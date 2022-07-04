@@ -21,7 +21,7 @@ char* c2_strcpy(char *dest, const char *src) {
 }
 C2_HOOK_FUNCTION(0x00579a30, c2_strcpy)
 
-const char *c2_strstr(const char *str, const char *delim) {
+char *c2_strstr(const char *str, const char *delim) {
     return strstr(str, delim);
 }
 C2_HOOK_FUNCTION(0x005767d0, c2_strstr)

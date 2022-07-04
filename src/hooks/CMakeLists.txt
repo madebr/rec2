@@ -30,6 +30,7 @@ function(add_hook_injector TARGET VICTIMEXE)
 
     set_target_properties(${TARGET}
         PROPERTIES
+            CXX_STANDARD 17
             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>"
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}"
     )
@@ -47,6 +48,11 @@ function(add_hook_plugin TARGET)
         "${hook_source_dir}/hooks.cpp"
         "${hook_source_dir}/hooks.h"
     )
+    if(MSVC)
+        target_sources(${TARGET} PRIVATE "${hook_source_dir}/hook_msvc.def")
+    elseif(MINGW)
+        target_sources(${TARGET} PRIVATE "${hook_source_dir}/hook_mingw.def")
+    endif()
     target_compile_definitions(${TARGET}
         PRIVATE
             "PLUGIN_NAME=\"$<TARGET_FILE_NAME:${TARGET}>\""

@@ -5,7 +5,7 @@
 
 #include "c2_hooks.h"
 
-void StripCRNL(char* line) {
+void C2_HOOK_FASTCALL StripCRNL(char* line) {
     char* loc;
 
     loc = c2_strchr(line, '\n');

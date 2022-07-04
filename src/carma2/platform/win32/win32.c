@@ -14,7 +14,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494)
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gReal_back_screen, 0x0074d360)
 
 
-void PDFatalError(char* pThe_str) {
+void C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
     char* str1;
     char* str2;
     dr_dprintf("FATAL ERROR: %s", pThe_str);
@@ -43,15 +43,15 @@ void PDFatalError(char* pThe_str) {
 C2_HOOK_FUNCTION(0x0051af20, PDFatalError)
 
 
-static void(* C2_HOOK_FASTCALL PDShutdownSystem_original)(void);
-void PDShutdownSystem() {
+static void(C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
+void C2_HOOK_FASTCALL PDShutdownSystem() {
     PDShutdownSystem_original();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c110, PDShutdownSystem, PDShutdownSystem_original)
 
 
-static void(* C2_HOOK_FASTCALL PDUnlockRealBackScreen_original)(void);
-void PDUnlockRealBackScreen() {
+static void(C2_HOOK_FASTCALL * PDUnlockRealBackScreen_original)(void);
+void C2_HOOK_FASTCALL PDUnlockRealBackScreen() {
     PDUnlockRealBackScreen_original();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00516c30, PDUnlockRealBackScreen, PDUnlockRealBackScreen_original)

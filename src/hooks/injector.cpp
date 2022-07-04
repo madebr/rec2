@@ -7,7 +7,7 @@
 
 namespace fs = std::filesystem;
 
-int CDECL main(int argc, char **argv)
+int CDECL main()
 {
 #if 0
     auto workPathDir = fs::current_path();
@@ -88,13 +88,6 @@ int CDECL main(int argc, char **argv)
             nullptr)) {
         DWORD dwError = GetLastError();
         printf(TARGET ": DetourCreateProcessWithDllEx failed: %ld\n", dwError);
-        if (dwError == ERROR_INVALID_HANDLE) {
-#if DETOURS_64BIT
-            printf(TARGET ": Can't detour a 32-bit target process from a 64-bit parent process.\n");
-#else
-            printf(TARGET ": Can't detour a 64-bit target process from a 32-bit parent process.\n");
-#endif
-        }
         printf("ERROR");
         ExitProcess(9009);
     }

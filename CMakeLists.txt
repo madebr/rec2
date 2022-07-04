@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 project(rec2 C)
 
-add_compile_options(-Wall)
+if(MSVC)
+else()
+    add_compile_options(-Wall)
+endif()
 
 if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
     include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
