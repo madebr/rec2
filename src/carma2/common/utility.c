@@ -1,6 +1,6 @@
 #include "utility.h"
 
-static void(*C2_HOOK_FASTCALL RemoveAllBrenderDevices_original)(void);
+static void(C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 void C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
     RemoveAllBrenderDevices_original();
 }

@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 project(rec2 C)
 
 if(MSVC)
+    add_compile_options(/GL-)
 else()
     add_compile_options(-Wall)
 endif()

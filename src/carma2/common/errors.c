@@ -12,8 +12,8 @@
 #include <stdint.h>
 //#include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gError_messages, 0x00591708)
-C2_HOOK_VARIABLE_IMPLEMENT(int, gError_code, 0x006b2e00)
+C2_HOOK_VARIABLE_IMPLEMENT(char*, gError_messages, 0x00591708);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gError_code, 0x006b2e00);
 
 FILE* gDiagnostic_file;
 
@@ -292,7 +292,7 @@ void FatalError(int pStr_index, ...) {
 //
 
 // This function is stripped from the retail binary, we've guessed at the implementation
-void OpenDiagnostics() {
+void OpenDiagnostics(void) {
     gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
     if (gDiagnostic_file == NULL) {
         return;
@@ -326,5 +326,7 @@ void dr_dprintf(char* fmt_string, ...) {
     va_end(args);
 
     c2_fputs("\n", gDiagnostic_file);
+
+    c2_fflush(gDiagnostic_file);
 }
 C2_HOOK_FUNCTION(0x0044c590, dr_dprintf);

@@ -99,7 +99,6 @@ int CDECL main()
     DWORD dwResult = 0;
     if (!GetExitCodeProcess(pi.hProcess, &dwResult)) {
         printf(TARGET ": GetExitCodeProcess failed: %ld\n", GetLastError());
-        return 9010;
     }
 
     return dwResult;

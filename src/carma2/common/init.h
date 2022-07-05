@@ -3,6 +3,6 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gBr_initialized)
+C2_HOOK_VARIABLE_DECLARE(int, gBr_initialized);
 
 #endif //REC2_INIT_H

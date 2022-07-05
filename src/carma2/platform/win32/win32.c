@@ -8,11 +8,10 @@
 
 #include <windows.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gFatalErrorMessage, 0x006acc88)
-C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498)
-C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494)
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gReal_back_screen, 0x0074d360)
-
+C2_HOOK_VARIABLE_IMPLEMENT(char*, gFatalErrorMessage, 0x006acc88);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gReal_back_screen, 0x0074d360);
 
 void C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
     char* str1;
