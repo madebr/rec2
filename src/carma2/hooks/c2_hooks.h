@@ -64,6 +64,7 @@ void c2_hook_vdebugf(const char* function, const char* format, va_list ap);
 #define C2V(NAME) C2_HOOK_VARIABLE(NAME)
 
 #define C2_HOOK_START() C2_HOOK_DEBUGF("start")
+#define C2_HOOK_STARTF(FMT, ...) C2_HOOK_DEBUGF("start" FMT, ##__VA_ARGS__)
 #define C2_HOOK_FINISH() C2_HOOK_DEBUGF("finish")
 
 #endif // C2_HOOKS_H

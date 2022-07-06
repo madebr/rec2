@@ -1,8 +1,12 @@
 #include "win32.h"
 
+#include "win32_dinput.h"
+
 #include "errors.h"
+#include "globvars.h"
 #include "init.h"
 #include "main.h"
+#include "platform.h"
 #include "utility.h"
 
 #include "c2_stdio.h"
@@ -12,10 +16,10 @@
 #include <windows.h>
 #include <dinput.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gFatalErrorMessage, 0x006acc88);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gReal_back_screen, 0x0074d360);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gScreen, 0x0074d3e0);
 
 C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd, 0x006ad4c8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gWindowActiveState, 0x006621e0, 2); // FIXME: enum: 0, 1 or 2
@@ -44,9 +48,30 @@ C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_kHz, 0x00
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFatalErrorMessage, 512, 0x006acc88);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFatalErrorMessageValid, 0x006ad498);
 
+void C2_HOOK_FASTCALL KeyBegin(void) {
+    C2V(gReal_back_screen) = NULL;
+    C2V(gScreen) = NULL;
+    ShowCursor(FALSE);
+    KeyScanCodeBegin();
+    KeyDInputBegin();
+}
+C2_HOOK_FUNCTION(0x0051b9f0, KeyBegin)
 
+void C2_HOOK_FASTCALL PDSetFileVariables() {
+    C2V(gDir_separator) = "\\";
+}
+C2_HOOK_FUNCTION(0x0051c6f0, PDSetFileVariables)
 
+void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path) {
+    GetCurrentDirectoryA(253, pThe_path);
+    GetShortPathNameA(pThe_path, pThe_path, 253);
+    strcat(pThe_path, "\\");
+    dr_dprintf("Application path '%s'", pThe_path);
+}
+C2_HOOK_FUNCTION(0x0051c700, PDBuildAppPath)
 
 #if 0
 void C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
@@ -120,7 +145,7 @@ void DeActivateApp(void) {
         C2V(gWindowActiveState) = (strcmp(C2V(gRenderer), "D3D") == 0) ? 0 : 1;
         C2V(gWindowMovingResizing) = 0;
     }
-    dr_dprintf("DeActivateApp() - END; active state now %d");
+    dr_dprintf("DeActivateApp() - END; active state now %d", C2V(gWindowActiveState));
 }
 
 WNDPROC Carma2MainWndProc_original;
@@ -302,3 +327,16 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
     C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051cad0, Win32ServiceMessages, Win32ServiceMessages_original)
+
+int (C2_HOOK_FASTCALL * PDCheckDriveExists2_original)(const char* pThe_path, const char* pFile_name, tU32 pMin_size);
+int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFile_name, tU32 pMin_size) {
+#if defined(C2_HOOKS_ENABLED)
+    C2_HOOK_START();
+    int res = PDCheckDriveExists2_original(pThe_path, pFile_name, pMin_size);
+    C2_HOOK_FINISH();
+    return res;
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051d500, PDCheckDriveExists2, PDCheckDriveExists2_original)

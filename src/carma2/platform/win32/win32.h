@@ -3,20 +3,17 @@
 
 #include "c2_hooks.h"
 
+#include "rec2_types.h"
+
 #include <brender/brender.h>
 
 #include <windows.h>
 #include <dinput.h>
 
-C2_HOOK_VARIABLE_DECLARE(char*, gFatalErrorMessage);
 C2_HOOK_VARIABLE_DECLARE(int, gIsFatalError);
 C2_HOOK_VARIABLE_DECLARE(int, gExitCode);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gReal_back_screen);
-
-C2_HOOK_VARIABLE_DECLARE(char*, gFatalErrorMessage);
-C2_HOOK_VARIABLE_DECLARE(int, gIsFatalError);
-C2_HOOK_VARIABLE_DECLARE(int, gExitCode);
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gReal_back_screen);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gScreen);
 
 C2_HOOK_VARIABLE_DECLARE(HWND, gHWnd);
 C2_HOOK_VARIABLE_DECLARE(int, gWindowActiveState);  // FIXME: enum (0,1) => background(d3d or glide), 2=> active
@@ -43,6 +40,12 @@ C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_kHz);
 
 C2_HOOK_VARIABLE_DECLARE(int, gTimeLastKeyboardInput);
 
+C2_HOOK_VARIABLE_DECLARE(HINSTANCE, gHInstance);
+
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFatalErrorMessage, 512);
+C2_HOOK_VARIABLE_DECLARE(int, gFatalErrorMessageValid);
+
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
 
 #endif // C2_WIN32_WIN32_H
