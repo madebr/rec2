@@ -1,10 +1,10 @@
 #ifndef C2_PLATFORM_H
 #define C2_PLATFORM_H
 
-#if defined(_WIN32)
-#include "win32/win32.h"
-#else
-#error "Unknown platform"
-#endif
+#include "c2_hooks.h"
+
+void C2_HOOK_FASTCALL PDFatalError(char* pThe_str);
+void C2_HOOK_FASTCALL PDShutdownSystem(void);
+void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void);
 
 #endif // C2_PLATFORM_H

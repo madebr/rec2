@@ -1,5 +1,5 @@
-#ifndef _ERRORS_H_
-#define _ERRORS_H_
+#ifndef REC2_ERRORS_H
+#define REC2_ERRORS_H
 
 #include "brender/br_types.h"
 
@@ -31,4 +31,4 @@ void C2_HOOK_CDECL dr_dprintf(char* fmt_string, ...);
 
 //int DoErrorInterface(int pMisc_text_index);
 
-#endif
+#endif // REC2_ERRORS_H

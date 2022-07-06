@@ -55,6 +55,10 @@ int CDECL main()
     si.cb = sizeof(si);
 
     command = victimPath;
+#if defined(ARGUMENTS)
+    command += " ";
+    command += ARGUMENTS;
+#endif
     char* commandBuffer = new char[command.size() + 1];
     command.copy(commandBuffer, command.size());
     commandBuffer[command.size()] = '\0';

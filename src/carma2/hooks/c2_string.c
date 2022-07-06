@@ -11,7 +11,15 @@ char *c2_strchr(const char *str, int c) {
 }
 C2_HOOK_FUNCTION(0x00575bf0, c2_strchr)
 
+#include <stdlib.h>
+#include <stdio.h>
+
 char* c2_strcat(char *dest, const char *src) {
+    printf("c2_strcat\n");
+    fflush(stdout);
+    if (dest == NULL || src == NULL) {
+        abort();
+    }
     return strcat(dest, src);
 }
 C2_HOOK_FUNCTION(0x00579a40, c2_strcat)

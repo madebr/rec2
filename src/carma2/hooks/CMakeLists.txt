@@ -2,9 +2,10 @@ if(C2_STANDALONE)
     add_library(c2_hooks INTERFACE)
 else()
     add_library(c2_hooks STATIC
+        c2_hooks.c
         c2_hooks.h
-        c2_stdio.c
-        c2_stdio.h
+#        c2_stdio.c
+#        c2_stdio.h
         c2_stdlib.h
         c2_string.c
         c2_string.h
@@ -21,8 +22,11 @@ target_include_directories(c2_hooks
 
 if(NOT C2_STANDALONE)
     add_hook_injector(rec2_inject "CARMA2_HW.EXE")
+#    target_compile_definitions(rec2_inject PRIVATE "ARGUMENTS=\"-D3D\"")
 
     add_hook_plugin(rec2)
+    target_compile_definitions(rec2 PRIVATE "HOOK_INIT_FUNCTION=c2_hook_init")
+    target_compile_definitions(rec2 PRIVATE "HOOK_DEINIT_FUNCTION=c2_hook_deinit")
     target_sources(rec2 PRIVATE
         $<TARGET_OBJECTS:brender>
         $<TARGET_OBJECTS:c2_common>

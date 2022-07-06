@@ -7,10 +7,12 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(FILE*, c2_stdout, 0x006737f0);
+C2_HOOK_VARIABLE_IMPLEMENT(FILE, c2_stdout_value, 0x006737f0);
 
 static FILE* (C2_HOOK_CDECL * fopen_original)(const char*, const char*);
 FILE*  c2_fopen(const char* path, const char* mode) {
+    c2_printf("c2_fopen(%s,%s)\n", path, mode);
+    c2_fflush(c2_stdout);
     return fopen_original(path, mode);
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00577170, c2_fopen, fopen_original)
@@ -43,7 +45,7 @@ static int (C2_HOOK_CDECL * printf_original)(const char* format, ...);
 int c2_printf(const char* format, ...) {
     va_list ap;
     va_start(ap, format);
-    return c2_vfprintf(C2V(c2_stdout), format, ap);
+    return c2_vfprintf(c2_stdout, format, ap);
     va_end(ap);
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00577930, c2_printf, printf_original);
@@ -60,6 +62,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00576d00, c2_fprintf, fprintf_original);
 int c2_sprintf(char* str, const char* format, ...) {
     va_list ap;
     va_start(ap, format);
+    c2_printf("c2_sprintf(%s, format)\n", str, format);
     return vsprintf(str, format, ap);
     va_end(ap);
 }

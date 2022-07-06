@@ -7,7 +7,8 @@
 
 #include <stdio.h>
 
-C2_HOOK_VARIABLE_DECLARE(FILE*, c2_stdout);
+C2_HOOK_VARIABLE_DECLARE(FILE, c2_stdout_value);
+#define c2_stdout (&C2V(c2_stdout_value))
 
 FILE* C2_HOOK_CDECL c2_fopen(const char* path, const char* mode);
 int C2_HOOK_CDECL c2_fflush(FILE* file);

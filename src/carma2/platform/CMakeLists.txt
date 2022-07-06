@@ -2,7 +2,9 @@ if(WIN32)
     set(PLATFORM_SOURCES
         win32/win32.c
         win32/win32.h
+        win32/winmain.c
     )
+    add_compile_definitions(DIRECTINPUT_VERSION=0x0200)
 else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
@@ -22,9 +24,7 @@ target_link_libraries(c2_platform
 )
 
 if(C2_STANDALONE)
-    add_executable(rec2
-        main.c
-    )
+    add_executable(rec2)
     target_link_libraries(rec2
         PRIVATE
             c2_common
