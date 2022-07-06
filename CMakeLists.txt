@@ -5,6 +5,7 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 project(rec2 C)
 
+option(KEEP_ACTIVE_IN_BACKGROUND "Keep the game active when alt-tabbing to another application" OFF)
 option(REC2_VENDORED "Use vendored dependencies" ON)
 option(REC2_WERROR "Treat warnings as errors" OFF)
 
@@ -29,6 +30,10 @@ if(REC2_WERROR)
     else()
         add_compile_options(-Werror)
     endif()
+endif()
+
+if(KEEP_ACTIVE_IN_BACKGROUND)
+    add_compile_definitions(KEEP_ACTIVE_IN_BACKGROUND)
 endif()
 
 option(C2_STANDALONE "Build standalone Carmageddon 2 executable" OFF)
