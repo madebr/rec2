@@ -7,8 +7,13 @@
 
 #include <stdio.h>
 
+C2_HOOK_VARIABLE_DECLARE(FILE, c2_stdin_value);
 C2_HOOK_VARIABLE_DECLARE(FILE, c2_stdout_value);
+C2_HOOK_VARIABLE_DECLARE(FILE, c2_stderr_value);
+
+#define c2_stdin (&C2V(c2_stdin_value))
 #define c2_stdout (&C2V(c2_stdout_value))
+#define c2_stderr (&C2V(c2_stderr_value))
 
 FILE* C2_HOOK_CDECL c2_fopen(const char* path, const char* mode);
 int C2_HOOK_CDECL c2_fflush(FILE* file);
