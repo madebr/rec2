@@ -1,3 +1,7 @@
 [submodule "external/detours/detours"]
 	path = external/detours/detours
 	url = https://github.com/microsoft/Detours.git
+[submodule "external/dxsdk/dxsdk"]
+	path = external/dxsdk/dxsdk
+	url = https://github.com/madebr/dxsdk
+	branch = v7.0a

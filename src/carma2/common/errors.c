@@ -296,9 +296,8 @@ C2_HOOK_FUNCTION(0x0044c230, FatalError)
 //}
 //
 
-#if 1
 // This function is stripped from the retail binary, we've guessed at the implementation
-void OpenDiagnostics(void) {
+void C2_HOOK_FASTCALL OpenDiagnostics() {
 #if defined(C2_HOOKS_ENABLED)
     // FIXME: use c2_stdio functions
 //    gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
@@ -306,10 +305,9 @@ void OpenDiagnostics(void) {
     if (gDiagnostic_file == NULL) {
         return;
     }
-
     fputs("DIAGNOSTIC OUTPUT\n", gDiagnostic_file);
     // todo: generate a real date
-    fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", "Mon Mar 24 16 : 32 : 33 1997");
+    fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", __DATE__ " : " __TIME__);
 #else
     gDiagnostic_file = fopen("DIAGNOST.TXT", "w");
     if (gDiagnostic_file == NULL) {
@@ -322,7 +320,6 @@ void OpenDiagnostics(void) {
 #endif
 }
 C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics);
-#endif
 
 // Renamed from dprintf to avoid collisions to stdio
 // This function is stripped from the retail binary, we've guessed at the implementation
