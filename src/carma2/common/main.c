@@ -1,4 +1,7 @@
 #include "main.h"
+
+#include "rec2_types.h"
+
 #include <stdlib.h>
 
 //#include "controls.h"
@@ -94,6 +97,22 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, char** pArgv) {
 #if defined(C2_HOOKS_ENABLED)
     GameMain_original(pArgc, pArgv);
 #else
+    tPath_name location;
+
+    PDSetFileVariables();
+    PDBuildAppPath(C2V(gApplicationPath);
+    OpenDiagnostics();
+
+    strcat(C2V(gApplicationPath), "DATA");
+    UsePathFileToDetermineIfFullInstallation();
+    if (!C2V(gCD_fully_installed)) {
+        if (PDReadSourceLocation(location)) {
+            if (!PDCheckDriveExists(location)) {
+
+            }
+        }
+    }
+
 //    tPath_name CD_dir;
 //
 //    PDSetFileVariables();
