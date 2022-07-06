@@ -21,8 +21,12 @@ target_include_directories(c2_hooks
 )
 
 if(NOT C2_STANDALONE)
+    option(REC2_INJECTOR_D3D "Use D3D for rec2 injector" ON)
+
     add_hook_injector(rec2_inject "CARMA2_HW.EXE")
-#    target_compile_definitions(rec2_inject PRIVATE "ARGUMENTS=\"-D3D\"")
+    if(REC2_INJECTOR_D3D)
+        target_compile_definitions(rec2_inject PRIVATE "ARGUMENTS=\"-D3D\"")
+    endif()
 
     add_hook_plugin(rec2)
     target_compile_definitions(rec2 PRIVATE "HOOK_INIT_FUNCTION=c2_hook_init")

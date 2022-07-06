@@ -20,6 +20,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, key_lut_3, 151, 0x006b3470);
 
 C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTINPUT, gDirectInput, 0x006acc78);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gJoystick_deadzone, 0x00762280);
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin() {
 #if defined(C2_HOOKS_ENABLED)
@@ -279,6 +281,7 @@ void C2_HOOK_FASTCALL KeyDInputBegin(void) {
         JoystickDInputDetect();
         LoadJoystickPreferences();
     }
+    C2V(gJoystick_deadzone) = 8000;
     return;
 error:
     C2V(gExitCode) = 700;
