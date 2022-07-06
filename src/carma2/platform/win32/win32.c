@@ -112,7 +112,6 @@ void C2_HOOK_FASTCALL PDUnlockRealBackScreen() {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00516c30, PDUnlockRealBackScreen, PDUnlockRealBackScreen_original)
 
-
 void DeActivateApp(void) {
     dr_dprintf("DeActivateApp() - START");
     if (!C2V(gWindowMovingResizing) && C2V(gWindowActiveState) == 2) {
@@ -151,6 +150,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
     case WM_DESTROY:
         dr_dprintf("WM_DESTROY received - doing nothing.");
         break;
+#if !defined(KEEP_ACTIVE_IN_BACKGROUND)
     case WM_MOVE:
     case WM_SIZE:
         if (IsIconic(hWnd)) {
@@ -158,6 +158,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             DeActivateApp();
         }
         break;
+#endif
     case WM_SYSCOMMAND:
         if (GET_SC_WPARAM(wParam) == SC_CLOSE) {
             DestroyWindow(C2V(gHWnd));
@@ -225,6 +226,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             dr_dprintf("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
         }
         break;
+#if !defined(KEEP_ACTIVE_IN_BACKGROUND)
     case WM_ACTIVATEAPP:
         dr_dprintf("WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
                    wParam, lParam, GetForegroundWindow(), C2V(gHWnd), hWnd, IsIconic(C2V(gHWnd)));
@@ -251,6 +253,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             }
         }
         break;
+#endif
     default:
         break;
     }

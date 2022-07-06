@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.15)
 project(rec2 C)
 
+option(KEEP_ACTIVE_IN_BACKGROUND "Keep the game active when alt-tabbing to another application" OFF)
+
+if(KEEP_ACTIVE_IN_BACKGROUND)
+    add_compile_definitions(KEEP_ACTIVE_IN_BACKGROUND)
+endif()
+
 if(MSVC)
     add_compile_options(/GL- /W3)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
