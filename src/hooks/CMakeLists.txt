@@ -17,7 +17,7 @@ function(add_hook_injector TARGET VICTIMEXE)
     add_executable(${TARGET}
         "${hook_source_dir}/injector.cpp"
     )
-    add_compile_definitions(${TARGET}
+    target_compile_definitions(${TARGET}
         PRIVATE
             "TARGET=\"$<TARGET_FILE_NAME:${TARGET}>\""
             "VICTIM=\"${VICTIMEXE}\""

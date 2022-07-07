@@ -46,7 +46,7 @@ void C2_HOOK_CDECL c2_fclose(FILE* file) {
 #if HOOK_STDIO
     fclose_original(file);
 #else
-    fclose(file);
+    fclose(hook_FILE(file));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00577640, c2_fclose, fclose_original)
@@ -72,6 +72,30 @@ int c2_ftell(FILE* file) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005772f0, c2_ftell, ftell_original)
+
+int (C2_HOOK_CDECL * fseek_original)(FILE *stream, int offset, int whence);
+int C2_HOOK_CDECL c2_fseek(FILE *stream, int offset, int whence) {
+
+    C2_HOOK_DEBUGF("(%p, %d, %d)", stream, offset, whence);
+#if HOOK_STDIO
+    return fseek_original(stream, offset, whence);
+#else
+    return fseek(hook_FILE(stream), offset, whence);
+#endif
+}
+
+C2_HOOK_FUNCTION_ORIGINAL(0x00576ec0, c2_fseek, fseek_original)
+void (C2_HOOK_CDECL * rewind_original)(FILE *stream);
+void C2_HOOK_CDECL c2_rewind(FILE *stream) {
+
+    C2_HOOK_DEBUGF("(%p)", stream);
+#if HOOK_STDIO
+    rewind_original(stream);
+#else
+    rewind(hook_FILE(stream));
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005770e0, c2_rewind, rewind_original)
 
 static int (C2_HOOK_CDECL * fputc_original)(int character, FILE* file);
 int c2_fputc(int character, FILE* file) {
@@ -171,6 +195,7 @@ size_t C2_HOOK_CDECL c2_fwrite(const void* ptr, size_t size, size_t count, FILE*
 #else
     res = fwrite(ptr, size, count, hook_FILE(stream));
 #endif
+    C2_HOOK_DEBUGF("-> %d", res);
     return res;
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005774a0, c2_fwrite, fwrite_original)
@@ -185,34 +210,10 @@ size_t C2_HOOK_CDECL c2_fread(void *ptr, size_t size, size_t nmemb, FILE *stream
 #else
     res = fread(ptr, size, nmemb, hook_FILE(stream));
 #endif
+    C2_HOOK_DEBUGF("-> %d", res);
     return res;
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00576fa0, c2_fread, c2_fread_original)
-
-int (C2_HOOK_CDECL * fseek_original)(FILE *stream, int offset, int whence);
-int C2_HOOK_CDECL c2_fseek(FILE *stream, int offset, int whence) {
-
-    C2_HOOK_DEBUGF("(%p, %d, %d)", stream, offset, whence);
-#if HOOK_STDIO
-    return fseek_original(stream, offset, whence);
-#else
-    return fseek(hook_FILE(stream), offset, whence);
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00576ec0, c2_fseek, fseek_original)
-
-
-void (C2_HOOK_CDECL * rewind_original)(FILE *stream);
-void C2_HOOK_CDECL c2_rewind(FILE *stream) {
-
-    C2_HOOK_DEBUGF("(%p)", stream);
-#if HOOK_STDIO
-    rewind_original(stream);
-#else
-    rewind(hook_FILE(stream));
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x005770e0, c2_rewind, rewind_original)
 
 
 #endif
