@@ -7,6 +7,8 @@ add_library(brender STATIC
 #    core/fw/diag.h
     core/fw/fwsetup.c
     core/fw/fwsetup.h
+    core/fw/mem.c
+    core/fw/mem.h
 
     core/pixelmap/pmdsptch.c
     core/pixelmap/pmdsptch.h
