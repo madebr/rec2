@@ -25,8 +25,8 @@ void C2_HOOK_FASTCALL QuitGame() {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491f70, QuitGame, QuitGame_original)
 
-void (C2_HOOK_FASTCALL * GameMain_original)(int pArgc, char** pArgv);
-void C2_HOOK_FASTCALL GameMain(int pArgc, char** pArgv) {
+void (C2_HOOK_FASTCALL * GameMain_original)(int pArgc, const char** pArgv);
+void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     C2_HOOK_START();
 #if 0//defined(C2_HOOKS_ENABLED)
     GameMain_original(pArgc, pArgv);

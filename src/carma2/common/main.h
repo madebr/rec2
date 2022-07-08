@@ -17,6 +17,6 @@ void C2_HOOK_FASTCALL QuitGame(void);
 //
 //void ServiceGameInRace();
 //
-void C2_HOOK_FASTCALL GameMain(int pArgc, char** pArgv);
+void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv);
 
 #endif // REC2_MAIN_H

@@ -6,9 +6,12 @@ else()
         c2_hooks.h
         c2_stdio.c
         c2_stdio.h
+        c2_stdlib.c
         c2_stdlib.h
         c2_string.c
         c2_string.h
+        c2_time.c
+        c2_time.h
         win32_hooks.c
     )
     target_compile_definitions(c2_hooks PUBLIC C2_HOOKS_ENABLED)

@@ -1,5 +1,7 @@
 #include "init.h"
 
+#include "c2_stdlib.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gBr_initialized, 0x0068be2c);
 
 
@@ -8,6 +10,53 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv) {
 #if defined(C2_HOOKS_ENABLED)
     InitialiseApplication_original(pArgc, pArgv);
 #else
+    KeyBegin();
+
+    C2V(gProgram_state.sausage_eater_mode) = C2V(gSausage_override);
+    QuickTimeInit();
+    memset(gFontTextureMaps, 0, sizeof(gFontTextureMaps));
+    TWT_Init();
+    MAMSInitMem();
+    C2V(gAusterity_mode) = C2V(gAustere_mode) || PDDoWeLeadAnAustereExistance();
+    c2_srand(time(NULL));
+    BrV1dbBeginWrapper_Float();
+    CreateStainlessClasses();
+    InstallDRMemCalls();
+    InstallDRStdioCalls();
+
+    tTWTVFS twtVfs = TWT_MountEx(C2V(gApplication_path));
+    C2V(gApplicationDataTwtMounted) = 1;
+
+    TemporaryMaterialStorageInit();
+    PDTimerInit();
+    InitWobbleStuff();
+    LoadGeneralParameters();
+    PrintMemoryDump(0, "AFTER LOADING GENERAL PARAMETERS");
+    DefaultNetName();
+    strcpy(C2V(gProgram_state_player_name), "MAX DAMAGE");
+    RestoreOptions();
+    LoadKeyMapping();
+    if (!PDInitScreenVars(pArgc, pArgv)) {
+        FatalError(kFatalError_InvalidScreenDepthSetting);
+    }
+    CalcGrafDataIndex();
+    // empty_func();
+    // empty_func();
+    InitializeBRenderEnvironment();
+    PrintMemoryDump(0, "AFTER INITIALISING BRENDER");
+    CheckIsDemo();
+
+    InitDRFonts();
+    InitBRFonts();
+    PrintMemoryDump(0, "AFTER LOADING FONTS");
+    InitExplosions();
+    PrintMemoryDump(0, "AFTER INITIALISING EXPLOSIONS");
+    LoadMiscStrings();
+    PrintMemoryDump(0, "AFTER LOADING MISC STRING");
+
+    abort(); //Unfinished
+
+
 #error "not implemented"
 #endif
 }
