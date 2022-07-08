@@ -7,4 +7,6 @@
 
 void* C2_HOOK_CDECL BrMemAllocate(br_size_t size, br_uint_8 type);
 
+void C2_HOOK_CDECL BrMemFree(void* block);
+
 #endif // REC2_MEM_H
