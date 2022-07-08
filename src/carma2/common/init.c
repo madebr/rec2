@@ -22,7 +22,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv) {
     BrV1dbBeginWrapper_Float();
     CreateStainlessClasses();
     InstallDRMemCalls();
-    InstallDRStdioCalls();
+    InstallDRFileCalls();
 
     tTWTVFS twtVfs = TWT_MountEx(C2V(gApplication_path));
     C2V(gApplicationDataTwtMounted) = 1;

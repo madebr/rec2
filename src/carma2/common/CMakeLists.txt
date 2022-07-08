@@ -1,4 +1,6 @@
 add_library(c2_common STATIC
+    drfile.c
+    drfile.h
     drmem.c
     drmem.h
     errors.c
