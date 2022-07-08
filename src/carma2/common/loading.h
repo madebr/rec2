@@ -39,4 +39,6 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path);
 
 tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
 
+br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(char* pPath_name);
+
 #endif //REC2_LOADING_H
