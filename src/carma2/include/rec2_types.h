@@ -1,6 +1,8 @@
 #ifndef REC2_TYPES_H
 #define REC2_TYPES_H
 
+#include <brender/br_types.h>
+
 typedef char tPath_name[256];
 
 typedef unsigned char tU8;
@@ -47,6 +49,46 @@ typedef struct tWobble_spec {
     int time_started;
 } tWobble_spec;
 
+typedef enum {
+    kSoundFx_None = -1,
+    kSoundFx_Saturated = 0,
+    kSoundFx_Scattered = 1,
+} tSpecial_volume_soundfx_type;
+
+typedef enum {
+    kSoundFxPeriodicity_Random = 0,
+    kSoundFxPeriodicity_Periodic = 1,
+    kSoundFxPeriodicity_Continuous = 2,
+} tSpecial_volume_soundfx_periodicity_type;
+
+typedef struct {
+    tSpecial_volume_soundfx_periodicity_type periodicity;
+    float periodic1;
+    float periodic2;
+    tU32 unknown1;
+    int nbEnvironmentalSoundAlternatives;
+    tS32 unknown2; // fixedpoint integer? (* 16 / 100)
+    tS16 soundAlternatives[5];
+    tS16 unknown3;
+} tSpecial_volume_soundfx_data;
+
+typedef struct {
+    char unknown1[136];
+    br_scalar gravity_multiplier;
+    br_scalar viscosity_multiplier;
+    float car_damage_per_ms;
+    float ped_damage_per_ms;
+    int camera_special_effect_index;
+    int sky_col;
+    int entry_noise;
+    int exit_noise;
+    int engine_noise_index;
+    br_material* screen_material;
+    int material_modifier_index;
+    tSpecial_volume_soundfx_type soundfx_type;
+    tSpecial_volume_soundfx_data soundfx_data;
+} tSpecial_volume;
+
 enum {
     // FIXME: add all c2 memory tags
     kMem_packed_file = 0xd0,
@@ -55,7 +97,8 @@ enum {
 enum {
     // FIXME: add all c2 FatalError types
     kFatalError_InvalidScreenDepthSetting = 0x00,
-    kFatalError_RootActorAllocError = 0x03,
+    kFatalError_FailToOpenGeneralSettings = 0x03,
+    kFatalError_MysteriousX_SS = 0xbd,
 };
 
 enum {

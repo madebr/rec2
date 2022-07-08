@@ -12,11 +12,25 @@
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
 
+C2_HOOK_VARIABLE_DECLARE(int, gRusselsFannies);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
-tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
+int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
 
-char* C2_HOOK_FASTCALL DRreadline(tTWTFILE* pFile, char* pBuffer);
+int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF);
+
+void C2_HOOK_FASTCALL GetThreeInts(tTWTFILE* pF, int* pF1, int* pF2, int* pF3);
+
+float C2_HOOK_FASTCALL GetAFloat(tTWTFILE* pF);
+
+float C2_HOOK_FASTCALL GetAScalar(tTWTFILE* pF);
+
+void C2_HOOK_FASTCALL GetThreeFloats(tTWTFILE * pF, float* pF1, float* pF2, float* pF3);
+
+void C2_HOOK_FASTCALL GetAString(tTWTFILE* pF, char* pString);
+
+tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
 void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile);
 
