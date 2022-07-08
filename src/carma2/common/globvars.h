@@ -9,6 +9,9 @@
 C2_HOOK_VARIABLE_DECLARE(tPath_name, gApplication_path);
 C2_HOOK_VARIABLE_DECLARE(const char*, gDir_separator);
 
+C2_HOOK_VARIABLE_DECLARE(int, gAusterity_mode);
+C2_HOOK_VARIABLE_DECLARE(int, gAustere_override);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;
@@ -20,7 +23,6 @@ C2_HOOK_VARIABLE_DECLARE(const char*, gDir_separator);
 //extern int gPipe_reg_snap_after_our_car;
 //extern int gAction_replay_mode;
 //extern int gDefault_engine_noise_index;
-//extern int gAusterity_mode;
 //extern int gSausage_override;
 //extern int gAustere_override;
 //extern int gSound_override;

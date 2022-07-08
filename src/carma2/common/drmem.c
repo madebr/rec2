@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//br_allocator gAllocator = { "Death Race", DRStdlibAllocate, DRStdlibFree, DRStdlibInquire, Claim4ByteAlignment };
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_allocator, gAllocator, 0x005937e8, { "Death Race", C2V(DRStdlibAllocate), C2V(DRStdlibFree), C2V(DRStdlibInquire), C2V(Claim4ByteAlignment) });
 //int gNon_fatal_allocation_errors = 0;
 //char* gMem_names[247] = {
 //    "",
@@ -277,17 +277,12 @@
 //    return gNon_fatal_allocation_errors == 0;
 //}
 //
-//// IDA: void __cdecl MAMSInitMem()
-//void MAMSInitMem() {
-//    int i;
-//    FILE* f;
-//    tPath_name the_path;
-//    LOG_TRACE("()");
-//}
-//
+
+void C2_HOOK_FASTCALL MAMSInitMem() {
+}
+C2_HOOK_FUNCTION(0x0044c820, MAMSInitMem)
+
 void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
-    // FIXME: use dr_dprintf or stderr? or nothing?
-    printf("%s: pTitle=\"%s\" pFlags=%d\n", __FUNCTION__, pTitle, pFlags);
     dr_dprintf("%s: pTitle=\"%s\" pFlags=%d", __FUNCTION__, pTitle, pFlags);
 }
 C2_HOOK_FUNCTION(0x0044c850, PrintMemoryDump);
@@ -296,11 +291,7 @@ void* (C2_HOOK_CDECL * DRStdlibAllocate_original)(br_size_t size, br_uint_8 type
 void* DRStdlibAllocate(br_size_t size, br_uint_8 type) {
     void* p;
 
-    if (size == 0) {
-        return NULL;
-    }
     p = malloc(size);
-    printf("%s: size=%d type=%d -> %p\n", __FUNCTION__, size, type, p);
     // FIXME: re-add this
 //    if (p == NULL && !gNon_fatal_allocation_errors) {
 //        sprintf(s, "%s/%d", gMem_names[type], (int)size);
@@ -315,23 +306,26 @@ void DRStdlibFree(void* mem) {
     free(mem);
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044c990, DRStdlibFree, DRStdlibFree_original)
-//
-//// IDA: br_size_t __cdecl DRStdlibInquire(br_uint_8 type)
-//br_size_t DRStdlibInquire(br_uint_8 type) {
-//    return 0;
-//}
-//
-//// IDA: br_uint_32 __cdecl Claim4ByteAlignment(br_uint_8 type)
-//br_uint_32 Claim4ByteAlignment(br_uint_8 type) {
-//    return 4;
-//}
-//
+
+br_size_t C2_HOOK_CDECL DRStdlibInquire(br_uint_8 type) {
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0044c9c0, DRStdlibInquire)
+
+br_uint_32 C2_HOOK_CDECL Claim4ByteAlignment(br_uint_8 type) {
+    return 4;
+}
+C2_HOOK_FUNCTION(0x0044c9d0, Claim4ByteAlignment)
+
+void (C2_HOOK_FASTCALL * InstallDRMemCalls_original)(void);
 void C2_HOOK_FASTCALL InstallDRMemCalls() {
-#if !defined(C2_HOOKS_ENABLED)
-    BrAllocatorSet(&gAllocator);
+#if defined(C2_HOOKS_ENABLED)
+    InstallDRMemCalls_original();
+#else
+    BrAllocatorSet(&C2V(gAllocator));
 #endif
 }
-C2_HOOK_FUNCTION(0x0044c9e0, InstallDRMemCalls)
+C2_HOOK_FUNCTION_ORIGINAL(0x0044c9e0, InstallDRMemCalls, InstallDRMemCalls_original)
 //
 //// IDA: void __usercall MAMSUnlock(void **pPtr@<EAX>)
 //void MAMSUnlock(void** pPtr) {
@@ -348,9 +342,9 @@ C2_HOOK_FUNCTION(0x0044c9e0, InstallDRMemCalls)
 void (C2_HOOK_FASTCALL * CreateStainlessClasses_original)(void);
 void C2_HOOK_FASTCALL CreateStainlessClasses() {
 #if defined(C2_HOOKS_ENABLED)
-    printf("%s: start\n", __FUNCTION__);
+    C2_HOOK_START();
     CreateStainlessClasses_original();
-    printf("%s: finish\n", __FUNCTION__);
+    C2_HOOK_FINISH();
 #else
     int i;
 
