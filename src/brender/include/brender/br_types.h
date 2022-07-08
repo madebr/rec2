@@ -639,8 +639,8 @@ typedef enum br_fitmap_axis {
 typedef void br_putline_cbfn(char*, void*);
 typedef int br_mode_test_cbfn(br_uint_8*, br_size_t);
 typedef br_uint_32 brfile_attributes_cbfn();
-typedef void* brfile_open_read_cbfn(char*, br_size_t, br_mode_test_cbfn*, int*);
-typedef void* brfile_open_write_cbfn(char*, int);
+typedef void* brfile_open_read_cbfn(const char*, br_size_t, br_mode_test_cbfn*, int*);
+typedef void* brfile_open_write_cbfn(const char*, int);
 typedef void brfile_close_cbfn(void*);
 typedef int brfile_eof_cbfn(void*);
 typedef int brfile_getchr_cbfn(void*);

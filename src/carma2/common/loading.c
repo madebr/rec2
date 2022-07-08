@@ -49,9 +49,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b4780, DRfopen, DRfopen_original)
 char* (C2_HOOK_FASTCALL * DRreadline_original)(tTWTFILE* pFile, char* pBuffer);
 char* C2_HOOK_FASTCALL DRreadline(tTWTFILE* pFile, char* pBuffer) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     char* res = DRreadline_original(pFile, pBuffer);
-    C2_HOOK_FINISH();
     return res;
 #else
 #error "not implemented"
@@ -69,6 +67,57 @@ void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile) {
 #error "not implemented"
 #endif
 }
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4760, DRfclose, DRfclose_original)
+
+br_size_t (C2_HOOK_FASTCALL * DRfread_original)(void* buf, br_size_t size, unsigned int n, void* f);
+br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, void* f) {
+#if defined(C2_HOOKS_ENABLED)
+    return DRfread_original(buf, size, n, f);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b49f0, DRfread, DRfread_original)
+
+br_size_t (C2_HOOK_FASTCALL * DRfwrite_original)(void* buf, br_size_t size, unsigned int n, void* f);
+br_size_t C2_HOOK_FASTCALL DRfwrite(void* buf, br_size_t size, unsigned int n, void* f) {
+#if defined(C2_HOOKS_ENABLED)
+    return DRfwrite_original(buf, size, n, f);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4a80, DRfwrite, DRfwrite_original)
+
+int (C2_HOOK_FASTCALL * DRfeof_original)(tTWTFILE* pFile);
+int C2_HOOK_FASTCALL DRfeof(tTWTFILE* pFile) {
+#if defined(C2_HOOKS_ENABLED)
+    return DRfeof_original(pFile);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4c10, DRfeof, DRfeof_original)
+
+int (C2_HOOK_FASTCALL * DRfgetc_original)(tTWTFILE* pFile);
+int C2_HOOK_FASTCALL DRfgetc(tTWTFILE* pFile) {
+#if defined(C2_HOOKS_ENABLED)
+    return DRfgetc_original(pFile);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4880, DRfgetc, DRfgetc_original)
+
+char* (C2_HOOK_FASTCALL * DRfgets_original)(char* buffer, br_size_t size, tTWTFILE* pFile);
+char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, tTWTFILE* pFile) {
+#if defined(C2_HOOKS_ENABLED)
+    return DRfgets_original(buffer, size, pFile);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4900, DRfgets, DRfgets_original)
 
 tU32 (C2_HOOK_FASTCALL * TWT_ReadBinaryU32_original)(FILE* file);
 tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file) {

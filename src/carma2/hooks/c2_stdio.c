@@ -206,14 +206,15 @@ size_t (C2_HOOK_CDECL * c2_fread_original)(void *ptr, size_t size, size_t nmemb,
 size_t C2_HOOK_CDECL c2_fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     size_t res;
 
-    C2_HOOK_DEBUGF("(%p, %d, %d, %p)", ptr, size, nmemb, stream);
+//    C2_HOOK_DEBUGF("(%p, %d, %d, %p)", ptr, size, nmemb, stream);
 #if HOOK_STDIO
     res = c2_fread_original(ptr, size, nmemb, stream);
 #else
     res = fread(ptr, size, nmemb, hook_FILE(stream));
 #endif
-    C2_HOOK_DEBUGF("-> %d", res);
+//    C2_HOOK_DEBUGF("-> %d", res);
     return res;
+
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00576fa0, c2_fread, c2_fread_original)
 
