@@ -19,6 +19,7 @@ void C2_HOOK_FASTCALL ClearWobbles(void) {
         C2V(gWobble_array)[i].time_started = 0;
     }
 }
+C2_HOOK_FUNCTION(0x004e4d30, ClearWobbles)
 
 void C2_HOOK_FASTCALL InitWobbleStuff(void) {
     int i;

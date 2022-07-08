@@ -1,4 +1,7 @@
 add_library(c2_common STATIC
+    ../include/rec2_macros.h
+    ../include/rec2_types.h
+
     crush.c
     crush.h
     drfile.c
@@ -27,9 +30,6 @@ add_library(c2_common STATIC
     utility.h
     world.c
     world.h
-
-    ../include/rec2_macros.h
-    ../include/rec2_types.h
 )
 target_include_directories(c2_common
     PUBLIC
