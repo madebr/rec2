@@ -205,7 +205,7 @@ char* gError_messages[186] = {
 };
 
 #if 0
-void FatalError(int pStr_index, ...) {
+void C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     char the_str[1024];
     char* sub_str;
     char temp_str[1024];

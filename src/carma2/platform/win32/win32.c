@@ -346,3 +346,9 @@ int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004910d0, PDReadSourceLocation)
+
+
+int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void) {
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0051d600, PDDoWeLeadAnAustereExistance)

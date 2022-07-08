@@ -12,6 +12,12 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5, 0x00691b40);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsFile, gTwatVfsFiles, 50, 0x00692080);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDisableTiffConversionStackSize, 0x006923a0);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDisableTiffConversion, 0x0068c724);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisableTiffConversionStack, 2, 0x00692068);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line) {
     char* loc;
 
@@ -27,11 +33,11 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
 }
 C2_HOOK_FUNCTION(0x00490690, StripCRNL)
 
-DRFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
-DRFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
+tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
+tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_STARTF("(%s %s)", pFilename, pMode);
-    DRFILE* res = DRfopen_original(pFilename, pMode);
+    tTWTFILE* res = DRfopen_original(pFilename, pMode);
     C2_HOOK_FINISH();
     return res;
 #else
@@ -40,8 +46,8 @@ DRFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4780, DRfopen, DRfopen_original)
 
-char* (C2_HOOK_FASTCALL * DRreadline_original)(DRFILE* pFile, char* pBuffer);
-char* C2_HOOK_FASTCALL DRreadline(DRFILE* pFile, char* pBuffer) {
+char* (C2_HOOK_FASTCALL * DRreadline_original)(tTWTFILE* pFile, char* pBuffer);
+char* C2_HOOK_FASTCALL DRreadline(tTWTFILE* pFile, char* pBuffer) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     char* res = DRreadline_original(pFile, pBuffer);
@@ -53,8 +59,8 @@ char* C2_HOOK_FASTCALL DRreadline(DRFILE* pFile, char* pBuffer) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00490f30, DRreadline, DRreadline_original)
 
-void (C2_HOOK_FASTCALL * DRfclose_original)(DRFILE* pFile);
-void C2_HOOK_FASTCALL DRfclose(DRFILE* pFile) {
+void (C2_HOOK_FASTCALL * DRfclose_original)(tTWTFILE* pFile);
+void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     DRfclose_original(pFile);
@@ -74,10 +80,22 @@ tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048f830, TWT_ReadBinaryU32, TWT_ReadBinaryU32_original)
 
-tTWT C2_HOOK_FASTCALL TWT_Mount(const char* path) {
+void C2_HOOK_FASTCALL TWT_Init() {
+    for(int i = 0; i < 50; i++) {  // FIXME: use array sizeof
+        C2V(gTwatVfsFiles)[i].used = 0;
+    }
+    for(int i = 0; i < 5; i++) {  // FIXME: use array sizeof
+        C2V(gTwatVfsMountPoints)[i].header = NULL;
+    }
+
+    C2V(gDisableTiffConversionStackSize) = 0;
+}
+C2_HOOK_FUNCTION(0x004b4570, TWT_Init)
+
+tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     tPath_name twatFilePath;
     FILE* f;
-    tTWT twt;
+    tTWTVFS twt;
     int fileSize;
 
     // file header must be 56 bytes for compatibility with .TWT files
@@ -117,3 +135,16 @@ tTWT C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     return twt;
 }
 C2_HOOK_FUNCTION(0x004b45b0, TWT_Mount)
+
+tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path) {
+    tTWTVFS res;
+
+    res = TWT_Mount(path);
+    if (TWT_MOUNT_SUCCEEDED(res)) {
+        C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackSize)] = C2V(gDisableTiffConversion);
+        C2V(gDisableTiffConversionStackSize)++;
+        C2V(gDisableTiffConversion) = 1;
+    }
+    return res;
+}
+C2_HOOK_FUNCTION(0x004b4df0, TWT_MountEx)
