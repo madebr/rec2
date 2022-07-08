@@ -204,7 +204,6 @@ char* gError_messages[186] = {
     "Could not create textures pages \"%\"."
 };
 
-#if 0
 void C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     char the_str[1024];
     char* sub_str;
@@ -213,7 +212,7 @@ void C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     int sub_int;
     va_list ap;
 
-    dr_dprintf("FatalError start\n");
+    C2_HOOK_STARTF("pStr_index=%d", pStr_index);
 
     if (pStr_index < 1000) {
         c2_strcpy(the_str, gError_messages[pStr_index]);
@@ -255,7 +254,6 @@ void C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     PDFatalError(the_str);
 }
 C2_HOOK_FUNCTION(0x0044c230, FatalError)
-#endif
 
 //// IDA: void __cdecl NonFatalError(int pStr_index, ...)
 //void NonFatalError(int pStr_index, ...) {
@@ -298,7 +296,6 @@ C2_HOOK_FUNCTION(0x0044c230, FatalError)
 
 // This function is stripped from the retail binary, we've guessed at the implementation
 void C2_HOOK_FASTCALL OpenDiagnostics() {
-#if defined(C2_HOOKS_ENABLED)
     // FIXME: use c2_stdio functions
 //    gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
     gDiagnostic_file = fopen("DIAGNOST.TXT", "w");
@@ -308,16 +305,6 @@ void C2_HOOK_FASTCALL OpenDiagnostics() {
     fputs("DIAGNOSTIC OUTPUT\n", gDiagnostic_file);
     // todo: generate a real date
     fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", __DATE__ " : " __TIME__);
-#else
-    gDiagnostic_file = fopen("DIAGNOST.TXT", "w");
-    if (gDiagnostic_file == NULL) {
-        return;
-    }
-
-    fputs("DIAGNOSTIC OUTPUT\n", gDiagnostic_file);
-    // todo: generate a real date
-    fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", "Mon Mar 24 16 : 32 : 33 1997");
-#endif
 }
 C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics);
 
@@ -325,16 +312,15 @@ C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics);
 // This function is stripped from the retail binary, we've guessed at the implementation
 void C2_HOOK_CDECL dr_dprintf(char* fmt_string, ...) {
     va_list args;
-#if defined(C2_HOOKS_ENABLED)
     // FIXME: use c2_stdio functions
     va_start(args, fmt_string);
     C2_HOOK_VDEBUGF(fmt_string, args);
     va_end(args);
 
-//    fprintf(gDiagnostic_file, "%7d.%02d: ", the_time / 1000, the_time % 100);
-    if(!gDiagnostic_file) {
+    if (gDiagnostic_file == NULL) {
         OpenDiagnostics();
     }
+//    fprintf(gDiagnostic_file, "%7d.%02d: ", the_time / 1000, the_time % 100);
 
     va_start(args, fmt_string);
     vfprintf(gDiagnostic_file, fmt_string, args);
@@ -343,27 +329,5 @@ void C2_HOOK_CDECL dr_dprintf(char* fmt_string, ...) {
     fputs("\n", gDiagnostic_file);
 
     fflush(gDiagnostic_file);
-#else
-//    uint32_t the_time;
-
-    if (gDiagnostic_file == NULL) {
-        return;
-    }
-
-//    if (first_time == 0) {
-//        first_time = GetTotalTime();
-//    }
-//    the_time = GetTotalTime() - first_time;
-//
-//    c2_fprintf(gDiagnostic_file, "%7d.%02d: ", the_time / 1000, the_time % 100);
-
-    va_start(args, fmt_string);
-    c2_vfprintf(gDiagnostic_file, fmt_string, args);
-    va_end(args);
-
-    c2_fputs("\n", gDiagnostic_file);
-
-    c2_fflush(gDiagnostic_file);
-#endif
 }
 C2_HOOK_FUNCTION(0x0044c590, dr_dprintf);
