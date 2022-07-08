@@ -197,3 +197,13 @@ tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path) {
     return res;
 }
 C2_HOOK_FUNCTION(0x004b4df0, TWT_MountEx)
+
+br_pixelmap* (C2_HOOK_FASTCALL * DRLoadPixelmap_original)(char* pPath_name);
+br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(char* pPath_name) {
+#if defined(C2_HOOKS_ENABLED)
+    return DRLoadPixelmap_original(pPath_name);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, DRLoadPixelmap, DRLoadPixelmap_original)

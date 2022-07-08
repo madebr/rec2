@@ -40,6 +40,13 @@ typedef struct {
     int unknown[3];
 } tTwatVfsFile;
 
+typedef struct tWobble_spec {
+    float amplitude_x;
+    float amplitude_y;
+    float period;
+    int time_started;
+} tWobble_spec;
+
 enum {
     // FIXME: add all c2 memory tags
     kMem_packed_file = 0xd0,
