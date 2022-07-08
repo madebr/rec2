@@ -50,4 +50,8 @@ enum {
     kFatalError_InvalidScreenDepthSetting = 0x00,
     kFatalError_RootActorAllocError = 0x03,
 };
+
+enum {
+    kMem_misc = 0xfd,
+};
 #endif // REC2_TYPES_H
