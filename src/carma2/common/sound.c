@@ -28,9 +28,9 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation() {
         line1[0] = '\0';
         line2[0] = '\0';
         line3[0] = '\0';
-        DRreadline(fp, line1);
-        DRreadline(fp, line2);
-        DRreadline(fp, line3);
+        GetALineWithNoPossibleService(fp, line1);
+        GetALineWithNoPossibleService(fp, line2);
+        GetALineWithNoPossibleService(fp, line3);
         DRfclose(fp);
         if (strcmp(line3, "Full") != 0) {
             return;
@@ -39,3 +39,14 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation() {
     C2V(gCD_fully_installed) = 1;
 }
 C2_HOOK_FUNCTION(0x00454f40, UsePathFileToDetermineIfFullInstallation)
+
+
+void (C2_HOOK_FASTCALL * ParseSoundFxDetails_original)(tTWTFILE* pF, tSpecial_volume_soundfx_data* pSpec);
+void C2_HOOK_FASTCALL ParseSoundFxDetails(tTWTFILE* pF, tSpecial_volume_soundfx_data* pSpec) {
+#if defined(C2_HOOKS_ENABLED)
+    ParseSoundFxDetails_original(pF, pSpec);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004569f0, ParseSoundFxDetails, ParseSoundFxDetails_original)

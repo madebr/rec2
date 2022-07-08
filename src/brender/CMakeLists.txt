@@ -18,6 +18,8 @@ add_library(brender STATIC
 
     core/v1db/dbsetup.c
     core/v1db/dbsetup.h
+    core/v1db/regsupt.c
+    core/v1db/regsupt.h
 )
 
 target_include_directories(brender

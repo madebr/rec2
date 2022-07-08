@@ -2,6 +2,8 @@ if(C2_STANDALONE)
     add_library(c2_hooks INTERFACE)
 else()
     add_library(c2_hooks STATIC
+        c2_ctype.c
+        c2_ctype.h
         c2_hooks.c
         c2_hooks.h
         c2_stdio.c

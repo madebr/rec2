@@ -11,11 +11,15 @@
 
 void C2_HOOK_CDECL c2_srand(int seed);
 
+void C2_HOOK_CDECL c2_abort(void);
+
 #else
 
 #include <stdlib.h>
 
 #define c2_srand srand
+
+#define c2_abort abort
 
 #endif
 
