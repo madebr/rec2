@@ -272,17 +272,16 @@
 //}
 //
 
-#include <stdio.h>
 void (C2_HOOK_CDECL * BrV1dbBeginWrapper_Float_original)(void);
 void BrV1dbBeginWrapper_Float() {
+    C2_HOOK_START();
 #if defined(C2_HOOKS_ENABLED)
-    printf("%s: start\n", __FUNCTION__);
     BrV1dbBeginWrapper_Float_original();
-    printf("%s: finish\n", __FUNCTION__);
 #else
     BrBegin();
     BrV1dbBegin();
 #endif
+    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00525f50, BrV1dbBeginWrapper_Float, BrV1dbBeginWrapper_Float_original)
 //

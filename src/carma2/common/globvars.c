@@ -3,6 +3,9 @@
 C2_HOOK_VARIABLE_IMPLEMENT(tPath_name, gApplication_path, 0x0075ba60);
 C2_HOOK_VARIABLE_IMPLEMENT(const char*, gDir_separator, 0x00761a5c);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAusterity_mode, 0x0068b87c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAustere_override, 0x0068b884);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;

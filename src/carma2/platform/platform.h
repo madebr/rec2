@@ -17,4 +17,6 @@ int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFil
 
 int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath);
 
+int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void);
+
 #endif // C2_PLATFORM_H

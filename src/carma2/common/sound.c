@@ -14,7 +14,7 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation() {
     char line2[80];
     char line3[80];
     char path_file[80];
-    DRFILE* fp;
+    tTWTFILE* fp;
 
     strcpy(path_file, C2V(gApplication_path));
     strcat(path_file, (char*)C2V(gDir_separator));
