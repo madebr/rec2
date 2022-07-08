@@ -7,6 +7,8 @@ add_library(c2_common STATIC
     errors.h
     globvars.c
     globvars.h
+    graphics.c
+    graphics.h
     init.c
     init.h
     input.c
@@ -24,7 +26,7 @@ add_library(c2_common STATIC
 
     ../include/rec2_macros.h
     ../include/rec2_types.h
-    )
+)
 target_include_directories(c2_common
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
