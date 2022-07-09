@@ -12,6 +12,8 @@ add_library(c2_common STATIC
     errors.h
     globvars.c
     globvars.h
+    grafdata.c
+    grafdata.h
     graphics.c
     graphics.h
     init.c
