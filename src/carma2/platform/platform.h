@@ -5,6 +5,9 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gGraf_spec_index);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
+
 void C2_HOOK_FASTCALL KeyBegin(void);
 
 void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path);

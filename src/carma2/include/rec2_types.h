@@ -15,6 +15,28 @@ typedef signed int tS32;
 typedef int tTWTVFS;
 
 typedef struct {
+    int width;
+    int height;
+    tU8 unknown[1304];
+} tGraf_data;
+
+typedef struct {
+    int depth_bits;
+    int depth_bytes;
+    int doubled;
+    int total_width;
+    int total_height;
+    long black_value;
+    int colour_index;
+    char* data_dir_name;
+    char* gfx_init_string;
+    int row_bytes;
+    int phys_width;
+    int phys_height;
+    void* base_addr;
+} tGraf_spec;
+
+typedef struct {
     int twtfile;
     void* stdio;
 } tTWTFILE;
@@ -98,6 +120,7 @@ enum {
     // FIXME: add all c2 FatalError types
     kFatalError_InvalidScreenDepthSetting = 0x00,
     kFatalError_FailToOpenGeneralSettings = 0x03,
+    kFatalError_ScreenDimensionNotInGrafData = 0x18,
     kFatalError_MysteriousX_SS = 0xbd,
 };
 
