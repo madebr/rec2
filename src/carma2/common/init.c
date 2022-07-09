@@ -13,7 +13,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv) {
     KeyBegin();
 
     C2V(gProgram_state.sausage_eater_mode) = C2V(gSausage_override);
-    QuickTimeInit();
+    VideoInit();
     memset(gFontTextureMaps, 0, sizeof(gFontTextureMaps));
     TWT_Init();
     MAMSInitMem();
