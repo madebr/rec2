@@ -17,6 +17,8 @@ add_library(brender STATIC
     core/fw/pattern.h
     core/fw/resource.c
     core/fw/resource.h
+    core/fw/scratch.c
+    core/fw/scratch.h
 
     core/math/matrix23.c
     core/math/matrix23.h
