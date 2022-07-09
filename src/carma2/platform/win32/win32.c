@@ -16,6 +16,9 @@
 #include <windows.h>
 #include <dinput.h>
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGraf_spec, gGraf_specs, 2, 0x00662208); // FIXME: implement
+C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gReal_back_screen, 0x0074d360);
@@ -23,7 +26,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gScreen, 0x0074d3e0);
 
 C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd, 0x006ad4c8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gWindowActiveState, 0x006621e0, 2); // FIXME: enum: 0, 1 or 2
-
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWindowMovingResizing, 0x006ad4d0);
 C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTINPUTDEVICE, gDirectInputDevice, 0x006acea0);
@@ -44,7 +46,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gKeyboardBuffer, 20, 0x006ace88);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPerformanceCounterInitialized, 0x006acc70);
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterStart, 0x006acc80);
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_kHz, 0x006ad1f0);
-
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
 
