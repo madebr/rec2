@@ -10,6 +10,9 @@ add_library(brender STATIC
     core/fw/mem.c
     core/fw/mem.h
 
+    core/math/matrix23.c
+    core/math/matrix23.h
+
     core/pixelmap/pmdsptch.c
     core/pixelmap/pmdsptch.h
 
