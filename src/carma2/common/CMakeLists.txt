@@ -30,6 +30,8 @@ add_library(c2_common STATIC
     structur.h
     utility.c
     utility.h
+    video.c
+    video.h
     world.c
     world.h
 )
