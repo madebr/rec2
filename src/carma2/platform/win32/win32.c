@@ -16,6 +16,12 @@
 #include <windows.h>
 #include <dinput.h>
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tGraf_spec, gGraf_specs, 2, 0x00662208, {
+    { 8, 1, 0, 320, 200, 0, 0, "32X20X8", "320x200 init string", 320, 320, 200, 0 },
+    { 8, 1, 0, 640, 480, 0, 0, "64X48X8", "640x480 init string", 640, 640, 480, 0 },
+});
+C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gReal_back_screen, 0x0074d360);
@@ -23,7 +29,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gScreen, 0x0074d3e0);
 
 C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd, 0x006ad4c8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gWindowActiveState, 0x006621e0, 2); // FIXME: enum: 0, 1 or 2
-
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWindowMovingResizing, 0x006ad4d0);
 C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTINPUTDEVICE, gDirectInputDevice, 0x006acea0);
