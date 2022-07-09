@@ -5,7 +5,7 @@
 #include "core/fw/diag.h"
 #include "core/fw/fwsetup.h"
 #include "core/fw/mem.h"
-/*#include "core/fw/scratch.h"*/
+#include "core/fw/scratch.h"
 #include "core/std/brstdlib.h"
 
 #include "c2_stdio.h"
