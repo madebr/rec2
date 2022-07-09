@@ -7,7 +7,7 @@
 #if defined(_WIN32) && defined(_M_IX86)
 #define C2_HOOK_CDECL __cdecl
 #define C2_HOOK_FASTCALL __fastcall
-#define C2_HOOK_STDCALL __cdecl
+#define C2_HOOK_STDCALL __stdcall
 #else
 #define C2_HOOK_CDECL
 #define C2_HOOK_FASTCALL
