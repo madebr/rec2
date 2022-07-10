@@ -36,6 +36,15 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_v1db_state, v1db, 0x0079efe0);
 
 br_error (C2_HOOK_CDECL * BrV1dbBegin_original)(void);
 br_error C2_HOOK_CDECL BrV1dbBegin(void) {
+    C2_HOOK_BUG_ON(sizeof(br_v1db_state) != 0x500);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).reg_models==(uintptr_t)0x0079f444);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).reg_materials==(uintptr_t)0x0079f458);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).reg_textures==(uintptr_t)0x0079f46c);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).reg_tables==(uintptr_t)0x0079f480);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).res==(uintptr_t)0x0079f494);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).enabled_lights == (uintptr_t)0x0079f3fc);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).enabled_clip_planes == (uintptr_t)0x0079f410);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).enabled_horizon_planes == (uintptr_t)0x0079f424);
 #if defined(C2_HOOKS_ENABLED)
     return BrV1dbBegin_original();
 #else
