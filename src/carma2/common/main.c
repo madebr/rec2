@@ -13,7 +13,7 @@
 
 #include "platform.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * QuitGame_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL QuitGame() {
@@ -39,7 +39,7 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     PDBuildAppPath(C2V(gApplication_path));
     OpenDiagnostics();
 
-    strcat(C2V(gApplication_path), "DATA");
+    c2_strcat(C2V(gApplication_path), "DATA");
     UsePathFileToDetermineIfFullInstallation();
     if (!C2V(gCD_fully_installed)) {
         if (PDReadSourceLocation(location)) {
