@@ -26,8 +26,8 @@ add_library(brender STATIC
     core/pixelmap/pmdsptch.c
     core/pixelmap/pmdsptch.h
 
-    #    core/std/brstdlib.c
-    #    core/std/brstdlib.h
+    core/std/brstdlib.c
+    core/std/brstdlib.h
 
     core/v1db/dbsetup.c
     core/v1db/dbsetup.h
