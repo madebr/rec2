@@ -11,6 +11,8 @@
 
 #if defined(C2_HOOKS_ENABLED)
 
+#define C2_HOOK_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+
 #if defined(_WIN32) && (defined(_M_IX86) || defined(_X86_))
 #define C2_HOOK_CDECL __cdecl
 #define C2_HOOK_FASTCALL __fastcall
@@ -43,6 +45,8 @@ void c2_hook_vdebugf(const char* function, const char* format, va_list ap);
 #define C2_HOOK_VDEBUGF(FMT, AP) c2_hook_vdebugf(__FUNCTION__, FMT, AP)
 
 #else
+
+#define C2_HOOK_BUG_ON(condition)
 
 #define C2_HOOK_CDECL
 #define C2_HOOK_FASTCALL
