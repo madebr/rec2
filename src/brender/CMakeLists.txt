@@ -37,6 +37,8 @@ add_library(brender STATIC
     core/std/brstdfile.h
     core/std/brstdlib.c
     core/std/brstdlib.h
+    core/std/brstdmem.c
+    core/std/brstdmem.h
     core/std/logwrite.c
     core/std/logwrite.h
 
