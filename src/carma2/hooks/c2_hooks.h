@@ -3,6 +3,7 @@
 
 #if defined(C2_HOOKS_ENABLED)
 
+#define C2_HOOK_ASSERT(condition) do { if (!(condition)) { extern void C2_HOOK_CDECL c2_abort(void); c2_abort(); } } while (0)
 #define C2_HOOK_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
 
 #if defined(_WIN32) && defined(_M_IX86)
