@@ -13,23 +13,23 @@ void* C2_HOOK_CDECL BrMemCpy(void* s1, void* s2, size_t n);
 
 void* C2_HOOK_CDECL BrMemSet(void* s, int c, size_t n);
 
-char* C2_HOOK_CDECL BrStrCat(char* s1, char* s2);
+char* C2_HOOK_CDECL BrStrCat(char* s1, const char* s2);
 
-int C2_HOOK_CDECL BrStrCmp(char* s1, char* s2);
+int C2_HOOK_CDECL BrStrCmp(const char* s1, const char* s2);
 
-int C2_HOOK_CDECL BrStrICmp(char* s1, char* s2);
+int C2_HOOK_CDECL BrStrICmp(const char* s1, const char* s2);
 
 char* C2_HOOK_CDECL BrStrCpy(char* s1, const char* s2);
 
-br_size_t C2_HOOK_CDECL BrStrLen(char* s);
+br_size_t C2_HOOK_CDECL BrStrLen(const char* s);
 
-int C2_HOOK_CDECL BrStrNCmp(char* s1, char* s2, size_t n);
+int C2_HOOK_CDECL BrStrNCmp(const char* s1, const char* s2, size_t n);
 
-int C2_HOOK_CDECL BrStrNICmp(char* s1, char* s2, size_t n);
+int C2_HOOK_CDECL BrStrNICmp(const char* s1, const char* s2, size_t n);
 
-char* C2_HOOK_CDECL BrStrNCpy(char* s1, char* s2, size_t n);
+char* C2_HOOK_CDECL BrStrNCpy(char* s1, const char* s2, size_t n);
 
-char* C2_HOOK_CDECL BrStrRChr(char* s1, char c);
+char* C2_HOOK_CDECL BrStrRChr(const char* s1, char c);
 
 void C2_HOOK_CDECL BrAbort(void);
 

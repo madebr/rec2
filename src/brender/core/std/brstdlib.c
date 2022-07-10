@@ -28,17 +28,17 @@ void* C2_HOOK_CDECL BrMemSet(void* s, int c, size_t n) {
 }
 C2_HOOK_FUNCTION(0x0053f080, BrMemSet)
 
-char* C2_HOOK_CDECL BrStrCat(char* s1, char* s2) {
+char* C2_HOOK_CDECL BrStrCat(char* s1, const char* s2) {
     return c2_strcat(s1, s2);
 }
 C2_HOOK_FUNCTION(0x0053f0c0, BrStrCat)
 
-int C2_HOOK_CDECL BrStrCmp(char* s1, char* s2) {
+int C2_HOOK_CDECL BrStrCmp(const char* s1, const char* s2) {
     return c2_strcmp(s1, s2);
 }
 C2_HOOK_FUNCTION(0x0053f100, BrStrCmp)
 
-int C2_HOOK_CDECL BrStrICmp(char* s1, char* s2) {
+int C2_HOOK_CDECL BrStrICmp(const char* s1, const char* s2) {
     return c2_strcasecmp(s1, s2);
 }
 C2_HOOK_FUNCTION(0x0053f140, BrStrICmp)
@@ -48,27 +48,27 @@ char* C2_HOOK_CDECL BrStrCpy(char* s1, const char* s2) {
 }
 C2_HOOK_FUNCTION(0x0053f160, BrStrCpy)
 
-br_size_t C2_HOOK_CDECL BrStrLen(char* s) {
+br_size_t C2_HOOK_CDECL BrStrLen(const char* s) {
     return c2_strlen(s);
 }
 C2_HOOK_FUNCTION(0x0053f190, BrStrLen)
 
-int C2_HOOK_CDECL BrStrNCmp(char* s1, char* s2, size_t n) {
+int C2_HOOK_CDECL BrStrNCmp(const char* s1, const char* s2, size_t n) {
     return c2_strncasecmp(s1, s2, n);
 }
 C2_HOOK_FUNCTION(0x0053f1b0, BrStrNCmp)
 
-int C2_HOOK_CDECL BrStrNICmp(char* s1, char* s2, size_t n) {
+int C2_HOOK_CDECL BrStrNICmp(const char* s1, const char* s2, size_t n) {
     return c2_strncasecmp(s1, s2, n);
 }
 C2_HOOK_FUNCTION(0x0053f1d0, BrStrNICmp)
 
-char* C2_HOOK_CDECL BrStrNCpy(char* s1, char* s2, size_t n) {
+char* C2_HOOK_CDECL BrStrNCpy(char* s1, const char* s2, size_t n) {
     return c2_strncpy(s1, s2, n);
 }
 C2_HOOK_FUNCTION(0x0053f1f0, BrStrNCpy)
 
-char* C2_HOOK_CDECL BrStrRChr(char* s1, char c) {
+char* C2_HOOK_CDECL BrStrRChr(const char* s1, char c) {
     return c2_strrchr(s1, c);
 }
 C2_HOOK_FUNCTION(0x0053f210, BrStrRChr)
