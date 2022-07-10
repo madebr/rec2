@@ -51,6 +51,8 @@ add_library(brender STATIC
     core/pixelmap/pmsetup.c
     core/pixelmap/pmsetup.h
 
+    core/std/brexcept.c
+    core/std/brexcept.h
     core/std/brmath.c
     core/std/brmath.h
     core/std/brstddiag.c
