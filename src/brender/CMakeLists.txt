@@ -45,6 +45,8 @@ add_library(brender STATIC
     core/math/matrix4.h
     core/math/plane.c
     core/math/plane.h
+    core/math/quat.c
+    core/math/quat.h
     core/math/vector.c
     core/math/vector.h
 
