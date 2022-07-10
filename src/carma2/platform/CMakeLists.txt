@@ -30,6 +30,7 @@ target_include_directories(c2_platform
 target_link_libraries(c2_platform
     PUBLIC
         brender
+        brender_softrendr
         c2_common
         c2_hooks
 )
