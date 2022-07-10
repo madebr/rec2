@@ -37,6 +37,8 @@ add_library(brender STATIC
     core/host/hstsetup.c
     core/host/hstsetup.h
 
+    core/math/angles.c
+    core/math/angles.h
     core/math/matrix23.c
     core/math/matrix23.h
     core/math/matrix34.c
