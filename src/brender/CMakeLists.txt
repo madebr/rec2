@@ -15,6 +15,8 @@ add_library(brender STATIC
     core/fw/diag.h
     core/fw/fwsetup.c
     core/fw/fwsetup.h
+    core/fw/image.c
+    core/fw/image.h
     core/fw/loader.c
     core/fw/loader.h
     core/fw/mem.c
