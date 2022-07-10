@@ -31,6 +31,8 @@ add_library(brender STATIC
     core/fw/resreg.h
     core/fw/scratch.c
     core/fw/scratch.h
+    core/fw/token.c
+    core/fw/token.h
 
     core/host/himage.c
     core/host/himage.h
