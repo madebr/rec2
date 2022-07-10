@@ -64,3 +64,16 @@ target_link_libraries(brender
     PUBLIC
         c2_hooks
 )
+
+add_library(brender_softrendr STATIC
+    drivers/softrend/driver.c
+)
+target_link_libraries(brender_softrendr
+    PRIVATE
+        brender
+        c2_hooks
+)
+target_compile_definitions(brender_softrendr
+    PRIVATE
+        BrDrv1Begin=BrDrv1SoftRendBegin
+)
