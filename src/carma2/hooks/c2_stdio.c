@@ -13,6 +13,20 @@ C2_HOOK_VARIABLE_IMPLEMENT(FILE, c2_stderr_value, 0x00673810);
 
 #define HOOK_STDIO 1
 
+#if HOOK_STDIO
+struct c2_iobuf {
+    char * _ptr;
+    int _cnt;
+    char * _base;
+    int _flag;
+    int _file;
+    int _charbuf;
+    int _bufsiz;
+    char * _tmpfname;
+};
+#define C2_IOBUF_EOF 0x10
+#endif
+
 #if !defined(HOOK_STDIO)
 static FILE* hook_FILE(FILE* file) {
     if (file == c2_stdin) {
@@ -52,6 +66,14 @@ void C2_HOOK_CDECL c2_fclose(FILE* file) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00577640, c2_fclose, fclose_original)
+
+int C2_HOOK_CDECL c2_feof(FILE* file) {
+#if HOOK_STDIO
+    return ((struct c2_iobuf*)file)->_flag & C2_IOBUF_EOF;
+#else
+    return feof(file);
+#endif
+}
 
 static int(C2_HOOK_CDECL * fflush_original)(FILE* file);
 int C2_HOOK_CDECL c2_fflush(FILE* file) {
@@ -98,6 +120,29 @@ void C2_HOOK_CDECL c2_rewind(FILE *stream) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005770e0, c2_rewind, rewind_original)
+
+int (C2_HOOK_CDECL * c2_fgetc_original)(FILE * stream);
+int C2_HOOK_CDECL c2_fgetc(FILE * stream) {
+
+    C2_HOOK_DEBUGF("(%p)", stream);
+#if HOOK_STDIO
+    return c2_fgetc_original(stream);
+#else
+    return fgetc(stream);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00576e80, c2_fgetc, c2_fgetc_original)
+
+char* (C2_HOOK_CDECL * fgets_original)(char* str, int num, FILE* stream);
+char* C2_HOOK_CDECL c2_fgets(char* str, int num, FILE* stream) {
+    C2_HOOK_DEBUGF("(%p)", stream);
+#if HOOK_STDIO
+    return fgets_original(str, num, stream);
+#else
+    return fgetc(stream);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00578610, c2_fgets, fgets_original)
 
 static int (C2_HOOK_CDECL * fputc_original)(int character, FILE* file);
 int c2_fputc(int character, FILE* file) {
@@ -228,5 +273,9 @@ int C2_HOOK_CDECL c2_sscanf(const char* str, const char* format, ...) {
     return result;
 }
 C2_HOOK_FUNCTION(0x00575cb0, c2_sscanf)
+
+int C2_HOOK_CDECL c2_vsscanf(const char* str, const char* format, va_list ap) {
+    return vsscanf(str, format, ap);
+}
 
 #endif
