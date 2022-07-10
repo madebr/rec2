@@ -4,11 +4,7 @@
 #include "core/math/matrix23.h"
 #include "core/v1db/dbsetup.h"
 
-br_material* (C2_HOOK_CDECL * SetupDefaultMaterial_original)(void);
 br_material* C2_HOOK_CDECL SetupDefaultMaterial(void) {
-#if defined(C2_HOOKS_ENABLED)
-    return SetupDefaultMaterial_original();
-#else
     static br_material* default_mat;
 
     default_mat = BrResAllocate(C2V(v1db).res, sizeof(br_material), BR_MEMORY_MATERIAL);
@@ -26,6 +22,5 @@ br_material* C2_HOOK_CDECL SetupDefaultMaterial(void) {
     default_mat->index_base = 10;
     default_mat->index_range = 31;
     return default_mat;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00526940, SetupDefaultMaterial, SetupDefaultMaterial_original)
+C2_HOOK_FUNCTION(0x00526940, SetupDefaultMaterial)
