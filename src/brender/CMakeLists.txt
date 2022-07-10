@@ -39,6 +39,8 @@ add_library(brender STATIC
 
     core/math/matrix23.c
     core/math/matrix23.h
+    core/math/matrix34.c
+    core/math/matrix34.h
     core/math/vector.c
     core/math/vector.h
 
