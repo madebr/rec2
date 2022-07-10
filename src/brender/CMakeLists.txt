@@ -4,13 +4,14 @@ add_library(brender STATIC
     core/fw/brlists.c
     core/fw/brlists.h
     core/fw/brprintf.c
+
     core/fw/brprintf.h
     core/fw/devlist.c
     core/fw/devlist.h
     core/fw/devsetup.c
     core/fw/devsetup.h
-#    core/fw/diag.c
-#    core/fw/diag.h
+    core/fw/diag.c
+    core/fw/diag.h
     core/fw/fwsetup.c
     core/fw/fwsetup.h
     core/fw/loader.c
