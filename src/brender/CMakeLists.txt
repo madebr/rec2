@@ -28,6 +28,8 @@ add_library(brender STATIC
 
     core/std/brstdlib.c
     core/std/brstdlib.h
+    core/std/logwrite.c
+    core/std/logwrite.h
 
     core/v1db/dbsetup.c
     core/v1db/dbsetup.h
