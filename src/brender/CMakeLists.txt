@@ -56,6 +56,8 @@ add_library(brender STATIC
 
     core/v1db/dbsetup.c
     core/v1db/dbsetup.h
+    core/v1db/def_mat.c
+    core/v1db/def_mat.h
     core/v1db/def_mdl.c
     core/v1db/def_mdl.h
     core/v1db/regsupt.c
