@@ -99,6 +99,8 @@ add_library(brender STATIC
     core/v1db/def_mat.h
     core/v1db/def_mdl.c
     core/v1db/def_mdl.h
+    core/v1db/enables.c
+    core/v1db/enables.h
     core/v1db/regsupt.c
     core/v1db/regsupt.h
 )
