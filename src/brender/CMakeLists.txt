@@ -28,6 +28,8 @@ add_library(brender STATIC
     core/pixelmap/pmdsptch.c
     core/pixelmap/pmdsptch.h
 
+    core/std/brstddiag.c
+    core/std/brstddiag.h
     core/std/brstdlib.c
     core/std/brstdlib.h
     core/std/logwrite.c
