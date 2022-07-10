@@ -22,6 +22,8 @@ add_library(brender STATIC
 
     core/host/himage.c
     core/host/himage.h
+    core/host/hstsetup.c
+    core/host/hstsetup.h
 
     core/math/matrix23.c
     core/math/matrix23.h
