@@ -20,6 +20,8 @@ add_library(brender STATIC
     core/fw/mem.h
     core/fw/pattern.c
     core/fw/pattern.h
+    core/fw/register.c
+    core/fw/register.h
     core/fw/resource.c
     core/fw/resource.h
     core/fw/scratch.c
