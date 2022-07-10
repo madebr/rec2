@@ -2119,52 +2119,51 @@ typedef struct br_v1db_enable {
     br_actor** enabled;
 } br_v1db_enable;
 
-typedef struct br_v1db_state {             // size: 0x504
-    br_boolean active;                     // @0x0
-    br_boolean zs_active;                  // @0x4
-    br_boolean zb_active;                  // @0x8
-    br_int_32 rendering;                   // @0xc
-    br_renderer* renderer;                 // @0x10
-    br_renderer* query_renderer;           // @0x14
-    br_geometry* format_model;             // @0x18
-    br_geometry* format_buckets;           // @0x1c
-    br_geometry_lighting* format_lighting; // @0x20
-    br_matrix4 model_to_screen;            // @0x24
-    br_matrix34 model_to_view;             // @0x64
-    br_boolean model_to_screen_valid;      // @0x94
-    br_uint_32 ttype;                      // @0x98
-    br_actor* render_root;                 // @0x9c
-    struct {                               // size: 0x38
-        br_matrix34 m;                     // @0x0
-        br_actor* a;                       // @0x30
-        br_uint_8 transform_type;          // @0x34
-    } camera_path[16];                     // @0xa0
-    br_v1db_enable enabled_lights;         // @0x420
-    br_v1db_enable enabled_clip_planes;    // @0x434
-    br_v1db_enable enabled_horizon_planes; // @0x448
-    br_int_32 max_light;                   // @0x45c
-    br_int_32 max_clip;                    // @0x460
-    br_actor* enabled_environment;         // @0x464
-    br_registry reg_models;                // @0x468
-    br_registry reg_materials;             // @0x47c
-    br_registry reg_textures;              // @0x490
-    br_registry reg_tables;                // @0x4a4
-    void* res;                             // @0x4b8
-    br_model* default_model;               // @0x4bc
-    br_material* default_material;         // @0x4c0
-    void* default_render_data;             // @0x4c4
-    br_order_table* default_order_table;   // @0x4c8
-    br_order_table* primary_order_table;   // @0x4cc
-    br_order_table* order_table_list;      // @0x4d0
-    br_primitive_heap heap;                // @0x4d4
-    br_primitive_cbfn* primitive_call;     // @0x4e0
-    br_renderbounds_cbfn* bounds_call;     // @0x4e4
-    br_vector2 origin;                     // @0x4e8
-    br_scalar vp_ox;                       // @0x4f0
-    br_scalar vp_oy;                       // @0x4f4
-    br_scalar vp_width;                    // @0x4f8
-    br_scalar vp_height;                   // @0x4fc
-    br_pixelmap* colour_buffer;            // @0x500
+typedef struct br_v1db_state {
+    br_boolean active;
+    int zxx_active_flags;
+    br_int_32 rendering;
+    br_renderer* renderer;
+    br_renderer* query_renderer;
+    br_geometry* format_model;
+    br_geometry* format_buckets;
+    br_geometry_lighting* format_lighting;
+    br_matrix4 model_to_screen;
+    br_matrix34 model_to_view;
+    br_boolean model_to_screen_valid;
+    br_uint_32 ttype;
+    br_actor* render_root;
+    struct {
+        br_matrix34 m;
+        br_actor* a;
+        br_uint_8 transform_type;
+    } camera_path[16];
+    br_v1db_enable enabled_lights;
+    br_v1db_enable enabled_clip_planes;
+    br_v1db_enable enabled_horizon_planes;
+    br_int_32 max_light;
+    br_int_32 max_clip;
+    br_actor* enabled_environment;
+    br_registry reg_models;
+    br_registry reg_materials;
+    br_registry reg_textures;
+    br_registry reg_tables;
+    void* res;
+    br_model* default_model;
+    br_material* default_material;
+    void* default_render_data;
+    br_order_table* default_order_table;
+    br_order_table* primary_order_table;
+    br_order_table* order_table_list;
+    br_primitive_heap heap;
+    br_primitive_cbfn* primitive_call;
+    br_renderbounds_cbfn* bounds_call;
+    br_vector2 origin;
+    br_scalar vp_ox;
+    br_scalar vp_oy;
+    br_scalar vp_width;
+    br_scalar vp_height;
+    br_pixelmap* colour_buffer;
 } br_v1db_state;
 
 typedef struct br_renderer_facility_dispatch {
