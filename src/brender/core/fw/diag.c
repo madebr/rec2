@@ -1,17 +1,14 @@
 #include "diag.h"
 
-#include "core/fw/fwsetup.h"
+#include "brprintf.h"
+#include "fwsetup.h"
 
 #include "core/std/brstdlib.h"
 
 #include <stdarg.h>
 
-#if defined(C2_HOOKS_ENABLED)
-C2_HOOK_VARIABLE_IMPLEMENT(char*, _diag_scratch, 0x006ad928);
-#else
 // Global variables
-char _diag_scratch[128];
-#endif
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, _diag_scratch, 128, 0x006ad928);
 
 void C2_HOOK_CDECL BrFailure(const char* s, ...) {
     va_list args;
