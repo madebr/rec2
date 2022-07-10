@@ -29,6 +29,8 @@ add_library(brender STATIC
     core/fw/genfile.h
     core/fw/image.c
     core/fw/image.h
+    core/fw/lexer.c
+    core/fw/lexer.h
     core/fw/loader.c
     core/fw/loader.h
     core/fw/mem.c
