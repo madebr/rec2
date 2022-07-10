@@ -2367,7 +2367,7 @@ typedef enum br_lexer_token_id {
     T_KEYWORD = 128
 } br_lexer_token_id;
 typedef struct br_lexer_source br_lexer_source;
-typedef void br_lexer_getchar_cbfn(br_lexer_source*);
+typedef void C2_HOOK_STDCALL br_lexer_getchar_cbfn(br_lexer_source*);
 typedef struct br_lexer br_lexer;
 typedef void br_lexer_error_cbfn(br_lexer*, char*);
 typedef struct br_lexer_source {
@@ -2399,7 +2399,7 @@ typedef struct br_lexer {
     br_lexer_keyword* keywords;
     br_int_32 nkeywords;
     char eol_comment;
-    void (*advance)(br_lexer*);
+    void (C2_HOOK_STDCALL*advance)(br_lexer*);
     br_putline_cbfn* putline;
     void* putline_arg;
     char* string_buffer;
