@@ -11,6 +11,8 @@ add_library(brender STATIC
     core/fw/brprintf.h
     core/fw/bswap.c
     core/fw/bswap.h
+    core/fw/datafile.c
+    core/fw/datafile.h
     core/fw/devlist.c
     core/fw/devlist.h
     core/fw/devsetup.c

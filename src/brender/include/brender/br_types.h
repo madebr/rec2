@@ -1,6 +1,8 @@
 #ifndef BR_TYPES_H
 #define BR_TYPES_H
 
+#include "c2_hooks.h"
+
 #include "br_defs.h"
 #include <setjmp.h>
 #include <stddef.h>
@@ -637,7 +639,7 @@ typedef enum br_fitmap_axis {
     BR_FITMAP_MINUS_Z = 5
 } br_fitmap_axis;
 typedef void br_putline_cbfn(char*, void*);
-typedef int br_mode_test_cbfn(br_uint_8*, br_size_t);
+typedef int C2_HOOK_STDCALL br_mode_test_cbfn(br_uint_8*, br_size_t);
 typedef br_uint_32 brfile_attributes_cbfn();
 typedef void* brfile_open_read_cbfn(const char*, br_size_t, br_mode_test_cbfn*, int*);
 typedef void* brfile_open_write_cbfn(const char*, int);
@@ -1995,27 +1997,27 @@ typedef struct br_datafile {   // size: 0x10
 
 typedef struct br_file_primitives {
     char* identifier;
-    int (*skip)(br_datafile*, br_uint_32);
-    int (*chunk_write)(br_datafile*, br_uint_32, br_uint_32);
-    int (*chunk_read)(br_datafile*, br_uint_32*);
-    void (*count_write)(br_datafile*, br_uint_32);
-    br_uint_32 (*count_read)(br_datafile*);
-    int (*count_size)(br_datafile*);
-    br_uint_32 (*struct_write)(br_datafile*, br_file_struct*, void*);
-    br_uint_32 (*struct_read)(br_datafile*, br_file_struct*, void*);
-    int (*struct_size)(br_datafile*, br_file_struct*, void*);
-    int (*block_write)(br_datafile*, void*, int, int, int, int);
-    void* (*block_read)(br_datafile*, void*, int*, int, int);
-    int (*block_size)(br_datafile*, void*, int, int, int, int);
-    int (*name_write)(br_datafile*, char*);
-    char* (*name_read)(br_datafile*, char*);
-    int (*name_size)(br_datafile*, char*);
+    int (C2_HOOK_STDCALL*skip)(br_datafile*, br_uint_32);
+    int (C2_HOOK_STDCALL*chunk_write)(br_datafile*, br_uint_32, br_uint_32);
+    int (C2_HOOK_STDCALL*chunk_read)(br_datafile*, br_uint_32*);
+    void (C2_HOOK_STDCALL*count_write)(br_datafile*, br_uint_32);
+    br_uint_32 (C2_HOOK_STDCALL*count_read)(br_datafile*);
+    int (C2_HOOK_STDCALL*count_size)(br_datafile*);
+    br_uint_32 (C2_HOOK_STDCALL*struct_write)(br_datafile*, br_file_struct*, void*);
+    br_uint_32 (C2_HOOK_STDCALL*struct_read)(br_datafile*, br_file_struct*, void*);
+    int (C2_HOOK_STDCALL*struct_size)(br_datafile*, br_file_struct*, void*);
+    int (C2_HOOK_STDCALL*block_write)(br_datafile*, void*, int, int, int, int);
+    void* (C2_HOOK_STDCALL*block_read)(br_datafile*, void*, int*, int, int);
+    int (C2_HOOK_STDCALL*block_size)(br_datafile*, void*, int, int, int, int);
+    int (C2_HOOK_STDCALL*name_write)(br_datafile*, char*);
+    char* (C2_HOOK_STDCALL*name_read)(br_datafile*, char*);
+    int (C2_HOOK_STDCALL*name_size)(br_datafile*, char*);
 } br_file_primitives;
 
 typedef struct br_chunks_table_entry {
     br_uint_32 id;
     br_uint_8 has_count;
-    int (*handler)(br_datafile*, br_uint_32, br_uint_32, br_uint_32);
+    int (C2_HOOK_STDCALL*handler)(br_datafile*, br_uint_32, br_uint_32, br_uint_32);
 } br_chunks_table_entry;
 
 typedef struct br_chunks_table {
