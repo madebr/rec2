@@ -34,3 +34,20 @@ endif()
 
 add_subdirectory(src/brender)
 add_subdirectory(src/carma2)
+
+set(CARM2_LOCATION "" CACHE FILEPATH "Path of Carmageddon II")
+if(CARM2_LOCATION)
+    if(C2_STANDALONE)
+        add_custom_target(copy_rec2
+            COMMEND "Copying rec2 to \"${CARM2_LOCATION}\""
+            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE_NAME:rec2>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2>"
+        )
+    else()
+        add_custom_target(copy_hooks
+            COMMENT "Copying rec2 hooks to \"${CARM2_LOCATION}\""
+            COMMAND "${CMAKE_COMMAND}" -E make_directory "${CARM2_LOCATION}/plugins"
+            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:rec2>" "${CARM2_LOCATION}/plugins/$<TARGET_FILE_NAME:rec2>"
+            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:rec2_inject>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2>"
+        )
+    endif()
+endif()
