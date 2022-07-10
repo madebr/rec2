@@ -30,9 +30,7 @@ void C2_HOOK_CDECL BrFailure(const char* s, ...) {
     }
 
     C2V(fw).diag->failure(C2V(_diag_scratch));
-    C2_HOOK_FINISH();
-#ifdef BRENDER_FIX_BUGS
     abort();
-#endif
+    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION(0x00527c80, BrFailure)
