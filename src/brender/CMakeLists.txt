@@ -3,6 +3,8 @@ add_library(brender STATIC
     core/fw/brbegin.h
     core/fw/brlists.c
     core/fw/brlists.h
+    core/fw/brprintf.c
+    core/fw/brprintf.h
     core/fw/devlist.c
     core/fw/devlist.h
     core/fw/devsetup.c
