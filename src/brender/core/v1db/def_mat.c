@@ -7,16 +7,20 @@
 br_material* C2_HOOK_CDECL SetupDefaultMaterial(void) {
     static br_material* default_mat;
 
+    C2_HOOK_BUG_ON(sizeof(br_material) != 156);
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).res == (uintptr_t)0x0079f494);
+
     default_mat = BrResAllocate(C2V(v1db).res, sizeof(br_material), BR_MEMORY_MATERIAL);
     if (default_mat == NULL) {
         return NULL;
     }
     default_mat->identifier = "default_mat";
     default_mat->colour = BR_COLOUR_RGB(255, 255, 255);
+    default_mat->opacity = 255;
     default_mat->ka = 0.1f;
     default_mat->kd = 0.7f;
     default_mat->ks = 0.0f;
-    default_mat->power = 20;
+    default_mat->power = 20.f;
     default_mat->flags = BR_MATF_LIGHT;
     BrMatrix23Identity(&default_mat->map_transform);
     default_mat->index_base = 10;
