@@ -105,6 +105,8 @@ add_library(brender STATIC
     core/v1db/def_otab.h
     core/v1db/enables.c
     core/v1db/enables.h
+    core/v1db/matsupt.c
+    core/v1db/matsupt.h
     core/v1db/regsupt.c
     core/v1db/regsupt.h
 )
