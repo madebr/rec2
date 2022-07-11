@@ -37,7 +37,7 @@ br_uint_32 C2_HOOK_CDECL BrResChildEnum(void* vres, br_resenum_cbfn* callback, v
 
 br_uint_32 C2_HOOK_CDECL BrResCheck(void* vres, int no_tag);
 
-char* C2_HOOK_CDECL BrResStrDup(void* vparent, char* str);
+char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str);
 
 void C2_HOOK_CDECL InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* arg, int level);
 
