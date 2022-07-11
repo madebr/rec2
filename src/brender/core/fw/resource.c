@@ -286,8 +286,8 @@ br_uint_32 C2_HOOK_CDECL BrResCheck(void* vres, int no_tag) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00527bd0, BrResCheck, BrResCheck_original)
 
-char* (C2_HOOK_CDECL * BrResStrDup_original)(void* vparent, char* str);
-char* C2_HOOK_CDECL BrResStrDup(void* vparent, char* str) {
+char* (C2_HOOK_CDECL * BrResStrDup_original)(void* vparent, const char* str);
+char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str) {
 #if HOOK_RESOURCE
     return BrResStrDup_original(vparent, str);
 #else
