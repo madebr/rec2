@@ -1381,22 +1381,24 @@ typedef struct br_actor {   // size: 0x64
     void* user;             // @0x60
 } br_actor;
 
-typedef struct br_model {         // size: 0x54
-    br_uint_32 _reserved;         // @0x0
-    char* identifier;             // @0x4
-    br_vertex* vertices;          // @0x8
-    br_face* faces;               // @0xc
-    br_uint_16 nvertices;         // @0x10
-    br_uint_16 nfaces;            // @0x12
-    br_vector3 pivot;             // @0x14
-    br_uint_16 flags;             // @0x20
-    br_model_custom_cbfn* custom; // @0x24
-    void* user;                   // @0x28
-    br_angle crease_angle;        // @0x2c
-    br_scalar radius;             // @0x30
-    br_bounds bounds;             // @0x34
-    void* prepared;               // @0x4c
-    void* stored;                 // @0x50
+typedef struct br_model {               // size: 0x54
+    br_uint_32 _reserved;               // @0x0
+    char* identifier;                   // @0x4
+    br_vertex* vertices;                // @0x8
+    br_face* faces;                     // @0xc
+    br_uint_16 nvertices;               // @0x10
+    br_uint_16 nfaces;                  // @0x12
+    br_vector3 pivot;                   // @0x14
+    br_uint_16 flags;                   // @0x20
+    br_model_custom_cbfn* custom;       // @0x24
+    void* user;                         // @0x28
+    br_angle crease_angle;              // @0x2c
+    br_scalar radius;                   // @0x30
+    br_bounds bounds;                   // @0x34
+    void* prepared;                     // @0x4c
+    void* stored;                       // @0x50
+    br_uint_16 nprimitive_lists;        // @0x54
+    br_primitive_list *primitive_list;  // @0x58
 } br_model;
 
 typedef struct br_camera {
