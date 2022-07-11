@@ -1199,7 +1199,7 @@ typedef struct br_renderer {
     br_renderer_dispatch* dispatch;
 } br_renderer;
 
-typedef struct br_material {       // size: 0x74
+typedef struct br_material {       // size: 0x9c
     br_uint_32 _reserved;          // @0x0
     char* identifier;              // @0x4
     br_colour colour;              // @0x8
@@ -1223,6 +1223,7 @@ typedef struct br_material {       // size: 0x74
     br_scalar fog_max;             // @0x60
     br_colour fog_colour;          // @0x64
     br_int_32 subdivide_tolerance; // @0x68
+    char unknown[40]; // FIXME: UNKNOWN!!!
     void* user;                    // @0x6c
     void* stored;                  // @0x70
 } br_material;
