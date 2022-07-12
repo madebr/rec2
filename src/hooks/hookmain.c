@@ -39,6 +39,7 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD dwReason, LPVOID reserved) {
         DetourTransactionCommit();
 
         hook_print_stats();
+        hook_check();
         char pathBuffer[512];
         GetModuleFileNameA(NULL, pathBuffer, sizeof(pathBuffer));
         printf("executable: \"%s\"\n", pathBuffer);

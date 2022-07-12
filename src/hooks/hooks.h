@@ -42,6 +42,7 @@ void hook_function_deregister(void **victim, void *detour);
 
 void hook_apply_all(void);
 void hook_unapply_all(void);
+void hook_check(void);
 
 void hook_print_stats(void);
 
