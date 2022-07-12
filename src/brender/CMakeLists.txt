@@ -115,6 +115,8 @@ add_library(brender STATIC
     core/v1db/prepmap.h
     core/v1db/prepmatl.c
     core/v1db/prepmatl.h
+    core/v1db/prepmesh.c
+    core/v1db/prepmesh.h
     core/v1db/regsupt.c
     core/v1db/regsupt.h
 )
