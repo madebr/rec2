@@ -8,6 +8,87 @@
 
 #include "core/fw/register.h"
 
+br_model* C2_HOOK_CDECL BrModelAdd(br_model* model) {
+
+    BrRegistryAdd(&C2V(v1db).reg_models, model);
+    BrModelUpdate(model, BR_MODU_ALL);
+    return model;
+}
+C2_HOOK_FUNCTION(0x0051ed00, BrModelAdd)
+
+br_model* C2_HOOK_CDECL BrModelRemove(br_model* model) {
+
+    BrModelClear(model);
+    return BrRegistryRemove(&C2V(v1db).reg_models, model);
+}
+C2_HOOK_FUNCTION(0x0051ed30, BrModelRemove)
+
+br_model* C2_HOOK_CDECL BrModelFind(char* pattern) {
+
+    return BrRegistryFind(&C2V(v1db).reg_models, pattern);
+}
+C2_HOOK_FUNCTION(0x0051ed50, BrModelFind)
+
+br_model_find_cbfn* C2_HOOK_CDECL BrModelFindHook(br_model_find_cbfn* hook) {
+    br_model_find_cbfn* old;
+
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).reg_models.find_failed_hook==(uintptr_t)0x0079f454);
+
+    old = (br_model_find_cbfn*)C2V(v1db).reg_models.find_failed_hook;
+    C2V(v1db).reg_models.find_failed_hook = (br_find_failed_cbfn*)hook;
+    return old;
+}
+C2_HOOK_FUNCTION(0x0051ed60, BrModelFindHook)
+
+br_uint_32 C2_HOOK_CDECL BrModelAddMany(br_model** items, int n) {
+    int i;
+    int r;
+
+    r = 0;
+    for (i = 0; i < n; i++) {
+        BrRegistryAdd(&C2V(v1db).reg_models, items[i]);
+        BrModelUpdate(items[i], BR_MODU_ALL);
+        if (items[i] != NULL) {
+            r++;
+        }
+    }
+    return r;
+}
+C2_HOOK_FUNCTION(0x0051ed70, BrModelAddMany)
+
+br_uint_32 C2_HOOK_CDECL BrModelRemoveMany(br_model** items, int n) {
+    int i;
+    int r;
+
+    r = 0;
+    for (i = 0; i < n; i++) {
+        BrModelClear(items[n]);
+        if (BrRegistryRemove(&C2V(v1db).reg_models, items[n]) != NULL) {
+            r++;
+        }
+    }
+    return r;
+}
+C2_HOOK_FUNCTION(0x0051edc0, BrModelRemoveMany)
+
+br_uint_32 C2_HOOK_CDECL BrModelFindMany(char* pattern, br_model** items, int max) {
+
+    return BrRegistryFindMany(&C2V(v1db).reg_models, pattern, (void**)items, max);
+}
+C2_HOOK_FUNCTION(0x0051ee00, BrModelFindMany)
+
+br_uint_32 C2_HOOK_CDECL BrModelCount(char* pattern) {
+
+    return BrRegistryCount(&C2V(v1db).reg_models, pattern);
+}
+C2_HOOK_FUNCTION(0x0051ee20, BrModelCount)
+
+br_uint_32 C2_HOOK_CDECL BrModelEnum(char* pattern, br_model_enum_cbfn* callback, void* arg) {
+
+    return BrRegistryEnum(&C2V(v1db).reg_models, pattern, (br_enum_cbfn*)callback, arg);
+}
+C2_HOOK_FUNCTION(0x0051ee30, BrModelEnum)
+
 br_material* C2_HOOK_CDECL BrMaterialAdd(br_material* material) {
 
     BrRegistryAdd(&C2V(v1db).reg_materials, material);

@@ -5,6 +5,24 @@
 
 #include "brender/br_types.h"
 
+br_model* C2_HOOK_CDECL BrModelAdd(br_model* model);
+
+br_model* C2_HOOK_CDECL BrModelRemove(br_model* model);
+
+br_model* C2_HOOK_CDECL BrModelFind(char* pattern);
+
+br_model_find_cbfn* C2_HOOK_CDECL BrModelFindHook(br_model_find_cbfn* hook);
+
+br_uint_32 C2_HOOK_CDECL BrModelAddMany(br_model** items, int n);
+
+br_uint_32 C2_HOOK_CDECL BrModelRemoveMany(br_model** items, int n);
+
+br_uint_32 C2_HOOK_CDECL BrModelFindMany(char* pattern, br_model** items, int max);
+
+br_uint_32 C2_HOOK_CDECL BrModelCount(char* pattern);
+
+br_uint_32 C2_HOOK_CDECL BrModelEnum(char* pattern, br_model_enum_cbfn* callback, void* arg);
+
 br_material* C2_HOOK_CDECL BrMaterialAdd(br_material* material);
 
 br_material* C2_HOOK_CDECL BrMaterialRemove(br_material* material);
