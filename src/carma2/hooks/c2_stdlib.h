@@ -23,6 +23,8 @@ void C2_HOOK_CDECL c2_free(void* ptr);
 
 char* C2_HOOK_CDECL c2_getenv(const char* name);
 
+void C2_HOOK_CDECL c2_qsort(void *base, size_t nitems, size_t size, int (C2_HOOK_CDECL*compar)(const void *, const void*));
+
 float C2_HOOK_CDECL c2_strtof(const char* str, char** endptr);
 
 double C2_HOOK_CDECL c2_strtod(const char* str, char** endptr);
