@@ -121,6 +121,9 @@ add_library(brender STATIC
     core/v1db/preptab.h
     core/v1db/regsupt.c
     core/v1db/regsupt.h
+    core/v1db/stackids.h
+    core/v1db/v1dbfile.c
+    core/v1db/v1dbfile.h
 )
 
 target_include_directories(brender
