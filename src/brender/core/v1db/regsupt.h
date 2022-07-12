@@ -41,4 +41,22 @@ br_uint_32 C2_HOOK_CDECL BrMaterialCount(const char* pattern);
 
 br_uint_32 C2_HOOK_CDECL BrMaterialEnum(const char* pattern, br_material_enum_cbfn* callback, void* arg);
 
+br_pixelmap* C2_HOOK_CDECL BrMapAdd(br_pixelmap* pixelmap);
+
+br_pixelmap* C2_HOOK_CDECL BrMapRemove(br_pixelmap* pixelmap);
+
+br_pixelmap* C2_HOOK_CDECL BrMapFind(const char* pattern);
+
+br_map_find_cbfn* C2_HOOK_CDECL BrMapFindHook(br_map_find_cbfn* hook);
+
+br_uint_32 C2_HOOK_CDECL BrMapAddMany(br_pixelmap** items, int n);
+
+br_uint_32 C2_HOOK_CDECL BrMapRemoveMany(br_pixelmap** items, int n);
+
+br_uint_32 C2_HOOK_CDECL BrMapFindMany(const char* pattern, br_pixelmap** items, int max);
+
+br_uint_32 C2_HOOK_CDECL BrMapCount(const char* pattern);
+
+br_uint_32 C2_HOOK_CDECL BrMapEnum(const char* pattern, br_map_enum_cbfn* callback, void* arg);
+
 #endif // REC2_REGSUPT_H
