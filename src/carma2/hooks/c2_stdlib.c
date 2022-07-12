@@ -45,6 +45,10 @@ char* C2_HOOK_CDECL c2_getenv(const char* name) {
 }
 C2_HOOK_FUNCTION(0x00578ac0, c2_getenv)
 
+void C2_HOOK_CDECL c2_qsort(void *base, size_t nitems, size_t size, int (C2_HOOK_CDECL*compar)(const void *, const void*)) {
+    qsort(base, nitems, size, compar);
+}
+
 float C2_HOOK_CDECL c2_strtof(const char* str, char** endptr) {
     return strtof(str, endptr);
 }
