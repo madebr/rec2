@@ -59,4 +59,22 @@ br_uint_32 C2_HOOK_CDECL BrMapCount(char* pattern);
 
 br_uint_32 C2_HOOK_CDECL BrMapEnum(char* pattern, br_map_enum_cbfn* callback, void* arg);
 
+br_pixelmap* C2_HOOK_CDECL BrTableAdd(br_pixelmap* pixelmap);
+
+br_pixelmap* C2_HOOK_CDECL BrTableRemove(br_pixelmap* pixelmap);
+
+br_pixelmap* C2_HOOK_CDECL BrTableFind(char* pattern);
+
+br_table_find_cbfn* C2_HOOK_CDECL BrTableFindHook(br_table_find_cbfn* hook);
+
+br_uint_32 C2_HOOK_CDECL BrTableAddMany(br_pixelmap** items, int n);
+
+br_uint_32 C2_HOOK_CDECL BrTableRemoveMany(br_pixelmap** items, int n);
+
+br_uint_32 C2_HOOK_CDECL BrTableFindMany(char* pattern, br_pixelmap** items, int max);
+
+br_uint_32 C2_HOOK_CDECL BrTableCount(char* pattern);
+
+br_uint_32 C2_HOOK_CDECL BrTableEnum(char* pattern, br_table_enum_cbfn* callback, void* arg);
+
 #endif // REC2_REGSUPT_H
