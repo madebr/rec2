@@ -169,3 +169,84 @@ br_uint_32 C2_HOOK_CDECL BrMaterialEnum(char* pattern, br_material_enum_cbfn* ca
     return BrRegistryEnum(&C2V(v1db).reg_materials, pattern, (br_enum_cbfn*)callback, arg);
 }
 C2_HOOK_FUNCTION(0x0051ef80, BrMaterialEnum)
+
+br_pixelmap* C2_HOOK_CDECL BrMapAdd(br_pixelmap* pixelmap) {
+
+    BrRegistryAdd(&C2V(v1db).reg_textures, pixelmap);
+    BrMapUpdate(pixelmap, 0xFFFu);
+    return pixelmap;
+}
+C2_HOOK_FUNCTION(0x0051efa0, BrMapAdd)
+
+br_pixelmap* C2_HOOK_CDECL BrMapRemove(br_pixelmap* pixelmap) {
+
+    BrBufferClear(pixelmap);
+    return BrRegistryRemove(&C2V(v1db).reg_textures, pixelmap);
+}
+C2_HOOK_FUNCTION(0x0051efd0, BrMapRemove)
+
+br_pixelmap* C2_HOOK_CDECL BrMapFind(char* pattern) {
+
+    return BrRegistryFind(&C2V(v1db).reg_textures, pattern);
+}
+C2_HOOK_FUNCTION(0x0051eff0, BrMapFind)
+
+br_map_find_cbfn* C2_HOOK_CDECL BrMapFindHook(br_map_find_cbfn* hook) {
+    br_map_find_cbfn* old;
+
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).reg_textures.find_failed_hook==(uintptr_t)0x0079f47c);
+
+    old = (br_map_find_cbfn*)C2V(v1db).reg_textures.find_failed_hook;
+    C2V(v1db).reg_textures.find_failed_hook = (br_find_failed_cbfn*)hook;
+    return old;
+}
+C2_HOOK_FUNCTION(0x0051f000, BrMapFindHook)
+
+br_uint_32 C2_HOOK_CDECL BrMapAddMany(br_pixelmap** items, int n) {
+    int i;
+    int r;
+
+    r = 0;
+    for (i = 0; i < n; i++) {
+        BrRegistryAdd(&C2V(v1db).reg_textures, items[i]);
+        BrMapUpdate(items[i], 0xFFF);
+        if (items[i]) {
+            r++;
+        }
+    }
+    return r++;
+}
+C2_HOOK_FUNCTION(0x0051f010, BrMapAddMany)
+
+br_uint_32 C2_HOOK_CDECL BrMapRemoveMany(br_pixelmap** items, int n) {
+    int i;
+    int r;
+
+    r = 0;
+    for (i = 0; i < n; i++) {
+        BrBufferClear(items[i]);
+        if (BrRegistryRemove(&C2V(v1db).reg_textures, items[i]) != NULL) {
+            r++;
+        }
+    }
+    return r;
+}
+C2_HOOK_FUNCTION(0x0051f060, BrMapRemoveMany)
+
+br_uint_32 C2_HOOK_CDECL BrMapFindMany(char* pattern, br_pixelmap** items, int max) {
+
+    return BrRegistryFindMany(&C2V(v1db).reg_textures, pattern, (void**)items, max);
+}
+C2_HOOK_FUNCTION(0x0051f0a0, BrMapFindMany)
+
+br_uint_32 C2_HOOK_CDECL BrMapCount(char* pattern) {
+
+    return BrRegistryCount(&C2V(v1db).reg_textures, pattern);
+}
+C2_HOOK_FUNCTION(0x0051f0c0, BrMapCount)
+
+br_uint_32 C2_HOOK_CDECL BrMapEnum(char* pattern, br_map_enum_cbfn* callback, void* arg) {
+
+    return BrRegistryEnum(&C2V(v1db).reg_textures, pattern, (br_enum_cbfn*)callback, arg);
+}
+C2_HOOK_FUNCTION(0x0051f0d0, BrMapEnum)
