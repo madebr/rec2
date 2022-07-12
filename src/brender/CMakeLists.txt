@@ -9,6 +9,8 @@ add_library(brender STATIC
     core/fw/brlists.h
     core/fw/brprintf.c
     core/fw/brprintf.h
+    core/fw/brqsort.c
+    core/fw/brqsort.h
     core/fw/bswap.c
     core/fw/bswap.h
     core/fw/datafile.c
