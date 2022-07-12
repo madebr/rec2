@@ -250,3 +250,84 @@ br_uint_32 C2_HOOK_CDECL BrMapEnum(char* pattern, br_map_enum_cbfn* callback, vo
     return BrRegistryEnum(&C2V(v1db).reg_textures, pattern, (br_enum_cbfn*)callback, arg);
 }
 C2_HOOK_FUNCTION(0x0051f0d0, BrMapEnum)
+
+br_pixelmap* C2_HOOK_CDECL BrTableAdd(br_pixelmap* pixelmap) {
+
+    BrRegistryAdd(&C2V(v1db).reg_tables, pixelmap);
+    BrTableUpdate(pixelmap, BR_TABU_ALL);
+    return pixelmap;
+}
+C2_HOOK_FUNCTION(0x0051f0f0, BrTableAdd)
+
+br_pixelmap* C2_HOOK_CDECL BrTableRemove(br_pixelmap* pixelmap) {
+
+    BrBufferClear(pixelmap);
+    return BrRegistryRemove(&C2V(v1db).reg_tables, pixelmap);
+}
+C2_HOOK_FUNCTION(0x0051f120, BrTableRemove)
+
+br_pixelmap* C2_HOOK_CDECL BrTableFind(char* pattern) {
+
+    return BrRegistryFind(&C2V(v1db).reg_tables, pattern);
+}
+C2_HOOK_FUNCTION(0x0051f140, BrTableFind)
+
+br_table_find_cbfn* C2_HOOK_CDECL BrTableFindHook(br_table_find_cbfn* hook) {
+    br_table_find_cbfn* old;
+
+    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).reg_tables.find_failed_hook==(uintptr_t)0x0079f490);
+
+    old = (br_table_find_cbfn*)C2V(v1db).reg_tables.find_failed_hook;
+    C2V(v1db).reg_tables.find_failed_hook = (br_find_failed_cbfn*)hook;
+    return old;
+}
+C2_HOOK_FUNCTION(0x0051f150, BrTableFindHook)
+
+br_uint_32 C2_HOOK_CDECL BrTableAddMany(br_pixelmap** items, int n) {
+    int i;
+    int r = 0;
+
+    r = 0;
+    for (i = 0; i < n; i++) {
+        BrRegistryAdd(&C2V(v1db).reg_tables, items[i]);
+        BrTableUpdate(items[i], BR_TABU_ALL);
+        if (items[i]) {
+            ++r;
+        }
+    }
+    return r;
+}
+C2_HOOK_FUNCTION(0x0051f160, BrTableAddMany)
+
+br_uint_32 C2_HOOK_CDECL BrTableRemoveMany(br_pixelmap** items, int n) {
+    int i;
+    int r;
+
+    r = 0;
+    for (i = 0; i < n; i++) {
+        BrBufferClear(items[i]);
+        if (BrRegistryRemove(&C2V(v1db).reg_tables, items[i]) != NULL) {
+            r++;
+        }
+    }
+    return r;
+}
+C2_HOOK_FUNCTION(0x0051f1b0, BrTableRemoveMany)
+
+br_uint_32 C2_HOOK_CDECL BrTableFindMany(char* pattern, br_pixelmap** items, int max) {
+
+    return BrRegistryFindMany(&C2V(v1db).reg_tables, pattern, (void**)items, max);
+}
+C2_HOOK_FUNCTION(0x0051f1f0, BrTableFindMany)
+
+br_uint_32 C2_HOOK_CDECL BrTableCount(char* pattern) {
+
+    return BrRegistryCount(&C2V(v1db).reg_tables, pattern);
+}
+C2_HOOK_FUNCTION(0x0051f210, BrTableCount)
+
+br_uint_32 C2_HOOK_CDECL BrTableEnum(char* pattern, br_table_enum_cbfn* callback, void* arg) {
+
+    return BrRegistryEnum(&C2V(v1db).reg_tables, pattern, (br_enum_cbfn*)callback, arg);
+}
+C2_HOOK_FUNCTION(0x0051f220, BrTableEnum)
