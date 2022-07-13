@@ -85,8 +85,8 @@ void C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
 C2_HOOK_FUNCTION_ORIGINAL
 (0x0051af20, PDFatalError, PDFatalError_original)
 
-static void(C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
-void C2_HOOK_FASTCALL PDShutdownSystem() {
+C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
+C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem() {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     PDShutdownSystem_original();
@@ -96,7 +96,6 @@ void C2_HOOK_FASTCALL PDShutdownSystem() {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c110, PDShutdownSystem, PDShutdownSystem_original)
-
 
 static void(C2_HOOK_FASTCALL * PDUnlockRealBackScreen_original)(void);
 void C2_HOOK_FASTCALL PDUnlockRealBackScreen() {
@@ -335,7 +334,7 @@ int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
 
     status = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\SCI\\CARMAGEDDON2", 0, KEY_ALL_ACCESS, &hKey);
     if (status == ERROR_SUCCESS) {
-        lenBuffer = sizeof(pPath) - 1;  // FIXME: use array_sizeof
+        lenBuffer =  sizeof(tPath_name) - 1;  // FIXME: use array_sizeof
         status = RegQueryValueExA(hKey, "SourceLocation", NULL, NULL, (LPBYTE)pPath, &lenBuffer);
         if (status == ERROR_SUCCESS) {
             RegCloseKey(hKey);

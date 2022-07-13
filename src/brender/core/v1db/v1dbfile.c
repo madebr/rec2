@@ -533,14 +533,18 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32
     unsigned int i;
     void* ptr;
 
-    ptr = DfPop(DF_VERTEX, (int*)&i);
+    ptr = DfPop(DF_VERTEX, &i);
     mip = DfPop(DF_MATERIAL_INDEX, &mi_count);
     DfPush(DF_VERTEX, ptr, i);
     mi_count = length / df->prims->struct_size(df, &C2V(br_old_face_F), NULL);
     fp = BrResAllocate(C2V(v1db).res, sizeof(br_face) * mi_count, BR_MEMORY_FACES);
     DfStructReadArray(df, &C2V(br_old_face_F), fp, mi_count);
     for (i = 0; i < mi_count; i++) {
-        fp[i].material = mip[*(br_uint_16*)&fp[i].material];
+        union u_mat_u16 {
+            br_material mat;
+            br_uint_16 u16;
+        };
+        fp[i].material = mip[((union u_mat_u16*)&fp[i].material)->u16];
         if (fp[i].smoothing == 0) {
             fp[i].smoothing = -1;
         }
@@ -577,7 +581,7 @@ int C2_HOOK_STDCALL FopWrite_FACE_MATERIAL(br_datafile* df, br_face* faces, int 
 
 int C2_HOOK_STDCALL FopRead_FACE_MATERIAL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_material** mindex;
-    int nmaterials;
+    unsigned int nmaterials;
     br_model* mp;
     br_face* fp;
     br_uint_16* block;
@@ -645,7 +649,7 @@ C2_HOOK_FUNCTION(0x00523860, FopRead_OLD_MODEL_1)
 
 int C2_HOOK_STDCALL FopRead_OLD_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
-    int i;
+    unsigned int i;
 
     mp = BrModelAllocate(NULL, 0, 0);
     df->res = mp;

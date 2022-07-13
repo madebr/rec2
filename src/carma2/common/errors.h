@@ -27,7 +27,7 @@ void C2_HOOK_CDECL FatalError(int pStr_index, ...);
 //
 void C2_HOOK_FASTCALL OpenDiagnostics(void);
 
-void C2_HOOK_CDECL dr_dprintf(char* fmt_string, ...);
+void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...);
 
 //int DoErrorInterface(int pMisc_text_index);
 

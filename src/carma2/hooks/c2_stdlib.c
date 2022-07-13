@@ -35,7 +35,7 @@ void C2_HOOK_CDECL c2_free(void* ptr) {
 }
 C2_HOOK_FUNCTION(0x005775f0, c2_free);
 
-void C2_HOOK_CDECL c2_exit(int status) {
+C2_NORETURN void C2_HOOK_CDECL c2_exit(int status) {
     exit(status);
 }
 C2_HOOK_FUNCTION(0x005784e0, c2_exit)

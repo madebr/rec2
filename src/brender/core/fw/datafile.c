@@ -144,7 +144,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, member_type_names, 32, 0x0066
 typedef struct {
     int type;
     void* value;
-    int count;
+    unsigned int count;
 } datafile_stack_t;
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(datafile_stack_t, DatafileStack, 1024, 0x006ad9b0);
@@ -230,7 +230,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, ChunkNames, CHUNKNAMES_NB, 0x006672
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, DatafileStackTop, 0x006b09b0);
 
-void C2_HOOK_STDCALL DfPush(int type, void* value, int count) {
+void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count) {
 
     if (C2V(DatafileStackTop) >= BR_ASIZE(C2V(DatafileStack))) {
         BrFailure("DatafileStack Overflow");
@@ -242,7 +242,7 @@ void C2_HOOK_STDCALL DfPush(int type, void* value, int count) {
 }
 C2_HOOK_FUNCTION(0x00529ff0, DfPush)
 
-void* C2_HOOK_STDCALL DfPop(int type, int* countp) {
+void* C2_HOOK_STDCALL DfPop(int type, unsigned int* countp) {
 
     if (C2V(DatafileStackTop) <= 0) {
         BrFailure("DatafileStack Underflow");
@@ -258,7 +258,7 @@ void* C2_HOOK_STDCALL DfPop(int type, int* countp) {
 }
 C2_HOOK_FUNCTION(0x0052a040, DfPop)
 
-void* C2_HOOK_STDCALL DfTop(int type, int* countp) {
+void* C2_HOOK_STDCALL DfTop(int type, unsigned int* countp) {
     if (C2V(DatafileStackTop) <= 0)
         BrFailure("DatafileStack Underflow");
     if (type != C2V(DatafileStack)[C2V(DatafileStackTop) - 1].type)
@@ -283,7 +283,7 @@ int C2_HOOK_STDCALL TextReadLine(br_datafile* df, char** ident, char** data) {
 
     while (1) {
         cp = BrScratchString();
-        int a = BrFileGetLine(cp, 256, df->h);
+        BrFileGetLine(cp, 256, df->h);
         if (BrFileEof(df->h) != 0) {
             return 0;
         }

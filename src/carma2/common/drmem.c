@@ -283,7 +283,7 @@ void C2_HOOK_FASTCALL MAMSInitMem() {
 C2_HOOK_FUNCTION(0x0044c820, MAMSInitMem)
 
 void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
-    dr_dprintf(__FUNCTION__": pTitle=\"%s\" pFlags=%d", pTitle, pFlags);
+    dr_dprintf("%s: pTitle=\"%s\" pFlags=%d", __FUNCTION__, pTitle, pFlags);
 }
 C2_HOOK_FUNCTION(0x0044c850, PrintMemoryDump);
 

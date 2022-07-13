@@ -1,6 +1,5 @@
-#include <stdio.h>
-
 #include "actsupt.h"
+
 #include "dbsetup.h"
 #include "enables.h"
 
@@ -423,7 +422,7 @@ void C2_HOOK_STDCALL ActorToBounds(br_bounds* dest, br_actor* ap, br_model* mode
         }
     }
 
-    BR_FOR_SIMPLELIST(&ap->children, a) {
+    for(a = ap->children; a != NULL; a = a->next) {
         ActorToBounds(dest, a, model);
     }
 
@@ -453,7 +452,7 @@ br_bounds* C2_HOOK_CDECL BrActorToBounds(br_bounds* b, br_actor* ap) {
         b->max.v[0] = b->max.v[1] = b->max.v[2] = BR_SCALAR_MIN;
     }
 
-    BR_FOR_SIMPLELIST(&ap->children, a) {
+    for (a = ap->children; a != NULL; a = a->next) {
         ActorToBounds(b, a, model);
     }
 

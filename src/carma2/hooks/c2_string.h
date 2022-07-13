@@ -5,6 +5,8 @@
 
 #include "c2_hooks.h"
 
+#include "c2_stdlib.h"
+
 int C2_HOOK_CDECL c2_memcmp(const void* s1, const void* s2, size_t n);
 void* C2_HOOK_CDECL c2_memcpy(void* s1, const void* s2, size_t n);
 void* C2_HOOK_CDECL c2_memset(void* s1, int c, size_t n);

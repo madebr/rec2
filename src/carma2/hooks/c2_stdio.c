@@ -27,6 +27,7 @@ struct c2_iobuf {
 #define C2_IOBUF_EOF 0x10
 #endif
 
+#if !defined(HOOK_STDIO)
 static FILE* hook_FILE(FILE* file) {
     if (file == c2_stdin) {
         return stdin;
@@ -39,6 +40,7 @@ static FILE* hook_FILE(FILE* file) {
     }
     return file;
 }
+#endif
 
 static FILE* (C2_HOOK_CDECL * fopen_original)(const char*, const char*);
 FILE* C2_HOOK_CDECL c2_fopen(const char* path, const char* mode) {

@@ -5,6 +5,8 @@
 
 #include "c2_hooks.h"
 
+#include <stdlib.h>
+
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
@@ -31,7 +33,7 @@ long int C2_HOOK_CDECL c2_strtol(const char* str, char** endptr, int base);
 
 unsigned long int C2_HOOK_CDECL c2_strtoul(const char* str, char** endptr, int base);
 
-void C2_HOOK_CDECL c2_exit(int status);
+C2_NORETURN void C2_HOOK_CDECL c2_exit(int status);
 
 #else
 

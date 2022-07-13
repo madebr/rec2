@@ -11,10 +11,11 @@
 
 #include "platform.h"
 
-#include <string.h>
+#include "c2_stdlib.h"
+#include "c2_string.h"
 
-void (C2_HOOK_FASTCALL * QuitGame_original)(void);
-void C2_HOOK_FASTCALL QuitGame() {
+C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * QuitGame_original)(void);
+C2_NORETURN void C2_HOOK_FASTCALL QuitGame() {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     QuitGame_original();
@@ -25,7 +26,7 @@ void C2_HOOK_FASTCALL QuitGame() {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491f70, QuitGame, QuitGame_original)
 
-void (C2_HOOK_FASTCALL * GameMain_original)(int pArgc, const char** pArgv);
+C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * GameMain_original)(int pArgc, const char** pArgv);
 void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     C2_HOOK_START();
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -37,7 +38,7 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     PDBuildAppPath(C2V(gApplication_path));
     OpenDiagnostics();
 
-    strcat(C2V(gApplication_path), "DATA");
+    c2_strcat(C2V(gApplication_path), "DATA");
     UsePathFileToDetermineIfFullInstallation();
     if (!C2V(gCD_fully_installed)) {
         if (PDReadSourceLocation(location)) {

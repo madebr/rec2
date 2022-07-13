@@ -1,6 +1,14 @@
 #ifndef C2_HOOKS_H
 #define C2_HOOKS_H
 
+#if defined(_MSC_VER)
+#define C2_NORETURN __declspec(noreturn)
+#define C2_NORETURN_FUNCPTR
+#else
+#define C2_NORETURN __attribute__ ((__noreturn__))
+#define C2_NORETURN_FUNCPTR C2_NORETURN
+#endif
+
 #if defined(C2_HOOKS_ENABLED)
 
 #define C2_HOOK_ASSERT(condition) do { if (!(condition)) { extern void C2_HOOK_CDECL c2_abort(void); c2_abort(); } } while (0)

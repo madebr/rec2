@@ -18,12 +18,6 @@ extern "C" {
     void (__cdecl * HOOK_JOIN(NAME, ID)##_)(void) = HOOK_JOIN(NAME, ID); \
     static void __cdecl HOOK_JOIN(NAME, ID)(void)
 
-//#define HOOK_FUNCTION_STARTUP_INNER(NAME, ID)                                                                       \
-//    static void __cdecl HOOK_JOIN(NAME, ID)(void);                                                                  \
-//    __declspec(dllexport)  void *HOOK_JOIN(NAME, ID)##_; \
-//    void *HOOK_JOIN(NAME, ID)##_ = HOOK_JOIN(NAME, ID); \
-//    static void __cdecl HOOK_JOIN(NAME, ID)(void)
-
 #define HOOK_FUNCTION_SHUTDOWN_INNER(NAME, ID)                  \
     static void HOOK_JOIN(NAME, ID)(void)
 #else

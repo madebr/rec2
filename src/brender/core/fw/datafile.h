@@ -106,11 +106,11 @@ enum {
     DF_CHUNKID_MATERIAL_OLD_2 = 60,
 };
 
-void C2_HOOK_STDCALL DfPush(int type, void* value, int count);
+void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count);
 
-void* C2_HOOK_STDCALL DfPop(int type, int* countp);
+void* C2_HOOK_STDCALL DfPop(int type, unsigned int* countp);
 
-void* C2_HOOK_STDCALL DfTop(int type, int* countp);
+void* C2_HOOK_STDCALL DfTop(int type, unsigned int* countp);
 
 int C2_HOOK_STDCALL DfTopType(void);
 

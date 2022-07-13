@@ -310,7 +310,7 @@ C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics);
 
 // Renamed from dprintf to avoid collisions to stdio
 // This function is stripped from the retail binary, we've guessed at the implementation
-void C2_HOOK_CDECL dr_dprintf(char* fmt_string, ...) {
+void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...) {
     va_list args;
     // FIXME: use c2_stdio functions
     va_start(args, fmt_string);

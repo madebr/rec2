@@ -1,7 +1,7 @@
 #ifndef REC2_PLANE_H
 #define REC2_PLANE_H
 
-#include "C2_hooks.h"
+#include "c2_hooks.h"
 
 #include "brender/br_types.h"
 

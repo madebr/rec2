@@ -219,7 +219,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
         strcat(C2V(gPathNetworkIni), "NETWORK.INI");
     }
 
-    char* args[] = { "Carmageddon" };
+    const char* args[] = { "Carmageddon" };
 
     GameMain(1, args);
     C2_HOOK_FINISH();
