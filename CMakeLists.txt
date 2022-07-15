@@ -50,7 +50,7 @@ if(CARM2_LOCATION)
             COMMENT "Copying rec2 hooks to \"${CARM2_LOCATION}\""
             COMMAND "${CMAKE_COMMAND}" -E make_directory "${CARM2_LOCATION}/plugins"
             COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:rec2>" "${CARM2_LOCATION}/plugins/$<TARGET_FILE_NAME:rec2>"
-            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:rec2_inject>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2>"
+            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:rec2_inject>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2_inject>"
         )
     endif()
 endif()
