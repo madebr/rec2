@@ -74,6 +74,8 @@ add_library(brender STATIC
     core/math/vector.c
     core/math/vector.h
 
+    core/pixelmap/genclip.c
+    core/pixelmap/genclip.h
     core/pixelmap/pmdsptch.c
     core/pixelmap/pmdsptch.h
     core/pixelmap/pmsetup.c
