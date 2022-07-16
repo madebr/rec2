@@ -80,8 +80,12 @@ add_library(brender STATIC
     core/pixelmap/genclip.h
     core/pixelmap/pmdsptch.c
     core/pixelmap/pmdsptch.h
+    core/pixelmap/pmmem.c
+    core/pixelmap/pmmem.h
     core/pixelmap/pmsetup.c
     core/pixelmap/pmsetup.h
+    core/pixelmap/pmutils.c
+    core/pixelmap/pmutils.h
 
     core/std/brexcept.c
     core/std/brexcept.h

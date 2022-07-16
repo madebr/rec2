@@ -2921,7 +2921,49 @@ enum {
     /*
      * Opacity + Index
      */
-    BR_PMT_INDEXA_88
+    BR_PMT_INDEXA_88,
+
+    /*
+     * Bump maps
+     */
+    BR_PMT_NORMAL_INDEX_8,
+    BR_PMT_NORMAL_XYZ,
+
+    /*
+     * Wrong way around 15 bit true colour
+     */
+    BR_PMT_BGR_555,
+
+    /*
+     * 16 bit r,g,b & alpha
+     */
+    BR_PMT_RGBA_4444,
+
+    /*
+     * Handy types for converting to 15/16 bit
+     */
+    BR_PMT_RBG_bab,
+    BR_PMT_RBG_1aba,
+
+    /*
+     * Pixelmap extensions.
+     */
+    BR_PMT_RGB_332,
+    BR_PMT_DEPTH_8,
+
+    BR_PMT_ARGB_8888,
+    BR_PMT_ALPHA_4,
+    BR_PMT_INDEXA_44,
+    BR_PMT_DEPTH_15,
+    BR_PMT_DEPTH_31,
+    BR_PMT_DEPTH_FP16,
+    BR_PMT_DEPTH_FP15,
+
+    BR_PMT_RGBA_5551,
+    BR_PMT_ARGB_1555,
+    BR_PMT_ARGB_4444,
+
+    BR_PMT_MAX,
 };
 
 /*
