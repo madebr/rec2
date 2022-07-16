@@ -2972,21 +2972,62 @@ enum {
 enum {
     BR_MATF_LIGHT = 0x00000001,
     BR_MATF_PRELIT = 0x00000002,
+
     BR_MATF_SMOOTH = 0x00000004,
+
     BR_MATF_ENVIRONMENT_I = 0x00000008,
     BR_MATF_ENVIRONMENT_L = 0x00000010,
     BR_MATF_PERSPECTIVE = 0x00000020,
     BR_MATF_DECAL = 0x00000040,
+
     BR_MATF_I_FROM_U = 0x00000080,
     BR_MATF_I_FROM_V = 0x00000100,
     BR_MATF_U_FROM_I = 0x00000200,
     BR_MATF_V_FROM_I = 0x00000400,
+
     BR_MATF_ALWAYS_VISIBLE = 0x00000800,
     BR_MATF_TWO_SIDED = 0x00001000,
-    BR_MATF_FORCE_Z_0 = 0x00002000,
+
+    BR_MATF_FORCE_FRONT = 0x00002000,
+
     BR_MATF_DITHER = 0x00004000,
-    BR_MATF_CUSTOM = 0x00008000
+#if 0
+    BR_MATF_CUSTOM = 0x00008000,
+#endif
+
+    BR_MATF_MAP_ANTIALIASING = 0x00010000,
+    BR_MATF_MAP_INTERPOLATION = 0x00020000,
+    BR_MATF_MIP_INTERPOLATION = 0x00040000,
+
+    BR_MATF_FOG_LOCAL = 0x00080000,
+    BR_MATF_SUBDIVIDE = 0x00100000,
+
+    BR_MATF_QUAD_MAPPING = 0x00400000,
+
+    BR_MATF_FORCE_BACK = 0x00800000,
+
+    BR_MATF_INHIBIT_DEPTH_WRITE = 0x01000000,
+
+    BR_MATF_MODULATE = 0x02000000,
+
+    BR_MATF_PREALPHA = 0x04000000,
+
+    BR_MATF_SEPARATE_SPECULAR = 0x08000000,
+
+    BR_MATF_MODULATE_ALPHA = 0x10000000,
+
+    BR_MATF_DISABLE_COLOUR_KEY  = 0x20000000,
+
+    BR_MATF_SMOOTH_ALPHA = 0x40000000,
 };
+
+/*
+ * Backwards compatibility
+ */
+#define BR_MATF_GOURAUD     BR_MATF_SMOOTH
+#define BR_MATF_MAP_COLOUR  0
+#define BR_MATF_FORCE_Z_0   BR_MATF_FORCE_FRONT
+#define BR_MATF_BLEND       0
 
 /*
  * Flags to BrModelUpdate()
@@ -3031,7 +3072,7 @@ enum {
  * Bits for br_model->flags
  */
 enum {
-    BR_MODF_DONT_WELD = 0x0001,      /* Vertices with same x,y,z cannot be merged	*/
+    BR_MODF_DONT_WELD = 0x0001,      /* Vertices with same x,y,z cannot be merged */
     BR_MODF_KEEP_ORIGINAL = 0x0002,  /* Don't release model->faces/vertices during ModelUpdate() */
     BR_MODF_GENERATE_TAGS = 0x0004,  /* Allocate and fill in the face and vertex tag structures */
     BR_MODF_QUICK_UPDATE = 0x0010,   /* ModelUpdate is fast - but may produce slower models */
@@ -3040,8 +3081,8 @@ enum {
     BR_MODF_UPDATEABLE = 0x0080,     /* Added by Jeff from Errols code */
     BR_MODF_CREASE = 0x0100,         /* Create creases in smoothing along edges if face<->face angle is g.t model->crease */
     BR_MODF_CUSTOM_NORMALS = 0x0200, /* Uses vertex normals from br_vertex structure */
-    BR_MODF_CUSTOM_BOUNDS = 0x0400,  /* Bounding box is already set up				*/
-    // BR_MODF_FACES_ONLY = 0x0800, /* Model will only be used to render faces (not edges or points) */
+    BR_MODF_CUSTOM_BOUNDS = 0x0400,  /* Bounding box is already set up */
+    // BR_MODF_FACES_ONLY = 0x0800,  /* Model will only be used to render faces (not edges or points) */
 
     MODF_USES_DEFAULT = 0x8000
 };
