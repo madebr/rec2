@@ -11,4 +11,6 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
 void C2_HOOK_FASTCALL ParseSoundFxDetails(tTWTFILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
+void C2_HOOK_FASTCALL StopMusic(void);
+
 #endif // REC2_SOUND_H

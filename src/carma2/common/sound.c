@@ -6,7 +6,6 @@
 
 #include <string.h>
 
-
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_fully_installed, 0x0068b898);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation() {
@@ -50,3 +49,15 @@ void C2_HOOK_FASTCALL ParseSoundFxDetails(tTWTFILE* pF, tSpecial_volume_soundfx_
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004569f0, ParseSoundFxDetails, ParseSoundFxDetails_original)
+
+void (C2_HOOK_FASTCALL * StopMusic_original)(void);
+void C2_HOOK_FASTCALL StopMusic(void) {
+#if defined(C2_HOOKS_ENABLED)
+    C2_HOOK_START();
+    StopMusic_original();
+    C2_HOOK_FINISH();
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456910, StopMusic, StopMusic_original)
