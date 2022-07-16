@@ -6,6 +6,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(const char*, gDir_separator, 0x00761a5c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAusterity_mode, 0x0068b87c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAustere_override, 0x0068b884);
 
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gDepth_buffer, 0x0068b8a4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gScreen, 0x0074d3e0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_override, 0x0068b888);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
@@ -20,7 +24,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gAustere_override, 0x0068b884);
 //int gAusterity_mode;
 //int gSausage_override;
 //int gAustere_override;
-//int gSound_override;
+
 //int gKey_map_index;
 //int gInterface_within_race_mode;
 //int gCut_scene_override;
@@ -85,7 +89,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gAustere_override, 0x0068b884);
 //tRace_info gCurrent_race;
 //br_actor* gSelf;
 //br_actor* gDont_render_actor;
-//br_pixelmap* gScreen;
 //br_pixelmap* gRender_screen;
 //br_actor* gRearview_camera;
 //br_scalar gCamera_hither;
@@ -100,7 +103,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gAustere_override, 0x0068b884);
 //br_actor* gCamera;
 //br_actor* gArrow_actor;
 //br_pixelmap* gIcons_pix_low_res;
-//br_pixelmap* gDepth_buffer;
 //int gInitial_net_credits[5];
 //float gCar_cred_value[3];
 //int gNo_races_yet;
