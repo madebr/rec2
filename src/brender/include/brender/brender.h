@@ -134,6 +134,9 @@ void C2_HOOK_CDECL BrPixelmapRectangleFill(br_pixelmap* dst, br_int_32 x, br_int
 void C2_HOOK_CDECL BrPixelmapPixelSet(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_uint_32 colour);
 br_pixelmap* C2_HOOK_CDECL BrPixelmapAllocate(br_uint_8 type, br_int_32 w, br_int_32 h, void* pixels, int flags);
 void C2_HOOK_CDECL BrPixelmapDoubleBuffer(br_pixelmap* dst, br_pixelmap* src);
+void C2_HOOK_CDECL BrPixelmapPaletteSet(br_pixelmap *pm, br_pixelmap *pal);
+void C2_HOOK_CDECL BrPixelmapPaletteEntrySet(br_pixelmap *pm, br_int_32 i,br_colour colour);
+void C2_HOOK_CDECL BrPixelmapPaletteEntrySetMany(br_pixelmap *pm, br_int_32 index , br_int_32 ncolours, br_colour *colours);
 void C2_HOOK_CDECL BrPixelmapText(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_uint_32 colour, br_font* font, char* text);
 void C2_HOOK_CDECL BrPixelmapTextF(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_uint_32 colour, br_font* font, char* fmt, ...);
 br_uint_16 C2_HOOK_CDECL BrPixelmapTextWidth(br_pixelmap* dst, br_font* font, char* text);
