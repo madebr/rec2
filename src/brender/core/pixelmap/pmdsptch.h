@@ -21,7 +21,7 @@
 //
 //br_pixelmap* BrPixelmapClone(br_pixelmap* src);
 //
-//void BrPixelmapFill(br_pixelmap* dst, br_uint_32 colour);
+void C2_HOOK_CDECL BrPixelmapFill(br_pixelmap* dst, br_uint_32 colour);
 //
 //void BrPixelmapRectangle(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h, br_uint_32 colour);
 //
@@ -71,14 +71,14 @@ void C2_HOOK_CDECL BrPixelmapDoubleBuffer(br_pixelmap* dst, br_pixelmap* src);
 //
 //br_uint_16 BrPixelmapChannels(br_pixelmap* pm);
 //
-//void BrPixelmapPaletteSet(br_pixelmap* pm, br_pixelmap* pal);
-//
-//void BrPixelmapPaletteEntrySet(br_pixelmap* pm, br_int_32 index, br_colour colour);
-//
-//void BrPixelmapPaletteEntrySetMany(br_pixelmap* pm, br_int_32 index, br_int_32 ncolours, br_colour* colours);
-//
-//br_pixelmap* BrPixelmapDirectLock(br_pixelmap* src, br_boolean block);
-//
-//br_pixelmap* BrPixelmapDirectUnlock(br_pixelmap* src);
+void C2_HOOK_CDECL BrPixelmapPaletteSet(br_pixelmap* pm, br_pixelmap* pal);
+
+void C2_HOOK_CDECL BrPixelmapPaletteEntrySet(br_pixelmap* pm, br_int_32 index, br_colour colour);
+
+void C2_HOOK_CDECL BrPixelmapPaletteEntrySetMany(br_pixelmap* pm, br_int_32 index, br_int_32 ncolours, br_colour* colours);
+
+br_pixelmap* C2_HOOK_CDECL BrPixelmapDirectLock(br_pixelmap* src, br_boolean block);
+
+br_pixelmap* C2_HOOK_CDECL BrPixelmapDirectUnlock(br_pixelmap* src);
 
 #endif // REC2_PMDSPTCH_H
