@@ -2122,9 +2122,15 @@ typedef struct br_v1db_enable {
     br_actor** enabled;
 } br_v1db_enable;
 
+enum {
+    BR_ZX_ZB_ACTIVE_MASK = 0x1,
+    BR_ZX_ZS_ACTIVE_MASK = 0x2,
+    BR_ZX_ZBS_ACTIVE_MASK = 0x4,
+};
+
 typedef struct br_v1db_state {
     br_boolean active;
-    int zxx_active_flags;
+    br_uint_32 zx_active;
     br_int_32 rendering;
     br_renderer* renderer;
     br_renderer* query_renderer;
