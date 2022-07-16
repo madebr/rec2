@@ -80,6 +80,8 @@ add_library(brender STATIC
     core/pixelmap/font3x5f.h
     core/pixelmap/font4x6p.c
     core/pixelmap/font4x6p.h
+    core/pixelmap/font7x9p.c
+    core/pixelmap/font7x9p.h
     core/pixelmap/genclip.c
     core/pixelmap/genclip.h
     core/pixelmap/pmdsptch.c
