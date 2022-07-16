@@ -17,6 +17,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGraf_spec, gGraf_specs, 2, 0x00662208); // FIXME: implement
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494);
@@ -351,3 +352,46 @@ int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0051d600, PDDoWeLeadAnAustereExistance)
+
+void (C2_HOOK_FASTCALL * PDSetPaletteEntries_original)(br_pixelmap* pPalette, int pFirst_colour, int pCount);
+void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount) {
+#if defined(C2_HOOKS_ENABLED)
+    PDSetPaletteEntries_original(pPalette, pFirst_colour, pCount);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051c850, PDSetPaletteEntries, PDSetPaletteEntries_original)
+
+void C2_HOOK_FASTCALL PDSetPalette(br_pixelmap *pixelmap) {
+    BrPixelmapPaletteSet(C2V(gScreen), pixelmap);
+}
+C2_HOOK_FUNCTION(0x0051c840, PDSetPalette)
+
+void C2_HOOK_FASTCALL PDServiceInput(void) {
+    Win32ServiceMessages();
+}
+C2_HOOK_FUNCTION(0x0051cbe0, PDServiceInput)
+
+void C2_HOOK_FASTCALL SwapBackScreen(void) {
+    BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gReal_back_screen));
+}
+C2_HOOK_FUNCTION(0x0051c520, SwapBackScreen)
+
+int (C2_HOOK_FASTCALL * PDGetTotalTime_original)(void);
+int C2_HOOK_FASTCALL PDGetTotalTime(void) {
+#if defined(C2_HOOKS_ENABLED)
+    return PDGetTotalTime_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051d410, PDGetTotalTime, PDGetTotalTime_original)
+
+void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
+
+    dr_dprintf("PDEnterDebugger(): %s", pStr);
+    ShowCursor(1);
+    __debugbreak();
+    ShowCursor(0);
+}
