@@ -5,8 +5,8 @@
 
 #include "brender/br_types.h"
 
-//extern pm_type_info pmTypeInfo[30];
-//
+C2_HOOK_VARIABLE_DECLARE_ARRAY(pm_type_info, pmTypeInfo, 32);
+
 br_device_pixelmap* C2_HOOK_STDCALL DevicePixelmapMemAllocate(br_uint_8 type, br_uint_16 w, br_uint_16 h, void* pixels, int flags);
 
 void C2_HOOK_STDCALL CheckDispatch(br_device_pixelmap* pm);
