@@ -16,10 +16,12 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS);
 
 char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS);
 
-void C2_HOOK_FASTCALL PathCat(char* pDestn_str, char* pStr_1, char* pStr_2);
+void C2_HOOK_FASTCALL PathCat(char* pDestn_str, char* pStr_1, const char* pStr_2);
 
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
 void C2_HOOK_FASTCALL PossibleService(void);
+
+br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW, br_uint_16 pH, void* pPixels, int pFlags);
 
 #endif // REC2_UTILITY_H
