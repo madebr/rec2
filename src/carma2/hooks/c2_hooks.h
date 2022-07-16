@@ -1,12 +1,17 @@
 #ifndef C2_HOOKS_H
 #define C2_HOOKS_H
 
+// Wrapper for functions that are too small, useful for tagging its address
+#define C2_NO_HOOK_FUNCTION(ADDRESS, NAME)
+
 #if defined(_MSC_VER)
 #define C2_NORETURN __declspec(noreturn)
 #define C2_NORETURN_FUNCPTR
+#define C2_NAKED __declspec(naked)
 #else
 #define C2_NORETURN __attribute__ ((__noreturn__))
 #define C2_NORETURN_FUNCPTR C2_NORETURN
+#define C2_NAKED __attribute__((__naked__))
 #endif
 
 #if defined(C2_HOOKS_ENABLED)
