@@ -72,7 +72,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_model, bounds_model, 0x00665030, {
 
 void C2_HOOK_STDCALL renderFaces(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen) {
 
-    v11model* stored_model = model->stored;
     if (model->stored != NULL) {
         if (on_screen == BRT_ACCEPT) {
             ((br_geometry_stored*)model->stored)->dispatch->_renderOnScreen((br_geometry_stored*)model->stored, C2V(v1db).renderer);

@@ -9,7 +9,7 @@ C2_NAKED br_uint_16 C2_HOOK_CDECL GetSysQual(void) {
     }
 #else
     __asm__(
-        "mov %%ds, %%ax\n"
+        "mov %ds, %ax\n"
         "ret\n"
     );
 #endif

@@ -1,6 +1,6 @@
 #include "font3x5f.h"
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, br_font4x6f_glyph_widths, 256, 0x0066f474, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, br_font4x6f_glyph_widths, 256, 0x0066f474, {
     2,  2,  2,  2,  2,  2,  2,  3,
     2,  2,  2,  2,  2,  2,  2,  2,
     2,  2,  2,  2,  2,  2,  2,  2,
@@ -35,7 +35,7 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, br_font4x6f_glyph_widths
     2,  2,  2,  5,  2,  2,  2,  2,
 });
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, br_font4x6f_glyph_offsets, 256, 0x0066f274, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, br_font4x6f_glyph_offsets, 256, 0x0066f274, {
     0,      0,      0,      0,      0,      0,      0,      570,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
@@ -70,7 +70,7 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, br_font4x6f_glyph_offse
     0,      0,      0,      582,    0,      0,      0,      0,
 });
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, br_font4x6f_glyphs, 624, 0x0066f574, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, br_font4x6f_glyphs, 624, 0x0066f574, {
     0x00,   0x00,   0x00,   0x00,   0x00,   0x00,   0x80,   0x80,
     0x80,   0x00,   0x80,   0x00,   0xa0,   0xa0,   0x00,   0x00,
     0x00,   0x00,   0x50,   0xf8,   0x50,   0xf8,   0x50,   0x00,

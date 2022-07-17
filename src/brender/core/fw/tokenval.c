@@ -119,7 +119,7 @@ br_error BrTokenValueQuery(br_uint_32* pvalue, br_uint_32* extra, br_size_t extr
     }
     tep = template->map_query_entry[o];
     if (tep != NULL) {
-        r = ValueQuery(&tv, &extra, &extra_size, block, tep);
+        r = ValueQuery(&tv, (void**)&extra, &extra_size, block, tep);
         *pvalue = tv.v.u32;
         return r;
     }
@@ -238,7 +238,6 @@ br_error C2_HOOK_CDECL BrTokenValueSet(void* mem, br_uint_32* pcombined_mask, br
 }
 C2_HOOK_FUNCTION(0x0052e5b0, BrTokenValueSet)
 
-// IDA: br_error __cdecl BrTokenValueSetMany(void *mem, br_int_32 *pcount, br_uint_32 *pcombined_mask, br_token_value *tv, br_tv_template *template)
 br_error BrTokenValueSetMany(void* mem, br_int_32* pcount, br_uint_32* pcombined_mask, br_token_value* tv, br_tv_template* template) {
     br_int_32 o;
     br_int_32 n;
@@ -248,8 +247,9 @@ br_error BrTokenValueSetMany(void* mem, br_int_32* pcount, br_uint_32* pcombined
     if (template->n_map_entries == 0) {
         templateMakeMap(template);
     }
+    cm = 0;
     n = 0;
-    for (; tv->t != 0 != 0; tv++) {
+    for (; tv->t != 0; tv++) {
         o = tv->t - template->map_base;
         if (o < 0 || o >= template->n_map_entries) {
             continue;

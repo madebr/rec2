@@ -1,6 +1,6 @@
 #include "font3x5f.h"
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, br_font3x5f_glyph_offsets, 256, 0x0066f830, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, br_font3x5f_glyph_offsets, 256, 0x0066f830, {
     0,      0,      0,      0,      0,      0,      0,      725,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
@@ -35,7 +35,7 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, br_font3x5f_glyph_offse
     360,    0,      0,      720,    0,      355,    0,      0,
 });
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, br_font3x5f_glyphs, 0x0066fa30, 728, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, br_font3x5f_glyphs, 0x0066fa30, 728, {
     0x00,   0x00,   0x00,   0x00,   0x00,   0x40,   0x40,   0x40,
     0x00,   0x40,   0xa0,   0xa0,   0x00,   0x00,   0x00,   0x60,
     0x40,   0xe0,   0x40,   0xe0,   0x40,   0xe0,   0x40,   0xe0,

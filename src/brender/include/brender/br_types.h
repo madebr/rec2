@@ -45,6 +45,7 @@ typedef union br_value_tag br_value;
 typedef struct br_associative_array_tag br_associative_array;
 typedef struct br_tri_strip br_tri_fan;
 typedef struct br_tri_strip br_quad_strip;
+typedef struct v11model v11model;
 
 typedef enum br_filesystem_attributes {
     BR_FS_ATTR_READABLE = 1,
@@ -2000,12 +2001,12 @@ struct br_geometry_v1_model_dispatch {
     br_error (*_queryManySize)(br_object*, size_t*, br_token_value*);
     br_error (*_queryAll)(br_object*, br_token_value*, size_t);
     br_error (*_queryAllSize)(br_object*, size_t*);
-    br_error (*_renderF)(br_geometry_v1_model*, br_renderer*, struct v11model*, br_renderer_state_stored*, br_token);
-    br_error (*_renderX)(br_geometry_v1_model*, br_renderer*, struct v11model*, br_renderer_state_stored*, br_token);
-    br_error (*_renderOnScreenF)(br_geometry_v1_model*, br_renderer*, struct v11model*, br_renderer_state_stored*, br_token);
-    br_error (*_renderOnScreenX)(br_geometry_v1_model*, br_renderer*, struct v11model*, br_renderer_state_stored*, br_token);
-    br_error (*_storedNewF)(br_geometry_v1_model*, br_renderer*, br_geometry_stored**, struct v11model*, br_token, br_token_value*);
-    br_error (*_storedNewX)(br_geometry_v1_model*, br_renderer*, br_geometry_stored**, struct v11model*, br_token, br_token_value*);
+    br_error (*_renderF)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
+    br_error (*_renderX)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
+    br_error (*_renderOnScreenF)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
+    br_error (*_renderOnScreenX)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
+    br_error (*_storedNewF)(br_geometry_v1_model*, br_renderer*, br_geometry_stored**, v11model*, br_token, br_token_value*);
+    br_error (*_storedNewX)(br_geometry_v1_model*, br_renderer*, br_geometry_stored**, v11model*, br_token, br_token_value*);
     br_error (*_storedAvail)(br_geometry_v1_model*, br_int_32*, br_token_value*);
 };
 
