@@ -6,8 +6,8 @@
 
 order_info OrderAxes[32];
 
-br_matrix34* (C2_HOOK_CDECL * BrEulerToMatrix34_original)(br_matrix34* mat, br_euler* euler);
-br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, br_euler* euler) {
+br_matrix34* (C2_HOOK_CDECL * BrEulerToMatrix34_original)(br_matrix34* mat, const br_euler* euler);
+br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* euler) {
 #if defined(C2_HOOKS_ENABLED)
     return BrEulerToMatrix34_original(mat, euler);
 #else
@@ -33,8 +33,8 @@ br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, br_euler* euler) 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00531de0, BrEulerToMatrix34, BrEulerToMatrix34_original)
 
-br_euler* (C2_HOOK_CDECL * BrMatrix34ToEuler_original)(br_euler* euler, br_matrix34* mat);
-br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, br_matrix34* mat) {
+br_euler* (C2_HOOK_CDECL * BrMatrix34ToEuler_original)(br_euler* euler, const br_matrix34* mat);
+br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* mat) {
 
 #if defined(C2_HOOKS_ENABLED)
     return BrMatrix34ToEuler_original(euler, mat);
@@ -48,7 +48,7 @@ br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, br_matrix34* mat) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005320d0, BrMatrix34ToEuler, BrMatrix34ToEuler_original)
 
-br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, br_euler* euler) {
+br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, const br_euler* euler) {
     br_matrix34 tmp;
 
     BrEulerToMatrix34(&tmp, euler);
@@ -57,7 +57,7 @@ br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, br_euler* euler) {
 }
 C2_HOOK_FUNCTION(0x00532320, BrEulerToMatrix4)
 
-br_euler* C2_HOOK_CDECL BrMatrix4ToEuler(br_euler* dest, br_matrix4* mat) {
+br_euler* C2_HOOK_CDECL BrMatrix4ToEuler(br_euler* dest, const br_matrix4* mat) {
     br_matrix34 tmp;
 
     BrMatrix34Copy4(&tmp, mat);
@@ -65,8 +65,8 @@ br_euler* C2_HOOK_CDECL BrMatrix4ToEuler(br_euler* dest, br_matrix4* mat) {
 }
 C2_HOOK_FUNCTION(0x00532350, BrMatrix4ToEuler)
 
-br_quat* (C2_HOOK_CDECL * BrEulerToQuat_original)(br_quat* q, br_euler* euler);
-br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, br_euler* euler) {
+br_quat* (C2_HOOK_CDECL * BrEulerToQuat_original)(br_quat* q, const br_euler* euler);
+br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, const br_euler* euler) {
 #if defined(C2_HOOKS_ENABLED)
     return BrEulerToQuat_original(q, euler);
 #else
@@ -92,7 +92,7 @@ br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, br_euler* euler) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00532380, BrEulerToQuat, BrEulerToQuat_original)
 
-br_euler* C2_HOOK_CDECL BrQuatToEuler(br_euler* euler, br_quat* q) {
+br_euler* C2_HOOK_CDECL BrQuatToEuler(br_euler* euler, const br_quat* q) {
     br_matrix34 mat;
 
     BrQuatToMatrix34(&mat, q);

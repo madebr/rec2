@@ -9,7 +9,7 @@
 #define M_DIAG(x) (((br_scalar*)mat->m)[4*(x)])
 #define Q_EL(e) (((br_scalar*)&(q->x))[(e)])
 
-br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, br_quat* l, br_quat* r) {
+br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, const br_quat* l, const br_quat* r) {
     br_scalar x1;
     br_scalar x2;
     br_scalar x3;
@@ -29,7 +29,7 @@ br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, br_quat* l, br_quat* r) {
 }
 C2_HOOK_FUNCTION(0x005355e0, BrQuatMul)
 
-br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, br_quat* qq) {
+br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, const br_quat* qq) {
     br_scalar s;
 
     s = 1.f / sqrtf(qq->x * qq->x + qq->y * qq->y + qq->z * qq->z + qq->w * qq->w);
@@ -41,7 +41,7 @@ br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, br_quat* qq) {
 }
 C2_HOOK_FUNCTION(0x00535710, BrQuatNormalise)
 
-br_quat* C2_HOOK_CDECL BrQuatInvert(br_quat* q, br_quat* qq) {
+br_quat* C2_HOOK_CDECL BrQuatInvert(br_quat* q, const br_quat* qq) {
 
     q->x = -qq->x;
     q->y = -qq->y;
@@ -51,7 +51,7 @@ br_quat* C2_HOOK_CDECL BrQuatInvert(br_quat* q, br_quat* qq) {
 }
 C2_HOOK_FUNCTION(0x00535790, BrQuatInvert)
 
-br_quat* C2_HOOK_CDECL BrQuatSlerp(br_quat* q, br_quat* l, br_quat* r, br_scalar a, br_int_16 spins) {
+br_quat* C2_HOOK_CDECL BrQuatSlerp(br_quat* q, const br_quat* l, const br_quat* r, br_scalar a, br_int_16 spins) {
     int omega;
     int omega_spin;
     br_scalar s_omega;
@@ -93,7 +93,7 @@ br_quat* C2_HOOK_CDECL BrQuatSlerp(br_quat* q, br_quat* l, br_quat* r, br_scalar
 }
 C2_HOOK_FUNCTION(0x005357c0, BrQuatSlerp)
 
-br_matrix34* C2_HOOK_CDECL BrQuatToMatrix34(br_matrix34* mat, br_quat* q) {
+br_matrix34* C2_HOOK_CDECL BrQuatToMatrix34(br_matrix34* mat, const br_quat* q) {
     br_scalar xs;
     br_scalar ys;
     br_scalar zs;
@@ -137,7 +137,7 @@ br_matrix34* C2_HOOK_CDECL BrQuatToMatrix34(br_matrix34* mat, br_quat* q) {
 }
 C2_HOOK_FUNCTION(0x005359a0, BrQuatToMatrix34)
 
-br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, br_matrix34* mat) {
+br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, const br_matrix34* mat) {
     br_scalar tr;
     br_scalar s;
     int i;
@@ -168,7 +168,7 @@ br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, br_matrix34* mat) {
 }
 C2_HOOK_FUNCTION(0x00535ae0, BrMatrix34ToQuat)
 
-br_matrix4* C2_HOOK_CDECL BrQuatToMatrix4(br_matrix4* mat, br_quat* q) {
+br_matrix4* C2_HOOK_CDECL BrQuatToMatrix4(br_matrix4* mat, const br_quat* q) {
     br_matrix34 tmp;
 
     BrQuatToMatrix34(&tmp, q);
@@ -177,7 +177,7 @@ br_matrix4* C2_HOOK_CDECL BrQuatToMatrix4(br_matrix4* mat, br_quat* q) {
 }
 C2_HOOK_FUNCTION(0x00535c70, BrQuatToMatrix4)
 
-br_quat* C2_HOOK_CDECL BrMatrix4ToQuat(br_quat* q, br_matrix4* mat) {
+br_quat* C2_HOOK_CDECL BrMatrix4ToQuat(br_quat* q, const br_matrix4* mat) {
     br_matrix34 tmp;
 
     BrMatrix34Copy4(&tmp, mat);

@@ -5,9 +5,9 @@
 
 #include "brender/br_types.h"
 
-void C2_HOOK_CDECL BrMatrix23Copy(br_matrix23* A, br_matrix23* B);
+void C2_HOOK_CDECL BrMatrix23Copy(br_matrix23* A, const br_matrix23* B);
 
-void C2_HOOK_CDECL BrMatrix23Mul(br_matrix23* A, br_matrix23* B, br_matrix23* C);
+void C2_HOOK_CDECL BrMatrix23Mul(br_matrix23* A, const br_matrix23* B, const br_matrix23* C);
 
 void C2_HOOK_CDECL BrMatrix23Identity(br_matrix23* mat);
 
@@ -21,23 +21,23 @@ void C2_HOOK_CDECL BrMatrix23ShearX(br_matrix23* mat, br_scalar sy);
 
 void C2_HOOK_CDECL BrMatrix23ShearY(br_matrix23* mat, br_scalar sx);
 
-br_scalar C2_HOOK_CDECL BrMatrix23Inverse(br_matrix23* B, br_matrix23* A);
+br_scalar C2_HOOK_CDECL BrMatrix23Inverse(br_matrix23* B, const br_matrix23* A);
 
-void C2_HOOK_CDECL BrMatrix23LPInverse(br_matrix23* B, br_matrix23* A);
+void C2_HOOK_CDECL BrMatrix23LPInverse(br_matrix23* B, const br_matrix23* A);
 
-void C2_HOOK_CDECL BrMatrix23LPNormalise(br_matrix23* A, br_matrix23* B);
+void C2_HOOK_CDECL BrMatrix23LPNormalise(br_matrix23* A, const br_matrix23* B);
 
-void C2_HOOK_CDECL BrMatrix23ApplyP(br_vector2* A, br_vector2* B, br_matrix23* C);
+void C2_HOOK_CDECL BrMatrix23ApplyP(br_vector2* A, const br_vector2* B, const br_matrix23* C);
 
-void C2_HOOK_CDECL BrMatrix23ApplyV(br_vector2* A, br_vector2* B, br_matrix23* C);
+void C2_HOOK_CDECL BrMatrix23ApplyV(br_vector2* A, const br_vector2* B, const br_matrix23* C);
 
-void C2_HOOK_CDECL BrMatrix23TApplyP(br_vector2* A, br_vector2* B, br_matrix23* C);
+void C2_HOOK_CDECL BrMatrix23TApplyP(br_vector2* A, const br_vector2* B, const br_matrix23* C);
 
-void C2_HOOK_CDECL BrMatrix23TApplyV(br_vector2* A, br_vector2* B, br_matrix23* C);
+void C2_HOOK_CDECL BrMatrix23TApplyV(br_vector2* A, const br_vector2* B, const br_matrix23* C);
 
-void C2_HOOK_CDECL BrMatrix23Pre(br_matrix23* mat, br_matrix23* A);
+void C2_HOOK_CDECL BrMatrix23Pre(br_matrix23* mat, const br_matrix23* A);
 
-void C2_HOOK_CDECL BrMatrix23Post(br_matrix23* mat, br_matrix23* A);
+void C2_HOOK_CDECL BrMatrix23Post(br_matrix23* mat, const br_matrix23* A);
 
 void C2_HOOK_CDECL BrMatrix23PreRotate(br_matrix23* mat, br_angle rz);
 
