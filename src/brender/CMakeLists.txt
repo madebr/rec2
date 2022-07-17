@@ -137,6 +137,8 @@ add_library(brender STATIC
     core/v1db/prepmesh.h
     core/v1db/preptab.c
     core/v1db/preptab.h
+    core/v1db/render.c
+    core/v1db/render.h
     core/v1db/regsupt.c
     core/v1db/regsupt.h
     core/v1db/stackids.h

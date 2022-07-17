@@ -259,17 +259,17 @@ void C2_HOOK_CDECL BrZsBegin(br_uint_8 colour_type, void* primitive, br_uint_32 
 }
 C2_HOOK_FUNCTION(0x00525cd0, BrZsBegin)
 
-void C2_HOOK_CDECL BrZs2Begin(br_uint_8 colour_type, br_uint_8 depth_type, void* primitive, br_uint_32 size) {
+void C2_HOOK_CDECL BrZbsBegin(br_uint_8 colour_type, br_uint_8 depth_type, void* primitive, br_uint_32 size) {
     if (C2V(v1db).zx_active == 0) {
         if (BrV1dbRendererBegin((br_device_pixelmap*)BrDevLastBeginQuery(), NULL) != 0) {
             BrFailure("Failed to load renderer\n");
         }
     }
-    C2V(v1db).zx_active = BR_ZX_ZS2_ACTIVE_MASK;
+    C2V(v1db).zx_active = BR_ZX_ZBS_ACTIVE_MASK;
     C2V(v1db).heap.base = primitive;
     C2V(v1db).heap.size = size;
 }
-C2_HOOK_FUNCTION(0x00525d20, BrZs2Begin)
+C2_HOOK_FUNCTION(0x00525d20, BrZbsBegin)
 
 void C2_HOOK_CDECL BrZbEnd(void) {
 
@@ -288,14 +288,14 @@ void C2_HOOK_CDECL BrZsEnd(void) {
 }
 C2_HOOK_FUNCTION(0x00525e10, BrZsEnd)
 
-void C2_HOOK_CDECL BrZs2End(void) {
+void C2_HOOK_CDECL BrZbsEnd(void) {
 
-    C2V(v1db).zx_active &= ~BR_ZX_ZS2_ACTIVE_MASK;
+    C2V(v1db).zx_active &= ~BR_ZX_ZBS_ACTIVE_MASK;
     if (C2V(v1db).zx_active == 0 && C2V(v1db).renderer != NULL) {
         BrV1dbRendererEnd();
     }
 }
-C2_HOOK_FUNCTION(0x00525eb0, BrZs2End)
+C2_HOOK_FUNCTION(0x00525eb0, BrZbsEnd)
 
 void C2_HOOK_CDECL BrV1dbBeginWrapper_Float() {
     C2_HOOK_START();
