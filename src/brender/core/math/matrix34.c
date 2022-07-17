@@ -14,7 +14,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, mattmp2, 0x006b09f0);
 #define BR_MAC3(a, b, c, d, e, f) ((a) * (b) + (c) * (d) + (e) * (f))
 #define BR_MAC4(a, b, c, d, e, f, g, h) ((a) * (b) + (c) * (d) + (e) * (f) + (g) * (h))
 
-void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, br_matrix34* B) {
+void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, const br_matrix34* B) {
 
     A(0, 0) = B(0, 0);
     A(0, 1) = B(0, 1);
@@ -34,7 +34,7 @@ void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, br_matrix34* B) {
 }
 C2_HOOK_FUNCTION(0x005325d0, BrMatrix34Copy)
 
-void C2_HOOK_CDECL BrMatrix34Mul(br_matrix34* A, br_matrix34* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34Mul(br_matrix34* A, const br_matrix34* B, const br_matrix34* C) {
 
     A(0, 0) = BR_MAC3(B(0, 0), C(0, 0), B(0, 1), C(1, 0), B(0, 2), C(2, 0));
     A(0, 1) = BR_MAC3(B(0, 0), C(0, 1), B(0, 1), C(1, 1), B(0, 2), C(2, 1));
@@ -140,7 +140,7 @@ void C2_HOOK_CDECL BrMatrix34RotateZ(br_matrix34* mat, br_angle rz) {
 }
 C2_HOOK_FUNCTION(0x005328d0, BrMatrix34RotateZ)
 
-void C2_HOOK_CDECL BrMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3* a) {
+void C2_HOOK_CDECL BrMatrix34Rotate(br_matrix34* mat, br_angle r, const br_vector3* a) {
     br_scalar t;
     br_scalar s;
     br_scalar c;
@@ -263,7 +263,7 @@ void C2_HOOK_CDECL BrMatrix34ShearZ(br_matrix34* mat, br_scalar sx, br_scalar sy
 }
 C2_HOOK_FUNCTION(0x00532b90, BrMatrix34ShearZ)
 
-br_scalar BrMatrix34Inverse(br_matrix34* B, br_matrix34* A) {
+br_scalar BrMatrix34Inverse(br_matrix34* B, const br_matrix34* A) {
     float idet;
     float det;
     float pos;
@@ -338,7 +338,7 @@ br_scalar BrMatrix34Inverse(br_matrix34* B, br_matrix34* A) {
 }
 C2_HOOK_FUNCTION(0x00532bd0, BrMatrix34Inverse)
 
-void C2_HOOK_CDECL BrMatrix34LPInverse(br_matrix34* A, br_matrix34* B) {
+void C2_HOOK_CDECL BrMatrix34LPInverse(br_matrix34* A, const br_matrix34* B) {
 
     A(0, 0) = B(0, 0);
     A(0, 1) = B(1, 0);
@@ -358,7 +358,7 @@ void C2_HOOK_CDECL BrMatrix34LPInverse(br_matrix34* A, br_matrix34* B) {
 }
 C2_HOOK_FUNCTION(0x00532eb0, BrMatrix34LPInverse)
 
-void C2_HOOK_CDECL BrMatrix34LPNormalise(br_matrix34* A, br_matrix34* B) {
+void C2_HOOK_CDECL BrMatrix34LPNormalise(br_matrix34* A, const br_matrix34* B) {
 
     BrVector3Normalise((br_vector3*)A->m[2], (br_vector3*)B->m[2]);
     BrVector3Cross((br_vector3*)A->m[0], (br_vector3*)B->m[1], (br_vector3*)A->m[2]);
@@ -412,7 +412,7 @@ void C2_HOOK_CDECL BrMatrix34RollingBall(br_matrix34* mat, int dx, int dy, int r
 }
 C2_HOOK_FUNCTION(0x00533100, BrMatrix34RollingBall)
 
-br_matrix34* BrBoundsToMatrix34(br_matrix34* mat, br_bounds* bounds) {
+br_matrix34* BrBoundsToMatrix34(br_matrix34* mat, const br_bounds* bounds) {
     int i;
     br_vector3 tr;
     br_vector3 sc;
@@ -442,7 +442,7 @@ br_matrix34* BrBoundsToMatrix34(br_matrix34* mat, br_bounds* bounds) {
 }
 C2_HOOK_FUNCTION(0x00533290, BrBoundsToMatrix34)
 
-void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, br_matrix4* B) {
+void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, const br_matrix4* B) {
 
     A(0, 0) = B(0, 0);
     A(0, 1) = B(0, 1);
@@ -462,7 +462,7 @@ void C2_HOOK_CDECL BrMatrix34Copy4(br_matrix34* A, br_matrix4* B) {
 }
 C2_HOOK_FUNCTION(0x00533350, BrMatrix34Copy4)
 
-void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, br_fvector3* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, const br_fvector3* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
     A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
@@ -470,7 +470,7 @@ void C2_HOOK_CDECL BrMatrix34TApplyFV(br_vector3* A, br_fvector3* B, br_matrix34
 }
 C2_HOOK_FUNCTION(0x005333a0, BrMatrix34TApplyFV)
 
-void C2_HOOK_CDECL BrMatrix34Apply(br_vector3* A, br_vector4* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34Apply(br_vector3* A, const br_vector4* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC4(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0), B->v[3], C(3, 0));
     A->v[1] = BR_MAC4(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1), B->v[3], C(3, 1));
@@ -478,7 +478,7 @@ void C2_HOOK_CDECL BrMatrix34Apply(br_vector3* A, br_vector4* B, br_matrix34* C)
 }
 C2_HOOK_FUNCTION(0x00533410, BrMatrix34Apply)
 
-void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, br_vector3* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0)) + C(3, 0);
     A->v[1] = BR_MAC3(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1)) + C(3, 1);
@@ -486,7 +486,7 @@ void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, br_vector3* B, br_matrix34* C
 }
 C2_HOOK_FUNCTION(0x005334a0, BrMatrix34ApplyP)
 
-void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, br_vector3* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0));
     A->v[1] = BR_MAC3(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1));
@@ -494,7 +494,7 @@ void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, br_vector3* B, br_matrix34* C
 }
 C2_HOOK_FUNCTION(0x00533520, BrMatrix34ApplyV)
 
-void C2_HOOK_CDECL BrMatrix34TApply(br_vector4* A, br_vector4* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34TApply(br_vector4* A, const br_vector4* B, const br_matrix34* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
     A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
@@ -503,7 +503,7 @@ void C2_HOOK_CDECL BrMatrix34TApply(br_vector4* A, br_vector4* B, br_matrix34* C
 }
 C2_HOOK_FUNCTION(0x00533590, BrMatrix34TApply)
 
-void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, br_vector3* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
 
     // translation elements are presumed zero or irrelevant
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
@@ -512,7 +512,7 @@ void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, br_vector3* B, br_matrix34* 
 }
 C2_HOOK_FUNCTION(0x00533620, BrMatrix34TApplyP)
 
-void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, br_vector3* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, const br_vector3* B,const  br_matrix34* C) {
 
     // translation elements are presumed zero or irrelevant
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
@@ -521,14 +521,14 @@ void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, br_vector3* B, br_matrix34* 
 }
 C2_HOOK_FUNCTION(0x00533690, BrMatrix34TApplyV)
 
-void C2_HOOK_CDECL BrMatrix34Pre(br_matrix34* mat, br_matrix34* A) {
+void C2_HOOK_CDECL BrMatrix34Pre(br_matrix34* mat, const br_matrix34* A) {
 
     BrMatrix34Mul(&C2V(mattmp1), A, mat);
     BrMatrix34Copy(mat, &C2V(mattmp1));
 }
 C2_HOOK_FUNCTION(0x00533700, BrMatrix34Pre)
 
-void C2_HOOK_CDECL BrMatrix34Post(br_matrix34* mat, br_matrix34* A) {
+void C2_HOOK_CDECL BrMatrix34Post(br_matrix34* mat, const br_matrix34* A) {
 
     BrMatrix34Mul(&C2V(mattmp1), mat, A);
     BrMatrix34Copy(mat, &C2V(mattmp1));
@@ -583,7 +583,7 @@ void C2_HOOK_CDECL BrMatrix34PostRotateZ(br_matrix34* mat, br_angle rz) {
 }
 C2_HOOK_FUNCTION(0x00533c50, BrMatrix34PostRotateZ)
 
-void C2_HOOK_CDECL BrMatrix34PreRotate(br_matrix34* mat, br_angle r, br_vector3* axis) {
+void C2_HOOK_CDECL BrMatrix34PreRotate(br_matrix34* mat, br_angle r, const br_vector3* axis) {
 
     BrMatrix34Rotate(&C2V(mattmp2), r, axis);
     BrMatrix34Mul(&C2V(mattmp1), &C2V(mattmp2), mat);
@@ -591,7 +591,7 @@ void C2_HOOK_CDECL BrMatrix34PreRotate(br_matrix34* mat, br_angle r, br_vector3*
 }
 C2_HOOK_FUNCTION(0x00533d40, BrMatrix34PreRotate)
 
-void C2_HOOK_CDECL BrMatrix34PostRotate(br_matrix34* mat, br_angle r, br_vector3* axis) {
+void C2_HOOK_CDECL BrMatrix34PostRotate(br_matrix34* mat, br_angle r, const br_vector3* axis) {
 
     BrMatrix34Rotate(&C2V(mattmp2), r, axis);
     BrMatrix34Mul(&C2V(mattmp1), mat, &C2V(mattmp2));

@@ -83,7 +83,7 @@ br_uint_8 _CombineTransforms[7][7] = {
     },
 };
 
-void C2_HOOK_CDECL BrTransformToMatrix34(br_matrix34* mat, br_transform* xform) {
+void C2_HOOK_CDECL BrTransformToMatrix34(br_matrix34* mat, const br_transform* xform) {
 
     switch (xform->type) {
     case BR_TRANSFORM_MATRIX34:
@@ -154,7 +154,7 @@ void C2_HOOK_CDECL BrTransformToMatrix34(br_matrix34* mat, br_transform* xform) 
 }
 C2_HOOK_FUNCTION(0x00531870, BrTransformToMatrix34)
 
-void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, br_transform* xform) {
+void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, const br_transform* xform) {
     br_matrix34 tmp;
 
     if (xform->type == BR_TRANSFORM_IDENTITY) {
@@ -166,7 +166,7 @@ void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, br_transform* xform)
 }
 C2_HOOK_FUNCTION(0x00531b60, BrMatrix34PreTransform)
 
-void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, br_transform* xform) {
+void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, const br_transform* xform) {
     br_matrix34 tmp;
 
     if (xform->type == BR_TRANSFORM_IDENTITY) {
@@ -178,8 +178,8 @@ void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, br_transform* xform
 }
 C2_HOOK_FUNCTION(0x00531ba0, BrMatrix34PostTransform)
 
-void (C2_HOOK_CDECL * BrMatrix4PreTransform_original)(br_matrix4* mat, br_transform* xform);
-void C2_HOOK_CDECL BrMatrix4PreTransform(br_matrix4* mat, br_transform* xform) {
+void (C2_HOOK_CDECL * BrMatrix4PreTransform_original)(br_matrix4* mat, const br_transform* xform);
+void C2_HOOK_CDECL BrMatrix4PreTransform(br_matrix4* mat, const br_transform* xform) {
 #if defined(C2_HOOKS_ENABLED)
     BrMatrix4PreTransform_original(mat, xform);
 #else
@@ -189,7 +189,7 @@ void C2_HOOK_CDECL BrMatrix4PreTransform(br_matrix4* mat, br_transform* xform) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00531be0, BrMatrix4PreTransform, BrMatrix4PreTransform_original)
 
-void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, br_matrix34* mat) {
+void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, const br_matrix34* mat) {
 
     switch (xform->type) {
     case BR_TRANSFORM_MATRIX34:
@@ -223,7 +223,7 @@ void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, br_matrix34* mat) 
 }
 C2_HOOK_FUNCTION(0x00531c20, BrMatrix34ToTransform)
 
-void C2_HOOK_CDECL BrTransformToTransform(br_transform* dest, br_transform* src) {
+void C2_HOOK_CDECL BrTransformToTransform(br_transform* dest, const br_transform* src) {
     br_matrix34 temp;
 
     if (src->type == dest->type) {

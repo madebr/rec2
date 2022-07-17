@@ -30,16 +30,16 @@
 #define BR_EULER_XYZ_R 22
 #define BR_EULER_ZYZ_R 30
 
-br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, br_euler* euler);
+br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* euler);
 
-br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, br_matrix34* mat);
+br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* mat);
 
-br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, br_euler* euler);
+br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, const br_euler* euler);
 
-br_euler* C2_HOOK_CDECL BrMatrix4ToEuler(br_euler* dest, br_matrix4* mat);
+br_euler* C2_HOOK_CDECL BrMatrix4ToEuler(br_euler* dest, const br_matrix4* mat);
 
-br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, br_euler* euler);
+br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, const br_euler* euler);
 
-br_euler* C2_HOOK_CDECL BrQuatToEuler(br_euler* euler, br_quat* q);
+br_euler* C2_HOOK_CDECL BrQuatToEuler(br_euler* euler, const br_quat* q);
 
 #endif // REC2_ANGLES_H
