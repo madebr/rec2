@@ -1976,6 +1976,34 @@ typedef struct br_geometry_stored_dispatch {
     br_error (*_renderOnScreen)(br_geometry_stored*, br_renderer*);
 } br_geometry_stored_dispatch;
 
+typedef struct br_geometry_v1_buckets br_geometry_v1_buckets;
+
+typedef struct br_geometry_v1_buckets_dispatch {
+    void (C2_HOOK_CDECL *_reserved0)(br_object*);
+    void (C2_HOOK_CDECL *_reserved1)(br_object*);
+    void (C2_HOOK_CDECL *_reserved2)(br_object*);
+    void (C2_HOOK_CDECL *_reserved3)(br_object*);
+    void (C2_HOOK_CDECL *_free)(br_object*);
+    char* (C2_HOOK_CDECL *_identifier)(br_object*);
+    br_token (C2_HOOK_CDECL *_type)(br_object*);
+    br_boolean (C2_HOOK_CDECL *_isType)(br_object*, br_token);
+    br_device* (C2_HOOK_CDECL *_device)(br_object*);
+    br_int_32 (C2_HOOK_CDECL *_space)(br_object*);
+    br_tv_template* (C2_HOOK_CDECL *_templateQuery)(br_object*);
+    br_error (C2_HOOK_CDECL *_query)(br_object*, br_uint_32*, br_token);
+    br_error (C2_HOOK_CDECL *_queryBuffer)(br_object*, br_uint_32*, br_uint_32* ,br_size_t, br_token t);
+    br_error (C2_HOOK_CDECL *_queryMany)(br_object*, br_token_value*, void*, br_size_t, br_int_32*);
+    br_error (C2_HOOK_CDECL *_queryManySize)(br_object*, br_size_t*, br_token_value*);
+    br_error (C2_HOOK_CDECL *_queryAll)(br_object*, br_token_value*, br_size_t);
+    br_error (C2_HOOK_CDECL *_queryAllSize)(br_object*, br_size_t*);
+    br_error (C2_HOOK_CDECL *_render)(br_geometry_v1_buckets*, br_renderer*, br_primitive**, br_int_32);
+    br_error (C2_HOOK_CDECL *_renderOnScreen)(br_geometry_v1_buckets*, br_renderer*, br_primitive**, br_int_32);
+} br_geometry_v1_buckets_dispatch;
+
+typedef struct br_geometry_v1_buckets {
+    br_geometry_v1_buckets_dispatch* dispatch;
+} br_geometry_v1_buckets;
+
 typedef struct br_file_struct_member {
     br_uint_16 type;
     br_uint_32 offset;
