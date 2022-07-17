@@ -115,6 +115,8 @@ add_library(brender STATIC
     core/v1db/actsupt.h
     core/v1db/actsupt.c
     core/v1db/chunkids.h
+    core/v1db/custsupt.c
+    core/v1db/custsupt.h
     core/v1db/dbsetup.c
     core/v1db/dbsetup.h
     core/v1db/def_mat.c
