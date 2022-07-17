@@ -12,7 +12,7 @@
 #define BR_MAC3(a, b, c, d, e, f) ((a) * (b) + (c) * (d) + (e) * (f))
 #define BR_MAC4(a, b, c, d, e, f, g, h) ((a) * (b) + (c) * (d) + (e) * (f) + (g) * (h))
 
-void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, br_matrix4* B) {
+void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, const br_matrix4* B) {
 
     A(0, 0) = B(0, 0);
     A(0, 1) = B(0, 1);
@@ -33,7 +33,7 @@ void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, br_matrix4* B) {
 }
 C2_HOOK_FUNCTION(0x00535cd0, BrMatrix4Copy)
 
-void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, br_matrix4* B, br_matrix4* C) {
+void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, const br_matrix4* B, const br_matrix4* C) {
 
     A(0, 0) = BR_MAC4(B(0, 0), C(0, 0), B(0, 1), C(1, 0), B(0, 2), C(2, 0), B(0, 3), C(3, 0));
     A(0, 1) = BR_MAC4(B(0, 0), C(0, 1), B(0, 1), C(1, 1), B(0, 2), C(2, 1), B(0, 3), C(3, 1));
@@ -96,7 +96,7 @@ void C2_HOOK_CDECL BrMatrix4Scale(br_matrix4* mat, br_scalar sx, br_scalar sy, b
 }
 C2_HOOK_FUNCTION(0x00536030, BrMatrix4Scale)
 
-br_scalar BrMatrix4Inverse(br_matrix4* A, br_matrix4* B) {
+br_scalar BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B) {
     int i;
     int j;
     br_scalar det;
@@ -127,7 +127,7 @@ br_scalar Determinant3(br_scalar a1, br_scalar a2, br_scalar a3, br_scalar b1, b
 }
 C2_HOOK_FUNCTION(0x005367b0, Determinant3)
 
-br_scalar BrMatrix4Determinant(br_matrix4* mat) {
+br_scalar BrMatrix4Determinant(const br_matrix4* mat) {
     br_scalar a1;
     br_scalar a2;
     br_scalar a3;
@@ -172,7 +172,7 @@ br_scalar BrMatrix4Determinant(br_matrix4* mat) {
 }
 C2_HOOK_FUNCTION(0x005360f0, BrMatrix4Determinant)
 
-void C2_HOOK_CDECL BrMatrix4Adjoint(br_matrix4* A, br_matrix4* B) {
+void C2_HOOK_CDECL BrMatrix4Adjoint(br_matrix4* A, const br_matrix4* B) {
     br_scalar a1;
     br_scalar a2;
     br_scalar a3;
@@ -259,7 +259,7 @@ void C2_HOOK_CDECL BrMatrix4Perspective(br_matrix4* mat, br_angle field_of_view,
 }
 C2_HOOK_FUNCTION(0x00536820, BrMatrix4Perspective)
 
-void C2_HOOK_CDECL BrMatrix4Apply(br_vector4* A, br_vector4* B, br_matrix4* C) {
+void C2_HOOK_CDECL BrMatrix4Apply(br_vector4* A, const br_vector4* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC4(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0), B->v[3], C(3, 0));
     A->v[1] = BR_MAC4(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1), B->v[3], C(3, 1));
@@ -268,7 +268,7 @@ void C2_HOOK_CDECL BrMatrix4Apply(br_vector4* A, br_vector4* B, br_matrix4* C) {
 }
 C2_HOOK_FUNCTION(0x005368e0, BrMatrix4Apply)
 
-void C2_HOOK_CDECL BrMatrix4ApplyP(br_vector4* A, br_vector3* B, br_matrix4* C) {
+void C2_HOOK_CDECL BrMatrix4ApplyP(br_vector4* A, const br_vector3* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0)) + C(3, 0);
     A->v[1] = BR_MAC3(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1)) + C(3, 1);
@@ -277,7 +277,7 @@ void C2_HOOK_CDECL BrMatrix4ApplyP(br_vector4* A, br_vector3* B, br_matrix4* C) 
 }
 C2_HOOK_FUNCTION(0x00536990, BrMatrix4ApplyP)
 
-void C2_HOOK_CDECL BrMatrix4ApplyV(br_vector4* A, br_vector3* B, br_matrix4* C) {
+void C2_HOOK_CDECL BrMatrix4ApplyV(br_vector4* A, const br_vector3* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0));
     A->v[1] = BR_MAC3(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1));
@@ -286,7 +286,7 @@ void C2_HOOK_CDECL BrMatrix4ApplyV(br_vector4* A, br_vector3* B, br_matrix4* C) 
 }
 C2_HOOK_FUNCTION(0x00536a30, BrMatrix4ApplyV)
 
-void C2_HOOK_CDECL BrMatrix4TApply(br_vector4* A, br_vector4* B, br_matrix4* C) {
+void C2_HOOK_CDECL BrMatrix4TApply(br_vector4* A, const br_vector4* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC4(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2), B->v[3], C(0, 3));
     A->v[1] = BR_MAC4(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2), B->v[3], C(1, 3));
@@ -295,7 +295,7 @@ void C2_HOOK_CDECL BrMatrix4TApply(br_vector4* A, br_vector4* B, br_matrix4* C) 
 }
 C2_HOOK_FUNCTION(0x00536ac0, BrMatrix4TApply)
 
-void C2_HOOK_CDECL BrMatrix4TApplyP(br_vector4* A, br_vector3* B, br_matrix4* C) {
+void C2_HOOK_CDECL BrMatrix4TApplyP(br_vector4* A, const br_vector3* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2)) + C(0, 3);
     A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2)) + C(1, 3);
@@ -304,7 +304,7 @@ void C2_HOOK_CDECL BrMatrix4TApplyP(br_vector4* A, br_vector3* B, br_matrix4* C)
 }
 C2_HOOK_FUNCTION(0x00536b70, BrMatrix4TApplyP)
 
-void C2_HOOK_CDECL BrMatrix4TApplyV(br_vector4* A, br_vector3* B, br_matrix4* C) {
+void C2_HOOK_CDECL BrMatrix4TApplyV(br_vector4* A, const br_vector3* B, const br_matrix4* C) {
 
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
     A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
@@ -313,7 +313,7 @@ void C2_HOOK_CDECL BrMatrix4TApplyV(br_vector4* A, br_vector3* B, br_matrix4* C)
 }
 C2_HOOK_FUNCTION(0x00536c10, BrMatrix4TApplyV)
 
-void C2_HOOK_CDECL BrMatrix4Copy34(br_matrix4* A, br_matrix34* B) {
+void C2_HOOK_CDECL BrMatrix4Copy34(br_matrix4* A, const br_matrix34* B) {
 
     A(0, 0) = B(0, 0);
     A(0, 1) = B(0, 1);
@@ -334,7 +334,7 @@ void C2_HOOK_CDECL BrMatrix4Copy34(br_matrix4* A, br_matrix34* B) {
 }
 C2_HOOK_FUNCTION(0x00536ca0, BrMatrix4Copy34)
 
-void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, br_matrix34* B, br_matrix4* C) {
+void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, const br_matrix34* B, const br_matrix4* C) {
 
     A(0, 0) = BR_MAC3(B(0, 0), C(0, 0), B(0, 1), C(1, 0), B(0, 2), C(2, 0));
     A(0, 1) = BR_MAC3(B(0, 0), C(0, 1), B(0, 1), C(1, 1), B(0, 2), C(2, 1));
@@ -355,7 +355,7 @@ void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, br_matrix34* B, br_matrix4* C) 
 }
 C2_HOOK_FUNCTION(0x00536d10, BrMatrix4Mul34)
 
-void C2_HOOK_CDECL BrMatrix4Pre34(br_matrix4* A, br_matrix34* B) {
+void C2_HOOK_CDECL BrMatrix4Pre34(br_matrix4* A, const br_matrix34* B) {
     br_matrix4 C;
 
     c2_memcpy(&C, A, sizeof(*A));
