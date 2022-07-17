@@ -1916,7 +1916,7 @@ typedef struct br_renderer_dispatch {
     br_error (*_stateStoredAvail)(br_renderer*, br_int_32*, br_uint_32, br_token_value*);
     br_error (*_bufferStoredNew)(br_renderer*, br_buffer_stored**, br_token, br_device_pixelmap*, br_token_value*);
     br_error (*_bufferStoredAvail)(br_renderer*, br_int_32*, br_token, br_token_value*);
-    br_error (*_partSet)(br_renderer*, br_token, br_int_32, br_token, br_uint_32);
+    br_error (*_partSet)(br_renderer*, br_token, br_int_32, br_token, uintptr_t);
     br_error (*_partSetMany)(br_renderer*, br_token, br_int_32, br_token_value*, br_int_32*);
     br_error (*_partQuery)(br_renderer*, br_token, br_int_32, br_uint_32*, br_token);
     br_error (*_partQueryBuffer)(br_renderer*, br_token, br_int_32, br_uint_32*, br_uint_32*, br_size_t, br_token);
@@ -2126,6 +2126,11 @@ enum {
     BR_ZX_ZB_ACTIVE_MASK = 0x1,
     BR_ZX_ZS_ACTIVE_MASK = 0x2,
     BR_ZX_ZBS_ACTIVE_MASK = 0x4,
+};
+
+enum {
+    BR_ZB_RENDERING = 0x1,
+    BR_ZS_RENDERING = 0x2,
 };
 
 typedef struct br_v1db_state {
@@ -3064,7 +3069,7 @@ enum {
  * Flags to BrMapUpdate()
  */
 enum {
-    BR_MAPU_ALL = 0x7fff
+    BR_MAPU_ALL = 0x0fff
 };
 
 /*
