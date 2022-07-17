@@ -24,6 +24,8 @@
 #define BrFloatToFixedUFraction(f) ((br_fixed_luf)((f)*65536.f))
 #define BrFixedUFractionToFloat(f) ((float)(((br_fixed_luf)(f))*(1.f/65536.f)))
 
+#define BrFixedNeg(f) ((f) ^ 0x80000000)
+
 #if 1
 #define BrFloatToScalar(f) f
 #define BrScalarToFlat(f) f
