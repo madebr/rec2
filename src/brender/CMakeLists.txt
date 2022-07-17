@@ -129,6 +129,8 @@ add_library(brender STATIC
     core/v1db/enables.h
     core/v1db/matsupt.c
     core/v1db/matsupt.h
+    core/v1db/modrend.c
+    core/v1db/modrend.h
     core/v1db/modsupt.c
     core/v1db/modsupt.h
     core/v1db/otable.c
