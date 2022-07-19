@@ -19,7 +19,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGraf_spec, gGraf_specs, 2, 0x00662208); // FIX
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFatalErrorMessage, 512, 0x006acc88);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFatalErrorMessageValid, 0x006ad498);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gReal_back_screen, 0x0074d360);
 
@@ -47,9 +48,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterStart, 0x006acc80);
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_kHz, 0x006ad1f0);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
-
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFatalErrorMessage, 512, 0x006acc88);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gFatalErrorMessageValid, 0x006ad498);
 
 void C2_HOOK_FASTCALL KeyBegin(void) {
     C2V(gReal_back_screen) = NULL;
