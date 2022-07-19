@@ -10,7 +10,6 @@
 #include <windows.h>
 #include <dinput.h>
 
-C2_HOOK_VARIABLE_DECLARE(int, gIsFatalError);
 C2_HOOK_VARIABLE_DECLARE(int, gExitCode);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gReal_back_screen);
 
