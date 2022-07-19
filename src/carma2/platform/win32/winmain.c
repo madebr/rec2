@@ -146,8 +146,7 @@ void C2_HOOK_FASTCALL ConfigurePedAlienPaths() {
 C2_HOOK_FUNCTION(0x004d6f70, ConfigurePedAlienPaths);
 
 int (APIENTRY * WinMain_original)(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
-int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
-{
+int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return WinMain_original(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 #else

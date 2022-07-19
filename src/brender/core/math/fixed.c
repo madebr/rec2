@@ -582,7 +582,7 @@ C2_HOOK_FUNCTION(0x00537a13, _BrISqrt64)
 
 #if 0
 // working inprecise
-uint16_t _BrFastSqrt32(uint32_t v) {
+uint16_t C2_HOOK_CDECL _BrFastSqrt32(uint32_t v) {
     uint32_t exp;
 
     if (v == 0) {
