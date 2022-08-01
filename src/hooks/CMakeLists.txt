@@ -10,7 +10,9 @@ function(add_hook_injector TARGET VICTIMEXE)
     get_property(hook_source_dir GLOBAL PROPERTY HOOK_SOURCE_DIR)
 
     list(APPEND CMAKE_MODULE_PATH "${hook_source_dir}/cmake")
-    find_package(Detours REQUIRED)
+    if(NOT REC2_VENDORED)
+        find_package(Detours REQUIRED)
+    endif()
 
     enable_language(CXX)
 
@@ -40,7 +42,9 @@ function(add_hook_plugin TARGET)
     get_property(hook_source_dir GLOBAL PROPERTY HOOK_SOURCE_DIR)
 
     list(APPEND CMAKE_MODULE_PATH "${hook_source_dir}/cmake")
-    find_package(Detours REQUIRED)
+    if(NOT REC2_VENDORED)
+        find_package(Detours REQUIRED)
+    endif()
 
     add_library(${TARGET} MODULE
         ${ARGN}

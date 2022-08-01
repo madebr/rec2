@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.15)
 project(rec2 C)
 
 option(KEEP_ACTIVE_IN_BACKGROUND "Keep the game active when alt-tabbing to another application" OFF)
+option(REC2_VENDORED "Use vendored dependencies" ON)
 
 if(KEEP_ACTIVE_IN_BACKGROUND)
     add_compile_definitions(KEEP_ACTIVE_IN_BACKGROUND)
@@ -32,6 +33,10 @@ else()
         add_link_options(-Wl,--disable-stdcall-fixup)
     endif()
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+    if(REC2_VENDORED)
+        add_subdirectory(external/detours EXCLUDE_FROM_ALL)
+    endif()
     add_subdirectory(src/hooks)
 endif()
 
