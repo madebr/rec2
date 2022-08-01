@@ -141,12 +141,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, member_type_names, 32, 0x0066
     "float_vector4",
 });
 
-typedef struct {
-    int type;
-    void* value;
-    unsigned int count;
-} datafile_stack_t;
-
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(datafile_stack_t, DatafileStack, 1024, 0x006ad9b0);
 
 #if defined(C2_HOOKS_ENABLED) || !defined(BRENDER_FIX_BUGS)
