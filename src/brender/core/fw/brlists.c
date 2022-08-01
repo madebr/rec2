@@ -4,7 +4,7 @@
 
 #include <assert.h>
 
-void BrNewList(br_list* list) {
+void C2_HOOK_CDECL BrNewList(br_list* list) {
 
     list->head = (br_node*)&list->_null;
     list->_null = NULL;
@@ -12,7 +12,7 @@ void BrNewList(br_list* list) {
 }
 C2_HOOK_FUNCTION(0x00529960, BrNewList)
 
-void BrAddHead(br_list* list, br_node* node) {
+void C2_HOOK_CDECL BrAddHead(br_list* list, br_node* node) {
 
     assert(node != NULL);
     assert(list != NULL);
@@ -26,7 +26,7 @@ void BrAddHead(br_list* list, br_node* node) {
 }
 C2_HOOK_FUNCTION(0x00529980, BrAddHead)
 
-void BrAddTail(br_list* list, br_node* node) {
+void C2_HOOK_CDECL BrAddTail(br_list* list, br_node* node) {
 
     node->next = (br_node*)&list->_null;
     node->prev = list->tail;
@@ -35,7 +35,7 @@ void BrAddTail(br_list* list, br_node* node) {
 }
 C2_HOOK_FUNCTION(0x005299a0, BrAddTail)
 
-br_node* BrRemHead(br_list* list) {
+br_node* C2_HOOK_CDECL BrRemHead(br_list* list) {
     br_node* n;
 
     n = list->head;
@@ -48,7 +48,7 @@ br_node* BrRemHead(br_list* list) {
 }
 C2_HOOK_FUNCTION(0x005299c0, BrRemHead)
 
-br_node* BrRemTail(br_list* list) {
+br_node* C2_HOOK_CDECL BrRemTail(br_list* list) {
     br_node* n;
 
     n = list->tail;
@@ -61,7 +61,7 @@ br_node* BrRemTail(br_list* list) {
 }
 C2_HOOK_FUNCTION(0x005299e0, BrRemTail)
 
-void BrInsert(br_list* list, br_node* here, br_node* node) {
+void C2_HOOK_CDECL BrInsert(br_list* list, br_node* here, br_node* node) {
 
     node->prev = here;
     node->next = here->next;
@@ -70,7 +70,7 @@ void BrInsert(br_list* list, br_node* here, br_node* node) {
 }
 C2_HOOK_FUNCTION(0x00529a00, BrInsert)
 
-br_node* BrRemove(br_node* node) {
+br_node* C2_HOOK_CDECL BrRemove(br_node* node) {
 
     node->next->prev = node->prev;
     node->prev->next = node->next;
@@ -78,13 +78,13 @@ br_node* BrRemove(br_node* node) {
 }
 C2_HOOK_FUNCTION(0x00529a20, BrRemove)
 
-void BrSimpleNewList(br_simple_list* list) {
+void C2_HOOK_CDECL BrSimpleNewList(br_simple_list* list) {
 
     list->head = NULL;
 }
 C2_HOOK_FUNCTION(0x00529a40, BrSimpleNewList)
 
-void BrSimpleAddHead(br_simple_list* list, br_simple_node* node) {
+void C2_HOOK_CDECL BrSimpleAddHead(br_simple_list* list, br_simple_node* node) {
 
     node->next = list->head;
     node->prev = (br_simple_node**)&list->head;
@@ -95,7 +95,7 @@ void BrSimpleAddHead(br_simple_list* list, br_simple_node* node) {
 }
 C2_HOOK_FUNCTION(0x00529a50, BrSimpleAddHead)
 
-br_simple_node* BrSimpleRemHead(br_simple_list* list) {
+br_simple_node* C2_HOOK_CDECL BrSimpleRemHead(br_simple_list* list) {
     br_simple_node* node;
 
     node = list->head;
@@ -106,7 +106,7 @@ br_simple_node* BrSimpleRemHead(br_simple_list* list) {
 }
 C2_HOOK_FUNCTION(0x00529a70, BrSimpleRemHead)
 
-void BrSimpleInsert(br_simple_list* list, br_simple_node* here, br_simple_node* node) {
+void C2_HOOK_CDECL BrSimpleInsert(br_simple_list* list, br_simple_node* here, br_simple_node* node) {
 
     node->prev = &here->next;
     node->next = here->next;
@@ -117,7 +117,7 @@ void BrSimpleInsert(br_simple_list* list, br_simple_node* here, br_simple_node* 
 }
 C2_HOOK_FUNCTION(0x00529aa0, BrSimpleInsert)
 
-br_simple_node* BrSimpleRemove(br_simple_node* node) {
+br_simple_node* C2_HOOK_CDECL BrSimpleRemove(br_simple_node* node) {
 
     *node->prev = node->next;
     if (node->next != NULL) {

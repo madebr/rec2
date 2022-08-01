@@ -166,7 +166,7 @@ br_scalar C2_HOOK_CDECL BrZbDepthToScreenZ(br_uint_32 depth_z, br_camera* camera
 }
 C2_HOOK_FUNCTION(0x00527240, BrZbDepthToScreenZ)
 
-br_uint_32 BrZbScreenZToDepth(br_scalar sz, br_camera* camera) {
+br_uint_32 C2_HOOK_CDECL BrZbScreenZToDepth(br_scalar sz, br_camera* camera) {
     br_uint_32 depth;
 
     depth = (br_uint_32)(-sz * 65536.f);

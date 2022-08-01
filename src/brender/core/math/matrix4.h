@@ -13,11 +13,11 @@ void C2_HOOK_CDECL BrMatrix4Identity(br_matrix4* mat);
 
 void C2_HOOK_CDECL BrMatrix4Scale(br_matrix4* mat, br_scalar sx, br_scalar sy, br_scalar sz);
 
-br_scalar BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B);
+br_scalar C2_HOOK_CDECL BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B);
 
-br_scalar Determinant3(br_scalar a1, br_scalar a2, br_scalar a3, br_scalar b1, br_scalar b2, br_scalar b3, br_scalar c1, br_scalar c2, br_scalar c3);
+br_scalar C2_HOOK_STDCALL Determinant3(br_scalar a1, br_scalar a2, br_scalar a3, br_scalar b1, br_scalar b2, br_scalar b3, br_scalar c1, br_scalar c2, br_scalar c3);
 
-br_scalar BrMatrix4Determinant(const br_matrix4* mat);
+br_scalar C2_HOOK_CDECL BrMatrix4Determinant(const br_matrix4* mat);
 
 void C2_HOOK_CDECL BrMatrix4Adjoint(br_matrix4* A, const br_matrix4* B);
 

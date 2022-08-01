@@ -297,7 +297,7 @@ void C2_HOOK_CDECL BrZbsEnd(void) {
 }
 C2_HOOK_FUNCTION(0x00525eb0, BrZbsEnd)
 
-void C2_HOOK_CDECL BrV1dbBeginWrapper_Float() {
+void C2_HOOK_CDECL BrV1dbBeginWrapper_Float(void) {
     C2_HOOK_START();
     BrBegin();
     BrV1dbBegin();

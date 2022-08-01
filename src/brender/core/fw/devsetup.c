@@ -13,7 +13,7 @@ br_pixelmap* C2_HOOK_CDECL BrDevLastBeginQuery(void) {
 }
 C2_HOOK_FUNCTION(0x00528d50, BrDevLastBeginQuery)
 
-void BrDevLastBeginSet(br_pixelmap* pm) {
+void C2_HOOK_CDECL BrDevLastBeginSet(br_pixelmap* pm) {
 
     C2V(last_begin_screen) = pm;
 }

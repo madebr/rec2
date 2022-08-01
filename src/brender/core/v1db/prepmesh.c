@@ -68,7 +68,7 @@ int C2_HOOK_CDECL FacesCompare(const void* p1, const void* p2) {
 }
 C2_HOOK_FUNCTION(0x00520840, FacesCompare)
 
-int TVCompare_XYZ(const void* p1, const void* p2) {
+int C2_HOOK_CDECL TVCompare_XYZ(const void* p1, const void* p2) {
     prep_vertex* tv1;
     prep_vertex* tv2;
     br_vertex* v1;
@@ -97,7 +97,7 @@ int TVCompare_XYZ(const void* p1, const void* p2) {
 }
 C2_HOOK_FUNCTION(0x00520860, TVCompare_XYZ)
 
-int TVCompare_MXYZUVN(const void* p1, const void* p2) {
+int C2_HOOK_CDECL TVCompare_MXYZUVN(const void* p1, const void* p2) {
     prep_vertex* tv1;
     prep_vertex* tv2;
     br_vertex* v1;
@@ -144,7 +144,7 @@ int TVCompare_MXYZUVN(const void* p1, const void* p2) {
 }
 C2_HOOK_FUNCTION(0x005208e0, TVCompare_MXYZUVN)
 
-int TVCompare_MVN(const void* p1, const void* p2) {
+int C2_HOOK_CDECL TVCompare_MVN(const void* p1, const void* p2) {
     prep_vertex* tv1;
     prep_vertex* tv2;
     int i;

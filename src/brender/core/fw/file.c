@@ -17,7 +17,7 @@ void C2_HOOK_CDECL _BrFileFree(void* res, br_uint_8 res_class, br_size_t size) {
 }
 C2_HOOK_FUNCTION(0x0052cc60, _BrFileFree)
 
-br_uint_32 C2_HOOK_CDECL BrFileAttributes() {
+br_uint_32 C2_HOOK_CDECL BrFileAttributes(void) {
 
     return C2V(fw).fsys->attributes();
 }

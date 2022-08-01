@@ -317,7 +317,7 @@ void C2_HOOK_CDECL BrZsModelRender(br_actor* actor, br_model* model, br_material
 }
 C2_HOOK_FUNCTION(0x00523070, BrZsModelRender)
 
-br_renderbounds_cbfn* BrZbRenderBoundsCallbackSet(br_renderbounds_cbfn* new_cbfn) {
+br_renderbounds_cbfn* C2_HOOK_CDECL BrZbRenderBoundsCallbackSet(br_renderbounds_cbfn* new_cbfn) {
 
     if ((C2V(v1db).zx_active & BR_ZX_ZB_ACTIVE_MASK) == 0) {
         BrFailure("BrZbSetRenderBoundsCallback called before BrZbBegin");
@@ -326,7 +326,7 @@ br_renderbounds_cbfn* BrZbRenderBoundsCallbackSet(br_renderbounds_cbfn* new_cbfn
 }
 C2_HOOK_FUNCTION(0x005230a0, BrZbRenderBoundsCallbackSet)
 
-br_renderbounds_cbfn* BrZsRenderBoundsCallbackSet(br_renderbounds_cbfn* new_cbfn) {
+br_renderbounds_cbfn* C2_HOOK_CDECL BrZsRenderBoundsCallbackSet(br_renderbounds_cbfn* new_cbfn) {
 
     if ((C2V(v1db).zx_active & BR_ZX_ZS_ACTIVE_MASK) == 0) {
         BrFailure("BrZsSetRenderBoundsCallback called before BrZsBegin");

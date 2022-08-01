@@ -25,7 +25,7 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapAllocateSub(br_pixelmap* src, br_int_32 x, 
 }
 C2_HOOK_FUNCTION(0x00537d60, BrPixelmapAllocateSub)
 
-void BrPixelmapFree(br_pixelmap* src) {
+void C2_HOOK_CDECL BrPixelmapFree(br_pixelmap* src) {
 
     CheckDispatch((br_device_pixelmap*)src);
     if (BrDevLastBeginQuery() == src) {
@@ -240,7 +240,7 @@ void C2_HOOK_CDECL BrPixelmapDirtyRectangleClear(br_pixelmap* dst, br_int_32 x, 
 }
 #endif
 
-void BrPixelmapDirtyRectangleDoubleBuffer(br_pixelmap* dst, br_pixelmap* src, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h) {
+void C2_HOOK_CDECL BrPixelmapDirtyRectangleDoubleBuffer(br_pixelmap* dst, br_pixelmap* src, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h) {
     br_rectangle r;
 
     CheckDispatch((br_device_pixelmap*)dst);
@@ -287,7 +287,7 @@ void C2_HOOK_CDECL BrPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00538880, BrPixelmapCopy, BrPixelmapCopy_original)
 
-void BrPixelmapLine(br_pixelmap* dst, br_int_32 x1, br_int_32 y1, br_int_32 x2, br_int_32 y2, br_uint_32 colour) {
+void C2_HOOK_CDECL BrPixelmapLine(br_pixelmap* dst, br_int_32 x1, br_int_32 y1, br_int_32 x2, br_int_32 y2, br_uint_32 colour) {
      br_point s;
      br_point e;
 

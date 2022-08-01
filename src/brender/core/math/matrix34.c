@@ -263,7 +263,7 @@ void C2_HOOK_CDECL BrMatrix34ShearZ(br_matrix34* mat, br_scalar sx, br_scalar sy
 }
 C2_HOOK_FUNCTION(0x00532b90, BrMatrix34ShearZ)
 
-br_scalar BrMatrix34Inverse(br_matrix34* B, const br_matrix34* A) {
+br_scalar C2_HOOK_CDECL BrMatrix34Inverse(br_matrix34* B, const br_matrix34* A) {
     float idet;
     float det;
     float pos;
@@ -412,7 +412,7 @@ void C2_HOOK_CDECL BrMatrix34RollingBall(br_matrix34* mat, int dx, int dy, int r
 }
 C2_HOOK_FUNCTION(0x00533100, BrMatrix34RollingBall)
 
-br_matrix34* BrBoundsToMatrix34(br_matrix34* mat, const br_bounds* bounds) {
+br_matrix34* C2_HOOK_CDECL BrBoundsToMatrix34(br_matrix34* mat, const br_bounds* bounds) {
     int i;
     br_vector3 tr;
     br_vector3 sc;
