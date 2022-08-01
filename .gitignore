@@ -1,2 +1,7 @@
 /*build*
+*.py[co]
 *.class
+symbols.json
+*.gpr
+*.lock
+*.rep
