@@ -1,0 +1,55 @@
+name: Build
+
+on: [push, pull_request]
+
+jobs:
+  Symbols:
+    name: Collect symbols
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install jq
+    - uses: actions/setup-python@v4
+      with:
+        python-version: '3.x'
+    - name: Collect symbols
+      run: |
+        python scripts/collect-symbols.py --summary -Werror
+    - name: Print symbols.json
+      run: |
+        cat symbols.json | jq
+
+  Build:
+    name: ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - { name: MinGW,  os: ubuntu-latest, cmake_args: '-DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/mingw32.cmake' }
+          - { name: MSVC,   os: windows-latest }
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+    - name: Setup Ninja
+      uses: ashutoshvarma/setup-ninja@master
+    - uses: ilammy/msvc-dev-cmd@release/v1
+      if: ${{ matrix.platform.name == 'MSVC' }}
+      with:
+        arch: x86
+    - name: Install MinGW
+      if: ${{ matrix.platform.name == 'MinGW' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-mingw-w64-i686 g++-mingw-w64-i686
+    - name: CMake (configure)
+      run: |
+        cmake -S . -B build -GNinja ${{ matrix.platform.cmake_args }} -DREC2_VENDORED=ON -DREC2_WERROR=ON
+    - name: CMake (build)
+      run: |
+        cmake --build build
