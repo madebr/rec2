@@ -126,13 +126,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_material_FM, 17,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_material_F, 0x00663900, { "br_material", BR_ASIZE(C2V(br_material_FM)), C2V(br_material_FM), sizeof(br_material) });
 
-typedef struct {
-    br_uint_32 id;
-    size_t offset;
-    int table;
-} material_map_item;
-
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(material_map_item, MaterialMaps, 5, 0x00663910, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_df_material_map_item, MaterialMaps, 5, 0x00663910, {
     { CHUNKID_MATERIAL_COLOUR_MAP, offsetof(br_material, colour_map), 0 },
     { CHUNKID_MATERIAL_INDEX_BLEND, offsetof(br_material, index_blend), 1 },
     { CHUNKID_MATERIAL_INDEX_SHADE, offsetof(br_material, index_shade), 1 },
