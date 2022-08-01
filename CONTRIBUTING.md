@@ -26,6 +26,22 @@ Run `python scripts/create-process.py -h` for help.
 
 After running the script in the previous step, the ghidra project (`c2.gpr`) can be opened with Ghidra.
 
+## Debugging rec2
+
+Debuging rec2 is possible by using Visual Studio:
+
+1. Make sure you copied `rec2_inject.exe` and `rec2.dll` to the Carmageddon 2 folder. The `copy_hooks` target takes care of this.
+   - `rec2_inject.exe` must be copied in the same folder as `CARMA2_HW.EXE`
+   - `rec2.dll` must be copied to a `plugins` subdirectory
+2. In Visual Studio, open `rec2_inject.exe` as a new project
+3. Install and enable [Child Process Debugging](https://marketplace.visualstudio.com/items?itemName=vsdbgplat.MicrosoftChildProcessDebuggingPowerTool)
+4. Start the executable
+
+## Hints
+
+- Copy 32-bit Direct3D dll's from [dgVoodoo](http://dege.freeweb.hu/dgVoodoo2/dgVoodoo2/) in the Carmageddon 2 folder to run Carmageddon in a Window. Version 2.51 is compatible with Carmageddon 2.
+Also copy `dgVoodooSetup.exe` into the Carmageddon folder and make sure the `Windowed` combobox is selected.
+
 ## Code conventions
 
 - No hard tabs, only soft tabs. Indentation if 4 characters.
@@ -49,7 +65,7 @@ After running the script in the previous step, the ghidra project (`c2.gpr`) can
   2. In later commits, implement these functions.
 - Pay attention to the x86 call convention of functions:
   `cdecl`, `fastcall` and `stdcall` are used in 99.9% of cases
-
+- The Carmageddon 2 is baded on Carmageddon 1. So a lot of code is shared between these games. See [DethRace](https://github.com/dethrace-labs/dethrace) for inspiration.
 
 ## Various
 
