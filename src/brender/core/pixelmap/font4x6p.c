@@ -70,7 +70,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, br_font4x6f_glyph_offsets, 256
     0,      0,      0,      582,    0,      0,      0,      0,
 });
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, br_font4x6f_glyphs, 624, 0x0066f574, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, br_font4x6f_glyphs, 624, 0x0066f574, {
     0x00,   0x00,   0x00,   0x00,   0x00,   0x00,   0x80,   0x80,
     0x80,   0x00,   0x80,   0x00,   0xa0,   0xa0,   0x00,   0x00,
     0x00,   0x00,   0x50,   0xf8,   0x50,   0xf8,   0x50,   0x00,
