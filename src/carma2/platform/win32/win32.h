@@ -17,7 +17,7 @@ C2_HOOK_VARIABLE_DECLARE(HWND, gHWnd);
 C2_HOOK_VARIABLE_DECLARE(int, gWindowActiveState);  // FIXME: enum (0,1) => background(d3d or glide), 2=> active
 
 C2_HOOK_VARIABLE_DECLARE(int, gWindowMovingResizing);
-C2_HOOK_VARIABLE_DECLARE(LPDIRECTINPUTDEVICE, gDirectInputDevice);
+C2_HOOK_VARIABLE_DECLARE(LPDIRECTINPUTDEVICEA, gDirectInputDevice);
 C2_HOOK_VARIABLE_DECLARE(char*, gRenderer);
 C2_HOOK_VARIABLE_DECLARE(int, gMouseLButtonDown);
 C2_HOOK_VARIABLE_DECLARE(int, gMouseRButtonDown);
