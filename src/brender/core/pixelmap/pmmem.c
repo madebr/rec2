@@ -168,6 +168,7 @@ void C2_HOOK_STDCALL CheckDispatch(br_device_pixelmap* pm) {
         pm->dispatch = &C2V(devicePixelmapDispatch);
     }
 }
+C2_HOOK_FUNCTION(0x00539730, CheckDispatch)
 
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_allocateSub(br_device_pixelmap* self, br_device_pixelmap** newpm, br_rectangle* rect) {
     br_device_pixelmap* pm;
