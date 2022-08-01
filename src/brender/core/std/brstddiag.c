@@ -21,7 +21,7 @@ void C2_HOOK_CDECL BrStdioWarning(char* message) {
 }
 C2_HOOK_FUNCTION(0x0053fa00, BrStdioWarning)
 
-void BrStdioFailure(char* message) {
+void C2_HOOK_CDECL BrStdioFailure(char* message) {
 
 #if 0
     // FIXME: 'real' implementation ends BRender

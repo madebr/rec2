@@ -15,7 +15,7 @@
 #include "c2_string.h"
 
 C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * QuitGame_original)(void);
-C2_NORETURN void C2_HOOK_FASTCALL QuitGame() {
+C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     QuitGame_original();

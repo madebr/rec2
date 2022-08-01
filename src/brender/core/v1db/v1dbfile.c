@@ -1209,7 +1209,7 @@ int C2_HOOK_STDCALL WriteActor(br_actor* a, br_datafile* df) {
 }
 C2_HOOK_FUNCTION(0x00524400, WriteActor)
 
-br_uint_32 BrActorSaveMany(char* filename, br_actor** actors, br_uint_16 num) {
+br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_uint_16 num) {
     br_datafile* df;
     int i;
 
@@ -1227,7 +1227,7 @@ br_uint_32 BrActorSaveMany(char* filename, br_actor** actors, br_uint_16 num) {
 }
 C2_HOOK_FUNCTION(0x005243a0, BrActorSaveMany)
 
-br_uint_32 BrMaterialLoadMany(char* filename, br_material** materials, br_uint_16 num) {
+br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materials, br_uint_16 num) {
     br_datafile* df;
     int count;
     int r;
@@ -1275,7 +1275,7 @@ br_uint_32 C2_HOOK_STDCALL WriteMaterial(br_material* mp, br_datafile* df) {
 }
 C2_HOOK_FUNCTION(0x005247f0, WriteMaterial)
 
-br_uint_32 BrMaterialSaveMany(char* filename, br_material** materials, br_uint_16 num) {
+br_uint_32 C2_HOOK_CDECL BrMaterialSaveMany(char* filename, br_material** materials, br_uint_16 num) {
     br_datafile* df;
     int i;
     int count;
@@ -1303,7 +1303,7 @@ br_uint_32 BrMaterialSaveMany(char* filename, br_material** materials, br_uint_1
 }
 C2_HOOK_FUNCTION(0x00524670, BrMaterialSaveMany)
 
-br_model* BrModelLoad(char* filename) {
+br_model* C2_HOOK_CDECL BrModelLoad(char* filename) {
     br_model* ptr;
 
     if (BrModelLoadMany(filename, &ptr, 1) == 1) {
@@ -1313,13 +1313,13 @@ br_model* BrModelLoad(char* filename) {
 }
 C2_HOOK_FUNCTION(0x005248e0, BrModelLoad)
 
-br_uint_32 BrModelSave(char* filename, br_model* ptr) {
+br_uint_32 C2_HOOK_CDECL BrModelSave(char* filename, br_model* ptr) {
 
     return BrModelSaveMany(filename, &ptr, 1);
 }
 C2_HOOK_FUNCTION(0x00524960, BrModelSave)
 
-br_material* BrMaterialLoad(char* filename) {
+br_material* C2_HOOK_CDECL BrMaterialLoad(char* filename) {
     br_material* ptr;
 
     if (BrMaterialLoadMany(filename, &ptr, 1) == 1) {
@@ -1329,13 +1329,13 @@ br_material* BrMaterialLoad(char* filename) {
 }
 C2_HOOK_FUNCTION(0x005249e0, BrMaterialLoad)
 
-br_uint_32 BrMaterialSave(char* filename, br_material* ptr) {
+br_uint_32 C2_HOOK_CDECL BrMaterialSave(char* filename, br_material* ptr) {
 
     return BrMaterialSaveMany(filename, &ptr, 1);
 }
 C2_HOOK_FUNCTION(0x00524a60, BrMaterialSave)
 
-br_actor* BrActorLoad(char* filename) {
+br_actor* C2_HOOK_CDECL BrActorLoad(char* filename) {
     br_actor* ptr;
 
     if (BrActorLoadMany(filename, &ptr, 1) == 1) {
@@ -1346,13 +1346,13 @@ br_actor* BrActorLoad(char* filename) {
 }
 C2_HOOK_FUNCTION(0x00524be0, BrActorLoad)
 
-br_uint_32 BrActorSave(char* filename, br_actor* ptr) {
+br_uint_32 C2_HOOK_CDECL BrActorSave(char* filename, br_actor* ptr) {
 
     return BrActorSaveMany(filename, &ptr, 1);
 }
 C2_HOOK_FUNCTION(0x00524c60, BrActorSave)
 
-br_error BrModelFileCount(char* filename, br_uint_16* num) {
+br_error C2_HOOK_CDECL BrModelFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
     df = DfOpen(filename, 0, BRT_FLOAT);
@@ -1377,7 +1377,7 @@ br_error BrModelFileCount(char* filename, br_uint_16* num) {
 }
 C2_HOOK_FUNCTION(0x00524cb0, BrModelFileCount)
 
-br_error BrActorFileCount(char* filename, br_uint_16* num) {
+br_error C2_HOOK_CDECL BrActorFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
     df = DfOpen(filename, 0, BRT_FLOAT);
@@ -1402,7 +1402,7 @@ br_error BrActorFileCount(char* filename, br_uint_16* num) {
 }
 C2_HOOK_FUNCTION(0x00524d30, BrActorFileCount)
 
-br_error BrMaterialFileCount(char* filename, br_uint_16* num) {
+br_error C2_HOOK_CDECL BrMaterialFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
     df = DfOpen(filename, 0, BRT_FLOAT);

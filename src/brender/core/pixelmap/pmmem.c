@@ -201,7 +201,7 @@ void C2_HOOK_CDECL _M_br_device_pixelmap_mem_free(br_device_pixelmap* self) {
 }
 C2_HOOK_FUNCTION(0x005397f0, _M_br_device_pixelmap_mem_free)
 
-char *C2_HOOK_CDECL _M_br_device_pixelmap_mem_identifier(br_device_pixelmap* self) {
+char* C2_HOOK_CDECL _M_br_device_pixelmap_mem_identifier(br_device_pixelmap* self) {
 
     return self->pm_identifier;
 }
@@ -231,7 +231,7 @@ br_int_32 C2_HOOK_CDECL _M_br_device_pixelmap_mem_space(br_device_pixelmap* self
 }
 C2_HOOK_FUNCTION(0x00539850, _M_br_device_pixelmap_mem_space)
 
-br_tv_template* _M_br_device_pixelmap_mem_queryTemplate(br_device_pixelmap* self) {
+br_tv_template* C2_HOOK_CDECL _M_br_device_pixelmap_mem_queryTemplate(br_device_pixelmap* self) {
 
     if (C2V(_pixelmap).device_pixelmap_template == NULL) {
         C2V(_pixelmap).device_pixelmap_template = BrTVTemplateAllocate(C2V(_pixelmap).res, C2V(devicePixelmapTemplateEntries), BR_ASIZE(C2V(devicePixelmapTemplateEntries)));
@@ -261,7 +261,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_resize(br_device_pixelmap* self
 C2_HOOK_FUNCTION_ORIGINAL(0x005398a0, _M_br_device_pixelmap_mem_resize, _M_br_device_pixelmap_mem_resize_original)
 
 // IDA: br_error __cdecl _M_br_device_pixelmap_mem_match(br_device_pixelmap *self, br_device_pixelmap **newpm, br_token_value *tv)
-br_error _M_br_device_pixelmap_mem_match(br_device_pixelmap* self, br_device_pixelmap** newpm, br_token_value* tv) {
+br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_match(br_device_pixelmap* self, br_device_pixelmap** newpm, br_token_value* tv) {
     match_tokens mt;
     br_int_32 count;
     br_device_pixelmap* pm;
@@ -595,13 +595,13 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_synchronise(br_device_pixelmap*
 }
 C2_HOOK_FUNCTION(0x0053c090, _M_br_device_pixelmap_mem_synchronise)
 
-br_error _M_br_device_pixelmap_mem_directLock(br_device_pixelmap* self, br_boolean block) {
+br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_directLock(br_device_pixelmap* self, br_boolean block) {
 
     return 0;
 }
 C2_HOOK_FUNCTION(0x0053c0a0, _M_br_device_pixelmap_mem_directLock)
 
-br_error _M_br_device_pixelmap_mem_directUnlock(br_device_pixelmap* self) {
+br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_directUnlock(br_device_pixelmap* self) {
 
     return 0;
 }

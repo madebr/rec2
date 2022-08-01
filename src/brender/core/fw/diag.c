@@ -30,7 +30,7 @@ void C2_HOOK_CDECL BrFailure(const char* s, ...) {
 }
 C2_HOOK_FUNCTION(0x00527c80, BrFailure)
 
-void BrWarning(const char* s, ...) {
+void C2_HOOK_CDECL BrWarning(const char* s, ...) {
     va_list args;
     const char warning_header[10] = "Warning: ";
 
@@ -47,7 +47,7 @@ void BrWarning(const char* s, ...) {
 }
 C2_HOOK_FUNCTION(0x00527cd0, BrWarning)
 
-void BrFatal(const char* name, int line, const char* s, ...) {
+void C2_HOOK_CDECL BrFatal(const char* name, int line, const char* s, ...) {
     va_list args;
     int n;
 
@@ -63,7 +63,7 @@ void BrFatal(const char* name, int line, const char* s, ...) {
 }
 C2_HOOK_FUNCTION(0x00527d20, BrFatal)
 
-void _BrAssert(const char* condition, const char* file, unsigned int line) {
+void C2_HOOK_CDECL _BrAssert(const char* condition, const char* file, unsigned int line) {
     if (C2V(fw).diag->failure == NULL) {
         BrAbort();
     }
@@ -73,7 +73,7 @@ void _BrAssert(const char* condition, const char* file, unsigned int line) {
 }
 C2_HOOK_FUNCTION(0x00527d80, _BrAssert)
 
-void _BrUAssert(const char* condition, const char* file, unsigned int line) {
+void C2_HOOK_CDECL _BrUAssert(const char* condition, const char* file, unsigned int line) {
     if (C2V(fw).diag->failure == NULL) {
         BrAbort();
     }

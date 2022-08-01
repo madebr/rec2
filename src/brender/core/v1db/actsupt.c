@@ -31,7 +31,7 @@ br_uint_32 C2_HOOK_CDECL BrActorEnum(br_actor* parent, br_actor_enum_cbfn* callb
 }
 C2_HOOK_FUNCTION(0x0051ded0, BrActorEnum)
 
-br_uint_32 BrActorSearchMany(br_actor* root, char* pattern, br_actor** actors, int max) {
+br_uint_32 C2_HOOK_CDECL BrActorSearchMany(br_actor* root, char* pattern, br_actor** actors, int max) {
     br_actor* a;
     char* sub;
     int n;
@@ -70,7 +70,7 @@ br_uint_32 BrActorSearchMany(br_actor* root, char* pattern, br_actor** actors, i
 }
 C2_HOOK_FUNCTION(0x0051df00, BrActorSearchMany)
 
-br_actor* BrActorSearch(br_actor* root, char* pattern) {
+br_actor* C2_HOOK_CDECL BrActorSearch(br_actor* root, char* pattern) {
     br_actor* a;
 
     if (BrActorSearchMany(root, pattern, &a, 1) == 1) {
@@ -120,7 +120,7 @@ br_actor* C2_HOOK_CDECL BrActorRemove(br_actor* a) {
 }
 C2_HOOK_FUNCTION(0x0051e070, BrActorRemove)
 
-void BrActorRelink(br_actor* parent, br_actor* a) {
+void C2_HOOK_CDECL BrActorRelink(br_actor* parent, br_actor* a) {
     br_matrix34 mat;
 
     if (a->parent == parent) {

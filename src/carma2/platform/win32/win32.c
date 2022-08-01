@@ -58,7 +58,7 @@ void C2_HOOK_FASTCALL KeyBegin(void) {
 }
 C2_HOOK_FUNCTION(0x0051b9f0, KeyBegin)
 
-void C2_HOOK_FASTCALL PDSetFileVariables() {
+void C2_HOOK_FASTCALL PDSetFileVariables(void) {
     C2V(gDir_separator) = "\\";
 }
 C2_HOOK_FUNCTION(0x0051c6f0, PDSetFileVariables)
@@ -84,7 +84,7 @@ C2_HOOK_FUNCTION_ORIGINAL
 (0x0051af20, PDFatalError, PDFatalError_original)
 
 C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
-C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem() {
+C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     PDShutdownSystem_original();
@@ -96,7 +96,7 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem() {
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c110, PDShutdownSystem, PDShutdownSystem_original)
 
 static void(C2_HOOK_FASTCALL * PDUnlockRealBackScreen_original)(void);
-void C2_HOOK_FASTCALL PDUnlockRealBackScreen() {
+void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void) {
 #if defined(C2_HOOKS_ENABLED)
     PDUnlockRealBackScreen_original();
 #else

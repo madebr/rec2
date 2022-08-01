@@ -87,7 +87,7 @@ int C2_HOOK_CDECL c2_fflush(FILE* file) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00577700, c2_fflush, fflush_original)
 
 int (C2_HOOK_CDECL * ftell_original)(FILE*);
-int c2_ftell(FILE* file) {
+int C2_HOOK_CDECL c2_ftell(FILE* file) {
     C2_HOOK_DEBUGF("(%p)", file);
 #if HOOK_STDIO
     return ftell_original(file);
@@ -144,7 +144,7 @@ char* C2_HOOK_CDECL c2_fgets(char* str, int num, FILE* stream) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00578610, c2_fgets, fgets_original)
 
 static int (C2_HOOK_CDECL * fputc_original)(int character, FILE* file);
-int c2_fputc(int character, FILE* file) {
+int C2_HOOK_CDECL c2_fputc(int character, FILE* file) {
     C2_HOOK_DEBUGF("(%d, %p)", character, file);
 #if HOOK_STDIO
     return fputc_original(character, file);
@@ -155,7 +155,7 @@ int c2_fputc(int character, FILE* file) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00577c40, c2_fputc, fputc_original);
 
 static int (C2_HOOK_CDECL * fputs_original)(const char*, FILE*);
-int c2_fputs(const char* text, FILE* file) {
+int C2_HOOK_CDECL c2_fputs(const char* text, FILE* file) {
     C2_HOOK_DEBUGF("(\"%s\", %p)", text, file);
 #if HOOK_STDIO
     return fputs_original(text, file);
@@ -166,7 +166,7 @@ int c2_fputs(const char* text, FILE* file) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00577ef0, c2_fputs, fputs_original);
 
 static int (C2_HOOK_CDECL * printf_original)(const char* format, ...);
-int c2_printf(const char* format, ...) {
+int C2_HOOK_CDECL c2_printf(const char* format, ...) {
     va_list ap;
     int res;
 
@@ -218,7 +218,7 @@ int C2_HOOK_CDECL c2_vsprintf(char* str, const char* format, va_list ap) {
 C2_HOOK_FUNCTION(0x00578ee0, c2_vsprintf)
 
 int (C2_HOOK_CDECL * vfprintf_original)(FILE*, const char*, va_list ap);
-int c2_vfprintf(FILE* file, const char* format, va_list ap) {
+int C2_HOOK_CDECL c2_vfprintf(FILE* file, const char* format, va_list ap) {
     int res;
 
     C2_HOOK_DEBUGF("(%p, \"%s\", ...)", file, format);

@@ -104,7 +104,7 @@ br_size_t C2_HOOK_STDCALL ValueExtraSize(void* block, br_tv_template_entry* tep)
 C2_HOOK_FUNCTION_ORIGINAL(0x0052e300, ValueExtraSize, ValueExtraSize_original)
 
 // IDA: br_error __cdecl BrTokenValueQuery(br_uint_32 *pvalue, br_uint_32 *extra, br_size_t extra_size, br_token t, void *block, br_tv_template *template)
-br_error BrTokenValueQuery(br_uint_32* pvalue, br_uint_32* extra, br_size_t extra_size, br_token t, void* block, br_tv_template* template) {
+br_error C2_HOOK_CDECL BrTokenValueQuery(br_uint_32* pvalue, br_uint_32* extra, br_size_t extra_size, br_token t, void* block, br_tv_template* template) {
     br_int_32 o;
     br_tv_template_entry* tep;
     br_token_value tv;
@@ -238,7 +238,7 @@ br_error C2_HOOK_CDECL BrTokenValueSet(void* mem, br_uint_32* pcombined_mask, br
 }
 C2_HOOK_FUNCTION(0x0052e5b0, BrTokenValueSet)
 
-br_error BrTokenValueSetMany(void* mem, br_int_32* pcount, br_uint_32* pcombined_mask, br_token_value* tv, br_tv_template* template) {
+br_error C2_HOOK_CDECL BrTokenValueSetMany(void* mem, br_int_32* pcount, br_uint_32* pcombined_mask, br_token_value* tv, br_tv_template* template) {
     br_int_32 o;
     br_int_32 n;
     br_error r;
@@ -307,7 +307,7 @@ void DumpObject(br_object* h, char* prefix, char* info, br_putline_cbfn* putline
 }
 #endif
 
-void BrTokenValueDump(br_token_value* tv, char* prefix, br_putline_cbfn* putline, void* arg) {
+void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline_cbfn* putline, void* arg) {
 #if 0
     char* id;
     char value[128];
