@@ -23,7 +23,7 @@ When enough functions have been replaced, it should become possible to not need 
 - DirectX SDK: we need `dinput` and `dxguid`.
   - MinGW provides these libraries out-of-the box
   - MSVC does not ship with a *DirectX SDK*: this [time-period correct version on archive.org](https://archive.org/details/MicrosoftDirectX7SDK) works perfect.
-- [Detour](https://github.com/microsoft/Detours): this library is used to hook functions
+- [Detours](https://github.com/microsoft/Detours): this library is used to hook functions
 
 ## Goals
 
