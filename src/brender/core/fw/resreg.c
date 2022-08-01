@@ -40,7 +40,7 @@ br_resource_class* C2_HOOK_CDECL BrResClassFind(char* pattern) {
 }
 C2_HOOK_FUNCTION(0x00528030, BrResClassFind)
 
-br_resclass_find_cbfn* BrResClassFindHook(br_resclass_find_cbfn* hook) {
+br_resclass_find_cbfn* C2_HOOK_CDECL BrResClassFindHook(br_resclass_find_cbfn* hook) {
     br_resclass_find_cbfn* old;
 
     old = (br_resclass_find_cbfn*)C2V(fw).reg_resource_classes.find_failed_hook;

@@ -75,19 +75,19 @@ void C2_HOOK_CDECL BrVector2InvScale(br_vector2* v1, const br_vector2* v2, br_sc
 }
 C2_HOOK_FUNCTION(0x005344b0, BrVector2InvScale)
 
-br_scalar BrVector2Dot(br_vector2* v1, const br_vector2* v2) {
+br_scalar C2_HOOK_CDECL BrVector2Dot(br_vector2* v1, const br_vector2* v2) {
 
     return BR_MAC2(v1->v[0], v2->v[0], v1->v[1], v2->v[1]);
 }
 C2_HOOK_FUNCTION(0x005344d0, BrVector2Dot)
 
-br_scalar BrVector2Length(const br_vector2* v1) {
+br_scalar C2_HOOK_CDECL BrVector2Length(const br_vector2* v1) {
 
     return sqrtf(BR_MAC2(v1->v[0], v1->v[0], v1->v[1], v1->v[1]));
 }
 C2_HOOK_FUNCTION(0x005344f0, BrVector2Length)
 
-br_scalar BrVector2LengthSquared(const br_vector2* v1) {
+br_scalar C2_HOOK_CDECL BrVector2LengthSquared(const br_vector2* v1) {
 
     return BR_MAC2(v1->v[0], v1->v[0], v1->v[1], v1->v[1]);
 }
@@ -173,7 +173,7 @@ void C2_HOOK_CDECL BrVector3InvScale(br_vector3* v1, const br_vector3* v2, br_sc
 }
 C2_HOOK_FUNCTION(0x00534690, BrVector3InvScale)
 
-br_scalar BrVector3Dot(br_vector3* v1, const br_vector3* v2) {
+br_scalar C2_HOOK_CDECL BrVector3Dot(br_vector3* v1, const br_vector3* v2) {
 
     return BR_MAC3(v1->v[0], v2->v[0], v1->v[1], v2->v[1], v1->v[2], v2->v[2]);
 }
@@ -187,13 +187,13 @@ void C2_HOOK_CDECL BrVector3Cross(br_vector3* v1, const br_vector3* v2, const br
 }
 C2_HOOK_FUNCTION(0x005346f0, BrVector3Cross)
 
-br_scalar BrVector3Length(const br_vector3* v1) {
+br_scalar C2_HOOK_CDECL BrVector3Length(const br_vector3* v1) {
 
     return sqrtf(BR_MAC3(v1->v[0], v1->v[0], v1->v[1], v1->v[1], v1->v[2], v1->v[2]));
 }
 C2_HOOK_FUNCTION(0x00534740, BrVector3Length)
 
-br_scalar BrVector3LengthSquared(const br_vector3* v1) {
+br_scalar C2_HOOK_CDECL BrVector3LengthSquared(const br_vector3* v1) {
 
     return BR_MAC3(v1->v[0], v1->v[0], v1->v[1], v1->v[1], v1->v[2], v1->v[2]);
 }
@@ -229,7 +229,7 @@ void C2_HOOK_CDECL BrVector3NormaliseLP(br_vector3* v1, const br_vector3* v2) {
 }
 C2_HOOK_FUNCTION(0x00534840, BrVector3NormaliseLP)
 
-br_scalar BrVector4Dot(const br_vector4* v1, const br_vector4* v2) {
+br_scalar C2_HOOK_CDECL BrVector4Dot(const br_vector4* v1, const br_vector4* v2) {
 
     return BR_MAC4(v1->v[0], v2->v[0], v1->v[1], v2->v[1], v1->v[2], v2->v[2], v1->v[3], v2->v[3]);
 }
@@ -244,7 +244,7 @@ void C2_HOOK_CDECL BrVector4Copy(br_vector4* v1, const br_vector4* v2) {
 }
 C2_HOOK_FUNCTION(0x005348e0, BrVector4Copy)
 
-br_scalar BrFVector2Dot(const br_fvector2* v1, const br_vector2* v2) {
+br_scalar C2_HOOK_CDECL BrFVector2Dot(const br_fvector2* v1, const br_vector2* v2) {
 
     return BR_MAC2(v1->v[0], v2->v[0], v1->v[1], v2->v[1]);
 }
@@ -266,7 +266,7 @@ void C2_HOOK_CDECL BrVector3ScaleF(br_vector3* v1, const br_fvector3* v2, br_sca
 }
 C2_HOOK_FUNCTION(0x00534940, BrVector3ScaleF)
 
-br_scalar BrFVector3Dot(const br_fvector3* v1, const br_vector3* v2) {
+br_scalar C2_HOOK_CDECL BrFVector3Dot(const br_fvector3* v1, const br_vector3* v2) {
 
     return BR_MAC3(v1->v[0], v2->v[0], v1->v[1], v2->v[1], v1->v[2], v2->v[2]);
 }

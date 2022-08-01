@@ -243,7 +243,7 @@ tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048f830, TWT_ReadBinaryU32, TWT_ReadBinaryU32_original)
 
-void C2_HOOK_FASTCALL TWT_Init() {
+void C2_HOOK_FASTCALL TWT_Init(void) {
     for(int i = 0; i < 50; i++) {  // FIXME: use array sizeof
         C2V(gTwatVfsFiles)[i].used = 0;
     }

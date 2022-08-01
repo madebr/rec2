@@ -28,7 +28,7 @@ void C2_HOOK_CDECL BrMemFree(void* block) {
 C2_HOOK_FUNCTION_ORIGINAL(0x005275f0, BrMemFree, BrMemFree_original)
 
 br_size_t (C2_HOOK_CDECL * BrMemInquire_original)(br_uint_8 type);
-br_size_t BrMemInquire(br_uint_8 type) {
+br_size_t C2_HOOK_CDECL BrMemInquire(br_uint_8 type) {
 #if MEM_HOOKS
     return BrMemInquire_original(type);
 #else

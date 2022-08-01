@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 void (C2_HOOK_FASTCALL * DoProgram_original)(void);
-void C2_HOOK_FASTCALL DoProgram() {
+void C2_HOOK_FASTCALL DoProgram(void) {
 #if defined(C2_HOOKS_ENABLED)
     DoProgram_original();
 #else

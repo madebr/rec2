@@ -190,7 +190,7 @@ void C2_HOOK_CDECL BrMatrix23TApplyP(br_vector2* A, const br_vector2* B, const b
 }
 C2_HOOK_FUNCTION(0x00534f30, BrMatrix23TApplyP)
 
-void BrMatrix23TApplyV(br_vector2* A, const br_vector2* B, const br_matrix23* C) {
+void C2_HOOK_CDECL BrMatrix23TApplyV(br_vector2* A, const br_vector2* B, const br_matrix23* C) {
 
     A->v[0] = BR_MAC2(B->v[0], C(0, 0), B->v[1], C(0, 1));
     A->v[1] = BR_MAC2(B->v[0], C(1, 0), B->v[1], C(1, 1));

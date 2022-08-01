@@ -51,7 +51,7 @@ void C2_HOOK_CDECL BrModelApplyMap(br_model* model, int map_type, br_matrix34* x
 }
 C2_HOOK_FUNCTION(0x00521490, BrModelApplyMap)
 
-br_matrix34* BrModelFitMap(br_model* model, int axis_0, int axis_1, br_matrix34* transform) {
+br_matrix34* C2_HOOK_CDECL BrModelFitMap(br_model* model, int axis_0, int axis_1, br_matrix34* transform) {
     br_vector3 axis_3;
     br_vector3 tr;
     br_vector3 sc;

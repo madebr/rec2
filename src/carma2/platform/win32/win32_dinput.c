@@ -23,7 +23,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTINPUTA, gDirectInput, 0x006acc78);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoystick_deadzone, 0x00762280);
 
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
-int C2_HOOK_FASTCALL JoystickDInputBegin() {
+int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     int res = JoystickDInputBegin_original();
@@ -36,7 +36,7 @@ int C2_HOOK_FASTCALL JoystickDInputBegin() {
 C2_HOOK_FUNCTION_ORIGINAL(0x00458860, JoystickDInputBegin, JoystickDInputBegin_original)
 
 void (C2_HOOK_FASTCALL * JoystickDInputDetect_original)(void);
-void C2_HOOK_FASTCALL JoystickDInputDetect() {
+void C2_HOOK_FASTCALL JoystickDInputDetect(void) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     JoystickDInputDetect_original();
