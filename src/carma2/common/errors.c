@@ -295,7 +295,7 @@ C2_HOOK_FUNCTION(0x0044c230, FatalError)
 //
 
 // This function is stripped from the retail binary, we've guessed at the implementation
-void C2_HOOK_FASTCALL OpenDiagnostics() {
+void C2_HOOK_FASTCALL OpenDiagnostics(void) {
     // FIXME: use c2_stdio functions
 //    gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
     gDiagnostic_file = fopen("DIAGNOST.TXT", "w");

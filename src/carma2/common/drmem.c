@@ -278,7 +278,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_allocator, gAllocator, 0x005937e8, { "Death R
 //}
 //
 
-void C2_HOOK_FASTCALL MAMSInitMem() {
+void C2_HOOK_FASTCALL MAMSInitMem(void) {
 }
 C2_HOOK_FUNCTION(0x0044c820, MAMSInitMem)
 
@@ -288,7 +288,7 @@ void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
 C2_HOOK_FUNCTION(0x0044c850, PrintMemoryDump);
 
 void* (C2_HOOK_CDECL * DRStdlibAllocate_original)(br_size_t size, br_uint_8 type);
-void* DRStdlibAllocate(br_size_t size, br_uint_8 type) {
+void* C2_HOOK_CDECL DRStdlibAllocate(br_size_t size, br_uint_8 type) {
     void* p;
 
     p = malloc(size);
@@ -302,7 +302,7 @@ void* DRStdlibAllocate(br_size_t size, br_uint_8 type) {
 C2_HOOK_FUNCTION_ORIGINAL(0x0044c8c0, DRStdlibAllocate, DRStdlibAllocate_original)
 
 void (C2_HOOK_CDECL * DRStdlibFree_original)(void* mem);
-void DRStdlibFree(void* mem) {
+void C2_HOOK_CDECL DRStdlibFree(void* mem) {
     free(mem);
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044c990, DRStdlibFree, DRStdlibFree_original)
@@ -318,7 +318,7 @@ br_uint_32 C2_HOOK_CDECL Claim4ByteAlignment(br_uint_8 type) {
 C2_HOOK_FUNCTION(0x0044c9d0, Claim4ByteAlignment)
 
 void (C2_HOOK_FASTCALL * InstallDRMemCalls_original)(void);
-void C2_HOOK_FASTCALL InstallDRMemCalls() {
+void C2_HOOK_FASTCALL InstallDRMemCalls(void) {
 #if defined(C2_HOOKS_ENABLED)
     InstallDRMemCalls_original();
 #else
@@ -340,7 +340,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0044c9e0, InstallDRMemCalls, InstallDRMemCalls_origi
 //
 #include <stdio.h>
 void (C2_HOOK_FASTCALL * CreateStainlessClasses_original)(void);
-void C2_HOOK_FASTCALL CreateStainlessClasses() {
+void C2_HOOK_FASTCALL CreateStainlessClasses(void) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     CreateStainlessClasses_original();

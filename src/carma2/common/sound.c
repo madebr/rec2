@@ -8,7 +8,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_fully_installed, 0x0068b898);
 
-void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation() {
+void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
     char line2[80];
     char line3[80];

@@ -96,7 +96,7 @@ void C2_HOOK_CDECL BrMatrix4Scale(br_matrix4* mat, br_scalar sx, br_scalar sy, b
 }
 C2_HOOK_FUNCTION(0x00536030, BrMatrix4Scale)
 
-br_scalar BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B) {
+br_scalar C2_HOOK_CDECL BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B) {
     int i;
     int j;
     br_scalar det;
@@ -119,7 +119,7 @@ br_scalar BrMatrix4Inverse(br_matrix4* A, const br_matrix4* B) {
 }
 C2_HOOK_FUNCTION(0x00536080, BrMatrix4Inverse)
 
-br_scalar Determinant3(br_scalar a1, br_scalar a2, br_scalar a3, br_scalar b1, br_scalar b2, br_scalar b3, br_scalar c1, br_scalar c2, br_scalar c3) {
+br_scalar C2_HOOK_STDCALL Determinant3(br_scalar a1, br_scalar a2, br_scalar a3, br_scalar b1, br_scalar b2, br_scalar b3, br_scalar c1, br_scalar c2, br_scalar c3) {
 
     return BR_MAC3(a1, BR_MAC2(b2, c3, -b3, c2),
         -b1, BR_MAC2(a2, c3, -a3, c2),
@@ -127,7 +127,7 @@ br_scalar Determinant3(br_scalar a1, br_scalar a2, br_scalar a3, br_scalar b1, b
 }
 C2_HOOK_FUNCTION(0x005367b0, Determinant3)
 
-br_scalar BrMatrix4Determinant(const br_matrix4* mat) {
+br_scalar C2_HOOK_CDECL BrMatrix4Determinant(const br_matrix4* mat) {
     br_scalar a1;
     br_scalar a2;
     br_scalar a3;

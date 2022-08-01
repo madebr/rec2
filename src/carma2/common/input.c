@@ -1,7 +1,7 @@
 #include "input.h"
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
-int C2_HOOK_FASTCALL LoadJoystickPreferences() {
+int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
 #if defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     int res = LoadJoystickPreferences_original();
