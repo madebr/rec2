@@ -3178,4 +3178,20 @@ enum {
     BR_STATE_ALL = 0xFFFFFFFF
 };
 
+// BRender internal types
+typedef struct {
+    int type;
+    void* value;
+    unsigned int count;
+} datafile_stack_t;
+
+typedef struct {
+    br_uint_32 id;
+    size_t offset;
+    int table;
+} br_df_material_map_item;
+
+typedef void (C2_HOOK_STDCALL * render_style_cbfn)(br_actor* actor, br_model* model, br_material* material,
+        void* render_data, br_uint_8 style, int on_screen);
+
 #endif /* BR_TYPES_H */
