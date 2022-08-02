@@ -45,6 +45,7 @@ br_pixelmap* C2_HOOK_CDECL BrMapRemove(br_pixelmap* pixelmap);
 br_pixelmap* C2_HOOK_CDECL BrMapFind(char* pattern);
 br_uint_32 C2_HOOK_CDECL BrMapAddMany(br_pixelmap** items, int n);
 br_map_find_cbfn* C2_HOOK_CDECL BrMapFindHook(br_map_find_cbfn* hook);
+void C2_HOOK_CDECL BrMapUpdate(br_pixelmap* map, br_uint_16 flags);
 
 // BrMaterial
 br_material* C2_HOOK_CDECL BrMaterialAllocate(char* name);
@@ -180,6 +181,7 @@ void C2_HOOK_CDECL BrFatal(const char* name, int line, const char* s, ...);
 // Z-buffer
 void C2_HOOK_CDECL BrZbBegin(br_uint_8 colour_type, br_uint_8 depth_type);
 
+void C2_HOOK_CDECL BrZbSceneRender(br_actor* world, br_actor* camera, br_pixelmap* colour_buffer, br_pixelmap* depth_buffer);
 void C2_HOOK_CDECL BrZbSceneRenderBegin(br_actor* world, br_actor* camera, br_pixelmap* colour_buffer, br_pixelmap* depth_buffer);
 void C2_HOOK_CDECL BrZbSceneRenderAdd(br_actor* tree);
 void C2_HOOK_CDECL BrZbSceneRenderEnd(void);
