@@ -11,7 +11,7 @@ if(WIN32)
         win32/winmain.c
     )
     target_compile_definitions(c2_platform
-        PRIVATE
+        PUBLIC
             DIRECTINPUT_VERSION=0x0500
     )
     find_library(DINPUT_LIBRARY NAMES dinput)
