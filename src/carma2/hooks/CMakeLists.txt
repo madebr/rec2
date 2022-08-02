@@ -16,8 +16,13 @@ else()
         c2_time.h
         win32_hooks.c
     )
+    add_subdirectory(smackw32)
     target_compile_definitions(c2_hooks PUBLIC C2_HOOKS_ENABLED)
-    target_link_libraries(c2_hooks PUBLIC hooks_interface)
+    target_link_libraries(c2_hooks
+        PUBLIC
+            hooks_interface
+            smackw
+    )
 endif()
 
 target_include_directories(c2_hooks
