@@ -9,4 +9,6 @@ int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 
 int C2_HOOK_FASTCALL AnyKeyDown(void);
 
+void C2_HOOK_FASTCALL WaitForNoKeys(void);
+
 #endif // REC2_INPUT_H
