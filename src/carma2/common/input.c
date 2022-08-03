@@ -25,3 +25,13 @@ int C2_HOOK_FASTCALL AnyKeyDown(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482d70, AnyKeyDown, AnyKeyDown_original)
+
+void (C2_HOOK_FASTCALL * WaitForNoKeys_original)(void);
+void C2_HOOK_FASTCALL WaitForNoKeys(void) {
+#if defined(C2_HOOKS_ENABLED)
+    WaitForNoKeys_original();
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004833b0, WaitForNoKeys, WaitForNoKeys_original)
