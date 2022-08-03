@@ -2,6 +2,7 @@
 #define REC2_TYPES_H
 
 #include <brender/br_types.h>
+#include <s3/s3.h>
 
 typedef char tPath_name[256];
 
