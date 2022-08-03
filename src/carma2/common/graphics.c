@@ -164,6 +164,16 @@ void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixe
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRConvertPixelmapRGB565To555, DRConvertPixelmapRGB565To555_original)
 
+br_model* (C2_HOOK_FASTCALL * CreateInterpolatedQuadModel_original)(int x, int y, int width, int height, int nbX, int nbY);
+br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x, int y, int width, int height, int nbX, int nbY) {
+#if defined(C2_HOOKS_ENABLED)
+    return CreateInterpolatedQuadModel_original(x, y, width, height, nbX, nbY);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d7ad0, CreateInterpolatedQuadModel, CreateInterpolatedQuadModel_original)
+
 void (C2_HOOK_FASTCALL * TintedPolyActor_SetColour_original)(int index, int red, int green, int blue);
 void C2_HOOK_FASTCALL TintedPolyActor_SetColour(int index, int red, int green, int blue) {
 #if defined(C2_HOOKS_ENABLED)
