@@ -9,6 +9,11 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tWobble_spec, gWobble_array, 5);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(float, gCosine_array, 64);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_palette);
 
+
+void C2_HOOK_FASTCALL ClearWobbles(void);
+
+void C2_HOOK_FASTCALL InitWobbleStuff(void);
+
 void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 void C2_HOOK_FASTCALL ClearEntireScreen(void);
@@ -17,8 +22,6 @@ void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_current_
 
 void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
 
-void C2_HOOK_FASTCALL ClearWobbles(void);
-
-void C2_HOOK_FASTCALL InitWobbleStuff(void);
+void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
 
 #endif //REC2_GRAPHICS_H
