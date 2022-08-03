@@ -16,4 +16,6 @@ void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
 
 void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
 
+void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixelType);
+
 #endif //REC2_GRAPHICS_H
