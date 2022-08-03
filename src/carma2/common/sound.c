@@ -61,3 +61,13 @@ void C2_HOOK_FASTCALL StopMusic(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456910, StopMusic, StopMusic_original)
+
+void (C2_HOOK_FASTCALL * DRS3StartCDA_original)(tS3_sound_id pCDA_id);
+void C2_HOOK_FASTCALL DRS3StartCDA(tS3_sound_id pCDA_id) {
+#if defined(C2_HOOKS_ENABLED)
+    DRS3StartCDA_original(pCDA_id);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456840, DRS3StartCDA, DRS3StartCDA_original)

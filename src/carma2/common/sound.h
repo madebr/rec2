@@ -13,4 +13,6 @@ void C2_HOOK_FASTCALL ParseSoundFxDetails(tTWTFILE* pF, tSpecial_volume_soundfx_
 
 void C2_HOOK_FASTCALL StopMusic(void);
 
+void C2_HOOK_FASTCALL DRS3StartCDA(tS3_sound_id pCDA_id);
+
 #endif // REC2_SOUND_H
