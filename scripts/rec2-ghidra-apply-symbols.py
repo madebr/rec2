@@ -4,6 +4,8 @@ except:
     pass
 
 import argparse
+import json
+import os
 
 from ghidra.program.model.listing import Function
 from ghidra.program.model.listing.Function import FunctionUpdateType
@@ -19,11 +21,16 @@ from ghidra.program.model.data import GenericCallingConvention
 from ghidra.util.data import DataTypeParser
 from ghidra.app.util.cparser.C import CParserUtils
 
-import json
+raw_args = list(str(a) for a in getScriptArgs())
+print "Raw arguments: {}".format(raw_args)
 
-parser = argparse.ArgumentParser(allow_abbrev=False)
+parser = argparse.ArgumentParser()
+parser.add_argument("ghidra_root", help="path of ghidra root")
 parser.add_argument("symbols", help="path of symbols JSON file")
-args = parser.parse_args(["ghidra"] + getScriptArgs())
+args = parser.parse_args(raw_args)
+print "Arguments: {}".format(args)
+
+args = parser.parse_args(raw_args)
 
 symbols = json.loads(open(args.symbols).read())
 
@@ -52,7 +59,7 @@ def clean_funcdef(funcdef):
         funcdef = funcdef.replace(tr, "")
     return funcdef
 
-generic_dtmanager = ghidra.program.model.data.FileDataTypeManager.openFileArchive(java.io.File("/home/maarten/ghidra/Ghidra/Features/Base/data/typeinfo/generic/generic_clib.gdt"), False)
+generic_dtmanager = ghidra.program.model.data.FileDataTypeManager.openFileArchive(java.io.File(os.path.join(args.ghidra_root, "Ghidra/Features/Base/data/typeinfo/generic/generic_clib.gdt")), False)
 
 GENCLIB_DTPARSER = DataTypeParser(
     generic_dtmanager,
@@ -71,10 +78,9 @@ DTPARSER = DataTypeParser(
 currentProgram.dataTypeManager.addDataType(GENCLIB_DTPARSER.parse("FILE"), None)
 currentProgram.dataTypeManager.addDataType(GENCLIB_DTPARSER.parse("time_t"), None)
 
-print("FILE -> ", DTPARSER.parse("FILE"))
-print("time_t -> ", DTPARSER.parse("time_t"))
-# print("size_t -> ", DTPARSER.parse("size_t"))
-print("gdt size_t -> ", list(l for l in getDataTypes("size_t")))
+# print("FILE -> ", DTPARSER.parse("FILE"))
+# print("time_t -> ", DTPARSER.parse("time_t"))
+# print("gdt size_t -> ", list(l for l in getDataTypes("size_t")))
 
 def parse_type_string(type_str):
     type_str = type_str.replace("const ", "")
@@ -113,18 +119,18 @@ for hookFunc in hookFuncs:
     args = []
     # vars = []
     for arg in hookFunc.details.arguments:
-        print(arg.name, arg.type.replace("const ", ""))
+        # print(arg.name, arg.type.replace("const ", ""))
         # args.append(ParameterDefinitionImpl(arg.name, parse_type_string(arg.type.replace("const ", "")), ""))
         # vars.append
         args.append(ParameterImpl(arg.name, parse_type_string(arg.type), currentProgram))
-    print(args)
+    # print(args)
     func.replaceParameters(args, Function.FunctionUpdateType.DYNAMIC_STORAGE_FORMAL_PARAMS, False, SourceType.USER_DEFINED)
 
 end(True)
 
 start()
 for hookVar in hookVars:
-    print(hookVar)
+    # print(hookVar)
     # removeDataAt(toAddr(hookVar.address))
     hookVarDT = parse_type_string(hookVar.vartype)
     addressSet = createAddressSet()
@@ -133,7 +139,7 @@ for hookVar in hookVars:
 
     createLabel(toAddr(hookVar.address), hookVar.varname, True, SourceType.USER_DEFINED)
     data = createData(toAddr(hookVar.address), parse_type_string(hookVar.vartype))
-    print("data=", data)
+    # print("data=", data)
     # funcdef_clean = clean_funcdef(hookFunc.funcdef)
     # print funcdef_clean, "->", CParserUtils.parseSignature(None, currentProgram, funcdef_clean)
 
@@ -151,12 +157,12 @@ end(True)
 
 start()
 for hookVararr in hookVararrs:
-    print(hookVararr)
+    # print(hookVararr)
     # removeDataAt(toAddr(hookVararr.address))
     hookVarDT = parse_type_string(hookVararr.vartype)
     addressSet = createAddressSet()
     addressSet.addRange(toAddr(hookVararr.address), toAddr(hookVararr.address + hookVararr.varcount * hookVarDT.getLength()))
-    print("clear {}:{}".format(toAddr(hookVararr.address), toAddr(hookVararr.address + hookVararr.varcount * hookVarDT.getLength())))
+    # print("clear {}:{}".format(toAddr(hookVararr.address), toAddr(hookVararr.address + hookVararr.varcount * hookVarDT.getLength())))
     clearListing(toAddr(hookVararr.address), toAddr(hookVararr.address + hookVararr.varcount * hookVarDT.getLength()))
 
     createLabel(toAddr(hookVararr.address), hookVararr.varname, True, SourceType.USER_DEFINED)
