@@ -23,6 +23,8 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
 
 void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixelType);
 
+void C2_HOOK_FASTCALL AllocateCursorActors(void);
+
 void C2_HOOK_FASTCALL StartMouseCursor(void);
 
 void C2_HOOK_FASTCALL EndMouseCursor(void);
