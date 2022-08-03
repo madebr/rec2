@@ -113,8 +113,8 @@ int C2_HOOK_STDCALL BrRegistryRemoveMany(br_registry* reg, void** items, int n) 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00529c40, BrRegistryRemoveMany, BrRegistryRemoveMany_original)
 
-void* (C2_HOOK_STDCALL * BrRegistryFind_original)(br_registry* reg, char* pattern);
-void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, char* pattern) {
+void* (C2_HOOK_STDCALL * BrRegistryFind_original)(br_registry* reg, const char* pattern);
+void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, const char* pattern) {
 #if HOOK_REGISTER
     return BrRegistryFind_original(reg, pattern);
 #else
@@ -136,8 +136,8 @@ void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, char* pattern) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00529cc0, BrRegistryFind, BrRegistryFind_original)
 
-int (C2_HOOK_STDCALL * BrRegistryFindMany_original)(br_registry* reg, char* pattern, void** items, int max);
-int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, char* pattern, void** items, int max) {
+int (C2_HOOK_STDCALL * BrRegistryFindMany_original)(br_registry* reg, const char* pattern, void** items, int max);
+int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, const char* pattern, void** items, int max) {
 #if HOOK_REGISTER
     return BrRegistryFindMany_original(reg, pattern, items, max);
 #else
@@ -158,8 +158,8 @@ int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, char* pattern, void** i
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00529d20, BrRegistryFindMany, BrRegistryFindMany_original)
 
-int (C2_HOOK_STDCALL * BrRegistryCount_original)(br_registry* reg, char* pattern);
-int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, char* pattern) {
+int (C2_HOOK_STDCALL * BrRegistryCount_original)(br_registry* reg, const char* pattern);
+int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, const char* pattern) {
 #if HOOK_REGISTER
     return BrRegistryCount_original(reg, pattern);
 #else
@@ -182,8 +182,8 @@ int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, char* pattern) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00529d70, BrRegistryCount, BrRegistryCount_original)
 
-int (C2_HOOK_STDCALL * BrRegistryEnum_original)(br_registry* reg, char* pattern, br_enum_cbfn* callback, void* arg);
-int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, char* pattern, br_enum_cbfn* callback, void* arg) {
+int (C2_HOOK_STDCALL * BrRegistryEnum_original)(br_registry* reg, const char* pattern, br_enum_cbfn* callback, void* arg);
+int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, const char* pattern, br_enum_cbfn* callback, void* arg) {
 #if HOOK_REGISTER
     return BrRegistryEnum_original(reg, pattern, callback, arg);
 #else

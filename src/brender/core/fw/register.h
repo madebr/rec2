@@ -17,13 +17,13 @@ void* C2_HOOK_STDCALL BrRegistryRemove(br_registry* reg, void* item);
 
 int C2_HOOK_STDCALL BrRegistryRemoveMany(br_registry* reg, void** items, int n);
 
-void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, char* pattern);
+void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, const char* pattern);
 
-int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, char* pattern, void** items, int max);
+int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, const char* pattern, void** items, int max);
 
-int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, char* pattern);
+int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, const char* pattern);
 
-int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, char* pattern, br_enum_cbfn* callback, void* arg);
+int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, const char* pattern, br_enum_cbfn* callback, void* arg);
 
 void* C2_HOOK_STDCALL BrRegistryNewStatic(br_registry* reg, br_registry_entry* base, int limit);
 

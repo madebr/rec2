@@ -23,7 +23,7 @@ br_model* C2_HOOK_CDECL BrModelRemove(br_model* model) {
 }
 C2_HOOK_FUNCTION(0x0051ed30, BrModelRemove)
 
-br_model* C2_HOOK_CDECL BrModelFind(char* pattern) {
+br_model* C2_HOOK_CDECL BrModelFind(const char* pattern) {
 
     return BrRegistryFind(&C2V(v1db).reg_models, pattern);
 }
@@ -71,19 +71,19 @@ br_uint_32 C2_HOOK_CDECL BrModelRemoveMany(br_model** items, int n) {
 }
 C2_HOOK_FUNCTION(0x0051edc0, BrModelRemoveMany)
 
-br_uint_32 C2_HOOK_CDECL BrModelFindMany(char* pattern, br_model** items, int max) {
+br_uint_32 C2_HOOK_CDECL BrModelFindMany(const char* pattern, br_model** items, int max) {
 
     return BrRegistryFindMany(&C2V(v1db).reg_models, pattern, (void**)items, max);
 }
 C2_HOOK_FUNCTION(0x0051ee00, BrModelFindMany)
 
-br_uint_32 C2_HOOK_CDECL BrModelCount(char* pattern) {
+br_uint_32 C2_HOOK_CDECL BrModelCount(const char* pattern) {
 
     return BrRegistryCount(&C2V(v1db).reg_models, pattern);
 }
 C2_HOOK_FUNCTION(0x0051ee20, BrModelCount)
 
-br_uint_32 C2_HOOK_CDECL BrModelEnum(char* pattern, br_model_enum_cbfn* callback, void* arg) {
+br_uint_32 C2_HOOK_CDECL BrModelEnum(const char* pattern, br_model_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&C2V(v1db).reg_models, pattern, (br_enum_cbfn*)callback, arg);
 }
@@ -103,7 +103,7 @@ br_material* C2_HOOK_CDECL BrMaterialRemove(br_material* material) {
 }
 C2_HOOK_FUNCTION(0x0051ee80, BrMaterialRemove)
 
-br_material* C2_HOOK_CDECL BrMaterialFind(char* pattern) {
+br_material* C2_HOOK_CDECL BrMaterialFind(const char* pattern) {
 
     return BrRegistryFind(&C2V(v1db).reg_materials, pattern);
 }
@@ -152,19 +152,19 @@ br_uint_32 C2_HOOK_CDECL BrMaterialRemoveMany(br_material** items, int n) {
 }
 C2_HOOK_FUNCTION(0x0051ef10, BrMaterialRemoveMany)
 
-br_uint_32 C2_HOOK_CDECL BrMaterialFindMany(char* pattern, br_material** items, int max) {
+br_uint_32 C2_HOOK_CDECL BrMaterialFindMany(const char* pattern, br_material** items, int max) {
 
     return BrRegistryFindMany(&C2V(v1db).reg_materials, pattern, (void**)items, max);
 }
 C2_HOOK_FUNCTION(0x0051ef50, BrMaterialFindMany)
 
-br_uint_32 C2_HOOK_CDECL BrMaterialCount(char* pattern) {
+br_uint_32 C2_HOOK_CDECL BrMaterialCount(const char* pattern) {
 
     return BrRegistryCount(&C2V(v1db).reg_materials, pattern);
 }
 C2_HOOK_FUNCTION(0x0051ef70, BrMaterialCount)
 
-br_uint_32 C2_HOOK_CDECL BrMaterialEnum(char* pattern, br_material_enum_cbfn* callback, void* arg) {
+br_uint_32 C2_HOOK_CDECL BrMaterialEnum(const char* pattern, br_material_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&C2V(v1db).reg_materials, pattern, (br_enum_cbfn*)callback, arg);
 }
@@ -185,7 +185,7 @@ br_pixelmap* C2_HOOK_CDECL BrMapRemove(br_pixelmap* pixelmap) {
 }
 C2_HOOK_FUNCTION(0x0051efd0, BrMapRemove)
 
-br_pixelmap* C2_HOOK_CDECL BrMapFind(char* pattern) {
+br_pixelmap* C2_HOOK_CDECL BrMapFind(const char* pattern) {
 
     return BrRegistryFind(&C2V(v1db).reg_textures, pattern);
 }
@@ -233,19 +233,19 @@ br_uint_32 C2_HOOK_CDECL BrMapRemoveMany(br_pixelmap** items, int n) {
 }
 C2_HOOK_FUNCTION(0x0051f060, BrMapRemoveMany)
 
-br_uint_32 C2_HOOK_CDECL BrMapFindMany(char* pattern, br_pixelmap** items, int max) {
+br_uint_32 C2_HOOK_CDECL BrMapFindMany(const char* pattern, br_pixelmap** items, int max) {
 
     return BrRegistryFindMany(&C2V(v1db).reg_textures, pattern, (void**)items, max);
 }
 C2_HOOK_FUNCTION(0x0051f0a0, BrMapFindMany)
 
-br_uint_32 C2_HOOK_CDECL BrMapCount(char* pattern) {
+br_uint_32 C2_HOOK_CDECL BrMapCount(const char* pattern) {
 
     return BrRegistryCount(&C2V(v1db).reg_textures, pattern);
 }
 C2_HOOK_FUNCTION(0x0051f0c0, BrMapCount)
 
-br_uint_32 C2_HOOK_CDECL BrMapEnum(char* pattern, br_map_enum_cbfn* callback, void* arg) {
+br_uint_32 C2_HOOK_CDECL BrMapEnum(const char* pattern, br_map_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&C2V(v1db).reg_textures, pattern, (br_enum_cbfn*)callback, arg);
 }
@@ -266,7 +266,7 @@ br_pixelmap* C2_HOOK_CDECL BrTableRemove(br_pixelmap* pixelmap) {
 }
 C2_HOOK_FUNCTION(0x0051f120, BrTableRemove)
 
-br_pixelmap* C2_HOOK_CDECL BrTableFind(char* pattern) {
+br_pixelmap* C2_HOOK_CDECL BrTableFind(const char* pattern) {
 
     return BrRegistryFind(&C2V(v1db).reg_tables, pattern);
 }
@@ -314,19 +314,19 @@ br_uint_32 C2_HOOK_CDECL BrTableRemoveMany(br_pixelmap** items, int n) {
 }
 C2_HOOK_FUNCTION(0x0051f1b0, BrTableRemoveMany)
 
-br_uint_32 C2_HOOK_CDECL BrTableFindMany(char* pattern, br_pixelmap** items, int max) {
+br_uint_32 C2_HOOK_CDECL BrTableFindMany(const char* pattern, br_pixelmap** items, int max) {
 
     return BrRegistryFindMany(&C2V(v1db).reg_tables, pattern, (void**)items, max);
 }
 C2_HOOK_FUNCTION(0x0051f1f0, BrTableFindMany)
 
-br_uint_32 C2_HOOK_CDECL BrTableCount(char* pattern) {
+br_uint_32 C2_HOOK_CDECL BrTableCount(const char* pattern) {
 
     return BrRegistryCount(&C2V(v1db).reg_tables, pattern);
 }
 C2_HOOK_FUNCTION(0x0051f210, BrTableCount)
 
-br_uint_32 C2_HOOK_CDECL BrTableEnum(char* pattern, br_table_enum_cbfn* callback, void* arg) {
+br_uint_32 C2_HOOK_CDECL BrTableEnum(const char* pattern, br_table_enum_cbfn* callback, void* arg) {
 
     return BrRegistryEnum(&C2V(v1db).reg_tables, pattern, (br_enum_cbfn*)callback, arg);
 }

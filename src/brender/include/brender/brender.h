@@ -11,8 +11,8 @@ C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontProp4x6);
 C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontProp7x9);
 
 // BrActor
-br_actor* C2_HOOK_CDECL BrActorLoad(char* filename);
-br_uint_32 C2_HOOK_CDECL BrActorLoadMany(char* filename, br_actor** actors, br_uint_16 num);
+br_actor* C2_HOOK_CDECL BrActorLoad(const char* filename);
+br_uint_32 C2_HOOK_CDECL BrActorLoadMany(const char* filename, br_actor** actors, br_uint_16 num);
 br_actor* C2_HOOK_CDECL BrActorAllocate(br_uint_8 type, void* type_data);
 br_actor* C2_HOOK_CDECL BrActorAdd(br_actor* parent, br_actor* a);
 void C2_HOOK_CDECL BrActorRelink(br_actor* parent, br_actor* a);
@@ -42,22 +42,22 @@ br_filesystem* C2_HOOK_CDECL BrFilesystemSet(br_filesystem* newfs);
 // BrMap
 br_pixelmap* C2_HOOK_CDECL BrMapAdd(br_pixelmap* pixelmap);
 br_pixelmap* C2_HOOK_CDECL BrMapRemove(br_pixelmap* pixelmap);
-br_pixelmap* C2_HOOK_CDECL BrMapFind(char* pattern);
+br_pixelmap* C2_HOOK_CDECL BrMapFind(const char* pattern);
 br_uint_32 C2_HOOK_CDECL BrMapAddMany(br_pixelmap** items, int n);
 br_map_find_cbfn* C2_HOOK_CDECL BrMapFindHook(br_map_find_cbfn* hook);
 void C2_HOOK_CDECL BrMapUpdate(br_pixelmap* map, br_uint_16 flags);
 
 // BrMaterial
-br_material* C2_HOOK_CDECL BrMaterialAllocate(char* name);
-br_material* C2_HOOK_CDECL BrMaterialLoad(char* filename);
-br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materials, br_uint_16 num);
+br_material* C2_HOOK_CDECL BrMaterialAllocate(const char* name);
+br_material* C2_HOOK_CDECL BrMaterialLoad(const char* filename);
+br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(const char* filename, br_material** materials, br_uint_16 num);
 br_material* C2_HOOK_CDECL BrMaterialAdd(br_material* material);
 br_material* C2_HOOK_CDECL BrMaterialRemove(br_material* material);
 void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags);
-br_material* C2_HOOK_CDECL BrMaterialFind(char* pattern);
+br_material* C2_HOOK_CDECL BrMaterialFind(const char* pattern);
 void C2_HOOK_CDECL BrMaterialFree(br_material* m);
 br_uint_32 C2_HOOK_CDECL BrMaterialAddMany(br_material** items, int n);
-br_uint_32 C2_HOOK_CDECL BrMaterialEnum(char* pattern, br_material_enum_cbfn* callback, void* arg);
+br_uint_32 C2_HOOK_CDECL BrMaterialEnum(const char* pattern, br_material_enum_cbfn* callback, void* arg);
 br_material_find_cbfn* C2_HOOK_CDECL BrMaterialFindHook(br_material_find_cbfn* hook);
 
 // BrMatrix236
@@ -109,21 +109,21 @@ void* C2_HOOK_CDECL BrMemAllocate(br_size_t size, br_uint_8 type);
 void* C2_HOOK_CDECL BrMemCalloc(int nelems, br_size_t size, br_uint_8 type);
 
 // BrModel
-br_model* C2_HOOK_CDECL BrModelAllocate(char* name, int nvertices, int nfaces);
+br_model* C2_HOOK_CDECL BrModelAllocate(const char* name, int nvertices, int nfaces);
 br_model* C2_HOOK_CDECL BrModelAdd(br_model* model);
 br_uint_32 C2_HOOK_CDECL BrModelAddMany(br_model** items, int n);
 br_model* C2_HOOK_CDECL BrModelRemove(br_model* model);
-br_model* C2_HOOK_CDECL BrModelLoad(char* filename);
+br_model* C2_HOOK_CDECL BrModelLoad(const char* filename);
 void C2_HOOK_CDECL BrModelFree(br_model* model);
 void C2_HOOK_CDECL BrModelUpdate(br_model* model, br_uint_16 flags);
-br_uint_32 C2_HOOK_CDECL BrModelLoadMany(char* filename, br_model** models, br_uint_16 num);
+br_uint_32 C2_HOOK_CDECL BrModelLoadMany(const char* filename, br_model** models, br_uint_16 num);
 br_model_find_cbfn* C2_HOOK_CDECL BrModelFindHook(br_model_find_cbfn* hook);
 
 // BrPixelmap
-br_pixelmap* C2_HOOK_CDECL BrPixelmapLoad(char* filename);
-br_uint_32 C2_HOOK_CDECL BrPixelmapLoadMany(char* filename, br_pixelmap** pixelmaps, br_uint_16 num);
-br_uint_32 C2_HOOK_CDECL BrPixelmapSave(char* filename, br_pixelmap* ptr);
-br_uint_32 C2_HOOK_CDECL BrPixelmapSaveMany(char* filename, br_pixelmap** pixelmaps, br_uint_16 num);
+br_pixelmap* C2_HOOK_CDECL BrPixelmapLoad(const char* filename);
+br_uint_32 C2_HOOK_CDECL BrPixelmapLoadMany(const char* filename, br_pixelmap** pixelmaps, br_uint_16 num);
+br_uint_32 C2_HOOK_CDECL BrPixelmapSave(const char* filename, br_pixelmap* ptr);
+br_uint_32 C2_HOOK_CDECL BrPixelmapSaveMany(const char* filename, br_pixelmap** pixelmaps, br_uint_16 num);
 void C2_HOOK_CDECL BrPixelmapFree(br_pixelmap* src);
 br_pixelmap* C2_HOOK_CDECL BrPixelmapMatch(br_pixelmap* src, br_uint_8 match_type);
 br_pixelmap* C2_HOOK_CDECL BrPixelmapAllocateSub(br_pixelmap* src, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h);
@@ -151,11 +151,11 @@ char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str);
 
 // BrTable
 br_pixelmap* C2_HOOK_CDECL BrTableAdd(br_pixelmap* pixelmap);
-br_pixelmap* C2_HOOK_CDECL BrTableFind(char* pattern);
+br_pixelmap* C2_HOOK_CDECL BrTableFind(const char* pattern);
 br_pixelmap* C2_HOOK_CDECL BrTableRemove(br_pixelmap* pixelmap);
 br_uint_32 C2_HOOK_CDECL  BrTableAddMany(br_pixelmap** items, int n);
 void C2_HOOK_CDECL BrTableUpdate(br_pixelmap* table, br_uint_16 flags);
-br_uint_32 C2_HOOK_CDECL BrTableEnum(char* pattern, br_table_enum_cbfn* callback, void* arg);
+br_uint_32 C2_HOOK_CDECL BrTableEnum(const char* pattern, br_table_enum_cbfn* callback, void* arg);
 br_table_find_cbfn* C2_HOOK_CDECL BrTableFindHook(br_table_find_cbfn* hook);
 
 // BrTransform
@@ -190,7 +190,7 @@ void C2_HOOK_CDECL BrZbsSceneRender(br_actor* world, br_actor* camera, br_pixelm
 
 void C2_HOOK_CDECL BrZbModelRender(br_actor* actor, br_model* model, br_material* material, br_uint_8 style, int on_screen, int use_custom);
 
-br_pixelmap* C2_HOOK_CDECL DOSGfxBegin(char* setup_string);
+br_pixelmap* C2_HOOK_CDECL DOSGfxBegin(const char* setup_string);
 
 // Various
 br_uint_32 C2_HOOK_CDECL BrOnScreenCheck(br_bounds3* bounds);
