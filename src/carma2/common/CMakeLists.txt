@@ -49,4 +49,5 @@ target_link_libraries(c2_common
         brender
         c2_hooks
         c2_platform
+        S3::S3
 )
