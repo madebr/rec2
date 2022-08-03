@@ -438,105 +438,34 @@ void C2_HOOK_FASTCALL DoOpeningAnimation(void) {
 }
 C2_HOOK_FUNCTION(0x0043f330, DoOpeningAnimation)
 
-//// IDA: void __cdecl DoNewGameAnimation()
-//void DoNewGameAnimation() {
-//    LOG_TRACE("()");
-//}
-//
-//// IDA: void __cdecl DoGoToRaceAnimation()
-//void DoGoToRaceAnimation() {
-//    LOG_TRACE("()");
-//
-//    if (!gNet_mode) {
-//        if (PercentageChance(50)) {
-//            PlaySmackerFile("GARAGE2.SMK");
-//        } else {
-//            PlaySmackerFile("GARAGE1.SMK");
-//        }
-//    }
-//}
-//
-//// IDA: void __cdecl DoEndRaceAnimation()
-//void DoEndRaceAnimation() {
-//    int made_a_profit;
-//    int went_up_a_rank;
-//    LOG_TRACE("()");
-//
-//    made_a_profit = gProgram_state.credits_earned >= gProgram_state.credits_lost;
-//    went_up_a_rank = gProgram_state.credits_earned >= gProgram_state.credits_per_rank;
-//
-//    FadePaletteDown();
-//
-//    if (gAusterity_mode || gNet_mode != eNet_mode_none) {
-//        return;
-//    }
-//    if (gProgram_state.credits + gProgram_state.credits_earned - gProgram_state.credits_lost >= 0) {
-//        if (made_a_profit && went_up_a_rank) {
-//            PlaySmackerFile("SUCCESS.SMK");
-//        } else if (made_a_profit || went_up_a_rank) {
-//            PlaySmackerFile("MUNDANE.SMK");
-//        } else {
-//            PlaySmackerFile("UNSUCSES.SMK");
-//        }
-//    }
-//}
-//
-//// IDA: void __cdecl DoGameOverAnimation()
-//void DoGameOverAnimation() {
-//    LOG_TRACE("()");
-//
-//    StopMusic();
-//    PlaySmackerFile("CRASH.SMK");
-//    StartMusic();
-//}
-//
-//// IDA: void __cdecl DoGameCompletedAnimation()
-//void DoGameCompletedAnimation() {
-//    LOG_TRACE("()");
-//
-//    StopMusic();
-//    PlaySmackerFile("TOPRANK.SMK");
-//    StartMusic();
-//}
-//
-//void DoFeatureUnavailableInDemo() {
-//    LOG_TRACE("()");
-//
-//    PrintMemoryDump(0, "BEFORE DEMO-ONLY SCREEN");
-//
-//    SuspendPendingFlic();
-//    FadePaletteDown();
-//    ShowCutScene(7, 1, 8502, gCut_delay_3);
-//    FadePaletteDown();
-//
-//    PrintMemoryDump(0, "AFTER DEMO-ONLY SCREEN");
-//}
-//
-//void DoFullVersionPowerpoint() {
-//    LOG_TRACE("()");
-//
-//    FadePaletteDown();
-//    DRSetPalette(gRender_palette);
-//    ShowCutScene(9, 0, 8503, gCut_delay_4);
-//    FadePaletteDown();
-//
-//    gLast_demo_end_anim = PDGetTotalTime();
-//}
-//
-//void DoDemoGoodbye() {
-//    if (PDGetTotalTime() - gLast_demo_end_anim > 90000) {
-//        DoFullVersionPowerpoint();
-//    }
-//}
-//
-//// IDA: void __cdecl StartLoadingScreen()
-//void StartLoadingScreen() {
-//    LOG_TRACE("()");
-//
-//    PossibleService();
-//    if (gProgram_state.sausage_eater_mode) {
-//        SplashScreenWith(harness_game_info.defines.GERMAN_LOADSCRN);
-//    } else {
-//        SplashScreenWith("LOADSCRN.PIX");
-//    }
-//}
+void C2_HOOK_FASTCALL DoNewGameAnimation(void) {
+}
+C2_HOOK_FUNCTION(0x0043f350, DoNewGameAnimation)
+
+void C2_HOOK_FASTCALL DoGoToRaceAnimation(void) {
+}
+C2_HOOK_FUNCTION(0x0043f360, DoGoToRaceAnimation)
+
+void C2_HOOK_FASTCALL DoEndRaceAnimation(void) {
+}
+C2_HOOK_FUNCTION(0x0043f370, DoEndRaceAnimation)
+
+void C2_HOOK_FASTCALL DoGameOverAnimation(void) {
+}
+C2_HOOK_FUNCTION(0x0043f380, DoGameOverAnimation)
+
+void C2_HOOK_FASTCALL DoGameCompletedAnimation(void) {
+
+    PlaySmackerFile("TOPRANK.SMK");
+    WaitForNoKeys();
+}
+C2_HOOK_FUNCTION(0x0043f390, DoGameCompletedAnimation)
+
+void C2_HOOK_FASTCALL StartLoadingScreen(void) {
+
+//    FUN_0047c660();
+    DRS3StartCDA(9998);
+    PossibleService();
+    SplashScreenWith("LOADSCRN.PIX");
+}
+C2_HOOK_FUNCTION(0x0043f5c0, StartLoadingScreen)
