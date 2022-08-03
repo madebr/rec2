@@ -27,6 +27,16 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRender_palette, 0x0074a674);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gCurrent_palette, 0x0074a678);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gCurrent_splash, 0x0068be20);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTransient_bm, gTransient_bitmaps, 50, 0x0067be98);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMouse_started, 0x0067c390);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNoTransients, 0x0074ca28);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNext_transient, 0x0067c348);
+
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tTransient_bm, gTransient_bitmaps, 50);
+C2_HOOK_VARIABLE_DECLARE(int, gMouse_started);
+C2_HOOK_VARIABLE_DECLARE(int, gNoTransients);
+C2_HOOK_VARIABLE_DECLARE(int, gNext_transient);
+
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
 
@@ -153,3 +163,55 @@ void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixe
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRConvertPixelmapRGB565To555, DRConvertPixelmapRGB565To555_original)
+
+void C2_HOOK_FASTCALL EndMouseCursor(void) {
+
+    RemoveTransientBitmaps(1);
+    DeallocateAllTransientBitmaps();
+    C2V(gMouse_started) = 0;
+}
+C2_HOOK_FUNCTION(0x0043e710, EndMouseCursor)
+
+void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them) {
+    int i;
+    int order_number;
+
+    if (C2V(gNoTransients) && pGraphically_remove_them) {
+        for (order_number = C2V(gNext_transient) - 1; order_number >= 0; order_number--) {
+            for (i = 0; i < REC2_ASIZE(C2V(gTransient_bitmaps)); i++) {
+                if (C2V(gTransient_bitmaps)[i].pixmap != NULL && C2V(gTransient_bitmaps)[i].order_number == order_number) {
+                    if (C2V(gTransient_bitmaps)[i].in_use) {
+                        BrPixelmapRectangleCopy(C2V(gBack_screen),
+                                                C2V(gTransient_bitmaps)[i].x_coord,
+                                                C2V(gTransient_bitmaps)[i].y_coord,
+                                                C2V(gTransient_bitmaps)[i].pixmap,
+                                                0,
+                                                0,
+                                                C2V(gTransient_bitmaps)[i].pixmap->width,
+                                                C2V(gTransient_bitmaps)[i].pixmap->height);
+                    }
+                    break;
+                }
+            }
+        }
+    }
+    C2V(gNext_transient) = 0;
+}
+C2_HOOK_FUNCTION(0x0043e010, RemoveTransientBitmaps)
+
+void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex) {
+
+    if (C2V(gTransient_bitmaps)[pIndex].pixmap != NULL) {
+        BrPixelmapFree(C2V(gTransient_bitmaps)[pIndex].pixmap);
+        C2V(gTransient_bitmaps)[pIndex].pixmap = NULL;
+        C2V(gTransient_bitmaps)[pIndex].in_use = 0;
+    }
+}
+
+void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gTransient_bitmaps)); i++) {
+        DeallocateTransientBitmap(i);
+    }
+}
