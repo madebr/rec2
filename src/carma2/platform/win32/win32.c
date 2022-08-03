@@ -22,7 +22,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFatalErrorMessage, 512, 0x006acc88);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFatalErrorMessageValid, 0x006ad498);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gReal_back_screen, 0x0074d360);
 
 C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd, 0x006ad4c8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gWindowActiveState, 0x006621e0, 2); // FIXME: enum: 0, 1 or 2
@@ -50,7 +49,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_kHz, 0x00
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
 
 void C2_HOOK_FASTCALL KeyBegin(void) {
-    C2V(gReal_back_screen) = NULL;
+    C2V(gBack_screen) = NULL;
     C2V(gScreen) = NULL;
     ShowCursor(FALSE);
     KeyScanCodeBegin();
@@ -95,20 +94,13 @@ C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c110, PDShutdownSystem, PDShutdownSystem_original)
 
-static void(C2_HOOK_FASTCALL * PDUnlockRealBackScreen_original)(void);
-void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void) {
-#if defined(C2_HOOKS_ENABLED)
-    PDUnlockRealBackScreen_original();
-#else
-    if (C2V(gReal_back_screen)->pixels != NULL) {
-        BrPixelmapDirectUnlock(gReal_back_screen);
-        return 1;
-    }
-    return 0;
-#error "Not implemented"
-#endif
+void C2_HOOK_FASTCALL PDLockRealBackScreen(void) {
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00516c30, PDUnlockRealBackScreen, PDUnlockRealBackScreen_original)
+C2_HOOK_FUNCTION(0x0051c2e0, PDLockRealBackScreen)
+
+void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void) {
+}
+C2_HOOK_FUNCTION(0x0051c2f0, PDUnlockRealBackScreen)
 
 void DeActivateApp(void) {
     dr_dprintf("DeActivateApp() - START");
@@ -244,7 +236,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
                     C2V(gTimeLastKeyboardInput) = (int)((li.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_kHz).QuadPart);
                 }
             } else {
-                if (C2V(gReal_back_screen) != NULL && C2V(gReal_back_screen)->pixels != NULL) {
+                if (C2V(gBack_screen) != NULL && C2V(gBack_screen)->pixels != NULL) {
                     return 1;
                 }
                 DeActivateApp();
@@ -371,10 +363,10 @@ void C2_HOOK_FASTCALL PDServiceInput(void) {
 }
 C2_HOOK_FUNCTION(0x0051cbe0, PDServiceInput)
 
-void C2_HOOK_FASTCALL SwapBackScreen(void) {
-    BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gReal_back_screen));
+void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only) {
+    BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gBack_screen));
 }
-C2_HOOK_FUNCTION(0x0051c520, SwapBackScreen)
+C2_HOOK_FUNCTION(0x0051c520, PDScreenBufferSwap)
 
 int (C2_HOOK_FASTCALL * PDGetTotalTime_original)(void);
 int C2_HOOK_FASTCALL PDGetTotalTime(void) {

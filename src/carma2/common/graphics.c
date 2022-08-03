@@ -54,10 +54,10 @@ void C2_HOOK_FASTCALL ClearEntireScreen(void) {
     if (C2V(gScreen) != NULL) {
         BrPixelmapFill(C2V(gScreen), C2V(gGraf_specs)[C2V(gGraf_spec_index)].black_value);
     }
-    BrPixelmapFill(C2V(gReal_back_screen), C2V(gGraf_specs)[C2V(gGraf_spec_index)].black_value);
+    BrPixelmapFill(C2V(gBack_screen), C2V(gGraf_specs)[C2V(gGraf_spec_index)].black_value);
     BrPixelmapFill(C2V(gDepth_buffer), 0xffffffff);
-    SwapBackScreen();
-    BrPixelmapFill(C2V(gReal_back_screen), C2V(gGraf_specs)[C2V(gGraf_spec_index)].black_value);
+    PDScreenBufferSwap(0);
+    BrPixelmapFill(C2V(gBack_screen), C2V(gGraf_specs)[C2V(gGraf_spec_index)].black_value);
 }
 C2_HOOK_FUNCTION(0x0047b880, ClearEntireScreen)
 
@@ -126,7 +126,7 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
     C2V(gCurrent_splash) = the_map;
     if (the_map == NULL) {
         C2V(gCurrent_splash) = DRLoadPixelmap(pPixmap_name);
-        DRConvertPixelmapRGB565To555(C2V(gCurrent_splash), C2V(gReal_back_screen)->type);
+        DRConvertPixelmapRGB565To555(C2V(gCurrent_splash), C2V(gBack_screen)->type);
         if (C2V(gCurrent_splash) != NULL) {
             BrMapAdd(C2V(GCurrent_splash));
         }

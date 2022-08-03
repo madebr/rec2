@@ -122,13 +122,13 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     if (C2V(gNoCutscenes)) {
         return;
     }
-    if (C2V(gReal_back_screen)->type == BR_PMT_INDEX_8) {
+    if (C2V(gBack_screen)->type == BR_PMT_INDEX_8) {
         smackBufferFlags = 0;
         palette_pixels = C2V(gCurrent_palette)->pixels;
-    } else if (C2V(gReal_back_screen)->type == BR_PMT_RGB_555) {
+    } else if (C2V(gBack_screen)->type == BR_PMT_RGB_555) {
         smackBufferFlags = SMACKBUFFER555;
         smackBlitFlags = SMACKBUFFER555 | SMACKBLIT2X;
-    } else if (C2V(gReal_back_screen)->type == BR_PMT_RGB_565) {
+    } else if (C2V(gBack_screen)->type == BR_PMT_RGB_565) {
         smackBufferFlags = SMACKBUFFER565;
         smackBlitFlags = SMACKBUFFER565 | SMACKBLIT2X;
     } else {
@@ -321,8 +321,8 @@ load_failed:
                             BrMaterialUpdate(C2V(gSmackMaterials)[i], BR_MATU_ALL);
                         }
                     }
-                    BrZbSceneRender(C2V(g2d_camera), C2V(g2d_camera), C2V(gReal_back_screen), C2V(gDepth_buffer));
-                    SwapBackScreen();
+                    BrZbSceneRender(C2V(g2d_camera), C2V(g2d_camera), C2V(gBack_screen), C2V(gDepth_buffer));
+                    PDScreenBufferSwap(0);
                     PDServiceInput();
                     if (currentFrame != smackHandle->Frames) {
                         SmackNextFrame(smackHandle);
@@ -355,26 +355,26 @@ load_failed:
         }
         FadePaletteDown();
         ClearEntireScreen();
-    } else if (C2V(gReal_back_screen)->type == BR_PMT_RGB_565 || C2V(gReal_back_screen)->type == BR_PMT_RGB_555) {
+    } else if (C2V(gBack_screen)->type == BR_PMT_RGB_565 || C2V(gBack_screen)->type == BR_PMT_RGB_555) {
         smackBlitHandle = SmackBlitOpen(smackBlitFlags);
         if (smackBlitHandle != NULL) {
             if (smackHandle->Frames != 0) {
                 for (currentFrame = 1; currentFrame != smackHandle->Frames; currentFrame++) {
                     frameStart = PDGetTotalTime();
                     frameCount++;
-                    if (C2V(gReal_back_screen)->type == BR_PMT_RGB_565 ||
-                        C2V(gReal_back_screen)->type == BR_PMT_RGB_555) {
+                    if (C2V(gBack_screen)->type == BR_PMT_RGB_565 ||
+                        C2V(gBack_screen)->type == BR_PMT_RGB_555) {
                         SmackToBuffer(smackHandle, 0, 0, 320, 200, C2V(gSmackerBuffer), 0);
                     } else {
-                        SmackToBuffer(smackHandle, 0, 0, C2V(gReal_back_screen)->row_bytes,
-                                      C2V(gReal_back_screen)->height, C2V(gReal_back_screen)->pixels, smackBufferFlags);
+                        SmackToBuffer(smackHandle, 0, 0, C2V(gBack_screen)->row_bytes,
+                                      C2V(gBack_screen)->height, C2V(gBack_screen)->pixels, smackBufferFlags);
                     }
                     paletteChanged = 0;
                     if (smackHandle->NewPalette) {
                         paletteChanged = 1;
                         paletteChangeCount += 1;
-                        if (C2V(gReal_back_screen)->type == BR_PMT_RGB_565 ||
-                            C2V(gReal_back_screen)->type == BR_PMT_RGB_555) {
+                        if (C2V(gBack_screen)->type == BR_PMT_RGB_565 ||
+                            C2V(gBack_screen)->type == BR_PMT_RGB_555) {
                             SmackBlitSetPalette(smackBlitHandle, smackHandle->Palette, smackHandle->PalType);
                         } else {
                             for (i = 0; i < 256; i++) {
@@ -385,9 +385,9 @@ load_failed:
                         }
                     }
                     SmackDoFrame(smackHandle);
-                    if (C2V(gReal_back_screen)->type == BR_PMT_RGB_565 ||
-                        C2V(gReal_back_screen)->type == BR_PMT_RGB_555) {
-                        SmackBlit(smackBlitHandle, C2V(gReal_back_screen)->pixels, C2V(gReal_back_screen)->row_bytes, 0,
+                    if (C2V(gBack_screen)->type == BR_PMT_RGB_565 ||
+                        C2V(gBack_screen)->type == BR_PMT_RGB_555) {
+                        SmackBlit(smackBlitHandle, C2V(gBack_screen)->pixels, C2V(gBack_screen)->row_bytes, 0,
                                   40, C2V(gSmackerBuffer), 320, 0, 0, 320, 200);
                     }
                     if (currentFrame != smackHandle->Frames) {
@@ -396,7 +396,7 @@ load_failed:
                     if (paletteChanged) {
                         DRSetPalette(C2V(gCurrent_palette));
                     }
-                    SwapBackScreen();
+                    PDScreenBufferSwap(0);
                     PDServiceInput();
                     keyPressed = 0;
                     while (SmackWait(smackHandle) && PDGetTotalTime() < frameStart + 67) {

@@ -9,7 +9,6 @@
 C2_HOOK_VARIABLE_DECLARE(int, gGraf_spec_index);
 C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gReal_back_screen);
 
 void C2_HOOK_FASTCALL PDServiceInput(void);
 void C2_HOOK_FASTCALL KeyBegin(void);
@@ -29,7 +28,7 @@ int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void);
 
 int C2_HOOK_FASTCALL PDGetTotalTime(void);
 
-void C2_HOOK_FASTCALL SwapBackScreen(void);
+void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only);
 
 void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount);
 
