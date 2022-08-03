@@ -164,6 +164,16 @@ void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixe
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRConvertPixelmapRGB565To555, DRConvertPixelmapRGB565To555_original)
 
+void (C2_HOOK_FASTCALL * TintedPolyActor_SetColour_original)(int index, int red, int green, int blue);
+void C2_HOOK_FASTCALL TintedPolyActor_SetColour(int index, int red, int green, int blue) {
+#if defined(C2_HOOKS_ENABLED)
+    TintedPolyActor_SetColour_original(index, red, green, blue);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d82b0, TintedPolyActor_SetColour, TintedPolyActor_SetColour_original)
+
 int (C2_HOOK_FASTCALL * CreateTintedPolyActor_original)(int x, int y, int width, int height, int type, int arg1, int arg2, int arg3);
 int C2_HOOK_FASTCALL CreateTintedPolyActor(int x, int y, int width, int height, int type, int arg1, int arg2, int arg3) {
 #if defined(C2_HOOKS_ENABLED)
