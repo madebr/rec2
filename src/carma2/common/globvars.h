@@ -96,7 +96,7 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gScreen);
 //extern br_pixelmap* gRender_screen;
 //extern br_actor* gRearview_camera;
 //extern br_scalar gCamera_hither;
-//extern br_pixelmap* gBack_screen;
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gBack_screen);
 //extern br_scalar gCamera_angle;
 //extern br_pixelmap* gDigits_pix;
 //extern br_pixelmap* gRender_shade_table;
@@ -147,5 +147,6 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDepth_buffer);
 //extern int gGraf_spec_index;
 //extern int gSound_available;
 //extern int gNumber_of_races;
+C2_HOOK_VARIABLE_DECLARE(int, gTiffFlags);
 
 #endif // REC2_GLOBVARS_H

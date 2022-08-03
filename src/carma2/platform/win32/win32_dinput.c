@@ -3,6 +3,7 @@
 #include "win32.h"
 
 #include "errors.h"
+#include "globvars.h"
 #include "init.h"
 #include "input.h"
 #include "utility.h"
@@ -285,8 +286,8 @@ void C2_HOOK_FASTCALL KeyDInputBegin(void) {
     return;
 error:
     C2V(gExitCode) = 700;
-    if (C2V(gReal_back_screen) != NULL) {
-        if (C2V(gReal_back_screen)->pixels != NULL) {
+    if (C2V(gBack_screen) != NULL) {
+        if (C2V(gBack_screen)->pixels != NULL) {
             C2V(gExitCode) = 700;
             PDUnlockRealBackScreen();
         }
