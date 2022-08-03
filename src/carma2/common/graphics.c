@@ -103,3 +103,46 @@ void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette) {
     DRSetPalette2(pThe_palette, 1);
 }
 C2_HOOK_FUNCTION(0x004b5030, DRSetPalette)
+
+void (C2_HOOK_FASTCALL * SplashScreenWith_original)(const char* pPixmap_name);
+void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
+#if defined(C2_HOOKS_ENABLED)
+    SplashScreenWith_original(pPixmap_name);
+#else
+    br_pixelmap* the_map;
+    int tiffFlags;
+
+    the_map = BrMapFind(pPixmap_name);
+    if (C2V(gCurrent_splash) != NULL) {
+        if (the_map == C2V(gCurrent_splash)) {
+            return;
+        }
+        if (C2V(gCurrent_splash) != NULL) {
+            BrMapRemove(C2V(gCurrent_splash));
+            BrPixelmapFree(C2V(gCurrent_splash));
+        }
+    }
+    tiffFlags = C2V(gTiffFlags);
+    C2V(gCurrent_splash) = the_map;
+    if (the_map == NULL) {
+        C2V(gCurrent_splash) = DRLoadPixelmap(pPixmap_name);
+        DRConvertPixelmapRGB565To555(C2V(gCurrent_splash), C2V(gReal_back_screen)->type);
+        if (C2V(gCurrent_splash) != NULL) {
+            BrMapAdd(C2V(GCurrent_splash));
+        }
+    }
+    C2V(gTiffFlags) = tiffFlags;
+    if (C2V(gCurrent_splash) != NULL) {
+        // FUN005191f();
+        DRPixelmapRectangleCopy(C2V(gBack_screen),
+                0, 0, C2V(gCurrent_splash),
+                0, 0,
+                C2V(gCurrent_splash)->width, C2V(gCurrent_splash)->height);
+        PDScreenBufferSwap(0);
+        BrMapRemove(C2V(gCurrent_splash));
+        BrPixelmapFree(C2V(gCurrent_splash));
+        C2V(gCurrent_splash) = NULL;
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0047b990, SplashScreenWith, SplashScreenWith_original)
