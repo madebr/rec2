@@ -4,6 +4,8 @@ add_library(c2_common STATIC
 
     crush.c
     crush.h
+    cutscene.c
+    cutscene.h
     drfile.c
     drfile.h
     drmem.c
