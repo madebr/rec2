@@ -430,16 +430,13 @@ load_failed:
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043e770, PlaySmackerFile, PlaySmackerFile_original)
 
-//
-//// IDA: void __cdecl DoOpeningAnimation()
-//void DoOpeningAnimation() {
-//    LOG_TRACE("()");
-//
-//    PlaySmackerFile("LOGO.SMK");
-//    PlaySmackerFile(harness_game_info.defines.INTRO_SMK_FILE);
-//    WaitForNoKeys();
-//}
-//
+void C2_HOOK_FASTCALL DoOpeningAnimation(void) {
+    PlaySmackerFile("INTERPLAYGO.SMK");
+    PlaySmackerFile("MIX_INTR.SMK");
+    WaitForNoKeys();
+}
+C2_HOOK_FUNCTION(0x0043f330, DoOpeningAnimation)
+
 //// IDA: void __cdecl DoNewGameAnimation()
 //void DoNewGameAnimation() {
 //    LOG_TRACE("()");
