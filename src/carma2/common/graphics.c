@@ -164,6 +164,16 @@ void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixe
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRConvertPixelmapRGB565To555, DRConvertPixelmapRGB565To555_original)
 
+void (C2_HOOK_FASTCALL * AllocateCursorActors_original)(void);
+void C2_HOOK_FASTCALL AllocateCursorActors(void) {
+#if defined(C2_HOOKS_ENABLED)
+    AllocateCursorActors_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0043e3f0, AllocateCursorActors, AllocateCursorActors_original)
+
 void (C2_HOOK_FASTCALL * StartMouseCursor_original)(void);
 void C2_HOOK_FASTCALL StartMouseCursor(void) {
 #if defined(C2_HOOKS_ENABLED)
