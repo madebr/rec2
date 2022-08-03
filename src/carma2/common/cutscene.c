@@ -27,7 +27,6 @@
 #include "win32/win32.h"
 #endif
 
-
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSmackerActor, 0x0079eca4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSmackerModel, 0x0079ecac);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmackerCurrentPalette, 0x0079eca8);
@@ -35,55 +34,21 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmackerBackPalette, 0x0079ec9c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmackerPrevBackPalette, 0x0079eca0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gSmackMaterials, 15, 0x0079ec60);
 
+#if USE_SMACKW32
+C2_HOOK_VARIABLE_IMPLEMENT(void*, gSmackerBuffer, 0x0067c3b0);
 #define SMACKER_INTERPOLATE
 #define SMACKER_ANTIALIASING
+#endif
 
-//tS32 gLast_demo_end_anim = -90000;
+void C2_HOOK_FASTCALL DoSCILogo(void) {
+}
+C2_HOOK_FUNCTION(0x0043e750, DoSCILogo)
 
-//// IDA: void __usercall ShowCutScene(int pIndex@<EAX>, int pWait_end@<EDX>, int pSound_ID@<EBX>, br_scalar pDelay)
-//void ShowCutScene(int pIndex, int pWait_end, int pSound_ID, br_scalar pDelay) {
-//    LOG_TRACE("(%d, %d, %d, %f)", pIndex, pWait_end, pSound_ID, pDelay);
-//
-//    gProgram_state.cut_scene = 1;
-//    if (pSound_ID >= 0) {
-//        DRS3LoadSound(pSound_ID);
-//        SetFlicSound(pSound_ID, PDGetTotalTime() + 1000.f * pDelay);
-//    }
-//    SetNonFatalAllocationErrors();
-//    RunFlic(pIndex);
-//    ResetNonFatalAllocationErrors();
-//    if (pWait_end) {
-//        WaitForAKey();
-//    } else {
-//        WaitForNoKeys();
-//    }
-//    FadePaletteDown();
-//    ClearEntireScreen();
-//    if (pSound_ID >= 0) {
-//        DRS3ReleaseSound(pSound_ID);
-//        SetFlicSound(0, 0);
-//    }
-//    gProgram_state.cut_scene = 0;
-//}
-//
-//// IDA: void __cdecl DoSCILogo()
-//void DoSCILogo() {
-//}
-//
-//// IDA: void __cdecl DoStainlessLogo()
-//void DoStainlessLogo() {
-//    LOG_TRACE("()");
-//}
-//
+void C2_HOOK_FASTCALL DoStainlessLogo(void) {
+}
+C2_HOOK_FUNCTION(0x0043e760, DoStainlessLogo)
 
-C2_HOOK_VARIABLE_IMPLEMENT(void*, gSmackerBuffer, 0x0067c3b0);
-
-void (C2_HOOK_FASTCALL * PlaySmackerFile_original)(const char* pSmack_name);
 void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
-    C2_HOOK_START();
-#if 0 //defined(C2_HOOKS_ENABLED)
-    PlaySmackerFile_original(pSmack_name);
-#else
 #if USE_SMACKW32
     int mati;
     int i;
@@ -94,7 +59,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     int paletteChangeCount;
     int frameCount;
     int frameStart;
-    char* palette_pixels;
+    char *palette_pixels;
     int vertex_start;
     int face_start;
     int smackBufferFlags;
@@ -103,15 +68,15 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     HSMACK smackHandle;
     HSMACKBLIT smackBlitHandle;
     int paletteChanged;
-    br_pixelmap* tmpPalette;
+    br_pixelmap *tmpPalette;
     br_scalar l, r;
     br_scalar b, u;
     br_uint_32 paletteColour;
     int keyPressed;
     int buffer_start;
     int current_buffer_start;
-    char* material_pixels;
-    br_uint_8* current_buffer;
+    char *material_pixels;
+    br_uint_8 *current_buffer;
 
     smackBlitHandle = NULL;
     paletteChangeCount = 0;
@@ -229,11 +194,11 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
             BrMaterialAdd(C2V(gSmackMaterials)[i]);
         }
         for (mati = 0, i = 0, vertex_start = 0, face_start = 0; mati < REC2_ASIZE(C2V(gSmackMaterials)); i++) {
-            b = (float)(-128 * i - 48);
-            u = (float)(-128 * (i + 1) - 48);
+            b = (float) (-128 * i - 48);
+            u = (float) (-128 * (i + 1) - 48);
             for (j = 0; j < 5; mati++, j++, vertex_start += 4, face_start += 2) {  // 5 == SMACK_WIDTH / 64
-                l = (float)(128 * j);
-                r = (float)(128 * (j + 1));
+                l = (float) (128 * j);
+                r = (float) (128 * (j + 1));
                 C2V(gSmackerModel)->vertices[vertex_start + 0].p.v[0] = l;
                 C2V(gSmackerModel)->vertices[vertex_start + 0].p.v[1] = u;
                 C2V(gSmackerModel)->vertices[vertex_start + 0].p.v[2] = -2.f;
@@ -276,7 +241,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
         BrModelAdd(C2V(gSmackerModel));
         C2V(gSmackerActor)->model = C2V(gSmackerModel);
         BrActorAdd(C2V(g2d_camera), C2V(gSmackerActor));
-load_failed:
+        load_failed:
         if (C2V(gSmackerActor) != NULL) {
             if (SmackBufferOpen(C2V(gHWnd), SMACKFRAMERATE, SMACK_WIDTH, SMACK_HEIGHT, SMACK_WIDTH, SMACK_WIDTH) == 0) {
                 PDEnterDebugger("sbuf");
@@ -309,7 +274,8 @@ load_failed:
                     }
                     SmackDoFrame(smackHandle);
                     BrPixelmapFill(C2V(gDepth_buffer), -1);
-                    for (i = 0, buffer_start = 0; i < REC2_ASIZE(C2V(gSmackMaterials)); buffer_start += 64 * SMACK_WIDTH) {
+                    for (i = 0, buffer_start = 0;
+                         i < REC2_ASIZE(C2V(gSmackMaterials)); buffer_start += 64 * SMACK_WIDTH) {
                         current_buffer_start = buffer_start;
                         for (j = 0; j < 5; j++, current_buffer_start += 64, i++) {
                             material_pixels = C2V(gSmackMaterials)[i]->colour_map->pixels;
@@ -420,15 +386,14 @@ load_failed:
     }
     timeEnd = PDGetTotalTime();
     dr_dprintf("Frames %d, time %d, pal changes %d, pal changes per sec %f, av fps %f",
-        frameCount, 1000 * (timeEnd - timeStart), paletteChangeCount,
-        (float)paletteChangeCount / (timeEnd - timeStart), (float)frameCount / (timeEnd - timeStart));
+               frameCount, 1000 * (timeEnd - timeStart), paletteChangeCount,
+               (float) paletteChangeCount / (timeEnd - timeStart), (float) frameCount / (timeEnd - timeStart));
     PDServiceInput();
 #else
 #error "Not implemented"
 #endif
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0043e770, PlaySmackerFile, PlaySmackerFile_original)
+C2_HOOK_FUNCTION(0x0043e770, PlaySmackerFile)
 
 void C2_HOOK_FASTCALL DoOpeningAnimation(void) {
     PlaySmackerFile("INTERPLAYGO.SMK");
