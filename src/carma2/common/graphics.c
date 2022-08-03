@@ -106,11 +106,7 @@ void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette) {
 }
 C2_HOOK_FUNCTION(0x004b5030, DRSetPalette)
 
-void (C2_HOOK_FASTCALL * SplashScreenWith_original)(const char* pPixmap_name);
 void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
-#if defined(C2_HOOKS_ENABLED)
-    SplashScreenWith_original(pPixmap_name);
-#else
     br_pixelmap* the_map;
     int tiffFlags;
 
@@ -145,9 +141,8 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
         BrPixelmapFree(C2V(gCurrent_splash));
         C2V(gCurrent_splash) = NULL;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0047b990, SplashScreenWith, SplashScreenWith_original)
+C2_HOOK_FUNCTION(0x0047b990, SplashScreenWith)
 
 void (C2_HOOK_FASTCALL * DRConvertPixelmapRGB565To555_original)(br_pixelmap* pixmap, int pixelType);
 void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixelType) {
