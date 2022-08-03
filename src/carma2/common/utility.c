@@ -83,3 +83,8 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW,
     return pm;
 }
 C2_HOOK_FUNCTION(0x005137d0, DRPixelmapAllocate)
+
+void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h) {
+    BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
+}
+C2_HOOK_FUNCTION(0x005191b0, DRPixelmapRectangleCopy)
