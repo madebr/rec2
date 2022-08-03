@@ -2,8 +2,8 @@
 
 #include "c2_ctype.h"
 
-br_boolean C2_HOOK_CDECL BrNamePatternMatch(char* p, char* s) {
-    char* cp;
+br_boolean C2_HOOK_CDECL BrNamePatternMatch(const char* p, const char* s) {
+    const char* cp;
 
     if (p == NULL) {
         return 1;

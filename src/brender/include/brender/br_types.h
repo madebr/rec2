@@ -1461,7 +1461,7 @@ typedef struct br_3ds_options {
 } br_3ds_options;
 
 typedef struct br_registery br_registry;
-typedef void* br_find_failed_cbfn(char*);
+typedef void* br_find_failed_cbfn(const char*);
 typedef br_uint_32 C2_HOOK_CDECL br_enum_cbfn(void*, void*);
 typedef void br_surface_fn(br_vertex*, br_fvector3*, br_scalar*);
 typedef br_uint_32 br_face_surface_fn(br_vertex*, br_face*, int);
