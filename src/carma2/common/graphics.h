@@ -23,4 +23,12 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
 
 void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixelType);
 
+void C2_HOOK_FASTCALL EndMouseCursor(void);
+
+void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them);
+
+void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex);
+
+void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void);
+
 #endif //REC2_GRAPHICS_H

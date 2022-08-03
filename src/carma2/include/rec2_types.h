@@ -112,6 +112,15 @@ typedef struct {
     tSpecial_volume_soundfx_data soundfx_data;
 } tSpecial_volume;
 
+typedef struct tTransient_bm {
+    br_pixelmap* pixmap;
+    int in_use;
+    int x_coord;
+    int y_coord;
+    int order_number;
+    int user_data;
+} tTransient_bm;
+
 enum {
     // FIXME: add all c2 memory tags
     kMem_packed_file = 0xd0,
