@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "loading.h"
+#include "utility.h"
 
 #include "platform.h"
 
@@ -24,6 +25,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(char*, gCurrent_palette_pixels, 0x0074a680);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFaded_palette, 0x006923c8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRender_palette, 0x0074a674);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gCurrent_palette, 0x0074a678);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gCurrent_splash, 0x0068be20);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -128,7 +130,7 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
         C2V(gCurrent_splash) = DRLoadPixelmap(pPixmap_name);
         DRConvertPixelmapRGB565To555(C2V(gCurrent_splash), C2V(gBack_screen)->type);
         if (C2V(gCurrent_splash) != NULL) {
-            BrMapAdd(C2V(GCurrent_splash));
+            BrMapAdd(C2V(gCurrent_splash));
         }
     }
     C2V(gTiffFlags) = tiffFlags;
@@ -146,3 +148,13 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047b990, SplashScreenWith, SplashScreenWith_original)
+
+void (C2_HOOK_FASTCALL * DRConvertPixelmapRGB565To555_original)(br_pixelmap* pixmap, int pixelType);
+void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixelType) {
+#if defined(C2_HOOKS_ENABLED)
+    DRConvertPixelmapRGB565To555_original(pixmap, pixelType);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRConvertPixelmapRGB565To555, DRConvertPixelmapRGB565To555_original)
