@@ -122,7 +122,7 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDepth_buffer);
 //extern int gCheck_point_cash[3];
 //extern int gPoints_per_second[3];
 //extern br_actor* gUniverse_actor;
-//extern br_actor* gTrack_actor;
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gTrack_actor);
 //extern int gMap_mode;
 //extern int gPed_time_value[3];
 //extern int gAbandon_game;
