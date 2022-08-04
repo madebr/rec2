@@ -47,6 +47,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gCunning_stunt_bonus, 3, 0x00763500);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gDefaultCar, 32, 0x00764ea0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gDefaultCockpit, 32, 0x00764ec0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gGoreLevel, 0x0065d7d4, 1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAnimalsOn, 0x0065d7c8, 1);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKnobbledFramePeriod, 0x007634f0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gUnknownOpponentFactor, 0x0065a3cc);
@@ -203,6 +204,18 @@ void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
     C2V(gGoreLevel) = 2 - pNewLevel;
 }
 C2_HOOK_FUNCTION(0x004d7030, SetGoreLevel)
+
+int C2_HOOK_FASTCALL GetAnimalsOn(void) {
+
+    return C2V(gAnimalsOn);
+}
+C2_HOOK_FUNCTION(0x004d6fd0, GetAnimalsOn)
+
+void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {
+
+    C2V(gAnimalsOn) = pNewAnimalsOn;
+}
+C2_HOOK_FUNCTION(0x004d7000, SetAnimalsOn)
 
 void C2_HOOK_FASTCALL StripCRNL(char* line) {
     char* loc;
