@@ -68,6 +68,10 @@ int C2_HOOK_FASTCALL GetAnimalsOn(void);
 
 void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn);
 
+int C2_HOOK_FASTCALL GetFlameThrowerOn(void);
+
+void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
