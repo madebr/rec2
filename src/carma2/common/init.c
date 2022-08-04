@@ -3,7 +3,7 @@
 #include "c2_stdlib.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gBr_initialized, 0x0068be2c);
-
+C2_HOOK_VARIABLE_IMPLEMENT(int, gRender_indent, 0x0068be38);
 
 void (C2_HOOK_FASTCALL * InitialiseApplication_original)(int pArgc, const char** pArgv);
 void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv) {
@@ -61,3 +61,15 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047dd20, InitialiseApplication, InitialiseApplication_original)
+
+int C2_HOOK_FASTCALL GetScreenSize(void) {
+
+    return C2V(gRender_indent);
+}
+C2_HOOK_FUNCTION(0x00481e90, GetScreenSize)
+
+void C2_HOOK_FASTCALL SetScreenSize(int pNew_size) {
+
+    C2V(gRender_indent) = pNew_size;
+}
+C2_HOOK_FUNCTION(0x00481ea0, SetScreenSize)
