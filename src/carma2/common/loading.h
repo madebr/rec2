@@ -32,6 +32,8 @@ void C2_HOOK_FASTCALL GetAString(tTWTFILE* pF, char* pString);
 
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
+tTWTFILE* C2_HOOK_FASTCALL TWTfopen(const char* pFilename, const char* pMode);
+
 void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile);
 
 br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, void* f);
@@ -56,3 +58,4 @@ tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name);
 
 #endif //REC2_LOADING_H
+
