@@ -48,6 +48,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gDefaultCar, 32, 0x00764ea0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gDefaultCockpit, 32, 0x00764ec0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gGoreLevel, 0x0065d7d4, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAnimalsOn, 0x0065d7c8, 1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFlameThrowerOn, 0x0065d7cc, 1);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKnobbledFramePeriod, 0x007634f0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gUnknownOpponentFactor, 0x0065a3cc);
@@ -216,6 +217,18 @@ void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {
     C2V(gAnimalsOn) = pNewAnimalsOn;
 }
 C2_HOOK_FUNCTION(0x004d7000, SetAnimalsOn)
+
+int C2_HOOK_FASTCALL GetFlameThrowerOn(void) {
+
+    return C2V(gFlameThrowerOn);
+}
+C2_HOOK_FUNCTION(0x004d6fe0, GetFlameThrowerOn)
+
+void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn) {
+
+    C2V(gFlameThrowerOn) = pNewFlameThrowerOn;
+}
+C2_HOOK_FUNCTION(0x004d7010, SetFlameThrowerOn)
 
 void C2_HOOK_FASTCALL StripCRNL(char* line) {
     char* loc;
