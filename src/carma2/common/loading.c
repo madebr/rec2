@@ -68,6 +68,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gDecode_string, 14, 0x00655e38, {   
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDecode_thing, 0x00655e30);
 C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume, gUnderwaterSpecialVolumeSettings, 0x00761b80);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gMisc_strings, 300, 0x006b5f40);
+
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedsFolder, 0x006a0414);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedSoundPath, 0x00684550);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedPowerupTxtPath, 0x006a0ad4);
@@ -590,3 +592,44 @@ void C2_HOOK_FASTCALL LoadHeadupImages(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0048c150, LoadHeadupImages)
+
+void C2_HOOK_FASTCALL LoadMiscStrings(void) {
+    int i;
+    tTWTFILE *f;
+    char s[256];
+    tPath_name the_path;
+
+    if (C2V(gPedTextTxtPath) == NULL) {
+        C2V(gPedTextTxtPath) = "TEXT.TXT";
+    }
+    PathCat(the_path, C2V(gApplication_path), C2V(gPedTextTxtPath));
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotOpenTEXT_TXT);
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gMisc_strings)); i++) {
+        if (DRfeof(f)) {
+            break;
+        }
+        GetALineAndDontArgue(f, s);
+        C2V(gMisc_strings)[i] = BrMemAllocate(strlen(s) + 1, kMem_misc_string);
+        strcpy(C2V(gMisc_strings)[i], s);
+    }
+    // Thousands delimiter
+    C2V(gMisc_strings)[294][1] = '\0';
+    switch (C2V(gMisc_strings)[294][0]) {
+    case 'C':
+        C2V(gMisc_strings)[294][0] = ',';
+        break;
+    case 'P':
+        C2V(gMisc_strings)[294][0] = '.';
+        break;
+    case 'S':
+        C2V(gMisc_strings)[294][0] = ' ';
+        break;
+    default:
+        break;
+    }
+    DRfclose(f);
+}
+C2_HOOK_FUNCTION(0x0048cfc0, LoadMiscStrings)

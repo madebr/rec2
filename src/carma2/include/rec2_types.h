@@ -142,6 +142,7 @@ typedef struct tTransient_bm {
 
 enum {
     // FIXME: add all c2 memory tags
+    kMem_misc_string = 0xab,
     kMem_packed_file = 0xd0,
 };
 
@@ -151,6 +152,7 @@ enum {
     kFatalError_FailToOpenGeneralSettings = 0x03,
     kFatalError_CouldNotOpenKeyMapFile = 0x09,
     kFatalError_ScreenDimensionNotInGrafData = 0x18,
+    kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_MysteriousX_SS = 0xbd,
 };
 
