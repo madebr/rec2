@@ -1,5 +1,6 @@
 #include "world.h"
 
+#include "car.h"
 #include "loading.h"
 #include "sound.h"
 
@@ -52,6 +53,18 @@ void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel) {
     C2V(gWall_texturing_level) = pLevel;
 }
 C2_HOOK_FUNCTION(0x00448900, SetWallTexturingLevel)
+
+void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {
+
+    C2V(gCar_simplification_level) = pLevel;
+}
+C2_HOOK_FUNCTION(0x00448f10, SetCarSimplificationLevel)
+
+int C2_HOOK_FASTCALL GetCarSimplificationLevel(void) {
+
+    return C2V(gCar_simplification_level);
+}
+C2_HOOK_FUNCTION(0x00448f20, GetCarSimplificationLevel)
 
 void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
     char s[256];
