@@ -2,6 +2,8 @@ add_library(c2_common STATIC
     ../include/rec2_macros.h
     ../include/rec2_types.h
 
+    brucetrk.c
+    brucetrk.h
     crush.c
     crush.h
     cutscene.c
