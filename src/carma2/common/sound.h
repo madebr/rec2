@@ -5,6 +5,7 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gSound_detail_level);
 C2_HOOK_VARIABLE_DECLARE(int, gCD_fully_installed);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
