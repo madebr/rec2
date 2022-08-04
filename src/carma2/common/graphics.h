@@ -21,7 +21,7 @@ void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
 
 void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
 
-void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixelType);
+void C2_HOOK_FASTCALL DRPixelmapConvertRGB565ToRGB555IfNeeded(br_pixelmap* pixelmap, int pixelType);
 
 br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x, int y, int width, int height, int nbX, int nbY);
 
