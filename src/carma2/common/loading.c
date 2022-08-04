@@ -49,6 +49,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gDefaultCockpit, 32, 0x00764ec0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gGoreLevel, 0x0065d7d4, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAnimalsOn, 0x0065d7c8, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFlameThrowerOn, 0x0065d7cc, 1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gMinesOn, 0x0065d7d0, 1);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKnobbledFramePeriod, 0x007634f0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gUnknownOpponentFactor, 0x0065a3cc);
@@ -229,6 +230,18 @@ void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn) {
     C2V(gFlameThrowerOn) = pNewFlameThrowerOn;
 }
 C2_HOOK_FUNCTION(0x004d7010, SetFlameThrowerOn)
+
+int C2_HOOK_FASTCALL GetMinesOn(void) {
+
+    return C2V(gMinesOn);
+}
+C2_HOOK_FUNCTION(0x004d6ff0, GetMinesOn)
+
+void C2_HOOK_FASTCALL SetMinesOn(int pNewMinesOn) {
+
+    C2V(gMinesOn) = pNewMinesOn;
+}
+C2_HOOK_FUNCTION(0x004d7020, SetMinesOn)
 
 void C2_HOOK_FASTCALL StripCRNL(char* line) {
     char* loc;

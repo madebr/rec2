@@ -72,6 +72,10 @@ int C2_HOOK_FASTCALL GetFlameThrowerOn(void);
 
 void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn);
 
+int C2_HOOK_FASTCALL GetMinesOn(void);
+
+void C2_HOOK_FASTCALL SetMinesOn(int pNewMinesOn);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
