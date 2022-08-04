@@ -37,6 +37,11 @@ C2_HOOK_VARIABLE_DECLARE(int, gMouse_started);
 C2_HOOK_VARIABLE_DECLARE(int, gNoTransients);
 C2_HOOK_VARIABLE_DECLARE(int, gNext_transient);
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_x, 0x00659b2c, 80.f);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_y, 0x00659b30, 6.f);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_width, 0x00659b34, 128.f);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_height, 0x00659b38, 80.f);
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tShadow_level, gShadow_level, 0x0065fdc8, kMiscString_ShadowUsOnly);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
