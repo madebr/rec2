@@ -1,8 +1,10 @@
 #include "world.h"
 
 #include "car.h"
+#include "globvars.h"
 #include "loading.h"
 #include "sound.h"
+#include "utility.h"
 
 #include <brender/brender.h>
 #include "rec2_macros.h"
@@ -13,6 +15,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundType_Choices, 2, 0x0066
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gCar_texturing_level, 0x00591374, eCTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gRoad_texturing_level, 0x0059136c, eRTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWall_texturing_level, gWall_texturing_level, 0x00591370, eWTL_full);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRendering_accessories, 0x00591368, 1);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -66,6 +69,35 @@ int C2_HOOK_FASTCALL GetCarSimplificationLevel(void) {
 }
 C2_HOOK_FUNCTION(0x00448f20, GetCarSimplificationLevel)
 
+intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
+    if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
+        pActor->render_style = *(br_uint_8*)pFlag;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00448ea0, SetAccessoryRenderingCB)
+
+void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn) {
+    int style;
+
+    if (C2V(gTrack_actor) != NULL)  {
+        if (pOn) {
+            style = BR_RSTYLE_FACES;
+        } else {
+            style = BR_RSTYLE_NONE;
+        }
+        DRActorEnumRecurse(C2V(gTrack_actor), (br_actor_enum_cbfn*)SetAccessoryRenderingCB, &style);
+    }
+    C2V(gRendering_accessories) = pOn;
+}
+C2_HOOK_FUNCTION(0x00448ec0, SetAccessoryRendering)
+
+int C2_HOOK_FASTCALL GetAccessoryRendering(void) {
+
+    return C2V(gRendering_accessories);
+}
+C2_HOOK_FUNCTION(0x00448f00, GetAccessoryRendering)
+
 void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
     char s[256];
 
@@ -104,5 +136,4 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, c
         pSpec->soundfx_type = kSoundFx_None;
     }
 }
-
 C2_HOOK_FUNCTION(0x004ff8d0, ParseSpecialVolume)

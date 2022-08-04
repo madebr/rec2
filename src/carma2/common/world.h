@@ -21,6 +21,12 @@ void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
 int C2_HOOK_FASTCALL GetCarSimplificationLevel(void);
 
+intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag);
+
+void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn);
+
+int C2_HOOK_FASTCALL GetAccessoryRendering(void);
+
 void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx);
 
 #endif // REC2_WORLD_H
