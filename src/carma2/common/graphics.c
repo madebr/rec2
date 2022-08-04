@@ -134,7 +134,7 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
     C2V(gCurrent_splash) = the_map;
     if (the_map == NULL) {
         C2V(gCurrent_splash) = DRLoadPixelmap(pPixmap_name);
-        DRConvertPixelmapRGB565To555(C2V(gCurrent_splash), C2V(gBack_screen)->type);
+        DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gCurrent_splash), C2V(gBack_screen)->type);
         if (C2V(gCurrent_splash) != NULL) {
             BrMapAdd(C2V(gCurrent_splash));
         }
@@ -154,15 +154,30 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
 }
 C2_HOOK_FUNCTION(0x0047b990, SplashScreenWith)
 
-void (C2_HOOK_FASTCALL * DRConvertPixelmapRGB565To555_original)(br_pixelmap* pixmap, int pixelType);
-void C2_HOOK_FASTCALL DRConvertPixelmapRGB565To555(br_pixelmap* pixmap, int pixelType) {
-#if defined(C2_HOOKS_ENABLED)
-    DRConvertPixelmapRGB565To555_original(pixmap, pixelType);
-#else
-#error "not implemented"
-#endif
+void (C2_HOOK_FASTCALL * DRPixelmapConvertRGB565ToRGB555IfNeeded_original)(br_pixelmap* pixelmap, int pixelType);
+void C2_HOOK_FASTCALL DRPixelmapConvertRGB565ToRGB555IfNeeded(br_pixelmap* pixelmap, int pixelType) {
+    br_uint_8* pixel_row_start;
+    br_uint_16* pixel;
+    int i;
+    int j;
+
+    if (pixelmap == NULL || pixelmap->type != BR_PMT_RGB_565 || pixelType != BR_PMT_RGB_555 || pixelmap->pixels == NULL) {
+        return;
+    }
+    pixel_row_start = pixelmap->pixels;
+
+    for (i = 0; i < pixelmap->height; i++) {
+        pixel = (br_uint_16*)pixel_row_start;
+        for (j = 0; j < pixelmap->width; j++) {
+            // Remove least significant bit of blue (6 bits -> 5 bits)
+            *pixel = ((*pixel & 0xffc0)>>1) | (*pixel & 0x001f);
+            pixel++;
+        }
+        pixel_row_start += pixelmap->row_bytes;
+    }
+    pixelmap->type = BR_PMT_RGB_555;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRConvertPixelmapRGB565To555, DRConvertPixelmapRGB565To555_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRPixelmapConvertRGB565ToRGB555IfNeeded, DRPixelmapConvertRGB565ToRGB555IfNeeded_original)
 
 br_model* (C2_HOOK_FASTCALL * CreateInterpolatedQuadModel_original)(int x, int y, int width, int height, int nbX, int nbY);
 br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x, int y, int width, int height, int nbX, int nbY) {
