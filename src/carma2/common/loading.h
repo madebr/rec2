@@ -14,6 +14,52 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
 
 C2_HOOK_VARIABLE_DECLARE(int, gRusselsFannies);
 
+C2_HOOK_VARIABLE_DECLARE(char*, gPedsFolder);
+C2_HOOK_VARIABLE_DECLARE(char*, gPedSoundPath);
+C2_HOOK_VARIABLE_DECLARE(char*, gPedPowerupTxtPath);
+C2_HOOK_VARIABLE_DECLARE(char*, gPedTextTxtPath);
+C2_HOOK_VARIABLE_DECLARE(char*, gPedTexturePath);
+
+void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
+
+void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void);
+
+void C2_HOOK_FASTCALL ConfigureDefaultPedTextTxtPath(void);
+
+void C2_HOOK_FASTCALL ConfigureDefaultPedTexturePath(void);
+
+void C2_HOOK_FASTCALL ConfigurePedDefaultPaths(void);
+
+void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void);
+
+void C2_HOOK_FASTCALL ConfigureZombiePedPowerupTxtPath(void);
+
+void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void);
+
+void C2_HOOK_FASTCALL ConfigureZombiePedTexturePath(void);
+
+void C2_HOOK_FASTCALL ConfigurePedZombiePaths(void);
+
+void C2_HOOK_FASTCALL ConfigureBloodPedSoundPath(void);
+
+void C2_HOOK_FASTCALL ConfigureBloodPedPowerupTxtPath(void);
+
+void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void);
+
+void C2_HOOK_FASTCALL ConfigureBloodPedTexturePath(void);
+
+void C2_HOOK_FASTCALL ConfigurePedBloodPaths(void);
+
+void C2_HOOK_FASTCALL ConfigureAlienPedSoundPath(void);
+
+void C2_HOOK_FASTCALL ConfigureAlienPedPowerupTxtPath(void);
+
+void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void);
+
+void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void);
+
+void C2_HOOK_FASTCALL ConfigurePedAlienPaths(void);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
