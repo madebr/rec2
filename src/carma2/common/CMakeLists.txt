@@ -6,6 +6,8 @@ add_library(c2_common STATIC
     brucetrk.h
     car.c
     car.h
+    controls.c
+    controls.h
     crush.c
     crush.h
     cutscene.c
