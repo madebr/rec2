@@ -44,5 +44,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gFatalErrorMessageValid);
 
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
+int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path);
 
 #endif // C2_WIN32_WIN32_H
