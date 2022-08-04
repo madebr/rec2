@@ -54,6 +54,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gMaxTimeOpponentRepair, 0x0074a688);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gUnderwaterScreenName, 32, 0x0068c6f8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gRusselsFannies, 0x006aa5c4);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_map_index, 0x0068b88c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gKey_mapping, 77, 0x0074b5e0);
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gDecode_string, 14, 0x00655e38, {    \
     0x9B, 0x52, 0x93, 0x9f, 0x52, 0x98, 0x9b,                                    \
     0x96, 0x96, 0x9e, 0x9B, 0xa0, 0x99, 0x0 });
@@ -422,3 +425,22 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00486ef0, LoadGeneralParameters, LoadGeneralParameters_original)
+
+void C2_HOOK_FASTCALL LoadKeyMapping(void) {
+    tTWTFILE* f;
+    tPath_name the_path;
+    int i;
+
+    PathCat(the_path, C2V(gApplication_path), "KEYMAP_X.TXT");
+    the_path[strlen(the_path) - 5] = '0' + C2V(gKey_map_index);
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CouldNotOpenKeyMapFile);
+    }
+
+    for (i = 0; i < REC2_ASIZE(C2V(gKey_mapping)); i++) {
+        c2_fscanf((FILE*)f, "%d", &C2V(gKey_mapping)[i]);
+    }
+    DRfclose(f);
+}
+C2_HOOK_FUNCTION(0x00487e10, LoadKeyMapping)
