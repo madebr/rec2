@@ -76,6 +76,10 @@ int C2_HOOK_FASTCALL GetMinesOn(void);
 
 void C2_HOOK_FASTCALL SetMinesOn(int pNewMinesOn);
 
+int C2_HOOK_FASTCALL GetDronesOn(void);
+
+void C2_HOOK_FASTCALL SetDronesOn(int pNewDronesOn);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
