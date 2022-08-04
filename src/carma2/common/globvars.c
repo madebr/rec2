@@ -13,6 +13,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_override, 0x0068b888);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gBack_screen, 0x0074d360);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCamera_yon, 0x00761f4c);;
+
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTrack_actor, 0x0075bb60);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
@@ -118,7 +121,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCamera_yon, 0x00761f4c);;
 //int gCheck_point_cash[3];
 //int gPoints_per_second[3];
 //br_actor* gUniverse_actor;
-//br_actor* gTrack_actor;
 //int gMap_mode;
 //int gPed_time_value[3];
 //int gAbandon_game;
