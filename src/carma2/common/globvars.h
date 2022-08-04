@@ -103,7 +103,7 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gBack_screen);
 //extern br_pixelmap* gRearview_depth_buffer;
 //extern br_pixelmap* gWhole_screen;
 //extern br_pixelmap* gIcons_pix;
-//extern br_scalar gCamera_yon;
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gCamera_yon);
 //extern br_actor* gCamera;
 //extern br_actor* gArrow_actor;
 //extern br_pixelmap* gIcons_pix_low_res;
