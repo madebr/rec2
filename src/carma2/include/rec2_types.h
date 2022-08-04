@@ -130,6 +130,7 @@ enum {
     // FIXME: add all c2 FatalError types
     kFatalError_InvalidScreenDepthSetting = 0x00,
     kFatalError_FailToOpenGeneralSettings = 0x03,
+    kFatalError_CouldNotOpenKeyMapFile = 0x09,
     kFatalError_ScreenDimensionNotInGrafData = 0x18,
     kFatalError_MysteriousX_SS = 0xbd,
 };
