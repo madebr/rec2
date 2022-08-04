@@ -12,6 +12,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_override, 0x0068b888);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gBack_screen, 0x0074d360);
 
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCamera_yon, 0x00761f4c);;
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
@@ -100,7 +101,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gBack_screen, 0x0074d360);
 //br_pixelmap* gRearview_depth_buffer;
 //br_pixelmap* gWhole_screen;
 //br_pixelmap* gIcons_pix;
-//br_scalar gCamera_yon;
 //br_actor* gCamera;
 //br_actor* gArrow_actor;
 //br_pixelmap* gIcons_pix_low_res;
