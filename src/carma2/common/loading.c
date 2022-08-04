@@ -3,6 +3,8 @@
 #include "crush.h"
 #include "errors.h"
 #include "globvars.h"
+#include "globvrpb.h"
+#include "graphics.h"
 #include "utility.h"
 #include "world.h"
 
@@ -56,6 +58,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gRusselsFannies, 0x006aa5c4);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_map_index, 0x0068b88c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gKey_mapping, 77, 0x0074b5e0);
+
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tHeadup_info, gHeadup_image_info, 45, 0x00657320, TODO);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gHeadup_images, 45, 0x0079eb60);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gDecode_string, 14, 0x00655e38, {    \
     0x9B, 0x52, 0x93, 0x9f, 0x52, 0x98, 0x9b,                                    \
@@ -444,3 +449,22 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     DRfclose(f);
 }
 C2_HOOK_FUNCTION(0x00487e10, LoadKeyMapping)
+
+void C2_HOOK_FASTCALL LoadHeadupImages(void) {
+    int i;
+    br_pixelmap* pixmap;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gHeadup_image_info)); i++) {
+        PossibleService();
+        if (C2V(gHeadup_image_info)[i].avail == eNet_or_otherwise
+                || (C2V(gHeadup_image_info)[i].avail == eNot_net && C2V(gNet_mode) == eNet_mode_none)
+                || (C2V(gHeadup_image_info)[i].avail == eNet_only && C2V(gNet_mode) != eNet_mode_none)) {
+            pixmap = DRLoadPixelmap(C2V(gHeadup_image_info)[i].name);
+            DRPixelmapConvertRGB565ToRGB555IfNeeded(pixmap, C2V(gBack_screen)->type);
+        } else {
+            pixmap = NULL;
+        }
+        C2V(gHeadup_images)[i] = pixmap;
+    }
+}
+C2_HOOK_FUNCTION(0x0048c150, LoadHeadupImages)
