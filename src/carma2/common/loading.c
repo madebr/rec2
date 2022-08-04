@@ -28,7 +28,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisableTiffConversionStack, 2, 0x00692068
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_hither, 0x0074d3e8);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_cockpit_hither, 0x007634ac);
 C2_HOOK_VARIABLE_IMPLEMENT(tTWTFILE*, gTempFile, 0x0068c6ec);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gYon, 0x00761f4c);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_angle, 0x0074d354);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gHeadupBackgroundBrightness, 0x0079ec14);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInitial_rank, 0x0074b76c);
@@ -518,7 +517,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     c2_sscanf(&s2[position + strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
     C2V(gCamera_hither) *= 2;
     C2V(gCamera_cockpit_hither) *= 2;
-    C2V(gYon) = GetAFloat(C2V(gTempFile));
+    C2V(gCamera_Yon) = GetAFloat(C2V(gTempFile));
     C2V(gCamera_angle) = GetAFloat(C2V(gTempFile));
     C2V(gHeadupBackgroundBrightness) = GetAnInt(C2V(gTempFile));
     C2V(gInitial_rank) = GetAnInt(C2V(gTempFile));
