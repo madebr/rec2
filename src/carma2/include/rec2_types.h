@@ -131,6 +131,33 @@ typedef struct {
     tSpecial_volume_soundfx_data soundfx_data;
 } tSpecial_volume;
 
+// FIXME: PROBABLY WRONG!!!!!!
+typedef enum tCar_choice {
+    eNet_car_eagle = 0,
+    eNet_car_novelty = 1,
+    eNet_car_all = 2,
+} tCar_choice;
+
+typedef enum tNet_sequence_type {
+    eNet_sequence_sequential = 0,
+    eNet_sequence_random = 1,
+} tNet_sequence_type;
+
+typedef struct tNet_game_options {
+    int show_players_on_map;
+    int enable_text_messages;
+    int show_powerups_on_map;
+    int powerup_respawn;
+    int open_game;
+    int starting_credits;
+    int grid_start;
+    int starting_target;
+    int waste_to_transfer;
+    int random_car_choice;
+    tNet_sequence_type race_sequence_type;
+    tCar_choice car_choice;
+} tNet_game_options;
+
 typedef struct tTransient_bm {
     br_pixelmap* pixmap;
     int in_use;

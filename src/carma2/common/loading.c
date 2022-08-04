@@ -633,3 +633,20 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
     DRfclose(f);
 }
 C2_HOOK_FUNCTION(0x0048cfc0, LoadMiscStrings)
+
+void C2_HOOK_FASTCALL ReadNetworkSettings(tTWTFILE* pF, tNet_game_options* pOptions) {
+
+    pOptions->enable_text_messages = GetAnInt(pF);
+    pOptions->show_players_on_map = GetAnInt(pF);
+    pOptions->show_powerups_on_map = GetAnInt(pF);
+    pOptions->powerup_respawn = GetAnInt(pF);
+    pOptions->waste_to_transfer = GetAnInt(pF);
+    pOptions->open_game = GetAnInt(pF);
+    pOptions->grid_start = GetAnInt(pF);
+    pOptions->race_sequence_type = GetAnInt(pF);
+    pOptions->random_car_choice = GetAnInt(pF);
+    pOptions->car_choice = GetAnInt(pF);
+    pOptions->starting_credits = GetAnInt(pF);
+    pOptions->starting_target = GetAnInt(pF);
+}
+C2_HOOK_FUNCTION(0x0048d110, ReadNetworkSettings)
