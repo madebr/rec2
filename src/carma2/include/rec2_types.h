@@ -35,6 +35,13 @@ typedef enum tRoad_texturing_level {
     eRTL_count = 2
 } tRoad_texturing_level;
 
+typedef enum tWall_texturing_level {
+    eWTL_none = 0,
+    eWTL_linear = 1,
+    eWTL_full = 2,
+    eWTL_count = 3
+} tWall_texturing_level;
+
 typedef struct {
     int width;
     int height;
