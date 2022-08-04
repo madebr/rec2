@@ -11,6 +11,7 @@
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundType_Choices, 2, 0x00660268, {"SATURATED", "SCATTERED"});
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gCar_texturing_level, 0x00591374, eCTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gRoad_texturing_level, 0x0059136c, eRTL_full);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWall_texturing_level, gWall_texturing_level, 0x00591370, eWTL_full);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -39,6 +40,18 @@ void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel) {
     C2V(gRoad_texturing_level) = pLevel;
 }
 C2_HOOK_FUNCTION(0x00448780, SetRoadTexturingLevel)
+
+tWall_texturing_level C2_HOOK_FASTCALL GetWallTexturingLevel(void) {
+
+    return C2V(gWall_texturing_level);
+}
+C2_HOOK_FUNCTION(0x004488f0, GetWallTexturingLevel)
+
+void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel) {
+
+    C2V(gWall_texturing_level) = pLevel;
+}
+C2_HOOK_FUNCTION(0x00448900, SetWallTexturingLevel)
 
 void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
     char s[256];
