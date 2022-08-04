@@ -107,5 +107,7 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void);
 
 void C2_HOOK_FASTCALL LoadHeadupImages(void);
 
+void C2_HOOK_FASTCALL LoadMiscStrings(void);
+
 #endif //REC2_LOADING_H
 
