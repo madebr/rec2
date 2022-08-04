@@ -386,3 +386,14 @@ void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
     __debugbreak();
     ShowCursor(0);
 }
+
+int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path) {
+    DWORD dwAttributes;
+
+    dwAttributes = GetFileAttributesA(pThe_path);
+    if (dwAttributes != INVALID_FILE_ATTRIBUTES) {
+        return SetFileAttributesA(pThe_path, dwAttributes & ~FILE_ATTRIBUTE_READONLY);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0051d4b0, PDFileUnlock)
