@@ -79,6 +79,18 @@ typedef struct tWobble_spec {
     int time_started;
 } tWobble_spec;
 
+typedef enum tNet_head_avail {
+    eNet_or_otherwise = 0,
+    eNet_only = 1,
+    eNot_net = 2,
+    eNot_ever_ever_ever = 3
+} tNet_head_avail;
+
+typedef struct tHeadup_info {
+    char* name;
+    tNet_head_avail avail;
+} tHeadup_info;
+
 typedef enum {
     kSoundFx_None = -1,
     kSoundFx_Saturated = 0,
@@ -145,4 +157,5 @@ enum {
 enum {
     kMem_misc = 0xfd,
 };
+
 #endif // REC2_TYPES_H
