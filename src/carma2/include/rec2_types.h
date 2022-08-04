@@ -42,6 +42,13 @@ typedef enum tWall_texturing_level {
     eWTL_count = 3
 } tWall_texturing_level;
 
+typedef enum tShadow_level {
+    eShadow_none = 0,
+    eShadow_us_only = 1,
+    eShadow_us_and_opponents = 2,
+    eShadow_everyone = 3
+} tShadow_level;
+
 typedef struct {
     int width;
     int height;
@@ -186,6 +193,13 @@ typedef struct tTransient_bm {
     int order_number;
     int user_data;
 } tTransient_bm;
+
+enum {
+    kMiscString_ShadowNone = 104,
+    kMiscString_ShadowUsOnly = 105,
+    kMiscString_ShadowUsAndOpponents = 106,
+    kMiscString_ShadowEveryone = 107,
+};
 
 enum {
     // FIXME: add all c2 memory tags
