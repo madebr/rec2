@@ -64,6 +64,10 @@ int C2_HOOK_FASTCALL GetGoreLevel(void);
 
 void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
+int C2_HOOK_FASTCALL GetAnimalsOn(void);
+
+void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
