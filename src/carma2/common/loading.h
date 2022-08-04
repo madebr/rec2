@@ -60,6 +60,10 @@ void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void);
 
 void C2_HOOK_FASTCALL ConfigurePedAlienPaths(void);
 
+int C2_HOOK_FASTCALL GetGoreLevel(void);
+
+void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
