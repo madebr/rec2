@@ -29,6 +29,12 @@ typedef enum tCar_texturing_level {
     eCTL_count = 3,
 } tCar_texturing_level;
 
+typedef enum tRoad_texturing_level {
+    eRTL_none = 0,
+    eRTL_full = 1,
+    eRTL_count = 2
+} tRoad_texturing_level;
+
 typedef struct {
     int width;
     int height;
