@@ -111,5 +111,7 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void);
 
 void C2_HOOK_FASTCALL ReadNetworkSettings(tTWTFILE* pF, tNet_game_options* pOptions);
 
+int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex);
+
 #endif //REC2_LOADING_H
 
