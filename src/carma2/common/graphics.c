@@ -37,6 +37,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gMouse_started);
 C2_HOOK_VARIABLE_DECLARE(int, gNoTransients);
 C2_HOOK_VARIABLE_DECLARE(int, gNext_transient);
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tShadow_level, gShadow_level, 0x0065fdc8, kMiscString_ShadowUsOnly);
+
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
 
@@ -280,3 +282,45 @@ void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void) {
         DeallocateTransientBitmap(i);
     }
 }
+
+void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel) {
+
+    C2V(gShadow_level) = pLevel;
+}
+C2_HOOK_FUNCTION(0x004e9940, SetShadowLevel)
+
+tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void) {
+
+    return C2V(gShadow_level);
+}
+C2_HOOK_FUNCTION(0x004e9950, GetShadowLevel)
+
+void (C2_HOOK_FASTCALL * ToggleShadow_original)(void);
+void C2_HOOK_FASTCALL ToggleShadow(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ToggleShadow_original();
+#else
+    gShadow_level++;
+    if (C2V(gShadow_level) == eShadow_everyone) {
+        C2V(gShadow_level) = eShadow_none;
+    }
+    switch (C2V(gShadow_level)) {
+        case eShadow_none:
+            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowNone));
+            break;
+        case eShadow_us_only:
+            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsOnly));
+            break;
+        case eShadow_us_and_opponents:
+            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsAndOpponents));
+            break;
+        case eShadow_everyone:
+            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowEveryone));
+            break;
+        default:
+            return;
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e9960, ToggleShadow, ToggleShadow_original)
