@@ -6,6 +6,7 @@
 
 #include <string.h>
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSound_detail_level, 0x00595c48, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_fully_installed, 0x0068b898);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
