@@ -3,6 +3,7 @@
 #include "win32.h"
 
 #include "errors.h"
+#include "loading.h"
 #include "main.h"
 
 #include <windows.h>
@@ -22,128 +23,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const char*, gRegionDescriminator, 0x00662270, "
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gPathNetworkIni, 240, 0x006b3380);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPathNetworkIniValid, 0x006ad4c4);
-
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedsFolder, 0x006a0414);
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedSoundPath, 0x00684550);
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedPowerupTxtPath, 0x006a0ad4);
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedTextTxtPath, 0x0068c718);
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedTexturePath, 0x0065852c);
-
-void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
-    C2V(gPedSoundPath) = NULL;
-}
-C2_HOOK_FUNCTION(0x00457570, ConfigureDefaultPedSoundPath);
-
-void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void) {
-    C2V(gPedPowerupTxtPath) = "POWERUP.TXT";
-}
-C2_HOOK_FUNCTION(0x004e0c00, ConfigureDefaultPedPowerupTxtPath);
-
-void C2_HOOK_FASTCALL ConfigureDefaultPedTextTxtPath(void) {
-    C2V(gPedTextTxtPath) = "TEXT.TXT";
-}
-C2_HOOK_FUNCTION(0x0048ea00, ConfigureDefaultPedTextTxtPath);
-
-void C2_HOOK_FASTCALL ConfigureDefaultPedTexturePath(void) {
-    C2V(gPedTexturePath) = "PIXELMAP";
-}
-C2_HOOK_FUNCTION(0x0048f7f0, ConfigureDefaultPedTexturePath);
-
-void C2_HOOK_FASTCALL ConfigurePedDefaultPaths(void) {
-    C2V(gPedsFolder) = "PEDS";
-    ConfigureDefaultPedSoundPath();
-    ConfigureDefaultPedPowerupTxtPath();
-    ConfigureDefaultPedTextTxtPath();
-    ConfigureDefaultPedTexturePath();
-}
-C2_HOOK_FUNCTION(0x004d6f10, ConfigurePedDefaultPaths);
-
-void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void) {
-    C2V(gPedSoundPath) = "ZOMSOUND";
-}
-C2_HOOK_FUNCTION(0x00457590, ConfigureZombiePedSoundPath);
-
-void C2_HOOK_FASTCALL ConfigureZombiePedPowerupTxtPath(void) {
-    C2V(gPedPowerupTxtPath) = "ZOMPOWERUP.TXT";
-}
-C2_HOOK_FUNCTION(0x004e0c20, ConfigureZombiePedPowerupTxtPath);
-
-void C2_HOOK_FASTCALL ConfigureZombiePedTextTxtPath(void) {
-    C2V(gPedTextTxtPath) = "ZOMTEXT.TXT";
-}
-C2_HOOK_FUNCTION(0x0048ea20, ConfigureZombiePedTextTxtPath);
-
-void C2_HOOK_FASTCALL ConfigureZombiePedTexturePath(void) {
-    C2V(gPedTexturePath) = "ZOMPIXELMAP";
-}
-C2_HOOK_FUNCTION(0x0048f810, ConfigureZombiePedTexturePath);
-
-void C2_HOOK_FASTCALL ConfigurePedZombiePaths(void) {
-    C2V(gPedsFolder) = "ZOMBIES";
-    ConfigureZombiePedSoundPath();
-    ConfigureZombiePedPowerupTxtPath();
-    ConfigureZombiePedTextTxtPath();
-    ConfigureZombiePedTexturePath();
-}
-C2_HOOK_FUNCTION(0x004d6f50, ConfigurePedZombiePaths);
-
-void C2_HOOK_FASTCALL ConfigureBloodPedSoundPath(void) {
-    C2V(gPedSoundPath) = NULL;
-}
-C2_HOOK_FUNCTION(0x00457580, ConfigureBloodPedSoundPath);
-
-void C2_HOOK_FASTCALL ConfigureBloodPedPowerupTxtPath(void) {
-    C2V(gPedPowerupTxtPath) = "POWERUP.TXT";
-}
-C2_HOOK_FUNCTION(0x004e0c10, ConfigureBloodPedPowerupTxtPath);
-
-void C2_HOOK_FASTCALL ConfigureBloodPedTextTxtPath(void) {
-    C2V(gPedTextTxtPath) = "TEXT.TXT";
-}
-C2_HOOK_FUNCTION(0x0048ea10, ConfigureBloodPedTextTxtPath);
-
-void C2_HOOK_FASTCALL ConfigureBloodPedTexturePath(void) {
-    C2V(gPedTexturePath) = "PIXELMAP";
-}
-C2_HOOK_FUNCTION(0x0048f800, ConfigureBloodPedTexturePath);
-
-void C2_HOOK_FASTCALL ConfigurePedBloodPaths(void) {
-    C2V(gPedsFolder) = "PEDS";
-    ConfigureBloodPedSoundPath();
-    ConfigureBloodPedPowerupTxtPath();
-    ConfigureBloodPedTextTxtPath();
-    ConfigureBloodPedTexturePath();
-}
-C2_HOOK_FUNCTION(0x004d6f30, ConfigurePedBloodPaths);
-
-void C2_HOOK_FASTCALL ConfigureAlienPedSoundPath(void) {
-    C2V(gPedSoundPath) = "ALSOUND";
-}
-C2_HOOK_FUNCTION(0x004575a0, ConfigureAlienPedSoundPath);
-
-void C2_HOOK_FASTCALL ConfigureAlienPedPowerupTxtPath(void) {
-    C2V(gPedPowerupTxtPath) = "ALPOWERUP.TXT";
-}
-C2_HOOK_FUNCTION(0x004e0c30, ConfigureAlienPedPowerupTxtPath);
-
-void C2_HOOK_FASTCALL ConfigureAlienPedTextTxtPath(void) {
-    C2V(gPedTextTxtPath) = "ALTEXT.TXT";
-}
-C2_HOOK_FUNCTION(0x0048ea30, ConfigureAlienPedTextTxtPath);
-
-void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void) {
-    C2V(gPedTexturePath) = "ALPIXELMAP";
-}
-C2_HOOK_FUNCTION(0x0048f820, ConfigureAlienPedTexturePath);
-
-void C2_HOOK_FASTCALL ConfigurePedAlienPaths(void) {
-    C2V(gPedsFolder) = "ALIENS";
-    ConfigureAlienPedSoundPath();
-    ConfigureAlienPedPowerupTxtPath();
-    ConfigureAlienPedTextTxtPath();
-    ConfigureAlienPedTexturePath();
-}
-C2_HOOK_FUNCTION(0x004d6f70, ConfigurePedAlienPaths);
 
 int (APIENTRY * WinMain_original)(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
