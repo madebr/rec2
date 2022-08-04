@@ -36,4 +36,10 @@ void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex);
 
 void C2_HOOK_FASTCALL DeallocateAllTransientBitmaps(void);
 
+void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel);
+
+tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void);
+
+void C2_HOOK_FASTCALL ToggleShadow(void);
+
 #endif //REC2_GRAPHICS_H
