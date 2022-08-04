@@ -88,3 +88,20 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
 }
 C2_HOOK_FUNCTION(0x005191b0, DRPixelmapRectangleCopy)
+
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg) {
+    intptr_t result;
+
+    result = callback(pActor, arg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurse(pActor, callback, arg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005146f0, DRActorEnumRecurse)
