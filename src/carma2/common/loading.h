@@ -109,5 +109,7 @@ void C2_HOOK_FASTCALL LoadHeadupImages(void);
 
 void C2_HOOK_FASTCALL LoadMiscStrings(void);
 
+void C2_HOOK_FASTCALL ReadNetworkSettings(tTWTFILE* pF, tNet_game_options* pOptions);
+
 #endif //REC2_LOADING_H
 
