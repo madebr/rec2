@@ -16,6 +16,8 @@ add_library(c2_common STATIC
     globvars.h
     globvrbm.c
     globvrbm.h
+    globvrpb.c
+    globvrpb.h
     grafdata.c
     grafdata.h
     graphics.c
