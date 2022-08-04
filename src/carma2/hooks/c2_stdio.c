@@ -201,11 +201,14 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00576d00, c2_fprintf, fprintf_original);
 
 int C2_HOOK_CDECL c2_sprintf(char* str, const char* format, ...) {
     va_list ap;
-    va_start(ap, format);
+    int res;
 
     C2_HOOK_DEBUGF("(\"%s\", \"%s\", ...)", str, format);
-    return vsprintf(str, format, ap);
-            va_end(ap);
+
+    va_start(ap, format);
+    res = vsprintf(str, format, ap);
+    va_end(ap);
+    return res;
 }
 C2_HOOK_FUNCTION(0x00575de0, c2_sprintf)
 
@@ -246,21 +249,50 @@ size_t C2_HOOK_CDECL c2_fwrite(const void* ptr, size_t size, size_t count, FILE*
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005774a0, c2_fwrite, fwrite_original)
 
-size_t (C2_HOOK_CDECL * c2_fread_original)(void *ptr, size_t size, size_t nmemb, FILE *stream);
+size_t (C2_HOOK_CDECL * fread_original)(void *ptr, size_t size, size_t nmemb, FILE *stream);
 size_t C2_HOOK_CDECL c2_fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     size_t res;
 
 //    C2_HOOK_DEBUGF("(%p, %d, %d, %p)", ptr, size, nmemb, stream);
 #if HOOK_STDIO
-    res = c2_fread_original(ptr, size, nmemb, stream);
+    res = fread_original(ptr, size, nmemb, stream);
 #else
     res = fread(ptr, size, nmemb, hook_FILE(stream));
 #endif
 //    C2_HOOK_DEBUGF("-> %d", res);
     return res;
-
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00576fa0, c2_fread, c2_fread_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00576fa0, c2_fread, fread_original)
+
+int (C2_HOOK_CDECL * fscanf_original)(FILE* file, const char* format, ...);
+int C2_HOOK_CDECL c2_fscanf(FILE* file, const char* format, ...) {
+    int res;
+    va_list ap;
+
+    va_start(ap, format);
+#if HOOK_STDIO
+    res = c2_vfscanf(file, format, ap);
+#else
+    res = vfscanf(file, format, ap);
+#endif
+    va_end(ap);
+
+    return res;
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00577c20, c2_fscanf, fscanf_original)
+
+int (C2_HOOK_CDECL * vfscanf_original)(FILE* file, const char* format, va_list ap);
+int C2_HOOK_CDECL c2_vfscanf(FILE* file, const char* format, va_list ap) {
+    int res;
+
+#if HOOK_STDIO
+    res = vfscanf_original(file, format, ap);
+#else
+    res = vfscanf(file, format, ap);
+#endif
+    return res;
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0057a8b0, c2_vfscanf, vfscanf_original)
 
 int C2_HOOK_CDECL c2_sscanf(const char* str, const char* format, ...) {
     va_list ap;
