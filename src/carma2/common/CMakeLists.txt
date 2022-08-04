@@ -8,6 +8,8 @@ add_library(c2_common STATIC
     crush.h
     cutscene.c
     cutscene.h
+    depth.c
+    depth.h
     drfile.c
     drfile.h
     drmem.c
