@@ -40,6 +40,8 @@ add_library(c2_common STATIC
     main.h
     sound.c
     sound.h
+    spark.c
+    spark.h
     structur.c
     structur.h
     utility.c
