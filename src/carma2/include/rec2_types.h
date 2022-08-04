@@ -22,6 +22,13 @@ typedef enum tNet_mode {
     eNet_mode_client = 3
 } tNet_mode;
 
+typedef enum tCar_texturing_level {
+    eCTL_none = 0,
+    eCTL_transparent = 1,
+    eCTL_full = 2,
+    eCTL_count = 3,
+} tCar_texturing_level;
+
 typedef struct {
     int width;
     int height;
