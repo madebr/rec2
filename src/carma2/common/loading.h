@@ -57,5 +57,7 @@ tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
 
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name);
 
+void C2_HOOK_FASTCALL LoadKeyMapping(void);
+
 #endif //REC2_LOADING_H
 
