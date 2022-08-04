@@ -40,6 +40,9 @@ int C2_HOOK_CDECL c2_vsprintf(char* str, const char* format, va_list ap);
 size_t C2_HOOK_CDECL c2_fwrite(const void* ptr, size_t size, size_t count, FILE* stream);
 size_t C2_HOOK_CDECL c2_fread(void *ptr, size_t size, size_t nmemb, FILE *stream);
 
+int C2_HOOK_CDECL c2_fscanf(FILE* file, const char* format, ...);
+int C2_HOOK_CDECL c2_vfscanf(FILE* file, const char* format, va_list ap);
+
 int C2_HOOK_CDECL c2_sscanf(const char* str, const char* format, ...);
 int C2_HOOK_CDECL c2_vsscanf(const char* str, const char* format, va_list ap);
 
