@@ -20,7 +20,7 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     strcat(path_file, "PATHS.TXT");
 
     if (PDCheckDriveExists(path_file)) {
-        fp = DRfopen(path_file, "rt");
+        fp = TWTfopen(path_file, "rt");
         if (fp == NULL) {
             return;
         }

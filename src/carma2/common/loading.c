@@ -169,7 +169,20 @@ tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #error "not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b4780, DRfopen, DRfopen_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00491170, DRfopen, DRfopen_original)
+
+tTWTFILE* (C2_HOOK_FASTCALL * TWTfopen_original)(const char* pFilename, const char* pMode);
+tTWTFILE* C2_HOOK_FASTCALL TWTfopen(const char* pFilename, const char* pMode) {
+#if defined(C2_HOOKS_ENABLED)
+    C2_HOOK_STARTF("(%s %s)", pFilename, pMode);
+    tTWTFILE* res = TWTfopen_original(pFilename, pMode);
+    C2_HOOK_FINISH();
+    return res;
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4780, TWTfopen, TWTfopen_original)
 
 void (C2_HOOK_FASTCALL * DRfclose_original)(tTWTFILE* pFile);
 void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile) {
@@ -336,7 +349,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     PathCat(the_path, C2V(gApplication_path), "ACTORS");
     PathCat(the_path, the_path, "PROG.ACT");
 
-    C2V(gTempFile) = DRfopen(the_path, "rb");
+    C2V(gTempFile) = TWTfopen(the_path, "rb");
     if (C2V(gTempFile) != NULL) {
         DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
         DRfclose(C2V(gTempFile));
