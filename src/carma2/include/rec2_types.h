@@ -15,6 +15,13 @@ typedef signed int tS32;
 
 typedef int tTWTVFS;
 
+typedef enum tNet_mode {
+    eNet_mode_none = 0,
+    eNet_mode_thinking_about_it = 1,
+    eNet_mode_host = 2,
+    eNet_mode_client = 3
+} tNet_mode;
+
 typedef struct {
     int width;
     int height;
