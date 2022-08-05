@@ -17,6 +17,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gRoad_texturing_level, 0x0
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWall_texturing_level, gWall_texturing_level, 0x00591370, eWTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRendering_accessories, 0x00591368, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage*, gStorageForCallbacks, 0x006b7820);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gAddedPixelmap, 0x006aaa20);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -195,6 +196,29 @@ int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pLis
     return 0;
 }
 C2_HOOK_FUNCTION(0x00502780, AddTextureFileStemToList);
+
+tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {
+    int i;
+
+    C2V(gAddedPixelmap) = NULL;
+    if (pStorage_space->pixelmaps_count >= pStorage_space->max_pixelmaps) {
+        C2V(gAddedPixelmap) = NULL;
+        return eStorage_not_enough_room;
+    }
+
+    for (i = 0; i < pStorage_space->pixelmaps_count; i++) {
+        if (pStorage_space->pixelmaps[i]->identifier != NULL
+            && pThe_pm->identifier != NULL
+            && c2_strcmp(pStorage_space->pixelmaps[i]->identifier, pThe_pm->identifier) == 0) {
+            C2V(gAddedPixelmap) = pStorage_space->pixelmaps[i];
+            return eStorage_duplicate;
+        }
+    }
+    pStorage_space->pixelmaps[pStorage_space->pixelmaps_count] = (br_pixelmap*)pThe_pm;
+    pStorage_space->pixelmaps_count++;
+    return eStorage_allocated;
+}
+C2_HOOK_FUNCTION(0x00501020, AddPixelmapToStorage)
 
 int (C2_HOOK_FASTCALL * LoadNPixelmapsFromPath_original)(tBrender_storage* pStorage_space, const char* path);
 int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path) {
