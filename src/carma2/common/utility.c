@@ -56,7 +56,7 @@ char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS) {
 }
 C2_HOOK_FUNCTION(0x00491090, GetALineAndDontArgue)
 
-void C2_HOOK_FASTCALL PathCat(char* pDestn_str, char* pStr_1, const char* pStr_2) {
+void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2) {
 
     if (pDestn_str != pStr_1) { // Added to avoid strcpy overlap checks
         c2_strcpy(pDestn_str, pStr_1);
