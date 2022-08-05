@@ -7,6 +7,7 @@
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tWobble_spec, gWobble_array, 5);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_palette);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gRender_palette);
 
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
