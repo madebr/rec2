@@ -246,6 +246,16 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
 }
 C2_HOOK_FUNCTION(0x00501020, AddPixelmapToStorage)
 
+br_pixelmap* (C2_HOOK_FASTCALL * LoadTiffTexture_Ex2_original)(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx);
+br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx) {
+#if defined(C2_HOOKS_ENABLED)
+    return LoadTiffTexture_Ex2_original(texturePathDir, textureName, pPalette, flags, errorCode, useTiffx);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00485750, LoadTiffTexture_Ex2, LoadTiffTexture_Ex2_original)
+
 int (C2_HOOK_FASTCALL * LoadNPixelmapsFromPath_original)(tBrender_storage* pStorage_space, const char* path);
 int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path) {
 #if defined(C2_HOOKS_ENABLED)
