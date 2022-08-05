@@ -73,6 +73,26 @@ typedef struct {
     void* base_addr;
 } tGraf_spec;
 
+typedef struct tBrender_storage {
+    int uid; // FIXME: unknown
+    int models_count;
+    int materials_count;
+    int shade_tables_count;
+    int pixelmaps_count;
+    int sounds_count; // FIXME: correct?
+    int max_pixelmaps;
+    int max_shade_tables;
+    int max_materials;
+    int max_models;
+    int max_sounds;
+    br_model** models;
+    br_pixelmap** pixelmaps;
+    br_pixelmap** shade_tables;
+    br_material** materials;
+    int** soundIds; // FIXME: correct?
+    int** materialProps; // FIXME: correct?
+} tBrender_storage;
+
 typedef struct {
     size_t size;
     char items[1000][16];
