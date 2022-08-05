@@ -251,7 +251,10 @@ enum {
     kFatalError_FailToOpenGeneralSettings = 0x03,
     kFatalError_CouldNotOpenKeyMapFile = 0x09,
     kFatalError_ScreenDimensionNotInGrafData = 0x18,
+    kFatalError_InsufficientPixelmapSlots = 0x43,
+    kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
+    kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_MysteriousX_SS = 0xbd,
 };
 
