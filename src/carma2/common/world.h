@@ -29,4 +29,6 @@ int C2_HOOK_FASTCALL GetAccessoryRendering(void);
 
 void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx);
 
+int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pList);
+
 #endif // REC2_WORLD_H
