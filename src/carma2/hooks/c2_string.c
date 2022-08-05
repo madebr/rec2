@@ -15,6 +15,11 @@ void* C2_HOOK_CDECL c2_memcpy(void* s1, const void* s2, size_t n) {
     return memcpy(s1, s2, n);
 }
 
+void* C2_HOOK_CDECL c2_memmove(void* s1, const void* s2, size_t n) {
+    return memmove(s1, s2, n);
+}
+C2_HOOK_FUNCTION(0x00576080, c2_memmove)
+
 void* C2_HOOK_CDECL c2_memset(void* s1, int c, size_t n) {
     return memset(s1, c, n);
 }
