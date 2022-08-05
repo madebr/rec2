@@ -100,7 +100,7 @@ int C2_HOOK_FASTCALL GetAccessoryRendering(void) {
 }
 C2_HOOK_FUNCTION(0x00448f00, GetAccessoryRendering)
 
-int C2_HOOK_FASTCALL LoadBrenderTextures(const char* pathRoot, char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
+int C2_HOOK_FASTCALL LoadBrenderTextures(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
     tPath_name tempPath;
     br_uint_32 nb;
 
