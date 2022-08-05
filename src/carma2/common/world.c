@@ -138,6 +138,27 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, c
 }
 C2_HOOK_FUNCTION(0x004ff8d0, ParseSpecialVolume)
 
+int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list *pList) {
+    tPath_name pathCopy;
+    tPath_name pathUpper;
+    tPath_name dir_path;
+    tPath_name stem_path;
+
+    c2_strcpy(pathCopy, path);
+    StringToUpper(pathUpper, pathCopy);
+    if (c2_strstr(pathUpper, ".PIX") == NULL
+            && c2_strstr(pathUpper, ".TIF") == NULL) {
+        return 0;
+    }
+    ExtractPath_Dirname_Stem(pathUpper, dir_path, stem_path);
+    c2_strcpy(pList->items[pList->size], stem_path);
+    if (pList->size < REC2_ASIZE(pList->items)) {
+        pList->size += 1;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005026b0, AddTexturePixTifFileStemToList)
+
 int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pList) {
     tPath_name pathCopy;
     tPath_name upperPath;
