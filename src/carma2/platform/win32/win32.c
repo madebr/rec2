@@ -9,9 +9,13 @@
 #include "platform.h"
 #include "utility.h"
 
+#include "rec2_macros.h"
+
 #include "c2_stdio.h"
+#include "c2_string.h"
 
 #include "brender/brender.h"
+#include "rec2_types.h"
 
 #include <windows.h>
 #include <dinput.h>
@@ -50,7 +54,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPerformanceCounterInitialized, 0x006acc70);
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterStart, 0x006acc80);
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_kHz, 0x006ad1f0);
 
-C2_HOOK_VARIABLE_IMPLEMENT(unsigned int, gTimeLastKeyboardInput, 0x006ad49c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimeLastKeyboardInput, 0x006ad49c);
 
 void C2_HOOK_FASTCALL KeyBegin(void) {
     C2V(gBack_screen) = NULL;
@@ -400,3 +404,46 @@ int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0051d4b0, PDFileUnlock)
+
+void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
+    char originalCurrentDirectory[MAX_PATH];
+    tPath_name filePath;
+    BOOL bSucceeded;
+    WIN32_FIND_DATAA findFileData;
+    HANDLE hFindFile;
+    size_t lenFilename;
+    size_t lenLnk;
+    int callback_res;
+
+    GetCurrentDirectory(REC2_ASIZE(originalCurrentDirectory), originalCurrentDirectory);
+    bSucceeded = SetCurrentDirectoryA(path);
+    if (!bSucceeded) {
+        return;
+    }
+    hFindFile = FindFirstFileA("*.???", &findFileData);
+    if (hFindFile != NULL) {
+        while (1) {
+            if ((findFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_HIDDEN)) == 0) {
+                lenFilename = c2_strlen(findFileData.cFileName);
+                lenLnk = c2_strlen(".lnk");
+                if (lenFilename > lenLnk && c2_strcasecmp(&findFileData.cFileName[lenFilename - lenLnk], ".lnk") == 0) {
+                    c2_memmove(filePath, findFileData.cFileName, lenFilename - lenLnk);
+                    filePath[lenFilename - lenLnk] = '\0';
+                } else {
+                    c2_memmove(filePath, findFileData.cFileName, lenFilename + 1);
+                }
+                callback_res = pCallback(filePath, data);
+                if (callback_res != 0) {
+                    break;
+                }
+            }
+            bSucceeded = FindNextFileA(hFindFile, &findFileData);
+            if (!bSucceeded) {
+                break;
+            }
+        }
+        FindClose(hFindFile);
+    }
+    SetCurrentDirectoryA(originalCurrentDirectory);
+}
+C2_HOOK_FUNCTION(0x00486c30, PDEnumPath)

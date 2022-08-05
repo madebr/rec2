@@ -15,6 +15,8 @@ typedef signed int tS32;
 
 typedef int tTWTVFS;
 
+typedef int (C2_HOOK_FASTCALL * tEnumPathCallback)(const char*, void*);
+
 typedef enum tNet_mode {
     eNet_mode_none = 0,
     eNet_mode_thinking_about_it = 1,

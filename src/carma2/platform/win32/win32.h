@@ -35,7 +35,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gPerformanceCounterInitialized);
 C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterStart);
 C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_kHz);
 
-C2_HOOK_VARIABLE_DECLARE(unsigned int, gTimeLastKeyboardInput);
+C2_HOOK_VARIABLE_DECLARE(tU32, gTimeLastKeyboardInput);
 
 C2_HOOK_VARIABLE_DECLARE(HINSTANCE, gHInstance);
 
