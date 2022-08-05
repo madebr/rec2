@@ -35,4 +35,6 @@ int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pLis
 
 int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path);
 
+void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pStorage_space, const char* path);
+
 #endif // REC2_WORLD_H
