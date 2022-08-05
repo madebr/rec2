@@ -90,6 +90,8 @@ add_library(brender STATIC
     core/pixelmap/pixelmap.h
     core/pixelmap/pmdsptch.c
     core/pixelmap/pmdsptch.h
+    core/pixelmap/pmfile.c
+    core/pixelmap/pmfile.h
     core/pixelmap/pmmem.c
     core/pixelmap/pmmem.h
     core/pixelmap/pmsetup.c
