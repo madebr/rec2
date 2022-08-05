@@ -279,6 +279,25 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex(const char* texturePathDir, con
 }
 C2_HOOK_FUNCTION(0x004856c0, LoadTiffTexture_Ex)
 
+br_pixelmap* C2_HOOK_FASTCALL LoadTiffOrBrenderTexture_Ex(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode) {
+    br_pixelmap* textures[1000];
+    int nb;
+
+    if (C2V(gDisableTiffConversion)) {
+        nb = LoadBrenderTextures(texturePathDir, textureName, textures, REC2_ASIZE(textures));
+        if (nb == 0) {
+            *errorCode = 1;
+            return NULL;
+        } else {
+            *errorCode = 0;
+            return textures[0];
+        }
+    } else {
+        return LoadTiffTexture_Ex(texturePathDir, textureName, pPalette, flags | 0x40, errorCode);
+    }
+}
+C2_HOOK_FUNCTION(0x0048eb80, LoadTiffOrBrenderTexture_Ex)
+
 int (C2_HOOK_FASTCALL * LoadNPixelmapsFromPath_original)(tBrender_storage* pStorage_space, const char* path);
 int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path) {
 #if defined(C2_HOOKS_ENABLED)
