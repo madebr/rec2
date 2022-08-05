@@ -147,6 +147,6 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gTrack_actor);
 //extern int gGraf_spec_index;
 //extern int gSound_available;
 //extern int gNumber_of_races;
-C2_HOOK_VARIABLE_DECLARE(int, gTiffFlags);
+C2_HOOK_VARIABLE_DECLARE(tPixelFlags, gPixelFlags);
 
 #endif // REC2_GLOBVARS_H
