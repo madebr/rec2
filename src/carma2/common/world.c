@@ -2,6 +2,7 @@
 
 #include "car.h"
 #include "globvars.h"
+#include "graphics.h"
 #include "loading.h"
 #include "sound.h"
 #include "utility.h"
@@ -297,6 +298,20 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffOrBrenderTexture_Ex(const char* texturePat
     }
 }
 C2_HOOK_FUNCTION(0x0048eb80, LoadTiffOrBrenderTexture_Ex)
+
+int C2_HOOK_FASTCALL LoadTiffOrBrenderTexture(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity) {
+    tPath_name texturePath;
+    tPath_name texturePathDir;
+    tPath_name texturePathStem;
+    int errorCode;
+
+    c2_strcpy(texturePath, texturePathNoExt);
+    c2_strcat(texturePath, ".TIF");
+    ExtractPath_Dirname_Stem(texturePath, texturePathDir, texturePathStem);
+    pixelmaps[0] = LoadTiffOrBrenderTexture_Ex(texturePathDir, texturePathStem, C2V(gRender_palette), C2V(gPixelFlags), &errorCode);
+    return (pixelmaps[0] != NULL && errorCode == 0) ? 1 : 0;
+}
+C2_HOOK_FUNCTION(0x00514570, LoadTiffOrBrenderTexture)
 
 int (C2_HOOK_FASTCALL * LoadNPixelmapsFromPath_original)(tBrender_storage* pStorage_space, const char* path);
 int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path) {
