@@ -10,6 +10,8 @@
 
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void);
 
+void C2_HOOK_FASTCALL StringToUpper(char* dest, const char* src);
+
 int C2_HOOK_FASTCALL PDCheckDriveExists(char* pThe_path);
 
 char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS);
