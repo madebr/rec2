@@ -18,7 +18,7 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS);
 
 char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS);
 
-void C2_HOOK_FASTCALL PathCat(char* pDestn_str, char* pStr_1, const char* pStr_2);
+void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
 
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
