@@ -105,3 +105,28 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbf
     return 0;
 }
 C2_HOOK_FUNCTION(0x005146f0, DRActorEnumRecurse)
+
+void C2_HOOK_FASTCALL ExtractPath_Dirname_Stem(const char* path, char* dirPath, char* stemPath) {
+    size_t pathLen;
+    size_t dirLen;
+    size_t stemIndex;
+
+    pathLen = c2_strlen(path);
+    for (dirLen = pathLen - 1; dirLen != 0; dirLen--) {
+        if (path[dirLen] == C2V(gDir_separator)[0]) {
+            break;
+        }
+    }
+    c2_strncpy(dirPath, path, dirLen);
+    dirPath[dirLen] = '\0';
+    if (*dirPath != '\0') {
+        dirLen += 1;
+    }
+    stemIndex = 0;
+    while (path[dirLen + stemIndex] != '.' && dirLen + stemIndex != pathLen) {
+        stemPath[stemIndex] = path[dirLen + stemIndex];
+        stemIndex += 1;
+    }
+    stemPath[stemIndex] = '\0';
+}
+C2_HOOK_FUNCTION(0x005139a0, ExtractPath_Dirname_Stem)
