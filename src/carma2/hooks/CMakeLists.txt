@@ -6,6 +6,8 @@ else()
         c2_ctype.h
         c2_hooks.c
         c2_hooks.h
+        c2_malloc.c
+        c2_malloc.h
         c2_stdio.c
         c2_stdio.h
         c2_stdlib.c
