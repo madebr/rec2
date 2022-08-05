@@ -1,6 +1,7 @@
 #include "world.h"
 
 #include "car.h"
+#include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
@@ -19,6 +20,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWall_texturing_level, gWall_texturing_level, 0x
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRendering_accessories, 0x00591368, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage*, gStorageForCallbacks, 0x006b7820);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gAddedPixelmap, 0x006aaa20);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDisallowDuplicates, 0x006aaa2c);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -313,15 +315,46 @@ int C2_HOOK_FASTCALL LoadTiffOrBrenderTexture(const char* texturePathNoExt, br_p
 }
 C2_HOOK_FUNCTION(0x00514570, LoadTiffOrBrenderTexture)
 
-int (C2_HOOK_FASTCALL * LoadNPixelmapsFromPath_original)(tBrender_storage* pStorage_space, const char* path);
 int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path) {
-#if defined(C2_HOOKS_ENABLED)
-    return LoadNPixelmapsFromPath_original(pStorage_space, path);
-#else
-#error "Not implemented"
-#endif
+    int i;
+    int nbLoaded;
+    int result;
+    tPath_name path_dirname;
+    tPath_name path_stem;
+    tAdd_to_storage_result addResult;
+    br_pixelmap* pixelmaps[500];
+
+    result = 0;
+    if (C2V(gDisableTiffConversion)) {
+        ExtractPath_Dirname_Stem(path, path_dirname, path_stem);
+        nbLoaded = LoadBrenderTextures(path_dirname, path_stem, pixelmaps, REC2_ASIZE(pixelmaps));
+    } else {
+        nbLoaded = LoadTiffOrBrenderTexture(path, pixelmaps, REC2_ASIZE(pixelmaps));
+    }
+    if (nbLoaded == 0) {
+        FatalError(kFatalError_CantLoadPixelmapFile_S, path);
+    }
+    for (i = 0; i < nbLoaded; i++) {
+        addResult = AddPixelmapToStorage(pStorage_space, pixelmaps[i]);
+        switch (addResult) {
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientPixelmapSlots);
+            break;
+        case eStorage_duplicate:
+            if (C2V(gDisallowDuplicates)) {
+                FatalError(kFatalError_DuplicatePixelmap_S, pixelmaps[i]->identifier);
+            }
+            BrPixelmapFree(pixelmaps[i]);
+            break;
+        case eStorage_allocated:
+            BrMapAdd(pixelmaps[i]);
+            result += 1;
+            break;
+        }
+    }
+    return result;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005024f0, LoadNPixelmapsFromPath, LoadNPixelmapsFromPath_original)
+C2_HOOK_FUNCTION(0x005024f0, LoadNPixelmapsFromPath)
 
 void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pStorage_space, const char* path) {
     tPath_name pathCopy;
