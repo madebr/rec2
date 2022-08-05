@@ -51,6 +51,12 @@ typedef enum tShadow_level {
     eShadow_everyone = 3
 } tShadow_level;
 
+typedef enum tAdd_to_storage_result {
+    eStorage_not_enough_room = 0,
+    eStorage_duplicate = 1,
+    eStorage_allocated = 2
+} tAdd_to_storage_result;
+
 typedef struct {
     int width;
     int height;
