@@ -100,6 +100,32 @@ int C2_HOOK_FASTCALL GetAccessoryRendering(void) {
 }
 C2_HOOK_FUNCTION(0x00448f00, GetAccessoryRendering)
 
+int C2_HOOK_FASTCALL LoadBrenderTextures(const char* pathRoot, char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
+    tPath_name tempPath;
+    br_uint_32 nb;
+
+    PathCat(tempPath, pathRoot, textureName);
+    c2_strcat(tempPath, (C2V(gPixelFlags) & kPixelFlags_16bbp) ? ".P16" : ".P08");
+    nb = BrPixelmapLoadMany(tempPath, textureBuffer, (br_uint_16)bufferCapacity);
+    if (nb == 0) {
+        PathCat(tempPath, pathRoot, (C2V(gPixelFlags) & kPixelFlags_16bbp) ? "PIX16" : "PIX8");
+        PathCat(tempPath, tempPath, textureName);
+        c2_strcat(tempPath, ".PIX");
+        nb = BrPixelmapLoadMany(tempPath, textureBuffer, (br_uint_16)bufferCapacity);
+    }
+    if (nb == 0) {
+        return 0;
+    }
+    if (nb == 1 && !C2V(gDisableTiffConversion)) {
+        if (textureBuffer[0]->identifier != NULL) {
+            BrResFree(textureBuffer[0]->identifier);
+        }
+        textureBuffer[0]->identifier = BrResStrDup(textureBuffer[0], textureName);
+    }
+    return nb;
+}
+C2_HOOK_FUNCTION(0x0048ea40, LoadBrenderTextures)
+
 void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
     char s[256];
 
