@@ -16,6 +16,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gCar_texturing_level, 0x00
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gRoad_texturing_level, 0x0059136c, eRTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWall_texturing_level, gWall_texturing_level, 0x00591370, eWTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRendering_accessories, 0x00591368, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage*, gStorageForCallbacks, 0x006b7820);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -204,3 +205,34 @@ int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, co
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005024f0, LoadNPixelmapsFromPath, LoadNPixelmapsFromPath_original)
+
+void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pStorage_space, const char* path) {
+    tPath_name pathCopy;
+    tPath_name tempPath;
+    tName_list list;
+    size_t i;
+
+    list.size = 0;
+    c2_strcpy(pathCopy, path);
+    C2V(gStorageForCallbacks) = pStorage_space;
+    if (C2V(gDisableTiffConversion)) {
+        TWT_EnumPath(pathCopy, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    }
+    if (!C2V(gDisableTiffConversion)) {
+        PathCat(tempPath, pathCopy, "TIFFX");
+        TWT_EnumPath(tempPath, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+    }
+    PathCat(tempPath, pathCopy, "PIX8");
+    TWT_EnumPath(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    if (!C2V(gDisableTiffConversion)) {
+        PathCat(tempPath, pathCopy, "TIFFRGB");
+        TWT_EnumPath(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    }
+    PathCat(tempPath, pathCopy, "PIX16");
+    TWT_EnumPath(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    for (i = 0; i < list.size; i++) {
+        PathCat(tempPath, path, list.items[i]);
+        LoadNPixelmapsFromPath(C2V(gStorageForCallbacks), tempPath);
+    }
+}
+C2_HOOK_FUNCTION(0x005028f0, LoadAllTexturesFromTexSubdirectories)
