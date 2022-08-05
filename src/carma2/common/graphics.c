@@ -125,7 +125,7 @@ C2_HOOK_FUNCTION(0x004b5030, DRSetPalette)
 
 void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
     br_pixelmap* the_map;
-    int tiffFlags;
+    tPixelFlags pixelFlags;
 
     the_map = BrMapFind(pPixmap_name);
     if (C2V(gCurrent_splash) != NULL) {
@@ -137,7 +137,7 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
             BrPixelmapFree(C2V(gCurrent_splash));
         }
     }
-    tiffFlags = C2V(gTiffFlags);
+    pixelFlags = C2V(gPixelFlags);
     C2V(gCurrent_splash) = the_map;
     if (the_map == NULL) {
         C2V(gCurrent_splash) = DRLoadPixelmap(pPixmap_name);
@@ -146,7 +146,7 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
             BrMapAdd(C2V(gCurrent_splash));
         }
     }
-    C2V(gTiffFlags) = tiffFlags;
+    C2V(gPixelFlags) = pixelFlags;
     if (C2V(gCurrent_splash) != NULL) {
         // FUN005191f();
         DRPixelmapRectangleCopy(C2V(gBack_screen),
