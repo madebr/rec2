@@ -10,9 +10,29 @@
 
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
+#if defined(C2_HOOKS_ENABLED)
     return RemoveAllBrenderDevices_original();
+#else
+#error "Not implemented"
+#endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00513400, RemoveAllBrenderDevices, RemoveAllBrenderDevices_original);
+
+void C2_HOOK_FASTCALL StringToUpper(char* dest, const char* src) {
+    size_t lenSrc;
+    size_t nbLeft;
+
+    lenSrc = c2_strlen(src);
+    nbLeft = lenSrc;
+    while (nbLeft != 0) {
+        *dest = c2_toupper(*src);
+        dest++;
+        src++;
+        nbLeft--;
+    }
+    dest[0] = '\0';
+}
+C2_HOOK_FUNCTION(0x00513460, StringToUpper)
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
     return PDCheckDriveExists2(pThe_path, NULL, 0);
