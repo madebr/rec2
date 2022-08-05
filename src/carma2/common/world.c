@@ -194,3 +194,13 @@ int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pLis
     return 0;
 }
 C2_HOOK_FUNCTION(0x00502780, AddTextureFileStemToList);
+
+int (C2_HOOK_FASTCALL * LoadNPixelmapsFromPath_original)(tBrender_storage* pStorage_space, const char* path);
+int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path) {
+#if defined(C2_HOOKS_ENABLED)
+    return LoadNPixelmapsFromPath_original(pStorage_space, path);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005024f0, LoadNPixelmapsFromPath, LoadNPixelmapsFromPath_original)
