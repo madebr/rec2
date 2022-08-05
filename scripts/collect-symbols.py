@@ -7,6 +7,7 @@ import os
 import pathlib
 import re
 import string
+import sys
 import typing
 
 from sre_common import FunctionArgument
@@ -18,7 +19,7 @@ from sre_common import VariableArrayHookItem
 REC2_ROOT = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 REC2_SRC_ROOT = os.path.join(REC2_ROOT, "src")
 
-RE_HOOK_FUNC = re.compile(r"(?:C2_HOOK_FUNCTION|C2_HOOK_FUNCTION_ORIGINAL|C2_NO_HOOK_FUNCTION)?\((0x[a-fA-F0-9]{1,8})[ \t]*,[ \t]+([A-Za-z0-9_]+)", flags=re.M)
+RE_HOOK_FUNC = re.compile(r"(?:C2_HOOK_FUNCTION|C2_HOOK_FUNCTION_ORIGINAL|C2_NO_HOOK_FUNCTION)\((0x[a-fA-F0-9]{1,8})[ \t]*,[ \t]+([A-Za-z0-9_]+)", flags=re.M)
 RE_HOOK_VAR = re.compile(r"(?:C2_HOOK_VARIABLE_IMPLEMENT|C2_HOOK_VARIABLE_IMPLEMENT_INIT)\(([a-zA-Z0-9_]+),[ \t]*([a-zA-Z0-9_]+)[ \t]*,[ \t]*(0x[a-fA-F0-9]{1,8})", flags=re.M)
 RE_HOOK_VAR_ARR = re.compile(r"(?:C2_HOOK_VARIABLE_IMPLEMENT_ARRAY|C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT)\(([a-zA-Z0-9_ *]+),[ \t]*([a-zA-Z0-9_]+)[ \t]*,[ \t]*([0-9]+)[ \t]*,[ \t]*(0x[a-fA-F0-9]{1,8})", flags=re.M)
 
@@ -57,6 +58,7 @@ CALL_CONVENTIONS = {
     "fastcall": CallConvParser(("C2_HOOK_FASTCALL", "__fastcall")),
     "cdecl": CallConvParser(("C2_HOOK_CDECL", "__cdecl")),
     "stdcall": CallConvParser(("C2_HOOK_STDCALL", "__stdcall", "CALLBACK", "WINAPI", "APIENTRY")),
+    "custom": CallConvParser(("C2_HOOK_CUSTOMCALL", )),
 }
 
 def analyze_funcdef(funcdef: str, warn: typing.Callable[[str], None]) -> FunctionDetails:
@@ -145,9 +147,10 @@ def main() -> int:
                 for funcaddress, funcname in RE_HOOK_FUNC.findall(source_text):
                     funcdefs = set(re.findall("^([a-zA-Z].*[ \t]" + funcname + "[ \t]*\(.*\))[ \t]*\{[ \t]*$", source_text, flags=re.M))
                     if len(funcdefs) == 0:
-                        warn(f"could not find function definition for {funcname} in {full_fn}")
+                        warn(f"{ file }: could not find function definition for {funcname} in {full_fn}")
+                        continue
                     elif len(funcdefs) > 1:
-                        warn(f"multiple function definitions found for {funcname} in {full_fn}")
+                        warn(f"{ file }: multiple function definitions found for {funcname} in {full_fn}")
                     funcdef = funcdefs.pop()
                     funcdetails = analyze_funcdef(funcdef, warn)
 
