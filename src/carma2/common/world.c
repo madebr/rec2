@@ -9,7 +9,7 @@
 #include <brender/brender.h>
 #include "rec2_macros.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundType_Choices, 2, 0x00660268, {"SATURATED", "SCATTERED"});
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gCar_texturing_level, 0x00591374, eCTL_full);
@@ -118,7 +118,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, c
 
     GetAString(pF, s);
     if (pScreen_name_str != NULL) {
-        strcpy(pScreen_name_str, s);
+        c2_strcpy(pScreen_name_str, s);
     } else {
         pSpec->screen_material = BrMaterialFind(s);
     }
@@ -137,3 +137,39 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, c
     }
 }
 C2_HOOK_FUNCTION(0x004ff8d0, ParseSpecialVolume)
+
+int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pList) {
+    tPath_name pathCopy;
+    tPath_name upperPath;
+    tPath_name dir_path;
+    tPath_name stem_path;
+    int alreadyInList;
+    size_t i;
+
+    c2_strcpy(pathCopy, path);
+    StringToUpper(upperPath, pathCopy);
+
+    if (c2_strstr(upperPath, ".PIX") == NULL
+            && c2_strstr(upperPath, ".P16") == NULL
+            && c2_strstr(upperPath, ".P08") == NULL
+            && c2_strstr(upperPath, ".TIF") == NULL) {
+        return 0;
+    }
+    ExtractPath_Dirname_Stem(upperPath, dir_path, stem_path);
+
+    alreadyInList = 0;
+    for (i = 0; i < pList->size; i++) {
+        if (c2_strcmp(pList->items[i], stem_path) == 0) {
+            alreadyInList = 1;
+            break;
+        }
+    }
+    if (!alreadyInList) {
+        c2_strcpy(pList->items[pList->size], stem_path);
+        if (pList->size < REC2_ASIZE(pList->items)) {
+            pList->size += 1;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00502780, AddTextureFileStemToList);

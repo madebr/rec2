@@ -72,6 +72,11 @@ typedef struct {
 } tGraf_spec;
 
 typedef struct {
+    size_t size;
+    char items[1000][16];
+} tName_list;
+
+typedef struct {
     int twtfile;
     void* stdio;
 } tTWTFILE;
