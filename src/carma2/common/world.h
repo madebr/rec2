@@ -33,6 +33,8 @@ int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list
 
 int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pList);
 
+tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm);
+
 int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path);
 
 void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pStorage_space, const char* path);
