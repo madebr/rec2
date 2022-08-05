@@ -45,6 +45,8 @@ def callconv_converter(callconv):
         return GenericCallingConvention.stdcall
     elif callconv == "fastcall":
         return GenericCallingConvention.fastcall
+    elif callconv == "custom":
+        return Function.UNKNOWN_CALLING_CONVENTION_STRING
     else:
         raise ValueError("Invalid call convention: {}".format(callconv))
 

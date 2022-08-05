@@ -28,5 +28,4 @@ void c2_hook_vdebugf(const char* function, const char* format, va_list ap) {
     vfprintf(gHookFile, format, ap);
     fputc('\n', gHookFile);
     fflush(gHookFile);
-
 }
