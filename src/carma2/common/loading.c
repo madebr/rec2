@@ -8,14 +8,14 @@
 #include "utility.h"
 #include "world.h"
 
+#include "platform.h"
+
 #include <brender/brender.h>
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
 #include "c2_stdlib.h"
 #include "c2_string.h"
-
-#include <string.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5, 0x00691b40);
 
@@ -335,11 +335,11 @@ void C2_HOOK_FASTCALL GetThreeFloats(tTWTFILE * pF, float* pF1, float* pF2, floa
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = strtok(s, "\t ,/");
+    str = c2_strtok(s, "\t ,/");
     sscanf(str, "%f", pF1);
-    str = strtok(NULL, "\t ,/");
+    str = c2_strtok(NULL, "\t ,/");
     sscanf(str, "%f", pF2);
-    str = strtok(NULL, "\t ,/");
+    str = c2_strtok(NULL, "\t ,/");
     sscanf(str, "%f", pF3);
 }
 C2_HOOK_FUNCTION(0x0048fc90, GetThreeFloats)
@@ -473,15 +473,15 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     // file header must be 56 bytes for compatibility with .TWT files
     REC2_BUG_ON(sizeof(tTwatFileHeader) != 56);
 
-    strcpy(twatFilePath, path);
-    strcat(twatFilePath, ".TWT");
+    c2_strcpy(twatFilePath, path);
+    c2_strcat(twatFilePath, ".TWT");
 
     f = c2_fopen(twatFilePath, "rb");
     if (f == NULL) {
         return -1;
     }
     for (twt = 0; ; twt++) {
-        if (twt >= 5) {  // FIXME: use array_sizeof(gTwatVfsMountPoints) or something similar
+        if (twt >= REC2_ASIZE(C2V(gTwatVfsMountPoints))) {
             c2_fclose(f);
             return -1;
         }
@@ -489,7 +489,7 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
             break;
         }
     }
-    strcpy(C2V(gTwatVfsMountPoints)[twt].path, path);
+    c2_strcpy(C2V(gTwatVfsMountPoints)[twt].path, path);
     fileSize = TWT_ReadBinaryU32(f);
     c2_rewind(f);
 
@@ -507,6 +507,24 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     return twt;
 }
 C2_HOOK_FUNCTION(0x004b45b0, TWT_Mount)
+
+void C2_HOOK_FASTCALL TWT_EnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
+    int twt;
+    size_t i;
+    tPath_name twt_filePath;
+
+    for (twt = 0; twt < REC2_ASIZE(C2V(gTwatVfsMountPoints)); twt++) {
+        if (C2V(gTwatVfsMountPoints)[twt].header != NULL && DRStricmp(C2V(gTwatVfsMountPoints)[twt].path, path) == 0) {
+            for (i = 0; i < C2V(gTwatVfsMountPoints)[twt].header->nbFiles; i++) {
+                PathCat(twt_filePath, path, C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].filename);
+                pCallback(twt_filePath, data);
+            }
+            return;
+        }
+    }
+    PDEnumPath(path, pCallback, data);
+}
+C2_HOOK_FUNCTION(0x004b4d30, TWT_EnumPath)
 
 tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path) {
     tTWTVFS res;
@@ -625,7 +643,7 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     int i;
 
     PathCat(the_path, C2V(gApplication_path), "KEYMAP_X.TXT");
-    the_path[strlen(the_path) - 5] = '0' + C2V(gKey_map_index);
+    the_path[c2_strlen(the_path) - 5] = '0' + C2V(gKey_map_index);
     f = DRfopen(the_path, "rt");
     if (f == NULL) {
         FatalError(kFatalError_CouldNotOpenKeyMapFile);
@@ -676,8 +694,8 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
             break;
         }
         GetALineAndDontArgue(f, s);
-        C2V(gMisc_strings)[i] = BrMemAllocate(strlen(s) + 1, kMem_misc_string);
-        strcpy(C2V(gMisc_strings)[i], s);
+        C2V(gMisc_strings)[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_misc_string);
+        c2_strcpy(C2V(gMisc_strings)[i], s);
     }
     // Thousands delimiter
     C2V(gMisc_strings)[294][1] = '\0';
