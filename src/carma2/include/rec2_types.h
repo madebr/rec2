@@ -63,6 +63,11 @@ typedef struct {
     tU8 unknown[1304];
 } tGraf_data;
 
+typedef enum {
+    kPixelFlags_16bbp = 0x1,
+    kPixelFlags_unknown = 0x2,
+} tPixelFlags;
+
 typedef struct {
     int depth_bits;
     int depth_bytes;

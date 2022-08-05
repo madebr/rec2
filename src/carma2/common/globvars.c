@@ -147,4 +147,4 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTrack_actor, 0x0075bb60);
 //int gNumber_of_races;
 //char gDir_separator[3] = "";
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTiffFlags, 0x0074ca18);
+C2_HOOK_VARIABLE_IMPLEMENT(tPixelFlags, gPixelFlags, 0x0074ca18);
