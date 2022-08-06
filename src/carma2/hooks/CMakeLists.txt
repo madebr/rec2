@@ -17,8 +17,15 @@ else()
         c2_time.c
         c2_time.h
         win32_hooks.c
+
+        c2_sys/c2_stat.c
+        c2_sys/c2_stat.h
     )
     add_subdirectory(smackw32)
+    target_include_directories(c2_hooks
+        PRIVATE
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+    )
     target_compile_definitions(c2_hooks PUBLIC C2_HOOKS_ENABLED)
     target_link_libraries(c2_hooks
         PUBLIC
