@@ -59,4 +59,6 @@ int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath
 
 int C2_HOOK_FASTCALL DRstrcmpi(const char* str1, const char* str2);
 
+int C2_HOOK_FASTCALL DRmemicmp(const char* str1, const char* str2, size_t count) ;
+
 #endif // REC2_WORLD_H
