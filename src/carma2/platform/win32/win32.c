@@ -442,6 +442,25 @@ void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, 
 }
 C2_HOOK_FUNCTION(0x00486c30, PDEnumPath)
 
+int C2_HOOK_CDECL IsNetworkShare(const char* path) {
+    size_t lenPath;
+    const char* pathPtr;
+    const char* pathPtr2;
+
+    lenPath = c2_strlen(path);
+    if (lenPath > 4 && (path[0] == '\\' || path[0] == '/') && (path[1] == '\\' || path[1] == '/')) {
+        pathPtr = c2_strpbrk(path + 3, "/\\");
+        if (pathPtr != NULL && pathPtr[1] != '\0') {
+            pathPtr2 = c2_strpbrk(pathPtr + 1, "/\\");
+            if (pathPtr2 == NULL || pathPtr2[1] == '\0') {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00578380, IsNetworkShare)
+
 int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
     char drivePath[4];
     UINT driveType;
