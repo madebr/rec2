@@ -477,3 +477,8 @@ int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath
 
 }
 C2_HOOK_FUNCTION(0x00486b20, CreatePathLink)
+
+int C2_HOOK_FASTCALL DRstrcmpi(const char* str1, const char* str2) {
+    return c2_strcasecmp(str1, str2);
+}
+C2_HOOK_FUNCTION(0x0047d850, DRstrcmpi)
