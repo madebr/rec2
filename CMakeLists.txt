@@ -3,6 +3,15 @@ project(rec2 C)
 
 option(KEEP_ACTIVE_IN_BACKGROUND "Keep the game active when alt-tabbing to another application" OFF)
 option(REC2_VENDORED "Use vendored dependencies" ON)
+option(REC2_WERROR "Treat warnings as errors" OFF)
+
+if(REC2_WERROR)
+    if(MSVC)
+        add_compile_options(/WX)
+    else()
+        add_compile_options(-Werror)
+    endif()
+endif()
 
 if(KEEP_ACTIVE_IN_BACKGROUND)
     add_compile_definitions(KEEP_ACTIVE_IN_BACKGROUND)
