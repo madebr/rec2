@@ -12,6 +12,7 @@
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+#include "c2_sys/c2_stat.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundType_Choices, 2, 0x00660268, {"SATURATED", "SCATTERED"});
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gCar_texturing_level, 0x00591374, eCTL_full);
@@ -248,6 +249,12 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
     return eStorage_allocated;
 }
 C2_HOOK_FUNCTION(0x00501020, AddPixelmapToStorage)
+
+int C2_HOOK_FASTCALL IsValidFile(const char* path) {
+    struct c2_stat stat;
+    return c2_stat32(path, &stat) == 0;
+}
+C2_HOOK_FUNCTION(0x00486c00, IsValidFile)
 
 br_pixelmap* (C2_HOOK_FASTCALL * LoadTiffTexture_Ex2_original)(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx);
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx) {
