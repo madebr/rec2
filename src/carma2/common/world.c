@@ -487,3 +487,25 @@ int C2_HOOK_FASTCALL DRmemicmp(const char* str1, const char* str2, size_t count)
     return c2_memicmp(str1, str2, count);
 }
 C2_HOOK_FUNCTION(0x0047d860, DRmemicmp)
+
+int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, const char* haystack, size_t haystackLen, const char* needle) {
+    size_t needleLen;
+    size_t haystackPos;
+
+    needleLen = c2_strlen(needle);
+    if (haystackLen < needleLen) {
+        return 0;
+    }
+    haystackPos = haystackLen - needleLen;
+    while (1) {
+        if (DRmemicmp(&haystack[haystackPos], needle, needleLen) == 0) {
+            *offset = haystackPos;
+            return 1;
+        }
+        if (haystackPos == 0) {
+            return 0;
+        }
+        haystackPos--;
+    }
+}
+C2_HOOK_FUNCTION(0x00486240, FindLastOccurrenceOfString_CaseInsensitive)
