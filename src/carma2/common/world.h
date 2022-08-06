@@ -61,4 +61,6 @@ int C2_HOOK_FASTCALL DRstrcmpi(const char* str1, const char* str2);
 
 int C2_HOOK_FASTCALL DRmemicmp(const char* str1, const char* str2, size_t count) ;
 
+int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, const char* haystack, size_t haystackLen, const char* needle);
+
 #endif // REC2_WORLD_H
