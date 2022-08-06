@@ -482,3 +482,8 @@ int C2_HOOK_FASTCALL DRstrcmpi(const char* str1, const char* str2) {
     return c2_strcasecmp(str1, str2);
 }
 C2_HOOK_FUNCTION(0x0047d850, DRstrcmpi)
+
+int C2_HOOK_FASTCALL DRmemicmp(const char* str1, const char* str2, size_t count) {
+    return c2_memicmp(str1, str2, count);
+}
+C2_HOOK_FUNCTION(0x0047d860, DRmemicmp)
