@@ -82,3 +82,8 @@ C2_HOOK_FUNCTION(0x00575d00, c2_strtok)
 size_t C2_HOOK_CDECL c2_strlen(const char* str) {
     return strlen(str);
 }
+
+char* C2_HOOK_CDECL c2_strpbrk(const char* dest, const char* breakset) {
+    return strpbrk(dest, breakset);
+}
+C2_HOOK_FUNCTION(0x00581110, c2_strpbrk)

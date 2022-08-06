@@ -25,7 +25,8 @@ size_t C2_HOOK_CDECL c2_strlen(const char *dest);
 char* C2_HOOK_CDECL c2_strchr(const char *str, int c);
 char* C2_HOOK_CDECL c2_strrchr(const char *str, int c);
 char* C2_HOOK_CDECL c2_strstr(const char *str, const char *delim);
-char* C2_HOOK_CDECL c2_strtok(char *str, const char *delim);
+char* C2_HOOK_CDECL c2_strtok(char* str, const char *delim);
+char* C2_HOOK_CDECL c2_strpbrk(const char* dest, const char* breakset);
 
 #else
 
@@ -49,8 +50,10 @@ char* C2_HOOK_CDECL c2_strtok(char *str, const char *delim);
 #endif
 
 #define c2_strchr strchr
-#define c2_strtok strtok
+#define c2_strrchr strrchr
 #define c2_strstr strstr
+#define c2_strtok strtok
+#define c2_strpbrk strpbrk
 
 #endif
 
