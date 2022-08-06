@@ -14,6 +14,13 @@
 #include "c2_string.h"
 #include "c2_sys/c2_stat.h"
 
+#define RGB565_R(V) (((V) & 0xf800) >> 11)
+#define RGB565_G(V) (((V) & 0x07e0) >> 5)
+#define RGB565_B(V) (((V) & 0x001f) >> 0)
+#define RGB888_R(V) (((V) >> 16) & 0xff)
+#define RGB888_G(V) (((V) >> 8) & 0xff)
+#define RGB888_B(V) (((V) >> 0) & 0xff)
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundType_Choices, 2, 0x00660268, {"SATURATED", "SCATTERED"});
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gCar_texturing_level, 0x00591374, eCTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gRoad_texturing_level, 0x0059136c, eRTL_full);
@@ -268,6 +275,59 @@ int C2_HOOK_FASTCALL GetLastModificationTime(const char* path) {
     return stat.st_mtime;
 }
 C2_HOOK_FUNCTION(0x00486be0, GetLastModificationTime)
+
+br_uint_8 C2_HOOK_FASTCALL FindBestMatch_ShadeTable(br_colour rgb, br_pixelmap *shadeTable) {
+    int i;
+    int ref_r, ref_g, ref_b;
+    int dr, dg, db;
+    br_uint_32 c;
+    int min_index;
+    int min_error;
+    int error;
+
+    ref_r = RGB888_R(rgb);
+    ref_g = RGB888_G(rgb);
+    ref_b = RGB888_B(rgb);
+    if (shadeTable->type == BR_PMT_RGB_555) {
+        c = ((br_uint_16*)shadeTable->pixels)[1];
+        dr = (RGB565_R(c) << 3) - ref_r;
+        dg = (RGB565_G(c) << 2) - ref_g;
+        db = (RGB565_B(c) << 3) - ref_b;
+        min_index = 1;
+        min_error = BR_SQR3(dr, dg, db);
+        for (i = 2; i < 256; i++) {
+            c = ((br_uint_16*)shadeTable->pixels)[i];
+            dr = (RGB565_R(c) << 3) - ref_r;
+            dg = (RGB565_G(c) << 2) - ref_g;
+            db = (RGB565_B(c) << 3) - ref_b;
+            error = BR_SQR3(dr, dg, db);
+            if (error < min_error) {
+                min_error = error;
+                min_index = i;
+            }
+        }
+    } else {
+        c = ((br_uint_32 *) shadeTable->pixels)[1];
+        dr = RGB888_R(c) - ref_r;
+        dg = RGB888_G(c) - ref_g;
+        db = RGB888_B(c) - ref_b;
+        min_index = 1;
+        min_error = BR_SQR3(dr, dg, db);
+        for (i = 2; i < 256; i++) {
+            c = ((br_uint_32 *) shadeTable->pixels)[i];
+            dr = RGB888_R(c) - ref_r;
+            dg = RGB888_G(c) - ref_g;
+            db = RGB888_B(c) - ref_b;
+            error = BR_SQR3(dr, dg, db);
+            if (error < min_error) {
+                min_error = error;
+                min_index = i;
+            }
+        }
+    }
+    return min_index;
+}
+C2_HOOK_FUNCTION(0x004862b0, FindBestMatch_ShadeTable)
 
 br_pixelmap* (C2_HOOK_FASTCALL * LoadTiffTexture_Ex2_original)(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx);
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx) {
