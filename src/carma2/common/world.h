@@ -49,4 +49,6 @@ int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, co
 
 void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pStorage_space, const char* path);
 
+int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path);
+
 #endif // REC2_WORLD_H

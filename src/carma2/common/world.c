@@ -386,3 +386,43 @@ void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pSt
     }
 }
 C2_HOOK_FUNCTION(0x005028f0, LoadAllTexturesFromTexSubdirectories)
+
+void UseNativeDirSeparator(char* nativePath, const char* path) {
+    size_t i;
+    size_t len;
+    char c;
+
+    len = c2_strlen(path);
+    for (i = 0; i < len; i++) {
+        c = path[i];
+        if (c == '\\') {
+            c = *C2V(gDir_separator);
+        }
+        nativePath[i] = c;
+    }
+    nativePath[len] = '\0';
+}
+
+int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path) {
+    tTWTFILE* f;
+    tPath_name linkPath;
+    tPath_name nativeLinkPath;
+
+    f = DRfopen(path, "rt");
+    if (f == NULL) {
+        return 0;
+    }
+    DRfclose(f);
+    GetALineAndDontArgue(f, linkPath);
+    if (c2_strstr(linkPath, ".TIF") != NULL) {
+        UseNativeDirSeparator(nativeLinkPath, linkPath);
+    } else if (c2_strstr(linkPath, ".PIX") != NULL) {
+        UseNativeDirSeparator(nativeLinkPath, linkPath);
+    } else {
+        return 0;
+    }
+    PathCat(linkPath, C2V(gApplication_path), nativeLinkPath);
+    c2_strcpy(realPath, linkPath);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004869e0, ResolveTexturePathLink)
