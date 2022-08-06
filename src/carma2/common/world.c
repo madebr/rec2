@@ -446,3 +446,34 @@ int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x004869e0, ResolveTexturePathLink)
+
+int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath) {
+    tPath_name buffer;
+    tPath_name cleanedTargetRelPath;
+    const char* targetRelPath;
+    char c;
+    int pos;
+    FILE *f;
+
+    c2_strcpy(buffer, targetPath);
+    targetRelPath = c2_strstr(buffer, "DATA") + c2_strlen("DATA") + 1;
+    pos = 0;
+    while ((c = *targetRelPath) != '\0') {
+        if (c == ':' || c == '\\') {
+            c = '\\';
+        }
+        cleanedTargetRelPath[pos] = c;
+        targetRelPath++;
+        pos++;
+    }
+    cleanedTargetRelPath[pos] = '\0';
+    f = (FILE*)DRfopen(linkPath, "wt");
+    if (f == NULL) {
+        return 0;
+    }
+    c2_fputs(cleanedTargetRelPath, f);
+    fclose(f);
+    return 1;
+
+}
+C2_HOOK_FUNCTION(0x00486b20, CreatePathLink)

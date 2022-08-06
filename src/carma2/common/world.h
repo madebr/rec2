@@ -55,4 +55,6 @@ void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pSt
 
 int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path);
 
+int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath);
+
 #endif // REC2_WORLD_H
