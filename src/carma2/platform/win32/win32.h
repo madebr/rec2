@@ -46,6 +46,8 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path);
 
+int C2_HOOK_CDECL IsNetworkShare(const char* path);
+
 int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex);
 
 #endif // C2_WIN32_WIN32_H
