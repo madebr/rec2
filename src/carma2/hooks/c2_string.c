@@ -11,6 +11,11 @@ int C2_HOOK_CDECL c2_memcmp(const void* s1, const void* s2, size_t n) {
     return memcmp(s1, s2, n);
 }
 
+int C2_HOOK_CDECL c2_memicmp(const char* buffer1, const char* buffer2, size_t count) {
+    return _memicmp(buffer1, buffer2, count);
+}
+C2_HOOK_FUNCTION(0x00577d20, c2_memicmp)
+
 void* C2_HOOK_CDECL c2_memcpy(void* s1, const void* s2, size_t n) {
     return memcpy(s1, s2, n);
 }
