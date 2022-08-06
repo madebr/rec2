@@ -252,9 +252,22 @@ C2_HOOK_FUNCTION(0x00501020, AddPixelmapToStorage)
 
 int C2_HOOK_FASTCALL IsValidFile(const char* path) {
     struct c2_stat stat;
+
     return c2_stat32(path, &stat) == 0;
 }
 C2_HOOK_FUNCTION(0x00486c00, IsValidFile)
+
+int C2_HOOK_FASTCALL GetLastModificationTime(const char* path) {
+    struct c2_stat stat;
+    int res;
+
+    res = c2_stat32(path, &stat);
+    if (res == -1) {
+        return 0;
+    }
+    return stat.st_mtime;
+}
+C2_HOOK_FUNCTION(0x00486be0, GetLastModificationTime)
 
 br_pixelmap* (C2_HOOK_FASTCALL * LoadTiffTexture_Ex2_original)(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx);
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx) {
