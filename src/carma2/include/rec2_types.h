@@ -17,6 +17,16 @@ typedef int tTWTVFS;
 
 typedef int (C2_HOOK_FASTCALL * tEnumPathCallback)(const char*, void*);
 
+typedef enum {
+    kLoadTextureFlags_16bbp = 0x01,
+    kLoadTextureFlags_UseARGB1555 = 0x02,
+    kLoadTextureFlags_SaveBrenderTexture = 0x04,
+    kLoadTextureFlags_KeepShadeTable = 0x08,
+    kLoadTextureFlags_PalatteRGB555 = 0x10,
+    kLoadTextureFlags_ForceTiff = 0x20,
+    kLoadTextureFlags_SaveTextureCompressed = 0x40,
+} tLoadTextureFlags;
+
 typedef enum tNet_mode {
     eNet_mode_none = 0,
     eNet_mode_thinking_about_it = 1,
