@@ -329,6 +329,38 @@ br_uint_8 C2_HOOK_FASTCALL FindBestMatch_ShadeTable(br_colour rgb, br_pixelmap *
 }
 C2_HOOK_FUNCTION(0x004862b0, FindBestMatch_ShadeTable)
 
+br_pixelmap* C2_HOOK_FASTCALL CreatePalettePixelmapFromRGBChannels(br_uint_16* redChannel, br_uint_16* greenChannel, br_uint_16* blueChannel, int isRGB555) {
+    br_pixelmap* pm;
+    int i;
+
+    if (isRGB555) {
+        pm = BrPixelmapAllocate(BR_PMT_RGB_565, 1, 0x100, NULL, 0);
+        if (pm == NULL) {
+            return NULL;
+        }
+        for (i = 0; i < 0x100; i++) {
+            ((br_uint_16*)pm->pixels)[i] = (redChannel[i] & 0xf800) | ((greenChannel[i] & 0xfc00) >> 5) | ((blueChannel[i] & 0xf800) >> 11);
+        }
+    } else {
+        pm = BrPixelmapAllocate(BR_PMT_RGBX_888, 1, 0x100, NULL, 0);
+        if (pm == NULL) {
+            return NULL;
+        }
+        for (i = 0; i < 0x100; i++) {
+            ((br_uint_8*)pm->pixels)[4 * i + 0] = redChannel[i] >> 8;
+            ((br_uint_8*)pm->pixels)[4 * i + 1] = greenChannel[i] >> 8;
+            ((br_uint_8*)pm->pixels)[4 * i + 2] = blueChannel[i] >> 8;
+        }
+    }
+    pm->identifier = BrResStrDup(pm, "palette");
+    if (pm == NULL) {
+        BrPixelmapFree(pm);
+        return NULL;
+    }
+    return pm;
+}
+C2_HOOK_FUNCTION(0x00485590, CreatePalettePixelmapFromRGBChannels)
+
 br_pixelmap* (C2_HOOK_FASTCALL * LoadTiffTexture_Ex2_original)(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx);
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx) {
 #if defined(C2_HOOKS_ENABLED)
