@@ -8,6 +8,8 @@
 #include "sound.h"
 #include "utility.h"
 
+#include "platform.h"
+
 #include <brender/brender.h>
 #include "rec2_macros.h"
 
@@ -31,6 +33,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRendering_accessories, 0x00591368, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage*, gStorageForCallbacks, 0x006b7820);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gAddedPixelmap, 0x006aaa20);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisallowDuplicates, 0x006aaa2c);
+
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -278,6 +282,73 @@ int C2_HOOK_FASTCALL GetLastModificationTime(const char* path) {
 }
 C2_HOOK_FUNCTION(0x00486be0, GetLastModificationTime)
 
+br_pixelmap* C2_HOOK_FASTCALL Read_DEFAULT_ACT(int flags, int *errorCode) {
+    int i;
+    tPath_name path;
+    br_uint_8 defaultActBuffer[0x300];
+    tTWTFILE* f;
+    br_pixelmap* pm;
+    br_uint_8* src;
+    br_uint_8* dst;
+    c2_sprintf(path, "%s%s%s%s%s", path, C2V(gDir_separator), "PALETTE", C2V(gDir_separator), "DEFAULT.ACT");
+    f = DRfopen(path, "rb");
+    if (f == NULL) {
+        *errorCode = 5;
+        return NULL;
+    }
+    if (fread(defaultActBuffer, 0x300, 1, (FILE*)f) == 0) {
+        DRfclose(f);
+        *errorCode = 5;
+        return NULL;
+    }
+    DRfclose(f);
+    src = defaultActBuffer;
+    if ((flags & kLoadTextureFlags_PalatteRGB555) != 0) {
+        pm = BrPixelmapAllocate(BR_PMT_RGB_565, 1, 0x100, NULL, 0);
+        if (pm == NULL) {
+            *errorCode = 2;
+            return NULL;
+        }
+        dst = pm->pixels;
+        for (i = 0; i < 0x100; i++) {
+            *(br_uint_32*)dst = ((src[0] & 0xf8) << 8) | ((src[1] & 0xfc) << 3) | (src[2] >> 3);
+            src += 3;
+            dst += 4;
+        }
+    } else {
+        pm = BrPixelmapAllocate(BR_PMT_RGBX_888, 1, 0x100, NULL, 0);
+        if (pm == NULL) {
+            *errorCode = 2;
+            return NULL;
+        }
+        dst = pm->pixels;
+        dst[0] = 0;
+        dst[1] = 0;
+        dst[2] = 0;
+        src += 3;
+        dst += 4;
+        for (i = 0; i < 0xff; i++) {
+            dst[0] = src[2];
+            dst[1] = src[1];
+            dst[2] = src[0];
+            if (dst[0] == 0 && dst[1] == 0 && dst[2] == 0) {
+                dst[0] = 1;
+                dst[1] = 1;
+                dst[2] = 1;
+            }
+            src += 3;
+            dst += 4;
+        }
+    }
+    pm->identifier = BrResStrDup(pm, "DEFAULT.ACT");
+    if (pm->identifier == NULL) {
+        BrPixelmapFree(pm);
+        *errorCode = 2;
+        return NULL;
+    }
+    return pm;
+}
+
 br_uint_8 C2_HOOK_FASTCALL FindBestMatch_ShadeTable(br_colour rgb, br_pixelmap *shadeTable) {
     int i;
     int ref_r, ref_g, ref_b;
@@ -362,6 +433,69 @@ br_pixelmap* C2_HOOK_FASTCALL CreatePalettePixelmapFromRGBChannels(br_uint_16* r
     return pm;
 }
 C2_HOOK_FUNCTION(0x00485590, CreatePalettePixelmapFromRGBChannels)
+
+br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_MappedToShadeTable(const char* path, br_pixelmap* shadeTable, int* errorCode) {
+    TIFF* tif;
+    br_pixelmap* pm;
+    br_uint_32 height;
+    br_uint_32 width;
+    br_uint_16 samples_per_pixel;
+    br_uint_8* scanlineBuffer;
+    br_uint_8* curSrcPixel;
+    br_uint_32 x;
+    br_uint_32 y;
+
+    tif = TIFFOpen(path, "r");
+    if (tif == NULL) {
+        *errorCode = 4;
+        return NULL;
+    }
+    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
+    TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
+    TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &samples_per_pixel);
+    pm = BrPixelmapAllocate(BR_PMT_INDEX_8, width, height, NULL, 0);
+    if (pm == NULL) {
+        TIFFClose(tif);
+        *errorCode = 2;
+        return NULL;
+    }
+    scanlineBuffer = c2_malloc(TIFFScanlineSize(tif));
+    if (scanlineBuffer == NULL) {
+        TIFFClose(tif);
+        BrPixelmapFree(pm);
+        *errorCode = 2;
+        return NULL;
+    }
+    for (y = 0; y < height; y++) {
+        if (TIFFReadScanline(tif, scanlineBuffer, y, 0) < 1) {
+            break;
+        }
+        curSrcPixel = scanlineBuffer;
+        if (samples_per_pixel == 3) {
+            for (x = 0; x < width; x++) {
+                *(((br_uint_8*)pm->pixels) + y * pm->row_bytes + x) = FindBestMatch_ShadeTable(BR_COLOUR_RGB(curSrcPixel[0], curSrcPixel[1], curSrcPixel[2]), shadeTable);
+                curSrcPixel += 3;
+            }
+        } else {
+            for (x = 0; x < width; x++) {
+                if (curSrcPixel[3] < 0x80) {
+                    *(((br_uint_8 *) pm->pixels) + y * pm->row_bytes + x) = FindBestMatch_ShadeTable(BR_COLOUR_RGB(curSrcPixel[0], curSrcPixel[1], curSrcPixel[2]), shadeTable);
+                } else {
+                    *(((br_uint_8 *) pm->pixels) + y * pm->row_bytes + x) = 0;
+                }
+                curSrcPixel += 4;
+            }
+        }
+    }
+    c2_free(scanlineBuffer);
+    TIFFClose(tif);
+    if (y < height) {
+        BrPixelmapFree(pm);
+        *errorCode = 2;
+        return NULL;
+    }
+    return pm;
+}
 
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_WithShadeTable(const char *path, int flags, int *errorCode) {
     TIFF* tif;
@@ -511,15 +645,127 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_16BitRGB(const char *path, int fla
 }
 C2_HOOK_FUNCTION(0x004864a0, LoadTiffTexture_16BitRGB)
 
-br_pixelmap* (C2_HOOK_FASTCALL * LoadTiffTexture_Ex2_original)(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx);
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx) {
-#if defined(C2_HOOKS_ENABLED)
-    return LoadTiffTexture_Ex2_original(texturePathDir, textureName, pPalette, flags, errorCode, useTiffx);
-#else
-#error "Not implemented"
-#endif
+    int usePix16;
+    tPath_name tifPath;
+    tPath_name pixPath;
+    tPath_name pixPathTarget;
+    tPath_name trgbPath;
+    tPath_name path;
+    int pixPathIsLink;
+    int tifPathIsLink;
+    int pixExists;
+    int tifExists;
+    br_pixelmap* realPalette;
+    br_pixelmap* texture;
+    br_filesystem* prevFilesystem;
+    tPath_name buf1;
+    int indexSuffix;
+    int indexLastSeparator;
+    size_t posDir;
+
+    c2_sprintf(tifPath, "%s%s%s%s%s%s", texturePathDir, C2V(gDir_separator), useTiffx ? "TIFFX" : "TIFFRGB", C2V(gDir_separator), textureName, ".TIF");
+    usePix16 = flags & kLoadTextureFlags_16bbp;
+    c2_sprintf(pixPath, "%s%s%s%s%s%s", texturePathDir, C2V(gDir_separator), usePix16 ? "PIX16" : "PIX8", C2V(gDir_separator), textureName, ".PIX");
+    tifPathIsLink = ResolveTexturePathLink(tifPath, tifPath);
+    pixPathIsLink = ResolveTexturePathLink(pixPathTarget, pixPath);
+    pixExists = IsValidFile(pixPathIsLink ? pixPathTarget : pixPath);
+    tifExists = IsValidFile(tifPath);
+
+    if (useTiffx && pixExists) {
+        c2_sprintf(trgbPath, "%s%s%s%s%s%s", texturePathDir, C2V(gDir_separator), "TIFFRGB", C2V(gDir_separator), textureName, ".TIF");
+        ResolveTexturePathLink(trgbPath, trgbPath);
+        if (IsValidFile(trgbPath)) {
+            if (GetLastModificationTime(pixPathIsLink ? pixPathTarget : pixPath) < GetLastModificationTime(trgbPath)) {
+                return NULL;
+            }
+        }
+    }
+    if (!tifExists) {
+        if (pixExists && (usePix16 || useTiffx)) {
+            prevFilesystem = BrFilesystemSet(&C2V(zlibFilesystem));
+            texture = BrPixelmapLoad(pixPathIsLink ? pixPathTarget : pixPath);
+            BrFilesystemSet(prevFilesystem);
+            *errorCode = (texture != NULL) ? 0 : 3;
+            return texture;
+        }
+        *errorCode = 1;
+        return NULL;
+    }
+
+    if ((usePix16 || useTiffx) && ((flags & kLoadTextureFlags_ForceTiff) == 0) && pixExists) {
+        if (GetLastModificationTime(tifPath) <= GetLastModificationTime(pixPathIsLink ? pixPathTarget : pixPath)) {
+            prevFilesystem = BrFilesystemSet(&C2V(zlibFilesystem));
+            texture = BrPixelmapLoad(pixPathIsLink ? pixPathTarget : pixPath);
+            BrFilesystemSet(prevFilesystem);
+            *errorCode = (texture != NULL) ? 0 : 3;
+            return texture;
+        }
+    }
+
+    if (useTiffx) {
+        texture = LoadTiffTexture_WithShadeTable(tifPath, flags, errorCode);
+    } else if (usePix16) {
+        texture = LoadTiffTexture_16BitRGB(tifPath, flags, errorCode);
+    } else {
+        if (pPalette != NULL) {
+            realPalette = pPalette;
+        } else {
+            realPalette = Read_DEFAULT_ACT(flags, errorCode);
+            if (realPalette == NULL) {
+                return NULL;
+            }
+        }
+
+        texture = LoadTiffTexture_MappedToShadeTable(tifPath, realPalette, errorCode);
+        if (texture == NULL || ((flags & kLoadTextureFlags_KeepShadeTable) == 0)) {
+            if (pPalette == NULL) {
+                BrPixelmapFree(realPalette);
+            }
+        } else {
+            texture->map = realPalette;
+            if (pPalette == NULL) {
+                BrResAdd(texture, realPalette);
+            }
+        }
+    }
+    if (texture == NULL) {
+        return NULL;
+    }
+    if ((flags & kLoadTextureFlags_SaveBrenderTexture) != 0) {
+        if (!pixPathIsLink) {
+            c2_sprintf(path, "%s%s%s", texturePathDir, C2V(gDir_separator), usePix16 ? "PIX16" : "PIX8");
+            PDmkdir(path);
+            if (tifPathIsLink && !pixExists) {
+                if (FindLastOccurrenceOfString_CaseInsensitive(&indexSuffix, tifPath, c2_strlen(tifPath), ".TIF")) {
+                    if (FindLastOccurrenceOfString_CaseInsensitive(&indexLastSeparator, tifPath, indexSuffix, C2V(gDir_separator))) {
+                        int texRootIndex;
+                        if (FindLastOccurrenceOfString_CaseInsensitive(&texRootIndex, tifPath, indexLastSeparator, C2V(gDir_separator))) {
+                            posDir = c2_strlen(C2V(gDir_separator)) + indexLastSeparator;
+                            c2_sprintf(buf1, "%.*s%s%s", texRootIndex, tifPath, C2V(gDir_separator), C2V(gDir_separator), usePix16 ? "PIX16" : "PIX8");
+                            c2_sprintf(pixPathTarget, "%s%s%.*s%s", buf1, C2V(gDir_separator), indexSuffix - posDir, tifPath + posDir, ".PIX");
+                        }
+                    }
+                }
+                PDmkdir(buf1);
+                CreatePathLink(pixPathTarget, pixPath);
+                pixPathIsLink = 1;
+            }
+        }
+        if ((flags & kLoadTextureFlags_SaveTextureCompressed) == 0) {
+            prevFilesystem = BrFilesystemSet(&C2V(zlibFilesystem));
+        }
+        BrPixelmapSave(pixPathIsLink ? pixPathTarget : pixPath, texture);
+        if ((flags & kLoadTextureFlags_SaveTextureCompressed) == 0) {
+            BrFilesystemSet(prevFilesystem);
+        }
+    }
+    if (texture != NULL) {
+        *errorCode = 0;
+    }
+    return texture;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00485750, LoadTiffTexture_Ex2, LoadTiffTexture_Ex2_original)
+C2_HOOK_FUNCTION(0x00485750, LoadTiffTexture_Ex2)
 
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode) {
     br_pixelmap* texture;
