@@ -77,6 +77,7 @@ void C2_HOOK_FASTCALL InstallDRFileCalls(void) {
     temp_system = BrMemAllocate(sizeof(br_filesystem), kMem_misc);
     C2V(gOld_file_system) = BrFilesystemSet(temp_system);
     C2V(gFilesystem).attributes = C2V(gOld_file_system)->attributes;
+    C2V(gFilesystem).putchr = C2V(gOld_file_system)->putchr;
     C2V(gFilesystem).putline = C2V(gOld_file_system)->putline;
     BrFilesystemSet(&C2V(gFilesystem));
     BrMemFree(temp_system);
