@@ -895,6 +895,96 @@ void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pSt
 }
 C2_HOOK_FUNCTION(0x005028f0, LoadAllTexturesFromTexSubdirectories)
 
+int C2_HOOK_FASTCALL LoadTiffTextureCB(const char* filePath, tLoadDirectoryStructureCBData* data) {
+    size_t filePathLength;
+    tPath_name textureName;
+    tLoadDirectoryStructureCBResult* itemResult;
+    br_pixelmap* texture;
+
+    filePathLength = c2_strlen(filePath);
+    if (DRstrcmpi(filePath + filePathLength - 4, ".TIF") != 0) {
+        return 0;
+    }
+    c2_sprintf(textureName, "%.*s", filePathLength - 4, filePath);
+    if (!data->isTiffx && data->results != NULL) {
+        for (itemResult = data->results; itemResult != NULL; itemResult = itemResult->next) {
+            if (DRstrcmpi(textureName, itemResult->name) == 0) {
+                return 0;
+            }
+        }
+    }
+    if (!(data->loadFlags & kLoadTextureFlags_16bbp)) {
+        texture = LoadTiffTexture_Ex2(data->directory, textureName, data->pPalette, data->loadFlags, data->errorCode, 1);
+        if (texture == NULL) {
+            texture = LoadTiffTexture_Ex2(data->directory, textureName, data->pPalette, data->loadFlags, data->errorCode, 0);
+        }
+        if (texture != NULL) {
+            texture->identifier = BrResStrDup(texture, textureName);
+            if (texture->identifier == NULL) {
+                BrPixelmapFree(texture);
+                *data->errorCode = 2;
+                texture = NULL;
+            }
+        }
+        if (texture != NULL) {
+            BrPixelmapFree(texture);
+        }
+    }
+    if (*data->errorCode != 0) {
+        return *data->errorCode;
+    }
+    if (!data->isTiffx) {
+        return 0;
+    }
+    itemResult = BrMemAllocate(sizeof(*itemResult), BR_MEMORY_APPLICATION);
+    if (itemResult == NULL) {
+        *data->errorCode = 2;
+        return 2;
+    }
+    itemResult->name = BrMemStrDup(textureName);
+    if (itemResult->name == NULL) {
+        *data->errorCode = 2;
+        return 2;
+    }
+    itemResult->next = data->results;
+    data->results = itemResult;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00486860, LoadTiffTextureCB)
+
+void C2_HOOK_FASTCALL LoadAllTiffTexturesInDirectory(const char* directory, br_pixelmap* pPalette, int loadFlags, int* errorCode) {
+    tLoadDirectoryStructureCBData data;
+    tLoadDirectoryStructureCBResult* nextItem;
+    tPath_name pathBuffer;
+
+    data.loadFlags = loadFlags | kLoadTextureFlags_SaveBrenderTexture;
+    data.errorCode = errorCode;
+    data.results = NULL;
+    data.directory = directory;
+    data.pPalette = pPalette;
+    if (!(loadFlags & kLoadTextureFlags_16bbp)) {
+        c2_sprintf(pathBuffer, "%s%s%s", directory, C2V(gDir_separator), "TIFFX");
+        data.isTiffx = 0x1;
+        PDEnumPath(pathBuffer, (tEnumPathCallback)LoadTiffTextureCB, &data);
+    }
+    if (*errorCode != 0) {
+        return;
+    }
+    c2_sprintf(pathBuffer, "%s%s%s", directory, C2V(gDir_separator), "TIFFRGB");
+    data.isTiffx = 0x0;
+    PDEnumPath(pathBuffer, (tEnumPathCallback)LoadTiffTextureCB, &data);
+
+    while (data.results != NULL) {
+        nextItem = data.results->next;
+        if (data.results->name != NULL) {
+            BrMemFree(data.results->name);
+        }
+        BrMemFree(data.results);
+        data.results = nextItem;
+    }
+}
+C2_HOOK_FUNCTION(0x00486760, LoadAllTiffTexturesInDirectory)
+
 void UseNativeDirSeparator(char* nativePath, const char* path) {
     size_t i;
     size_t len;
