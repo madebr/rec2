@@ -49,6 +49,12 @@ else()
     add_compile_options(-Wall)
 endif()
 
+if(REC2_VENDORED)
+    add_subdirectory(external/libtiff EXCLUDE_FROM_ALL)
+else()
+    find_package(TIFF REQUIRED)
+endif()
+
 if(C2_STANDALONE)
 else()
     enable_language(CXX)
