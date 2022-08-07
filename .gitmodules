@@ -1,6 +1,9 @@
 [submodule "external/detours/detours"]
 	path = external/detours/detours
 	url = https://github.com/microsoft/Detours.git
+[submodule "external/libtiff/libtiff"]
+	path = external/libtiff/libtiff
+	url = https://gitlab.com/libtiff/libtiff.git
 [submodule "external/dxsdk/dxsdk"]
 	path = external/dxsdk/dxsdk
 	url = https://github.com/madebr/dxsdk
