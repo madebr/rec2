@@ -363,6 +363,84 @@ br_pixelmap* C2_HOOK_FASTCALL CreatePalettePixelmapFromRGBChannels(br_uint_16* r
 }
 C2_HOOK_FUNCTION(0x00485590, CreatePalettePixelmapFromRGBChannels)
 
+br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_WithShadeTable(const char *path, int flags, int *errorCode) {
+    TIFF* tif;
+    br_pixelmap* pm;
+    br_uint_32 height;
+    br_uint_32 width;
+    br_uint_16 samples_per_pixel;
+    br_uint_8* scanlineBuffer;
+    br_uint_8* curSrcPos;
+    br_uint_32 x;
+    br_uint_32 y;
+    br_uint_16* colorMap_Red;
+    br_uint_16* colorMap_Green;
+    br_uint_16* colorMap_Blue;
+
+    tif = TIFFOpen(path, "r");
+    if (tif == NULL) {
+        *errorCode = 4;
+        return NULL;
+    }
+    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
+    TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
+    TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &samples_per_pixel);
+    pm = BrPixelmapAllocate(BR_PMT_INDEX_8, width, height, NULL, 0);
+    if (pm == NULL) {
+        TIFFClose(tif);
+        *errorCode = 2;
+        return NULL;
+    }
+    if (samples_per_pixel == 1) {
+        for (y = 0; y < height; y++) {
+            TIFFReadScanline(tif, (br_uint_8*)pm->pixels + y * pm->row_bytes, y, 0);
+        }
+    } else {
+        scanlineBuffer = c2_malloc(TIFFScanlineSize(tif));
+        if (scanlineBuffer == NULL) {
+            TIFFClose(tif);
+            BrPixelmapFree(pm);
+            *errorCode = 2;
+            return NULL;
+        }
+        for (y = 0; y < height; y++) {
+            if (TIFFReadScanline(tif, scanlineBuffer, y, 0) < 1) {
+                break;
+            }
+            curSrcPos = scanlineBuffer;
+            for (x = 0; x < width; x++) {
+                if (curSrcPos[1] < 0x80) {
+                    *(((br_uint_8 *) pm->pixels) + y * pm->row_bytes + x) = 0;
+                } else {
+                    *(((br_uint_8 *) pm->pixels) + y * pm->row_bytes + x) = curSrcPos[0];
+                }
+                curSrcPos += samples_per_pixel;
+            }
+        }
+        c2_free(scanlineBuffer);
+    }
+    if (y < height) {
+        TIFFClose(tif);
+        BrPixelmapFree(pm);
+        *errorCode = 4;
+        return NULL;
+    }
+    if ((flags & kLoadTextureFlags_KeepShadeTable) != 0) {
+        TIFFGetField(tif, TIFFTAG_COLORMAP, &colorMap_Red, &colorMap_Green, &colorMap_Blue);
+        pm->map = CreatePalettePixelmapFromRGBChannels(colorMap_Red, colorMap_Green, colorMap_Blue, flags & kLoadTextureFlags_PalatteRGB555);
+        if (pm->map == NULL) {
+            TIFFClose(tif);
+            BrPixelmapFree(pm);
+            *errorCode = 2;
+            return NULL;
+        }
+        BrResAdd(pm, pm->map);
+    }
+    TIFFClose(tif);
+    return pm;
+}
+C2_HOOK_FUNCTION(0x00485fe0, LoadTiffTexture_WithShadeTable)
+
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_16BitRGB(const char *path, int flags, int *errorCode) {
     TIFF* tif;
     br_pixelmap* pm;
