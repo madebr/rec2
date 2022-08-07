@@ -1,3 +1,4 @@
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(cxx OFF CACHE BOOL "" FORCE)
 set(fatal-warnings OFF CACHE BOOL "" FORCE)
 set(jbig OFF CACHE BOOL "" FORCE)
