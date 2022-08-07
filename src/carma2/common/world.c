@@ -343,7 +343,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex(const char* texturePathDir, con
     br_pixelmap* texture;
 
     texture = NULL;
-    if ((flags & 0x1) != 0x1) {
+    if ((flags & kLoadTextureFlags_16bbp) == 0) {
         texture = LoadTiffTexture_Ex2(texturePathDir, textureName, pPalette, flags, errorCode, 1);
     }
     if (texture == NULL) {
@@ -376,7 +376,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffOrBrenderTexture_Ex(const char* texturePat
             return textures[0];
         }
     } else {
-        return LoadTiffTexture_Ex(texturePathDir, textureName, pPalette, flags | 0x40, errorCode);
+        return LoadTiffTexture_Ex(texturePathDir, textureName, pPalette, flags | kLoadTextureFlags_SaveTextureCompressed, errorCode);
     }
 }
 C2_HOOK_FUNCTION(0x0048eb80, LoadTiffOrBrenderTexture_Ex)
