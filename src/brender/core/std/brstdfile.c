@@ -19,7 +19,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, BrStdioFilesystem, 0x0066fdc0, {
     BrStdioWrite,
     BrStdioGetLine,
     BrStdioPutLine,
-    BrStdioAdvance
+    BrStdioAdvance,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem*, _BrDefaultFilesystem, 0x0066fdf4, &C2V(BrStdioFilesystem));
 
