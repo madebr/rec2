@@ -35,4 +35,6 @@ void C2_HOOK_FASTCALL PDSetPalette(br_pixelmap *pixelmap);
 
 void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, void* data);
 
+int C2_HOOK_FASTCALL PDmkdir(const char* path);
+
 #endif // C2_PLATFORM_H
