@@ -11,6 +11,8 @@
 #include <brender/brender.h>
 #include "rec2_macros.h"
 
+#include <tiffio.h>
+
 #include "c2_string.h"
 #include "c2_sys/c2_stat.h"
 
@@ -360,6 +362,76 @@ br_pixelmap* C2_HOOK_FASTCALL CreatePalettePixelmapFromRGBChannels(br_uint_16* r
     return pm;
 }
 C2_HOOK_FUNCTION(0x00485590, CreatePalettePixelmapFromRGBChannels)
+
+br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_16BitRGB(const char *path, int flags, int *errorCode) {
+    TIFF* tif;
+    br_pixelmap* pm;
+    br_uint_32 height;
+    br_uint_32 width;
+    br_uint_16 samples_per_pixel;
+    br_uint_8* scanlineBuffer;
+    br_uint_8* curSrcPos;
+    br_uint_32 x;
+    br_uint_32 y;
+
+    tif = TIFFOpen(path, "r");
+    if (tif == NULL) {
+        *errorCode = 4;
+        return NULL;
+    }
+    TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &height);
+    TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &width);
+    TIFFGetField(tif, TIFFTAG_SAMPLESPERPIXEL, &samples_per_pixel);
+    pm = BrPixelmapAllocate((samples_per_pixel == 3) ? BR_PMT_RGB_565 : ((flags & kLoadTextureFlags_UseARGB1555) ? BR_PMT_ARGB_1555 : BR_PMT_RGBA_4444), width, height, NULL, 0);
+    if (pm == NULL) {
+        TIFFClose(tif);
+        *errorCode = 2;
+        return NULL;
+    }
+    scanlineBuffer = c2_malloc(TIFFScanlineSize(tif));
+    if (scanlineBuffer == NULL) {
+        TIFFClose(tif);
+        BrPixelmapFree(pm);
+        *errorCode = 2;
+        return NULL;
+    }
+
+    for (y = 0; y < height; y++) {
+        if (TIFFReadScanline(tif, scanlineBuffer, y, 0) < 1) {
+            break;
+        }
+        curSrcPos = scanlineBuffer;
+        if (samples_per_pixel == 3) {
+            // RGB888 -> RGB565
+            for (x = 0; x < width; x++) {
+                *((br_uint_16*)((br_uint_8*)pm->pixels + y * pm->row_bytes + sizeof(br_uint_16) * x)) = ((curSrcPos[0] >> 3) << 11) | ((curSrcPos[1] >> 2) << 5) | (curSrcPos[2] >> 3);
+                curSrcPos += 3;
+            }
+        }
+        else if (flags & kLoadTextureFlags_UseARGB1555) {
+            // RGBA8888 -> ARGB1555?
+            for (x = 0; x < width; x++) {
+                *((br_uint_16*)((br_uint_8*)pm->pixels + y * pm->row_bytes + sizeof(br_uint_16) * x)) = ((curSrcPos[3] >> 7) << 15) | ((curSrcPos[0] >> 3) << 10) | ((curSrcPos[1] >> 3) << 5) | (curSrcPos[2] >> 3);
+                curSrcPos += 4;
+            }
+        } else {
+            // RGBA8888 -> ARGB4444?
+            for (x = 0; x < width; x++) {
+                *((br_uint_16*)((br_uint_8*)pm->pixels + y * pm->row_bytes + sizeof(br_uint_16) * x)) = ((curSrcPos[3] >> 4) << 12) | ((curSrcPos[0] >> 4) << 8) | ((curSrcPos[1] >> 4) << 4) | (curSrcPos[2] >> 4);
+                curSrcPos += 4;
+            }
+        }
+    }
+    c2_free(scanlineBuffer);
+    TIFFClose(tif);
+    if (y < height) {
+        BrPixelmapFree(pm);
+        *errorCode = 4;
+        return NULL;
+    }
+    return pm;
+}
+C2_HOOK_FUNCTION(0x004864a0, LoadTiffTexture_16BitRGB)
 
 br_pixelmap* (C2_HOOK_FASTCALL * LoadTiffTexture_Ex2_original)(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx);
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx) {
