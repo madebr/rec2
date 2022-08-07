@@ -66,8 +66,8 @@ void* C2_HOOK_CDECL BrMemCalloc(int nelems, br_size_t size, br_uint_8 type) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00527650, BrMemCalloc, BrMemCalloc_original)
 
-char* (C2_HOOK_CDECL * BrMemStrDup_original)(char* str);
-char* C2_HOOK_CDECL BrMemStrDup(char* str) {
+char* (C2_HOOK_CDECL * BrMemStrDup_original)(const char* str);
+char* C2_HOOK_CDECL BrMemStrDup(const char* str) {
 #if MEM_HOOKS
     return BrMemStrDup_original(str);
 #else
