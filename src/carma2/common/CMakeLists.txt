@@ -64,4 +64,5 @@ target_link_libraries(c2_common
         c2_hooks
         c2_platform
         S3::S3
+        TIFF::TIFF
 )
