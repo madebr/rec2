@@ -17,6 +17,7 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+#include <direct.h>
 #include <windows.h>
 #include <dinput.h>
 
@@ -479,3 +480,9 @@ int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
     return driveType != DRIVE_UNKNOWN && driveType != DRIVE_NO_ROOT_DIR;
 }
 C2_HOOK_FUNCTION(0x00585ee0, IsValidDriveIndex)
+
+int C2_HOOK_FASTCALL PDmkdir(const char* path) {
+
+    return _mkdir(path);
+}
+C2_HOOK_FUNCTION(0x00486c20, PDmkdir)
