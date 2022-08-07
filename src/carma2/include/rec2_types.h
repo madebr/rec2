@@ -27,6 +27,20 @@ typedef enum {
     kLoadTextureFlags_SaveTextureCompressed = 0x40,
 } tLoadTextureFlags;
 
+typedef struct tLoadDirectoryStructureCBResult {
+    char* name;
+    struct tLoadDirectoryStructureCBResult* next;
+} tLoadDirectoryStructureCBResult;
+
+typedef struct {
+    const char* directory;
+    br_pixelmap* pPalette;
+    int loadFlags;
+    int* errorCode;
+    tLoadDirectoryStructureCBResult* results;
+    int isTiffx : 1;
+} tLoadDirectoryStructureCBData;
+
 typedef enum tNet_mode {
     eNet_mode_none = 0,
     eNet_mode_thinking_about_it = 1,
