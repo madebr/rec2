@@ -64,4 +64,11 @@ if(NOT C2_STANDALONE)
             c2_hooks
             c2_platform
     )
+    if(MSVC)
+        target_link_options(rec2
+            PRIVATE
+                # dinput.lib and dxguid.lib might be unsafe
+                /SAFESEH:NO
+        )
+    endif()
 endif()
