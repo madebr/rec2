@@ -144,6 +144,7 @@ br_uint_16 C2_HOOK_CDECL BrPixelmapTextWidth(br_pixelmap* dst, br_font* font, ch
 
 // BrRes
 void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_class);
+void* C2_HOOK_CDECL BrResAdd(void* vparent, void* vres);
 br_resource_class* C2_HOOK_CDECL BrResClassAdd(br_resource_class* rclass);
 void* C2_HOOK_CDECL BrResRemove(void* vres);
 void C2_HOOK_CDECL BrResFree(void* vres);
