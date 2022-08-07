@@ -107,6 +107,7 @@ void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, br_matrix4* B, br_matrix4* C);
 void C2_HOOK_CDECL BrMemFree(void* block);
 void* C2_HOOK_CDECL BrMemAllocate(br_size_t size, br_uint_8 type);
 void* C2_HOOK_CDECL BrMemCalloc(int nelems, br_size_t size, br_uint_8 type);
+char* C2_HOOK_CDECL BrMemStrDup(const char* str);
 
 // BrModel
 br_model* C2_HOOK_CDECL BrModelAllocate(const char* name, int nvertices, int nfaces);
