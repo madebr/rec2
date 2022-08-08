@@ -18,6 +18,8 @@ add_library(c2_common STATIC
     drfile.h
     drmem.c
     drmem.h
+    drone.c
+    drone.h
     errors.c
     errors.h
     globvars.c
