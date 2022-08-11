@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 
+#define c2_fpos_t fpos_t
+
 C2_HOOK_VARIABLE_DECLARE(FILE, c2_stdin_value);
 C2_HOOK_VARIABLE_DECLARE(FILE, c2_stdout_value);
 C2_HOOK_VARIABLE_DECLARE(FILE, c2_stderr_value);
