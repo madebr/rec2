@@ -32,7 +32,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMax_bend_damage, 0x0067bdf4);
 void C2_HOOK_FASTCALL LoadGeneralCrushSettings(tTWTFILE* file) {
     char s[256];
 
-    C2_HOOK_START();
     while (1) {
         if (!GetALineAndDontArgue(file, s)) {
             PDFatalError("Can't find start of CRUSH SETTINGS in .TXT file");
@@ -72,6 +71,5 @@ void C2_HOOK_FASTCALL LoadGeneralCrushSettings(tTWTFILE* file) {
             break;
         }
     }
-    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION(0x00429bb0, LoadGeneralCrushSettings)
