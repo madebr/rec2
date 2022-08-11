@@ -1,6 +1,7 @@
 #include "utility.h"
 
 #include "globvars.h"
+#include "loading.h"
 #include "platform.h"
 
 #include "brender/brender.h"
@@ -39,15 +40,55 @@ int C2_HOOK_FASTCALL PDCheckDriveExists(char* pThe_path) {
 }
 C2_HOOK_FUNCTION(0x00515950, PDCheckDriveExists)
 
-char* (C2_HOOK_FASTCALL * GetALineWithNoPossibleService_original)(tTWTFILE* pF, char* pS);
 char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS) {
-#if defined(C2_HOOKS_ENABLED)
-    return GetALineWithNoPossibleService_original(pF, pS);
-#else
-#error "not implemented"
-#endif
+    char* result;
+    char s[256];
+    int ch;
+    size_t len;
+
+    do {
+        result = DRfgets(s, sizeof(s), pF);
+        if (result == NULL) {
+            pS[0] = '\0';
+            return pS;
+        }
+        while (*result == ' ' || *result == '\t') {
+            result++;
+        }
+
+        while (1) {
+            ch = DRfgetc(pF);
+            if (ch != '\r' && ch != '\n') {
+                break;
+            }
+        }
+        if (ch != -1) {
+            DRungetc(ch, pF);
+        }
+    } while (!c2_isalnum(*result)
+             && *result != '*'
+             && *result != '-'
+             && *result != '+'
+             && *result != '.'
+             && *result != '!'
+             && *result != '&'
+             && *result != '}'
+             && *result != '{'
+             && *result != '~'
+             && *result != '('
+             && *result != '\''
+             && *result != '\"'
+             && *result >= 0);
+
+    len = c2_strlen(result);
+    while (len > 0 && (result[len - 1] == '\r' || result[len - 1] == '\n')) {
+        len--;
+    }
+    result[len] = '\0';
+    c2_strncpy(pS, result, len + 1);
+    return pS;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00490f30, GetALineWithNoPossibleService, GetALineWithNoPossibleService_original)
+C2_HOOK_FUNCTION(0x00490f30, GetALineWithNoPossibleService)
 
 char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS) {
 
