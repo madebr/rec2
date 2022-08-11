@@ -291,15 +291,17 @@ int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pStr
 }
 C2_HOOK_FUNCTION(0x0048fa70, GetALineAndInterpretCommand)
 
-int (C2_HOOK_FASTCALL * GetAnInt_original)(tTWTFILE* pF);
 int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF) {
-#if defined(C2_HOOKS_ENABLED)
-    return GetAnInt_original(pF);
-#else
-#error "not implemented"
-#endif
+    char s[256];
+    int value;
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    sscanf(str, "%d", &value);
+    return value;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0048fb00, GetAnInt, GetAnInt_original)
+C2_HOOK_FUNCTION(0x0048fb00, GetAnInt)
 
 void C2_HOOK_FASTCALL GetPairOfInts(tTWTFILE* pF, int* pF1, int* pF2) {
     char s[256];
