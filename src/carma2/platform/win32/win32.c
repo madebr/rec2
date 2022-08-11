@@ -122,19 +122,11 @@ void DeActivateApp(void) {
     dr_dprintf("DeActivateApp() - END; active state now %d", C2V(gWindowActiveState));
 }
 
-WNDPROC Carma2MainWndProc_original;
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
-    LRESULT res = Carma2MainWndProc_original(hWnd, uMsg, wParam, lParam);
-    C2_HOOK_FINISH();
-    return res;
-#else
     PAINTSTRUCT paint;
     POINT point;
     char buffer[256];
 
-    C2_HOOK_START();
     switch (uMsg) {
     case WM_PAINT:
         BeginPaint(hWnd, &paint);
@@ -251,18 +243,11 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
         break;
     }
     LRESULT res = DefWindowProcA(hWnd, uMsg, wParam, lParam);
-    C2_HOOK_FINISH();
     return res;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051b0c0, Carma2MainWndProc, Carma2MainWndProc_original)
+C2_HOOK_FUNCTION(0x0051b0c0, Carma2MainWndProc)
 
-void (C2_HOOK_CDECL * Win32ServiceMessages_original)(void);
 void C2_HOOK_CDECL Win32ServiceMessages(void) {
-    C2_HOOK_START();
-#if 0//defined(C2_HOOKS_ENABLED)
-    Win32ServiceMessages_original();
-#else
     MSG msg;
     dr_dprintf("Win32ServiceMessages() - START");
     while (1) {
@@ -301,17 +286,13 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
         DispatchMessageA(&msg);
     }
     dr_dprintf("Win32ServiceMessages() - END");
-#endif
-    C2_HOOK_FINISH();
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051cad0, Win32ServiceMessages, Win32ServiceMessages_original)
+C2_HOOK_FUNCTION(0x0051cad0, Win32ServiceMessages)
 
 int (C2_HOOK_FASTCALL * PDCheckDriveExists2_original)(const char* pThe_path, const char* pFile_name, tU32 pMin_size);
 int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFile_name, tU32 pMin_size) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     int res = PDCheckDriveExists2_original(pThe_path, pFile_name, pMin_size);
-    C2_HOOK_FINISH();
     return res;
 #else
 #error "Not implemented"
