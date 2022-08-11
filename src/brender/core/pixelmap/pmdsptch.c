@@ -48,9 +48,7 @@ C2_HOOK_FUNCTION(0x00537df0, BrPixelmapResize)
 br_pixelmap* (C2_HOOK_CDECL * BrPixelmapMatch_original)(br_pixelmap* src, br_uint_8 match_type);
 br_pixelmap* C2_HOOK_CDECL BrPixelmapMatch(br_pixelmap* src, br_uint_8 match_type) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     br_pixelmap* res = BrPixelmapMatch_original(src, match_type);
-    C2_HOOK_FINISH();
     return res;
 #else
 #error "Not implemented"
@@ -301,7 +299,6 @@ C2_HOOK_FUNCTION(0x00538990, BrPixelmapLine)
 
 void (C2_HOOK_CDECL * BrPixelmapDoubleBuffer_original)(br_pixelmap* dst, br_pixelmap* src);
 void C2_HOOK_CDECL BrPixelmapDoubleBuffer(br_pixelmap* dst, br_pixelmap* src) {
-    C2_HOOK_START();
 #if defined(C2_HOOKS_ENABLED)
     BrPixelmapDoubleBuffer_original(dst, src);
 #else
@@ -309,7 +306,6 @@ void C2_HOOK_CDECL BrPixelmapDoubleBuffer(br_pixelmap* dst, br_pixelmap* src) {
     CheckDispatch(dst);
     PIXELMAP_DISPATCH_GEN_DOUBLEBUFFER(dst, src);
 #endif
-    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005389e0, BrPixelmapDoubleBuffer, BrPixelmapDoubleBuffer_original)
 
