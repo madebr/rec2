@@ -2,6 +2,12 @@
 
 #include <stdlib.h>
 
+#if defined(DEBUG_STDLIB)
+#define DEBUG_PRINTF(...) C2_HOOK_DEBUGF(##__VA_ARGS__)
+#else
+#define DEBUG_PRINTF(...)
+#endif
+
 void (C2_HOOK_CDECL * srand_original)(int seed);
 void C2_HOOK_CDECL c2_srand(int seed) {
     srand_original(seed);
@@ -16,7 +22,7 @@ C2_HOOK_FUNCTION(0x00578aa0, c2_abort)
 void* C2_HOOK_CDECL c2_malloc(size_t size) {
     void* result;
     result = malloc(size);
-    C2_HOOK_DEBUGF("size=%d => 0x%p", size, result);
+    DEBUG_PRINTF("size=%d => 0x%p", size, result);
     return result;
 }
 C2_HOOK_FUNCTION(0x00576d40, c2_malloc)
@@ -24,13 +30,13 @@ C2_HOOK_FUNCTION(0x00576d40, c2_malloc)
 void* C2_HOOK_CDECL c2_calloc (size_t num, size_t size) {
     void* result;
     result = calloc(num, size);
-    C2_HOOK_DEBUGF("num=%d, size=%d => 0x%p", num, size, result);
+    DEBUG_PRINTF("num=%d, size=%d => 0x%p", num, size, result);
     return result;
 }
 C2_HOOK_FUNCTION(0x00579b20, c2_calloc)
 
 void C2_HOOK_CDECL c2_free(void* ptr) {
-    C2_HOOK_DEBUGF("(0x%p)", ptr);
+    DEBUG_PRINTF("(0x%p)", ptr);
     free(ptr);
 }
 C2_HOOK_FUNCTION(0x005775f0, c2_free);
