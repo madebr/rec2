@@ -114,6 +114,8 @@ int C2_HOOK_FASTCALL DRfeof(tTWTFILE* pFile);
 
 int C2_HOOK_FASTCALL DRfgetc(tTWTFILE* pFile);
 
+int C2_HOOK_FASTCALL DRungetc(int ch, tTWTFILE* file);
+
 char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, tTWTFILE* pFile);
 
 /// FIXME: rename to DRxxx
