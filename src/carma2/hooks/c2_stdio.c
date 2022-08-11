@@ -7,6 +7,12 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#if defined(DEBUG_STDIO)
+#define DEBUG_PRINTF(...) C2_HOOK_DEBUGF(##__VA_ARGS__)
+#else
+#define DEBUG_PRINTF(...)
+#endif
+
 C2_HOOK_VARIABLE_IMPLEMENT(FILE, c2_stdin_value, 0x006737d0);
 C2_HOOK_VARIABLE_IMPLEMENT(FILE, c2_stdout_value, 0x006737f0);
 C2_HOOK_VARIABLE_IMPLEMENT(FILE, c2_stderr_value, 0x00673810);
@@ -45,20 +51,20 @@ static FILE* hook_FILE(FILE* file) {
 static FILE* (C2_HOOK_CDECL * fopen_original)(const char*, const char*);
 FILE* C2_HOOK_CDECL c2_fopen(const char* path, const char* mode) {
     FILE* res;
-    C2_HOOK_DEBUGF("(\"%s\", \"%s\")", path, mode);
+    DEBUG_PRINTF("(\"%s\", \"%s\")", path, mode);
 #if HOOK_STDIO
     res = fopen_original(path, mode);
 #else
     res = fopen(path, mode);
 #endif
-    C2_HOOK_DEBUGF("-> %p", res);
+    DEBUG_PRINTF("-> %p", res);
     return res;
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00577170, c2_fopen, fopen_original)
 
 static void (C2_HOOK_CDECL * fclose_original)(FILE* file);
 void C2_HOOK_CDECL c2_fclose(FILE* file) {
-    C2_HOOK_DEBUGF("(%p)", file);
+    DEBUG_PRINTF("(%p)", file);
 #if HOOK_STDIO
     fclose_original(file);
 #else
@@ -77,7 +83,7 @@ int C2_HOOK_CDECL c2_feof(FILE* file) {
 
 static int(C2_HOOK_CDECL * fflush_original)(FILE* file);
 int C2_HOOK_CDECL c2_fflush(FILE* file) {
-    C2_HOOK_DEBUGF("(%p)", file);
+    DEBUG_PRINTF("(%p)", file);
 #if HOOK_STDIO
     return fflush_original(file);
 #else
@@ -88,7 +94,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00577700, c2_fflush, fflush_original)
 
 int (C2_HOOK_CDECL * ftell_original)(FILE*);
 int C2_HOOK_CDECL c2_ftell(FILE* file) {
-    C2_HOOK_DEBUGF("(%p)", file);
+    DEBUG_PRINTF("(%p)", file);
 #if HOOK_STDIO
     return ftell_original(file);
 #else
@@ -100,7 +106,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005772f0, c2_ftell, ftell_original)
 int (C2_HOOK_CDECL * fseek_original)(FILE *stream, int offset, int whence);
 int C2_HOOK_CDECL c2_fseek(FILE *stream, int offset, int whence) {
 
-    C2_HOOK_DEBUGF("(%p, %d, %d)", stream, offset, whence);
+    DEBUG_PRINTF("(%p, %d, %d)", stream, offset, whence);
 #if HOOK_STDIO
     return fseek_original(stream, offset, whence);
 #else
@@ -112,7 +118,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00576ec0, c2_fseek, fseek_original)
 void (C2_HOOK_CDECL * rewind_original)(FILE *stream);
 void C2_HOOK_CDECL c2_rewind(FILE *stream) {
 
-    C2_HOOK_DEBUGF("(%p)", stream);
+    DEBUG_PRINTF("(%p)", stream);
 #if HOOK_STDIO
     rewind_original(stream);
 #else
@@ -124,7 +130,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005770e0, c2_rewind, rewind_original)
 int (C2_HOOK_CDECL * fgetc_original)(FILE * stream);
 int C2_HOOK_CDECL c2_fgetc(FILE * stream) {
 
-    C2_HOOK_DEBUGF("(%p)", stream);
+    DEBUG_PRINTF("(%p)", stream);
 #if HOOK_STDIO
     return fgetc_original(stream);
 #else
@@ -134,7 +140,7 @@ int C2_HOOK_CDECL c2_fgetc(FILE * stream) {
 
 char* (C2_HOOK_CDECL * fgets_original)(char* str, int num, FILE* stream);
 char* C2_HOOK_CDECL c2_fgets(char* str, int num, FILE* stream) {
-    C2_HOOK_DEBUGF("(%p)", stream);
+    DEBUG_PRINTF("(%p)", stream);
 #if HOOK_STDIO
     return fgets_original(str, num, stream);
 #else
@@ -145,7 +151,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00578610, c2_fgets, fgets_original)
 
 static int (C2_HOOK_CDECL * fputc_original)(int character, FILE* file);
 int C2_HOOK_CDECL c2_fputc(int character, FILE* file) {
-    C2_HOOK_DEBUGF("(%d, %p)", character, file);
+    DEBUG_PRINTF("(%d, %p)", character, file);
 #if HOOK_STDIO
     return fputc_original(character, file);
 #else
@@ -156,7 +162,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00577c40, c2_fputc, fputc_original);
 
 static int (C2_HOOK_CDECL * fputs_original)(const char*, FILE*);
 int C2_HOOK_CDECL c2_fputs(const char* text, FILE* file) {
-    C2_HOOK_DEBUGF("(\"%s\", %p)", text, file);
+    DEBUG_PRINTF("(\"%s\", %p)", text, file);
 #if HOOK_STDIO
     return fputs_original(text, file);
 #else
@@ -170,7 +176,7 @@ int C2_HOOK_CDECL c2_printf(const char* format, ...) {
     va_list ap;
     int res;
 
-    C2_HOOK_DEBUGF("(%s, ...)", format);
+    DEBUG_PRINTF("(%s, ...)", format);
     va_start(ap, format);
 #if HOOK_STDIO
     res = c2_vfprintf(c2_stdout, format, ap);
@@ -187,7 +193,7 @@ int C2_HOOK_CDECL c2_fprintf(FILE* file, const char* format, ...) {
     va_list ap;
     int res;
 
-    C2_HOOK_DEBUGF("(%p, \"%s\", ...)", file, format);
+    DEBUG_PRINTF("(%p, \"%s\", ...)", file, format);
     va_start(ap, format);
 #if HOOK_STDIO
     res = c2_vfprintf(file, format, ap);
@@ -203,7 +209,7 @@ int C2_HOOK_CDECL c2_sprintf(char* str, const char* format, ...) {
     va_list ap;
     int res;
 
-    C2_HOOK_DEBUGF("(\"%s\", \"%s\", ...)", str, format);
+    DEBUG_PRINTF("(\"%s\", \"%s\", ...)", str, format);
 
     va_start(ap, format);
     res = vsprintf(str, format, ap);
@@ -215,7 +221,7 @@ C2_HOOK_FUNCTION(0x00575de0, c2_sprintf)
 
 int C2_HOOK_CDECL c2_vsprintf(char* str, const char* format, va_list ap) {
 
-    C2_HOOK_DEBUGF("(\"%s\", \"%s\", ...)", str, format);
+    DEBUG_PRINTF("(\"%s\", \"%s\", ...)", str, format);
     return vsprintf(str, format, ap);
 }
 C2_HOOK_FUNCTION(0x00578ee0, c2_vsprintf)
@@ -224,7 +230,7 @@ int (C2_HOOK_CDECL * vfprintf_original)(FILE*, const char*, va_list ap);
 int C2_HOOK_CDECL c2_vfprintf(FILE* file, const char* format, va_list ap) {
     int res;
 
-    C2_HOOK_DEBUGF("(%p, \"%s\", ...)", file, format);
+    DEBUG_PRINTF("(%p, \"%s\", ...)", file, format);
 #if HOOK_STDIO
     res = vfprintf_original(file, format, ap);
 #else
@@ -238,13 +244,13 @@ size_t (C2_HOOK_CDECL * fwrite_original)(const void* ptr, size_t size, size_t co
 size_t C2_HOOK_CDECL c2_fwrite(const void* ptr, size_t size, size_t count, FILE* stream) {
     size_t res;
 
-    C2_HOOK_DEBUGF("(%p, %d, %d, %p)", ptr, size, count, stream);
+    DEBUG_PRINTF("(%p, %d, %d, %p)", ptr, size, count, stream);
 #if HOOK_STDIO
     res = fwrite_original(ptr, size, count, stream);
 #else
     res = fwrite(ptr, size, count, hook_FILE(stream));
 #endif
-    C2_HOOK_DEBUGF("-> %d", res);
+    DEBUG_PRINTF("-> %d", res);
     return res;
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005774a0, c2_fwrite, fwrite_original)
@@ -253,13 +259,13 @@ size_t (C2_HOOK_CDECL * fread_original)(void *ptr, size_t size, size_t nmemb, FI
 size_t C2_HOOK_CDECL c2_fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     size_t res;
 
-//    C2_HOOK_DEBUGF("(%p, %d, %d, %p)", ptr, size, nmemb, stream);
+//    DEBUG_PRINTF("(%p, %d, %d, %p)", ptr, size, nmemb, stream);
 #if HOOK_STDIO
     res = fread_original(ptr, size, nmemb, stream);
 #else
     res = fread(ptr, size, nmemb, hook_FILE(stream));
 #endif
-//    C2_HOOK_DEBUGF("-> %d", res);
+//    DEBUG_PRINTF("-> %d", res);
     return res;
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00576fa0, c2_fread, fread_original)
