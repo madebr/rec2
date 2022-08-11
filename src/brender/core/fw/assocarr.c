@@ -117,14 +117,12 @@ C2_HOOK_FUNCTION(0x00531750, BrAssociativeArrayRemoveEntry)
 br_error C2_HOOK_STDCALL BrAssociativeArrayQuery(br_associative_array* pArray, br_token t, br_value* pValue) {
     br_uint_16 i;
 
-    C2_HOOK_START();
     for (i = 0; i < pArray->num_elements; i++) {
         if (pArray->tv[i].t == t) {
             *pValue = pArray->tv[i].v;
             return 0;
         }
     }
-    C2_HOOK_FINISH();
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00531810, BrAssociativeArrayQuery)

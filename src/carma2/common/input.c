@@ -3,9 +3,7 @@
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     int res = LoadJoystickPreferences_original();
-    C2_HOOK_FINISH();
     return res;
 #else
 #error "Not implemented"
@@ -16,9 +14,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0045c0b0, LoadJoystickPreferences, LoadJoystickPrefe
 int (C2_HOOK_FASTCALL * AnyKeyDown_original)(void);
 int C2_HOOK_FASTCALL AnyKeyDown(void) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     int res = AnyKeyDown_original();
-    C2_HOOK_FINISH();
     return res;
 #else
 #error "not implemented"
