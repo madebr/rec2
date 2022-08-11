@@ -18,6 +18,12 @@
 #include <windows.h>
 #include <dinput.h>
 
+#if defined(C2_WIN32_DEBUG)
+#define DR_DPRINTF(...) dr_dprintf(__VA_ARGS__)
+#else
+#define DR_DPRINTF(...)
+#endif
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGraf_spec, gGraf_specs, 2, 0x00662208); // FIXME: implement
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
@@ -106,9 +112,9 @@ void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void) {
 C2_HOOK_FUNCTION(0x0051c2f0, PDUnlockRealBackScreen)
 
 void DeActivateApp(void) {
-    dr_dprintf("DeActivateApp() - START");
+    DR_DPRINTF("DeActivateApp() - START");
     if (!C2V(gWindowMovingResizing) && C2V(gWindowActiveState) == 2) {
-        dr_dprintf("DeActivateApp() - deactivating app");
+        DR_DPRINTF("DeActivateApp() - deactivating app");
         C2V(gWindowMovingResizing) = 1;
         if (C2V(gDirectInputDevice) != NULL) {
             IDirectInputDevice_Unacquire(C2V(gDirectInputDevice));
@@ -119,7 +125,7 @@ void DeActivateApp(void) {
         C2V(gWindowActiveState) = (strcmp(C2V(gRenderer), "D3D") == 0) ? 0 : 1;
         C2V(gWindowMovingResizing) = 0;
     }
-    dr_dprintf("DeActivateApp() - END; active state now %d", C2V(gWindowActiveState));
+    DR_DPRINTF("DeActivateApp() - END; active state now %d", C2V(gWindowActiveState));
 }
 
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
@@ -133,13 +139,13 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
         EndPaint(hWnd, &paint);
         return 0;
     case WM_DESTROY:
-        dr_dprintf("WM_DESTROY received - doing nothing.");
+        DR_DPRINTF("WM_DESTROY received - doing nothing.");
         break;
 #if !defined(KEEP_ACTIVE_IN_BACKGROUND)
     case WM_MOVE:
     case WM_SIZE:
         if (IsIconic(hWnd)) {
-            dr_dprintf("WM_SIZE/WM_MOVE: Window is iconic");
+            DR_DPRINTF("WM_SIZE/WM_MOVE: Window is iconic");
             DeActivateApp();
         }
         break;
@@ -208,16 +214,16 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             C2V(gKeyboardBufferLength)++;
             strncpy(buffer, C2V(gKeyboardBuffer), C2V(gKeyboardBufferLength));
             buffer[C2V(gKeyboardBufferLength)] = '\0';
-            dr_dprintf("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
+            DR_DPRINTF("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
         }
         break;
 #if !defined(KEEP_ACTIVE_IN_BACKGROUND)
     case WM_ACTIVATEAPP:
-        dr_dprintf("WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
+        DR_DPRINTF("WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
                    wParam, lParam, GetForegroundWindow(), C2V(gHWnd), hWnd, IsIconic(C2V(gHWnd)));
         if (C2V(gHWnd) != NULL) {
             if (GetForegroundWindow() == C2V(gHWnd) && !IsIconic(C2V(gHWnd))) {
-                dr_dprintf("Activating app");
+                DR_DPRINTF("Activating app");
                 if (C2V(gDirectInputDevice) != NULL) {
                     IDirectInputDevice_Acquire(C2V(gDirectInputDevice));
                 }
@@ -249,7 +255,7 @@ C2_HOOK_FUNCTION(0x0051b0c0, Carma2MainWndProc)
 
 void C2_HOOK_CDECL Win32ServiceMessages(void) {
     MSG msg;
-    dr_dprintf("Win32ServiceMessages() - START");
+    DR_DPRINTF("Win32ServiceMessages() - START");
     while (1) {
         if (C2V(gWindowActiveState) == 1) {
             SetForegroundWindow(C2V(gHWnd));
@@ -257,35 +263,35 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
 
         if (C2V(gWindowActiveState) == 0) {
             if (GetMessageA(&msg, NULL, 0, 0) == -1) {
-                dr_dprintf("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
+                DR_DPRINTF("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
                 break;
             }
         } else {
             if (PeekMessageA(&msg, NULL, 0, 0, 1) == 0) {
-                dr_dprintf("Win32ServiceMessages() - breaking cos PeekMessage() returned 0");
+                DR_DPRINTF("Win32ServiceMessages() - breaking cos PeekMessage() returned 0");
                 break;
             }
             if (C2V(gWindowActiveState) == 0) {
                 if (GetMessageA(&msg, NULL, 0, 0) == -1) {
-                    dr_dprintf("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
+                    DR_DPRINTF("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
                     break;
                 }
             }
         }
         if (msg.message == WM_QUIT) {
-            dr_dprintf("WM_QUIT received.");
+            DR_DPRINTF("WM_QUIT received.");
             if (C2V(gWindowActiveState) == 2) {
-                dr_dprintf("Active, so lock the surface");
-                dr_dprintf("QuitGame being called...");
+                DR_DPRINTF("Active, so lock the surface");
+                DR_DPRINTF("QuitGame being called...");
                 QuitGame();
             }
             PDShutdownSystem();
         }
         TranslateMessage(&msg);
-        dr_dprintf("Win32ServiceMessages() - dispatching message...");
+        DR_DPRINTF("Win32ServiceMessages() - dispatching message...");
         DispatchMessageA(&msg);
     }
-    dr_dprintf("Win32ServiceMessages() - END");
+    DR_DPRINTF("Win32ServiceMessages() - END");
 }
 C2_HOOK_FUNCTION(0x0051cad0, Win32ServiceMessages)
 
