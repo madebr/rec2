@@ -438,6 +438,16 @@ int C2_HOOK_FASTCALL DRfgetc(tTWTFILE* pFile) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4880, DRfgetc, DRfgetc_original)
 
+int (C2_HOOK_FASTCALL * DRungetc_original)(int ch, tTWTFILE* file);
+int C2_HOOK_FASTCALL DRungetc(int ch, tTWTFILE* file) {
+#if defined(C2_HOOKS_ENABLED)
+    return DRungetc_original(ch, file);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b49a0, DRungetc, DRungetc_original)
+
 char* (C2_HOOK_FASTCALL * DRfgets_original)(char* buffer, br_size_t size, tTWTFILE* pFile);
 char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, tTWTFILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
