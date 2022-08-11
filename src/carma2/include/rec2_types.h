@@ -259,6 +259,114 @@ typedef struct tTransient_bm {
     int user_data;
 } tTransient_bm;
 
+typedef enum {
+    kFrontendItemEnabled_default = 0,
+    kFrontendItemEnabled_enabled = 1,
+    kFrontendItemEnabled_disabled = -1,
+} eFrontendItemEnablec;
+
+typedef enum {
+    kFrontendSelectableButton = 0,
+    kFrontendSelectableOption = 1,
+} eFrontendSelectableType;
+
+typedef struct {
+    int unknown0;  // FIXME: unknown
+    int unknown1;  // FIXME: unknown
+    int unknown2;  // FIXME: unknown
+    int unknown3;  // FIXME: unknown
+    int unknown4;  // FIXME: unknown
+    int unknown5;  // FIXME: unknown
+} tFrontend_level_spec;
+
+typedef struct {
+    int id;
+    int count;
+    int nbDisplayedAtOnce;
+    int indexTopItem;
+    int indexFirstScrollableItem;
+    int indexLastScrollableItem;
+    int greyedOutBackdrop;
+    int x_greyArea;
+    int y_greyArea;
+    int width_greyArea;
+    int height_greyArea;
+    int indexOfItemAtTop;
+    int unknown;  // FIXME: unknown
+} tFrontend_scroller_spec;
+
+typedef struct {
+    int id;
+    int count;
+    int indexFirstItem;
+    int indexLastItem;
+    int greyboxRequested;
+    int x_greybox;
+    int y_greybox;
+    int width_greybox;
+    int height_greybox;
+    int indexSelected;
+    int unknown;  // FIXME: unknown
+} tFrontend_radio_spec;
+
+typedef struct tFrontend_spec tFrontend_spec;
+
+typedef struct tFrontend_item_spec {
+    int stringId;
+    int (C2_HOOK_FASTCALL * action)(int);
+    tFrontend_spec* menuInfo;
+    int unknown;  // FIXME: unknown
+    int unlitFont;
+    int highFont;
+    int x;
+    int y;
+    int width;
+    int height;
+    eFrontendItemEnablec enabled;
+    int visible;
+    int pixmapIndex; /* 0 = no image */
+    int greyedBackdrop;
+    eFrontendSelectableType selectable;
+    int radioButton_selected;
+    int group;
+    int idLevelBar;
+    int wrapText;
+    int glowDisabled;
+    int x2;
+    int y2;
+    char unknownChar;  // FIXME: unknown
+    char text[255];
+} tFrontend_item_spec;
+
+typedef struct tFrontend_spec {
+    char name[260];
+    int itemCount;
+    int (C2_HOOK_FASTCALL * create)(struct tFrontend_spec*);
+    int (C2_HOOK_FASTCALL * destroy)(struct tFrontend_spec*);
+    int (C2_HOOK_FASTCALL * tick)(struct tFrontend_spec*);
+    struct tFrontend_spec* previousFrontend;
+    int unknown1;  // FIXME: unknown
+    int unknown2;  // FIXME: unknown
+    int unknown3;  // FIXME: unknown
+    int model_A_index;
+    int model_B_index;
+    int model_C_index;
+    tFrontend_item_spec items[100];
+    int scrollerCount;
+    tFrontend_scroller_spec scrollers[100];
+    int radioCount;
+    tFrontend_radio_spec radios[100];
+    int groupCount;
+    int loaded;
+    char unknownLongString[260];  // FIXME: unknown
+    char backdropName[256];
+    tFrontend_level_spec levels[100];
+    int levelCount;
+    char unknownshortString[56];  // FIXME: unknown
+    int isPrevimousSomeOtherMenu;
+    int unknownLastInt;  // FIXME: unknown
+} tFrontend_spec;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
@@ -281,7 +389,10 @@ enum {
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
+    kFatalError_CantOpen_S = 0x6b,
     kFatalError_DuplicatePixelmap_S = 0xb5,
+    kFatalError_CantCopeWithVersionFor_SS = 0xb1,
+    kFatalError_FileMustStartWith_SS = 0xb2,
     kFatalError_MysteriousX_SS = 0xbd,
 };
 
