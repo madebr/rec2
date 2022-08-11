@@ -301,6 +301,18 @@ int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048fb00, GetAnInt, GetAnInt_original)
 
+void C2_HOOK_FASTCALL GetPairOfInts(tTWTFILE* pF, int* pF1, int* pF2) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = c2_strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+}
+C2_HOOK_FUNCTION(0x0048fdc0, GetPairOfInts)
+
 void C2_HOOK_FASTCALL GetThreeInts(tTWTFILE* pF, int* pF1, int* pF2, int* pF3) {
     char s[256];
     char* str;
