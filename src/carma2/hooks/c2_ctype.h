@@ -9,6 +9,8 @@ int C2_HOOK_CDECL c2_tolower(int character);
 
 int C2_HOOK_CDECL c2_toupper(int character);
 
+int C2_HOOK_CDECL c2_isalnum(int c);
+
 int C2_HOOK_CDECL c2_isalpha(int c);
 
 int C2_HOOK_CDECL c2_isdigit(int c);
