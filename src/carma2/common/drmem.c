@@ -342,9 +342,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0044c9e0, InstallDRMemCalls, InstallDRMemCalls_origi
 void (C2_HOOK_FASTCALL * CreateStainlessClasses_original)(void);
 void C2_HOOK_FASTCALL CreateStainlessClasses(void) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     CreateStainlessClasses_original();
-    C2_HOOK_FINISH();
 #else
     int i;
 

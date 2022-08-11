@@ -357,9 +357,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00490630, GetAString, GetAString_original)
 tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_STARTF("(%s %s)", pFilename, pMode);
     tTWTFILE* res = DRfopen_original(pFilename, pMode);
-    C2_HOOK_FINISH();
     return res;
 #else
 #error "not implemented"
@@ -370,9 +368,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00491170, DRfopen, DRfopen_original)
 tTWTFILE* (C2_HOOK_FASTCALL * TWTfopen_original)(const char* pFilename, const char* pMode);
 tTWTFILE* C2_HOOK_FASTCALL TWTfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_STARTF("(%s %s)", pFilename, pMode);
     tTWTFILE* res = TWTfopen_original(pFilename, pMode);
-    C2_HOOK_FINISH();
     return res;
 #else
 #error "not implemented"
@@ -383,9 +379,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b4780, TWTfopen, TWTfopen_original)
 void (C2_HOOK_FASTCALL * DRfclose_original)(tTWTFILE* pFile);
 void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     DRfclose_original(pFile);
-    C2_HOOK_FINISH();
 #else
 #error "not implemented"
 #endif
