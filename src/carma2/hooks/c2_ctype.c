@@ -12,6 +12,10 @@ int C2_HOOK_CDECL c2_toupper(int character) {
 }
 C2_HOOK_FUNCTION(0x005771a0, c2_toupper);
 
+int C2_HOOK_CDECL c2_isalnum(int c) {
+    return isalnum(c);
+}
+
 int C2_HOOK_CDECL c2_isalpha(int c) {
     return isalpha(c);
 }
