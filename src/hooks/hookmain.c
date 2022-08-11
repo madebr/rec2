@@ -38,6 +38,8 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD dwReason, LPVOID reserved) {
 
         DetourTransactionCommit();
 
+        hook_run_functions();
+
         hook_print_stats();
         hook_check();
         char pathBuffer[512];
