@@ -27,6 +27,9 @@ typedef enum {
     kLoadTextureFlags_SaveTextureCompressed = 0x40,
 } tLoadTextureFlags;
 
+// relict from Carmageddon I
+typedef struct tInterface_spec tInterface_spec;
+
 typedef struct tLoadDirectoryStructureCBResult {
     char* name;
     struct tLoadDirectoryStructureCBResult* next;
