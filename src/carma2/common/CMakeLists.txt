@@ -36,6 +36,8 @@ add_library(c2_common STATIC
     graphics.h
     init.c
     init.h
+    intrface.c
+    intrface.h
     input.c
     input.h
     loading.c
