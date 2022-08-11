@@ -88,6 +88,8 @@ int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pStr
 
 int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF);
 
+void C2_HOOK_FASTCALL GetPairOfInts(tTWTFILE* pF, int* pF1, int* pF2);
+
 void C2_HOOK_FASTCALL GetThreeInts(tTWTFILE* pF, int* pF1, int* pF2, int* pF3);
 
 float C2_HOOK_FASTCALL GetAFloat(tTWTFILE* pF);
