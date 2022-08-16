@@ -84,6 +84,20 @@ void C2_HOOK_FASTCALL SetDronesOn(int pNewDronesOn);
 
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
+tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr);
+
+tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr);
+
+tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr);
+
+tS32 C2_HOOK_FASTCALL MemReadS32(char** pPtr);
+
+tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr);
+
+tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr);
+
+void C2_HOOK_FASTCALL MemSkipBytes(char** pPtr, int pBytes_to_skip);
+
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
 
 int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF);
