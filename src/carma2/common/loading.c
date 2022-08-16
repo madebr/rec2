@@ -271,6 +271,66 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
 }
 C2_HOOK_FUNCTION(0x00490690, StripCRNL)
 
+tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr) {
+    tU32 raw_long;
+
+    c2_memcpy(&raw_long, *pPtr, sizeof(raw_long));
+    *pPtr += sizeof(raw_long);
+    return raw_long;
+}
+C2_HOOK_FUNCTION(0x0048fa00, MemReadU32)
+
+tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr) {
+    tU16 raw_short;
+
+    c2_memcpy(&raw_short, *pPtr, sizeof(raw_short));
+    *pPtr += sizeof(raw_short);
+    return raw_short;
+}
+C2_HOOK_FUNCTION(0x0048fa10, MemReadU16)
+
+tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
+    tU8 raw_byte;
+
+    c2_memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
+    *pPtr += sizeof(raw_byte);
+    return raw_byte;
+}
+C2_HOOK_FUNCTION(0x0048fa20, MemReadU8)
+
+tS32 C2_HOOK_FASTCALL MemReadS32(char** pPtr) {
+    tS32 raw_long;
+
+    c2_memcpy(&raw_long, *pPtr, sizeof(raw_long));
+    *pPtr += sizeof(raw_long);
+    return raw_long;
+}
+C2_HOOK_FUNCTION(0x0048fa30, MemReadS32)
+
+tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr) {
+    tS16 raw_short;
+
+    c2_memcpy(&raw_short, *pPtr, sizeof(raw_short));
+    *pPtr += sizeof(raw_short);
+    return raw_short;
+}
+C2_HOOK_FUNCTION(0x0048fa40, MemReadS16)
+
+tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr) {
+    tS8 raw_byte;
+
+    c2_memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
+    *pPtr += sizeof(raw_byte);
+    return raw_byte;
+}
+C2_HOOK_FUNCTION(0x0048fa50, MemReadS8)
+
+void C2_HOOK_FASTCALL MemSkipBytes(char** pPtr, int pBytes_to_skip) {
+
+    *pPtr += pBytes_to_skip;
+}
+C2_HOOK_FUNCTION(0x0048fa60, MemSkipBytes)
+
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount) {
     int i;
     char s[256];
