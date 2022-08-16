@@ -56,3 +56,14 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004924a0, GameMain, GameMain_original)
+
+void (C2_HOOK_FASTCALL * ServiceGame_original)(void);
+void C2_HOOK_FASTCALL ServiceGame(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ServiceGame_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00492180, ServiceGame, ServiceGame_original)
