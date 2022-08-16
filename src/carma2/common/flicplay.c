@@ -950,3 +950,61 @@ void C2_HOOK_FASTCALL FlushFlicQueue(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00462dc0, FlushFlicQueue)
+
+void C2_HOOK_FASTCALL AddToFlicQueue(int pIndex, int pX, int pY, int pMust_finish) {
+    tFlic_descriptor* the_flic = NULL;
+    tFlic_descriptor* new_flic = NULL;
+    tFlic_descriptor* last_flic = NULL;
+    tFlic_descriptor* doomed_flic = NULL;
+
+    the_flic = C2V(gFirst_flic);
+    while (the_flic != NULL) {
+        if (pX == the_flic->x_offset && pY == the_flic->y_offset) {
+            doomed_flic = the_flic;
+            break;
+        }
+        last_flic = the_flic;
+        the_flic = the_flic->next;
+    }
+
+    if (doomed_flic != NULL) {
+        EndFlic(doomed_flic);
+        if (last_flic != NULL) {
+            last_flic->next = doomed_flic->next;
+        } else {
+            C2V(gFirst_flic) = doomed_flic->next;
+        }
+        BrMemFree(doomed_flic);
+    }
+
+    C2_HOOK_BUG_ON(sizeof(tFlic_descriptor) != 0x70);
+
+    LoadFlic(pIndex);
+    new_flic = BrMemAllocate(sizeof(tFlic_descriptor), kMem_misc);
+    new_flic->next = NULL;
+    the_flic = C2V(gFirst_flic);
+    if (C2V(gFirst_flic) != NULL) {
+        while (the_flic->next != NULL) {
+            the_flic = the_flic->next;
+        }
+        the_flic->next = new_flic;
+    } else {
+        C2V(gFirst_flic) = new_flic;
+    }
+    new_flic->last_frame = 0;
+    new_flic->data_start = NULL;
+    new_flic->the_index = pIndex;
+    new_flic->must_finish = pMust_finish;
+
+    StartFlic(
+            C2V(gMain_flic_list)[pIndex].file_name,
+            pIndex,
+            new_flic,
+            C2V(gMain_flic_list)[pIndex].the_size,
+            C2V(gMain_flic_list)[pIndex].data_ptr,
+            C2V(gBack_screen),
+            pX >= 0 ? pX : C2V(gMain_flic_list)[pIndex].x_offset,
+            pY >= 0 ? pY : C2V(gMain_flic_list)[pIndex].y_offset,
+            20);
+}
+C2_HOOK_FUNCTION(0x00462f00, AddToFlicQueue)
