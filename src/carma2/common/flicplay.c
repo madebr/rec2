@@ -126,3 +126,18 @@ int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_pt
     return 0;
 }
 C2_HOOK_FUNCTION(0x00461ad0, StartFlic)
+
+int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
+
+    if (pFlic_info->f != NULL) {
+        BrMemFree(pFlic_info->data_start);
+        pFlic_info->data_start = NULL;
+        DRfclose(pFlic_info->f);
+        pFlic_info->f = NULL;
+    }
+    if (pFlic_info->data != NULL) {
+        pFlic_info->data = NULL;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00461d60, EndFlic)
