@@ -191,3 +191,13 @@ void C2_HOOK_FASTCALL ExtractPath_Dirname_Stem(const char* path, char* dirPath, 
     stemPath[stemIndex] = '\0';
 }
 C2_HOOK_FUNCTION(0x005139a0, ExtractPath_Dirname_Stem)
+
+tU32 C2_HOOK_FASTCALL GetFileLength(tTWTFILE* pF) {
+    tU32 the_size;
+
+    DRfseek(pF, 0, SEEK_END);
+    the_size = DRftell(pF);
+    DRrewind(pF);
+    return the_size;
+}
+C2_HOOK_FUNCTION(0x00513790, GetFileLength)
