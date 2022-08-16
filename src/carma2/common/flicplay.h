@@ -7,4 +7,6 @@
 
 int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_ptr pFlic_info, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, int pFrame_rate);
 
+int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
+
 #endif //REC2_FLICPLAY_H
