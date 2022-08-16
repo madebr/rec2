@@ -833,3 +833,8 @@ void C2_HOOK_FASTCALL RunFlic(int pIndex) {
 
 }
 C2_HOOK_FUNCTION(0x00462c20, RunFlic)
+
+void C2_HOOK_FASTCALL PreloadBunchOfFlics(int pBunch_index) {
+
+}
+C2_HOOK_FUNCTION(0x00462c30, PreloadBunchOfFlics)
