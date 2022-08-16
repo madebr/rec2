@@ -44,6 +44,21 @@ typedef struct tFlic_descriptor {
     tFlic_descriptor_ptr next;
 } tFlic_descriptor;
 
+typedef enum tJustification {
+    eJust_left = 0,
+    eJust_right = 1,
+    eJust_centre = 2
+} tJustification;
+
+typedef struct tTranslation_record {
+    int flic_index;
+    int x;
+    int y;
+    int font_index;
+    tJustification justification;
+    char* text;
+} tTranslation_record;
+
 typedef int (C2_HOOK_FASTCALL * tEnumPathCallback)(const char*, void*);
 
 typedef enum {
