@@ -473,3 +473,18 @@ int C2_HOOK_FASTCALL PDmkdir(const char* path) {
     return _mkdir(path);
 }
 C2_HOOK_FUNCTION(0x00486c20, PDmkdir)
+
+void C2_HOOK_FASTCALL MAMSUnlock(void** pPtr) {
+
+    void* mem = *pPtr;
+    if (mem == NULL) {
+        FatalError(kFatalError_OOM_S, "NULL POINTER BEING FREED");
+    }
+    HeapFree(GetProcessHeap(), 0, mem);
+    *pPtr = NULL;
+}
+C2_HOOK_FUNCTION(0x0044c9f0, MAMSUnlock)
+
+void C2_HOOK_FASTCALL MAMSLock(void** pPtr) {
+}
+C2_HOOK_FUNCTION(0x0044ca30, MAMSLock)

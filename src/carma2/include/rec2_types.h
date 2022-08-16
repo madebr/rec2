@@ -448,6 +448,7 @@ enum {
     kFatalError_ScreenDimensionNotInGrafData = 0x18,
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
+    kFatalError_OOM_S = 0x5e,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_CantOpen_S = 0x6b,
     kFatalError_DuplicatePixelmap_S = 0xb5,
