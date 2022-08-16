@@ -1,7 +1,9 @@
 #include "flicplay.h"
 
+#include "displays.h"
 #include "errors.h"
 #include "globvars.h"
+#include "graphics.h"
 #include "loading.h"
 #include "utility.h"
 
@@ -15,6 +17,18 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette, 0x00686208);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gPalette_pixels, 0x006861d8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPlay_from_disk, 0x00686318);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gLast_flic_name, 14, 0x00686330);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPalette_fuck_prevention, 0x00686308);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTransparency_on, 0x00686310);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTranslation_count, 0x006861dc);
+C2_HOOK_VARIABLE_IMPLEMENT(tTranslation_record*, gTranslations, 0x00686210);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDR_font*, gTrans_fonts, 2, 0x006861e0);
+
+// Use this function to avoid unaligned memory access.
+// Added by DethRace
+static void mem_write_u16(void* memory, tU16 u16) {
+
+    c2_memcpy(memory, &u16, sizeof(tU16));
+}
 
 int C2_HOOK_FASTCALL GetPanelFlicFrameIndex(int pIndex) {
 
@@ -141,3 +155,542 @@ int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00461d60, EndFlic)
+
+void C2_HOOK_FASTCALL DoColour256(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int packet_count;
+    int skip_count;
+    int change_count;
+    int current_colour;
+    tU8* palette_pixels;
+    tU8 red;
+    tU8 green;
+    tU8 blue;
+
+    current_colour = 0;
+    palette_pixels = C2V(gPalette_pixels);
+
+    packet_count = MemReadU16(&pFlic_info->data);
+    for (i = 0; i < packet_count; i++) {
+        skip_count = MemReadU8(&pFlic_info->data);
+        change_count = MemReadU8(&pFlic_info->data);
+        if (change_count == 0) {
+            change_count = 256;
+        }
+        palette_pixels += skip_count * sizeof(br_int_32);
+        current_colour += skip_count;
+        for (j = 0; j < change_count; j++) {
+            red = MemReadU8(&pFlic_info->data);
+            blue = MemReadU8(&pFlic_info->data);
+            green = MemReadU8(&pFlic_info->data);
+            // argb
+            palette_pixels[0] = green;
+            palette_pixels[1] = blue;
+            palette_pixels[2] = red;
+            palette_pixels[3] = 0;
+            palette_pixels += 4;
+            // LOG_DEBUG("color %d", current_colour);
+        }
+        if (!C2V(gPalette_fuck_prevention)) {
+            DRSetPaletteEntries(C2V(gPalette), current_colour, change_count);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DoDeltaTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int k;
+    int line_count;
+    int number_of_packets;
+    int skip_count;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8 the_byte;
+    tU8 the_byte2;
+    tU32 the_row_bytes;
+    tU16* line_pixel_ptr;
+    tU16 the_word;
+
+    line_count = MemReadU16(&pFlic_info->data);
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+
+    for (i = 0; i < line_count;) {
+        number_of_packets = MemReadS16(&pFlic_info->data);
+        line_pixel_ptr = (tU16*)pixel_ptr;
+
+        if (number_of_packets < 0) {
+            pixel_ptr = pixel_ptr + the_row_bytes * -number_of_packets;
+        } else {
+            for (j = 0; j < number_of_packets; j++) {
+                skip_count = MemReadU8(&pFlic_info->data);
+                size_count = MemReadS8(&pFlic_info->data);
+                line_pixel_ptr += skip_count / 2;
+                if (size_count < 0) {
+                    the_byte = *pFlic_info->data++;
+                    the_byte2 = *pFlic_info->data++;
+
+                    if (the_byte && the_byte2) {
+                        the_word = *((tU16*)pFlic_info->data - 1);
+                        for (k = 0; k < -size_count; k++) {
+                            mem_write_u16(line_pixel_ptr, the_word);
+                            line_pixel_ptr++;
+                        }
+                    } else {
+                        for (k = 0; k < -size_count; k++) {
+                            if (the_byte) {
+                                *(tU8*)line_pixel_ptr = the_byte;
+                            }
+                            line_pixel_ptr = (tU16*)((tU8*)line_pixel_ptr + 1);
+                            if (the_byte2) {
+                                *(tU8*)line_pixel_ptr = the_byte2;
+                            }
+                            line_pixel_ptr = (tU16*)((tU8*)line_pixel_ptr + 1);
+                        }
+                    }
+                } else {
+                    for (k = 0; k < size_count; k++) {
+                        the_word = *(tU16*)pFlic_info->data;
+                        pFlic_info->data += 2;
+                        if (the_word) {
+                            mem_write_u16(line_pixel_ptr, the_word);
+                        }
+                        line_pixel_ptr++;
+                    }
+                }
+            }
+            pixel_ptr = pixel_ptr + the_row_bytes;
+            i++;
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DoDeltaX(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int k;
+    int line_count;
+    int number_of_packets;
+    int skip_count;
+    int size_count;
+    tU8* pixel_ptr;
+    tU32 the_row_bytes;
+    tU16* line_pixel_ptr;
+    tU16 the_word;
+
+    line_count = MemReadU16(&pFlic_info->data);
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+
+    for (i = 0; i < line_count;) {
+        number_of_packets = MemReadS16(&pFlic_info->data);
+        line_pixel_ptr = (tU16*)pixel_ptr;
+
+        if (number_of_packets < 0) {
+            pixel_ptr = pixel_ptr + the_row_bytes * -number_of_packets;
+        } else {
+            for (j = 0; j < number_of_packets; j++) {
+                skip_count = MemReadU8(&pFlic_info->data);
+                size_count = MemReadS8(&pFlic_info->data);
+                line_pixel_ptr += skip_count / 2;
+                if (size_count < 0) {
+                    the_word = *(tU16*)pFlic_info->data;
+                    pFlic_info->data += 2;
+                    for (k = 0; k < -size_count; k++) {
+                        *line_pixel_ptr = the_word;
+                        line_pixel_ptr++;
+                    }
+                } else {
+                    for (k = 0; k < size_count; k++) {
+                        the_word = *(tU16*)pFlic_info->data;
+                        pFlic_info->data += 2;
+                        *line_pixel_ptr = the_word;
+                        line_pixel_ptr++;
+                    }
+                }
+            }
+            pixel_ptr = pixel_ptr + the_row_bytes;
+            i++;
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DoColourMap(tFlic_descriptor_ptr pFlic_info, tU32 chunk_length) {
+    int i;
+    int j;
+    int packet_count;
+    int skip_count;
+    int change_count;
+    int current_colour = 0;
+    tU8* palette_pixels;
+    tU8 red;
+    tU8 green;
+    tU8 blue;
+
+    palette_pixels = C2V(gPalette_pixels);
+
+    packet_count = MemReadU16(&pFlic_info->data);
+    for (i = 0; i < packet_count; i++) {
+        skip_count = MemReadU8(&pFlic_info->data);
+        change_count = MemReadU8(&pFlic_info->data);
+        if (change_count == 0) {
+            change_count = 256;
+        }
+        palette_pixels += skip_count * sizeof(br_int_32);
+        current_colour += skip_count;
+        for (j = 0; j < change_count; j++) {
+            red = MemReadU8(&pFlic_info->data);
+            blue = MemReadU8(&pFlic_info->data);
+            green = MemReadU8(&pFlic_info->data);
+            // argb
+            palette_pixels[0] = green * 4;
+            palette_pixels[1] = blue * 4;
+            palette_pixels[2] = red * 4;
+            palette_pixels[3] = 0;
+            palette_pixels += 4;
+        }
+        if (!C2V(gPalette_fuck_prevention)) {
+            DRSetPaletteEntries(C2V(gPalette), current_colour, change_count);
+        }
+    }
+}
+
+void (C2_HOOK_FASTCALL * DoDifferenceX_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+void C2_HOOK_FASTCALL DoDifferenceX(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoDifferenceX_original(pFlic_info, chunk_length);
+#else
+    int i;
+    int j;
+    int k;
+    int first_line;
+    int line_count;
+    int number_of_packets;
+    int skip_count;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00462390, DoDifferenceX, DoDifferenceX_original)
+
+void (C2_HOOK_FASTCALL * DoDifferenceTrans_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoDifferenceTrans_original(pFlic_info, chunk_length);
+#else
+    int i;
+    int j;
+    int k;
+    int first_line;
+    int line_count;
+    int number_of_packets;
+    int skip_count;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00462480, DoDifferenceTrans, DoDifferenceTrans_original)
+
+void (C2_HOOK_FASTCALL * DoBlack_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoBlack_original(pFlic_info, chunk_length);
+#else
+    int i;
+    int j;
+    int the_width;
+    tU8* pixel_ptr;
+    tU32 the_row_bytes;
+    tU32* line_pixel_ptr;
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00462580, DoBlack, DoBlack_original)
+
+void (C2_HOOK_FASTCALL * DoRunLengthX_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+void C2_HOOK_FASTCALL DoRunLengthX(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+
+#if 0 //defined(C2_HOOKS_ENABLED)
+    DoRunLengthX(pFlic_info, chunk_length);
+#else
+    int i;
+    int j;
+    int k;
+    int number_of_packets;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = pixel_ptr;
+        number_of_packets = MemReadU8(&pFlic_info->data);
+        for (j = 0; j < number_of_packets; j++) {
+            size_count = MemReadS8(&pFlic_info->data);
+            if (size_count >= 0) {
+                the_byte = MemReadU8(&pFlic_info->data);
+                for (k = 0; k < size_count; k++) {
+                    *line_pixel_ptr = the_byte;
+                    line_pixel_ptr++;
+                }
+            } else {
+                for (k = 0; k < -size_count; k++) {
+                    the_byte = MemReadU8(&pFlic_info->data);
+                    *line_pixel_ptr = the_byte;
+                    line_pixel_ptr++;
+                }
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004625d0, DoRunLengthX, DoRunLengthX_original)
+
+void (C2_HOOK_FASTCALL * DoRunLengthTrans_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+void C2_HOOK_FASTCALL DoRunLengthTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+
+#if 0 //defined(C2_HOOKS_ENABLED)
+    DoRunLengthTrans_original(pFlic_info, chunk_length);
+#else
+    int i;
+    int j;
+    int k;
+    int number_of_packets;
+    int size_count;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+
+    the_row_bytes = pFlic_info->the_pixelmap->row_bytes;
+    pixel_ptr = pFlic_info->first_pixel;
+
+    for (i = 0; i < pFlic_info->height; i++) {
+        line_pixel_ptr = pixel_ptr;
+        number_of_packets = MemReadU8(&pFlic_info->data);
+        for (j = 0; j < number_of_packets; j++) {
+            size_count = MemReadS8(&pFlic_info->data);
+            if (size_count >= 0) {
+                the_byte = MemReadU8(&pFlic_info->data);
+
+                for (k = 0; k < size_count; k++) {
+                    if (the_byte) {
+                        *line_pixel_ptr = the_byte;
+                    }
+                    line_pixel_ptr++;
+                }
+            } else {
+                for (k = 0; k < -size_count; k++) {
+                    the_byte = MemReadU8(&pFlic_info->data);
+                    if (the_byte) {
+                        *line_pixel_ptr = the_byte;
+                    }
+                    line_pixel_ptr++;
+                }
+            }
+        }
+        pixel_ptr += the_row_bytes;
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004626a0, DoRunLengthTrans, DoRunLengthTrans_original)
+
+
+void (C2_HOOK_FASTCALL * DoUncompressed_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+void C2_HOOK_FASTCALL DoUncompressed(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoUncompressed_original(pFlic_info, chunk_length);
+#else
+    int i;
+    int j;
+    int the_width;
+    tU8* pixel_ptr;
+    tU32 the_row_bytes;
+    tU32* line_pixel_ptr;
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00462780, DoUncompressed, DoUncompressed_original)
+
+void (C2_HOOK_FASTCALL * DoUncompressedTrans_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoUncompressedTrans_original(pFlic_info, chunk_length);
+#else
+    int i;
+    int j;
+    int the_width;
+    tU8* pixel_ptr;
+    tU8* line_pixel_ptr;
+    tU8 the_byte;
+    tU32 the_row_bytes;
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004627f0, DoUncompressedTrans, DoUncompressedTrans_original)
+
+void (C2_HOOK_FASTCALL * DrawTranslations_original)(tFlic_descriptor* pFlic_info);
+void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
+
+#if 0 //defined(C2_HOOKS_ENABLED)
+    DrawTranslations_orginal(pFlic_info, pLast_frame);
+#else
+    tTranslation_record* trans;
+    int i;
+    int x;
+    int width;
+    int right_edge;
+
+    for (i = 0; i < C2V(gTranslation_count); i++) {
+        trans = &C2V(gTranslations)[i];
+        if (trans->flic_index == pFlic_info->the_index) {
+            width = DRTextWidth(C2V(gTrans_fonts)[trans->font_index], trans->text);
+            switch (trans->justification) {
+                case eJust_left:
+                    x = pFlic_info->x_offset + trans->x;
+                    right_edge = x + width;
+                    break;
+                case eJust_right:
+                    x = pFlic_info->x_offset - width + trans->x;
+                    right_edge = x;
+                    break;
+                case eJust_centre:
+                    x = pFlic_info->x_offset + trans->x - width / 2;
+                    right_edge = x + width / 2;
+                    break;
+            }
+            TransDRPixelmapText(
+                    pFlic_info->the_pixelmap,
+                    x,
+                    pFlic_info->y_offset + trans->y,
+                    C2V(gTrans_fonts)[trans->font_index],
+                    trans->text,
+                    right_edge);
+        }
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00462860, DrawTranslations, DrawTranslations_original)
+
+int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel_flic) {
+    tU32 frame_length;
+    tU32 chunk_length;
+    int chunk_count;
+    int chunk_counter;
+    int chunk_type;
+    int magic_bytes;
+    int data_knocked_off;
+    int read_amount;
+
+    PossibleService();
+    frame_length = MemReadU32(&pFlic_info->data);
+    magic_bytes = MemReadU16(&pFlic_info->data);
+    chunk_count = MemReadU16(&pFlic_info->data);
+
+    MemSkipBytes(&pFlic_info->data, 8);
+    if (magic_bytes == 0xf1fa) {
+        for (chunk_counter = 0; chunk_counter < chunk_count; chunk_counter++) {
+            chunk_length = MemReadU32(&pFlic_info->data);
+            chunk_type = MemReadU16(&pFlic_info->data);
+            switch (chunk_type) {
+                case 4:
+                    DoColour256(pFlic_info, chunk_length);
+                    break;
+                case 7:
+                    if (C2V(gTransparency_on)) {
+                        DoDeltaTrans(pFlic_info, chunk_length);
+                    } else {
+                        DoDeltaX(pFlic_info, chunk_length);
+                    }
+                    break;
+                case 11:
+                    DoColourMap(pFlic_info, chunk_length);
+                    break;
+                case 12:
+                    if (C2V(gTransparency_on)) {
+                        DoDifferenceTrans(pFlic_info, chunk_length);
+                    } else {
+                        DoDifferenceX(pFlic_info, chunk_length);
+                    }
+                    break;
+                case 13:
+                    DoBlack(pFlic_info, chunk_length);
+                    break;
+                case 15:
+                    if (C2V(gTransparency_on)) {
+                        DoRunLengthTrans(pFlic_info, chunk_length);
+                    } else {
+                        DoRunLengthX(pFlic_info, chunk_length);
+                    }
+                    break;
+                case 16:
+                    if (C2V(gTransparency_on)) {
+                        DoUncompressedTrans(pFlic_info, chunk_length);
+                    } else {
+                        DoUncompressed(pFlic_info, chunk_length);
+                    }
+                    break;
+                default:
+                    // LOG_WARN("unrecognized chunk type");
+                    MemSkipBytes(&pFlic_info->data, chunk_length - 6);
+                    break;
+            }
+            // Align on even byte
+            pFlic_info->data = (char*)((uintptr_t)(pFlic_info->data + 1) & (~(uintptr_t)1));
+        }
+    } else {
+        // LOG_WARN("not frame header");
+        MemSkipBytes(&pFlic_info->data, frame_length - 16);
+        pFlic_info->frames_left++;
+        pFlic_info->current_frame--;
+    }
+    pFlic_info->current_frame++;
+    pFlic_info->frames_left--;
+    if (pFlic_info->frames_left != 0 && C2V(gTranslation_count) != 0) {
+        DrawTranslations(pFlic_info);
+    }
+    if (pFlic_info->f != NULL && pFlic_info->bytes_still_to_be_read) {
+        data_knocked_off = pFlic_info->data - pFlic_info->data_start;
+        c2_memmove(pFlic_info->data_start, pFlic_info->data, pFlic_info->bytes_in_buffer - data_knocked_off);
+        pFlic_info->data = pFlic_info->data_start;
+        pFlic_info->bytes_in_buffer -= data_knocked_off;
+
+        if (pFlic_info->bytes_still_to_be_read > data_knocked_off) {
+            read_amount = data_knocked_off;
+        } else {
+            read_amount = pFlic_info->bytes_still_to_be_read;
+        }
+        if (read_amount != 0) {
+            DRfread(&pFlic_info->data_start[pFlic_info->bytes_in_buffer], 1, read_amount, pFlic_info->f);
+        }
+        pFlic_info->bytes_in_buffer += read_amount;
+        pFlic_info->bytes_still_to_be_read -= read_amount;
+    }
+    return pFlic_info->frames_left == 0;
+}
+
+int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info) {
+
+    return PlayNextFlicFrame2(pFlic_info, 0);
+}
+C2_HOOK_FUNCTION(0x00461da0, PlayNextFlicFrame)
