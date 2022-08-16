@@ -939,3 +939,14 @@ void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
     LetFlicFuckWithPalettes();
 }
 C2_HOOK_FUNCTION(0x00462d00, ProcessFlicQueue)
+
+void C2_HOOK_FASTCALL FlushFlicQueue(void) {
+
+    while (!FlicQueueFinished()) {
+        RemoveTransientBitmaps(1);
+        ProcessFlicQueue(C2V(gFrame_period));
+        DoMouseCursor();
+        PDScreenBufferSwap(0);
+    }
+}
+C2_HOOK_FUNCTION(0x00462dc0, FlushFlicQueue)

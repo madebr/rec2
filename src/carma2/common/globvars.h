@@ -81,7 +81,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gNoCutscenes);
 //extern tU32 gCredit_period_single[3];
 //extern tU32 gRace_start;
 //extern tBrender_storage gTrack_storage_space;
-//extern tU32 gFrame_period;
+
+C2_HOOK_VARIABLE_DECLARE(tU32, gFrame_period);
+
 //extern tU32 gCredit_period;
 //extern tU32 gCredit_period_network[7];
 //extern tBrender_storage gOur_car_storage_space;
