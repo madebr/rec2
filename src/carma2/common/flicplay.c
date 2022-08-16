@@ -1101,3 +1101,24 @@ void C2_HOOK_FASTCALL ServicePanelFlics(int pCopy_to_buffer) {
     LetFlicFuckWithPalettes();
 }
 C2_HOOK_FUNCTION(0x00463130, ServicePanelFlics)
+
+void C2_HOOK_FASTCALL ChangePanelFlic(int pIndex, tU8* pData, tU32 pData_length) {
+
+    EndFlic(&C2V(gPanel_flic)[pIndex]);
+    C2V(gPanel_flic_data)[pIndex] = pData;
+    C2V(gPanel_flic_data_length)[pIndex] = pData_length;
+    BrPixelmapFill(C2V(gPanel_buffer)[pIndex], 0);
+    StartFlic(
+            C2V(gPanel_flic)[pIndex].file_name,
+            pIndex,
+            &C2V(gPanel_flic)[pIndex],
+            C2V(gPanel_flic_data_length)[pIndex],
+            (tS8*)C2V(gPanel_flic_data)[pIndex],
+            C2V(gPanel_buffer)[pIndex],
+            0,
+            0,
+            0);
+    C2V(gLast_panel_frame_time)[pIndex] = 0;
+    ServicePanelFlics(0);
+}
+C2_HOOK_FUNCTION(0x00463270, ChangePanelFlic)
