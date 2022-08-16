@@ -830,3 +830,8 @@ void C2_HOOK_FASTCALL RunFlicAt(int pIndex, int pX, int pY) {
     UnlockFlic(pIndex);
 }
 C2_HOOK_FUNCTION(0x00462bb0, RunFlicAt)
+
+void C2_HOOK_FASTCALL RunFlic(int pIndex) {
+
+}
+C2_HOOK_FUNCTION(0x00462c20, RunFlic)
