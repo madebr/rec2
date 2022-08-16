@@ -1126,3 +1126,14 @@ br_pixelmap* C2_HOOK_FASTCALL GetPanelPixelmap(int pIndex) {
     return C2V(gPanel_buffer)[pIndex];
 }
 C2_HOOK_FUNCTION(0x00463330, GetPanelPixelmap)
+
+void (C2_HOOK_FASTCALL * LoadInterfaceStrings_original)(void);
+void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadInterfaceStrings_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00463340, LoadInterfaceStrings, LoadInterfaceStrings_original)
