@@ -25,4 +25,6 @@ void C2_HOOK_FASTCALL RunFlic(int pIndex);
 
 void C2_HOOK_FASTCALL PreloadBunchOfFlics(int pBunch_index);
 
-#endif //REC2_FLICPLAY_H
+void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index);
+
+#endif
