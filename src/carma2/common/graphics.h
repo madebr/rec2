@@ -13,6 +13,8 @@ void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 void C2_HOOK_FASTCALL ClearEntireScreen(void);
 
+void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount);
+
 void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
 
 void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
