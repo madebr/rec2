@@ -848,3 +848,12 @@ void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index) {
     }
 }
 C2_HOOK_FUNCTION(0x00462c40, UnlockBunchOfFlics)
+
+void C2_HOOK_FASTCALL FlushAllFlics(int pBunch_index) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gFlic_bunch)); i++) {
+        FreeFlic(i);
+    }
+}
+C2_HOOK_FUNCTION(0x00462c90, FlushAllFlics)
