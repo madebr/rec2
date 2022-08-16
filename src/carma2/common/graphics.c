@@ -342,3 +342,14 @@ void C2_HOOK_FASTCALL EnsurePaletteUp(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b55f0, EnsurePaletteUp, EnsurePaletteUp_original)
+
+int (C2_HOOK_FASTCALL * DoMouseCursor_original)(void);
+int C2_HOOK_FASTCALL DoMouseCursor(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DoMouseCursor_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0043e0a0, DoMouseCursor, DoMouseCursor_original)
