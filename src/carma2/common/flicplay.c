@@ -1122,3 +1122,9 @@ void C2_HOOK_FASTCALL ChangePanelFlic(int pIndex, tU8* pData, tU32 pData_length)
     ServicePanelFlics(0);
 }
 C2_HOOK_FUNCTION(0x00463270, ChangePanelFlic)
+
+br_pixelmap* C2_HOOK_FASTCALL GetPanelPixelmap(int pIndex) {
+
+    return C2V(gPanel_buffer)[pIndex];
+}
+C2_HOOK_FUNCTION(0x00463330, GetPanelPixelmap)
