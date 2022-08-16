@@ -38,4 +38,8 @@ void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, 
 
 int C2_HOOK_FASTCALL PDmkdir(const char* path);
 
+void C2_HOOK_FASTCALL MAMSUnlock(void** pPtr);
+
+void C2_HOOK_FASTCALL MAMSLock(void** pPtr);
+
 #endif // C2_PLATFORM_H
