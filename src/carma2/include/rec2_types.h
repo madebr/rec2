@@ -15,6 +15,32 @@ typedef signed int tS32;
 
 typedef int tTWTVFS;
 
+typedef struct tFlic_descriptor* tFlic_descriptor_ptr;
+
+typedef struct tFlic_descriptor {
+    char* data;
+    char* data_start;
+    char file_name[32];
+    tU8* first_pixel;
+    tU32 bytes_remaining;
+    tU32 frame_period;
+    tU32 last_frame;
+    br_pixelmap* the_pixelmap;
+    int x_offset;
+    int y_offset;
+    int width;
+    int height;
+    int frames_left;
+    int current_frame;
+    int the_index;
+    int new_format;
+    int must_finish;
+    int bytes_still_to_be_read;
+    int bytes_in_buffer;
+    void* f;
+    tFlic_descriptor_ptr next;
+} tFlic_descriptor;
+
 typedef int (C2_HOOK_FASTCALL * tEnumPathCallback)(const char*, void*);
 
 typedef enum {
@@ -378,6 +404,7 @@ enum {
     // FIXME: add all c2 memory tags
     kMem_misc_string = 0xab,
     kMem_packed_file = 0xd0,
+    kMem_misc = 0xfd,
 };
 
 enum {
@@ -394,10 +421,6 @@ enum {
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
     kFatalError_FileMustStartWith_SS = 0xb2,
     kFatalError_MysteriousX_SS = 0xbd,
-};
-
-enum {
-    kMem_misc = 0xfd,
 };
 
 #endif // REC2_TYPES_H
