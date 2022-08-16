@@ -17,7 +17,9 @@
 #include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFlic_descriptor, gPanel_flic, 2, 0x00686218);
-
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPanel_flic_left, 2, 0x006861f0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPanel_flic_top, 2, 0x00686200);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gPanel_buffer, 2, 0x00686320);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette, 0x00686208);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gPalette_pixels, 0x006861d8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPlay_from_disk, 0x00686318);
@@ -1006,3 +1008,21 @@ void C2_HOOK_FASTCALL AddToFlicQueue(int pIndex, int pX, int pY, int pMust_finis
             20);
 }
 C2_HOOK_FUNCTION(0x00462f00, AddToFlicQueue)
+
+void C2_HOOK_FASTCALL InitialiseFlicPanel(int pIndex, int pLeft, int pTop, int pWidth, int pHeight) {
+    void* the_pixels;
+
+    C2V(gPanel_flic)[pIndex].data = NULL;
+    C2V(gPanel_flic_left)[pIndex] = pLeft;
+    C2V(gPanel_flic_top)[pIndex] = pTop;
+    the_pixels = BrMemAllocate(pHeight * ((pWidth + 3) & ~3), kMem_misc);
+    if (C2V(gScreen)->row_bytes < 0) {
+        BrFatal(
+                "C:\\Carma2\\Source\\Common\\Flicplay.c",
+                2082,
+                "Bruce bug at line %d, file C:\\Carma2\\Source\\Common\\Flicplay.c",
+                2082);
+    }
+    C2V(gPanel_buffer)[pIndex] = DRPixelmapAllocate(C2V(gScreen)->type, pWidth, pHeight, the_pixels, 0);
+}
+C2_HOOK_FUNCTION(0x00463020, InitialiseFlicPanel)
