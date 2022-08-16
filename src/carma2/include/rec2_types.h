@@ -18,6 +18,18 @@ typedef int tTWTVFS;
 // FIXME: imcomplete type
 typedef struct tDR_font tDR_font;
 
+typedef struct tFlic_spec {
+    char* file_name;
+    int interruptable;
+    int queued;
+    int frame_rate;
+    int repeat;
+    int x_offset;
+    int y_offset;
+    tS8* data_ptr;
+    tU32 the_size;
+} tFlic_spec;
+
 typedef struct tFlic_descriptor* tFlic_descriptor_ptr;
 
 typedef struct tFlic_descriptor {
