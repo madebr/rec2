@@ -32,4 +32,6 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbf
 
 void C2_HOOK_FASTCALL ExtractPath_Dirname_Stem(const char* path, char* dirPath, char* stemPath);
 
+tU32 C2_HOOK_FASTCALL GetFileLength(tTWTFILE* pF);
+
 #endif // REC2_UTILITY_H
