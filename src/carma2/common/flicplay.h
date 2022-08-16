@@ -19,4 +19,6 @@ int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length);
 
 void C2_HOOK_FASTCALL FreeFlic(int pIndex);
 
+void C2_HOOK_FASTCALL RunFlicAt(int pIndex, int pX, int pY);
+
 #endif //REC2_FLICPLAY_H
