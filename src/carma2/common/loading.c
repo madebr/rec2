@@ -460,6 +460,39 @@ char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, tTWTFILE* pFile) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4900, DRfgets, DRfgets_original)
 
+int (C2_HOOK_FASTCALL * DRfseek_original)(tTWTFILE* pF, int offset, int whence);
+int C2_HOOK_FASTCALL DRfseek(tTWTFILE* pF, int offset, int whence) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DRfseek_original(pF, offset, whence);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4b70, DRfseek, DRfseek_original)
+
+int (C2_HOOK_FASTCALL * DRftell_original)(tTWTFILE* pF);
+int C2_HOOK_FASTCALL DRftell(tTWTFILE* pF) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DRftell_original(pF);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4b00, DRftell, DRftell_original)
+
+int (C2_HOOK_FASTCALL * DRrewind_original)(tTWTFILE* pF);
+int C2_HOOK_FASTCALL DRrewind(tTWTFILE* pF) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DRrewind_original(pF);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4be0, DRrewind, DRrewind_original)
+
 tU32 (C2_HOOK_FASTCALL * TWT_ReadBinaryU32_original)(FILE* file);
 tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file) {
 #if defined(C2_HOOKS_ENABLED)

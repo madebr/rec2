@@ -118,6 +118,12 @@ int C2_HOOK_FASTCALL DRungetc(int ch, tTWTFILE* file);
 
 char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, tTWTFILE* pFile);
 
+int C2_HOOK_FASTCALL DRfseek(tTWTFILE* pF, int offset, int whence);
+
+int C2_HOOK_FASTCALL DRftell(tTWTFILE* pF);
+
+int C2_HOOK_FASTCALL DRrewind(tTWTFILE* pF);
+
 /// FIXME: rename to DRxxx
 tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file);
 
