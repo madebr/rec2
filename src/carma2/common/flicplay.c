@@ -795,3 +795,13 @@ int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) 
     return 1;
 }
 C2_HOOK_FUNCTION(0x00462a90, LoadFlicData)
+
+void C2_HOOK_FASTCALL FreeFlic(int pIndex) {
+
+    PossibleService();
+    if (C2V(gMain_flic_list)[pIndex].data_ptr != NULL) {
+        BrMemFree(C2V(gMain_flic_list)[pIndex].data_ptr);
+        C2V(gMain_flic_list)[pIndex].data_ptr = NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x00462b80, FreeFlic)
