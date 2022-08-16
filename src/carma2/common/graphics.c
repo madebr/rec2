@@ -329,3 +329,16 @@ void C2_HOOK_FASTCALL ToggleShadow(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e9960, ToggleShadow, ToggleShadow_original)
+
+void (C2_HOOK_FASTCALL * EnsurePaletteUp_original)(void);
+void C2_HOOK_FASTCALL EnsurePaletteUp(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    EnsurePaletteUp_original();
+#else
+    if (C2V(gFaded_palette)) {
+        FadePaletteUp();
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b55f0, EnsurePaletteUp, EnsurePaletteUp_original)

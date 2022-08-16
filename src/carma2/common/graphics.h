@@ -50,4 +50,6 @@ tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void);
 
 void C2_HOOK_FASTCALL ToggleShadow(void);
 
+void C2_HOOK_FASTCALL EnsurePaletteUp(void);
+
 #endif //REC2_GRAPHICS_H
