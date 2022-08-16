@@ -866,3 +866,17 @@ void C2_HOOK_FASTCALL InitFlicQueue(void) {
     C2V(gFirst_flic) = NULL;
 }
 C2_HOOK_FUNCTION(0x00462cc0, InitFlicQueue)
+
+int C2_HOOK_FASTCALL FlicQueueFinished(void) {
+    tFlic_descriptor* the_flic;
+
+    the_flic = C2V(gFirst_flic);
+    while (the_flic != NULL) {
+        if (the_flic->must_finish) {
+            return 0;
+        }
+        the_flic = the_flic->next;
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00462cd0, FlicQueueFinished)
