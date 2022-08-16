@@ -15,6 +15,9 @@ typedef signed int tS32;
 
 typedef int tTWTVFS;
 
+// FIXME: imcomplete type
+typedef struct tDR_font tDR_font;
+
 typedef struct tFlic_descriptor* tFlic_descriptor_ptr;
 
 typedef struct tFlic_descriptor {
