@@ -751,3 +751,17 @@ void C2_HOOK_FASTCALL InitFlics(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00462a40, InitFlics)
+
+int C2_HOOK_FASTCALL LoadFlic(int pIndex) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00462a60, LoadFlic)
+
+void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
+
+    if (pIndex >= 0 && C2V(gMain_flic_list)[pIndex].data_ptr != NULL) {
+        MAMSUnlock((void **) &C2V(gMain_flic_list)[pIndex].data_ptr);
+    }
+}
+C2_HOOK_FUNCTION(0x00462a70, UnlockFlic)
