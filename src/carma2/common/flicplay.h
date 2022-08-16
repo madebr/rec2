@@ -15,4 +15,6 @@ int C2_HOOK_FASTCALL LoadFlic(int pIndex);
 
 void C2_HOOK_FASTCALL UnlockFlic(int pIndex);
 
+int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length);
+
 #endif //REC2_FLICPLAY_H
