@@ -22,6 +22,8 @@ add_library(c2_common STATIC
     drone.h
     errors.c
     errors.h
+    flicplay.c
+    flicplay.h
     globvars.c
     globvars.h
     globvrbm.c
