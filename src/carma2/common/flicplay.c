@@ -1026,3 +1026,12 @@ void C2_HOOK_FASTCALL InitialiseFlicPanel(int pIndex, int pLeft, int pTop, int p
     C2V(gPanel_buffer)[pIndex] = DRPixelmapAllocate(C2V(gScreen)->type, pWidth, pHeight, the_pixels, 0);
 }
 C2_HOOK_FUNCTION(0x00463020, InitialiseFlicPanel)
+
+void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex) {
+
+    EndFlic(&C2V(gPanel_flic)[pIndex]);
+    BrMemFree(C2V(gPanel_buffer)[pIndex]->pixels);
+    BrPixelmapFree(C2V(gPanel_buffer)[pIndex]);
+    C2V(gPanel_buffer)[pIndex] = NULL;
+}
+C2_HOOK_FUNCTION(0x004630b0, DisposeFlicPanel)
