@@ -14,6 +14,8 @@
 
 #include "brender/brender.h"
 
+#include "rec2_macros.h"
+
 #include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFlic_descriptor, gPanel_flic, 2, 0x00686218);
@@ -742,3 +744,12 @@ int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelma
     return 0;
 }
 C2_HOOK_FUNCTION(0x00462930, PlayFlic)
+
+void C2_HOOK_FASTCALL InitFlics(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gMain_flic_list)); i++) {
+        C2V(gMain_flic_list)[i].data_ptr = NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x00462a40, InitFlics)

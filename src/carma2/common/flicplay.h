@@ -9,4 +9,6 @@ int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_pt
 
 int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
 
+void C2_HOOK_FASTCALL InitFlics(void);
+
 #endif //REC2_FLICPLAY_H
