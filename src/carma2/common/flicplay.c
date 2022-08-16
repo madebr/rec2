@@ -767,3 +767,33 @@ void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
     }
 }
 C2_HOOK_FUNCTION(0x00462a70, UnlockFlic)
+
+int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) {
+    tTWTFILE* f;
+    tPath_name the_path;
+
+    if (*pData != NULL) {
+        MAMSLock((void**)pData);
+        return 1;
+    }
+    if (C2V(gPlay_from_disk)) {
+        return 1;
+    }
+    PossibleService();
+    PathCat(the_path, C2V(gApplication_path), "ANIM");
+    PathCat(the_path, the_path, pName);
+    f = DRfopen(the_path, "rb");
+    if (f == NULL) {
+        return 0;
+    }
+    *pData_length = GetFileLength(f);
+    *pData = BrMemAllocate(*pData_length, kMem_misc);
+    if (*pData == NULL) {
+        DRfclose(f);
+        return 0;
+    }
+    DRfread(*pData, 1, *pData_length, f);
+    DRfclose(f);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00462a90, LoadFlicData)
