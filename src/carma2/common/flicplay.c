@@ -742,3 +742,12 @@ int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelma
     return 0;
 }
 C2_HOOK_FUNCTION(0x00462930, PlayFlic)
+
+void C2_HOOK_FASTCALL InitFlics(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gMain_flic_list)); i++) {
+        C2V(gMain_flic_list)[i].data_ptr = NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x00462a40, InitFlics)
