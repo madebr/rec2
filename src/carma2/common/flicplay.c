@@ -1146,3 +1146,9 @@ void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
     C2V(gPending_flic) = -1;
 }
 C2_HOOK_FUNCTION(0x00463700, SuspendPendingFlic)
+
+void C2_HOOK_FASTCALL ResumePendingFlic(void) {
+
+    C2V(gPending_flic) = C2V(gPending_pending_flic);
+}
+C2_HOOK_FUNCTION(0x00463720, ResumePendingFlic)
