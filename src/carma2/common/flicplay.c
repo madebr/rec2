@@ -37,6 +37,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_ID, 0x00686300);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDark_mode, 0x0068630c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tFlic_bunch, gFlic_bunch, 9, 0x00599c10, FIXME);
 C2_HOOK_VARIABLE_IMPLEMENT(tFlic_descriptor*, gFirst_flic, 0x006861e8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gLast_panel_frame_time, 2, 0x006862f8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gPanel_flic_data_length, 2, 0x006861f8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8*, gPanel_flic_data, 2, 0x006861d0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPanel_flic_disable, 0x00686314);
 
 // Use this function to avoid unaligned memory access.
 // Added by DethRace
@@ -1037,3 +1041,63 @@ void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex) {
     C2V(gPanel_buffer)[pIndex] = NULL;
 }
 C2_HOOK_FUNCTION(0x004630b0, DisposeFlicPanel)
+
+void C2_HOOK_FASTCALL ServicePanelFlics(int pCopy_to_buffer) {
+    tU32 time_diff;
+    tU32 the_time;
+    tU32 old_last_time[2];
+    int i;
+    int j;
+    int iteration_count;
+    int finished;
+
+    if (C2V(gPanel_flic_disable)) {
+        return;
+    }
+    the_time = PDGetTotalTime();
+    DontLetFlicFuckWithPalettes();
+    TurnFlicTransparencyOn();
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPanel_flic)); i++) {
+        old_last_time[i] = C2V(gLast_panel_frame_time)[i];
+        if (C2V(gPanel_buffer)[i] != NULL && C2V(gPanel_flic)[i].data != NULL) {
+            if (old_last_time[i] != 0) {
+                time_diff = the_time - old_last_time[i];
+                iteration_count = time_diff / C2V(gPanel_flic)[i].frame_period;
+            } else {
+                iteration_count = 1;
+            }
+            for (j = 0; j < iteration_count; j++) {
+                finished = PlayNextFlicFrame(&C2V(gPanel_flic)[i]);
+                if (finished) {
+                    EndFlic(&C2V(gPanel_flic)[i]);
+                    StartFlic(
+                            C2V(gPanel_flic)[i].file_name,
+                            C2V(gPanel_flic)[i].the_index,
+                            &C2V(gPanel_flic)[i],
+                            C2V(gPanel_flic_data_length)[i],
+                            (tS8*)C2V(gPanel_flic_data)[i],
+                            C2V(gPanel_buffer)[i],
+                            0,
+                            0,
+                            0);
+                }
+                C2V(gLast_panel_frame_time)[i] = the_time;
+            }
+            if (pCopy_to_buffer) {
+                BrPixelmapRectangleCopy(
+                        C2V(gBack_screen),
+                        C2V(gPanel_flic_left)[i],
+                        C2V(gPanel_flic_top)[i],
+                        C2V(gPanel_buffer)[i],
+                        0,
+                        0,
+                        C2V(gPanel_buffer)[i]->width,
+                        C2V(gPanel_buffer)[i]->height);
+            }
+        }
+    }
+    TurnFlicTransparencyOff();
+    LetFlicFuckWithPalettes();
+}
+C2_HOOK_FUNCTION(0x00463130, ServicePanelFlics)
