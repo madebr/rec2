@@ -11,4 +11,8 @@ int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info);
 
 void C2_HOOK_FASTCALL InitFlics(void);
 
+int C2_HOOK_FASTCALL LoadFlic(int pIndex);
+
+void C2_HOOK_FASTCALL UnlockFlic(int pIndex);
+
 #endif //REC2_FLICPLAY_H
