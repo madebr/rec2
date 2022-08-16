@@ -16,6 +16,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCamera_yon, 0x00761f4c);;
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTrack_actor, 0x0075bb60);
 
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrame_period, 0x0074abf0);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
@@ -85,7 +87,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTrack_actor, 0x0075bb60);
 //tU32 gCredit_period_single[3];
 //tU32 gRace_start;
 //tBrender_storage gTrack_storage_space;
-//tU32 gFrame_period;
 //tU32 gCredit_period;
 //tU32 gCredit_period_network[7];
 //tBrender_storage gOur_car_storage_space;
