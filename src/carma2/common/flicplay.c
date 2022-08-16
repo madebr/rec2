@@ -1045,6 +1045,12 @@ int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelma
 }
 C2_HOOK_FUNCTION(0x00462930, PlayFlic)
 
+void C2_HOOK_FASTCALL SwapScreen(void) {
+
+    PDScreenBufferSwap(0);
+}
+C2_HOOK_FUNCTION(0x00462c10, SwapScreen)
+
 void C2_HOOK_FASTCALL InitFlics(void) {
     int i;
 
@@ -1107,3 +1113,20 @@ void C2_HOOK_FASTCALL FreeFlic(int pIndex) {
     }
 }
 C2_HOOK_FUNCTION(0x00462b80, FreeFlic)
+
+void C2_HOOK_FASTCALL RunFlicAt(int pIndex, int pX, int pY) {
+
+    LoadFlic(pIndex);
+    PlayFlic(
+            pIndex,
+            C2V(gMain_flic_list)[pIndex].the_size,
+            C2V(gMain_flic_list)[pIndex].data_ptr,
+            C2V(gBack_screen),
+            pX,
+            pY,
+            SwapScreen,
+            0,
+            0);
+    UnlockFlic(pIndex);
+}
+C2_HOOK_FUNCTION(0x00462bb0, RunFlicAt)
