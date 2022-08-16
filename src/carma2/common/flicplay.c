@@ -4,8 +4,13 @@
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
+#include "input.h"
 #include "loading.h"
+#include "main.h"
+#include "sound.h"
 #include "utility.h"
+
+#include "platform.h"
 
 #include "brender/brender.h"
 
@@ -22,6 +27,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gTransparency_on, 0x00686310);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTranslation_count, 0x006861dc);
 C2_HOOK_VARIABLE_IMPLEMENT(tTranslation_record*, gTranslations, 0x00686210);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDR_font*, gTrans_fonts, 2, 0x006861e0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tFlic_spec, gMain_flic_list, 372, 0x005964d0, MISSING);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gSound_time, 0x00686328);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_ID, 0x00686300);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDark_mode, 0x0068630c);
 
 // Use this function to avoid unaligned memory access.
 // Added by DethRace
@@ -694,3 +703,42 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info) {
     return PlayNextFlicFrame2(pFlic_info, 0);
 }
 C2_HOOK_FUNCTION(0x00461da0, PlayNextFlicFrame)
+
+int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, void (*DoPerFrame)(), int pInterruptable, int pFrame_rate) {
+    int finished_playing;
+    tFlic_descriptor the_flic;
+    tU32 last_frame;
+    tU32 new_time;
+    tU32 frame_period;
+
+    finished_playing = 0;
+    the_flic.data_start = NULL;
+    if (StartFlic(C2V(gMain_flic_list)[pIndex].file_name, pIndex, &the_flic, pSize, pData_ptr, pDest_pixelmap, pX_offset, pY_offset, pFrame_rate)) {
+        // LOG_WARN("startflic returned error");
+        return -1;
+    }
+
+    last_frame = 0;
+    while ((!pInterruptable || !AnyKeyDown()) && !finished_playing) {
+        new_time = PDGetTotalTime();
+        frame_period = new_time - last_frame;
+
+        if (C2V(gSound_time) != 0 && new_time >= C2V(gSound_time)) {
+            DRS3StartSound(C2V(gEffects_outlet), C2V(gSound_ID));
+            C2V(gSound_time) = finished_playing;
+        }
+        if (frame_period >= the_flic.frame_period) {
+            finished_playing = PlayNextFlicFrame(&the_flic);
+            DoPerFrame();
+            if (!C2V(gDark_mode)) {
+                EnsurePaletteUp();
+            }
+            ServiceGame();
+            last_frame = new_time;
+        }
+    }
+    ServiceGame();
+    EndFlic(&the_flic);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00462930, PlayFlic)
