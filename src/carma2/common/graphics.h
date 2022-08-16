@@ -19,6 +19,8 @@ void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 void C2_HOOK_FASTCALL ClearEntireScreen(void);
 
+void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount);
+
 void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_current_palette);
 
 void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
