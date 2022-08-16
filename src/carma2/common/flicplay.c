@@ -34,6 +34,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gSound_time, 0x00686328);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_ID, 0x00686300);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDark_mode, 0x0068630c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tFlic_bunch, gFlic_bunch, 9, 0x00599c10, FIXME);
+C2_HOOK_VARIABLE_IMPLEMENT(tFlic_descriptor*, gFirst_flic, 0x006861e8);
 
 // Use this function to avoid unaligned memory access.
 // Added by DethRace
@@ -859,3 +860,9 @@ void C2_HOOK_FASTCALL FlushAllFlics(int pBunch_index) {
     }
 }
 C2_HOOK_FUNCTION(0x00462c90, FlushAllFlics)
+
+void C2_HOOK_FASTCALL InitFlicQueue(void) {
+
+    C2V(gFirst_flic) = NULL;
+}
+C2_HOOK_FUNCTION(0x00462cc0, InitFlicQueue)
