@@ -39,6 +39,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gLast_panel_frame_time, 2, 0x006862f8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gPanel_flic_data_length, 2, 0x006861f8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8*, gPanel_flic_data, 2, 0x006861d0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPanel_flic_disable, 0x00686314);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPending_pending_flic, 0x0068620c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPending_flic, 0x005964c8, -1);
 
 // Use this function to avoid unaligned memory access.
 // Added by DethRace
@@ -1137,3 +1139,10 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00463340, LoadInterfaceStrings, LoadInterfaceStrings_original)
+
+void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
+
+    C2V(gPending_pending_flic) = C2V(gPending_flic);
+    C2V(gPending_flic) = -1;
+}
+C2_HOOK_FUNCTION(0x00463700, SuspendPendingFlic)
