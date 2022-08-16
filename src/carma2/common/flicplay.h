@@ -21,4 +21,6 @@ void C2_HOOK_FASTCALL FreeFlic(int pIndex);
 
 void C2_HOOK_FASTCALL RunFlicAt(int pIndex, int pX, int pY);
 
+void C2_HOOK_FASTCALL RunFlic(int pIndex);
+
 #endif //REC2_FLICPLAY_H
