@@ -353,3 +353,14 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043e0a0, DoMouseCursor, DoMouseCursor_original)
+
+void (C2_HOOK_FASTCALL * LoadFont_original)(int pFont_ID);
+void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadFont_original(pFont_ID);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00465850, LoadFont, LoadFont_original)

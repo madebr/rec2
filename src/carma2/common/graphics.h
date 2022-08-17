@@ -54,4 +54,6 @@ void C2_HOOK_FASTCALL EnsurePaletteUp(void);
 
 int C2_HOOK_FASTCALL DoMouseCursor(void);
 
+void C2_HOOK_FASTCALL LoadFont(int pFont_ID);
+
 #endif //REC2_GRAPHICS_H
