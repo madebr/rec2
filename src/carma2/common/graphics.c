@@ -44,6 +44,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_height, 0x00659b38, 80.f);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tShadow_level, gShadow_level, 0x0065fdc8, kMiscString_ShadowUsOnly);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDR_font, gFonts, 24, 0x007663e0);
+
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
 
