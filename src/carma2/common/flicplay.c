@@ -1134,10 +1134,80 @@ C2_HOOK_FUNCTION(0x00463330, GetPanelPixelmap)
 void (C2_HOOK_FASTCALL * LoadInterfaceStrings_original)(void);
 void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0 //defined(C2_HOOKS_ENABLED)
     LoadInterfaceStrings_original();
 #else
-#error "Not implemented"
+    tTWTFILE* f;
+    char s[256];
+    char s2[256];
+    char* str;
+    char ch;
+    tPath_name the_path;
+    int i;
+    int j;
+
+    C2V(gTranslation_count) = 0;
+    PathCat(the_path, C2V(gApplication_path), "TRNSLATE.TXT");
+    f = TWTfopen(the_path, "rt");
+    if (f == NULL) {
+        return;
+    }
+    while (!DRfeof(f)) {
+        GetALineAndDontArgue(f, s);
+        C2V(gTranslation_count)++;
+    }
+    DRrewind(f);
+    C2V(gTranslations) = BrMemAllocate(C2V(gTranslation_count) * sizeof(tTranslation_record), kMem_misc);
+    for (i = 0; i < C2V(gTranslation_count); i++) {
+        GetALineAndDontArgue(f, s);
+        str = c2_strtok(s, "\t ,/");
+        c2_strcpy(s2, str);
+        c2_strtok(s2, ".");
+        c2_strcat(s2, ".FLI");
+        C2V(gTranslations)[i].flic_index = -1;
+        for (j = 0; j < REC2_ASIZE(C2V(gMain_flic_list)); j++) {
+            if (c2_strcmp(C2V(gMain_flic_list)[j].file_name, s2) == 0) {
+                C2V(gTranslations)[i].flic_index = j;
+                break;
+            }
+        }
+        if (C2V(gTranslations)[i].flic_index < 0) {
+            FatalError(kFatalError_CannotFindFlicReferencedTranslation_S, s2);
+        }
+        str[c2_strlen(str)] = ',';
+        c2_strtok(s, "\t ,/");
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &C2V(gTranslations)[i].x);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &C2V(gTranslations)[i].y);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &C2V(gTranslations)[i].font_index);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%c", &ch);
+        switch (ch) {
+            case 'C':
+            case 'c':
+                C2V(gTranslations[i]).justification = eJust_centre;
+                break;
+            case 'L':
+            case 'l':
+                C2V(gTranslations[i]).justification = eJust_left;
+                break;
+            case 'R':
+            case 'r':
+                C2V(gTranslations[i]).justification = eJust_right;
+                break;
+        }
+        str += c2_strlen(str) + 1;
+        C2V(gTranslations)[i].text = BrMemAllocate(c2_strlen(str) + 1, kMem_misc);
+        c2_strcpy(C2V(gTranslations)[i].text, str);
+    }
+    LoadFont(1);
+    LoadFont(2);
+    C2V(gTrans_fonts)[0] = &C2V(gFonts)[1];
+    C2V(gTrans_fonts)[1] = &C2V(gFonts)[2];
+
+    DRfclose(f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00463340, LoadInterfaceStrings, LoadInterfaceStrings_original)
