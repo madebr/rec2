@@ -320,6 +320,18 @@ typedef struct tTransient_bm {
     int user_data;
 } tTransient_bm;
 
+typedef struct tDR_font {
+    br_pixelmap* images;
+    int file_read_once;
+    int height;
+    int width;
+    int spacing;
+    int offset;
+    int num_entries;
+    int font_id;
+    int width_table[224];
+} tDR_font;
+
 typedef enum {
     kFrontendItemEnabled_default = 0,
     kFrontendItemEnabled_enabled = 1,
@@ -455,6 +467,7 @@ enum {
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_OOM_S = 0x5e,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
+    kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
     kFatalError_CantOpen_S = 0x6b,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
