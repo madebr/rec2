@@ -4,6 +4,7 @@
 #include "c2_hooks.h"
 
 #include "brender/brender.h"
+#include "rec2_types.h"
 
 br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx);
 
