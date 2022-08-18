@@ -26,6 +26,8 @@ add_library(c2_common STATIC
     errors.h
     flicplay.c
     flicplay.h
+    font.c
+    font.h
     globvars.c
     globvars.h
     globvrbm.c
