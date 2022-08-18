@@ -31,6 +31,31 @@ typedef struct {
     tRGBColour br;
 } tPolyFontBorderColours;
 
+typedef struct tPolyFont tPolyFont;
+
+typedef struct {
+    br_material* material;
+    int used;
+    br_uint_32 index;
+    br_uint_32 glyph_width;
+    br_vector2 texCoord;
+    tPolyFont* font;
+} tPolyFontGlyph;
+
+typedef struct tPolyFont {
+    char field0_0x0[68];
+    br_uint_32 numberOfCharacters;
+    br_uint_32 interCharacterSpacing;
+    br_uint_32 asciiOffset;
+    br_uint_32 fontCharacterHeight;
+    br_uint_32 widthOfBlank;
+    br_uint_32 fontSize;
+    br_uint_32 unknown_0x5c;
+    int available;
+    br_uint_32 unknown_0x64;
+    tPolyFontGlyph glyphs[256]; /* unsure about offset */
+} tPolyFont;
+
 typedef struct tFlic_bunch {
     char count;
     int* indexes;
