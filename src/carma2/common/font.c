@@ -1,8 +1,12 @@
 #include "font.h"
 
 #include "errors.h"
+#include "loading.h"
+#include "utility.h"
 
 #include "rec2_macros.h"
+
+#include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gTextureMaps, 1000, 0x0076c960);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPolyFontBorderColours, gPolyFontBorderColours, 27, 0x00765ec0);
@@ -10,11 +14,43 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gPolyFontMaterials, 80, 0x0068634
 C2_HOOK_VARIABLE_IMPLEMENT(int, polyFontMaterialCounter, 0x00686498); // FIXME: unknown purpose
 C2_HOOK_VARIABLE_IMPLEMENT(int, currentPolyFontMaterialIdx, 0x00686480);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPolyFont, gPolyFonts, 27, 0x0076d960);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gPixelmapBuffer, 1000, 0x00764f00);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPixelmapBufferSize, 0x007663d0);
 
 #define POLYFONT_MATERIAL_STORE_PROPS(MATERIAL, CHARACTER, FONTIDX, COUNTER)  do { (MATERIAL)->user = (void*)(uintptr_t)((CHARACTER) | ((FONTIDX) << 8) | ((COUNTER) << 16)); } while (0)
 #define POLYFONT_MATERIAL_GET_CHARACTER(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 0) & 0xff)
 #define POLYFONT_MATERIAL_GET_FONTIDX(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 8) & 0xff)
 #define POLYFONT_MATERIAL_GET_COUNTER(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 16) & 0xffff)
+
+br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char* glyphName, int loadFromDisk) {
+    tPath_name pathBuffer;
+    tTWTFILE* f;
+    char* str;
+    int i;
+
+    PathCat(pathBuffer, path, "PIXIES.P16");
+    f = TWTfopen(pathBuffer, "rb");
+    if (f == NULL) {
+        PathCat(pathBuffer, path, glyphName);
+        return DRLoadUpdatePixelmapFromTif(pathBuffer);
+    }
+    DRfclose(f);
+    if (loadFromDisk) {
+        C2V(gPixelmapBufferSize) = BrPixelmapLoadMany(pathBuffer, C2V(gPixelmapBuffer), REC2_ASIZE(C2V(gPixelmapBuffer)));
+    }
+    c2_strcpy(pathBuffer, glyphName);
+
+    str = c2_strchr(pathBuffer, '.');
+    *str = '\0';
+
+    for (i = 0; i < C2V(gPixelmapBufferSize); i++) {
+        if (C2V(gPixelmapBuffer)[i] != NULL && DRStricmp(C2V(gPixelmapBuffer)[i]->identifier, pathBuffer) == 0) {
+            return C2V(gPixelmapBuffer)[i];
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x00464a70, LoadPolyFontPixiesP16)
 
 br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureIdX, int textureIdY, const char* pageName) {
     br_model* pModel;
