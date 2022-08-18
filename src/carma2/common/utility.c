@@ -1,8 +1,10 @@
 #include "utility.h"
 
 #include "globvars.h"
+#include "graphics.h"
 #include "loading.h"
 #include "platform.h"
+#include "world.h"
 
 #include "brender/brender.h"
 
@@ -156,6 +158,35 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
     return the_map;
 }
 C2_HOOK_FUNCTION(0x00513820, DRPixelmapAllocateSub)
+
+br_pixelmap* C2_HOOK_FASTCALL DRLoadUpdatePixelmapFromTif(const char* path) {
+    int errorFlags;
+    tPath_name pathBuffer;
+    tPath_name pathDir;
+    tPath_name textureName;
+    size_t fileStart;
+    size_t pathLen;
+    size_t i;
+
+    c2_strcpy(pathBuffer, path);
+    pathLen = c2_strlen(pathBuffer);
+    for (fileStart = pathLen - 1; fileStart != 0; fileStart--) {
+        if (pathBuffer[fileStart] == *C2V(gDir_separator)) {
+            break;
+        }
+    }
+    c2_strncpy(pathDir, pathBuffer, fileStart);
+    pathDir[fileStart] = '\0';
+    if (pathDir[0] != '\0') {
+        fileStart += 1;
+    }
+    for (i = 0; i < pathLen - fileStart; i++) {
+        textureName[i] = pathBuffer[fileStart + i];
+    }
+    textureName[pathLen - fileStart] = '\0';
+    return LoadTiffOrBrenderTexture_Ex(pathDir, textureName, C2V(gRender_palette), C2V(gPixelFlags), &errorFlags);
+}
+C2_HOOK_FUNCTION(0x00513870, DRLoadUpdatePixelmapFromTif)
 
 void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h) {
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
