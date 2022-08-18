@@ -18,6 +18,19 @@ typedef int tTWTVFS;
 // FIXME: imcomplete type
 typedef struct tDR_font tDR_font;
 
+typedef struct {
+    int r;
+    int g;
+    int b;
+} tRGBColour;
+
+typedef struct {
+    tRGBColour tl;
+    tRGBColour tr;
+    tRGBColour bl;
+    tRGBColour br;
+} tPolyFontBorderColours;
+
 typedef struct tFlic_bunch {
     char count;
     int* indexes;
