@@ -145,6 +145,18 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW,
 }
 C2_HOOK_FUNCTION(0x005137d0, DRPixelmapAllocate)
 
+br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16 pX, br_uint_16 pY, br_uint_16 pW, br_uint_16 pH) {
+    br_pixelmap* the_map;
+
+    the_map = BrPixelmapAllocateSub(pPm, pX, pY, pW, pH);
+    if (the_map != NULL) {
+        the_map->origin_y = 0;
+        the_map->origin_x = 0;
+    }
+    return the_map;
+}
+C2_HOOK_FUNCTION(0x00513820, DRPixelmapAllocateSub)
+
 void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h) {
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
 }
