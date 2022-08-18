@@ -1,5 +1,7 @@
 #include "font.h"
 
+#include "errors.h"
+
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gTextureMaps, 1000, 0x0076c960);
@@ -13,6 +15,33 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPolyFont, gPolyFonts, 27, 0x0076d960);
 #define POLYFONT_MATERIAL_GET_CHARACTER(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 0) & 0xff)
 #define POLYFONT_MATERIAL_GET_FONTIDX(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 8) & 0xff)
 #define POLYFONT_MATERIAL_GET_COUNTER(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 16) & 0xffff)
+
+br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureIdX, int textureIdY, const char* pageName) {
+    br_model* pModel;
+
+    pModel = BrModelAllocate("String model", 4, 2);
+    if (pModel == NULL) {
+        FatalError(kFatalError_CouldNotCreateTexturesPages_S, pageName);
+    }
+    pModel->faces[0].vertices[0] = 0;
+    pModel->faces[0].vertices[1] = 1;
+    pModel->faces[0].vertices[2] = 2;
+    pModel->faces[1].vertices[0] = 1;
+    pModel->faces[1].vertices[1] = 3;
+    pModel->faces[1].vertices[2] = 2;
+    BrVector3Set(&pModel->vertices[0].p, 0.f, 0.f, -1.2f);
+    BrVector3Set(&pModel->vertices[1].p, (float)width, 0.f, -1.2f);
+    BrVector3Set(&pModel->vertices[2].p, 0.f, -(float)height, -1.2f);
+    BrVector3Set(&pModel->vertices[3].p, (float)width, (float)-height, -1.2f);
+    BrVector2Set(&pModel->vertices[0].map, (float)textureIdX / 64.f, (float)textureIdY / 64.f);
+    BrVector2Set(&pModel->vertices[1].map, (float)(textureIdX + width) / 64.f, (float)textureIdY / 64.f);
+    BrVector2Set(&pModel->vertices[2].map, (float)textureIdX / 64.f,  (float)(textureIdY + height) / 64.f);
+    BrVector2Set(&pModel->vertices[3].map, (float)(textureIdX + width) / 64.f, (float)(textureIdY + height) / 64.f);
+    pModel->flags |= BR_STATE_STATS;
+    BrModelAdd(pModel);
+    return pModel;
+}
+C2_HOOK_FUNCTION(0x00464b80, CreateStringModel)
 
 br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx) {
     br_material* pMaterial;
