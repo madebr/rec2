@@ -510,6 +510,7 @@ enum {
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
     kFatalError_FileMustStartWith_SS = 0xb2,
+    kFatalError_CouldNotCreateTexturesPages_S = 0xb7,
     kFatalError_MysteriousX_SS = 0xbd,
 };
 
