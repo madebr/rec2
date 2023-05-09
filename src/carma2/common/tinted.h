@@ -19,4 +19,8 @@ void C2_HOOK_FASTCALL FreeAllTintedPolyActors(void);
 
 void C2_HOOK_FASTCALL UpdateTintedPolyActor(int pTintedIndex);
 
+void C2_HOOK_FASTCALL MakeTintedVisible(int pTintedIndex);
+
+void C2_HOOK_FASTCALL MakeTintedInvisible(int pTintedIndex);
+
 #endif //REC2_TINTED_H
