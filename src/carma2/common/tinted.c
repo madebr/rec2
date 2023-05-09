@@ -55,6 +55,55 @@ void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, in
 }
 C2_HOOK_FUNCTION(0x004d82b0, SetTintedColour)
 
+br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x0, int y0, int width, int height, int nbX, int nbY) {
+    br_model* model;
+    int dx;
+    int dy;
+    int i;
+    int j;
+    int vert_below;
+    int vert_above;
+    br_vertex* vertex;
+    br_face* face;
+
+    if (nbX <= 0 || nbY < 0) {
+        return NULL;
+    }
+    model = BrModelAllocate("Tint Poly", (nbX + 1) * (nbY + 1), 2 * nbX * nbY);
+    if (model == NULL) {
+        return NULL;
+    }
+    dx = width / nbX;
+    for (j = 0; j < nbY + 1; j++) {
+        dy = j * (height / nbY);
+        for (i = 0; i < nbX + 1; i++) {
+            dx = i * (width / nbX);
+            vertex = &model->vertices[j * (nbX + 1) + i];
+            vertex->p.v[0] = (br_scalar)(x0 + dx);
+            vertex->p.v[1] = (br_scalar)(-(y0 + dy));
+            vertex->p.v[2] = -1.02f;
+            vertex->map.v[0] = (br_scalar)dx / width;
+            vertex->map.v[1] = (br_scalar)dy / height;
+        }
+    }
+    for (j = 0; j < nbY; j++) {
+        vert_above = j * (nbX + 1);
+        vert_below = (j + 1) * (nbX + 1);
+        for (i = 0; i < nbX; i++) {
+            face = &model->faces[2 * (j * nbX + i)];
+            face[0].vertices[0] = vert_above + i ;
+            face[0].vertices[1] = vert_above + i + 1;
+            face[0].vertices[2] = vert_below + i ;
+            face[1].vertices[0] = vert_above + i + 1;
+            face[1].vertices[1] = vert_below + i + 1;
+            face[1].vertices[2] = vert_below + i;
+        }
+    }
+    model->flags |= BR_MODF_DONT_WELD | BR_MODF_KEEP_ORIGINAL;
+    return model;
+}
+C2_HOOK_FUNCTION(0x004d7ad0, CreateInterpolatedQuadModel)
+
 void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
     if (!C2V(gTintedPolys)[pTintedIndex].used) {
         return;
