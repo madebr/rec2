@@ -476,3 +476,8 @@ void C2_HOOK_FASTCALL MakeTintedInvisible(int pTintedIndex) {
     }
 }
 C2_HOOK_FUNCTION(0x004d8250, MakeTintedInvisible)
+
+void C2_HOOK_FASTCALL RenderTintedActors(void) {
+    BrZbsSceneRender(C2V(gTintedPolyCamera), C2V(gTintedPolyCamera), C2V(gBack_screen), C2V(gDepth_buffer));
+}
+C2_HOOK_FUNCTION(0x004d8290, RenderTintedActors)
