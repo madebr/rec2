@@ -478,6 +478,36 @@ typedef struct tFrontend_spec {
     int unknownLastInt;  // FIXME: unknown
 } tFrontend_spec;
 
+typedef struct {
+    br_actor* actor;
+    br_material* material;
+    br_model* model;
+    br_uint_32 color_red;
+    br_uint_32 color_grn;
+    br_uint_32 color_blu;
+    br_uint_32 color2_red;
+    br_uint_32 color2_grn;
+    br_uint_32 color2_blu;
+    int subClass;
+    br_uint_8 field10_0x28;
+    br_uint_8 unknown_padding_0;  // FIXME: unknown
+    br_uint_8 unknown_padding_1;  // FIXME: unknown
+    br_uint_8 unknown_padding_2;  // FIXME: unknown
+    br_material* material2;
+    int used;
+    int visible;
+    int class;
+    int lastTime;
+    br_colour colour;
+    br_pixelmap* pixelmap;
+    br_colour colours[256];
+    br_uint_32 tints1[2048];
+    br_uint_32 tints2[2048];
+    br_uint_32 tints3[2048];
+    br_uint_32 unknown_1;  // FIXME: unknown
+    br_uint_32 unknown_2;  // FIXME: unknown
+} tTintedPoly;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
