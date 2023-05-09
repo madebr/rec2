@@ -210,7 +210,7 @@ typedef struct {
     void* base_addr;
 } tGraf_spec;
 
-typedef struct tBrender_storage {
+typedef struct {
     int uid; // FIXME: unknown
     int models_count;
     int materials_count;
