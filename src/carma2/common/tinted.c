@@ -360,3 +360,12 @@ void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
     C2V(gTintedPolys)[pTintedIndex].used = 0;
 }
 C2_HOOK_FUNCTION(0x004d7c80, FreeTintedPolyActor)
+
+void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gTintedPolys)); i++) {
+        FreeTintedPolyActor(i);
+    }
+}
+C2_HOOK_FUNCTION(0x004d7d10, FreeAllTintedPolyActor)
