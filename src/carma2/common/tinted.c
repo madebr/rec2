@@ -54,3 +54,25 @@ void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, in
     }
 }
 C2_HOOK_FUNCTION(0x004d82b0, SetTintedColour)
+
+void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
+    if (!C2V(gTintedPolys)[pTintedIndex].used) {
+        return;
+    }
+    if (C2V(gTintedPolys)[pTintedIndex].material != NULL) {
+        BrMaterialFree(C2V(gTintedPolys)[pTintedIndex].material);
+    }
+    if (C2V(gTintedPolys)[pTintedIndex].model != NULL) {
+        BrModelFree(C2V(gTintedPolys)[pTintedIndex].model);
+    }
+    if (C2V(gTintedPolys)[pTintedIndex].actor != NULL) {
+        BrActorRemove(C2V(gTintedPolys)[pTintedIndex].actor);
+        BrActorFree(C2V(gTintedPolys)[pTintedIndex].actor);
+        C2V(gTintedPolys)[pTintedIndex].actor = NULL;
+    }
+    C2V(gTintedPolys)[pTintedIndex].class = 0;
+    C2V(gTintedPolys)[pTintedIndex].material2 =NULL;
+    C2V(gTintedPolys)[pTintedIndex].visible = 0;
+    C2V(gTintedPolys)[pTintedIndex].used = 0;
+}
+C2_HOOK_FUNCTION(0x004d7c80, FreeTintedPolyActor)
