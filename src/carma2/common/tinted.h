@@ -23,4 +23,6 @@ void C2_HOOK_FASTCALL MakeTintedVisible(int pTintedIndex);
 
 void C2_HOOK_FASTCALL MakeTintedInvisible(int pTintedIndex);
 
+void C2_HOOK_FASTCALL RenderTintedActors(void);
+
 #endif //REC2_TINTED_H
