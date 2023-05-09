@@ -22,8 +22,6 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
 
 void C2_HOOK_FASTCALL DRPixelmapConvertRGB565ToRGB555IfNeeded(br_pixelmap* pixelmap, int pixelType);
 
-int C2_HOOK_FASTCALL CreateTintedPolyActor(int x, int y, int width, int height, int type, int arg1, int arg2, int arg3);
-
 void C2_HOOK_FASTCALL AllocateCursorActors(void);
 
 void C2_HOOK_FASTCALL StartMouseCursor(void);
