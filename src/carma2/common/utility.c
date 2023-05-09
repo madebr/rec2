@@ -125,6 +125,16 @@ int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
 }
 C2_HOOK_FUNCTION(0x00515870, DRStricmp)
 
+static tU32 (C2_HOOK_FASTCALL * GetTotalTime_original)(void);
+tU32 C2_HOOK_FASTCALL GetTotalTime(void) {
+#if defined(C2_HOOKS_ENABLED)
+    return GetTotalTime_original();
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00514c30, GetTotalTime, GetTotalTime_original)
+
 void (C2_HOOK_FASTCALL * PossibleService_original)(void);
 void C2_HOOK_FASTCALL PossibleService(void) {
 #if defined(C2_HOOKS_ENABLED)
