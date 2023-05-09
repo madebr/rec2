@@ -465,3 +465,20 @@ void C2_HOOK_FASTCALL MakeTintedVisible(int pTintedIndex) {
     }
 }
 C2_HOOK_FUNCTION(0x004d8220, MakeTintedVisible)
+
+void C2_HOOK_FASTCALL MakeTintedInvisible(int pTintedIndex) {
+
+#ifdef REC2_FIX_BUGS
+    if (pTintedIndex < 0) {
+        return;
+    }
+#endif
+    if (C2V(gTintedPolys)[pTintedIndex].used) {
+        (C2V(gTintedPolys)[pTintedIndex].actor)->render_style = BR_RSTYLE_NONE;
+        C2V(gTintedPolys)[pTintedIndex].color_red = 0;
+        C2V(gTintedPolys)[pTintedIndex].color_grn = 0;
+        C2V(gTintedPolys)[pTintedIndex].color_blu = 0;
+        C2V(gTintedPolys)[pTintedIndex].visible = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x004d8250, MakeTintedInvisible)
