@@ -489,7 +489,7 @@ typedef struct {
     br_uint_32 color2_grn;
     br_uint_32 color2_blu;
     int subClass;
-    br_uint_8 field10_0x28;
+    br_uint_8 unknown_0;
     br_uint_8 unknown_padding_0;  // FIXME: unknown
     br_uint_8 unknown_padding_1;  // FIXME: unknown
     br_uint_8 unknown_padding_2;  // FIXME: unknown
