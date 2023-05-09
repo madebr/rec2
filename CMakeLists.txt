@@ -9,6 +9,12 @@ option(KEEP_ACTIVE_IN_BACKGROUND "Keep the game active when alt-tabbing to anoth
 option(REC2_VENDORED "Use vendored dependencies" ON)
 option(REC2_WERROR "Treat warnings as errors" OFF)
 
+if(REC2_VENDORED)
+    add_subdirectory(external/libtiff EXCLUDE_FROM_ALL)
+else()
+    find_package(TIFF REQUIRED)
+endif()
+
 if(REC2_WERROR)
     if(MSVC)
         add_compile_options(/WX)
@@ -37,12 +43,6 @@ if(MSVC)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 else()
     add_compile_options(-Wall)
-endif()
-
-if(REC2_VENDORED)
-    add_subdirectory(external/libtiff EXCLUDE_FROM_ALL)
-else()
-    find_package(TIFF REQUIRED)
 endif()
 
 if(C2_STANDALONE)
