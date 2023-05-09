@@ -870,6 +870,8 @@ void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pSt
     tName_list list;
     size_t i;
 
+    C2_HOOK_BUG_ON(sizeof(tBrender_storage) != 68);
+
     list.size = 0;
     c2_strcpy(pathCopy, path);
     C2V(gStorageForCallbacks) = pStorage_space;
