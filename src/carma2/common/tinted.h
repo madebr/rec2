@@ -5,4 +5,6 @@
 
 void C2_HOOK_FASTCALL InitTintedPolys(void);
 
+void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, int pBlue);
+
 #endif //REC2_TINTED_H
