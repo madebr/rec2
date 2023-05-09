@@ -87,6 +87,7 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gFrame_period);
 //extern tU32 gCredit_period;
 //extern tU32 gCredit_period_network[7];
 //extern tBrender_storage gOur_car_storage_space;
+C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gMisc_storage_space);
 //extern tU32 gFox_start_time;
 //extern br_font* gBig_font;
 //extern tBrender_storage gPedestrians_storage_space;

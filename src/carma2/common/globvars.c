@@ -18,6 +18,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTrack_actor, 0x0075bb60);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrame_period, 0x0074d3e4);
 
+C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gMisc_storage_space, 0x0075b9c0);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
