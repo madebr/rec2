@@ -58,6 +58,8 @@ add_library(c2_common STATIC
     spark.h
     structur.c
     structur.h
+    tinted.c
+    tinted.h
     utility.c
     utility.h
     video.c
