@@ -14,6 +14,9 @@
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTintedPoly, gTintedPolys, 10, 0x00705c80);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTintedPolyCamera, 0x006a0430);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefaultOpacity_TintedPoly, 0x0065e874, 0x80);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_uint_32, gTintedColourMap_red, 0x0065e870, 0x80);
+C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gTintedColourMap_grn, 0x006a0438);
+C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gTintedColourMap_blu, 0x006a043c);
 
 void C2_HOOK_FASTCALL InitTintedPolys(void) {
     br_camera *camera;
@@ -369,3 +372,88 @@ void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004d7d10, FreeAllTintedPolyActor)
+
+void C2_HOOK_FASTCALL UpdateTintedPolyActor(int pTintedIndex) {
+    br_uint_32 new_grn, new_blu, new_red;
+    br_pixelmap* map;
+    tU32 time;
+    int material_changed;
+    tU32 time_since_last_update_s;
+
+    if (!C2V(gTintedPolys)[pTintedIndex].visible || C2V(gTintedPolys)[pTintedIndex].material2 == NULL) {
+        return;
+    }
+
+    map = C2V(gTintedPolys)[pTintedIndex].material->colour_map;
+    new_grn = C2V(gTintedColourMap_grn);
+    new_blu = C2V(gTintedColourMap_blu);
+    new_red = C2V(gTintedColourMap_red);
+    if (map != NULL && map->pixels != NULL) {
+        br_uint_32 v_tl, v_tr, v_bl, v_br;
+
+        v_tl = BrPixelmapPixelGet(map, map->width / 4, map->height / 4);
+        v_tr = BrPixelmapPixelGet(map, map->width - map->width / 4, map->height / 4);
+        v_bl = BrPixelmapPixelGet(map, map->width / 4, map->height / 4);
+        v_br = BrPixelmapPixelGet(map, map->width - map->width / 4, map->height - map->height / 4);
+
+        new_red = (REC2_RGB888_R(v_tl) + REC2_RGB888_R(v_tr) + REC2_RGB888_R(v_bl) + REC2_RGB888_R(v_br)) / 4;
+        new_grn = (REC2_RGB888_G(v_tl) + REC2_RGB888_G(v_tr) + REC2_RGB888_G(v_bl) + REC2_RGB888_G(v_br)) / 4;
+        new_grn = (REC2_RGB888_B(v_tl) + REC2_RGB888_B(v_tr) + REC2_RGB888_B(v_bl) + REC2_RGB888_B(v_br)) / 4;
+    }
+    time = GetTotalTime();
+    if (C2V(gTintedPolys)[pTintedIndex].color_red + C2V(gTintedPolys)[pTintedIndex].color_grn + C2V(gTintedPolys)[pTintedIndex].color_blu == 0) {
+        C2V(gTintedPolys)[pTintedIndex].color_red = new_red;
+        C2V(gTintedPolys)[pTintedIndex].color_grn = new_grn;
+        C2V(gTintedPolys)[pTintedIndex].color_blu = new_blu;
+        C2V(gTintedPolys)[pTintedIndex].lastTime = time;
+        C2V(gTintedPolys)[pTintedIndex].material->colour = BR_COLOUR_RGB(new_red, new_grn, new_blu);
+        BrMaterialUpdate(C2V(gTintedPolys)[pTintedIndex].material, BR_MATU_LIGHTING);
+        return;
+    }
+
+    material_changed = 0;
+    time_since_last_update_s = time - C2V(gTintedPolys)[pTintedIndex].lastTime;
+    if (time <= 0) {
+        time_since_last_update_s = 0;
+    }
+    if (time_since_last_update_s != 0) {
+        if (C2V(gTintedPolys)[pTintedIndex].color_red != new_red) {
+            if (C2V(gTintedPolys)[pTintedIndex].color_red < new_red) {
+                C2V(gTintedPolys)[pTintedIndex].color_red += time_since_last_update_s;
+            } else {
+                C2V(gTintedPolys)[pTintedIndex].color_red -= time_since_last_update_s;
+            }
+            if (new_red - time_since_last_update_s < C2V(gTintedPolys)[pTintedIndex].color_red && C2V(gTintedPolys)[pTintedIndex].color_red < time_since_last_update_s + new_red) {
+                C2V(gTintedPolys)[pTintedIndex].color_red = new_red;
+            }
+            material_changed = 1;
+        }
+        if (C2V(gTintedPolys)[pTintedIndex].color_grn != new_grn) {
+            if (C2V(gTintedPolys)[pTintedIndex].color_grn < new_grn) {
+                C2V(gTintedPolys)[pTintedIndex].color_grn += time_since_last_update_s;
+            } else {
+                C2V(gTintedPolys)[pTintedIndex].color_grn -= time_since_last_update_s;
+            }
+            if (new_grn - time_since_last_update_s < C2V(gTintedPolys)[pTintedIndex].color_grn && C2V(gTintedPolys)[pTintedIndex].color_grn < time_since_last_update_s + new_grn) {
+                C2V(gTintedPolys)[pTintedIndex].color_grn = new_grn;
+            }
+            material_changed = 1;
+        }
+        if (C2V(gTintedPolys)[pTintedIndex].color_blu != new_blu) {
+            if (C2V(gTintedPolys)[pTintedIndex].color_blu < new_blu) {
+                C2V(gTintedPolys)[pTintedIndex].color_blu += time_since_last_update_s;
+            } else {
+                C2V(gTintedPolys)[pTintedIndex].color_blu -= time_since_last_update_s;
+            }
+            if (new_blu - time_since_last_update_s < C2V(gTintedPolys)[pTintedIndex].color_blu && C2V(gTintedPolys)[pTintedIndex].color_blu < time_since_last_update_s + new_blu) {
+                C2V(gTintedPolys)[pTintedIndex].color_blu = new_blu;
+            }
+            material_changed = 1;
+        }
+        if (material_changed) {
+            C2V(gTintedPolys)[pTintedIndex].material->colour = BR_COLOUR_RGB(C2V(gTintedPolys)[pTintedIndex].color_red, C2V(gTintedPolys)[pTintedIndex].color_grn, C2V(gTintedPolys)[pTintedIndex].color_blu);
+            BrMaterialUpdate(C2V(gTintedPolys)[pTintedIndex].material, BR_MATU_LIGHTING);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004d7d80, UpdateTintedPolyActor)
