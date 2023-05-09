@@ -39,30 +39,6 @@ void C2_HOOK_FASTCALL InitTintedPolys(void) {
 }
 C2_HOOK_FUNCTION(0x004d7040, InitTintedPolys);
 
-void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {
-    int red_differs;
-    int grn_differs;
-    int blu_differs;
-
-    red_differs = C2V(gTintedPolys)[pTintedIndex].color_red != pRed;
-    if (red_differs) {
-        C2V(gTintedPolys)[pTintedIndex].color_red = pRed;
-    }
-    grn_differs = C2V(gTintedPolys)[pTintedIndex].color_grn != pGreen;
-    if (grn_differs) {
-        C2V(gTintedPolys)[pTintedIndex].color_grn = pGreen;
-    }
-    blu_differs = C2V(gTintedPolys)[pTintedIndex].color_blu != pBlue;
-    if (blu_differs) {
-        C2V(gTintedPolys)[pTintedIndex].color_blu = pBlue;
-    }
-    if (red_differs || (grn_differs || blu_differs)) {
-        (C2V(gTintedPolys)[pTintedIndex].material)->colour = BR_COLOUR_RGB(C2V(gTintedPolys)[pTintedIndex].color_red, C2V(gTintedPolys)[pTintedIndex].color_grn, C2V(gTintedPolys)[pTintedIndex].color_blu);
-        BrMaterialUpdate(C2V(gTintedPolys)[pTintedIndex].material ,BR_MATU_LIGHTING);
-    }
-}
-C2_HOOK_FUNCTION(0x004d82b0, SetTintedColour)
-
 #define ALLOCATE_TINTED_POLY_MATERIAL(MAT) do {                                     \
         static br_token_value extra_prims[2] = {                                    \
             {                                                                       \
@@ -481,3 +457,27 @@ void C2_HOOK_FASTCALL RenderTintedActors(void) {
     BrZbsSceneRender(C2V(gTintedPolyCamera), C2V(gTintedPolyCamera), C2V(gBack_screen), C2V(gDepth_buffer));
 }
 C2_HOOK_FUNCTION(0x004d8290, RenderTintedActors)
+
+void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {
+    int red_differs;
+    int grn_differs;
+    int blu_differs;
+
+    red_differs = C2V(gTintedPolys)[pTintedIndex].color_red != pRed;
+    if (red_differs) {
+        C2V(gTintedPolys)[pTintedIndex].color_red = pRed;
+    }
+    grn_differs = C2V(gTintedPolys)[pTintedIndex].color_grn != pGreen;
+    if (grn_differs) {
+        C2V(gTintedPolys)[pTintedIndex].color_grn = pGreen;
+    }
+    blu_differs = C2V(gTintedPolys)[pTintedIndex].color_blu != pBlue;
+    if (blu_differs) {
+        C2V(gTintedPolys)[pTintedIndex].color_blu = pBlue;
+    }
+    if (red_differs || (grn_differs || blu_differs)) {
+        (C2V(gTintedPolys)[pTintedIndex].material)->colour = BR_COLOUR_RGB(C2V(gTintedPolys)[pTintedIndex].color_red, C2V(gTintedPolys)[pTintedIndex].color_grn, C2V(gTintedPolys)[pTintedIndex].color_blu);
+        BrMaterialUpdate(C2V(gTintedPolys)[pTintedIndex].material ,BR_MATU_LIGHTING);
+    }
+}
+C2_HOOK_FUNCTION(0x004d82b0, SetTintedColour)
