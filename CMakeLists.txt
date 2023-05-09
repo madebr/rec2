@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
+
+cmake_policy(SET CMP0091 NEW)
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
 project(rec2 C)
 
 option(KEEP_ACTIVE_IN_BACKGROUND "Keep the game active when alt-tabbing to another application" OFF)
@@ -47,7 +51,6 @@ else()
     if(NOT MSVC)
         add_link_options(-Wl,--disable-stdcall-fixup)
     endif()
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
     if(REC2_VENDORED)
         add_subdirectory(external/detours EXCLUDE_FROM_ALL)
