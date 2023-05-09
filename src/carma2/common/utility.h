@@ -22,6 +22,8 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
+tU32 C2_HOOK_FASTCALL GetTotalTime(void);
+
 void C2_HOOK_FASTCALL PossibleService(void);
 
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW, br_uint_16 pH, void* pPixels, int pFlags);
