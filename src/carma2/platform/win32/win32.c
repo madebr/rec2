@@ -300,11 +300,33 @@ C2_HOOK_FUNCTION(0x0051cad0, Win32ServiceMessages)
 
 int (C2_HOOK_FASTCALL * PDCheckDriveExists2_original)(const char* pThe_path, const char* pFile_name, tU32 pMin_size);
 int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFile_name, tU32 pMin_size) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 // defined(C2_HOOKS_ENABLED)
+    fprintf(stderr, "PDCheckDriveExists2_original=%p\n", PDCheckDriveExists2_original);
     int res = PDCheckDriveExists2_original(pThe_path, pFile_name, pMin_size);
     return res;
 #else
-#error "Not implemented"
+    char the_path[256];
+    tU32 file_size;
+    HANDLE hFile;
+
+    file_size = 0;
+    if (pFile_name != NULL) {
+        PathCat(the_path, pThe_path, pFile_name);
+    } else {
+        strcpy(the_path, pThe_path);
+    }
+    if (the_path[0] && the_path[1] == ':' && the_path[2] == '\0') {
+        strcat(the_path, C2V(gDir_separator));
+    }
+    if (GetFileAttributesA(pThe_path) == INVALID_FILE_ATTRIBUTES) {
+        return 0;
+    }
+    hFile = CreateFileA(the_path, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    if (hFile != INVALID_HANDLE_VALUE) {
+        file_size = GetFileSize(hFile, NULL);
+        CloseHandle(hFile);
+    }
+    return file_size >= pMin_size;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051d500, PDCheckDriveExists2, PDCheckDriveExists2_original)
