@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <detours.h>
 #include <filesystem>
+#include <functional>
 #include <cstdio>
 #include <string>
 #include <vector>
