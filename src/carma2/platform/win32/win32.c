@@ -600,3 +600,15 @@ void C2_HOOK_FASTCALL PDGetFormattedTime(char* pTimeStr) {
     strcpy(pTimeStr, buffer);
 }
 C2_HOOK_FUNCTION(0x0051da90, PDGetFormattedTime)
+
+int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord) {
+    if (!C2V(gCursorPos_LastClick_Valid)) {
+        C2V(gCursorPos_LastClick_Valid) = 0;
+        return 0;
+    }
+    *pX_coord = C2V(gCursorPos_LastClick).x;
+    *pY_coord = C2V(gCursorPos_LastClick).y;
+    C2V(gCursorPos_LastClick_Valid) = 0;
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0051db00, PDGetMouseClickPosition)
