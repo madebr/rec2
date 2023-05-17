@@ -51,4 +51,6 @@ void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr);
 
 void C2_HOOK_FASTCALL PDGetFormattedTime(char* pTimeStr);
 
+int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord);
+
 #endif // C2_PLATFORM_H
