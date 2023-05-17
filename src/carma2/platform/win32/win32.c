@@ -415,6 +415,21 @@ int C2_HOOK_FASTCALL PDGetTotalTime(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051d410, PDGetTotalTime, PDGetTotalTime_original)
 
+int C2_HOOK_FASTCALL PDGetTotalMicroTime(void) {
+#if 0 //defined(C2_HOOKS_ENABLED)
+    return PDGetTotalTime_original();
+#else
+    if (C2V(gPerformanceCounterInitialized)) {
+        LARGE_INTEGER perfCountValue;
+        QueryPerformanceCounter(&perfCountValue);
+        // Is it okay to convert unsigned to int here?
+        return (int)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_us).QuadPart);
+    }
+    return 0;
+#endif
+}
+C2_HOOK_FUNCTION(0x0051d990, PDGetTotalMicroTime)
+
 void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
 
     dr_dprintf("PDEnterDebugger(): %s", pStr);

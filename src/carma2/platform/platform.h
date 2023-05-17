@@ -30,6 +30,8 @@ void C2_HOOK_FASTCALL PDInitTimer(void);
 
 int C2_HOOK_FASTCALL PDGetTotalTime(void);
 
+int C2_HOOK_FASTCALL PDGetTotalMicroTime(void);
+
 void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only);
 
 void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount);
