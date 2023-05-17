@@ -50,4 +50,6 @@ void C2_HOOK_FASTCALL PDForEveryFileRecurse(char* pThe_path, void (C2_HOOK_FASTC
 
 void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr);
 
+void C2_HOOK_FASTCALL PDGetFormattedTime(char* pTimeStr);
+
 #endif // C2_PLATFORM_H
