@@ -11,6 +11,7 @@
 
 #include "rec2_macros.h"
 
+#include "c2_direct.h"
 #include "c2_stdio.h"
 #include "c2_string.h"
 
@@ -532,7 +533,7 @@ C2_HOOK_FUNCTION(0x00585ee0, IsValidDriveIndex)
 
 int C2_HOOK_FASTCALL PDmkdir(const char* path) {
 
-    return _mkdir(path);
+    return c2_mkdir(path);
 }
 C2_HOOK_FUNCTION(0x00486c20, PDmkdir)
 
