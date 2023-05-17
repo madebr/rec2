@@ -26,6 +26,8 @@ int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath);
 
 int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void);
 
+void C2_HOOK_FASTCALL PDInitTimer(void);
+
 int C2_HOOK_FASTCALL PDGetTotalTime(void);
 
 void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only);

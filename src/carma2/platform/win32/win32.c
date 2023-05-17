@@ -53,7 +53,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gKeyboardBuffer, 20, 0x006ace88);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPerformanceCounterInitialized, 0x006acc70);
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterStart, 0x006acc80);
-C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_kHz, 0x006ad1f0);
+C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_s, 0x006acc68);
+C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_ms, 0x006ad1f0);
+C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_us, 0x006ac858);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
 
@@ -234,7 +236,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
                 if (C2V(gPerformanceCounterInitialized)) {
                     LARGE_INTEGER li;
                     QueryPerformanceCounter(&li);
-                    C2V(gTimeLastKeyboardInput) = (int)((li.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_kHz).QuadPart);
+                    C2V(gTimeLastKeyboardInput) = (int)((li.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_ms).QuadPart);
                 }
             } else {
                 if (C2V(gBack_screen) != NULL && C2V(gBack_screen)->pixels != NULL) {
@@ -380,6 +382,23 @@ void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only) {
 }
 C2_HOOK_FUNCTION(0x0051c520, PDScreenBufferSwap)
 
+void C2_HOOK_FASTCALL PDInitTimer(void) {
+    LARGE_INTEGER freq;
+    LARGE_INTEGER current_count;
+
+
+    C2V(gPerformanceCounterInitialized) = 0;
+    if (QueryPerformanceFrequency(&freq) != 0) {
+        C2V(gPerformanceCounterInitialized) = 1;
+        C2V(gPerformanceCounterFrequency_s) = freq;
+        QueryPerformanceCounter(&current_count);
+        C2V(gPerformanceCounterStart) = current_count;
+        C2V(gPerformanceCounterFrequency_ms).QuadPart = C2V(gPerformanceCounterFrequency_s).QuadPart / 1000;
+        C2V(gPerformanceCounterFrequency_us).QuadPart = C2V(gPerformanceCounterFrequency_s).QuadPart / 1000000;
+    }
+}
+C2_HOOK_FUNCTION(0x0051d7c0, PDInitTimer)
+
 int (C2_HOOK_FASTCALL * PDGetTotalTime_original)(void);
 int C2_HOOK_FASTCALL PDGetTotalTime(void) {
 #if 0 //defined(C2_HOOKS_ENABLED)
@@ -389,7 +408,7 @@ int C2_HOOK_FASTCALL PDGetTotalTime(void) {
         LARGE_INTEGER perfCountValue;
         QueryPerformanceCounter(&perfCountValue);
         // Is it okay to convert unsigned to int here?
-        return (int)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_kHz).QuadPart);
+        return (int)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_ms).QuadPart);
     }
     return 0;
 #endif
