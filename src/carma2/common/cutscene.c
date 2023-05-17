@@ -87,9 +87,11 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     if (C2V(gNoCutscenes)) {
         return;
     }
+    palette_pixels = NULL; /* Added by re2c */
     if (C2V(gBack_screen)->type == BR_PMT_INDEX_8) {
         smackBufferFlags = 0;
         palette_pixels = C2V(gCurrent_palette)->pixels;
+        smackBlitFlags = 0; /* Added by re2c */
     } else if (C2V(gBack_screen)->type == BR_PMT_RGB_555) {
         smackBufferFlags = SMACKBUFFER555;
         smackBlitFlags = SMACKBUFFER555 | SMACKBLIT2X;
@@ -343,6 +345,10 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                             C2V(gBack_screen)->type == BR_PMT_RGB_555) {
                             SmackBlitSetPalette(smackBlitHandle, smackHandle->Palette, smackHandle->PalType);
                         } else {
+                            /* Check added by re2c */
+                            if (palette_pixels == NULL) {
+                                abort();
+                            }
                             for (i = 0; i < 256; i++) {
                                 ((br_uint_32 *) palette_pixels)[i] = BR_COLOUR_RGB(smackHandle->Palette[3 * i + 0],
                                                                                    smackHandle->Palette[3 * i + 1],
