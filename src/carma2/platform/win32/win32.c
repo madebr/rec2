@@ -336,7 +336,7 @@ int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
 
     status = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\SCI\\CARMAGEDDON2", 0, KEY_ALL_ACCESS, &hKey);
     if (status == ERROR_SUCCESS) {
-        lenBuffer =  sizeof(tPath_name) - 1;  // FIXME: use array_sizeof
+        lenBuffer = sizeof(tPath_name) - 1;  // FIXME: use array_sizeof
         status = RegQueryValueExA(hKey, "SourceLocation", NULL, NULL, (LPBYTE)pPath, &lenBuffer);
         if (status == ERROR_SUCCESS) {
             RegCloseKey(hKey);
@@ -382,10 +382,16 @@ C2_HOOK_FUNCTION(0x0051c520, PDScreenBufferSwap)
 
 int (C2_HOOK_FASTCALL * PDGetTotalTime_original)(void);
 int C2_HOOK_FASTCALL PDGetTotalTime(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 //defined(C2_HOOKS_ENABLED)
     return PDGetTotalTime_original();
 #else
-#error "Not implemented"
+    if (C2V(gPerformanceCounterInitialized)) {
+        LARGE_INTEGER perfCountValue;
+        QueryPerformanceCounter(&perfCountValue);
+        // Is it okay to convert unsigned to int here?
+        return (int)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_kHz).QuadPart);
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051d410, PDGetTotalTime, PDGetTotalTime_original)
