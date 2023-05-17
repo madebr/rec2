@@ -24,6 +24,7 @@ When enough functions have been replaced, it should become possible to not need 
   - MinGW provides these libraries out-of-the box
   - MSVC does not ship with a *DirectX SDK*: this [time-period correct version on archive.org](https://archive.org/details/MicrosoftDirectX7SDK) works perfect.
 - [Detours](https://github.com/microsoft/Detours): this library is used to hook functions
+- [libtiff](http://www.libtiff.org/): this library is used to convert tiff images to BRender pixelmaps
 
 ## Goals
 
