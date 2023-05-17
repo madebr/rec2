@@ -516,3 +516,36 @@ C2_HOOK_FUNCTION(0x0044c9f0, MAMSUnlock)
 void C2_HOOK_FASTCALL MAMSLock(void** pPtr) {
 }
 C2_HOOK_FUNCTION(0x0044ca30, MAMSLock)
+
+void C2_HOOK_FASTCALL PDForEveryFileRecurse(char* pThe_path, void (C2_HOOK_FASTCALL* pAction_routine)(char*)) {
+    char found_path[256];
+    WIN32_FIND_DATAA find_data;
+    HANDLE hFindFile;
+    char file_filter[256];
+    char current_dir[260];
+
+    GetCurrentDirectoryA(sizeof(current_dir), current_dir);
+    if (SetCurrentDirectoryA(pThe_path)) {
+        dr_dprintf("*PDForEveryFileRecurse() - NEW DIRECTORY '%s'", pThe_path);
+        strcpy(file_filter, "*");
+        hFindFile = FindFirstFileA(file_filter, &find_data);
+        if (hFindFile != INVALID_HANDLE_VALUE) {
+            do {
+                if (strcmp(find_data.cFileName, ".") != 0 && strcmp(find_data.cFileName, "..") != 0) {
+                    PathCat(found_path, pThe_path, find_data.cFileName);
+                    SetCurrentDirectoryA(current_dir);
+                    if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+                        dr_dprintf("PDForEveryFileRecurse() - Calling action proc with file '%s' in dir '%s'", found_path, current_dir);
+                        pAction_routine(found_path);
+                    } else {
+                        PDForEveryFileRecurse(found_path, pAction_routine);
+                    }
+                    SetCurrentDirectoryA(pThe_path);
+                }
+            } while (FindNextFileA(hFindFile, &find_data) != 0);
+            FindClose(hFindFile);
+        }
+        SetCurrentDirectoryA(current_dir);
+    }
+}
+C2_HOOK_FUNCTION(0x0051d640, PDForEveryFileRecurse)
