@@ -580,3 +580,13 @@ void C2_HOOK_FASTCALL PDForEveryFileRecurse(char* pThe_path, void (C2_HOOK_FASTC
     }
 }
 C2_HOOK_FUNCTION(0x0051d640, PDForEveryFileRecurse)
+
+void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr) {
+    SYSTEMTIME time;
+    char buffer[256];
+
+    GetLocalTime(&time);
+    GetDateFormatA(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &time, NULL, buffer, sizeof(buffer));
+    strcpy(pTimeStr, buffer);
+}
+C2_HOOK_FUNCTION(0x0051da20, PDGetFormattedDate)
