@@ -27,11 +27,6 @@ if(KEEP_ACTIVE_IN_BACKGROUND)
     add_compile_definitions(KEEP_ACTIVE_IN_BACKGROUND)
 endif()
 
-if(EXISTS "${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    include("${CMAKE_BINARY_DIR}/conanbuildinfo.cmake")
-    conan_basic_setup(NO_OUTPUT_DIRS)
-endif()
-
 option(C2_STANDALONE "Build standalone Carmageddon 2 executable" OFF)
 
 if(C2_STANDALONE)
