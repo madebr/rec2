@@ -590,3 +590,13 @@ void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr) {
     strcpy(pTimeStr, buffer);
 }
 C2_HOOK_FUNCTION(0x0051da20, PDGetFormattedDate)
+
+void C2_HOOK_FASTCALL PDGetFormattedTime(char* pTimeStr) {
+    SYSTEMTIME time;
+    char buffer[256];
+
+    GetLocalTime(&time);
+    GetTimeFormatA(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &time, NULL, buffer, sizeof(buffer));
+    strcpy(pTimeStr, buffer);
+}
+C2_HOOK_FUNCTION(0x0051da90, PDGetFormattedTime)
