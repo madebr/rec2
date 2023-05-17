@@ -33,7 +33,9 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gKeyboardBuffer, 20);
 
 C2_HOOK_VARIABLE_DECLARE(int, gPerformanceCounterInitialized);
 C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterStart);
-C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_kHz);
+C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_s);
+C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_ms);
+C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_us);
 
 C2_HOOK_VARIABLE_DECLARE(int, gTimeLastKeyboardInput);
 
