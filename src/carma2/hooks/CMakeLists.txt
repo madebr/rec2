@@ -4,6 +4,8 @@ else()
     add_library(c2_hooks STATIC
         c2_ctype.c
         c2_ctype.h
+        c2_direct.c
+        c2_direct.h
         c2_hooks.c
         c2_hooks.h
         c2_malloc.c
