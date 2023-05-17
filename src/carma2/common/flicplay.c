@@ -600,6 +600,8 @@ void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
     int width;
     int right_edge;
 
+    x = 0;
+    right_edge = 0;
     for (i = 0; i < C2V(gTranslation_count); i++) {
         trans = &C2V(gTranslations)[i];
         if (trans->flic_index == pFlic_info->the_index) {
