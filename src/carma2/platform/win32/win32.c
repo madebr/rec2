@@ -385,10 +385,16 @@ C2_HOOK_FUNCTION(0x0051c520, PDScreenBufferSwap)
 
 int (C2_HOOK_FASTCALL * PDGetTotalTime_original)(void);
 int C2_HOOK_FASTCALL PDGetTotalTime(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 //defined(C2_HOOKS_ENABLED)
     return PDGetTotalTime_original();
 #else
-#error "Not implemented"
+    if (C2V(gPerformanceCounterInitialized)) {
+        LARGE_INTEGER perfCountValue;
+        QueryPerformanceCounter(&perfCountValue);
+        // Is it okay to convert unsigned to int here?
+        return (int)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_kHz).QuadPart);
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051d410, PDGetTotalTime, PDGetTotalTime_original)
