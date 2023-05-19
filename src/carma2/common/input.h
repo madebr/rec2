@@ -5,10 +5,14 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, GEdge_trigger_mode);
+
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 
 int C2_HOOK_FASTCALL AnyKeyDown(void);
 
 void C2_HOOK_FASTCALL WaitForNoKeys(void);
+
+void C2_HOOK_FASTCALL EdgeTriggerModeOn(void);
 
 #endif // REC2_INPUT_H
