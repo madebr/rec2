@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL WaitForNoKeys(void);
 
 void C2_HOOK_FASTCALL EdgeTriggerModeOn(void);
 
+void C2_HOOK_FASTCALL EdgeTriggerModeOff(void);
+
 #endif // REC2_INPUT_H

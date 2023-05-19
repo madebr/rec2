@@ -38,3 +38,8 @@ void C2_HOOK_FASTCALL EdgeTriggerModeOn(void) {
     C2V(gEdge_trigger_mode) = 1;
 }
 C2_HOOK_FUNCTION(0x00484600, EdgeTriggerModeOn)
+
+void C2_HOOK_FASTCALL EdgeTriggerModeOff(void) {
+    C2V(gEdge_trigger_mode) = 0;
+}
+C2_HOOK_FUNCTION(0x00484610, EdgeTriggerModeOff)
