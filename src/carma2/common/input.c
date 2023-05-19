@@ -1,5 +1,7 @@
 #include "input.h"
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gEdge_trigger_mode, 0x0068c1c4);
+
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
 #if defined(C2_HOOKS_ENABLED)
@@ -31,3 +33,8 @@ void C2_HOOK_FASTCALL WaitForNoKeys(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004833b0, WaitForNoKeys, WaitForNoKeys_original)
+
+void C2_HOOK_FASTCALL EdgeTriggerModeOn(void) {
+    C2V(gEdge_trigger_mode) = 1;
+}
+C2_HOOK_FUNCTION(0x00484600, EdgeTriggerModeOn)
