@@ -48,7 +48,7 @@ void C2_HOOK_FASTCALL JoystickDInputDetect(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c410, JoystickDInputDetect, JoystickDInputDetect_original)
 
-void C2_HOOK_FASTCALL KeyScanCodeBegin(void) {
+void C2_HOOK_FASTCALL KeyBegin(void) {
     memset(C2V(key_lut_1), 0, sizeof(C2V(key_lut_1)));
     memset(C2V(key_lut_2), 0, sizeof(C2V(key_lut_2)));
 
@@ -235,7 +235,7 @@ void C2_HOOK_FASTCALL KeyScanCodeBegin(void) {
     C2V(key_lut_3)[117] = 0xff;
     C2V(key_lut_3)[118] = 0x39;
 }
-C2_HOOK_FUNCTION(0x0051ba10, KeyScanCodeBegin)
+C2_HOOK_FUNCTION(0x0051ba10, KeyBegin)
 
 
 void C2_HOOK_FASTCALL KeyDInputBegin(void) {

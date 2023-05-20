@@ -64,7 +64,7 @@ void C2_HOOK_FASTCALL PDInitialiseSystem(void) {
     C2V(gBack_screen) = NULL;
     C2V(gScreen) = NULL;
     ShowCursor(FALSE);
-    KeyScanCodeBegin();
+    KeyBegin();
     KeyDInputBegin();
 }
 C2_HOOK_FUNCTION(0x0051b9f0, PDInitialiseSystem)

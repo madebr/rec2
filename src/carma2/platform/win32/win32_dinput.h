@@ -5,7 +5,7 @@
 
 #include "platform.h"
 
-void C2_HOOK_FASTCALL KeyScanCodeBegin(void);
+void C2_HOOK_FASTCALL KeyBegin(void);
 
 void C2_HOOK_FASTCALL KeyDInputBegin(void);
 
