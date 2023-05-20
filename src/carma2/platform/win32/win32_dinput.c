@@ -245,35 +245,23 @@ void C2_HOOK_FASTCALL Win32InitInputDevice(void) {
 
     hRes = DirectInputCreateA(C2V(gHInstance), DIRECTINPUT_VERSION, &C2V(gDirectInput), NULL);
     if (hRes != S_OK) {
-        dr_dprintf("FATAL ERROR: %s", "Unable to create DirectInput object - please check that DirectX is installed");
-        C2V(gFatalErrorMessageValid) = 1;
-        sprintf(C2V(gFatalErrorMessage), "%s\n%s", "Unable to create DirectInput object - please check that DirectX is installed", "");
-        goto error;
+        PDFatalError("Unable to create DirectInput object - please check that DirectX is installed");
     }
 
     GUID guid_sysKeyboard = GUID_SysKeyboard;
     hRes = IDirectInput_CreateDevice(C2V(gDirectInput), &guid_sysKeyboard, &C2V(gDirectInputDevice), NULL);
     if (hRes != S_OK) {
-        dr_dprintf("FATAL ERROR: %s", "Direct Input: Can't create device");
-        C2V(gFatalErrorMessageValid) = 1;
-        sprintf(C2V(gFatalErrorMessage), "%s\n%s", "Direct Input: Can't create device", "");
-        goto error;
+        PDFatalError("Direct Input: Can't create device");
     }
 
     hRes = IDirectInputDevice_SetDataFormat(C2V(gDirectInputDevice), &c_dfDIKeyboard);
     if (hRes != S_OK) {
-        dr_dprintf("FATAL ERROR: %s", "Direct Input: Can't create device");
-        C2V(gFatalErrorMessageValid) = 1;
-        sprintf(C2V(gFatalErrorMessage), "%s\n%s", "Direct Input: Can't set data format", "");
-        goto error;
+        PDFatalError("Direct Input: Can't create device");
     }
 
     hRes = IDirectInputDevice_SetCooperativeLevel(C2V(gDirectInputDevice), C2V(gHWnd), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
     if (hRes != S_OK) {
-        dr_dprintf("FATAL ERROR: %s", "Direct Input: Can't set keyboard cooperative level");
-        C2V(gFatalErrorMessageValid) = 1;
-        sprintf(C2V(gFatalErrorMessage), "%s\n%s", "Direct Input: Can't set keyboard cooperative level", "");
-        goto error;
+        PDFatalError("Direct Input: Can't set keyboard cooperative level");
     }
 
     hRes = IDirectInputDevice_Acquire(C2V(gDirectInputDevice));
@@ -285,18 +273,5 @@ void C2_HOOK_FASTCALL Win32InitInputDevice(void) {
         LoadJoystickPreferences();
     }
     C2V(gJoystick_deadzone) = 8000;
-    return;
-error:
-    C2V(gExitCode) = 700;
-    if (C2V(gBack_screen) != NULL) {
-        if (C2V(gBack_screen)->pixels != NULL) {
-            C2V(gExitCode) = 700;
-            PDUnlockRealBackScreen();
-        }
-    }
-    if (C2V(gBr_initialized)) {
-        RemoveAllBrenderDevices();
-    }
-    PDShutdownSystem();
 }
 C2_HOOK_FUNCTION(0x0051cbf0, Win32InitInputDevice)
