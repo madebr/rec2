@@ -117,6 +117,11 @@ void C2_HOOK_FASTCALL PDNonFatalError(char* pThe_str) {
 }
 C2_HOOK_FUNCTION(0x0051afb0, PDNonFatalError)
 
+int C2_HOOK_FASTCALL PDIsWindowActive(void) {
+    return C2V(gWindowActiveState) == 1;
+}
+C2_HOOK_FUNCTION(0x0051afd0, PDIsWindowActive)
+
 C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #if defined(C2_HOOKS_ENABLED)
