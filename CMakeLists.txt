@@ -8,6 +8,7 @@ project(rec2 C)
 option(KEEP_ACTIVE_IN_BACKGROUND "Keep the game active when alt-tabbing to another application" OFF)
 option(REC2_VENDORED "Use vendored dependencies" ON)
 option(REC2_WERROR "Treat warnings as errors" OFF)
+option(REC2_FIX_BUGS "Fix rec2 bugs" ON)
 
 if(REC2_VENDORED)
     add_subdirectory(external/libtiff EXCLUDE_FROM_ALL)
