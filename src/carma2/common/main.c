@@ -43,7 +43,7 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     if (!C2V(gCD_fully_installed)) {
         if (PDReadSourceLocation(location)) {
             if (!PDCheckDriveExists(location)) {
-                KeyBegin();
+                PDInitialiseSystem();
                 PDFatalError("Can't find the Carmageddon CD\n");
             }
         }

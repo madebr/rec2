@@ -11,7 +11,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
 
 void C2_HOOK_FASTCALL PDServiceInput(void);
-void C2_HOOK_FASTCALL KeyBegin(void);
+
+void C2_HOOK_FASTCALL PDInitialiseSystem(void);
 
 void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path);
 void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr);
