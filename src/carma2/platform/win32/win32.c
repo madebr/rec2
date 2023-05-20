@@ -63,6 +63,17 @@ C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_us, 0x006
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gExtendedAsciiToNormalAscii, 128, 0x00662150, {
+    ' ', ' ',  ' ',  ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    ' ', '\'', '\'', ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    ' ', '~',  'c',  '$', '*',  'Y', '|', ' ', '"', 'c', 'a', '<', '-', '-', 'R', '-',
+    'o', ' ',  '2',  '3', '\'', 'u', ' ', '.', ',', '1', 'o', '>', ' ', ' ', ' ', '{',
+    'A', 'A',  'A',  'A', 'A',  'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
+    'D', '}',  'O',  'O', 'O',  'O', 'O', 'x', '0', 'U', 'U', 'U', 'U', 'Y', 'b', 'B',
+    'a', 'a',  'a',  'a', 'a',  'a', 'a', 'C', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
+    'd', '}',  'o',  'o', 'o',  'o', 'o', '/', '0', 'u', 'u', 'u', 'u', 'y', 'b', 'y',
+});
+
 void C2_HOOK_FASTCALL PDInitialiseSystem(void) {
     C2V(gBack_screen) = NULL;
     C2V(gScreen) = NULL;
@@ -124,6 +135,17 @@ int C2_HOOK_FASTCALL PDIsWindowInactive(void) {
     return C2V(gWindowActiveState) == 1;
 }
 C2_HOOK_FUNCTION(0x0051afd0, PDIsWindowInactive)
+
+char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
+    if ((unsigned char)pChar > 0x7f) {
+        char c = C2V(gExtendedAsciiToNormalAscii)[(unsigned char)pChar - 128];
+        dr_dprintf("PDConvertToASCIILessThan128() Returning %d", c);
+        return c;
+    }
+    dr_dprintf("PDConvertToASCIILessThan128() Returning %d", pChar);
+    return pChar;
+}
+C2_HOOK_FUNCTION(0x0051afe0, PDConvertToASCIILessThan128)
 
 C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
