@@ -294,6 +294,13 @@ typedef enum {
     kSoundFxPeriodicity_Continuous = 2,
 } tSpecial_volume_soundfx_periodicity_type;
 
+typedef enum tKey_down_result {
+    tKey_down_no = 0,
+    tKey_down_yes = 1,
+    tKey_down_still = 2,
+    tKey_down_repeat = 3
+} tKey_down_result;
+
 typedef struct {
     tSpecial_volume_soundfx_periodicity_type periodicity;
     float periodic1;
