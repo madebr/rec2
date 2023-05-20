@@ -5,6 +5,7 @@
 #include "errors.h"
 #include "globvars.h"
 #include "init.h"
+#include "input.h"
 #include "main.h"
 #include "utility.h"
 
@@ -305,6 +306,16 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
     return res;
 }
 C2_HOOK_FUNCTION(0x0051b0c0, Carma2MainWndProc)
+
+int C2_HOOK_FASTCALL PDGetASCIIFromKey(int pKey) {
+
+    if (PDKeyDown(0)) {
+        return C2V(gASCII_shift_table)[pKey];
+    } else {
+        return C2V(gASCII_table)[pKey];
+    }
+}
+C2_HOOK_FUNCTION(0x0051cab0, PDGetASCIIFromKey)
 
 void C2_HOOK_CDECL Win32ServiceMessages(void) {
     MSG msg;
