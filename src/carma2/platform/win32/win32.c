@@ -63,14 +63,14 @@ C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_us, 0x006
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
 
-void C2_HOOK_FASTCALL KeyBegin(void) {
+void C2_HOOK_FASTCALL PDInitialiseSystem(void) {
     C2V(gBack_screen) = NULL;
     C2V(gScreen) = NULL;
     ShowCursor(FALSE);
     KeyScanCodeBegin();
     KeyDInputBegin();
 }
-C2_HOOK_FUNCTION(0x0051b9f0, KeyBegin)
+C2_HOOK_FUNCTION(0x0051b9f0, PDInitialiseSystem)
 
 void C2_HOOK_FASTCALL PDSetFileVariables(void) {
     C2V(gDir_separator) = "\\";
