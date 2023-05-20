@@ -111,6 +111,12 @@ void C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
 C2_HOOK_FUNCTION_ORIGINAL
 (0x0051af20, PDFatalError, PDFatalError_original)
 
+void C2_HOOK_FASTCALL PDNonFatalError(char* pThe_str) {
+    dr_dprintf("*** ERROR...");
+    dr_dprintf(pThe_str);
+}
+C2_HOOK_FUNCTION(0x0051afb0, PDNonFatalError)
+
 C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #if defined(C2_HOOKS_ENABLED)
