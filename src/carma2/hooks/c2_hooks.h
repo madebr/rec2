@@ -19,7 +19,7 @@
 #define C2_HOOK_ASSERT(condition) do { if (!(condition)) { extern void C2_HOOK_CDECL c2_abort(void); c2_abort(); } } while (0)
 #define C2_HOOK_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
 
-#if defined(_WIN32) && defined(_M_IX86)
+#if defined(_WIN32) && (defined(_M_IX86) || defined(_X86_))
 #define C2_HOOK_CDECL __cdecl
 #define C2_HOOK_FASTCALL __fastcall
 #define C2_HOOK_STDCALL __stdcall
