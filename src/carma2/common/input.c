@@ -53,3 +53,14 @@ int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index, undefined4 pArg2) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482590, PDKeyDown2, PDKeyDown2_original)
+
+int C2_HOOK_FASTCALL PDKeyDown(int pKey_index) {
+    tKey_down_result result;
+
+    result = PDKeyDown2(pKey_index, 0);
+    if (!C2V(gEdge_trigger_mode) || pKey_index <= 10) {
+        return result != tKey_down_no;
+    }
+    return result == tKey_down_yes || result == tKey_down_repeat;
+}
+C2_HOOK_FUNCTION(0x00482550, PDKeyDown)
