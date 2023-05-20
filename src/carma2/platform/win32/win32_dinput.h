@@ -5,6 +5,10 @@
 
 #include "platform.h"
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gASCII_table, 151);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gASCII_shift_table, 151);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gScan_code, 151);
+
 void C2_HOOK_FASTCALL KeyBegin(void);
 
 void C2_HOOK_FASTCALL KeyDInputBegin(void);
