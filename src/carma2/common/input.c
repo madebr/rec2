@@ -43,3 +43,13 @@ void C2_HOOK_FASTCALL EdgeTriggerModeOff(void) {
     C2V(gEdge_trigger_mode) = 0;
 }
 C2_HOOK_FUNCTION(0x00484610, EdgeTriggerModeOff)
+
+int (C2_HOOK_FASTCALL * PDKeyDown2_original)(int pKey_index, undefined4 pArg2);
+int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index, undefined4 pArg2) {
+#if defined(C2_HOOKS_ENABLED)
+    return PDKeyDown2_original(pKey_index, pArg2);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00482590, PDKeyDown2, PDKeyDown2_original)
