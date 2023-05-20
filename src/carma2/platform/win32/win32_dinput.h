@@ -11,6 +11,6 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gScan_code, 151);
 
 void C2_HOOK_FASTCALL KeyBegin(void);
 
-void C2_HOOK_FASTCALL KeyDInputBegin(void);
+void C2_HOOK_FASTCALL Win32InitInputDevice(void);
 
 #endif // C2_WIN32_INPUT_H
