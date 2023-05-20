@@ -17,6 +17,7 @@ void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path);
 void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr);
 void C2_HOOK_FASTCALL PDFatalError(char* pThe_str);
 void C2_HOOK_FASTCALL PDNonFatalError(char* pThe_str);
+int C2_HOOK_FASTCALL PDIsWindowInactive(void);
 void C2_HOOK_FASTCALL PDSetFileVariables(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void);
 void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void);
