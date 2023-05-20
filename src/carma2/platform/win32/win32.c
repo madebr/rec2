@@ -34,7 +34,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFatalErrorMessage, 512, 0x006acc88);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFatalErrorMessageValid, 0x006ad498);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gExitCode, 0x006ad494);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWin32_fatal_error_exit_code, 0x006ad494);
 
 C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd, 0x006ad4c8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gWindowActiveState, 0x006621e0, 2); // FIXME: enum: 0, 1 or 2
@@ -87,11 +87,28 @@ C2_HOOK_FUNCTION(0x0051c700, PDBuildAppPath)
 
 void (C2_HOOK_FASTCALL * PDFatalError_original)(char* pThe_str);
 void C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 //defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     PDFatalError_original(pThe_str);
 #else
-#error "not implemented"
+    dr_dprintf("FATAL ERROR: %s", pThe_str);
+    if (pThe_str == NULL) {
+        pThe_str = "NULL str1";
+    }
+    C2V(gFatalErrorMessageValid) = 1;
+    sprintf(C2V(gFatalErrorMessage), "%s\n%s", pThe_str, "");
+
+    C2V(gWin32_fatal_error_exit_code) = 700;
+    if (C2V(gBack_screen) != NULL) {
+        if (C2V(gBack_screen)->pixels != NULL) {
+            C2V(gWin32_fatal_error_exit_code) = 700;
+            PDUnlockRealBackScreen();
+        }
+    }
+    if (C2V(gBr_initialized)) {
+        RemoveAllBrenderDevices();
+    }
+    PDShutdownSystem();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL
