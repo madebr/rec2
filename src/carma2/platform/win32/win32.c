@@ -65,7 +65,7 @@ void C2_HOOK_FASTCALL PDInitialiseSystem(void) {
     C2V(gScreen) = NULL;
     ShowCursor(FALSE);
     KeyBegin();
-    KeyDInputBegin();
+    Win32InitInputDevice();
 }
 C2_HOOK_FUNCTION(0x0051b9f0, PDInitialiseSystem)
 

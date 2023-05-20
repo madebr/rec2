@@ -238,7 +238,7 @@ void C2_HOOK_FASTCALL KeyBegin(void) {
 C2_HOOK_FUNCTION(0x0051ba10, KeyBegin)
 
 
-void C2_HOOK_FASTCALL KeyDInputBegin(void) {
+void C2_HOOK_FASTCALL Win32InitInputDevice(void) {
     HRESULT hRes;
 
     hRes = DirectInputCreateA(C2V(gHInstance), DIRECTINPUT_VERSION, &C2V(gDirectInput), NULL);
@@ -297,4 +297,4 @@ error:
     }
     PDShutdownSystem();
 }
-C2_HOOK_FUNCTION(0x0051cbf0, KeyDInputBegin)
+C2_HOOK_FUNCTION(0x0051cbf0, Win32InitInputDevice)
