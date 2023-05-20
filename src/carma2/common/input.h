@@ -17,4 +17,6 @@ void C2_HOOK_FASTCALL EdgeTriggerModeOn(void);
 
 void C2_HOOK_FASTCALL EdgeTriggerModeOff(void);
 
+int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index, undefined4 pArg2);
+
 #endif // REC2_INPUT_H
