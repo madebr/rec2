@@ -196,6 +196,11 @@ void C2_HOOK_FASTCALL AttachJoystickButtonInfos(size_t pSize, tWin32_void_voidpt
 }
 C2_HOOK_FUNCTION(0x00459fe0, AttachJoystickButtonInfos)
 
+const char* C2_HOOK_FASTCALL GetCurrentJoystickName(void) {
+    return C2V(gDirectInputJoystickInfos)[C2V(gCurrentDirectInputJoysticksIndex)].productName;
+}
+C2_HOOK_FUNCTION(0x004599d0, GetCurrentJoystickName)
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
