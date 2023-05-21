@@ -1,17 +1,11 @@
 #ifndef C2_SYS_STAT_H
 #define C2_SYS_STAT_H
 
-#include <time.h>
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <stdio.h>
-#include <errno.h>
 
 #if defined(C2_HOOKS_ENABLED)
 
 #include "c2_hooks.h"
-
-#include <sys/stat.h>
 
 #define c2_stat _stat32
 

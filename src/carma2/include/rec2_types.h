@@ -15,7 +15,11 @@ typedef signed int tS32;
 
 typedef int tTWTVFS;
 
-// FIXME: imcomplete type
+// Function callbacks are moved to a header for automatic SRE project generation
+typedef void(C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
+typedef void (C2_HOOK_FASTCALL * tPDForEveryFileRecurse_cbfn)(char*);
+
+// FIXME: incomplete type
 typedef struct tDR_font tDR_font;
 
 typedef struct {
