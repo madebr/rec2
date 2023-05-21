@@ -201,6 +201,11 @@ const char* C2_HOOK_FASTCALL GetCurrentJoystickName(void) {
 }
 C2_HOOK_FUNCTION(0x004599d0, GetCurrentJoystickName)
 
+size_t C2_HOOK_FASTCALL GetCurrentJoystickCountButtons(void) {
+    return C2V(gDirectInputJoystickInfos)[C2V(gCurrentDirectInputJoysticksIndex)].count_buttons;
+}
+C2_HOOK_FUNCTION(0x00459fb0, GetCurrentJoystickCountButtons)
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
