@@ -369,6 +369,16 @@ int C2_HOOK_FASTCALL InitForceFeedback(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00457760, InitForceFeedback, InitForceFeedback_original)
 
+int (C2_HOOK_FASTCALL * ResetDInputJoystickFFB_original)(int pIndex);
+int C2_HOOK_FASTCALL ResetDInputJoystickFFB(int pIndex) {
+#if defined(C2_HOOKS_ENABLED)
+    return ResetDInputJoystickFFB_original(pIndex);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00457ff0, ResetDInputJoystickFFB, ResetDInputJoystickFFB_original)
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
