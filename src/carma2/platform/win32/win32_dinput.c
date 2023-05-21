@@ -232,6 +232,17 @@ void C2_HOOK_FASTCALL CollectJoystickButtonInfo(tButtonJoystickInfo* pInfo) {
 }
 C2_HOOK_FUNCTION(0x0045c370, CollectJoystickButtonInfo)
 
+void (C2_HOOK_FASTCALL * CollectJoystickButtonInfos_original)(void);
+void C2_HOOK_FASTCALL CollectJoystickButtonInfos(void) {
+#if 0 // defined(C2_HOOKS_ENABLED)
+    return JoystickDInputDetect_original();
+#else
+    C2_HOOK_BUG_ON(sizeof(tButtonJoystickInfo) != 0xec);
+    AttachJoystickButtonInfos(sizeof(tButtonJoystickInfo), (void(C2_HOOK_FASTCALL*)(void*))CollectJoystickButtonInfo);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045c410, CollectJoystickButtonInfos, CollectJoystickButtonInfos_original)
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
@@ -244,18 +255,6 @@ int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00458860, JoystickDInputBegin, JoystickDInputBegin_original)
-
-void (C2_HOOK_FASTCALL * JoystickDInputDetect_original)(void);
-void C2_HOOK_FASTCALL JoystickDInputDetect(void) {
-#if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
-    JoystickDInputDetect_original();
-    C2_HOOK_FINISH();
-#else
-#error "not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0045c410, JoystickDInputDetect, JoystickDInputDetect_original)
 
 void C2_HOOK_FASTCALL KeyBegin(void) {
     memset(C2V(gASCII_table), 0, sizeof(C2V(gASCII_table)));
@@ -479,7 +478,7 @@ void C2_HOOK_FASTCALL Win32InitInputDevice(void) {
         dr_dprintf("ERROR: Can't aquire keyboard; HRESULT %x", hRes);
     }
     if (JoystickDInputBegin()) {
-        JoystickDInputDetect();
+        CollectJoystickButtonInfos();
         LoadJoystickPreferences();
     }
     C2V(gJoystick_deadzone) = 8000;
