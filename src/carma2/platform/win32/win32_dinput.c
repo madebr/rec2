@@ -90,6 +90,86 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(DIDATAFORMAT, gJoystickDirectInputDataFormat, 0x
     gJoystickDirectIniputDataFormatObjects,
 });
 
+BOOL C2_HOOK_STDCALL Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, IDirectInputA* pDirectInput) {
+    HRESULT hResult;
+    IDirectInputDeviceA *device;
+    IDirectInputDevice2A *device2;
+    int nb;
+
+    C2_HOOK_ASSERT(sizeof(tJoystickInputState) == 0x50);
+
+    nb = C2V(gCountEnumeratedJoystickDinputDevices);
+    c2_strncpy(C2V(gDirectInputJoystickInfos)[nb].productName, pDeviceInstance->tszProductName, 80);
+    C2V(gDirectInputJoystickInfos)[nb].productName[79] = '\0';
+    switch (pDeviceInstance->dwDevType) {
+        case DIDEVTYPEJOYSTICK_GAMEPAD:
+            C2V(gDirectInputJoystickInfos)[nb].count_buttons = 4;
+            break;
+        case DIDEVTYPEJOYSTICK_WHEEL:
+            C2V(gDirectInputJoystickInfos)[nb].count_buttons = 2;
+            break;
+        default:
+            C2V(gDirectInputJoystickInfos)[nb].count_buttons = 1;
+            break;
+    }
+    hResult = IDirectInput_CreateDevice(pDirectInput, &pDeviceInstance->guidInstance, &device, NULL);
+    if (hResult != DI_OK) {
+        dr_dprintf("Could not create dinput object\n");
+        return DIENUM_CONTINUE;
+    }
+    hResult = IDirectInputDevice_SetDataFormat(device, &C2V(gJoystickDirectInputDataFormat));
+    if (hResult != DI_OK) {
+        dr_dprintf("Could not set dinput device data format\n");
+        IDirectInputDevice2_Release(device);
+        return DIENUM_CONTINUE;
+    }
+    hResult = IDirectInputDevice_QueryInterface(device, &IID_IDirectInputDevice2A,
+                                                (void **)&C2V(gDirectInputJoystickDevices)[nb]);
+    IDirectInputDevice2_Release(device);
+    if (hResult != DI_OK) {
+        dr_dprintf("QueryInterface did not return DI_OK\n");
+        return DIENUM_CONTINUE;
+    }
+    device2 = C2V(gDirectInputJoystickDevices)[nb];
+    if (device2 == NULL) {
+        dr_dprintf("Could not set dinput coop level\n");
+        return DIENUM_STOP;
+    }
+    hResult = IDirectInputDevice2_SetCooperativeLevel(device2, C2V(gHWnd), DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+    if (hResult != DI_OK) {
+        dr_dprintf("Could not set dinput coop level\n");
+        return DIENUM_STOP;
+    }
+    DIPROPRANGE diphRange;
+    diphRange.diph.dwSize = sizeof(diphRange);
+    diphRange.diph.dwHeaderSize = sizeof(diphRange.diph);
+    diphRange.diph.dwObj = offsetof(tJoystickInputState, xaxis);
+    diphRange.diph.dwHow = DIPH_BYOFFSET;
+    diphRange.lMin = 0;
+    diphRange.lMax = 0xffff;
+    hResult = IDirectInputDevice2_SetProperty(device2, DIPROP_RANGE, (DIPROPHEADER*)&diphRange);
+    if (hResult != DI_OK) {
+        dr_dprintf("IDirectInputDevice::SetProperty(DIPH_RANGE)  FAILED\n");
+        IDirectInputDevice2_Release(device2);
+        return DIENUM_CONTINUE;
+    }
+    DIPROPDWORD zoneProp;
+    zoneProp.diph.dwSize = sizeof(zoneProp);
+    zoneProp.diph.dwHeaderSize = sizeof(zoneProp.diph);
+    diphRange.diph.dwObj = offsetof(tJoystickInputState, xaxis);
+    zoneProp.diph.dwHow = DIPH_BYOFFSET;
+    zoneProp.dwData = 1000;
+    hResult = IDirectInputDevice2_SetProperty(device2, DIPROP_DEADZONE, (DIPROPHEADER*)&diphRange);
+    if (hResult != DI_OK) {
+        dr_dprintf("IDirectInputDevice:: SetProperty(DIPH_DEADZONE) FAILED\n");
+        IDirectInputDevice2_Release(device2);
+        return DIENUM_CONTINUE;
+    }
+    C2V(gCountEnumeratedJoystickDinputDevices)++;
+    return DIENUM_CONTINUE;
+}
+C2_HOOK_FUNCTION(0x00459c70, Win32DInputJoystickEnum)
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
