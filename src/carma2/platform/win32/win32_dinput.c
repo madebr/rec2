@@ -8,11 +8,14 @@
 #include "input.h"
 #include "utility.h"
 
+#include "c2_stdlib.h"
+#include "c2_string.h"
+
 #include <windows.h>
 #include <dinput.h>
 
-#include <stdio.h>
-#include <string.h>
+#define MAX_COUNT_JOYSTICKS 16
+#define MAX_COUNT_EFFECTS 30
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gASCII_table, 151, 0x006ad1f8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gASCII_shift_table, 151, 0x006ac588);
@@ -21,6 +24,71 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gScan_code, 151, 0x006b3470);
 C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTINPUTA, gDirectInput, 0x006acc78);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoystick_deadzone, 0x00762280);
+
+C2_HOOK_VARIABLE_IMPLEMENT(IDirectInputA*, gDirectInputJoystickHandle, 0x00686158);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(IDirectInputDevice2A*, gDirectInputJoystickDevices, MAX_COUNT_JOYSTICKS, 0x0079e060);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gJoystickFFB, 0x0068615c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCountEnumeratedJoystickDinputDevices, 0x00686160);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(void*, gDirectInputEffects, MAX_COUNT_EFFECTS, 0x0079e0a0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDirectInputJoystickEnumerated, 0x00686170);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCurrentDirectInputJoysticksIndex, 0x00595f88, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDirectInputJoystickInfo, gDirectInputJoystickInfos, MAX_COUNT_JOYSTICKS, 0x0079d9c0);
+
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(DIOBJECTDATAFORMAT, gJoystickDirectIniputDataFormatObjects, 44, 0x0054d050, {
+    { &GUID_XAxis, offsetof(tJoystickInputState, xaxis), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_AXIS, DIDOI_ASPECTPOSITION },
+    { &GUID_YAxis, offsetof(tJoystickInputState, yaxis), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_AXIS, DIDOI_ASPECTPOSITION },
+    { &GUID_ZAxis, offsetof(tJoystickInputState, zaxis), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_AXIS, DIDOI_ASPECTPOSITION },
+    { &GUID_RyAxis, offsetof(tJoystickInputState, rxAxis), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_AXIS, DIDOI_ASPECTPOSITION },
+    { &GUID_RzAxis, offsetof(tJoystickInputState, ryAxis), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_AXIS, DIDOI_ASPECTPOSITION },
+    { &GUID_RzAxis, offsetof(tJoystickInputState, rzAxis), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_AXIS, DIDOI_ASPECTPOSITION },
+    { &GUID_Slider, offsetof(tJoystickInputState, sliders) + 0 * sizeof(tU32), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_AXIS, DIDOI_ASPECTPOSITION },
+    { &GUID_Slider, offsetof(tJoystickInputState, sliders) + 1 * sizeof(tU32), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_AXIS, DIDOI_ASPECTPOSITION },
+    { &GUID_POV, offsetof(tJoystickInputState, povs) + 0 * sizeof(tU32), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_POV, 0 },
+    { &GUID_POV, offsetof(tJoystickInputState, povs) + 1 * sizeof(tU32), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_POV, 0 },
+    { &GUID_POV, offsetof(tJoystickInputState, povs) + 2 * sizeof(tU32), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_POV, 0 },
+    { &GUID_POV, offsetof(tJoystickInputState, povs) + 3 * sizeof(tU32), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_POV, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  0 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  1 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  2 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  3 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  4 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  5 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  6 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  7 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  8 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) +  9 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 10 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 11 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 12 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 13 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 14 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 15 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 16 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 17 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 18 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 19 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 20 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 21 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 22 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 23 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 24 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 25 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 26 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 27 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 28 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 29 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 30 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+    { NULL, offsetof(tJoystickInputState, buttons) + 31 * sizeof(tU8), DIDFT_OPTIONAL | DIDFT_ANYINSTANCE | DIDFT_BUTTON, 0 },
+});
+
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(DIDATAFORMAT, gJoystickDirectInputDataFormat, 0x0054d310, {
+    sizeof(DIDATAFORMAT),
+    sizeof(DIOBJECTDATAFORMAT),
+    DIDOI_FFACTUATOR,
+    sizeof(tJoystickInputState),
+    REC2_ASIZE(gJoystickDirectIniputDataFormatObjects),
+    gJoystickDirectIniputDataFormatObjects,
+});
 
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
