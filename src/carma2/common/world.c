@@ -240,6 +240,28 @@ int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pLis
 }
 C2_HOOK_FUNCTION(0x00502780, AddTextureFileStemToList);
 
+void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pStorage_space, int pMax_pixelmaps, int pMax_shade_tables, int pMax_materials, int pMax_models, int pMax_sounds) {
+
+    pStorage_space->pixelmaps_count = 0;
+    pStorage_space->shade_tables_count = 0;
+    pStorage_space->materials_count = 0;
+    pStorage_space->models_count = 0;
+    pStorage_space->sounds_count = 0;
+    pStorage_space->unknown = pUnknown;
+    pStorage_space->max_pixelmaps = pMax_pixelmaps;
+    pStorage_space->max_shade_tables = pMax_shade_tables;
+    pStorage_space->max_materials = pMax_materials;
+    pStorage_space->max_models = pMax_models;
+    pStorage_space->max_sounds = pMax_sounds;
+    pStorage_space->pixelmaps = BrMemCalloc(pMax_pixelmaps, sizeof(br_pixelmap*), kMem_stor_space_table);
+    pStorage_space->shade_tables = BrMemCalloc(pMax_shade_tables, sizeof(br_pixelmap*), kMem_stor_space_table);
+    pStorage_space->materials = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
+    pStorage_space->models = BrMemCalloc(pMax_models, sizeof(br_model*), kMem_stor_space_table);
+    pStorage_space->sounds = BrMemCalloc(pMax_sounds, sizeof(int*), kMem_stor_space_table); // FIXME: fill in correct type
+    pStorage_space->materialProps = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
+}
+C2_HOOK_FUNCTION(0x00500d50, InitialiseStorageSpace)
+
 tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {
     int i;
 
