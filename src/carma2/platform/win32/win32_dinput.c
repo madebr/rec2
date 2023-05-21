@@ -206,6 +206,30 @@ size_t C2_HOOK_FASTCALL GetCurrentJoystickCountButtons(void) {
 }
 C2_HOOK_FUNCTION(0x00459fb0, GetCurrentJoystickCountButtons)
 
+void C2_HOOK_FASTCALL CollectJoystickButtonInfo(tButtonJoystickInfo* pInfo) {
+    unsigned int i;
+
+    if (pInfo == NULL) {
+        return;
+    }
+    strcpy(pInfo->productName, GetCurrentJoystickName());
+    pInfo->count_buttons = GetCurrentJoystickCountButtons();
+    for (i = 0; i < REC2_ASIZE(((tButtonJoystickInfo*)NULL)->buttons); i++) {
+        if (i < pInfo->count_buttons) {
+            pInfo->buttons[i] = i;
+        } else {
+            pInfo->buttons[i] = -1;
+        }
+        pInfo->field3_0xd4 = 1;
+        pInfo->field4_0xd8 = 1.0f;
+        pInfo->field5_0xdc = 1.0f;
+        pInfo->field6_0xe0 = 0; /* or 0.f */
+        pInfo->field7_0xe4 = 50;
+        pInfo->field8_0xe8 = 0; /* or 0.f */
+    }
+}
+C2_HOOK_FUNCTION(0x0045c370, CollectJoystickButtonInfo)
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
