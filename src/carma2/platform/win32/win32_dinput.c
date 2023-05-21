@@ -170,6 +170,32 @@ BOOL C2_HOOK_STDCALL Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceIns
 }
 C2_HOOK_FUNCTION(0x00459c70, Win32DInputJoystickEnum)
 
+void C2_HOOK_FASTCALL AttachJoystickButtonInfos(size_t pSize, tWin32_void_voidptr_cbfn pCallback) {
+    int original_index;
+    int i;
+
+    original_index = C2V(gCurrentDirectInputJoysticksIndex);
+    for (i = 0; i < REC2_ASIZE(C2V(gDirectInputJoystickDevices)); i++) {
+        IDirectInputDevice2A *device;
+
+        device = C2V(gDirectInputJoystickDevices)[i];
+        if (device != NULL && C2V(gDirectInputJoystickInfos)[i].data == NULL) {
+            C2V(gCurrentDirectInputJoysticksIndex) = i;
+            if (pSize != 0) {
+                C2V(gDirectInputJoystickInfos)[i].data = c2_malloc(pSize);
+                if (C2V(gDirectInputJoystickInfos)[i].data != NULL) {
+                    C2V(gDirectInputJoystickInfos)[i].sizeData = pSize;
+                }
+            }
+            if (C2V(gDirectInputJoystickInfos)[i].data != NULL) {
+                pCallback(C2V(gDirectInputJoystickInfos)[i].data);
+            }
+        }
+    }
+    C2V(gCurrentDirectInputJoysticksIndex) = original_index;
+}
+C2_HOOK_FUNCTION(0x00459fe0, AttachJoystickButtonInfos)
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
