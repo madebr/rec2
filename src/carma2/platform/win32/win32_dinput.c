@@ -393,13 +393,37 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00458520, RegisterJoystickFFBForces, RegisterJoystic
 
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 // defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     int res = JoystickDInputBegin_original();
     C2_HOOK_FINISH();
     return res;
 #else
-#error "not implemented"
+    int i;
+    if (InitDirectInput()) {
+        return 0;
+    }
+    if (!C2V(gDirectInputJoystickEnumerated)) {
+        C2V(gDirectInputJoystickEnumerated) = 1;
+        if (C2V(gCountEnumeratedJoystickDinputDevices) == 0) {
+            IDirectInput2_EnumDevices(C2V(gDirectInputJoystickHandle), DIDEVTYPE_JOYSTICK, (LPDIENUMDEVICESCALLBACKA)Win32DInputJoystickEnum, C2V(gDirectInputJoystickHandle), DIEDFL_ATTACHEDONLY);
+        }
+        if (C2V(gCountEnumeratedJoystickDinputDevices) != 0) {
+            for (i = 0; i < REC2_ASIZE(C2V(gDirectInputJoystickDevices)); i++) {
+                JoystickDInputGetInfo(i, NULL, NULL);
+                AcquireDInputJoystickDevice(i);
+            }
+            C2V(gCurrentDirectInputJoysticksIndex) = 0;
+        }
+        if (C2V(gCurrentDirectInputJoysticksIndex) < 0) {
+            return 0;
+        }
+        if (InitForceFeedback()) {
+            ResetDInputJoystickFFB(C2V(gCurrentDirectInputJoysticksIndex));
+            RegisterJoystickFFBForces();
+        }
+    }
+    return C2V(gCountEnumeratedJoystickDinputDevices);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00458860, JoystickDInputBegin, JoystickDInputBegin_original)
