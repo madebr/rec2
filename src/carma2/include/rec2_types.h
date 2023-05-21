@@ -215,7 +215,7 @@ typedef struct {
 } tGraf_spec;
 
 typedef struct {
-    int uid; // FIXME: unknown
+    int unknown; // FIXME: unknown
     int models_count;
     int materials_count;
     int shade_tables_count;
@@ -230,8 +230,8 @@ typedef struct {
     br_pixelmap** pixelmaps;
     br_pixelmap** shade_tables;
     br_material** materials;
-    int** soundIds; // FIXME: correct?
-    int** materialProps; // FIXME: correct?
+    int** sounds; // FIXME: correct?
+    br_material** materialProps; // FIXME: correct?
 } tBrender_storage;
 
 typedef struct {
