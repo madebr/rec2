@@ -90,6 +90,124 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(DIDATAFORMAT, gJoystickDirectInputDataFormat, 0x
     gJoystickDirectIniputDataFormatObjects,
 });
 
+static int InitDirectInput(void) {
+    int i;
+
+    if (C2V(gDirectInputJoystickHandle) == NULL) {
+        memset(C2V(gDirectInputJoystickDevices), 0, sizeof(IDirectInputDeviceA *));
+        for (i = 0; i < REC2_ASIZE(C2V(gDirectInputJoystickInfos)); i++) {
+            C2V(gDirectInputJoystickInfos)[i].buttonMask = 0;
+            C2V(gDirectInputJoystickInfos)[i].axisMask = 0;
+            C2V(gDirectInputJoystickInfos)[i].devSubType = 0;
+            C2V(gDirectInputJoystickInfos)[i].productName[0] = '\0';
+            C2V(gDirectInputJoystickInfos)[i].sizeData = 0;
+            C2V(gDirectInputJoystickInfos)[i].data = NULL;
+        }
+        memset(C2V(gDirectInputEffects), 0, sizeof(C2V(gDirectInputEffects)));
+        C2V(gJoystickFFB) = 0;
+        C2V(gCountEnumeratedJoystickDinputDevices) = 0;
+        DirectInputCreateA(GetModuleHandleA(NULL), 0x0500, &C2V(gDirectInputJoystickHandle), NULL);
+        if (C2V(gDirectInputJoystickHandle) == NULL) {
+            return 1;
+        }
+        C2V(gDirectInputJoystickEnumerated) = 0;
+    }
+    return 0;
+}
+
+static void AcquireDInputJoystickDevice(int pIndex) {
+    IDirectInputDevice2A *device;
+
+    device = C2V(gDirectInputJoystickDevices)[pIndex];
+    if (C2V(gDirectInputJoystickHandle) != NULL) {
+        HRESULT hRes;
+        const char *format_msg;
+
+        hRes = IDirectInputDevice2_Acquire(device);
+        if (hRes == DI_OK) {
+            format_msg = "Joystick #%d acquired\n";
+        } else if (hRes == DI_NOEFFECT) {
+            format_msg = "Joystick #%d already acquired\n";
+        } else if (hRes == DIERR_INVALIDPARAM) {
+            format_msg = "Joystick %d DIERR_INVALIDPARAM\n";
+        } else if (hRes == DIERR_OTHERAPPHASPRIO) {
+            format_msg = "Joystick %d DIERR_OTHERAPPHASPRIO\n";
+        } else {
+            format_msg = "Unknown Error acquiring joystick %d\n";
+        }
+        dr_dprintf(format_msg, pIndex);
+    }
+}
+
+tDirectInputJoystickInfo* C2_HOOK_FASTCALL JoystickDInputGetInfo(int pJoystickIndex, tU32* pButtonMask, tU32* pAxisMask) {
+    IDirectInputDevice2A* device;
+    tDirectInputJoystickInfo* info;
+
+    if (pButtonMask != NULL) {
+        *pButtonMask = 0;
+    }
+    if (pAxisMask != NULL) {
+        *pAxisMask = 0;
+    }
+    if (InitDirectInput()) {
+        return NULL;
+    }
+    device = C2V(gDirectInputJoystickDevices)[pJoystickIndex];
+    if (device == NULL) {
+        return NULL;
+    }
+    AcquireDInputJoystickDevice(pJoystickIndex);
+    info = &C2V(gDirectInputJoystickInfos)[pJoystickIndex];
+    if (info->buttonMask == 0 && info->axisMask == 0) {
+        DIDEVCAPS caps;
+        HRESULT hRes;
+        DIDEVICEOBJECTINSTANCE device_obj_descr;
+        tU32 i;
+
+        caps.dwSize = sizeof(caps);
+        hRes = IDirectInputDevice2_GetCapabilities(device, &caps);
+        if (hRes != DI_OK) {
+            return NULL;
+        }
+        if (caps.dwFlags & DIDC_FORCEFEEDBACK) {
+            C2V(gJoystickFFB) |= 1 << pJoystickIndex;
+        }
+        info->count_buttons = caps.dwButtons; // unsure
+        device_obj_descr.dwSize = sizeof(device_obj_descr);
+
+        for (i = 0; i < caps.dwButtons && i < REC2_ASIZE(((tJoystickInputState*)NULL)->buttons); i++) {
+            hRes = IDirectInputDevice2_GetObjectInfo(device, &device_obj_descr,
+                                                     offsetof(tJoystickInputState, buttons) + i, DIPH_BYOFFSET);
+            if (hRes == DI_OK) {
+                info->buttonMask |= 1 << i;
+                if (pButtonMask != NULL) {
+                    *pButtonMask = info->buttonMask; // unsure
+                }
+            }
+        }
+
+        for (i = 0; i < caps.dwAxes && i < 8; i++) {
+            hRes = IDirectInputDevice2_GetObjectInfo(device, &device_obj_descr,
+                                                     sizeof(tU32) * i, DIPH_BYOFFSET);
+            if (hRes == DI_OK) {
+                info->axisMask |= 1 << i;
+                if (pAxisMask != NULL) {
+                    *pAxisMask = info->axisMask; // unsure
+                }
+            }
+        }
+    } else {
+        if (pButtonMask != NULL) {
+            *pButtonMask = info->buttonMask;
+        }
+        if (pAxisMask != NULL) {
+            *pAxisMask = info->axisMask;
+        }
+    }
+    return info;
+}
+C2_HOOK_FUNCTION(0x004589d0, JoystickDInputGetInfo)
+
 BOOL C2_HOOK_STDCALL Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, IDirectInputA* pDirectInput) {
     HRESULT hResult;
     IDirectInputDeviceA *device;
