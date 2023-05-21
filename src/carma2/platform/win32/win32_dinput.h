@@ -4,6 +4,7 @@
 #include "c2_hooks.h"
 
 #include "platform.h"
+#include "win32_types.h"
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gASCII_table, 151);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gASCII_shift_table, 151);
