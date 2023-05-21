@@ -72,6 +72,7 @@ def analyze_funcdef(funcdef: str, warn: typing.Callable[[str], None]) -> Functio
     noreturn = "C2_NORETURN" in funcdef
     vararg = False
     funcdef = funcdef.replace("C2_NORETURN", "")
+    # funcdef = re.sub("(?:^| )const(?:$| )", "", funcdef)
 
     arguments_str = funcdef[funcdef.find("("):].strip()[1:-1].strip()
     if not arguments_str:
@@ -90,7 +91,7 @@ def analyze_funcdef(funcdef: str, warn: typing.Callable[[str], None]) -> Functio
             arguments.append(FunctionArgument(type=argtype, name=argname))
 
     ret_name_str = funcdef[:funcdef.find("(")].strip()
-    ret_str, name_str = re.split(r"[ \t]+", ret_name_str, 1)
+    ret_str, name_str = ret_name_str.rsplit(" ", 1)
     ret_str = ret_str.strip()
     name_str = name_str.strip()
     if callconv is None:

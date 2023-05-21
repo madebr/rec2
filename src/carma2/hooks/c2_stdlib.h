@@ -31,7 +31,7 @@ double C2_HOOK_CDECL c2_strtod(const char* str, char** endptr);
 
 long int C2_HOOK_CDECL c2_strtol(const char* str, char** endptr, int base);
 
-unsigned long int C2_HOOK_CDECL c2_strtoul(const char* str, char** endptr, int base);
+unsigned int C2_HOOK_CDECL c2_strtoul(const char* str, char** endptr, int base);
 
 C2_NORETURN void C2_HOOK_CDECL c2_exit(int status);
 
