@@ -359,6 +359,16 @@ void C2_HOOK_FASTCALL CollectJoystickButtonInfos(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c410, CollectJoystickButtonInfos, CollectJoystickButtonInfos_original)
 
+int (C2_HOOK_FASTCALL * InitForceFeedback_original)(void);
+int C2_HOOK_FASTCALL InitForceFeedback(void) {
+#if defined(C2_HOOKS_ENABLED)
+    return InitForceFeedback_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00457760, InitForceFeedback, InitForceFeedback_original)
+
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if defined(C2_HOOKS_ENABLED)
