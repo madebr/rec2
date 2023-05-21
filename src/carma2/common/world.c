@@ -262,6 +262,17 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
 }
 C2_HOOK_FUNCTION(0x00500d50, InitialiseStorageSpace)
 
+void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage) {
+    BrMemFree(pStorage->pixelmaps);
+    BrMemFree(pStorage->shade_tables);
+    BrMemFree(pStorage->materials);
+    BrMemFree(pStorage->models);
+    BrMemFree(pStorage->sounds);
+    BrMemFree(pStorage->materialProps);
+}
+C2_HOOK_FUNCTION(0x00500e10, DisposeStorageSpace)
+
+
 tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {
     int i;
 
