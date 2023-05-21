@@ -86,6 +86,7 @@ currentProgram.dataTypeManager.addDataType(GENCLIB_DTPARSER.parse("time_t"), Non
 
 def parse_type_string(type_str):
     type_str = type_str.replace("const ", "")
+    type_str = type_str.replace("struct ", "")
     try:
         return DTPARSER.parse(type_str)
     except ghidra.program.model.data.InvalidDataTypeException:
@@ -111,6 +112,12 @@ for hookFunc in hookFuncs:
     func = getFunctionAt(toAddr(hookFunc.address))
     if func is None:
         func = createFunction(toAddr(hookFunc.address), hookFunc.name)
+    if func is None:
+        disassemble(toAddr(hookFunc.address))
+        func = createFunction(toAddr(hookFunc.address), hookFunc.name)
+    if func is None:
+        print("Failed to create a Function for {} at 0x{:08x}".format(hookFunc.name, hookFunc.address))
+        continue
     func.setCallingConvention(str(callconv_converter(hookFunc.details.callconv)))
     func.setSignatureSource(SourceType.USER_DEFINED)
     func.setName(hookFunc.name, SourceType.USER_DEFINED)

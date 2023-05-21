@@ -67,6 +67,9 @@ typedef struct DIDEVICEINSTANCEA {
     DWORD	dwDevType;
     CHAR	tszInstanceName[MAX_PATH];
     CHAR	tszProductName[MAX_PATH];
+    GUID	guidFFDriver;
+    WORD	wUsagePage;
+    WORD	wUsage;
 } DIDEVICEINSTANCEA, *LPDIDEVICEINSTANCEA;
 typedef const DIDEVICEINSTANCEA *LPCDIDEVICEINSTANCEA;
 

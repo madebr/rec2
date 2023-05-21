@@ -36,9 +36,11 @@ cpp.setOutputStream(bos)
 cpp.parse(format(os.path.join(rec2_root, "src/brender/include/brender/br_types.h")))
 cpp.parse(format(os.path.join(rec2_root, "src/carma2/include/rec2_types.h")))
 cpp.parse(format(os.path.join(rec2_root, "src/carma2/hooks/c2_time.h")))
+cpp.parse(format(os.path.join(rec2_root, "src/carma2/hooks/c2_sys/c2_stat.h")))
+cpp.parse(format(os.path.join(rec2_root, "src/carma2/platform/win32/win32_types.h")))
 cpp.parse(format(os.path.join(rec2_root, "scripts/include-sre/dinput.h")))
 
-cpp.getDefinitions().populateDefineEquates(dtMgr)
+cpp.getDefinitions().populateDefineEquates(None, dtMgr)
 
 cParser = CParser(dtMgr, True, [dtMgr])
 bis = java.io.ByteArrayInputStream(bos.toByteArray())
