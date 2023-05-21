@@ -75,6 +75,91 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gExtendedAsciiToNormalAscii, 128, 0x
     'd', '}',  'o',  'o', 'o',  'o', 'o', '/', '0', 'u', 'u', 'u', 'u', 'y', 'b', 'y',
 });
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWin32ActionReplayBufferAllocated, 0x006ad4d4);
+C2_HOOK_VARIABLE_IMPLEMENT(void*, gPDActionReplayBuffer, 0x006ad470);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPDActionReplayBufferSize, 0x006ad474);
+
+void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
+    MEMORYSTATUS memory_status;
+    unsigned int bufferSize;
+    void *buffer;
+
+    if (C2V(gWin32ActionReplayBufferAllocated)) {
+        return;
+    }
+    C2V(gWin32ActionReplayBufferAllocated) = 1;
+    memory_status.dwLength = sizeof(memory_status);
+    GlobalMemoryStatus(&memory_status);
+    dr_dprintf("Win32AllocateActionReplayBuffer(): Memory Status BEFORE Action Replay Allocation:\n"
+               "             dwLength        %u\n"
+               "             dwMemoryLoad    %u\n"
+               "             dwTotalPhys     %u\n"
+               "             dwAvailPhys     %u\n"
+               "             dwTotalPageFile %u\n"
+               "             dwAvailPageFile %u\n"
+               "             dwTotalVirtual  %u\n"
+               "             dwAvailVirtual  %u",
+               memory_status.dwLength,
+               memory_status.dwMemoryLoad,
+               memory_status.dwTotalPhys,
+               memory_status.dwAvailPhys,
+               memory_status.dwTotalPageFile,
+               memory_status.dwAvailPageFile,
+               memory_status.dwTotalVirtual,
+               memory_status.dwAvailVirtual);
+    bufferSize = 8000000;
+    if (memory_status.dwTotalPhys < 24000000) {
+        bufferSize = 500000;
+    } else if (memory_status.dwTotalPhys < 32000000) {
+        bufferSize = 2000000;
+    } else if (memory_status.dwTotalPhys < 48000000) {
+        bufferSize = 4000000;
+    }
+    dr_dprintf("Win32AllocateActionReplayBuffer(): We want %d bytes...", bufferSize);
+    if (memory_status.dwAvailPageFile + memory_status.dwAvailPhys < bufferSize) {
+        bufferSize = memory_status.dwAvailPageFile + memory_status.dwAvailPhys - 0x100000;
+        dr_dprintf("Win32AllocateActionReplayBuffer(): ...but there's only %d bytes available...", bufferSize);
+    }
+    if (bufferSize < 0x10000) {
+        bufferSize = 0x10000;
+        dr_dprintf("Win32AllocateActionReplayBuffer(): ...but we have to have a minimum size of %d bytes...", bufferSize);
+    }
+    while (1) {
+        buffer = BrMemAllocate(bufferSize, kMem_action_replay_buffer);
+        if (buffer != NULL) {
+            break;
+        }
+        bufferSize -= 0x10000;
+    }
+    C2V(gPDActionReplayBuffer) = buffer;
+    if (buffer == NULL) {
+        C2V(gPDActionReplayBufferSize) = 0;
+    } else {
+        C2V(gPDActionReplayBufferSize) = bufferSize;
+        Sleep(1000);
+    }
+    dr_dprintf("Win32AllocateActionReplayBuffer(): Actually allocated %d bytes.", bufferSize);
+    GlobalMemoryStatus(&memory_status);
+    dr_dprintf("Win32AllocateActionReplayBuffer(): Memory Status AFTER Action Replay Allocation:\n"
+               "             dwLength        %u\n"
+               "             dwMemoryLoad    %u\n"
+               "             dwTotalPhys     %u\n"
+               "             dwAvailPhys     %u\n"
+               "             dwTotalPageFile %u\n"
+               "             dwAvailPageFile %u\n"
+               "             dwTotalVirtual  %u\n"
+               "             dwAvailVirtual  %u",
+               memory_status.dwLength,
+               memory_status.dwMemoryLoad,
+               memory_status.dwTotalPhys,
+               memory_status.dwAvailPhys,
+               memory_status.dwTotalPageFile,
+               memory_status.dwAvailPageFile,
+               memory_status.dwTotalVirtual,
+               memory_status.dwAvailVirtual);
+}
+C2_HOOK_FUNCTION(0x0051b810, Win32AllocateActionReplayBuffer)
+
 void C2_HOOK_FASTCALL PDInitialiseSystem(void) {
     C2V(gBack_screen) = NULL;
     C2V(gScreen) = NULL;
