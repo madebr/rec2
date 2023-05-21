@@ -70,7 +70,7 @@ long int C2_HOOK_CDECL c2_strtol(const char* str, char** endptr, int base) {
 }
 C2_HOOK_FUNCTION(0x00578c10, c2_strtol)
 
-unsigned long int C2_HOOK_CDECL c2_strtoul(const char* str, char** endptr, int base) {
+unsigned int C2_HOOK_CDECL c2_strtoul(const char* str, char** endptr, int base) {
     return strtoul(str, endptr, base);
 }
 C2_HOOK_FUNCTION(0x00578ec0, c2_strtoul)
