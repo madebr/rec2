@@ -728,6 +728,29 @@ void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFi
 }
 C2_HOOK_FUNCTION(0x0051d640, PDForEveryFileRecurse)
 
+void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn pAction_routine) {
+    char found_path[256];
+    WIN32_FIND_DATAA find_data;
+    HANDLE hFindFile;
+    char file_filter[6];
+    char current_dir[260];
+
+    GetCurrentDirectoryA(sizeof(current_dir), current_dir);
+    if (SetCurrentDirectoryA(pThe_path)) {
+        strcpy(file_filter, "*.???");
+        hFindFile = FindFirstFileA(file_filter, &find_data);
+        if (hFindFile != INVALID_HANDLE_VALUE) {
+            do {
+                PathCat(found_path, pThe_path, find_data.cFileName);
+                pAction_routine(found_path);
+            } while (FindNextFileA(hFindFile, &find_data) != 0);
+            FindClose(hFindFile);
+        }
+        SetCurrentDirectoryA(current_dir);
+    }
+}
+C2_HOOK_FUNCTION(0x0051c760, PDForEveryFile)
+
 void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
