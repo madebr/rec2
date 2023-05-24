@@ -127,16 +127,17 @@ void C2_HOOK_CDECL c2_rewind(FILE *stream) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005770e0, c2_rewind, rewind_original)
 
-int (C2_HOOK_CDECL * fgetc_original)(FILE * stream);
+int (C2_HOOK_CDECL * c2_fgetc_original)(FILE * stream);
 int C2_HOOK_CDECL c2_fgetc(FILE * stream) {
 
     DEBUG_PRINTF("(%p)", stream);
 #if HOOK_STDIO
-    return fgetc_original(stream);
+    return c2_fgetc_original(stream);
 #else
     return fgetc(stream);
 #endif
 }
+C2_HOOK_FUNCTION_ORIGINAL(0x00576e80, c2_fgetc, c2_fgetc_original)
 
 char* (C2_HOOK_CDECL * fgets_original)(char* str, int num, FILE* stream);
 char* C2_HOOK_CDECL c2_fgets(char* str, int num, FILE* stream) {
