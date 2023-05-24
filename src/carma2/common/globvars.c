@@ -20,6 +20,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrame_period, 0x0074d3e4);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gMisc_storage_space, 0x0075b9c0);
 
+C2_HOOK_VARIABLE_IMPLEMENT(br_font*, gBig_font, 0x0075ba54);
+C2_HOOK_VARIABLE_IMPLEMENT(br_font*, gFont_7, 0x0074d3c4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_font*, gHeadup_font, 0x0074cf9c);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
@@ -76,13 +80,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gMisc_storage_space, 0x0075b9c0);
 //tU32 gKeys_pressed;
 //tSpecial_volume* gDefault_water_spec_vol;
 //float gNet_repair_cost[7];
-//br_font* gFont_7;
 //tU32 gLast_replay_frame_time;
 //tU32 gTag_start_time;
 //tOpponent* gOpponents;
 //tU32 gLast_credit_tick;
 //tBrender_storage gTheir_cars_storage_space;
-//br_font* gHeadup_font;
 //tU32 gRace_finished;
 //tU32 gFrame_start_time;
 //tProgram_state gProgram_state;
@@ -93,7 +95,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gMisc_storage_space, 0x0075b9c0);
 //tU32 gCredit_period_network[7];
 //tBrender_storage gOur_car_storage_space;
 //tU32 gFox_start_time;
-//br_font* gBig_font;
 //tBrender_storage gPedestrians_storage_space;
 //tRace_info gCurrent_race;
 //br_actor* gSelf;
