@@ -145,7 +145,7 @@ void C2_HOOK_FASTCALL TWT_Init(void);
 
 tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path);
 
-void C2_HOOK_FASTCALL TWT_EnumPath(const char* path, tEnumPathCallback pCallback, void* data);
+void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, void* data);
 
 tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
 
