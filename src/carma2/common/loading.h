@@ -149,6 +149,8 @@ void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt);
 
 tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
 
+void C2_HOOK_FASTCALL TWT_UnmountEx(tTWTVFS twt);
+
 void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 
 void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, void* data);
