@@ -579,7 +579,8 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     tPath_name twatFilePath;
     FILE* f;
     tTWTVFS twt;
-    int fileSize;
+    tU32 fileSize;
+    tU32 i;
 
     // file header must be 56 bytes for compatibility with .TWT files
     REC2_BUG_ON(sizeof(tTwatFileHeader) != 56);
@@ -611,7 +612,7 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     c2_fclose(f);
 
     tU8* fileData = (tU8*)&C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[C2V(gTwatVfsMountPoints)[twt].header->nbFiles];
-    for (tU32 i = 0; i < C2V(gTwatVfsMountPoints)[twt].header->nbFiles; i++) {
+    for (i = 0; i < C2V(gTwatVfsMountPoints)[twt].header->nbFiles; i++) {
         C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].data = fileData;
         fileData += (C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].fileSize + 3u) & ~3u;
     }
