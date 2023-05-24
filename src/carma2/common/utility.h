@@ -42,4 +42,6 @@ void C2_HOOK_FASTCALL ExtractPath_Dirname_Stem(const char* path, char* dirPath, 
 
 tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF);
 
+double C2_HOOK_FASTCALL sqr(double pN);
+
 #endif // REC2_UTILITY_H
