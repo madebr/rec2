@@ -1,5 +1,8 @@
 #include "init.h"
 
+#include "globvars.h"
+#include "loading.h"
+
 #include "c2_stdlib.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gBr_initialized, 0x0068be2c);
@@ -73,3 +76,10 @@ void C2_HOOK_FASTCALL SetScreenSize(int pNew_size) {
     C2V(gRender_indent) = pNew_size;
 }
 C2_HOOK_FUNCTION(0x00481ea0, SetScreenSize)
+
+void C2_HOOK_FASTCALL InitBRFonts(void) {
+
+    C2V(gBig_font) = LoadBRFont("BIGFONT.FNT");
+    C2V(gFont_7) = LoadBRFont("FONT7.FNT");
+    C2V(gHeadup_font) = LoadBRFont("HEADUP.FNT");
+}
