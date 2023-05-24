@@ -254,3 +254,9 @@ tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
     return the_size;
 }
 C2_HOOK_FUNCTION(0x00513790, GetFileLength)
+
+double C2_HOOK_FASTCALL sqr(double pN) {
+
+    return pN * pN;
+}
+C2_HOOK_FUNCTION(0x00513510, sqr)
