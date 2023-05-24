@@ -620,6 +620,14 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
 }
 C2_HOOK_FUNCTION(0x004b45b0, TWT_Mount)
 
+void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt) {
+    if (twt >= 0) {
+        BrMemFree(C2V(gTwatVfsMountPoints)[twt].header);
+        C2V(gTwatVfsMountPoints)[twt].header = NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x004b4730, TWT_Unmount)
+
 void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     int twt;
     unsigned int i;
