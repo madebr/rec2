@@ -620,6 +620,28 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
 }
 C2_HOOK_FUNCTION(0x004b45b0, TWT_Mount)
 
+void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
+    int twt;
+    unsigned int i;
+    char buffer[256];
+
+    for (twt = 0; twt < REC2_ASIZE(C2V(gTwatVfsMountPoints)); twt++) {
+        if (C2V(gTwatVfsMountPoints)[twt].header == NULL) {
+            continue;
+        }
+        if (DRStricmp(pThe_path, C2V(gTwatVfsMountPoints)[twt].path) != 0) {
+            continue;
+        }
+        for (i = 0; i < C2V(gTwatVfsMountPoints)[twt].header->nbFiles; i++) {
+            PathCat(buffer, pThe_path, C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].filename);
+            pAction_routine(buffer);
+        }
+        return;
+    }
+    PDForEveryFile(pThe_path, pAction_routine);
+}
+C2_HOOK_FUNCTION(0x004b4c80, DRForEveryFile)
+
 void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
     int twt;
     size_t i;
