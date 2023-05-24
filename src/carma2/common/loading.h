@@ -138,6 +138,8 @@ int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence);
 
 int C2_HOOK_FASTCALL DRftell(FILE* pF);
 
+int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos);
+
 int C2_HOOK_FASTCALL DRrewind(FILE* pF);
 
 /// FIXME: rename to DRxxx
