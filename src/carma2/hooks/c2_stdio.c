@@ -31,6 +31,7 @@ struct c2_iobuf {
     char * _tmpfname;
 };
 #define C2_IOBUF_EOF 0x10
+#define C2_IOBUF_ERROR 0x20
 #endif
 
 #if !defined(HOOK_STDIO)
@@ -78,6 +79,14 @@ int C2_HOOK_CDECL c2_feof(FILE* file) {
     return ((struct c2_iobuf*)file)->_flag & C2_IOBUF_EOF;
 #else
     return feof(file);
+#endif
+}
+
+int C2_HOOK_CDECL c2_ferror(FILE* file) {
+#if HOOK_STDIO
+    return ((struct c2_iobuf*)file)->_flag & C2_IOBUF_ERROR;
+#else
+    return ferror(file);
 #endif
 }
 
