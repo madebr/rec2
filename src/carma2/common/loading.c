@@ -935,6 +935,17 @@ void C2_HOOK_FASTCALL TWT_UnmountEx(tTWTVFS twt) {
 }
 C2_HOOK_FUNCTION(0x004b4e20, TWT_UnmountEx)
 
+void C2_HOOK_FASTCALL ApplyPreviousTiffConversion(void) {
+    int count;
+
+    count = C2V(gDisableTiffConversionStackPos);
+    if (count != 0) { // or > 0 if it is unsigned
+        C2V(gDisableTiffConversionStack)[count] = C2V(gDisableTiffConversion);
+        C2V(gDisableTiffConversion) = C2V(gDisableTiffConversionStack)[count - 1];
+    }
+}
+C2_HOOK_FUNCTION(0x004b4e60, ApplyPreviousTiffConversion)
+
 br_pixelmap* (C2_HOOK_FASTCALL * DRLoadPixelmap_original)(const char* pPath_name);
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name) {
 #if defined(C2_HOOKS_ENABLED)
