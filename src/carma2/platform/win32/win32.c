@@ -695,7 +695,7 @@ void C2_HOOK_FASTCALL MAMSLock(void** pPtr) {
 }
 C2_HOOK_FUNCTION(0x0044ca30, MAMSLock)
 
-void C2_HOOK_FASTCALL PDForEveryFileRecurse(char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
+void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     char found_path[256];
     WIN32_FIND_DATAA find_data;
     HANDLE hFindFile;
