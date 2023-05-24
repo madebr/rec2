@@ -241,11 +241,6 @@ typedef struct {
 } tName_list;
 
 typedef struct {
-    int twtfile;
-    void* stdio;
-} tTWTFILE;
-
-typedef struct {
     tU32 fileSize;
     char filename[48];
     tU8* data;
@@ -259,13 +254,15 @@ typedef struct {
 
 typedef struct {
     tTwatHeader* header;
-    tPath_name path;
+    char path[256];
     tU8* data;
 } tTwatVfsMountPoint;
 
 typedef struct {
-    int used;
-    int unknown[3];
+    tU8* start;
+    tU8* pos;
+    tU8* end;
+    int error;
 } tTwatVfsFile;
 
 typedef struct tWobble_spec {
