@@ -538,6 +538,23 @@ int C2_HOOK_FASTCALL DRferror(FILE* pFile) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4c40, DRferror, DRferror_original)
 
+void (C2_HOOK_FASTCALL * DRclearerr_original)(FILE* pFile);
+void C2_HOOK_FASTCALL DRclearerr(FILE* pFile) {
+#if 0 // defined(C2_HOOKS_ENABLED)
+    CR_clearerr_original(pFile);
+#else
+    tTwatVfsFile* twtFile;
+
+    if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int) pFile - 1];
+        twtFile->error = 0;
+        return;
+    }
+    c2_clearerr(pFile);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4c60, DRclearerr, DRclearerr_original)
+
 int (C2_HOOK_FASTCALL * DRfgetc_original)(FILE* pFile);
 int C2_HOOK_FASTCALL DRfgetc(FILE* pFile) {
 #if 0 // defined(C2_HOOKS_ENABLED)
