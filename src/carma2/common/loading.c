@@ -476,10 +476,14 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b49f0, DRfread, DRfread_original)
 
 br_size_t (C2_HOOK_FASTCALL * DRfwrite_original)(void* buf, br_size_t size, unsigned int n, void* f);
 br_size_t C2_HOOK_FASTCALL DRfwrite(void* buf, br_size_t size, unsigned int n, void* f) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 // defined(C2_HOOKS_ENABLED)
     return DRfwrite_original(buf, size, n, f);
 #else
-#error "not implemented"
+
+    if ((int)f < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        FatalError(kFatalError_WriteAttemptToPackedFile_S, "unknown");
+    }
+    return c2_fwrite(buf, size, n, f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4a80, DRfwrite, DRfwrite_original)
