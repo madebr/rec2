@@ -24,12 +24,12 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPixelmapBufferSize, 0x007663d0);
 
 br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char* glyphName, int loadFromDisk) {
     tPath_name pathBuffer;
-    tTWTFILE* f;
+    FILE* f;
     char* str;
     int i;
 
     PathCat(pathBuffer, path, "PIXIES.P16");
-    f = TWTfopen(pathBuffer, "rb");
+    f = TWT_fopen(pathBuffer, "rb");
     if (f == NULL) {
         PathCat(pathBuffer, path, glyphName);
         return DRLoadUpdatePixelmapFromTif(pathBuffer);

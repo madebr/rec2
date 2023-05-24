@@ -3,6 +3,8 @@
 
 #include "c2_hooks.h"
 
+#include "c2_stdio.h"
+
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(int, gSound_detail_level);
@@ -11,7 +13,7 @@ C2_HOOK_VARIABLE_DECLARE(tS3_outlet_ptr, gEffects_outlet);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
-void C2_HOOK_FASTCALL ParseSoundFxDetails(tTWTFILE* pF, tSpecial_volume_soundfx_data* pSpec);
+void C2_HOOK_FASTCALL ParseSoundFxDetails(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
 void C2_HOOK_FASTCALL StopMusic(void);
 
