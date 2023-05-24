@@ -635,10 +635,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b4b70, DRfseek, DRfseek_original)
 int (C2_HOOK_FASTCALL * DRftell_original)(FILE* pF);
 int C2_HOOK_FASTCALL DRftell(FILE* pF) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0 //defined(C2_HOOKS_ENABLED)
     return DRftell_original(pF);
 #else
-#error "Not implemented"
+    tTwatVfsFile* twtFile;
+
+    if ((int)pF < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int)pF - 1];
+        return twtFile->pos - twtFile->start;
+    }
+    return c2_ftell(pF);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4b00, DRftell, DRftell_original)
