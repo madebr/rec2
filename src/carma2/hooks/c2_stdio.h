@@ -32,6 +32,7 @@ int C2_HOOK_CDECL c2_fputc(int character, FILE* file);
 char* C2_HOOK_CDECL c2_fgets(char* str, size_t num, FILE* stream);
 int C2_HOOK_CDECL c2_fputs(const char* text, FILE* file);
 
+int C2_HOOK_CDECL c2_fgetpos(FILE* file, fpos_t* pos);
 
 int C2_HOOK_CDECL c2_printf(const char* format, ...);
 int C2_HOOK_CDECL c2_fprintf(FILE* file, const char* format, ...);
