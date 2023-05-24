@@ -21,6 +21,7 @@ FILE* C2_HOOK_CDECL c2_fopen(const char* path, const char* mode);
 void C2_HOOK_CDECL c2_fclose(FILE* file);
 int C2_HOOK_CDECL c2_feof(FILE* file);
 int C2_HOOK_CDECL c2_ferror(FILE* file);
+void C2_HOOK_CDECL c2_clearerr(FILE* file);
 
 int C2_HOOK_CDECL c2_fflush(FILE* file);
 
@@ -62,6 +63,7 @@ int C2_HOOK_CDECL c2_vsscanf(const char* str, const char* format, va_list ap);
 #define c2_fclose fclose
 #define c2_feof feof
 #define c2_ferror ferror
+#define c2_clearerr clearerr
 
 #define c2_fflush fflush
 

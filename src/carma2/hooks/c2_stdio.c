@@ -90,6 +90,16 @@ int C2_HOOK_CDECL c2_ferror(FILE* file) {
 #endif
 }
 
+void (C2_HOOK_CDECL * c2_clearerr_original)(FILE* file);
+void C2_HOOK_CDECL c2_clearerr(FILE* file) {
+#if HOOK_STDIO
+    c2_clearerr_original(file);
+#else
+    clearerr(file);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00578690, c2_clearerr, c2_clearerr_original)
+
 static int(C2_HOOK_CDECL * fflush_original)(FILE* file);
 int C2_HOOK_CDECL c2_fflush(FILE* file) {
     DEBUG_PRINTF("(%p)", file);
