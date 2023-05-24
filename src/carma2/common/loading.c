@@ -451,10 +451,25 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b4760, DRfclose, DRfclose_original)
 
 br_size_t (C2_HOOK_FASTCALL * DRfread_original)(void* buf, br_size_t size, unsigned int n, void* f);
 br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, void* f) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 // defined(C2_HOOKS_ENABLED)
     return DRfread_original(buf, size, n, f);
 #else
-#error "not implemented"
+    tTwatVfsFile* twtFile;
+    int totalSize;
+
+    if ((int)f < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int)f - 1];
+        totalSize = size * n;
+        if (twtFile->end - twtFile->pos < totalSize) {
+            n = ((twtFile->end - twtFile->pos) / size) * size;
+            totalSize = size * n;
+        }
+        c2_memcpy(buf, twtFile->pos, totalSize);
+        twtFile->pos += totalSize;
+        twtFile->error = 0;
+        return n;
+    }
+    return c2_fread(buf, size, n, f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b49f0, DRfread, DRfread_original)
