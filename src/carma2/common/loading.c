@@ -624,10 +624,37 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b4900, DRfgets, DRfgets_original)
 int (C2_HOOK_FASTCALL * DRfseek_original)(FILE* pF, int offset, int whence);
 int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0 // defined(C2_HOOKS_ENABLED)
     return DRfseek_original(pF, offset, whence);
 #else
-#error "Not implemented"
+    tTwatVfsFile* twtFile;
+    tU8 *newpos;
+
+    if ((int)pF < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int)pF - 1];
+        switch (whence) {
+        case SEEK_SET:
+            newpos = twtFile->start + offset;
+            break;
+        case SEEK_CUR:
+            newpos = twtFile->pos + offset;
+            break;
+        case SEEK_END:
+            newpos = twtFile->end + offset;
+            break;
+        default:
+            abort(); // FIXME: use better failure function
+            break;
+        }
+        if (twtFile->start <= newpos && newpos <= twtFile->end) {
+            twtFile->pos = newpos;
+            twtFile->error = 0;
+            return 0;
+        } else {
+            twtFile->error = -1;
+        }
+    }
+    return c2_fseek(pF, offset, whence);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4b70, DRfseek, DRfseek_original)
