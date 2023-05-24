@@ -42,6 +42,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_y, 0x00659b30, 6.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_width, 0x00659b34, 128.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_height, 0x00659b38, 80.f);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gColours, 9, 0x0074a620);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRGB_colours, 9, 0x0065cf30, {
+    0x000000,   0xffffff,   0xff0000,   0x00ff00,
+    0x0000ff,   0xffff00,   0x00ffff,   0xff00ff,
+    0xd04702,
+});
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tShadow_level, gShadow_level, 0x0065fdc8, kMiscString_ShadowUsOnly);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDR_font, gFonts, 24, 0x007663e0);
@@ -84,10 +91,34 @@ C2_HOOK_FUNCTION(0x0047b880, ClearEntireScreen)
 
 void (C2_HOOK_FASTCALL * BuildColourTable_original)(br_pixelmap* pPalette);
 void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 // defined(C2_HOOKS_ENABLED)
     BuildColourTable_original(pPalette);
 #else
-#error "not implemented"
+    int i;
+    int j;
+    int nearest_index = 0;
+    int red;
+    int green;
+    int blue;
+    float nearest_distance;
+    float distance;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gRGB_colours)); i++) {
+        nearest_distance = 196608.f;
+        red = (C2V(gRGB_colours)[i] >> 16) & 0xFF;
+        green = (C2V(gRGB_colours)[i] >> 8) & 0xFF;
+        blue = C2V(gRGB_colours)[i] & 0xFF;
+        for (j = 0; j < 256; j++) {
+            distance = (float)(sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 2) - red))
+                + sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j) - blue))
+                + sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 1) - green)));
+            if (distance < nearest_distance) {
+                nearest_index = j;
+                nearest_distance = distance;
+            }
+        }
+        C2V(gColours)[i] = nearest_index;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4ed0, BuildColourTable, BuildColourTable_original)
