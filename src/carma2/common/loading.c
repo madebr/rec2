@@ -699,13 +699,21 @@ int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4b30, DRfsetpos, DRfsetpos_original)
 
-int (C2_HOOK_FASTCALL * DRrewind_original)(FILE* pF);
-int C2_HOOK_FASTCALL DRrewind(FILE* pF) {
+void (C2_HOOK_FASTCALL * DRrewind_original)(FILE* pF);
+void C2_HOOK_FASTCALL DRrewind(FILE* pF) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0 //defined(C2_HOOKS_ENABLED)
     return DRrewind_original(pF);
 #else
-#error "Not implemented"
+    tTwatVfsFile* twtFile;
+
+    if ((int)pF < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int)pF - 1];
+        twtFile->pos = twtFile->start;
+        twtFile->error = 0;
+        return;
+    }
+    c2_rewind(pF);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4be0, DRrewind, DRrewind_original)
