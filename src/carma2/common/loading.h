@@ -181,5 +181,7 @@ void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions)
 
 int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex);
 
+br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName);
+
 #endif //REC2_LOADING_H
 
