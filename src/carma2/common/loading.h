@@ -128,6 +128,8 @@ int C2_HOOK_FASTCALL DRfeof(FILE* pFile);
 
 int C2_HOOK_FASTCALL DRferror(FILE* pFile);
 
+void C2_HOOK_FASTCALL DRclearerr(FILE* pFile);
+
 int C2_HOOK_FASTCALL DRfgetc(FILE* pFile);
 
 int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile);
