@@ -529,10 +529,19 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b48c0, DRfgetc2, DRfgetc2_original)
 
 int (C2_HOOK_FASTCALL * DRungetc_original)(int ch, FILE* file);
 int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 // defined(C2_HOOKS_ENABLED)
     return DRungetc_original(ch, file);
 #else
-#error "Not implemented"
+    tTwatVfsFile* twtFile;
+
+    if ((int)file < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int)file - 1];
+        twtFile->pos--;
+        *twtFile->pos = ch;
+        twtFile->error = 0;
+        return ch;
+    }
+    return c2_ungetc(ch, file);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b49a0, DRungetc, DRungetc_original)
