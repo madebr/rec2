@@ -9,8 +9,13 @@
 C2_HOOK_VARIABLE_DECLARE(tPath_name, gApplication_path);
 C2_HOOK_VARIABLE_DECLARE(const char*, gDir_separator);
 
+//extern br_font* gBig_font;
 C2_HOOK_VARIABLE_DECLARE(int, gAusterity_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gAustere_override);
+
+C2_HOOK_VARIABLE_DECLARE(br_font*, gBig_font);
+C2_HOOK_VARIABLE_DECLARE(br_font*, gFont_7);
+C2_HOOK_VARIABLE_DECLARE(br_font*, gHeadup_font);
 
 //extern int gTyping;
 //extern int gArrow_mode;
@@ -68,13 +73,11 @@ C2_HOOK_VARIABLE_DECLARE(int, gNoCutscenes);
 //extern tU32 gKeys_pressed;
 //extern tSpecial_volume* gDefault_water_spec_vol;
 //extern float gNet_repair_cost[7];
-//extern br_font* gFont_7;
 //extern tU32 gLast_replay_frame_time;
 //extern tU32 gTag_start_time;
 //extern tOpponent* gOpponents;
 //extern tU32 gLast_credit_tick;
 //extern tBrender_storage gTheir_cars_storage_space;
-//extern br_font* gHeadup_font;
 //extern tU32 gRace_finished;
 //extern tU32 gFrame_start_time;
 //extern tProgram_state gProgram_state;
@@ -89,7 +92,6 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gFrame_period);
 //extern tBrender_storage gOur_car_storage_space;
 C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gMisc_storage_space);
 //extern tU32 gFox_start_time;
-//extern br_font* gBig_font;
 //extern tBrender_storage gPedestrians_storage_space;
 //extern tRace_info gCurrent_race;
 //extern br_actor* gSelf;
