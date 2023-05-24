@@ -1168,3 +1168,55 @@ int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0048d7d0, PrintNetOptions)
+
+br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
+    FILE* f;
+    tPath_name the_path;
+    br_font* the_font;
+    tU32 data_size;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(br_font) != 24);
+
+    PathCat(the_path, C2V(gApplication_path), C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
+    PathCat(the_path, the_path, "FONTS");
+    PathCat(the_path, the_path, pName);
+    f = DRfopen(the_path, "rb");
+    PossibleService();
+    the_font = BrMemAllocate(sizeof(br_font), kMem_br_font);
+
+    // we read 0x18 bytes as that is the size of the struct in 32 bit code.
+    c2_fread(the_font, 0x18, 1, f);
+#if !defined(C2_BIG_ENDIAN)
+    the_font->flags = BrSwap32(the_font->flags);
+
+    // swap endianness
+    the_font->glyph_x = the_font->glyph_x >> 8 | the_font->glyph_x << 8;
+    the_font->glyph_y = the_font->glyph_y >> 8 | the_font->glyph_y << 8;
+    the_font->spacing_x = the_font->spacing_x >> 8 | the_font->spacing_x << 8;
+    the_font->spacing_y = the_font->spacing_y >> 8 | the_font->spacing_y << 8;
+#endif
+
+    data_size = 256 * sizeof(br_int_8);
+    the_font->width = BrMemAllocate(data_size, kMem_br_font_wid);
+    DRfread(the_font->width, data_size, 1, f);
+    data_size = 256 * sizeof(br_uint_16);
+    the_font->encoding = BrMemAllocate(data_size, kMem_br_font_enc);
+    DRfread(the_font->encoding, data_size, 1, f);
+#if !defined(C2_BIG_ENDIAN)
+    for (i = 0; i < 256; i++) {
+        the_font->encoding[i] = the_font->encoding[i] >> 8 | the_font->encoding[i] << 8;
+    }
+#endif
+    PossibleService();
+    DRfread(&data_size, sizeof(tU32), 1, f);
+#if !defined(C2_BIG_ENDIAN)
+    data_size = BrSwap32(data_size);
+#endif
+    PossibleService();
+    the_font->glyphs = BrMemAllocate(data_size, kMem_br_font_glyphs);
+    DRfread(the_font->glyphs, data_size, 1u, f);
+    DRfclose(f);
+    return the_font;
+}
+C2_HOOK_FUNCTION(0x00466050, LoadBRFont)
