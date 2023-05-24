@@ -649,6 +649,29 @@ int C2_HOOK_FASTCALL DRftell(FILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4b00, DRftell, DRftell_original)
 
+int (C2_HOOK_FASTCALL * DRfsetpos_original)(FILE* pF, c2_fpos_t* pos);
+int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos) {
+
+#if 0 // defined(C2_HOOKS_ENABLED)
+    return DRfsetpos_original(pF, pos);
+#else
+    tTwatVfsFile* twtFile;
+
+    if ((int)pF < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int)pF - 1];
+        if (twtFile->start <= *(tU8**)pos && *(tU8**)pos <= twtFile->end) {
+            twtFile->pos = *(tU8**)pos;
+            twtFile->error = 0;
+            return 0;
+        }
+        twtFile->error = -1;
+        return -1;
+    }
+    return c2_fsetpos(pF, pos);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4b30, DRfsetpos, DRfsetpos_original)
+
 int (C2_HOOK_FASTCALL * DRrewind_original)(FILE* pF);
 int C2_HOOK_FASTCALL DRrewind(FILE* pF) {
 
