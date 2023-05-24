@@ -145,11 +145,13 @@ void C2_HOOK_FASTCALL TWT_Init(void);
 
 tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path);
 
+void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt);
+
+tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
+
 void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 
 void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, void* data);
-
-tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
 
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name);
 
