@@ -143,7 +143,7 @@ int C2_HOOK_FASTCALL LoadBrenderTextures(const char* pathRoot, const char* textu
 }
 C2_HOOK_FUNCTION(0x0048ea40, LoadBrenderTextures)
 
-void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
+void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
     char s[256];
 
     REC2_BUG_ON(sizeof(tSpecial_volume) != 220);
@@ -319,7 +319,7 @@ br_pixelmap* C2_HOOK_FASTCALL Read_DEFAULT_ACT(int flags, int *errorCode) {
     int i;
     tPath_name path;
     br_uint_8 defaultActBuffer[0x300];
-    tTWTFILE* f;
+    FILE* f;
     br_pixelmap* pm;
     br_uint_8* src;
     br_uint_8* dst;
@@ -1037,7 +1037,7 @@ void UseNativeDirSeparator(char* nativePath, const char* path) {
 }
 
 int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path) {
-    tTWTFILE* f;
+    FILE* f;
     tPath_name linkPath;
     tPath_name nativeLinkPath;
 
