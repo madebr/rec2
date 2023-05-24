@@ -139,8 +139,8 @@ int C2_HOOK_CDECL c2_fgetc(FILE * stream) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00576e80, c2_fgetc, c2_fgetc_original)
 
-char* (C2_HOOK_CDECL * fgets_original)(char* str, int num, FILE* stream);
-char* C2_HOOK_CDECL c2_fgets(char* str, int num, FILE* stream) {
+char* (C2_HOOK_CDECL * fgets_original)(char* str, size_t num, FILE* stream);
+char* C2_HOOK_CDECL c2_fgets(char* str, size_t num, FILE* stream) {
     DEBUG_PRINTF("(%p)", stream);
 #if HOOK_STDIO
     return fgets_original(str, num, stream);
