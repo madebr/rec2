@@ -620,7 +620,7 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
 }
 C2_HOOK_FUNCTION(0x004b45b0, TWT_Mount)
 
-void C2_HOOK_FASTCALL TWT_EnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
+void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
     int twt;
     size_t i;
     tPath_name twt_filePath;
@@ -636,7 +636,7 @@ void C2_HOOK_FASTCALL TWT_EnumPath(const char* path, tEnumPathCallback pCallback
     }
     PDEnumPath(path, pCallback, data);
 }
-C2_HOOK_FUNCTION(0x004b4d30, TWT_EnumPath)
+C2_HOOK_FUNCTION(0x004b4d30, DREnumPath)
 
 tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path) {
     tTWTVFS res;
