@@ -29,7 +29,7 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
     tPath_name path;
     char buffer[256];
     char* str;
-    tTWTFILE* f;
+    FILE* f;
     int count;
     int version;
     int itemCount;
