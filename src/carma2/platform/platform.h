@@ -52,6 +52,8 @@ void C2_HOOK_FASTCALL MAMSLock(void** pPtr);
 
 void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 
+void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn pAction_routine);
+
 void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr);
 
 void C2_HOOK_FASTCALL PDGetFormattedTime(char* pTimeStr);
