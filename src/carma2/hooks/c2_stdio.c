@@ -139,6 +139,18 @@ int C2_HOOK_CDECL c2_fgetc(FILE * stream) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00576e80, c2_fgetc, c2_fgetc_original)
 
+int (C2_HOOK_CDECL * c2_ungetc_original)(int ch, FILE* file);
+int C2_HOOK_CDECL c2_ungetc(int ch, FILE* file) {
+
+    DEBUG_PRINTF("(%p)", stream);
+#if HOOK_STDIO
+    return c2_ungetc_original(ch, file);
+#else
+    return ungetc(ch, file);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00576df0, c2_ungetc, c2_ungetc_original)
+
 char* (C2_HOOK_CDECL * fgets_original)(char* str, size_t num, FILE* stream);
 char* C2_HOOK_CDECL c2_fgets(char* str, size_t num, FILE* stream) {
     DEBUG_PRINTF("(%p)", stream);
