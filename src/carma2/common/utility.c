@@ -42,7 +42,7 @@ int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
 }
 C2_HOOK_FUNCTION(0x00515950, PDCheckDriveExists)
 
-char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS) {
+char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
     char* result;
     char s[256];
     int ch;
@@ -92,7 +92,7 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS) {
 }
 C2_HOOK_FUNCTION(0x00490f30, GetALineWithNoPossibleService)
 
-char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS) {
+char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS) {
 
     PossibleService();
     return GetALineWithNoPossibleService(pF, pS);
@@ -245,7 +245,7 @@ void C2_HOOK_FASTCALL ExtractPath_Dirname_Stem(const char* path, char* dirPath, 
 }
 C2_HOOK_FUNCTION(0x005139a0, ExtractPath_Dirname_Stem)
 
-tU32 C2_HOOK_FASTCALL GetFileLength(tTWTFILE* pF) {
+tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
     tU32 the_size;
 
     DRfseek(pF, 0, SEEK_END);

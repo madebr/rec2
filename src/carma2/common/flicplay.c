@@ -807,7 +807,7 @@ void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
 C2_HOOK_FUNCTION(0x00462a70, UnlockFlic)
 
 int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) {
-    tTWTFILE* f;
+    FILE* f;
     tPath_name the_path;
 
     if (*pData != NULL) {
@@ -1139,7 +1139,7 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 #if 0 //defined(C2_HOOKS_ENABLED)
     LoadInterfaceStrings_original();
 #else
-    tTWTFILE* f;
+    FILE* f;
     char s[256];
     char s2[256];
     char* str;
@@ -1150,7 +1150,7 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 
     C2V(gTranslation_count) = 0;
     PathCat(the_path, C2V(gApplication_path), "TRNSLATE.TXT");
-    f = TWTfopen(the_path, "rt");
+    f = TWT_fopen(the_path, "rt");
     if (f == NULL) {
         return;
     }
