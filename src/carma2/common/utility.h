@@ -6,6 +6,8 @@
 
 #include "c2_hooks.h"
 
+#include "c2_stdio.h"
+
 #include <stdint.h>
 
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void);
@@ -14,9 +16,9 @@ void C2_HOOK_FASTCALL StringToUpper(char* dest, const char* src);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(char* pThe_path);
 
-char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS);
+char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
-char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS);
+char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS);
 
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
 
@@ -38,6 +40,6 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbf
 
 void C2_HOOK_FASTCALL ExtractPath_Dirname_Stem(const char* path, char* dirPath, char* stemPath);
 
-tU32 C2_HOOK_FASTCALL GetFileLength(tTWTFILE* pF);
+tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF);
 
 #endif // REC2_UTILITY_H

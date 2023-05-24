@@ -16,14 +16,14 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line2[80];
     char line3[80];
     char path_file[80];
-    tTWTFILE* fp;
+    FILE* fp;
 
     strcpy(path_file, C2V(gApplication_path));
     strcat(path_file, (char*)C2V(gDir_separator));
     strcat(path_file, "PATHS.TXT");
 
     if (PDCheckDriveExists(path_file)) {
-        fp = TWTfopen(path_file, "rt");
+        fp = TWT_fopen(path_file, "rt");
         if (fp == NULL) {
             return;
         }
@@ -43,8 +43,8 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
 C2_HOOK_FUNCTION(0x00454f40, UsePathFileToDetermineIfFullInstallation)
 
 
-void (C2_HOOK_FASTCALL * ParseSoundFxDetails_original)(tTWTFILE* pF, tSpecial_volume_soundfx_data* pSpec);
-void C2_HOOK_FASTCALL ParseSoundFxDetails(tTWTFILE* pF, tSpecial_volume_soundfx_data* pSpec) {
+void (C2_HOOK_FASTCALL * ParseSoundFxDetails_original)(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
+void C2_HOOK_FASTCALL ParseSoundFxDetails(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
 #if defined(C2_HOOKS_ENABLED)
     ParseSoundFxDetails_original(pF, pSpec);
 #else

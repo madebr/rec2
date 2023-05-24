@@ -98,45 +98,43 @@ tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr);
 
 void C2_HOOK_FASTCALL MemSkipBytes(char** pPtr, int pBytes_to_skip);
 
-int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
+int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_list, int pCount);
 
-int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF);
+int C2_HOOK_FASTCALL GetAnInt(FILE* pF);
 
-void C2_HOOK_FASTCALL GetPairOfInts(tTWTFILE* pF, int* pF1, int* pF2);
+void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2);
 
-void C2_HOOK_FASTCALL GetThreeInts(tTWTFILE* pF, int* pF1, int* pF2, int* pF3);
+void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3);
 
-float C2_HOOK_FASTCALL GetAFloat(tTWTFILE* pF);
+float C2_HOOK_FASTCALL GetAFloat(FILE* pF);
 
-float C2_HOOK_FASTCALL GetAScalar(tTWTFILE* pF);
+float C2_HOOK_FASTCALL GetAScalar(FILE* pF);
 
-void C2_HOOK_FASTCALL GetThreeFloats(tTWTFILE * pF, float* pF1, float* pF2, float* pF3);
+void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* pF3);
 
-void C2_HOOK_FASTCALL GetAString(tTWTFILE* pF, char* pString);
+void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 
-tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
+FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
-tTWTFILE* C2_HOOK_FASTCALL TWTfopen(const char* pFilename, const char* pMode);
-
-void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile);
+void C2_HOOK_FASTCALL DRfclose(FILE* pFile);
 
 br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, void* f);
 
 br_size_t C2_HOOK_FASTCALL DRfwrite(void* buf, br_size_t size, unsigned int n, void* f);
 
-int C2_HOOK_FASTCALL DRfeof(tTWTFILE* pFile);
+int C2_HOOK_FASTCALL DRfeof(FILE* pFile);
 
-int C2_HOOK_FASTCALL DRfgetc(tTWTFILE* pFile);
+int C2_HOOK_FASTCALL DRfgetc(FILE* pFile);
 
-int C2_HOOK_FASTCALL DRungetc(int ch, tTWTFILE* file);
+int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file);
 
-char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, tTWTFILE* pFile);
+char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, FILE* pFile);
 
-int C2_HOOK_FASTCALL DRfseek(tTWTFILE* pF, int offset, int whence);
+int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence);
 
-int C2_HOOK_FASTCALL DRftell(tTWTFILE* pF);
+int C2_HOOK_FASTCALL DRftell(FILE* pF);
 
-int C2_HOOK_FASTCALL DRrewind(tTWTFILE* pF);
+int C2_HOOK_FASTCALL DRrewind(FILE* pF);
 
 /// FIXME: rename to DRxxx
 tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file);
@@ -146,6 +144,8 @@ void C2_HOOK_FASTCALL TWT_Init(void);
 tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path);
 
 void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt);
+
+FILE* C2_HOOK_FASTCALL TWT_fopen(const char* pPath, const char* mode);
 
 tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
 
@@ -163,7 +163,7 @@ void C2_HOOK_FASTCALL LoadHeadupImages(void);
 
 void C2_HOOK_FASTCALL LoadMiscStrings(void);
 
-void C2_HOOK_FASTCALL ReadNetworkSettings(tTWTFILE* pF, tNet_game_options* pOptions);
+void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions);
 
 int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex);
 

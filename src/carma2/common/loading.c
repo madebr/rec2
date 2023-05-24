@@ -27,7 +27,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisableTiffConversionStack, 2, 0x00692068
 
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_hither, 0x0074d3e8);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_cockpit_hither, 0x007634ac);
-C2_HOOK_VARIABLE_IMPLEMENT(tTWTFILE*, gTempFile, 0x0068c6ec);
+C2_HOOK_VARIABLE_IMPLEMENT(FILE*, gTempFile, 0x0068c6ec);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_angle, 0x0074d354);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gHeadupBackgroundBrightness, 0x0079ec14);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInitial_rank, 0x0074b76c);
@@ -331,7 +331,7 @@ void C2_HOOK_FASTCALL MemSkipBytes(char** pPtr, int pBytes_to_skip) {
 }
 C2_HOOK_FUNCTION(0x0048fa60, MemSkipBytes)
 
-int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount) {
+int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_list, int pCount) {
     int i;
     char s[256];
     char* str;
@@ -351,7 +351,7 @@ int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pStr
 }
 C2_HOOK_FUNCTION(0x0048fa70, GetALineAndInterpretCommand)
 
-int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF) {
+int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
     char s[256];
     int value;
     char* str;
@@ -363,7 +363,7 @@ int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF) {
 }
 C2_HOOK_FUNCTION(0x0048fb00, GetAnInt)
 
-void C2_HOOK_FASTCALL GetPairOfInts(tTWTFILE* pF, int* pF1, int* pF2) {
+void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2) {
     char s[256];
     char* str;
 
@@ -375,7 +375,7 @@ void C2_HOOK_FASTCALL GetPairOfInts(tTWTFILE* pF, int* pF1, int* pF2) {
 }
 C2_HOOK_FUNCTION(0x0048fdc0, GetPairOfInts)
 
-void C2_HOOK_FASTCALL GetThreeInts(tTWTFILE* pF, int* pF1, int* pF2, int* pF3) {
+void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
     char s[256];
     char* str;
 
@@ -389,8 +389,8 @@ void C2_HOOK_FASTCALL GetThreeInts(tTWTFILE* pF, int* pF1, int* pF2, int* pF3) {
 }
 C2_HOOK_FUNCTION(0x0048fe30, GetThreeInts)
 
-float (C2_HOOK_FASTCALL * GetAFloat_original)(tTWTFILE* pF);
-float C2_HOOK_FASTCALL GetAFloat(tTWTFILE* pF) {
+float (C2_HOOK_FASTCALL * GetAFloat_original)(FILE* pF);
+float C2_HOOK_FASTCALL GetAFloat(FILE* pF) {
 #if defined(C2_HOOKS_ENABLED)
     return GetAFloat_original(pF);
 #else
@@ -399,12 +399,12 @@ float C2_HOOK_FASTCALL GetAFloat(tTWTFILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004900e0, GetAFloat, GetAFloat_original)
 
-float C2_HOOK_FASTCALL GetAScalar(tTWTFILE* pF) {
+float C2_HOOK_FASTCALL GetAScalar(FILE* pF) {
     return GetAFloat(pF);
 }
 C2_HOOK_FUNCTION(0x0048fb80, GetAScalar)
 
-void C2_HOOK_FASTCALL GetThreeFloats(tTWTFILE * pF, float* pF1, float* pF2, float* pF3) {
+void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* pF3) {
     char s[256];
     char* str;
 
@@ -418,8 +418,8 @@ void C2_HOOK_FASTCALL GetThreeFloats(tTWTFILE * pF, float* pF1, float* pF2, floa
 }
 C2_HOOK_FUNCTION(0x0048fc90, GetThreeFloats)
 
-void (C2_HOOK_FASTCALL * GetAString_original)(tTWTFILE* pF, char* pString);
-void C2_HOOK_FASTCALL GetAString(tTWTFILE* pF, char* pString) {
+void (C2_HOOK_FASTCALL * GetAString_original)(FILE* pF, char* pString);
+void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
 #if defined(C2_HOOKS_ENABLED)
     GetAString_original(pF, pString);
 #else
@@ -428,10 +428,10 @@ void C2_HOOK_FASTCALL GetAString(tTWTFILE* pF, char* pString) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00490630, GetAString, GetAString_original)
 
-tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
-tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
+FILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
+FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
-    tTWTFILE* res = DRfopen_original(pFilename, pMode);
+    FILE* res = DRfopen_original(pFilename, pMode);
     return res;
 #else
 #error "not implemented"
@@ -439,19 +439,8 @@ tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491170, DRfopen, DRfopen_original)
 
-tTWTFILE* (C2_HOOK_FASTCALL * TWTfopen_original)(const char* pFilename, const char* pMode);
-tTWTFILE* C2_HOOK_FASTCALL TWTfopen(const char* pFilename, const char* pMode) {
-#if defined(C2_HOOKS_ENABLED)
-    tTWTFILE* res = TWTfopen_original(pFilename, pMode);
-    return res;
-#else
-#error "not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004b4780, TWTfopen, TWTfopen_original)
-
-void (C2_HOOK_FASTCALL * DRfclose_original)(tTWTFILE* pFile);
-void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile) {
+void (C2_HOOK_FASTCALL * DRfclose_original)(FILE* pFile);
+void C2_HOOK_FASTCALL DRfclose(FILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
     DRfclose_original(pFile);
 #else
@@ -480,8 +469,8 @@ br_size_t C2_HOOK_FASTCALL DRfwrite(void* buf, br_size_t size, unsigned int n, v
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4a80, DRfwrite, DRfwrite_original)
 
-int (C2_HOOK_FASTCALL * DRfeof_original)(tTWTFILE* pFile);
-int C2_HOOK_FASTCALL DRfeof(tTWTFILE* pFile) {
+int (C2_HOOK_FASTCALL * DRfeof_original)(FILE* pFile);
+int C2_HOOK_FASTCALL DRfeof(FILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
     return DRfeof_original(pFile);
 #else
@@ -490,8 +479,8 @@ int C2_HOOK_FASTCALL DRfeof(tTWTFILE* pFile) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4c10, DRfeof, DRfeof_original)
 
-int (C2_HOOK_FASTCALL * DRfgetc_original)(tTWTFILE* pFile);
-int C2_HOOK_FASTCALL DRfgetc(tTWTFILE* pFile) {
+int (C2_HOOK_FASTCALL * DRfgetc_original)(FILE* pFile);
+int C2_HOOK_FASTCALL DRfgetc(FILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
     return DRfgetc_original(pFile);
 #else
@@ -500,8 +489,8 @@ int C2_HOOK_FASTCALL DRfgetc(tTWTFILE* pFile) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4880, DRfgetc, DRfgetc_original)
 
-int (C2_HOOK_FASTCALL * DRungetc_original)(int ch, tTWTFILE* file);
-int C2_HOOK_FASTCALL DRungetc(int ch, tTWTFILE* file) {
+int (C2_HOOK_FASTCALL * DRungetc_original)(int ch, FILE* file);
+int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file) {
 #if defined(C2_HOOKS_ENABLED)
     return DRungetc_original(ch, file);
 #else
@@ -510,8 +499,8 @@ int C2_HOOK_FASTCALL DRungetc(int ch, tTWTFILE* file) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b49a0, DRungetc, DRungetc_original)
 
-char* (C2_HOOK_FASTCALL * DRfgets_original)(char* buffer, br_size_t size, tTWTFILE* pFile);
-char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, tTWTFILE* pFile) {
+char* (C2_HOOK_FASTCALL * DRfgets_original)(char* buffer, br_size_t size, FILE* pFile);
+char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, FILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
     return DRfgets_original(buffer, size, pFile);
 #else
@@ -520,8 +509,8 @@ char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, tTWTFILE* pFile) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4900, DRfgets, DRfgets_original)
 
-int (C2_HOOK_FASTCALL * DRfseek_original)(tTWTFILE* pF, int offset, int whence);
-int C2_HOOK_FASTCALL DRfseek(tTWTFILE* pF, int offset, int whence) {
+int (C2_HOOK_FASTCALL * DRfseek_original)(FILE* pF, int offset, int whence);
+int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence) {
 
 #if defined(C2_HOOKS_ENABLED)
     return DRfseek_original(pF, offset, whence);
@@ -531,8 +520,8 @@ int C2_HOOK_FASTCALL DRfseek(tTWTFILE* pF, int offset, int whence) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4b70, DRfseek, DRfseek_original)
 
-int (C2_HOOK_FASTCALL * DRftell_original)(tTWTFILE* pF);
-int C2_HOOK_FASTCALL DRftell(tTWTFILE* pF) {
+int (C2_HOOK_FASTCALL * DRftell_original)(FILE* pF);
+int C2_HOOK_FASTCALL DRftell(FILE* pF) {
 
 #if defined(C2_HOOKS_ENABLED)
     return DRftell_original(pF);
@@ -542,8 +531,8 @@ int C2_HOOK_FASTCALL DRftell(tTWTFILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4b00, DRftell, DRftell_original)
 
-int (C2_HOOK_FASTCALL * DRrewind_original)(tTWTFILE* pF);
-int C2_HOOK_FASTCALL DRrewind(tTWTFILE* pF) {
+int (C2_HOOK_FASTCALL * DRrewind_original)(FILE* pF);
+int C2_HOOK_FASTCALL DRrewind(FILE* pF) {
 
 #if defined(C2_HOOKS_ENABLED)
     return DRrewind_original(pF);
@@ -564,10 +553,14 @@ tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file) {
 C2_HOOK_FUNCTION_ORIGINAL(0x0048f830, TWT_ReadBinaryU32, TWT_ReadBinaryU32_original)
 
 void C2_HOOK_FASTCALL TWT_Init(void) {
-    for(int i = 0; i < 50; i++) {  // FIXME: use array sizeof
-        C2V(gTwatVfsFiles)[i].used = 0;
+    size_t i;
+
+    C2_HOOK_BUG_ON(sizeof(tTwatVfsMountPoint) != 264);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gTwatVfsFiles)); i++) {
+        C2V(gTwatVfsFiles)[i].start = NULL;
     }
-    for(int i = 0; i < 5; i++) {  // FIXME: use array sizeof
+    for (i = 0; i < REC2_ASIZE(C2V(gTwatVfsMountPoints)); i++) {
         C2V(gTwatVfsMountPoints)[i].header = NULL;
     }
 
@@ -627,6 +620,43 @@ void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt) {
     }
 }
 C2_HOOK_FUNCTION(0x004b4730, TWT_Unmount)
+
+FILE* C2_HOOK_FASTCALL TWT_fopen(const char* pPath, const char* mode) {
+    int twt;
+    unsigned int i;
+    int file_index;
+    size_t twt_path_len;
+
+    C2_HOOK_BUG_ON(sizeof(tTwatVfsFile) != 16);
+    C2_HOOK_BUG_ON(sizeof(tTwatFileHeader) != 56);
+
+    for (twt = 0; twt < REC2_ASIZE(C2V(gTwatVfsMountPoints)); twt++) {
+        if (C2V(gTwatVfsMountPoints)[twt].header == NULL) {
+            continue;
+        }
+        if (c2_strstr(pPath, C2V(gTwatVfsMountPoints)[twt].path) != pPath) {
+            continue;
+        }
+        twt_path_len = c2_strlen(C2V(gTwatVfsMountPoints)[twt].path);
+        for (i = 0; i < C2V(gTwatVfsMountPoints)[twt].header->nbFiles; i++) {
+            if (DRStricmp(C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].filename, &pPath[twt_path_len + 1]) == 0) {
+                for (file_index = 0; file_index < REC2_ASIZE(C2V(gTwatVfsFiles)); file_index++) {
+                    if (C2V(gTwatVfsFiles)[file_index].start != NULL) {
+                        continue;
+                    }
+                    C2V(gTwatVfsFiles)[file_index].start = C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].data;
+                    C2V(gTwatVfsFiles)[file_index].pos = C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].data;
+                    C2V(gTwatVfsFiles)[file_index].end = C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].data + C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].fileSize;
+                    C2V(gTwatVfsFiles)[file_index].error = 0;
+                    return (FILE*)(file_index + 1);
+                }
+                return NULL;
+            }
+        }
+    }
+    return c2_fopen(pPath, mode);
+}
+C2_HOOK_FUNCTION(0x004b4780, TWT_fopen)
 
 void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     int twt;
@@ -714,7 +744,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     PathCat(the_path, C2V(gApplication_path), "ACTORS");
     PathCat(the_path, the_path, "PROG.ACT");
 
-    C2V(gTempFile) = TWTfopen(the_path, "rb");
+    C2V(gTempFile) = TWT_fopen(the_path, "rb");
     if (C2V(gTempFile) != NULL) {
         DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
         DRfclose(C2V(gTempFile));
@@ -789,7 +819,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00486ef0, LoadGeneralParameters, LoadGeneralParameters_original)
 
 void C2_HOOK_FASTCALL LoadKeyMapping(void) {
-    tTWTFILE* f;
+    FILE* f;
     tPath_name the_path;
     int i;
 
@@ -828,7 +858,7 @@ C2_HOOK_FUNCTION(0x0048c150, LoadHeadupImages)
 
 void C2_HOOK_FASTCALL LoadMiscStrings(void) {
     int i;
-    tTWTFILE *f;
+    FILE *f;
     char s[256];
     tPath_name the_path;
 
@@ -867,7 +897,7 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
 }
 C2_HOOK_FUNCTION(0x0048cfc0, LoadMiscStrings)
 
-void C2_HOOK_FASTCALL ReadNetworkSettings(tTWTFILE* pF, tNet_game_options* pOptions) {
+void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions) {
 
     pOptions->enable_text_messages = GetAnInt(pF);
     pOptions->show_players_on_map = GetAnInt(pF);

@@ -3,6 +3,8 @@
 
 #include "c2_hooks.h"
 
+#include "c2_stdio.h"
+
 #include "rec2_types.h"
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
@@ -29,7 +31,7 @@ int C2_HOOK_FASTCALL GetAccessoryRendering(void);
 
 int C2_HOOK_FASTCALL LoadBrenderTextures(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity);
 
-void C2_HOOK_FASTCALL ParseSpecialVolume(tTWTFILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx);
+void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx);
 
 int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list *pList);
 
