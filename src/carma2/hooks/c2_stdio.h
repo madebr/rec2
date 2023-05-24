@@ -26,7 +26,7 @@ int C2_HOOK_CDECL c2_fseek(FILE *stream, int offset, int whence);
 void C2_HOOK_CDECL c2_rewind(FILE *stream);
 
 int C2_HOOK_CDECL c2_fgetc(FILE * stream);
-char* C2_HOOK_CDECL c2_fgets(char* str, int num, FILE* stream);
+char* C2_HOOK_CDECL c2_fgets(char* str, size_t num, FILE* stream);
 int C2_HOOK_CDECL c2_fputc(int character, FILE* file);
 int C2_HOOK_CDECL c2_fputs(const char* text, FILE* file);
 

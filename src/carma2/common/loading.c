@@ -539,10 +539,38 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b49a0, DRungetc, DRungetc_original)
 
 char* (C2_HOOK_FASTCALL * DRfgets_original)(char* buffer, br_size_t size, FILE* pFile);
 char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, FILE* pFile) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 // defined(C2_HOOKS_ENABLED)
     return DRfgets_original(buffer, size, pFile);
 #else
-#error "not implemented"
+    tTwatVfsFile* twtFile;
+    char c;
+    char* b;
+    size_t i;
+
+    if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int)pFile - 1];
+        b = buffer;
+        for (i = 0; i < size; i++) {
+            c = (char)*twtFile->pos;
+            twtFile->pos++;
+            if (c == -1) {
+                *b = '\0';
+                twtFile->error = -1;
+                return NULL;
+            }
+            *b = c;
+            b++;
+            // FIXME: move this check above?
+            if (c == '\n' || twtFile->pos >= twtFile->end) {
+                break;
+            }
+        }
+        *b = '\0';
+        twtFile->error = 0;
+        return buffer;
+    }
+    return c2_fgets(buffer, size, pFile);
+
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4900, DRfgets, DRfgets_original)
