@@ -946,6 +946,14 @@ void C2_HOOK_FASTCALL ApplyPreviousTiffConversion(void) {
 }
 C2_HOOK_FUNCTION(0x004b4e60, ApplyPreviousTiffConversion)
 
+void C2_HOOK_FASTCALL ApplyTopTiffConversion(void) {
+
+    if (C2V(gDisableTiffConversionStackPos) != 0) { // or > 0 if it is unsigned
+        C2V(gDisableTiffConversion) = C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackPos)];
+    }
+}
+C2_HOOK_FUNCTION(0x004b4e90, ApplyTopTiffConversion)
+
 br_pixelmap* (C2_HOOK_FASTCALL * DRLoadPixelmap_original)(const char* pPath_name);
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name) {
 #if defined(C2_HOOKS_ENABLED)
