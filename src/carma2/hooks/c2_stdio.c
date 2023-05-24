@@ -195,6 +195,17 @@ int C2_HOOK_CDECL c2_fgetpos(FILE* file, fpos_t* pos) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005772c0, c2_fgetpos, c2_fgetpos_original);
 
+int (C2_HOOK_CDECL * c2_fsetpos_original)(FILE* file, fpos_t* pos);
+int C2_HOOK_CDECL c2_fsetpos(FILE* file, fpos_t* pos) {
+    DEBUG_PRINTF("(%p, %p)", file, pos);
+#if HOOK_STDIO
+    return c2_fsetpos_original(file, pos);
+#else
+    return fsetpos(file, pos);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005772a0, c2_fsetpos, c2_fsetpos_original);
+
 static int (C2_HOOK_CDECL * printf_original)(const char* format, ...);
 int C2_HOOK_CDECL c2_printf(const char* format, ...) {
     va_list ap;
