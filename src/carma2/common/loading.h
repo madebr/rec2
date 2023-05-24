@@ -140,7 +140,7 @@ int C2_HOOK_FASTCALL DRftell(FILE* pF);
 
 int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos);
 
-int C2_HOOK_FASTCALL DRrewind(FILE* pF);
+void C2_HOOK_FASTCALL DRrewind(FILE* pF);
 
 /// FIXME: rename to DRxxx
 tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file);
