@@ -488,6 +488,24 @@ br_size_t C2_HOOK_FASTCALL DRfwrite(void* buf, br_size_t size, unsigned int n, v
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4a80, DRfwrite, DRfwrite_original)
 
+int (C2_HOOK_FASTCALL * DRfgetpos_original)(FILE*, c2_fpos_t*);
+int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, c2_fpos_t* pos) {
+#if 0 // efined(C2_HOOKS_ENABLED)
+    return DRfgetpos_original(pFile, pos);
+#else
+    tTwatVfsFile* twtFile;
+
+    if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        twtFile = &C2V(gTwatVfsFiles)[(int) pFile - 1];
+        *(tU8 **) pos = twtFile->pos;
+        twtFile->error = 0;
+        return 0;
+    }
+    return c2_fgetpos(pFile, pos);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4ac0, DRfgetpos, DRfgetpos_original)
+
 int (C2_HOOK_FASTCALL * DRfeof_original)(FILE* pFile);
 int C2_HOOK_FASTCALL DRfeof(FILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
