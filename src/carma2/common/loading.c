@@ -20,7 +20,7 @@
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5, 0x00691b40);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsFile, gTwatVfsFiles, 50, 0x00692080);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDisableTiffConversionStackSize, 0x006923a0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDisableTiffConversionStackPos, 0x006923a0);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisableTiffConversion, 0x0068c724);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisableTiffConversionStack, 2, 0x00692068);
@@ -779,7 +779,7 @@ void C2_HOOK_FASTCALL TWT_Init(void) {
         C2V(gTwatVfsMountPoints)[i].header = NULL;
     }
 
-    C2V(gDisableTiffConversionStackSize) = 0;
+    C2V(gDisableTiffConversionStackPos) = 0;
 }
 C2_HOOK_FUNCTION(0x004b4570, TWT_Init)
 
@@ -918,8 +918,8 @@ tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path) {
 
     res = TWT_Mount(path);
     if (TWT_MOUNT_SUCCEEDED(res)) {
-        C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackSize)] = C2V(gDisableTiffConversion);
-        C2V(gDisableTiffConversionStackSize)++;
+        C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackPos)] = C2V(gDisableTiffConversion);
+        C2V(gDisableTiffConversionStackPos)++;
         C2V(gDisableTiffConversion) = 1;
     }
     return res;
@@ -928,8 +928,8 @@ C2_HOOK_FUNCTION(0x004b4df0, TWT_MountEx)
 
 void C2_HOOK_FASTCALL TWT_UnmountEx(tTWTVFS twt) {
     if (twt >= 0) {
-        C2V(gDisableTiffConversionStackSize)--;
-        C2V(gDisableTiffConversion) = C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackSize)];
+        C2V(gDisableTiffConversionStackPos)--;
+        C2V(gDisableTiffConversion) = C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackPos)];
         TWT_Unmount(twt);
     }
 }
