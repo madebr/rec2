@@ -8,7 +8,7 @@
 #include <stdio.h>
 
 #if defined(DEBUG_STDIO)
-#define DEBUG_PRINTF(...) C2_HOOK_DEBUGF(##__VA_ARGS__)
+#define DEBUG_PRINTF(...) C2_HOOK_DEBUGF(__VA_ARGS__)
 #else
 #define DEBUG_PRINTF(...)
 #endif
@@ -142,7 +142,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00576e80, c2_fgetc, c2_fgetc_original)
 int (C2_HOOK_CDECL * c2_ungetc_original)(int ch, FILE* file);
 int C2_HOOK_CDECL c2_ungetc(int ch, FILE* file) {
 
-    DEBUG_PRINTF("(%p)", stream);
+    DEBUG_PRINTF("(%d, %p)", ch, file);
 #if HOOK_STDIO
     return c2_ungetc_original(ch, file);
 #else
@@ -153,7 +153,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00576df0, c2_ungetc, c2_ungetc_original)
 
 char* (C2_HOOK_CDECL * fgets_original)(char* str, size_t num, FILE* stream);
 char* C2_HOOK_CDECL c2_fgets(char* str, size_t num, FILE* stream) {
-    DEBUG_PRINTF("(%p)", stream);
+    DEBUG_PRINTF("(\"%s\", %d, %p)", str, num, stream);
 #if HOOK_STDIO
     return fgets_original(str, num, stream);
 #else
@@ -175,7 +175,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00577c40, c2_fputc, fputc_original);
 
 static int (C2_HOOK_CDECL * fputs_original)(const char*, FILE*);
 int C2_HOOK_CDECL c2_fputs(const char* text, FILE* file) {
-    DEBUG_PRINTF("(\"%s\", %p)", text, file);
+    DEBUG_PRINTF("(%p)", file);
 #if HOOK_STDIO
     return fputs_original(text, file);
 #else
@@ -283,7 +283,7 @@ size_t (C2_HOOK_CDECL * fread_original)(void *ptr, size_t size, size_t nmemb, FI
 size_t C2_HOOK_CDECL c2_fread(void *ptr, size_t size, size_t nmemb, FILE *stream) {
     size_t res;
 
-//    DEBUG_PRINTF("(%p, %d, %d, %p)", ptr, size, nmemb, stream);
+    DEBUG_PRINTF("(%p, %d, %d, %p)", ptr, size, nmemb, stream);
 #if HOOK_STDIO
     res = fread_original(ptr, size, nmemb, stream);
 #else
