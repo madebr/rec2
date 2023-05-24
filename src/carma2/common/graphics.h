@@ -17,6 +17,8 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 void C2_HOOK_FASTCALL FadePaletteDown(void);
 
+void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette);
+
 void C2_HOOK_FASTCALL ClearEntireScreen(void);
 
 void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount);
