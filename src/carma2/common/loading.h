@@ -126,6 +126,8 @@ int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, c2_fpos_t* pos);
 
 int C2_HOOK_FASTCALL DRfeof(FILE* pFile);
 
+int C2_HOOK_FASTCALL DRferror(FILE* pFile);
+
 int C2_HOOK_FASTCALL DRfgetc(FILE* pFile);
 
 int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile);
