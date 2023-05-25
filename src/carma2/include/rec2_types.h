@@ -15,6 +15,9 @@ typedef signed int tS32;
 
 typedef int tTWTVFS;
 
+typedef struct tRace_list_spec tRace_list_spec;
+typedef struct tRace_group_spec tRace_group_spec;
+
 // Function callbacks are moved to a header for automatic SRE project generation
 typedef void(C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
 typedef void (C2_HOOK_FASTCALL * tPDForEveryFile_cbfn)(const char*);
@@ -198,6 +201,15 @@ typedef enum {
     kPixelFlags_16bbp = 0x1,
     kPixelFlags_unknown = 0x2,
 } tPixelFlags;
+
+typedef enum {
+    kRaceType_Carma1 = 0,
+    kRaceType_Cars = 1,
+    kRaceType_Peds = 2,
+    kRaceType_Checkpoints = 3,
+    kRaceType_Smash = 4,
+    kRaceType_SmashNPed = 5,
+} eRaceType;
 
 typedef struct {
     int depth_bits;
@@ -517,6 +529,57 @@ typedef struct {
     br_uint_32 unknown_2;  // FIXME: unknown
 } tTintedPoly;
 
+typedef struct tRace_group_spec {
+    int count_races;
+    tRace_list_spec* races;
+    tRace_list_spec* mission;
+} tRace_group_spec;
+
+typedef struct tRace_list_spec {
+    char name[64];                      /* readable name */
+    char interface_name[32];            /* interface element name */
+    char file_name[32];                 /* Text file name */
+    char description[256];
+    br_scalar opponent_nastiness_level;
+    int count_opponents;
+    int expansion;
+    int no_time_awards;
+    int is_boundary;                    /* boundary race/mission */
+    int count_explicit_opponents;       /* Number of explicit opponents */
+    int explicit_opponents[15];         /* positive number: index / negative number: hardness */
+    int count_powerup_exclusions;
+    int* powerup_exclusions;
+    int count_laps;
+    int completion_bonus[3];
+    int completion_bonus_peds[3];
+    int completion_bonus_opponents[3];
+    int initial_timer[3];
+    eRaceType race_type;
+    union {
+        struct {
+            int count_laps;
+        } checkpoints;
+        struct {
+            int count_opponents;
+            int opponents[10];
+        } cars;
+        struct {
+            int count_ped_groups;
+            int ped_groups[10];
+        } peds;
+        struct {
+            int var_smash_number;
+            int var_smash_target;
+        } smash;
+        struct {
+            int var_smash_number;
+            int var_smash_target;
+            int ped_group_index;
+        } smash_and_peds;
+    } options;
+    tRace_group_spec* group;
+} tRace_list_spec;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
@@ -661,6 +724,7 @@ enum {
     kFatalError_FlicFileWasNot8BitsDeep_S = 0x0f,
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
     kFatalError_ScreenDimensionNotInGrafData = 0x18,
+    kFatalError_CannotOpenRacesFile = 0x32,
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_OOM_S = 0x5e,

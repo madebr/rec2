@@ -22,6 +22,13 @@ C2_HOOK_VARIABLE_DECLARE(char*, gPedPowerupTxtPath);
 C2_HOOK_VARIABLE_DECLARE(char*, gPedTextTxtPath);
 C2_HOOK_VARIABLE_DECLARE(char*, gPedTexturePath);
 
+C2_HOOK_VARIABLE_DECLARE(int, gApplicationDataTwtMounted);
+C2_HOOK_VARIABLE_DECLARE(int, gCurrent_race_file_index);
+C2_HOOK_VARIABLE_DECLARE(int, gDevInitialRace);
+C2_HOOK_VARIABLE_DECLARE(int, gCountRaceGroups);
+C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gRaceGroups);
+C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gRaceGroups2);
+
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void);
@@ -184,6 +191,10 @@ void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions)
 int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex);
 
 br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName);
+
+FILE* C2_HOOK_FASTCALL OpenRaceFile(void);
+
+void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index);
 
 #endif //REC2_LOADING_H
 

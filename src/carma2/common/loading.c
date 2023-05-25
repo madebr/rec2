@@ -80,6 +80,25 @@ C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedPowerupTxtPath, 0x006a0ad4);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedTextTxtPath, 0x0068c718);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedTexturePath, 0x0065852c);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, gRaces_file_names, 9, 0x00657530, {
+    "RACES.TXT",
+    "NETRACES.TXT",
+    "NETRACES.TXT",
+    "PEDRACES.TXT",
+    "RACES.TXT",
+    "RACES.TXT",
+    "NETRACES.TXT",
+    "NETRACES.TXT",
+    "NETRACES.TXT"
+});
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gApplicationDataTwtMounted, 0x0068b868);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_race_file_index, 0x0068c6f4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDevInitialRace, 0x0076211c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCountRaceGroups, 0x007634ec);
+C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups, 0x0068b8a0);
+C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups2, 0x0074d5e4);
+
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
 }
@@ -1232,3 +1251,240 @@ br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
     return the_font;
 }
 C2_HOOK_FUNCTION(0x00466050, LoadBRFont)
+
+FILE* C2_HOOK_FASTCALL OpenRaceFile(void) {
+    FILE* f;
+    tPath_name the_path;
+
+    PathCat(the_path, C2V(gApplication_path), C2V(gRaces_file_names)[C2V(gCurrent_race_file_index)]);
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotOpenRacesFile);
+    }
+    return f;
+}
+
+void (C2_HOOK_FASTCALL * LoadRaces_original)(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index);
+void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    LoadRaces_original(pRace_list, pCount, pRace_type_index);
+#else
+    FILE* f;
+    br_scalar opponent_count_first_race;
+    br_scalar opponent_count_last_race;
+    br_scalar opponent_softness_first_race, opponent_hardness_first_race;
+    br_scalar opponent_softness_last_race, opponent_hardness_last_race;
+    br_scalar opponent_nastiness_first_race;
+    br_scalar opponent_nastiness_last_race;
+    tTWTVFS twt;
+    int powerup_exclusions[50];
+    tRace_group_spec* current_group;
+    float factor;
+    float softness;
+    float hardness;
+    int hardness_oppo;
+    int i;
+    int j;
+    int count_races;
+    int last_race;
+    char s[256];
+    char* str;
+
+    C2_HOOK_BUG_ON(sizeof(tRace_list_spec) != 0x244);
+
+    twt = -1;
+    if (!C2V(gApplicationDataTwtMounted)) {
+        twt = TWT_MountEx(C2V(gApplication_path));
+    }
+    C2V(gCurrent_race_file_index) = pRace_type_index + 1;
+
+    f = OpenRaceFile();
+
+#if defined(C2_STAINLESS_DEVEL)
+    /* Initial race is in DATA.TWT */
+    C2V(gDevInitialRace) = GetAnInt(f);
+#else
+    /* Ignore Initial race */
+    GetAnInt(f);
+    C2V(gDevInitialRace) = 0;
+#endif
+
+    /* Default number of opponents in first race */
+    opponent_count_first_race = GetAScalar(f);
+    /* Default number of opponents in last race */
+    opponent_count_last_race = GetAScalar(f);
+    /* Softness,hardest rank of opponents in first race */
+    GetPairOfFloats(f, &opponent_softness_first_race, &opponent_hardness_first_race);
+    /* Softness,hardest rank of opponents in last race */
+    GetPairOfFloats(f, &opponent_softness_last_race, &opponent_hardness_last_race);
+    /* Opponent nastiness influencer for first race */
+    opponent_nastiness_first_race = GetAScalar(f);
+    /* Opponent nastiness influencer for last race */
+    opponent_nastiness_last_race = GetAScalar(f);
+
+    C2V(gCountRaceGroups) = 0;
+
+    for (i = 0; 1;) {
+        GetALineAndDontArgue(f, pRace_list[i].name);
+        if (c2_strcmp(pRace_list[i].name, "END") == 0) {
+            last_race = 1;
+            count_races = i;
+        } else {
+            last_race = 0;
+        }
+        if (last_race) {
+            break;
+        }
+        /* Text file name */
+        GetAString(f, pRace_list[i].file_name);
+        /* Name of interface element */
+        GetAString(f, pRace_list[i].interface_name);
+        /* Number of opponents (-1 = use default) */
+        pRace_list[i].count_opponents = GetAnInt(f);
+        /* Number of explicit opponents */
+        pRace_list[i].count_explicit_opponents = GetAnInt(f);
+        // FIXME: assert(pRace_list[i].count_explicit_opponents <= REC2_ASIZE(pRace_list[i].explicit_opponents))
+        for (j = 0; j < pRace_list[i].count_explicit_opponents; j++) {
+            pRace_list[i].explicit_opponents[j] = GetAnInt(f);
+        }
+        /* Opponent nastiness level (-1 = use default) */
+        pRace_list[i].opponent_nastiness_level = GetAScalar(f);
+        /* Powerup exclusions */
+        GetALineAndDontArgue(f, s);
+        str = c2_strtok(s, "\t ,/");
+        for (j = 0; str != NULL; j++) {
+            c2_sscanf(str, "%d", &powerup_exclusions[j]);
+            str = c2_strtok(NULL, "\t ,/");
+        }
+        pRace_list[i].count_powerup_exclusions = j;
+        if (pRace_list[i].count_powerup_exclusions != 0) {
+            pRace_list[i].powerup_exclusions = BrMemAllocate(pRace_list[i].count_powerup_exclusions * sizeof(int), kMem_misc);
+            c2_memcpy(pRace_list[i].powerup_exclusions, powerup_exclusions, pRace_list[i].count_powerup_exclusions * sizeof(int));
+        }
+        /* Disable time awards */
+        pRace_list[i].no_time_awards = GetAnInt(f);
+        /* Boundary race (mission) */
+        pRace_list[i].is_boundary = GetAnInt(f);
+        if (pRace_list[i].is_boundary) {
+            C2V(gCountRaceGroups)++;
+        }
+        /* Race type (0 = Carma1, 1 = Cars, 2 = Peds, 3 = Checkpoints, 4 = Smash, 5 = smash'n'ped) */
+        pRace_list[i].race_type = GetAnInt(f);
+        /* Initial timer count for each skill level */
+        GetThreeInts(f, &pRace_list[i].initial_timer[0], &pRace_list[i].initial_timer[1], &pRace_list[i].initial_timer[2]);
+        switch (pRace_list[i].race_type) {
+        case kRaceType_Carma1:
+        case kRaceType_Checkpoints:
+            /* # laps */
+            pRace_list[i].count_laps = GetAnInt(f);
+            break;
+        case kRaceType_Cars:
+            /* Number of opponents that must be killed (-1 means all) */
+            pRace_list[i].options.cars.count_opponents = GetAnInt(f);
+            // FIXME: assert(pRace_list[i].options.cars.count_opponents <= REC2_ASIZE(pRace_list[i].options.cars.opponents))
+            for (j = 0; j < pRace_list[i].options.cars.count_opponents; j++) {
+                pRace_list[i].options.cars.opponents[j] = GetAnInt(f);
+            }
+            break;
+        case kRaceType_Peds:
+            /* Number of ped groups (-1 means all) */
+            pRace_list[i].options.peds.count_ped_groups = GetAnInt(f);
+            for (j = 0; j < pRace_list[i].options.peds.count_ped_groups; j++) {
+                pRace_list[i].options.peds.ped_groups[j] = GetAnInt(f);
+            }
+            break;
+        case kRaceType_Smash:
+            /* Smash variable number */
+            pRace_list[i].options.smash.var_smash_number = GetAnInt(f);
+            /* Smash variable target */
+            pRace_list[i].options.smash.var_smash_target = GetAnInt(f);
+            break;
+        case kRaceType_SmashNPed:
+            /* Smash variable number */
+            pRace_list[i].options.smash_and_peds.var_smash_number = GetAnInt(f);
+            /* Smash variable target */
+            pRace_list[i].options.smash_and_peds.var_smash_target = GetAnInt(f);
+            /* Ped group index for required extra kills */
+            pRace_list[i].options.smash_and_peds.ped_group_index = GetAnInt(f);
+            break;
+        }
+        /* Race completed bonus for each skill level (all laps raced or target met)*/
+        GetThreeInts(f, &pRace_list[i].completion_bonus[0], &pRace_list[i].completion_bonus[1], &pRace_list[i].completion_bonus[2]);
+        if (pRace_list[i].race_type == kRaceType_Carma1) {
+            /* Race completed bonus (all peds killed) for each skill level */
+            GetThreeInts(f, &pRace_list[i].completion_bonus_peds[0], &pRace_list[i].completion_bonus_peds[1], &pRace_list[i].completion_bonus_peds[2]);
+            /* Race completed bonus (all oppos wasted) for each skill level */
+            GetThreeInts(f, &pRace_list[i].completion_bonus_opponents[0], &pRace_list[i].completion_bonus_opponents[1], &pRace_list[i].completion_bonus_opponents[2]);
+        }
+        /* Race description */
+        GetALineAndDontArgue(f, pRace_list[i].description);
+        if (DRStricmp(pRace_list[i].description, "none") == 0) {
+            pRace_list[i].description[0] = '\0';
+        }
+        /* Expansion */
+        pRace_list[i].expansion = GetAnInt(f) & 0x1;
+
+        if (pRace_type_index < 0 || pRace_list[i].race_type == kRaceType_Carma1) {
+            i++;
+        }
+    }
+    *pCount = count_races;
+    DRfclose(f);
+    if (C2V(gRaceGroups) != NULL) {
+        BrMemFree(C2V(gRaceGroups));
+    }
+    C2_HOOK_BUG_ON(sizeof(tRace_group_spec) != 12);
+    C2V(gRaceGroups) = BrMemAllocate((C2V(gCountRaceGroups) == 0 ? 1 : C2V(gCountRaceGroups)) * sizeof(tRace_group_spec), kMem_misc);
+    C2V(gRaceGroups)[0].count_races = 0;
+    C2V(gRaceGroups)[0].races = pRace_list;
+
+    current_group = &C2V(gRaceGroups)[0];
+
+    for (i = 0; i < count_races; i++) {
+        int count_opponents;
+
+        if (pRace_list[i].opponent_nastiness_level <= 0.f) {
+            pRace_list[i].opponent_nastiness_level = opponent_nastiness_first_race + (opponent_nastiness_last_race - opponent_nastiness_first_race) * (float)i / (float)(count_races - 1);
+        }
+        count_opponents = pRace_list[i].count_opponents;
+        if (count_opponents < 0) {
+            count_opponents = (int)(opponent_count_first_race + (float)i / (float)(count_races - 1) * (opponent_count_last_race - opponent_count_first_race));
+        }
+        pRace_list[i].count_opponents = 0;
+        if (pRace_list[i].count_explicit_opponents < count_opponents) {
+            factor =  (float)i / (float)(count_races - 1);
+            softness = opponent_softness_first_race + factor * (opponent_softness_last_race - opponent_softness_first_race);
+            hardness = opponent_hardness_first_race + factor * (opponent_hardness_last_race - opponent_hardness_first_race) - softness;
+            for (j = pRace_list[i].count_explicit_opponents; j < count_opponents; j++) {
+                hardness_oppo = (int)(softness + (float)hardness * (float)(j - pRace_list[i].count_explicit_opponents) / (float)(count_opponents - 1 - pRace_list[i].count_explicit_opponents));
+
+                if (hardness_oppo <= 0) {
+                    pRace_list[i].explicit_opponents[j] = -1;
+                } else {
+                    pRace_list[i].explicit_opponents[j] = -MIN(hardness_oppo, 5);
+                }
+            }
+        } else {
+            pRace_list[i].count_explicit_opponents = count_opponents;
+        }
+        pRace_list[i].count_explicit_opponents = count_opponents;
+        pRace_list[i].group = current_group;
+        if (pRace_list[i].is_boundary) {
+            current_group->mission = &pRace_list[i];
+            current_group++;
+            if (current_group - C2V(gRaceGroups) < C2V(gCountRaceGroups)) {
+                current_group->count_races = 0;
+                current_group->races = &pRace_list[i+1];
+            }
+        } else {
+            current_group->count_races++;
+        }
+    }
+    C2V(gRaceGroups2) = C2V(gRaceGroups);
+    if (!C2V(gApplicationDataTwtMounted)) {
+        TWT_UnmountEx(twt);
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0048c1c0, LoadRaces, LoadRaces_original)
