@@ -358,7 +358,7 @@ int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
 
     GetALineAndDontArgue(pF, s);
     str = c2_strtok(s, "\t ,/");
-    sscanf(str, "%d", &value);
+    c2_sscanf(str, "%d", &value);
     return value;
 }
 C2_HOOK_FUNCTION(0x0048fb00, GetAnInt)
@@ -369,9 +369,9 @@ void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2) {
 
     GetALineAndDontArgue(pF, s);
     str = c2_strtok(s, "\t ,/");
-    sscanf(str, "%d", pF1);
+    c2_sscanf(str, "%d", pF1);
     str = c2_strtok(NULL, "\t ,/");
-    sscanf(str, "%d", pF2);
+    c2_sscanf(str, "%d", pF2);
 }
 C2_HOOK_FUNCTION(0x0048fdc0, GetPairOfInts)
 
@@ -381,11 +381,11 @@ void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
 
     GetALineAndDontArgue(pF, s);
     str = c2_strtok(s, "\t ,/");
-    sscanf(str, "%d", pF1);
+    c2_sscanf(str, "%d", pF1);
     str = c2_strtok(NULL, "\t ,/");
-    sscanf(str, "%d", pF2);
+    c2_sscanf(str, "%d", pF2);
     str = c2_strtok(NULL, "\t ,/");
-    sscanf(str, "%d", pF3);
+    c2_sscanf(str, "%d", pF3);
 }
 C2_HOOK_FUNCTION(0x0048fe30, GetThreeInts)
 
@@ -422,11 +422,11 @@ void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* p
 
     GetALineAndDontArgue(pF, s);
     str = c2_strtok(s, "\t ,/");
-    sscanf(str, "%f", pF1);
+    c2_sscanf(str, "%f", pF1);
     str = c2_strtok(NULL, "\t ,/");
-    sscanf(str, "%f", pF2);
+    c2_sscanf(str, "%f", pF2);
     str = c2_strtok(NULL, "\t ,/");
-    sscanf(str, "%f", pF3);
+    c2_sscanf(str, "%f", pF3);
 }
 C2_HOOK_FUNCTION(0x0048fc90, GetThreeFloats)
 
@@ -1020,7 +1020,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 
     C2V(gDisableTiffConversion) = GetAnInt(C2V(gTempFile));
     GetALineAndDontArgue(C2V(gTempFile), s2);
-    result = sscanf(&s2[strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
+    result = c2_sscanf(&s2[strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
     if (result == 0) {
         FatalError(kFatalError_MysteriousX_SS, s2, "GENERAL.TXT");
     }
