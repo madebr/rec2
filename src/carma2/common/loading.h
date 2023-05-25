@@ -196,5 +196,7 @@ FILE* C2_HOOK_FASTCALL OpenRaceFile(void);
 
 void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index);
 
+void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec);
+
 #endif //REC2_LOADING_H
 

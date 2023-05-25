@@ -1488,3 +1488,61 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048c1c0, LoadRaces, LoadRaces_original)
+
+void (C2_HOOK_FASTCALL * LoadHeadups_original)(FILE* pF, int pIndex, tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+#if defined(C2_HOOKS_ENABLED)
+    LoadHeadups_original(pF, pIndex, pCar_spec);
+#else
+    char s[256];
+    char* str;
+    int j;
+    int number_of_slots;
+
+    C2_HOOK_BUG_ON(offsetof(tCar_spec, headup_slots) != 0x728);
+    C2_HOOK_BUG_ON(sizeof(tHeadup_slot) != 44);
+
+    number_of_slots = GetAnInt(pF);
+    for (j = 0; j < number_of_slots; j++) {
+        GetALineAndDontArgue(pF, s);
+        str = c2_strtok(s, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].field_0x28);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].x);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].y);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].colour);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_strcpy(s, str);
+        switch (s[0]) {
+        case 'c':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_centre;
+            break;
+        case 'l':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_left;
+            break;
+        case 'r':
+            pCar_spec->headup_slots[pIndex][j].justification = eJust_right;
+            break;
+        }
+        if (s[1] == 'c') {
+            pCar_spec->headup_slots[pIndex][j].cockpit_anchored = 1;
+        }
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_left);
+        if (pCar_spec->headup_slots[pIndex][j].dim_left < 0) {
+            pCar_spec->headup_slots[pIndex][j].dimmed_background = 0;
+        } else {
+            pCar_spec->headup_slots[pIndex][j].dimmed_background = 1;
+            str = c2_strtok(NULL, "\t ,/");
+            c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_top);
+            str = c2_strtok(NULL, "\t ,/");
+            c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_right);
+            str = c2_strtok(NULL, "\t ,/");
+            c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_bottom);
+        }
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0048ba60, LoadHeadups, LoadHeadups_original)
