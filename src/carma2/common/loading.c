@@ -404,6 +404,18 @@ float C2_HOOK_FASTCALL GetAScalar(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x0048fb80, GetAScalar)
 
+void C2_HOOK_FASTCALL GetPairOfFloats(FILE* pF, float* pF1, float* pF2) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_sscanf(str, "%f", pF1);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%f", pF2);
+}
+C2_HOOK_FUNCTION(0x0048fc20, GetPairOfFloats)
+
 void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* pF3) {
     char s[256];
     char* str;
