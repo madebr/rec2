@@ -25,6 +25,7 @@ typedef void (C2_HOOK_FASTCALL * tPDForEveryFileRecurse_cbfn)(const char*);
 
 // FIXME: incomplete type
 typedef struct tDR_font tDR_font;
+typedef struct tCar_spec tCar_spec;
 
 typedef struct {
     int r;
@@ -112,6 +113,20 @@ typedef enum tJustification {
     eJust_right = 1,
     eJust_centre = 2
 } tJustification;
+
+typedef struct tHeadup_slot {
+    int x;
+    int y;
+    int colour;
+    int cockpit_anchored;
+    int dimmed_background;
+    int dim_left;
+    int dim_top;
+    int dim_right;
+    int dim_bottom;
+    tJustification justification;
+    int field_0x28; // FIXME: unknown
+} tHeadup_slot;
 
 typedef struct tTranslation_record {
     int flic_index;
