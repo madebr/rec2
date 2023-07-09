@@ -60,6 +60,7 @@ endif()
 
 add_subdirectory(src/brender)
 add_subdirectory(src/carma2)
+add_subdirectory(src/launcher)
 
 set(CARM2_LOCATION "" CACHE FILEPATH "Path of Carmageddon II")
 if(CARM2_LOCATION)
