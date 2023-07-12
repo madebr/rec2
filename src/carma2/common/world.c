@@ -1122,3 +1122,13 @@ int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, con
     }
 }
 C2_HOOK_FUNCTION(0x00486240, FindLastOccurrenceOfString_CaseInsensitive)
+
+void (C2_HOOK_FASTCALL * LoadTrack_original)(char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
+void C2_HOOK_FASTCALL LoadTrack(char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
+#if defined(C2_HOOKS_ENABLED)
+    LoadTrack_original(pFile_name, pTrack_spec, pRace_info);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00504bf0, LoadTrack, LoadTrack_original)
