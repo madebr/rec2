@@ -17,6 +17,8 @@ C2_HOOK_VARIABLE_DECLARE(br_font*, gBig_font);
 C2_HOOK_VARIABLE_DECLARE(br_font*, gFont_7);
 C2_HOOK_VARIABLE_DECLARE(br_font*, gHeadup_font);
 
+C2_HOOK_VARIABLE_DECLARE(tProgram_state, gProgram_state);
+
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gUniverse_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gNon_track_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gDont_render_actor);

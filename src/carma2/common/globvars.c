@@ -24,6 +24,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_font*, gBig_font, 0x0075ba54);
 C2_HOOK_VARIABLE_IMPLEMENT(br_font*, gFont_7, 0x0074d3c4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_font*, gHeadup_font, 0x0074cf9c);
 
+C2_HOOK_VARIABLE_IMPLEMENT(tProgram_state, gProgram_state, 0x0075bb80);
+
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gUniverse_actor, 0x0074d44c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gNon_track_actor, 0x007634b8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gDont_render_actor, 0x00761ce4);
