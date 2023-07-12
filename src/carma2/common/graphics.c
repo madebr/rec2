@@ -247,6 +247,16 @@ void C2_HOOK_FASTCALL EndMouseCursor(void) {
 }
 C2_HOOK_FUNCTION(0x0043e710, EndMouseCursor)
 
+void (C2_HOOK_FASTCALL * InitTransientBitmaps_original)(void);
+void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
+#if defined(C2_HOOKS_ENABLED)
+    InitTransientBitmaps_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0043dff0, InitTransientBitmaps, InitTransientBitmaps_original)
+
 void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them) {
     int i;
     int order_number;
