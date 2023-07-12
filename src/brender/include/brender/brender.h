@@ -48,6 +48,7 @@ br_map_find_cbfn* C2_HOOK_CDECL BrMapFindHook(br_map_find_cbfn* hook);
 void C2_HOOK_CDECL BrMapUpdate(br_pixelmap* map, br_uint_16 flags);
 
 br_pixelmap* C2_HOOK_CDECL BrPixelmapDirectLock(br_pixelmap* src, br_boolean block);
+br_pixelmap* C2_HOOK_CDECL BrPixelmapDirectUnlock(br_pixelmap* src);
 
 // BrMaterial
 br_material* C2_HOOK_CDECL BrMaterialAllocate(const char* name);
