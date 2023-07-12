@@ -62,6 +62,8 @@ add_library(c2_common STATIC
     spark.h
     structur.c
     structur.h
+    temp.c
+    temp.h
     tinted.c
     tinted.h
     utility.c
