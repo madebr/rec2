@@ -84,6 +84,17 @@ void C2_HOOK_FASTCALL InitBRFonts(void) {
     C2V(gHeadup_font) = LoadBRFont("HEADUP.FNT");
 }
 
+void (C2_HOOK_FASTCALL * AllocateSelf_original)(void);
+void C2_HOOK_FASTCALL AllocateSelf(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    AllocateSelf_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0047e320, AllocateSelf, AllocateSelf_original)
+
 void (C2_HOOK_FASTCALL * AllocateCamera_original)(void);
 void C2_HOOK_FASTCALL AllocateCamera(void) {
 
