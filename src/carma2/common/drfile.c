@@ -10,7 +10,7 @@
 
 #include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gFilesystem, 0x005933a8, {   \
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gFile_system, 0x005933a8, {   \
     "Carmageddon",                                                          \
     NULL,                                                                   \
     &DRStdioOpenRead,                                                       \
@@ -76,10 +76,10 @@ void C2_HOOK_FASTCALL InstallDRFileCalls(void) {
 
     temp_system = BrMemAllocate(sizeof(br_filesystem), kMem_misc);
     C2V(gOld_file_system) = BrFilesystemSet(temp_system);
-    C2V(gFilesystem).attributes = C2V(gOld_file_system)->attributes;
-    C2V(gFilesystem).putchr = C2V(gOld_file_system)->putchr;
-    C2V(gFilesystem).putline = C2V(gOld_file_system)->putline;
-    BrFilesystemSet(&C2V(gFilesystem));
+    C2V(gFile_system).attributes = C2V(gOld_file_system)->attributes;
+    C2V(gFile_system).putchr = C2V(gOld_file_system)->putchr;
+    C2V(gFile_system).putline = C2V(gOld_file_system)->putline;
+    BrFilesystemSet(&C2V(gFile_system));
     BrMemFree(temp_system);
 }
 C2_HOOK_FUNCTION(0x0044c790, InstallDRFileCalls)
