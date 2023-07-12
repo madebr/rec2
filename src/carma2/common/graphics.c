@@ -410,3 +410,14 @@ void C2_HOOK_FASTCALL InitHUDActor(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e560, InitHUDActor, InitHUDActor_original)
+
+void (C2_HOOK_FASTCALL * InitShadows_original)(void);
+void C2_HOOK_FASTCALL InitShadows(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitShadows_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e99d0, InitShadows, InitShadows_original)
