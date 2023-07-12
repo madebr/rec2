@@ -1083,6 +1083,96 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00486ef0, LoadGeneralParameters, LoadGeneralParameters_original)
 
+void (C2_HOOK_FASTCALL * FinishLoadGeneralParameters_original)(void);
+void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FinishLoadGeneralParameters_original();
+#else
+    tPath_name the_path;
+    char s[256];
+    char s2[256];
+    int position;
+    int result;
+
+    PathCat(the_path, C2V(gApplication_path), "ACTORS");
+    PathCat(the_path, the_path, "PROG.ACT");
+
+    C2V(gTempFile) = TWT_fopen(the_path, "rb");
+    if (C2V(gTempFile) != NULL) {
+        DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
+        DRfclose(C2V(gTempFile));
+
+        for (size_t i = 0; i < strlen(C2V(gDecode_string)); i++) {
+            C2V(gDecode_string)[i] -= 50;
+        }
+
+        // trim trailing CRLF etc
+        while (s[0] != '\0' && s[strlen(s) - 1] < 0x20) {
+            s[strlen(s) - 1] = 0;
+        }
+
+        if (strcmp(s, C2V(gDecode_string)) == 0) {
+            C2V(gDecode_thing) = 0;
+        }
+
+        for (size_t  i = 0; i < strlen(C2V(gDecode_string)); i++) {
+            C2V(gDecode_string)[i] += 50;
+        }
+    }
+    PathCat(the_path, C2V(gApplication_path), "GENERAL.TXT");
+    C2V(gTempFile) = DRfopen(the_path, "rt");
+    if (C2V(gTempFile) == NULL) {
+        FatalError(kFatalError_FailToOpenGeneralSettings);
+    }
+
+    C2V(gDisableTiffConversion) = GetAnInt(C2V(gTempFile));
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    result = c2_sscanf(&s2[strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
+    if (result == 0) {
+        FatalError(kFatalError_MysteriousX_SS, s2, "GENERAL.TXT");
+    }
+    c2_sscanf(&s2[position + strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
+    C2V(gCamera_hither) *= 2;
+    C2V(gCamera_cockpit_hither) *= 2;
+    C2V(gCamera_Yon) = GetAFloat(C2V(gTempFile));
+    C2V(gCamera_angle) = GetAFloat(C2V(gTempFile));
+    C2V(gHeadupBackgroundBrightness) = GetAnInt(C2V(gTempFile));
+    C2V(gInitial_rank) = GetAnInt(C2V(gTempFile));
+    GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_rank)[0], &C2V(gCredits_per_rank)[1], &C2V(gCredits_per_rank)[2]);
+
+    LoadGeneralCrushSettings(C2V(gTempFile));
+
+    GetThreeInts(C2V(gTempFile), &C2V(gTime_per_ped_kill)[0], &C2V(gTime_per_ped_kill)[1], &C2V(gTime_per_ped_kill)[2]);
+    GetThreeFloats(C2V(gTempFile), &C2V(gSeconds_per_unit_car_damage)[0], &C2V(gSeconds_per_unit_car_damage)[1], &C2V(gSeconds_per_unit_car_damage)[2]);
+    GetThreeFloats(C2V(gTempFile), &C2V(gCredits_per_unit_car_damage)[0], &C2V(gCredits_per_unit_car_damage)[1], &C2V(gCredits_per_unit_car_damage)[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gTime_wasting_car)[0], &C2V(gTime_wasting_car)[1], &C2V(gTime_wasting_car)[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gCredits_wasting_car)[0], &C2V(gCredits_wasting_car)[1], &C2V(gCredits_wasting_car)[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gTime_rolling_car)[0], &C2V(gTime_rolling_car)[1], &C2V(gTime_rolling_car)[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gCredits_rolling_car)[0], &C2V(gCredits_rolling_car)[1], &C2V(gCredits_rolling_car)[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gCredits_checkpoint)[0], &C2V(gCredits_checkpoint)[1], &C2V(gCredits_checkpoint)[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gFine_jump_start)[0], &C2V(gFine_jump_start)[1], &C2V(gFine_jump_start)[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_second_time_bonus)[0], &C2V(gCredits_per_second_time_bonus)[1], &C2V(gCredits_per_second_time_bonus)[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gCunning_stunt_bonus)[0], &C2V(gCunning_stunt_bonus)[1], &C2V(gCunning_stunt_bonus)[2]);
+
+    GetAString(C2V(gTempFile), C2V(gDefaultCar));
+    GetAString(C2V(gTempFile), C2V(gDefaultCockpit));
+
+    C2V(gKnobbledFramePeriod) = 0;
+    C2V(gUnknownOpponentFactor) = 1.f;
+    C2V(gMinTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
+    C2V(gMaxTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
+
+    ParseSpecialVolume(C2V(gTempFile), &C2V(gUnderwaterSpecialVolumeSettings), C2V(gUnderwaterScreenName), 0);
+
+    //unfinished
+    c2_abort();
+//#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00487dc0, FinishLoadGeneralParameters, FinishLoadGeneralParameters_original)
+
+
 void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     FILE* f;
     tPath_name the_path;
