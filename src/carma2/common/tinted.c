@@ -326,15 +326,15 @@ br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x0, int y0, int width
     }
     for (j = 0; j < nbY; j++) {
         vert_above = j * (nbX + 1);
-        vert_below = vert_above + (nbX + 1);
+        vert_below = (j + 1) * (nbX + 1);
         for (i = 0; i < nbX; i++) {
             face = &model->faces[2 * (j * nbX + i)];
             face[0].vertices[0] = vert_above + i ;
             face[0].vertices[1] = vert_above + i + 1;
-            face[0].vertices[1] = vert_below + i ;
-            face[0].vertices[0] = vert_above + i + 1;
-            face[0].vertices[1] = vert_below + i + 1;
-            face[0].vertices[1] = vert_below + i;
+            face[0].vertices[2] = vert_below + i ;
+            face[1].vertices[0] = vert_above + i + 1;
+            face[1].vertices[1] = vert_below + i + 1;
+            face[1].vertices[2] = vert_below + i;
         }
     }
     model->flags |= BR_MODF_DONT_WELD | BR_MODF_KEEP_ORIGINAL;
