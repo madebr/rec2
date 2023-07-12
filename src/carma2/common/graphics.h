@@ -69,4 +69,6 @@ void C2_HOOK_FASTCALL InitShadows(void);
 
 void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
+void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight);
+
 #endif //REC2_GRAPHICS_H
