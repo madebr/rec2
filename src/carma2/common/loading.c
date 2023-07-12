@@ -1705,3 +1705,14 @@ void C2_HOOK_FASTCALL LoadInRegistees(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00486e10, LoadInRegistees, LoadInRegistees_original)
+
+void (C2_HOOK_FASTCALL * LoadTreeSurgery_original)(void);
+void C2_HOOK_FASTCALL LoadTreeSurgery(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadTreeSurgery_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00504b30, LoadTreeSurgery, LoadTreeSurgery_original)
