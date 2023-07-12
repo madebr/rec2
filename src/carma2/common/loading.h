@@ -202,5 +202,9 @@ void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info);
 
 void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch);
 
+void C2_HOOK_FASTCALL LoadGeneralParameters(void);
+
+void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void);
+
 #endif //REC2_LOADING_H
 
