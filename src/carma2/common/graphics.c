@@ -421,3 +421,14 @@ void C2_HOOK_FASTCALL InitShadows(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e99d0, InitShadows, InitShadows_original)
+
+void (C2_HOOK_FASTCALL * InitPaletteAnimate_original)(void);
+void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitPaletteAnimate_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b52a0, InitPaletteAnimate, InitPaletteAnimate_original)
