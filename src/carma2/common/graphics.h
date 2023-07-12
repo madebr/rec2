@@ -66,4 +66,6 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
 
 void C2_HOOK_FASTCALL LockBackScreen(int pValue);
 
+int C2_HOOK_FASTCALL UnlockBackScreen(int pValue);
+
 #endif //REC2_GRAPHICS_H
