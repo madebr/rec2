@@ -388,3 +388,14 @@ void C2_HOOK_FASTCALL InitDRFonts(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465a40, InitDRFonts, InitDRFonts_original)
+
+void (C2_HOOK_FASTCALL * UpdateMinimap_original)(void);
+void C2_HOOK_FASTCALL UpdateMinimap(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    UpdateMinimap_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00496e30, UpdateMinimap, UpdateMinimap_original)
