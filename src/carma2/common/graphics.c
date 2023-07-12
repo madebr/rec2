@@ -399,3 +399,14 @@ void C2_HOOK_FASTCALL UpdateMinimap(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00496e30, UpdateMinimap, UpdateMinimap_original)
+
+void (C2_HOOK_FASTCALL * InitHUDActor_original)(void);
+void C2_HOOK_FASTCALL InitHUDActor(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitHUDActor_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0047e560, InitHUDActor, InitHUDActor_original)
