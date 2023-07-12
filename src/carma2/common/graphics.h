@@ -52,4 +52,6 @@ void C2_HOOK_FASTCALL LoadFont(int pFont_ID);
 
 void C2_HOOK_FASTCALL InitDRFonts(void);
 
+void C2_HOOK_FASTCALL UpdateMinimap(void);
+
 #endif //REC2_GRAPHICS_H
