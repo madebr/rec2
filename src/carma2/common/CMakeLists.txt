@@ -62,6 +62,8 @@ add_library(c2_common STATIC
     sound.h
     spark.c
     spark.h
+    skidmark.c
+    skidmark.h
     structur.c
     structur.h
     temp.c
