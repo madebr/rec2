@@ -83,3 +83,15 @@ void C2_HOOK_FASTCALL InitBRFonts(void) {
     C2V(gFont_7) = LoadBRFont("FONT7.FNT");
     C2V(gHeadup_font) = LoadBRFont("HEADUP.FNT");
 }
+
+void (C2_HOOK_FASTCALL * InitGame_original)(int pStart_race);
+void C2_HOOK_FASTCALL InitGame(int pStart_race) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitGame_original(pStart_race);
+#else
+#error "Not implemented"
+#endif
+
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004816b0, InitGame, InitGame_original)
