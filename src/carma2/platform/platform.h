@@ -65,4 +65,6 @@ int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char** pArgv);
 
 void C2_HOOK_FASTCALL PDSaveOriginalPalette(void);
 
+void C2_HOOK_FASTCALL PDInitScreen(void);
+
 #endif // C2_PLATFORM_H

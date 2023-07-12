@@ -846,3 +846,8 @@ void C2_HOOK_FASTCALL PDSaveOriginalPalette(void) {
 
 }
 C2_HOOK_FUNCTION(0x0051c270, PDSaveOriginalPalette)
+
+void C2_HOOK_FASTCALL PDInitScreen(void) {
+
+}
+C2_HOOK_FUNCTION(0x0051c2b0, PDInitScreen)
