@@ -198,5 +198,9 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
 void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL LoadGeneralParameters(void);
+
+void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void);
+
 #endif //REC2_LOADING_H
 
