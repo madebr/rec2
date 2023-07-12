@@ -432,3 +432,14 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b52a0, InitPaletteAnimate, InitPaletteAnimate_original)
+
+void (C2_HOOK_FASTCALL * SetBRenderScreenAndBuffers_original)(int pX_offset, int pY_offset, int pWidth, int pHeight);
+void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetBRenderScreenAndBuffers_original(pX_offset, pY_offset, pWidth, pHeight);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e4980, SetBRenderScreenAndBuffers, SetBRenderScreenAndBuffers_original)
