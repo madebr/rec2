@@ -62,4 +62,6 @@ int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord);
 
 void C2_HOOK_FASTCALL PDInstallErrorHandlers(void);
 
+int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char** pArgv);
+
 #endif // C2_PLATFORM_H
