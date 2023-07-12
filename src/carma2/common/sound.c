@@ -85,3 +85,14 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet_ptr pOutlet, tS3_sound_
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455690, DRS3StartSound, DRS3StartSound_original)
+
+void (C2_HOOK_FASTCALL * InitSound_original)(void);
+void C2_HOOK_FASTCALL InitSound(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitSound_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00455080, InitSound, InitSound_original)
