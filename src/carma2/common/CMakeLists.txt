@@ -56,6 +56,8 @@ add_library(c2_common STATIC
     main.h
     options.c
     options.h
+    smashing.c
+    smashing.h
     sound.c
     sound.h
     spark.c
