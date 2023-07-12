@@ -22,9 +22,7 @@ C2_HOOK_VARIABLE_DECLARE(char*, gPedPowerupTxtPath);
 C2_HOOK_VARIABLE_DECLARE(char*, gPedTextTxtPath);
 C2_HOOK_VARIABLE_DECLARE(char*, gPedTexturePath);
 
-C2_HOOK_VARIABLE_DECLARE(int, gApplicationDataTwtMounted);
 C2_HOOK_VARIABLE_DECLARE(int, gCurrent_race_file_index);
-C2_HOOK_VARIABLE_DECLARE(int, gDevInitialRace);
 C2_HOOK_VARIABLE_DECLARE(int, gCountRaceGroups);
 C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gRaceGroups);
 C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gRaceGroups2);

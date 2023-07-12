@@ -92,9 +92,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, gRaces_file_names, 9, 0x00657530, {
     "NETRACES.TXT"
 });
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gApplicationDataTwtMounted, 0x0068b868);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_race_file_index, 0x0068c6f4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDevInitialRace, 0x0076211c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCountRaceGroups, 0x007634ec);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups, 0x0068b8a0);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups2, 0x0074d5e4);
@@ -1393,11 +1391,11 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
 #if defined(C2_STAINLESS_DEVEL)
     /* Initial race is in DATA.TWT */
-    C2V(gDevInitialRace) = GetAnInt(f);
+    C2V(gDev_initial_race) = GetAnInt(f);
 #else
     /* Ignore Initial race */
     GetAnInt(f);
-    C2V(gDevInitialRace) = 0;
+    C2V(gDev_initial_race) = 0;
 #endif
 
     /* Default number of opponents in first race */

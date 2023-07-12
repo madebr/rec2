@@ -257,7 +257,7 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
     pStorage_space->shade_tables = BrMemCalloc(pMax_shade_tables, sizeof(br_pixelmap*), kMem_stor_space_table);
     pStorage_space->materials = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
     pStorage_space->models = BrMemCalloc(pMax_models, sizeof(br_model*), kMem_stor_space_table);
-    pStorage_space->sounds = BrMemCalloc(pMax_sounds, sizeof(int*), kMem_stor_space_table); // FIXME: fill in correct type
+    pStorage_space->sounds = BrMemCalloc(pMax_sounds, sizeof(undefined4*), kMem_stor_space_table); // FIXME: fill in correct type
     pStorage_space->materialProps = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
 }
 C2_HOOK_FUNCTION(0x00500d50, InitialiseStorageSpace)
