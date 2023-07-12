@@ -1,5 +1,7 @@
 #include "powerups.h"
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tHeadup_icon, gPickedup_powerups, 5, 0x007059e0);
+
 void (C2_HOOK_FASTCALL * InitPowerups_original)(void);
 void C2_HOOK_FASTCALL InitPowerups(void) {
 
