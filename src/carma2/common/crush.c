@@ -30,6 +30,17 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gMin_bend_angle, 0x0067a18c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMin_bend_damage, 0x0067b7b0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMax_bend_damage, 0x0067bdf4);
 
+void (C2_HOOK_FASTCALL * InitCrush_original)(void);
+void C2_HOOK_FASTCALL InitCrush(void) {
+#if defined(C2_HOOKS_ENABLED)
+    InitCrush_original();
+#else
+#error "Not implemented"
+#endif
+
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrush, InitCrush_original)
+
 void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file) {
     char s[256];
 
