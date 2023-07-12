@@ -86,3 +86,15 @@ br_scalar C2_HOOK_STDCALL GetYon(void) {
     return C2V(gCamera_yon);
 }
 C2_HOOK_FUNCTION(0x00446bb0, GetYon)
+
+void (C2_HOOK_FASTCALL * InitDepthEffects_original)(void);
+void C2_HOOK_FASTCALL InitDepthEffects(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitDepthEffects_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00445620, InitDepthEffects, InitDepthEffects_original)
+
