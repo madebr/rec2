@@ -1,7 +1,11 @@
 #include "init.h"
 
+#include "errors.h"
 #include "globvars.h"
+#include "graphics.h"
 #include "loading.h"
+
+#include "brender/brender.h"
 
 #include "c2_stdlib.h"
 
@@ -82,6 +86,31 @@ void C2_HOOK_FASTCALL InitBRFonts(void) {
     C2V(gBig_font) = LoadBRFont("BIGFONT.FNT");
     C2V(gFont_7) = LoadBRFont("FONT7.FNT");
     C2V(gHeadup_font) = LoadBRFont("HEADUP.FNT");
+}
+
+void C2_HOOK_FASTCALL InitializeBRenderEnvironment(void) {
+
+    C2V(gBr_initialized) = 1;
+    SetBRenderScreenAndBuffers(0, 0, 0, 0);
+    C2V(gUniverse_actor) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    if (C2V(gUniverse_actor) == NULL) {
+        FatalError(3);
+    }
+    C2V(gUniverse_actor)->identifier = BrResStrDup(C2V(gUniverse_actor), "Root");
+    BrEnvironmentSet(C2V(gUniverse_actor));
+    C2V(gNon_track_actor) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    if (C2V(gNon_track_actor) == NULL) {
+        FatalError(3);
+    }
+    BrActorAdd(C2V(gUniverse_actor), C2V(gNon_track_actor));
+    C2V(gDont_render_actor) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    if (C2V(gDont_render_actor) == NULL) {
+        FatalError(3);
+    }
+    C2V(gDont_render_actor)->render_style = BR_RSTYLE_NONE;
+    BrActorAdd(C2V(gUniverse_actor), C2V(gDont_render_actor));
+    AllocateSelf();
+    AllocateCamera();
 }
 
 void (C2_HOOK_FASTCALL * AllocateSelf_original)(void);
