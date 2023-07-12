@@ -1,7 +1,11 @@
 #ifndef REC2_INIT_H
 #define REC2_INIT_H
 
+#include "brender/brender.h"
+
 #include "c2_hooks.h"
+
+C2_HOOK_VARIABLE_DECLARE(br_material*, gDefault_track_material);
 
 C2_HOOK_VARIABLE_DECLARE(int, gBr_initialized);
 
