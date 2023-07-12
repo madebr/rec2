@@ -1900,3 +1900,14 @@ void C2_HOOK_FASTCALL RestoreOptions(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048d8f0, RestoreOptions, RestoreOptions_original)
+
+void (C2_HOOK_FASTCALL * LoadInRegistees_original)(void);
+void C2_HOOK_FASTCALL LoadInRegistees(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadInRegistees_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00486e10, LoadInRegistees, LoadInRegistees_original)
