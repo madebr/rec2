@@ -4,6 +4,7 @@
 
 #include "errors.h"
 #include "globvars.h"
+#include "graphics.h"
 #include "init.h"
 #include "input.h"
 #include "main.h"
@@ -60,6 +61,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_ms, 0x006
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_us, 0x006ac858);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
+
+C2_HOOK_VARIABLE_IMPLEMENT(br_diaghandler, gPD_error_handler, 0x006aceb0);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gExtendedAsciiToNormalAscii, 128, 0x00662150, {
     ' ', ' ',  ' ',  ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
@@ -782,3 +785,46 @@ int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x0051db00, PDGetMouseClickPosition)
+
+static void C2_HOOK_CDECL OnWarnCallback(char* text) {
+
+    dr_dprintf("*******************************************************************************");
+    dr_dprintf("BRender WARNING: '%s'", text);
+    dr_dprintf("*******************************************************************************");
+}
+C2_HOOK_FUNCTION(0x0051c5f0, OnWarnCallback)
+
+static void C2_HOOK_CDECL OnErrorCallback(char* text) {
+    const char *msg;
+
+    dr_dprintf("*******************************************************************************");
+    dr_dprintf("BRender FAILURE: '%s'", text);
+    dr_dprintf("*******************************************************************************");
+    msg = "BRender error detected:";
+    if (msg == NULL) {
+        msg = "NULL str1";
+    }
+    if (text == NULL) {
+        msg = "NULL str2";
+    }
+    C2V(gFatalErrorMessageValid) = 1;
+    sprintf(C2V(gFatalErrorMessage), "%s\n%s", msg, text);
+    C2V(gWin32_fatal_error_exit_code) = 700;
+    if (C2V(gBack_screen) != NULL && C2V(gBack_screen)->pixels != NULL) {
+        UnlockBackScreen(1);
+    }
+    if (C2V(gBr_initialized)) {
+        RemoveAllBrenderDevices();
+    }
+    PDShutdownSystem();
+}
+C2_HOOK_FUNCTION(0x0051c620, OnErrorCallback)
+
+void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
+
+    C2V(gPD_error_handler).identifier = "LlantisilioBlahBlahBlahOgOgOch";
+    C2V(gPD_error_handler).warning = OnWarnCallback;
+    C2V(gPD_error_handler).failure = OnErrorCallback;
+    BrDiagHandlerSet(&C2V(gPD_error_handler));
+}
+C2_HOOK_FUNCTION(0x0051c6c0, PDInstallErrorHandlers)
