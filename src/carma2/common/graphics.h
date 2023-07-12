@@ -30,6 +30,8 @@ void C2_HOOK_FASTCALL StartMouseCursor(void);
 
 void C2_HOOK_FASTCALL EndMouseCursor(void);
 
+void C2_HOOK_FASTCALL InitTransientBitmaps(void);
+
 void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them);
 
 void C2_HOOK_FASTCALL DeallocateTransientBitmap(int pIndex);
