@@ -451,3 +451,13 @@ void C2_HOOK_FASTCALL LockBackScreen(int pValue) {
     }
 }
 C2_HOOK_FUNCTION(0x00516c10, LockBackScreen)
+
+int C2_HOOK_FASTCALL UnlockBackScreen(int pValue) {
+
+    if (C2V(gBack_screen)->pixels != NULL) {
+        BrPixelmapDirectUnlock(C2V(gBack_screen));
+        return 1;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00516c30, UnlockBackScreen)
