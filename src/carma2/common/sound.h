@@ -21,4 +21,6 @@ void C2_HOOK_FASTCALL DRS3StartCDA(tS3_sound_id pCDA_id);
 
 tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet_ptr pOutlet, tS3_sound_id pSound);
 
+void C2_HOOK_FASTCALL InitSound(void);
+
 #endif // REC2_SOUND_H
