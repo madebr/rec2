@@ -9,7 +9,11 @@
 #include "rec2_types.h"
 #include "brender/brender.h"
 
-#include <string.h>
+#include "c2_string.h"
+
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHud_tinted1, 0x00655e48, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHud_tinted2, 0x00655e4c, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHud_tinted3, 0x00655e50, -1);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTintedPoly, gTintedPolys, 10, 0x00705c80);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTintedPolyCamera, 0x006a0430);
@@ -23,7 +27,7 @@ void C2_HOOK_FASTCALL InitTintedPolys(void) {
 
     C2_HOOK_BUG_ON(sizeof(tTintedPoly) != 0x6450);
 
-    memset(C2V(gTintedPolys), 0, sizeof(C2V(gTintedPolys)));
+    c2_memset(C2V(gTintedPolys), 0, sizeof(C2V(gTintedPolys)));
 
     if (C2V(gTintedPolyCamera) == NULL) {
         C2V(gTintedPolyCamera) = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
@@ -155,8 +159,8 @@ int C2_HOOK_FASTCALL CreateTintedPolyActor(int x0, int y0, int width, int height
                     C2V(gTintedPolys)[tintedIndex].tints1[y + x * 64] = REC2_CLAMP(v, 0u, (br_uint_32)arg1);
                 }
             }
-            memset(C2V(gTintedPolys)[tintedIndex].tints2, 0, sizeof(C2V(gTintedPolys)[tintedIndex].tints2));
-            memset(C2V(gTintedPolys)[tintedIndex].tints3, 0, sizeof(C2V(gTintedPolys)[tintedIndex].tints3));
+            c2_memset(C2V(gTintedPolys)[tintedIndex].tints2, 0, sizeof(C2V(gTintedPolys)[tintedIndex].tints2));
+            c2_memset(C2V(gTintedPolys)[tintedIndex].tints3, 0, sizeof(C2V(gTintedPolys)[tintedIndex].tints3));
 
             C2V(gTintedPolys)[tintedIndex].model = CreateInterpolatedQuadModel(x0, y0, width, height, 1, 1);
             C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
