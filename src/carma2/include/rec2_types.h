@@ -16,7 +16,9 @@ typedef signed int tS32;
 typedef int tTWTVFS;
 
 typedef struct tRace_list_spec tRace_list_spec;
-typedef struct tRace_group_spec tRace_group_spec;
+typedef struct tRace_list_spec tRace_list_spec;
+typedef struct tRace_info tRace_info;
+typedef struct tTrack_spec tTrack_spec;
 
 // Function callbacks are moved to a header for automatic SRE project generation
 typedef void(C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
