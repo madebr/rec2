@@ -838,3 +838,8 @@ int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char** pArgv) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c290, PDInitScreenVars, PDInitScreenVars_original)
+
+void C2_HOOK_FASTCALL PDSaveOriginalPalette(void) {
+
+}
+C2_HOOK_FUNCTION(0x0051c270, PDSaveOriginalPalette)
