@@ -5,6 +5,10 @@
 
 #include <brender/brender.h>
 
+C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted1);
+C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted2);
+C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted3);
+
 void C2_HOOK_FASTCALL InitTintedPolys(void);
 
 int C2_HOOK_FASTCALL CreateTintedPolyActor(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
