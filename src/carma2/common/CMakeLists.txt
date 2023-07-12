@@ -56,6 +56,8 @@ add_library(c2_common STATIC
     main.h
     oil.c
     oil.h
+    opponent.c
+    opponent.h
     options.c
     options.h
     pedestrn.c
