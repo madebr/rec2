@@ -63,4 +63,6 @@ void C2_HOOK_FASTCALL UpdateMinimap(void);
 
 void C2_HOOK_FASTCALL InitHUDActor(void);
 
+void C2_HOOK_FASTCALL InitShadows(void);
+
 #endif //REC2_GRAPHICS_H
