@@ -8,7 +8,7 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gTextureMaps, 1000, 0x0076c960);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gTextureMaps, 1024, 0x0076c960);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPolyFontBorderColours, gPolyFontBorderColours, 27, 0x00765ec0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gPolyFontMaterials, 80, 0x00686340);
 C2_HOOK_VARIABLE_IMPLEMENT(int, polyFontMaterialCounter, 0x00686498); // FIXME: unknown purpose

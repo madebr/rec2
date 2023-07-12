@@ -6,6 +6,8 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_pixelmap*, gTextureMaps, 1024);
+
 br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx);
 
 #endif //REC2_FONT_H

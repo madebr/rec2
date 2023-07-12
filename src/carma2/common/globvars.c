@@ -1,5 +1,6 @@
 #include "globvars.h"
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gApplicationDataTwtMounted, 0x0068b868);
 C2_HOOK_VARIABLE_IMPLEMENT(tPath_name, gApplication_path, 0x0075ba60);
 C2_HOOK_VARIABLE_IMPLEMENT(const char*, gDir_separator, 0x00761a5c);
 
@@ -25,6 +26,22 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_font*, gFont_7, 0x0074d3c4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_font*, gHeadup_font, 0x0074cf9c);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tProgram_state, gProgram_state, 0x0075bb80);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSausage_override, 0x0068b880);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tRace_list_spec, gRace_list, 100, 0x0074d660);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_races, 0x0074d4a0);
+
+C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gOur_car_storage_space, 0x0075b960);
+C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gTheir_cars_storage_space, 0x00761ca0);
+C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gDroneStorage, 0x00762340);
+C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gPedStorage, 0x0074d5a0);
+C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gTrack_storage_space, 0x0074d400);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_is_in_drive, 0x0068b89c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDev_initial_race, 0x0076211c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gCamera_to_world, 0x0074d460);
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gRearview_camera_to_world, 0x0074d560);
+
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(undefined4, gUnknown_00705b80, 20, 0x00705b80);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gUniverse_actor, 0x0074d44c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gNon_track_actor, 0x007634b8);
@@ -42,7 +59,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gDont_render_actor, 0x00761ce4);
 //int gAction_replay_mode;
 //int gDefault_engine_noise_index;
 //int gAusterity_mode;
-//int gSausage_override;
 //int gAustere_override;
 
 //int gKey_map_index;

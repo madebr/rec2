@@ -29,4 +29,6 @@ void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index);
 
 void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
+void C2_HOOK_FASTCALL LoadInterfaceStrings(void);
+
 #endif
