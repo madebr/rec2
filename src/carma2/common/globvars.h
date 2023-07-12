@@ -6,6 +6,7 @@
 //#include "brender/br_types.h"
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gApplicationDataTwtMounted);
 C2_HOOK_VARIABLE_DECLARE(tPath_name, gApplication_path);
 C2_HOOK_VARIABLE_DECLARE(const char*, gDir_separator);
 
@@ -18,6 +19,22 @@ C2_HOOK_VARIABLE_DECLARE(br_font*, gFont_7);
 C2_HOOK_VARIABLE_DECLARE(br_font*, gHeadup_font);
 
 C2_HOOK_VARIABLE_DECLARE(tProgram_state, gProgram_state);
+C2_HOOK_VARIABLE_DECLARE(int, gSausage_override);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tRace_list_spec, gRace_list, 100);
+C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_races);
+
+C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gOur_car_storage_space);
+C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gTheir_cars_storage_space);
+C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gDroneStorage);
+C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gPedStorage);
+C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gTrack_storage_space);
+
+C2_HOOK_VARIABLE_DECLARE(int, gCD_is_in_drive);
+C2_HOOK_VARIABLE_DECLARE(int, gDev_initial_race);
+C2_HOOK_VARIABLE_DECLARE(br_matrix34, gCamera_to_world);
+C2_HOOK_VARIABLE_DECLARE(br_matrix34, gRearview_camera_to_world);
+
+C2_HOOK_VARIABLE_DECLARE_ARRAY(undefined4, gUnknown_00705b80, 20);
 
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gUniverse_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gNon_track_actor);
