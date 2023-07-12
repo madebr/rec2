@@ -19,6 +19,7 @@ typedef struct tRace_list_spec tRace_list_spec;
 typedef struct tRace_list_spec tRace_list_spec;
 typedef struct tRace_info tRace_info;
 typedef struct tTrack_spec tTrack_spec;
+typedef struct tPowerup tPowerup;
 
 // Function callbacks are moved to a header for automatic SRE project generation
 typedef void(C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
@@ -596,6 +597,13 @@ typedef struct tRace_list_spec {
     } options;
     tRace_group_spec* group;
 } tRace_list_spec;
+
+typedef struct {
+    tPowerup* powerup;
+    int fizzle_stage;
+    int fizzle_direction;
+    tU32 fizzle_start;
+} tHeadup_icon;
 
 enum {
     kMiscString_ShadowNone = 104,
