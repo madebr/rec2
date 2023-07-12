@@ -13,22 +13,27 @@ typedef signed short tS16;
 typedef unsigned int tU32;
 typedef signed int tS32;
 
+typedef unsigned char undefined;
+typedef unsigned short undefined2;
+typedef unsigned int undefined4;
+
 typedef int tTWTVFS;
 
-typedef struct tRace_list_spec tRace_list_spec;
+// FIXME: incomplete type
+typedef struct tCar_crush_spec tCar_crush_spec;
+typedef struct tCollision_info tCollision_info;
+typedef struct tDR_font tDR_font;
+typedef struct tNon_car_spec tNon_car_spec;
+typedef struct tPath_section_struct tPath_section_struct;
+typedef struct tPowerup tPowerup;
 typedef struct tRace_list_spec tRace_list_spec;
 typedef struct tRace_info tRace_info;
-typedef struct tTrack_spec tTrack_spec;
-typedef struct tPowerup tPowerup;
 
 // Function callbacks are moved to a header for automatic SRE project generation
 typedef void(C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
 typedef void (C2_HOOK_FASTCALL * tPDForEveryFile_cbfn)(const char*);
 typedef void (C2_HOOK_FASTCALL * tPDForEveryFileRecurse_cbfn)(const char*);
 
-// FIXME: incomplete type
-typedef struct tDR_font tDR_font;
-typedef struct tCar_spec tCar_spec;
 
 typedef struct {
     int r;
@@ -246,12 +251,12 @@ typedef struct {
 } tGraf_spec;
 
 typedef struct {
-    int unknown; // FIXME: unknown
+    undefined4 unknown;
     int models_count;
     int materials_count;
     int shade_tables_count;
     int pixelmaps_count;
-    int sounds_count; // FIXME: correct?
+    int sounds_count;
     int max_pixelmaps;
     int max_shade_tables;
     int max_materials;
@@ -597,6 +602,606 @@ typedef struct tRace_list_spec {
     } options;
     tRace_group_spec* group;
 } tRace_list_spec;
+
+typedef struct {
+    int x_coord;
+    int y_coord;
+    int damage_level;
+    int last_level;
+    int smoke_last_level;
+    int periods[5];
+    br_pixelmap* images;
+} tDamage_unit;
+
+typedef enum {
+    eAxis_x = 0,
+    eAxis_y = 1,
+    eAxis_z = 2
+} tAxis_comp;
+
+typedef struct {
+    tAxis_comp axis_comp;
+    int condition_operator;
+    float comparitor;
+} tDamage_condition;
+
+typedef enum {
+    eDamage_engine = 0,
+    eDamage_transmission = 1,
+    eDamage_driver = 2,
+    eDamage_lf_brake = 3,
+    eDamage_steering = 4,
+    eDamage_rf_brake = 5,
+    eDamage_lr_brake = 6,
+    eDamage_rr_brake = 7,
+    eDamage_lf_wheel = 8,
+    eDamage_rf_wheel = 9,
+    eDamage_lr_wheel = 10,
+    eDamage_rr_wheel = 11
+} tDamage_type;
+
+typedef struct  {
+    tDamage_type type;
+    float weakness_factor;
+} tDamage_effect;
+
+typedef struct {
+    tDamage_condition conditions[2];
+    int effect_count;
+    int condition_count;
+    tDamage_effect effects[4];
+} tDamage_clause;
+
+typedef struct {
+    int clause_count;
+    tDamage_clause* clauses;
+} tDamage_program;
+
+typedef enum tDriver {
+    eDriver_oppo = 6,
+    eDriver_net_human = 7,
+    eDriver_local_human = 8
+} tDriver;
+
+typedef enum {
+    eView_undefined = 0,
+    eView_left = 1,
+    eView_forward = 2,
+    eView_right = 3
+} tWhich_view;
+
+typedef enum {
+    eProg_intro = 0,
+    eProg_opening = 1,
+    eProg_idling = 2,
+    eProg_demo = 3,
+    eProg_game_starting = 4,
+    eProg_game_ongoing = 5,
+    eProg_quit = 6
+} tProg_status;
+
+typedef struct {
+    br_vector3 trail_nodes[25];
+    br_vector3 base_heading;
+    tU32 time_of_next_recording;
+    tU32 end_of_deviation;
+    tU8 number_of_nodes;
+    tU8 has_deviated_recently;
+    tU8 nodes_shifted_this_frame;
+    undefined field_0x143;
+} tPursuee_trail;
+
+typedef struct {
+    br_material* material;
+    int count_maps;
+    br_pixelmap* maps[3];
+} tCarCockpitWindowThing;
+
+typedef struct tCar_spec {
+    int index;
+    int disabled;
+    tCollision_info* collision_info;
+    tDriver driver;
+    br_actor* car_master_actor;
+    undefined field_0x14[8];
+    br_matrix34 old_frame_mat;
+    br_vector3 pos;
+    br_vector3 centre_of_mass_world_scale;
+    int frame_collision_flag;
+    undefined field_0x68[8];
+    br_vector3 direction;
+    float speed;
+    short car_ID;
+    undefined field_0x82;
+    undefined field_0x83;
+    br_material* shrapnel_material[3];
+    undefined field_0x90[28];
+    tU16 fire_vertex[12];
+    float dt;
+    undefined* field_0xc8;
+    char name[32];
+    char driver_name[32];
+    char grid_icon_names[3][14];
+    undefined field_0x136;
+    undefined field_0x137;
+    undefined4* cockpit_images[3];
+    br_pixelmap* prat_cam_left;
+    br_pixelmap* prat_cam_top;
+    br_pixelmap* prat_cam_right;
+    br_pixelmap* prat_cam_bottom;
+    undefined field_0x154[4];
+    br_pixelmap* speedo_image[2];
+    br_pixelmap* tacho_image[2];
+    br_pixelmap* damage_background;
+    br_pixelmap* lhands_images[7];
+    br_pixelmap* rhands_images[7];
+    br_pixelmap* grid_icon_image;
+    br_pixelmap* gears_image;
+    int fg_index;
+    int underwater_ability;
+    int invulnerable1;
+    int invulnerable2;
+    undefined field_0x1bc[4];
+    int field_0x1c0;
+    int wall_climber_mode;
+    int can_be_stolen;
+    int has_been_stolen;
+    int active;
+    int knackered;
+    int pre_car_col_knackered;
+    int render_left[3];
+    int render_top[3];
+    int render_right[3];
+    int render_bottom[3];
+    int mirror_left;
+    int mirror_top;
+    int mirror_right;
+    int mirror_bottom;
+    int prat_left;
+    int prat_top;
+    int prat_right;
+    int prat_bottom;
+    int speedo_x[2];
+    int speedo_y[2];
+    int speedo_centre_x[2];
+    int speedo_centre_y[2];
+    int speedo_x_pitch[2];
+    int speedo_y_pitch[2];
+    int speedo_radius_1[2];
+    int speedo_radius_2[2];
+    int speedo_start_angle[2];
+    int speedo_end_angle[2];
+    int speedo_needle_colour[2];
+    int tacho_x[2];
+    int tacho_y[2];
+    int tacho_centre_x[2];
+    int tacho_centre_y[2];
+    int tacho_x_pitch[2];
+    int tacho_y_pitch[2];
+    int tacho_radius_1[2];
+    int tacho_radius_2[2];
+    int tacho_start_angle[2];
+    int tacho_end_angle[2];
+    int tacho_needle_colour[2];
+    int gear_x[2];
+    int gear_y[2];
+    int red_line;
+    int lhands_x[7];
+    int lhands_y[7];
+    int rhands_x[7];
+    int rhands_y[7];
+    int number_of_hands_images;
+    int field_0x364;
+    int damage_x_offset;
+    int damage_y_offset;
+    int damage_background_x;
+    int damage_background_y;
+    int dim_count[2];
+    int dim_left[2][4];
+    int dim_top[2][4];
+    int dim_right[2][4];
+    int dim_bottom[2][4];
+    undefined field_0x400[4];
+    int number_of_steerable_wheels;
+    int steering_ref[6];
+    int lf_sus_ref[4];
+    int rf_sus_ref[4];
+    int lr_sus_ref[2];
+    int rr_sus_ref[2];
+    int driven_wheels_spin_ref_1;
+    int driven_wheels_spin_ref_2;
+    int driven_wheels_spin_ref_3;
+    int driven_wheels_spin_ref_4;
+    int non_driven_wheels_spin_ref_1;
+    int non_driven_wheels_spin_ref_2;
+    int non_driven_wheels_spin_ref_3;
+    int non_driven_wheels_spin_ref_4;
+    int engine_noises[3];
+    float driver_x_offset;
+    float driver_y_offset;
+    float driver_z_offset;
+    float mirror_x_offset;
+    float mirror_y_offset;
+    float mirror_z_offset;
+    float rearview_camera_angle;
+    float head_left_angle;
+    float head_right_angle;
+    float steering_angle;
+    float speedo_speed;
+    float lf_sus_position;
+    float rf_sus_position;
+    float lr_sus_position;
+    float rr_sus_position;
+    float driven_wheels_circum;
+    float non_driven_wheels_circum;
+    float bounce_rate;
+    float bounce_amount;
+    undefined field_0x4c8[4];
+    float damage_multiplier;
+    float grip_multiplier;
+    undefined field_0x4d4[4];
+    tDamage_unit damage_units[12];
+    int frame_start_damage[3];
+    float last_impact_location;
+    tDamage_program damage_programs[6];
+    tHeadup_slot headup_slots[2][20];
+    undefined field_0xe08[4];
+    br_actor* car_model_actor;
+    br_actor* car_actor;
+    int count_detail_levels;
+    float field_0xe18;
+    float detail_levels[2];
+    int use_shell_model;
+    br_model* shell_model;
+    undefined field_0xe2c[12];
+    br_matrix34 last_safe_positions[5];
+    undefined field_0xf28[720];
+    int wheel_slip;
+    float damping;
+    undefined field_0x1200[16];
+    float steerable_suspension_give;
+    float susp_give;
+    float susp_height[2];
+    float maybe_ride_height;
+    br_vector3 wpos[4];
+    float curvature;
+    float maxcurve;
+    float turn_speed;
+    float field_0x1260;
+    int oldd[4];
+    int material_index[4];
+    undefined field_0x1284[16];
+    br_vector3 mu;
+    float traction_fractional_multiplier;
+    float downforce_to_weight;
+    undefined field_0x12a8;
+    undefined field_0x12a9;
+    undefined field_0x12aa;
+    undefined field_0x12ab;
+    float initial_brake;
+    float brake_increase;
+    float friction_slipping_reduction;
+    float acc_force;
+    float torque;
+    float brake_force;
+    int traction_control;
+    float steerable_rolling_resistance;
+    float rolling_resistance;
+    tU32 keys;
+    undefined field_0x12d4[8];
+    int joystick_acc;
+    int joystick_dec;
+    undefined field_0x12e4[4];
+    int number_of_wheels_on_ground;
+    br_actor* wheel_actors[6];
+    br_actor* pivot_actors[6];
+    undefined field_0x131c[32];
+    float damage_magnitude_accumulator;
+    float revs;
+    float target_revs;
+    undefined field_0x1348[12];
+    float max_force_front;
+    float max_force_rear;
+    float gear;
+    int just_changed_gear;
+    int max_gear;
+    float speed_revs_ratio;
+    float force_torque_ratio;
+    undefined4 sound_source;
+     br_matrix34 pre_car_col_mat;
+    float pre_car_col_speed;
+    float pre_car_col_direction;
+    float field_0x13ac;
+    float field_0x13b0;
+    br_vector3 pre_car_col_velocity;
+    float pre_car_col_velocity_car_space;
+    float field_0x13c4;
+    float field_0x13c8;
+    undefined field_0x13cc[20];
+    float field_0x13e0;
+    int time_last_hit;
+    int time_last_victim;
+    undefined* last_hit_by;
+    undefined* field_0x13f0;
+    int no_of_processes_recording_my_trail;
+    tPursuee_trail my_trail;
+    int flags;
+    undefined field_0x1540[8];
+    undefined4 field_0x1548;
+    undefined field_0x154c[20];
+    struct tCar_spec* last_person_to_hit_us;
+    struct tCar_spec* last_person_we_hit;
+    undefined field_0x1568[44];
+    int shadow_intersection_flags;
+    tU32 last_bounce;
+    int new_skidding;
+    undefined field_0x15a0[12];
+    br_vector3 field_0x15ac[4];
+    undefined field_0x15dc[240];
+    float oil_remaining[4];
+    float maybe_blood_remaining[4];
+    float maybe_total_length[4];
+    undefined4 field_0x16fc[4];
+    float proxy_ray_distance;
+    int powerups[80]; /* unknown_size */
+    undefined field_0x1850[80];
+    int time_to_recover;
+    undefined field_0x18a4[4];
+    int power_up_levels[3];
+    int power_up_slots[3];
+    int horn_sound_tag;
+    int is_girl;
+    undefined field_0x18c8[4];
+    int field_0x18cc;
+    float softness_factor;
+    tCar_crush_spec* car_crush_spec;
+    br_vector3 camera_bumper_position;
+    br_vector3 camera_cockpit_position;
+    int count_window_things;
+    tCarCockpitWindowThing window_things[5];
+    tU16 old_material_count;
+    tU16 new_material_count;
+    undefined4 field_0x195c;
+    undefined field_0x1960[4];
+} tCar_spec;
+
+typedef struct {
+    tU8 ncolumns_x;
+    tU8 ncolumns_z;
+    undefined field_0x2;
+    undefined field_0x3;
+    float column_size_x;
+    float column_size_z;
+    float origin_x;
+    float origin_z;
+    br_actor* the_actor; /* for newcity1 ==> actor from newcity1.twt/newcity1.act */
+    undefined4* columns;
+    int count_non_cars;
+    br_actor** non_car_list;
+} tTrack_spec;
+
+typedef enum {
+    /* eDepth_effect_none = -1, */
+    eDepth_effect_darkness = 0,
+    eDepth_effect_fog = 1,
+    eDepth_effect_colour = 2,
+} tDepth_effect_type;
+
+typedef struct {
+    int red;
+    int green;
+    int blue;
+} tRGB_colour;
+
+typedef struct {
+    tDepth_effect_type type;
+    int start;
+    int end;
+    tRGB_colour colour;
+    br_pixelmap* sky_texture;
+} tDepth_effect;
+
+typedef struct {
+    br_material* material;
+    float min_x;
+    float min_z;
+    float max_x;
+    float max_z;
+} tSpecial_screen;
+
+typedef enum {
+    kSoundGeneratorType_noncar = 0,
+    kSoundGeneratorType_actor = 1,
+    kSoundGeneratorType_point = 2,
+} tSoundGeneratorType;
+
+typedef struct {
+    tSoundGeneratorType type;
+    tSpecial_volume_soundfx_data fx;
+    tSpecial_volume_soundfx_data fx1_noncar;
+    tSpecial_volume_soundfx_data fx2_noncar;
+    br_vector3 point;
+} tTrackSoundGenerator;
+
+typedef enum {
+    eOOT_none = 0,
+    eOOT_complete_race = 1,
+    eOOT_pursue_and_twat = 2,
+    eOOT_run_away = 3,
+    eOOT_get_near_player = 4,
+    eOOT_levitate = 5,
+    eOOT_knackered_and_freewheeling = 6,
+    eOOT_frozen = 7,
+    eOOT_wait_for_some_hapless_sod = 8,
+    eOOT_return_to_start = 9
+} tOpponent_objective_type;
+
+typedef struct {
+    tS16 section_no;
+    tU8 direction;
+    undefined field_0x3;
+} tRoute_section;
+
+typedef struct {
+    tU8 finished_calcing_race_route;
+    tU8 found_race_section;
+} tComplete_race_data;
+
+typedef struct tReturn_to_start_data {
+    br_vector3 nearest_path_point;
+    tS16 section_no;
+    tU8 waiting_near_start;
+} tReturn_to_start_data;
+
+typedef struct {
+    int index;
+    tOpponent_objective_type current_objective;
+    tCar_spec* car_spec;
+    float nastiness;
+    float distance_to_camera;
+    float distance_from_home;
+    float player_to_oppo_d;
+    br_vector3 start_pos;
+    br_vector3 start_direction;
+    undefined field9_0x34[12];
+    br_vector3 player_to_oppo_v;
+    tU32 next_out_of_world_check;
+    tU32 next_repair_check;
+    tU32 repair_interval;
+    tU32 last_repair_time;
+    tU32 stun_time_ends;
+    tU32 next_player_visibility_check;
+    undefined field17_0x64[4];
+    tU32 last_in_view;
+    undefined field19_0x6c[4];
+    tU32 time_this_objective_started;
+    tU32 time_for_this_objective_to_finish;
+    undefined field22_0x78[4];
+    int nnext_sections;
+    tRoute_section next_sections[11];
+    undefined field25_0xac[4];
+    unsigned int flags;
+    undefined field27_0xb4[4];
+    tComplete_race_data complete_race_data;
+    undefined field29_0xba[2];
+    /* FIXME: START tFollow_path_data */
+    tU32 follow_path_data__struggle_time;
+    int follow_path_data__last_finished_struggle_time;
+    undefined4 field32_0xc4;
+    undefined field33_0xc8[4];
+    float follow_path_data__prev_acc;
+    float follow_path_data__desired_speed;
+    float follow_path_data__desired_speed2;
+    float follow_path_data__last_distance;
+    br_vector3 follow_path_data__cheaty_intersect;
+    tS16 follow_path_data__section_no;
+    tS16 follow_path_data__first_section_no;
+    tS16 follow_path_last__struggle_section;
+    undefined field42_0xee[2];
+    undefined4 field43_0xf0;
+    undefined4 field44_0xf4;
+    undefined field45_0xf8[4];
+    float field46_0xfc;
+    float field47_0x100;
+    float field48_0x104;
+    float field49_0x108;
+    float follow_path_data__corner_width;
+    int field51_0x110;
+    /* FIXME: start tPursue_car_data */
+    tCar_spec* pursue_car_data__pursuee;
+    undefined field53_0x118[16];
+    tU32 time_last_away_from_pursuee;
+    br_vector3 pursue_car_data__direct_line_nodes_p;
+    undefined field56_0x138[60];
+    float pursue_car_data__direct_line_section__width;
+    /* FIXME: missing:
+        tLevitate_data levitate_data;
+        tRun_away_data run_away_data;
+    */
+    undefined field58_0x178[24];
+    tReturn_to_start_data return_to_start_data;
+    undefined field63_0x1a3;
+} tOpponent_spec;
+
+typedef struct {
+    undefined4 number_of_opponents;
+    undefined4 number_of_cops;
+    undefined4 number_of_path_nodes;
+    undefined4 number_of_path_sections;
+    br_vector3 cop_start_points[20];
+    tOpponent_spec opponents[40];
+    undefined4 path_nodes;
+    tPath_section_struct* path_sections;
+} tIntelligent_vehicles;
+
+typedef struct {
+    int credits;
+    tU32 view_change_start;
+    tU32 pratcam_move_start;
+    int peds_killed;
+    int sausage_eater_mode;
+    int rank;
+    int field6_0x18;
+    int field7_0x1c;
+    int skill_level;
+    undefined4 field9_0x24;
+    int racing;
+    int field11_0x2c;
+    int field12_0x30;
+    int field13_0x34;
+    int field14_0x38;
+    int dont_save_or_load;
+    int dont_load;
+    int mirror_on;
+    int prat_cam_on;
+    int cockpit_on;
+    int cockpit_image_index;
+    int current_render_left;
+    int current_render_top;
+    int current_render_right;
+    int current_render_bottom;
+    int frame_rate_headup;
+    int field26_0x68;
+    int revs;
+    int music_volume;
+    int effects_volume;
+    int current_race_index;
+    int redo_race_index;
+    int credits_per_rank;
+    int game_completed;
+    int number_of_cars;
+    int current_car_index;
+    tWhich_view which_view;
+    tWhich_view new_view;
+    tWhich_view pending_view;
+    tWhich_view old_view;
+    undefined4 field40_0xa0;
+    tProg_status prog_status;
+    undefined4 field42_0xa8;
+    tCar_spec current_car;
+    char player_name[14];
+    char track_file_name[64];
+    char car_name[64];
+    char padding_0x1a9e[2];
+    int cars_available[60];
+    br_vector3 initial_position;
+    float initial_yaw;
+    tTrack_spec track_spec;
+    tDepth_effect default_depth_effect;
+    tDepth_effect current_depth_effect;
+    int special_volume_count;
+    tSpecial_volume* special_volumes;
+    int count_track_sound_generators;
+    tTrackSoundGenerator* track_sound_generators;
+    br_pixelmap* field59_0x1c0c;
+    br_pixelmap* field60_0x1c10;
+    br_pixelmap* field61_0x1c14;
+    int special_screens_count;
+    tSpecial_screen* special_screens;
+    tIntelligent_vehicles AI_vehicles;
+    tNon_car_spec* non_cars;
+    int num_non_car_spaces;
+} tProgram_state;
 
 typedef struct {
     tPowerup* powerup;
