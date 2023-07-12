@@ -11,6 +11,8 @@ int C2_HOOK_FASTCALL GetScreenSize(void);
 
 void C2_HOOK_FASTCALL SetScreenSize(int pNew_size);
 
+void C2_HOOK_FASTCALL AllocateStandardLamp(void);
+
 void C2_HOOK_FASTCALL InitGame(int pStart_race);
 
 #endif //REC2_INIT_H

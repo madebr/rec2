@@ -84,6 +84,17 @@ void C2_HOOK_FASTCALL InitBRFonts(void) {
     C2V(gHeadup_font) = LoadBRFont("HEADUP.FNT");
 }
 
+void (C2_HOOK_FASTCALL * AllocateStandardLamp_original)(void);
+void C2_HOOK_FASTCALL AllocateStandardLamp(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    AllocateStandardLamp_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0047e500, AllocateStandardLamp, AllocateStandardLamp_original)
+
 void (C2_HOOK_FASTCALL * InitGame_original)(int pStart_race);
 void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 
