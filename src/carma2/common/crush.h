@@ -7,6 +7,8 @@
 
 #include "rec2_types.h"
 
+void C2_HOOK_FASTCALL InitCrush(void);
+
 void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file);
 
 #endif // REC2_CRUSH_H
