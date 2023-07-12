@@ -26,6 +26,8 @@ add_library(c2_common STATIC
     drone.h
     errors.c
     errors.h
+    explosions.c
+    explosions.h
     flicplay.c
     flicplay.h
     font.c
