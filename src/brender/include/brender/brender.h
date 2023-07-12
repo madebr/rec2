@@ -10,6 +10,8 @@ C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontFixed3x5);
 C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontProp4x6);
 C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontProp7x9);
 
+void C2_HOOK_CDECL BrV1dbBeginWrapper_Float(void);
+
 // BrActor
 br_actor* C2_HOOK_CDECL BrActorLoad(const char* filename);
 br_uint_32 C2_HOOK_CDECL BrActorLoadMany(const char* filename, br_actor** actors, br_uint_16 num);
