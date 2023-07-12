@@ -69,4 +69,6 @@ void C2_HOOK_FASTCALL PDSaveOriginalPalette(void);
 
 void C2_HOOK_FASTCALL PDInitScreen(void);
 
+void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length);
+
 #endif // C2_PLATFORM_H

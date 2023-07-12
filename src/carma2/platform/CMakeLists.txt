@@ -8,6 +8,8 @@ if(WIN32)
         win32/win32_dinput.h
         win32/win32.c
         win32/win32.h
+        win32/win32net.c
+        win32/win32net.h
         win32/winmain.c
     )
     target_compile_definitions(c2_platform
