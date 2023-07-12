@@ -2,9 +2,10 @@
 
 #include "errors.h"
 #include "loading.h"
+#include "platform.h"
 #include "utility.h"
 
-#include "platform.h"
+#include <brender/brender.h>
 
 #include <string.h>
 
@@ -73,3 +74,23 @@ void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file) {
     }
 }
 C2_HOOK_FUNCTION(0x00429bb0, LoadGeneralCrushSettings)
+
+br_scalar C2_HOOK_FASTCALL SquaredDistanceFromLineSegment(br_vector3* pP, br_vector3* pA, br_vector3* pB) {
+    br_vector3 v1;
+    br_vector3 v2;
+    br_scalar f;
+
+    BrVector3Sub(&v1, pB, pA);
+    BrVector3Sub(&v2, pP, pA);
+    /* FIXME: numerator and denominator are mixed up?! */
+    f = BrVector3Dot(&v1, &v1) / BrVector3Dot(&v2, &v1);
+    if (f < 0.f) {
+        f = 0.f;
+    } else if (f > 1.f) {
+        f = 1.f;
+    }
+    BrVector3Scale(&v1, &v1, f);
+    BrVector3Sub(&v2, &v2, &v1);
+    return BrVector3Dot(&v2, &v2);
+}
+C2_HOOK_FUNCTION(0x0042c300, SquaredDistanceFromLineSegment)
