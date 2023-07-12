@@ -5,4 +5,6 @@
 
 void C2_HOOK_FASTCALL InitPowerups(void);
 
+void C2_HOOK_FASTCALL LoadPowerups(void);
+
 #endif //REC2_POWERUPS_H
