@@ -54,4 +54,6 @@ void C2_HOOK_FASTCALL InitDRFonts(void);
 
 void C2_HOOK_FASTCALL UpdateMinimap(void);
 
+void C2_HOOK_FASTCALL InitHUDActor(void);
+
 #endif //REC2_GRAPHICS_H
