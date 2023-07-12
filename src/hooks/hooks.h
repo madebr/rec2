@@ -65,16 +65,16 @@ void hook_print_stats(void);
     HOOK_FUNCTION_ORIGINAL(ADDRESS, FUNCTION, HOOK_JOIN(hook_func_, FUNCTION))
 
 #define HOOK_VARIABLE_DECLARE(TYPE, NAME)   \
-    extern TYPE* HOOK_JOIN(hookvar_, NAME)
+    extern TYPE* const HOOK_JOIN(hookvar_, NAME)
 
 #define HOOK_VARIABLE_IMPLEMENT(TYPE, NAME, ADDRESS)    \
-    TYPE* HOOK_JOIN(hookvar_, NAME) = (TYPE*)(ADDRESS)
+    TYPE* const HOOK_JOIN(hookvar_, NAME) = (TYPE*)(ADDRESS)
 
 #define HOOK_VARIABLE_DECLARE_ARRAY(TYPE, NAME, COUNT)   \
-    extern TYPE (*HOOK_JOIN(hookvar_, NAME))[COUNT]
+    extern TYPE (*const HOOK_JOIN(hookvar_, NAME))[COUNT]
 
 #define HOOK_VARIABLE_IMPLEMENT_ARRAY(TYPE, NAME, COUNT, ADDRESS)    \
-    TYPE (*HOOK_JOIN(hookvar_, NAME))[COUNT] = (TYPE (*)[COUNT])(ADDRESS)
+    TYPE (* const HOOK_JOIN(hookvar_, NAME))[COUNT] = (TYPE (*)[COUNT])(ADDRESS)
 
 #define HOOK_VARIABLE(NAME)        \
     (*(HOOK_JOIN(hookvar_, NAME)))
