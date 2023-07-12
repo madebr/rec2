@@ -831,3 +831,13 @@ void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
     BrDiagHandlerSet(&C2V(gPD_error_handler));
 }
 C2_HOOK_FUNCTION(0x0051c6c0, PDInstallErrorHandlers)
+
+int (C2_HOOK_FASTCALL* PDInitScreenVars_original)(int pArgc, const char** pArgv);
+int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char** pArgv) {
+#if defined(C2_HOOKS_ENABLED)
+    return PDInitScreenVars_original(pArgc, pArgv);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051c290, PDInitScreenVars, PDInitScreenVars_original)
