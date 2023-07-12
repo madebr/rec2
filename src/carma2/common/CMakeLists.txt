@@ -56,6 +56,8 @@ add_library(c2_common STATIC
     main.h
     options.c
     options.h
+    physics.c
+    physics.h
     powerups.h
     powerups.c
     raycast.c
