@@ -202,5 +202,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void);
 
 void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void);
 
+void C2_HOOK_FASTCALL RestoreOptions(void);
+
 #endif //REC2_LOADING_H
 
