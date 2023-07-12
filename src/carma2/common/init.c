@@ -84,6 +84,17 @@ void C2_HOOK_FASTCALL InitBRFonts(void) {
     C2V(gHeadup_font) = LoadBRFont("HEADUP.FNT");
 }
 
+void (C2_HOOK_FASTCALL * Init2DStuff_original)(void);
+void C2_HOOK_FASTCALL Init2DStuff(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    Init2DStuff_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0047e720, Init2DStuff, Init2DStuff_original)
+
 void (C2_HOOK_FASTCALL * InitLineStuff_original)(void);
 void C2_HOOK_FASTCALL InitLineStuff(void) {
 

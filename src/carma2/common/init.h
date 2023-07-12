@@ -11,6 +11,8 @@ int C2_HOOK_FASTCALL GetScreenSize(void);
 
 void C2_HOOK_FASTCALL SetScreenSize(int pNew_size);
 
+void C2_HOOK_FASTCALL Init2DStuff(void);
+
 void C2_HOOK_FASTCALL InitLineStuff(void);
 
 void C2_HOOK_FASTCALL InitSmokeStuff(void);
