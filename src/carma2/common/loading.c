@@ -1716,3 +1716,14 @@ void C2_HOOK_FASTCALL LoadTreeSurgery(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00504b30, LoadTreeSurgery, LoadTreeSurgery_original)
+
+int (C2_HOOK_FASTCALL * TestForOriginalCarmaCDinDrive_original)(void);
+int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return TestForOriginalCarmaCDinDrive_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0048f3b0, TestForOriginalCarmaCDinDrive, TestForOriginalCarmaCDinDrive_original)

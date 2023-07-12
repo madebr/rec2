@@ -208,5 +208,7 @@ void C2_HOOK_FASTCALL LoadInRegistees(void);
 
 void C2_HOOK_FASTCALL LoadTreeSurgery(void);
 
+int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void);
+
 #endif //REC2_LOADING_H
 
