@@ -11,6 +11,8 @@ int C2_HOOK_FASTCALL GetScreenSize(void);
 
 void C2_HOOK_FASTCALL SetScreenSize(int pNew_size);
 
+void C2_HOOK_FASTCALL InitializeBRenderEnvironment(void);
+
 void C2_HOOK_FASTCALL AllocateSelf(void);
 
 void C2_HOOK_FASTCALL AllocateCamera(void);
