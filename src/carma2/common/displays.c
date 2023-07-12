@@ -21,3 +21,14 @@ void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465a70, TransDRPixelmapText, TransDRPixelmapText_original)
+
+void (C2_HOOK_FASTCALL * InitHeadups_original)(void);
+void C2_HOOK_FASTCALL InitHeadups(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitHeadups_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00449090, InitHeadups, InitHeadups_original)
