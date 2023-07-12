@@ -206,5 +206,7 @@ void C2_HOOK_FASTCALL RestoreOptions(void);
 
 void C2_HOOK_FASTCALL LoadInRegistees(void);
 
+void C2_HOOK_FASTCALL LoadTreeSurgery(void);
+
 #endif //REC2_LOADING_H
 
