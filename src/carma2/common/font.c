@@ -57,7 +57,7 @@ br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureI
 
     pModel = BrModelAllocate("String model", 4, 2);
     if (pModel == NULL) {
-        FatalError(kFatalError_CoudNotCreateTexturesPages_S, pageName);
+        FatalError(kFatalError_CouldNotCreateTexturesPages_S, pageName);
     }
     pModel->faces[0].vertices[0] = 0;
     pModel->faces[0].vertices[1] = 1;
@@ -67,12 +67,12 @@ br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureI
     pModel->faces[1].vertices[2] = 2;
     BrVector3Set(&pModel->vertices[0].p, 0.f, 0.f, -1.2f);
     BrVector3Set(&pModel->vertices[1].p, (float)width, 0.f, -1.2f);
-    BrVector3Set(&pModel->vertices[2].p, -1.2f, -(float)height, -1.2f);
-    BrVector3Set(&pModel->vertices[2].p, (float)width, (float)-height, -1.2f);
+    BrVector3Set(&pModel->vertices[2].p, 0.f, -(float)height, -1.2f);
+    BrVector3Set(&pModel->vertices[3].p, (float)width, (float)-height, -1.2f);
     BrVector2Set(&pModel->vertices[0].map, (float)textureIdX / 64.f, (float)textureIdY / 64.f);
     BrVector2Set(&pModel->vertices[1].map, (float)(textureIdX + width) / 64.f, (float)textureIdY / 64.f);
-    BrVector2Set(&pModel->vertices[1].map, (float)textureIdX / 64.f,  (float)(textureIdY + height) / 64.f);
-    BrVector2Set(&pModel->vertices[1].map, (float)(textureIdX + width) / 64.f, (float)(textureIdY + height) / 64.f);
+    BrVector2Set(&pModel->vertices[2].map, (float)textureIdX / 64.f,  (float)(textureIdY + height) / 64.f);
+    BrVector2Set(&pModel->vertices[3].map, (float)(textureIdX + width) / 64.f, (float)(textureIdY + height) / 64.f);
     pModel->flags |= BR_STATE_STATS;
     BrModelAdd(pModel);
     return pModel;
