@@ -7,15 +7,15 @@
 
 C2_HOOK_VARIABLE_DECLARE(br_allocator, gAllocator);
 
-//extern int gNon_fatal_allocation_errors;
-//extern char* gMem_names[247];
-//extern br_resource_class gStainless_classes[118];
-//
-//void SetNonFatalAllocationErrors();
-//
-//void ResetNonFatalAllocationErrors();
-//
-//int AllocationErrorsAreFatal();
+C2_HOOK_VARIABLE_DECLARE(int, gNon_fatal_allocation_errors);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gMem_names, 256);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_resource_class, gStainless_classes, 126);
+
+void C2_HOOK_FASTCALL SetNonFatalAllocationErrors(void);
+
+void C2_HOOK_FASTCALL ResetNonFatalAllocationErrors(void);
+
+int C2_HOOK_FASTCALL AllocationErrorsAreFatal(void);
 
 void C2_HOOK_FASTCALL MAMSInitMem(void);
 
@@ -30,13 +30,9 @@ br_size_t C2_HOOK_CDECL DRStdlibInquire(br_uint_8 type);
 br_uint_32 C2_HOOK_CDECL Claim4ByteAlignment(br_uint_8 type);
 
 void C2_HOOK_FASTCALL InstallDRMemCalls(void);
-//
-//void MAMSUnlock(void** pPtr);
-//
-//void MAMSLock(void** pPtr);
-//
+
 void C2_HOOK_FASTCALL CreateStainlessClasses(void);
-//
-//void CheckMemory();
+
+void C2_HOOK_FASTCALL CheckMemory(void);
 
 #endif // REC3_DRMEM_H
