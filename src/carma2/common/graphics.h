@@ -10,6 +10,8 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_palette);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gRender_palette);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tDR_font, gFonts, 24);
 
+C2_HOOK_VARIABLE_DECLARE(int, gGraf_data_index);
+
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_x);
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_y);
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_width);

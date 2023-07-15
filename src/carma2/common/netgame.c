@@ -5,7 +5,9 @@
 
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
-    NetObtainSystemUserName(C2V(gProgram_state).player_name, 0x20);
+    /* FIXME: 32 overflows the player_name field */
+    C2_HOOK_ASSERT((uintptr_t)&C2V(gProgram_state).player_name == 0x0075d590);
+    NetObtainSystemUserName(C2V(gProgram_state).player_name, 32);
 }
 C2_HOOK_FUNCTION(0x0049bd10, DefaultNetName)
 
