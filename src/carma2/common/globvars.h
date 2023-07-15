@@ -79,6 +79,10 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gLight_array, 50);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gHUD_root);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gHUD_camera);
 
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gLine_actor);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gLine_model);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gLine_material);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;
