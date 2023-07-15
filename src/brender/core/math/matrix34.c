@@ -81,7 +81,7 @@ void C2_HOOK_CDECL BrMatrix34RotateX(br_matrix34* mat, br_angle rx) {
     s = BR_SIN(rx);
     c = BR_COS(rx);
 
-    M(0, 0) = 1;
+    M(0, 0) = 1.f;
     M(0, 1) = 0;
     M(0, 2) = 0;
     M(1, 0) = 0;
