@@ -76,6 +76,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_lights);
 C2_HOOK_VARIABLE_DECLARE(tDRLighting_data, gGlobal_lighting_data);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gLight_array, 50);
 
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gHUD_root);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gHUD_camera);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;
