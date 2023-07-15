@@ -30,6 +30,8 @@
 #define DR_DPRINTF(...)
 #endif
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_spec_index, 0x00662200, 1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_data_index, 0x00662204, 1);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tGraf_spec, gGraf_specs, 2, 0x00662208, {
     { 8, 1, 0, 320, 200, 0, 0, "32X20X8", "320x200 init string", 320, 320, 200, 0 },
@@ -838,10 +840,12 @@ C2_HOOK_FUNCTION(0x0051c6c0, PDInstallErrorHandlers)
 
 int (C2_HOOK_FASTCALL* PDInitScreenVars_original)(int pArgc, const char** pArgv);
 int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char** pArgv) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return PDInitScreenVars_original(pArgc, pArgv);
 #else
-#error "Not implemented"
+    C2V(gGraf_spec_index) = C2V(gDefault_spec_index);
+    C2V(gGraf_data_index) = C2V(gDefault_data_index);
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c290, PDInitScreenVars, PDInitScreenVars_original)
