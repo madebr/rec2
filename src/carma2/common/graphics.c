@@ -424,10 +424,23 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00496e30, UpdateMap, UpdateMap_original)
 void (C2_HOOK_FASTCALL * InitHUDActor_original)(void);
 void C2_HOOK_FASTCALL InitHUDActor(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitHUDActor_original();
 #else
-#error "Not implemented"
+    br_camera* camera_data;
+
+    C2V(gHUD_root) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    C2V(gHUD_camera) = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+    if (C2V(gHUD_root) == NULL || C2V(gHUD_camera) == NULL) {
+        FatalError(kFatalError_OOM_S);
+    }
+    camera_data = C2V(gHUD_camera)->type_data;
+    camera_data->type = BR_CAMERA_PARALLEL;
+    camera_data->hither_z = 1.f;
+    camera_data->yon_z = 3.f;
+    camera_data->width = C2V(gBack_screen)->width;
+    camera_data->height = C2V(gBack_screen)->height;
+    BrActorAdd(C2V(gHUD_root), C2V(gHUD_camera));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e560, InitHUDActor, InitHUDActor_original)
