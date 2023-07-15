@@ -1527,6 +1527,16 @@ typedef struct {
     float diffuse_0;
 } tDRLighting_data;
 
+typedef struct {
+    br_vector3 pos;
+    br_scalar r;
+    br_scalar strength;
+    br_colour col;
+    float aspect;
+    br_material* material;
+    br_model* model;
+} tBRender_smoke;
+
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
