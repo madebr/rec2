@@ -10,6 +10,7 @@
 #include "flicplay.h"
 #include "font.h"
 #include "globvars.h"
+#include "globvrbm.h"
 #include "grafdata.h"
 #include "graphics.h"
 #include "loading.h"
@@ -26,6 +27,7 @@
 #include "sound.h"
 #include "temp.h"
 #include "tinted.h"
+#include "utility.h"
 #include "video.h"
 #include "world.h"
 
@@ -269,13 +271,576 @@ void C2_HOOK_FASTCALL AllocateCamera(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e3b0, AllocateCamera, AllocateCamera_original)
 
+static void inline Prepare2DModelAndMaterial(br_model* pModel, br_material* pMaterial, int pConfigure_vertices, br_colour pColour, int pFadeAlpha) {
+    static br_token_value fadealpha[3] = {
+            { BRT_BLEND_B , {1}},
+            { BRT_OPACITY_X, {0x800000} }, /* 50%*/
+            { 0 },
+    };
+
+    if (pConfigure_vertices) {
+        pModel->faces[0].vertices[0] = 0;
+        pModel->faces[0].vertices[1] = 1;
+        pModel->faces[0].vertices[2] = 2;
+        pModel->faces[1].vertices[0] = 2;
+        pModel->faces[1].vertices[1] = 3;
+        pModel->faces[1].vertices[2] = 0;
+        BrVector3Set(&pModel->vertices[0].p, 150.f, -20.f, -2.f);
+        BrVector3Set(&pModel->vertices[1].p, 150.0, -100.f, -2.f);
+        BrVector3Set(&pModel->vertices[2].p, 200.f, -100.f, -2.f);
+        BrVector3Set(&pModel->vertices[3].p, 200.f, -20.f, -2.f);
+    }
+    pMaterial->colour = pColour;
+    pMaterial->flags = BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
+    if (pFadeAlpha) {
+        pMaterial->extra_prim = fadealpha;
+    }
+    pModel->flags |= BR_MODF_KEEP_ORIGINAL;
+}
+
+static void inline Prepare2DModelToDim(br_model* pModel, int pX, int pY, int pW, int pH) {
+
+    pModel->vertices[0].p.v[0] = pModel->vertices[1].p.v[0] = (float)pX;
+    pModel->vertices[0].p.v[1] = pModel->vertices[3].p.v[1] = (float)-pY;
+    pModel->vertices[2].p.v[0] = pModel->vertices[3].p.v[0] = pModel->vertices[1].p.v[0] + pW;
+    pModel->vertices[1].p.v[1] = pModel->vertices[2].p.v[1] = pModel->vertices[3].p.v[1] - pH;
+}
+
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gPrat_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, g2d_camera);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gPowerupHUD_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gStatbarHUD1_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gHeadup2_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gHUDsquare_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gMapHUD_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gTimerRightHUD_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gOffense_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gTimerLeftHUD_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gPower_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gHUDcurve_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gStatbarRightHUD_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gHeadup_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gStatbarHUD5_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gDim_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gArmour_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gHUD_root_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gStatbarHUD3_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gTestFont_actor);
+
+C2_HOOK_VARIABLE_DECLARE(br_model*, gPrat_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gMapHUD_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gStatbarRightHUD_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gTestFont_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gHeadup_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gHUDsquare_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gTimerRightHUD_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gOffence_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gTimerLeftHUD_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gPower_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gStatbarHUD5_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gStatbarHUD3_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gStatbarHUD1_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gPowerupHUD_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gHeadup2_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gDim_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gHUDcurve_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gArmour_model);
+
+C2_HOOK_VARIABLE_DECLARE(br_material*, gPowerupHUD_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gTestFont_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gArmour_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gStatbarHUD1_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gStatbarHUD5_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gHeadup_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gStatbarHUD3_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gOffence_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gPower_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gStatbarRightHUD_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gPrat_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gHUDcurve_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMapHUD_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gHeadup2_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gTimerRightHUD_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gDim_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gHUDsquare_material);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gTimerLeftHUD_material);
+
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup2_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup2_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup2_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup2_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gPowerupHUD_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gPowerupHUD_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gPowerupHUD_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gPowerupHUD_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD1_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD1_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD1_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD1_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD3_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD3_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD3_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD3_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gHUDsquare_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gHUDsquare_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gHUDsquare_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gHUDsquare_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD5_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD5_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD5_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gStatbarHUD5_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gTimerRightHUD_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerRightHUD_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerRightHUD_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerRightHUD_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gTimerLeftHUD_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerLeftHUD_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerLeftHUD_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerLeftHUD_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gTimerRightHUD_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerRightHUD_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerRightHUD_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gTimerRightHUD_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gArmour_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gArmour_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gArmour_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gArmour_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gPower_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gPower_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gPower_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gPower_dim_y);
+
+C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_w);
+C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_h);
+C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_x);
+C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_y);
+
+int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth);
+int C2_HOOK_FASTCALL Fix2DTextureHeight(int pHeight);
+
 void (C2_HOOK_FASTCALL * Init2DStuff_original)(void);
 void C2_HOOK_FASTCALL Init2DStuff(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     Init2DStuff_original();
 #else
-#error "Not implemented"
+    tPath_name the_path;
+    br_camera* camera_data;
+    float w, h, w_fixed, h_fixed;
+
+    C2V(gHUD_root_actor) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    BrMatrix34Translate(&C2V(gHUD_root_actor)->t.t.mat, 0.f, 0.f, 2.f);
+    C2V(g2d_camera) = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+    C2V(gDim_model) = BrModelAllocate("gDim_model", 4, 2);
+    C2V(gDim_material) = BrMaterialAllocate("gDim_material");
+    C2V(gDim_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    C2V(gPrat_model) = BrModelAllocate("gPrat_model", 4, 2);
+    C2V(gPrat_material) = BrMaterialAllocate("gPrat_material");
+    C2V(gPrat_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    PathCat(the_path, C2V(gApplication_path), "INTRFACE");
+    PathCat(the_path, the_path, "BOTHUP");
+    c2_strcat(the_path, ".DAT");
+
+    C2V(gHeadup_model) = BrModelLoad(the_path);
+    C2V(gHeadup_material) = BrMaterialAllocate("gHeadup_material");
+    C2V(gHeadup_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gHeadup2_model) = BrModelAllocate("gHeadup2_model", 4, 2);
+    C2V(gHeadup2_material) = BrMaterialAllocate("gHeadup2_material");
+    C2V(gHeadup2_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gPowerupHUD_model) = BrModelAllocate("gPowerupHUD_model", 4, 2);
+    C2V(gPowerupHUD_material) = BrMaterialAllocate("gPowerupHUD_material");
+    C2V(gPowerupHUD_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gStatbarHUD1_model) = BrModelAllocate("gStatbarHUD1_model", 4, 2);
+    C2V(gStatbarHUD1_material) = BrMaterialAllocate("gStatbarHUD1_material");
+    C2V(gStatbarHUD1_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gHUDcurve_model) = BrModelAllocate("gHUDcurve_model", 4, 2);
+    C2V(gHUDcurve_material) = BrMaterialAllocate("gHUDcurve_material");
+    C2V(gHUDcurve_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gStatbarHUD3_model) = BrModelAllocate("gStatbarHUD3_model", 4, 2);
+    C2V(gStatbarHUD3_material) = BrMaterialAllocate("gStatbarHUD3");
+    C2V(gStatbarHUD3_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gHUDsquare_model) = BrModelAllocate("gHUDsquare_model", 4, 2);
+    C2V(gHUDsquare_material) = BrMaterialAllocate("gHUDsquare_material");
+    C2V(gHUDsquare_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gStatbarHUD5_model) = BrModelAllocate("gStatbarHUD5_model", 4, 2);
+    C2V(gStatbarHUD5_material) = BrMaterialAllocate("gStatbarHUD5_material");
+    C2V(gStatbarHUD5_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gTimerLeftHUD_model) = BrModelAllocate("gTimerLeftHUD_model", 4, 2);
+    C2V(gTimerLeftHUD_material) = BrMaterialAllocate("gTimerLeftHUD_material");
+    C2V(gTimerLeftHUD_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gTimerRightHUD_model) = BrModelAllocate("gTimerRightHUD_model", 4, 2);
+    C2V(gTimerRightHUD_material) = BrMaterialAllocate("gTimerRightHUD_material");
+    C2V(gTimerRightHUD_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gStatbarRightHUD_model) = BrModelAllocate("gStatbarRightHUD_model", 4, 2);
+    C2V(gStatbarRightHUD_material) = BrMaterialAllocate("gStatbarRightHUD_material");
+    C2V(gStatbarRightHUD_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gMapHUD_model) = BrModelAllocate("gMapHUD_model", 4, 2);
+    C2V(gMapHUD_material) = BrMaterialAllocate("gMapHUD_material");
+    C2V(gMapHUD_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gTestFont_model) = BrModelAllocate("gTestFont_model", 4, 2);
+    C2V(gTestFont_material) = BrMaterialAllocate("gTestFont_material");
+    C2V(gTestFont_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gArmour_model) = BrModelAllocate("gArmour_model", 4, 2);
+    C2V(gArmour_material) = BrMaterialAllocate("gArmour_material");
+    C2V(gArmour_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gPower_model) = BrModelAllocate("gPower_model", 4, 2);
+    C2V(gPower_material) = BrMaterialAllocate("gPower_material");
+    C2V(gPower_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    C2V(gOffence_model) = BrModelAllocate("gOffence_model", 4, 2);
+    C2V(gOffence_material) = BrMaterialAllocate("gOffence_material");
+    C2V(gOffense_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+    if (C2V(gHUD_root_actor) == NULL
+            || C2V(g2d_camera) == NULL
+            || C2V(gDim_model) == NULL
+            || C2V(gDim_material) == NULL
+            || C2V(gDim_actor) == NULL
+            || C2V(gPrat_model) == NULL
+            || C2V(gPrat_material) == NULL
+            || C2V(gPrat_actor) == NULL
+            || C2V(gHeadup_model) == NULL
+            || C2V(gHeadup_material) == NULL
+            || C2V(gHeadup_actor) == NULL
+            || C2V(gHeadup2_model) == NULL
+            || C2V(gHeadup2_material) == NULL
+            || C2V(gHeadup2_actor) == NULL
+            || C2V(gPowerupHUD_model) == NULL
+            || C2V(gPowerupHUD_material) == NULL
+            || C2V(gPowerupHUD_actor) == NULL
+            || C2V(gStatbarHUD1_model) == NULL
+            || C2V(gStatbarHUD1_material) == NULL
+            || C2V(gStatbarHUD1_actor) == NULL
+            || C2V(gHUDcurve_model) == NULL
+            || C2V(gHUDcurve_material) == NULL
+            || C2V(gHUDcurve_actor) == NULL
+            || C2V(gStatbarHUD3_model) == NULL
+            || C2V(gStatbarHUD3_material) == NULL
+            || C2V(gStatbarHUD3_actor) == NULL
+            || C2V(gHUDsquare_model) == NULL
+            || C2V(gHUDsquare_material) == NULL
+            || C2V(gHUDsquare_actor) == NULL
+            || C2V(gStatbarHUD5_model) == NULL
+            || C2V(gStatbarHUD5_material) == NULL
+            || C2V(gStatbarHUD5_actor) == NULL
+            || C2V(gTimerLeftHUD_model) == NULL
+            || C2V(gTimerLeftHUD_material) == NULL
+            || C2V(gTimerLeftHUD_actor) == NULL
+            || C2V(gTimerRightHUD_model) == NULL
+            || C2V(gTimerRightHUD_material) == NULL
+            || C2V(gTimerRightHUD_actor) == NULL
+            || C2V(gStatbarRightHUD_model) == NULL
+            || C2V(gStatbarRightHUD_material) == NULL
+            || C2V(gStatbarRightHUD_actor) == NULL
+            || C2V(gMapHUD_model) == NULL
+            || C2V(gMapHUD_material) == NULL
+            || C2V(gMapHUD_actor) == NULL
+            || C2V(gTestFont_model) == NULL
+            || C2V(gTestFont_material) == NULL
+            || C2V(gTestFont_actor) == NULL
+            || C2V(gArmour_model) == NULL
+            || C2V(gArmour_material) == NULL
+            || C2V(gArmour_actor) == NULL
+            || C2V(gPower_model) == NULL
+            || C2V(gPower_material) == NULL
+            || C2V(gPower_actor) == NULL
+            || C2V(gOffence_model) == NULL
+            || C2V(gOffence_material) == NULL
+            || C2V(gOffense_actor) == NULL) {
+        FatalError(kFatalError_OOM_S);
+    }
+
+    C2V(g2d_camera)->identifier = "A 2D camera, possibly even g2d_camera";
+    camera_data = C2V(g2d_camera)->type_data;
+    camera_data->type = BR_CAMERA_PARALLEL;
+    camera_data->hither_z = 1.f;
+    camera_data->yon_z = 3.f;
+    camera_data->width = (float)C2V(gScreen)->width;
+    camera_data->height = (float)C2V(gScreen)->height;
+
+    C2V(gDim_actor)->identifier = "gDim_actor";
+    C2V(gDim_actor)->model = C2V(gDim_model);
+    C2V(gDim_actor)->material = C2V(gDim_material);
+    Prepare2DModelAndMaterial(C2V(gDim_model), C2V(gDim_material), 1, BR_COLOUR_RGB(0, 0, 0), 1);
+    BrModelAdd(C2V(gDim_model));
+    BrMaterialAdd(C2V(gDim_material));
+
+    C2V(gPrat_actor)->identifier ="gPrat_actor";
+    C2V(gPrat_actor)->model = C2V(gPrat_model);
+    C2V(gPrat_actor)->material = C2V(gPrat_material);
+    Prepare2DModelAndMaterial(C2V(gPrat_model), C2V(gPrat_material), 1, BR_COLOUR_RGB(0xff, 0xff, 0xff), 0);
+    BrVector2Set(&C2V(gPrat_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gPrat_model)->vertices[1].map, 0.f, 1.f);
+    BrVector2Set(&C2V(gPrat_model)->vertices[2].map, 1.f, 1.f);
+    BrVector2Set(&C2V(gPrat_model)->vertices[3].map, 1.f, 0.f);
+    BrModelAdd(C2V(gPrat_model));
+    BrMaterialAdd(C2V(gPrat_material));
+
+    C2V(gHeadup_actor)->identifier = "gHeadup_actor";
+    C2V(gHeadup_actor)->model = C2V(gHeadup_model);
+    C2V(gHeadup_actor)->material = C2V(gHeadup_material);
+    Prepare2DModelAndMaterial(C2V(gHeadup_model), C2V(gHeadup_material), 0, BR_COLOUR_RGB(0x04, 0x0e, 0x4a), 1);
+    w = (float)C2V(gHeadup_dim_w);
+    h = (float)C2V(gHeadup_dim_w);
+    w_fixed = (float)Fix2DTextureWidth(C2V(gHeadup_dim_w));
+    h_fixed = (float)Fix2DTextureHeight(C2V(gHeadup_dim_w));
+    BrVector2Set(&C2V(gHeadup_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gHeadup_model)->vertices[1].map, 0.f, h / h_fixed);
+    BrVector2Set(&C2V(gHeadup_model)->vertices[2].map, w / w_fixed, h / h_fixed);
+    BrVector2Set(&C2V(gHeadup_model)->vertices[3].map, w / w_fixed, 0.f);
+    BrModelAdd(C2V(gHeadup_model));
+    BrMaterialAdd(C2V(gHeadup_material));
+    BrMatrix34Translate(&C2V(gHeadup_actor)->t.t.mat,
+            (float)(C2V(gHeadup_dim_x) + 10 + C2V(gHeadup_dim_w)),
+            (float)(-C2V(gHeadup_dim_h) / 2 - C2V(gHeadup_dim_y)),
+            -2.f);
+
+    C2V(gHeadup2_actor)->identifier = "gHeadup2_actor";
+    C2V(gHeadup2_actor)->model = C2V(gHeadup2_model);
+    C2V(gHeadup2_actor)->material = C2V(gHeadup2_material);
+    Prepare2DModelAndMaterial(C2V(gHeadup2_model), C2V(gHeadup2_material), 1, BR_COLOUR_RGB(0x04, 0x0e, 0x4a), 1);
+    w = (float)C2V(gHeadup2_dim_w);
+    h = (float)C2V(gHeadup2_dim_h);
+    w_fixed = (float)Fix2DTextureWidth(C2V(gHeadup2_dim_w));
+    h_fixed = (float)Fix2DTextureHeight(C2V(gHeadup2_dim_h));
+    BrVector2Set(&C2V(gHeadup2_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gHeadup2_model)->vertices[1].map, 0.f, h / h_fixed);
+    BrVector2Set(&C2V(gHeadup2_model)->vertices[2].map, w / w_fixed, h / h_fixed);
+    BrVector2Set(&C2V(gHeadup2_model)->vertices[3].map, w / w_fixed, 0.f);
+    BrModelAdd(C2V(gHeadup2_model));
+    BrMaterialAdd(C2V(gHeadup2_material));
+
+    C2V(gPowerupHUD_actor)->identifier = "gPowerupHUD_actor";
+    C2V(gPowerupHUD_actor)->model = C2V(gPowerupHUD_model);
+    C2V(gPowerupHUD_actor)->material = C2V(gPowerupHUD_material);
+    Prepare2DModelAndMaterial(C2V(gPowerupHUD_model), C2V(gPowerupHUD_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    w = (float)C2V(gPowerupHUD_dim_w);
+    h = (float)C2V(gPowerupHUD_dim_h);
+    w_fixed = (float)Fix2DTextureWidth(C2V(gPowerupHUD_dim_w));
+    h_fixed = (float)Fix2DTextureHeight(C2V(gPowerupHUD_dim_h));
+    BrVector2Set(&C2V(gPowerupHUD_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gPowerupHUD_model)->vertices[1].map, 0.f, h / h_fixed);
+    BrVector2Set(&C2V(gPowerupHUD_model)->vertices[2].map, w / w_fixed, h / h_fixed);
+    BrVector2Set(&C2V(gPowerupHUD_model)->vertices[3].map, w / w_fixed, 0.f);
+    BrModelAdd(C2V(gPowerupHUD_model));
+    BrMaterialAdd(C2V(gPowerupHUD_material));
+
+    C2V(gStatbarHUD1_actor)->identifier = "gStatbarHUD1_actor";
+    C2V(gStatbarHUD1_actor)->model = C2V(gStatbarHUD1_model);
+    C2V(gStatbarHUD1_actor)->material = C2V(gStatbarHUD1_material);
+    Prepare2DModelAndMaterial(C2V(gStatbarHUD1_model), C2V(gStatbarHUD1_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    w = (float)C2V(gStatbarHUD1_dim_w);
+    h = (float)C2V(gStatbarHUD1_dim_h);
+    w_fixed = (float)Fix2DTextureWidth(C2V(gStatbarHUD1_dim_w));
+    h_fixed = (float)Fix2DTextureHeight(C2V(gStatbarHUD1_dim_h));
+    BrVector2Set(&C2V(gStatbarHUD1_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gStatbarHUD1_model)->vertices[1].map, 0.f, h / h_fixed);
+    BrVector2Set(&C2V(gStatbarHUD1_model)->vertices[2].map, w / w_fixed, h / h_fixed);
+    BrVector2Set(&C2V(gStatbarHUD1_model)->vertices[3].map, w / w_fixed, 0.f);
+    BrModelAdd(C2V(gStatbarHUD1_model));
+    BrMaterialAdd(C2V(gStatbarHUD1_material));
+
+    C2V(gHUDcurve_actor)->identifier = "gHUDcurve_actor";
+    C2V(gHUDcurve_actor)->model = C2V(gHUDcurve_model);
+    C2V(gHUDcurve_actor)->material = C2V(gHUDcurve_material);
+    Prepare2DModelAndMaterial(C2V(gHUDcurve_model), C2V(gHUDcurve_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    BrVector2Set(&C2V(gPrat_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gPrat_model)->vertices[1].map, 0.f, 1.f);
+    BrVector2Set(&C2V(gPrat_model)->vertices[2].map, 1.f, 1.f);
+    BrVector2Set(&C2V(gPrat_model)->vertices[3].map, 1.f, 0.f);
+    BrModelAdd(C2V(gHUDcurve_model));
+    BrMaterialAdd(C2V(gHUDcurve_material));
+
+    C2V(gStatbarHUD3_actor)->identifier = "gStatbarHUD3_actor";
+    C2V(gStatbarHUD3_actor)->model = C2V(gStatbarHUD3_model);
+    C2V(gStatbarHUD3_actor)->material = C2V(gStatbarHUD3_material);
+    Prepare2DModelAndMaterial(C2V(gStatbarHUD3_model), C2V(gStatbarHUD3_material), 1, BR_COLOUR_RGB(0x04, 0x0e, 0x4a), 1);
+    w = (float)C2V(gStatbarHUD3_dim_w);
+    h = (float)C2V(gStatbarHUD3_dim_h);
+    w_fixed = (float)Fix2DTextureWidth(C2V(gStatbarHUD3_dim_w));
+    h_fixed = (float)Fix2DTextureHeight(C2V(gStatbarHUD3_dim_h));
+    BrVector2Set(&C2V(gStatbarHUD3_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gStatbarHUD3_model)->vertices[1].map, 0.f, h / h_fixed);
+    BrVector2Set(&C2V(gStatbarHUD3_model)->vertices[2].map, w / w_fixed, h / h_fixed);
+    BrVector2Set(&C2V(gStatbarHUD3_model)->vertices[3].map, w / w_fixed, 0.f);
+    BrModelAdd(C2V(gStatbarHUD3_model));
+    BrMaterialAdd(C2V(gStatbarHUD3_material));
+
+    C2V(gHUDsquare_actor)->identifier = "gHUDsquare_actor";
+    C2V(gHUDsquare_actor)->model = C2V(gHUDsquare_model);
+    C2V(gHUDsquare_actor)->material = C2V(gHUDsquare_material);
+    Prepare2DModelAndMaterial(C2V(gHUDsquare_model), C2V(gHUDsquare_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    w = (float)C2V(gHUDsquare_dim_w);
+    h = (float)C2V(gHUDsquare_dim_h);
+    w_fixed = (float)Fix2DTextureWidth(C2V(gHUDsquare_dim_w));
+    h_fixed = (float)Fix2DTextureHeight(C2V(gHUDsquare_dim_h));
+    BrVector2Set(&C2V(gHUDsquare_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gHUDsquare_model)->vertices[1].map, 0.f, h / h_fixed);
+    BrVector2Set(&C2V(gHUDsquare_model)->vertices[2].map, w / w_fixed, h / h_fixed);
+    BrVector2Set(&C2V(gHUDsquare_model)->vertices[3].map, w / w_fixed, 0.f);
+    BrModelAdd(C2V(gHUDsquare_model));
+    BrMaterialAdd(C2V(gHUDsquare_material));
+
+    C2V(gStatbarHUD5_actor)->identifier = "gStatbarHUD5_actor";
+    C2V(gStatbarHUD5_actor)->model = C2V(gStatbarHUD5_model);
+    C2V(gStatbarHUD5_actor)->material = C2V(gStatbarHUD5_material);
+    Prepare2DModelAndMaterial(C2V(gStatbarHUD5_model), C2V(gStatbarHUD5_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    w = (float)C2V(gStatbarHUD5_dim_w);
+    h = (float)C2V(gStatbarHUD5_dim_h);
+    w_fixed = (float)Fix2DTextureWidth(C2V(gStatbarHUD5_dim_w));
+    h_fixed = (float)Fix2DTextureHeight(C2V(gStatbarHUD5_dim_h));
+    BrVector2Set(&C2V(gStatbarHUD5_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gStatbarHUD5_model)->vertices[1].map, 0.f, h / h_fixed);
+    BrVector2Set(&C2V(gStatbarHUD5_model)->vertices[2].map, w / w_fixed, h / h_fixed);
+    BrVector2Set(&C2V(gStatbarHUD5_model)->vertices[3].map, w / w_fixed, 0.f);
+    BrModelAdd(C2V(gStatbarHUD5_model));
+    BrMaterialAdd(C2V(gStatbarHUD5_material));
+
+    C2V(gTimerLeftHUD_actor)->identifier = "gTimerLeftHUD_actor";
+    C2V(gTimerLeftHUD_actor)->model = C2V(gTimerLeftHUD_model);
+    C2V(gTimerLeftHUD_actor)->material = C2V(gTimerLeftHUD_material);
+    Prepare2DModelAndMaterial(C2V(gTimerLeftHUD_model), C2V(gTimerLeftHUD_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    BrVector2Set(&C2V(gTimerLeftHUD_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gTimerLeftHUD_model)->vertices[1].map, 0.f, 1.f);
+    BrVector2Set(&C2V(gTimerLeftHUD_model)->vertices[2].map, 1.f, 1.f);
+    BrVector2Set(&C2V(gTimerLeftHUD_model)->vertices[3].map, 1.f, 0.f);
+    BrModelAdd(C2V(gTimerLeftHUD_model));
+    BrMaterialAdd(C2V(gTimerLeftHUD_material));
+
+    C2V(gTimerRightHUD_actor)->identifier = "gTimerRightHUD_actor";
+    C2V(gTimerRightHUD_actor)->model = C2V(gTimerRightHUD_model);
+    C2V(gTimerRightHUD_actor)->material = C2V(gTimerRightHUD_material);
+    Prepare2DModelAndMaterial(C2V(gTimerRightHUD_model), C2V(gTimerRightHUD_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    w = (float)C2V(gTimerRightHUD_dim_w);
+    h = (float)C2V(gTimerRightHUD_dim_h);
+    w_fixed = (float)Fix2DTextureWidth(C2V(gTimerRightHUD_dim_w));
+    h_fixed = (float)Fix2DTextureHeight(C2V(gTimerRightHUD_dim_h));
+    BrVector2Set(&C2V(gTimerRightHUD_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gTimerRightHUD_model)->vertices[1].map, 0.f, h / h_fixed);
+    BrVector2Set(&C2V(gTimerRightHUD_model)->vertices[2].map, w / w_fixed, h / h_fixed);
+    BrVector2Set(&C2V(gTimerRightHUD_model)->vertices[3].map, w / w_fixed, 0.f);
+    BrModelAdd(C2V(gTimerRightHUD_model));
+    BrMaterialAdd(C2V(gTimerRightHUD_material));
+
+    C2V(gStatbarRightHUD_actor)->identifier = "gStatbarRightHUD_actor";
+    C2V(gStatbarRightHUD_actor)->model = C2V(gStatbarRightHUD_model);
+    C2V(gStatbarRightHUD_actor)->material = C2V(gStatbarRightHUD_material);
+    Prepare2DModelAndMaterial(C2V(gStatbarRightHUD_model), C2V(gStatbarRightHUD_material), 1, BR_COLOUR_RGB(0x04, 0x0e, 0x4e), 1);
+    BrModelAdd(C2V(gStatbarRightHUD_model));
+    BrMaterialAdd(C2V(gStatbarRightHUD_material));
+
+    C2V(gMapHUD_actor)->identifier = "gMapHUD_actor";
+    C2V(gMapHUD_actor)->model = C2V(gMapHUD_model);
+    C2V(gMapHUD_actor)->material = C2V(gMapHUD_material);
+    Prepare2DModelAndMaterial(C2V(gMapHUD_model), C2V(gMapHUD_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    BrModelAdd(C2V(gMapHUD_model));
+    BrMaterialAdd(C2V(gMapHUD_material));
+
+    C2V(gTestFont_actor)->identifier = "gTestFont_actor";
+    C2V(gTestFont_actor)->model = C2V(gTestFont_model);
+    C2V(gTestFont_actor)->material = C2V(gTestFont_material);
+    Prepare2DModelAndMaterial(C2V(gTestFont_model), C2V(gTestFont_material), 1, BR_COLOUR_RGB(0x22, 0x35, 0x51), 0);
+    BrModelAdd(C2V(gTestFont_model));
+    BrMaterialAdd(C2V(gTestFont_material));
+
+    C2V(gArmour_actor)->identifier = "gArmour_actor";
+    C2V(gArmour_actor)->model = C2V(gArmour_model);
+    C2V(gArmour_actor)->material = C2V(gArmour_material);
+    Prepare2DModelAndMaterial(C2V(gArmour_model), C2V(gArmour_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
+    BrVector2Set(&C2V(gArmour_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gArmour_model)->vertices[1].map, 0.f, 1.f);
+    BrVector2Set(&C2V(gArmour_model)->vertices[2].map, 1.f, 1.f);
+    BrVector2Set(&C2V(gArmour_model)->vertices[3].map, 1.f, 0.f);
+    BrModelAdd(C2V(gArmour_model));
+    BrMaterialAdd(C2V(gArmour_material));
+
+    C2V(gPower_actor)->identifier = "gPower_actor";
+    C2V(gPower_actor)->model = C2V(gPower_model);
+    C2V(gPower_actor)->material = C2V(gPower_material);
+    Prepare2DModelAndMaterial(C2V(gPower_model), C2V(gPower_material), 1, BR_COLOUR_RGB(0x22, 0x35, 0x51), 0);
+    BrVector2Set(&C2V(gPower_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gPower_model)->vertices[1].map, 0.f, 1.f);
+    BrVector2Set(&C2V(gPower_model)->vertices[2].map, 1.f, 1.f);
+    BrVector2Set(&C2V(gPower_model)->vertices[3].map, 1.f, 0.f);
+    BrModelAdd(C2V(gPower_model));
+    BrMaterialAdd(C2V(gPower_material));
+
+    C2V(gOffense_actor)->identifier = "gOffense_actor";
+    C2V(gOffense_actor)->model = C2V(gOffence_model);
+    C2V(gOffense_actor)->material = C2V(gOffence_material);
+    Prepare2DModelAndMaterial(C2V(gOffence_model), C2V(gOffence_material), 1, BR_COLOUR_RGB(0x22, 0x35, 0x51), 0);
+    BrVector2Set(&C2V(gOffence_model)->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gOffence_model)->vertices[1].map, 0.f, 1.f);
+    BrVector2Set(&C2V(gOffence_model)->vertices[2].map, 1.f, 1.f);
+    BrVector2Set(&C2V(gOffence_model)->vertices[3].map, 1.f, 0.f);
+    BrModelAdd(C2V(gOffence_model));
+    BrMaterialAdd(C2V(gOffence_material));
+
+    Prepare2DModelToDim(C2V(gHeadup2_model), C2V(gHeadup2_dim_x), C2V(gHeadup2_dim_y), C2V(gHeadup2_dim_w), C2V(gHeadup2_dim_h));
+    BrModelUpdate(C2V(gHeadup2_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gPowerupHUD_model), C2V(gPowerupHUD_dim_x), C2V(gPowerupHUD_dim_y), C2V(gPowerupHUD_dim_w), C2V(gPowerupHUD_dim_h));
+    BrModelUpdate(C2V(gPowerupHUD_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gStatbarHUD1_model), C2V(gStatbarHUD1_dim_x), C2V(gStatbarHUD1_dim_y), C2V(gStatbarHUD1_dim_w), C2V(gStatbarHUD1_dim_h));
+    BrModelUpdate(C2V(gStatbarHUD1_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gStatbarHUD3_model), C2V(gStatbarHUD3_dim_x), C2V(gStatbarHUD3_dim_y), C2V(gStatbarHUD3_dim_w), C2V(gStatbarHUD3_dim_h));
+    BrModelUpdate(C2V(gStatbarHUD3_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gHUDsquare_model), C2V(gHUDsquare_dim_x), C2V(gHUDsquare_dim_y), C2V(gHUDsquare_dim_w), C2V(gHUDsquare_dim_h));
+    BrModelUpdate(C2V(gHUDsquare_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gStatbarHUD5_model), C2V(gStatbarHUD5_dim_x), C2V(gStatbarHUD5_dim_y), C2V(gStatbarHUD5_dim_w), C2V(gStatbarHUD5_dim_h));
+    BrModelUpdate(C2V(gStatbarHUD5_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gTimerLeftHUD_model), C2V(gTimerLeftHUD_dim_x), C2V(gTimerLeftHUD_dim_y), C2V(gTimerLeftHUD_dim_w), C2V(gTimerLeftHUD_dim_h));
+    BrModelUpdate(C2V(gTimerLeftHUD_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gTimerRightHUD_model), C2V(gTimerRightHUD_dim_x), C2V(gTimerRightHUD_dim_y), C2V(gTimerRightHUD_dim_w), C2V(gTimerRightHUD_dim_h));
+    BrModelUpdate(C2V(gTimerRightHUD_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gStatbarRightHUD_model), C2V(gStatbarRightHUD_dim_x), C2V(gStatbarRightHUD_dim_y), C2V(gStatbarRightHUD_dim_w), C2V(gStatbarRightHUD_dim_h));
+    BrModelUpdate(C2V(gStatbarRightHUD_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gArmour_model), C2V(gArmour_dim_x), C2V(gArmour_dim_y), C2V(gArmour_dim_w), C2V(gArmour_dim_h));
+    BrModelUpdate(C2V(gArmour_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gPower_model), C2V(gPower_dim_x), C2V(gPower_dim_y), C2V(gPower_dim_w), C2V(gPower_dim_h));
+    BrModelUpdate(C2V(gPower_model), BR_MODU_NORMALS);
+
+    Prepare2DModelToDim(C2V(gOffence_model), C2V(gOffence_dim_x), C2V(gOffence_dim_y), C2V(gOffence_dim_w), C2V(gOffence_dim_h));
+    BrModelUpdate(C2V(gOffence_model), BR_MODU_NORMALS);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e720, Init2DStuff, Init2DStuff_original)
