@@ -1,6 +1,8 @@
 #include "graphics.h"
 
+#include "errors.h"
 #include "globvars.h"
+#include "init.h"
 #include "loading.h"
 #include "utility.h"
 
@@ -32,11 +34,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMouse_started, 0x0067c390);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNoTransients, 0x0074ca28);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNext_transient, 0x0067c348);
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tTransient_bm, gTransient_bitmaps, 50);
-C2_HOOK_VARIABLE_DECLARE(int, gMouse_started);
-C2_HOOK_VARIABLE_DECLARE(int, gNoTransients);
-C2_HOOK_VARIABLE_DECLARE(int, gNext_transient);
-
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_x, 0x00659b2c, 80.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_y, 0x00659b30, 6.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_width, 0x00659b34, 128.f);
@@ -63,6 +60,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRGB_colours, 9, 0x0065cf30, {
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tShadow_level, gShadow_level, 0x0065fdc8, kMiscString_ShadowUsOnly);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDR_font, gFonts, 24, 0x007663e0);
+
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRear_pixelmap, 0x006a22bc);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -444,13 +443,57 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b52a0, InitPaletteAnimate, InitPaletteAnimate_original)
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWidth, 0x00703e24);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHeight, 0x00703e20);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gX_offset, 0x00705060);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gY_offset, 0x006baa2c);
+
 void (C2_HOOK_FASTCALL * SetBRenderScreenAndBuffers_original)(int pX_offset, int pY_offset, int pWidth, int pHeight);
 void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetBRenderScreenAndBuffers_original(pX_offset, pY_offset, pWidth, pHeight);
 #else
-#error "Not implemented"
+
+    PDAllocateScreenAndBack();
+    if (pWidth == 0) {
+        pWidth = C2V(gBack_screen)->width;
+    }
+    if (pHeight == 0) {
+        pHeight = C2V(gBack_screen)->height;
+    }
+    C2V(gRender_screen) = DRPixelmapAllocateSub(C2V(gBack_screen), pX_offset, pY_offset, pWidth, pHeight);
+    C2V(gWidth) = pWidth;
+    C2V(gHeight) = pHeight;
+    C2V(gY_offset) = pY_offset;
+    C2V(gX_offset) = pX_offset;
+    if (C2V(gGraf_specs)[C2V(gGraf_spec_index)].doubled) {
+        C2V(gScreen)->base_x = (C2V(gGraf_specs)[C2V(gGraf_spec_index)].phys_width - 2 * C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width) / 2;
+        C2V(gScreen)->base_y = (C2V(gGraf_specs)[C2V(gGraf_spec_index)].phys_height - 2 * C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height) / 2;
+    } else {
+        C2V(gScreen)->base_x = (C2V(gGraf_specs)[C2V(gGraf_spec_index)].phys_width - C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width) / 2;
+        C2V(gScreen)->base_y = (C2V(gGraf_specs)[C2V(gGraf_spec_index)].phys_height - C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height) / 2;
+    }
+
+    C2V(gScreen)->origin_x = 0;
+    C2V(gScreen)->origin_y = 0;
+    if (C2V(gBack_screen) == NULL) {
+        FatalError(kFatalError_AllocateOffScreenBuffer);
+    }
+
+    if (C2V(gDepth_buffer) != NULL) {
+        BrPixelmapFree(C2V(gDepth_buffer));
+        C2V(gDepth_buffer) = NULL;
+    }
+    C2V(gDepth_buffer) = BrPixelmapMatch(C2V(gBack_screen), BR_PMMATCH_DEPTH_16);
+    if (C2V(gDepth_buffer) == NULL) {
+        FatalError(kFatalError_AllocateZBuffer);
+    }
+
+    BrZbsBegin(C2V(gRender_screen)->type, C2V(gDepth_buffer)->type, C2V(gHeap), 300000); /* FIXME: use sizeof */
+    C2V(gBrZb_initialized) = 1;
+    C2V(gRear_pixelmap) = DRPixelmapAllocate(C2V(gScreen)->type, 64, 64, NULL, 0);
+    BrMapAdd(C2V(gRear_pixelmap));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4980, SetBRenderScreenAndBuffers, SetBRenderScreenAndBuffers_original)

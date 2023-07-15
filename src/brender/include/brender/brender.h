@@ -188,6 +188,9 @@ void C2_HOOK_CDECL BrTransformToTransform(br_transform* dest, br_transform* src)
 void C2_HOOK_CDECL BrFailure(const char* s, ...);
 void C2_HOOK_CDECL BrFatal(const char* name, int line, const char* s, ...);
 
+// Z-buffer with primitive (or so I think)
+void C2_HOOK_CDECL BrZbsBegin(br_uint_8 colour_type, br_uint_8 depth_type, void* primitive, br_uint_32 size);
+
 // Z-buffer
 void C2_HOOK_CDECL BrZbBegin(br_uint_8 colour_type, br_uint_8 depth_type);
 
