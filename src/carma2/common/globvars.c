@@ -93,6 +93,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gLight_array, 50, 0x0074b3e0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHUD_root, 0x0074ca00);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHUD_camera, 0x0074cf74);
 
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gLine_actor, 0x0074ca34);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gLine_model, 0x0074cac8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gLine_material, 0x0074ca4c);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
