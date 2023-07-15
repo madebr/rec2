@@ -27,8 +27,5 @@ void C2_HOOK_FASTCALL CalcGrafDataIndex(void) {
         }
     }
     FatalError(kFatalError_ScreenDimensionNotInGrafData);
-#if !defined(C2_HOOKS_ENABLED)
-#error "gGraf_data and gGraf_specs not implemented yet"
-#endif
 }
 C2_HOOK_FUNCTION(0x0047b3e0, CalcGrafDataIndex)
