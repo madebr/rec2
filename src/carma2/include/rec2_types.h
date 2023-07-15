@@ -417,6 +417,27 @@ typedef struct {
     int width_table[224];
 } tDR_font;
 
+typedef struct {
+    float opacity;
+    br_pixelmap* map;
+} tExplosion_frame;
+
+typedef struct {
+    tU32 start;
+    tU32 period;
+    undefined field_0x8;
+    tU8 count_frames;
+    tU8 finished;
+    undefined field_0xb;
+    br_actor* collision_actor;
+    br_actor* actor;
+    float field_0x14;
+    br_angle angle;
+    undefined padding[2];
+    br_vector3 field_0x1c;
+    tExplosion_frame frames[10];
+} tExplosion;
+
 typedef enum {
     kRendererShadingType_Undefined = -1,
     kRendererShadingType_Default = 0,
