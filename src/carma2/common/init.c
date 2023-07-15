@@ -312,10 +312,93 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0047e610, InitLineStuff, InitLineStuff_original)
 
 void (C2_HOOK_FASTCALL * InitSmokeStuff_original)(void);
 void C2_HOOK_FASTCALL InitSmokeStuff(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitSmokeStuff_original();
 #else
-#error "Not implemented"
+    int i;
+    br_pixelmap* smoke_pm;
+    static br_token_value fadealpha[3] = {
+        { BRT_BLEND_B, { 1 } },
+        { BRT_OPACITY_X, { 0x4b0000 } }, /* ~ 29.296875% = 75 / 256 */
+        { 0 },
+    };
+
+    C2V(gBlend_model) = BrModelAllocate("gBlend_model", 4, 2);
+    C2V(gBlend_model2) = BrModelAllocate("gBlend_model2", 6, 4);
+    C2V(gBlend_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_infos)); i++) {
+        C2V(gSmoke_infos)[i].material = BrMaterialAllocate("some smoke");
+    }
+    if (C2V(gBlend_model) == NULL || C2V(gBlend_actor) == NULL) {
+        FatalError(kFatalError_OOM_S);
+    }
+    C2V(gBlend_actor)->identifier = "gBlend_actor";
+    C2V(gBlend_actor)->model = C2V(gBlend_model);
+
+    C2V(gBlend_model)->faces[0].vertices[0] = 0;
+    C2V(gBlend_model)->faces[0].vertices[1] = 1;
+    C2V(gBlend_model)->faces[0].vertices[2] = 2;
+    C2V(gBlend_model)->faces[1].vertices[0] = 2;
+    C2V(gBlend_model)->faces[1].vertices[1] = 3;
+    C2V(gBlend_model)->faces[1].vertices[2] = 0;
+
+    C2V(gBlend_model2)->faces[0].vertices[0] = 0;
+    C2V(gBlend_model2)->faces[0].vertices[1] = 1;
+    C2V(gBlend_model2)->faces[0].vertices[2] = 2;
+    C2V(gBlend_model2)->faces[1].vertices[0] = 2;
+    C2V(gBlend_model2)->faces[1].vertices[1] = 3;
+    C2V(gBlend_model2)->faces[1].vertices[2] = 0;
+    C2V(gBlend_model2)->faces[2].vertices[0] = 1;
+    C2V(gBlend_model2)->faces[2].vertices[1] = 5;
+    C2V(gBlend_model2)->faces[2].vertices[2] = 2;
+    C2V(gBlend_model2)->faces[3].vertices[0] = 1;
+    C2V(gBlend_model2)->faces[3].vertices[1] = 4;
+    C2V(gBlend_model2)->faces[3].vertices[2] = 5;
+
+    BrVector3Set(&C2V(gBlend_model)->vertices[0].p, -1.f,  1.f, 0.f);
+    BrVector3Set(&C2V(gBlend_model)->vertices[1].p, -1.f, -1.f, 0.f);
+    BrVector3Set(&C2V(gBlend_model)->vertices[2].p,  1.f, -1.f, 0.f);
+    BrVector3Set(&C2V(gBlend_model)->vertices[3].p,  1.f,  1.f, 0.f);
+
+    BrVector3Set(&C2V(gBlend_model2)->vertices[0].p, -1.f, 1.f, 0.f);
+    BrVector3Set(&C2V(gBlend_model2)->vertices[1].p, -1.f, 0.f, 0.f);
+    BrVector3Set(&C2V(gBlend_model2)->vertices[2].p,  1.f, 0.f, 0.f);
+    BrVector3Set(&C2V(gBlend_model2)->vertices[3].p,  1.f, 1.f, 0.f);
+    BrVector3Set(&C2V(gBlend_model2)->vertices[4].p, -1.f, -.25f, 0.f);
+    BrVector3Set(&C2V(gBlend_model2)->vertices[5].p,  1.f, -.25f, 0.f);
+    C2V(gBlend_model)->flags |= BR_MODF_KEEP_ORIGINAL;
+    C2V(gBlend_model2)->flags |= BR_MODF_KEEP_ORIGINAL;
+
+    smoke_pm = DRLoadPixelmap("SMOKE.PIX");
+    if (smoke_pm == NULL) {
+        FatalError(kFatalError_CantLoadPixelmapFile_S, "SMOKE.PIX");
+    }
+    smoke_pm->map = C2V(gRender_palette);
+    BrMapAdd(smoke_pm);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_infos)); i++) {
+        C2V(gSmoke_infos)[i].material->flags = BR_MATF_LIGHT | BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_PERSPECTIVE;
+        C2V(gSmoke_infos)[i].material->extra_prim = fadealpha;
+        C2V(gSmoke_infos)[i].material->colour_map = smoke_pm;
+        BrMaterialAdd(C2V(gSmoke_infos)[i].material);
+    }
+
+    BrVector2Set(&C2V(gBlend_model)->vertices[0].map, 0.f, 1.f - 1.f / (float)smoke_pm->height);
+    BrVector2Set(&C2V(gBlend_model)->vertices[1].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gBlend_model)->vertices[2].map, 1.f - 1.f / (float)smoke_pm->width, 0.f);
+    BrVector2Set(&C2V(gBlend_model)->vertices[3].map, 1.f - 1.f / (float)smoke_pm->width, 1.f - 1.f / (float)smoke_pm->height);
+
+    BrVector2Set(&C2V(gBlend_model2)->vertices[0].map, 0.f, 1.f - 1.f / (float)smoke_pm->height);
+    BrVector2Set(&C2V(gBlend_model2)->vertices[1].map, 0.f, 0.5f);
+    BrVector2Set(&C2V(gBlend_model2)->vertices[2].map, 1.f - 1.f / (float)smoke_pm->width, .5f);
+    BrVector2Set(&C2V(gBlend_model2)->vertices[3].map, 1.f - 1.f / (float)smoke_pm->width, 1.f - 1.f / (float)smoke_pm->height);
+    BrVector2Set(&C2V(gBlend_model2)->vertices[4].map, 0.f, 0.f);
+    BrVector2Set(&C2V(gBlend_model2)->vertices[5].map, 1.f - 1.f / (float)smoke_pm->width, 0.f);
+
+    BrModelAdd(C2V(gBlend_model));
+    BrModelAdd(C2V(gBlend_model2));
+
+    BrActorAdd(C2V(gDont_render_actor), C2V(gBlend_actor));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f9fc0, InitSmokeStuff, InitSmokeStuff_original)

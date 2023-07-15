@@ -83,6 +83,11 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gLine_actor);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gLine_model);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gLine_material);
 
+C2_HOOK_VARIABLE_DECLARE(br_model*, gBlend_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gBlend_model2);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gBlend_actor);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmoke_info, gSmoke_infos, 35);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;

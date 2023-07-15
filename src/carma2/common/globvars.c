@@ -97,6 +97,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gLine_actor, 0x0074ca34);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gLine_model, 0x0074cac8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gLine_material, 0x0074ca4c);
 
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gBlend_model, 0x0074cf30);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gBlend_model2, 0x0074cf94);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gBlend_actor, 0x0074caac);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmoke_info, gSmoke_infos, 35, 0x006a87f0);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
