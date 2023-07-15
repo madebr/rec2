@@ -13,6 +13,10 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tDR_font, gFonts, 24);
 C2_HOOK_VARIABLE_DECLARE(int, gGraf_data_index);
 
 C2_HOOK_VARIABLE_DECLARE(int, gNoTransients);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tTransient_bm, gTransient_bitmaps, 50);
+C2_HOOK_VARIABLE_DECLARE(int, gMouse_started);
+C2_HOOK_VARIABLE_DECLARE(int, gNoTransients);
+C2_HOOK_VARIABLE_DECLARE(int, gNext_transient);
 
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_x);
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_y);
