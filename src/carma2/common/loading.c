@@ -2093,10 +2093,27 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0048d8f0, RestoreOptions, RestoreOptions_original)
 void (C2_HOOK_FASTCALL * LoadInRegistees_original)(void);
 void C2_HOOK_FASTCALL LoadInRegistees(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadInRegistees_original();
 #else
-#error "Not implemented"
+    tPath_name the_path;
+    tPath_name the_path2;
+    tTWTVFS twt;
+
+    PathCat(the_path, C2V(gApplication_path), "REG");
+    DRForEveryArchivedFile(the_path, "PALETTES", DRLoadPalette);
+    DRForEveryArchivedFile(the_path, "SHADETAB", DRLoadShadeTable);
+    InitializePalettes();
+
+    PathCat(the_path2, the_path, "PIXELMAP");
+    twt = TWT_MountEx(the_path2);
+    LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path2);
+    TWT_UnmountEx(twt);
+
+    DRForEveryArchivedFile(the_path, "MATERIAL", DRLoadMaterials);
+    DRForEveryArchivedFile(the_path, "MODELS", DRLoadModels);
+    DRForEveryArchivedFile(the_path, "ACTORS", DRLoadActors);
+    DRForEveryArchivedFile(the_path, "LIGHTS", DRLoadLights);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00486e10, LoadInRegistees, LoadInRegistees_original)
@@ -2263,4 +2280,3 @@ void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00518690, DisableVertexColours, DisableVertexColours_original)
-
