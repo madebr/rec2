@@ -63,6 +63,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_movie_path_stub, 256, 0x00705
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_last_game_type, 0x007638a0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_view, 0x0075b9a4);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, gHeap, 40000, 0x006baa40);
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gScreen_lock_often, 0x0074cadc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gShadow_workaround, 0x0074ca0c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEnable_texture_interpolation, 0x0074cf38);
@@ -150,7 +152,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gUse_actor_dimming, 0x0074cf60);
 //tBrender_storage gPedestrians_storage_space;
 //tRace_info gCurrent_race;
 //br_actor* gSelf;
-//br_pixelmap* gRender_screen;
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRender_screen, 0x00762128);
 //br_actor* gRearview_camera;
 //br_scalar gCamera_hither;
 //br_scalar gCamera_angle;
