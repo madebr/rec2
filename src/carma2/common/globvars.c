@@ -90,6 +90,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tDRLighting_data, gGlobal_lighting_data, 0x00657
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gLight_array, 50, 0x0074b3e0);
 
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHUD_root, 0x0074ca00);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHUD_camera, 0x0074cf74);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
