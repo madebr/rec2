@@ -78,7 +78,7 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 void C2_HOOK_FASTCALL InitDRFonts(void);
 
-void C2_HOOK_FASTCALL UpdateMinimap(void);
+void C2_HOOK_FASTCALL UpdateMap(void);
 
 void C2_HOOK_FASTCALL InitHUDActor(void);
 
