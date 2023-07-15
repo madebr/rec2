@@ -220,7 +220,7 @@ typedef enum tAdd_to_storage_result {
 typedef struct {
     int width;
     int height;
-    tU8 unknown[1304];
+    int unknown[326];
 } tGraf_data;
 
 typedef enum {
