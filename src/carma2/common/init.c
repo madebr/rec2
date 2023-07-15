@@ -283,10 +283,29 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0047e720, Init2DStuff, Init2DStuff_original)
 void (C2_HOOK_FASTCALL * InitLineStuff_original)(void);
 void C2_HOOK_FASTCALL InitLineStuff(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitLineStuff_original();
 #else
-#error "Not implemented"
+
+    C2V(gLine_model) = BrModelAllocate("gLine_model", 2, 1);
+    C2V(gLine_material) = BrMaterialAllocate("gLine_material");
+    C2V(gLine_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    if (C2V(gLine_model) == NULL || C2V(gLine_material) == NULL || C2V(gLine_actor) == NULL) {
+        FatalError(kFatalError_OOM_S);
+    }
+    C2V(gLine_actor)->identifier = "gLine_actor";
+    C2V(gLine_actor)->model = C2V(gLine_model);
+    C2V(gLine_actor)->material = C2V(gLine_material);
+    C2V(gLine_actor)->render_style = BR_RSTYLE_EDGES;
+    C2V(gLine_model)->flags = BR_MODF_KEEP_ORIGINAL | BR_MODF_QUICK_UPDATE;
+    C2V(gLine_model)->faces->vertices[0] = 0;
+    C2V(gLine_model)->faces->vertices[1] = 0;
+    C2V(gLine_model)->faces->vertices[2] = 1;
+    C2V(gLine_material)->flags = BR_MATF_LIGHT | BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_TWO_SIDED;
+    C2V(gLine_model)->faces->flags = 5;
+    BrModelAdd(C2V(gLine_model));
+    BrMaterialAdd(C2V(gLine_material));
+    BrActorAdd(C2V(gDont_render_actor), C2V(gLine_actor));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e610, InitLineStuff, InitLineStuff_original)
