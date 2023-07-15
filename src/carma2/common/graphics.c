@@ -391,10 +391,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00465850, LoadFont, LoadFont_original)
 void (C2_HOOK_FASTCALL * InitDRFonts_original)(void);
 void C2_HOOK_FASTCALL InitDRFonts(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitDRFonts_original();
 #else
-#error "Not implemented"
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gFonts)); i++) {
+        C2V(gFonts)[i].file_read_once = 0;
+        C2V(gFonts)[i].images = NULL;
+        C2V(gFonts)[i].id = 11;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465a40, InitDRFonts, InitDRFonts_original)

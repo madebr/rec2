@@ -23,7 +23,6 @@ typedef int tTWTVFS;
 typedef struct tCar_spec tCar_spec;
 typedef struct tCar_crush_spec tCar_crush_spec;
 typedef struct tCollision_info tCollision_info;
-typedef struct tDR_font tDR_font;
 typedef struct tNon_car_spec tNon_car_spec;
 typedef struct tPath_section_struct tPath_section_struct;
 typedef struct tPowerup tPowerup;
@@ -406,7 +405,7 @@ typedef struct tTransient_bm {
     int user_data;
 } tTransient_bm;
 
-typedef struct tDR_font {
+typedef struct {
     br_pixelmap* images;
     int file_read_once;
     int height;
@@ -414,7 +413,7 @@ typedef struct tDR_font {
     int spacing;
     int offset;
     int num_entries;
-    int font_id;
+    int id;
     int width_table[224];
 } tDR_font;
 
