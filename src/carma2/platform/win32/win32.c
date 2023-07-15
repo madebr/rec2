@@ -27,6 +27,9 @@
 #define DR_DPRINTF(...)
 #endif
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_spec_index, 0x00662200, 1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_data_index, 0x00662204, 1);
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGraf_spec, gGraf_specs, 2, 0x00662208); // FIXME: implement
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
@@ -831,10 +834,12 @@ C2_HOOK_FUNCTION(0x0051c6c0, PDInstallErrorHandlers)
 
 int (C2_HOOK_FASTCALL* PDInitScreenVars_original)(int pArgc, const char** pArgv);
 int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char** pArgv) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return PDInitScreenVars_original(pArgc, pArgv);
 #else
-#error "Not implemented"
+    C2V(gGraf_spec_index) = C2V(gDefault_spec_index);
+    C2V(gGraf_data_index) = C2V(gDefault_data_index);
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c290, PDInitScreenVars, PDInitScreenVars_original)
