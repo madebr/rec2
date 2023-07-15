@@ -37,6 +37,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAustere_time, 0x0068be24);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gBr_initialized, 0x0068be2c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBrZb_initialized, 0x0068be30);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gRender_indent, 0x0068be38);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gApp_initialized, 0x0068be34);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDefault_track_material, 0x0074b74c);
