@@ -232,5 +232,7 @@ void C2_HOOK_FASTCALL InitializePalettes(void);
 
 void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount);
 
+br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path);
+
 #endif //REC2_LOADING_H
 
