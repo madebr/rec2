@@ -34,6 +34,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gCamera_type);
 C2_HOOK_VARIABLE_DECLARE(int, gAR_camera_type);
 C2_HOOK_VARIABLE_DECLARE(int, gMini_map_visible);
 
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_palette_change);
+C2_HOOK_VARIABLE_DECLARE(int, gPalette_index);
+
 void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette);

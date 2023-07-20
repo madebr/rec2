@@ -63,6 +63,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDR_font, gFonts, 24, 0x007663e0);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRear_pixelmap, 0x006a22bc);
 
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_palette_change, 0x006923a4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPalette_index, 0x006923b4);
+
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
 
@@ -454,10 +457,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004e99d0, InitShadows, InitShadows_original)
 void (C2_HOOK_FASTCALL * InitPaletteAnimate_original)(void);
 void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitPaletteAnimate_original();
 #else
-#error "Not implemented"
+    C2V(gLast_palette_change) = 0;
+    C2V(gPalette_index) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b52a0, InitPaletteAnimate, InitPaletteAnimate_original)
