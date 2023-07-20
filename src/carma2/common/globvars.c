@@ -184,7 +184,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRender_screen, 0x00762128);
 //br_pixelmap* gRearview_depth_buffer;
 //br_pixelmap* gWhole_screen;
 //br_pixelmap* gIcons_pix;
-//br_actor* gCamera;
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gCamera, 0x0074d35c);
 //br_actor* gArrow_actor;
 //br_pixelmap* gIcons_pix_low_res;
 //int gInitial_net_credits[5];
