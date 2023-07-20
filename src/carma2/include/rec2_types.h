@@ -1509,6 +1509,18 @@ typedef struct {
     struct br_model* model;
 } tSmoke_info;
 
+typedef struct {
+    br_actor* actor;
+    br_model* model;
+    undefined4 field_0x8;
+    undefined field_0xc[44];
+} tSmash_vertex;
+
+typedef struct {
+    br_actor* actor;
+    undefined4 field_0x4;
+} tSmash_quad;
+
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
