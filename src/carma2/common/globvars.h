@@ -181,7 +181,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gHas_double_back_screen);
 //extern br_pixelmap* gWhole_screen;
 //extern br_pixelmap* gIcons_pix;
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gCamera_yon);
-//extern br_actor* gCamera;
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gCamera);
 //extern br_actor* gArrow_actor;
 //extern br_pixelmap* gIcons_pix_low_res;
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDepth_buffer);
