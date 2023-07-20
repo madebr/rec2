@@ -5,6 +5,11 @@
 
 #include <brender/brender.h>
 
+C2_HOOK_VARIABLE_DECLARE(br_material*, gHorizon_material);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gSky_actor);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gSky_model);
+
+
 int C2_HOOK_FASTCALL GetSkyTextureOn(void);
 
 void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn);
