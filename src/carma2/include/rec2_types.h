@@ -1541,6 +1541,12 @@ typedef struct {
     undefined4 field_0x50;
 } tOil_spill_info;
 
+typedef struct {
+    br_actor* actor;
+    br_vector3 normal;
+    br_vector3 pos;
+} tSkid;
+
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
