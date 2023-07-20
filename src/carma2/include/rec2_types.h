@@ -1521,6 +1521,26 @@ typedef struct {
     undefined4 field_0x4;
 } tSmash_quad;
 
+typedef struct {
+    br_actor* actor;
+    br_actor* car_actor;
+    br_model* car_model;
+    tCar_spec* car;
+    tU32 spill_time;
+    undefined4 field_0x14;
+    float full_size;
+    float field_0x1c;
+    float field_0x20;
+    float field_0x24;
+    br_vector3 original_pos;
+    br_vector3 field_0x34;
+    float field_0x40;
+    float field_0x44;
+    float field_0x48;
+    float field_0x4c;
+    undefined4 field_0x50;
+} tOil_spill_info;
+
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
