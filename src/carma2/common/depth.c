@@ -4,12 +4,26 @@
 #include "globvars.h"
 #include "globvrkm.h"
 #include "loading.h"
+#include "spark.h"
 #include "utility.h"
 
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSky_on, 0x00591188, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDepth_cueing_on, 0x0059118c, 1);
+
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gDepth_shade_table, 0x0079ec20);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDepth_shade_table_power, 0x0067c4bc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gFog_shade_table, 0x0079ec38);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFog_shade_table_power, 0x0067c4a4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gAcid_shade_table, 0x0079ec24);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAcid_shade_table_power, 0x0067c4dc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gWater_shade_table, 0x0079ec28);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWater_shade_table_power, 0x0067c4cc);
+
+C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHorizon_material, 0x0067c4e0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSky_actor, 0x0067c4d8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSky_model, 0x0067c4a0);
 
 int C2_HOOK_FASTCALL GetSkyTextureOn(void) {
 
@@ -178,10 +192,38 @@ C2_HOOK_FUNCTION(0x00445860, LoadDepthTable)
 void (C2_HOOK_FASTCALL * InitDepthEffects_original)(void);
 void C2_HOOK_FASTCALL InitDepthEffects(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitDepthEffects_original();
 #else
-#error "Not implemented"
+    LoadDepthTable("DEPTHCUE.TAB", &C2V(gDepth_shade_table), &C2V(gDepth_shade_table_power));
+    LoadDepthTable("FOG.TAB", &C2V(gFog_shade_table), &C2V(gFog_shade_table_power));
+    LoadDepthTable("ACIDFOG.TAB", &C2V(gAcid_shade_table), &C2V(gAcid_shade_table_power));
+    LoadDepthTable("BLUEGIT.TAB", &C2V(gWater_shade_table), &C2V(gWater_shade_table_power));
+    GenerateSmokeShades();
+    C2V(gHorizon_material) = BrMaterialFind("HORIZON.MAT");
+    if (C2V(gHorizon_material) == NULL) {
+        FatalError(kFatalError_CannotFindSkyMaterial_S);
+    }
+    if (C2V(gScreen)->type == BR_PMT_INDEX_8 && !C2V(gNo_fog)) {
+        int i, j;
+        br_uint_8* pixels;
+        C2V(gHorizon_material)->index_blend = BrPixelmapAllocate(BR_PMT_INDEX_8, 256, 256, NULL, 0);
+        BrTableAdd(C2V(gHorizon_material)->index_blend);
+        pixels = C2V(gHorizon_material)->index_blend->pixels;
+        for (i = 0; i < 256; i++) {
+            for (j = 0; j < 256; j++) {
+                pixels[256*i + j] = j;
+            }
+        }
+        C2V(gHorizon_material)->flags |= BR_MATF_PERSPECTIVE;
+    }
+    C2V(gHorizon_material)->flags |= BR_MATF_MAP_INTERPOLATION;
+    C2V(gSky_model) = CreateHorizonModel(C2V(gCamera));
+    C2V(gSky_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    C2V(gSky_actor)->model = C2V(gSky_model);
+    C2V(gSky_actor)->material = C2V(gHorizon_material);
+    C2V(gSky_actor)->render_style = BR_RSTYLE_NONE;
+    BrActorAdd(C2V(gUniverse_actor), C2V(gSky_actor));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00445620, InitDepthEffects, InitDepthEffects_original)

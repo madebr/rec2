@@ -1667,6 +1667,7 @@ enum {
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_CannotLoadDepthCueShadeTable = 0x57,
+    kFatalError_CannotFindSkyMaterial_S = 0x59,
     kFatalError_OOM_S = 0x5e,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
