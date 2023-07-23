@@ -88,6 +88,22 @@ C2_HOOK_VARIABLE_DECLARE(br_model*, gBlend_model2);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gBlend_actor);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmoke_info, gSmoke_infos, 35);
 
+C2_HOOK_VARIABLE_DECLARE(int, gNo_current_game);
+C2_HOOK_VARIABLE_DECLARE(int, gWaiting_for_unpause);
+C2_HOOK_VARIABLE_DECLARE(int, gWait_for_it);
+C2_HOOK_VARIABLE_DECLARE(int, gGame_to_load);
+C2_HOOK_VARIABLE_DECLARE(tRace_info, gCurrent_race);
+C2_HOOK_VARIABLE_DECLARE(int, gGame_initialized);
+C2_HOOK_VARIABLE_DECLARE(int, gNo_races_yet);
+C2_HOOK_VARIABLE_DECLARE(tNet_mode, gNet_mode_of_last_game);
+C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gCurrent_race_group);
+C2_HOOK_VARIABLE_DECLARE(int, gIs_boundary_race);
+C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_racers);
+C2_HOOK_VARIABLE_DECLARE(tOpponent*, gOpponents);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCurrent_APO_levels, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCurrent_APO_potential_levels, 3);
+C2_HOOK_VARIABLE_DECLARE(tNet_game_details*, gCurrent_net_game);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;
