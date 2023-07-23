@@ -11,10 +11,12 @@
 #include "font.h"
 #include "globvars.h"
 #include "globvrbm.h"
+#include "globvrpb.h"
 #include "grafdata.h"
 #include "graphics.h"
 #include "loading.h"
 #include "netgame.h"
+#include "network.h"
 #include "oil.h"
 #include "opponent.h"
 #include "pedestrn.h"
@@ -986,12 +988,50 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0047e500, AllocateStandardLamp, AllocateStandardLamp
 void (C2_HOOK_FASTCALL * InitGame_original)(int pStart_race);
 void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitGame_original(pStart_race);
 #else
-#error "Not implemented"
+    int i;
+
+#ifndef _MSC_VER
+    C2_HOOK_BUG_ON((uintptr_t)&C2V(gCurrent_race).number_of_racers != 0x00762430);
 #endif
 
+    C2V(gProgram_state).field11_0x2c = 0;
+    C2V(gNo_current_game) = 0;
+    C2V(gWaiting_for_unpause) = 1;
+    C2V(gWait_for_it) = 0;
+    C2V(gGame_to_load) = -1;
+    C2V(gCurrent_race).number_of_racers = 0;
+    TemporaryMaterialStorageInit();
+    DisableMaterialAdapt();
+    C2V(gGame_initialized) = 1;
+    C2V(gNet_mode_of_last_game) = C2V(gNet_mode);
+    C2V(gNo_races_yet) = 1;
+    NetPlayerStatusChanged(ePlayer_status_loading);
+    C2V(gCurrent_race_group) = C2V(gRace_list)[pStart_race].group;
+    C2V(gIs_boundary_race) = C2V(gRace_list)[pStart_race].is_boundary;
+    C2V(gProgram_state).current_race_index = pStart_race;
+    for (i = 0; i < C2V(gNumber_of_races); i++) {
+        C2V(gRace_list)[i].count_opponents = 0;
+    }
+    C2_HOOK_BUG_ON(sizeof(tOpponent) != 448);
+    for (i = 0; i < C2V(gNumber_of_racers); i++) {
+        C2V(gOpponents)[i].field_0x1a8 = 0;
+    }
+    C2V(gProgram_state).rank = C2V(gInitial_rank);
+    C2V(gProgram_state).number_of_cars = 1;
+    C2V(gProgram_state).credits_per_rank = C2V(gCredits_per_rank)[C2V(gProgram_state).skill_level];
+    C2V(gProgram_state).credits = C2V(gStarting_money)[C2V(gProgram_state).skill_level];
+    C2V(gProgram_state).redo_race_index = -1;
+    C2V(gProgram_state).cars_available[0] = 0;
+    C2V(gProgram_state).current_car_index = 0;
+    C2V(gProgram_state).game_completed = 0;
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO)); i++) {
+        C2V(gCurrent_APO_levels)[i] = C2V(gNet_mode) == eNet_mode_none ? C2V(gInitial_APO)[i].initial[C2V(gProgram_state).skill_level] : C2V(gInitial_APO)[i].initial_network[C2V(gCurrent_net_game)->type];
+        C2V(gCurrent_APO_potential_levels)[i] = C2V(gNet_mode) == eNet_mode_none ? C2V(gInitial_APO_potential)[i].initial[C2V(gProgram_state).skill_level] : C2V(gInitial_APO_potential)[i].initial_network[C2V(gCurrent_net_game)->type];
+    }
+#endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004816b0, InitGame, InitGame_original)
 
