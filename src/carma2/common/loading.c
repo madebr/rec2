@@ -106,13 +106,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCountRaceGroups, 0x007634ec);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups, 0x0068b8a0);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups2, 0x0074d5e4);
 
-/* FIXME: these are probably stored as an array (e.g. gInitial_APO, gInitial_potential_APO, ...) */
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_armour, 0x0074d4c0);
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_power, 0x0074d4ec);
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_offensive, 0x0074d518);
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_armour_potential, 0x007622a0);
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_power_potential, 0x007622cc);
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_offensive_potential, 0x007622f8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSlot_info, gInitial_APO, 3, 0x0074d4c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSlot_info, gInitial_APO_potential, 3, 0x007622a0);
 C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_armour, 0x0074cfa0);
 C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_power, 0x0074cfcc);
 C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_offensive, 0x0074cff8);
@@ -1172,58 +1167,58 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     ParseSpecialVolume(C2V(gTempFile), &C2V(gDefault_water_spec_vol), C2V(gUnderwater_screen_name), 0);
 
     /* Initial armour, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gInitial_armour).initial[0], &C2V(gInitial_armour).initial[1], &C2V(gInitial_armour).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_APO)[0].initial[0], &C2V(gInitial_APO)[0].initial[1], &C2V(gInitial_APO)[0].initial[2]);
     /* Initial armour, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gInitial_armour).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gInitial_armour).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO)[0].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_APO)[0].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
     /* Initial power, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gInitial_power).initial[0], &C2V(gInitial_power).initial[1], &C2V(gInitial_power).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_APO)[1].initial[0], &C2V(gInitial_APO)[1].initial[1], &C2V(gInitial_APO)[1].initial[2]);
     /* Initial power, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gInitial_power).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gInitial_power).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO)[1].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_APO)[1].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
     /* Initial offensive, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gInitial_offensive).initial[0], &C2V(gInitial_offensive).initial[1], &C2V(gInitial_offensive).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_APO)[2].initial[0], &C2V(gInitial_APO)[2].initial[1], &C2V(gInitial_APO)[2].initial[2]);
     /* Initial offensive, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gInitial_offensive).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gInitial_offensive).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO)[2].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_APO)[2].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
 
     /* Initial potential armour, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gInitial_armour_potential).initial[0], &C2V(gInitial_armour_potential).initial[1], &C2V(gInitial_armour_potential).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_APO_potential)[0].initial[0], &C2V(gInitial_APO_potential)[0].initial[1], &C2V(gInitial_APO_potential)[0].initial[2]);
     /* Initial potential armour, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gInitial_armour_potential).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gInitial_armour_potential).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO_potential)[0].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_APO_potential)[0].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
     /* Initial potential power, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gInitial_power_potential).initial[0], &C2V(gInitial_power_potential).initial[1], &C2V(gInitial_power_potential).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_APO_potential)[1].initial[0], &C2V(gInitial_APO_potential)[1].initial[1], &C2V(gInitial_APO_potential)[1].initial[2]);
     /* Initial potential power, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gInitial_power_potential).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gInitial_power_potential).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO_potential)[1].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_APO_potential)[1].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
     /* Initial potential offensive, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gInitial_offensive_potential).initial[0], &C2V(gInitial_offensive_potential).initial[1], &C2V(gInitial_offensive_potential).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_APO_potential)[2].initial[0], &C2V(gInitial_APO_potential)[2].initial[1], &C2V(gInitial_APO_potential)[2].initial[2]);
     /* Initial potential offensive, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gInitial_offensive_potential).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gInitial_offensive_potential).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO_potential)[2].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_APO_potential)[2].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
 

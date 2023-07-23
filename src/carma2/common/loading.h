@@ -25,6 +25,12 @@ C2_HOOK_VARIABLE_DECLARE(int, gCountRaceGroups);
 C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gRaceGroups);
 C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gRaceGroups2);
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO_potential, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_per_rank, 3);
+C2_HOOK_VARIABLE_DECLARE(int, gInitial_rank);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gStarting_money, 3);
+
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void);
