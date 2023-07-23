@@ -102,6 +102,22 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gBlend_model2, 0x0074cf94);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gBlend_actor, 0x0074caac);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmoke_info, gSmoke_infos, 35, 0x006a87f0);
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNo_current_game, 0x00655dc0, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWaiting_for_unpause, 0x0074b7d8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWait_for_it, 0x0075b8f0);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gGame_to_load, 0x00655dd4, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(tRace_info, gCurrent_race, 0x007623a0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gGame_initialized, 0x0068be3c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNo_races_yet, 0x0074d49c);
+C2_HOOK_VARIABLE_IMPLEMENT(tNet_mode, gNet_mode_of_last_game, 0x0074b750);
+C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gCurrent_race_group, 0x0074d5e4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gIs_boundary_race, 0x00761a60);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_racers, 0x0074d1ac);
+C2_HOOK_VARIABLE_IMPLEMENT(tOpponent*, gOpponents, 0x007634bc);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gCurrent_APO_levels, 3, 0x00761f50);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gCurrent_APO_potential_levels, 3, 0x0074d490);
+C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_details*, gCurrent_net_game, 0x0074b784);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;

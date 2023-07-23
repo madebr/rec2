@@ -20,6 +20,7 @@ typedef unsigned short undefined2;
 typedef unsigned int undefined4;
 
 typedef int tTWTVFS;
+typedef tU32 tPlayer_ID;
 
 // FIXME: incomplete type
 typedef struct tCar_spec tCar_spec;
@@ -29,7 +30,6 @@ typedef struct tNon_car_spec tNon_car_spec;
 typedef struct tPath_section_struct tPath_section_struct;
 typedef struct tPowerup tPowerup;
 typedef struct tRace_list_spec tRace_list_spec;
-typedef struct tRace_info tRace_info;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -1651,6 +1651,62 @@ typedef struct {
     undefined field_0x8[76];
 } tBurning_ped;
 
+typedef struct {
+    br_vector3 points[4];
+} tQuad;
+
+typedef struct {
+    int timer_increments[3];
+    int count_quads;
+    tQuad quads[4];
+    br_vector3 normals[4];
+    br_vector3 pos;
+    br_vector2 map_position;
+} tRace_checkpoint_spec;
+
+typedef struct {
+    int index;
+    int net_player_index; /* FIXME: order correct? */
+    int ranking; /* FIXME: order correct? */
+    tCar_spec* car_spec;
+} tOpp_spec;
+
+typedef struct {
+    float car_wall_friction;
+    float tyre_road_friction;
+    float down_force;
+    float bumpiness;
+    int tyre_noise_index;
+    int crash_noise_index;
+    int scrape_noise_index;
+    float sparkiness;
+    int smoke_type;
+    br_material* skid_mark_material;
+} tMaterial_modifiers;
+
+typedef struct {
+    int index;
+    int total_laps;
+    int check_point_count;
+    int initial_timer[3];
+    undefined4 field_0x18[3];
+    int count_powerup_exclusions[3];
+    int completion_bonus[3];
+    undefined field_0x3c[84];
+    int number_of_racers;
+    undefined field_0x94[4];
+    tRace_list_spec* race_spec;
+    undefined field_0x9c[384];
+    tRace_checkpoint_spec checkpoints[5];
+    undefined field_0x780[1380];
+    tOpp_spec opponent_list[30];
+    br_vector3 initial_position;
+    float initial_yaw;
+    br_matrix34 map_transformation;
+    br_pixelmap* map_image;
+    tMaterial_modifiers material_modifiers[11];
+} tRace_info;
+
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
@@ -1675,6 +1731,73 @@ typedef enum {
     ePlayer_status_recovering = 8,
     ePlayer_status_action_replay = 9
 } tPlayer_status;
+
+typedef enum {
+    eNet_avail_never = 0,
+    eNet_avail_eagle = 1,
+    eNet_avail_hawk = 2,
+    eNet_avail_all = 3
+} tNet_avail;
+
+typedef struct {
+    tU8 grudge_against_player;
+} tOppo_psyche;
+
+typedef struct {
+    char name[24];
+    char abbrev_name[24];
+    undefined field_0x30[32];
+    char car_file_name[40];
+    char car_name[20];
+    undefined field_0x8c[36];
+    char topspeed[32];
+    char line2_weight[32];
+    char line3_accel_0_60mph_seconds[32];
+    char line4_text[32];
+    undefined field_0x130[88];
+    undefined4 field_0x188;
+    undefined4 field_0x18c;
+    undefined field_0x190[12];
+    int strength_rating;
+    int price;
+    int picked;
+    undefined4 field_0x1a8;
+    int field182_0x1ac; /* count of field_0x1bc */
+    tNet_avail network_availability;
+    undefined4 field184_0x1b4;
+    tOppo_psyche psyche;
+    undefined field_0x1b9[3];
+    undefined4* field_0x1bc;
+} tOpponent;
+
+typedef enum {
+    eNet_game_type_foxy = 7
+} tNet_game_type;
+
+typedef struct {
+    char addr[16]; /* struct sockaddr addr; */
+} tPD_net_player_info;
+
+typedef enum {
+    eNet_game_XXXXX = -1 /* FIXE: remove eNet_game_XXXXX and add real stages */
+} tNet_game_stage;
+
+typedef struct {
+    tNet_game_stage stage;
+} tNet_game_status;
+
+typedef struct {
+    tPD_net_player_info pd_net_info;
+    undefined4 field_0x10;
+    char field_0x14[28];
+    tPlayer_ID host_ID;
+    int num_players;
+    int start_race;
+    int no_races_yet;
+    tNet_game_status status;
+    tNet_game_options options;
+    tNet_game_type type;
+} tNet_game_details;
 
 enum {
     kMiscString_ShadowNone = 104,
