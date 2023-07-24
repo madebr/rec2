@@ -13,4 +13,6 @@ void C2_HOOK_FASTCALL DisposeNetHeadups(void);
 
 void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
 
+void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
+
 #endif // REC2_NETWORK_H
