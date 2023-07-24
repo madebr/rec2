@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "sound.h"
+#include "utility.h"
 
 #include "c2_stdlib.h"
 
@@ -41,3 +42,35 @@ void C2_HOOK_FASTCALL InitialiseProgramState(void) {
     C2V(gProgram_state).car_name[0] = '\0';
     SetSoundVolumes(0);
 }
+
+int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness) {
+    int i;
+    int count;
+    int temp_array[40];
+
+    while (1) {
+        count = 0;
+        for (i = 0; i < C2V(gNumber_of_racers); i++) {
+            if ((pNastiness == 0 || C2V(gOpponents)[i].strength_rating == pNastiness)
+                && C2V(gProgram_state).current_car.index != i
+                && !C2V(gOpponents)[i].picked
+                && C2V(gOpponents)[i].strength_rating < 6
+                && C2V(gOpponents)[i].strength_rating > 0) {
+                temp_array[count] = i;
+                count++;
+            }
+        }
+        if (count != 0) {
+            break;
+        }
+        if (pNastiness < 5) {
+            pNastiness++;
+        } else {
+            pNastiness = 0;
+        }
+    }
+    i = temp_array[IRandomBetween(0, count - 1)];
+    C2V(gOpponents)[i].picked = 1;
+    return i;
+}
+C2_HOOK_FUNCTION(0x00503b00, ChooseOpponent)
