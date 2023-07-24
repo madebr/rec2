@@ -1818,6 +1818,33 @@ typedef struct {
     tNet_game_type type;
 } tNet_game_details;
 
+typedef struct {
+    tPD_net_player_info pd_net_info;
+    tU32 this_players_time_stamp;
+    tU32 last_heard_from_him;
+    tU32 reposition_time;
+    int last_waste_message;
+    int host;
+    tPlayer_ID ID;
+    char player_name[32];
+    tPlayer_status player_status;
+    int car_index;
+    int grid_index;
+    int grid_position_set;
+    undefined field_0x58[4];
+    int opponent_list_index;
+    undefined field_0x60[16];
+    int wasteage_attributed;
+    undefined field_0x74[12];
+    int field_0x80;
+    undefined field_0x84[12];
+    int score;
+    undefined field_0x94[4];
+    struct br_matrix34 initial_position;
+    struct tCar_spec * car;
+    undefined field_0xcc[8];
+} tNet_game_player_info;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,

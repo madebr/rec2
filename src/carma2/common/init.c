@@ -1065,3 +1065,32 @@ int C2_HOOK_FASTCALL Fix2DTextureHeight(int pHeight) {
 
 }
 C2_HOOK_FUNCTION(0x0044ba90, Fix2DTextureHeight)
+
+void C2_HOOK_FASTCALL DisposeGameIfNecessary(void) {
+    int i;
+
+    dr_dprintf("DisposeGameIfNecessary() - START");
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        NetLeaveGame(C2V(gCurrent_net_game));
+    }
+    dr_dprintf("DisposeGameIfNecessary() - Point 1");
+    if (C2V(gGame_initialized)) {
+        C2V(gGame_initialized) = 0;
+        dr_dprintf("DisposeGameIfNecessary() - Point 2");
+        if (C2V(gNet_mode_of_last_game) != eNet_mode_none) {
+            for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+                DisposeCar(C2V(gNet_players)[i].car, C2V(gNet_players)[i].car_index);
+            }
+            dr_dprintf("DisposeGameIfNecessary() - Point 3");
+            PossibleService();
+            LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), -1);
+            DisposeStorageSpace(&C2V(gNet_cars_storage_space));
+            C2V(gNo_current_game) = 1;
+            dr_dprintf("DisposeGameIfNecessary() - Point 4");
+        }
+        dr_dprintf("DisposeGameIfNecessary() - Point 5");
+    }
+    ShutdownNetIfRequired();
+    dr_dprintf("DisposeGameIfNecessary() - END");
+}
+C2_HOOK_FUNCTION(0x0044c130, DisposeGameIfNecessary)
