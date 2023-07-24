@@ -30,6 +30,9 @@ typedef struct tNon_car_spec tNon_car_spec;
 typedef struct tPath_section_struct tPath_section_struct;
 typedef struct tPowerup tPowerup;
 typedef struct tRace_list_spec tRace_list_spec;
+typedef struct tMin_message tMin_message;
+typedef struct tMid_message tMid_message;
+typedef struct tMax_message tMax_message;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -55,6 +58,11 @@ typedef struct {
 } tPolyFontBorderColours;
 
 typedef struct tPolyFont tPolyFont;
+
+typedef struct tDynamic_message {
+    struct tDynamic_message* next;
+    char data[];
+} tDynamic_message;
 
 typedef struct {
     br_material* material;
