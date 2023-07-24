@@ -244,5 +244,7 @@ void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount);
 
 br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path);
 
+void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race);
+
 #endif //REC2_LOADING_H
 
