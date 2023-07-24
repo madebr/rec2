@@ -101,4 +101,6 @@ void C2_HOOK_FASTCALL DisableLights(void);
 
 void C2_HOOK_FASTCALL EnableLights(void);
 
+int C2_HOOK_FASTCALL SwitchToLoresMode(void);
+
 #endif //REC2_GRAPHICS_H
