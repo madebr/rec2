@@ -2,6 +2,10 @@
 
 #include "sound.h"
 
+#include "brender/brender.h"
+
+#include "rec2_macros.h"
+
 #define DEBUG_CONTROLS
 
 #if defined(DEBUG_CONTROLS)
@@ -10,6 +14,8 @@
 #else
 #define CONTROLS_START()
 #endif
+
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gAbuse_text, 10, 0x0067c3c8);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -564,3 +570,14 @@ void C2_HOOK_FASTCALL ToggleCockpit(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e900, ToggleCockpit, ToggleCockpit_original)
+
+void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gAbuse_text)); i++) {
+        if (C2V(gAbuse_text)[i] != NULL) {
+            BrMemFree(C2V(gAbuse_text)[i]);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00444ea0, DisposeAbuseomatic)
