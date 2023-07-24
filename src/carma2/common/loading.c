@@ -2364,3 +2364,13 @@ void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048d0e0, FillInRaceInfo, FillInRaceInfo_original)
+
+void (C2_HOOK_FASTCALL * DisposeCar_original)(tCar_spec* pCar_spec, int pOwner);
+void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner) {
+#if defined(C2_HOOKS_ENABLED)
+    DisposeCar_original(pCar_spec, pOwner);
+#else
+#error "Not implemeneted"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044bbe0, DisposeCar, DisposeCar_original)
