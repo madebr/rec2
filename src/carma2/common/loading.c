@@ -2290,3 +2290,14 @@ br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path) {
     return BrMaterialLoad(the_path);
 }
 C2_HOOK_FUNCTION(0x0048ef80, LoadMaterial)
+
+void (C2_HOOK_FASTCALL * FillInRaceInfo_original)(tRace_info* pThe_race);
+void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
+#if defined(C2_HOOKS_ENABLED)
+    FillInRaceInfo_original(pThe_race);
+#else
+
+    c2_strcpy(C2V(gProgram_state).track_file_name, pThe_race->race_spec->track_file_name);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0048d0e0, FillInRaceInfo, FillInRaceInfo_original)
