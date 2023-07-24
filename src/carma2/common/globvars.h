@@ -149,7 +149,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gNoCutscenes);
 //extern float gCar_crush_softness;
 //extern br_vector3* gOur_pos;
 //extern float gCar_crush_max_fold;
-//extern tBrender_storage gNet_cars_storage_space;
+C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gNet_cars_storage_space);
 //extern float gNet_softness[7];
 //extern tS32 gJoystick_deadzone;
 //extern float gCar_crush_limit_deviant;
