@@ -33,3 +33,13 @@ void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0049a730, DisposeNetHeadups)
+
+void (C2_HOOK_FASTCALL * NetLeaveGame_original)(tNet_game_details* pNet_game);
+void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game) {
+#if defined(C2_HOOKS_ENABLED)
+    NetLeaveGame_original(pNet_game);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049dc90, NetLeaveGame, NetLeaveGame_original)
