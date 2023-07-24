@@ -630,3 +630,8 @@ void C2_HOOK_FASTCALL EnableLights(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0047d6d0, EnableLights)
+
+int C2_HOOK_FASTCALL SwitchToLoresMode(void) {
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0047c660, SwitchToLoresMode)
