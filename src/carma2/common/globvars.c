@@ -162,7 +162,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCockpit_on, 0x006aaa30);
 //float gCar_crush_softness;
 //br_vector3* gOur_pos;
 //float gCar_crush_max_fold;
-//tBrender_storage gNet_cars_storage_space;
+C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gNet_cars_storage_space, 0x00761f00);
 //float gNet_softness[7];
 //tS32 gJoystick_deadzone;
 //float gCar_crush_limit_deviant;
