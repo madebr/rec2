@@ -1171,6 +1171,17 @@ typedef struct {
     tPath_section_struct* path_sections;
 } tIntelligent_vehicles;
 
+typedef enum {
+    eVT_Scene = 0,
+    eVT_Info = 1,
+    eVT_Opponents = 2
+} tRace_sel_view_type;
+
+typedef enum tFrank_anne {
+    eFrankie = 0,
+    eAnnie = 1
+} tFrank_anne;
+
 typedef struct {
     int credits;
     tU32 view_change_start;
@@ -1178,15 +1189,15 @@ typedef struct {
     int peds_killed;
     int sausage_eater_mode;
     int rank;
-    int field6_0x18;
-    int field7_0x1c;
+    int field_0x18;
+    int last_slot;
     int skill_level;
-    undefined4 field9_0x24;
+    undefined4 field_0x24;
     int racing;
-    int field11_0x2c;
-    int field12_0x30;
-    int field13_0x34;
-    int field14_0x38;
+    int field_0x2c;
+    int cut_scene;
+    int saving;
+    int loading;
     int dont_save_or_load;
     int dont_load;
     int mirror_on;
@@ -1212,9 +1223,9 @@ typedef struct {
     tWhich_view new_view;
     tWhich_view pending_view;
     tWhich_view old_view;
-    undefined4 field40_0xa0;
+    tRace_sel_view_type view_type;
     tProg_status prog_status;
-    undefined4 field42_0xa8;
+    tFrank_anne frank_or_anniness;
     tCar_spec current_car;
     char player_name[14];
     char track_file_name[64];
