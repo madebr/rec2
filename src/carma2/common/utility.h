@@ -46,4 +46,6 @@ double C2_HOOK_FASTCALL sqr(double pN);
 
 br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter);
 
+int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
+
 #endif // REC2_UTILITY_H

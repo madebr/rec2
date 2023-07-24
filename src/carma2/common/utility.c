@@ -412,3 +412,17 @@ br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPale
             1.0f);
 }
 C2_HOOK_FUNCTION(0x00514e40, GenerateShadeTable)
+
+int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
+    int num;
+
+    num = c2_rand();
+#if RAND_MAX == 0x7fff
+    //  If RAND_MAX == 0x7fff, then `num` can be seen as a fixed point number with 15 fractional and 17 integral bits
+    return pA + ((num * (pB + 1 - pA)) >> 15);
+#else
+    //  If RAND_MAX != 0x7fff, then use floating numbers (alternative is using modulo)
+    return pA + (int)((pB + 1 - pA) * (num / ((float)RAND_MAX + 1)));
+#endif
+}
+C2_HOOK_FUNCTION(0x00513520, IRandomBetween)
