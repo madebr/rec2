@@ -433,7 +433,7 @@ C2_HOOK_FUNCTION(0x0043f390, DoGameCompletedAnimation)
 
 void C2_HOOK_FASTCALL StartLoadingScreen(void) {
 
-//    FUN_0047c660();
+    SwitchToLoresMode();
     DRS3StartCDA(9998);
     PossibleService();
     SplashScreenWith("LOADSCRN.PIX");
