@@ -96,3 +96,13 @@ void C2_HOOK_FASTCALL InitSound(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455080, InitSound, InitSound_original)
+
+void (C2_HOOK_FASTCALL * SetSoundVolumes_original)(int pCD_audio);
+void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio) {
+#if defined(C2_HOOKS_ENABLED)
+    SetSoundVolumes_original(pCD_audio);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456530, SetSoundVolumes, SetSoundVolumes_original)
