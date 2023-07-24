@@ -246,5 +246,7 @@ br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path);
 
 void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race);
 
+void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner);
+
 #endif //REC2_LOADING_H
 
