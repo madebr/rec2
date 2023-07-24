@@ -24,3 +24,12 @@ void C2_HOOK_FASTCALL InitNetHeadups(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0049a710, InitNetHeadups)
+
+void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
+
+    if (C2V(gDigits_pix) != NULL) {
+        BrMapRemove(C2V(gDigits_pix));
+        BrPixelmapFree(C2V(gDigits_pix));
+    }
+}
+C2_HOOK_FUNCTION(0x0049a730, DisposeNetHeadups)
