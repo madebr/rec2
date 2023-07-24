@@ -997,7 +997,7 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
     C2_HOOK_BUG_ON((uintptr_t)&C2V(gCurrent_race).number_of_racers != 0x00762430);
 #endif
 
-    C2V(gProgram_state).field11_0x2c = 0;
+    C2V(gProgram_state).field_0x2c = 0;
     C2V(gNo_current_game) = 0;
     C2V(gWaiting_for_unpause) = 1;
     C2V(gWait_for_it) = 0;
