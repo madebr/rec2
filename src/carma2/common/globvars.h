@@ -104,6 +104,9 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCurrent_APO_levels, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCurrent_APO_potential_levels, 3);
 C2_HOOK_VARIABLE_DECLARE(tNet_game_details*, gCurrent_net_game);
 
+C2_HOOK_VARIABLE_DECLARE(int, gCockpit_on);
+C2_HOOK_VARIABLE_DECLARE(int, gPratcam_on);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;

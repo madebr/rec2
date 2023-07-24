@@ -118,6 +118,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gCurrent_APO_levels, 3, 0x00761f50);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gCurrent_APO_potential_levels, 3, 0x0074d490);
 C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_details*, gCurrent_net_game, 0x0074b784);
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPratcam_on, 0x00660ce4, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCockpit_on, 0x006aaa30);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
