@@ -22,3 +22,14 @@ void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
     }
 }
 C2_HOOK_FUNCTION(0x0051a190, PDNetObtainSystemUserName)
+
+int (C2_HOOK_FASTCALL * PDNetShutdown_original)(void);
+int C2_HOOK_FASTCALL PDNetShutdown(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PDNetShutdown_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00519a10, PDNetShutdown, PDNetShutdown_original)
