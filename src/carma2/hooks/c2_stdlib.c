@@ -14,6 +14,12 @@ void C2_HOOK_CDECL c2_srand(int seed) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00576960, c2_srand, srand_original)
 
+int (C2_HOOK_CDECL * rand_original)(void);
+int C2_HOOK_CDECL c2_rand(void) {
+    return rand_original();
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00576970, c2_rand, rand_original)
+
 void C2_HOOK_CDECL c2_abort(void) {
     abort();
 }
