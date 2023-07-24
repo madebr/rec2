@@ -5,4 +5,6 @@
 
 void C2_HOOK_FASTCALL DoProgram(void);
 
+int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness);
+
 #endif // REC2_STRUCTUR_H
