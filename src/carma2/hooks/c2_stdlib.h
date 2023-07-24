@@ -13,6 +13,8 @@
 
 void C2_HOOK_CDECL c2_srand(int seed);
 
+int C2_HOOK_CDECL c2_rand(void);
+
 void C2_HOOK_CDECL c2_abort(void);
 
 void* C2_HOOK_CDECL c2_malloc(size_t size);
@@ -40,6 +42,8 @@ C2_NORETURN void C2_HOOK_CDECL c2_exit(int status);
 #include <stdlib.h>
 
 #define c2_srand srand
+
+#define c2_rand rand
 
 #define c2_abort abort
 
