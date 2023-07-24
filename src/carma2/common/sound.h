@@ -23,4 +23,6 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet_ptr pOutlet, tS3_sound_
 
 void C2_HOOK_FASTCALL InitSound(void);
 
+void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio);
+
 #endif // REC2_SOUND_H
