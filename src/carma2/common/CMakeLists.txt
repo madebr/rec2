@@ -92,6 +92,8 @@ add_library(c2_common STATIC
     structur.h
     temp.c
     temp.h
+    timers.c
+    timers.h
     tinted.c
     tinted.h
     utility.c

@@ -51,6 +51,17 @@ typedef struct {
 } tRGBColour;
 
 typedef struct {
+    tU32 total_duration;
+    tU32 durations[1];
+    tU8 index;
+    undefined field_0x9[3];
+    tU32 start_time;
+    tU32 longest_duration;
+    int colour;
+    char identifier[4];
+} tTimer;
+
+typedef struct {
     tRGBColour tl;
     tRGBColour tr;
     tRGBColour bl;
