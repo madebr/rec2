@@ -2121,10 +2121,32 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00486e10, LoadInRegistees, LoadInRegistees_original)
 void (C2_HOOK_FASTCALL * LoadTreeSurgery_original)(void);
 void C2_HOOK_FASTCALL LoadTreeSurgery(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadTreeSurgery_original();
 #else
-#error "Not implemented"
+    tPath_name the_path;
+    FILE* file;
+    int i;
+
+    PathCat(the_path, C2V(gApplication_path), "TreeSurgery.TXT");
+    file = TWT_fopen(the_path, "rt");
+    if (file == NULL) {
+        C2V(gTree_surgery_pass1_count) = 0;
+        C2V(gTree_surgery_pass2_count) = 0;
+        return;
+    }
+    C2V(gTree_surgery_pass1_count) = GetAnInt(file);
+    for (i = 0; i < C2V(gTree_surgery_pass1_count); i++) {
+        GetAString(file, C2V(gTree_surgery_pass1)[i].name);
+    }
+    C2V(gTree_surgery_pass2_count) = GetAnInt(file);
+    for (i = 0; i < C2V(gTree_surgery_pass1_count); i++) {
+        GetAString(file, C2V(gTree_surgery_pass2)[i].original);
+        GetAString(file, C2V(gTree_surgery_pass2)[i].replacement);
+    }
+#if defined(REC2_FIX_BUGS)
+    DRfclose(file);
+#endif
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00504b30, LoadTreeSurgery, LoadTreeSurgery_original)

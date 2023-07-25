@@ -121,6 +121,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_details*, gCurrent_net_game, 0x0074b784);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPratcam_on, 0x00660ce4, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCockpit_on, 0x006aaa30);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTree_surgery_pass1_count, 0x006aaf44);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTree_surgery_pass2_count, 0x006aaf10);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTree_surgery_pass1, gTree_surgery_pass1, 5, 0x006aaf18);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTree_surgery_pass2, gTree_surgery_pass2, 25, 0x006aaa60);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;

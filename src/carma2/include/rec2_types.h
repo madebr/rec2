@@ -59,6 +59,15 @@ typedef struct {
 
 typedef struct tPolyFont tPolyFont;
 
+typedef struct {
+    char name[8];
+} tTree_surgery_pass1;
+
+typedef struct {
+    char original[24];
+    char replacement[24];
+} tTree_surgery_pass2;
+
 typedef struct tDynamic_message {
     struct tDynamic_message* next;
     char data[];
