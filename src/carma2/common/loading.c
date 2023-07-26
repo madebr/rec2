@@ -4,6 +4,7 @@
 #include "controls.h"
 #include "crush.h"
 #include "depth.h"
+#include "drmem.h"
 #include "errors.h"
 #include "explosions.h"
 #include "globvars.h"
@@ -2400,10 +2401,14 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0044bbe0, DisposeCar, DisposeCar_original)
 void (C2_HOOK_FASTCALL * InitAIWorld_original)(void);
 void C2_HOOK_FASTCALL InitAIWorld(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitAIWorld_original();
 #else
-#error "Not implemented"
+    PrintMemoryDump(0, "BEFORE LoadOpponents()");
+    LoadOpponents();
+    PrintMemoryDump(0, "AFTER LoadOpponents(), BEFORE LoadPanGameDroneInfo()");
+    LoadPanGameDroneInfo();
+    PrintMemoryDump(0, "AFTER LoadPanGameDroneInfo()");
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00401000, InitAIWorld, InitAIWorld_original)
