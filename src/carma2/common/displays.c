@@ -6,6 +6,7 @@
 
 #include "rec2_macros.h"
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tHeadup, gHeadups, 37, 0x0067c500);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_headup, gQueued_headups, 4, 0x0067f890);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gQueued_headup_count, 0x0067f888);
 
@@ -54,6 +55,25 @@ int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044a220, MungeHeadupWidth, MungeHeadupWidth_original)
+
+int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index) {
+    int i;
+    int empty_one;
+    tHeadup* the_headup;
+
+    empty_one = -1;
+    for (i = 0; i < REC2_ASIZE(C2V(gHeadups)); i++) {
+        the_headup = &C2V(gHeadups)[i];
+        if (pSlot_index >= 0 && the_headup->slot_index == pSlot_index) {
+            return i;
+        }
+        if (the_headup->type == eHeadup_unused) {
+            empty_one = i;
+        }
+    }
+    return empty_one;
+}
+C2_HOOK_FUNCTION(0x00449fa0, FindAHeadupHoleWoofBarkSoundsABitRude)
 
 void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void) {
 
