@@ -66,6 +66,32 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRear_pixelmap, 0x006a22bc);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_palette_change, 0x006923a4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPalette_index, 0x006923b4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFont_names, 24, 0x0059ad30, {
+    "TYPEABLE",
+    "ORANGHED",
+    "BLUEHEAD",
+    "GREENHED",
+    "MEDIUMHD",
+    "TIMER",
+    "NEWHITE",
+    "NEWRED",
+    "NEWBIGGR",
+    "GRNDK",
+    "GRNLIT",
+    "GRYDK",
+    "GRYLIT",
+    "BUTTIN",
+    "BUTTOUT",
+    "LITPLAQ",
+    "DRKPLAQ",
+    "RED1",
+    "RED1GLOW",
+    "GRN1",
+    "GRN1GLOW",
+    "RED2",
+    "RED2GLOW",
+    "OPPOSTAT",
+});
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -384,10 +410,42 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0043e0a0, DoMouseCursor, DoMouseCursor_original)
 void (C2_HOOK_FASTCALL * LoadFont_original)(int pFont_ID);
 void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadFont_original(pFont_ID);
 #else
-#error "Not implemented"
+    int i;
+    FILE* file;
+    tPath_name the_path;
+
+    if (C2V(gFonts)[pFont_ID].images != NULL) {
+        return;
+    }
+    PathCat(the_path, C2V(gApplication_path), C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
+    PathCat(the_path, the_path, "FONTS");
+    PathCat(the_path, the_path, C2V(gFont_names)[pFont_ID]);
+    c2_strcat(the_path, ".PIX");
+    if (C2V(gFonts)[pFont_ID].file_read_once) {
+        return;
+    }
+    the_path[c2_strlen(the_path) - 4] = '\0';
+    c2_strcat(the_path, ".TXT");
+    file = DRfopen(the_path, "rt");
+    if (file == NULL) {
+        FatalError(kFatalError_CannotLoadFontWidthTable_S, C2V(gFont_names)[pFont_ID]);
+    }
+    C2V(gFonts)[pFont_ID].height = GetAnInt(file);
+    C2V(gFonts)[pFont_ID].width = GetAnInt(file);
+    C2V(gFonts)[pFont_ID].spacing = GetAnInt(file);
+    C2V(gFonts)[pFont_ID].offset = GetAnInt(file);
+    C2V(gFonts)[pFont_ID].num_entries = GetAnInt(file);
+    C2V(gFonts)[pFont_ID].id = pFont_ID;
+    if (C2V(gFonts)[pFont_ID].width <= 0) {
+        for (i = 0; i < C2V(gFonts)[pFont_ID].num_entries; i++) {
+            C2V(gFonts)[pFont_ID].width_table[i] = GetAnInt(file);
+        }
+    }
+    DRfclose(file);
+    C2V(gFonts)[pFont_ID].file_read_once = 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465850, LoadFont, LoadFont_original)

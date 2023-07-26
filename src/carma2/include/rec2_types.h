@@ -2024,6 +2024,7 @@ enum {
     kFatalError_CouldNotOpenFlicFile_S = 0x0d,
     kFatalError_FlicFileWasNot8BitsDeep_S = 0x0f,
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
+    kFatalError_CannotLoadFontWidthTable_S = 0x15,
     kFatalError_CantLoadCarResolutionIndependentFile = 0x18,
     kFatalError_ScreenDimensionNotInGrafData = 0x19,
     kFatalError_CannotOpenRacesFile = 0x32,
