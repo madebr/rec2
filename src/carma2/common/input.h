@@ -5,6 +5,7 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gKey_mapping, 77);
 C2_HOOK_VARIABLE_DECLARE(int, GEdge_trigger_mode);
 
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
@@ -28,5 +29,7 @@ tU32* C2_HOOK_FASTCALL KevKeyService(void);
 void C2_HOOK_FASTCALL CyclePollKeys(void);
 
 int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
+
+int C2_HOOK_FASTCALL KeyIsDown2(int pKey_index);
 
 #endif // REC2_INPUT_H
