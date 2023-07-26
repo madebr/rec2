@@ -32,3 +32,16 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00449090, InitHeadups, InitHeadups_original)
+
+int (C2_HOOK_FASTCALL * MungeHeadupWidth_original)(tHeadup* pHeadup);
+int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
+
+    C2_HOOK_BUG_ON(sizeof(tHeadup) != 356);
+
+#if defined(C2_HOOKS_ENABLED)
+    return MungeHeadupWidth_original(pHeadup);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044a220, MungeHeadupWidth, MungeHeadupWidth_original)
