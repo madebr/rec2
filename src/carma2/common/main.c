@@ -2,9 +2,13 @@
 
 #include "rec2_types.h"
 
+#include "drmem.h"
+#include "controls.h"
 #include "errors.h"
 #include "globvars.h"
 #include "init.h"
+#include "input.h"
+#include "network.h"
 #include "sound.h"
 #include "structur.h"
 #include "utility.h"
@@ -66,3 +70,24 @@ void C2_HOOK_FASTCALL ServiceGame(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00492180, ServiceGame, ServiceGame_original)
+
+void C2_HOOK_FASTCALL ServiceTheGame(int pRacing) {
+
+    CheckMemory();
+    if (!pRacing) {
+        CyclePollKeys();
+    }
+    PollKeys();
+    c2_rand();
+    if (PDServiceSystem(C2V(gFrame_period))) {
+        QuitGame();
+    }
+    if (!pRacing) {
+        CheckSystemKeys(0);
+    }
+    if (!pRacing && C2V(gSound_enabled)) {
+        SoundService();
+    }
+    NetService(pRacing);
+}
+C2_HOOK_FUNCTION(0x00492050, ServiceTheGame)

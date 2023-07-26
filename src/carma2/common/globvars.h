@@ -243,7 +243,7 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gTrack_actor);
 //extern int gCountdown;
 //extern int gFrame_rate;
 //extern int gNumber_of_racers;
-//extern int gSound_enabled;
+C2_HOOK_VARIABLE_DECLARE(int, gSound_enabled);
 //extern int gGraf_spec_index;
 //extern int gSound_available;
 //extern int gNumber_of_races;
