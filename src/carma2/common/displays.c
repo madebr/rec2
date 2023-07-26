@@ -160,3 +160,9 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pL
     return index;
 }
 C2_HOOK_FUNCTION(0x00449fd0, NewTextHeadupSlot2)
+
+int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, char* pText) {
+
+    return NewTextHeadupSlot2(pSlot_index, pFlash_rate, pLifetime, pFont_index, pText, 1);
+}
+C2_HOOK_FUNCTION(0x0044a380, NewTextHeadupSlot)
