@@ -25,4 +25,6 @@ void C2_HOOK_FASTCALL InitSound(void);
 
 void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio);
 
+void C2_HOOK_FASTCALL SoundService(void);
+
 #endif // REC2_SOUND_H
