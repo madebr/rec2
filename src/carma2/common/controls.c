@@ -1,8 +1,14 @@
 #include "controls.h"
 
+#include "globvrpb.h"
+#include "input.h"
+#include "network.h"
 #include "sound.h"
+#include "utility.h"
 
 #include "brender/brender.h"
+
+#include "c2_string.h"
 
 #include "rec2_macros.h"
 
@@ -16,6 +22,103 @@
 #endif
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gAbuse_text, 10, 0x0067c3c8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tCheat, gKev_keys, 94, 0x00590970, {
+    { 0xa11ee75d, 0xa11ee75d, SetFlag,    0xa11ee75d },
+    { 0x398da28c, 0x398da28c, SetFlag,    0x564e78b9 },
+    { 0x7dc510f3, 0x7dc510f3, SetFlag2,   0x00000001 },
+    { 0x309e4f55, 0x309e4f55, FinishRace, 0x00000000 },
+    { 0x1bcbe148, 0x1bcbe148, GetPowerup, 0x00000000 },
+    { 0x1d5e7725, 0x1d5e7725, GetPowerup, 0x00000001 },
+    { 0x22c65063, 0x22c65063, GetPowerup, 0x00000002 },
+    { 0x1a37d28a, 0x1a37d28a, GetPowerup, 0x00000003 },
+    { 0x1dcba360, 0x1dcba360, GetPowerup, 0x00000004 },
+    { 0x24c99afb, 0x24c99afb, GetPowerup, 0x00000005 },
+    { 0x200c1bd4, 0x200c1bd4, GetPowerup, 0x00000006 },
+    { 0x252a2e6b, 0x252a2e6b, GetPowerup, 0x00000007 },
+    { 0x218f555c, 0x218f555c, GetPowerup, 0x00000008 },
+    { 0x1fc7655b, 0x1fc7655b, GetPowerup, 0x00000009 },
+    { 0x2b2e6891, 0x2b2e6891, GetPowerup, 0x0000000a },
+    { 0x2db8b34a, 0x2db8b34a, GetPowerup, 0x0000000b },
+    { 0x3001467e, 0x3001467e, GetPowerup, 0x0000000c },
+    { 0x23968eda, 0x23968eda, GetPowerup, 0x0000000d },
+    { 0x1f3baa55, 0x1f3baa55, GetPowerup, 0x0000000f },
+    { 0x214a2558, 0x214a2558, GetPowerup, 0x00000010 },
+    { 0x373ae69a, 0x373ae69a, GetPowerup, 0x00000011 },
+    { 0x327ebd75, 0x327ebd75, GetPowerup, 0x00000012 },
+    { 0x350c0384, 0x350c0384, GetPowerup, 0x00000013 },
+    { 0x17f03c24, 0x17f03c24, GetPowerup, 0x00000014 },
+    { 0x32aeca21, 0x32aeca21, GetPowerup, 0x00000015 },
+    { 0x191841aa, 0x191841aa, GetPowerup, 0x00000016 },
+    { 0x26026896, 0x26026896, GetPowerup, 0x00000017 },
+    { 0x2440ca1b, 0x2440ca1b, GetPowerup, 0x00000018 },
+    { 0x37a11b1b, 0x37a11b1b, GetPowerup, 0x00000019 },
+    { 0x2f2ea509, 0x2f2ea509, GetPowerup, 0x0000001a },
+    { 0x28f522f1, 0x28f522f1, GetPowerup, 0x0000001b },
+    { 0x26c15553, 0x26c15553, GetPowerup, 0x00000020 },
+    { 0x3964b52b, 0x3964b52b, GetPowerup, 0x00000021 },
+    { 0x18bf123a, 0x18bf123a, GetPowerup, 0x00000022 },
+    { 0x2a439e13, 0x2a439e13, GetPowerup, 0x00000023 },
+    { 0x28769902, 0x28769902, GetPowerup, 0x00000024 },
+    { 0x2d5aa4e5, 0x2d5aa4e5, GetPowerup, 0x00000025 },
+    { 0x1e73b354, 0x1e73b354, GetPowerup, 0x00000026 },
+    { 0x1cac0a7c, 0x1cac0a7c, GetPowerup, 0x00000027 },
+    { 0x1e3c613a, 0x1e3c613a, GetPowerup, 0x00000028 },
+    { 0x2f4c3519, 0x2f4c3519, GetPowerup, 0x00000029 },
+    { 0x21f0d261, 0x21f0d261, GetPowerup, 0x0000002a },
+    { 0x1c727344, 0x1c727344, GetPowerup, 0x0000002b },
+    { 0x2f574845, 0x2f574845, GetPowerup, 0x0000002c },
+    { 0x1f0601e3, 0x1f0601e3, GetPowerup, 0x0000002d },
+    { 0x26219ff3, 0x26219ff3, GetPowerup, 0x0000002f },
+    { 0x26afbb31, 0x26afbb31, GetPowerup, 0x00000030 },
+    { 0x25205546, 0x25205546, GetPowerup, 0x00000031 },
+    { 0x1a0a8e5b, 0x1a0a8e5b, GetPowerup, 0x00000033 },
+    { 0x1bdea925, 0x1bdea925, GetPowerup, 0x00000034 },
+    { 0x2d4dd2a9, 0x2d4dd2a9, GetPowerup, 0x00000035 },
+    { 0x2e7a7505, 0x2e7a7505, GetPowerup, 0x00000036 },
+    { 0x17290940, 0x17290940, GetPowerup, 0x00000037 },
+    { 0x1d4e7a9c, 0x1d4e7a9c, GetPowerup, 0x00000038 },
+    { 0x3579d64a, 0x3579d64a, GetPowerup, 0x00000039 },
+    { 0x28f4d49c, 0x28f4d49c, GetPowerup, 0x0000003a },
+    { 0x1d6ba9c3, 0x1d6ba9c3, GetPowerup, 0x0000003b },
+    { 0x310971ab, 0x310971ab, GetPowerup, 0x0000003c },
+    { 0x28451eeb, 0x28451eeb, GetPowerup, 0x0000003d },
+    { 0x1ebfa5ba, 0x1ebfa5ba, GetPowerup, 0x0000003e },
+    { 0x27079773, 0x27079773, GetPowerup, 0x0000003f },
+    { 0x388de72c, 0x388de72c, GetPowerup, 0x00000040 },
+    { 0x1a0da9fc, 0x1a0da9fc, GetPowerup, 0x00000041 },
+    { 0x2975a10c, 0x2975a10c, GetPowerup, 0x00000042 },
+    { 0x1e5cc6ca, 0x1e5cc6ca, GetPowerup, 0x00000043 },
+    { 0x250c6f99, 0x250c6f99, GetPowerup, 0x00000044 },
+    { 0x33950e49, 0x33950e49, GetPowerup, 0x00000045 },
+    { 0x4e5f487a, 0x4e5f487a, GetPowerup, 0x00000046 },
+    { 0x3815584c, 0x3815584c, GetPowerup, 0x00000047 },
+    { 0x459732b2, 0x459732b2, GetPowerup, 0x00000048 },
+    { 0x62871003, 0x62871003, GetPowerup, 0x00000049 },
+    { 0x2d72ebb4, 0x2d72ebb4, GetPowerup, 0x0000004a },
+    { 0x2c3be2aa, 0x2c3be2aa, GetPowerup, 0x0000004b },
+    { 0x2b2be28b, 0x2b2be28b, GetPowerup, 0x0000004c },
+    { 0x29be089d, 0x29be089d, GetPowerup, 0x0000004d },
+    { 0x4897982d, 0x4897982d, GetPowerup, 0x0000004e },
+    { 0x44d50f49, 0x44d50f49, GetPowerup, 0x0000004f },
+    { 0x403afae5, 0x403afae5, GetPowerup, 0x00000050 },
+    { 0x45c19e5e, 0x45c19e5e, GetPowerup, 0x00000051 },
+    { 0x2f790ebd, 0x2f790ebd, GetPowerup, 0x00000052 },
+    { 0x244f60c9, 0x244f60c9, GetPowerup, 0x00000053 },
+    { 0x2b0794d3, 0x2b0794d3, GetPowerup, 0x00000054 },
+    { 0x2a44b628, 0x2a44b628, GetPowerup, 0x00000055 },
+    { 0x2998e46d, 0x2998e46d, GetPowerup, 0x00000056 },
+    { 0x23248728, 0x23248728, GetPowerup, 0x00000057 },
+    { 0x289c1822, 0x289c1822, GetPowerup, 0x00000058 },
+    { 0x35abb7d0, 0x35abb7d0, GetPowerup, 0x0000005a },
+    { 0x1c1fdd92, 0x1c1fdd92, GetPowerup, 0x0000005b },
+    { 0x253069c1, 0x253069c1, GetPowerup, 0x0000005c },
+    { 0x33ca4873, 0x33ca4873, GetPowerup, 0x0000005d },
+    { 0x1f56cde5, 0x1f56cde5, GetPowerup, 0x0000005e },
+    { 0x1784995b, 0x1784995b, GetPowerup, 0x00000060 },
+    { 0x3003eccb, 0x3003eccb, GetPowerup, 0x00000061 },
+    { 0x4b054b60, 0x4b054b60, DoSteelGonadODeath, 0x00000000 },
+    { 0x00000000, 0x00000000, NULL,       0x00000000 },
+});
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -581,3 +684,38 @@ void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00444ea0, DisposeAbuseomatic)
+
+void C2_HOOK_FASTCALL CheckKevKeys(void) {
+    int i;
+    tU32* value;
+    char s[128];
+
+    value = KevKeyService();
+    if (value[0] == 0) {
+        return;
+    }
+
+    for (i = 0; C2V(gKev_keys)[i].action_proc != NULL; i++) {
+        if (C2V(gKev_keys)[i].code == value[0] && C2V(gKev_keys)[i].code2 == value[1]) {
+            break;
+        }
+    }
+
+    if (C2V(gKev_keys)[i].action_proc != NULL) {
+        if (C2V(gNet_mode) == eNet_mode_none) {
+            C2V(gKev_keys)[i].action_proc(C2V(gKev_keys)[i].num);
+        } else if (C2V(gKev_keys)[i].num == 0xa11ee75d) {
+            c2_strcpy(s, C2V(gNet_players)[C2V(gThis_net_player_index)].player_name);
+            c2_strcat(s, " ");
+            c2_strcat(s, GetMiscString(225));
+            NetSendHeadupToEverybody(s);
+            C2V(gKev_keys)[i].action_proc(C2V(gKev_keys)[i].num);
+        } else {
+            c2_strcpy(s, C2V(gNet_players)[C2V(gThis_net_player_index)].player_name);
+            c2_strcat(s, " ");
+            c2_strcat(s, GetMiscString(224));
+            NetSendHeadupToAllPlayers(s);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00443c90, CheckKevKeys)
