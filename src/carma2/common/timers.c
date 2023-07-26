@@ -2,6 +2,8 @@
 
 #include "globvars.h"
 
+#include "platform.h"
+
 #include "c2_string.h"
 
 #include "rec2_macros.h"
@@ -14,6 +16,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_max_index, 0x006b7814);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_draw_x, 0x006aaa40);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_draw_y_stride, 0x006aaa44);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_draw_y, 0x006aaa54);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_frame_start_time, 0x006aaa58);
 
 #define RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5) (C2V(gBack_screen)->type == BR_PMT_RGB_565 ? (((R5) << 11) | ((G6) << 5) | (B5)) : (((R5) << 10) | (((G6) >> 1) << 5) | (B5)))
 
@@ -67,3 +70,14 @@ void C2_HOOK_FASTCALL InitTimers(void) {
 #undef TIMER_COLOUR_NAME
 }
 C2_HOOK_FUNCTION(0x00504300, InitTimers)
+
+void C2_HOOK_FASTCALL Timers_StartFrame(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gTimers)); i++) {
+        C2V(gTimers)[i].durations[C2V(gTimers)[i].index] = 0;
+    }
+    C2V(gTimers)[TIMER_OQQ].start_time = PDGetTotalMicroTime();
+    C2V(gTimers_frame_start_time) = PDGetTotalMicroTime();
+}
+C2_HOOK_FUNCTION(0x00504700, Timers_StartFrame)
