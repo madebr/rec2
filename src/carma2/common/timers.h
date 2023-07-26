@@ -43,4 +43,6 @@ void C2_HOOK_FASTCALL Timers_StartFrame(void);
 
 void C2_HOOK_FASTCALL Timers_EndFrame(void);
 
+void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen);
+
 #endif //REC2_TIMERS_H
