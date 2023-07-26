@@ -79,3 +79,14 @@ void C2_HOOK_FASTCALL ShutdownNetIfRequired(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0049d370, ShutdownNetIfRequired)
+
+void (C2_HOOK_FASTCALL * NetSendHeadupToEverybody_original)(const char* pMessage);
+void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage) {
+
+#if defined(C2_HOOKS_ENABLED)
+    NetSendHeadupToEverybody_original(pMessage);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049d780, NetSendHeadupToEverybody, NetSendHeadupToEverybody_original)
