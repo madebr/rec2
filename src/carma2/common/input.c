@@ -1,5 +1,9 @@
 #include "input.h"
 
+#include "globvars.h"
+
+#include "platform.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEdge_trigger_mode, 0x0068c1c4);
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
@@ -76,3 +80,60 @@ void C2_HOOK_FASTCALL PollKeys(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00481eb0, PollKeys, PollKeys_original)
+
+tU32* C2_HOOK_FASTCALL KevKeyService(void) {
+    static tU32 sum = 0;
+    static tU32 code = 0;
+    static tU32 code2 = 0;
+    static int last_key = -1;
+    static int last_single_key = -1;
+    static tU32 last_time = 0;
+    static tU32 return_val[2];
+    tU32 keys;
+
+    return_val[0] = 0;
+    return_val[1] = 0;
+    keys = C2V(gKeys_pressed);
+
+    if (keys < 0x6B) {
+        last_single_key = C2V(gKeys_pressed);
+    } else {
+        if (keys > 0x6b00) {
+            sum = 0;
+            code = 0;
+            return return_val;
+        }
+        if ((keys & 0xff) != last_single_key && keys >> 8 != last_single_key) {
+            sum = 0;
+            code = 0;
+            return return_val;
+        }
+        if (keys >> 8 != last_single_key) {
+            sum = 0;
+            code = 0;
+            return return_val;
+        }
+        if ((keys & 0xff) == last_single_key) {
+            keys = keys >> 8;
+        }
+        keys = keys & 0xff;
+    }
+
+    if (keys != 0 && keys != last_key) {
+        sum += keys;
+        code += keys << 11;
+        code = (code >> 17) + (code << 4);
+        code2 = (code2 >> 29) + keys * keys + (code2 << 3);
+        last_time = PDGetTotalTime();
+    } else if ((tU32)PDGetTotalTime() > last_time + 1000) {
+        return_val[0] = (code >> 11) + (sum << 21);
+        return_val[1] = code2;
+        // printf("final value: code=%lx, code2=%lx\n", return_val[0], return_val[1]);
+        code = 0;
+        code2 = 0;
+        sum = 0;
+    }
+    last_key = keys;
+    return return_val;
+}
+C2_HOOK_FUNCTION(0x00482f10, KevKeyService)

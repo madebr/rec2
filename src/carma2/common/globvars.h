@@ -165,7 +165,7 @@ C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gNet_cars_storage_space);
 //extern float gRepair_cost[3];
 //extern float gCop_speed_factor;
 //extern float gDefault_gravity;
-//extern tU32 gKeys_pressed;
+C2_HOOK_VARIABLE_DECLARE(tU32, gKeys_pressed);
 //extern tSpecial_volume* gDefault_water_spec_vol;
 //extern float gNet_repair_cost[7];
 //extern tU32 gLast_replay_frame_time;
