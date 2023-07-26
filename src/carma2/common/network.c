@@ -90,3 +90,14 @@ void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049d780, NetSendHeadupToEverybody, NetSendHeadupToEverybody_original)
+
+void (C2_HOOK_FASTCALL * NetSendHeadupToAllPlayers_original)(const char* pMessage);
+void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage) {
+
+#if defined(C2_HOOKS_ENABLED)
+    NetSendHeadupToAllPlayers_original(pMessage);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049d430, NetSendHeadupToAllPlayers, NetSendHeadupToAllPlayers_original)
