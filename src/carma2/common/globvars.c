@@ -135,7 +135,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gTyping, 0x0068b858);
 //int gPipe_reg_snap_before_new_game;
 //int gPipe_reg_snap_before_our_car;
 //int gPipe_reg_snap_after_our_car;
-//int gAction_replay_mode;
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAction_replay_mode, 0x00676914, 0);
 //int gDefault_engine_noise_index;
 //int gAusterity_mode;
 //int gAustere_override;
