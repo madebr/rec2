@@ -4,7 +4,12 @@
 
 #include "platform.h"
 
+#include "rec2_macros.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEdge_trigger_mode, 0x0068c1c4);
+C2_HOOK_VARIABLE_IMPLEMENT(tJoy_array, gJoy_array, 0x0074b5c0);
+C2_HOOK_VARIABLE_IMPLEMENT(tKey_array, gKey_array, 0x0068bee0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_poll_counter, 0x0068bed4);
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
@@ -137,3 +142,18 @@ tU32* C2_HOOK_FASTCALL KevKeyService(void) {
     return return_val;
 }
 C2_HOOK_FUNCTION(0x00482f10, KevKeyService)
+
+void C2_HOOK_FASTCALL CyclePollKeys(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gKey_array)); i++) {
+        if (C2V(gKey_array)[i] > C2V(gKey_poll_counter)) {
+            C2V(gKey_array)[i] = 0;
+            if (i > 143) {
+                C2V(gJoy_array)[i - 143] = -1; // yes this is a little weird I know...
+            }
+        }
+    }
+    C2V(gKey_poll_counter) = 0;
+}
+C2_HOOK_FUNCTION(0x00482160, CyclePollKeys)
