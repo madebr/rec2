@@ -4,8 +4,8 @@
 
 #include "rec2_types.h"
 
-#include "drmem.h"
 #include "controls.h"
+#include "drmem.h"
 #include "errors.h"
 #include "globvars.h"
 #include "init.h"
@@ -92,3 +92,9 @@ void C2_HOOK_FASTCALL ServiceTheGame(int pRacing) {
     NetService(pRacing);
 }
 C2_HOOK_FUNCTION(0x00492050, ServiceTheGame)
+
+void C2_HOOK_FASTCALL ServiceGameInRace(void) {
+
+    ServiceTheGame(1);
+    CheckKevKeys();
+}
