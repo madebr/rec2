@@ -52,4 +52,6 @@ const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
 void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time);
 
+int C2_HOOK_FASTCALL CheckQuit(void);
+
 #endif // REC2_UTILITY_H
