@@ -244,7 +244,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gOther_selfs, 4, 0x0074d644);
 //int gCountdown;
 //int gFrame_rate;
 //int gNumber_of_racers;
-//int gSound_enabled;
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_enabled, 0x00762328);
 //int gGraf_spec_index;
 //int gSound_available;
 //int gNumber_of_races;
