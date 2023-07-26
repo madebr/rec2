@@ -254,5 +254,7 @@ void C2_HOOK_FASTCALL InitAIWorld(void);
 
 void C2_HOOK_FASTCALL LoadOpponents(void);
 
+void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
+
 #endif //REC2_LOADING_H
 
