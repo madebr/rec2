@@ -13,4 +13,8 @@ void C2_HOOK_FASTCALL InitHeadups(void);
 
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup);
 
+void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void);
+
+void C2_HOOK_FASTCALL ClearQueuedHeadups(void);
+
 #endif //REC2_DISPLAYS_H
