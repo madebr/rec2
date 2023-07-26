@@ -50,4 +50,6 @@ int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 
 const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
+void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time);
+
 #endif // REC2_UTILITY_H
