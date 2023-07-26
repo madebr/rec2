@@ -77,6 +77,8 @@ int C2_HOOK_FASTCALL DoMouseCursor(void);
 
 void C2_HOOK_FASTCALL LoadFont(int pFont_ID);
 
+void C2_HOOK_FASTCALL DisposeFont(int pFont_ID);
+
 void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 void C2_HOOK_FASTCALL InitDRFonts(void);
