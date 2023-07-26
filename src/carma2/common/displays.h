@@ -11,4 +11,6 @@ void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY
 
 void C2_HOOK_FASTCALL InitHeadups(void);
 
+int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup);
+
 #endif //REC2_DISPLAYS_H
