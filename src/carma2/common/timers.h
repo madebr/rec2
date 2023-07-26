@@ -33,7 +33,10 @@ C2_HOOK_VARIABLE_DECLARE(int, gTimers_max_index);
 C2_HOOK_VARIABLE_DECLARE(int, gTimers_draw_x);
 C2_HOOK_VARIABLE_DECLARE(int, gTimers_draw_y_stride);
 C2_HOOK_VARIABLE_DECLARE(int, gTimers_draw_y);
+C2_HOOK_VARIABLE_DECLARE(int, gTimers_frame_start_time);
 
 void C2_HOOK_FASTCALL InitTimers(void);
+
+void C2_HOOK_FASTCALL Timers_StartFrame(void);
 
 #endif //REC2_TIMERS_H
