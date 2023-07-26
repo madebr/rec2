@@ -61,6 +61,13 @@ typedef struct {
     char identifier[4];
 } tTimer;
 
+typedef struct tCheat {
+    tU32 code;
+    tU32 code2;
+    void (C2_HOOK_FASTCALL * action_proc)(int);
+    int num;
+} tCheat;
+
 typedef struct {
     tRGBColour tl;
     tRGBColour tr;
