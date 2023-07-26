@@ -147,7 +147,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     }
     if (smackHandle == NULL) {
         dr_dprintf("Smack file '%s' failed to open", pSmack_name);
-        PDServiceInput();
+        PDServiceSystem(0);
         return;
     }
     dr_dprintf("Smack file opened OK");
@@ -291,7 +291,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                     }
                     BrZbSceneRender(C2V(g2d_camera), C2V(g2d_camera), C2V(gBack_screen), C2V(gDepth_buffer));
                     PDScreenBufferSwap(0);
-                    PDServiceInput();
+                    PDServiceSystem(0);
                     if (currentFrame != smackHandle->Frames) {
                         SmackNextFrame(smackHandle);
                     }
@@ -369,7 +369,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                         DRSetPalette(C2V(gCurrent_palette));
                     }
                     PDScreenBufferSwap(0);
-                    PDServiceInput();
+                    PDServiceSystem(0);
                     keyPressed = 0;
                     while (SmackWait(smackHandle) && PDGetTotalTime() < frameStart + 67) {
                         keyPressed = AnyKeyDown();
@@ -394,7 +394,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     dr_dprintf("Frames %d, time %d, pal changes %d, pal changes per sec %f, av fps %f",
                frameCount, 1000 * (timeEnd - timeStart), paletteChangeCount,
                (float) paletteChangeCount / (timeEnd - timeStart), (float) frameCount / (timeEnd - timeStart));
-    PDServiceInput();
+    PDServiceSystem(0);
 #else
 #error "Not implemented"
 #endif
