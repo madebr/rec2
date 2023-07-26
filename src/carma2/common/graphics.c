@@ -455,6 +455,16 @@ void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465850, LoadFont, LoadFont_original)
 
+void C2_HOOK_FASTCALL DisposeFont(int pFont_ID) {
+
+    if (C2V(gFonts)[pFont_ID].images != NULL) {
+        BrPixelmapFree(C2V(gFonts)[pFont_ID].images);
+        C2V(gFonts)[pFont_ID].images = NULL;
+        C2V(gFonts)[pFont_ID].file_read_once = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x00465a00, DisposeFont)
+
 void (C2_HOOK_FASTCALL * InitDRFonts_original)(void);
 void C2_HOOK_FASTCALL InitDRFonts(void) {
 
