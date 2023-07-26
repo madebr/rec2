@@ -16,6 +16,8 @@ void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
 void C2_HOOK_FASTCALL CheckKevKeys(void);
 
+void C2_HOOK_FASTCALL CheckSystemKeys(int pRacing);
+
 void C2_HOOK_FASTCALL CheckToggles(int pRacing);
 
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);

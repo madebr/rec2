@@ -121,7 +121,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gTyping);
 //extern int gPipe_reg_snap_before_new_game;
 //extern int gPipe_reg_snap_before_our_car;
 //extern int gPipe_reg_snap_after_our_car;
-//extern int gAction_replay_mode;
+C2_HOOK_VARIABLE_DECLARE(int, gAction_replay_mode);
 //extern int gDefault_engine_noise_index;
 //extern int gSausage_override;
 //extern int gAustere_override;
