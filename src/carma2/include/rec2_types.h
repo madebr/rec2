@@ -514,6 +514,13 @@ typedef struct tHeadup {
 } tHeadup;
 
 typedef struct {
+    int flash_rate;
+    int lifetime;
+    int font_index;
+    char text[256];
+} tQueued_headup;
+
+typedef struct {
     float opacity;
     br_pixelmap* map;
 } tExplosion_frame;
