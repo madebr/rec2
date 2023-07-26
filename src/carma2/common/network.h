@@ -22,4 +22,6 @@ void C2_HOOK_FASTCALL ShutdownNetIfRequired(void);
 
 void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage);
 
+void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
+
 #endif // REC2_NETWORK_H
