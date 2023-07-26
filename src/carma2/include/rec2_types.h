@@ -64,6 +64,15 @@ typedef struct {
     char identifier[4];
 } tTimer;
 
+typedef struct tToggle_element {
+    int key1;
+    int key2;
+    int in_game_only;
+    int exact_modifiers;
+    int on_last_time;
+    void (*action_proc)(void);
+} tToggle_element;
+
 typedef struct tCheat {
     tU32 code;
     tU32 code2;
