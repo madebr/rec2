@@ -426,3 +426,9 @@ int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
 #endif
 }
 C2_HOOK_FUNCTION(0x00513520, IRandomBetween)
+
+const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
+
+    return C2V(gMisc_strings)[pIndex];
+}
+C2_HOOK_FUNCTION(0x00514d70, GetMiscString)

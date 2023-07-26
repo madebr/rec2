@@ -10,6 +10,7 @@
 
 #define TWT_MOUNT_SUCCEEDED(TWTVFS) ((TWTVFS) >= 0)
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gMisc_strings, 300);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
 
 C2_HOOK_VARIABLE_DECLARE(int, gDisableTiffConversion);
