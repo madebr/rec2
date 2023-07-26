@@ -16,7 +16,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_max_index, 0x006b7814);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_draw_x, 0x006aaa40);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_draw_y_stride, 0x006aaa44);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_draw_y, 0x006aaa54);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_frame_start_time, 0x006aaa58);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimers_frame_start_time, 0x006aaa58);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimers_frame_end_time, 0x006aaa50);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimers_tolerance, 0x006aaa5c);
 
 #define RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5) (C2V(gBack_screen)->type == BR_PMT_RGB_565 ? (((R5) << 11) | ((G6) << 5) | (B5)) : (((R5) << 10) | (((G6) >> 1) << 5) | (B5)))
 
@@ -81,3 +83,34 @@ void C2_HOOK_FASTCALL Timers_StartFrame(void) {
     C2V(gTimers_frame_start_time) = PDGetTotalMicroTime();
 }
 C2_HOOK_FUNCTION(0x00504700, Timers_StartFrame)
+
+void C2_HOOK_FASTCALL Timers_EndFrame(void) {
+    int i;
+    int j;
+    tU32 total_duration;
+
+    if (C2V(gTimers_stack_size) != 0) {
+        PDFatalError("Timers_EndFrame(): Timer stack mismatch.");
+    }
+    C2V(gTimers)[TIMER_OQQ].durations[C2V(gTimers)[TIMER_OQQ].index] += PDGetTotalMicroTime() - C2V(gTimers)[TIMER_OQQ].start_time;
+    C2V(gTimers_frame_end_time) = PDGetTotalMicroTime();
+    C2V(gTimers_frame_count)++;
+    if (!C2V(gTimers_enough_samples) && C2V(gTimers_frame_count) > 64) {
+        C2V(gTimers_enough_samples) = 1;
+    }
+
+    total_duration = 0;
+    for (i = 0; i < REC2_ASIZE(C2V(gTimers)); i++) {
+        C2V(gTimers)[i].total_duration = 0;
+        for (j = 0; j < REC2_ASIZE(C2V(gTimers)[i].durations); j++) {
+            C2V(gTimers)[i].total_duration += C2V(gTimers)[i].durations[j];
+        }
+        C2V(gTimers)[i].index = 0;
+        total_duration += C2V(gTimers)[i].total_duration;
+        if (C2V(gTimers_enough_samples) && C2V(gTimers)[i].total_duration > C2V(gTimers)[i].longest_duration) {
+            C2V(gTimers)[i].longest_duration = C2V(gTimers)[i].total_duration;
+        }
+    }
+    C2V(gTimers_tolerance) = abs(total_duration - (C2V(gTimers_frame_end_time) - C2V(gTimers_frame_start_time)));
+}
+C2_HOOK_FUNCTION(0x00504740, Timers_EndFrame)
