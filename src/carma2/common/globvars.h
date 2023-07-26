@@ -112,7 +112,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gTree_surgery_pass2_count);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTree_surgery_pass1, gTree_surgery_pass1, 5);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTree_surgery_pass2, gTree_surgery_pass2, 25);
 
-//extern int gTyping;
+C2_HOOK_VARIABLE_DECLARE(int, gTyping);
 //extern int gArrow_mode;
 //extern int gInfo_on;
 //extern int gHost_abandon_game;
