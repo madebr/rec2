@@ -719,3 +719,14 @@ void C2_HOOK_FASTCALL CheckKevKeys(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00443c90, CheckKevKeys)
+
+void (C2_HOOK_FASTCALL * CheckOtherRacingKeys_original)(void);
+void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CheckOtherRacingKeys_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00442f90, CheckOtherRacingKeys, CheckOtherRacingKeys_original)
