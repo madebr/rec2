@@ -9,5 +9,6 @@
 C2_HOOK_VARIABLE_DECLARE(tNet_mode, gNet_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_net_players);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tNet_game_player_info, gNet_players, 12);
+C2_HOOK_VARIABLE_DECLARE(int, gThis_net_player_index);
 
 #endif // REC2_GLOBVRPB_H

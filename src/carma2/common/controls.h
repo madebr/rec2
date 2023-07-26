@@ -13,4 +13,6 @@ int C2_HOOK_FASTCALL GetSoundDetailLevel(void);
 
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
+void C2_HOOK_FASTCALL CheckKevKeys(void);
+
 #endif //REC2_CONTROLS_H
