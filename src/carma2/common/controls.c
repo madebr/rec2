@@ -727,6 +727,19 @@ void C2_HOOK_FASTCALL CheckKevKeys(void) {
 }
 C2_HOOK_FUNCTION(0x00443c90, CheckKevKeys)
 
+void C2_HOOK_FASTCALL CheckSystemKeys(int pRacing) {
+    tU32 start_menu_time;
+
+    start_menu_time = PDGetTotalTime();
+    CheckQuit();
+    AddLostTime(PDGetTotalTime() - start_menu_time);
+    CheckToggles(pRacing);
+    if (pRacing & !C2V(gAction_replay_mode)) {
+        CheckOtherRacingKeys();
+    }
+}
+C2_HOOK_FUNCTION(0x00442e90, CheckSystemKeys)
+
 void C2_HOOK_FASTCALL CheckToggles(int pRacing) {
     int i;
     int new_state;
