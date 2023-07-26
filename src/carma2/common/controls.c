@@ -1,10 +1,13 @@
 #include "controls.h"
 
+#include "globvars.h"
 #include "globvrpb.h"
 #include "input.h"
 #include "network.h"
 #include "sound.h"
 #include "utility.h"
+
+#include "platform.h"
 
 #include "brender/brender.h"
 
@@ -21,6 +24,7 @@
 #define CONTROLS_START()
 #endif
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gEntering_message, 0x0067c474);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gAbuse_text, 10, 0x0067c3c8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tCheat, gKev_keys, 94, 0x00590970, {
     { 0xa11ee75d, 0xa11ee75d, SetFlag,    0xa11ee75d },
@@ -118,6 +122,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tCheat, gKev_keys, 94, 0x00590970, {
     { 0x3003eccb, 0x3003eccb, GetPowerup, 0x00000061 },
     { 0x4b054b60, 0x4b054b60, DoSteelGonadODeath, 0x00000000 },
     { 0x00000000, 0x00000000, NULL,       0x00000000 },
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tToggle_element, gToggle_array, 44, 0x005900a0, {
+    XXXX TODO FIXME XXXX
 });
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
@@ -719,6 +726,38 @@ void C2_HOOK_FASTCALL CheckKevKeys(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00443c90, CheckKevKeys)
+
+void C2_HOOK_FASTCALL CheckToggles(int pRacing) {
+    int i;
+    int new_state;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gToggle_array)); i++) {
+        if (!pRacing && C2V(gToggle_array)[i].in_game_only) {
+            continue;
+        }
+        if ((C2V(gTyping) || C2V(gEntering_message)) && C2V(gToggle_array)[i].key2 == -2) {
+            continue;
+        }
+        new_state = 0;
+        if (C2V(gToggle_array)[i].key1 == -2 || KeyIsDown2(C2V(gToggle_array)[i].key1)) {
+            if (C2V(gToggle_array)[i].key2 == -2 && C2V(gToggle_array)[i].exact_modifiers) {
+                if (!PDKeyDown(0) && !PDKeyDown(1) && !PDKeyDown(2) && !PDKeyDown(3)) {
+                    new_state = 1;
+                }
+            } else {
+                if (KeyIsDown(C2V(gToggle_array)[i].key2)) {
+                    new_state = 1;
+                }
+            }
+        }
+        if (C2V(gToggle_array)[i].on_last_time != new_state) {
+            C2V(gToggle_array)[i].on_last_time = new_state;
+            if (new_state) {
+                C2V(gToggle_array)[i].action_proc();
+            }
+        }
+    }
+}
 
 void (C2_HOOK_FASTCALL * CheckOtherRacingKeys_original)(void);
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
