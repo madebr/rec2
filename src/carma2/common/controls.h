@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
 void C2_HOOK_FASTCALL CheckKevKeys(void);
 
+void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
+
 #endif //REC2_CONTROLS_H
