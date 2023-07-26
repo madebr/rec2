@@ -24,4 +24,6 @@ void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage);
 
 void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
 
+void C2_HOOK_FASTCALL NetService(int pIn_race);
+
 #endif // REC2_NETWORK_H
