@@ -178,7 +178,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gNet_cars_storage_space, 0x00761f00
 //float gRepair_cost[3];
 //float gCop_speed_factor;
 //float gDefault_gravity;
-//tU32 gKeys_pressed;
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gKeys_pressed, 0x0074d350);
 //tSpecial_volume* gDefault_water_spec_vol;
 //float gNet_repair_cost[7];
 //tU32 gLast_replay_frame_time;
