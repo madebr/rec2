@@ -252,5 +252,7 @@ void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner);
 
 void C2_HOOK_FASTCALL InitAIWorld(void);
 
+void C2_HOOK_FASTCALL LoadOpponents(void);
+
 #endif //REC2_LOADING_H
 
