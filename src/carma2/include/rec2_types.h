@@ -468,6 +468,51 @@ typedef struct {
     int width_table[224];
 } tDR_font;
 
+typedef enum {
+    eHeadup_unused = 0,
+    eHeadup_text = 1,
+    eHeadup_coloured_text = 2,
+    eHeadup_image = 3,
+    eHeadup_fancy = 4,
+    eHeadup_box_text = 5,
+} tHeadup_type;
+
+typedef struct tHeadup {
+    tHeadup_type type;
+    int x;
+    int y;
+    int original_x;
+    int right_edge;
+    int flash_period;
+    int slot_index;
+    int dimmed_background;
+    int dim_left;
+    int dim_top;
+    int dim_right;
+    int dim_bottom;
+    int clever;
+    int cockpit_anchored;
+    int flash_state;
+    int field_0x3c;
+    tJustification justification;
+    tU32 end_time;
+    tU32 last_flash;
+    union {
+        struct {
+            char text[252];
+            int colour;
+            br_font* font;
+        } text_info;
+        struct {
+            char text[252];
+            tDR_font* coloured_font;
+        } coloured_text_info;
+        struct {
+            undefined field_0x0[280];
+        } unknown;
+    } data;
+} tHeadup;
+
 typedef struct {
     float opacity;
     br_pixelmap* map;
