@@ -3,7 +3,10 @@
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
+#include "input.h"
 #include "loading.h"
+#include "main.h"
+#include "mainmenu.h"
 #include "platform.h"
 #include "world.h"
 
@@ -15,6 +18,7 @@
 #include <float.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLost_time, 0x006abef4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gIn_check_quit, 0x006abee0);
 
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
@@ -440,3 +444,21 @@ void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time) {
     C2V(gLost_time) += pLost_time;
 }
 C2_HOOK_FUNCTION(0x00514c80, AddLostTime)
+
+int C2_HOOK_FASTCALL CheckQuit(void) {
+
+    if (C2V(gIn_check_quit)) {
+        return 0;
+    }
+    if (KeyIsDown(1) && KeyIsDown(7)) {
+        C2V(gIn_check_quit) = 1;
+        while (AnyKeyDown()) {
+        }
+        if (DoVerifyQuit(1)) {
+            QuitGame();
+        }
+        C2V(gIn_check_quit) = 0;
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x005134b0, CheckQuit)
