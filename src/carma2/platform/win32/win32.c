@@ -531,10 +531,12 @@ void C2_HOOK_FASTCALL PDSetPalette(br_pixelmap *pixelmap) {
 }
 C2_HOOK_FUNCTION(0x0051c840, PDSetPalette)
 
-void C2_HOOK_FASTCALL PDServiceInput(void) {
+int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call) {
+
     Win32ServiceMessages();
+    return 0;
 }
-C2_HOOK_FUNCTION(0x0051cbe0, PDServiceInput)
+C2_HOOK_FUNCTION(0x0051cbe0, PDServiceSystem)
 
 void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only) {
     BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gBack_screen));
