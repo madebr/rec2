@@ -48,4 +48,6 @@ br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPale
 
 int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 
+const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
+
 #endif // REC2_UTILITY_H
