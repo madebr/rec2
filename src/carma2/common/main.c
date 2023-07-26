@@ -26,6 +26,12 @@ C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
     QuitGame_original();
     C2_HOOK_FINISH();
 #else
+    SaveOptions();
+    if (C2V(gSave_game_out_of_sync)) {
+        SaveGame();
+    }
+    ActionReplayFinishRecording();
+
 #error "Not implemented"
 #endif
 }
