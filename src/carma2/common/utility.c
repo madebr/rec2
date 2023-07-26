@@ -14,6 +14,8 @@
 
 #include <float.h>
 
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLost_time, 0x006abef4);
+
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
 #if defined(C2_HOOKS_ENABLED)
@@ -432,3 +434,9 @@ const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
     return C2V(gMisc_strings)[pIndex];
 }
 C2_HOOK_FUNCTION(0x00514d70, GetMiscString)
+
+void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time) {
+
+    C2V(gLost_time) += pLost_time;
+}
+C2_HOOK_FUNCTION(0x00514c80, AddLostTime)
