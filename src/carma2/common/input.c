@@ -64,3 +64,15 @@ int C2_HOOK_FASTCALL PDKeyDown(int pKey_index) {
     return result == tKey_down_yes || result == tKey_down_repeat;
 }
 C2_HOOK_FUNCTION(0x00482550, PDKeyDown)
+
+void (C2_HOOK_FASTCALL * PollKeys_original)(void);
+void C2_HOOK_FASTCALL PollKeys(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PollKeys_original();
+#else
+
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00481eb0, PollKeys, PollKeys_original)

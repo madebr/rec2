@@ -21,4 +21,6 @@ int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index);
 
 int C2_HOOK_FASTCALL PDKeyDown(int pKey_index);
 
+void C2_HOOK_FASTCALL PollKeys(void);
+
 #endif // REC2_INPUT_H
