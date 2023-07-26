@@ -44,6 +44,9 @@ typedef int  C2_HOOK_FASTCALL tGot_proc(tPowerup*, tCar_spec*);
 typedef void C2_HOOK_FASTCALL tLose_proc(tPowerup*, tCar_spec*);
 typedef void C2_HOOK_FASTCALL tPeriodic_proc(tPowerup*, tU32);
 
+typedef int tJoy_array[8];
+typedef int tKey_array[151];
+
 typedef struct {
     int r;
     int g;
