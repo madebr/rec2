@@ -19,4 +19,6 @@ void C2_HOOK_FASTCALL ServiceGame(void);
 //
 C2_NORETURN void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv);
 
+void C2_HOOK_FASTCALL ServiceTheGame(int pRacing);
+
 #endif // REC2_MAIN_H
