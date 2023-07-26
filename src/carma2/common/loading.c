@@ -2418,3 +2418,14 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048c930, LoadOpponents, LoadOpponents_original)
+
+void (C2_HOOK_FASTCALL * LoadPanGameDroneInfo_original)(void);
+void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadPanGameDroneInfo_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044ed10, LoadPanGameDroneInfo, LoadPanGameDroneInfo_original)
