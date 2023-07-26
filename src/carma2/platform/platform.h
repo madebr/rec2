@@ -9,7 +9,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gGraf_spec_index);
 C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
 
-void C2_HOOK_FASTCALL PDServiceInput(void);
+int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call);
 
 void C2_HOOK_FASTCALL PDInitialiseSystem(void);
 
