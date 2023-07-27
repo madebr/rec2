@@ -2115,6 +2115,7 @@ enum {
     kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CantFindPedTexture_S = 0xa8,
     kFatalError_CannotFindGibletModel_S = 0xa9,
+    kFatalError_UnableToOpenDroneFileOrFileCorrupted_S = 0xaf,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
     kFatalError_FileMustStartWith_SS = 0xb2,

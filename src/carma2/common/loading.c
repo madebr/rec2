@@ -2445,6 +2445,23 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048c930, LoadOpponents, LoadOpponents_original)
 
+FILE* C2_HOOK_FASTCALL OpenDrone(const char* pDrone_name) {
+    tPath_name the_path;
+    FILE* f;
+
+    c2_strcpy(the_path, C2V(gApplication_path));
+    PathCat(the_path, the_path, "DRONES");
+    PathCat(the_path, the_path, pDrone_name);
+    PathCat(the_path, the_path, pDrone_name);
+    c2_strcat(the_path, ".TXT");
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, the_path);
+    }
+    return f;
+}
+C2_HOOK_FUNCTION(0x0044f640, OpenDrone)
+
 void (C2_HOOK_FASTCALL * LoadPanGameDroneInfo_original)(void);
 void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
 
