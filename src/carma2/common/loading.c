@@ -2746,3 +2746,9 @@ void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
     C2V(gGroove_funk_offset) = 0;
 }
 C2_HOOK_FUNCTION(0x0048cd80, AboutToLoadFirstCar)
+
+void C2_HOOK_FASTCALL LoadCopCars(void) {
+
+    C2V(gProgram_state).AI_vehicles.number_of_cops = 0;
+}
+C2_HOOK_FUNCTION(0x004a9600, LoadCopCars)
