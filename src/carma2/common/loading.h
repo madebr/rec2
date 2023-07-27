@@ -256,5 +256,6 @@ void C2_HOOK_FASTCALL LoadOpponents(void);
 
 void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
-#endif //REC2_LOADING_H
+void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info);
 
+#endif //REC2_LOADING_H
