@@ -17,4 +17,6 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
+#define GROOVE_FUNK_MAX_PER_CAR 36
+
 #endif // REC2_REC2_MACROS_H
