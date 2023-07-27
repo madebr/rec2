@@ -75,7 +75,53 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMaxTimeOpponentRepair, 0x0074a688);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_map_index, 0x0068b88c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gKey_mapping, 77, 0x0074b5e0);
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tHeadup_info, gHeadup_image_info, 45, 0x00657320, TODO);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tHeadup_info, gHeadup_image_info, 45, 0x00657320, {
+    { "", eNot_ever_ever_ever }
+    { "", eNot_ever_ever_ever }
+    { "", eNot_ever_ever_ever }
+    { "", eNot_ever_ever_ever }
+    { "GO.PIX", eNet_or_otherwise }
+    { "NUMBER1.PIX", eNet_or_otherwise }
+    { "NUMBER2.PIX", eNet_or_otherwise }
+    { "NUMBER3.PIX", eNet_or_otherwise }
+    { "NUMBER4.PIX", eNet_or_otherwise }
+    { "NUMBER5.PIX", eNet_or_otherwise }
+    { "SPLATTER.PIX", eNet_or_otherwise }
+    { "PILEDRIV.PIX", eNet_or_otherwise }
+    { "EXTRASTY.PIX", eNet_or_otherwise }
+    { "ARTISTIC.PIX", eNet_or_otherwise }
+    { "PLAYWITH.PIX", eNet_or_otherwise }
+    { "PUNT.PIX", eNet_or_otherwise }
+    { "DROP.PIX", eNet_or_otherwise }
+    { "POLITE.PIX", eNet_or_otherwise }
+    { "2XCOMBO.PIX", eNet_or_otherwise }
+    { "3XCOMBO.PIX", eNet_or_otherwise }
+    { "4XCOMBO.PIX", eNet_or_otherwise }
+    { "5XCOMBO.PIX", eNet_or_otherwise }
+    { "6XCOMBO.PIX", eNet_or_otherwise }
+    { "7XCOMBO.PIX", eNet_or_otherwise }
+    { "8XCOMBO.PIX", eNet_or_otherwise }
+    { "9XCOMBO.PIX", eNet_or_otherwise }
+    { "10XCOMBO.PIX", eNet_or_otherwise }
+    { "BILLIARD.PIX", eNet_or_otherwise }
+    { "POLITE.PIX", eNet_or_otherwise }
+    { "HEADON.PIX", eNet_or_otherwise }
+    { "DESTROY.PIX", eNet_or_otherwise }
+    { "CHECKPNT.PIX", eNet_or_otherwise }
+    { "TIMEUP.PIX", eNot_net }
+    { "RACEOVER.PIX", eNet_or_otherwise }
+    { "UWASTED.PIX", eNet_or_otherwise }
+    { "MAD.PIX", eNet_or_otherwise }
+    { "GAMEOVER.PIX", eNet_or_otherwise }
+    { "UBROKE.PIX", eNet_or_otherwise }
+    { "ULOST.PIX", eNet_or_otherwise }
+    { "UWON.PIX", eNet_or_otherwise }
+    { "BBQBON.PIX", eNet_or_otherwise }
+    { "TAILBON.PIX", eNet_or_otherwise }
+    { "DETTAILBON.PIX", eNet_or_otherwise }
+    { "MISSIONFAIL.PIX", eNet_or_otherwise }
+    { "MISSIONDONE.PIX", eNet_or_otherwise }
+});
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gHeadup_images, 45, 0x0079eb60);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gDecode_string, 14, 0x00655e38, {    \

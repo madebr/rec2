@@ -374,7 +374,7 @@ typedef enum tNet_head_avail {
     eNet_or_otherwise = 0,
     eNet_only = 1,
     eNot_net = 2,
-    eNot_ever_ever_ever = 3
+    eNot_ever_ever_ever = 3,
 } tNet_head_avail;
 
 typedef struct tHeadup_info {
