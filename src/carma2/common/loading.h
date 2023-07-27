@@ -264,4 +264,6 @@ void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF);
 
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
 
+void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info);
+
 #endif //REC2_LOADING_H
