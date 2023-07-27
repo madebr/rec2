@@ -2547,9 +2547,9 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
     drone = &C2V(gDrones)[C2V(gCount_drones)];
     c2_strcpy(the_path, C2V(gApplication_path));
     PathCat(the_path, the_path, "DRONES");
-    PathCat(the_path, the_path, s);
+    PathCat(the_path, the_path, pDrone_name);
     twt = TWT_MountEx(the_path);
-    f = OpenDrone(s);
+    f = OpenDrone(pDrone_name);
 
     /* Version of this text file's format */
     GetALineAndDontArgue(f, s);
@@ -2565,7 +2565,8 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
 
     /* Name of this drone, for cross-referencing porpoises */
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(pDrone_name, s) != 0) {
+    str = c2_strtok(s," \t ,/");
+    if (c2_strcmp(pDrone_name, str) != 0) {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
     }
     c2_strncpy(drone->name, pDrone_name, REC2_ASIZE(drone->name) - 1);
@@ -2583,9 +2584,10 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
 
     /* Cornering (smooth/sharp) */
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "smooth") == 0) {
+    str = c2_strtok(s," \t ,/");
+    if (c2_strcmp(str, "smooth") == 0) {
         drone->flags |= 0x1;
-    } else if (c2_strcmp(s, "sharp") == 0) {
+    } else if (c2_strcmp(str, "sharp") == 0) {
         drone->flags &= ~0x1;
     } else {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -2593,13 +2595,13 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
 
     /* Speed (constant/variable) */
     GetALineAndDontArgue(f, s);
-
-    if (c2_strcmp(s, "constant") == 0) {
+    str = c2_strtok(s," \t ,/");
+    if (c2_strcmp(str, "constant") == 0) {
         /* if constant, must be followed by ONE number (the speed), */
 
         /* (BRU/s) */
         drone->speed = GetAScalar(f);
-    } else if (c2_strcmp(s, "variable") == 0) {
+    } else if (c2_strcmp(str, "variable") == 0) {
         /* if variable, must be followed by THREE numbers on separate lines (accel, max speed, min speed) */
 
         drone->speed = -1.f;
@@ -2633,9 +2635,10 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
 
     /* Ability to be resurrected after twattage (respawn / norespawn) */
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "respawn") == 0) {
+    str = c2_strtok(s," \t ,/");
+    if (c2_strcmp(str, "respawn") == 0) {
         drone->flags |= 0x2;
-    } else if (c2_strcmp(s, "norespawn") == 0) {
+    } else if (c2_strcmp(str, "norespawn") == 0) {
         drone->flags &= ~0x2;
     } else {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -2643,9 +2646,10 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
 
     /* orientation relative to path incline: inline (car, plane), vertical (cable car) */
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "vertical") == 0) {
+    str = c2_strtok(s," \t ,/");
+    if (c2_strcmp(str, "vertical") == 0) {
         drone->flags |= 0x10;
-    } else if (c2_strcmp(s, "inline") == 0) {
+    } else if (c2_strcmp(str, "inline") == 0) {
         drone->flags &= ~0x10;
     } else {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -2653,9 +2657,10 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
 
     /* Processing - 'always' or 'distance' */
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "always") == 0) {
+    str = c2_strtok(s," \t ,/");
+    if (c2_strcmp(str, "always") == 0) {
         drone->flags |= 0x4;
-    } else if (c2_strcmp(s, "distance") == 0) {
+    } else if (c2_strcmp(str, "distance") == 0) {
         drone->flags &= ~0x4;
     } else {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -2666,10 +2671,9 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
     if (version > 2) {
         GetALineAndDontArgue(f, s);
         str = c2_strtok(s, "\t ,/");
-
-        if (c2_strcmp(s, "drivable_on") == 0) {
+        if (c2_strcmp(str, "drivable_on") == 0) {
             drone->flags |= 0x8;
-        } else if (c2_strcmp(s, "not_drivable_on") == 0) {
+        } else if (c2_strcmp(str, "not_drivable_on") == 0) {
             drone->flags &= ~0x8;
         } else {
             FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
