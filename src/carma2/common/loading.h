@@ -246,5 +246,7 @@ void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race);
 
 void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner);
 
+void C2_HOOK_FASTCALL InitAIWorld(void);
+
 #endif //REC2_LOADING_H
 
