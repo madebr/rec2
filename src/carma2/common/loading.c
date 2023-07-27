@@ -212,6 +212,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gNet_avail_names, 4, 0x006575
     "hawk",
     "all",
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gFunk_groove_flags, 30, 0x00763540);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gGroove_funk_offset, 0x0074b4a8);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
@@ -2788,3 +2790,22 @@ void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
     }
 }
 C2_HOOK_FUNCTION(0x0048c860, LoadRaceInfo)
+
+void C2_HOOK_FASTCALL InitFunkGrooveFlags(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gFunk_groove_flags)) != 30);
+
+    // Starting from 1
+    for (i = 1; i < REC2_ASIZE(C2V(gFunk_groove_flags)); i++) {
+        C2V(gFunk_groove_flags)[i] = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x0048e9e0, InitFunkGrooveFlags)
+
+void C2_HOOK_FASTCALL AboutToLoadFirstCar(void) {
+
+    InitFunkGrooveFlags();
+    C2V(gGroove_funk_offset) = 0;
+}
+C2_HOOK_FUNCTION(0x0048cd80, AboutToLoadFirstCar)
