@@ -2770,3 +2770,21 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044ed10, LoadPanGameDroneInfo, LoadPanGameDroneInfo_original)
+
+void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info) {
+    int i;
+
+    pRace_info->index = pRace_index;
+    pRace_info->race_spec = &C2V(gRace_list)[pRace_index];
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        pRace_info->number_of_racers = C2V(gRace_list)[pRace_index].count_explicit_opponents;
+    }
+    pRace_info->total_laps = C2V(gRace_list)[pRace_index].count_laps;
+    for (i = 0; i < 3; i++) {
+        pRace_info->initial_timer[i] = pRace_info->race_spec->initial_timer[i];
+        pRace_info->completion_bonus[i] = pRace_info->race_spec->completion_bonus[i];
+        pRace_info->completion_bonus_peds[i] = pRace_info->race_spec->completion_bonus_peds[i];
+        pRace_info->completion_bonus_opponents[i] = pRace_info->race_spec->completion_bonus_opponents[i];
+    }
+}
+C2_HOOK_FUNCTION(0x0048c860, LoadRaceInfo)

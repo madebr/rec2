@@ -1803,9 +1803,9 @@ typedef struct {
     int total_laps;
     int check_point_count;
     int initial_timer[3];
-    undefined4 field_0x18[3];
-    int count_powerup_exclusions[3];
     int completion_bonus[3];
+    int completion_bonus_peds[3];
+    int completion_bonus_opponents[3];
     undefined field_0x3c[84];
     int number_of_racers;
     undefined field_0x94[4];
