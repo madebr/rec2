@@ -258,4 +258,8 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void);
 
 void C2_HOOK_FASTCALL LoadRaceInfo(int pRace_index, tRace_info* pRace_info);
 
+void C2_HOOK_FASTCALL InitFunkGrooveFlags(void);
+
+void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
+
 #endif //REC2_LOADING_H
