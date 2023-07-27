@@ -12,6 +12,7 @@
 #include "graphics.h"
 #include "init.h"
 #include "newgame.h"
+#include "opponent.h"
 #include "powerups.h"
 #include "replay.h"
 #include "spark.h"
@@ -152,6 +153,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gUnderwater_screen_name, 32, 0x0068c6f8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWasted_explosion_chance, 0x00762120);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gExplosion_sound_id, 0x00761f5c);
 C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gExplosion_pix_animation_groups, 0x007620f8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gNet_avail_names, 4, 0x00657558, {
+    "never",
+    "eagle",
+    "hawk",
+    "all",
+});
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
@@ -2416,10 +2423,87 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00401000, InitAIWorld, InitAIWorld_original)
 void (C2_HOOK_FASTCALL * LoadOpponents_original)(void);
 void C2_HOOK_FASTCALL LoadOpponents(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadOpponents_original();
 #else
-#error "Not implemented"
+    FILE* f;
+    tPath_name the_path;
+    int i;
+    int j;
+    int k;
+    char s[256];
+    char* str;
+    tText_chunk* the_chunk;
+
+    PathCat(the_path, C2V(gApplication_path), "OPPONENT.TXT");
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotOpenOpponentsFile);
+    }
+    GetALineAndDontArgue(f, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_sscanf(str, "%d", &C2V(gNumber_of_racers));
+    C2V(gOpponents) = BrMemAllocate(sizeof(tOpponent) * C2V(gNumber_of_racers), kMem_oppo_array);
+
+    for (i = 0; i < C2V(gNumber_of_racers); i++) {
+        PossibleService();
+        GetALineAndDontArgue(f, C2V(gOpponents)[i].name);
+        if (c2_strcmp(C2V(gOpponents)[i].name, "END") == 0) {
+            FatalError(kFatalError_OpponentCountMismatchesActualNumberOfOpponents);
+        }
+        GetALineAndDontArgue(f, s);
+        c2_strcpy(C2V(gOpponents)[i].abbrev_name, c2_strtok(s, "\t ,/"));
+        GetALineAndDontArgue(f, C2V(gOpponents)[i].car_name);
+        /* Strength rating (1-5) */
+        C2V(gOpponents)[i].strength_rating = GetAnInt(f);
+        /* Cost to buy it */
+        C2V(gOpponents)[i].price = GetAnInt(f);
+        /* Network availability ('eagle', or 'all') */
+        C2V(gOpponents)[i].network_availability = GetALineAndInterpretCommand(f, C2V(gNet_avail_names), REC2_ASIZE(C2V(gNet_avail_names)));
+
+        C2V(gOpponents)[i].mug_shot_image_data = NULL;
+        C2V(gOpponents)[i].grid_icon_image = NULL;
+        C2V(gOpponents)[i].stolen_car_image_data = NULL;
+
+        /* vehicle filename */
+        GetALineAndDontArgue(f, s);
+        c2_strcpy(C2V(gOpponents)[i].car_file_name, c2_strtok(s, "\t ,/"));
+
+        /* vehicle description */
+        GetALineAndDontArgue(f, C2V(gOpponents)[i].line1_topspeed);
+        GetALineAndDontArgue(f, C2V(gOpponents)[i].line2_weight);
+        GetALineAndDontArgue(f, C2V(gOpponents)[i].line3_acceleration);
+        GetALineAndDontArgue(f, C2V(gOpponents)[i].line4_description);
+
+        C2_HOOK_BUG_ON(sizeof(tText_chunk) != 52);
+        C2V(gOpponents)[i].text_chunk_count = 0;
+        C2V(gOpponents)[i].text_chunks = BrMemAllocate(sizeof(tText_chunk) * C2V(gOpponents)[i].text_chunk_count, kMem_oppo_text_chunk);
+
+        for (j = 0; j < C2V(gOpponents)[i].text_chunk_count; j++) {
+            the_chunk = &C2V(gOpponents)[i].text_chunks[j];
+            PossibleService();
+            GetPairOfInts(f, &the_chunk->x_coord, &the_chunk->y_coord);
+            GetPairOfInts(f, &the_chunk->frame_cue, &the_chunk->frame_end);
+            the_chunk->line_count = GetAnInt(f);
+            while (the_chunk->line_count > REC2_ASIZE(the_chunk->text)) {
+                the_chunk->line_count--;
+                GetALineAndDontArgue(f, s);
+            }
+
+            for (k = 0; k < the_chunk->line_count; k++) {
+                GetALineAndDontArgue(f, s);
+                the_chunk->text[k] = BrMemAllocate(c2_strlen(s) + 1, kMem_oppo_text_str);
+                c2_strcpy(the_chunk->text[k], s);
+            }
+        }
+        C2V(gOpponents)[i].dead = 0;
+        InitOpponentPsyche(i);
+    }
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "END") != 0) {
+        FatalError(kFatalError_OpponentCountMismatchesActualNumberOfOpponents);
+    }
+    DRfclose(f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048c930, LoadOpponents, LoadOpponents_original)
