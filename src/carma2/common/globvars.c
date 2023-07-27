@@ -127,6 +127,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTree_surgery_pass1, gTree_surgery_pass1, 5, 0x
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTree_surgery_pass2, gTree_surgery_pass2, 25, 0x006aaa60);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTyping, 0x0068b858);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_opponents, 0x0074b588);
 //int gArrow_mode;
 //int gInfo_on;
 //int gHost_abandon_game;
