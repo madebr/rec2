@@ -1942,7 +1942,40 @@ typedef struct {
     struct br_matrix34 initial_position;
     struct tCar_spec * car;
     undefined field_0xcc[8];
-} tNet_game_player_info;
+} tNet_game_player_info;typedef enum {
+    kDroneType_car = 0,
+    kDroneType_plane = 1,
+    kDroneType_train = 2,
+    kDroneType_chopper = 3,
+} tDrone_type;
+
+typedef struct {
+    char name[13];
+    undefined field1_0xd[3];
+    tDrone_type type;
+    float M;
+    float speed;
+    float min_speed;
+    float max_speed;
+    float max_acceleration;
+    float crushability;
+    int flags;
+    struct br_vector3 center;
+    float crush_limits_front;
+    float crush_limits_back;
+    float crush_limits_left;
+    float crush_limits_right;
+    float crush_limits_bottom;
+    float crush_limits_top;
+    undefined field_0x54[24];
+    undefined4 field_0x6c;
+    undefined4 field_0x70;
+    undefined4 field_0x74;
+    undefined4 field_0x78;
+    undefined4 field_0x7c;
+    undefined4 field_0x80;
+    undefined4 field_0x84;
+} tDrone;
 
 enum {
     kMiscString_ShadowNone = 104,
