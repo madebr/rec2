@@ -2762,3 +2762,15 @@ void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF) {
     PrintMemoryDump(0, "AFTER LoadInDronePaths()");
 }
 C2_HOOK_FUNCTION(0x00401030, LoadAIWorld)
+
+
+void (C2_HOOK_FASTCALL * LoadCar_original)(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
+void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadCar_original(pCar_name, pDriver, pCar_spec, pOwner, pDriver_name, pStorage_space);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00488f70, LoadCar, LoadCar_original)
