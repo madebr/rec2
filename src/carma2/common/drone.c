@@ -22,3 +22,14 @@ void C2_HOOK_CDECL DroneDebug(const char* format, ...) {
 #endif
 }
 C2_HOOK_FUNCTION(0x0044cfc0, DroneDebug)
+
+void (C2_HOOK_FASTCALL * LoadInDronePaths_original)(FILE* pF);
+void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadInDronePaths_original(pF);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00450bf0, LoadInDronePaths, LoadInDronePaths_original)
