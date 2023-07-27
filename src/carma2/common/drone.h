@@ -10,4 +10,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gCount_drones);
 
 void C2_HOOK_CDECL DroneDebug(const char* message, ...);
 
+void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
+
 #endif //REC2_DRONE_H
