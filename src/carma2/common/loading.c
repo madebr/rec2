@@ -5,6 +5,7 @@
 #include "crush.h"
 #include "depth.h"
 #include "drmem.h"
+#include "drone.h"
 #include "errors.h"
 #include "explosions.h"
 #include "globvars.h"
@@ -101,6 +102,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, gRaces_file_names, 9, 0x00657530, {
     "NETRACES.TXT",
     "NETRACES.TXT",
     "NETRACES.TXT"
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gDrone_type_names, 4, 0x00594770, {
+    "CAR",
+    "PLANE",
+    "TRAIN",
+    "CHOPPER",
 });
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_race_file_index, 0x0068c6f4);
@@ -2525,13 +2532,191 @@ FILE* C2_HOOK_FASTCALL OpenDrone(const char* pDrone_name) {
 }
 C2_HOOK_FUNCTION(0x0044f640, OpenDrone)
 
+void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
+    tPath_name the_path;
+    tTWTVFS twt;
+    int version;
+    int count;
+    char s[256];
+    char* str;
+    FILE* f;
+    tDrone* drone;
+
+    C2_HOOK_BUG_ON(sizeof(tDrone) != 136);
+
+    drone = &C2V(gDrones)[C2V(gCount_drones)];
+    c2_strcpy(the_path, C2V(gApplication_path));
+    PathCat(the_path, the_path, "DRONES");
+    PathCat(the_path, the_path, s);
+    twt = TWT_MountEx(the_path);
+    f = OpenDrone(s);
+
+    /* Version of this text file's format */
+    GetALineAndDontArgue(f, s);
+    c2_strtok(s, "\t ,/");
+    if (c2_strcmp(s, "VERSION") != 0) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+    str = c2_strtok(NULL, "\t ,/");
+    count = c2_sscanf(str, "%d", &version);
+    if (count != 1 || version < 2) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+
+    /* Name of this drone, for cross-referencing porpoises */
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(pDrone_name, s) != 0) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+    c2_strncpy(drone->name, pDrone_name, REC2_ASIZE(drone->name) - 1);
+
+    drone->type = GetALineAndInterpretCommand(f, C2V(gDrone_type_names), REC2_ASIZE(C2V(gDrone_type_names)));
+    if (drone->type < 0) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+
+    /* Mass (tonnes) */
+    drone->M = GetAScalar(f);
+
+    /* Centre of mass, as %age distance from front, left, bottom (woof) */
+    GetThreeFloats(f, &drone->center.v[0], &drone->center.v[1], &drone->center.v[2]);
+
+    /* Cornering (smooth/sharp) */
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "smooth") == 0) {
+        drone->flags |= 0x1;
+    } else if (c2_strcmp(s, "sharp") == 0) {
+        drone->flags &= ~0x1;
+    } else {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+
+    /* Speed (constant/variable) */
+    GetALineAndDontArgue(f, s);
+
+    if (c2_strcmp(s, "constant") == 0) {
+        /* if constant, must be followed by ONE number (the speed), */
+
+        /* (BRU/s) */
+        drone->speed = GetAScalar(f);
+    } else if (c2_strcmp(s, "variable") == 0) {
+        /* if variable, must be followed by THREE numbers on separate lines (accel, max speed, min speed) */
+
+        drone->speed = -1.f;
+
+        /* Max accel (BRU/s/s, 1 BRU/s = 15mph approx.) */
+        drone->max_acceleration = GetAScalar(f);
+
+        /* Max speed (BRU/s) (that's about 150 mph...we don't really want the F14 to go at 600mph now, do we?) */
+        drone->max_speed = GetAScalar(f);
+
+        /* Min speed (BRU/s) (or taxi speed for a plane) */
+        drone->min_speed = GetAScalar(f);
+    } else {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+
+    /* Crushability (0 = no crushing, 0.5 average softness, 1.0 very soft, 2.0 extremely soft) */
+    drone->crushability = GetAScalar(f);
+
+    if (drone->crushability != 0.f) {
+        /* if not 0 (zero) then must be followed by three lines of 2 values */
+        /* Crush limits front, back as %age of total length of vehicle */
+        GetPairOfFloats(f, &drone->crush_limits_front, &drone->crush_limits_back);
+
+        /* Crush limits left, right */
+        GetPairOfFloats(f, &drone->crush_limits_left, &drone->crush_limits_right);
+
+        /* Crush limits left, right */
+        GetPairOfFloats(f, &drone->crush_limits_bottom, &drone->crush_limits_top);
+    }
+
+    /* Ability to be resurrected after twattage (respawn / norespawn) */
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "respawn") == 0) {
+        drone->flags |= 0x2;
+    } else if (c2_strcmp(s, "norespawn") == 0) {
+        drone->flags &= ~0x2;
+    } else {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+
+    /* orientation relative to path incline: inline (car, plane), vertical (cable car) */
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "vertical") == 0) {
+        drone->flags |= 0x10;
+    } else if (c2_strcmp(s, "inline") == 0) {
+        drone->flags &= ~0x10;
+    } else {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+
+    /* Processing - 'always' or 'distance' */
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "always") == 0) {
+        drone->flags |= 0x4;
+    } else if (c2_strcmp(s, "distance") == 0) {
+        drone->flags &= ~0x4;
+    } else {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+    }
+
+    drone->flags &= ~0x8;
+
+    if (version > 2) {
+        GetALineAndDontArgue(f, s);
+        str = c2_strtok(s, "\t ,/");
+
+        if (c2_strcmp(s, "drivable_on") == 0) {
+            drone->flags |= 0x8;
+        } else if (c2_strcmp(s, "not_drivable_on") == 0) {
+            drone->flags &= ~0x8;
+        } else {
+            FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
+        }
+    }
+    DRfclose(f);
+    TWT_UnmountEx(twt);
+}
+
 void (C2_HOOK_FASTCALL * LoadPanGameDroneInfo_original)(void);
 void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadPanGameDroneInfo_original();
 #else
-#error "Not implemented"
+    int version;
+    FILE* f;
+    tPath_name the_path;
+    char s[256];
+    char* str;
+
+    c2_strcpy(the_path, C2V(gApplication_path));
+    PathCat(the_path, the_path, "DRONES");
+    PathCat(the_path, the_path, "DRONE.TXT");
+
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, the_path);
+    }
+    GetALineAndDontArgue(f, s);
+    c2_strtok(s, "\t ,/");
+    if (c2_strcmp(s, "VERSION") != 0) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, the_path);
+    }
+    str = c2_strtok(NULL, "\t ,/");
+    sscanf(str, "%d", &version);
+    if (version == 1) {
+        c2_memset(C2V(gDrones), 0, sizeof(C2V(gDrones)));
+        for (C2V(gCount_drones) = 0; C2V(gCount_drones) < REC2_ASIZE(C2V(gDrones)); C2V(gCount_drones)++) {
+            GetALineAndDontArgue(f, s);
+            if (c2_strcmp(s, "END OF DRONES") == 0 || DRfeof(f)) {
+                break;
+            }
+            LoadDrone(s);
+        }
+        DRfclose(f);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044ed10, LoadPanGameDroneInfo, LoadPanGameDroneInfo_original)
