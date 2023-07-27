@@ -258,4 +258,6 @@ void C2_HOOK_FASTCALL InitFunkGrooveFlags(void);
 
 void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
 
+void C2_HOOK_FASTCALL LoadCopCars(void);
+
 #endif //REC2_LOADING_H
