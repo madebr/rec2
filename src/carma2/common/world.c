@@ -1422,3 +1422,14 @@ void C2_HOOK_FASTCALL LoadFolderInStorageWithShading(tBrender_storage* pStorage,
     LoadSomeModels(pStorage, pPath);
 }
 C2_HOOK_FUNCTION(0x00502cf0, LoadFolderInStorageWithShading)
+
+void (C2_HOOK_FASTCALL * SetCarStorageTexturingLevel_original)(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
+void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetCarStorageTexturingLevel_original(pStorage, pNew, pOld);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00447350, SetCarStorageTexturingLevel, SetCarStorageTexturingLevel_original)
