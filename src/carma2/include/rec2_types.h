@@ -89,6 +89,15 @@ typedef struct {
 
 typedef struct tPolyFont tPolyFont;
 
+typedef struct tText_chunk {
+    int frame_cue;
+    int frame_end;
+    int x_coord;
+    int y_coord;
+    int line_count;
+    char* text[8];
+} tText_chunk;
+
 typedef struct {
     char name[8];
 } tTree_surgery_pass1;
@@ -1855,29 +1864,28 @@ typedef struct {
 
 typedef struct {
     char name[24];
-    char abbrev_name[24];
-    undefined field_0x30[32];
-    char car_file_name[40];
-    char car_name[20];
-    undefined field_0x8c[36];
-    char topspeed[32];
+    char abbrev_name[56];
+    char car_file_name[64];
+    char car_name[32];
+    char line1_topspeed[32];
     char line2_weight[32];
-    char line3_accel_0_60mph_seconds[32];
-    char line4_text[32];
-    undefined field_0x130[88];
-    undefined4 field_0x188;
-    undefined4 field_0x18c;
-    undefined field_0x190[12];
+    char line3_acceleration[32];
+    char line4_description[120];
+    tU8* mug_shot_image_data;
+    tU8* stolen_car_image_data;
+    int mug_shot_image_data_length;
+    int stolen_car_image_data_length;
+    int car_number;
     int strength_rating;
     int price;
     int picked;
-    undefined4 field_0x1a8;
-    int field182_0x1ac; /* count of field_0x1bc */
+    int dead;
+    int text_chunk_count;
     tNet_avail network_availability;
-    undefined4 field184_0x1b4;
+    br_pixelmap* grid_icon_image;
     tOppo_psyche psyche;
     undefined field_0x1b9[3];
-    undefined4* field_0x1bc;
+    tText_chunk* text_chunks;
 } tOpponent;
 
 typedef enum {
@@ -2085,6 +2093,8 @@ enum {
     kFatalError_CantLoadCarResolutionIndependentFile = 0x18,
     kFatalError_ScreenDimensionNotInGrafData = 0x19,
     kFatalError_CannotOpenRacesFile = 0x32,
+    kFatalError_CannotOpenOpponentsFile = 0x36,
+    kFatalError_OpponentCountMismatchesActualNumberOfOpponents = 0x37,
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_InsufficientShadeTableSlots = 0x44,
     kFatalError_InsufficientMaterialSlots = 0x45,
