@@ -113,6 +113,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tTree_surgery_pass1, gTree_surgery_pass1, 5);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTree_surgery_pass2, gTree_surgery_pass2, 25);
 
 C2_HOOK_VARIABLE_DECLARE(int, gTyping);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_opponents);
 //extern int gArrow_mode;
 //extern int gInfo_on;
 //extern int gHost_abandon_game;

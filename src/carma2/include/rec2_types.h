@@ -887,7 +887,7 @@ typedef struct tCar_spec {
     int invulnerable1;
     int invulnerable2;
     undefined field_0x1bc[4];
-    int field_0x1c0;
+    int is_race_goal;
     int wall_climber_mode;
     int can_be_stolen;
     int has_been_stolen;
