@@ -1017,7 +1017,7 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
     }
     C2_HOOK_BUG_ON(sizeof(tOpponent) != 448);
     for (i = 0; i < C2V(gNumber_of_racers); i++) {
-        C2V(gOpponents)[i].field_0x1a8 = 0;
+        C2V(gOpponents)[i].dead = 0;
     }
     C2V(gProgram_state).rank = C2V(gInitial_rank);
     C2V(gProgram_state).number_of_cars = 1;
