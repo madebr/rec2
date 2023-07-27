@@ -2815,3 +2815,13 @@ void C2_HOOK_FASTCALL LoadCopCars(void) {
     C2V(gProgram_state).AI_vehicles.number_of_cops = 0;
 }
 C2_HOOK_FUNCTION(0x004a9600, LoadCopCars)
+
+void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF) {
+
+    PrintMemoryDump(0, "BEFORE LoadInOppoPaths()");
+    LoadInOppoPaths(pF);
+    PrintMemoryDump(0, "AFTER LoadInOppoPaths(), BEFORE LoadInDronePaths()");
+    LoadInDronePaths(pF);
+    PrintMemoryDump(0, "AFTER LoadInDronePaths()");
+}
+C2_HOOK_FUNCTION(0x00401030, LoadAIWorld)
