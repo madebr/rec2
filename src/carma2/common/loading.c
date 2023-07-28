@@ -2834,6 +2834,22 @@ void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x00401030, LoadAIWorld)
 
+void C2_HOOK_FASTCALL LoadGear(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+
+    /* Gear display x,y,image */
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    sscanf(str, "%d", &pCar_spec->gear_x[pIndex]);
+    str = c2_strtok(NULL, "\t ,/");
+    sscanf(str, "%d", &pCar_spec->gear_y[pIndex]);
+    str = c2_strtok(NULL, "\t ,/");
+    if (pIndex == 0) {
+        pCar_spec->gears_image = DRLoadPixelmap(str);
+    }
+}
+
 void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char s[256];
     char* str;
