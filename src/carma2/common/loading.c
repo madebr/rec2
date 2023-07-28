@@ -76,6 +76,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMaxTimeOpponentRepair, 0x0074a688);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_map_index, 0x0068b88c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gKey_mapping, 77, 0x0074b5e0);
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAllow_open_to_fail, 0x00658610, 1);
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tHeadup_info, gHeadup_image_info, 45, 0x00657320, {
     { "", eNot_ever_ever_ever }
     { "", eNot_ever_ever_ever }
@@ -569,6 +571,11 @@ void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00490630, GetAString, GetAString_original)
+
+void C2_HOOK_FASTCALL AllowOpenToFail(void) {
+    C2V(gAllow_open_to_fail) = 1;
+}
+C2_HOOK_FUNCTION(0x004910b0, AllowOpenToFail)
 
 FILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
