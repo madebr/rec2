@@ -127,6 +127,8 @@ void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* p
 
 void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 
+void C2_HOOK_FASTCALL AllowOpenToFail(void);
+
 FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
 void C2_HOOK_FASTCALL DRfclose(FILE* pFile);
