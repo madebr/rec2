@@ -2771,6 +2771,55 @@ void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x00401030, LoadAIWorld)
 
+void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+    char the_char1;
+
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_sscanf(str, "%c", &the_char1);
+    if (the_char1 == 'd') {
+        /* Speedo type, x, y, filename, x-pitch */
+        pCar_spec->speedo_radius_2[pIndex] = -1;
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        pCar_spec->speedo_image[pIndex] = DRLoadPixelmap(str);
+        if (pCar_spec->speedo_image[pIndex] == NULL) {
+            FatalError(kFatalError_CannotLoadSpeedoImage);
+        }
+        pCar_spec->speedo_y_pitch[pIndex] = pCar_spec->speedo_image[pIndex]->height / 10;
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_x_pitch[pIndex]);
+    } else {
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        pCar_spec->speedo_image[pIndex] = DRLoadPixelmap(str);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_centre_x[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_centre_y[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_radius_1[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_radius_2[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_start_angle[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_end_angle[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->speedo_needle_colour[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->max_speed);
+    }
+}
+C2_HOOK_FUNCTION(0x0048b560, LoadSpeedo)
 
 void (C2_HOOK_FASTCALL * LoadCar_original)(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
