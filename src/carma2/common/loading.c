@@ -2834,6 +2834,48 @@ void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x00401030, LoadAIWorld)
 
+void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
+    char s[256];
+    char* str;
+    char the_char1;
+
+    /* tacho type, x, y, filename, x-pitch */
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_sscanf(str, "%c", &the_char1);
+    if (the_char1 == 'd') {
+        pCar_spec->tacho_radius_2[pIndex] = -1;
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        pCar_spec->tacho_image[pIndex] = DRLoadPixelmap(str);
+    } else {
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        pCar_spec->tacho_image[pIndex] = DRLoadPixelmap(str);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_centre_x[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_centre_y[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_radius_1[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_radius_2[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_start_angle[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_end_angle[pIndex]);
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &pCar_spec->tacho_needle_colour[pIndex]);
+    }
+}
+C2_HOOK_FUNCTION(0x0048b810, LoadTacho)
+
 void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char s[256];
     char* str;
