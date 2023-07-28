@@ -936,7 +936,7 @@ typedef struct tCar_spec {
     int rhands_x[7];
     int rhands_y[7];
     int number_of_hands_images;
-    int field93_0x364;
+    int max_speed;
     int damage_x_offset;
     int damage_y_offset;
     int damage_background_x;
@@ -2120,6 +2120,7 @@ enum {
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
     kFatalError_CantLoadCarResolutionIndependentFile = 0x18,
     kFatalError_ScreenDimensionNotInGrafData = 0x19,
+    kFatalError_CannotLoadSpeedoImage = 0x23,
     kFatalError_CannotOpenRacesFile = 0x32,
     kFatalError_CannotOpenOpponentsFile = 0x36,
     kFatalError_OpponentCountMismatchesActualNumberOfOpponents = 0x37,
