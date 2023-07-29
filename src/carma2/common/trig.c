@@ -96,6 +96,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(float, gFloat_sine_table, 91, 0x00661398, 
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, mattmp1__trig, 0x006ab980);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, mattmp2__trig, 0x006ab9b0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix23, mat23tmp1, 0x006ab950);
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix23, mat23tmp2, 0x006ab968);
 
 float C2_HOOK_FASTCALL FastFloatSin(int pAngle_in_degrees) {
 
@@ -504,3 +506,11 @@ void C2_HOOK_FASTCALL DRMatrix23Rotate(br_matrix23* mat, br_angle rz) {
     mat->m[2][1] = 0.f;
 }
 C2_HOOK_FUNCTION(0x00513020, DRMatrix23Rotate)
+
+void C2_HOOK_FASTCALL DRMatrix23PreRotate(br_matrix23* mat, br_angle rz) {
+
+    DRMatrix23Rotate(&C2V(mat23tmp2), rz);
+    BrMatrix23Mul(&C2V(mat23tmp1), &C2V(mat23tmp2), mat);
+    BrMatrix23Copy(mat, &C2V(mat23tmp1));
+}
+C2_HOOK_FUNCTION(0x00513140, DRMatrix23PreRotate)
