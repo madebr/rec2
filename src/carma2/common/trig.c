@@ -472,3 +472,11 @@ void C2_HOOK_FASTCALL DRMatrix34PostRotateZ(br_matrix34* mat, br_angle rz) {
     BrMatrix34Copy(mat, &C2V(mattmp1__trig));
 }
 C2_HOOK_FUNCTION(0x00512df0, DRMatrix34PostRotateZ)
+
+void C2_HOOK_FASTCALL DRMatrix34PreRotate(br_matrix34* mat, br_angle r, br_vector3* axis) {
+
+    DRMatrix34Rotate(&C2V(mattmp2__trig), r, axis);
+    BrMatrix34Mul(&C2V(mattmp1__trig), &C2V(mattmp2__trig), mat);
+    BrMatrix34Copy(mat, &C2V(mattmp1__trig));
+}
+C2_HOOK_FUNCTION(0x00512f80, DRMatrix34PreRotate)
