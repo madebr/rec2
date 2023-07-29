@@ -216,3 +216,9 @@ br_scalar C2_HOOK_STDCALL FastScalarArcSin(br_scalar pValue) {
     return FastFloatArcSin(pValue);
 }
 C2_HOOK_FUNCTION(0x00511b50, FastScalarArcSin)
+
+br_scalar C2_HOOK_STDCALL FastScalarArcCos(br_scalar pValue) {
+
+    return 90.f - FastScalarArcSin(pValue);
+}
+C2_HOOK_FUNCTION(0x00511c10, FastScalarArcCos)
