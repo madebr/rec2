@@ -25,4 +25,6 @@ br_scalar C2_HOOK_FASTCALL FastScalarTanAngle(br_angle pBR_angle);
 
 float C2_HOOK_STDCALL FastFloatArcSin(float pValue);
 
+float C2_HOOK_STDCALL FastFloatArcCos(float pValue);
+
 #endif //REC2_TRIG_H
