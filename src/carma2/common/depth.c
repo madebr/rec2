@@ -228,3 +228,13 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00445620, InitDepthEffects, InitDepthEffects_original)
 
+void (C2_HOOK_FASTCALL * MungeForwardSky_original)(void);
+void C2_HOOK_FASTCALL MungeForwardSky(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeForwardSky_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00447250, MungeForwardSky, MungeForwardSky_original)
