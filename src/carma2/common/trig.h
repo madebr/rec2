@@ -33,4 +33,6 @@ br_scalar C2_HOOK_STDCALL FastScalarArcCos(br_scalar pValue);
 
 float C2_HOOK_STDCALL FastFloatArcTan2(float pY, float pX);
 
+br_scalar C2_HOOK_STDCALL FastScalarArcTan2(br_scalar pY, br_scalar pX);
+
 #endif //REC2_TRIG_H

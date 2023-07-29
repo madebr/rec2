@@ -268,3 +268,9 @@ float C2_HOOK_STDCALL FastFloatArcTan2(float pY, float pX) {
     }
 }
 C2_HOOK_FUNCTION(0x00511ce0, FastFloatArcTan2)
+
+br_scalar C2_HOOK_STDCALL FastScalarArcTan2(br_scalar pY, br_scalar pX) {
+
+    return FastFloatArcTan2(pY, pX);
+}
+C2_HOOK_FUNCTION(0x00511e50, FastScalarArcTan2)
