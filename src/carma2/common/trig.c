@@ -204,3 +204,9 @@ float C2_HOOK_STDCALL FastFloatArcSin(float pValue) {
     return low_limit;
 }
 C2_HOOK_FUNCTION(0x005119c0, FastFloatArcSin)
+
+float C2_HOOK_STDCALL FastFloatArcCos(float pValue) {
+
+    return 90.f - FastFloatArcSin(pValue);
+}
+C2_HOOK_FUNCTION(0x00511a80, FastFloatArcCos)
