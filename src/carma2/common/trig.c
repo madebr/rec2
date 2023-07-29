@@ -146,3 +146,9 @@ br_scalar C2_HOOK_FASTCALL FastScalarSin(int pAngle_in_degrees) {
     return FastFloatSin(pAngle_in_degrees);
 }
 C2_HOOK_FUNCTION(0x005115b0, FastScalarSin)
+
+br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_in_degrees) {
+
+    return FastFloatCos(pAngle_in_degrees);
+}
+C2_HOOK_FUNCTION(0x00511620, FastScalarCos)
