@@ -10,6 +10,7 @@
 #include "explosions.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "grafdata.h"
 #include "graphics.h"
 #include "init.h"
 #include "newgame.h"
@@ -2818,6 +2819,39 @@ void C2_HOOK_FASTCALL LoadGear(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     str = c2_strtok(NULL, "\t ,/");
     if (pIndex == 0) {
         pCar_spec->gears_image = DRLoadPixelmap(str);
+    }
+}
+
+void C2_HOOK_FASTCALL AdjustCarCoordinates(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(pCar->render_left); i++) {
+        pCar->render_left[i] -= C2V(gCurrent_graf_data)->cock_margin_x;
+        pCar->render_top[i] -= C2V(gCurrent_graf_data)->cock_margin_y;
+        pCar->render_right[i] -= C2V(gCurrent_graf_data)->cock_margin_x;
+        pCar->render_bottom[i] -= C2V(gCurrent_graf_data)->cock_margin_y;
+    }
+    pCar->mirror_left -= C2V(gCurrent_graf_data)->cock_margin_x;
+    pCar->mirror_top -= C2V(gCurrent_graf_data)->cock_margin_y;
+    pCar->mirror_right -= C2V(gCurrent_graf_data)->cock_margin_x;
+    pCar->mirror_bottom -= C2V(gCurrent_graf_data)->cock_margin_y;
+    pCar->speedo_centre_x[1] -= C2V(gCurrent_graf_data)->cock_margin_x;
+    pCar->speedo_centre_y[1] -= C2V(gCurrent_graf_data)->cock_margin_y;
+    pCar->tacho_centre_x[1] -= C2V(gCurrent_graf_data)->cock_margin_x;
+    pCar->tacho_centre_y[1] -= C2V(gCurrent_graf_data)->cock_margin_y;
+    pCar->speedo_x[1] -= C2V(gCurrent_graf_data)->cock_margin_x;
+    pCar->speedo_y[1] -= C2V(gCurrent_graf_data)->cock_margin_y;
+    pCar->tacho_x[1] -= C2V(gCurrent_graf_data)->cock_margin_x;
+    pCar->tacho_y[1] -= C2V(gCurrent_graf_data)->cock_margin_y;
+    for (i = 0; i < REC2_ASIZE(pCar->lhands_x); i++) {
+        pCar->lhands_x[i] -= C2V(gCurrent_graf_data)->cock_margin_x;
+        pCar->lhands_y[i] -= C2V(gCurrent_graf_data)->cock_margin_y;
+        pCar->rhands_x[i] -= C2V(gCurrent_graf_data)->cock_margin_x;
+        pCar->rhands_y[i] -= C2V(gCurrent_graf_data)->cock_margin_y;
+    }
+    for (i = 0; i < REC2_ASIZE(pCar->damage_units); i++) {
+        pCar->damage_units[i].x_coord -= C2V(gCurrent_graf_data)->cock_margin_x;
+        pCar->damage_units[i].y_coord -= C2V(gCurrent_graf_data)->cock_margin_y;
     }
 }
 
