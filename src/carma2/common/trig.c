@@ -113,3 +113,24 @@ float C2_HOOK_FASTCALL FastFloatSin(int pAngle_in_degrees) {
     return C2V(gFloat_sine_table)[pAngle_in_degrees];
 }
 C2_HOOK_FUNCTION(0x005113d0, FastFloatSin)
+
+float C2_HOOK_FASTCALL FastFloatCos(int pAngle_in_degrees) {
+
+    if (pAngle_in_degrees >= 0) {
+        pAngle_in_degrees = pAngle_in_degrees % 360;
+    } else {
+        pAngle_in_degrees = 360 - -pAngle_in_degrees % 360;
+    }
+
+    if (pAngle_in_degrees > 270) {
+        return C2V(gFloat_sine_table)[pAngle_in_degrees - 270];
+    }
+    if (pAngle_in_degrees > 180) {
+        return -C2V(gFloat_sine_table)[270 - pAngle_in_degrees];
+    }
+    if (pAngle_in_degrees > 90) {
+        return -C2V(gFloat_sine_table)[pAngle_in_degrees - 90];
+    }
+    return C2V(gFloat_sine_table)[90 - pAngle_in_degrees];
+}
+C2_HOOK_FUNCTION(0x00511440, FastFloatCos)
