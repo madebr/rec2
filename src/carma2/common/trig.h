@@ -5,4 +5,6 @@
 
 float C2_HOOK_FASTCALL FastFloatSin(int pAngle_in_degrees);
 
+float C2_HOOK_FASTCALL FastFloatCos(int pAngle_in_degrees);
+
 #endif //REC2_TRIG_H
