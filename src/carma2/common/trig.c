@@ -343,3 +343,24 @@ void C2_HOOK_FASTCALL DRMatrix34RotateX(br_matrix34* mat, br_angle rx) {
     mat->m[3][2] = 0.0f;
 }
 C2_HOOK_FUNCTION(0x00512030, DRMatrix34RotateX)
+
+void C2_HOOK_FASTCALL DRMatrix34RotateY(br_matrix34* mat, br_angle ry) {
+    br_scalar s;
+    br_scalar c;
+
+    s = FastScalarSinAngle(ry);
+    c = FastScalarCosAngle(ry);
+    mat->m[0][0] = c;
+    mat->m[0][1] = 0.0f;
+    mat->m[0][2] = -s;
+    mat->m[1][0] = 0.0f;
+    mat->m[1][1] = 1.0f;
+    mat->m[1][2] = 0.0f;
+    mat->m[2][0] = s;
+    mat->m[2][1] = 0.0f;
+    mat->m[2][2] = c;
+    mat->m[3][0] = 0.0f;
+    mat->m[3][1] = 0.0f;
+    mat->m[3][2] = 0.0f;
+}
+C2_HOOK_FUNCTION(0x00512170, DRMatrix34RotateY)
