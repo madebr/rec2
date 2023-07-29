@@ -1876,7 +1876,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0048c1c0, LoadRaces, LoadRaces_original)
 
 void (C2_HOOK_FASTCALL * LoadHeadups_original)(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadHeadups_original(pF, pIndex, pCar_spec);
 #else
     char s[256];
@@ -1887,8 +1887,26 @@ void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     C2_HOOK_BUG_ON(offsetof(tCar_spec, headup_slots) != 0x728);
     C2_HOOK_BUG_ON(sizeof(tHeadup_slot) != 44);
 
+    /* pIndex=0 -> Number of headups (external) */
+    /* pIndex=1 -> Number of headups (internal) */
     number_of_slots = GetAnInt(pF);
     for (j = 0; j < number_of_slots; j++) {
+        /* [ 0]: Development info display
+         * [ 1]: Credits earned
+         * [ 2]: Pedestrian kill count
+         * [ 3]: Pedestrian warning
+         * [ 4]: Miscellaneous messages
+         * [ 5]: Start of race countdown
+         * [ 6]: Fancy bonuses, timeup, race over etc
+         * [ 7]: Timer
+         * [ 8]: Lap count
+         * [ 9]: End of race bonus
+         * [10]: Time bonus
+         * [11]: Time awarded
+         * [12]: Cars out count
+         * [13]: Cash in network mode
+         * [14]: Cash in network mode
+         * */
         GetALineAndDontArgue(pF, s);
         str = c2_strtok(s, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].field_0x28);
