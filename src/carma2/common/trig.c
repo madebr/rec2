@@ -274,3 +274,45 @@ br_scalar C2_HOOK_STDCALL FastScalarArcTan2(br_scalar pY, br_scalar pX) {
     return FastFloatArcTan2(pY, pX);
 }
 C2_HOOK_FUNCTION(0x00511e50, FastScalarArcTan2)
+
+br_angle C2_HOOK_STDCALL FastFloatArcTan2Angle(float pY, float pX) {
+    float abs_x;
+    float abs_y;
+
+    abs_x = fabsf(pX);
+    abs_y = fabsf(pY);
+    if (pX == 0.0) {
+        if (pY >= 0.0) {
+            if (pY <= 0.0) {
+                return 0;
+            } else {
+                return 16380;
+            }
+        } else {
+            return -16396;
+        }
+    } else if (pX >= 0.0) {
+        if (pY >= 0.0) {
+            if (abs_y <= (double)abs_x) {
+                return (br_angle)(abs_y / abs_x * 8192.0f);
+            } else {
+                return (br_angle)((2.0 - abs_x / abs_y) * 8192.0f);
+            }
+        } else if (abs_y <= abs_x) {
+            return (br_angle)((8.0 - abs_y / abs_x) * 8192.0f);
+        } else {
+            return (br_angle)((abs_x / abs_y + 6.0) * 8192.0f);
+        }
+    } else if (pY >= 0.0) {
+        if (abs_y <= abs_x) {
+            return (br_angle)((4.0 - abs_y / abs_x) * 8192.0f);
+        } else {
+            return (br_angle)((abs_x / abs_y + 2.0) * 8192.0f);
+        }
+    } else if (abs_y <= abs_x) {
+        return (br_angle)((abs_y / abs_x + 4.0) * 8192.0f);
+    } else {
+        return (br_angle)((6.0 - abs_x / abs_y) * 8192.0f);
+    }
+}
+C2_HOOK_FUNCTION(0x00511e70, FastFloatArcTan2Angle)
