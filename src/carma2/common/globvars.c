@@ -225,7 +225,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gOther_selfs, 4, 0x0074d644);
 //int gWait_for_it;
 //int gCheck_point_cash[3];
 //int gPoints_per_second[3];
-//int gMap_mode;
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_mode, 0x00761edc);
 //int gPed_time_value[3];
 //int gAbandon_game;
 //int gLap;
