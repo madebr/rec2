@@ -3099,6 +3099,22 @@ void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_l
 }
 C2_HOOK_FUNCTION(0x0048bca0, GetDamageProgram)
 
+void C2_HOOK_FASTCALL UpdateMaterialsForCar(tBrender_storage* pStorage, tCar_spec* pCar_spec) {
+    int i;
+    br_material* material;
+
+    for (i = pCar_spec->old_material_count; i < pCar_spec->new_material_count; i++) {
+        material = pStorage->materials[i];
+        if (C2V(gNbPixelBits) == 16) {
+            material->ka = 0.6f;
+            material->kd = 0.2f;
+            material->flags &= ~BR_MATF_PRELIT;
+            material->flags |= BR_MATF_LIGHT | BR_MATF_SMOOTH;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004f67a0, UpdateMaterialsForCar)
+
 void (C2_HOOK_FASTCALL * LoadCar_original)(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
 
