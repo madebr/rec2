@@ -54,4 +54,6 @@ void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time);
 
 int C2_HOOK_FASTCALL CheckQuit(void);
 
+float C2_HOOK_STDCALL tandeg(float pAngle);
+
 #endif // REC2_UTILITY_H
