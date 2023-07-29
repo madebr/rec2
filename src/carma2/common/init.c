@@ -1167,3 +1167,23 @@ void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void) {
     AssertYons();
 }
 C2_HOOK_FUNCTION(0x0047d8d0, ReinitialiseForwardCamera)
+
+void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void) {
+
+    if (C2V(gRearview_screen) != NULL) {
+        BrPixelmapFree(C2V(gRearview_screen));
+        C2V(gRearview_screen) = NULL;
+    }
+    if (C2V(gProgram_state).mirror_on) {
+        C2V(gRearview_screen) = BrPixelmapAllocateSub(
+                C2V(gBack_screen),
+                C2V(gProgram_state).current_car.mirror_left,
+                C2V(gProgram_state).current_car.mirror_top,
+                C2V(gProgram_state).current_car.mirror_right - C2V(gProgram_state).current_car.mirror_left,
+                C2V(gProgram_state).current_car.mirror_bottom - C2V(gProgram_state).current_car.mirror_top);
+        C2V(gRearview_depth_buffer) = C2V(gDepth_buffer);
+        C2V(gRearview_screen)->origin_x = C2V(gRearview_screen)->width / 2;
+        C2V(gRearview_screen)->origin_y = C2V(gRearview_screen)->height / 2;
+    }
+}
+C2_HOOK_FUNCTION(0x0047dab0, AllocateRearviewPixelmap)
