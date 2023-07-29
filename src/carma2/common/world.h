@@ -74,6 +74,8 @@ int C2_HOOK_FASTCALL DRmemicmp(const char* str1, const char* str2, size_t count)
 
 int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, const char* haystack, size_t haystackLen, const char* needle);
 
+tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat);
+
 void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadSomeShadeTables(tBrender_storage* pStorage, const char* pPath);
