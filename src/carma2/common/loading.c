@@ -3115,6 +3115,15 @@ void C2_HOOK_FASTCALL UpdateMaterialsForCar(tBrender_storage* pStorage, tCar_spe
 }
 C2_HOOK_FUNCTION(0x004f67a0, UpdateMaterialsForCar)
 
+void C2_HOOK_FASTCALL LoadCarMaterials(tBrender_storage* pStorage, const char* pPath, tCar_spec* pCar_spec) {
+
+    pCar_spec->old_material_count = pStorage->materials_count;
+    LoadSomeMaterialsWithShading(pStorage, pPath, kRendererShadingType_Specular);
+    pCar_spec->new_material_count = pStorage->materials_count;
+    UpdateMaterialsForCar(pStorage, pCar_spec);
+}
+C2_HOOK_FUNCTION(0x004f6740, LoadCarMaterials)
+
 void (C2_HOOK_FASTCALL * LoadCar_original)(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
 
