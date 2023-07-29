@@ -37,6 +37,11 @@ C2_HOOK_VARIABLE_DECLARE(int, gMini_map_visible);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_palette_change);
 C2_HOOK_VARIABLE_DECLARE(int, gPalette_index);
 
+C2_HOOK_VARIABLE_DECLARE(int, gWidth);
+C2_HOOK_VARIABLE_DECLARE(int, gHeight);
+C2_HOOK_VARIABLE_DECLARE(int, gX_offset);
+C2_HOOK_VARIABLE_DECLARE(int, gY_offset);
+
 void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette);
