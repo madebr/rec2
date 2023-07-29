@@ -514,3 +514,11 @@ void C2_HOOK_FASTCALL DRMatrix23PreRotate(br_matrix23* mat, br_angle rz) {
     BrMatrix23Copy(mat, &C2V(mat23tmp1));
 }
 C2_HOOK_FUNCTION(0x00513140, DRMatrix23PreRotate)
+
+void C2_HOOK_FASTCALL DRMatrix23PostRotate(br_matrix23* mat, br_angle rz) {
+
+    DRMatrix23Rotate(&C2V(mat23tmp2), rz);
+    BrMatrix23Mul(&C2V(mat23tmp1), mat, &C2V(mat23tmp2));
+    BrMatrix23Copy(mat, &C2V(mat23tmp1));
+}
+C2_HOOK_FUNCTION(0x005132a0, DRMatrix23PostRotate)
