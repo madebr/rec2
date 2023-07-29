@@ -466,7 +466,7 @@ C2_HOOK_FUNCTION(0x005134b0, CheckQuit)
 
 float C2_HOOK_STDCALL tandeg(float pAngle) {
 
-    pAngle = DEG_TO_RAD(pAngle);
+    pAngle = (float)DEG_TO_RAD(pAngle);
     return sinf(pAngle) / cosf(pAngle);
 }
 C2_HOOK_FUNCTION(0x00513770, tandeg)
