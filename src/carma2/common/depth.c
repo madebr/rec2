@@ -249,3 +249,8 @@ void C2_HOOK_FASTCALL AssertYons(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00446a10, AssertYons)
+
+void C2_HOOK_FASTCALL MungeRearviewSky(void) {
+
+}
+C2_HOOK_FUNCTION(0x00447280, MungeRearviewSky)
