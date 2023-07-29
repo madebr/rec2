@@ -12,10 +12,13 @@
 
 #include "brender/brender.h"
 
+#include "rec2_macros.h"
+
 #include "c2_ctype.h"
 #include "c2_string.h"
 
 #include <float.h>
+#include <math.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLost_time, 0x006abef4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gIn_check_quit, 0x006abee0);
@@ -462,3 +465,10 @@ int C2_HOOK_FASTCALL CheckQuit(void) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x005134b0, CheckQuit)
+
+float C2_HOOK_STDCALL tandeg(float pAngle) {
+
+    pAngle = (float)DEG_TO_RAD(pAngle);
+    return sinf(pAngle) / cosf(pAngle);
+}
+C2_HOOK_FUNCTION(0x00513770, tandeg)
