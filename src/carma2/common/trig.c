@@ -134,3 +134,9 @@ float C2_HOOK_FASTCALL FastFloatCos(int pAngle_in_degrees) {
     return C2V(gFloat_sine_table)[90 - pAngle_in_degrees];
 }
 C2_HOOK_FUNCTION(0x00511440, FastFloatCos)
+
+float C2_HOOK_FASTCALL FastFloatTan(int pAngle_in_degrees) {
+
+    return FastFloatSin(pAngle_in_degrees) / FastFloatCos(pAngle_in_degrees);
+}
+C2_HOOK_FUNCTION(0x005114b0, FastFloatTan)
