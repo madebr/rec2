@@ -3112,6 +3112,7 @@ enum {
     BR_MODU_GROUPS = 0x0008,
     BR_MODU_BOUNDING_BOX = 0x0010,
     BR_MODU_MATERIALS = 0x0020,
+    BR_MODU_VERTICES = 0x0040,
     BR_MODU_UNKNOWN = 0x0100, /* Added by Jeff. Referred to in code */
     BR_MODU_ALL = 0x7fff
 };
