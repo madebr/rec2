@@ -32,6 +32,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO_potential, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_per_rank, 3);
 C2_HOOK_VARIABLE_DECLARE(int, gInitial_rank);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gStarting_money, 3);
+C2_HOOK_VARIABLE_DECLARE(float, gCamera_angle);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
 
