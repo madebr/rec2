@@ -40,4 +40,6 @@ void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void);
 
 void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void);
 
+void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void);
+
 #endif //REC2_INIT_H
