@@ -322,3 +322,24 @@ br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX) {
     return FastFloatArcTan2Angle(pY, pX);
 }
 C2_HOOK_FUNCTION(0x00512010, FastScalarArcTan2Angle)
+
+void C2_HOOK_FASTCALL DRMatrix34RotateX(br_matrix34* mat, br_angle rx) {
+    br_scalar s;
+    br_scalar c;
+
+    s = FastScalarSinAngle(rx);
+    c = FastScalarCosAngle(rx);
+    mat->m[0][0] = 1.0f;
+    mat->m[0][1] = 0.0f;
+    mat->m[0][2] = 0.0f;
+    mat->m[1][0] = 0.0f;
+    mat->m[1][1] = c;
+    mat->m[1][2] = s;
+    mat->m[2][0] = 0.0;
+    mat->m[2][1] = -s;
+    mat->m[2][2] = c;
+    mat->m[3][0] = 0.0f;
+    mat->m[3][1] = 0.0f;
+    mat->m[3][2] = 0.0f;
+}
+C2_HOOK_FUNCTION(0x00512030, DRMatrix34RotateX)
