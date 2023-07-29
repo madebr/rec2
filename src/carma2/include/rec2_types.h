@@ -1084,10 +1084,26 @@ typedef struct {
 } tDamage_unit;
 
 typedef enum {
+    eImpact_top = 0,
+    eImpact_bottom = 1,
+    eImpact_left = 2,
+    eImpact_right = 3,
+    eImpact_front = 4,
+    eImpact_back = 5,
+    eImpact_location_count = 6,
+    eImpact_unknown = 7
+} tImpact_location;
+
+typedef enum {
     eAxis_x = 0,
     eAxis_y = 1,
     eAxis_z = 2
 } tAxis_comp;
+
+typedef enum {
+    eCondition_less_than = 0,
+    eCondition_greater_than = 1
+} tCondition_operator;
 
 typedef struct {
     tAxis_comp axis_comp;
@@ -1099,8 +1115,8 @@ typedef enum {
     eDamage_engine = 0,
     eDamage_transmission = 1,
     eDamage_driver = 2,
-    eDamage_lf_brake = 3,
-    eDamage_steering = 4,
+    eDamage_steering = 3,
+    eDamage_lf_brake = 4,
     eDamage_rf_brake = 5,
     eDamage_lr_brake = 6,
     eDamage_rr_brake = 7,
@@ -2464,6 +2480,8 @@ enum {
     kFatalError_CannotLoadModelFileOrItIsEmpty_S = 0x52,
     kFatalError_CannotLoadDepthCueShadeTable = 0x57,
     kFatalError_CannotFindSkyMaterial_S = 0x59,
+    kFatalError_UnknownDamageType_S = 0x5b,
+    kFatalError_ConfusedByFormatOfConditionalDamageInCarFile = 0x5c,
     kFatalError_OOM_S = 0x5e,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
