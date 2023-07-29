@@ -151,7 +151,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAction_replay_mode, 0x00676914, 0);
 //br_scalar gCut_delay_2;
 //br_scalar gCut_delay_3;
 //br_scalar gCut_delay_4;
-//br_scalar gYon_multiplier;
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_scalar, gYon_multiplier, 0x00655ddc, 1.f);
 //tSave_game* gPre_race_saved_game;
 //VFILE* gDiagnostic_file;
 //br_vector3 gDisabled_vector;

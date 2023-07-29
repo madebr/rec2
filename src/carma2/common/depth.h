@@ -27,4 +27,6 @@ void C2_HOOK_FASTCALL InitDepthEffects(void);
 
 void C2_HOOK_FASTCALL MungeForwardSky(void);
 
+void C2_HOOK_FASTCALL AssertYons(void);
+
 #endif //REC2_DEPTH_H
