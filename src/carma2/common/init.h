@@ -38,4 +38,6 @@ int C2_HOOK_FASTCALL Fix2DTextureHeight(int pHeight);
 
 void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void);
 
+void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void);
+
 #endif //REC2_INIT_H

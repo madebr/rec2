@@ -29,6 +29,7 @@
 #include "sound.h"
 #include "temp.h"
 #include "tinted.h"
+#include "trig.h"
 #include "utility.h"
 #include "video.h"
 #include "world.h"
@@ -1122,3 +1123,51 @@ void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0047dc30, ReinitialiseRenderStuff)
+
+void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void) {
+    br_camera* camera_ptr;
+    float the_angle;
+    float d;
+    float w;
+
+    camera_ptr = C2V(gCamera)->type_data;
+    if (C2V(gProgram_state).cockpit_on) {
+        the_angle = C2V(gCamera_angle) / 2.f;
+
+        d = atanf(
+                tandeg(the_angle)
+                * (float)C2V(gRender_screen)->height
+                / (float)(C2V(gProgram_state).current_car.render_bottom[0] - C2V(gProgram_state).current_car.render_top[0]))
+            * (br_scalar)(2 * 180. / PI);
+        camera_ptr->field_of_view = BrDegreeToAngle(d);
+        BrMatrix34Identity(&C2V(gCamera)->t.t.mat);
+        BrVector3Set(&C2V(gCamera)->t.t.translate.t,
+            C2V(gProgram_state).current_car.driver_x_offset,
+            C2V(gProgram_state).current_car.driver_y_offset,
+            C2V(gProgram_state).current_car.driver_z_offset);
+        w = (float)(C2V(gRender_screen)->base_y
+                    + (C2V(gRender_screen)->height / 2)
+                    - (C2V(gProgram_state).current_car.render_bottom[0] + C2V(gProgram_state).current_car.render_top[0]) / 2);
+
+        C2V(gCamera)->t.t.mat.m[2][1] = tandeg(d / 2.0f) * w * 2.0f / (float)C2V(gRender_screen)->height;
+        camera_ptr->aspect = (float)C2V(gWidth) / C2V(gHeight);
+        camera_ptr->yon_z = C2V(gYon_multiplier) * C2V(gCamera_yon);
+        if (C2V(gProgram_state).which_view == eView_left) {
+            DRMatrix34PostRotateY(
+                    &C2V(gCamera)->t.t.mat,
+                    BrDegreeToAngle(C2V(gProgram_state).current_car.head_left_angle));
+        } else if (C2V(gProgram_state).which_view == eView_right) {
+            DRMatrix34PostRotateY(
+                    &C2V(gCamera)->t.t.mat,
+                    BrDegreeToAngle(C2V(gProgram_state).current_car.head_right_angle));
+        }
+        BrVector3Set(&C2V(gCamera)->t.t.translate.t,
+                     C2V(gProgram_state).current_car.driver_x_offset,
+                     C2V(gProgram_state).current_car.driver_y_offset,
+                     C2V(gProgram_state).current_car.driver_z_offset);
+        SetSightDistance(camera_ptr->yon_z);
+        MungeForwardSky();
+    }
+    AssertYons();
+}
+C2_HOOK_FUNCTION(0x0047d8d0, ReinitialiseForwardCamera)
