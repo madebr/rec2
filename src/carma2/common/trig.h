@@ -29,4 +29,6 @@ float C2_HOOK_STDCALL FastFloatArcCos(float pValue);
 
 br_scalar C2_HOOK_STDCALL FastScalarArcSin(br_scalar pValue);
 
+br_scalar C2_HOOK_STDCALL FastScalarArcCos(br_scalar pValue);
+
 #endif //REC2_TRIG_H
