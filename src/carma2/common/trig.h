@@ -19,4 +19,6 @@ br_scalar C2_HOOK_FASTCALL FastScalarTan(int pAngle_in_degrees);
 
 br_scalar C2_HOOK_FASTCALL FastScalarSinAngle(br_angle pBR_angle);
 
+br_scalar C2_HOOK_FASTCALL FastScalarCosAngle(br_angle pBR_angle);
+
 #endif //REC2_TRIG_H
