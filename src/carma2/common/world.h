@@ -7,6 +7,8 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gSight_distance_squared);
+
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
 void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel);
@@ -96,5 +98,7 @@ void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPa
 void C2_HOOK_FASTCALL LoadFolderInStorageWithShading(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 
 void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
+
+void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 #endif // REC2_WORLD_H
