@@ -25,4 +25,6 @@ void C2_HOOK_FASTCALL LoadDepthTable(char* pName, br_pixelmap** pTable, int* pPo
 
 void C2_HOOK_FASTCALL InitDepthEffects(void);
 
+void C2_HOOK_FASTCALL MungeForwardSky(void);
+
 #endif //REC2_DEPTH_H
