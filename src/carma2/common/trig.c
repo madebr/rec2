@@ -210,3 +210,9 @@ float C2_HOOK_STDCALL FastFloatArcCos(float pValue) {
     return 90.f - FastFloatArcSin(pValue);
 }
 C2_HOOK_FUNCTION(0x00511a80, FastFloatArcCos)
+
+br_scalar C2_HOOK_STDCALL FastScalarArcSin(br_scalar pValue) {
+
+    return FastFloatArcSin(pValue);
+}
+C2_HOOK_FUNCTION(0x00511b50, FastScalarArcSin)
