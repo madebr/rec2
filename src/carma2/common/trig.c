@@ -488,3 +488,19 @@ void C2_HOOK_FASTCALL DRMatrix34PostRotate(br_matrix34* mat, br_angle r, br_vect
     BrMatrix34Copy(mat, &C2V(mattmp1__trig));
 }
 C2_HOOK_FUNCTION(0x00512fd0, DRMatrix34PostRotate)
+
+void C2_HOOK_FASTCALL DRMatrix23Rotate(br_matrix23* mat, br_angle rz) {
+    br_scalar s;
+    br_scalar c;
+
+    s = FastScalarSinAngle(rz);
+    c = FastScalarCosAngle(rz);
+
+    mat->m[0][0] = c;
+    mat->m[0][1] = s;
+    mat->m[1][0] = -s;
+    mat->m[1][1] = c;
+    mat->m[2][0] = 0.f;
+    mat->m[2][1] = 0.f;
+}
+C2_HOOK_FUNCTION(0x00513020, DRMatrix23Rotate)

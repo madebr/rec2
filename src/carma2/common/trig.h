@@ -63,4 +63,6 @@ void C2_HOOK_FASTCALL DRMatrix34PreRotate(br_matrix34* mat, br_angle r, br_vecto
 
 void C2_HOOK_FASTCALL DRMatrix34PostRotate(br_matrix34* mat, br_angle r, br_vector3* axis);
 
+void C2_HOOK_FASTCALL DRMatrix23Rotate(br_matrix23* mat, br_angle rz);
+
 #endif //REC2_TRIG_H
