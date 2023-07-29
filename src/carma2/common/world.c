@@ -36,6 +36,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gDisallowDuplicates, 0x006aaa2c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tRendererShadingType, gMaterial_shading_for_callback, 0x00660cb8, kRendererShadingType_Undefined);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gDuplicate_model, 0x006aaa24);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDuplicate_material, 0x006aaa28);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gSight_distance_squared, 0x0068b840);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
 
@@ -1433,3 +1434,8 @@ void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tC
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00447350, SetCarStorageTexturingLevel, SetCarStorageTexturingLevel_original)
+
+void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
+    C2V(gSight_distance_squared) = pYon * 1.02f * pYon * 1.02f;
+}
+C2_HOOK_FUNCTION(0x00474880, SetSightDistance)
