@@ -1090,3 +1090,31 @@ void C2_HOOK_FASTCALL DisposeGameIfNecessary(void) {
     dr_dprintf("DisposeGameIfNecessary() - END");
 }
 C2_HOOK_FUNCTION(0x0044c130, DisposeGameIfNecessary)
+
+void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void) {
+    int x_diff;
+    int y_diff;
+
+    if (C2V(gProgram_state).cockpit_on) {
+        C2V(gProgram_state).current_render_left = C2V(gProgram_state).current_car.render_left[C2V(gProgram_state).cockpit_image_index];
+        C2V(gProgram_state).current_render_top = C2V(gProgram_state).current_car.render_top[C2V(gProgram_state).cockpit_image_index];
+        C2V(gProgram_state).current_render_right = C2V(gProgram_state).current_car.render_right[C2V(gProgram_state).cockpit_image_index];
+        C2V(gProgram_state).current_render_bottom = C2V(gProgram_state).current_car.render_bottom[C2V(gProgram_state).cockpit_image_index];
+    } else {
+        if (C2V(gNo_render_indent)) {
+            C2V(gProgram_state).current_render_right = C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width;
+            C2V(gProgram_state).current_render_bottom = C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height;
+            C2V(gProgram_state).current_render_left = 0;
+            C2V(gProgram_state).current_render_top = 0;
+        } else {
+            C2V(gProgram_state).current_render_top = (C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height / 18 & ~1) * C2V(gRender_indent);
+            C2V(gProgram_state).current_render_left = (C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width / 18 & ~3) * C2V(gRender_indent);
+            x_diff = C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width - C2V(gProgram_state).current_render_left;
+            y_diff = C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height - C2V(gProgram_state).current_render_top;
+            C2V(gProgram_state).current_render_right = x_diff;
+            C2V(gProgram_state).current_render_bottom = y_diff;
+
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0047dc30, ReinitialiseRenderStuff)
