@@ -98,6 +98,8 @@ add_library(c2_common STATIC
     timers.h
     tinted.c
     tinted.h
+    trig.c
+    trig.h
     utility.c
     utility.h
     video.c
