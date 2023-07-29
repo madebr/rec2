@@ -178,3 +178,29 @@ br_scalar C2_HOOK_FASTCALL FastScalarTanAngle(br_angle pBR_angle) {
     return FastScalarSin(angle_in_degrees) / FastScalarCos(angle_in_degrees);
 }
 C2_HOOK_FUNCTION(0x005118a0, FastScalarTanAngle)
+
+float C2_HOOK_STDCALL FastFloatArcSin(float pValue) {
+    float low_limit;
+    float high_limit;
+    float mid_point;
+
+    if (pValue < 0.f) {
+        return -FastFloatArcSin(-pValue);
+    }
+    high_limit = 90.f * pValue;
+    low_limit = high_limit - 19.f;
+    if (low_limit < 0.f) {
+        low_limit = 0.f;
+    }
+    while (high_limit - low_limit >= 1.f) {
+        mid_point = (low_limit + high_limit) / 2.f;
+
+        if (C2V(gFloat_sine_table)[(int)mid_point] > pValue) {
+            high_limit = mid_point;
+        } else {
+            low_limit = mid_point;
+        }
+    }
+    return low_limit;
+}
+C2_HOOK_FUNCTION(0x005119c0, FastFloatArcSin)
