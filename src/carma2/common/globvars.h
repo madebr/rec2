@@ -138,7 +138,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gNoCutscenes);
 //extern br_scalar gCut_delay_2;
 //extern br_scalar gCut_delay_3;
 //extern br_scalar gCut_delay_4;
-//extern br_scalar gYon_multiplier;
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gYon_multiplier);
 //extern tSave_game* gPre_race_saved_game;
 //extern VFILE* gDiagnostic_file;
 //extern br_vector3 gDisabled_vector;

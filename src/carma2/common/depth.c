@@ -238,3 +238,14 @@ void C2_HOOK_FASTCALL MungeForwardSky(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00447250, MungeForwardSky, MungeForwardSky_original)
+
+void C2_HOOK_FASTCALL AssertYons(void) {
+    br_camera* camera_ptr;
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gCamera_list)); i++) {
+        camera_ptr = C2V(gCamera_list)[i]->type_data;
+        camera_ptr->yon_z = C2V(gYon_multiplier) * C2V(gCamera_yon);
+    }
+}
+C2_HOOK_FUNCTION(0x00446a10, AssertYons)
