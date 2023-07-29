@@ -117,6 +117,8 @@ void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2);
 
 void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3);
 
+void C2_HOOK_FASTCALL GetFourInts(FILE* pF, int* pF1, int* pF2, int* pF3, int* pF4);
+
 float C2_HOOK_FASTCALL GetAFloat(FILE* pF);
 
 float C2_HOOK_FASTCALL GetAScalar(FILE* pF);
