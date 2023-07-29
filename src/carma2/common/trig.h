@@ -37,4 +37,6 @@ br_scalar C2_HOOK_STDCALL FastScalarArcTan2(br_scalar pY, br_scalar pX);
 
 br_angle C2_HOOK_STDCALL FastFloatArcTan2Angle(float pY, float pX);
 
+br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX);
+
 #endif //REC2_TRIG_H
