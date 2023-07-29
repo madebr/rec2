@@ -164,3 +164,9 @@ br_scalar C2_HOOK_FASTCALL FastScalarSinAngle(br_angle pBR_angle) {
     return FastScalarSin(BrAngleToDegrees(pBR_angle));
 }
 C2_HOOK_FUNCTION(0x00511780, FastScalarSinAngle)
+
+br_scalar C2_HOOK_FASTCALL FastScalarCosAngle(br_angle pBR_angle) {
+
+    return FastScalarCos(BrAngleToDegrees(pBR_angle));
+}
+C2_HOOK_FUNCTION(0x00511810, FastScalarCosAngle)
