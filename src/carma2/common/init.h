@@ -36,4 +36,6 @@ int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth);
 
 int C2_HOOK_FASTCALL Fix2DTextureHeight(int pHeight);
 
+void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void);
+
 #endif //REC2_INIT_H
