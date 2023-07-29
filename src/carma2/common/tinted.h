@@ -8,6 +8,7 @@
 C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted1);
 C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted2);
 C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted3);
+C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted4);
 
 void C2_HOOK_FASTCALL InitTintedPolys(void);
 

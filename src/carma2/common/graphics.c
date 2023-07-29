@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "init.h"
 #include "loading.h"
+#include "tinted.h"
 #include "utility.h"
 #include "world.h"
 
@@ -92,6 +93,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFont_names, 24, 0x0059ad30, 
     "RED2GLOW",
     "OPPOSTAT",
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_render_x_i, 0x0074abc0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_render_y_i, 0x0074abbc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_render_width_i, 0x0074abe8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_render_height_i, 0x0074abc8);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
