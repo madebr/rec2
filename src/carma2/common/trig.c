@@ -158,3 +158,9 @@ br_scalar C2_HOOK_FASTCALL FastScalarTan(int pAngle_in_degrees) {
     return FastScalarSin(pAngle_in_degrees) / FastScalarCos(pAngle_in_degrees);
 }
 C2_HOOK_FUNCTION(0x00511690, FastScalarTan)
+
+br_scalar C2_HOOK_FASTCALL FastScalarSinAngle(br_angle pBR_angle) {
+
+    return FastScalarSin(BrAngleToDegrees(pBR_angle));
+}
+C2_HOOK_FUNCTION(0x00511780, FastScalarSinAngle)
