@@ -521,6 +521,22 @@ void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
 }
 C2_HOOK_FUNCTION(0x0048fe30, GetThreeInts)
 
+void C2_HOOK_FASTCALL GetFourInts(FILE* pF, int* pF1, int* pF2, int* pF3, int* pF4) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_sscanf(str, "%d", pF1);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%d", pF2);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%d", pF3);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%d", pF4);
+}
+C2_HOOK_FUNCTION(0x00490020, GetFourInts)
+
 float (C2_HOOK_FASTCALL * GetAFloat_original)(FILE* pF);
 float C2_HOOK_FASTCALL GetAFloat(FILE* pF) {
 #if defined(C2_HOOKS_ENABLED)
