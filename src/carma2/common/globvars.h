@@ -194,7 +194,7 @@ C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gMisc_storage_space);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gScreen);
 //extern br_pixelmap* gScreen;
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gRender_screen);
-//extern br_actor* gRearview_camera;
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gRearview_camera);
 //extern br_scalar gCamera_hither;
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gBack_screen);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDouble_back_screen);
