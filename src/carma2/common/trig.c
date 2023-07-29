@@ -316,3 +316,9 @@ br_angle C2_HOOK_STDCALL FastFloatArcTan2Angle(float pY, float pX) {
     }
 }
 C2_HOOK_FUNCTION(0x00511e70, FastFloatArcTan2Angle)
+
+br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX) {
+
+    return FastFloatArcTan2Angle(pY, pX);
+}
+C2_HOOK_FUNCTION(0x00512010, FastScalarArcTan2Angle)
