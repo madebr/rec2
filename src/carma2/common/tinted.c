@@ -485,3 +485,39 @@ void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, in
     }
 }
 C2_HOOK_FUNCTION(0x004d82b0, SetTintedColour)
+
+void C2_HOOK_FASTCALL ResetTintedVertices(int pTintedIndex, int x0, int y0, int width, int height) {
+    tTintedPoly* tinted;
+    int nb_x;
+    int nb_y;
+    int i;
+    int j;
+    br_vertex* vertex;
+
+    if (pTintedIndex == -1) {
+        return;
+    }
+    tinted = &C2V(gTintedPolys)[pTintedIndex];
+    if (tinted->class == 3) {
+        nb_x = 4;
+        nb_y = 4;
+    } else {
+        nb_x = 1;
+        nb_y = 1;
+    }
+    if (tinted->model == NULL) {
+        return;
+    }
+    vertex = tinted->model->vertices;
+    for (i = 0; i <= nb_y; i++) {
+        br_scalar dy = i * (br_scalar)height / (br_scalar)nb_y;
+        for (j = 0; j <= nb_x; j++) {
+            float dx = j * (br_scalar)width / (br_scalar)nb_x;
+            BrVector3Set(&vertex->p, (br_scalar)x0 + dx, (br_scalar)-y0 - dy, -1.02f);
+            BrVector2Set(&vertex->map, dx / width, dy / height);
+            vertex++;
+        }
+    }
+    BrModelUpdate(tinted->model, BR_MODU_VERTICES);
+}
+C2_HOOK_FUNCTION(0x004d8bb0, ResetTintedVertices)
