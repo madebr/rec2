@@ -222,3 +222,49 @@ br_scalar C2_HOOK_STDCALL FastScalarArcCos(br_scalar pValue) {
     return 90.f - FastScalarArcSin(pValue);
 }
 C2_HOOK_FUNCTION(0x00511c10, FastScalarArcCos)
+
+float C2_HOOK_STDCALL FastFloatArcTan2(float pY, float pX) {
+    float abs_x;
+    float abs_y;
+
+    abs_x = fabsf(pX);
+    abs_y = fabsf(pY);
+    if (pX == 0.0f) {
+        if (pY < 0.0f) {
+            return 270.0;
+        } else if (pY == 0.0f) {
+            return 0.0f;
+        } else {
+            return 90.0f;
+        }
+    } else if (pX > 0.0f) {
+        if (pY >= 0.0) {
+            if (abs_y <= abs_x) {
+                return abs_y / abs_x * 45.0f;
+            } else {
+                return (2.0f - abs_x / abs_y) * 45.0f;
+            }
+        } else {
+            if (abs_y <= abs_x) {
+                return (8.0f - abs_y / abs_x) * 45.0f;
+            } else {
+                return (abs_x / abs_y + 6.0f) * 45.0f;
+            }
+        }
+    } else {
+        if (pY >= 0.0f) {
+            if (abs_y <= abs_x) {
+                return (4.0f - abs_y / abs_x) * 45.0f;
+            } else {
+                return (abs_x / abs_y + 2.0f) * 45.0f;
+            }
+        } else {
+            if (abs_y <= abs_x) {
+                return (abs_y / abs_x + 4.0f) * 45.0f;
+            } else {
+                return (6.0f - abs_x / abs_y) * 45.0f;
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00511ce0, FastFloatArcTan2)
