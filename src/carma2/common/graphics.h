@@ -119,4 +119,6 @@ int C2_HOOK_FASTCALL SwitchToRealResolution(void);
 
 int C2_HOOK_FASTCALL SwitchToLoresMode(void);
 
+void C2_HOOK_FASTCALL AdjustRenderScreenSize(void);
+
 #endif //REC2_GRAPHICS_H

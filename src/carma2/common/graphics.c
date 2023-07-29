@@ -715,3 +715,45 @@ int C2_HOOK_FASTCALL SwitchToLoresMode(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0047c660, SwitchToLoresMode)
+
+void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
+
+    ReinitialiseRenderStuff();
+    if (C2V(gMap_view) == 2) {
+        C2V(gRender_screen)->base_x = C2V(gMap_render_x_i);
+        C2V(gRender_screen)->base_y = C2V(gMap_render_y_i);
+        C2V(gRender_screen)->width = C2V(gMap_render_width_i);
+        C2V(gRender_screen)->height = C2V(gMap_render_height_i);
+    } else {
+        C2V(gRender_screen)->base_x = C2V(gProgram_state).current_render_left;
+        C2V(gRender_screen)->base_y = C2V(gProgram_state).current_render_top;
+        C2V(gRender_screen)->height = C2V(gProgram_state).current_render_bottom - C2V(gProgram_state).current_render_top;
+        C2V(gRender_screen)->width = C2V(gProgram_state).current_render_right - C2V(gProgram_state).current_render_left;
+    }
+    if (C2V(gRender_screen)->row_bytes == C2V(gRender_screen)->width) {
+        C2V(gRender_screen)->flags |= BR_PMF_ROW_WHOLEPIXELS;
+    } else {
+        C2V(gRender_screen)->flags &= ~BR_PMF_ROW_WHOLEPIXELS;
+    }
+    C2V(gRender_screen)->origin_x = C2V(gRender_screen)->width / 2;
+    C2V(gRender_screen)->origin_y = C2V(gRender_screen)->height / 2;
+    C2V(gWidth) = C2V(gRender_screen)->width;
+    C2V(gHeight) = C2V(gRender_screen)->height;
+    ReinitialiseForwardCamera();
+    ResetTintedVertices(C2V(gHud_tinted1),
+        C2V(gRender_screen)->base_x,
+        C2V(gRender_screen)->base_y,
+        C2V(gRender_screen)->width,
+        C2V(gRender_screen)->height);
+    ResetTintedVertices(C2V(gHud_tinted2),
+        C2V(gRender_screen)->base_x,
+        C2V(gRender_screen)->base_y,
+        C2V(gRender_screen)->width,
+        C2V(gRender_screen)->height);
+    ResetTintedVertices(C2V(gHud_tinted4),
+        C2V(gRender_screen)->base_x,
+        C2V(gRender_screen)->base_y,
+        C2V(gRender_screen)->width,
+        C2V(gRender_screen)->height);
+}
+C2_HOOK_FUNCTION(0x004e4b40, AdjustRenderScreenSize)
