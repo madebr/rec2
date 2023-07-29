@@ -219,6 +219,21 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gNet_avail_names, 4, 0x006575
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gFunk_groove_flags, 30, 0x00763540);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGroove_funk_offset, 0x0074b4a8);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gDamage_names, 12, 0x006574d0, {
+    "engine",
+    "transmission",
+    "driver",
+    "steering",
+    "lf_brake",
+    "rf_brake",
+    "lr_brake",
+    "rr_brake",
+    "lf_wheel",
+    "rf_wheel",
+    "lr_wheel",
+    "rr_wheel"
+});
+
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
 }
@@ -3009,6 +3024,80 @@ void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     }
 }
 C2_HOOK_FUNCTION(0x0048b560, LoadSpeedo)
+
+void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_location pImpact_location) {
+    tDamage_clause* the_clause;
+    int i;
+    int j;
+    int k;
+    int count;
+    char s[256];
+    char delim[64];
+    char* str;
+
+    PossibleService();
+    /* Number of clauses */
+    count = GetAnInt(pF);
+    pCar_spec->damage_programs[pImpact_location].clause_count = count;
+    pCar_spec->damage_programs[pImpact_location].clauses = BrMemAllocate(count * sizeof(tDamage_clause), kMem_damage_clauses);
+    c2_strcpy(delim, "\t ,/");
+    c2_strcat(delim, "&");
+
+    for (i = 0; i < count; i++) {
+        the_clause = &pCar_spec->damage_programs[pImpact_location].clauses[i];
+        the_clause->condition_count = 0;
+        GetALineAndDontArgue(pF, s);
+        str = c2_strtok(s, delim);
+        do {
+            if (str[0] == 'x') {
+                the_clause->conditions[the_clause->condition_count].axis_comp = eAxis_x;
+            } else if (str[0] == 'y') {
+                the_clause->conditions[the_clause->condition_count].axis_comp = eAxis_y;
+            } else if (str[0] == 'z') {
+                the_clause->conditions[the_clause->condition_count].axis_comp = eAxis_z;
+            } else {
+                break;
+            }
+            if (str[1] == '>') {
+                the_clause->conditions[the_clause->condition_count].condition_operator = 1;
+            } else if (str[1] == '<') {
+                the_clause->conditions[the_clause->condition_count].condition_operator = 0;
+            } else {
+                break;
+            }
+            if (str[1] == '>') {
+                the_clause->conditions[the_clause->condition_count].condition_operator = eCondition_greater_than;
+            } else if (str[1] == '<') {
+                the_clause->conditions[the_clause->condition_count].condition_operator = eCondition_less_than;
+            } else {
+                FatalError(kFatalError_ConfusedByFormatOfConditionalDamageInCarFile);
+            }
+            c2_sscanf(&str[2], "%f", &the_clause->conditions[the_clause->condition_count].comparitor);
+            the_clause->condition_count++;
+            str = c2_strtok(NULL, delim);
+        } while (the_clause->condition_count < 2);
+        /* Systems count */
+        the_clause->effect_count = GetAnInt(pF);
+        for (j = 0; j < the_clause->effect_count; j++) {
+            the_clause->effects[j].type = -1;
+            /* Damage */
+            GetALineAndDontArgue(pF, s);
+            str = c2_strtok(s, "\t ,/");
+            for (k = 0; k < REC2_ASIZE(C2V(gDamage_names)); k++) {
+                if (c2_strcmp(str, C2V(gDamage_names)[k]) == 0) {
+                    the_clause->effects[j].type = k;
+                    break;
+                }
+            }
+            if (the_clause->effects[j].type < 0) {
+                FatalError(kFatalError_UnknownDamageType_S, str);
+            }
+            str = c2_strtok(NULL, "\t ,/");
+            c2_sscanf(str, "%f", &the_clause->effects[j].weakness_factor);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0048bca0, GetDamageProgram)
 
 void (C2_HOOK_FASTCALL * LoadCar_original)(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
