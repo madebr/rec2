@@ -41,4 +41,6 @@ br_angle C2_HOOK_STDCALL FastScalarArcTan2Angle(br_scalar pY, br_scalar pX);
 
 void C2_HOOK_FASTCALL DRMatrix34RotateX(br_matrix34* mat, br_angle rx);
 
+void C2_HOOK_FASTCALL DRMatrix34RotateY(br_matrix34* mat, br_angle ry);
+
 #endif //REC2_TRIG_H
