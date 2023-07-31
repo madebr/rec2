@@ -1286,6 +1286,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
     pStorage_space->materials_count++;
     return eStorage_allocated;
 }
+C2_HOOK_FUNCTION(0x00501190, AddMaterialToStorage)
 
 int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading) {
     int i;
