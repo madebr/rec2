@@ -8,6 +8,9 @@
 
 #define REC2_ASIZE(ARR)  ((sizeof(ARR))/sizeof(*(ARR)))
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
+
 #define DEG_TO_RAD(degrees) ((degrees)*3.141592653589793 / 180.0)
 
 #define REC2_RGB555_B(X) ((X) & 0x1f)
