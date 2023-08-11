@@ -453,6 +453,95 @@ void C2_HOOK_FASTCALL LoadCarCrushDataEntry(FILE* pF, tCar_crush_buffer_entry* p
 }
 C2_HOOK_FUNCTION(0x0042a550, LoadCarCrushDataEntry)
 
+int C2_HOOK_FASTCALL LoadCarCrush(tCar_crush_buffer* pCar_crush_buffer, const char* pPath, tBrender_storage* pBrender_storage, tCar_crush_spec** pCar_crush_spec) {
+    int i;
+    int j;
+    int k;
+    FILE* f;
+    char s[256];
+    int count;
+    int version;
+    tCar_crush_spec* car_crush;
+    int version_le_100;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_buffer) != 260);
+
+    *pCar_crush_spec = NULL;
+    pCar_crush_buffer->count_entries = 0;
+    f = DRfopen(pPath, "rt");
+    if (f == NULL) {
+        return 1;
+    }
+    /* VERSION %d */
+    GetALineAndDontArgue(f, s);
+    count = c2_sscanf(s, "VERSION %d", &version);
+    if (count != 1) {
+        FatalError(kFatalError_WrongCrushDataFileVersion_SDD, pPath, 0, 4);
+    }
+    version_le_100 = version <= 100;
+    if (!version_le_100) {
+        version -= 100;
+    }
+    if (version != 4) {
+        FatalError(kFatalError_WrongCrushDataFileVersion_SDD, pPath, version, 4);
+    }
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_spec) != 1404);
+    car_crush = BrMemAllocate(sizeof(tCar_crush_spec), kMem_crush_data);
+    *pCar_crush_spec = car_crush;
+    for (i = 0; i < 3; i++) {
+        for (j = 0; j < 2; j++) {
+            /* [0] Number of 'X/Y/Z mins' entries.
+             * [1] Number of 'X/Y/Z maxs' entries. */
+            count = GetAnInt(f);
+            car_crush->count_limits[i][j] = count;
+            if (count == 0) {
+                continue;
+            }
+            if (count > REC2_ASIZE(car_crush->limits[i].min_max[j])) {
+                FatalError(kFatalError_TooManyCrushLimits);
+            }
+            for (k = 0; k < count; k++) {
+                car_crush->limits[i].min_max[j][k] = GetAScalar(f);
+            }
+        }
+    }
+    car_crush->field_0x134 = 0;
+    car_crush->field_0x144 = 0;
+    /* Bendability factor */
+    car_crush->bendability_factor = GetAScalar(f);
+    /* Bend point Z min */
+    car_crush->bend_z_min = GetAScalar(f);
+    /* Bend point Z max */
+    car_crush->bend_z_max = GetAScalar(f);
+    car_crush->field_0x270 = 0;
+    car_crush->field_0x2b0 = 0;
+    car_crush->field_0x4b8 = 0;
+    /* Snappability factor */
+    car_crush->snappability_factor = GetAScalar(f);
+    /* Y split position */
+    car_crush->split_y_pos = GetAScalar(f);
+    /* Driver position */
+    GetThreeFloats(f, &car_crush->driver_position.v[0], &car_crush->driver_position.v[1], &car_crush->driver_position.v[2]);
+    car_crush->model_actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    car_crush->actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    BrActorAdd(car_crush->actor, car_crush->model_actor);
+    car_crush->actor->identifier = BrResStrDup(car_crush->actor, "Sx?!");
+    car_crush->version_le_100 = version_le_100;
+    /* Number of 'Crush data' entries. */
+    pCar_crush_buffer->count_entries = car_crush->nb_entries = GetAnInt(f);
+    if (pCar_crush_buffer->count_entries > kMax_crush_datas) {
+        FatalError(kFatalError_TooManyCrushDatas);
+    }
+    C2V(gCrush_data_entry_counter) = 1;
+    for (i = 0; i < pCar_crush_buffer->count_entries; i++) {
+        pCar_crush_buffer->entries[i] = BrMemAllocate(sizeof(tCar_crush_buffer_entry), kMem_crush_data);
+        LoadCarCrushDataEntry(f, pCar_crush_buffer->entries[i], pBrender_storage);
+    }
+    DRfclose(f);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042a280, LoadCarCrush)
+
 int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData) {
 
     C2_HOOK_BUG_ON(sizeof(tUser_crush_data) != 16);
