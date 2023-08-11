@@ -2276,6 +2276,58 @@ typedef struct {
 } tCar_crush_buffer;
 
 typedef struct {
+    float min_max[2][2];
+} tCar_crush_limit;
+
+typedef struct {
+    undefined field_0x0[6];
+} tCar_crush_vertex_data;
+
+typedef struct tCar_crush_spec {
+    int field_0x0;
+    undefined* field_0x4;
+    int expand_bounding_box;
+    tCollision_shape *field_0xc;
+    undefined field_0x10[12];
+    int version_le_100;
+    undefined* field_0x20;
+    undefined2 field_0x24;
+    undefined2 field_0x26;
+    int field_0x28;
+    int count_limits[3][2];
+    tCar_crush_limit limits[3];
+    undefined field_0x74[192];
+    tU8 field_0x134;
+    undefined field_0x135[15];
+    tU8 field_0x144;
+    undefined field_0x145[3];
+    float bendability_factor;
+    float bend_z_min;
+    float bend_z_max;
+    undefined field_0x154[120];
+    tCar_crush_vertex_data* field_0x1cc;
+    undefined field_0x1d0[28];
+    br_vector3 field_0x1ec[6];
+    undefined field_0x1f8[60];
+    undefined4 field_0x270;
+    undefined field_0x274[60];
+    undefined4 field_0x2b0;
+    undefined field_0x2b4[516];
+    tU8 field_0x4b8;
+    undefined field_0x4b9[3];
+    float snappability_factor;
+    float split_y_pos;
+    undefined field_0x4c4[8];
+    br_actor* actor;
+    br_actor* model_actor;
+    undefined field_0x4d4[132];
+    br_vector3 driver_position;
+    struct tCollisionShape_Polyhedron * field1245_0x564[4];
+    int field_0x574;
+    int nb_entries;
+} tCar_crush_spec;
+
+typedef struct {
     int owner;
     int done_this_frame;
     int block_flags;
@@ -2730,9 +2782,12 @@ enum {
     kFatalError_CannotLoadAGeneratedShadeTable = 0x6d,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
+    kFatalError_TooManyCrushLimits = 0x7a,
+    kFatalError_TooManyCrushDatas = 0x7c,
     kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CantFindPedTexture_S = 0xa8,
     kFatalError_CannotFindGibletModel_S = 0xa9,
+    kFatalError_WrongCrushDataFileVersion_SDD = 0xab,
     kFatalError_UnableToOpenDroneFileOrFileCorrupted_S = 0xaf,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
