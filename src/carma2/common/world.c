@@ -1440,3 +1440,14 @@ void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
     C2V(gSight_distance_squared) = pYon * 1.02f * pYon * 1.02f;
 }
 C2_HOOK_FUNCTION(0x00474880, SetSightDistance)
+
+void (C2_HOOK_FASTCALL * AddFunkotronics_original)(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
+void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas) {
+
+#if defined(C2_HOOKS_ENABLED)
+    AddFunkotronics_original(pF, pOwner, pRef_offset, pCar_crush_datas);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00474ac0, AddFunkotronics, AddFunkotronics_original)
