@@ -133,6 +133,17 @@ void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
 }
 C2_HOOK_FUNCTION(0x004ef460, LoadMinMax)
 
+int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData) {
+
+    C2_HOOK_BUG_ON(sizeof(tUser_crush_data) != 16);
+    C2_HOOK_BUG_ON(sizeof(tGroovidelic_spec) != 132);
+    if (pActor->type == BR_ACTOR_MODEL) {
+        pActor->user = BrMemAllocate(sizeof(tUser_crush_data), kMem_crush_data);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0048bf20, LinkCrushData)
+
 int C2_HOOK_CDECL LinkCarCrushData(br_actor* pActor, tCar_crush_buffer* pCar_crush_buffer) {
     int i;
     tUser_crush_data* user_crush;
