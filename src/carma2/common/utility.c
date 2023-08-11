@@ -491,3 +491,14 @@ intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg) {
     }
 }
 C2_HOOK_FUNCTION(0x005147b0, CompareActorID)
+
+br_actor* (C2_HOOK_FASTCALL * DRActorFindRecurse_original)(br_actor* pSearch_root, const char* pName);
+br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char* pName) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    return DRActorFindRecurse_original(pSearch_root, pName);
+#else
+    return (br_actor*)DRActorEnumRecurse(pSearch_root, CompareActorID, (void*)pName);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00514730, DRActorFindRecurse, DRActorFindRecurse_original)
