@@ -19,6 +19,7 @@
 #define C2_HOOK_ASSERT(condition) do { if (!(condition)) { extern void C2_HOOK_CDECL c2_abort(void); c2_abort(); } } while (0)
 // FIXME: rewrite to C2_HOOK_STATIC_ASSERT
 #define C2_HOOK_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
+#define C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(T, M, O) C2_HOOK_BUG_ON(((uintptr_t)&(((T*)0)->M)) != O)
 
 #if defined(_WIN32) && (defined(_M_IX86) || defined(_X86_))
 #define C2_HOOK_CDECL __cdecl
