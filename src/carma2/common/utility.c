@@ -31,6 +31,17 @@ br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00513400, RemoveAllBrenderDevices, RemoveAllBrenderDevices_original);
 
+void C2_HOOK_FASTCALL StringTransformToLower(char* pStr) {
+    int i;
+    int len;
+
+    len = c2_strlen(pStr);
+    for (i = 0; i < len; i++) {
+        pStr[i] = c2_tolower(pStr[i]);
+    }
+}
+C2_HOOK_FUNCTION(0x00515910, StringTransformToLower)
+
 void C2_HOOK_FASTCALL StringToUpper(char* dest, const char* src) {
     size_t lenSrc;
     size_t nbLeft;
