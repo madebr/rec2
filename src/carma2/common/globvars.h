@@ -114,6 +114,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tTree_surgery_pass2, gTree_surgery_pass2, 25);
 
 C2_HOOK_VARIABLE_DECLARE(int, gTyping);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_opponents);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gPlayer_car_master_actor);
 //extern int gArrow_mode;
 //extern int gInfo_on;
 //extern int gHost_abandon_game;

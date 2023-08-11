@@ -35,6 +35,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_per_rank, 3);
 C2_HOOK_VARIABLE_DECLARE(int, gInitial_rank);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gStarting_money, 3);
 C2_HOOK_VARIABLE_DECLARE(float, gCamera_angle);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gWheel_actor_names, 6);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPivot_actor_names, 6);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
 
@@ -292,6 +294,12 @@ void C2_HOOK_FASTCALL LoadCarMaterials(tBrender_storage* pStorage, const char* p
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
 
 void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info);
+
+void C2_HOOK_FASTCALL SetModelFlags(br_model* pModel, int pOwner);
+
+void C2_HOOK_FASTCALL AddRefOffset(int* pRef_holder);
+
+void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version);
 
 br_material* C2_HOOK_FASTCALL GetSimpleMaterial(const char* pName, tRendererShadingType pShading_type);
 
