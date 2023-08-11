@@ -111,6 +111,34 @@ typedef struct {
 } tTree_surgery_pass2;
 
 typedef enum {
+    eSoftness_VerySoft = 0,
+    eSoftness_Soft = 1,
+    eSoftness_Normal = 2,
+    eSoftness_Hard = 3,
+    eSoftness_VeryHard = 4,
+    eSoftness_Uncrushable = 5,
+} tSoftness;
+
+typedef enum {
+    eCrushType_Boring = 0,
+    eCrushType_Flap = 1,
+    eCrushType_Detach = 2,
+} tCrush_type;
+
+typedef enum {
+    eEaseOfDetachment_VeryEasy = 0,
+    eEaseOfDetachment_Easy = 1,
+    eEaseOfDetachment_Normal = 2,
+    eEaseOfDetachment_Hard = 3,
+    eEaseOfDetachment_VeryHard = 4,
+} tEase_of_detachment;
+
+typedef enum {
+    eCarCrushShape_box = 0,
+    eCarCrushShape_poly = 1,
+} tCar_crush_shape;
+
+typedef enum {
     eGroove_mode_constant = 0,
     eGroove_mode_distance = 1,
 } tGroove_trigger_mode;
