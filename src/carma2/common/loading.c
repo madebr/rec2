@@ -3138,6 +3138,21 @@ void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info) {
 }
 C2_HOOK_FUNCTION(0x0048cda0, LoadPlayerCars)
 
+void C2_HOOK_FASTCALL GetAVector(FILE* pF, br_vector3* pV) {
+    char s[256];
+    char* str;
+
+    PossibleService();
+    GetALineWithNoPossibleService(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_sscanf(str, "%f", &pV->v[0]);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%f", &pV->v[1]);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%f", &pV->v[2]);
+}
+C2_HOOK_FUNCTION(0x0048fd30, GetAVector)
+
 int C2_HOOK_CDECL AttachGroovidelic(br_actor* pActor, void* pData) {
     tUser_crush_data* user_crush;
 
