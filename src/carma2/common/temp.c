@@ -1,6 +1,8 @@
 #include "temp.h"
 
+#include "depth.h"
 #include "errors.h"
+#include "graphics.h"
 
 #include "rec2_macros.h"
 #include "rec2_types.h"
@@ -38,3 +40,23 @@ void C2_HOOK_FASTCALL DisableMaterialAdapt(void) {
     C2V(gAllow_material_adapt) = 0;
 }
 C2_HOOK_FUNCTION(0x004ea850, DisableMaterialAdapt)
+
+void C2_HOOK_FASTCALL AdaptCachedMaterials(tRendererShadingType pShading_type) {
+    int i;
+
+    if (!C2V(gAllow_material_adapt)) {
+        return;
+    }
+    for (i = 0; i < C2V(gMaterials_to_adapt_count); i++) {
+        br_material* material;
+
+        material = C2V(gMaterials_to_adapt)[i];
+        if (material == NULL) {
+            continue;
+            AdaptMaterialsForRenderer(&material, 1, pShading_type);
+            FogAccordingToGPSCDE(material);
+        }
+    }
+    C2V(gMaterials_to_adapt_count) = 0;
+}
+C2_HOOK_FUNCTION(0x004ea7c0, AdaptCachedMaterials)
