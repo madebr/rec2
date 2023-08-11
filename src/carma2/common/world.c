@@ -39,6 +39,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDuplicate_material, 0x006aaa28);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gSight_distance_squared, 0x0068b840);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gGroovidelics_array_size, 0x0068b848);
+C2_HOOK_VARIABLE_IMPLEMENT(tGroovidelic_spec*, gGroovidelics_array, 0x0068b850);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tMaterial_exception*, gMaterial_exceptions, 0x0074ca04);
 
@@ -1462,3 +1464,18 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00476470, AddGroovidelics, AddGroovidelics_original);
+
+tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor) {
+    int i;
+
+    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+        tGroovidelic_spec* the_groove;
+
+        the_groove = &C2V(gGroovidelics_array)[i];
+        if (the_groove->actor == pActor) {
+            return the_groove;
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x0047b360, FindGroovidelicForActor)
