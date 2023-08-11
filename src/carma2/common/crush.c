@@ -135,6 +135,25 @@ void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
 }
 C2_HOOK_FUNCTION(0x004ef460, LoadMinMax)
 
+int C2_HOOK_CDECL AllocateUserDetailLevel(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush;
+    int i;
+    tCar_spec* car_spec = pData;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 0;
+    }
+    for (i = 0; i < car_spec->count_detail_levels; i++) {
+        if (user_crush->models[i] != NULL) {
+            C2_HOOK_BUG_ON(sizeof(tUser_detail_level_model) != 12);
+            user_crush->models[i]->user = BrMemAllocate(sizeof(tUser_detail_level_model), kMem_crush_data);
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0048bf50, AllocateUserDetailLevel)
+
 void (C2_HOOK_FASTCALL * PrepareCarForCrushing_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
 
