@@ -1,9 +1,16 @@
 #include "crush.h"
 
+#include "animation.h"
 #include "errors.h"
+#include "globvrpb.h"
 #include "loading.h"
 #include "platform.h"
+#include "powerups.h"
+#include "shrapnel.h"
+#include "skidmark.h"
+#include "smashing.h"
 #include "utility.h"
+#include "world.h"
 
 #include <brender/brender.h>
 
@@ -29,6 +36,15 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gChance_of_bending, 0x0067be00);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gMin_bend_angle, 0x0067a18c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMin_bend_damage, 0x0067b7b0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMax_bend_damage, 0x0067bdf4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPosition_type_names, 2, 0x0065ff00, {
+    "relative",
+    "absolute",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSmashable_collision_type_names, 3, 0x0065fea0, {
+    "solid",
+    "passthrough",
+    "edges",
+});
 
 void (C2_HOOK_FASTCALL * InitCrush_original)(void);
 void C2_HOOK_FASTCALL InitCrush(void) {
@@ -132,6 +148,109 @@ void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
     pBounds->max.v[2] = MAX(z1, z2);
 }
 C2_HOOK_FUNCTION(0x004ef460, LoadMinMax)
+
+void C2_HOOK_FASTCALL LoadNoncarActivation(FILE* pF, tNoncar_activation** pNoncar_activations, int* pCount_noncar_activations) {
+    int i;
+    int v1, v2;
+    tNoncar_activation* activation;
+
+    /* Number of non-cars activated */
+    *pCount_noncar_activations = GetAnInt(pF);
+    C2_HOOK_BUG_ON(sizeof(tNoncar_activation) != 64);
+    (*pNoncar_activations) = BrMemAllocate(*pCount_noncar_activations * sizeof(tNoncar_activation), kMem_smash_side_effects);
+    for (i = 0; i < *pCount_noncar_activations; i++) {
+        activation = &(*pNoncar_activations)[i];
+        GetPairOfInts(pF, &v1, &v2);
+        activation->time_0x0 = 1000 * v1;
+        activation->time_0x2 = 1000 * v2;
+        activation->location_type = GetALineAndInterpretCommand(pF, C2V(gPosition_type_names), REC2_ASIZE(C2V(gPosition_type_names)));
+        activation->field_0x8 = GetAnInt(pF);
+        LoadMinMax(pF, &activation->bounds);
+        ReadSmashableInitialSpeed(pF, &activation->speed_info);
+    }
+}
+
+void C2_HOOK_FASTCALL LoadAward(FILE* pF, tAward_info* pAward_info) {
+
+    pAward_info->frequency = GetALineAndInterpretCommand(pF, C2V(gRepeatability_names), REC2_ASIZE(C2V(gRepeatability_names)));
+    if (pAward_info->frequency != kRepeatability_None) {
+        pAward_info->field_0x4 = GetAScalar(pF);
+        pAward_info->field_0x8 = GetAScalar(pF);
+        pAward_info->field_0xc = GetAnInt(pF);
+        pAward_info->field_0x10 = GetAnInt(pF);
+    }
+}
+
+void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage) {
+    char s[256];
+    int i;
+    int j;
+    int sound;
+    int v1;
+    int v2;
+    tSmashable_level* level;
+
+    /* pixelmap to use when intact */
+    GetAString(pF, s);
+    /* Number of levels */
+    *pCount_smashable_levels = GetAnInt(pF) + 1;
+    C2_HOOK_BUG_ON(sizeof(tSmashable_level) != 708);
+    *pSmashable_levels = BrMemAllocate(*pCount_smashable_levels * sizeof(tSmashable_level), kMem_smash_levels);
+
+    (*pSmashable_levels)[0].pixelmaps[0] = BrMapFind(s);
+    if ((*pSmashable_levels)[0].pixelmaps[0] == NULL) {
+        FatalError(kFatalError_CantLoadSmashPix_S, s);
+    }
+    (*pSmashable_levels)[0].count_shrapnels = 0;
+    (*pSmashable_levels)[0].trigger_threshold = 0;
+    for (i = 1; i < *pCount_smashable_levels; i++) {
+        level = &(*pSmashable_levels)[i];
+        /* trigger threshold (default if zero) */
+        level->trigger_threshold = GetAScalar(pF);
+        /* flags */
+        level->flags = GetAnInt(pF);
+        if (pIs_texture_change) {
+            level->collision_type = GetALineAndInterpretCommand(pF, C2V(gSmashable_collision_type_names), REC2_ASIZE(C2V(gSmashable_collision_type_names)));
+        }
+        /* number of possible sounds */
+        level->count_sounds = GetAnInt(pF);
+        for (j = 0; j < level->count_sounds; j++) {
+            /* sound ID */
+            sound = GetAnInt(pF);
+            level->sounds[j] = LoadSoundInStorage(pBrender_storage, sound);
+        }
+        ReadShrapnel(pF, level->shrapnels, &level->count_shrapnels);
+        ReadExplosionAnimation(pF, &level->animation);
+        ReadSlick(pF, &level->slick);
+        LoadNoncarActivation(pF, &level->noncar_activations, &level->count_noncar_activations);
+        ReadShrapnelSideEffects(pF, &level->side_effects);
+        /*Extensions flags */
+        level->extension_flags = GetAnInt(pF);
+        if (level->extension_flags & 0x1) {
+            level->field_0x280 = GetAnInt(pF);
+        }
+        /* Room turn on code */
+        level->room_turn_on_code = GetAnInt(pF);
+        LoadAward(pF, &level->award);
+        /* run-time variable changes */
+        level->count_runtime_variable_changes = GetAnInt(pF);
+        for (j = 0; j < level->count_runtime_variable_changes; j++) {
+            GetPairOfInts(pF, &v1, &v2);
+            level->runtime_variable_changes[j].field_0x0 = v2;
+            level->runtime_variable_changes[j].field_0x2 = v1;
+        }
+        /* Number of pixelmaps */
+        level->count_pixelmaps = GetAnInt(pF);
+        for (j = 0; j < level->count_pixelmaps; j++) {
+            GetAString(pF, s);
+            level->pixelmaps[j] = BrMapFind(s);
+            if (level->pixelmaps[j] == NULL) {
+                FatalError(kFatalError_CantLoadSmashPix_S, s);
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004eea20, LoadSmashableLevels)
 
 int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData) {
 
