@@ -134,3 +134,14 @@ void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
     pBounds->max.v[2] = MAX(z1, z2);
 }
 C2_HOOK_FUNCTION(0x004ef460, LoadMinMax)
+
+void (C2_HOOK_FASTCALL * PrepareCarForCrushing_original)(tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PrepareCarForCrushing_original(pCar_spec);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042aa20, PrepareCarForCrushing, PrepareCarForCrushing_original)
