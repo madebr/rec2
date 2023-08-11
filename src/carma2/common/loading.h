@@ -285,6 +285,8 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
 void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info);
 
+br_material* C2_HOOK_FASTCALL GetSimpleMaterial(const char* pName, tRendererShadingType pShading_type);
+
 void C2_HOOK_FASTCALL GetAVector(FILE* pF, br_vector3* pV);
 
 int C2_HOOK_CDECL AttachGroovidelic(br_actor* pActor, void* pData);
