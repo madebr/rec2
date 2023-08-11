@@ -135,6 +135,26 @@ void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
 }
 C2_HOOK_FUNCTION(0x004ef460, LoadMinMax)
 
+int C2_HOOK_CDECL LinkCarCrushData(br_actor* pActor, void* data) {
+    int i;
+    tUser_crush_data* user_crush;
+    tCar_crush_buffer* pCar_crush_buffer = data;
+
+    user_crush = pActor->user;
+    if (user_crush == NULL) {
+        return 0;
+    }
+    user_crush->crush_data = NULL;
+    for (i = 0; i < pCar_crush_buffer->count_entries; i++) {
+        if (DRStricmp(pCar_crush_buffer->entries[i]->actor_name, pActor->identifier) == 0) {
+            user_crush->crush_data = pCar_crush_buffer->entries[i];
+            return 0;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042a950, LinkCarCrushData)
+
 int C2_HOOK_CDECL AllocateUserDetailLevel(br_actor* pActor, void* pData) {
     tUser_crush_data* user_crush;
     int i;
