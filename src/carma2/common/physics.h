@@ -9,4 +9,6 @@ void C2_HOOK_FASTCALL InitPhysics(void);
 
 void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF);
 
+void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_info);
+
 #endif //REC2_PHYSICS_H
