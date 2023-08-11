@@ -33,6 +33,7 @@ typedef struct tRace_list_spec tRace_list_spec;
 typedef struct tMin_message tMin_message;
 typedef struct tMid_message tMid_message;
 typedef struct tMax_message tMax_message;
+typedef union tCollision_shape tCollision_shape;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
