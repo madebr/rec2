@@ -15,6 +15,8 @@ br_scalar C2_HOOK_FASTCALL SquaredDistanceFromLineSegment(br_vector3* pP, br_vec
 
 void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);
 
+int C2_HOOK_CDECL AllocateUserDetailLevel(br_actor* pActor, void* pData);
+
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec * pCar_spec);
 
 #endif // REC2_CRUSH_H
