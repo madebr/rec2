@@ -58,4 +58,6 @@ int C2_HOOK_FASTCALL CheckQuit(void);
 
 float C2_HOOK_STDCALL tandeg(float pAngle);
 
+intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg);
+
 #endif // REC2_UTILITY_H
