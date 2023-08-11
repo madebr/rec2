@@ -36,4 +36,6 @@ void C2_HOOK_FASTCALL AssertYons(void);
 
 void C2_HOOK_FASTCALL MungeRearviewSky(void);
 
+void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial);
+
 #endif //REC2_DEPTH_H
