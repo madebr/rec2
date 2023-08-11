@@ -12,6 +12,8 @@
 
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void);
 
+void C2_HOOK_FASTCALL StringTransformToLower(char* pStr);
+
 void C2_HOOK_FASTCALL StringToUpper(char* dest, const char* src);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(char* pThe_path);
