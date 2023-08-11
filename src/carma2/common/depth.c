@@ -254,3 +254,17 @@ void C2_HOOK_FASTCALL MungeRearviewSky(void) {
 
 }
 C2_HOOK_FUNCTION(0x00447280, MungeRearviewSky)
+
+void (C2_HOOK_FASTCALL * FogAccordingToGPSCDE_original)(br_material* pMaterial);
+void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FogAccordingToGPSCDE_original(pMaterial);
+#else
+    int start;
+    int end;
+    LOG_TRACE("(%p)", pMaterial);
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004451a0, FogAccordingToGPSCDE, FogAccordingToGPSCDE_original)
