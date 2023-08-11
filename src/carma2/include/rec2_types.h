@@ -34,6 +34,7 @@ typedef struct tMin_message tMin_message;
 typedef struct tMid_message tMid_message;
 typedef struct tMax_message tMax_message;
 typedef union tCollision_shape tCollision_shape;
+typedef struct tCar_crush_buffer tCar_crush_buffer;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
