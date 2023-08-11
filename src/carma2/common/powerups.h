@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec, gPowerup_respawn_smashable);
 C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec, gUnknown_smashable_006a3660);
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tHeadup_icon, gPickedup_powerups, 5);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gRepeatability_names, 4);
 
 void C2_HOOK_FASTCALL InitPowerups(void);
 
