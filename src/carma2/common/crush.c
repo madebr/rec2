@@ -16,7 +16,7 @@
 
 #include "rec2_macros.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(float, gDistortion_factor,0x00679698 );
 C2_HOOK_VARIABLE_IMPLEMENT(float, gMin_crush_force, 0x006796b8);
@@ -38,6 +38,37 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gChance_of_bending, 0x0067be00);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gMin_bend_angle, 0x0067a18c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMin_bend_damage, 0x0067b7b0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMax_bend_damage, 0x0067bdf4);
+C2_HOOK_VARIABLE_IMPLEMENT(tU8, gCrush_data_entry_counter, 0x0067be08);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoftness_names, 6, 0x0058f808, {
+    "very soft",
+    "soft",
+    "normal",
+    "hard",
+    "very hard",
+    "uncrushable",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gCrush_type_names, 3, 0x0058f848, {
+    "boring",
+    "flap",
+    "detach",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gEase_of_detachment_names, 5, 0x0058f820, {
+    "very easy",
+    "easy",
+    "normal",
+    "difficult",
+    "very difficult",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gCar_crush_shape_names, 2, 0x0058f858, {
+    "box",
+    "poly",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gDetach_type_names, 4, 0x0058f838, {
+    "normal",
+    "stubborn",
+    "fully_detach",
+    "joint_index",
+});
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPosition_type_names, 2, 0x0065ff00, {
     "relative",
     "absolute",
@@ -66,7 +97,7 @@ void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file) {
         if (!GetALineAndDontArgue(file, s)) {
             PDFatalError("Can't find start of CRUSH SETTINGS in .TXT file");
         }
-        if (strcmp(s, "START OF CRUSH SETTINGS") == 0) {
+        if (c2_strcmp(s, "START OF CRUSH SETTINGS") == 0) {
             break;
         }
     }
@@ -108,7 +139,7 @@ void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file) {
         if (!GetALineAndDontArgue(file, s)) {
             PDFatalError("Can't find end of CRUSH SETTINGS in .TXT file");
         }
-        if (strcmp(s, "END OF CRUSH SETTINGS") == 0) {
+        if (c2_strcmp(s, "END OF CRUSH SETTINGS") == 0) {
             break;
         }
     }
@@ -270,6 +301,157 @@ void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_e
     }
 }
 C2_HOOK_FUNCTION(0x004ee990, LoadCarCrushSmashDataEntries)
+
+void C2_HOOK_FASTCALL LoadCarCrushDataEntry(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry,tBrender_storage *pBrender_storage) {
+    int i;
+
+    /* Actor */
+    GetAString(pF, pCar_crush_buffer_entry->actor_name);
+    if (c2_strlen(pCar_crush_buffer_entry->actor_name) < 4) {
+        PDFatalError("Less than 4 chars in car actor identifier");
+    }
+    StringTransformToLower(pCar_crush_buffer_entry->actor_name);
+    /* Softness */
+    switch (GetALineAndInterpretCommand(pF, C2V(gSoftness_names), REC2_ASIZE(C2V(gSoftness_names)))) {
+    case eSoftness_VerySoft:
+        pCar_crush_buffer_entry->softness_factor = 4.f;
+        break;
+    case eSoftness_Soft:
+        pCar_crush_buffer_entry->softness_factor = 2.f;
+        break;
+    default:
+        pCar_crush_buffer_entry->softness_factor = 1.f;
+        break;
+    case eSoftness_Hard:
+        pCar_crush_buffer_entry->softness_factor = 0.5f;
+        break;
+    case eSoftness_VeryHard:
+        pCar_crush_buffer_entry->softness_factor = 0.25f;
+        break;
+    case eSoftness_Uncrushable:
+        pCar_crush_buffer_entry->softness_factor = 0.f;
+        break;
+    }
+    pCar_crush_buffer_entry->id = C2V(gCrush_data_entry_counter);
+    C2V(gCrush_data_entry_counter)++;
+
+    /* Crush type */
+    switch (GetALineAndInterpretCommand(pF, C2V(gCrush_type_names), REC2_ASIZE(C2V(gCrush_type_names)))) {
+    case eCrushType_Flap:
+        C2_HOOK_BUG_ON(sizeof(tCar_crush_flap_data) != 44);
+        pCar_crush_buffer_entry->flap_data = BrMemAllocate(sizeof(tCar_crush_flap_data), kMem_crush_data);
+        /* Hinge point 0 */
+        pCar_crush_buffer_entry->flap_data->hinge0 = GetAnInt(pF);
+        /* Hinge point 1 */
+        pCar_crush_buffer_entry->flap_data->hinge1 = GetAnInt(pF);
+        /* Hinge point 2 */
+        pCar_crush_buffer_entry->flap_data->hinge2 = GetAnInt(pF);
+        pCar_crush_buffer_entry->flap_data->field_0x4 = 0;
+        pCar_crush_buffer_entry->flap_data->field_0x2 = 0;
+        pCar_crush_buffer_entry->flap_data->field_0x6 = 0x3ffc;
+        pCar_crush_buffer_entry->flap_data->field_0x8 = 0x3ffc;
+        /* Kev-o-flap? */
+        pCar_crush_buffer_entry->flap_data->kev_o_flap = GetAnInt(pF);
+        pCar_crush_buffer_entry->flap_data->field_0x14 = 1;
+        pCar_crush_buffer_entry->flap_data->field_0x15 = 0;
+        pCar_crush_buffer_entry->flap_data->field_0x18 = 0;
+        pCar_crush_buffer_entry->flap_data->is_door = c2_strstr(pCar_crush_buffer_entry->actor_name, "door") != NULL || c2_strstr(pCar_crush_buffer_entry->actor_name, "dor") != NULL;
+        C2_HOOK_BUG_ON(sizeof(tCar_crush_detach_data) != 136);
+        pCar_crush_buffer_entry->detach_data = BrMemAllocate(sizeof(tCar_crush_detach_data), kMem_crush_data);
+        pCar_crush_buffer_entry->detach_data->field_0x0 = 0;
+        /* Ease of flap */
+        switch (GetALineAndInterpretCommand(pF, C2V(gEase_of_detachment_names), REC2_ASIZE(C2V(gEase_of_detachment_names)))) {
+        case eEaseOfDetachment_VeryEasy:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach) * 0.25f;
+            break;
+        case eEaseOfDetachment_Easy:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach) * 0.5f;
+            break;
+        case eEaseOfDetachment_Normal:
+        default:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach);
+            break;
+        case eEaseOfDetachment_Hard:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach) * 2.f;
+            break;
+        case eEaseOfDetachment_VeryHard:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach) * 4.f;
+            break;
+        }
+        if (pCar_crush_buffer_entry->flap_data->kev_o_flap) {
+            pCar_crush_buffer_entry->detach_data->type = eDetachType_kev_o_flap;
+        } else {
+            pCar_crush_buffer_entry->detach_data->type = eDetachType_fully_detachable;
+        }
+        /* shape */
+        switch (GetALineAndInterpretCommand(pF, C2V(gCar_crush_shape_names), REC2_ASIZE(C2V(gCar_crush_shape_names)))) {
+        case eCarCrushShape_poly:
+            pCar_crush_buffer_entry->detach_data->count_shape_points = GetAnInt(pF);
+            for (i = 0; i < pCar_crush_buffer_entry->detach_data->count_shape_points; i++) {
+                pCar_crush_buffer_entry->detach_data->shape_points[i] = GetAnInt(pF);
+            }
+            break;
+        case eCarCrushShape_box:
+        default:
+            pCar_crush_buffer_entry->detach_data->count_shape_points = 0;
+            break;
+        }
+        pCar_crush_buffer_entry->detach_data->field_0x28 = 0;
+        break;
+    case eCrushType_Detach:
+        C2_HOOK_BUG_ON(sizeof(tCar_crush_detach_data) != 136);
+        pCar_crush_buffer_entry->detach_data = BrMemAllocate(sizeof(tCar_crush_detach_data), kMem_crush_data);
+        pCar_crush_buffer_entry->detach_data->field_0x0 = 0;
+        /* Ease of detachment */
+        switch (GetALineAndInterpretCommand(pF, C2V(gEase_of_detachment_names), REC2_ASIZE(C2V(gEase_of_detachment_names)))) {
+        case eEaseOfDetachment_VeryEasy:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach) * .25f;
+            break;
+        case eEaseOfDetachment_Easy:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach) * .5f;
+            break;
+        case eEaseOfDetachment_Normal:
+        default:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach);
+            break;
+        case eEaseOfDetachment_Hard:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach) * 2.f;
+            break;
+        case eEaseOfDetachment_VeryHard:
+            pCar_crush_buffer_entry->detach_data->force = C2V(gNormal_force_to_detach) * 4.f;
+            break;
+        }
+        /* Type */
+        pCar_crush_buffer_entry->detach_data->type = GetALineAndInterpretCommand(pF, C2V(gDetach_type_names), REC2_ASIZE(C2V(gDetach_type_names)));
+        if (pCar_crush_buffer_entry->detach_data->type == eDetachType_joint_index) {
+            /* FIXME: not used in C2 game data */
+            pCar_crush_buffer_entry->detach_data->field_0x30 = GetAnInt(pF);
+        }
+        switch (GetALineAndInterpretCommand(pF, C2V(gCar_crush_shape_names), REC2_ASIZE(C2V(gCar_crush_shape_names)))) {
+        case eCarCrushShape_poly:
+            pCar_crush_buffer_entry->detach_data->count_shape_points = GetAnInt(pF);
+            if (pCar_crush_buffer_entry->detach_data->count_shape_points > 16) {
+                PDFatalError("Too many sample points in crush data");
+            }
+            for (i = 0; i < pCar_crush_buffer_entry->detach_data->count_shape_points; i++) {
+                pCar_crush_buffer_entry->detach_data->shape_points[i] = GetAnInt(pF);
+            }
+            break;
+        case eCarCrushShape_box:
+        default:
+            pCar_crush_buffer_entry->detach_data->count_shape_points = 0;
+            break;
+        }
+        pCar_crush_buffer_entry->detach_data->field_0x28 = 0;
+        break;
+    }
+    if (C2V(gNet_mode) != eNet_mode_none && pCar_crush_buffer_entry->detach_data != NULL) {
+        pCar_crush_buffer_entry->detach_data->count_shape_points = 0;
+    }
+    pCar_crush_buffer_entry->field_0x2c = 0;
+    LoadCarCrushSmashDataEntries(pF, pCar_crush_buffer_entry, pBrender_storage);
+}
+C2_HOOK_FUNCTION(0x0042a550, LoadCarCrushDataEntry)
 
 int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData) {
 
