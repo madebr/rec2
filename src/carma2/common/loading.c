@@ -3201,6 +3201,17 @@ void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info) {
 }
 C2_HOOK_FUNCTION(0x0048cda0, LoadPlayerCars)
 
+br_material* (C2_HOOK_FASTCALL * GetSimpleMaterial_original)(const char* pName, tRendererShadingType pShading_type);
+br_material* C2_HOOK_FASTCALL GetSimpleMaterial(const char* pName, tRendererShadingType pShading_type) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GetSimpleMaterial_original(pName, pShading_type);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00488dd0, GetSimpleMaterial, GetSimpleMaterial_original);
+
 void C2_HOOK_FASTCALL GetAVector(FILE* pF, br_vector3* pV) {
     char s[256];
     char* str;
