@@ -128,6 +128,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTree_surgery_pass2, gTree_surgery_pass2, 25, 0
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTyping, 0x0068b858);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_opponents, 0x0074b588);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gPlayer_car_master_actor, 0x0076350c);
 //int gArrow_mode;
 //int gInfo_on;
 //int gHost_abandon_game;

@@ -297,7 +297,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
     PathCat(the_path, C2V(gApplication_path), C2V(gPowerup_txt_path));
     f = DRfopen(the_path, "rt");
     if (f == NULL) {
-        FatalError(kFatalError_CantLoadCarResolutionIndependentFile);
+        FatalError(kFatalError_CannotLoadCarResolutionIndependentFile);
     }
     /* Number of powerups */
     C2V(gNumber_of_powerups) = GetAnInt(f);
