@@ -8,6 +8,12 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gBatty_gravity);
+C2_HOOK_VARIABLE_DECLARE(tU8, gCrush_data_entry_counter);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSoftness_names, 6);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gCrush_type_names, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gEase_of_detachment_names, 5);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gCar_crush_shape_names, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gDetach_type_names, 4);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPosition_type_names, 2);
 
 void C2_HOOK_FASTCALL InitCrush(void);
@@ -25,6 +31,8 @@ void C2_HOOK_FASTCALL LoadAward(FILE* pF, tAward_info* pAward_info);
 void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage);
 
 void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage);
+
+void C2_HOOK_FASTCALL LoadCarCrushDataEntry(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry,tBrender_storage *pBrender_storage);
 
 int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData);
 
