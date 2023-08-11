@@ -254,6 +254,23 @@ void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashabl
 }
 C2_HOOK_FUNCTION(0x004eea20, LoadSmashableLevels)
 
+void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage) {
+    int i;
+
+    /* Number of 'Smash data' entries */
+    pCar_crush_buffer_entry->count_smashables = GetAnInt(pF);
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_smashable_part) != 124);
+    pCar_crush_buffer_entry->smashables = BrMemAllocate(pCar_crush_buffer_entry->count_smashables * sizeof(tCar_crush_smashable_part), kMem_smashable_info);
+    for (i = 0; i < pCar_crush_buffer_entry->count_smashables; i++) {
+        /* name of material */
+        GetAString(pF, pCar_crush_buffer_entry->smashables[i].material_name);
+        pCar_crush_buffer_entry->smashables[i].funk = -1;
+        LoadSmashableLevels(pF, &pCar_crush_buffer_entry->smashables[i].levels, &pCar_crush_buffer_entry->smashables[i].count_smashable_levels, 0, pBrender_storage);
+    }
+}
+C2_HOOK_FUNCTION(0x004ee990, LoadCarCrushSmashDataEntries)
+
 int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData) {
 
     C2_HOOK_BUG_ON(sizeof(tUser_crush_data) != 16);
