@@ -8,6 +8,7 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gSight_distance_squared);
+C2_HOOK_VARIABLE_DECLARE(tBrender_storage*, gStorageForCallbacks);
 C2_HOOK_VARIABLE_DECLARE(int, gGroovidelics_array_size);
 C2_HOOK_VARIABLE_DECLARE(tGroovidelic_spec*, gGroovidelics_array);
 C2_HOOK_VARIABLE_DECLARE(tMaterial_exception*, gMaterial_exceptions);
@@ -97,6 +98,8 @@ void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile,
 int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char* pPath);
 
 void C2_HOOK_FASTCALL LoadModelCallback(const char* pPath);
+
+void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath);
 
 void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath);
 
