@@ -104,4 +104,6 @@ void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tC
 
 void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
+void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
+
 #endif // REC2_WORLD_H
