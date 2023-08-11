@@ -26,6 +26,6 @@ void C2_HOOK_FASTCALL CalcGrafDataIndex(void) {
             return;
         }
     }
-    FatalError(kFatalError_ScreenDimensionNotInGrafData);
+    FatalError(kFatalError_ScreenWidthHeightDoesNotMatchGrafData);
 }
 C2_HOOK_FUNCTION(0x0047b3e0, CalcGrafDataIndex)
