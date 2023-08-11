@@ -1268,7 +1268,7 @@ typedef struct {
     br_material* material;
     int count_maps;
     br_pixelmap* maps[3];
-} tCarCockpitWindowThing;
+} tCarCockpitMaterial;
 
 typedef struct tCar_spec {
     int index;
@@ -1281,13 +1281,14 @@ typedef struct tCar_spec {
     br_vector3 pos;
     br_vector3 centre_of_mass_world_scale;
     int frame_collision_flag;
-    undefined field_0x68[8];
+    undefined field_0x68[4];
+    int count_shrapnel_materials;
     br_vector3 direction;
     float speed;
     short car_ID;
     undefined field_0x82;
     undefined field_0x83;
-    br_material* shrapnel_material[3];
+    br_material* shrapnel_materials[3];
     undefined field_0x90[28];
     tU16 fire_vertex[12];
     float dt;
@@ -1374,7 +1375,7 @@ typedef struct tCar_spec {
     int dim_top[2][4];
     int dim_right[2][4];
     int dim_bottom[2][4];
-    undefined field_0x400[4];
+    int car_model_variable;
     int number_of_steerable_wheels;
     int steering_ref[6];
     int lf_sus_ref[4];
@@ -1435,7 +1436,7 @@ typedef struct tCar_spec {
     float steerable_suspension_give;
     float susp_give;
     float susp_height[2];
-    float maybe_ride_height;
+    float ride_height;
     br_vector3 wpos[4];
     float curvature;
     float maxcurve;
@@ -1445,7 +1446,7 @@ typedef struct tCar_spec {
     int material_index[4];
     undefined field_0x1284[16];
     br_vector3 mu;
-    float traction_fractional_multiplier;
+    float traction_multiplier;
     float downforce_to_weight;
     undefined field_0x12a8;
     undefined field_0x12a9;
@@ -1524,14 +1525,15 @@ typedef struct tCar_spec {
     int power_up_slots[3];
     int horn_sound_tag;
     int is_girl;
-    undefined field_0x18c8[4];
+    tU8 field_0x18c8;
+    undefined field_0x18c9[3];
     int field_0x18cc;
     float softness_factor;
     tCar_crush_spec* car_crush_spec;
     br_vector3 camera_bumper_position;
     br_vector3 camera_cockpit_position;
-    int count_window_things;
-    tCarCockpitWindowThing window_things[5];
+    int count_window_materials;
+    tCarCockpitMaterial window_materials[5];
     tU16 old_material_count;
     tU16 new_material_count;
     undefined4 field_0x195c;
@@ -2853,8 +2855,9 @@ enum {
     kFatalError_FlicFileWasNot8BitsDeep_S = 0x0f,
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
-    kFatalError_CantLoadCarResolutionIndependentFile = 0x18,
-    kFatalError_ScreenDimensionNotInGrafData = 0x19,
+    kFatalError_ScreenWidthHeightDoesNotMatchGrafData = 0x18,
+    kFatalError_CannotLoadCarResolutionIndependentFile = 0x19,
+    kFatalError_CannotLoadDamageImage = 0x1b,
     kFatalError_CannotLoadSpeedoImage = 0x23,
     kFatalError_CannotOpenRacesFile = 0x32,
     kFatalError_CannotOpenOpponentsFile = 0x36,
@@ -2863,6 +2866,7 @@ enum {
     kFatalError_InsufficientShadeTableSlots = 0x44,
     kFatalError_InsufficientMaterialSlots = 0x45,
     kFatalError_InsufficientModelSlots = 0x46,
+    kFatalError_CannotLoadCarActor = 0x47,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_CannotLoadShadeTableFileOrItIsEmpty_S = 0x50,
     kFatalError_CannotLoadMaterialFileOrItIsEmpty_S = 0x51,
@@ -2874,8 +2878,12 @@ enum {
     kFatalError_OOM_S = 0x5e,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
+    kFatalError_CannotOpenHeadupsFile = 0x66,
+    kFatalError_CannotOpenCarResolutionDependentFile = 0x68,
     kFatalError_CantOpen_S = 0x6b,
     kFatalError_CannotLoadAGeneratedShadeTable = 0x6d,
+    kFatalError_RanOutOfFunkGrooveSlotBunches = 0x71,
+    kFatalError_FileIsCorrupted_S = 0x73,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
     kFatalError_TooManyCrushLimits = 0x7a,
