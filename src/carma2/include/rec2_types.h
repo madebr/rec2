@@ -1939,6 +1939,14 @@ typedef struct {
 } tShrapnel_side_effects;
 
 typedef struct {
+    tRepeatability frequency;
+    float field_0x4;
+    float field_0x8;
+    int field_0xc;
+    int field_0x10;
+} tAward_info;
+
+typedef struct {
     int flags;
     union {
         struct {
@@ -2106,6 +2114,128 @@ typedef struct {
     float random_spin_rate_max;
 } tSmashable_initial_speed_spec;
 
+typedef enum {
+    eNonCarLocation_Relative = 0,
+    eNonCarLocation_Absolute = 1
+} tNon_car_location_type;
+
+typedef struct {
+    undefined2 time_0x0;
+    undefined2 time_0x2;
+    tNon_car_location_type location_type;
+    int field_0x8; /* can be -1 in file */
+    br_bounds3 bounds;
+    tSmashable_initial_speed_spec speed_info;
+} tNoncar_activation;
+
+typedef enum {
+    kTextureLevelCollisionChange_Solid = 0,
+    kTextureLevelCollisionChange_PassThrough = 1,
+    kTextureLevelCollisionChange_Edges = 2
+} tSmashable_texture_level_collision_type;
+
+typedef struct {
+    br_pixelmap * pixelmaps[3];
+    int count_pixelmaps;
+    float trigger_threshold;
+    int count_sounds;
+    int sounds[3];
+    int count_shrapnels;
+    tShrapnel_spec shrapnels[6];
+    tExplosion_animation animation;
+    tSlick_spec slick;
+    int count_noncar_activations;
+    tNoncar_activation* noncar_activations;
+    tShrapnel_side_effects side_effects;
+    int field_0x280;
+    int extension_flags;
+    int room_turn_on_code;
+    tAward_info award;
+    undefined field_0x2a0[4];
+    tU8 count_runtime_variable_changes;
+    undefined field_0x2a5;
+    tSmash_run_time_variable_change runtime_variable_changes[1]; /* FIXME: unknown size */
+    undefined field_0x2aa[18];
+    int flags;
+    tSmashable_texture_level_collision_type collision_type;
+} tSmashable_level;
+
+typedef struct  {
+    undefined field_0x0[2];
+    tU16 field_0x2;
+    tU16 field_0x4;
+    tU16 field_0x6;
+    tU16 field_0x8;
+    tU16 hinge0;
+    tU16 field_0xc;
+    tU16 hinge1;
+    tU16 hinge2;
+    undefined field_0x12[2];
+    tU8 field_0x14;
+    tU8 field_0x15;
+    undefined field_0x16[2];
+    undefined4 field_0x18;
+    undefined field_0x1c[4];
+    tU8 kev_o_flap;
+    undefined field_0x21[7];
+    tU8 is_door;
+    undefined field_0x29[3];
+} tCar_crush_flap_data;
+
+typedef enum {
+    eDetachType_normal=0,
+    eDetachType_stubborn=1,
+    eDetachType_fully_detachable=2,
+    eDetachType_joint_index=3,
+    eDetachType_kev_o_flap=5
+} tDetach_type;
+
+typedef struct  {
+    undefined4 field_0x0;
+    float force;
+    tU16 min_vertex;
+    tU16 max_vertex;
+    undefined field_0xc[24];
+    tDetach_type type;
+    undefined4 field_0x28;
+    int field_0x2c;
+    tU16 field_0x30;
+    undefined field_0x32[2];
+    int count_shape_points; /* >0 if shape is poly, ==0 if box */
+    int shape_points[16];
+    undefined field_0x78[16];
+} tCar_crush_detach_data;
+
+typedef struct {
+    char material_name[16];
+    undefined field_0x10[48];
+    int funk;
+    br_material* funk_material;
+    int count_smashable_levels;
+    undefined field_0x4c[4];
+    tSmashable_level* levels;
+    undefined field_0x56[28];
+    undefined4* field_0x70;
+    undefined field_0x74[4];
+    undefined4* field_0x78;
+} tCar_crush_smashable_part;
+
+typedef struct {
+    char actor_name[16];
+    undefined field_0xc[16];
+    tU8 id;
+    undefined field_0x21[3];
+    float field_0x24;
+    float softness_factor;
+    tU8 field_0x2c;
+    undefined field_0x2d[3];
+    tCar_crush_flap_data* flap_data;
+    tCar_crush_detach_data* detach_data;
+    tU16 count_smashables;
+    undefined field_0x3a[2];
+    tCar_crush_smashable_part* smashables;
+} tCar_crush_buffer_entry;
+
 typedef struct {
     int owner;
     int done_this_frame;
@@ -2127,6 +2257,16 @@ typedef struct {
     float object_resumption_value;
     undefined field_0x6c[24];
 } tGroovidelic_spec;
+
+typedef struct {
+    undefined field_0x0[12];
+} tUser_detail_level_model;
+
+typedef struct {
+    br_model* models[2]; /* model for every detail level. Each model has a tUser_detail_level_model. */
+    tCar_crush_buffer_entry* crush_data;
+    tGroovidelic_spec* groove;
+} tUser_crush_data;
 
 typedef struct {
     tU32 min_time_between;
