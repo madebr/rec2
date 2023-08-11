@@ -3159,3 +3159,9 @@ int C2_HOOK_CDECL ActorModelAttachCrushData(br_actor* pActor, void* pData) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0042a220, ActorModelAttachCrushData)
+
+void C2_HOOK_FASTCALL AttachCrushDataToActorModels(br_actor* pActor, tCar_spec* pCar_spec) {
+
+    DRActorEnumRecurse(pActor, ActorModelAttachCrushData, pCar_spec);
+}
+C2_HOOK_FUNCTION(0x0042a210, AttachCrushDataToActorModels)
