@@ -3200,3 +3200,25 @@ void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info) {
     }
 }
 C2_HOOK_FUNCTION(0x0048cda0, LoadPlayerCars)
+
+int C2_HOOK_CDECL ActorModelAttachCrushData(br_actor* pActor, void* pData) {
+    tCar_spec* c;
+    tUser_crush_data* user_crush;
+
+    c = pData;
+    (void)c;
+    if (pActor->type != BR_ACTOR_MODEL) {
+        return 0;
+    }
+    user_crush = pActor->user;
+    if (user_crush == NULL || user_crush->crush_data == NULL || user_crush->groove == NULL) {
+        return 0;
+    }
+    user_crush->crush_data = BrMemAllocate(sizeof(tCar_crush_buffer_entry), kMem_crush_data);
+    c2_strncpy(user_crush->crush_data->actor_name, pActor->identifier, sizeof(user_crush->crush_data->actor_name) - 1);
+    user_crush->crush_data->id = 0xe9;
+    user_crush->crush_data->softness_factor = 1.f;
+    user_crush->crush_data->field_0x2c = 0;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042a220, ActorModelAttachCrushData)
