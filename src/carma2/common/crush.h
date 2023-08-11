@@ -8,6 +8,7 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gBatty_gravity);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPosition_type_names, 2);
 
 void C2_HOOK_FASTCALL InitCrush(void);
 
@@ -16,6 +17,12 @@ void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file);
 br_scalar C2_HOOK_FASTCALL SquaredDistanceFromLineSegment(br_vector3* pP, br_vector3* pA, br_vector3* pB);
 
 void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);
+
+void C2_HOOK_FASTCALL LoadNoncarActivation(FILE* pF, tNoncar_activation** pNoncar_activations, int* pCount_noncar_activations);
+
+void C2_HOOK_FASTCALL LoadAward(FILE* pF, tAward_info* pAward_info);
+
+void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage);
 
 int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData);
 
