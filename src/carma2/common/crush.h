@@ -21,6 +21,8 @@ void C2_HOOK_FASTCALL LoadAward(FILE* pF, tAward_info* pAward_info);
 
 void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage);
 
+void C2_HOOK_FASTCALL LoadCarCrushSmashDataEntries(FILE* pF, tCar_crush_buffer_entry* pCar_crush_buffer_entry, tBrender_storage* pBrender_storage);
+
 int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData);
 
 int C2_HOOK_CDECL LinkCarCrushData(br_actor* pActor, tCar_crush_buffer* pCar_crush_buffer);
