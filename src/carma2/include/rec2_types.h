@@ -6,6 +6,8 @@
 
 #include "c2_stdio.h"
 
+#define kMax_crush_datas 64
+
 typedef char tPath_name[256];
 
 typedef unsigned char tU8;
@@ -34,7 +36,6 @@ typedef struct tMin_message tMin_message;
 typedef struct tMid_message tMid_message;
 typedef struct tMax_message tMax_message;
 typedef union tCollision_shape tCollision_shape;
-typedef struct tCar_crush_buffer tCar_crush_buffer;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -2240,6 +2241,11 @@ typedef struct {
     undefined field_0x3a[2];
     tCar_crush_smashable_part* smashables;
 } tCar_crush_buffer_entry;
+
+typedef struct {
+    int count_entries;
+    tCar_crush_buffer_entry* entries[kMax_crush_datas];
+} tCar_crush_buffer;
 
 typedef struct {
     int owner;
