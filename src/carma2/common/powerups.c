@@ -465,8 +465,8 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     pSmashable_spec->count_variable_changes = GetAnInt(pF);
     for (i = 0; i < pSmashable_spec->count_variable_changes; i++) {
         GetPairOfInts(pF, &d1, &d2);
-        pSmashable_spec->variable_changes[i].address = d2;
-        pSmashable_spec->variable_changes[i].value = d1;
+        pSmashable_spec->variable_changes[i].field_0x0 = d2;
+        pSmashable_spec->variable_changes[i].field_0x2 = d1;
     }
     pSmashable_spec->trigger_type = kSmashableTrigger_Model | kSmashableTrigger_Number;
     REC2_BUG_ON((kSmashableTrigger_Model | kSmashableTrigger_Number) != 0x3);
