@@ -483,3 +483,13 @@ float C2_HOOK_STDCALL tandeg(float pAngle) {
     return sinf(pAngle) / cosf(pAngle);
 }
 C2_HOOK_FUNCTION(0x00513770, tandeg)
+
+intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg) {
+
+    if (pActor->identifier != NULL && c2_strcmp(pActor->identifier, (const char*)pArg) == 0) {
+        return (intptr_t)pActor;
+    } else {
+        return 0;
+    }
+}
+C2_HOOK_FUNCTION(0x005147b0, CompareActorID)
