@@ -289,6 +289,8 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
 void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info);
 
+int C2_HOOK_CDECL AttachGroovidelic(br_actor* pActor, void* pData);
+
 int C2_HOOK_CDECL ActorModelAttachCrushData(br_actor* pActor, void* pData);
 
 void C2_HOOK_FASTCALL AttachCrushDataToActorModels(br_actor* pActor, tCar_spec* pCar_spec);
