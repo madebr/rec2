@@ -3201,6 +3201,17 @@ void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info) {
 }
 C2_HOOK_FUNCTION(0x0048cda0, LoadPlayerCars)
 
+int C2_HOOK_CDECL AttachGroovidelic(br_actor* pActor, void* pData) {
+    tUser_crush_data* user_crush;
+
+    user_crush = pActor->user;
+    if (user_crush != NULL) {
+        user_crush->groove = FindGroovidelicForActor(pActor);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0048c130, AttachGroovidelic)
+
 int C2_HOOK_CDECL ActorModelAttachCrushData(br_actor* pActor, void* pData) {
     tCar_spec* c;
     tUser_crush_data* user_crush;
