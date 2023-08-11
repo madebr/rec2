@@ -1865,8 +1865,8 @@ typedef enum {
 } tSmashable_trigger_type;
 
 typedef struct {
-    short address;
-    short value;
+    short field_0x0;
+    short field_0x2;
 } tSmash_run_time_variable_change;
 
 typedef enum {
