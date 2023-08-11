@@ -109,6 +109,49 @@ typedef struct {
     char replacement[24];
 } tTree_surgery_pass2;
 
+typedef enum {
+    eGroove_mode_constant = 0,
+    eGroove_mode_distance = 1,
+} tGroove_trigger_mode;
+
+typedef enum {
+    eGroove_path_none = -1,
+    eGroove_path_straight = 0,
+    eGroove_path_circular = 1,
+} tGroove_path_mode;
+
+typedef enum {
+    eLollipop_none = -1,
+    eLollipop_x_match = 0,
+    eLollipop_y_match = 1,
+    eLollipop_z_match = 2,
+} tLollipop_mode;
+
+typedef enum {
+    eMove_none = -1,
+    eMove_linear = 0,
+    eMove_harmonic = 1,
+    eMove_flash = 2,
+    eMove_controlled = 3,
+    eMove_absolute = 4,
+    eMove_continuous = 5,
+    eMove_texturebits = 6,
+} tMove_mode;
+
+typedef enum {
+    eInterrupt_none = 0,
+    eInterrupt_less_than = 1,
+    eInterrupt_greater_than = 2,
+} tInterrupt_status;
+
+typedef enum {
+    eGroove_object_none = -1,
+    eGroove_object_spin = 0,
+    eGroove_object_rock = 1,
+    eGroove_object_throb = 2,
+    eGroove_object_shear = 3,
+} tGroove_object_mode;
+
 typedef struct tDynamic_message {
     struct tDynamic_message* next;
     char data[];
@@ -2062,6 +2105,28 @@ typedef struct {
     float random_normal_velocity_max;
     float random_spin_rate_max;
 } tSmashable_initial_speed_spec;
+
+typedef struct {
+    int owner;
+    int done_this_frame;
+    int block_flags;
+    struct br_actor * actor;
+    tLollipop_mode lollipop_mode;
+    tGroove_trigger_mode mode;
+    tGroove_path_mode path_type;
+    tMove_mode path_mode;
+    tInterrupt_status path_interrupt_status;
+    float path_resumption_value;
+    undefined field_0x28[16];
+    br_vector3 field_0x38;
+    br_vector3 object_centre;
+    br_vector3 object_position;
+    tGroove_object_mode object_type;
+    tMove_mode object_mode; /* Created by retype action */
+    tInterrupt_status object_interrupt_status; /* Created by retype action */
+    float object_resumption_value;
+    undefined field_0x6c[24];
+} tGroovidelic_spec;
 
 typedef struct {
     tU32 min_time_between;
