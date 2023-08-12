@@ -102,6 +102,14 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_render_x_i, 0x0074abc0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_render_y_i, 0x0074abbc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_render_width_i, 0x0074abe8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_render_height_i, 0x0074abc8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tClip_details, gShadow_clip_planes, 8, 0x006a2448);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFancy_shadow, 0x006a23d8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gShadow_material, 0x006a27e0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gShadow_light_ray, 0x006a27d0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gShadow_light_z, 0x006a27c0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gShadow_light_x, 0x006a27b0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gShadow_model, 0x006a27e4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gShadow_actor, 0x006a2444);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -525,10 +533,30 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0047e560, InitHUDActor, InitHUDActor_original)
 void (C2_HOOK_FASTCALL * InitShadows_original)(void);
 void C2_HOOK_FASTCALL InitShadows(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitShadows_original();
 #else
-#error "Not implemented"
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(C2V(gShadow_clip_planes)[0]) != 8);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gShadow_clip_planes)); i++) {
+        C2V(gShadow_clip_planes)[i].clip = BrActorAllocate(BR_ACTOR_CLIP_PLANE, NULL);
+        BrActorAdd(C2V(gUniverse_actor), C2V(gShadow_clip_planes)[i].clip);
+        BrClipPlaneDisable(C2V(gShadow_clip_planes)[i].clip);
+        BrMatrix34Identity(&C2V(gShadow_clip_planes)[i].clip->t.t.mat);
+    }
+    C2V(gFancy_shadow) = 1;
+    C2V(gShadow_material) = BrMaterialFind("SHADOW.MAT");
+    BrVector3Set(&C2V(gShadow_light_ray), 0.f, -1.f, 0.f);
+    BrVector3Set(&C2V(gShadow_light_z), 0.f, 0.f, -1.f);
+    BrVector3Set(&C2V(gShadow_light_x), 1.f, 0.f, 0.f);
+
+    C2V(gShadow_model) = BrModelAllocate("", 0, 0);
+    C2V(gShadow_model)->flags = BR_MODF_GENERATE_TAGS | BR_MODF_KEEP_ORIGINAL;
+    C2V(gShadow_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    C2V(gShadow_actor)->model = C2V(gShadow_model);
+    BrActorAdd(C2V(gUniverse_actor), C2V(gShadow_actor));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e99d0, InitShadows, InitShadows_original)
