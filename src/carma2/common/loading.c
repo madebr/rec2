@@ -3156,6 +3156,24 @@ void C2_HOOK_FASTCALL LoadCarMaterials(tBrender_storage* pStorage, const char* p
 }
 C2_HOOK_FUNCTION(0x004f6740, LoadCarMaterials)
 
+void C2_HOOK_FASTCALL LoadCarShrapnelMaterials(FILE* pF, tCar_spec* pCar_spec) {
+    int i;
+    char s[256];
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, count_shrapnel_materials, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, shrapnel_materials, 0x84);
+
+    /* number of materials */
+    pCar_spec->count_shrapnel_materials = GetAnInt(pF);
+
+    for (i = 0; i < pCar_spec->count_shrapnel_materials; i++) {
+        GetALineAndDontArgue(pF, s);
+        pCar_spec->shrapnel_materials[i] = GetSimpleMaterial(s, (pCar_spec == NULL || pCar_spec->driver < 6) ? 1 : 2);
+    }
+
+}
+C2_HOOK_FUNCTION(0x00488f00, LoadCarShrapnelMaterials)
+
 void (C2_HOOK_FASTCALL * LoadCar_original)(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space);
 void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec* pCar_spec, int pOwner, const char* pDriver_name, tBrender_storage* pStorage_space) {
 
@@ -3861,16 +3879,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     PossibleService();
 
     /* Materials for shrapnel */
-
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, count_shrapnel_materials, 0x6c);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, shrapnel_materials, 0x84);
-
-    /* number of materials */
-    pCar_spec->count_shrapnel_materials = GetAnInt(f);
-    for (i = 0; i < pCar_spec->count_shrapnel_materials; i++) {
-        GetALineAndDontArgue(f, s);
-        pCar_spec->shrapnel_materials[i] = GetSimpleMaterial(s, (pCar_spec == NULL || pCar_spec->driver < 6) ? 1 : 2);
-    }
+    LoadCarShrapnelMaterials(f, pCar_spec);
 
     count_vertices = 0;
     v11model* v11 = pCar_spec->car_actor->model->prepared;
