@@ -18,6 +18,7 @@
 
 #include "c2_string.h"
 
+#include <float.h>
 #include <math.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tWobble_spec, gWobble_array, 5, 0x006a22f8);
@@ -713,6 +714,31 @@ void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** pMaterials, int pC
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005182f0, AdaptMaterialsForRenderer, AdaptMaterialsForRenderer_original)
+
+int C2_HOOK_FASTCALL FindBestMatchingPaletteIndex(br_colour pColour) {
+    double min_error = DBL_MAX;
+    int i;
+    int pal_index;
+    br_colour* pal_colours;
+
+    pal_index = 127;
+    pal_colours = C2V(gRender_palette)->pixels;
+    for (i = 0; i < 256; i++) {
+        int dr, dg, db;
+        double error;
+
+        dr = ((pal_colours[i] >> 16) & 0xff) - ((pColour >> 16) & 0xff);
+        dg = ((pal_colours[i] >>  8) & 0xff) - ((pColour >>  8) & 0xff);
+        db = ((pal_colours[i] >>  0) & 0xff) - ((pColour >>  0) & 0xff);
+        error = (double)(dr * dr + dg * dg + db * db);
+        if (error < min_error) {
+            pal_index = i;
+            min_error = error;
+        }
+    }
+    return pal_index;
+}
+C2_HOOK_FUNCTION(0x005184c0, FindBestMatchingPaletteIndex)
 
 void C2_HOOK_FASTCALL DisableLights(void) {
     int i;
