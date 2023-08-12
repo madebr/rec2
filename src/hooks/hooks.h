@@ -76,6 +76,9 @@ void hook_print_stats(void);
 #define HOOK_VARIABLE_IMPLEMENT_ARRAY(TYPE, NAME, COUNT, ADDRESS)    \
     TYPE (* const HOOK_JOIN(hookvar_, NAME))[COUNT] = (TYPE (*)[COUNT])(ADDRESS)
 
+#define HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV(TYPE, NAME, ADV, ADDRESS)    \
+    TYPE (* const HOOK_JOIN(hookvar_, NAME))ADV = (TYPE (*)ADV)(ADDRESS)
+
 #define HOOK_VARIABLE(NAME)        \
     (*(HOOK_JOIN(hookvar_, NAME)))
 

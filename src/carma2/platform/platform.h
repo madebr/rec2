@@ -8,6 +8,7 @@
 C2_HOOK_VARIABLE_DECLARE(int, gGraf_spec_index);
 C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
+C2_HOOK_VARIABLE_DECLARE(int, gMsg_header_strlen);
 
 int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call);
 
@@ -72,6 +73,8 @@ void C2_HOOK_FASTCALL PDInitScreen(void);
 void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length);
 
 int C2_HOOK_FASTCALL PDNetShutdown(void);
+
+int C2_HOOK_FASTCALL PDNetInitialise(void);
 
 int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path);
 
