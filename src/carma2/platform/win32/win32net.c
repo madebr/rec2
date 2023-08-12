@@ -193,10 +193,16 @@ C2_HOOK_FUNCTION(0x00519560, PDNetInitialise)
 int (C2_HOOK_FASTCALL * PDNetShutdown_original)(void);
 int C2_HOOK_FASTCALL PDNetShutdown(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return PDNetShutdown_original();
 #else
-#error "Not implemented"
+
+    dr_dprintf("PDNetShutdown()");
+    if (C2V(gSocket) != SOCKET_ERROR) {
+        closesocket(C2V(gSocket));
+    }
+    C2V(gSocket) = SOCKET_ERROR;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00519a10, PDNetShutdown, PDNetShutdown_original)
