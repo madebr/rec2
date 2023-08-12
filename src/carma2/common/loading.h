@@ -101,6 +101,8 @@ void C2_HOOK_FASTCALL SetDronesOn(int pNewDronesOn);
 
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
+void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber);
+
 void C2_HOOK_FASTCALL WriteS32L(FILE* pF, tS32 pNumber);
 
 void C2_HOOK_FASTCALL WriteS16L(FILE* pF, tS16 pNumber);
