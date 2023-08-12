@@ -101,6 +101,8 @@ void C2_HOOK_FASTCALL SetDronesOn(int pNewDronesOn);
 
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
+tU16 C2_HOOK_FASTCALL ReadU16(FILE* pF);
+
 tU8 C2_HOOK_FASTCALL ReadU8(FILE* pF);
 
 float C2_HOOK_FASTCALL ReadF32(FILE* pF);
