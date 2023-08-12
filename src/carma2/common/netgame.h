@@ -11,4 +11,6 @@ void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_length);
 
 void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar);
 
+void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar);
+
 #endif // REC2_NETGAME_H
