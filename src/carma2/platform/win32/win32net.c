@@ -31,6 +31,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMsg_header_strlen, 0x006abf04);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSpecial_server, 0x006ac578);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV(char, gIpx_network_numbers, [16][4], 0x006ac130);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gSend_buffer, 512, 0x006ac360);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gReceive_buffer, 512, 0x006abf18);
 
 void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
     char buffer[16];
@@ -253,3 +254,138 @@ int C2_HOOK_FASTCALL BroadcastMessage(void) {
     }
     return errors == 0;
 }
+
+void C2_HOOK_FASTCALL MakeMessageToSend(int pMessage_type) {
+
+#if defined(REC2_FIX_BUGS)
+    c2_sprintf(C2V(gSend_buffer), "XXXX%s%1d", BROADCAST_HEADER, pMessage_type);
+#else
+    sprintf(C2V(gSend_buffer), "XXXX%s%0.1d", BROADCAST_HEADER, pMessage_type);
+#endif
+}
+
+int C2_HOOK_FASTCALL SameEthernetAddress(struct sockaddr* pAddr_ipx1, struct sockaddr* pAddr_ipx2) {
+
+    return c2_memcmp(&pAddr_ipx1->sa_data[4], &pAddr_ipx2->sa_data[4], 6) == 0;
+}
+
+int C2_HOOK_FASTCALL GetMessageTypeFromMessage(char* pMessage_str) {
+    char* real_msg;
+    int msg_type_int;
+
+    real_msg = &pMessage_str[4];
+    msg_type_int = 0;
+
+    // FIXME: "CW95MSG" value is used in and depends on platform
+    if (c2_strncmp(real_msg, BROADCAST_HEADER, C2V(gMsg_header_strlen)) == 0) {
+        if (isdigit(real_msg[C2V(gMsg_header_strlen)])) {
+            msg_type_int = real_msg[C2V(gMsg_header_strlen)] - '0';
+        }
+        if (msg_type_int != 0 && msg_type_int < 2) {
+            return msg_type_int;
+        }
+    }
+    return 999;
+}
+
+int C2_HOOK_FASTCALL ReceiveHostResponses(void) {
+    char str[256];
+    int i;
+    int already_registered;
+
+    char addr_string[32];
+    int sa_len;
+    int wsa_error;
+
+    C2_HOOK_BUG_ON(sizeof(C2V(gReceive_buffer)) != 0x200);
+
+    sa_len = sizeof(SOCKADDR_IPX);
+    while (1) {
+        if (recvfrom(C2V(gSocket), C2V(gReceive_buffer), sizeof(C2V(gReceive_buffer)), 0, &C2V(gListen_address), &sa_len) == SOCKET_ERROR) {
+            break;
+        }
+        NetNowIPXLocalTarget2String(addr_string, C2V(gPtr_listen_address));
+        dr_dprintf("ReceiveHostResponses(): Received string '%s' from %s", C2V(gReceive_buffer), addr_string);
+
+        if (SameEthernetAddress(C2V(gPtr_local_address), C2V(gPtr_listen_address))) {
+            dr_dprintf("*** Discounting the above 'cos we sent it ***");
+            continue;
+        }
+        if (GetMessageTypeFromMessage(C2V(gReceive_buffer)) != 2) {
+            dr_dprintf("*** Discounting the above 'cos it's not a host reply ***");
+            continue;
+        }
+
+        dr_dprintf("*** It's a host reply! ***");
+        already_registered = 0;
+        for (i = 0; i < C2V(gNumber_of_hosts); i++) {
+            if (SameEthernetAddress((struct sockaddr*)&C2V(gJoinable_games)[i].addr, C2V(gPtr_listen_address))) {
+                already_registered = 1;
+                break;
+            }
+        }
+        if (already_registered) {
+            dr_dprintf("That game already registered");
+            C2V(gJoinable_games)[i].last_response = PDGetTotalTime();
+        } else {
+            dr_dprintf("Adding joinable game to slot #%d", C2V(gNumber_of_hosts));
+            c2_memcpy(C2V(gJoinable_games)[C2V(gNumber_of_hosts)].addr, C2V(gPtr_listen_address), sizeof(struct sockaddr));
+            C2V(gJoinable_games)[C2V(gNumber_of_hosts)].last_response = PDGetTotalTime();
+            C2V(gNumber_of_hosts)++;
+            dr_dprintf("Number of games found so far: %d", C2V(gNumber_of_hosts));
+        }
+        if (C2V(gNumber_of_hosts) != 0) {
+            dr_dprintf("Currently registered net games:");
+            for (i = 0; i < C2V(gNumber_of_hosts); i++) {
+                NetNowIPXLocalTarget2String(str, (struct sockaddr*)&C2V(gJoinable_games)[i].addr);
+                dr_dprintf("%d: Host addr %s", i, str);
+            }
+        }
+    }
+    wsa_error = WSAGetLastError() != WSAEWOULDBLOCK;
+    if (wsa_error == 0) {
+        return 1;
+    }
+    dr_dprintf("ReceiveHostResponses(): Error on recvfrom() - WSAGetLastError=%d", wsa_error);
+    return 0;
+}
+
+int C2_HOOK_FASTCALL PDNetGetNextJoinGame(tNet_game_details* pGame, int pIndex) {
+    static tU32 next_broadcast_time = 0;
+    int i;
+    int j;
+    int number_of_hosts_has_changed;
+
+    dr_dprintf("PDNetGetNextJoinGame(): pIndex is %d", pIndex);
+    if (pIndex == 0) {
+        do {
+            number_of_hosts_has_changed = 0;
+            for (i = 0; i < C2V(gNumber_of_hosts); i++) {
+                if (C2V(gJoinable_games)[i].last_response + 10000 < (tU32)PDGetTotalTime()) {
+                    number_of_hosts_has_changed = 1;
+                    for (j = i; j < C2V(gNumber_of_hosts) - 1; j++) {
+                        c2_memmove(&C2V(gJoinable_games)[j], &C2V(gJoinable_games)[j + 1], sizeof(tPD_net_game_info));
+                    }
+                }
+            }
+            if (number_of_hosts_has_changed) {
+                C2V(gNumber_of_hosts)--;
+            }
+        } while (number_of_hosts_has_changed);
+        if ((tU32)PDGetTotalTime() > next_broadcast_time) {
+            next_broadcast_time = PDGetTotalTime() + 3000;
+            MakeMessageToSend(1);
+            if (BroadcastMessage() == 0) {
+                dr_dprintf("PDNetGetNextJoinGame(): Error on BroadcastMessage()");
+            }
+        }
+    }
+    ReceiveHostResponses();
+    if (C2V(gNumber_of_hosts) <= pIndex) {
+        return 0;
+    }
+    dr_dprintf("PDNetGetNextJoinGame(): Adding game.");
+    c2_memcpy(&pGame->pd_net_info.addr, &C2V(gJoinable_games)[pIndex].addr, sizeof(pGame->pd_net_info.addr));
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00519ab0, PDNetGetNextJoinGame)
