@@ -455,6 +455,14 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
 }
 C2_HOOK_FUNCTION(0x00490690, StripCRNL)
 
+void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
+    tU8 raw_byte;
+
+    raw_byte = pNumber;
+    DRfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
+}
+C2_HOOK_FUNCTION(0x0048f960, WriteU8L)
+
 void C2_HOOK_FASTCALL WriteS32L(FILE* pF, tS32 pNumber) {
     tS32 raw_long;
 
