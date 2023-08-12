@@ -455,6 +455,14 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
 }
 C2_HOOK_FUNCTION(0x00490690, StripCRNL)
 
+tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
+    tU32 raw_long;
+
+    DRfread(&raw_long, sizeof(raw_long), 1, pF);
+    return raw_long;
+}
+C2_HOOK_FUNCTION(0x0048f830, ReadU32)
+
 tU16 C2_HOOK_FASTCALL ReadU16(FILE* pF) {
     tU16 raw_short;
 
@@ -1080,16 +1088,6 @@ void C2_HOOK_FASTCALL DRrewind(FILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4be0, DRrewind, DRrewind_original)
 
-tU32 (C2_HOOK_FASTCALL * TWT_ReadBinaryU32_original)(FILE* file);
-tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file) {
-#if defined(C2_HOOKS_ENABLED)
-    return TWT_ReadBinaryU32_original(file);
-#else
-#error "Not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0048f830, TWT_ReadBinaryU32, TWT_ReadBinaryU32_original)
-
 void C2_HOOK_FASTCALL TWT_Init(void) {
     size_t i;
 
@@ -1133,7 +1131,7 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
         }
     }
     c2_strcpy(C2V(gTwatVfsMountPoints)[twt].path, path);
-    fileSize = TWT_ReadBinaryU32(f);
+    fileSize = ReadU32(f);
     c2_rewind(f);
 
     C2V(gTwatVfsMountPoints)[twt].header = BrMemAllocate(fileSize, kMem_packed_file);
