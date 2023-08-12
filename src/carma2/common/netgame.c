@@ -1,7 +1,10 @@
 #include "netgame.h"
 
 #include "globvars.h"
+#include "opponent.h"
 #include "platform.h"
+
+#include <brender/brender.h>
 
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
@@ -18,3 +21,18 @@ void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_length) {
 }
 
 C2_HOOK_FUNCTION(0x0049ee20, NetObtainSystemUserName)
+
+void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
+
+    if (pCar->driver_name[0] != '\0') {
+        if (!pCar->disabled) {
+            pCar->disabled = 1;
+            ForceRebuildActiveCarList();
+        }
+        if (pCar->car_master_actor->t.t.mat.m[3][0] < 500.0f) {
+            BrVector3Accumulate(&pCar->car_master_actor->t.t.translate.t, &C2V(gInitial_position));
+            BrVector3Copy((br_vector3*)pCar->old_frame_mat.m[3], &pCar->car_master_actor->t.t.translate.t);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00499260, DisableCar)
