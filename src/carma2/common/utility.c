@@ -502,3 +502,70 @@ br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00514730, DRActorFindRecurse, DRActorFindRecurse_original)
+
+void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF) {
+    int i;
+    int j;
+    int bit_map_size;
+    int offset;
+
+    bit_map_size = C2V(gBack_screen)->height * C2V(gBack_screen)->row_bytes;
+
+    // 1. BMP Header
+    //    1. 'BM' Signature
+    WriteU8L(pF, 'B');
+    WriteU8L(pF, 'M');
+    //    2. File size in bytes (header = 0xe bytes; infoHeader = 0x28 bytes; colorTable = 0x400 bytes; pixelData = xxx)
+    WriteU32L(pF, bit_map_size + 0x436);
+    //    3. unused
+    WriteU16L(pF, 0);
+    //    4. unused
+    WriteU16L(pF, 0);
+    //    5. pixelData offset (from beginning of file)
+    WriteU32L(pF, 0x436);
+
+    // 2. Info Header
+    //    1. InfoHeader Size
+    WriteU32L(pF, 0x28);
+    //    2. Width of bitmap in pixels
+    WriteU32L(pF, C2V(gBack_screen)->row_bytes);
+    //    3. Height of bitmap in pixels
+    WriteU32L(pF, C2V(gBack_screen)->height);
+    //    4. Number of planes
+    WriteU16L(pF, 1);
+    //    5. Bits per pixels / palletization (8 -> 8bit palletized ==> #colors = 256)
+    WriteU16L(pF, 8);
+    //    6. Compression (0 = BI_RGB -> no compression)
+    WriteU32L(pF, 0);
+    //    7. Image Size (0 --> no compression)
+    WriteU32L(pF, 0);
+    //    8. Horizontal Pixels Per Meter
+    WriteU32L(pF, 0);
+    //    9. Vertical Pixels Per Meter
+    WriteU32L(pF, 0);
+    //    10. # Actually used colors
+    WriteU32L(pF, 0);
+    //    11. Number of important colors
+    WriteU32L(pF, 256);
+
+    // 3. Color table (=palette)
+    for (i = 0; i < 256; i++) {
+        // red, green, blue, unused
+        WriteU8L(pF, ((tU8*)C2V(gCurrent_palette)->pixels)[4 * i + 0]);
+        WriteU8L(pF, ((tU8*)C2V(gCurrent_palette)->pixels)[4 * i + 1]);
+        WriteU8L(pF, ((tU8*)C2V(gCurrent_palette)->pixels)[4 * i + 2]);
+        WriteU8L(pF, 0);
+    }
+
+    // 4. Pixel Data (=LUT)
+    offset = bit_map_size - C2V(gBack_screen)->row_bytes;
+    for (i = 0; i < C2V(gBack_screen)->height; i++) {
+        for (j = 0; j < C2V(gBack_screen)->row_bytes; j++) {
+            WriteU8L(pF, ((tU8*)C2V(gBack_screen)->pixels)[offset]);
+            offset++;
+        }
+        offset -= 2 * C2V(gBack_screen)->row_bytes;
+    }
+    WriteU16L(pF, 0);
+}
+C2_HOOK_FUNCTION(0x00514ab0, PrintScreenFile)
