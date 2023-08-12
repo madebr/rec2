@@ -449,6 +449,14 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
 }
 C2_HOOK_FUNCTION(0x00490690, StripCRNL)
 
+void C2_HOOK_FASTCALL WriteS8L(FILE* pF, tS8 pNumber) {
+    tS8 raw_byte;
+
+    raw_byte = pNumber;
+    DRfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
+}
+C2_HOOK_FUNCTION(0x0048f9d0, WriteS8L)
+
 void C2_HOOK_FASTCALL SkipBytes(FILE* pF, int pBytes_to_skip) {
 
     DRfseek(pF, pBytes_to_skip, SEEK_CUR);
