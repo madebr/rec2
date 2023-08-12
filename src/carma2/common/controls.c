@@ -257,18 +257,6 @@ void C2_HOOK_FASTCALL ToggleSoundEnable(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455a50, ToggleSoundEnable, ToggleSoundEnable_original)
 
-// Key: 'shift+d'
-void (C2_HOOK_FASTCALL * WriteScreenShotBMP_original)(void);
-void C2_HOOK_FASTCALL WriteScreenShotBMP(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
-    WriteScreenShotBMP_original();
-#else
-#error "Not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00518780, WriteScreenShotBMP, WriteScreenShotBMP_original)
-
 // Key: 'f1'
 void (C2_HOOK_FASTCALL * ToggleHUD_original)(void);
 void C2_HOOK_FASTCALL ToggleHUD(void) {
