@@ -224,3 +224,13 @@ void C2_HOOK_FASTCALL PDNetStartProducingJoinList(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00519a40, PDNetStartProducingJoinList)
+
+void C2_HOOK_FASTCALL PDNetEndJoinList(void) {
+
+    dr_dprintf("PDNetEndJoinList()");
+    if (C2V(gJoinable_games) != NULL) {
+        BrMemFree(C2V(gJoinable_games));
+    }
+    C2V(gJoinable_games) = NULL;
+}
+C2_HOOK_FUNCTION(0x00519a80, PDNetEndJoinList)
