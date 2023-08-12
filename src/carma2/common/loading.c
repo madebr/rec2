@@ -4071,14 +4071,14 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
     acceleration_highest_gear = GetAScalar(pF);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, collision_info, 0x8);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, car, 0x23c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, owner, 0x23c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags_0x238, 0x238);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x1a0, 0x1a0);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x1a4, 0x1a4);
 
     C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
     c->collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
-    c->collision_info->car = c;
+    c->collision_info->owner = c;
     c->collision_info->flags_0x238 = 1;
     c->collision_info->field_0x1a0 = 0xffff;
     c->collision_info->field_0x1a4 = 0;
