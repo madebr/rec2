@@ -72,4 +72,6 @@ void C2_HOOK_FASTCALL PrintScreen(void);
 
 int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
 
+void C2_HOOK_FASTCALL DumpActorTree(br_actor* pActor, const char* pMsg);
+
 #endif // REC2_UTILITY_H

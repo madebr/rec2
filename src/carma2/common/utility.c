@@ -779,3 +779,12 @@ int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
     return BrActorEnum(pActor, DumpVisibleActorsCB, pData);
 }
 C2_HOOK_FUNCTION(0x00518b00, DumpVisibleActorsCB)
+
+void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg) {
+
+    c2_printf("MSG:\"%s\"\n", pMsg);
+    BrActorEnum(pActor, DumpVisibleActorsCB, NULL);
+    c2_printf("----------------------------------\n\n");
+    c2_fflush(c2_stdout);
+}
+C2_HOOK_FUNCTION(0x00518ac0, DumpVisibleActors)
