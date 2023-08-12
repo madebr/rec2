@@ -70,4 +70,6 @@ void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
 void C2_HOOK_FASTCALL PrintScreen(void);
 
+int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
+
 #endif // REC2_UTILITY_H
