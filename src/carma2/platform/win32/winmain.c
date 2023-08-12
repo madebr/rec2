@@ -1,6 +1,7 @@
 #include "c2_hooks.h"
 
 #include "win32.h"
+#include "win32net.h"
 
 #include "errors.h"
 #include "loading.h"
@@ -19,10 +20,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNShowCmd, 0x006ace9c);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const char*, gCarma2WndClassName, 0x006621d0, "Carma2MainWndClass");;
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const char*, gRegionDescriminator, 0x00662270, "AUDIQUATTRO");
-
-
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gPathNetworkIni, 240, 0x006b3380);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gPathNetworkIniValid, 0x006ad4c4);
 
 int (APIENTRY * WinMain_original)(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
