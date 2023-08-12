@@ -64,6 +64,11 @@ typedef struct {
 } tRGBColour;
 
 typedef struct {
+    br_actor* clip;
+    br_scalar length;
+} tClip_details;
+
+typedef struct {
     tU32 total_duration;
     tU32 durations[1];
     tU8 index;
