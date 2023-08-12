@@ -8,6 +8,9 @@
 #include <brender/brender.h>
 #include <winsock.h>
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gPathNetworkIni, 240);
+C2_HOOK_VARIABLE_DECLARE(int, gPathNetworkIniValid);
+
 void C2_HOOK_FASTCALL NetNowIPXLocalTarget2String(char* pString, struct sockaddr* pSock_addr);
 
 #endif // C2_WIN32_NET_H
