@@ -503,6 +503,23 @@ br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00514730, DRActorFindRecurse, DRActorFindRecurse_original)
 
+FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
+    int index;
+    FILE* f;
+    tPath_name the_path;
+
+    for (index = 0; index < 10000; index++) {
+        PathCat(the_path, C2V(gApplication_path), pPrefix);
+        c2_sprintf(the_path + c2_strlen(the_path), "%04d.%s", index, pExtension);
+        f = DRfopen(the_path, "rt");
+        if (f == NULL) {
+            return DRfopen(the_path, "wb");
+        }
+        DRfclose(f);
+    }
+    return NULL;
+}
+
 void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF) {
     int i;
     int j;
@@ -569,3 +586,100 @@ void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF) {
     WriteU16L(pF, 0);
 }
 C2_HOOK_FUNCTION(0x00514ab0, PrintScreenFile)
+
+void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
+    int i;
+    int j;
+    int bit_map_size;
+    int offset;
+
+    if (C2V(gBack_screen)->pixels == NULL) {
+        BrPixelmapDirectLock(C2V(gBack_screen), 1);
+    }
+
+    bit_map_size = C2V(gBack_screen)->height * 3 * C2V(gBack_screen)->width;
+
+    // 1. BMP Header
+    //    1. 'BM' Signature
+    WriteU8L(pF, 'B');
+    WriteU8L(pF, 'M');
+    //    2. File size in bytes (header = 0xe bytes; infoHeader = 0x28 bytes; colorTable = 0x400 bytes; pixelData = xxx)
+    WriteU32L(pF, 0x36 + bit_map_size);
+    //    3. unused
+    WriteU16L(pF, 0);
+    //    4. unused
+    WriteU16L(pF, 0);
+    //    5. pixelData offset (from beginning of file)
+    WriteU32L(pF, 0x36);
+
+    // 2. Info Header
+    //    1. InfoHeader Size
+    WriteU32L(pF, 0x28);
+    //    2. Width of bitmap in pixels
+    WriteU32L(pF, C2V(gBack_screen)->width);
+    //    3. Height of bitmap in pixels
+    WriteU32L(pF, C2V(gBack_screen)->height);
+    //    4. Number of planes
+    WriteU16L(pF, 1);
+    //    5. Bits per pixels / palletization (0x18 -> 24bit colours ==> #colors = 2^24)
+    WriteU16L(pF, 0x18);
+    //    6. Compression (0 = BI_RGB -> no compression)
+    WriteU32L(pF, 0);
+    //    7. Image Size (0 --> no compression)
+    WriteU32L(pF, 0);
+    //    8. Horizontal Pixels Per Meter
+    WriteU32L(pF, 0);
+    //    9. Vertical Pixels Per Meter
+    WriteU32L(pF, 0);
+    //    10. # Actually used colors
+    WriteU32L(pF, 0);
+    //    11. Number of important colors
+    WriteU32L(pF, 256);
+
+    // 4. Pixel Data (=LUT)
+    offset = C2V(gBack_screen)->row_bytes * (C2V(gBack_screen)->height - 1);
+    for (i = 0; i < C2V(gBack_screen)->height; i++) {
+        for (j = 0; j < C2V(gBack_screen)->width; j++) {
+            tU8 r, g, b;
+            tU16 pixel = *(tU16*)&((tU8*)C2V(gBack_screen)->pixels)[offset];
+            if (C2V(gBack_screen)->type == BR_PMT_RGB_565) {
+                b = pixel << 3;
+                g = (pixel >> 3) & 0xf8;
+                r = (pixel >> 8) & 0xf8;
+            } else if (C2V(gBack_screen)->type == BR_PMT_RGB_555) {
+                b = pixel << 3;
+                g = (pixel >> 2) & 0xf8;
+                r = (pixel >> 7) & 0xf8;
+            } else {
+                b = 0;
+                g = 0;
+                r = 0;
+            }
+            WriteU8L(pF, b);
+            WriteU8L(pF, g);
+            WriteU8L(pF, r);
+            offset += 2;
+        }
+        offset -= 2 * C2V(gBack_screen)->width + C2V(gBack_screen)->row_bytes;
+    }
+    WriteU16L(pF, 0);
+
+    if (C2V(gBack_screen)->pixels != NULL) {
+        BrPixelmapDirectUnlock(C2V(gBack_screen));
+    }
+}
+
+void C2_HOOK_FASTCALL PrintScreen(void) {
+    FILE* f;
+
+    f = OpenUniqueFileB("DUMP", "BMP");
+    if (f != NULL) {
+        if (C2V(gBack_screen)->type == BR_PMT_INDEX_8) {
+            PrintScreenFile(f);
+        } else {
+            PrintScreenFile16(f);
+        }
+        DRfclose(f);
+    }
+}
+C2_HOOK_FUNCTION(0x00518780, PrintScreen)
