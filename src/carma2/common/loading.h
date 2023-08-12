@@ -304,7 +304,7 @@ void C2_HOOK_FASTCALL AddRefOffset(int* pRef_holder);
 
 void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version);
 
-br_material* C2_HOOK_FASTCALL GetSimpleMaterial(const char* pName, tRendererShadingType pShading_type);
+br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type);
 
 void C2_HOOK_FASTCALL GetAVector(FILE* pF, br_vector3* pV);
 
