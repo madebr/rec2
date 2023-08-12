@@ -49,7 +49,7 @@ void C2_HOOK_FASTCALL CalcPlayerConspicuousness(tOpponent_spec* pOpponent_spec) 
 C2_HOOK_FUNCTION_ORIGINAL(0x004adae0, CalcPlayerConspicuousness, CalcPlayerConspicuousness_original)
 
 void (C2_HOOK_FASTCALL * ProcessPursueAndTwat_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
-void ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 
 #if defined(C2_HOOKS_ENABLED)
     ProcessPursueAndTwat_original(pOpponent_spec, pCommand);
@@ -58,3 +58,14 @@ void ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProcess_objective_com
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ab190, ProcessPursueAndTwat, ProcessPursueAndTwat_original)
+
+void (C2_HOOK_FASTCALL * RebuildActiveCarList_original)(void);
+void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    RebuildActiveCarList_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a7a80, RebuildActiveCarList, RebuildActiveCarList_original)
