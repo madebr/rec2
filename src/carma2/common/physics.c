@@ -1,5 +1,7 @@
 #include "physics.h"
 
+#include "rec2_macros.h"
+
 void (C2_HOOK_FASTCALL * InitPhysics_original)(void);
 void C2_HOOK_FASTCALL InitPhysics(void) {
 
@@ -33,3 +35,17 @@ void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_inf
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c60a0, UpdateCollisionBoundingBox, UpdateCollisionBoundingBox_original)
+
+tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
+tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
+
+REC2_THISCALL_UNUSED(pArg2);
+
+#if defined(C2_HOOKS_ENABLED)
+    return CreateSphericalCollisionObject_original(pModel, pWeight);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004da400, CreateSphericalCollisionObject, CreateSphericalCollisionObject_original)
+
