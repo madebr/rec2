@@ -62,4 +62,6 @@ intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg);
 
 br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char* pName);
 
+void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF);
+
 #endif // REC2_UTILITY_H
