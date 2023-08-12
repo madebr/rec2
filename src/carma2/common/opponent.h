@@ -20,4 +20,6 @@ void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProc
 
 void C2_HOOK_FASTCALL RebuildActiveCarList(void);
 
+void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
+
 #endif //REC2_OPPONENT_H

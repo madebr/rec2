@@ -3,6 +3,8 @@
 #include "finteray.h"
 #include "globvars.h"
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gActive_car_list_rebuild_required, 0x0069173c);
+
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 
     C2V(gOpponents)[pOpponent_index].psyche.grudge_against_player = 0;
@@ -69,3 +71,12 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a7a80, RebuildActiveCarList, RebuildActiveCarList_original)
+
+void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
+
+    C2V(gActive_car_list_rebuild_required) = 1;
+    if (C2V(gProgram_state).racing) {
+        RebuildActiveCarList();
+    }
+}
+C2_HOOK_FUNCTION(0x004a7a60, ForceRebuildActiveCarList)
