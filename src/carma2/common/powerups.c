@@ -480,3 +480,4 @@ void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF) {
     C2V(gUnknown_smashable_006a3660).mode = kSmashableMode_Remove;
 }
 C2_HOOK_FUNCTION(0x004efa00, ReadPowerupSmashables)
+
