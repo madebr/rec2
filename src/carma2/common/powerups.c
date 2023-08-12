@@ -5,6 +5,7 @@
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
+#include "physics.h"
 #include "platform.h"
 #include "shrapnel.h"
 #include "skidmark.h"
@@ -215,6 +216,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tPeriodic_proc*, gPeriodic_procs, 56, 0x00
     NULL,
     NULL,
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tShit_mine, gShit_mines, 20, 0x00705560);
 
 void (C2_HOOK_FASTCALL * InitPowerups_original)(void);
 void C2_HOOK_FASTCALL InitPowerups(void) {
@@ -481,3 +483,27 @@ void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x004efa00, ReadPowerupSmashables)
 
+void C2_HOOK_FASTCALL InitShitMines(void) {
+    tPath_name the_path;
+    tTWTVFS twt;
+    int i;
+
+    PathCat(the_path, C2V(gApplication_path), "MINE");
+    twt = TWT_MountEx(the_path);
+    LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
+    TWT_UnmountEx(twt);
+
+    C2_HOOK_BUG_ON(sizeof(tShit_mine) != 56);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gShit_mines)) != 20);
+    for (i = 0; i < REC2_ASIZE(C2V(gShit_mines)); i++) {
+        C2V(gShit_mines)[i].flags = 4;
+        C2V(gShit_mines)[i].field_0x35 = 0;
+        C2V(gShit_mines)[i].collision_info = CreateSphericalCollisionObject(BrModelFind("SHITMINE.ACT") REC2_THISCALL_EDX, C2V(gMass_mine));
+        C2V(gShit_mines)[i].collision_info->uid = i;
+        C2V(gShit_mines)[i].collision_info->flags_0x238 = 0x40;
+        C2V(gShit_mines)[i].collision_info->owner = &C2V(gShit_mines)[i];
+        BrMatrix34Translate(&C2V(gShit_mines)[i].collision_info->transform_matrix, 0.f, 0.f, 0.f);
+        BrMatrix34Translate(&C2V(gShit_mines)[i].collision_info->actor->t.t.mat, 0.f, 0.f, 0.f);
+    }
+}
+C2_HOOK_FUNCTION(0x004da530, InitShitMines)

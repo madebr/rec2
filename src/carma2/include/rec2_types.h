@@ -205,6 +205,22 @@ typedef struct tDynamic_message {
 } tDynamic_message;
 
 typedef struct {
+    int flags;
+    int field1_0x4;
+    tCollision_info* collision_info;
+    float field3_0xc;
+    float initial_y_speed_factor;
+    float initial_z_omega_factor;
+    float initial_x_omega_factor;
+    undefined field_0x1c[12];
+    tCar_spec* car;
+    float max_damage;
+    undefined field_0x30[5];
+    tU8 field_0x35;
+    undefined field_0x36[2];
+} tShit_mine;
+
+typedef struct {
     br_material* material;
     int used;
     br_uint_32 index;
@@ -2435,7 +2451,7 @@ typedef struct tCollision_info {
     tU8 flags_0x238;
     tU8 field_0x239;
     undefined field_0x23a[2];
-    tCar_spec* car;
+    void* owner;
     undefined* field_0x240;
     br_vector3 water_normal;
     br_scalar water_d; /* Created by retype action */

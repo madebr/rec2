@@ -37,6 +37,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gStarting_money, 3);
 C2_HOOK_VARIABLE_DECLARE(float, gCamera_angle);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gWheel_actor_names, 6);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPivot_actor_names, 6);
+C2_HOOK_VARIABLE_DECLARE(float, gMass_mine);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
 
