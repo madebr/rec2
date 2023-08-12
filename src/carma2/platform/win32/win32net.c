@@ -30,6 +30,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_networks, 0x006ac128);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMsg_header_strlen, 0x006abf04);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSpecial_server, 0x006ac578);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV(char, gIpx_network_numbers, [16][4], 0x006ac130);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gSend_buffer, 512, 0x006ac360);
 
 void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
     char buffer[16];
@@ -234,3 +235,21 @@ void C2_HOOK_FASTCALL PDNetEndJoinList(void) {
     C2V(gJoinable_games) = NULL;
 }
 C2_HOOK_FUNCTION(0x00519a80, PDNetEndJoinList)
+
+int C2_HOOK_FASTCALL BroadcastMessage(void) {
+    int i;
+    int errors;
+    char broadcast_addr_string[32];
+
+    errors = 0;
+    for (i = 0; i < C2V(gNumber_of_networks); i++) {
+        c2_memcpy(C2V(gPtr_broadcast_address)->sa_data, C2V(gIpx_network_numbers)[0], 4);
+        NetNowIPXLocalTarget2String(broadcast_addr_string, C2V(gPtr_broadcast_address));
+        dr_dprintf("Broadcasting on address '%s'", broadcast_addr_string);
+        if (sendto(C2V(gSocket), C2V(gSend_buffer), c2_strlen(C2V(gSend_buffer)) + 1, 0, &C2V(gBroadcast_address), sizeof(C2V(gBroadcast_address))) == SOCKET_ERROR) {
+            dr_dprintf("BroadcastMessage(): Error on sendto() - WSAGetLastError=%d", WSAGetLastError());
+            errors = 1;
+        }
+    }
+    return errors == 0;
+}
