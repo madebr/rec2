@@ -101,6 +101,8 @@ void C2_HOOK_FASTCALL SetDronesOn(int pNewDronesOn);
 
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
+tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
+
 tU16 C2_HOOK_FASTCALL ReadU16(FILE* pF);
 
 tU8 C2_HOOK_FASTCALL ReadU8(FILE* pF);
@@ -196,9 +198,6 @@ int C2_HOOK_FASTCALL DRftell(FILE* pF);
 int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos);
 
 void C2_HOOK_FASTCALL DRrewind(FILE* pF);
-
-/// FIXME: rename to DRxxx
-tU32 C2_HOOK_FASTCALL TWT_ReadBinaryU32(FILE* file);
 
 void C2_HOOK_FASTCALL TWT_Init(void);
 
