@@ -455,6 +455,14 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
 }
 C2_HOOK_FUNCTION(0x00490690, StripCRNL)
 
+float C2_HOOK_FASTCALL ReadF32(FILE* pF) {
+    float f;
+
+    DRfread(&f, sizeof(f), 1, pF);
+    return f;
+}
+C2_HOOK_FUNCTION(0x0048f890, ReadF32)
+
 tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF) {
     tS32 raw_long;
 
