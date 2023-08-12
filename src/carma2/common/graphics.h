@@ -111,6 +111,8 @@ int C2_HOOK_FASTCALL UnlockBackScreen(int pValue);
 
 void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** pMaterials, int pCount, tRendererShadingType pShading);
 
+int C2_HOOK_FASTCALL FindBestMatchingPaletteIndex(br_colour pColour);
+
 void C2_HOOK_FASTCALL DisableLights(void);
 
 void C2_HOOK_FASTCALL EnableLights(void);
