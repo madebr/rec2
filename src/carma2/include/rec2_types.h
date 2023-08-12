@@ -2639,6 +2639,11 @@ typedef struct {
     char addr[16]; /* struct sockaddr addr; */
 } tPD_net_player_info;
 
+typedef struct {
+    char addr[16]; /* struct sockaddr addr; */
+    tU32 last_response;
+} tPD_net_game_info;
+
 typedef enum {
     eNet_game_XXXXX = -1 /* FIXE: remove eNet_game_XXXXX and add real stages */
 } tNet_game_stage;
