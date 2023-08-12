@@ -251,6 +251,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPivot_actor_names, 6, 0x0065
     "IRLPIVOT.ACT",
     "IRRPIVOT.ACT",
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gSimple_materials, 32, 0x0074b500);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU32, gSimple_material_colours, 12, 0x006572f0, {
+    0x005d0303, 0x02a56e04, 0x03a9a905, 0x08006868,
+    0x0d3c3626, 0x0e212121, 0x15284c21, 0x1900326a,
+    0x1a93491d, 0x1ec0bfc0, 0x23141414, 0x00000000,
+});
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
@@ -4285,13 +4291,50 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
     C2_HOOK_ASSERT(c2_strcmp(s, "END OF MECHANICS STUFF") != 0);
 }
 
-br_material* (C2_HOOK_FASTCALL * GetSimpleMaterial_original)(const char* pName, tRendererShadingType pShading_type);
-br_material* C2_HOOK_FASTCALL GetSimpleMaterial(const char* pName, tRendererShadingType pShading_type) {
+br_material* (C2_HOOK_FASTCALL * GetSimpleMaterial_original)(char* pName, tRendererShadingType pShading_type);
+br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingType pShading_type) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return GetSimpleMaterial_original(pName, pShading_type);
 #else
-#error "Not implemented"
+    int i;
+    br_colour colour;
+
+    if (pName[0] == 'M') {
+        c2_strtok(pName, "\t ,/");
+        for (i = 0; C2V(gSimple_material_colours)[i] != 0; i++) {
+            if (10 * (pName[1] - '0') + pName[2] - '0' == (C2V(gSimple_material_colours)[i] >> 24)) {
+                break;
+            }
+        }
+        if (C2V(gSimple_material_colours)[i] == 0) {
+            PDFatalError("Obsolete simple material");
+        }
+        colour = C2V(gSimple_material_colours)[i] & 0xffffff;
+    } else {
+        int r, g, b;
+        c2_sscanf(pName, "%d,%d,%d", &r, &g, &b);
+        colour = (r << 16) | (g << 8) | (b << 0);
+    }
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSimple_materials)); i++) {
+        if (C2V(gSimple_materials)[i] == NULL) {
+            break;
+        }
+        if (C2V(gSimple_materials)[i]->colour == colour) {
+            return C2V(gSimple_materials)[i];
+        }
+    }
+    if (i >= REC2_ASIZE(C2V(gSimple_materials))) {
+        return NULL;
+    }
+    C2V(gSimple_materials)[i] = BrMaterialAllocate("Simple");
+    C2V(gSimple_materials)[i]->colour = colour;
+    C2V(gSimple_materials)[i]->index_base = FindBestMatchingPaletteIndex(colour);
+    C2V(gSimple_materials)[i]->index_range = 0;
+    AdaptMaterialsForRenderer(&C2V(gSimple_materials)[i], 1, pShading_type);
+    BrMaterialAdd(C2V(gSimple_materials)[i]);
+    return C2V(gSimple_materials)[i];
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00488dd0, GetSimpleMaterial, GetSimpleMaterial_original);
