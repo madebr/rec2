@@ -455,6 +455,12 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
 }
 C2_HOOK_FUNCTION(0x00490690, StripCRNL)
 
+void C2_HOOK_FASTCALL SkipBytes(FILE* pF, int pBytes_to_skip) {
+
+    DRfseek(pF, pBytes_to_skip, SEEK_CUR);
+}
+C2_HOOK_FUNCTION(0x0048f9f0, SkipBytes)
+
 tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr) {
     tU32 raw_long;
 
