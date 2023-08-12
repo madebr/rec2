@@ -3,6 +3,7 @@
 #include "win32.h"
 
 #include "errors.h"
+#include "platform.h"
 
 #include "c2_string.h"
 
@@ -10,6 +11,7 @@
 #include <wsipx.h>
 
 #define BROADCAST_HEADER "CAR2MSG"
+#define JOINABLE_GAMES_CAPACITY 16
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gPathNetworkIni, 240, 0x006b3380);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPathNetworkIniValid, 0x006ad4c4);
@@ -206,3 +208,19 @@ int C2_HOOK_FASTCALL PDNetShutdown(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00519a10, PDNetShutdown, PDNetShutdown_original)
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_hosts, 0x006ac35c);
+C2_HOOK_VARIABLE_IMPLEMENT(tPD_net_game_info*, gJoinable_games, 0x006ac574);
+
+void C2_HOOK_FASTCALL PDNetStartProducingJoinList(void) {
+
+    C2_HOOK_BUG_ON(sizeof(tPD_net_game_info) * JOINABLE_GAMES_CAPACITY != 0x140);
+
+    dr_dprintf("PDNetStartProducingJoinList()");
+    C2V(gNumber_of_hosts) = 0;
+    C2V(gJoinable_games) = BrMemAllocate(sizeof(tPD_net_game_info) * JOINABLE_GAMES_CAPACITY, BR_MEMORY_APPLICATION);
+    if (C2V(gJoinable_games) == NULL) {
+        PDFatalError("Can't allocate memory for joinable games");
+    }
+}
+C2_HOOK_FUNCTION(0x00519a40, PDNetStartProducingJoinList)
