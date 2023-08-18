@@ -41,7 +41,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gSight_distance_squared, 0x0068b840);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGroovidelics_array_size, 0x0068b848);
 C2_HOOK_VARIABLE_IMPLEMENT(tGroovidelic_spec*, gGroovidelics_array, 0x0068b850);
-C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume*, gDefault_water_spec_vol_real, 0x00761f44);
+C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume*, gDefault_water_spec_vol_real, 0x004ff110);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gRace_path, 0x0074d0a0, 256);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tMaterial_exception*, gMaterial_exceptions, 0x0074ca04);
 
@@ -1529,3 +1530,18 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
     return C2V(gDefault_water_spec_vol_real);
 }
 C2_HOOK_FUNCTION(0x004ff110, GetDefaultSpecialVolumeForWater)
+
+void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF) {
+
+    /* //////////// GLOBAL LIGHTING DATA /////////// */
+
+    /* RGB for main directional light-source */
+    GetThreeInts(pF, &C2V(gLighting_data).directional.red, &C2V(gLighting_data).directional.green, &C2V(gLighting_data).directional.blue);
+    /* Ambient/Diffuse light to be used when plaything ambient says 0 */
+    GetPairOfScalars(pF, &C2V(gLighting_data).ambient_0, &C2V(gLighting_data).diffuse_0);
+    /* Ambient/Diffuse light to be used when plaything ambient says 1 */
+    GetPairOfScalars(pF, &C2V(gLighting_data).ambient_1, &C2V(gLighting_data).diffuse_1);
+    /* Ambient/Diffuse light to be used when plaything ambient says anything else */
+    GetPairOfScalars(pF, &C2V(gLighting_data).ambient_else, &C2V(gLighting_data).diffuse_else);
+}
+C2_HOOK_FUNCTION(0x00486dc0, LoadGlobalLighting)
