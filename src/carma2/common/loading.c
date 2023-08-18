@@ -708,6 +708,12 @@ float C2_HOOK_FASTCALL GetAScalar(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x0048fb80, GetAScalar)
 
+void C2_HOOK_FASTCALL GetPairOfScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2) {
+
+    GetPairOfFloats(pF, pS1, pS2);
+}
+C2_HOOK_FUNCTION(0x00490130, GetPairOfScalars)
+
 void C2_HOOK_FASTCALL GetPairOfFloats(FILE* pF, float* pF1, float* pF2) {
     char s[256];
     char* str;
