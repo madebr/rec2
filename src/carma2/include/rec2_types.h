@@ -2067,12 +2067,12 @@ typedef struct {
 typedef struct {
     tRGB_colour directional;
     float ambient_else;
-    float diffues_else;
+    float diffuse_else;
     float ambient_1;
     float diffuse_1;
     float ambient_0;
     float diffuse_0;
-} tDRLighting_data;
+} tLighting_data;
 
 typedef struct tMaterial_exception {
     struct tMaterial_exception* next;

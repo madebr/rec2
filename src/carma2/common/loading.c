@@ -2596,7 +2596,7 @@ void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
     light = actor->type_data;
     light->type = BR_LIGHT_DIRECT;
     light->attenuation_c = 1.f;
-    light->colour = BR_COLOUR_RGB(C2V(gGlobal_lighting_data).directional.red, C2V(gGlobal_lighting_data).directional.green, C2V(gGlobal_lighting_data).directional.blue);
+    light->colour = BR_COLOUR_RGB(C2V(gLighting_data).directional.red, C2V(gLighting_data).directional.green, C2V(gLighting_data).directional.blue);
     BrMatrix34RotateX(&actor->t.t.mat, BR_ANGLE_DEG(300));
     BrMatrix34PostRotateY(&actor->t.t.mat, BR_ANGLE_DEG(30));
     C2V(gLight_array)[C2V(gNumber_of_lights)] = actor;

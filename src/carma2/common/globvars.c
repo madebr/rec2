@@ -82,7 +82,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gUse_actor_dimming, 0x0074cf60);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_actors, 0x0068c71c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gActor_array, 100, 0x0074ac00);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_lights, 0x0068c720);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tDRLighting_data, gGlobal_lighting_data, 0x006572cc, {
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tLighting_data, gLighting_data, 0x006572cc, {
     { 255, 255, 255 },
     .2f, .8f,
     .2f, .8f,
