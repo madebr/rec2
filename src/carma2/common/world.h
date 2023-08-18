@@ -121,4 +121,6 @@ tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor);
 
 tSpecial_volume* GetDefaultSpecialVolumeForWater(void);
 
+void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF);
+
 #endif // REC2_WORLD_H
