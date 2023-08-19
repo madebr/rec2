@@ -341,4 +341,6 @@ void C2_HOOK_FASTCALL AttachCrushDataToActorModels(br_actor* pActor, tCar_spec* 
 
 void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath);
 
+int C2_HOOK_FASTCALL LoadAllModelsInPath(tBrender_storage* pStorage, const char* pPath);
+
 #endif //REC2_LOADING_H
