@@ -4632,3 +4632,13 @@ int C2_HOOK_FASTCALL LoadAllModelsInPath(tBrender_storage* pStorage, const char*
     return new_ones;
 }
 C2_HOOK_FUNCTION(0x004f6580, LoadAllModelsInPath)
+
+void C2_HOOK_FASTCALL LoadDATModelsCallback(const char* pPath) {
+    char s[256];
+
+    StringToUpper(s, pPath);
+    if (c2_strstr(s, ".DAT") != NULL) {
+        LoadAllModelsInPath(C2V(gStorageForCallbacks), pPath);
+    }
+}
+C2_HOOK_FUNCTION(0x004f6540, LoadDATModelsCallback)
