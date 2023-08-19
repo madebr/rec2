@@ -4579,3 +4579,9 @@ void C2_HOOK_FASTCALL LoadDATModelsCallback(const char* pPath) {
     }
 }
 C2_HOOK_FUNCTION(0x004f6540, LoadDATModelsCallback)
+
+void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pPath) {
+    C2V(gStorageForCallbacks) = pStorage;
+    DRForEveryFile(pPath, LoadDATModelsCallback);
+}
+C2_HOOK_FUNCTION(0x004f6520, LoadTrackModels)
