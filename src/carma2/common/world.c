@@ -41,6 +41,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gSight_distance_squared, 0x0068b840);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGroovidelics_array_size, 0x0068b848);
 C2_HOOK_VARIABLE_IMPLEMENT(tGroovidelic_spec*, gGroovidelics_array, 0x0068b850);
+
 C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume*, gDefault_water_spec_vol_real, 0x004ff110);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gRace_path, 0x0074d0a0, 256);
 
@@ -1383,20 +1384,19 @@ void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile,
 }
 C2_HOOK_FUNCTION(0x00501fe0, LoadSomeMaterials)
 
-
-tAdd_to_storage_result AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod) {
+tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod) {
     int i;
 
     C2V(gDuplicate_model) = NULL;
     if (pStorage_space->materials_count >= pStorage_space->max_models) {
         return eStorage_not_enough_room;
     }
-    if (pStorage_space->flags & 0x1) {
+    if (pStorage_space->flags & 0x1) { /* FIXME: add enum (0x1 -> eStorage_space_flags_No_duplicates*/
         for (i = 0; i < pStorage_space->models_count; i++) {
-            if (pStorage_space->models[i]
-                && pStorage_space->models[i]->identifier
-                && pThe_mod->identifier
-                && !c2_strcmp(pStorage_space->models[i]->identifier, pThe_mod->identifier)) {
+            if (pStorage_space->models[i] != NULL
+                && pStorage_space->models[i]->identifier != NULL
+                && pThe_mod->identifier != NULL
+                && c2_strcmp(pStorage_space->models[i]->identifier, pThe_mod->identifier) == 0) {
                 C2V(gDuplicate_model) = pStorage_space->models[i];
                 return eStorage_duplicate;
             }
@@ -1406,6 +1406,7 @@ tAdd_to_storage_result AddModelToStorage(tBrender_storage* pStorage_space, br_mo
     pStorage_space->models_count++;
     return eStorage_allocated;
 }
+C2_HOOK_FUNCTION(0x00501260, AddModelToStorage)
 
 int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char* pPath) {
     int i;
