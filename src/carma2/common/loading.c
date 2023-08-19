@@ -4597,3 +4597,38 @@ void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char*
     }
 }
 C2_HOOK_FUNCTION(0x004f6640, LoadTrackMaterials)
+
+int C2_HOOK_FASTCALL LoadAllModelsInPath(tBrender_storage* pStorage, const char* pPath) {
+    br_model* temp_array[2000];
+    int count;
+    int new_ones;
+    int i;
+
+    new_ones = 0;
+    count = BrModelLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
+    DisableVertexColours(temp_array, count);
+    if (count == 0) {
+        FatalError(kFatalError_CannotLoadModelFileOrItIsEmpty_S, pPath);
+    }
+    for (i = 0; i < count; i++) {
+        if (temp_array[i] == NULL) {
+            continue;
+        }
+        switch (AddModelToStorage(pStorage, temp_array[i])) {
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientMaterialSlots);
+            break;
+        case eStorage_duplicate:
+            BrModelFree(temp_array[i]);
+            break;
+        case eStorage_allocated:
+            temp_array[i]->flags |= BR_MODF_UPDATEABLE;
+            temp_array[i]->flags &= ~(BR_MODF_DONT_WELD | BR_MODF_CUSTOM_NORMALS);
+            BrModelAdd(temp_array[i]);
+            new_ones++;
+            break;
+        }
+    }
+    return new_ones;
+}
+C2_HOOK_FUNCTION(0x004f6580, LoadAllModelsInPath)
