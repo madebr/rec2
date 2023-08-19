@@ -345,4 +345,6 @@ int C2_HOOK_FASTCALL LoadAllModelsInPath(tBrender_storage* pStorage, const char*
 
 void C2_HOOK_FASTCALL LoadDATModelsCallback(const char* pPath);
 
+void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pPath);
+
 #endif //REC2_LOADING_H
