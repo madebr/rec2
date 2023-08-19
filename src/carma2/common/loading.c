@@ -4567,3 +4567,33 @@ void C2_HOOK_FASTCALL AttachCrushDataToActorModels(br_actor* pActor, tCar_spec* 
     DRActorEnumRecurse(pActor, ActorModelAttachCrushData, pCar_spec);
 }
 C2_HOOK_FUNCTION(0x0042a210, AttachCrushDataToActorModels)
+
+void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath) {
+    int i;
+
+    LoadSomeMaterialsWithShading(pStorage, pPath, kRendererShadingType_Default);
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_material* material = pStorage->materials[i];
+        if (C2V(gNbPixelBits) == 16) {
+            if ((uintptr_t)material->user == 0x5ba0) { /* FIXME: what is 0x5ba0/23456 magic? */
+                float original_ka = material->ka;
+                int original_flags = material->flags;
+                material->ka = 1.f;
+                material->kd = 1.f;
+                material->flags |= BR_MATF_SMOOTH | BR_MATF_LIGHT;
+                material->flags &= ~BR_MATF_PRELIT;
+                if (original_flags == material->flags && original_ka > 0.999f) {
+                    continue;
+                }
+            } else {
+                material->user = NULL;
+                material->ka = C2V(gLighting_data).ambient_else;
+                material->kd = C2V(gLighting_data).diffuse_else;
+                material->ks = 0.f;
+                material->flags &= ~(BR_MATF_PRELIT | BR_MATF_LIGHT | BR_MATF_SMOOTH);
+            }
+            BrMaterialUpdate(material, BR_MATU_LIGHTING | BR_MATU_RENDERING);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004f6640, LoadTrackMaterials)
