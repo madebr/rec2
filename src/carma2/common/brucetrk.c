@@ -94,3 +94,19 @@ void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* p
     }
 }
 C2_HOOK_FUNCTION(0x004f5ae0, GetModelTextureArea)
+
+void C2_HOOK_FASTCALL FixModelPointer(br_model* pModel, br_uint_16 pFlags) {
+
+    if (pModel->nvertices != 0 && pModel->nfaces != 0) {
+        int i;
+
+        BrModelUpdate(pModel, pFlags);
+        for (i = 0; i < V11MODEL(pModel)->ngroups; i++) {
+            v11group* v11g;
+
+            v11g = &V11MODEL(pModel)->groups[i];
+            (br_material*)v11g->face_colours = pModel->faces[*v11g->face_user].material;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00515fa0, FixModelPointer)
