@@ -10,6 +10,10 @@
 #include "utility.h"
 #include "world.h"
 
+#include "brender/brender.h"
+
+#include "c2_string.h"
+
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
@@ -79,6 +83,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gBurning_ped_map_names, 7, 0x
     "Ex00006",
     "Ex00006",
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_race_pedestrian_specs, 0x0069bce8);
+C2_HOOK_VARIABLE_IMPLEMENT(tRace_ped_spec*, gRace_pedestrian_specs, 0x00694138);
+C2_HOOK_VARIABLE_IMPLEMENT(tPedestrian*, gPedestrian_array, 0x00744808);
 
 void (C2_HOOK_FASTCALL * InitPedsForm_original)(tPedForms_vtable* pTable);
 void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable) {
@@ -468,3 +475,108 @@ int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pO
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ce140, ForEachMortalPedestrianInSight, ForEachMortalPedestrianInSight_original)
+
+void C2_HOOK_FASTCALL LoadTrackPedestrians(FILE* pF) {
+    int i;
+    char s[256];
+    char s2[256];
+
+    /* Number of ped spawn sets */
+    C2V(gCount_race_pedestrian_specs) = GetAnInt(pF);
+
+    C2_HOOK_BUG_ON(sizeof(tRace_ped_spec) != 0x20);
+    C2V(gRace_pedestrian_specs) = BrMemAllocate(C2V(gCount_race_pedestrian_specs) * sizeof(tRace_ped_spec), kMem_misc_poly_ped);
+
+    for (i = 0; i < C2V(gCount_race_pedestrian_specs); i++) {
+        tRace_ped_spec* spec = &C2V(gRace_pedestrian_specs)[i];
+        int index;
+        int j;
+        int exclusions_ok_when_scared = 1;
+
+        /* Material name */
+        GetAString(pF, s);
+        spec->spawn_material = BrMaterialFind(s);
+        if (spec->spawn_material == NULL) {
+            FatalError(kFatalError_CannotFindPedSpawnMaterial_S, s);
+        }
+
+        /* Movement index */
+        index = GetAnInt(pF);
+        if (index < 0 || index >= C2V(gPed_movements_count)) {
+            FatalError(kFatalError_CannotMovePedIndexOutOfRangeForMaterial_S, s);
+        }
+        spec->movement = &C2V(gPed_movements)[index];
+
+        /* Group index */
+        index = GetAnInt(pF);
+        if (index < 0 || index >= C2V(gPed_groups_count)) {
+            FatalError(kFatalError_CannotGroupPedIndexOutOfRangeForMaterial_S, s);
+        }
+        spec->group = &C2V(gPed_groups)[index];
+
+        /* Peds per 100 square metres */
+        spec->density = GetAScalar(pF);
+
+        spec->field_0x10 = 0;
+
+        /* Number of exclusion materials */
+        spec->count_exclusion_materials = GetAnInt(pF);
+
+        spec->exclusion_materials = BrMemAllocate(spec->count_exclusion_materials * sizeof(tRace_spec_exclusion_material), kMem_misc_poly_ped);
+        C2_HOOK_BUG_ON(sizeof(tRace_spec_exclusion_material) != 8);
+
+        exclusions_ok_when_scared = 1;
+
+        for (j = 0; j < spec->count_exclusion_materials; j++) {
+            tRace_spec_exclusion_material* exclusion = &spec->exclusion_materials[j];
+
+            /* Exclusion flags (1 = OK when scared) */
+            exclusion->flags = GetAnInt(pF);
+            exclusions_ok_when_scared &= exclusion->flags;
+
+            /* Exclusion material #1 name */
+            GetAString(pF, s2);
+            exclusion->material = BrMaterialFind(s2);
+            if (exclusion->material == NULL) {
+                FatalError(kFatalError_CannotFindPedSpawnMaterial_S, s2);
+            }
+        }
+        if (exclusions_ok_when_scared) {
+            spec->exclusions_ok_when_scared = 1;
+        }
+
+        /* Number of exception materials */
+        spec->count_exception_materials = GetAnInt(pF);
+        spec->exception_materials = BrMemAllocate(spec->count_exception_materials * sizeof(br_material*), kMem_misc_poly_ped);
+
+        for (j = 0; j < spec->count_exception_materials; j++) {
+
+            GetAString(pF, s2);
+            spec->exception_materials[j] = BrMaterialFind(s2);
+            if (spec->exception_materials[j] == NULL) {
+                FatalError(kFatalError_CannotFindPedSpawnMaterial_S, s2);
+            }
+        }
+    }
+
+    for (i = 0; i < C2V(gCount_race_pedestrian_specs); i++) {
+        tRace_ped_spec* spec = &C2V(gRace_pedestrian_specs)[i];
+        size_t len;
+
+        len = c2_strlen(spec->spawn_material->identifier);
+        if (len < 4) {
+            len = 4;
+        }
+        if (len - 4 < 8) {
+            c2_strcpy(s2, spec->spawn_material->identifier);
+            c2_strcpy(&s2[len], "xxxxxxxx.MAT");
+            BrResFree(spec->spawn_material->identifier);
+            spec->spawn_material->identifier = BrResStrDup(spec->spawn_material, s2);
+        }
+        spec->spawn_material->identifier[7] = '?';
+    }
+
+    C2V(gPedestrian_array) = BrMemAllocate(2000 * sizeof(tPedestrian), kMem_ped_array);
+    C2_HOOK_BUG_ON(sizeof(tPedestrian) != 84);
+}
+C2_HOOK_FUNCTION(0x004ca9f0, LoadTrackPedestrians)
