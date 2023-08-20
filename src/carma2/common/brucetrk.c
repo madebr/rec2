@@ -26,3 +26,14 @@ void C2_HOOK_FASTCALL StripBlendedFaces(br_actor* pActor, br_model* pModel) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040d530, StripBlendedFaces, StripBlendedFaces_original)
+
+intptr_t (C2_HOOK_CDECL * FindNonCarsCB_original)(br_actor* pActor, tTrack_spec* pTrack_spec);
+intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, tTrack_spec* pTrack_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FindNonCarsCB_original(pActor, pTrack_spec);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040d1f0, FindNonCarsCB, FindNonCarsCB_original)
