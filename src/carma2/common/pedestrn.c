@@ -44,6 +44,29 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gGiblet_min_max_time, 2, 0x006a0408);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGiblet_size_count, 0x0069bc18);
 C2_HOOK_VARIABLE_IMPLEMENT(tPed_giblet_size_spec*, gGiblet_sizes, 0x00694274);
 
+C2_HOOK_VARIABLE_IMPLEMENT(tPedForms_vtable, gPed_forms_vtable, 0x0065d778);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_process_distance, 0x00694118);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_process_distance_inner, 0x0069bc1c);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_popup_distance, 0x006944bc);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_popup_distance_inner, 0x00694128);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_cos_max_slope, 0x00694464);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_reach_squared, 0x0069413c);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_min_dist_avoid_collisions_squared, 0x00694300);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_buoyancy_factor, 0x007447fc);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPed_points, 3, 0x0069bcf8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPed_times, 3, 0x00694268);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_severing_damage, 0x00694234);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_severing_chance, 0x0069bc0c);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_max_survivable_impact, 0x00694494);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_damage_per_force, 0x0069bc20);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_movements_count, 0x0069bcec);
+C2_HOOK_VARIABLE_IMPLEMENT(tPed_movement_spec*, gPed_movements, 0x0069bcf0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_groups_count, 0x00694134);
+C2_HOOK_VARIABLE_IMPLEMENT(tPed_group_spec*, gPed_groups, 0x0069bc14);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_animal_count, 0x00694230);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_animal_name, gPed_animal_names, 50, 0x0069fdb8);
+C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gNapalmed_ped_animation, 0x0069bc28);
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gBurning_ped_materials, 7, 0x0069fd88);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gBurning_ped_models, 7, 0x00694308);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tBurning_ped, gBurning_peds, 5, 0x0069b9f0);
@@ -241,8 +264,6 @@ void C2_HOOK_FASTCALL InitPeds(void) {
         ConfigurePedDefaultPaths();
     }
 
-    C2_HOOK_VARIABLE_IMPLEMENT(tPedForms_vtable, gPed_forms_vtable, 0x0065d778);
-
     InitPedsForm(&C2V(gPed_forms_vtable));
 
     PathCat(the_path, C2V(gApplication_path), C2V(gPedsFolder));
@@ -256,13 +277,6 @@ void C2_HOOK_FASTCALL InitPeds(void) {
      * ***************************
      */
 
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_process_distance, 0x00694118);
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_process_distance_inner, 0x0069bc1c);
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_popup_distance, 0x006944bc);
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_popup_distance_inner, 0x00694128);
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_cos_max_slope, 0x00694464);
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_reach_squared, 0x0069413c);
-
     /* Max distance from camera that peds are processed within */
     C2V(gPed_process_distance) = GetAScalar(file);
     C2V(gPed_process_distance_inner) = 0.6f * C2V(gPed_process_distance);
@@ -275,15 +289,6 @@ void C2_HOOK_FASTCALL InitPeds(void) {
     /* Nearest distance to obstacles that ped should ideally reach */
     v = GetAScalar(file);
     C2V(gPed_reach_squared) = v * v;
-
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_min_dist_avoid_collisions_squared, 0x00694300);
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_buoyancy_factor, 0x007447fc);
-    C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPed_points, 3, 0x0069bcf8);
-    C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPed_times, 3, 0x00694268);
-    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_severing_damage, 0x00694234);
-    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_severing_chance, 0x0069bc0c);
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_max_survivable_impact, 0x00694494);
-    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_damage_per_force, 0x0069bc20);
 
     /* Distance from which turning to avoid obstacles is a possibility */
     v = GetAScalar(file);
@@ -304,8 +309,6 @@ void C2_HOOK_FASTCALL InitPeds(void) {
     C2V(gPed_damage_per_force) = GetAScalar(file);
     ReadPedGiblets(file);
 
-    C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gNapalmed_ped_animation, 0x0069bc28);
-
     /* NAPALMED PED SPEC */
     ReadExplosionAnimation(file, &C2V(gNapalmed_ped_animation));
 
@@ -316,9 +319,6 @@ void C2_HOOK_FASTCALL InitPeds(void) {
      */
 
     C2_HOOK_BUG_ON(sizeof(tPed_movement_spec) != 20);
-
-    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_movements_count, 0x0069bcec);
-    C2_HOOK_VARIABLE_IMPLEMENT(tPed_movement_spec*, gPed_movements, 0x0069bcf0);
 
     /* Number of movements */
     C2V(gPed_movements_count) = GetAnInt(file);
@@ -345,9 +345,6 @@ void C2_HOOK_FASTCALL InitPeds(void) {
 
     C2_HOOK_BUG_ON(sizeof(tPed_group_spec) != 8);
 
-    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_groups_count, 0x00694134);
-    C2_HOOK_VARIABLE_IMPLEMENT(tPed_group_spec*, gPed_groups, 0x0069bc14);
-
     /* Number of groups
      * (Remember that it starts at 0, so this no. is one more than last group no.)(honest this time ;o) */
     C2V(gPed_groups_count) = GetAnInt(file);
@@ -371,9 +368,6 @@ void C2_HOOK_FASTCALL InitPeds(void) {
      *       GORE LEVEL
      * ***************************
      */
-
-    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_animal_count, 0x00694230);
-    C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_animal_name, gPed_animal_names, 50, 0x0069fdb8);
 
     /* Number of peds to be considered "animals" */
     C2V(gPed_animal_count) = GetAnInt(file);
