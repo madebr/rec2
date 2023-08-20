@@ -35,6 +35,7 @@ typedef struct tRace_list_spec tRace_list_spec;
 typedef struct tMin_message tMin_message;
 typedef struct tMid_message tMid_message;
 typedef struct tMax_message tMax_message;
+typedef struct tSmashable_level tSmashable_level;
 typedef union tCollision_shape tCollision_shape;
 typedef union tPhysics_joint tPhysics_joint;
 typedef struct tPedestrian tPedestrian;
@@ -2021,22 +2022,20 @@ typedef struct {
     int field_0x10;
 } tAward_info;
 
+typedef union {
+    struct {
+        tU8 field_0x0;
+        tU8 field_0x1;
+        undefined field_0x2;
+        undefined field_0x3;
+    } number;
+    br_actor* actor;
+    br_material* material;
+    br_model* model;
+} tSmashable_item_spec_trigger;
+
 typedef struct {
-    int flags;
-    union {
-        struct {
-            tU8 field_0x0;
-            tU8 field_0x1;
-            undefined field_0x2;
-            undefined field_0x3;
-        } number;
-        br_actor* actor;
-        br_material* material;
-    } trigger_object;
-    tSmashable_trigger_type trigger_type;
-    tSmashable_item_mode mode;
-    undefined4 field_0x10;
-    undefined4 field_0x14;
+    float removal_threshold;
     int count_sounds;
     int sounds[3];
     int count_shrapnel;
@@ -2048,21 +2047,52 @@ typedef struct {
     int extension_arg;
     int extension_flags;
     int room_turn_on_code;
-    tRepeatability award_code;
-    float award_arg1_f;
-    float award_arg2_f;
-    int award_arg3_i;
-    int award_arg4_i;
-    undefined field_0x2a4[4];
-    tU8 count_variable_changes;
+    tAward_info award;
+    undefined field_0x294[4];
+    tU8 count_runtime_variable_changes;
     undefined field27_0x2a9;
-    tSmash_run_time_variable_change variable_changes[5];
-    undefined field29_0x2be;
-    undefined field30_0x2bf;
+    tSmash_run_time_variable_change runtime_variable_changes[5];
+    undefined field29_0x2ae;
+    undefined field30_0x2af;
+} tSmashable_item_spec_shrapnel;
+
+typedef struct {
+    char undefined_0x4[4];
+    int count_sounds;
+    int sounds[3];
+    undefined field_0x18[44];
+    undefined4 field_0x44;
+    tSmashable_item_spec_trigger trigger;
+    int count_levels;
+    undefined4 field_0x4c;
+    tSmashable_level* levels;
+    undefined4 field_0x54;
+    undefined4 field_0x58;
+    undefined4 field_0x5c;
+    float field_0x60;
+    undefined4 field_0x64;
+    undefined4 field_0x68;
+    undefined4 field_0x6c;
+    undefined4 field_0x70;
+    undefined4 field_0x74;
+    undefined4 field_0x78;
+} tSmashable_item_spec_texture_change;
+
+typedef struct {
+    int flags;
+    tSmashable_item_spec_trigger trigger_object;
+    tSmashable_trigger_type trigger_type;
+    tSmashable_item_mode mode;
+    undefined4 field_0x10;
+    union {
+        tSmashable_item_spec_shrapnel shrapnel;
+        tSmashable_item_spec_texture_change texture_change;
+    } mode_data;
     br_model* replace_model;
     int replace_modelchance_fire;
     int replace_model_2_int;
-    undefined field_0x2cc[8];
+    int replace_model_3_int;
+    undefined field_0x2cc[4];
     undefined4 field_0x2d4;
     undefined4 field_0x2d8;
     undefined field_0x2dc;
@@ -2204,7 +2234,7 @@ typedef enum {
     kTextureLevelCollisionChange_Edges = 2
 } tSmashable_texture_level_collision_type;
 
-typedef struct {
+typedef struct tSmashable_level {
     br_pixelmap * pixelmaps[3];
     int count_pixelmaps;
     float trigger_threshold;
