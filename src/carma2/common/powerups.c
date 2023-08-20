@@ -1,6 +1,7 @@
 #include "powerups.h"
 
 #include "animation.h"
+#include "crush.h"
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
@@ -427,44 +428,38 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, initial_pos) != 40);
     C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, type_info) != 56);
     C2_HOOK_BUG_ON(sizeof(tShrapnel_spec) != 88);
-    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, shrapnel) != 44);
-    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, explosion_animation) != 572);
+    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, shrapnel) != 44);
+    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, explosion_animation) != 572);
     C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 736);
 
     c2_memset(pSmashable_spec, 0, sizeof(tSmashable_item_spec));
     /* Number of sounds */
-    pSmashable_spec->count_sounds = GetAnInt(pF);
-    for (i = 0; i < pSmashable_spec->count_sounds; i++) {
+    pSmashable_spec->mode_data.shrapnel.count_sounds = GetAnInt(pF);
+    for (i = 0; i < pSmashable_spec->mode_data.shrapnel.count_sounds; i++) {
         /* Sound ID */
-        pSmashable_spec->sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+        pSmashable_spec->mode_data.shrapnel.sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
     }
-    ReadShrapnel(pF, pSmashable_spec->shrapnel, &pSmashable_spec->count_shrapnel);
-    ReadExplosionAnimation(pF, &pSmashable_spec->explosion_animation);
-    ReadSlick(pF, &pSmashable_spec->slick);
-    ReadNonCarCuboidActivation(pF, &pSmashable_spec->activations);
-    ReadShrapnelSideEffects(pF, &pSmashable_spec->side_effects);
+    ReadShrapnel(pF, pSmashable_spec->mode_data.shrapnel.shrapnel, &pSmashable_spec->mode_data.shrapnel.count_shrapnel);
+    ReadExplosionAnimation(pF, &pSmashable_spec->mode_data.shrapnel.explosion_animation);
+    ReadSlick(pF, &pSmashable_spec->mode_data.shrapnel.slick);
+    ReadNonCarCuboidActivation(pF, &pSmashable_spec->mode_data.shrapnel.activations);
+    ReadShrapnelSideEffects(pF, &pSmashable_spec->mode_data.shrapnel.side_effects);
 
     /* Extension flags */
-    pSmashable_spec->extension_flags = GetAnInt(pF);
-    if (pSmashable_spec->extension_flags & 0x1) {
-        pSmashable_spec->extension_arg = GetAnInt(pF);
+    pSmashable_spec->mode_data.shrapnel.extension_flags = GetAnInt(pF);
+    if (pSmashable_spec->mode_data.shrapnel.extension_flags & 0x1) {
+        pSmashable_spec->mode_data.shrapnel.extension_arg = GetAnInt(pF);
     }
     /* Room turn on */
-    pSmashable_spec->room_turn_on_code = GetAnInt(pF);
+    pSmashable_spec->mode_data.shrapnel.room_turn_on_code = GetAnInt(pF);
     /* Award code */
-    pSmashable_spec->award_code = GetALineAndInterpretCommand(pF, C2V(gRepeatability_names), REC2_ASIZE(C2V(gRepeatability_names)));
-    if (pSmashable_spec->award_code != kRepeatability_None) {
-        pSmashable_spec->award_arg1_f = GetAScalar(pF);
-        pSmashable_spec->award_arg2_f = GetAScalar(pF);
-        pSmashable_spec->award_arg3_i = GetAnInt(pF);
-        pSmashable_spec->award_arg4_i = GetAnInt(pF);
-    }
+    LoadAward(pF, &pSmashable_spec->mode_data.shrapnel.award);
     /* Count variable changes */
-    pSmashable_spec->count_variable_changes = GetAnInt(pF);
-    for (i = 0; i < pSmashable_spec->count_variable_changes; i++) {
+    pSmashable_spec->mode_data.shrapnel.count_runtime_variable_changes = GetAnInt(pF);
+    for (i = 0; i < pSmashable_spec->mode_data.shrapnel.count_runtime_variable_changes; i++) {
         GetPairOfInts(pF, &d1, &d2);
-        pSmashable_spec->variable_changes[i].field_0x0 = d2;
-        pSmashable_spec->variable_changes[i].field_0x2 = d1;
+        pSmashable_spec->mode_data.shrapnel.runtime_variable_changes[i].field_0x0 = d2;
+        pSmashable_spec->mode_data.shrapnel.runtime_variable_changes[i].field_0x2 = d1;
     }
     pSmashable_spec->trigger_type = kSmashableTrigger_Model | kSmashableTrigger_Number;
     REC2_BUG_ON((kSmashableTrigger_Model | kSmashableTrigger_Number) != 0x3);
