@@ -40,6 +40,7 @@ typedef union tCollision_shape tCollision_shape;
 typedef union tPhysics_joint tPhysics_joint;
 typedef struct tPedestrian tPedestrian;
 typedef struct tPedestrian_distances tPedestrian_distances;
+typedef struct tRace_pedestrian tRace_pedestrian;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -2545,6 +2546,39 @@ typedef struct {
 } tBurning_ped;
 
 typedef struct {
+    tU8 flags;
+    undefined field_0x1;
+    undefined field_0x2;
+    undefined field_0x3;
+    br_material* material;
+} tRace_spec_exclusion_material;
+
+typedef struct {
+    tPed_movement_spec* movement;
+    tPed_group_spec* group;
+    br_material* spawn_material;
+    float density; /* peds per 100 square meters */
+    undefined4 field_0x10;
+    tU8 count_exclusion_materials;
+    tU8 count_exception_materials;
+    tU8 exclusions_ok_when_scared;
+    undefined field8_0x17;
+    tRace_spec_exclusion_material* exclusion_materials;
+    br_material** exception_materials;
+} tRace_ped_spec;
+
+typedef struct tPedestrian {
+    tRace_pedestrian* race_ped;
+    undefined field_0x0[80];
+} tPedestrian;
+
+typedef struct tRace_pedestrian {
+    undefined field_0x0[228];
+    tPedestrian* ped;
+    undefined field_0xe8[88];
+} tRace_pedestrian;
+
+typedef struct {
     br_vector3 points[4];
 } tQuad;
 
@@ -2948,6 +2982,9 @@ enum {
     kFatalError_TooManyCrushDatas = 0x7c,
     kFatalError_CannotFindSmashActorModel_S = 0x81,
     kFatalError_CannotOpenPedFile_S = 0xa0,
+    kFatalError_CannotFindPedSpawnMaterial_S = 0xa4,
+    kFatalError_CannotMovePedIndexOutOfRangeForMaterial_S = 0xa5,
+    kFatalError_CannotGroupPedIndexOutOfRangeForMaterial_S = 0xa6,
     kFatalError_CantFindPedTexture_S = 0xa8,
     kFatalError_CannotFindGibletModel_S = 0xa9,
     kFatalError_WrongCrushDataFileVersion_SDD = 0xab,
