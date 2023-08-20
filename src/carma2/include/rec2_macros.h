@@ -20,6 +20,7 @@
 #define REC2_CLAMP(X, LOWER, UPPER) (((X) < (LOWER)) ? (LOWER) : (((X) > (UPPER)) ? (UPPER) : (X)))
 
 #define V11MODEL(model) (((v11model*)model->prepared))
+
 #define WORLD_SCALE 6.9f
 
 #define GROOVE_FUNK_MAX_PER_CAR 36
