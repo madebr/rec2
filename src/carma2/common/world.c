@@ -1740,3 +1740,14 @@ void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath)
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0450, LoadSmashableTrackEnvironment, LoadSmashableTrackEnvironment_original)
+
+void (C2_HOOK_FASTCALL * LoadTrackSpecialVolumes_original)(FILE* pF);
+void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadTrackSpecialVolumes_original(pF);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, LoadTrackSpecialVolumes, LoadTrackSpecialVolumes_original)

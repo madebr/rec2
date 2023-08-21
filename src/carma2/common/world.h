@@ -134,4 +134,6 @@ void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF);
 
 void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath);
 
+void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF);
+
 #endif // REC2_WORLD_H
