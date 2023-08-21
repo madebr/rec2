@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "globvrpb.h"
+#include "init.h"
 #include "smashing.h"
 #include "world.h"
 
@@ -173,3 +174,63 @@ void C2_HOOK_FASTCALL ProcessSmashableActorModel(br_actor* pActor) {
     }
 }
 C2_HOOK_FUNCTION(0x004f5cb0, ProcessSmashableActorModel)
+
+intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
+    unsigned int x;
+    unsigned int z;
+    tTrack_spec* pTrack_spec = data;
+
+    if (c2_sscanf(pActor->identifier, "%u%u", &x, &z) == 2 && x < pTrack_spec->ncolumns_x && z < pTrack_spec->ncolumns_z) {
+        pActor->material = C2V(gDefault_track_material);
+        pTrack_spec->columns[z][x].actor_0x0 = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        BrActorAdd(pActor->parent, pTrack_spec->columns[z][x].actor_0x0);
+        pTrack_spec->columns[z][x].actor_0x4 = pActor;
+        pTrack_spec->columns[z][x].actor_0x8 = NULL;
+        BrActorRelink(pTrack_spec->columns[z][x].actor_0x0, pActor);
+        C2V(gMr_blendy) = NULL;
+        if (pActor->model != NULL && !C2V(gAusterity_mode)) {
+            StripBlendedFaces(pActor, pActor->model);
+        } else {
+            br_actor *child;
+
+            for (child = pActor->children; child != NULL; child = child->next) {
+                if (child->identifier[0] != '&') {
+                    StripBlendedFaces(child, child->model);
+                    break;
+                }
+            }
+        }
+        BrActorEnum(pActor, (br_actor_enum_cbfn*)FindNonCarsCB, pTrack_spec);
+        if (C2V(gMr_blendy) != NULL) {
+            int area1, area2;
+            br_vertex* new_vertices;
+            br_face* new_faces;
+
+            BrActorAdd(pTrack_spec->columns[z][x].actor_0x0, C2V(gMr_blendy));
+            C2V(gMr_blendy)->model->flags |= BR_MODU_FACES;
+            BrModelAdd(C2V(gMr_blendy)->model);
+            GetModelTextureArea(C2V(gMr_blendy)->model, &area1, &area2);
+
+            new_vertices = BrResAllocate(C2V(gMr_blendy)->model,
+                (C2V(gMr_blendy)->model->nvertices + area2) * sizeof(br_vertex), BR_MEMORY_VERTICES);
+            c2_memcpy(new_vertices, C2V(gMr_blendy)->model->vertices,
+                C2V(gMr_blendy)->model->nvertices * sizeof(br_vertex));
+            BrResFree(C2V(gMr_blendy)->model->vertices);
+            C2V(gMr_blendy)->model->vertices = new_vertices;
+
+            new_faces = BrResAllocate(C2V(gMr_blendy)->model,
+                (C2V(gMr_blendy)->model->nfaces + area1) * sizeof(br_face), BR_MEMORY_FACES);
+            c2_memcpy(new_faces, C2V(gMr_blendy)->model->faces, C2V(gMr_blendy)->model->nfaces * sizeof(br_face));
+            BrResFree(C2V(gMr_blendy)->model->faces);
+            C2V(gMr_blendy)->model->faces = new_faces;
+
+            FixModelPointer(C2V(gMr_blendy)->model, BR_MODU_ALL);
+            pTrack_spec->columns[z][x].actor_0x8 = C2V(gMr_blendy);
+        }
+    } else {
+        BrActorEnum(pActor, ProcessModelsCB, pTrack_spec);
+    }
+    ProcessSmashableActorModel(pActor);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0040cf10, ProcessModelsCB)
