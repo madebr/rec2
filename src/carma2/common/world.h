@@ -138,4 +138,6 @@ void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF);
 
 void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF);
 
+void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM);
+
 #endif // REC2_WORLD_H
