@@ -18,4 +18,6 @@ void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* p
 
 void C2_HOOK_FASTCALL FixModelPointer(br_model* pModel, br_uint_16 pFlags);
 
+void C2_HOOK_FASTCALL ProcessSmashableActorModel(br_actor* pActor);
+
 #endif //REC2_BRUCETRK_H
