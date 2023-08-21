@@ -33,4 +33,6 @@ void C2_HOOK_FASTCALL MungeRearviewSky(void);
 
 void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial);
 
+void C2_HOOK_FASTCALL ResetDepthEffect(void);
+
 #endif //REC2_DEPTH_H
