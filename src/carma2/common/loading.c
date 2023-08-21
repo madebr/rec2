@@ -2600,6 +2600,15 @@ void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
 }
 C2_HOOK_FUNCTION(0x0048f230, DRLoadModels)
 
+br_model* C2_HOOK_FASTCALL LoadModel(const char* pName) {
+    tPath_name the_path;
+
+    PossibleService();
+    PathCat(the_path, C2V(gApplication_path), "MODELS");
+    PathCat(the_path, the_path, pName);
+    return BrModelLoad(the_path);
+}
+C2_HOOK_FUNCTION(0x0048efd0, LoadModel)
 
 void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
     int i;
