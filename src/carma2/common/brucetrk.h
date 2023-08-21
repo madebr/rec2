@@ -22,4 +22,10 @@ void C2_HOOK_FASTCALL ProcessSmashableActorModel(br_actor* pActor);
 
 intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data);
 
+void C2_HOOK_FASTCALL ProcessModels(tTrack_spec* pTrack_spec);
+
+void C2_HOOK_FASTCALL AllocateActorMatrix(tTrack_spec* pTrack_spec, tTrack_square*** pDst);
+
+void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec);
+
 #endif //REC2_BRUCETRK_H
