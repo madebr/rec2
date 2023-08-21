@@ -720,6 +720,12 @@ void C2_HOOK_FASTCALL GetThreeScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, 
 }
 C2_HOOK_FUNCTION(0x004901c0, GetThreeScalars)
 
+void C2_HOOK_FASTCALL GetFourScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3, br_scalar* pS4) {
+
+    GetFourFloats(pF, pS1, pS2, pS3, pS4);
+}
+C2_HOOK_FUNCTION(0x00490270, GetFourScalars)
+
 void C2_HOOK_FASTCALL GetPairOfFloats(FILE* pF, float* pF1, float* pF2) {
     char s[256];
     char* str;
@@ -745,6 +751,21 @@ void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* p
     c2_sscanf(str, "%f", pF3);
 }
 C2_HOOK_FUNCTION(0x0048fc90, GetThreeFloats)
+
+void C2_HOOK_FASTCALL GetFourFloats(FILE * pF, float* pF1, float* pF2, float* pF3, float* pF4) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_sscanf(str, "%f", pF1);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%f", pF2);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%f", pF3);
+    str = c2_strtok(NULL, "\t ,/");
+    c2_sscanf(str, "%f", pF4);
+}
 
 void (C2_HOOK_FASTCALL * GetAString_original)(FILE* pF, char* pString);
 void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
