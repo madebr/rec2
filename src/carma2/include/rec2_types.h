@@ -1996,6 +1996,12 @@ typedef struct {
     } type_info;
 } tShrapnel_spec;
 
+typedef struct {
+    br_model* model;
+    br_actor* actor;
+    int field_0x8;
+} tSmashable_race_target;
+
 typedef enum {
     kSmashableTrigger_Material = 0,
     kSmashableTrigger_Model = 1,
