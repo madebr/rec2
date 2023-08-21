@@ -2112,6 +2112,7 @@ typedef struct {
     union {
         tSmashable_item_spec_shrapnel shrapnel;
         tSmashable_item_spec_texture_change texture_change;
+        tU16 field_0x14; /* FIXME */
     } mode_data;
     br_model* replace_model;
     int replace_modelchance_fire;
@@ -2703,6 +2704,7 @@ typedef struct {
 } tOpponent;
 
 typedef enum {
+    eNet_game_type_2 = 2, /* FIXME */
     eNet_game_type_foxy = 7
 } tNet_game_type;
 
