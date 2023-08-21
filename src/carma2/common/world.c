@@ -1772,3 +1772,14 @@ int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial) {
     return 0;
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f5470, MaterialIsSmashableTrigger, MaterialIsSmashableTrigger_original)
+
+void (C2_HOOK_FASTCALL * LoadTrackSpecialVolumes_original)(FILE* pF);
+void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadTrackSpecialVolumes_original(pF);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, LoadTrackSpecialVolumes, LoadTrackSpecialVolumes_original)
