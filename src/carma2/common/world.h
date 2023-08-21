@@ -17,6 +17,9 @@ C2_HOOK_VARIABLE_DECLARE(tSmashable_environment_name*, gSmashable_noncars);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_smashable_noncars);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_smashable_noncar_shrapnel_actors);
 C2_HOOK_VARIABLE_DECLARE(tMaterial_exception*, gMaterial_exceptions);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_track_smashable_environment_specs);
+C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec*, gTrack_smashable_environment_specs);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmashable_item_spec*, gSmashable_track_indexable_triggers, 100);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
