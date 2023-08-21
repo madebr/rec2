@@ -4,16 +4,17 @@
 #include "globvrpb.h"
 #include "init.h"
 #include "pedestrn.h"
+#include "platform.h"
 #include "smashing.h"
 #include "world.h"
-
-#include "platform.h"
 
 #include "c2_string.h"
 
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_scalar, gYon_factor, 0x00655e60, 0.25f);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMax_count_non_cars, 0x0079efac);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_track_non_cars, 0x00679260);
 
 br_scalar C2_HOOK_STDCALL GetYonFactor(void) {
 
@@ -290,3 +291,100 @@ intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, tTrack_spec* pTrack_spe
     return 0;
 }
 C2_HOOK_FUNCTION(0x0040cf10, ProcessModelsCB)
+
+void C2_HOOK_FASTCALL ProcessModels(tTrack_spec* pTrack_spec) {
+
+    BrActorEnum(pTrack_spec->the_actor, (br_actor_enum_cbfn*)ProcessModelsCB, pTrack_spec);
+}
+
+void C2_HOOK_FASTCALL AllocateActorMatrix(tTrack_spec* pTrack_spec, tTrack_square*** pDst) {
+    tU16 z;
+
+    *pDst = BrMemAllocate(pTrack_spec->ncolumns_z * sizeof(tTrack_square*) , kMem_columns_z);
+    for (z = 0; z < pTrack_spec->ncolumns_z; z++) {
+        (*pDst)[z] = BrMemAllocate(pTrack_spec->ncolumns_x * sizeof(tTrack_square), kMem_columns_x);
+        C2_HOOK_BUG_ON(sizeof(tTrack_square) != 12);
+
+        c2_memset((*pDst)[z], 0, sizeof(br_actor**) * pTrack_spec->ncolumns_x);
+    }
+}
+
+void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
+    const char* identifier;
+    char s[256];
+    unsigned int x;
+    unsigned int z;
+    int ad;
+    br_scalar extra_room;
+    br_bounds bounds;
+    int count;
+    int i;
+    int count_null_non_cars;
+    int count_non_null_non_cars;
+
+    /* e.g. newcity1: "PP01 16 16 1.000 1126" */
+    identifier = pTrack_spec->the_actor->identifier;
+    if (identifier[0] == 'P' && identifier[1] == 'P') {
+        if (identifier[3] != '1') {
+            c2_sprintf(s, "The World has officially ended: Wrong format of track!!! '");
+            c2_strncat(s, pTrack_spec->the_actor->identifier, 4);
+            c2_strcat(s, "'");
+            PDFatalError(s);
+        }
+        identifier = &identifier[5];
+    }
+
+    count = c2_sscanf(identifier, "%u%u%f%d", &x, &z, &extra_room, &ad);
+
+    if (count == 3) {
+        BrFailure(
+            "Attempt to extract columns from invalid track\n"
+            "(It might have been produced by an ancient preproc.\n"
+            "This is no longer supported.\n");
+    }
+    if (count == 4) {
+        pTrack_spec->count_non_cars = ad; /* FIXME: pTrack_spec->ampersand_digits = ad; */
+    } else {
+        x = 1;
+        z = 1;
+        extra_room = 0.f;
+        pTrack_spec->count_non_cars = 0; /* FIXME: pTrack_spec->ampersand_digits = 0; */
+    }
+
+    pTrack_spec->ncolumns_x = x;
+    pTrack_spec->ncolumns_z = z;
+
+    BrActorToBounds(&bounds, pTrack_spec->the_actor);
+    pTrack_spec->column_size_x = (bounds.max.v[0] - bounds.min.v[0] + 2.f * extra_room) / (float)pTrack_spec->ncolumns_x;
+    pTrack_spec->column_size_z = (bounds.max.v[2] - bounds.min.v[2] + 2.f * extra_room) / (float)pTrack_spec->ncolumns_z;
+    pTrack_spec->origin_x = bounds.min.v[0] - extra_room;
+    pTrack_spec->origin_z = bounds.min.v[2] - extra_room;
+
+    AllocateActorMatrix(pTrack_spec, &pTrack_spec->columns);
+
+    C2V(gMax_count_non_cars) = pTrack_spec->count_non_cars + 250;
+    C2V(gCount_track_non_cars) = pTrack_spec->count_non_cars;
+    pTrack_spec->non_car_list = BrMemAllocate(C2V(gMax_count_non_cars) * sizeof(br_actor*), kMem_non_car_list);
+    if (count == 4) {
+        ProcessModels(pTrack_spec);
+    } else {
+        pTrack_spec->columns[0][0].actor_0x0 = pTrack_spec->the_actor;
+    }
+
+    count_null_non_cars = 0;
+    count_non_null_non_cars = 0;
+    for (i = 0; i < pTrack_spec->count_non_cars; i++) {
+
+        if (pTrack_spec->non_car_list[i] == NULL) {
+            count_null_non_cars += 1;
+        } else {
+            pTrack_spec->non_car_list[count_non_null_non_cars] = pTrack_spec->non_car_list[i];
+            c2_sprintf(&pTrack_spec->non_car_list[count_non_null_non_cars]->identifier[4], "%04d", count_non_null_non_cars);
+            count_non_null_non_cars += 1;
+        }
+    }
+    C2V(gMax_count_non_cars) -= count_null_non_cars;
+    C2V(gCount_track_non_cars) -= count_null_non_cars;
+    pTrack_spec->count_non_cars -= count_null_non_cars;
+}
+C2_HOOK_FUNCTION(0x0040cc50, ExtractColumns)
