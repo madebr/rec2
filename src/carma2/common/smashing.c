@@ -19,6 +19,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gInitial_position_sphere_wher
     "impact",
     "model",
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmashable_race_target, gSmashable_race_targets, 300, 0x0068c898);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_race_targets, 0x0074abe0);
 
 void (C2_HOOK_FASTCALL * InitSmashing_original)(void);
 void C2_HOOK_FASTCALL InitSmashing(void) {
@@ -110,3 +112,15 @@ void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes) {
     pTimes[1] = (int)(1000.f * f2);
 }
 C2_HOOK_FUNCTION(0x004ee5a0, ReadMinMaxTimeInMilliseconds)
+
+void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor, int pUnknown) {
+
+    C2_HOOK_BUG_ON(sizeof(tSmashable_race_target) != 12);
+    if (C2V(gCount_smashable_race_targets) < REC2_ASIZE(C2V(gSmashable_race_targets))) {
+        C2V(gSmashable_race_targets)[C2V(gCount_smashable_race_targets)].model = pModel;
+        C2V(gSmashable_race_targets)[C2V(gCount_smashable_race_targets)].actor = pActor;
+        C2V(gSmashable_race_targets)[C2V(gCount_smashable_race_targets)].field_0x8 = pUnknown;
+        C2V(gCount_smashable_race_targets)++;
+    }
+}
+C2_HOOK_FUNCTION(0x004977f0, AddSmashableRaceTarget)
