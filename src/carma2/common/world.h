@@ -139,4 +139,6 @@ int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial);
 
 void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF);
 
+void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF);
+
 #endif // REC2_WORLD_H
