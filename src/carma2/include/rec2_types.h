@@ -1564,6 +1564,12 @@ typedef struct tCar_spec {
 } tCar_spec;
 
 typedef struct {
+    br_actor* actor_0x0;
+    br_actor* actor_0x4;
+    br_actor* actor_0x8;
+} tTrack_square;
+
+typedef struct {
     tU8 ncolumns_x;
     tU8 ncolumns_z;
     undefined field2_0x2;
@@ -1573,7 +1579,7 @@ typedef struct {
     float origin_x;
     float origin_z;
     br_actor* the_actor; /* for newcity1 ==> actor from newcity1.twt/newcity1.act */
-    undefined4* columns;
+    tTrack_square** columns;
     int count_non_cars;
     br_actor** non_car_list;
 } tTrack_spec;

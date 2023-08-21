@@ -20,4 +20,6 @@ void C2_HOOK_FASTCALL FixModelPointer(br_model* pModel, br_uint_16 pFlags);
 
 void C2_HOOK_FASTCALL ProcessSmashableActorModel(br_actor* pActor);
 
+intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, tTrack_spec* pTrack_spec);
+
 #endif //REC2_BRUCETRK_H
