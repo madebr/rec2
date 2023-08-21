@@ -1783,3 +1783,14 @@ void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, LoadTrackSpecialVolumes, LoadTrackSpecialVolumes_original)
+
+void (C2_HOOK_FASTCALL * LoadTrackSoundGenerators_original)(tTrack_spec* pTrack_spec, FILE* pF);
+void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadTrackSoundGenerators_original(pTrack_spec, pF);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004572f0, LoadTrackSoundGenerators, LoadTrackSoundGenerators_original)
