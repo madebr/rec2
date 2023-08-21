@@ -1799,3 +1799,14 @@ void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* p
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004572f0, LoadTrackSoundGenerators, LoadTrackSoundGenerators_original)
+
+void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
+
+    BrResFree(pM->faces);
+    BrResFree(pM->vertices);
+    pM->nfaces = 0;
+    pM->nvertices = 0;
+    pM->faces = NULL;
+    pM->vertices = NULL;
+}
+C2_HOOK_FUNCTION(0x00502210, DodgyModelUpdate)
