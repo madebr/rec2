@@ -22,4 +22,6 @@ void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes);
 
 void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 
+void C2_HOOK_FASTCALL PrepareSmashableTrackItemIdentifiers(void);
+
 #endif //REC2_SMASHING_H
