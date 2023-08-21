@@ -1,5 +1,14 @@
 #include "brucetrk.h"
 
+#include "globvars.h"
+#include "globvrpb.h"
+#include "smashing.h"
+#include "world.h"
+
+#include "platform.h"
+
+#include "c2_string.h"
+
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_scalar, gYon_factor, 0x00655e60, 0.25f);
@@ -121,3 +130,46 @@ void C2_HOOK_FASTCALL FixModelPointer(br_model* pModel, br_uint_16 pFlags) {
     }
 }
 C2_HOOK_FUNCTION(0x00515fa0, FixModelPointer)
+
+void C2_HOOK_FASTCALL ProcessSmashableActorModel(br_actor* pActor) {
+    int i;
+
+    if (pActor->model == NULL || pActor->model->identifier == NULL) {
+        return;
+    }
+    for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
+        tSmashable_item_spec* spec;
+
+        spec = &C2V(gTrack_smashable_environment_specs)[i];
+        if (spec->trigger_type == kSmashableTrigger_Model && spec->trigger_object.model == pActor->model) {
+            char s[64];
+            char s2[64];
+            size_t len;
+
+            c2_strcpy(s, pActor->identifier);
+            len = c2_strlen(s);
+            if (len < 4) {
+                sprintf(s, "Smash material %s has a name that is less than 4 characters long", pActor->identifier);
+                PDFatalError(s);
+            }
+            c2_strcpy(s2, &s[len - 4]);
+            c2_sprintf(&s[len - 4], "        ");
+            c2_sprintf(&s[5], "%cx", '|');
+            s[6] = i + 1;
+            c2_strcat(s, s2);
+            s[11] = '\0';
+            if (c2_strlen(pActor->identifier) < 12) {
+                BrResFree(pActor->identifier);
+                pActor->identifier = BrResStrDup(pActor, s);
+            } else {
+                c2_strcpy(pActor->identifier, s);
+            }
+
+            if ((C2V(gCurrent_race).race_spec->race_type > 3 && spec->mode_data.field_0x14 == C2V(gCurrent_race).race_spec->options.cars.count_opponents)
+                    || (C2V(gNet_mode) != eNet_mode_none && C2V(gCurrent_net_game)->type == eNet_game_type_2 && spec->mode_data.field_0x14 == 1)) {
+                AddSmashableRaceTarget(pActor->model, pActor, -1);
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004f5cb0, ProcessSmashableActorModel)
