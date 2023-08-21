@@ -277,6 +277,8 @@ void C2_HOOK_FASTCALL DRLoadMaterials(const char* p_path);
 
 void C2_HOOK_FASTCALL DRLoadModels(const char* p_path);
 
+br_model* C2_HOOK_FASTCALL LoadModel(const char* pName);
+
 void C2_HOOK_FASTCALL DRLoadActors(const char* p_path);
 
 void C2_HOOK_FASTCALL DRLoadLights(const char* p_path);
