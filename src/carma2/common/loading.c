@@ -4535,6 +4535,33 @@ void C2_HOOK_FASTCALL AttachCrushDataToActorModels(br_actor* pActor, tCar_spec* 
 }
 C2_HOOK_FUNCTION(0x0042a210, AttachCrushDataToActorModels)
 
+void C2_HOOK_FASTCALL SetMaterialTrackLighting(br_material* pMaterial) {
+
+    if (C2V(gNbPixelBits) != 16) {
+        return;
+    }
+    if ((uintptr_t)pMaterial->user == 0x5ba0) { /* FIXME: what is 0x5ba0/23456 magic? */
+        float original_ka = pMaterial->ka;
+        int original_flags = pMaterial->flags;
+        pMaterial->ka = 1.f;
+        pMaterial->kd = 1.f;
+        pMaterial->flags |= BR_MATF_SMOOTH | BR_MATF_LIGHT;
+        pMaterial->flags &= ~BR_MATF_PRELIT;
+        if ((original_flags & BR_MATF_PRELIT) || !(original_flags & BR_MATF_LIGHT) || !(original_flags && BR_MATF_SMOOTH) || original_ka <= .9999f) {
+            BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
+        }
+    } else {
+        pMaterial->user = NULL;
+        pMaterial->ka = C2V(gLighting_data).ambient_else;
+        pMaterial->kd = C2V(gLighting_data).diffuse_else;
+        pMaterial->ks = 0.f;
+        pMaterial->flags &= ~BR_MATF_PRELIT;
+        pMaterial->flags |= BR_MATF_LIGHT | BR_MATF_SMOOTH;
+        BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
+    }
+}
+C2_HOOK_FUNCTION(0x004f6a90, SetMaterialTrackLighting)
+
 void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath) {
     int i;
 
