@@ -1313,6 +1313,35 @@ void C2_HOOK_FASTCALL LoadSomePixelmaps(tBrender_storage* pStorage, const char* 
 }
 C2_HOOK_FUNCTION(0x00502490, LoadSomePixelmaps)
 
+br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, const char* pName) {
+    br_pixelmap* map;
+    tAdd_to_storage_result addResult;
+
+    map = DRLoadPixelmap(pName);
+    if (map == NULL) {
+        return BrMapFind(pName);
+    }
+
+    addResult = AddPixelmapToStorage(pStorage, map);
+    switch (addResult) {
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientPixelmapSlots);
+            break;
+        case eStorage_duplicate:
+            if (C2V(gDisallowDuplicates)) {
+                FatalError(kFatalError_DuplicatePixelmap_S, map->identifier);
+            }
+            BrPixelmapFree(map);
+            return C2V(gAddedPixelmap);
+        case eStorage_allocated:
+            BrMapAdd(map);
+            return map;
+        default:
+            return NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x00501560, LoadSinglePixelmap)
+
 void C2_HOOK_FASTCALL LoadMaterialCallback(const char* pPath) {
     tRendererShadingType shading;
     char s[256];
