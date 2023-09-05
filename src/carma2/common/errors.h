@@ -19,7 +19,7 @@ extern char* gError_messages[126];
 
 #endif
 //
-void C2_HOOK_CDECL FatalError(int pStr_index, ...);
+void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 //
 //void NonFatalError(int pStr_index, ...);
 //
