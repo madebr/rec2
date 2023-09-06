@@ -77,6 +77,17 @@ void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f) {
 }
 C2_HOOK_FUNCTION(0x004fdb70, GetSmokeShadeTables)
 
+void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale) {
+    int i;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+
+        BrVector3Scale(&pModel->vertices[i].p, &pModel->vertices[i].p, pScale);
+    }
+    BrModelUpdate(pModel, BR_MODU_ALL);
+}
+C2_HOOK_FUNCTION(0x00516240, ModelScale)
+
 void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
 
