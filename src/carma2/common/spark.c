@@ -4,12 +4,15 @@
 #include "loading.h"
 #include "utility.h"
 
+#include "rec2_macros.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSmoke_on, 0x00660110, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gShade_list, 16, 0x006b7840);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int*, gShade_table, 0x00660140, &gShade_list[8]); /* FIXME: rename to gDust_table*/
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_dust_tables, 0x006a82b4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gShrapnel_model, 2, 0x006aa588);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gBlack_material, 0x006b7880);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tShrapnel, gShrapnel, 30, 0x006a9180);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
@@ -101,6 +104,27 @@ void C2_HOOK_FASTCALL LoadInShrapnel(void) {
     BrModelAdd(C2V(gShrapnel_model)[1]);
     C2V(gBlack_material) = GetSimpleMaterial("M14.MAT", 4);
     C2V(gNon_track_actor)->material = C2V(gBlack_material);
+}
+
+void C2_HOOK_FASTCALL InitShrapnel(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gShrapnel)); i++) {
+        C2V(gShrapnel)[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        C2V(gShrapnel)[i].actor->parent = NULL;
+        C2V(gShrapnel)[i].actor->model = C2V(gShrapnel_model)[i % 2];
+        C2V(gShrapnel)[i].actor->render_style = BR_RSTYLE_DEFAULT;
+        C2V(gShrapnel)[i].actor->t.type = BR_TRANSFORM_MATRIX34;
+        C2V(gShrapnel)[i].actor->material = BrMaterialFind("DEBRIS.MAT");
+        C2V(gShrapnel)[i].age = 0;
+        C2V(gShrapnel)[i].shear1 = FRandomBetween(-2.f, 2.f);
+        C2V(gShrapnel)[i].shear2 = FRandomBetween(-2.f, 2.f);
+        BrVector3SetFloat(&C2V(gShrapnel)[i].axis,
+            FRandomBetween(-1.f, 1.f),
+            FRandomBetween(-1.f, 1.f),
+            FRandomBetween(-1.f, 1.f));
+        BrVector3Normalise(&C2V(gShrapnel)[i].axis, &C2V(gShrapnel)[i].axis);
+    }
 }
 
 void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
