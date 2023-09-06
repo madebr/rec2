@@ -359,4 +359,6 @@ void C2_HOOK_FASTCALL LoadDATModelsCallback(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pPath);
 
+void C2_HOOK_FASTCALL LoadNonCar(FILE* pF, tNon_car_spec* pNon_car_spec);
+
 #endif //REC2_LOADING_H
