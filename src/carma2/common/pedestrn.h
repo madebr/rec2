@@ -9,6 +9,7 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(tPedestrian*, gPedestrian_array);
+C2_HOOK_VARIABLE_DECLARE(int, gPed_count);
 
 void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable);
 
@@ -27,5 +28,7 @@ int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pO
 void C2_HOOK_FASTCALL LoadTrackPedestrians(FILE* pF);
 
 void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel);
+
+void C2_HOOK_FASTCALL AllocateTrackPedestrians(void);
 
 #endif //REC2_PEDESTRN_H
