@@ -1,6 +1,8 @@
 #ifndef REC2_SPARK_H
 #define REC2_SPARK_H
 
+#include "brender/brender.h"
+
 #include "c2_stdio.h"
 
 #include "c2_hooks.h"
@@ -12,6 +14,8 @@ int C2_HOOK_FASTCALL GetSmokeOn(void);
 void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 
 void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f);
+
+void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale);
 
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF);
 
