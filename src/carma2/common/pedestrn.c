@@ -12,6 +12,7 @@
 
 #include "brender/brender.h"
 
+#include "c2_stdlib.h"
 #include "c2_string.h"
 
 #include "rec2_macros.h"
@@ -86,6 +87,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gBurning_ped_map_names, 7, 0x
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_race_pedestrian_specs, 0x0069bce8);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_ped_spec*, gRace_pedestrian_specs, 0x00694138);
 C2_HOOK_VARIABLE_IMPLEMENT(tPedestrian*, gPedestrian_array, 0x00744808);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count, 0x007447d4);
 
 void (C2_HOOK_FASTCALL * InitPedsForm_original)(tPedForms_vtable* pTable);
 void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable) {
@@ -591,3 +593,27 @@ void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d2cc0, MaybeSpawnPedestrian, MaybeSpawnPedestrian_original)
+
+void C2_HOOK_FASTCALL AllocateTrackPedestrians(void) {
+    tPedestrian* new_pedestrians;
+    int i;
+
+    dr_dprintf("%d pedestrians, %d bytes each, total = %d bytes\n", C2V(gPed_count), sizeof(tRace_pedestrian), C2V(gPed_count) * sizeof(tRace_pedestrian));
+    C2_HOOK_BUG_ON(sizeof(tRace_pedestrian) != 320);
+
+    new_pedestrians = BrMemAllocate(C2V(gPed_count) * sizeof(tPedestrian), kMem_ped_array);
+    C2_HOOK_BUG_ON(sizeof(tPedestrian) != 84);
+
+    c2_memcpy(new_pedestrians, C2V(gPedestrian_array), C2V(gPed_count) * sizeof(tPedestrian));
+    C2_HOOK_BUG_ON(sizeof(tRace_pedestrian) != 320);
+
+    BrMemFree(C2V(gPedestrian_array));
+    C2V(gPedestrian_array) = new_pedestrians;
+
+    for (i = 0; i < C2V(gPed_count); i++) {
+
+        C2V(gPedestrian_array)[i].race_ped->ped = &C2V(gPedestrian_array)[i];
+        C2_HOOK_BUG_ON(offsetof(tRace_pedestrian, ped) != 228);
+    }
+}
+C2_HOOK_FUNCTION(0x004d3520, AllocateTrackPedestrians)
