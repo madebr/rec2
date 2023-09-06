@@ -1,8 +1,12 @@
 #include "spark.h"
 
+#include "loading.h"
+#include "utility.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSmoke_on, 0x00660110, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gShade_list, 16, 0x006b7840);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int*, gShade_table, 0x00660144, &gShade_list[8]);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int*, gShade_table, 0x00660140, &gShade_list[8]); /* FIXME: rename to gDust_table*/
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNum_dust_tables, 0x006a82b4);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
@@ -50,3 +54,25 @@ void C2_HOOK_FASTCALL GenerateSmokeShades(void) {
 
 }
 C2_HOOK_FUNCTION(0x004fb910, GenerateSmokeShades)
+
+void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f) {
+    int i;
+    int red;
+    int green;
+    int blue;
+    float quarter;
+    float half;
+    float three_quarter;
+
+    C2V(gNum_dust_tables) = GetAnInt(f);
+    if (C2V(gNum_dust_tables) > 8) {
+        C2V(gNum_dust_tables) = 8;
+    }
+    for (i = 0; i < C2V(gNum_dust_tables); i++) {
+        PossibleService();
+        GetThreeInts(f, &red, &green, &blue);
+        GetThreeScalars(f, &quarter, &half, &three_quarter);
+        C2V(gShade_table)[i] = (red << 24) | (green << 8) | (blue << 0);
+    }
+}
+C2_HOOK_FUNCTION(0x004fdb70, GetSmokeShadeTables)
