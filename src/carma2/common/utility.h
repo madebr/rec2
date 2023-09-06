@@ -76,4 +76,6 @@ int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
 
 void C2_HOOK_FASTCALL DumpActorTree(br_actor* pActor, const char* pMsg);
 
+int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity);
+
 #endif // REC2_UTILITY_H
