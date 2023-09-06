@@ -1,12 +1,15 @@
 #include "spark.h"
 
+#include "globvars.h"
 #include "loading.h"
 #include "utility.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSmoke_on, 0x00660110, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gShade_list, 16, 0x006b7840);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int*, gShade_table, 0x00660140, &gShade_list[8]); /* FIXME: rename to gDust_table*/
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNum_dust_tables, 0x006a82b4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_dust_tables, 0x006a82b4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gShrapnel_model, 2, 0x006aa588);
+C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gBlack_material, 0x006b7880);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
@@ -87,6 +90,18 @@ void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale) {
     BrModelUpdate(pModel, BR_MODU_ALL);
 }
 C2_HOOK_FUNCTION(0x00516240, ModelScale)
+
+void C2_HOOK_FASTCALL LoadInShrapnel(void) {
+
+    C2V(gShrapnel_model)[0] = LoadModel("FRAG4.DAT");
+    ModelScale(C2V(gShrapnel_model)[0], 0.5f);
+    C2V(gShrapnel_model)[1] = LoadModel("FRAG5.DAT");
+    ModelScale(C2V(gShrapnel_model)[1], 0.5f);
+    BrModelAdd(C2V(gShrapnel_model)[0]);
+    BrModelAdd(C2V(gShrapnel_model)[1]);
+    C2V(gBlack_material) = GetSimpleMaterial("M14.MAT", 4);
+    C2V(gNon_track_actor)->material = C2V(gBlack_material);
+}
 
 void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
