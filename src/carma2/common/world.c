@@ -1807,6 +1807,12 @@ int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f5470, MaterialIsSmashableTrigger, MaterialIsSmashableTrigger_original)
 
+void C2_HOOK_FASTCALL FreeSmashableNonCarNames(void) {
+
+    BrMemFree(C2V(gSmashable_noncars));
+}
+C2_HOOK_FUNCTION(0x004f0940, FreeSmashableNonCarNames)
+
 void (C2_HOOK_FASTCALL * LoadTrackSpecialVolumes_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF) {
 
