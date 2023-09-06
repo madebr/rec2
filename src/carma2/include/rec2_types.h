@@ -1926,6 +1926,21 @@ typedef enum {
     kShrapnelRelPos_ActorBased = 2
 } tShrapnel_rel_pos_type;
 
+typedef struct {
+    tShrapnel_rel_pos_type type;
+    br_vector3 pos;
+} tShrapnel_pos;
+
+typedef struct {
+    br_actor* actor;
+    br_vector3 v;
+    tU32 time_sync;
+    tU32 age;
+    br_scalar shear1;
+    br_scalar shear2;
+    br_vector3 axis;
+} tShrapnel;
+
 typedef enum {
     kShrapnelType_Abstract = 0,
     kShrapnelType_Shards = 1,

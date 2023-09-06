@@ -1,6 +1,7 @@
 #ifndef REC2_SPARK_H
 #define REC2_SPARK_H
 
+#include "rec2_types.h"
 #include "brender/brender.h"
 
 #include "c2_stdio.h"
@@ -13,6 +14,7 @@ C2_HOOK_VARIABLE_DECLARE(int*, gShade_table); /* FIXME: rename to gDust_table*/
 C2_HOOK_VARIABLE_DECLARE(int, gNum_dust_tables);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_model*, gShrapnel_model, 2);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gBlack_material);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tShrapnel, gShrapnel, 30);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -25,6 +27,8 @@ void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f);
 void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale);
 
 void C2_HOOK_FASTCALL LoadInShrapnel(void);
+
+void C2_HOOK_FASTCALL InitShrapnel(void);
 
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF);
 
