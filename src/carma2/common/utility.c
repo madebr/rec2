@@ -447,6 +447,12 @@ int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
 }
 C2_HOOK_FUNCTION(0x00513520, IRandomBetween)
 
+float C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
+
+    return (float)rand() * (pB - pA) / (float)RAND_MAX + pA;
+}
+C2_HOOK_FUNCTION(0x005135b0, FRandomBetween)
+
 const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
 
     return C2V(gMisc_strings)[pIndex];
@@ -690,7 +696,7 @@ int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
 
     if (pActor->render_style != BR_RSTYLE_NONE) {
         const char* str;
-        
+
         switch (pActor->type) {
         case BR_ACTOR_NONE:
             str = "DUMMY ACTOR\n";
