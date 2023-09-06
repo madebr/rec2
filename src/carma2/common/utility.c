@@ -794,3 +794,93 @@ void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg) {
     c2_fflush(c2_stdout);
 }
 C2_HOOK_FUNCTION(0x00518ac0, DumpVisibleActors)
+
+int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps) {
+    char path1[256];
+    char path2[256];
+    char path3[256];
+    char path4[256];
+    tName_list list;
+    size_t i;
+    int error;
+
+    list.size = 0;
+    pName[c2_strlen(pName) - 4] = '\0';
+    c2_strcpy(path1, C2V(gApplication_path));
+    if (c2_strlen(C2V(gCurrent_load_directory)) != 0) {
+        c2_strcat(path1, C2V(gDir_separator));
+        c2_strcat(path1, C2V(gCurrent_load_directory));
+    }
+    if (c2_strcmp(C2V(gCurrent_load_directory), "COMMON") != 0 && c2_strcmp(C2V(gCurrent_load_directory), "INTRFACE") != 0) {
+        if (c2_strlen(C2V(gCurrent_load_name)) != 0) {
+            c2_strcat(path1, C2V(gDir_separator));
+            c2_strcat(path1, C2V(gCurrent_load_name));
+        }
+    }
+    if (c2_strlen(C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name) != 0) {
+        c2_strcat(path1, C2V(gDir_separator));
+        c2_strcat(path1, C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
+    }
+    if (c2_strlen(pName) != 0) {
+        c2_strcat(path1, C2V(gDir_separator));
+        c2_strcat(path1, pName);
+    }
+
+    c2_strcpy(path3, C2V(gApplication_path));
+    if (c2_strlen(C2V(gCurrent_load_directory)) != 0) {
+        c2_strcat(path3, C2V(gDir_separator));
+        c2_strcat(path3, C2V(gCurrent_load_directory));
+    }
+    if (c2_strcmp(C2V(gCurrent_load_directory), "COMMON") != 0 && c2_strcmp(C2V(gCurrent_load_directory), "INTRFACE") != 0) {
+        if (c2_strlen(C2V(gCurrent_load_name)) != 0) {
+            c2_strcat(path3, C2V(gDir_separator));
+            c2_strcat(path3, C2V(gCurrent_load_name));
+        }
+    }
+    if (c2_strlen(pName) != 0) {
+        c2_strcat(path3, C2V(gDir_separator));
+        c2_strcat(path3, pName);
+    }
+
+    c2_strcpy(path2, path1);
+    if (c2_strlen("TIFFX") != 0) {
+        c2_strcat(path2, C2V(gDir_separator));
+        c2_strcat(path2, "TIFFX");
+    }
+    DREnumPath(path2, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+
+    c2_strcpy(path4, path1);
+    if (c2_strlen("PIX8") != 0) {
+        c2_strcat(path4, C2V(gDir_separator));
+        c2_strcat(path4, "PIX8");
+    }
+    DREnumPath(path4, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+
+    if (list.size == 0) {
+        c2_strcpy(path2, path3);
+        if (c2_strlen("TIFFRGB") != 0) {
+            c2_strcat(path2, C2V(gDir_separator));
+            c2_strcat(path2, "TIFFRGB");
+        }
+        DREnumPath(path2, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+
+        c2_strcpy(path4, path3);
+        if (c2_strlen("PIX16") != 0) {
+            c2_strcat(path4, C2V(gDir_separator));
+            c2_strcat(path4, "PIX16");
+        }
+        DREnumPath(path4, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+        if (list.size == 0) {
+            return 0;
+        }
+        for (i = 0; i < list.size; i++) {
+            pMaps[i] = LoadTiffOrBrenderTexture_Ex(path3, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
+        }
+    } else {
+        for (i = 0; i < list.size; i++) {
+            pMaps[i] = LoadTiffOrBrenderTexture_Ex(path1, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
+        }
+    }
+    return list.size;
+}
+C2_HOOK_FUNCTION(0x00513a30, LoadTextureTryAllLocations)
