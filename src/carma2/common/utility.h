@@ -50,6 +50,8 @@ br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPale
 
 int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 
+float C2_HOOK_STDCALL FRandomBetween(float pA, float pB);
+
 const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
 void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time);
