@@ -168,6 +168,8 @@ br_resource_class* C2_HOOK_CDECL BrResClassAdd(br_resource_class* rclass);
 void* C2_HOOK_CDECL BrResRemove(void* vres);
 void C2_HOOK_CDECL BrResFree(void* vres);
 char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str);
+br_uint_32 C2_HOOK_CDECL BrResSize(void* vres);
+br_uint_8 C2_HOOK_CDECL BrResClass(void* vres);
 
 // BrTable
 br_pixelmap* C2_HOOK_CDECL BrTableAdd(br_pixelmap* pixelmap);

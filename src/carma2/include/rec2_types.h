@@ -1254,6 +1254,7 @@ typedef struct {
 } tDamage_program;
 
 typedef enum tDriver {
+    eDriver_non_car_unused_slot = 0,
     eDriver_oppo = 6,
     eDriver_net_human = 7,
     eDriver_local_human = 8
@@ -1808,9 +1809,9 @@ typedef struct {
     tSpecial_volume* special_volumes;
     int count_track_sound_generators;
     tTrackSoundGenerator* track_sound_generators;
-    br_pixelmap* field59_0x1c0c;
-    br_pixelmap* field60_0x1c10;
-    br_pixelmap* field61_0x1c14;
+    br_pixelmap* standard_screen;
+    br_pixelmap* standard_screen_dark;
+    br_pixelmap* standard_screen_fog;
     int special_screens_count;
     tSpecial_screen* special_screens;
     tIntelligent_vehicles AI_vehicles;
@@ -2134,7 +2135,7 @@ typedef struct {
     int replace_modelchance_fire;
     int replace_model_2_int;
     int replace_model_3_int;
-    undefined field_0x2cc[4];
+    int replace_model_4_int;
     undefined4 field_0x2d4;
     undefined4 field_0x2d8;
     undefined field_0x2dc;
@@ -2600,6 +2601,14 @@ typedef struct {
     br_vector3 points[4];
 } tQuad;
 
+typedef struct tNon_car_spec {
+    int index;
+    undefined field_0x4[4];
+    tCollision_info* collision_info;
+    undefined4 field_0xc;
+    undefined field_0x10[244];
+} tNon_car_spec;
+
 typedef struct {
     int timer_increments[3];
     int count_quads;
@@ -2625,9 +2634,14 @@ typedef struct {
     int crash_noise_index;
     int scrape_noise_index;
     float sparkiness;
-    int smoke_type;
+    int smoke_type; /* room for expansion */
     br_material* skid_mark_material;
 } tMaterial_modifiers;
+
+typedef struct {
+    br_vector3 pos;
+    float yaw;
+} tNet_starts;
 
 typedef struct {
     int index;
@@ -2639,9 +2653,9 @@ typedef struct {
     int completion_bonus_opponents[3];
     undefined field_0x3c[84];
     int number_of_racers;
-    undefined field_0x94[4];
+    int count_network_start_points;
     tRace_list_spec* race_spec;
-    undefined field_0x9c[384];
+    tNet_starts net_starts[24];
     tRace_checkpoint_spec checkpoints[5];
     undefined field_0x780[1380];
     tOpp_spec opponent_list[30];
@@ -2994,6 +3008,7 @@ enum {
     kFatalError_CannotLoadAGeneratedShadeTable = 0x6d,
     kFatalError_RanOutOfFunkGrooveSlotBunches = 0x71,
     kFatalError_FileIsCorrupted_S = 0x73,
+    kFatalError_CantFindFile_S = 0x76,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
     kFatalError_CannotFindSmashModel_S = 0x79,
@@ -3009,8 +3024,9 @@ enum {
     kFatalError_WrongCrushDataFileVersion_SDD = 0xab,
     kFatalError_UnableToOpenDroneFileOrFileCorrupted_S = 0xaf,
     kFatalError_DuplicatePixelmap_S = 0xb5,
+    kFatalError_FileMustStartWith_SS = 0xb0,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
-    kFatalError_FileMustStartWith_SS = 0xb2,
+    kFatalError_Mysterious_SS = 0xb2,
     kFatalError_DuplicateModel_S = 0xb3,
     kFatalError_DuplicateMaterial_S = 0xb4,
     kFatalError_WriteAttemptToPackedFile_S = 0xb6,

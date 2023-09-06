@@ -11,7 +11,6 @@ C2_HOOK_VARIABLE_DECLARE(br_scalar, gSight_distance_squared);
 C2_HOOK_VARIABLE_DECLARE(tBrender_storage*, gStorageForCallbacks);
 C2_HOOK_VARIABLE_DECLARE(int, gGroovidelics_array_size);
 C2_HOOK_VARIABLE_DECLARE(tGroovidelic_spec*, gGroovidelics_array);
-C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDefault_water_spec_vol_real);
 C2_HOOK_VARIABLE_DECLARE(const char*, gSmashable_track_environment_path);
 C2_HOOK_VARIABLE_DECLARE(tSmashable_environment_name*, gSmashable_noncars);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_smashable_noncars);
@@ -148,5 +147,7 @@ void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF);
 void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF);
 
 void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM);
+
+void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 
 #endif // REC2_WORLD_H
