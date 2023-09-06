@@ -794,3 +794,72 @@ void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg) {
     c2_fflush(c2_stdout);
 }
 C2_HOOK_FUNCTION(0x00518ac0, DumpVisibleActors)
+
+int (C2_HOOK_FASTCALL * LoadTextureTryAllLocations_original)(char* pName, br_pixelmap** pMaps, int pCapacity);
+int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    return LoadTextureTryAllLocations_original(pName, pMaps, pCapacity);
+#else
+    char path1[256];
+    char path2[256];
+    char path3[256];
+    char path4[256];
+    tName_list list;
+    size_t i;
+    int error;
+
+    list.size = 0;
+    C2_HOOK_ASSERT(pName[c2_strlen(pName) - 4] == '.');
+    pName[c2_strlen(pName) - 4] = '\0';
+
+    PathCat(path1, C2V(gApplication_path), C2V(gCurrent_load_directory));
+    if (c2_strcmp(C2V(gCurrent_load_directory), "COMMON") != 0 && c2_strcmp(C2V(gCurrent_load_directory), "INTRFACE") != 0) {
+        PathCat(path1, path1, C2V(gCurrent_load_name));
+    }
+    PathCat(path1, path1, C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
+    PathCat(path1, path1, pName);
+
+    PathCat(path3, C2V(gApplication_path), C2V(gCurrent_load_directory));
+    if (c2_strcmp(C2V(gCurrent_load_directory), "COMMON") != 0 && c2_strcmp(C2V(gCurrent_load_directory), "INTRFACE") != 0) {
+        PathCat(path3, path3, C2V(gCurrent_load_name));
+    }
+    PathCat(path3, path3, pName);
+
+    PathCat(path2, path1, "TIFFX");
+    DREnumPath(path2, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+
+    PathCat(path4, path1, "PIX8");
+    DREnumPath(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
+
+    PathCat(path2, path1, "TIFFRGB");
+    DREnumPath(path2, (tEnumPathCallback)AddTextureFileStemToList, &list);
+
+    PathCat(path4, path1, "PIX16");
+    DREnumPath(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
+
+    if (list.size == 0) {
+        PathCat(path2, path3, "TIFFX");
+        DREnumPath(path2, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+
+        PathCat(path4, path3, "PIX8");
+        DREnumPath(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
+
+        PathCat(path2, path3, "TIFFRGB");
+        DREnumPath(path2, (tEnumPathCallback)AddTextureFileStemToList, &list);
+
+        PathCat(path4, path3, "PIX16");
+        DREnumPath(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
+
+        for (i = 0; i < list.size; i++) {
+            pMaps[i] = LoadTiffOrBrenderTexture_Ex(path3, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
+        }
+    } else {
+        for (i = 0; i < list.size; i++) {
+            pMaps[i] = LoadTiffOrBrenderTexture_Ex(path1, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
+        }
+    }
+    return list.size;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00513a30, LoadTextureTryAllLocations, LoadTextureTryAllLocations_original)
