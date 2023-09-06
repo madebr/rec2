@@ -13,4 +13,6 @@ void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 
 void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f);
 
+void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF);
+
 #endif //REC2_SPARK_H
