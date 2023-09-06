@@ -1,15 +1,23 @@
 #include "world.h"
 
 #include "animation.h"
+#include "brucetrk.h"
 #include "car.h"
 #include "crush.h"
+#include "depth.h"
+#include "drmem.h"
 #include "errors.h"
+#include "flicplay.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "graphics.h"
 #include "loading.h"
+#include "pedestrn.h"
 #include "shrapnel.h"
 #include "skidmark.h"
+#include "smashing.h"
 #include "sound.h"
+#include "spark.h"
 #include "utility.h"
 
 #include "platform.h"
@@ -19,8 +27,10 @@
 
 #include <tiffio.h>
 
+#include "c2_ctype.h"
 #include "c2_string.h"
 #include "c2_sys/c2_stat.h"
+#include "rec2_types.h"
 
 #define RGB565_R(V) (((V) & 0xf800) >> 11)
 #define RGB565_G(V) (((V) & 0x07e0) >> 5)
@@ -46,8 +56,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO)
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGroovidelics_array_size, 0x0068b848);
 C2_HOOK_VARIABLE_IMPLEMENT(tGroovidelic_spec*, gGroovidelics_array, 0x0068b850);
 
-C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume*, gDefault_water_spec_vol_real, 0x004ff110);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gRace_path, 0x0074d0a0, 256);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gRace_path, 256, 0x0074d0a0);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tMaterial_exception*, gMaterial_exceptions, 0x0074ca04);
 
@@ -69,6 +78,31 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_track_smashable_environment_specs_2, 0x00
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCapacity_track_smashables, 0x006a3330);
 C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_item_spec*, gTrack_smashable_environment_specs, 0x006a5138);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmashable_item_spec*, gSmashable_track_indexable_triggers, 100, 0x006ba4a0);
+
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gDepth_effect_names, 3, 0x00660e90, {
+    "dark",
+    "fog",
+    "colour",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gAdditional_model_path, 256, 0x006b6400);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gAdditional_actor_path, 256, 0x006b6500);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gAdditional_models, 1000, 0x006b6620);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_version, 0x007634b4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_additional_models, 0x006ab948);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gAdditional_actors, 0x006b75c0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gLast_actor, 0x006b6600);
+C2_HOOK_VARIABLE_IMPLEMENT(tU8*, gTrack_flic_buffer, 0x006aaf40);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTrack_flic_buffer_size, 0x006aaf48);
+C2_HOOK_VARIABLE_IMPLEMENT(tFlic_descriptor, gTrack_flic_descriptor, 0x006aaf50);
+
+C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gSky_image_width, 0x0079ec2e);
+C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gSky_image_height, 0x0079ec2c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gSky_image_underground, 0x0079ec30);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_red, 0x0074caa8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_green, 0x0074cf2c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_blue, 0x0074cad0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gNon_car_spec_indices, 100, 0x0079ef40);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gNon_car_indices, 88, 0x0079ed30);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -1221,16 +1255,6 @@ int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, con
 }
 C2_HOOK_FUNCTION(0x00486240, FindLastOccurrenceOfString_CaseInsensitive)
 
-void (C2_HOOK_FASTCALL * LoadTrack_original)(char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
-void C2_HOOK_FASTCALL LoadTrack(char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
-#if defined(C2_HOOKS_ENABLED)
-    LoadTrack_original(pFile_name, pTrack_spec, pRace_info);
-#else
-#error "Not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00504bf0, LoadTrack, LoadTrack_original)
-
 tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st) {
     int i;
 
@@ -1339,6 +1363,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, con
         default:
             return NULL;
     }
+    return NULL;
 }
 C2_HOOK_FUNCTION(0x00501560, LoadSinglePixelmap)
 
@@ -1788,7 +1813,7 @@ void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath)
             spec->replace_modelchance_fire = GetAnInt(pF);
             if (spec->replace_modelchance_fire != 0) {
                 spec->replace_model_2_int = GetAnInt(pF);
-                GetPairOfInts(pF, &spec->replace_model_3_int, &spec->flags);
+                GetPairOfInts(pF, &spec->replace_model_3_int, &spec->replace_model_4_int);
             }
         }
         /* reserved 1 */
@@ -1874,3 +1899,744 @@ void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
     pM->vertices = NULL;
 }
 C2_HOOK_FUNCTION(0x00502210, DodgyModelUpdate)
+
+void (C2_HOOK_FASTCALL * LoadTrack_original)(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
+void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    LoadTrack_original(pFile_name, pTrack_spec, pRace_info);
+#else
+    int i;
+    int j;
+    char short_track_name[32];
+    char local_directory[256];
+    char local_name[256];
+    char local_race_path[256];
+    char race_fixup_filename[256];
+    char race_lighting_path[256];
+    char race_desc_path[256];
+    char actor_path[256];
+    char s[256];
+    FILE* f;
+    int count, version;
+    char *str;
+    tTWTVFS twt, twt2;
+    tMaterial_exception* material_exception;
+    br_pixelmap* sky;
+    tU16 sky_pixels_high;
+    int killed_sky;
+    int count_material_modifiers;
+    int count_noncar_objects;
+
+    PrintMemoryDump(0, "AT THE START OF LOAD TRACK");
+    c2_strcpy(C2V(gCurrent_load_directory), "RACES");
+    c2_strcpy(C2V(gCurrent_load_name), pFile_name);
+    C2V(gCurrent_load_name)[c2_strlen(C2V(gCurrent_load_name)) - 4] = '\0';
+
+    c2_strcpy(local_directory, C2V(gCurrent_load_directory));
+    c2_strcpy(local_name, C2V(gCurrent_load_name));
+
+    PathCat(C2V(gRace_path), C2V(gApplication_path), local_directory);
+    c2_strcpy(local_race_path, C2V(gRace_path));
+
+    c2_sprintf(race_fixup_filename, "%s%s%s%s",
+        local_race_path, C2V(gDir_separator),
+        C2V(gRenderer_fixup_basename), C2V(gRenderer_fixup_extension));
+
+    f = DRfopen(race_fixup_filename, "rt");
+    if (f != NULL) {
+        GetALineAndDontArgue(f, s);
+        str = c2_strtok(s, "\t ,");
+        if (DRStricmp(str, "VERSION") != 0) {
+            FatalError(kFatalError_FileMustStartWith_SS, race_fixup_filename, "VERSION");
+        }
+        str = c2_strtok(NULL, "\t ,");
+        count = c2_sscanf(str, "%d", &version);
+        if (count == 0 || version != 1) {
+            FatalError(kFatalError_CantCopeWithVersionFor_SS, str, race_fixup_filename);
+        }
+        while (1) {
+            tMaterial_exception* matexc;
+
+            GetALineAndDontArgue(f, s);
+            str = c2_strtok(s, "\t ,");
+            if (DRStricmp(str, "end") == 0) {
+                break;
+            }
+            C2_HOOK_BUG_ON(sizeof(tMaterial_exception) != 12);
+            matexc = BrMemAllocate(sizeof(tMaterial_exception), kMem_exception);
+            matexc->texture_name = BrMemAllocate(c2_strlen(str) + 1, kMem_misc_string);
+            c2_strcpy(matexc->texture_name, str);
+            matexc->flags = 0;
+            while (1) {
+                str = c2_strtok(NULL, "\t ,");
+                if (str == NULL) {
+                    break;
+                }
+                if (!c2_isalnum(str[0])) {
+                    break;
+                }
+                if (DRStricmp(str, "nobilinear") == 0) {
+                    matexc->flags |= eMaterial_exception_nobilinear;
+                } else if (DRStricmp(str, "wrap") == 0) {
+                    matexc->flags |= eMaterial_exception_wrap;
+                } else {
+                    FatalError(kFatalError_Mysterious_SS, str, race_fixup_filename);
+                }
+            }
+            matexc->next = C2V(gMaterial_exceptions);
+            C2V(gMaterial_exceptions) = matexc;
+        }
+        DRfclose(f);
+    }
+
+    PathCat(C2V(gRace_path), C2V(gRace_path), local_name);
+    twt = TWT_MountEx(C2V(gRace_path));
+    PathCat(race_lighting_path, C2V(gRace_path), "LIGHTING.TXT");
+    PathCat(race_desc_path, C2V(gRace_path), pFile_name);
+    f = DRfopen(race_desc_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotOpenRacesFile);
+    }
+
+    GetALineAndDontArgue(f, s);
+    str = c2_strtok(s, "\t ,/");
+    if (c2_strcmp(str, "VERSION") == 0) {
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &C2V(gTrack_version));
+        if (C2V(gTrack_version) == 8) {
+            C2V(gTrack_version) = 0;
+        }
+    } else {
+        C2V(gTrack_version) = 0;
+    }
+
+    if (C2V(gTrack_version) > 0) {
+        LoadGlobalLighting(f);
+    }
+
+    /* Position of centre of start of grid */
+    GetThreeFloats(f,
+        &pRace_info->initial_position.v[0],
+        &pRace_info->initial_position.v[1],
+        &pRace_info->initial_position.v[2]);
+
+    /* Direction that grid faces in */
+    pRace_info->initial_yaw = GetAFloat(f);
+
+    /* Laps, checkpoints etc */
+
+    /* # checkpoints */
+    pRace_info->check_point_count = GetAnInt(f);
+    for (i = 0; i < pRace_info->check_point_count; i++) {
+        /* Checkpoint #x */
+        PossibleService();
+
+        /* Timer increment for each skill level (ped mode) */
+        GetThreeInts(f,
+            &pRace_info->checkpoints[i].timer_increments[0],
+            &pRace_info->checkpoints[i].timer_increments[1],
+            &pRace_info->checkpoints[i].timer_increments[2]);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_info, checkpoints, 0x21c);
+
+        /* # quads for this checkpoint */
+        pRace_info->checkpoints[i].count_quads = GetAnInt(f);
+
+        BrVector3Set(&pRace_info->checkpoints[i].pos, 0.f, 0.f, 0.f);
+
+        for (j = 0; j < pRace_info->checkpoints[i].count_quads; j++) {
+            br_vector3 tmp1, tmp2;
+            int k;
+
+            for (k = 0; k < 4; k++) {
+                /* Point #[0-3] */
+                GetThreeScalars(f,
+                    &pRace_info->checkpoints[i].quads[j].points[k].v[0],
+                    &pRace_info->checkpoints[i].quads[j].points[k].v[1],
+                    &pRace_info->checkpoints[i].quads[j].points[k].v[2]);
+                BrVector3Accumulate(&pRace_info->checkpoints[i].pos, &pRace_info->checkpoints[i].quads[j].points[k]);
+            }
+            BrVector3Sub(&tmp1,
+                &pRace_info->checkpoints[i].quads[j].points[2],
+                &pRace_info->checkpoints[i].quads[j].points[0]);
+            BrVector3Sub(&tmp2,
+                &pRace_info->checkpoints[i].quads[j].points[1],
+                &pRace_info->checkpoints[i].quads[j].points[0]);
+            BrVector3Cross(&pRace_info->checkpoints[i].normals[j], &tmp2, &tmp1);
+        }
+        BrVector3InvScale(&pRace_info->checkpoints[i].pos,
+            &pRace_info->checkpoints[i].pos,
+            (float)(4 * pRace_info->checkpoints[i].count_quads));
+    }
+
+    PossibleService();
+    c2_strcpy(short_track_name, pFile_name);
+    short_track_name[4] = '\0';
+    PathCat(race_desc_path, C2V(gApplication_path), "RACES");
+    PathCat(race_desc_path, race_desc_path, short_track_name);
+    twt2 = TWT_Mount(race_desc_path);
+    LoadAllTexturesFromTexSubdirectories(&C2V(gTrack_storage_space), race_desc_path);
+    TWT_Unmount(twt2);
+
+    PossibleService();
+    LoadAllTexturesFromTexSubdirectories(&C2V(gTrack_storage_space), C2V(gRace_path));
+
+    PossibleService();
+    LoadSomeShadeTables(&C2V(gTrack_storage_space), C2V(gRace_path));
+
+    PossibleService();
+    LoadTrackMaterials(&C2V(gTrack_storage_space), C2V(gRace_path));
+
+    PossibleService();
+    LoadTrackModels(&C2V(gTrack_storage_space), C2V(gRace_path));
+
+    for (i = 0; i < C2V(gTrack_storage_space).models_count; i++) {
+        br_model* model;
+        int* vertex_index_buffer;
+        int (* face_index_buffer)[3];
+
+        PossibleService();
+        model = C2V(gTrack_storage_space).models[i];
+        vertex_index_buffer = BrMemAllocate((model->nvertices + 1) * sizeof(int), BR_MEMORY_APPLICATION);
+        face_index_buffer = BrMemAllocate(model->nfaces * 3 * sizeof(int), BR_MEMORY_APPLICATION);
+
+        for (j = 1; j < model->nvertices; j++) {
+            if (vertex_index_buffer[j] == 0) {
+                int k;
+
+                vertex_index_buffer[j] = j;
+                for (k = j + 1; k <= model->nvertices; k++) {
+                    br_vector3 d;
+
+                    BrVector3Sub(&d, &model->vertices[j - 1].p, &model->vertices[k - 1].p);
+                    if (BrVector3LengthSquared(&d) < 1e-8f) {
+                        vertex_index_buffer[k] = j;
+                    }
+                }
+            }
+        }
+        for (j = 0; j < model->nfaces; j++) {
+            int k;
+
+            for (k = 0; k < 3; k++) {
+                face_index_buffer[j][k] = vertex_index_buffer[1 + model->faces[j].vertices[k]];
+            }
+        }
+        if (model->nfaces > 1) {
+            for (j = 0; j < model->nfaces - 1; j++) {
+                int k;
+
+                for (k = j + 1; k < model->nfaces; k++) {
+                    int l;
+
+                    for (l = 0; l < 3; l++) {
+                        int m;
+                        int s1a = face_index_buffer[j][l];
+                        int s1b = face_index_buffer[j][(l + 1) % 3];
+
+                        for (m = 0; m < 3; m++) {
+                            int s2a = face_index_buffer[k][m];
+                            int s2b = face_index_buffer[k][(m + 1) % 3];
+
+                            if ((s1a == s2a && s1b == s2b) || (s1a == s2b && s1b == s2a)) {
+                                br_vector3 d21, o31b, o31a, c2;
+                                float d;
+                                int s1c, s2c;
+
+                                model->faces[k].flags |= 1 << m;
+                                BrVector3Sub(&d21, &model->vertices[s2b - 1].p, &model->vertices[s2a - 1].p);
+                                s1c = face_index_buffer[j][(l + 2) % 3];
+                                s2c = face_index_buffer[k][(m + 2) % 3];
+                                BrVector3Sub(&o31b, &model->vertices[s2c - 1].p, &model->vertices[s2a - 1].p);
+                                BrVector3Sub(&o31a, &model->vertices[s1c - 1].p, &model->vertices[s2c - 1].p);
+                                BrVector3Cross(&c2, &o31b, &d21);
+                                d = BrVector3Dot(&o31a, &c2);
+                                if (d < .0001f && (((model->faces[j].material == NULL || !(model->faces[j].material->flags & BR_MATF_TWO_SIDED)) && (model->faces[k].material == NULL || !(model->faces[k].material->flags & BR_MATF_TWO_SIDED))) || d >= -.0001f)) {
+                                    model->faces[k].flags |= 1 << l;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        BrMemFree(vertex_index_buffer);
+        BrMemFree(face_index_buffer);
+        model->flags |= BR_MODF_UPDATEABLE;
+        BrModelUpdate(model, BR_MODU_FACES);
+    }
+    PrintMemoryDump(0, "JUST LOADED IN TEXTURES/MATS/MODELS FOR TRACK");
+
+    PathCat(actor_path, C2V(gRace_path), local_name);
+    c2_strcat(actor_path, ".ACT");
+    pTrack_spec->the_actor = BrActorLoad(actor_path);
+    PrintMemoryDump(0, "AFTER LOADING TRACK ACTORS");
+    PossibleService();
+
+    /* Smashable environment specs */
+    LoadSmashableTrackEnvironment(f, C2V(gRace_path));
+    PrintMemoryDump(0, "AFTER LOADING SMASHABLE ENVIRONMENT");
+
+    /* Ped specs */
+    LoadTrackPedestrians(f);
+    PossibleService();
+
+    ApplyPreviousTiffConversion();
+    ExtractColumns(pTrack_spec);
+    ApplyTopTiffConversion();
+
+    AllocateTrackPedestrians();
+    PrintMemoryDump(0, "JUST EXTRACTED COLUMNS AND LOADED IN PEDS");
+
+    C2V(gTrack_actor) = pTrack_spec->the_actor;
+    if (!C2V(gRendering_accessories) && C2V(gNet_mode) == eNet_mode_none) {
+        int rstyle;
+
+        rstyle = BR_RSTYLE_NONE;
+        PossibleService();
+        DRActorEnumRecurse(C2V(gTrack_actor), SetAccessoryRenderingCB, &rstyle);
+    }
+    BrActorAdd(C2V(gUniverse_actor), pTrack_spec->the_actor);
+
+    /* Additional actor */
+    GetALineAndDontArgue(f, s);
+    str = c2_strtok(c2_strtok(s, "\t ,/"), ".");
+    c2_strcat(str, ".DAT");
+    PathCat(C2V(gAdditional_model_path), C2V(gApplication_path), "MODELS");
+    PathCat(C2V(gAdditional_model_path), C2V(gAdditional_model_path), str);
+    PossibleService();
+    C2V(gNumber_of_additional_models) = BrModelLoadMany(C2V(gAdditional_model_path), C2V(gAdditional_models), REC2_ASIZE(C2V(gAdditional_models)));
+    for (i = 0; i < C2V(gNumber_of_additional_models); i++) {
+        C2V(gAdditional_models)[i]->flags = BR_MODF_UPDATEABLE;
+    }
+    BrModelAddMany(C2V(gAdditional_models), C2V(gNumber_of_additional_models));
+    PossibleService();
+
+    str = c2_strtok(c2_strtok(s, "\t ,/"), ".");
+    c2_strcat(str, ".ACT");
+    PathCat(C2V(gAdditional_actor_path), C2V(gApplication_path), "ACTORS");
+    PathCat(C2V(gAdditional_actor_path), C2V(gAdditional_actor_path), str);
+    C2V(gAdditional_actors) = BrActorLoad(C2V(gAdditional_actor_path));
+    if (C2V(gAdditional_actors) == NULL) {
+        C2V(gAdditional_actors) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    }
+    BrActorAdd(C2V(gUniverse_actor), C2V(gAdditional_actors));
+    C2V(gLast_actor) = NULL;
+
+    /* Name of sky texture pixelmap (or "none") */
+    GetAString(f, s);
+    if (!C2V(gAusterity_mode) && c2_strcmp(&s[c2_strlen(s) - 4], ".FLI") == 0) {
+        void* flic_pixels;
+
+        C2V(gTrack_flic_buffer) = NULL;
+        if (!LoadFlicData(s, &C2V(gTrack_flic_buffer), &C2V(gTrack_flic_buffer_size))) {
+            FatalError(kFatalError_CantFindFile_S, s);
+        }
+        StartFlic(s, -1, &C2V(gTrack_flic_descriptor), C2V(gTrack_flic_buffer_size), (tS8*)C2V(gTrack_flic_buffer), NULL, 0, 0, 0);
+        flic_pixels = BrMemAllocate((C2V(gTrack_flic_descriptor).width + 3) & (~3) * C2V(gTrack_flic_descriptor).height, kMem_video_pixels);
+        sky = DRPixelmapAllocate(C2V(gScreen)->type, C2V(gTrack_flic_descriptor).width, C2V(gTrack_flic_descriptor).height, flic_pixels, 0);
+        BrMapAdd(sky);
+        AssertFlicPixelmap(&C2V(gTrack_flic_descriptor), sky);
+    } else {
+        C2V(gTrack_flic_buffer) = NULL;
+        sky = BrMapFind(s);
+    }
+    killed_sky = 0;
+    if (C2V(gAusterity_mode) && sky != NULL) {
+        for (i = 0; i < C2V(gTrack_storage_space).pixelmaps_count; i++) {
+            if (C2V(gTrack_storage_space).pixelmaps[i] == sky) {
+                BrMapRemove(C2V(gTrack_storage_space).pixelmaps[i]);
+                BrPixelmapFree(C2V(gTrack_storage_space).pixelmaps[i]);
+                C2V(gTrack_storage_space).pixelmaps[i] = C2V(gTrack_storage_space).pixelmaps[C2V(gTrack_storage_space).pixelmaps_count - 1];
+                C2V(gTrack_storage_space).pixelmaps_count--;
+                break;
+            }
+        }
+        sky = NULL;
+        killed_sky = 1;
+    }
+    C2V(gProgram_state).default_depth_effect.sky_texture = sky;
+    if (sky != NULL) {
+        sky_pixels_high = C2V(gProgram_state).default_depth_effect.sky_texture->height;
+    } else {
+        sky_pixels_high = 100;
+    }
+    PossibleService();
+
+    /* Horizontal repetitions of sky texture */
+    C2V(gSky_image_width) = BrDegreeToAngle(360.0 / GetAnInt(f));
+
+    /* Vertical size of sky texture (degrees) */
+    C2V(gSky_image_height) = BrDegreeToAngle(GetAScalar(f));
+
+    /* Position of horizon (pixels below top) */
+    C2V(gSky_image_underground) = C2V(gSky_image_height) * (sky_pixels_high - GetAnInt(f)) / sky_pixels_high;
+
+    MungeForwardSky();
+    MungeRearviewSky();
+    PossibleService();
+
+    /* Depth cue mode ("none", "dark" or "fog") */
+    C2V(gProgram_state).default_depth_effect.type = GetALineAndInterpretCommand(f, C2V(gDepth_effect_names), REC2_ASIZE(C2V(gDepth_effect_names)));
+
+    /* Degree of fog/darkness */
+    GetPairOfInts(f,
+        &C2V(gProgram_state).default_depth_effect.start,
+        &C2V(gProgram_state).default_depth_effect.end);
+
+    /* Depth cue colour (red, green, blue ) */
+    GetThreeInts(f,
+        &C2V(gProgram_state).default_depth_effect.colour.red,
+        &C2V(gProgram_state).default_depth_effect.colour.green,
+        &C2V(gProgram_state).default_depth_effect.colour.blue);
+    C2V(gTrack_depth_colour_red) = C2V(gProgram_state).default_depth_effect.colour.red;
+    C2V(gTrack_depth_colour_green) = C2V(gProgram_state).default_depth_effect.colour.green;
+    C2V(gTrack_depth_colour_blue) = C2V(gProgram_state).default_depth_effect.colour.blue;
+    ResetDepthEffect();
+
+    if (killed_sky && C2V(gProgram_state).default_depth_effect.type != eDepth_effect_fog) {
+        C2V(gProgram_state).default_depth_effect.type = eDepth_effect_fog;
+        C2V(gProgram_state).default_depth_effect.start = 7;
+        C2V(gProgram_state).default_depth_effect.end = 0;
+        C2V(gProgram_state).default_depth_effect.colour.red = 0xf8;
+        C2V(gProgram_state).default_depth_effect.colour.green = 0xf8;
+        C2V(gProgram_state).default_depth_effect.colour.blue = 0xf8;
+    }
+    PossibleService();
+    LoadTrackSpecialVolumes(f);
+    LoadTrackSoundGenerators(pTrack_spec, f);
+
+    /* REFLECTIVE WINDSCREEN SPECIFICATIONS */
+
+    /* Material to use for default screens */
+    GetAString(f, s);
+    C2V(gProgram_state).standard_screen = BrMapFind(s);
+
+    /* Material to use for default screens during darkness */
+    GetAString(f, s);
+    C2V(gProgram_state).standard_screen_dark = BrMapFind(s);
+
+    /* Material to use for default screens during fog */
+    GetAString(f, s);
+    C2V(gProgram_state).standard_screen_fog = BrMapFind(s);
+
+    /* (ignore) # areas with different screens */
+    C2V(gProgram_state).special_screens_count = GetAnInt(f);
+    if (C2V(gProgram_state).special_screens_count != 0) {
+        C2V(gProgram_state).special_screens = BrMemAllocate(sizeof(tSpecial_screen) * C2V(gProgram_state).special_screens_count, kMem_special_screen);
+        C2_HOOK_BUG_ON(sizeof(tSpecial_screen) != 20);
+        for (i = 0; i < C2V(gProgram_state).special_screens_count; i++) {
+            GetFourScalars(f,
+                &C2V(gProgram_state).special_screens[i].min_x,
+                &C2V(gProgram_state).special_screens[i].min_z,
+                &C2V(gProgram_state).special_screens[i].max_x,
+                &C2V(gProgram_state).special_screens[i].max_z);
+            GetAString(f, s);
+            C2V(gProgram_state).special_screens[i].material = BrMaterialFind(s);
+        }
+    }
+
+    PossibleService();
+
+    /* MAP DETAILS */
+
+    /* Map pixelmap name */
+    GetAString(f, s);
+    pRace_info->map_image = BrMapFind(s);
+    if (pRace_info->map_image == NULL) {
+        c2_strtok(s, ".");
+        pRace_info->map_image = BrMapFind(s);
+        if (pRace_info->map_image == NULL) {
+            StringToUpper(s, s);
+            pRace_info->map_image = BrMapFind(s);
+        }
+    }
+    DRPixelmapConvertRGB565ToRGB555IfNeeded(pRace_info->map_image, C2V(gBack_screen)->type);
+    PrintMemoryDump(0, "JUST LOADING SKY/SPEC VOLS/SCREENS/MAP");
+    /* World->map transformation matrix */
+    for (i = 0; i < 4; ++i) {
+        GetThreeScalars(f,
+            &pRace_info->map_transformation.m[i][0],
+            &pRace_info->map_transformation.m[i][1],
+            &pRace_info->map_transformation.m[i][2]);
+    }
+    if (C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width != 640 || C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height != 480) {
+        pRace_info->map_transformation.m[3][0] -= 320.f;
+        pRace_info->map_transformation.m[3][1] -= 240.f;
+        BrMatrix34PostRotateX(&pRace_info->map_transformation, BrDegreeToAngle(90));
+        BrMatrix34PostScale(&pRace_info->map_transformation,
+            (float)C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width / (float)640,
+            0.f,
+            (float)C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height / (float)480);
+        BrMatrix34PostRotateX(&pRace_info->map_transformation, BrDegreeToAngle(270));
+        pRace_info->map_transformation.m[3][0] += (float)C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width / 2;
+        pRace_info->map_transformation.m[3][1] += (float)C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height / 2;
+    }
+
+    /* ****** START OF FUNK AND GROOVE STUFF ****** */
+
+    /* START OF FUNK */
+    GetALineAndDontArgue(f, s);
+    AddFunkotronics(f, -2, 30 * GROOVE_FUNK_MAX_PER_CAR, NULL);
+
+    /* FIXME: What is magic 1080 / 30 * 30 * GROOVE_FUNK_MAX_PER_CAR ?*/
+    C2_HOOK_BUG_ON(30 * GROOVE_FUNK_MAX_PER_CAR != 1080);
+
+    /* START OF GROOVE */
+    GetALineAndDontArgue(f, s);
+    C2_HOOK_ASSERT(c2_strcmp(s, "START OF GROOVE") == 0);
+
+    AddGroovidelics(f, -2, C2V(gUniverse_actor), 30 * GROOVE_FUNK_MAX_PER_CAR, 0);
+
+    PossibleService();
+    PrintMemoryDump(0, "JUST LOADING IN FUNKS AND GROOVES");
+
+    for (i = 0; i < C2V(gTrack_storage_space).models_count; i++) {
+        br_model* model;
+
+        PossibleService();
+        model = C2V(gTrack_storage_space).models[i];
+        if (model != NULL && model->identifier != NULL) {
+            for (j = 0; j < C2V(gTree_surgery_pass1_count); j++) {
+                if (c2_strstr(model->identifier, C2V(gTree_surgery_pass1)->name) == model->identifier) {
+                    break;
+                }
+            }
+            if (j != C2V(gTree_surgery_pass1_count)) {
+                for (j = 0; j < C2V(gTree_surgery_pass2_count); j++) {
+                    if (c2_strcmp(model->identifier, C2V(gTree_surgery_pass2)->original) == 0) {
+                        br_model* replacement;
+
+                        c2_strcpy(s, C2V(gTree_surgery_pass2)->replacement);
+                        replacement = LoadModel(s);
+                        if (replacement != NULL) {
+                            BrResFree(model->faces);
+                            BrResFree(model->vertices);
+                            model->faces = BrResAllocate(model, BrResSize(replacement->faces), BrResClass(replacement->faces));
+                            c2_memcpy(model->faces, replacement->faces, BrResSize(replacement->faces));
+                            model->nfaces = replacement->nfaces;
+                            model->vertices = BrResAllocate(model, BrResSize(replacement->vertices), BrResClass(replacement->vertices));
+                            c2_memcpy(model->vertices, replacement->vertices, BrResSize(replacement->vertices));
+                            model->nvertices = replacement->nvertices;
+                            BrModelUpdate(model, BR_MODU_ALL);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (model != NULL && (model->flags & (BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE))) {
+            if (model->identifier != NULL && model->identifier[0] != '-') {
+                model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
+            }
+            for (j = 0; j < V11MODEL(model)->ngroups; j++) {
+                v11group* v11_group = &V11MODEL(model)->groups[j];
+                v11_group->face_colours.material = model->faces[*v11_group->face_user].material;
+                if (v11_group->face_colours.material != NULL) {
+                    SetMaterialTrackLighting(v11_group->face_colours.material);
+                    if (v11_group->face_colours.material->index_shade == NULL) {
+                        v11_group->face_colours.material->index_shade = BrTableFind("DRRENDER.TAB");
+                        BrMaterialUpdate(v11_group->face_colours.material, BR_MATU_ALL);
+                    }
+                }
+            }
+            if (model->flags & BR_MODF_UPDATEABLE) {
+                BrModelUpdate(model, BR_MODU_ALL);
+            } else {
+                DodgyModelUpdate(model);
+            }
+        }
+    }
+    PossibleService();
+
+    PrintMemoryDump(0, "JUST ABOUT TO LOAD IN AI WORLD");
+    LoadAIWorld(f);
+    PrintMemoryDump(0, "JUST LOADED IN AI WORLD");
+    PrepareSmashableTrackItemIdentifiers();
+    ApplyPreviousTiffConversion();
+
+    /* number of material modifiers */
+    count_material_modifiers = GetAnInt(f);
+
+    for (i = 0; i < count_material_modifiers; i++) {
+        tMaterial_modifiers* modifier = &pRace_info->material_modifiers[i];
+
+        /* car wall friction */
+        modifier->car_wall_friction = GetAFloat(f);
+
+        /* tyre road friction */
+        modifier->tyre_road_friction = GetAFloat(f);
+
+        /* down force */
+        modifier->down_force = GetAFloat(f);
+
+        /* bumpiness */
+        modifier->bumpiness = GetAFloat(f);
+
+        /* tyre sound index */
+        modifier->tyre_noise_index = GetAnInt(f);
+
+        /* crash sound index */
+        modifier->crash_noise_index = GetAnInt(f);
+
+        /* scrape noise index */
+        modifier->scrape_noise_index = GetAnInt(f);
+
+        /* sparkiness */
+        modifier->sparkiness = GetAFloat(f);
+
+        /* room for expansion */
+        modifier->smoke_type = GetAnInt(f);
+
+        /* skid mark material */
+        GetAString(f, s);
+        str = c2_strtok(s, ".");
+        if (c2_strcmp(str, "NONE") == 0) {
+            modifier->skid_mark_material = NULL;
+        } else if (c2_strcmp(str, "0") == 0) {
+            modifier->skid_mark_material = NULL;
+        } else if (c2_strcmp(str, "1") == 0) {
+            modifier->skid_mark_material = NULL;
+        } else {
+            c2_strcat(str, ".PIX");
+            LoadSinglePixelmap(&C2V(gTrack_storage_space), str);
+            str[c2_strlen(str) - 4] = '\0';
+            c2_strcat(str, ".MAT");
+            modifier->skid_mark_material = LoadSingleMaterial(&C2V(gTrack_storage_space), str);
+        }
+    }
+    ApplyTopTiffConversion();
+    for (i = count_material_modifiers; i < REC2_ASIZE(pRace_info->material_modifiers) - 1; i++) {
+        tMaterial_modifiers* modifier = &pRace_info->material_modifiers[i];
+
+        modifier->car_wall_friction = 1.f;
+        modifier->tyre_road_friction = 1.f;
+        modifier->down_force = 1.f;
+        modifier->bumpiness = 0.f;
+        modifier->tyre_noise_index = 0;
+        modifier->crash_noise_index = 0;
+        modifier->scrape_noise_index = 0;
+        modifier->sparkiness = 1.f;
+        modifier->smoke_type = 1;
+        modifier->skid_mark_material = NULL;
+    }
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].car_wall_friction = 1.f;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].tyre_road_friction = 1.f;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].down_force = 0.f;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].bumpiness = 0.f;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].tyre_noise_index = -1;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].crash_noise_index = 0;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].scrape_noise_index = 0;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].sparkiness = 0.f;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].smoke_type = 1;
+    pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].skid_mark_material = NULL;
+
+    C2V(gDefault_water_spec_vol_real)->material_modifier_index = 10;
+
+    /* Non CarObjects */
+    count_noncar_objects = GetAnInt(f);
+    if (count_noncar_objects > 40) { /* FIXME: magic number */
+        PDFatalError("Too many non-car types");
+    }
+    C2V(gProgram_state).num_non_car_spaces = count_noncar_objects + C2V(gCount_smashable_noncars) + 40;
+    C2V(gProgram_state).non_cars = BrMemCalloc(C2V(gProgram_state).num_non_car_spaces, sizeof(tNon_car_spec), kMem_non_car_spec);
+    C2_HOOK_BUG_ON(sizeof(tNon_car_spec) != 260);
+    if (C2V(gProgram_state).non_cars == NULL && count_noncar_objects != 0) {
+        FatalError(kFatalError_CannotOpenRacesFile);
+    }
+    c2_memset(C2V(gNon_car_spec_indices), 0, sizeof(C2V(gNon_car_spec_indices)));
+    C2_HOOK_BUG_ON(sizeof(C2V(gNon_car_spec_indices)) != 100);
+    for (i = 0; i < 40; i++) { /* FIXME: magic */
+        tCollision_info *collision_info;
+        tNon_car_spec* non_car;
+
+        non_car = &C2V(gProgram_state).non_cars[i];
+        non_car->field_0xc = 0; /* FIXME: owner type? */
+        collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
+        C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
+        non_car->collision_info = collision_info;
+        collision_info->owner = non_car;
+        collision_info->flags_0x238 = 1;
+        collision_info->field_0x1a0 = 0xffff;
+        collision_info->field_0x1a4 = 0;
+    }
+    for (i = 0; i < count_noncar_objects + C2V(gCount_smashable_noncars); i++) {
+        tCollision_info* collision_info;
+        tNon_car_spec* non_car;
+        char non_cars_path[256];
+        FILE* g;
+
+        PossibleService();
+        non_car = &C2V(gProgram_state).non_cars[40 + i]; /* FIXME: magic number */
+        collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
+        C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
+        non_car->collision_info = collision_info;
+        collision_info->owner = non_car;
+        collision_info->flags_0x238 = 1;
+        collision_info->field_0x1a0 = 0xffff;
+        collision_info->field_0x1a4 = 0;
+
+        if (i < count_noncar_objects) {
+            GetAString(f, s);
+        } else {
+            c2_strcpy(s, C2V(gSmashable_noncars)[i - count_noncar_objects]);
+        }
+        PathCat(non_cars_path, C2V(gApplication_path), "NONCARS");
+        PathCat(non_cars_path, non_cars_path, s);
+        g = DRfopen(non_cars_path, "rt");
+        if (g == NULL) {
+            FatalError(kFatalError_CantOpen_S, non_cars_path);
+        }
+        LoadNonCar(g, non_car);
+        PossibleService();
+        C2V(gNon_car_spec_indices)[non_car->index] = i + 1;
+        DRfclose(g);
+    }
+    FreeSmashableNonCarNames();
+    for (i = 0; i < C2V(gProgram_state).track_spec.count_non_cars; i++) {
+        br_actor* actor = C2V(gProgram_state).track_spec.non_car_list[i];
+        int idx;
+        tNon_car_spec* non_car;
+        if (actor == NULL) {
+            continue;
+        }
+        idx = C2V(gNon_car_spec_indices)[10 * (actor->identifier[1] - '0') + (actor->identifier[2] - '0')] + 40 - 1;
+        non_car = &C2V(gProgram_state).non_cars[idx];
+        if (non_car == NULL || non_car->collision_info->actor != NULL) {
+            continue;
+        }
+        non_car->collision_info->actor = actor;
+        for (j = 0; j < 3; j++) {
+            actor->model->bounds.min.v[j] = MIN(actor->model->bounds.min.v[j], non_car->collision_info->bb2.min.v[j]);
+            actor->model->bounds.max.v[j] = MAX(actor->model->bounds.max.v[j], non_car->collision_info->bb2.max.v[j]);
+        }
+    }
+    GetSmokeShadeTables(f);
+    pRace_info->count_network_start_points = GetAnInt(f);
+    for (i = 0; i < pRace_info->count_network_start_points; i++) {
+        GetThreeScalars(f,
+            &pRace_info->net_starts[i].pos.v[0],
+            &pRace_info->net_starts[i].pos.v[1],
+            &pRace_info->net_starts[i].pos.v[2]);
+        pRace_info->net_starts[i].yaw = GetAFloat(f);
+    }
+    LoadInKevStuff(f);
+    C2V(gYon_multiplier) = GetAFloat(f);
+    GetAString(f, s);
+    if (DRStricmp(s, pFile_name) != 0) {
+        FatalError(kFatalError_FileIsCorrupted_S, pFile_name);
+    }
+    DRfclose(f);
+    for (material_exception = C2V(gMaterial_exceptions); material_exception != NULL; ) {
+        tMaterial_exception* next_material_exception = material_exception->next;
+        BrMemFree(material_exception->texture_name);
+        BrMemFree(material_exception);
+        material_exception = next_material_exception;
+    }
+    C2V(gMaterial_exceptions) = NULL;
+    PrintMemoryDump(0, "FINISHED LOADING TRACK");
+    /* nop_FUN_00486db0(race_lighting_path); */
+    TWT_UnmountEx(twt);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00504bf0, LoadTrack, LoadTrack_original)
