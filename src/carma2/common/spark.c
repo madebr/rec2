@@ -76,3 +76,24 @@ void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f) {
     }
 }
 C2_HOOK_FUNCTION(0x004fdb70, GetSmokeShadeTables)
+
+void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
+void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadInKevStuff_original(pF);
+#else
+#error "Not implemented"
+    ApplyPreviousTiffConversion();
+    PossibleService();
+    LoadInShrapnel();
+    PossibleService();
+    InitShrapnel();
+    PossibleService();
+    InitFlame();
+    PossibleService();
+    InitSplash(pF);
+    ApplyTopTiffConversion();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fdc10, LoadInKevStuff, LoadInKevStuff_original)
