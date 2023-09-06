@@ -15,6 +15,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gKey_mapping, 77);
 
 C2_HOOK_VARIABLE_DECLARE(int, gDisableTiffConversion);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gCurrent_load_directory, 256);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gCurrent_load_name, 256);
 
 C2_HOOK_VARIABLE_DECLARE(tSpecial_volume, gDefault_water_spec_vol);
 
@@ -38,6 +40,8 @@ C2_HOOK_VARIABLE_DECLARE(float, gCamera_angle);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gWheel_actor_names, 6);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPivot_actor_names, 6);
 C2_HOOK_VARIABLE_DECLARE(float, gMass_mine);
+C2_HOOK_VARIABLE_DECLARE(tSpecial_volume, gDefault_water_spec_vol);/* FIXME: rename to gDefault_default_water_spec_vol*/
+C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDefault_water_spec_vol_real);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
 

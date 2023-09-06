@@ -18,6 +18,7 @@
 #include "rec2_macros.h"
 
 #include "c2_string.h"
+#include "rec2_types.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tHeadup_icon, gPickedup_powerups, 5, 0x007059e0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gRepeatability_names, 4, 0x0065feb0, {

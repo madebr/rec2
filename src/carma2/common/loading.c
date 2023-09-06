@@ -137,7 +137,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gDecode_string, 14, 0x00655e38, {   
     0x9B, 0x52, 0x93, 0x9f, 0x52, 0x98, 0x9b,                                    \
     0x96, 0x96, 0x9e, 0x9B, 0xa0, 0x99, 0x0 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDecode_thing, 0x00655e30);
-C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume, gDefault_water_spec_vol, 0x00761b80);
+C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume, gDefault_water_spec_vol, 0x00761b80); /* FIXME: rename to gDefault_default_water_spec_vol */
+C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume*, gDefault_water_spec_vol_real, 0x00761f44);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gMisc_strings, 300, 0x006b5f40);
 
