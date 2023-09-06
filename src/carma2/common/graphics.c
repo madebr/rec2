@@ -649,7 +649,7 @@ void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** pMaterials, int pC
 #error "Not implemented"
     int i;
     br_material* material;
-    tMaterialException *material_exception;
+    tMaterial_exception *material_exception;
 
     for (i = 0; i < pCount; i++) {
         material = pMaterials[i];
