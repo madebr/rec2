@@ -4687,3 +4687,14 @@ void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pP
     DRForEveryFile(pPath, LoadDATModelsCallback);
 }
 C2_HOOK_FUNCTION(0x004f6520, LoadTrackModels)
+
+void (C2_HOOK_FASTCALL * LoadNonCar_original)(FILE* pF, tNon_car_spec* pNon_car_spec);
+void C2_HOOK_FASTCALL LoadNonCar(FILE* pF, tNon_car_spec* pNon_car_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadNonCar_original(pF, pNon_car_spec);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00487ec0, LoadNonCar, LoadNonCar_original)
