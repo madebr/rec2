@@ -1424,6 +1424,35 @@ int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const c
 }
 C2_HOOK_FUNCTION(0x00502060, LoadMaterialsInto)
 
+br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_space, const char* pName) {
+    br_material* temp;
+
+    temp = LoadMaterial(pName);
+    if (temp == NULL) {
+        return BrMaterialFind(pName);
+    }
+
+    switch (AddMaterialToStorage(pStorage_space, temp)) {
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientMaterialSlots);
+            break;
+
+        case eStorage_duplicate:
+            if (C2V(gDisallowDuplicates)) {
+                FatalError(kFatalError_DuplicateMaterial_S, temp->identifier);
+            }
+            BrMaterialFree(temp);
+            return C2V(gDuplicate_material);
+
+        case eStorage_allocated:
+            BrMaterialAdd(temp);
+            return temp;
+    }
+
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x005017e0, LoadSingleMaterial)
+
 void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile, tRendererShadingType pShading) {
     char s1[256];
     char s2[256];
