@@ -21,6 +21,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gColumn_flags, 0x006aa59c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gLollipop_model, 0x006aa380);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gFlame_map, 20, 0x006a8638);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmoke_column, gSmoke_column, 10, 0x006a96a8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSplash_flags, 0x006aa570);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSplash_model, 0x006a8758);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_splash_types, 0x006aa5a4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gSplash_material, 20, 0x006a9130);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSplash, gSplash, 32, 0x006a82b8);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
@@ -193,6 +198,79 @@ void C2_HOOK_FASTCALL InitFlame(void) {
     BrModelAdd(C2V(gLollipop_model));
 }
 C2_HOOK_FUNCTION(0x004fc3a0, InitFlame)
+
+void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
+    int i;
+    int num_files;
+    int num;
+    br_actor* actor;
+    char the_path[256];
+    char s[256];
+    br_pixelmap* splash_maps[20];
+
+    C2V(gSplash_flags) = 0;
+    C2V(gSplash_model) = BrModelAllocate("Splash", 4, 2);
+    c2_strcpy(C2V(gCurrent_load_directory), "COMMON");
+    if (pF != NULL) {
+        num = GetAnInt(pF);
+        C2V(gNum_splash_types) = 0;
+        for (i = 0; i < num; i++) {
+            GetAString(pF, s);
+#if 0
+            PathCat(the_path, the_path, s);
+#else
+            c2_strcpy(the_path, s);
+#endif
+            num_files = LoadTextureTryAllLocations(the_path, &splash_maps[C2V(gNum_splash_types)], REC2_ASIZE(splash_maps));
+            if (num_files == 0) {
+                FatalError(kFatalError_CantLoadPixelmapFile_S, the_path);
+            }
+            C2V(gNum_splash_types) += num_files;
+        }
+    } else {
+        c2_strcpy(the_path, "SPLSHBLU.PIX");
+        C2V(gNum_splash_types) = LoadTextureTryAllLocations(the_path, splash_maps, REC2_ASIZE(splash_maps));
+    }
+    BrMapAddMany(splash_maps, C2V(gNum_splash_types));
+    for (i = 0; i < C2V(gNum_splash_types); i++) {
+        C2V(gSplash_material)[i] = BrMaterialAllocate(NULL);
+        C2V(gSplash_material)[i]->flags &= ~BR_MATF_LIGHT;
+        C2V(gSplash_material)[i]->flags |= BR_MATF_ALWAYS_VISIBLE;
+        C2V(gSplash_material)[i]->colour_map = splash_maps[i];
+        BrMaterialAdd(C2V(gSplash_material)[i]);
+    }
+    C2V(gSplash_model)->nvertices = 4;
+    BrVector3SetFloat(&C2V(gSplash_model)->vertices[0].p, -0.5f, 0.0f, 0.0f);
+    BrVector3SetFloat(&C2V(gSplash_model)->vertices[1].p,  0.5f, 0.0f, 0.0f);
+    BrVector3SetFloat(&C2V(gSplash_model)->vertices[2].p,  0.5f, 1.0f, 0.0f);
+    BrVector3SetFloat(&C2V(gSplash_model)->vertices[3].p, -0.5f, 1.0f, 0.0f);
+    BrVector2Set(&C2V(gSplash_model)->vertices[0].map, 0.0f, 1.0f);
+    BrVector2Set(&C2V(gSplash_model)->vertices[1].map, 1.0f, 1.0f);
+    BrVector2Set(&C2V(gSplash_model)->vertices[2].map, 1.0f, 0.0f);
+    BrVector2Set(&C2V(gSplash_model)->vertices[3].map, 0.0f, 0.0f);
+    C2V(gSplash_model)->nfaces = 2;
+    C2V(gSplash_model)->faces[0].vertices[0] = 0;
+    C2V(gSplash_model)->faces[0].vertices[1] = 1;
+    C2V(gSplash_model)->faces[0].vertices[2] = 2;
+    C2V(gSplash_model)->faces[1].vertices[0] = 0;
+    C2V(gSplash_model)->faces[1].vertices[1] = 2;
+    C2V(gSplash_model)->faces[1].vertices[2] = 3;
+    C2V(gSplash_model)->faces[0].smoothing = 1;
+    C2V(gSplash_model)->faces[1].smoothing = 1;
+    BrModelAdd(C2V(gSplash_model));
+    for (i = 0; i < REC2_ASIZE(C2V(gSplash)); i++) {
+        C2V(gSplash)[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        actor = C2V(gSplash)[i].actor;
+        actor->model = C2V(gSplash_model);
+        if (C2V(gNum_splash_types) != 0) {
+            actor->material = C2V(gSplash_material)[IRandomBetween(0, C2V(gNum_splash_types) - 1)];
+        } else {
+            actor->material = NULL;
+        }
+        C2V(gSplash)[i].scale_x = SRandomBetween(0.9f, 1.1f) * (2 * IRandomBetween(0, 1) - 1);
+    }
+}
+C2_HOOK_FUNCTION(0x004fdde0, InitSplash)
 
 void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
