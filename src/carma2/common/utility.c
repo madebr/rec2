@@ -451,6 +451,12 @@ float C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
 }
 C2_HOOK_FUNCTION(0x005135b0, FRandomBetween)
 
+br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
+
+    return FRandomBetween(pA, pB);
+}
+C2_HOOK_FUNCTION(0x00513620, SRandomBetween)
+
 const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
 
     return C2V(gMisc_strings)[pIndex];
