@@ -1,10 +1,14 @@
 #include "spark.h"
 
+#include "errors.h"
 #include "globvars.h"
+#include "graphics.h"
 #include "loading.h"
 #include "utility.h"
 
 #include "rec2_macros.h"
+
+#include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSmoke_on, 0x00660110, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gShade_list, 16, 0x006b7840);
@@ -13,6 +17,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_dust_tables, 0x006a82b4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gShrapnel_model, 2, 0x006aa588);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gBlack_material, 0x006b7880);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tShrapnel, gShrapnel, 30, 0x006a9180);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gColumn_flags, 0x006aa59c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gLollipop_model, 0x006aa380);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gFlame_map, 20, 0x006a8638);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmoke_column, gSmoke_column, 10, 0x006a96a8);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
@@ -126,6 +134,65 @@ void C2_HOOK_FASTCALL InitShrapnel(void) {
         BrVector3Normalise(&C2V(gShrapnel)[i].axis, &C2V(gShrapnel)[i].axis);
     }
 }
+
+void C2_HOOK_FASTCALL InitFlame(void) {
+    int i;
+    int j;
+    char name[256];
+    br_actor* actor;
+    br_material* material;
+
+    C2V(gColumn_flags) = 0;
+    C2V(gLollipop_model) = BrModelAllocate("Lollipop", 4, 2);
+    c2_strcpy(name, "FLAMES.PIX");
+    c2_strcpy(C2V(gCurrent_load_directory), "COMMON");
+    if (LoadTextureTryAllLocations(name, C2V(gFlame_map), REC2_ASIZE(C2V(gFlame_map))) != REC2_ASIZE(C2V(gFlame_map))) {
+        FatalError(kFatalError_CantLoadPixelmapFile_S, name);
+    }
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gFlame_map)) != 20);
+    BrMapAddMany(C2V(gFlame_map), REC2_ASIZE(C2V(gFlame_map)));
+
+    C2_HOOK_BUG_ON(sizeof(tSmoke_column) != 124);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmoke_column)) != 10);
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+
+        C2V(gSmoke_column)[i].flame_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        for (j = 0; j < REC2_ASIZE(C2V(gSmoke_column)[i].frame_count); j++) {
+            actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            material = BrMaterialAllocate(NULL);
+            BrActorAdd(C2V(gSmoke_column)[i].flame_actor, actor);
+            actor->model = C2V(gLollipop_model);
+            actor->material = material;
+            material->flags &= ~BR_MATF_LIGHT;
+            material->flags |= BR_MATF_ALWAYS_VISIBLE;
+            material->colour_map = C2V(gFlame_map)[0];
+            AdaptMaterialsForRenderer(&material, 1, kRendererShadingType_AmbientOnly);
+            BrMaterialAdd(material);
+            C2V(gSmoke_column)[i].frame_count[j] = 100;
+        }
+    }
+    C2V(gLollipop_model)->nvertices = 4;
+    BrVector3SetFloat(&C2V(gLollipop_model)->vertices[0].p, -.5f, 0.f, .0f);
+    BrVector3SetFloat(&C2V(gLollipop_model)->vertices[1].p, .5f, 0.f, .0f);
+    BrVector3SetFloat(&C2V(gLollipop_model)->vertices[2].p, .5f, 1.f, .0f);
+    BrVector3SetFloat(&C2V(gLollipop_model)->vertices[3].p, -.5f, 1.f, .0f);
+    BrVector2Set(&C2V(gLollipop_model)->vertices[0].map, 0.f, 1.f);
+    BrVector2Set(&C2V(gLollipop_model)->vertices[1].map, 1.f, 1.f);
+    BrVector2Set(&C2V(gLollipop_model)->vertices[2].map, 1.f, 0.f);
+    BrVector2Set(&C2V(gLollipop_model)->vertices[3].map, 0.f, 0.f);
+
+    C2V(gLollipop_model)->nfaces = 2;
+    C2V(gLollipop_model)->faces[0].vertices[0] = 0;
+    C2V(gLollipop_model)->faces[0].vertices[1] = 1;
+    C2V(gLollipop_model)->faces[0].vertices[2] = 2;
+    C2V(gLollipop_model)->faces[1].vertices[0] = 0;
+    C2V(gLollipop_model)->faces[1].vertices[1] = 2;
+    C2V(gLollipop_model)->faces[1].vertices[2] = 3;
+    C2V(gLollipop_model)->faces[0].smoothing = 1;
+    C2V(gLollipop_model)->faces[1].smoothing = 1;
+    BrModelAdd(C2V(gLollipop_model));
+}
+C2_HOOK_FUNCTION(0x004fc3a0, InitFlame)
 
 void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {

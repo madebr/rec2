@@ -2848,6 +2848,28 @@ typedef struct {
     undefined field_0x48[8];
 } tFace_ref;
 
+typedef struct {
+    undefined field_0x0[4];
+    tCar_spec* car;
+    tCollision_info* collision_info;
+    br_actor* car_actor;
+    int time;
+    int lifetime;
+    undefined field_0x18[4];
+    int colour;
+    undefined field_0x20[4];
+    struct br_actor * flame_actor;
+    int frame_count[3];
+    undefined field_0x34[12];
+    float scale_x[3];
+    float scale_y[3];
+    float offset_x[3];
+    float offset_z[3];
+    int smudge_timer;
+    int vertex_index;
+    int upright;
+} tSmoke_column;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
