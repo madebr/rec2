@@ -19,6 +19,11 @@ C2_HOOK_VARIABLE_DECLARE(int, gColumn_flags);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gLollipop_model);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_pixelmap*, gFlame_map, 20);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmoke_column, gSmoke_column, 10);
+C2_HOOK_VARIABLE_DECLARE(int, gSplash_flags);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gSplash_model);
+C2_HOOK_VARIABLE_DECLARE(int, gNum_splash_types);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_material*, gSplash_material, 20);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSplash, gSplash, 20);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
