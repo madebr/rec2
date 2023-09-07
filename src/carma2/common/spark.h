@@ -15,6 +15,10 @@ C2_HOOK_VARIABLE_DECLARE(int, gNum_dust_tables);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_model*, gShrapnel_model, 2);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gBlack_material);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tShrapnel, gShrapnel, 30);
+C2_HOOK_VARIABLE_DECLARE(int, gColumn_flags);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gLollipop_model);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_pixelmap*, gFlame_map, 20);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmoke_column, gSmoke_column, 10);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -29,6 +33,8 @@ void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale);
 void C2_HOOK_FASTCALL LoadInShrapnel(void);
 
 void C2_HOOK_FASTCALL InitShrapnel(void);
+
+void C2_HOOK_FASTCALL InitFlame(void);
 
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF);
 
