@@ -2870,6 +2870,14 @@ typedef struct {
     int upright;
 } tSmoke_column;
 
+typedef struct {
+    br_actor* actor;
+    br_vector3 v;
+    int just_done;
+    float size;
+    float scale_x;
+} tSplash;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
