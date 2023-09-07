@@ -275,10 +275,9 @@ C2_HOOK_FUNCTION(0x004fdde0, InitSplash)
 void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadInKevStuff_original(pF);
 #else
-#error "Not implemented"
     ApplyPreviousTiffConversion();
     PossibleService();
     LoadInShrapnel();
