@@ -2,8 +2,12 @@
 
 #include "finteray.h"
 #include "globvars.h"
+#include "loading.h"
+
+#include <brender/brender.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gActive_car_list_rebuild_required, 0x0069173c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gBIG_APC_index, 0x0065a3c4, -1);
 
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 
@@ -80,3 +84,14 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004a7a60, ForceRebuildActiveCarList)
+
+void C2_HOOK_FASTCALL DisposeOpponents(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(offsetof(tIntelligent_vehicles, cops) != 12856);
+    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_cops; i++) {
+        DisposeCar(C2V(gProgram_state).AI_vehicles.cops[i].car_spec, (i == C2V(gBIG_APC_index)) ? 99 : 98);
+        BrMemFree(C2V(gProgram_state).AI_vehicles.cops[i].car_spec);
+    }
+}
+C2_HOOK_FUNCTION(0x004ae5d0, DisposeOpponents)

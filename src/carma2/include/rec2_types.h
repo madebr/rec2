@@ -1729,12 +1729,13 @@ typedef struct {
 } tOpponent_spec;
 
 typedef struct {
-    undefined4 number_of_opponents;
-    undefined4 number_of_cops;
-    undefined4 number_of_path_nodes;
-    undefined4 number_of_path_sections;
+    int number_of_opponents;
+    int number_of_cops;
+    int number_of_path_nodes;
+    int number_of_path_sections;
     br_vector3 cop_start_points[20];
-    tOpponent_spec opponents[40];
+    tOpponent_spec opponents[30];
+    tOpponent_spec cops[10];
     undefined4 path_nodes;
     tPath_section_struct* path_sections;
 } tIntelligent_vehicles;
