@@ -4699,3 +4699,14 @@ void C2_HOOK_FASTCALL LoadNonCar(FILE* pF, tNon_car_spec* pNon_car_spec) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00487ec0, LoadNonCar, LoadNonCar_original)
+
+void (C2_HOOK_FASTCALL * LoadPerRaceDroneStuff_original)(void);
+void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadPerRaceDroneStuff_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044fda0, LoadPerRaceDroneStuff, LoadPerRaceDroneStuff_original)
