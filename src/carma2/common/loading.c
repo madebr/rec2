@@ -4647,3 +4647,14 @@ void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044fda0, LoadPerRaceDroneStuff, LoadPerRaceDroneStuff_original)
+
+void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info) {
+
+    PrintMemoryDump(0,"BEFORE LoadOpponentsCars()");
+    LoadPlayerCars(pRace_info);
+    LoadCopCars();
+    PrintMemoryDump(0,"AFTER LoadOpponentsCars(), BEFORE LoadPerRaceDroneStuff()");
+    LoadPerRaceDroneStuff();
+    PrintMemoryDump(0,"AFTER LoadPerRaceDroneStuff()");
+}
+C2_HOOK_FUNCTION(0x00401070, LoadCars)
