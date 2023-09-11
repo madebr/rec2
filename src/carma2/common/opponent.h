@@ -8,6 +8,9 @@
 
 #include "c2_hooks.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gActive_car_list_rebuild_required);
+C2_HOOK_VARIABLE_DECLARE(int, gBIG_APC_index);
+
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index);
 
 void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF);
@@ -21,5 +24,7 @@ void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProc
 void C2_HOOK_FASTCALL RebuildActiveCarList(void);
 
 void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
+
+void C2_HOOK_FASTCALL DisposeOpponents(void);
 
 #endif //REC2_OPPONENT_H
