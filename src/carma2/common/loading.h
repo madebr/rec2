@@ -367,4 +367,6 @@ void C2_HOOK_FASTCALL LoadNonCar(FILE* pF, tNon_car_spec* pNon_car_spec);
 
 void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void);
 
+void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info);
+
 #endif //REC2_LOADING_H
