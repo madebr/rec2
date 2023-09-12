@@ -369,4 +369,6 @@ void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void);
 
 void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info);
 
+void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race);
+
 #endif //REC2_LOADING_H
