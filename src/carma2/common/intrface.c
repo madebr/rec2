@@ -68,12 +68,12 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
     }
     GetAString(f, pFrontend->name);
     itemCount = GetAnInt(f);
-    if (itemCount != pFrontend->itemCount) {
+    if (itemCount != pFrontend->count_items) {
         BrFailure("Error - Menu item number mismatch ");
     }
-    pFrontend->groupCount = GetAnInt(f);
-    GetAString(f, pFrontend->backdropName);
-    for (i = 0; i < pFrontend->itemCount; i++) {
+    pFrontend->count_groups = GetAnInt(f);
+    GetAString(f, pFrontend->backdrop_name);
+    for (i = 0; i < pFrontend->count_items; i++) {
         GetAString(f, pFrontend->items[i].text);
         if (DRStricmp(pFrontend->items[i].text, "XXX") == 0) {
             pFrontend->items[i].text[0] = '\0';
@@ -102,8 +102,8 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
     // FIXME: stringid = 0x401 (==> find out function of this item)
     c2_memcpy(&pFrontend->items[REC2_ASIZE(pFrontend->items) - 1], &C2V(gDefaultLastInterfaceItem), sizeof(tFrontend_item_spec));
 
-    pFrontend->scrollerCount = GetAnInt(f);
-    for (i = 0; i < pFrontend->scrollerCount; i++) {
+    pFrontend->count_scrollers = GetAnInt(f);
+    for (i = 0; i < pFrontend->count_scrollers; i++) {
         GetPairOfInts(f, &pFrontend->scrollers[i].id, &pFrontend->scrollers[i].count);
         GetPairOfInts(f, &pFrontend->scrollers[i].nbDisplayedAtOnce, &pFrontend->scrollers[i].indexTopItem);
         GetPairOfInts(f, &pFrontend->scrollers[i].indexFirstScrollableItem, &pFrontend->scrollers[i].indexLastScrollableItem);
@@ -117,8 +117,8 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
         }
     }
 
-    pFrontend->radioCount = GetAnInt(f);
-    for (i = 0; i < pFrontend->radioCount; i++) {
+    pFrontend->count_radios = GetAnInt(f);
+    for (i = 0; i < pFrontend->count_radios; i++) {
         GetPairOfInts(f, &pFrontend->radios[i].id, &pFrontend->radios[i].count);
         GetPairOfInts(f, &pFrontend->radios[i].indexFirstItem, &pFrontend->radios[i].indexLastItem);
         GetPairOfInts(f, &pFrontend->radios[i].indexSelected, &pFrontend->radios[i].greyboxRequested);
@@ -126,8 +126,8 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
         GetPairOfInts(f, &pFrontend->radios[i].width_greybox, &pFrontend->radios[i].height_greybox);
     }
 
-    pFrontend->levelCount = GetAnInt(f);
-    for (i = 0; i < pFrontend->levelCount; i++) {
+    pFrontend->count_levels = GetAnInt(f);
+    for (i = 0; i < pFrontend->count_levels; i++) {
         GetPairOfInts(f, &pFrontend->levels[i].unknown0, &pFrontend->levels[i].unknown1);
         GetPairOfInts(f, &pFrontend->levels[i].unknown2, &pFrontend->levels[i].unknown3);
     }
