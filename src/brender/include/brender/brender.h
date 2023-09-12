@@ -90,6 +90,7 @@ void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, br_matrix34* B);
 void C2_HOOK_CDECL BrMatrix34PreRotateY(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34RotateX(br_matrix34* mat, br_angle rx);
 void C2_HOOK_CDECL BrMatrix34RotateY(br_matrix34* mat, br_angle ry);
+void C2_HOOK_CDECL BrMatrix34PreScale(br_matrix34* mat, br_scalar sx, br_scalar sy, br_scalar sz);
 void C2_HOOK_CDECL BrMatrix34PostScale(br_matrix34* mat, br_scalar sx, br_scalar sy, br_scalar sz);
 void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, br_transform* xform);
 void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, br_transform* xform);
