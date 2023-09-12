@@ -36,6 +36,8 @@ add_library(c2_common STATIC
     flicplay.h
     font.c
     font.h
+    frontend.c
+    frontend.h
     globvars.c
     globvars.h
     globvrbm.c
