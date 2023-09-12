@@ -2874,6 +2874,11 @@ typedef struct {
     float scale_x;
 } tSplash;
 
+typedef struct {
+    br_model* model;
+    undefined field_0x4[12];
+} tFrontend_model;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
@@ -3074,5 +3079,15 @@ enum {
     kFatalError_CouldNotCreateTexturesPages_S = 0xb7,
     kFatalError_MysteriousX_SS = 0xbd,
 };
+
+typedef enum {
+    kFrontend_menu_main = 0,
+    kFrontend_menu_options = 1,
+    kFrontend_menu_wrecks = 2,
+    kFrontend_menu_netsync = 3,
+    kFrontend_menu_networksummary = 4,
+    kFrontend_menu_credits = 5,
+    kFrontend_menu_newgame = 6,
+} tFrontendMenuType;
 
 #endif // REC2_TYPES_H
