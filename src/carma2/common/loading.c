@@ -4658,3 +4658,8 @@ void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info) {
     PrintMemoryDump(0,"AFTER LoadPerRaceDroneStuff()");
 }
 C2_HOOK_FUNCTION(0x00401070, LoadCars)
+
+void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
+
+}
+C2_HOOK_FUNCTION(0x00487ea0, LoadInterfaceStuff)
