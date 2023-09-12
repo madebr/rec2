@@ -1584,7 +1584,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     /* Starting money in network mode */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-#if defined(REC2_REC2_FIX_BUGS)
+#if defined(REC2_FIX_BUGS)
     for (i = 0; i < REC2_ASIZE(C2V(gNet_starting_money)); i++) {
 #else
     for (i = 0; i < 5; i++) {
@@ -4721,3 +4721,8 @@ void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info) {
     PrintMemoryDump(0,"AFTER LoadPerRaceDroneStuff()");
 }
 C2_HOOK_FUNCTION(0x00401070, LoadCars)
+
+void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
+
+}
+C2_HOOK_FUNCTION(0x00487ea0, LoadInterfaceStuff)
