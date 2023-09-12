@@ -1075,31 +1075,31 @@ typedef struct tFrontend_item_spec {
 
 typedef struct tFrontend_spec {
     char name[260];
-    int itemCount;
+    int count_items;
     int (C2_HOOK_FASTCALL * create)(struct tFrontend_spec*);
     int (C2_HOOK_FASTCALL * destroy)(struct tFrontend_spec*);
     int (C2_HOOK_FASTCALL * tick)(struct tFrontend_spec*);
-    struct tFrontend_spec* previousFrontend;
-    int unknown1;  // FIXME: unknown
-    int unknown2;  // FIXME: unknown
-    int unknown3;  // FIXME: unknown
+    struct tFrontend_spec* previous;
+    undefined4 unknown1;  // FIXME: unknown
+    undefined4 unknown2;  // FIXME: unknown
+    undefined4 unknown3;  // FIXME: unknown
     int model_A_index;
     int model_B_index;
     int model_C_index;
     tFrontend_item_spec items[100];
-    int scrollerCount;
+    int count_scrollers;
     tFrontend_scroller_spec scrollers[100];
-    int radioCount;
+    int count_radios;
     tFrontend_radio_spec radios[100];
-    int groupCount;
+    int count_groups;
     int loaded;
-    char unknownLongString[260];  // FIXME: unknown
-    char backdropName[256];
+    undefined unknownLongString[260];  // FIXME: unknown
+    char backdrop_name[256];
     tFrontend_level_spec levels[100];
-    int levelCount;
-    char unknownshortString[56];  // FIXME: unknown
+    int count_levels;
+    undefined unknownshortString[56];  // FIXME: unknown
     int isPrevimousSomeOtherMenu;
-    int unknownLastInt;  // FIXME: unknown
+    undefined4 unknownLastInt;  // FIXME: unknown
 } tFrontend_spec;
 
 typedef struct {
