@@ -74,6 +74,8 @@ add_library(c2_common STATIC
     options.h
     pedestrn.c
     pedestrn.h
+    polyfont.c
+    polyfont.h
     pratcam.c
     pratcam.h
     physics.c
