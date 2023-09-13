@@ -4,6 +4,7 @@
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
+#include "init.h"
 #include "loading.h"
 #include "polyfont.h"
 #include "platform.h"
@@ -49,6 +50,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFrontend_brender_item, gFrontend_brender_items
 C2_HOOK_VARIABLE_IMPLEMENT(br_colour, gFrontend_some_color, 0x00688ae8);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_time_last_input, 0x0068875c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMouse_in_use, 0x0079ecb8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_actor, 0x0068650c);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -244,13 +246,87 @@ br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder,
 C2_HOOK_FUNCTION_ORIGINAL(0x0046abf0, Frontend_LoadFrontendPixelmap, Frontend_LoadFrontendPixelmap_original)
 
 void (C2_HOOK_FASTCALL * FRONTEND_CreateItemBrenderObjects_original)(tFrontend_brender_item* Frontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText);
-void C2_HOOK_FASTCALL FRONTEND_CreateItemBrenderObjects(tFrontend_brender_item* Frontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText) {
+void C2_HOOK_FASTCALL FRONTEND_CreateItemBrenderObjects(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText) {
 
     C2_HOOK_BUG_ON(sizeof(tFrontend_brender_item) != 44);
-#if defined(C2_HOOKS_ENABLED)
-    FRONTEND_CreateItemBrenderObjects_original(Frontend_brender_item, pX, pY, pWidth, pHeight, pColour, pMap, pText);
+#if 0//defined(C2_HOOKS_ENABLED)
+    FRONTEND_CreateItemBrenderObjects_original(pFrontend_brender_item, pX, pY, pWidth, pHeight, pColour, pMap, pText);
 #else
-#error "Not implemented"
+    br_actor* actor;
+    br_model* model;
+    br_material* material;
+    int dx;
+    int dy;
+    float map_x;
+    float map_y;
+
+    pFrontend_brender_item->actor = actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    pFrontend_brender_item->model = model = BrModelAllocate("ButtonModel", 4, 2);
+    pFrontend_brender_item->material = material = BrMaterialAllocate("ButtonMaterial");
+    if (model == NULL || material == NULL || actor == NULL) {
+        FatalError(kFatalError_OOM_S, "");
+    }
+    if (pMap != NULL) {
+        pFrontend_brender_item->field_0x10 = BrPixelmapAllocate(BR_PMT_RGBA_4444, pMap->width, pMap->height, NULL, 0);
+        BrPixelmapCopy(pFrontend_brender_item->field_0x10, pMap);
+        pFrontend_brender_item->field_0xc = BrPixelmapAllocate(BR_PMT_RGBA_4444, pMap->width, pMap->height, NULL, 0);
+        BrPixelmapCopy(pFrontend_brender_item->field_0xc, pFrontend_brender_item->field_0x10);
+    } else {
+        pFrontend_brender_item->field_0x10 = BrPixelmapAllocate(BR_PMT_RGBA_4444, 8, 8, NULL, 0);
+        BrPixelmapFill(pFrontend_brender_item->field_0x10, BR_COLOUR_RGBA(0, 0, 0x80, 0));
+        pFrontend_brender_item->field_0xc = BrPixelmapAllocate(BR_PMT_RGBA_4444, 8, 8, NULL, 0);
+        BrPixelmapCopy(pFrontend_brender_item->field_0xc, pFrontend_brender_item->field_0x10);
+        pFrontend_brender_item->field_0xc->identifier = BrResStrDup(pFrontend_brender_item->field_0xc, pText);
+    }
+    BrMapAdd(pFrontend_brender_item->field_0xc);
+    pFrontend_brender_item->prims[0].t = BRT_BLEND_B;
+    pFrontend_brender_item->prims[0].v.b = 1;
+    pFrontend_brender_item->prims[1].t = BRT_OPACITY_X;
+    pFrontend_brender_item->prims[1].v.x = 0x800000;
+    pFrontend_brender_item->prims[2].t = BR_NULL_TOKEN;
+    pFrontend_brender_item->prims[2].v.u32 = 0;
+    material->extra_prim = pFrontend_brender_item->prims;
+    actor->model = model;
+    actor->material = material;
+    actor->identifier = BrResStrDup(actor, "Button");;
+    BrMaterialAdd(material);
+    material->colour = pColour;
+    material->flags = BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
+    material->colour_map = pFrontend_brender_item->field_0xc;
+    BrMaterialUpdate(material, BR_MATU_ALL);
+    model->flags |= BR_MODF_KEEP_ORIGINAL;
+
+    model->vertices[0].p.v[0] = model->vertices[1].p.v[0] = (float)pX;
+    model->vertices[0].p.v[1] = model->vertices[3].p.v[1] = -(float)pY;
+    model->vertices[2].p.v[0] = model->vertices[3].p.v[0] = model->vertices[1].p.v[0] + (float)pWidth;
+    model->vertices[1].p.v[1] = model->vertices[2].p.v[1] = model->vertices[3].p.v[1] - (float)pHeight;
+    model->vertices[0].p.v[2] = -1.1f;
+    model->vertices[1].p.v[2] = -1.1f;
+    model->vertices[2].p.v[2] = -1.1f;
+    model->vertices[3].p.v[2] = -1.1f;
+    model->faces[0].vertices[0] = 0;
+    model->faces[0].vertices[1] = 1;
+    model->faces[0].vertices[2] = 2;
+    model->faces[1].vertices[0] = 2;
+    model->faces[1].vertices[1] = 3;
+    model->faces[1].vertices[2] = 0;
+    BrModelAdd(model);
+    if (pMap != NULL) {
+        dx = Fix2DTextureWidth(pMap->width);
+        dy = Fix2DTextureWidth(pMap->height);
+    } else {
+        dx = Fix2DTextureWidth(8);
+        dy = Fix2DTextureWidth(8);
+    }
+    map_x = (float)pWidth / (float)dx;
+    map_y = (float)pHeight / (float)dy;
+    BrVector2Set(&model->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&model->vertices[1].map, 0.f, map_y);
+    BrVector2Set(&model->vertices[2].map, map_x, map_y);
+    BrVector2Set(&model->vertices[3].map, map_x, 0.f);
+    BrModelUpdate(model, BR_MODU_ALL);
+    BrActorAdd(C2V(gFrontend_actor), actor);
+    actor->render_style = BR_RSTYLE_NONE;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046c5c0, FRONTEND_CreateItemBrenderObjects, FRONTEND_CreateItemBrenderObjects_original)
