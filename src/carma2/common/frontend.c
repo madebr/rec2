@@ -51,6 +51,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_colour, gFrontend_some_color, 0x00688ae8);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_time_last_input, 0x0068875c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMouse_in_use, 0x0079ecb8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_actor, 0x0068650c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_camera, 0x00686f94);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_token_value, gFrontend_backdrop0_material_prims, 3, 0x00686f50);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_token_value, gFrontend_backdrop1_material_prims, 3, 0x00686f20);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_token_value, gFrontend_backdrop2_material_prims, 3, 0x00686f38);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gFrontend_backdrop_materials, 3, 0x00686f10);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -115,10 +120,69 @@ static void C2_HOOK_FASTCALL LoadMenuImages(void) {
 void (C2_HOOK_FASTCALL * CreateMenuActors_original)(void);
 void C2_HOOK_FASTCALL CreateMenuActors(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CreateMenuActors_original();
 #else
-#error "Not implemented"
+    br_camera* camera;
+
+    C2V(gFrontend_actor) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    C2V(gFrontend_camera) = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+    camera = C2V(gFrontend_camera)->type_data;
+    camera->type = BR_CAMERA_PARALLEL;
+    camera->field_of_view = BrDegreeToAngle(45); /* 0x1ffe */
+    camera->hither_z = 1.f;
+    camera->yon_z = 3.f;
+    camera->width = 640.f;
+    camera->height = 480.f;
+    BrActorAdd(C2V(gFrontend_actor), C2V(gFrontend_camera));
+    C2V(gFrontend_backdrop0_material_prims)[0].t = BRT_BLEND_B;
+    C2V(gFrontend_backdrop0_material_prims)[0].v.b = 1;
+    C2V(gFrontend_backdrop0_material_prims)[1].t = BRT_OPACITY_X;
+    C2V(gFrontend_backdrop0_material_prims)[1].v.x = 0xb00000;
+    C2V(gFrontend_backdrop0_material_prims)[2].t = BR_NULL_TOKEN;
+    C2V(gFrontend_backdrop0_material_prims)[2].v.u32 = 0;
+    C2V(gFrontend_backdrop1_material_prims)[0].t = BRT_BLEND_B;
+    C2V(gFrontend_backdrop1_material_prims)[0].v.b = 1;
+    C2V(gFrontend_backdrop1_material_prims)[1].t = BRT_OPACITY_X;
+    C2V(gFrontend_backdrop1_material_prims)[1].v.x = 0xb00000;
+    C2V(gFrontend_backdrop1_material_prims)[2].t = BR_NULL_TOKEN;
+    C2V(gFrontend_backdrop1_material_prims)[2].v.u32 = 0;
+    C2V(gFrontend_backdrop2_material_prims)[0].t = BRT_BLEND_B;
+    C2V(gFrontend_backdrop2_material_prims)[0].v.b = 1;
+    C2V(gFrontend_backdrop2_material_prims)[1].t = BRT_OPACITY_X;
+    C2V(gFrontend_backdrop2_material_prims)[1].v.x = 0xb00000;
+    C2V(gFrontend_backdrop2_material_prims)[2].t = BR_NULL_TOKEN;
+    C2V(gFrontend_backdrop2_material_prims)[2].v.u32 = 0;
+    C2V(gFrontend_backdrop_materials)[0] = BrMaterialAllocate("Backdrop_material1");
+    C2V(gFrontend_backdrop_materials)[1] = BrMaterialAllocate("Backdrop_material2");
+    C2V(gFrontend_backdrop_materials)[2] = BrMaterialAllocate("Backdrop_material3");
+    C2V(gFrontend_backdrop_actors)[0] = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    C2V(gFrontend_backdrop_actors)[1] = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    C2V(gFrontend_backdrop_actors)[2] = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    C2V(gFrontend_backdrop_materials)[0]->colour = 0;
+    C2V(gFrontend_backdrop_materials)[1]->colour = 0;
+    C2V(gFrontend_backdrop_materials)[2]->colour = 0;
+    C2V(gFrontend_backdrop_materials)[0]->index_base = 0;
+    C2V(gFrontend_backdrop_materials)[1]->index_base = 0;
+    C2V(gFrontend_backdrop_materials)[2]->index_base = 0;
+    C2V(gFrontend_backdrop_materials)[0]->index_range = 1;
+    C2V(gFrontend_backdrop_materials)[1]->index_range = 1;
+    C2V(gFrontend_backdrop_materials)[2]->index_range = 1;
+    C2V(gFrontend_backdrop_materials)[0]->extra_prim = C2V(gFrontend_backdrop0_material_prims);
+    C2V(gFrontend_backdrop_materials)[1]->extra_prim = C2V(gFrontend_backdrop1_material_prims);
+    C2V(gFrontend_backdrop_materials)[2]->extra_prim = C2V(gFrontend_backdrop2_material_prims);
+    BrMaterialAdd(C2V(gFrontend_backdrop_materials)[0]);
+    BrMaterialAdd(C2V(gFrontend_backdrop_materials)[1]);
+    BrMaterialAdd(C2V(gFrontend_backdrop_materials)[2]);
+    C2V(gFrontend_backdrop_actors)[0]->material = C2V(gFrontend_backdrop_materials)[0];
+    C2V(gFrontend_backdrop_actors)[0]->identifier = BrResStrDup(C2V(gFrontend_backdrop_actors)[0], "Backdrop");;
+    C2V(gFrontend_backdrop_actors)[1]->material = C2V(gFrontend_backdrop_materials)[1];
+    C2V(gFrontend_backdrop_actors)[1]->identifier = BrResStrDup(C2V(gFrontend_backdrop_actors)[1], "Backdrop");
+    C2V(gFrontend_backdrop_actors)[2]->material = C2V(gFrontend_backdrop_materials)[2];
+    C2V(gFrontend_backdrop_actors)[2]->identifier = BrResStrDup(C2V(gFrontend_backdrop_actors)[2], "Backdrop");
+    BrActorAdd(C2V(gFrontend_actor), C2V(gFrontend_backdrop_actors)[0]);
+    BrActorAdd(C2V(gFrontend_actor), C2V(gFrontend_backdrop_actors)[1]);
+    BrActorAdd(C2V(gFrontend_actor), C2V(gFrontend_backdrop_actors)[2]);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046cf10, CreateMenuActors, CreateMenuActors_original)
