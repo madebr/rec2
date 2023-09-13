@@ -90,7 +90,7 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
         pFrontend->items[i].y2 = pFrontend->items[i].y;
         GetPairOfInts(f, &pFrontend->items[i].width, &pFrontend->items[i].height);
         GetPairOfInts(f, &pFrontend->items[i].unlitFont, &pFrontend->items[i].highFont);
-        pFrontend->items[i].pixmapIndex = GetAnInt(f);
+        pFrontend->items[i].map_index = GetAnInt(f);
         pFrontend->items[i].greyedBackdrop = GetAnInt(f);
         pFrontend->items[i].selectable = GetAnInt(f);
         pFrontend->items[i].group = GetAnInt(f);

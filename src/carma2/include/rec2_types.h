@@ -1059,7 +1059,7 @@ typedef struct tFrontend_item_spec {
     int height;
     eFrontendItemEnablec enabled;
     int visible;
-    int pixmapIndex; /* 0 = no image */
+    int map_index; /* 0 = no image */
     int greyedBackdrop;
     eFrontendSelectableType selectable;
     int radioButton_selected;
