@@ -187,11 +187,11 @@ static void C2_HOOK_FASTCALL LoadMenuModels(void) {
 #endif
 }
 
-void (C2_HOOK_FASTCALL * FRONTEND_CreateMenu_original)(tFrontend_spec* pFrontend_spec);
-void C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
+int (C2_HOOK_FASTCALL * FRONTEND_CreateMenu_original)(tFrontend_spec* pFrontend_spec);
+int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 
 #if defined(C2_HOOKS_ENABLED)
-    FRONTEND_CreateMenu_original(pFrontend_spec);
+    return FRONTEND_CreateMenu_original(pFrontend_spec);
 #else
 #error "Not implemented"
 #endif

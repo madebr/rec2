@@ -11,7 +11,7 @@ void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
 void C2_HOOK_FASTCALL CreateMenuActors(void);
 
-void C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
+int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 
 void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) ;
 
