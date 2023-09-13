@@ -3,8 +3,10 @@
 #include "drmem.h"
 #include "errors.h"
 #include "globvars.h"
+#include "graphics.h"
 #include "loading.h"
 #include "polyfont.h"
+#include "platform.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -39,6 +41,14 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_backdrop0_opacity_mode, 0x006864e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_backdrop1_opacity_mode, 0x006864dc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_backdrop2_opacity_mode, 0x006864d4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_interpolate_steps_left, 0x00686ef8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_count_brender_items, 0x0068683c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_remove_current_backdrop, 0x00764ee0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gFrontend_backdrop, 0x00686f8c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_selected_item_index, 0x00688770);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFrontend_brender_item, gFrontend_brender_items, 100, 0x00687248); /* FIXME: parametrize size + index of last item */
+C2_HOOK_VARIABLE_IMPLEMENT(br_colour, gFrontend_some_color, 0x00688ae8);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_time_last_input, 0x0068875c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMouse_in_use, 0x0079ecb8);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -214,10 +224,104 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0046c5c0, FRONTEND_CreateItemBrenderObjects, FRONTEN
 int (C2_HOOK_FASTCALL * FRONTEND_CreateMenu_original)(tFrontend_spec* pFrontend_spec);
 int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return FRONTEND_CreateMenu_original(pFrontend_spec);
 #else
-#error "Not implemented"
+    char s[256];
+    char s2[256];
+    const char* name;
+    int i;
+
+    c2_sprintf(s, "START OF FRONTEND_CreateMenu for menu \'%s\'", pFrontend_spec->name);
+    PrintMemoryDump(0, s);
+    if (pFrontend_spec->create != NULL) {
+        pFrontend_spec->create(pFrontend_spec);
+    }
+    C2V(gFrontend_count_brender_items) = 0;
+    name = pFrontend_spec->backdrop_name;
+    if (name != NULL && c2_strlen(name) != 0) {
+        if (!C2V(gFrontend_remove_current_backdrop)) {
+            tTWTVFS twt;
+
+            PathCat(s2, C2V(gApplication_path), "INTRFACE");
+            PathCat(s2, s2, "BACKDROP");
+            c2_strcpy(s, name);
+            C2_HOOK_ASSERT(s[c2_strlen(s) - 4] == '.');
+            s[c2_strlen(s) - 4] = '\0';
+            PathCat(s2, s2, s);
+            twt = TWT_MountEx(s2);
+            C2V(gFrontend_backdrop) = Frontend_LoadFrontendPixelmap(s2, name);
+            TWT_UnmountEx(twt);
+
+            if (C2V(gFrontend_backdrop) == NULL) {
+                BrFailure("FRONTEND: Error loading background graphics.", 0);
+            }
+            /* FUN_005191f0(gFrontend_backdrop); */
+            BrMapAdd(C2V(gFrontend_backdrop));
+        } else if (C2V(gFrontend_backdrop) != NULL) {
+            tTWTVFS twt;
+
+            BrMapRemove(C2V(gFrontend_backdrop));
+            BrPixelmapFree(C2V(gFrontend_backdrop));
+
+            PathCat(s2, C2V(gApplication_path), "INTRFACE");
+            PathCat(s2, s2, "BACKDROP");
+            c2_strcpy(s, name);
+            C2_HOOK_ASSERT(s[c2_strlen(s) - 4] == '.');
+            s[c2_strlen(s) - 4] = '\0';
+            PathCat(s2, s2, s);
+            twt = TWT_MountEx(s2);
+            C2V(gFrontend_backdrop) = Frontend_LoadFrontendPixelmap(s2, name);
+            TWT_UnmountEx(twt);
+
+            if (C2V(gFrontend_backdrop) == NULL) {
+                BrFailure("FRONTEND: Error loading background graphics.", 0);
+            }
+            /* FUN_005191f0(C2V(gFrontend_backdrop)); */
+            BrMapAdd(C2V(gFrontend_backdrop));
+        }
+    }
+    StartMouseCursor();
+    for (i = 0; i < pFrontend_spec->count_items; i++) {
+        tFrontend_item_spec* item = &pFrontend_spec->items[i];
+        tS16 y;
+        tS16 width;
+        tS16 height;
+
+        if (i == C2V(gFrontend_selected_item_index)) {
+            width = item->width;
+            height = item->height;
+            y = item->y;
+        }
+        else {
+            width = item->width;
+            height = item->height;
+            y = item->y;
+        }
+        FRONTEND_CreateItemBrenderObjects(
+            &C2V(gFrontend_brender_items)[C2V(gFrontend_count_brender_items)],
+            item->x,
+            y,
+            width,
+            height,
+            C2V(gFrontend_some_color),
+            item->map_index == 0 ? NULL : C2V(gFrontend_images)[item->map_index],
+            item->text);
+        C2V(gFrontend_count_brender_items)++;
+    }
+    C2V(gFrontend_time_last_input) = PDGetTotalTime();
+    FRONTEND_CreateItemBrenderObjects(&C2V(gFrontend_brender_items)[99],
+        0,
+        0,
+        0,
+        0,
+        C2V(gFrontend_some_color),
+        NULL,
+        "");
+    C2V(gFrontend_selected_item_index) = C2V(gMouse_in_use) ? 99 : 0;
+    c2_sprintf(s, "END OF FRONTEND_CreateMenu for menu \'%s\'", pFrontend_spec->name);
+    PrintMemoryDump(0, s);
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046c970, FRONTEND_CreateMenu, FRONTEND_CreateMenu_original)
