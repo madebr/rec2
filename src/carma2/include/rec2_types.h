@@ -1104,6 +1104,15 @@ typedef struct tFrontend_spec {
 
 typedef struct {
     br_actor* actor;
+    br_model* model;
+    br_material* material;
+    br_pixelmap* field_0xc;
+    br_pixelmap* field_0x10;
+    br_token_value prims[3];
+} tFrontend_brender_item;
+
+typedef struct {
+    br_actor* actor;
     br_material* material;
     br_model* model;
     br_uint_32 color_red;
