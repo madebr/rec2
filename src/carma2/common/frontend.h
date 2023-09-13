@@ -11,6 +11,8 @@ void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
 void C2_HOOK_FASTCALL CreateMenuActors(void);
 
+br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder, const char* pName);
+
 int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 
 void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) ;
