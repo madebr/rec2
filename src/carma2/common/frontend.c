@@ -201,10 +201,44 @@ static void C2_HOOK_FASTCALL LoadMenuModels(void) {
 br_pixelmap* (C2_HOOK_FASTCALL * Frontend_LoadFrontendPixelmap_original)(const char* pFolder, const char* pName);
 br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder, const char* pName) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return Frontend_LoadFrontendPixelmap_original(pFolder, pName);
 #else
-#error "Not implemented"
+
+    br_pixelmap* pixelmaps[1000];
+    br_pixelmap* result;
+    FILE* f;
+    tPath_name the_path;
+    char* str;
+    int i;
+    int count;
+
+    result = NULL;
+    PathCat(the_path, pFolder, "PIXIES.P16");
+    f = TWT_fopen(the_path, "rb");
+    if (f == NULL) {
+        PathCat(the_path, pFolder, pName);
+        result = DRLoadUpdatePixelmapFromTif(the_path);
+        /* FUN_005193f0(result, 0); */
+        return result;
+    }
+    DRfclose(f);
+    count = BrPixelmapLoadMany(the_path, pixelmaps, REC2_ASIZE(pixelmaps));
+    c2_strcpy(the_path, pName);
+    str = c2_strchr(the_path, '.');
+    *str = '\0';
+    for (i = 0; i < count; i++) {
+        if (pixelmaps[i] != NULL) {
+            if (DRStricmp(pixelmaps[i]->identifier, the_path) == 0) {
+                result = pixelmaps[i];
+            } else {
+                BrPixelmapFree(pixelmaps[i]);
+                pixelmaps[i] = NULL;
+            }
+        }
+    }
+    /* FUN_005193f0(result, 0); */
+    return result;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046abf0, Frontend_LoadFrontendPixelmap, Frontend_LoadFrontendPixelmap_original)
