@@ -188,6 +188,17 @@ static void C2_HOOK_FASTCALL LoadMenuModels(void) {
 #endif
 }
 
+br_pixelmap* (C2_HOOK_FASTCALL * Frontend_LoadFrontendPixelmap_original)(const char* pFolder, const char* pName);
+br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder, const char* pName) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return Frontend_LoadFrontendPixelmap_original(pFolder, pName);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0046abf0, Frontend_LoadFrontendPixelmap_original, Frontend_LoadFrontendPixelmap)
+
 int (C2_HOOK_FASTCALL * FRONTEND_CreateMenu_original)(tFrontend_spec* pFrontend_spec);
 int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 
