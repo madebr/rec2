@@ -22,6 +22,23 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gCar_icons_model_actor, 0x0074ab84);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyFont_glyph_actors, 256, 0x0074cae0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_icon, gCar_icons, 128, 0x0074a780);
 
+int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
+    int y;
+    int x;
+
+    for (x = pMap->width - 1; x >= 0; x--) {
+        tU16* ptr = &((tU16*)pMap->pixels)[x];
+        for (y = 0; y < pMap->height; y++) {
+            if (*ptr != 0) {
+                return x + 1;
+            }
+            *(tU8*)ptr += pMap->row_bytes;
+        }
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00463760, CalculatePolyFontMapWidth)
+
 void (C2_HOOK_FASTCALL * LoadPolyFont_original)(const char* pName, int pSize, int pIndex);
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
 
