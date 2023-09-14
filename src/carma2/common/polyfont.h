@@ -15,6 +15,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_icon, gCar_icons, 128);
 
 int C2_HOOK_FASTCALL GetPolyFontCharacterWidthI(int pIndex, tU8 pCharacter);
 
+int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex);
+
 int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex);
