@@ -23,6 +23,18 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gCar_icons_model_actor, 0x0074ab84);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyFont_glyph_actors, 256, 0x0074cae0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_icon, gCar_icons, 128, 0x0074a780);
 
+int C2_HOOK_FASTCALL GetPolyFontCharacterWidthI(int pIndex, tU8 pCharacter) {
+
+    if ('a' <= pCharacter && pCharacter <= 'z') {
+        pCharacter = pCharacter - ('a' - 'A');
+    }
+    if (C2V(gPolyFonts)[pIndex].glyphs[pCharacter].used) {
+         return C2V(gPolyFonts)[pIndex].glyphs[pCharacter].glyph_width;
+    }
+    return C2V(gPolyFonts)[pIndex].widthOfBlank;
+}
+C2_HOOK_FUNCTION(0x004637d0, GetPolyFontCharacterWidthI)
+
 int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
     int y;
     int x;
