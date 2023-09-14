@@ -223,16 +223,16 @@ typedef struct {
 } tShit_mine;
 
 typedef struct {
+    br_model* model;
     br_material* material;
     int used;
     br_uint_32 index;
     br_uint_32 glyph_width;
     br_vector2 texCoord;
-    tPolyFont* font;
 } tPolyFontGlyph;
 
 typedef struct tPolyFont {
-    char field0_0x0[68];
+    char name[68];
     br_uint_32 numberOfCharacters;
     br_uint_32 interCharacterSpacing;
     br_uint_32 asciiOffset;
@@ -241,8 +241,8 @@ typedef struct tPolyFont {
     br_uint_32 fontSize;
     br_uint_32 unknown_0x5c;
     int available;
-    br_uint_32 unknown_0x64;
     tPolyFontGlyph glyphs[256]; /* unsure about offset */
+    br_model* model;
 } tPolyFont;
 
 typedef struct {
@@ -3043,6 +3043,7 @@ enum {
     kFatalError_CouldNotOpenFlicFile_S = 0x0d,
     kFatalError_FlicFileWasNot8BitsDeep_S = 0x0f,
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
+    kFatalError_CannotLoadFontImage_S = 0x14,
     kFatalError_CannotLoadFontWidthTable_S = 0x15,
     kFatalError_ScreenWidthHeightDoesNotMatchGrafData = 0x18,
     kFatalError_CannotLoadCarResolutionIndependentFile = 0x19,
