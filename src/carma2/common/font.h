@@ -16,8 +16,12 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(br_pixelmap*, gPixelmapBuffer, 1000);
 C2_HOOK_VARIABLE_DECLARE(int, gPixelmapBufferSize);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_pixelmap*, gTextureMaps, 1000);
 
+br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char* glyphName, int loadFromDisk);
+
 br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx);
 
 br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureIdX, int textureIdY, const char* pageName);
+
+void C2_HOOK_FASTCALL SetPolyFontBorderColours(br_model* pModel, int fontIdx);
 
 #endif //REC2_FONT_H
