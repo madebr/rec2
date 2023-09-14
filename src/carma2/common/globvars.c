@@ -210,7 +210,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gRearview_camera, 0x0075b940);
 //br_pixelmap* gRender_shade_table;
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRearview_depth_buffer, 0x0075b93c);
 //br_pixelmap* gWhole_screen;
-//br_pixelmap* gIcons_pix;
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcons_pix, 0x0068b8ac);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gCamera, 0x0074d35c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gOther_selfs, 4, 0x0074d644);
 //br_actor* gArrow_actor;
