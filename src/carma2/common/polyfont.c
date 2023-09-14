@@ -6,6 +6,7 @@
 #include "globvars.h"
 #include "grafdata.h"
 #include "loading.h"
+#include "platform.h"
 #include "utility.h"
 
 #include "rec2_types.h"
@@ -32,7 +33,7 @@ int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
             if (*ptr != 0) {
                 return x + 1;
             }
-            *(tU8*)ptr += pMap->row_bytes;
+            (tU8*)ptr += pMap->row_bytes;
         }
     }
     return 1;
@@ -42,10 +43,163 @@ C2_HOOK_FUNCTION(0x00463760, CalculatePolyFontMapWidth)
 void (C2_HOOK_FASTCALL * LoadPolyFont_original)(const char* pName, int pSize, int pIndex);
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadPolyFont_original(pName, pSize, pIndex);
 #else
-#error "Not implemented"
+    tPath_name the_path;
+    tTWTVFS twt;
+    char s[256];
+    char s2[256];
+    FILE* f;
+    int i;
+    br_model* model;
+    br_pixelmap* blank_map;
+    int tex_x;
+    int tex_y;
+
+    PathCat(the_path, C2V(gApplication_path), C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
+    PathCat(the_path, the_path, "FONTS");
+    PathCat(the_path, the_path, pName);
+
+    twt = TWT_MountEx(the_path);
+
+    c2_strcpy(s, the_path);
+    PathCat(s, s, "FONT.TXT");
+    f = TWT_fopen(s, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotLoadFontWidthTable_S, pName);
+    }
+
+    c2_strcpy(C2V(gPolyFonts)[pIndex].name, pName);
+    /* number of characters */
+    C2V(gPolyFonts)[pIndex].numberOfCharacters = GetAnInt(f);
+    /* inter-character spacing */
+    C2V(gPolyFonts)[pIndex].interCharacterSpacing = GetAnInt(f);
+    /* ASCII offset (value of first character) */
+    C2V(gPolyFonts)[pIndex].asciiOffset = GetAnInt(f);
+    /* font character height */
+    C2V(gPolyFonts)[pIndex].fontCharacterHeight = GetAnInt(f);
+    /* Blank width */
+    C2V(gPolyFonts)[pIndex].widthOfBlank = GetAnInt(f);
+    C2V(gPolyFonts)[pIndex].fontSize = pSize;
+    C2V(gPolyFonts)[pIndex].available = 1;
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPolyFonts)[pIndex].glyphs) != 256);
+    for (i = 0; i < REC2_ASIZE(C2V(gPolyFonts)[pIndex].glyphs); i++) {
+        tPolyFontGlyph* glyph = &C2V(gPolyFonts)[pIndex].glyphs[i];
+
+        glyph->model = NULL;
+        glyph->material = NULL;
+        glyph->used = 0;
+        glyph->index = 0;
+        glyph->glyph_width = pSize;
+    }
+    DRfclose(f);
+    c2_strcpy(s, the_path);
+    PathCat(s, s, "BLANK.PIX");
+    blank_map = LoadPolyFontPixiesP16(the_path, "BLANK.PIX", 1);
+    if (blank_map == NULL) {
+        FatalError(kFatalError_CannotLoadFontImage_S, "BLANK.PIX");
+    }
+
+    tex_x = 0;
+    tex_y = 0;
+    for (i = 0; i < (int)C2V(gPolyFonts)[pIndex].numberOfCharacters; i++) {
+        int ascii;
+        br_pixelmap* map;
+
+        c2_strcpy(s, the_path);
+        ascii = C2V(gPolyFonts)[pIndex].asciiOffset + i;
+        sprintf(s2, "%d.PIX", ascii);
+        PathCat(s, s, s2);
+        map = LoadPolyFontPixiesP16(the_path, s2, 0);
+        if (map == NULL) {
+            continue;
+        }
+        if (C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] == NULL) {
+            C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] = BrPixelmapAllocate(blank_map->type, 64, 64, NULL, 0);
+            if (C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] == NULL) {
+                FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
+            }
+            BrMapAdd(C2V(gTextureMaps)[C2V(gSize_font_texture_pages)]);
+        }
+        if (map->type != C2V(gTextureMaps)[C2V(gSize_font_texture_pages)]->type) {
+            c2_printf("FONT:%s  CHAR:%c (%i)\n", pName, ascii, ascii);
+            c2_fflush(c2_stdout);
+            BrFailure("BLOODY FONTS :(");
+        }
+        DRPixelmapRectangleCopy(
+                C2V(gTextureMaps)[C2V(gSize_font_texture_pages)],
+                tex_x, tex_y,
+                map,
+                0, 0,
+                pSize, pSize);
+        BrMapUpdate(C2V(gTextureMaps)[C2V(gSize_font_texture_pages)], BR_MAPU_ALL);
+        C2V(gPolyFonts)[pIndex].glyphs[ascii].index = C2V(gSize_font_texture_pages);
+        C2V(gPolyFonts)[pIndex].glyphs[ascii].used = 1;
+        BrVector2Set(&C2V(gPolyFonts)[pIndex].glyphs[ascii].texCoord, (float) tex_x / 64.f, (float)tex_y  / 64.f);
+        C2V(gPolyFonts)[pIndex].glyphs[ascii].glyph_width = CalculatePolyFontMapWidth(map);
+        C2V(gPolyFonts)[pIndex].glyphs[ascii].material = NULL;
+        model = C2V(gPolyFonts)[pIndex].model;
+        /* Find model for font size */
+        while (model != NULL) {
+            if (model->bounds.max.v[0] == pSize && model->bounds.min.v[1] == -pSize) {
+                break;
+            }
+            model = model->user;
+        }
+        if (model == NULL) {
+            model = BrModelAllocate("String Model", 4, 2);
+            model->user = C2V(gPolyFonts)[pIndex].glyphs[pIndex].model;
+            C2V(gPolyFonts)[pIndex].glyphs[pIndex].model = model;
+            if (model == NULL) {
+                FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
+            }
+            model->faces[0].vertices[0] = 0;
+            model->faces[0].vertices[1] = 1;
+            model->faces[0].vertices[2] = 2;
+            model->faces[1].vertices[0] = 1;
+            model->faces[1].vertices[1] = 3;
+            model->faces[1].vertices[2] = 2;
+            BrVector3Set(&model->vertices[0].p, 0.f, 0.f, -1.2f);
+            BrVector3Set(&model->vertices[1].p, (float) pSize, 0.f, -1.2f);
+            BrVector3Set(&model->vertices[2].p, 0.f, (float) -pSize, -1.2f);
+            BrVector3Set(&model->vertices[3].p, (float) pSize, (float) -pSize, -1.2f);
+            BrVector2Set(&model->vertices[0].map, 0.f, 0.f);
+            BrVector2Set(&model->vertices[1].map, 1.f, 0.f);
+            BrVector2Set(&model->vertices[2].map, 0.f, 1.f);
+            BrVector2Set(&model->vertices[3].map, 1.f, 1.f);
+            SetPolyFontBorderColours(model, pIndex);
+            model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
+            BrModelAdd(model);
+        }
+        C2V(gPolyFonts)[pIndex].glyphs[ascii].model = model;
+        tex_x += pSize;
+        if (tex_x >= 64) {
+            tex_y += pSize;
+            tex_x = 0;
+            if (tex_y >= 64) {
+                C2V(gSize_font_texture_pages)++;
+                if (C2V(gSize_font_texture_pages) >= REC2_ASIZE(C2V(gTextureMaps))) {
+                    FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
+                }
+                tex_x = 0;
+                tex_y = 0;
+            }
+        }
+        if (twt < 0) {
+            BrPixelmapFree(map);
+        }
+    }
+    for (i = 0; i < C2V(gPixelmapBufferSize); i++) {
+
+        if (C2V(gPixelmapBuffer)[i] != NULL) {
+            BrPixelmapFree(C2V(gPixelmapBuffer)[i]);
+            C2V(gPixelmapBuffer)[i] = NULL;
+        }
+    }
+    C2V(gPixelmapBufferSize) = 0;
+    TWT_UnmountEx(twt);
+    C2V(gSize_font_texture_pages)++;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004643f0, LoadPolyFont, LoadPolyFont_original)
