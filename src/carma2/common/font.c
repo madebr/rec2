@@ -80,16 +80,16 @@ br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureI
 C2_HOOK_FUNCTION(0x00464b80, CreateStringModel)
 
 br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx) {
-    br_material* pMaterial;
+    br_material* material;
 
-    pMaterial = BrMaterialAllocate("Character Material");
-    if (pMaterial == NULL) {
+    material = BrMaterialAllocate("Character Material");
+    if (material == NULL) {
         BrFailure("Could not create font material");
     }
-    pMaterial->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
-    pMaterial->colour_map = C2V(gTextureMaps)[textureIdx];
-    BrMaterialAdd(pMaterial);
-    return pMaterial;
+    material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
+    material->colour_map = C2V(gTextureMaps)[textureIdx];
+    BrMaterialAdd(material);
+    return material;
 }
 C2_HOOK_FUNCTION(0x00464cf0, CreateFontCharacterMaterial)
 
