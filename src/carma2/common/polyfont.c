@@ -4,6 +4,7 @@
 #include "errors.h"
 #include "font.h"
 #include "globvars.h"
+#include "grafdata.h"
 #include "loading.h"
 #include "utility.h"
 
@@ -17,7 +18,9 @@
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInitial_count_font_texture_pages, 0x00765ea0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSize_font_texture_pages, 0x0068648c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gString_root_actor, 0x0074cf10);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gCar_icons_model_actor, 0x0074ab84);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyFont_glyph_actors, 256, 0x0074cae0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_icon, gCar_icons, 128, 0x0074a780);
 
 void (C2_HOOK_FASTCALL * LoadPolyFont_original)(const char* pName, int pSize, int pIndex);
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
@@ -30,13 +33,88 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004643f0, LoadPolyFont, LoadPolyFont_original)
 
+static tU32 FindSmallestPowerOf2BiggerThen(tU32 pValue) {
+    tU32 power;
+
+    for (power = 1; power < 32; power++) {
+        if (pValue <= 1u << power) {
+            return 1 << power;
+        }
+    }
+    return 1 << 31;
+}
+
 void (C2_HOOK_FASTCALL * InitCarIcons_original)(br_pixelmap* pMap);
 void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitCarIcons_original(pMap);
 #else
-#error "Not implemented"
+    int i;
+    int count_car_icons;
+    int icon_width;
+    int icon_height;
+    int texture_x;
+    int texture_y;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gCar_icons)) != 128);
+    c2_memset(C2V(gCar_icons), 0, sizeof(C2V(gCar_icons)));
+    count_car_icons = C2V(gIcons_pix)->height / C2V(gCurrent_graf_data)->car_icon_height;
+
+    icon_width = FindSmallestPowerOf2BiggerThen(pMap->width);
+    icon_height = FindSmallestPowerOf2BiggerThen(C2V(gCurrent_graf_data)->car_icon_height);
+
+    texture_x = 0;
+    texture_y = 0;
+    for (i = 0; i < count_car_icons; i++) {
+        int j;
+        tCar_icon* icon = &C2V(gCar_icons)[i];
+
+        if (C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] == NULL) {
+            C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] = BrPixelmapAllocate(pMap->type, 64, 64, NULL, 0);
+            if (C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] == NULL) {
+                FatalError(kFatalError_CouldNotCreateTexturesPages_S, "Car Icons");
+            }
+            BrMapAdd(C2V(gTextureMaps)[C2V(gSize_font_texture_pages)]);
+        }
+        DRPixelmapRectangleCopy(
+            C2V(gTextureMaps)[C2V(gSize_font_texture_pages)],
+            texture_x,
+            texture_y,
+            pMap,
+            0,
+            C2V(gCurrent_graf_data)->car_icon_height * i,
+            icon_width,
+            C2V(gCurrent_graf_data)->car_icon_height);
+        BrMapUpdate(C2V(gTextureMaps)[C2V(gSize_font_texture_pages)], BR_MAPU_ALL);
+        icon->index = C2V(gSize_font_texture_pages);
+        icon->model = CreateStringModel(icon_width, icon_height, texture_x, texture_y, "CAR ICONS");
+        for (j = 0; j < 4; j++) {
+            icon->model->vertices[j].red = 0xff;
+            icon->model->vertices[j].grn = 0xff;
+            icon->model->vertices[j].blu = 0xff;
+        }
+        icon->model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
+        BrModelUpdate(icon->model, BR_MODU_ALL);
+        texture_x += icon_width;
+        if (texture_x > 64) {
+            texture_x = 0;
+            texture_y += icon_height;
+            if (texture_y >= 64) {
+                C2V(gSize_font_texture_pages)++;
+                if (C2V(gSize_font_texture_pages) >= REC2_ASIZE(C2V(gTextureMaps))) {
+                    FatalError(kFatalError_CouldNotCreateTexturesPages_S, "CAR ICONS");
+                }
+                texture_x = 0;
+                texture_y = 0;
+            }
+        }
+    }
+    C2V(gSize_font_texture_pages)++;
+    C2V(gCar_icons_model_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    C2V(gCar_icons_model_actor)->material = BrMaterialAllocate("Car Icon Material");
+    C2V(gCar_icons_model_actor)->material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE;
+    BrMaterialAdd(C2V(gCar_icons_model_actor)->material);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004973b0, InitCarIcons, InitCarIcons_original)
