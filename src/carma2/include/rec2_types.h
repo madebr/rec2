@@ -3104,4 +3104,34 @@ typedef enum {
     kFrontend_menu_newgame = 6,
 } tFrontendMenuType;
 
+enum {
+    kPolyfont_hand_green_15pt_unlit     = 0,
+    kPolyfont_hand_green_15pt_lit       = 1,
+    kPolyfont_hand_red_15pt_unlit       = 2,
+    kPolyfont_hand_red_15pt_lit         = 3,
+    kPolyfont_serp_red_15pt_lit         = 4,
+    kPolyfont_serp_red_30pt_lit         = 5,
+    kPolyfont_serp_green_30pt_unlit     = 6,
+    kPolyfont_serp_green_30pt_lit       = 7,
+    kPolyfont_serp_green_38pt_unlit     = 8,
+    kPolyfont_serp_green_38pt_lit       = 9,
+    kPolyfont_hand_green_10pt_unlit     = 10,
+    kPolyfont_hand_green_10pt_lit       = 11,
+    kPolyfont_ingame_tiny_yellow        = 12,
+    kPolyfont_ingame_tiny_blue          = 13,
+    kPolyfont_ingame_tiny_red           = 14,
+    kPolyfont_ingame_tiny_green         = 15,
+    kPolyfont_ingame_big_timer          = 16,
+    kPolyfont_ingame_medium_red         = 17,
+    kPolyfont_ingame_medium_blue        = 18,
+    kPolyfont_ingame_medium_orange      = 19,
+    kPolyfont_ingame_medium_green       = 20,
+    kPolyfont_ingame_italic_yellow      = 21,
+    kPolyfont_ingame_italic_green       = 22,
+    kPolyfont_ingame_italic_blue        = 23,
+    kPolyfont_ingame_italic_red         = 24,
+    kPolyfont_netpos                    = 25,
+    kPolyfont_highlighter               = 26,
+};
+
 #endif // REC2_TYPES_H
