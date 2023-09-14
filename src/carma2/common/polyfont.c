@@ -11,6 +11,17 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004643f0, LoadPolyFont, LoadPolyFont_original)
 
+void (C2_HOOK_FASTCALL * InitCarIcons_original)(br_pixelmap* pMap);
+void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitCarIcons_original(pMap);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004973b0, InitCarIcons, InitCarIcons_original)
+
 void (C2_HOOK_FASTCALL * InitPolyFonts_original)(void);
 void C2_HOOK_FASTCALL InitPolyFonts(void) {
 #if defined(C2_HOOKS_ENABLED)
