@@ -18,4 +18,6 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(br_pixelmap*, gTextureMaps, 1000);
 
 br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx);
 
+br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureIdX, int textureIdY, const char* pageName);
+
 #endif //REC2_FONT_H
