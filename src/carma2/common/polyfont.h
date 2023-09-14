@@ -13,6 +13,8 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gCar_icons_model_actor);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gPolyFont_glyph_actors, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_icon, gCar_icons, 128);
 
+int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap);
+
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex);
 
 void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap);
