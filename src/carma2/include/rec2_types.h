@@ -245,6 +245,11 @@ typedef struct tPolyFont {
     tPolyFontGlyph glyphs[256]; /* unsure about offset */
 } tPolyFont;
 
+typedef struct {
+    br_model* model;
+    int index;
+} tCar_icon;
+
 typedef struct tFlic_bunch {
     char count;
     int* indexes;
@@ -651,7 +656,7 @@ typedef struct {
     int field_0x414;
     int field_0x418;
     int field_0x41c;
-    int field_0x420;
+    int car_icon_height;
     int field_0x424;
     int field_0x428;
     int field_0x42c;
