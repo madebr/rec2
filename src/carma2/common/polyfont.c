@@ -35,6 +35,12 @@ int C2_HOOK_FASTCALL GetPolyFontCharacterWidthI(int pIndex, tU8 pCharacter) {
 }
 C2_HOOK_FUNCTION(0x004637d0, GetPolyFontCharacterWidthI)
 
+int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex) {
+
+    return C2V(gPolyFonts)[pIndex].interCharacterSpacing;
+}
+C2_HOOK_FUNCTION(0x00463830, GetPolyFontInterCharacterSpacing)
+
 int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
     int y;
     int x;
