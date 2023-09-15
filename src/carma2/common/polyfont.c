@@ -22,6 +22,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gString_root_actor, 0x0074cf10);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gCar_icons_model_actor, 0x0074ab84);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyFont_glyph_actors, 256, 0x0074cae0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_icon, gCar_icons, 128, 0x0074a780);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_fonts_loaded, 0x00686488);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_polyfont_texture_pages, 0x00686494);
 
 int C2_HOOK_FASTCALL GetPolyFontCharacterWidthI(int pIndex, tU8 pCharacter) {
 
@@ -424,3 +426,25 @@ void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, flo
     }
 }
 C2_HOOK_FUNCTION(0x00464090, LoadPolyFontWithTimerFix)
+
+void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void) {
+    if (!C2V(gInterface_fonts_loaded)) {
+        C2V(gSize_font_texture_pages) = C2V(gInitial_count_font_texture_pages);
+        LoadPolyFont("HAND15U", 16, kPolyfont_hand_green_15pt_unlit);
+        LoadPolyFont("HAND15", 16, kPolyfont_hand_green_15pt_lit);
+        LoadPolyFont("HAND15U", 16, kPolyfont_hand_red_15pt_unlit);
+        LoadPolyFont("HAND15", 16, kPolyfont_hand_red_15pt_lit);
+        LoadPolyFont("HAND10U", 16, kPolyfont_hand_green_10pt_unlit);
+        LoadPolyFont("HAND10", 16, kPolyfont_hand_green_10pt_lit);
+        LoadPolyFont("SERP15", 16, kPolyfont_serp_red_15pt_lit);
+        LoadPolyFont("SERP30", 32, kPolyfont_serp_red_30pt_lit);
+        LoadPolyFont("SERP30U", 32, kPolyfont_serp_green_30pt_unlit);
+        LoadPolyFont("SERP30", 32, kPolyfont_serp_green_30pt_lit);
+        LoadPolyFont("SERP38U", 64, kPolyfont_serp_green_38pt_unlit);
+        LoadPolyFontWithTimerFix(kPolyfont_serp_green_38pt_lit, "SERP38", 1.0f, 64);
+        LoadPolyFontWithTimerFix(kPolyfont_highlighter, "HAND15lo", 1.0f, 16);
+        C2V(gInterface_polyfont_texture_pages) = C2V(gSize_font_texture_pages) - C2V(gInitial_count_font_texture_pages);
+        C2V(gInterface_fonts_loaded) = 1;
+    }
+}
+C2_HOOK_FUNCTION(0x004642d0, LoadInterfacePolyFonts)
