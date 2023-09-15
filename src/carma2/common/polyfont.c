@@ -5,6 +5,7 @@
 #include "font.h"
 #include "globvars.h"
 #include "grafdata.h"
+#include "graphics.h"
 #include "loading.h"
 #include "platform.h"
 #include "utility.h"
@@ -20,7 +21,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gInitial_count_font_texture_pages, 0x00765ea0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSize_font_texture_pages, 0x0068648c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gString_root_actor, 0x0074cf10);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gCar_icons_model_actor, 0x0074ab84);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyFont_glyph_actors, 256, 0x0074cae0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_icon, gCar_icons, 128, 0x0074a780);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_fonts_loaded, 0x00686488);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_polyfont_texture_pages, 0x00686494);
@@ -340,12 +340,12 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
     C2V(gString_root_actor)->t.type = BR_TRANSFORM_TRANSLATION;
     BrVector3Set(&C2V(gString_root_actor)->t.t.translate.t, 0.f, 0.f, 0.f);
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPolyFont_glyph_actors)) != 256);
-    for (i = 0; i < REC2_ASIZE(C2V(gPolyFont_glyph_actors)); i++) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPolyfont_glyph_actors)) != 256);
+    for (i = 0; i < REC2_ASIZE(C2V(gPolyfont_glyph_actors)); i++) {
         br_actor* actor;
 
         actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        C2V(gPolyFont_glyph_actors)[i] = actor;
+        C2V(gPolyfont_glyph_actors)[i] = actor;
         if (actor == NULL) {
             FatalError(kFatalError_OOM_S, "");
         }

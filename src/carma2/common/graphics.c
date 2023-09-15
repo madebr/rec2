@@ -111,6 +111,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gShadow_light_z, 0x006a27c0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gShadow_light_x, 0x006a27b0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gShadow_model, 0x006a27e4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gShadow_actor, 0x006a2444);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_polyfont_glyph_actors, 0x00686490);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyfont_glyph_actors, 256, 0x0074cae0);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -811,3 +813,16 @@ void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
         C2V(gRender_screen)->height);
 }
 C2_HOOK_FUNCTION(0x004e4b40, AdjustRenderScreenSize)
+
+void C2_HOOK_FASTCALL RemovePolyFontActors(void) {
+    int i;
+
+    for (i = 0; i < C2V(gCount_polyfont_glyph_actors); i++) {
+        br_actor* actor = C2V(gPolyfont_glyph_actors)[i];
+        if (actor->parent != NULL) {
+            BrActorRemove(actor);
+        }
+    }
+    C2V(gCount_polyfont_glyph_actors) = 0;
+}
+C2_HOOK_FUNCTION(0x004e5c70, RemovePolyFontActors)
