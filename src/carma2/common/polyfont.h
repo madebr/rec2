@@ -33,6 +33,8 @@ void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void);
 
 void C2_HOOK_FASTCALL CheckLoadFrontendPolyFonts(int pFont);
 
+void C2_HOOK_FASTCALL ClearInterfacePolyFonts(void);
+
 void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont);
 
 #endif //REC2_POLYFONT_H
