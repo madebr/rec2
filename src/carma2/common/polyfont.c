@@ -413,3 +413,17 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00463d40, InitPolyFonts, InitPolyFonts_original)
+
+void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, float pFactor, int pSize) {
+    int i;
+
+    LoadPolyFont(pName, pSize, pFont);
+    if (pFont == kPolyfont_ingame_big_timer) {
+        /* 0x10 -> kPolyfont_ingame_big_timer */
+        for (i = 0; i < REC2_ASIZE(C2V(gPolyFonts)[kPolyfont_ingame_big_timer].glyphs); i++) {
+            C2V(gPolyFonts)[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
+        }
+        C2V(gPolyFonts)[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11; /* FIXME: What is gyph 58? */
+    }
+}
+C2_HOOK_FUNCTION(0x00464090, LoadPolyFontWithTimerFix)
