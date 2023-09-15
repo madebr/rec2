@@ -458,3 +458,21 @@ void C2_HOOK_FASTCALL CheckLoadFrontendPolyFonts(int pFont) {
         LoadInterfacePolyFonts();
     }
 }
+C2_HOOK_FUNCTION(0x004640d0, CheckLoadFrontendPolyFonts)
+
+void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPolyFonts)[pFont].glyphs); i++) {
+        tPolyFontGlyph* glyph = &C2V(gPolyFonts)[pFont].glyphs[i];
+
+        if (glyph->used) {
+
+            glyph->material = NULL;
+            glyph->model = NULL;
+            glyph->used = 0;
+        }
+    }
+    C2V(gPolyFonts)[pFont].available = 0;
+}
+C2_HOOK_FUNCTION(0x00464290, ClearPolyFontGlyphs)
