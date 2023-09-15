@@ -25,6 +25,15 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_icon, gCar_icons, 128, 0x0074a780);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_fonts_loaded, 0x00686488);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_polyfont_texture_pages, 0x00686494);
 
+int C2_HOOK_FASTCALL GetPolyFontHeight(int pIndex) {
+
+    if (!C2V(gPolyFonts)[pIndex].available) {
+        LoadInterfacePolyFonts();
+    }
+    return C2V(gPolyFonts)[pIndex].fontCharacterHeight;
+}
+C2_HOOK_FUNCTION(0x00463730, GetPolyFontHeight)
+
 int C2_HOOK_FASTCALL GetPolyFontCharacterWidthI(int pIndex, tU8 pCharacter) {
 
     if ('a' <= pCharacter && pCharacter <= 'z') {
