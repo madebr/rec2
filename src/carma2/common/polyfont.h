@@ -25,4 +25,6 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL InitPolyFonts(void);
 
+void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, float pFactor, int pSize);
+
 #endif //REC2_POLYFONT_H
