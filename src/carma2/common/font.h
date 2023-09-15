@@ -23,4 +23,6 @@ br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureI
 
 void C2_HOOK_FASTCALL SetPolyFontBorderColours(br_model* pModel, int fontIdx);
 
+br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int fontIdx, char character);
+
 #endif //REC2_FONT_H

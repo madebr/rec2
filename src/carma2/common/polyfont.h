@@ -38,4 +38,6 @@ void C2_HOOK_FASTCALL ClearInterfacePolyFonts(void);
 
 void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont);
 
+void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
+
 #endif //REC2_POLYFONT_H
