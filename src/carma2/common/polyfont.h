@@ -12,6 +12,7 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gString_root_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gCar_icons_model_actor);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gPolyFont_glyph_actors, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_icon, gCar_icons, 128);
+C2_HOOK_VARIABLE_DECLARE(int, gRender_poly_text);
 C2_HOOK_VARIABLE_DECLARE(int, gInterface_polyfont_texture_pages);
 C2_HOOK_VARIABLE_DECLARE(int, gInterface_fonts_loaded);
 
@@ -20,6 +21,8 @@ int C2_HOOK_FASTCALL GetPolyFontHeight(int pIndex);
 int C2_HOOK_FASTCALL GetPolyFontCharacterWidthI(int pIndex, tU8 pCharacter);
 
 int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex);
+
+void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, int pRender);
 
 int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap);
 
