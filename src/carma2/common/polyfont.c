@@ -457,6 +457,40 @@ void C2_HOOK_FASTCALL CheckLoadFrontendPolyFonts(int pFont) {
 }
 C2_HOOK_FUNCTION(0x004640d0, CheckLoadFrontendPolyFonts)
 
+void C2_HOOK_FASTCALL ClearInterfacePolyFonts(void) {
+
+    if (C2V(gInterface_fonts_loaded)) {
+        int i;
+
+        ClearPolyFontGlyphs(kPolyfont_hand_green_15pt_unlit);
+        ClearPolyFontGlyphs(kPolyfont_hand_green_15pt_lit);
+        ClearPolyFontGlyphs(kPolyfont_hand_red_15pt_unlit);
+        ClearPolyFontGlyphs(kPolyfont_hand_red_15pt_lit);
+        ClearPolyFontGlyphs(kPolyfont_hand_green_10pt_unlit);
+        ClearPolyFontGlyphs(kPolyfont_hand_green_10pt_lit);
+        ClearPolyFontGlyphs(kPolyfont_serp_red_15pt_lit);
+        ClearPolyFontGlyphs(kPolyfont_serp_red_30pt_lit);
+        ClearPolyFontGlyphs(kPolyfont_serp_green_30pt_unlit);
+        ClearPolyFontGlyphs(kPolyfont_serp_green_30pt_lit);
+        ClearPolyFontGlyphs(kPolyfont_serp_green_38pt_unlit);
+        ClearPolyFontGlyphs(kPolyfont_serp_green_38pt_lit);
+        ClearPolyFontGlyphs(kPolyfont_highlighter);
+
+        for (i = 0; i < C2V(gInterface_polyfont_texture_pages); i++) {
+            int map_i = C2V(gInterface_polyfont_texture_pages) + i;
+
+            if (C2V(gTextureMaps)[map_i] != NULL) {
+
+                BrMapRemove(C2V(gTextureMaps)[map_i]);
+                BrPixelmapFree(C2V(gTextureMaps)[map_i]);
+                C2V(gTextureMaps)[map_i] = NULL;
+            }
+        }
+        C2V(gInterface_fonts_loaded) = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x004640f0, ClearInterfacePolyFonts)
+
 void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
     int i;
 
