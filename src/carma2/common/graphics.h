@@ -42,6 +42,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gWidth);
 C2_HOOK_VARIABLE_DECLARE(int, gHeight);
 C2_HOOK_VARIABLE_DECLARE(int, gX_offset);
 C2_HOOK_VARIABLE_DECLARE(int, gY_offset);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_polyfont_glyph_actors);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gPolyfont_glyph_actors, 256);
 
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
@@ -123,5 +125,7 @@ int C2_HOOK_FASTCALL SwitchToRealResolution(void);
 int C2_HOOK_FASTCALL SwitchToLoresMode(void);
 
 void C2_HOOK_FASTCALL AdjustRenderScreenSize(void);
+
+void C2_HOOK_FASTCALL RemovePolyFontActors(void);
 
 #endif //REC2_GRAPHICS_H
