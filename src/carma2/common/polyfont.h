@@ -29,6 +29,9 @@ void C2_HOOK_FASTCALL InitPolyFonts(void);
 
 void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, float pFactor, int pSize);
 
+
 void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void);
+
+void C2_HOOK_FASTCALL CheckLoadFrontendPolyFonts(int pFont);
 
 #endif //REC2_POLYFONT_H

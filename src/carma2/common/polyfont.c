@@ -451,3 +451,10 @@ void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004642d0, LoadInterfacePolyFonts)
+
+void C2_HOOK_FASTCALL CheckLoadFrontendPolyFonts(int pFont) {
+
+    if (!C2V(gPolyFonts)[pFont].available) {
+        LoadInterfacePolyFonts();
+    }
+}
