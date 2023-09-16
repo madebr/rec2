@@ -1308,6 +1308,30 @@ typedef struct {
     br_pixelmap* maps[3];
 } tCarCockpitMaterial;
 
+typedef struct {
+    int joystick_acc : 8;
+    int joystick_dec : 8;
+    unsigned int left : 1;        // 0x10000     bit 17
+    unsigned int right : 1;       // 0x20000     bit 18
+    unsigned int acc : 1;         // 0x40000     bit 19
+    unsigned int dec : 1;         // 0x80000     bit 20
+    unsigned int brake : 1;       // 0x100000    bit 21
+    unsigned int up : 1;          // 0x200000    bit 22
+    unsigned int down : 1;        // 0x400000    bit 23
+    unsigned int holdw : 1;       // 0x800000    bit 24
+    unsigned int backwards : 1;   // 0x1000000   bit 25
+    unsigned int change_up : 1;   // 0x2000000   bit 26
+    unsigned int change_down : 1; // 0x4000000   bit 27
+    unsigned int horn : 1;        // 0x8000000   bit 28
+} tCar_controls;
+
+typedef struct {
+    tS32 left;
+    tS32 right;
+    tS32 acc;
+    tS32 dec;
+} tJoystick;
+
 typedef struct tCar_spec {
     int index;
     int disabled;
@@ -1499,10 +1523,8 @@ typedef struct tCar_spec {
     int traction_control;
     float steerable_rolling_resistance;
     float rolling_resistance;
-    tU32 keys;
-    undefined field_0x12d4[8];
-    int joystick_acc;
-    int joystick_dec;
+    tCar_controls keys;
+    tJoystick joystick;
     undefined field_0x12e4[4];
     int number_of_wheels_on_ground;
     br_actor* wheel_actors[6];
