@@ -17,4 +17,6 @@ int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime);
 
 void C2_HOOK_FASTCALL ResetCarSpecialVolume(tCollision_info* pCollision_info);
 
+void C2_HOOK_FAKE_THISCALL ControlCar4(tCar_spec* c, undefined4 pArg2, br_scalar dt);
+
 #endif //REC2_CAR_H
