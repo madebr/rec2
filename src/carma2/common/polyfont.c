@@ -716,3 +716,95 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
     }
 }
 C2_HOOK_FUNCTION(0x00464e40, RenderPolyTextLine)
+
+void C2_HOOK_FASTCALL RenderBlendedPolyTextLine(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pBlend_factor) {
+    int text_len;
+    int i;
+    int draw_x;
+    int draw_y;
+    br_token_value tvs[3];
+
+    if (!C2V(gPolyFonts)[pFont].available) {
+        LoadInterfacePolyFonts();
+    }
+    if (pRender) {
+        RemovePolyFontActors();
+    }
+    switch (pJust) {
+    case eJust_right:
+        pX -= CalculatePolyTextLineWidth(pText, pFont);
+        break;
+    case eJust_centre:
+        pX -= CalculatePolyTextLineWidth(pText, pFont) / 2;
+        break;
+    case eJust_left:
+        break;
+    }
+
+
+    text_len = c2_strlen(pText);
+    if (C2V(gCount_polyfont_glyph_actors) + text_len >= REC2_ASIZE(C2V(gPolyfont_glyph_actors))) {
+        /* line is not drawn */
+        /* FIXME: log debug message */
+        return;
+    }
+    tvs[0].t = BRT_BLEND_B;
+    tvs[0].v.b = 1;
+    tvs[1].t = BRT_OPACITY_X;
+    tvs[1].v.x = BR_FIXED_INT(pBlend_factor * 255.);
+    tvs[2].t = BR_NULL_TOKEN;
+    tvs[2].v.u32 = 0;
+
+    draw_x = pX;
+    draw_y = pY;
+    for (i = 0; i < text_len; i++) {
+        tU8 c = pText[i];
+        br_actor* actor;
+
+        if (c == '\r') {
+            draw_x = pX;
+            draw_y += C2V(gPolyFonts)[pFont].fontCharacterHeight;
+            continue;
+        }
+        if (c >= 'a' && c <= 'z') {
+            c -= 'a' - 'A';
+        }
+        if (!C2V(gPolyFonts)[pFont].glyphs[c].used) {
+            draw_x += C2V(gPolyFonts)[pFont].widthOfBlank;
+            continue;
+        }
+        actor = C2V(gPolyFont_glyph_actors)[C2V(gCount_polyfont_glyph_actors)];
+        actor->model = C2V(gPolyFonts)[pFont].glyphs[c].model;
+        actor->material = GetPolyFontMaterial(pFont, c);
+        actor->material->extra_prim = tvs;
+        BrMaterialUpdate(actor->material, BR_MATU_ALL);
+        BrActorAdd(C2V(gString_root_actor), actor);
+        BrVector3Set(&actor->t.t.translate.t, (float)draw_x, (float)-draw_y, -1.1f);
+        C2V(gCount_polyfont_glyph_actors)++;
+        draw_x += C2V(gPolyFonts)[pFont].glyphs[c].glyph_width + C2V(gPolyFonts)[pFont].interCharacterSpacing;
+    }
+    if (pRender) {
+        int original_origin_x;
+        int original_origin_y;
+        int original_base_x;
+        int original_base_y;
+
+        BrActorAdd(C2V(gHUD_root), C2V(gString_root_actor));
+        original_origin_x = C2V(gBack_screen)->origin_x;
+        original_origin_y = C2V(gBack_screen)->origin_y;
+        original_base_x = C2V(gBack_screen)->base_x;
+        original_base_y = C2V(gBack_screen)->base_y;
+        C2V(gBack_screen)->origin_x = 0;
+        C2V(gBack_screen)->origin_y = 0;
+        C2V(gBack_screen)->base_x = 0;
+        C2V(gBack_screen)->base_y = 0;
+        BrZbSceneRender(C2V(gHUD_root), C2V(gHUD_camera), C2V(gBack_screen), C2V(gDepth_buffer));
+        C2V(gBack_screen)->origin_x = original_origin_x;
+        C2V(gBack_screen)->origin_y = original_origin_y;
+        C2V(gBack_screen)->base_x = original_base_x;
+        C2V(gBack_screen)->base_y = original_base_y;
+        BrActorRemove(C2V(gString_root_actor));
+        RemovePolyFontActors();
+    }
+}
+C2_HOOK_FUNCTION(0x00465380, RenderBlendedPolyTextLine)
