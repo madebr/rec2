@@ -43,4 +43,6 @@ void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont);
 
 void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
 
+void C2_HOOK_FASTCALL RenderBlendedPolyTextLine(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pBlend_factor);
+
 #endif //REC2_POLYFONT_H
