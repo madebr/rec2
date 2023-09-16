@@ -45,10 +45,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gDRFont_to_polyfont_mapping, 24, 0x00
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DRTextWidth_original(pFont, pText);
 #else
-#error "Not implemented"
+
+    return GetPolyFontTextWidth(C2V(gDRFont_to_polyfont_mapping)[pFont->id], pText);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465d50, DRTextWidth, DRTextWidth_original)
