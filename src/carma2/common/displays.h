@@ -9,6 +9,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gDRFont_to_polyfont_mapping, 24);
 
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 
+int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText);
+
 void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge);
 
 void C2_HOOK_FASTCALL InitHeadups(void);
