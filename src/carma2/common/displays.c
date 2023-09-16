@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "graphics.h"
+#include "polyfont.h"
 #include "utility.h"
 
 #include "platform.h"
@@ -14,6 +15,32 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tHeadup, gHeadups, 37, 0x0067c500);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_headup, gQueued_headups, 4, 0x0067f890);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gQueued_headup_count, 0x0067f888);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_centre_headup, 0x0067fcf8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gDRFont_to_polyfont_mapping, 24, 0x0059ada0, {
+    kPolyfont_ingame_tiny_red,
+    kPolyfont_ingame_tiny_yellow,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_tiny_green,
+    kPolyfont_ingame_italic_yellow,
+    kPolyfont_ingame_big_timer,
+    kPolyfont_ingame_medium_blue,
+    kPolyfont_ingame_medium_red,
+    kPolyfont_ingame_medium_orange,
+    kPolyfont_ingame_tiny_green,
+    kPolyfont_ingame_medium_green,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_tiny_red,
+    kPolyfont_ingame_tiny_yellow,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_italic_red,
+    kPolyfont_ingame_italic_red,
+    kPolyfont_ingame_italic_green,
+    kPolyfont_ingame_italic_green,
+    kPolyfont_ingame_italic_red,
+    kPolyfont_ingame_italic_red,
+    kPolyfont_ingame_medium_blue,
+});
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
@@ -29,10 +56,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00465d50, DRTextWidth, DRTextWidth_original)
 void (C2_HOOK_FASTCALL *TransDRPixelmapText_original)(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge);
 void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     TransDRPixelmapText_original(pPixelmap, pX, pY, pFont, pText, pRight_edge);
 #else
-#error "Not implemented"
+
+    RenderPolyTextLine(pText, pX, pY, C2V(gDRFont_to_polyfont_mapping)[pFont->id], eJust_left, C2V(gRender_poly_text));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465a70, TransDRPixelmapText, TransDRPixelmapText_original)
