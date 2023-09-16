@@ -144,6 +144,96 @@ void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, in
 }
 C2_HOOK_FUNCTION(0x004638b0, RenderPolyText)
 
+void C2_HOOK_FASTCALL RenderBlendedPolyText(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend) {
+    char s[256];
+    int s_len;
+    int x;
+    int y;
+    int in_start_put;
+    int in_end_put;
+    int in_pos;
+    int newline;
+    int text_x;
+    int max_width;
+
+    if (pText == NULL) {
+        return;
+    }
+
+    in_start_put = 0;
+    text_x = 0;
+    max_width = pRight - pLeft;
+    in_pos = 0;
+    s_len = 0;
+    s[s_len] = '\0';
+    y = pTop;
+
+    while (pText[in_pos] != '\0') {
+        int chr;
+
+        chr = pText[in_pos];
+        newline = chr == '\r';
+        s[s_len] = chr;
+        if (newline) {
+            s[s_len] = ' ';
+        }
+        s[s_len + 1] = '\0';
+        if (!newline) {
+            text_x += GetPolyFontCharacterWidthI(pFont, (tU8)chr);
+        }
+        in_end_put = in_pos;
+        if (text_x > max_width || newline) {
+            int len_put;
+
+            /* Avoid breaking words in parts ... */
+            while (in_end_put > in_start_put && pText[in_end_put] != ' ') {
+                in_end_put -= 1;
+            }
+            /* ... but break when the word is too long */
+            if (in_end_put == in_start_put) {
+                in_end_put = in_pos;
+            }
+            len_put = in_end_put - in_start_put;
+            s[len_put + 1] = '\0';
+            if (pText[in_end_put] == ' ') {
+                in_end_put += 1;
+            }
+            s[len_put] = '\0';
+            if (pJust == eJust_centre) {
+                x = (pRight + pLeft) / 2;
+            } else {
+                x = pLeft;
+            }
+            RenderBlendedPolyTextLine(s, x, y, pFont, pJust, C2V(gRender_poly_text), pBlend);
+            while (pText[in_end_put] == '\r' || pText[in_end_put] == ' ') {
+                in_end_put++;
+            }
+            y += GetPolyFontHeight(pFont);
+            text_x = 0;
+            in_start_put = in_end_put;
+            s_len = 0;
+            in_pos = in_start_put;
+        } else {
+            s_len++;
+            in_pos++;
+        }
+    }
+    if (s_len != 0) {
+        int x;
+        tJustification justif;
+
+        if (pJust == eJust_centre) {
+            x = (pRight + pLeft) / 2;
+            justif = eJust_centre;
+        } else {
+            x = pLeft;
+            justif = pJust;
+        }
+        RenderBlendedPolyTextLine(s, x, y, pFont, justif, C2V(gRender_poly_text), pBlend);
+    }
+}
+C2_HOOK_FUNCTION(0x00463ad0, RenderBlendedPolyText)
+
 int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
     int y;
     int x;
@@ -740,7 +830,6 @@ void C2_HOOK_FASTCALL RenderBlendedPolyTextLine(const char* pText, int pX, int p
     case eJust_left:
         break;
     }
-
 
     text_len = c2_strlen(pText);
     if (C2V(gCount_polyfont_glyph_actors) + text_len >= REC2_ASIZE(C2V(gPolyfont_glyph_actors))) {
