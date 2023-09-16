@@ -108,6 +108,6 @@
     } while (0)
 
 #define BR_ONE_LS 65536
-#define BR_FIXED_INT(I) ((I) * BR_ONE_LS)
+#define BR_FIXED_INT(I) ((br_fixed_ls)(((int)(I)) * BR_ONE_LS))
 #define BrFixedToFloat(s) ((float)((s) * (1.0 / (float)BR_ONE_LS)))
 #endif
