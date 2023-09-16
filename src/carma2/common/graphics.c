@@ -889,3 +889,16 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
     }
 }
 C2_HOOK_FUNCTION(0x0047ba80, DRPixelmapRectangleMaskedCopy)
+
+void C2_HOOK_FASTCALL DrawNumberAt(br_pixelmap* pSrc, br_pixelmap* pDest, int pX, int pY, int pX_pitch, int pY_pitch, int pValue ,int pDigit_count, int pLeading_zeroes) {
+    int i;
+
+    for (i = pDigit_count - 1; i >= 0; i--) {
+        int the_value = pValue % 10;
+        pValue /= 10;
+        if (pValue != 0 || pLeading_zeroes || pDigit_count - 1 == i) {
+            DRPixelmapRectangleMaskedCopy(pDest, pX + pX_pitch * i, pY, pSrc, 0, the_value * pY_pitch, pSrc->width, pY_pitch);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004657c0, DrawNumberAt)
