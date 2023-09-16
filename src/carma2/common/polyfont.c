@@ -699,7 +699,7 @@ void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
 }
 C2_HOOK_FUNCTION(0x00464290, ClearPolyFontGlyphs)
 
-static int CalculatePolyTextLineWidth(const char* pText, int pFont) {
+int C2_HOOK_FASTCALL GetPolyFontTextWidth(int pFont, const char* pText) {
     int len;
     int i;
 
@@ -716,6 +716,7 @@ static int CalculatePolyTextLineWidth(const char* pText, int pFont) {
     }
     return result;
 }
+C2_HOOK_FUNCTION(0x00465ca0, GetPolyFontTextWidth)
 
 void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
     int text_len;
@@ -731,10 +732,10 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
     }
     switch (pJust) {
     case eJust_right:
-        pX -= CalculatePolyTextLineWidth(pText, pFont);
+        pX -= GetPolyFontTextWidth(pFont, pText);
         break;
     case eJust_centre:
-        pX -= CalculatePolyTextLineWidth(pText, pFont) / 2;
+        pX -= GetPolyFontTextWidth(pFont, pText) / 2;
         break;
     case eJust_left:
         break;
@@ -822,10 +823,10 @@ void C2_HOOK_FASTCALL RenderBlendedPolyTextLine(const char* pText, int pX, int p
     }
     switch (pJust) {
     case eJust_right:
-        pX -= CalculatePolyTextLineWidth(pText, pFont);
+        pX -= GetPolyFontTextWidth(pFont, pText);
         break;
     case eJust_centre:
-        pX -= CalculatePolyTextLineWidth(pText, pFont) / 2;
+        pX -= GetPolyFontTextWidth(pFont, pText) / 2;
         break;
     case eJust_left:
         break;
