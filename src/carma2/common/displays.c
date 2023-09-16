@@ -2,6 +2,7 @@
 
 #include "font.h"
 #include "globvars.h"
+#include "globvrbm.h"
 #include "graphics.h"
 #include "polyfont.h"
 #include "utility.h"
@@ -41,6 +42,22 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gDRFont_to_polyfont_mapping, 24, 0x00
     kPolyfont_ingame_italic_red,
     kPolyfont_ingame_italic_red,
     kPolyfont_ingame_medium_blue,
+});
+C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gAcc_poly_material, 0x00686178);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gAcc_poly_actor, 0x00686174);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gAcc_poly_model, 0x0068617c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gRender_acc_poly_actor, 0x00686180);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, gAccent_poly_prims, 3, 0x005962f8, {
+    {
+        BRT_BLEND_B,
+        { .b = 1 },
+    }, {
+        BRT_OPACITY_X,
+        { .x = 0x4b0000 },
+    }, {
+        BR_NULL_TOKEN,
+        { .u32 = 0 },
+    },
 });
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
@@ -286,3 +303,42 @@ void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, 
     }
 }
 C2_HOOK_FUNCTION(0x00465aa0, TransDRPixelmapCleverText)
+
+void C2_HOOK_STDCALL CreateAccentPolyActor(float pX, float pY, float pWidth, float pHeight) {
+
+    if (C2V(gAcc_poly_material) == NULL) {
+        C2V(gAcc_poly_material) = BrMaterialAllocate("Acc Poly Mat");
+        C2V(gAcc_poly_material)->colour = 0x80;
+        C2V(gAcc_poly_material)->flags = BR_MATF_ALWAYS_VISIBLE;
+        BrMaterialAdd(C2V(gAcc_poly_material));
+        C2V(gAcc_poly_material)->extra_prim = C2V(gAccent_poly_prims);
+        C2V(gAccent_poly_prims)[1].v.x = 0x800000;
+        BrMaterialUpdate(C2V(gAcc_poly_material), BR_MATU_EXTRA_PRIM);
+    }
+    if (C2V(gAcc_poly_actor) == NULL) {
+        C2V(gAcc_poly_model) = BrModelAllocate("Tint Poly", 6, 2);
+        BrVector3Set(&C2V(gAcc_poly_model)->vertices[0].p, pX,          -pY,                -1.01f);
+        BrVector3Set(&C2V(gAcc_poly_model)->vertices[1].p, pX + pWidth, -pY,                -1.01f);
+        BrVector3Set(&C2V(gAcc_poly_model)->vertices[2].p, pX,          -(pY + pHeight),    -1.01f);
+        BrVector3Set(&C2V(gAcc_poly_model)->vertices[3].p, pX + pWidth, -pY,                -1.01f);
+        BrVector3Set(&C2V(gAcc_poly_model)->vertices[4].p, pX + pWidth, -(pY + pHeight),    -1.01f);
+        BrVector3Set(&C2V(gAcc_poly_model)->vertices[5].p, pX,          -(pY + pHeight),    -1.01f);
+        C2V(gAcc_poly_model)->faces[0].vertices[0] = 0;
+        C2V(gAcc_poly_model)->faces[0].vertices[1] = 1;
+        C2V(gAcc_poly_model)->faces[0].vertices[2] = 2;
+        C2V(gAcc_poly_model)->faces[1].vertices[0] = 3;
+        C2V(gAcc_poly_model)->faces[1].vertices[1] = 4;
+        C2V(gAcc_poly_model)->faces[1].vertices[2] = 5;
+        C2V(gAcc_poly_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        C2V(gAcc_poly_actor)->material = C2V(gAcc_poly_material);
+        C2V(gAcc_poly_model)->faces[0].material = C2V(gAcc_poly_material);
+        C2V(gAcc_poly_model)->faces[1].material = C2V(gAcc_poly_material);
+        C2V(gAcc_poly_actor)->model = C2V(gAcc_poly_model);
+        BrModelAdd(C2V(gAcc_poly_model));
+    }
+    if (!C2V(gRender_acc_poly_actor)) {
+        C2V(gRender_acc_poly_actor) = 1;
+        BrActorAdd(C2V(g2d_camera), C2V(gAcc_poly_actor));
+    }
+}
+C2_HOOK_FUNCTION(0x0045aa60, CreateAccentPolyActor)
