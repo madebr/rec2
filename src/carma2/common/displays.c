@@ -1,5 +1,6 @@
 #include "displays.h"
 
+#include "font.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "polyfont.h"
@@ -53,6 +54,33 @@ int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465d50, DRTextWidth, DRTextWidth_original)
+
+int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText) {
+    int polyfont;
+    int i;
+    int len;
+    int result;
+
+    polyfont = C2V(gDRFont_to_polyfont_mapping)[pFont->id];
+    result = 0;
+    len = c2_strlen(pText);
+
+    for (i = 0; i < len; i++) {
+
+        if ((tS8)pText[i] < 0) {
+            polyfont = C2V(gDRFont_to_polyfont_mapping)[C2V(gFonts)[-(tS8) pText[i]].id];
+        } else {
+            int inter = 0;
+            if (i < len - 1) {
+                inter = C2V(gPolyFonts)[polyfont].interCharacterSpacing;
+            }
+
+            result += GetPolyFontCharacterWidthI(pText[i], polyfont) + inter;
+        }
+    }
+    return result;
+}
+C2_HOOK_FUNCTION(0x00465e10, DRTextCleverWidth)
 
 void (C2_HOOK_FASTCALL *TransDRPixelmapText_original)(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge);
 void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
