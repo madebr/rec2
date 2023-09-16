@@ -82,6 +82,14 @@ int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText)
 }
 C2_HOOK_FUNCTION(0x00465e10, DRTextCleverWidth)
 
+void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText) {
+    int width_over_2;
+
+    width_over_2 = DRTextWidth(pFont, pText) / 2;
+    TransDRPixelmapText(pPixelmap, pX - width_over_2, pY, pFont, pText, width_over_2 + pX);
+}
+C2_HOOK_FUNCTION(0x00465f10, DRPixelmapCentredText)
+
 void (C2_HOOK_FASTCALL *TransDRPixelmapText_original)(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge);
 void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
 
