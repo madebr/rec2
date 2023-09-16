@@ -194,3 +194,42 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLi
     return NewTextHeadupSlot2(pSlot_index, pFlash_rate, pLifetime, pFont_index, pText, 1);
 }
 C2_HOOK_FUNCTION(0x0044a380, NewTextHeadupSlot)
+
+void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, char* pText, int pRight_edge) {
+    int i;
+    char s[512];
+    int s_end;
+    int x;
+    int next_x;
+    int len;
+
+    len = c2_strlen(pText);
+    s_end = -1;
+    x = pX;
+    next_x = pX;
+    for (i = 0; i < len; i++) {
+        tS8 ch = pText[i];
+
+        if (ch < 0) {
+
+            if (s_end >= 0) {
+                s[s_end + 1] = '\0';
+                RenderPolyTextLine(s, x, pY, C2V(gDRFont_to_polyfont_mapping)[pFont->id], eJust_left, C2V(gRender_poly_text));
+                s_end = -1;
+                x = next_x;
+            }
+            /* Change font */
+            pY -= (GetPolyFontHeight(C2V(gDRFont_to_polyfont_mapping)[C2V(gFonts)[-ch].id]) - GetPolyFontHeight(C2V(gDRFont_to_polyfont_mapping)[pFont->id])) / 2;
+            pFont = &C2V(gFonts)[-ch];
+        } else {
+            s_end += 1;
+            s[s_end] = pText[i];
+            next_x += GetPolyFontCharacterWidthI(C2V(gDRFont_to_polyfont_mapping)[pFont->id], pText[i]);
+        }
+    }
+    if (s_end >= 0) {
+        s[s_end + 1] = '\0';
+        RenderPolyTextLine(s, x, pY, C2V(gDRFont_to_polyfont_mapping)[pFont->id], eJust_left, C2V(gRender_poly_text));
+    }
+}
+C2_HOOK_FUNCTION(0x00465aa0, TransDRPixelmapCleverText)
