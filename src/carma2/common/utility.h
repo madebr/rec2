@@ -80,4 +80,6 @@ void C2_HOOK_FASTCALL DumpActorTree(br_actor* pActor, const char* pMsg);
 
 int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity);
 
+int C2_HOOK_FASTCALL PercentageChance(int pC);
+
 #endif // REC2_UTILITY_H
