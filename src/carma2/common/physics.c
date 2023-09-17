@@ -6,6 +6,8 @@
 
 #include "rec2_macros.h"
 
+C2_HOOK_VARIABLE_IMPLEMENT(tPhysicsError_cbfn*, gPhysics_error_cb, 0x006940c0);
+
 void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError, const char* pMessage) {
     char s[256];
 
@@ -29,6 +31,12 @@ void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError, const char* pMessage)
     FatalError(1000 + pError, s);
 }
 C2_HOOK_FUNCTION(0x004b5990, OnPhysicsError)
+
+void C2_HOOK_FASTCALL SetPhysicsErrorCallback(tPhysicsError_cbfn *pError_cbfn) {
+
+    C2V(gPhysics_error_cb) = pError_cbfn;
+}
+C2_HOOK_FUNCTION(0x004c61f0, SetPhysicsErrorCallback)
 
 void (C2_HOOK_FASTCALL * InitPhysics_original)(void);
 void C2_HOOK_FASTCALL InitPhysics(void) {
