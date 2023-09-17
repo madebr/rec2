@@ -5,7 +5,11 @@
 
 #include "c2_hooks.h"
 
+C2_HOOK_VARIABLE_DECLARE(tPhysicsError_cbfn*, gPhysics_error_cb);
+
 void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError);
+
+void C2_HOOK_FASTCALL SetPhysicsErrorCallback(tPhysicsError_cbfn *pError_cbfn);
 
 void C2_HOOK_FASTCALL InitPhysics(void);
 
