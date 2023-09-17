@@ -3069,6 +3069,9 @@ typedef enum {
     ePhysicsError_InsufficientSizedBuffer = 12
 } tPhysicsError;
 
+// Function callback for automatic SRE project generation
+typedef void C2_HOOK_FASTCALL tPhysicsError_cbfn(tPhysicsError);
+
 enum {
     // FIXME: add all c2 FatalError types
     kFatalError_InvalidScreenDepthSetting = 0x00,
