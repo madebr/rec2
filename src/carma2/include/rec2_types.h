@@ -1490,8 +1490,7 @@ typedef struct tCar_spec {
     int use_shell_model;
     br_model* shell_model;
     undefined field158_0xe2c[12];
-    br_matrix34 last_safe_positions[5];
-    undefined field160_0xf28[720];
+    br_matrix34 last_safe_positions[20];
     int wheel_slip;
     float damping;
     undefined field163_0x1200[16];
@@ -1562,7 +1561,11 @@ typedef struct tCar_spec {
     int flags;
     undefined field238_0x1540[8];
     undefined4 field239_0x1548;
-    undefined field240_0x154c[20];
+    tU32 end_steering_damage_effect;
+    tU32 end_trans_damage_effect;
+    int false_key_left;
+    int false_key_right;
+    undefined field240_0x154c[4];
     struct tCar_spec* last_person_to_hit_us;
     struct tCar_spec* last_person_we_hit;
     undefined field243_0x1568[44];
