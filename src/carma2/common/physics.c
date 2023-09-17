@@ -1,6 +1,34 @@
 #include "physics.h"
 
+#include "errors.h"
+
+#include "c2_string.h"
+
 #include "rec2_macros.h"
+
+void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError) {
+    char s[256];
+
+    switch(pError) {
+    case ePhysicsError_UnknownShapeType:
+        c2_strcpy(s, "Unknown shape type");
+        break;
+    case ePhysicsError_WireFrameHasNoPoints:
+        c2_strcpy(s, "Wire frame shape has no points");
+        break;
+    case ePhysicsError_PolyhedronHasNoPoints:
+        c2_strcpy(s, "Polyhedron shape has no points");
+        break;
+    case ePhysicsError_UnknownHingeType:
+        c2_strcpy(s, "Unknown hinge type");
+        break;
+    default:
+        sprintf(s, "%d", pError);
+        break;
+    }
+    FatalError(1000 + pError, s);
+}
+C2_HOOK_FUNCTION(0x004b5990, OnPhysicsError)
 
 void (C2_HOOK_FASTCALL * InitPhysics_original)(void);
 void C2_HOOK_FASTCALL InitPhysics(void) {
