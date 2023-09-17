@@ -3054,6 +3054,16 @@ enum {
     kMem_exception = 0xfe,
 };
 
+typedef enum {
+    ePhysicsError_Ok = 0,
+    ePhysicsError_UnknownShapeType = 1,
+    ePhysicsError_WireFrameHasNoPoints = 2,
+    ePhysicsError_PolyhedronHasNoPoints = 3,
+    ePhysicsError_UnknownHingeType = 5,
+    ePhysicsError_OutOfMemory = 6,
+    ePhysicsError_InsufficientSizedBuffer = 12
+} tPhysicsError;
+
 enum {
     // FIXME: add all c2 FatalError types
     kFatalError_InvalidScreenDepthSetting = 0x00,
