@@ -21,4 +21,8 @@ void C2_HOOK_FAKE_THISCALL FlyCar(tCar_spec* c, undefined4 pArg2, br_scalar dt);
 
 void C2_HOOK_FAKE_THISCALL ControlCar4(tCar_spec* c, undefined4 pArg2, br_scalar dt);
 
+void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime);
+
+void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference);
+
 #endif //REC2_CAR_H

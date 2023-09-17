@@ -1,6 +1,10 @@
 #include "car.h"
 
 #include "finteray.h"
+#include "globvars.h"
+#include "globvrkm.h"
+#include "globvrpb.h"
+#include "utility.h"
 #include "world.h"
 
 #include "brender/brender.h"
@@ -156,3 +160,175 @@ void C2_HOOK_FAKE_THISCALL ControlCar4(tCar_spec* c, undefined4 pArg2, br_scalar
     }
 }
 C2_HOOK_FUNCTION(0x004175e0, ControlCar4)
+
+void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime_difference) {
+    static tU32 time_count;
+    int i;
+    br_vector3 r;
+
+    time_count += pTime_difference;
+    if (time_count < 5000) {
+        return;
+    }
+    time_count = 4000;
+    if (car->disabled) {
+        return;
+    }
+    if (car->car_crush_spec != NULL && car->car_crush_spec->field_0x4b8) {
+        return;
+    }
+
+    REC2_BUG_ON(REC2_ASIZE(car->oldd) != 4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, susp_height, 0x1218);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, oldd, 0x1264);
+
+    for (i = 0; i < REC2_ASIZE(car->oldd); i++) {
+        if (car->susp_height[i / 2] <= car->oldd[i]) {
+            return;
+        }
+    }
+    if ((car->collision_info->last_special_volume == NULL || car->collision_info->last_special_volume->gravity_multiplier == 1.f)
+        && C2V(gCurrent_race).material_modifiers[car->material_index[0]].tyre_road_friction >= 0.1f
+        && C2V(gCurrent_race).material_modifiers[car->material_index[1]].tyre_road_friction >= 0.1f
+        && C2V(gCurrent_race).material_modifiers[car->material_index[2]].tyre_road_friction >= 0.1f
+        && C2V(gCurrent_race).material_modifiers[car->material_index[3]].tyre_road_friction >= 0.1f
+        && !car->field_0x195c
+        && car->car_master_actor->t.t.mat.m[1][1] >= 0.8f) {
+
+        REC2_BUG_ON(REC2_ASIZE(car->last_safe_positions) != 19);
+        /* Only check last 5 positions */
+        for (i = 0; i < 5; i++) {
+            BrVector3Sub(&r, &car->car_master_actor->t.t.translate.t, (br_vector3*)car->last_safe_positions[i].m[3]);
+
+            if (BrVector3LengthSquared(&r) < 8.4015961f) {
+                return;
+            }
+        }
+        for (i = REC2_ASIZE(car->last_safe_positions) - 1; i > 0; i--) {
+            BrMatrix34Copy(&car->last_safe_positions[i], &car->last_safe_positions[i - 1]);
+        }
+        BrMatrix34Copy(&car->last_safe_positions[0], &car->car_master_actor->t.t.mat);
+        time_count = 0;
+    }
+}
+
+typedef void (C2_HOOK_FAKE_THISCALL * tControl_car_fn)(tCar_spec* pCar_spec, undefined4 pArg2, float pT);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tControl_car_fn, ControlCar, 6, 0x0058f660, {
+    ControlCar1,
+    ControlCar2,
+    ControlCar3,
+    ControlCar4,
+    ControlCar5,
+    NULL,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gControl__car, 0x0058f678, 3);
+
+void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
+    static int last_key_down = 1;
+    tCar_spec* car;
+    tU32 time;
+    br_vector3 minus_k;
+
+    car = &C2V(gProgram_state).current_car;
+
+    if (!car->keys.change_down) {
+        last_key_down = 0;
+    } else if (!last_key_down) {
+        last_key_down = 1;
+
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, number_of_wheels_on_ground, 0x12e8);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, oldd, 0x1264);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, susp_height, 0x1218);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, frame_collision_flag, 0x64);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, disable_move_rotate, 0xec);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, omega, 0x74);
+
+        if (car->number_of_wheels_on_ground < 3
+                && BrVector3LengthSquared(&car->collision_info->v) < .04f
+                && car->oldd[0] == car->susp_height[0]
+                && car->oldd[1] == car->susp_height[1]
+                && (car->frame_collision_flag || car->collision_info->disable_move_rotate)) {
+            br_vector3 tmp;
+            br_vector3 delta_omega;
+
+            BrVector3Copy(&tmp, (br_vector3*)car->collision_info->transform_matrix.m[1]);
+            tmp.v[1] = 0.f;
+            BrVector3Normalise(&tmp, &tmp);
+            BrMatrix34TApplyV(&delta_omega, &tmp, &car->collision_info->transform_matrix);
+            BrVector3Accumulate(&car->collision_info->omega, &delta_omega);
+            car->collision_info->disable_move_rotate = 0;
+        }
+    }
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        int i;
+
+        for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+
+            if (i != C2V(gThis_net_player_index)) {
+                C2V(ControlCar)[C2V(gControl__car)](C2V(gNet_players)[i].car REC2_THISCALL_EDX, 0.001f * pTime_difference);
+            }
+        }
+    }
+    if (C2V(gCar_flying)) {
+        FlyCar(C2V(gCar_to_view) REC2_THISCALL_EDX, pTime_difference / 1000.f);
+        return;
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, end_steering_damage_effect, 0x154c);
+
+    time = GetTotalTime();
+    if (car->damage_units[eDamage_steering].damage_level > 40) {
+        if (car->end_steering_damage_effect != 0) {
+            if (time < car->end_steering_damage_effect || car->damage_units[eDamage_steering].damage_level == 99) {
+                car->keys.left = car->false_key_left;
+                car->keys.right = car->false_key_right;
+            } else {
+                car->end_steering_damage_effect = 0;
+            }
+        } else {
+            float ts;
+
+            ts = pTime_difference * (car->damage_units[eDamage_steering].damage_level - 40) * 0.0045f;
+            if (PercentageChance((int)ts) && fabsf(car->collision_info->velocity_car_space.v[2]) > 1.f / (10000.f * WORLD_SCALE)) {
+                if (car->keys.left || car->keys.right) {
+                    car->false_key_left = !car->keys.left;
+                    car->false_key_right = !car->keys.right;
+                } else {
+                    if (PercentageChance(50)) {
+                        car->false_key_left = 1;
+                    } else {
+                        car->false_key_right = 1;
+                    }
+                }
+                ts = (float)(25 * (car->damage_units[eDamage_steering].damage_level - 40));
+                car->end_steering_damage_effect = (tU32)(time + FRandomBetween(0.0f, ts));
+            }
+        }
+    }
+    if (car->damage_units[eDamage_transmission].damage_level > 40) {
+        if (car->end_trans_damage_effect != 0) {
+            if (time < car->end_trans_damage_effect || car->damage_units[eDamage_transmission].damage_level == 99) {
+                car->gear = 0.f;
+                car->just_changed_gear = 1;
+            } else {
+                car->end_trans_damage_effect = 0;
+            }
+        } else {
+            float ts;
+
+            ts = pTime_difference * (car->damage_units[eDamage_transmission].damage_level - 40) * 0.006f;
+            if (PercentageChance((int)ts)) {
+                ts = (float)(50 * (car->damage_units[eDamage_transmission].damage_level - 40));
+                car->end_trans_damage_effect = (tU32)(time + FRandomBetween(0.f, ts));
+            }
+        }
+    }
+    C2V(ControlCar)[C2V(gControl__car)](car REC2_THISCALL_EDX, pTime_difference / 1000.0f);
+    RememberSafePosition(car, pTime_difference);
+    if (C2V(gCamera_reset)) {
+        BrVector3SetFloat(&minus_k, 0.0f, 0.0f, -1.0f);
+        C2V(gCamera_sign) = 0;
+        BrMatrix34ApplyV(&car->direction, &minus_k, &car->car_master_actor->t.t.mat);
+    }
+}
+C2_HOOK_FUNCTION(0x00414cb0, ControlOurCar)
