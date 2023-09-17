@@ -871,3 +871,9 @@ int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00513a30, LoadTextureTryAllLocations, LoadTextureTryAllLocations_original)
+
+int C2_HOOK_FASTCALL PercentageChance(int pC) {
+
+    return IRandomBetween(0, 100) < pC;
+}
+C2_HOOK_FUNCTION(0x00513550, PercentageChance)
