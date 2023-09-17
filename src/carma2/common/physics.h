@@ -5,6 +5,8 @@
 
 #include "c2_hooks.h"
 
+void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError);
+
 void C2_HOOK_FASTCALL InitPhysics(void);
 
 void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF);
