@@ -189,7 +189,7 @@ void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path) {
 C2_HOOK_FUNCTION(0x0051c700, PDBuildAppPath)
 
 void (C2_HOOK_FASTCALL * PDFatalError_original)(char* pThe_str);
-void C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
+void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
 #if 0 //defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     PDFatalError_original(pThe_str);
