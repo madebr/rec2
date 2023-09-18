@@ -2304,6 +2304,7 @@ typedef enum {
     kCollisionShapeType_Box = 0,
     kCollisionShapeType_Polyhedron = 1,
     kCollisionShapeType_Wireframe = 2,
+    kCollisionShapeType_Plane_Polygon_Wireframe = 3,
     kCollisionShapeType_Sphere = 4,
 } tCollision_shape_type;
 
@@ -2359,6 +2360,14 @@ typedef struct {
     tCollision_shape_common common;
     tCollision_shape_wireframe_data wireframe;
 } tCollision_shape_wireframe;
+
+typedef union tCollision_shape {
+    tCollision_shape_common common;
+    tCollision_shape_box box;
+    tCollision_shape_sphere sphere;
+    tCollision_shape_wireframe wireframe;
+    tCollision_shape_polyhedron polyhedron;
+} tCollision_shape;
 
 typedef enum {
     kTextureLevelCollisionChange_Solid = 0,
@@ -3159,6 +3168,7 @@ enum {
     kFatalError_CannotFindSkyMaterial_S = 0x59,
     kFatalError_UnknownDamageType_S = 0x5b,
     kFatalError_ConfusedByFormatOfConditionalDamageInCarFile = 0x5c,
+    kFatalError_TooManyExtraPointsForCarIndex_S = 0x5d,
     kFatalError_OOM_S = 0x5e,
     kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
@@ -3182,6 +3192,7 @@ enum {
     kFatalError_CantFindPedTexture_S = 0xa8,
     kFatalError_CannotFindGibletModel_S = 0xa9,
     kFatalError_WrongCrushDataFileVersion_SDD = 0xab,
+    kFatalError_ShapeDataIsWrong = 0xad,
     kFatalError_UnableToOpenDroneFileOrFileCorrupted_S = 0xaf,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_FileMustStartWith_SS = 0xb0,
