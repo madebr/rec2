@@ -2301,6 +2301,31 @@ typedef struct {
 } tNoncar_activation;
 
 typedef enum {
+    kCollisionShapeType_Polyhedron = 1,
+} tCollision_shape_type;
+
+typedef struct tCollision_shape_common {
+    tCollision_shape_type type;
+    br_bounds3 bb;
+    br_bounds3 field_0x1c;
+    tCollision_shape* next;
+} tCollision_shape_common;
+
+typedef struct {
+    int count_points;
+    int count_edges;
+    int count_planes;
+    br_vector3* points;
+    tU8* edges; /* FIXME: correct type */
+    br_vector4* planes;
+} tCollision_shape_polyhedron_data;
+
+typedef struct tCollision_shape_polyhedron {
+    tCollision_shape_common common;
+    tCollision_shape_polyhedron_data polyhedron;
+} tCollision_shape_polyhedron;
+
+typedef enum {
     kTextureLevelCollisionChange_Solid = 0,
     kTextureLevelCollisionChange_PassThrough = 1,
     kTextureLevelCollisionChange_Edges = 2

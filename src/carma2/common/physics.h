@@ -21,6 +21,8 @@ void C2_HOOK_FASTCALL SetPhysicsBuffer(tU8* pBuffer, int pSize);
 
 void C2_HOOK_FASTCALL InitPhysics(void);
 
+tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(int pCount_points, br_uint_8 pType);
+
 void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF);
 
 void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_info);
