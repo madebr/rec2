@@ -10,6 +10,7 @@
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define REC2_SQR(A) ((A) * (A))
 
 #define DEG_TO_RAD(degrees) ((degrees)*3.141592653589793 / 180.0)
 

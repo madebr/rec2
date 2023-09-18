@@ -255,10 +255,34 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00488b00, LoadCollisionShape, LoadCollisionShape_ori
 void (C2_HOOK_FASTCALL * UpdateCollisionBoundingBox_original)(tCollision_info* pCollision_info);
 void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_info) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     UpdateCollisionBoundingBox_original(pCollision_info);
 #else
-#error "Not implemented"
+    tCollision_shape* shape;
+    tCollision_shape* current;
+
+    shape = pCollision_info->shape;
+    if (shape == NULL) {
+        return;
+    }
+    pCollision_info->bb1 = shape->common.bb;
+
+    for (current = shape->common.next; current != NULL; current = current->common.next) {
+        int i;
+
+        for (i = 0; i < 3; i++) {
+
+            pCollision_info->bb1.min.v[i] = MIN(pCollision_info->bb1.min.v[i], current->common.bb.min.v[i]);
+            pCollision_info->bb1.max.v[i] = MAX(pCollision_info->bb1.max.v[i], current->common.bb.max.v[i]);
+        }
+    }
+    pCollision_info->bb2 = pCollision_info->bb1;
+
+    pCollision_info->radius_squared = 0.f
+            + MAX(REC2_SQR(pCollision_info->bb2.min.v[0]), REC2_SQR(pCollision_info->bb2.max.v[0]))
+            + MAX(REC2_SQR(pCollision_info->bb2.min.v[1]), REC2_SQR(pCollision_info->bb2.max.v[1]))
+            + MAX(REC2_SQR(pCollision_info->bb2.min.v[2]), REC2_SQR(pCollision_info->bb2.max.v[2]));
+    pCollision_info->radius = sqrtf(pCollision_info->radius_squared);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c60a0, UpdateCollisionBoundingBox, UpdateCollisionBoundingBox_original)
