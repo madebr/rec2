@@ -2,6 +2,8 @@
 
 #include "errors.h"
 
+#include <brender/brender.h>
+
 #include "c2_string.h"
 
 #include "rec2_macros.h"
@@ -85,6 +87,32 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5ca0, InitPhysics, InitPhysics_original)
+
+tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(int pCount_points, br_uint_8 pType) {
+    tCollision_shape_polyhedron* result;
+    tU8* raw_memory;
+
+    C2_HOOK_BUG_ON(sizeof(tCollision_shape_polyhedron) != 80);
+    result = BrMemAllocate(sizeof(tCollision_shape_polyhedron) * pCount_points * sizeof(br_vector3) + (pCount_points + -2) * 38, pType); /* FIXME: 38? */
+    raw_memory = (tU8*)result;
+
+    raw_memory += sizeof(tCollision_shape_polyhedron);
+
+    result->polyhedron.points = (br_vector3*)raw_memory;
+    raw_memory += pCount_points * sizeof(br_vector3);
+
+    result->polyhedron.edges = (tU8*)raw_memory;
+    raw_memory += (pCount_points - 2) * 6;
+
+    result->polyhedron.planes = (br_vector4*)raw_memory;
+
+    result->polyhedron.count_points = 0;
+    result->polyhedron.count_edges = 0;
+    result->polyhedron.count_planes = 0;
+    result->common.type = kCollisionShapeType_Polyhedron;
+    return result;
+}
+C2_HOOK_FUNCTION(0x004c5d70, AllocatePolyhedronCollisionShape)
 
 void (C2_HOOK_FASTCALL * LoadCollisionShape_original)(tCollision_shape** pShape, FILE* pF);
 void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF) {
