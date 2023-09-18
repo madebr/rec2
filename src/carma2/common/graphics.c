@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "init.h"
 #include "loading.h"
+#include "physics.h"
 #include "tinted.h"
 #include "utility.h"
 #include "world.h"
@@ -618,7 +619,7 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
         FatalError(kFatalError_AllocateZBuffer);
     }
 
-    BrZbsBegin(C2V(gRender_screen)->type, C2V(gDepth_buffer)->type, C2V(gHeap), 300000); /* FIXME: use sizeof */
+    BrZbsBegin(C2V(gRender_screen)->type, C2V(gDepth_buffer)->type, C2V(gPhysics_buffer), 300000); /* FIXME: use sizeof */
     C2V(gBrZb_initialized) = 1;
     C2V(gRear_pixelmap) = DRPixelmapAllocate(C2V(gScreen)->type, 64, 64, NULL, 0);
     BrMapAdd(C2V(gRear_pixelmap));

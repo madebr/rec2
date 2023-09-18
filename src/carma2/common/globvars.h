@@ -54,8 +54,6 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_movie_path_stub, 256);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_last_game_type);
 C2_HOOK_VARIABLE_DECLARE(int, gMap_view);
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gHeap, 40000);
-
 C2_HOOK_VARIABLE_DECLARE(int, gScreen_lock_often);
 C2_HOOK_VARIABLE_DECLARE(int, gShadow_workaround);
 C2_HOOK_VARIABLE_DECLARE(int, gEnable_texture_interpolation);
