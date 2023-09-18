@@ -2301,6 +2301,7 @@ typedef struct {
 } tNoncar_activation;
 
 typedef enum {
+    kCollisionShapeType_Box = 0,
     kCollisionShapeType_Polyhedron = 1,
 } tCollision_shape_type;
 
@@ -2324,6 +2325,10 @@ typedef struct tCollision_shape_polyhedron {
     tCollision_shape_common common;
     tCollision_shape_polyhedron_data polyhedron;
 } tCollision_shape_polyhedron;
+
+typedef struct {
+    tCollision_shape_common common;
+} tCollision_shape_box;
 
 typedef enum {
     kTextureLevelCollisionChange_Solid = 0,
