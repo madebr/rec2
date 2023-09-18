@@ -287,6 +287,7 @@ void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_inf
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c60a0, UpdateCollisionBoundingBox, UpdateCollisionBoundingBox_original)
 
+
 void (C2_HOOK_FASTCALL * ProcessCollisionShape_original)(tCollision_shape* pShape);
 void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape) {
 
@@ -297,6 +298,30 @@ void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c5f20, ProcessCollisionShape, ProcessCollisionShape_original)
+
+int C2_HOOK_FASTCALL ArePointsColinear(const br_vector3* pV1, const br_vector3* pV2, const br_vector3* pV3) {
+    br_scalar dx31, dx21;
+    br_scalar dy31, dy21;
+    br_scalar dz31, dz21;
+
+    dy21 = pV2->v[1] - pV1->v[1];
+    dz21 = pV2->v[2] - pV1->v[2];
+    dy31 = pV3->v[1] - pV1->v[1];
+    dz31 = pV3->v[2] - pV1->v[2];
+    if (fabsf(dz31 * dy21 - dy31 - dz21) >= 1e-6f) {
+        return 0;
+    }
+    dx21 = pV2->v[0] - pV1->v[0];
+    dx31 = pV3->v[0] - pV1->v[0];
+    if (fabsf(dx31 * dz21 - dx21 * dz31) >= 1e-6f) {
+        return 0;
+    }
+    if (fabsf(dx21 * dy31 - dx31 * dy21) >= 1e-6f) {
+        return 0;
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00420ef0, ArePointsColinear)
 
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
