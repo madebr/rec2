@@ -6,7 +6,15 @@
 
 #include "rec2_macros.h"
 
+#define PHYSICS_BUFFER_PART_SIZE 40000
+#define PHYSICS_BUFFER_OTHER_SIZE 50000
+
 C2_HOOK_VARIABLE_IMPLEMENT(tPhysicsError_cbfn*, gPhysics_error_cb, 0x006940c0);
+C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_buffer1_ptr, 0x00744818);
+C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_buffer2_ptr, 0x00744814);
+C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_buffer3_ptr, 0x0074a5e0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPhysics_other_buffer_capacity, 0x006940c8);
+C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_other_buffer, 0x006baa40);
 
 void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError) {
     char s[256];
@@ -37,6 +45,29 @@ void C2_HOOK_FASTCALL SetPhysicsErrorCallback(tPhysicsError_cbfn *pError_cbfn) {
     C2V(gPhysics_error_cb) = pError_cbfn;
 }
 C2_HOOK_FUNCTION(0x004c61f0, SetPhysicsErrorCallback)
+
+void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError) {
+
+    if (C2V(gPhysics_error_cb) != NULL) {
+        C2V(gPhysics_error_cb)(pError);
+    }
+
+    c2_exit(pError);
+}
+
+void C2_HOOK_FASTCALL SetPhysicsBuffer(tU8* pBuffer, int pSize) {
+
+    C2V(gPhysics_buffer1_ptr) = pBuffer + 0 * PHYSICS_BUFFER_PART_SIZE;
+    C2V(gPhysics_buffer2_ptr) = pBuffer + 1 * PHYSICS_BUFFER_PART_SIZE;
+    C2V(gPhysics_buffer3_ptr) = pBuffer + 2 * PHYSICS_BUFFER_PART_SIZE;
+
+    if (pSize - 3 * PHYSICS_BUFFER_PART_SIZE < PHYSICS_BUFFER_OTHER_SIZE) {
+        PhysicsError(ePhysicsError_InsufficientSizedBuffer);
+    }
+    C2V(gPhysics_other_buffer_capacity) = pSize - 3 * PHYSICS_BUFFER_PART_SIZE;
+    C2V(gPhysics_other_buffer) = pBuffer + 3 * PHYSICS_BUFFER_PART_SIZE;
+}
+C2_HOOK_FUNCTION(0x004c6510, SetPhysicsBuffer)
 
 void (C2_HOOK_FASTCALL * InitPhysics_original)(void);
 void C2_HOOK_FASTCALL InitPhysics(void) {
