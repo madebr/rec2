@@ -14,7 +14,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_buffer1_ptr, 0x00744818);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_buffer2_ptr, 0x00744814);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_buffer3_ptr, 0x0074a5e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPhysics_other_buffer_capacity, 0x006940c8);
-C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_other_buffer, 0x006baa40);
+C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_other_buffer, 0x006940c4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gPhysics_buffer, 299792, 0x006baa40);
 
 void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError) {
     char s[256];
@@ -73,10 +74,14 @@ void (C2_HOOK_FASTCALL * InitPhysics_original)(void);
 void C2_HOOK_FASTCALL InitPhysics(void) {
 
     C2_HOOK_ASSUME_UNUSED();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitPhysics_original();
 #else
-#error "Not implemented"
+
+    SetPhysicsErrorCallback(OnPhysicsError);
+    SetPhysicsBuffer(C2V(gPhysics_buffer), sizeof(C2V(gPhysics_buffer)));
+
+    C2_HOOK_BUG_ON(sizeof(C2V(gPhysics_buffer)) != 299792);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5ca0, InitPhysics, InitPhysics_original)
