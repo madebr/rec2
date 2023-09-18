@@ -88,6 +88,16 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5ca0, InitPhysics, InitPhysics_original)
 
+tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType) {
+    tCollision_shape_box* result;
+
+    C2_HOOK_BUG_ON(sizeof(tCollision_shape_box) != 56);
+    result = BrMemAllocate(sizeof(tCollision_shape_box), pType);
+    result->common.type = kCollisionShapeType_Box;
+    return result;
+}
+C2_HOOK_FUNCTION(0x004c5e00, AllocateBoxCollisionShape)
+
 tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(int pCount_points, br_uint_8 pType) {
     tCollision_shape_polyhedron* result;
     tU8* raw_memory;
