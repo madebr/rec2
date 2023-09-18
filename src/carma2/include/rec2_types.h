@@ -2303,6 +2303,7 @@ typedef struct {
 typedef enum {
     kCollisionShapeType_Box = 0,
     kCollisionShapeType_Polyhedron = 1,
+    kCollisionShapeType_Wireframe = 2,
     kCollisionShapeType_Sphere = 4,
 } tCollision_shape_type;
 
@@ -2341,6 +2342,23 @@ typedef struct {
     tCollision_shape_common common;
     tCollision_shape_sphere_data sphere;
 } tCollision_shape_sphere;
+
+typedef struct {
+    tU8 index1;
+    tU8 index2;
+} tCollision_shape_wire_frame__line;
+
+typedef struct {
+    int count_points;
+    int count_lines;
+    br_vector3* points;
+    tCollision_shape_wire_frame__line* lines;
+} tCollision_shape_wireframe_data;
+
+typedef struct {
+    tCollision_shape_common common;
+    tCollision_shape_wireframe_data wireframe;
+} tCollision_shape_wireframe;
 
 typedef enum {
     kTextureLevelCollisionChange_Solid = 0,
