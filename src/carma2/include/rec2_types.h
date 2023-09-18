@@ -2308,6 +2308,7 @@ typedef struct {
 typedef enum {
     kCollisionShapeType_Box = 0,
     kCollisionShapeType_Polyhedron = 1,
+    kCollisionShapeType_Sphere = 4,
 } tCollision_shape_type;
 
 typedef struct tCollision_shape_common {
@@ -2334,6 +2335,17 @@ typedef struct tCollision_shape_polyhedron {
 typedef struct {
     tCollision_shape_common common;
 } tCollision_shape_box;
+
+typedef struct {
+    br_scalar radius;
+    br_vector3 center;
+    br_scalar radius_squared;
+} tCollision_shape_sphere_data;
+
+typedef struct {
+    tCollision_shape_common common;
+    tCollision_shape_sphere_data sphere;
+} tCollision_shape_sphere;
 
 typedef enum {
     kTextureLevelCollisionChange_Solid = 0,
