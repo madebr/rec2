@@ -134,6 +134,27 @@ tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(i
 }
 C2_HOOK_FUNCTION(0x004c5d70, AllocatePolyhedronCollisionShape)
 
+tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateWireFrameCollisionShape(int pCount_points, int pCount_lines, br_uint_8 pType) {
+    tCollision_shape_wireframe* result;
+    tU8* raw_memory;
+
+    C2_HOOK_BUG_ON(sizeof(tCollision_shape_wireframe) != 72);
+    result = BrMemAllocate(sizeof(tCollision_shape_wireframe) + pCount_points * sizeof(br_vector3) + pCount_lines * sizeof(tCollision_shape_wire_frame__line), pType);
+    raw_memory = (tU8*)result;
+
+    raw_memory += sizeof(tCollision_shape_wireframe);
+
+    result->wireframe.points = (br_vector3*)raw_memory;
+    raw_memory += pCount_points * sizeof(br_vector3);
+
+    result->wireframe.count_lines = pCount_lines;
+    result->wireframe.lines = (tCollision_shape_wire_frame__line*)raw_memory;
+    result->wireframe.count_points = pCount_points;
+    result->common.type = kCollisionShapeType_Wireframe;
+    return result;
+}
+C2_HOOK_FUNCTION(0x004c5dc0, AllocateWireFrameCollisionShape)
+
 void (C2_HOOK_FASTCALL * LoadCollisionShape_original)(tCollision_shape** pShape, FILE* pF);
 void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF) {
 
