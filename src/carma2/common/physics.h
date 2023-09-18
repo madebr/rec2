@@ -23,6 +23,8 @@ void C2_HOOK_FASTCALL InitPhysics(void);
 
 tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType);
 
+tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateSphereCollisionShape(br_uint_8 pType);
+
 tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(int pCount_points, br_uint_8 pType);
 
 void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF);
