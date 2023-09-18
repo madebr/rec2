@@ -1,6 +1,9 @@
 #include "physics.h"
 
 #include "errors.h"
+#include "loading.h"
+#include "platform.h"
+#include "utility.h"
 
 #include <brender/brender.h>
 
@@ -139,6 +142,7 @@ tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateWireFrameCollisionShape(int
     tU8* raw_memory;
 
     C2_HOOK_BUG_ON(sizeof(tCollision_shape_wireframe) != 72);
+    C2_HOOK_BUG_ON(sizeof(tCollision_shape_wire_frame__line) != 2);
     result = BrMemAllocate(sizeof(tCollision_shape_wireframe) + pCount_points * sizeof(br_vector3) + pCount_lines * sizeof(tCollision_shape_wire_frame__line), pType);
     raw_memory = (tU8*)result;
 
@@ -158,10 +162,92 @@ C2_HOOK_FUNCTION(0x004c5dc0, AllocateWireFrameCollisionShape)
 void (C2_HOOK_FASTCALL * LoadCollisionShape_original)(tCollision_shape** pShape, FILE* pF);
 void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF) {
 
-#if defined(C2_HOOKS_ENABLED)
-    LoadCollisionShape_original(pShape, pF);
+#if 0//defined(C2_HOOKS_ENABLED)
+    LoadCollisionShape_original(pShapes, pF);
 #else
-#error "Not implemented"
+    int i;
+    int count;
+
+    /* Number of 'Bounding shapes' entries. */
+    count = GetAnInt(pF);
+
+    for (i = 0; i < count; i++) {
+        char s[256];
+        tCollision_shape* shape;
+
+        GetAString(pF, s);
+        if (DRStricmp(s, "box") == 0) {
+
+            shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
+            GetThreeFloats(pF,
+                &shape->box.common.bb.min.v[0],
+                &shape->box.common.bb.min.v[1],
+                &shape->box.common.bb.min.v[2]);
+            GetThreeFloats(pF,
+                &shape->box.common.bb.max.v[0],
+                &shape->box.common.bb.max.v[1],
+                &shape->box.common.bb.max.v[2]);
+        } else if (DRStricmp(s, "polyhedron") == 0) {
+            int count_points;
+            int j;
+
+            /* number of points */
+            count_points = GetAnInt(pF);
+            if (count_points > 32) { /* FIXME: magic number */
+                c2_sprintf(s, "Ow! Physics shape is mad (having %d points is silly)", count_points);
+                PDFatalError(s);
+            }
+            shape = (tCollision_shape*)AllocatePolyhedronCollisionShape(count_points, kMem_collision_shape);
+
+            shape->polyhedron.polyhedron.count_points = count_points;
+            for (j = 0; j < count_points; j++) {
+                GetThreeFloats(pF,
+                    &shape->polyhedron.polyhedron.points[j].v[0],
+                    &shape->polyhedron.polyhedron.points[j].v[1],
+                    &shape->polyhedron.polyhedron.points[j].v[2]);
+            }
+        } else if (DRStricmp(s, "sphere") == 0) {
+
+            shape = (tCollision_shape*)AllocateSphereCollisionShape(kMem_collision_shape);
+
+            shape->sphere.sphere.radius = GetAScalar(pF);
+            GetThreeFloats(pF,
+                &shape->sphere.sphere.center.v[0],
+                &shape->sphere.sphere.center.v[1],
+                &shape->sphere.sphere.center.v[2]);
+        } else if (DRStricmp(s, "wire") == 0) {
+            br_vector3 points[64];
+            int count_points;
+            int count_lines;
+            int j;
+
+            count_points = GetAnInt(pF);
+            if (count_points > REC2_ASIZE(points)) {
+                FatalError(kFatalError_TooManyExtraPointsForCarIndex_S, " Too many points in wire frame shape ");
+            }
+            for (j = 0; j < count_points; j++) {
+                GetThreeFloats(pF, &points[j].v[0], &points[j].v[1], &points[j].v[2]);
+            }
+            count_lines = GetAnInt(pF);
+            shape = (tCollision_shape*)AllocateWireFrameCollisionShape(count_points, count_lines, kMem_collision_shape);
+
+            for (j = 0; j < count_points; j++) {
+                BrVector3Copy(&shape->wireframe.wireframe.points[j], &points[j]);
+            }
+            for (j = 0; j < count_lines; j++) {
+                int index1, index2;
+
+                GetPairOfInts(pF, &index1, &index2);
+                shape->wireframe.wireframe.lines[j].index1 = index1;
+                shape->wireframe.wireframe.lines[j].index2 = index2;
+            }
+        } else {
+            FatalError(kFatalError_ShapeDataIsWrong);
+        }
+        ProcessCollisionShape(shape);
+        *pShape = shape;
+        pShape = &shape->common.next;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00488b00, LoadCollisionShape, LoadCollisionShape_original)
