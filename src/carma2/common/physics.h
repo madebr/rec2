@@ -35,6 +35,8 @@ int C2_HOOK_FASTCALL ArePointsColinear(const br_vector3* pV1, const br_vector3* 
 
 void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_info);
 
+tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron, tCollision_shape_wire_frame__line* pEdges);
+
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight);
 
 #endif //REC2_PHYSICS_H
