@@ -116,6 +116,7 @@ tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(i
     tU8* raw_memory;
 
     C2_HOOK_BUG_ON(sizeof(tCollision_shape_polyhedron) != 80);
+    C2_HOOK_BUG_ON(sizeof(tPolyhedron_edge_indexes) != 2);
     result = BrMemAllocate(sizeof(tCollision_shape_polyhedron) * pCount_points * sizeof(br_vector3) + (pCount_points + -2) * 38, pType); /* FIXME: 38? */
     raw_memory = (tU8*)result;
 
@@ -124,8 +125,8 @@ tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(i
     result->polyhedron.points = (br_vector3*)raw_memory;
     raw_memory += pCount_points * sizeof(br_vector3);
 
-    result->polyhedron.edges = (tU8*)raw_memory;
-    raw_memory += (pCount_points - 2) * 6;
+    result->polyhedron.edges = (tPolyhedron_edge_indexes*)raw_memory;
+    raw_memory += (pCount_points - 2) * 3 * sizeof(tPolyhedron_edge_indexes);
 
     result->polyhedron.planes = (br_vector4*)raw_memory;
 
@@ -322,6 +323,98 @@ int C2_HOOK_FASTCALL ArePointsColinear(const br_vector3* pV1, const br_vector3* 
     return 1;
 }
 C2_HOOK_FUNCTION(0x00420ef0, ArePointsColinear)
+
+static br_scalar inline C2_HOOK_FASTCALL PlaneValue(const br_vector4* pPlane, const br_vector3* pP) {
+
+    return BrVector3Dot(pPlane, pP) + pPlane->v[3];
+}
+
+tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron, tCollision_shape_wire_frame__line* pEdges) {
+    int first_non_colinear;
+    int i;
+    br_vector3 tv2;
+    br_vector3 tv1;
+
+    first_non_colinear = 0;
+    while (ArePointsColinear(&pPolyhedron->points[first_non_colinear + 0], &pPolyhedron->points[first_non_colinear + 1], &pPolyhedron->points[first_non_colinear + 2])) {
+        first_non_colinear++;
+        if (first_non_colinear == pPolyhedron->count_points - 3) {
+            return ePhysicsError_UnknownShapeType;
+        }
+    }
+
+    if (first_non_colinear != 0) {
+        BrVector3Copy(&pPolyhedron->points[0], &pPolyhedron->points[first_non_colinear + 0]);
+        BrVector3Copy(&pPolyhedron->points[1], &pPolyhedron->points[first_non_colinear + 1]);
+        BrVector3Copy(&pPolyhedron->points[2], &pPolyhedron->points[first_non_colinear + 2]);
+    }
+    pPolyhedron->edges[0].index1 = 0;
+    pPolyhedron->edges[0].index2 = 1;
+    pPolyhedron->edges[1].index1 = 1;
+    pPolyhedron->edges[1].index2 = 2;
+    pPolyhedron->edges[2].index1 = 0;
+    pPolyhedron->edges[2].index2 = 2;
+
+    /* PlaneEquation */
+    BrVector3Sub(&tv1, &pPolyhedron->points[2], &pPolyhedron->points[1]);
+    BrVector3Sub(&tv2, &pPolyhedron->points[1], &pPolyhedron->points[0]);
+    BrVector3Cross(&pPolyhedron->planes[0], &tv2, &tv1);
+    BrVector3Normalise(&pPolyhedron->planes[0], &pPolyhedron->planes[0]);
+    pPolyhedron->planes[0].v[3] = -BrVector3Dot(&pPolyhedron->planes[0], &pPolyhedron->points[0]);
+
+    pEdges[2].index1 = 0;
+    pEdges[1].index1 = 0;
+    pEdges[0].index1 = 0;
+
+    for (i = 0; i < pPolyhedron->count_points; i++) {
+
+        if (fabsf(PlaneValue(&pPolyhedron->planes[0], &pPolyhedron->points[i])) > 1e-6f) {
+            break;
+        }
+    }
+    if (i == pPolyhedron->count_points) {
+        return 7;
+    }
+    BrVector3Copy(&pPolyhedron->points[3], &pPolyhedron->points[i]);
+    /* Points inside the polyhedron must have positive plane value */
+    if (PlaneValue(&pPolyhedron->planes[0], &pPolyhedron->points[i]) < 1e-6f) {
+        BrVector4Negate(&pPolyhedron->planes[0], &pPolyhedron->planes[0]);
+    }
+    for (i = 0; i < 3; i++) {
+        int o;
+        int o_i;
+
+        o = i + 1;
+        o_i = o % 3;
+
+        pPolyhedron->edges[3 + i].index1 = i;
+        pPolyhedron->edges[3 + i].index2 = 3;
+
+        /* PlaneEquation */
+        BrVector3Sub(&tv1, &pPolyhedron->points[3], &pPolyhedron->points[i]);
+        BrVector3Sub(&tv2, &pPolyhedron->points[o_i], &pPolyhedron->points[i]);
+        BrVector3Cross(&pPolyhedron->planes[o], &tv1, &tv2);
+        BrVector3Normalise(&pPolyhedron->planes[o], &pPolyhedron->planes[o]);
+        pPolyhedron->planes[o].v[3] = -BrVector3Dot(&pPolyhedron->planes[o], &pPolyhedron->points[3]);
+
+        pEdges[i].index2 = o;
+        pEdges[3 + i].index1 = o;
+        pEdges[3 + i].index2 = 1 + (o + 1) % 3;
+    }
+
+    for (i = 0; i < 3; i++) {
+
+        if (PlaneValue(&pPolyhedron->planes[1 + i], &pPolyhedron->points[(2 + i) % 3]) < 1e-6f) {
+            BrVector4Negate(&pPolyhedron->planes[1 + i], &pPolyhedron->planes[1 + i]);
+        }
+    }
+
+    pPolyhedron->count_points = 4;
+    pPolyhedron->count_planes = 4;
+    pPolyhedron->count_edges = 6;
+    return ePhysicsError_Ok;
+}
+C2_HOOK_FUNCTION(0x004211f0, ProcessTetrahedronPolyhedronCollisionShape)
 
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
