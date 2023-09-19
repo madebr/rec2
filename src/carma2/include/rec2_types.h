@@ -2316,11 +2316,16 @@ typedef struct tCollision_shape_common {
 } tCollision_shape_common;
 
 typedef struct {
+    tU8 index1;
+    tU8 index2;
+} tPolyhedron_edge_indexes; /* FIXME: better name */
+
+typedef struct {
     int count_points;
     int count_edges;
     int count_planes;
     br_vector3* points;
-    tU8* edges; /* FIXME: correct type */
+    tPolyhedron_edge_indexes* edges;
     br_vector4* planes;
 } tCollision_shape_polyhedron_data;
 
