@@ -416,6 +416,25 @@ tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tColli
 }
 C2_HOOK_FUNCTION(0x004211f0, ProcessTetrahedronPolyhedronCollisionShape)
 
+void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds) {
+    int i;
+
+    BrVector3Copy(&pBounds->min, &pVertices[0]);
+    BrVector3Copy(&pBounds->max, &pVertices[0]);
+    for (i = 1; i < pCount_vertices; i++) {
+        int j;
+
+        for (j = 0; j < 3; j++) {
+            if (pVertices[i].v[j] < pBounds->min.v[j]) {
+                pBounds->min.v[j] = pVertices[i].v[j];
+            } else if (pVertices[i].v[j] > pBounds->max.v[j]) {
+                pBounds->max.v[j] = pVertices[i].v[j];
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004c5eb0, CalculateBoundingBox)
+
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
 
