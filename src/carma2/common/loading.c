@@ -921,10 +921,14 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00491170, DRfopen, DRfopen_original)
 
 void (C2_HOOK_FASTCALL * DRfclose_original)(FILE* pFile);
 void C2_HOOK_FASTCALL DRfclose(FILE* pFile) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DRfclose_original(pFile);
 #else
-#error "not implemented"
+    if ((uintptr_t)pFile > REC2_ASIZE(C2V(gTwatVfsFiles))) {
+        c2_fclose(pFile);
+    } else {
+        C2V(gTwatVfsFiles)[(uintptr_t)pFile].start = NULL;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4760, DRfclose, DRfclose_original)
