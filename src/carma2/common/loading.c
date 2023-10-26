@@ -42,7 +42,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5, 0x00691b40);
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsFile, gTwatVfsFiles, 50, 0x00692080);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsFile, gTwatVfsFiles, 50, 0x00692070);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisableTiffConversionStackPos, 0x006923a0);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisableTiffConversion, 0x0068c724);
@@ -944,7 +944,7 @@ br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, vo
     int totalSize;
 
     if ((int)f < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)f - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)f];
         totalSize = size * n;
         if (twtFile->end - twtFile->pos < totalSize) {
             n = ((twtFile->end - twtFile->pos) / size) * size;
@@ -982,7 +982,7 @@ int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, c2_fpos_t* pos) {
     tTwatVfsFile* twtFile;
 
     if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int) pFile - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pFile];
         *(tU8 **) pos = twtFile->pos;
         twtFile->error = 0;
         return 0;
@@ -1000,7 +1000,7 @@ int C2_HOOK_FASTCALL DRfeof(FILE* pFile) {
     tTwatVfsFile* twtFile;
 
     if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int) pFile - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pFile];
         return twtFile->pos >= twtFile->end;
     }
     return c2_feof(pFile);
@@ -1016,7 +1016,7 @@ int C2_HOOK_FASTCALL DRferror(FILE* pFile) {
     tTwatVfsFile* twtFile;
 
     if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int) pFile - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pFile];
         return twtFile->error;
     }
     return c2_ferror(pFile);
@@ -1032,7 +1032,7 @@ void C2_HOOK_FASTCALL DRclearerr(FILE* pFile) {
     tTwatVfsFile* twtFile;
 
     if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int) pFile - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pFile];
         twtFile->error = 0;
         return;
     }
@@ -1050,7 +1050,7 @@ int C2_HOOK_FASTCALL DRfgetc(FILE* pFile) {
     int result;
 
     if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)pFile - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pFile];
         if (twtFile->pos >= twtFile->end) {
             twtFile->error = -1;
             return EOF;
@@ -1074,7 +1074,7 @@ int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile) {
     int result;
 
     if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)pFile - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pFile];
         if (twtFile->pos >= twtFile->end) {
             twtFile->error = -1;
             return EOF;
@@ -1097,7 +1097,7 @@ int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file) {
     tTwatVfsFile* twtFile;
 
     if ((int)file < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)file - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)file];
         twtFile->pos--;
         *twtFile->pos = ch;
         twtFile->error = 0;
@@ -1119,7 +1119,7 @@ char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, FILE* pFile) {
     size_t i;
 
     if ((int)pFile < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)pFile - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pFile];
         b = buffer;
         for (i = 0; i < size; i++) {
             c = (char)*twtFile->pos;
@@ -1156,7 +1156,7 @@ int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence) {
     tU8 *newpos;
 
     if ((int)pF < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)pF - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pF];
         switch (whence) {
         case SEEK_SET:
             newpos = twtFile->start + offset;
@@ -1193,7 +1193,7 @@ int C2_HOOK_FASTCALL DRftell(FILE* pF) {
     tTwatVfsFile* twtFile;
 
     if ((int)pF < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)pF - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pF];
         return twtFile->pos - twtFile->start;
     }
     return c2_ftell(pF);
@@ -1210,7 +1210,7 @@ int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos) {
     tTwatVfsFile* twtFile;
 
     if ((int)pF < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)pF - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pF];
         if (twtFile->start <= *(tU8**)pos && *(tU8**)pos <= twtFile->end) {
             twtFile->pos = *(tU8**)pos;
             twtFile->error = 0;
@@ -1233,7 +1233,7 @@ void C2_HOOK_FASTCALL DRrewind(FILE* pF) {
     tTwatVfsFile* twtFile;
 
     if ((int)pF < REC2_ASIZE(C2V(gTwatVfsFiles))) {
-        twtFile = &C2V(gTwatVfsFiles)[(int)pF - 1];
+        twtFile = &C2V(gTwatVfsFiles)[(uintptr_t)pF];
         twtFile->pos = twtFile->start;
         twtFile->error = 0;
         return;
@@ -1248,7 +1248,7 @@ void C2_HOOK_FASTCALL TWT_Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(tTwatVfsMountPoint) != 264);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gTwatVfsFiles)); i++) {
+    for (i = 1; i < REC2_ASIZE(C2V(gTwatVfsFiles)); i++) {
         C2V(gTwatVfsFiles)[i].start = NULL;
     }
     for (i = 0; i < REC2_ASIZE(C2V(gTwatVfsMountPoints)); i++) {
@@ -1331,7 +1331,7 @@ FILE* C2_HOOK_FASTCALL TWT_fopen(const char* pPath, const char* mode) {
         twt_path_len = c2_strlen(C2V(gTwatVfsMountPoints)[twt].path);
         for (i = 0; i < C2V(gTwatVfsMountPoints)[twt].header->nbFiles; i++) {
             if (DRStricmp(C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].filename, &pPath[twt_path_len + 1]) == 0) {
-                for (file_index = 0; file_index < REC2_ASIZE(C2V(gTwatVfsFiles)); file_index++) {
+                for (file_index = 1; file_index < REC2_ASIZE(C2V(gTwatVfsFiles)); file_index++) {
                     if (C2V(gTwatVfsFiles)[file_index].start != NULL) {
                         continue;
                     }
@@ -1339,7 +1339,7 @@ FILE* C2_HOOK_FASTCALL TWT_fopen(const char* pPath, const char* mode) {
                     C2V(gTwatVfsFiles)[file_index].pos = C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].data;
                     C2V(gTwatVfsFiles)[file_index].end = C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].data + C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[i].fileSize;
                     C2V(gTwatVfsFiles)[file_index].error = 0;
-                    return (FILE*)(file_index + 1);
+                    return (FILE*)file_index;
                 }
                 return NULL;
             }
