@@ -37,6 +37,8 @@ void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_inf
 
 tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron, tCollision_shape_wire_frame__line* pEdges);
 
+void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds);
+
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight);
 
 #endif //REC2_PHYSICS_H
