@@ -2350,15 +2350,10 @@ typedef struct {
 } tCollision_shape_sphere;
 
 typedef struct {
-    tU8 index1;
-    tU8 index2;
-} tCollision_shape_wire_frame__line;
-
-typedef struct {
     int count_points;
     int count_lines;
     br_vector3* points;
-    tCollision_shape_wire_frame__line* lines;
+    tPolyhedron_edge_indexes* lines;
 } tCollision_shape_wireframe_data;
 
 typedef struct {
