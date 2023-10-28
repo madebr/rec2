@@ -1,6 +1,6 @@
 #include "finteray.h"
 
-#include <brender/br_inline_funcs.h>
+#include <brender/brender.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPling_materials, 0x005964c0, 1);
 
@@ -112,3 +112,27 @@ void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, b
     }
 }
 C2_HOOK_FUNCTION(0x0045f0d0, MultiRayCheckSingleFace)
+
+void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m) {
+    br_vector3 a;
+    br_vector3 c[3];
+    int j;
+
+    BrMatrix34ApplyP(&b2->min, &b1->min, m);
+    BrVector3Copy(&b2->max, &b2->min);
+    BrVector3Sub(&a, &b1->max, &b1->min);
+    for (j = 0; j < 3; j++) {
+        BrVector3Scale(&c[j], (br_vector3*)m->m[j], a.v[j]);
+    }
+    for (j = 0; j < 3; ++j) {
+        b2->min.v[j] = (float)(c[2].v[j] < 0.f) * c[2].v[j]
+                       + (float)(c[1].v[j] < 0.f) * c[1].v[j]
+                       + (float)(c[0].v[j] < 0.f) * c[0].v[j]
+                       + b2->min.v[j];
+        b2->max.v[j] = (float)(c[0].v[j] > 0.f) * c[0].v[j]
+                       + (float)(c[2].v[j] > 0.f) * c[2].v[j]
+                       + (float)(c[1].v[j] > 0.f) * c[1].v[j]
+                       + b2->max.v[j];
+    }
+}
+C2_HOOK_FUNCTION(0x0045f5b0, GetNewBoundingBox)
