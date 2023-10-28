@@ -531,6 +531,7 @@ FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
     }
     return NULL;
 }
+C2_HOOK_FUNCTION(0x005149a0, OpenUniqueFileB)
 
 void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF) {
     int i;
