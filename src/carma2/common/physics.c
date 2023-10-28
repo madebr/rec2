@@ -24,6 +24,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gPhysics_buffer, 299792, 0x006baa40);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCollision_info_uid_counter, 0x006a0adc);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFace_num__car, 0x0065d010, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gPhysics_reference_normal_comparison, 0x00679420);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape_polyhedron_data*, gPolyhedron_to_sort, 0x0067942c);
 
 void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError) {
     char s[256];
@@ -620,6 +621,32 @@ br_scalar C2_HOOK_FASTCALL ComparePolyhedronPlaneToNormal(const br_vector3* pV1,
     return BrVector3Dot(&tv, &C2V(gPhysics_reference_normal_comparison));
 }
 C2_HOOK_FUNCTION(0x00420d60, ComparePolyhedronPlaneToNormal)
+
+int C2_HOOK_CDECL ComparePolyhedronPointIndicesToNormal(const int* pIndex1, const int* pIndex2) {
+    br_vector3 tv1, tv2;
+    br_scalar s;
+    br_scalar s1, s2;
+
+    BrVector3Sub(&tv1, &C2V(gPolyhedron_to_sort)->points[*pIndex1], &C2V(gPolyhedron_to_sort)->points[0]);
+    BrVector3Sub(&tv2, &C2V(gPolyhedron_to_sort)->points[*pIndex2], &C2V(gPolyhedron_to_sort)->points[0]);
+    /* Calculate norm2 of normal on vectors v1/v2 with orthonormal */
+    s = ComparePolyhedronPlaneToNormal(&tv1, &tv2);
+    if (s > 1e-6f) {
+        return -1;
+    }
+    if (s < -1e-6f) {
+        return 1;
+    }
+    s1 = BrVector3LengthSquared(&tv1);
+    s2 = BrVector3LengthSquared(&tv2);
+    if (s1 < s2) {
+        return -1;
+    } else if (s2 > s1) {
+        return 1;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00420dc0, ComparePolyhedronPointIndicesToNormal)
 
 void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds) {
     int i;
