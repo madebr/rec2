@@ -2617,6 +2617,16 @@ typedef struct {
     undefined4 field_0x84;
 } tDrone;
 
+typedef struct {
+    br_material* material;
+    br_vector3 v[3];
+    br_vector2* map[3];
+    br_vector3 normal;
+    int flags;
+    br_scalar d;
+    undefined field_0x48[8];
+} tFace_ref;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
