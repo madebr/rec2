@@ -143,8 +143,8 @@ tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateWireFrameCollisionShape(int
     tU8* raw_memory;
 
     C2_HOOK_BUG_ON(sizeof(tCollision_shape_wireframe) != 72);
-    C2_HOOK_BUG_ON(sizeof(tCollision_shape_wire_frame__line) != 2);
-    result = BrMemAllocate(sizeof(tCollision_shape_wireframe) + pCount_points * sizeof(br_vector3) + pCount_lines * sizeof(tCollision_shape_wire_frame__line), pType);
+    C2_HOOK_BUG_ON(sizeof(tPolyhedron_edge_indexes) != 2);
+    result = BrMemAllocate(sizeof(tCollision_shape_wireframe) + pCount_points * sizeof(br_vector3) + pCount_lines * sizeof(tPolyhedron_edge_indexes), pType);
     raw_memory = (tU8*)result;
 
     raw_memory += sizeof(tCollision_shape_wireframe);
@@ -153,7 +153,7 @@ tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateWireFrameCollisionShape(int
     raw_memory += pCount_points * sizeof(br_vector3);
 
     result->wireframe.count_lines = pCount_lines;
-    result->wireframe.lines = (tCollision_shape_wire_frame__line*)raw_memory;
+    result->wireframe.lines = (tPolyhedron_edge_indexes*)raw_memory;
     result->wireframe.count_points = pCount_points;
     result->common.type = kCollisionShapeType_Wireframe;
     return result;
@@ -329,7 +329,7 @@ static br_scalar inline C2_HOOK_FASTCALL PlaneValue(const br_vector4* pPlane, co
     return BrVector3Dot(pPlane, pP) + pPlane->v[3];
 }
 
-tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron, tCollision_shape_wire_frame__line* pEdges) {
+tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron, tPolyhedron_edge_indexes* pEdges) {
     int first_non_colinear;
     int i;
     br_vector3 tv2;
@@ -415,6 +415,200 @@ tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tColli
     return ePhysicsError_Ok;
 }
 C2_HOOK_FUNCTION(0x004211f0, ProcessTetrahedronPolyhedronCollisionShape)
+
+typedef enum {
+    ePlaneSide_positive = 0,
+    ePlaneSide_negative = 1,
+    ePlaneSide_zero = 2,
+} tPlane_side;
+
+static tPlane_side calculate_plane_side(br_vector4* pPlane, br_vector3* pPoint) {
+    br_scalar s;
+
+
+    s = PlaneValue(pPlane, pPoint);
+    if (s < -1e-6f) {
+        return ePlaneSide_negative;
+    } else if (s >= 1e-6f) {
+        return ePlaneSide_positive;
+    } else {
+        return ePlaneSide_zero;
+    }
+}
+
+int C2_HOOK_FASTCALL PolyhedronCollisionShape_AddPoint(tCollision_shape_polyhedron_data* pPolyhedron, br_vector3* pVertex, tU8 pVertex_index, tPolyhedron_edge_indexes* pEdge_to_plane_indices) {
+    tPlane_side plane_side_buffer[596];
+    tPolyhedron_edge_indexes new_edge_to_plane_indices[894];
+    tPolyhedron_edge_indexes new_edges[894];
+    br_vector4 new_planes[596];
+    int positive_side_edges[596];
+    int all_positive;
+    int i;
+    int j;
+    int count_new_planes;
+    int count_new_edges;
+    int final_count_edges;
+    int final_count_planes;
+
+    all_positive = 1;
+    for (i = 0; i < pPolyhedron->count_planes; i++) {
+        plane_side_buffer[i] = calculate_plane_side(&pPolyhedron->planes[i], pVertex);
+        all_positive &= plane_side_buffer[i] != ePlaneSide_negative;
+    }
+    /* If all positive ==> point is inside polyhedron */
+    if (all_positive) {
+        return 0;
+    }
+
+    count_new_planes = 0;
+    count_new_edges = 0;
+
+    for (i = 0; i < pPolyhedron->count_edges; i++) {
+        tU8 plane1;
+        tPlane_side side1;
+        tU8 plane2;
+        tPlane_side side2;
+
+        plane1 = pEdge_to_plane_indices[i].index1;
+        side1 = plane_side_buffer[plane1];
+        plane2 = pEdge_to_plane_indices[i].index2;
+        side2 = plane_side_buffer[plane2];
+        positive_side_edges[i] = side1 == ePlaneSide_positive || side2 == ePlaneSide_positive;
+        if ((side1 ^ side2) & ePlaneSide_negative) {
+            /* Exactly one plane of edge has vertex on negative side */
+            if (!(side1 & ePlaneSide_zero) && !(side2 & ePlaneSide_zero)) {
+                br_vector3* v1,* v2;
+                br_vector3 tv1, tv2;
+                br_vector4 *new_plane;
+                /* vertex does not lie on edge */
+                v1 = &pPolyhedron->points[pPolyhedron->edges[i].index1];
+                v2 = &pPolyhedron->points[pPolyhedron->edges[i].index2];
+                BrVector3Sub(&tv1, pVertex, v1);
+                BrVector3Sub(&tv2, v2, v1);
+                new_plane = &new_planes[count_new_planes];
+                BrVector3Cross(new_plane, &tv1, &tv2);
+                BrVector3Normalise(new_plane, new_plane);
+                if (BrVector3Dot(&pPolyhedron->planes[plane1], &pPolyhedron->planes[plane1]) * BrVector3Dot(new_plane, &pPolyhedron->planes[plane2])
+                        - BrVector3Dot(&pPolyhedron->planes[plane1], &pPolyhedron->planes[plane2]) * BrVector3Dot(new_plane, &pPolyhedron->planes[plane1]) < 0.f) {
+                    BrVector4Negate(new_plane, new_plane);
+                }
+                new_plane->v[3] = -BrVector3Dot(new_plane, pVertex);
+                if (side1 == ePlaneSide_positive) {
+                    pEdge_to_plane_indices[i].index2 = count_new_planes + pPolyhedron->count_planes;
+                } else {
+                    pEdge_to_plane_indices[i].index1 = count_new_planes + pPolyhedron->count_planes;
+                }
+
+                for (j = 0; j < count_new_edges; j++) {
+                    if (new_edges[j].index1 == pPolyhedron->edges[i].index1 && new_edges[j].index2 == pVertex_index) {
+                        new_edge_to_plane_indices[j].index2 = count_new_planes + pPolyhedron->count_planes;
+                        break;
+                    }
+                }
+                if (j >= count_new_edges) {
+                    new_edges[count_new_edges].index1 = pPolyhedron->edges[i].index1;
+                    new_edges[count_new_edges].index2 = pVertex_index;
+                    new_edge_to_plane_indices[count_new_edges].index1 = count_new_planes + pPolyhedron->count_planes;
+                    count_new_edges += 1;
+                }
+
+                for (j = 0; j < count_new_edges; j++) {
+                    if (new_edges[j].index1 == pPolyhedron->edges[i].index2 && new_edges[j].index2 == pVertex_index) {
+                        new_edge_to_plane_indices[j].index2 = count_new_planes + pPolyhedron->count_planes;
+                        count_new_planes += 1;
+                        break;
+                    }
+                }
+                if (j >= count_new_edges) {
+                    new_edges[count_new_edges].index1 = pPolyhedron->edges[i].index2;
+                    new_edges[count_new_edges].index2 = pVertex_index;
+                    new_edge_to_plane_indices[count_new_edges].index1 = count_new_planes + pPolyhedron->count_planes;
+                    count_new_edges += 1;
+                    count_new_planes += 1;
+                }
+            } else {
+                if (!(side1 & ePlaneSide_zero)) {
+                    plane1 = plane2;
+                }
+
+                for (j = 0; j < count_new_edges; j++) {
+                    if (new_edges[j].index1 == pPolyhedron->edges[i].index1 && new_edges[j].index2 == pVertex_index) {
+                        new_edge_to_plane_indices[j].index2 = plane1;
+                        break;
+                    }
+                }
+                if (j >= count_new_edges) {
+                    new_edges[count_new_edges].index1 = pPolyhedron->edges[i].index1;
+                    new_edges[count_new_edges].index2 = pVertex_index;
+                    new_edge_to_plane_indices[count_new_edges].index1 = plane1;
+                    count_new_edges += 1;
+                }
+
+                for (j = 0; j < count_new_edges; j++) {
+                    if (new_edges[j].index1 == pPolyhedron->edges[i].index2 && new_edges[j].index2 == pVertex_index) {
+                        new_edge_to_plane_indices[j].index2 = plane1;
+                        break;
+                    }
+                }
+                if (j >= count_new_edges) {
+                    new_edges[count_new_edges].index1 = pPolyhedron->edges[i].index2;
+                    new_edges[count_new_edges].index2 = pVertex_index;
+                    new_edge_to_plane_indices[count_new_edges].index1 = plane1;
+                    count_new_edges += 1;
+                }
+
+            }
+        }
+    }
+
+    final_count_edges = 0;
+    for (i = 0; i < pPolyhedron->count_edges; i++) {
+        if (positive_side_edges[i]) {
+            if (i != final_count_edges) {
+                pPolyhedron->edges[final_count_edges] = pPolyhedron->edges[i];
+                pEdge_to_plane_indices[final_count_edges] = pEdge_to_plane_indices[i];
+            }
+            final_count_edges += 1;
+        }
+    }
+    for (i = 0; i < count_new_edges; i++) {
+        pPolyhedron->edges[final_count_edges] = new_edges[i];
+        pEdge_to_plane_indices[final_count_edges] = new_edge_to_plane_indices[i];
+        final_count_edges += 1;
+    }
+    pPolyhedron->count_edges = final_count_edges;
+
+    final_count_planes = 0;
+    for (i = 0; i < pPolyhedron->count_planes; i++) {
+        if (!(plane_side_buffer[i] & ePlaneSide_negative)) {
+            if (i != final_count_planes) {
+                BrVector4Copy(&pPolyhedron->planes[final_count_planes], &pPolyhedron->planes[i]);
+                for (j = 0; j < pPolyhedron->count_edges; j++) {
+                    if (pEdge_to_plane_indices[j].index1 == i) {
+                        pEdge_to_plane_indices[j].index1 = final_count_planes;
+                    } else if (pEdge_to_plane_indices[j].index2 == i) {
+                        pEdge_to_plane_indices[j].index2 = final_count_planes;
+                    }
+                }
+            }
+            final_count_planes += 1;
+        }
+    }
+    for (i = 0; i < count_new_planes; i++) {
+        BrVector4Copy(&pPolyhedron->planes[final_count_planes], &new_planes[i]);
+        for (j = 0; j < pPolyhedron->count_edges; j++) {
+            if (pEdge_to_plane_indices[j].index1 == pPolyhedron->count_planes + i) {
+                pEdge_to_plane_indices[j].index1 = final_count_planes;
+            } else if (pEdge_to_plane_indices[j].index2 == pPolyhedron->count_planes + i) {
+                pEdge_to_plane_indices[j].index2 = final_count_planes;
+            }
+        }
+        final_count_planes += 1;
+    }
+    pPolyhedron->count_planes = final_count_planes;
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00421790, PolyhedronCollisionShape_AddPoint)
 
 void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds) {
     int i;
