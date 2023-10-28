@@ -107,6 +107,14 @@
         BrVector3Scale(v1, v2, _scale);                                  \
     } while (0)
 
+#define BrVector4Copy(v1, v2)    \
+    do {                         \
+        (v1)->v[0] = (v2)->v[0]; \
+        (v1)->v[1] = (v2)->v[1]; \
+        (v1)->v[2] = (v2)->v[2]; \
+        (v1)->v[3] = (v2)->v[3]; \
+    } while (0)
+
 #define BrVector4Negate(v1, v2)   \
     do {                          \
         (v1)->v[0] = -(v2)->v[0]; \
