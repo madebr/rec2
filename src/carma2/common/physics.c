@@ -21,6 +21,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_buffer3_ptr, 0x0074a5e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPhysics_other_buffer_capacity, 0x006940c8);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_other_buffer, 0x006940c4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gPhysics_buffer, 299792, 0x006baa40);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCollision_info_uid_counter, 0x006a0adc);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFace_num__car, 0x0065d010, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gPhysics_reference_normal_comparison, 0x00679420);
 
 void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError) {
     char s[256];
@@ -609,6 +612,14 @@ int C2_HOOK_FASTCALL PolyhedronCollisionShape_AddPoint(tCollision_shape_polyhedr
     return 1;
 }
 C2_HOOK_FUNCTION(0x00421790, PolyhedronCollisionShape_AddPoint)
+
+br_scalar C2_HOOK_FASTCALL ComparePolyhedronPlaneToNormal(const br_vector3* pV1, const br_vector3* pV2) {
+    br_vector3 tv;
+
+    BrVector3Cross(&tv, pV1, pV2);
+    return BrVector3Dot(&tv, &C2V(gPhysics_reference_normal_comparison));
+}
+C2_HOOK_FUNCTION(0x00420d60, ComparePolyhedronPlaneToNormal)
 
 void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds) {
     int i;
