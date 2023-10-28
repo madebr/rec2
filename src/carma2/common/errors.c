@@ -12,12 +12,7 @@
 #include <stdint.h>
 //#include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gError_messages, 0x00591708);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gError_code, 0x006b2e00);
-
-FILE* gDiagnostic_file;
-
-char* gError_messages[186] = {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gError_messages, 186, 0x00591708,
     "Unable to support this screen depth setting",
     "Couldn't allocate off-screen buffer",
     "Couldn't allocate Z-Buffer",
@@ -201,8 +196,11 @@ char* gError_messages[186] = {
     "Duplicate material \"%\"",
     "Duplicate pixelmap \"%\"",
     "Oh my God! Attempt made to write to packed file \"%\". This is stupid.",
-    "Could not create textures pages \"%\"."
-};
+    "Could not create textures pages \"%\".",
+});
+C2_HOOK_VARIABLE_IMPLEMENT(int, gError_code, 0x006b2e00);
+
+FILE* gDiagnostic_file;
 
 void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     char the_str[1024];
@@ -215,7 +213,7 @@ void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     C2_HOOK_STARTF("pStr_index=%d", pStr_index);
 
     if (pStr_index < 1000) {
-        c2_strcpy(the_str, gError_messages[pStr_index]);
+        c2_strcpy(the_str, C2V(gError_messages)[pStr_index]);
     } else {
         c2_strcpy(the_str, "Physics Error: %");
     }
