@@ -1,8 +1,11 @@
 #include "opponent.h"
 
+#include "car.h"
 #include "finteray.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "loading.h"
+#include "platform.h"
 
 #include <brender/brender.h>
 
@@ -95,3 +98,29 @@ void C2_HOOK_FASTCALL DisposeOpponents(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004ae5d0, DisposeOpponents)
+
+tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
+
+    switch (pCategory) {
+    case eVehicle_self:
+        return &C2V(gProgram_state).current_car;
+    case eVehicle_net_player:
+        if (pIndex < C2V(gThis_net_player_index)) {
+            return C2V(gNet_players)[pIndex].car;
+        } else {
+            return C2V(gNet_players)[pIndex + 1].car;
+        }
+    case eVehicle_opponent:
+        return C2V(gProgram_state).AI_vehicles.opponents[pIndex].car_spec;
+    case eVehicle_rozzer:
+        return C2V(gProgram_state).AI_vehicles.cops[pIndex].car_spec;
+    case eVehicle_drone:
+        PDEnterDebugger("OPPONENT.C: GetCarSpec() can't return drone car_specs");
+        return NULL;
+    case eVehicle_not_really:
+        return (tCar_spec*)C2V(gActive_non_car_list)[pIndex];
+    default:
+        return NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x004ae7e0, GetCarSpec)
