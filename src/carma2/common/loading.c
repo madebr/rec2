@@ -266,7 +266,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU32, gSimple_material_colours, 12, 0x0065
     0x1a93491d, 0x1ec0bfc0, 0x23141414, 0x00000000,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, g_source_exists, 0x00658614, 1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFirst_drone_processing, 0x0058f038, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_stamp_for_this_munging, 0x0079efb8);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrame_period_for_this_munging, 0x0079efc4);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gDrone_delta_time, 0x0079efc0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gTrack_drone_min_y, 0x0079efbc);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
@@ -4852,3 +4856,27 @@ void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
 
 }
 C2_HOOK_FUNCTION(0x00487ea0, LoadInterfaceStuff)
+
+void C2_HOOK_FASTCALL InitOpponentsAndDrones(tRace_info* pRace_info) {
+    br_bounds3 track_bounds;
+
+    C2V(gFirst_drone_processing) = 1;
+    C2V(gTime_stamp_for_this_munging) = GetTotalTime();
+    if (C2V(gTime_stamp_for_this_munging) == 0) {
+        C2V(gTime_stamp_for_this_munging) = PDGetTotalTime();
+    }
+    C2V(gFrame_period_for_this_munging) = 100;
+    C2V(gDrone_delta_time) = 0.1f;
+    BrActorToBounds(&track_bounds, C2V(gTrack_actor));
+    if (track_bounds.max.v[1] <= track_bounds.min.v[1]) {
+        C2V(gTrack_drone_min_y) = track_bounds.max.v[1];
+    } else {
+        C2V(gTrack_drone_min_y) = track_bounds.min.v[1];
+    }
+    PrintMemoryDump(0, "BEFORE InitOpponents()");
+    InitOpponents(pRace_info);
+    PrintMemoryDump(0, "AFTER InitOpponents(), BEFORE InitDrones()");
+    InitDrones();
+    PrintMemoryDump(0, "AFTER InitDrones()");
+}
+C2_HOOK_FUNCTION(0x004010b0, InitOpponentsAndDrones)

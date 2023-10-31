@@ -2986,7 +2986,9 @@ typedef struct {
     struct br_matrix34 initial_position;
     struct tCar_spec * car;
     undefined field_0xcc[8];
-} tNet_game_player_info;typedef enum {
+} tNet_game_player_info;
+
+typedef enum {
     kDroneType_car = 0,
     kDroneType_plane = 1,
     kDroneType_train = 2,
@@ -2995,7 +2997,7 @@ typedef struct {
 
 typedef struct {
     char name[13];
-    undefined field1_0xd[3];
+    undefined field_0xd[3];
     tDrone_type type;
     float M;
     float speed;

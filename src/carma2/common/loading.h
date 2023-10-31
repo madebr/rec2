@@ -42,8 +42,14 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPivot_actor_names, 6);
 C2_HOOK_VARIABLE_DECLARE(float, gMass_mine);
 C2_HOOK_VARIABLE_DECLARE(tSpecial_volume, gDefault_water_spec_vol);/* FIXME: rename to gDefault_default_water_spec_vol*/
 C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDefault_water_spec_vol_real);
+C2_HOOK_VARIABLE_DECLARE(int, gFirst_drone_processing);
 C2_HOOK_VARIABLE_DECLARE(tU32, gTime_stamp_for_this_munging);
+C2_HOOK_VARIABLE_DECLARE(tU32, gFrame_period_for_this_munging);
+C2_HOOK_VARIABLE_DECLARE(float, gDrone_delta_time);
+C2_HOOK_VARIABLE_DECLARE(float, gTrack_drone_min_y);
 
+C2_HOOK_VARIABLE_DECLARE(int, gKnobbledFramePeriod);
+C2_HOOK_VARIABLE_DECLARE(float, gUnknownOpponentFactor);
 C2_HOOK_VARIABLE_DECLARE(int, gMinTimeOpponentRepair);
 C2_HOOK_VARIABLE_DECLARE(int, gMaxTimeOpponentRepair);
 
@@ -372,5 +378,7 @@ void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void);
 void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race);
+
+void C2_HOOK_FASTCALL InitOpponentsAndDrones(tRace_info* pRace_info);
 
 #endif //REC2_LOADING_H
