@@ -151,3 +151,15 @@ int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
     }
 }
 C2_HOOK_FUNCTION(0x004ae790, GetCarCount)
+
+tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
+    int i;
+
+    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
+        if (C2V(gProgram_state).AI_vehicles.opponents[i].index == pIndex) {
+            return C2V(gProgram_state).AI_vehicles.opponents[i].car_spec;
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x004ae970, GetCarSpecFromGlobalOppoIndex)
