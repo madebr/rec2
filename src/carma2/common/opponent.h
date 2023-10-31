@@ -32,4 +32,6 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
 
 int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory);
 
+tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex);
+
 #endif //REC2_OPPONENT_H
