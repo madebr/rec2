@@ -44,6 +44,8 @@ add_library(c2_common STATIC
     globvrbm.h
     globvrkm.c
     globvrkm.h
+    globvrme.c
+    globvrme.h
     globvrpb.c
     globvrpb.h
     grafdata.c
