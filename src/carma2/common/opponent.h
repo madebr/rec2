@@ -11,6 +11,18 @@
 C2_HOOK_VARIABLE_DECLARE(int, gActive_car_list_rebuild_required);
 C2_HOOK_VARIABLE_DECLARE(int, gBIG_APC_index);
 C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_cops_before_faffage);
+C2_HOOK_VARIABLE_DECLARE(tU32, gNext_grudge_reduction);
+C2_HOOK_VARIABLE_DECLARE(int, gFirst_frame);
+C2_HOOK_VARIABLE_DECLARE(int, gGrudge_reduction_per_period);
+C2_HOOK_VARIABLE_DECLARE(int, gAcknowledged_start);
+C2_HOOK_VARIABLE_DECLARE(int, gStart_jumped);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gMinimum_yness_before_knackerisation);
+C2_HOOK_VARIABLE_DECLARE(tU32, gAcme_frame_count);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gHead_on_cos_value);
+C2_HOOK_VARIABLE_DECLARE(int, gBig_bang);
+C2_HOOK_VARIABLE_DECLARE(float, gOpponent_nastyness_frigger);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gIn_view_distance);
+C2_HOOK_VARIABLE_DECLARE(int, gChallenger_index__opponent);
 
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index);
 
@@ -39,5 +51,7 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex);
 tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec);
 
 void C2_HOOK_CDECL oppo_dprintf(const char* pMessage, ...);
+
+void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info);
 
 #endif //REC2_OPPONENT_H

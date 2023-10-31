@@ -42,6 +42,10 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPivot_actor_names, 6);
 C2_HOOK_VARIABLE_DECLARE(float, gMass_mine);
 C2_HOOK_VARIABLE_DECLARE(tSpecial_volume, gDefault_water_spec_vol);/* FIXME: rename to gDefault_default_water_spec_vol*/
 C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDefault_water_spec_vol_real);
+C2_HOOK_VARIABLE_DECLARE(tU32, gTime_stamp_for_this_munging);
+
+C2_HOOK_VARIABLE_DECLARE(int, gMinTimeOpponentRepair);
+C2_HOOK_VARIABLE_DECLARE(int, gMaxTimeOpponentRepair);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
 
