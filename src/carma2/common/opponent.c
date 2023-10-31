@@ -163,3 +163,23 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
     return NULL;
 }
 C2_HOOK_FUNCTION(0x004ae970, GetCarSpecFromGlobalOppoIndex)
+
+tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec) {
+    int i;
+
+    if ((pCar_spec->car_ID & 0xff00) == 0x200) {
+        for (i = 0; i < GetCarCount(eVehicle_opponent); i++) {
+            if (C2V(gProgram_state).AI_vehicles.opponents[i].car_spec == pCar_spec) {
+                return &C2V(gProgram_state).AI_vehicles.opponents[i];
+            }
+        }
+    } else if ((pCar_spec->car_ID & 0xff00) == 0x300) {
+        for (i = 0; i < GetCarCount(eVehicle_rozzer); i++) {
+            if (C2V(gProgram_state).AI_vehicles.cops[i].car_spec == pCar_spec) {
+                return &C2V(gProgram_state).AI_vehicles.cops[i];
+            }
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x004ae8e0, GetOpponentSpecFromCarSpec)
