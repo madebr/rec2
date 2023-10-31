@@ -16,4 +16,6 @@ void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec);
 
 int C2_HOOK_FASTCALL DroneCollisionInfoCollides(tCollision_info* pCollision_1,tCollision_info* pCollision_2);
 
+int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec);
+
 #endif //REC2_DRONE_H
