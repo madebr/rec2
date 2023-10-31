@@ -1568,14 +1568,18 @@ typedef struct tCar_spec {
     undefined* field_0x13f0;
     int no_of_processes_recording_my_trail;
     tPursuee_trail my_trail;
-    int flags;
-    undefined field_0x1540[8];
-    undefined4 field_0x1548;
+    unsigned int grudge_raised_recently : 1;   // @0x13c  // 0x1
+    unsigned int big_bang : 1;                 // @0x13c  // 0x2
+    unsigned int scary_bang : 1;               // @0x13c  // 0x4
+    undefined4 field_0x1540;
+    undefined4 field_0x1544;
+    tU32 field_0x1548;
     tU32 end_steering_damage_effect;
     tU32 end_trans_damage_effect;
     int false_key_left;
     int false_key_right;
-    undefined field_0x154c[4];
+    tS16 field_0x155c;
+    undefined field_0x155e[2];
     struct tCar_spec* last_person_to_hit_us;
     struct tCar_spec* last_person_we_hit;
     undefined field_0x1568[44];
@@ -1717,7 +1721,7 @@ typedef struct {
     float player_to_oppo_d;
     br_vector3 start_pos;
     br_vector3 start_direction;
-    undefined field9_0x34[12];
+    br_vector3 pos_last_frame;
     br_vector3 player_to_oppo_v;
     tU32 next_out_of_world_check;
     tU32 next_repair_check;
@@ -1725,17 +1729,29 @@ typedef struct {
     tU32 last_repair_time;
     tU32 stun_time_ends;
     tU32 next_player_visibility_check;
-    undefined field17_0x64[4];
+    tU32 last_moved_ok;
     tU32 last_in_view;
-    undefined field19_0x6c[4];
+    tU32 time_last_processed;
     tU32 time_this_objective_started;
     tU32 time_for_this_objective_to_finish;
-    undefined field22_0x78[4];
+    tS16 players_section_when_last_calced_full_path;
+    undefined field_0x80[2];
     int nnext_sections;
     tRoute_section next_sections[11];
     undefined field25_0xac[4];
-    unsigned int flags;
-    undefined field27_0xb4[4];
+    unsigned int new_objective_required : 1;         // @0xb0  // 0x1
+    unsigned int finished_for_this_race : 1;         // @0xb0  // 0x2
+    unsigned int knackeredness_detected : 1;         // @0xb0  // 0x4
+    unsigned int physics_me : 1;                     // @0xb0  // 0x8
+    unsigned int pursue_from_start : 1;              // @0xb0  // 0x10
+    unsigned int cheating : 1;                       // @0xb0  // 0x20
+    unsigned int last_cheating_value : 1;            // @0xb0  // 0x40
+    unsigned int pursuing_player_before_freeze : 1;  // @0xb0  // 0x80
+    unsigned int has_moved_at_some_point : 1;        // @0xb0  // 0x100
+    unsigned int player_in_view_now : 1;             // @0xb0  // 0x200
+    unsigned int acknowledged_piv : 1;               // @0xb0  // 0x400
+    unsigned int murder_reported : 1;                // @0xb0  // 0x800
+    undefined4 field_0xb4;
     tComplete_race_data complete_race_data;
     undefined field29_0xba[2];
     /* FIXME: START tFollow_path_data */

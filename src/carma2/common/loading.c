@@ -76,7 +76,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gMinesOn, 0x0065d7d0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDronesOff, 0x00684518);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKnobbledFramePeriod, 0x007634f0);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gUnknownOpponentFactor, 0x0065a3cc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMinTimeOpponentRepair, 0x0074a684);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMaxTimeOpponentRepair, 0x0074a688);
 
@@ -260,6 +259,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU32, gSimple_material_colours, 12, 0x0065
     0x1a93491d, 0x1ec0bfc0, 0x23141414, 0x00000000,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, g_source_exists, 0x00658614, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_stamp_for_this_munging, 0x0079efb8);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
@@ -1583,7 +1583,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     GetAString(C2V(gTempFile), C2V(gBasic_car_name));
 
     C2V(gKnobbledFramePeriod) = 0;
-    C2V(gUnknownOpponentFactor) = 1.f;
+    C2V(gOpponent_nastyness_frigger) = 1.f;
     /* Min time in secs after last contact with play before opponent considers repairing */
     C2V(gMinTimeOpponentRepair) = (int)GetAScalar(C2V(gTempFile));
     /* Max time in secs after last contact with play before opponent considers repairing */
