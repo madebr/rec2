@@ -41,6 +41,7 @@ typedef union tPhysics_joint tPhysics_joint;
 typedef struct tPedestrian tPedestrian;
 typedef struct tPedestrian_distances tPedestrian_distances;
 typedef struct tRace_pedestrian tRace_pedestrian;
+typedef struct tDrone_spec tDrone_spec;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -55,6 +56,15 @@ typedef void C2_HOOK_FASTCALL tLose_proc(tPowerup*, tCar_spec*);
 typedef void C2_HOOK_FASTCALL tPeriodic_proc(tPowerup*, tU32);
 typedef void C2_HOOK_FASTCALL tForEachPedestrian_cbfn(tPedestrian*, tCar_spec*, float, tU32, tPedestrian_distances*);
 typedef void C2_HOOK_FASTCALL material_cbfn(br_material*);
+
+typedef enum {
+    eDrone_state_START = 0,
+    eDrone_state_RUN = 1,
+    eDrone_state_DEFAULT = 3,
+    eDrone_state_STOP = 4,
+} tDroneStateFuncState;
+
+typedef void C2_HOOK_FASTCALL tDrone_state_function(tDrone_spec*, tDroneStateFuncState);
 
 typedef int tJoy_array[8];
 typedef int tKey_array[151];
@@ -3017,6 +3027,46 @@ typedef struct {
     br_model* model;
     undefined field_0x4[12];
 } tFrontend_model;
+
+typedef struct tDrone_spec {
+    int id;
+    tDrone_form* form;
+    tU16 field_0x8_pathnode_id;
+    tU16 field_0xa_pathnode_id;
+    tS16 field_0xc;
+    tS16 field_0xe;
+    undefined4 field_0x10;
+    undefined4 field_0x14;
+    br_vector3 field_0x18;
+    br_vector3 pos;
+    tU32 time_last_munge;
+    tU32 last_collide_check;
+    int current_state;
+    int prev_states[2];
+    tU8 field_0x44;
+    undefined field_0x45;
+    tU8 field_0x46;
+    undefined field_0x47;
+    float field_0x48;
+    float field_0x4c;
+    float field_0x50;
+    undefined field_0x54[20];
+    float field_0x68;
+    undefined4 field_0x6c;
+    undefined field_0x70[4];
+    undefined4 field_0x74;
+    undefined field_0x78[100];
+    tU32 field_0xdc;
+    undefined4 field_0xe0;
+    float field_0xe4;
+    undefined field_0xe8[4];
+    br_actor* actor;
+    br_actor* field_0xf0;
+    int field_0xf4;
+    tCollision_info collision_info;
+    undefined field_0x5d0[4];
+    undefined4 field_0x5d4;
+} tDrone_spec;
 
 enum {
     kMiscString_ShadowNone = 104,
