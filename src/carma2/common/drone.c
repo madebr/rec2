@@ -49,3 +49,14 @@ void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec) {
     }
 }
 C2_HOOK_FUNCTION(0x004516b0, DoDefaultDroneStateAction)
+
+int (C2_HOOK_FASTCALL * DroneCollisionInfoCollides_original)(tCollision_info* pCollision_1, tCollision_info* pCollision_2);
+int C2_HOOK_FASTCALL DroneCollisionInfoCollides(tCollision_info* pCollision_1, tCollision_info* pCollision_2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DroneCollisionInfoCollides_original(pCollision_1, pCollision_2);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00428d40, DroneCollisionInfoCollides, DroneCollisionInfoCollides_original)
