@@ -10,6 +10,7 @@
 
 C2_HOOK_VARIABLE_DECLARE(int, gActive_car_list_rebuild_required);
 C2_HOOK_VARIABLE_DECLARE(int, gBIG_APC_index);
+C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_cops_before_faffage);
 
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index);
 
@@ -28,5 +29,7 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
 void C2_HOOK_FASTCALL DisposeOpponents(void);
 
 tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
+
+int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory);
 
 #endif //REC2_OPPONENT_H
