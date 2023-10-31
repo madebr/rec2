@@ -27,4 +27,6 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
 
 void C2_HOOK_FASTCALL DisposeOpponents(void);
 
+tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
+
 #endif //REC2_OPPONENT_H

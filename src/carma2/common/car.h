@@ -6,6 +6,8 @@
 #include "c2_hooks.h"
 
 C2_HOOK_VARIABLE_DECLARE(int, gCar_simplification_level);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tNon_car_spec*, gActive_non_car_list, 99);
+C2_HOOK_VARIABLE_DECLARE(int, gNum_active_non_cars);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
