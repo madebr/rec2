@@ -9,6 +9,14 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDrone_form, gDrone_forms, 64, 0x00682178);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_drone_forms, 0x0068450c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tDrone_state_function*, gDrone_state_functions, 6, 0x00594738, {
+    NULL,
+    DroneStateFuncReset,
+    DroneStateFuncControlledMovement,
+    DroneStateFuncPhysicsActive,
+    DroneStateFuncStationaryPassive,
+    NULL,
+});
 
 void C2_HOOK_CDECL DroneDebug(const char* format, ...) {
 // Disabled because too noisy
@@ -33,3 +41,11 @@ void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00450bf0, LoadInDronePaths, LoadInDronePaths_original)
+
+void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec) {
+
+    if (C2V(gDrone_state_functions)[pDrone_spec->current_state] != NULL) {
+        C2V(gDrone_state_functions)[pDrone_spec->current_state](pDrone_spec, eDrone_state_DEFAULT);
+    }
+}
+C2_HOOK_FUNCTION(0x004516b0, DoDefaultDroneStateAction)

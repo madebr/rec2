@@ -12,4 +12,6 @@ void C2_HOOK_CDECL DroneDebug(const char* message, ...);
 
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
+void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec);
+
 #endif //REC2_DRONE_H
