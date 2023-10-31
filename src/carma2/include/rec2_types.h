@@ -2655,11 +2655,11 @@ typedef struct tCollision_info {
     undefined field_0x1de[10];
     br_matrix34 field_0x1e8;
     undefined field_0x218[8];
-    struct tCollision_info * field_0x220;
-    struct tCollision_info * field_0x224;
-    struct tCollision_info * field_0x228;
-    struct tCollision_info * field_0x22c;
-    struct tCollision_info * field_0x230;
+    tCollision_info* next;
+    tCollision_info* field_0x224;
+    tCollision_info* field_0x228;
+    tCollision_info* prev;
+    tCollision_info* field_0x230;
     undefined field_0x234[4];
     tU8 flags_0x238;
     tU8 field_0x239;
