@@ -131,6 +131,15 @@ typedef enum {
 } tProcess_objective_command;
 
 typedef enum {
+    eVehicle_self = 0,
+    eVehicle_net_player = 1,
+    eVehicle_opponent = 2,
+    eVehicle_rozzer = 3,
+    eVehicle_drone = 4,
+    eVehicle_not_really = 5
+} tVehicle_type;
+
+typedef enum {
     eSoftness_VerySoft = 0,
     eSoftness_Soft = 1,
     eSoftness_Normal = 2,
