@@ -183,3 +183,7 @@ tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec
     return NULL;
 }
 C2_HOOK_FUNCTION(0x004ae8e0, GetOpponentSpecFromCarSpec)
+
+void C2_HOOK_CDECL oppo_dprintf(const char* pMessage, ...) {
+}
+C2_HOOK_FUNCTION(0x004a8160, oppo_dprintf)
