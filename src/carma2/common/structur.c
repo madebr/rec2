@@ -1,6 +1,7 @@
 #include "structur.h"
 
 #include "globvars.h"
+#include "opponent.h"
 #include "sound.h"
 #include "utility.h"
 
@@ -74,3 +75,20 @@ int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness) {
     return i;
 }
 C2_HOOK_FUNCTION(0x00503b00, ChooseOpponent)
+
+int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
+    int i;
+    int car_count;
+    int result;
+    tCar_spec* the_car;
+
+    result = 0;
+    car_count = GetCarCount(eVehicle_opponent);
+    for (i = 0; i < car_count; i++) {
+        the_car = GetCarSpec(eVehicle_opponent, i);
+        if (!the_car->knackered) {
+            result++;
+        }
+    }
+    return result;
+}
