@@ -42,6 +42,7 @@ typedef struct tPedestrian tPedestrian;
 typedef struct tPedestrian_distances tPedestrian_distances;
 typedef struct tRace_pedestrian tRace_pedestrian;
 typedef struct tDrone_spec tDrone_spec;
+typedef struct tDrone_path_node tDrone_path_node;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -2655,7 +2656,7 @@ typedef struct tCollision_info {
     float M;
     br_vector3 I;
     br_vector3 cmpos;
-    tCollision_shape *shape;
+    tCollision_shape* shape;
     br_bounds3 bb1;
     br_bounds3 bb2;
     br_vector3 field7_0x54;
@@ -3018,9 +3019,9 @@ typedef struct {
     undefined4 field_0x70;
     undefined4 field_0x74;
     undefined4 field_0x78;
-    undefined4 field_0x7c;
-    undefined4 field_0x80;
-    undefined4 field_0x84;
+    int count_models;
+    undefined4* field_0x80;
+    br_model** models;
 } tDrone_form;
 
 typedef struct {
@@ -3104,7 +3105,7 @@ typedef struct tDrone_spec {
     br_actor* field_0xf0;
     int field_0xf4;
     tCollision_info collision_info;
-    undefined field_0x5d0[4];
+    undefined4* field_0x5d0;
     undefined4 field_0x5d4;
 } tDrone_spec;
 

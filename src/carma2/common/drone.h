@@ -20,6 +20,8 @@ C2_HOOK_VARIABLE_DECLARE(tDrone_spec*, gDrone_specs);
 C2_HOOK_VARIABLE_DECLARE(int, gShow_drone_paths);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_active_drones);
 C2_HOOK_VARIABLE_DECLARE(int, gFrame);
+C2_HOOK_VARIABLE_DECLARE(tDrone_path_node*, gDrone_path_nodes);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_drone_path_nodes);
 
 void C2_HOOK_CDECL DroneDebug(const char* message, ...);
 
@@ -40,5 +42,7 @@ void C2_HOOK_FASTCALL DroneDebugPosition(const char* pMessage, br_vector3* pPosi
 void C2_HOOK_FASTCALL InitDrones(void);
 
 void C2_HOOK_FASTCALL FreeThingForm(void* pData);
+
+void C2_HOOK_FASTCALL DisposeDrones(void);
 
 #endif //REC2_DRONE_H

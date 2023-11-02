@@ -1,8 +1,10 @@
 #include "drone.h"
 
 #include "errors.h"
+#include "globvars.h"
 #include "loading.h"
 #include "physics.h"
+#include "world.h"
 
 #include <brender/brender.h>
 
@@ -33,6 +35,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(tDrone_spec*, gDrone_specs, 0x00684504);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gShow_drone_paths, 0x0068452c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_active_drones, 0x00681fb4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrame, 0x00684514);
+C2_HOOK_VARIABLE_IMPLEMENT(tDrone_path_node*, gDrone_path_nodes, 0x00684508);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_drone_path_nodes, 0x00684510);
 
 void C2_HOOK_CDECL DroneDebug(const char* format, ...) {
 // Disabled because too noisy
@@ -179,3 +183,58 @@ void C2_HOOK_FASTCALL FreeThingForm(void* pData) {
     BrMemFree(pData);
 }
 C2_HOOK_FUNCTION(0x004c5e70, FreeThingForm)
+
+void C2_HOOK_FASTCALL DisposeDrones(void) {
+    int i;
+
+    if (C2V(gCount_drones) == 0) {
+        return;
+    }
+
+    for (i = 0; i < C2V(gCount_drones); i++) {
+        tDrone_spec* drone = &C2V(gDrone_specs)[i];
+
+        if (drone->actor->parent != NULL) {
+            BrActorRemove(drone->actor);
+        }
+        BrActorFree(drone->actor);
+        RemoveFromCollisionInfoList(&drone->collision_info);
+        if (drone->field_0x46) {
+            FreeThingForm(drone->collision_info.shape);
+            drone->field_0x46 = 0;
+        }
+        if (drone->field_0x5d0 != NULL) {
+            BrMemFree(drone->field_0x5d0);
+            drone->field_0x5d0 = NULL;
+        }
+    }
+
+    for (i = 0; i < C2V(gCount_drone_forms); i++) {
+        tDrone_form* form = &C2V(gDrone_forms)[i];
+
+        if (form->field_0x80 != NULL) {
+            int j;
+
+            BrMemFree(form->field_0x80);
+            form->field_0x80 = NULL;
+            for (j = 0; j < form->count_models; j++) {
+                BrModelRemove(form->models[j]);
+                form->models[j]->nfaces = 0;
+                form->models[j]->faces = NULL;
+                BrModelFree(form->models[j]);
+            }
+            if (form->models != NULL) {
+                BrMemFree(form->models);
+                form->models = NULL;
+            }
+        }
+    }
+    ClearOutStorageSpace(&C2V(gDroneStorage));
+    BrMemFree(C2V(gDrone_specs));
+    C2V(gDrone_specs) = NULL;
+    C2V(gCount_drones) = 0;
+    BrMemFree(C2V(gDrone_path_nodes));
+    C2V(gDrone_path_nodes) = NULL;
+    C2V(gCount_drone_path_nodes) = 0;
+}
+C2_HOOK_FUNCTION(0x0044fc10, DisposeDrones)
