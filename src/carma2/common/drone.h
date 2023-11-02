@@ -39,4 +39,6 @@ void C2_HOOK_FASTCALL DroneDebugPosition(const char* pMessage, br_vector3* pPosi
 
 void C2_HOOK_FASTCALL InitDrones(void);
 
+void C2_HOOK_FASTCALL FreeThingForm(void* pData);
+
 #endif //REC2_DRONE_H
