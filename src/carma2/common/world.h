@@ -150,4 +150,6 @@ void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM);
 
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 
+void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space);
+
 #endif // REC2_WORLD_H
