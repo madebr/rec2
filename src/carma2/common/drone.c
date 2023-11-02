@@ -181,3 +181,9 @@ void C2_HOOK_FASTCALL InitDrones(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044f700, InitDrones, InitDrones_original)
+
+void C2_HOOK_FASTCALL FreeThingForm(void* pData) {
+
+    BrMemFree(pData);
+}
+C2_HOOK_FUNCTION(0x004c5e70, FreeThingForm)
