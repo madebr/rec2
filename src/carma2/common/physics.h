@@ -57,4 +57,6 @@ tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* 
 
 int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_info);
 
+int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_info);
+
 #endif //REC2_PHYSICS_H

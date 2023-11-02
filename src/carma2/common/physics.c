@@ -883,3 +883,14 @@ int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_in
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5d40, MarkCollisionInfoAsProcessed, MarkCollisionInfoAsProcessed_original)
+
+int (C2_HOOK_FASTCALL * RemoveFromCollisionInfoList_original)(tCollision_info* pCollision_info);
+int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_info) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return RemoveFromCollisionInfoList_original(pCollision_info);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b5ea0, RemoveFromCollisionInfoList, RemoveFromCollisionInfoList_original)
