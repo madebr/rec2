@@ -64,4 +64,6 @@ void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pR
 
 int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pParam, ...);
 
+int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_info);
+
 #endif //REC2_PHYSICS_H
