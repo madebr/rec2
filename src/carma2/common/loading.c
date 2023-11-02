@@ -4816,3 +4816,9 @@ void C2_HOOK_FASTCALL InitOpponentsAndDrones(tRace_info* pRace_info) {
     PrintMemoryDump(0, "AFTER InitDrones()");
 }
 C2_HOOK_FUNCTION(0x004010b0, InitOpponentsAndDrones)
+
+void C2_HOOK_FASTCALL DisposeOpponentsAndDrones(void) {
+    DisposeOpponents();
+    DisposeDrones();
+}
+C2_HOOK_FUNCTION(0x00401160, DisposeOpponentsAndDrones)
