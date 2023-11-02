@@ -2635,3 +2635,38 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00504bf0, LoadTrack, LoadTrack_original)
+
+void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space) {
+    int i;
+
+    DRStopCarSounds();
+    for (i = 0; i < pStorage_space->pixelmaps_count; i++) {
+        if (pStorage_space->pixelmaps[i] != NULL) {
+            BrMapRemove(pStorage_space->pixelmaps[i]);
+            BrPixelmapFree(pStorage_space->pixelmaps[i]);
+        }
+    }
+    pStorage_space->pixelmaps_count = 0;
+    for (i = 0; i < pStorage_space->shade_tables_count; i++) {
+        if (pStorage_space->shade_tables[i] != NULL) {
+            BrTableRemove(pStorage_space->shade_tables[i]);
+            BrPixelmapFree(pStorage_space->shade_tables[i]);
+        }
+    }
+    pStorage_space->shade_tables_count = 0;
+    for (i = 0; i < pStorage_space->materials_count; i++) {
+        if (pStorage_space->materials[i] != NULL) {
+            BrMaterialRemove(pStorage_space->materials[i]);
+            BrMaterialFree(pStorage_space->materials[i]);
+        }
+    }
+    pStorage_space->materials_count = 0;
+    for (i = 0; i < pStorage_space->models_count; i++) {
+        if (pStorage_space->models[i] != NULL) {
+            BrModelRemove(pStorage_space->models[i]);
+            BrModelFree(pStorage_space->models[i]);
+        }
+    }
+    pStorage_space->models_count = 0;
+}
+C2_HOOK_FUNCTION(0x00500f30, ClearOutStorageSpace)
