@@ -507,3 +507,14 @@ void C2_HOOK_FASTCALL InitShitMines(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004da530, InitShitMines)
+
+void (C2_HOOK_FASTCALL * ProcessShitMines_original)(tU32 pTime);
+void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessShitMines_original(pTime);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dde20, ProcessShitMines, ProcessShitMines_original)
