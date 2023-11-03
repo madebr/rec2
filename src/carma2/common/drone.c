@@ -238,3 +238,14 @@ void C2_HOOK_FASTCALL DisposeDrones(void) {
     C2V(gCount_drone_path_nodes) = 0;
 }
 C2_HOOK_FUNCTION(0x0044fc10, DisposeDrones)
+
+void (C2_HOOK_FASTCALL * ProcessDrones_original)(void);
+void C2_HOOK_FASTCALL ProcessDrones(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessDrones_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004512f0, ProcessDrones, ProcessDrones_original)
