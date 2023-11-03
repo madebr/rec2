@@ -5,6 +5,8 @@
 
 #include "c2_hooks.h"
 
+#include "platform.h"
+
 #define TIMER_MNG 0
 #define TIMER_ROB 1
 #define TIMER_RWL 2
@@ -27,6 +29,7 @@
 
 C2_HOOK_VARIABLE_DECLARE(int, gTimers_stack_size);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTimer, gTimers, 19);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gTimers_stack, 19);
 C2_HOOK_VARIABLE_DECLARE(int, gTimers_frame_count);
 C2_HOOK_VARIABLE_DECLARE(int, gTimers_enough_samples);
 C2_HOOK_VARIABLE_DECLARE(int, gTimers_max_index);
@@ -44,5 +47,32 @@ void C2_HOOK_FASTCALL Timers_StartFrame(void);
 void C2_HOOK_FASTCALL Timers_EndFrame(void);
 
 void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen);
+
+static void inline Timers_Push(int pType) {
+    int prev_type;
+
+    C2V(gTimers_stack)[C2V(gTimers_stack_size)] = pType;
+    if (C2V(gTimers_stack_size) == 0) {
+        prev_type = C2V(gTimers_max_index);
+    } else {
+        prev_type = C2V(gTimers_stack)[C2V(gTimers_stack_size) - 1];
+    }
+    C2V(gTimers)[prev_type].durations[C2V(gTimers)[prev_type].index] += PDGetTotalMicroTime() - C2V(gTimers)[prev_type].start_time;
+    C2V(gTimers)[pType].start_time = PDGetTotalMicroTime();
+    C2V(gTimers_stack_size) += 1;
+}
+
+static void inline Timers_Pop(int pType) {
+    int prev_type;
+
+    C2V(gTimers)[pType].durations[C2V(gTimers)[pType].index] += PDGetTotalMicroTime() - C2V(gTimers)[pType].start_time;
+    if (C2V(gTimers_stack_size) > 1) {
+        prev_type = C2V(gTimers_stack_size) - 1;
+    } else {
+        prev_type = C2V(gTimers_max_index);
+    }
+    C2V(gTimers)[prev_type].start_time = PDGetTotalMicroTime();
+    C2V(gTimers_stack_size) -= 1;
+}
 
 #endif //REC2_TIMERS_H
