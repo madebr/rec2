@@ -23,4 +23,6 @@ void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF);
 
 void C2_HOOK_FASTCALL InitShitMines(void);
 
+void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime);
+
 #endif //REC2_POWERUPS_H
