@@ -384,3 +384,14 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
     RebuildActiveCarList();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004add50, InitOpponents, InitOpponents_original)
+
+void (C2_HOOK_FASTCALL * MungeOpponents_original)(void);
+void C2_HOOK_FASTCALL MungeOpponents(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeOpponents_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a9e10, MungeOpponents, MungeOpponents_original)
