@@ -14,6 +14,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_stack_size, 0x006b7818);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTimer, gTimers, 19, 0x006b7600);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gTimers_stack, 19, 0x006b75e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_frame_count, 0x006aaa4c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_enough_samples, 0x006aaa48);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTimers_max_index, 0x006b7814);
