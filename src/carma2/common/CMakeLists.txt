@@ -62,6 +62,8 @@ add_library(c2_common STATIC
     loading.h
     main.c
     main.h
+    mainloop.c
+    mainloop.h
     mainmenu.c
     mainmenu.h
     netgame.c
