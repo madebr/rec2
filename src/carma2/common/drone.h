@@ -45,4 +45,6 @@ void C2_HOOK_FASTCALL FreeThingForm(void* pData);
 
 void C2_HOOK_FASTCALL DisposeDrones(void);
 
+void C2_HOOK_FASTCALL ProcessDrones(void);
+
 #endif //REC2_DRONE_H
