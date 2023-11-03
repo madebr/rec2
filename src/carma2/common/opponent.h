@@ -54,4 +54,6 @@ void C2_HOOK_CDECL oppo_dprintf(const char* pMessage, ...);
 
 void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info);
 
+void C2_HOOK_FASTCALL MungeOpponents(void);
+
 #endif //REC2_OPPONENT_H
