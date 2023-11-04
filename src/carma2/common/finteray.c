@@ -8,7 +8,11 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPling_materials, 0x005964c0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTemp_group, 0x006861c8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNearest_face, 0x00686188);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gNearest_model, 0x0068618c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gNearest_actor, 0x006861cc);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gNearest_T, 0x00686190);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNearest_face_group, 0x00686194);
 
 int C2_HOOK_FASTCALL BadDiv__finteray(br_scalar a, br_scalar b) {
 
@@ -411,3 +415,16 @@ int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vect
     return 0;
 }
 C2_HOOK_FUNCTION(0x0045cb70, ActorRayPick2D)
+
+int C2_HOOK_CDECL FindHighestPolyCallBack__finteray(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData) {
+
+    if (pT < C2V(gNearest_T)) {
+        C2V(gNearest_T) = pT;
+        C2V(gNearest_model) = pModel;
+        C2V(gNearest_actor) = pActor;
+        C2V(gNearest_face) = pF;
+        C2V(gNearest_face_group) = C2V(gTemp_group);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0045d570, FindHighestPolyCallBack__finteray)
