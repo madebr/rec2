@@ -26,6 +26,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gChallenger_index__opponent);
 
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
 
+void C2_HOOK_FASTCALL PointActorAlongVectorWithUp(br_actor* pThe_actor, br_vector3* pLook, br_vector3* pUp);
+
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index);
 
 void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF);
