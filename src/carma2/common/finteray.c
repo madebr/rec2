@@ -13,6 +13,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gNearest_model, 0x0068618c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gNearest_actor, 0x006861cc);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gNearest_T, 0x00686190);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNearest_face_group, 0x00686194);
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__finteray, 0x00686198);
 
 int C2_HOOK_FASTCALL BadDiv__finteray(br_scalar a, br_scalar b) {
 
@@ -435,3 +436,26 @@ int C2_HOOK_CDECL FindHighestCallBack__finteray(br_actor* pActor, br_model* pMod
     return 0;
 }
 C2_HOOK_FUNCTION(0x0045cf20, FindHighestCallBack__finteray)
+
+int C2_HOOK_FASTCALL DRSceneRayPick2D(br_actor* pWorld, br_vector3* pPosition, br_vector3* pDir, dr_pick2d_cbfn* pCallback) {
+
+    BrMatrix34Inverse(&C2V(gPick_model_to_view__finteray), &pWorld->t.t.mat);
+    return ActorRayPick2D(pWorld, pPosition, pDir, NULL, NULL, pCallback);
+}
+
+void C2_HOOK_FASTCALL FindWorldFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* nor, br_scalar* t, br_material** material, br_actor** actor) {
+    int group;
+
+    C2V(gNearest_T) = 100.0f;
+    DRSceneRayPick2D(pWorld, pPosition, pDir, FindHighestCallBack__finteray);
+    *t = C2V(gNearest_T);
+    if (C2V(gNearest_T) < 100.0f) {
+        group = C2V(gNearest_face_group);
+        BrVector3Copy(nor, &V11MODEL(C2V(gNearest_model))->groups[group].faces[C2V(gNearest_face)].eqn);
+        *material = *(br_material**)V11MODEL(C2V(gNearest_model))->groups[group].face_colours;
+        if (actor != NULL) {
+            *actor = C2V(gNearest_actor);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0045ca60, FindWorldFace)
