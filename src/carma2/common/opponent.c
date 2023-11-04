@@ -42,6 +42,17 @@ void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_v
 }
 C2_HOOK_FUNCTION(0x004013d0, PointActorAlongThisBloodyVector)
 
+void C2_HOOK_FASTCALL PointActorAlongVectorWithUp(br_actor* pThe_actor, br_vector3* pLook, br_vector3* pUp) {
+    br_transform trans;
+
+    trans.type = BR_TRANSFORM_LOOK_UP;
+    BrVector3Copy(&trans.t.look_up.look, pLook);
+    BrVector3Copy(&trans.t.look_up.up, pUp);
+    BrVector3Copy(&trans.t.look_up.t, &pThe_actor->t.t.translate.t);
+    BrTransformToTransform(&pThe_actor->t, &trans);
+}
+C2_HOOK_FUNCTION(0x00401430, PointActorAlongVectorWithUp)
+
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 
     C2V(gOpponents)[pOpponent_index].psyche.grudge_against_player = 0;
