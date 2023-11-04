@@ -12,6 +12,7 @@ C2_HOOK_VARIABLE_DECLARE(br_model*, gNearest_model);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gNearest_actor);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gNearest_T);
 C2_HOOK_VARIABLE_DECLARE(int, gNearest_face_group);
+C2_HOOK_VARIABLE_DECLARE(br_matrix34, gPick_model_to_view__finteray);
 
 void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt);
 
@@ -28,5 +29,9 @@ int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vect
 int C2_HOOK_CDECL FindHighestPolyCallBack__finteray(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData);
 
 int C2_HOOK_CDECL FindHighestCallBack__finteray(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg);
+
+int C2_HOOK_FASTCALL DRSceneRayPick2D(br_actor* pWorld, br_vector3* pPosition, br_vector3* pDir, dr_pick2d_cbfn* pCallback);
+
+void C2_HOOK_FASTCALL FindWorldFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* nor, br_scalar* t, br_material** material, br_actor** actor);
 
 #endif
