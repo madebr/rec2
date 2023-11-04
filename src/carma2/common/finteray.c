@@ -1,11 +1,14 @@
 #include "finteray.h"
 
+#include "globvars.h"
+
 #include <brender/brender.h>
 
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPling_materials, 0x005964c0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTemp_group, 0x006861c8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gNearest_T, 0x00686190);
 
 int C2_HOOK_FASTCALL BadDiv__finteray(br_scalar a, br_scalar b) {
 
@@ -334,3 +337,77 @@ int C2_HOOK_FASTCALL DRModelPick2D__finteray(br_model* model, br_material* mater
     return 0;
 }
 C2_HOOK_FUNCTION(0x0045cf60, DRModelPick2D__finteray)
+
+int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vector3* pDir, br_model* model, br_material* material, dr_pick2d_cbfn* callback) {
+    br_actor* a;
+    br_model* this_model;
+    br_material* this_material;
+    br_scalar t_near;
+    br_scalar t_far;
+    int r;
+    br_matrix34 mat;
+    br_matrix34 invmat;
+    br_vector3 pos;
+    br_vector3 dir;
+    void* arg;
+
+    r = 0;
+    t_near = 0.0f;
+    t_far = 1.0f;
+    arg = NULL;
+    if (ap->model != NULL) {
+        this_model = ap->model;
+    } else {
+        this_model = model;
+    }
+    if (ap->material != NULL) {
+        this_material = ap->material;
+    } else {
+        this_material = material;
+    }
+    if (ap->render_style == BR_RSTYLE_NONE) {
+        return 0;
+    }
+    if (ap->identifier != NULL && ap->identifier[0] == '&') {
+        BrTransformToMatrix34(&mat, &ap->t);
+        BrMatrix34Inverse(&invmat, &mat);
+        BrMatrix34ApplyP(&pos, pPosition, &invmat);
+        BrMatrix34ApplyV(&dir, pDir, &invmat);
+        pPosition = &pos;
+        pDir = &dir;
+    }
+    if (ap->type == BR_ACTOR_MODEL) {
+        if (this_model != NULL) {
+            if (PickBoundsTestRay__finteray(&this_model->bounds, pPosition, pDir, t_near, t_far, &t_near, &t_far)) {
+                t_near = 0.f;
+                t_far = MIN(1.f, C2V(gNearest_T));
+                r = callback(ap, this_model, this_material, pPosition, pDir, t_near, t_far, arg);
+                if (r) {
+                    return r;
+                }
+            }
+            if (r) {
+                return r;
+            }
+        }
+    } else if (ap->type >= BR_ACTOR_BOUNDS && ap->type <= BR_ACTOR_BOUNDS_CORRECT) {
+        if (!PickBoundsTestRay__finteray((br_bounds*)ap->type_data, pPosition, pDir, t_near, t_far, &t_near, &t_far)) {
+            return 0;
+        }
+        for (a = ap->children; a != NULL; a = a->next) {
+            r = ActorRayPick2D(a, pPosition, pDir, this_model, this_material, callback);
+            if (r) {
+                return r;
+            }
+        }
+        return 0;
+    }
+    for (a = ap->children; a != NULL; a = a->next) {
+        r = ActorRayPick2D(a, pPosition, pDir, this_model, this_material, callback);
+        if (r) {
+            return r;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0045cb70, ActorRayPick2D)
