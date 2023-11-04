@@ -2,7 +2,10 @@
 
 #include <brender/brender.h>
 
+#include "rec2_macros.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPling_materials, 0x005964c0, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTemp_group, 0x006861c8);
 
 int C2_HOOK_FASTCALL BadDiv__finteray(br_scalar a, br_scalar b) {
 
@@ -185,3 +188,149 @@ int C2_HOOK_FASTCALL PickBoundsTestRay__finteray(br_bounds* b, br_vector3* rp, b
     return 1;
 }
 C2_HOOK_FUNCTION(0x0045cd90, PickBoundsTestRay__finteray)
+
+void C2_HOOK_FASTCALL DRVector2AccumulateScale__finteray(br_vector2* a, const br_vector2* b, br_scalar s) {
+
+    a->v[0] = b->v[0] * s + a->v[0];
+    a->v[1] = b->v[1] * s + a->v[1];
+}
+
+int C2_HOOK_FASTCALL DRModelPick2D__finteray(br_model* model, br_material* material, br_actor* actor, br_vector3* ray_pos, br_vector3* ray_dir, br_scalar t_near, br_scalar t_far, dr_modelpick2d_cbfn* callback, void* arg) {
+    DR_FACE* fp;
+    int f;
+    int axis_m;
+    int axis_0;
+    int axis_1;
+    br_scalar t;
+    br_scalar d;
+    br_vector3 p;
+    float u0;
+    float u1;
+    float u2;
+    float v0;
+    float v1;
+    float v2;
+    br_scalar v0i1;
+    br_scalar v0i2;
+    float alpha;
+    float beta;
+    float f_d;
+    float f_n;
+    br_scalar s_alpha;
+    br_scalar s_beta;
+    br_vector2 map;
+    int v;
+    int e;
+    int r;
+    br_material* this_material;
+    br_scalar numerator;
+    int group;
+
+    t_near -= 1e-5f;
+    t_far += 1e-5f;
+    for (group = 0; group < V11MODEL(model)->ngroups; group++) {
+        for (f = 0; f < V11MODEL(model)->groups[group].nfaces; f++) {
+            fp = &V11MODEL(model)->groups[group].faces[f];
+            if (V11MODEL(model)->groups[group].face_colours != NULL) {
+                this_material = *(br_material**)V11MODEL(model)->groups[group].face_colours;
+            } else {
+                this_material = material;
+            }
+            d = BrVector3Dot(&fp->eqn, ray_dir);
+            if (fabsf(d) < 2.3841858e-7f) {
+                continue;
+            }
+            if (this_material != NULL && this_material->identifier != NULL && (this_material->identifier[0] == '!' || this_material->identifier[0] == '>' || this_material->identifier[0] == '?') && C2V(gPling_materials)) {
+                continue;
+            }
+            if (this_material != NULL && (this_material->flags & (BR_MATF_ALWAYS_VISIBLE | BR_MATF_TWO_SIDED)) == 0 && d > 0.f) {
+                continue;
+            }
+            numerator = BrVector3Dot(&fp->eqn, ray_pos) - fp->eqn.v[3];
+            if (BadDiv__finteray(numerator, d)) {
+                continue;
+            }
+            t = -(numerator / d);
+            if (t < t_near || t > t_far) {
+                continue;
+            }
+            BrVector3Scale(&p, ray_dir, t);
+            BrVector3Accumulate(&p, ray_pos);
+            axis_m = fabsf(fp->eqn.v[0]) < fabsf(fp->eqn.v[1]);
+            if (fabsf(fp->eqn.v[2]) > fabsf(fp->eqn.v[axis_m])) {
+                axis_m = 2;
+            }
+            if (axis_m == 0) {
+                axis_0 = 1;
+                axis_1 = 2;
+            } else {
+                axis_0 = 0;
+                if (axis_m == 1) {
+                    axis_1 = 2;
+                } else {
+                    axis_1 = 1;
+                }
+            }
+
+            v0 = V11MODEL(model)->groups[group].vertices[fp->vertices[0]].p.v[axis_0];
+            u0 = V11MODEL(model)->groups[group].vertices[fp->vertices[0]].p.v[axis_1];
+            v1 = V11MODEL(model)->groups[group].vertices[fp->vertices[1]].p.v[axis_0] - v0;
+            u1 = V11MODEL(model)->groups[group].vertices[fp->vertices[1]].p.v[axis_1] - u0;
+            v2 = V11MODEL(model)->groups[group].vertices[fp->vertices[2]].p.v[axis_0] - v0;
+            u2 = V11MODEL(model)->groups[group].vertices[fp->vertices[2]].p.v[axis_1] - u0;
+
+            v0i1 = p.v[axis_0] - v0;
+            v0i2 = p.v[axis_1] - u0;
+
+            f_d = v0i2 * v1 - u1 * v0i1;
+            f_n = u2 * v1 - u1 * v2;
+            if (fabsf(f_d) > fabs(f_n)) {
+                continue;
+            }
+            if (f_n == 0.f) {
+                continue;
+            }
+            beta = f_d / f_n;
+            if (beta < 0.f) {
+                continue;
+            }
+            alpha = v0i2 * v2 - u2 * v0i1;
+            if (fabsf(alpha) > fabsf(f_n)) { /* Verifies fabsf(alpha / f_n) < 1.f */
+                continue;
+            }
+            alpha = alpha / -f_n;
+            if (alpha < 0.f) {
+                continue;
+            }
+            if (alpha + beta > 1.f) {
+                continue;
+            }
+            s_alpha = alpha;
+            s_beta = beta;
+            map.v[0] = V11MODEL(model)->groups[group].vertices[fp->vertices[1]].map.v[0] * s_alpha;
+            map.v[1] = V11MODEL(model)->groups[group].vertices[fp->vertices[1]].map.v[1] * s_alpha;
+            DRVector2AccumulateScale__finteray(&map,
+                &V11MODEL(model)->groups[group].vertices[fp->vertices[2]].map,
+                s_beta);
+            DRVector2AccumulateScale__finteray(&map,
+                &V11MODEL(model)->groups[group].vertices[fp->vertices[0]].map,
+                1.f - s_alpha - s_beta);
+
+            if (s_alpha <= s_beta) {
+                e = (1.f - s_beta) / 2.f <= s_alpha;
+                v = s_alpha > 1.f - 2.f * s_beta;
+            } else {
+                e = (1.f - 2.f * s_beta <= s_alpha) ? 1 : 2;
+                v = (alpha <= (1.f - s_beta) / 2.f) ? 0 : 2;
+            }
+
+            C2V(gTemp_group) = group;
+            r = callback(model, actor, this_material, ray_pos, ray_dir, t, f, e, v, &p, &map, arg);
+            if (r != 0) {
+                return r;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0045cf60, DRModelPick2D__finteray)

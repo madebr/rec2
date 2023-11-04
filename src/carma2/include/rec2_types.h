@@ -40,6 +40,8 @@ typedef union tCollision_shape tCollision_shape;
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
 // Function callbacks are moved to a header for automatic SRE project generation
+typedef int C2_HOOK_CDECL dr_pick2d_cbfn(br_actor*, br_model*, br_material*, br_vector3*, br_vector3*, br_scalar, br_scalar, void*);
+typedef int C2_HOOK_CDECL dr_modelpick2d_cbfn(br_model*, br_actor*, br_material*, br_vector3*, br_vector3*, br_scalar, int, int, int, br_vector3*, br_vector2*, void*);
 typedef void (C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
 typedef void (C2_HOOK_FASTCALL * tPDForEveryFile_cbfn)(const char*);
 typedef void (C2_HOOK_FASTCALL * tPDForEveryFileRecurse_cbfn)(const char*);
