@@ -428,3 +428,10 @@ int C2_HOOK_CDECL FindHighestPolyCallBack__finteray(br_model* pModel, br_actor* 
     return 0;
 }
 C2_HOOK_FUNCTION(0x0045d570, FindHighestPolyCallBack__finteray)
+
+int C2_HOOK_CDECL FindHighestCallBack__finteray(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
+
+    DRModelPick2D__finteray(pModel, pMaterial, pActor, pRay_pos, pRay_dir, pT_near, pT_far, FindHighestPolyCallBack__finteray, pArg);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0045cf20, FindHighestCallBack__finteray)
