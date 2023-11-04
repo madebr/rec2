@@ -459,3 +459,9 @@ void C2_HOOK_FASTCALL FindWorldFace(br_vector3* pPosition, br_vector3* pDir, br_
     }
 }
 C2_HOOK_FUNCTION(0x0045ca60, FindWorldFace)
+
+void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vector3* nor, br_scalar* t, br_material** material) {
+
+    FindWorldFace(pPosition, pDir, C2V(gTrack_actor), nor, t, material, NULL);
+}
+C2_HOOK_FUNCTION(0x0041e340, FindFace)
