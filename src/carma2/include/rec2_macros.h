@@ -19,8 +19,7 @@
 #define REC2_RGB888_B(X) (((X) >>  0) & 0xff)
 #define REC2_CLAMP(X, LOWER, UPPER) (((X) < (LOWER)) ? (LOWER) : (((X) > (UPPER)) ? (UPPER) : (X)))
 
-#define MAX(a, b) ((a) > (b) ? (a) : (b))
-#define MIN(a, b) ((a) < (b) ? (a) : (b))
+#define V11MODEL(model) (((v11model*)model->prepared))
 
 #define GROOVE_FUNK_MAX_PER_CAR 36
 
