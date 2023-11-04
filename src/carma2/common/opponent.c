@@ -29,6 +29,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gOpponent_nastyness_frigger, 0x0065a3cc, 
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gIn_view_distance, 0x00691764);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gChallenger_index__opponent, 0x0065a3c8, -1);
 
+void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector) {
+    br_transform trans;
+
+    trans.type = BR_TRANSFORM_LOOK_UP;
+    BrVector3Copy(&trans.t.look_up.look, pThe_vector);
+    BrVector3Set(&trans.t.look_up.up, 0.f, 1.f, 0.f);
+    BrVector3Copy(&trans.t.look_up.t, &pThe_actor->t.t.translate.t);
+    BrTransformToTransform(&pThe_actor->t, &trans);
+}
+C2_HOOK_FUNCTION(0x004013d0, PointActorAlongThisBloodyVector)
+
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 
     C2V(gOpponents)[pOpponent_index].psyche.grudge_against_player = 0;
