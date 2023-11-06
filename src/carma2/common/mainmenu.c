@@ -10,3 +10,14 @@ int C2_HOOK_FASTCALL DoVerifyQuit(int pReplace_background) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00494450, DoVerifyQuit, DoVerifyQuit_original)
+
+void (C2_HOOK_FASTCALL * DoMainMenu_original)(void);
+void C2_HOOK_FASTCALL DoMainMenu(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoMainMenu_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00494540, DoMainMenu, DoMainMenu_original)
