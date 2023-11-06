@@ -90,6 +90,8 @@ add_library(c2_common STATIC
     physics.h
     powerups.h
     powerups.c
+    racestrt.c
+    racestrt.h
     raycast.c
     raycast.h
     replay.c
