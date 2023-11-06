@@ -12,6 +12,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tMin_message*, gMin_messages, 0x0068d97c);
 C2_HOOK_VARIABLE_IMPLEMENT(tMid_message*, gMid_messages, 0x0068d970);
 C2_HOOK_VARIABLE_IMPLEMENT(tMax_message*, gMax_messages, 0x0068d980);
 C2_HOOK_VARIABLE_IMPLEMENT(tDynamic_message*, gDynamic_messages, 0x00690c48);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_service_disable, 0x00690c38);
 
 void (C2_HOOK_FASTCALL * NetPlayerStatusChanged_original)(tPlayer_status pNew_status);
 void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status) {
@@ -111,3 +112,9 @@ void C2_HOOK_FASTCALL NetService(int pIn_race) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5280, NetService, NetService_original)
+
+void C2_HOOK_FASTCALL DisableNetService(void) {
+
+    C2V(gNet_service_disable) = 1;
+}
+C2_HOOK_FUNCTION(0x0049d3e0, DisableNetService)
