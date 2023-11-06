@@ -135,3 +135,14 @@ void C2_HOOK_FASTCALL PrepareSmashableTrackItemIdentifiers(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0bc0, PrepareSmashableTrackItemIdentifiers, PrepareSmashableTrackItemIdentifiers_original)
+
+void (C2_HOOK_FASTCALL * DisposeSmashingAndExplosions_original)(void);
+void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisposeSmashingAndExplosions_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f02b0, DisposeSmashingAndExplosions,DisposeSmashingAndExplosions_original)
