@@ -1,6 +1,7 @@
 #include "structur.h"
 
 #include "globvars.h"
+#include "globvrpb.h"
 #include "opponent.h"
 #include "sound.h"
 #include "utility.h"
@@ -92,3 +93,30 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     }
     return result;
 }
+
+void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info) {
+    int i;
+
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        return;
+    }
+
+    pRace_info->number_of_racers = pRace_info->race_spec->count_explicit_opponents;
+    for (i = 0; i < C2V(gNumber_of_racers); i++) {
+        C2V(gOpponents)[i].picked = 0;
+    }
+    for (i = 0; i < pRace_info->race_spec->count_explicit_opponents; i++) {
+        if (pRace_info->race_spec->explicit_opponents[i] >= 0) {
+            C2V(gOpponents)[i].picked = 1;
+            pRace_info->opponent_list[i].index = pRace_info->race_spec->explicit_opponents[i];
+            pRace_info->opponent_list[i].ranking = -(i + 1);
+        }
+    }
+    for (i = 0; i < pRace_info->race_spec->count_explicit_opponents; i++) {
+        if (pRace_info->race_spec->explicit_opponents[i] < 0) {
+            pRace_info->opponent_list[i].index = ChooseOpponent(-pRace_info->race_spec->explicit_opponents[i]);
+            pRace_info->opponent_list[i].ranking = IRandomBetween(0, 99);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x005039e0, SelectOpponents)
