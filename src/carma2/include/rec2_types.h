@@ -44,6 +44,7 @@ typedef struct tRace_pedestrian tRace_pedestrian;
 typedef struct tDrone_spec tDrone_spec;
 typedef struct tDrone_path_node tDrone_path_node;
 typedef struct tSave_game tSave_game;
+typedef struct tPipe_smudge_data tPipe_smudge_data;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
