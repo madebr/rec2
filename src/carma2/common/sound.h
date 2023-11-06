@@ -27,4 +27,6 @@ void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio);
 
 void C2_HOOK_FASTCALL SoundService(void);
 
+int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet);
+
 #endif // REC2_SOUND_H

@@ -116,3 +116,12 @@ void C2_HOOK_FASTCALL SoundService(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455a80, SoundService, SoundService_original)
+
+int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet) {
+
+    if (C2V(gSound_enabled)) {
+        return S3StopOutletSound(pOutlet);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00455970, DRS3StopOutletSound)
