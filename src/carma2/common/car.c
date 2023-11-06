@@ -345,3 +345,22 @@ void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00414510, SetInitialPosition, SetInitialPosition_original)
+
+void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_info, number_of_racers, 0x90);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_info, opponent_list, 0xce4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tOpp_spec, ranking, 0x8);
+    C2_HOOK_BUG_ON(sizeof(tOpp_spec) != 16);
+
+    for (i = 0; i < pThe_race->number_of_racers; i++) {
+        int grid_index = pThe_race->opponent_list[i].ranking;
+
+        if (grid_index >= 0) {
+            grid_index = i;
+        }
+        SetInitialPosition(pThe_race, i, grid_index);
+    }
+}
+C2_HOOK_FUNCTION(0x004148d0, SetInitialPositions)
