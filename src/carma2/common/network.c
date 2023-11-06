@@ -118,3 +118,9 @@ void C2_HOOK_FASTCALL DisableNetService(void) {
     C2V(gNet_service_disable) = 1;
 }
 C2_HOOK_FUNCTION(0x0049d3e0, DisableNetService)
+
+void C2_HOOK_FASTCALL ReenableNetService(void) {
+
+    C2V(gNet_service_disable) = 0;
+}
+C2_HOOK_FUNCTION(0x0049d3f0, ReenableNetService)

@@ -29,4 +29,6 @@ void C2_HOOK_FASTCALL NetService(int pIn_race);
 
 void C2_HOOK_FASTCALL DisableNetService(void);
 
+void C2_HOOK_FASTCALL ReenableNetService(void);
+
 #endif // REC2_NETWORK_H
