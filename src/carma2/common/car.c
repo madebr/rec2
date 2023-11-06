@@ -334,3 +334,14 @@ void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
     }
 }
 C2_HOOK_FUNCTION(0x00414cb0, ControlOurCar)
+
+void (C2_HOOK_FASTCALL * SetInitialPosition_original)(tRace_info* pThe_race, int pCar_index, int pGrid_index);
+void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, int pGrid_index) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetInitialPosition_original(pThe_race, pCar_index, pGrid_index);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00414510, SetInitialPosition, SetInitialPosition_original)
