@@ -36,6 +36,8 @@ int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth);
 
 int C2_HOOK_FASTCALL Fix2DTextureHeight(int pHeight);
 
+void C2_HOOK_FASTCALL DisposeGameIfNecessary(void);
+
 void C2_HOOK_FASTCALL ReinitialiseRenderStuff(void);
 
 void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void);
@@ -43,5 +45,7 @@ void C2_HOOK_FASTCALL ReinitialiseForwardCamera(void);
 void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void);
 
 void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void);
+
+void C2_HOOK_FASTCALL InitRace(void);
 
 #endif //REC2_INIT_H
