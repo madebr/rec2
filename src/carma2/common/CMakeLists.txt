@@ -60,6 +60,8 @@ add_library(c2_common STATIC
     input.h
     loading.c
     loading.h
+    loadsave.c
+    loadsave.h
     main.c
     main.h
     mainloop.c
