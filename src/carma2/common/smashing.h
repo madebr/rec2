@@ -24,4 +24,6 @@ void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor,
 
 void C2_HOOK_FASTCALL PrepareSmashableTrackItemIdentifiers(void);
 
+void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void);
+
 #endif //REC2_SMASHING_H
