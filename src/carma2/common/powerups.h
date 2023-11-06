@@ -25,4 +25,6 @@ void C2_HOOK_FASTCALL InitShitMines(void);
 
 void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime);
 
+void C2_HOOK_FASTCALL DisposeMutantTail(void);
+
 #endif //REC2_POWERUPS_H
