@@ -12,4 +12,6 @@ void C2_HOOK_FASTCALL RestoreStashedSaveGame(void);
 
 int C2_HOOK_FASTCALL LoadTheGame(tSave_game* pSave_game);
 
+void C2_HOOK_FASTCALL LoadLastSaveGame(void);
+
 #endif // REC2_LOADSAVE_H
