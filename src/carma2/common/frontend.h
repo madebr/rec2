@@ -19,6 +19,8 @@ void C2_HOOK_FASTCALL FRONTEND_CreateItemBrenderObjects(tFrontend_brender_item* 
 
 int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 
-void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) ;
+void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pFrontendType);
+
+void C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontend);
 
 #endif //REC2_FRONTEND_H
