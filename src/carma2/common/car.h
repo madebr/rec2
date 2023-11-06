@@ -29,4 +29,6 @@ void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference);
 
 void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, int pGrid_index);
 
+void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
+
 #endif //REC2_CAR_H
