@@ -4822,3 +4822,8 @@ void C2_HOOK_FASTCALL DisposeOpponentsAndDrones(void) {
     DisposeDrones();
 }
 C2_HOOK_FUNCTION(0x00401160, DisposeOpponentsAndDrones)
+
+void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info) {
+
+}
+C2_HOOK_FUNCTION(0x0044bf70, DisposeRaceInfo)
