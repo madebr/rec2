@@ -26,3 +26,14 @@ int C2_HOOK_FASTCALL LoadTheGame(tSave_game* pSave_game) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491ce0, LoadTheGame, LoadTheGame_original)
+
+void (C2_HOOK_FASTCALL * LoadLastSaveGame_original)(void);
+void C2_HOOK_FASTCALL LoadLastSaveGame(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadLastSaveGame_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00491e50, LoadLastSaveGame, LoadLastSaveGame_original)
