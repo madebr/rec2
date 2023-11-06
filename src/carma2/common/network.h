@@ -9,6 +9,7 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDigits_pix);
 C2_HOOK_VARIABLE_DECLARE(tMin_message*, gMin_messages);
 C2_HOOK_VARIABLE_DECLARE(tMid_message*, gMid_messages);
 C2_HOOK_VARIABLE_DECLARE(tMax_message*, gMax_messages);
+C2_HOOK_VARIABLE_DECLARE(int, gNet_service_disable);
 
 void C2_HOOK_FASTCALL InitNetHeadups(void);
 
@@ -25,5 +26,7 @@ void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage);
 void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
 
 void C2_HOOK_FASTCALL NetService(int pIn_race);
+
+void C2_HOOK_FASTCALL DisableNetService(void);
 
 #endif // REC2_NETWORK_H
