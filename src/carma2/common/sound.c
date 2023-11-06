@@ -126,3 +126,12 @@ int C2_HOOK_FASTCALL DRStopCarSounds(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004559e0, DRStopCarSounds, DRStopCarSounds_original)
+
+int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet) {
+
+    if (C2V(gSound_enabled)) {
+        return S3StopOutletSound(pOutlet);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00455970, DRS3StopOutletSound)
