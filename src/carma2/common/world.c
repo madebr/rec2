@@ -2692,3 +2692,13 @@ void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004489d0, DisposeTexturingMaterials, DisposeTexturingMaterials_original)
+
+intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg) {
+
+    if (pActor->type == BR_ACTOR_BOUNDS || pActor->type == BR_ACTOR_BOUNDS_CORRECT) {
+        BrResFree(pActor->type_data);
+        pActor->type_data = NULL;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00506e20, RemoveBounds)
