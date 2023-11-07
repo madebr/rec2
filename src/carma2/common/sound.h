@@ -35,4 +35,6 @@ void C2_HOOK_FASTCALL ToggleSoundEnable(void);
 
 void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
+void C2_HOOK_FASTCALL InitSoundSources(void);
+
 #endif // REC2_SOUND_H
