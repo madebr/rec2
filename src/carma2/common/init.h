@@ -50,4 +50,6 @@ void C2_HOOK_FASTCALL InitRace(void);
 
 void C2_HOOK_FASTCALL DisposeRace(void);
 
+void C2_HOOK_FASTCALL DisposeTrack(void);
+
 #endif //REC2_INIT_H
