@@ -8,6 +8,8 @@
 C2_HOOK_VARIABLE_DECLARE(int, gCar_simplification_level);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tNon_car_spec*, gActive_non_car_list, 99);
 C2_HOOK_VARIABLE_DECLARE(int, gNum_active_non_cars);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gMin_world_y);
+C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gUnknown_car_collision_info);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
@@ -32,6 +34,8 @@ void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, 
 void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag);
 
 void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar);
+
+void C2_HOOK_FASTCALL InitialiseCarsEtc(tRace_info* pThe_race);
 
 void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
 

@@ -4,6 +4,10 @@
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrpb.h"
+#include "graphics.h"
+#include "opponent.h"
+#include "physics.h"
+#include "replay.h"
 #include "utility.h"
 #include "world.h"
 
@@ -17,6 +21,8 @@
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCar_simplification_level, 0x006793d8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tNon_car_spec*, gActive_non_car_list, 99, 0x0079eda0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_active_non_cars, 0x006793dc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gMin_world_y, 0x00679360);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gUnknown_car_collision_info, 0x006793e4);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -362,6 +368,48 @@ void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar) {
     InitialiseCar2(pCar, 1);
 }
 C2_HOOK_FUNCTION(0x00414400, InitialiseCar)
+
+void C2_HOOK_FASTCALL InitialiseCarsEtc(tRace_info* pThe_race) {
+    int i;
+    int cat;
+    int car_count;
+    tCar_spec* car;
+    br_bounds bnds;
+
+    BrVector3Copy(&C2V(gProgram_state).initial_position, &pThe_race->initial_position);
+    C2V(gProgram_state).initial_yaw = pThe_race->initial_yaw;
+    BrActorToBounds(&bnds, C2V(gProgram_state).track_spec.the_actor);
+    C2V(gMin_world_y) = bnds.min.v[1];
+    C2V(gNum_active_non_cars) = 0;
+    for (cat = eVehicle_self; cat <= eVehicle_not_really; cat++) {
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (i = 0; i < car_count; i++) {
+            PossibleService();
+            if (cat == eVehicle_self) {
+                car = &C2V(gProgram_state).current_car;
+            } else {
+                car = GetCarSpec(cat, i);
+            }
+            if (cat != eVehicle_not_really) {
+                InitialiseCar(car);
+            }
+        }
+    }
+    C2V(gCamera_yaw) = 0;
+    if (C2V(gAction_replay_camera_mode) == tActionReplayCameraMode_Manual) {
+        C2V(gCamera_type) = 0;
+        C2V(gAction_replay_camera_mode) = kActionReplayCameraMode_Standard;
+    }
+    InitialiseExternalCamera();
+    if (C2V(gUnknown_car_collision_info) != NULL && C2V(gProgram_state).current_car.collision_info != C2V(gUnknown_car_collision_info)->parent) {
+        AddCollisionInfoChild(C2V(gProgram_state).current_car.collision_info, C2V(gUnknown_car_collision_info));
+    }
+}
+C2_HOOK_FUNCTION(0x00414410, InitialiseCarsEtc)
 
 void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
     int i;
