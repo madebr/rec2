@@ -27,4 +27,6 @@ void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime);
 
 void C2_HOOK_FASTCALL DisposeMutantTail(void);
 
+void C2_HOOK_FASTCALL CloseDownPowerUps(void);
+
 #endif //REC2_POWERUPS_H
