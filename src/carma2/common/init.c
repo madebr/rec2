@@ -21,7 +21,9 @@
 #include "opponent.h"
 #include "pedestrn.h"
 #include "physics.h"
+#include "piping.h"
 #include "powerups.h"
+#include "pratcam.h"
 #include "platform.h"
 #include "raycast.h"
 #include "skidmark.h"
@@ -1217,3 +1219,38 @@ void C2_HOOK_FASTCALL InitRace(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00481830, InitRace, InitRace_original)
+
+void C2_HOOK_FASTCALL DisposeRace(void) {
+
+    DisposeMutantTail();
+    PossibleService();
+    DisposeSmashingAndExplosions();
+    DisposeReplay();
+    PossibleService();
+    CloseDownPowerUps();
+    PossibleService();
+    if (!TranslationMode()) {
+        DisposeFont(1);
+        DisposeFont(2);
+    }
+    PossibleService();
+    DisposeFont(6);
+    DisposeFont(7);
+    DisposeFont(8);
+    DisposeFont(3);
+    DisposeFont(4);
+    DisposeFont(5);
+    PossibleService();
+    DisposeSavedShadeTables();
+    PossibleService();
+    DisposeSoundSources();
+    PossibleService();
+    // FUN_00486d70();
+    DisposeOpponentsAndDrones();
+    PossibleService();
+    DisposePedestrians();
+    PossibleService();
+    DisposePratcam();
+    PossibleService();
+}
+C2_HOOK_FUNCTION(0x0044c070, DisposeRace)
