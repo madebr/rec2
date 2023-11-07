@@ -39,6 +39,26 @@ typedef struct tS3_vector3 {
     tF32 z;
 } tS3_vector3;
 
+typedef struct tS3_sound_source {
+    tS3_channel* channel;
+    int brender_vector;
+    void* position_ptr;
+    void* velocity_ptr;
+    tS3_outlet* bound_outlet;
+    tS3_sound_source* prev;
+    tS3_sound_source* next;
+    int ambient;
+    tS3_repeats ambient_repeats;
+    int time_since_last_played;
+    tS3_sound_id sound_id;
+    float max_distance_sq;
+    int period;
+    tS3_volume volume;
+    tS3_pitch pitch;
+    tS3_speed speed;
+    tS3_sound_tag tag;
+} tS3_sound_source;
+
 typedef struct tS3_channel {
     int active;
     tS3_termination_reason termination_reason;
