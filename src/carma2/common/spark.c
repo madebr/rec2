@@ -272,6 +272,11 @@ void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x004fdde0, InitSplash)
 
+void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
+
+}
+C2_HOOK_FUNCTION(0x004fdc00, FreeSmokeShadeTables)
+
 void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
 
