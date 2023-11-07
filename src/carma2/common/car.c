@@ -346,6 +346,17 @@ void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00414510, SetInitialPosition, SetInitialPosition_original)
 
+void (C2_HOOK_FASTCALL * InitialiseCar2_original)(tCar_spec* pCar, int pClear_disabled_flag);
+void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitialiseCar2_original(pCar, pClear_disabled_flag);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00413f70, InitialiseCar2, InitialiseCar2_original)
+
 void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
     int i;
 
