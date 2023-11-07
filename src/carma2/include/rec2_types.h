@@ -137,6 +137,11 @@ typedef struct {
     char replacement[24];
 } tTree_surgery_pass2;
 
+typedef struct {
+    br_pixelmap* original;
+    br_pixelmap* copy;
+} tSaved_table;
+
 typedef enum {
     ePOC_start = 0,
     ePOC_run = 1,
