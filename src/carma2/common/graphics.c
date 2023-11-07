@@ -114,6 +114,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gShadow_model, 0x006a27e4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gShadow_actor, 0x006a2444);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_polyfont_glyph_actors, 0x00686490);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyfont_glyph_actors, 256, 0x0074cae0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSaved_table, gSaved_shade_tables, 100, 0x006a2488);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSaved_table_count, 0x006a27a8);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -903,3 +905,12 @@ void C2_HOOK_FASTCALL DrawNumberAt(br_pixelmap* pSrc, br_pixelmap* pDest, int pX
     }
 }
 C2_HOOK_FUNCTION(0x004657c0, DrawNumberAt)
+
+void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
+    int i;
+
+    for (i = 0; i < C2V(gSaved_table_count); i++) {
+        BrMemFree(C2V(gSaved_shade_tables)[i].copy);
+    }
+}
+C2_HOOK_FUNCTION(0x004e9b60, DisposeSavedShadeTables)
