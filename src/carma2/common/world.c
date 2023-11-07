@@ -2681,3 +2681,14 @@ void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space) {
     pStorage_space->models_count = 0;
 }
 C2_HOOK_FUNCTION(0x00500f30, ClearOutStorageSpace)
+
+void (C2_HOOK_FASTCALL * DisposeTexturingMaterials_original)(void);
+void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisposeTexturingMaterials_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004489d0, DisposeTexturingMaterials, DisposeTexturingMaterials_original)
