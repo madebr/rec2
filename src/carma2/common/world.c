@@ -1628,6 +1628,17 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00476470, AddGroovidelics, AddGroovidelics_original);
 
+void (C2_HOOK_FASTCALL * DisposeGroovidelics_original)(int pOwner);
+void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisposeGroovidelics_original(pOwner);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00476430, DisposeGroovidelics, DisposeGroovidelics_original)
+
 tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor) {
     int i;
 
