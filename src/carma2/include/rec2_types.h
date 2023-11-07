@@ -1564,7 +1564,7 @@ typedef struct tCar_spec {
     int max_gear;
     float speed_revs_ratio;
     float force_torque_ratio;
-    undefined4 sound_source;
+    tS3_sound_source* sound_source;
      br_matrix34 pre_car_col_mat;
     float pre_car_col_speed;
     float pre_car_col_direction;
