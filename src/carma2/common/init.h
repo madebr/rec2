@@ -48,4 +48,6 @@ void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void);
 
 void C2_HOOK_FASTCALL InitRace(void);
 
+void C2_HOOK_FASTCALL DisposeRace(void);
+
 #endif //REC2_INIT_H
