@@ -1254,3 +1254,9 @@ void C2_HOOK_FASTCALL DisposeRace(void) {
     PossibleService();
 }
 C2_HOOK_FUNCTION(0x0044c070, DisposeRace)
+
+void C2_HOOK_FASTCALL DisposeTrack(void) {
+
+    FreeTrack(&C2V(gProgram_state).track_spec);
+}
+C2_HOOK_FUNCTION(0x0044c220, DisposeTrack)
