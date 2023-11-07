@@ -1606,6 +1606,17 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00474ac0, AddFunkotronics, AddFunkotronics_original)
 
+void (C2_HOOK_FASTCALL * DisposeFunkotronics_original)(int pOwner);
+void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisposeFunkotronics_original(pOwner);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00474950, DisposeFunkotronics, DisposeFunkotronics_original)
+
 void (C2_HOOK_FASTCALL * AddGroovidelics_original)(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
 void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent) {
 

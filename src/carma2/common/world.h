@@ -128,6 +128,8 @@ void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
 
+void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
+
 void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
 
 tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor);
