@@ -162,4 +162,8 @@ void C2_HOOK_FASTCALL DisposeTexturingMaterials(void);
 
 intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg);
 
+void C2_HOOK_FASTCALL RemoveBoundsStructures(br_actor* pActor);
+
+void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec);
+
 #endif // REC2_WORLD_H
