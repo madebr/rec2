@@ -12,6 +12,7 @@
 #include "globvrpb.h"
 #include "graphics.h"
 #include "loading.h"
+#include "opponent.h"
 #include "pedestrn.h"
 #include "shrapnel.h"
 #include "skidmark.h"
@@ -2724,3 +2725,85 @@ intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00506e20, RemoveBounds)
+
+void C2_HOOK_FASTCALL RemoveBoundsStructures(br_actor* pActor) {
+
+    DRActorEnumRecurse(pActor, RemoveBounds, NULL);
+}
+
+void (C2_HOOK_FASTCALL * FreeTrack_original)(tTrack_spec* pTrack_spec);
+void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
+    int i;
+
+    DisposeSmashableTrackEnvironment();
+    if (C2V(gAdditional_actors) != NULL) {
+        BrActorRemove(C2V(gAdditional_actors));
+        BrActorFree(C2V(gAdditional_actors));
+    }
+    PossibleService();
+    DisposeTexturingMaterials();
+    PossibleService();
+    RemoveBoundsStructures(pTrack_spec->the_actor);
+    PossibleService();
+    DisposeColumns(pTrack_spec);
+    PossibleService();
+    DisposeFunkotronics(-2);
+    PossibleService();
+    ClearOutStorageSpace(&C2V(gTrack_storage_space));
+    C2V(gProgram_state).current_depth_effect.sky_texture = NULL;
+    PossibleService();
+    DisposeGroovidelics(-2);
+    PossibleService();
+    DisposeOpponentPaths();
+    PossibleService();
+    DisposeKevStuff();
+    PossibleService();
+    BrActorRemove(pTrack_spec->the_actor);
+    BrActorFree(pTrack_spec->the_actor);
+    pTrack_spec->the_actor = NULL;
+    C2V(gTrack_actor) = NULL;
+    if (C2V(gProgram_state).special_volume_count != 0) {
+        BrMemFree(C2V(gProgram_state).special_volumes);
+    }
+    if (C2V(gProgram_state).special_screens_count != 0) {
+        BrMemFree(C2V(gProgram_state).special_screens);
+    }
+    PossibleService();
+    for (i = 0; i < 40; i++) { /* FIXME: magic number 40 */
+        tNon_car_spec *non_car;
+
+        non_car = &C2V(gProgram_state).non_cars[i];
+        non_car->collision_info->shape = NULL;
+        non_car->collision_info->physics_joint1 = NULL;
+        non_car->collision_info->physics_joint2 = NULL;
+    }
+    for (i = 0; i < C2V(gProgram_state).num_non_car_spaces; i++) {
+        tNon_car_spec* non_car;
+
+        non_car = &C2V(gProgram_state).non_cars[i];
+        PossibleService();
+        /* FIXME: comparison with eDriver_non_car in dethrace */
+        if (non_car->field_0xc == 4 && non_car->actor != NULL) {
+            if (non_car->actor->parent != NULL) {
+                BrActorRemove(non_car->actor);
+            }
+            BrActorFree(non_car->actor);
+        }
+        DisposeNonCarCollisionInfo(non_car->collision_info);
+    }
+    if (C2V(gProgram_state).non_cars != NULL) {
+        BrMemFree(C2V(gProgram_state).non_cars);
+        /* C2V(gProgram_state).non_cars = NULL; */
+    }
+    FreeSmokeShadeTables();
+    if (C2V(gTrack_flic_buffer) != NULL) {
+        BrMapRemove(C2V(gProgram_state).default_depth_effect.sky_texture);
+        BrMemFree(C2V(gTrack_flic_buffer));
+        EndFlic(&C2V(gTrack_flic_descriptor));
+        BrMemFree(C2V(gProgram_state).default_depth_effect.sky_texture->pixels);
+        C2V(gProgram_state).default_depth_effect.sky_texture->pixels = NULL;
+        BrPixelmapFree(C2V(gProgram_state).default_depth_effect.sky_texture);
+        C2V(gTrack_flic_buffer) = NULL;
+    }
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00506c20, FreeTrack, FreeTrack_original)

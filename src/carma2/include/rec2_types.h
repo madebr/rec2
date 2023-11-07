@@ -2809,7 +2809,8 @@ typedef struct tNon_car_spec {
     undefined field_0x4[4];
     tCollision_info* collision_info;
     undefined4 field_0xc;
-    undefined field_0x10[244];
+    br_actor* actor;
+    undefined field_0x14[240];
 } tNon_car_spec;
 
 typedef struct {
