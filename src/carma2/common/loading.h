@@ -310,6 +310,8 @@ br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path);
 
 void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race);
 
+void C2_HOOK_FASTCALL DisposeNonCarCollisionInfo(tCollision_info* pCollision_info);
+
 void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner);
 
 void C2_HOOK_FASTCALL InitAIWorld(void);
