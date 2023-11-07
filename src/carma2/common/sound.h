@@ -9,7 +9,9 @@
 
 C2_HOOK_VARIABLE_DECLARE(int, gSound_detail_level);
 C2_HOOK_VARIABLE_DECLARE(int, gCD_fully_installed);
+C2_HOOK_VARIABLE_DECLARE(int, gSound_sources_inited);
 C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gEffects_outlet);
+C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gEngine_outlet);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
@@ -32,5 +34,7 @@ int C2_HOOK_FASTCALL DRStopCarSounds(void);
 int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet);
 
 void C2_HOOK_FASTCALL ToggleSoundEnable(void);
+
+void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
 #endif // REC2_SOUND_H
