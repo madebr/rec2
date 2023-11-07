@@ -357,6 +357,12 @@ void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag) 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00413f70, InitialiseCar2, InitialiseCar2_original)
 
+void C2_HOOK_FASTCALL InitialiseCar(tCar_spec* pCar) {
+
+    InitialiseCar2(pCar, 1);
+}
+C2_HOOK_FUNCTION(0x00414400, InitialiseCar)
+
 void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
     int i;
 
