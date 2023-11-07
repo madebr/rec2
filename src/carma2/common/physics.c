@@ -1036,3 +1036,20 @@ int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_inf
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5ea0, RemoveFromCollisionInfoList, RemoveFromCollisionInfoList_original)
+
+void C2_HOOK_FASTCALL AddCollisionInfoChild(tCollision_info* pParent, tCollision_info* pChild) {
+    tCollision_info* current;
+    tCollision_info* last;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, parent, 0x228);
+
+    pChild->parent = pParent;
+    last = pChild;
+    for (current = pChild->next; current != NULL; current = current->next) {
+        current->parent = pParent;
+        last = current;
+    }
+    last->next = pParent->child;
+    pParent->child = pChild;
+}
+C2_HOOK_FUNCTION(0x004c63d0, AddCollisionInfoChild)
