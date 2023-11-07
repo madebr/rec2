@@ -30,6 +30,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gBig_bang, 0x00691714);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gOpponent_nastyness_frigger, 0x0065a3cc, 1.f);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gIn_view_distance, 0x00691764);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gChallenger_index__opponent, 0x0065a3c8, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(tU8*, gBit_per_node, 0x0069175c);
 
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector) {
     br_transform trans;
@@ -108,6 +109,27 @@ void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProc
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ab190, ProcessPursueAndTwat, ProcessPursueAndTwat_original)
+
+void C2_HOOK_FASTCALL DisposeOpponentPaths(void) {
+
+    if (C2V(gProgram_state).AI_vehicles.path_nodes != NULL) {
+        BrMemFree(C2V(gProgram_state).AI_vehicles.path_nodes);
+    }
+    C2V(gProgram_state).AI_vehicles.number_of_path_nodes = 0;
+    C2V(gProgram_state).AI_vehicles.path_nodes = NULL;
+
+    if (C2V(gProgram_state).AI_vehicles.path_sections != NULL) {
+        BrMemFree(C2V(gProgram_state).AI_vehicles.path_sections);
+    }
+    C2V(gProgram_state).AI_vehicles.number_of_path_sections = 0;
+    C2V(gProgram_state).AI_vehicles.path_sections = NULL;
+
+    if (C2V(gBit_per_node) != NULL) {
+        BrMemFree(C2V(gBit_per_node));
+    }
+    C2V(gBit_per_node) = NULL;
+}
+C2_HOOK_FUNCTION(0x004a9c50, DisposeOpponentPaths)
 
 void (C2_HOOK_FASTCALL * RebuildActiveCarList_original)(void);
 void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
