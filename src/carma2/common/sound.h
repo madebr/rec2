@@ -9,7 +9,7 @@
 
 C2_HOOK_VARIABLE_DECLARE(int, gSound_detail_level);
 C2_HOOK_VARIABLE_DECLARE(int, gCD_fully_installed);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet_ptr, gEffects_outlet);
+C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gEffects_outlet);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
@@ -19,7 +19,7 @@ void C2_HOOK_FASTCALL StopMusic(void);
 
 void C2_HOOK_FASTCALL DRS3StartCDA(tS3_sound_id pCDA_id);
 
-tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet_ptr pOutlet, tS3_sound_id pSound);
+tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
 void C2_HOOK_FASTCALL InitSound(void);
 
