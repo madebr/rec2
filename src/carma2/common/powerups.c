@@ -529,3 +529,14 @@ void C2_HOOK_FASTCALL DisposeMutantTail(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e06a0, DisposeMutantTail, DisposeMutantTail_original)
+
+void (C2_HOOK_FASTCALL * CloseDownPowerUps_original)(void);
+void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CloseDownPowerUps_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004da730, CloseDownPowerUps, CloseDownPowerUps_original)
