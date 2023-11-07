@@ -41,6 +41,7 @@ typedef struct tDrone_spec tDrone_spec;
 typedef struct tDrone_path_node tDrone_path_node;
 typedef struct tSave_game tSave_game;
 typedef struct tPipe_smudge_data tPipe_smudge_data;
+typedef struct tPath_node tPath_node;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -1815,7 +1816,7 @@ typedef struct {
     br_vector3 cop_start_points[20];
     tOpponent_spec opponents[30];
     tOpponent_spec cops[10];
-    undefined4 path_nodes;
+    tPath_node* path_nodes;
     tPath_section_struct* path_sections;
 } tIntelligent_vehicles;
 
