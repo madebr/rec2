@@ -1,6 +1,10 @@
 #ifndef HOOKS_H
 #define HOOKS_H
 
+typedef unsigned char undefined;
+typedef unsigned short undefined2;
+typedef unsigned int undefined4;
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
