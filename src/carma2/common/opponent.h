@@ -23,6 +23,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gBig_bang);
 C2_HOOK_VARIABLE_DECLARE(float, gOpponent_nastyness_frigger);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gIn_view_distance);
 C2_HOOK_VARIABLE_DECLARE(int, gChallenger_index__opponent);
+C2_HOOK_VARIABLE_DECLARE(tU8*, gBit_per_node);
 
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
 
@@ -37,6 +38,8 @@ int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo);
 void C2_HOOK_FASTCALL CalcPlayerConspicuousness(tOpponent_spec* pOpponent_spec);
 
 void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
+
+void C2_HOOK_FASTCALL DisposeOpponentPaths(void);
 
 void C2_HOOK_FASTCALL RebuildActiveCarList(void);
 
