@@ -2703,7 +2703,7 @@ typedef struct tCollision_info {
     undefined field_0x218[8];
     tCollision_info* next;
     tCollision_info* child;
-    tCollision_info* field_0x228;
+    tCollision_info* parent;
     tCollision_info* prev;
     tCollision_info* field_0x230;
     undefined field_0x234[4];
