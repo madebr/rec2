@@ -7,4 +7,6 @@
 
 void* C2_HOOK_FASTCALL S3MemAllocate(br_size_t size, br_uint_8 type);
 
+void C2_HOOK_FASTCALL S3MemFree(void* p);
+
 #endif // S3_RESOURCE_H
