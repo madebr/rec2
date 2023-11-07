@@ -11,4 +11,6 @@ void C2_HOOK_FASTCALL DisposePiping(void);
 
 void C2_HOOK_FASTCALL DisposeReplay(void);
 
+void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);
+
 #endif //REC2_PIPING_H
