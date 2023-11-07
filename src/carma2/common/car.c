@@ -381,3 +381,15 @@ void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race) {
     }
 }
 C2_HOOK_FUNCTION(0x004148d0, SetInitialPositions)
+
+
+void (C2_HOOK_FASTCALL * InitialiseExternalCamera_original)(void);
+void C2_HOOK_FASTCALL InitialiseExternalCamera(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitialiseExternalCamera_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00413580, InitialiseExternalCamera, InitialiseExternalCamera_original)
