@@ -43,4 +43,6 @@ void C2_HOOK_FASTCALL InitFlame(void);
 
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF);
 
+void C2_HOOK_FASTCALL DisposeKevStuff(void);
+
 #endif //REC2_SPARK_H
