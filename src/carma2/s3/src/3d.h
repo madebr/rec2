@@ -5,4 +5,6 @@
 
 void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src);
 
+void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag, tS3_sound_source* src, float pMax_distance_squared, int pPeriod, tS3_repeats pAmbient_repeats, tS3_volume pVolume, int pPitch, tS3_speed pSpeed);
+
 #endif // S3_3D_H
