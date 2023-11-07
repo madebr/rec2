@@ -291,3 +291,14 @@ void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fdc10, LoadInKevStuff, LoadInKevStuff_original)
+
+void (C2_HOOK_FASTCALL * DisposeKevStuff_original)(void);
+void C2_HOOK_FASTCALL DisposeKevStuff(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisposeKevStuff_original();
+#else
+#error "Not iplemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fe180, DisposeKevStuff, DisposeKevStuff_original)
