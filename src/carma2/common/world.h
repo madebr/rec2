@@ -154,4 +154,6 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
 void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space);
 
+void C2_HOOK_FASTCALL DisposeTexturingMaterials(void);
+
 #endif // REC2_WORLD_H
