@@ -8,6 +8,7 @@
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_enabled, 0x007a06c0);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_sound_source*, gS3_sound_sources, 0x007a0590);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_nsound_sources, 0x007a0584);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gS3_outlets, 0x007a058c);
 
 int (C2_HOOK_FASTCALL * S3StopChannel_original)(tS3_channel* chan);
 int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* chan) {
@@ -104,3 +105,16 @@ int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0056671e, S3ReleaseSoundSource)
+
+void C2_HOOK_FASTCALL S3StopAllOutletSounds(void) {
+    tS3_outlet* o;
+
+    if (!C2V(gS3_enabled)) {
+        return;
+    }
+
+    for (o = C2V(gS3_outlets); o != NULL; o = o->next) {
+        S3StopOutletSound(o);
+    }
+}
+C2_HOOK_FUNCTION(0x005657bd, S3StopAllOutletSounds)
