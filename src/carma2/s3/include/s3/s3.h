@@ -99,4 +99,6 @@ typedef struct tS3_outlet {
 
 int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
 
+int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
+
 #endif
