@@ -16,6 +16,13 @@ void C2_HOOK_FASTCALL S3Enable(void) {
 }
 C2_HOOK_FUNCTION(0x00564ce7, S3Enable)
 
+void C2_HOOK_FASTCALL S3Disable(void) {
+
+    S3StopAllOutletSounds();
+    C2V(gS3_enabled) = 0;
+}
+C2_HOOK_FUNCTION(0x00564cf6, S3Disable)
+
 int (C2_HOOK_FASTCALL * S3StopChannel_original)(tS3_channel* chan);
 int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* chan) {
 
