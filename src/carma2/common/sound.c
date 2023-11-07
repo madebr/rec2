@@ -9,7 +9,7 @@
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSound_detail_level, 0x00595c48, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_fully_installed, 0x0068b898);
 
-C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet_ptr, gEffects_outlet, 0x006845fc);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gEffects_outlet, 0x006845fc);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
@@ -75,8 +75,8 @@ void C2_HOOK_FASTCALL DRS3StartCDA(tS3_sound_id pCDA_id) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456840, DRS3StartCDA, DRS3StartCDA_original)
 
-tS3_sound_tag (C2_HOOK_FASTCALL * DRS3StartSound_original)(tS3_outlet_ptr pOutlet, tS3_sound_id pSound);
-tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet_ptr pOutlet, tS3_sound_id pSound) {
+tS3_sound_tag (C2_HOOK_FASTCALL * DRS3StartSound_original)(tS3_outlet* pOutlet, tS3_sound_id pSound);
+tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
 
 #if defined(C2_HOOKS_ENABLED)
     return DRS3StartSound_original(pOutlet, pSound);
