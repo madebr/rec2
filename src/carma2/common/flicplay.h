@@ -45,4 +45,6 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 void C2_HOOK_FASTCALL LoadInterfaceStrings(void);
 
+int C2_HOOK_FASTCALL TranslationMode(void);
+
 #endif
