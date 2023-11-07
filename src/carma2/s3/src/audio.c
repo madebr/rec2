@@ -131,3 +131,14 @@ void C2_HOOK_FASTCALL S3StopAllOutletSounds(void) {
     }
 }
 C2_HOOK_FUNCTION(0x005657bd, S3StopAllOutletSounds)
+
+void (C2_HOOK_FASTCALL * S3Service_original)(int inside_cockpit, int unk1);
+void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1) {
+
+#if defined(C2_HOOKS_ENABLED)
+    S3Service_original(inside_cockpit, unk1);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00564358, S3Service, S3Service_original)
