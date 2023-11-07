@@ -132,6 +132,8 @@ void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
 
 void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
 
+void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
+
 tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor);
 
 tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
