@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "loading.h"
+#include "opponent.h"
 #include "utility.h"
 
 #include <s3/s3.h>
@@ -10,8 +11,10 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSound_detail_level, 0x00595c48, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_fully_installed, 0x0068b898);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_sources_inited, 0x00684560);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gEffects_outlet, 0x006845fc);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gEngine_outlet, 0x00684604);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
@@ -150,3 +153,53 @@ void C2_HOOK_FASTCALL ToggleSoundEnable(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00455a50, ToggleSoundEnable)
+
+void C2_HOOK_FASTCALL DisposeSoundSources(void) {
+    int cat;
+    int car_count;
+    int i;
+    int toggle;
+    tCar_spec* the_car;
+
+    if (!C2V(gSound_available)) {
+        return;
+    }
+    toggle = !C2V(gSound_enabled);
+    if (toggle) {
+        ToggleSoundEnable();
+    }
+    if (C2V(gSound_sources_inited)) {
+        DRS3StopOutletSound(C2V(gEngine_outlet));
+        if (C2V(gProgram_state).cockpit_on && C2V(gProgram_state).cockpit_image_index >= 0) {
+            S3Service(1, 0);
+        } else {
+            S3Service(0, 0);
+        }
+        for (cat = eVehicle_self; cat <= eVehicle_rozzer; cat++) {
+            if (cat == eVehicle_self) {
+                car_count = 1;
+            } else {
+                car_count = GetCarCount(cat);
+            }
+            for (i = 0; i < car_count; i++) {
+                if (cat == eVehicle_self) {
+                    the_car = &C2V(gProgram_state).current_car;
+                } else {
+                    the_car = GetCarSpec(cat, i);
+                }
+                if ((the_car != NULL && the_car->driver == eDriver_local_human) || C2V(gSound_detail_level) == 3 || cat == eVehicle_rozzer) {
+                    if (the_car->sound_source != NULL) {
+                        S3UpdateSoundSource(C2V(gEngine_outlet), -1, the_car->sound_source, 0.0f, 0, 0, 0, 0x10000, 0x10000);
+                        S3ReleaseSoundSource(the_car->sound_source);
+                    }
+                    the_car->sound_source = NULL;
+                }
+            }
+        }
+        C2V(gSound_sources_inited) = 0;
+    }
+    if (toggle) {
+        ToggleSoundEnable();
+    }
+}
+C2_HOOK_FUNCTION(0x00455de0, DisposeSoundSources)
