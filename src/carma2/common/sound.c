@@ -203,3 +203,14 @@ void C2_HOOK_FASTCALL DisposeSoundSources(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00455de0, DisposeSoundSources)
+
+void (C2_HOOK_FASTCALL * InitSoundSources_original)(void);
+void C2_HOOK_FASTCALL InitSoundSources(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitSoundSources_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00455bb0, InitSoundSources, InitSoundSources_original)
