@@ -11,5 +11,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gCar_flying);
 C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCar_to_view);
 C2_HOOK_VARIABLE_DECLARE(int, gCamera_reset);
 C2_HOOK_VARIABLE_DECLARE(int, gCamera_sign);
+C2_HOOK_VARIABLE_DECLARE(br_angle, gCamera_yaw);
 
 #endif //REC2_GLOBVRKM_H
