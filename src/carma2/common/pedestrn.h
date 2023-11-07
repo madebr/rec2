@@ -31,4 +31,6 @@ void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel);
 
 void C2_HOOK_FASTCALL AllocateTrackPedestrians(void);
 
+void C2_HOOK_FASTCALL DisposePedestrians(void);
+
 #endif //REC2_PEDESTRN_H
