@@ -156,4 +156,6 @@ void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space);
 
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void);
 
+intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg);
+
 #endif // REC2_WORLD_H
