@@ -1226,3 +1226,9 @@ void C2_HOOK_FASTCALL ResumePendingFlic(void) {
     C2V(gPending_flic) = C2V(gPending_pending_flic);
 }
 C2_HOOK_FUNCTION(0x00463720, ResumePendingFlic)
+
+int C2_HOOK_FASTCALL TranslationMode(void) {
+
+    return C2V(gTranslation_count);
+}
+C2_HOOK_FUNCTION(0x00461990, TranslationMode)
