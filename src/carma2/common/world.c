@@ -1826,6 +1826,17 @@ void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath)
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0450, LoadSmashableTrackEnvironment, LoadSmashableTrackEnvironment_original)
 
+void (C2_HOOK_FASTCALL * DisposeSmashableTrackEnvironment_original)(void);
+void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisposeSmashableTrackEnvironment_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f0960, DisposeSmashableTrackEnvironment, DisposeSmashableTrackEnvironment_original)
+
 void C2_HOOK_FASTCALL FreeSmashableNonCarNames(void) {
 
     BrMemFree(C2V(gSmashable_noncars));

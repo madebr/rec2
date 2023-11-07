@@ -137,6 +137,8 @@ void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF);
 
 void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath);
 
+void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void);
+
 void C2_HOOK_FASTCALL FreeSmashableNonCarNames(void);
 
 void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF);
