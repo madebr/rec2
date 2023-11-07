@@ -17,10 +17,6 @@ typedef signed short tS16;
 typedef unsigned int tU32;
 typedef signed int tS32;
 
-typedef unsigned char undefined;
-typedef unsigned short undefined2;
-typedef unsigned int undefined4;
-
 typedef int tTWTVFS;
 typedef tU32 tPlayer_ID;
 
