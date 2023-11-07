@@ -28,4 +28,6 @@ void C2_HOOK_FASTCALL AllocateActorMatrix(tTrack_spec* pTrack_spec, tTrack_squar
 
 void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec);
 
+void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec);
+
 #endif //REC2_BRUCETRK_H

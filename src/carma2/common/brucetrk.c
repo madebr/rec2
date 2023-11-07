@@ -389,3 +389,15 @@ void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
     pTrack_spec->count_non_cars -= count_null_non_cars;
 }
 C2_HOOK_FUNCTION(0x0040cc50, ExtractColumns)
+
+void (C2_HOOK_FASTCALL * DisposeColumns_original)(tTrack_spec* pTrack_spec);
+void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisposeColumns_original(pTrack_spec);
+#else
+#error "Not implemented"
+#endif
+}
+
+C2_HOOK_FUNCTION_ORIGINAL(0x0040ca90, DisposeColumns, DisposeColumns_original)
