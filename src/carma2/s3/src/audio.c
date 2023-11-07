@@ -1,11 +1,18 @@
 #include "audio.h"
 
+#include "3d.h"
+#include "resource.h"
+
 #include <stddef.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_enabled, 0x007a06c0);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_sound_source*, gS3_sound_sources, 0x007a0590);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_nsound_sources, 0x007a0584);
 
 int (C2_HOOK_FASTCALL * S3StopChannel_original)(tS3_channel* chan);
 int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* chan) {
+
+    C2_HOOK_BUG_ON(sizeof(tS3_channel) != 120);
 
 #if defined(C2_HOOKS_ENABLED)
     return S3StopChannel_original(chan);
@@ -62,3 +69,38 @@ int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0056575b, S3StopOutletSound)
+
+int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src) {
+    tS3_sound_source* prev;
+    tS3_sound_source* next;
+
+    C2_HOOK_BUG_ON(sizeof(tS3_sound_source) != 68);
+
+    if (!C2V(gS3_enabled)) {
+        return 0;
+    }
+
+    if (src == NULL) {
+        return 0;
+    }
+    prev = src->prev;
+    next = src->next;
+    if (prev != NULL) {
+        prev->next = next;
+    } else {
+        C2V(gS3_sound_sources) = src->next;
+    }
+    if (next != NULL) {
+        next->prev = prev;
+    }
+    if (C2V(gS3_nsound_sources) != 0) {
+        C2V(gS3_nsound_sources)--;
+        if (C2V(gS3_nsound_sources) == 0) {
+            C2V(gS3_sound_sources) = NULL;
+        }
+    }
+    S3StopSoundSource(src);
+    S3MemFree(src);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0056671e, S3ReleaseSoundSource)
