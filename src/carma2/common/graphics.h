@@ -45,6 +45,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gCount_polyfont_glyph_actors);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gPolyfont_glyph_actors, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSaved_table, gSaved_shade_tables, 100);
 C2_HOOK_VARIABLE_DECLARE(int, gSaved_table_count);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_splash);
 
 void C2_HOOK_FASTCALL FadePaletteDown(void);
 
@@ -127,5 +128,7 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleMaskedCopy(br_pixelmap* pDest, br_int_1
 void C2_HOOK_FASTCALL DrawNumberAt(br_pixelmap* pSrc, br_pixelmap* pDest, int pX, int pY, int pX_pitch, int pY_pitch, int pValue ,int pDigit_count, int pLeading_zeroes);
 
 void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
+
+void C2_HOOK_FASTCALL KillSplashScreen(void);
 
 #endif //REC2_GRAPHICS_H
