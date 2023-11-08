@@ -14,4 +14,6 @@ int C2_HOOK_FASTCALL LoadTheGame(tSave_game* pSave_game);
 
 void C2_HOOK_FASTCALL LoadLastSaveGame(void);
 
+void C2_HOOK_FASTCALL WriteSaveGame(void);
+
 #endif // REC2_LOADSAVE_H
