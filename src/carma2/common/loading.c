@@ -4839,3 +4839,15 @@ void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info) {
 
 }
 C2_HOOK_FUNCTION(0x0044bf70, DisposeRaceInfo)
+
+void (C2_HOOK_FASTCALL * DisposeAllCars_original)(tRace_info* pRace_info);
+void C2_HOOK_FASTCALL DisposeAllCars(tRace_info* pRace_info) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisposeAllCars_original(pRace_info);
+#else
+    /* contains DisposeOpponentsCars from dethrace */
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044bfa0, DisposeAllCars, DisposeAllCars_original)
