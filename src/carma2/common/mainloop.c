@@ -26,3 +26,13 @@ void C2_HOOK_FASTCALL ProcessAICars(tU32 pFrame_period) {
 }
 C2_HOOK_FUNCTION(0x00401170, ProcessAICars)
 
+tRace_result (C2_HOOK_FASTCALL * MainGameLoop_original)(void);
+tRace_result C2_HOOK_FASTCALL MainGameLoop(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return MainGameLoop_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00492980, MainGameLoop, MainGameLoop_original)
