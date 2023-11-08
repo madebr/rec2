@@ -1,9 +1,11 @@
 #include "mainloop.h"
 
 #include "drone.h"
+#include "globvars.h"
 #include "loading.h"
 #include "opponent.h"
 #include "powerups.h"
+#include "sound.h"
 #include "timers.h"
 #include "utility.h"
 
@@ -36,3 +38,13 @@ tRace_result C2_HOOK_FASTCALL MainGameLoop(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00492980, MainGameLoop, MainGameLoop_original)
+
+tRace_result C2_HOOK_FASTCALL DoRace(void) {
+    tRace_result result;
+
+    StartMusicTrack(PercentageChance(50) ? 9998 : 9997);
+    C2V(gRace_start) = GetTotalTime();
+    result = MainGameLoop();
+    return result;
+}
+C2_HOOK_FUNCTION(0x00492950, DoRace)
