@@ -46,4 +46,6 @@ int C2_HOOK_CDECL LinkCrushModel(br_actor* pActor, void* pData);
 
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec * pCar_spec);
 
+void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
+
 #endif // REC2_CRUSH_H
