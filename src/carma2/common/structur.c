@@ -1,14 +1,40 @@
 #include "structur.h"
 
+#include "car.h"
+#include "cutscene.h"
+#include "drmem.h"
+#include "errors.h"
+#include "frontend.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "globvrpb.h"
+#include "graphics.h"
+#include "init.h"
+#include "loading.h"
+#include "loadsave.h"
+#include "mainmenu.h"
+#include "network.h"
 #include "opponent.h"
+#include "piping.h"
+#include "racestrt.h"
 #include "sound.h"
+#include "temp.h"
 #include "utility.h"
 
 #include "c2_stdlib.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gMirror_on__structur, 0x00660ce0, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMoney_pre_race, 0x007051f8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gAPO_pre_race, 3, 0x007051e0);
+
+void C2_HOOK_FASTCALL StashCreditsAndAPO(void) {
+
+    C2V(gMoney_pre_race) = C2V(gProgram_state).credits;
+    C2V(gAPO_pre_race)[0] = C2V(gProgram_state).current_car.power_up_levels[0];
+    C2V(gAPO_pre_race)[1] = C2V(gProgram_state).current_car.power_up_levels[1];
+    C2V(gAPO_pre_race)[2] = C2V(gProgram_state).current_car.power_up_levels[2];
+}
+C2_HOOK_FUNCTION(0x004e3410, StashCreditsAndAPO)
 
 void (C2_HOOK_FASTCALL * DoProgram_original)(void);
 void C2_HOOK_FASTCALL DoProgram(void) {
