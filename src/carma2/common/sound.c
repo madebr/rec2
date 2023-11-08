@@ -205,3 +205,13 @@ void C2_HOOK_FASTCALL InitSoundSources(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455bb0, InitSoundSources, InitSoundSources_original)
+
+void (C2_HOOK_FASTCALL * StartMusicTrack_original)(int pMusic_track);
+void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track) {
+
+#if defined(C2_HOOKS_ENABLED)
+    StartMusicTrack_original(pMusic_track);
+#else
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456840, StartMusicTrack, StartMusicTrack_original)

@@ -37,4 +37,6 @@ void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
 void C2_HOOK_FASTCALL InitSoundSources(void);
 
+void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track);
+
 #endif // REC2_SOUND_H
