@@ -94,6 +94,8 @@ add_library(c2_common STATIC
     powerups.c
     racestrt.c
     racestrt.h
+    racesumm.c
+    racesumm.h
     raycast.c
     raycast.h
     replay.c
