@@ -4,6 +4,7 @@
 #include "loading.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gValid_stashed_save_game, 0x00688ae4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSave_game_out_of_sync, 0x0068b8ec);
 C2_HOOK_VARIABLE_IMPLEMENT(tSave_game, gStashed_save_game, 0x00688780);
 
 void C2_HOOK_FASTCALL RestoreStashedSaveGame(void) {
