@@ -2,6 +2,7 @@
 
 #include "animation.h"
 #include "errors.h"
+#include "globvars.h"
 #include "globvrpb.h"
 #include "loading.h"
 #include "platform.h"
@@ -682,3 +683,11 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00439510, TotallyRepairACar, TotallyRepairACar_original)
+
+void C2_HOOK_FASTCALL TotallyRepairCar(void) {
+
+    if (!C2V(gArrow_mode)) {
+        TotallyRepairACar(&C2V(gProgram_state).current_car);
+    }
+}
+C2_HOOK_FUNCTION(0x00439bf0, TotallyRepairCar)
