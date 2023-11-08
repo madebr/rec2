@@ -193,7 +193,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gKeys_pressed, 0x0074d350);
 //tU32 gFrame_start_time;
 //tProgram_state gProgram_state;
 //tU32 gCredit_period_single[3];
-//tU32 gRace_start;
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gRace_start, 0x00763460);
 //tBrender_storage gTrack_storage_space;
 //tU32 gCredit_period;
 //tU32 gCredit_period_network[7];

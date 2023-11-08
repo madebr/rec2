@@ -180,7 +180,7 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gKeys_pressed);
 //extern tU32 gFrame_start_time;
 //extern tProgram_state gProgram_state;
 //extern tU32 gCredit_period_single[3];
-//extern tU32 gRace_start;
+C2_HOOK_VARIABLE_DECLARE(tU32, gRace_start);
 //extern tBrender_storage gTrack_storage_space;
 
 C2_HOOK_VARIABLE_DECLARE(tU32, gFrame_period);
