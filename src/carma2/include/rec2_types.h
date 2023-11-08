@@ -134,6 +134,13 @@ typedef struct {
     char replacement[24];
 } tTree_surgery_pass2;
 
+typedef enum {
+    eRace_game_abandonned = 0,
+    eRace_aborted = 1,
+    eRace_timed_out = 2,
+    eRace_completed = 3
+} tRace_result;
+
 typedef struct {
     br_pixelmap* original;
     br_pixelmap* copy;
