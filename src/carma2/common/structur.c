@@ -36,6 +36,17 @@ void C2_HOOK_FASTCALL StashCreditsAndAPO(void) {
 }
 C2_HOOK_FUNCTION(0x004e3410, StashCreditsAndAPO)
 
+int (C2_HOOK_FASTCALL * DoPostRace_original)(tRace_result pRace_result);
+int C2_HOOK_FASTCALL DoPostRace(tRace_result pRace_result) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DoPostRace_original(pRace_result);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e3440, DoPostRace, DoPostRace_original)
+
 void (C2_HOOK_FASTCALL * DoProgram_original)(void);
 void C2_HOOK_FASTCALL DoProgram(void) {
 #if defined(C2_HOOKS_ENABLED)
