@@ -6,6 +6,7 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(int, gValid_stashed_save_game);
+C2_HOOK_VARIABLE_DECLARE(int, gSave_game_out_of_sync);
 C2_HOOK_VARIABLE_DECLARE(tSave_game, gStashed_save_game);
 
 void C2_HOOK_FASTCALL RestoreStashedSaveGame(void);

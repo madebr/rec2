@@ -16,6 +16,18 @@ int C2_HOOK_FASTCALL DoPostRace(tRace_result pRace_result);
 
 void C2_HOOK_FASTCALL DoProgram(void);
 
+void C2_HOOK_FASTCALL InitialiseProgramState(void);
+
+void C2_HOOK_FASTCALL DoLogos(void);
+
+void C2_HOOK_FASTCALL DoProgramDemo(void);
+
+void C2_HOOK_FASTCALL DoProgOpeningAnimation(void);
+
+void C2_HOOK_FASTCALL SwapNetCarsLoad(void);
+
+void C2_HOOK_FASTCALL DoGame(void);
+
 int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness);
 
 int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
