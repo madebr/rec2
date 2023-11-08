@@ -135,6 +135,13 @@ typedef struct {
 } tTree_surgery_pass2;
 
 typedef enum {
+    eSO_main_menu_invoked = 0,
+    eSO_game_over = 1,
+    eSO_game_completed = 2,
+    eSO_continue = 3
+} tSO_result;
+
+typedef enum {
     eRace_game_abandonned = 0,
     eRace_aborted = 1,
     eRace_timed_out = 2,
@@ -231,6 +238,18 @@ typedef enum {
     eGroove_object_throb = 2,
     eGroove_object_shear = 3,
 } tGroove_object_mode;
+
+typedef enum {
+    eCar_owner_none = 0,
+    eCar_owner_someone = 1,
+    eCar_owner_self = 2,
+    eCar_owner_not_allowed = 3
+} tCar_detail_ownership;
+
+typedef struct {
+    tCar_detail_ownership ownership;
+    char name[16];
+} tCar_detail_info;
 
 typedef struct tDynamic_message {
     struct tDynamic_message* next;
@@ -2993,7 +3012,8 @@ typedef struct {
     int wasteage_attributed;
     undefined field_0x74[12];
     int field_0x80;
-    undefined field_0x84[12];
+    undefined field_0x84[8];
+    int next_car_index;
     int score;
     undefined field_0x94[4];
     struct br_matrix34 initial_position;
