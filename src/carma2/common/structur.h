@@ -5,10 +5,14 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gMirror_on__structur);
+C2_HOOK_VARIABLE_DECLARE(int, gLoad_last_save_game);
 C2_HOOK_VARIABLE_DECLARE(int, gMoney_pre_race);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gAPO_pre_race, 3);
 
 void C2_HOOK_FASTCALL StashCreditsAndAPO(void);
+
+int C2_HOOK_FASTCALL DoPostRace(tRace_result pRace_result);
 
 void C2_HOOK_FASTCALL DoProgram(void);
 
