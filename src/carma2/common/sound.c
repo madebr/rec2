@@ -70,16 +70,6 @@ void C2_HOOK_FASTCALL StopMusic(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456910, StopMusic, StopMusic_original)
 
-void (C2_HOOK_FASTCALL * DRS3StartCDA_original)(tS3_sound_id pCDA_id);
-void C2_HOOK_FASTCALL DRS3StartCDA(tS3_sound_id pCDA_id) {
-#if defined(C2_HOOKS_ENABLED)
-    DRS3StartCDA_original(pCDA_id);
-#else
-#error "not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00456840, DRS3StartCDA, DRS3StartCDA_original)
-
 tS3_sound_tag (C2_HOOK_FASTCALL * DRS3StartSound_original)(tS3_outlet* pOutlet, tS3_sound_id pSound);
 tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
 
@@ -214,3 +204,13 @@ void C2_HOOK_FASTCALL InitSoundSources(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455bb0, InitSoundSources, InitSoundSources_original)
+
+void (C2_HOOK_FASTCALL * StartMusicTrack_original)(int pMusic_track);
+void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track) {
+
+#if defined(C2_HOOKS_ENABLED)
+    StartMusicTrack_original(pMusic_track);
+#else
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456840, StartMusicTrack, StartMusicTrack_original)

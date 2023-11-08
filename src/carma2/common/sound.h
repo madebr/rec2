@@ -19,8 +19,6 @@ void C2_HOOK_FASTCALL ParseSoundFxDetails(FILE* pF, tSpecial_volume_soundfx_data
 
 void C2_HOOK_FASTCALL StopMusic(void);
 
-void C2_HOOK_FASTCALL DRS3StartCDA(tS3_sound_id pCDA_id);
-
 tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
 void C2_HOOK_FASTCALL InitSound(void);
@@ -38,5 +36,7 @@ void C2_HOOK_FASTCALL ToggleSoundEnable(void);
 void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
 void C2_HOOK_FASTCALL InitSoundSources(void);
+
+void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track);
 
 #endif // REC2_SOUND_H
