@@ -18,4 +18,6 @@ void C2_HOOK_FASTCALL DisableMaterialAdapt(void);
 
 void C2_HOOK_FASTCALL AdaptCachedMaterials(tRendererShadingType pShading_type);
 
+void C2_HOOK_FASTCALL AdaptFoggedMaterialsForRenderer(tRendererShadingType pShading_type);
+
 #endif /* TEMP_H */
