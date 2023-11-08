@@ -914,3 +914,13 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004e9b60, DisposeSavedShadeTables)
+
+void C2_HOOK_FASTCALL KillSplashScreen(void) {
+
+    if (C2V(gCurrent_splash) != NULL) {
+        BrMapRemove(C2V(gCurrent_splash));
+        BrPixelmapFree(C2V(gCurrent_splash));
+        C2V(gCurrent_splash) = NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x0047b960, KillSplashScreen)
