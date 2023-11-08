@@ -9,4 +9,6 @@ void C2_HOOK_FASTCALL ProcessAICars(tU32 pTime);
 
 tRace_result C2_HOOK_FASTCALL MainGameLoop(void);
 
+tRace_result C2_HOOK_FASTCALL DoRace(void);
+
 #endif // REC2_MAINLOOP_H
