@@ -48,4 +48,6 @@ void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec * pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL TotallyRepairCar(void);
+
 #endif // REC2_CRUSH_H

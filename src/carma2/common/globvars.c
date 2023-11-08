@@ -130,7 +130,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gTyping, 0x0068b858);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_opponents, 0x0074b588);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gPlayer_car_master_actor, 0x0076350c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector3, gInitial_position, 0x00655de0, {1000.f, 1000.f, 1000.f});
-//int gArrow_mode;
+C2_HOOK_VARIABLE_IMPLEMENT(int, gArrow_mode, 0x0068b85c);
 //int gInfo_on;
 //int gHost_abandon_game;
 //int gRecover_car;
