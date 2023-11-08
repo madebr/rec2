@@ -671,3 +671,14 @@ void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042aa20, PrepareCarForCrushing, PrepareCarForCrushing_original)
+
+void (C2_HOOK_FASTCALL * TotallyRepairACar_original)(tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    TotallyRepairACar_original(pCar_spec);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00439510, TotallyRepairACar, TotallyRepairACar_original)
