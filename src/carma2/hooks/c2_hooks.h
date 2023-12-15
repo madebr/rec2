@@ -24,10 +24,14 @@
 #define C2_HOOK_CDECL __cdecl
 #define C2_HOOK_FASTCALL __fastcall
 #define C2_HOOK_STDCALL __stdcall
+#define C2_HOOK_THISCALL __thiscall
+#define C2_HOOK_FAKE_THISCALL __fastcall
 #else
 #define C2_HOOK_CDECL
 #define C2_HOOK_FASTCALL
 #define C2_HOOK_STDCALL
+#define C2_HOOK_THISCALL
+#define C2_HOOK_FAKE_THISCALL
 #endif
 
 #include <stdarg.h>
