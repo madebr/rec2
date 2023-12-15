@@ -1554,6 +1554,28 @@ typedef struct {
 } tSkid;
 
 typedef enum {
+    kInitialSmashablePosition_SphereClumped = 0,
+    kInitialSmashablePosition_BoxClumped = 1,
+    kInitialSmashablePosition_ActorBased = 2,
+} tInitial_smashable_position_type;
+
+typedef enum {
+    kSmashableSpherePosition_Impact = 0,
+    kSmashableSpherePosition_Model = 0,
+} tSmashable_sphere_position;
+
+typedef struct {
+    tInitial_smashable_position_type type;
+    union {
+        struct {
+            float radius;
+            tSmashable_sphere_position where;
+        } sphere;
+        br_vector3 box;
+    } position;
+} tSmashable_initial_position_spec;
+
+typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
     tActionReplayCameraMode_ActionTracking = 2,
