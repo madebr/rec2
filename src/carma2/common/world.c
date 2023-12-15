@@ -1218,3 +1218,13 @@ void C2_HOOK_FASTCALL LoadSomeShadeTables(tBrender_storage* pStorage, const char
     DRForEveryFile(pPath, LoadShadeTableCallback);
 }
 C2_HOOK_FUNCTION(0x00502b60, LoadSomeShadeTables)
+
+void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath) {
+    char s[256];
+
+    StringToUpper(s, pPath);
+    if (c2_strstr(s, ".PIX") != NULL) {
+        LoadNPixelmapsFromPath(C2V(gStorageForCallbacks), pPath);
+    }
+}
+C2_HOOK_FUNCTION(0x005024b0, LoadPixelmapCallback)
