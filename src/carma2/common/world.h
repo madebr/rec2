@@ -73,4 +73,6 @@ int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, con
 
 void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath);
 
+void C2_HOOK_FASTCALL LoadSomeShadeTables(tBrender_storage* pStorage, const char* pPath);
+
 #endif // REC2_WORLD_H
