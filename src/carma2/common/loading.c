@@ -5,6 +5,7 @@
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
+#include "newgame.h"
 #include "utility.h"
 #include "world.h"
 
@@ -1266,8 +1267,6 @@ void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions)
     pOptions->starting_target = GetAnInt(pF);
 }
 C2_HOOK_FUNCTION(0x0048d110, ReadNetworkSettings)
-
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tNet_game_options, gNet_settings, 9, 0x00763960);
 
 int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex) {
 
