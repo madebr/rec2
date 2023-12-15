@@ -2225,3 +2225,12 @@ void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name) {
     BrTableAddMany(palette_array, number_of_palettes);
 }
 C2_HOOK_FUNCTION(0x0048f090, DRLoadPalette)
+
+void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name) {
+    br_pixelmap* table_array[100];
+    int number_of_tables;
+
+    number_of_tables = DRPixelmapLoadMany(pPath_name, table_array, REC2_ASIZE(table_array));
+    BrTableAddMany(table_array, number_of_tables);
+}
+C2_HOOK_FUNCTION(0x0048f100, DRLoadShadeTable)
