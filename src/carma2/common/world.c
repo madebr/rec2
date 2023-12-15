@@ -296,6 +296,17 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
 }
 C2_HOOK_FUNCTION(0x00501020, AddPixelmapToStorage)
 
+tAdd_to_storage_result (C2_HOOK_FASTCALL * LoadSoundInStorage_original)(tBrender_storage* pStorage_space, int pSound_id);
+tAdd_to_storage_result C2_HOOK_FASTCALL LoadSoundInStorage(tBrender_storage* pStorage_space, int pSound_id) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return LoadSoundInStorage_original(pStorage_space, pSound_id);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00501930, LoadSoundInStorage, LoadSoundInStorage_original)
+
 int C2_HOOK_FASTCALL IsValidFile(const char* path) {
     struct c2_stat stat;
 
