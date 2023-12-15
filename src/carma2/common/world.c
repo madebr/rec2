@@ -33,6 +33,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRendering_accessories, 0x00591368, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage*, gStorageForCallbacks, 0x006b7820);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gAddedPixelmap, 0x006aaa20);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisallowDuplicates, 0x006aaa2c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tRendererShadingType, gMaterial_shading_for_callback, 0x00660cb8, kRendererShadingType_Undefined);
+C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDuplicate_material, 0x006aaa28);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
 
@@ -1235,3 +1237,60 @@ void C2_HOOK_FASTCALL LoadSomePixelmaps(tBrender_storage* pStorage, const char* 
     DRForEveryFile(pPath, LoadPixelmapCallback);
 }
 C2_HOOK_FUNCTION(0x00502490, LoadSomePixelmaps)
+
+tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat) {
+    int i;
+
+    C2V(gDuplicate_material) = NULL;
+    if (pStorage_space->materials_count >= pStorage_space->max_materials) {
+        return eStorage_not_enough_room;
+    }
+    for (i = 0; i < pStorage_space->materials_count; i++) {
+        if (pStorage_space->materials[i]->identifier
+            && pThe_mat->identifier
+            && !c2_strcmp(pStorage_space->materials[i]->identifier, pThe_mat->identifier)) {
+            C2V(gDuplicate_material) = pStorage_space->materials[i];
+            return eStorage_duplicate;
+        }
+    }
+    pStorage_space->materialProps[pStorage_space->materials_count] = 0; /* FIXME */
+    pStorage_space->materials[pStorage_space->materials_count] = pThe_mat;
+    pStorage_space->materials_count++;
+    return eStorage_allocated;
+}
+
+int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading) {
+    int i;
+    int new_ones;
+    int total;
+    br_material* temp_array[500];
+
+    new_ones = 0;
+    total = BrMaterialLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
+    if (total == 0) {
+        FatalError(kFatalError_CannotLoadMaterialFileOrItIsEmpty_S, pPath);
+    }
+    AdaptMaterialsForRenderer(temp_array, total, pShading);
+    for (i = 0; i < total; ++i) {
+        if (temp_array[i] == NULL) {
+            continue;
+        }
+        switch (AddMaterialToStorage(pStorage_space, temp_array[i])) {
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientMaterialSlots);
+            break;
+        case eStorage_duplicate:
+            if (C2V(gDisallowDuplicates)) {
+                FatalError(kFatalError_DuplicateMaterial_S, temp_array[i]->identifier);
+            }
+            BrMaterialFree(temp_array[i]);
+            break;
+        case eStorage_allocated:
+            BrMaterialAdd(temp_array[i]);
+            new_ones++;
+            break;
+        }
+    }
+    return new_ones;
+}
+C2_HOOK_FUNCTION(0x00502060, LoadMaterialsInto)
