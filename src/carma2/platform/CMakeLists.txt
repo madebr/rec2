@@ -1,5 +1,6 @@
 add_library(c2_platform STATIC
     platform.h
+    rec2_logging.c
 )
 
 if(WIN32)
