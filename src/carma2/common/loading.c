@@ -2242,6 +2242,17 @@ void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
 }
 C2_HOOK_FUNCTION(0x0048f2e0, DRLoadLights)
 
+void (C2_HOOK_FASTCALL * InitializePalettes_original)(void);
+void C2_HOOK_FASTCALL InitializePalettes(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitializePalettes_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b5090, InitializePalettes, InitializePalettes_original)
+
 void (C2_HOOK_FASTCALL * DisableVertexColours_original)(br_model** pModels, int pCount);
 void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {
 
