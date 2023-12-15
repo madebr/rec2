@@ -1,6 +1,7 @@
 #include "win32.h"
 
 #include "win32_dinput.h"
+#include "win32_ssdx.h"
 
 #include "errors.h"
 #include "globvars.h"
@@ -36,6 +37,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_data_index, 0x00662204, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGraf_spec, gGraf_specs, 2, 0x00662208); // FIXME: implement
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gUnknown_int_0074ca94, 0x0074ca94);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gUnknown_int_0074cf48, 0x0074cf48);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFatalErrorMessage, 512, 0x006acc88);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFatalErrorMessageValid, 0x006ad498);
@@ -46,7 +49,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gWindowActiveState, 0x006621e0, 2); // FIXM
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWindowMovingResizing, 0x006ad4d0);
 C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTINPUTDEVICEA, gDirectInputDevice, 0x006acea0);
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gRenderer, 0x006621dc);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(char*, gRenderer, 0x006621dc, "3DFX_WIN");
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseLButtonDown, 0x006ad488);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseRButtonDown, 0x006ad48c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseCaptured, 0x006ad490);
@@ -856,3 +859,67 @@ void C2_HOOK_FASTCALL PDInitScreen(void) {
 
 }
 C2_HOOK_FUNCTION(0x0051c2b0, PDInitScreen)
+
+void (C2_HOOK_FASTCALL * PDAllocateScreenAndBack_original)(void);
+void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
+
+    dr_dprintf("PDAllocateScreenAndBack() - START...");
+
+    dr_dprintf("Setting up DirectSound stuff...");
+
+    SSDXStart(C2V(gHWnd), 0, 1, SSDX_InitDirectSound);
+
+    C2V(gNbPixelBits) = 16;
+    BrDevBeginVar(&C2V(gScreen), C2V(gRenderer),
+        BRT_WINDOW_FULLSCREEN_B, 1,
+        BRT_WINDOW_HANDLE_H, C2V(gHWnd),
+        BRT_WIDTH_I32, 640,
+        BRT_HEIGHT_I32, 480,
+        BRT_PIXEL_BITS_I32, 16,
+        BRT_PIXEL_TYPE_U8, BR_PMT_RGB_565,
+        0);
+    if (C2V(gScreen) == NULL) {
+        BrFailure("Unable to allocate Main Front Screen");
+    }
+
+    if (c2_strcmp(C2V(gScreen)->identifier, "Voodoo Graphics") == 0) {
+        dr_dprintf("%s: lock seldom", C2V(gScreen)->identifier);
+    } else {
+        dr_dprintf("%s: lock often", C2V(gScreen)->identifier);
+        C2V(gScreen_lock_often) = 1;
+    }
+    C2V(gShadow_workaround) = 1; /* Not 100% sure this is shadow related */
+    C2V(gEnable_texture_interpolation) = 1;
+    C2V(gEnable_texture_antialiasing) = 1;
+    C2V(gTexture_power_of_2) = 1;
+    C2V(gUnknown_int_0074ca94) = 8;
+    C2V(gUnknown_int_0074cf48) = 256;
+    C2V(gAdapt_sky_model_for_cockpit) = 1;
+    C2V(gNo_fog) = 1; /* Enables lut for horizon material */
+    C2V(gRenderer_fixup_basename) = "VOODOO";
+    C2V(gRenderer_fixup_extension) = ".TXT";
+    C2V(gNo_render_indent) = 1;
+    C2V(gTranslucent_smoke) = 1; /* maybe? */
+    C2V(gEnable_perspective_maps) = 1;
+    C2V(gNoTransients) = 1;
+    C2V(gUse_actor_dimming) = 1;
+
+    C2V(gScreen)->origin_x = 0;
+    C2V(gScreen)->origin_y = 0;
+    C2V(gBack_screen) = BrPixelmapMatch(C2V(gScreen), BR_PMMATCH_OFFSCREEN);
+    if (C2V(gBack_screen) == NULL) {
+        BrFailure("Unable to allocate Back Screen");
+    }
+
+    C2V(gPixelFlags) = kPixelFlags_unknown_0x4 | (C2V(gNbPixelBits) == 16 ? kPixelFlags_16bbp : 0);
+
+    C2V(gDouble_back_screen) = BrPixelmapMatch(C2V(gBack_screen), BR_PMMATCH_OFFSCREEN);
+    C2V(gHas_double_back_screen) = 1;
+
+    c2_memset(C2V(gBack_screen)->pixels, 0, C2V(gBack_screen)->height * C2V(gBack_screen)->row_bytes);
+
+    BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gBack_screen));
+
+    dr_dprintf("PDAllocateScreenAndBack() - END.");
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051c300, PDAllocateScreenAndBack, PDAllocateScreenAndBack_original)
