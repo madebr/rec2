@@ -47,13 +47,13 @@ void hook_print_stats(void);
         hook_register(FUNCTION);      \
     }
 
-#define HOOK_FUNCTION_ORIGINAL(ADDRESS, FUNCTION, ORIGINAL)    \
-    HOOK_FUNCTION_STARTUP(FUNCTION) {                          \
-        *(void**)(&ORIGINAL) = (void*)ADDRESS;                 \
-        hook_function_register((void**)&ORIGINAL, FUNCTION);   \
-    }                                                          \
-    HOOK_FUNCTION_SHUTDOWN(FUNCTION) {                         \
-        hook_function_deregister((void**)&ORIGINAL, FUNCTION); \
+#define HOOK_FUNCTION_ORIGINAL(ADDRESS, FUNCTION, ORIGINAL)           \
+    HOOK_FUNCTION_STARTUP(FUNCTION) {                                 \
+        *(void**)(&ORIGINAL) = (void*)ADDRESS;                        \
+        hook_function_register((void**)&ORIGINAL, (void*)FUNCTION);   \
+    }                                                                 \
+    HOOK_FUNCTION_SHUTDOWN(FUNCTION) {                                \
+        hook_function_deregister((void**)&ORIGINAL, (void*)FUNCTION); \
     }
 
 #define HOOK_FUNCTION(ADDRESS, FUNCTION)                                      \
