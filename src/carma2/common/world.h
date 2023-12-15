@@ -75,4 +75,6 @@ void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadSomeShadeTables(tBrender_storage* pStorage, const char* pPath);
 
+void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath);
+
 #endif // REC2_WORLD_H
