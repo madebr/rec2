@@ -1312,6 +1312,11 @@ typedef struct {
     } type_info;
 } tShrapnel_spec;
 
+typedef struct {
+    int count_side_effects;
+    struct tShrapnel_side_effect* side_effects;
+} tShrapnel_side_effects;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
