@@ -99,3 +99,14 @@ void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_
     pInitial_speed->random_spin_rate_max = GetAScalar(pFile);
 }
 C2_HOOK_FUNCTION(0x004ee500, ReadSmashableInitialSpeed)
+
+void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes) {
+    float f1;
+    float f2;
+
+    /* Min time, Max time */
+    GetPairOfFloats(pFile, &f1, &f2);
+    pTimes[0] = (int)(1000.f * f1);
+    pTimes[1] = (int)(1000.f * f2);
+}
+C2_HOOK_FUNCTION(0x004ee5a0, ReadMinMaxTimeInMilliseconds)
