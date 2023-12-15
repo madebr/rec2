@@ -1323,6 +1323,11 @@ typedef struct {
 } tShrapnel_spec;
 
 typedef struct {
+    int count_activations;
+    struct tNon_car_cuboid_activation* activations;
+} tNon_car_cuboid_activations;
+
+typedef struct {
     int count_side_effects;
     struct tShrapnel_side_effect* side_effects;
 } tShrapnel_side_effects;
