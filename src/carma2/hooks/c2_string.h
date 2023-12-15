@@ -25,6 +25,7 @@ char* C2_HOOK_CDECL c2_strncpy(char *dest, const char *src, size_t n);
 size_t C2_HOOK_CDECL c2_strlen(const char *dest);
 
 char* C2_HOOK_CDECL c2_strchr(const char *str, int c);
+size_t C2_HOOK_CDECL c2_strspn(const char *str, const char *accept);
 char* C2_HOOK_CDECL c2_strrchr(const char *str, int c);
 char* C2_HOOK_CDECL c2_strstr(const char *str, const char *delim);
 char* C2_HOOK_CDECL c2_strtok(char* str, const char *delim);
