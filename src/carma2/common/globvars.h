@@ -70,6 +70,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gTranslucent_smoke);
 C2_HOOK_VARIABLE_DECLARE(int, gEnable_perspective_maps);
 C2_HOOK_VARIABLE_DECLARE(int, gUse_actor_dimming);
 
+C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_actors);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gActor_array, 100);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;
