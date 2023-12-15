@@ -418,6 +418,15 @@ typedef struct {
 } tDR_font;
 
 typedef enum {
+    kRendererShadingType_Undefined = -1,
+    kRendererShadingType_Default = 1,
+    kRendererShadingType_Diffuse1 = 3,
+    kRendererShadingType_Specular = 2,
+    kRendererShadingType_Diffuse2 = 0,
+    kRendererShadingType_AmbientOnly = 4,
+} tRendererShadingType;
+
+typedef enum {
     kFrontendItemEnabled_default = 0,
     kFrontendItemEnabled_enabled = 1,
     kFrontendItemEnabled_disabled = -1,
