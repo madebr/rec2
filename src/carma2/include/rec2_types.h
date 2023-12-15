@@ -254,7 +254,7 @@ typedef struct {
 } tGraf_spec;
 
 typedef struct {
-    undefined4 unknown;
+    tU32 flags;
     int models_count;
     int materials_count;
     int shade_tables_count;
@@ -1710,9 +1710,11 @@ enum {
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_InsufficientShadeTableSlots = 0x44,
     kFatalError_InsufficientMaterialSlots = 0x45,
+    kFatalError_InsufficientModelSlots = 0x46,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_CannotLoadShadeTableFileOrItIsEmpty_S = 0x50,
     kFatalError_CannotLoadMaterialFileOrItIsEmpty_S = 0x51,
+    kFatalError_CannotLoadModelFileOrItIsEmpty_S = 0x52,
     kFatalError_CannotLoadDepthCueShadeTable = 0x57,
     kFatalError_CannotFindSkyMaterial_S = 0x59,
     kFatalError_OOM_S = 0x5e,
@@ -1723,6 +1725,7 @@ enum {
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
     kFatalError_FileMustStartWith_SS = 0xb2,
+    kFatalError_DuplicateModel_S = 0xb3,
     kFatalError_DuplicateMaterial_S = 0xb4,
     kFatalError_WriteAttemptToPackedFile_S = 0xb6,
     kFatalError_CouldNotCreateTexturesPages_S = 0xb7,
