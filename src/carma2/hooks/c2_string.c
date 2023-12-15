@@ -59,6 +59,11 @@ char* C2_HOOK_CDECL c2_strchr(const char* str, int c) {
 }
 C2_HOOK_FUNCTION(0x00575bf0, c2_strchr)
 
+size_t C2_HOOK_CDECL c2_strspn(const char *str, const char *accept) {
+    return strspn(str, accept);
+}
+C2_HOOK_FUNCTION(0x00578430, c2_strspn)
+
 char* C2_HOOK_CDECL c2_strrchr(const char *str, int c) {
     return strrchr(str, c);
 }
