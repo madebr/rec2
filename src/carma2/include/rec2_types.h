@@ -1253,6 +1253,18 @@ typedef struct {
     tExplosion_animation_group* groups;
 } tExplosion_animation;
 
+typedef enum {
+    kActionReplayCameraMode_Standard = 0,
+    tActionReplayCameraMode_Panning = 1,
+    tActionReplayCameraMode_ActionTracking = 2,
+    tActionReplayCameraMode_Manual = 3,
+    tActionReplayCameraMode_Rigid = 4,
+    tActionReplayCameraMode_Peds = 5,
+    tActionReplayCameraMode_Drone = 6,
+    tActionReplayCameraMode_Reversing = 7,
+    tActionReplayCameraMode_Internal = 8,
+} tActionReplayCameraMode;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
