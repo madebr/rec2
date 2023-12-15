@@ -47,6 +47,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gUniverse_actor, 0x0074d44c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gNon_track_actor, 0x007634b8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gDont_render_actor, 0x00761ce4);
 
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAmbient_sound, 0x00655dc4, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAuto_load, 0x0068b864);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gRussels_fannies, 0x006aa5c4);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_quality, 32, 0x00705220);
@@ -55,6 +57,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gQuick_time_banner_number, 0x0065ef30, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_banner_texture_name, 32, 0x00705340);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_temp_path, 256, 0x00705440);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_movie_path_stub, 256, 0x00705240);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_last_game_type, 0x007638a0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_view, 0x0075b9a4);
 
 //int gTyping;
 //int gArrow_mode;
