@@ -70,6 +70,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gNo_2d_effects);
 C2_HOOK_VARIABLE_DECLARE(int, gEnable_perspective_maps);
 C2_HOOK_VARIABLE_DECLARE(int, gDevious_2d);
 
+C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_actors);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gActor_array, 100);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;
