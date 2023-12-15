@@ -92,4 +92,6 @@ void C2_HOOK_FASTCALL LockBackScreen(int pValue);
 
 int C2_HOOK_FASTCALL UnlockBackScreen(int pValue);
 
+void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** p_materials, int p_countMaterials, tRendererShadingType p_type);
+
 #endif //REC2_GRAPHICS_H

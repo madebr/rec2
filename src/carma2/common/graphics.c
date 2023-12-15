@@ -521,3 +521,13 @@ int C2_HOOK_FASTCALL UnlockBackScreen(int pValue) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00516c30, UnlockBackScreen)
+
+void (C2_HOOK_FASTCALL * AdaptMaterialsForRenderer_original)(br_material** p_materials, int p_countMaterials, tRendererShadingType p_type);
+void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** p_materials, int p_count, tRendererShadingType p_type) {
+#if defined(C2_HOOKS_ENABLED)
+    AdaptMaterialsForRenderer_original(p_materials, p_count, p_type);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005182f0, AdaptMaterialsForRenderer, AdaptMaterialsForRenderer_original)
