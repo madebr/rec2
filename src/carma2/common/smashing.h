@@ -14,4 +14,6 @@ void C2_HOOK_FASTCALL InitSmashing(void);
 
 void C2_HOOK_FASTCALL ReadSmashableInitialPosition(FILE* pFile, tSmashable_initial_position_spec*  pInitial_pos);
 
+void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed);
+
 #endif //REC2_DEPTH_H
