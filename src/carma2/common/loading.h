@@ -12,8 +12,6 @@
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
 
-C2_HOOK_VARIABLE_DECLARE(int, gRusselsFannies);
-
 C2_HOOK_VARIABLE_DECLARE(int, gDisableTiffConversion);
 
 C2_HOOK_VARIABLE_DECLARE(char*, gPedsFolder);
