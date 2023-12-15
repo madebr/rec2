@@ -32,4 +32,6 @@ void C2_HOOK_FASTCALL AllocateStandardLamp(void);
 
 void C2_HOOK_FASTCALL InitGame(int pStart_race);
 
+int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth);
+
 #endif //REC2_INIT_H
