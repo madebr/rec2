@@ -360,7 +360,7 @@ typedef struct {
     int entry_noise;
     int exit_noise;
     int engine_noise_index;
-    br_material* screen_material;
+    br_pixelmap* screen_pixelmap;
     int material_modifier_index;
     tSpecial_volume_soundfx_type soundfx_type;
     tSpecial_volume_soundfx_data soundfx_data;

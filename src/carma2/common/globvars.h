@@ -40,6 +40,8 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gUniverse_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gNon_track_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gDont_render_actor);
 
+C2_HOOK_VARIABLE_DECLARE(int, gRussels_fannies);
+
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_quality, 32);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_compressor, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gQuick_time_banner_number);
