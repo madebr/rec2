@@ -230,6 +230,8 @@ void C2_HOOK_FASTCALL DRLoadModels(const char* p_path);
 
 void C2_HOOK_FASTCALL DRLoadActors(const char* p_path);
 
+void C2_HOOK_FASTCALL DRLoadLights(const char* p_path);
+
 void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount);
 
 #endif //REC2_LOADING_H
