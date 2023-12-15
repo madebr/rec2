@@ -2,10 +2,12 @@
 
 #include "crush.h"
 #include "errors.h"
+#include "explosions.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
 #include "newgame.h"
+#include "powerups.h"
 #include "utility.h"
 #include "world.h"
 
@@ -55,10 +57,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gDronesOff, 0x00684518);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKnobbledFramePeriod, 0x007634f0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gUnknownOpponentFactor, 0x0065a3cc);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gMinTimeOpponentRepair, 0x0074a684);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gMaxTimeOpponentRepair, 0x0074a688);
-
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gUnderwaterScreenName, 32, 0x0068c6f8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMinTimeOpponentRepair, 0x0074a684);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMaxTimeOpponentRepair, 0x0074a688);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_map_index, 0x0068b88c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gKey_mapping, 77, 0x0074b5e0);
@@ -70,7 +70,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gDecode_string, 14, 0x00655e38, {   
     0x9B, 0x52, 0x93, 0x9f, 0x52, 0x98, 0x9b,                                    \
     0x96, 0x96, 0x9e, 0x9B, 0xa0, 0x99, 0x0 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDecode_thing, 0x00655e30);
-C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume, gUnderwaterSpecialVolumeSettings, 0x00761b80);
+C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume, gDefault_water_spec_vol, 0x00761b80);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gMisc_strings, 300, 0x006b5f40);
 
@@ -96,6 +96,46 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_race_file_index, 0x0068c6f4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCountRaceGroups, 0x007634ec);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups, 0x0068b8a0);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups2, 0x0074d5e4);
+
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSlot_info, gInitial_APO, 3, 0x0074d4c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSlot_info, gInitial_APO_potential, 3, 0x007622a0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSlot_info, gMax_APO, 3, 0x0074cfa0);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gCost_APO, 0x00763480);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gTrade_in_value_APO, 0x0075b900);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gSubstitution_value_APO, 0x0074d380);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gPotential_substitution_value_APO, 0x00761c60);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gArmour_starting_value, 100, 0x0074d1c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gPower_starting_value, 100, 0x00761f60);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gOffensive_starting_value, 100, 0x00761d40);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_powerup_time_replacement, 0x0074d1a4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gStarting_money, 3, 0x00762110);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gNet_starting_money, 8, 0x00762160);
+C2_HOOK_VARIABLE_IMPLEMENT(tFloat_bunch_info, gRepair_cost, 0x00761d00);
+C2_HOOK_VARIABLE_IMPLEMENT(tFloat_bunch_info, gRecovery_cost, 0x007634c0);
+C2_HOOK_VARIABLE_IMPLEMENT(tFloat_bunch_info, gCar_softness, 0x0075ba20);
+C2_HOOK_VARIABLE_IMPLEMENT(tFloat_bunch_info, gCar_car_damage_multiplier, 0x0074d600);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gNet_score_targets, 8, 0x007638c0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPickup_respawn_min_time_ms, 0x007447d8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPickup_respawn_max_extra_time_ms, 0x007447e8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDemo_race_rank_equivalent, 0x0074b58c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_demo_opponents, 0x0074b4fc);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDemo_opponents, 15, 0x0074b4c0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gDefault_gravity, 0x0074d3bc);
+/* FIXME: this might be a struct */
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFlic_sound_delay_pre_smack, 0x0068b8b4);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFlic_sound_delay_post_smack, 0x0068b8b8);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFlic_sound_delay_not_in_demo, 0x0068b8bc);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFlic_sound_delay_post_demo, 0x0068b8c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gAuto_increase_credits_dt, 3, 0x0074b740);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gNet_auto_increase_credits_dt, 8, 0x0074b720);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_mutant_tail_parts, 0x007059c0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gMass_mutant_tail_link, 0x00705b78);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gMass_mutant_tail_ball, 0x00705b74);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMass_mine, 0x0065ebbc, 1.f);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gUnderwater_screen_name, 32, 0x0068c6f8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWasted_explosion_chance, 0x00762120);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gExplosion_sound_id, 0x00761f5c);
+C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gExplosion_pix_animation_groups, 0x007620f8);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
@@ -993,7 +1033,7 @@ br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, DRLoadPixelmap, DRLoadPixelmap_original)
 
-void C2_HOOK_FASTCALL LoadBunchOfParameters(tSlot_info* pSlot_info) {
+void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info) {
     char s[256];
     const char *str;
     int i;
@@ -1031,14 +1071,18 @@ void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch) {
 
 void (C2_HOOK_FASTCALL * LoadGeneralParameters_original)(void);
 void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 //defined(C2_HOOKS_ENABLED)
     LoadGeneralParameters_original();
 #else
     tPath_name the_path;
+    size_t i;
+    char* str;
     char s[256];
     char s2[256];
     int position;
     int result;
+    br_scalar armour_mult, power_mult, offensive_mult;
+    int time;
 
     PathCat(the_path, C2V(gApplication_path), "ACTORS");
     PathCat(the_path, the_path, "PROG.ACT");
@@ -1048,20 +1092,20 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
         DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
         DRfclose(C2V(gTempFile));
 
-        for (size_t i = 0; i < strlen(C2V(gDecode_string)); i++) {
+        for (i = 0; i < c2_strlen(C2V(gDecode_string)); i++) {
             C2V(gDecode_string)[i] -= 50;
         }
 
         // trim trailing CRLF etc
-        while (s[0] != '\0' && s[strlen(s) - 1] < 0x20) {
-            s[strlen(s) - 1] = 0;
+        while (s[0] != '\0' && s[c2_strlen(s) - 1] < 0x20) {
+            s[c2_strlen(s) - 1] = 0;
         }
 
-        if (strcmp(s, C2V(gDecode_string)) == 0) {
+        if (c2_strcmp(s, C2V(gDecode_string)) == 0) {
             C2V(gDecode_thing) = 0;
         }
 
-        for (size_t  i = 0; i < strlen(C2V(gDecode_string)); i++) {
+        for (i = 0; i < c2_strlen(C2V(gDecode_string)); i++) {
             C2V(gDecode_string)[i] += 50;
         }
     }
@@ -1071,50 +1115,67 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
         FatalError(kFatalError_FailToOpenGeneralSettings);
     }
 
+    /* Disable TIFF conversion */
     C2V(gDisableTiffConversion) = GetAnInt(C2V(gTempFile));
+    /* Hithers, general then cockpit mode */
     GetALineAndDontArgue(C2V(gTempFile), s2);
-    result = c2_sscanf(&s2[strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
+    result = c2_sscanf(&s2[c2_strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
     if (result == 0) {
         FatalError(kFatalError_MysteriousX_SS, s2, "GENERAL.TXT");
     }
-    c2_sscanf(&s2[position + strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
+    c2_sscanf(&s2[position + c2_strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
     C2V(gCamera_hither) *= 2;
     C2V(gCamera_cockpit_hither) *= 2;
-    C2V(gCamera_Yon) = GetAFloat(C2V(gTempFile));
+    /* Yon */
+    C2V(gCamera_yon) = GetAFloat(C2V(gTempFile));
+    /* Camera angle */
     C2V(gCamera_angle) = GetAFloat(C2V(gTempFile));
+    /* Headup background brightness amount */
     C2V(gHeadupBackgroundBrightness) = GetAnInt(C2V(gTempFile));
+    /* Initial rank */
     C2V(gInitial_rank) = GetAnInt(C2V(gTempFile));
+    /* Credits per rank for each skill level */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_rank)[0], &C2V(gCredits_per_rank)[1], &C2V(gCredits_per_rank)[2]);
 
     LoadGeneralCrushSettings(C2V(gTempFile));
 
+    /* Time per ped kill for each skill level */
     GetThreeInts(C2V(gTempFile), &C2V(gTime_per_ped_kill)[0], &C2V(gTime_per_ped_kill)[1], &C2V(gTime_per_ped_kill)[2]);
+    /* Seconds per unit car damage for each skill level (with peds */
     GetThreeFloats(C2V(gTempFile), &C2V(gSeconds_per_unit_car_damage)[0], &C2V(gSeconds_per_unit_car_damage)[1], &C2V(gSeconds_per_unit_car_damage)[2]);
+    /* Credits per unit car damage for each skill level (with peds) */
     GetThreeFloats(C2V(gTempFile), &C2V(gCredits_per_unit_car_damage)[0], &C2V(gCredits_per_unit_car_damage)[1], &C2V(gCredits_per_unit_car_damage)[2]);
+    /* Time awarded for wasting car for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gTime_wasting_car)[0], &C2V(gTime_wasting_car)[1], &C2V(gTime_wasting_car)[2]);
+    /* Credits awarded for wasting car for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_wasting_car)[0], &C2V(gCredits_wasting_car)[1], &C2V(gCredits_wasting_car)[2]);
+    /* Time awarded for rolling car for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gTime_rolling_car)[0], &C2V(gTime_rolling_car)[1], &C2V(gTime_rolling_car)[2]);
+    /* Credits awarded for rolling car for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_rolling_car)[0], &C2V(gCredits_rolling_car)[1], &C2V(gCredits_rolling_car)[2]);
+    /* Credits awarded for checkpoints for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_checkpoint)[0], &C2V(gCredits_checkpoint)[1], &C2V(gCredits_checkpoint)[2]);
+    /* Jump start fine for each level */
     GetThreeInts(C2V(gTempFile), &C2V(gFine_jump_start)[0], &C2V(gFine_jump_start)[1], &C2V(gFine_jump_start)[2]);
+    /* Credits per second of time bonus */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_second_time_bonus)[0], &C2V(gCredits_per_second_time_bonus)[1], &C2V(gCredits_per_second_time_bonus)[2]);
+    /* Cunning stunt bonus for each skill level */
     GetThreeInts(C2V(gTempFile), &C2V(gCunning_stunt_bonus)[0], &C2V(gCunning_stunt_bonus)[1], &C2V(gCunning_stunt_bonus)[2]);
 
+    /* Cars to use as defaults: */
     GetAString(C2V(gTempFile), C2V(gDefaultCar));
     GetAString(C2V(gTempFile), C2V(gDefaultCockpit));
 
     C2V(gKnobbledFramePeriod) = 0;
     C2V(gUnknownOpponentFactor) = 1.f;
-    C2V(gMinTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
-    C2V(gMaxTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
+    /* Min time in secs after last contact with play before opponent considers repairing */
+    C2V(gMinTimeOpponentRepair) = (int)GetAScalar(C2V(gTempFile));
+    /* Max time in secs after last contact with play before opponent considers repairing */
+    C2V(gMaxTimeOpponentRepair) = (int)GetAScalar(C2V(gTempFile));
 
-    ParseSpecialVolume(C2V(gTempFile), &C2V(gUnderwaterSpecialVolumeSettings), C2V(gUnderwaterScreenName), 0);
+    /* Default underwater special volume parameters */
+    ParseSpecialVolume(C2V(gTempFile), &C2V(gDefault_water_spec_vol), C2V(gUnderwater_screen_name), 0);
 
-<<<<<<< HEAD
-    //unfinished
-    c2_abort();
-//#error "not implemented"
-=======
     /* Initial armour, single player, each skill level */
     /* Initial armour, each network game type */
     LoadBunchOParameters(&C2V(gInitial_APO)[0]);
@@ -1290,88 +1351,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00486ef0, LoadGeneralParameters, LoadGeneralParamete
 void (C2_HOOK_FASTCALL * FinishLoadGeneralParameters_original)(void);
 void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     FinishLoadGeneralParameters_original();
 #else
-    tPath_name the_path;
-    char s[256];
-    char s2[256];
-    int position;
-    int result;
-
-    PathCat(the_path, C2V(gApplication_path), "ACTORS");
-    PathCat(the_path, the_path, "PROG.ACT");
-
-    C2V(gTempFile) = TWT_fopen(the_path, "rb");
-    if (C2V(gTempFile) != NULL) {
-        DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
-        DRfclose(C2V(gTempFile));
-
-        for (size_t i = 0; i < strlen(C2V(gDecode_string)); i++) {
-            C2V(gDecode_string)[i] -= 50;
-        }
-
-        // trim trailing CRLF etc
-        while (s[0] != '\0' && s[strlen(s) - 1] < 0x20) {
-            s[strlen(s) - 1] = 0;
-        }
-
-        if (strcmp(s, C2V(gDecode_string)) == 0) {
-            C2V(gDecode_thing) = 0;
-        }
-
-        for (size_t  i = 0; i < strlen(C2V(gDecode_string)); i++) {
-            C2V(gDecode_string)[i] += 50;
-        }
-    }
-    PathCat(the_path, C2V(gApplication_path), "GENERAL.TXT");
-    C2V(gTempFile) = DRfopen(the_path, "rt");
-    if (C2V(gTempFile) == NULL) {
-        FatalError(kFatalError_FailToOpenGeneralSettings);
-    }
-
-    C2V(gDisableTiffConversion) = GetAnInt(C2V(gTempFile));
-    GetALineAndDontArgue(C2V(gTempFile), s2);
-    result = c2_sscanf(&s2[strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
-    if (result == 0) {
-        FatalError(kFatalError_MysteriousX_SS, s2, "GENERAL.TXT");
-    }
-    c2_sscanf(&s2[position + strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
-    C2V(gCamera_hither) *= 2;
-    C2V(gCamera_cockpit_hither) *= 2;
-    C2V(gCamera_Yon) = GetAFloat(C2V(gTempFile));
-    C2V(gCamera_angle) = GetAFloat(C2V(gTempFile));
-    C2V(gHeadupBackgroundBrightness) = GetAnInt(C2V(gTempFile));
-    C2V(gInitial_rank) = GetAnInt(C2V(gTempFile));
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_rank)[0], &C2V(gCredits_per_rank)[1], &C2V(gCredits_per_rank)[2]);
-
-    LoadGeneralCrushSettings(C2V(gTempFile));
-
-    GetThreeInts(C2V(gTempFile), &C2V(gTime_per_ped_kill)[0], &C2V(gTime_per_ped_kill)[1], &C2V(gTime_per_ped_kill)[2]);
-    GetThreeFloats(C2V(gTempFile), &C2V(gSeconds_per_unit_car_damage)[0], &C2V(gSeconds_per_unit_car_damage)[1], &C2V(gSeconds_per_unit_car_damage)[2]);
-    GetThreeFloats(C2V(gTempFile), &C2V(gCredits_per_unit_car_damage)[0], &C2V(gCredits_per_unit_car_damage)[1], &C2V(gCredits_per_unit_car_damage)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gTime_wasting_car)[0], &C2V(gTime_wasting_car)[1], &C2V(gTime_wasting_car)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_wasting_car)[0], &C2V(gCredits_wasting_car)[1], &C2V(gCredits_wasting_car)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gTime_rolling_car)[0], &C2V(gTime_rolling_car)[1], &C2V(gTime_rolling_car)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_rolling_car)[0], &C2V(gCredits_rolling_car)[1], &C2V(gCredits_rolling_car)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_checkpoint)[0], &C2V(gCredits_checkpoint)[1], &C2V(gCredits_checkpoint)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gFine_jump_start)[0], &C2V(gFine_jump_start)[1], &C2V(gFine_jump_start)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_second_time_bonus)[0], &C2V(gCredits_per_second_time_bonus)[1], &C2V(gCredits_per_second_time_bonus)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCunning_stunt_bonus)[0], &C2V(gCunning_stunt_bonus)[1], &C2V(gCunning_stunt_bonus)[2]);
-
-    GetAString(C2V(gTempFile), C2V(gDefaultCar));
-    GetAString(C2V(gTempFile), C2V(gDefaultCockpit));
-
-    C2V(gKnobbledFramePeriod) = 0;
-    C2V(gUnknownOpponentFactor) = 1.f;
-    C2V(gMinTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
-    C2V(gMaxTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
-
-    ParseSpecialVolume(C2V(gTempFile), &C2V(gUnderwaterSpecialVolumeSettings), C2V(gUnderwaterScreenName), 0);
-
-    //unfinished
-    c2_abort();
-//#error "not implemented"
+    C2V(gDefault_water_spec_vol).screen_pixelmap = BrMapFind(C2V(gUnderwater_screen_name));
+    ReadExplosionInfo(C2V(gTempFile), &C2V(gWasted_explosion_chance), &C2V(gExplosion_sound_id), &C2V(gExplosion_pix_animation_groups));
+    ReadPowerupSmashables(C2V(gTempFile));
+    DRfclose(C2V(gTempFile));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00487dc0, FinishLoadGeneralParameters, FinishLoadGeneralParameters_original)
