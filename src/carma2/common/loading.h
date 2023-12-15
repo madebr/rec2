@@ -214,5 +214,7 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void);
 
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name);
 
+br_uint_32 C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* pFile_name, br_pixelmap** pPixelmaps, br_uint_16 pNum);
+
 #endif //REC2_LOADING_H
 
