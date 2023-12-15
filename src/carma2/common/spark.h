@@ -7,4 +7,6 @@ void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
 int C2_HOOK_FASTCALL GetSmokeOn(void);
 
+void C2_HOOK_FASTCALL GenerateSmokeShades(void);
+
 #endif //REC2_SPARK_H
