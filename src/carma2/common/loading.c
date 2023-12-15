@@ -2,10 +2,12 @@
 
 #include "crush.h"
 #include "errors.h"
+#include "explosions.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
 #include "newgame.h"
+#include "powerups.h"
 #include "utility.h"
 #include "world.h"
 
@@ -55,10 +57,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gDronesOff, 0x00684518);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKnobbledFramePeriod, 0x007634f0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gUnknownOpponentFactor, 0x0065a3cc);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gMinTimeOpponentRepair, 0x0074a684);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gMaxTimeOpponentRepair, 0x0074a688);
-
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gUnderwaterScreenName, 32, 0x0068c6f8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMinTimeOpponentRepair, 0x0074a684);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMaxTimeOpponentRepair, 0x0074a688);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_map_index, 0x0068b88c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gKey_mapping, 77, 0x0074b5e0);
@@ -70,7 +70,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gDecode_string, 14, 0x00655e38, {   
     0x9B, 0x52, 0x93, 0x9f, 0x52, 0x98, 0x9b,                                    \
     0x96, 0x96, 0x9e, 0x9B, 0xa0, 0x99, 0x0 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDecode_thing, 0x00655e30);
-C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume, gUnderwaterSpecialVolumeSettings, 0x00761b80);
+C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume, gDefault_water_spec_vol, 0x00761b80);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gMisc_strings, 300, 0x006b5f40);
 
@@ -96,6 +96,57 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_race_file_index, 0x0068c6f4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCountRaceGroups, 0x007634ec);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups, 0x0068b8a0);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups2, 0x0074d5e4);
+
+/* FIXME: these are probably stored as an array (e.g. gInitial_APO, gInitial_potential_APO, ...) */
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_armour, 0x0074d4c0);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_power, 0x0074d4ec);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_offensive, 0x0074d518);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_armour_potential, 0x007622a0);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_power_potential, 0x007622cc);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gInitial_offensive_potential, 0x007622f8);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_armour, 0x0074cfa0);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_power, 0x0074cfcc);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_offensive, 0x0074cff8);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gCost_APO, 0x00763480);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gTrade_in_value_APO, 0x0075b900);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gSubstitution_value_APO, 0x0074d380);
+C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gPotential_substitution_value_APO, 0x00761c60);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gArmour_starting_value, 100, 0x0074d1c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gPower_starting_value, 100, 0x00761f60);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gOffensive_starting_value, 100, 0x00761d40);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_powerup_time_replacement, 0x0074d1a4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gStarting_money, 3, 0x00762110);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gNet_starting_money, 8, 0x00762160);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gRepair_cost, 3, 0x00761d00);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gNet_repair_cost, 8, 0x00761d0c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gRecovery_cost, 3, 0x007634c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gNet_recovery_cost, 8, 0x007634cc);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gCar_softness, 3, 0x0075ba20);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gNet_car_softness, 8, 0x0075ba2c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gCar_car_damage_multiplier, 3, 0x0074d600);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gNet_car_car_damage_multiplier, 8, 0x0074d60c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gNet_score_targets, 8, 0x007638c0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPickup_respawn_min_time_ms, 0x007447d8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPickup_respawn_max_extra_time_ms, 0x007447e8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDemo_race_rank_equivalent, 0x0074b58c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_demo_opponents, 0x0074b4fc);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDemo_opponents, 15, 0x0074b4c0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gDefault_gravity, 0x0074d3bc);
+/* FIXME: this might be a struct */
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFlic_sound_delay_pre_smack, 0x0068b8b4);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFlic_sound_delay_post_smack, 0x0068b8b8);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFlic_sound_delay_not_in_demo, 0x0068b8bc);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFlic_sound_delay_post_demo, 0x0068b8c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gAuto_increase_credits_dt, 3, 0x0074b740);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gNet_auto_increase_credits_dt, 8, 0x0074b720);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_mutant_tail_parts, 0x007059c0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gMass_mutant_tail_link, 0x00705b78);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gMass_mutant_tail_ball, 0x00705b74);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMass_mine, 0x0065ebbc, 1.f);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gUnderwater_screen_name, 32, 0x0068c6f8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWasted_explosion_chance, 0x00762120);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gExplosion_sound_id, 0x00761f5c);
+C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gExplosion_pix_animation_groups, 0x007620f8);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
@@ -995,14 +1046,18 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, DRLoadPixelmap, DRLoadPixelmap_original)
 
 void (C2_HOOK_FASTCALL * LoadGeneralParameters_original)(void);
 void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0 //defined(C2_HOOKS_ENABLED)
     LoadGeneralParameters_original();
 #else
     tPath_name the_path;
+    size_t i;
+    char* str;
     char s[256];
     char s2[256];
     int position;
     int result;
+    br_scalar armour_mult, power_mult, offensive_mult;
+    int time;
 
     PathCat(the_path, C2V(gApplication_path), "ACTORS");
     PathCat(the_path, the_path, "PROG.ACT");
@@ -1012,20 +1067,20 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
         DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
         DRfclose(C2V(gTempFile));
 
-        for (size_t i = 0; i < strlen(C2V(gDecode_string)); i++) {
+        for (i = 0; i < c2_strlen(C2V(gDecode_string)); i++) {
             C2V(gDecode_string)[i] -= 50;
         }
 
         // trim trailing CRLF etc
-        while (s[0] != '\0' && s[strlen(s) - 1] < 0x20) {
-            s[strlen(s) - 1] = 0;
+        while (s[0] != '\0' && s[c2_strlen(s) - 1] < 0x20) {
+            s[c2_strlen(s) - 1] = 0;
         }
 
-        if (strcmp(s, C2V(gDecode_string)) == 0) {
+        if (c2_strcmp(s, C2V(gDecode_string)) == 0) {
             C2V(gDecode_thing) = 0;
         }
 
-        for (size_t  i = 0; i < strlen(C2V(gDecode_string)); i++) {
+        for (i = 0; i < c2_strlen(C2V(gDecode_string)); i++) {
             C2V(gDecode_string)[i] += 50;
         }
     }
@@ -1035,48 +1090,328 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
         FatalError(kFatalError_FailToOpenGeneralSettings);
     }
 
+    /* Disable TIFF conversion */
     C2V(gDisableTiffConversion) = GetAnInt(C2V(gTempFile));
+    /* Hithers, general then cockpit mode */
     GetALineAndDontArgue(C2V(gTempFile), s2);
-    result = c2_sscanf(&s2[strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
+    result = c2_sscanf(&s2[c2_strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
     if (result == 0) {
         FatalError(kFatalError_MysteriousX_SS, s2, "GENERAL.TXT");
     }
-    c2_sscanf(&s2[position + strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
+    c2_sscanf(&s2[position + c2_strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
     C2V(gCamera_hither) *= 2;
     C2V(gCamera_cockpit_hither) *= 2;
-    C2V(gCamera_Yon) = GetAFloat(C2V(gTempFile));
+    /* Yon */
+    C2V(gCamera_yon) = GetAFloat(C2V(gTempFile));
+    /* Camera angle */
     C2V(gCamera_angle) = GetAFloat(C2V(gTempFile));
+    /* Headup background brightness amount */
     C2V(gHeadupBackgroundBrightness) = GetAnInt(C2V(gTempFile));
+    /* Initial rank */
     C2V(gInitial_rank) = GetAnInt(C2V(gTempFile));
+    /* Credits per rank for each skill level */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_rank)[0], &C2V(gCredits_per_rank)[1], &C2V(gCredits_per_rank)[2]);
 
     LoadGeneralCrushSettings(C2V(gTempFile));
 
+    /* Time per ped kill for each skill level */
     GetThreeInts(C2V(gTempFile), &C2V(gTime_per_ped_kill)[0], &C2V(gTime_per_ped_kill)[1], &C2V(gTime_per_ped_kill)[2]);
+    /* Seconds per unit car damage for each skill level (with peds */
     GetThreeFloats(C2V(gTempFile), &C2V(gSeconds_per_unit_car_damage)[0], &C2V(gSeconds_per_unit_car_damage)[1], &C2V(gSeconds_per_unit_car_damage)[2]);
+    /* Credits per unit car damage for each skill level (with peds) */
     GetThreeFloats(C2V(gTempFile), &C2V(gCredits_per_unit_car_damage)[0], &C2V(gCredits_per_unit_car_damage)[1], &C2V(gCredits_per_unit_car_damage)[2]);
+    /* Time awarded for wasting car for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gTime_wasting_car)[0], &C2V(gTime_wasting_car)[1], &C2V(gTime_wasting_car)[2]);
+    /* Credits awarded for wasting car for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_wasting_car)[0], &C2V(gCredits_wasting_car)[1], &C2V(gCredits_wasting_car)[2]);
+    /* Time awarded for rolling car for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gTime_rolling_car)[0], &C2V(gTime_rolling_car)[1], &C2V(gTime_rolling_car)[2]);
+    /* Credits awarded for rolling car for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_rolling_car)[0], &C2V(gCredits_rolling_car)[1], &C2V(gCredits_rolling_car)[2]);
+    /* Credits awarded for checkpoints for each skill level (with peds) */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_checkpoint)[0], &C2V(gCredits_checkpoint)[1], &C2V(gCredits_checkpoint)[2]);
+    /* Jump start fine for each level */
     GetThreeInts(C2V(gTempFile), &C2V(gFine_jump_start)[0], &C2V(gFine_jump_start)[1], &C2V(gFine_jump_start)[2]);
+    /* Credits per second of time bonus */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_second_time_bonus)[0], &C2V(gCredits_per_second_time_bonus)[1], &C2V(gCredits_per_second_time_bonus)[2]);
+    /* Cunning stunt bonus for each skill level */
     GetThreeInts(C2V(gTempFile), &C2V(gCunning_stunt_bonus)[0], &C2V(gCunning_stunt_bonus)[1], &C2V(gCunning_stunt_bonus)[2]);
 
+    /* Cars to use as defaults: */
     GetAString(C2V(gTempFile), C2V(gDefaultCar));
     GetAString(C2V(gTempFile), C2V(gDefaultCockpit));
 
     C2V(gKnobbledFramePeriod) = 0;
     C2V(gUnknownOpponentFactor) = 1.f;
-    C2V(gMinTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
-    C2V(gMaxTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
+    /* Min time in secs after last contact with play before opponent considers repairing */
+    C2V(gMinTimeOpponentRepair) = (int)GetAScalar(C2V(gTempFile));
+    /* Max time in secs after last contact with play before opponent considers repairing */
+    C2V(gMaxTimeOpponentRepair) = (int)GetAScalar(C2V(gTempFile));
 
-    ParseSpecialVolume(C2V(gTempFile), &C2V(gUnderwaterSpecialVolumeSettings), C2V(gUnderwaterScreenName), 0);
+    /* Default underwater special volume parameters */
+    ParseSpecialVolume(C2V(gTempFile), &C2V(gDefault_water_spec_vol), C2V(gUnderwater_screen_name), 0);
 
-    //unfinished
-    c2_abort();
-//#error "not implemented"
+    /* Initial armour, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_armour).initial[0], &C2V(gInitial_armour).initial[1], &C2V(gInitial_armour).initial[2]);
+    /* Initial armour, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_armour).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_armour).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* Initial power, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_power).initial[0], &C2V(gInitial_power).initial[1], &C2V(gInitial_power).initial[2]);
+    /* Initial power, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_power).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_power).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* Initial offensive, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_offensive).initial[0], &C2V(gInitial_offensive).initial[1], &C2V(gInitial_offensive).initial[2]);
+    /* Initial offensive, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_offensive).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_offensive).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Initial potential armour, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_armour_potential).initial[0], &C2V(gInitial_armour_potential).initial[1], &C2V(gInitial_armour_potential).initial[2]);
+    /* Initial potential armour, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_armour_potential).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_armour_potential).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* Initial potential power, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_power_potential).initial[0], &C2V(gInitial_power_potential).initial[1], &C2V(gInitial_power_potential).initial[2]);
+    /* Initial potential power, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_power_potential).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_power_potential).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* Initial potential offensive, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gInitial_offensive_potential).initial[0], &C2V(gInitial_offensive_potential).initial[1], &C2V(gInitial_offensive_potential).initial[2]);
+    /* Initial potential offensive, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_offensive_potential).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gInitial_offensive_potential).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Max armour, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gMax_armour).initial[0], &C2V(gMax_armour).initial[1], &C2V(gMax_armour).initial[2]);
+    /* Max armour, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gMax_armour).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gMax_armour).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* Max power, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gMax_power).initial[0], &C2V(gMax_power).initial[1], &C2V(gMax_power).initial[2]);
+    /* Max power, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gMax_power).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gMax_power).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* Max offensive, single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gMax_offensive).initial[0], &C2V(gMax_offensive).initial[1], &C2V(gMax_offensive).initial[2]);
+    /* Max offensive, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gMax_offensive).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gMax_offensive).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* APO cost, single player */
+    GetThreeInts(C2V(gTempFile), &C2V(gCost_APO).initial[0], &C2V(gCost_APO).initial[1], &C2V(gCost_APO).initial[2]);
+    /* APO cost, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gCost_APO).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gCost_APO).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* Trade-in APO value, single player */
+    GetThreeInts(C2V(gTempFile), &C2V(gTrade_in_value_APO).initial[0], &C2V(gTrade_in_value_APO).initial[1], &C2V(gTrade_in_value_APO).initial[2]);
+    /* Trade-in APO value, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gTrade_in_value_APO).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gTrade_in_value_APO).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* APO substitution value, single player */
+    GetThreeInts(C2V(gTempFile), &C2V(gSubstitution_value_APO).initial[0], &C2V(gSubstitution_value_APO).initial[1], &C2V(gSubstitution_value_APO).initial[2]);
+    /* APO substitution, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gSubstitution_value_APO).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gSubstitution_value_APO).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+    /* APO potential substitution value, single player */
+    GetThreeInts(C2V(gTempFile), &C2V(gPotential_substitution_value_APO).initial[0], &C2V(gPotential_substitution_value_APO).initial[1], &C2V(gPotential_substitution_value_APO).initial[2]);
+    /* APO potential substitution, each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gPotential_substitution_value_APO).initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gPotential_substitution_value_APO).initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Armour starting value */
+    C2V(gArmour_starting_value)[0] = GetAScalar(C2V(gTempFile));
+    /* Power starting value */
+    C2V(gPower_starting_value)[0] = GetAScalar(C2V(gTempFile));
+    /* Offensive starting value */
+    C2V(gOffensive_starting_value)[0] = GetAScalar(C2V(gTempFile));
+    /* Armour per-level multiplier */
+    armour_mult = GetAScalar(C2V(gTempFile));
+    /* Power per-level multiplier */
+    power_mult = GetAScalar(C2V(gTempFile));
+    /* Offensive per-level multiplier */
+    offensive_mult = GetAScalar(C2V(gTempFile));
+    for (i = 1; i < REC2_ASIZE(C2V(gArmour_starting_value)); i++) {
+        C2V(gArmour_starting_value)[i] = C2V(gArmour_starting_value)[i - 1] * armour_mult;
+        C2V(gPower_starting_value)[i] = C2V(gPower_starting_value)[i - 1] * power_mult;
+        C2V(gOffensive_starting_value)[i] = C2V(gOffensive_starting_value)[i - 1] * offensive_mult;
+    }
+
+    /* Powerup number to use when time powerup got during network game */
+    C2V(gNet_powerup_time_replacement) = GetAnInt(C2V(gTempFile));
+
+    /* Starting money for each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gStarting_money)[0], &C2V(gStarting_money)[1], &C2V(gStarting_money)[2]);
+    /* Starting money in network mode */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+#if defined(REC2_REC2_FIX_BUGS)
+    for (i = 0; i < REC2_ASIZE(C2V(gNet_starting_money)); i++) {
+#else
+    for (i = 0; i < 5; i++) {
+#endif
+        c2_sscanf(str, "%d", &C2V(gNet_starting_money)[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Repair cost for each skill level (cred per % damage) */
+    GetThreeFloats(C2V(gTempFile), &C2V(gRepair_cost)[0], &C2V(gRepair_cost)[1], &C2V(gRepair_cost)[2]);
+    /* Repair cost for each net game (cred per % damage) */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gNet_repair_cost)); i++) {
+        c2_sscanf(str, "%f", &C2V(gNet_repair_cost)[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Recovery cost for each skill level */
+    GetThreeFloats(C2V(gTempFile), &C2V(gRecovery_cost)[0], &C2V(gRecovery_cost)[1], &C2V(gRecovery_cost)[2]);
+    /* Recovery cost for each net game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gNet_recovery_cost)); i++) {
+        c2_sscanf(str, "%f", &C2V(gNet_recovery_cost)[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Car softness factor for each net skill level */
+    GetThreeFloats(C2V(gTempFile), &C2V(gCar_softness)[0], &C2V(gCar_softness)[1], &C2V(gCar_softness)[2]);
+    /* Car softness factor for each net game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gNet_car_softness)); i++) {
+        c2_sscanf(str, "%f", &C2V(gNet_car_softness)[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Car-to-car damage multiplier for each net skill level */
+    GetThreeFloats(C2V(gTempFile), &C2V(gCar_car_damage_multiplier)[0], &C2V(gCar_car_damage_multiplier)[1], &C2V(gCar_car_damage_multiplier)[2]);
+    /* Car-to-car damage multiplier for each net game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gNet_car_car_damage_multiplier)); i++) {
+        c2_sscanf(str, "%f", &C2V(gNet_car_car_damage_multiplier)[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Score targets for each net game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gNet_score_targets)); i++) {
+        c2_sscanf(str, "%f", &C2V(gNet_score_targets)[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Pickup respawn min time (seconds) */
+    C2V(gPickup_respawn_min_time_ms) = 1000 * GetAnInt(C2V(gTempFile));
+    /* Pickup respawn max extra time (seconds) */
+    C2V(gPickup_respawn_max_extra_time_ms) = 100 * GetAnInt(C2V(gTempFile));
+
+    /* Demo race rank equivalent */
+    C2V(gDemo_race_rank_equivalent) = GetAnInt(C2V(gTempFile));
+
+    /* Number of demo opponents */
+    C2V(gCount_demo_opponents) = GetAnInt(C2V(gTempFile));
+    /* Demo opponents */
+    for (i = 0; (int)i < C2V(gCount_demo_opponents); i++) {
+        C2V(gDemo_opponents)[i] = GetAnInt(C2V(gTempFile));
+    }
+
+    /* default Gravity Multiplier */
+    C2V(gDefault_gravity) = GetAScalar(C2V(gTempFile));
+
+    /* Flic sound delays */
+    /* Delay (in seconds) before sound during pre-smack flic */
+    C2V(gFlic_sound_delay_pre_smack) = GetAFloat(C2V(gTempFile));
+    /* Delay (in seconds) before sound during post-smack flic */
+    C2V(gFlic_sound_delay_post_smack) = GetAFloat(C2V(gTempFile));
+    /* Delay (in seconds) before sound during 'not in demo' flic */
+    C2V(gFlic_sound_delay_not_in_demo) = GetAFloat(C2V(gTempFile));
+    /* Delay (in seconds) before sound during post-demo slideshow flic */
+    C2V(gFlic_sound_delay_post_demo) = GetAFloat(C2V(gTempFile));
+
+    /* Time (in seconds) that credits take before they reach the recovery
+     * amount when self-increasing (if starting at zero)
+     *
+     * First line is for single-player games, second is for each type of
+     * network game. Zero means don't tick up.
+     */
+    time = GetAnInt(C2V(gTempFile));
+    for (i = 0; (int)i < REC2_ASIZE(C2V(gAuto_increase_credits_dt)); i++) {
+        C2V(gAuto_increase_credits_dt)[i] = (int)((float)(1000 * time) / (.02f * (float)C2V(gRecovery_cost[i])));
+    }
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; (int)i < REC2_ASIZE(C2V(gNet_score_targets)); i++) {
+        float t;
+        c2_sscanf(str, "%d", &t);
+        C2V(gNet_auto_increase_credits_dt)[i] = (int)((float)(1000 * t) / (.02f * (float)C2V(gRecovery_cost[i])));
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Mutant tail thing settings */
+    /* Number of links including ball */
+    C2V(gCount_mutant_tail_parts) = GetAnInt(C2V(gTempFile));
+    /* Mass of each link */
+    C2V(gMass_mutant_tail_link) = GetAFloat(C2V(gTempFile));
+    /* Mass of ball */
+    C2V(gMass_mutant_tail_ball) = GetAFloat(C2V(gTempFile));
+
+    /*  Mine / Mortar weight */
+    C2V(gMass_mine) = GetAFloat(C2V(gTempFile));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00486ef0, LoadGeneralParameters, LoadGeneralParameters_original)
@@ -1084,88 +1419,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00486ef0, LoadGeneralParameters, LoadGeneralParamete
 void (C2_HOOK_FASTCALL * FinishLoadGeneralParameters_original)(void);
 void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     FinishLoadGeneralParameters_original();
 #else
-    tPath_name the_path;
-    char s[256];
-    char s2[256];
-    int position;
-    int result;
-
-    PathCat(the_path, C2V(gApplication_path), "ACTORS");
-    PathCat(the_path, the_path, "PROG.ACT");
-
-    C2V(gTempFile) = TWT_fopen(the_path, "rb");
-    if (C2V(gTempFile) != NULL) {
-        DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
-        DRfclose(C2V(gTempFile));
-
-        for (size_t i = 0; i < strlen(C2V(gDecode_string)); i++) {
-            C2V(gDecode_string)[i] -= 50;
-        }
-
-        // trim trailing CRLF etc
-        while (s[0] != '\0' && s[strlen(s) - 1] < 0x20) {
-            s[strlen(s) - 1] = 0;
-        }
-
-        if (strcmp(s, C2V(gDecode_string)) == 0) {
-            C2V(gDecode_thing) = 0;
-        }
-
-        for (size_t  i = 0; i < strlen(C2V(gDecode_string)); i++) {
-            C2V(gDecode_string)[i] += 50;
-        }
-    }
-    PathCat(the_path, C2V(gApplication_path), "GENERAL.TXT");
-    C2V(gTempFile) = DRfopen(the_path, "rt");
-    if (C2V(gTempFile) == NULL) {
-        FatalError(kFatalError_FailToOpenGeneralSettings);
-    }
-
-    C2V(gDisableTiffConversion) = GetAnInt(C2V(gTempFile));
-    GetALineAndDontArgue(C2V(gTempFile), s2);
-    result = c2_sscanf(&s2[strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
-    if (result == 0) {
-        FatalError(kFatalError_MysteriousX_SS, s2, "GENERAL.TXT");
-    }
-    c2_sscanf(&s2[position + strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
-    C2V(gCamera_hither) *= 2;
-    C2V(gCamera_cockpit_hither) *= 2;
-    C2V(gCamera_Yon) = GetAFloat(C2V(gTempFile));
-    C2V(gCamera_angle) = GetAFloat(C2V(gTempFile));
-    C2V(gHeadupBackgroundBrightness) = GetAnInt(C2V(gTempFile));
-    C2V(gInitial_rank) = GetAnInt(C2V(gTempFile));
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_rank)[0], &C2V(gCredits_per_rank)[1], &C2V(gCredits_per_rank)[2]);
-
-    LoadGeneralCrushSettings(C2V(gTempFile));
-
-    GetThreeInts(C2V(gTempFile), &C2V(gTime_per_ped_kill)[0], &C2V(gTime_per_ped_kill)[1], &C2V(gTime_per_ped_kill)[2]);
-    GetThreeFloats(C2V(gTempFile), &C2V(gSeconds_per_unit_car_damage)[0], &C2V(gSeconds_per_unit_car_damage)[1], &C2V(gSeconds_per_unit_car_damage)[2]);
-    GetThreeFloats(C2V(gTempFile), &C2V(gCredits_per_unit_car_damage)[0], &C2V(gCredits_per_unit_car_damage)[1], &C2V(gCredits_per_unit_car_damage)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gTime_wasting_car)[0], &C2V(gTime_wasting_car)[1], &C2V(gTime_wasting_car)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_wasting_car)[0], &C2V(gCredits_wasting_car)[1], &C2V(gCredits_wasting_car)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gTime_rolling_car)[0], &C2V(gTime_rolling_car)[1], &C2V(gTime_rolling_car)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_rolling_car)[0], &C2V(gCredits_rolling_car)[1], &C2V(gCredits_rolling_car)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_checkpoint)[0], &C2V(gCredits_checkpoint)[1], &C2V(gCredits_checkpoint)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gFine_jump_start)[0], &C2V(gFine_jump_start)[1], &C2V(gFine_jump_start)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_second_time_bonus)[0], &C2V(gCredits_per_second_time_bonus)[1], &C2V(gCredits_per_second_time_bonus)[2]);
-    GetThreeInts(C2V(gTempFile), &C2V(gCunning_stunt_bonus)[0], &C2V(gCunning_stunt_bonus)[1], &C2V(gCunning_stunt_bonus)[2]);
-
-    GetAString(C2V(gTempFile), C2V(gDefaultCar));
-    GetAString(C2V(gTempFile), C2V(gDefaultCockpit));
-
-    C2V(gKnobbledFramePeriod) = 0;
-    C2V(gUnknownOpponentFactor) = 1.f;
-    C2V(gMinTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
-    C2V(gMaxTimeOpponentRepair) = GetAScalar(C2V(gTempFile));
-
-    ParseSpecialVolume(C2V(gTempFile), &C2V(gUnderwaterSpecialVolumeSettings), C2V(gUnderwaterScreenName), 0);
-
-    //unfinished
-    c2_abort();
-//#error "not implemented"
+    C2V(gDefault_water_spec_vol).screen_pixelmap = BrMapFind(C2V(gUnderwater_screen_name));
+    ReadExplosionInfo(C2V(gTempFile), &C2V(gWasted_explosion_chance), &C2V(gExplosion_sound_id), &C2V(gExplosion_pix_animation_groups));
+    ReadPowerupSmashables(C2V(gTempFile));
+    DRfclose(C2V(gTempFile));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00487dc0, FinishLoadGeneralParameters, FinishLoadGeneralParameters_original)
