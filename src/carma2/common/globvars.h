@@ -52,6 +52,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_temp_path, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_movie_path_stub, 256);
 
 C2_HOOK_VARIABLE_DECLARE(int, gNet_last_game_type);
+C2_HOOK_VARIABLE_DECLARE(int, gMap_view);
+
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;
