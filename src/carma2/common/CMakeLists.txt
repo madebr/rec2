@@ -2,6 +2,8 @@ add_library(c2_common STATIC
     ../include/rec2_macros.h
     ../include/rec2_types.h
 
+    animation.c
+    animation.h
     brucetrk.c
     brucetrk.h
     car.c
