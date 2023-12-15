@@ -2260,3 +2260,15 @@ void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name) {
     BrMaterialAddMany(material_array, number_of_materials);
 }
 C2_HOOK_FUNCTION(0x0048f1d0, DRLoadMaterials)
+
+void (C2_HOOK_FASTCALL * DisableVertexColours_original)(br_model** pModels, int pCount);
+void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisableVertexColours_original(pModels, pCount);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00518690, DisableVertexColours, DisableVertexColours_original)
+
