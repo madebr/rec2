@@ -5,6 +5,8 @@ add_library(c2_platform STATIC
 
 if(WIN32)
     target_sources(c2_platform PRIVATE
+        win32/win32_ssdx.c
+        win32/win32_ssdx.h
         win32/win32_dinput.c
         win32/win32_dinput.h
         win32/win32.c
@@ -19,6 +21,7 @@ if(WIN32)
     )
     find_library(DINPUT_LIBRARY NAMES dinput)
     find_library(DXGUID_LIBRARY NAMES dxguid)
+    find_library(DSOUND_LIBRARY NAMES dsound)
     if(NOT DINPUT_LIBRARY OR NOT DXGUID_LIBRARY)
         message(FATAL_ERROR "Could not find dinput and/or dxguid (provided by older DirectX SDK's)")
     endif()
@@ -26,6 +29,7 @@ if(WIN32)
         PRIVATE
             ${DINPUT_LIBRARY}
             ${DXGUID_LIBRARY}
+            ${DSOUND_LIBRARY}
     )
 else()
     message(FATAL_ERROR "Unsupported platform")
