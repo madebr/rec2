@@ -949,6 +949,17 @@ FILE* C2_HOOK_FASTCALL TWT_fopen(const char* pPath, const char* mode) {
 }
 C2_HOOK_FUNCTION(0x004b4780, TWT_fopen)
 
+void C2_HOOK_FASTCALL DRForEveryArchivedFile(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine) {
+    tPath_name the_path;
+    tTWTVFS twt;
+
+    PathCat(the_path, pThe_path, pArchive_name);
+    twt = TWT_MountEx(the_path);
+    DRForEveryFile(the_path, pAction_routine);
+    TWT_UnmountEx(twt);
+}
+C2_HOOK_FUNCTION(0x0048f360, DRForEveryArchivedFile)
+
 void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     int twt;
     unsigned int i;
