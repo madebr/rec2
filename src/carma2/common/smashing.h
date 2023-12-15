@@ -16,4 +16,6 @@ void C2_HOOK_FASTCALL ReadSmashableInitialPosition(FILE* pFile, tSmashable_initi
 
 void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed);
 
-#endif //REC2_DEPTH_H
+void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes);
+
+#endif //REC2_SMASHING_H
