@@ -1253,6 +1253,15 @@ void C2_HOOK_FASTCALL LoadMaterialCallback(const char* pPath) {
 }
 C2_HOOK_FUNCTION(0x00502a70, LoadMaterialCallback)
 
+void C2_HOOK_FASTCALL LoadSomeMaterialsWithShading(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
+
+    C2V(gMaterial_shading_for_callback) = pShading;
+    C2V(gStorageForCallbacks) = pStorage;
+    DRForEveryFile(pPath, LoadMaterialCallback);
+    C2V(gMaterial_shading_for_callback) = kRendererShadingType_Undefined;
+}
+C2_HOOK_FUNCTION(0x00502ad0, LoadSomeMaterialsWithShading)
+
 tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat) {
     int i;
 
