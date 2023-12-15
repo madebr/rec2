@@ -2178,3 +2178,17 @@ void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name) {
     BrTableAddMany(table_array, number_of_tables);
 }
 C2_HOOK_FUNCTION(0x0048f100, DRLoadShadeTable)
+
+void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name) {
+    br_material* material_array[100];
+    int i;
+    int number_of_materials;
+
+    PossibleService();
+    number_of_materials = BrMaterialLoadMany(pPath_name, material_array, REC2_ASIZE(material_array));
+    for (i = 0; i < number_of_materials; i++) {
+        material_array[i]->flags &= ~BR_MATF_LIGHT;
+    }
+    BrMaterialAddMany(material_array, number_of_materials);
+}
+C2_HOOK_FUNCTION(0x0048f1d0, DRLoadMaterials)
