@@ -541,3 +541,11 @@ void C2_HOOK_FASTCALL DisableLights(void) {
 }
 C2_HOOK_FUNCTION(0x0047d6a0, DisableLights)
 
+void C2_HOOK_FASTCALL EnableLights(void) {
+    int i;
+
+    for (i = 0; i < C2V(gNumber_of_lights); i++) {
+        BrLightEnable(C2V(gLight_array)[i]);
+    }
+}
+C2_HOOK_FUNCTION(0x0047d6d0, EnableLights)
