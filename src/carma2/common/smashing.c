@@ -80,3 +80,22 @@ void C2_HOOK_FASTCALL ReadSmashableInitialPosition(FILE* pFile, tSmashable_initi
     }
 }
 C2_HOOK_FUNCTION(0x004ee550, ReadSmashableInitialPosition)
+
+void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_speed_spec* pInitial_speed) {
+
+    C2_HOOK_BUG_ON(sizeof(tSmashable_initial_speed_spec) != 28);
+
+    /* Min,max speed towards car */
+    GetPairOfFloats(pFile, &pInitial_speed->min_speed, &pInitial_speed->max_speed);
+    /* Impactee velocity factor */
+    pInitial_speed->impactee_velocity_factor = GetAScalar(pFile);
+    /* Random velocity (max) */
+    pInitial_speed->random_velocity_max = GetAScalar(pFile);
+    /* Random up velocity (max) */
+    pInitial_speed->random_up_velocity_max = GetAScalar(pFile);
+    /* Random normal velocity (max) */
+    pInitial_speed->random_normal_velocity_max = GetAScalar(pFile);
+    /* Random spin rate (max) */
+    pInitial_speed->random_spin_rate_max = GetAScalar(pFile);
+}
+C2_HOOK_FUNCTION(0x004ee500, ReadSmashableInitialSpeed)
