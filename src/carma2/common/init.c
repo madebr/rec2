@@ -429,3 +429,18 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004816b0, InitGame, InitGame_original)
+
+int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth) {
+    int new_width;
+
+    if (C2V(gUse_actor_dimming) && C2V(gTexture_power_of_2)) {
+        new_width = 1;
+        while (pWidth > new_width) {
+            new_width *= 2;
+        }
+    } else {
+        new_width = pWidth;
+    }
+    return new_width;
+}
+C2_HOOK_FUNCTION(0x0044ba60, Fix2DTextureWidth)
