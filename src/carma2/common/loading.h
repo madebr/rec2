@@ -218,5 +218,7 @@ br_uint_32 C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* pFile_name, br_pixelm
 
 void C2_HOOK_FASTCALL DRLoadPalette(const char* p_path);
 
+void C2_HOOK_FASTCALL DRLoadShadeTable(const char* p_path);
+
 #endif //REC2_LOADING_H
 
