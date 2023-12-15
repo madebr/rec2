@@ -47,6 +47,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gUniverse_actor, 0x0074d44c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gNon_track_actor, 0x007634b8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gDont_render_actor, 0x00761ce4);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gRussels_fannies, 0x006aa5c4);
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_quality, 32, 0x00705220);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_compressor, 32, 0x00705200);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gQuick_time_banner_number, 0x0065ef30, 1);
