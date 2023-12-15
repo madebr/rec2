@@ -55,21 +55,32 @@ void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file) {
     if (GetAnInt(file) != 4) {
         PDFatalError("Wrong version of CRUSH SETTINGS");
     }
+    /* CRUSHING */
     C2V(gDistortion_factor) = GetAScalar(file);
     C2V(gMin_crush_force) = GetAScalar(file);
     C2V(gMax_crush_force) = GetAScalar(file);
     C2V(gForce_to_movement_factor) = GetAScalar(file);
     C2V(gMax_crush_dist_sq) = GetAScalar(file);
+
+    /* SPLITTING */
     C2V(gMin_force_to_split_XZ_per_tonne) = GetAScalar(file);
     C2V(gMin_force_to_split_Y_per_tonne) = GetAScalar(file);
     C2V(gMin_split_damage) = GetAnInt(file);
     C2V(gMax_split_damage) = GetAnInt(file);
+
+    /* BUCKLING */
     C2V(gChance_of_inverse_buckle) = GetAScalar(file);
+
+    /* FLAPPING AND JOINT SNAPPING */
     C2V(gFlap_inertia_fudge_biscuit) = GetAScalar(file);
     C2V(gBatty_gravity) = GetAScalar(file);
     C2V(gTorque_to_snap_per_tonne) = GetAScalar(file);
+
+    /* DETACHING */
     C2V(gMax_detach_time_ms) = GetAScalar(file);
     C2V(gNormal_force_to_detach) = GetAScalar(file);
+
+    /* BENDING */
     C2V(gMin_bend_force) = GetAScalar(file);
     C2V(gChance_of_bending) = GetAScalar(file);
     C2V(gMin_bend_angle) = GetAScalar(file);
