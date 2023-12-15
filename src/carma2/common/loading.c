@@ -1,19 +1,25 @@
 #include "loading.h"
 
+#include "brucetrk.h"
+#include "controls.h"
 #include "crush.h"
+#include "depth.h"
 #include "errors.h"
 #include "explosions.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
+#include "init.h"
 #include "newgame.h"
 #include "powerups.h"
+#include "spark.h"
 #include "utility.h"
 #include "world.h"
 
 #include "platform.h"
 
 #include <brender/brender.h>
+#include "rec2_logging.h"
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
@@ -1892,6 +1898,89 @@ void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048ba60, LoadHeadups, LoadHeadups_original)
+
+int C2_HOOK_FASTCALL SaveOptions(void) {
+    tPath_name the_path;
+    FILE* f;
+
+    PathCat(the_path, C2V(gApplication_path), "OPTIONS.TXT");
+    PDFileUnlock(the_path);
+    f = DRfopen(the_path, "wt");
+    if (f == NULL) {
+        return 0;
+    }
+
+#define BAIL_IF_NEGATIVE(VAL)            \
+    if ((VAL) < 0) {                     \
+        rec2_log_warn(#VAL " FAILED\n"); \
+        return 0;                        \
+    }
+
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "YonFactor %f\n", GetYonFactor()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "SkyTextureOn %d\n", GetSkyTextureOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "CarTexturingLevel %d\n", GetCarTexturingLevel()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "RoadTexturingLevel %d\n", GetRoadTexturingLevel()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "WallTexturingLevel %d\n", GetWallTexturingLevel()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "ShadowLevel %d\n", GetShadowLevel()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "DepthCueingOn %d\n", GetDepthCueingOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "Yon %f\n", GetYon()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "CarSimplificationLevel %d\n", GetCarSimplificationLevel()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "AccessoryRendering %d\n", GetAccessoryRendering()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "SmokeOn %d\n", GetSmokeOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "SoundDetailLevel %d\n", GetSoundDetailLevel()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "ScreenSize %d\n", GetScreenSize()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapRenderX %f\n", C2V(gMap_render_x)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapRenderY %f\n", C2V(gMap_render_y)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapRenderWidth %f\n", C2V(gMap_render_width)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapRenderHeight %f\n", C2V(gMap_render_height)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapMode %d\n", 1));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "PlayerName 0\n%s\n", C2V(gProgram_state).player_name[0] == '\0' ? "MAX DAMAGE" : C2V(gProgram_state).player_name));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "EVolume %d\n", C2V(gProgram_state).effects_volume));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MVolume %d\n", C2V(gProgram_state).music_volume));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "KeyMapIndex %d\n", C2V(gKey_map_index)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapTrans %d\n", C2V(gMap_trans)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapX %d\n", C2V(gHeadup_map_x)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapY %d\n", C2V(gHeadup_map_y)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapW %d\n", C2V(gHeadup_map_w)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapH %d\n", C2V(gHeadup_map_h)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "CameraType %d\n", C2V(gCamera_type)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "ARCameraType %d\n", C2V(gAR_camera_type)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "GoreLevel %d\n", GetGoreLevel()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "AnimalsOn %d\n", GetAnimalsOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "FlameThrowerOn %d\n", GetFlameThrowerOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MinesOn %d\n", GetMinesOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "DronesOn %d\n", GetDronesOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MiniMapVisible %i\n", C2V(gMini_map_visible)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "SkillLevel %d\n", C2V(gProgram_state).skill_level));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "AmbientSound %i\n", C2V(gAmbient_sound)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "AutoLoad %d\n", C2V(gAuto_load)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "RusselsFannies %d\n", C2V(gRussels_fannies)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeQuality 0\n%s\n", C2V(gQuick_time_quality)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeCompressor 0\n%s\n", C2V(gQuick_time_compressor)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeBanner %d\n%s\n", C2V(gQuick_time_banner_number), C2V(gQuick_time_banner_texture_name)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeTempPath 0\n%s\n", C2V(gQuick_time_temp_path)));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeMoviePathStub 0\n%s\n", C2V(gQuick_time_movie_path_stub)));
+
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "NETGAMETYPE %d\n", C2V(gNet_last_game_type)));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 0));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 1));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 2));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 3));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 4));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 5));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 6));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 7));
+    BAIL_IF_NEGATIVE(PrintNetOptions(f, 8));
+
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupDetailLevel %d\n", C2V(gHeadup_detail_level)));
+
+#undef BAIL_IF_NEGATIVE
+
+    DRfclose(f);
+
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0048d190, SaveOptions)
 
 void (C2_HOOK_FASTCALL * RestoreOptions_original)(void);
 void C2_HOOK_FASTCALL RestoreOptions(void) {

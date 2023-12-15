@@ -40,6 +40,8 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gUniverse_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gNon_track_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gDont_render_actor);
 
+C2_HOOK_VARIABLE_DECLARE(int, gAmbient_sound);
+C2_HOOK_VARIABLE_DECLARE(int, gAuto_load);
 C2_HOOK_VARIABLE_DECLARE(int, gRussels_fannies);
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_quality, 32);
@@ -49,6 +51,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_banner_texture_name, 32);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_temp_path, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_movie_path_stub, 256);
 
+C2_HOOK_VARIABLE_DECLARE(int, gNet_last_game_type);
 //extern int gTyping;
 //extern int gArrow_mode;
 //extern int gInfo_on;
