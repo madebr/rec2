@@ -1717,6 +1717,7 @@ enum {
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
     kFatalError_CantOpen_S = 0x6b,
     kFatalError_CantLoadSmashPix_S = 0x77,
+    kFatalError_CannotFindSmashMaterial_S = 0x78,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
     kFatalError_FileMustStartWith_SS = 0xb2,
