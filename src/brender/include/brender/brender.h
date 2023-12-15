@@ -25,6 +25,8 @@ br_uint_32 C2_HOOK_CDECL BrActorEnum(br_actor* parent, br_actor_enum_cbfn* callb
 br_bounds* C2_HOOK_CDECL BrActorToBounds(br_bounds* b, br_actor* ap);
 br_uint_16 C2_HOOK_CDECL BrActorToActorMatrix34(br_matrix34* m, br_actor* a, br_actor* b);
 
+void C2_HOOK_CDECL BrLightDisable(br_actor* l);
+
 // BrAllocator
 br_allocator* C2_HOOK_CDECL BrAllocatorSet(br_allocator* newal);
 

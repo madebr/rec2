@@ -531,3 +531,13 @@ void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** p_materials, int p
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005182f0, AdaptMaterialsForRenderer, AdaptMaterialsForRenderer_original)
+
+void C2_HOOK_FASTCALL DisableLights(void) {
+    int i;
+
+    for (i = 0; i < C2V(gNumber_of_lights); i++) {
+        BrLightDisable(C2V(gLight_array)[i]);
+    }
+}
+C2_HOOK_FUNCTION(0x0047d6a0, DisableLights)
+
