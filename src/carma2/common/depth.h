@@ -21,6 +21,8 @@ void C2_HOOK_STDCALL SetYon(br_scalar pYon);
 
 br_scalar C2_HOOK_STDCALL GetYon(void);
 
+void C2_HOOK_FASTCALL LoadDepthTable(char* pName, br_pixelmap** pTable, int* pPower);
+
 void C2_HOOK_FASTCALL InitDepthEffects(void);
 
 #endif //REC2_DEPTH_H
