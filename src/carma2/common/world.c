@@ -1318,3 +1318,15 @@ int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const c
     return new_ones;
 }
 C2_HOOK_FUNCTION(0x00502060, LoadMaterialsInto)
+
+void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile, tRendererShadingType pShading) {
+    char s1[256];
+    char s2[256];
+
+    PossibleService();
+    GetALineAndDontArgue(pFile, s1);
+    PathCat(s2, C2V(gApplication_path), "MATERIAL");
+    PathCat(s2, s2, c2_strtok(s1, "\t ,/"));
+    LoadMaterialsInto(pStorage, s2, pShading);
+}
+C2_HOOK_FUNCTION(0x00501fe0, LoadSomeMaterials)
