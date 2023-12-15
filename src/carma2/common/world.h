@@ -91,4 +91,6 @@ int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char
 
 void C2_HOOK_FASTCALL LoadModelCallback(const char* pPath);
 
+void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath);
+
 #endif // REC2_WORLD_H
