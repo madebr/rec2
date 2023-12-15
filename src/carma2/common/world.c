@@ -1238,6 +1238,21 @@ void C2_HOOK_FASTCALL LoadSomePixelmaps(tBrender_storage* pStorage, const char* 
 }
 C2_HOOK_FUNCTION(0x00502490, LoadSomePixelmaps)
 
+void C2_HOOK_FASTCALL LoadMaterialCallback(const char* pPath) {
+    tRendererShadingType shading;
+    char s[256];
+
+    shading = C2V(gMaterial_shading_for_callback);
+    if (C2V(gMaterial_shading_for_callback) == kRendererShadingType_Undefined) {
+        shading = kRendererShadingType_Default;
+    }
+    StringToUpper(s, pPath);
+    if (c2_strstr(s, ".MAT") != NULL) {
+        LoadMaterialsInto(C2V(gStorageForCallbacks), pPath, shading);
+    }
+}
+C2_HOOK_FUNCTION(0x00502a70, LoadMaterialCallback)
+
 tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat) {
     int i;
 
