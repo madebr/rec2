@@ -79,4 +79,6 @@ void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadSomePixelmaps(tBrender_storage* pStorage, const char* pPath);
 
+int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading);
+
 #endif // REC2_WORLD_H
