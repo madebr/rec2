@@ -1228,3 +1228,10 @@ void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath) {
     }
 }
 C2_HOOK_FUNCTION(0x005024b0, LoadPixelmapCallback)
+
+void C2_HOOK_FASTCALL LoadSomePixelmaps(tBrender_storage* pStorage, const char* pPath) {
+
+    C2V(gStorageForCallbacks) = pStorage;
+    DRForEveryFile(pPath, LoadPixelmapCallback);
+}
+C2_HOOK_FUNCTION(0x00502490, LoadSomePixelmaps)
