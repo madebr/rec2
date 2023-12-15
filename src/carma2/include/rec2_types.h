@@ -226,6 +226,7 @@ typedef struct {
 typedef enum {
     kPixelFlags_16bbp = 0x1,
     kPixelFlags_unknown = 0x2,
+    kPixelFlags_unknown_0x4 = 0x4,
 } tPixelFlags;
 
 typedef enum {
