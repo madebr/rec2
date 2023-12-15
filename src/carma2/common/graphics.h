@@ -96,4 +96,6 @@ void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** p_materials, int p
 
 void C2_HOOK_FASTCALL DisableLights(void);
 
+void C2_HOOK_FASTCALL EnableLights(void);
+
 #endif //REC2_GRAPHICS_H
