@@ -27,6 +27,8 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
+#include "brender/brender.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5, 0x00691b40);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTwatVfsFile, gTwatVfsFiles, 50, 0x00692080);
@@ -2290,6 +2292,23 @@ void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
     }
 }
 C2_HOOK_FUNCTION(0x0048f290, DRLoadActors)
+
+void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
+    br_actor* actor;
+    br_light* light;
+
+    actor = BrActorAllocate(BR_ACTOR_LIGHT, NULL);
+    light = actor->type_data;
+    light->type = BR_LIGHT_DIRECT;
+    light->attenuation_c = 1.f;
+    light->colour = BR_COLOUR_RGB(C2V(gGlobal_lighting_data).directional.red, C2V(gGlobal_lighting_data).directional.green, C2V(gGlobal_lighting_data).directional.blue);
+    BrMatrix34RotateX(&actor->t.t.mat, BR_ANGLE_DEG(300));
+    BrMatrix34PostRotateY(&actor->t.t.mat, BR_ANGLE_DEG(30));
+    C2V(gLight_array)[C2V(gNumber_of_lights)] = actor;
+    C2V(gNumber_of_lights)++;
+    EnableLights();
+}
+C2_HOOK_FUNCTION(0x0048f2e0, DRLoadLights)
 
 void (C2_HOOK_FASTCALL * DisableVertexColours_original)(br_model** pModels, int pCount);
 void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {

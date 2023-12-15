@@ -87,11 +87,11 @@ void C2_HOOK_CDECL BrMatrix34PostTranslate(br_matrix34* mat, br_scalar x, br_sca
 void C2_HOOK_CDECL BrMatrix34Mul(br_matrix34* A, br_matrix34* B, br_matrix34* C);
 void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, br_matrix34* B);
 void C2_HOOK_CDECL BrMatrix34PreRotateY(br_matrix34* mat, br_angle ry);
+void C2_HOOK_CDECL BrMatrix34RotateX(br_matrix34* mat, br_angle rx);
 void C2_HOOK_CDECL BrMatrix34RotateY(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PostScale(br_matrix34* mat, br_scalar sx, br_scalar sy, br_scalar sz);
 void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, br_transform* xform);
 void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, br_transform* xform);
-void C2_HOOK_CDECL BrMatrix34PreRotateX(br_matrix34* mat, br_angle rx);
 void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, br_vector3* B, br_matrix34* C);
 void C2_HOOK_CDECL BrMatrix34LPNormalise(br_matrix34* A, br_matrix34* B);
 void C2_HOOK_CDECL BrMatrix34PreRotate(br_matrix34* mat, br_angle r, br_vector3* axis);
@@ -101,6 +101,10 @@ void C2_HOOK_CDECL BrMatrix34PostShearX(br_matrix34* mat, br_scalar sy, br_scala
 void C2_HOOK_CDECL BrMatrix34PostShearY(br_matrix34* mat, br_scalar sx, br_scalar sz);
 void C2_HOOK_CDECL BrMatrix34PostShearZ(br_matrix34* mat, br_scalar sx, br_scalar sy);
 void C2_HOOK_CDECL BrMatrix34PreShearX(br_matrix34* mat, br_scalar sy, br_scalar sz);
+void C2_HOOK_CDECL BrMatrix34PostRotateX(br_matrix34* mat, br_angle ry);
+void C2_HOOK_CDECL BrMatrix34PostRotateY(br_matrix34* mat, br_angle ry);
+void C2_HOOK_CDECL BrMatrix34PostRotateZ(br_matrix34* mat, br_angle ry);
+void C2_HOOK_CDECL BrMatrix34PreRotateX(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PreRotateY(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PreRotateZ(br_matrix34* mat, br_angle rz);
 

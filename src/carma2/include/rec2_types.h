@@ -1482,6 +1482,16 @@ typedef struct {
     int initial_network[8];
 } tSlot_info;
 
+typedef struct {
+    tRGB_colour directional;
+    float ambient_else;
+    float diffues_else;
+    float ambient_1;
+    float diffuse_1;
+    float ambient_0;
+    float diffuse_0;
+} tDRLighting_data;
+
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
