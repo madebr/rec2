@@ -42,6 +42,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_y, 0x00659b30, 6.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_width, 0x00659b34, 128.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gMap_render_height, 0x00659b38, 80.f);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHeadup_map_x, 0x0074abac);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHeadup_map_y, 0x0074abb0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHeadup_map_w, 0x0074aba8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHeadup_map_h, 0x0074abb4);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup_detail_level, 0x00655e54, 5);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_trans, 0x0068d8d4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_type, 0x00679308);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAR_camera_type, 0x0058f620, 2);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gMini_map_visible, 0x00655dfc, 2);
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gColours, 9, 0x0074a620);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRGB_colours, 9, 0x0065cf30, {
     0x000000,   0xffffff,   0xff0000,   0x00ff00,

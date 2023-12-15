@@ -10,6 +10,22 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_palette);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gRender_palette);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tDR_font, gFonts, 24);
 
+C2_HOOK_VARIABLE_DECLARE(float, gMap_render_x);
+C2_HOOK_VARIABLE_DECLARE(float, gMap_render_y);
+C2_HOOK_VARIABLE_DECLARE(float, gMap_render_width);
+C2_HOOK_VARIABLE_DECLARE(float, gMap_render_height);
+
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_map_x);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_map_y);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_map_w);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_map_h);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_detail_level);
+
+C2_HOOK_VARIABLE_DECLARE(int, gMap_trans);
+C2_HOOK_VARIABLE_DECLARE(int, gCamera_type);
+C2_HOOK_VARIABLE_DECLARE(int, gAR_camera_type);
+C2_HOOK_VARIABLE_DECLARE(int, gMini_map_visible);
+
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 

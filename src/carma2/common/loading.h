@@ -202,6 +202,8 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void);
 
 void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void);
 
+int C2_HOOK_FASTCALL SaveOptions(void);
+
 void C2_HOOK_FASTCALL RestoreOptions(void);
 
 void C2_HOOK_FASTCALL LoadInRegistees(void);
