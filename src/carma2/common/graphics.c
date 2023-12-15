@@ -539,12 +539,71 @@ int C2_HOOK_FASTCALL UnlockBackScreen(int pValue) {
 }
 C2_HOOK_FUNCTION(0x00516c30, UnlockBackScreen)
 
-void (C2_HOOK_FASTCALL * AdaptMaterialsForRenderer_original)(br_material** p_materials, int p_countMaterials, tRendererShadingType p_type);
-void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** p_materials, int p_count, tRendererShadingType p_type) {
+void (C2_HOOK_FASTCALL * AdaptMaterialsForRenderer_original)(br_material** pMaterials, int pCount, tRendererShadingType pShading);
+void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
 #if defined(C2_HOOKS_ENABLED)
-    AdaptMaterialsForRenderer_original(p_materials, p_count, p_type);
+    AdaptMaterialsForRenderer_original(pMaterials, pCount, pShading);
 #else
 #error "Not implemented"
+    int i;
+    br_material* material;
+    tMaterialException *material_exception;
+
+    for (i = 0; i < pCount; i++) {
+        material = pMaterials[i];
+
+        if (material->colour_map != NULL) {
+            for (material_exception = C2V(gMaterial_exceptions); material_exception != NULL; material_exception = material_exception->next) {
+                if (c2_stricmp(material->colour_map->identifier, material_exception->texture_name) == 0) {
+                    break;
+                }
+            }
+            if (C2V(gEnable_texture_interpolation)) {
+                if (material_exception == NULL || !(material_exception->flags & 0x1)) {
+                    material->br_pixelmap_allocate_flags  |= BR_MATF_MAP_INTERPOLATION;
+                }
+                if (C2v(gEnable_texture_interpolation) && material_exception != NULL && material_exception->flags & 0x8) {
+                    material->map_transform.m[2][0] = .02f;
+                    material->map_transform.m[2][1] = .02f;
+                }
+            }
+            if (C2V(gEnable_texture_antialiasing)) {
+                material->flags |= BR_MATF_MAP_ANTIALIASING;
+            }
+            if (C2V(gEnable_perspective_maps)) {
+                material->flags |= BR_MATF_PERSPECTIVE;
+            }
+        }
+        switch (pShading) {
+        case kRendererShadingType_Default:
+            material->ka = .2f;
+            break;
+        case kRendererShadingType_Specular:
+            material->ka = .6f;
+            material->kd = .2f;
+            material->ks = .8f;
+            material->flags &= ~BR_MATF_PRELIT;
+            material->flags |= BR_MATF_LIGHT;
+            material->flags |= BR_MATF_SMOOTH;
+            break;
+        case kRendererShadingType_Diffuse1:
+            material->ka = .4f;
+            break;
+        case kRendererShadingType_AmbientOnly:
+            material->ka = 1.f;
+            material->kd = 0.f;
+            material->ks = 0.f;
+            material->flags &= ~BR_MATF_PRELIT;
+            material->flags |= BR_MATF_LIGHT;
+            material->flags |= BR_MATF_SMOOTH;
+            break;
+        default:
+            material->ka = 1.f;
+            material->kd = 0.f;
+            material->ks = 0.f;
+            break;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005182f0, AdaptMaterialsForRenderer, AdaptMaterialsForRenderer_original)
