@@ -1313,6 +1313,21 @@ typedef struct {
 } tShrapnel_spec;
 
 typedef struct {
+    int field_0x0;
+    float field_0x4;
+    float field_0x8;
+    float field_0xc;
+    float field_0x10;
+    float field_0x14;
+    float field_0x18;
+    float field_0x1c;
+    float field_0x20;
+    float field_0x24;
+    br_material* material;
+    br_material* material2;
+} tSlick_spec;
+
+typedef struct {
     int count_activations;
     struct tNon_car_cuboid_activation* activations;
 } tNon_car_cuboid_activations;
