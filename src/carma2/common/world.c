@@ -1211,3 +1211,10 @@ void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath) {
     }
 }
 C2_HOOK_FUNCTION(0x00502b80, LoadShadeTableCallback)
+
+void C2_HOOK_FASTCALL LoadSomeShadeTables(tBrender_storage* pStorage, const char* pPath) {
+
+    C2V(gStorageForCallbacks) = pStorage;
+    DRForEveryFile(pPath, LoadShadeTableCallback);
+}
+C2_HOOK_FUNCTION(0x00502b60, LoadSomeShadeTables)
