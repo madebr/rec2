@@ -2216,3 +2216,12 @@ br_uint_32 C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* pFile_name, br_pixelm
     }
     return number_loaded;
 }
+
+void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name) {
+    br_pixelmap* palette_array[100];
+    int number_of_palettes;
+
+    number_of_palettes = DRPixelmapLoadMany(pPath_name, palette_array, REC2_ASIZE(palette_array));
+    BrTableAddMany(palette_array, number_of_palettes);
+}
+C2_HOOK_FUNCTION(0x0048f090, DRLoadPalette)
