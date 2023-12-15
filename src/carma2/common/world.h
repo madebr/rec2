@@ -43,6 +43,8 @@ void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage);
 
 tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm);
 
+tAdd_to_storage_result C2_HOOK_FASTCALL LoadSoundInStorage(tBrender_storage* pStorage_space, int pSound_id);
+
 int C2_HOOK_FASTCALL IsValidFile(const char* path);
 
 int C2_HOOK_FASTCALL GetLastModificationTime(const char* path);
