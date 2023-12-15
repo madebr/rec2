@@ -5,6 +5,8 @@ add_library(c2_platform STATIC
 
 if(WIN32)
     target_sources(c2_platform PRIVATE
+        win32/win32_ssdx.c
+        win32/win32_ssdx.h
         win32/win32_dinput.c
         win32/win32_dinput.h
         win32/win32.c
@@ -17,10 +19,12 @@ if(WIN32)
         PUBLIC
             DIRECTINPUT_VERSION=0x0500
     )
+    find_library(DSOUND_LIBRARY NAMES dsound)
     target_link_libraries(c2_platform
         PRIVATE
             DirectX::dinput
             DirectX::dxguid
+            ${DSOUND_LIBRARY}
     )
 else()
     message(FATAL_ERROR "Unsupported platform")
