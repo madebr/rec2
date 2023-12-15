@@ -51,16 +51,16 @@ void C2_HOOK_FASTCALL ToggleMiniMap(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004420e0, ToggleMiniMap, ToggleMiniMap_original)
 
 // Key: 'Enter'
-void (C2_HOOK_FASTCALL * ToogleDoors_original)(void);
-void C2_HOOK_FASTCALL ToogleDoors(void) {
+void (C2_HOOK_FASTCALL * ToggleDoors_original)(void);
+void C2_HOOK_FASTCALL ToggleDoors(void) {
     CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
-    ToogleDoors_original();
+    ToggleDoors_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0042dd50, ToogleDoors, ToogleDoors_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0042dd50, ToggleDoors, ToggleDoors_original)
 
 // Key: 'tab'
 void (C2_HOOK_FASTCALL * ToggleMap_original)(void);
