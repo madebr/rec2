@@ -1410,3 +1410,13 @@ void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPa
     DRForEveryFile(pPath, LoadModelCallback);
 }
 C2_HOOK_FUNCTION(0x00502b00, LoadSomeModels)
+
+void C2_HOOK_FASTCALL LoadFolderInStorageWithShading(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
+
+    LoadSomeShadeTables(pStorage, pPath);
+    LoadSomePixelmaps(pStorage, pPath);
+    LoadAllTexturesFromTexSubdirectories(pStorage, pPath);
+    LoadSomeMaterialsWithShading(pStorage, pPath, pShading);
+    LoadSomeModels(pStorage, pPath);
+}
+C2_HOOK_FUNCTION(0x00502cf0, LoadFolderInStorageWithShading)
