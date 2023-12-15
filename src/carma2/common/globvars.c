@@ -79,6 +79,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gTranslucent_smoke, 0x0074cf68);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEnable_perspective_maps, 0x0074ca54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gUse_actor_dimming, 0x0074cf60);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_actors, 0x0068c71c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gActor_array, 100, 0x0074ac00);
+
 //int gTyping;
 //int gArrow_mode;
 //int gInfo_on;
