@@ -220,5 +220,7 @@ void C2_HOOK_FASTCALL DRLoadPalette(const char* p_path);
 
 void C2_HOOK_FASTCALL DRLoadShadeTable(const char* p_path);
 
+void C2_HOOK_FASTCALL DRLoadMaterials(const char* p_path);
+
 #endif //REC2_LOADING_H
 
