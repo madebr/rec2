@@ -1403,3 +1403,10 @@ void C2_HOOK_FASTCALL LoadModelCallback(const char* pPath) {
     }
 }
 C2_HOOK_FUNCTION(0x00502b20, LoadModelCallback)
+
+void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath) {
+
+    C2V(gStorageForCallbacks) = pStorage;
+    DRForEveryFile(pPath, LoadModelCallback);
+}
+C2_HOOK_FUNCTION(0x00502b00, LoadSomeModels)
