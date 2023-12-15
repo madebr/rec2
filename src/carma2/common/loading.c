@@ -2208,6 +2208,21 @@ void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
 }
 C2_HOOK_FUNCTION(0x0048f230, DRLoadModels)
 
+
+void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
+    int i;
+    br_actor* actor_array[100];
+    int number_of_actors;
+
+    PossibleService();
+    number_of_actors = BrActorLoadMany(pPath_name, actor_array, REC2_ASIZE(actor_array));
+    for (i = 0; i < number_of_actors; i++) {
+        C2V(gActor_array)[C2V(gNumber_of_actors)] = actor_array[i];
+        C2V(gNumber_of_actors)++;
+    }
+}
+C2_HOOK_FUNCTION(0x0048f290, DRLoadActors)
+
 void (C2_HOOK_FASTCALL * DisableVertexColours_original)(br_model** pModels, int pCount);
 void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {
 
