@@ -71,4 +71,6 @@ int C2_HOOK_FASTCALL DRmemicmp(const char* str1, const char* str2, size_t count)
 
 int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, const char* haystack, size_t haystackLen, const char* needle);
 
+void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath);
+
 #endif // REC2_WORLD_H
