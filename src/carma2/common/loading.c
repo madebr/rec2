@@ -2188,3 +2188,16 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048f3b0, TestForOriginalCarmaCDinDrive, TestForOriginalCarmaCDinDrive_original)
+
+br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name) {
+    br_pixelmap* the_map;
+
+    the_map = BrPixelmapLoad(pFile_name);
+    if (the_map != NULL) {
+        the_map->origin_x = 0;
+        the_map->origin_y = 0;
+        the_map->row_bytes = (the_map->row_bytes + sizeof(int32_t) - 1) & ~(sizeof(int32_t) - 1);
+    }
+    return the_map;
+}
+C2_HOOK_FUNCTION(0x00513970, DRPixelmapLoad)
