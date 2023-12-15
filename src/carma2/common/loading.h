@@ -216,5 +216,7 @@ void C2_HOOK_FASTCALL LoadTreeSurgery(void);
 
 int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void);
 
+br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name);
+
 #endif //REC2_LOADING_H
 
