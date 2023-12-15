@@ -76,6 +76,8 @@ add_library(c2_common STATIC
     raycast.h
     replay.c
     replay.h
+    shrapnel.c
+    shrapnel.h
     smashing.c
     smashing.h
     sound.c

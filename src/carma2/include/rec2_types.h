@@ -1265,6 +1265,63 @@ typedef enum {
     tActionReplayCameraMode_Internal = 8,
 } tActionReplayCameraMode;
 
+typedef enum {
+    kShrapnelRelPos_SphereClumped = 0,
+    kShrapnelRelPos_BoxClumped = 1,
+    kShrapnelRelPos_ActorBased = 2
+} tShrapnel_rel_pos_type;
+
+typedef struct {
+    tShrapnel_rel_pos_type type;
+    br_vector3 pos;
+} tShrapnel_pos;
+
+typedef enum {
+    kShrapnelType_Abstract = 0,
+    kShrapnelType_Shards = 1,
+    kShrapnelType_GhostParts = 2,
+    kShrapnelType_NonCars = 3,
+} tShrapnel_type;
+
+typedef struct {
+    tShrapnel_type type;
+    float min_speed_towards_you;
+    float max_speed_towards_you;
+    float impactee_velocity_factor;
+    float random_velocity_max;
+    float random_up_velocity_max;
+    float random_normal_velocity_max;
+    float random_spin_rate_max;
+    float min_time_ms;
+    float max_time_ms;
+    tShrapnel_pos initial_pos;
+    union {
+        struct {
+            br_material* material;
+            float field_0x4;
+            int field_0x8;
+        } material;
+        struct {
+            int count;
+            int invalid_count;
+            int actor_count;
+            float bounds_dx;
+            float bounds_dy;
+            br_actor* actor;
+        } ghost;
+        struct {
+            int amount_min;
+            int amount_max;
+            int count_separate_actors;
+            br_actor* actors;
+            int probability_fire;
+            int count_fire_columns;
+            int min_smokiness;
+            int max_smokiness;
+        } noncar;
+    } type_info;
+} tShrapnel_spec;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
