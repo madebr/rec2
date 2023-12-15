@@ -2261,6 +2261,21 @@ void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name) {
 }
 C2_HOOK_FUNCTION(0x0048f1d0, DRLoadMaterials)
 
+void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
+    int i;
+    br_model* model_array[100];
+    int number_of_models;
+
+    PossibleService();
+    number_of_models = BrModelLoadMany(pPath_name, model_array, REC2_ASIZE(model_array));
+    DisableVertexColours(model_array, number_of_models);
+    for (i = 0; i < number_of_models; i++) {
+        model_array[i]->flags = BR_MODF_UPDATEABLE;
+    }
+    BrModelAddMany(model_array, number_of_models);
+}
+C2_HOOK_FUNCTION(0x0048f230, DRLoadModels)
+
 void (C2_HOOK_FASTCALL * DisableVertexColours_original)(br_model** pModels, int pCount);
 void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {
 
