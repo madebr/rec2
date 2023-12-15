@@ -87,4 +87,6 @@ int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const c
 
 void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile, tRendererShadingType pShading);
 
+int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char* pPath);
+
 #endif // REC2_WORLD_H
