@@ -1153,3 +1153,61 @@ void C2_HOOK_FASTCALL LoadTrack(char* pFile_name, tTrack_spec* pTrack_spec, tRac
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00504bf0, LoadTrack, LoadTrack_original)
+
+tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st) {
+    int i;
+
+    if (pStorage_space->shade_tables_count >= pStorage_space->max_shade_tables) {
+        return eStorage_not_enough_room;
+    }
+
+    for (i = 0; i < pStorage_space->shade_tables_count; i++) {
+        if (pStorage_space->shade_tables[i]->identifier
+            && pThe_st->identifier
+            && !c2_strcmp(pStorage_space->shade_tables[i]->identifier, pThe_st->identifier)) {
+            return eStorage_duplicate;
+        }
+    }
+    pStorage_space->shade_tables[pStorage_space->shade_tables_count] = pThe_st;
+    pStorage_space->shade_tables_count++;
+    return eStorage_allocated;
+}
+
+void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath) {
+    br_pixelmap* temp_array[50];
+    int total;
+    int i;
+    tBrender_storage* storage_space;
+    char s[256];
+
+    StringToUpper(s, pPath);
+    if (c2_strstr(s, ".TAB") == NULL) {
+        return;
+    }
+    storage_space = C2V(gStorageForCallbacks);
+    total = BrPixelmapLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
+    if (total == 0) {
+        FatalError(kFatalError_CannotLoadShadeTableFileOrItIsEmpty_S, pPath);
+    }
+    for (i = 0; i < total; i++) {
+        if (temp_array[i] == NULL) {
+            continue;
+        }
+        switch (AddShadeTableToStorage(storage_space, temp_array[i])) {
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientShadeTableSlots);
+            break;
+
+        case eStorage_duplicate:
+            if (C2V(gDisallowDuplicates)) {
+                FatalError(kFatalError_DuplicatePixelmap_S, temp_array[i]->identifier);
+            }
+            BrPixelmapFree(temp_array[i]);
+            break;
+        case eStorage_allocated:
+            BrTableAdd(temp_array[i]);
+            break;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00502b80, LoadShadeTableCallback)
