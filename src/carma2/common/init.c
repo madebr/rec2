@@ -440,3 +440,19 @@ int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth) {
     return new_width;
 }
 C2_HOOK_FUNCTION(0x0044ba60, Fix2DTextureWidth)
+
+int C2_HOOK_FASTCALL Fix2DTextureHeight(int pHeight) {
+    int new_height;
+
+    if (C2V(gUse_actor_dimming) && C2V(gTexture_power_of_2)) {
+        new_height = 1;
+        while (pHeight > new_height) {
+            new_height *= 2;
+        }
+    } else {
+        new_height = pHeight;
+    }
+    return new_height;
+
+}
+C2_HOOK_FUNCTION(0x0044ba90, Fix2DTextureHeight)
