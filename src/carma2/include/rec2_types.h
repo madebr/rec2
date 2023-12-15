@@ -1210,6 +1210,39 @@ typedef struct {
     tU32 fizzle_start;
 } tHeadup_icon;
 
+typedef struct {
+    float opacity;
+    br_pixelmap* map;
+} tExplosion_animation_frame;
+
+typedef enum {
+    kExplosionRotateModus_NoRotate = 0,
+    kExplosionRotateModus_RandomRotate = 1,
+} tExplosion_animation_rotate_modus;
+
+typedef struct {
+    tU16 min_count;
+    tU16 max_count;
+    tU16 count_frames;
+    tU16 min_start_delay_ms;
+    tU16 max_start_delay_ms;
+    tU16 min_frametime_ms;
+    tU16 max_frametime_ms;
+    char padding_0xe[2];
+    float min_scaling_factor;
+    float max_scaling_factor;
+    br_vector3 min_xyz_factor;
+    br_vector3 max_xyz_factor;
+    br_vector3 offset;
+    tExplosion_animation_rotate_modus rotate_modus;
+    tExplosion_animation_frame* frames;
+} tExplosion_animation_group;
+
+typedef struct {
+    int count_groups;
+    tExplosion_animation_group* groups;
+} tExplosion_animation;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
@@ -1361,6 +1394,7 @@ enum {
     kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
     kFatalError_CantOpen_S = 0x6b,
+    kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
     kFatalError_FileMustStartWith_SS = 0xb2,
