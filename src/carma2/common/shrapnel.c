@@ -19,3 +19,13 @@ void C2_HOOK_FASTCALL ReadShrapnelSideEffects(FILE* pF, tShrapnel_side_effects* 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ef550, ReadShrapnelSideEffects, ReadShrapnelSideEffects_original)
+
+void (C2_HOOK_FASTCALL * ReadNonCarCuboidActivation_original)(FILE* pF, tNon_car_cuboid_activations* pNon_car_cuboid_activations);
+void C2_HOOK_FASTCALL ReadNonCarCuboidActivation(FILE* pF, tNon_car_cuboid_activations* pNon_car_cuboid_activations) {
+#if defined(C2_HOOKS_ENABLED)
+    ReadNonCarCuboidActivation_original(pF, pNon_car_cuboid_activations);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004efce0, ReadNonCarCuboidActivation, ReadNonCarCuboidActivation_original)
