@@ -12,8 +12,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gScreen, 0x0074d3e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_override, 0x0068b888);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gBack_screen, 0x0074d360);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gDouble_back_screen, 0x006ad47c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHas_double_back_screen, 0x006ad480);
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCamera_yon, 0x00761f4c);;
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCamera_yon, 0x00761f4c);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTrack_actor, 0x0075bb60);
 
@@ -60,6 +62,20 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_movie_path_stub, 256, 0x00705
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_last_game_type, 0x007638a0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_view, 0x0075b9a4);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gScreen_lock_often, 0x0074cadc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gShadow_workaround, 0x0074ca0c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gEnable_texture_interpolation, 0x0074cf38);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gEnable_texture_antialiasing, 0x0074cf20);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTexture_power_of_2, 0x0074ca20);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAdapt_sky_model_for_cockpit, 0x0074cab8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNo_fog, 0x0074ca10);
+C2_HOOK_VARIABLE_IMPLEMENT(const char*, gRenderer_fixup_basename, 0x0074c9f4);
+C2_HOOK_VARIABLE_IMPLEMENT(const char*, gRenderer_fixup_extension, 0x0074ca6c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNo_render_indent, 0x0074cf8c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTranslucent_smoke, 0x0074cf68);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gEnable_perspective_maps, 0x0074ca54);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gUse_actor_dimming, 0x0074cf60);
 
 //int gTyping;
 //int gArrow_mode;

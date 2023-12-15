@@ -74,4 +74,6 @@ void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length);
 
 int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path);
 
+void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void);
+
 #endif // C2_PLATFORM_H
