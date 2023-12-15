@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
+#include "temp.h"
 
 #include <brender/brender.h>
 
@@ -109,10 +110,38 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004e9c40, InitSkids, InitSkids_original)
 void (C2_HOOK_FASTCALL * ReadSlick_original)(FILE* pF,tSlick_spec* pSlick_spec);
 void C2_HOOK_FASTCALL ReadSlick(FILE* pF, tSlick_spec* pSlick_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ReadSlick_original(pF, pSlick_spec);
 #else
-#error "Not implemented"
+    float f1, f2, f3;
+    char s[256];
+
+    GetAString(pF, s);
+    if (c2_strcmp(s, "none") == 0) {
+        pSlick_spec->material = NULL;
+        return;
+    }
+
+    pSlick_spec->material = LoadTemporaryMaterial(s);
+
+    GetThreeFloats(pF, &f1, &f2, &f3);
+    pSlick_spec->field_0x0 = (int)f1;
+    pSlick_spec->field_0xc = f2;
+    pSlick_spec->field_0x10 = f3;
+    GetThreeFloats(pF, &f1, &f2, &f3);
+    pSlick_spec->field_0x14 = f1;
+    pSlick_spec->field_0x4 = f2;
+    pSlick_spec->field_0x8 = f3;
+    GetPairOfFloats(pF, &f1, &f2);
+    pSlick_spec->field_0x20 = f2;
+    pSlick_spec->field_0x24 = f3;
+    if (pSlick_spec->field_0x24 != 0.f) {
+        GetPairOfFloats(pF, &f1, &f2);
+        pSlick_spec->field_0x18 = f2;
+        pSlick_spec->field_0x1c = f3;
+        GetAString(pF, s);
+        pSlick_spec->material2 = LoadTemporaryMaterial(s);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ee5e0, ReadSlick, ReadSlick_original)
