@@ -34,6 +34,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage*, gStorageForCallbacks, 0x006b7820);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gAddedPixelmap, 0x006aaa20);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisallowDuplicates, 0x006aaa2c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tRendererShadingType, gMaterial_shading_for_callback, 0x00660cb8, kRendererShadingType_Undefined);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gDuplicate_model, 0x006aaa24);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDuplicate_material, 0x006aaa28);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
@@ -259,7 +260,7 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
     pStorage_space->materials_count = 0;
     pStorage_space->models_count = 0;
     pStorage_space->sounds_count = 0;
-    pStorage_space->unknown = pUnknown;
+    pStorage_space->flags = pUnknown;
     pStorage_space->max_pixelmaps = pMax_pixelmaps;
     pStorage_space->max_shade_tables = pMax_shade_tables;
     pStorage_space->max_materials = pMax_materials;
@@ -1330,3 +1331,65 @@ void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile,
     LoadMaterialsInto(pStorage, s2, pShading);
 }
 C2_HOOK_FUNCTION(0x00501fe0, LoadSomeMaterials)
+
+
+tAdd_to_storage_result AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod) {
+    int i;
+
+    C2V(gDuplicate_model) = NULL;
+    if (pStorage_space->materials_count >= pStorage_space->max_models) {
+        return eStorage_not_enough_room;
+    }
+    if (pStorage_space->flags & 0x1) {
+        for (i = 0; i < pStorage_space->models_count; i++) {
+            if (pStorage_space->models[i]
+                && pStorage_space->models[i]->identifier
+                && pThe_mod->identifier
+                && !c2_strcmp(pStorage_space->models[i]->identifier, pThe_mod->identifier)) {
+                C2V(gDuplicate_model) = pStorage_space->models[i];
+                return eStorage_duplicate;
+            }
+        }
+    }
+    pStorage_space->models[pStorage_space->models_count] = pThe_mod;
+    pStorage_space->models_count++;
+    return eStorage_allocated;
+}
+
+int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char* pPath) {
+    int i;
+    int new_ones;
+    int total;
+    br_model* temp_array[2000];
+
+    new_ones = 0;
+    total = BrModelLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
+    DisableVertexColours(temp_array, total);
+    if (total == 0) {
+        FatalError(kFatalError_CannotLoadModelFileOrItIsEmpty_S, pPath);
+    }
+    for (i = 0; i < total; i++) {
+        if (temp_array[i] == NULL) {
+            continue;
+        }
+        switch (AddModelToStorage(pStorage_space, temp_array[i])) {
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientModelSlots);
+            break;
+        case eStorage_duplicate:
+            if (C2V(gDisallowDuplicates)) {
+                FatalError(kFatalError_DuplicateModel_S, temp_array[i]->identifier);
+            }
+            BrModelFree(temp_array[i]);
+            break;
+        case eStorage_allocated:
+            temp_array[i]->flags |= BR_MODF_UPDATEABLE;
+            BrModelAdd(temp_array[i]);
+            new_ones++;
+            break;
+        }
+    }
+
+    return new_ones;
+}
+C2_HOOK_FUNCTION(0x00501e40, LoadModelsInto)
