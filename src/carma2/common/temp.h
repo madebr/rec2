@@ -9,4 +9,6 @@ void C2_HOOK_FASTCALL TemporaryMaterialStorageInit(void);
 
 br_material* C2_HOOK_FASTCALL LoadTemporaryMaterial(const char* pName);
 
+void C2_HOOK_FASTCALL EnableMaterialAdapt(void);
+
 #endif /* TEMP_H */
