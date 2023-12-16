@@ -1585,6 +1585,16 @@ typedef struct {
     float random_spin_rate_max;
 } tSmashable_initial_speed_spec;
 
+typedef struct {
+    tU8 flags;
+    tU8 max_count;
+    tU8 model_count;
+    undefined field_0x3;
+    float min_force;
+    float instance_force;
+    br_model* models[3];
+} tPed_giblet_size_spec;
+
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
@@ -1761,6 +1771,7 @@ enum {
     kFatalError_CantOpen_S = 0x6b,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
+    kFatalError_CannotFindGibletModel_S = 0xa9,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
     kFatalError_FileMustStartWith_SS = 0xb2,
