@@ -46,6 +46,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gBurning_ped_map_names, 7, 0x
     "Ex00006",
 });
 
+void (C2_HOOK_FASTCALL * InitPedsForm_original)(tPedForms_vtable* pTable);
+void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable) {
+#if defined(C2_HOOKS_ENABLED)
+
+    InitPedsForm_original(pTable);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00403ed0, InitPedsForm, InitPedsForm_original)
+
 void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, float pY, float pZ) {
     int i;
 
