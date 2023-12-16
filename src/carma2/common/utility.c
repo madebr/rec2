@@ -396,3 +396,19 @@ br_pixelmap* C2_HOOK_FASTCALL GenerateDarkenedShadeTable(int pHeight, br_pixelma
     return the_table;
 }
 C2_HOOK_FUNCTION(0x00514eb0, GenerateDarkenedShadeTable)
+
+br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter) {
+
+    PossibleService();
+    return GenerateDarkenedShadeTable(
+            pHeight,
+            pPalette,
+            pRed_mix,
+            pGreen_mix,
+            pBlue_mix,
+            pQuarter,
+            pHalf,
+            pThree_quarter,
+            1.0f);
+}
+C2_HOOK_FUNCTION(0x00514e40, GenerateShadeTable)
