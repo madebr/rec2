@@ -1595,6 +1595,12 @@ typedef struct {
     br_model* models[3];
 } tPed_giblet_size_spec;
 
+typedef struct {
+    undefined4 field_0x0;
+    br_actor* actors[7];
+    undefined field_0x8[76];
+} tBurning_ped;
+
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
     tActionReplayCameraMode_Panning = 1,
@@ -1771,6 +1777,7 @@ enum {
     kFatalError_CantOpen_S = 0x6b,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
+    kFatalError_CantFindPedTexture_S = 0xa8,
     kFatalError_CannotFindGibletModel_S = 0xa9,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_CantCopeWithVersionFor_SS = 0xb1,
