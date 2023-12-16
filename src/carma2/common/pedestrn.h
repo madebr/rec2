@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile);
 
 void C2_HOOK_CDECL InitPeds(void);
 
+void C2_HOOK_FASTCALL InitBurningPeds(void);
+
 #endif //REC2_PEDESTRN_H
