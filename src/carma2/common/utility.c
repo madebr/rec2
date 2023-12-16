@@ -1,5 +1,6 @@
 #include "utility.h"
 
+#include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
@@ -10,6 +11,8 @@
 
 #include "c2_ctype.h"
 #include "c2_string.h"
+
+#include <float.h>
 
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
@@ -260,3 +263,136 @@ double C2_HOOK_FASTCALL sqr(double pN) {
     return pN * pN;
 }
 C2_HOOK_FUNCTION(0x00513510, sqr)
+
+void C2_HOOK_FASTCALL BuildShadeTablePath(char* pThe_path, int pR, int pG, int pB) {
+    char s[32];
+
+    s[0] = 's';
+    s[1] = 't';
+    s[2] = 'A' + ((pR & 0xf0) >> 4);
+    s[3] = 'A' + ((pR & 0x0f) >> 0);
+    s[4] = 'A' + ((pG & 0xf0) >> 4);
+    s[5] = 'A' + ((pG & 0x0f) >> 0);
+    s[6] = 'A' + ((pB & 0xf0) >> 4);
+    s[7] = 'A' + ((pB & 0x0f) >> 0);
+    s[8] = '\0';
+    c2_strcat(s, ".TAB");
+    PathCat(pThe_path, C2V(gApplication_path), "SHADETAB");
+    PathCat(pThe_path, pThe_path, s);
+}
+
+br_pixelmap* C2_HOOK_FASTCALL LoadGeneratedShadeTable(int pR, int pG, int pB) {
+    char the_path[256];
+
+    BuildShadeTablePath(the_path, pR, pG, pB);
+    return BrPixelmapLoad(the_path);
+}
+
+void C2_HOOK_FASTCALL SaveGeneratedShadeTable(br_pixelmap* pThe_table, int pR, int pG, int pB) {
+    char the_path[256];
+
+    BuildShadeTablePath(the_path, pR, pG, pB);
+    BrPixelmapSave(the_path, pThe_table);
+}
+
+double C2_HOOK_FASTCALL RGBDifferenceSqr(tRGB_colour* pColour_1, tRGB_colour* pColour_2) {
+
+    return ((pColour_1->red - pColour_2->red) * (pColour_1->red - pColour_2->red))
+           + ((pColour_1->green - pColour_2->green) * (pColour_1->green - pColour_2->green))
+           + ((pColour_1->blue - pColour_2->blue) * (pColour_1->blue - pColour_2->blue));
+}
+
+int C2_HOOK_FASTCALL FindBestMatch(tRGB_colour* pRGB_colour, br_pixelmap* pPalette) {
+    int n;
+    int near_c;
+    double min_d;
+    double d;
+    tRGB_colour trial_RGB;
+    br_colour* dp;
+
+    near_c = 127;
+    min_d = DBL_MAX;
+    dp = pPalette->pixels;
+    for (n = 0; n < 256; n++) {
+        trial_RGB.red = (dp[n] >> 16) & 0xff;
+        trial_RGB.green = (dp[n] >> 8) & 0xff;
+        trial_RGB.blue = (dp[n] >> 0) & 0xff;
+        d = RGBDifferenceSqr(pRGB_colour, &trial_RGB);
+        if (d < min_d) {
+            min_d = d;
+            near_c = n;
+        }
+    }
+    return near_c;
+}
+
+br_pixelmap* C2_HOOK_FASTCALL GenerateDarkenedShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter, br_scalar pDarken) {
+    br_pixelmap* the_table;
+    tRGB_colour the_RGB;
+    tRGB_colour new_RGB;
+    tRGB_colour ref_col;
+    br_colour* cp;
+    char* tab_ptr;
+    char* shade_ptr;
+    double f_i;
+    double f_total_minus_1;
+    double ratio1;
+    double ratio2;
+    int i;
+    int c;
+
+    the_table = LoadGeneratedShadeTable(pRed_mix, pGreen_mix, pBlue_mix);
+    if (the_table == NULL) {
+        the_table = BrPixelmapAllocate(BR_PMT_INDEX_8, 256, pHeight, NULL, 0);
+        if (the_table == NULL) {
+            FatalError(kFatalError_CannotLoadAGeneratedShadeTable);
+        }
+        cp = pPalette->pixels;
+
+        ref_col.red = pRed_mix;
+        ref_col.green = pGreen_mix;
+        ref_col.blue = pBlue_mix;
+
+        for (c = 0, tab_ptr = the_table->pixels; c < 256; c++, tab_ptr++) {
+            the_RGB.red = (int)(((cp[c] >> 16) & 0xff) * pDarken);
+            the_RGB.green = (int)(((cp[c] >> 8) & 0xff) * pDarken);
+            the_RGB.blue = (int)(((cp[c] >> 0) & 0xff) * pDarken);
+
+            if (pHeight == 1) {
+                f_total_minus_1 = 1.;
+            } else {
+                f_total_minus_1 = pHeight - 1;
+            }
+            shade_ptr = tab_ptr;
+            for (i = 0, shade_ptr = tab_ptr; i < pHeight; i++, shade_ptr += 0x100) {
+                if (pHeight == 1) {
+                    f_i = 1.f;
+                } else {
+                    f_i = (float)i;
+                }
+                ratio1 = f_i / f_total_minus_1;
+                if (ratio1 < .5f) {
+                    if (ratio1 < .25) {
+                        ratio2 = pQuarter * ratio1 * 4.;
+                    } else {
+                        ratio2 = (ratio1 - .25f) * (pHalf - pQuarter) * 4. + pQuarter;
+                    }
+                } else {
+                    if (ratio1 < 0.75f) {
+                        ratio2 = (ratio1 - .5f) * (pThree_quarter - pHalf) * 4. + pHalf;
+                    } else {
+                        ratio2 = 1.f - (1.f - pThree_quarter) * (1.f - ratio1) * 4.f;
+                    }
+                }
+                new_RGB.red = (int)(ref_col.red * ratio2 + the_RGB.red * (1. - ratio2));
+                new_RGB.green = (int)(ref_col.green * ratio2 + the_RGB.green * (1. - ratio2));
+                new_RGB.blue = (int)(ref_col.blue * ratio2 + the_RGB.blue * (1. - ratio2));
+                *shade_ptr = FindBestMatch(&new_RGB, pPalette);
+            }
+        }
+        SaveGeneratedShadeTable(the_table, pRed_mix, pGreen_mix, pBlue_mix);
+    }
+    BrTableAdd(the_table);
+    return the_table;
+}
+C2_HOOK_FUNCTION(0x00514eb0, GenerateDarkenedShadeTable)
