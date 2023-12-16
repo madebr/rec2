@@ -34,6 +34,11 @@ char* C2_HOOK_CDECL c2_strcat(char* dest, const char *src) {
 }
 C2_HOOK_FUNCTION(0x00579a40, c2_strcat)
 
+char* C2_HOOK_CDECL c2_strncat(char* s1, const char* s2, size_t n) {
+    return strncat(s1, s2, n);
+}
+C2_HOOK_FUNCTION(0x00575f50, c2_strncat)
+
 int C2_HOOK_CDECL c2_strcmp(const char* s1, const char* s2) {
     return strcmp(s1, s2);
 }
