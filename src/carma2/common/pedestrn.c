@@ -33,6 +33,19 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gGiblet_min_max_time, 2, 0x006a0408);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGiblet_size_count, 0x0069bc18);
 C2_HOOK_VARIABLE_IMPLEMENT(tPed_giblet_size_spec*, gGiblet_sizes, 0x00694274);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gBurning_ped_materials, 7, 0x0069fd88);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gBurning_ped_models, 7, 0x00694308);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tBurning_ped, gBurning_peds, 5, 0x0069b9f0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gBurning_ped_map_names, 7, 0x0065e598, {
+    "Ex00006",
+    "Ex00006",
+    "Ex00006",
+    "Ex00006",
+    "Ex00006",
+    "Ex00006",
+    "Ex00006",
+});
+
 void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, float pY, float pZ) {
     int i;
 
@@ -200,3 +213,66 @@ void C2_HOOK_CDECL InitPeds(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cadc0, InitPeds, InitPeds_original)
+
+void (C2_HOOK_FASTCALL * InitBurningPeds_original)(void);
+void C2_HOOK_FASTCALL InitBurningPeds(void) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    InitBurningPeds_original();
+#else
+    int i;
+    int j;
+    br_model* model;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gBurning_ped_materials)); i++) {
+        model = BrModelAllocate(NULL, 4, 2);
+        C2V(gBurning_ped_models)[i] = model;
+        model->faces[0].vertices[0] = 0;
+        model->faces[0].vertices[1] = 2;
+        model->faces[0].vertices[2] = 1;
+        model->faces[0].material = NULL;
+        model->faces[0].smoothing = 1;
+        model->faces[1].vertices[0] = 0;
+        model->faces[1].vertices[1] = 3;
+        model->faces[1].vertices[2] = 2;
+        model->faces[1].material = NULL;
+        model->faces[1].smoothing = 1;
+
+        BrVector3Set(&model->vertices[0].p, -.5f, -.5f, 0.f);
+        BrVector2Set(&model->vertices[0].map, 0.f, 1.f);
+        BrVector3Set(&model->vertices[1].p, -.5f, 1.f, 0.f);
+        BrVector2Set(&model->vertices[1].map, 0.f, 0.f);
+        BrVector3Set(&model->vertices[2].p, 1.f, 1.f, 0.f);
+        BrVector2Set(&model->vertices[2].map, 1.f, 0.f);
+        BrVector3Set(&model->vertices[2].p, 1.f, -.5f, 0.f);
+        BrVector2Set(&model->vertices[2].map, 1.f, 1.f);
+
+        BrModelAdd(model);
+
+        C2V(gBurning_ped_materials)[i] = BrMaterialAllocate("BURN!");
+        C2V(gBurning_ped_materials)[i]->flags &= ~BR_MATF_LIGHT;
+        C2V(gBurning_ped_materials)[i]->flags |= BR_MATF_ALWAYS_VISIBLE;
+        C2V(gBurning_ped_materials)[i]->colour_map = BrMapFind(C2V(gBurning_ped_map_names)[i]);
+        if (C2V(gBurning_ped_materials)[i]->colour_map == NULL) {
+            FatalError(kFatalError_CantFindPedTexture_S, C2V(gBurning_ped_map_names)[i]);
+        }
+        AdaptMaterialsForRenderer(&C2V(gBurning_ped_materials)[i], 1, kRendererShadingType_Diffuse2);
+        BrMaterialAdd(C2V(gBurning_ped_materials)[i]);
+    }
+
+    C2_HOOK_BUG_ON(sizeof(tBurning_ped) != 0x6c);
+    for (i = 0; i < REC2_ASIZE(C2V(gBurning_peds)); i++) {
+        C2V(gBurning_peds)[i].field_0x0 = 0;
+        for (j = 0; j < REC2_ASIZE(C2V(gBurning_ped_materials)); j++) {
+            br_actor* actor;
+
+            actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            C2V(gBurning_peds)[i].actors[j] = actor;
+            actor->material = C2V(gBurning_ped_materials)[j];
+            actor->model = C2V(gBurning_ped_models)[j];
+            actor->render_style = BR_RSTYLE_NONE;
+            BrActorAdd(C2V(gNon_track_actor), actor);
+        }
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cb630, InitBurningPeds, InitBurningPeds_original)
