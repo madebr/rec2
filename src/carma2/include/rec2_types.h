@@ -1663,6 +1663,19 @@ typedef enum {
     tActionReplayCameraMode_Internal = 8,
 } tActionReplayCameraMode;
 
+typedef enum {
+    ePlayer_status_unknown = 0,
+    ePlayer_status_ready = 1,
+    ePlayer_status_loading = 2,
+    ePlayer_status_wrecks_gallery = 3,
+    ePlayer_status_summary = 4,
+    ePlayer_status_not_responding = 5,
+    ePlayer_status_racing = 6,
+    ePlayer_status_main_menu = 7,
+    ePlayer_status_recovering = 8,
+    ePlayer_status_action_replay = 9
+} tPlayer_status;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
