@@ -130,6 +130,7 @@ br_model* C2_HOOK_CDECL BrModelAdd(br_model* model);
 br_uint_32 C2_HOOK_CDECL BrModelAddMany(br_model** items, int n);
 br_model* C2_HOOK_CDECL BrModelRemove(br_model* model);
 br_model* C2_HOOK_CDECL BrModelLoad(const char* filename);
+br_model* C2_HOOK_CDECL BrModelFind(const char* name);
 void C2_HOOK_CDECL BrModelFree(br_model* model);
 void C2_HOOK_CDECL BrModelUpdate(br_model* model, br_uint_16 flags);
 br_uint_32 C2_HOOK_CDECL BrModelLoadMany(const char* filename, br_model** models, br_uint_16 num);
