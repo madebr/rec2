@@ -1794,6 +1794,7 @@ enum {
     kFatalError_CannotOpenTEXT_TXT = 0x63,
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
     kFatalError_CantOpen_S = 0x6b,
+    kFatalError_CannotLoadAGeneratedShadeTable = 0x6d,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
     kFatalError_CantFindPedTexture_S = 0xa8,
