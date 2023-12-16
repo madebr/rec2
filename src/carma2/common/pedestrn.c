@@ -13,6 +13,17 @@
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPed_cache_sizes_2, 4, 0x0065d7a8, {
+    5, 10, 40, 75,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPed_cache_sizes_1, 4, 0x0065d7b8, {
+    40, 25, 15, 5,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_face_cache_0x34*, gPed_face_caches, 4, 0x0069bc58);
+C2_HOOK_VARIABLE_IMPLEMENT(tPed_face_cache_0x50*, gPed_face_cache, 0x0069bc54);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSelected_ped, 0x007447f0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPed_shade, 0x00694458);
+
 C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gPed_explosion_small_blood_cloud, 0x00694478);
 C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gPed_medium_blood_cloud, 0x00694480);
 C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gPed_large_blood_cloud, 0x00694488);
@@ -215,12 +226,177 @@ void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile) {
 }
 C2_HOOK_FUNCTION(0x004cb1e0, ReadPedGiblets)
 
-void (C2_HOOK_CDECL * InitPeds_original)(void);
-void C2_HOOK_CDECL InitPeds(void) {
-#if defined(C2_HOOKS_ENABLED)
+void (C2_HOOK_FASTCALL * InitPeds_original)(void);
+void C2_HOOK_FASTCALL InitPeds(void) {
+#if 0//defined(C2_HOOKS_ENABLED)
     InitPeds_original();
 #else
-#error "not implemented"
+    tPath_name the_path;
+    FILE* file;
+    int i;
+    int j;
+    float v;
+
+    if (C2V(gPedsFolder) == NULL) {
+        ConfigurePedDefaultPaths();
+    }
+
+    C2_HOOK_VARIABLE_IMPLEMENT(tPedForms_vtable, gPed_forms_vtable, 0x0065d778);
+
+    InitPedsForm(&C2V(gPed_forms_vtable));
+
+    PathCat(the_path, C2V(gApplication_path), C2V(gPedsFolder));
+    PathCat(the_path, the_path, "SETTINGS.TXT");
+    file = DRfopen(the_path, "rt");
+    if (file == NULL) {
+        FatalError(kFatalError_CannotOpenPedFile_S, "SETTINGS.TXT");
+    }
+    /* ***************************
+     *        GENERAL STUFF
+     * ***************************
+     */
+
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_process_distance, 0x00694118);
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_process_distance_inner, 0x0069bc1c);
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_popup_distance, 0x006944bc);
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_popup_distance_inner, 0x00694128);
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_cos_max_slope, 0x00694464);
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_reach_squared, 0x0069413c);
+
+    /* Max distance from camera that peds are processed within */
+    C2V(gPed_process_distance) = GetAScalar(file);
+    C2V(gPed_process_distance_inner) = 0.6f * C2V(gPed_process_distance);
+    /* Min distance from camera that peds can suddenly pop up at */
+    C2V(gPed_popup_distance) = GetAScalar(file);
+    C2V(gPed_popup_distance_inner) = 0.6f * C2V(gPed_popup_distance);
+    /* Maximum slope that peds will walk on (in degreesm) */
+    C2V(gPed_cos_max_slope) = BR_COS(BR_ANGLE_DEG(GetAScalar(file)));
+
+    /* Nearest distance to obstacles that ped should ideally reach */
+    v = GetAScalar(file);
+    C2V(gPed_reach_squared) = v * v;
+
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_min_dist_avoid_collisions_squared, 0x00694300);
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_buoyancy_factor, 0x007447fc);
+    C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPed_points, 3, 0x0069bcf8);
+    C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPed_times, 3, 0x00694268);
+    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_severing_damage, 0x00694234);
+    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_severing_chance, 0x0069bc0c);
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_max_survivable_impact, 0x00694494);
+    C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_damage_per_force, 0x0069bc20);
+
+    /* Distance from which turning to avoid obstacles is a possibility */
+    v = GetAScalar(file);
+    C2V(gPed_min_dist_avoid_collisions_squared) = v * v;
+    /* Buoyancy factor */
+    C2V(gPed_buoyancy_factor) = GetAScalar(file);
+    /* Points score per ped (each level) */
+    GetThreeInts(file, &C2V(gPed_points)[0], &C2V(gPed_points)[1], &C2V(gPed_points)[2]);
+    /* Time score per ped (each level) */
+    GetThreeInts(file, &C2V(gPed_times)[0], &C2V(gPed_times)[1], &C2V(gPed_times)[2]);
+    /* HP damage required per severing */
+    C2V(gPed_severing_damage) = GetAnInt(file);
+    /* % chance of severing occurring */
+    C2V(gPed_severing_chance) = GetAnInt(file);
+    /* Maximum survivable initial impact force */
+    C2V(gPed_max_survivable_impact) = GetAScalar(file);
+    /* HP Damage per unit force */
+    C2V(gPed_damage_per_force) = GetAScalar(file);
+    ReadPedGiblets(file);
+
+    C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gNapalmed_ped_animation, 0x0069bc28);
+
+    /* NAPALMED PED SPEC */
+    ReadExplosionAnimation(file, &C2V(gNapalmed_ped_animation));
+
+    /*
+     * ***************************
+     *       MOVEMENT STUFF
+     * ***************************
+     */
+
+    C2_HOOK_BUG_ON(sizeof(tPed_movement_spec) != 20);
+
+    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_movements_count, 0x0069bcec);
+    C2_HOOK_VARIABLE_IMPLEMENT(tPed_movement_spec*, gPed_movements, 0x0069bcf0);
+
+    /* Number of movements */
+    C2V(gPed_movements_count) = GetAnInt(file);
+    C2V(gPed_movements) = BrMemAllocate(C2V(gPed_movements_count) * sizeof(tPed_movement_spec), kMem_misc_poly_ped);
+
+    for (i = 0; i < C2V(gPed_movements_count); i++) {
+        /* Min time between random turns */
+        C2V(gPed_movements)[i].min_time_between = (int)(1000.f * GetAScalar(file));
+        /* Max time between random turns */
+        C2V(gPed_movements)[i].max_time_between = (int)(1000.f * GetAScalar(file));
+        /* Max angle of random turn */
+        C2V(gPed_movements)[i].max_random_angle = BR_ANGLE_DEG(GetAScalar(file));
+        /* Min walk speed multiplier */
+        C2V(gPed_movements)[i].min_walk_speed_factor = 1000.f / GetAScalar(file) * 30.f;
+        /* Max walk speed multiplier */
+        C2V(gPed_movements)[i].max_walk_speed_factor = 1000.f / GetAScalar(file) * 30.f;
+    }
+
+    /*
+     * ***************************
+     *       PED GROUPS
+     * ***************************
+     */
+
+    C2_HOOK_BUG_ON(sizeof(tPed_group_spec) != 8);
+
+    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_groups_count, 0x00694134);
+    C2_HOOK_VARIABLE_IMPLEMENT(tPed_group_spec*, gPed_groups, 0x0069bc14);
+
+    /* Number of groups
+     * (Remember that it starts at 0, so this no. is one more than last group no.)(honest this time ;o) */
+    C2V(gPed_groups_count) = GetAnInt(file);
+    C2V(gPed_groups) = BrMemAllocate(C2V(gPed_groups_count) * sizeof(tPed_group_spec), kMem_misc_poly_ped);
+
+    for (i = 0; i < C2V(gPed_groups_count); i++) {
+        C2_HOOK_BUG_ON(sizeof(tPed_group_member_spec) != 16);
+
+        /* Number of peds types in this group */
+        C2V(gPed_groups)[i].count = GetAnInt(file);
+        C2V(gPed_groups)[i].members = BrMemAllocate(C2V(gPed_groups)[i].count * sizeof(tPed_group_member_spec), kMem_misc_poly_ped);
+
+        for (j = 0; j < C2V(gPed_groups)[i].count; j++) {
+            /* Name of ped */
+            GetAString(file, C2V(gPed_groups)[i].members[j].name);
+        }
+    }
+
+    /*
+     * ***************************
+     *       GORE LEVEL
+     * ***************************
+     */
+
+    C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_animal_count, 0x00694230);
+    C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_animal_name, gPed_animal_names, 50, 0x0069fdb8);
+
+    /* Number of peds to be considered "animals" */
+    C2V(gPed_animal_count) = GetAnInt(file);
+    for (i = 0; i < C2V(gPed_animal_count); i++) {
+        GetAString(file, (char*)(C2V(gPed_animal_names)[i]));
+    }
+
+    DRfclose(file);
+
+    C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x34) != 52);
+    C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x50) != 80);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPed_cache_sizes_1)); i++) {
+        C2V(gPed_face_caches)[i] = BrMemAllocate(C2V(gPed_cache_sizes_1)[i] * sizeof(tPed_face_cache_0x34), kMem_ped_face_cache);
+        for (j = 0; j < C2V(gPed_cache_sizes_1)[i]; j++) {
+            C2V(gPed_face_caches)[i][j].field_0x0 = BrMemAllocate(C2V(gPed_cache_sizes_2)[i] * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
+            C2V(gPed_face_caches)[i][j].count = C2V(gPed_cache_sizes_2)[i];
+        }
+    }
+    C2V(gPed_face_cache) = BrMemAllocate((C2V(gPed_cache_sizes_2)[3] + 1) * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
+    InitBurningPeds();
+    C2V(gSelected_ped) = 0;
+    C2V(gPed_shade) = GenerateShadeTable(8, C2V(gRender_palette), 0xd7, 0xff, 0xe9, .5f, .75f, .9f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cadc0, InitPeds, InitPeds_original)
