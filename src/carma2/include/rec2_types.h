@@ -4,6 +4,8 @@
 #include <brender/br_types.h>
 #include <s3/s3.h>
 
+#include "c2_stdio.h"
+
 typedef char tPath_name[256];
 
 typedef unsigned char tU8;
@@ -1579,6 +1581,18 @@ typedef struct {
         br_vector3 box;
     } position;
 } tSmashable_initial_position_spec;
+
+typedef struct {
+    undefined4 (C2_HOOK_FASTCALL * field_0x0)(undefined4*, undefined4, undefined4*);
+    undefined4 (C2_HOOK_FASTCALL * field_0x4)(undefined4*, undefined4*);
+    void (C2_HOOK_FASTCALL * field_0x8)(undefined4*, undefined4*);
+    int (C2_HOOK_FASTCALL * field_0xc)(undefined4*);
+    void (C2_HOOK_FASTCALL * field_0x10)(undefined4*, undefined4);
+    void (C2_HOOK_FASTCALL * field_0x14)(undefined4*, FILE*);
+    void (C2_HOOK_FASTCALL * field_0x18)(undefined4*);
+    void (C2_HOOK_FASTCALL * field_0x1c)(undefined4*, FILE*);
+    void (C2_HOOK_FASTCALL * field_0x20)(undefined4*);
+} tPedForms_vtable;
 
 typedef struct {
     float min_speed;
