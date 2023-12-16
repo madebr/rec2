@@ -31,6 +31,8 @@ typedef struct tPowerup tPowerup;
 typedef struct tRace_list_spec tRace_list_spec;
 typedef struct tRace_info tRace_info;
 
+typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
+
 // Function callbacks are moved to a header for automatic SRE project generation
 typedef void (C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
 typedef void (C2_HOOK_FASTCALL * tPDForEveryFile_cbfn)(const char*);
@@ -1600,6 +1602,26 @@ typedef struct {
 } tSmashable_initial_speed_spec;
 
 typedef struct {
+    tU32 min_time_between;
+    tU32 max_time_between;
+    float min_walk_speed_factor;
+    float max_walk_speed_factor;
+    br_angle max_random_angle;
+    tU8 padding_0x12[2];
+} tPed_movement_spec;
+
+typedef struct {
+    undefined field_0x0[0x50];
+} tPed_face_cache_0x50;
+
+typedef struct  {
+    tPed_face_cache_0x50* field_0x0;
+    undefined field_0x4;
+    tU8 count;
+    undefined field_0x6[46];
+} tPed_face_cache_0x34;
+
+typedef struct {
     tU8 flags;
     tU8 max_count;
     tU8 model_count;
@@ -1608,6 +1630,15 @@ typedef struct {
     float instance_force;
     br_model* models[3];
 } tPed_giblet_size_spec;
+
+typedef struct {
+    char name[16];
+} tPed_group_member_spec;
+
+typedef struct {
+    int count;
+    tPed_group_member_spec *members;
+} tPed_group_spec;
 
 typedef struct {
     undefined4 field_0x0;
@@ -1792,6 +1823,7 @@ enum {
     kFatalError_CannotLoadAGeneratedShadeTable = 0x6d,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
+    kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CantFindPedTexture_S = 0xa8,
     kFatalError_CannotFindGibletModel_S = 0xa9,
     kFatalError_DuplicatePixelmap_S = 0xb5,
