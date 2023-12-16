@@ -58,6 +58,8 @@ add_library(c2_common STATIC
     main.h
     netgame.c
     netgame.h
+    network.c
+    network.h
     newgame.c
     newgame.h
     oil.c
