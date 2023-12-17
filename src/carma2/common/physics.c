@@ -786,6 +786,55 @@ tPhysicsError C2_HOOK_FASTCALL ProcessPolyhedronCollisionShape(tCollision_shape_
 }
 C2_HOOK_FUNCTION(0x00420fb0, ProcessPolyhedronCollisionShape)
 
+void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape) {
+    int i;
+    tPhysicsError error;
+
+    switch (pShape->common.type) {
+    case kCollisionShapeType_Box:
+        break;
+    case kCollisionShapeType_Polyhedron:
+        if (pShape->polyhedron.polyhedron.count_points < 4) {
+            PhysicsError(ePhysicsError_PolyhedronHasNoPoints);
+        }
+        error = ProcessPolyhedronCollisionShape(&pShape->polyhedron.polyhedron);
+        if (error != ePhysicsError_Ok) {
+            if (error == ePhysicsError_WireFrameHasNoPoints) {
+                PDFatalError("This polyhedron is too wierd for me");
+            }
+            pShape->common.type = kCollisionShapeType_Wireframe_Polyhedron;
+        }
+        CalculateBoundingBox(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
+        break;
+    case kCollisionShapeType_Wireframe:
+        if (pShape->wireframe.wireframe.count_points == 0) {
+            PhysicsError(ePhysicsError_WireFrameHasNoPoints);
+        }
+        CalculateBoundingBox(pShape->wireframe.wireframe.points, pShape->wireframe.wireframe.count_points, &pShape->common.bb);
+        break;
+    case kCollisionShapeType_Wireframe_Polyhedron:
+        if (pShape->polyhedron.polyhedron.count_points < 3) {
+            PhysicsError(4);
+        }
+        AddPolyhedronCollisionShapePlanes(&pShape->polyhedron.polyhedron);
+        CalculateBoundingBox(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
+        break;
+    case kCollisionShapeType_Sphere:
+        BrVector3Copy(&pShape->common.bb.min, &pShape->sphere.sphere.center);
+        BrVector3Copy(&pShape->common.bb.max, &pShape->sphere.sphere.center);
+        for (i = 0; i < 3; i++) {
+            pShape->common.bb.min.v[i] -= pShape->sphere.sphere.radius;
+            pShape->common.bb.max.v[i] += pShape->sphere.sphere.radius;
+        }
+        pShape->sphere.sphere.radius_squared = REC2_SQR(pShape->sphere.sphere.radius);
+        break;
+    default:
+        PhysicsError(ePhysicsError_UnknownShapeType);
+        break;
+    }
+}
+C2_HOOK_FUNCTION(0x004c5f20, ProcessCollisionShape)
+
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
 
