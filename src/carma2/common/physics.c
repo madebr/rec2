@@ -861,13 +861,37 @@ C2_HOOK_FUNCTION(0x004c5f20, ProcessCollisionShape)
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
 
-REC2_THISCALL_UNUSED(pArg2);
+    REC2_THISCALL_UNUSED(pArg2);
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return CreateSphericalCollisionObject_original(pModel, pWeight);
 #else
-#error "Not implemented"
+    tCollision_info* collision_info;
+    tCollision_shape* shape;
+    br_vector3 tv;
+
+    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
+
+    collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
+    collision_info->shape = shape = (tCollision_shape*)AllocateSphereCollisionShape(kMem_collision_shape);
+    BrVector3Set(&collision_info->shape->sphere.sphere.center, 0.f, 0.f, 0.f);
+    BrVector3Sub(&tv, &pModel->bounds.max, &pModel->bounds.min);
+    shape->sphere.sphere.radius = (tv.v[0] + tv.v[1] + tv.v[2]) / 6.f;
+    ProcessCollisionShape(shape);
+    collision_info->uid = C2V(gCollision_info_uid_counter);
+    C2V(gCollision_info_uid_counter)++;
+    UpdateCollisionBoundingBox(collision_info);
+    collision_info->M = pWeight;
+    BrVector3Set(&collision_info->I,
+        REC2_SQR(shape->sphere.sphere.radius) * pWeight / 6.f,
+        REC2_SQR(shape->sphere.sphere.radius) * pWeight / 6.f,
+        REC2_SQR(shape->sphere.sphere.radius) * pWeight / 6.f);
+    BrVector3SetFloat(&collision_info->field7_0x54, 0.f, -0.05797102f, 0.f);
+    collision_info->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    BrMatrix34Copy(&collision_info->actor->t.t.mat, &collision_info->transform_matrix);
+    collision_info->actor->model = pModel;
+    collision_info->box_face_ref = C2V(gFace_num__car) - 2;
+    return collision_info;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da400, CreateSphericalCollisionObject, CreateSphericalCollisionObject_original)
-
