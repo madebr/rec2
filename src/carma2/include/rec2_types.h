@@ -2950,7 +2950,7 @@ typedef struct {
     undefined4 field_0x7c;
     undefined4 field_0x80;
     undefined4 field_0x84;
-} tDrone;
+} tDrone_form;
 
 typedef struct {
     br_material* material;

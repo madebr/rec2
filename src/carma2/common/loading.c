@@ -2948,11 +2948,11 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
     char s[256];
     char* str;
     FILE* f;
-    tDrone* drone;
+    tDrone_form* drone;
 
-    C2_HOOK_BUG_ON(sizeof(tDrone) != 136);
+    C2_HOOK_BUG_ON(sizeof(tDrone_form) != 136);
 
-    drone = &C2V(gDrones)[C2V(gCount_drones)];
+    drone = &C2V(gDrone_forms)[C2V(gCount_drone_forms)];
     c2_strcpy(the_path, C2V(gApplication_path));
     PathCat(the_path, the_path, "DRONES");
     PathCat(the_path, the_path, pDrone_name);
@@ -3119,8 +3119,8 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
     str = c2_strtok(NULL, "\t ,/");
     sscanf(str, "%d", &version);
     if (version == 1) {
-        c2_memset(C2V(gDrones), 0, sizeof(C2V(gDrones)));
-        for (C2V(gCount_drones) = 0; C2V(gCount_drones) < REC2_ASIZE(C2V(gDrones)); C2V(gCount_drones)++) {
+        c2_memset(C2V(gDrone_forms), 0, sizeof(C2V(gDrone_forms)));
+        for (C2V(gCount_drone_forms) = 0; C2V(gCount_drone_forms) < REC2_ASIZE(C2V(gDrone_forms)); C2V(gCount_drone_forms)++) {
             GetALineAndDontArgue(f, s);
             if (c2_strcmp(s, "END OF DRONES") == 0 || DRfeof(f)) {
                 break;
