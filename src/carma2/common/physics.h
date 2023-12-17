@@ -35,8 +35,6 @@ int C2_HOOK_FASTCALL ArePointsColinear(const br_vector3* pV1, const br_vector3* 
 
 void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_info);
 
-void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape);
-
 tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron, tPolyhedron_edge_indexes* pEdges);
 
 int C2_HOOK_FASTCALL PolyhedronCollisionShape_AddPoint(tCollision_shape_polyhedron_data* pPolyhedron, br_vector3* pVertex, tU8 pVertex_index, tPolyhedron_edge_indexes* pEdge_to_plane_indices);
@@ -50,6 +48,8 @@ tPhysicsError C2_HOOK_FASTCALL AddPolyhedronCollisionShapePlanes(tCollision_shap
 tPhysicsError C2_HOOK_FASTCALL ProcessPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron);
 
 void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds);
+
+void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape);
 
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight);
 
