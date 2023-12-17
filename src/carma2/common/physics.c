@@ -749,6 +749,80 @@ void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCou
 }
 C2_HOOK_FUNCTION(0x004c5eb0, CalculateBoundingBox)
 
+tPhysicsError C2_HOOK_FASTCALL ProcessPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron) {
+    int original_count_points;
+    br_vector3 original_points[300];
+    tPolyhedron_edge_indexes indices[894];
+
+    if (pPolyhedron->count_points > REC2_ASIZE(original_points)) {
+        pPolyhedron->count_points = REC2_ASIZE(original_points);
+    }
+
+    original_count_points = pPolyhedron->count_points;
+    c2_memcpy(original_points, pPolyhedron->points, sizeof(original_points));
+    switch (ProcessTetrahedronPolyhedronCollisionShape(pPolyhedron, indices)) {
+    case ePhysicsError_Ok: {
+        int new_count_points;
+        int i;
+        int j;
+
+        new_count_points = 4;
+        for (i = 0; i < original_count_points; i++) {
+
+            if (PolyhedronCollisionShape_AddPoint(pPolyhedron, &original_points[i], new_count_points, indices)) {
+                if (i != new_count_points) {
+                    BrVector3Copy(&pPolyhedron->points[new_count_points], &original_points[i]);
+                }
+                new_count_points++;
+            }
+        }
+        pPolyhedron->count_points = new_count_points;
+
+        new_count_points = 0;
+        for (i = 0; i < pPolyhedron->count_points; i++) {
+            int edge_j;
+
+            for (j = 0; j < pPolyhedron->count_edges; j++) {
+                if (i == pPolyhedron->edges[j].index1 || i == pPolyhedron->edges[j].index2) {
+                    break;
+                }
+            }
+            edge_j = j;
+            if (j >= pPolyhedron->count_edges) {
+                continue;
+            }
+            if (i != new_count_points) {
+                BrVector3Copy(&pPolyhedron->points[new_count_points], &pPolyhedron->points[i]);
+                for (j = 0; j < pPolyhedron->count_edges; j++) {
+                    if (pPolyhedron->edges[j].index1 == i) {
+                        pPolyhedron->edges[j].index1 = new_count_points;
+                    } else if (pPolyhedron->edges[j].index2 == i) {
+                        pPolyhedron->edges[j].index2 = new_count_points;
+                    }
+                }
+            }
+            new_count_points++;
+        }
+        pPolyhedron->count_points = new_count_points;
+        return ePhysicsError_Ok;
+    }
+    default: {
+        tPhysicsError err;
+
+        pPolyhedron->count_points = original_count_points;
+        c2_memcpy(pPolyhedron->points, original_points, sizeof(original_points));
+        err = AddPolyhedronCollisionShapePlanes(pPolyhedron);
+        if (err == ePhysicsError_Ok) {
+            return ePhysicsError_WireFrameHasNoPoints;
+        }
+        return err;
+    }
+    case ePhysicsError_UnknownShapeType:
+        return ePhysicsError_UnknownShapeType;
+    }
+}
+C2_HOOK_FUNCTION(0x00420fb0, ProcessPolyhedronCollisionShape)
+
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
 
