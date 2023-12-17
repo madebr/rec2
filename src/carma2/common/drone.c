@@ -7,8 +7,8 @@
 
 #include <stdarg.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDrone, gDrones, 64, 0x00682178);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_drones, 0x0068450c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDrone_form, gDrone_forms, 64, 0x00682178);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_drone_forms, 0x0068450c);
 
 void C2_HOOK_CDECL DroneDebug(const char* format, ...) {
 // Disabled because too noisy
