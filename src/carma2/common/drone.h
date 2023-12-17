@@ -5,8 +5,8 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tDrone, gDrones, 64);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_drones);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tDrone_form, gDrone_forms, 64);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_drone_forms);
 
 void C2_HOOK_CDECL DroneDebug(const char* message, ...);
 
