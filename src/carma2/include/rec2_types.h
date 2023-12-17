@@ -2304,7 +2304,7 @@ typedef enum {
     kCollisionShapeType_Box = 0,
     kCollisionShapeType_Polyhedron = 1,
     kCollisionShapeType_Wireframe = 2,
-    kCollisionShapeType_Plane_Polygon_Wireframe = 3,
+    kCollisionShapeType_Wireframe_Polyhedron = 3,
     kCollisionShapeType_Sphere = 4,
 } tCollision_shape_type;
 
