@@ -245,18 +245,6 @@ void C2_HOOK_FASTCALL AbortRace(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441490, AbortRace, AbortRace_original)
 
-// Key: 's'
-void (C2_HOOK_FASTCALL * ToggleSoundEnable_original)(void);
-void C2_HOOK_FASTCALL ToggleSoundEnable(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
-    ToggleSoundEnable_original();
-#else
-#error "Not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00455a50, ToggleSoundEnable, ToggleSoundEnable_original)
-
 // Key: 'f1'
 void (C2_HOOK_FASTCALL * ToggleHUD_original)(void);
 void C2_HOOK_FASTCALL ToggleHUD(void) {
