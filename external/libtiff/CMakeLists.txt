@@ -1,3 +1,11 @@
+set(tiff-tools OFF CACHE BOOL "" FORCE)
+set(tiff-tools OFF CACHE BOOL "" FORCE)
+set(tiff-tests OFF CACHE BOOL "" FORCE)
+set(tiff-contrib OFF CACHE BOOL "" FORCE)
+set(tiff-docs OFF CACHE BOOL "" FORCE)
+set(tiff-deprecated OFF CACHE BOOL "" FORCE)
+set(tiff-install OFF CACHE BOOL "" FORCE)
+
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(cxx OFF CACHE BOOL "" FORCE)
 set(fatal-warnings OFF CACHE BOOL "" FORCE)
