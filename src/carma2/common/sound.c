@@ -4,6 +4,8 @@
 #include "loading.h"
 #include "utility.h"
 
+#include <s3/s3.h>
+
 #include <string.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSound_detail_level, 0x00595c48, 1);
@@ -135,3 +137,16 @@ int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00455970, DRS3StopOutletSound)
+
+void C2_HOOK_FASTCALL ToggleSoundEnable(void) {
+
+    if (C2V(gSound_enabled)) {
+        S3StopAllOutletSounds();
+        S3Disable();
+        C2V(gSound_enabled) = 0;
+    } else {
+        S3Enable();
+        C2V(gSound_enabled) = 1;
+    }
+}
+C2_HOOK_FUNCTION(0x00455a50, ToggleSoundEnable)
