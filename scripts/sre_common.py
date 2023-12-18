@@ -74,6 +74,6 @@ class FunctionHookItem:
         return cls(**dkt2)
 
 
-VariableHookItem = collections.namedtuple("VariableHookItem", ("address", "vartype", "varname"))
-VariableArrayHookItem = collections.namedtuple("VariableArrayHookItem", ("address", "vartype", "varname", "varcount"))
+VariableHookItem = collections.namedtuple("VariableHookItem", ("address", "vartype", "name"))
+VariableArrayHookItem = collections.namedtuple("VariableArrayHookItem", ("address", "vartype", "name", "varcount"))
 
