@@ -8,6 +8,8 @@ C2_HOOK_VARIABLE_DECLARE(tS3_sound_source*, gS3_sound_sources);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_nsound_sources);
 C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gS3_outlets);
 
+void C2_HOOK_FASTCALL S3Enable(void);
+
 int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* chan);
 
 void C2_HOOK_FASTCALL S3StopAllOutletSounds(void);
