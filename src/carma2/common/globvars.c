@@ -249,7 +249,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMap_mode, 0x00761edc);
 //int gNumber_of_racers;
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_enabled, 0x00762328);
 //int gGraf_spec_index;
-//int gSound_available;
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_available, 0x00761ee4);
 //int gNumber_of_races;
 //char gDir_separator[3] = "";
 
