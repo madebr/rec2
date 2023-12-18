@@ -1547,7 +1547,7 @@ int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex) {
     c2_fprintf(pF, "%d // Auto-goody\n", C2V(gNet_settings)[pIndex].random_car_choice);
     c2_fprintf(pF, "%d // Car choice mode\n", C2V(gNet_settings)[pIndex].car_choice);
     c2_fprintf(pF, "%d // Starting credits\n\n", C2V(gNet_settings)[pIndex].starting_credits);
-    c2_fprintf(pF, "%d // Target\n", C2V(gNet_settings)[pIndex].starting_target);
+    c2_fprintf(pF, "%d // Target\n\n", C2V(gNet_settings)[pIndex].starting_target);
     return 0;
 }
 C2_HOOK_FUNCTION(0x0048d7d0, PrintNetOptions)
