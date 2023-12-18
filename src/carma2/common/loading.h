@@ -16,7 +16,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gDisableTiffConversion);
 
 C2_HOOK_VARIABLE_DECLARE(char*, gPedsFolder);
 C2_HOOK_VARIABLE_DECLARE(char*, gPedSoundPath);
-C2_HOOK_VARIABLE_DECLARE(char*, gPedPowerupTxtPath);
+C2_HOOK_VARIABLE_DECLARE(char*, gPowerup_txt_path);
 C2_HOOK_VARIABLE_DECLARE(char*, gPedTextTxtPath);
 C2_HOOK_VARIABLE_DECLARE(char*, gPedTexturePath);
 
