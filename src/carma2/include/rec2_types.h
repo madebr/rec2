@@ -20,6 +20,7 @@ typedef unsigned int undefined4;
 typedef int tTWTVFS;
 
 // FIXME: incomplete type
+typedef struct tCar_spec tCar_spec;
 typedef struct tCar_crush_spec tCar_crush_spec;
 typedef struct tCollision_info tCollision_info;
 typedef struct tDR_font tDR_font;
@@ -30,10 +31,12 @@ typedef struct tRace_list_spec tRace_list_spec;
 typedef struct tRace_info tRace_info;
 
 // Function callbacks are moved to a header for automatic SRE project generation
-typedef void(C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
+typedef void (C2_HOOK_FASTCALL * tPlayFlic_DoPerFrame)(void);
 typedef void (C2_HOOK_FASTCALL * tPDForEveryFile_cbfn)(const char*);
 typedef void (C2_HOOK_FASTCALL * tPDForEveryFileRecurse_cbfn)(const char*);
-
+typedef int  C2_HOOK_FASTCALL tGot_proc(tPowerup*, tCar_spec*);
+typedef void C2_HOOK_FASTCALL tLose_proc(tPowerup*, tCar_spec*);
+typedef void C2_HOOK_FASTCALL tPeriodic_proc(tPowerup*, tU32);
 
 typedef struct {
     int r;
@@ -1210,6 +1213,46 @@ typedef struct {
     tU32 fizzle_start;
 } tHeadup_icon;
 
+typedef enum {
+    ePowerup_dummy = 0,
+    ePowerup_instantaneous = 1,
+    ePowerup_timed = 2,
+    ePowerup_whole_race = 3,
+} tPowerup_type;
+
+typedef enum {
+    eNet_powerup_local = 0,
+    eNet_powerup_global = 1,
+    eNet_powerup_inappropriate = 2,
+    eNet_powerup_off_before_snapweld = 4,
+} tNet_powerup_type;
+
+typedef struct tPowerup{
+    tPowerup_type type;
+    undefined4 got_time;
+    int duration;
+    int lose_time;
+    int group_inclusion;
+    struct br_pixelmap * icon;
+    int fizzle_type;
+    int number_of_float_params;
+    int number_of_integer_params;
+    int* integer_params;
+    int current_value;
+    int prat_cam_event;
+    int value;
+    int initial_value;
+    tNet_powerup_type net_type;
+    tGot_proc* got_proc;
+    tLose_proc* lose_proc;
+    tPeriodic_proc* periodic_proc;
+    float * float_params;
+    tCar_spec* car;
+    char message[64]; /* name is written here */
+    br_actor* icon_actor;
+    br_token_value material_prims[3];
+} tPowerup;
+
 typedef struct {
     int initial[3];
     int initial_network[8];
@@ -1253,17 +1296,16 @@ typedef struct {
     tExplosion_animation_group* groups;
 } tExplosion_animation;
 
+typedef struct {
+    tU8* bools;
+} tPowerup_respawn_spec;
+
 typedef enum {
-    kActionReplayCameraMode_Standard = 0,
-    tActionReplayCameraMode_Panning = 1,
-    tActionReplayCameraMode_ActionTracking = 2,
-    tActionReplayCameraMode_Manual = 3,
-    tActionReplayCameraMode_Rigid = 4,
-    tActionReplayCameraMode_Peds = 5,
-    tActionReplayCameraMode_Drone = 6,
-    tActionReplayCameraMode_Reversing = 7,
-    tActionReplayCameraMode_Internal = 8,
-} tActionReplayCameraMode;
+    kRepeatability_None,
+    kRepeatability_SingleShot,
+    kRepeatability_Repeated,
+    kRepeatability_DoItRegardless,
+} tRepeatability;
 
 typedef enum {
     kShrapnelRelPos_SphereClumped = 0,
@@ -1322,6 +1364,26 @@ typedef struct {
     } type_info;
 } tShrapnel_spec;
 
+typedef enum {
+    kSmashableTrigger_Material = 0,
+    kSmashableTrigger_Model = 1,
+    kSmashableTrigger_Number = 2,
+} tSmashable_trigger_type;
+
+typedef struct {
+    short address;
+    short value;
+} tSmash_run_time_variable_change;
+
+typedef enum {
+    kSmashableMode_NoChange = 0,
+    kSmashableMode_Decal = 1,
+    kSmashableMode_TextureChange = 2,
+    kSmashableMode_Remove = 3,
+    kSmashableMode_ReplaceModel = 4,
+    kSmashableMode_Crush = 5,
+} tSmashable_item_mode;
+
 typedef struct {
     int field_0x0;
     float field_0x4;
@@ -1346,6 +1408,66 @@ typedef struct {
     int count_side_effects;
     struct tShrapnel_side_effect* side_effects;
 } tShrapnel_side_effects;
+
+typedef struct {
+    int flags;
+    union {
+        struct {
+            tU8 field_0x0;
+            tU8 field_0x1;
+            undefined field_0x2;
+            undefined field_0x3;
+        } number;
+        br_actor* actor;
+        br_material* material;
+    } trigger_object;
+    tSmashable_trigger_type trigger_type;
+    tSmashable_item_mode mode;
+    undefined4 field_0x10;
+    undefined4 field_0x14;
+    int count_sounds;
+    int sounds[3];
+    int count_shrapnel;
+    tShrapnel_spec shrapnel[6];
+    tExplosion_animation explosion_animation;
+    tSlick_spec slick;
+    tNon_car_cuboid_activations activations;
+    tShrapnel_side_effects side_effects;
+    int extension_arg;
+    int extension_flags;
+    int room_turn_on_code;
+    tRepeatability award_code;
+    float award_arg1_f;
+    float award_arg2_f;
+    int award_arg3_i;
+    int award_arg4_i;
+    undefined field_0x2a4[4];
+    tU8 count_variable_changes;
+    undefined field27_0x2a9;
+    tSmash_run_time_variable_change variable_changes[5];
+    undefined field29_0x2be;
+    undefined field30_0x2bf;
+    br_model* replace_model;
+    int replace_modelchance_fire;
+    int replace_model_2_int;
+    undefined field_0x2cc[8];
+    undefined4 field_0x2d4;
+    undefined4 field_0x2d8;
+    undefined field_0x2dc;
+    undefined field_0x2dd[3];
+} tSmashable_item_spec;
+
+typedef enum {
+    kActionReplayCameraMode_Standard = 0,
+    tActionReplayCameraMode_Panning = 1,
+    tActionReplayCameraMode_ActionTracking = 2,
+    tActionReplayCameraMode_Manual = 3,
+    tActionReplayCameraMode_Rigid = 4,
+    tActionReplayCameraMode_Peds = 5,
+    tActionReplayCameraMode_Drone = 6,
+    tActionReplayCameraMode_Reversing = 7,
+    tActionReplayCameraMode_Internal = 8,
+} tActionReplayCameraMode;
 
 enum {
     kMiscString_ShadowNone = 104,
@@ -1490,7 +1612,8 @@ enum {
     kFatalError_CouldNotOpenFlicFile_S = 0x0d,
     kFatalError_FlicFileWasNot8BitsDeep_S = 0x0f,
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
-    kFatalError_ScreenDimensionNotInGrafData = 0x18,
+    kFatalError_CantLoadCarResolutionIndependentFile = 0x18,
+    kFatalError_ScreenDimensionNotInGrafData = 0x19,
     kFatalError_CannotOpenRacesFile = 0x32,
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
