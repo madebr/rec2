@@ -38,6 +38,15 @@ def to_int(thing):
         raise ValueError("Invalid integer", thing)
 
 
+class DuplicateItemException(Exception):
+    def __init__(self, name1: str, addr1: int, name2:str, addr2: int):
+        super().__init__(name1)
+        self.name1 = name1
+        self.addr1 = addr1
+        self.name2 = name2
+        self.addr2 = addr2
+
+
 class HookDatabase:
     def __init__(self):
         self.db = {}
@@ -45,29 +54,36 @@ class HookDatabase:
     def add(self, item):
         address = to_int(item.address)
         if address in self.db:
-            raise ValueError(f"0x{address:08x} already in database. Trying to add { item }, but { self.db[address] } was already present")
+            raise DuplicateItemException(item.name, item.address, self.db[address].name, self.db[address].address)
         self.db[address] = item
 
 class CallConvParser(object):
-    def __init__(self, choices: tuple[str]):
+    def __init__(self, name: str, choices: tuple[str], remove: tuple[int]=()):
+        self.name = name
         self.choices = choices
         re_text = f"(.*)([ \t]{'|'.join(self.choices)}[ \t])(.*)"
         self.re = re.compile(re_text)
+        self.remove = remove
 
-CALL_CONVENTIONS = {
-    "fastcall": CallConvParser(("C2_HOOK_FASTCALL", "__fastcall")),
-    "cdecl": CallConvParser(("C2_HOOK_CDECL", "__cdecl")),
-    "stdcall": CallConvParser(("C2_HOOK_STDCALL", "__stdcall", "CALLBACK", "WINAPI", "APIENTRY")),
-    "custom": CallConvParser(("C2_HOOK_CUSTOMCALL", )),
-}
+CALL_CONVENTIONS = (
+    CallConvParser("fastcall", ("C2_HOOK_FASTCALL", "__fastcall")),
+    CallConvParser("cdecl", ("C2_HOOK_CDECL", "__cdecl")),
+    CallConvParser("stdcall", ("C2_HOOK_STDCALL", "__stdcall", "CALLBACK", "WINAPI", "APIENTRY")),
+    CallConvParser("custom", ("C2_HOOK_CUSTOMCALL", )),
+    CallConvParser("thiscall", ("C2_HOOK_THISCALL", )),
+    CallConvParser("thiscall", ("C2_HOOK_FAKE_THISCALL", ), (1, )),
+)
 
 def analyze_funcdef(funcdef: str, warn: typing.Callable[[str], None]) -> FunctionDetails:
     callconv = None
-    for callconv_name, convparser in CALL_CONVENTIONS.items():
+    for convparser in CALL_CONVENTIONS:
         if convparser.re.match(funcdef) is not None:
             funcdef = convparser.re.subn(r"\1 \3", funcdef)[0]
-            callconv = callconv_name
+            callconv = convparser.name
+            remove = convparser.remove
             break
+    else:
+        warn(f"function '{funcdef}' has unknown call convention")
 
     noreturn = "C2_NORETURN" in funcdef
     vararg = False
@@ -89,6 +105,9 @@ def analyze_funcdef(funcdef: str, warn: typing.Callable[[str], None]) -> Functio
             argtype = argstr.rstrip(string.ascii_letters + string.digits + "_").strip()
             argname = argstr[len(argtype):].strip()
             arguments.append(FunctionArgument(type=argtype, name=argname))
+
+    for r in sorted(convparser.remove, reverse=True):
+        arguments = arguments[:r] + arguments[r+1:]
 
     ret_name_str = funcdef[:funcdef.find("(")].strip()
     ret_str, name_str = ret_name_str.rsplit(" ", 1)
@@ -127,17 +146,21 @@ def main() -> int:
     parser.add_argument("--summary", dest="summary", action="store_true", help="Print summary")
     args = parser.parse_args()
 
-    warning_happened = False
+    class Namespace:
+        def __init__(self):
+            self.warning_happened = False
+    ns = Namespace()
 
     def warn(message: str) -> None:
         print(f"Warning: { message }", file=sys.stderr)
-        warning_happened = True
+        ns.warning_happened = True
 
 
     funcdb = HookDatabase()
     vardb = HookDatabase()
     vararrdb = HookDatabase()
 
+    duplicates = []
 
     for folder, dirs, files in os.walk(REC2_SRC_ROOT):
         for file in files:
@@ -146,7 +169,7 @@ def main() -> int:
                 full_fn = os.path.join(folder, file)
                 source_text = open(full_fn).read()
                 for funcaddress, funcname in RE_HOOK_FUNC.findall(source_text):
-                    funcdefs = set(re.findall("^([a-zA-Z].*[ \t]" + funcname + "[ \t]*\(.*\))[ \t]*\{[ \t]*$", source_text, flags=re.M))
+                    funcdefs = set(re.findall("^([a-zA-Z].*[ \t]" + funcname + "[ \t]*\\(.*\\))[ \t]*\\{[ \t]*$", source_text, flags=re.M))
                     if len(funcdefs) == 0:
                         warn(f"{ file }: could not find function definition for {funcname} in {full_fn}")
                         continue
@@ -155,12 +178,26 @@ def main() -> int:
                     funcdef = funcdefs.pop()
                     funcdetails = analyze_funcdef(funcdef, warn)
 
-                    funcdb.add(FunctionHookItem(to_int(funcaddress), funcname, funcdef, funcdetails))
+                    try:
+                        funcdb.add(FunctionHookItem(to_int(funcaddress), funcname, funcdef, funcdetails))
+                    except DuplicateItemException as e:
+                        duplicates.append(e)
 
                 for vartype, varname, varaddress in RE_HOOK_VAR.findall(source_text):
-                    vardb.add(VariableHookItem(to_int(varaddress), vartype, varname))
+                    try:
+                        vardb.add(VariableHookItem(to_int(varaddress), vartype, varname))
+                    except DuplicateItemException as e:
+                        duplicates.append(e)
                 for arrtype, arrname, arrcount, arraddress in RE_HOOK_VAR_ARR.findall(source_text):
-                    vararrdb.add(VariableArrayHookItem(to_int(arraddress), arrtype, arrname, to_int(arrcount)))
+                    try:
+                        vararrdb.add(VariableArrayHookItem(to_int(arraddress), arrtype, arrname, to_int(arrcount)))
+                    except DuplicateItemException as e:
+                        duplicates.append(e)
+
+    if duplicates:
+        warn(f"Found {len(duplicates)} duplicates:")
+        for d in duplicates:
+            warn(f"- {d.name1:<30}: 0x{d.addr1:08x} | {d.name2:<30}: 0x{d.addr2:08x}")
 
 
     json_data = json.dumps({
@@ -183,13 +220,13 @@ def main() -> int:
         print("Variables:")
         for varaddr in sorted(vardb.db.keys()):
             hookinfo = vardb.db[varaddr]
-            print(f"{format_address(hookinfo.address)} {hookinfo.vartype:<30} {hookinfo.varname}")
+            print(f"{format_address(hookinfo.address)} {hookinfo.vartype:<30} {hookinfo.name}")
         print("Variable arrays:")
         for arraddr in sorted(vararrdb.db.keys()):
             hookinfo = vararrdb.db[arraddr]
-            print(f"{format_address(hookinfo.address)} {hookinfo.vartype:<30} {hookinfo.varname}[{hookinfo.varcount}]")
+            print(f"{format_address(hookinfo.address)} {hookinfo.vartype:<30} {hookinfo.name}[{hookinfo.varcount}]")
 
-    if warning_happened:
+    if ns.warning_happened:
         print("Warnings treated as error. Exiting.", file=sys.stderr)
         raise SystemExit(1)
 
