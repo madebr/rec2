@@ -246,7 +246,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gMap_mode);
 //extern int gNumber_of_racers;
 C2_HOOK_VARIABLE_DECLARE(int, gSound_enabled);
 //extern int gGraf_spec_index;
-//extern int gSound_available;
+C2_HOOK_VARIABLE_DECLARE(int, gSound_available);
 //extern int gNumber_of_races;
 C2_HOOK_VARIABLE_DECLARE(tPixelFlags, gPixelFlags);
 
