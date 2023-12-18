@@ -76,7 +76,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gMisc_strings, 300, 0x006b5f40);
 
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedsFolder, 0x006a0414);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedSoundPath, 0x00684550);
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedPowerupTxtPath, 0x006a0ad4);
+C2_HOOK_VARIABLE_IMPLEMENT(char*, gPowerup_txt_path, 0x006a0ad4);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedTextTxtPath, 0x0068c718);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedTexturePath, 0x0065852c);
 
@@ -103,7 +103,7 @@ void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
 C2_HOOK_FUNCTION(0x00457570, ConfigureDefaultPedSoundPath)
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void) {
-    C2V(gPedPowerupTxtPath) = "POWERUP.TXT";
+    C2V(gPowerup_txt_path) = "POWERUP.TXT";
 }
 C2_HOOK_FUNCTION(0x004e0c00, ConfigureDefaultPedPowerupTxtPath)
 
@@ -132,7 +132,7 @@ void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void) {
 C2_HOOK_FUNCTION(0x00457590, ConfigureZombiePedSoundPath)
 
 void C2_HOOK_FASTCALL ConfigureZombiePedPowerupTxtPath(void) {
-    C2V(gPedPowerupTxtPath) = "ZOMPOWERUP.TXT";
+    C2V(gPowerup_txt_path) = "ZOMPOWERUP.TXT";
 }
 C2_HOOK_FUNCTION(0x004e0c20, ConfigureZombiePedPowerupTxtPath)
 
@@ -161,7 +161,7 @@ void C2_HOOK_FASTCALL ConfigureBloodPedSoundPath(void) {
 C2_HOOK_FUNCTION(0x00457580, ConfigureBloodPedSoundPath)
 
 void C2_HOOK_FASTCALL ConfigureBloodPedPowerupTxtPath(void) {
-    C2V(gPedPowerupTxtPath) = "POWERUP.TXT";
+    C2V(gPowerup_txt_path) = "POWERUP.TXT";
 }
 C2_HOOK_FUNCTION(0x004e0c10, ConfigureBloodPedPowerupTxtPath)
 
@@ -190,7 +190,7 @@ void C2_HOOK_FASTCALL ConfigureAlienPedSoundPath(void) {
 C2_HOOK_FUNCTION(0x004575a0, ConfigureAlienPedSoundPath)
 
 void C2_HOOK_FASTCALL ConfigureAlienPedPowerupTxtPath(void) {
-    C2V(gPedPowerupTxtPath) = "ALPOWERUP.TXT";
+    C2V(gPowerup_txt_path) = "ALPOWERUP.TXT";
 }
 C2_HOOK_FUNCTION(0x004e0c30, ConfigureAlienPedPowerupTxtPath)
 
