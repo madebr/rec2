@@ -31,6 +31,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFizzle_names, 3, 0x0065ebb0,
 });
 C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_item_spec, gPowerup_pickup_smashable, 0x006a52d0);
 C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_item_spec, gPowerup_respawn_smashable, 0x006a7ce0);
+C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_item_spec, gUnknown_smashable_006a3660, 0x006a3660);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gFizzle_in, 3, 0x006a0ac0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFizzle_height, 0x006a0950);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_powerups, 0x006a0ad0);
@@ -420,3 +421,66 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d96c0, LoadPowerups, LoadPowerups_original)
+
+static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec* pSmashable_spec) {
+    int i;
+    int d1, d2;
+
+    C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, initial_pos) != 40);
+    C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, type_info) != 56);
+    C2_HOOK_BUG_ON(sizeof(tShrapnel_spec) != 88);
+    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, shrapnel) != 44);
+    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, explosion_animation) != 572);
+    C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 736);
+
+    c2_memset(pSmashable_spec, 0, sizeof(tSmashable_item_spec));
+    /* Number of sounds */
+    pSmashable_spec->count_sounds = GetAnInt(pF);
+    for (i = 0; i < pSmashable_spec->count_sounds; i++) {
+        /* Sound ID */
+        pSmashable_spec->sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+    }
+    ReadShrapnel(pF, pSmashable_spec->shrapnel, &pSmashable_spec->count_shrapnel);
+    ReadExplosionAnimation(pF, &pSmashable_spec->explosion_animation);
+    ReadSlick(pF, &pSmashable_spec->slick);
+    ReadNonCarCuboidActivation(pF, &pSmashable_spec->activations);
+    ReadShrapnelSideEffects(pF, &pSmashable_spec->side_effects);
+
+    /* Extension flags */
+    pSmashable_spec->extension_flags = GetAnInt(pF);
+    if (pSmashable_spec->extension_flags & 0x1) {
+        pSmashable_spec->extension_arg = GetAnInt(pF);
+    }
+    /* Room turn on */
+    pSmashable_spec->room_turn_on_code = GetAnInt(pF);
+    /* Award code */
+    pSmashable_spec->award_code = GetALineAndInterpretCommand(pF, C2V(gRepeatability_names), REC2_ASIZE(C2V(gRepeatability_names)));
+    if (pSmashable_spec->award_code != kRepeatability_None) {
+        pSmashable_spec->award_arg1_f = GetAScalar(pF);
+        pSmashable_spec->award_arg2_f = GetAScalar(pF);
+        pSmashable_spec->award_arg3_i = GetAnInt(pF);
+        pSmashable_spec->award_arg4_i = GetAnInt(pF);
+    }
+    /* Count variable changes */
+    pSmashable_spec->count_variable_changes = GetAnInt(pF);
+    for (i = 0; i < pSmashable_spec->count_variable_changes; i++) {
+        GetPairOfInts(pF, &d1, &d2);
+        pSmashable_spec->variable_changes[i].address = d2;
+        pSmashable_spec->variable_changes[i].value = d1;
+    }
+    pSmashable_spec->trigger_type = kSmashableTrigger_Model | kSmashableTrigger_Number;
+    REC2_BUG_ON((kSmashableTrigger_Model | kSmashableTrigger_Number) != 0x3);
+    pSmashable_spec->mode = kSmashableMode_Remove;
+    REC2_BUG_ON(kSmashableMode_Remove != 0x3);
+}
+
+void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF) {
+
+    ReadPowerupSmashable(pF, &C2V(gPowerup_pickup_smashable));
+    ReadPowerupSmashable(pF, &C2V(gPowerup_respawn_smashable));
+
+    c2_memset(&C2V(gUnknown_smashable_006a3660), 0, sizeof(C2V(gUnknown_smashable_006a3660)));
+    C2V(gUnknown_smashable_006a3660).trigger_type = kSmashableTrigger_Model | kSmashableTrigger_Number;
+    C2V(gUnknown_smashable_006a3660).mode = kSmashableMode_Remove;
+}
+C2_HOOK_FUNCTION(0x004efa00, ReadPowerupSmashables)
