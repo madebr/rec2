@@ -97,6 +97,8 @@ typedef struct tS3_outlet {
     tS3_outlet_callback* callback;
 } tS3_outlet;
 
+void C2_HOOK_FASTCALL S3Enable(void);
+
 void C2_HOOK_FASTCALL S3StopAllOutletSounds(void);
 
 int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
