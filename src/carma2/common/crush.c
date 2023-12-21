@@ -16,6 +16,7 @@
 
 #include "rec2_macros.h"
 
+#include "c2_ctype.h"
 #include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(float, gDistortion_factor,0x00679698 );
@@ -591,6 +592,68 @@ int C2_HOOK_CDECL AllocateUserDetailLevel(br_actor* pActor, void* pData) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0048bf50, AllocateUserDetailLevel)
+
+int C2_HOOK_CDECL LinkCrushModel(br_actor* pActor, void* pData) {
+    tCrush_model_pool* pool = pData;
+    tUser_crush_data* user_crush_data = pData;
+    int len_actor_identifier;
+    int len_model_identifier;
+    int i;
+    int crush_idx;
+    const char *dot;
+
+    if (pActor == NULL || pActor->identifier == NULL) {
+        return 0;
+    }
+    user_crush_data = pActor->user;
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+
+    dot = c2_strrchr(pActor->identifier, '.');
+    if (dot == NULL) {
+        len_actor_identifier = c2_strlen(pActor->identifier);
+    } else {
+        len_actor_identifier = dot - pActor->identifier;
+    }
+    for (i = 0; i < pool->model_count; i++) {
+        br_model* model = pool->models[i];
+        if (model == NULL || model->identifier == NULL) {
+            continue;
+        }
+        dot = c2_strrchr(model->identifier, '.');
+        if (dot == NULL) {
+            len_model_identifier = c2_strlen(model->identifier);
+        } else {
+            len_model_identifier = dot - model->identifier;
+        }
+        if (len_actor_identifier != len_model_identifier || c2_strncmp(model->identifier, pActor->identifier, len_actor_identifier) != 0) {
+            continue;
+        }
+        if (dot != NULL && c2_isdigit(dot[1])) {
+            crush_idx = dot[1] - '0';
+        } else {
+            crush_idx  = -1;
+        }
+        if (crush_idx < 0) {
+            for (crush_idx = 0; crush_idx < pool->count_detail_levels; crush_idx++) {
+                if (user_crush_data->models[crush_idx] == NULL || user_crush_data->models[crush_idx]->nvertices < model->nvertices) {
+                    break;
+                }
+            }
+        }
+        if (crush_idx < REC2_ASIZE(user_crush_data->models)) {
+            if (user_crush_data->models[crush_idx] != NULL && crush_idx < REC2_ASIZE(user_crush_data->models) - 1) {
+                c2_memmove(&user_crush_data->models[crush_idx + 1],
+                    &user_crush_data->models[crush_idx],
+                    (REC2_ASIZE(user_crush_data->models) - crush_idx - 1) * sizeof(br_model*));
+            }
+            user_crush_data->models[crush_idx] = model;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0048bfa0, LinkCrushModel)
 
 void (C2_HOOK_FASTCALL * PrepareCarForCrushing_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
