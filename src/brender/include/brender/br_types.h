@@ -2874,8 +2874,7 @@ typedef struct v11group {
     br_uint_16 nfaces;
     br_uint_16 nvertices;
     br_uint_16 nedges;
-
-    br_material* face_colours_material; // Added to avoid 64 bit issues trying to pack br_material* into br_colour. eek ;)
+    br_uint_16 unused_0x22;
 } v11group;
 
 typedef struct v11model {
