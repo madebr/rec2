@@ -2350,6 +2350,12 @@ typedef struct {
 } tGroovidelic_spec;
 
 typedef struct {
+    br_model** models;
+    int model_count;
+    int count_detail_levels;
+} tCrush_model_pool;
+
+typedef struct {
     undefined field_0x0[12];
 } tUser_detail_level_model;
 
