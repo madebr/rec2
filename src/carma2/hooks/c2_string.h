@@ -17,6 +17,7 @@ void* C2_HOOK_CDECL c2_memset(void* s1, int c, size_t n);
 char* C2_HOOK_CDECL c2_strcat(char *dest, const char *src);
 
 int C2_HOOK_CDECL c2_strcmp(const char* s1, const char* s2);
+int C2_HOOK_CDECL c2_strncmp(const char* s1, const char* s2, size_t n);
 int C2_HOOK_CDECL c2_strcasecmp(const char* s1, const char* s2);
 int C2_HOOK_CDECL c2_strncasecmp(const char* s1, const char* s2, size_t n);
 
@@ -43,6 +44,7 @@ char* C2_HOOK_CDECL c2_strpbrk(const char* dest, const char* breakset);
 #define c2_strcat strcat
 
 #define c2_strcmp strcmp
+#define c2_strncmp strncmp
 
 #if defined(_WIN32)
 #define c2_strcasecmp stricmp
