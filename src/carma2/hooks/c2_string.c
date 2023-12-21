@@ -38,6 +38,11 @@ int C2_HOOK_CDECL c2_strcmp(const char* s1, const char* s2) {
     return strcmp(s1, s2);
 }
 
+int C2_HOOK_CDECL c2_strncmp(const char* s1, const char* s2, size_t n) {
+    return strncmp(s1, s2, n);
+}
+C2_HOOK_FUNCTION(0x00576f60, c2_strncmp)
+
 int C2_HOOK_CDECL c2_strcasecmp(const char* s1, const char* s2) {
 #if defined(_WIN32)
     return _stricmp(s1, s2);
