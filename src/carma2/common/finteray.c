@@ -21,6 +21,12 @@ void C2_HOOK_FASTCALL EnablePlingMaterials(void) {
 }
 C2_HOOK_FUNCTION(0x0045d5c0, EnablePlingMaterials)
 
+void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
+
+    C2V(gPling_materials) = 0;
+}
+C2_HOOK_FUNCTION(0x0045d5d0, DisablePlingMaterials)
+
 int C2_HOOK_FASTCALL BadDiv__finteray(br_scalar a, br_scalar b) {
 
     return fabsf(b) < 1.0f && fabsf(b) * BR_SCALAR_MAX < fabsf(a);
