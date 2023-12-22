@@ -97,6 +97,37 @@ int C2_HOOK_FASTCALL GetCarSimplificationLevel(void) {
 }
 C2_HOOK_FUNCTION(0x00448f20, GetCarSimplificationLevel)
 
+void C2_HOOK_FASTCALL ApplyMaterialCallbackOnAllMaterials(br_model* pModel, material_cbfn* pCallback) {
+    if (pModel->faces == NULL) {
+        v11model* v11m = pModel->prepared;
+        if (v11m != NULL) {
+            int g;
+
+            for (g = 0; g < v11m->ngroups; g++) {
+                int f;
+                v11group* v11g = &v11m->groups[g];
+
+                for (f = 0; f < v11g->nfaces; f++) {
+                    br_material* mat = *v11g->face_colours.materials;
+                    if (mat != NULL) {
+                        pCallback(mat);
+                    }
+                }
+            }
+        }
+    } else {
+        int i;
+
+        for (i = 0; i < pModel->nfaces; i++) {
+            br_face* face = &pModel->faces[i];
+            if (face->material != NULL) {
+                pCallback(face->material);
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00448fd0, ApplyMaterialCallbackOnAllMaterials)
+
 intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
     if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
         pActor->render_style = *(br_uint_8*)pFlag;
