@@ -925,3 +925,22 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     dr_dprintf("PDAllocateScreenAndBack() - END.");
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c300, PDAllocateScreenAndBack, PDAllocateScreenAndBack_original)
+
+int GetRegisterSourceLocation(char* buffer, int* buffer_size) {
+    HKEY hKey;
+    LONG status;
+
+    status = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\SCI\\CARMAGEDDON2", 0, KEY_ALL_ACCESS, &hKey);
+    if (status == ERROR_SUCCESS) {
+        status = RegQueryValueExA(hKey, "SourceLocation", NULL, NULL, (LPBYTE)buffer, (LPDWORD)buffer_size);
+        if (status == ERROR_SUCCESS) {
+            RegCloseKey(hKey);
+            return 1;
+        } else {
+            char message[256];
+            FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, status, 0, message, sizeof(message) - 1, NULL);
+            RegCloseKey(hKey);
+        }
+    }
+    return 0;
+}
