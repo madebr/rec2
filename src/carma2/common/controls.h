@@ -1,6 +1,8 @@
 #ifndef REC2_CONTROLS_H
 #define REC2_CONTROLS_H
 
+#include "rec2_types.h"
+
 #include "c2_hooks.h"
 
 C2_HOOK_VARIABLE_DECLARE(int, gEntering_message);
@@ -21,5 +23,7 @@ void C2_HOOK_FASTCALL CheckSystemKeys(int pRacing);
 void C2_HOOK_FASTCALL CheckToggles(int pRacing);
 
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
+
+void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* car);
 
 #endif //REC2_CONTROLS_H
