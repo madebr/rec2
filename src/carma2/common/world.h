@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(br_scalar, gSight_distance_squared);
 C2_HOOK_VARIABLE_DECLARE(tBrender_storage*, gStorageForCallbacks);
 C2_HOOK_VARIABLE_DECLARE(int, gGroovidelics_array_size);
 C2_HOOK_VARIABLE_DECLARE(tGroovidelic_spec*, gGroovidelics_array);
+C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDefault_water_spec_vol_real);
 C2_HOOK_VARIABLE_DECLARE(tMaterial_exception*, gMaterial_exceptions);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
@@ -114,5 +115,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
 void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
 
 tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor);
+
+tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
 
 #endif // REC2_WORLD_H
