@@ -2,6 +2,10 @@
 
 #include <stdlib.h>
 
+#if defined(C2_HOOKS_ENABLED)
+//#define USE_ORIGINAL_ALLOCATARS
+#endif
+
 #if defined(DEBUG_STDLIB)
 #define DEBUG_PRINTF(...) C2_HOOK_DEBUGF(##__VA_ARGS__)
 #else
@@ -25,27 +29,45 @@ void C2_HOOK_CDECL c2_abort(void) {
 }
 C2_HOOK_FUNCTION(0x00578aa0, c2_abort)
 
+void* (C2_HOOK_CDECL * c2_malloc_original)(size_t size);
 void* C2_HOOK_CDECL c2_malloc(size_t size) {
+
+#if defined(USE_ORIGINAL_ALLOCATARS)
+    return c2_malloc_original(size);
+#else
     void* result;
     result = malloc(size);
     DEBUG_PRINTF("size=%d => 0x%p", size, result);
     return result;
+#endif
 }
-C2_HOOK_FUNCTION(0x00576d40, c2_malloc)
+C2_HOOK_FUNCTION_ORIGINAL(0x00576d40, c2_malloc, c2_malloc_original)
 
-void* C2_HOOK_CDECL c2_calloc (size_t num, size_t size) {
+void* (C2_HOOK_CDECL * c2_calloc_original)(size_t num, size_t size);
+void* C2_HOOK_CDECL c2_calloc(size_t num, size_t size) {
+
+#if defined(USE_ORIGINAL_ALLOCATARS)
+    return c2_calloc_original(num, size);
+#else
     void* result;
     result = calloc(num, size);
     DEBUG_PRINTF("num=%d, size=%d => 0x%p", num, size, result);
     return result;
+#endif
 }
-C2_HOOK_FUNCTION(0x00579b20, c2_calloc)
+C2_HOOK_FUNCTION_ORIGINAL(0x00579b20, c2_calloc, c2_calloc_original)
 
+void (C2_HOOK_CDECL *  c2_free_original)(void* ptr);
 void C2_HOOK_CDECL c2_free(void* ptr) {
+
+#if defined(USE_ORIGINAL_ALLOCATARS)
+    c2_free_original(ptr);
+#else
     DEBUG_PRINTF("(0x%p)", ptr);
     free(ptr);
+#endif
 }
-C2_HOOK_FUNCTION(0x005775f0, c2_free);
+C2_HOOK_FUNCTION_ORIGINAL(0x005775f0, c2_free, c2_free_original);
 
 C2_NORETURN void C2_HOOK_CDECL c2_exit(int status) {
     exit(status);
