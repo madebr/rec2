@@ -132,6 +132,8 @@ void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 
 void C2_HOOK_FASTCALL AllowOpenToFail(void);
 
+void C2_HOOK_FASTCALL DisallowOpenToFail(void);
+
 FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
 void C2_HOOK_FASTCALL DRfclose(FILE* pFile);
