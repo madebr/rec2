@@ -18,6 +18,7 @@
 #include "physics.h"
 #include "powerups.h"
 #include "replay.h"
+#include "sound.h"
 #include "spark.h"
 #include "temp.h"
 #include "utility.h"
@@ -258,6 +259,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU32, gSimple_material_colours, 12, 0x0065
     0x0d3c3626, 0x0e212121, 0x15284c21, 0x1900326a,
     0x1a93491d, 0x1ec0bfc0, 0x23141414, 0x00000000,
 });
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, g_source_exists, 0x00658614, 1);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
     C2V(gPedSoundPath) = NULL;
@@ -787,13 +789,132 @@ void C2_HOOK_FASTCALL DisallowOpenToFail(void) {
 }
 C2_HOOK_FUNCTION(0x004910c0, DisallowOpenToFail)
 
+FILE* OldDRfopen(const char* pFilename, const char* pMode) {
+    FILE* fp;
+
+    fp = TWT_fopen(pFilename, pMode);
+    if (fp == NULL) {
+        const char* data_pos;
+        char source_check[256];
+        int source_len;
+
+        if (C2V(gCD_fully_installed)) {
+            return NULL;
+        }
+        if (C2V(g_source_exists) == 1) {
+            char general_file[256];
+            char paths_file[256];
+            char source_check[256];
+
+            c2_strcpy(general_file, "DATA");
+            c2_strcat(general_file, C2V(gDir_separator));
+            c2_strcat(general_file, "GENERAL.TXT");
+            c2_strcpy(paths_file, C2V(gApplication_path));
+            c2_strcat(paths_file, C2V(gDir_separator));
+            c2_strcat(paths_file, "PATHS.TXT");
+            if (!PDCheckDriveExists(paths_file)) {
+                C2V(g_source_exists) = 0;
+                return NULL;
+            }
+            fp = TWT_fopen(paths_file, "rt");
+            if (fp == NULL) {
+                C2V(g_source_exists) = 0;
+                return NULL;
+            }
+            source_check[0] = '\0';
+            PossibleService();
+            GetALineWithNoPossibleService(fp, source_check);
+            if (c2_strchr(C2V(gDir_separator), source_check[c2_strlen(source_check)-1]) == NULL) {
+                c2_strcat(source_check, C2V(gDir_separator));
+            }
+            c2_strcat(source_check, general_file);
+            DRfclose(fp);
+            if (!PDCheckDriveExists(source_check)) {
+                PDFatalError("Carmageddon CD not in drive.");
+            }
+            C2V(g_source_exists)++;
+        }
+        if (C2V(g_source_exists) == 0) {
+            return NULL;
+        }
+        data_pos = c2_strstr(pFilename, "DATA");
+        if (data_pos == NULL) {
+            return NULL;
+        }
+
+        source_len = sizeof(source_check) - 1;
+        if (GetRegisterSourceLocation(source_check, &source_len)) {
+            if (c2_strchr(C2V(gDir_separator), source_check[c2_strlen(source_check)-1]) == NULL) {
+                c2_strcat(source_check, C2V(gDir_separator));
+            }
+            c2_strcat(source_check, data_pos);
+            if (!PDCheckDriveExists(source_check)) {
+                return NULL;
+            }
+            return TWT_fopen(source_check, pMode);
+        }
+        return NULL;
+    } else {
+        int len;
+        char ch;
+
+        if (!C2V(gDecode_thing)) {
+            return fp;
+        }
+        len = c2_strlen(pFilename);
+        if (c2_strcmp(&pFilename[len - 4], ".TXT") != 0
+                || c2_strcmp(&pFilename[len - 12], "DKEYMAP0.TXT") == 0
+                || c2_strcmp(&pFilename[len - 12], "DKEYMAP1.TXT") == 0
+                || c2_strcmp(&pFilename[len - 12], "DKEYMAP2.TXT") == 0
+                || c2_strcmp(&pFilename[len - 12], "DKEYMAP3.TXT") == 0
+                || c2_strcmp(&pFilename[len - 12], "KEYMAP_0.TXT") == 0
+                || c2_strcmp(&pFilename[len - 12], "KEYMAP_1.TXT") == 0
+                || c2_strcmp(&pFilename[len - 12], "KEYMAP_2.TXT") == 0
+                || c2_strcmp(&pFilename[len - 12], "KEYMAP_3.TXT") == 0
+                || c2_strcmp(&pFilename[len - 11], "OPTIONS.TXT") == 0
+                || c2_strcmp(&pFilename[len - 12], "KEYNAMES.TXT") == 0
+                || c2_strcmp(&pFilename[len - 10], "KEYMAP.TXT") == 0
+                || c2_strcmp(&pFilename[len - 9], "PATHS.TXT") == 0
+                || c2_strcmp(&pFilename[len - 11], "PRATCAM.TXT") == 0) {
+            return fp;
+        }
+        ch = DRfgetc(fp);
+        if (ch == C2V(gDecode_thing)) {
+            DRungetc(ch, fp);
+            return fp;
+        }
+        DRfclose(fp);
+        return NULL;
+    }
+}
+
 FILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     FILE* res = DRfopen_original(pFilename, pMode);
     return res;
 #else
-#error "not implemented"
+    FILE *result;
+
+    result = OldDRfopen(pFilename, pMode);
+
+    if (result == NULL && !C2V(gAllow_open_to_fail)) {
+        char buffer[256];
+        int buffer_size = sizeof(buffer) - 1;
+
+        if (GetRegisterSourceLocation(buffer, &buffer_size)) {
+            if (!PDCheckDriveExists(buffer)) {
+                if (C2V(gMisc_strings)[0] != NULL) {
+                    PDFatalError(GetMiscString(243));
+                } else {
+                    PDFatalError("Could not find the Carmageddon CD");
+                }
+            }
+        }
+        sprintf(buffer, "DRfopen( \"%s\", \"%s\" ) failed", pFilename, pMode);
+        PDFatalError(buffer);
+    }
+    return result;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491170, DRfopen, DRfopen_original)
