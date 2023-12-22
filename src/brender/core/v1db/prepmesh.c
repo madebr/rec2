@@ -260,7 +260,7 @@ void C2_HOOK_STDCALL CopyFace(v11group* group, int f, br_face* src, br_model* mo
     group->faces[f].vertices[0] = src->vertices[0];
     group->faces[f].vertices[1] = src->vertices[1];
     group->faces[f].vertices[2] = src->vertices[2];
-    group->face_colours[f] = BR_COLOUR_RGBA(src->red, src->grn, src->blu, src->index);
+    group->face_colours.colours[f] = BR_COLOUR_RGBA(src->red, src->grn, src->blu, src->index);
     group->faces[f].eqn.v[0] = src->n.v[0];
     group->faces[f].eqn.v[1] = src->n.v[1];
     group->faces[f].eqn.v[2] = src->n.v[2];
