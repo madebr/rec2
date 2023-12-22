@@ -251,8 +251,8 @@ int C2_HOOK_FASTCALL DRModelPick2D__finteray(br_model* model, br_material* mater
     for (group = 0; group < V11MODEL(model)->ngroups; group++) {
         for (f = 0; f < V11MODEL(model)->groups[group].nfaces; f++) {
             fp = &V11MODEL(model)->groups[group].faces[f];
-            if (V11MODEL(model)->groups[group].face_colours != NULL) {
-                this_material = *(br_material**)V11MODEL(model)->groups[group].face_colours;
+            if (V11MODEL(model)->groups[group].face_colours.materials != NULL) {
+                this_material = *V11MODEL(model)->groups[group].face_colours.materials;
             } else {
                 this_material = material;
             }
@@ -464,7 +464,7 @@ void C2_HOOK_FASTCALL FindWorldFace(br_vector3* pPosition, br_vector3* pDir, br_
     if (C2V(gNearest_T) < 100.0f) {
         group = C2V(gNearest_face_group);
         BrVector3Copy(nor, &V11MODEL(C2V(gNearest_model))->groups[group].faces[C2V(gNearest_face)].eqn);
-        *material = *(br_material**)V11MODEL(C2V(gNearest_model))->groups[group].face_colours;
+        *material = *V11MODEL(C2V(gNearest_model))->groups[group].face_colours.materials;
         if (actor != NULL) {
             *actor = C2V(gNearest_actor);
         }

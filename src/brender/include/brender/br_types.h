@@ -2866,7 +2866,11 @@ typedef struct v11face {
 typedef struct v11group {
     void* stored;
     v11face* faces;
-    br_colour* face_colours;
+    union {
+        br_material* material;
+        br_material** materials;
+        br_colour* colours;
+    } face_colours;
     br_uint_16* face_user;
     fmt_vertex* vertices;
     br_colour* vertex_colours;
