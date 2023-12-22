@@ -13,4 +13,6 @@ int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br
 
 void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime);
 
+int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime);
+
 #endif //REC2_CAR_H
