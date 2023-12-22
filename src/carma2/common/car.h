@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime);
 
 int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime);
 
+void C2_HOOK_FASTCALL ResetCarSpecialVolume(tCollision_info* pCollision_info);
+
 #endif //REC2_CAR_H

@@ -1,5 +1,11 @@
 #include "car.h"
 
+#include "finteray.h"
+#include "world.h"
+
+#include "brender/br_inline_funcs.h"
+
+#include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCar_simplification_level, 0x006793d8);
 
@@ -46,3 +52,37 @@ int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040f790, IncidentCam, IncidentCam_original)
+
+void (C2_HOOK_FASTCALL * ResetCarSpecialVolume_original)(tCollision_info* pCar);
+void C2_HOOK_FASTCALL ResetCarSpecialVolume(tCollision_info* pCollision_info) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    ResetCarSpecialVolume_original(pCollision_info);
+#else
+    br_vector3 cast_v;
+    br_vector3 norm;
+    br_scalar t;
+    int id_len;
+    char* mat_id;
+    tSpecial_volume* new_special_volume;
+    br_material* material;
+
+    new_special_volume = NULL;
+    BrVector3Set(&cast_v, 0.f, 200.f, 0.f);
+    DisablePlingMaterials();
+    FindFace(&pCollision_info->actor->t.t.translate.t, &cast_v, &norm, &t, &material);
+    EnablePlingMaterials();
+    if (t < 100.0f && material != NULL) {
+        mat_id = material->identifier;
+        if (mat_id != NULL) {
+            id_len = c2_strlen(mat_id);
+            if (id_len != 0 && (mat_id[0] == '!' || mat_id[0] == '#')) {
+                new_special_volume = GetDefaultSpecialVolumeForWater();
+            }
+        }
+    }
+    pCollision_info->auto_special_volume = new_special_volume;
+    pCollision_info->water_depth_factor = 1.0f;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ff530, ResetCarSpecialVolume, ResetCarSpecialVolume_original)
