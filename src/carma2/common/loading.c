@@ -615,6 +615,10 @@ void C2_HOOK_FASTCALL AllowOpenToFail(void) {
 }
 C2_HOOK_FUNCTION(0x004910b0, AllowOpenToFail)
 
+void C2_HOOK_FASTCALL DisallowOpenToFail(void) {
+}
+C2_HOOK_FUNCTION(0x004910c0, DisallowOpenToFail)
+
 FILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
