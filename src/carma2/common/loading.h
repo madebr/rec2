@@ -16,6 +16,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gKey_mapping, 77);
 
 C2_HOOK_VARIABLE_DECLARE(int, gDisableTiffConversion);
 
+C2_HOOK_VARIABLE_DECLARE(tSpecial_volume, gDefault_water_spec_vol);
+
 C2_HOOK_VARIABLE_DECLARE(char*, gPedsFolder);
 C2_HOOK_VARIABLE_DECLARE(char*, gPedSoundPath);
 C2_HOOK_VARIABLE_DECLARE(char*, gPowerup_txt_path);
