@@ -522,3 +522,14 @@ void C2_HOOK_FASTCALL ResetTintedVertices(int pTintedIndex, int x0, int y0, int 
     BrModelUpdate(tinted->model, BR_MODU_VERTICES);
 }
 C2_HOOK_FUNCTION(0x004d8bb0, ResetTintedVertices)
+
+void (C2_HOOK_FASTCALL * SetTintedFromSpecialVolume_original)(int pIndex, br_vector3* pPosition);
+void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPosition) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetTintedFromSpecialVolume_original(pIndex, pPosition);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d8350, SetTintedFromSpecialVolume, SetTintedFromSpecialVolume_original)
