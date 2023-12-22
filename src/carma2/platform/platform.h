@@ -11,13 +11,15 @@ C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
 C2_HOOK_VARIABLE_DECLARE(int, gMsg_header_strlen);
 
+int GetRegisterSourceLocation(char* buffer, int* buffer_size);
+
 int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call);
 
 void C2_HOOK_FASTCALL PDInitialiseSystem(void);
 
 void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path);
 void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr);
-void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(char* pThe_str);
+void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str);
 void C2_HOOK_FASTCALL PDNonFatalError(char* pThe_str);
 int C2_HOOK_FASTCALL PDIsWindowActive(void);
 char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar);
