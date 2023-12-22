@@ -10,6 +10,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
 C2_HOOK_VARIABLE_DECLARE(int, gMsg_header_strlen);
 
+int GetRegisterSourceLocation(char* buffer, int* buffer_size);
+
 int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call);
 
 void C2_HOOK_FASTCALL PDInitialiseSystem(void);
