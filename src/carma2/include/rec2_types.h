@@ -36,6 +36,7 @@ typedef struct tMin_message tMin_message;
 typedef struct tMid_message tMid_message;
 typedef struct tMax_message tMax_message;
 typedef union tCollision_shape tCollision_shape;
+typedef union tPhysics_joint tPhysics_joint;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -2361,6 +2362,73 @@ typedef struct {
     tCar_crush_buffer_entry* crush_data;
     tGroovidelic_spec* groove;
 } tUser_crush_data;
+
+typedef struct tCollision_info {
+    br_actor* actor;
+    float M;
+    br_vector3 I;
+    br_vector3 cmpos;
+    tCollision_shape *shape;
+    br_bounds3 bb1;
+    br_bounds3 bb2;
+    br_vector3 field7_0x54;
+    undefined field_0x60[4];
+    float field_0x64;
+    br_vector3 v;
+    br_vector3 omega;
+    br_vector3 pos;
+    br_matrix34 transform_matrix;
+    undefined field_0xbc[48];
+    tU8 disable_move_rotate;
+    undefined field_0xed[3];
+    undefined4 field_0xf0;
+    br_bounds3 field_0xf4;
+    br_bounds3 field_0x10c;
+    br_bounds3 field_0x124;
+    float radius_squared;
+    float radius;
+    undefined field_0x144[48];
+    tU16 box_face_start;
+    tU16 box_face_end;
+    tU16 box_face_ref;
+    undefined field_0x17a[14];
+    tPhysics_joint* physics_joint1;
+    tPhysics_joint* physics_joint2;
+    tU8 uid;
+    undefined field_0x191[11];
+    int flags_0x19c;
+    int field_0x1a0;
+    undefined4 field_0x1a4;
+    br_vector3 velocity_car_space;
+    undefined field_0x1b4[12];
+    br_vector3 rotate_omega;
+    undefined field_0x1cc[12];
+    undefined4 field183_0x1d8;
+    undefined field_0x1dc;
+    undefined collision_flag;
+    undefined field_0x1de[10];
+    br_matrix34 field_0x1e8;
+    undefined field_0x218[8];
+    struct tCollision_info * field_0x220;
+    struct tCollision_info * field_0x224;
+    struct tCollision_info * field_0x228;
+    struct tCollision_info * field_0x22c;
+    struct tCollision_info * field_0x230;
+    undefined field_0x234[4];
+    tU8 flags_0x238;
+    tU8 field_0x239;
+    undefined field_0x23a[2];
+    tCar_spec* car;
+    undefined* field_0x240;
+    br_vector3 water_normal;
+    br_scalar water_d; /* Created by retype action */
+    br_scalar water_depth_factor;
+    tSpecial_volume* last_special_volume;
+    tSpecial_volume* auto_special_volume;
+    undefined field_0x260[8];
+    tU32 message_time;
+    undefined field_0x26c[620];
+} tCollision_info;
 
 typedef struct {
     tU32 min_time_between;
