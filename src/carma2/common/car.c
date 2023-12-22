@@ -35,3 +35,14 @@ void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004104b0, PanningExternalCamera, PanningExternalCamera_original)
+
+int (C2_HOOK_FASTCALL * IncidentCam_original)(tCar_spec* c, tU32 pTime);
+int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return IncidentCam_original(c, pTime);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040f790, IncidentCam, IncidentCam_original)
