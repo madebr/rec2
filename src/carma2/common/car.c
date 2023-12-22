@@ -13,3 +13,14 @@ void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004105f0, SetUpPanningCamera, SetUpPanningCamera_original)
+
+int (C2_HOOK_FASTCALL * CollideCamera2_original)(br_vector3* car_pos, br_vector3* cam_pos, br_vector3* old_camera_pos, int manual_move, tCollision_info *collision_info);
+int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br_vector3* old_camera_pos, int manual_move, tCollision_info *collision_info) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return CollideCamera2_original(car_pos, cam_pos, old_camera_pos, manual_move, collision_info);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004122b0, CollideCamera2, CollideCamera2_original)
