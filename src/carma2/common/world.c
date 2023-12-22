@@ -41,6 +41,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gSight_distance_squared, 0x0068b840);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGroovidelics_array_size, 0x0068b848);
 C2_HOOK_VARIABLE_IMPLEMENT(tGroovidelic_spec*, gGroovidelics_array, 0x0068b850);
+C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume*, gDefault_water_spec_vol_real, 0x00761f44);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tMaterial_exception*, gMaterial_exceptions, 0x0074ca04);
 
@@ -1479,3 +1480,9 @@ tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor) {
     return NULL;
 }
 C2_HOOK_FUNCTION(0x0047b360, FindGroovidelicForActor)
+
+tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
+
+    return C2V(gDefault_water_spec_vol_real);
+}
+C2_HOOK_FUNCTION(0x004ff110, GetDefaultSpecialVolumeForWater)
