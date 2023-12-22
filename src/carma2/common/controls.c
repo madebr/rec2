@@ -782,3 +782,14 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442f90, CheckOtherRacingKeys, CheckOtherRacingKeys_original)
+
+void (C2_HOOK_FASTCALL * FlipUpCar_original)(tCar_spec* car);
+void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* car) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FlipUpCar_original(car);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004429b0, FlipUpCar, FlipUpCar_original)
