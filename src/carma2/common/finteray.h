@@ -14,6 +14,8 @@ C2_HOOK_VARIABLE_DECLARE(br_scalar, gNearest_T);
 C2_HOOK_VARIABLE_DECLARE(int, gNearest_face_group);
 C2_HOOK_VARIABLE_DECLARE(br_matrix34, gPick_model_to_view__finteray);
 
+void C2_HOOK_FASTCALL EnablePlingMaterials(void);
+
 void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt);
 
 void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m);

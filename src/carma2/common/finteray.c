@@ -15,6 +15,12 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gNearest_T, 0x00686190);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNearest_face_group, 0x00686194);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__finteray, 0x00686198);
 
+void C2_HOOK_FASTCALL EnablePlingMaterials(void) {
+
+    C2V(gPling_materials) = 1;
+}
+C2_HOOK_FUNCTION(0x0045d5c0, EnablePlingMaterials)
+
 int C2_HOOK_FASTCALL BadDiv__finteray(br_scalar a, br_scalar b) {
 
     return fabsf(b) < 1.0f && fabsf(b) * BR_SCALAR_MAX < fabsf(a);
