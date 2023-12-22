@@ -123,6 +123,18 @@ void C2_HOOK_FASTCALL ApplyMaterialCallbackOnAllMaterials(br_model* pModel, mate
 }
 C2_HOOK_FUNCTION(0x00448fd0, ApplyMaterialCallbackOnAllMaterials)
 
+intptr_t C2_HOOK_CDECL ApplyMaterialCallbackOnAllModelActorsCallback(br_actor* pActor, material_cbfn* pCallback) {
+
+    if (pActor->material != NULL) {
+        pCallback(pActor->material);
+    }
+    if (pActor->type == BR_ACTOR_MODEL && pActor->model != NULL) {
+        ApplyMaterialCallbackOnAllMaterials(pActor->model, pCallback);
+    }
+    return BrActorEnum(pActor, (br_actor_enum_cbfn*)ApplyMaterialCallbackOnAllModelActorsCallback, pCallback);
+}
+C2_HOOK_FUNCTION(0x00448f90, ApplyMaterialCallbackOnAllModelActorsCallback)
+
 intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
     if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
         pActor->render_style = *(br_uint_8*)pFlag;
