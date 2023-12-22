@@ -20,4 +20,6 @@ void C2_HOOK_FASTCALL InitPeds(void);
 
 void C2_HOOK_FASTCALL InitBurningPeds(void);
 
+int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback);
+
 #endif //REC2_PEDESTRN_H
