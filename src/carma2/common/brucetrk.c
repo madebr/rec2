@@ -108,6 +108,8 @@ C2_HOOK_FUNCTION(0x004f5ae0, GetModelTextureArea)
 
 void C2_HOOK_FASTCALL FixModelPointer(br_model* pModel, br_uint_16 pFlags) {
 
+    C2_HOOK_BUG_ON(sizeof(v11group) != 0x24);
+
     if (pModel->nvertices != 0 && pModel->nfaces != 0) {
         int i;
 
