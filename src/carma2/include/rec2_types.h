@@ -114,6 +114,12 @@ typedef struct {
 } tTree_surgery_pass2;
 
 typedef enum {
+    ePOC_start = 0,
+    ePOC_run = 1,
+    ePOC_die = 2,
+} tProcess_objective_command;
+
+typedef enum {
     eSoftness_VerySoft = 0,
     eSoftness_Soft = 1,
     eSoftness_Normal = 2,
