@@ -1,5 +1,13 @@
 #include "shrapnel.h"
 
+uintptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, br_actor** pActorBuffer) {
+
+    pActorBuffer[C2V(gShrapnel_ghost_actor_count)] = pActor;
+    C2V(gShrapnel_ghost_actor_count) += 1;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004ef440, AddGhostActorToBuffer)
+
 void (C2_HOOK_FASTCALL * ReadShrapnel_original)(FILE* pF, tShrapnel_spec* pShrapnel_spec, int* pShrapnel_count);
 void C2_HOOK_FASTCALL ReadShrapnel(FILE* pF, tShrapnel_spec* pShrapnel_spec, int* pShrapnel_count) {
 #if defined(C2_HOOKS_ENABLED)
