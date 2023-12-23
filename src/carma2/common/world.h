@@ -130,4 +130,6 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
 
 void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF);
 
+void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath);
+
 #endif // REC2_WORLD_H
