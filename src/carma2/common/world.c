@@ -45,6 +45,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(tGroovidelic_spec*, gGroovidelics_array, 0x0068b850);
 C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume*, gDefault_water_spec_vol_real, 0x004ff110);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gRace_path, 0x0074d0a0, 256);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_noncars, 0x006b788c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_noncar_shrapnel_actors, 0x006a55b0);
+C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_environment_name*, gSmashable_noncars, 0x006b7888);
+C2_HOOK_VARIABLE_IMPLEMENT(const char*, gSmashable_track_environment_path, 0x006a55b8);
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
     return C2V(gCar_texturing_level);
