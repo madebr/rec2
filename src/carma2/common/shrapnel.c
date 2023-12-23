@@ -1,5 +1,7 @@
 #include "shrapnel.h"
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gShrapnel_ghost_actor_count, 0x006a3338);
+
 uintptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, br_actor** pActorBuffer) {
 
     pActorBuffer[C2V(gShrapnel_ghost_actor_count)] = pActor;
