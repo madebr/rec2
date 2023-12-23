@@ -2080,7 +2080,6 @@ typedef struct {
     int sounds[3];
     undefined field_0x18[44];
     undefined4 field_0x40;
-    undefined4 field_0x44;
     tSmashable_item_spec_trigger trigger;
     int count_levels;
     undefined4 field_0x4c;

@@ -1,10 +1,14 @@
 #include "world.h"
 
+#include "animation.h"
 #include "car.h"
+#include "crush.h"
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
+#include "shrapnel.h"
+#include "skidmark.h"
 #include "sound.h"
 #include "utility.h"
 
@@ -47,10 +51,24 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gRace_path, 0x0074d0a0, 256);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tMaterial_exception*, gMaterial_exceptions, 0x0074ca04);
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSmashable_item_mode_names, 6, 0x0065fe88, {
+    "nochange",
+    "decal",
+    "texturechange",
+    "remove",
+    "replacemodel",
+    "crush",
+});
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_noncars, 0x006b788c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_noncar_shrapnel_actors, 0x006a55b0);
 C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_environment_name*, gSmashable_noncars, 0x006b7888);
 C2_HOOK_VARIABLE_IMPLEMENT(const char*, gSmashable_track_environment_path, 0x006a55b8);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_track_smashable_environment_specs, 0x006a55b4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_track_smashable_environment_specs_2, 0x006a8288);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCapacity_track_smashables, 0x006a3330);
+C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_item_spec*, gTrack_smashable_environment_specs, 0x006a5138);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmashable_item_spec*, gSmashable_track_indexable_triggers, 100, 0x006ba4a0);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -1546,3 +1564,187 @@ void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF) {
     GetPairOfScalars(pF, &C2V(gLighting_data).ambient_else, &C2V(gLighting_data).diffuse_else);
 }
 C2_HOOK_FUNCTION(0x00486dc0, LoadGlobalLighting)
+
+void (C2_HOOK_FASTCALL * LoadSmashableTrackEnvironment_original)(FILE* pF, const char* pPath);
+void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    LoadSmashableTrackEnvironment_original(pF, pPath);
+#else
+    int i;
+    int j;
+    char s[256];
+    char s2[256];
+
+    s2[0] = '\0';
+    C2V(gCount_smashable_noncars) = 0;
+    C2V(gCount_smashable_noncar_shrapnel_actors) = 0;
+    C2V(gSmashable_noncars) = BrMemAllocate(100 * sizeof(tSmashable_environment_name), kMem_smashable_env_info);
+    C2_HOOK_BUG_ON(100 * sizeof(tSmashable_environment_name) != 3200);
+
+    /* Number of smash specs */
+    C2V(gCount_track_smashable_environment_specs) = GetAnInt(pF);
+
+    C2V(gCapacity_track_smashables) = 5 * (C2V(gCount_track_smashable_environment_specs) + 30);
+    C2V(gCount_track_smashable_environment_specs_2) = C2V(gCount_track_smashable_environment_specs);
+    C2V(gTrack_smashable_environment_specs) = BrMemAllocate(C2V(gCapacity_track_smashables) * sizeof(tSmashable_item_spec), kMem_smashable_env_info);
+    C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 736);
+
+    C2V(gSmashable_track_environment_path) = pPath;
+
+    c2_memset(C2V(gSmashable_track_indexable_triggers), 0, sizeof(C2V(gSmashable_track_indexable_triggers)));
+    C2_HOOK_BUG_ON(sizeof(C2V(gSmashable_track_indexable_triggers)) != 400);
+
+    for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
+        tSmashable_item_spec* spec = &C2V(gTrack_smashable_environment_specs)[i];
+
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, flags, 0x0);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, field_0x10, 0x10);
+
+        /* Flags */
+        spec->flags = GetAnInt(pF);
+        spec->field_0x10 = 0;
+
+        /* Name of trigger material */
+        GetAString(pF, s);
+        if (s[0] == '&') {
+            if (s[1] >= '0' && s[1] <= '9' && s[3] == '\0') {
+                spec->trigger_type = kSmashableTrigger_Number;
+            } else {
+                spec->trigger_type = kSmashableTrigger_Model;
+            }
+        } else {
+            if (c2_strstr(s, ".DAT") != NULL || c2_strstr(s, ".dat") != NULL || c2_strstr(s, ".ACT") != NULL || c2_strstr(s, ".act") != NULL) {
+                spec->trigger_type = kSmashableTrigger_Model;
+            } else {
+                spec->trigger_type = kSmashableTrigger_Material;
+            }
+        }
+
+        switch (spec->trigger_type) {
+        case kSmashableTrigger_Material:
+            spec->trigger_object.material = BrMaterialFind(s);
+            if (spec->trigger_object.material == NULL) {
+                FatalError(kFatalError_CannotFindSmashMaterial_S, s);
+            }
+            break;
+        case kSmashableTrigger_Model:
+            spec->trigger_object.model = BrModelFind(s);
+            if (spec->trigger_object.model == NULL) {
+                FatalError(kFatalError_CannotFindSmashModel_S, s);
+            }
+            break;
+        case kSmashableTrigger_Number:
+            spec->trigger_object.number.field_0x0 = (s[1] + 24) * 10 + s[2]; /* FIXME: why 24? (-'0' == -48) */
+            spec->trigger_object.number.field_0x1 = GetAnInt(pF);
+            C2V(gSmashable_track_indexable_triggers)[spec->trigger_object.number.field_0x0] = spec;
+            break;
+        }
+
+        /* Mode */
+        spec->mode = GetALineAndInterpretCommand(pF, C2V(gSmashable_item_mode_names), REC2_ASIZE(C2V(gSmashable_item_mode_names)));
+        switch (spec->mode) {
+        case kSmashableMode_Decal:
+        case kSmashableMode_TextureChange:
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
+
+            spec->mode_data.texture_change.levels = NULL;
+            c2_strcpy(spec->mode_data.texture_change.undefined_0x0, s2);
+
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, field_0x40, 0x40);
+
+            spec->mode_data.texture_change.field_0x40 = -1;
+            spec->mode_data.texture_change.trigger = spec->trigger_object;
+            spec->mode_data.texture_change.field_0x4c = 0;
+            spec->mode_data.texture_change.field_0x40 = -1;
+            spec->mode_data.texture_change.field_0x6c = 0;
+            spec->mode_data.texture_change.field_0x70 = 0;
+            spec->mode_data.texture_change.field_0x74 = 0;
+            spec->mode_data.texture_change.field_0x78 = 0;
+            spec->mode_data.texture_change.field_0x54 = 0;
+            spec->mode_data.texture_change.field_0x58 = 0;
+            spec->mode_data.texture_change.field_0x5c = 0;
+            spec->mode_data.texture_change.field_0x60 = 1.f;
+            spec->mode_data.texture_change.field_0x64 = 0;
+            spec->mode_data.texture_change.field_0x68 = 0;
+            LoadSmashableLevels(pF,
+                &spec->mode_data.texture_change.levels,
+                &spec->mode_data.texture_change.count_levels,
+                spec->mode == kSmashableMode_TextureChange,
+                &C2V(gTrack_storage_space));
+            break;
+        default:
+            /* Removal threshold */
+            spec->mode_data.shrapnel.removal_threshold = GetAScalar(pF);
+
+            /* number of possible sounds */
+            spec->mode_data.shrapnel.count_sounds = GetAnInt(pF);
+
+            for (j = 0; j < spec->mode_data.shrapnel.count_sounds; j++) {
+                /* sound id */
+                spec->mode_data.shrapnel.sounds[j] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+            }
+
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, count_shrapnel, 0x14);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, shrapnel, 0x18);
+
+            ReadShrapnel(pF, spec->mode_data.shrapnel.shrapnel, &spec->mode_data.shrapnel.count_shrapnel);
+            ReadExplosionAnimation(pF, &spec->mode_data.shrapnel.explosion_animation);
+            ReadSlick(pF, &spec->mode_data.shrapnel.slick);
+            ReadNonCarCuboidActivation(pF, &spec->mode_data.shrapnel.activations);
+            ReadShrapnelSideEffects(pF, &spec->mode_data.shrapnel.side_effects);
+
+            /* Extensions flags */
+            spec->mode_data.shrapnel.extension_flags = GetAnInt(pF);
+            if (spec->mode_data.shrapnel.extension_flags & 0x1) {
+                spec->mode_data.shrapnel.extension_arg = GetAnInt(pF);
+            }
+            /* Room turn on code */
+            spec->mode_data.shrapnel.room_turn_on_code = GetAnInt(pF);
+            LoadAward(pF, &spec->mode_data.shrapnel.award);
+            /* run-time variable changes */
+            spec->mode_data.shrapnel.count_runtime_variable_changes = GetAnInt(pF);
+            for (j = 0; j < spec->mode_data.shrapnel.count_runtime_variable_changes; j++) {
+                int v1, v2;
+
+                GetPairOfInts(pF, &v1, &v2);
+                spec->mode_data.shrapnel.runtime_variable_changes[j].field_0x0 = v2;
+                spec->mode_data.shrapnel.runtime_variable_changes[j].field_0x2 = v1;
+            }
+            break;
+        }
+        if (spec->mode == kSmashableMode_ReplaceModel) {
+            /* new model */
+            GetAString(pF, s2);
+            spec->replace_model = BrModelFind(s2);
+            if (spec->replace_model == NULL) {
+                FatalError(kFatalError_CannotFindSmashActorModel_S, s2);
+            }
+            /* %chance fire */
+            spec->replace_modelchance_fire = GetAnInt(pF);
+            if (spec->replace_modelchance_fire != 0) {
+                spec->replace_model_2_int = GetAnInt(pF);
+                GetPairOfInts(pF, &spec->replace_model_3_int, &spec->flags);
+            }
+        }
+        /* reserved 1 */
+        GetAnInt(pF);
+        /* reserved 2 */
+        GetAnInt(pF);
+        /* reserved 3 */
+        GetAnInt(pF);
+        GetAnInt(pF);
+
+        spec->field_0x2d4 = 0;
+        spec->field_0x2d8 = 0;
+        spec->field_0x2dc = 0;
+    }
+    for (i = C2V(gCount_track_smashable_environment_specs); i < C2V(gCapacity_track_smashables); i++) {
+        tSmashable_item_spec* spec = &C2V(gTrack_smashable_environment_specs)[i];
+
+        spec->trigger_type = -1;
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f0450, LoadSmashableTrackEnvironment, LoadSmashableTrackEnvironment_original)
