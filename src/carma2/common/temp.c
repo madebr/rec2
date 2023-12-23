@@ -31,6 +31,15 @@ br_material* C2_HOOK_FASTCALL LoadTemporaryMaterial(const char* pName) {
     return material;
 }
 
+void C2_HOOK_FASTCALL TemporaryMaterialStore(br_material* pMaterial) {
+
+    if (C2V(gMaterials_to_adapt_count) < REC2_ASIZE(C2V(gMaterials_to_adapt))) {
+        C2V(gMaterials_to_adapt)[C2V(gMaterials_to_adapt_count)] = pMaterial;
+        C2V(gMaterials_to_adapt_count) += 1;
+    }
+}
+C2_HOOK_FUNCTION(0x004ea820, TemporaryMaterialStore)
+
 void C2_HOOK_FASTCALL EnableMaterialAdapt(void) {
     C2V(gAllow_material_adapt) = 1;
 }
