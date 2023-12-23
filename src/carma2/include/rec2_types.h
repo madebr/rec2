@@ -1918,17 +1918,34 @@ typedef enum {
     kShrapnelRelPos_ActorBased = 2
 } tShrapnel_rel_pos_type;
 
-typedef struct {
-    tShrapnel_rel_pos_type type;
-    br_vector3 pos;
-} tShrapnel_pos;
-
 typedef enum {
     kShrapnelType_Abstract = 0,
     kShrapnelType_Shards = 1,
     kShrapnelType_GhostParts = 2,
     kShrapnelType_NonCars = 3,
 } tShrapnel_type;
+
+typedef enum {
+    kInitialSmashablePosition_SphereClumped = 0,
+    kInitialSmashablePosition_BoxClumped = 1,
+    kInitialSmashablePosition_ActorBased = 2,
+} tInitial_smashable_position_type;
+
+typedef enum {
+    kSmashableSpherePosition_Impact = 0,
+    kSmashableSpherePosition_Model = 0,
+} tSmashable_sphere_position;
+
+typedef struct {
+    tInitial_smashable_position_type type;
+    union {
+        struct {
+            float radius;
+            tSmashable_sphere_position where;
+        } sphere;
+        br_vector3 box;
+    } position;
+} tSmashable_initial_position_spec;
 
 typedef struct {
     tShrapnel_type type;
@@ -1941,26 +1958,35 @@ typedef struct {
     float random_spin_rate_max;
     float min_time_ms;
     float max_time_ms;
-    tShrapnel_pos initial_pos;
+    tSmashable_initial_position_spec initial_pos;
     union {
+        struct {
+            int count_materials;
+            br_material* materials[5];
+        } abstract;
         struct {
             br_material* material;
             float field_0x4;
             int field_0x8;
         } material;
         struct {
-            int count;
-            int invalid_count;
-            int actor_count;
+            br_material* material;
+            float field_0x4;
+            int field_0x8;
+        } shard;
+        struct {
+            int field_0x0;
+            int field_0x4;
+            int count_actors;
             float bounds_dx;
             float bounds_dy;
-            br_actor* actor;
+            br_actor** actors;
         } ghost;
         struct {
             int amount_min;
             int amount_max;
-            int count_separate_actors;
-            br_actor* actors;
+            int count_actors;
+            br_actor** actors;
             int probability_fire;
             int count_fire_columns;
             int min_smokiness;
@@ -2022,6 +2048,8 @@ typedef struct {
     int field_0x10;
 } tAward_info;
 
+typedef char tSmashable_environment_name[32];
+
 typedef union {
     struct {
         tU8 field_0x0;
@@ -2057,10 +2085,11 @@ typedef struct {
 } tSmashable_item_spec_shrapnel;
 
 typedef struct {
-    char undefined_0x4[4];
+    char undefined_0x0[4];
     int count_sounds;
     int sounds[3];
     undefined field_0x18[44];
+    undefined4 field_0x40;
     undefined4 field_0x44;
     tSmashable_item_spec_trigger trigger;
     int count_levels;
@@ -2169,28 +2198,6 @@ typedef struct {
     br_vector3 normal;
     br_vector3 pos;
 } tSkid;
-
-typedef enum {
-    kInitialSmashablePosition_SphereClumped = 0,
-    kInitialSmashablePosition_BoxClumped = 1,
-    kInitialSmashablePosition_ActorBased = 2,
-} tInitial_smashable_position_type;
-
-typedef enum {
-    kSmashableSpherePosition_Impact = 0,
-    kSmashableSpherePosition_Model = 0,
-} tSmashable_sphere_position;
-
-typedef struct {
-    tInitial_smashable_position_type type;
-    union {
-        struct {
-            float radius;
-            tSmashable_sphere_position where;
-        } sphere;
-        br_vector3 box;
-    } position;
-} tSmashable_initial_position_spec;
 
 typedef struct {
     undefined4 (C2_HOOK_FASTCALL * field_0x0)(undefined4*, undefined4, undefined4*);
@@ -2942,8 +2949,10 @@ enum {
     kFatalError_FileIsCorrupted_S = 0x73,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
+    kFatalError_CannotFindSmashModel_S = 0x79,
     kFatalError_TooManyCrushLimits = 0x7a,
     kFatalError_TooManyCrushDatas = 0x7c,
+    kFatalError_CannotFindSmashActorModel_S = 0x81,
     kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CantFindPedTexture_S = 0xa8,
     kFatalError_CannotFindGibletModel_S = 0xa9,
