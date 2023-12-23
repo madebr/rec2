@@ -12,6 +12,10 @@ C2_HOOK_VARIABLE_DECLARE(tBrender_storage*, gStorageForCallbacks);
 C2_HOOK_VARIABLE_DECLARE(int, gGroovidelics_array_size);
 C2_HOOK_VARIABLE_DECLARE(tGroovidelic_spec*, gGroovidelics_array);
 C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDefault_water_spec_vol_real);
+C2_HOOK_VARIABLE_DECLARE(const char*, gSmashable_track_environment_path);
+C2_HOOK_VARIABLE_DECLARE(tSmashable_environment_name*, gSmashable_noncars);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_smashable_noncars);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_smashable_noncar_shrapnel_actors);
 C2_HOOK_VARIABLE_DECLARE(tMaterial_exception*, gMaterial_exceptions);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
