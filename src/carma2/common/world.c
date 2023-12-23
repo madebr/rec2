@@ -47,6 +47,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gRace_path, 0x0074d0a0, 256);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tMaterial_exception*, gMaterial_exceptions, 0x0074ca04);
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_noncars, 0x006b788c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_noncar_shrapnel_actors, 0x006a55b0);
+C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_environment_name*, gSmashable_noncars, 0x006b7888);
+C2_HOOK_VARIABLE_IMPLEMENT(const char*, gSmashable_track_environment_path, 0x006a55b8);
+
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
     return C2V(gCar_texturing_level);
