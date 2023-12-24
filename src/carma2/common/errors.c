@@ -298,13 +298,13 @@ C2_HOOK_FUNCTION(0x0044c230, FatalError)
 void C2_HOOK_FASTCALL OpenDiagnostics(void) {
     // FIXME: use c2_stdio functions
 //    gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
-    gDiagnostic_file = fopen("DIAGNOST.TXT", "w");
+    gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
     if (gDiagnostic_file == NULL) {
         return;
     }
-    fputs("DIAGNOSTIC OUTPUT\n", gDiagnostic_file);
+    c2_fputs("DIAGNOSTIC OUTPUT\n", gDiagnostic_file);
     // todo: generate a real date
-    fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", __DATE__ " : " __TIME__);
+    c2_fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", __DATE__ " : " __TIME__);
 }
 C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics);
 
@@ -312,6 +312,8 @@ C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics);
 // This function is stripped from the retail binary, we've guessed at the implementation
 void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...) {
     va_list args;
+    tU32 the_time;
+
     // FIXME: use c2_stdio functions
     va_start(args, fmt_string);
     C2_HOOK_VDEBUGF(fmt_string, args);
@@ -320,14 +322,15 @@ void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...) {
     if (gDiagnostic_file == NULL) {
         OpenDiagnostics();
     }
-//    fprintf(gDiagnostic_file, "%7d.%02d: ", the_time / 1000, the_time % 100);
+    the_time = PDGetTotalTime();
+    c2_fprintf(gDiagnostic_file, "%7d.%03d: ", the_time / 1000, the_time % 1000);
 
     va_start(args, fmt_string);
-    vfprintf(gDiagnostic_file, fmt_string, args);
+    c2_vfprintf(gDiagnostic_file, fmt_string, args);
     va_end(args);
 
-    fputs("\n", gDiagnostic_file);
+    c2_fputs("\n", gDiagnostic_file);
 
-    fflush(gDiagnostic_file);
+    c2_fflush(gDiagnostic_file);
 }
 C2_HOOK_FUNCTION(0x0044c590, dr_dprintf);
