@@ -86,6 +86,8 @@ add_library(brender STATIC
     core/pixelmap/fontptrs.h
     core/pixelmap/genclip.c
     core/pixelmap/genclip.h
+    core/pixelmap/gencopy.c
+    core/pixelmap/gencopy.h
     core/pixelmap/pixelmap.c
     core/pixelmap/pixelmap.h
     core/pixelmap/pmdsptch.c
