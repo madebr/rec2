@@ -62,7 +62,7 @@ C2_HOOK_FUNCTION(0x004d7040, InitTintedPolys);
             if (C2V(gDefaultOpacity_TintedPoly) != 0) {                             \
                 extra_prims[1].v.x = BR_FIXED_INT(C2V(gDefaultOpacity_TintedPoly)); \
                 MAT->extra_prim = extra_prims;                                      \
-                BrMaterialUpdate(MAT, BR_MATU_SHADE);                               \
+                BrMaterialUpdate(MAT, BR_MATU_EXTRA_PRIM);                          \
             }                                                                       \
         }                                                                           \
     } while (0)
