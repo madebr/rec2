@@ -47,11 +47,71 @@ C2_HOOK_FUNCTION(0x00537df0, BrPixelmapResize)
 
 br_pixelmap* (C2_HOOK_CDECL * BrPixelmapMatch_original)(br_pixelmap* src, br_uint_8 match_type);
 br_pixelmap* C2_HOOK_CDECL BrPixelmapMatch(br_pixelmap* src, br_uint_8 match_type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     br_pixelmap* res = BrPixelmapMatch_original(src, match_type);
     return res;
 #else
-#error "Not implemented"
+    br_pixelmap *new;
+
+    br_token_value tv[] = {
+        { BRT_USE_T, { 0 } },
+        { 0,         { 0 } },
+        { 0 },
+    };
+
+    CheckDispatch((br_device_pixelmap*)src);
+
+    switch (match_type) {
+    case BR_PMMATCH_OFFSCREEN:
+        tv[0].v.t = BRT_OFFSCREEN;
+        break;
+
+    case BR_PMMATCH_DEPTH_16:
+    case BR_PMMATCH_DEPTH_15:
+    case BR_PMMATCH_DEPTH_FP15:
+    case BR_PMMATCH_DEPTH_FP16:
+        tv[0].v.t = BRT_DEPTH;
+        tv[1].t = BRT_PIXEL_BITS_I32;
+        tv[1].v.i32 = 16;
+        break;
+
+    case BR_PMMATCH_DEPTH:
+        tv[0].v.t = BRT_DEPTH;
+        break;
+
+    case BR_PMMATCH_HIDDEN:
+        tv[0].v.t = BRT_HIDDEN;
+        break;
+
+    case BR_PMMATCH_HIDDEN_BUFFER:
+        tv[0].v.t = BRT_HIDDEN_BUFFER;
+        break;
+
+    case BR_PMMATCH_NO_RENDER:
+        tv[0].v.t = BRT_NO_RENDER;
+        break;
+
+    case BR_PMMATCH_DEPTH_8:
+        tv[0].v.t = BRT_DEPTH;
+        tv[1].t = BRT_PIXEL_BITS_I32;
+        tv[1].v.i32 = 8;
+        break;
+
+    case BR_PMMATCH_DEPTH_32:
+    case BR_PMMATCH_DEPTH_31:
+        tv[0].v.t = BRT_DEPTH;
+        tv[1].t = BRT_PIXEL_BITS_I32;
+        tv[1].v.i32 = 32;
+        break;
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _match, 0x4c);
+
+    if (((br_device_pixelmap*)src)->dispatch->_match((br_device_pixelmap*)src, (br_device_pixelmap**)&new, tv) != 0) {
+        return NULL;
+    }
+
+    return new;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00537e20, BrPixelmapMatch, BrPixelmapMatch_original)
