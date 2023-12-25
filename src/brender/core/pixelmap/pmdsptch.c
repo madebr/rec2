@@ -1,5 +1,6 @@
 #include "pmdsptch.h"
 
+#include "gencopy.h"
 #include "fontptrs.h"
 #include "pmmem.h"
 
@@ -357,20 +358,26 @@ C2_HOOK_FUNCTION(0x00538360, BrPixelmapRectangle2)
 
 br_error (C2_HOOK_STDCALL * DispatchCopy_original)(br_device_pixelmap* self, br_device_pixelmap* src);
 br_error C2_HOOK_STDCALL DispatchCopy(br_device_pixelmap* self, br_device_pixelmap* src) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DispatchCopy_original(self, src);
 #else
-    CheckDispatch((br_device_pixelmap*)dst);
-    if ((*(br_device_pixelmap_dispatch**)self)->_device((br_object*)self) == (*(br_device_pixelmap_dispatch**)self)->_device((br_object*)src)) {
-        return (*(br_device_pixelmap_dispatch**)self)->_copyTo(self, src);
+    CheckDispatch((br_device_pixelmap*)self);
+    CheckDispatch((br_device_pixelmap*)src);
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _device, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _copy, 0x54);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _copyTo, 0x58);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _copyFrom, 0x5c);
+
+    if (((br_device_pixelmap*)self)->dispatch->_device((br_object*)self) == ((br_device_pixelmap*)src)->dispatch->_device((br_object*)src)) {
+        return ((br_device_pixelmap*)self)->dispatch->_copy(self, src);
+    } else if (!(src->pm_flags & BR_PMF_NO_ACCESS))
+        return ((br_device_pixelmap*)self)->dispatch->_copyTo(self, src);
+    else if (!(self->pm_flags & BR_PMF_NO_ACCESS)) {
+        return ((br_device_pixelmap*)src)->dispatch->_copyFrom(src, self);
+    } else {
+        return GeneralCopy((br_device_pixelmap*)self, (br_device_pixelmap*)src);
     }
-    if (src->pm_flags & 1 == 0) {
-        return (*(br_device_pixelmap_dispatch**)self)->_copyTo2(self, src);
-    }
-    if (self->pm_flags & 1 == 0) {
-        return (*(br_device_pixelmap_dispatch**)src)->_copyFrom(src, self);
-    }
-##error "Not implemented"
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005383b0, DispatchCopy, DispatchCopy_original)
