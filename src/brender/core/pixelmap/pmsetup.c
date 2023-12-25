@@ -40,7 +40,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005395a0, BrPixelmapBegin, BrPixelmapBegin_original)
 void (C2_HOOK_CDECL * BrPixelmapEnd_original)(void);
 void C2_HOOK_CDECL BrPixelmapEnd(void) {
     C2_HOOK_START();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrPixelmapEnd_original();
 #else
     BrImageRemove(&C2V(Image_BRMAP1));
