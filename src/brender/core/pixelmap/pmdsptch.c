@@ -411,10 +411,26 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00538430, DispatchRectangleCopy, DispatchRectangleCo
 
 br_error (C2_HOOK_STDCALL * DispatchRectangleStretchCopy_original)(br_device_pixelmap* self, br_rectangle* r, br_device_pixelmap* src, br_rectangle* s);
 br_error C2_HOOK_STDCALL DispatchRectangleStretchCopy(br_device_pixelmap* self, br_rectangle* r, br_device_pixelmap* src, br_rectangle* s) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DispatchRectangleStretchCopy_original(self, r, src, s);
 #else
-#error "Not implemented"
+    CheckDispatch((br_device_pixelmap*)self);
+    CheckDispatch((br_device_pixelmap*)src);
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _device, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _rectangleStretchCopy, 0x90);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _rectangleStretchCopyTo, 0x94);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _rectangleStretchCopyFrom, 0x98);
+
+    if (((br_device_pixelmap*)self)->dispatch->_device((br_object*)self) == ((br_device_pixelmap*)src)->dispatch->_device((br_object*)src)) {
+        return ((br_device_pixelmap*)self)->dispatch->_rectangleStretchCopy(self, r, (br_device_pixelmap*)src, s);
+    } else if(!(src->pm_flags & BR_PMF_NO_ACCESS)) {
+        return ((br_device_pixelmap*)self)->dispatch->_rectangleStretchCopyTo(self, r, (br_device_pixelmap*)src, s);
+    } else if(!(self->pm_flags & BR_PMF_NO_ACCESS)) {
+        return ((br_device_pixelmap*)self)->dispatch->_rectangleStretchCopyFrom(src, r, (br_device_pixelmap*)self, s);
+        } else {
+        return GeneralRectangleStretchCopy((br_device_pixelmap*)self, r, (br_device_pixelmap*)src, s);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005384e0, DispatchRectangleStretchCopy, DispatchRectangleStretchCopy_original)
