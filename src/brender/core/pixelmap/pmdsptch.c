@@ -240,12 +240,63 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00538060, BrPixelmapMatchTyped, BrPixelmapMatchTyped
 
 br_pixelmap* (C2_HOOK_CDECL * BrPixelmapMatchTypedSized_original)(br_pixelmap* src, br_uint_8 match_type, br_uint_8 pixelmap_type, br_int_32 width, br_int_32 height);
 br_pixelmap* C2_HOOK_CDECL BrPixelmapMatchTypedSized(br_pixelmap* src, br_uint_8 match_type, br_uint_8 pixelmap_type, br_int_32 width, br_int_32 height) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrPixelmapMatchTypedSized_original(src, match_type, pixelmap_type, width, height);
 #else
-    br_pixelmap* new;
-    br_token_value tv[6];
-#error "Not implemented"
+    br_pixelmap *new;
+
+    br_token_value tv[] = {
+        { BRT_USE_T,         { 0 } },
+        { BRT_WIDTH_I32,     { 0 } },
+        { BRT_HEIGHT_I32,    { 0 } },
+        { BRT_PIXEL_TYPE_U8, { 0 } },
+        { 0,                 { 0 } },
+        { 0 }
+    };
+
+    CheckDispatch((br_device_pixelmap*)src);
+
+    tv[1].v.i32 = width;
+    tv[2].v.i32 = height;
+    tv[3].v.u8 = pixelmap_type;
+
+    switch(match_type) {
+        case BR_PMMATCH_OFFSCREEN:
+            tv[0].v.t = BRT_OFFSCREEN;
+            break;
+
+        case BR_PMMATCH_HIDDEN:
+            tv[0].v.t = BRT_HIDDEN;
+            break;
+
+        case BR_PMMATCH_HIDDEN_BUFFER:
+            tv[0].v.t = BRT_HIDDEN_BUFFER;
+            break;
+
+        case BR_PMMATCH_NO_RENDER:
+            tv[0].v.t = BRT_NO_RENDER;
+            break;
+
+        case BR_PMMATCH_DEPTH_16:
+            tv[4].t = BRT_PIXEL_BITS_I32;
+            tv[4].v.i32 = 16;
+
+            /* FALL THROUGH */
+
+        case BR_PMMATCH_DEPTH:
+            tv[0].v.t = BRT_DEPTH;
+            break;
+    }
+
+    if (((br_device_pixelmap*)src)->dispatch->_match((br_device_pixelmap*)src, (br_device_pixelmap**)&new, tv) != 0) {
+        return NULL;
+    }
+
+    if (new->type != pixelmap_type || new->width != width || new->height != height) {
+        BrPixelmapFree(new);
+        return NULL;
+    }
+    return new;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00538160, BrPixelmapMatchTypedSized, BrPixelmapMatchTypedSized_original)
