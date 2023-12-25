@@ -1015,7 +1015,7 @@ typedef struct br_pixelmap {
     br_int_16 origin_x;
     br_int_16 origin_y;
     void* user;
-    void* stored;
+    struct br_buffer_stored* stored;
 } br_pixelmap;
 
 typedef struct br_point {
@@ -3158,7 +3158,8 @@ enum {
  * Flags to BrMapUpdate()
  */
 enum {
-    BR_MAPU_ALL = 0x0fff
+    BR_MAPU_ALL = 0x0fff,
+    BR_MAPU_SHARED = 0x8000,
 };
 
 /*
