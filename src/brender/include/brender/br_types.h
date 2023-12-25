@@ -46,6 +46,7 @@ typedef struct br_associative_array_tag br_associative_array;
 typedef struct br_tri_strip br_tri_fan;
 typedef struct br_tri_strip br_quad_strip;
 typedef struct v11model v11model;
+typedef struct br_renderer_state_stored br_renderer_state_stored;
 
 typedef enum br_filesystem_attributes {
     BR_FS_ATTR_READABLE = 1,
@@ -160,6 +161,8 @@ typedef enum {
     BR_PMF_LINEAR = 0x02,
     BR_PMF_ROW_WHOLEPIXELS = 0x04
 } br_pixelmap_flags;
+
+#define BR_NULL_TOKEN 0
 
 typedef enum br_token {
     BRT_NONE = 1,
@@ -1204,33 +1207,34 @@ typedef struct br_renderer {
     br_renderer_dispatch* dispatch;
 } br_renderer;
 
-typedef struct br_material {       // size: 0x9c
-    br_uint_32 _reserved;          // @0x0
-    char* identifier;              // @0x4
-    br_colour colour;              // @0x8
-    br_uint_8 opacity;             // @0xc
-    br_ufraction ka;               // @0x10
-    br_ufraction kd;               // @0x14
-    br_ufraction ks;               // @0x18
-    br_scalar power;               // @0x1c
-    br_uint_32 flags;              // @0x20
-    br_matrix23 map_transform;     // @0x24
-    br_uint_8 index_base;          // @0x3c
-    br_uint_8 index_range;         // @0x3d
-    br_pixelmap* colour_map;       // @0x40
-    br_pixelmap* screendoor;       // @0x44
-    br_pixelmap* index_shade;      // @0x48
-    br_pixelmap* index_blend;      // @0x4c
-    br_pixelmap* index_fog;        // @0x50
-    br_token_value* extra_surf;    // @0x54
-    br_token_value* extra_prim;    // @0x58
-    br_scalar fog_min;             // @0x5c
-    br_scalar fog_max;             // @0x60
-    br_colour fog_colour;          // @0x64
-    br_int_32 subdivide_tolerance; // @0x68
-    char unknown[40]; // FIXME: UNKNOWN!!!
-    void* user;                    // @0x6c
-    void* stored;                  // @0x70
+typedef struct br_material {            // size: 0x9c
+    br_uint_32 _reserved;               // @0x0
+    char* identifier;                   // @0x4
+    br_colour colour;                   // @0x8
+    br_uint_8 opacity;                  // @0xc
+    br_ufraction ka;                    // @0x10
+    br_ufraction kd;                    // @0x14
+    br_ufraction ks;                    // @0x18
+    br_scalar power;                    // @0x1c
+    br_uint_32 flags;                   // @0x20
+    br_matrix23 map_transform;          // @0x24
+    br_uint_8 index_base;               // @0x3c
+    br_uint_8 index_range;              // @0x3d
+    br_pixelmap* colour_map;            // @0x40
+    br_pixelmap* screendoor;            // @0x44
+    br_pixelmap* index_shade;           // @0x48
+    br_pixelmap* index_blend;           // @0x4c
+    br_pixelmap* index_fog;             // @0x50
+    br_token_value* extra_surf;         // @0x54
+    br_token_value* extra_prim;         // @0x58
+    br_scalar fog_min;                  // @0x5c
+    br_scalar fog_max;                  // @0x60
+    br_colour fog_colour;               // @0x64
+    br_uint_32 mode;                    // @0x68
+    char field_0x6c[36];                // FIXME: UNKNOWN!!!
+    br_int_32 subdivide_tolerance;      // @0x90
+    void* user;                         // @0x94
+    br_renderer_state_stored* stored;   // @0x98
 } br_material;
 
 typedef struct br_vertex {
@@ -1889,74 +1893,74 @@ typedef struct br_buffer_stored_dispatch {
 typedef struct brp_vertex brp_vertex;
 
 typedef struct br_renderer_dispatch {
-    void (*__reserved0)(br_object*);
-    void (*__reserved1)(br_object*);
-    void (*__reserved2)(br_object*);
-    void (*__reserved3)(br_object*);
-    void (*_free)(br_object*);
-    char* (*_identifier)(br_object*);
-    br_token (*_type)(br_object*);
-    br_boolean (*_isType)(br_object*, br_token);
-    br_device* (*_device)(br_object*);
-    br_int_32 (*_space)(br_object*);
-    br_tv_template* (*_templateQuery)(br_object*);
-    br_error (*_query)(br_object*, br_uint_32*, br_token);
-    br_error (*_queryBuffer)(br_object*, br_uint_32*, void*, br_size_t, br_token);
-    br_error (*_queryMany)(br_object*, br_token_value*, void*, br_size_t, br_int_32*);
-    br_error (*_queryManySize)(br_object*, br_size_t*, br_token_value*);
-    br_error (*_queryAll)(br_object*, br_token_value*, br_size_t);
-    br_error (*_queryAllSize)(br_object*, br_size_t*);
-    void* (*_listQuery)(br_object_container*);
-    void* (*_tokensMatchBegin)(br_object_container*, br_token, br_token_value*);
-    br_boolean (*_tokensMatch)(br_object_container*, br_object*, void*);
-    void (*_tokensMatchEnd)(br_object_container*, void*);
-    br_error (*_addFront)(br_object_container*, br_object*);
-    br_error (*_removeFront)(br_object_container*, br_object**);
-    br_error (*_remove)(br_object_container*, br_object*);
-    br_error (*_find)(br_object_container*, br_object**, br_token, char*, br_token_value*);
-    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, char*, br_token_value*);
-    br_error (*_count)(br_object_container*, br_int_32*, br_token, char*, br_token_value*);
-    br_error (*_validDestination)(br_renderer*, br_boolean*, br_object*);
-    br_error (*_stateStoredNew)(br_renderer*, br_renderer_state_stored**, br_uint_32, br_token_value*);
-    br_error (*_stateStoredAvail)(br_renderer*, br_int_32*, br_uint_32, br_token_value*);
-    br_error (*_bufferStoredNew)(br_renderer*, br_buffer_stored**, br_token, br_device_pixelmap*, br_token_value*);
-    br_error (*_bufferStoredAvail)(br_renderer*, br_int_32*, br_token, br_token_value*);
-    br_error (*_partSet)(br_renderer*, br_token, br_int_32, br_token, uintptr_t);
-    br_error (*_partSetMany)(br_renderer*, br_token, br_int_32, br_token_value*, br_int_32*);
-    br_error (*_partQuery)(br_renderer*, br_token, br_int_32, br_uint_32*, br_token);
-    br_error (*_partQueryBuffer)(br_renderer*, br_token, br_int_32, br_uint_32*, br_uint_32*, br_size_t, br_token);
-    br_error (*_partQueryMany)(br_renderer*, br_token, br_int_32, br_token_value*, void*, br_size_t, br_int_32*);
-    br_error (*_partQueryManySize)(br_renderer*, br_token, br_int_32, br_size_t*, br_token_value*);
-    br_error (*_partQueryAll)(br_renderer*, br_token, br_int_32, br_token_value*, br_size_t);
-    br_error (*_partQueryAllSize)(br_renderer*, br_token, br_int_32, br_size_t*);
-    br_error (*_partIndexQuery)(br_renderer*, br_token, br_int_32*);
-    br_error (*_modelMulF)(br_renderer*, br_matrix34_f*);
-    br_error (*_modelMulX)(br_renderer*, br_matrix34_x*);
-    br_error (*_modelPopPushMulF)(br_renderer*, br_matrix34_f*);
-    br_error (*_modelPopPushMulX)(br_renderer*, br_matrix34_x*);
-    br_error (*_modelInvert)(br_renderer*);
-    br_error (*_statePush)(br_renderer*, br_uint_32);
-    br_error (*_statePop)(br_renderer*, br_uint_32);
-    br_error (*_stateSave)(br_renderer*, br_renderer_state_stored*, br_uint_32);
-    br_error (*_stateRestore)(br_renderer*, br_renderer_state_stored*, br_uint_32);
-    br_error (*_stateMask)(br_renderer*, br_uint_32*, br_token*, int);
-    br_error (*_stateDefault)(br_renderer*, br_uint_32);
-    br_error (*_boundsTestF)(br_renderer*, br_token*, br_bounds3_f*);
-    br_error (*_boundsTestX)(br_renderer*, br_token*, br_bounds3_x*);
-    br_error (*_coverageTestF)(br_renderer*, br_float*, br_bounds3_f*);
-    br_error (*_coverageTestX)(br_renderer*, br_fixed_ls*, br_bounds3_x*);
-    br_error (*_viewDistanceF)(br_renderer*, br_float*);
-    br_error (*_viewDistanceX)(br_renderer*, br_fixed_ls*);
-    br_error (*_commandModeSet)(br_renderer*, br_token);
-    br_error (*_commandModeQuery)(br_renderer*, br_token*);
-    br_error (*_commandModeDefault)(br_renderer*);
-    br_error (*_commandModePush)(br_renderer*);
-    br_error (*_commandModePop)(br_renderer*);
-    br_error (*_flush)(br_renderer*, br_boolean);
-    br_error (*_synchronise)(br_renderer*, br_token, br_boolean);
-    br_error (*_testRender)(br_renderer*, br_token, brp_vertex*, brp_vertex*, brp_vertex*);
-    br_error (*_partQueryCapability)(br_renderer*, br_token, br_int_32, br_token_value*, br_size_t);
-    br_error (*_stateQueryPerformance)(br_renderer*, br_fixed_lu*);
+    void (C2_HOOK_CDECL *__reserved0)(br_object*);
+    void (C2_HOOK_CDECL *__reserved1)(br_object*);
+    void (C2_HOOK_CDECL *__reserved2)(br_object*);
+    void (C2_HOOK_CDECL *__reserved3)(br_object*);
+    void (C2_HOOK_CDECL *_free)(br_object*);
+    char* (C2_HOOK_CDECL *_identifier)(br_object*);
+    br_token (C2_HOOK_CDECL *_type)(br_object*);
+    br_boolean (C2_HOOK_CDECL *_isType)(br_object*, br_token);
+    br_device* (C2_HOOK_CDECL *_device)(br_object*);
+    br_int_32 (C2_HOOK_CDECL *_space)(br_object*);
+    br_tv_template* (C2_HOOK_CDECL *_templateQuery)(br_object*);
+    br_error (C2_HOOK_CDECL *_query)(br_object*, br_uint_32*, br_token);
+    br_error (C2_HOOK_CDECL *_queryBuffer)(br_object*, br_uint_32*, void*, br_size_t, br_token);
+    br_error (C2_HOOK_CDECL *_queryMany)(br_object*, br_token_value*, void*, br_size_t, br_int_32*);
+    br_error (C2_HOOK_CDECL *_queryManySize)(br_object*, br_size_t*, br_token_value*);
+    br_error (C2_HOOK_CDECL *_queryAll)(br_object*, br_token_value*, br_size_t);
+    br_error (C2_HOOK_CDECL *_queryAllSize)(br_object*, br_size_t*);
+    void* (C2_HOOK_CDECL *_listQuery)(br_object_container*);
+    void* (C2_HOOK_CDECL *_tokensMatchBegin)(br_object_container*, br_token, br_token_value*);
+    br_boolean (C2_HOOK_CDECL *_tokensMatch)(br_object_container*, br_object*, void*);
+    void (C2_HOOK_CDECL *_tokensMatchEnd)(br_object_container*, void*);
+    br_error (C2_HOOK_CDECL *_addFront)(br_object_container*, br_object*);
+    br_error (C2_HOOK_CDECL *_removeFront)(br_object_container*, br_object**);
+    br_error (C2_HOOK_CDECL *_remove)(br_object_container*, br_object*);
+    br_error (C2_HOOK_CDECL *_find)(br_object_container*, br_object**, br_token, char*, br_token_value*);
+    br_error (C2_HOOK_CDECL *_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, char*, br_token_value*);
+    br_error (C2_HOOK_CDECL *_count)(br_object_container*, br_int_32*, br_token, char*, br_token_value*);
+    br_error (C2_HOOK_CDECL *_validDestination)(br_renderer*, br_boolean*, br_object*);
+    br_error (C2_HOOK_CDECL *_stateStoredNew)(br_renderer*, br_renderer_state_stored**, br_uint_32, br_token_value*);
+    br_error (C2_HOOK_CDECL *_stateStoredAvail)(br_renderer*, br_int_32*, br_uint_32, br_token_value*);
+    br_error (C2_HOOK_CDECL *_bufferStoredNew)(br_renderer*, br_buffer_stored**, br_token, br_device_pixelmap*, br_token_value*);
+    br_error (C2_HOOK_CDECL *_bufferStoredAvail)(br_renderer*, br_int_32*, br_token, br_token_value*);
+    br_error (C2_HOOK_CDECL *_partSet)(br_renderer*, br_token, br_int_32, br_token, uintptr_t);
+    br_error (C2_HOOK_CDECL *_partSetMany)(br_renderer*, br_token, br_int_32, br_token_value*, br_int_32*);
+    br_error (C2_HOOK_CDECL *_partQuery)(br_renderer*, br_token, br_int_32, br_uint_32*, br_token);
+    br_error (C2_HOOK_CDECL *_partQueryBuffer)(br_renderer*, br_token, br_int_32, br_uint_32*, br_uint_32*, br_size_t, br_token);
+    br_error (C2_HOOK_CDECL *_partQueryMany)(br_renderer*, br_token, br_int_32, br_token_value*, void*, br_size_t, br_int_32*);
+    br_error (C2_HOOK_CDECL *_partQueryManySize)(br_renderer*, br_token, br_int_32, br_size_t*, br_token_value*);
+    br_error (C2_HOOK_CDECL *_partQueryAll)(br_renderer*, br_token, br_int_32, br_token_value*, br_size_t);
+    br_error (C2_HOOK_CDECL *_partQueryAllSize)(br_renderer*, br_token, br_int_32, br_size_t*);
+    br_error (C2_HOOK_CDECL *_partIndexQuery)(br_renderer*, br_token, br_int_32*);
+    br_error (C2_HOOK_CDECL *_modelMulF)(br_renderer*, br_matrix34_f*);
+    br_error (C2_HOOK_CDECL *_modelMulX)(br_renderer*, br_matrix34_x*);
+    br_error (C2_HOOK_CDECL *_modelPopPushMulF)(br_renderer*, br_matrix34_f*);
+    br_error (C2_HOOK_CDECL *_modelPopPushMulX)(br_renderer*, br_matrix34_x*);
+    br_error (C2_HOOK_CDECL *_modelInvert)(br_renderer*);
+    br_error (C2_HOOK_CDECL *_statePush)(br_renderer*, br_uint_32);
+    br_error (C2_HOOK_CDECL *_statePop)(br_renderer*, br_uint_32);
+    br_error (C2_HOOK_CDECL *_stateSave)(br_renderer*, br_renderer_state_stored*, br_uint_32);
+    br_error (C2_HOOK_CDECL *_stateRestore)(br_renderer*, br_renderer_state_stored*, br_uint_32);
+    br_error (C2_HOOK_CDECL *_stateMask)(br_renderer*, br_uint_32*, br_token*, int);
+    br_error (C2_HOOK_CDECL *_stateDefault)(br_renderer*, br_uint_32);
+    br_error (C2_HOOK_CDECL *_boundsTestF)(br_renderer*, br_token*, br_bounds3_f*);
+    br_error (C2_HOOK_CDECL *_boundsTestX)(br_renderer*, br_token*, br_bounds3_x*);
+    br_error (C2_HOOK_CDECL *_coverageTestF)(br_renderer*, br_float*, br_bounds3_f*);
+    br_error (C2_HOOK_CDECL *_coverageTestX)(br_renderer*, br_fixed_ls*, br_bounds3_x*);
+    br_error (C2_HOOK_CDECL *_viewDistanceF)(br_renderer*, br_float*);
+    br_error (C2_HOOK_CDECL *_viewDistanceX)(br_renderer*, br_fixed_ls*);
+    br_error (C2_HOOK_CDECL *_commandModeSet)(br_renderer*, br_token);
+    br_error (C2_HOOK_CDECL *_commandModeQuery)(br_renderer*, br_token*);
+    br_error (C2_HOOK_CDECL *_commandModeDefault)(br_renderer*);
+    br_error (C2_HOOK_CDECL *_commandModePush)(br_renderer*);
+    br_error (C2_HOOK_CDECL *_commandModePop)(br_renderer*);
+    br_error (C2_HOOK_CDECL *_flush)(br_renderer*, br_boolean);
+    br_error (C2_HOOK_CDECL *_synchronise)(br_renderer*, br_token, br_boolean);
+    br_error (C2_HOOK_CDECL *_testRender)(br_renderer*, br_token, brp_vertex*, brp_vertex*, brp_vertex*);
+    br_error (C2_HOOK_CDECL *_partQueryCapability)(br_renderer*, br_token, br_int_32, br_token_value*, br_size_t);
+    br_error (C2_HOOK_CDECL *_stateQueryPerformance)(br_renderer*, br_fixed_lu*);
 } br_renderer_dispatch;
 
 typedef struct br_geometry_stored_dispatch {
@@ -3081,6 +3085,7 @@ enum {
 
     BR_MATF_FOG_LOCAL = 0x00080000,
     BR_MATF_SUBDIVIDE = 0x00100000,
+    BR_MATF_DIM_BLENDING = 0x00200000,
 
     BR_MATF_QUAD_MAPPING = 0x00400000,
 
@@ -3099,6 +3104,17 @@ enum {
     BR_MATF_DISABLE_COLOUR_KEY  = 0x20000000,
 
     BR_MATF_SMOOTH_ALPHA = 0x40000000,
+};
+
+/*
+ * Bits for br_material->mode
+ */
+enum {
+    BR_MATM_MAP_WIDTH_LIMIT_MIRROR = 0x1,
+    BR_MATM_MAP_WIDTH_LIMIT_CLAMP = 0x2,
+    BR_MATM_MAP_HEIGHT_LIMIT_MIRROR = 0x4,
+    BR_MATM_MAP_HEIGHT_LIMIT_CLAMP = 0x8,
+    BR_MATM_ANTIALIASING = 0x100,
 };
 
 /*
@@ -3132,7 +3148,9 @@ enum {
     BR_MATU_RENDERING = 0x0002,
     BR_MATU_LIGHTING = 0x0004,
     BR_MATU_COLOURMAP = 0x0008,
-    BR_MATU_SHADE = 0x0040,
+    BR_MATU_SCREENDOOR = 0x0010,
+    BR_MATU_EXTRA_SURF = 0x0020,
+    BR_MATU_EXTRA_PRIM = 0x0040,
     BR_MATU_ALL = 0x7fff
 };
 
@@ -3170,19 +3188,19 @@ enum {
 };
 
 enum {
-    BR_STATE_SURFACE = 0x00000001,
-    BR_STATE_MATRIX = 0x00000002,
-    BR_STATE_ENABLE = 0x00000004,
-    BR_STATE_LIGHT = 0x00000008,
-    BR_STATE_CLIP = 0x00000010,
-    BR_STATE_BOUNDS = 0x00000020,
-    BR_STATE_CULL = 0x00000040,
-    BR_STATE_STATS = 0x00000080,
+    BR_STATE_SURFACE = 0x00000001u,
+    BR_STATE_MATRIX = 0x00000002u,
+    BR_STATE_ENABLE = 0x00000004u,
+    BR_STATE_LIGHT = 0x00000008u,
+    BR_STATE_CLIP = 0x00000010u,
+    BR_STATE_BOUNDS = 0x00000020u,
+    BR_STATE_CULL = 0x00000040u,
+    BR_STATE_STATS = 0x00000080u,
 
-    BR_STATE_CACHE = 0x00000100,
+    BR_STATE_CACHE = 0x00000100u,
 
-    BR_STATE_OUTPUT = 0x40000000,
-    BR_STATE_PRIMITIVE = 0x80000000,
+    BR_STATE_OUTPUT = 0x40000000u,
+    BR_STATE_PRIMITIVE = 0x80000000u,
 
     BR_STATE_ALL = 0xFFFFFFFF
 };
