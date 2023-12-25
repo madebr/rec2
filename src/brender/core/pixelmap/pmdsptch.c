@@ -484,13 +484,35 @@ void C2_HOOK_CDECL BrPixelmapRectangleFill(br_pixelmap* dst, br_int_32 x, br_int
 }
 C2_HOOK_FUNCTION(0x00538640, BrPixelmapRectangleFill)
 
-#if 0
 void C2_HOOK_CDECL BrPixelmapDirtyRectangleCopy(br_pixelmap* dst, br_pixelmap* src, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h) {
     br_rectangle r;
     br_point p;
-#error "Not implemented"
-}
 
+    CheckDispatch((br_device_pixelmap*)dst);
+    CheckDispatch((br_device_pixelmap*)src);
+
+    p.x = x; p.y = y;
+    r.x = x; r.y = y;
+    r.w = w; r.h = h;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _device, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _copyDirty, 0x68);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _copyToDirty, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _copyFromDirty, 0x70);
+
+    if (((br_device_pixelmap*)dst)->dispatch->_device((br_object*)dst) == ((br_device_pixelmap*)src)->dispatch->_device((br_object*)src)) {
+        ((br_device_pixelmap*)dst)->dispatch->_copyDirty((br_device_pixelmap*)dst, (br_device_pixelmap*)src, &r, 1);
+    } else if(!(src->flags & BR_PMF_NO_ACCESS)) {
+        ((br_device_pixelmap*)dst)->dispatch->_copyToDirty((br_device_pixelmap*)dst, (br_device_pixelmap*)src, &r, 1);
+    } else if(!(dst->flags & BR_PMF_NO_ACCESS)) {
+        ((br_device_pixelmap*)src)->dispatch->_copyFromDirty((br_device_pixelmap*)src, (br_device_pixelmap*)dst, &r, 1);
+    } else {
+        GeneralRectangleCopy((br_device_pixelmap*)dst, &p, (br_device_pixelmap*)src, &r);
+    }
+}
+C2_HOOK_FUNCTION(0x00538690, BrPixelmapDirtyRectangleCopy)
+
+#if 0
 void C2_HOOK_CDECL BrPixelmapDirtyRectangleClear(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h, br_uint_32 colour) {
     br_rectangle r;
 #error "Not implemented"
