@@ -292,15 +292,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00520e70, BrMaterialUpdate, BrMaterialUpdate_origina
 
 void (C2_HOOK_STDCALL * BrMaterialClear_original)(br_material* mat);
 void C2_HOOK_STDCALL BrMaterialClear(br_material* mat) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrMaterialClear_original(mat);
 #else
-    br_token_value tva[32];
-    br_token_value* tvp;
-    br_token t;
-    br_int_32 c;
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_state_stored_dispatch, _free, 0x10);
 
-#error "Not implemented"
+    br_object* stored = (br_object*)mat->stored;
+    if (stored != NULL) {
+        stored->dispatch->_free(stored);
+        mat->stored = NULL;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00521460, BrMaterialClear, BrMaterialClear_original)
