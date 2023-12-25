@@ -319,12 +319,16 @@ C2_HOOK_FUNCTION(0x00538990, BrPixelmapLine)
 
 void (C2_HOOK_CDECL * BrPixelmapDoubleBuffer_original)(br_pixelmap* dst, br_pixelmap* src);
 void C2_HOOK_CDECL BrPixelmapDoubleBuffer(br_pixelmap* dst, br_pixelmap* src) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrPixelmapDoubleBuffer_original(dst, src);
 #else
-    CheckDispatch(src);
-    CheckDispatch(dst);
-    PIXELMAP_DISPATCH_GEN_DOUBLEBUFFER(dst, src);
+
+    CheckDispatch((br_device_pixelmap*)dst);
+    CheckDispatch((br_device_pixelmap*)src);
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _doubleBuffer, 0x64);
+
+    ((br_device_pixelmap*)dst)->dispatch->_doubleBuffer((br_device_pixelmap*)dst, (br_device_pixelmap*)src);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005389e0, BrPixelmapDoubleBuffer, BrPixelmapDoubleBuffer_original)
