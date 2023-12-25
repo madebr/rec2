@@ -451,15 +451,26 @@ C2_HOOK_FUNCTION(0x00538590, BrPixelmapRectangleCopy)
 
 void (C2_HOOK_CDECL * BrPixelmapRectangleStretchCopy_original)(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_int_32 dw, br_int_32 dh, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 sw, br_int_32 sh);
 void C2_HOOK_CDECL BrPixelmapRectangleStretchCopy(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_int_32 dw, br_int_32 dh, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 sw, br_int_32 sh) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrPixelmapRectangleStretchCopy_original(dst, dx, dy, dw, dh, src, sx, sy, sw, sh);
 #else
     br_rectangle s;
     br_rectangle d;
-#error "Not implemented"
+
+    s.x = sx;
+    s.y = sy;
+    s.w = sw;
+    s.h = sh;
+
+    d.x = dx;
+    d.y = dy;
+    d.w = dw;
+    d.h = dh;
+
+    DispatchRectangleStretchCopy((br_device_pixelmap *)dst, &d, (br_device_pixelmap *)src, &s);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00538690, BrPixelmapRectangleStretchCopy, BrPixelmapRectangleStretchCopy_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x005385e0, BrPixelmapRectangleStretchCopy, BrPixelmapRectangleStretchCopy_original)
 
 void C2_HOOK_CDECL BrPixelmapRectangleFill(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h, br_uint_32 colour) {
     br_rectangle r;
