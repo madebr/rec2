@@ -303,12 +303,23 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00538160, BrPixelmapMatchTypedSized, BrPixelmapMatch
 
 br_pixelmap* (C2_HOOK_CDECL * BrPixelmapClone_original)(br_pixelmap* src);
 br_pixelmap* C2_HOOK_CDECL BrPixelmapClone(br_pixelmap* src) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrPixelmapClone_original(src);
 #else
-    br_pixelmap* new;
-    br_token_value tv[2];
-#error "Not implemented"
+    br_pixelmap *new;
+
+    br_token_value tv[] = {
+        { BRT_USE_T,    { BRT_CLONE } },
+        { 0 },
+    };
+
+    CheckDispatch((br_device_pixelmap*)src);
+
+    if (((br_device_pixelmap*)src)->dispatch->_match((br_device_pixelmap*)src, (br_device_pixelmap **)&new, tv) != 0) {
+        return NULL;
+    }
+
+    return new;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005382a0, BrPixelmapClone, BrPixelmapClone_original)
