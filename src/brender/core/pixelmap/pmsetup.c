@@ -11,7 +11,7 @@
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap_state, _pixelmap, 0x0079f950);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_resource_class, pm_resourceClasses, 2, 0x0058b968, {
     { 0u, "PIXELMAP", BR_MEMORY_PIXELMAP, NULL, 0u },
-    { 0u, "PIXELS", BR_MEMORY_PIXELS, NULL, 32u }
+    { 0u, "PIXELS",     BR_MEMORY_PIXELS, NULL, 32u }
 });
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(void*, functionPointers_BRPMAP1, 77, 0x0066dd30, xxx);
@@ -21,9 +21,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_image, Image_BRMAP1, 0x0066de68, xxx);
 
 void (C2_HOOK_CDECL * BrPixelmapBegin_original)(void);
 void C2_HOOK_CDECL BrPixelmapBegin(void) {
-    C2_HOOK_START();
     C2_HOOK_BUG_ON(sizeof(br_pixelmap_state) != 12);
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrPixelmapBegin_original();
 #else
     int i;
@@ -35,7 +34,6 @@ void C2_HOOK_CDECL BrPixelmapBegin(void) {
     }
     BrImageAdd(&C2V(Image_BRMAP1));
 #endif
-    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005395a0, BrPixelmapBegin, BrPixelmapBegin_original)
 
