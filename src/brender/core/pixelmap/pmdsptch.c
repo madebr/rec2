@@ -275,12 +275,32 @@ C2_HOOK_FUNCTION(0x00538840, BrPixelmapPixelGet)
 
 void (C2_HOOK_CDECL * BrPixelmapCopy_original)(br_pixelmap* dst, br_pixelmap* src);
 void C2_HOOK_CDECL BrPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrPixelmapCopy_original(dst, src);
 #else
     br_rectangle s;
     br_rectangle d;
-#error "Not implemented"
+
+    CheckDispatch((br_device_pixelmap*)dst);
+    CheckDispatch((br_device_pixelmap*)src);
+
+    if (dst->width != src->width || dst->height != src->height) {
+
+        s.x = -src->origin_x;
+        s.y = -src->origin_y;
+        s.w = src->width;
+        s.h = src->height;
+
+        d.x = -dst->origin_x;
+        d.y = -dst->origin_y;
+        d.w = dst->width;
+        d.h = dst->height;
+
+        DispatchRectangleStretchCopy((br_device_pixelmap*)dst, &d, (br_device_pixelmap*)src, &s);
+        return;
+    }
+
+    DispatchCopy((br_device_pixelmap*)dst, (br_device_pixelmap*)src);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00538880, BrPixelmapCopy, BrPixelmapCopy_original)
