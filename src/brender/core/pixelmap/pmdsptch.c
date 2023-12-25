@@ -512,12 +512,19 @@ void C2_HOOK_CDECL BrPixelmapDirtyRectangleCopy(br_pixelmap* dst, br_pixelmap* s
 }
 C2_HOOK_FUNCTION(0x00538690, BrPixelmapDirtyRectangleCopy)
 
-#if 0
 void C2_HOOK_CDECL BrPixelmapDirtyRectangleClear(br_pixelmap* dst, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h, br_uint_32 colour) {
     br_rectangle r;
-#error "Not implemented"
+
+    CheckDispatch((br_device_pixelmap*)dst);
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _fillDirty, 0x74);
+
+    r.x = x; r.y = y;
+    r.w = w; r.h = h;
+
+    ((br_device_pixelmap*)dst)->dispatch->_fillDirty((br_device_pixelmap*)dst, colour, &r, 1);
 }
-#endif
+C2_HOOK_FUNCTION(0x00538760, BrPixelmapDirtyRectangleClear)
 
 void C2_HOOK_CDECL BrPixelmapDirtyRectangleDoubleBuffer(br_pixelmap* dst, br_pixelmap* src, br_int_32 x, br_int_32 y, br_int_32 w, br_int_32 h) {
     br_rectangle r;
