@@ -45,10 +45,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005231f0, BrBufferUpdate, BrBufferUpdate_original)
 
 void (C2_HOOK_STDCALL * BrBufferClear_original)(br_pixelmap* pm);
 void C2_HOOK_STDCALL BrBufferClear(br_pixelmap* pm) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrBufferClear_original(pm);
 #else
-#error "Not implemented"
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_buffer_stored_dispatch , _free, 0x10);
+
+    if (pm->stored != NULL) {
+        ((br_buffer_stored*)pm->stored)->dispatch->_free((br_object*)pm->stored);
+        pm->stored = NULL;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00523280, BrBufferClear, BrBufferClear_original)
