@@ -1422,8 +1422,8 @@ typedef struct br_model {               // size: 0x54
     br_angle crease_angle;              // @0x2c
     br_scalar radius;                   // @0x30
     br_bounds bounds;                   // @0x34
-    void* prepared;                     // @0x4c
-    void* stored;                       // @0x50
+    v11model* prepared;                 // @0x4c
+    struct br_object* stored;           // @0x50
     br_uint_16 nprimitive_lists;        // @0x54
     br_primitive_list *primitive_list;  // @0x58
 } br_model;
@@ -3148,15 +3148,24 @@ enum {
  */
 enum {
     BR_MODU_VERTEX_POSITIONS = 0x0001,
-    BR_MODU_EDGES = 0x0002,
-    BR_MODU_RADIUS = 0x0004,
-    BR_MODU_GROUPS = 0x0008,
+    BR_MODU_VERTEX_COLOURS = 0x0002,
+    BR_MODU_VERTEX_MAPPING = 0x0004,
+    BR_MODU_VERTEX_NORMALS = 0x0008,
     BR_MODU_BOUNDING_BOX = 0x0010,
-    BR_MODU_MATERIALS = 0x0020,
+    BR_MODU_PRIMITIVE_COLOURS = 0x0020,
     BR_MODU_VERTICES = 0x0040,
-    BR_MODU_UNKNOWN = 0x0100, /* Added by Jeff. Referred to in code */
+    BR_MODU_FACES = 0x0080,
+    BR_MODU_PIVOT = 0x0100,
     BR_MODU_ALL = 0x7fff
 };
+
+#define BR_MODU_FACE_COLOURS    BR_MODU_PRIMITIVE_COLOURS
+#define BR_MODU_NORMALS         BR_MODU_VERTEX_POSITIONS
+#define BR_MODU_EDGES           BR_MODU_FACES
+#define BR_MODU_RADIUS          BR_MODU_VERTEX_POSITIONS
+#define BR_MODU_GROUPS          BR_MODU_FACES
+#define BR_MODU_BOUNDING_BOX    BR_MODU_VERTEX_POSITIONS
+#define BR_MODU_MATERIALS       BR_MODU_FACE_MATERIALS
 
 /*
  * Flags to BrMaterialUpdate()
@@ -3198,12 +3207,13 @@ enum {
     BR_MODF_CUSTOM = 0x0020,         /* Invoke custom callback for this model */
     BR_MODF_PREPREPARED = 0x0040,    /* Model structure is pre-prepared - update performs no work */
     BR_MODF_UPDATEABLE = 0x0080,     /* Added by Jeff from Errols code */
-    BR_MODF_CREASE = 0x0100,         /* Create creases in smoothing along edges if face<->face angle is g.t model->crease */
+    BR_MODF_CREASE = 0x0100,
     BR_MODF_CUSTOM_NORMALS = 0x0200, /* Uses vertex normals from br_vertex structure */
     BR_MODF_CUSTOM_BOUNDS = 0x0400,  /* Bounding box is already set up */
-    // BR_MODF_FACES_ONLY = 0x0800,  /* Model will only be used to render faces (not edges or points) */
+    BR_MODF_FACES_ONLY = 0x0800,     /* Model will only be used to render faces (not edges or points) */
+    BR_MODF_USED_PREPARED_USER = 0x1000,
 
-    MODF_USES_DEFAULT = 0x8000
+    _BR_MODF_RESERVED = 0x8000,
 };
 
 enum {
