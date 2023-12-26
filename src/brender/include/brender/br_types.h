@@ -3125,7 +3125,7 @@ enum {
  * Flags to BrModelUpdate()
  */
 enum {
-    BR_MODU_NORMALS = 0x0001,
+    BR_MODU_VERTEX_POSITIONS = 0x0001,
     BR_MODU_EDGES = 0x0002,
     BR_MODU_RADIUS = 0x0004,
     BR_MODU_GROUPS = 0x0008,

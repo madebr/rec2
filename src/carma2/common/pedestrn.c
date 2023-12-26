@@ -78,7 +78,7 @@ void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, 
         pModel->vertices[i].p.v[1] *= pY;
         pModel->vertices[i].p.v[2] *= pZ;
     }
-    BrModelUpdate(pModel, BR_MODU_NORMALS);
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
 }
 C2_HOOK_FUNCTION(0x00404290, ScaleModelXYZ)
 
@@ -92,7 +92,7 @@ void C2_HOOK_FAKE_THISCALL ScaleModel(br_model* pModel, int pArg2, float pScale)
         pModel->vertices[i].p.v[1] *= pScale;
         pModel->vertices[i].p.v[2] *= pScale;
     }
-    BrModelUpdate(pModel, BR_MODU_NORMALS);
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
 }
 C2_HOOK_FUNCTION(0x004042f0, ScaleModel)
 
