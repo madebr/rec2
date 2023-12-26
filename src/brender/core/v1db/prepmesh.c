@@ -329,7 +329,7 @@ void PrepareBoundingBox(br_model* model) {
 
 void (C2_HOOK_STDCALL * RegenerateFaceNormals_original)(v11model* v11m);
 void C2_HOOK_STDCALL RegenerateFaceNormals(v11model* v11m) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     RegenerateFaceNormals_original(v11m);
 #else
     int g;
@@ -340,9 +340,9 @@ void C2_HOOK_STDCALL RegenerateFaceNormals(v11model* v11m) {
         for (f = 0; f < v11m->groups[g].nfaces; f++) {
             fp = &v11m->groups[g].faces[f];
             BrPlaneEquation(&fp->eqn,
-                &v11m->groups->vertices[fp->vertices[0]].p,
-                &v11m->groups->vertices[fp->vertices[1]].p,
-                &v11m->groups->vertices[fp->vertices[2]].p);
+                &v11m->groups[g].vertices[fp->vertices[0]].p,
+                &v11m->groups[g].vertices[fp->vertices[1]].p,
+                &v11m->groups[g].vertices[fp->vertices[2]].p);
         }
     }
 #endif
