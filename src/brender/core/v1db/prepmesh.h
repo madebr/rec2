@@ -37,6 +37,10 @@ void C2_HOOK_STDCALL PrepareBoundingRadius(br_model* model);
 
 void C2_HOOK_STDCALL PrepareBoundingBox(br_model* model);
 
+int C2_HOOK_STDCALL IsMaterialTransparent(const br_material* material);
+
+int C2_HOOK_STDCALL IsMaterialTransparent(const br_material* material);
+
 void C2_HOOK_STDCALL RegenerateFaceNormals(v11model* v11m);
 
 void C2_HOOK_STDCALL RegenerateVertexNormals(v11model* v11m);
