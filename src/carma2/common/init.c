@@ -810,40 +810,40 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     BrMaterialAdd(C2V(gOffence_material));
 
     Prepare2DModelToDim(C2V(gHeadup2_model), C2V(gHeadup2_dim_x), C2V(gHeadup2_dim_y), C2V(gHeadup2_dim_w), C2V(gHeadup2_dim_h));
-    BrModelUpdate(C2V(gHeadup2_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gHeadup2_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gPowerupHUD_model), C2V(gPowerupHUD_dim_x), C2V(gPowerupHUD_dim_y), C2V(gPowerupHUD_dim_w), C2V(gPowerupHUD_dim_h));
-    BrModelUpdate(C2V(gPowerupHUD_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gPowerupHUD_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gStatbarHUD1_model), C2V(gStatbarHUD1_dim_x), C2V(gStatbarHUD1_dim_y), C2V(gStatbarHUD1_dim_w), C2V(gStatbarHUD1_dim_h));
-    BrModelUpdate(C2V(gStatbarHUD1_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gStatbarHUD1_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gStatbarHUD3_model), C2V(gStatbarHUD3_dim_x), C2V(gStatbarHUD3_dim_y), C2V(gStatbarHUD3_dim_w), C2V(gStatbarHUD3_dim_h));
-    BrModelUpdate(C2V(gStatbarHUD3_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gStatbarHUD3_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gHUDsquare_model), C2V(gHUDsquare_dim_x), C2V(gHUDsquare_dim_y), C2V(gHUDsquare_dim_w), C2V(gHUDsquare_dim_h));
-    BrModelUpdate(C2V(gHUDsquare_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gHUDsquare_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gStatbarHUD5_model), C2V(gStatbarHUD5_dim_x), C2V(gStatbarHUD5_dim_y), C2V(gStatbarHUD5_dim_w), C2V(gStatbarHUD5_dim_h));
-    BrModelUpdate(C2V(gStatbarHUD5_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gStatbarHUD5_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gTimerLeftHUD_model), C2V(gTimerLeftHUD_dim_x), C2V(gTimerLeftHUD_dim_y), C2V(gTimerLeftHUD_dim_w), C2V(gTimerLeftHUD_dim_h));
-    BrModelUpdate(C2V(gTimerLeftHUD_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gTimerLeftHUD_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gTimerRightHUD_model), C2V(gTimerRightHUD_dim_x), C2V(gTimerRightHUD_dim_y), C2V(gTimerRightHUD_dim_w), C2V(gTimerRightHUD_dim_h));
-    BrModelUpdate(C2V(gTimerRightHUD_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gTimerRightHUD_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gStatbarRightHUD_model), C2V(gStatbarRightHUD_dim_x), C2V(gStatbarRightHUD_dim_y), C2V(gStatbarRightHUD_dim_w), C2V(gStatbarRightHUD_dim_h));
-    BrModelUpdate(C2V(gStatbarRightHUD_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gStatbarRightHUD_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gArmour_model), C2V(gArmour_dim_x), C2V(gArmour_dim_y), C2V(gArmour_dim_w), C2V(gArmour_dim_h));
-    BrModelUpdate(C2V(gArmour_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gArmour_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gPower_model), C2V(gPower_dim_x), C2V(gPower_dim_y), C2V(gPower_dim_w), C2V(gPower_dim_h));
-    BrModelUpdate(C2V(gPower_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gPower_model), BR_MODU_VERTEX_POSITIONS);
 
     Prepare2DModelToDim(C2V(gOffence_model), C2V(gOffence_dim_x), C2V(gOffence_dim_y), C2V(gOffence_dim_w), C2V(gOffence_dim_h));
-    BrModelUpdate(C2V(gOffence_model), BR_MODU_NORMALS);
+    BrModelUpdate(C2V(gOffence_model), BR_MODU_VERTEX_POSITIONS);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e720, Init2DStuff, Init2DStuff_original)

@@ -3973,7 +3973,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
             for (j = 0; j < actor->model->nvertices; j++) {
                 BrVector3Sub(&actor->model->vertices[j].p, &actor->model->vertices[j].p, &avg);
             }
-            BrModelUpdate(actor->model, BR_MODU_NORMALS);
+            BrModelUpdate(actor->model, BR_MODU_VERTEX_POSITIONS);
         }
     }
 
