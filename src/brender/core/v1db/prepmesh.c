@@ -351,7 +351,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051f6a0, RegenerateFaceNormals, RegenerateFaceNorma
 
 void (C2_HOOK_STDCALL * RegenerateVertexNormals_original)(v11model* v11m);
 void C2_HOOK_STDCALL RegenerateVertexNormals(v11model* v11m) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     RegenerateVertexNormals_original(v11m);
 #else
     int g;
