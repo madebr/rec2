@@ -327,6 +327,43 @@ void PrepareBoundingBox(br_model* model) {
 }
 #endif
 
+int C2_HOOK_STDCALL IsMaterialTransparent(const br_material* material) {
+    br_token_value* tvp;
+
+    if (material == NULL) {
+        return 0;
+    }
+    if (material->colour_map != NULL) {
+        br_uint_8 type = material->colour_map->type;
+
+        switch (type) {
+        case BR_PMT_ALPHA_8:
+        case BR_PMT_INDEXA_88:
+        case BR_PMT_RGBA_4444:
+        case BR_PMT_ALPHA_4:
+        case BR_PMT_INDEXA_44:
+        case BR_PMT_DEPTH_15:
+        case BR_PMT_ARGB_1555:
+            return 1;
+        }
+        if (material->index_blend != NULL) {
+            return 1;
+        }
+    }
+
+    tvp = material->extra_prim;
+    if (tvp != NULL) {
+        while (tvp->t != BR_NULL_TOKEN) {
+            if (tvp->t == BRT_OPACITY_X || tvp->t == BRT_OPACITY_F) {
+                return 1;
+            }
+            tvp++;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0051f630, IsMaterialTransparent)
+
 void (C2_HOOK_STDCALL * RegenerateFaceNormals_original)(v11model* v11m);
 void C2_HOOK_STDCALL RegenerateFaceNormals(v11model* v11m) {
 #if 0//defined(C2_HOOKS_ENABLED)
