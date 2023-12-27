@@ -1263,6 +1263,24 @@ typedef struct br_face {
     br_scalar d;
 } br_face;
 
+enum {
+    BR_FACEF_COPLANAR_0 = 0x01,	/* The face adjoining edge 0 is coplanar with this face */
+    BR_FACEF_COPLANAR_1 = 0x02,	/*         ""              1          ""                */
+    BR_FACEF_COPLANAR_2 = 0x04,	/*         ""              2          ""                */
+    BR_FACEF_COPLANAR_3 = 0x08,	/*         ""              3          ""                */
+
+    BR_FACEF_QUAD_MASK = 0x70,	/* For quad based texture mapping, which half of a quad this triangle represents */
+    BR_FACEF_QUAD_012 = 0x00,	/* Vertices 0, 1 and 2 of this face are vertices 0, 1 and 2 of a quad */
+    BR_FACEF_QUAD_123 = 0x10,	/* Vertices 0, 1 and 2 of this face are vertices 1, 2 and 3 of a quad */
+    BR_FACEF_QUAD_230 = 0x20,	/* Vertices 0, 1 and 2 of this face are vertices 2, 3 and 0 of a quad */
+    BR_FACEF_QUAD_301 = 0x30,	/* Vertices 0, 1 and 2 of this face are vertices 3, 0 and 1 of a quad */
+    BR_FACEF_QUAD_032 = 0x40,	/* Vertices 0, 1 and 2 of this face are vertices 0, 3 and 2 of a quad */
+    BR_FACEF_QUAD_103 = 0x50,	/* Vertices 0, 1 and 2 of this face are vertices 1, 0 and 3 of a quad */
+    BR_FACEF_QUAD_210 = 0x60,	/* Vertices 0, 1 and 2 of this face are vertices 2, 1 and 0 of a quad */
+    BR_FACEF_QUAD_321 = 0x70,	/* Vertices 0, 1 and 2 of this face are vertices 3, 2 and 1 of a quad */
+    BR_FACEF_QUAD_SHIFT = 4
+};
+
 typedef struct br_primitive_list br_primitive_list;
 typedef struct br_primitive_list {
     br_primitive_list* next;
