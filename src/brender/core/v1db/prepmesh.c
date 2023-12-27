@@ -15,30 +15,91 @@
 #include <assert.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, compareModel, 0x006ad4e0);
-C2_HOOK_VARIABLE_IMPLEMENT(char*, pm_edge_scratch, 0x006ad4e4);
-C2_HOOK_VARIABLE_IMPLEMENT(pm_temp_edge**, pm_edge_hash, 0x006ad4e8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, num_edges, 0x006ad4ec);
-pm_temp_edge* pm_edge_table;
+static C2_HOOK_VARIABLE_IMPLEMENT(char*, pm_edge_scratch, 0x006ad4e4);
+static C2_HOOK_VARIABLE_IMPLEMENT(struct pm_temp_edge *, pm_edge_table, 0x006ad4dc);
+static C2_HOOK_VARIABLE_IMPLEMENT(pm_temp_edge**, pm_edge_hash, 0x006ad4e8);
+static C2_HOOK_VARIABLE_IMPLEMENT(int, num_edges, 0x006ad4ec);
 
-#define PREP_ALIGN(f) (f)
+#define PREP_BOUNDARY 32
+#define PREP_ALIGN(x) (((x)+(PREP_BOUNDARY-1)) & ~(PREP_BOUNDARY-1))
 
-#if 0
-int addEdge(br_uint_16 first, br_uint_16 last) {
-    pm_temp_edge* tep;
-#error "Not implemented"
+int C2_HOOK_STDCALL addEdge(br_uint_16 first, br_uint_16 last) {
+    int edge;
+    struct pm_temp_edge *tep;
+
+    for (tep = C2V(pm_edge_hash)[last]; tep != NULL; tep = tep->next) {
+
+        if (tep->last == first && tep->other == 0) {
+            tep->other = 1;
+            return tep - C2V(pm_edge_table);
+        }
+    }
+
+    tep = &C2V(pm_edge_table)[C2V(num_edges)];
+
+    tep->first = first;
+    tep->last = last;
+    tep->other = 0;
+    tep->next = C2V(pm_edge_hash)[first];
+    C2V(pm_edge_hash)[first] = tep;
+
+    edge = C2V(num_edges);
+    C2V(num_edges)++;
+
+    return edge;
 }
-#endif
 
 void (C2_HOOK_STDCALL * prepareEdges_original)(v11group* group, br_model* model);
 void C2_HOOK_STDCALL prepareEdges(v11group* group, br_model* model) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     prepareEdges_original(group, model);
 #else
     br_size_t scratch_size;
     br_face* mfp;
     v11face* fp;
     int f;
-#error "Not implemented"
+
+    C2_HOOK_BUG_ON(sizeof(*C2V(pm_edge_table)) != 12);
+    C2_HOOK_BUG_ON(sizeof(*C2V(pm_edge_hash)) != 4);
+
+    scratch_size = group->nfaces * 3 * sizeof(*C2V(pm_edge_table)) +
+            group->nvertices * sizeof(*C2V(pm_edge_hash));
+
+    C2V(pm_edge_scratch) = BrScratchAllocate(scratch_size);
+
+    C2V(pm_edge_hash) = (struct pm_temp_edge**)C2V(pm_edge_scratch);
+    C2V(pm_edge_table) = (struct pm_temp_edge*)(C2V(pm_edge_scratch)) + group->nvertices * sizeof(*C2V(pm_edge_hash));
+
+    BrMemSet(C2V(pm_edge_hash), 0, group->nvertices * sizeof(*C2V(pm_edge_hash)));
+
+    C2V(num_edges) = 0;
+	fp = group->faces;
+
+    for (f = 0; f < group->nfaces; f++, fp++) {
+        mfp = &model->faces[group->face_user[f]];
+
+        if (!(mfp->flags & BR_FACEF_COPLANAR_0)) {
+            fp->edges[0] = addEdge(fp->vertices[0], fp->vertices[1]) + 1;
+        } else {
+            fp->edges[0] = 0;
+        }
+
+        if (!(mfp->flags & BR_FACEF_COPLANAR_1)) {
+            fp->edges[1] = addEdge(fp->vertices[1], fp->vertices[2]) + 1;
+        } else {
+            fp->edges[1] = 0;
+        }
+
+        if (!(mfp->flags & BR_FACEF_COPLANAR_2)) {
+            fp->edges[2] = addEdge(fp->vertices[2], fp->vertices[0]) + 1;
+        } else {
+            fp->edges[2] = 0;
+        }
+    }
+
+    group->nedges = C2V(num_edges) + 1;
+
+    BrScratchFree(C2V(pm_edge_scratch));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00520560, prepareEdges, prepareEdges_original)
