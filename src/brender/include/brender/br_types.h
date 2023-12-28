@@ -2963,15 +2963,17 @@ enum {
 
 enum {
 
-    BR_LIGHT_POINT = 0x0000,
-    BR_LIGHT_DIRECT = 0x0001,
-    BR_LIGHT_SPOT = 0x0002,
-    BR_LIGHT_TYPE = 0x0003,
+    BR_LIGHT_POINT          = 0x0000,
+    BR_LIGHT_DIRECT         = 0x0001,
+    BR_LIGHT_SPOT           = 0x0002,
+    BR_LIGHT_POINT_LOCAL_1  = 0x0008,
+    BR_LIGHT_POINT_LOCAL_2  = 0x0010,
+    BR_LIGHT_TYPE           = 0x001b,
 
     /*
      * Flag idicating that caluculations are done in view space
      */
-    BR_LIGHT_VIEW = 0x0004
+    BR_LIGHT_VIEW           = 0x0004,
 };
 
 enum {
