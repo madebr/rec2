@@ -6,6 +6,7 @@
 #include "core/fw/diag.h"
 #include "core/fw/resource.h"
 #include "core/math/matrix34.h"
+#include "core/math/matrix4.h"
 #include "core/math/transfrm.h"
 
 #include "c2_stdlib.h"
@@ -262,7 +263,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005250e0, BrSetupLights, BrSetupLights_original)
 
 void (C2_HOOK_STDCALL * BrSetupClipPlanes_original)(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt, br_matrix4* view_to_screen);
 void C2_HOOK_STDCALL BrSetupClipPlanes(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt, br_matrix4* view_to_screen) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrSetupClipPlanes_original(world, world_to_view, w2vt, view_to_screen);
 #else
     br_matrix34 this_to_view;
@@ -270,13 +271,51 @@ void C2_HOOK_STDCALL BrSetupClipPlanes(br_actor* world, br_matrix34* world_to_vi
     br_matrix4 screen_to_view;
     br_matrix4 tmp4;
     br_matrix4 screen_to_this;
-    int light_part;
     int i;
     br_int_32 clip_part;
     br_token_value tv[3];
     br_vector4 sp;
 
-    c2_abort(); // FIXME: not implemented
+	tv[0].t = BRT_TYPE_T;
+	tv[0].v.t = BRT_PLANE;
+	tv[1].t = BRT_PLANE_V4_F;
+	tv[1].v.p = &sp;
+	tv[2].t = BR_NULL_TOKEN;
+
+	clip_part = 0;
+
+	if (C2V(v1db).enabled_clip_planes.enabled == NULL) {
+        return;
+    }
+
+	if (C2V(v1db).enabled_clip_planes.count != 0) {
+        BrMatrix4Inverse(&screen_to_view, view_to_screen);
+    }
+
+	for (i = 0; i < C2V(v1db).enabled_clip_planes.max; i++) {
+
+		if (C2V(v1db).enabled_clip_planes.enabled[i] == NULL) {
+			continue;
+		}
+
+		if (!setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, C2V(v1db).enabled_clip_planes.enabled[i])) {
+            continue;
+        }
+		BrMatrix4Copy34(&tmp4, &view_to_this);
+		BrMatrix4Mul(&screen_to_this, &screen_to_view, &tmp4);
+		BrMatrix4TApply(&sp, C2V(v1db).enabled_clip_planes.enabled[i]->type_data, &screen_to_this);
+		C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_CLIP, clip_part, tv, NULL);
+		clip_part++;
+	}
+
+	tv[0].t = BRT_TYPE_T;
+	tv[0].v.t = BRT_NONE;
+	tv[1].t = BR_NULL_TOKEN;
+
+	for ( ; clip_part < C2V(v1db).max_clip; clip_part++)
+        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_CLIP, clip_part, tv, NULL);
+
+	C2V(v1db).max_clip = clip_part;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00525450, BrSetupClipPlanes, BrSetupClipPlanes_original)
