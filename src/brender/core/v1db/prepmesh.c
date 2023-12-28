@@ -327,7 +327,6 @@ C2_HOOK_FUNCTION(0x00520b50, SmoothingCreased)
 
 void C2_HOOK_STDCALL CopyVertex(v11group* group, int v, prep_vertex* src, br_model* model) {
     br_vertex* srcv;
-//    br_vector3 n;
 
     srcv = &model->vertices[src->v];
 
@@ -337,6 +336,7 @@ void C2_HOOK_STDCALL CopyVertex(v11group* group, int v, prep_vertex* src, br_mod
 
     group->vertices[v].map = srcv->map;
 
+    /* FIXME: use inlined function */
     BrVector3Normalise(&group->vertices[v].n, &src->n);
 
     group->vertex_colours[v] = BR_COLOUR_RGBA(srcv->red, srcv->grn, srcv->blu, srcv->index);
