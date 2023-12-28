@@ -142,15 +142,46 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d2b0, _M_br_object_container_find, _M_br_object_
 br_error (C2_HOOK_CDECL * _M_br_object_container_findMany_original)(br_object_container* self, br_object** objects, br_int_32 max_objects, br_int_32* num_objects, br_token type, char* pattern, br_token_value* tv);
 br_error C2_HOOK_CDECL _M_br_object_container_findMany(br_object_container* self, br_object** objects, br_int_32 max_objects, br_int_32* num_objects, br_token type, char* pattern, br_token_value* tv) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_container_findMany_original(self, objects, max_objects, num_objects, type, pattern, tv);
 #else
     object_list* hl;
     object_list_entry* he;
     void* tvarg;
     int n;
-    LOG_TRACE("(%p, %p, %d, %p, %d, \"%s\", %p)", self, objects, max_objects, num_objects, type, pattern, tv);
-#error "Not implemented"
+
+    hl = self->dispatch->_listQuery(self);
+    if (hl == NULL) {
+        return 0x1002;
+    }
+    tvarg = NULL;
+    if (tv != NULL) {
+        tvarg = self->dispatch->_tokensMatchBegin(self, type, tv);
+    }
+    n = 0;
+    for (he = (object_list_entry*)hl->l.head; he != NULL; he = (object_list_entry*)he->n.next) {
+        if (type != BR_NULL_TOKEN && he->h->dispatch->_type(he->h) != type) {
+            continue;
+        }
+        if (!BrNamePatternMatch(pattern, he->h->dispatch->_identifier(he->h))) {
+            continue;
+        }
+        if (tv != NULL && !self->dispatch->_tokensMatch(self, he->h, tvarg)) {
+            continue;
+        }
+        if (n < max_objects) {
+            objects[n] = he->h;
+        }
+        n++;
+    }
+    if (tv != NULL) {
+        self->dispatch->_tokensMatchEnd(self, tvarg);
+    }
+    *num_objects = n;
+    if (n > max_objects) {
+        return 0x1004;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d390, _M_br_object_container_findMany, _M_br_object_container_findMany_original)
