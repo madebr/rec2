@@ -298,7 +298,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d670, _M_br_object_container_tokensMatchEnd, _M_
 br_error (C2_HOOK_CDECL * BrObjectContainerFree_original)(br_object_container* self, br_token type, char* pattern, br_token_value* tv);
 br_error C2_HOOK_CDECL BrObjectContainerFree(br_object_container* self, br_token type, char* pattern, br_token_value* tv) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrObjectContainerFree_original(self, type, pattern, tv);
 #else
     br_error r;
@@ -306,8 +306,19 @@ br_error C2_HOOK_CDECL BrObjectContainerFree(br_object_container* self, br_token
     br_int_32 count;
     br_int_32 n;
     br_int_32 i;
-    LOG_TRACE("(%p, %d, \"%s\", %p)", self, type, pattern, tv);
-#error "Not implemented"
+
+    r = self->dispatch->_count(self, &count, type, pattern, tv);
+    if (r != 0) {
+        return r;
+    }
+    handles = BrMemAllocate(count * sizeof(br_object*), BR_MEMORY_DRIVER);
+    self->dispatch->_findMany(self, handles, count, &n, type, pattern, tv);
+    for (i = 0; i < n; i++) {
+        self->dispatch->_remove(self, handles[i]);
+        handles[i]->dispatch->_free(handles[i]);
+    }
+    BrMemFree(handles);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d690, BrObjectContainerFree, BrObjectContainerFree_original)
