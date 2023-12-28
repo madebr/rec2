@@ -188,15 +188,39 @@ br_error (C2_HOOK_CDECL * _M_br_object_container_count_original)(br_object_conta
 br_error C2_HOOK_CDECL _M_br_object_container_count(br_object_container* self, br_uint_32* pcount, br_token type, char* pattern, br_token_value* tv) {
 
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_container_count_original(self, pcount, type, pattern, tv);
 #else
     object_list* hl;
     object_list_entry* he;
     void* tvarg;
     int n;
-    LOG_TRACE("(%p, %p, %d, \"%s\", %p)", self, pcount, type, pattern, tv);
-#error "Not implemented"
+
+    hl = self->dispatch->_listQuery(self);
+    if (hl == NULL) {
+        return 0x1002;
+    }
+    if (tv != NULL) {
+        tvarg = self->dispatch->_tokensMatchBegin(self, type, tv);
+    }
+    n = 0;
+    for (he = (object_list_entry*)hl->l.head; he != NULL; he = (object_list_entry*)he->n.next) {
+        if (type != BR_NULL_TOKEN && he->h->dispatch->_type(he->h) != type) {
+            continue;
+        }
+        if (!BrNamePatternMatch(pattern, he->h->dispatch->_identifier(he->h))) {
+            continue;
+        }
+        if (tv != NULL && !self->dispatch->_tokensMatch(self, he->h, tvarg)) {
+            continue;
+        }
+        n++;
+    }
+    if (tv != NULL) {
+        self->dispatch->_tokensMatchEnd(self, tvarg);
+    }
+    *pcount = n;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d490, _M_br_object_container_count, _M_br_object_container_count_original)
