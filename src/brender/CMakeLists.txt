@@ -173,6 +173,8 @@ target_link_libraries(brender
 
 add_library(brender_softrendr STATIC
     drivers/softrend/driver.c
+    drivers/softrend/facility.c
+    drivers/softrend/facility.h
 )
 target_link_libraries(brender_softrendr
     PRIVATE
