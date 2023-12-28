@@ -1,5 +1,6 @@
 #include "enables.h"
 
+#include "actsupt.h"
 #include "dbsetup.h"
 
 #include "core/fw/diag.h"
@@ -96,7 +97,6 @@ br_actor* C2_HOOK_CDECL BrEnvironmentSet(br_actor* a) {
 }
 C2_HOOK_FUNCTION(0x005250d0, BrEnvironmentSet)
 
-#if !defined(C2_HOOKS_ENABLED)
 br_boolean C2_HOOK_STDCALL setupView(br_matrix34* view_to_this, br_matrix34* this_to_view, br_matrix34* world_to_view, br_int_32 w2vt, br_actor* world, br_actor* a) {
     br_matrix34 this_to_world;
     br_int_32 root_t;
@@ -106,14 +106,13 @@ br_boolean C2_HOOK_STDCALL setupView(br_matrix34* view_to_this, br_matrix34* thi
     }
     BrMatrix34Mul(this_to_view, &this_to_world, world_to_view);
     t = BrTransformCombineTypes(root_t, w2vt);
-    if (BrTransformTypeIsLP(t) != 0) {
+    if (BrTransformTypeIsLP(t)) {
         BrMatrix34LPInverse(view_to_this, this_to_view);
     } else {
         BrMatrix34Inverse(view_to_this, this_to_view);
     }
     return 1;
 }
-#endif
 
 void (C2_HOOK_STDCALL * BrSetupLights_original)(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt);
 void C2_HOOK_STDCALL BrSetupLights(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt) {
@@ -158,7 +157,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00525450, BrSetupClipPlanes, BrSetupClipPlanes_origi
 
 void (C2_HOOK_STDCALL * BrSetupEnvironment_original)(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt);
 void C2_HOOK_STDCALL BrSetupEnvironment(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrSetupEnvironment_original(world, world_to_view, w2vt);
 #else
     br_matrix34 view_to_this;
@@ -168,7 +167,7 @@ void C2_HOOK_STDCALL BrSetupEnvironment(br_actor* world, br_matrix34* world_to_v
     h = BRT_DONT_CARE;
     if (C2V(v1db).enabled_environment != NULL) {
         if (C2V(v1db).enabled_environment == world) {
-            if (BrTransformTypeIsLP(w2vt) != 0) {
+            if (BrTransformTypeIsLP(w2vt)) {
                 BrMatrix34LPInverse(&view_to_this, world_to_view);
             } else {
                 BrMatrix34Inverse(&view_to_this, world_to_view);
@@ -181,7 +180,6 @@ void C2_HOOK_STDCALL BrSetupEnvironment(br_actor* world, br_matrix34* world_to_v
         }
     }
     if (h != BRT_DONT_CARE) {
-        // FIXME: fix type of last parameter of partset
         C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_VIEW_TO_ENVIRONMENT_M34_F, (uintptr_t)&view_to_this);
     }
     C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_VIEW_TO_ENVIRONMENT_HINT_T, h);
