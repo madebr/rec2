@@ -71,12 +71,15 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d150, _M_br_object_queryAllSize, _M_br_object_qu
 void (C2_HOOK_CDECL * _BrObjectFree_original)(void* res, br_uint_8 res_class, br_size_t size);
 void C2_HOOK_CDECL _BrObjectFree(void* res, br_uint_8 res_class, br_size_t size) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     _BrObjectFree_original(res, res_class, size);
 #else
     br_object* o;
 
-#error "Not implemented"
+    o = res;
+    if (o != NULL && o->dispatch != NULL) {
+        o->dispatch->_free(o);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d170, _BrObjectFree, _BrObjectFree_original)
