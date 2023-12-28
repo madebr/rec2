@@ -1772,9 +1772,9 @@ typedef struct br_device_dispatch {
 } br_device_dispatch;
 
 // br_device. Not sure when this is used
-typedef struct br_device_2 {
+typedef struct br_device {
     br_device_dispatch* dispatch;
-} br_device_2;
+} br_device;
 
 typedef struct br_object_dispatch {
     void (*__reserved0)(br_object*);
