@@ -23,12 +23,26 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d190, BrObjectListAllocate, BrObjectListAllocate
 br_error (C2_HOOK_CDECL * _M_br_object_container_addFront_original)(br_object_container* self, br_object* ph);
 br_error C2_HOOK_CDECL _M_br_object_container_addFront(br_object_container* self, br_object* ph) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_container_addFront_original(self, ph);
 #else
     object_list* hl;
     object_list_entry* he;
-#error "Not implemented"
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_object_container_dispatch, _listQuery, 0x44);
+    C2_HOOK_BUG_ON(sizeof(object_list_entry) != 0xc);
+
+    hl = self->dispatch->_listQuery(self);
+    if (hl == NULL) {
+        return 0x1002;
+    }
+    he = BrResAllocate(hl, sizeof(object_list_entry), BR_MEMORY_OBJECT_LIST_ENTRY);
+    if (he == NULL) {
+        return 0x1003;
+    }
+    he->h = ph;
+    BrSimpleAddHead(&hl->l, &he->n);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d1c0, _M_br_object_container_addFront, _M_br_object_container_addFront_original)
