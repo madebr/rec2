@@ -127,9 +127,9 @@ void C2_HOOK_STDCALL BrPrepareEdges(br_model* model) {
         return;
     }
 
-    for (g=0; g < v11m->ngroups; g++) {
+    for (g = 0; g < v11m->ngroups; g++) {
         prepareEdges(&v11m->groups[g], model);
-    };
+    }
 }
 
 int C2_HOOK_CDECL FacesCompare(const void* p1, const void* p2) {
