@@ -1,12 +1,14 @@
 #include "object.h"
 
+#include "tokenval.h"
+
 br_error (C2_HOOK_CDECL * _M_br_object_query_original)(br_object* self, br_uint_32* pvalue, br_token t);
 br_error C2_HOOK_CDECL _M_br_object_query(br_object* self, br_uint_32* pvalue, br_token t) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_query_original(self, pvalue, t);
 #else
-#error "Not implemented"
+    return BrTokenValueQuery(pvalue, NULL, 0, t, self, self->dispatch->_templateQuery(self));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d060, _M_br_object_query, _M_br_object_query_original)
