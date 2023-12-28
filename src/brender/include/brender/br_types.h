@@ -1137,6 +1137,7 @@ typedef struct br_associative_array_tag {
     br_uint_16 max_elements;
 } br_associative_array;
 
+#if 0
 typedef struct br_device {                               // size: 68
     br_uint_32 magic;                                    // @0
     char* identifier;                                    // @4
@@ -1156,6 +1157,7 @@ typedef struct br_device {                               // size: 68
     dev_clone_cbfn* clone;                               // @60
     dev_free_cbfn* free;                                 // @64
 } br_device;
+#endif
 
 typedef struct br_outfcty_desc {
     br_int_32 width;
