@@ -4,10 +4,10 @@
 
 void (C2_HOOK_CDECL * BrMapUpdate_original)(br_pixelmap* map, br_uint_16 flags);
 void C2_HOOK_CDECL BrMapUpdate(br_pixelmap* map, br_uint_16 flags) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrMapUpdate_original(map, flags);
 #else
-#error "Not implemented"
+    BrBufferUpdate(map, BRT_COLOUR_MAP_O, flags);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00523160, BrMapUpdate, BrMapUpdate_original)
