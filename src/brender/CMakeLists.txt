@@ -177,6 +177,7 @@ add_library(brender_softrendr STATIC
     drivers/softrend/driver.c
     drivers/softrend/facility.c
     drivers/softrend/facility.h
+    drivers/softrend/timestmp.h
     drivers/softrend/types.h
 )
 target_include_directories(brender_softrendr
@@ -191,4 +192,5 @@ target_link_libraries(brender_softrendr
 target_compile_definitions(brender_softrendr
     PRIVATE
         BrDrv1Begin=BrDrv1SoftRendBegin
+        BASED_FLOAT
 )
