@@ -1,13 +1,21 @@
 #include "objectc.h"
 
+#include "brender/brender.h"
+
+#include "brlists.h"
+
 void* (C2_HOOK_CDECL * BrObjectListAllocate_original)(void* res);
 void* C2_HOOK_CDECL BrObjectListAllocate(void* res) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrObjectListAllocate_original(res);
 #else
+
     object_list* hl;
-#error "Not implemented"
+
+    hl = BrResAllocate(res, sizeof(object_list), BR_MEMORY_OBJECT_LIST);
+    BrSimpleNewList(&hl->l);
+    return hl;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d190, BrObjectListAllocate, BrObjectListAllocate_original)
