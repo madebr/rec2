@@ -49,10 +49,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d0f0, _M_br_object_queryManySize, _M_br_object_q
 br_error (C2_HOOK_CDECL * _M_br_object_queryAll_original)(br_object* self, br_token_value* buffer, br_size_t buffer_size);
 br_error C2_HOOK_CDECL _M_br_object_queryAll(br_object* self, br_token_value* buffer, br_size_t buffer_size) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_queryAll_original(self, buffer, buffer_size);
 #else
-#error "Not implemented"
+    return BrTokenValueQueryAll(buffer, buffer_size, self, self->dispatch->_templateQuery(self));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d120, _M_br_object_queryAll, _M_br_object_queryAll_original)
