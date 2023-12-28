@@ -54,7 +54,7 @@ if(NOT C2_STANDALONE)
     target_compile_definitions(rec2 PRIVATE "HOOK_DEINIT_FUNCTION=c2_hook_deinit")
     target_sources(rec2 PRIVATE
         $<TARGET_OBJECTS:brender>
-        $<TARGET_OBJECTS:brender_softrendr>
+        $<TARGET_OBJECTS:brender_softrendr_float>
         $<TARGET_OBJECTS:c2_common>
         $<TARGET_OBJECTS:c2_hooks>
         $<TARGET_OBJECTS:c2_platform>
