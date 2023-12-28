@@ -39,6 +39,8 @@ add_library(brender STATIC
     core/fw/mem.h
     core/fw/object.c
     core/fw/object.h
+    core/fw/objectc.c
+    core/fw/objectc.h
     core/fw/pattern.c
     core/fw/pattern.h
     core/fw/register.c
