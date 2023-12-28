@@ -260,7 +260,7 @@ void C2_HOOK_CDECL BrZbsSceneRenderBegin(br_actor* world, br_actor* camera, br_p
     C2V(v1db).order_table_list = NULL;
     C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_HIDDEN_SURFACE, 0, BRT_V1ORDER_TABLE_P, (uintptr_t)C2V(v1db).default_order_table);
     C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_HIDDEN_SURFACE, 0, BRT_V1PRIMITIVE_HEAP_P, (uintptr_t)&C2V(v1db).heap);
-    C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_HIDDEN_SURFACE, 0, BRT_TYPE_T, BRT_Z_WRITE_NEVER);
+    C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_HIDDEN_SURFACE, 0, BRT_TYPE_T, BRT_BUCKET_AND_BUFFER);
     C2V(v1db).default_render_data = C2V(v1db).default_order_table;
     BrDbSceneRenderBegin(world, camera);
 }
