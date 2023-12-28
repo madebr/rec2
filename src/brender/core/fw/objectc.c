@@ -75,13 +75,24 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d210, _M_br_object_container_remove, _M_br_objec
 br_error (C2_HOOK_CDECL * _M_br_object_container_removeFront_original)(br_object_container* self, br_object** ph);
 br_error C2_HOOK_CDECL _M_br_object_container_removeFront(br_object_container* self, br_object** ph) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_container_removeFront_original(self, ph);
 #else
     object_list* hl;
     object_list_entry* he;
-    LOG_TRACE("(%p, %p)", self, ph);
-#error "Not implemented"
+
+    hl = self->dispatch->_listQuery(self);
+    if (hl == NULL) {
+        return 0x1002;
+    }
+    he = (object_list_entry*)BrSimpleRemHead(&hl->l);
+    if (he == NULL) {
+        *ph = NULL;
+        return 0x1002;
+    }
+    *ph = he->h;
+    BrResFree(he);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d260, _M_br_object_container_removeFront, _M_br_object_container_removeFront_original)
