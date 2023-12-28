@@ -171,7 +171,7 @@ target_link_libraries(brender
         c2_hooks
 )
 
-add_library(brender_softrendr STATIC
+add_library(brender_softrendr_float STATIC
     drivers/softrend/device.c
     drivers/softrend/device.h
     drivers/softrend/driver.c
@@ -180,16 +180,16 @@ add_library(brender_softrendr STATIC
     drivers/softrend/timestmp.h
     drivers/softrend/types.h
 )
-target_include_directories(brender_softrendr
+target_include_directories(brender_softrendr_float
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}"
 )
-target_link_libraries(brender_softrendr
+target_link_libraries(brender_softrendr_float
     PRIVATE
         brender
         c2_hooks
 )
-target_compile_definitions(brender_softrendr
+target_compile_definitions(brender_softrendr_float
     PRIVATE
         BrDrv1Begin=BrDrv1SoftRendBegin
         BASED_FLOAT
