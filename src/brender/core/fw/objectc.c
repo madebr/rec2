@@ -288,11 +288,12 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d5e0, _M_br_object_container_tokensMatch, _M_br_
 void (C2_HOOK_CDECL * _M_br_object_container_tokensMatchEnd_original)(br_object_container* self, void* arg);
 void C2_HOOK_CDECL _M_br_object_container_tokensMatchEnd(br_object_container* self, void* arg) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     _M_br_object_container_tokensMatchEnd_original(self, arg);
 #else
-    LOG_TRACE("(%p, %p)", self, arg);
-#error "Not implemented"
+    if (arg != NULL) {
+        BrResFree(arg);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d670, _M_br_object_container_tokensMatchEnd, _M_br_object_container_tokensMatchEnd_original)
