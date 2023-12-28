@@ -3,6 +3,8 @@
 #include "brender/brender.h"
 
 #include "brlists.h"
+#include "../std/brstdlib.h"
+#include "fwsetup.h"
 #include "pattern.h"
 
 void* (C2_HOOK_CDECL * BrObjectListAllocate_original)(void* res);
@@ -231,13 +233,25 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d490, _M_br_object_container_count, _M_br_object
 void* (C2_HOOK_CDECL * _M_br_object_container_tokensMatchBegin_original)(br_object_container* self, br_token t, br_token_value* tv);
 void* C2_HOOK_CDECL _M_br_object_container_tokensMatchBegin(br_object_container* self, br_token t, br_token_value* tv) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_container_tokensMatchBegin_original(self, t, tv);
 #else
     token_match* tm;
     br_int_32 i;
-    LOG_TRACE("(%p, %d, %p)", self, t, tv);
-#error "Not implemented"
+
+    C2_HOOK_BUG_ON(sizeof(token_match) != 20);
+
+    if (tv == NULL) {
+        return 0;
+    }
+    tm = BrResAllocate(C2V(fw).res, sizeof(token_match), BR_MEMORY_APPLICATION);
+    tm->original = tv;
+    for (i = 0; tv[i].t != BR_NULL_TOKEN; i++) {
+    }
+    tm->n = i + 1;
+    tm->query = BrResAllocate(tm, tm->n * sizeof(br_token_value), BR_MEMORY_APPLICATION);
+    BrMemCpy(tm->query, tv, i * sizeof(br_token_value));
+    return tm;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d560, _M_br_object_container_tokensMatchBegin, _M_br_object_container_tokensMatchBegin_original)
