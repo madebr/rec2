@@ -3,6 +3,7 @@
 #include "brender/brender.h"
 
 #include "brlists.h"
+#include "pattern.h"
 
 void* (C2_HOOK_CDECL * BrObjectListAllocate_original)(void* res);
 void* C2_HOOK_CDECL BrObjectListAllocate(void* res) {
@@ -100,15 +101,40 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d260, _M_br_object_container_removeFront, _M_br_
 br_error (C2_HOOK_CDECL * _M_br_object_container_find_original)(br_object_container* self, br_object** ph, br_token type, char* pattern, br_token_value* tv);
 br_error C2_HOOK_CDECL _M_br_object_container_find(br_object_container* self, br_object** ph, br_token type, char* pattern, br_token_value* tv) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_container_find_original(self, ph, type, pattern, tv);
 #else
     object_list* hl;
     object_list_entry* he;
     void* tvarg;
     br_error r;
-    LOG_TRACE("(%p, %p, %d, \"%s\", %p)", self, ph, type, pattern, tv);
-#error "Not implemented"
+
+    hl = self->dispatch->_listQuery(self);
+    if (hl == NULL) {
+        return 0x1002;
+    }
+    tvarg = NULL;
+    if (tv != NULL) {
+        tvarg = self->dispatch->_tokensMatchBegin(self, type, tv);
+    }
+    r = 0x1002;
+    for (he = (object_list_entry*)hl->l.head; he != NULL; he = (object_list_entry*)he->n.next) {
+        if (type != BR_NULL_TOKEN && he->h->dispatch->_type(he->h) != type) {
+            continue;
+        }
+        if (!BrNamePatternMatch(pattern, he->h->dispatch->_identifier(he->h))) {
+            continue;
+        }
+        if (tv != NULL && !self->dispatch->_tokensMatch(self, he->h, tvarg)) {
+            continue;
+        }
+        r = 0;
+        *ph = he->h;
+    }
+    if (tv != NULL) {
+        self->dispatch->_tokensMatchEnd(self, tvarg);
+    }
+    return r;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d2b0, _M_br_object_container_find, _M_br_object_container_find_original)
