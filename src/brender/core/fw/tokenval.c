@@ -5,6 +5,7 @@
 #include "resource.h"
 #include "token.h"
 
+#include "core/math/fixed.h"
 #include "core/std/brstdlib.h"
 
 #include "c2_stdlib.h"
@@ -672,7 +673,6 @@ void C2_HOOK_STDCALL DumpObject(br_object* h, char* prefix, char* info, br_putli
 }
 
 void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline_cbfn* putline, void* arg) {
-#if 0
     char* id;
     char value[128];
     char tmp[128];
@@ -684,7 +684,258 @@ void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline
     br_object** pph;
     void** ppp;
     br_token* pt;
-#endif
+
+    info_n = "                                         ";
+
+    for (n = 0; tv->t != BR_NULL_TOKEN; n++, tv++) {
+
+        id = BrTokenIdentifier(tv->t);
+        if (id == NULL) {
+            BrSprintf(tmp, "%s  %5d:  ??? (%08x) %08x", prefix, n, tv->t, tv->v.p);
+            putline(tmp, arg);
+            continue;
+        }
+        BrSprintf(info_0, "%5d:  %-32s ", n, id);
+        pvalue = value;
+        switch (BrTokenType(tv->t)) {
+        case BR_NULL_TOKEN:
+            pvalue = "NULL";
+            break;
+        case BRT_NONE:
+            value[0] = 0;
+            break;
+        case BRT_BOOLEAN:
+            pvalue = tv->v.b ? "TRUE" : "FALSE";
+            break;
+        case BRT_POINTER:
+            BrSprintf(value, "%08x");
+            break;
+        case BRT_TOKEN:
+            pvalue = BrTokenIdentifier(tv->v.t);
+            if (pvalue == NULL) {
+                BrSprintf(value, "??? %d");
+                pvalue = value;
+            }
+            break;
+        case BRT_INT_8:
+            BrSprintf(value, "%d", tv->v.i8);
+            break;
+        case BRT_UINT_8:
+            BrSprintf(value, "%u (0x%02x)", tv->v.u8, tv->v.u8);
+            break;
+        case BRT_INT_16:
+            BrSprintf(value, "%d", tv->v.i16);
+            break;
+        case BRT_UINT_16:
+            BrSprintf(value, "%u (0x%04x)", tv->v.u16, tv->v.u16);
+            break;
+        case BRT_INT_32:
+            BrSprintf(value, "%d", tv->v.i32);
+            break;
+        case BRT_UINT_32:
+            BrSprintf(value, "%u (0x%08x)", tv->v.u32, tv->v.u32);
+            break;
+        case BRT_FIXED:
+            BrSprintf(value, "%f", (float)tv->v.x / 65536.f);
+            break;
+        case BRT_FLOAT:
+            BrSprintf(value, "%f", tv->v.f);
+            break;
+        case BRT_ANGLE:
+            /* FIXME: is this missing a >>16 ? */
+            BrSprintf(value, "%f", (float)BrFixedMul(tv->v.x, 360 << 16));
+            break;
+        case BRT_COLOUR_RGB:
+            BrSprintf(value, "(%d,%d,%d)", (tv->v.rgb >> 16) & 0xff, (tv->v.rgb >> 8) & 0xff, (tv->v.rgb >> 0) & 0xff);
+            break;
+        case BRT_OBJECT:
+            DumpObject(tv->v.o, prefix, info_0, putline, arg);
+            continue;
+        case BRT_VECTOR2_INTEGER:
+            if (tv->v.v2_i == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixInteger(tv->v.v2_i->v, 1, 2, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_VECTOR3_INTEGER:
+            if (tv->v.v3_i == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixInteger(tv->v.v3_i->v, 1, 3, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_VECTOR4_INTEGER:
+        if (tv->v.v4_i == NULL) {
+            pvalue = "NULL";
+            break;
+        }
+            DumpMatrixInteger(tv->v.v4_i->v, 1, 4, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_VECTOR2_FIXED:
+            if (tv->v.v2_x == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFixed(tv->v.v2_x->v, 1, 2, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_VECTOR3_FIXED:
+            if (tv->v.v3_x == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFixed(tv->v.v3_x->v, 1, 3, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_VECTOR4_FIXED:
+            if (tv->v.v4_x == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFixed(tv->v.v4_x->v, 1, 4, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_VECTOR2_FLOAT:
+            if (tv->v.v2_f == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFloat(tv->v.v2_f->v, 1, 2, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_VECTOR3_FLOAT:
+            if (tv->v.v3_f == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFloat(tv->v.v3_f->v, 1, 3, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_VECTOR4_FLOAT:
+            if (tv->v.v4_f == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFloat(tv->v.v4_f->v, 1, 4, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_MATRIX23_FIXED:
+            if (tv->v.m23_x == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFixed(tv->v.m23_x->m[0], 2, 3, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_MATRIX34_FIXED:
+            if (tv->v.m34_x == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFixed(tv->v.m34_x->m[0], 3, 4, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_MATRIX4_FIXED:
+            if (tv->v.m4_x == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFixed(tv->v.m4_x->m[0], 4, 4, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_MATRIX23_FLOAT:
+            if (tv->v.m23_f == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFloat(tv->v.m23_f->m[0], 2, 3, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_MATRIX34_FLOAT:
+            if (tv->v.m34_f == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFloat(tv->v.m34_f->m[0], 3, 4, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_MATRIX4_FLOAT:
+            if (tv->v.m4_f == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            DumpMatrixFloat(tv->v.m4_f->m[0], 4, 4, prefix, info_0, info_n, putline, arg);
+            continue;
+        case BRT_STRING:
+            if (tv->v.str == NULL) {
+                pvalue = "NULL";
+            } else {
+                pvalue = tv->v.str;
+            }
+            break;
+        case BRT_CONSTANT_STRING:
+            if (tv->v.cstr == NULL) {
+                pvalue = "NULL";
+            } else {
+                pvalue = (char*)tv->v.cstr;
+            }
+            break;
+        case BRT_OBJECT_LIST:
+            if (tv->v.ol == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            pph = tv->v.ol;
+            if (*pph == NULL) {
+                pvalue = "Empty List";
+                break;
+            }
+            for (i = 0; pph[i] != NULL ; i++) {
+                DumpObject(pph[i], prefix, (i == 0) ? info_0 : info_n, putline, arg);
+            }
+            continue;
+        case BRT_TOKEN_LIST:
+            if (tv->v.tl == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            pt = tv->v.tl;
+            if (*pt == BR_NULL_TOKEN) {
+                pvalue = "Empty List";
+                break;
+            }
+
+            for (i = 0; pt[i] != BR_NULL_TOKEN ; i++) {
+                pvalue = BrTokenIdentifier(pt[i]);
+                if (pvalue == NULL) {
+                    BrSprintf(value, "??? %d", pt[i]);
+                    pvalue = value;
+                }
+
+                BrSprintf(tmp, "%s%s%s", prefix, (i == 0) ? info_0 : info_n, pvalue);
+                putline(tmp,arg);
+            }
+            continue;
+        case BRT_POINTER_LIST:
+            if (tv->v.pl == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            ppp = tv->v.pl;
+            if (*ppp == NULL) {
+                pvalue = "Empty List";
+                break;
+            }
+            for (i=0; ppp[i] != NULL ; i++) {
+                BrSprintf(value, "%08x", ppp[i]);
+                pvalue = value;
+                BrSprintf(tmp, "%s%s%s", prefix, (i == 0) ? info_0 : info_n, pvalue);
+                putline(tmp, arg);
+            }
+            continue;
+        case BRT_TOKEN_VALUE_LIST:
+            if (tv->v.tvl == NULL) {
+                pvalue = "NULL";
+                break;
+            }
+            BrTokenValueDump(tv->v.tvl, prefix, putline, arg);
+            continue;
+        default:
+            break;
+        }
+        BrSprintf(tmp, "%s%s%s", prefix, info_0, pvalue);
+        putline(tmp, arg);
+    }
 }
 C2_HOOK_FUNCTION(0x0052e9e0, BrTokenValueDump)
 
