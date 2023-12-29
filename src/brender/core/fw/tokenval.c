@@ -1,6 +1,7 @@
 #include "tokenval.h"
 
 #include "resource.h"
+#include "token.h"
 
 br_tv_template* C2_HOOK_CDECL BrTVTemplateAllocate(void* res, br_tv_template_entry* entries, int n_entries) {
     br_tv_template* t;
@@ -19,13 +20,17 @@ void C2_HOOK_CDECL BrTVTemplateFree(br_tv_template* t) {
 }
 C2_HOOK_FUNCTION(0x0052d770, BrTVTemplateFree)
 
-#if 0
 void C2_HOOK_STDCALL templateResolveNames(br_tv_template* template) {
     br_tv_template_entry* tp;
     int n;
-#error "Not implemented"
+
+    for (n = 0; n < template->n_map_entries; n++) {
+        tp = &template->entries[n];
+        if (tp->name != NULL) {
+            tp->token = BrTokenCreate(tp->name, BR_NULL_TOKEN);
+        }
+    }
 }
-#endif
 
 void (C2_HOOK_STDCALL * templateMakeMap_original)(br_tv_template* template);
 void C2_HOOK_STDCALL templateMakeMap(br_tv_template* template) {
@@ -137,7 +142,7 @@ br_error C2_HOOK_CDECL BrTokenValueQueryMany(br_token_value* tv, void* extra, br
     }
     *pcount = 0;
 
-    for (; tv->t != 0; tv++) {
+    for (; tv->t != BR_NULL_TOKEN; tv++) {
         o = tv->t - template->map_base;
         if (o < 0 || o >= template->n_map_entries) {
             continue;
@@ -181,7 +186,7 @@ C2_HOOK_FUNCTION(0x0052e2a0, BrTokenValueQueryManySize)
 
 br_error (C2_HOOK_CDECL * BrTokenValueQueryAll_original)(br_token_value* buffer, br_size_t buffer_size, void* block, br_tv_template* template);
 br_error C2_HOOK_CDECL BrTokenValueQueryAll(br_token_value* buffer, br_size_t buffer_size, void* block, br_tv_template* template) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrTokenValueQueryAll_original(buffer, buffer_size, block, template);
 #else
     br_tv_template_entry* tp;
@@ -191,7 +196,41 @@ br_error C2_HOOK_CDECL BrTokenValueQueryAll(br_token_value* buffer, br_size_t bu
     char* extra;
     br_size_t extra_size;
     br_error r;
-#error "Not implemented"
+
+    if (!template->names_resolved) {
+        templateResolveNames(template);
+    }
+
+    n = 1;
+    for (e = 0; e < template->n_entries; e++) {
+        tp = &template->entries[e];
+        if (tp->token != BR_NULL_TOKEN && (tp->flags & 0x4)) {
+            n++;
+        }
+    }
+    extra = (char *)(buffer + n);
+    if (buffer_size < sizeof(*buffer) * n) {
+        return 0x1004;
+    }
+    tv = buffer;
+    extra_size = buffer_size - sizeof(*buffer) * n;
+    for (e = 0; e < template->n_entries; e++) {
+        tp = &template->entries[e];
+        if (tp->token == BR_NULL_TOKEN) {
+            continue;
+        }
+        if ((tp->flags & 4) == 0) {
+            continue;
+        }
+        tv->t = tp->token;
+        r = ValueQuery(tv, (void*)&extra, &extra_size, block, tp);
+        if (r != 0) {
+            return r;
+        }
+        tv++;
+    }
+    tv->t = BR_NULL_TOKEN;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052e430, BrTokenValueQueryAll, BrTokenValueQueryAll_original)
