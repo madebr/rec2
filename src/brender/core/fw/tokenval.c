@@ -237,14 +237,32 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052e430, BrTokenValueQueryAll, BrTokenValueQueryAll
 
 br_error (C2_HOOK_CDECL * BrTokenValueQueryAllSize_original)(br_size_t* psize, void* block, br_tv_template* template);
 br_error C2_HOOK_CDECL BrTokenValueQueryAllSize(br_size_t* psize, void* block, br_tv_template* template) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrTokenValueQueryAllSize_original(psize, block, template);
 #else
     br_tv_template_entry* tp;
     int e;
     int n;
     br_size_t extra_size;
-#error "Not implemented"
+
+    if (!template->names_resolved) {
+        templateResolveNames(template);
+    }
+    extra_size = 0;
+    n = 1;
+    for (e = 0; e < template->n_entries; e++) {
+        tp = &template->entries[e];
+        if (tp->token == BR_NULL_TOKEN) {
+            continue;
+        }
+        if ((tp->flags & 4) == 0) {
+            continue;
+        }
+        n++;
+        extra_size += ValueExtraSize(block, tp);
+    }
+    *psize = extra_size + sizeof(br_token_value) * n;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052e510, BrTokenValueQueryAllSize, BrTokenValueQueryAllSize_original)
