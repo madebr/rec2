@@ -54,33 +54,289 @@ void C2_HOOK_STDCALL templateMakeMap(br_tv_template* template) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d7f0, templateMakeMap, templateMakeMap_original)
 
-#if 0
 br_fixed_ls* C2_HOOK_STDCALL ConvertFloatToFixed(br_fixed_ls** pextra, br_float* src, br_int_32 count, br_size_t* pextra_space) {
     br_fixed_ls* ret;
-#error "Not implemented"
+
+    if (pextra == NULL || *pextra == NULL || pextra_space == NULL) {
+        return NULL;
+    }
+    ret = *pextra;
+    if (*pextra_space < sizeof(uint32_t) * count) {
+        return 0;
+    }
+    *pextra_space -= sizeof(br_fixed_ls) * count;
+    for (; count != 0; count--) {
+        **pextra = (br_fixed_ls)(*src * 65536.f);
+        (*pextra)++;
+        src++;
+    }
+    return ret;
 }
 
 br_float* C2_HOOK_STDCALL ConvertFixedToFloat(br_float** pextra, br_fixed_ls* src, br_int_32 count, br_size_t* pextra_space) {
     br_float* ret;
-#error "Not implemented"
+
+    if (pextra == NULL || *pextra == NULL || pextra_space == NULL) {
+        return NULL;
+    }
+    ret = *pextra;
+    if (*pextra_space < sizeof(float) * count) {
+        return 0;
+    }
+    *pextra_space -= sizeof(float) * count;
+    for (; count != 0; count--) {
+        **pextra = (float)*src / 65536.f;
+        (*pextra)++;
+        src++;
+    }
+    return ret;
 }
 
 br_uint_32* C2_HOOK_STDCALL ConvertLongCopy(br_uint_32** pextra, br_uint_32* src, br_int_32 count, br_size_t* pextra_space) {
     br_uint_32* ret;
-#error "Not implemented"
+
+    if (pextra == NULL || *pextra == NULL || pextra_space == NULL) {
+        return NULL;
+    }
+    ret = *pextra;
+    if (*pextra_space < sizeof(uint32_t) * count) {
+        return NULL;
+    }
+    *pextra_space -= sizeof(uint32_t) * count;
+    for (; count != 0; count--) {
+        **pextra = *src;
+        (*pextra)++;
+        src++;
+    }
+    return ret;
 }
-#endif
 
 br_error (C2_HOOK_STDCALL * ValueQuery_original)(br_token_value* tv, void** pextra, br_size_t* pextra_size, void* block, br_tv_template_entry* tep);
 br_error C2_HOOK_STDCALL ValueQuery(br_token_value* tv, void** pextra, br_size_t* pextra_size, void* block, br_tv_template_entry* tep) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ValueQuery_original(tv, pextra, pextra_size, block, tep);
 #else
     void* mem;
     br_uint_32* lp;
     int t;
     br_tv_custom* custp;
-#error "Not implemented"
+
+    if (tep->flags & 0x8) {
+        /* absolute */
+        mem = &tep->offset;
+    } else {
+        /* relative */
+        mem = (br_uint_8*)block + tep->offset;
+    }
+
+    switch (tep->conv) {
+    case 1:
+        /* const */
+        tv->v.u32 = (br_uint_32)tep->conv_arg;
+        break;
+    case 2:
+        /* custom */
+        custp = (br_tv_custom*)tep->conv_arg;
+        if (custp == NULL || custp->query == NULL) {
+            return 0x1001;
+        }
+        return custp->query(&tv->v.u32, pextra, pextra_size, block, tep);
+    case 3:
+        /* void* */
+        tv->v.u32 = *(br_uint_32*)mem;
+        break;
+    case 4:
+        /* vec2 (default=float) */
+        tv->v.p = ConvertLongCopy((br_uint_32**)pextra, (br_uint_32*)mem, 2, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 5:
+        /* vec3 (default=float) */
+        tv->v.p = ConvertLongCopy((br_uint_32**)pextra, (br_uint_32*)mem, 3, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 6:
+        /* vec4 (default=float) */
+        tv->v.p = ConvertLongCopy((br_uint_32**)pextra, (br_uint_32*)mem, 4, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 7:
+        /* mat23 (default=float) */
+        tv->v.p = ConvertLongCopy((br_uint_32**)pextra, (br_uint_32*)mem, 6, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 8:
+        /* mat34 (default=float) */
+        tv->v.p = ConvertLongCopy((br_uint_32**)pextra, (br_uint_32*)mem, 12, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 9:
+        /* mat4 (default=float) */
+        tv->v.p = ConvertLongCopy((br_uint_32**)pextra, (br_uint_32*)mem, 16, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 10:
+        /* i8 */
+        tv->v.i8 = *(br_int_8*)mem;
+        break;
+    case 11:
+        /* i16 */
+        tv->v.i16 = *(br_int_16*)mem;
+        break;
+    case 12:
+        /* u8 */
+        tv->v.u8 = *(br_uint_8*)mem;
+        break;
+    case 13:
+        /* u16 */
+        tv->v.u16 = *(br_uint_16*)mem;
+        break;
+    case 14:
+        /* fixed */
+        tv->v.x = (br_fixed_ls)(65536.f * *(float*)mem);
+        break;
+    case 15:
+        /* float */
+        tv->v.s = (br_fixed_ls)*(br_fixed_ls*)mem / 65536.f;
+        break;
+    case 16:
+        /* vec2f_to_x */
+        tv->v.p = ConvertFloatToFixed((br_fixed_ls**)pextra, (float*)mem, 2, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 17:
+        /* vec2x_to_f */
+        tv->v.p = ConvertFixedToFloat((float**)pextra, (br_fixed_ls*)mem, 2, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 18:
+        /* vec3f_to_x */
+        tv->v.p = ConvertFloatToFixed((br_fixed_ls**)pextra, (float*)mem, 3, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 19:
+        /* vec3x_to_f */
+        tv->v.p = ConvertFixedToFloat((float**)pextra, (br_fixed_ls*)mem, 3, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 20:
+        /* vec4f_to_x */
+        tv->v.p = ConvertFloatToFixed((br_fixed_ls**)pextra, (float*)mem, 4, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 21:
+        /* vec4x_to_f */
+        tv->v.p = ConvertFixedToFloat((float**)pextra, (br_fixed_ls*)mem, 4, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 22:
+        /* mat23f_to_x */
+        tv->v.p = ConvertFloatToFixed((br_fixed_ls**)pextra, (float*)mem, 6, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 23:
+        /* mat23x_to_f */
+        tv->v.p = ConvertFixedToFloat((float**)pextra, (br_fixed_ls*)mem, 6, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 24:
+        /* mat34f_to_x */
+        tv->v.p = ConvertFloatToFixed((br_fixed_ls**)pextra, (float*)mem, 12, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 25:
+        /* mat34x_to_f */
+        tv->v.p = ConvertFixedToFloat((float**)pextra, (br_fixed_ls*)mem, 12, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 26:
+        /* mat4f_to_x */
+        tv->v.p = ConvertFloatToFixed((br_fixed_ls**)pextra, (float*)mem, 16, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 27:
+        /* mat4x_to_f */
+        tv->v.p = ConvertFixedToFloat((float**)pextra, (br_fixed_ls*)mem, 16, pextra_size);
+        if (tv->v.p == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 28:
+        /* string */
+        tv->v.cstr = (char*)ConvertLongCopy((br_uint_32**)pextra, (br_uint_32*)*(char**)mem, (BrStrLen(*(const char**)mem) + 1 + sizeof(br_uint_32)) / sizeof(br_uint_32), pextra_size);
+        if (tv->v.cstr == NULL) {
+            return 0x1004;
+        }
+        break;
+    case 29:
+        /* null terminated array */
+        lp = *(br_uint_32**)mem;
+        t = 0;
+        if (lp != NULL) {
+            while (*lp++) {
+                t++;
+            }
+            tv->v.p = ConvertLongCopy((br_uint_32**)pextra, *(br_uint_32**)mem, t + 1, pextra_size);
+            if (tv->v.p == NULL) {
+                return 0x1004;
+            }
+        } else {
+            tv->v.p = ConvertLongCopy((br_uint_32**)pextra, (br_uint_32*)&mem, 1, pextra_size);
+            if (tv->v.p == NULL) {
+                return 0x1004;
+            }
+        }
+        break;
+    case 30:
+        /* Invert Boolean */
+        tv->v.b = (*(br_uint_32*)mem) != 0x1;
+        break;
+    case 31:
+        /* Boolean mask */
+        tv->v.b = !!((*(br_uint_32*)mem) & tep->conv_arg);
+        break;
+    case 32:
+        /* Boolean not mask */
+        tv->v.b = !((*(br_uint_32*)mem) & tep->conv_arg);
+        break;
+    default:
+        return 0x1001;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d8e0, ValueQuery, ValueQuery_original)
