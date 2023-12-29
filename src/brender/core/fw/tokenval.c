@@ -1,7 +1,12 @@
 #include "tokenval.h"
 
+#include "lexer.h"
 #include "resource.h"
 #include "token.h"
+
+#include "core/std/brstdlib.h"
+
+#include "c2_stdlib.h"
 
 br_tv_template* C2_HOOK_CDECL BrTVTemplateAllocate(void* res, br_tv_template_entry* entries, int n_entries) {
     br_tv_template* t;
@@ -381,29 +386,219 @@ void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline
 }
 C2_HOOK_FUNCTION(0x0052e9e0, BrTokenValueDump)
 
+#define T_FALSE (T_KEYWORD + 0)
+#define T_TRUE  (T_KEYWORD + 1)
+
 br_error (C2_HOOK_CDECL * BrStringToTokenValue_original)(br_token_value* buffer, br_size_t buffer_size, char* str);
 br_error C2_HOOK_CDECL BrStringToTokenValue(br_token_value* buffer, br_size_t buffer_size, char* str) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrStringToTokenValue_original(buffer, buffer_size, str);
 #else
     br_lexer* l;
     br_error r;
-    static br_lexer_keyword keywords[4];
-#error "Not implemented"
+    static br_lexer_keyword keywords[4] = {
+        { "true",   T_TRUE  },
+        { "t",      T_TRUE  },
+        { "false",  T_FALSE },
+        { "f",      T_FALSE },
+    };
+
+    l = BrLexerAllocate(keywords, BR_ASIZE(keywords));
+    if (l == NULL) {
+        return 0x1003;
+    }
+    r = BrLexerPushString(l, str, NULL);
+    if (r != 0) {
+        BrLexerFree(l);
+        return r;
+    }
+    l->advance(l);
+    parseTokenValue(l, buffer, buffer_size);
+    BrLexerFree(l);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052e9f0, BrStringToTokenValue, BrStringToTokenValue_original)
 
-#if 0
 br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_size_t size) {
     int len;
     char name[40];
     br_token type;
-    static br_token real_types[2];
     br_error r;
-#error "Not implemented"
+
+    if (size < sizeof(br_token_value)) {
+        return 0x1004;
+    }
+
+    size -= sizeof(br_token_value);
+
+    while (l->current.id != T_EOF) {
+        while (l->current.id == T_COMMA) {
+            l->advance(l);
+        }
+        if (l->current.id != T_IDENT) {
+            break;
+        }
+        if (size <= sizeof(br_token_value)) {
+            r = 0x1004;
+            break;
+        }
+        name[BR_ASIZE(name) - 1] = '\0';
+        BrStrNCpy(name, l->current.v.string, BR_ASIZE(name) - 1);
+        l->advance(l);
+        if (name[1] == '\0') {
+            if (name[0] == 'w' || name [0] == 'W') {
+                BrStrCpy(name, "width");
+            } else if(name[0] == 'h' || name [0] == 'H') {
+                BrStrCpy(name, "height");
+            } else if(name[0] == 'b' || name [0] == 'B') {
+                BrStrCpy(name, "pixel_bits");
+            } else if(name[0] == 'm' || name [0] == 'M') {
+                BrStrCpy(name, "mode");
+            }
+        }
+        tv->t = BR_NULL_TOKEN;
+
+        if (l->current.id == T_COLON || l->current.id == T_EQUAL) {
+            l->advance(l);
+
+            switch ((int)l->current.id) {
+            case T_IDENT: {
+                static br_token ident_types[] = { BRT_TOKEN };
+                tv->t = BrTokenFindType(&type, name, ident_types, BR_ASIZE(ident_types));
+                if (tv->t == BR_NULL_TOKEN) {
+                    break;
+                }
+                tv->v.t = BrTokenFind(l->current.v.string);
+                if (tv->v.t == BR_NULL_TOKEN) {
+                    tv->t = BR_NULL_TOKEN;
+                }
+                break;
+            }
+            case T_STRING: {
+                static br_token string_types[] = { BRT_STRING, BRT_CONSTANT_STRING };
+                tv->t = BrTokenFindType(&type, name, string_types, BR_ASIZE(string_types));
+                if (tv->t == BR_NULL_TOKEN) {
+                    break;
+                }
+                len = BrStrLen(l->current.v.string) + 1;
+                if (len > (int)size) {
+                    tv->t = BR_NULL_TOKEN;
+                    r = 0x1004;
+                    break;
+                }
+                size -= len;
+                tv->v.str = (char *)tv + size;
+                BrMemCpy(tv->v.str, l->current.v.string, len);
+                break;
+            }
+            case T_INTEGER: {
+                static br_token pos_int_types[] = {
+                    BRT_INT_32, BRT_UINT_32, BRT_INT_16,
+                    BRT_UINT_16, BRT_INT_8, BRT_UINT_8,
+                    BRT_FLOAT, BRT_FIXED, BRT_BOOLEAN };
+                static br_token neg_int_types[] = {
+                    BRT_INT_32, BRT_INT_16, BRT_INT_8,
+                    BRT_FLOAT, BRT_FIXED, BRT_BOOLEAN };
+
+                if (l->current.v.integer < 0) {
+                    tv->t = BrTokenFindType(&type, name, neg_int_types, BR_ASIZE(neg_int_types));
+                } else {
+                    tv->t = BrTokenFindType(&type, name, pos_int_types, BR_ASIZE(pos_int_types));
+                }
+                if (tv->t == BR_NULL_TOKEN) {
+                    break;
+                }
+                switch (type) {
+                case BRT_BOOLEAN:
+                    tv->v.b = l->current.v.integer != 0;
+                    break;
+                case BRT_INT_8:
+                    tv->v.i8 = (br_int_8)l->current.v.integer;
+                    break;
+                case BRT_UINT_8:
+                    tv->v.u8 = (br_uint_8)l->current.v.integer;
+                    break;
+                case BRT_INT_16:
+                    tv->v.i16 = (br_int_16)l->current.v.integer;
+                    break;
+                case BRT_UINT_16:
+                    tv->v.u16 = (br_uint_16)l->current.v.integer;
+                    break;
+                case BRT_INT_32:
+                    tv->v.i32 = l->current.v.integer;
+                    break;
+                case BRT_UINT_32:
+                    tv->v.u32 = (br_uint_32)l->current.v.integer;
+                    break;
+                case BRT_FIXED:
+                    tv->v.x = l->current.v.integer << 16;
+                    break;
+                case BRT_FLOAT:
+                    tv->v.f = (float)l->current.v.integer;
+                    break;
+                default:
+                    c2_abort();
+                    break;
+                }
+                break;
+            }
+            case T_REAL: {
+                static br_token real_types[] = { BRT_FLOAT, BRT_FIXED };
+
+                tv->t = BrTokenFindType(&type, name, real_types, BR_ASIZE(real_types));
+                if (tv->t == BR_NULL_TOKEN) {
+                    break;
+                }
+                switch (type) {
+                case BRT_FIXED:
+                    tv->v.x = (br_fixed_ls)(l->current.v.real * 65536.f);
+                    break;
+                case BRT_FLOAT:
+                    tv->v.f = l->current.v.real;
+                    break;
+                default:
+                    c2_abort();
+                    break;
+                }
+                break;
+            }
+            case T_FALSE:
+            case T_TRUE: {
+                static br_token bool_types[] = { BRT_BOOLEAN };
+
+                tv->t = BrTokenFindType(&type, name, bool_types, BR_ASIZE(bool_types));
+                if (tv->t == BR_NULL_TOKEN) {
+                    break;
+                }
+                tv->v.b = l->current.id == T_TRUE;;
+                break;
+            }
+            default:
+                l->error(l, "expecting a value");
+                break;
+            }
+            l->advance(l);
+        } else {
+            static br_token none_types[] = { BRT_NONE, BRT_BOOLEAN };
+
+            tv->t = BrTokenFindType(&type, name, none_types, BR_ASIZE(none_types));
+            if (tv->t != BR_NULL_TOKEN && type == BRT_BOOLEAN) {
+                tv->v.b = T_TRUE;
+            }
+        }
+
+        if (tv->t != BR_NULL_TOKEN) {
+            tv++;
+            size -= sizeof(br_token_value);
+        } else {
+            l->error(l, "unknown token");
+        }
+    }
+    tv->t = BR_NULL_TOKEN;
+    tv->v.u32 = 0;
+    return r;
 }
-#endif
 
 br_boolean (C2_HOOK_CDECL * BrTokenValueCompare_original)(br_token_value* tv1, br_token_value* tv2);
 br_boolean C2_HOOK_CDECL BrTokenValueCompare(br_token_value* tv1, br_token_value* tv2) {
