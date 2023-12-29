@@ -162,9 +162,8 @@ typedef enum {
     BR_PMF_ROW_WHOLEPIXELS = 0x04
 } br_pixelmap_flags;
 
-#define BR_NULL_TOKEN 0
-
 typedef enum br_token {
+    BR_NULL_TOKEN = 0,
     BRT_NONE = 1,
     BRT_BOOLEAN = 2,
     BRT_POINTER = 3,
@@ -1081,9 +1080,10 @@ typedef union br_value_tag {
     br_matrix34_f* m34_f;
     br_matrix4_f* m4_f;
     char* str;
-    char* cstr;
+    const char* cstr;
     br_object** hl;
     br_token* tl;
+    struct br_object** ol;
     void** pl;
     br_token_value* tvl;
 } br_value;
