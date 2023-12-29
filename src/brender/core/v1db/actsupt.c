@@ -235,11 +235,26 @@ C2_HOOK_FUNCTION(0x0051e340, ActorToRoot)
 
 br_boolean (C2_HOOK_STDCALL * ActorToRootTyped_original)(br_actor* a, br_actor* world, br_matrix34* m, br_int_32* type);
 br_boolean C2_HOOK_STDCALL ActorToRootTyped(br_actor* a, br_actor* world, br_matrix34* m, br_int_32* type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ActorToRootTyped_original(a, world, m, type);
 #else
     br_int_32 t;
-#error "not implemented"
+
+	if (a == world) {
+		BrMatrix34Identity(m);
+		*type = BR_TRANSFORM_IDENTITY;
+		return 1;
+	}
+    BrTransformToMatrix34(m, &a->t);
+	t = a->t.type;
+	for (a = a->parent; a != NULL && a != world; a = a->parent) {
+		if (a->t.type != BR_TRANSFORM_IDENTITY) {
+            BrTransformToMatrix34(m, &a->t);
+			t = BrTransformCombineTypes(t, a->t.type);
+		}
+	}
+	*type = t;
+	return a == world;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051e3b0, ActorToRootTyped, ActorToRootTyped_original)
