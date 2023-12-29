@@ -456,11 +456,16 @@ C2_HOOK_FUNCTION(0x0051e7d0, BrActorToActorMatrix34)
 
 void (C2_HOOK_CDECL * BrActorToScreenMatrix4_original)(br_matrix4* m, br_actor* a, br_actor* camera);
 void C2_HOOK_CDECL BrActorToScreenMatrix4(br_matrix4* m, br_actor* a, br_actor* camera) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrActorToScreenMatrix4_original(m, a, camera);
 #else
     br_matrix34 a2c;
-#error "not implemented"
+
+    CameraToScreenMatrix4(m, camera);
+    if (a != camera) {
+        BrActorToActorMatrix34(&a2c, a, camera);
+        BrMatrix4Pre34(m, &a2c);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051eae0, BrActorToScreenMatrix4, BrActorToScreenMatrix4_original)
