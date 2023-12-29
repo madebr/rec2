@@ -4,11 +4,13 @@
 #include "enables.h"
 
 #include "core/fw/brlists.h"
+#include "core/fw/diag.h"
 #include "core/fw/fwsetup.h"
 #include "core/fw/pattern.h"
 #include "core/fw/resource.h"
 
 #include "core/math/matrix34.h"
+#include "core/math/matrix4.h"
 #include "core/math/transfrm.h"
 
 br_uint_32 C2_HOOK_CDECL BrActorEnum(br_actor* parent, br_actor_enum_cbfn* callback, void* arg) {
@@ -290,12 +292,72 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051e450, Matrix4PerspectiveNew, Matrix4PerspectiveN
 
 br_token (C2_HOOK_STDCALL * CameraToScreenMatrix4_original)(br_matrix4* mat, br_actor* camera);
 br_token C2_HOOK_STDCALL CameraToScreenMatrix4(br_matrix4* mat, br_actor* camera) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return CameraToScreenMatrix4_original(mat, camera);
 #else
     br_camera* camera_type;
     br_matrix34 mat34;
-#error "not implemented"
+
+    camera_type = camera->type_data;
+	switch (camera_type->type) {
+	case BR_CAMERA_PARALLEL:
+		if (camera_type->width == 0.f) {
+			BrFailure("Parallel camera has zero width");
+        }
+		if (camera_type->height == 0.f) {
+			BrFailure("Parallel camera has zero height");
+        }
+		if (camera_type->yon_z <= camera_type->hither_z) {
+			BrFailure("Parallel camera has invalid yon and hither");
+        }
+
+		BrMatrix34Scale(&mat34,
+            2.f / (camera_type->width * camera_type->aspect),
+            2.f / camera_type->height,
+            2.f / (camera_type->yon_z - camera_type->hither_z));
+		BrMatrix34PreTranslate(&mat34,
+            0.f,
+            0.f,
+            (camera_type->hither_z + camera_type->yon_z) / 2.f);
+		BrMatrix34PostTranslate(&mat34,
+            C2V(v1db).origin.v[0],
+            C2V(v1db).origin.v[1],
+            0.f);
+		BrMatrix4Copy34(mat, &mat34);
+		return BRT_PARALLEL;
+	case BR_CAMERA_PERSPECTIVE_FOV:
+		Matrix4PerspectiveNew(mat,
+			camera_type->field_of_view,
+            camera_type->aspect,
+			-camera_type->hither_z,
+            -camera_type->yon_z,
+			C2V(v1db).origin.v[0],
+            C2V(v1db).origin.v[1]);
+		return BRT_PERSPECTIVE;
+    case BR_CAMERA_PERSPECTIVE_WHD:
+        return BRT_PERSPECTIVE;
+	case BR_CAMERA_PARALLEL_OLD:
+		if (camera_type->width == 0.f) {
+            BrFailure("Parallel camera has zero width");
+        }
+        if (camera_type->height == 0.f) {
+            BrFailure("Parallel camera has zero height");
+        }
+		if (camera_type->yon_z <= camera_type->hither_z) {
+            BrFailure("Parallel camera has invalid yon and hither");
+        }
+		BrMatrix34Scale(&mat34,
+			1.f / camera_type->width,
+			1.f / camera_type->height,
+			1.f / (camera_type->yon_z - camera_type->hither_z));
+		BrMatrix34PreTranslate(&mat34,
+            0.f,
+            0.f,
+            camera_type->hither_z);
+		BrMatrix4Copy34(mat,&mat34);
+		return BRT_PARALLEL;
+	}
+	return BR_NULL_TOKEN;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051e520, CameraToScreenMatrix4, CameraToScreenMatrix4_original)
