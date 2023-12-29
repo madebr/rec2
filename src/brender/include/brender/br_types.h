@@ -1691,7 +1691,7 @@ typedef struct br_tv_template_entry {
     br_int_32 offset;
     br_int_16 flags;
     br_int_16 conv;
-    br_int_32 conv_arg;
+    uintptr_t conv_arg;
     br_int_32 mask;
 } br_tv_template_entry;
 
