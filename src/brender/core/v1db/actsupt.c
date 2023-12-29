@@ -261,11 +261,29 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051e3b0, ActorToRootTyped, ActorToRootTyped_origina
 
 void (C2_HOOK_STDCALL * Matrix4PerspectiveNew_original)(br_matrix4* mat, br_angle field_of_view, br_scalar aspect, br_scalar hither, br_scalar yon, br_scalar origin_x, br_scalar origin_y);
 void C2_HOOK_STDCALL Matrix4PerspectiveNew(br_matrix4* mat, br_angle field_of_view, br_scalar aspect, br_scalar hither, br_scalar yon, br_scalar origin_x, br_scalar origin_y) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     Matrix4PerspectiveNew_original(mat, field_of_view, aspect, hither, yon, origin_x, origin_y);
 #else
     br_scalar scale;
-#error "not implemented"
+
+    scale = BR_COS(field_of_view / 2) / BR_SIN(field_of_view / 2);
+
+    mat->m[0][0] = scale / aspect;
+    mat->m[0][1] = 0.f;
+    mat->m[0][2] = 0.f;
+    mat->m[0][3] = 0.f;
+    mat->m[1][0] = 0.f;
+    mat->m[1][1] = scale;
+    mat->m[1][2] = 0.f;
+    mat->m[1][3] = 0.f;
+    mat->m[2][0] = -origin_x;
+    mat->m[2][1] = -origin_y;
+    mat->m[2][2] = (yon + hither) / (yon - hither);
+    mat->m[2][3] = -1.f;
+    mat->m[3][0] = 0.f;
+    mat->m[3][1] = 0.f;
+    mat->m[3][2] = -2.f * (yon * hither) / (yon - hither);
+    mat->m[3][3] = 0.f;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051e450, Matrix4PerspectiveNew, Matrix4PerspectiveNew_original)
