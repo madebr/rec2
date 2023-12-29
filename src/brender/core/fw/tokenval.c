@@ -1,5 +1,6 @@
 #include "tokenval.h"
 
+#include "brprintf.h"
 #include "lexer.h"
 #include "resource.h"
 #include "token.h"
@@ -613,15 +614,35 @@ void C2_HOOK_STDCALL DumpMatrixFloat(br_float* fp, int rows, int cols, char* pre
     char value[128];
 #error "Not implemented";
 }
+#endif
 
-void DumpObject(br_object* h, char* prefix, char* info, br_putline_cbfn* putline, void* arg) {
+void C2_HOOK_STDCALL DumpObject(br_object* h, char* prefix, char* info, br_putline_cbfn* putline, void* arg) {
     char value[128];
     char* dev_ident;
     char* h_ident;
     br_object* dev;
-#error "Not implemented"
+
+    if (h == NULL) {
+        BrSprintf(value, "%s%sNULL OBJECT", prefix, info);
+    } else {
+        dev = (br_object*)h->dispatch->_device(h);
+        if (dev == NULL) {
+            dev_ident = "<NULL DEVICE>";
+        } else {
+            dev_ident = dev->dispatch->_identifier(dev);
+        }
+        if (dev_ident == NULL) {
+            dev_ident = "<NULL>";
+        }
+        h_ident = h->dispatch->_identifier(h);
+        if (h == NULL) {
+            h_ident = "<NULL>";
+        }
+        BrSprintf(value, "%s%s%08x %s:%s  %s", prefix, info, h, dev_ident, h_ident,
+                   BrTokenIdentifier(h->dispatch->_type(h)));
+    }
+    putline(value, arg);
 }
-#endif
 
 void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline_cbfn* putline, void* arg) {
 #if 0
