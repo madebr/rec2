@@ -590,15 +590,22 @@ br_error C2_HOOK_CDECL BrTokenValueSetMany(void* mem, br_int_32* pcount, br_uint
 }
 C2_HOOK_FUNCTION(0x0052e940, BrTokenValueSetMany)
 
-#if 0
 void C2_HOOK_STDCALL DumpMatrixInteger(br_int_32* ip, int rows, int cols, char* prefix, char* info_0, char* info_n, br_putline_cbfn* putline, void* arg) {
     int i;
     int j;
     char* cp;
     char value[128];
-#error "Not implemented"
+
+    for (i = 0; i < rows; i++) {
+        cp = value;
+        cp += BrSprintf(value, "%s%s[", prefix, (i == 0) ? info_0 : info_n);
+        for (j = 0; j < cols; j++, ip++) {
+            cp += BrSprintf(cp, "%s%d", (j == 0) ? "" : ",", *ip);
+        }
+        BrStrCpy(cp, "]");
+        putline(value, arg);
+    }
 }
-#endif
 
 void C2_HOOK_STDCALL DumpMatrixFixed(br_fixed_ls* xp, int rows, int cols, char* prefix, char* info_0, char* info_n, br_putline_cbfn* putline, void* arg) {
     int i;
