@@ -598,15 +598,24 @@ void C2_HOOK_STDCALL DumpMatrixInteger(br_int_32* ip, int rows, int cols, char* 
     char value[128];
 #error "Not implemented"
 }
+#endif
 
-void C2_HOOK_STDCALLDumpMatrixFixed(br_fixed_ls* xp, int rows, int cols, char* prefix, char* info_0, char* info_n, br_putline_cbfn* putline, void* arg) {
+void C2_HOOK_STDCALL DumpMatrixFixed(br_fixed_ls* xp, int rows, int cols, char* prefix, char* info_0, char* info_n, br_putline_cbfn* putline, void* arg) {
     int i;
     int j;
     char* cp;
     char value[128];
-#error "Not implemented"
+
+    for (i = 0; i < rows; i++) {
+        cp = value;
+        cp += BrSprintf(value, "%s%s[", prefix, (i == 0) ? info_0 : info_n);
+        for (j = 0; j < cols; j++, xp++) {
+            cp += BrSprintf(cp, "%s%f", (j == 0) ? "" : ",", (float)*xp / 65536.f);
+        }
+        BrStrCpy(cp, "]");
+        putline(value, arg);
+    }
 }
-#endif
 
 void C2_HOOK_STDCALL DumpMatrixFloat(br_float* fp, int rows, int cols, char* prefix, char* info_0, char* info_n, br_putline_cbfn* putline, void* arg) {
     int i;
