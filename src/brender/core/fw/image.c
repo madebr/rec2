@@ -133,7 +133,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052ffa0, BrImageReference, BrImageReference_origina
 
 void* (C2_HOOK_STDCALL * imageLookupName_original)(br_image* img, char* name, br_uint_32 hint);
 void* C2_HOOK_STDCALL imageLookupName(br_image* img, char* name, br_uint_32 hint) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return imageLookupName_original(img, name, hint);
 #else
     int c;
@@ -153,7 +153,7 @@ void* C2_HOOK_STDCALL imageLookupName(br_image* img, char* name, br_uint_32 hint
         if (c == 0) {
             return img->functions[img->name_ordinals[base + limit / 2]];
         } else if (c < 0) {
-            continue;
+            limit = limit / 2;
         } else {
             base += limit / 2 + 1;
             limit = limit - (limit / 2 + 1);
