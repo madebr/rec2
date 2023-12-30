@@ -736,17 +736,15 @@ br_error C2_HOOK_CDECL BrTokenValueSet(void* mem, br_uint_32* pcombined_mask, br
     if (o < 0 || o >= template->n_map_entries) {
         return 0x1001;
     }
-
-    if (template->map_set_entry[o] != NULL)  {
-        r = ValueSet(mem, &tv, template->map_set_entry[o]);
-        if (r != 0) {
-            return r;
-        }
-        *pcombined_mask |= template->map_set_entry[o]->mask;
-        return 0;
-    } else {
+    if (template->map_set_entry[o] == NULL) {
         return 0x1001;
     }
+    r = ValueSet(mem, &tv, template->map_set_entry[o]);
+    if (r != 0) {
+        return r;
+    }
+    *pcombined_mask |= template->map_set_entry[o]->mask;
+    return 0;
 }
 C2_HOOK_FUNCTION(0x0052e5b0, BrTokenValueSet)
 
