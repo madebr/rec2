@@ -34,7 +34,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052fef0, BrImageRemove, BrImageRemove_original)
 
 br_image* (C2_HOOK_CDECL * BrImageFind_original)(char* pattern);
 br_image* C2_HOOK_CDECL BrImageFind(char* pattern) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrImageFind_original(pattern);
 #else
     char* c;
