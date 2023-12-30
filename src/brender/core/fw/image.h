@@ -11,7 +11,7 @@ br_boolean C2_HOOK_CDECL BrImageRemove(br_image* img);
 
 br_image* C2_HOOK_CDECL BrImageFind(const char* pattern);
 
-br_image* C2_HOOK_CDECL imageLoadHost(const char* name);
+br_image* C2_HOOK_STDCALL imageLoadHost(const char* name);
 
 br_image* C2_HOOK_CDECL BrImageReference(const char* name);
 
