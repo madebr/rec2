@@ -345,14 +345,144 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052d8e0, ValueQuery, ValueQuery_original)
 
 br_error (C2_HOOK_STDCALL * ValueSet_original)(void* block, br_token_value* tv, br_tv_template_entry* tep);
 br_error C2_HOOK_STDCALL ValueSet(void* block, br_token_value* tv, br_tv_template_entry* tep) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ValueSet_original(block, tv, tep);
 #else
     void* mem;
     int i;
     int t;
     br_tv_custom* custp;
-##error "Not implemented"
+
+    if (tep->flags & 0x8) {
+        return 0x1002;
+    }
+    mem = (br_uint_8*)block + tep->offset;
+
+    switch (tep->conv) {
+    case 2:
+        custp = (br_tv_custom*)tep->conv_arg;
+        if (custp == NULL ||custp->set == NULL) {
+            return 0x1001;
+        }
+        return custp->set(block, &tv->v.u32, tep);
+    case 3:
+        /* void* */
+        *(br_uint_32*)mem = tv->v.u32;
+        break;
+    case 4:
+        t = 2;
+        goto copy_integers;
+    case 5:
+        t = 3;
+        goto copy_integers;
+    case 6:
+        t = 4;
+        goto copy_integers;
+    case 7:
+        t = 6;
+        goto copy_integers;
+    case 8:
+        t = 12;
+        goto copy_integers;
+    case 9:
+        t = 16;
+copy_integers:
+        for (i = 0; i < t; i++) {
+            ((br_uint_32*)mem)[i] = ((br_uint_32*)tv->v.p)[i];
+        }
+        break;
+    case 10:
+        *(br_int_8*)mem = tv->v.i8;
+        break;
+    case 11:
+        *(br_int_16*)mem = tv->v.i16;
+        break;
+    case 12:
+        *(br_uint_8*)mem = tv->v.u8;
+        break;
+    case 13:
+        *(br_uint_16*)mem = tv->v.u16;
+        break;
+    case 14:
+        *(float*)mem = (float)tv->v.x / 65536.f;
+        break;
+    case 15:
+        *(br_fixed_ls*)mem = (br_fixed_ls)(tv->v.f * 65536.f);
+        break;
+    case 16:
+        t = 2;
+        goto store_fixed_as_floats;
+    case 17:
+        t = 2;
+        goto store_floats_as_fixed;
+    case 18:
+        t = 3;
+        goto store_fixed_as_floats;
+    case 19:
+        t = 3;
+        goto store_floats_as_fixed;
+    case 20:
+        t = 4;
+        goto store_fixed_as_floats;
+    case 21:
+        t = 4;
+        goto store_floats_as_fixed;
+    case 22:
+        t = 6;
+        goto store_fixed_as_floats;
+    case 23:
+        t = 6;
+        goto store_floats_as_fixed;
+    case 24:
+        t = 12;
+        goto store_fixed_as_floats;
+    case 25:
+        t = 12;
+        goto store_floats_as_fixed;
+    case 26:
+        t = 16;
+store_fixed_as_floats:
+        for (i = 0; i < t; i++) {
+            ((float*)mem)[i] = (float)((br_fixed_ls*)tv->v.p)[i] / 65536.f;
+        }
+        break;
+    case 27:
+        t = 16;
+store_floats_as_fixed:
+        for (i = 0; i < t; i++) {
+            ((br_fixed_ls*)mem)[i] = (br_fixed_ls)(((float*)tv->v.p)[i] * 65536.f);
+        }
+        break;
+    case 28:
+        BrStrNCpy(mem, tv->v.cstr, 64);
+        break;
+    case 29:
+        return 0x1001;
+    case 30:
+        if (tv->v.b) {
+            *(br_uint_32*) mem = tep->conv_arg;
+        } else {
+            *(br_uint_32*) mem = 1;
+        }
+        break;
+    case 31:
+        if (tv->v.b) {
+            *(br_uint_32*) mem |= tep->conv_arg;
+        } else {
+            *(br_uint_32*) mem &= ~tep->conv_arg;
+        }
+        break;
+    case 32:
+        if (tv->v.b) {
+            *(br_uint_32*) mem &= ~tep->conv_arg;
+        } else {
+            *(br_uint_32*) mem |= tep->conv_arg;
+        }
+        break;
+    default:
+        return 0x1001;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052e630, ValueSet, ValueSet_original)
