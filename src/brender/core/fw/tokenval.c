@@ -1345,12 +1345,180 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
 
 br_boolean (C2_HOOK_CDECL * BrTokenValueCompare_original)(br_token_value* tv1, br_token_value* tv2);
 br_boolean C2_HOOK_CDECL BrTokenValueCompare(br_token_value* tv1, br_token_value* tv2) {
-#if defined(C2_HOOKS_ENABLED)
-    return BrTokenValueCompare_original
-    (tv1, tv2);
+#if 0//defined(C2_HOOKS_ENABLED)
+    return BrTokenValueCompare_original(tv1, tv2);
 #else
     int i;
-#error "Not implemented"
+
+    if (tv1 == NULL && tv2 == NULL) {
+        return 1;
+    }
+    if (tv1 == NULL || tv2 == NULL) {
+        return 0;
+    }
+    for (; tv1->t == tv2->t; tv1++, tv2++) {
+        if (tv1->t == BR_NULL_TOKEN) {
+            return 1;
+        }
+        switch (BrTokenType(tv1->t)) {
+        case BRT_BOOLEAN:
+            if (!tv1->v.b != !tv2->v.b) {
+                return 0;
+            }
+            break;
+        case BRT_INT_8:
+        case BRT_UINT_8:
+            if (tv1->v.u8 != tv2->v.u8) {
+                return 0;
+            }
+            break;
+        case BRT_INT_16:
+        case BRT_UINT_16:
+            if (tv1->v.u16 != tv2->v.u16) {
+                return 0;
+            }
+            break;
+        case BRT_INT_32:
+        case BRT_UINT_32:
+        case BRT_COLOUR_RGB:
+            if (tv1->v.u32 != tv2->v.u32) {
+                return 0;
+            }
+            break;
+        case BRT_FIXED:
+            if (tv1->v.x != tv2->v.x) {
+                return 0;
+            }
+            break;
+        case BRT_FLOAT:
+        case BRT_ANGLE:
+            if (tv1->v.f != tv2->v.f) {
+                return 0;
+            }
+            break;
+        case BRT_OBJECT:
+            if (tv1->v.o != tv2->v.o) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR2_INTEGER:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 2 * sizeof(int)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR3_INTEGER:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 3 * sizeof(int)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR4_INTEGER:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 3 * sizeof(int)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR2_FIXED:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 2 * sizeof(br_fixed_ls)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR3_FIXED:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 3 * sizeof(br_fixed_ls)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR4_FIXED:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 3 * sizeof(br_fixed_ls)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR2_FLOAT:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 2 * sizeof(float)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR3_FLOAT:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 3 * sizeof(float)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_VECTOR4_FLOAT:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 3 * sizeof(float)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_MATRIX23_FIXED:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 6 * sizeof(br_fixed_ls)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_MATRIX34_FIXED:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 12 * sizeof(br_fixed_ls)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_MATRIX4_FIXED:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 16 * sizeof(br_fixed_ls)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_MATRIX23_FLOAT:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 6 * sizeof(float)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_MATRIX34_FLOAT:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 12 * sizeof(float)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_MATRIX4_FLOAT:
+            if (BrMemCpy(tv1->v.p, tv2->v.p, 16 * sizeof(float)) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_STRING:
+        case BRT_CONSTANT_STRING:
+            if (BrStrCmp(tv1->v.cstr, tv1->v.cstr) != 0) {
+                return 0;
+            }
+            break;
+        case BRT_OBJECT_LIST:
+        case BRT_POINTER_LIST:
+            for (i = 0;; i++) {
+#if 1
+                if (tv1->v.pl[i] != tv2->v.pl[i]) {
+#else
+                if (tv1->v.pl[i] != tv1->v.pl[i]) {
+#endif
+                    return 0;
+                }
+                if (tv1->v.pl[i] == NULL) {
+                    break;
+                }
+            }
+            break;
+        case BRT_TOKEN_LIST:
+            for (i = 0;; i++) {
+#if 1
+                if (tv1->v.tl[i] != tv2->v.tl[i]) {
+#else
+                if (tv1->v.tl[i] != tv1->v.tl[i]) {
+#endif
+                    return 0;
+                }
+                if (tv1->v.tl[i] == BR_NULL_TOKEN) {
+                    break;
+                }
+            }
+            break;
+        default:
+            if (tv1->v.p != tv2->v.p) {
+                return 0;
+            }
+            break;
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052ee40, BrTokenValueCompare, BrTokenValueCompare_original)
