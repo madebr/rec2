@@ -54,12 +54,9 @@ br_image* C2_HOOK_CDECL BrImageFind(char* pattern) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052ff10, BrImageFind, BrImageFind_original)
 
-#if 0
-br_image* C2_HOOK_CDECL imageLoadHost(char* name) {
+br_image* C2_HOOK_STDCALL imageLoadHost(char* name) {
     br_image* img;
     void* host_image;
-    LOG_TRACE("(\"%s\")", name);
-    NOT_IMPLEMENTED();
 
     host_image = HostImageLoad(name);
     if (host_image != NULL) {
@@ -67,10 +64,11 @@ br_image* C2_HOOK_CDECL imageLoadHost(char* name) {
         img->identifier = BrResStrDup(img, name);
         img->type = 3;
         img->type_pointer = host_image;
+    } else {
+        img = NULL;
     }
     return img;
 }
-#endif
 
 br_image* (C2_HOOK_CDECL * BrImageReference_original)(char* name);
 br_image* C2_HOOK_CDECL BrImageReference(char* name) {
