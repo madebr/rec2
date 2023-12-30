@@ -1523,11 +1523,10 @@ br_boolean C2_HOOK_CDECL BrTokenValueCompare(br_token_value* tv1, br_token_value
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052ee40, BrTokenValueCompare, BrTokenValueCompare_original)
 
-#if 0
-br_error C2_HOOK_CDECl BrTokenValueDup(br_token_value** dstp, br_token_value* src) {
-    int i;
-    int c;
+br_error C2_HOOK_CDECL BrTokenValueDup(br_token_value** dstp, br_token_value* src) {
     br_token_value* tv;
-#error "Not implemented"
+
+	for (tv = src; tv->t != BR_NULL_TOKEN; tv++) {
+    }
+	return 0;
 }
-#endif
