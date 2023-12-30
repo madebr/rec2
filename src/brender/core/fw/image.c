@@ -72,7 +72,7 @@ br_image* C2_HOOK_STDCALL imageLoadHost(char* name) {
 
 br_image* (C2_HOOK_CDECL * BrImageReference_original)(char* name);
 br_image* C2_HOOK_CDECL BrImageReference(char* name) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrImageReference_original(name);
 #else
     char* suffix;
@@ -91,10 +91,10 @@ br_image* C2_HOOK_CDECL BrImageReference(char* name) {
         if (img == NULL) {
             BrStrCpy(scratch, name);
             BrStrCat(scratch, ".BDD");
-            img = ImageLoad(name);
+            img = ImageLoad(scratch);
         }
         if (img == NULL) {
-            img = imageLoadHost(scratch);
+            img = imageLoadHost(name);
         }
         if (img == NULL) {
             BrStrCpy(scratch, name);
@@ -118,6 +118,11 @@ br_image* C2_HOOK_CDECL BrImageReference(char* name) {
     }
 
     if (img != NULL) {
+        for (suffix = img->identifier; *suffix != '\0' && *suffix != '.'; suffix++) {
+        }
+        if (suffix != NULL) {
+            *suffix = '\0';
+        }
         BrResAdd(C2V(fw).res, img);
         BrAddHead(&C2V(fw).images, &img->node);
     }
