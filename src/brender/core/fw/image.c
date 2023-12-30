@@ -12,7 +12,7 @@
 
 br_boolean (C2_HOOK_CDECL * BrImageAdd_original)(br_image* img);
 br_boolean C2_HOOK_CDECL BrImageAdd(br_image* img) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrImageAdd_original(img);
 #else
     BrAddHead(&C2V(fw).images, &img->node);
