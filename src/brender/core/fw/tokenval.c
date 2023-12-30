@@ -489,14 +489,76 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052e630, ValueSet, ValueSet_original)
 
 br_size_t (C2_HOOK_STDCALL * ValueExtraSize_original)(void* block, br_tv_template_entry* tep);
 br_size_t C2_HOOK_STDCALL ValueExtraSize(void* block, br_tv_template_entry* tep) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ValueExtraSize_original(block, tep);
 #else
     void* mem;
     br_uint_32* lp;
     int t;
     br_tv_custom* custp;
-#error "Not implemented"
+
+    if (tep->flags & 0x8) {
+        mem = (void*)&tep->offset;
+    } else {
+        mem = (br_uint_8*)block + tep->offset;
+    }
+    switch (tep->conv) {
+    case 2:
+        custp = (br_tv_custom*)tep->conv_arg;
+        if (custp == NULL || custp->extra_size == NULL) {
+            return 0;
+        }
+        return custp->extra_size(block, tep);
+    case 4:
+        return 2 * sizeof(int);
+    case 5:
+        return 3 * sizeof(int);
+    case 6:
+        return 4 * sizeof(int);
+    case 7:
+        return 6 * sizeof(int);
+    case 8:
+        return 12 * sizeof(int);
+    case 9:
+        return 16 * sizeof(int);
+    case 16:
+        return 2 * sizeof(float);
+    case 17:
+        return 2 * sizeof(br_fixed_ls);
+    case 18:
+        return 3 * sizeof(float);
+    case 19:
+        return 3 * sizeof(br_fixed_ls);
+    case 20:
+        return 4 * sizeof(float);
+    case 21:
+        return 4 * sizeof(br_fixed_ls);
+    case 22:
+        return 6 * sizeof(float);
+    case 23:
+        return 6 * sizeof(br_fixed_ls);
+    case 24:
+        return 12 * sizeof(float);
+    case 25:
+        return 12 * sizeof(br_fixed_ls);
+    case 26:
+        return 16 * sizeof(float);
+    case 27:
+        return 16 * sizeof(br_fixed_ls);
+    case 28:
+        return (BrStrLen(*(char**)mem) + 1 + sizeof(int) - 1) / sizeof(int);
+    case 29:
+        t = 1;
+        lp = *(br_uint_32**)mem;
+        if (lp != NULL) {
+            while (*lp++ != 0) {
+                t++;
+            }
+        }
+        return t * sizeof(int);
+    default:
+        return 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052e300, ValueExtraSize, ValueExtraSize_original)
