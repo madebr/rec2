@@ -23,7 +23,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052fed0, BrImageAdd, BrImageAdd_original)
 
 br_boolean (C2_HOOK_CDECL * BrImageRemove_original)(br_image* img);
 br_boolean C2_HOOK_CDECL BrImageRemove(br_image* img) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrImageRemove_original(img);
 #else
     BrRemove(&img->node);
