@@ -31,10 +31,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053fbb0, HostIniSectionExists, HostIniSectionExists
 br_error (C2_HOOK_CDECL * HostIniQuery_original)(char* ini_file, char* section_name, char* entry, char* Buffer, int max, br_uint_16* size);
 br_error C2_HOOK_CDECL HostIniQuery(char* ini_file, char* section_name, char* entry, char* Buffer, int max, br_uint_16* size) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return HostIniQuery_original(ini_file, section_name, entry, Buffer, max, size);
 #else
-#error "Not implemented"
+    static char default_entry[] = "";
+
+    *size = (br_uint_16)GetPrivateProfileStringA(section_name, entry, default_entry, Buffer, max, ini_file);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fbe0, HostIniQuery, HostIniQuery_original)
