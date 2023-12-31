@@ -1042,6 +1042,10 @@ typedef struct br_font {
 } br_font;
 #pragma pack(pop)
 
+enum {
+    BR_FONTF_VARIABLE_WIDTH = 0x1,
+};
+
 typedef struct br_object_dispatch br_object_dispatch;
 typedef struct br_object {
     br_object_dispatch* dispatch;

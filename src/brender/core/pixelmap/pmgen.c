@@ -1,5 +1,7 @@
 #include "pmgen.h"
 
+#include "core/std/brstdlib.h"
+
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_match_original)(br_device_pixelmap* self, br_device_pixelmap** newpm, br_token_value* tv);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_match(br_device_pixelmap* self, br_device_pixelmap** newpm, br_token_value* tv) {
 #if defined(C2_HOOKS_ENABLED)
@@ -210,12 +212,29 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053d660, _M_br_device_pixelmap_gen_text, _M_br_devi
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_textBounds_original)(br_device_pixelmap* self, br_rectangle* rect, br_font* font,const  char* text);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_textBounds(br_device_pixelmap* self, br_rectangle* rect, br_font* font, const char* text) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_textBounds_original(self, rect, font, text);
 #else
     int i;
     int j;
-#error "Not implemented"
+
+    rect->x = 0;
+    rect->y = 0;
+    rect->w = 0;
+    rect->h = font->glyph_y;
+    if (text == NULL) {
+        return 0;
+    }
+    if (!(font->flags & BR_FONTF_VARIABLE_WIDTH)) {
+        rect->w = BrStrLen(text) * (font->glyph_x + 1) - 1;
+        return 0;
+    }
+    j = BrStrLen(text);
+    for (i = 0; i < j; i++) {
+        rect->w += font->width[(br_uint_8)text[i]] + 1;
+    }
+    rect->w -= 1;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053d810, _M_br_device_pixelmap_gen_textBounds, _M_br_device_pixelmap_gen_textBounds_original)
