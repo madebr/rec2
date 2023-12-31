@@ -158,6 +158,8 @@ add_library(brender STATIC
     core/v1db/regsupt.c
     core/v1db/regsupt.h
     core/v1db/stackids.h
+    core/v1db/sys_conf.c
+    core/v1db/sys_conf.h
     core/v1db/v1dbfile.c
     core/v1db/v1dbfile.h
 )
