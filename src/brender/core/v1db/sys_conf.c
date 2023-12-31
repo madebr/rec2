@@ -118,12 +118,17 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00530a90, BrSystemConfigLoad, BrSystemConfigLoad_ori
 br_error (C2_HOOK_CDECL * BrSystemConfigSetString_original)(br_token t, char* string);
 br_error C2_HOOK_CDECL BrSystemConfigSetString(br_token t, char* string) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrSystemConfigSetString_original(t, string);
 #else
     br_value v;
 
-#error "Not implemented"
+    if (!Is_Valid_Sys_Config_Token(t)) {
+        BrFailure("Not a valid System configuration token.\n");
+        return 0x1002;
+    }
+    v.cstr = string;
+    return BrAssociativeArraySetEntry(C2V(fw).sys_config, t, v);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00530d80, BrSystemConfigSetString, BrSystemConfigSetString_original)
