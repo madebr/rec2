@@ -41,17 +41,50 @@ void C2_HOOK_STDCALL templateResolveNames(br_tv_template* template) {
 
 void (C2_HOOK_STDCALL * templateMakeMap_original)(br_tv_template* template);
 void C2_HOOK_STDCALL templateMakeMap(br_tv_template* template) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     templateMakeMap_original(template);
 #else
     br_tv_template_entry* tp;
-    char* map;
     br_int_32 min;
     br_int_32 max;
     int i;
     int n;
     int e;
-#error "Not implemented"
+
+    if (!template->names_resolved) {
+        templateResolveNames(template);
+    }
+    max = min = template->entries->token;
+    for (i = 0; i < template->n_entries; i++) {
+        tp = &template->entries[i];
+        if (tp->token < min) {
+            min = tp->token;
+        }
+        if (tp->token > max) {
+            max = tp->token;
+        }
+    }
+    n = max - min + 1;
+    template->map_base = min;
+    template->n_map_entries = n;
+
+    template->map_query_entry = BrResAllocate(template->res, 2 * n * sizeof(br_tv_template_entry*), BR_MEMORY_TOKEN_MAP);
+    template->map_set_entry = &template->map_query_entry[n];
+    for (i = 0; i < n; i++) {
+        template->map_query_entry[i] = NULL;
+        template->map_set_entry[i] = NULL;
+    }
+
+    for (i = 0; i < template->n_entries; i++) {
+        tp = &template->entries[i];
+        e = tp->token - template->map_base;
+        if (tp->flags & 0x1) {
+            template->map_query_entry[e] = tp;
+        }
+        if (tp->flags & 0x2) {
+            template->map_set_entry[e] = tp;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d7f0, templateMakeMap, templateMakeMap_original)
