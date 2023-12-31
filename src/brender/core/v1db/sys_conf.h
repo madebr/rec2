@@ -9,15 +9,11 @@ br_boolean C2_HOOK_STDCALL Is_Valid_Sys_Config_Token(br_token t);
 
 br_boolean C2_HOOK_STDCALL LoadIniEntry(char* ini_file, char* section_name, br_token t, char* Entry);
 
-#if 0
-br_error LoadIniConfig(char* ini_file, char* section_name);
-#endif
+br_error C2_HOOK_STDCALL LoadIniConfig(char* ini_file, char* section_name);
 
 br_boolean C2_HOOK_STDCALL LoadRegistryEntry(char* Reg_Path, void* hKey, br_token t, char* Entry);
 
-#if 0
 br_error C2_HOOK_STDCALL LoadRegistryConfig(char* Reg_Path, void* hKey);
-#endif
 
 br_error C2_HOOK_CDECL BrSetDefaultConfig(br_token t, char* Entry);
 
