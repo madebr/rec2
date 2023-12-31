@@ -245,10 +245,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053d970, _M_br_device_pixelmap_gen_flush, _M_br_dev
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_synchronise_original)(br_device_pixelmap* self, br_token sync_type, br_boolean block);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_synchronise(br_device_pixelmap* self, br_token sync_type, br_boolean block) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
 return _M_br_device_pixelmap_gen_synchronise_original(self, sync_type, block);
 #else
-#error "Not implemented"
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053d980, _M_br_device_pixelmap_gen_synchronise, _M_br_device_pixelmap_gen_synchronise_original)
