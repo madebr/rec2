@@ -8,6 +8,7 @@
 #include "core/fw/token.h"
 #include "core/std/brstddiag.h"
 #include "core/std/brstdfile.h"
+#include "core/std/brstdlib.h"
 #include "core/std/brstdmem.h"
 #include "core/v1db/sys_conf.h"
 
@@ -114,16 +115,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527e20, BrFwBegin, BrFwBegin_original)
 
 br_error (C2_HOOK_CDECL * BrFwEnd_original)(void);
 br_error C2_HOOK_CDECL BrFwEnd(void) {
-#if HOOK_FW
+#if 0//HOOK_FW
     return BrFwEnd_original();
 #else
 
-    if (fw.active == 0) {
-        return 4102;
+    if (!C2V(fw).active) {
+        return 0x1006;
     }
-    BrImageRemove(&Image_BRCORE1);
-    BrResFree(fw.res);
-    BrMemSet(&fw, 0, sizeof(fw));
+    BrImageRemove(&C2V(Image_BRCORE1));
+    BrResFree(C2V(fw).res);
+    BrMemSet(&C2V(fw), 0, sizeof(C2V(fw)));
     return 0;
 #endif
 }
