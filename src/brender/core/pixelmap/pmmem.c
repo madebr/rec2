@@ -248,14 +248,37 @@ C2_HOOK_FUNCTION(0x00539890, _M_br_device_pixelmap_mem_validSource)
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_mem_resize_original)(br_device_pixelmap* self, br_int_32 width, br_int_32 height);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_resize(br_device_pixelmap* self, br_int_32 width, br_int_32 height) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_mem_resize_original(self, width, height);
 #else
     char* pixels;
     pm_type_info* tip;
     br_int_16 old_row_bytes;
-    LOG_TRACE("(%p, %d, %d)", self, width, height);
-#error "Not implemented"
+
+    pixels = self->pm_pixels;
+    if (self->pm_row_bytes < 0) {
+        pixels += (self->pm_height - 1) * self->pm_row_bytes;
+    }
+    if (BrResIsChild(self, pixels)) {
+        BrResFree(pixels);
+    }
+    self->pm_width = width;
+    self->pm_height = height;
+    old_row_bytes = self->pm_row_bytes;
+    tip = &C2V(pmTypeInfo)[self->pm_type];
+    self->pm_row_bytes = (width + tip->align - 1) / tip->align * tip->bits * tip->align / 8;
+
+    if (((8 * self->pm_row_bytes) % tip->bits) == 0) {
+        self->pm_flags |= BR_PMF_ROW_WHOLEPIXELS;
+    }
+    self->pm_pixels = pixels = BrResAllocate(self, height * self->pm_row_bytes, BR_MEMORY_PIXELS);
+// FIXME: _GetSysQual()
+//    self->pm_pixels_qualifier = _GetSysQual();
+    if (old_row_bytes < 0) {
+        self->pm_pixels = pixels + (self->pm_height - 1) * self->pm_row_bytes;
+        self->pm_row_bytes = -self->pm_row_bytes;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005398a0, _M_br_device_pixelmap_mem_resize, _M_br_device_pixelmap_mem_resize_original)
