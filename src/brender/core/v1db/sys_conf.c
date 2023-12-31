@@ -47,12 +47,18 @@ br_boolean C2_HOOK_STDCALL LoadIniEntry(char* ini_file, char* section_name, br_t
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005308b0, LoadIniEntry, LoadIniEntry_original)
 
-#if 0
 br_error C2_HOOK_STDCALL LoadIniConfig(char* ini_file, char* section_name) {
 
-#error "Not implemented"
+    if (!HostIniSectionExists(ini_file, section_name)) {
+        return 0x1002;
+    }
+    LoadIniEntry(ini_file, section_name, BRT_BRENDER_PATH_STR, "BRENDER_PATH");
+    LoadIniEntry(ini_file, section_name, BRT_BRENDER_DRIVERS_STR, "BRENDER_DRIVERS");
+    LoadIniEntry(ini_file, section_name, BRT_BRENDER_DEVICES_STR, "BRENDER_DEVICES");
+    LoadIniEntry(ini_file, section_name, BRT_DEFAULT_DEVICE_STR, "BRENDER_DOS_GFX");
+    LoadIniEntry(ini_file, section_name, BRT_DEFAULT_DEVICE_STR, "BR_DEFAULT_DEVICE");
+    return 0;
 }
-#endif
 
 br_boolean (C2_HOOK_STDCALL * LoadRegistryEntry_original)(char* Reg_Path, void* hKey, br_token t, char* Entry);
 br_boolean C2_HOOK_STDCALL LoadRegistryEntry(char* Reg_Path, void* hKey, br_token t, char* Entry) {
@@ -76,12 +82,25 @@ br_boolean C2_HOOK_STDCALL LoadRegistryEntry(char* Reg_Path, void* hKey, br_toke
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00530920, LoadRegistryEntry, LoadRegistryEntry_original)
 
-#if 0
 br_error C2_HOOK_STDCALL LoadRegistryConfig(char* Reg_Path, void* hKey) {
 
-#error "Not implemented"
+    if (!LoadRegistryEntry(Reg_Path, hKey, BRT_BRENDER_PATH_STR, "BRENDER_PATH")) {
+        return 0x1002;
+    }
+    if (!LoadRegistryEntry(Reg_Path, hKey, BRT_BRENDER_DRIVERS_STR, "BRENDER_DRIVERS")) {
+        return 0x1002;
+    }
+    if (!LoadRegistryEntry(Reg_Path, hKey, BRT_BRENDER_DEVICES_STR, "BRENDER_DEVICES")) {
+        return 0x1002;
+    }
+    if (!LoadRegistryEntry(Reg_Path, hKey, BRT_DEFAULT_DEVICE_STR, "BRENDER_DOS_GFX")) {
+        return 0x1002;
+    }
+    if (!LoadRegistryEntry(Reg_Path, hKey, BRT_DEFAULT_DEVICE_STR, "BR_DEFAULT_DEVICE")) {
+        return 0x1002;
+    }
+    return 0;
 }
-#endif
 
 br_error (C2_HOOK_CDECL * BrSetDefaultConfig_original)(br_token t, char* Entry);
 br_error C2_HOOK_CDECL BrSetDefaultConfig(br_token t, char* Entry) {
@@ -118,12 +137,24 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00530460, BrSystemConfigBegin, BrSystemConfigBegin_o
 br_error (C2_HOOK_CDECL * BrSystemConfigLoad_original)(br_token t, char* Param1, void* Param2);
 br_error C2_HOOK_CDECL BrSystemConfigLoad(br_token t, char* Param1, void* Param2) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrSystemConfigLoad_original(t, Param1, Param2);
 #else
     br_error r;
 
-#error "Not implemented"
+    switch (t) {
+    case BRT_REGISTRY_STR:
+        r = LoadRegistryConfig(Param1, Param2);
+        break;
+    case BRT_INI_STR:
+        r = LoadIniConfig(Param1, Param2);
+        break;
+    default:
+        BrFailure("Invalid system config load token. Must be REGISTRY or INI");
+        r = 0x1002;
+        break;
+    }
+    return r;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00530a90, BrSystemConfigLoad, BrSystemConfigLoad_original)
