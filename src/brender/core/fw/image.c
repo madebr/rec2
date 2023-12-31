@@ -194,13 +194,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005301e0, BrImageLookupName, BrImageLookupName_origi
 
 void* (C2_HOOK_CDECL * BrImageLookupOrdinal_original)(br_image* img, br_uint_32 ordinal);
 void* C2_HOOK_CDECL BrImageLookupOrdinal(br_image* img, br_uint_32 ordinal) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrImageLookupOrdinal_original(img, ordinal);
 #else
     if (img->type == 3) {
         return HostImageLookupOrdinal(img->type_pointer, ordinal);
     }
-    if (img->n_functions < (ordinal - img->ordinal_base)) {
+    if (ordinal - img->ordinal_base > img->n_functions) {
         return NULL;
     }
     return img->functions[ordinal - img->ordinal_base];
