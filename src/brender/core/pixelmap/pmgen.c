@@ -222,13 +222,25 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053d810, _M_br_device_pixelmap_gen_textBounds, _M_b
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_copyBits_original)(br_device_pixelmap* self, br_point* point, br_uint_8* src, br_uint_16 s_stride, br_rectangle* bit_rect, br_uint_32 colour);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_copyBits(br_device_pixelmap* self, br_point* point, br_uint_8* src, br_uint_16 s_stride, br_rectangle* bit_rect, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_copyBits_original(self, point, src, s_stride, bit_rect, colour);
 #else
     br_int_32 x;
     br_int_32 y;
     br_point p;
-#error "Not implemented"
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _pixelSet, 0xa0);
+
+    for (y = bit_rect->y; y < bit_rect->y + bit_rect->h; y++) {
+        for (x = bit_rect->x; x < bit_rect->x + bit_rect->w; x++) {
+            if (src[y * s_stride + x / 8] & (0x80 >> (x % 8))) {
+                p.x = point->x + x;
+                p.y = point->y + y;
+                self->dispatch->_pixelSet(self, &p, colour);
+            }
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053d8a0, _M_br_device_pixelmap_gen_copyBits, _M_br_device_pixelmap_gen_copyBits_original)
