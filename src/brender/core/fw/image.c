@@ -210,7 +210,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00530320, BrImageLookupOrdinal, BrImageLookupOrdinal
 
 void (C2_HOOK_CDECL * BrImageDereference_original)(br_image* image);
 void C2_HOOK_CDECL BrImageDereference(br_image* image) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrImageDereference_original(image);
 #else
     image->ref_count--;
