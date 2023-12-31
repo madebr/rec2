@@ -3,6 +3,7 @@
 #include "core/fw/assocarr.h"
 #include "core/fw/diag.h"
 #include "core/fw/fwsetup.h"
+#include "core/host/hostcfg.h"
 #include "core/std/brstdlib.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token, valid_system_config_tokens, 5, 0x0066c870, {
@@ -50,7 +51,7 @@ br_error C2_HOOK_STDCALL LoadIniConfig(char* ini_file, char* section_name) {
 br_boolean (C2_HOOK_STDCALL * LoadRegistryEntry_original)(char* Reg_Path, void* hKey, br_token t, char* Entry);
 br_boolean C2_HOOK_STDCALL LoadRegistryEntry(char* Reg_Path, void* hKey, br_token t, char* Entry) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return LoadRegistryEntry_original(Reg_Path, hKey, t, Entry);
 #else
     char Temp[255];
@@ -58,7 +59,13 @@ br_boolean C2_HOOK_STDCALL LoadRegistryEntry(char* Reg_Path, void* hKey, br_toke
     br_value v;
     br_error r;
 
-#error "Not implemented"
+    r = HostRegistryQuery(hKey, Reg_Path, Entry, Temp, sizeof(Temp), &size);
+    if (r != 0) {
+        return r;
+    }
+    v.cstr = Temp;
+    BrAssociativeArraySetEntry(C2V(fw).sys_config, t, v);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00530920, LoadRegistryEntry, LoadRegistryEntry_original)
