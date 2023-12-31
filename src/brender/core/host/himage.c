@@ -33,10 +33,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053fb70, HostImageLookupName, HostImageLookupName_o
 
 void* (C2_HOOK_CDECL * HostImageLookupOrdinal_original)(void* img, br_uint_32 ordinal);
 void* C2_HOOK_CDECL HostImageLookupOrdinal(void* img, br_uint_32 ordinal) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return HostImageLookupOrdinal_original(img, ordinal);
 #else
-#error "not implemented"
+
+    return NULL;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fb90, HostImageLookupOrdinal, HostImageLookupOrdinal_original)
