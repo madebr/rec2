@@ -1,5 +1,7 @@
 #include "hostcfg.h"
 
+#include "core/fw/diag.h"
+
 #include <windows.h>
 
 const char* (C2_HOOK_CDECL * HostDefaultDevice_original)(void);
@@ -46,10 +48,28 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053fbe0, HostIniQuery, HostIniQuery_original)
 br_error (C2_HOOK_CDECL * HostRegistryQuery_original)(void* hKey, char* Path, char* entry, char* Buffer, br_uint_16 max, br_uint_16* size);
 br_error C2_HOOK_CDECL HostRegistryQuery(void* hKey, char* Path, char* entry, char* Buffer, br_uint_16 max, br_uint_16* size) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return HostRegistryQuery_original(hKey, Path, entry, Buffer, max, size);
 #else
-#error "Not implemented"
+    DWORD cbData;
+    DWORD type;
+
+    if (hKey == NULL) {
+        hKey = HKEY_LOCAL_MACHINE;
+    }
+    if (RegOpenKeyExA(hKey, Path, 0, KEY_READ, (PHKEY)&hKey) != ERROR_SUCCESS) {
+        return 0x1002;
+    }
+    type = REG_NONE;
+    cbData = max;
+    if (RegQueryValueExA((HKEY)hKey, entry, NULL, &type, (LPBYTE)Buffer, &cbData) != ERROR_SUCCESS) {
+        return 0x1002;
+    }
+    if (type != REG_SZ) {
+        BrFailure("Registry entry type is not a string");
+    }
+    *size = (br_uint_16)cbData;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fc10, HostRegistryQuery, HostRegistryQuery_original)
