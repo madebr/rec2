@@ -1,8 +1,15 @@
 #include "fwsetup.h"
 
+#include "core/fw/image.h"
+#include "core/fw/register.h"
+#include "core/fw/resource.h"
+#include "core/fw/resreg.h"
+#include "core/fw/brlists.h"
+#include "core/fw/token.h"
 #include "core/std/brstddiag.h"
 #include "core/std/brstdfile.h"
 #include "core/std/brstdmem.h"
+#include "core/v1db/sys_conf.h"
 
 #define HOOK_FW 1
 
@@ -64,13 +71,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_image, Image_BRCORE1, 0x00665e58, {
 
 br_error (C2_HOOK_CDECL * BrFwBegin_original)(void);
 br_error C2_HOOK_CDECL BrFwBegin(void) {
-#if HOOK_FW
+#if 0//HOOK_FW
     return BrFwBegin_original();
 #else
     int i;
 
     if (C2V(fw).active) {
-        return 4103;
+        return 0x1007;
     }
 
     if (C2V(fw).diag == NULL) {
@@ -82,7 +89,7 @@ br_error C2_HOOK_CDECL BrFwBegin(void) {
     if (C2V(fw).mem == NULL) {
         C2V(fw).mem = C2V(_BrDefaultAllocator);
     }
-    C2V(fw).open_mode = 0;
+    C2V(fw).open_mode = BR_FS_MODE_BINARY;
     BrRegistryNew(&C2V(fw).reg_resource_classes);
 
     C2V(fw).resource_class_index[BR_MEMORY_REGISTRY] = &C2V(fw_resourceClasses)[0];
