@@ -1,6 +1,7 @@
 #include "sys_conf.h"
 
 #include "core/fw/assocarr.h"
+#include "core/fw/brprintf.h"
 #include "core/fw/diag.h"
 #include "core/fw/fwsetup.h"
 #include "core/host/hostcfg.h"
@@ -105,7 +106,7 @@ br_error C2_HOOK_STDCALL LoadRegistryConfig(char* Reg_Path, void* hKey) {
 br_error (C2_HOOK_CDECL * BrSetDefaultConfig_original)(br_token t, char* Entry);
 br_error C2_HOOK_CDECL BrSetDefaultConfig(br_token t, char* Entry) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrSetDefaultConfig_original(t, Entry);
 #else
     char Reg_Path[255];
@@ -114,7 +115,23 @@ br_error C2_HOOK_CDECL BrSetDefaultConfig(br_token t, char* Entry) {
     int v2;
     br_value v;
 
-#error "Not implemented"
+    v0 = 1;
+    v1 = 3;
+    v2 = 0;
+    BrSprintf(Reg_Path, "%s\\%d.%d.%d","SOFTWARE\\Argonaut\\BRender", v0, v1, v2);
+    if (LoadRegistryEntry(Reg_Path, NULL, t, Entry)) {
+        return 0;
+    }
+
+    if (LoadIniEntry("BRender.ini", "BRender", t, Entry)) {
+        return 0;
+    }
+
+    v.cstr = BrGetEnv(Entry);
+    if (v.cstr != NULL) {
+        BrAssociativeArraySetEntry(C2V(fw).sys_config, t, v);
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00530990, BrSetDefaultConfig, BrSetDefaultConfig_original)
