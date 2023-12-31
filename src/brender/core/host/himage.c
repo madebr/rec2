@@ -15,10 +15,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053fb50, HostImageLoad, HostImageLoad_original)
 
 void (C2_HOOK_CDECL * HostImageUnload_original)(void* image);
 void C2_HOOK_CDECL HostImageUnload(void* image) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     HostImageUnload_original(image);
 #else
-#error "not implemented"
+
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fb60, HostImageUnload, HostImageUnload_original)
