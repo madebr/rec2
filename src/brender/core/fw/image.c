@@ -234,7 +234,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00530360, BrImageDereference, BrImageDereference_ori
 
 void (C2_HOOK_CDECL * BrImageFree_original)(br_image* image);
 void C2_HOOK_CDECL BrImageFree(br_image* image) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrImageFree_original(image);
 #else
     int i;
