@@ -1,5 +1,10 @@
 #include "sys_conf.h"
 
+#include "core/fw/assocarr.h"
+#include "core/fw/diag.h"
+#include "core/fw/fwsetup.h"
+#include "core/std/brstdlib.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token, valid_system_config_tokens, 5, 0x0066c870, {
     BRT_BRENDER_PATH_STR,
     BRT_BRENDER_DRIVERS_STR,
@@ -8,24 +13,18 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token, valid_system_config_tokens, 5, 0
     BR_NULL_TOKEN,
 });
 
-#if 0
 br_boolean C2_HOOK_STDCALL Is_Valid_Sys_Config_Token(br_token t) {
-
-#if defined(C2_HOOKS_ENABLED)
-#error "Not hooked yet"
-#else
-    br_boolean bOK;
     int i;
 
-    for (i = 0; C2V(valid_system_config_tokens)[i].t != BR_NULL_TOKEN; i++) {
-        if (C2V(valid_system_config_tokens)[i].t == t) {
+    for (i = 0; C2V(valid_system_config_tokens)[i] != BR_NULL_TOKEN; i++) {
+        if (C2V(valid_system_config_tokens)[i] == t) {
             return 1;
         }
     }
     return 0;
-#endif
 }
 
+#if 0
 br_boolean (C2_HOOK_STDCALL * LoadIniEntry_original)(char* ini_file, char* section_name, br_token t, char* Entry);
 br_boolean C2_HOOK_STDCALL LoadIniEntry(char* ini_file, char* section_name, br_token t, char* Entry) {
 
@@ -133,7 +132,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00530d80, BrSystemConfigSetString, BrSystemConfigSet
 br_error (C2_HOOK_CDECL * BrSystemConfigQueryString_original)(br_token t, char* string, int max_size);
 br_error C2_HOOK_CDECL BrSystemConfigQueryString(br_token t, char* string, int max_size) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrSystemConfigQueryString_original(t, string, max_size);
 #else
     br_error r;
@@ -143,15 +142,16 @@ br_error C2_HOOK_CDECL BrSystemConfigQueryString(br_token t, char* string, int m
         BrFailure("Not a valid system configuration token.\n");
         return 0x1002;
     }
-    e = BrAssociativeArrayQuery(C2V(fw).sys_config, t, &v);
-    if (e != 0) {
-        return e;
+    r = BrAssociativeArrayQuery(C2V(fw).sys_config, t, &v);
+    if (r != 0) {
+        string[0] = '\0';
+        return r;
     }
     if (v.cstr == NULL) {
         string[0] = '\0';
         return 0;
     }
-    BrStrNCpy(string, v, max_size);
+    BrStrNCpy(string, v.cstr, max_size);
     return 0;
 #endif
 }

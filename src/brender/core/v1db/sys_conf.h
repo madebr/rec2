@@ -5,9 +5,9 @@
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_token, valid_system_config_tokens, 5);
 
-#if 0
 br_boolean C2_HOOK_STDCALL Is_Valid_Sys_Config_Token(br_token t);
 
+#if 0
 br_boolean C2_HOOK_STDCALL LoadIniEntry(char* ini_file, char* section_name, br_token t, char* Entry);
 
 br_error LoadIniConfig(char* ini_file, char* section_name);
