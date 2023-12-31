@@ -2,6 +2,7 @@
 
 #include "angles.h"
 #include "matrix34.h"
+#include "matrix4.h"
 #include "quat.h"
 #include "vector.h"
 
@@ -180,11 +181,15 @@ C2_HOOK_FUNCTION(0x00531ba0, BrMatrix34PostTransform)
 
 void (C2_HOOK_CDECL * BrMatrix4PreTransform_original)(br_matrix4* mat, const br_transform* xform);
 void C2_HOOK_CDECL BrMatrix4PreTransform(br_matrix4* mat, const br_transform* xform) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrMatrix4PreTransform_original(mat, xform);
 #else
     br_matrix34 tmp;
-#error "Not implemented"
+
+    if (xform->type != BR_TRANSFORM_IDENTITY) {
+        BrTransformToMatrix34(&tmp, xform);
+        BrMatrix4Pre34(mat, &tmp);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00531be0, BrMatrix4PreTransform, BrMatrix4PreTransform_original)
