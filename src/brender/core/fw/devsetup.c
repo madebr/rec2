@@ -28,22 +28,16 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, char* setup_string, ...)
     va_start(vl, setup_string);
     for (i = 0; ; i++) {
         if (i == BR_ASIZE(tv)) {
-            // FIXME: enable this back!
-//            BrFailure("Too many token value pairs");
+            BrFailure("Too many token value pairs");
         }
         tv[i].t = va_arg(vl, br_token);
-        if (tv[i].t == 0) {
+        if (tv[i].t == BR_NULL_TOKEN) {
             break;
         }
         tv[i].v = va_arg(vl, br_value);
-
-        // rec2 hook: disable full screen
-        if (tv[i].t == BRT_WINDOW_FULLSCREEN_B) {
-//            tv[i].v.i32 = 0;
-        }
     }
     va_end(vl);
-    tv[i].t = 0;
+    tv[i].t = BR_NULL_TOKEN;
     tv[i].v.p = NULL;
     br_error res = BrDevBeginTV(ppm, setup_string, tv);
     C2_HOOK_FINISH();
