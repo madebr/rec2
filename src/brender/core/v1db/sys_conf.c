@@ -139,13 +139,36 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00530990, BrSetDefaultConfig, BrSetDefaultConfig_ori
 br_error (C2_HOOK_CDECL * BrSystemConfigBegin_original)(void);
 br_error C2_HOOK_CDECL BrSystemConfigBegin(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrSystemConfigBegin_original();
 #else
     char temp[255];
     br_value v;
 
-#error "Not implemented"
+    C2V(fw).sys_config = BrAssociativeArrayAllocate();
+    if (C2V(fw).sys_config == NULL) {
+        BrFailure("System config associative array allocate failed.\n");
+        return 0x1002;
+    }
+    BrSetDefaultConfig(BRT_BRENDER_PATH_STR, "BRENDER_PATH");
+    BrSetDefaultConfig(BRT_BRENDER_DRIVERS_STR, "BRENDER_DRIVERS");
+    BrSetDefaultConfig(BRT_BRENDER_DRIVERS_STR, "BR_DRIVERS");
+    BrSetDefaultConfig(BRT_BRENDER_DEVICES_STR, "BRENDER_DEVICES");
+    BrSetDefaultConfig(BRT_BRENDER_DEVICES_STR, "BR_DEVICES");
+    BrSetDefaultConfig(BRT_DEFAULT_DEVICE_STR, "BRENDER_DOS_GFX");
+    BrSetDefaultConfig(BRT_DEFAULT_DEVICE_STR, "BRENDER_DEFAULT_DEVICE");
+    BrSetDefaultConfig(BRT_DEFAULT_DEVICE_STR, "BR_DEFAULT_DEVICE");
+    BrSystemConfigQueryString(BRT_DEFAULT_DEVICE_STR, temp, sizeof(temp));
+    if (temp[0] == '\0') {
+        v.cstr = HostDefaultDevice();
+        BrAssociativeArraySetEntry(C2V(fw).sys_config, BRT_DEFAULT_DEVICE_STR, v);
+    }
+    BrSystemConfigQueryString(BRT_BRENDER_PATH_STR, temp, sizeof(temp));
+    if (temp[0] == '\0') {
+        v.cstr = "dat;../dat;../../dat;../../../dat;../../../../dat";
+        BrAssociativeArraySetEntry(C2V(fw).sys_config, BRT_BRENDER_PATH_STR, v);
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00530460, BrSystemConfigBegin, BrSystemConfigBegin_original)
