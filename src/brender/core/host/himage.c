@@ -1,5 +1,7 @@
 #include "himage.h"
 
+#include <windows.h>
+
 void* (C2_HOOK_CDECL * HostImageLoad_original)(char* name);
 void* C2_HOOK_CDECL HostImageLoad(char* name) {
 #if defined(C2_HOOKS_ENABLED)
@@ -23,10 +25,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053fb60, HostImageUnload, HostImageUnload_original)
 
 void* (C2_HOOK_CDECL * HostImageLookupName_original)(void* img, char* name, br_uint_32 hint);
 void* C2_HOOK_CDECL HostImageLookupName(void* img, char* name, br_uint_32 hint) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return HostImageLookupName_original(img, name, hint);
 #else
-#error "not implemented"
+
+    return GetProcAddress((HMODULE)img, name);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fb70, HostImageLookupName, HostImageLookupName_original)
