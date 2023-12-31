@@ -3,10 +3,10 @@
 const char* (C2_HOOK_CDECL * HostDefaultDevice_original)(void);
 const char* C2_HOOK_CDECL HostDefaultDevice(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return HostDefaultDevice_original();
 #else
-#error "Not implemented"
+    return "DDRAW";
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fba0, HostDefaultDevice, HostDefaultDevice_original)
