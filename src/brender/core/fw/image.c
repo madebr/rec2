@@ -166,7 +166,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00530260, imageLookupName, imageLookupName_original)
 
 void* (C2_HOOK_CDECL * BrImageLookupName_original)(br_image* img, const char* name, br_uint_32 hint);
 void* C2_HOOK_CDECL BrImageLookupName(br_image* img, const char* name, br_uint_32 hint) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrImageLookupName_original(img, name, hint);
 #else
     char* scratch;
@@ -186,7 +186,7 @@ void* C2_HOOK_CDECL BrImageLookupName(br_image* img, const char* name, br_uint_3
             return p;
         }
     }
-    *scratch = '_';
+    scratch[0] = '_';
     BrStrCpy(&scratch[1], name);
     return imageLookupName(img, scratch, hint);
 #endif
