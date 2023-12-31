@@ -248,7 +248,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005303a0, BrImageFree, BrImageFree_original)
 
 void (C2_HOOK_CDECL * _BrImageFree_original)(void* res, br_uint_8 res_class, br_size_t size);
 void C2_HOOK_CDECL _BrImageFree(void* res, br_uint_8 res_class, br_size_t size) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     _BrImageFree_original(res, res_class, size);
 #else
     BrImageFree(res);
