@@ -1,5 +1,7 @@
 #include "hostcfg.h"
 
+#include <windows.h>
+
 const char* (C2_HOOK_CDECL * HostDefaultDevice_original)(void);
 const char* C2_HOOK_CDECL HostDefaultDevice(void) {
 
@@ -15,10 +17,12 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053fba0, HostDefaultDevice, HostDefaultDevice_origi
 br_boolean (C2_HOOK_CDECL * HostIniSectionExists_original)(char* ini_file, char* section_name);
 br_boolean C2_HOOK_CDECL HostIniSectionExists(char* ini_file, char* section_name) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return HostIniSectionExists_original(ini_file, section_name);
 #else
-#error "Not implemented"
+    char buffer[5];
+
+    return GetPrivateProfileSectionA(section_name, buffer, sizeof(buffer), ini_file) != 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fbb0, HostIniSectionExists, HostIniSectionExists_original)
