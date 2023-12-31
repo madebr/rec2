@@ -255,10 +255,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053d980, _M_br_device_pixelmap_gen_synchronise, _M_
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_directLock_original)(br_device_pixelmap* self, br_boolean block);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_directLock(br_device_pixelmap* self, br_boolean block) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//
 return _M_br_device_pixelmap_gen_directLock_original(self, block);
 #else
-#error "Not implemented"
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053d990, _M_br_device_pixelmap_gen_directLock, _M_br_device_pixelmap_gen_directLock_original)
