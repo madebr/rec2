@@ -25,11 +25,10 @@ br_boolean C2_HOOK_STDCALL Is_Valid_Sys_Config_Token(br_token t) {
     return 0;
 }
 
-#if 0
 br_boolean (C2_HOOK_STDCALL * LoadIniEntry_original)(char* ini_file, char* section_name, br_token t, char* Entry);
 br_boolean C2_HOOK_STDCALL LoadIniEntry(char* ini_file, char* section_name, br_token t, char* Entry) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return LoadIniEntry_original(ini_file, section_name, t, Entry);
 #else
     char Temp[255];
@@ -37,11 +36,18 @@ br_boolean C2_HOOK_STDCALL LoadIniEntry(char* ini_file, char* section_name, br_t
     br_value v;
     br_error r;
 
-#error "Not implemented"
+    r = HostIniQuery(ini_file, section_name, Entry, Temp, sizeof(Temp), &size);
+    if (r != 0) {
+        return r;
+    }
+    v.cstr = Temp;
+    BrAssociativeArraySetEntry(C2V(fw).sys_config, t, v);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005308b0, LoadIniEntry, LoadIniEntry_original)
 
+#if 0
 br_error C2_HOOK_STDCALL LoadIniConfig(char* ini_file, char* section_name) {
 
 #error "Not implemented"
