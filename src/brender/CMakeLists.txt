@@ -58,6 +58,8 @@ add_library(brender STATIC
 
     core/host/himage.c
     core/host/himage.h
+    core/host/hostcfg.c
+    core/host/hostcfg.h
     core/host/hstsetup.c
     core/host/hstsetup.h
 
