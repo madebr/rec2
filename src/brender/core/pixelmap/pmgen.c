@@ -139,7 +139,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c640, _M_br_device_pixelmap_gen_doubleBufferDirt
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_rectangle_original)(br_device_pixelmap* self, br_rectangle* rect, br_uint_32 colour);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_rectangle(br_device_pixelmap* self, br_rectangle* rect, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_rectangle_original(self, rect, colour);
 #else
     br_point tl;
@@ -147,7 +147,26 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_rectangle(br_device_pixelmap* s
     br_point bl;
     br_point br;
     br_error e;
-#error "Not implemented"
+
+    tl.x = bl.x = rect->x;
+    tr.y = tl.y = rect->y;
+    tr.x = br.x = rect->x + rect->w - 1;
+    bl.y = br.y = rect->y + rect->h - 1;
+
+    e = self->dispatch->_line(self, &tl, &tr, colour);
+    if (e != 0) {
+        return e;
+    }
+    e = self->dispatch->_line(self, &tl, &bl, colour);
+    if (e != 0) {
+        return e;
+    }
+    e = self->dispatch->_line(self, &bl, &br, colour);
+    if (e != 0) {
+        return e;
+    }
+    e = self->dispatch->_line(self, &tr, &br, colour);
+    return e;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053c6c0, _M_br_device_pixelmap_gen_rectangle, _M_br_device_pixelmap_gen_rectangle_original)
