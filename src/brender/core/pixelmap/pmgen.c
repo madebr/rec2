@@ -75,13 +75,29 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c3e0, _M_br_device_pixelmap_gen_doubleBuffer, _M
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_copyDirty_original)(br_device_pixelmap* self, br_device_pixelmap* src, br_rectangle* dirty, br_int_32 num_rects);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_copyDirty(br_device_pixelmap* self, br_device_pixelmap* src, br_rectangle* dirty, br_int_32 num_rects) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_copyDirty_original(self, src, dirty, num_rects);
 #else
     int i;
     br_point p;
     br_error e;
-#error "Not implemented"
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _rectangleCopy, 0x84);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _copy, 0x54);
+
+    if (self->pm_width == src->pm_width && self->pm_height == src->pm_height) {
+        for (i = 0; i < num_rects; i++) {
+            p.x = dirty->x;
+            p.y = dirty->y;
+            e = self->dispatch->_rectangleCopy(self, &p, src, &dirty[i]);
+            if (e != 0) {
+                return e;
+            }
+        }
+        return 0;
+    } else {
+        return self->dispatch->_copy(self, src);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053c480, _M_br_device_pixelmap_gen_copyDirty, _M_br_device_pixelmap_gen_copyDirty_original)
