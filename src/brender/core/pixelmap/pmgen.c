@@ -1,6 +1,7 @@
 #include "pmgen.h"
 
 #include "genclip.h"
+#include "pmdsptch.h"
 
 #include "core/std/brstdlib.h"
 
@@ -63,12 +64,25 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c390, _M_br_device_pixelmap_gen_fill, _M_br_devi
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_doubleBuffer_original)(br_device_pixelmap* self, br_device_pixelmap* src);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_doubleBuffer(br_device_pixelmap* self, br_device_pixelmap* src) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_doubleBuffer_original(self, src);
 #else
     br_rectangle s;
     br_rectangle d;
-#error "Not implemented"
+
+    if (self->pm_width == src->pm_width && self->pm_height == src->pm_height) {
+        return DispatchCopy(self,src);
+    } else {
+        s.x = -self->pm_origin_x;
+        s.y = -self->pm_origin_y;
+        s.w = self->pm_width;
+        s.h = self->pm_height;
+        d.x = -src->pm_origin_x;
+        d.y = -src->pm_origin_y;
+        d.w = src->pm_width;
+        d.h = src->pm_height;
+        return DispatchRectangleStretchCopy(self, &s, src, &d);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053c3e0, _M_br_device_pixelmap_gen_doubleBuffer, _M_br_device_pixelmap_gen_doubleBuffer_original)
