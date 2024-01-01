@@ -1,5 +1,7 @@
 #include "pmgen.h"
 
+#include "genclip.h"
+
 #include "core/std/brstdlib.h"
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_match_original)(br_device_pixelmap* self, br_device_pixelmap** newpm, br_token_value* tv);
@@ -167,9 +169,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c780, _M_br_device_pixelmap_gen_rectangle2, _M_b
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_line_original)(br_device_pixelmap* self, br_point* s, br_point* e, br_uint_32 colour);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_line(br_device_pixelmap* self, br_point* s, br_point* e, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_line_original(self, s, e, colour);
 #else
+#if 0
     int dx;
     int dy;
     int incr1;
@@ -190,7 +193,57 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_line(br_device_pixelmap* self, 
     br_point as;
     br_point ae;
     br_point p;
-#error "Not implemented"
+#else
+    int err;
+    int e2;
+    int sx;
+    int sy;
+    int dx;
+    int dy;
+    br_point as;
+    br_point ae;
+    br_point p;
+#endif
+
+    if (PixelmapLineClip(&as, &ae, s, e, (br_pixelmap*)self) == BR_CLIP_REJECT) {
+        return 0;
+    }
+    as.x -= self->pm_origin_x;
+    as.y -= self->pm_origin_y;
+    ae.x -= self->pm_origin_x;
+    ae.y -= self->pm_origin_y;
+
+    sx = as.x < ae.x ? 1 : -1;
+    dx = (ae.x - as.x) * sx;
+    sy = as.y < ae.y ? 1 : -1;
+    dy = (ae.y - as.y) * sy;
+    err = dx + dy;
+
+    p.x = as.x;
+    p.y = as.y;
+
+    for (;;) {
+        self->dispatch->_pixelSet(self, &p, colour);
+        if (p.x == ae.x && p.y == ae.y) {
+            break;
+        }
+        e2 = 2 * err;
+        if (e2 >= dy) {
+            if (p.x == ae.x) {
+                break;
+            }
+            err += dy;
+            p.x += sx;
+        }
+        if (e2 <=  dx) {
+            if (p.y == ae.y) {
+                break;
+            }
+            err += dx;
+            p.y += sy;
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053c840, _M_br_device_pixelmap_gen_line, _M_br_device_pixelmap_gen_line_original)
