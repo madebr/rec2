@@ -29,12 +29,21 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c240, _M_br_device_pixelmap_gen_copy, _M_br_devi
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_copyTo_original)(br_device_pixelmap* self, br_device_pixelmap* src);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_copyTo(br_device_pixelmap* self, br_device_pixelmap* src) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_copyTo_original(self, src);
 #else
     br_rectangle r;
     br_point p;
-#error "Not implemented"
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _rectangleCopyTo, 0x88);
+
+    p.x = -self->pm_origin_x;
+    p.y = -self->pm_origin_y;
+    r.x = -src->pm_origin_x;
+    r.y = -src->pm_origin_y;
+    r.w = src->pm_width;
+    r.h = src->pm_height;
+    return self->dispatch->_rectangleCopyTo(self, &p, src, &r);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053c2b0, _M_br_device_pixelmap_gen_copyTo, _M_br_device_pixelmap_gen_copyTo_original)
