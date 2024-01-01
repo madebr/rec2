@@ -53,11 +53,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c320, _M_br_device_pixelmap_gen_copyFrom, _M_br_
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_fill_original)(br_device_pixelmap* self, br_uint_32 colour);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_fill(br_device_pixelmap* self, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_fill_original(self, colour);
 #else
     br_rectangle r;
-#error "Not implemented"
+
+    r.x = -self->pm_origin_x;
+    r.y = -self->pm_origin_y;
+    r.w = self->pm_width;
+    r.h = self->pm_height;
+    return self->dispatch->_rectangleFill(self, &r, colour);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053c390, _M_br_device_pixelmap_gen_fill, _M_br_device_pixelmap_gen_fill_original)
