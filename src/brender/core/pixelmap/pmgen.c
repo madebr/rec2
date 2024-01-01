@@ -126,13 +126,26 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c600, _M_br_device_pixelmap_gen_fillDirty, _M_br
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_doubleBufferDirty_original)(br_device_pixelmap* self, br_device_pixelmap* src, br_rectangle* dirty, br_int_32 num_rects);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_doubleBufferDirty(br_device_pixelmap* self, br_device_pixelmap* src, br_rectangle* dirty, br_int_32 num_rects) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_doubleBufferDirty_original(self, src, dirty, num_rects);
 #else
     int i;
     br_point p;
     br_error e;
-#error "Not implemented"
+
+    if (self->pm_width == src->pm_width && self->pm_height == src->pm_height) {
+        for (i = 0; i < num_rects; i++) {
+            p.x = dirty[i].x;
+            p.y = dirty[i].y;
+            e = self->dispatch->_rectangleCopy(self, &p, src, &dirty[i]);
+            if (e != 0) {
+                return e;
+            }
+        }
+        return 0;
+    } else {
+        return self->dispatch->_doubleBuffer(self, src);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053c640, _M_br_device_pixelmap_gen_doubleBufferDirty, _M_br_device_pixelmap_gen_doubleBufferDirty_original)
