@@ -114,12 +114,19 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c580, _M_br_device_pixelmap_gen_copyFromDirty, _
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_gen_fillDirty_original)(br_device_pixelmap* self, br_uint_32 colour, br_rectangle* dirty, br_int_32 num_rects);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_fillDirty(br_device_pixelmap* self, br_uint_32 colour, br_rectangle* dirty, br_int_32 num_rects) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_gen_fillDirty_original(self, colour, dirty, num_rects);
 #else
     int i;
     br_error e;
-#error "Not implemented"
+
+    for (i = 0; i < num_rects; i++) {
+        e = self->dispatch->_rectangleFill(self, &dirty[i], colour);
+        if (e != 0) {
+            return e;
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053c600, _M_br_device_pixelmap_gen_fillDirty, _M_br_device_pixelmap_gen_fillDirty_original)
