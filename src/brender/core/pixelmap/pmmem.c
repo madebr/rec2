@@ -1,6 +1,7 @@
 #include "pmmem.h"
 
 #include "genclip.h"
+#include "pmmemops.h"
 #include "pmsetup.h"
 #include "pmutils.h"
 
@@ -386,11 +387,31 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00539dc0, _M_br_device_pixelmap_mem_copyFrom, _M_br_
 
 br_error (C2_HOOK_CDECL  * _M_br_device_pixelmap_mem_fill_original)(br_device_pixelmap* self, br_uint_32 colour);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_fill(br_device_pixelmap* self, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_mem_fill_original(self, colour);
 #else
     br_int_8 bytes;
-#error "Not implemented"
+
+    bytes = C2V(pmTypeInfo)[self->pm_type].bits / 8;
+    if ((self->pm_flags & (BR_PMF_ROW_WHOLEPIXELS | BR_PMF_LINEAR)) == (BR_PMF_ROW_WHOLEPIXELS | BR_PMF_LINEAR)) {
+        if (self->pm_row_bytes > 0) {
+            pm_mem_fill_colour((br_uint_8*)self->pm_pixels + self->pm_base_y * self->pm_row_bytes + self->pm_base_x * bytes, self->pm_pixels_qualifier,
+                               self->pm_width * self->pm_height, bytes, colour);
+        } else {
+            pm_mem_fill_colour((br_uint_8*)self->pm_pixels + (self->pm_base_y + self->pm_height - 1) * self->pm_row_bytes + self->pm_base_x * bytes,
+                               self->pm_pixels_qualifier, self->pm_width * self->pm_height, bytes, colour);
+        }
+    } else if ((self->pm_row_bytes & 7) == 0) {
+        pm_mem_fill_colour_rect((br_uint_8*)self->pm_pixels + self->pm_base_y * self->pm_row_bytes + self->pm_base_x * bytes, self->pm_pixels_qualifier,
+                                self->pm_width, self->pm_height, self->pm_row_bytes, bytes, colour);
+    } else {
+        int i;
+        for (i = 0; i < self->pm_height; i++) {
+            pm_mem_fill_colour((br_uint_8*)self->pm_pixels + (i + self->pm_base_y) * self->pm_row_bytes + self->pm_base_x * bytes, self->pm_pixels_qualifier,
+                               self->pm_width, bytes, colour);
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00539f90, _M_br_device_pixelmap_mem_fill, _M_br_device_pixelmap_mem_fill_original)
