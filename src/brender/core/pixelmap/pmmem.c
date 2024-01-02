@@ -612,13 +612,66 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053a150, _M_br_device_pixelmap_mem_rectangleCopyTo,
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_mem_rectangleCopyFrom_original)(br_device_pixelmap* self, br_point* p, br_device_pixelmap* dest, br_rectangle* r);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_rectangleCopyFrom(br_device_pixelmap* self, br_point* p, br_device_pixelmap* dest, br_rectangle* r) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_mem_rectangleCopyFrom_original(self, p, dest, r);
 #else
     int bytes;
     br_rectangle ar;
     br_point ap;
-#error "Not implemented"
+
+    if (PixelmapRectangleClipTwo(&ar, &ap, r, p, (br_pixelmap*)dest, (br_pixelmap*)self) == BR_CLIP_REJECT) {
+        return 0;
+    }
+    bytes = C2V(pmTypeInfo)[self->pm_type].bits / 8;
+    if (ar.w == self->pm_width) {
+        if (self->pm_row_bytes == dest->pm_row_bytes
+            && (self->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)
+            && (dest->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) {
+                if (self->pm_row_bytes > 0) {
+                    pm_mem_copy_colour(
+                        (br_uint_8*)dest->pm_pixels + (dest->pm_base_y + ap.y) * dest->pm_row_bytes + (dest->pm_base_x + ap.x) * bytes,
+                        dest->pm_pixels_qualifier,
+                        (br_uint_8*)self->pm_pixels + (self->pm_base_y + ar.y) * self->pm_row_bytes + (self->pm_base_x + ar.x) * bytes,
+                        self->pm_pixels_qualifier,
+                        ar.w * ar.h,
+                        bytes);
+                    return 0;
+                } else {
+                    pm_mem_copy_colour(
+                        (br_uint_8*)dest->pm_pixels + (dest->pm_base_y + ap.y - 1 + ar.h) * dest->pm_row_bytes + (dest->pm_base_x + ap.x) * bytes,
+                        dest->pm_pixels_qualifier,
+                        (br_uint_8*)self->pm_pixels + (self->pm_base_y + ar.y - 1 + ar.h) * self->pm_row_bytes + (self->pm_base_x + ar.x) * bytes,
+                        self->pm_pixels_qualifier,
+                        ar.w * ar.h,
+                        bytes);
+                return 0;
+            }
+        }
+    }
+    if ((dest->pm_row_bytes & 0x7) == 0) {
+        pm_mem_copy_colour_rowbyrow(
+            (br_uint_8*)dest->pm_pixels + (dest->pm_base_y + ap.y) * dest->pm_row_bytes + (dest->pm_base_x + ap.x) * bytes,
+            dest->pm_pixels_qualifier,
+            (br_uint_8*)self->pm_pixels + (self->pm_base_y + ar.y) * self->pm_row_bytes + (self->pm_base_x + ar.x) * bytes,
+            self->pm_pixels_qualifier,
+            ar.w, ar.h,
+            dest->pm_row_bytes, self->pm_row_bytes,
+            bytes);
+        return 0;
+    } else {
+        int i;
+
+        for (i = 0; i < ar.h; i++) {
+            pm_mem_copy_colour(
+                (br_uint_8*)dest->pm_pixels + (dest->pm_base_y + ap.y + i) * dest->pm_row_bytes + (dest->pm_base_x + ap.x) * bytes,
+                dest->pm_pixels_qualifier,
+                (br_uint_8*)self->pm_pixels + (self->pm_base_y + ar.y + i) * self->pm_row_bytes + (self->pm_base_x + ar.x) * bytes,
+                self->pm_pixels_qualifier,
+                ar.w,
+                bytes);
+        }
+        return 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053a3f0, _M_br_device_pixelmap_mem_rectangleCopyFrom, _M_br_device_pixelmap_mem_rectangleCopyFrom_original)
