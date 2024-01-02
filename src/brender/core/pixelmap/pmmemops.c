@@ -134,10 +134,27 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053ef0d, pm_mem_copy_colour_rowbyrow, pm_mem_copy_c
 
 void (C2_HOOK_CDECL * pm_mem_set_colour_original)(br_uint_8* dest, br_uint_32 dest_qual, br_uint_32 bpp, br_uint_32 colour);
 void C2_HOOK_CDECL pm_mem_set_colour(br_uint_8* dest, br_uint_32 dest_qual, br_uint_32 bpp, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     pm_mem_set_colour_original(dest, dest_qual, bpp, colour);
 #else
-#error "Not implemented"
+    switch (bpp) {
+    case 1:
+        *(br_uint_8*)dest = colour;
+        break;
+    case 2:
+        *(br_uint_16*)dest = colour;
+        break;
+    case 3:
+        ((br_uint_8*)dest)[0] = (br_uint_8)((colour >>  0) & 0xff);
+        ((br_uint_8*)dest)[1] = (br_uint_8)((colour >>  8) & 0xff);
+        ((br_uint_8*)dest)[2] = (br_uint_8)((colour >> 16) & 0xff);
+        break;
+    case 4:
+        *(br_uint_32*)dest = colour;
+        break;
+    default:
+        c2_abort();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053e5c9, pm_mem_set_colour, pm_mem_set_colour_original)
