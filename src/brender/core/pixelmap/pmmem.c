@@ -721,9 +721,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053a870, _M_br_device_pixelmap_mem_pixelSet, _M_br_
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_mem_line_original)(br_device_pixelmap* self, br_point* s, br_point* e, br_uint_32 colour);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_line(br_device_pixelmap* self, br_point* s, br_point* e, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_mem_line_original(self, s, e, colour);
 #else
+#if 0
     int dx;
     int dy;
     int incr1;
@@ -745,7 +746,64 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_line(br_device_pixelmap* self, 
     int bytes;
     br_point as;
     br_point ae;
-#error "Not implemented"
+#else
+    int err;
+    int e2;
+    int sx;
+    int sy;
+    int dx;
+    int dy;
+    br_point as;
+    br_point ae;
+    br_point p;
+    int bytes;
+#endif
+
+    if (PixelmapLineClip(&as, &ae, s, e, (br_pixelmap*)self) == BR_CLIP_REJECT) {
+        return 0;
+    }
+    as.x -= self->pm_origin_x;
+    as.y -= self->pm_origin_y;
+    ae.x -= self->pm_origin_x;
+    ae.y -= self->pm_origin_y;
+
+    sx = as.x < ae.x ? 1 : -1;
+    dx = (ae.x - as.x) * sx;
+    sy = as.y < ae.y ? 1 : -1;
+    dy = (ae.y - as.y) * sy;
+    err = dx + dy;
+
+    p.x = as.x;
+    p.y = as.y;
+
+    bytes = C2V(pmTypeInfo)[self->pm_type].bits / 8;
+
+    for (;;) {
+        pm_mem_set_colour(
+            (br_uint_8*)self->pm_pixels + (self->pm_base_y + p.y) * self->pm_row_bytes + (self->pm_base_x + p.x) * bytes,
+            self->pm_pixels_qualifier,
+            bytes,
+            colour);
+        if (p.x == ae.x && p.y == ae.y) {
+            break;
+        }
+        e2 = 2 * err;
+        if (e2 >= dy) {
+            if (p.x == ae.x) {
+                break;
+            }
+            err += dy;
+            p.x += sx;
+        }
+        if (e2 <=  dx) {
+            if (p.y == ae.y) {
+                break;
+            }
+            err += dx;
+            p.y += sy;
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053a8f0, _M_br_device_pixelmap_mem_line, _M_br_device_pixelmap_mem_line_original)
