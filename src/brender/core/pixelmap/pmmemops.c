@@ -1,5 +1,8 @@
 #include "pmmemops.h"
 
+#include "c2_stdlib.h"
+#include "c2_string.h"
+
 void (C2_HOOK_CDECL * pm_mem_copy_bits_original)(void* dest,br_uint_32 qual, br_uint_32 dest_stride, void* src, br_uint_32 s_stride, br_uint_32 start_bit, br_uint_32 end_bit, br_uint_32 height, br_uint_32 bpp, br_uint_32 colour);
 void pm_mem_copy_bits(void* dest,br_uint_32 qual, br_uint_32 dest_stride, void* src, br_uint_32 s_stride, br_uint_32 start_bit, br_uint_32 end_bit, br_uint_32 height, br_uint_32 bpp, br_uint_32 colour) {
 #if defined(C2_HOOKS_ENABLED)
@@ -12,10 +15,47 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053df30, pm_mem_copy_bits, pm_mem_copy_bits_origina
 
 void (C2_HOOK_CDECL * pm_mem_fill_colour_original)(br_uint_8 *dest, br_uint_32 qual, br_uint_32 nbpixels, br_uint_32 bpp, br_uint_32 colour);
 void C2_HOOK_CDECL pm_mem_fill_colour(br_uint_8 *dest, br_uint_32 qual, br_uint_32 nbpixels, br_uint_32 bpp, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     pm_mem_fill_colour_original(dest, qual, nbpixels, bpp, colour);
 #else
-#error "Not implemented"
+    switch (bpp) {
+    case 1:
+        c2_memset(dest, colour, nbpixels);
+        break;
+    case 2: {
+        br_uint_16 p = colour;
+        int i;
+        for (i = nbpixels; i != 0; i--, dest += 2) {
+            *(br_uint_16*)dest = p;
+        }
+        break;
+    }
+    break;
+    case 3: {
+        int i;
+        br_uint_8 b0, b1, b2;
+
+        b0 = (br_uint_8)((colour >>  0) & 0xff);
+        b1 = (br_uint_8)((colour >>  8) & 0xff);
+        b2 = (br_uint_8)((colour >> 16) & 0xff);
+        for (i = nbpixels; i != 0; i--, dest += 3) {
+            dest[0] = b0;
+            dest[1] = b1;
+            dest[2] = b2;
+        }
+        break;
+    }
+    case 4: {
+        int i;
+        for (i = nbpixels; i != 0; i--, dest += 4) {
+            *(br_uint_32*)dest = colour;
+        }
+        break;
+    }
+    default:
+        c2_abort();
+        return;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053e686, pm_mem_fill_colour, pm_mem_fill_colour_original)
