@@ -365,11 +365,57 @@ C2_HOOK_FUNCTION(0x00539990, _M_br_device_pixelmap_mem_match)
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_mem_copyTo_original)(br_device_pixelmap* self, br_device_pixelmap* src);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_copyTo(br_device_pixelmap* self, br_device_pixelmap* src) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_mem_copyTo_original(self, src);
 #else
     br_int_8 bytes;
-#error "Not implemented"
+
+    bytes = C2V(pmTypeInfo)[self->pm_type].bits / 8;
+    if (self->pm_row_bytes == src->pm_row_bytes
+        && (self->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == ((BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS))
+        && (src->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == ((BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS))) {
+        if (self->pm_row_bytes > 0) {
+            pm_mem_copy_colour(
+                (br_uint_8*)self->pm_pixels + self->pm_base_y * self->pm_row_bytes + self->pm_base_x * bytes,
+                self->pm_pixels_qualifier,
+                (br_uint_8*)src->pm_pixels + src->pm_base_y * src->pm_row_bytes + src->pm_base_x * bytes,
+                src->pm_pixels_qualifier,
+                self->pm_width * self->pm_height,
+                bytes);
+            return 0;
+        } else {
+            pm_mem_copy_colour(
+                (br_uint_8*)self->pm_pixels + (self->pm_base_y - 1 + self->pm_height) * self->pm_row_bytes + self->pm_base_x * bytes,
+                self->pm_pixels_qualifier,
+                (br_uint_8*)src->pm_pixels + (src->pm_base_y - 1 + src->pm_height) * src->pm_row_bytes + src->pm_base_x * bytes,
+                src->pm_pixels_qualifier,
+                self->pm_width * self->pm_height,
+                bytes);
+            return 0;
+        }
+    } else {
+        if ((self->pm_row_bytes & 0x7) == 0) {
+            pm_mem_copy_colour_rowbyrow(
+                (br_uint_8*)self->pm_pixels, self->pm_pixels_qualifier,
+                (br_uint_8*)src->pm_pixels, src->pm_pixels_qualifier,
+                self->pm_width, self->pm_height,
+                self->pm_row_bytes, src->pm_row_bytes, bytes);
+            return 0;
+        } else {
+            int i;
+
+            for (i = 0; i < self->pm_height; i++) {
+                pm_mem_copy_colour(
+                    (br_uint_8*)self->pm_pixels + i * self->pm_row_bytes,
+                    self->pm_pixels_qualifier,
+                    (br_uint_8*)src->pm_pixels + i * src->pm_row_bytes,
+                    src->pm_pixels_qualifier,
+                    self->pm_width,
+                    bytes);
+            }
+            return 0;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00539bf0, _M_br_device_pixelmap_mem_copyTo, _M_br_device_pixelmap_mem_copyTo_original)
