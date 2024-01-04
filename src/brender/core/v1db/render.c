@@ -1,17 +1,107 @@
 #include "render.h"
 
 #include "dbsetup.h"
+#include "modrend.h"
+#include "otable.h"
+#include "prepmesh.h"
 
 #include "core/fw/diag.h"
 
 void (C2_HOOK_CDECL * BrDbModelRender_original)(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen, int use_custom);
 void C2_HOOK_CDECL BrDbModelRender(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen, int use_custom) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrDbModelRender_original(actor, model, material, render_data, style, on_screen, use_custom);
 #else
-    br_int_32 count;
-    br_token_value tv[5];
-#error "Not implemented"
+    br_token_value tv[5] = {
+        { BRT_V1INSERT_FUNCTION_P },
+        { BRT_V1INSERT_ARG1_P },
+        { BRT_V1INSERT_ARG2_P },
+        { BRT_V1INSERT_ARG3_P },
+        { BR_NULL_TOKEN },
+    };
+
+    C2V(v1db).model_to_screen_valid = 0;
+    if (use_custom && (model->flags & BR_MODF_CUSTOM)) {
+        model->custom(actor, model, material, render_data, style, on_screen);
+        return;
+    }
+    if (model->prepared == NULL && model->stored == NULL) {
+        BrFailure("Tried to render un-prepared model %s", model->identifier != NULL ? model->identifier : "<NULL>");
+        return;
+    }
+    if ((C2V(v1db).rendering == 2
+        || (C2V(v1db).rendering == 3
+            && ((model->flags & BR_MODF_USED_PREPARED_USER)
+                || ((model->flags & _BR_MODF_RESERVED) && IsMaterialTransparent(material)))))
+        && render_data != NULL) {
+        br_order_table* order_table = render_data;
+        SetOrderTableBounds(&model->bounds, order_table);
+        if (order_table->visits == 0) {
+            BrZsOrderTableClear(order_table);
+            InsertOrderTableList(order_table);
+        }
+        order_table->visits += 1;
+        C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_HIDDEN_SURFACE, 0, BRT_V1ORDER_TABLE_P, (uintptr_t)order_table);
+        if (C2V(v1db).primitive_call != NULL) {
+            tv[0].v.p = C2V(v1db).primitive_call;
+            tv[1].v.p = actor;
+            tv[2].v.p = model;
+            tv[3].v.p = material;
+            C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_HIDDEN_SURFACE, 0, tv, &use_custom);
+        }
+    }
+    if (C2V(v1db).bounds_call == NULL) {
+        C2V(RenderStyleCalls)[style](actor, model, material, render_data, style, on_screen);
+    } else {
+        char bounds_buffer[2 * sizeof(br_vector2)];
+        br_int_32 r;
+        br_int_32 int_bounds[4];
+        br_token_value tv2[3] = {
+            { BRT_MIN_V2_F },
+            { BRT_MAX_V2_F },
+            { BR_NULL_TOKEN },
+        };
+        C2V(v1db).renderer->dispatch->_stateDefault(C2V(v1db).renderer, 0x20);
+        C2V(RenderStyleCalls)[style](actor, model, material, render_data, style, on_screen);
+        C2V(v1db).renderer->dispatch->_partQueryMany(C2V(v1db).renderer, BRT_BOUNDS, 0, tv2, bounds_buffer, sizeof(bounds_buffer), &r);
+        int_bounds[0] = (br_int_32)tv[0].v.v2_f->v[0];
+        int_bounds[1] = (br_int_32)tv[0].v.v2_f->v[1];
+        int_bounds[2] = (br_int_32)tv[1].v.v2_f->v[0];
+        int_bounds[3] = (br_int_32)tv[1].v.v2_f->v[1];
+
+        if (int_bounds[0] < 0) {
+            int_bounds[0] = 0;
+        }
+        if (int_bounds[1] < 0) {
+            int_bounds[1] = 0;
+        }
+        if (int_bounds[2] < 0) {
+            int_bounds[2] = 0;
+        }
+        if (int_bounds[3] < 0) {
+            int_bounds[3] = 0;
+        }
+
+        if (int_bounds[0] >= C2V(v1db).colour_buffer->width) {
+            int_bounds[0] = C2V(v1db).colour_buffer->width - 1;
+        }
+        if (int_bounds[1] >= C2V(v1db).colour_buffer->height) {
+            int_bounds[1] = C2V(v1db).colour_buffer->height - 1;
+        }
+        if (int_bounds[2] >= C2V(v1db).colour_buffer->width) {
+            int_bounds[2] = C2V(v1db).colour_buffer->width - 1;
+        }
+        if (int_bounds[3] >= C2V(v1db).colour_buffer->height) {
+            int_bounds[3] = C2V(v1db).colour_buffer->height - 1;
+        }
+        int_bounds[0] -= C2V(v1db).colour_buffer->origin_x;
+        int_bounds[1] -= C2V(v1db).colour_buffer->origin_y;
+        int_bounds[2] -= C2V(v1db).colour_buffer->origin_x;
+        int_bounds[3] -= C2V(v1db).colour_buffer->origin_y;
+        if (int_bounds[0] <= int_bounds[2] && int_bounds[1] <= int_bounds[3]) {
+            C2V(v1db).bounds_call(actor, model, material, render_data, style, &C2V(v1db).model_to_screen, int_bounds);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00521890, BrDbModelRender, BrDbModelRender_original)
