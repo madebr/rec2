@@ -3,12 +3,155 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
-void (C2_HOOK_CDECL * pm_mem_copy_bits_original)(void* dest,br_uint_32 qual, br_uint_32 dest_stride, void* src, br_uint_32 s_stride, br_uint_32 start_bit, br_uint_32 end_bit, br_uint_32 height, br_uint_32 bpp, br_uint_32 colour);
-void pm_mem_copy_bits(void* dest,br_uint_32 qual, br_uint_32 dest_stride, void* src, br_uint_32 s_stride, br_uint_32 start_bit, br_uint_32 end_bit, br_uint_32 height, br_uint_32 bpp, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, g_startMasks, 9, 0x0066fd0c, {
+    0xff, 0x7f, 0x3f, 0x1f,
+    0x0f, 0x07, 0x03, 0x01,
+    0x00,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, g_endMasks, 9, 0x0066fd15, {
+    0x00,
+    0x80, 0xc0, 0xe0, 0xf0,
+    0xf8, 0xfc, 0xfe, 0xff,
+});
+
+#define WRITE_COLOUR_U8(DEST, COLOUR)               \
+    do {                                            \
+        *(br_uint_8*)(DEST) = (br_uint_8)(COLOUR);  \
+    } while (0)
+#define WRITE_COLOUR_U16(DEST, COLOUR)                  \
+    do {                                                \
+        *(br_uint_16*)(DEST) = (br_uint_16)(COLOUR);    \
+    } while (0)
+#define WRITE_COLOUR_U24(DEST, COLOUR)  \
+    do {                                \
+        ((br_uint_8*)(DEST))[0] = b0;   \
+        ((br_uint_8*)(DEST))[1] = b1;   \
+        ((br_uint_8*)(DEST))[2] = b2;   \
+    } while (0)
+#define WRITE_COLOUR_U32(DEST, COLOUR)                  \
+    do {                                                \
+        *(br_uint_32*)(DEST) = (br_uint_32)(COLOUR);    \
+    } while (0)
+
+#define COLOR_BITS_BYTE(SIZE, WRITE, BITS, DEST, SRC, COLOUR)   \
+    do {                                                        \
+        if ((BITS) & 0x80) {                                    \
+            WRITE(((br_uint_8*)(DEST) + 0 * (SIZE)), COLOUR);   \
+        }                                                       \
+        if ((BITS) & 0x40) {                                    \
+            WRITE(((br_uint_8*)(DEST) + 1 * (SIZE)), COLOUR);   \
+        }                                                       \
+        if ((BITS) & 0x20) {                                    \
+            WRITE(((br_uint_8*)(DEST) + 2 * (SIZE)), COLOUR);   \
+        }                                                       \
+        if ((BITS) & 0x10) {                                    \
+            WRITE(((br_uint_8*)(DEST) + 3 * (SIZE)), COLOUR);   \
+        }                                                       \
+        if ((BITS) & 0x08) {                                    \
+            WRITE(((br_uint_8*)(DEST) + 4 * (SIZE)), COLOUR);   \
+        }                                                       \
+        if ((BITS) & 0x04) {                                    \
+            WRITE(((br_uint_8*)(DEST) + 5 * (SIZE)), COLOUR);   \
+        }                                                       \
+        if ((BITS) & 0x02) {                                    \
+            WRITE(((br_uint_8*)(DEST) + 6 * (SIZE)), COLOUR);   \
+        }                                                       \
+        if ((BITS) & 0x01) {                                    \
+            WRITE(((br_uint_8*)(DEST) + 7 * (SIZE)), COLOUR);   \
+        }                                                       \
+    } while (0)
+
+#define COLOR_BITS_BLOCK(SIZE, WRITE, SRC, DEST, COLOUR)                                                    \
+    do {                                                                                                    \
+        br_uint_8* src_ptr = (SRC);                                                                         \
+        void* dest_ptr = (DEST);                                                                            \
+        for (; height != 0; height--, src_ptr += s_stride, dest_ptr = (br_uint_8*)dest_ptr + dest_stride) { \
+            br_uint_32 remaining_row = row_bytes;                                                           \
+            br_uint_8 bits = *src_ptr & start_mask;                                                         \
+                                                                                                            \
+            for (; remaining_row >= 0; remaining_row--) {                                                   \
+                COLOR_BITS_BYTE((SIZE), WRITE, bits, dest_ptr, src_ptr, (COLOUR));                          \
+                ++src_ptr;                                                                                  \
+                dest_ptr = (br_uint_8*)dest_ptr + 8 * (SIZE);                                               \
+                bits = *src_ptr;                                                                            \
+                if (remaining_row == 0) {                                                                   \
+                    bits &= end_mask;                                                                       \
+                }                                                                                           \
+            }                                                                                               \
+        }                                                                                                   \
+    } while (0)
+
+void (C2_HOOK_CDECL * pm_mem_copy_bits_original)(void* dest, br_uint_32 qual, br_uint_32 dest_stride, void* src, br_uint_32 s_stride, br_uint_32 start_bit, br_uint_32 end_bit, br_uint_32 height, br_uint_32 bpp, br_uint_32 colour);
+void pm_mem_copy_bits(void* dest, br_uint_32 qual, br_uint_32 dest_stride, void* src, br_uint_32 s_stride, br_uint_32 start_bit, br_uint_32 end_bit, br_uint_32 height, br_uint_32 bpp, br_uint_32 colour) {
+#if 0//defined(C2_HOOKS_ENABLED)
     pm_mem_copy_bits_original(dest, qual, dest_stride, src, s_stride, start_bit, end_bit, height, bpp, colour);
 #else
-#error "Not implemeneted"
+    br_uint_8 start_mask;
+    br_uint_8 end_mask;
+    br_uint_32 row_bytes;
+
+    start_mask = C2V(g_startMasks)[start_bit];
+    end_mask = C2V(g_endMasks)[end_bit & 0x7];
+    row_bytes = end_bit >> 3;
+
+    if (row_bytes == 0) {
+        switch (bpp) {
+        case 1:
+            for (; height != 0; height--, src = (br_uint_8*)src + s_stride, dest = (br_uint_8*)dest + dest_stride) {
+                br_uint_8 bits = *(br_uint_8*)src & start_mask & end_mask;
+                COLOR_BITS_BYTE(1, WRITE_COLOUR_U8, bits, dest, src, colour);
+            }
+            break;
+        case 2:
+            for (; height != 0; height--, src = (br_uint_8*)src + s_stride, dest = (br_uint_8*)dest + dest_stride) {
+                br_uint_8 bits = *(br_uint_8*)src & start_mask & end_mask;
+                COLOR_BITS_BYTE(2, WRITE_COLOUR_U16, bits, dest, src, colour);
+            }
+            break;
+        case 3: {
+            br_uint_8 b0 = (br_uint_8)((colour >>  0) & 0xff);
+            br_uint_8 b1 = (br_uint_8)((colour >>  8) & 0xff);
+            br_uint_8 b2 = (br_uint_8)((colour >> 16) & 0xff);
+            for (; height != 0; height--, src = (br_uint_8*)src + s_stride, dest = (br_uint_8*)dest + dest_stride) {
+                br_uint_8 bits = *(br_uint_8*)src & start_mask & end_mask;
+                COLOR_BITS_BYTE(3, WRITE_COLOUR_U24, bits, dest, src, colour);
+            }
+            break;
+        }
+        case 4: {
+            for (; height != 0; height--, src = (br_uint_8*)src + s_stride, dest = (br_uint_8*)dest + dest_stride) {
+                br_uint_8 bits = *(br_uint_8*)src & start_mask & end_mask;
+                COLOR_BITS_BYTE(4, WRITE_COLOUR_U32, bits, dest, src, colour);
+            }
+            break;
+        }
+        default:
+            c2_abort();
+            break;
+        }
+    } else {
+        switch (bpp) {
+        case 1:
+            COLOR_BITS_BLOCK(1, WRITE_COLOUR_U8, src, dest, colour);
+            break;
+        case 2:
+            COLOR_BITS_BLOCK(2, WRITE_COLOUR_U16, src, dest, colour);
+            break;
+        case 3: {
+            br_uint_8 b0 = (br_uint_8)((colour >>  0) & 0xff);
+            br_uint_8 b1 = (br_uint_8)((colour >>  8) & 0xff);
+            br_uint_8 b2 = (br_uint_8)((colour >> 16) & 0xff);
+            COLOR_BITS_BLOCK(3, WRITE_COLOUR_U24, src, dest, colour);
+            break;
+        }
+        case 4:
+            COLOR_BITS_BLOCK(4, WRITE_COLOUR_U32, src, dest, colour);
+            break;
+        default:
+            c2_abort();
+            break;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053df30, pm_mem_copy_bits, pm_mem_copy_bits_original)
