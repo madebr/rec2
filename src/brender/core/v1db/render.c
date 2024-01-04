@@ -513,11 +513,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00522af0, BrZsSceneRenderEnd, BrZsSceneRenderEnd_ori
 
 void (C2_HOOK_CDECL * BrZsSceneRender_original)(br_actor* world, br_actor* camera, br_pixelmap* colour_buffer);
 void C2_HOOK_CDECL BrZsSceneRender(br_actor* world, br_actor* camera, br_pixelmap* colour_buffer) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrZsSceneRender_original(world, camera, colour_buffer);
 #else
-    br_actor* a;
-#error "Not implemented"
+
+    if (C2V(v1db).renderer == NULL) {
+        return;
+    }
+    BrZsSceneRenderBegin(world, camera, colour_buffer);
+    sceneRenderWorld(world);
+    BrZsSceneRenderEnd();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00522b70, BrZsSceneRender, BrZsSceneRender_original)
