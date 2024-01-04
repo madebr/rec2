@@ -1,5 +1,7 @@
 #include "pmmemops.h"
 
+#include "brender/br_defs.h"
+
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
@@ -304,10 +306,23 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053e5c9, pm_mem_set_colour, pm_mem_set_colour_origi
 
 br_uint_32 (C2_HOOK_CDECL * pm_mem_read_colour_original)(void* src, br_uint_32 src_qual, br_uint_32 bpp);
 br_uint_32 C2_HOOK_CDECL pm_mem_read_colour(void* src, br_uint_32 src_qual, br_uint_32 bpp) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return pm_mem_read_colour_original(src, src_qual, bpp);
 #else
-#error "Not implemented"
+    switch (bpp) {
+    case 1:
+        return (br_uint_32)*(br_uint_8*)src;
+    case 2:
+        return (br_uint_32)*(br_uint_16*)src;
+    case 3: {
+        return BR_COLOUR_RGB(((br_uint_8*)src)[2], ((br_uint_8*)src)[1], ((br_uint_8*)src)[0]);
+    }
+    case 4:
+        return (br_uint_32)*(br_uint_32*)src;
+    default:
+        c2_abort();
+        return 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053e626, pm_mem_read_colour, pm_mem_read_colour_original)
