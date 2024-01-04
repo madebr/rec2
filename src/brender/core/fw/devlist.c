@@ -108,10 +108,21 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528a10, BrDevCount, BrDevCount_original)
 
 br_error (C2_HOOK_CDECL * BrDevContainedFind_original)(br_object** ph, br_token type, char* pattern, br_token_value* tv);
 br_error C2_HOOK_CDECL BrDevContainedFind(br_object** ph, br_token type, char* pattern, br_token_value* tv) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevContainedFind_original(ph, type, pattern, tv);
 #else
-#error "Not implemented"
+    int i;
+
+    AddRequestedDrivers();
+
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        if (C2V(fw).dev_slots[i].dev != NULL) {
+            if (C2V(fw).dev_slots[i].dev->dispatch->_find((br_object_container*)C2V(fw).dev_slots[i].dev, ph, type, pattern, tv) == 0) {
+                return 0;
+            }
+        }
+    }
+    return 0x1002;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528ac0, BrDevContainedFind, BrDevContainedFind_original)
