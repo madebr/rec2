@@ -1846,7 +1846,7 @@ typedef struct br_device_pixelmap_dispatch {                                    
     br_device* (*_device)(br_object*);                                                                             // @0x20
     br_int_32 (*_space)(br_object*);                                                                               // @0x24
     br_tv_template* (*_templateQuery)(br_object*);                                                                 // @0x28
-    br_error (*_query)(br_object*, br_uint_32*, br_token);                                                         // @0x2c
+    br_error (*_query)(br_object*, void*, br_token);                                                               // @0x2c
     br_error (*_queryBuffer)(br_object*, br_uint_32*, void*, br_size_t, br_token);                                 // @0x30
     br_error (*_queryMany)(br_object*, br_token_value*, void*, br_size_t, br_int_32*);                             // @0x34
     br_error (*_queryManySize)(br_object*, br_size_t*, br_token_value*);                                           // @0x38
@@ -2323,7 +2323,7 @@ typedef struct br_output_facility_dispatch {
     br_device* (*_device)(br_object*);
     br_int_32 (*_space)(br_object*);
     br_tv_template* (*_templateQuery)(br_object*);
-    br_error (*_query)(br_object*, br_uint_32*, br_token);
+    br_error (*_query)(br_object*, void*, br_token);
     br_error (*_queryBuffer)(br_object*, br_uint_32*, void*, br_size_t, br_token);
     br_error (*_queryMany)(br_object*, br_token_value*, void*, br_size_t, br_int_32*);
     br_error (*_queryManySize)(br_object*, br_size_t*, br_token_value*);
