@@ -63,12 +63,18 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528e10, BrDevBeginTV, BrDevBeginTV_original)
 
 br_pixelmap* (C2_HOOK_CDECL * BrDevBeginOld_original)(char* setup_string);
 br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(char* setup_string) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevBeginOld_original(setup_string);
 #else
     br_pixelmap* s;
 
-#error "Not implemented"
+    if (BrDevLastBeginQuery() != NULL) {
+        BrFailure("Device already active");
+    }
+    if (BrDevBeginTV(&s, setup_string, NULL) != 0) {
+        BrFailure("Could not start driver");
+    }
+    return s;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00529270, BrDevBeginOld, BrDevBeginOld_original)
