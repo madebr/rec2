@@ -126,17 +126,24 @@ br_uint_16 C2_HOOK_STDCALL prependMatrix(br_matrix34* mat, br_uint_16 mat_t, br_
 
 #error "Not implemented"
 }
+#endif
 
+void (C2_HOOK_STDCALL * actorRender_original)(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t);
 void C2_HOOK_STDCALL actorRender(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t) {
+#if defined(C2_HOOKS_ENABLED)
+    actorRender_original(ap, model, material, render_data, style, t);
+#else
     br_material* this_material;
     br_model* this_model;
     void* this_render_data;
     br_actor* a;
     br_token s;
-
 #error "Not implemented"
+#endif
 }
+C2_HOOK_FUNCTION_ORIGINAL(0x005221e0, actorRender, actorRender_original)
 
+#if 0
 void actorRenderOnScreen(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t) {
     br_material* this_material;
     br_model* this_model;
