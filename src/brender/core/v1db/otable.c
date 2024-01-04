@@ -6,6 +6,8 @@
 #include "core/std/brstdlib.h"
 #include "core/fw/resource.h"
 
+#include "c2_stdlib.h"
+
 br_order_table* C2_HOOK_CDECL BrZsOrderTableAllocate(br_uint_16 size, br_uint_32 flags, br_uint_16 type) {
     br_order_table* order_table;
 
@@ -61,14 +63,86 @@ C2_HOOK_FUNCTION(0x005263c0, BrZsOrderTablePrimitiveInsert)
 
 br_uint_16 (C2_HOOK_CDECL * BrZsPrimitiveBucketSelect_original)(br_scalar* z, br_uint_16 type, br_scalar min_z, br_scalar max_z, br_uint_16 size, br_uint_16 sort_type);
 br_uint_16 C2_HOOK_CDECL BrZsPrimitiveBucketSelect(br_scalar* z, br_uint_16 type, br_scalar min_z, br_scalar max_z, br_uint_16 size, br_uint_16 sort_type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrZsPrimitiveBucketSelect_original(z, type, min_z, max_z, size, sort_type);
 #else
     br_uint_16 bucket;
     br_scalar zprim;
     br_scalar range;
     br_scalar scale;
-#error "Not implemented"
+
+#ifdef BRENDER_FIX_BUGS
+    zprim = 0.f;
+#endif
+
+    switch (type) {
+    case BRT_POINT:
+        zprim = z[0];
+        break;
+    case BRT_LINE:
+        switch (sort_type) {
+        case 1:
+            zprim = (z[0] + z[1]) / 2.f;
+            break;
+        case 2:
+            zprim = z[0];
+            if (z[1] < zprim) {
+                zprim = z[1];
+            }
+            break;
+        case 3:
+            zprim = z[0];
+            if (zprim < z[1]) {
+                zprim = z[1];
+            }
+            break;
+        default:
+            c2_abort();
+        }
+    case BRT_TRIANGLE:
+        switch (sort_type) {
+        case 1:
+            zprim = (z[0] + z[1] + z[3]) * (1.f / 3.f);
+            break;
+        case 2:
+            zprim = z[0];
+            if (z[1] < zprim) {
+                zprim = z[1];
+            }
+            if (z[2] < zprim) {
+                zprim = z[2];
+            }
+            break;
+        case 3:
+            zprim = z[0];
+            if (zprim < z[1]) {
+                zprim = z[1];
+            }
+            if (zprim < z[2]) {
+                zprim = z[2];
+            }
+            break;
+        default:
+            c2_abort();
+        }
+    default:
+        c2_abort();
+    }
+    range = max_z - min_z;
+    if (range < 0.001f) {
+        scale = 1000.f;
+    } else {
+        scale = size / range;
+    }
+    zprim -= min_z;
+    if (zprim < 0.f) {
+        zprim = 0.f;
+    }
+    bucket = (br_uint_16)(scale * zprim);
+    if (bucket >= size) {
+        bucket = size - 1;
+    }
+    return bucket;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005263f0, BrZsPrimitiveBucketSelect, BrZsPrimitiveBucketSelect_original)
