@@ -264,7 +264,6 @@ void C2_HOOK_STDCALL actorRenderOnScreen(br_actor* ap, br_model* model, br_mater
     }
 }
 
-#if 0
 void C2_HOOK_STDCALL sceneRenderWorld(br_actor* world) {
     br_model* model;
     br_material* material;
@@ -272,9 +271,15 @@ void C2_HOOK_STDCALL sceneRenderWorld(br_actor* world) {
     br_uint_8 style;
     br_actor* a;
 
-#error "Not implemented"
+    model = world->model != NULL ? world->model : C2V(v1db).default_model;
+    material = world->material != NULL ? world->material : C2V(v1db).default_material;
+    render_data = world->render_data != NULL ? world->render_data : C2V(v1db).default_render_data;
+    style = world->render_style != BR_RSTYLE_DEFAULT ? world->render_style : BR_RSTYLE_DEFAULT;
+    for (a = world->children; a != NULL; a = a->next) {
+        actorRender(a, model, material, render_data, style, C2V(v1db).ttype);
+    }
+    return;
 }
-#endif
 
 void (C2_HOOK_STDCALL * sceneRenderAdd_original)(br_actor* tree);
 void C2_HOOK_STDCALL sceneRenderAdd(br_actor* tree) {
@@ -441,10 +446,15 @@ C2_HOOK_FUNCTION(0x005226a0, BrZbSceneRenderEnd)
 
 void (C2_HOOK_CDECL * BrZbSceneRender_original)(br_actor* world, br_actor* camera, br_pixelmap* colour_buffer, br_pixelmap* depth_buffer);
 void C2_HOOK_CDECL BrZbSceneRender(br_actor* world, br_actor* camera, br_pixelmap* colour_buffer, br_pixelmap* depth_buffer) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrZbSceneRender_original(world, camera, colour_buffer, depth_buffer);
 #else
-#error "Not implemented"
+
+    if (C2V(v1db).renderer != NULL) {
+        BrZbSceneRenderBegin(world, camera, colour_buffer, depth_buffer);
+        sceneRenderWorld(world);
+        BrZbSceneRenderEnd();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005226d0, BrZbSceneRender, BrZbSceneRender_original)
