@@ -48,10 +48,14 @@ C2_HOOK_FUNCTION(0x005285a0, BrDevAddStatic)
 
 br_error (C2_HOOK_CDECL * BrDevCheckAdd_original)(br_device** pdev, char* name, char* args);
 br_error C2_HOOK_CDECL BrDevCheckAdd(br_device** pdev, char* name, char* args) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevCheckAdd_original(pdev, name, args);
 #else
-#error "Not implemented"
+
+    if (BrDevFind(pdev, name) == 0) {
+        return 0;
+    }
+    return BrDevAdd(pdev, name, args);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005285c0, BrDevCheckAdd, BrDevCheckAdd_original)
