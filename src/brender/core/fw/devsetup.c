@@ -1,8 +1,11 @@
 #include "devsetup.h"
 
 #include "devlist.h"
+#include "tokenval.h"
 
 #include "../core/std/brstdlib.h"
+
+#include "../core/v1db/sys_conf.h"
 
 #include <stdarg.h>
 #include <stdio.h>
@@ -58,10 +61,152 @@ C2_HOOK_FUNCTION(0x00528df0, BrDevBegin)
 
 br_error (C2_HOOK_CDECL * BrDevBeginTV_original)(br_pixelmap** ppm, char* setup_string, br_token_value* setup_tv);
 br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, char* setup_string, br_token_value* setup_tv) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevBeginTV_original(ppm, setup_string, setup_tv);
 #else
-#error "not implemented"
+    char str[512];
+    char* args;
+    char* devname;
+    char* devargs;
+    char devices_str[512];
+    char* device_name;
+    char* device_args;
+    char* next_device;
+    br_token_value args_tv[64];
+    br_token_value* tv;
+    br_output_facility* output_facility;
+    br_device* device;
+    br_pixelmap* screen;
+    int i;
+    int n;
+    br_error r;
+
+    tv = NULL;
+    if (setup_string == NULL) {
+        BrSystemConfigQueryString(BRT_DEFAULT_DEVICE_STR, str, BR_ASIZE(str));
+    } else {
+        BrStrNCpy(str, setup_string, BR_ASIZE(str));
+        str[BR_ASIZE(str) - 1] = '\0';
+    }
+    for (args = str; *args != '\0' && *args != ','; args++) {
+    }
+    if (*args != '\0') {
+        *args = '\0';
+        args++;
+    }
+    for (devname = str; BrIsSpace(*devname); devname++) {
+    }
+    n = BrStrLen(devname);
+    /* Fix to avoid writing to negative indices */
+    while (n != 0 && BrIsSpace(devname[n - 1])) {
+        devname[n - 1] = '\0';
+        n--;
+    }
+    if (n == 0 || (n == 1 && devname[0] == '*')) {
+        if (*args != '\0' && BrStringToTokenValue(args_tv, sizeof(args_tv), args) == 0) {
+            tv = args_tv;
+        }
+        if (setup_tv != NULL) {
+            if (tv == NULL) {
+                tv = setup_tv;
+            } else {
+                for (tv = setup_tv; tv->t != BR_NULL_TOKEN; tv++) {
+                    for (i = 0; args_tv[i].t != BR_NULL_TOKEN; i++) {
+                        if (args_tv[i].t == tv->t) {
+                            break;
+                        }
+                    }
+                    if (args_tv[i].t == BR_NULL_TOKEN) {
+                        if (i == BR_ASIZE(args_tv) - 1) {
+                            BrFailure("Too many token value pairs");
+                        }
+                        args_tv[i + 1].t = BR_NULL_TOKEN;
+                        args_tv[i + 1].v.p = NULL;
+                    }
+                    args_tv[i] = *tv;
+                }
+                tv = args_tv;
+            }
+        }
+        r = BrDevContainedFind((br_object **)&output_facility, BRT_OUTPUT_FACILITY, NULL, tv);
+        if (r != 0) {
+            return r;
+        }
+    } else {
+        if (BrDevFind(&device, devname) != 0) {
+            devargs = NULL;
+            if (BrSystemConfigQueryString(BRT_BRENDER_DEVICES_STR, devices_str, BR_ASIZE(devices_str)) == 0) {
+                for (device_name = devices_str; *device_name != '\0'; device_name = next_device) {
+                    for (device_args = device_name; *device_args != '\0' && *device_args != ',' && *device_args != ';'; device_args++) {
+                    }
+                    if (*device_args == ',') {
+                        *device_args = '\0';
+                        device_args++;
+                    }
+                    for (next_device = device_args; *next_device != '\0' && *next_device != ';'; next_device++) {
+                    }
+                    if (*next_device != '\0') {
+                        *next_device = '\0';
+                        next_device++;
+                    }
+                    while (BrIsSpace(*device_name)) {
+                        device_name++;
+                    }
+                    n = BrStrLen(device_name);
+                    /* Fix to avoid writing to negative indices */
+                    while (n != 0 && BrIsSpace(device_name[n - 1])) {
+                        device_name[n - 1] = '\0';
+                        n--;
+                    }
+                    if (BrStrICmp(devname, device_name) == 0) {
+                        devargs = device_args;
+                        break;
+                    }
+                }
+            }
+
+            r = BrDevAdd(&device, devname, devargs);
+            if (r != 0) {
+                return r;
+            }
+        }
+        if(*args && BrStringToTokenValue(args_tv, sizeof(args_tv), args) == 0) {
+            tv = args_tv;
+        }
+        if (setup_tv != NULL) {
+            if (tv == NULL) {
+                tv = setup_tv;
+            } else {
+                for (tv = setup_tv; tv->t != BR_NULL_TOKEN; tv++) {
+                    for (i = 0; args_tv[i].t != BR_NULL_TOKEN; i++) {
+                        if (args_tv[i].t == tv->t) {
+                            break;
+                        }
+                    }
+                    if (args_tv[i].t == BR_NULL_TOKEN) {
+                        if (i == BR_ASIZE(args_tv) - 1) {
+                            BrFailure("Too many token value pairs");
+                        }
+                        args_tv[i+1].t = BR_NULL_TOKEN;
+                        args_tv[i+1].v.p = NULL;
+                    }
+                    args_tv[i] = *tv;
+                }
+                tv = args_tv;
+            }
+        }
+        r = device->dispatch->_find((br_object_container*)device, (br_object**)&output_facility, BRT_OUTPUT_FACILITY, NULL, tv);
+        if (r != 0) {
+            return r;
+        }
+    }
+    r = output_facility->dispatch->_pixelmapNew(output_facility, (br_device_pixelmap**)&screen, tv);
+    if (r != 0) {
+        return r;
+    }
+    BrDevLastBeginSet(screen);
+    *ppm = screen;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528e10, BrDevBeginTV, BrDevBeginTV_original)
