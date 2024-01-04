@@ -56,6 +56,8 @@ add_library(brender STATIC
     core/fw/tokenval.c
     core/fw/tokenval.h
 
+    core/host/cpuid.c
+    core/host/cpuid.h
     core/host/himage.c
     core/host/himage.h
     core/host/hostcfg.c
