@@ -33,10 +33,22 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528490, devAdd, devAdd_original)
 
 br_error (C2_HOOK_CDECL * BrDevAdd_original)(br_device** pdev, char* image, char* args);
 br_error C2_HOOK_CDECL BrDevAdd(br_device** pdev, char* image, char* args) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevAdd_original(pdev, image, args);
 #else
-#error "Not implemented"
+    br_image* dev_image;
+    br_device_begin_fn* dev_begin;
+
+    dev_image = BrImageReference(image);
+    if (dev_image == NULL) {
+        return 0x1002;
+    }
+    dev_begin = BrImageLookupName(dev_image, "BrDrv1Begin", 0);
+    if (dev_begin == NULL) {
+        BrImageDereference(dev_image);
+        return 0x1002;
+    }
+    return devAdd(pdev, dev_begin, args, dev_image);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528430, BrDevAdd, BrDevAdd_original)
