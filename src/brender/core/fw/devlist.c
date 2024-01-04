@@ -1,8 +1,9 @@
 #include "devlist.h"
 
+#include "fwsetup.h"
 #include "image.h"
 #include "pattern.h"
-#include "fwsetup.h"
+#include "resource.h"
 
 #include "core/std/brstdlib.h"
 
@@ -23,10 +24,46 @@ br_error C2_HOOK_CDECL AddRequestedDrivers(void) {
 
 br_error (C2_HOOK_STDCALL * devAdd_original)(br_device** pdev, br_device_begin_fn* dev_begin, char* args, br_image* image);
 br_error C2_HOOK_STDCALL devAdd(br_device** pdev, br_device_begin_fn* dev_begin, char* args, br_image* image) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
 return devAdd_original(pdev, dev_begin, args, image);
 #else
-#error "Not implemented"
+    int i;
+    br_device* dev;
+    br_open_device* new_slots;
+
+    dev = dev_begin(args);
+    if (dev == NULL) {
+        return 0x1002;
+    }
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        if (C2V(fw).dev_slots[i].dev == NULL) {
+            C2V(fw).dev_slots[i].dev = dev;
+            C2V(fw).dev_slots[i].image = image;
+            if (pdev != NULL) {
+                *pdev = dev;
+            }
+            return 0;
+        }
+    }
+    new_slots = BrResAllocate(dev, (C2V(fw).ndev_slots + 16) * sizeof(br_open_device), BR_MEMORY_DRIVER);
+    if (new_slots == NULL) {
+        dev->dispatch->_free((br_object*)dev);
+        /* FIXME: also do BrImageDereference? */
+        return 0x1003;
+    }
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        new_slots[i].dev = C2V(fw).dev_slots[i].dev = dev;
+        new_slots[i].image = C2V(fw).dev_slots[i].image = image;
+    }
+    BrResFree(C2V(fw).dev_slots);
+    C2V(fw).dev_slots = new_slots;
+    C2V(fw).dev_slots[C2V(fw).ndev_slots].dev = dev;
+    C2V(fw).dev_slots[C2V(fw).ndev_slots].image = image;
+    C2V(fw).ndev_slots++;
+    if (pdev != NULL) {
+        *pdev = dev;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528490, devAdd, devAdd_original)
