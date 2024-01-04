@@ -81,11 +81,14 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00529270, BrDevBeginOld, BrDevBeginOld_original)
 
 void (C2_HOOK_CDECL * BrDevEndOld_original)(void);
 void C2_HOOK_CDECL BrDevEndOld(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrDevEndOld_original();
 #else
 
-#error "Not implemented"
+    if (BrDevLastBeginQuery() != NULL) {
+        BrPixelmapFree(BrDevLastBeginQuery());
+    }
+    BrDevLastBeginSet(NULL);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005292c0, BrDevEndOld, BrDevEndOld_original)
