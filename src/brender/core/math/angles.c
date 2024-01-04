@@ -41,7 +41,7 @@ order_info OrderAxes[32] = {
 
 br_matrix34* (C2_HOOK_CDECL * BrEulerToMatrix34_original)(br_matrix34* mat, const br_euler* euler);
 br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* euler) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrEulerToMatrix34_original(mat, euler);
 #else
     br_uint_8 o;
@@ -61,7 +61,66 @@ br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* e
     int a0;
     int a1;
     int a2;
-#error "not implemented"
+
+    o = euler->order;
+    if (o & 0x10) {
+        ti = euler->c;
+        tj = euler->b;;
+        th = euler->a;
+    } else {
+        ti = euler->c;
+        tj = euler->b;
+        th = euler->a;
+    }
+    if (o & 0x4) {
+        ti = -ti;
+        tj = -tj;
+        th = -th;
+    }
+    ci = BR_COS(ti);
+    cj = BR_COS(tj);
+    ch = BR_COS(th);
+
+    si = BR_SIN(ti);
+    sj = BR_SIN(tj);
+    sh = BR_SIN(th);
+
+    cc = ci * ch;
+    cs = ci * sh;
+    sc = si * ch;
+    ss = si * sh;
+
+    a0 = OrderAxes[o].a0;
+    a1 = OrderAxes[o].a1;
+    a2 = OrderAxes[o].a2;
+
+    if (o & 0x8) {
+        mat->m[a0][a0] =              cj;
+        mat->m[a1][a0] =   sj * si;
+        mat->m[a2][a0] =   sj * ci;
+        mat->m[a0][a1] =   sj * sh;
+        mat->m[a1][a1] = -(cj * ss) + cc;
+        mat->m[a2][a1] = -(cj * cs) - sc;
+        mat->m[a0][a2] = -(sj * ch);
+        mat->m[a1][a2] =   cj * sc + cs;
+        mat->m[a2][a2] =   cj * cc - ss;
+    } else {
+        mat->m[a0][a0] =  cj * ch;
+        mat->m[a1][a0] =  sj * sc - cs;
+        mat->m[a2][a0] =  sj * cc + ss;
+        mat->m[a0][a1] =  cj * sh;
+        mat->m[a1][a1] =  sj * ss + cc;
+        mat->m[a2][a1] =  sj * cs - sc;
+        mat->m[a0][a2] =          - sj;
+        mat->m[a1][a2] =  cj * si;
+        mat->m[a2][a2] =  cj * ci;
+    }
+
+    mat->m[3][0] = 0.f;
+    mat->m[3][1] = 0.f;
+    mat->m[3][2] = 0.f;
+
+    return mat;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00531de0, BrEulerToMatrix34, BrEulerToMatrix34_original)
