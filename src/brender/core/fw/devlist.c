@@ -1,5 +1,6 @@
 #include "devlist.h"
 
+#include "image.h"
 #include "pattern.h"
 #include "fwsetup.h"
 
@@ -65,10 +66,22 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005286d0, BrDevAddConfig, BrDevAddConfig_original)
 
 br_error (C2_HOOK_CDECL * BrDevRemove_original)(br_device* dev);
 br_error C2_HOOK_CDECL BrDevRemove(br_device* dev) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevRemove_original(dev);
 #else
-#error "Not implemented"
+    int i;
+
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        if (C2V(fw).dev_slots[i].dev == dev) {
+            C2V(fw).dev_slots[i].dev->dispatch->_free((br_object*)C2V(fw).dev_slots[i].dev);
+            if (C2V(fw).dev_slots[i].image != NULL) {
+                BrImageDereference(C2V(fw).dev_slots[i].image);
+            }
+            C2V(fw).dev_slots[i].dev = NULL;
+            C2V(fw).dev_slots[i].image = NULL;
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528800, BrDevRemove, BrDevRemove_original)
