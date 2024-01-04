@@ -1,9 +1,14 @@
 #include "devsetup.h"
 
+#include "devlist.h"
+
+#include "../core/std/brstdlib.h"
+
 #include <stdarg.h>
 #include <stdio.h>
 
 #include "c2_stdio.h"
+#include "c2_stdlib.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, last_begin_screen, 0x006ad9ac);
 
@@ -120,17 +125,61 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00529300, BrDevPaletteSetEntryOld, BrDevPaletteSetEn
 
 br_error (C2_HOOK_CDECL * BrRendererFacilityFind_original)(br_renderer_facility** prf, br_device_pixelmap* destination, br_token scalar_type);
 br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_device_pixelmap* destination, br_token scalar_type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrRendererFacilityFind_original(prf, destination, scalar_type);
 #else
     br_renderer_facility* renderer_facility;
     br_error r;
     br_output_facility* ot;
-    char object_name[23];
-    char image_name[9];
+    char object_name[23] = "Default-Renderer-00000";
+    char image_name[9] = "softrnd0";
     br_boolean scalar_is_valid;
 
-#error "Not implemented"
+    renderer_facility = NULL;
+    scalar_is_valid = 0;
+    switch (scalar_type) {
+    case BRT_FIXED:
+        BrStrCpy(&object_name[17], "Fixed");
+        image_name[7] = 'x';
+        scalar_is_valid = 1;
+        break;
+    case BRT_FLOAT:
+        BrStrCpy(&object_name[17], "Float");
+        image_name[7] = 'f';
+        scalar_is_valid = 1;
+        break;
+    default:
+        c2_abort();
+    }
+    if (renderer_facility == NULL && destination != NULL) {
+        destination->dispatch->_query((br_object*)destination, &renderer_facility, BRT_RENDERER_FACILITY_O);
+    }
+    if (renderer_facility == NULL && destination != NULL) {
+        ot = NULL;
+        r = destination->dispatch->_query((br_object*)destination, &ot, BRT_OUTPUT_FACILITY_O);
+        if (r == 0 && ot != NULL) {
+            ot->dispatch->_query((br_object*)ot, &renderer_facility, BRT_RENDERER_FACILITY_O);
+        }
+    }
+    if (scalar_is_valid && renderer_facility == NULL) {
+        BrDevContainedFind((br_object**)&renderer_facility, BRT_RENDERER_FACILITY, object_name, NULL);
+    }
+    if (renderer_facility == NULL) {
+        BrDevContainedFind((br_object**)&renderer_facility, BRT_RENDERER_FACILITY, "Default-Renderer", NULL);
+    }
+    if (scalar_is_valid && renderer_facility == NULL) {
+        BrDevCheckAdd(0, image_name, 0);
+        BrDevContainedFind((br_object**)&renderer_facility, BRT_RENDERER_FACILITY, object_name, NULL);
+    }
+    if (renderer_facility == NULL) {
+        BrDevCheckAdd(0, "softrend", 0);
+        BrDevContainedFind((br_object**)&renderer_facility, BRT_RENDERER_FACILITY, "Default-Renderer", NULL);
+    }
+    if (renderer_facility == NULL) {
+        return 0x1002;
+    }
+    *prf = renderer_facility;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00529320, BrRendererFacilityFind, BrRendererFacilityFind_original)
