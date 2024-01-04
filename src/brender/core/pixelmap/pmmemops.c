@@ -267,12 +267,14 @@ void C2_HOOK_CDECL pm_mem_copy_colour(br_uint_8* dst, br_uint_32 dst_qual, br_ui
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053ee16, pm_mem_copy_colour, pm_mem_copy_colour_original)
 
-void (C2_HOOK_CDECL * pm_mem_copy_colour_rowbyrow_original)(br_uint_8* dst, br_uint_32 dst_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 width, br_uint_32 height, br_uint_32 dst_stride, br_uint_32 src_stride, br_uint_32 bpp);
-void C2_HOOK_CDECL pm_mem_copy_colour_rowbyrow(br_uint_8* dst, br_uint_32 dst_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 width, br_uint_32 height, br_uint_32 dst_stride, br_uint_32 src_stride, br_uint_32 bpp) {
-#if defined(C2_HOOKS_ENABLED)
-    pm_mem_copy_colour_rowbyrow_original(dst, dst_qual, src, src_qual, width, height, dst_stride, src_stride, bpp);
+void (C2_HOOK_CDECL * pm_mem_copy_colour_rowbyrow_original)(br_uint_8* dest, br_uint_32 dest_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 width, br_uint_32 height, br_uint_32 dest_stride, br_uint_32 src_stride, br_uint_32 bpp);
+void C2_HOOK_CDECL pm_mem_copy_colour_rowbyrow(br_uint_8* dest, br_uint_32 dest_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 width, br_uint_32 height, br_uint_32 dest_stride, br_uint_32 src_stride, br_uint_32 bpp) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    pm_mem_copy_colour_rowbyrow_original(dest, dest_qual, src, src_qual, width, height, dest_stride, src_stride, bpp);
 #else
-#error "Not implemented"
+    for (; height != 0; height--, dest += dest_stride, src += src_stride) {
+        c2_memcpy(dest, src, width * bpp);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053ef0d, pm_mem_copy_colour_rowbyrow, pm_mem_copy_colour_rowbyrow_original)
