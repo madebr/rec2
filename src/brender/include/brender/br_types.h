@@ -1176,7 +1176,9 @@ typedef struct br_outfcty_desc {
     br_boolean fullscreen;
 } br_outfcty_desc;
 
-typedef struct br_renderer_facility br_renderer_facility;
+typedef struct br_renderer_facility {
+    struct br_renderer_facility_dispatch* dispatch;
+} br_renderer_facility;
 
 typedef struct br_device_pixelmap_dispatch br_device_pixelmap_dispatch;
 typedef struct br_device_pixelmap {        // size: 0x44
@@ -1928,7 +1930,7 @@ typedef struct br_renderer_dispatch {
     br_device* (C2_HOOK_CDECL *_device)(br_object*);
     br_int_32 (C2_HOOK_CDECL *_space)(br_object*);
     br_tv_template* (C2_HOOK_CDECL *_templateQuery)(br_object*);
-    br_error (C2_HOOK_CDECL *_query)(br_object*, br_uint_32*, br_token);
+    br_error (C2_HOOK_CDECL *_query)(br_object*, void*, br_token);
     br_error (C2_HOOK_CDECL *_queryBuffer)(br_object*, br_uint_32*, void*, br_size_t, br_token);
     br_error (C2_HOOK_CDECL *_queryMany)(br_object*, br_token_value*, void*, br_size_t, br_int_32*);
     br_error (C2_HOOK_CDECL *_queryManySize)(br_object*, br_size_t*, br_token_value*);
