@@ -10,7 +10,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, nameOrdinals_BRHOST1, 50, 0x00
 
 void (C2_HOOK_CDECL * HostBegin_original)(void);
 void C2_HOOK_CDECL HostBegin(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     HostBegin_original();
 #else
 #if defined(__I86__)
