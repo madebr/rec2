@@ -117,13 +117,19 @@ br_uint_32 C2_HOOK_CDECL BrOnScreenCheck(br_bounds3* bounds) {
 }
 C2_HOOK_FUNCTION(0x00521bf0, BrOnScreenCheck)
 
-#if 0
 br_uint_16 C2_HOOK_STDCALL prependActorTransform(br_actor* ap, br_uint_16 t) {
     br_matrix34 mt;
 
-#error "Not implemented"
+    if (ap->t.type < BR_TRANSFORM_QUAT) {
+        C2V(v1db).renderer->dispatch->_modelMulF(C2V(v1db).renderer, (br_matrix34_f*)&ap->t.t.mat);
+    } else {
+        BrTransformToMatrix34(&mt, &ap->t);
+        C2V(v1db).renderer->dispatch->_modelMulF(C2V(v1db).renderer, (br_matrix34_f*)&mt);
+    }
+    return C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_MODEL_TO_VIEW_HINT_T, ap->t.type == BR_TRANSFORM_MATRIX34_LP ? BRT_LENGTH_PRESERVING : BRT_NONE);
 }
 
+#if 0
 br_uint_16 C2_HOOK_STDCALL prependMatrix(br_matrix34* mat, br_uint_16 mat_t, br_uint_16 t) {
     br_matrix34 mt;
 
@@ -133,7 +139,7 @@ br_uint_16 C2_HOOK_STDCALL prependMatrix(br_matrix34* mat, br_uint_16 mat_t, br_
 
 void (C2_HOOK_STDCALL * actorRender_original)(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t);
 void C2_HOOK_STDCALL actorRender(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     actorRender_original(ap, model, material, render_data, style, t);
 #else
     br_material* this_material;
@@ -141,21 +147,122 @@ void C2_HOOK_STDCALL actorRender(br_actor* ap, br_model* model, br_material* mat
     void* this_render_data;
     br_actor* a;
     br_token s;
-#error "Not implemented"
+
+    if (ap->children == NULL && ap->type != BR_ACTOR_MODEL) {
+        return;
+    }
+    if (ap->render_style != BR_RSTYLE_DEFAULT) {
+        style = ap->render_style;
+    }
+    if (style == BR_RSTYLE_NONE) {
+        return;
+    }
+    this_material = ap->material != NULL ? ap->material : material;
+    this_model = ap->model != NULL ? ap->model : model;
+    this_render_data = ap->render_data != NULL ? ap->render_data : render_data;
+    if (ap->t.type == BR_TRANSFORM_IDENTITY) {
+        switch (ap->type) {
+        case BR_ACTOR_MODEL:
+            s = BrOnScreenCheck(&this_model->bounds);
+            if (s != BRT_REJECT) {
+                BrDbModelRender(ap, this_model, this_material, this_render_data, style, s, 1);
+            }
+            break;
+        case BR_ACTOR_BOUNDS:
+            s = BrOnScreenCheck(&this_model->bounds);
+            if (s == BRT_REJECT) {
+                return;
+            }
+            break;
+        case BR_ACTOR_BOUNDS_CORRECT:
+            s = BrOnScreenCheck((br_bounds3*)ap->type_data);
+            if (s == BRT_ACCEPT) {
+                for (a = ap->children; a != NULL; a = a->next) {
+                    actorRenderOnScreen(a, this_model, this_material, this_render_data, style, t);
+                }
+                return;
+            } else if (s == BRT_REJECT) {
+                return;
+            }
+            break;
+        }
+        for (a = ap->children; a != NULL; a = a->next) {
+            actorRender(a, this_model, this_material, this_render_data, style, t);
+        }
+    } else {
+        C2V(v1db).renderer->dispatch->_statePush(C2V(v1db).renderer, 0x2);
+        t = prependActorTransform(ap, t);
+        switch (ap->type) {
+        case BR_ACTOR_MODEL:
+            s = BrOnScreenCheck(&this_model->bounds);
+            if (s != BRT_REJECT) {
+                BrDbModelRender(ap, this_model, this_material, this_render_data, style, s, 1);
+            }
+            break;
+        case BR_ACTOR_BOUNDS:
+            s = BrOnScreenCheck((br_bounds3*)ap->type_data);
+            if (s == BRT_REJECT) {
+                C2V(v1db).renderer->dispatch->_statePop(C2V(v1db).renderer, 0x2);
+                return;
+            }
+            break;
+        case BR_ACTOR_BOUNDS_CORRECT:
+            s = BrOnScreenCheck((br_bounds3*)ap->type_data);
+            if (s == BRT_ACCEPT) {
+                for (a = ap->children; a != NULL; a = a->next) {
+                    actorRenderOnScreen(a, this_model, this_material, this_render_data, style, t);
+                }
+            } else if (s == BRT_REJECT) {
+                C2V(v1db).renderer->dispatch->_statePop(C2V(v1db).renderer, 0x2);
+                return;
+            }
+            break;
+        }
+        for (a = ap->children; a != NULL; a = a->next) {
+            actorRender(a, this_model, this_material, this_render_data, style, t);
+        }
+        C2V(v1db).renderer->dispatch->_statePop(C2V(v1db).renderer, 0x2);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005221e0, actorRender, actorRender_original)
 
-#if 0
-void actorRenderOnScreen(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t) {
+void C2_HOOK_STDCALL actorRenderOnScreen(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t) {
     br_material* this_material;
     br_model* this_model;
     void* this_render_data;
     br_actor* a;
 
-#error "Not implemented"
+    if (ap->render_style != BR_RSTYLE_DEFAULT) {
+        style = ap->render_style;
+    }
+    if (style == BR_RSTYLE_NONE) {
+        return;
+    }
+    this_material = ap->material != NULL ? ap->material : material;
+    this_model = ap->model != NULL ? ap->model : model;
+    this_render_data = ap->render_data != NULL ? ap->render_data : model;
+    if (ap->t.type == BR_TRANSFORM_IDENTITY) {
+        if (ap->type == BR_ACTOR_MODEL) {
+            BrDbModelRender(ap, this_model, this_material, this_render_data, style, BRT_ACCEPT, 1);
+        }
+        for (a = ap->children; a != NULL; a = a->next) {
+            actorRenderOnScreen(a, this_model, this_material, this_render_data, style, t);
+        }
+    } else {
+        C2V(v1db).renderer->dispatch->_statePush(C2V(v1db).renderer, 0x2);
+        t = prependActorTransform(ap, t);
+        if (ap->type == BR_ACTOR_MODEL) {
+            BrDbModelRender(ap, this_model, this_material, this_render_data, style, BRT_ACCEPT, 1);
+        }
+        for (a = ap->children; a != NULL; a = a->next) {
+            actorRenderOnScreen(a, this_model, this_material, this_render_data, style, t);
+        }
+        C2V(v1db).renderer->dispatch->_statePop(C2V(v1db).renderer, 0x2);
+    }
 }
 
+#if 0
 void C2_HOOK_STDCALL sceneRenderWorld(br_actor* world) {
     br_model* model;
     br_material* material;
