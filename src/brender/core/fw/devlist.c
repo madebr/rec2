@@ -4,6 +4,8 @@
 #include "pattern.h"
 #include "fwsetup.h"
 
+#include "core/std/brstdlib.h"
+
 #include "core/v1db/sys_conf.h"
 
 br_error C2_HOOK_CDECL AddRequestedDrivers(void) {
@@ -56,10 +58,47 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005285c0, BrDevCheckAdd, BrDevCheckAdd_original)
 
 br_error (C2_HOOK_CDECL * BrDevAddConfig_original)(char* config);
 br_error C2_HOOK_CDECL BrDevAddConfig(char* config) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevAddConfig_original(config);
 #else
-#error "Not implemented"
+    char* end;
+    char* dev;
+    char* arg;
+    char tmp[512];
+    int n;
+
+    while (1) {
+        for (end = config; *end != '\0' && *end != ';'; end++) {
+        }
+        n = end - config;
+        if (n != 0) {
+            BrMemCpy(tmp, config, n);
+            tmp[n] = '\0';
+            for (arg = tmp; *arg != '\0' && *arg != ',' && *arg != ':'; arg++) {
+            }
+            if (*arg != '\0') {
+                *arg = '\0';
+            }
+            dev = tmp;
+            while (BrIsSpace(*dev)) {
+                dev++;
+            }
+            n = BrStrLen(dev);
+            if (n != 0) {
+                while (BrIsSpace(dev[n - 1])) {
+                    dev[n - 1] = '\0';
+                    n--;
+                }
+                BrDevAdd(NULL, dev, arg);
+            }
+        }
+        if (*end == ';') {
+            config = end + 1;
+        } else {
+            break;
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005286d0, BrDevAddConfig, BrDevAddConfig_original)
