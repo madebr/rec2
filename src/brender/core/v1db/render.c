@@ -492,10 +492,9 @@ C2_HOOK_FUNCTION(0x00522ae0, BrZsSceneRenderAdd)
 
 void (C2_HOOK_CDECL * BrZsSceneRenderEnd_original)(void);
 void C2_HOOK_CDECL BrZsSceneRenderEnd(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrZsSceneRenderEnd_original();
 #else
-
     C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_OUTPUT, 0, BRT_COLOUR_BUFFER_O, (uintptr_t)C2V(v1db).colour_buffer);
     if (C2V(v1db).format_buckets == NULL) {
         BrFailure("Renderer does not support buckets");
