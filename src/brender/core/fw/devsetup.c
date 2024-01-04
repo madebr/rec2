@@ -247,16 +247,76 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005294d0, BrPrimitiveLibraryFind, BrPrimitiveLibrary
 
 br_error (C2_HOOK_CDECL * BrGeometryFormatFind_original)(br_geometry** pgf, br_renderer* renderer, br_renderer_facility* renderer_facility, br_token scalar_type, br_token format_type);
 br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* renderer, br_renderer_facility* renderer_facility, br_token scalar_type, br_token format_type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrGeometryFormatFind_original(pgf, renderer, renderer_facility, scalar_type, format_type);
 #else
     br_error r;
     br_geometry* gf;
-    char object_name[21];
-    char image_name[9];
+    char object_name[21] = "Default-Format-00000";
+    char image_name[9] = "softfrm0";
     br_boolean scalar_is_valid;
 
-#error "Not implemented"
+    scalar_is_valid = 0;
+    switch (scalar_type) {
+    case BRT_FIXED:
+        BrStrCpy(&object_name[15], "Fixed");
+        image_name[7] = 'x';
+        scalar_is_valid = 1;
+        break;
+    case BRT_FLOAT:
+        BrStrCpy(&object_name[15], "Float");
+        image_name[7] = 'f';
+        scalar_is_valid = 1;
+        break;
+    default:
+        c2_abort();
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_dispatch, _query, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_dispatch, _find, 0x60);
+
+    r = renderer->dispatch->_find((br_object_container*)renderer, (br_object**)&gf, format_type, NULL, NULL);
+    if (r == 0) {
+        *pgf = gf;
+        return 0;
+    }
+    if (renderer_facility == NULL) {
+        renderer->dispatch->_query((br_object*)renderer, (br_object**)&renderer_facility, BRT_RENDERER_FACILITY_O);
+    }
+    if (renderer_facility != NULL) {
+        r = renderer_facility->dispatch->_find((br_object_container*)renderer_facility, (br_object**)&gf, format_type, 0, 0);
+        if (r == 0) {
+            *pgf = gf;
+            return 0;
+        }
+    }
+    if (scalar_is_valid) {
+        r = BrDevContainedFind((br_object**)&gf, format_type, object_name, NULL);
+        if (r == 0) {
+            *pgf = gf;
+            return 0;
+        }
+    }
+    r = BrDevContainedFind((br_object**)&gf, format_type, object_name, NULL);
+    if (r == 0) {
+        *pgf = gf;
+        return 0;
+    }
+    if (scalar_is_valid) {
+        BrDevCheckAdd(0, image_name, 0);
+        r = BrDevContainedFind((br_object**)&gf, format_type, object_name, NULL);
+        if (r == 0) {
+            *pgf = gf;
+            return 0;
+        }
+    }
+    BrDevCheckAdd(0, "softform", 0);
+    r = BrDevContainedFind((br_object**)&gf, format_type, object_name, NULL);
+    if (r == 0) {
+        *pgf = gf;
+        return 0;
+    }
+    return 0x1002;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00529680, BrGeometryFormatFind, BrGeometryFormatFind_original)
