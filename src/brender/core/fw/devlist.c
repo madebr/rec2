@@ -89,10 +89,31 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528860, BrDevFind, BrDevFind_original)
 
 br_error (C2_HOOK_CDECL * BrDevFindMany_original)(br_device** devices, br_int_32* ndevices, br_int_32 max_devices, char* pattern);
 br_error C2_HOOK_CDECL BrDevFindMany(br_device** devices, br_int_32* ndevices, br_int_32 max_devices, char* pattern) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevFindMany_original(devices, ndevices, max_devices, pattern);
 #else
-#error "Not implemented"
+    int i;
+    int c;
+
+    AddRequestedDrivers();
+
+    c = 0;
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        if (C2V(fw).dev_slots[i].dev != NULL) {
+            if (BrNamePatternMatch(pattern, C2V(fw).dev_slots[i].dev->dispatch->_identifier((br_object*)C2V(fw).dev_slots[i].dev))) {
+                if (c >= max_devices) {
+                    return 0x1004;
+                }
+                /* Order of operations differs from OG */
+                devices[c] = C2V(fw).dev_slots[i].dev;
+                c++;
+            }
+        }
+    }
+    if (ndevices != NULL) {
+        *ndevices = c;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528930, BrDevFindMany, BrDevFindMany_original)
