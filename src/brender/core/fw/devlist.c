@@ -1,5 +1,6 @@
 #include "devlist.h"
 
+#include "pattern.h"
 #include "fwsetup.h"
 
 #include "core/v1db/sys_conf.h"
@@ -98,10 +99,26 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528930, BrDevFindMany, BrDevFindMany_original)
 
 br_error (C2_HOOK_CDECL * BrDevCount_original)(br_int_32* ndevices, char* pattern);
 br_error C2_HOOK_CDECL BrDevCount(br_int_32* ndevices, char* pattern) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevCount_original(ndevices, pattern);
 #else
-#error "Not implemented"
+    int i;
+    int c;
+
+    AddRequestedDrivers();
+
+    c = 0;
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        if (C2V(fw).dev_slots[i].dev != NULL) {
+            if (BrNamePatternMatch(pattern, C2V(fw).dev_slots[i].dev->dispatch->_identifier((br_object*)C2V(fw).dev_slots[i].dev))) {
+                c++;
+            }
+        }
+    }
+    if (ndevices != NULL) {
+        *ndevices = c;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528a10, BrDevCount, BrDevCount_original)
