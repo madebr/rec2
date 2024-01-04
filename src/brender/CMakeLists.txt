@@ -170,6 +170,9 @@ add_library(brender STATIC
     core/v1db/v1dbfile.h
 )
 
+if(REC2_FIX_BUGS)
+    target_compile_definitions(brender PRIVATE BRENDER_FIX_BUGS)
+endif()
 target_include_directories(brender
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
