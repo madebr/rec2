@@ -75,14 +75,28 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528800, BrDevRemove, BrDevRemove_original)
 
 br_error (C2_HOOK_CDECL * BrDevFind_original)(br_device** pdev, char* pattern);
 br_error C2_HOOK_CDECL BrDevFind(br_device** pdev, char* pattern) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     br_error res = BrDevFind_original(pdev, pattern);
     C2_HOOK_DEBUGF("pattern=%s res=%d", pattern, res);
     C2_HOOK_FINISH();
     return res;
 #else
-#error "Not implemented"
+    int i;
+
+    AddRequestedDrivers();
+
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        if (C2V(fw).dev_slots[i].dev != NULL) {
+            if (BrNamePatternMatch(pattern, C2V(fw).dev_slots[i].dev->dispatch->_identifier((br_object*)C2V(fw).dev_slots[i].dev))) {
+                if (pdev != NULL) {
+                    *pdev = C2V(fw).dev_slots[i].dev;
+                }
+                return 0;
+            }
+        }
+    }
+    return 0x1002;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528860, BrDevFind, BrDevFind_original)
