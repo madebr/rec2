@@ -859,14 +859,33 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053a8f0, _M_br_device_pixelmap_mem_line, _M_br_devi
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_mem_copyBits_original)(br_device_pixelmap* self, br_point* point, br_uint_8* src, br_uint_16 s_stride, br_rectangle* bit_rect, br_uint_32 colour);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_copyBits(br_device_pixelmap* self, br_point* point, br_uint_8* src, br_uint_16 s_stride, br_rectangle* bit_rect, br_uint_32 colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_mem_copyBits_original(self, point, src, s_stride, bit_rect, colour);
 #else
     int bytes;
     int bit;
     br_rectangle ar;
     br_point ap;
-#error "Not implemented"
+
+    if (PixelmapCopyBitsClip(&ar, &ap, bit_rect, point, (br_pixelmap*)self) == BR_CLIP_REJECT) {
+        return 0;
+    }
+
+    bytes = C2V(pmTypeInfo)[self->pm_type].bits / 8;
+    bit = ar.x & 7;
+
+    pm_mem_copy_bits(
+        (br_uint_8*)self->pm_pixels + (self->pm_base_y + ap.y) * self->pm_row_bytes + (self->pm_base_x + ap.x + (ar.x & ~7) - bit) * bytes,
+        self->pm_pixels_qualifier,
+        self->pm_row_bytes,
+        src + ar.y * s_stride,
+        s_stride,
+        bit,
+        bit + ar.w,
+        ar.h,
+        bytes,
+        colour);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053be40, _M_br_device_pixelmap_mem_copyBits, _M_br_device_pixelmap_mem_copyBits_original)
