@@ -1,6 +1,8 @@
 #include "render.h"
 
+#include "actsupt.h"
 #include "dbsetup.h"
+#include "enables.h"
 #include "modrend.h"
 #include "otable.h"
 #include "prepmesh.h"
@@ -342,7 +344,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00521fe0, sceneRenderAdd, sceneRenderAdd_original)
 
 void (C2_HOOK_CDECL * BrDbSceneRenderBegin_original)(br_actor* world, br_actor* camera);
 void C2_HOOK_CDECL BrDbSceneRenderBegin(br_actor* world, br_actor* camera) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrDbSceneRenderBegin_original(world, camera);
 #else
     br_matrix34 tfm;
@@ -351,7 +353,33 @@ void C2_HOOK_CDECL BrDbSceneRenderBegin(br_actor* world, br_actor* camera) {
     int i;
     br_token vtos_type;
     br_uint_32 dummy;
-#error "Not implemented"
+
+    vtos_type = CameraToScreenMatrix4(&vtos, camera);
+    C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_VIEW_TO_SCREEN_M4_F, (uintptr_t)&vtos);
+    C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_VIEW_TO_SCREEN_HINT_T, vtos_type);
+    for (i = 0; i < BR_ASIZE(C2V(v1db).camera_path); i++) {
+        C2V(v1db).camera_path[i].a = NULL;
+    }
+    BrMatrix34Identity(&C2V(v1db).camera_path[camera->depth].m);
+    C2V(v1db).camera_path[camera->depth].transform_type = BR_TRANSFORM_IDENTITY;
+    for (i = camera->depth, a = camera; i > 0 && a != world; i--, a = a->parent) {
+        BrTransformToMatrix34(&tfm, &a->t);
+        BrMatrix34Mul(&C2V(v1db).camera_path[i - 1].m, &C2V(v1db).camera_path[i].m, &tfm);
+        C2V(v1db).camera_path[i - 1].transform_type = _CombineTransforms[C2V(v1db).camera_path[i].transform_type][a->t.type];
+        C2V(v1db).camera_path[i - 1].a = a;
+    }
+    if (world != a) {
+        BrFailure("camera is not in world hierachy");
+    }
+    C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_MODEL_TO_VIEW_M34_F, (uintptr_t)&C2V(v1db).camera_path[i].m);
+    C2V(v1db).ttype = C2V(v1db).camera_path[i].transform_type;
+    C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_MODEL_TO_VIEW_HINT_T, C2V(v1db).ttype != BR_TRANSFORM_MATRIX34 ? BRT_LENGTH_PRESERVING : BRT_NONE);
+    C2V(v1db).renderer->dispatch->_modelInvert(C2V(v1db).renderer);
+    C2V(v1db).renderer->dispatch->_partQueryBuffer(C2V(v1db).renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)&tfm, sizeof(tfm), BRT_MODEL_TO_VIEW_M34_F);
+    BrSetupLights(world, &tfm, C2V(v1db).ttype);
+    BrSetupClipPlanes(world, &tfm, C2V(v1db).ttype, &vtos);
+    BrSetupEnvironment(world, &tfm, C2V(v1db).ttype);
+    BrSetupHorizons(world,&tfm, C2V(v1db).ttype);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00521c10, BrDbSceneRenderBegin, BrDbSceneRenderBegin_original)
