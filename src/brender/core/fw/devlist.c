@@ -1,11 +1,21 @@
 #include "devlist.h"
 
-//br_error C2_HOOK_CDECL AddRequestedDrivers() {
-//    char devstr[256];
-//    static br_boolean bAlreadyDone;
-//    LOG_TRACE("()");
-//    NOT_IMPLEMENTED();
-//}
+#include "fwsetup.h"
+
+#include "core/v1db/sys_conf.h"
+
+br_error C2_HOOK_CDECL AddRequestedDrivers(void) {
+    char devstr[256];
+
+    if (!C2V(fw).bAlreadyLoadedDrivers) {
+        BrSystemConfigQueryString(BRT_BRENDER_DRIVERS_STR, devstr, sizeof(devstr));
+        if (devstr[0] != '\0') {
+            BrDevAddConfig(devstr);
+        }
+        C2V(fw).bAlreadyLoadedDrivers = 1;
+    }
+    return 0;
+}
 
 br_error (C2_HOOK_STDCALL * devAdd_original)(br_device** pdev, br_device_begin_fn* dev_begin, char* args, br_image* image);
 br_error C2_HOOK_STDCALL devAdd(br_device** pdev, br_device_begin_fn* dev_begin, char* args, br_image* image) {
@@ -118,10 +128,30 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528b90, BrDevContainedFindMany, BrDevContainedFind
 
 br_error (C2_HOOK_CDECL * BrDevContainedCount_original)(br_int_32* pcount, br_token type, char* pattern, br_token_value* tv);
 br_error C2_HOOK_CDECL BrDevContainedCount(br_int_32* pcount, br_token type, char* pattern, br_token_value* tv) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevContainedCount_original(pcount, type, pattern, tv);
 #else
-#error "Not implemented"
+    int i;
+    br_int_32 n;
+    br_int_32 total;
+    br_error r;
+
+    AddRequestedDrivers();
+
+    total = 0;
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        if (C2V(fw).dev_slots[i].dev != NULL) {
+            r = C2V(fw).dev_slots[i].dev->dispatch->_count((br_object_container*)C2V(fw).dev_slots[i].dev, &n, type, pattern, tv);
+            if (r != 0) {
+                return r;
+            }
+            total += n;
+        }
+    }
+    if (pcount != NULL) {
+        *pcount = total;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528c80, BrDevContainedCount, BrDevContainedCount_original)
