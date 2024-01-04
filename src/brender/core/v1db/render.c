@@ -571,7 +571,7 @@ C2_HOOK_FUNCTION(0x00522ea0, BrZbsSceneRenderAdd)
 
 void (C2_HOOK_CDECL * BrZbsSceneRenderEnd_original)(void);
 void C2_HOOK_CDECL BrZbsSceneRenderEnd(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrZbsSceneRenderEnd_original();
 #else
 
