@@ -892,13 +892,18 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053be40, _M_br_device_pixelmap_mem_copyBits, _M_br_
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_mem_pixelQuery_original)(br_device_pixelmap* self, br_uint_32* pcolour, br_point* p);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_pixelQuery(br_device_pixelmap* self, br_uint_32* pcolour, br_point* p) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_device_pixelmap_mem_pixelQuery_original(self, pcolour, p);
 #else
     br_point ap;
     br_int_8 bytes;
-    LOG_TRACE("(%p, %p, %p)", self, pcolour, p);
-#error "Not implemented"
+
+    if (PixelmapPointClip(&ap, p, (br_pixelmap*)self) == BR_CLIP_REJECT) {
+        return 0x1002;
+    }
+    bytes = C2V(pmTypeInfo)[self->pm_type].bits / 8;
+    *pcolour = pm_mem_read_colour((br_uint_8*)self->pm_pixels + (self->pm_base_y + ap.y) * self->pm_row_bytes + (self->pm_base_x + ap.x) * bytes, self->pm_pixels_qualifier, bytes);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053bf00, _M_br_device_pixelmap_mem_pixelQuery, _M_br_device_pixelmap_mem_pixelQuery_original)
