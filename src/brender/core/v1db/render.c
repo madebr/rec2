@@ -5,6 +5,9 @@
 #include "otable.h"
 #include "prepmesh.h"
 
+#include "../core/math/matrix34.h"
+#include "../core/math/transfrm.h"
+
 #include "core/fw/diag.h"
 
 void (C2_HOOK_CDECL * BrDbModelRender_original)(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen, int use_custom);
@@ -166,7 +169,7 @@ void C2_HOOK_STDCALL sceneRenderWorld(br_actor* world) {
 
 void (C2_HOOK_STDCALL * sceneRenderAdd_original)(br_actor* tree);
 void C2_HOOK_STDCALL sceneRenderAdd(br_actor* tree) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     sceneRenderAdd_original(tree);
 #else
     br_material* material;
@@ -177,7 +180,55 @@ void C2_HOOK_STDCALL sceneRenderAdd(br_actor* tree) {
     br_int_32 t;
     br_matrix34 m;
 
-#error "Not implemented"
+    if (tree->parent == NULL) {
+        actorRender(tree, C2V(v1db).default_model, C2V(v1db).default_material, C2V(v1db).default_render_data, BR_RSTYLE_DEFAULT, C2V(v1db).ttype);
+        return;
+    }
+    material = NULL;
+    model = NULL;
+    render_data = NULL;
+    style = BR_RSTYLE_DEFAULT;
+    t = BR_TRANSFORM_IDENTITY;
+    BrMatrix34Identity(&m);
+    for (a = tree->parent; a != NULL; a = a->parent) {
+        if (material == NULL && a->material != NULL) {
+            material = a->material;
+        }
+        if (model == NULL && a->model != NULL) {
+            model = a->model;
+        }
+        if (render_data == NULL && a->render_data != NULL) {
+            render_data = a->render_data;
+        }
+        if (a->render_style != BR_RSTYLE_DEFAULT) {
+            style = a->render_style;
+        }
+        if (a == C2V(v1db).render_root) {
+            break;
+        }
+        if (a->t.type != BR_TRANSFORM_IDENTITY) {
+            BrMatrix34PostTransform(&m, &a->t);
+            t = _CombineTransforms[t][a->t.type];
+        }
+    }
+    if (material == NULL) {
+        material = C2V(v1db).default_material;
+    }
+    if (model == NULL) {
+        model = C2V(v1db).default_model;
+    }
+    if (render_data == NULL) {
+        render_data = C2V(v1db).default_render_data;
+    }
+    if (t == BR_TRANSFORM_IDENTITY) {
+        actorRender(tree, model, material, render_data, style, C2V(v1db).ttype);
+    } else {
+        C2V(v1db).renderer->dispatch->_statePush(C2V(v1db).renderer, 0x2);
+        C2V(v1db).renderer->dispatch->_modelMulF(C2V(v1db).renderer, (br_matrix34_f*)&m);
+        C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_MODEL_TO_VIEW_HINT_T, t == BR_TRANSFORM_MATRIX34_LP ? BRT_LENGTH_PRESERVING : BRT_NONE);
+        actorRender(tree, model, material, render_data, style, C2V(v1db).ttype);
+        C2V(v1db).renderer->dispatch->_statePop(C2V(v1db).renderer, 0x2);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00521fe0, sceneRenderAdd, sceneRenderAdd_original)
