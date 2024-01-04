@@ -108,11 +108,12 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005292e0, BrDevPaletteSetOld, BrDevPaletteSetOld_ori
 
 void (C2_HOOK_CDECL * BrDevPaletteSetEntryOld_original)(int i, br_colour colour);
 void C2_HOOK_CDECL BrDevPaletteSetEntryOld(int i, br_colour colour) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrDevPaletteSetEntryOld_original(i, colour);
 #else
-
-#error "Not implemented"
+    if (BrDevLastBeginQuery() != NULL) {
+        BrPixelmapPaletteEntrySet(BrDevLastBeginQuery(), i, colour);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00529300, BrDevPaletteSetEntryOld, BrDevPaletteSetEntryOld_original)
