@@ -186,17 +186,61 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00529320, BrRendererFacilityFind, BrRendererFacility
 
 br_error (C2_HOOK_CDECL * BrPrimitiveLibraryFind_original)(br_primitive_library** ppl, br_device_pixelmap* destination, br_token scalar_type);
 br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_device_pixelmap* destination, br_token scalar_type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrPrimitiveLibraryFind_original(ppl, destination, scalar_type);
 #else
     br_primitive_library* primitive_library;
     br_error r;
     br_output_facility* ot;
-    char object_name[25];
-    char image_name[9];
+    char object_name[25] = "Default-Primitives-00000";
+    char image_name[9] = "softprm0";
     br_boolean scalar_is_valid;
 
-#error "Not implemented"
+    primitive_library = NULL;
+    scalar_is_valid = 0;
+    switch (scalar_type) {
+    case BRT_FIXED:
+        BrStrCpy(&object_name[19], "Fixed");
+        image_name[7] = 'x';
+        scalar_is_valid = 1;
+        break;
+    case BRT_FLOAT:
+        BrStrCpy(&object_name[19], "Float");
+        image_name[7] = 'f';
+        scalar_is_valid = 1;
+        break;
+    default:
+        c2_abort();
+    }
+    if (primitive_library == NULL && destination != NULL) {
+        destination->dispatch->_query((br_object*)destination, &primitive_library, BRT_PRIMITIVE_LIBRARY_O);
+    }
+    if (primitive_library == NULL && destination != NULL) {
+        ot = NULL;
+        r = destination->dispatch->_query((br_object*)destination, &ot, BRT_OUTPUT_FACILITY_O);
+        if (r == 0 && ot != NULL) {
+            ot->dispatch->_query((br_object*)ot, &primitive_library, BRT_PRIMITIVE_LIBRARY_O);
+        }
+    }
+    if (scalar_is_valid && primitive_library == NULL) {
+        BrDevContainedFind((br_object**)&primitive_library, BRT_PRIMITIVE_LIBRARY, object_name, NULL);
+    }
+    if (primitive_library == NULL) {
+        BrDevContainedFind((br_object**)&primitive_library, BRT_PRIMITIVE_LIBRARY, "Default-Primitives", NULL);
+    }
+    if (scalar_is_valid && primitive_library == NULL) {
+        BrDevCheckAdd(0, image_name, 0);
+        BrDevContainedFind((br_object**)&primitive_library, BRT_PRIMITIVE_LIBRARY, object_name, NULL);
+    }
+    if (primitive_library == NULL) {
+        BrDevCheckAdd(0, "softprim", 0);
+        BrDevContainedFind((br_object**)&primitive_library, BRT_PRIMITIVE_LIBRARY, "Default-Primitives", NULL);
+    }
+    if (primitive_library == NULL) {
+        return 0x1002;
+    }
+    *ppl = primitive_library;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005294d0, BrPrimitiveLibraryFind, BrPrimitiveLibraryFind_original)
