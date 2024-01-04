@@ -118,10 +118,32 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528ac0, BrDevContainedFind, BrDevContainedFind_ori
 
 br_error (C2_HOOK_CDECL * BrDevContainedFindMany_original)(br_object** objects, br_int_32 max_objects, br_int_32* pnum_objects, br_token type, char* pattern, br_token_value* tv);
 br_error C2_HOOK_CDECL BrDevContainedFindMany(br_object** objects, br_int_32 max_objects, br_int_32* pnum_objects, br_token type, char* pattern, br_token_value* tv) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrDevContainedFindMany_original(objects, max_objects, pnum_objects, type, pattern, tv);
 #else
-#error "Not implemented"
+    int i;
+    br_int_32 n;
+    br_int_32 total;
+    br_error r;
+
+    AddRequestedDrivers();
+
+    total = 0;
+    for (i = 0; i < C2V(fw).ndev_slots; i++) {
+        if (C2V(fw).dev_slots[i].dev != NULL) {
+            r = C2V(fw).dev_slots[i].dev->dispatch->_findMany((br_object_container*)C2V(fw).dev_slots[i].dev, objects, max_objects, &n, type, pattern, tv);
+            if (r != 0) {
+                return r;
+            }
+            max_objects -= n;
+            total += n;
+            objects += n;
+        }
+    }
+    if (pnum_objects != NULL) {
+        *pnum_objects = total;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528b90, BrDevContainedFindMany, BrDevContainedFindMany_original)
