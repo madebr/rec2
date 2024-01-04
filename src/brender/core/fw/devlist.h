@@ -5,7 +5,7 @@
 
 #include "brender/br_types.h"
 
-//br_error C2_HOOK_CDECL AddRequestedDrivers();
+br_error C2_HOOK_CDECL AddRequestedDrivers(void);
 
 br_error C2_HOOK_STDCALL devAdd(br_device** pdev, br_device_begin_fn* dev_begin, char* args, br_image* image);
 
