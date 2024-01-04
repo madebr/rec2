@@ -2,6 +2,7 @@
 
 #include "def_mat.h"
 #include "def_mdl.h"
+#include "def_otab.h"
 #include "prepmap.h"
 #include "prepmatl.h"
 #include "prepmesh.h"
@@ -154,18 +155,15 @@ C2_HOOK_FUNCTION(0x00525c80, clearModel)
 
 br_error (C2_HOOK_CDECL * BrV1dbRendererBegin_original)(br_device_pixelmap* destination, br_renderer* renderer);
 br_error C2_HOOK_CDECL BrV1dbRendererBegin(br_device_pixelmap* destination, br_renderer* renderer) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrV1dbRendererBegin_original(destination, renderer);
 #else
-    br_renderer_facility* renderer_facility;
+    br_renderer_facility* renderer_facility = NULL;
     br_error r;
-    br_token_value tv[2];
-
-    renderer_facility = NULL;
-    tv[0].t = 0;
-    tv[0].v.u32 = 0;
-    tv[1].t = 0;
-    tv[1].v.u32 = 0;
+    br_token_value tv[2] = {
+        { BR_NULL_TOKEN },
+        { BR_NULL_TOKEN },
+    };
 
     if (renderer == NULL) {
         r = BrRendererFacilityFind(&renderer_facility, destination, BRT_FLOAT);
