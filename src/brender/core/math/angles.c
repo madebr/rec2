@@ -128,14 +128,65 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00531de0, BrEulerToMatrix34, BrEulerToMatrix34_origi
 br_euler* (C2_HOOK_CDECL * BrMatrix34ToEuler_original)(br_euler* euler, const br_matrix34* mat);
 br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* mat) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrMatrix34ToEuler_original(euler, mat);
 #else
     br_uint_8 o;
     int a0;
     int a1;
     int a2;
-#error "not implemented"
+
+    o = euler->order;
+
+    a0 = OrderAxes[o].a0;
+    a1 = OrderAxes[o].a1;
+    a2 = OrderAxes[o].a2;
+
+    if (o & 0x8) {
+        br_scalar sy;
+
+        sy = sqrtf(mat->m[a1][a0] * mat->m[a1][a0] + mat->m[a2][a0] * mat->m[a2][a0]);
+
+        if (sy > 16 * BR_SCALAR_EPSILON) {
+            euler->a = BR_ATAN2( mat->m[a1][a0],  mat->m[a2][a0]);
+            euler->b = BR_ATAN2( sy,              mat->m[a0][a0]);
+            euler->c = BR_ATAN2( mat->m[a0][a1], -mat->m[a0][a2]);
+        } else {
+            euler->a = BR_ATAN2(-mat->m[a2][a1],  mat->m[a1][a1]);
+            euler->b = BR_ATAN2( sy,              mat->m[a0][a0]);
+            euler->c = 0;
+        }
+    } else {
+        br_scalar cy;
+
+        cy = sqrtf(mat->m[a0][a0] * mat->m[a0][a0] + mat->m[a0][a1] * mat->m[a0][a1]);
+
+        if (cy > 16 * BR_SCALAR_EPSILON) {
+            euler->a = BR_ATAN2( mat->m[a1][a2], mat->m[a2][a2]);
+            euler->b = BR_ATAN2(-mat->m[a0][a2], cy);
+            euler->c = BR_ATAN2( mat->m[a0][a1], mat->m[a0][a0]);
+        } else {
+            euler->a = BR_ATAN2(-mat->m[a2][a1], mat->m[a1][a1]);
+            euler->b = BR_ATAN2(-mat->m[a0][a2], cy);
+            euler->c = 0;
+        }
+    }
+
+    if (o & 4) {
+        euler->a = -euler->a;
+        euler->b = -euler->b;
+        euler->c = -euler->c;
+    }
+
+    if (o & 0x10) {
+        br_angle t;
+
+        t  = euler->a;
+        euler->a = euler->c;
+        euler->c = t;
+    }
+
+    return euler;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005320d0, BrMatrix34ToEuler, BrMatrix34ToEuler_original)
