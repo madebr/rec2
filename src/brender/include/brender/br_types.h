@@ -162,9 +162,8 @@ typedef enum {
     BR_PMF_ROW_WHOLEPIXELS = 0x04
 } br_pixelmap_flags;
 
-#define BR_NULL_TOKEN 0
-
 typedef enum br_token {
+    BR_NULL_TOKEN = 0,
     BRT_NONE = 1,
     BRT_BOOLEAN = 2,
     BRT_POINTER = 3,
