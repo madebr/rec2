@@ -5,10 +5,27 @@ set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 project(rec2 C)
 
+include(CMakeDependentOption)
+
 option(KEEP_ACTIVE_IN_BACKGROUND "Keep the game active when alt-tabbing to another application" OFF)
 option(REC2_VENDORED "Use vendored dependencies" ON)
 option(REC2_WERROR "Treat warnings as errors" OFF)
 option(REC2_FIX_BUGS "Fix rec2 bugs" ON)
+
+find_package(Python3 COMPONENTS Interpreter)
+set(GENDUMPER_AVAILABLE FALSE)
+if(Python3_Interpreter_FOUND)
+    execute_process(
+        COMMAND "${Python3_EXECUTABLE}" "${CMAKE_CURRENT_SOURCE_DIR}/scripts/gendumper.py" --help
+        RESULT_VARIABLE RES_GENDUMPER_HELP
+        OUTPUT_VARIABLE stdout_GENDUMPER_HELP
+        ERROR_VARIABLE stderr_GENDUMPER_HELP
+    )
+    if(RES_GENDUMPER_HELP EQUAL 0)
+        set(GENDUMPER_AVAILABLE TRUE)
+    endif()
+endif()
+cmake_dependent_option(REC2_DUMPERS "Build struct/enum dumpers" FALSE GENDUMPER_AVAILABLE FALSE)
 
 if(REC2_VENDORED)
     add_subdirectory(external/libtiff EXCLUDE_FROM_ALL)
