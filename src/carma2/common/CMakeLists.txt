@@ -128,3 +128,33 @@ target_link_libraries(c2_common
         S3::S3
         TIFF::TIFF
 )
+
+if(REC2_DUMPERS)
+    target_compile_definitions(c2_common PRIVATE dumpers)
+    add_custom_command(OUTPUT
+            "${CMAKE_CURRENT_BINARY_DIR}/dumper.c"
+            "${CMAKE_CURRENT_BINARY_DIR}/dumper.h"
+        COMMAND Python3::Interpreter "${rec2_SOURCE_DIR}/scripts/gendumper.py"
+            brender/br_types.h
+            rec2_types.h
+            -j "${CMAKE_CURRENT_BINARY_DIR}/dumper.h"
+            -o "${CMAKE_CURRENT_BINARY_DIR}/dumper.c"
+            -I "${rec2_SOURCE_DIR}/scripts/include-sre"
+            -I "${rec2_SOURCE_DIR}/src/hooks"
+            -I "${rec2_SOURCE_DIR}/src/brender/include"
+            -I "${CMAKE_CURRENT_SOURCE_DIR}/../hooks"
+            -I "${CMAKE_CURRENT_SOURCE_DIR}/../include"
+            -I "${CMAKE_CURRENT_SOURCE_DIR}/../s3/include"
+            -D _SRE_
+            --dump-typedefs tTrack_spec tRace_info tBrender_storage tProgram_state v11group v11face tCollision_shape_polyhedron
+            --skip-typedefs br_model tBrender_storage v11group v11model tCollision_shape_polyhedron_data
+    )
+    target_sources(c2_common PRIVATE
+        "${CMAKE_CURRENT_BINARY_DIR}/dumper.c"
+        "${CMAKE_CURRENT_BINARY_DIR}/dumper.h"
+        custom_dumper.c
+    )
+    target_include_directories(c2_common
+        PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+endif()
