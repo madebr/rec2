@@ -554,6 +554,12 @@ int C2_HOOK_CDECL LinkCrushData(br_actor* pActor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x0048bf20, LinkCrushData)
 
+void C2_HOOK_FASTCALL LinkCarCrushDatas(br_actor *pActor, tCar_crush_buffer *pBuffer) {
+
+    DRActorEnumRecurse(pActor, LinkCarCrushData, pBuffer);
+}
+C2_HOOK_FUNCTION(0x0042a940, LinkCarCrushDatas)
+
 int C2_HOOK_CDECL LinkCarCrushData(br_actor* pActor, tCar_crush_buffer* pCar_crush_buffer) {
     int i;
     tUser_crush_data* user_crush;
