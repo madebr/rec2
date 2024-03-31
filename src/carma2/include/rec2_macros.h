@@ -26,6 +26,10 @@
 #define GROOVE_FUNK_MAX_PER_CAR 36
 #define REC2_PI 3.141592653589793
 
+#define Vector2Equals(V1, V2) \
+    ((V1)->v[0] == (V2)->v[0] && (V1)->v[1] == (V2)->v[1])
+#define Vector3Equals(V1, V2) \
+    ((V1)->v[0] == (V2)->v[0] && (V1)->v[1] == (V2)->v[1] && (V1)->v[2] == (V2)->v[2])
 #define Vector3EqualElements(V, A, B, C) \
     ((V)->v[0] == (A) && (V)->v[1] == (B) && (V)->v[2] == (C))
 #define Vector3IsZero(V) Vector3EqualElements((V), 0.f, 0.f, 0.f)
