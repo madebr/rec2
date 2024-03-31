@@ -135,4 +135,6 @@ void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF);
 
 void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath);
 
+int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial);
+
 #endif // REC2_WORLD_H
