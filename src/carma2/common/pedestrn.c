@@ -580,3 +580,14 @@ void C2_HOOK_FASTCALL LoadTrackPedestrians(FILE* pF) {
     C2_HOOK_BUG_ON(sizeof(tPedestrian) != 84);
 }
 C2_HOOK_FUNCTION(0x004ca9f0, LoadTrackPedestrians)
+
+void (C2_HOOK_FASTCALL * MaybeSpawnPedestrian_original)(br_face *pFace, br_model *pModel);
+void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MaybeSpawnPedestrian_original(pFace, pModel);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d2cc0, MaybeSpawnPedestrian, MaybeSpawnPedestrian_original)
