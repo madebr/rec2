@@ -24,4 +24,6 @@ int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pO
 
 void C2_HOOK_FASTCALL LoadTrackPedestrians(FILE* pF);
 
+void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel);
+
 #endif //REC2_PEDESTRN_H
