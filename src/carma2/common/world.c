@@ -39,6 +39,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDuplicate_material, 0x006aaa28);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
 
+C2_HOOK_VARIABLE_IMPLEMENT(tMaterial_exception*, gMaterial_exceptions, 0x0074ca04);
+
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
     return C2V(gCar_texturing_level);
