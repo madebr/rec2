@@ -1492,6 +1492,17 @@ typedef struct {
     float diffuse_0;
 } tDRLighting_data;
 
+typedef struct tMaterial_exception {
+    struct tMaterial_exception* next;
+    char* texture_name;
+    int flags;
+} tMaterial_exception;
+
+typedef enum {
+    eMaterial_exception_nobilinear = 0x1,
+    eMaterial_exception_wrap = 0x2,
+} tMaterial_exception_flags;
+
 typedef struct {
     undefined4 field_0x0;
     undefined4 field_0x4;
