@@ -5,6 +5,7 @@
 #include "init.h"
 #include "loading.h"
 #include "utility.h"
+#include "world.h"
 
 #include "platform.h"
 
@@ -541,28 +542,27 @@ C2_HOOK_FUNCTION(0x00516c30, UnlockBackScreen)
 
 void (C2_HOOK_FASTCALL * AdaptMaterialsForRenderer_original)(br_material** pMaterials, int pCount, tRendererShadingType pShading);
 void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AdaptMaterialsForRenderer_original(pMaterials, pCount, pShading);
 #else
-#error "Not implemented"
     int i;
     br_material* material;
-    tMaterialException *material_exception;
+    tMaterial_exception *material_exception;
 
     for (i = 0; i < pCount; i++) {
         material = pMaterials[i];
 
         if (material->colour_map != NULL) {
             for (material_exception = C2V(gMaterial_exceptions); material_exception != NULL; material_exception = material_exception->next) {
-                if (c2_stricmp(material->colour_map->identifier, material_exception->texture_name) == 0) {
+                if (c2_strcasecmp(material->colour_map->identifier, material_exception->texture_name) == 0) {
                     break;
                 }
             }
             if (C2V(gEnable_texture_interpolation)) {
                 if (material_exception == NULL || !(material_exception->flags & 0x1)) {
-                    material->br_pixelmap_allocate_flags  |= BR_MATF_MAP_INTERPOLATION;
+                    material->flags |= BR_MATF_MAP_INTERPOLATION;
                 }
-                if (C2v(gEnable_texture_interpolation) && material_exception != NULL && material_exception->flags & 0x8) {
+                if (C2V(gEnable_texture_interpolation) && material_exception != NULL && material_exception->flags & 0x8) {
                     material->map_transform.m[2][0] = .02f;
                     material->map_transform.m[2][1] = .02f;
                 }
@@ -577,6 +577,11 @@ void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** pMaterials, int pC
         switch (pShading) {
         case kRendererShadingType_Default:
             material->ka = .2f;
+            material->kd = .8f;
+            material->ks = .0f;
+            material->flags &= ~BR_MATF_PRELIT;
+            material->flags |= BR_MATF_LIGHT;
+            material->flags |= BR_MATF_SMOOTH;
             break;
         case kRendererShadingType_Specular:
             material->ka = .6f;

@@ -7,6 +7,8 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(tMaterial_exception*, gMaterial_exceptions);
+
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
 void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel);
