@@ -177,6 +177,17 @@ void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_inf
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c60a0, UpdateCollisionBoundingBox, UpdateCollisionBoundingBox_original)
 
+void (C2_HOOK_FASTCALL * ProcessCollisionShape_original)(tCollision_shape* pShape);
+void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessCollisionShape_original(pShape);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c5f20, ProcessCollisionShape, ProcessCollisionShape_original)
+
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
 
