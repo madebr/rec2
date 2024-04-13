@@ -116,3 +116,13 @@ void C2_HOOK_FASTCALL SoundService(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455a80, SoundService, SoundService_original)
+
+int (C2_HOOK_FASTCALL * DRStopCarSounds_original)(void);
+int C2_HOOK_FASTCALL DRStopCarSounds(void) {
+#if defined(C2_HOOKS_ENABLED)
+    return DRStopCarSounds_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004559e0, DRStopCarSounds, DRStopCarSounds_original)
