@@ -37,7 +37,7 @@ typedef struct tMid_message tMid_message;
 typedef struct tMax_message tMax_message;
 typedef struct tSmashable_level tSmashable_level;
 typedef union tCollision_shape tCollision_shape;
-typedef union tPhysics_joint tPhysics_joint;
+typedef struct tPhysics_joint tPhysics_joint;
 typedef struct tPedestrian tPedestrian;
 typedef struct tPedestrian_distances tPedestrian_distances;
 typedef struct tRace_pedestrian tRace_pedestrian;
@@ -2612,6 +2612,39 @@ typedef struct {
     tGroovidelic_spec* groove;
 } tUser_crush_data;
 
+typedef enum {
+    eJoint_limit_plane = 0,
+    eJoint_limit_universal = 1,
+} tPhysics_joint_limit_type;
+
+typedef struct {
+    tPhysics_joint_limit_type type;
+    float sine_max_angle;
+    br_vector3 child;
+    br_vector3 parent;
+} tPhysics_joint_limit;
+
+typedef enum {
+    eJoint_none = 0,
+    eJoint_hinge = 1,
+    eJoint_universal = 2,
+    eJoint_ball_n_socket = 3,
+    eJoint_quick_hinge = 4,
+} tPhysics_joint_type;
+
+typedef struct tPhysics_joint {
+    tPhysics_joint_type type;
+    undefined field_0x4[0x4];
+    br_vector3 field_0x08;
+    br_vector3 field_0x14;
+    br_vector3 hinge_axis2;
+    br_vector3 hinge_axis3;
+    br_vector3 hinge_axis;
+    br_vector3 parent_bone_axis;
+    int count_limits;
+    tPhysics_joint_limit *limits;
+} tPhysics_joint;
+
 typedef struct tCollision_info {
     br_actor* actor;
     float M;
@@ -2658,11 +2691,11 @@ typedef struct tCollision_info {
     undefined field_0x1de[10];
     br_matrix34 field_0x1e8;
     undefined field_0x218[8];
-    struct tCollision_info * field_0x220;
-    struct tCollision_info * field_0x224;
-    struct tCollision_info * field_0x228;
-    struct tCollision_info * field_0x22c;
-    struct tCollision_info * field_0x230;
+    tCollision_info* next;
+    tCollision_info* child;
+    tCollision_info* field_0x228;
+    tCollision_info* prev;
+    tCollision_info* field_0x230;
     undefined field_0x234[4];
     tU8 flags_0x238;
     tU8 field_0x239;
