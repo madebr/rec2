@@ -22,6 +22,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPhysics_other_buffer_capacity, 0x006940c8);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_other_buffer, 0x006940c4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gPhysics_buffer, 299792, 0x006baa40);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCollision_info_uid_counter, 0x006a0adc);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNo_recursive_collision_info_rebuild, 0x0065d004, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFace_num__car, 0x0065d010, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gPhysics_reference_normal_comparison, 0x00679420);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape_polyhedron_data*, gPolyhedron_to_sort, 0x0067942c);
@@ -932,3 +933,93 @@ void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pR
     }
 }
 C2_HOOK_FUNCTION(0x004c2b20, FUN_004c2b20)
+
+int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pParam, ...) {
+    va_list va;
+    tCollision_info_owner* owner;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x04, 0x04);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x08, 0x08);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x0c, 0x0c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x10, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x14, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x240, 0x240);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, box_face_ref, 0x178);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags_0x19c, 0x19c);
+
+    if (C2V(gNo_recursive_collision_info_rebuild)) {
+        return 0;
+    }
+    if (pCollision_info->field_0x239 != 2) {
+    }
+    owner = (tCollision_info_owner*)pCollision_info->field_0x240;
+    if (owner == NULL) {
+        return 3;
+    }
+
+    va_start(va, pParam);
+    switch (pParam) {
+        case 0:
+            owner->field_0x10 = (float)va_arg(va, double);
+            break;
+        case 1: {
+            int v = !!va_arg(va, int);
+            if (v) {
+                owner->field_0x04 |= 0x1;
+                FUN_004c2b10(pCollision_info);
+            } else {
+                owner->field_0x04 &= 0x1;
+            }
+            break;
+        }
+        case 2:
+            owner->field_0x0c = (float)va_arg(va, double);
+            break;
+        case 3: {
+            int v = va_arg(va, int) != 0;
+            pCollision_info->flags_0x19c = (pCollision_info->flags_0x19c & ~(1 << 6)) | (v << 6);
+            if (!v) {
+                pCollision_info->box_face_ref = C2V(gFace_num__car) - 2;
+            }
+            break;
+        }
+        case 4: {
+            int v = va_arg(va, int) != 0;
+            pCollision_info->flags_0x19c = (pCollision_info->flags_0x19c & ~(1 << 3)) | (v << 3);
+            break;
+        }
+        case 5: {
+            int v = va_arg(va, int) != 0;
+            pCollision_info->flags_0x19c = (pCollision_info->flags_0x19c & ~(1 << 4)) | (v << 4);
+            break;
+        }
+        case 6: {
+            int v = va_arg(va, int) != 0;
+            if (v) {
+                owner->field_0x04 |= 0x4;
+            } else {
+                owner->field_0x04 &= 0x4;
+            }
+            break;
+        }
+        case 7: {
+            int v = va_arg(va, int) != 0;
+            if (v) {
+                owner->field_0x04 |= 0x8;
+                pCollision_info->water_d = 10000.f;
+            } else {
+                owner->field_0x04 &= 0x8;
+            }
+            break;
+        }
+        case 8:
+            owner->field_0x14 = (float)va_arg(va, double);
+            break;
+        default:
+            va_end(va);
+            return 5;
+    }
+    va_end(va);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004b63b0, SetCollisionInfoParam)

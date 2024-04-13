@@ -13,6 +13,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gPhysics_other_buffer_capacity);
 C2_HOOK_VARIABLE_DECLARE(void*, gPhysics_other_buffer);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tU8, gPhysics_buffer, 299792);
 C2_HOOK_VARIABLE_DECLARE(int, gCollision_info_uid_counter);
+C2_HOOK_VARIABLE_DECLARE(int, gNo_recursive_collision_info_rebuild);
 C2_HOOK_VARIABLE_DECLARE(int, gFace_num__car);
 
 void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError);
@@ -60,5 +61,7 @@ int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_in
 void C2_HOOK_FASTCALL FUN_004c2b10(tCollision_info *pCollision_info);
 
 void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot);
+
+int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pParam, ...);
 
 #endif //REC2_PHYSICS_H
