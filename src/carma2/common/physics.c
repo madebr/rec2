@@ -909,6 +909,12 @@ int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_in
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5d40, MarkCollisionInfoAsProcessed, MarkCollisionInfoAsProcessed_original)
 
+void C2_HOOK_FASTCALL FUN_004c2b10(tCollision_info *pCollision_info) {
+
+    FUN_004c2b20(pCollision_info, pCollision_info);
+}
+C2_HOOK_FUNCTION(0x004c2b10, FUN_004c2b10)
+
 void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot) {
     if (!(pParent->flags_0x19c & 0x400)) {
         pRoot = pParent;
