@@ -2607,6 +2607,16 @@ typedef struct {
     tGroovidelic_spec* groove;
 } tUser_crush_data;
 
+typedef struct {
+    undefined field_0x00[4];
+    tU16 field_0x04;
+    undefined2 field_0x06;
+    undefined4 field_0x08;
+    float field_0x0c;
+    float field_0x10;
+    float field_0x14;
+} tCollision_info_owner;
+
 typedef enum {
     eJoint_limit_plane = 0,
     eJoint_limit_universal = 1,
@@ -2695,7 +2705,7 @@ typedef struct tCollision_info {
     tU8 flags_0x238;
     tU8 field_0x239;
     undefined field_0x23a[2];
-    void* owner;
+    void* owner; /* points to tCollision_info_owner (used in SetCollisionInfoParam) */
     undefined* field_0x240;
     br_vector3 water_normal;
     br_scalar water_d; /* Created by retype action */
