@@ -908,3 +908,23 @@ int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_in
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5d40, MarkCollisionInfoAsProcessed, MarkCollisionInfoAsProcessed_original)
+
+void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot) {
+    if (!(pParent->flags_0x19c & 0x400)) {
+        pRoot = pParent;
+    }
+    for (tCollision_info *child = pParent->child; child != NULL; child = child->next) {
+        if (pParent->flags_0x19c & 0x400) {
+            BrMatrix34Mul(&pParent->transform_matrix, &pParent->field_0x1e8, &pRoot->transform_matrix);
+        } else {
+            br_vector3 tv1;
+            br_vector3 tv2;
+            BrMatrix34ApplyP(&tv1, &child->physics_joint1->field_0x14, &pParent->transform_matrix);
+            BrMatrix34ApplyP(&tv2, &child->physics_joint1->field_0x08, &child->transform_matrix);
+            BrVector3Sub(&tv1, &tv1, &tv2);
+            BrVector3Accumulate((br_vector3*)&child->transform_matrix.m[3], &tv1);
+        }
+        FUN_004c2b20(child, pRoot);
+    }
+}
+C2_HOOK_FUNCTION(0x004c2b20, FUN_004c2b20)
