@@ -55,6 +55,8 @@ void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape);
 
 tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight);
 
+void C2_HOOK_FASTCALL FUN_004c2b10(tCollision_info *pCollision_info);
+
 void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot);
 
 #endif //REC2_PHYSICS_H
