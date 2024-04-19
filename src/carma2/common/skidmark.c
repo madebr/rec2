@@ -107,6 +107,12 @@ void C2_HOOK_FASTCALL InitSkids(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e9c40, InitSkids, InitSkids_original)
 
+void C2_HOOK_FASTCALL HideSkid(int pSkid_num) {
+
+    C2V(gSkids)[pSkid_num].actor->render_style = BR_RSTYLE_NONE;
+}
+C2_HOOK_FUNCTION(0x004e9ee0, HideSkid)
+
 void (C2_HOOK_FASTCALL * ReadSlick_original)(FILE* pF,tSlick_spec* pSlick_spec);
 void C2_HOOK_FASTCALL ReadSlick(FILE* pF, tSlick_spec* pSlick_spec) {
 
