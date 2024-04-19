@@ -92,6 +92,17 @@ void C2_HOOK_FASTCALL InitCrush(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrush, InitCrush_original)
 
+void (C2_HOOK_FASTCALL * InitTrackCrushables_original)(void);
+void C2_HOOK_FASTCALL InitTrackCrushables(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitTrackCrushables_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042a190, InitTrackCrushables, InitTrackCrushables_original)
+
 void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file) {
     char s[256];
 
