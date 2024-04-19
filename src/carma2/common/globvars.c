@@ -202,7 +202,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gRace_start, 0x00763460);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSelf, 0x0068be28);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRender_screen, 0x00762128);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gRearview_camera, 0x0075b940);
-//br_scalar gCamera_hither;
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCamera_hither, 0x0074d3e8);
 //br_scalar gCamera_angle;
 //br_pixelmap* gDigits_pix;
 //br_pixelmap* gRender_shade_table;
