@@ -930,3 +930,14 @@ void C2_HOOK_FASTCALL ResetTargetLock(void) {
     C2V(gTarget_lock_enabled) = 0;
 }
 C2_HOOK_FUNCTION(0x004948a0, ResetTargetLock)
+
+void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
+
+    C2V(gMap_render_width) = 128.f;
+    C2V(gMap_render_height) = 80.f;
+    C2V(gMap_render_x_i) = ((int)C2V(gMap_render_x)) & ~3;
+    C2V(gMap_render_y_i) = ((int)C2V(gMap_render_y)) & ~1;
+    C2V(gMap_render_width_i) = (int)C2V(gMap_render_width);
+    C2V(gMap_render_height_i) = (int)C2V(gMap_render_height);
+}
+C2_HOOK_FUNCTION(0x004948b0, SetIntegerMapRenders)
