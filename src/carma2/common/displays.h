@@ -29,6 +29,8 @@ void C2_HOOK_FASTCALL InitHeadups(void);
 
 void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
+void C2_HOOK_FASTCALL ClearHeadupSlot(int pSlot_index);
+
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup);
 
 int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index);
