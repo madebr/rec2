@@ -585,6 +585,13 @@ br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
 }
 C2_HOOK_FUNCTION(0x004e9b10, SaveShadeTable)
 
+void C2_HOOK_FASTCALL SaveShadeTables(void) {
+    PossibleService();
+    C2V(gSaved_table_count) = 0;
+    BrTableEnum("*", (br_table_enum_cbfn*)SaveShadeTable, NULL);
+}
+C2_HOOK_FUNCTION(0x004e9ae0, SaveShadeTables)
+
 void (C2_HOOK_FASTCALL * InitPaletteAnimate_original)(void);
 void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 
