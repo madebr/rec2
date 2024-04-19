@@ -62,3 +62,8 @@ void C2_HOOK_FASTCALL InitPlayers(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049b720, InitPlayers, InitPlayers_original)
+
+void C2_HOOK_FASTCALL InitNetGameplayStuff(void) {
+
+}
+C2_HOOK_FUNCTION(0x0049bd00, InitNetGameplayStuff)
