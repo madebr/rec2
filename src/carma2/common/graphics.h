@@ -46,6 +46,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gPolyfont_glyph_actors, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSaved_table, gSaved_shade_tables, 100);
 C2_HOOK_VARIABLE_DECLARE(int, gSaved_table_count);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_splash);
+C2_HOOK_VARIABLE_DECLARE(int, gTarget_lock_enabled);
 
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
@@ -137,5 +138,7 @@ void C2_HOOK_FASTCALL DrawNumberAt(br_pixelmap* pSrc, br_pixelmap* pDest, int pX
 void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
 void C2_HOOK_FASTCALL KillSplashScreen(void);
+
+void C2_HOOK_FASTCALL ResetTargetLock(void);
 
 #endif //REC2_GRAPHICS_H
