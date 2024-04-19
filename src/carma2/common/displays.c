@@ -59,6 +59,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, gAccent_poly_prims, 3, 0x0
         { .u32 = 0 },
     },
 });
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_fancy_index, 0x005913d4, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_credit_headup__displays, 0x005913d8, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_time_credit_headup, 0x005913dc, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_earn_time, 0x0067f874);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_fancy_time, 0x0067fd34);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_time_earn_time, 0x0067fcc4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gOld_times, 10, 0x0079eac0);
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
@@ -164,6 +171,31 @@ void C2_HOOK_FASTCALL ClearHeadupSlot(int pSlot_index) {
     }
 }
 C2_HOOK_FUNCTION(0x00449650, ClearHeadupSlot)
+
+void C2_HOOK_FASTCALL ClearHeadups(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gHeadups)) != 37);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gOld_times)) != 10);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gHeadups)); i++) {
+        if (C2V(gHeadups)[i].type != eHeadup_unused) {
+            ClearHeadup(i);
+        }
+    }
+    C2V(gLast_fancy_index) = -1;
+    C2V(gLast_credit_headup__displays) = -1;
+    C2V(gLast_time_credit_headup) = -1;
+    C2V(gLast_earn_time) = 0;
+    for (i = 0; i < REC2_ASIZE(C2V(gOld_times)); i++) {
+        C2V(gOld_times)[i] = 0;
+    }
+    C2V(gLast_fancy_time) = 0;
+    C2V(gLast_time_earn_time) = 0;
+    C2V(gQueued_headup_count) = 0;
+    C2V(gLast_centre_headup) = 0;
+}
+C2_HOOK_FUNCTION(0x00449690, ClearHeadups)
 
 int (C2_HOOK_FASTCALL * MungeHeadupWidth_original)(tHeadup* pHeadup);
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
