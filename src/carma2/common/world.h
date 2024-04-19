@@ -19,6 +19,7 @@ C2_HOOK_VARIABLE_DECLARE(tMaterial_exception*, gMaterial_exceptions);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_track_smashable_environment_specs);
 C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec*, gTrack_smashable_environment_specs);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmashable_item_spec*, gSmashable_track_indexable_triggers, 100);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tUnknown_0x006a7fc8, gUnknown_0x006a7fc8, 25);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -139,6 +140,8 @@ tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor);
 tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
 
 void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF);
+
+void C2_HOOK_FASTCALL FUN_004f0430(void);
 
 void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath);
 
