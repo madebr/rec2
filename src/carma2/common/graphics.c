@@ -116,6 +116,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_polyfont_glyph_actors, 0x00686490);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyfont_glyph_actors, 256, 0x0074cae0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSaved_table, gSaved_shade_tables, 100, 0x006a2488);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSaved_table_count, 0x006a27a8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTarget_lock_enabled, 0x0068d8c8);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -924,3 +925,9 @@ void C2_HOOK_FASTCALL KillSplashScreen(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0047b960, KillSplashScreen)
+
+void C2_HOOK_FASTCALL ResetTargetLock(void) {
+
+    C2V(gTarget_lock_enabled) = 0;
+}
+C2_HOOK_FUNCTION(0x004948a0, ResetTargetLock)
