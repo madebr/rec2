@@ -80,3 +80,15 @@ void C2_HOOK_FASTCALL InitOilSpills(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a6a10, InitOilSpills, InitOilSpills_original)
+
+void C2_HOOK_FASTCALL ResetOilSpills(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gOily_spills)); i++) {
+        C2V(gOily_spills)[i].actor->render_style = BR_RSTYLE_NONE;
+        C2V(gOily_spills)[i].car = NULL;
+        C2V(gOily_spills)[i].car_actor = NULL;
+        C2V(gOily_spills)[i].field_0x14 = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x004a6c50, ResetOilSpills)
