@@ -24,6 +24,7 @@ C2_HOOK_VARIABLE_DECLARE(br_model*, gSplash_model);
 C2_HOOK_VARIABLE_DECLARE(int, gNum_splash_types);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_material*, gSplash_material, 20);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSplash, gSplash, 20);
+C2_HOOK_VARIABLE_DECLARE(int, gSpark_flags);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -34,6 +35,8 @@ void C2_HOOK_FASTCALL GenerateSmokeShades(void);
 void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f);
 
 void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale);
+
+void C2_HOOK_FASTCALL ResetSparks(void);
 
 void C2_HOOK_FASTCALL LoadInShrapnel(void);
 

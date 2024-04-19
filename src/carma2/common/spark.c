@@ -26,6 +26,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSplash_model, 0x006a8758);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_splash_types, 0x006aa5a4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gSplash_material, 20, 0x006a9130);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSplash, gSplash, 20, 0x006a82b8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSpark_flags, 0x006aa57c);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
@@ -106,6 +107,12 @@ void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale) {
     BrModelUpdate(pModel, BR_MODU_ALL);
 }
 C2_HOOK_FUNCTION(0x00516240, ModelScale)
+
+void C2_HOOK_FASTCALL ResetSparks(void) {
+
+    C2V(gSpark_flags) = 0;
+}
+C2_HOOK_FUNCTION(0x004f87a0, ResetSparks)
 
 void C2_HOOK_FASTCALL LoadInShrapnel(void) {
 
