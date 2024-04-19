@@ -3,7 +3,10 @@
 
 #include "c2_hooks.h"
 
+#include "rec2_types.h"
 #include <brender/brender.h>
+
+void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 
 int C2_HOOK_FASTCALL GetSkyTextureOn(void);
 

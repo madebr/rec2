@@ -25,6 +25,16 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHorizon_material, 0x0067c4e0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSky_actor, 0x0067c4d8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSky_model, 0x0067c4a0);
 
+void (C2_HOOK_FASTCALL * InstantDepthChange_original)(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
+void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8) {
+#if defined(C2_HOOKS_ENABLED)
+    InstantDepthChange_original(pType, pSky_texture, pStart, pEnd, pRed, pGreen, pBlue, pParam_8);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00445340, InstantDepthChange, InstantDepthChange_original)
+
 int C2_HOOK_FASTCALL GetSkyTextureOn(void) {
 
     return C2V(gSky_on);
