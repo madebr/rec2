@@ -562,6 +562,23 @@ void C2_HOOK_FASTCALL InitShadows(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e99d0, InitShadows, InitShadows_original)
 
+br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
+    br_pixelmap* copy;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSaved_shade_tables)) != 100);
+    if (C2V(gSaved_table_count) == REC2_ASIZE(C2V(gSaved_shade_tables))) {
+        return 1;
+    }
+    C2V(gSaved_shade_tables)[C2V(gSaved_table_count)].original = pTable;
+    C2_HOOK_BUG_ON(sizeof(br_pixelmap) != 0x44);
+    copy = BrMemAllocate(sizeof(br_pixelmap), kMem_misc);
+    C2V(gSaved_shade_tables)[C2V(gSaved_table_count)].copy = copy;
+    C2V(gSaved_table_count) += 1;
+    c2_memcpy(copy, pTable, sizeof(br_pixelmap));
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e9b10, SaveShadeTable)
+
 void (C2_HOOK_FASTCALL * InitPaletteAnimate_original)(void);
 void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 

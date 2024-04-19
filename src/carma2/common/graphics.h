@@ -102,6 +102,8 @@ void C2_HOOK_FASTCALL InitHUDActor(void);
 
 void C2_HOOK_FASTCALL InitShadows(void);
 
+br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg);
+
 void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
 void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight);
