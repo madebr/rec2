@@ -3141,6 +3141,12 @@ typedef struct tDrone_spec {
     undefined4 field_0x5d4;
 } tDrone_spec;
 
+typedef struct {
+    void *field_0x0;
+    undefined4 field_0x4;
+    undefined4 field_0x8;
+} tUnknown_0x006a7fc8;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
