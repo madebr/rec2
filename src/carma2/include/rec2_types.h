@@ -3295,6 +3295,7 @@ enum {
     kFatalError_AllocateOffScreenBuffer = 0x01,
     kFatalError_AllocateZBuffer = 0x02,
     kFatalError_FailToOpenGeneralSettings = 0x03,
+    kFatalError_CannotAllocateSelf = 0x06,
     kFatalError_CouldNotOpenKeyMapFile = 0x09,
     kFatalError_CouldNotOpenFlicFile_S = 0x0d,
     kFatalError_FlicFileWasNot8BitsDeep_S = 0x0f,

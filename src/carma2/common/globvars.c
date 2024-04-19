@@ -201,7 +201,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gRace_start, 0x00763460);
 //tU32 gFox_start_time;
 //tBrender_storage gPedestrians_storage_space;
 //tRace_info gCurrent_race;
-//br_actor* gSelf;
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSelf, 0x0068be28);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRender_screen, 0x00762128);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gRearview_camera, 0x0075b940);
 //br_scalar gCamera_hither;
