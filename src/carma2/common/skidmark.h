@@ -8,6 +8,8 @@
 
 void C2_HOOK_FASTCALL InitSkids(void);
 
+void C2_HOOK_FASTCALL HideSkid(int pSkid_num);
+
 void C2_HOOK_FASTCALL ReadSlick(FILE *pF,tSlick_spec *pSlick_spec);
 
 #endif // REC2_SKIDMARK_H
