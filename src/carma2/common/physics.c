@@ -96,6 +96,17 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5ca0, InitPhysics, InitPhysics_original)
 
+int (C2_HOOK_FASTCALL * ResetMechanics_original)(void);
+int C2_HOOK_FASTCALL ResetMechanics(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return ResetMechanics_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b5cc0, ResetMechanics, ResetMechanics_original)
+
 tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType) {
     tCollision_shape_box* result;
 
