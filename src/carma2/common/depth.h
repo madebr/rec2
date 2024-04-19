@@ -3,12 +3,15 @@
 
 #include "c2_hooks.h"
 
+#include "rec2_types.h"
 #include <brender/brender.h>
 
 C2_HOOK_VARIABLE_DECLARE(br_material*, gHorizon_material);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gSky_actor);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gSky_model);
 
+
+void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 
 int C2_HOOK_FASTCALL GetSkyTextureOn(void);
 
