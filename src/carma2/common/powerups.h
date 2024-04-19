@@ -15,6 +15,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gRepeatability_names, 4);
 
 void C2_HOOK_FASTCALL InitPowerups(void);
 
+void C2_HOOK_FASTCALL ResetPowerups(void);
+
 br_actor* C2_HOOK_FASTCALL CreateActorFromPowerupMap(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL LoadPowerups(void);
