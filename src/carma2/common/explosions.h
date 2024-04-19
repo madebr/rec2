@@ -8,6 +8,8 @@
 
 void C2_HOOK_FASTCALL InitExplosions(void);
 
+void C2_HOOK_FASTCALL ResetExplosions(void);
+
 void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* pExplosion_sound_id, tExplosion_animation* pExplosion_groups);
 
 #endif // REC2_EXPLOSIONS_H
