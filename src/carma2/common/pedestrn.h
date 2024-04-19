@@ -10,6 +10,7 @@
 
 C2_HOOK_VARIABLE_DECLARE(tPedestrian*, gPedestrian_array);
 C2_HOOK_VARIABLE_DECLARE(int, gPed_count);
+C2_HOOK_VARIABLE_DECLARE(int, gCamera_is_teleporting);
 
 void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable);
 
@@ -32,5 +33,7 @@ void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel);
 void C2_HOOK_FASTCALL AllocateTrackPedestrians(void);
 
 void C2_HOOK_FASTCALL DisposePedestrians(void);
+
+void C2_HOOK_FASTCALL CameraIsMovingReallyFast(void);
 
 #endif //REC2_PEDESTRN_H
