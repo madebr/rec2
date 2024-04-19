@@ -65,6 +65,17 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ea880, InitExplosions, InitExplosions_original)
 
+void (C2_HOOK_FASTCALL * ResetExplosions_original)(void);
+void C2_HOOK_FASTCALL ResetExplosions(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ResetExplosions_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004eaac0, ResetExplosions, ResetExplosions_original)
+
 void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* pExplosion_sound_id, tExplosion_animation* pExplosion_groups) {
     tPath_name the_path;
     char* name;
