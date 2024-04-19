@@ -113,6 +113,15 @@ void C2_HOOK_FASTCALL HideSkid(int pSkid_num) {
 }
 C2_HOOK_FUNCTION(0x004e9ee0, HideSkid)
 
+void C2_HOOK_FASTCALL HideSkids(void) {
+    int skid;
+
+    for (skid = 0; skid < REC2_ASIZE(C2V(gSkids)); skid++) {
+        HideSkid(skid);
+    }
+}
+C2_HOOK_FUNCTION(0x004e9f00, HideSkids)
+
 void (C2_HOOK_FASTCALL * ReadSlick_original)(FILE* pF,tSlick_spec* pSlick_spec);
 void C2_HOOK_FASTCALL ReadSlick(FILE* pF, tSlick_spec* pSlick_spec) {
 
