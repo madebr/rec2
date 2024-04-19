@@ -88,6 +88,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_race_pedestrian_specs, 0x0069bce8);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_ped_spec*, gRace_pedestrian_specs, 0x00694138);
 C2_HOOK_VARIABLE_IMPLEMENT(tPedestrian*, gPedestrian_array, 0x00744808);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count, 0x007447d4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_is_teleporting, 0x00694490);
 
 void (C2_HOOK_FASTCALL * InitPedsForm_original)(tPedForms_vtable* pTable);
 void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable) {
@@ -628,3 +629,9 @@ void C2_HOOK_FASTCALL DisposePedestrians(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cb8d0, DisposePedestrians, DisposePedestrians_original)
+
+void C2_HOOK_FASTCALL CameraIsMovingReallyFast(void) {
+
+    C2V(gCamera_is_teleporting) = 1;
+}
+C2_HOOK_FUNCTION(0x004d6390, CameraIsMovingReallyFast)
