@@ -261,10 +261,29 @@ void C2_HOOK_FASTCALL InitializeBRenderEnvironment(void) {
 void (C2_HOOK_FASTCALL * AllocateSelf_original)(void);
 void C2_HOOK_FASTCALL AllocateSelf(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AllocateSelf_original();
 #else
-#error "Not implemented"
+    int i;
+
+    C2V(gSelf) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    if (C2V(gSelf) == NULL) {
+        FatalError(kFatalError_CannotAllocateSelf);
+    }
+    C2V(gSelf) = BrActorAdd(C2V(gUniverse_actor), C2V(gSelf));
+    if (C2V(gSelf) == NULL) {
+        FatalError(kFatalError_CannotAllocateSelf);
+    }
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gOther_selfs)) != 4);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gOther_selfs)); i++) {
+        C2V(gOther_selfs)[i] = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        if (C2V(gOther_selfs)[i] == NULL) {
+            FatalError(kFatalError_CannotAllocateSelf);
+        }
+        BrActorAdd(C2V(gSelf), C2V(gOther_selfs)[i]);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e320, AllocateSelf, AllocateSelf_original)
