@@ -190,7 +190,7 @@ C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gMisc_storage_space);
 //extern tU32 gFox_start_time;
 //extern tBrender_storage gPedestrians_storage_space;
 //extern tRace_info gCurrent_race;
-//extern br_actor* gSelf;
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gSelf);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gScreen);
 //extern br_pixelmap* gScreen;
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gRender_screen);
