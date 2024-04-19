@@ -1042,10 +1042,22 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004f9fc0, InitSmokeStuff, InitSmokeStuff_original)
 void (C2_HOOK_FASTCALL * AllocateStandardLamp_original)(void);
 void C2_HOOK_FASTCALL AllocateStandardLamp(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AllocateStandardLamp_original();
 #else
-#error "Not implemented"
+    int i;
+
+    for (i = 0; i < C2V(gNumber_of_lights); i++) {
+        br_actor *light = C2V(gLight_array)[i];
+        BrActorAdd(C2V(gUniverse_actor), light);
+        if (light->children != NULL) {
+            br_actor *child = light->children;
+            BrActorRemove(child);
+            light->children = NULL;
+            BrActorFree(child);
+        }
+        BrLightEnable(light);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e500, AllocateStandardLamp, AllocateStandardLamp_original)
