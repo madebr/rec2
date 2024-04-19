@@ -11,6 +11,7 @@
 #include "font.h"
 #include "globvars.h"
 #include "globvrbm.h"
+#include "globvrkm.h"
 #include "globvrpb.h"
 #include "grafdata.h"
 #include "graphics.h"
@@ -291,10 +292,52 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0047e320, AllocateSelf, AllocateSelf_original)
 void (C2_HOOK_FASTCALL * AllocateCamera_original)(void);
 void C2_HOOK_FASTCALL AllocateCamera(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AllocateCamera_original();
 #else
-#error "Not implemented"
+    br_camera* camera_ptr;
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gCamera_list)) != 2);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gCamera_list)); i++) {
+        C2V(gCamera_list)[i] = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+        if (C2V(gCamera_list)[i] == NULL) {
+            FatalError(kFatalError_CannotAllocateCamera);
+        }
+
+        camera_ptr = C2V(gCamera_list)[i]->type_data;
+        camera_ptr->type = BR_CAMERA_PERSPECTIVE_FOV;
+        camera_ptr->field_of_view = BrDegreeToAngle(C2V(gCamera_angle));
+        camera_ptr->hither_z = C2V(gCamera_hither);
+        camera_ptr->yon_z = C2V(gCamera_yon);
+        camera_ptr->aspect = (float)C2V(gWidth) / (float)C2V(gHeight);
+    }
+
+    if (C2V(gCamera_list)[0] == NULL) {
+        FatalError(kFatalError_CannotAllocateCamera);
+    }
+    C2V(gCamera_list)[1] = BrActorAdd(C2V(gUniverse_actor), C2V(gCamera_list)[1]);
+    if (C2V(gCamera_list)[1] == NULL) {
+        FatalError(kFatalError_CannotAllocateCamera);
+    }
+    C2V(gCamera) = C2V(gCamera_list)[1];
+    C2V(gRearview_camera) = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+    if (C2V(gRearview_camera) == NULL) {
+        FatalError(kFatalError_CannotAllocateCamera);
+    }
+
+    C2V(gRearview_camera)->t.t.mat.m[2][2] = -1.0f;
+    camera_ptr = (br_camera*)C2V(gRearview_camera)->type_data;
+    camera_ptr->hither_z = C2V(gCamera_hither);
+    camera_ptr->type = BR_CAMERA_PERSPECTIVE_FOV;
+    camera_ptr->yon_z = .5f * C2V(gCamera_yon);
+    camera_ptr->field_of_view = BrDegreeToAngle(C2V(gCamera_angle));
+    camera_ptr->aspect = (float)C2V(gWidth) / (float)C2V(gHeight);
+    if (C2V(gRearview_camera) == NULL) {
+        FatalError(kFatalError_CannotAllocateCamera);
+    }
+    SetSightDistance(camera_ptr->yon_z);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e3b0, AllocateCamera, AllocateCamera_original)
