@@ -48,6 +48,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gSaved_table_count);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_splash);
 C2_HOOK_VARIABLE_DECLARE(int, gTarget_lock_enabled);
 
+void C2_HOOK_FASTCALL ClearWobbles(void);
+
 void C2_HOOK_FASTCALL FadePaletteDown(void);
 
 void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette);
