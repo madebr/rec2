@@ -24,6 +24,8 @@ void C2_HOOK_FASTCALL SetPhysicsBuffer(tU8* pBuffer, int pSize);
 
 void C2_HOOK_FASTCALL InitPhysics(void);
 
+int C2_HOOK_FASTCALL ResetMechanics(void);
+
 tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType);
 
 tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateSphereCollisionShape(br_uint_8 pType);
