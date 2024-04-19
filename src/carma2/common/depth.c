@@ -51,6 +51,17 @@ void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00446e10, SetSkyTextureOn, SetSkyTextureOn_original)
 
+void (C2_HOOK_FASTCALL * ToggleSkyQuietly_original)(void);
+void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ToggleSkyQuietly_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00446e80, ToggleSkyQuietly, ToggleSkyQuietly_original)
+
 int C2_HOOK_FASTCALL GetDepthCueingOn(void) {
 
     return C2V(gDepth_cueing_on);
