@@ -33,6 +33,8 @@ void C2_HOOK_FASTCALL AllocateTrackPedestrians(void);
 
 void C2_HOOK_FASTCALL DisposePedestrians(void);
 
+void C2_HOOK_FASTCALL ResetPeds(void);
+
 void C2_HOOK_FASTCALL CameraIsMovingReallyFast(void);
 
 #endif //REC2_PEDESTRN_H
