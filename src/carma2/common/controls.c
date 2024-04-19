@@ -126,6 +126,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tCheat, gKev_keys, 94, 0x00590970, {
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tToggle_element, gToggle_array, 44, 0x005900a0, {
     XXXX TODO FIXME XXXX
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gRecovery_voucher_count, 0x0067c3f8);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -769,3 +770,9 @@ void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004429b0, FlipUpCar, FlipUpCar_original)
+
+void C2_HOOK_FASTCALL ResetRecoveryVouchers(void) {
+
+    C2V(gRecovery_voucher_count) = 0;
+}
+C2_HOOK_FUNCTION(0x00444710, ResetRecoveryVouchers)
