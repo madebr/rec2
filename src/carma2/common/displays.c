@@ -144,6 +144,12 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00449090, InitHeadups, InitHeadups_original)
 
+void C2_HOOK_FASTCALL ClearHeadup(int pIndex) {
+
+    C2V(gHeadups)[pIndex].type = eHeadup_unused;
+}
+C2_HOOK_FUNCTION(0x00449630, ClearHeadup)
+
 int (C2_HOOK_FASTCALL * MungeHeadupWidth_original)(tHeadup* pHeadup);
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
 
