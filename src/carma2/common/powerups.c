@@ -234,6 +234,17 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d9ea0, InitPowerups, InitPowerups_original)
 
+void (C2_HOOK_FASTCALL * ResetPowerups_original)(void);
+void C2_HOOK_FASTCALL ResetPowerups(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ResetPowerups_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004da630, ResetPowerups, ResetPowerups_original)
+
 br_actor* (C2_HOOK_FASTCALL * CreateActorFromPowerupMap_original)(br_pixelmap* pMap);
 br_actor* C2_HOOK_FASTCALL CreateActorFromPowerupMap(br_pixelmap* pMap) {
 
