@@ -5,13 +5,30 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tHeadup, gHeadups, 36);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gAcc_poly_material);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gAcc_poly_actor);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gAcc_poly_model);
 C2_HOOK_VARIABLE_DECLARE(int, gRender_acc_poly_actor);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_token_value, gAccent_poly_prims, 3);
+C2_HOOK_VARIABLE_DECLARE(int, gCredits_won_headup);
+C2_HOOK_VARIABLE_DECLARE(int, gPed_kill_count_headup);
+C2_HOOK_VARIABLE_DECLARE(int, gCar_kill_count_headup);
+C2_HOOK_VARIABLE_DECLARE(int, gTimer_headup);
+C2_HOOK_VARIABLE_DECLARE(int, gTime_awarded_headup);
+C2_HOOK_VARIABLE_DECLARE(int, gLaps_headup);
+C2_HOOK_VARIABLE_DECLARE(int, gNet_cash_headup);
+C2_HOOK_VARIABLE_DECLARE(int, gNet_ped_headup);
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gDRFont_to_polyfont_mapping, 24);
+
+C2_HOOK_VARIABLE_DECLARE(int, gLast_fancy_index);
+C2_HOOK_VARIABLE_DECLARE(int, gLast_credit_headup__displays);
+C2_HOOK_VARIABLE_DECLARE(int, gLast_time_credit_headup);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_earn_time);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_fancy_time);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_time_earn_time);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gOld_times, 10);
 
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 
@@ -30,6 +47,8 @@ void C2_HOOK_FASTCALL InitHeadups(void);
 void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
 
 void C2_HOOK_FASTCALL ClearHeadupSlot(int pSlot_index);
+
+void C2_HOOK_FASTCALL ClearHeadups(void);
 
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup);
 
