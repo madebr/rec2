@@ -16,6 +16,8 @@ int C2_HOOK_FASTCALL GetDepthCueingOn(void);
 
 void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn);
 
+void C2_HOOK_FASTCALL ToggleSkyQuietly(void);
+
 void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
 
 void C2_HOOK_FASTCALL ToggleDepthCueing(void);
