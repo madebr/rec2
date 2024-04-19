@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL InitPlayers(void);
 
+void C2_HOOK_FASTCALL InitNetGameplayStuff(void);
+
 #endif // REC2_NETGAME_H
