@@ -26,3 +26,14 @@ void C2_HOOK_FASTCALL DefaultQuicktimeSettings(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004e1740, DefaultQuicktimeSettings)
+
+void (C2_HOOK_FASTCALL * InitializeActionReplayCamera_original)(tActionReplayCameraMode pCamPos);
+void C2_HOOK_FASTCALL InitializeActionReplayCamera(tActionReplayCameraMode pCamPos) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitializeActionReplayCamera_original(pCamPos);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, InitializeActionReplayCamera, InitializeActionReplayCamera_original)
