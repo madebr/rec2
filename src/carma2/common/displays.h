@@ -27,6 +27,8 @@ void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY
 
 void C2_HOOK_FASTCALL InitHeadups(void);
 
+void C2_HOOK_FASTCALL ClearHeadup(int pIndex);
+
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup);
 
 int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index);
