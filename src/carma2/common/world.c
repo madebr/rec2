@@ -1902,6 +1902,17 @@ void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0960, DisposeSmashableTrackEnvironment, DisposeSmashableTrackEnvironment_original)
 
+void (C2_HOOK_FASTCALL * ResetSmashing_original)(void);
+void C2_HOOK_FASTCALL ResetSmashing(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ResetSmashing_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f5750, ResetSmashing, ResetSmashing_original)
+
 void C2_HOOK_FASTCALL FreeSmashableNonCarNames(void) {
 
     BrMemFree(C2V(gSmashable_noncars));
