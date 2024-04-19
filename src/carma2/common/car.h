@@ -23,6 +23,8 @@ void C2_HOOK_FASTCALL ResetCarSpecialVolume(tCollision_info* pCollision_info);
 
 void C2_HOOK_FAKE_THISCALL FlyCar(tCar_spec* c, undefined4 pArg2, br_scalar dt);
 
+void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 pArg2, br_scalar pFront_give_factor, br_scalar pRear_give_factor, br_scalar pDamping_factor, br_scalar pExtra_front_height, br_scalar pExtra_rear_height);
+
 void C2_HOOK_FAKE_THISCALL ControlCar4(tCar_spec* c, undefined4 pArg2, br_scalar dt);
 
 void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime);

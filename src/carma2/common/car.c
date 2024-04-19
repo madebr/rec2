@@ -59,6 +59,17 @@ void C2_HOOK_FAKE_THISCALL FlyCar(tCar_spec* c, undefined4 pArg2, br_scalar dt) 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f4f0, FlyCar, FlyCar_original)
 
+void (C2_HOOK_FAKE_THISCALL * SetCarSuspGiveAndHeight_original)(tCar_spec* pCar, undefined4 pArg2, br_scalar pFront_give_factor, br_scalar pRear_give_factor, br_scalar pDamping_factor, br_scalar pExtra_front_height, br_scalar pExtra_rear_height);
+void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 pArg2, br_scalar pFront_give_factor, br_scalar pRear_give_factor, br_scalar pDamping_factor, br_scalar pExtra_front_height, br_scalar pExtra_rear_height) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetCarSuspGiveAndHeight_original(pCar, pArg2, pFront_give_factor, pRear_give_factor, pDamping_factor, pExtra_front_height, pExtra_rear_height);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0041fc60, SetCarSuspGiveAndHeight, SetCarSuspGiveAndHeight_original)
+
 void (C2_HOOK_FASTCALL * PanningExternalCamera_original)(tCar_spec* c, tU32 pTime);
 void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime) {
 
