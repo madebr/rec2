@@ -7,6 +7,7 @@
 
 C2_HOOK_VARIABLE_DECLARE(int, gEntering_message);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gAbuse_text, 10);
+C2_HOOK_VARIABLE_DECLARE(int, gRecovery_voucher_count);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
@@ -25,5 +26,7 @@ void C2_HOOK_FASTCALL CheckToggles(int pRacing);
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
 
 void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* car);
+
+void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 
 #endif //REC2_CONTROLS_H
