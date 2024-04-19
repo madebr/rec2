@@ -92,6 +92,8 @@ add_library(c2_common STATIC
     physics.h
     powerups.h
     powerups.c
+    racemem.c
+    racemem.h
     racestrt.c
     racestrt.h
     racesumm.c
