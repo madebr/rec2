@@ -51,3 +51,14 @@ void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
     }
 }
 C2_HOOK_FUNCTION(0x004992e0, EnableCar)
+
+void (C2_HOOK_FASTCALL * InitPlayers_original)(void);
+void C2_HOOK_FASTCALL InitPlayers(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitPlayers_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049b720, InitPlayers, InitPlayers_original)
