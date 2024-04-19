@@ -18,6 +18,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPosition_type_names, 2);
 
 void C2_HOOK_FASTCALL InitCrush(void);
 
+void C2_HOOK_FASTCALL InitTrackCrushables(void);
+
 void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file);
 
 br_scalar C2_HOOK_FASTCALL SquaredDistanceFromLineSegment(br_vector3* pP, br_vector3* pA, br_vector3* pB);
