@@ -173,9 +173,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tRace_group_spec*, gRaceGroups2, 0x0074d5e4);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSlot_info, gInitial_APO, 3, 0x0074d4c0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSlot_info, gInitial_APO_potential, 3, 0x007622a0);
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_armour, 0x0074cfa0);
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_power, 0x0074cfcc);
-C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gMax_offensive, 0x0074cff8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSlot_info, gMax_APO, 3, 0x0074cfa0);
 C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gCost_APO, 0x00763480);
 C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gTrade_in_value_APO, 0x0075b900);
 C2_HOOK_VARIABLE_IMPLEMENT(tSlot_info, gSubstitution_value_APO, 0x0074d380);
@@ -1623,30 +1621,30 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     }
 
     /* Max armour, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gMax_armour).initial[0], &C2V(gMax_armour).initial[1], &C2V(gMax_armour).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gMax_APO)[0].initial[0], &C2V(gMax_APO)[0].initial[1], &C2V(gMax_APO)[0].initial[2]);
     /* Max armour, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gMax_armour).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gMax_armour).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gMax_APO)[0].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gMax_APO)[0].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
     /* Max power, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gMax_power).initial[0], &C2V(gMax_power).initial[1], &C2V(gMax_power).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gMax_APO)[1].initial[0], &C2V(gMax_APO)[1].initial[1], &C2V(gMax_APO)[1].initial[2]);
     /* Max power, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gMax_power).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gMax_power).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gMax_APO)[1].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gMax_APO)[1].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
     /* Max offensive, single player, each skill level */
-    GetThreeInts(C2V(gTempFile), &C2V(gMax_offensive).initial[0], &C2V(gMax_offensive).initial[1], &C2V(gMax_offensive).initial[2]);
+    GetThreeInts(C2V(gTempFile), &C2V(gMax_APO)[2].initial[0], &C2V(gMax_APO)[2].initial[1], &C2V(gMax_APO)[2].initial[2]);
     /* Max offensive, each network game type */
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(C2V(gMax_offensive).initial_network); i++) {
-        c2_sscanf(str, "%d", &C2V(gMax_offensive).initial_network[i]);
+    for (i = 0; i < REC2_ASIZE(C2V(gMax_APO)[2].initial_network); i++) {
+        c2_sscanf(str, "%d", &C2V(gMax_APO)[2].initial_network[i]);
         str = c2_strtok(NULL, "\t ,/");
     }
 

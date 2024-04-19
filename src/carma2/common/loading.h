@@ -54,6 +54,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gMinTimeOpponentRepair);
 C2_HOOK_VARIABLE_DECLARE(int, gMaxTimeOpponentRepair);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO_potential, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gMax_APO, 3);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void);
 
