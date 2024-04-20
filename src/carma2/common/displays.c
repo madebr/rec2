@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "globvrbm.h"
 #include "graphics.h"
+#include "loading.h"
 #include "polyfont.h"
 #include "utility.h"
 
@@ -75,6 +76,30 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_earn_time, 0x0067f874);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_fancy_time, 0x0067fd34);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_time_earn_time, 0x0067fcc4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gOld_times, 10, 0x0079eac0);
+
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_font*, gBR_fonts, 4, 0x0067fcd8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gRevs, 13, 0x0067fd00);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gArmour_colour_map, 0x0074cf84);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPowerbar, 0x0067fcd0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPower_colour_map, 0x0074cab4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gOffensive_colour_map, 0x0074cf5c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_test, 0x006815bc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gCurrent_rev, 0x0074ca1c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gHud_curve1, 0x0067c4f8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gHud_curve2, 0x0067fcfc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gHud_curve3, 0x0067f87c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gGrey_top5, 0x0067fcf4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gDamage_hud, 0x0074cf00);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gTimer_lhs, 0x0074ca80);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gHud_timer_rhs, 0x0074ca44);
+C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHud_timer_rhs_material, 0x0074cac0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_armour, 0x006815b8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_power, 0x006815b4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_offense, 0x0067c4f0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_greyBloc1, 0x0067c4f4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_litBloc1, 0x0067fce8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_grnBlock1, 0x0067fcd4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tHud_message, gHud_messages, 46, 0x0067fd40);
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
@@ -152,10 +177,152 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00465a70, TransDRPixelmapText, TransDRPixelmapText_o
 void (C2_HOOK_FASTCALL * InitHeadups_original)(void);
 void C2_HOOK_FASTCALL InitHeadups(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitHeadups_original();
 #else
-#error "Not implemented"
+    int i;
+    int j;
+    FILE* f;
+    tPath_name path;
+    int count;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gHeadups)) != 36);
+    for (i = 0; i < REC2_ASIZE(C2V(gHeadups)); i++) {
+        C2V(gHeadups)[i].type = eHeadup_unused;
+    }
+
+    C2V(gBR_fonts)[0] = C2V(BrFontProp4x6);
+    C2V(gBR_fonts)[1] = C2V(BrFontProp7x9);
+    C2V(gBR_fonts)[2] = C2V(gFont_7);
+    C2V(gBR_fonts)[3] = C2V(gHeadup_font);
+    C2V(gRevs)[ 0] = DRLoadPixelmap("rev1.tif");
+    C2V(gRevs)[ 1] = DRLoadPixelmap("rev2.tif");
+    C2V(gRevs)[ 2] = DRLoadPixelmap("rev3.tif");
+    C2V(gRevs)[ 3] = DRLoadPixelmap("rev4.tif");
+    C2V(gRevs)[ 4] = DRLoadPixelmap("rev5.tif");
+    C2V(gRevs)[ 5] = DRLoadPixelmap("rev6.tif");
+    C2V(gRevs)[ 6] = DRLoadPixelmap("rev7.tif");
+    C2V(gRevs)[ 7] = DRLoadPixelmap("rev8.tif");
+    C2V(gRevs)[ 8] = DRLoadPixelmap("rev9.tif");
+    C2V(gRevs)[ 9] = DRLoadPixelmap("rev10.tif");
+    C2V(gRevs)[10] = DRLoadPixelmap("rev11.tif");
+    C2V(gRevs)[11] = DRLoadPixelmap("rev12.tif");
+    C2V(gRevs)[12] = DRLoadPixelmap("rev13.tif");
+    C2V(gPowerbar) = DRLoadPixelmap("powerbar.tif");
+
+    C2V(gArmour_colour_map) = BrPixelmapAllocate(BR_PMT_RGBA_4444,
+        C2V(gPowerbar)->width, C2V(gPowerbar)->height,
+        NULL, 0);
+    C2V(gArmour_colour_map)->identifier = BrResStrDup(C2V(gArmour_colour_map), "Armour_area");
+    BrMapAdd(C2V(gArmour_colour_map));
+
+    C2V(gPower_colour_map) = DRLoadPixelmap("powerbar.tif");
+    BrMapAdd(C2V(gPower_colour_map));
+
+    C2V(gOffensive_colour_map) = DRLoadPixelmap("powerbar.tif");
+    BrMapAdd(C2V(gOffensive_colour_map));
+
+    C2V(gIcon_test) = DRLoadPixelmap("icontest.tif");
+
+    C2V(gCurrent_rev) = C2V(gRevs)[0];
+    BrMapAdd(C2V(gRevs)[0]);
+
+    C2V(gHud_curve1) = DRLoadPixelmap("hudcurve1.tif");
+    BrMapAdd(C2V(gHud_curve1));
+    C2V(gHud_curve2) = DRLoadPixelmap("hudcurve2.tif");
+    BrMapAdd(C2V(gHud_curve2));
+    C2V(gHud_curve3) = DRLoadPixelmap("hudcurve3.tif");
+    BrMapAdd(C2V(gHud_curve3));
+
+    C2V(gGrey_top5) = DRLoadPixelmap("greytop5.tif");
+    C2V(gDamage_hud) = BrPixelmapAllocate(BR_PMT_RGBA_4444,
+        C2V(gGrey_top5)->width, C2V(gGrey_top5)->height,
+        NULL, 0);
+    BrMapAdd(C2V(gDamage_hud));
+    BrMapUpdate(C2V(gDamage_hud), BR_MAPU_ALL);
+
+    C2V(gStatbarHUD5_material)->colour_map = C2V(gDamage_hud);
+    BrMaterialUpdate(C2V(gStatbarHUD5_material), BR_MATU_COLOURMAP);
+
+    C2V(gTimer_lhs) = DRLoadPixelmap("timerlhs.tif");
+    BrMapAdd(C2V(gTimer_lhs));
+    C2V(gTimerLeftHUD_material)->colour_map = C2V(gTimer_lhs);
+    BrMaterialUpdate(C2V(gTimerLeftHUD_material), BR_MATU_COLOURMAP);
+    C2V(gTimerLeftHUD_model)->vertices[1].p.v[0] = (float)C2V(gTimerLeftHUD_dim_x);
+    C2V(gTimerLeftHUD_model)->vertices[0].p.v[0] = C2V(gTimerLeftHUD_model)->vertices[1].p.v[0];
+    C2V(gTimerLeftHUD_model)->vertices[3].p.v[1] = (float)-C2V(gTimerLeftHUD_dim_y);
+    C2V(gTimerLeftHUD_model)->vertices[0].p.v[1] = C2V(gTimerLeftHUD_model)->vertices[3].p.v[1];
+    C2V(gTimerLeftHUD_model)->vertices[3].p.v[0] = (float)C2V(gTimerLeftHUD_dim_w) + C2V(gTimerLeftHUD_model)->vertices[1].p.v[0];
+    C2V(gTimerLeftHUD_model)->vertices[2].p.v[0] = C2V(gTimerLeftHUD_model)->vertices[3].p.v[0];
+    C2V(gTimerLeftHUD_model)->vertices[2].p.v[1] = C2V(gTimerLeftHUD_model)->vertices[3].p.v[1] - (float)C2V(gTimerLeftHUD_dim_h);
+    C2V(gTimerLeftHUD_model)->vertices[1].p.v[1] = C2V(gTimerLeftHUD_model)->vertices[2].p.v[1];
+    BrModelUpdate(C2V(gTimerLeftHUD_model), BR_MODU_VERTEX_POSITIONS);
+
+    C2V(gHud_timer_rhs) = DRLoadPixelmap("timerrhs.tif");
+    BrMapAdd(C2V(gHud_timer_rhs));
+    C2V(gHud_timer_rhs_material)->colour_map = C2V(gHud_timer_rhs);
+    BrMaterialUpdate(C2V(gHud_timer_rhs_material), BR_MATU_COLOURMAP);
+
+    C2V(gTimerRightHUD_model)->vertices[1].p.v[0] = (float)C2V(gTimerRightHUD_dim_x);
+    C2V(gTimerRightHUD_model)->vertices[0].p.v[0] = C2V(gTimerRightHUD_model)->vertices[1].p.v[0];
+    C2V(gTimerRightHUD_model)->vertices[3].p.v[1] = (float)-C2V(gTimerRightHUD_dim_y);
+    C2V(gTimerRightHUD_model)->vertices[0].p.v[1] = C2V(gTimerRightHUD_model)->vertices[3].p.v[1];
+    C2V(gTimerRightHUD_model)->vertices[3].p.v[0] = (float)C2V(gTimerRightHUD_dim_w) + C2V(gTimerRightHUD_model)->vertices[1].p.v[0];
+    C2V(gTimerRightHUD_model)->vertices[2].p.v[0] = C2V(gTimerRightHUD_model)->vertices[3].p.v[0];
+    C2V(gTimerRightHUD_model)->vertices[2].p.v[1] = C2V(gTimerRightHUD_model)->vertices[3].p.v[1] - (float)C2V(gTimerRightHUD_dim_h);
+    C2V(gTimerRightHUD_model)->vertices[1].p.v[1] = C2V(gTimerRightHUD_model)->vertices[2].p.v[1];
+    BrModelUpdate(C2V(gTimerRightHUD_model), BR_MODU_VERTEX_POSITIONS);
+
+    C2V(gIcon_armour) = DRLoadPixelmap("iconarmour.tif");
+    C2V(gIcon_power) = DRLoadPixelmap("iconpower.tif");
+    C2V(gIcon_offense) = DRLoadPixelmap("iconoffense.tif");
+    C2V(gIcon_greyBloc1) = DRLoadPixelmap("greybloc1.tif");
+    C2V(gIcon_litBloc1) = DRLoadPixelmap("litbloc1.tif");
+    C2V(gIcon_grnBlock1) = DRLoadPixelmap("grnblock1.tif");
+    PathCat(path, C2V(gApplication_path), "SCROLLERS.TXT");
+    f = DRfopen(path, "rt");
+    if (f == NULL) {
+        BrFailure("Couldn't open ", path);
+    }
+    /*
+     * # of Headup scrolly messages
+     * Format:  Font index, Message string
+     * N.B use underscore "_" where you want a space in the string
+     **/
+    count = GetAnInt(f);
+
+    C2_HOOK_BUG_ON(sizeof(tHud_message) != 0x88);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gHud_messages)) != 46);
+
+    if (count > REC2_ASIZE(C2V(gHud_messages))) {
+        BrFailure("Error - Too many Headup messages ", path);
+    }
+    for (i = 0; i < count; i++) {
+        char s[256];
+        char* str;
+        tHud_message* hud_message;
+        int len;
+
+        hud_message = &C2V(gHud_messages)[i];
+        GetALineAndDontArgue(f, s);
+
+        str = c2_strtok(s, "\t ,/");
+        c2_sscanf(str, "%d", &hud_message->font1);
+
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &hud_message->font2);
+
+        str = c2_strtok(NULL,"\t ,/");
+        c2_strcpy(hud_message->message, str);
+
+        len = c2_strlen(hud_message->message);
+        for (j = 0; j < len; j++) {
+            if (hud_message->message[j] == '_') {
+                hud_message->message[j] = ' ';
+            }
+        }
+    }
+    DRfclose(f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00449090, InitHeadups, InitHeadups_original)
