@@ -30,6 +30,30 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gLast_fancy_time);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_time_earn_time);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gOld_times, 10);
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_font*, gBR_fonts, 4);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_pixelmap*, gRevs, 13);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gArmour_colour_map);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gPowerbar);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gPower_colour_map);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gOffensive_colour_map);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_test);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_rev);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gHud_curve1);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gHud_curve2);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gHud_curve3);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gGrey_top5);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDamage_hud);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gTimer_lhs);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gHud_timer_rhs);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gHud_timer_rhs_material);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_armour);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_power);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_offense);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_greyBloc1);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_litBloc1);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_grnBlock1);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tHud_message, gHud_messages, 46);
+
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 
 int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText);
