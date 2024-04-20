@@ -705,10 +705,18 @@ C2_HOOK_FUNCTION(0x00490020, GetFourInts)
 
 float (C2_HOOK_FASTCALL * GetAFloat_original)(FILE* pF);
 float C2_HOOK_FASTCALL GetAFloat(FILE* pF) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return GetAFloat_original(pF);
 #else
-#error "not implemented"
+    char s[256];
+    char *str;
+    float f;
+
+    PossibleService();
+    GetALineWithNoPossibleService(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_sscanf(str, "%f", &f);
+    return f;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004900e0, GetAFloat, GetAFloat_original)
