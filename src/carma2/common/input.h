@@ -21,6 +21,8 @@ void C2_HOOK_FASTCALL EdgeTriggerModeOff(void);
 
 int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index);
 
+int C2_HOOK_FASTCALL EitherMouseButtonDown(void);
+
 int C2_HOOK_FASTCALL PDKeyDown(int pKey_index);
 
 void C2_HOOK_FASTCALL PollKeys(void);

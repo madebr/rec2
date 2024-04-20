@@ -62,6 +62,17 @@ int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482590, PDKeyDown2, PDKeyDown2_original)
 
+int (C2_HOOK_FASTCALL * EitherMouseButtonDown_original)(void);
+int C2_HOOK_FASTCALL EitherMouseButtonDown(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return EitherMouseButtonDown_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004824c0, EitherMouseButtonDown, EitherMouseButtonDown_original)
+
 int C2_HOOK_FASTCALL PDKeyDown(int pKey_index) {
     tKey_down_result result;
 
