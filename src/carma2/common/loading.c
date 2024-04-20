@@ -145,7 +145,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedsFolder, 0x006a0414);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedSoundPath, 0x00684550);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPowerup_txt_path, 0x006a0ad4);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedTextTxtPath, 0x0068c718);
-C2_HOOK_VARIABLE_IMPLEMENT(char*, gPedTexturePath, 0x0065852c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(char*, gPedTexturePath, 0x0065852c, "PIXELMAP");
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, gRaces_file_names, 9, 0x00657530, {
     "RACES.TXT",
@@ -1471,10 +1471,56 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, DRLoadPixelmap, DRLoadPixelmap_original)
 
 br_pixelmap* (C2_HOOK_FASTCALL * DRLoadPixelmap2_original)(const char* pPath_name);
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap2(const char* pPath_name) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DRLoadPixelmap2_original(pPath_name);
 #else
-#error "not implemented"
+    const char* ext;
+    tPath_name path;
+    char texture_name[256];
+    int error;
+    br_pixelmap* pixelmaps[1000];
+    br_pixelmap* pm;
+
+    ext = c2_strrchr(pPath_name, '.');
+    if (ext == NULL) {
+        ext = pPath_name + c2_strlen(pPath_name);
+    }
+    if (ext - pPath_name == 4) {
+        if (c2_strncmp(pPath_name, "none", 4) == 0) {
+            return NULL;
+        }
+    }
+    PossibleService();
+    PathCat(path, C2V(gApplication_path), C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
+    PathCat(path, path, "PIXELMAP");
+    c2_strcpy(texture_name, pPath_name);
+    texture_name[c2_strlen(texture_name) - 4] = '\0';
+    AllowOpenToFail();
+    if (!C2V(gDisableTiffConversion)) {
+        pm = LoadTiffTexture_Ex(path, texture_name, C2V(gRender_palette), C2V(gPixelFlags) | 0x40, &error);
+    } else {
+        if (LoadBrenderTextures(path, texture_name, pixelmaps, REC2_ASIZE(pixelmaps)) != 0) {
+            error = 0;
+            pm = pixelmaps[0];
+        } else {
+            error = 1;
+            pm = NULL;
+        }
+    }
+    DisallowOpenToFail();
+    if (pm == NULL) {
+        PathCat(path, C2V(gApplication_path), C2V(gPedTexturePath));
+        if (!C2V(gDisableTiffConversion)) {
+            pm = LoadTiffTexture_Ex(path, texture_name, C2V(gRender_palette), C2V(gPixelFlags) | 0x40, &error);
+        } else {
+            if (LoadBrenderTextures(path, texture_name, pixelmaps, REC2_ASIZE(pixelmaps)) != 0) {
+                pm = pixelmaps[0];
+            } else {
+                pm = NULL;
+            }
+        }
+    }
+    return pm;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048ec20, DRLoadPixelmap2, DRLoadPixelmap2_original)
