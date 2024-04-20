@@ -5,6 +5,8 @@
 
 #include "c2_hooks.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gInitialised_grid);
+
 void C2_HOOK_FASTCALL DefaultNetName(void);
 
 void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_length);
