@@ -22,7 +22,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gMouseLButtonDown);
 C2_HOOK_VARIABLE_DECLARE(int, gMouseRButtonDown);
 C2_HOOK_VARIABLE_DECLARE(int, gMouseCaptured);
 C2_HOOK_VARIABLE_DECLARE(POINT, gCursorPos_LastClick);
-C2_HOOK_VARIABLE_DECLARE(POINT, gCurrentCursorPos);
+C2_HOOK_VARIABLE_DECLARE(POINT, gPD_mouse_position);
 C2_HOOK_VARIABLE_DECLARE(int, gCursorPos_LastClick_Valid);
 C2_HOOK_VARIABLE_DECLARE(int, gScaleMouse);
 C2_HOOK_VARIABLE_DECLARE(int, gScreenWidth);

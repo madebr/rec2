@@ -54,7 +54,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseLButtonDown, 0x006ad488);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseRButtonDown, 0x006ad48c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseCaptured, 0x006ad490);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(POINT, gCursorPos_LastClick, 0x006621d4, {-1,-1});
-C2_HOOK_VARIABLE_IMPLEMENT(POINT, gCurrentCursorPos, 0x006ad458);
+C2_HOOK_VARIABLE_IMPLEMENT(POINT, gPD_mouse_position, 0x006ad458);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCursorPos_LastClick_Valid, 0x006ad454);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gScaleMouse, 0x006ad468);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gScreenWidth, 0x006ad460);
@@ -326,17 +326,17 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
     case WM_LBUTTONDBLCLK:
     case WM_RBUTTONDBLCLK:
         if (C2V(gWindowActiveState) != 2) {
-            C2V(gCursorPos_LastClick) = C2V(gCurrentCursorPos);
+            C2V(gCursorPos_LastClick) = C2V(gPD_mouse_position);
             C2V(gCursorPos_LastClick_Valid) = 1;
             break;
         }
         GetCursorPos(&point);
         if (!C2V(gScaleMouse) || strcmp(C2V(gRenderer), "D3D") == 0) {
             ScreenToClient(C2V(gHWnd), &point);
-            C2V(gCurrentCursorPos) = C2V(gCursorPos_LastClick) = point;
+            C2V(gPD_mouse_position) = C2V(gCursorPos_LastClick) = point;
         } else {
-            C2V(gCurrentCursorPos).x = C2V(gCursorPos_LastClick).x = (int)((double)point.x / (C2V(gScreenWidth) / 640.));
-            C2V(gCurrentCursorPos).y = C2V(gCursorPos_LastClick).y = (int)((double)point.y / (C2V(gScreenHeight) / 480.));
+            C2V(gPD_mouse_position).x = C2V(gCursorPos_LastClick).x = (int)((double)point.x / (C2V(gScreenWidth) / 640.));
+            C2V(gPD_mouse_position).y = C2V(gCursorPos_LastClick).y = (int)((double)point.y / (C2V(gScreenHeight) / 480.));
         }
         C2V(gCursorPos_LastClick_Valid) = 1;
         break;
@@ -944,3 +944,19 @@ int GetRegisterSourceLocation(char* buffer, int* buffer_size) {
     }
     return 0;
 }
+
+void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
+    if (C2V(gWindowActiveState) != 2) {
+        *pX = C2V(gPD_mouse_position).x;
+        *pY = C2V(gPD_mouse_position).y;
+        return;
+    }
+    POINT pnt;
+    GetCursorPos(&pnt);
+    ScreenToClient(C2V(gHWnd), &pnt);
+    *pX = pnt.x;
+    *pY = pnt.y;
+    C2V(gPD_mouse_position).x = *pX;
+    C2V(gPD_mouse_position).y = *pY;
+}
+C2_HOOK_FUNCTION(0x0051c900, PDGetMousePosition)
