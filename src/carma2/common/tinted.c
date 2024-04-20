@@ -573,3 +573,23 @@ void C2_HOOK_FASTCALL UpdateTinted(int pIndex) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d84a0, UpdateTinted, UpdateTinted_original)
+
+void C2_HOOK_FASTCALL TintedAnimateSawToothColor(int pIndex) {
+
+    if ((C2V(gTintedPolys)[pIndex].actor)->render_style == BR_RSTYLE_FACES) {
+        tU32 time;
+        int i;
+        tU8 new_color;
+
+        time = GetTotalTime();
+
+        new_color = (tU8)(time >> C2V(gTintedPolys)[pIndex].colour);
+        for (i = 0; i < C2V(gTintedPolys)[pIndex].model->nvertices; i++) {
+            C2V(gTintedPolys)[pIndex].model->vertices[i].red = new_color + 128;
+            C2V(gTintedPolys)[pIndex].model->vertices[i].grn = new_color + 30 * i;
+            C2V(gTintedPolys)[pIndex].model->vertices[i].blu = new_color;
+        }
+        BrModelUpdate(C2V(gTintedPolys)[pIndex].model, BR_MODU_VERTICES);
+    }
+}
+C2_HOOK_FUNCTION(0x004d8630, TintedAnimateSawToothColor)
