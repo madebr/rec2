@@ -533,3 +533,14 @@ void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPositi
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d8350, SetTintedFromSpecialVolume, SetTintedFromSpecialVolume_original)
+
+void (C2_HOOK_FASTCALL * UpdateTinted_original)(int pIndex);
+void C2_HOOK_FASTCALL UpdateTinted(int pIndex) {
+
+#if defined(C2_HOOKS_ENABLED)
+    UpdateTinted_original(pIndex);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d84a0, UpdateTinted, UpdateTinted_original)
