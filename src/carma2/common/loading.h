@@ -251,6 +251,8 @@ void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, 
 
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name);
 
+br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap2(const char* pPath_name);
+
 void C2_HOOK_FASTCALL LoadKeyMapping(void);
 
 void C2_HOOK_FASTCALL LoadHeadupImages(void);
