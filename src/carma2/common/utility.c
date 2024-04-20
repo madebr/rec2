@@ -134,6 +134,17 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 }
 C2_HOOK_FUNCTION(0x00513690, PathCat)
 
+void (C2_HOOK_FASTCALL * EncodeFile_original)(char* pThe_path);
+void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
+
+#if defined(C2_HOOKS_ENABLED)
+    EncodeFile_original(pThe_path);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00490840, EncodeFile, EncodeFile_original)
+
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
     int val;
 
