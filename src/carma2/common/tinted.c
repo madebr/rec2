@@ -3,6 +3,7 @@
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrkm.h"
+#include "input.h"
 #include "loading.h"
 #include "platform.h"
 #include "utility.h"
@@ -572,10 +573,57 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004d8350, SetTintedFromSpecialVolume, SetTintedFromS
 void (C2_HOOK_FASTCALL * UpdateTinted_original)(int pIndex);
 void C2_HOOK_FASTCALL UpdateTinted(int pIndex) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     UpdateTinted_original(pIndex);
 #else
-#error "Not implemented"
+
+    if (!C2V(gTintedPolys)[pIndex].used) {
+        return;
+    }
+    switch (C2V(gTintedPolys)[pIndex].class) {
+    case 2: {
+        tSpecial_volume *volume = C2V(gCar_to_view)->collision_info->last_special_volume;
+        if ((volume != NULL && volume->gravity_multiplier < 1.0f) || C2V(gAction_replay_mode)) {
+            UpdateTintedPolyActor(pIndex);
+        }
+        break;
+    }
+    case 3:
+        TintedAnimateSawToothColor(pIndex);
+        return;
+    case 4:
+        if (PDKeyDown(32) || (C2V(gINT_006a0444) > 0 && C2V(gINT_006a0444) <= 200)) {
+            FUN_004d86e0(pIndex);
+        }
+        if (PDKeyDown(35) || (C2V(gINT_006a0444) > 0 && C2V(gINT_006a0444) <= 200)) {
+            C2V(gINT_006a0448) = 1;
+            FUN_004d86e0(pIndex);
+        }
+        break;
+    case 6:
+        if (C2V(gTintedPolys)[pIndex].visible) {
+            int red, grn, blu;
+
+            if (C2V(gTintedPolys)[pIndex].subClass == 0) {
+                unsigned int mask;
+                mask = GetTotalTime() >> C2V(gTintedPolys)[pIndex].colour;
+                if ((mask & 0x1ff) > 254) {
+                    mask = -2 - (mask & 0x1ff);
+                }
+                mask &= 0xff;
+                red = C2V(gTintedPolys)[pIndex].color2_red & mask;
+                grn = C2V(gTintedPolys)[pIndex].color2_grn & mask;
+                blu = C2V(gTintedPolys)[pIndex].color2_blu & mask;
+            } else {
+                red = grn = blu = pIndex;
+                if (C2V(gTintedPolys)[pIndex].subClass == 1) {
+                    TintedAnimateSawToothColor(pIndex);
+                }
+            }
+            C2V(gTintedPolys)[pIndex].material->colour = BR_COLOUR_RGB(red, grn, blu);
+            BrMaterialUpdate(C2V(gTintedPolys)[pIndex].material, BR_MATU_LIGHTING);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d84a0, UpdateTinted, UpdateTinted_original)
