@@ -782,10 +782,16 @@ void C2_HOOK_FASTCALL GetFourFloats(FILE * pF, float* pF1, float* pF2, float* pF
 
 void (C2_HOOK_FASTCALL * GetAString_original)(FILE* pF, char* pString);
 void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     GetAString_original(pF, pString);
 #else
-#error "not implemented"
+    char s[256];
+    char* str;
+
+    PossibleService();
+    GetALineWithNoPossibleService(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    c2_strcpy(pString, str);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00490630, GetAString, GetAString_original)
