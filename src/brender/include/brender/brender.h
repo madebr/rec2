@@ -73,6 +73,7 @@ br_material_find_cbfn* C2_HOOK_CDECL BrMaterialFindHook(br_material_find_cbfn* h
 void C2_HOOK_CDECL BrMatrix23Copy(br_matrix23* A, br_matrix23* B);
 void C2_HOOK_CDECL BrMatrix23Identity(br_matrix23* mat);
 void C2_HOOK_CDECL BrMatrix23Mul(br_matrix23* A, br_matrix23* B, br_matrix23* C);
+void C2_HOOK_CDECL BrMatrix23Rotate(br_matrix23* mat, br_angle rz);
 void C2_HOOK_CDECL BrMatrix23Scale(br_matrix23* mat, br_scalar sx, br_scalar sy);
 
 // BrMatrix34
