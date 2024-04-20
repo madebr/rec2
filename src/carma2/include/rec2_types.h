@@ -1182,10 +1182,10 @@ typedef struct {
     br_uint_32 color2_grn;
     br_uint_32 color2_blu;
     int subClass;
-    br_uint_8 unknown_0;
-    br_uint_8 unknown_padding_0;  // FIXME: unknown
-    br_uint_8 unknown_padding_1;  // FIXME: unknown
-    br_uint_8 unknown_padding_2;  // FIXME: unknown
+    br_uint_8 field_0x28;
+    br_uint_8 field_0x29;
+    br_uint_8 field_0x30;
+    br_uint_8 field_0x31;
     br_material* material2;
     int used;
     int visible;

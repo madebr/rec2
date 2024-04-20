@@ -1,6 +1,8 @@
 #include "tinted.h"
 
+#include "finteray.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "platform.h"
 #include "utility.h"
 #include "world.h"
@@ -526,10 +528,37 @@ C2_HOOK_FUNCTION(0x004d8bb0, ResetTintedVertices)
 void (C2_HOOK_FASTCALL * SetTintedFromSpecialVolume_original)(int pIndex, br_vector3* pPosition);
 void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPosition) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetTintedFromSpecialVolume_original(pIndex, pPosition);
 #else
-#error "Not implemented"
+    tSpecial_volume* volume;
+
+    volume = C2V(gCar_to_view)->collision_info->last_special_volume;
+    if ((volume != NULL && volume->gravity_multiplier < 1.f) || C2V(gAction_replay_mode)) {
+        br_vector3 dir, nor;
+        br_scalar t;
+        br_material *mat;
+
+        BrVector3Set(&dir, 0.f, 200.f, 0.f);
+        DisablePlingMaterials();
+        FindFace(pPosition, &dir, &nor, &t, &mat);
+        EnablePlingMaterials();
+        if (t < 100.f && mat != NULL && mat->identifier != NULL) {
+            if (c2_strlen(mat->identifier) >= 1) {
+                if (mat->identifier[0] == '!' || mat->identifier[0] == '#') {
+                    C2V(gTintedPolys)[pIndex].field_0x28 = 35;
+                    C2V(gTintedPolys)[pIndex].material2 = mat;
+                    return;
+                } else if (mat->identifier[0] == '@') {
+                    C2V(gTintedPolys)[pIndex].field_0x28 = 64;
+                    C2V(gTintedPolys)[pIndex].material2 = mat;
+                    return;
+                }
+            }
+        }
+    }
+    C2V(gTintedPolys)[pIndex].field_0x28 = 0;
+    C2V(gTintedPolys)[pIndex].material2 = NULL;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d8350, SetTintedFromSpecialVolume, SetTintedFromSpecialVolume_original)
