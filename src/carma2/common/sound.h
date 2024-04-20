@@ -12,6 +12,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gCD_fully_installed);
 C2_HOOK_VARIABLE_DECLARE(int, gSound_sources_inited);
 C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gEffects_outlet);
 C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gEngine_outlet);
+C2_HOOK_VARIABLE_DECLARE(int, gMusic_available);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_00684554);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_00684568);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
