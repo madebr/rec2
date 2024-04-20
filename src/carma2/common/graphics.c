@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "grafdata.h"
 #include "init.h"
+#include "input.h"
 #include "loading.h"
 #include "physics.h"
 #include "tinted.h"
@@ -126,6 +127,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_tinted_bottom, 0x0058fdcc, -1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_tinted_right, 0x0058fdd4, -1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_tinted_center, 0x0058fdd8, -1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_line_width, 0x0058fde0, 5);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTransient_bitmap_index, 0x0067be94);
+C2_HOOK_VARIABLE_IMPLEMENT(tMouse_coord, gMouse_last_pos, 0x0079ecb0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMouse_in_use, 0x0079ecb8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_cursor_index, 0x0067be90);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -332,10 +338,18 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0043e3f0, AllocateCursorActors, AllocateCursorActors
 
 void (C2_HOOK_FASTCALL * StartMouseCursor_original)(void);
 void C2_HOOK_FASTCALL StartMouseCursor(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     StartMouseCursor_original();
 #else
-#error "Not implemented"
+    if (C2V(gCursor_tinted_top) == -1) {
+        AllocateCursorActors();
+    }
+    C2V(gNext_transient) = 0;
+    C2V(gTransient_bitmap_index) = 0;
+    GetMousePosition(&C2V(gMouse_last_pos).x, &C2V(gMouse_last_pos).y);
+    C2V(gMouse_in_use) = 0;
+    C2V(gCurrent_cursor_index) = 2;
+    C2V(gMouse_started) = 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043e6c0, StartMouseCursor, StartMouseCursor_original)
