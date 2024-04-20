@@ -47,6 +47,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tSaved_table, gSaved_shade_tables, 100);
 C2_HOOK_VARIABLE_DECLARE(int, gSaved_table_count);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_splash);
 C2_HOOK_VARIABLE_DECLARE(int, gTarget_lock_enabled);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gLit_op_stat);
 
 
 void C2_HOOK_FASTCALL ClearWobbles(void);

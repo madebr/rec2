@@ -6,6 +6,8 @@
 
 #include <brender/brender.h>
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInitialised_grid, 0x0074a738);
+
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
     /* FIXME: 32 overflows the player_name field */

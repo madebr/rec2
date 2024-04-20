@@ -1680,7 +1680,7 @@ typedef struct {
 } tTrack_spec;
 
 typedef enum {
-    /* eDepth_effect_none = -1, */
+    eDepth_effect_none = -1,
     eDepth_effect_darkness = 0,
     eDepth_effect_fog = 1,
     eDepth_effect_colour = 2,
@@ -2965,6 +2965,7 @@ typedef struct {
 
 typedef enum {
     eNet_game_type_2 = 2, /* FIXME */
+    eNet_game_type_5 = 5, /* FIXME */
     eNet_game_type_foxy = 7
 } tNet_game_type;
 

@@ -6,6 +6,9 @@
 #include "rec2_types.h"
 #include <brender/brender.h>
 
+C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDAT_0079ec44);
+C2_HOOK_VARIABLE_DECLARE(tDepth_effect_type, gSwap_depth_effect_type);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gSky_texture_0079ec1c);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gHorizon_material);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gSky_actor);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gSky_model);
