@@ -59,6 +59,15 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, gAccent_poly_prims, 3, 0x0
         { .u32 = 0 },
     },
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCredits_won_headup, 0x0079eaa8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_kill_count_headup, 0x0079eaf4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCar_kill_count_headup, 0x0079eaf8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTimer_headup, 0x0079eaec);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTime_awarded_headup, 0x0079eb40);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gLaps_headup, 0x0079eaf0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_cash_headup, 0x0079eae8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_ped_headup, 0x0079eaa4);
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_fancy_index, 0x005913d4, -1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_credit_headup__displays, 0x005913d8, -1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_time_credit_headup, 0x005913dc, -1);
