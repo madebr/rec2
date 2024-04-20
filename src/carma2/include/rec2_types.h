@@ -70,6 +70,11 @@ typedef int tJoy_array[8];
 typedef int tKey_array[151];
 
 typedef struct {
+    int x;
+    int y;
+} tMouse_coord;
+
+typedef struct {
     int r;
     int g;
     int b;
