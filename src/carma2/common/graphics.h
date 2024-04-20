@@ -56,6 +56,11 @@ C2_HOOK_VARIABLE_DECLARE(int, gCursor_tinted_right);
 C2_HOOK_VARIABLE_DECLARE(int, gCursor_tinted_cent);
 C2_HOOK_VARIABLE_DECLARE(int, gCursor_line_width);
 
+C2_HOOK_VARIABLE_DECLARE(int, gTransient_bitmap_index);
+C2_HOOK_VARIABLE_DECLARE(tMouse_coord, gMouse_last_pos);
+C2_HOOK_VARIABLE_DECLARE(int, gMouse_in_use);
+C2_HOOK_VARIABLE_DECLARE(int, gCurrent_cursor_index);
+
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
 void C2_HOOK_FASTCALL FadePaletteDown(void);
