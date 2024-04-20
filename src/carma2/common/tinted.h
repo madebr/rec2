@@ -4,11 +4,13 @@
 #include "c2_hooks.h"
 
 #include <brender/brender.h>
+#include <rec2_types.h>
 
 C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted1);
 C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted2);
 C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted3);
 C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted4);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tTintedPoly, gTintedPolys, 10);
 
 void C2_HOOK_FASTCALL InitTintedPolys(void);
 
