@@ -9,6 +9,7 @@ C2_HOOK_VARIABLE_DECLARE(br_material*, gDefault_track_material);
 
 C2_HOOK_VARIABLE_DECLARE(int, gBr_initialized);
 C2_HOOK_VARIABLE_DECLARE(int, gBrZb_initialized);
+C2_HOOK_VARIABLE_DECLARE(undefined4, gDAT_0074c6d0);
 
 void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv);
 
@@ -49,6 +50,8 @@ void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void);
 void C2_HOOK_FASTCALL InitRace(void);
 
 void C2_HOOK_FASTCALL DisposeRace(void);
+
+void C2_HOOK_FASTCALL LoadInTrack(void);
 
 void C2_HOOK_FASTCALL DisposeTrack(void);
 

@@ -127,6 +127,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tToggle_element, gToggle_array, 44, 0x0059
     XXXX TODO FIXME XXXX
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gRecovery_voucher_count, 0x0067c3f8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAuto_repair, 0x0079ec54);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInstant_handbrake, 0x0079ec50);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
