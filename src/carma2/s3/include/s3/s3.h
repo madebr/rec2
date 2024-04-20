@@ -107,6 +107,8 @@ int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
 
 int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
 
+int C2_HOOK_FASTCALL S3StopSound(int pTag);
+
 void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
 
 void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag, tS3_sound_source* src, float pMax_distance_squared, int pPeriod, tS3_repeats pAmbient_repeats, tS3_volume pVolume, int pPitch, tS3_speed pSpeed);
