@@ -1201,6 +1201,12 @@ typedef struct {
     br_uint_32 unknown_2;  // FIXME: unknown
 } tTintedPoly;
 
+typedef struct {
+    char message[128];
+    int font1;
+    int font2;
+} tHud_message;
+
 typedef struct tRace_group_spec {
     int count_races;
     tRace_list_spec* races;
