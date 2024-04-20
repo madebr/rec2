@@ -1457,10 +1457,14 @@ C2_HOOK_FUNCTION(0x004b4e90, ApplyTopTiffConversion)
 
 br_pixelmap* (C2_HOOK_FASTCALL * DRLoadPixelmap_original)(const char* pPath_name);
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DRLoadPixelmap_original(pPath_name);
 #else
-#error "not implemented"
+    br_pixelmap *pm;
+
+    pm = DRLoadPixelmap2(pPath_name);
+    // nop_FUN_005193f0(pm, 0);
+    return pm;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, DRLoadPixelmap, DRLoadPixelmap_original)
