@@ -476,10 +476,116 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b55f0, EnsurePaletteUp, EnsurePaletteUp_original)
 int (C2_HOOK_FASTCALL * DoMouseCursor_original)(void);
 int C2_HOOK_FASTCALL DoMouseCursor(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DoMouseCursor_original();
 #else
-#error "Not implemented"
+    int delta_time;
+    int mouse_moved;
+    int button_down;
+    int new_required;
+    tU32 time_now;
+    int pos_x, pos_y;
+
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_call_time, 0x0067c398);
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_required_change, 0x0067c39c);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, delta_x, 0x0067c3a0);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, required_cursor, 0x0067c3a4);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, zero_count, 0x0067c3a8);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, button_was_down, 0x0067c3ac);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, draw_cursor, 0x0058fddc, 1);
+
+    do {
+        time_now = PDGetTotalTime();
+        if (C2V(last_call_time) == 0) {
+            delta_time = 1000;
+        } else {
+            delta_time = time_now - C2V(last_call_time);
+        }
+    } while (delta_time <= 20);
+    GetMousePosition(&pos_x, &pos_y);
+    mouse_moved = pos_x != C2V(gMouse_last_pos).x || pos_y != C2V(gMouse_last_pos).y;
+    button_down = EitherMouseButtonDown();
+    if (C2V(gMouse_in_use) || mouse_moved) {
+        C2V(gMouse_in_use) = 1;
+        if (pos_x == C2V(gMouse_last_pos).x) {
+            if (C2V(zero_count) > 4) {
+                C2V(delta_x) = 0;
+            }
+            C2V(zero_count) += 1;
+        } else {
+            C2V(zero_count) = 0;
+            C2V(delta_x) = 1000 * (pos_x - C2V(gMouse_last_pos).x) / delta_time;
+        }
+        if (C2V(delta_x) < -10) {
+            new_required = 0;
+        } else if (C2V(delta_x) > 10) {
+            new_required = 3;
+        } else {
+            new_required = 2;
+        }
+        if (new_required != C2V(required_cursor) && time_now - C2V(last_required_change) >= 200) {
+            C2V(last_required_change) = time_now;
+            C2V(required_cursor) = new_required;
+        }
+        C2V(gCurrent_cursor_index) = 2;
+        if (!C2V(gNoTransients)) {
+            br_pixelmap *map;
+            int idx = C2V(gTransient_bitmap_index);
+
+            C2V(gTransient_bitmaps)[idx].x_coord = (pos_x - 7) & ~3;
+            C2V(gTransient_bitmaps)[idx].y_coord = pos_y - 7;
+            C2V(gTransient_bitmaps)[idx].in_use = 1;
+            C2V(gTransient_bitmaps)[idx].order_number = C2V(gNext_transient);
+            C2V(gNext_transient) += 1;
+            map = C2V(gTransient_bitmaps)[idx].pixmap;
+            BrPixelmapRectangleCopy(map,
+                0, 0,
+                C2V(gBack_screen),
+                C2V(gTransient_bitmaps)[idx].x_coord,
+                C2V(gTransient_bitmaps)[idx].y_coord,
+                map->width,
+                map->height);
+        }
+        if (C2V(draw_cursor) && C2V(draw_cursor) == 1) {
+            UnlockBackScreen(1);
+            ResetTintedVertices(C2V(gCursor_tinted_top),
+                pos_x - 1, 0,
+                C2V(gCursor_line_width), pos_y - 9);
+            ResetTintedVertices(C2V(gCursor_tinted_left),
+                0, pos_y - 1,
+                pos_x - 9, C2V(gCursor_line_width));
+            ResetTintedVertices(C2V(gCursor_tinted_bottom),
+                pos_x - 1, pos_y + 5 + C2V(gCursor_line_width),
+                C2V(gCursor_line_width), C2V(gCurrent_graf_data)->height - C2V(gCursor_line_width) - pos_y + 9);
+            ResetTintedVertices(C2V(gCursor_tinted_right),
+                pos_x + 5 + C2V(gCursor_line_width), pos_y - 1,
+                C2V(gCurrent_graf_data)->width - C2V(gCursor_line_width) - pos_x + 9, C2V(gCursor_line_width));
+            ResetTintedVertices(C2V(gCursor_tinted_center),
+                pos_x - 7, pos_y - 7,
+                16, 16);
+            MakeTintedVisible(C2V(gCursor_tinted_top));
+            MakeTintedVisible(C2V(gCursor_tinted_left));
+            MakeTintedVisible(C2V(gCursor_tinted_bottom));
+            MakeTintedVisible(C2V(gCursor_tinted_right));
+            MakeTintedVisible(C2V(gCursor_tinted_center));
+            UpdateTinted(C2V(gCursor_tinted_top));
+            UpdateTinted(C2V(gCursor_tinted_left));
+            UpdateTinted(C2V(gCursor_tinted_bottom));
+            UpdateTinted(C2V(gCursor_tinted_right));
+            UpdateTinted(C2V(gCursor_tinted_center));
+            RenderTintedActors();
+            MakeTintedInvisible(C2V(gCursor_tinted_top));
+            MakeTintedInvisible(C2V(gCursor_tinted_left));
+            MakeTintedInvisible(C2V(gCursor_tinted_bottom));
+            MakeTintedInvisible(C2V(gCursor_tinted_right));
+            MakeTintedInvisible(C2V(gCursor_tinted_center));
+        }
+    }
+    C2V(last_call_time) = time_now;
+    C2V(gMouse_last_pos).y = pos_y;
+    C2V(gMouse_last_pos).x = pos_x;
+    C2V(button_was_down) = button_down;
+    return mouse_moved;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043e0a0, DoMouseCursor, DoMouseCursor_original)
