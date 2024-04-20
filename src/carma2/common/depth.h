@@ -6,6 +6,9 @@
 #include "rec2_types.h"
 #include <brender/brender.h>
 
+C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDAT_0079ec44);
+C2_HOOK_VARIABLE_DECLARE(tDepth_effect_type, gSwap_depth_effect_type);
+
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 
 int C2_HOOK_FASTCALL GetSkyTextureOn(void);

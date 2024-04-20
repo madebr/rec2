@@ -1,5 +1,7 @@
 #include "init.h"
 
+#include "car.h"
+#include "controls.h"
 #include "crush.h"
 #include "demo.h"
 #include "depth.h"
@@ -15,6 +17,7 @@
 #include "globvrpb.h"
 #include "grafdata.h"
 #include "graphics.h"
+#include "joystick.h"
 #include "loading.h"
 #include "netgame.h"
 #include "network.h"
@@ -26,10 +29,13 @@
 #include "powerups.h"
 #include "pratcam.h"
 #include "platform.h"
+#include "racemem.h"
 #include "raycast.h"
+#include "replay.h"
 #include "skidmark.h"
 #include "smashing.h"
 #include "sound.h"
+#include "spark.h"
 #include "temp.h"
 #include "tinted.h"
 #include "trig.h"
@@ -49,6 +55,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gBrZb_initialized, 0x0068be30);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gRender_indent, 0x0068be38);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gApp_initialized, 0x0068be34);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDefault_track_material, 0x0074b74c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gInitial_powerup_slots, 3, 0x00762130);
+C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gDAT_0074c6d0, 0x0074c6d0);
 
 void (C2_HOOK_FASTCALL * InitialiseApplication_original)(int pArgc, const char** pArgv);
 void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv) {
@@ -1279,13 +1287,194 @@ void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void) {
 }
 C2_HOOK_FUNCTION(0x0047db30, ReinitialiseRearviewCamera)
 
+static void C2_HOOK_FASTCALL InitRaceHeadups(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gRace_head_ups)) != 22);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gRace_head_ups)); i++) {
+        C2V(gRace_head_ups)[i] = NewTextHeadupSlot(16 + i, 0, 0, -1, "");
+    }
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        C2V(gCredits_won_headup) = NewTextHeadupSlot(1, 0, 0, -6, "");
+        C2V(gPed_kill_count_headup) = NewTextHeadupSlot(2, 0, 0, -6, "");
+        C2V(gCar_kill_count_headup) = NewTextHeadupSlot(12, 0, 0, -6, "");
+        C2V(gTimer_headup) = NewTextHeadupSlot(7, 0, 0, -5, "");
+        C2V(gTime_awarded_headup) = NewTextHeadupSlot(11, 0, 0, -2, "");
+        C2V(gLaps_headup) = NewTextHeadupSlot(8, 0, 0, -6, "");
+
+        C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gInitial_powerup_slots)) != 3);
+        for (i = 0; i < REC2_ASIZE(C2V(gInitial_powerup_slots)); i++) {
+            int current, max;
+
+            if (C2V(gNet_mode) == eNet_mode_none) {
+                max = C2V(gMax_APO)[i].initial[C2V(gProgram_state).skill_level];
+                current = C2V(gInitial_APO_potential)[i].initial[C2V(gProgram_state).skill_level];
+            } else {
+                max = C2V(gMax_APO)[i].initial_network[C2V(gCurrent_net_game)->type];
+                current = C2V(gInitial_APO_potential)[i].initial_network[C2V(gCurrent_net_game)->type];
+            }
+            C2V(gInitial_powerup_slots)[i] = current + 1 + (max - current - 1) * C2V(gCurrent_race).index / (C2V(gNumber_of_races) - 1);
+        }
+    } else {
+        C2V(gNet_cash_headup) = NewTextHeadupSlot(13, 0, 0, -6, "");
+        C2V(gNet_ped_headup) = NewTextHeadupSlot(14, 0, 0, -6, "");
+
+        C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gInitial_powerup_slots)) != 3);
+        for (i = 0; i < REC2_ASIZE(C2V(gInitial_powerup_slots)); i++) {
+            if (C2V(gNet_mode) == eNet_mode_none) {
+                C2V(gInitial_powerup_slots)[i] = C2V(gMax_APO)[i].initial[C2V(gProgram_state).skill_level];
+            } else {
+                C2V(gInitial_powerup_slots)[i] = C2V(gMax_APO)[i].initial_network[C2V(gCurrent_net_game)->type];
+            }
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * InitRace_original)(void);
 void C2_HOOK_FASTCALL InitRace(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitRace_original();
 #else
-#error "Not implemented"
+    int i;
+
+    C2V(gMap_view) = 1;
+    TemporaryMaterialStorageInit();
+    ResetSmashableRaceTargets();
+    ClearRaceMemory();
+    ResetMechanics();
+    /* SetUpTestObjects(); */
+    ResetTargetLock();
+    ResetSmashing();
+    FUN_004f0430();  /* InitRepairAnimations() */
+    ResetExplosions();
+    ClearWobbles();
+    ClearHeadups();
+    ResetOilSpills();
+    HideSkids();
+    CameraIsMovingReallyFast();
+    PossibleService();
+    ResetPeds();
+    BuildColourTable(C2V(gRender_palette));
+    PossibleService();
+
+    C2V(gDAT_0074c6d0) = 0;
+    C2V(gStart_race_sent) = 0;
+    C2V(gDAT_0079ec44) = NULL;
+    if (!TranslationMode()) {
+        LoadFont(1);
+        LoadFont(2);
+    }
+    LoadFont(3);
+    LoadFont(4);
+    LoadFont(5);
+    PossibleService();
+    LoadFont(6);
+    LoadFont(7);
+    LoadFont(8);
+    LoadFont(23);
+    PossibleService();
+    ResetRecoveryVouchers();
+    C2V(gMap_mode) = 0;
+    C2V(gProgram_state).cockpit_image_index = 0;
+    PossibleService();
+    C2V(gProgram_state).which_view = eView_forward;
+    C2V(gProgram_state).new_view = eView_undefined;
+    C2V(gProgram_state).pratcam_move_start = 0;
+    C2V(gAction_replay_mode) = 0;
+    InitPratcam();
+    C2V(gProgram_state).peds_killed = 0;
+    C2V(gProgram_state).revs = 2000;
+    C2V(gProgram_state).current_car.speed = 0.0f;
+    C2V(gProgram_state).current_car.steering_angle = 0.0f;
+    C2V(gProgram_state).current_car.lf_sus_position = 0.0f;
+    C2V(gProgram_state).current_car.rf_sus_position = 0.0f;
+    C2V(gProgram_state).current_car.lr_sus_position = 0.0f;
+    C2V(gProgram_state).current_car.rr_sus_position = 0.0f;
+    PossibleService();
+    C2V(gAuto_repair) = 0;
+    SetIntegerMapRenders();
+    AdjustRenderScreenSize();
+    PrintMemoryDump(0, "DIRECTLY BEFORE LOADING IN TRACK");
+    LoadInTrack();
+    if (C2V(gYon_multiplier) != 1.0f) {
+        AdjustRenderScreenSize();
+    }
+    PrintMemoryDump(0, "DIRECTLY AFTER LOADING IN TRACK");
+    InitTrackCrushables();
+    LoadCars(&C2V(gCurrent_race));
+
+    InitRaceHeadups();
+
+    InstantDepthChange(
+        C2V(gProgram_state).default_depth_effect.type,
+        C2V(gProgram_state).default_depth_effect.sky_texture,
+        C2V(gProgram_state).default_depth_effect.start,
+        C2V(gProgram_state).default_depth_effect.end,
+        C2V(gProgram_state).default_depth_effect.colour.red,
+        C2V(gProgram_state).default_depth_effect.colour.green,
+        C2V(gProgram_state).default_depth_effect.colour.blue,
+        1);
+    C2V(gProgram_state).current_depth_effect.sky_texture = NULL;
+    if (!GetSkyTextureOn()) {
+        ToggleSkyQuietly();
+    }
+    C2V(gSwap_depth_effect_type) = eDepth_effect_none;
+    if (!GetDepthCueingOn()) {
+        ToggleDepthCueingQuietly();
+    }
+    PrintMemoryDump(0, "AFTER LOADING IN AI STUFF");
+    SaveShadeTables();
+    C2V(gCountdown) = 7;
+    C2V(gLap) = 1;
+    C2V(gTimer) = 1000 * C2V(gCurrent_race).initial_timer[C2V(gProgram_state).skill_level];
+    C2V(gTotal_laps) = C2V(gCurrent_race).total_laps;
+
+    if (C2V(gNet_mode) != eNet_mode_none && C2V(gCurrent_net_game)->type == eNet_game_type_5) {
+        C2V(gTotal_laps) = C2V(gCurrent_net_game)->options.starting_target;
+    }
+    C2V(gCheckpoint) = 1;
+    C2V(gCheckpoint_count) = C2V(gCurrent_race).check_point_count;
+    C2V(gFreeze_timer) = 0;
+    C2V(gFree_repairs) = 0;
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        C2V(gShow_opponents) = 1;
+    } else {
+        C2V(gShow_opponents) = C2V(gCurrent_net_game)->options.show_players_on_map;
+    }
+    C2V(gOn_drugs) = 0;
+    C2V(gRace_finished) = 0;
+    C2V(gOpponent_speed_factor) = 1.f;
+    C2V(gCop_speed_factor) = 1.f;
+    C2V(gGravity_multiplier) = C2V(gDefault_gravity);
+    C2V(gPinball_factor) = 0.f;
+    C2V(gInstant_handbrake) = 0;
+    C2V(gShow_peds_on_map) = 0;
+
+    PossibleService();
+    SetCarSuspGiveAndHeight(&C2V(gProgram_state).current_car REC2_THISCALL_EDX, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f);
+    ResetPowerups();
+    PossibleService();
+    ResetSparks();
+    PossibleService();
+    PossibleService();
+    InitPlayers();
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        C2V(gProgram_state).credits = C2V(gCurrent_net_game)->options.starting_credits;
+        InitNetGameplayStuff();
+    }
+    C2V(gInitialised_grid) = 0;
+    InitializeActionReplayCamera(C2V(gAction_replay_camera_mode));
+    for (i = 0; i < REC2_ASIZE(C2V(gFonts)); i++) {
+        DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gFonts)[i].images, C2V(gBack_screen)->type);
+    }
+    DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gIcons_pix), C2V(gBack_screen)->type);
+    DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gLit_op_stat), C2V(gBack_screen)->type);
+
+    ReadFFB_TXT();
+    LockBackScreen(1);
+    UnlockBackScreen(1);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00481830, InitRace, InitRace_original)
@@ -1324,6 +1513,14 @@ void C2_HOOK_FASTCALL DisposeRace(void) {
     PossibleService();
 }
 C2_HOOK_FUNCTION(0x0044c070, DisposeRace)
+
+void C2_HOOK_FASTCALL LoadInTrack(void) {
+
+    LoadTrack(
+        C2V(gProgram_state).track_file_name,
+        &C2V(gProgram_state).track_spec,
+        &C2V(gCurrent_race));
+}
 
 void C2_HOOK_FASTCALL DisposeTrack(void) {
 

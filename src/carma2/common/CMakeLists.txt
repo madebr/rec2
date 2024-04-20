@@ -58,6 +58,8 @@ add_library(c2_common STATIC
     intrface.h
     input.c
     input.h
+    joystick.c
+    joystick.h
     loading.c
     loading.h
     loadsave.c

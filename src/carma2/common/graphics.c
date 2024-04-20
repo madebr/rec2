@@ -111,6 +111,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPolyfont_glyph_actors, 256, 0x0074c
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSaved_table, gSaved_shade_tables, 100, 0x006a2488);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSaved_table_count, 0x006a27a8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTarget_lock_enabled, 0x0068d8c8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gLit_op_stat, 0x0068d8e0);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
