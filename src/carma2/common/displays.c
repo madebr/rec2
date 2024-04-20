@@ -373,15 +373,76 @@ void C2_HOOK_FASTCALL ClearHeadups(void) {
 }
 C2_HOOK_FUNCTION(0x00449690, ClearHeadups)
 
+int C2_HOOK_FASTCALL IsHeadupTextClever(char* pText) {
+
+    while (*pText) {
+        if (*(signed char*)pText < 0) {
+            return 1;
+        }
+        pText++;
+    }
+    return 0;
+}
+
 int (C2_HOOK_FASTCALL * MungeHeadupWidth_original)(tHeadup* pHeadup);
 int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
 
     C2_HOOK_BUG_ON(sizeof(tHeadup) != 356);
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return MungeHeadupWidth_original(pHeadup);
 #else
-#error "Not implemented"
+    int width;
+
+    C2_HOOK_BUG_ON((int)&((tHeadup*)0)->data.text_info.text != 0x4c);
+    C2_HOOK_BUG_ON((int)&((tHeadup*)0)->data.coloured_text_info.coloured_font != 0x148);
+
+    width = 0;
+    if (pHeadup->type == eHeadup_box_text) {
+        return 0;
+    } else if (pHeadup->type == eHeadup_coloured_text) {
+
+        pHeadup->clever = IsHeadupTextClever(pHeadup->data.text_info.text);
+        if (pHeadup->justification == eJust_left) {
+            pHeadup->x = pHeadup->original_x;
+        } else if (pHeadup->justification == eJust_right) {
+            if (pHeadup->clever) {
+                width = DRTextCleverWidth(
+                    pHeadup->data.coloured_text_info.coloured_font,
+                    pHeadup->data.text_info.text);
+            } else {
+                width = DRTextWidth(
+                    pHeadup->data.coloured_text_info.coloured_font,
+                    pHeadup->data.text_info.text);
+            }
+            pHeadup->x = pHeadup->original_x - width;
+        } else if (pHeadup->justification == eJust_centre) {
+            if (pHeadup->clever) {
+                width = DRTextCleverWidth(
+                    pHeadup->data.coloured_text_info.coloured_font,
+                    pHeadup->data.text_info.text);
+            } else {
+                width = DRTextWidth(
+                    pHeadup->data.coloured_text_info.coloured_font,
+                    pHeadup->data.text_info.text);
+            }
+            pHeadup->x = pHeadup->original_x - width / 2;
+        }
+    } else if (pHeadup->type ==eHeadup_fancy) {
+        return 0;
+    } else {
+        pHeadup->clever = 0;
+        if (pHeadup->justification == eJust_left) {
+            pHeadup->x = pHeadup->original_x;
+        } else if (pHeadup->justification == eJust_right) {
+            width = BrPixelmapTextWidth(C2V(gBack_screen), pHeadup->data.text_info.font, pHeadup->data.text_info.text);
+            pHeadup->x = pHeadup->original_x - width;
+        } else if (pHeadup->justification == eJust_centre) {
+            width = BrPixelmapTextWidth(C2V(gBack_screen), pHeadup->data.text_info.font, pHeadup->data.text_info.text);
+            pHeadup->x = pHeadup->original_x - width / 2;
+        }
+    }
+    return width;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044a220, MungeHeadupWidth, MungeHeadupWidth_original)
