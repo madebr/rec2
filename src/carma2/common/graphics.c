@@ -358,10 +358,18 @@ C2_HOOK_FUNCTION(0x0043e710, EndMouseCursor)
 
 void (C2_HOOK_FASTCALL * InitTransientBitmaps_original)(void);
 void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitTransientBitmaps_original();
 #else
-#error "Not implemented"
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gTransient_bitmaps)) != 50);
+    C2_HOOK_BUG_ON(sizeof(tTransient_bm) != 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tTransient_bm, in_use, 4);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gTransient_bitmaps)); i++) {
+        C2V(gTransient_bitmaps)[i].in_use = 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043dff0, InitTransientBitmaps, InitTransientBitmaps_original)
