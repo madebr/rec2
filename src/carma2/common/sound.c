@@ -15,6 +15,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_sources_inited, 0x00684560);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gEffects_outlet, 0x006845fc);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gEngine_outlet, 0x00684604);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMusic_available, 0x00684564);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00684554, 0x00684554);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00684568, 0x00684568);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
@@ -60,12 +63,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004569f0, ParseSoundFxDetails, ParseSoundFxDetails_o
 
 void (C2_HOOK_FASTCALL * StopMusic_original)(void);
 void C2_HOOK_FASTCALL StopMusic(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     StopMusic_original();
     C2_HOOK_FINISH();
 #else
-#error "not implemented"
+    if (C2V(gCD_fully_installed) && C2V(gMusic_available) && C2V(gINT_00684568) != 0) {
+        S3StopSound(C2V(gINT_00684568));
+        C2V(gINT_00684554) = 0;
+        C2V(gINT_00684568) = 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456910, StopMusic, StopMusic_original)
