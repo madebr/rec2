@@ -8,6 +8,7 @@
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gGo_ahead_keys, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gKey_mapping, 77);
 C2_HOOK_VARIABLE_DECLARE(int, GEdge_trigger_mode);
+C2_HOOK_VARIABLE_DECLARE(tMouse_coord, gCurrent_mouse_position);
 
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 
@@ -34,5 +35,7 @@ void C2_HOOK_FASTCALL CheckKeysForMouldiness(void);
 int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
 
 int C2_HOOK_FASTCALL KeyIsDown2(int pKey_index);
+
+void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY);
 
 #endif // REC2_INPUT_H
