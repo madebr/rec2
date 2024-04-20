@@ -38,4 +38,6 @@ void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPositi
 
 void C2_HOOK_FASTCALL UpdateTinted(int pIndex);
 
+void C2_HOOK_FASTCALL TintedAnimateSawToothColor(int pIndex);
+
 #endif //REC2_TINTED_H
