@@ -2644,10 +2644,51 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00504b30, LoadTreeSurgery, LoadTreeSurgery_original)
 int (C2_HOOK_FASTCALL * TestForOriginalCarmaCDinDrive_original)(void);
 int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return TestForOriginalCarmaCDinDrive_original();
 #else
-#error "Not implemented"
+    tPath_name paths_txt;
+    tPath_name cd_data_pathname;
+    tPath_name cutscene_pathname;
+    FILE* paths_txt_fp;
+    char paths_txt_first_char;
+    char cd_pathname[256];
+
+    PathCat(paths_txt, C2V(gApplication_path), "PATHS.TXT");
+    if (!PDCheckDriveExists(paths_txt)) {
+        return 0;
+    }
+    paths_txt_fp = TWT_fopen(paths_txt, "rt");
+    if (paths_txt_fp == NULL) {
+        return 0;
+    }
+    paths_txt_first_char = DRfgetc(paths_txt_fp);
+    DRungetc(paths_txt_first_char, paths_txt_fp);
+    cd_pathname[0] = '\0';
+    GetALineAndDontArgue(paths_txt_fp, cd_pathname);
+    DRfclose(paths_txt_fp);
+    PathCat(cd_data_pathname, cd_pathname, "DATA");
+
+    if (DRStricmp(cd_pathname, C2V(gApplication_path)) == 0) {
+        return 0;
+    }
+
+    PathCat(cutscene_pathname, cd_data_pathname, "CUTSCENE");
+
+    if (!PDCheckDriveExists2(cd_data_pathname, "GENERAL.TXT", 100)) {
+        return 0;
+    }
+    if (!PDCheckDriveExists2(cd_pathname, "CARMA.EXE", 1000000)) {
+        return 0;
+    }
+    if (!PDCheckDriveExists2(cutscene_pathname, "MIX_INTR.SMK.EXE", 1000000)) {
+        return 0;
+    }
+
+    if (paths_txt_first_char != '@') {
+        EncodeFile(paths_txt);
+    }
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048f3b0, TestForOriginalCarmaCDinDrive, TestForOriginalCarmaCDinDrive_original)
