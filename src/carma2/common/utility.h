@@ -24,6 +24,8 @@ char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS);
 
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
 
+void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
+
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
 tU32 C2_HOOK_FASTCALL GetTotalTime(void);
