@@ -283,13 +283,42 @@ C2_HOOK_FUNCTION(0x00447280, MungeRearviewSky)
 void (C2_HOOK_FASTCALL * FogAccordingToGPSCDE_original)(br_material* pMaterial);
 void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     FogAccordingToGPSCDE_original(pMaterial);
 #else
-    int start;
     int end;
-    LOG_TRACE("(%p)", pMaterial);
-#error "Not implemented"
+    int start;
+
+    end = C2V(gProgram_state).current_depth_effect.end;
+    start = C2V(gProgram_state).current_depth_effect.start;
+
+    switch (C2V(gProgram_state).current_depth_effect.type) {
+    case eDepth_effect_none:
+        pMaterial->flags = pMaterial->flags & ~BR_MATF_FOG_LOCAL;
+        break;
+    case eDepth_effect_darkness:
+        pMaterial->fog_min = C2V(gCamera_yon) * powf(-0.1f * (float)start, 10.0f);
+        pMaterial->fog_max = C2V(gCamera_yon) * powf(0.1f * (float)end, 10.0f);
+        pMaterial->fog_colour = 0;
+        pMaterial->flags |= BR_MATF_FOG_LOCAL;
+        break;
+    case eDepth_effect_fog:
+        pMaterial->fog_min = C2V(gCamera_yon) * powf(-0.1f * (float)start, 10.0f);
+        pMaterial->fog_max = C2V(gCamera_yon) * powf(0.1f * (float)end, 10.0f);
+        pMaterial->fog_colour = BR_COLOUR_RGB(0xf8, 0xf8, 0xf8);
+        pMaterial->flags |= BR_MATF_FOG_LOCAL;
+        break;
+    case eDepth_effect_colour:
+        pMaterial->fog_min = C2V(gCamera_yon) * powf(-0.1f * (float)start, 10.0f);
+        pMaterial->fog_max = powf(0.1f * end, 10.0f) * C2V(gCamera_yon);
+        pMaterial->fog_colour = BR_COLOUR_RGB(
+                C2V(gProgram_state).current_depth_effect.colour.red,
+                C2V(gProgram_state).current_depth_effect.colour.green,
+                C2V(gProgram_state).current_depth_effect.colour.blue);
+        pMaterial->flags |= BR_MATF_FOG_LOCAL;
+        break;
+    }
+    BrMaterialUpdate(pMaterial, BR_MATU_ALL);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004451a0, FogAccordingToGPSCDE, FogAccordingToGPSCDE_original)
