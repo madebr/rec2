@@ -8,6 +8,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gEdge_trigger_mode, 0x0068c1c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tJoy_array, gJoy_array, 0x0074b5c0);
 C2_HOOK_VARIABLE_IMPLEMENT(tKey_array, gKey_array, 0x0068bee0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_poll_counter, 0x0068bed4);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tMouse_coord, gCurrent_mouse_position, 0x006571f8, {-1, -1});
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
@@ -187,3 +188,21 @@ int C2_HOOK_FASTCALL KeyIsDown2(int pKey_index) {
     return C2V(gKey_array)[C2V(gKey_mapping)[pKey_index]];
 }
 C2_HOOK_FUNCTION(0x004833a0, KeyIsDown2)
+
+void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY) {
+
+    PDGetMousePosition(pX, pY);
+    if (*pX < 0) {
+        *pX = 0;
+    } else if (*pX > C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width) {
+        *pX = C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width;
+    }
+    if (*pY < 0) {
+        *pY = 0;
+    } else if (*pY > C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height) {
+        *pY = C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height;
+    }
+    C2V(gCurrent_mouse_position).x = *pX;
+    C2V(gCurrent_mouse_position).y = *pY;
+}
+C2_HOOK_FUNCTION(0x00483c10, GetMousePosition);
