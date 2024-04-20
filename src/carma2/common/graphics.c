@@ -2,6 +2,7 @@
 
 #include "errors.h"
 #include "globvars.h"
+#include "grafdata.h"
 #include "init.h"
 #include "loading.h"
 #include "physics.h"
@@ -118,6 +119,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSaved_table, gSaved_shade_tables, 100, 0x006a2
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSaved_table_count, 0x006a27a8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTarget_lock_enabled, 0x0068d8c8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gLit_op_stat, 0x0068d8e0);
+
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_tinted_top, 0x0058fdc8, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_tinted_left, 0x0058fdd0, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_tinted_bottom, 0x0058fdcc, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_tinted_right, 0x0058fdd4, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_tinted_center, 0x0058fdd8, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCursor_line_width, 0x0058fde0, 5);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -287,10 +295,37 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRPixelmapConvertRGB565ToRGB555IfNeeded, D
 
 void (C2_HOOK_FASTCALL * AllocateCursorActors_original)(void);
 void C2_HOOK_FASTCALL AllocateCursorActors(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AllocateCursorActors_original();
 #else
-#error "Not implemented"
+    br_pixelmap *mse_cross;
+    br_pixelmap *mse_line;
+
+    mse_cross = BrMapFind("mse_corn");
+    mse_cross = BrMapFind("mse_cros");
+    mse_line = BrMapFind("mse_line");
+    C2V(gCursor_tinted_top) = CreateTintedPolyActor(0, 0, C2V(gCursor_line_width), C2V(gCurrent_graf_data)->height, 1, 127, 192, 0);
+    C2V(gCursor_tinted_left) = CreateTintedPolyActor(0, 0, C2V(gCurrent_graf_data)->width, C2V(gCursor_line_width), 1, 127, 192, 0);
+    C2V(gCursor_tinted_bottom) = CreateTintedPolyActor(0, 0, C2V(gCursor_line_width), C2V(gCurrent_graf_data)->height, 1, 127, 192, 0);
+    C2V(gCursor_tinted_right) = CreateTintedPolyActor(0, 0, C2V(gCurrent_graf_data)->width, C2V(gCursor_line_width), 1, 127, 192, 0);
+    C2V(gCursor_tinted_center) = CreateTintedPolyActor(0, 0, 16, 16, 1, 127, 192, 0);
+    if (mse_line != NULL) {
+        C2V(gTintedPolys)[C2V(gCursor_tinted_left)].material->colour_map = mse_line;
+        C2V(gTintedPolys)[C2V(gCursor_tinted_left)].material->ka = 1.0f;
+        BrMaterialUpdate(C2V(gTintedPolys)[C2V(gCursor_tinted_left)].material, BR_MATU_ALL);
+        C2V(gTintedPolys)[C2V(gCursor_tinted_right)].material->colour_map = mse_line;
+        BrMaterialUpdate(C2V(gTintedPolys)[C2V(gCursor_tinted_right)].material, BR_MATU_ALL);
+        C2V(gTintedPolys)[C2V(gCursor_tinted_top)].material->colour_map = mse_line;
+        BrMatrix23Rotate(&(C2V(gTintedPolys)[C2V(gCursor_tinted_top)].material)->map_transform, BrDegreeToAngle(90));
+        BrMaterialUpdate(C2V(gTintedPolys)[C2V(gCursor_tinted_top)].material, BR_MATU_ALL);
+        (C2V(gTintedPolys)[C2V(gCursor_tinted_bottom)].material)->colour_map = mse_line;
+        BrMatrix23Rotate(&(C2V(gTintedPolys)[C2V(gCursor_tinted_bottom)].material)->map_transform, BrDegreeToAngle(90));
+        BrMaterialUpdate(C2V(gTintedPolys)[C2V(gCursor_tinted_bottom)].material, BR_MATU_ALL);
+    }
+    if (mse_cross != NULL) {
+        C2V(gTintedPolys)[C2V(gCursor_tinted_center)].material->colour_map = mse_cross;
+        BrMaterialUpdate(C2V(gTintedPolys)[C2V(gCursor_tinted_center)].material, BR_MATU_ALL);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043e3f0, AllocateCursorActors, AllocateCursorActors_original)
