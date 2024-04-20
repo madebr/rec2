@@ -3,6 +3,7 @@
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrkm.h"
+#include "loading.h"
 #include "platform.h"
 #include "utility.h"
 #include "world.h"
@@ -24,6 +25,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefaultOpacity_TintedPoly, 0x0065e874, 0x8
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_uint_32, gTintedColourMap_red, 0x0065e870, 0x80);
 C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gTintedColourMap_grn, 0x006a0438);
 C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gTintedColourMap_blu, 0x006a043c);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0440, 0x006a0440);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0444, 0x006a0444);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0448, 0x006a0448);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a044c, 0x006a044c);
 
 void C2_HOOK_FASTCALL InitTintedPolys(void) {
     br_camera *camera;
@@ -593,3 +599,84 @@ void C2_HOOK_FASTCALL TintedAnimateSawToothColor(int pIndex) {
     }
 }
 C2_HOOK_FUNCTION(0x004d8630, TintedAnimateSawToothColor)
+
+void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex) {
+    int i;
+    int j;
+
+    if (!C2V(gINT_006a0444)) {
+        C2_HOOK_BUG_ON(sizeof(C2V(gTintedPolys)[pIndex].tints2) != 8192);
+        C2_HOOK_BUG_ON(sizeof(C2V(gTintedPolys)[pIndex].tints3) != 8192);
+
+        c2_memset(C2V(gTintedPolys)[pIndex].tints2, 0, sizeof(C2V(gTintedPolys)[pIndex].tints2));
+        c2_memset(C2V(gTintedPolys)[pIndex].tints3, 0, sizeof(C2V(gTintedPolys)[pIndex].tints2));
+    }
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 2; j++) {
+            C2V(gTintedPolys)[pIndex].tints2[64 * (IRandomBetween(i - 5, 5 - i) + IRandomBetween(13, 19)) + i + 64 - 5] = 255 - C2V(gINT_006a044c);
+        }
+    }
+    if (C2V(gINT_006a0444) > 150) {
+        C2V(gINT_006a044c) += 1;
+    }
+    C2V(gINT_006a0440) += 1;
+    if (C2V(gINT_006a0440) >= 64) {
+        C2V(gINT_006a0440) = 0;
+    }
+
+    for (i = 0; i < 62; i++) {
+        for (j = 0; j < 30; j++) {
+            int avg =
+                ((C2V(gTintedPolys)[pIndex].tints2[i + (j + 2) * 64 + 1]
+                + C2V(gTintedPolys)[pIndex].tints2[i + (j + 0) * 64 + 1]
+                + C2V(gTintedPolys)[pIndex].tints2[i + (j + 1) * 64 + 2]
+                + C2V(gTintedPolys)[pIndex].tints2[i + (j + 1) * 64 + 0]) / 4
+                + C2V(gTintedPolys)[pIndex].tints2[i + (j + 1) * 64 + 1]) / 2
+            - C2V(gTintedPolys)[pIndex].tints1[i + (j + 1) * 64 + 1]
+            - C2V(gINT_006a044c);
+            C2V(gTintedPolys)[pIndex].tints3[i + (j + 1) * 64] = MAX(0, avg);
+        }
+    }
+
+    if (C2V(gINT_006a0444) < 150 && IRandomBetween(0, 6) > 3) {
+        int idx;
+
+        idx = IRandomBetween(12, 20) * 64 + IRandomBetween(30,55);
+        C2V(gTintedPolys)[pIndex].tints2[idx] = 0xff;
+        C2V(gTintedPolys)[pIndex].tints3[idx] = 0xbf;
+    }
+    c2_memcpy(C2V(gTintedPolys)[pIndex].tints2, C2V(gTintedPolys)[pIndex].tints3, sizeof(C2V(gTintedPolys)[pIndex].tints2));
+
+    for (i = 0; i < 64; i++) {
+        for (j = 0; j < 32; j++) {
+            int idx = C2V(gTintedPolys)[pIndex].tints3[j * 64 + i];
+            BrPixelmapPixelSet(C2V(gTintedPolys)[pIndex].pixelmap, i, j, C2V(gTintedPolys)[pIndex].colours[idx]);
+        }
+    }
+    BrMapUpdate(C2V(gTintedPolys)[pIndex].pixelmap, BR_MAPU_ALL);
+
+    if (C2V(gINT_006a0444) % 10 == 0 && C2V(gINT_006a0448) && C2V(gINT_006a0444) > 10) {
+        tPath_name save_path;
+        for (i = 1; i < 10000; i++) {
+            tPath_name path;
+            FILE* f;
+
+            PathCat(path, C2V(gApplication_path), "FLM");
+            c2_sprintf(&path[c2_strlen(path)], "%02d.%s", i, "PIX");
+            f = DRfopen(path, "rt");
+            if (f == NULL) {
+                c2_sprintf(save_path, "%s", path);
+                break;
+            }
+        }
+        BrPixelmapSave(save_path, C2V(gTintedPolys)[pIndex].pixelmap);
+    }
+    C2V(gINT_006a0444) += 1;
+    if (C2V(gINT_006a0444) >= 200) {
+        C2V(gINT_006a0444) = 0;
+        C2V(gINT_006a0448) = 0;
+        C2V(gINT_006a044c) = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x004d86e0, FUN_004d86e0)
