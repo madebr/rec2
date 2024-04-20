@@ -49,6 +49,13 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_splash);
 C2_HOOK_VARIABLE_DECLARE(int, gTarget_lock_enabled);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gLit_op_stat);
 
+C2_HOOK_VARIABLE_DECLARE(int, gCursor_tinted_top);
+C2_HOOK_VARIABLE_DECLARE(int, gCursor_tinted_left);
+C2_HOOK_VARIABLE_DECLARE(int, gCursor_tinted_bott);
+C2_HOOK_VARIABLE_DECLARE(int, gCursor_tinted_right);
+C2_HOOK_VARIABLE_DECLARE(int, gCursor_tinted_cent);
+C2_HOOK_VARIABLE_DECLARE(int, gCursor_line_width);
+
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
 void C2_HOOK_FASTCALL FadePaletteDown(void);
