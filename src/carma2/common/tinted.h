@@ -12,6 +12,11 @@ C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted3);
 C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted4);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTintedPoly, gTintedPolys, 10);
 
+C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0440);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0444);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0448);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_006a044c);
+
 void C2_HOOK_FASTCALL InitTintedPolys(void);
 
 int C2_HOOK_FASTCALL CreateTintedPolyActor(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
@@ -39,5 +44,7 @@ void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPositi
 void C2_HOOK_FASTCALL UpdateTinted(int pIndex);
 
 void C2_HOOK_FASTCALL TintedAnimateSawToothColor(int pIndex);
+
+void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex);
 
 #endif //REC2_TINTED_H
