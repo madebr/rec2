@@ -219,13 +219,62 @@ int C2_HOOK_FASTCALL ToggleDoorsCollisionInfoCallback(tCollision_info* pCollisio
 }
 C2_HOOK_FUNCTION(0x0042ddb0, ToggleDoorsCollisionInfoCallback)
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_toggled_doors, 0x0067bd58);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tToggled_door, gToggled_doors, 16, 0x00679450);
+
 int (C2_HOOK_CDECL * ToggleDoorsActorCallback_original)(br_actor* pActor, void* data);
 int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ToggleDoorsActorCallback_original(pActor, data);
 #else
-#error "Not implemented"
+    tCar_spec* pCar = data;
+    tUser_crush_data* user_data;
+    tCar_crush_buffer_entry* crush_buffer;
+    int i;
+
+    user_data = pActor->user;
+    if (user_data == NULL) {
+        return 0;
+    }
+    crush_buffer = user_data->crush_data;
+    if (crush_buffer == NULL) {
+        return 0;
+    }
+    if (crush_buffer->flap_data == NULL || !crush_buffer->flap_data->kev_o_flap) {
+        return 0;
+    }
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gToggled_doors)) != 16);
+
+    if (crush_buffer->flap_data->field_0x0) {
+        if (C2V(gCount_toggled_doors) != REC2_ASIZE(C2V(gToggled_doors))) {
+            for (i = 0; i < C2V(gCount_toggled_doors); i++) {
+                if (C2V(gToggled_doors)[i].actor == pActor) {
+                    return 0;
+                }
+            }
+            C2V(gToggled_doors)[C2V(gCount_toggled_doors)].actor = pActor;
+            C2V(gToggled_doors)[C2V(gCount_toggled_doors)].car = pCar;
+            C2V(gToggled_doors)[C2V(gCount_toggled_doors)].field_0x8 = 0;
+            C2V(gToggled_doors)[C2V(gCount_toggled_doors)].field_0xc = 0.f;
+            C2V(gCount_toggled_doors) += 1;
+        }
+    } else {
+        if (C2V(gCount_toggled_doors) != REC2_ASIZE(C2V(gToggled_doors))) {
+            for (i = 0; i < C2V(gCount_toggled_doors); i++) {
+                if (C2V(gToggled_doors)[i].actor == pActor) {
+                    return 0;
+                }
+            }
+            C2V(gToggled_doors)[C2V(gCount_toggled_doors)].actor = pActor;
+            C2V(gToggled_doors)[C2V(gCount_toggled_doors)].car = pCar;
+            C2V(gToggled_doors)[C2V(gCount_toggled_doors)].field_0x8 = 1;
+            C2V(gToggled_doors)[C2V(gCount_toggled_doors)].field_0xc = 20.f;
+            C2V(gCount_toggled_doors) += 1;
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042ddc0, ToggleDoorsActorCallback, ToggleDoorsActorCallback_original)

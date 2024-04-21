@@ -2484,7 +2484,8 @@ typedef struct tSmashable_level {
 } tSmashable_level;
 
 typedef struct  {
-    undefined field_0x0[2];
+    tU8 field_0x0;
+    undefined field_0x1;
     tU16 field_0x2;
     tU16 field_0x4;
     tU16 field_0x6;
@@ -3197,6 +3198,13 @@ typedef struct {
     void* callback_0x18;
     void* callback_0x1c;
 } tCar_callbacks;
+
+typedef struct {
+    br_actor* actor;
+    tCar_spec* car;
+    int field_0x8;
+    float field_0xc;
+} tToggled_door;
 
 typedef union {
     tNet_message_chunk_raw raw;
