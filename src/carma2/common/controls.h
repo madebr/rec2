@@ -117,7 +117,7 @@ void C2_HOOK_FASTCALL CheckToggles(int pRacing);
 
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
 
-void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* car);
+void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL FlipUpCollisionInfo(tCollision_info* pCollision_info);
 
