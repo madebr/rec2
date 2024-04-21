@@ -135,3 +135,14 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(int pType, int pOpt
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049f860, NetAllocateMessageChunk, NetAllocateMessageChunk_original)
+
+tNet_game_player_info* (C2_HOOK_FASTCALL * NetPlayerFromCar_original)(tCar_spec *pCar);
+tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec *pCar) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetPlayerFromCar_original(pCar);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a69b0, NetPlayerFromCar, NetPlayerFromCar_original)
