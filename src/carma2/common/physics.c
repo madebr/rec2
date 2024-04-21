@@ -107,6 +107,11 @@ int C2_HOOK_FASTCALL ResetMechanics(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5cc0, ResetMechanics, ResetMechanics_original)
 
+void C2_HOOK_FASTCALL DisableRecursiveCollisions(void) {
+    C2V(gNo_recursive_collision_info_rebuild) = 1;
+}
+C2_HOOK_FUNCTION(0x004b5d20, DisableRecursiveCollisions)
+
 tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType) {
     tCollision_shape_box* result;
 
