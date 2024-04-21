@@ -181,6 +181,13 @@ void C2_HOOK_FASTCALL ToggleDoors(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042dd50, ToggleDoors, ToggleDoors_original)
 
+int C2_HOOK_FASTCALL ToggleDoorsCollisionInfoCallback(tCollision_info* pCollision_info, tCar_spec *pCar_spec) {
+
+    DRActorEnumRecurse(pCollision_info->actor, ToggleDoorsActorCallback, pCar_spec);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042ddb0, ToggleDoorsCollisionInfoCallback)
+
 int (C2_HOOK_CDECL * ToggleDoorsActorCallback_original)(br_actor* pActor, tCar_spec* pCar);
 int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, tCar_spec* pCar) {
 

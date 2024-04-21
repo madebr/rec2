@@ -17,6 +17,8 @@ void C2_HOOK_FASTCALL ReallySetSoundDetailLevel(int pLevel);
 
 int C2_HOOK_FASTCALL GetSoundDetailLevel(void);
 
+int C2_HOOK_FASTCALL ToggleDoorsCollisionInfoCallback(tCollision_info* pCollision_info, tCar_spec *pCar_spec);
+
 int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
