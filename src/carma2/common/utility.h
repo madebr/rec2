@@ -10,6 +10,10 @@
 
 #include <stdint.h>
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const tU8, gLong_key, 16);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const tU8, gOther_long_key, 16);
+C2_HOOK_VARIABLE_DECLARE(int, gDecode_thing);
+
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void);
 
 void C2_HOOK_FASTCALL StringTransformToLower(char* pStr);
@@ -23,6 +27,10 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS);
 
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
+
+void C2_HOOK_FASTCALL DecodeLine2(char* pS);
+
+void C2_HOOK_FASTCALL EncodeLine2(char* pS);
 
 void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
 

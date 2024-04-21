@@ -22,6 +22,15 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLost_time, 0x006abef4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gIn_check_quit, 0x006abee0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const tU8, gLong_key, 16, 0x006585f0, {
+    0x6c, 0x1b, 0x99, 0x5f, 0xb9, 0xcd, 0x5f, 0x13,
+    0xcb, 0x04, 0x20, 0x0e, 0x5e, 0x1c, 0xa1, 0x0e,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const tU8, gOther_long_key, 16, 0x00658600, {
+    0x67, 0xa8, 0xd6, 0x26, 0xb6, 0xdd, 0x45, 0x1b,
+    0x32, 0x7e, 0x22, 0x13, 0x15, 0xc2, 0x94, 0x37,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDecode_thing, 0x00655e30, '@');
 
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
@@ -134,13 +143,177 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 }
 C2_HOOK_FUNCTION(0x00513690, PathCat)
 
+void C2_HOOK_FASTCALL DecodeLine2(char* pS) {
+    int len;
+    int seed;
+    int i;
+    unsigned char c;
+    const tU8* key;
+
+    len = c2_strlen(pS);
+    key = C2V(gLong_key);
+    while (len > 0 && (pS[len - 1] == '\r' || pS[len - 1] == '\n')) {
+        len--;
+        pS[len] = '\0';
+    }
+    seed = len % 16;
+    for (i = 0; i < len; i++) {
+        c = pS[i];
+        if (i >= 2) {
+            if (pS[i - 1] == '/' && pS[i - 2] == '/') {
+                key = C2V(gOther_long_key);
+            }
+        }
+        if (c == '\t') {
+            c = 0x9f;
+        }
+
+        c -= 0x20;
+        c ^= key[seed];
+        c &= 0x7f;
+        c += 0x20;
+
+        seed += 7;
+        seed %= 16;
+
+        if (c == 0x9f) {
+            c = '\t';
+        }
+        pS[i] = c;
+    }
+}
+
+void C2_HOOK_FASTCALL EncodeLine2(char* pS) {
+    int len;
+    int seed;
+    int i;
+    int count;
+    unsigned char c;
+    const tU8* key;
+
+    len = c2_strlen(pS);
+    count = 0;
+    key = C2V(gLong_key);
+    while (len > 0 && (pS[len - 1] == '\r' || pS[len - 1] == '\n')) {
+        len--;
+        pS[len] = '\0';
+    }
+
+    seed = len % 16;
+
+    for (i = 0; i < len; i++) {
+        if (count == 2) {
+            key = C2V(gOther_long_key);
+        }
+        if (pS[i] == '/') {
+            count++;
+        } else {
+            count = 0;
+        }
+        if (pS[i] == '\t') {
+            pS[i] = 0x9f;
+        }
+
+        c = pS[i] - 0x20;
+        c ^= key[seed];
+        c &= 0x7f;
+        c += 0x20;
+
+        seed += 7;
+        seed %= 16;
+
+        if (c == 0x9f) {
+            c = '\t';
+        }
+        pS[i] = c;
+    }
+}
+
 void (C2_HOOK_FASTCALL * EncodeFile_original)(char* pThe_path);
 void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     EncodeFile_original(pThe_path);
 #else
-#error "Not implemented"
+    FILE* f;
+    FILE* d;
+    char line[257];
+    char new_file[256];
+    char* result;
+    int ch;
+    int decode;
+    int len;
+    int count;
+
+    len = c2_strlen(pThe_path);
+    c2_strcpy(new_file, pThe_path);
+    c2_strcpy(&new_file[len - 3], "ENC");
+
+    f = TWT_fopen(pThe_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CantOpen_S, pThe_path);
+    }
+
+    ch = DRfgetc(f);
+    DRungetc(ch, f);
+
+    if (C2V(gDecode_thing) == '@' && ch == '@') {
+        DRfclose(f);
+        return;
+    }
+
+    d = TWT_fopen(new_file, "wb");
+    if (d == NULL) {
+        FatalError(kFatalError_CantOpen_S, new_file);
+    }
+
+    result = &line[1];
+
+    while (DRfgets(result, 256, f) || !DRfeof(f)) {
+
+        if (result[0] == '@') {
+            decode = 1;
+        } else {
+            decode = 0;
+            // Strip leading whitespace
+            while (result[0] == ' ' || result[0] == '\t') {
+                c2_memmove(result, &result[1], c2_strlen(result) - 1);
+            }
+        }
+
+        if (decode) {
+            DecodeLine2(&result[decode]);
+        } else {
+            EncodeLine2(&result[decode]);
+        }
+
+        line[0] = '@';
+        c2_fputs(&line[decode * 2], d);
+        count = -1;
+        while (1) {
+            count++;
+            ch = DRfgetc(f);
+            if (ch == '\r' || ch == '\n') {
+                continue;
+            }
+        }
+        if (count > 2) {
+            c2_fputc('\r', d);
+            c2_fputc('\n', d);
+        }
+        c2_fputc('\r', d);
+        c2_fputc('\n', d);
+
+        if (ch != -1) {
+            DRungetc(ch, f);
+        }
+    }
+    DRfclose(f);
+    DRfclose(d);
+
+    PDFileUnlock(pThe_path);
+    c2_unlink(pThe_path);
+    c2_rename(new_file, pThe_path);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00490840, EncodeFile, EncodeFile_original)
