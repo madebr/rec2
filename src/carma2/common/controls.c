@@ -7,6 +7,7 @@
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
+#include "init.h"
 #include "input.h"
 #include "loading.h"
 #include "netgame.h"
@@ -141,6 +142,15 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gAuto_repair, 0x0079ec54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInstant_handbrake, 0x0079ec50);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gToo_poor_for_recovery_timeout, 0x0067c47c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCheckpoint_finder_enabled, 0x00659b28);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068b8e4, 0x0068b8e4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068b8e8, 0x0068b8e8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHad_auto_recover, 0x0067c460);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gPalette_fade_time, 0x0067c478);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gRecover_timer, 0x0067c3bc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00590f60, 0x00590f60);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gToo_late, 0x0067c3b8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067c470, 0x0067c470);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -277,14 +287,41 @@ int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, tCar_spec* pCar) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042ddc0, ToggleDoorsActorCallback, ToggleDoorsActorCallback_original)
 
+void C2_HOOK_FASTCALL ToggleMap2(void) {
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, old_indent, 0x0067c458);
+    int original_indent;
+
+    original_indent = C2V(gRender_indent);
+    if (C2V(gMap_view) == 2) {
+        C2V(gMap_view) = 1;
+        C2V(gRender_indent) = C2V(old_indent);
+    } else {
+        if (C2V(gAction_replay_mode)) {
+            return;
+        }
+        if (C2V(gNet_mode) != eNet_mode_none && C2V(gCurrent_net_game)->type == eNet_game_type_foxy && C2V(gThis_net_player_index) == C2V(gIt_or_fox)) {
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_fox_cant_do_that));
+            return;
+        }
+        C2V(gRender_indent) = 0;
+        C2V(old_indent) = original_indent;
+        C2V(gMap_view) = 2;
+        C2V(gMap_time) = PDGetTotalTime();
+    }
+    if (C2V(gCurrent_race).map_image != NULL) {
+        // nop_FUN005191f0(C2V(gCurrent_race).map_image);
+    }
+}
+
 // Key: 'tab'
 void (C2_HOOK_FASTCALL * ToggleMap_original)(void);
 void C2_HOOK_FASTCALL ToggleMap(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleMap_original();
 #else
-#error "Not implemented"
+    ToggleMap2();
+    AdjustRenderScreenSize();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444610, ToggleMap, ToggleMap_original)
@@ -327,10 +364,57 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00494880, ToggleMapTrans, ToggleMapTrans_original)
 void (C2_HOOK_FASTCALL * SetRecovery_original)(void);
 void C2_HOOK_FASTCALL SetRecovery(void) {
     CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetRecovery_original();
 #else
-#error "Not implemented"
+    if (C2V(gINT_0068b8e4)
+        || C2V(gINT_0068b8e8)
+        || C2V(gRace_finished)
+        || C2V(gProgram_state).current_car.knackered
+        || C2V(gWait_for_it)
+        || C2V(gHad_auto_recover)
+        || C2V(gPalette_fade_time) != 0) {
+        return;
+    }
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        C2V(gRecover_car) = 1;
+        C2V(gRecover_timer) = 0;
+    } else if (C2V(gProgram_state).current_car.time_to_recover == 0) {
+        C2V(gINT_00590f60) = 1;
+        if (CheckRecoverCost()) {
+            if (C2V(gCurrent_net_game)->type == eNet_game_type_foxy) {
+                if (C2V(gThis_net_player_index) == C2V(gIt_or_fox)) {
+                    C2V(gToo_late) = 0;
+                    C2V(gProgram_state).current_car.time_to_recover = GetRaceTime() + 5000;
+                } else {
+                    C2V(gToo_late) = 0;
+                    C2V(gProgram_state).current_car.time_to_recover = GetRaceTime() + 1000;
+                }
+            } else {
+                if (C2V(gCurrent_net_game)->type == 6 &&
+                    C2V(gNet_players)[C2V(gThis_net_player_index)].field_0x80 != 0) {
+                    C2V(gToo_late) = 0;
+                    C2V(gProgram_state).current_car.time_to_recover = GetRaceTime() + 500;
+                } else {
+                    C2V(gToo_late) = 0;
+                    C2V(gProgram_state).current_car.time_to_recover = GetRaceTime() + 3000;
+                }
+            }
+        }
+    }
+    else if (C2V(gINT_00590f60)) {
+        if (GetRaceTime() + 600 < C2V(gProgram_state).current_car.time_to_recover) {
+            C2V(gProgram_state).current_car.time_to_recover = 0;
+            if (!C2V(gINT_0067c470)) {
+                float cost = (C2V(gNet_mode) == eNet_mode_none) ? C2V(gRecovery_cost)[C2V(gProgram_state).skill_level] : C2V(gNet_recovery_cost)[C2V(gCurrent_net_game)->type];
+                EarnCredits((int)cost);
+            }
+            NewTextHeadupSlot2(4, 0, 2000, -4, GetMiscString(eMiscString_recovery_cancelled), 0);
+        } else {
+            NewTextHeadupSlot2(4, 0, 2000, -4, GetMiscString(eMiscString_too_late_to_cancel), 1);
+            C2V(gToo_late) = 1;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442300, SetRecovery, SetRecovery_original)

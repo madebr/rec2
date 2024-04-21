@@ -47,6 +47,8 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gTime_stamp_for_this_munging);
 C2_HOOK_VARIABLE_DECLARE(tU32, gFrame_period_for_this_munging);
 C2_HOOK_VARIABLE_DECLARE(float, gDrone_delta_time);
 C2_HOOK_VARIABLE_DECLARE(float, gTrack_drone_min_y);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(float, gRecovery_cost, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(float, gNet_recovery_cost, 8);
 
 C2_HOOK_VARIABLE_DECLARE(int, gKnobbledFramePeriod);
 C2_HOOK_VARIABLE_DECLARE(float, gUnknownOpponentFactor);
