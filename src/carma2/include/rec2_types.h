@@ -3194,6 +3194,11 @@ enum {
 };
 
 enum {
+    eMiscString_checkpoint_finder_turned_off = 254,
+    eMiscString_checkpoint_finder_turned_on = 255,
+};
+
+enum {
     kBoner_mem_type_remap = 0x81,
     kBoner_mem_type_sequence = 0x82,
     kMem_nodes_array = 0x83,
