@@ -921,11 +921,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00441780, F8Key, F8Key_original)
 // Key: 'f10'
 void (C2_HOOK_FASTCALL * F10Key_original)(void);
 void C2_HOOK_FASTCALL F10Key(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     F10Key_original();
 #else
-#error "Not implemented"
+    DoEditModeKey(4);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441800, F10Key, F10Key_original)
