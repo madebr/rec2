@@ -374,4 +374,9 @@ int C2_HOOK_CDECL c2_unlink(const char* path) {
 }
 C2_HOOK_FUNCTION(0x005776c0, c2_unlink)
 
+int C2_HOOK_CDECL c2_rename(const char *oldname, const char *newname) {
+    return rename(oldname, newname);
+}
+C2_HOOK_FUNCTION(0x00578470, c2_rename)
+
 #endif
