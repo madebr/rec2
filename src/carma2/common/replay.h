@@ -11,4 +11,6 @@ void C2_HOOK_FASTCALL DefaultQuicktimeSettings(void);
 
 void C2_HOOK_FASTCALL InitializeActionReplayCamera(tActionReplayCameraMode pCamPos);
 
+void C2_HOOK_FASTCALL ActionReplayFinishRecording(void);
+
 #endif //REC2_REPLAY_H
