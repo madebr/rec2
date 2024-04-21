@@ -3,7 +3,9 @@
 #include "displays.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "graphics.h"
 #include "input.h"
+#include "loading.h"
 #include "network.h"
 #include "physics.h"
 #include "sound.h"
@@ -252,11 +254,12 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00494840, ToggleCheckpointFinder, ToggleCheckpointFi
 // key: 'alt+tab' ('alt' in map mode)
 void (C2_HOOK_FASTCALL * ToggleMapTrans_original)(void);
 void C2_HOOK_FASTCALL ToggleMapTrans(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleMapTrans_original();
 #else
-#error "Not implemented"
+    C2V(gMap_trans) = !C2V(gMap_trans);
+    SaveOptions();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00494880, ToggleMapTrans, ToggleMapTrans_original)
