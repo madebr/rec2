@@ -11,6 +11,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gNum_active_non_cars);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gMin_world_y);
 C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gUnknown_car_collision_info);
 
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0067939c);
+C2_HOOK_VARIABLE_DECLARE(tCar_callbacks, gCar_callbacks);
+
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
 int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br_vector3* old_camera_pos, int manual_move, tCollision_info *collision_info);
@@ -24,6 +27,8 @@ void C2_HOOK_FASTCALL ResetCarSpecialVolume(tCollision_info* pCollision_info);
 void C2_HOOK_FAKE_THISCALL FlyCar(tCar_spec* c, undefined4 pArg2, br_scalar dt);
 
 void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 pArg2, br_scalar pFront_give_factor, br_scalar pRear_give_factor, br_scalar pDamping_factor, br_scalar pExtra_front_height, br_scalar pExtra_rear_height);
+
+int C2_HOOK_FASTCALL FUN_0041fe50(tCar_spec *pCar_spec, br_vector3 *pVec3);
 
 void C2_HOOK_FAKE_THISCALL ControlCar4(tCar_spec* c, undefined4 pArg2, br_scalar dt);
 
