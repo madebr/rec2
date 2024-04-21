@@ -632,3 +632,14 @@ void C2_HOOK_STDCALL CreateAccentPolyActor(float pX, float pY, float pWidth, flo
     }
 }
 C2_HOOK_FUNCTION(0x0045aa60, CreateAccentPolyActor)
+
+void (C2_HOOK_FASTCALL * EarnCredits2_original)(int pAmount, const char* pPrefix_text);
+void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text) {
+
+#if defined(C2_HOOKS_ENABLED)
+    EarnCredits2_original(pAmount, pPrefix_text);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044b300, EarnCredits2, EarnCredits2_original)
