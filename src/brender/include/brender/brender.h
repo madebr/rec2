@@ -226,4 +226,8 @@ int BrWriteModeSet(int mode);
 br_uint_32 C2_HOOK_CDECL BrSwap32(br_uint_32 l);
 br_diaghandler* C2_HOOK_CDECL BrDiagHandlerSet(br_diaghandler* newdh);
 
+void C2_HOOK_CDECL _BrEndHook(void);
+br_error C2_HOOK_CDECL BrDevFind(br_device** pdev, char* pattern);
+br_error C2_HOOK_CDECL BrDevRemove(br_device* dev);
+
 #endif

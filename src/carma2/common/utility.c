@@ -3,6 +3,7 @@
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
+#include "init.h"
 #include "input.h"
 #include "loading.h"
 #include "main.h"
@@ -32,10 +33,24 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDecode_thing, 0x00655e30, '@');
 
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return RemoveAllBrenderDevices_original();
 #else
-#error "Not implemented"
+    br_device *dev;
+
+    if (!C2V(gBr_initialized)) {
+        return 0x1006;
+    }
+
+    _BrEndHook();
+    C2V(gBr_initialized) = 0;
+    while (BrDevFind(&dev, NULL) == 0) {
+        if (dev != NULL) {
+            BrDevRemove(dev);
+        }
+    }
+    return 0;
+
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00513400, RemoveAllBrenderDevices, RemoveAllBrenderDevices_original);
