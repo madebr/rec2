@@ -52,4 +52,6 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairCar(void);
 
+void C2_HOOK_FASTCALL FUN_0043b8a0(tCar_spec* pCar_spec);
+
 #endif // REC2_CRUSH_H

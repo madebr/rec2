@@ -701,3 +701,14 @@ void C2_HOOK_FASTCALL TotallyRepairCar(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00439bf0, TotallyRepairCar)
+
+void (C2_HOOK_FASTCALL * FUN_0043b8a0_original)(tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL FUN_0043b8a0(tCar_spec* pCar_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FUN_0043b8a0_original(pCar_spec);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0043b8a0, FUN_0043b8a0, FUN_0043b8a0_original)
