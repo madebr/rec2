@@ -501,6 +501,12 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004973b0, InitCarIcons, InitCarIcons_original)
 
+void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void) {
+    UpdateMap();
+    SaveOptions();
+}
+C2_HOOK_FUNCTION(0x00497610, UpdateMapAndSaveOptions)
+
 void (C2_HOOK_FASTCALL * InitPolyFonts_original)(void);
 void C2_HOOK_FASTCALL InitPolyFonts(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
