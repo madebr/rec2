@@ -5,6 +5,7 @@
 #include "displays.h"
 #include "finteray.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "globvrpb.h"
 #include "graphics.h"
 #include "init.h"
@@ -518,6 +519,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
         },
     },
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAllow_car_flying, 0x0067c46c);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -1078,11 +1080,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00441d90, NumberKey9, NumberKey9_original)
 // Key: 'kp_1'
 void (C2_HOOK_FASTCALL * ToggleFlying_original)(void);
 void C2_HOOK_FASTCALL ToggleFlying(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleFlying_original();
 #else
-#error "Not implemented"
+
+    if (C2V(gAllow_car_flying) && C2V(gNet_mode) == eNet_mode_none) {
+        C2V(gCar_flying) = !C2V(gCar_flying);
+        NewTextHeadupSlot(4, 0, 500, -4, C2V(gCar_flying) ? "We have lift off!!" : "Back down to Earth");
+    } else {
+        C2V(gCar_flying) = 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004443c0, ToggleFlying, ToggleFlying_original)
