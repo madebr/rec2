@@ -158,7 +158,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_scalar, gYon_multiplier, 0x00655ddc, 1.f);
 //tSave_game* gPre_race_saved_game;
 //VFILE* gDiagnostic_file;
 //br_vector3 gDisabled_vector;
-//tU32 gI_am_cheating;
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gI_am_cheating, 0x0068b8e0);
 //char gNet_player_name[32];
 //br_matrix34 gRearview_camera_to_world;
 //tSpecial_volume gDefault_default_water_spec_vol;
