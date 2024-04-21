@@ -482,7 +482,7 @@ void C2_HOOK_FASTCALL ClearQueuedHeadups(void) {
 }
 C2_HOOK_FUNCTION(0x004497b0, ClearQueuedHeadups)
 
-int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, char* pText, int pQueue_it) {
+int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it) {
     int index;
     tHeadup* the_headup;
     tHeadup_slot* headup_slot;
@@ -549,13 +549,13 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pL
 }
 C2_HOOK_FUNCTION(0x00449fd0, NewTextHeadupSlot2)
 
-int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, char* pText) {
+int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText) {
 
     return NewTextHeadupSlot2(pSlot_index, pFlash_rate, pLifetime, pFont_index, pText, 1);
 }
 C2_HOOK_FUNCTION(0x0044a380, NewTextHeadupSlot)
 
-void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, char* pText, int pRight_edge) {
+void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge) {
     int i;
     char s[512];
     int s_end;
