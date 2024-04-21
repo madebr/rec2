@@ -72,4 +72,6 @@ int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_inf
 
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tCollision_info* pParent, tCollision_info* pChild);
 
+int C2_HOOK_FASTCALL EnumCollisionInfo(tCollision_info* pCollision_info, tEnumCollision_cbfn* pCallback, void* pUser_data);
+
 #endif //REC2_PHYSICS_H
