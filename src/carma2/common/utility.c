@@ -1085,3 +1085,9 @@ int C2_HOOK_FASTCALL PercentageChance(int pC) {
     return IRandomBetween(0, 100) < pC;
 }
 C2_HOOK_FUNCTION(0x00513550, PercentageChance)
+
+tU32 C2_HOOK_FASTCALL GetRaceTime(void) {
+
+    return PDGetTotalTime() - C2V(gRace_start);
+}
+C2_HOOK_FUNCTION(0x00514c70, GetRaceTime)
