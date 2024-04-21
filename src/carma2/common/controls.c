@@ -994,11 +994,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00441a10, NumberKey2, NumberKey2_original)
 // Key: '3'
 void (C2_HOOK_FASTCALL * NumberKey3_original)(void);
 void C2_HOOK_FASTCALL NumberKey3(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     NumberKey3_original();
 #else
-#error "Not implemented"
+    DoEditModeKey(10);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441a90, NumberKey3, NumberKey3_original)
