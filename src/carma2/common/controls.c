@@ -434,10 +434,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00442750, CheckRecoverCost, CheckRecoverCost_origina
 void (C2_HOOK_FASTCALL * AbortRace_original)(void);
 void C2_HOOK_FASTCALL AbortRace(void) {
     CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AbortRace_original();
 #else
-#error "Not implemented"
+
+    if (!C2V(gRace_finished)) {
+        C2V(gAbandon_game) = 1;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441490, AbortRace, AbortRace_original)
