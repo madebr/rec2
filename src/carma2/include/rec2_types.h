@@ -3193,10 +3193,19 @@ typedef struct {
     undefined4 field_0x8;
 } tUnknown_0x006a7fc8;
 
+typedef enum {
+    eNet_message_chunk_type_toggle_doors = 0x2c,
+} tNet_message_chunk_type;
+
 typedef struct {
     tU8 size;
     tU8 type;
 } tNet_message_chunk_header;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    int id;
+} tNet_message_chunk_toggle_doors;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -3205,6 +3214,7 @@ typedef struct {
 
 typedef union {
     tNet_message_chunk_raw raw;
+    tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
 } tNet_message_chunk;
 
 enum {

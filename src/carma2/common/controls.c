@@ -4,6 +4,7 @@
 #include "globvrpb.h"
 #include "input.h"
 #include "network.h"
+#include "physics.h"
 #include "sound.h"
 #include "utility.h"
 
@@ -129,6 +130,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tToggle_element, gToggle_array, 44, 0x0059
 C2_HOOK_VARIABLE_IMPLEMENT(int, gRecovery_voucher_count, 0x0067c3f8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAuto_repair, 0x0079ec54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInstant_handbrake, 0x0079ec50);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gToo_poor_for_recovery_timeout, 0x0067c47c);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -172,11 +174,24 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004420e0, ToggleMiniMap, ToggleMiniMap_original)
 // Key: 'Enter'
 void (C2_HOOK_FASTCALL * ToggleDoors_original)(void);
 void C2_HOOK_FASTCALL ToggleDoors(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleDoors_original();
 #else
-#error "Not implemented"
+    if (C2V(gCountdown) || C2V(gToo_poor_for_recovery_timeout) != 0) {
+        return;
+    }
+    if (C2V(gNet_mode) == eNet_mode_none || C2V(gNet_mode) == eNet_mode_host) {
+        EnumCollisionInfo(C2V(gProgram_state).current_car.collision_info,
+            ToggleDoorsCollisionInfoCallback,
+            &C2V(gProgram_state).current_car);
+    } else {
+        tNet_message_chunk* chunk = NetAllocateMessageChunk(eNet_message_chunk_type_toggle_doors, 0);
+        tNet_game_player_info *player_info = NetPlayerFromCar(&C2V(gProgram_state).current_car);
+        if (player_info != NULL) {
+            chunk->toggle_doors.id = player_info->ID;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042dd50, ToggleDoors, ToggleDoors_original)
