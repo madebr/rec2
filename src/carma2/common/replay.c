@@ -38,6 +38,17 @@ void C2_HOOK_FASTCALL InitializeActionReplayCamera(tActionReplayCameraMode pCamP
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, InitializeActionReplayCamera, InitializeActionReplayCamera_original)
 
+void (C2_HOOK_FASTCALL * PositionExternalCamera_original)(tCar_spec* pCar_spec, tU32 pTime);
+void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PositionExternalCamera_original(pCar_spec, pTime);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040ea30, PositionExternalCamera, PositionExternalCamera_original)
+
 void (C2_HOOK_FASTCALL * ActionReplayFinishRecording_original)(void);
 void C2_HOOK_FASTCALL ActionReplayFinishRecording(void) {
 
