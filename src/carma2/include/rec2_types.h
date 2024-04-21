@@ -1552,8 +1552,7 @@ typedef struct tCar_spec {
     int use_shell_model;
     br_model* shell_model;
     undefined field158_0xe2c[12];
-    br_matrix34 last_safe_positions[19];
-    undefined field_0x11c8[0x30];
+    br_matrix34 last_safe_positions[20];
     int wheel_slip;
     float damping;
     undefined field_0x1200[16];
