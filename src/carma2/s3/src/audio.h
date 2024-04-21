@@ -24,4 +24,6 @@ int C2_HOOK_FASTCALL S3StopSound(int pTag);
 
 void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
 
+void C2_HOOK_FASTCALL S3StopAll(void);
+
 #endif // S3_AUDIO_H
