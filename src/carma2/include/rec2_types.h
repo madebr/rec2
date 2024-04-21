@@ -3186,6 +3186,17 @@ typedef struct {
     tU8 data[];
 } tNet_message_chunk_raw;
 
+typedef struct {
+    void* callback_0x00;
+    void* callback_0x04;
+    void* callback_0x08;
+    void* callback_0x0c;
+    void* callback_0x10;
+    void* callback_0x14;
+    void* callback_0x18;
+    void* callback_0x1c;
+} tCar_callbacks;
+
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */

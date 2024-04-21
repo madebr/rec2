@@ -1085,3 +1085,14 @@ int C2_HOOK_FASTCALL EnumCollisionInfo(tCollision_info* pCollision_info, tEnumCo
     return 0;
 }
 C2_HOOK_FUNCTION(0x004c6470, EnumCollisionInfo)
+
+int (C2_HOOK_FASTCALL * FUN_00429070_original)(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tCar_callbacks* pCar_callbacks);
+int C2_HOOK_FASTCALL FUN_00429070(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tCar_callbacks* pCar_callbacks) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FUN_00429070_original(pCollision_info_1, pCollision_info_2, pVec3, pCar_callbacks);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00429070, FUN_00429070, FUN_00429070_original)
