@@ -57,6 +57,8 @@ int C2_HOOK_CDECL c2_vsscanf(const char* str, const char* format, va_list ap);
 
 int C2_HOOK_CDECL c2_unlink(const char* path);
 
+int C2_HOOK_CDECL c2_rename(const char *oldname, const char *newname);
+
 #else
 
 #include <stdio.h>
