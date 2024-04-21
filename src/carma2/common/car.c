@@ -243,7 +243,7 @@ void C2_HOOK_FASTCALL RememberSafePosition(tCar_spec* car, tU32 pTime_difference
         && !car->field273_0x195c
         && car->car_master_actor->t.t.mat.m[1][1] >= 0.8f) {
 
-        REC2_BUG_ON(REC2_ASIZE(car->last_safe_positions) != 19);
+        REC2_BUG_ON(REC2_ASIZE(car->last_safe_positions) != 20);
         /* Only check last 5 positions */
         for (i = 0; i < 5; i++) {
             BrVector3Sub(&r, &car->car_master_actor->t.t.translate.t, (br_vector3*)car->last_safe_positions[i].m[3]);
