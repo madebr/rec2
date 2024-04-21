@@ -3225,6 +3225,8 @@ enum {
 };
 
 enum {
+    eMiscString_minimap_on = 2,
+    eMiscString_minimap_off = 3,
     eMiscString_checkpoint_finder_turned_off = 254,
     eMiscString_checkpoint_finder_turned_on = 255,
 };
