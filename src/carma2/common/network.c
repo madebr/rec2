@@ -124,3 +124,14 @@ void C2_HOOK_FASTCALL ReenableNetService(void) {
     C2V(gNet_service_disable) = 0;
 }
 C2_HOOK_FUNCTION(0x0049d3f0, ReenableNetService)
+
+tNet_message_chunk* (C2_HOOK_FASTCALL * NetAllocateMessageChunk_original)(int pType, int pOption);
+tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(int pType, int pOption) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetAllocateMessageChunk_original(pType, pOption);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049f860, NetAllocateMessageChunk, NetAllocateMessageChunk_original)
