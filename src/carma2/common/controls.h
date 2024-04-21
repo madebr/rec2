@@ -37,6 +37,8 @@ void C2_HOOK_FASTCALL ToggleMapTrans(void);
 
 void C2_HOOK_FASTCALL SetRecovery(void);
 
+int C2_HOOK_FASTCALL CheckRecoverCost(void);
+
 void C2_HOOK_FASTCALL AbortRace(void);
 
 void C2_HOOK_FASTCALL ToggleHUD(void);
