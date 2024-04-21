@@ -1069,3 +1069,21 @@ void C2_HOOK_FASTCALL AddCollisionInfoChild(tCollision_info* pParent, tCollision
     pParent->child = pChild;
 }
 C2_HOOK_FUNCTION(0x004c63d0, AddCollisionInfoChild)
+
+int C2_HOOK_FASTCALL EnumCollisionInfo(tCollision_info* pCollision_info, tEnumCollision_cbfn* pCallback, void* pUser_data) {
+    int r;
+    tCollision_info* child;
+
+    r = pCallback(pCollision_info, pUser_data);
+    if (r != 0) {
+        return r;
+    }
+    for (child = pCollision_info->child; child != NULL; child = child->next) {
+        r = EnumCollisionInfo(child,pCallback, pUser_data);
+        if (r != 0) {
+            return r;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004c6470, EnumCollisionInfo)
