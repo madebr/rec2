@@ -1,14 +1,19 @@
 #include "controls.h"
 
+#include "car.h"
+#include "crush.h"
 #include "displays.h"
+#include "finteray.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
 #include "input.h"
 #include "loading.h"
+#include "netgame.h"
 #include "network.h"
 #include "physics.h"
 #include "polyfont.h"
+#include "replay.h"
 #include "sound.h"
 #include "utility.h"
 
@@ -809,13 +814,88 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442f90, CheckOtherRacingKeys, CheckOtherRacingKeys_original)
 
-void (C2_HOOK_FASTCALL * FlipUpCar_original)(tCar_spec* car);
-void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* car) {
+void (C2_HOOK_FASTCALL * FlipUpCar_original)(tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     FlipUpCar_original(car);
 #else
-#error "Not implemented"
+    int new_pos;
+    int i;
+    int j;
+    int k;
+
+    if (pCar_spec != NULL && pCar_spec->driver == eDriver_local_human && C2V(gNet_mode) == eNet_mode_none) {
+        FadePaletteDown();
+        while (KeyIsDown(0x3c)) {
+        }
+    }
+
+    if (pCar_spec->car_crush_spec != NULL && pCar_spec->car_crush_spec->field_0x4b8) {
+        FUN_0043b8a0(pCar_spec);
+    }
+    SetCollisionInfoChildsDoNothing(pCar_spec->collision_info, 0);
+    EnableCar(pCar_spec);
+
+    new_pos = 1;
+    for (i = 0; i < 4; i++) {
+        if (pCar_spec->susp_height[i / 2] <= pCar_spec->oldd[i]) {
+            new_pos = 0;
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        br_scalar t;
+        br_vector3 dir;
+        br_vector3 nor;
+        br_vector3 p;
+        br_material* mat;
+
+        BrVector3Sub(&nor, &pCar_spec->car_master_actor->t.t.translate.t, (br_vector3*)pCar_spec->last_safe_positions[0].m[3]);
+        if (BrVector3LengthSquared(&nor) > 8.3015966f) {
+            new_pos = 0;
+        }
+        BrMatrix34Copy(&pCar_spec->car_master_actor->t.t.mat, &pCar_spec->last_safe_positions[new_pos]);
+        BrMatrix34Copy(&pCar_spec->collision_info->transform_matrix, &pCar_spec->last_safe_positions[new_pos]);
+        BrMatrix34Copy(&pCar_spec->old_frame_mat, &pCar_spec->last_safe_positions[new_pos]);
+        BrVector3Set(&dir, 0.f, 0.2898551f, 0.f);
+        FindFace(&pCar_spec->car_master_actor->t.t.translate.t, &dir, &nor, &t, &mat);
+        if (t > 1.f) {
+            BrVector3Accumulate(&pCar_spec->car_master_actor->t.t.translate.t, &dir);
+            BrVector3Copy((br_vector3*)pCar_spec->collision_info->transform_matrix.m[3], &pCar_spec->car_master_actor->t.t.translate.t);
+            BrVector3Copy((br_vector3*)pCar_spec->old_frame_mat.m[3], &pCar_spec->car_master_actor->t.t.translate.t);
+        }
+        BrVector3Set(&nor, 0.f, 0.f, -0.0002f);
+        BrMatrix34ApplyV(&pCar_spec->collision_info->v, &nor, &pCar_spec->car_master_actor->t.t.mat);
+        BrVector3Set(&pCar_spec->collision_info->omega, 0.f, 0.f, 0.f);
+        BrVector3Negate(&pCar_spec->direction, (br_vector3*)pCar_spec->collision_info->transform_matrix.m[2]);
+
+        for (j = 0; j <= new_pos; j++) {
+            for (k = 0; k < REC2_ASIZE(pCar_spec->last_safe_positions) - 1; k++) {
+                BrMatrix34Copy(&pCar_spec->last_safe_positions[k], &pCar_spec->last_safe_positions[k + 1]);
+            }
+        }
+        FlipUpCollisionInfo(pCar_spec->collision_info);
+        FUN_004c2b10(pCar_spec->collision_info);
+        for (j = 0; !FUN_0041fe50(pCar_spec, &p) && j < 10; j++) {
+            BrVector3InvScale(&p, &p, 2.f * WORLD_SCALE);
+            BrVector3Accumulate(&pCar_spec->car_master_actor->t.t.translate.t, &p);
+            BrVector3Copy((br_vector3*)pCar_spec->collision_info->transform_matrix.m[3], &pCar_spec->car_master_actor->t.t.translate.t);
+            BrVector3Copy((br_vector3*)pCar_spec->old_frame_mat.m[3], &pCar_spec->car_master_actor->t.t.translate.t);
+        }
+    }
+    BrVector3Copy((br_vector3*)pCar_spec->collision_info->transform_matrix.m[3],
+        &pCar_spec->car_master_actor->t.t.translate.t);
+    pCar_spec->curvature = 0.f;
+    for (i = 0; i < REC2_ASIZE(pCar_spec->oldd); i++) {
+        pCar_spec->oldd[i] = pCar_spec->ride_height;
+    }
+    pCar_spec->revs = 0.f;
+    pCar_spec->gear = 0.f;
+    pCar_spec->collision_info->auto_special_volume = NULL;
+    if (pCar_spec != NULL && pCar_spec->driver == eDriver_local_human) {
+        InitialiseExternalCamera();
+        PositionExternalCamera(pCar_spec, 100);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004429b0, FlipUpCar, FlipUpCar_original)
