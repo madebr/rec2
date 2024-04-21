@@ -820,6 +820,26 @@ void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* car) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004429b0, FlipUpCar, FlipUpCar_original)
 
+void C2_HOOK_FASTCALL FlipUpCollisionInfo(tCollision_info* pCollision_info) {
+    tCollision_info *child;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, v, 0x68);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, omega, 0x74);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, transform_matrix, 0x8c);
+
+    for (child = pCollision_info->child; child != NULL; child = child->next) {
+        int i;
+
+        for (i = 0; i < 3; i++) {
+            BrVector3Copy((br_vector3*)child->transform_matrix.m[i], (br_vector3*)pCollision_info->transform_matrix.m[i]);
+        }
+        BrVector3SetFloat(&child->v, 0.f, 0.f, 0.f);
+        BrVector3SetFloat(&child->omega, 0.f, 0.f, 0.f);
+        FlipUpCollisionInfo(child);
+    }
+}
+C2_HOOK_FUNCTION(0x00442e10, FlipUpCollisionInfo)
+
 void C2_HOOK_FASTCALL ResetRecoveryVouchers(void) {
 
     C2V(gRecovery_voucher_count) = 0;
