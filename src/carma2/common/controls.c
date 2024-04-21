@@ -151,6 +151,373 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gRecover_timer, 0x0067c3bc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00590f60, 0x00590f60);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gToo_late, 0x0067c3b8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067c470, 0x0067c470);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWhich_edit_mode, 0x0067c468); /* FIXME: enum tEdit_mode */
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 0x005904f0, {
+    {
+        {
+            NULL, /* [0][ 0][0] */
+            NULL, /* [0][ 0][1] */
+            NULL, /* [0][ 0][2] */
+            NULL, /* [0][ 0][3] */
+            NULL, /* [0][ 0][4] */
+            NULL, /* [0][ 0][5] */
+            NULL, /* [0][ 0][6] */
+            NULL, /* [0][ 0][7] */
+        },
+        {
+            NULL, /* [0][ 1][0] */
+            NULL, /* [0][ 1][1] */
+            NULL, /* [0][ 1][2] */
+            NULL, /* [0][ 1][3] */
+            NULL, /* [0][ 1][4] */
+            NULL, /* [0][ 1][5] */
+            NULL, /* [0][ 1][6] */
+            NULL, /* [0][ 1][7] */
+        },
+        {
+            NULL, /* [0][ 2][0] */
+            NULL, /* [0][ 2][1] */
+            NULL, /* [0][ 2][2] */
+            NULL, /* [0][ 2][3] */
+            NULL, /* [0][ 2][4] */
+            NULL, /* [0][ 2][5] */
+            NULL, /* [0][ 2][6] */
+            NULL, /* [0][ 2][7] */
+        },
+        {
+            NULL, /* [0][ 3][0] */
+            NULL, /* [0][ 3][1] */
+            NULL, /* [0][ 3][2] */
+            NULL, /* [0][ 3][3] */
+            NULL, /* [0][ 3][4] */
+            NULL, /* [0][ 3][5] */
+            NULL, /* [0][ 3][6] */
+            NULL, /* [0][ 3][7] */
+        },
+        {
+            NULL, /* [0][ 4][0] */
+            NULL, /* [0][ 4][1] */
+            NULL, /* [0][ 4][2] */
+            NULL, /* [0][ 4][3] */
+            NULL, /* [0][ 4][4] */
+            NULL, /* [0][ 4][5] */
+            NULL, /* [0][ 4][6] */
+            NULL, /* [0][ 4][7] */
+        },
+        {
+            NULL, /* [0][ 5][0] */
+            NULL, /* [0][ 5][1] */
+            NULL, /* [0][ 5][2] */
+            NULL, /* [0][ 5][3] */
+            NULL, /* [0][ 5][4] */
+            NULL, /* [0][ 5][5] */
+            NULL, /* [0][ 5][6] */
+            NULL, /* [0][ 5][7] */
+        },
+        {
+            NULL, /* [0][ 6][0] */
+            NULL, /* [0][ 6][1] */
+            NULL, /* [0][ 6][2] */
+            NULL, /* [0][ 6][3] */
+            NULL, /* [0][ 6][4] */
+            NULL, /* [0][ 6][5] */
+            NULL, /* [0][ 6][6] */
+            NULL, /* [0][ 6][7] */
+        },
+        {
+            NULL, /* [0][ 7][0] */
+            NULL, /* [0][ 7][1] */
+            NULL, /* [0][ 7][2] */
+            NULL, /* [0][ 7][3] */
+            NULL, /* [0][ 7][4] */
+            NULL, /* [0][ 7][5] */
+            NULL, /* [0][ 7][6] */
+            NULL, /* [0][ 7][7] */
+        },
+        {
+            ToggleCarSimplification, /* [0][ 8][0] */
+            NULL, /* [0][ 8][1] */
+            NULL, /* [0][ 8][2] */
+            NULL, /* [0][ 8][3] */
+            NULL, /* [0][ 8][4] */
+            NULL, /* [0][ 8][5] */
+            NULL, /* [0][ 8][6] */
+            NULL, /* [0][ 8][7] */
+        },
+        {
+            ToggleShadow, /* [0][ 9][0] */
+            NULL, /* [0][ 9][1] */
+            NULL, /* [0][ 9][2] */
+            NULL, /* [0][ 9][3] */
+            NULL, /* [0][ 9][4] */
+            NULL, /* [0][ 9][5] */
+            NULL, /* [0][ 9][6] */
+            NULL, /* [0][ 9][7] */
+        },
+        {
+            NULL, /* [0][10][0] */
+            NULL, /* [0][10][1] */
+            NULL, /* [0][10][2] */
+            NULL, /* [0][10][3] */
+            NULL, /* [0][10][4] */
+            NULL, /* [0][10][5] */
+            NULL, /* [0][10][6] */
+            NULL, /* [0][10][7] */
+        }
+        {
+            ToggleSky, /* [0][11][0] */
+            NULL, /* [0][11][1] */
+            NULL, /* [0][11][2] */
+            NULL, /* [0][11][3] */
+            ToggleDepthCueing, /* [0][11][4] */
+            NULL, /* [0][11][5] */
+            NULL, /* [0][11][6] */
+            NULL, /* [0][11][7] */
+        },
+        {
+            ToggleTrackAppearingSpeed, /* [0][12][0] */
+            NULL, /* [0][12][1] */
+            NULL, /* [0][12][2] */
+            NULL, /* [0][12][3] */
+            ToggleAccessories, /* [0][12][4] */
+            NULL, /* [0][12][5] */
+            NULL, /* [0][12][6] */
+            NULL, /* [0][12][7] */
+        },
+        {
+            DecreaseYon, /* [0][13][0] */
+            NULL, /* [0][13][1] */
+            NULL, /* [0][13][2] */
+            NULL, /* [0][13][3] */
+            IncreaseYon, /* [0][13][4] */
+            NULL, /* [0][13][5] */
+            NULL, /* [0][13][6] */
+            NULL, /* [0][13][7] */
+        },
+        {
+            ToggleSoundDetail, /* [0][14][0] */
+            NULL, /* [0][14][1] */
+            NULL, /* [0][14][2] */
+            NULL, /* [0][14][3] */
+            NULL, /* [0][14][4] */
+            NULL, /* [0][14][5] */
+            NULL, /* [0][14][6] */
+            NULL, /* [0][14][7] */
+        },
+        {
+            FUN_004599f0, /* [0][15][0] */
+            FUN_00511240, /* [0][15][1] */
+            FUN_00511280, /* [0][15][2] */
+            FUN_00511330, /* [0][15][3] */
+            FUN_00511270, /* [0][15][4] */
+            FUN_005112d0, /* [0][15][5] */
+            FUN_00511390, /* [0][15][6] */
+            NULL, /* [0][15][7] */
+        },
+        {
+            NULL, /* [0][16][0] */
+            NULL, /* [0][16][1] */
+            NULL, /* [0][16][2] */
+            NULL, /* [0][16][3] */
+            NULL, /* [0][16][4] */
+            NULL, /* [0][16][5] */
+            NULL, /* [0][16][6] */
+            NULL, /* [0][16][7] */
+        },
+        {
+            NULL, /* [0][17][0] */
+            NULL, /* [0][17][1] */
+            NULL, /* [0][17][2] */
+            NULL, /* [0][17][3] */
+            NULL, /* [0][17][4] */
+            NULL, /* [0][17][5] */
+            NULL, /* [0][17][6] */
+            NULL, /* [0][17][7] */
+        },
+    },
+    {
+        {
+            TotalRepair, /* [1][ 0][0] */
+            SetAPOToPotential, /* [1][ 0][1] */
+            NULL, /* [1][ 0][2] */
+            NULL, /* [1][ 0][3] */
+            FUN_00447330, /* [1][ 0][4] */
+            FUN_00447340, /* [1][ 0][5] */
+            NULL, /* [1][ 0][6] */
+            NULL, /* [1][ 0][7] */
+        },
+        {
+            ToggleInvulnerability, /* [1][ 1][0] */
+            NULL, /* [1][ 1][1] */
+            NULL, /* [1][ 1][2] */
+            NULL, /* [1][ 1][3] */
+            FUN_004b5ab0, /* [1][ 1][4] */
+            NULL, /* [1][ 1][5] */
+            NULL, /* [1][ 1][6] */
+            NULL, /* [1][ 1][7] */
+        },
+        {
+            SelectNextPedestrian, /* [1][ 2][0] */
+            FUN_004d62e0, /* [1][ 2][1] */
+            NULL, /* [1][ 2][2] */
+            NULL, /* [1][ 2][3] */
+            SelectPreviousPedestrian, /* [1][ 2][4] */
+            FUN_004d62e0, /* [1][ 2][5] */
+            NULL, /* [1][ 2][6] */
+            NULL, /* [1][ 2][7] */
+        },
+        {
+            ToggleTimerFreeze, /* [1][ 3][0] */
+            ShadowMode, /* [1][ 3][1] */
+            NULL, /* [1][ 3][2] */
+            NULL, /* [1][ 3][3] */
+            ToggleShadow, /* [1][ 3][4] */
+            NULL, /* [1][ 3][5] */
+            NULL, /* [1][ 3][6] */
+            NULL, /* [1][ 3][7] */
+        },
+        {
+            IncrementLap, /* [1][ 4][0] */
+            NULL, /* [1][ 4][1] */
+            NULL, /* [1][ 4][2] */
+            NULL, /* [1][ 4][3] */
+            IncrementCheckpoint, /* [1][ 4][4] */
+            NULL, /* [1][ 4][5] */
+            NULL, /* [1][ 4][6] */
+            NULL, /* [1][ 4][7] */
+        },
+        {
+            EarnDosh, /* [1][ 5][0] */
+            NULL, /* [1][ 5][1] */
+            NULL, /* [1][ 5][2] */
+            NULL, /* [1][ 5][3] */
+            LoseDosh, /* [1][ 5][4] */
+            NULL, /* [1][ 5][5] */
+            NULL, /* [1][ 5][6] */
+            NULL, /* [1][ 5][7] */
+        },
+        {
+            ViewOpponent, /* [1][ 6][0] */
+            ViewOpponent, /* [1][ 6][1] */
+            ViewOpponent, /* [1][ 6][2] */
+            ViewOpponent, /* [1][ 6][3] */
+            ViewOpponent, /* [1][ 6][4] */
+            ViewOpponent, /* [1][ 6][5] */
+            ViewOpponent, /* [1][ 6][6] */
+            ViewOpponent, /* [1][ 6][7] */
+        },
+        {
+            GotPowerup0, /* [1][ 7][0] */
+            GotPowerup0, /* [1][ 7][1] */
+            GotPowerup0, /* [1][ 7][2] */
+            GotPowerup0, /* [1][ 7][3] */
+            GotPowerup0, /* [1][ 7][4] */
+            GotPowerup0, /* [1][ 7][5] */
+            GotPowerup0, /* [1][ 7][6] */
+            GotPowerup0, /* [1][ 7][7] */
+        },
+        {
+            GotPowerup1, /* [1][ 8][0] */
+            GotPowerup1, /* [1][ 8][1] */
+            GotPowerup1, /* [1][ 8][2] */
+            GotPowerup1, /* [1][ 8][3] */
+            GotPowerup1, /* [1][ 8][4] */
+            GotPowerup1, /* [1][ 8][5] */
+            GotPowerup1, /* [1][ 8][6] */
+            GotPowerup1, /* [1][ 8][7] */
+        },
+        {
+            GotPowerup2, /* [1][ 9][0] */
+            GotPowerup2, /* [1][ 9][1] */
+            GotPowerup2, /* [1][ 9][2] */
+            GotPowerup2, /* [1][ 9][3] */
+            GotPowerup2, /* [1][ 9][4] */
+            GotPowerup2, /* [1][ 9][5] */
+            GotPowerup2, /* [1][ 9][6] */
+            GotPowerup2, /* [1][ 9][7] */
+        },
+        {
+            GotPowerup3, /* [1][10][0] */
+            GotPowerup3, /* [1][10][1] */
+            GotPowerup3, /* [1][10][2] */
+            GotPowerup3, /* [1][10][3] */
+            GotPowerup3, /* [1][10][4] */
+            GotPowerup3, /* [1][10][5] */
+            GotPowerup3, /* [1][10][6] */
+            GotPowerup3, /* [1][10][7] */
+        }
+        {
+            GotPowerup4, /* [1][11][0] */
+            GotPowerup4, /* [1][11][1] */
+            GotPowerup4, /* [1][11][2] */
+            GotPowerup4, /* [1][11][3] */
+            GotPowerup4, /* [1][11][4] */
+            GotPowerup4, /* [1][11][5] */
+            GotPowerup4, /* [1][11][6] */
+            GotPowerup4, /* [1][11][7] */
+        },
+        {
+            GotPowerup5, /* [1][12][0] */
+            GotPowerup5, /* [1][12][1] */
+            GotPowerup5, /* [1][12][2] */
+            GotPowerup5, /* [1][12][3] */
+            GotPowerup5, /* [1][12][4] */
+            GotPowerup5, /* [1][12][5] */
+            GotPowerup5, /* [1][12][6] */
+            GotPowerup5, /* [1][12][7] */
+        },
+        {
+            GotPowerup6, /* [1][13][0] */
+            GotPowerup6, /* [1][13][1] */
+            GotPowerup6, /* [1][13][2] */
+            GotPowerup6, /* [1][13][3] */
+            GotPowerup6, /* [1][13][4] */
+            GotPowerup6, /* [1][13][5] */
+            GotPowerup6, /* [1][13][6] */
+            GotPowerup6, /* [1][13][7] */
+        },
+        {
+            GotPowerup7, /* [1][14][0] */
+            GotPowerup7, /* [1][14][1] */
+            GotPowerup7, /* [1][14][2] */
+            GotPowerup7, /* [1][14][3] */
+            GotPowerup7, /* [1][14][4] */
+            GotPowerup7, /* [1][14][5] */
+            GotPowerup7, /* [1][14][6] */
+            GotPowerup7, /* [1][14][7] */
+        },
+        {
+            GotPowerup8, /* [1][15][0] */
+            GotPowerup8, /* [1][15][1] */
+            GotPowerup8, /* [1][15][2] */
+            GotPowerup8, /* [1][15][3] */
+            GotPowerup8, /* [1][15][4] */
+            GotPowerup8, /* [1][15][5] */
+            GotPowerup8, /* [1][15][6] */
+            GotPowerup8, /* [1][15][7] */
+        },
+        {
+            GotPowerup9, /* [1][16][0] */
+            GotPowerup9, /* [1][16][1] */
+            GotPowerup9, /* [1][16][2] */
+            GotPowerup9, /* [1][16][3] */
+            GotPowerup9, /* [1][16][4] */
+            GotPowerup9, /* [1][16][5] */
+            GotPowerup9, /* [1][16][6] */
+            GotPowerup9, /* [1][16][7] */
+        },
+        {
+            NULL, /* [1][17][0] */
+            NULL, /* [1][17][1] */
+            NULL, /* [1][17][2] */
+            NULL, /* [1][17][3] */
+            NULL, /* [1][17][4] */
+            NULL, /* [1][17][5] */
+            NULL, /* [1][17][6] */
+            NULL, /* [1][17][7] */
+        },
+    },
+});
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -484,14 +851,35 @@ void C2_HOOK_FASTCALL F4Key(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004414b0, F4Key, F4Key_original)
 
+void C2_HOOK_FASTCALL DoEditModeKey(int pIndex) {
+    int modifiers;
+
+    if (C2V(gI_am_cheating) == 0xa11ee75d || (C2V(gI_am_cheating) == 0x564e78b9 && C2V(gNet_mode) == eNet_mode_none)) {
+        modifiers = 0;
+        if (PDKeyDown(0)) {
+            modifiers |= 4;
+        }
+        if (PDKeyDown(1)) {
+            modifiers |= 2;
+        }
+        if (PDKeyDown(2)) {
+            modifiers |= 1;
+        }
+        if (C2V(gEdit_funcs)[C2V(gWhich_edit_mode)][pIndex][modifiers] != NULL) {
+            C2V(gEdit_funcs)[C2V(gWhich_edit_mode)][pIndex][modifiers]();
+        }
+    } else {
+        C2V(gWhich_edit_mode) = 0;
+    }
+}
+
 // Key: 'f5'
 void (C2_HOOK_FASTCALL * F5Key_original)(void);
 void C2_HOOK_FASTCALL F5Key(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     F5Key_original();
 #else
-#error "Not implemented"
+    DoEditModeKey(0);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441600, F5Key, F5Key_original)
