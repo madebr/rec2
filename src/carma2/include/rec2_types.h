@@ -3159,6 +3159,22 @@ typedef struct {
     undefined4 field_0x8;
 } tUnknown_0x006a7fc8;
 
+typedef struct {
+    tU8 size;
+    tU8 type;
+    tU8 offset_0x2;
+    tU8 offset_0x3;
+} tNet_message_chunk_header;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    tU8 data[];
+} tNet_message_chunk_raw;
+
+typedef union {
+    tNet_message_chunk_raw raw;
+} tNet_message_chunk;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
