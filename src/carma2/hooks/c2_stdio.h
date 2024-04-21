@@ -55,6 +55,8 @@ int C2_HOOK_CDECL c2_vfscanf(FILE* file, const char* format, va_list ap);
 int C2_HOOK_CDECL c2_sscanf(const char* str, const char* format, ...);
 int C2_HOOK_CDECL c2_vsscanf(const char* str, const char* format, va_list ap);
 
+int C2_HOOK_CDECL c2_unlink(const char* path);
+
 #else
 
 #include <stdio.h>

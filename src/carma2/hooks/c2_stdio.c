@@ -369,4 +369,9 @@ int C2_HOOK_CDECL c2_vsscanf(const char* str, const char* format, va_list ap) {
     return vsscanf(str, format, ap);
 }
 
+int C2_HOOK_CDECL c2_unlink(const char* path) {
+    return _unlink(path);
+}
+C2_HOOK_FUNCTION(0x005776c0, c2_unlink)
+
 #endif
