@@ -960,3 +960,7 @@ void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
     C2V(gPD_mouse_position).y = *pY;
 }
 C2_HOOK_FUNCTION(0x0051c900, PDGetMousePosition)
+
+void C2_HOOK_FASTCALL PDRevertPalette(void) {
+}
+C2_HOOK_FUNCTION(0x0051c280, PDRevertPalette)
