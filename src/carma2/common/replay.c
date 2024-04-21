@@ -37,3 +37,14 @@ void C2_HOOK_FASTCALL InitializeActionReplayCamera(tActionReplayCameraMode pCamP
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, InitializeActionReplayCamera, InitializeActionReplayCamera_original)
+
+void (C2_HOOK_FASTCALL * ActionReplayFinishRecording_original)(void);
+void C2_HOOK_FASTCALL ActionReplayFinishRecording(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ActionReplayFinishRecording_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e1a20, ActionReplayFinishRecording, ActionReplayFinishRecording_original)
