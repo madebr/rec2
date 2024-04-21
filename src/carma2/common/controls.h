@@ -21,6 +21,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gRecover_timer);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_00590f60);
 C2_HOOK_VARIABLE_DECLARE(int, gToo_late);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0067c470);
+C2_HOOK_VARIABLE_DECLARE(int, gWhich_edit_mode);
+C2_HOOK_VARIABLE_DECLARE_ARRAY_ADV(tEdit_func*, gEdit_funcs, [2][18][8]);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
@@ -57,6 +59,8 @@ void C2_HOOK_FASTCALL ToggleHUD(void);
 void C2_HOOK_FASTCALL SetFlag(tU32 i);
 
 void C2_HOOK_FASTCALL F4Key(void);
+
+void C2_HOOK_FASTCALL DoEditModeKey(int pIndex);
 
 void C2_HOOK_FASTCALL F5Key(void);
 
