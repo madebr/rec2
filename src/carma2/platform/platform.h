@@ -90,4 +90,6 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void);
 
 void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY);
 
+void C2_HOOK_FASTCALL PDRevertPalette(void);
+
 #endif // C2_PLATFORM_H
