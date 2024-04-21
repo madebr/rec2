@@ -1030,11 +1030,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00441b90, NumberKey5, NumberKey5_original)
 // Key: '6'
 void (C2_HOOK_FASTCALL * NumberKey6_original)(void);
 void C2_HOOK_FASTCALL NumberKey6(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     NumberKey6_original();
 #else
-#error "Not implemented"
+    DoEditModeKey(13);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441c10, NumberKey6, NumberKey6_original)
