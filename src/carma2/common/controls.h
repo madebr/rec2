@@ -17,6 +17,8 @@ void C2_HOOK_FASTCALL ReallySetSoundDetailLevel(int pLevel);
 
 int C2_HOOK_FASTCALL GetSoundDetailLevel(void);
 
+int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data);
+
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
 void C2_HOOK_FASTCALL CheckKevKeys(void);

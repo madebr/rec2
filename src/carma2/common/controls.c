@@ -181,6 +181,17 @@ void C2_HOOK_FASTCALL ToggleDoors(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042dd50, ToggleDoors, ToggleDoors_original)
 
+int (C2_HOOK_CDECL * ToggleDoorsActorCallback_original)(br_actor* pActor, void* data);
+int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return ToggleDoorsActorCallback_original(pActor, data);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042ddc0, ToggleDoorsActorCallback, ToggleDoorsActorCallback_original)
+
 // Key: 'tab'
 void (C2_HOOK_FASTCALL * ToggleMap_original)(void);
 void C2_HOOK_FASTCALL ToggleMap(void) {
