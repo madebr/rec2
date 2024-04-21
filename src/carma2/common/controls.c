@@ -8,6 +8,7 @@
 #include "loading.h"
 #include "network.h"
 #include "physics.h"
+#include "polyfont.h"
 #include "sound.h"
 #include "utility.h"
 
@@ -167,10 +168,15 @@ C2_HOOK_FUNCTION(0x004569e0, GetSoundDetailLevel)
 void (C2_HOOK_FASTCALL * ToggleMiniMap_original)(void);
 void C2_HOOK_FASTCALL ToggleMiniMap(void) {
     CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleMiniMap_original();
 #else
-#error "Not implemented"
+    if (C2V(gMap_view) == 2) {
+        return;
+    }
+    C2V(gMini_map_visible) = !C2V(gMini_map_visible);
+    NewTextHeadupSlot(4, 0, 500, -4, GetMiscString(C2V(gMini_map_visible) ? eMiscString_minimap_on : eMiscString_minimap_off));
+    UpdateMapAndSaveOptions();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004420e0, ToggleMiniMap, ToggleMiniMap_original)
