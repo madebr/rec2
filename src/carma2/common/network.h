@@ -31,4 +31,6 @@ void C2_HOOK_FASTCALL DisableNetService(void);
 
 void C2_HOOK_FASTCALL ReenableNetService(void);
 
+tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(int pType, int pOption);
+
 #endif // REC2_NETWORK_H
