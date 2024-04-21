@@ -457,6 +457,19 @@ void C2_HOOK_FASTCALL ToggleHUD(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444f40, ToggleHUD, ToggleHUD_original)
 
+void C2_HOOK_FASTCALL SetFlag(tU32 i) {
+    int match;
+
+    match = C2V(gI_am_cheating) == i;
+    C2V(gI_am_cheating) = i;
+    if (match) {
+        C2V(gI_am_cheating) = 0;
+        NewTextHeadupSlot(4, 0, 3000, -4, "Cheating Off");
+    }
+    F4Key();
+}
+C2_HOOK_FUNCTION(0x00441580, SetFlag)
+
 // Key: 'f4'
 void (C2_HOOK_FASTCALL * F4Key_original)(void);
 void C2_HOOK_FASTCALL F4Key(void) {

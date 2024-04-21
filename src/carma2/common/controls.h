@@ -54,6 +54,8 @@ void C2_HOOK_FASTCALL AbortRace(void);
 
 void C2_HOOK_FASTCALL ToggleHUD(void);
 
+void C2_HOOK_FASTCALL SetFlag(tU32 i);
+
 void C2_HOOK_FASTCALL F4Key(void);
 
 void C2_HOOK_FASTCALL F5Key(void);
