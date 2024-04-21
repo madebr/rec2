@@ -945,11 +945,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00441880, F11Key, F11Key_original)
 // Key: 'f12'
 void (C2_HOOK_FASTCALL * F12Key_original)(void);
 void C2_HOOK_FASTCALL F12Key(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0///defined(C2_HOOKS_ENABLED)
     F12Key_original();
 #else
-#error "Not implemented"
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441900, F12Key, F12Key_original)
