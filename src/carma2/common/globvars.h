@@ -120,7 +120,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gRace_head_ups, 22);
 
 //extern int gInfo_on;
 //extern int gHost_abandon_game;
-//extern int gRecover_car;
+C2_HOOK_VARIABLE_DECLARE(int, gRecover_car);
 C2_HOOK_VARIABLE_DECLARE(int, gDisallow_abandon_race);
 //extern int gPipe_reg_snap_before_new_game;
 //extern int gPipe_reg_snap_before_our_car;
@@ -227,7 +227,7 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDepth_buffer);
 //extern int gCheck_point_cash[3];
 //extern int gPoints_per_second[3];
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gTrack_actor);
-C2_HOOK_VARIABLE_DECLARE(int, gMap_mode);
+C2_HOOK_VARIABLE_DECLARE(tU32, gMap_time);
 //extern int gPed_time_value[3];
 C2_HOOK_VARIABLE_DECLARE(int, gAbandon_game);
 C2_HOOK_VARIABLE_DECLARE(int, gLap);

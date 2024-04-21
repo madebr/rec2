@@ -6,6 +6,7 @@
 #include "c2_hooks.h"
 
 C2_HOOK_VARIABLE_DECLARE(int, gInitialised_grid);
+C2_HOOK_VARIABLE_DECLARE(int, gIt_or_fox);
 
 void C2_HOOK_FASTCALL DefaultNetName(void);
 
