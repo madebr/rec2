@@ -641,3 +641,9 @@ void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044b300, EarnCredits2, EarnCredits2_original)
+
+void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
+
+    EarnCredits2(pAmount, "");
+}
+C2_HOOK_FUNCTION(0x0044b440, EarnCredits)
