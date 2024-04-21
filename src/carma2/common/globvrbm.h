@@ -5,7 +5,7 @@
 
 #include <brender/br_types.h>
 
-
+C2_HOOK_VARIABLE_DECLARE(int, gCar_flying);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gPrat_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, g2d_camera);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gPowerupHUD_actor);
