@@ -2736,7 +2736,9 @@ typedef struct tCollision_info {
     undefined4 field183_0x1d8;
     undefined field_0x1dc;
     undefined collision_flag;
-    undefined field_0x1de[10];
+    undefined field_0x1de;
+    undefined field_0x1df;
+    undefined field_0x1e0[8];
     br_matrix34 field_0x1e8;
     undefined field_0x218[8];
     tCollision_info* next;
