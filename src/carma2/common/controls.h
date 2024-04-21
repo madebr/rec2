@@ -119,6 +119,8 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
 
 void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* car);
 
+void C2_HOOK_FASTCALL FlipUpCollisionInfo(tCollision_info* pCollision_info);
+
 void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 
 #endif //REC2_CONTROLS_H
