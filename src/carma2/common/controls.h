@@ -13,6 +13,15 @@ C2_HOOK_VARIABLE_DECLARE(int, gInstant_handbrake);
 C2_HOOK_VARIABLE_DECLARE(tU32, gToo_poor_for_recovery_timeout);
 C2_HOOK_VARIABLE_DECLARE(int, gCheckpoint_finder_enabled);
 
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e4);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e8);
+C2_HOOK_VARIABLE_DECLARE(int, gHad_auto_recover);
+C2_HOOK_VARIABLE_DECLARE(tU32, gPalette_fade_time);
+C2_HOOK_VARIABLE_DECLARE(int, gRecover_timer);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_00590f60);
+C2_HOOK_VARIABLE_DECLARE(int, gToo_late);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0067c470);
+
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
 void C2_HOOK_FASTCALL ReallySetSoundDetailLevel(int pLevel);
@@ -26,6 +35,8 @@ void C2_HOOK_FASTCALL ToggleDoors(void);
 int C2_HOOK_FASTCALL ToggleDoorsCollisionInfoCallback(tCollision_info* pCollision_info, void* data);
 
 int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data);
+
+void C2_HOOK_FASTCALL ToggleMap2(void);
 
 void C2_HOOK_FASTCALL ToggleMap(void);
 
