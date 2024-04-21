@@ -92,4 +92,6 @@ void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, 
 
 void C2_HOOK_STDCALL CreateAccentPolyActor(float pX, float pY, float pWidth, float pHeight);
 
+void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text);
+
 #endif //REC2_DISPLAYS_H
