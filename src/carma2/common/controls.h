@@ -18,9 +18,93 @@ void C2_HOOK_FASTCALL ReallySetSoundDetailLevel(int pLevel);
 
 int C2_HOOK_FASTCALL GetSoundDetailLevel(void);
 
+void C2_HOOK_FASTCALL ToggleMiniMap(void);
+
+void C2_HOOK_FASTCALL ToggleDoors(void);
+
 int C2_HOOK_FASTCALL ToggleDoorsCollisionInfoCallback(tCollision_info* pCollision_info, tCar_spec *pCar_spec);
 
 int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, tCar_spec* pCar);
+
+void C2_HOOK_FASTCALL ToggleMap(void);
+
+void C2_HOOK_FASTCALL FUN00444600(void);
+
+void C2_HOOK_FASTCALL ToggleCheckpointFinder(void);
+
+void C2_HOOK_FASTCALL ToggleMapTrans(void);
+
+void C2_HOOK_FASTCALL SetRecovery(void);
+
+void C2_HOOK_FASTCALL AbortRace(void);
+
+void C2_HOOK_FASTCALL ToggleHUD(void);
+
+void C2_HOOK_FASTCALL F4Key(void);
+
+void C2_HOOK_FASTCALL F5Key(void);
+
+void C2_HOOK_FASTCALL F6Key(void);
+
+void C2_HOOK_FASTCALL F7Key(void);
+
+void C2_HOOK_FASTCALL F8Key(void);
+
+void C2_HOOK_FASTCALL F10Key(void);
+
+void C2_HOOK_FASTCALL F11Key(void);
+
+void C2_HOOK_FASTCALL F12Key(void);
+
+void C2_HOOK_FASTCALL NumberKey0(void);
+
+void C2_HOOK_FASTCALL NumberKey1(void);
+
+void C2_HOOK_FASTCALL NumberKey2(void);
+
+void C2_HOOK_FASTCALL NumberKey3(void);
+
+void C2_HOOK_FASTCALL NumberKey4(void);
+
+void C2_HOOK_FASTCALL NumberKey5(void);
+
+void C2_HOOK_FASTCALL NumberKey6(void);
+
+void C2_HOOK_FASTCALL NumberKey7(void);
+
+void C2_HOOK_FASTCALL NumberKey8(void);
+
+void C2_HOOK_FASTCALL NumberKey9(void);
+
+void C2_HOOK_FASTCALL ToggleFlying(void);
+
+void C2_HOOK_FASTCALL ScreenSmaller(void);
+
+void C2_HOOK_FASTCALL ScreenLarger(void);
+
+void C2_HOOK_FASTCALL BuyArmour(void);
+
+void C2_HOOK_FASTCALL BuyPower(void);
+
+void C2_HOOK_FASTCALL BuyOffense(void);
+
+void C2_HOOK_FASTCALL FUN0040e430(void);
+
+void C2_HOOK_FASTCALL UserSendMessage(void);
+
+void C2_HOOK_FASTCALL ToggleTargetLock(void);
+
+void C2_HOOK_FASTCALL ToggleTarget(void);
+
+void C2_HOOK_FASTCALL PowerupInventoryToggle(void);
+
+void C2_HOOK_FASTCALL PowerupInventoryNext(void);
+
+void C2_HOOK_FASTCALL PowerupInventoryPrevious(void);
+
+void C2_HOOK_FASTCALL ToggleCam(void);
+
+void C2_HOOK_FASTCALL ToggleCockpit(void);
 
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
