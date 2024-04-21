@@ -1,5 +1,6 @@
 #include "car.h"
 
+#include "drone.h"
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -23,6 +24,18 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tNon_car_spec*, gActive_non_car_list, 99, 0x007
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_active_non_cars, 0x006793dc);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gMin_world_y, 0x00679360);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gUnknown_car_collision_info, 0x006793e4);
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067939c, 0x0067939c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
+    FUN_0041c1b0,
+    FUN_0041e310,
+    FUN_00414910,
+    FUN_004b57d0,
+    FUN_0041ff00,
+    StopGroovidelic,
+    FUN_004b5970,
+    NULL,
+});
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -69,6 +82,22 @@ void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 p
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041fc60, SetCarSuspGiveAndHeight, SetCarSuspGiveAndHeight_original)
+
+int C2_HOOK_FASTCALL FUN_0041fe50(tCar_spec *pCar_spec, br_vector3 *pVec3) {
+    int r;
+
+    if (!C2V(gProgram_state).racing) {
+        return 1;
+    }
+    C2V(gINT_0067939c) = 1;
+    r = FUN_00429070(pCar_spec->collision_info,
+        C2V(gList_collision_infos),
+        pVec3,
+        &C2V(gCar_callbacks));
+    C2V(gINT_0067939c) = 0;
+    return r;
+}
+C2_HOOK_FUNCTION(0x0041fe50, FUN_0041fe50)
 
 void (C2_HOOK_FASTCALL * PanningExternalCamera_original)(tCar_spec* c, tU32 pTime);
 void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime) {
