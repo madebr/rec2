@@ -93,4 +93,6 @@ int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps
 
 int C2_HOOK_FASTCALL PercentageChance(int pC);
 
+tU32 C2_HOOK_FASTCALL GetRaceTime(void);
+
 #endif // REC2_UTILITY_H
