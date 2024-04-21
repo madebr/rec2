@@ -23,6 +23,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gToo_late);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0067c470);
 C2_HOOK_VARIABLE_DECLARE(int, gWhich_edit_mode);
 C2_HOOK_VARIABLE_DECLARE_ARRAY_ADV(tEdit_func*, gEdit_funcs, [2][18][8]);
+C2_HOOK_VARIABLE_DECLARE(int, gAllow_car_flying);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
