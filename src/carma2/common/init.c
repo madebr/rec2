@@ -1380,7 +1380,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     LoadFont(23);
     PossibleService();
     ResetRecoveryVouchers();
-    C2V(gMap_mode) = 0;
+    C2V(gMap_time) = 0;
     C2V(gProgram_state).cockpit_image_index = 0;
     PossibleService();
     C2V(gProgram_state).which_view = eView_forward;

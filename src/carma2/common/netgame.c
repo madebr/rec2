@@ -7,6 +7,7 @@
 #include <brender/brender.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInitialised_grid, 0x0074a738);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gIt_or_fox, 0x0074a734);
 
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
