@@ -52,4 +52,6 @@ int C2_HOOK_CDECL IsNetworkShare(const char* path);
 
 int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex);
 
+void C2_HOOK_FASTCALL PDRevertPalette(void);
+
 #endif // C2_WIN32_WIN32_H
