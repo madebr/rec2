@@ -8,7 +8,9 @@
 #include "loading.h"
 #include "main.h"
 #include "mainmenu.h"
+#include "network.h"
 #include "platform.h"
+#include "sound.h"
 #include "world.h"
 
 #include "brender/brender.h"
@@ -32,6 +34,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const tU8, gOther_long_key, 16, 0x00658600
     0x32, 0x7e, 0x22, 0x13, 0x15, 0xc2, 0x94, 0x37,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDecode_thing, 0x00655e30, '@');
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_service, 0x006abef8);
 
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
@@ -359,10 +362,17 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00514c30, GetTotalTime, GetTotalTime_original)
 
 void (C2_HOOK_FASTCALL * PossibleService_original)(void);
 void C2_HOOK_FASTCALL PossibleService(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PossibleService_original();
 #else
-#error "not implemented"
+    tU32 time;
+
+    time = PDGetTotalTime();
+    if (time - C2V(last_service) > 200 && !C2V(gProgram_state).racing) {
+        SoundService();
+        NetService(C2V(gProgram_state).racing);
+        C2V(last_service) = time;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005155d0, PossibleService, PossibleService_original)
