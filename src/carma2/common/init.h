@@ -7,6 +7,7 @@
 
 C2_HOOK_VARIABLE_DECLARE(br_material*, gDefault_track_material);
 
+C2_HOOK_VARIABLE_DECLARE(int, gRender_indent);
 C2_HOOK_VARIABLE_DECLARE(int, gBr_initialized);
 C2_HOOK_VARIABLE_DECLARE(int, gBrZb_initialized);
 C2_HOOK_VARIABLE_DECLARE(undefined4, gDAT_0074c6d0);
