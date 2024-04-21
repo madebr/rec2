@@ -885,11 +885,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00441600, F5Key, F5Key_original)
 // Key: 'f6'
 void (C2_HOOK_FASTCALL * F6Key_original)(void);
 void C2_HOOK_FASTCALL F6Key(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     F6Key_original();
 #else
-#error "Not implemented"
+    DoEditModeKey(1);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441680, F6Key, F6Key_original)
