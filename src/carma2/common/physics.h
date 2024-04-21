@@ -70,6 +70,8 @@ int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pP
 
 void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tCollision_info *pCollision_info, tU8 pDisable);
 
+void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tCollision_info *pCollision_info, tU8 pDisable);
+
 int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_info);
 
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tCollision_info* pParent, tCollision_info* pChild);

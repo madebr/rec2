@@ -1053,6 +1053,23 @@ void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tCollision_info *pCollision_info
 }
 C2_HOOK_FUNCTION(0x004b9eb0, SetCollisionInfoDoNothing)
 
+void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tCollision_info *pCollision_info, tU8 pDisable) {
+    tCollision_info *child;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x1df, 0x1df);
+
+    pCollision_info->disable_move_rotate = pDisable;
+    pCollision_info->field_0x1df = 0;
+    for (child = pCollision_info->child; child != NULL; child = child->next) {
+        child->disable_move_rotate = pDisable;
+        child->field_0x1df = 0;
+        if (child->child != NULL) {
+            SetCollisionInfoDoNothing(child->child,pDisable);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004b9ef0, SetCollisionInfoChildsDoNothing)
+
 int (C2_HOOK_FASTCALL * RemoveFromCollisionInfoList_original)(tCollision_info* pCollision_info);
 int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_info) {
 
