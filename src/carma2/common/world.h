@@ -20,6 +20,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gCount_track_smashable_environment_specs);
 C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec*, gTrack_smashable_environment_specs);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmashable_item_spec*, gSmashable_track_indexable_triggers, 100);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tUnknown_0x006a7fc8, gUnknown_0x006a7fc8, 25);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gAdditional_actors);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -170,5 +171,7 @@ intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg);
 void C2_HOOK_FASTCALL RemoveBoundsStructures(br_actor* pActor);
 
 void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec);
+
+void C2_HOOK_FASTCALL SaveAdditionalStuff(void);
 
 #endif // REC2_WORLD_H
