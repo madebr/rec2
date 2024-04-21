@@ -1,5 +1,6 @@
 #include "controls.h"
 
+#include "displays.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "input.h"
@@ -131,6 +132,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gRecovery_voucher_count, 0x0067c3f8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAuto_repair, 0x0079ec54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInstant_handbrake, 0x0079ec50);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gToo_poor_for_recovery_timeout, 0x0067c47c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCheckpoint_finder_enabled, 0x00659b28);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -238,10 +240,12 @@ C2_HOOK_FUNCTION(0x00444600, FUN00444600)
 void (C2_HOOK_FASTCALL * ToggleCheckpointFinder_original)(void);
 void C2_HOOK_FASTCALL ToggleCheckpointFinder(void) {
     CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleCheckpointFinder_original();
 #else
-#error "Not implemented"
+
+    C2V(gCheckpoint_finder_enabled) = !C2V(gCheckpoint_finder_enabled);
+    NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(C2V(gCheckpoint_finder_enabled) ? eMiscString_checkpoint_finder_turned_on : eMiscString_checkpoint_finder_turned_off), 0);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00494840, ToggleCheckpointFinder, ToggleCheckpointFinder_original)

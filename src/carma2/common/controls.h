@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gRecovery_voucher_count);
 C2_HOOK_VARIABLE_DECLARE(int, gAuto_repair);
 C2_HOOK_VARIABLE_DECLARE(int, gInstant_handbrake);
 C2_HOOK_VARIABLE_DECLARE(tU32, gToo_poor_for_recovery_timeout);
+C2_HOOK_VARIABLE_DECLARE(int, gCheckpoint_finder_enabled);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
