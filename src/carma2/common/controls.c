@@ -337,6 +337,17 @@ void C2_HOOK_FASTCALL SetRecovery(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442300, SetRecovery, SetRecovery_original)
 
+int (C2_HOOK_FASTCALL * CheckRecoverCost_original)(void);
+int C2_HOOK_FASTCALL CheckRecoverCost(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return CheckRecoverCost_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00442750, CheckRecoverCost, CheckRecoverCost_original)
+
 // Key: 'ctrl+a'
 void (C2_HOOK_FASTCALL * AbortRace_original)(void);
 void C2_HOOK_FASTCALL AbortRace(void) {
