@@ -1042,6 +1042,19 @@ int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pP
 }
 C2_HOOK_FUNCTION(0x004b63b0, SetCollisionInfoParam)
 
+void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tCollision_info *pCollision_info, tU8 pDisable) {
+
+    while (pCollision_info != NULL) {
+        pCollision_info->disable_move_rotate = pDisable;
+        pCollision_info->field_0x1df = 0;
+        if (pCollision_info->child != NULL) {
+            SetCollisionInfoDoNothing(pCollision_info->child, pDisable);
+        }
+        pCollision_info = pCollision_info->next;
+    }
+}
+C2_HOOK_FUNCTION(0x004b9eb0, SetCollisionInfoDoNothing)
+
 int (C2_HOOK_FASTCALL * RemoveFromCollisionInfoList_original)(tCollision_info* pCollision_info);
 int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_info) {
 
