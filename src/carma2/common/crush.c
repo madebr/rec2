@@ -757,3 +757,12 @@ void C2_HOOK_FASTCALL SortOutSmoke(tCar_spec* pCar) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00440230, SortOutSmoke, SortOutSmoke_original)
+
+void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
+
+    if (DoCrashEarnings(pCar1, pCar2)) {
+        SortOutSmoke(pCar1);
+        SortOutSmoke(pCar2);
+    }
+}
+C2_HOOK_FUNCTION(0x00440640, CrashEarnings)
