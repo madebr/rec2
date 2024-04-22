@@ -84,4 +84,6 @@ tCollision_info* C2_HOOK_FAKE_THISCALL CreateBoxCollisionShapeWithMass(br_model*
 
 tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType);
 
+void C2_HOOK_FASTCALL CollisionInfoAddChild(tCollision_info* pParent, tCollision_info* pChild);
+
 #endif //REC2_PHYSICS_H
