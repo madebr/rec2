@@ -8,6 +8,7 @@
 #include "loading.h"
 #include "polyfont.h"
 #include "platform.h"
+#include "sound.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -752,3 +753,42 @@ int C2_HOOK_FASTCALL FRONTEND_FindVisibleItem(tFrontend_spec* pFrontend, int pSt
     }
 }
 C2_HOOK_FUNCTION(0x00467a30, FRONTEND_FindVisibleItem)
+
+void C2_HOOK_FASTCALL FRONTEND_HandleClick(tFrontend_spec* pFrontend) {
+
+    int selected_index = C2V(gFrontend_selected_item_index);
+    tFrontend_item_spec* selected_item = &pFrontend->items[selected_index];
+    int selected_group = selected_item->group;
+    if (selected_group != 0) {
+        int i;
+
+        for (i = 0; i < pFrontend->count_items; i++) {
+            tFrontend_item_spec* item = &pFrontend->items[i];
+            if (item->group == selected_group && selected_item->selectable != kFrontendSelectableButton) {
+                pFrontend->items[i].radioButton_selected = 0;
+            }
+        }
+        if (selected_item->selectable != kFrontendSelectableButton) {
+            selected_item->radioButton_selected = !selected_item->radioButton_selected;
+            DRS3StartSound(C2V(gEffects_outlet), eSoundId_Done);
+        }
+    } else if (selected_item->idLevelBar != 0) {
+        int i;
+        int level_id = selected_item->idLevelBar;
+
+        for (i = pFrontend->levels[level_id - 1].first_item_id; i <= pFrontend->levels[level_id - 1].last_item_id; i++) {
+            br_pixelmap* src;
+
+            if (i > selected_index) {
+                src = C2V(gFrontend_images)[5];
+            } else {
+                src = C2V(gFrontend_images)[4];
+            }
+            BrPixelmapCopy(C2V(gFrontend_brender_items)[i].field_0xc, src);
+            BrPixelmapCopy(C2V(gFrontend_brender_items)[i].field_0x10, src);
+            pFrontend->items[i].radioButton_selected = 0;
+        }
+        pFrontend->items[selected_index].radioButton_selected = 1;
+    }
+}
+C2_HOOK_FUNCTION(0x00467890, FRONTEND_HandleClick)

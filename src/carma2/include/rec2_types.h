@@ -1068,12 +1068,12 @@ typedef enum {
 } eFrontendSelectableType;
 
 typedef struct {
-    int unknown0;  // FIXME: unknown
-    int unknown1;  // FIXME: unknown
-    int unknown2;  // FIXME: unknown
-    int unknown3;  // FIXME: unknown
-    int unknown4;  // FIXME: unknown
-    int unknown5;  // FIXME: unknown
+    undefined4 field_0x00;
+    undefined4 field_0x04;
+    int first_item_id;
+    int last_item_id;
+    undefined4 field_0x10;
+    undefined4 field_0x14;
 } tFrontend_level_spec;
 
 typedef struct {
@@ -3490,6 +3490,10 @@ enum {
     kPolyfont_ingame_italic_red         = 24,
     kPolyfont_netpos                    = 25,
     kPolyfont_highlighter               = 26,
+};
+
+enum {
+    eSoundId_Done = 3004,
 };
 
 #endif // REC2_TYPES_H
