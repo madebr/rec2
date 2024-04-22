@@ -67,10 +67,28 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00482590, PDKeyDown2, PDKeyDown2_original)
 int (C2_HOOK_FASTCALL * EitherMouseButtonDown_original)(void);
 int C2_HOOK_FASTCALL EitherMouseButtonDown(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return EitherMouseButtonDown_original();
 #else
-#error "Not implemented"
+    tMouse_coord pos;
+    tMouse_coord prev_pos = C2V(gCurrent_mouse_position);
+    int left;
+    int right;
+
+    GetMousePosition(&pos.x, &pos.y);
+    if (prev_pos.x == pos.x && prev_pos.y == pos.y) {
+        tMouse_coord click_pos;
+
+        int ok = PDGetMouseClickPosition(&click_pos.x, &click_pos.y);
+        if (ok && pos.x == click_pos.x && pos.y == click_pos.y) {
+            return 2;
+        }
+    }
+    PDMouseButtons(&left, &right);
+    if (left || right) {
+        return 1;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004824c0, EitherMouseButtonDown, EitherMouseButtonDown_original)
