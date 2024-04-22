@@ -1150,3 +1150,13 @@ tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pTy
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c5e20, AllocatePhysicsJoint, AllocatePhysicsJoint_original)
 
+void (C2_HOOK_FASTCALL * CollisionInfoAddChild_original)(tCollision_info* pParent, tCollision_info* pChild);
+void C2_HOOK_FASTCALL CollisionInfoAddChild(tCollision_info* pParent, tCollision_info* pChild) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CollisionInfoAddChild_original(pParent, pChild);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c63b0, CollisionInfoAddChild, CollisionInfoAddChild_original)
