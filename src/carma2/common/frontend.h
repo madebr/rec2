@@ -15,6 +15,8 @@ void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
 void C2_HOOK_FASTCALL FreeInterfaceStrings(void);
 
+const char* C2_HOOK_FASTCALL GetInterfaceString(int pIndex);
+
 static void C2_HOOK_FASTCALL LoadMenuImages(void);
 
 void C2_HOOK_FASTCALL CreateMenuActors(void);
