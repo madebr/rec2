@@ -662,3 +662,20 @@ void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x004666f0, FRONTEND_CompleteItemSizes)
+
+void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, int pIndex) {
+    int i;
+
+    tFrontend_scroller_spec* scroller = &pFrontend->scrollers[pIndex];
+
+    for (i = 0; i < scroller->nbDisplayedAtOnce; i++) {
+        int item_idx = scroller->indexFirstScrollableItem + i;
+        br_model* model = C2V(gFrontend_brender_items)[item_idx].model;
+
+        model->vertices[3].p.v[0] = model->vertices[1].p.v[0] + pFrontend->items[item_idx].width;
+        model->vertices[2].p.v[0] = model->vertices[3].p.v[0];
+        model->vertices[2].p.v[1] = model->vertices[3].p.v[1] - pFrontend->items[item_idx].height;
+        model->vertices[1].p.v[0] = model->vertices[2].p.v[1];
+    }
+}
+C2_HOOK_FUNCTION(0x00466ce0, FRONTEND_UpdateScrollerModels)
