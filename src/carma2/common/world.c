@@ -1267,7 +1267,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage*
     for (i = 0; i < pStorage_space->shade_tables_count; i++) {
         if (pStorage_space->shade_tables[i]->identifier
             && pThe_st->identifier
-            && !c2_strcmp(pStorage_space->shade_tables[i]->identifier, pThe_st->identifier)) {
+            && c2_strcmp(pStorage_space->shade_tables[i]->identifier, pThe_st->identifier) == 0) {
             return eStorage_duplicate;
         }
     }
@@ -1491,6 +1491,15 @@ void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile,
     LoadMaterialsInto(pStorage, s2, pShading);
 }
 C2_HOOK_FUNCTION(0x00501fe0, LoadSomeMaterials)
+
+br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName) {
+    tPath_name the_path;
+
+    PathCat(the_path, C2V(gApplication_path), "SHADETAB");
+    PathCat(the_path, the_path, pName);
+    return BrPixelmapLoad(the_path);
+}
+C2_HOOK_FUNCTION(0x0048ef40, LoadShadeTable)
 
 tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod) {
     int i;
