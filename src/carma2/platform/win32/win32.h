@@ -54,4 +54,6 @@ int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex);
 
 void C2_HOOK_FASTCALL PDRevertPalette(void);
 
+void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
+
 #endif // C2_WIN32_WIN32_H
