@@ -792,3 +792,57 @@ void C2_HOOK_FASTCALL FRONTEND_HandleClick(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x00467890, FRONTEND_HandleClick)
+
+int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
+    char buffer[256];
+    br_actor* actor;
+    int i;
+
+    c2_sprintf(buffer, "START OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
+    PrintMemoryDump(0, buffer);
+    if (pFrontend->destroy != NULL) {
+        pFrontend->destroy(pFrontend);
+    }
+    for (actor = C2V(gFrontend_actor)->children; actor != NULL; actor = C2V(gFrontend_actor)->children) {
+        if (c2_strcmp(actor->identifier, "Backdrop") == 0) {
+            break;
+        }
+        BrActorRemove(actor);
+    }
+    for (i = 0; i < C2V(gFrontend_count_brender_items); i++) {
+
+        BrMaterialRemove(C2V(gFrontend_brender_items)[i].material);
+        BrModelRemove(C2V(gFrontend_brender_items)[i].model);
+        C2V(gFrontend_brender_items)[i].actor->render_style = BR_RSTYLE_NONE;
+        BrMaterialFree(C2V(gFrontend_brender_items)[i].material);
+        C2V(gFrontend_brender_items)[i].material = NULL;
+        BrModelFree(C2V(gFrontend_brender_items)[i].model);
+        C2V(gFrontend_brender_items)[i].model = NULL;
+        BrActorFree(C2V(gFrontend_brender_items)[i].actor);
+        C2V(gFrontend_brender_items)[i].actor = NULL;
+        if (C2V(gFrontend_brender_items)[i].field_0xc != NULL) {
+            BrMapRemove(C2V(gFrontend_brender_items)[i].field_0xc);
+            BrPixelmapFree(C2V(gFrontend_brender_items)[i].field_0xc);
+            C2V(gFrontend_brender_items)[i].field_0xc = NULL;
+        }
+        if (C2V(gFrontend_brender_items)[i].field_0x10 != NULL) {
+            BrPixelmapFree(C2V(gFrontend_brender_items)[i].field_0x10);
+            C2V(gFrontend_brender_items)[i].field_0x10 = NULL;
+        }
+    }
+    /* FIXME: parametrize last item */
+    BrMaterialRemove(C2V(gFrontend_brender_items)[99].material);
+    BrModelRemove(C2V(gFrontend_brender_items)[99].model);
+    C2V(gFrontend_brender_items)[99].actor->render_style = BR_RSTYLE_NONE;
+    BrMaterialFree(C2V(gFrontend_brender_items)[99].material);
+    C2V(gFrontend_brender_items)[99].material = NULL;
+    BrModelFree(C2V(gFrontend_brender_items)[99].model);
+    C2V(gFrontend_brender_items)[99].model = NULL;
+    BrActorFree(C2V(gFrontend_brender_items)[99].actor);
+    C2V(gFrontend_brender_items)[99].actor = NULL;
+    EndMouseCursor();
+    c2_sprintf(buffer, "END OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
+    PrintMemoryDump(0, buffer);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0046ccb0, FRONTEND_DestroyMenu)
