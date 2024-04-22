@@ -29,6 +29,8 @@ void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF);
 
 void C2_HOOK_FASTCALL InitShitMines(void);
 
+int C2_HOOK_FASTCALL DoExplodingMineEffect(tShit_mine *pMine);
+
 void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime);
 
 void C2_HOOK_FASTCALL DisposeMutantTail(void);
