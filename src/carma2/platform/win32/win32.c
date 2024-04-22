@@ -961,3 +961,12 @@ C2_HOOK_FUNCTION(0x0051c900, PDGetMousePosition)
 void C2_HOOK_FASTCALL PDRevertPalette(void) {
 }
 C2_HOOK_FUNCTION(0x0051c280, PDRevertPalette)
+
+void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown) {
+
+    *pLeftButtonDown = C2V(gMouseLButtonDown);
+    if (pRightButtonDown != NULL) {
+        *pRightButtonDown = C2V(gMouseRButtonDown);
+    }
+}
+C2_HOOK_FUNCTION(0x0051c8e0, PDMouseButtons)
