@@ -603,3 +603,15 @@ void C2_HOOK_FASTCALL UpdateThrobFactor(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0046cec0, UpdateThrobFactor)
+
+void C2_HOOK_FASTCALL FRONTEND_InterpolateModel(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps) {
+    int i;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+
+        pModel->vertices[i].p.v[0] = pModel_from->vertices[i].p.v[0] + (pModel_to->vertices[i].p.v[0] - pModel_from->vertices[i].p.v[0]) * ((float)pStep / (float)pCount_steps);
+        pModel->vertices[i].p.v[1] = pModel_from->vertices[i].p.v[1] + (pModel_to->vertices[i].p.v[1] - pModel_from->vertices[i].p.v[1]) * ((float)pStep / (float)pCount_steps);
+    }
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+}
+C2_HOOK_FUNCTION(0x0046f5b0, FRONTEND_InterpolateModel)
