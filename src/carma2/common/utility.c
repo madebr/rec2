@@ -1093,3 +1093,74 @@ tU32 C2_HOOK_FASTCALL GetRaceTime(void) {
     return PDGetTotalTime() - C2V(gRace_start);
 }
 C2_HOOK_FUNCTION(0x00514c70, GetRaceTime)
+
+void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent) {
+    char* s = NULL;
+
+    switch (pPercent) {
+    case 0:
+    case 100:
+        pMaterial->index_blend = NULL;
+        return;
+    case 25:
+        s = "BLEND75.TAB";
+        break;
+    case 50:
+        s = "BLEND50.TAB";
+        break;
+    case 75:
+        s = "BLEND25.TAB";
+        break;
+    default:
+        return;
+    }
+    pMaterial->index_blend = BrTableFind(s);
+    if (pMaterial->index_blend == NULL) {
+        pMaterial->index_blend = LoadSingleShadeTable(&C2V(gTrack_storage_space), s);
+    }
+}
+
+void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent) {
+
+    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, alpha25, 3, 0x00661688, {
+        { BRT_BLEND_B, { .b = 1 } },
+        { BRT_OPACITY_X, { .x = 0x400000 } },
+        { 0 },
+    });
+    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, alpha50, 3, 0x006616a0, {
+        { BRT_BLEND_B, { .b = 1 } },
+        { BRT_OPACITY_X, { .x = 0x800000 } },
+        { 0 },
+    });
+    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, alpha75, 3, 0x006616b8, {
+        { BRT_BLEND_B, { .b = 1 } },
+        { BRT_OPACITY_X, { .x = 0xc00000 } },
+        { 0 },
+    });
+
+    switch (pPercent) {
+    case 25:
+        pMaterial->extra_prim = C2V(alpha25);
+        break;
+    case 50:
+        pMaterial->extra_prim = C2V(alpha50);
+        break;
+    case 75:
+        pMaterial->extra_prim = C2V(alpha75);
+        break;
+    case 0:
+    case 1000:
+        pMaterial->extra_prim = NULL;
+        break;
+    }
+}
+
+void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent) {
+
+    if (C2V(gScreen)->type == BR_PMT_INDEX_8) {
+        BlendifyMaterialTablishly(pMaterial, pPercent);
+    } else {
+        BlendifyMaterialPrimitively(pMaterial, pPercent);
+    }
+}
+C2_HOOK_FUNCTION(0x00515e70, BlendifyMaterial)
