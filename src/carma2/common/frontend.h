@@ -41,4 +41,6 @@ void C2_HOOK_FASTCALL FRONTEND_InterpolateModel(br_model* pModel_from, br_model*
 
 void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, int pIndex);
+
 #endif //REC2_FRONTEND_H
