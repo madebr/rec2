@@ -634,3 +634,31 @@ void C2_HOOK_FASTCALL FRONTEND_InterpolateModel(br_model* pModel_from, br_model*
     BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
 }
 C2_HOOK_FUNCTION(0x0046f5b0, FRONTEND_InterpolateModel)
+
+void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend) {
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_spec, count_items, 0x104);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_spec, items, 0x130);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_item_spec, stringId, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_item_spec, width, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_item_spec, height, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_item_spec, wrapText, 0x48);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_item_spec, unlitFont, 0x10);
+
+    for (i = 0; i < pFrontend->count_items; i++) {
+        tFrontend_item_spec* item = &pFrontend->items[i];
+        const char* text = NULL;
+
+        if (item->stringId <= 0x400) {
+            text = GetInterfaceString(item->stringId);
+        } else if (item->stringId == 0x404) {
+            text = item->text;
+        }
+        if (text != NULL && !item->wrapText) {
+            item->width = GetPolyFontTextWidth(item->unlitFont, text);
+            item->height = GetPolyFontHeight(item->unlitFont);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004666f0, FRONTEND_CompleteItemSizes)
