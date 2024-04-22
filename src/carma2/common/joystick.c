@@ -24,3 +24,14 @@ void C2_HOOK_STDCALL ReadFFB_TXT(void) {
     c2_sscanf(c2_strtok(s, "\t ,/"), "%f", &C2V(Force_feedback_lower_limit));
     DRfclose(f);
 }
+
+int (C2_HOOK_FASTCALL * PlayFFBEffect_original)(const char* pEffect_name, int pArg2);
+int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PlayFFBEffect_original(pEffect_name, pArg2);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045c6b0, PlayFFBEffect, PlayFFBEffect_original)
