@@ -1162,3 +1162,9 @@ void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent) {
     }
 }
 C2_HOOK_FUNCTION(0x00515e70, BlendifyMaterial)
+
+float C2_HOOK_STDCALL FRandomPosNeg(float pN) {
+
+    return FRandomBetween(-pN, pN);
+}
+C2_HOOK_FUNCTION(0x005135e0, FRandomPosNeg)
