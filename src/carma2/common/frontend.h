@@ -39,4 +39,6 @@ void C2_HOOK_FASTCALL UpdateThrobFactor(void);
 
 void C2_HOOK_FASTCALL FRONTEND_InterpolateModel(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps);
 
+void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend);
+
 #endif //REC2_FRONTEND_H
