@@ -4,8 +4,10 @@
 #include "crush.h"
 #include "errors.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "graphics.h"
 #include "loading.h"
+#include "network.h"
 #include "physics.h"
 #include "platform.h"
 #include "shrapnel.h"
@@ -225,6 +227,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tRepulse_link, gRepulse_links, 6, 0x006a0960);
 C2_HOOK_VARIABLE_IMPLEMENT(tPhysics_joint*, gMutant_tail_first_joint, 0x006a0acc);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gMutant_tail_first_collision_info, 0x006a0908);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMutant_tail_state, 0x00705540);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074a5ec, 0x0074a5ec);
 
 void (C2_HOOK_FASTCALL * InitPowerups_original)(void);
 void C2_HOOK_FASTCALL InitPowerups(void) {
@@ -683,13 +686,92 @@ int C2_HOOK_FASTCALL DoExplodingMineEffect(tShit_mine *pMine) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ddab0, DoExplodingMineEffect, DoExplodingMineEffect_original)
 
+int C2_HOOK_FASTCALL CarVulnerableByMine(tCar_spec* pCar) {
+
+    if (pCar->field_0x4c8 > 1.f) {
+        return 0;
+    }
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        tNet_game_player_info* net_player = NetPlayerFromCar(pCar);
+        if (net_player != NULL && net_player->field_0x80 != 0) {
+            return 0;
+        }
+    }
+    if (pCar->invulnerable1) {
+        return 0;
+    }
+    return 1;
+}
+
 void (C2_HOOK_FASTCALL * ProcessShitMines_original)(tU32 pTime);
 void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ProcessShitMines_original(pTime);
 #else
-#error "Not implemented"
+    int i;
+    int play_effect;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gShit_mines)) != 20);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gShit_mines)); i++) {
+        tShit_mine* mine = &C2V(gShit_mines)[i];
+
+        if (!(mine->flags & 0x1)) {
+            continue;
+        }
+        if (mine->flags & 0x80) {
+            tCar_spec *car = mine->car;
+
+            if (car != NULL) {
+                int car_vulnerable;
+
+                mine->flags &= ~0x80;
+                car_vulnerable = CarVulnerableByMine(car);
+                if (car_vulnerable) {
+                    TotallySpamTheModel(car REC2_THISCALL_EDX, 0.1f * mine->max_damage);
+                }
+                if (car_vulnerable && (C2V(gNet_mode) == eNet_mode_none || C2V(gNet_mode) == eNet_mode_host)) {
+                    car->collision_info->v.v[1] += FRandomBetween(mine->field3_0xc, mine->initial_y_speed_factor) / (car->collision_info->M * WORLD_SCALE);
+                    car->collision_info->omega.v[2] += FRandomPosNeg(mine->initial_z_omega_factor) * TAU_F / car->collision_info->M;
+                    car->collision_info->omega.v[0] += FRandomPosNeg(mine->initial_x_omega_factor) * TAU_F / car->collision_info->M;
+                    car->collision_info->disable_move_rotate = 0;
+
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x49c, 0x49c);
+                    car->collision_info->field_0x49c = 40 + C2V(gINT_0074a5ec);
+                    if (!car->invulnerable2) {
+                        int j;
+
+                        C2_HOOK_BUG_ON(REC2_ASIZE(car->damage_units) != 12);
+                        for (j = 0; j < REC2_ASIZE(car->damage_units); j++) {
+                            DoDamage(car, j, IRandomBetween(0, (int)(25.f * mine->max_damage)));
+                        }
+                        if (car != mine->field_0x30) {
+                            car->last_hit_by = mine->field_0x30;
+                            car->time_last_hit = PDGetTotalTime();
+                            CrashEarnings(car, NULL);
+                        }
+                    }
+                }
+            }
+        }
+        play_effect = 0;
+        if (mine->flags & 0x20) {
+            mine->flags &= ~0x20;
+            play_effect = 1;
+        } else {
+            if (!(mine->flags & 0x2)) {
+                if ((mine->flags & 0x4) && pTime > mine->next_think_time) {
+                    play_effect = 1;
+                }
+            } else if (pTime > mine->next_think_time) {
+                mine->flags &= ~0x3;
+            }
+        }
+        if (play_effect) {
+            DoExplodingMineEffect(mine);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dde20, ProcessShitMines, ProcessShitMines_original)
