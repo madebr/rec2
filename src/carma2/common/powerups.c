@@ -363,10 +363,48 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004da630, ResetPowerups, ResetPowerups_original)
 br_actor* (C2_HOOK_FASTCALL * CreateActorFromPowerupMap_original)(br_pixelmap* pMap);
 br_actor* C2_HOOK_FASTCALL CreateActorFromPowerupMap(br_pixelmap* pMap) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return CreateActorFromPowerupMap_original(pMap);
 #else
-#error "Not implemented"
+    br_actor* actor;
+    br_material* material;
+    br_model* model;
+    br_scalar half_width;
+    br_scalar half_height;
+
+    model = BrModelAllocate("Billboard Model", 4, 2);
+    material = BrMaterialAllocate("Billboard Material");
+    actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    actor->identifier = "Billboard Actor";
+    actor->model = model;
+    actor->material = material;
+    actor->render_style = BR_RSTYLE_FACES;
+    model->faces[0].vertices[0] = 0;
+    model->faces[0].vertices[1] = 1;
+    model->faces[0].vertices[2] = 2;
+    model->faces[1].vertices[0] = 2;
+    model->faces[1].vertices[1] = 3;
+    model->faces[1].vertices[2] = 0;
+    model->faces[0].material = NULL;
+    model->faces[1].material = NULL;
+    half_width = (float)(pMap->width / 2);
+    half_height = (float)(pMap->height / 2);
+    BrVector3Set(&model->vertices[0].p, -half_width,  half_height, -2.f);
+    BrVector3Set(&model->vertices[1].p, -half_width, -half_height, -2.f);
+    BrVector3Set(&model->vertices[2].p,  half_width, -half_height, -2.f);
+    BrVector3Set(&model->vertices[3].p,  half_width,  half_height, -2.f);
+    BrVector2Set(&model->vertices[0].map, 0.f, 0.f);
+    BrVector2Set(&model->vertices[1].map, 0.f, 1.f);
+    BrVector2Set(&model->vertices[2].map, 1.f, 1.f);
+    BrVector2Set(&model->vertices[3].map, 1.f, 0.f);
+    material->colour = 0;
+    material->colour_map = pMap;
+    material->flags = BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
+    model->flags |= BR_MODF_KEEP_ORIGINAL;
+    BrMapAdd(pMap);
+    BrMaterialAdd(material);
+    BrModelAdd(model);
+    return actor;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e09d0, CreateActorFromPowerupMap, CreateActorFromPowerupMap_original)
