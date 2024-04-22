@@ -129,8 +129,8 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
 
     pFrontend->count_levels = GetAnInt(f);
     for (i = 0; i < pFrontend->count_levels; i++) {
-        GetPairOfInts(f, &pFrontend->levels[i].unknown0, &pFrontend->levels[i].unknown1);
-        GetPairOfInts(f, &pFrontend->levels[i].unknown2, &pFrontend->levels[i].unknown3);
+        GetPairOfInts(f, &pFrontend->levels[i].field_0x00, &pFrontend->levels[i].field_0x04);
+        GetPairOfInts(f, &pFrontend->levels[i].first_item_id, &pFrontend->levels[i].last_item_id);
     }
 
     DRfclose(f);
