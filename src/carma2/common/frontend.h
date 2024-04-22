@@ -45,4 +45,6 @@ void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, i
 
 void C2_HOOK_FASTCALL FRONTEND_MainMenu_UpdateRaces(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL FRONTEND_FindItemUnderMouse(tFrontend_spec *pFrontend,int mouse_x,int mouse_y);
+
 #endif //REC2_FRONTEND_H
