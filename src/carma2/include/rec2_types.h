@@ -264,7 +264,7 @@ typedef struct tDynamic_message {
 
 typedef struct {
     int flags;
-    int field1_0x4;
+    tU32 next_think_time;
     tCollision_info* collision_info;
     float field3_0xc;
     float initial_y_speed_factor;
@@ -273,7 +273,8 @@ typedef struct {
     undefined field_0x1c[12];
     tCar_spec* car;
     float max_damage;
-    undefined field_0x30[5];
+    tCar_spec* field_0x30;
+    undefined field_0x34;
     tU8 field_0x35;
     undefined field_0x36[2];
 } tShit_mine;
@@ -1534,7 +1535,7 @@ typedef struct tCar_spec {
     float non_driven_wheels_circum;
     float bounce_rate;
     float bounce_amount;
-    undefined field_0x4c8[4];
+    float field_0x4c8;
     float damage_multiplier;
     float grip_multiplier;
     undefined field_0x4d4[4];
@@ -1616,7 +1617,7 @@ typedef struct tCar_spec {
     float field_0x13e0;
     int time_last_hit;
     int time_last_victim;
-    undefined* last_hit_by;
+    tCar_spec* last_hit_by;
     undefined* field_0x13f0;
     int no_of_processes_recording_my_trail;
     tPursuee_trail my_trail;
@@ -2763,8 +2764,10 @@ typedef struct tCollision_info {
     tSpecial_volume* last_special_volume;
     tSpecial_volume* auto_special_volume;
     undefined field_0x260[8];
-    tU32 message_time;
-    undefined field_0x26c[620];
+    tU32 message_time; // 0x268
+    undefined field_0x26c[560];
+    undefined4 field_0x49c;
+    undefined field_0x4a0[56];
 } tCollision_info;
 
 typedef struct {
