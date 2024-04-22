@@ -746,3 +746,14 @@ int C2_HOOK_FASTCALL DoCrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00440660, DoCrashEarnings, DoCrashEarnings_original)
+
+void (C2_HOOK_FASTCALL * SortOutSmoke_original)(tCar_spec* pCar);
+void C2_HOOK_FASTCALL SortOutSmoke(tCar_spec* pCar) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SortOutSmoke_original(pCar);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00440230, SortOutSmoke, SortOutSmoke_original)
