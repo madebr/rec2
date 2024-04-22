@@ -60,6 +60,15 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO_potential, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gMax_APO, 3);
 
+C2_HOOK_VARIABLE_DECLARE(int, gCount_mutant_tail_parts);
+C2_HOOK_VARIABLE_DECLARE(float, gMass_mutant_tail_link);
+C2_HOOK_VARIABLE_DECLARE(float, gMass_mutant_tail_ball);
+C2_HOOK_VARIABLE_DECLARE(float, gMass_mine);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gUnderwater_screen_name, 32);
+C2_HOOK_VARIABLE_DECLARE(int, gWasted_explosion_chance);
+C2_HOOK_VARIABLE_DECLARE(int, gExplosion_sound_id);
+C2_HOOK_VARIABLE_DECLARE(tExplosion_animation, gExplosion_pix_animation_groups);
+
 void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedTextTxtPath(void);

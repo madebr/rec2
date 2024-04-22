@@ -33,7 +33,6 @@ typedef struct tMid_message tMid_message;
 typedef struct tMax_message tMax_message;
 typedef struct tSmashable_level tSmashable_level;
 typedef union tCollision_shape tCollision_shape;
-typedef union tPhysics_joint tPhysics_joint;
 typedef struct tPedestrian tPedestrian;
 typedef struct tPedestrian_distances tPedestrian_distances;
 typedef struct tRace_pedestrian tRace_pedestrian;
@@ -2681,7 +2680,7 @@ typedef enum {
     eJoint_quick_hinge = 4,
 } tPhysics_joint_type;
 
-typedef struct tPhysics_joint {
+typedef struct {
     tPhysics_joint_type type;
     undefined field_0x4[0x4];
     br_vector3 field_0x08;
@@ -2691,7 +2690,7 @@ typedef struct tPhysics_joint {
     br_vector3 hinge_axis;
     br_vector3 parent_bone_axis;
     int count_limits;
-    tPhysics_joint_limit *limits;
+    tPhysics_joint_limit limits[];
 } tPhysics_joint;
 
 typedef struct tCollision_info {
@@ -2762,6 +2761,19 @@ typedef struct tCollision_info {
     tU32 message_time;
     undefined field_0x26c[620];
 } tCollision_info;
+
+typedef struct {
+    tU32 time;
+    br_vector3* pos_origin;
+    br_vector3* pos_victim;
+    br_actor* actor;
+    undefined4 field_0x10;
+    br_material* material;
+    float field_0x18;
+    float field_0x1c;
+    tCar_spec* car;
+    undefined4 field_0x24;
+} tRepulse_link;
 
 typedef struct {
     tU32 min_time_between;
@@ -3409,7 +3421,8 @@ enum {
     kFatalError_CannotLoadAGeneratedShadeTable = 0x6d,
     kFatalError_RanOutOfFunkGrooveSlotBunches = 0x71,
     kFatalError_FileIsCorrupted_S = 0x73,
-    kFatalError_CantFindFile_S = 0x76,
+    kFatalError_CantFindFile_S = 0x75,
+    kFatalError_CantLoadCrushDataFile_S = 0x76,
     kFatalError_CantLoadSmashPix_S = 0x77,
     kFatalError_CannotFindSmashMaterial_S = 0x78,
     kFatalError_CannotFindSmashModel_S = 0x79,

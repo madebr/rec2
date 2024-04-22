@@ -219,15 +219,130 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tPeriodic_proc*, gPeriodic_procs, 56, 0x00
     NULL,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tShit_mine, gShit_mines, 20, 0x00705560);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tRepulse_link, gRepulse_links, 6, 0x006a0960);
+C2_HOOK_VARIABLE_IMPLEMENT(tPhysics_joint*, gMutant_tail_first_joint, 0x006a0acc);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gMutant_tail_first_collision_info, 0x006a0908);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMutant_tail_state, 0x00705540);
 
 void (C2_HOOK_FASTCALL * InitPowerups_original)(void);
 void C2_HOOK_FASTCALL InitPowerups(void) {
 
-    C2_HOOK_ASSUME_UNUSED();
-#if defined(C2_HOOKS_ENABLED)
+#if 0// defined(C2_HOOKS_ENABLED)
     InitPowerups_original();
 #else
-#error "Not implemented"
+    br_pixelmap* repulse;
+    int i;
+    int j;
+    tCollision_info* parent_collision_info;
+    tPath_name the_path;
+    tTWTVFS twt;
+
+    repulse = DRLoadPixelmap("REPULSE.PIX");
+    if (repulse == NULL) {
+        FatalError(kFatalError_CantFindFile_S, "REPULSE.PIX");
+    }
+    BrMapAdd(repulse);
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gRepulse_links)) != 6);
+    C2_HOOK_BUG_ON(sizeof(tRepulse_link) != 0x28);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gRepulse_links)); i++) {
+        tRepulse_link* link = &C2V(gRepulse_links)[i];
+        br_model* model;
+        br_material* material;
+
+        link->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        model = BrModelAllocate(NULL, 102, 100);
+        model->flags |= BR_MODF_UPDATEABLE;
+        material = BrMaterialAllocate("");
+        material->colour_map = repulse;
+        material->flags &= ~BR_MATF_LIGHT;
+        material->flags |= BR_MATF_TWO_SIDED;
+        BrMaterialAdd(material);
+        BlendifyMaterial(material, 100);
+        BrMaterialUpdate(material, BR_MATU_ALL);
+        for (j = 0; j < model->nfaces / 2; j++) {
+            model->faces[j].material = material;
+            model->faces[j].vertices[0] = j + 0;
+            model->faces[j].vertices[1] = j + 1;
+            model->faces[j].vertices[2] = j + 1 + model->nvertices / 2;
+        }
+        for (j = model->nfaces / 2; j < model->nfaces; j++) {
+            model->faces[j].material = material;
+            model->faces[j].vertices[0] = j + 1;
+            model->faces[j].vertices[1] = j + 2;
+            model->faces[j].vertices[2] = j + 1 - model->nvertices / 2;
+        }
+        for (j = 0; j < model->nvertices / 2; j++) {
+            model->vertices[j].p.v[0] = (float)(j % 2);
+            model->vertices[j].p.v[1] = 0.f;
+        }
+        for (j = model->nvertices / 2; j < model->nvertices; j++) {
+            model->vertices[j].p.v[0] = (float)(j % 2);
+            model->vertices[j].p.v[1] = 1.f;
+        }
+        link->actor->model = model;
+        link->actor->render_style = BR_RSTYLE_FACES;
+        link->material = material;
+        BrModelAdd(model);
+    }
+
+    parent_collision_info = NULL;
+    PathCat(the_path, C2V(gApplication_path), "TAIL");
+    twt = TWT_MountEx(the_path);
+    LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
+    TWT_UnmountEx(twt);
+    for (i = 0; i < C2V(gCount_mutant_tail_parts); i++) {
+        int is_link;
+        tCollision_info* collision_info;
+        br_model* model;
+
+        is_link = i != C2V(gCount_mutant_tail_parts) - 1;
+        if (is_link) {
+            model = BrModelFind("TAILLINK");
+            collision_info = CreateBoxCollisionShapeWithMass(model REC2_THISCALL_EDX, C2V(gMass_mutant_tail_link));
+        } else {
+            model = BrModelFind("TAILBALL");
+            collision_info = CreateSphericalCollisionObject(model REC2_THISCALL_EDX, C2V(gMass_mutant_tail_ball));
+        }
+
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, physics_joint1, 0x188);
+
+        collision_info->flags_0x238 = 0x20;
+        collision_info->physics_joint1 = AllocatePhysicsJoint(1, kMem_physics_joint);
+        collision_info->physics_joint1->type = eJoint_ball_n_socket;
+        BrVector3SetFloat(&collision_info->physics_joint1->field_0x08,
+            0.f, 0.f, model->bounds.min.v[2] * (is_link ? 0.99f : 0.45f));
+        if (i == 0) {
+            C2V(gMutant_tail_first_joint) = collision_info->physics_joint1;
+            C2V(gMutant_tail_first_collision_info) = collision_info;
+
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, type, 0x00);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, field_0x4, 0x04);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, field_0x08, 0x08);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, hinge_axis2, 0x20);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, hinge_axis3, 0x2c);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, hinge_axis, 0x38);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, count_limits, 0x50);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, limits, 0x54);
+
+            collision_info->physics_joint1->count_limits = 1;
+            BrVector3SetFloat(&collision_info->physics_joint1->limits[0].child, 0.f, 0.f, 1.f);
+            BrVector3SetFloat(&collision_info->physics_joint1->limits[0].parent, 0.f, 0.f, 1.f);
+        } else {
+            BrVector3SetFloat(&collision_info->physics_joint1->field_0x14,
+                0.f, 0.f, model->bounds.min.v[2] * (is_link ? 0.99f : 0.45f));
+            CollisionInfoAddChild(parent_collision_info, collision_info);
+        }
+        BrVector3SetFloat(&collision_info->physics_joint1->hinge_axis2, 0.f, 0.f, 1.f);
+        BrVector3SetFloat(&collision_info->physics_joint1->hinge_axis3, 0.f, 1.f, 0.f);
+        BrVector3SetFloat(&collision_info->physics_joint1->hinge_axis, 1.f, 0.f, 0.f);
+        BrMatrix34Translate(&collision_info->transform_matrix, 0.f, 0.f, 0.f);
+        BrMatrix34Translate(&collision_info->actor->t.t.mat, 0.f, 0.f, 0.f);
+        parent_collision_info = collision_info;
+    }
+    C2V(gMutant_tail_state) = 0;
+    InitShitMines();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d9ea0, InitPowerups, InitPowerups_original)
