@@ -9,6 +9,7 @@
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gFrontend_billboard_actors, 8);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_menu_camera);
+C2_HOOK_VARIABLE_DECLARE(double, gFrontend_throb_factor);
 
 void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
@@ -27,5 +28,7 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pFrontendType);
 void C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontend);
 
 void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index);
+
+void C2_HOOK_FASTCALL UpdateThrobFactor(void);
 
 #endif //REC2_FRONTEND_H
