@@ -9,4 +9,6 @@ C2_HOOK_VARIABLE_DECLARE(float, Force_feedback_lower_limit);
 
 void C2_HOOK_STDCALL ReadFFB_TXT(void);
 
+int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2);
+
 #endif /* REC2_JOYSTICK_H */
