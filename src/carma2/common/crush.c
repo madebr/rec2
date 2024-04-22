@@ -735,3 +735,14 @@ void C2_HOOK_FASTCALL DoDamage(tCar_spec *pCar, tDamage_type pDamage_type, int p
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043f930, DoDamage, DoDamage_original)
+
+int (C2_HOOK_FASTCALL * DoCrashEarnings_original)(tCar_spec* pCar1, tCar_spec* pCar2);
+int C2_HOOK_FASTCALL DoCrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DoCrashEarnings_original(pCar1, pCar2);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00440660, DoCrashEarnings, DoCrashEarnings_original)
