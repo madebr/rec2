@@ -101,4 +101,6 @@ void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pP
 
 void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent);
 
+float C2_HOOK_STDCALL FRandomPosNeg(float pN);
+
 #endif // REC2_UTILITY_H
