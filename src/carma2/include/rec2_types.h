@@ -1060,7 +1060,7 @@ typedef enum {
     kFrontendItemEnabled_default = 0,
     kFrontendItemEnabled_enabled = 1,
     kFrontendItemEnabled_disabled = -1,
-} eFrontendItemEnablec;
+} eFrontendItemEnabled;
 
 typedef enum {
     kFrontendSelectableButton = 0,
@@ -1119,7 +1119,7 @@ typedef struct tFrontend_item_spec {
     int y;
     int width;
     int height;
-    eFrontendItemEnablec enabled;
+    eFrontendItemEnabled enabled;
     int visible;
     int map_index; /* 0 = no image */
     int greyedBackdrop;
