@@ -1138,3 +1138,15 @@ tCollision_info* C2_HOOK_FAKE_THISCALL CreateBoxCollisionShapeWithMass(br_model*
 }
 
 C2_HOOK_FUNCTION_ORIGINAL(0x004da290, CreateBoxCollisionShapeWithMass, CreateBoxCollisionShapeWithMass_original)
+
+tPhysics_joint* (C2_HOOK_FASTCALL * AllocatePhysicsJoint_original)(int pCount_limits, int pType);
+tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return AllocatePhysicsJoint_original(pCount_limits, pType);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c5e20, AllocatePhysicsJoint, AllocatePhysicsJoint_original)
+
