@@ -97,6 +97,15 @@ void C2_HOOK_FASTCALL FreeInterfaceStrings(void) {
 }
 C2_HOOK_FUNCTION(0x004850d0, FreeInterfaceStrings)
 
+const char* C2_HOOK_FASTCALL GetInterfaceString(int pIndex) {
+
+    if (pIndex > C2V(gCount_interface_strings)) {
+        return NULL;
+    }
+    return C2V(gInterface_strings)[pIndex];
+}
+C2_HOOK_FUNCTION(0x00485110, GetInterfaceString)
+
 void C2_HOOK_FASTCALL LoadMenuImages(void) {
     int i;
     char s[256];
