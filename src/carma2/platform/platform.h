@@ -92,4 +92,6 @@ void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY);
 
 void C2_HOOK_FASTCALL PDRevertPalette(void);
 
+void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
+
 #endif // C2_PLATFORM_H
