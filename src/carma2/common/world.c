@@ -1496,6 +1496,35 @@ br_pixelmap* LoadShadeTable(const char* pName) {
 }
 C2_HOOK_FUNCTION(0x0048ef40, LoadShadeTable)
 
+br_pixelmap* LoadSingleShadeTable(tBrender_storage* pStorage_space, const char* pName) {
+    br_pixelmap* temp;
+
+    temp = LoadShadeTable(pName);
+    if (temp == NULL) {
+        return BrTableFind(pName);
+    }
+
+    switch (AddShadeTableToStorage(pStorage_space, temp)) {
+    case eStorage_not_enough_room:
+        FatalError(kFatalError_InsufficientShadeTableSlots);
+        break;
+
+    case eStorage_duplicate:
+        if (C2V(gDisallowDuplicates)) {
+            FatalError(kFatalError_DuplicatePixelmap_S, temp->identifier);
+        }
+        BrPixelmapFree(temp);
+        return BrTableFind(pName);
+
+    case eStorage_allocated:
+        BrTableAdd(temp);
+        return temp;
+    }
+
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x005016a0, LoadSingleShadeTable)
+
 tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod) {
     int i;
 
