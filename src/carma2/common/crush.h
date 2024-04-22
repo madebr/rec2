@@ -62,4 +62,6 @@ int C2_HOOK_FASTCALL DoCrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2);
 
 void C2_HOOK_FASTCALL SortOutSmoke(tCar_spec* pCar);
 
+void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2);
+
 #endif // REC2_CRUSH_H
