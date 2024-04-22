@@ -51,4 +51,6 @@ int C2_HOOK_FASTCALL FRONTEND_FindVisibleItem(tFrontend_spec* pFrontend, int pSt
 
 int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL FRONTEND_SetTransitionModels(tFrontend_spec* pCurrent, tFrontend_spec* pNext);
+
 #endif //REC2_FRONTEND_H
