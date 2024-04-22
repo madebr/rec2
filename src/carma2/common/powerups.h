@@ -9,9 +9,13 @@
 C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec, gPowerup_pickup_smashable);
 C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec, gPowerup_respawn_smashable);
 C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec, gUnknown_smashable_006a3660);
-
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tHeadup_icon, gPickedup_powerups, 5);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gRepeatability_names, 4);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tShit_mine, gShit_mines, 20);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tRepulse_link, gRepulse_links, 6);
+C2_HOOK_VARIABLE_DECLARE(tPhysics_joint*, gMutant_tail_first_joint);
+C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gMutant_tail_first_collision_info);
+C2_HOOK_VARIABLE_DECLARE(int, gMutant_tail_state);
 
 void C2_HOOK_FASTCALL InitPowerups(void);
 
