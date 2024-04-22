@@ -736,3 +736,19 @@ int C2_HOOK_FASTCALL FRONTEND_FindItemUnderMouse(tFrontend_spec *pFrontend, int 
     return -1;
 }
 C2_HOOK_FUNCTION(0x004677d0, FRONTEND_FindItemUnderMouse)
+
+int C2_HOOK_FASTCALL FRONTEND_FindVisibleItem(tFrontend_spec* pFrontend, int pStart_index) {
+    int i;
+
+    for (;;) {
+        for (i = pStart_index - 1; i >= 0; i--) {
+            tFrontend_item_spec *item = &pFrontend->items[i];
+
+            if (item->enabled > 0 && item->visible) {
+                return i;
+            }
+        }
+        pStart_index = pFrontend->count_items;
+    }
+}
+C2_HOOK_FUNCTION(0x00467a30, FRONTEND_FindVisibleItem)
