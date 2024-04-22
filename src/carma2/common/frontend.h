@@ -7,6 +7,9 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gFrontend_billboard_actors, 8);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_menu_camera);
+
 void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
 void C2_HOOK_FASTCALL CreateMenuActors(void);
@@ -22,5 +25,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pFrontendType);
 
 void C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontend);
+
+void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index);
 
 #endif //REC2_FRONTEND_H
