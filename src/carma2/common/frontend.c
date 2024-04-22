@@ -680,3 +680,40 @@ void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, i
     }
 }
 C2_HOOK_FUNCTION(0x00466ce0, FRONTEND_UpdateScrollerModels)
+
+void C2_HOOK_FASTCALL FRONTEND_MainMenu_UpdateRaces(tFrontend_spec* pFrontend) {
+    char group_text[12];
+    int group;
+    int i;
+    int race_i;
+
+    group = 1 + (C2V(gCurrent_race_group) - C2V(gRaceGroups)) % 10;
+    c2_sprintf(group_text, "%s %d", GetInterfaceString(78), group);
+    c2_strcpy(pFrontend->items[2].text, group_text);
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_scroller_spec, indexFirstScrollableItem, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_scroller_spec, indexLastScrollableItem, 0x14);
+
+    race_i = 0;
+    for (i = pFrontend->scrollers[0].indexFirstScrollableItem; i < pFrontend->scrollers[0].indexLastScrollableItem; i++, race_i++) {
+        tFrontend_item_spec* item = &pFrontend->items[i];
+
+        c2_strcpy(item->text, C2V(gRace_list)[4 * (group - 1) + race_i].name);
+        item->radioButton_selected = race_i == C2V(gProgram_state).current_race_index;
+        if (C2V(gRace_list)[race_i].is_boundary) {
+            item->unlitFont = 2;
+            item->highFont = 2;
+        } else {
+            item->unlitFont = 0;
+            item->highFont = 1;
+        }
+    }
+    FRONTEND_CompleteItemSizes(pFrontend);
+    if (C2V(gIs_boundary_race) || C2V(gProgram_state).game_completed) {
+        pFrontend->items[7].enabled = kFrontendItemEnabled_enabled;
+    } else {
+        pFrontend->items[7].enabled = kFrontendItemEnabled_disabled;
+    }
+    FRONTEND_UpdateScrollerModels(pFrontend, 0);
+}
+C2_HOOK_FUNCTION(0x00467b30, FRONTEND_MainMenu_UpdateRaces)
