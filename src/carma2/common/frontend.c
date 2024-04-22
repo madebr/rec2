@@ -716,3 +716,23 @@ void C2_HOOK_FASTCALL FRONTEND_MainMenu_UpdateRaces(tFrontend_spec* pFrontend) {
     FRONTEND_UpdateScrollerModels(pFrontend, 0);
 }
 C2_HOOK_FUNCTION(0x00467b30, FRONTEND_MainMenu_UpdateRaces)
+
+int C2_HOOK_FASTCALL FRONTEND_FindItemUnderMouse(tFrontend_spec *pFrontend, int pX, int pY) {
+    int i;
+
+    for (i = 0; i < pFrontend->count_items; i++) {
+        br_model *model = C2V(gFrontend_brender_items)[i].model;
+        tFrontend_item_spec *item = &pFrontend->items[i];
+
+        if (pX >= model->vertices[1].p.v[0]
+                && pX <= model->vertices[3].p.v[0]
+                && pY >= -model->vertices[0].p.v[1]
+                && pY <= -model->vertices[1].p.v[1]
+                && item->enabled > 0 /* default or disabled */
+                && item->visible) {
+            return i;
+        }
+    }
+    return -1;
+}
+C2_HOOK_FUNCTION(0x004677d0, FRONTEND_FindItemUnderMouse)
