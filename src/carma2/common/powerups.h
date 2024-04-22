@@ -16,6 +16,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tRepulse_link, gRepulse_links, 6);
 C2_HOOK_VARIABLE_DECLARE(tPhysics_joint*, gMutant_tail_first_joint);
 C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gMutant_tail_first_collision_info);
 C2_HOOK_VARIABLE_DECLARE(int, gMutant_tail_state);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0074a5ec);
 
 void C2_HOOK_FASTCALL InitPowerups(void);
 
