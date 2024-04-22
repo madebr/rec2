@@ -846,3 +846,33 @@ int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x0046ccb0, FRONTEND_DestroyMenu)
+
+void C2_HOOK_FASTCALL FRONTEND_SetTransitionModels(tFrontend_spec* pCurrent, tFrontend_spec* pNext) {
+
+    C2V(gFrontend_A_model_from) = C2V(gFrontend_A_models)[pCurrent->model_A_index].model;
+    C2V(gFrontend_A_model_to) = C2V(gFrontend_A_models)[pNext->model_A_index].model;
+    if (pCurrent->model_A_index == 0) {
+        C2V(gFrontend_backdrop0_opacity_mode) = pNext->model_A_index != 0 ? 1 : -2;
+    } else {
+        C2V(gFrontend_backdrop0_opacity_mode) = pNext->model_A_index != 0 ? 0 : -1;
+    }
+
+    C2V(gFrontend_B_model_from) = C2V(gFrontend_B_models)[pCurrent->model_B_index].model;
+    C2V(gFrontend_B_model_to) = C2V(gFrontend_B_models)[pNext->model_B_index].model;
+    if (pCurrent->model_B_index == 0) {
+        C2V(gFrontend_backdrop1_opacity_mode) = pNext->model_B_index != 0 ? 1 : -2;
+    } else {
+        C2V(gFrontend_backdrop1_opacity_mode) = pNext->model_B_index != 0 ? 0 : -1;
+    }
+
+    C2V(gFrontend_C_model_from) = C2V(gFrontend_C_models)[pCurrent->model_C_index].model;
+    C2V(gFrontend_C_model_to) = C2V(gFrontend_C_models)[pNext->model_C_index].model;
+    if (pCurrent->model_C_index == 0) {
+        C2V(gFrontend_backdrop2_opacity_mode) = pNext->model_C_index != 0 ? 1 : -2;
+    } else {
+        C2V(gFrontend_backdrop2_opacity_mode) = pNext->model_C_index != 0 ? 0 : -1;
+    }
+
+    C2V(gFrontend_interpolate_steps_left) = 16;
+}
+C2_HOOK_FUNCTION(0x00470a90, FRONTEND_SetTransitionModels)
