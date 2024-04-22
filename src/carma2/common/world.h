@@ -114,6 +114,8 @@ void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile,
 
 br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName);
 
+br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_space, const char* pName);
+
 tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod);
 
 int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char* pPath);
