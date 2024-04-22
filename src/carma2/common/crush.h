@@ -56,4 +56,6 @@ void C2_HOOK_FASTCALL FUN_0043b8a0(tCar_spec* pCar_spec);
 
 void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, undefined4 pArg2, float pDamage);
 
+void C2_HOOK_FASTCALL DoDamage(tCar_spec *pCar, tDamage_type pDamage_type, int pMagnitude);
+
 #endif // REC2_CRUSH_H

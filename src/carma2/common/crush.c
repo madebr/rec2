@@ -723,3 +723,14 @@ void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, undefined4 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00431610, TotallySpamTheModel, TotallySpamTheModel_original)
+
+void (C2_HOOK_FASTCALL * DoDamage_original)(tCar_spec *pCar, tDamage_type pDamage_type, int pMagnitude);
+void C2_HOOK_FASTCALL DoDamage(tCar_spec *pCar, tDamage_type pDamage_type, int pMagnitude) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoDamage_original(pCar, pDamage_type, pMagnitude);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0043f930, DoDamage, DoDamage_original)
