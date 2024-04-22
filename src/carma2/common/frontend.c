@@ -55,6 +55,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_token_value, gFrontend_backdrop0_material_pr
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_token_value, gFrontend_backdrop1_material_prims, 3, 0x00686f20);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_token_value, gFrontend_backdrop2_material_prims, 3, 0x00686f38);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gFrontend_backdrop_materials, 3, 0x00686f10);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gFrontend_billboard_actors, 8, 0x00763940);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_menu_camera, 0x00688b10);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -571,3 +573,19 @@ void C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontendType) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046d8e0, DoFrontendMenu, DoFrontendMenu_original)
+
+void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index) {
+    br_model *model;
+
+    model = C2V(gFrontend_billboard_actors)[pIndex]->model;
+    BrVector2Set(&model->vertices[0].map, 0.f, pTex_index * .1875f);
+    BrVector2Set(&model->vertices[1].map, 0.625f, pTex_index * .1875f);
+    BrVector2Set(&model->vertices[2].map, 0.f, (float)(pTex_index + 1) * .1875f);
+    BrVector2Set(&model->vertices[3].map, 0.625f, (float)(pTex_index + 1) * .1875f);
+    BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
+    BrVector3Set(&C2V(gFrontend_billboard_actors)[pIndex]->t.t.translate.t, (float)pX, (float)-pY, 0.f);
+    BrActorAdd(C2V(gFrontend_menu_camera), C2V(gFrontend_billboard_actors)[pIndex]);
+    BrZbSceneRender(C2V(gFrontend_menu_camera), C2V(gFrontend_menu_camera), C2V(gBack_screen), C2V(gDepth_buffer));
+    BrActorRemove(C2V(gFrontend_billboard_actors)[pIndex]);
+}
+C2_HOOK_FUNCTION(0x004708a0, RenderFrontendBillboard)
