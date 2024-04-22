@@ -57,6 +57,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_token_value, gFrontend_backdrop2_material_pr
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gFrontend_backdrop_materials, 3, 0x00686f10);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gFrontend_billboard_actors, 8, 0x00763940);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_menu_camera, 0x00688b10);
+C2_HOOK_VARIABLE_IMPLEMENT(double, gFrontend_throb_factor, 0x006886d0);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -589,3 +590,16 @@ void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pT
     BrActorRemove(C2V(gFrontend_billboard_actors)[pIndex]);
 }
 C2_HOOK_FUNCTION(0x004708a0, RenderFrontendBillboard)
+
+void C2_HOOK_FASTCALL UpdateThrobFactor(void) {
+    tU32 time;
+
+    time = PDGetTotalTime() % 750;
+
+    if (time < 375) {
+        C2V(gFrontend_throb_factor) = (double)time / 375.;
+    } else {
+        C2V(gFrontend_throb_factor) = (double)(750 - time) / 375.;
+    }
+}
+C2_HOOK_FUNCTION(0x0046cec0, UpdateThrobFactor)
