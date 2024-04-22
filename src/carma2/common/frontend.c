@@ -87,6 +87,16 @@ void C2_HOOK_FASTCALL LoadFrontendStrings(void) {
 }
 C2_HOOK_FUNCTION(0x00484fd0, LoadFrontendStrings)
 
+void C2_HOOK_FASTCALL FreeInterfaceStrings(void) {
+    int i;
+
+    for (i = 0; i < C2V(gCount_interface_strings); i++) {
+        BrMemFree(C2V(gInterface_strings)[i]);;
+    }
+    C2V(gCount_interface_strings) = 0;
+}
+C2_HOOK_FUNCTION(0x004850d0, FreeInterfaceStrings)
+
 static void C2_HOOK_FASTCALL LoadMenuImages(void) {
     int i;
     char s[256];

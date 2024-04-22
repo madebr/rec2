@@ -13,6 +13,10 @@ C2_HOOK_VARIABLE_DECLARE(double, gFrontend_throb_factor);
 
 void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
+void C2_HOOK_FASTCALL FreeInterfaceStrings(void);
+
+static void C2_HOOK_FASTCALL LoadMenuImages(void);
+
 void C2_HOOK_FASTCALL CreateMenuActors(void);
 
 br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder, const char* pName);
