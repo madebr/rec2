@@ -3,10 +3,12 @@
 #include "drmem.h"
 #include "errors.h"
 #include "frontend_credits.h"
+#include "frontend_loadgame.h"
 #include "frontend_main.h"
 #include "frontend_netsync.h"
 #include "frontend_networksummary.h"
 #include "frontend_quit.h"
+#include "frontend_startgame.h"
 #include "frontend_wrecks.h"
 #include "globvars.h"
 #include "graphics.h"
@@ -17,6 +19,7 @@
 #include "polyfont.h"
 #include "platform.h"
 #include "sound.h"
+#include "tinted.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -65,6 +68,13 @@ C2_HOOK_VARIABLE_IMPLEMENT(double, gFrontend_throb_factor, 0x006886d0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTyping_slot, 0x0075b8fc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_leave_current_menu, 0x006883a8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_suppress_mouse, 0x00688b20);
+C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gFrontend_APO_Colour_1, 0x007635f0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gFrontend_APO_Colour_2, 0x007635e0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gFrontend_APO_Colour_3, 0x00763700);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_wrecks_actor, 0x00688aec);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_wrecks_camera, 0x00688af0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gFrontend_wrecks_pixelmap, 0x007635e4);
+C2_HOOK_VARIABLE_IMPLEMENT(tFrontendMenuType, gFrontend_next_menu, 0x00764eec);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -600,13 +610,185 @@ void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046f630, FRONTEND_RenderAuthorCredits, FRONTEND_RenderAuthorCredits_original)
 
-void (C2_HOOK_FASTCALL * DoFrontendMenu_original)(tFrontendMenuType pFrontend);
-void C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontendType) {
+static br_uint_32 GetBillboardAPOColour(int pType_APO, int pLevel) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoFrontendMenu_original(pFrontendType);
+    if (pLevel >= C2V(gCurrent_APO_potential_levels)[pType_APO]) {
+        return C2V(gFrontend_APO_Colour_2);
+    } else if (pLevel < C2V(gCurrent_APO_levels[pType_APO])) {
+        return C2V(gFrontend_APO_Colour_1);
+    } else {
+        return C2V(gFrontend_APO_Colour_3);
+    }
+}
+
+int (C2_HOOK_FASTCALL * DoFrontendMenu_original)(tFrontendMenuType pFrontend);
+int C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontendType) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    return DoFrontendMenu_original(pFrontendType);
 #else
-#error "Not implemented"
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, back_screen_base_x, 0x0076370c);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, back_screen_base_y, 0x00763710);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, back_screen_origin_x, 0x00763704);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, back_screen_origin_y, 0x00763708);
+
+    if (C2V(gSound_enabled)) {
+        DRStopCarSounds();
+    }
+    SwitchToRealResolution();
+    WaitForNoKeys();
+    C2V(gFrontend_remove_current_backdrop) = 0;
+    MakeTintedInvisible(C2V(gHud_tinted1));
+    MakeTintedInvisible(C2V(gHud_tinted2));
+    MakeTintedInvisible(C2V(gHud_tinted3));
+    FRONTEND_Setup(pFrontendType);
+    C2V(gFrontend_remove_current_backdrop) = 1;
+    C2V(gFrontend_leave_current_menu) = 0;
+    C2V(gFrontend_time_last_input) = PDGetTotalTime();
+    DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingin);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_spec, unknownLastInt, 0xb8c4);
+    C2V(gCurrent_frontend_spec)->unknownLastInt = 0;
+
+    for (;;) {
+        C2V(gBack_screen)->origin_x = 0;
+        C2V(gBack_screen)->origin_y = 0;
+        if (C2V(gFrontend_backdrop) != NULL) {
+            DRPixelmapRectangleCopy(C2V(gBack_screen), 0, 0,
+                C2V(gFrontend_backdrop), 0, 0, C2V(gFrontend_backdrop)->width, C2V(gFrontend_backdrop)->height);
+        }
+        if (C2V(gCurrent_frontend_spec) != &C2V(gFrontend_LOAD_GAME) &&
+              C2V(gCurrent_frontend_spec) != &C2V(gFrontend_NETSYNC) &&
+              C2V(gCurrent_frontend_spec) != &C2V(gFrontend_NETWORK_SUMMARY) &&
+              C2V(gFrontend_interpolate_steps_left) == 0) {
+            C2V(gCurrent_frontend_spec)->unknownLastInt = FRONTEND_Tick(C2V(gCurrent_frontend_spec));
+        }
+        BrPixelmapFill(C2V(gDepth_buffer), 0xffffffff);
+        C2V(gBack_screen)->origin_x = 0;
+        C2V(gBack_screen)->origin_y = 0;
+
+        if (C2V(gFrontend_interpolate_steps_left) > 0) {
+            int step = 16 - C2V(gFrontend_interpolate_steps_left) + 1;
+
+            FRONTEND_InterpolateModel(C2V(gFrontend_A_model_from), C2V(gFrontend_A_model_to), C2V(gFrontend_backdrop_actors)[0]->model, step, 16);
+            if (C2V(gFrontend_backdrop0_opacity_mode) == -1) {
+                C2V(gFrontend_backdrop0_material_prims)[1].v.x = BR_FIXED_INT(176 * (16 - step)  / 16);
+            } else if (C2V(gFrontend_backdrop0_opacity_mode) == 1) {
+                C2V(gFrontend_backdrop0_material_prims)[1].v.x = BR_FIXED_INT(176 * step / 16);
+            } else if (C2V(gFrontend_backdrop0_opacity_mode) == -2) {
+                C2V(gFrontend_backdrop0_material_prims)[1].v.x = BR_FIXED_INT(0);
+            }
+            BrMaterialUpdate(C2V(gFrontend_backdrop_materials)[0], BR_MATU_ALL);
+
+            FRONTEND_InterpolateModel(C2V(gFrontend_B_model_from), C2V(gFrontend_B_model_to), C2V(gFrontend_backdrop_actors)[1]->model, step, 16);
+            if (C2V(gFrontend_backdrop1_opacity_mode) == -1) {
+                C2V(gFrontend_backdrop1_material_prims)[1].v.x = BR_FIXED_INT(176 * (16 - step)  / 16);
+            } else if (C2V(gFrontend_backdrop1_opacity_mode) == 1) {
+                C2V(gFrontend_backdrop1_material_prims)[1].v.x = BR_FIXED_INT(176 * step / 16);
+            } else if (C2V(gFrontend_backdrop1_opacity_mode) == -2) {
+                C2V(gFrontend_backdrop1_material_prims)[1].v.x = BR_FIXED_INT(0);
+            }
+            BrMaterialUpdate(C2V(gFrontend_backdrop_materials)[1], BR_MATU_ALL);
+
+            FRONTEND_InterpolateModel(C2V(gFrontend_C_model_from), C2V(gFrontend_C_model_to), C2V(gFrontend_backdrop_actors)[2]->model, step, 16);
+            if (C2V(gFrontend_backdrop2_opacity_mode) == -1) {
+                C2V(gFrontend_backdrop2_material_prims)[1].v.x = BR_FIXED_INT(176 * (16 - step)  / 16);
+            } else if (C2V(gFrontend_backdrop2_opacity_mode) == 1) {
+                C2V(gFrontend_backdrop2_material_prims)[1].v.x = BR_FIXED_INT(176 * step / 16);
+            } else if (C2V(gFrontend_backdrop2_opacity_mode) == -2) {
+                C2V(gFrontend_backdrop2_material_prims)[1].v.x = BR_FIXED_INT(0);
+            }
+            BrMaterialUpdate(C2V(gFrontend_backdrop_materials)[2], BR_MATU_ALL);
+        }
+        BrZbsSceneRender(C2V(gFrontend_actor), C2V(gFrontend_camera), C2V(gBack_screen), C2V(gDepth_buffer));
+
+        if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_LOAD_GAME) ||
+                C2V(gCurrent_frontend_spec) == &C2V(gFrontend_NETSYNC) ||
+                C2V(gCurrent_frontend_spec) == &C2V(gFrontend_NETWORK_SUMMARY)) {
+            if (C2V(gFrontend_interpolate_steps_left) == 0) {
+                C2V(gCurrent_frontend_spec)->unknownLastInt = FRONTEND_Tick(C2V(gCurrent_frontend_spec));
+            }
+        }
+        if (C2V(gFrontend_interpolate_steps_left) != 0) {
+            C2V(gFrontend_interpolate_steps_left) -= 1;
+        } else {
+            if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_WRECKS) && C2V(gFrontend_wrecks_actor) != NULL) {
+                C2V(back_screen_base_x) = C2V(gBack_screen)->base_x;
+                C2V(back_screen_base_y) = C2V(gBack_screen)->base_y;
+                C2V(back_screen_origin_x) = C2V(gBack_screen)->origin_x;
+                C2V(back_screen_origin_y) = C2V(gBack_screen)->origin_y;
+                C2V(gBack_screen)->base_x = 0;
+                C2V(gBack_screen)->base_y = 0;
+                C2V(gBack_screen)->origin_x = 320;
+                C2V(gBack_screen)->origin_y = 120;
+                BrZbsSceneRender(C2V(gFrontend_wrecks_actor), C2V(gFrontend_wrecks_camera), C2V(gFrontend_wrecks_pixelmap), C2V(gDepth_buffer));
+                C2V(gBack_screen)->base_x = C2V(back_screen_base_x);
+                C2V(gBack_screen)->base_y = C2V(back_screen_base_y);
+                C2V(gBack_screen)->origin_x = C2V(back_screen_origin_x);
+                C2V(gBack_screen)->origin_y = C2V(back_screen_origin_y);
+            }
+            if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_MAIN) && C2V(gFrontend_menu_camera) != NULL) {
+                int i;
+                BrPixelmapFill(C2V(gFrontend_billboard_actors)[0]->material->colour_map, 0);
+
+                for (i = 0; i < 30; i++) {
+                    br_uint_32 c;
+
+                    c = GetBillboardAPOColour(0, i);
+                    BrPixelmapRectangleFill(C2V(gFrontend_billboard_actors)[0]->material->colour_map, 4 * (i % 10),  0 + 4 * (i / 10), 3, 3, c);
+                }
+
+                for (i = 0; i < 30; i++) {
+                    br_uint_32 c;
+
+                    c = GetBillboardAPOColour(1, i);
+                    BrPixelmapRectangleFill(C2V(gFrontend_billboard_actors)[0]->material->colour_map, 4 * (i % 10), 12 + 4 * (i / 10), 3, 3, c);
+                }
+
+                for (i = 0; i < 30; i++) {
+                    br_uint_32 c;
+
+                    c = GetBillboardAPOColour(2, i);
+                    BrPixelmapRectangleFill(C2V(gFrontend_billboard_actors)[0]->material->colour_map, 4 * (i % 10), 24 + 4 * (i / 10), 3, 3, c);
+                }
+
+                BrMapUpdate(C2V(gFrontend_billboard_actors)[0]->material->colour_map, BR_MAPU_ALL);
+                BrMaterialUpdate(C2V(gFrontend_billboard_actors)[0]->material, BR_MATU_ALL);
+                BrModelUpdate(C2V(gFrontend_billboard_actors)[0]->model, BR_MODU_VERTICES);
+                RenderFrontendBillboard( 95, 348, 0, 0);
+                RenderFrontendBillboard(146, 348, 0, 1);
+                RenderFrontendBillboard(195, 348, 0, 2);
+            }
+            if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_CREDITS)) {
+                FRONTEND_RenderAuthorCredits();
+            }
+            FRONTEND_RenderItems(C2V(gCurrent_frontend_spec));
+            if (C2V(gCurrent_frontend_spec)->unknownLastInt == 0) {
+                FRONTEND_DoMouse();
+            }
+        }
+        PDScreenBufferSwap(0);
+        if (C2V(gCurrent_frontend_spec)->unknownLastInt == 1 && C2V(gCurrent_frontend_spec) != &C2V(gFrontend_START_GAME)) {
+            FRONTEND_DestroyMenu(C2V(gCurrent_frontend_spec));
+            c2_strcpy(C2V(gFrontend_START_GAME).backdrop_name, C2V(gCurrent_frontend_spec)->backdrop_name);
+            FRONTEND_SetTransitionModels(C2V(gCurrent_frontend_spec), &C2V(gFrontend_START_GAME));
+            C2V(gCurrent_frontend_spec) = &C2V(gFrontend_START_GAME);
+            FRONTEND_CreateMenu(&C2V(gFrontend_START_GAME));
+        }
+        if (C2V(gCurrent_frontend_spec)->unknownLastInt == 3) {
+            FRONTEND_DestroyMenu(C2V(gCurrent_frontend_spec));
+            FRONTEND_Setup(C2V(gFrontend_next_menu));
+            C2V(gCurrent_frontend_spec)->unknownLastInt = 0;
+        }
+        if (C2V(gCurrent_frontend_spec)->unknownLastInt != 0) {
+            FRONTEND_DestroyMenu(C2V(gCurrent_frontend_spec));
+            if (C2V(gFrontend_backdrop) != NULL) {
+                BrMapRemove(C2V(gFrontend_backdrop));
+                BrPixelmapFree(C2V(gFrontend_backdrop));
+            }
+            ClearInterfacePolyFonts();
+            return C2V(gCurrent_frontend_spec)->unknownLastInt != 2;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046d8e0, DoFrontendMenu, DoFrontendMenu_original)
