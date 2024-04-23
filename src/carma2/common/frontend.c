@@ -2,6 +2,7 @@
 
 #include "drmem.h"
 #include "errors.h"
+#include "frontend_main.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "init.h"
@@ -26,7 +27,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFrontend_model, gFrontend_C_models, 6, 0x00687
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gFrontend_backdrop_actors, 3, 0x00687030);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_stuff_not_loaded, 0x0059b0d0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_spec*, gCurrent_frontend_spec, 0x00688abc);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_main, 0x005a80f0, FIXMEFIXME);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_options, 0x00632c60, FIXMEFIXME);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_wrecks, 0x005f8e68, FIXMEFIXME);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_netsync, 0x0061bad0, FIXMEFIXME);
@@ -538,8 +538,8 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
     }
     switch (pType) {
     case kFrontend_menu_main:
-        FRONTEND_CreateMenu(&C2V(gFrontend_main));
-        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_main);
+        FRONTEND_CreateMenu(&C2V(gFrontend_MAIN));
+        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_MAIN);
         break;
     case kFrontend_menu_options:
         FRONTEND_CreateMenu(&C2V(gFrontend_options));
