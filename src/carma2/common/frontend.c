@@ -1050,3 +1050,14 @@ int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00470c20, FRONTEND_Default_Tick, FRONTEND_Default_Tick_original)
+
+void (C2_HOOK_FASTCALL * FRONTEND_RenderItems_original)(tFrontend_spec* pFrontend);
+void C2_HOOK_FASTCALL FRONTEND_RenderItems(tFrontend_spec* pFrontend) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FRONTEND_RenderItems_original(pFrontend);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0046e020, FRONTEND_RenderItems, FRONTEND_RenderItems_original)
