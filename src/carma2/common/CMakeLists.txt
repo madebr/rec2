@@ -38,10 +38,22 @@ add_library(c2_common STATIC
     font.h
     frontend.c
     frontend.h
+    frontend_credits.c
+    frontend_credits.h
     frontend_main.c
     frontend_main.h
+    frontend_loadgame.c
+    frontend_loadgame.h
+    frontend_netsync.c
+    frontend_netsync.h
+    frontend_networksummary.c
+    frontend_networksummary.h
     frontend_quit.c
     frontend_quit.h
+    frontend_startgame.c
+    frontend_startgame.h
+    frontend_wrecks.c
+    frontend_wrecks.h
     globvars.c
     globvars.h
     globvrbm.c
