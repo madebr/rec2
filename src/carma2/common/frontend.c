@@ -589,6 +589,16 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
 }
 C2_HOOK_FUNCTION(0x0046d1c0, FRONTEND_Setup)
 
+void (C2_HOOK_FASTCALL * FRONTEND_RenderAuthorCredits_original)(void);
+void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FRONTEND_RenderAuthorCredits_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0046f630, FRONTEND_RenderAuthorCredits, FRONTEND_RenderAuthorCredits_original)
 
 void (C2_HOOK_FASTCALL * DoFrontendMenu_original)(tFrontendMenuType pFrontend);
 void C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontendType) {
