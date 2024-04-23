@@ -10,6 +10,8 @@
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gFrontend_billboard_actors, 8);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_menu_camera);
 C2_HOOK_VARIABLE_DECLARE(double, gFrontend_throb_factor);
+C2_HOOK_VARIABLE_DECLARE(int, gTyping_slot);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_leave_current_menu);
 
 void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
@@ -52,6 +54,8 @@ int C2_HOOK_FASTCALL FRONTEND_FindVisibleItem(tFrontend_spec* pFrontend, int pSt
 int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL FRONTEND_SetTransitionModels(tFrontend_spec* pCurrent, tFrontend_spec* pNext);
+
+int C2_HOOK_FASTCALL FRONTEND_Tick(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_DefaultItem_Action(tFrontend_spec* pFrontend);
 
