@@ -1110,9 +1110,9 @@ typedef struct tFrontend_spec tFrontend_spec;
 
 typedef struct tFrontend_item_spec {
     int stringId;
-    int (C2_HOOK_FASTCALL * action)(int);
+    int (C2_HOOK_FASTCALL * action)(tFrontend_spec*);
     tFrontend_spec* menuInfo;
-    int unknown;  // FIXME: unknown
+    int field_0xc;
     int unlitFont;
     int highFont;
     int x;
@@ -1142,7 +1142,7 @@ typedef struct tFrontend_spec {
     int (C2_HOOK_FASTCALL * destroy)(struct tFrontend_spec*);
     int (C2_HOOK_FASTCALL * tick)(struct tFrontend_spec*);
     struct tFrontend_spec* previous;
-    undefined4 unknown1;  // FIXME: unknown
+    int default_item;
     undefined4 unknown2;  // FIXME: unknown
     undefined4 unknown3;  // FIXME: unknown
     int model_A_index;
@@ -1155,11 +1155,11 @@ typedef struct tFrontend_spec {
     tFrontend_radio_spec radios[100];
     int count_groups;
     int loaded;
-    undefined unknownLongString[260];  // FIXME: unknown
+    char unknownLongString[260];  // FIXME: unknown
     char backdrop_name[256];
     tFrontend_level_spec levels[100];
     int count_levels;
-    undefined unknownshortString[56];  // FIXME: unknown
+    char unknownshortString[56];  // FIXME: unknown
     int isPrevimousSomeOtherMenu;
     undefined4 unknownLastInt;  // FIXME: unknown
 } tFrontend_spec;
