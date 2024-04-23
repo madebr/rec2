@@ -35,3 +35,14 @@ int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c6b0, PlayFFBEffect, PlayFFBEffect_original)
+
+void (C2_HOOK_FASTCALL * StopJoysticks_original)(void);
+void C2_HOOK_FASTCALL StopJoysticks(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    StopJoysticks_original();
+#else
+#error "Notimplemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004575b0, StopJoysticks, StopJoysticks_original)
