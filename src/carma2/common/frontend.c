@@ -2,8 +2,12 @@
 
 #include "drmem.h"
 #include "errors.h"
+#include "frontend_credits.h"
 #include "frontend_main.h"
+#include "frontend_netsync.h"
+#include "frontend_networksummary.h"
 #include "frontend_quit.h"
+#include "frontend_wrecks.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "init.h"
@@ -31,10 +35,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gFrontend_backdrop_actors, 3, 0x0068
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_stuff_not_loaded, 0x0059b0d0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_spec*, gCurrent_frontend_spec, 0x00688abc);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_options, 0x00632c60, FIXMEFIXME);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_wrecks, 0x005f8e68, FIXMEFIXME);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_netsync, 0x0061bad0, FIXMEFIXME);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_networksummary, 0x00627398, FIXMEFIXME);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_credits, 0x005cab48, FIXMEFIXME);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_newgame, 0x005bf280, FIXMEFIXME);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gFrontend_A_model_from, 0x00688378);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gFrontend_A_model_to, 0x0068844c);
@@ -552,20 +552,20 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
         C2V(gCurrent_frontend_spec) = &C2V(gFrontend_options);
         break;
     case kFrontend_menu_wrecks:
-        FRONTEND_CreateMenu(&C2V(gFrontend_wrecks));
-        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_wrecks);
+        FRONTEND_CreateMenu(&C2V(gFrontend_WRECKS));
+        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_WRECKS);
         break;
     case kFrontend_menu_netsync:
-        FRONTEND_CreateMenu(&C2V(gFrontend_netsync));
-        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_netsync);
+        FRONTEND_CreateMenu(&C2V(gFrontend_NETSYNC));
+        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_NETSYNC);
         break;
     case kFrontend_menu_networksummary:
-        FRONTEND_CreateMenu(&C2V(gFrontend_networksummary));
-        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_networksummary);
+        FRONTEND_CreateMenu(&C2V(gFrontend_NETWORK_SUMMARY));
+        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_NETWORK_SUMMARY);
         break;
     case kFrontend_menu_credits:
-        FRONTEND_CreateMenu(&C2V(gFrontend_credits));
-        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_credits);
+        FRONTEND_CreateMenu(&C2V(gFrontend_CREDITS));
+        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_CREDITS);
         break;
     case kFrontend_menu_newgame:
         FRONTEND_CreateMenu(&C2V(gFrontend_newgame));
