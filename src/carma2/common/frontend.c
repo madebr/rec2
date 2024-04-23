@@ -888,3 +888,14 @@ int C2_HOOK_FASTCALL FRONTEND_Default_Destroy(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00470c10, FRONTEND_Default_Destroy)
+
+int (C2_HOOK_FASTCALL * FRONTEND_Default_Tick_original)(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FRONTEND_Default_Tick_original(pFrontend);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00470c20, FRONTEND_Default_Tick, FRONTEND_Default_Tick_original)
