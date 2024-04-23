@@ -877,3 +877,9 @@ void C2_HOOK_FASTCALL FRONTEND_SetTransitionModels(tFrontend_spec* pCurrent, tFr
     C2V(gFrontend_interpolate_steps_left) = 16;
 }
 C2_HOOK_FUNCTION(0x00470a90, FRONTEND_SetTransitionModels)
+
+int C2_HOOK_FASTCALL FRONTEND_DefaultItem_Action(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00466450, FRONTEND_DefaultItem_Action)
