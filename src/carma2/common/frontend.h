@@ -63,4 +63,6 @@ int C2_HOOK_FASTCALL FRONTEND_Default_Destroy(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL FRONTEND_RenderItems(tFrontend_spec* pFrontend);
+
 #endif //REC2_FRONTEND_H
