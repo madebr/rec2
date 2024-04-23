@@ -3494,6 +3494,7 @@ enum {
 
 enum {
     eSoundId_Done = 3004,
+    eSoundId_Swingin = 3006,
 };
 
 #endif // REC2_TYPES_H
