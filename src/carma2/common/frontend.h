@@ -34,6 +34,8 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 
 void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pFrontendType);
 
+void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void);
+
 void C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontend);
 
 void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index);
