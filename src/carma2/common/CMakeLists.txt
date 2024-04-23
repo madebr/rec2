@@ -40,6 +40,8 @@ add_library(c2_common STATIC
     frontend.h
     frontend_main.c
     frontend_main.h
+    frontend_quit.c
+    frontend_quit.h
     globvars.c
     globvars.h
     globvrbm.c
