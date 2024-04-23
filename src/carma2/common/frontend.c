@@ -883,3 +883,9 @@ int C2_HOOK_FASTCALL FRONTEND_DefaultItem_Action(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00466450, FRONTEND_DefaultItem_Action)
+
+int C2_HOOK_FASTCALL FRONTEND_Default_Destroy(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00470c10, FRONTEND_Default_Destroy)
