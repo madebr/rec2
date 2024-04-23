@@ -37,4 +37,6 @@ int C2_HOOK_FASTCALL KeyIsDown2(int pKey_index);
 
 void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY);
 
+int C2_HOOK_FASTCALL PDAnyKeyDown(void);
+
 #endif // REC2_INPUT_H

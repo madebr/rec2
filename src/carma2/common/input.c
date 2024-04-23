@@ -237,3 +237,14 @@ void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY) {
     C2V(gCurrent_mouse_position).y = *pY;
 }
 C2_HOOK_FUNCTION(0x00483c10, GetMousePosition);
+
+int (C2_HOOK_FASTCALL * PDAnyKeyDown_original)(void);
+int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PDAnyKeyDown_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00482a00, PDAnyKeyDown, PDAnyKeyDown_original)
