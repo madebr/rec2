@@ -11,4 +11,6 @@ void C2_HOOK_STDCALL ReadFFB_TXT(void);
 
 int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2);
 
+void C2_HOOK_FASTCALL StopJoysticks(void);
+
 #endif /* REC2_JOYSTICK_H */
