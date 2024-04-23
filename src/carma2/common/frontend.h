@@ -12,6 +12,7 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_menu_camera);
 C2_HOOK_VARIABLE_DECLARE(double, gFrontend_throb_factor);
 C2_HOOK_VARIABLE_DECLARE(int, gTyping_slot);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_leave_current_menu);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_suppress_mouse);
 
 void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
@@ -64,5 +65,7 @@ int C2_HOOK_FASTCALL FRONTEND_Default_Destroy(tFrontend_spec* pFrontend);
 int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL FRONTEND_RenderItems(tFrontend_spec* pFrontend);
+
+void C2_HOOK_FASTCALL FRONTEND_DoMouse(void);
 
 #endif //REC2_FRONTEND_H
