@@ -64,6 +64,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_menu_camera, 0x00688b10);
 C2_HOOK_VARIABLE_IMPLEMENT(double, gFrontend_throb_factor, 0x006886d0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTyping_slot, 0x0075b8fc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_leave_current_menu, 0x006883a8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_suppress_mouse, 0x00688b20);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -1061,3 +1062,12 @@ void C2_HOOK_FASTCALL FRONTEND_RenderItems(tFrontend_spec* pFrontend) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046e020, FRONTEND_RenderItems, FRONTEND_RenderItems_original)
+
+void C2_HOOK_FASTCALL FRONTEND_DoMouse(void) {
+    if (!C2V(gFrontend_suppress_mouse)) {
+        LockBackScreen(1);
+        DoMouseCursor();
+        UnlockBackScreen(1);
+    }
+}
+C2_HOOK_FUNCTION(0x0046d8b0, FRONTEND_DoMouse)
