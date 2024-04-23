@@ -38,6 +38,8 @@ add_library(c2_common STATIC
     font.h
     frontend.c
     frontend.h
+    frontend_main.c
+    frontend_main.h
     globvars.c
     globvars.h
     globvrbm.c
