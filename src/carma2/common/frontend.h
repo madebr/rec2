@@ -13,6 +13,15 @@ C2_HOOK_VARIABLE_DECLARE(double, gFrontend_throb_factor);
 C2_HOOK_VARIABLE_DECLARE(int, gTyping_slot);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_leave_current_menu);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_suppress_mouse);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gFrontend_backdrop_actors, 3);
+C2_HOOK_VARIABLE_DECLARE(br_uint_32, gFrontend_APO_Colour_1);
+C2_HOOK_VARIABLE_DECLARE(br_uint_32, gFrontend_APO_Colour_2);
+C2_HOOK_VARIABLE_DECLARE(br_uint_32, gFrontend_APO_Colour_3);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_wrecks_actor);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_wrecks_camera);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gFrontend_wrecks_pixelmap);
+C2_HOOK_VARIABLE_DECLARE(tFrontendMenuType, gFrontend_next_menu);
+
 
 void C2_HOOK_FASTCALL LoadFrontendStrings(void);
 
@@ -36,7 +45,7 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pFrontendType);
 
 void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void);
 
-void C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontend);
+int C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontend);
 
 void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index);
 
