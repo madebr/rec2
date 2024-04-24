@@ -81,6 +81,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_wrecks_actor, 0x00688aec);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_wrecks_camera, 0x00688af0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gFrontend_wrecks_pixelmap, 0x007635e4);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontendMenuType, gFrontend_next_menu, 0x00764eec);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAuthor_credits_scroll_start_time, 0x00686834);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -608,10 +609,33 @@ C2_HOOK_FUNCTION(0x0046d1c0, FRONTEND_Setup)
 void (C2_HOOK_FASTCALL * FRONTEND_RenderAuthorCredits_original)(void);
 void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+    C2_HOOK_VARIABLE_IMPLEMENT(int, gAuthor_credits_line_count, 0x006883c0);
+    C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_heights, 0x00686f04);
+    C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_throbs, 0x00687238);
+    C2_HOOK_VARIABLE_IMPLEMENT(char**, gAuthor_credits_texts, 0x00688448);
+    C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_fonts, 0x0068682c);
+    C2_HOOK_VARIABLE_IMPLEMENT(int, gAuthor_credits_total_height, 0x00686f90);
+
+#if 0//defined(C2_HOOKS_ENABLED)
     FRONTEND_RenderAuthorCredits_original();
 #else
-#error "Not implemented"
+    int i;
+    int y = (int)(430.f - 0.03f * (float)(PDGetTotalTime() - C2V(gAuthor_credits_scroll_start_time)));
+
+    for (i = 0; i < C2V(gAuthor_credits_line_count); i++) {
+        y += C2V(gAuthor_credits_heights)[i];
+        if (y > 30 && y < 430) {
+            if (C2V(gAuthor_credits_throbs[i])) {
+                FRONTEND_RenderPolyTextLine(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i] - 1, eJust_centre, 1);
+                RenderBlendedPolyTextLine(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i], eJust_centre, 1, C2V(gFrontend_throb_factor));
+            } else {
+                FRONTEND_RenderPolyTextLine(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i], eJust_centre, 1);
+            }
+        }
+    }
+    if (C2V(gAuthor_credits_total_height) < 0.03f * (PDGetTotalTime() - C2V(gAuthor_credits_scroll_start_time))) {
+        C2V(gAuthor_credits_scroll_start_time) = PDGetTotalTime();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046f630, FRONTEND_RenderAuthorCredits, FRONTEND_RenderAuthorCredits_original)
