@@ -21,6 +21,7 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_wrecks_actor);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_wrecks_camera);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gFrontend_wrecks_pixelmap);
 C2_HOOK_VARIABLE_DECLARE(tFrontendMenuType, gFrontend_next_menu);
+C2_HOOK_VARIABLE_DECLARE(tConnected_items*, gConnected_items);
 
 
 void C2_HOOK_FASTCALL LoadFrontendStrings(void);

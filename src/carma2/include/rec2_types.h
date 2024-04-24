@@ -1131,7 +1131,7 @@ typedef struct tFrontend_item_spec {
     int glowDisabled;
     int x2;
     int y2;
-    char unknownChar;  // FIXME: unknown
+    tU8 flags;
     char text[255];
 } tFrontend_item_spec;
 
@@ -1172,6 +1172,15 @@ typedef struct {
     br_pixelmap* field_0x10;
     br_token_value prims[3];
 } tFrontend_brender_item;
+
+typedef struct tConnected_items {
+    undefined4 field_0x0;
+    int range_length;
+    undefined4 field_0x8;
+    int count_ranges;
+    int range_starts[7];
+    struct tConnected_items* next;
+} tConnected_items;
 
 typedef struct {
     br_actor* actor;
