@@ -2,6 +2,7 @@
 
 #include "drmem.h"
 #include "errors.h"
+#include "font.h"
 #include "frontend_credits.h"
 #include "frontend_loadgame.h"
 #include "frontend_main.h"
@@ -1264,3 +1265,12 @@ void C2_HOOK_FASTCALL FRONTEND_DoMouse(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0046d8b0, FRONTEND_DoMouse)
+
+void C2_HOOK_FASTCALL FRONTEND_RenderPolyTextLine(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
+
+    if (C2V(gPolyFonts)[pFont].available == 0) {
+        LoadInterfacePolyFonts();
+    }
+    RenderBlendedPolyTextLine(pText, pX, pY, pFont, pJust, pRender, 1.0);
+}
+C2_HOOK_FUNCTION(0x00464df0, FRONTEND_RenderPolyTextLine)
