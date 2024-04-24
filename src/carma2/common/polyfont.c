@@ -53,6 +53,14 @@ int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex) {
 }
 C2_HOOK_FUNCTION(0x00463830, GetPolyFontInterCharacterSpacing)
 
+void C2_HOOK_FASTCALL RenderInterfaceBlendedPolyText(int pFont, const char* pText, int pX, int pY, int pWidth, int pHeight, tJustification pJustification, undefined4 pParam_8) {
+    if (!C2V(gPolyFonts)[pFont].available) {
+        LoadInterfacePolyFonts();
+    }
+    RenderBlendedPolyText(pFont, pText, pX, pY, pWidth, pHeight, pJustification, pParam_8, 1.0);
+}
+C2_HOOK_FUNCTION(0x00463850, RenderInterfaceBlendedPolyText)
+
 void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, int pRender) {
     char s[256];
     int s_len;
