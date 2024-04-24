@@ -82,6 +82,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_wrecks_camera, 0x00688af0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gFrontend_wrecks_pixelmap, 0x007635e4);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontendMenuType, gFrontend_next_menu, 0x00764eec);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAuthor_credits_scroll_start_time, 0x00686834);
+C2_HOOK_VARIABLE_IMPLEMENT(tConnected_items*, gConnected_items, 0x00688ab0);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -1277,10 +1278,108 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00470c20, FRONTEND_Default_Tick, FRONTEND_Default_Ti
 void (C2_HOOK_FASTCALL * FRONTEND_RenderItems_original)(tFrontend_spec* pFrontend);
 void C2_HOOK_FASTCALL FRONTEND_RenderItems(tFrontend_spec* pFrontend) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     FRONTEND_RenderItems_original(pFrontend);
 #else
-#error "Not implemented"
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, count_connected_items, 0x00686f08);
+    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, connected_items, 6, 0x00687018);
+    int i;
+    br_fixed_ls blend_x;
+
+    if (C2V(gFrontend_leave_current_menu) || pFrontend->count_items <= 0) {
+        return;
+    }
+    C2V(count_connected_items) = 0;
+    if (C2V(gFrontend_selected_item_index) != -1) {
+        tConnected_items* connected_items = C2V(gConnected_items);
+        int scroll_area_containing_selected_item = 0;
+
+        for (; connected_items != NULL; connected_items = connected_items->next) {
+            for (i = 0; i < connected_items->count_ranges; i++) {
+                if (connected_items->range_starts[i] <= C2V(gFrontend_selected_item_index) && C2V(gFrontend_selected_item_index) < connected_items->range_starts[i] + connected_items->range_length) {
+                    scroll_area_containing_selected_item = C2V(gFrontend_selected_item_index) - connected_items->range_starts[i] + 1;
+                    break;
+                }
+            }
+            if (scroll_area_containing_selected_item != 0) {
+                break;
+            }
+        }
+        if (scroll_area_containing_selected_item == 0) {
+            C2V(count_connected_items) = 1;
+            C2V(connected_items)[0] = C2V(gFrontend_selected_item_index);
+            pFrontend->items[C2V(gFrontend_selected_item_index)].flags |= 0x1;
+        } else {
+            for (i = 0; i < connected_items->count_ranges; i++) {
+                C2V(connected_items)[C2V(count_connected_items)] = scroll_area_containing_selected_item + connected_items->range_starts[i] - 1;
+                pFrontend->items[i - 1].flags |= 0x1;
+                C2V(count_connected_items) += 1;
+            }
+        }
+    }
+    for (i = 0; i < C2V(gFrontend_count_brender_items); i++) {
+        tFrontend_brender_item* brender_item = &C2V(gFrontend_brender_items)[i];
+        tFrontend_item_spec* item = &pFrontend->items[i];
+        const char* text;
+
+        if (!item->visible) {
+            brender_item->actor->render_style = BR_RSTYLE_NONE;
+            continue;
+        }
+
+        brender_item->actor->render_style = BR_RSTYLE_FACES;
+        text = item->stringId >= 0x400 ? item->text : GetInterfaceString(item->stringId);
+        if (item->flags & 0x1) {
+            if (text != NULL) {
+                RenderBlendedPolyText(item->unlitFont, text,
+                    item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1, 0.6);
+            }
+            RenderBlendedPolyText(item->highFont, text,
+                item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1,
+                item->radioButton_selected ? 0.3 - 0.7 * C2V(gFrontend_throb_factor) : 0.6 * C2V(gFrontend_throb_factor));
+        } else if (item->enabled >= 0) {
+            if (item->radioButton_selected) {
+                if (text != NULL) {
+                    RenderInterfaceBlendedPolyText(item->highFont, text,
+                        item->x, item->y, item->x + item->width, item->y + item->height, eJust_centre, 1);
+                }
+            } else {
+                if (text != NULL) {
+                    RenderInterfaceBlendedPolyText(item->unlitFont, text,
+                        item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1);
+                }
+            }
+            brender_item->prims[1].v.x = 0x800000;
+            BrMaterialUpdate(brender_item->material, BR_MATU_EXTRA_PRIM);
+        } else {
+            if (item->map_index && brender_item->prims[1].v.x != 0x400000) {
+                brender_item->prims[1].v.x = 0x400000;
+                BrMaterialUpdate(brender_item->material, BR_MATU_EXTRA_PRIM);
+            }
+            if (text != NULL) {
+                RenderBlendedPolyText(item->unlitFont, text,
+                    item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1, 0.4);
+            }
+        }
+    }
+    blend_x = BR_FIXED_INT((int)(255. * (0.3 + 0.7 * C2V(gFrontend_throb_factor))));
+    C2V(gFrontend_brender_items)[C2V(gFrontend_selected_item_index)].prims[1].v.x = blend_x;
+    BrMaterialUpdate(C2V(gFrontend_brender_items)[C2V(gFrontend_selected_item_index)].material, BR_MATU_EXTRA_PRIM);
+    if (pFrontend->items[C2V(gFrontend_selected_item_index)].glowDisabled != 0) {
+        for (i = 0; i < C2V(gFrontend_count_brender_items); i++) {
+            if (pFrontend->items[i].glowDisabled == pFrontend->items[C2V(gFrontend_selected_item_index)].glowDisabled
+                    && C2V(gFrontend_brender_items)[i].prims[1].v.x != blend_x) {
+                C2V(gFrontend_brender_items)[i].prims[1].v.x = blend_x;
+                BrMaterialUpdate(C2V(gFrontend_brender_items)[i].material, BR_MATU_EXTRA_PRIM);
+            }
+        }
+    }
+    UpdateThrobFactor();
+    PossibleService();
+    for (i = 0; i < C2V(count_connected_items); i++) {
+        pFrontend->items[C2V(connected_items)[i]].flags &= ~0x1;
+    }
+    C2V(count_connected_items) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046e020, FRONTEND_RenderItems, FRONTEND_RenderItems_original)
