@@ -886,6 +886,7 @@ typedef enum {
 } tSpecial_volume_soundfx_type;
 
 typedef enum {
+    kSoundFxPeriodicity_None = -1,
     kSoundFxPeriodicity_Random = 0,
     kSoundFxPeriodicity_Periodic = 1,
     kSoundFxPeriodicity_Continuous = 2,
@@ -900,12 +901,12 @@ typedef enum tKey_down_result {
 
 typedef struct {
     tSpecial_volume_soundfx_periodicity_type periodicity;
-    float periodic1;
-    float periodic2;
-    tU32 unknown1;
-    int nbEnvironmentalSoundAlternatives;
-    tS32 unknown2; // fixedpoint integer? (* 16 / 100)
-    tS16 soundAlternatives[5];
+    int periodic1;
+    int periodic2;
+    undefined4 field_0xc;
+    int count_sound_alternatives;
+    br_fixed_ls field_0x14; // fixedpoint integer? (* 16 / 100)
+    tS16 sound_alternatives[5];
     tS16 unknown3;
 } tSpecial_volume_soundfx_data;
 
@@ -3463,6 +3464,7 @@ enum {
     kFatalError_TooManyCrushDatas = 0x7c,
     kFatalError_CannotFindSmashActorModel_S = 0x81,
     kFatalError_ProglemWithSpecialVolumeNumber_I = 0x82,
+    kFatalError_TooManyEnvironmentalSoundAlternatives = 0x83,
     kFatalError_CannotFindModelReferencedInSoundGeneratorList_S = 0x84,
     kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CannotFindPedSpawnMaterial_S = 0xa4,
