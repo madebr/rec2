@@ -1,13 +1,17 @@
 #include "sound.h"
 
+#include "errors.h"
 #include "globvars.h"
 #include "loading.h"
 #include "opponent.h"
 #include "utility.h"
+#include "world.h"
 
 #include <s3/s3.h>
 
 #include "c2_string.h"
+
+#include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSound_detail_level, 0x00595c48, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_fully_installed, 0x0068b898);
@@ -27,6 +31,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gCar_outlet, 0x00684600);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gPedestrians_outlet, 0x0068460c);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gXXX_outlet, 0x00684614);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tS3_outlet*, gIndexed_outlets, 6, 0x0079e160);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSound_periodicity_choices, 3, 0x00595c28, {
+    "RANDOM",
+    "PERIODIC",
+    "CONTINUOUS",
+});
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
@@ -61,10 +70,36 @@ C2_HOOK_FUNCTION(0x00454f40, UsePathFileToDetermineIfFullInstallation)
 
 void (C2_HOOK_FASTCALL * LoadSpecialVolumeSoundEffects_original)(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 void C2_HOOK_FASTCALL LoadSpecialVolumeSoundEffects(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadSpecialVolumeSoundEffects_original(pF, pSpec);
 #else
-#error "not implemented"
+    int i;
+
+    pSpec->periodicity = GetALineAndInterpretCommand(pF, C2V(gSound_periodicity_choices), REC2_ASIZE(C2V(gSound_periodicity_choices)));
+    if (pSpec->periodicity == kSoundFxPeriodicity_None) {
+        return;
+    }
+    if (pSpec->periodicity == kSoundFxPeriodicity_Random) {
+        float f1, f2;
+
+        GetPairOfFloats(pF, &f1, &f2);
+        pSpec->periodic1 = (int)(1000.f * f1);
+        pSpec->periodic2 = (int)(1000.f * f2);
+    } else if (pSpec->periodicity == kSoundFxPeriodicity_Periodic) {
+        pSpec->periodic1 = (int)(1000.f * GetAScalar(pF));
+    }
+    pSpec->field_0x14 = BR_FIXED_INT(GetAnInt(pF)) / 100;
+    pSpec->count_sound_alternatives = GetAnInt(pF);
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pSpec->sound_alternatives) != 5);
+    if (pSpec->count_sound_alternatives > REC2_ASIZE(pSpec->sound_alternatives)) {
+        FatalError(kFatalError_TooManyEnvironmentalSoundAlternatives);
+    }
+    for (i = 0; i < pSpec->count_sound_alternatives; i++) {
+
+        pSpec->sound_alternatives[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+    }
+    pSpec->field_0xc = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004569f0, LoadSpecialVolumeSoundEffects, LoadSpecialVolumeSoundEffects_original)
