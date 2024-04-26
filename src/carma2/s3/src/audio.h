@@ -18,6 +18,8 @@ int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* chan);
 
 tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_channels_2);
 
+int C2_HOOK_FASTCALL S3SetOutletVolume(tS3_outlet* pOutlet, int pVolume);
+
 void C2_HOOK_FASTCALL S3StopAllOutletSounds(void);
 
 int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
