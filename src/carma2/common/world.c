@@ -298,7 +298,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
     if (soundfx) {
         pSpec->soundfx_type = GetALineAndInterpretCommand(pF, C2V(gSoundType_Choices), REC2_ASIZE(C2V(gSoundType_Choices)));
         if (pSpec->soundfx_type != kSoundFx_None) {
-            ParseSoundFxDetails(pF, &pSpec->soundfx_data);
+            LoadSpecialVolumeSoundEffects(pF, &pSpec->soundfx_data);
         }
     } else {
         pSpec->soundfx_type = kSoundFx_None;
