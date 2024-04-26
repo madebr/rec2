@@ -103,6 +103,8 @@ void C2_HOOK_FASTCALL S3Enable(void);
 
 void C2_HOOK_FASTCALL S3Disable(void);
 
+tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_channels_2);
+
 void C2_HOOK_FASTCALL S3StopAllOutletSounds(void);
 
 int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
