@@ -97,6 +97,8 @@ typedef struct tS3_outlet {
     tS3_outlet_callback* callback;
 } tS3_outlet;
 
+int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
+
 void C2_HOOK_FASTCALL S3Enable(void);
 
 void C2_HOOK_FASTCALL S3Disable(void);

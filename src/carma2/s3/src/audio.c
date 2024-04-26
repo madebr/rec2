@@ -10,6 +10,17 @@ C2_HOOK_VARIABLE_IMPLEMENT(tS3_sound_source*, gS3_sound_sources, 0x007a0590);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_nsound_sources, 0x007a0584);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gS3_outlets, 0x007a058c);
 
+int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_path);
+int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return S3Init_original(pPath, pLow_memory_mode, pSound_path);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005651d0, S3Init, S3Init_original)
+
 void C2_HOOK_FASTCALL S3Enable(void) {
 
     C2V(gS3_enabled) = 1;
