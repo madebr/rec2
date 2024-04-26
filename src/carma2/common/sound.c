@@ -7,7 +7,7 @@
 
 #include <s3/s3.h>
 
-#include <string.h>
+#include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSound_detail_level, 0x00595c48, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_fully_installed, 0x0068b898);
@@ -26,9 +26,9 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char path_file[80];
     FILE* fp;
 
-    strcpy(path_file, C2V(gApplication_path));
-    strcat(path_file, (char*)C2V(gDir_separator));
-    strcat(path_file, "PATHS.TXT");
+    c2_strcpy(path_file, C2V(gApplication_path));
+    c2_strcat(path_file, (char*)C2V(gDir_separator));
+    c2_strcat(path_file, "PATHS.TXT");
 
     if (PDCheckDriveExists(path_file)) {
         fp = TWT_fopen(path_file, "rt");
@@ -42,14 +42,13 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
         GetALineWithNoPossibleService(fp, line2);
         GetALineWithNoPossibleService(fp, line3);
         DRfclose(fp);
-        if (strcmp(line3, "Full") != 0) {
+        if (c2_strcmp(line3, "Full") != 0) {
             return;
         }
     }
     C2V(gCD_fully_installed) = 1;
 }
 C2_HOOK_FUNCTION(0x00454f40, UsePathFileToDetermineIfFullInstallation)
-
 
 void (C2_HOOK_FASTCALL * ParseSoundFxDetails_original)(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 void C2_HOOK_FASTCALL ParseSoundFxDetails(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
