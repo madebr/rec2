@@ -7,6 +7,7 @@
 #include "depth.h"
 #include "drmem.h"
 #include "errors.h"
+#include "finteray.h"
 #include "flicplay.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -105,6 +106,18 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_blue, 0x0074cad0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gNon_car_spec_indices, 100, 0x0079ef40);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gNon_car_indices, 88, 0x0079ed30);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tUnknown_0x006a7fc8, gUnknown_0x006a7fc8, 25, 0x006a7fc8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSpecial_effects_boundary_choices, 4, 0x00660258, {
+    "BOX",
+    "PLANE",
+    "DEFAULT",
+    "NEW",
+});
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDefault_engine_noise_index, 0x0068b878);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundGeneratorTypeNames, 3, 0x00595c38, {
+    "NONCAR",
+    "ACTOR",
+    "POINT",
+});
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -1971,10 +1984,56 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, LoadTrackSpecialVolumes, LoadTrackSpecialV
 void (C2_HOOK_FASTCALL * LoadTrackSoundGenerators_original)(tTrack_spec* pTrack_spec, FILE* pF);
 void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadTrackSoundGenerators_original(pTrack_spec, pF);
 #else
-#error "Not implemented"
+    int i;
+
+    C2V(gProgram_state).count_track_sound_generators = GetAnInt(pF);
+    if (C2V(gProgram_state).count_track_sound_generators != 0) {
+        C2_HOOK_BUG_ON(sizeof(tTrackSoundGenerator) != 0x7c);
+        C2V(gProgram_state).track_sound_generators = BrMemAllocate(C2V(gProgram_state).count_track_sound_generators * sizeof(tTrackSoundGenerator), kMem_sound_generator);
+    }
+    for (i = 0; i < C2V(gProgram_state).count_track_sound_generators; i++) {
+        tTrackSoundGenerator* generator;
+        char name[32];
+
+        generator = &C2V(gProgram_state).track_sound_generators[i];
+        generator->type = GetALineAndInterpretCommand(pF, C2V(gSoundGeneratorTypeNames), REC2_ASIZE(C2V(gSoundGeneratorTypeNames)));
+        if (generator->type == kSoundGeneratorType_noncar) {
+            char identifier[4];
+            br_model* model;
+
+            GetAString(pF, name);
+            c2_sprintf(identifier, "%c%02d", 'L', i);
+            model = BrModelFind(name);
+            if (model == NULL || model->identifier == NULL) {
+                FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S, name);
+            }
+            c2_memcpy(model->identifier, identifier, sizeof(identifier));
+        } else if (generator->type == kSoundGeneratorType_actor) {
+            char identifier[4];
+            br_model* model;
+
+            GetAString(pF, name);
+            c2_sprintf(identifier, "%c%02d", ')', i);
+            model = BrModelFind(name);
+            if (model == NULL || model->identifier == NULL) {
+                FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S, name);
+            }
+            c2_memcpy(model->identifier, identifier, sizeof(identifier));
+        } else if (generator->type == kSoundGeneratorType_noncar) {
+            GetThreeFloats(pF,
+                &generator->point.v[0],
+                &generator->point.v[1],
+                &generator->point.v[2]);
+        }
+        LoadSpecialVolumeSoundEffects(pF, &generator->fx);
+        if (generator->type == kSoundGeneratorType_noncar) {
+            LoadSpecialVolumeSoundEffects(pF, &generator->fx1_noncar);
+            LoadSpecialVolumeSoundEffects(pF, &generator->fx2_noncar);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004572f0, LoadTrackSoundGenerators, LoadTrackSoundGenerators_original)

@@ -909,8 +909,24 @@ typedef struct {
     tS16 unknown3;
 } tSpecial_volume_soundfx_data;
 
+typedef enum {
+    eFx_boundary_box = 0,
+    eFx_boundary_plane = 1,
+    eFx_boundary_default = 2,
+    eFx_boundary_new = 3,
+} tSpecial_volume_boundary_type;
+
 typedef struct {
-    char unknown1[136];
+    tSpecial_volume_boundary_type boundary_type;
+    union {
+        struct {
+            br_matrix34 mat;
+            br_matrix34 inv_mat;
+            br_vector3 axis_length;
+            br_bounds3 bounds;
+        } box;
+        br_vector4 plane;
+    } boundary;
     br_scalar gravity_multiplier;
     br_scalar viscosity_multiplier;
     float car_damage_per_ms;
@@ -3441,6 +3457,8 @@ enum {
     kFatalError_TooManyCrushLimits = 0x7a,
     kFatalError_TooManyCrushDatas = 0x7c,
     kFatalError_CannotFindSmashActorModel_S = 0x81,
+    kFatalError_ProglemWithSpecialVolumeNumber_I = 0x82,
+    kFatalError_CannotFindModelReferencedInSoundGeneratorList_S = 0x84,
     kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CannotFindPedSpawnMaterial_S = 0xa4,
     kFatalError_CannotMovePedIndexOutOfRangeForMaterial_S = 0xa5,
