@@ -24,6 +24,7 @@ C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gCar_outlet);
 C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gPedestrians_outlet);
 C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gXXX_outlet);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tS3_outlet*, gIndexed_outlets, 6);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSound_periodicity_choices, 3);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
