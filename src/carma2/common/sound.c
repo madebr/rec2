@@ -18,6 +18,15 @@ C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gEngine_outlet, 0x00684604);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMusic_available, 0x00684564);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00684554, 0x00684554);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00684568, 0x00684568);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gVirgin_pass, 0x00655dd8, 1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gOld_sound_detail_level, 0x00595c4c, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCD_is_disabled, 0x0079e13c);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gDriver_outlet, 0x00684608);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gMusic_outlet, 0x00684610);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gCar_outlet, 0x00684600);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gPedestrians_outlet, 0x0068460c);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gXXX_outlet, 0x00684614);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tS3_outlet*, gIndexed_outlets, 6, 0x0079e160);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
@@ -90,10 +99,124 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00455690, DRS3StartSound, DRS3StartSound_original)
 void (C2_HOOK_FASTCALL * InitSound_original)(void);
 void C2_HOOK_FASTCALL InitSound(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitSound_original();
 #else
-#error "Not implemented"
+    tPath_name the_path;
+    int engine_channel_count;
+    int car_channel_count;
+    int ped_channel_count;
+    int xxx_channel_count;
+
+    if (C2V(gVirgin_pass)) {
+        PathCat(the_path, C2V(gApplication_path), "SOUND");
+        PathCat(the_path, the_path, "SOUND.TXT");
+        if (C2V(gSound_override)) {
+            C2V(gSound_enabled) = 0;
+        } else {
+            C2V(gSound_enabled) = S3Init(the_path, C2V(gAusterity_mode), C2V(gPedSoundPath)) == 0;
+        }
+        C2V(gSound_available) = C2V(gSound_enabled);
+        S3Set3DSoundEnvironment(0.14492753f, -1.0f, -1.0f);
+        C2V(gVirgin_pass) = 0;
+        C2V(gCD_is_disabled) = 0;
+        UsePathFileToDetermineIfFullInstallation();
+    }
+    if (!C2V(gSound_available)) {
+        return;
+    }
+    switch (C2V(gSound_detail_level)) {
+    case 0:
+        engine_channel_count = 2;
+        car_channel_count = 2;
+        ped_channel_count = 3;
+        xxx_channel_count = 1;
+        break;
+    case 1:
+        engine_channel_count = 4;
+        car_channel_count = 3;
+        ped_channel_count = 4;
+        xxx_channel_count = 3;
+        break;
+    default:
+        engine_channel_count = 6;
+        car_channel_count = 4;
+        ped_channel_count = 5;
+        xxx_channel_count = 5;
+        break;
+    }
+    if (C2V(gDriver_outlet) == NULL) {
+        C2V(gIndexed_outlets)[0] = C2V(gDriver_outlet) = S3CreateOutlet(1, 1);
+        if (C2V(gDriver_outlet) == NULL) {
+            C2V(gSound_available) = 0;
+            return;
+        }
+    }
+    if (C2V(gMusic_outlet) == NULL) {
+        C2V(gIndexed_outlets)[2] = C2V(gMusic_outlet) = S3CreateOutlet(1, 1);
+        C2V(gMusic_available) = C2V(gMusic_outlet) != NULL;
+        DRS3SetOutletVolume(C2V(gMusic_outlet), C2V(gProgram_state).music_volume);
+    }
+    if (C2V(gSound_detail_level) != C2V(gOld_sound_detail_level)) {
+        if (C2V(gCar_outlet) != NULL) {
+            S3ReleaseOutlet(C2V(gCar_outlet));
+            C2V(gCar_outlet) = NULL;
+        }
+        if (C2V(gPedestrians_outlet) != NULL) {
+            S3ReleaseOutlet(C2V(gPedestrians_outlet));
+            C2V(gPedestrians_outlet) = NULL;
+        }
+        if (C2V(gEngine_outlet) != NULL) {
+            S3ReleaseOutlet(C2V(gEngine_outlet));
+            C2V(gEngine_outlet) = NULL;
+        }
+        if (C2V(gXXX_outlet) != NULL) {
+            S3ReleaseOutlet(C2V(gXXX_outlet));
+            C2V(gXXX_outlet) = NULL;
+        }
+        if (C2V(gEngine_outlet) == NULL) {
+            C2V(gIndexed_outlets)[1] = C2V(gEngine_outlet) = S3CreateOutlet(engine_channel_count, engine_channel_count);
+            if (C2V(gEngine_outlet) == NULL) {
+                C2V(gSound_available) = 0;
+                return;
+            }
+            DRS3SetOutletVolume(C2V(gEngine_outlet), C2V(gProgram_state).effects_volume);
+        }
+        if (C2V(gCar_outlet) == NULL) {
+            C2V(gIndexed_outlets)[3] = C2V(gCar_outlet) = S3CreateOutlet(car_channel_count, car_channel_count);
+            if (C2V(gCar_outlet) == NULL) {
+                C2V(gSound_available) = 0;
+                return;
+            }
+            DRS3SetOutletVolume(C2V(gCar_outlet), C2V(gProgram_state).effects_volume);
+        }
+        if (C2V(gPedestrians_outlet) == NULL) {
+            C2V(gIndexed_outlets)[4] = C2V(gPedestrians_outlet) = S3CreateOutlet(ped_channel_count, ped_channel_count);
+            if (C2V(gPedestrians_outlet) == NULL) {
+                C2V(gSound_available) = 0;
+                return;
+            }
+            DRS3SetOutletVolume(C2V(gPedestrians_outlet), C2V(gProgram_state).effects_volume);
+        }
+        if (C2V(gXXX_outlet) == NULL) {
+            C2V(gIndexed_outlets)[5] = C2V(gXXX_outlet) = S3CreateOutlet(xxx_channel_count, xxx_channel_count);
+            if (C2V(gXXX_outlet) == NULL) {
+                C2V(gSound_available) = 0;
+                return;
+            }
+            DRS3SetOutletVolume(C2V(gXXX_outlet), C2V(gProgram_state).effects_volume);
+        }
+    }
+    if (C2V(gEffects_outlet) == NULL) {
+        C2V(gIndexed_outlets)[5] = C2V(gEffects_outlet) = S3CreateOutlet(2, 2);
+        if (C2V(gEffects_outlet) == NULL) {
+            C2V(gSound_available) = 0;
+            return;
+        }
+        DRS3SetOutletVolume(C2V(gEffects_outlet), C2V(gProgram_state).effects_volume);
+    }
+    C2V(gOld_sound_detail_level) = C2V(gSound_detail_level);
+    SetSoundVolumes(0);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455080, InitSound, InitSound_original)

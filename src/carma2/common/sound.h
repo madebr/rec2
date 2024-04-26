@@ -15,6 +15,15 @@ C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gEngine_outlet);
 C2_HOOK_VARIABLE_DECLARE(int, gMusic_available);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_00684554);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_00684568);
+C2_HOOK_VARIABLE_DECLARE(int, gVirgin_pass);
+C2_HOOK_VARIABLE_DECLARE(int, gOld_sound_detail_level);
+C2_HOOK_VARIABLE_DECLARE(int, gCD_is_disabled);
+C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gDriver_outlet);
+C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gMusic_outlet);
+C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gCar_outlet);
+C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gPedestrians_outlet);
+C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gXXX_outlet);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tS3_outlet*, gIndexed_outlets, 6);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
