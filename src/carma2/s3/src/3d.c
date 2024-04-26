@@ -30,3 +30,14 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00567875, S3UpdateSoundSource, S3UpdateSoundSource_original)
+
+int (C2_HOOK_STDCALL * S3Set3DSoundEnvironment_original)(float a1, float a2, float a3);
+int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return S3Set3DSoundEnvironment_original(a1, a2, a3);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00565d70, S3Set3DSoundEnvironment, S3Set3DSoundEnvironment_original)
