@@ -117,4 +117,6 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
 
 void C2_HOOK_FASTCALL S3StopAll(void);
 
+int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3);
+
 #endif
