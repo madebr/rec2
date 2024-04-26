@@ -220,3 +220,12 @@ void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456840, StartMusicTrack, StartMusicTrack_original)
+
+int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
+
+    if (!C2V(gSound_enabled)) {
+        return 0;
+    }
+    return S3SetOutletVolume(pOutlet, pVolume);
+}
+C2_HOOK_FUNCTION(0x00455930, DRS3SetOutletVolume)
