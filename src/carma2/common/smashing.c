@@ -25,38 +25,47 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_race_targets, 0x0074abe0);
 void (C2_HOOK_FASTCALL * InitSmashing_original)(void);
 void C2_HOOK_FASTCALL InitSmashing(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitSmashing_original();
 #else
     int i;
 
-    C2_HOOK_BUG_ON(sizeof(tSmash_vertex) != 0x38);
-    for (i = 0; i < REC2_ASiZE(gSmash_vertices); i++) {
-        C2V(gSmash_vertices)[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        C2V(gSmash_vertices)[i].actor->model = BrModelAllocate(NULL, 3, 1);
-        C2V(gSmash_vertices)[i].actor->model->faces[0].vertices[0] = 0;
-        C2V(gSmash_vertices)[i].actor->model->faces[0].vertices[1] = 1;
-        C2V(gSmash_vertices)[i].actor->model->faces[0].vertices[2] = 2;
-        C2V(gSmash_vertices)[i].actor->model->flags |= BR_MODF_UPDATEABLE;
-        BrModelAdd(C2V(gSmash_vertices)[i].actor->model);
-        C2V(gSmash_vertices)[i].actor->model->render_style = BR_RSTYLE_FACES;
-        C2V(gSmash_vertices)[i].field_0x8 = 0;
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_vertices)) != 200);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmash_vertices)); i++) {
+        tSmash_vertex *smash_vertex;
+
+        smash_vertex = &C2V(gSmash_vertices)[i];
+        smash_vertex->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        smash_vertex->actor->model = BrModelAllocate(NULL, 3, 1);
+        smash_vertex->actor->model->faces[0].vertices[0] = 0;
+        smash_vertex->actor->model->faces[0].vertices[1] = 1;
+        smash_vertex->actor->model->faces[0].vertices[2] = 2;
+        smash_vertex->actor->model->flags |= BR_MODF_UPDATEABLE;
+        BrModelAdd(smash_vertex->actor->model);
+        smash_vertex->model = smash_vertex->actor->model;
+        smash_vertex->actor->render_style = BR_RSTYLE_FACES;
+        smash_vertex->field_0x8 = 0;
     }
 
-    C2_HOOK_BUG_ON(sizeof(tSmash_quad) != 0x8);
-    for (i = 0; i < REC2_ASiZE(gSmash_quads); i++) {
-        C2V(gSmash_quads)[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        C2V(gSmash_quads)[i].actor->model= BrModelAllocate(NULL, 4, 2);
-        C2V(gSmash_quads)[i].actor->model->faces[0].vertices[0] = 0;
-        C2V(gSmash_quads)[i].actor->model->faces[0].vertices[1] = 1;
-        C2V(gSmash_quads)[i].actor->model->faces[0].vertices[2] = 3;
-        C2V(gSmash_quads)[i].actor->model->faces[1].vertices[0] = 0;
-        C2V(gSmash_quads)[i].actor->model->faces[1].vertices[1] = 3;
-        C2V(gSmash_quads)[i].actor->model->faces[1].vertices[2] = 2;
-        C2V(gSmash_quads)[i].actor->model->flags |= BR_MODF_UPDATEABLE;
-        BrModelAdd(C2V(gSmash_quads)[i].actor->model);
-        C2V(gSmash_quads)[i].actor->model->render_style = BR_RSTYLE_FACES;
-        C2V(gSmash_quads)[i].field_0x4 = 0;
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_quads)) != 50);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmash_quads)); i++) {
+        tSmash_quad* smash_quad;
+
+        smash_quad = &C2V(gSmash_quads)[i];
+        smash_quad->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        smash_quad->actor->model = BrModelAllocate(NULL, 4, 2);
+        smash_quad->actor->model->faces[0].vertices[0] = 0;
+        smash_quad->actor->model->faces[0].vertices[1] = 1;
+        smash_quad->actor->model->faces[0].vertices[2] = 3;
+        smash_quad->actor->model->faces[1].vertices[0] = 0;
+        smash_quad->actor->model->faces[1].vertices[1] = 3;
+        smash_quad->actor->model->faces[1].vertices[2] = 2;
+        smash_quad->actor->model->flags |= BR_MODF_UPDATEABLE;
+        BrModelAdd(smash_quad->actor->model);
+        smash_quad->actor->render_style = BR_RSTYLE_FACES;
+        smash_quad->field_0x4 = 0;
     }
 #endif
 }
