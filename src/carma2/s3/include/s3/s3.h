@@ -29,6 +29,12 @@ typedef enum {
     eS3_tr_overridden = 2,
 } tS3_termination_reason;
 
+typedef enum tS3_error_codes {
+    eS3_error_none = 0,
+    eS3_error_memory = 3,
+    eS3_error_bad_id = 6,
+} tS3_error_codes;
+
 // FIXME: add call convention!!
 typedef void ( * tS3_outlet_callback)(tS3_outlet*, tS3_sound_tag, tS3_termination_reason);
 typedef void ( * tS3_sample_filter)(tS3_effect_tag, tS3_sound_tag);
@@ -124,5 +130,7 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
 void C2_HOOK_FASTCALL S3StopAll(void);
 
 int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3);
+
+tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id);
 
 #endif
