@@ -393,7 +393,7 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
     pStorage_space->shade_tables = BrMemCalloc(pMax_shade_tables, sizeof(br_pixelmap*), kMem_stor_space_table);
     pStorage_space->materials = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
     pStorage_space->models = BrMemCalloc(pMax_models, sizeof(br_model*), kMem_stor_space_table);
-    pStorage_space->sounds = BrMemCalloc(pMax_sounds, sizeof(undefined4*), kMem_stor_space_table); // FIXME: fill in correct type
+    pStorage_space->sounds = BrMemCalloc(pMax_sounds, sizeof(int), kMem_stor_space_table);
     pStorage_space->materialProps = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
 }
 C2_HOOK_FUNCTION(0x00500d50, InitialiseStorageSpace)
@@ -432,13 +432,48 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
 }
 C2_HOOK_FUNCTION(0x00501020, AddPixelmapToStorage)
 
+tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pStorage_space, int pSound_id) {
+    int i;
+
+    if (pStorage_space->sounds_count >= pStorage_space->max_sounds) {
+        return eStorage_not_enough_room;
+    }
+
+    for (i = 0; i < pStorage_space->sounds_count; i++) {
+        if (pStorage_space->sounds[i] != 0
+            && pStorage_space->sounds[i] == pSound_id) {
+            return eStorage_duplicate;
+        }
+    }
+    pStorage_space->sounds[pStorage_space->sounds_count] = pSound_id;
+    pStorage_space->sounds_count++;
+    return eStorage_allocated;
+}
+
 tAdd_to_storage_result (C2_HOOK_FASTCALL * LoadSoundInStorage_original)(tBrender_storage* pStorage_space, int pSound_id);
 tAdd_to_storage_result C2_HOOK_FASTCALL LoadSoundInStorage(tBrender_storage* pStorage_space, int pSound_id) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return LoadSoundInStorage_original(pStorage_space, pSound_id);
 #else
-#error "Not implemented"
+
+    if (S3GetBufferDescription(pSound_id) != NULL) {
+        return pSound_id;
+    }
+
+    switch (AddSoundToStorage(pStorage_space, pSound_id)) {
+    case eStorage_not_enough_room:
+        FatalError(kFatalError_InsufficientSoundSlotsInStorageArea);
+        break;
+
+    case eStorage_duplicate:
+        return pSound_id;
+
+    case eStorage_allocated:
+        S3LoadSample(pSound_id);
+        return pSound_id;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00501930, LoadSoundInStorage, LoadSoundInStorage_original)
