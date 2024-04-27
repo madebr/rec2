@@ -826,7 +826,7 @@ typedef struct {
     br_pixelmap** pixelmaps;
     br_pixelmap** shade_tables;
     br_material** materials;
-    int** sounds; // FIXME: correct?
+    int* sounds;
     br_material** materialProps; // FIXME: correct?
 } tBrender_storage;
 
@@ -3466,6 +3466,7 @@ enum {
     kFatalError_ProglemWithSpecialVolumeNumber_I = 0x82,
     kFatalError_TooManyEnvironmentalSoundAlternatives = 0x83,
     kFatalError_CannotFindModelReferencedInSoundGeneratorList_S = 0x84,
+    kFatalError_InsufficientSoundSlotsInStorageArea = 0x85,
     kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CannotFindPedSpawnMaterial_S = 0xa4,
     kFatalError_CannotMovePedIndexOutOfRangeForMaterial_S = 0xa5,
