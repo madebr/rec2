@@ -7,6 +7,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gS3_enabled);
 C2_HOOK_VARIABLE_DECLARE(tS3_sound_source*, gS3_sound_sources);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_nsound_sources);
 C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gS3_outlets);
+C2_HOOK_VARIABLE_DECLARE(int, gS3_CDA_enabled);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
@@ -33,5 +34,7 @@ int C2_HOOK_FASTCALL S3StopSound(int pTag);
 void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
 
 void C2_HOOK_FASTCALL S3StopAll(void);
+
+void C2_HOOK_FASTCALL S3EnableCDA(void);
 
 #endif // S3_AUDIO_H
