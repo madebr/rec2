@@ -32,4 +32,6 @@ int C2_HOOK_FASTCALL PDS3InitCDA(void);
 
 void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav_buffer);
 
+void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor);
+
 #endif // C2_WIN32_SSDX_H
