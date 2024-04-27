@@ -18,5 +18,7 @@ target_link_libraries(s3
     PUBLIC
         c2_hooks
         brender
+        rec2_headers
+        c2_platform
 )
 add_library(S3::S3 ALIAS s3)
