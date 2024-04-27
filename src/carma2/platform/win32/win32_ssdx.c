@@ -160,3 +160,12 @@ void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav
     IDirectSoundBuffer_Unlock(buffer, buffer_data, buffer_data_size, NULL, 0);
     return buffer;
 }
+
+void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor) {
+
+    LPDIRECTSOUNDBUFFER buffer = pSound_descriptor->pd_handle;
+    if (buffer != NULL) {
+        IDirectSoundBuffer_Release(buffer);
+    }
+}
+C2_HOOK_FUNCTION(0x005693d9, PDS3ReleaseSound)
