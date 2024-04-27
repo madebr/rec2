@@ -18,6 +18,8 @@ void C2_HOOK_FASTCALL S3Disable(void);
 
 int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* chan);
 
+int C2_HOOK_FASTCALL S3GetCountChannels(int pCount_channels_1, int pCount_channels_2);
+
 tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_channels_2);
 
 int C2_HOOK_FASTCALL S3ReleaseOutlet(tS3_outlet* pOutlet);
