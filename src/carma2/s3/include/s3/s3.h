@@ -211,4 +211,6 @@ tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id);
 
 void C2_HOOK_FASTCALL S3EnableCDA(void);
 
+int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel);
+
 #endif
