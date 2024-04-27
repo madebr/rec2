@@ -24,6 +24,18 @@ typedef struct tS3_channel tS3_channel;
 typedef struct tS3_outlet tS3_outlet;
 typedef struct tS3_sound_source tS3_sound_source;
 
+/* FIXME: rename to tS3_hardware_info */
+typedef struct {
+    int free_direct_sound;
+    undefined4 field_0x04;
+    undefined4 field_0x08;
+    undefined4 field_0x0c;
+    undefined4 field_0x10;
+    undefined4 field_0x14;
+    undefined4 field_0x18;
+    int independent_pitch;
+} tPD_S3_config;
+
 /* FIXME: verify elements of tS3_termination_reason */
 typedef enum {
     eS3_tr_natural = 0,
@@ -36,6 +48,7 @@ typedef enum tS3_error_codes {
     eS3_error_memory = 3,
     eS3_error_readfile = 4,
     eS3_error_bad_id = 6,
+    eS3_error_channel_alloc = 10,
 } tS3_error_codes;
 
 typedef struct {
