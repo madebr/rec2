@@ -34,4 +34,6 @@ void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav
 
 void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor);
 
+int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel);
+
 #endif // C2_WIN32_SSDX_H
