@@ -973,3 +973,14 @@ void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown
     }
 }
 C2_HOOK_FUNCTION(0x0051c8e0, PDMouseButtons)
+
+void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath) {
+    char dirname [256];
+    char drive[4];
+    char filename[256];
+    char extension[256];
+
+    _splitpath(pPath, drive, dirname, filename, extension);
+    c2_sprintf(pDest, "%s%s", filename, extension);
+}
+C2_HOOK_FUNCTION(0x0056a3a9, PDExtractFilename)
