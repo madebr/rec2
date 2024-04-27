@@ -98,3 +98,14 @@ void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056907c, PDS3BufferWav, PDS3BufferWav_original)
+
+int (C2_HOOK_FASTCALL * PDS3InitCDA_original)(void);
+int C2_HOOK_FASTCALL PDS3InitCDA(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PDS3InitCDA_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005699aa, PDS3InitCDA, PDS3InitCDA_original)
