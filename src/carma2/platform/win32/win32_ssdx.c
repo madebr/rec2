@@ -62,3 +62,14 @@ void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDD
     dr_dprintf("SSDXStart(): END.");
 }
 C2_HOOK_FUNCTION(0x00500500, SSDXStart)
+
+void* (C2_HOOK_FASTCALL * PDS3BufferWav_original)(const char* pPath, tS3_buffer_desc* pBuffer_desc);
+void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_desc) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PDS3BufferWav_original(pPath, pBuffer_desc);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0056907c, PDS3BufferWav, PDS3BufferWav_original)
