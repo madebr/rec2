@@ -18,7 +18,6 @@ typedef long tS3_priority;
 typedef long tS3_pitch;
 typedef long tS3_speed;
 typedef struct tS3_channel tS3_channel;
-typedef struct tS3_descriptor tS3_descriptor;
 typedef struct tS3_outlet tS3_outlet;
 typedef struct tS3_sound_source tS3_sound_source;
 
@@ -53,6 +52,28 @@ typedef struct {
     undefined4 field_0x10;
     undefined4 field_0x14;
 } tS3_buffer_desc;
+
+typedef struct tS3_descriptor {
+    int sample_id;
+    undefined4 type;
+    int priority;
+    int repeat_rate;
+    int min_volume;
+    int max_volume;
+    int min_pitch;
+    int max_pitch;
+    int min_speed;
+    int max_speed;
+    struct tS3_descriptor* prev;
+    struct tS3_descriptor* next;
+    int flags;
+    void* field_0x34;
+    int effects_enabled;
+    int low_memory_alternative;
+    tS3_buffer_desc* buffer_description;
+    char* path;
+    void* pd_handle;
+} tS3_descriptor;
 
 typedef struct tS3_sound_source {
     tS3_channel* channel;
