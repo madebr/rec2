@@ -7,6 +7,8 @@ add_library(s3 STATIC
     src/audio.h
     src/resource.c
     src/resource.h
+    src/sample.c
+    src/sample.h
 )
 target_include_directories(s3
     PUBLIC
