@@ -100,4 +100,6 @@ void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer
 
 int C2_HOOK_FASTCALL PDS3Init(void);
 
+void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
+
 #endif // C2_PLATFORM_H
