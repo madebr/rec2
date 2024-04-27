@@ -7,6 +7,8 @@ add_library(s3 STATIC
     src/audio.h
     src/resource.c
     src/resource.h
+    src/s3sound.c
+    src/s3sound.h
     src/sample.c
     src/sample.h
 )
