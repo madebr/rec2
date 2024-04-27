@@ -1,14 +1,27 @@
 #include "sample.h"
 
+#include "audio.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_descriptor*, gS3_descriptors, 0x007a0594);
 
 tS3_buffer_desc* (C2_HOOK_FASTCALL * S3GetBufferDescription_original)(int pSample_id);
 tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3GetBufferDescription_original(pSample_id);
 #else
-#error "Not implemented"
+    tS3_descriptor* descriptor;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, buffer_description, 0x40);
+
+    if (!C2V(gS3_enabled)) {
+        return NULL;
+    }
+    descriptor = S3GetDescriptorByID(pSample_id);
+    if (descriptor == NULL) {
+        return NULL;
+    }
+    return descriptor->buffer_description;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005687ff, S3GetBufferDescription, S3GetBufferDescription_original)
