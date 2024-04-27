@@ -56,4 +56,6 @@ void C2_HOOK_FASTCALL PDRevertPalette(void);
 
 void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
 
+void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
+
 #endif // C2_WIN32_WIN32_H
