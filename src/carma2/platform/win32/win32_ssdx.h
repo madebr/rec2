@@ -21,4 +21,6 @@ int C2_HOOK_FASTCALL PDS3DDXInit(void);
 
 void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBUffer_desc);
 
+int C2_HOOK_FASTCALL PDS3InitCDA(void);
+
 #endif // C2_WIN32_SSDX_H
