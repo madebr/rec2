@@ -8,6 +8,8 @@
 
 #include <ddraw.h>
 
+#include "c2_string.h"
+
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTSOUND, gDirectSound, 0x006aaa1c);
@@ -16,6 +18,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gUse_DirectDraw, 0x006aa9e0);
 C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd_SSDX, 0x006aaa08);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEnumerate_DirectX_surfaces, 0x006aa9d8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPDS3_volume_factors, 256, 0x007a00e0);
+C2_HOOK_VARIABLE_IMPLEMENT(tPD_S3_config, gPD_S3_config, 0x007a0080);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_path_separator, 2, 0x007a0554);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_sound_folder_name, 6, 0x007a0558);
 
 void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 #define LOG_CASE_DDERR(V) case V: dr_dprintf("%s (%x)", #V, V); break
@@ -68,6 +73,25 @@ void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDD
     dr_dprintf("SSDXStart(): END.");
 }
 C2_HOOK_FUNCTION(0x00500500, SSDXStart)
+
+int C2_HOOK_FASTCALL PDS3Init(void) {
+
+    C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
+
+    c2_strcpy(C2V(gS3_path_separator), "\\");
+    c2_strcpy(C2V(gS3_sound_folder_name), "SOUND");
+    c2_memset(&C2V(gPD_S3_config), 0, sizeof(C2V(gPD_S3_config)));
+    if (!PDS3DDXInit()) {
+        return 0;
+    }
+    PDS3InitCDA();
+    // nop_FUN_005699a3();
+    C2V(gPD_S3_config).field_0x04 = 0;
+    C2V(gPD_S3_config).free_direct_sound = 1;
+    C2V(gPD_S3_config).field_0x1c = 0;
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0056992f, PDS3Init)
 
 int C2_HOOK_FASTCALL PDS3DDXInit(void) {
     int i;
