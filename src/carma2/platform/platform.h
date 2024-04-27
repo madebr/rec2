@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gGraf_spec_index);
 C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
 C2_HOOK_VARIABLE_DECLARE(int, gMsg_header_strlen);
+C2_HOOK_VARIABLE_DECLARE(tPD_S3_config, gPD_S3_config);
 
 int GetRegisterSourceLocation(char* buffer, int* buffer_size);
 
