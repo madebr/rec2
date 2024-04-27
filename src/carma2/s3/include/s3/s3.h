@@ -165,4 +165,6 @@ tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id);
 
 tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id);
 
+void C2_HOOK_FASTCALL S3EnableCDA(void);
+
 #endif
