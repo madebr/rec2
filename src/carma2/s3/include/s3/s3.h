@@ -175,6 +175,8 @@ typedef struct tS3_outlet {
     tS3_outlet_callback* callback;
 } tS3_outlet;
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_path_separator, 2);
+
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
 void C2_HOOK_FASTCALL S3Enable(void);

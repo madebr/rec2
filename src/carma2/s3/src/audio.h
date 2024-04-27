@@ -3,6 +3,7 @@
 
 #include <s3/s3.h>
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_path_separator, 2);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_enabled);
 C2_HOOK_VARIABLE_DECLARE(tS3_sound_source*, gS3_sound_sources);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_nsound_sources);

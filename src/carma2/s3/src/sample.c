@@ -11,6 +11,9 @@
 #include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_descriptor*, gS3_descriptors, 0x007a0594);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_low_memory_mode, 0x006b2c88);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_error_codes, gS3_last_error, 0x007a05a0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_sound_dirname, 256, 0x007a05c0);
 
 tS3_buffer_desc* (C2_HOOK_FASTCALL * S3GetBufferDescription_original)(int pSample_id);
 tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
@@ -67,7 +70,7 @@ tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
         return eS3_error_memory;
     }
     c2_memset(buffer_description, 0, sizeof(tS3_buffer_desc));
-    descriptor->pd_handle = PDS3BufferWav(path, buffer_description);
+    descriptor->pd_handle = S3BufferWav(path, buffer_description);
     if (descriptor->pd_handle == NULL) {
         BrFailure("Cound not load sample:%s", path);
     }
@@ -159,3 +162,66 @@ int C2_HOOK_FASTCALL S3CheckWavHeader(tS3_wav_file* pWav_buffer, tS3_wav_chunk_i
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00568ee0, S3CheckWavHeader, S3CheckWavHeader_original)
+
+void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_desc) {
+    char wav_path[512];
+    FILE* f;
+    int file_size;
+    tS3_wav_info wav_info;
+    void* pd_handle;
+
+    if (C2V(gS3_low_memory_mode)) {
+        c2_sprintf(wav_path, "DATA%sSOUND%s%s", C2V(gS3_path_separator), C2V(gS3_path_separator), pPath);
+        f = S3_low_memory_fopen(wav_path, "rb");
+    } else {
+        if (C2V(gS3_sound_dirname)[0] != '\0') {
+            char filename[512];
+
+            PDExtractFilename(filename, pPath);
+            c2_sprintf(wav_path, "%s\\%s", C2V(gS3_sound_dirname), filename);
+            f = c2_fopen(wav_path, "rb");
+        } else {
+            f = c2_fopen(pPath, "rb");
+        }
+    }
+    if (f == NULL) {
+        C2V(gS3_last_error) = eS3_error_readfile;
+        return NULL;
+    }
+    file_size = S3GetFileSize(f);
+    if (file_size == 0) {
+        c2_fclose(f);
+        C2V(gS3_last_error) = eS3_error_readfile;
+        return NULL;
+    }
+    tS3_wav_file* wav_buffer = S3MemAllocate(file_size, kMem_S3_Windows_95_load_WAV_file);
+    if (wav_buffer == NULL) {
+        c2_fclose(f);
+        C2V(gS3_last_error) = eS3_error_memory;
+        return NULL;
+    }
+    c2_fread(wav_buffer, 1, file_size, f);
+    c2_fclose(f);
+
+    C2_HOOK_BUG_ON(sizeof(tS3_wav_info) != 0xc);
+
+    c2_memset(&wav_info, 0, sizeof(tS3_wav_info));
+    if (!S3CheckWavHeader(wav_buffer, &wav_info.wav_info_header, &wav_info.samples, &wav_info.sample_size)) {
+        C2V(gS3_last_error) = eS3_error_readfile;
+        s3_dprintf("ERROR: .WAV file '%s'is crap", wav_path);
+        return NULL;
+    }
+    pBuffer_desc->field_0x14 = 0;
+    pBuffer_desc->field_0x10 = 0;
+    pBuffer_desc->sample_size = wav_info.sample_size;
+    pBuffer_desc->sample_rate = wav_info.wav_info_header->sample_rate;
+    pBuffer_desc->bytes_per_second = wav_info.wav_info_header->avg_bytes_per_second;
+    pBuffer_desc->count_channels = wav_info.wav_info_header->number_of_channels;
+    pd_handle = PDS3CreateSoundBuffer(&wav_info, wav_buffer);
+    if (pd_handle != NULL) {
+        /* FIXME: unconditionally free wav buffer */
+        S3MemFree(wav_buffer);
+    }
+    return pd_handle;
+}
+C2_HOOK_FUNCTION(0x0056907c, S3BufferWav)
