@@ -90,7 +90,7 @@ int C2_HOOK_FASTCALL PDS3Init(void) {
     // nop_FUN_005699a3();
     C2V(gPD_S3_config).field_0x04 = 0;
     C2V(gPD_S3_config).free_direct_sound = 1;
-    C2V(gPD_S3_config).field_0x1c = 0;
+    C2V(gPD_S3_config).independent_pitch = 0;
     return 1;
 }
 C2_HOOK_FUNCTION(0x0056992f, PDS3Init)

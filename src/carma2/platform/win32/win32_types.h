@@ -39,15 +39,4 @@ typedef struct {
     tButtonJoystickInfo* data;
 } tDirectInputJoystickInfo;
 
-typedef struct {
-    int free_direct_sound;
-    undefined4 field_0x04;
-    undefined4 field_0x08;
-    undefined4 field_0x0c;
-    undefined4 field_0x10;
-    undefined4 field_0x14;
-    undefined4 field_0x18;
-    undefined4 field_0x1c;
-} tPD_S3_config;
-
 #endif // C2_WIN32_TYPES_H
