@@ -3,6 +3,9 @@
 
 #include "c2_hooks.h"
 
+// FIXME: alternative definition for br_uint_16/br_uint_32?
+#include <brender/brender.h>
+
 #include <stdlib.h> /* uintptr_t */
 
 // External typedefs
@@ -31,8 +34,47 @@ typedef enum {
 typedef enum tS3_error_codes {
     eS3_error_none = 0,
     eS3_error_memory = 3,
+    eS3_error_readfile = 4,
     eS3_error_bad_id = 6,
 } tS3_error_codes;
+
+typedef struct {
+    br_uint_8 magic[4];
+    br_uint_32 chunk_size; /* remaining size of this chunk */
+} tS3_riff_chunk_header;
+
+/* **MUST** match WAVEFORMATEX */
+typedef struct {
+    br_uint_16 type_format;
+    br_uint_16 number_of_channels;
+    br_uint_32 sample_rate;
+    br_uint_32 avg_bytes_per_second;
+    br_uint_16 data_block_sizee;
+    br_uint_16 bits_per_sample;
+} tS3_wav_chunk_info_header;
+
+typedef struct {
+    tS3_riff_chunk_header header;
+    tS3_wav_chunk_info_header wav_info_header;
+} tS3_riff_fmt_chunk;
+
+typedef struct {
+    tS3_riff_chunk_header header;
+    br_uint_8 data[];
+} tS3_riff_data_chunk;
+
+typedef struct {
+    tS3_riff_chunk_header riff_header; /* chunk_size means size of riff file */
+    br_uint_8 wave_magic[4];
+    tS3_riff_fmt_chunk fmt_chunk;
+    tS3_riff_data_chunk data_chunk;
+} tS3_wav_file;
+
+typedef struct {
+    int sample_size;
+    tS3_wav_chunk_info_header* wav_info_header;
+    void* samples;
+} tS3_wav_info;
 
 // FIXME: add call convention!!
 typedef void ( * tS3_outlet_callback)(tS3_outlet*, tS3_sound_tag, tS3_termination_reason);
