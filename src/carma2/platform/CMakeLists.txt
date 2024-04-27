@@ -18,6 +18,7 @@ if(WIN32)
     target_compile_definitions(c2_platform
         PUBLIC
             DIRECTINPUT_VERSION=0x0500
+            DIRECTSOUND_VERSION=0x0500
     )
     find_library(DINPUT_LIBRARY NAMES dinput)
     find_library(DXGUID_LIBRARY NAMES dxguid)

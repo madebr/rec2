@@ -96,10 +96,10 @@ void C2_HOOK_FASTCALL PDRevertPalette(void);
 
 void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
 
-void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_desc);
-
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
+
+void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav_buffer);
 
 #endif // C2_PLATFORM_H
