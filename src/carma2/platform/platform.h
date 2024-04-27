@@ -4,6 +4,7 @@
 #include "c2_hooks.h"
 
 #include "rec2_types.h"
+#include <s3/s3.h>
 
 C2_HOOK_VARIABLE_DECLARE(int, gGraf_spec_index);
 C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
