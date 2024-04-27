@@ -22,6 +22,7 @@ if(WIN32)
     find_library(DINPUT_LIBRARY NAMES dinput)
     find_library(DXGUID_LIBRARY NAMES dxguid)
     find_library(DSOUND_LIBRARY NAMES dsound)
+    find_library(WINMM_LIBRARY NAMES winmm)
     find_library(WS2_32_LIBRARY NAMES ws2_32)
     if(NOT DINPUT_LIBRARY OR NOT DXGUID_LIBRARY)
         message(FATAL_ERROR "Could not find dinput and/or dxguid (provided by older DirectX SDK's)")
@@ -31,6 +32,7 @@ if(WIN32)
             ${DINPUT_LIBRARY}
             ${DXGUID_LIBRARY}
             ${DSOUND_LIBRARY}
+            ${WINMM_LIBRARY}
             ${WS2_32_LIBRARY}
     )
 else()

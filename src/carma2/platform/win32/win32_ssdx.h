@@ -14,6 +14,9 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPDS3_volume_factors, 256);
 C2_HOOK_VARIABLE_DECLARE(tPD_S3_config, gPD_S3_config);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_path_separator, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_sound_folder_name, 6);
+C2_HOOK_VARIABLE_DECLARE(MCI_OPEN_PARMS, gPDS3_mci_open_parms);
+C2_HOOK_VARIABLE_DECLARE(MCI_SET_PARMS, gPDS3_mci_set_parms);
+C2_HOOK_VARIABLE_DECLARE(int, gPDS3_cda_initialized);
 
 enum tSSDXFlags {
     SSDX_InitDirectSound = 0x2,
