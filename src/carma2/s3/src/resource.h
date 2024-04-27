@@ -13,4 +13,6 @@ void C2_HOOK_FASTCALL S3MemFree(void* p);
 
 FILE* S3_low_memory_fopen(const char* pPath, const char* pMode);
 
+int C2_HOOK_FASTCALL S3GetFileSize(FILE *pF);
+
 #endif // S3_RESOURCE_H
