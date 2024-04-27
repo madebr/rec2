@@ -2,7 +2,11 @@
 
 #include "3d.h"
 #include "resource.h"
+#include "s3sound.h"
 
+#include "rec2_types.h"
+
+#include "c2_string.h"
 #include <stddef.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_enabled, 0x007a06c0);
@@ -216,3 +220,38 @@ void C2_HOOK_FASTCALL S3EnableCDA(void) {
     C2V(gS3_CDA_enabled);
 }
 C2_HOOK_FUNCTION(0x00565b70, S3EnableCDA)
+
+int C2_HOOK_FASTCALL S3CreateOutletChannels(tS3_outlet* outlet, int pChannel_count) {
+    tS3_channel* chan;
+    tS3_channel* last_chan;
+
+    last_chan = NULL;
+    while (pChannel_count != 0) {
+        C2_HOOK_BUG_ON(sizeof(tS3_channel) != 0x78);
+
+        chan = S3MemAllocate(sizeof(tS3_channel), kMem_S3_channel_00593a58);
+        if (chan == NULL) {
+            return pChannel_count;
+        }
+        c2_memset(chan, 0, sizeof(tS3_channel));
+        chan->owner_outlet = outlet;
+
+        if (!S3CreateTypeStructs(chan)) {
+            S3MemFree(chan);
+            return pChannel_count;
+        }
+
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_channel, next, 0x64);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_outlet, channel_list, 0x10);
+
+        if (last_chan != NULL) {
+            last_chan->next = chan;
+        } else {
+            outlet->channel_list = chan;
+        }
+        last_chan = chan;
+        pChannel_count--;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00565571, S3CreateOutletChannels)
