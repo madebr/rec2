@@ -11,4 +11,6 @@ tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id);
 
 tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id);
 
+void C2_HOOK_CDECL s3_dprintf(const char* pFormat, ...);
+
 #endif /* S3_SAMPLE_H */
