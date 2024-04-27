@@ -1,3 +1,8 @@
+add_library(rec2_headers INTERFACE)
+target_include_directories(rec2_headers INTERFACE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
+)
+
 add_library(c2_common STATIC
     ../include/rec2_macros.h
     ../include/rec2_types.h
@@ -150,10 +155,10 @@ add_library(c2_common STATIC
 target_include_directories(c2_common
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
 )
 target_link_libraries(c2_common
     PUBLIC
+        rec2_headers
         brender
         c2_hooks
         c2_platform
