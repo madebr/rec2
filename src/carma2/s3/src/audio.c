@@ -83,6 +83,12 @@ int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* chan) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00564bfd, S3StopChannel, S3StopChannel_original)
 
+int C2_HOOK_FASTCALL S3GetCountChannels(int pCount_channels_1, int pCount_channels_2) {
+
+    return pCount_channels_2;
+}
+C2_HOOK_FUNCTION(0x005698fc, S3GetCountChannels)
+
 tS3_outlet* (C2_HOOK_FASTCALL * S3CreateOutlet_original)(int pCount_channels_1, int pCount_channels_2);
 tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_channels_2) {
 
