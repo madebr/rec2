@@ -11,3 +11,8 @@ void C2_HOOK_FASTCALL S3MemFree(void* p) {
     BrMemFree(p);
 }
 C2_HOOK_FUNCTION(0x00565b1d, S3MemFree)
+
+FILE* S3_low_memory_fopen(const char* pPath, const char* pMode) {
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x005186f0, S3_low_memory_fopen)
