@@ -19,7 +19,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd_SSDX, 0x006aaa08);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEnumerate_DirectX_surfaces, 0x006aa9d8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPDS3_volume_factors, 256, 0x007a00e0);
 C2_HOOK_VARIABLE_IMPLEMENT(tPD_S3_config, gPD_S3_config, 0x007a0080);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_path_separator, 2, 0x007a0554);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_sound_folder_name, 6, 0x007a0558);
 C2_HOOK_VARIABLE_IMPLEMENT(MCI_OPEN_PARMS, gPDS3_mci_open_parms, 0x007a0500);
 C2_HOOK_VARIABLE_IMPLEMENT(MCI_SET_PARMS, gPDS3_mci_set_parms, 0x0079fec0);
@@ -115,17 +114,6 @@ int C2_HOOK_FASTCALL PDS3DDXInit(void) {
 }
 C2_HOOK_FUNCTION(0x00569a2c, PDS3DDXInit)
 
-void* (C2_HOOK_FASTCALL * PDS3BufferWav_original)(const char* pPath, tS3_buffer_desc* pBuffer_desc);
-void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_desc) {
-
-#if defined(C2_HOOKS_ENABLED)
-    return PDS3BufferWav_original(pPath, pBuffer_desc);
-#else
-#error "Not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0056907c, PDS3BufferWav, PDS3BufferWav_original)
-
 int (C2_HOOK_FASTCALL * PDS3InitCDA_original)(void);
 int C2_HOOK_FASTCALL PDS3InitCDA(void) {
 
@@ -148,3 +136,27 @@ int C2_HOOK_FASTCALL PDS3InitCDA(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005699aa, PDS3InitCDA, PDS3InitCDA_original)
+
+void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav_buffer) {
+    LPDIRECTSOUNDBUFFER buffer;
+    DSBUFFERDESC buffer_desc;
+    void* buffer_data;
+    DWORD buffer_data_size;
+
+    C2_HOOK_BUG_ON(sizeof(DSBUFFERDESC) != 0x14);
+    c2_memset(&buffer_desc, 0, sizeof(buffer_desc));
+    buffer_desc.dwSize = sizeof(DSBUFFERDESC);
+    buffer_desc.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPAN | DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC;
+    buffer_desc.dwBufferBytes = pWav_info->sample_size;
+    buffer_desc.lpwfxFormat = (LPWAVEFORMATEX)pWav_info->wav_info_header;
+    if (FAILED(IDirectSound_CreateSoundBuffer(C2V(gPD_S3_direct_sound), &buffer_desc, &buffer, NULL))) {
+        return NULL;
+    }
+    if (FAILED(IDirectSoundBuffer_Lock(buffer, 0, pWav_info->sample_size, &buffer_data, &buffer_data_size, NULL, NULL, 0))) {
+        IDirectSoundBuffer_Release(buffer);
+        return NULL;
+    }
+    c2_memmove(buffer_data, pWav_info->samples, buffer_data_size);
+    IDirectSoundBuffer_Unlock(buffer, buffer_data, buffer_data_size, NULL, 0);
+    return buffer;
+}
