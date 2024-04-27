@@ -95,4 +95,6 @@ void C2_HOOK_FASTCALL PDRevertPalette(void);
 
 void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
 
+void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_desc);
+
 #endif // C2_PLATFORM_H
