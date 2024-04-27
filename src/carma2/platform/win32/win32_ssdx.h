@@ -7,6 +7,8 @@
 #include <s3/s3.h>
 
 C2_HOOK_VARIABLE_DECLARE(LPDIRECTSOUND, gDirectSound);
+C2_HOOK_VARIABLE_DECLARE(LPDIRECTSOUND, gPD_S3_direct_sound);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPDS3_volume_factors, 256);
 
 enum tSSDXFlags {
     SSDX_InitDirectSound = 0x2,
@@ -14,6 +16,8 @@ enum tSSDXFlags {
 
 
 void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDDX, int p_flags);
+
+int C2_HOOK_FASTCALL PDS3DDXInit(void);
 
 void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBUffer_desc);
 
