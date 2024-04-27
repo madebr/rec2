@@ -1,15 +1,21 @@
 #include "win32_ssdx.h"
 
+#include "win32.h"
+
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
 
 #include <ddraw.h>
 
+#include "rec2_macros.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTSOUND, gDirectSound, 0x006aaa1c);
+C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTSOUND, gPD_S3_direct_sound, 0x006b2d9c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gUse_DirectDraw, 0x006aa9e0);
 C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd_SSDX, 0x006aaa08);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEnumerate_DirectX_surfaces, 0x006aa9d8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPDS3_volume_factors, 256, 0x007a00e0);
 
 void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 #define LOG_CASE_DDERR(V) case V: dr_dprintf("%s (%x)", #V, V); break
@@ -62,6 +68,25 @@ void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDD
     dr_dprintf("SSDXStart(): END.");
 }
 C2_HOOK_FUNCTION(0x00500500, SSDXStart)
+
+int C2_HOOK_FASTCALL PDS3DDXInit(void) {
+    int i;
+
+    if (FAILED(DirectSoundCreate(0, &C2V(gPD_S3_direct_sound), NULL))) {
+        return 0;
+    }
+    if (FAILED(IDirectSound_SetCooperativeLevel(C2V(gPD_S3_direct_sound), C2V(gHWnd), DSSCL_EXCLUSIVE))) {
+        return 0;
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gPDS3_volume_factors)); i++) {
+        float f;
+        f = ((float)i + 1.f) * 999.f / 256.f;
+        C2V(gPDS3_volume_factors)[i] = (int)((f * 9999.f / 3.f - 4300.f) - 9999.f);
+    }
+    S3Enable();
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00569a2c, PDS3DDXInit)
 
 void* (C2_HOOK_FASTCALL * PDS3BufferWav_original)(const char* pPath, tS3_buffer_desc* pBuffer_desc);
 void* C2_HOOK_FASTCALL PDS3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_desc) {
