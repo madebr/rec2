@@ -96,3 +96,8 @@ tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
     return NULL;
 }
 C2_HOOK_FUNCTION(0x00565a3d, S3GetDescriptorByID)
+
+void C2_HOOK_CDECL s3_dprintf(const char* pFormat, ...) {
+
+}
+C2_HOOK_FUNCTION(0x00565b46, s3_dprintf);
