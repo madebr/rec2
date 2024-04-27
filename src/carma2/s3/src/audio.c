@@ -3,6 +3,8 @@
 #include "3d.h"
 #include "resource.h"
 #include "s3sound.h"
+#include "sample.h"
+#include "platform.h"
 
 #include "rec2_types.h"
 
@@ -15,6 +17,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_nsound_sources, 0x007a0584);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gS3_outlets, 0x007a058c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gS3_CDA_enabled, 0x00673504, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_path_separator, 2, 0x007a0554);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_next_outlet_id, 0x007a0588);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_noutlets, 0x007a0580);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path) {
@@ -92,10 +96,58 @@ C2_HOOK_FUNCTION(0x005698fc, S3GetCountChannels)
 tS3_outlet* (C2_HOOK_FASTCALL * S3CreateOutlet_original)(int pCount_channels_1, int pCount_channels_2);
 tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_channels_2) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3CreateOutlet_original(pCount_channels_1, pCount_channels_2);
 #else
-#error "Not implemented"
+    tS3_outlet* o;
+    int nchannels;
+    tS3_outlet* outlet;
+    int channels_remaining;
+
+    nchannels = S3GetCountChannels(pCount_channels_1, pCount_channels_2);
+
+    if (nchannels == 0) {
+        C2V(gS3_last_error) = eS3_error_channel_alloc;
+        return NULL;
+    }
+
+    C2_HOOK_BUG_ON(sizeof(tS3_outlet) != 0x20);
+
+    outlet = S3MemAllocate(sizeof(tS3_outlet), kMem_S3_outlet);
+    if (outlet == NULL) {
+        C2V(gS3_last_error) = eS3_error_memory;
+        return NULL;
+    }
+    c2_memset(outlet, 0, sizeof(tS3_outlet));
+    channels_remaining = S3CreateOutletChannels(outlet, nchannels);
+    if (channels_remaining == nchannels) {
+        S3MemFree(outlet);
+        return NULL;
+    }
+
+    o = C2V(gS3_outlets);
+    if (C2V(gS3_outlets) != NULL) {
+        while (o->next != NULL) {
+            o = o->next;
+        }
+        o->next = outlet;
+        outlet->prev = o;
+    } else {
+        C2V(gS3_outlets) = outlet;
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_outlet, volume, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_outlet, max_channels, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_outlet, id, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_outlet, independent_pitch, 0xc);
+
+    outlet->volume = 0xff;
+    outlet->max_channels = nchannels - channels_remaining;
+    outlet->id = C2V(gS3_next_outlet_id);
+    C2V(gS3_next_outlet_id) += 1;
+    outlet->independent_pitch = C2V(gPD_S3_config).independent_pitch;
+    C2V(gS3_noutlets) += 1;
+    return outlet;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005653c7, S3CreateOutlet, S3CreateOutlet_original)
