@@ -21,6 +21,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPDS3_volume_factors, 256, 0x007a00e0);
 C2_HOOK_VARIABLE_IMPLEMENT(tPD_S3_config, gPD_S3_config, 0x007a0080);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_path_separator, 2, 0x007a0554);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_sound_folder_name, 6, 0x007a0558);
+C2_HOOK_VARIABLE_IMPLEMENT(MCI_OPEN_PARMS, gPDS3_mci_open_parms, 0x007a0500);
+C2_HOOK_VARIABLE_IMPLEMENT(MCI_SET_PARMS, gPDS3_mci_set_parms, 0x0079fec0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_initialized, 0x006b2d98);
 
 void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 #define LOG_CASE_DDERR(V) case V: dr_dprintf("%s (%x)", #V, V); break
@@ -126,10 +129,22 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0056907c, PDS3BufferWav, PDS3BufferWav_original)
 int (C2_HOOK_FASTCALL * PDS3InitCDA_original)(void);
 int C2_HOOK_FASTCALL PDS3InitCDA(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return PDS3InitCDA_original();
 #else
-#error "Not implemented"
+    MCIERROR err;
+    err = mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID | MCI_OPEN_SHAREABLE, (DWORD_PTR)&C2V(gPDS3_mci_open_parms));
+    if (err != 0) {
+        err = mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID, (DWORD_PTR)&C2V(gPDS3_mci_open_parms));
+        if (err != 0) {
+            return 0;
+        }
+    }
+    C2V(gPDS3_mci_set_parms).dwTimeFormat = MCI_FORMAT_TMSF;
+    mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_SET, MCI_SET_TIME_FORMAT, (DWORD_PTR)&C2V(gPDS3_mci_set_parms));
+    S3EnableCDA();
+    C2V(gPDS3_cda_initialized) = 1;
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005699aa, PDS3InitCDA, PDS3InitCDA_original)

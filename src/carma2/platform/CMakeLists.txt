@@ -20,12 +20,14 @@ if(WIN32)
             DIRECTINPUT_VERSION=0x0500
     )
     find_library(DSOUND_LIBRARY NAMES dsound)
+    find_library(WINMM_LIBRARY NAMES winmm)
     find_library(WS2_32_LIBRARY NAMES ws2_32)
     target_link_libraries(c2_platform
         PRIVATE
             DirectX::dinput
             DirectX::dxguid
             ${DSOUND_LIBRARY}
+            ${WINMM_LIBRARY}
             ${WS2_32_LIBRARY}
     )
 else()
