@@ -45,6 +45,15 @@ typedef struct tS3_vector3 {
     tF32 z;
 } tS3_vector3;
 
+typedef struct {
+    int sample_size;
+    int sample_rate;
+    int bytes_per_second;
+    int count_channels;
+    undefined4 field_0x10;
+    undefined4 field_0x14;
+} tS3_buffer_desc;
+
 typedef struct tS3_sound_source {
     tS3_channel* channel;
     int brender_vector;
@@ -130,6 +139,8 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
 void C2_HOOK_FASTCALL S3StopAll(void);
 
 int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3);
+
+tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id);
 
 tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id);
 
