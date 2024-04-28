@@ -109,4 +109,6 @@ void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor);
 
 char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
 
+int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
+
 #endif // C2_PLATFORM_H
