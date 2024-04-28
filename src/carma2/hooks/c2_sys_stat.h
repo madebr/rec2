@@ -2,6 +2,7 @@
 #define REC2_SYS_STAT_H_
 
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #if defined(C2_HOOKS_ENABLED)
 

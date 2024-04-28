@@ -9,7 +9,10 @@
 #include "rec2_types.h"
 
 #include "c2_ctype.h"
+#include "c2_io.h"
+#include "c2_sys_stat.h"
 #include "c2_string.h"
+#include <fcntl.h>
 #include <stddef.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_enabled, 0x007a06c0);
@@ -22,6 +25,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_sound_folder_name, 6, 0x007a0558);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_next_outlet_id, 0x007a0588);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_noutlets, 0x007a0580);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_soundbank_buffer_len, 0x006b2c80);
+C2_HOOK_VARIABLE_IMPLEMENT(char*, gS3_soundbank_buffer, 0x006b2c84);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path) {
@@ -320,10 +324,80 @@ C2_HOOK_FUNCTION(0x00565571, S3CreateOutletChannels)
 void* (C2_HOOK_FASTCALL * S3LoadSoundBankFile_original)(const char* pPath);
 void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3LoadSoundBankFile_original(pPath);
 #else
-#error "Not implemented"
+    size_t bytes_read;
+    char* buffer;
+    char path[512];
+
+    size_t file_size;
+
+    if (C2V(gS3_low_memory_mode)) {
+        FILE* f;
+
+        C2V(gS3_last_error) = eS3_error_readfile;
+        c2_sprintf(path, "DATA%sSOUNDS%s%s", C2V(gS3_path_separator), C2V(gS3_path_separator), pPath);
+        f = S3_low_memory_fopen(path, "rb");
+        if (f == NULL) {
+            return NULL;
+        }
+        file_size = S3GetFileSize(f);
+        buffer = S3MemAllocate(file_size + 1, kMem_S3_sample);
+        if (buffer == NULL) {
+            c2_fclose(f);
+            C2V(gS3_last_error) = eS3_error_memory;
+            return NULL;
+        }
+        buffer[file_size] = '\0';
+        bytes_read = c2_fread(buffer, 1, file_size, f);
+        if (bytes_read != file_size) {
+            c2_fclose(f);
+            C2V(gS3_last_error) = eS3_error_readfile;
+            return NULL;
+        }
+        C2V(gS3_soundbank_buffer) = buffer;
+        C2V(gS3_soundbank_buffer_len) = file_size;
+    } else {
+        struct _stat32 stat;
+        int fd;
+
+        C2_HOOK_BUG_ON(_O_BINARY != 0x8000);
+        if (C2V(gS3_sound_dirname)[0] == '\0') {
+            fd = c2_open(pPath, _O_BINARY);
+        } else {
+            char filename[512];
+
+            PDExtractFilename(filename, pPath);
+            c2_sprintf(path, "%s%s%s", C2V(gS3_sound_dirname), C2V(gS3_path_separator), filename);
+            fd = c2_open(path, _O_BINARY);
+        }
+        if (fd == -1) {
+            C2V(gS3_last_error) = eS3_error_readfile;
+            return NULL;
+        }
+        if (c2_fstat32(fd, &stat) != 0) {
+            C2V(gS3_last_error) = eS3_error_readfile;
+            return NULL;
+        }
+        buffer = S3MemAllocate(stat.st_size + 1, kMem_S3_sample);
+        if (buffer == NULL) {
+            c2_close(fd);
+            C2V(gS3_last_error) = eS3_error_memory;
+            return NULL;
+        }
+        buffer[stat.st_size] = '\0';
+        bytes_read = c2_read(fd, buffer, stat.st_size);
+        if (bytes_read != stat.st_size) {
+            c2_close(fd);
+            C2V(gS3_last_error) = eS3_error_readfile;
+            return NULL;
+        }
+        C2V(gS3_soundbank_buffer) = buffer;
+        C2V(gS3_soundbank_buffer_len) = stat.st_size;
+        c2_close(fd);
+    }
+    return buffer;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00568c2c, S3LoadSoundBankFile, S3LoadSoundBankFile_original)
