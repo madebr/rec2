@@ -12,6 +12,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gS3_CDA_enabled);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_next_outlet_id);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_noutlets);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_soundbank_buffer_len);
+C2_HOOK_VARIABLE_DECLARE(char*, gS3_soundbank_buffer);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
