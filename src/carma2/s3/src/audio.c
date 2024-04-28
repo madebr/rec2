@@ -26,6 +26,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_next_outlet_id, 0x007a0588);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_noutlets, 0x007a0580);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_soundbank_buffer_len, 0x006b2c80);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gS3_soundbank_buffer, 0x006b2c84);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_descriptor*, gS3_root_descriptor, 0x007a0598);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path) {
@@ -499,3 +500,25 @@ void C2_HOOK_FASTCALL S3SoundBankReaderAdvance(tS3_soundbank_read_ctx* pContext,
     pContext->data_len -= pAmount;
 }
 C2_HOOK_FUNCTION(0x00568260, S3SoundBankReaderAdvance)
+
+tS3_descriptor* C2_HOOK_FASTCALL S3CreateDescriptor(void) {
+    tS3_descriptor* descriptor;
+
+    C2_HOOK_BUG_ON(sizeof(tS3_descriptor) != 0x4c);
+
+    descriptor = S3MemAllocate(sizeof(tS3_descriptor), kMem_S3_descriptor);
+    if (descriptor == NULL) {
+        C2V(gS3_last_error) = eS3_error_memory;
+        return NULL;
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, prev, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, next, 0x2c);
+
+    c2_memset(descriptor, 0, sizeof(tS3_descriptor));
+    C2V(gS3_root_descriptor)->next = descriptor;
+    descriptor->prev = C2V(gS3_root_descriptor);
+    C2V(gS3_root_descriptor) = descriptor;
+    return descriptor;
+}
+C2_HOOK_FUNCTION(0x00565a8a, S3CreateDescriptor)
