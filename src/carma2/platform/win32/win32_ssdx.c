@@ -24,6 +24,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(MCI_SET_PARMS, gPDS3_mci_set_parms, 0x0079fec0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_initialized, 0x006b2d98);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_working_directory_initialized, 0x006b2da0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_working_directory, 260, 0x006b2c90);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_midi_playing, 0x006b2da4);
 
 void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 #define LOG_CASE_DDERR(V) case V: dr_dprintf("%s (%x)", #V, V); break
@@ -223,3 +224,16 @@ char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void) {
     return C2V(gS3_working_directory);
 }
 C2_HOOK_FUNCTION(0x00569b30, PDS3GetWorkingDirectory)
+
+int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel) {
+
+    if C2V(gPDS3_midi_playing) {
+        C2V(gPDS3_midi_playing) = 0;
+        mciSendCommandA(pChannel->mciDevice, MCI_CLOSE, 0, 0);
+    }
+    if (pChannel->active) {
+        pChannel->needs_service = 1;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00569cb1, PDS3StopMidiChannel)
