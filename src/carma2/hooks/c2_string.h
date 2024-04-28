@@ -14,6 +14,8 @@ void* C2_HOOK_CDECL c2_memcpy(void* s1, const void* s2, size_t n);
 void* C2_HOOK_CDECL c2_memmove(void* s1, const void* s2, size_t n);
 void* C2_HOOK_CDECL c2_memset(void* s1, int c, size_t n);
 
+void* C2_HOOK_CDECL c2_memchr(const void *ptr, int ch, size_t n);
+
 char* C2_HOOK_CDECL c2_strcat(char *dest, const char *src);
 char* C2_HOOK_CDECL c2_strncat(char* s1, const char* s2, size_t n);
 
@@ -41,6 +43,8 @@ char* C2_HOOK_CDECL c2_strpbrk(const char* dest, const char* breakset);
 #define c2_memcpy memcpy
 #define c2_memmove memmove
 #define c2_memset memset
+
+#define c2_memchr memchr
 
 #define c2_strcat strcat
 #define c2_strncat strncat
