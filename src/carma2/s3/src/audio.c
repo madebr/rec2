@@ -391,3 +391,10 @@ int C2_HOOK_FASTCALL S3SoundBankReadEntry(tS3_soundbank_read_ctx *pContext, cons
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056828c, S3SoundBankReadEntry, S3SoundBankReadEntry_original)
+
+void C2_HOOK_FASTCALL S3SoundBankReaderAdvance(tS3_soundbank_read_ctx* pContext, int pAmount) {
+
+    pContext->data += pAmount;
+    pContext->data_len -= pAmount;
+}
+C2_HOOK_FUNCTION(0x00568260, S3SoundBankReaderAdvance)
