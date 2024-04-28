@@ -42,6 +42,8 @@ void C2_HOOK_FASTCALL S3StopAll(void);
 
 void C2_HOOK_FASTCALL S3EnableCDA(void);
 
+void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath);
+
 int C2_HOOK_FASTCALL S3CreateOutletChannels(tS3_outlet* outlet, int pChannel_count);
 
 #endif // S3_AUDIO_H
