@@ -313,3 +313,14 @@ int C2_HOOK_FASTCALL S3CreateOutletChannels(tS3_outlet* outlet, int pChannel_cou
     return 0;
 }
 C2_HOOK_FUNCTION(0x00565571, S3CreateOutletChannels)
+
+void* (C2_HOOK_FASTCALL * S3LoadSoundBankFile_original)(const char* pPath);
+void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return S3LoadSoundBankFile_original(pPath);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00568c2c, S3LoadSoundBankFile, S3LoadSoundBankFile_original)
