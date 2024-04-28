@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gS3_outlets);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_CDA_enabled);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_next_outlet_id);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_noutlets);
+C2_HOOK_VARIABLE_DECLARE(int, gS3_soundbank_buffer_len);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
@@ -43,6 +44,8 @@ void C2_HOOK_FASTCALL S3StopAll(void);
 void C2_HOOK_FASTCALL S3EnableCDA(void);
 
 void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath);
+
+int C2_HOOK_FASTCALL S3LoadSoundbank(const char* pPath, int pLow_memory_mode);
 
 int C2_HOOK_FASTCALL S3CreateOutletChannels(tS3_outlet* outlet, int pChannel_count);
 
