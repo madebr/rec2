@@ -29,6 +29,11 @@ void* C2_HOOK_CDECL c2_memset(void* s1, int c, size_t n) {
     return memset(s1, c, n);
 }
 
+void* C2_HOOK_CDECL c2_memchr(const void *ptr, int ch, size_t n) {
+    return memchr(ptr, ch, n);
+}
+C2_HOOK_FUNCTION(0x00579fd0, c2_memchr)
+
 char* C2_HOOK_CDECL c2_strcat(char* dest, const char *src) {
     return strcat(dest, src);
 }
