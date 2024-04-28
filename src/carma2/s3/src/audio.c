@@ -35,6 +35,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_opened_output_devices, 0x006b2c18);
 C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gS3_last_service_time, 0x007a0568);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel*, gS3_unbound_channels, 0x007a056c);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel*, gS3_last_unbound_channel, 0x007a059c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_enable_midi, 0x0079feb8);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_dirname);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_dirname) {
@@ -758,3 +759,13 @@ void C2_HOOK_FASTCALL S3StopCDA(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00565b7f, S3StopCDA, S3StopCDA_original)
+
+int C2_HOOK_FASTCALL S3StopMIDIChannel(tS3_channel* pChannel) {
+
+    if (C2V(gS3_enable_midi) && pChannel->active && pChannel->type == 1) {
+        PDS3StopMidiChannel(pChannel);
+        pChannel->active = 0;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0056a4cd, S3StopMIDIChannel)
