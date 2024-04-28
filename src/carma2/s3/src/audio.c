@@ -324,3 +324,14 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00568c2c, S3LoadSoundBankFile, S3LoadSoundBankFile_original)
+
+void (C2_HOOK_FASTCALL * S3SoundBankReaderSkipWhitespace_original)(tS3_soundbank_read_ctx* pContext);
+void C2_HOOK_FASTCALL S3SoundBankReaderSkipWhitespace(tS3_soundbank_read_ctx* pContext) {
+
+#if defined(C2_HOOKS_ENABLED)
+    S3SoundBankReaderSkipWhitespace_original(pContext);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0056818f, S3SoundBankReaderSkipWhitespace, S3SoundBankReaderSkipWhitespace_original)
