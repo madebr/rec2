@@ -105,4 +105,6 @@ void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav
 
 void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor);
 
+char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
+
 #endif // C2_PLATFORM_H
