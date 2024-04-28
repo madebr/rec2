@@ -677,3 +677,14 @@ int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soundbank_r
     return 1;
 }
 C2_HOOK_FUNCTION(0x00568704, S3SoundBankReaderReadFilename)
+
+void (C2_HOOK_FASTCALL * S3StopMidi_original)(void);
+void C2_HOOK_FASTCALL S3StopMidi(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    S3StopMidi_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0056a41f, S3StopMidi, S3StopMidi_original)
