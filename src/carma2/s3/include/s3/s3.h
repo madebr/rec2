@@ -196,6 +196,7 @@ typedef struct tS3_outlet {
 } tS3_outlet;
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_path_separator, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_sound_folder_name, 6);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
