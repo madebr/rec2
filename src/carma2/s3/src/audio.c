@@ -522,3 +522,31 @@ tS3_descriptor* C2_HOOK_FASTCALL S3CreateDescriptor(void) {
     return descriptor;
 }
 C2_HOOK_FUNCTION(0x00565a8a, S3CreateDescriptor)
+
+int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soundbank_read_ctx* pContext, const char* pDir_name) {
+    char* data_start;
+    unsigned int bytes_read;
+    unsigned int dir_name_len;
+
+    data_start = pContext->data;
+    dir_name_len = c2_strlen(pDir_name);
+    while (pContext->data_len != 0) {
+        if (c2_isspace(*pContext->data)) {
+            break;
+        }
+        S3SoundBankReaderAdvance(pContext, 1);
+    }
+    bytes_read = pContext->data - data_start;
+    if (bytes_read == 0) {
+        return 0;
+    }
+    *pPath = S3MemAllocate(bytes_read + dir_name_len + 1, kMem_S3_scan_name);
+    if (*pPath == NULL) {
+        return 0;
+    }
+    c2_strcpy(*pPath, pDir_name);
+    c2_memcpy(&(*pPath)[dir_name_len], data_start, bytes_read);
+    (*pPath)[bytes_read + dir_name_len] = '\0';
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00568704, S3SoundBankReaderReadFilename)
