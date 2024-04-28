@@ -981,3 +981,14 @@ void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath) {
     c2_sprintf(pDest, "%s%s", filename, extension);
 }
 C2_HOOK_FUNCTION(0x0056a3a9, PDExtractFilename)
+
+void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath) {
+    char dirname [256];
+    char drive[4];
+    char filename[256];
+    char extension[256];
+
+    _splitpath(pPath, drive, dirname, filename, extension);
+    c2_sprintf(pDest, "%s%s", drive, dirname);
+}
+C2_HOOK_FUNCTION(0x0056a349, PDExtractDirectory)
