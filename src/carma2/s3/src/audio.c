@@ -466,10 +466,137 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0056818f, S3SoundBankReaderSkipWhitespace, S3SoundBa
 int (C2_HOOK_FASTCALL * S3SoundBankReadEntry_original)(tS3_soundbank_read_ctx *pContext, const char* pDir_name, int pLow_memory_mode);
 int C2_HOOK_FASTCALL S3SoundBankReadEntry(tS3_soundbank_read_ctx *pContext, const char* pDir_name, int pLow_memory_mode) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3SoundBankReadEntry_original(pContext, pDir_name, pLow_memory_mode);
 #else
-#error "Not implemented"
+    tS3_descriptor* descriptor;
+    int i;
+    int n;
+    const char* dir_name;
+    double f1, f2;
+    int count;
+    C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, cda_dir_name, 4, 0x006b2c8c);
+
+    descriptor = S3CreateDescriptor();
+    if (descriptor == NULL) {
+        return C2V(gS3_last_error);
+    }
+
+    /* Sound ID */
+    if (c2_sscanf(pContext->data, "%i%n", &descriptor->sample_id, &n) != 1) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+
+    /* Type, Flags */
+    if (c2_sscanf(pContext->data, "%i,%i%n", &descriptor->type, &descriptor->flags, &n) != 2) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+
+    /* File name */
+    dir_name = pDir_name;
+    if (descriptor->type == 2) {
+        dir_name = C2V(cda_dir_name);
+        C2V(cda_dir_name)[0] = '\0';
+    }
+    if (!S3SoundBankReaderReadFilename(&descriptor->path, pContext, dir_name)) {
+        return 0;
+    }
+    S3SoundBankReaderNextLine(pContext);
+
+    /* Priority */
+    if (c2_sscanf(pContext->data, "%i%n", &descriptor->priority, &n) != 1) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+
+    /* Repeat rate */
+    if (c2_sscanf(pContext->data, "%i%n", &descriptor->repeat_rate, &n) != 1) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+
+    /* MinVol, MaxVol */
+    if (c2_sscanf(pContext->data, "%i,%i%n", &descriptor->min_volume, &descriptor->max_volume, &n) != 2) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+
+    /* MinPitch, MaxPitch */
+    if (c2_sscanf(pContext->data, "%lf,%lf%n", &f1, &f2, &n) != 2) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+    if (f1 == 0.) {
+        f1 = 1.875;
+    }
+    if (f2 == 0.f) {
+        f2 = 1.875;
+    }
+    descriptor->min_pitch = (int)ldexp(f1, 16);
+    descriptor->max_pitch = (int)ldexp(f2, 16);
+
+    /* MinSpeed, MaxSpeed */
+    if (c2_sscanf(pContext->data, "%lf,%lf%n", &f1, &f2, &n) != 2) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+    if (f1 == 0.) {
+        f1 = 1.875;
+    }
+    if (f2 == 0.) {
+        f2 = 1.875;
+    }
+    descriptor->min_speed = (int)ldexp(f1, 16);
+    descriptor->max_speed = (int)ldexp(f2, 16);
+
+    /* Special FX index */
+    if (c2_sscanf(pContext->data, "%i%n", &descriptor->effects_enabled, &n) != 1) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+
+    /* Number of low memory alternatives */
+    if (c2_sscanf(pContext->data, "%d%n", &count, &n) != 1) {
+        return 0;
+    }
+    S3SoundBankReaderAdvance(pContext, n);
+    S3SoundBankReaderNextLine(pContext);
+    descriptor->low_memory_alternative = -1;
+    for (i = 0; i < count; i++) {
+        int alternative;
+
+        if (c2_sscanf(pContext->data, "%d%n", &alternative, &n) != 1) {
+            return 0;
+        }
+        if (i + 1 == pLow_memory_mode) {
+            descriptor->low_memory_alternative = alternative;
+        }
+        S3SoundBankReaderAdvance(pContext, n);
+        S3SoundBankReaderNextLine(pContext);
+    }
+
+    if ((descriptor->flags & 0x1) && descriptor->low_memory_alternative == -1) {
+        if (descriptor->type == 1) {
+            descriptor->buffer_description = NULL;
+        } else {
+            if (S3LoadSample(descriptor->sample_id) != eS3_error_none) {
+                c2_printf("\nSound bank file: couldn't load '%s'\n", descriptor->path);
+                pContext->data_len = 1;
+                return 0;
+            }
+        }
+    }
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056828c, S3SoundBankReadEntry, S3SoundBankReadEntry_original)
