@@ -14,6 +14,14 @@ C2_HOOK_VARIABLE_DECLARE(int, gS3_noutlets);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_soundbank_buffer_len);
 C2_HOOK_VARIABLE_DECLARE(char*, gS3_soundbank_buffer);
 C2_HOOK_VARIABLE_DECLARE(tS3_descriptor*, gS3_root_descriptor);
+C2_HOOK_VARIABLE_DECLARE(tS3_callbacks, gS3_callbacks);
+C2_HOOK_VARIABLE_DECLARE(int, gS3_effects_enabled);
+C2_HOOK_VARIABLE_DECLARE(tS3SetEffect_cbfn*, gS3_enable_effect_cbfn);
+C2_HOOK_VARIABLE_DECLARE(tS3SetEffect_cbfn*, gS3_disable_effect_cbfn);
+C2_HOOK_VARIABLE_DECLARE(int, gS3_opened_output_devices);
+C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_last_service_time);
+C2_HOOK_VARIABLE_DECLARE(tS3_channel*, gS3_unbound_channels);
+C2_HOOK_VARIABLE_DECLARE(tS3_channel*, gS3_last_unbound_channel);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
