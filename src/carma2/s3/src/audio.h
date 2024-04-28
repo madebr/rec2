@@ -22,6 +22,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gS3_opened_output_devices);
 C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_last_service_time);
 C2_HOOK_VARIABLE_DECLARE(tS3_channel*, gS3_unbound_channels);
 C2_HOOK_VARIABLE_DECLARE(tS3_channel*, gS3_last_unbound_channel);
+C2_HOOK_VARIABLE_DECLARE(int, gS3_enable_midi);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
@@ -76,5 +77,7 @@ int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soundbank_r
 void C2_HOOK_FASTCALL S3StopMidi(void);
 
 void C2_HOOK_FASTCALL S3StopCDA(void);
+
+int C2_HOOK_FASTCALL S3StopMIDIChannel(tS3_channel* pChannel);
 
 #endif // S3_AUDIO_H
