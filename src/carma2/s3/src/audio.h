@@ -13,6 +13,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gS3_next_outlet_id);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_noutlets);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_soundbank_buffer_len);
 C2_HOOK_VARIABLE_DECLARE(char*, gS3_soundbank_buffer);
+C2_HOOK_VARIABLE_DECLARE(tS3_descriptor*, gS3_root_descriptor);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
@@ -59,5 +60,7 @@ void C2_HOOK_FASTCALL S3SoundBankReaderNextLine(tS3_soundbank_read_ctx* pContext
 void C2_HOOK_FASTCALL S3SoundBankReaderSkipToNewline(tS3_soundbank_read_ctx* pContext);
 
 void C2_HOOK_FASTCALL S3SoundBankReaderAdvance(tS3_soundbank_read_ctx* pContext, int pAmount);
+
+tS3_descriptor* C2_HOOK_FASTCALL S3CreateDescriptor(void);
 
 #endif // S3_AUDIO_H
