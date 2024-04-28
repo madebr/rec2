@@ -52,8 +52,10 @@ typedef enum {
 
 typedef enum tS3_error_codes {
     eS3_error_none = 0,
+    eS3_error_digi_init = 1,
     eS3_error_memory = 3,
     eS3_error_readfile = 4,
+    eS3_error_soundbank = 5,
     eS3_error_bad_id = 6,
     eS3_error_channel_alloc = 10,
 } tS3_error_codes;
@@ -194,6 +196,15 @@ typedef struct tS3_outlet {
     tS3_outlet* next;
     tS3_outlet_callback* callback;
 } tS3_outlet;
+
+typedef struct {
+    undefined4 field_0x0;
+    undefined4 field_0x4;
+    undefined4 field_0x8;
+    undefined4 field_0xc;
+} tS3_callbacks;
+
+typedef void C2_HOOK_FASTCALL tS3SetEffect_cbfn(int pEffect_index, int pSound_tag);
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_path_separator, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_sound_folder_name, 6);

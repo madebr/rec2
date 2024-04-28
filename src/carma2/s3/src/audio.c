@@ -27,14 +27,72 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_noutlets, 0x007a0580);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_soundbank_buffer_len, 0x006b2c80);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gS3_soundbank_buffer, 0x006b2c84);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_descriptor*, gS3_root_descriptor, 0x007a0598);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_callbacks, gS3_callbacks, 0x006b2dc8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_effects_enabled, 0x007a0758);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3SetEffect_cbfn*, gS3_enable_effect_cbfn, 0x007a0760);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3SetEffect_cbfn*, gS3_disable_effect_cbfn, 0x007a0764);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_opened_output_devices, 0x006b2c18);
+C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gS3_last_service_time, 0x007a0568);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel*, gS3_unbound_channels, 0x007a056c);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel*, gS3_last_unbound_channel, 0x007a059c);
 
-int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_path);
-int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path) {
+int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_dirname);
+int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_dirname) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3Init_original(pPath, pLow_memory_mode, pSound_path);
 #else
-#error "Not implemented"
+    tS3_descriptor* descriptor;
+
+    /* nop_FUN_00565b39(); */
+
+    /* FIXME: this is a struct with 7 members */
+    C2V(gS3_noutlets) = 0;
+    C2V(gS3_nsound_sources) = 0;
+    C2V(gS3_next_outlet_id) = 0;
+    C2V(gS3_outlets) = NULL;
+    C2V(gS3_sound_sources) = NULL;
+    C2V(gS3_descriptors) = NULL;
+    C2V(gS3_root_descriptor) = NULL;
+
+    C2_HOOK_BUG_ON(sizeof(C2V(gS3_callbacks)) != 0x10);
+    c2_memset(&C2V(gS3_callbacks), 0, sizeof(C2V(gS3_callbacks)));
+
+    S3Disable();
+    S3StopMidi();
+    S3StopCDA();
+    C2V(gS3_effects_enabled) = 0;
+    C2V(gS3_enable_effect_cbfn) = NULL;
+    C2V(gS3_disable_effect_cbfn) = NULL;
+    if (!PDS3Init()) {
+        return eS3_error_digi_init;
+    }
+    C2V(gS3_opened_output_devices) = 1;
+
+    C2_HOOK_BUG_ON(sizeof(tS3_descriptor) != 0x4c);
+
+    descriptor = S3MemAllocate(sizeof(tS3_descriptor), kMem_S3_sentinel);
+    if (descriptor == NULL) {
+        return eS3_error_memory;
+    }
+    c2_memset(descriptor, 0, sizeof(tS3_descriptor));
+    descriptor->sample_id = 0x261269;
+    C2V(gS3_sound_dirname)[0] = '\0';
+    C2V(gS3_descriptors) = descriptor;
+    C2V(gS3_root_descriptor) = descriptor;
+    if (pSound_dirname != NULL) {
+        char dirpath[256];
+
+        PDExtractDirectory(dirpath, pPath);
+        c2_sprintf(C2V(gS3_sound_dirname), "%s%s", dirpath, pSound_dirname);
+    }
+    if (S3LoadSoundbank(pPath, pLow_memory_mode) != 0) {
+        return eS3_error_soundbank;
+    }
+    C2V(gS3_last_service_time) = PDGetTotalTime();
+    C2V(gS3_unbound_channels) = NULL;
+    C2V(gS3_last_unbound_channel) = NULL;
+    return eS3_error_none;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005651d0, S3Init, S3Init_original)
