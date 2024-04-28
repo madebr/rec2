@@ -67,4 +67,6 @@ int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soundbank_r
 
 void C2_HOOK_FASTCALL S3StopMidi(void);
 
+void C2_HOOK_FASTCALL S3StopCDA(void);
+
 #endif // S3_AUDIO_H
