@@ -17,8 +17,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_nsound_sources, 0x007a0584);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_outlet*, gS3_outlets, 0x007a058c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gS3_CDA_enabled, 0x00673504, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_path_separator, 2, 0x007a0554);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_sound_folder_name, 6, 0x007a0558);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_next_outlet_id, 0x007a0588);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_noutlets, 0x007a0580);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_soundbank_buffer_len, 0x006b2c80);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path) {
@@ -324,6 +326,49 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00568c2c, S3LoadSoundBankFile, S3LoadSoundBankFile_original)
+
+int C2_HOOK_FASTCALL S3LoadSoundbank(const char* pPath, int pLow_memory_mode) {
+    tS3_soundbank_read_ctx read_ctx;
+    char soundbank_filename[512];
+    void *buffer;
+    char dir_name[512];
+    const char* cur_dir;
+
+    if (!C2V(gS3_enabled)) {
+        return 0;
+    }
+    if (pLow_memory_mode == 0x123456) {
+        C2V(gS3_low_memory_mode) = 1;
+        c2_strcpy(soundbank_filename, pPath);
+        dir_name[0] = '\0';
+        buffer = S3LoadSoundBankFile(soundbank_filename);
+        pLow_memory_mode = 0;
+    } else {
+        dir_name[0] = '\0';
+        soundbank_filename[0] = '\0';
+        cur_dir = PDS3GetWorkingDirectory();
+        c2_strcpy(dir_name, cur_dir);
+        c2_strcat(dir_name, C2V(gS3_path_separator));
+        c2_strcat(dir_name, "DATA");
+        c2_strcat(dir_name, C2V(gS3_path_separator));
+        c2_strcat(dir_name, C2V(gS3_sound_folder_name));
+        c2_strcat(dir_name, C2V(gS3_path_separator));
+        c2_strcpy(soundbank_filename, pPath);
+        buffer = S3LoadSoundBankFile(soundbank_filename);
+    }
+    if (buffer == NULL) {
+        return C2V(gS3_last_error);
+    }
+    read_ctx.nlines = 0;
+    read_ctx.data_len = C2V(gS3_soundbank_buffer_len);
+    read_ctx.data = buffer;
+    S3SoundBankReaderSkipWhitespace(&read_ctx);
+    while (S3SoundBankReadEntry(&read_ctx, dir_name, pLow_memory_mode) != 0) {
+    }
+    S3MemFree(buffer);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00567fe0, S3LoadSoundbank)
 
 void (C2_HOOK_FASTCALL * S3SoundBankReaderSkipWhitespace_original)(tS3_soundbank_read_ctx* pContext);
 void C2_HOOK_FASTCALL S3SoundBankReaderSkipWhitespace(tS3_soundbank_read_ctx* pContext) {
