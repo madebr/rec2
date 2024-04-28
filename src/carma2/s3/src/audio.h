@@ -65,4 +65,6 @@ tS3_descriptor* C2_HOOK_FASTCALL S3CreateDescriptor(void);
 
 int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soundbank_read_ctx* pContext, const char* pDir_name);
 
+void C2_HOOK_FASTCALL S3StopMidi(void);
+
 #endif // S3_AUDIO_H
