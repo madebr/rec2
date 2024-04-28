@@ -15,6 +15,7 @@ C2_HOOK_VARIABLE_DECLARE(tPD_S3_config, gPD_S3_config);
 C2_HOOK_VARIABLE_DECLARE(MCI_OPEN_PARMS, gPDS3_mci_open_parms);
 C2_HOOK_VARIABLE_DECLARE(MCI_SET_PARMS, gPDS3_mci_set_parms);
 C2_HOOK_VARIABLE_DECLARE(int, gPDS3_cda_initialized);
+C2_HOOK_VARIABLE_DECLARE(int, gPDS3_midi_playing);
 
 enum tSSDXFlags {
     SSDX_InitDirectSound = 0x2,
@@ -36,5 +37,7 @@ void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor);
 int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel);
 
 char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
+
+int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
 
 #endif // C2_WIN32_SSDX_H
