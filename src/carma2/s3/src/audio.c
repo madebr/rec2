@@ -760,6 +760,23 @@ void C2_HOOK_FASTCALL S3StopCDA(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00565b7f, S3StopCDA, S3StopCDA_original)
 
+void C2_HOOK_FASTCALL S3StopMidiInternal(void) {
+
+    if (C2V(gS3_enable_midi)) {
+        tS3_outlet* outlet;
+        for (outlet = C2V(gS3_outlets); outlet != NULL; outlet = outlet->next) {
+            tS3_channel *channel;
+
+            for (channel = outlet->channel_list; channel != NULL; channel = channel->next) {
+                if (channel->type == 1) {
+                    S3StopMIDIChannel(channel);
+                }
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0056a7bd, S3StopMidiInternal)
+
 int C2_HOOK_FASTCALL S3StopMIDIChannel(tS3_channel* pChannel) {
 
     if (C2V(gS3_enable_midi) && pChannel->active && pChannel->type == 1) {
