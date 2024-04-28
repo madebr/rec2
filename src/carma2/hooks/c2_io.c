@@ -32,4 +32,15 @@ int C2_HOOK_CDECL c2_close(int fd) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005805e0, c2_close, c2_close_original)
 
+int (C2_HOOK_CDECL * c2_read_original)(int fd, void * const buffer, unsigned const buffer_size);
+int C2_HOOK_CDECL c2_read(int fd, void * const buffer, unsigned const buffer_size) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return c2_read_original(fd, buffer, buffer_size);
+#else
+    return _read(fd, buffer, buffer_size);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0057fa30, c2_read, c2_read_original)
+
 #endif
