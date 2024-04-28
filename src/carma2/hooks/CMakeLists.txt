@@ -18,6 +18,8 @@ else()
         c2_stdlib.h
         c2_string.c
         c2_string.h
+        c2_sys_stat.c
+        c2_sys_stat.h
         c2_time.c
         c2_time.h
         win32_hooks.c
