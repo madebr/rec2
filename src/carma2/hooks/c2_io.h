@@ -7,11 +7,15 @@
 
 int C2_HOOK_CDECL c2_open(const char *filename, int oflag);
 
+int C2_HOOK_CDECL c2_close(int fd);
+
 #else
 
 #include <io.h>
 
 #define c2_open _open
+
+#define c2_close _close
 
 #endif
 
