@@ -392,6 +392,19 @@ int C2_HOOK_FASTCALL S3SoundBankReadEntry(tS3_soundbank_read_ctx *pContext, cons
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056828c, S3SoundBankReadEntry, S3SoundBankReadEntry_original)
 
+void C2_HOOK_FASTCALL S3SoundBankReaderSkipToNewline(tS3_soundbank_read_ctx* pContext) {
+    char* newline_ptr;
+
+    newline_ptr = c2_memchr(pContext->data, '\n', pContext->data_len);
+    if (newline_ptr != NULL) {
+        S3SoundBankReaderAdvance(pContext, newline_ptr + 1 - pContext->data);
+        pContext->nlines += 1;
+    } else {
+        pContext->data_len = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x00568205, S3SoundBankReaderSkipToNewline)
+
 void C2_HOOK_FASTCALL S3SoundBankReaderAdvance(tS3_soundbank_read_ctx* pContext, int pAmount) {
 
     pContext->data += pAmount;
