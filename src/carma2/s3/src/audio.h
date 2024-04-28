@@ -46,4 +46,6 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath);
 
 int C2_HOOK_FASTCALL S3CreateOutletChannels(tS3_outlet* outlet, int pChannel_count);
 
+void C2_HOOK_FASTCALL S3SoundBankReaderSkipWhitespace(tS3_soundbank_read_ctx* pContext);
+
 #endif // S3_AUDIO_H

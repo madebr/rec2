@@ -36,6 +36,13 @@ typedef struct {
     int independent_pitch;
 } tPD_S3_config;
 
+typedef struct {
+    int data_len;
+    undefined4 field_0x4;
+    int nlines;
+    char* data;
+} tS3_soundbank_read_ctx;
+
 /* FIXME: verify elements of tS3_termination_reason */
 typedef enum {
     eS3_tr_natural = 0,
