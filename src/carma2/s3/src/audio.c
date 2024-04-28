@@ -8,6 +8,7 @@
 
 #include "rec2_types.h"
 
+#include "c2_ctype.h"
 #include "c2_string.h"
 #include <stddef.h>
 
@@ -373,10 +374,16 @@ C2_HOOK_FUNCTION(0x00567fe0, S3LoadSoundbank)
 void (C2_HOOK_FASTCALL * S3SoundBankReaderSkipWhitespace_original)(tS3_soundbank_read_ctx* pContext);
 void C2_HOOK_FASTCALL S3SoundBankReaderSkipWhitespace(tS3_soundbank_read_ctx* pContext) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     S3SoundBankReaderSkipWhitespace_original(pContext);
 #else
-#error "Not implemented"
+
+    while (pContext->data_len != 0) {
+        if (c2_isalnum(*pContext->data) || *pContext->data == '-') {
+            break;
+        }
+        S3SoundBankReaderSkipToNewline(pContext);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056818f, S3SoundBankReaderSkipWhitespace, S3SoundBankReaderSkipWhitespace_original)
