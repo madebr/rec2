@@ -8,6 +8,8 @@ else()
         c2_direct.h
         c2_hooks.c
         c2_hooks.h
+        c2_io.c
+        c2_io.h
         c2_malloc.c
         c2_malloc.h
         c2_stdio.c
