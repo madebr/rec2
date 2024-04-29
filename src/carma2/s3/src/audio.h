@@ -50,8 +50,6 @@ tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag);
 
 void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
 
-void C2_HOOK_FASTCALL S3StopAll(void);
-
 int C2_HOOK_FASTCALL S3DisableSound(void);
 
 void C2_HOOK_FASTCALL S3EnableCDA(void);
