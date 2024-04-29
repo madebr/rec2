@@ -251,4 +251,6 @@ int C2_HOOK_FASTCALL S3DisableSound(void);
 
 int C2_HOOK_FASTCALL S3SoundStillPlaying(int pTag);
 
+int C2_HOOK_FASTCALL S3SetVolume(int pVolume);
+
 #endif
