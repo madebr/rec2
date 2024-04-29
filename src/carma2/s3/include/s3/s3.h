@@ -57,6 +57,7 @@ typedef enum tS3_error_codes {
     eS3_error_readfile = 4,
     eS3_error_soundbank = 5,
     eS3_error_bad_id = 6,
+    eS3_error_bad_stag = 7,
     eS3_error_channel_alloc = 10,
 } tS3_error_codes;
 
