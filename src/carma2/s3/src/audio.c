@@ -423,6 +423,42 @@ void C2_HOOK_FASTCALL S3StopAll(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455910, S3StopAll, S3StopAll_original)
 
+int C2_HOOK_FASTCALL S3DisableSound(void) {
+
+    S3StopAllOutletSounds();
+    S3StopMidi();
+    S3StopCDA();
+    if (C2V(gS3_enabled)) {
+        tS3_descriptor* descriptor;
+        tS3_outlet* outlet;
+
+        S3Disable();
+
+        descriptor = C2V(gS3_descriptors);
+        while (descriptor != NULL) {
+            tS3_descriptor* next = descriptor->next;
+            S3ReleaseSound(descriptor->sample_id);
+            S3MemFree(descriptor);
+            descriptor = next;
+        }
+
+        outlet = C2V(gS3_outlets);
+        while (outlet != NULL) {
+            tS3_outlet* next = outlet->next;
+            S3ReleaseOutlet(outlet);
+            outlet = next;
+        }
+
+        S3FreeUnboundChannels();
+    }
+    if (C2V(gS3_opened_output_devices)) {
+        PDS3Stop();
+    }
+    /* nop_FUN_00565b34(); */
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0056532d, S3DisableSound)
+
 void C2_HOOK_FASTCALL S3EnableCDA(void) {
 
     C2V(gS3_CDA_enabled) = 1;
