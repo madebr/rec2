@@ -58,4 +58,6 @@ int C2_HOOK_FASTCALL DRS3DisableSound(void);
 
 int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
 
+int C2_HOOK_FASTCALL DRS3SetVolume(int pVolume);
+
 #endif // REC2_SOUND_H
