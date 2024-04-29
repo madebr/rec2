@@ -278,3 +278,19 @@ int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0056a093, PDS3StopCDAChannel)
+
+int C2_HOOK_FASTCALL PDS3StopSampleChannel(tS3_channel* pChannel) {
+
+    if (pChannel->descriptor != NULL && pChannel->descriptor->type == pChannel->type && pChannel->descriptor->pd_handle != NULL) {
+        LPDIRECTSOUNDBUFFER buffer = pChannel->descriptor->pd_handle;
+        IDirectSoundBuffer_Stop(buffer);
+        if (C2V(gS3_callbacks).on_sample_channel_stop != NULL && pChannel->active) {
+            C2V(gS3_callbacks).on_sample_channel_stop(pChannel);
+        }
+    }
+    if (pChannel->active) {
+        pChannel->needs_service = 1;
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x005697ef, PDS3StopSampleChannel)
