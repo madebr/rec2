@@ -219,13 +219,33 @@ tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_ch
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005653c7, S3CreateOutlet, S3CreateOutlet_original)
 
-int (C2_HOOK_FASTCALL * S3ReleaseOutlet_original)(tS3_outlet* pOutlet);
-int C2_HOOK_FASTCALL S3ReleaseOutlet(tS3_outlet* pOutlet) {
+tS3_error_codes (C2_HOOK_FASTCALL * S3ReleaseOutlet_original)(tS3_outlet* pOutlet);
+tS3_error_codes C2_HOOK_FASTCALL S3ReleaseOutlet(tS3_outlet* pOutlet) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3ReleaseOutlet_original(pOutlet);
 #else
-#error "Not implemented"
+
+    if (pOutlet == NULL) {
+        return eS3_error_bad_id;
+    }
+    S3UnbindChannels(pOutlet);
+    if (pOutlet->prev != NULL) {
+        pOutlet->prev->next = pOutlet->next;
+    } else {
+        C2V(gS3_outlets) = pOutlet->next;
+    }
+    if (pOutlet->next != NULL) {
+        pOutlet->next->prev = pOutlet->prev;
+    }
+    if (C2V(gS3_noutlets) != 0) {
+        C2V(gS3_noutlets) -= 1;
+        if (C2V(gS3_noutlets) == 0) {
+            C2V(gS3_outlets) = NULL;
+        }
+    }
+    S3MemFree(pOutlet);
+    return eS3_error_none;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005654e2, S3ReleaseOutlet, S3ReleaseOutlet_original)
