@@ -29,6 +29,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_media_present, 0x006b2dac);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_is_playing, 0x006b2db0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_paused, 0x006b2db4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_track, 0x006b2db8);
+C2_HOOK_VARIABLE_IMPLEMENT(MCI_STATUS_PARMS, gPDS3_cda_status_parms, 0x007a0528);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_Number_of_tracks, 0x007a00ac);
 
 void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 #define LOG_CASE_DDERR(V) case V: dr_dprintf("%s (%x)", #V, V); break
@@ -245,10 +247,22 @@ C2_HOOK_FUNCTION(0x00569cb1, PDS3StopMidiChannel)
 void (C2_HOOK_FASTCALL * PDS3CheckCDAMedia_original)(tS3_channel* pChannel);
 void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PDS3CheckCDAMedia_original(pChannel);
 #else
-#error "Not implemented"
+    C2V(gPDS3_cda_status_parms).dwItem = MCI_STATUS_MEDIA_PRESENT;
+    mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&C2V(gPDS3_cda_status_parms));
+    if (!C2V(gPDS3_cda_media_present) && C2V(gPDS3_cda_status_parms).dwReturn) {
+        C2V(gPDS3_cda_media_present) = 1;
+        C2V(gPDS3_cda_paused) = 0;
+        C2V(gPDS3_cda_track) = 0;
+        C2V(gPDS3_cda_status_parms).dwItem = MCI_STATUS_NUMBER_OF_TRACKS;
+        mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&C2V(gPDS3_cda_status_parms));
+        C2V(gPDS3_Number_of_tracks) = MIN(C2V(gPDS3_cda_status_parms).dwReturn, 99);
+    } else if (C2V(gPDS3_cda_media_present) && !C2V(gPDS3_cda_status_parms).dwReturn) {
+        C2V(gPDS3_cda_media_present) = 0;
+        C2V(gPDS3_cda_paused) = 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056a0e1, PDS3CheckCDAMedia, PDS3CheckCDAMedia_original)
