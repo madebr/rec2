@@ -840,10 +840,32 @@ C2_HOOK_FUNCTION(0x00565bfe, S3StopCDAChannel)
 int (C2_HOOK_FASTCALL * S3UnbindChannels_original)(tS3_outlet* pOutlet);
 int C2_HOOK_FASTCALL S3UnbindChannels(tS3_outlet* pOutlet) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3UnbindChannels_original(pOutlet);
 #else
-#error "Not implemented"
+    tS3_channel* chan;
+    tS3_channel* next;
+
+    for (chan = pOutlet->channel_list; chan != NULL; chan = next) {
+        if (chan->active) {
+            chan->termination_reason = 1;
+            S3StopChannel(chan);
+            chan->needs_service = 1;
+        }
+        next = chan->next;
+        /* nop1_FUN_0056991f(chan); */
+        if (C2V(gS3_unbound_channels) == NULL) {
+            C2V(gS3_unbound_channels) = chan;
+        } else {
+            C2V(gS3_last_unbound_channel)->next = chan;
+        }
+        C2V(gS3_last_unbound_channel) = chan;
+
+        C2_HOOK_BUG_ON(sizeof(tS3_channel) != 0x78);
+        c2_memset(chan, 0, sizeof(tS3_channel));
+    }
+    pOutlet->channel_list = NULL;
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00565607, S3UnbindChannels, S3UnbindChannels_original)
