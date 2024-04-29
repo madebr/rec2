@@ -255,10 +255,29 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005654e2, S3ReleaseOutlet, S3ReleaseOutlet_original)
 int (C2_HOOK_FASTCALL * S3SetOutletVolume_original)(tS3_outlet* pOutlet, int pVolume);
 int C2_HOOK_FASTCALL S3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3SetOutletVolume_original(pOutlet, pVolume);
 #else
-#error "Not implemented"
+    int volume;
+
+    if (!C2V(gS3_enabled)) {
+        return 0;
+    }
+
+    volume = pVolume;
+    volume = MIN(volume, 255);
+    volume = MAX(volume, 10);
+    if (pOutlet != NULL) {
+        tS3_channel* channel;
+
+        pOutlet->volume = volume;
+        for (channel = pOutlet->channel_list; channel != NULL; channel = channel->next) {
+            if (channel->active) {
+                PDS3UpdateChannelVolume(channel);
+            }
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056494f, S3SetOutletVolume, S3SetOutletVolume_original)
