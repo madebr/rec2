@@ -10,6 +10,9 @@
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c6c, 0x006b2c6c);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c4c, 0x006b2c4c);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c68, 0x006b2c68);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_position_now, 0x006b2c20);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_vel_now, 0x006b2c58);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_left_now, 0x006b2c30);
 
 
 void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src) {
@@ -148,10 +151,15 @@ C2_HOOK_FUNCTION(0x00565e39, FUN_00565e39)
 int (C2_HOOK_STDCALL * S3Set3DSoundEnvironment_original)(float a1, float a2, float a3);
 int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3Set3DSoundEnvironment_original(a1, a2, a3);
 #else
-#error "Not implemented"
+
+    FUN_00565e39(a1, a2, a3);
+    BrVector3Set(&C2V(gS3_listener_position_now), 0.f, 0.f, 0.f);
+    BrVector3Set(&C2V(gS3_listener_vel_now), 0.f, 0.f, 0.f);
+    BrVector3Set(&C2V(gS3_listener_left_now), 0.f, 0.f, 0.f);
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00565d70, S3Set3DSoundEnvironment, S3Set3DSoundEnvironment_original)
