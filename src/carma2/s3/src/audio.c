@@ -349,13 +349,54 @@ void C2_HOOK_FASTCALL S3StopAllOutletSounds(void) {
 }
 C2_HOOK_FUNCTION(0x005657bd, S3StopAllOutletSounds)
 
-int (C2_HOOK_FASTCALL * S3StopSound_original)(int pTag);
-int C2_HOOK_FASTCALL S3StopSound(int pTag) {
+tS3_error_codes (C2_HOOK_FASTCALL * S3StopSound_original)(int pTag);
+tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3StopSound_original(pTag);
 #else
-#error "Not implemented"
+    tS3_channel* channel;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_channel, source_volume, 0x50);
+
+    if (!C2V(gS3_enabled)) {
+        return eS3_error_none;
+    }
+    if (pTag == 0) {
+        return eS3_error_bad_stag;
+    }
+    channel = S3GetChannelForTag(pTag);
+    if (channel == NULL) {
+        return eS3_error_bad_stag;
+    }
+    channel->termination_reason = 1;
+    channel->source_volume = 0;
+    if (channel->active) {
+        channel->needs_service = 1;
+    }
+    if (channel->type == 0) {
+        if (channel->sound_source_ptr != NULL) {
+            channel->sound_source_ptr->tag = 0;
+            channel->sound_source_ptr->channel = NULL;
+            channel->sound_source_ptr->volume = 0;
+        }
+        if (PDS3StopSampleChannel(channel) == 0) {
+            return eS3_error_function_failed;
+        }
+    } else if (channel->type == 1) {
+        if (S3StopMIDIChannel(channel) != 0) {
+            return eS3_error_function_failed;
+        }
+    } else if (channel->type == 2) {
+        if (S3StopCDAChannel(channel) != 0) {
+            return eS3_error_function_failed;
+        }
+    }
+    if (channel->descriptor->flags & 0x2) {
+        S3ReleaseSound(channel->descriptor->sample_id);
+    }
+    channel->repetitions = 1;
+    return eS3_error_none;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00564ae2, S3StopSound, S3StopSound_original)
