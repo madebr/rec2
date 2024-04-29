@@ -31,6 +31,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_paused, 0x006b2db4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_track, 0x006b2db8);
 C2_HOOK_VARIABLE_IMPLEMENT(MCI_STATUS_PARMS, gPDS3_cda_status_parms, 0x007a0528);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_Number_of_tracks, 0x007a00ac);
+C2_HOOK_VARIABLE_IMPLEMENT(MCI_STATUS_PARMS, gPDS3_mci_midi_status_parms, 0x007a0070);
 
 void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 #define LOG_CASE_DDERR(V) case V: dr_dprintf("%s (%x)", #V, V); break
@@ -349,3 +350,11 @@ void C2_HOOK_FASTCALL PDS3Stop(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00569ae2, PDS3Stop)
+
+int C2_HOOK_FASTCALL PDS3IsMIDIStopped(tS3_channel *pChannel) {
+
+    C2V(gPDS3_mci_midi_status_parms).dwItem = MCI_STATUS_MODE;
+    mciSendCommandA(pChannel->mciDevice, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&C2V(gPDS3_mci_midi_status_parms));
+    return C2V(gPDS3_mci_midi_status_parms).dwReturn != MCI_MODE_PLAY;
+}
+C2_HOOK_FUNCTION(0x00569f1b, PDS3IsMIDIStopped)
