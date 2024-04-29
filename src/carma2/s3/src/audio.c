@@ -412,17 +412,6 @@ void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00564358, S3Service, S3Service_original)
 
-void (C2_HOOK_FASTCALL * S3StopAll_original)(void);
-void C2_HOOK_FASTCALL S3StopAll(void) {
-
-#if defined(C2_HOOKS_ENABLED)
-    S3StopAll_original();
-#else
-#error "Not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00455910, S3StopAll, S3StopAll_original)
-
 int C2_HOOK_FASTCALL S3DisableSound(void) {
 
     S3StopAllOutletSounds();

@@ -54,4 +54,6 @@ void C2_HOOK_FASTCALL StartMusicTrack(int pMusic_track);
 
 int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume);
 
+int C2_HOOK_FASTCALL DRS3DisableSound(void);
+
 #endif // REC2_SOUND_H
