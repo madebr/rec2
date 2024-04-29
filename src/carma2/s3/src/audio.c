@@ -754,10 +754,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0056a41f, S3StopMidi, S3StopMidi_original)
 void (C2_HOOK_FASTCALL * S3StopCDA_original)(void);
 void C2_HOOK_FASTCALL S3StopCDA(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     S3StopCDA_original();
 #else
-#error "Not implemented"
+    S3StopCDAInternal();
+    C2V(gS3_CDA_enabled) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00565b7f, S3StopCDA, S3StopCDA_original)
