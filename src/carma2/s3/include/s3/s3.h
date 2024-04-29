@@ -248,4 +248,6 @@ void C2_HOOK_FASTCALL S3EnableCDA(void);
 
 int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel);
 
+int C2_HOOK_FASTCALL S3DisableSound(void);
+
 #endif
