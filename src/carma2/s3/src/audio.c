@@ -1072,6 +1072,29 @@ int C2_HOOK_FASTCALL S3FreeUnboundChannels(void) {
 }
 C2_HOOK_FUNCTION(0x005656b7, S3FreeUnboundChannels)
 
+int C2_HOOK_FASTCALL S3SoundStillPlaying(int pTag) {
+    tS3_channel *channel;
+
+    if (!C2V(gS3_enabled)) {
+        return 0;
+    }
+    if (pTag == 0) {
+        return 0;
+    }
+
+    channel = S3GetChannelForTag(pTag);
+    if (channel == NULL) {
+        return 0;
+    }
+
+    if (S3ServiceChannel(channel) != 0) {
+        return 1;
+    }
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005657f5, S3SoundStillPlaying)
+
 int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel* pChannel) {
 
     if (pChannel->type == 0) {
@@ -1084,3 +1107,4 @@ int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel* pChannel) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00569752, S3ServiceChannel)
+
