@@ -278,10 +278,31 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00455a80, SoundService, SoundService_original)
 
 int (C2_HOOK_FASTCALL * DRStopCarSounds_original)(void);
 int C2_HOOK_FASTCALL DRStopCarSounds(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DRStopCarSounds_original();
 #else
-#error "Not implemented"
+
+    if (!C2V(gSound_enabled)) {
+        return 0;
+    }
+    S3StopOutletSound(C2V(gCar_outlet));
+
+    if (C2V(gSound_enabled)) {
+        S3StopOutletSound(C2V(gEngine_outlet));
+    }
+
+    if (C2V(gSound_enabled)) {
+        S3StopOutletSound(C2V(gXXX_outlet));
+    }
+
+    if (C2V(gSound_enabled)) {
+        S3StopOutletSound(C2V(gEffects_outlet));
+    }
+
+    if (C2V(gSound_enabled)) {
+        S3StopOutletSound(C2V(gPedestrians_outlet));
+    }
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004559e0, DRStopCarSounds, DRStopCarSounds_original)
