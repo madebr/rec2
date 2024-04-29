@@ -25,6 +25,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_initialized, 0x006b2d98);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_working_directory_initialized, 0x006b2da0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_working_directory, 260, 0x006b2c90);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_midi_playing, 0x006b2da4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_media_present, 0x006b2dac);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_is_playing, 0x006b2db0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_paused, 0x006b2db4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPDS3_cda_track, 0x006b2db8);
 
 void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 #define LOG_CASE_DDERR(V) case V: dr_dprintf("%s (%x)", #V, V); break
@@ -248,3 +252,15 @@ void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056a0e1, PDS3CheckCDAMedia, PDS3CheckCDAMedia_original)
+
+int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel) {
+    PDS3CheckCDAMedia(pChannel);
+    if (C2V(gPDS3_cda_media_present)) {
+        C2V(gPDS3_cda_paused) = 0;
+        C2V(gPDS3_cda_track) = 0;
+        mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_STOP, 0, 0);
+    }
+    C2V(gPDS3_cda_is_playing) = 0;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0056a093, PDS3StopCDAChannel)
