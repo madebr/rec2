@@ -1032,3 +1032,18 @@ int C2_HOOK_FASTCALL S3IRandomBetweenLog(int pMin, int pMax, int pDefault) {
     return (int)(ldexp(exp(dbl), -16) * (double)pDefault);
 }
 C2_HOOK_FUNCTION(0x005663dd, S3IRandomBetweenLog)
+
+int C2_HOOK_FASTCALL S3FreeUnboundChannels(void) {
+    tS3_channel *channel;
+
+    channel = C2V(gS3_unbound_channels);
+    while (channel != NULL) {
+        tS3_channel* next;
+
+        next = channel->next;
+        S3MemFree(channel);
+        channel = next;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005656b7, S3FreeUnboundChannels)
