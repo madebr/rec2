@@ -887,3 +887,46 @@ tS3_error_codes C2_HOOK_FASTCALL S3ClearBufferOfMidiChannel(int pTag) {
     return eS3_error_none;
 }
 C2_HOOK_FUNCTION(0x0056a818, S3ClearBufferOfMidiChannel)
+
+int C2_HOOK_FASTCALL S3ReleaseSound(int pSound_id) {
+    tS3_descriptor* descriptor;
+
+    if (!C2V(gS3_enabled)) {
+        return eS3_error_none;
+    }
+
+    descriptor = S3GetDescriptorByID(pSound_id);
+    if (descriptor == NULL) {
+        return eS3_error_bad_id;
+    }
+    if (descriptor->type == 1) {
+        tS3_outlet *outlet;
+
+        for (outlet = C2V(gS3_outlets); outlet != NULL; outlet = outlet->next) {
+            tS3_channel *channel;
+
+            for (channel = outlet->channel_list; channel != NULL; channel = channel->next) {
+                if (channel->descriptor != NULL && channel->descriptor->sample_id == pSound_id) {
+                    S3ClearBufferOfMidiChannel(channel->tag);
+                }
+            }
+        }
+    } else if (descriptor->type == 0) {
+        tS3_buffer_desc *description;
+
+
+        description = descriptor->buffer_description;
+
+        if (description == NULL) {
+            return 0;
+        }
+        PDS3ReleaseSound(descriptor);
+        if (description->field_0x14 != NULL) {
+            S3MemFree(description->field_0x14);
+        }
+        S3MemFree(description);
+        descriptor->buffer_description = NULL;
+    }
+    return eS3_error_none;
+}
+C2_HOOK_FUNCTION(0x00568929, S3ReleaseSound)

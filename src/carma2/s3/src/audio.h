@@ -92,4 +92,6 @@ tS3_channel* C2_HOOK_FASTCALL S3GetChannelForTag(int pTag);
 
 tS3_error_codes C2_HOOK_FASTCALL S3ClearBufferOfMidiChannel(int pTag);
 
+int C2_HOOK_FASTCALL S3ReleaseSound(int pSound_id);
+
 #endif // S3_AUDIO_H
