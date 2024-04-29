@@ -336,3 +336,16 @@ void C2_HOOK_FASTCALL PDS3UpdateCDAVolume(tS3_channel* pChannel, int pVolume) {
 
 }
 C2_HOOK_FUNCTION(0x00568ed0, PDS3UpdateCDAVolume)
+
+void C2_HOOK_FASTCALL PDS3Stop(void) {
+
+    if (C2V(gPD_S3_config).free_direct_sound) {
+
+        IDirectSound_Release(C2V(gPD_S3_direct_sound));
+        C2V(gPD_S3_direct_sound) = NULL;
+    }
+    if (C2V(gPDS3_mci_open_parms).wDeviceID != 0) {
+        mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_CLOSE, 0, 0);
+    }
+}
+C2_HOOK_FUNCTION(0x00569ae2, PDS3Stop)
