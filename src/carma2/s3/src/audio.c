@@ -11,7 +11,9 @@
 #include "c2_ctype.h"
 #include "c2_io.h"
 #include "c2_sys_stat.h"
+#include "c2_stdlib.h"
 #include "c2_string.h"
+
 #include <fcntl.h>
 #include <stddef.h>
 
@@ -952,3 +954,9 @@ int C2_HOOK_FASTCALL S3ReleaseSound(int pSound_id) {
     return eS3_error_none;
 }
 C2_HOOK_FUNCTION(0x00568929, S3ReleaseSound)
+
+double C2_HOOK_STDCALL S3FRandomBetween(double pMin, double pMax) {
+
+    return (double)c2_rand() * (pMax - pMin) / 32767. + pMin;
+}
+C2_HOOK_FUNCTION(0x00566454, S3FRandomBetween)
