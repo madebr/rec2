@@ -84,4 +84,6 @@ int C2_HOOK_FASTCALL S3StopMIDIChannel(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL S3StopCDAInternal(void);
 
+int C2_HOOK_FASTCALL S3StopCDAChannel(tS3_channel* pChannel);
+
 #endif // S3_AUDIO_H

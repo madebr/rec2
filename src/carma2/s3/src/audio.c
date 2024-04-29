@@ -807,3 +807,12 @@ int C2_HOOK_FASTCALL S3StopCDAInternal(void) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00565c22, S3StopCDAInternal)
+
+int C2_HOOK_FASTCALL S3StopCDAChannel(tS3_channel* pChannel) {
+
+    if (!C2V(gS3_CDA_enabled)) {
+        return 0;
+    }
+    return PDS3StopCDAChannel(pChannel);
+}
+C2_HOOK_FUNCTION(0x00565bfe, S3StopCDAChannel)
