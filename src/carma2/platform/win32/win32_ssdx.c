@@ -364,3 +364,26 @@ int C2_HOOK_FASTCALL PDS3IsCDAPlaying(void) {
     return C2V(gS3_CDA_enabled) && C2V(gPDS3_cda_is_playing) && C2V(gPDS3_cda_media_present);
 }
 C2_HOOK_FUNCTION(0x0056a260, PDS3IsCDAPlaying)
+
+int C2_HOOK_FASTCALL PDS3IsSamplePlaying(tS3_channel* pChannel) {
+    LPDIRECTSOUNDBUFFER buffer;
+    DWORD status;
+
+    if (pChannel->descriptor == NULL) {
+        return 0;
+    }
+    if (pChannel->descriptor->type != pChannel->type) {
+        return 0;
+    }
+    buffer = pChannel->descriptor->pd_handle;
+    if (buffer == NULL) {
+        return 0;
+    }
+    if (FAILED(IDirectSoundBuffer_GetStatus(buffer, &status))) {
+        return 0;
+    }
+    if (status & DSBSTATUS_PLAYING) {
+        return 1;
+    }
+    return 0;
+}

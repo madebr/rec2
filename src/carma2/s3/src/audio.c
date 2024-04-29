@@ -1071,3 +1071,16 @@ int C2_HOOK_FASTCALL S3FreeUnboundChannels(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x005656b7, S3FreeUnboundChannels)
+
+int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel* pChannel) {
+
+    if (pChannel->type == 0) {
+        return PDS3IsSamplePlaying(pChannel);
+    } else if (pChannel->type == 1) {
+        return !PDS3IsMIDIStopped(pChannel);
+    } else if (pChannel->type == 2) {
+        return PDS3IsCDAPlaying();
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00569752, S3ServiceChannel)
