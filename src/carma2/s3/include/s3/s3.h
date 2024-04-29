@@ -176,7 +176,7 @@ typedef struct tS3_channel {
     tS3_vector3 position;
     tS3_vector3 velocity;
     tS3_vector3 lastpos;
-    int fieldd_0x50;
+    int source_volume;
     int source_rate;
     float max_distance_squared;
     tS3_outlet* owner_outlet;
@@ -230,7 +230,7 @@ int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
 
 int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
 
-int C2_HOOK_FASTCALL S3StopSound(int pTag);
+tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag);
 
 void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
 
