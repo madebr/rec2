@@ -40,4 +40,6 @@ char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
 
 int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
 
+void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel);
+
 #endif // C2_WIN32_SSDX_H

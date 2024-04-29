@@ -237,3 +237,14 @@ int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00569cb1, PDS3StopMidiChannel)
+
+void (C2_HOOK_FASTCALL * PDS3CheckCDAMedia_original)(tS3_channel* pChannel);
+void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PDS3CheckCDAMedia_original(pChannel);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0056a0e1, PDS3CheckCDAMedia, PDS3CheckCDAMedia_original)
