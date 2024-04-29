@@ -403,3 +403,13 @@ int C2_HOOK_FASTCALL DRS3DisableSound(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455910, DRS3DisableSound, DRS3DisableSound_original)
+
+int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag) {
+
+    if (!C2V(gSound_enabled)) {
+        return 0;
+    }
+
+    return S3SoundStillPlaying(pTag);
+}
+C2_HOOK_FUNCTION(0x004558f0, DRS3SoundStillPlaying)
