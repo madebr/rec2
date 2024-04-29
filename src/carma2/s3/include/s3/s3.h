@@ -249,4 +249,6 @@ int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL S3DisableSound(void);
 
+int C2_HOOK_FASTCALL S3SoundStillPlaying(int pTag);
+
 #endif
