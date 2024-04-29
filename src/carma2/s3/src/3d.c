@@ -7,6 +7,10 @@
 #include <math.h>
 #include <stddef.h>
 
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c6c, 0x006b2c6c);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c4c, 0x006b2c4c);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c68, 0x006b2c68);
+
 
 void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src) {
     if (!C2V(gS3_enabled)) {
@@ -122,6 +126,24 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00567875, S3UpdateSoundSource, S3UpdateSoundSource_original)
+
+int C2_HOOK_STDCALL FUN_00565e39(float a1, float a2, float a3) {
+
+    if (a1 == -1.f) {
+        a1 = .25f;
+    }
+    if (a2 == -1.f) {
+        a2 = 1.2f;
+    }
+    if (a3 == -1.f) {
+        a3 = 130000.f;
+    }
+    C2V(gFLOAT_006b2c6c) = a1;
+    C2V(gFLOAT_006b2c4c) = sqrtf(a3 / a2);
+    C2V(gFLOAT_006b2c68) = C2V(gFLOAT_006b2c4c) * C2V(gFLOAT_006b2c6c);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00565e39, FUN_00565e39)
 
 int (C2_HOOK_STDCALL * S3Set3DSoundEnvironment_original)(float a1, float a2, float a3);
 int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
