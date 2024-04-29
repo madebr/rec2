@@ -88,4 +88,6 @@ int C2_HOOK_FASTCALL S3StopCDAChannel(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL S3UnbindChannels(tS3_outlet* pOutlet);
 
+tS3_channel* C2_HOOK_FASTCALL S3GetChannelForTag(int pTag);
+
 #endif // S3_AUDIO_H
