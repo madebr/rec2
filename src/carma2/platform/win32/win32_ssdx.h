@@ -50,4 +50,6 @@ void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel);
 
+int C2_HOOK_FASTCALL PDS3StopSampleChannel(tS3_channel* pChannel);
+
 #endif // C2_WIN32_SSDX_H

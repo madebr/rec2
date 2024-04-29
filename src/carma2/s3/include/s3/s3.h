@@ -199,7 +199,7 @@ typedef struct tS3_outlet {
 
 typedef struct {
     undefined4 field_0x0;
-    undefined4 field_0x4;
+    void (C2_HOOK_FASTCALL * on_sample_channel_stop)(tS3_channel* pChannel);
     undefined4 field_0x8;
     undefined4 field_0xc;
 } tS3_callbacks;
@@ -208,6 +208,7 @@ typedef void C2_HOOK_FASTCALL tS3SetEffect_cbfn(int pEffect_index, int pSound_ta
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_path_separator, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_sound_folder_name, 6);
+C2_HOOK_VARIABLE_DECLARE(tS3_callbacks, gS3_callbacks);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
