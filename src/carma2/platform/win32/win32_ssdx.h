@@ -20,6 +20,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gPDS3_cda_media_present);
 C2_HOOK_VARIABLE_DECLARE(int, gPDS3_cda_is_playing);
 C2_HOOK_VARIABLE_DECLARE(int, gPDS3_cda_paused);
 C2_HOOK_VARIABLE_DECLARE(int, gPDS3_cda_track);
+C2_HOOK_VARIABLE_DECLARE(MCI_STATUS_PARMS, gPDS3_cda_status_parms);
+C2_HOOK_VARIABLE_DECLARE(int, gPDS3_Number_of_tracks);
 
 enum tSSDXFlags {
     SSDX_InitDirectSound = 0x2,
