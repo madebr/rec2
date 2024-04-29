@@ -816,3 +816,14 @@ int C2_HOOK_FASTCALL S3StopCDAChannel(tS3_channel* pChannel) {
     return PDS3StopCDAChannel(pChannel);
 }
 C2_HOOK_FUNCTION(0x00565bfe, S3StopCDAChannel)
+
+int (C2_HOOK_FASTCALL * S3UnbindChannels_original)(tS3_outlet* pOutlet);
+int C2_HOOK_FASTCALL S3UnbindChannels(tS3_outlet* pOutlet) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return S3UnbindChannels_original(pOutlet);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00565607, S3UnbindChannels, S3UnbindChannels_original)
