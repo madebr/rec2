@@ -115,7 +115,7 @@ typedef struct {
     int bytes_per_second;
     int count_channels;
     undefined4 field_0x10;
-    undefined4 field_0x14;
+    undefined4* field_0x14;
 } tS3_buffer_desc;
 
 typedef struct tS3_descriptor {
