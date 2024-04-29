@@ -413,3 +413,12 @@ int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag) {
     return S3SoundStillPlaying(pTag);
 }
 C2_HOOK_FUNCTION(0x004558f0, DRS3SoundStillPlaying)
+
+int C2_HOOK_FASTCALL DRS3SetVolume(int pVolume) {
+
+    if (!C2V(gSound_enabled)) {
+        return 0;
+    }
+    return S3SetVolume(pVolume);
+}
+C2_HOOK_FUNCTION(0x00455950, DRS3SetVolume)
