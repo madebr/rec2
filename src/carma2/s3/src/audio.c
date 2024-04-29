@@ -847,3 +847,25 @@ int C2_HOOK_FASTCALL S3UnbindChannels(tS3_outlet* pOutlet) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00565607, S3UnbindChannels, S3UnbindChannels_original)
+
+tS3_channel* C2_HOOK_FASTCALL S3GetChannelForTag(int pTag) {
+    tS3_outlet* outlet;
+
+    if (pTag == 0) {
+        return NULL;
+    }
+    for (outlet = C2V(gS3_outlets); outlet != NULL; outlet = outlet->next) {
+        if (outlet->id == (pTag & 0xff)) {
+            tS3_channel* channel;
+
+            for (channel = outlet->channel_list; channel != NULL; channel = channel->next) {
+                if (channel->tag == pTag) {
+                    return channel;
+                }
+            }
+            return NULL;
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x00565888, S3GetChannelForTag)
