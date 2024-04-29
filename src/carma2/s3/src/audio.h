@@ -94,4 +94,6 @@ tS3_error_codes C2_HOOK_FASTCALL S3ClearBufferOfMidiChannel(int pTag);
 
 int C2_HOOK_FASTCALL S3ReleaseSound(int pSound_id);
 
+double C2_HOOK_STDCALL S3FRandomBetween(double pMin, double pMax);
+
 #endif // S3_AUDIO_H
