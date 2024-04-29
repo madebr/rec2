@@ -52,6 +52,8 @@ void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
 
 void C2_HOOK_FASTCALL S3StopAll(void);
 
+int C2_HOOK_FASTCALL S3DisableSound(void);
+
 void C2_HOOK_FASTCALL S3EnableCDA(void);
 
 void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath);
