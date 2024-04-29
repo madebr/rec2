@@ -52,6 +52,8 @@ int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL PDS3StopSampleChannel(tS3_channel* pChannel);
 
+int C2_HOOK_FASTCALL PDS3UpdateChannelVolume(tS3_channel* pChannel);
+
 void C2_HOOK_FASTCALL PDS3UpdateCDAVolume(tS3_channel* pChannel, int pVolume);
 
 #endif // C2_WIN32_SSDX_H
