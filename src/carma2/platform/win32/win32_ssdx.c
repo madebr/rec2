@@ -294,3 +294,8 @@ int C2_HOOK_FASTCALL PDS3StopSampleChannel(tS3_channel* pChannel) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x005697ef, PDS3StopSampleChannel)
+
+void C2_HOOK_FASTCALL PDS3UpdateCDAVolume(tS3_channel* pChannel, int pVolume) {
+
+}
+C2_HOOK_FUNCTION(0x00568ed0, PDS3UpdateCDAVolume)
