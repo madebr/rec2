@@ -358,3 +358,9 @@ int C2_HOOK_FASTCALL PDS3IsMIDIStopped(tS3_channel *pChannel) {
     return C2V(gPDS3_mci_midi_status_parms).dwReturn != MCI_MODE_PLAY;
 }
 C2_HOOK_FUNCTION(0x00569f1b, PDS3IsMIDIStopped)
+
+int C2_HOOK_FASTCALL PDS3IsCDAPlaying(void) {
+
+    return C2V(gS3_CDA_enabled) && C2V(gPDS3_cda_is_playing) && C2V(gPDS3_cda_media_present);
+}
+C2_HOOK_FUNCTION(0x0056a260, PDS3IsCDAPlaying)

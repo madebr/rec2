@@ -211,6 +211,7 @@ typedef void C2_HOOK_FASTCALL tS3SetEffect_cbfn(int pEffect_index, int pSound_ta
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_path_separator, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_sound_folder_name, 6);
 C2_HOOK_VARIABLE_DECLARE(tS3_callbacks, gS3_callbacks);
+C2_HOOK_VARIABLE_DECLARE(int, gS3_CDA_enabled);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 

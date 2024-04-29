@@ -120,4 +120,6 @@ void C2_HOOK_FASTCALL PDS3Stop(void);
 
 int C2_HOOK_FASTCALL PDS3IsMIDIStopped(tS3_channel* pChannel);
 
+int C2_HOOK_FASTCALL PDS3IsCDAPlaying(void);
+
 #endif // C2_PLATFORM_H
