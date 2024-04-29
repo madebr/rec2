@@ -788,3 +788,21 @@ int C2_HOOK_FASTCALL S3StopMIDIChannel(tS3_channel* pChannel) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0056a4cd, S3StopMIDIChannel)
+
+int C2_HOOK_FASTCALL S3StopCDAInternal(void) {
+
+    if (C2V(gS3_CDA_enabled)) {
+        tS3_outlet* outlet;
+
+        for (outlet = C2V(gS3_outlets); outlet != NULL; outlet = outlet->next) {
+            tS3_channel* channel;
+            for (channel = outlet->channel_list; channel != NULL; channel = channel->next) {
+                if (channel->type == 2) {
+                    PDS3StopCDAChannel(channel);
+                }
+            }
+        }
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00565c22, S3StopCDAInternal)
