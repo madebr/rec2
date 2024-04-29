@@ -217,7 +217,7 @@ void C2_HOOK_FASTCALL S3Disable(void);
 
 tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_channels_2);
 
-int C2_HOOK_FASTCALL S3ReleaseOutlet(tS3_outlet* pOutlet);
+tS3_error_codes C2_HOOK_FASTCALL S3ReleaseOutlet(tS3_outlet* pOutlet);
 
 int C2_HOOK_FASTCALL S3SetOutletVolume(tS3_outlet* pOutlet, int pVolume);
 
