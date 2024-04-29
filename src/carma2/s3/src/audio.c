@@ -111,45 +111,45 @@ void C2_HOOK_FASTCALL S3Disable(void) {
 }
 C2_HOOK_FUNCTION(0x00564cf6, S3Disable)
 
-int (C2_HOOK_FASTCALL * S3StopChannel_original)(tS3_channel* chan);
-int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* chan) {
+int (C2_HOOK_FASTCALL * S3StopChannel_original)(tS3_channel* pChannel);
+int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* pChannel) {
 
     C2_HOOK_BUG_ON(sizeof(tS3_channel) != 120);
 
-#if defined(C2_HOOKS_ENABLED)
-    return S3StopChannel_original(chan);
+#if 0//defined(C2_HOOKS_ENABLED)
+    return S3StopChannel_original(pChannel);
 #else
-    if (chan-> == 0) {
+    if (pChannel->tag == 0) {
         return eS3_error_bad_stag;
     }
-    chan->termination_reason = eS3_tr_stopped;
-    if (chan->active) {
-        chan->needs_service = 1;
+    pChannel->termination_reason = eS3_tr_stopped;
+    if (pChannel->active) {
+        pChannel->needs_service = 1;
     }
-    if (chan->type == eS3_ST_sample) {
-        if (chan->sound_source_ptr != NULL) {
-            chan->sound_source_ptr->tag = 0;
-            chan->sound_source_ptr->channel = 0;
-            chan->sound_source_ptr->volume = 0;
+    if (pChannel->type == 0) {
+        if (pChannel->sound_source_ptr != NULL) {
+            pChannel->sound_source_ptr->tag = 0;
+            pChannel->sound_source_ptr->channel = 0;
+            pChannel->sound_source_ptr->volume = 0;
         }
-        if (S3StopSample(chan) == 0) {
+        if (PDS3StopSampleChannel(pChannel) == 0) {
             return eS3_error_function_failed;
         }
-    } else if (chan->type == eS3_ST_midi) {
-        if (S3StopMIDI(chan) != 0) {
+    } else if (pChannel->type == 1) {
+        if (S3StopMIDIChannel(pChannel) != 0) {
             return eS3_error_function_failed;
         }
-    } else if (chan->type == eS3_ST_cda) {
-        if (S3StopCDA(chan) != 0) {
+    } else if (pChannel->type == 2) {
+        if (S3StopCDAChannel(pChannel) != 0) {
             return eS3_error_function_failed;
         }
     }
 
-    if ((chan->descriptor->flags & 2) != 0) {
-        S3ReleaseSound(chan->descriptor->id);
+    if ((pChannel->descriptor->flags & 0x2) != 0) {
+        S3ReleaseSound(pChannel->descriptor->sample_id);
     }
-    chan->repetitions = 1;
-    return 0;
+    pChannel->repetitions = 1;
+    return eS3_error_none;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00564bfd, S3StopChannel, S3StopChannel_original)
