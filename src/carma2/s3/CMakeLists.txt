@@ -24,3 +24,6 @@ target_link_libraries(s3
         c2_platform
 )
 add_library(S3::S3 ALIAS s3)
+if(NOT MSVC)
+    target_link_libraries(s3 PRIVATE m)
+endif()
