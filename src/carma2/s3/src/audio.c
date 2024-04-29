@@ -1095,6 +1095,27 @@ int C2_HOOK_FASTCALL S3SoundStillPlaying(int pTag) {
 }
 C2_HOOK_FUNCTION(0x005657f5, S3SoundStillPlaying)
 
+int C2_HOOK_FASTCALL S3SetVolume(int pVolume) {
+    int volume;
+    tS3_outlet* outlet;
+
+    if (!C2V(gS3_enabled)) {
+        return 0;
+    }
+    volume = pVolume;
+    if (volume > 255) {
+        volume = 255;
+    }
+    if (volume < 0) {
+        volume = 0;
+    }
+    for (outlet = C2V(gS3_outlets); outlet != NULL; outlet = outlet->next) {
+        S3SetOutletVolume(outlet, volume);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005649c8, S3SetVolume)
+
 int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel* pChannel) {
 
     if (pChannel->type == 0) {
@@ -1107,4 +1128,3 @@ int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel* pChannel) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00569752, S3ServiceChannel)
-
