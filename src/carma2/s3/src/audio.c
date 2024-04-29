@@ -960,3 +960,14 @@ double C2_HOOK_STDCALL S3FRandomBetween(double pMin, double pMax) {
     return (double)c2_rand() * (pMax - pMin) / 32767. + pMin;
 }
 C2_HOOK_FUNCTION(0x00566454, S3FRandomBetween)
+
+int C2_HOOK_FASTCALL S3IRandomBetweenLog(int pMin, int pMax, int pDefault) {
+    double dbl;
+
+    if (pMin == -1 || pMin >= pMax) {
+        return pDefault;
+    }
+    dbl = S3FRandomBetween(log(pMin), log(pMax));
+    return (int)(ldexp(exp(dbl), -16) * (double)pDefault);
+}
+C2_HOOK_FUNCTION(0x005663dd, S3IRandomBetweenLog)
