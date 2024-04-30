@@ -169,3 +169,31 @@ void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_materia
     C2V(gSkids)[pSkid_num].actor->render_style = BR_RSTYLE_DEFAULT;
 }
 C2_HOOK_FUNCTION(0x004e9be0, AdjustSkid)
+
+void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* pTo, br_scalar pTexture_start, br_scalar pTexture_step) {
+    br_vector3 temp;
+    br_vector3* rows;
+    br_scalar len;
+    br_model* model;
+
+    BrVector3Sub(&temp, pTo, pFrom);
+    len = BrVector3Length(&temp);
+    if (len < 0.001f) {
+        BrMatrix34Scale(&pMark->actor->t.t.mat, 0.001f, 0.001f, 0.001f);
+        return;
+    }
+
+    rows = (br_vector3*)&pMark->actor->t.t.mat.m;
+    BrVector3Copy(&rows[1], &pMark->normal);
+    BrVector3Cross(&rows[2], &temp, &pMark->normal);
+    BrVector3Scale(&rows[2], &rows[2], pTexture_step / len);
+    BrVector3Copy(&rows[0], &temp);
+    Vector3Average(&pMark->pos, pFrom, pTo);
+    BrVector3Copy(&rows[3], &pMark->pos);
+
+    model = pMark->actor->model;
+    model->vertices[0].map.v[0] = model->vertices[1].map.v[0] = pTexture_start / pTexture_step;
+    model->vertices[2].map.v[0] = model->vertices[3].map.v[0] = (pTexture_start + len) / pTexture_step;
+    BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
+}
+C2_HOOK_FUNCTION(0x004ea2c0, StretchMark)
