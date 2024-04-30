@@ -369,7 +369,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
         },
         {
             ToggleTimerFreeze, /* [1][ 3][0] */
-            ShadowMode, /* [1][ 3][1] */
+            ToggleShadowMode, /* [1][ 3][1] */
             NULL, /* [1][ 3][2] */
             NULL, /* [1][ 3][3] */
             ToggleShadow, /* [1][ 3][4] */
