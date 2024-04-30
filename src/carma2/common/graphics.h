@@ -102,6 +102,8 @@ tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void);
 
 void C2_HOOK_FASTCALL ToggleShadow(void);
 
+void C2_HOOK_FASTCALL ToggleShadowMode(void);
+
 void C2_HOOK_FASTCALL EnsurePaletteUp(void);
 
 int C2_HOOK_FASTCALL DoMouseCursor(void);
