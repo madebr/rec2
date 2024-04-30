@@ -230,4 +230,7 @@ void C2_HOOK_CDECL _BrEndHook(void);
 br_error C2_HOOK_CDECL BrDevFind(br_device** pdev, char* pattern);
 br_error C2_HOOK_CDECL BrDevRemove(br_device* dev);
 
+// Carmageddon 2 adaptation
+void C2_HOOK_CDECL BrSetScreenZOffset(br_uint_32 pOffset);
+
 #endif

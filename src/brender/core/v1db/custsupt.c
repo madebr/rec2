@@ -7,6 +7,27 @@
 
 // Carmageddon 2 adaptation
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gScreenZOffset, 0x0079feb4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const float, gScreenZOffsetPresetChoices, 7, 0x00670530, {
+     0.0f,
+    -1.5f,
+    -3.0f,
+    -4.5f,
+    -6.0f,
+    -7.5f,
+    -9.0f,
+});
+
+void C2_HOOK_CDECL BrSetScreenZOffset(br_uint_32 pOffset) {
+
+    C2_HOOK_BUG_ON(BR_ASIZE(C2V(gScreenZOffsetPresetChoices)) != 7);
+
+    if (pOffset < BR_ASIZE(C2V(gScreenZOffsetPresetChoices))) {
+        C2V(gScreenZOffset) = C2V(gScreenZOffsetPresetChoices)[pOffset];
+    } else {
+        C2V(gScreenZOffset) = 0.f;
+    }
+}
+C2_HOOK_FUNCTION(0x00540560, BrSetScreenZOffset)
 
 static br_uint_32 calculate_outcode(const br_vector4* v) {
     br_uint_32 outcode;
