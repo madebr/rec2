@@ -13,4 +13,6 @@ void C2_HOOK_FASTCALL DisposeReplay(void);
 
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);
 
+void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
+
 #endif //REC2_PIPING_H
