@@ -160,3 +160,12 @@ void C2_HOOK_FASTCALL ReadSlick(FILE* pF, tSlick_spec* pSlick_spec) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ee5e0, ReadSlick, ReadSlick_original)
+
+void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial) {
+
+    BrMatrix34Copy(&C2V(gSkids)[pSkid_num].actor->t.t.mat, pMatrix);
+    BrVector3Copy(&C2V(gSkids)[pSkid_num].pos, (br_vector3*)pMatrix->m[3]);
+    C2V(gSkids)[pSkid_num].actor->material = pMaterial;
+    C2V(gSkids)[pSkid_num].actor->render_style = BR_RSTYLE_DEFAULT;
+}
+C2_HOOK_FUNCTION(0x004e9be0, AdjustSkid)
