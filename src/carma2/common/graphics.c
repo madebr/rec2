@@ -1,5 +1,6 @@
 #include "graphics.h"
 
+#include "displays.h"
 #include "errors.h"
 #include "globvars.h"
 #include "grafdata.h"
@@ -62,7 +63,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRGB_colours, 9, 0x0065cf30, {
     0xd04702,
 });
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tShadow_level, gShadow_level, 0x0065fdc8, kMiscString_ShadowUsOnly);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tShadow_level, gShadow_level, 0x0065fdc8, eShadow_us_only);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDR_font, gFonts, 24, 0x007663e0);
 
@@ -433,28 +434,28 @@ C2_HOOK_FUNCTION(0x004e9950, GetShadowLevel)
 void (C2_HOOK_FASTCALL * ToggleShadow_original)(void);
 void C2_HOOK_FASTCALL ToggleShadow(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleShadow_original();
 #else
-    gShadow_level++;
-    if (C2V(gShadow_level) == eShadow_everyone) {
+    C2V(gShadow_level) += 1;
+    if (C2V(gShadow_level) > eShadow_everyone) {
         C2V(gShadow_level) = eShadow_none;
     }
     switch (C2V(gShadow_level)) {
-        case eShadow_none:
-            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowNone));
-            break;
-        case eShadow_us_only:
-            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsOnly));
-            break;
-        case eShadow_us_and_opponents:
-            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsAndOpponents));
-            break;
-        case eShadow_everyone:
-            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowEveryone));
-            break;
-        default:
-            return;
+    case eShadow_none:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowNone));
+        break;
+    case eShadow_us_only:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsOnly));
+        break;
+    case eShadow_us_and_opponents:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowUsAndOpponents));
+        break;
+    case eShadow_everyone:
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(kMiscString_ShadowEveryone));
+        break;
+    default:
+        return;
     }
 #endif
 }
