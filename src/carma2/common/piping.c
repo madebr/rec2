@@ -61,3 +61,14 @@ void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004c6580, InitLastDamageArrayEtc)
+
+void (C2_HOOK_FASTCALL * PipeSingleSkidAdjustment_original)(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
+void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PipeSingleSkidAdjustment_original(pSkid_num, pMatrix, pMaterial);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c8600, PipeSingleSkidAdjustment, PipeSingleSkidAdjustment_original)
