@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
+#include "piping.h"
 #include "temp.h"
 
 #include <brender/brender.h>
@@ -22,6 +23,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, gMaterial_names, 2, 0x0065fe10, {
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gMaterial, 2, 0x0074cee8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSkid, gSkids, 100, 0x006a27f0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_skid, 0x006a27e8);
 
 void (C2_HOOK_FASTCALL * InitSkids_original)(void);
 void C2_HOOK_FASTCALL InitSkids(void) {
@@ -197,3 +199,51 @@ void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* p
     BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
 }
 C2_HOOK_FUNCTION(0x004ea2c0, StretchMark)
+
+int C2_HOOK_FASTCALL SkidSection(tS16* pSkid_id, br_vector3* pSkid_start, br_vector3* pSkid_end, br_material* pMaterial, br_vector3* pPos, br_vector3* pNorm, br_vector3* pPrev_pos, br_vector3* pPrev_norm, br_scalar pTexture_start, br_scalar pTexture_step) {
+
+    if (BrVector3Dot(pNorm, pPrev_norm) < 0.997f || fabsf(BrVector3Dot(pNorm, pPos) - BrVector3Dot(pPrev_pos, pNorm)) > 0.01f) {
+        *pSkid_id = -1;
+        return 1;
+    }
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSkids)) != 100);
+
+    if (*pSkid_id < REC2_ASIZE(C2V(gSkids)) && C2V(gSkids)[*pSkid_id].actor->material == pMaterial) {
+        br_scalar tmp = BrVector3LengthSquared((br_vector3*)C2V(gSkids)[*pSkid_id].actor->t.t.mat.m[2]);
+        if (tmp < 2 * (pTexture_step * pTexture_step) && pTexture_step * pTexture_step <= 2 * tmp) {
+            if (BrVector3LengthSquared((br_vector3*)C2V(gSkids)[*pSkid_id].actor->t.t.mat.m[0]) <= 0.5f) {
+                br_vector3 t1, t2, t3;
+                br_vector3 t4, t5;
+
+                BrVector3Sub(&t1, pSkid_end, pSkid_start);
+                t1.v[1] = 0.f;
+                BrVector3Sub(&t2, pPos, pSkid_end);
+                t2.v[1] = 0.f;
+                BrVector3Cross(&t3, &t1, &t2);
+
+                BrVector3Sub(&t4, pPos, pPrev_pos);
+                t4.v[1] = 0.f;
+                BrVector3Sub(&t5, pPrev_pos, pSkid_start);
+                t5.v[1] = 0.f;
+
+                if (fabsf(t3.v[1]) <= 0.05f * BrVector3Length(&t1) && BrVector3Dot(&t4, &t5) >= 0.f) {
+                    StretchMark(&C2V(gSkids)[*pSkid_id], pSkid_start, pPos, pTexture_start, pTexture_step);
+                    PipeSingleSkidAdjustment(*pSkid_id, &C2V(gSkids)[*pSkid_id].actor->t.t.mat, pMaterial);
+                    return 0;
+                }
+            }
+        }
+    }
+    BrVector3Copy(pSkid_start, pPrev_pos);
+    BrVector3Copy(pSkid_end, pPos);
+    C2V(gSkids)[C2V(gCurrent_skid)].actor->render_style = BR_RSTYLE_DEFAULT;
+    C2V(gSkids)[C2V(gCurrent_skid)].actor->material = pMaterial;
+    BrVector3Copy(&C2V(gSkids)[C2V(gCurrent_skid)].normal, pNorm);
+    StretchMark(&C2V(gSkids)[C2V(gCurrent_skid)], pPrev_pos, pPos, pTexture_start, pTexture_step);
+    PipeSingleSkidAdjustment(C2V(gCurrent_skid), &C2V(gSkids)[C2V(gCurrent_skid)].actor->t.t.mat, pMaterial);
+    *pSkid_id = C2V(gCurrent_skid);
+    C2V(gCurrent_skid) = (C2V(gCurrent_skid) + 1) % REC2_ASIZE(C2V(gSkids));
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e9f20, SkidSection)
