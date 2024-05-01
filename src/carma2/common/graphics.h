@@ -157,4 +157,6 @@ void C2_HOOK_FASTCALL ResetTargetLock(void);
 
 void C2_HOOK_FASTCALL SetIntegerMapRenders(void);
 
+void C2_HOOK_FASTCALL VerifyPaletteBlackness(br_pixelmap* pPalette);
+
 #endif //REC2_GRAPHICS_H

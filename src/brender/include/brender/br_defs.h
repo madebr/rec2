@@ -39,6 +39,10 @@
 #define BR_COLOUR_RGBA(r, g, b, a) \
     ((((unsigned int)(a)) << 24) | (((unsigned int)(r)) << 16) | (((unsigned int)(g)) << 8) | ((unsigned int)(b)))
 
+#define BR_COLOUR_RED(c) ((c >> 16) & 0xff)
+#define BR_COLOUR_GRN(c) ((c >>  8) & 0xff)
+#define BR_COLOUR_BLU(c) ((c >>  0) & 0xff)
+
 #define BR_LENGTH2(a, b) ((br_scalar)sqrtf((a) * (a) + (b) * (b)))
 #define BR_LENGTH3(a, b, c) ((br_scalar)sqrtf((a) * (a) + (b) * (b) + (c) * (c)))
 #define BR_SCALAR_EPSILON 1.192092896e-7f

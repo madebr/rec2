@@ -1141,3 +1141,26 @@ void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
     C2V(gMap_render_height_i) = (int)C2V(gMap_render_height);
 }
 C2_HOOK_FUNCTION(0x004948b0, SetIntegerMapRenders)
+
+void C2_HOOK_FASTCALL VerifyPaletteBlackness(br_pixelmap* pPalette) {
+    int modified;
+    int i;
+    br_colour *pixels;
+
+    pixels = pPalette->pixels;
+    modified = pixels[0] != BR_COLOUR_RGBA(0, 0, 0, 0);
+    if (modified) {
+        pixels[0] = BR_COLOUR_RGBA(0, 0, 0, 0);
+    }
+    for (i = 1; i < 256; i++) {
+        br_colour c = pixels[i];
+        if (BR_COLOUR_RED(c) == 0 && BR_COLOUR_GRN(c) == 0 && BR_COLOUR_BLU(c) == 0) {
+            pixels[i] = BR_COLOUR_RGB(1, 1, 1);
+            modified = 1;
+        }
+    }
+    if (modified) {
+        BrMapUpdate(pPalette, BR_MAPU_ALL);
+    }
+}
+C2_HOOK_FUNCTION(0x00517fa0, VerifyPaletteBlackness)
