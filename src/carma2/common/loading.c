@@ -5002,14 +5002,39 @@ void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info) {
 }
 C2_HOOK_FUNCTION(0x0044bf70, DisposeRaceInfo)
 
+void C2_HOOK_FASTCALL DisposeOpponentsCars(tRace_info* pRace_info) {
+    int i;
+
+    for (i = 0; i < pRace_info->number_of_racers; i++) {
+        PossibleService();
+        if (pRace_info->opponent_list[i].index >= 0) {
+            if (pRace_info->opponent_list[i].car_spec != NULL) {
+                DisposeCar(pRace_info->opponent_list[i].car_spec, pRace_info->opponent_list[i].index);
+                BrMemFree(pRace_info->opponent_list[i].car_spec);
+            }
+        }
+    }
+    ClearOutStorageSpace(&C2V(gTheir_cars_storage_space));
+}
+
 void (C2_HOOK_FASTCALL * DisposeAllCars_original)(tRace_info* pRace_info);
 void C2_HOOK_FASTCALL DisposeAllCars(tRace_info* pRace_info) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DisposeAllCars_original(pRace_info);
 #else
-    /* contains DisposeOpponentsCars from dethrace */
-#error "Not implemented"
+
+    C2V(gCurrent_APO_potential_levels)[0] = C2V(gProgram_state).current_car.power_up_slots[0];
+    C2V(gCurrent_APO_potential_levels)[1] = C2V(gProgram_state).current_car.power_up_slots[1];
+    C2V(gCurrent_APO_potential_levels)[2] = C2V(gProgram_state).current_car.power_up_slots[2];
+    C2V(gCurrent_APO_levels)[0] = C2V(gProgram_state).current_car.power_up_levels[0];
+    C2V(gCurrent_APO_levels)[1] = C2V(gProgram_state).current_car.power_up_levels[1];
+    C2V(gCurrent_APO_levels)[2] = C2V(gProgram_state).current_car.power_up_levels[2];
+    DisposeCar(&C2V(gProgram_state).current_car, C2V(gProgram_state).current_car.index);
+    ClearOutStorageSpace(&C2V(gOur_car_storage_space));
+    DisposeOpponentsCars(pRace_info);
+    C2V(gCurrent_race).number_of_racers = 0;
+    C2V(gProgram_state).AI_vehicles.number_of_opponents = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044bfa0, DisposeAllCars, DisposeAllCars_original)
