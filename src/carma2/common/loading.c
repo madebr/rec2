@@ -2886,10 +2886,41 @@ C2_HOOK_FUNCTION(0x0048f2e0, DRLoadLights)
 void (C2_HOOK_FASTCALL * InitializePalettes_original)(void);
 void C2_HOOK_FASTCALL InitializePalettes(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitializePalettes_original();
 #else
-#error "Not implemented"
+    br_pixelmap* render_palette;
+
+    C2V(gCurrent_palette_pixels) = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
+    C2V(g16bitPaltte_munged) = 0;
+    C2V(gCurrent_palette) = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, C2V(gCurrent_palette_pixels), 0);
+    C2V(gRender_palette) = BrTableFind("DRRENDER.PAL");
+    if (C2V(gRender_palette) == NULL) {
+        FatalError(kFatalError_unableToFindRequiredPalette);
+    }
+    VerifyPaletteBlackness(C2V(gRender_palette));
+    C2V(gOrig_render_palette) = BrPixelmapAllocateSub(C2V(gRender_palette), 0, 0, C2V(gRender_palette)->width, C2V(gRender_palette)->height);
+    C2V(gOrig_render_palette)->pixels = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
+    c2_memcpy(C2V(gOrig_render_palette)->pixels, C2V(gRender_palette)->pixels, 256 * sizeof(br_uint_32));
+    C2V(gFlic_palette) = BrTableFind("DRACEFLC.PAL");
+    render_palette = C2V(gRender_palette);
+    if (C2V(gFlic_palette) == NULL) {
+        FatalError(kFatalError_unableToFindRequiredPalette);
+    }
+    ((br_uint_32*)C2V(gRender_palette)->pixels)[0] = 0;
+    c2_memcpy(C2V(gCurrent_palette_pixels), C2V(gRender_palette)->pixels, 256 * sizeof(br_uint_32));
+    C2V(g16bitPaltte_munged) = 0;
+    if (!C2V(gFaded_palette)) {
+        PDSetPalette(C2V(gRender_palette));
+    }
+    C2V(gPalette_munged) |= render_palette != C2V(gRender_palette);
+    C2V(gScratch_pixels) = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
+    C2V(gScratch_palette) = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, C2V(gScratch_pixels), 0);
+    C2V(gMini_map_glowing_line_palettes)[0] = (br_pixelmap*)-1; /* FIXME: invalid pointer! */
+    C2V(gMini_map_glowing_line_palettes)[1] = C2V(gPalette_0074a604);
+    C2V(gMini_map_glowing_line_palettes)[2] = C2V(gPalette_0074a600);
+    C2V(gPalette_0074a66c) = C2V(gPalette_0074a5fc);
+    C2V(gPalette_0074a670) = NULL;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5090, InitializePalettes, InitializePalettes_original)
