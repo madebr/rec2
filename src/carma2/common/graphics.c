@@ -36,6 +36,17 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gRender_palette, 0x0074a674);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gCurrent_palette, 0x0074a678);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gCurrent_splash, 0x0068be20);
 
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gOrig_render_palette, 0x006923ac);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gFlic_palette, 0x0074a67c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_colour*, gScratch_pixels, 0x006923b8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gScratch_palette, 0x006923a8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette_0074a604, 0x0074a604);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette_0074a600, 0x0074a600);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gMini_map_glowing_line_palettes, 3, 0x0074a660);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette_0074a66c, 0x0074a66c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette_0074a5fc, 0x0074a5fc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette_0074a670, 0x0074a670);
+
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTransient_bm, gTransient_bitmaps, 50, 0x0067be98);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMouse_started, 0x0067c390);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNoTransients, 0x0074ca28);
