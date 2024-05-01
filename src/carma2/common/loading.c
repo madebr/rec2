@@ -2866,10 +2866,28 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b5090, InitializePalettes, InitializePalettes_ori
 void (C2_HOOK_FASTCALL * DisableVertexColours_original)(br_model** pModels, int pCount);
 void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DisableVertexColours_original(pModels, pCount);
 #else
-#error "Not implemented"
+    int i;
+
+    if (C2V(gScreen) == NULL) {
+        return;
+    }
+    if (C2V(gScreen)->type == BR_PMT_INDEX_8) {
+        return;
+    }
+    for (i = 0; i < pCount; i++) {
+        int j;
+
+        for (j = 0; j < pModels[i]->nvertices; j++) {
+            br_vertex* vertex = &pModels[i]->vertices[j];
+
+            vertex->red = 0xff;
+            vertex->grn = 0xff;
+            vertex->blu = 0xff;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00518690, DisableVertexColours, DisableVertexColours_original)
