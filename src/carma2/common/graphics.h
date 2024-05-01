@@ -5,10 +5,26 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, g16bitPaltte_munged);
+C2_HOOK_VARIABLE_DECLARE(int, gPalette_munged);
+C2_HOOK_VARIABLE_DECLARE(char*, gCurrent_palette_pixels);
+C2_HOOK_VARIABLE_DECLARE(int, gFaded_palette);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_splash);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tWobble_spec, gWobble_array, 5);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_palette);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gRender_palette);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tDR_font, gFonts, 24);
+
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gOrig_render_palette);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gFlic_palette);
+C2_HOOK_VARIABLE_DECLARE(br_colour*, gScratch_pixels);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gScratch_palette);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gPalette_0074a604);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gPalette_0074a600);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_pixelmap*, gMini_map_glowing_line_palettes, 3);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gPalette_0074a66c);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gPalette_0074a5fc);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gPalette_0074a670);
 
 C2_HOOK_VARIABLE_DECLARE(int, gGraf_data_index);
 
