@@ -5,7 +5,7 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, g16bitPaltte_munged);
+C2_HOOK_VARIABLE_DECLARE(int, gPalette_changed);
 C2_HOOK_VARIABLE_DECLARE(int, gPalette_munged);
 C2_HOOK_VARIABLE_DECLARE(char*, gCurrent_palette_pixels);
 C2_HOOK_VARIABLE_DECLARE(int, gFaded_palette);
