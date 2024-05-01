@@ -2997,81 +2997,81 @@ enum {
     /*
      * Each pixel is an index into a colour map
      */
-    BR_PMT_INDEX_1,
-    BR_PMT_INDEX_2,
-    BR_PMT_INDEX_4,
-    BR_PMT_INDEX_8,
+    BR_PMT_INDEX_1 = 0,
+    BR_PMT_INDEX_2 = 1,
+    BR_PMT_INDEX_4 = 2,
+    BR_PMT_INDEX_8 = 3,
 
     /*
      * True colour RGB
      */
-    BR_PMT_RGB_555,   /* 16 bits per pixel */
-    BR_PMT_RGB_565,   /* 16 bits per pixel */
-    BR_PMT_RGB_888,   /* 24 bits per pixel */
-    BR_PMT_RGBX_888,  /* 32 bits per pixel */
-    BR_PMT_RGBA_8888, /* 32 bits per pixel */
+    BR_PMT_RGB_555 = 4,   /* 16 bits per pixel */
+    BR_PMT_RGB_565 = 5,   /* 16 bits per pixel */
+    BR_PMT_RGB_888 = 6,   /* 24 bits per pixel */
+    BR_PMT_RGBX_888 = 7,  /* 32 bits per pixel */
+    BR_PMT_RGBA_8888 = 8, /* 32 bits per pixel */
 
     /*
      * YUV
      */
-    BR_PMT_YUYV_8888, /* YU YV YU YV ... */
-    BR_PMT_YUV_888,
+    BR_PMT_YUYV_8888 = 9, /* YU YV YU YV ... */
+    BR_PMT_YUV_888 = 10,
 
     /*
      * Depth
      */
-    BR_PMT_DEPTH_16,
-    BR_PMT_DEPTH_32,
+    BR_PMT_DEPTH_16 = 11,
+    BR_PMT_DEPTH_32 = 12,
 
     /*
      * Opacity
      */
-    BR_PMT_ALPHA_8,
+    BR_PMT_ALPHA_8 = 13,
 
     /*
      * Opacity + Index
      */
-    BR_PMT_INDEXA_88,
+    BR_PMT_INDEXA_88 = 14,
 
     /*
      * Bump maps
      */
-    BR_PMT_NORMAL_INDEX_8,
-    BR_PMT_NORMAL_XYZ,
+    BR_PMT_NORMAL_INDEX_8 = 15,
+    BR_PMT_NORMAL_XYZ = 16,
 
     /*
      * Wrong way around 15 bit true colour
      */
-    BR_PMT_BGR_555,
+    BR_PMT_BGR_555 = 17,
 
     /*
      * 16 bit r,g,b & alpha
      */
-    BR_PMT_RGBA_4444,
+    BR_PMT_RGBA_4444 = 18,
 
     /*
      * Handy types for converting to 15/16 bit
      */
-    BR_PMT_RBG_bab,
-    BR_PMT_RBG_1aba,
+    BR_PMT_RBG_bab = 19,
+    BR_PMT_RBG_1aba = 20,
 
     /*
      * Pixelmap extensions.
      */
-    BR_PMT_RGB_332,
-    BR_PMT_DEPTH_8,
+    BR_PMT_RGB_332 = 21,
+    BR_PMT_DEPTH_8 = 22,
 
-    BR_PMT_ARGB_8888,
-    BR_PMT_ALPHA_4,
-    BR_PMT_INDEXA_44,
-    BR_PMT_DEPTH_15,
-    BR_PMT_DEPTH_31,
-    BR_PMT_DEPTH_FP16,
-    BR_PMT_DEPTH_FP15,
+    BR_PMT_ARGB_8888 = 23,
+    BR_PMT_ALPHA_4 = 24,
+    BR_PMT_INDEXA_44 = 25,
+    BR_PMT_DEPTH_15 = 26,
+    BR_PMT_DEPTH_31 = 27,
+    BR_PMT_DEPTH_FP16 = 28,
+    BR_PMT_DEPTH_FP15 = 29,
 
-    BR_PMT_RGBA_5551,
-    BR_PMT_ARGB_1555,
-    BR_PMT_ARGB_4444,
+    BR_PMT_RGBA_5551 = 30,
+    BR_PMT_ARGB_1555 = 31,
+    BR_PMT_ARGB_4444 = 32,
 
     BR_PMT_MAX,
 };
