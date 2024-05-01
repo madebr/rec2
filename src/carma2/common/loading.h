@@ -405,6 +405,8 @@ void C2_HOOK_FASTCALL DisposeOpponentsAndDrones(void);
 
 void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info);
 
+void C2_HOOK_FASTCALL DisposeOpponentsCars(tRace_info* pRace_info);
+
 void C2_HOOK_FASTCALL DisposeAllCars(tRace_info* pRace_info);
 
 #endif //REC2_LOADING_H
