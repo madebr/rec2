@@ -2830,7 +2830,7 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     br_pixelmap* render_palette;
 
     C2V(gCurrent_palette_pixels) = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
-    C2V(g16bitPaltte_munged) = 0;
+    C2V(gPalette_changed) = 0;
     C2V(gCurrent_palette) = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, C2V(gCurrent_palette_pixels), 0);
     C2V(gRender_palette) = BrTableFind("DRRENDER.PAL");
     if (C2V(gRender_palette) == NULL) {
@@ -2847,7 +2847,7 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     }
     ((br_uint_32*)C2V(gRender_palette)->pixels)[0] = 0;
     c2_memcpy(C2V(gCurrent_palette_pixels), C2V(gRender_palette)->pixels, 256 * sizeof(br_uint_32));
-    C2V(g16bitPaltte_munged) = 0;
+    C2V(gPalette_changed) = 0;
     if (!C2V(gFaded_palette)) {
         PDSetPalette(C2V(gRender_palette));
     }
