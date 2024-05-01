@@ -28,7 +28,7 @@
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tWobble_spec, gWobble_array, 5, 0x006a22f8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gCosine_array, 64, 0x00705080);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gEvalu, 0x006a22b8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, g16bitPaltte_munged, 0x0074cf04);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPalette_changed, 0x0074cf04);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPalette_munged, 0x006923c0);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gCurrent_palette_pixels, 0x0074a680);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFaded_palette, 0x006923c8);
@@ -221,7 +221,7 @@ void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colo
         ((br_int_32*)pPalette->pixels)[0] = 0;
     }
     c2_memcpy(C2V(gCurrent_palette_pixels) + 4 * pFirst_colour, (char*)pPalette->pixels + 4 * pFirst_colour, 4 * pCount);
-    C2V(g16bitPaltte_munged) = 0;
+    C2V(gPalette_changed) = 0;
     if (!C2V(gFaded_palette)) {
         PDSetPaletteEntries(pPalette, pFirst_colour, pCount);
     }
@@ -234,7 +234,7 @@ void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_current_
     if (pSet_current_palette) {
         c2_memcpy(C2V(gCurrent_palette_pixels), pThe_palette->pixels, 256 * sizeof(br_colour));
     }
-    C2V(g16bitPaltte_munged) = 0;
+    C2V(gPalette_changed) = 0;
     if (!C2V(gFaded_palette)) {
         PDSetPalette(pThe_palette);
     }
