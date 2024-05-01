@@ -3420,6 +3420,7 @@ enum {
     kFatalError_CannotAllocateCamera = 0x05,
     kFatalError_CannotAllocateSelf = 0x06,
     kFatalError_CouldNotOpenKeyMapFile = 0x09,
+    kFatalError_unableToFindRequiredPalette = 0x0a,
     kFatalError_CouldNotOpenFlicFile_S = 0x0d,
     kFatalError_FlicFileWasNot8BitsDeep_S = 0x0f,
     kFatalError_CouldNotAscertainFrameRateForFlicFile = 0x10,
