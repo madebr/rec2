@@ -53,4 +53,6 @@ void C2_HOOK_FASTCALL PlayFlicsFromMemory(void);
 
 void C2_HOOK_FASTCALL TurnOffPanelFlics(void);
 
+void C2_HOOK_FASTCALL TurnOnPanelFlics(void);
+
 #endif
