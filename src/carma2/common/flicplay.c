@@ -1242,3 +1242,9 @@ void C2_HOOK_FASTCALL PlayFlicsFromMemory(void) {
     C2V(gPlay_from_disk) = 0;
 }
 C2_HOOK_FUNCTION(0x00461a10, PlayFlicsFromMemory)
+
+void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
+
+    C2V(gPanel_flic_disable) = 1;
+}
+C2_HOOK_FUNCTION(0x00461a20, TurnOffPanelFlics)
