@@ -20,4 +20,6 @@ void C2_HOOK_FASTCALL InitPlayers(void);
 
 void C2_HOOK_FASTCALL InitNetGameplayStuff(void);
 
+void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index);
+
 #endif // REC2_NETGAME_H
