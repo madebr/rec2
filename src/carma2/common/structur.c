@@ -36,6 +36,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMoney_pre_race, 0x007051f8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gAPO_pre_race, 3, 0x007051e0);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_over_reason, gRace_over_reason, 0x006b781c);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_checkpoint_time, 0x006aaa34);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_wrong_checkpoint, 0x00660cdc, -1);
 
 void C2_HOOK_FASTCALL StashCreditsAndAPO(void) {
 
@@ -510,3 +511,36 @@ void C2_HOOK_FASTCALL IncrementLap(void) {
     }
 }
 C2_HOOK_FUNCTION(0x005033b0, IncrementLap)
+
+void C2_HOOK_FASTCALL WrongCheckpoint(int pCheckpoint_index) {
+
+    if (C2V(gRace_finished)) {
+        return;
+    }
+    if (!(C2V(gCurrent_race).race_spec->race_type == kRaceType_Carma1 ||
+        C2V(gCurrent_race).race_spec->race_type == kRaceType_Checkpoints)) {
+        return;
+    }
+    if ((C2V(gLast_wrong_checkpoint) == pCheckpoint_index && GetTotalTime() - C2V(gLast_checkpoint_time) > 20000)
+            || (C2V(gLast_wrong_checkpoint) != pCheckpoint_index && GetTotalTime() - C2V(gLast_checkpoint_time) > 2000)) {
+
+        if (C2V(gNet_mode) == eNet_mode_none) {
+            int next_checkpoint = pCheckpoint_index + 2;
+            if (C2V(gCurrent_race).check_point_count < next_checkpoint) {
+                if (C2V(gLap) == 1) {
+                    next_checkpoint = -1;
+                } else {
+                    next_checkpoint = 1;
+                }
+            }
+            if (next_checkpoint == C2V(gCheckpoint)) {
+                return;
+            }
+        }
+    }
+    NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_wrong_checkpoint));
+    DRS3StartSound(C2V(gPedestrians_outlet), eSoundId_WrongCheckpoint);
+    C2V(gLast_checkpoint_time) = GetTotalTime();
+    C2V(gLast_wrong_checkpoint) = pCheckpoint_index;
+}
+C2_HOOK_FUNCTION(0x005033e0, WrongCheckpoint)
