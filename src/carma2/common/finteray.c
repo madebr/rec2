@@ -477,3 +477,98 @@ void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vecto
     FindWorldFace(pPosition, pDir, C2V(gTrack_actor), nor, t, material, NULL);
 }
 C2_HOOK_FUNCTION(0x0041e340, FindFace)
+
+void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt, br_vector3* coll_pos) {
+    br_scalar t;
+    br_scalar numerator;
+    br_scalar d;
+    br_vector3 p;
+    int axis_m;
+    int axis_0;
+    int axis_1;
+    float u0;
+    float u1;
+    float u2;
+    float v0;
+    float v1;
+    float v2;
+    br_scalar v0i1;
+    br_scalar v0i2;
+    float alpha;
+    float beta;
+    float f_d;
+    br_material* this_material;
+
+    this_material = pFace->material;
+    *rt = 100.f;
+
+    d = BrVector3Dot(&pFace->normal, ray_dir);
+    if (this_material != NULL && (this_material->flags & (BR_MATF_TWO_SIDED | BR_MATF_ALWAYS_VISIBLE)) == 0 && d > 0.f) {
+        return;
+    }
+    if (this_material != NULL && this_material->identifier != NULL && (this_material->identifier[0] == '!' || this_material->identifier[0] == '>' || this_material->identifier[0] == '?') && C2V(gPling_materials)) {
+        return;
+    }
+    if (fabsf(d) < 2.384186e-7f) {
+        return;
+    }
+    BrVector3Sub(&p, ray_pos, &pFace->v[0]);
+    numerator = BrVector3Dot(&pFace->normal, &p);
+    if (BadDiv__finteray(numerator, d)) {
+        return;
+    }
+
+    if (d > 0.f) {
+        if (-numerator < 0.f || -numerator > 0.003f + d) {
+            return;
+        }
+    } else {
+        if ( numerator < 0.f ||  numerator > 0.003f - d) {
+            return;
+        }
+    }
+    t = -(numerator / d);
+    if (t > 1.f) {
+        t = 1.f;
+    }
+    BrVector3Scale(coll_pos, ray_dir, t);
+    BrVector3Accumulate(coll_pos, ray_pos);
+    axis_m = fabs(pFace->normal.v[0]) >= fabs(pFace->normal.v[1]) ? 0 : 1;
+    if (fabsf(pFace->normal.v[2]) > fabs(pFace->normal.v[axis_m])) {
+        axis_m = 2;
+    }
+    if (axis_m == 0) {
+        axis_0 = 1;
+        axis_1 = 2;
+    } else if (axis_m == 1) {
+        axis_0 = 0;
+        axis_1 = 2;
+    } else if (axis_m == 2) {
+        axis_0 = 0;
+        axis_1 = 1;
+    }
+    v0i1 = pFace->v[0].v[axis_0];
+    v0i2 = pFace->v[0].v[axis_1];
+    u0 = pFace->v[1].v[axis_0] - v0i1;
+    u1 = pFace->v[1].v[axis_1] - v0i2;
+    v0 = pFace->v[2].v[axis_0] - v0i1;
+    v1 = pFace->v[2].v[axis_1] - v0i2;
+    u2 = coll_pos->v[axis_0] - v0i1;
+    v2 = coll_pos->v[axis_1] - v0i2;
+
+    f_d = u0 * v1 - u1 * v0;
+    alpha = u0 * v2 - u1 * u2;
+    if (fabsf(alpha) > 1.0001f * fabsf(f_d) || f_d == 0.f || alpha / f_d < -0.0001f) {
+        return;
+    }
+    beta = v0 * v2 - v1 * u2;
+    if (fabsf(beta) > 1.0001f * fabsf(f_d) || f_d == 0.f || beta / f_d >= -0.0001f || alpha / f_d - beta / f_d > 1.0001f) {
+        return;
+    }
+    *rt = t;
+    BrVector3Copy(normal, &pFace->normal);
+    if (d > 0.f) {
+        BrVector3Negate(normal, normal);
+    }
+}
+C2_HOOK_FUNCTION(0x0045ecc0, CheckSingleFace)

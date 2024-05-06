@@ -40,4 +40,6 @@ void C2_HOOK_FASTCALL FindWorldFace(br_vector3* pPosition, br_vector3* pDir, br_
 
 void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vector3* nor, br_scalar* t, br_material** material);
 
+void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt, br_vector3* coll_pos);
+
 #endif
