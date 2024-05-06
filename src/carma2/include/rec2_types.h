@@ -1358,6 +1358,7 @@ typedef struct {
 
 typedef enum tDriver {
     eDriver_non_car_unused_slot = 0,
+    eDriver_4 = 4,
     eDriver_oppo = 6,
     eDriver_net_human = 7,
     eDriver_local_human = 8
@@ -2695,11 +2696,13 @@ typedef struct {
 typedef enum {
     eJoint_limit_plane = 0,
     eJoint_limit_universal = 1,
+    eJoint_limit_10 = 10,
+    eJoint_limit_11 = 11,
 } tPhysics_joint_limit_type;
 
 typedef struct {
     tPhysics_joint_limit_type type;
-    float sine_max_angle;
+    float value;
     br_vector3 child;
     br_vector3 parent;
 } tPhysics_joint_limit;
@@ -2710,11 +2713,12 @@ typedef enum {
     eJoint_universal = 2,
     eJoint_ball_n_socket = 3,
     eJoint_quick_hinge = 4,
+    eJoint_translation = 5,
 } tPhysics_joint_type;
 
 typedef struct {
     tPhysics_joint_type type;
-    undefined field_0x4[0x4];
+    br_scalar friction;
     br_vector3 field_0x08;
     br_vector3 field_0x14;
     br_vector3 hinge_axis2;
@@ -2734,8 +2738,8 @@ typedef struct tCollision_info {
     br_bounds3 bb1;
     br_bounds3 bb2;
     br_vector3 field7_0x54;
-    undefined field_0x60[4];
-    float field_0x64;
+    br_scalar world_friction;
+    br_scalar object_friction;
     br_vector3 v;
     br_vector3 omega;
     br_vector3 pos;
@@ -2758,7 +2762,7 @@ typedef struct tCollision_info {
     tPhysics_joint* physics_joint2;
     tU8 uid;
     undefined field_0x191[11];
-    int flags_0x19c;
+    int flags;
     int field_0x1a0;
     undefined4 field_0x1a4;
     br_vector3 velocity_car_space;
@@ -2793,7 +2797,9 @@ typedef struct tCollision_info {
     tU32 message_time; // 0x268
     undefined field_0x26c[560];
     undefined4 field_0x49c;
-    undefined field_0x4a0[56];
+    undefined field_0x4a0[52];
+    tU8 drivable_on;
+    undefined field_0x4d5[3];
 } tCollision_info;
 
 typedef struct {
@@ -2891,13 +2897,40 @@ typedef struct {
     br_vector3 points[4];
 } tQuad;
 
+typedef struct {
+    br_scalar forward_acceleration;
+    br_scalar reverse_acceleration;
+    br_scalar forward_resistance;
+    br_scalar reverse_resistance;
+    tU32 pause_at_top;
+} tJoint_translation_params;
+
 typedef struct tNon_car_spec {
     int index;
     undefined field_0x4[4];
     tCollision_info* collision_info;
-    undefined4 field_0xc;
+    tDriver driver;
     br_actor* actor;
-    undefined field_0x14[240];
+    undefined field_0x14[4];
+    br_scalar break_off_radians_squared;
+    undefined field_0x1c[80];
+    int count_shrapnel_materials;
+    undefined field_0x70[20];
+    br_material* shrapnel_materials[3];
+    undefined field_0x90[60];
+    float free_mass;
+    float attached_mass;
+    float min_torque_squared;
+    float snap_off_cosine;
+    float tumble_factor;
+    float tumble_threshold; /* m/s */
+    br_vector3 I_over_M;
+    tPhysics_joint* field_0xf0;
+    tJoint_translation_params* translation_parameters;
+    tU8 field_0xf8[4];
+    tU8 field_0xfc;
+    tU8 number_of_pushes;
+    tU32 flags;
 } tNon_car_spec;
 
 typedef struct {
@@ -3476,6 +3509,7 @@ enum {
     kFatalError_CannotFindGibletModel_S = 0xa9,
     kFatalError_WrongCrushDataFileVersion_SDD = 0xab,
     kFatalError_ShapeDataIsWrong = 0xad,
+    kFatalError_UnknownNonCarCommand = 0xad,
     kFatalError_UnableToOpenDroneFileOrFileCorrupted_S = 0xaf,
     kFatalError_DuplicatePixelmap_S = 0xb5,
     kFatalError_FileMustStartWith_SS = 0xb0,
