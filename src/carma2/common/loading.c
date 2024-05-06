@@ -2693,6 +2693,12 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048f3b0, TestForOriginalCarmaCDinDrive, TestForOriginalCarmaCDinDrive_original)
 
+int C2_HOOK_FASTCALL OriginalCarmaCDinDrive(void) {
+
+    return C2V(gCD_is_in_drive);
+}
+C2_HOOK_FUNCTION(0x0048f6a0, OriginalCarmaCDinDrive)
+
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name) {
     br_pixelmap* the_map;
 
