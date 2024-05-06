@@ -691,3 +691,21 @@ int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race
     return new_index;
 }
 C2_HOOK_FUNCTION(0x00503ba0, PickNetRace)
+
+void C2_HOOK_FASTCALL JumpTheStart(void) {
+    char s[256];
+
+    if (C2V(gNet_mode) == eNet_mode_none || C2V(gProgram_state).credits >= C2V(gJump_start_fine)[C2V(gProgram_state).skill_level]) {
+        WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(C2V(gCountdown));
+        C2V(gCountdown) = 0;
+        DRS3StopOutletSound(C2V(gPedestrians_outlet));
+        DRS3StartSound(C2V(gPedestrians_outlet), eSoundId_HeyYou);
+        SpendCredits(C2V(gJump_start_fine)[C2V(gProgram_state).skill_level]);
+        c2_sprintf(s, "%s %d %s",
+            GetMiscString(eMiscString_bad_boy),
+            C2V(gJump_start_fine)[C2V(gProgram_state).skill_level],
+            GetMiscString(eMiscString_credit_fine));
+        NewTextHeadupSlot(4, 0, 1000, -4, s);
+    }
+}
+C2_HOOK_FUNCTION(0x00504170, JumpTheStart)

@@ -219,7 +219,7 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDepth_buffer);
 //extern int gInitial_net_credits[5];
 //extern float gCar_cred_value[3];
 //extern int gNo_races_yet;
-//extern int gJump_start_fine[3];
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gJump_start_fine, 3);
 //extern int gReal_graf_data_index;
 //extern float gCar_time_value[3];
 //extern int gTyping_slot;
