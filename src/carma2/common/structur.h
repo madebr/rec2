@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gMoney_pre_race);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gAPO_pre_race, 3);
 C2_HOOK_VARIABLE_DECLARE(tRace_over_reason, gRace_over_reason);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_checkpoint_time);
+C2_HOOK_VARIABLE_DECLARE(int, gLast_wrong_checkpoint);
 
 void C2_HOOK_FASTCALL StashCreditsAndAPO(void);
 
@@ -45,5 +46,7 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
 void C2_HOOK_FASTCALL IncrementCheckpoint(void);
 
 void C2_HOOK_FASTCALL IncrementLap(void);
+
+void C2_HOOK_FASTCALL WrongCheckpoint(int pCheckpoint_index);
 
 #endif // REC2_STRUCTUR_H
