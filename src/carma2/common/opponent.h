@@ -63,4 +63,8 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL MungeOpponents(void);
 
+void C2_HOOK_FASTCALL UnStunTheBugger(tOpponent_spec* pOpponent_spec);
+
+void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was);
+
 #endif //REC2_OPPONENT_H
