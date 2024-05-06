@@ -51,4 +51,6 @@ void C2_HOOK_FASTCALL WrongCheckpoint(int pCheckpoint_index);
 
 void C2_HOOK_FASTCALL CheckCheckpoints(void);
 
+void C2_HOOK_FASTCALL TotalRepair(void);
+
 #endif // REC2_STRUCTUR_H
