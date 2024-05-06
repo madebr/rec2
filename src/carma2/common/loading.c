@@ -4685,9 +4685,9 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
         c->damping = damping;
     }
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x64, 0x64);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, object_friction, 0x64);
 
-    c->collision_info->field_0x64 = 0.4f;
+    c->collision_info->object_friction = 0.4f;
 
     LoadCollisionShape(&c->collision_info->shape, pF);
 
@@ -4932,10 +4932,285 @@ C2_HOOK_FUNCTION(0x004f6520, LoadTrackModels)
 void (C2_HOOK_FASTCALL * LoadNonCar_original)(FILE* pF, tNon_car_spec* pNon_car_spec);
 void C2_HOOK_FASTCALL LoadNonCar(FILE* pF, tNon_car_spec* pNon_car_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadNonCar_original(pF, pNon_car_spec);
 #else
-#error "Not implemented"
+    int index_version;
+    int extra_point_num;
+    int i;
+    br_scalar len, wid, het;
+    br_scalar snap_angle;
+    br_scalar ts;
+    br_vector3 attached_cmpos;
+
+    C2_HOOK_BUG_ON(sizeof(tNon_car_spec) != 0x104);
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, driver, 0xc);
+    pNon_car_spec->driver = eDriver_non_car_unused_slot;
+
+    /* Carmageddon 1: number of non car */
+    /* Carmageddon 2: version number */
+    index_version = GetAnInt(pF);
+    if (index_version < 100) {
+        br_vector3 attached_cmpos;
+        br_bounds3 bounds;
+
+        pNon_car_spec->index = index_version;
+
+        /* centre of mass position */
+        GetThreeFloats(pF,
+            &pNon_car_spec->collision_info->cmpos.v[0],
+            &pNon_car_spec->collision_info->cmpos.v[1],
+            &pNon_car_spec->collision_info->cmpos.v[2]);
+
+        /* centre of mass position when attached */
+        GetThreeFloats(pF,
+            &attached_cmpos.v[0],
+            &attached_cmpos.v[1],
+            &attached_cmpos.v[2]);
+
+        /* min x, min y, min z */
+        GetThreeFloats(pF, &bounds.min.v[0], &bounds.min.v[1], &bounds.min.v[2]);
+        /* max x, max y, max z */
+        GetThreeFloats(pF, &bounds.max.v[0], &bounds.max.v[1], &bounds.max.v[2]);
+
+        /* number of extra points */
+        extra_point_num = GetAnInt(pF);
+        if (extra_point_num > 6) {
+            FatalError(kFatalError_TooManyExtraPointsForCarIndex_S, index_version);
+        }
+        for (i = 0; i < extra_point_num; i++) {
+            br_vector3 tmp;
+
+            GetThreeFloats(pF, &tmp.v[0], &tmp.v[1], &tmp.v[2]);
+        }
+
+        /* mass in tonnes */
+        GetPairOfFloats(pF, &pNon_car_spec->free_mass, &pNon_car_spec->attached_mass);
+
+        /* am length, width, height */
+        GetThreeFloats(pF, &len, &wid, &het);
+
+        /* bend angle before snapping */
+        snap_angle = GetAFloat(pF);
+        pNon_car_spec->snap_off_cosine = cosf(BrAngleToRadian(BrDegreeToAngle(snap_angle)));
+        pNon_car_spec->break_off_radians_squared = snap_angle * 3.14f / 180.f * (snap_angle * 3.14f / 180.f);
+
+        /* torque (KN m) needed to move object */
+        ts = GetAFloat(pF);
+        pNon_car_spec->min_torque_squared = REC2_SQR(ts / WORLD_SCALE);
+
+        BrVector3Set(&pNon_car_spec->I_over_M,
+            (het * het + wid * wid) / 12.f,
+            (het * het + len * len) / 12.f,
+            (wid * wid + len * len) / 12.f);
+
+        C2_HOOK_BUG_ON(sizeof(tCollision_shape_polyhedron) != 0x50);
+        pNon_car_spec->collision_info->shape = BrMemAllocate(sizeof(tCollision_shape_polyhedron), kMem_collision_shape);
+        c2_memcpy(&pNon_car_spec->collision_info->shape->polyhedron.common.bb, &bounds, sizeof(br_bounds3));
+        if (snap_angle != 0.f) {
+            pNon_car_spec->field_0xf0 = pNon_car_spec->collision_info->physics_joint2 = AllocatePhysicsJoint(1, kMem_physics_joint);
+            pNon_car_spec->collision_info->physics_joint2->type = eJoint_ball_n_socket;
+            BrVector3Copy(&pNon_car_spec->collision_info->physics_joint2->field_0x08, &attached_cmpos);
+            pNon_car_spec->collision_info->physics_joint2->count_limits = 1;
+            pNon_car_spec->collision_info->physics_joint2->limits[0].type = eJoint_limit_10;
+            pNon_car_spec->collision_info->physics_joint2->limits[0].value = pNon_car_spec->min_torque_squared;
+        }
+        UpdateCollisionBoundingBox(pNon_car_spec->collision_info);
+        pNon_car_spec->collision_info->actor = pNon_car_spec->actor;
+        pNon_car_spec->collision_info->bb2 = pNon_car_spec->collision_info->bb1;
+    } else {
+        /* non car number */
+        pNon_car_spec->index = (int)GetAScalar(pF);
+
+        /* centre of mass position */
+        GetThreeFloats(pF,
+            &pNon_car_spec->collision_info->cmpos.v[0],
+            &pNon_car_spec->collision_info->cmpos.v[1],
+            &pNon_car_spec->collision_info->cmpos.v[2]);
+
+        /* centre of mass position when attached */
+        GetThreeFloats(pF,
+            &attached_cmpos.v[0],
+            &attached_cmpos.v[1],
+            &attached_cmpos.v[2]);
+
+        LoadCollisionShape(&pNon_car_spec->collision_info->shape, pF);
+
+        /* mass unattached, mass attached */
+        GetPairOfFloats(pF, &pNon_car_spec->free_mass, &pNon_car_spec->attached_mass);
+
+        /* am width height and length */
+        GetThreeFloats(pF, &len, &wid, &het);
+
+        /* bend angle before snapping */
+        snap_angle = GetAFloat(pF);
+        pNon_car_spec->snap_off_cosine = cosf(BrAngleToRadian(BrDegreeToAngle(snap_angle)));
+        pNon_car_spec->break_off_radians_squared = snap_angle * 3.14f / 180.f * (snap_angle * 3.14f / 180.f);
+
+        /* torque (KN m) needed to move object */
+        ts = GetAFloat(pF);
+        pNon_car_spec->min_torque_squared = REC2_SQR(ts / WORLD_SCALE);
+
+        BrVector3Set(&pNon_car_spec->I_over_M,
+            (het * het + wid * wid) / 12.f,
+            (het * het + len * len) / 12.f,
+            (wid * wid + len * len) / 12.f);
+
+        if (snap_angle != 0.f) {
+            pNon_car_spec->field_0xf0 = pNon_car_spec->collision_info->physics_joint2 = AllocatePhysicsJoint(1, kMem_physics_joint);
+            pNon_car_spec->collision_info->physics_joint2->type = eJoint_ball_n_socket;
+            BrVector3Copy(&pNon_car_spec->collision_info->physics_joint2->field_0x08, &attached_cmpos);
+            pNon_car_spec->collision_info->physics_joint2->count_limits = 1;
+            pNon_car_spec->collision_info->physics_joint2->limits[0].type = eJoint_limit_10;
+            pNon_car_spec->collision_info->physics_joint2->limits[0].value = pNon_car_spec->min_torque_squared;
+        }
+        UpdateCollisionBoundingBox(pNon_car_spec->collision_info);
+        pNon_car_spec->collision_info->actor = pNon_car_spec->actor;
+        pNon_car_spec->collision_info->bb2 = pNon_car_spec->collision_info->bb1;
+
+        /* Materials for shrapnel */
+        pNon_car_spec->count_shrapnel_materials = GetAnInt(pF);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, count_shrapnel_materials, 0x6c);
+
+        for (i = 0; i < pNon_car_spec->count_shrapnel_materials; i++) {
+            char s[256];
+
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, shrapnel_materials, 0x84);
+
+            GetALineAndDontArgue(pF, s);
+            pNon_car_spec->shrapnel_materials[i] = GetSimpleMaterial(s, (pNon_car_spec != NULL && pNon_car_spec->driver >= 6) ? kRendererShadingType_Specular : kRendererShadingType_Diffuse1);
+        }
+        pNon_car_spec->collision_info->object_friction = 0.4f;
+        if (index_version > 100) {
+            for (;;) {
+                char s[256];
+
+                GetAString(pF, s);
+                if (DRStricmp(s, "END") == 0) {
+                    break;
+                } else if (DRStricmp(s, "WORLD_FRICTION") == 0) {
+                    pNon_car_spec->collision_info->world_friction = GetAScalar(pF) - 1.f;
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, world_friction, 0x60);
+                } else if (DRStricmp(s, "OBJECT_FRICTION") == 0) {
+                    pNon_car_spec->collision_info->object_friction = GetAScalar(pF) - 1.f;
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, object_friction, 0x64);
+                } else if (DRStricmp(s, "TUMBLE") == 0) {
+                    pNon_car_spec->tumble_factor = GetAScalar(pF);
+                    pNon_car_spec->tumble_threshold = GetAScalar(pF);
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, tumble_factor, 0xdc);
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, tumble_threshold, 0xe0);
+                } else if (DRStricmp(s, "WORLD_BALL_JOINT") == 0) {
+                    br_vector3 tv;
+                    br_scalar friction;
+                    int count_limits;
+
+                    GetThreeFloats(pF, &tv.v[0], &tv.v[1], &tv.v[2]);
+
+                    /* friction */
+                    friction = GetAScalar(pF);
+
+                    /* num limits */
+                    count_limits = GetAnInt(pF);
+
+                    pNon_car_spec->field_0xf0 = pNon_car_spec->collision_info->physics_joint2 = AllocatePhysicsJoint(count_limits, kMem_physics_joint);
+                    pNon_car_spec->field_0xf0->friction = friction;
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_joint, friction, 0x4);
+                    BrVector3Copy(&pNon_car_spec->field_0xf0->field_0x08, &tv);
+                    pNon_car_spec->field_0xf0->type = eJoint_ball_n_socket;
+                } else if (DRStricmp(s, "WORLD_HINGE_JOINT") == 0) {
+                    br_vector3 tv1;
+                    br_vector3 tv2;
+                    br_scalar friction;
+                    int count_limits;
+
+                    GetThreeFloats(pF, &tv1.v[0], &tv1.v[1], &tv1.v[2]);
+                    GetThreeFloats(pF, &tv2.v[0], &tv2.v[1], &tv2.v[2]);
+
+                    /* friction */
+                    friction = GetAScalar(pF);
+
+                    /* num limits */
+                    count_limits = GetAnInt(pF);
+
+                    pNon_car_spec->field_0xf0 = pNon_car_spec->collision_info->physics_joint2 = AllocatePhysicsJoint(count_limits, kMem_physics_joint);
+                    pNon_car_spec->field_0xf0->friction = friction;
+                    BrVector3Copy(&pNon_car_spec->field_0xf0->field_0x08, &tv1);
+                    pNon_car_spec->field_0xf0->type = eJoint_ball_n_socket;
+                } else if (DRStricmp(s, "WORLD_TRANSLATION_JOINT") == 0) {
+                    br_vector3 pos;
+                    br_vector3 dir;
+                    br_scalar limit;
+                    /* joint position */
+                    GetThreeFloats(pF, &pos.v[0], &pos.v[1], &pos.v[2]);
+
+                    /* axis (direction of movement) */
+                    GetThreeFloats(pF, &dir.v[0], &dir.v[1], &dir.v[2]);
+
+                    /* lift height */
+                    limit = GetAScalar(pF);
+
+                    pNon_car_spec->field_0xf0 = pNon_car_spec->collision_info->physics_joint2 = AllocatePhysicsJoint(1, kMem_physics_joint);
+                    BrVector3Copy(&pNon_car_spec->field_0xf0->field_0x08, &pos);
+                    BrVector3Copy(&pNon_car_spec->field_0xf0->hinge_axis, &dir);
+
+                    if (fabsf(dir.v[0]) <= fabsf(dir.v[1]) && fabsf(dir.v[0]) <= fabsf(dir.v[2])) {
+                        BrVector3Set(&pNon_car_spec->field_0xf0->hinge_axis2, 0.f, dir.v[2], -dir.v[1]);
+                    } else if (fabsf(dir.v[1]) <= fabsf(dir.v[2])) {
+                        BrVector3Set(&pNon_car_spec->field_0xf0->hinge_axis2, -dir.v[2], 0.f, -dir.v[0]);
+                    } else {
+                        BrVector3Set(&pNon_car_spec->field_0xf0->hinge_axis2, dir.v[1], -dir.v[0], 0.f);
+                    }
+                    BrVector3Normalise(&pNon_car_spec->field_0xf0->hinge_axis2, &pNon_car_spec->field_0xf0->hinge_axis2);
+                    BrVector3Cross(&pNon_car_spec->field_0xf0->hinge_axis3, &pNon_car_spec->field_0xf0->hinge_axis, &pNon_car_spec->field_0xf0->hinge_axis2);
+                    pNon_car_spec->field_0xf0->type = eJoint_translation;
+                    pNon_car_spec->flags |= 0x10000;
+                    pNon_car_spec->field_0xf0->count_limits = 1;
+                    pNon_car_spec->field_0xf0->limits[0].type = eJoint_limit_11;
+                    pNon_car_spec->field_0xf0->limits[0].value = limit;
+
+                    C2_HOOK_BUG_ON(sizeof(tJoint_translation_params) != 0x14);
+                    pNon_car_spec->translation_parameters = BrMemAllocate(sizeof(tJoint_translation_params), kMem_non_car_spec);
+
+                    /* forward accel in g */
+                    pNon_car_spec->translation_parameters->forward_acceleration = GetAScalar(pF);
+
+                    /* reverse accel in g (nb grvity will pull it down) */
+                    pNon_car_spec->translation_parameters->reverse_acceleration = GetAScalar(pF);
+
+                    /* resistance going up */
+                    pNon_car_spec->translation_parameters->forward_resistance = GetAScalar(pF);
+
+                    /* resistance going down */
+                    pNon_car_spec->translation_parameters->reverse_resistance = GetAScalar(pF);
+
+                    /* pause at the top */
+                    pNon_car_spec->translation_parameters->pause_at_top = GetAnInt(pF);
+
+                    pNon_car_spec->translation_parameters->forward_resistance = exp2f(pNon_car_spec->translation_parameters->forward_resistance);
+                    pNon_car_spec->translation_parameters->reverse_resistance = exp2f(pNon_car_spec->translation_parameters->reverse_resistance);
+                } else if (DRStricmp(s, "RISE_WHEN_HIT") == 0) {
+                    pNon_car_spec->flags |= 0x20000;
+                } else if (DRStricmp(s, "RISE_WHEN_DRIVEN_ON") == 0) {
+                    pNon_car_spec->flags |= 0x40000;
+                } else if (DRStricmp(s, "NUMBER_OF_PUSHES") == 0) {
+                    pNon_car_spec->number_of_pushes = GetAnInt(pF);
+                } else if (DRStricmp(s, "DRIVABLE_ON") == 0) {
+                    pNon_car_spec->collision_info->drivable_on = 1;
+                } else if (DRStricmp(s, "INFINITE_I") == 0) {
+                    pNon_car_spec->collision_info->flags |= 0x800;
+                } else if (DRStricmp(s, "IGNORE_WORLD_COLLISIONS") == 0) {
+                    pNon_car_spec->collision_info->flags |= 0x80;
+                } else if (DRStricmp(s, "BLOCK_CAMERA") == 0) {
+                    pNon_car_spec->flags |= 0x80000;
+                } else if (DRStricmp(s, "SPARKY") == 0) {
+                    pNon_car_spec->flags |= 0x200000;
+                } else {
+                    FatalError(kFatalError_UnknownNonCarCommand);
+                }
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00487ec0, LoadNonCar, LoadNonCar_original)
