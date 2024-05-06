@@ -1269,7 +1269,10 @@ typedef struct tRace_list_spec {
     int expansion;
     int no_time_awards;
     int is_boundary;                    /* boundary race/mission */
-    int count_explicit_opponents;       /* Number of explicit opponents */
+    union {
+        int count_explicit_opponents;       /* Number of explicit opponents */
+        int been_there_done_that;
+    };
     int explicit_opponents[15];         /* positive number: index / negative number: hardness */
     int count_powerup_exclusions;
     int* powerup_exclusions;
