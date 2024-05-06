@@ -9,6 +9,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gMirror_on__structur);
 C2_HOOK_VARIABLE_DECLARE(int, gLoad_last_save_game);
 C2_HOOK_VARIABLE_DECLARE(int, gMoney_pre_race);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gAPO_pre_race, 3);
+C2_HOOK_VARIABLE_DECLARE(tRace_over_reason, gRace_over_reason);
 
 void C2_HOOK_FASTCALL StashCreditsAndAPO(void);
 
@@ -35,5 +36,7 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
 void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info);
 
 int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void);
+
+void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason);
 
 #endif // REC2_STRUCTUR_H
