@@ -96,4 +96,6 @@ void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text);
 
 void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
+void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
+
 #endif //REC2_DISPLAYS_H
