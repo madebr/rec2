@@ -3324,6 +3324,8 @@ enum {
     eMiscString_instant_repair = 41,
     eMiscString_final_lap = 42,
     eMiscString_wrong_checkpoint = 43,
+    eMiscString_bad_boy = 44,
+    eMiscString_credit_fine = 45,
     eMiscString_host_abandoned_race = 87,
     eMiscString_recovery_cancelled = 125,
     eMiscString_fox_cant_do_that = 214,
@@ -3599,6 +3601,7 @@ enum {
     eSoundId_Checkpoint = 8012,
     eSoundId_WrongCheckpoint = 8013,
     eSoundId_FinalLap = 8014,
+    eSoundId_HeyYou = 8016,
 };
 
 #endif // REC2_TYPES_H

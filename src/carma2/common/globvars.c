@@ -219,7 +219,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gOther_selfs, 4, 0x0074d644);
 //int gInitial_net_credits[5];
 //float gCar_cred_value[3];
 //int gNo_races_yet;
-//int gJump_start_fine[3];
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gJump_start_fine, 3, 0x0074d3d0);
 //int gReal_graf_data_index;
 //float gCar_time_value[3];
 //int gTyping_slot;
