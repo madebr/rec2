@@ -70,3 +70,14 @@ void C2_HOOK_FASTCALL InitNetGameplayStuff(void) {
 
 }
 C2_HOOK_FUNCTION(0x0049bd00, InitNetGameplayStuff)
+
+void (C2_HOOK_FASTCALL * DeclareWinner_original)(int pWinner_index);
+void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DeclareWinner_original(pWinner_index);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049a760, DeclareWinner, DeclareWinner_original)
