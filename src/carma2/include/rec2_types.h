@@ -3067,6 +3067,8 @@ typedef struct {
 
 typedef enum {
     eNet_game_type_2 = 2, /* FIXME */
+    eNet_game_type_3 = 3, /* FIXME */
+    eNet_game_type_4 = 4, /* FIXME */
     eNet_game_type_5 = 5, /* FIXME */
     eNet_game_type_foxy = 7
 } tNet_game_type;
@@ -3116,7 +3118,9 @@ typedef struct {
     int grid_position_set;
     undefined field_0x58[4];
     int opponent_list_index;
-    undefined field_0x60[16];
+    undefined field_0x60[4];
+    int score2;
+    undefined field_0x68[8];
     int wasteage_attributed;
     undefined field_0x74[12];
     int field_0x80;
