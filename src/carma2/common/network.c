@@ -157,3 +157,14 @@ void C2_HOOK_FASTCALL NetFinishRace(tNet_game_details* pDetails, tRace_over_reas
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5710, NetFinishRace, NetFinishRace_original)
+
+void (C2_HOOK_FASTCALL * NetFullScreenMessage_original)(int pStr_index, int pLeave_it_up_there);
+void C2_HOOK_FASTCALL NetFullScreenMessage(int pStr_index, int pLeave_it_up_there) {
+
+#if defined(C2_HOOKS_ENABLED)
+    NetFullScreenMessage_original(pStr_index, pLeave_it_up_there);
+#else
+#error "Not impplemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a0080, NetFullScreenMessage, NetFullScreenMessage_original)
