@@ -9,4 +9,6 @@ void C2_HOOK_FASTCALL DisposePratcam(void);
 
 void C2_HOOK_FASTCALL ChangeAmbientPratcam(int pIndex);
 
+void C2_HOOK_FASTCALL PratcamEvent(int pIndex);
+
 #endif //REC2_PRATCAM_H
