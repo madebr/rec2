@@ -647,3 +647,14 @@ void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
     EarnCredits2(pAmount, "");
 }
 C2_HOOK_FUNCTION(0x0044b440, EarnCredits)
+
+void (C2_HOOK_FASTCALL * DoFancyHeadup_original)(int pIndex);
+void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoFancyHeadup_original(pIndex);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044a600, DoFancyHeadup, DoFancyHeadup_original)
