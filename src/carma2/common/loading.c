@@ -2904,11 +2904,14 @@ C2_HOOK_FUNCTION(0x0048ef80, LoadMaterial)
 
 void (C2_HOOK_FASTCALL * FillInRaceInfo_original)(tRace_info* pThe_race);
 void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     FillInRaceInfo_original(pThe_race);
 #else
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, track_file_name, 0x1a1e);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_info, race_spec, 0x98);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_list_spec, file_name, 0x60);
 
-    c2_strcpy(C2V(gProgram_state).track_file_name, pThe_race->race_spec->track_file_name);
+    c2_strcpy(C2V(gProgram_state).track_file_name, pThe_race->race_spec->file_name);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048d0e0, FillInRaceInfo, FillInRaceInfo_original)
