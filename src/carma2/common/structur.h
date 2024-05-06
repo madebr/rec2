@@ -53,4 +53,6 @@ void C2_HOOK_FASTCALL CheckCheckpoints(void);
 
 void C2_HOOK_FASTCALL TotalRepair(void);
 
+int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence);
+
 #endif // REC2_STRUCTUR_H

@@ -658,3 +658,36 @@ void C2_HOOK_FASTCALL TotalRepair(void) {
     NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_instant_repair));
 }
 C2_HOOK_FUNCTION(0x005039b0, TotalRepair)
+
+int C2_HOOK_FASTCALL PickNetRace(int pCurrent_race, tNet_sequence_type pNet_race_sequence) {
+    int i;
+    int new_index;
+    int races_count;
+    int most_seldom_seen;
+    int races_to_pick_from[50];
+
+    if (pNet_race_sequence == eNet_sequence_sequential) {
+        new_index = pCurrent_race + 1;
+        if (new_index >= C2V(gNumber_of_races)) {
+            new_index = 0;
+        }
+    } else {
+        most_seldom_seen = 10000;
+        for (i = 0; i < C2V(gNumber_of_races); i++) {
+            if (C2V(gRace_list)[i].been_there_done_that < most_seldom_seen) {
+                most_seldom_seen = C2V(gRace_list)[i].been_there_done_that;
+            }
+        }
+        races_count = 0;
+        for (i = 0; i < C2V(gNumber_of_races); i++) {
+            if (C2V(gRace_list)[i].been_there_done_that == most_seldom_seen && (i != pCurrent_race)) {
+                races_to_pick_from[races_count] = i;
+                races_count++;
+            }
+        }
+        new_index = races_to_pick_from[IRandomBetween(0, races_count - 1)];
+        C2V(gRace_list)[new_index].been_there_done_that += 1;
+    }
+    return new_index;
+}
+C2_HOOK_FUNCTION(0x00503ba0, PickNetRace)
