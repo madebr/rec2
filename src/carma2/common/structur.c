@@ -362,3 +362,21 @@ void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info) {
     }
 }
 C2_HOOK_FUNCTION(0x005039e0, SelectOpponents)
+
+int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void) {
+    int result;
+    int count;
+    int i;
+
+    result = 0;
+    count = GetCarCount(eVehicle_opponent);
+    for (i = 0; i < count; i++) {
+        tCar_spec* car_spec = GetCarSpec(eVehicle_opponent, i);
+
+        if (!car_spec->knackered && (C2V(gCurrent_race).race_spec->race_type == kRaceType_Carma1 || (C2V(gCurrent_race).race_spec->race_type == kRaceType_Cars && car_spec->is_race_goal))) {
+            result += 1;
+        }
+    }
+    return result;
+}
+C2_HOOK_FUNCTION(0x00503050, NumberOfOpponentObjectivesLeft)
