@@ -38,4 +38,6 @@ void C2_HOOK_FASTCALL DisposeMutantTail(void);
 
 void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
+void C2_HOOK_FASTCALL SetAPOToInitialValues(void);
+
 #endif //REC2_POWERUPS_H
