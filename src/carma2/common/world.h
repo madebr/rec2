@@ -24,6 +24,7 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gAdditional_actors);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSpecial_effects_boundary_choices, 4);
 C2_HOOK_VARIABLE_DECLARE(int, gDefault_engine_noise_index);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSoundGeneratorTypeNames, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gRace_path, 256);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
