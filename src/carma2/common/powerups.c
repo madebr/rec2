@@ -6,6 +6,7 @@
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
+#include "init.h"
 #include "loading.h"
 #include "network.h"
 #include "physics.h"
@@ -793,3 +794,13 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da730, CloseDownPowerUps, CloseDownPowerUps_original)
+
+void C2_HOOK_FASTCALL SetAPOToInitialValues(void) {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        C2V(gProgram_state).current_car.power_up_levels[i] = C2V(gInitial_powerup_slots)[i];
+        C2V(gProgram_state).current_car.power_up_slots[i] = C2V(gInitial_powerup_slots)[i];
+    }
+}
+C2_HOOK_FUNCTION(0x00502e00, SetAPOToInitialValues)
