@@ -35,6 +35,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLoad_last_save_game, 0x00660ce8, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMoney_pre_race, 0x007051f8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gAPO_pre_race, 3, 0x007051e0);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_over_reason, gRace_over_reason, 0x006b781c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_checkpoint_time, 0x006aaa34);
 
 void C2_HOOK_FASTCALL StashCreditsAndAPO(void) {
 
@@ -458,3 +459,45 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
     }
 }
 C2_HOOK_FUNCTION(0x00503270, Checkpoint)
+
+void C2_HOOK_FASTCALL IncrementCheckpoint(void) {
+    int done_voice;
+
+    if (C2V(gRace_finished)) {
+        return;
+    }
+    if (!(C2V(gCurrent_race).race_spec->race_type == kRaceType_Carma1 || C2V(gCurrent_race).race_spec->race_type == kRaceType_Checkpoints)) {
+        return;
+    }
+    done_voice = 0;
+    C2V(gLast_checkpoint_time) = GetTotalTime();
+    if (C2V(gCheckpoint) < C2V(gCheckpoint_count)) {
+        C2V(gCheckpoint) += 1;
+    } else {
+        C2V(gCheckpoint) = 1;
+        if (C2V(gLap) < C2V(gTotal_laps)) {
+            C2V(gLap) += 1;
+            if (C2V(gLap) == C2V(gTotal_laps)) {
+                PratcamEvent(33);
+                NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_final_lap));
+                DRS3StartSound(C2V(gPedestrians_outlet), eSoundId_FinalLap);
+                done_voice = 1;
+            }
+        } else {
+            C2V(gLap) = C2V(gTotal_laps);
+            C2V(gCheckpoint) = C2V(gCheckpoint_count);
+            RaceCompleted(eRace_over_0);
+        }
+    }
+    if (!C2V(gRace_finished)) {
+        PratcamEvent(33);
+        DoFancyHeadup(21);
+        if (!done_voice) {
+            DRS3StartSound(C2V(gPedestrians_outlet), eSoundId_Checkpoint);
+        }
+        if (C2V(gCredits_checkpoint[C2V(gProgram_state).skill_level]) != 0) {
+            EarnCredits(C2V(gCredits_checkpoint[C2V(gProgram_state).skill_level]));
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x005032a0, IncrementCheckpoint)

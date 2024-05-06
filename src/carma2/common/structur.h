@@ -10,6 +10,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gLoad_last_save_game);
 C2_HOOK_VARIABLE_DECLARE(int, gMoney_pre_race);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gAPO_pre_race, 3);
 C2_HOOK_VARIABLE_DECLARE(tRace_over_reason, gRace_over_reason);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_checkpoint_time);
 
 void C2_HOOK_FASTCALL StashCreditsAndAPO(void);
 
@@ -40,5 +41,7 @@ int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void);
 void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason);
 
 void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
+
+void C2_HOOK_FASTCALL IncrementCheckpoint(void);
 
 #endif // REC2_STRUCTUR_H
