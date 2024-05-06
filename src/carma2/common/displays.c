@@ -658,3 +658,13 @@ void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044a600, DoFancyHeadup, DoFancyHeadup_original)
+
+int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
+
+    C2V(gProgram_state).credits -= pAmount;
+    if (C2V(gProgram_state).credits < 0) {
+        C2V(gProgram_state).credits = 0;
+    }
+    return C2V(gProgram_state).credits;
+}
+C2_HOOK_FUNCTION(0x0044b470, SpendCredits)
