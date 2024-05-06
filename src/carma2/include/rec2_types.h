@@ -3581,6 +3581,7 @@ enum {
     eSoundId_Swingin = 3006,
     eSoundId_OutOfTime2 = 8010,
     eSoundId_RaceComplete = 8011,
+    eSoundId_Checkpoint = 8012,
 };
 
 #endif // REC2_TYPES_H
