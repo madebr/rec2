@@ -59,6 +59,19 @@ typedef void C2_HOOK_FASTCALL material_cbfn(br_material*);
 typedef int C2_HOOK_FASTCALL tEnumCollision_cbfn(tCollision_info* pCollision_info, void* pUser_data);
 
 typedef enum {
+    eRace_over_0 = 0, /* FIXME */
+    eRace_over_1 = 1, /* FIXME */
+    eRace_over_2 = 2, /* FIXME */
+    eRace_over_3 = 3, /* FIXME */
+    eRace_over_abandoned = 4,
+    eRace_over_out_of_time = 5,
+    eRace_over_6 = 6, /* FIXME */
+    eRace_over_7 = 7, /* FIXME */
+    eRace_over_8 = 8, /* FIXME */
+    eRace_over_9 = 9, /* FIXME */
+} tRace_over_reason;
+
+typedef enum {
     eDrone_state_START = 0,
     eDrone_state_RUN = 1,
     eDrone_state_DEFAULT = 3,
