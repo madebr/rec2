@@ -1230,3 +1230,9 @@ int C2_HOOK_FASTCALL TranslationMode(void) {
     return C2V(gTranslation_count);
 }
 C2_HOOK_FUNCTION(0x00461990, TranslationMode)
+
+void C2_HOOK_FASTCALL PlayFlicsFromDisk(void) {
+
+    C2V(gPlay_from_disk) = 1;
+}
+C2_HOOK_FUNCTION(0x00461a00, PlayFlicsFromDisk)

@@ -45,4 +45,6 @@ void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 int C2_HOOK_FASTCALL TranslationMode(void);
 
+void C2_HOOK_FASTCALL PlayFlicsFromDisk(void);
+
 #endif
