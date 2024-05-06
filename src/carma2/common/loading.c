@@ -2761,6 +2761,16 @@ int C2_HOOK_FASTCALL OriginalCarmaCDinDrive(void) {
 }
 C2_HOOK_FUNCTION(0x0048f6a0, OriginalCarmaCDinDrive)
 
+int C2_HOOK_FASTCALL CarmaCDinDriveOrFullGameInstalled(void) {
+
+    if (C2V(gCD_fully_installed)) {
+        return 1;
+    } else {
+        return OriginalCarmaCDinDrive();
+    }
+}
+C2_HOOK_FUNCTION(0x0048f6b0, CarmaCDinDriveOrFullGameInstalled)
+
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name) {
     br_pixelmap* the_map;
 
