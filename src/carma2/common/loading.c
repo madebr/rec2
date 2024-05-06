@@ -2790,6 +2790,22 @@ br_model* C2_HOOK_FASTCALL LoadModel(const char* pName) {
 }
 C2_HOOK_FUNCTION(0x0048efd0, LoadModel)
 
+br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName) {
+    tPath_name the_path;
+    br_actor* actor;
+
+    PossibleService();
+    PathCat(the_path, C2V(gApplication_path), "ACTORS");
+    PathCat(the_path, the_path, pName);
+    actor = BrActorLoad(the_path);
+    if (actor == NULL) {
+        PathCat(the_path, C2V(gRace_path), pName);
+        actor = BrActorLoad(the_path);
+    }
+    return actor;
+}
+C2_HOOK_FUNCTION(0x0048f020, LoadActor)
+
 void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
     int i;
     br_actor* actor_array[100];
