@@ -98,4 +98,6 @@ void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
 void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
+int C2_HOOK_FASTCALL SpendCredits(int pAmount);
+
 #endif //REC2_DISPLAYS_H
