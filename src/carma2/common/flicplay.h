@@ -47,4 +47,6 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void);
 
 int C2_HOOK_FASTCALL TranslationMode(void);
 
+void C2_HOOK_FASTCALL PlayFlicsFromDisk(void);
+
 #endif
