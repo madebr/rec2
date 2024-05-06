@@ -439,3 +439,32 @@ void C2_HOOK_FASTCALL MungeOpponents(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a9e10, MungeOpponents, MungeOpponents_original)
+
+void C2_HOOK_FASTCALL UnStunTheBugger(tOpponent_spec* pOpponent_spec) {
+
+    pOpponent_spec->stun_time_ends = 0;
+}
+
+void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was) {
+    int i;
+
+    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
+        UnStunTheBugger(&C2V(gProgram_state).AI_vehicles.opponents[i]);
+        if (IRandomBetween(1000, 2500) < 1000 * pWhat_the_countdown_was) {
+            StunTheBugger(&C2V(gProgram_state).AI_vehicles.opponents[i], IRandomBetween(1000, 2500));
+        } else {
+            StunTheBugger(&C2V(gProgram_state).AI_vehicles.opponents[i], 1000 * pWhat_the_countdown_was);
+        }
+    }
+    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_cops; i++) {
+        UnStunTheBugger(&C2V(gProgram_state).AI_vehicles.cops[i]);
+        if (IRandomBetween(1000, 2500) < 1000 * pWhat_the_countdown_was) {
+            StunTheBugger(&C2V(gProgram_state).AI_vehicles.cops[i], IRandomBetween(1000, 2500));
+        } else {
+            StunTheBugger(&C2V(gProgram_state).AI_vehicles.cops[i], 1000 * pWhat_the_countdown_was);
+        }
+    }
+    C2V(gAcknowledged_start) = 1;
+    C2V(gStart_jumped) = 1;
+}
+C2_HOOK_FUNCTION(0x004ae620, WakeUpOpponentsToTheFactThatTheStartHasBeenJumped)
