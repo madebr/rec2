@@ -933,11 +933,11 @@ void C2_HOOK_FASTCALL FUN_004c2b10(tCollision_info *pCollision_info) {
 C2_HOOK_FUNCTION(0x004c2b10, FUN_004c2b10)
 
 void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot) {
-    if (!(pParent->flags_0x19c & 0x400)) {
+    if (!(pParent->flags & 0x400)) {
         pRoot = pParent;
     }
     for (tCollision_info *child = pParent->child; child != NULL; child = child->next) {
-        if (pParent->flags_0x19c & 0x400) {
+        if (pParent->flags & 0x400) {
             BrMatrix34Mul(&pParent->transform_matrix, &pParent->field_0x1e8, &pRoot->transform_matrix);
         } else {
             br_vector3 tv1;
@@ -963,7 +963,7 @@ int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pP
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x14, 0x14);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x240, 0x240);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, box_face_ref, 0x178);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags_0x19c, 0x19c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags, 0x19c);
 
     if (C2V(gNo_recursive_collision_info_rebuild)) {
         return 0;
@@ -995,7 +995,7 @@ int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pP
             break;
         case 3: {
             int v = va_arg(va, int) != 0;
-            pCollision_info->flags_0x19c = (pCollision_info->flags_0x19c & ~(1 << 6)) | (v << 6);
+            pCollision_info->flags = (pCollision_info->flags & ~(1 << 6)) | (v << 6);
             if (!v) {
                 pCollision_info->box_face_ref = C2V(gFace_num__car) - 2;
             }
@@ -1003,12 +1003,12 @@ int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pP
         }
         case 4: {
             int v = va_arg(va, int) != 0;
-            pCollision_info->flags_0x19c = (pCollision_info->flags_0x19c & ~(1 << 3)) | (v << 3);
+            pCollision_info->flags = (pCollision_info->flags & ~(1 << 3)) | (v << 3);
             break;
         }
         case 5: {
             int v = va_arg(va, int) != 0;
-            pCollision_info->flags_0x19c = (pCollision_info->flags_0x19c & ~(1 << 4)) | (v << 4);
+            pCollision_info->flags = (pCollision_info->flags & ~(1 << 4)) | (v << 4);
             break;
         }
         case 6: {

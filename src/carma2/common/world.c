@@ -2735,7 +2735,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         tNon_car_spec* non_car;
 
         non_car = &C2V(gProgram_state).non_cars[i];
-        non_car->field_0xc = 0; /* FIXME: owner type? */
+        non_car->driver = eDriver_non_car_unused_slot;
         collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
         C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
         non_car->collision_info = collision_info;
@@ -2938,7 +2938,7 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
         non_car = &C2V(gProgram_state).non_cars[i];
         PossibleService();
         /* FIXME: comparison with eDriver_non_car in dethrace */
-        if (non_car->field_0xc == 4 && non_car->actor != NULL) {
+        if (non_car->driver == eDriver_4 && non_car->actor != NULL) {
             if (non_car->actor->parent != NULL) {
                 BrActorRemove(non_car->actor);
             }
