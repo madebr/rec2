@@ -1,8 +1,10 @@
 #include "structur.h"
 
 #include "car.h"
+#include "controls.h"
 #include "crush.h"
 #include "cutscene.h"
+#include "displays.h"
 #include "drmem.h"
 #include "errors.h"
 #include "frontend.h"
@@ -18,6 +20,7 @@
 #include "network.h"
 #include "opponent.h"
 #include "piping.h"
+#include "pratcam.h"
 #include "racesumm.h"
 #include "racestrt.h"
 #include "sound.h"
@@ -31,6 +34,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gMirror_on__structur, 0x00660ce0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLoad_last_save_game, 0x00660ce8, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMoney_pre_race, 0x007051f8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gAPO_pre_race, 3, 0x007051e0);
+C2_HOOK_VARIABLE_IMPLEMENT(tRace_over_reason, gRace_over_reason, 0x006b781c);
 
 void C2_HOOK_FASTCALL StashCreditsAndAPO(void) {
 
@@ -380,3 +384,67 @@ int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void) {
     return result;
 }
 C2_HOOK_FUNCTION(0x00503050, NumberOfOpponentObjectivesLeft)
+
+void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
+
+    if (C2V(gRace_finished)) {
+        return;
+    }
+    if (C2V(gNet_mode) == eNet_mode_host && pReason < eRace_over_8) {
+        NetFinishRace(C2V(gCurrent_net_game), pReason);
+    }
+    if (pReason == eRace_over_out_of_time || pReason == eRace_over_7) {
+        ChangeAmbientPratcam(35);
+    } else if (pReason < eRace_over_abandoned) {
+        ChangeAmbientPratcam(34);
+    }
+    C2V(gRace_over_reason) = pReason;
+    if (C2V(gMap_view) == 2) {
+        ToggleMap();
+    }
+    switch (C2V(gRace_over_reason)) {
+    case eRace_over_0:
+    case eRace_over_1:
+    case eRace_over_2:
+    case eRace_over_3:
+        ChangeAmbientPratcam(34);
+        DoFancyHeadup(C2V(gCurrent_race).race_spec->is_boundary ? 34 : 23);
+        DRS3StartSound(C2V(gPedestrians_outlet), eSoundId_RaceComplete);
+        break;
+    case eRace_over_abandoned:
+        if (C2V(gNet_mode) == eNet_mode_client) {
+            C2V(gHost_abandon_game) = 1;
+            NetFullScreenMessage(eMiscString_host_abandoned_race, 0);
+        }
+        break;
+    case eRace_over_out_of_time:
+        ChangeAmbientPratcam(35);
+        DoFancyHeadup(C2V(gCurrent_race).race_spec->is_boundary ? 33 : 22);
+        DRS3StartSound(C2V(gPedestrians_outlet), eSoundId_OutOfTime2);
+        break;
+    case eRace_over_6:
+        ChangeAmbientPratcam(36);
+        DoFancyHeadup(C2V(gCurrent_race).race_spec->is_boundary ? 33 : 24);
+        break;
+    case eRace_over_7:
+        ChangeAmbientPratcam(35);
+        DoFancyHeadup(35);
+        break;
+    case eRace_over_8:
+        ChangeAmbientPratcam(34);
+        DoFancyHeadup(29);
+        break;
+    case eRace_over_9:
+        ChangeAmbientPratcam(36);
+        DoFancyHeadup(26);
+        break;
+    default:
+        break;
+    }
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        C2V(gRace_finished) = 10000;
+    } else {
+        C2V(gRace_finished) = 8000;
+    }
+}
+C2_HOOK_FUNCTION(0x005030b0, RaceCompleted)

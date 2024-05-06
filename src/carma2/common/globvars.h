@@ -121,7 +121,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gArrow_mode);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gRace_head_ups, 22);
 
 //extern int gInfo_on;
-//extern int gHost_abandon_game;
+C2_HOOK_VARIABLE_DECLARE(int, gHost_abandon_game);
 C2_HOOK_VARIABLE_DECLARE(int, gRecover_car);
 C2_HOOK_VARIABLE_DECLARE(int, gDisallow_abandon_race);
 //extern int gPipe_reg_snap_before_new_game;

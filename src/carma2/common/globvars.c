@@ -135,7 +135,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gArrow_mode, 0x0068b85c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gRace_head_ups, 22, 0x0074d040);
 
 //int gInfo_on;
-//int gHost_abandon_game;
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHost_abandon_game, 0x0068b86c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gRecover_car, 0x0068b870);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisallow_abandon_race, 0x0068b874);
 //int gPipe_reg_snap_before_new_game;
