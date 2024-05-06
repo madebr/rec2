@@ -49,4 +49,6 @@ void C2_HOOK_FASTCALL IncrementLap(void);
 
 void C2_HOOK_FASTCALL WrongCheckpoint(int pCheckpoint_index);
 
+void C2_HOOK_FASTCALL CheckCheckpoints(void);
+
 #endif // REC2_STRUCTUR_H

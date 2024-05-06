@@ -7,6 +7,7 @@
 #include "displays.h"
 #include "drmem.h"
 #include "errors.h"
+#include "finteray.h"
 #include "frontend.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -17,6 +18,7 @@
 #include "loadsave.h"
 #include "mainloop.h"
 #include "mainmenu.h"
+#include "netgame.h"
 #include "network.h"
 #include "opponent.h"
 #include "piping.h"
@@ -544,3 +546,108 @@ void C2_HOOK_FASTCALL WrongCheckpoint(int pCheckpoint_index) {
     C2V(gLast_wrong_checkpoint) = pCheckpoint_index;
 }
 C2_HOOK_FUNCTION(0x005033e0, WrongCheckpoint)
+
+int C2_HOOK_FASTCALL RayHitFace(br_vector3* pV0, br_vector3* pV1, br_vector3* pV2, br_vector3* pNormal, br_vector3* pStart, br_vector3* pDir) {
+    tFace_ref the_face;
+    br_scalar rt;
+    br_vector3 rp;
+
+    the_face.material = NULL;
+    BrVector3Copy(&the_face.v[0], pV0);
+    BrVector3Copy(&the_face.v[1], pV1);
+    BrVector3Copy(&the_face.v[2], pV2);
+    BrVector3Copy(&the_face.normal, pNormal);
+    CheckSingleFace(&the_face, pStart, pDir, &the_face.normal, &rt, &rp);
+    return rt >= 0.f && rt <= 1.f;
+}
+
+void C2_HOOK_FASTCALL CheckCheckpoints(void) {
+    tCar_spec* car;
+    br_vector3 orig;
+    br_vector3 dir;
+    int i;
+    int j;
+    int cat;
+    int car_count;
+    int car_index;
+    tNet_game_player_info* net_player;
+
+    if (C2V(gNet_mode) == eNet_mode_client) {
+        return;
+    }
+    if (C2V(gNet_mode) == eNet_mode_host && C2V(gCurrent_net_game)->type != eNet_game_type_5 && C2V(gCurrent_net_game)->type != eNet_game_type_3 && C2V(gCurrent_net_game)->type != eNet_game_type_4) {
+        return;
+    }
+    for (cat = eVehicle_self; cat <= C2V(gNet_mode); cat++) {
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (car_index = 0; car_index < car_count; car_index++) {
+            if (cat == eVehicle_self) {
+                car = &C2V(gProgram_state).current_car;
+            } else {
+                car = GetCarSpec(cat, car_index);
+            }
+            BrVector3Copy(&orig, (br_vector3*)car->old_frame_mat.m[3]);
+            BrVector3Sub(&dir, &car->car_master_actor->t.t.translate.t, &orig);
+            for (i = 0; i < C2V(gCurrent_race).check_point_count; i++) {
+                for (j = 0; j < C2V(gCurrent_race).checkpoints[i].count_quads; j++) {
+                    if (
+                            RayHitFace(&C2V(gCurrent_race).checkpoints[i].quads[j].points[0],
+                                       &C2V(gCurrent_race).checkpoints[i].quads[j].points[1],
+                                       &C2V(gCurrent_race).checkpoints[i].quads[j].points[2],
+                                       &C2V(gCurrent_race).checkpoints[i].normals[j],
+                                       &orig, &dir)
+                            || RayHitFace(&C2V(gCurrent_race).checkpoints[i].quads[j].points[0],
+                                          &C2V(gCurrent_race).checkpoints[i].quads[j].points[2],
+                                          &C2V(gCurrent_race).checkpoints[i].quads[j].points[3],
+                                          &C2V(gCurrent_race).checkpoints[i].normals[j],
+                                          &orig,
+                                          &dir)) {
+                        if (C2V(gNet_mode) == eNet_mode_none) {
+                            if (i + 1 == C2V(gCheckpoint)) {
+                                IncrementCheckpoint();
+                            } else {
+                                WrongCheckpoint(i);
+                            }
+                        } else {
+                            net_player = NetPlayerFromCar(car);
+                            if (C2V(gCurrent_net_game)->type == eNet_game_type_3) {
+                                if (net_player->score2 & (1 << i)) {
+                                    net_player->score2 &= ~(1 << i);
+                                    SendGameplay(net_player->ID, eNet_gameplay_checkpoint, i, 0, 0, 0);
+                                } else {
+                                    SendGameplay(net_player->ID, eNet_gameplay_wrong_checkpoint, i, 0, 0, 0);
+                                }
+                            } else if (C2V(gCurrent_net_game)->type == eNet_game_type_5) {
+                                if ((net_player->score2 % C2V(gCurrent_race).check_point_count) == i) {
+                                    net_player->score2 += 1;
+                                    SendGameplay(net_player->ID, eNet_gameplay_checkpoint, i, 0, 0, 0);
+                                    C2V(gLast_checkpoint_time) = GetTotalTime();
+                                    if (net_player->score2 >= C2V(gCurrent_net_game)->options.starting_target * C2V(gCurrent_race).check_point_count) {
+                                        DeclareWinner(net_player - C2V(gNet_players));
+                                    }
+                                } else {
+                                    SendGameplay(net_player->ID, eNet_gameplay_wrong_checkpoint, i, 0, 0, 0);
+                                }
+                            } else {
+                                if ((net_player->score2 % C2V(gCurrent_race).check_point_count) == i) {
+                                    net_player->score2 += 1;
+                                    SendGameplay(net_player->ID, eNet_gameplay_checkpoint, i, 0, 0, 0);
+                                    break;
+                                } else {
+                                    SendGameplay(net_player->ID, eNet_gameplay_wrong_checkpoint, i, 0, 0, 0);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            BrMatrix34Copy(&car->old_frame_mat, &car->car_master_actor->t.t.mat);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x005034b0, CheckCheckpoints)
