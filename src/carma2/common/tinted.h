@@ -47,4 +47,6 @@ void C2_HOOK_FASTCALL TintedAnimateSawToothColor(int pIndex);
 
 void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex);
 
+int C2_HOOK_FASTCALL IsTintedVisible(int pIndex);
+
 #endif //REC2_TINTED_H
