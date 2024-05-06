@@ -3304,6 +3304,7 @@ enum {
 enum {
     eMiscString_minimap_on = 2,
     eMiscString_minimap_off = 3,
+    eMiscString_final_lap = 42,
     eMiscString_host_abandoned_race = 87,
     eMiscString_recovery_cancelled = 125,
     eMiscString_fox_cant_do_that = 214,
@@ -3577,6 +3578,7 @@ enum {
     eSoundId_OutOfTime2 = 8010,
     eSoundId_RaceComplete = 8011,
     eSoundId_Checkpoint = 8012,
+    eSoundId_FinalLap = 8014,
 };
 
 #endif // REC2_TYPES_H
