@@ -44,4 +44,6 @@ void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
 
 void C2_HOOK_FASTCALL IncrementCheckpoint(void);
 
+void C2_HOOK_FASTCALL IncrementLap(void);
+
 #endif // REC2_STRUCTUR_H
