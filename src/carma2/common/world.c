@@ -1667,6 +1667,12 @@ void C2_HOOK_FASTCALL LoadFolderInStorageWithShading(tBrender_storage* pStorage,
 }
 C2_HOOK_FUNCTION(0x00502cf0, LoadFolderInStorageWithShading)
 
+void C2_HOOK_FASTCALL AllowDuplicates(void) {
+
+    C2V(gDisallowDuplicates) = 0;
+}
+C2_HOOK_FUNCTION(0x00502d70, AllowDuplicates);
+
 void (C2_HOOK_FASTCALL * SetCarStorageTexturingLevel_original)(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
 void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld) {
 
