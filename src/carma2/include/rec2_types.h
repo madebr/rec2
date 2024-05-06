@@ -3313,6 +3313,7 @@ enum {
 enum {
     eMiscString_minimap_on = 2,
     eMiscString_minimap_off = 3,
+    eMiscString_instant_repair = 41,
     eMiscString_final_lap = 42,
     eMiscString_wrong_checkpoint = 43,
     eMiscString_host_abandoned_race = 87,

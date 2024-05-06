@@ -651,3 +651,10 @@ void C2_HOOK_FASTCALL CheckCheckpoints(void) {
     }
 }
 C2_HOOK_FUNCTION(0x005034b0, CheckCheckpoints)
+
+void C2_HOOK_FASTCALL TotalRepair(void) {
+
+    TotallyRepairCar();
+    NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_instant_repair));
+}
+C2_HOOK_FUNCTION(0x005039b0, TotalRepair)
