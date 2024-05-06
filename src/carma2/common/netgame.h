@@ -22,4 +22,6 @@ void C2_HOOK_FASTCALL InitNetGameplayStuff(void);
 
 void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index);
 
+void C2_HOOK_FASTCALL SendGameplay(tPlayer_ID pPlayer, tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
+
 #endif // REC2_NETGAME_H
