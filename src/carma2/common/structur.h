@@ -34,4 +34,6 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
 
 void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info);
 
+int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void);
+
 #endif // REC2_STRUCTUR_H
