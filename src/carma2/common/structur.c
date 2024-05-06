@@ -501,3 +501,12 @@ void C2_HOOK_FASTCALL IncrementCheckpoint(void) {
     }
 }
 C2_HOOK_FUNCTION(0x005032a0, IncrementCheckpoint)
+
+void C2_HOOK_FASTCALL IncrementLap(void) {
+    int i;
+
+    for (i = C2V(gCheckpoint); i <= C2V(gCheckpoint_count); i++) {
+        IncrementCheckpoint();
+    }
+}
+C2_HOOK_FUNCTION(0x005033b0, IncrementLap)
