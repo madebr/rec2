@@ -39,4 +39,6 @@ int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void);
 
 void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason);
 
+void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound);
+
 #endif // REC2_STRUCTUR_H

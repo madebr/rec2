@@ -448,3 +448,13 @@ void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
     }
 }
 C2_HOOK_FUNCTION(0x005030b0, RaceCompleted)
+
+void C2_HOOK_FASTCALL Checkpoint(int pCheckpoint_index, int pDo_sound) {
+
+    PratcamEvent(33);
+    DoFancyHeadup(21);
+    if (pDo_sound) {
+        DRS3StartSound(C2V(gPedestrians_outlet), eSoundId_Checkpoint);
+    }
+}
+C2_HOOK_FUNCTION(0x00503270, Checkpoint)
