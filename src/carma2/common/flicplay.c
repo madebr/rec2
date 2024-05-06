@@ -1248,3 +1248,9 @@ void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
     C2V(gPanel_flic_disable) = 1;
 }
 C2_HOOK_FUNCTION(0x00461a20, TurnOffPanelFlics)
+
+void C2_HOOK_FASTCALL TurnOnPanelFlics(void) {
+
+    C2V(gPanel_flic_disable) = 0;
+}
+C2_HOOK_FUNCTION(0x00461a30, TurnOnPanelFlics)
