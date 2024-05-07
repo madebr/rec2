@@ -192,6 +192,8 @@ add_library(brender_softrendr_float STATIC
     drivers/softrend/driver.c
     drivers/softrend/facility.c
     drivers/softrend/facility.h
+    drivers/softrend/state.c
+    drivers/softrend/state.h
     drivers/softrend/timestmp.h
     drivers/softrend/types.h
 )

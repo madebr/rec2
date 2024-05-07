@@ -17,4 +17,8 @@ typedef struct br_soft_device {
     struct host_info hostInfo;
 } br_soft_device;
 
+typedef struct soft_state_all {
+    br_uint_8 field_0x0[0x788];
+} soft_state_all;
+
 #endif /* SOFTREND_TYPES_H */
