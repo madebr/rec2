@@ -145,7 +145,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gAction_replay_mode, 0x00676914, 0);
 //int gAustere_override;
 
 //int gKey_map_index;
-//int gInterface_within_race_mode;
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_within_race_mode, 0x0068b890);
 //int gCut_scene_override;
 //int gGame_to_load = -1;
 //int gCD_is_in_drive;
