@@ -20,6 +20,12 @@ typedef struct br_soft_device {
     struct host_info hostInfo;
 } br_soft_device;
 
+typedef struct  {
+    br_object_dispatch *dispatch;
+    const char *identifier;
+    br_soft_device *device;
+} br_softrend_object;
+
 typedef struct soft_state_all {
     br_uint_8 field_0x0[0x788];
 } soft_state_all;

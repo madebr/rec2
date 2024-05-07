@@ -198,6 +198,8 @@ add_library(brender_softrendr_float STATIC
     drivers/softrend/gv1model.h
     drivers/softrend/lighting.c
     drivers/softrend/lighting.h
+    drivers/softrend/object.c
+    drivers/softrend/object.h
     drivers/softrend/rendfcty.c
     drivers/softrend/rendfcty.h
     drivers/softrend/state.c
