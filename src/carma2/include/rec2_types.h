@@ -72,6 +72,10 @@ typedef enum {
 } tRace_over_reason;
 
 typedef enum {
+    eNet_gameplay_host_paused = 4,
+} tNet_gameplay_mess;
+
+typedef enum {
     eNet_gameplay_checkpoint = 0,
     eNet_gameplay_wrong_checkpoint = 1,
 } tNet_gameplay_mess;

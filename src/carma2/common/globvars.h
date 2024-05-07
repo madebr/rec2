@@ -134,7 +134,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gAction_replay_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gSound_override);
 C2_HOOK_VARIABLE_DECLARE(int, gNoCutscenes);
 //extern int gKey_map_index;
-//extern int gInterface_within_race_mode;
+C2_HOOK_VARIABLE_DECLARE(int, gInterface_within_race_mode);
 //extern int gCut_scene_override;
 //extern int gGame_to_load;
 //extern int gCD_is_in_drive;

@@ -8,6 +8,7 @@
 #include "drmem.h"
 #include "errors.h"
 #include "finteray.h"
+#include "flicplay.h"
 #include "frontend.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -27,6 +28,7 @@
 #include "racestrt.h"
 #include "sound.h"
 #include "temp.h"
+#include "tinted.h"
 #include "utility.h"
 #include "world.h"
 
@@ -39,6 +41,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gAPO_pre_race, 3, 0x007051e0);
 C2_HOOK_VARIABLE_IMPLEMENT(tRace_over_reason, gRace_over_reason, 0x006b781c);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_checkpoint_time, 0x006aaa34);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_wrong_checkpoint, 0x00660cdc, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHud_tinted1_visible, 0x006aaa38);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHud_tinted2_visible, 0x006aaa3c);
 
 void C2_HOOK_FASTCALL StashCreditsAndAPO(void) {
 
@@ -709,3 +713,17 @@ void C2_HOOK_FASTCALL JumpTheStart(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00504170, JumpTheStart)
+
+void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void) {
+
+    C2V(gInterface_within_race_mode) = 1;
+    C2V(gHud_tinted1_visible) = !!IsTintedVisible(C2V(gHud_tinted1));
+    C2V(gHud_tinted2_visible) = !!IsTintedVisible(C2V(gHud_tinted2));
+    MakeTintedInvisible(C2V(gHud_tinted1));
+    MakeTintedInvisible(C2V(gHud_tinted2));
+    PlayFlicsFromDisk();
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        SendGameplayToAllPlayers(eNet_gameplay_host_paused, 0, 0, 0, 0);
+    }
+}
+C2_HOOK_FUNCTION(0x00504230, GoingToInterfaceFromRace)
