@@ -11,4 +11,6 @@ br_renderer_facility* C2_HOOK_STDCALL RendererFacilitySoftAllocate(br_device* de
 
 void C2_HOOK_CDECL _M_br_renderer_facility_soft_free(br_soft_renderer_facility* self);
 
+br_token C2_HOOK_CDECL _M_br_renderer_facility_soft_type(br_soft_renderer_facility* self);
+
 #endif //SOFTREND_FACILITY_H

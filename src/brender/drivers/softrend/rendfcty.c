@@ -55,6 +55,12 @@ void C2_HOOK_CDECL _M_br_renderer_facility_soft_free(br_soft_renderer_facility* 
 }
 C2_HOOK_FUNCTION(0x00540670, _M_br_renderer_facility_soft_free)
 
+br_token C2_HOOK_CDECL _M_br_renderer_facility_soft_type(br_soft_renderer_facility* self) {
+
+    return BRT_RENDERER_FACILITY;
+}
+C2_HOOK_FUNCTION(0x005406b0, _M_br_renderer_facility_soft_type)
+
 static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatch, rendererFacilityDispatch, 0x0058bc20, {
     NULL,
     NULL,
