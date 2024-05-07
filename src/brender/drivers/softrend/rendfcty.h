@@ -15,4 +15,6 @@ br_token C2_HOOK_CDECL _M_br_renderer_facility_soft_type(br_soft_renderer_facili
 
 int C2_HOOK_CDECL _M_br_renderer_facility_soft_isType(br_soft_renderer_facility* self, br_token t);
 
+br_int_32 C2_HOOK_CDECL _M_br_renderer_facility_soft_space(br_soft_renderer_facility* self);
+
 #endif //SOFTREND_FACILITY_H
