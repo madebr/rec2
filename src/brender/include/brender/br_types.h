@@ -62,6 +62,12 @@ typedef enum br_filesystem_identify {
     BR_FS_MODE_UNKNOWN = 2
 } br_filesystem_identify;
 
+enum {
+    BR_IMG_FRAMEWORK = 1,
+    BR_IMG_RESIDENT,
+    BR_IMG_HOST,
+};
+
 typedef enum br_memory_classes {
     BR_MEMORY_SCRATCH = 1,
     BR_MEMORY_PIXELMAP = 2,
