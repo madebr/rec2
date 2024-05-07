@@ -92,3 +92,14 @@ void C2_HOOK_FASTCALL SendGameplay(tPlayer_ID pPlayer, tNet_gameplay_mess pMess,
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049bc20, SendGameplay, SendGameplay_original)
+
+void (C2_HOOK_FASTCALL * SendGameplayToAllPlayers_original)(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
+void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SendGameplayToAllPlayers_original(pMess, pParam_1, pParam_2, pParam_3, pParam_4);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049bc70, SendGameplayToAllPlayers, SendGameplayToAllPlayers_original)
