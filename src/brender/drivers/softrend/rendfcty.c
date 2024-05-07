@@ -4,6 +4,7 @@
 #include "gv1buckt.h"
 #include "gv1model.h"
 #include "lighting.h"
+#include "object.h"
 #include "state.h"
 
 #include "core/fw/objectc.h"
