@@ -3,6 +3,7 @@
 
 #include <brender/brender.h>
 
+typedef struct br_geometry_primitives br_geometry_primitives;
 typedef struct br_geometry_v1_buckets br_geometry_v1_buckets;
 
 struct device_templates {
