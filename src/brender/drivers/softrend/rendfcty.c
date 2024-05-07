@@ -61,6 +61,12 @@ br_token C2_HOOK_CDECL _M_br_renderer_facility_soft_type(br_soft_renderer_facili
 }
 C2_HOOK_FUNCTION(0x005406b0, _M_br_renderer_facility_soft_type)
 
+int C2_HOOK_CDECL _M_br_renderer_facility_soft_isType(br_soft_renderer_facility* self, br_token t) {
+
+    return t == BRT_RENDERER_FACILITY || t == BRT_OBJECT_CONTAINER || t == BRT_OBJECT;
+}
+C2_HOOK_FUNCTION(0x005406c0, _M_br_renderer_facility_soft_isType)
+
 static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatch, rendererFacilityDispatch, 0x0058bc20, {
     NULL,
     NULL,

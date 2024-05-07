@@ -13,4 +13,6 @@ void C2_HOOK_CDECL _M_br_renderer_facility_soft_free(br_soft_renderer_facility* 
 
 br_token C2_HOOK_CDECL _M_br_renderer_facility_soft_type(br_soft_renderer_facility* self);
 
+int C2_HOOK_CDECL _M_br_renderer_facility_soft_isType(br_soft_renderer_facility* self, br_token t);
+
 #endif //SOFTREND_FACILITY_H
