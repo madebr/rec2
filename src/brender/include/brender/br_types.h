@@ -62,6 +62,12 @@ typedef enum br_filesystem_identify {
     BR_FS_MODE_UNKNOWN = 2
 } br_filesystem_identify;
 
+enum {
+    BR_IMG_FRAMEWORK = 1,
+    BR_IMG_RESIDENT,
+    BR_IMG_HOST,
+};
+
 typedef enum br_memory_classes {
     BR_MEMORY_SCRATCH = 1,
     BR_MEMORY_PIXELMAP = 2,
@@ -2738,7 +2744,7 @@ typedef struct nt_optional_header {
 } nt_optional_header;
 
 typedef struct section_header {
-    br_uint_8 section_name[8];
+    char section_name[8];
     br_uint_32 virtual_size;
     br_uint_32 rva;
     br_uint_32 data_size;
