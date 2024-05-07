@@ -59,4 +59,6 @@ void C2_HOOK_FASTCALL JumpTheStart(void);
 
 void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void);
 
+void C2_HOOK_FASTCALL SendGameplayToHost(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
+
 #endif // REC2_STRUCTUR_H
