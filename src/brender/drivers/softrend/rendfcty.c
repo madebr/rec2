@@ -67,6 +67,14 @@ int C2_HOOK_CDECL _M_br_renderer_facility_soft_isType(br_soft_renderer_facility*
 }
 C2_HOOK_FUNCTION(0x005406c0, _M_br_renderer_facility_soft_isType)
 
+br_int_32 C2_HOOK_CDECL _M_br_renderer_facility_soft_space(br_soft_renderer_facility* self) {
+
+    C2_HOOK_BUG_ON(sizeof(br_soft_renderer_facility) != 0x79c);
+
+    return sizeof(br_soft_renderer_facility);
+}
+C2_HOOK_FUNCTION(0x005406e0, _M_br_renderer_facility_soft_space)
+
 static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatch, rendererFacilityDispatch, 0x0058bc20, {
     NULL,
     NULL,
