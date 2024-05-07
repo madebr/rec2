@@ -64,6 +64,9 @@ void hook_print_stats(void);
     static void* HOOK_JOIN(hook_func_, FUNCTION);                             \
     HOOK_FUNCTION_ORIGINAL(ADDRESS, FUNCTION, HOOK_JOIN(hook_func_, FUNCTION))
 
+#define HOOK_VARIABLE_DECLARE_STATIC(TYPE, NAME)   \
+    static TYPE* const HOOK_JOIN(hookvar_, NAME)
+
 #define HOOK_VARIABLE_DECLARE(TYPE, NAME)   \
     extern TYPE* const HOOK_JOIN(hookvar_, NAME)
 
