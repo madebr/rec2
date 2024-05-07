@@ -7,6 +7,7 @@
 #include "state.h"
 
 #include "core/fw/objectc.h"
+#include "core/fw/resource.h"
 
 HOOK_VARIABLE_DECLARE_STATIC(const struct br_renderer_facility_dispatch, rendererFacilityDispatch);
 
@@ -41,6 +42,17 @@ br_renderer_facility* C2_HOOK_STDCALL RendererFacilitySoftAllocate(br_device* de
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005405e0, RendererFacilitySoftAllocate, RendererFacilitySoftAllocate_original)
+
+void C2_HOOK_CDECL _M_br_renderer_facility_soft_free(br_soft_renderer_facility* self) {
+
+    br_device* dev = self->dispatch->_device((br_object*)self);
+    dev->dispatch->_remove((br_object_container*)dev, (br_object*)self);
+
+    BrObjectContainerFree((br_object_container*)self, BR_NULL_TOKEN, NULL, NULL);
+
+    BrResFreeNoCallback(self);
+}
+C2_HOOK_FUNCTION(0x00540670, _M_br_renderer_facility_soft_free)
 
 static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatch, rendererFacilityDispatch, 0x0058bc20, {
     NULL,
