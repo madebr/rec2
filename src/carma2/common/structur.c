@@ -727,3 +727,14 @@ void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00504230, GoingToInterfaceFromRace)
+
+void (C2_HOOK_FASTCALL * SendGameplayToHost_original)(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
+void C2_HOOK_FASTCALL SendGameplayToHost(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SendGameplayToHost_original(pMess, pParam_1, pParam_2, pParam_3, pParam_4);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049bcb0, SendGameplayToHost, SendGameplayToHost_original)
