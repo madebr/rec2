@@ -110,6 +110,12 @@ void* C2_HOOK_CDECL _M_br_renderer_facility_soft_listQuery(br_soft_renderer_faci
 }
 C2_HOOK_FUNCTION(0x00540800, _M_br_renderer_facility_soft_listQuery)
 
+int C2_HOOK_CDECL _M_br_renderer_facility_soft_validDestination(br_soft_renderer_facility* self, br_boolean* bp, br_object* h) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00540720, _M_br_renderer_facility_soft_validDestination)
+
 static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatch, rendererFacilityDispatch, 0x0058bc20, {
     NULL,
     NULL,
