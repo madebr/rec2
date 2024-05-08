@@ -19,4 +19,6 @@ br_int_32 C2_HOOK_CDECL _M_br_renderer_facility_soft_space(br_soft_renderer_faci
 
 br_tv_template* C2_HOOK_CDECL _M_br_renderer_facility_soft_templateQuery(br_soft_renderer_facility* self);
 
+void* C2_HOOK_CDECL _M_br_renderer_facility_soft_listQuery(br_soft_renderer_facility* self);
+
 #endif //SOFTREND_FACILITY_H
