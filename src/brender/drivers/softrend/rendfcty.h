@@ -21,4 +21,6 @@ br_tv_template* C2_HOOK_CDECL _M_br_renderer_facility_soft_templateQuery(br_soft
 
 void* C2_HOOK_CDECL _M_br_renderer_facility_soft_listQuery(br_soft_renderer_facility* self);
 
+int C2_HOOK_CDECL _M_br_renderer_facility_soft_validDestination(br_soft_renderer_facility* self, br_boolean* bp, br_object* h);
+
 #endif //SOFTREND_FACILITY_H
