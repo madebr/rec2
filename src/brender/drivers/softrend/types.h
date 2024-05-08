@@ -15,7 +15,7 @@ struct device_templates {
     struct br_tv_template* template_field_0x14;
     struct br_tv_template* template_field_0x18;
     struct br_tv_template* template_field_0x1c;
-    struct br_tv_template* template_field_0x20;
+    struct br_tv_template* rendererNewTemplate;
     struct br_tv_template* template_field_0x24;
     struct br_tv_template* template_field_0x28;
     struct br_tv_template* template_field_0x2c;
@@ -53,5 +53,10 @@ typedef struct br_soft_renderer_facility {
     soft_state_all default_state;
     br_int_32 num_instances;
 } br_soft_renderer_facility;
+
+typedef struct {
+    br_object* dest;
+    br_primitive_library* prims;
+}  newRendererTokens;
 
 #endif /* SOFTREND_TYPES_H */
