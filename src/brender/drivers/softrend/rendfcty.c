@@ -102,6 +102,14 @@ br_tv_template* C2_HOOK_CDECL _M_br_renderer_facility_soft_templateQuery(br_soft
 }
 C2_HOOK_FUNCTION(0x005406f0, _M_br_renderer_facility_soft_templateQuery)
 
+void* C2_HOOK_CDECL _M_br_renderer_facility_soft_listQuery(br_soft_renderer_facility* self) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer_facility, object_list, 0xc);
+
+    return self->object_list;
+}
+C2_HOOK_FUNCTION(0x00540800, _M_br_renderer_facility_soft_listQuery)
+
 static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatch, rendererFacilityDispatch, 0x0058bc20, {
     NULL,
     NULL,
