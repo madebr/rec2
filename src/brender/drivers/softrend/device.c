@@ -13,7 +13,7 @@ br_device* C2_HOOK_STDCALL DeviceSoftAllocate(const char* identifier) {
 
     C2_HOOK_BUG_ON(sizeof(*self) != 88);
 
-     self = BrResAllocate(NULL, sizeof(*self), BR_MEMORY_OBJECT_DATA);
+    self = BrResAllocate(NULL, sizeof(*self), BR_MEMORY_OBJECT_DATA);
     self->res = BrResAllocate(self, 0, BR_MEMORY_DRIVER);
 
     self->dispatch = (struct br_device_dispatch*)&C2V(softrendr_deviceDispatch);

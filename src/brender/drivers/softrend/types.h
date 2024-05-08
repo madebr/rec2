@@ -7,7 +7,23 @@ typedef struct br_geometry_primitives br_geometry_primitives;
 typedef struct br_geometry_v1_buckets br_geometry_v1_buckets;
 
 struct device_templates {
-    struct br_tv_template *templates[3];
+    struct br_tv_template* template_field_0x00;
+    struct br_tv_template* rendererFacilityTemplate;
+    struct br_tv_template* template_field_0x08;
+    struct br_tv_template* template_field_0x0c;
+    struct br_tv_template* template_field_0x10;
+    struct br_tv_template* template_field_0x14;
+    struct br_tv_template* template_field_0x18;
+    struct br_tv_template* template_field_0x1c;
+    struct br_tv_template* template_field_0x20;
+    struct br_tv_template* template_field_0x24;
+    struct br_tv_template* template_field_0x28;
+    struct br_tv_template* template_field_0x2c;
+    struct br_tv_template* template_field_0x30;
+    struct br_tv_template* template_field_0x34;
+    struct br_tv_template* template_field_0x38;
+    struct br_tv_template* template_field_0x3c;
+    struct br_tv_template* template_field_0x40;
 };
 
 typedef struct br_soft_device {
@@ -17,7 +33,6 @@ typedef struct br_soft_device {
     void *object_list;
     void *res;
     struct device_templates templates;
-    struct host_info hostInfo;
 } br_soft_device;
 
 typedef struct  {
@@ -33,7 +48,7 @@ typedef struct soft_state_all {
 typedef struct br_soft_renderer_facility {
     br_renderer_facility_dispatch* dispatch;
     const char* identifier;
-    br_device* device;
+    br_soft_device* device;
     void* object_list;
     soft_state_all default_state;
     br_int_32 num_instances;
