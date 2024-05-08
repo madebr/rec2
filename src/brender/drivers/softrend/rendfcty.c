@@ -5,8 +5,10 @@
 #include "gv1model.h"
 #include "lighting.h"
 #include "object.h"
+#include "renderer.h"
 #include "state.h"
 
+#include "core/fw/devsetup.h"
 #include "core/fw/objectc.h"
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
@@ -24,6 +26,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererFacilityTemp
     { BRT_IDENTIFIER_CSTR,  NULL,	offsetof(br_renderer_facility , identifier),    5,	3,  0,  0, },
     { BRT_RENDERER_MAX_I32, NULL,	0,					                            5,  1,  1,  0, },
     { BRT_PARTS_TL,         NULL,	&C2V(RendererPartsTokens),                      13, 29, 0,  0, },
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererNewTemplateEntries, 3, 0x00670570, {
+    { BRT_DESTINATION_O,        NULL,   offsetof(newRendererTokens, dest),  2, 3, 0, 0, },
+    { BRT_OUTPUT_FACILITY_O,    NULL	offsetof(newRendererTokens, dest),	2, 3, 0, 0, },
+    { BRT_PRIMITIVE_LIBRARY_O,  NULL,	offsetof(newRendererTokens, prims),	2, 3, 0, 0, },
 });
 
 br_renderer_facility* (C2_HOOK_STDCALL * RendererFacilitySoftAllocate_original)(br_device* dev, const char* identifier);
@@ -115,6 +122,43 @@ int C2_HOOK_CDECL _M_br_renderer_facility_soft_validDestination(br_soft_renderer
     return 0;
 }
 C2_HOOK_FUNCTION(0x00540720, _M_br_renderer_facility_soft_validDestination)
+
+int C2_HOOK_CDECL _M_br_renderer_facility_soft_rendererNew(br_soft_renderer_facility* self, br_renderer** prenderer, br_token_value* tv) {
+    newRendererTokens rt = { NULL, NULL };
+    br_error r;
+    br_int_32 count;
+    br_renderer *renderer;
+
+    C2_HOOK_BUG_ON(BR_ASIZE(C2V(rendererNewTemplateEntries)) != 3);
+
+    if (self->device->templates.rendererNewTemplate == NULL) {
+        self->device->templates.rendererNewTemplate = BrTVTemplateAllocate(self->device,
+            C2V(rendererNewTemplateEntries), BR_ASIZE(C2V(rendererNewTemplateEntries)));
+    }
+
+    BrTokenValueSetMany(&rt, &count, NULL, tv, self->device->templates.rendererNewTemplate);
+
+    self->num_instances += 1;
+
+    if (rt.prims == NULL) {
+        r = BrPrimitiveLibraryFind(&rt.prims, (br_device_pixelmap*)rt.dest, BRT_FLOAT);
+        if (r != 0) {
+            return r;
+        }
+
+        if (rt.prims == NULL) {
+            return 0x1002;
+        }
+    }
+
+    renderer = RendererSoftAllocate(self->dispatch->_device((br_object*)self), self, rt.prims);
+    if (renderer == NULL) {
+        return 0x1002;
+    }
+    *prenderer	= renderer;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00540730, _M_br_renderer_facility_soft_rendererNew)
 
 static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatch, rendererFacilityDispatch, 0x0058bc20, {
     NULL,
