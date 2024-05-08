@@ -23,4 +23,6 @@ void* C2_HOOK_CDECL _M_br_renderer_facility_soft_listQuery(br_soft_renderer_faci
 
 int C2_HOOK_CDECL _M_br_renderer_facility_soft_validDestination(br_soft_renderer_facility* self, br_boolean* bp, br_object* h);
 
+int C2_HOOK_CDECL _M_br_renderer_facility_soft_rendererNew(br_soft_renderer_facility* self, br_renderer** prenderer, br_token_value* tv);
+
 #endif //SOFTREND_FACILITY_H
