@@ -7,7 +7,7 @@ typedef struct br_geometry_primitives br_geometry_primitives;
 typedef struct br_geometry_v1_buckets br_geometry_v1_buckets;
 
 struct device_templates {
-    struct br_tv_template* template_field_0x00;
+    struct br_tv_template* deviceTemplate;
     struct br_tv_template* rendererFacilityTemplate;
     struct br_tv_template* template_field_0x08;
     struct br_tv_template* template_field_0x0c;
