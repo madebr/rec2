@@ -23,4 +23,6 @@ br_size_t C2_HOOK_CDECL softrend_renderer_customPartsExtra(void* block, br_tv_te
 
 void* C2_HOOK_CDECL _M_br_soft_renderer_listQuery(br_soft_renderer* self);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_validDestination(br_soft_renderer* self, br_boolean* bp, br_object* h);
+
 #endif /* SOFTREND_RENDERER_H */
