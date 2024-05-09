@@ -2,6 +2,7 @@
 
 #include "core/fw/objectc.h"
 #include "core/fw/resource.h"
+#include "core/fw/tokenval.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_renderer_dispatch, softRendererDispatch, 0x0058bd40, {
     NULL,
@@ -72,6 +73,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_renderer_dispatch, softRendererDispatch, 0x00
     _M_br_soft_renderer_partQueryCapability,
     _M_br_soft_renderer_stateQueryPerformance,
 });
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_tv_custom, softrend_customPartsConv, 0x00670608, {
+    softrend_renderer_customPartsQuery,
+    NULL,
+    softrend_renderer_customPartsExtra,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererTemplateEntries, 4, 0x00670618, {
+    { BRT_IDENTIFIER_CSTR, NULL, offsetof(br_soft_renderer, identifier), 5, 3, 0, 0, },
+    { BRT_PARTS_TL, NULL, 0, 5, 2, C2V(softrend_customPartsConv), 0, },
+    { BRT_PRIMITIVE_LIBRARY_O, NULL, offsetof(br_soft_renderer, plib), 4, 3, 0, 0 },
+    { BRT_NULL_TOKEN, "PRIMITIVE_STATE_O", offsetof(br_soft_renderer, plib), 4, 3, 0, 0 },
+});
 
 br_renderer* (C2_HOOK_STDCALL * RendererSoftAllocate_original)(br_device *dev, br_soft_renderer_facility *type, br_primitive_library *prims);
 br_renderer* C2_HOOK_STDCALL RendererSoftAllocate(br_device *dev, br_soft_renderer_facility *type, br_primitive_library *prims) {
@@ -90,7 +102,7 @@ br_renderer* C2_HOOK_STDCALL RendererSoftAllocate(br_device *dev, br_soft_render
     }
 
     self->dispatch = (br_renderer_dispatch*)&C2V(softRendererDispatch);
-    self->device = dev;
+    self->device = (br_soft_device*)dev;
     self->identifier = type->identifier;
     self->renderer_facility = type;
     self->object_list = BrObjectListAllocate(self);
@@ -135,3 +147,15 @@ size_t C2_HOOK_CDECL _M_br_soft_renderer_space(br_soft_renderer* self) {
     return sizeof(br_soft_renderer);
 }
 C2_HOOK_FUNCTION(0x00540b70, _M_br_soft_renderer_space)
+
+br_tv_template* C2_HOOK_CDECL _M_br_soft_renderer_templateQuery(br_soft_renderer* self) {
+
+    if (self->device->templates.rendererTemplate == NULL) {
+        self->device->templates.rendererTemplate = BrTVTemplateAllocate(self->device,
+            C2V(rendererTemplateEntries),
+            BR_ASIZE(C2V(rendererTemplateEntries)));
+    }
+
+    return self->device->templates.rendererTemplate;
+}
+C2_HOOK_FUNCTION(0x00540b80, _M_br_soft_renderer_templateQuery)
