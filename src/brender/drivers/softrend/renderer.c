@@ -84,6 +84,15 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererTemplateEntr
     { BRT_PRIMITIVE_LIBRARY_O, NULL, offsetof(br_soft_renderer, plib), 4, 3, 0, 0 },
     { BRT_NULL_TOKEN, "PRIMITIVE_STATE_O", offsetof(br_soft_renderer, plib), 4, 3, 0, 0 },
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const br_token, RendererPartsTokens, 7, 0x0058bd20, {
+    BRT_CULL,
+    BRT_SURFACE,
+    BRT_MATRIX,
+    BRT_ENABLE,
+    BRT_LIGHT,
+    BRT_CLIP,
+    0,
+});
 
 br_renderer* (C2_HOOK_STDCALL * RendererSoftAllocate_original)(br_device *dev, br_soft_renderer_facility *type, br_primitive_library *prims);
 br_renderer* C2_HOOK_STDCALL RendererSoftAllocate(br_device *dev, br_soft_renderer_facility *type, br_primitive_library *prims) {
@@ -159,3 +168,39 @@ br_tv_template* C2_HOOK_CDECL _M_br_soft_renderer_templateQuery(br_soft_renderer
     return self->device->templates.rendererTemplate;
 }
 C2_HOOK_FUNCTION(0x00540b80, _M_br_soft_renderer_templateQuery)
+
+br_error C2_HOOK_CDECL softrend_renderer_customPartsQuery(br_uint_32* pvalue, void** pextra, br_size_t* pextra_size, void* block, br_tv_template_entry* tep) {
+    br_soft_renderer *self = block;
+    int i;
+    br_uint_32 dummy;
+    br_error r;
+    br_token **ppt = (br_token **) pextra;
+
+    if (pextra == NULL || *pextra == NULL || pextra_size == NULL) {
+        return 0x1002;
+    }
+
+    *((void **) pvalue) = *pextra;
+
+    if (((BR_ASIZE(C2V(RendererPartsTokens)) - 1) * sizeof(br_token)) > *pextra_size) {
+        return 0x1002;
+    }
+
+    for (i = 0; i < BR_ASIZE(C2V(RendererPartsTokens)) - 1; i++) {
+        *(*ppt)++ = C2V(RendererPartsTokens)[i];
+        *pextra_size -= sizeof(br_token);
+    }
+
+    r = self->plib->dispatch->_queryBuffer((br_object*)self->plib, &dummy, *ppt, *pextra_size, BRT_PARTS_TL);
+
+    if (r != 0) {
+        return r;
+    }
+
+    for (i = 0; (*ppt)[i] != 0 ; i++) {
+        *pextra_size -= sizeof(br_token);
+    }
+    *pextra_size -= sizeof(br_token);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00540940, softrend_renderer_customPartsQuery)

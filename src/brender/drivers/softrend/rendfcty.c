@@ -14,14 +14,6 @@
 #include "core/fw/tokenval.h"
 
 HOOK_VARIABLE_DECLARE_STATIC(const struct br_renderer_facility_dispatch, rendererFacilityDispatch);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token, RendererPartsTokens, 7, 0x0058bd20, {
-    BRT_CULL,
-    BRT_SURFACE,
-    BRT_MATRIX,
-    BRT_ENABLE,
-    BRT_LIGHT,
-    BRT_CLIP,
-});
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererFacilityTemplateEntries, 3, 0x0058bbd8, {
     { BRT_IDENTIFIER_CSTR,  NULL,	offsetof(br_renderer_facility , identifier),    5,	3,  0,  0, },
     { BRT_RENDERER_MAX_I32, NULL,	0,					                            5,  1,  1,  0, },
