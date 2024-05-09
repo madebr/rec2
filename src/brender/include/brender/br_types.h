@@ -1211,7 +1211,9 @@ typedef struct br_device_pixelmap {        // size: 0x44
     void* pm_stored;                       // @0x40
 } br_device_pixelmap;
 
-typedef struct br_primitive_library br_primitive_library;
+typedef struct br_primitive_library {
+    struct br_primitive_library_dispatch* dispatch;
+} br_primitive_library;
 
 typedef struct br_geometry br_geometry;
 
@@ -1990,7 +1992,7 @@ typedef struct br_renderer_dispatch {
     br_error (C2_HOOK_CDECL *_commandModePop)(br_renderer*);
     br_error (C2_HOOK_CDECL *_flush)(br_renderer*, br_boolean);
     br_error (C2_HOOK_CDECL *_synchronise)(br_renderer*, br_token, br_boolean);
-    br_error (C2_HOOK_CDECL *_testRender)(br_renderer*, br_token, brp_vertex*, brp_vertex*, brp_vertex*);
+    /* br_error (C2_HOOK_CDECL *_testRender)(br_renderer*, br_token, brp_vertex*, brp_vertex*, brp_vertex*); */
     br_error (C2_HOOK_CDECL *_partQueryCapability)(br_renderer*, br_token, br_int_32, br_token_value*, br_size_t);
     br_error (C2_HOOK_CDECL *_stateQueryPerformance)(br_renderer*, br_fixed_lu*);
 } br_renderer_dispatch;

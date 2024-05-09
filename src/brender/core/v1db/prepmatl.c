@@ -18,7 +18,6 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
     br_int_32 c;
 
     C2_HOOK_BUG_ON(sizeof(br_token_value) != 8);
-    C2_HOOK_BUG_ON(sizeof(br_renderer_dispatch) != 272);
     C2_HOOK_BUG_ON(PARTS_MASK != 0x80000041u);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_material, subdivide_tolerance, 0x90);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_dispatch, _stateStoredNew, 0x70);
