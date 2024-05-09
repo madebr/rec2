@@ -117,3 +117,9 @@ void C2_HOOK_CDECL _M_br_soft_renderer_free(br_soft_renderer* self) {
     BrResFreeNoCallback(self);
 }
 C2_HOOK_FUNCTION(0x00540af0, _M_br_soft_renderer_free)
+
+br_token C2_HOOK_CDECL _M_br_soft_renderer_type(br_soft_renderer* self) {
+
+    return BRT_RENDERER;
+}
+C2_HOOK_FUNCTION(0x00540b40, _M_br_soft_renderer_type)
