@@ -11,7 +11,7 @@ typedef struct br_soft_renderer br_soft_renderer;
 struct device_templates {
     struct br_tv_template* deviceTemplate;
     struct br_tv_template* rendererFacilityTemplate;
-    struct br_tv_template* template_field_0x08;
+    struct br_tv_template* rendererTemplate;
     struct br_tv_template* template_field_0x0c;
     struct br_tv_template* template_field_0x10;
     struct br_tv_template* template_field_0x14;
@@ -68,7 +68,7 @@ typedef struct {
 typedef struct br_soft_renderer {
     br_renderer_dispatch* dispatch;
     const char* identifier;
-    br_device* device;
+    br_soft_device* device;
     void* object_list;
     soft_state_all state;
     soft_state_all* default_state;
