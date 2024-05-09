@@ -228,3 +228,9 @@ void* C2_HOOK_CDECL _M_br_soft_renderer_listQuery(br_soft_renderer* self) {
     return self->object_list;
 }
 C2_HOOK_FUNCTION(0x00540bb0, _M_br_soft_renderer_listQuery)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_validDestination(br_soft_renderer* self, br_boolean* bp, br_object* h) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00540bc0, _M_br_soft_renderer_validDestination)
