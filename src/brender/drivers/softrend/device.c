@@ -3,6 +3,7 @@
 #include "core/fw/objectc.h"
 #include "core/fw/resource.h"
 #include "core/fw/token.h"
+#include "core/fw/tokenval.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(struct br_device_dispatch, softrendr_deviceDispatch, 0x0058bcb0, {
     NULL,
@@ -34,6 +35,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(struct br_device_dispatch, softrendr_deviceDispa
     _M_br_object_container_count,
 });
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, deviceTemplateEntries, 1, 0x0058bc98, {
+    { BRT_IDENTIFIER_CSTR, NULL, offsetof(br_soft_device, identifier), 5, 3, 0, 0 },
+});
+
 void C2_HOOK_CDECL _M_br_softrend_device_free(br_soft_device* self) {
 
     BrObjectContainerFree((br_object_container *)self, BR_NULL_TOKEN, NULL, NULL);
@@ -59,6 +64,18 @@ br_size_t C2_HOOK_CDECL _M_br_softrend_device_space(br_soft_device* self) {
     return sizeof(br_soft_device);
 }
 C2_HOOK_FUNCTION(0x005408d0, _M_br_softrend_device_space)
+
+br_tv_template* C2_HOOK_CDECL _M_br_soft_device_templateQuery(br_soft_device* self) {
+
+    if (self->templates.deviceTemplate == NULL) {
+        C2_HOOK_BUG_ON(BR_ASIZE(C2V(deviceTemplateEntries)) != 1);
+
+        self->templates.deviceTemplate = BrTVTemplateAllocate(self, C2V(deviceTemplateEntries), BR_ASIZE(C2V(deviceTemplateEntries)));
+    }
+
+    return self->templates.deviceTemplate;
+}
+C2_HOOK_FUNCTION(0x005408e0, _M_br_soft_device_templateQuery)
 
 br_device* (C2_HOOK_STDCALL * DeviceSoftAllocate_original)(const char* identifier);
 br_device* C2_HOOK_STDCALL DeviceSoftAllocate(const char* identifier) {
