@@ -204,3 +204,18 @@ br_error C2_HOOK_CDECL softrend_renderer_customPartsQuery(br_uint_32* pvalue, vo
     return 0;
 }
 C2_HOOK_FUNCTION(0x00540940, softrend_renderer_customPartsQuery)
+
+br_size_t C2_HOOK_CDECL softrend_renderer_customPartsExtra(void* block, br_tv_template_entry* tep) {
+    br_soft_renderer* self = block;
+    br_size_t s;
+    br_token_value tv[2] = {
+        { BRT_PARTS_TL, 0},
+        { 0, 0}
+    };
+
+    if (self->plib->dispatch->_queryManySize((br_object*)self->plib, &s, tv) != 0) {
+        return 0;
+    }
+    return s + (BR_ASIZE(C2V(SoftRendererPartsTokens)) - 1) * sizeof(br_token);
+}
+C2_HOOK_FUNCTION(0x005409f0, softrend_renderer_customPartsExtra)
