@@ -1,5 +1,6 @@
 #include "renderer.h"
 
+#include "core/fw/object.h"
 #include "core/fw/objectc.h"
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
@@ -219,3 +220,11 @@ br_size_t C2_HOOK_CDECL softrend_renderer_customPartsExtra(void* block, br_tv_te
     return s + (BR_ASIZE(C2V(SoftRendererPartsTokens)) - 1) * sizeof(br_token);
 }
 C2_HOOK_FUNCTION(0x005409f0, softrend_renderer_customPartsExtra)
+
+void* C2_HOOK_CDECL _M_br_soft_renderer_listQuery(br_soft_renderer* self) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, object_list, 0xc);
+
+    return self->object_list;
+}
+C2_HOOK_FUNCTION(0x00540bb0, _M_br_soft_renderer_listQuery)
