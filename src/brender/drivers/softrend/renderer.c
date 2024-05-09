@@ -1,6 +1,7 @@
 #include "renderer.h"
 
 #include "core/fw/objectc.h"
+#include "core/fw/resource.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_renderer_dispatch, softRendererDispatch, 0x0058bd40, {
     NULL,
@@ -105,3 +106,14 @@ br_renderer* C2_HOOK_STDCALL RendererSoftAllocate(br_device *dev, br_soft_render
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00540a40, RendererSoftAllocate, RendererSoftAllocate_original)
+
+void C2_HOOK_CDECL _M_br_soft_renderer_free(br_soft_renderer* self) {
+
+    self->renderer_facility->dispatch->_remove((br_object_container*)self->renderer_facility, (br_object*)self);
+    self->renderer_facility->num_instances -= 1;
+
+    BrObjectContainerFree((br_object_container*)self, BR_NULL_TOKEN, NULL, NULL);
+
+    BrResFreeNoCallback(self);
+}
+C2_HOOK_FUNCTION(0x00540af0, _M_br_soft_renderer_free)
