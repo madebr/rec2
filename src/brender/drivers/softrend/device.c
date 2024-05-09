@@ -47,6 +47,12 @@ br_token C2_HOOK_CDECL _M_br_softrend_device_type(br_soft_device* self) {
 }
 C2_HOOK_FUNCTION(0x005408a0, _M_br_softrend_device_type)
 
+int C2_HOOK_CDECL _M_br_softrend_device_isType(br_soft_device* self, br_token t) {
+
+    return t == BRT_DEVICE || t == BRT_OBJECT_CONTAINER || t == BRT_OBJECT;
+}
+C2_HOOK_FUNCTION(0x005408b0, _M_br_softrend_device_isType)
+
 br_device* (C2_HOOK_STDCALL * DeviceSoftAllocate_original)(const char* identifier);
 br_device* C2_HOOK_STDCALL DeviceSoftAllocate(const char* identifier) {
     br_soft_device *self;
