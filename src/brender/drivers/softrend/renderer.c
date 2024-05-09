@@ -129,3 +129,9 @@ int C2_HOOK_CDECL _M_br_soft_renderer_isType(br_soft_renderer* self, br_token t)
     return t == BRT_RENDERER || t == BRT_OBJECT;
 }
 C2_HOOK_FUNCTION(0x00540b50, _M_br_soft_renderer_isType)
+
+size_t C2_HOOK_CDECL _M_br_soft_renderer_space(br_soft_renderer* self) {
+
+    return sizeof(br_soft_renderer);
+}
+C2_HOOK_FUNCTION(0x00540b70, _M_br_soft_renderer_space)
