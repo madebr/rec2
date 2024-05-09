@@ -15,4 +15,6 @@ int C2_HOOK_CDECL _M_br_soft_renderer_isType(br_soft_renderer* self, br_token t)
 
 size_t C2_HOOK_CDECL _M_br_soft_renderer_space(br_soft_renderer* self);
 
+br_tv_template* C2_HOOK_CDECL _M_br_soft_renderer_templateQuery(br_soft_renderer* self);
+
 #endif /* SOFTREND_RENDERER_H */
