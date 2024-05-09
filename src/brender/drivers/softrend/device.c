@@ -53,6 +53,13 @@ int C2_HOOK_CDECL _M_br_softrend_device_isType(br_soft_device* self, br_token t)
 }
 C2_HOOK_FUNCTION(0x005408b0, _M_br_softrend_device_isType)
 
+br_size_t C2_HOOK_CDECL _M_br_softrend_device_space(br_soft_device* self) {
+
+    C2_HOOK_BUG_ON(sizeof(br_soft_device) != 0x58);
+    return sizeof(br_soft_device);
+}
+C2_HOOK_FUNCTION(0x005408d0, _M_br_softrend_device_space)
+
 br_device* (C2_HOOK_STDCALL * DeviceSoftAllocate_original)(const char* identifier);
 br_device* C2_HOOK_STDCALL DeviceSoftAllocate(const char* identifier) {
     br_soft_device *self;
