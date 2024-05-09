@@ -21,4 +21,6 @@ br_error C2_HOOK_CDECL softrend_renderer_customPartsQuery(br_uint_32* pvalue, vo
 
 br_size_t C2_HOOK_CDECL softrend_renderer_customPartsExtra(void* block, br_tv_template_entry* tep);
 
+void* C2_HOOK_CDECL _M_br_soft_renderer_listQuery(br_soft_renderer* self);
+
 #endif /* SOFTREND_RENDERER_H */
