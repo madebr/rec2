@@ -123,3 +123,9 @@ br_token C2_HOOK_CDECL _M_br_soft_renderer_type(br_soft_renderer* self) {
     return BRT_RENDERER;
 }
 C2_HOOK_FUNCTION(0x00540b40, _M_br_soft_renderer_type)
+
+int C2_HOOK_CDECL _M_br_soft_renderer_isType(br_soft_renderer* self, br_token t) {
+
+    return t == BRT_RENDERER || t == BRT_OBJECT;
+}
+C2_HOOK_FUNCTION(0x00540b50, _M_br_soft_renderer_isType)
