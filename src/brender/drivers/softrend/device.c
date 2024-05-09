@@ -77,6 +77,12 @@ br_tv_template* C2_HOOK_CDECL _M_br_soft_device_templateQuery(br_soft_device* se
 }
 C2_HOOK_FUNCTION(0x005408e0, _M_br_soft_device_templateQuery)
 
+void* C2_HOOK_CDECL _M_br_softrend_device_listQuery(br_soft_device* self) {
+
+    return self->object_list;
+}
+C2_HOOK_FUNCTION(0x00540910, _M_br_softrend_device_listQuery)
+
 br_device* (C2_HOOK_STDCALL * DeviceSoftAllocate_original)(const char* identifier);
 br_device* C2_HOOK_STDCALL DeviceSoftAllocate(const char* identifier) {
     br_soft_device *self;
