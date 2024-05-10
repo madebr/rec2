@@ -7,4 +7,6 @@
 
 br_error C2_HOOK_STDCALL CheckPrimitiveState(br_soft_renderer* self);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_partSet(br_soft_renderer* self, br_token part, br_int_32 index, br_token t, br_uint_32 value);
+
 #endif /* SOFTREND_RNDSTATE_H */
