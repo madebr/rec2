@@ -49,4 +49,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateMask(br_soft_renderer* self, br_
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_stateDefault(br_soft_renderer* self, br_uint_32 mask);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestF(br_soft_renderer* self, br_token* r, br_bounds3_f* bounds);
+
 #endif /* SOFTREND_RNDSTATE_H */
