@@ -310,3 +310,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_synchronise(br_soft_renderer* self, b
     return self->plib->dispatch->_synchronise(self->plib, sync_type, block);
 }
 C2_HOOK_FUNCTION(0x00540c90, _M_br_soft_renderer_synchronise)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryCapability(br_soft_renderer* self, br_token part, br_int_32 index, br_token_value* buffer, br_size_t buffer_size) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00541d90, _M_br_soft_renderer_partQueryCapability)
