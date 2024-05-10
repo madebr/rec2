@@ -298,3 +298,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModePop(br_soft_renderer* self
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00540cf0, _M_br_soft_renderer_commandModePop)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_flush(br_soft_renderer* self, br_boolean wait) {
+
+    return self->plib->dispatch->_flush(self->plib, wait);
+}
+C2_HOOK_FUNCTION(0x00540c70, _M_br_soft_renderer_flush)
