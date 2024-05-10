@@ -195,3 +195,47 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryAllSize(br_soft_renderer* se
     }
 }
 C2_HOOK_FUNCTION(0x00541d00, _M_br_soft_renderer_partQueryAllSize)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_partIndexQuery(br_soft_renderer* self, br_token part, br_int_32* pnindex) {
+    br_int_32 n;
+    br_error r;
+
+    C2_HOOK_BUG_ON(BR_ASIZE(self->state.light) != 0x10);
+    C2_HOOK_BUG_ON(BR_ASIZE(self->state.clip) != 0x6);
+
+    switch(part) {
+    case BRT_CULL:
+    case BRT_SURFACE:
+    case BRT_MATRIX:
+    case BRT_ENABLE:
+        n = 1;
+        break;
+
+    case BRT_LIGHT:
+        n = BR_ASIZE(self->state.light);
+        break;
+
+    case BRT_CLIP:
+        n = BR_ASIZE(self->state.clip);
+        break;
+
+    default:
+        n = 0;
+        r = CheckPrimitiveState(self);
+        if (r != 0) {
+            return r;
+        }
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_primitive_state_dispatch, _partIndexQuery, 0x64);
+        r = self->state.pstate->dispatch->_partIndexQuery(self->state.pstate, part, &n);
+        if (r != 0) {
+            return r;
+        }
+    }
+
+    if (pnindex == NULL) {
+        return 0x1002;
+    }
+    *pnindex = n;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00541da0, _M_br_soft_renderer_partIndexQuery)
