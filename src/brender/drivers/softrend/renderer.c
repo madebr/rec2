@@ -261,3 +261,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_bufferStoredNew(br_soft_renderer* sel
     return self->plib->dispatch->_bufferStoredNew(self->plib, psm, use, pm, tv);
 }
 C2_HOOK_FUNCTION(0x00540c10, _M_br_soft_renderer_bufferStoredNew)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_bufferStoredAvail(br_soft_renderer* self, br_int_32* space, br_token use, br_token_value* tv) {
+
+    return self->plib->dispatch->_bufferStoredAvail(self->plib, space, use, tv);
+}
+C2_HOOK_FUNCTION(0x00540c40, _M_br_soft_renderer_bufferStoredAvail)
