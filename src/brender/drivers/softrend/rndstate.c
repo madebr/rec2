@@ -405,3 +405,15 @@ br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br
     return 0;
 }
 C2_HOOK_FUNCTION(0x00541e70, StateCopy)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_statePush(br_soft_renderer* self, br_uint_32 mask) {
+    soft_state_all* sp;
+
+    if (self->stack_top >= MAX_STATE_STACK) {
+        return 0x1004;
+    }
+    sp = self->state_stack + self->stack_top;
+    self->stack_top += 1;
+    return StateCopy(sp, &self->state, mask, self);
+}
+C2_HOOK_FUNCTION(0x00542280, _M_br_soft_renderer_statePush)
