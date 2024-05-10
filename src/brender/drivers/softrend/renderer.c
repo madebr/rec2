@@ -280,3 +280,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModeQuery(br_soft_renderer* se
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00540cc0, _M_br_soft_renderer_commandModeQuery)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModeDefault(br_soft_renderer* self) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00540cd0, _M_br_soft_renderer_commandModeDefault)
