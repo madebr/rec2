@@ -383,3 +383,14 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
     return *tpp = BrTVTemplateAllocate(self->device,  entries, n_entries);
 }
 C2_HOOK_FUNCTION(0x00541580, FindStateTemplate)
+
+void (C2_HOOK_STDCALL * TemplateActions_original)(soft_state_all *state, br_token part, br_int_32 index, br_uint_32 mask);
+void C2_HOOK_STDCALL TemplateActions(soft_state_all *state, br_token part, br_int_32 index, br_uint_32 mask) {
+
+#if defined(C2_HOOKS_ENABLED)
+    TemplateActions_original(state, part, index, mask);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00541770, TemplateActions, TemplateActions_original)
