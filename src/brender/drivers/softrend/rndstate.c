@@ -306,3 +306,17 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulX(br_soft_renderer* se
     return 0;
 }
 C2_HOOK_FUNCTION(0x00542130, _M_br_soft_renderer_modelPopPushMulX)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_modelInvert(br_soft_renderer* self) {
+    br_matrix34 old;
+
+    BrMatrix34Copy(&old, &self->state.matrix.model_to_view);
+    if (self->state.matrix.model_to_view_hint == BRT_LENGTH_PRESERVING) {
+        BrMatrix34LPInverse(&self->state.matrix.model_to_view, &old);
+    } else {
+        BrMatrix34Inverse(&self->state.matrix.model_to_view, &old);
+    }
+    TouchModelToView(self);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00542210, _M_br_soft_renderer_modelInvert)
