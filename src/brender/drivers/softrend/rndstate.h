@@ -37,4 +37,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelInvert(br_soft_renderer* self);
 
 br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br_uint_32 copy_mask, void* res);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_statePush(br_soft_renderer* self, br_uint_32 mask);
+
 #endif /* SOFTREND_RNDSTATE_H */
