@@ -137,7 +137,8 @@ typedef struct soft_state_all {
     soft_state_bounds bounds;
     soft_state_enable enable;
     soft_state_hidden hidden;
-    undefined field_0x590[0x1f8];
+    undefined field_0x590[0x1f4];
+    br_primitive_state* pstate;
 } soft_state_all;
 
 typedef struct br_soft_renderer_facility {
