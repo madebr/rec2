@@ -289,3 +289,20 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulF(br_soft_renderer* se
     return 0;
 }
 C2_HOOK_FUNCTION(0x005421c0, _M_br_soft_renderer_modelPopPushMulF)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulX(br_soft_renderer* self, br_matrix34_x* m) {
+    br_matrix34 cm;
+
+    if (self->stack_top == 0) {
+        return 0x1005;
+    }
+    convertM34FixedToFloat((br_matrix34_f*)&cm, (const br_matrix34_x*)m);
+    BrMatrix34Mul(
+        &self->state.matrix.model_to_view,
+        &cm,
+        &self->state_stack[0].matrix.model_to_view);
+    self->state.matrix.model_to_view_hint = BRT_NONE;
+    TouchModelToView(self);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00542130, _M_br_soft_renderer_modelPopPushMulX)
