@@ -1,5 +1,7 @@
 #include "renderer.h"
 
+#include "sstate.h"
+
 #include "core/fw/object.h"
 #include "core/fw/objectc.h"
 #include "core/fw/resource.h"
@@ -234,3 +236,16 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_validDestination(br_soft_renderer* se
     return 0;
 }
 C2_HOOK_FUNCTION(0x00540bc0, _M_br_soft_renderer_validDestination)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredNew(br_soft_renderer* self, br_soft_renderer_state_stored** pss, br_uint_32 mask, br_token_value* tv) {
+    br_soft_renderer_state_stored *ss;
+
+    ss = RendererStateStoredSoftAllocate(self, &self->state, mask, tv);
+
+    if (ss == NULL) {
+        return 0x1002;
+    }
+    *pss = ss;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00540bd0, _M_br_soft_renderer_stateStoredNew)
