@@ -1,5 +1,6 @@
 #include "renderer.h"
 
+#include "rndstate.h"
 #include "sstate.h"
 
 #include "core/fw/object.h"
