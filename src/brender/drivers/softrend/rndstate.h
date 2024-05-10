@@ -11,4 +11,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partSet(br_soft_renderer* self, br_to
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partSetMany(br_soft_renderer* self, br_token part, br_int_32 index, br_token_value* tv, br_int_32* pcount);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_partQuery(br_soft_renderer* self, br_token part, br_int_32 index, br_uint_32* pvalue, br_token t);
+
 #endif /* SOFTREND_RNDSTATE_H */
