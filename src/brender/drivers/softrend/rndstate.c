@@ -479,3 +479,12 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateMask(br_soft_renderer* self, br_
     return 0;
 }
 C2_HOOK_FUNCTION(0x00542490, _M_br_soft_renderer_stateMask)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateDefault(br_soft_renderer* self, br_uint_32 mask) {
+
+    if(self->state.pstate != NULL) {
+        self->state.pstate->dispatch->_stateDefault(self->state.pstate, mask);
+    }
+    return StateCopy(&self->state, self->default_state, mask & 0x7f, self);
+}
+C2_HOOK_FUNCTION(0x00542450, _M_br_soft_renderer_stateDefault)
