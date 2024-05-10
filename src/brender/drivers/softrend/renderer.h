@@ -39,4 +39,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_synchronise(br_soft_renderer* self, b
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryCapability(br_soft_renderer* self, br_token part, br_int_32 index, br_token_value* buffer, br_size_t buffer_size);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateQueryPerformance(br_soft_renderer* self, br_fixed_lu* speed);
+
 #endif /* SOFTREND_RENDERER_H */
