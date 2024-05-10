@@ -9,4 +9,6 @@ br_soft_renderer_state_stored* C2_HOOK_STDCALL RendererStateStoredSoftAllocate(b
 
 br_error C2_HOOK_STDCALL StateCopyToStored(br_soft_renderer_state_stored* dest, soft_state_all* src, br_uint_32 copy_mask, void* res);
 
+br_error C2_HOOK_STDCALL StateCopyFromStored(soft_state_all* dest, br_soft_renderer_state_stored* src, br_uint_32 copy_mask, void* res);
+
 #endif /* SOFTREND_SSTATE_H */
