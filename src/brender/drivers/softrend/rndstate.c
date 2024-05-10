@@ -137,3 +137,42 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryMany(br_soft_renderer* self,
     }
 }
 C2_HOOK_FUNCTION(0x00541b10, _M_br_soft_renderer_partQueryMany)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryManySize(br_soft_renderer* self, br_token part, br_int_32 index, br_size_t* pextra_size, br_token_value* tv) {
+    br_error r;
+    soft_state_all* sp = &self->state;
+    br_tv_template* tp;
+
+    tp = FindStateTemplate(self, &sp, part, index);
+    if (tp != NULL) {
+        return BrTokenValueQueryManySize(pextra_size, tv, sp, tp);
+    } else {
+        r = CheckPrimitiveState(self);
+        if (r != 0) {
+            return r;
+        }
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_primitive_state_dispatch, _partQueryManySize, 0x58);
+        return self->state.pstate->dispatch->_partQueryManySize(self->state.pstate, part, index, pextra_size, tv);
+    }
+}
+C2_HOOK_FUNCTION(0x00541bc0, _M_br_soft_renderer_partQueryManySize)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryAll(br_soft_renderer* self, br_token part, br_int_32 index, br_token_value* buffer, br_size_t buffer_size) {
+    br_error r;
+    soft_state_all* sp = &self->state;
+    br_tv_template* tp;
+
+    tp = FindStateTemplate(self,&sp,part,index);
+
+    if (tp != NULL) {
+        return BrTokenValueQueryAll(buffer, buffer_size, sp, tp);
+    } else {
+        r = CheckPrimitiveState(self);
+        if (r != 0) {
+            return r;
+        }
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_primitive_state_dispatch, _partQueryAll, 0x5c);
+        return self->state.pstate->dispatch->_partQueryAll(self->state.pstate, part, index, buffer, buffer_size);
+    }
+}
+C2_HOOK_FUNCTION(0x00541c60, _M_br_soft_renderer_partQueryAll)
