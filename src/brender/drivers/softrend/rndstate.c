@@ -4,6 +4,7 @@
 
 #include "core/fw/tokenval.h"
 
+#include "c2_string.h"
 
 br_error C2_HOOK_STDCALL CheckPrimitiveState(br_soft_renderer* self) {
     br_error r;
@@ -320,3 +321,87 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelInvert(br_soft_renderer* self) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00542210, _M_br_soft_renderer_modelInvert)
+
+br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br_uint_32 copy_mask, void* res) {
+    int i;
+
+    if (copy_mask & 0x41) {
+        copy_mask |= 0x100;
+    }
+    copy_mask &= src->valid;
+    dest->valid |= copy_mask;
+
+    if (copy_mask & ~0x7f) {
+        if (dest->pstate != NULL) {
+            if (src->pstate != NULL) {
+                dest->pstate->dispatch->_stateCopy(dest->pstate, src->pstate, copy_mask);
+            } else {
+                dest->pstate->dispatch->_stateDefault(dest->pstate, copy_mask);
+            }
+        } else {
+            if (src->pstate != NULL) {
+                if (src->renderer->plib->dispatch->_stateNew(src->renderer->plib, &dest->pstate) == 0) {
+                    if (res != NULL) {
+                        BrResAdd(res, dest->pstate);
+                    }
+                    dest->pstate->dispatch->_stateCopy(dest->pstate, src->pstate, copy_mask);
+                }
+            }
+        }
+    }
+
+    if (copy_mask & 0x40) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_cull) != 0xc);
+        c2_memcpy(&dest->cull, &src->cull, sizeof(soft_state_cull));
+    }
+
+    if (copy_mask & 0x1) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_surface) != 0x48);
+        c2_memcpy(&dest->surface, &src->surface, sizeof(soft_state_surface));
+    }
+
+    if (copy_mask & 0x2) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_matrix) != 0xbc);
+        c2_memcpy(&dest->matrix, &src->matrix, sizeof(soft_state_matrix));
+    }
+
+    if (copy_mask & 0x4) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_enable) != 0x8);
+        c2_memcpy(&dest->enable, &src->enable, sizeof(soft_state_enable));
+    }
+
+    if (copy_mask & 0x20) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_bounds) != 0x10);
+        c2_memcpy(&dest->bounds, &src->bounds, sizeof(soft_state_bounds));
+    }
+
+    if (copy_mask & 0x8) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_light) != 0x3c);
+        for (i = 0; i < BR_ASIZE(src->light); i++) {
+            c2_memcpy(&dest->light[i], &src->light[i], sizeof(soft_state_light));
+        }
+        dest->timestamp_lights = src->timestamp_lights;
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, timestamp_lights, 0x41c);
+    }
+
+    if (copy_mask & 0x10) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_clip) != 0x14);
+        for (i = 0; i < BR_ASIZE(src->clip); i++) {
+            c2_memcpy(&dest->clip[i], &src->clip[i], sizeof(soft_state_clip));
+        }
+        dest->timestamp_clips = src->timestamp_clips;
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, timestamp_clips, 0x498);
+    }
+
+    if (copy_mask & 0x100) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_cache) != 0x1ec);
+        c2_memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
+    }
+
+    if ((copy_mask & 0x41) != 0x41) {
+        dest->cache.valid = 0;
+    }
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00541e70, StateCopy)
