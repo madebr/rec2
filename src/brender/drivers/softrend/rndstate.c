@@ -412,8 +412,23 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_statePush(br_soft_renderer* self, br_
     if (self->stack_top >= MAX_STATE_STACK) {
         return 0x1004;
     }
-    sp = self->state_stack + self->stack_top;
+    sp = &self->state_stack[self->stack_top];
     self->stack_top += 1;
     return StateCopy(sp, &self->state, mask, self);
 }
 C2_HOOK_FUNCTION(0x00542280, _M_br_soft_renderer_statePush)
+
+br_error C2_HOOK_CDECL _M_br_soft_state_statePop(br_soft_renderer* self, br_uint_32 mask) {
+    soft_state_all* sp;
+    br_error r;
+
+    if (self->stack_top == 0) {
+        return 0x1005;
+    }
+    self->stack_top -= 1;
+    sp = &self->state_stack[self->stack_top];
+    r = StateCopy(&self->state, sp, mask, self);
+    sp->valid = 0;
+    return r;
+}
+C2_HOOK_FUNCTION(0x005422c0, _M_br_soft_state_statePop)
