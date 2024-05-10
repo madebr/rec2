@@ -21,4 +21,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryManySize(br_soft_renderer* s
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryAll(br_soft_renderer* self, br_token part, br_int_32 index, br_token_value* buffer, br_size_t buffer_size);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryAllSize(br_soft_renderer* self, br_token part, br_int_32 index, br_size_t* psize);
+
 #endif /* SOFTREND_RNDSTATE_H */
