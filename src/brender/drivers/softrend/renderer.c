@@ -316,3 +316,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryCapability(br_soft_renderer*
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00541d90, _M_br_soft_renderer_partQueryCapability)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateQueryPerformance(br_soft_renderer* self, br_fixed_lu* speed) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00541e60, _M_br_soft_renderer_stateQueryPerformance)
