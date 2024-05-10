@@ -33,4 +33,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_bufferStoredNew(br_soft_renderer* sel
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_bufferStoredAvail(br_soft_renderer* self, br_int_32* space, br_token use, br_token_value* tv);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_flush(br_soft_renderer* self, br_boolean wait);
+
 #endif /* SOFTREND_RENDERER_H */
