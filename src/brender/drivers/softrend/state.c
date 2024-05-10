@@ -394,3 +394,14 @@ void C2_HOOK_STDCALL TemplateActions(soft_state_all *state, br_token part, br_in
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00541770, TemplateActions, TemplateActions_original)
+
+void (C2_HOOK_STDCALL * TouchModelToView_original)(br_soft_renderer* self);
+void C2_HOOK_STDCALL TouchModelToView(br_soft_renderer* self) {
+
+#if defined(C2_HOOKS_ENABLED)
+    TouchModelToView_original(self);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005417d0, TouchModelToView, TouchModelToView_original)
