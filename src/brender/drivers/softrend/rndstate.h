@@ -33,4 +33,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulF(br_soft_renderer* se
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulX(br_soft_renderer* self, br_matrix34_x* m);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_modelInvert(br_soft_renderer* self);
+
 #endif /* SOFTREND_RNDSTATE_H */
