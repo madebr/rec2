@@ -124,20 +124,26 @@ typedef struct {
     br_vector4 plane;
 } soft_state_clip;
 
+typedef struct {
+    undefined field_0x0[0x1e8];
+    br_boolean valid;
+} soft_state_cache;
+
 typedef struct soft_state_all {
     br_soft_renderer* renderer;
     br_uint_32 valid;
     soft_state_cull cull;
     soft_state_surface surface;
     soft_state_light light[MAX_STATE_LIGHTS];
-    undefined field_41c[4];
+    br_timestamp  timestamp_lights;
     soft_state_clip clip[MAX_STATE_CLIP_PLANES];
-    undefined field_0x498[0x4];
+    br_timestamp  timestamp_clips;
     soft_state_matrix matrix;
     soft_state_bounds bounds;
     soft_state_enable enable;
     soft_state_hidden hidden;
-    undefined field_0x590[0x1f4];
+    soft_state_cache cache;
+    undefined field_0x77c[0x8];
     br_primitive_state* pstate;
 } soft_state_all;
 
