@@ -501,3 +501,14 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestF(br_soft_renderer* self, b
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00542390, _M_br_soft_renderer_boundsTestF, _M_br_soft_renderer_boundsTestF_original)
+
+br_error (C2_HOOK_CDECL * _M_br_soft_renderer_boundsTestX_original)(br_soft_renderer* self, br_token* r, br_bounds3_x* bounds_in);
+br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestX(br_soft_renderer* self, br_token* r, br_bounds3_x* bounds_in) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return _M_br_soft_renderer_boundsTestX_original(self, r, bounds_in);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00542320, _M_br_soft_renderer_boundsTestX, _M_br_soft_renderer_boundsTestX_original)
