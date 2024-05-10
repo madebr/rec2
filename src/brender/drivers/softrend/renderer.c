@@ -268,3 +268,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_bufferStoredAvail(br_soft_renderer* s
     return self->plib->dispatch->_bufferStoredAvail(self->plib, space, use, tv);
 }
 C2_HOOK_FUNCTION(0x00540c40, _M_br_soft_renderer_bufferStoredAvail)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModeSet(br_soft_renderer* self, br_token mode) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00540cb0, _M_br_soft_renderer_commandModeSet)
