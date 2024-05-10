@@ -41,4 +41,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_statePush(br_soft_renderer* self, br_
 
 br_error C2_HOOK_CDECL _M_br_soft_state_statePop(br_soft_renderer* self, br_uint_32 mask);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateSave(br_soft_renderer* self, br_soft_renderer_state_stored* save, br_uint_32 mask);
+
 #endif /* SOFTREND_RNDSTATE_H */

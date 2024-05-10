@@ -1,5 +1,6 @@
 #include "rndstate.h"
 
+#include "sstate.h"
 #include "state.h"
 
 #include "core/fw/tokenval.h"
@@ -432,3 +433,9 @@ br_error C2_HOOK_CDECL _M_br_soft_state_statePop(br_soft_renderer* self, br_uint
     return r;
 }
 C2_HOOK_FUNCTION(0x005422c0, _M_br_soft_state_statePop)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateSave(br_soft_renderer* self, br_soft_renderer_state_stored* save, br_uint_32 mask) {
+
+    return StateCopyToStored(save, &self->state, mask, save);
+}
+C2_HOOK_FUNCTION(0x00542410, _M_br_soft_renderer_stateSave)
