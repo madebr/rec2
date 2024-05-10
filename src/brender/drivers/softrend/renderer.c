@@ -292,3 +292,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModePush(br_soft_renderer* sel
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00540ce0, _M_br_soft_renderer_commandModePush)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModePop(br_soft_renderer* self) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00540cf0, _M_br_soft_renderer_commandModePop)
