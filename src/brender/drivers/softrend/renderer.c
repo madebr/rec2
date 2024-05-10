@@ -249,3 +249,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredNew(br_soft_renderer* self
     return 0;
 }
 C2_HOOK_FUNCTION(0x00540bd0, _M_br_soft_renderer_stateStoredNew)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredAvail(br_soft_renderer* self, br_int_32* psize, br_uint_32 mask, br_token_value* tv) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00540c00, _M_br_soft_renderer_stateStoredAvail)
