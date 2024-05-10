@@ -512,3 +512,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestX(br_soft_renderer* self, b
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00542320, _M_br_soft_renderer_boundsTestX, _M_br_soft_renderer_boundsTestX_original)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_coverageTestF(br_soft_renderer* self, br_float* r, br_bounds3_f* bounds) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x005423d0, _M_br_soft_renderer_coverageTestF)
