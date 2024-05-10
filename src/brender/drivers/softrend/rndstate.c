@@ -490,3 +490,14 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateDefault(br_soft_renderer* self, 
     return StateCopy(&self->state, self->default_state, mask & 0x7f, self);
 }
 C2_HOOK_FUNCTION(0x00542450, _M_br_soft_renderer_stateDefault)
+
+br_error (C2_HOOK_CDECL * _M_br_soft_renderer_boundsTestF_original)(br_soft_renderer* self, br_token* r, br_bounds3_f* bounds);
+br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestF(br_soft_renderer* self, br_token* r, br_bounds3_f* bounds) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return _M_br_soft_renderer_boundsTestF_original(self, r, bounds);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00542390, _M_br_soft_renderer_boundsTestF, _M_br_soft_renderer_boundsTestF_original)
