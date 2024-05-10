@@ -275,3 +275,17 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelMulX(br_soft_renderer* self, br_
     return 0;
 }
 C2_HOOK_FUNCTION(0x005420b0, _M_br_soft_renderer_modelMulX)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulF(br_soft_renderer* self, br_matrix34_f* m) {
+
+    if (self->stack_top == 0) {
+        return 0x1005;
+    }
+    BrMatrix34Mul(&self->state.matrix.model_to_view,
+        (br_matrix34*)m,
+        &self->state_stack[0].matrix.model_to_view);
+    self->state.matrix.model_to_view_hint = BRT_NONE;
+    TouchModelToView(self);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005421c0, _M_br_soft_renderer_modelPopPushMulF)
