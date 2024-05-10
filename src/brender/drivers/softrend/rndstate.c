@@ -97,3 +97,23 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQuery(br_soft_renderer* self, br_
     }
 }
 C2_HOOK_FUNCTION(0x005419c0, _M_br_soft_renderer_partQuery)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryBuffer(br_soft_renderer* self, br_token part, br_int_32 index, br_uint_32* pvalue, br_uint_32 *buffer, br_size_t buffer_size, br_token t) {
+    br_error r;
+    soft_state_all* sp = &self->state;
+    br_tv_template* tp;
+
+    tp = FindStateTemplate(self, &sp, part, index);
+
+    if (tp != NULL) {
+        return BrTokenValueQuery(pvalue, buffer, buffer_size, t, sp, tp);
+    } else {
+        r = CheckPrimitiveState(self);
+        if (r != 0) {
+            return r;
+        }
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_primitive_state_dispatch, _partQueryBuffer, 0x50);
+        return self->state.pstate->dispatch->_partQueryBuffer(self->state.pstate, part, index, pvalue, buffer, buffer_size, t);
+    }
+}
+C2_HOOK_FUNCTION(0x00541a60, _M_br_soft_renderer_partQueryBuffer)
