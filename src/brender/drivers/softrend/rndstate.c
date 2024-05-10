@@ -439,3 +439,10 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateSave(br_soft_renderer* self, br_
     return StateCopyToStored(save, &self->state, mask, save);
 }
 C2_HOOK_FUNCTION(0x00542410, _M_br_soft_renderer_stateSave)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateRestore(br_soft_renderer* self, br_soft_renderer_state_stored* save, br_uint_32 mask) {
+
+    self->last_restored = save;
+    return StateCopyFromStored(&self->state, save, mask, self);
+}
+C2_HOOK_FUNCTION(0x00542430, _M_br_soft_renderer_stateRestore)
