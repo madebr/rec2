@@ -274,3 +274,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModeSet(br_soft_renderer* self
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00540cb0, _M_br_soft_renderer_commandModeSet)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModeQuery(br_soft_renderer* self, br_token *mode) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00540cc0, _M_br_soft_renderer_commandModeQuery)
