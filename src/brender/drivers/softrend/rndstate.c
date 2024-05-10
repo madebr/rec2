@@ -524,3 +524,9 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_coverageTestX(br_soft_renderer* self,
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x005423e0, _M_br_soft_renderer_coverageTestX)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_viewDistanceF(br_soft_renderer* self, br_float* r) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x005423f0, _M_br_soft_renderer_viewDistanceF)

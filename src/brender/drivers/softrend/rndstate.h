@@ -57,4 +57,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_coverageTestF(br_soft_renderer* self,
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_coverageTestX(br_soft_renderer* self, br_fixed_ls* r, br_bounds3_x* bounds);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_viewDistanceF(br_soft_renderer* self, br_float* r);
+
 #endif /* SOFTREND_RNDSTATE_H */
