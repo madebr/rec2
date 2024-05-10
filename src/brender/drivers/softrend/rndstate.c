@@ -250,3 +250,28 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelMulF(br_soft_renderer* self, br_
     return 0;
 }
 C2_HOOK_FUNCTION(0x00542060, _M_br_soft_renderer_modelMulF)
+
+static void convertM34FixedToFloat(br_matrix34_f* dest, const br_matrix34_x* src)
+{
+    int i,j;
+
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 3; j++) {
+            dest->m[i][j] = BrFixedToFloat(src->m[i][j]);
+        }
+    }
+}
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_modelMulX(br_soft_renderer* self, br_matrix34_x* m) {
+#define CONV(d,s)
+    br_matrix34 om;
+    br_matrix34 cm;
+
+    om = self->state.matrix.model_to_view;
+    convertM34FixedToFloat((br_matrix34_f*)&cm, (const br_matrix34_x*)m);
+    BrMatrix34Mul(&self->state.matrix.model_to_view, &cm, &om);
+    self->state.matrix.model_to_view_hint = BRT_NONE;
+    TouchModelToView(self);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005420b0, _M_br_soft_renderer_modelMulX)
