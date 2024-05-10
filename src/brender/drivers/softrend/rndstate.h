@@ -65,4 +65,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModeSet(br_soft_renderer* self
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModeQuery(br_soft_renderer* self, br_token *mode);
 
+br_error C2_HOOK_CDECL _M_br_soft_renderer_commandModeDefault(br_soft_renderer* self);
+
 #endif /* SOFTREND_RNDSTATE_H */
