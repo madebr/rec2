@@ -2,6 +2,7 @@
 
 #include "core/fw/tokenval.h"
 
+#include "c2_string.h"
 #include <stdlib.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, partCullTemplateEntries, 2, 0x0058c0d0, {
@@ -85,14 +86,132 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, partClipTemplateEntr
     { BRT_PLANE_V4_X,   NULL, offsetof(soft_state_all, clip[0].plane),  3,  20, 0,  0x1001, },
     { BRT_PLANE_V4_F,   NULL, offsetof(soft_state_all, clip[0].plane),  7,  6,  0,  0x1001, },
 });
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_surface, partSurfaceDefault, 0x0058c6f8, {
+    BR_COLOUR_RGB(0xff, 0xff, 0xff),
+    1.f,
+    0.f,
+    0.75f,
+    0.f,
+    20.f,
+    0,
+    0,
+    BRT_SURFACE,
+    BRT_GEOMETRY_MAP,
+    {
+        { 1.f, 0.f, },
+        { 0.f, 1.f, },
+        { 0.f, 0.f, },
+    }},
+    0,
+    0,
+});
+
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_light, partLightDefault, 0x0058c740, {
+    BRT_NONE,
+    BRT_MODEL,
+    { { 0.f, 0.f, 0.f, } },
+    { { 0.f, 0.f, 0.f, } },
+    BR_COLOUR_RGB(0x00, 0x15, 0x54),
+    3640.f,
+    0.f,
+    0.f,
+    0.f,
+    0.f,
+    0,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_clip, partClipDefault, 0x0058c780, {
+    BRT_NONE,
+    { { 0.f, 0.f, -1.f, 0.f, } },
+});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_matrix, partMatrixDefault, 0x0058c798, {
+    {{
+        { 1.f, 0.f, 0.f, },
+        { 0.f, 1.f, 0.f, },
+        { 0.f, 0.f, 1.f, },
+        { 0.f, 0.f, 0.f, },
+    }},
+    {{
+        { 1.f, 0.f, 0.f, 0.f, },
+        { 0.f, 1.f, 0.f, 0.f, },
+        { 0.f, 0.f, 1.f, 0.f, },
+        { 0.f, 0.f, 0.f, 1.f, },
+    }},
+    {{
+        { 1.f, 0.f, 0.f, },
+        { 0.f, 1.f, 0.f, },
+        { 0.f, 0.f, 1.f, },
+        { 0.f, 0.f, 0.f, },
+    }},
+    BRT_LENGTH_PRESERVING,
+    BRT_PARALLEL,
+    0,
+    0,
+    0,
+    0,
+    0,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_enable, partEnableDefault, 0x0058c858, {
+    0x2a,
+    0,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_hidden, partHiddenSurfaceDefault, 0x0058c860, {
+    BRT_NONE,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    0,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_bounds, partBoundsDefault, 0x0058c880, {
+    { BR_SCALAR_MAX, BR_SCALAR_MAX, },
+    { BR_SCALAR_MIN, BR_SCALAR_MIN, },
+});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_cull, partCullDefault, 0x0058c6e8, {
+    BRT_NONE,
+    BRT_MODEL,
+    0,
+});
 
 int (C2_HOOK_STDCALL * StateInitialise_original)(soft_state_all* state);
 int C2_HOOK_STDCALL StateInitialise(soft_state_all* state) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return StateInitialise_original(state);
 #else
-#error "Not implemented"
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(soft_state_surface) != 0x48);
+	c2_memcpy(&state->surface, &C2V(partSurfaceDefault), sizeof(soft_state_surface));
+
+	for (i = 0; i < MAX_STATE_LIGHTS; i++) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_light) != 0x3c);
+        c2_memcpy(&state->light[i], &C2V(partLightDefault), sizeof(soft_state_light));
+	}
+
+	for (i = 0; i < MAX_STATE_CLIP_PLANES; i++) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_clip) != 0x14);
+        c2_memcpy(&state->clip[i], &C2V(partClipDefault), sizeof(soft_state_clip));
+    }
+
+    C2_HOOK_BUG_ON(sizeof(soft_state_matrix) != 0xbc);
+    c2_memcpy(&state->matrix, &C2V(partMatrixDefault), sizeof(soft_state_matrix));
+
+    C2_HOOK_BUG_ON(sizeof(soft_state_enable) != 0x8);
+    c2_memcpy(&state->enable, &C2V(partEnableDefault), sizeof(soft_state_enable));
+
+    C2_HOOK_BUG_ON(sizeof(soft_state_hidden) != 0x20);
+    c2_memcpy(&state->hidden, &C2V(partHiddenSurfaceDefault), sizeof(soft_state_hidden));
+
+	state->valid = 0x17f;
+
+    C2_HOOK_BUG_ON(sizeof(soft_state_bounds) != 0x10);
+    c2_memcpy(&state->bounds, &C2V(partBoundsDefault), sizeof(soft_state_bounds));
+
+    C2_HOOK_BUG_ON(sizeof(soft_state_cull) != 0xc);
+    c2_memcpy(&state->cull, &C2V(partCullDefault), sizeof(soft_state_cull));
+
+	return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005414a0, StateInitialise, StateInitialise_original)
