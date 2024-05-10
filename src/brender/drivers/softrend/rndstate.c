@@ -446,3 +446,38 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateRestore(br_soft_renderer* self, 
     return StateCopyFromStored(&self->state, save, mask, self);
 }
 C2_HOOK_FUNCTION(0x00542430, _M_br_soft_renderer_stateRestore)
+
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateMask(br_soft_renderer* self, br_uint_32* mask, br_token* parts, int n_parts) {
+    int i;
+    br_uint_32 m;
+
+    m = 0;
+    self->plib->dispatch->_mask(self->plib, &m, parts, n_parts);
+    for (i = 0; i < n_parts; i++) {
+        switch (parts[i]) {
+        case BRT_CULL:
+            m |= 0x40;
+            break;
+        case BRT_SURFACE:
+            m |= 0x01;
+            break;
+        case BRT_MATRIX:
+            m |= 0x02;
+            break;
+        case BRT_ENABLE:
+            m |= 0x04;
+            break;
+        case BRT_LIGHT:
+            m |= 0x08;
+            break;
+        case BRT_CLIP:
+            m |= 0x10;
+            break;
+        default:
+            break;
+        }
+    }
+    *mask = m;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00542490, _M_br_soft_renderer_stateMask)
