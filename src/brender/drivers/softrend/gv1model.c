@@ -1,5 +1,7 @@
 #include "gv1model.h"
 
+#include "core/fw/resource.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_geometry_v1_model_dispatch, geometryV1ModelDispatch, 0x0058be98, {
     NULL,
     NULL,
@@ -52,3 +54,10 @@ br_geometry_v1_model* C2_HOOK_STDCALL GeometryV1ModelAllocate(br_soft_renderer_f
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00540d00, GeometryV1ModelAllocate, GeometryV1ModelAllocate_original)
+
+void C2_HOOK_CDECL _M_br_geometry_v1_model_soft_free(br_geometry_v1_model_soft* self) {
+
+    self->renderer_facility->dispatch->_remove((br_object_container*)self->renderer_facility, (br_object*)self);
+    BrResFreeNoCallback(self);
+}
+C2_HOOK_FUNCTION(0x00540d50, _M_br_geometry_v1_model_soft_free)
