@@ -107,3 +107,9 @@ br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_renderFixedToFloat(br_geomet
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00540e10, _M_br_geometry_v1_model_soft_renderFixedToFloat)
+
+br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_renderOnScreenFixedToFloat(br_geometry* self, br_renderer* renderer, v11model* model, br_token type) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00540e20, _M_br_geometry_v1_model_soft_renderOnScreenFixedToFloat)
