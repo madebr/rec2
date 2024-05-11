@@ -2019,37 +2019,37 @@ typedef struct br_geometry_stored_dispatch {
     br_error (*_renderOnScreen)(br_geometry_stored*, br_renderer*);
 } br_geometry_stored_dispatch;
 
-struct  br_geometry_v1_model_dispatch;
+typedef struct br_geometry_v1_model_dispatch br_geometry_v1_model_dispatch;
 
 typedef struct br_geometry_v1_model {
     struct br_geometry_v1_model_dispatch *dispatch;
 } br_geometry_v1_model;
 
 struct br_geometry_v1_model_dispatch {
-    void (*__reserved0)(br_object*);
-    void (*__reserved1)(br_object* );
-    void (*__reserved2)(br_object*);
-    void (*__reserved3)(br_object*);
-    void (*_free)(br_object*);
-    char* (*_identifier)(br_object*);
-    br_token (*_type)(br_object*);
-    br_boolean (*_isType)(br_object*, br_token);
-    br_device* (*_device)(br_object*);
-    br_int_32 (*_space)(br_object*);
-    struct br_tv_template*  (*_templateQuery)(br_object*);
-    br_error (*_query)(br_object*, br_uint_32*, br_token);
-    br_error (*_queryBuffer)(br_object*, br_uint_32*, br_uint_32*, br_token);
-    br_error (*_queryMany)(br_object*, br_token_value*, void*, size_t, br_int_32*);
-    br_error (*_queryManySize)(br_object*, size_t*, br_token_value*);
-    br_error (*_queryAll)(br_object*, br_token_value*, size_t);
-    br_error (*_queryAllSize)(br_object*, size_t*);
-    br_error (*_renderF)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
-    br_error (*_renderX)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
-    br_error (*_renderOnScreenF)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
-    br_error (*_renderOnScreenX)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
-    br_error (*_storedNewF)(br_geometry_v1_model*, br_renderer*, br_geometry_stored**, v11model*, br_token, br_token_value*);
-    br_error (*_storedNewX)(br_geometry_v1_model*, br_renderer*, br_geometry_stored**, v11model*, br_token, br_token_value*);
-    br_error (*_storedAvail)(br_geometry_v1_model*, br_int_32*, br_token_value*);
+    void (C2_HOOK_CDECL *__reserved0)(br_object*);
+    void (C2_HOOK_CDECL *__reserved1)(br_object* );
+    void (C2_HOOK_CDECL *__reserved2)(br_object*);
+    void (C2_HOOK_CDECL *__reserved3)(br_object*);
+    void (C2_HOOK_CDECL *_free)(br_object*);
+    char* (C2_HOOK_CDECL *_identifier)(br_object*);
+    br_token (C2_HOOK_CDECL *_type)(br_object*);
+    br_boolean (C2_HOOK_CDECL *_isType)(br_object*, br_token);
+    br_device* (C2_HOOK_CDECL *_device)(br_object*);
+    br_int_32 (C2_HOOK_CDECL *_space)(br_object*);
+    struct br_tv_template*  (C2_HOOK_CDECL *_templateQuery)(br_object*);
+    br_error (C2_HOOK_CDECL *_query)(br_object*, br_uint_32*, br_token);
+    br_error (C2_HOOK_CDECL *_queryBuffer)(br_object*, br_uint_32*, br_uint_32*, br_token);
+    br_error (C2_HOOK_CDECL *_queryMany)(br_object*, br_token_value*, void*, size_t, br_int_32*);
+    br_error (C2_HOOK_CDECL *_queryManySize)(br_object*, size_t*, br_token_value*);
+    br_error (C2_HOOK_CDECL *_queryAll)(br_object*, br_token_value*, size_t);
+    br_error (C2_HOOK_CDECL *_queryAllSize)(br_object*, size_t*);
+    br_error (C2_HOOK_CDECL *_renderF)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
+    br_error (C2_HOOK_CDECL *_renderX)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
+    br_error (C2_HOOK_CDECL *_renderOnScreenF)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
+    br_error (C2_HOOK_CDECL *_renderOnScreenX)(br_geometry_v1_model*, br_renderer*, v11model*, br_renderer_state_stored*, br_token);
+    br_error (C2_HOOK_CDECL *_storedNewF)(br_geometry_v1_model*, br_renderer*, br_geometry_stored**, v11model*, br_token, br_token_value*);
+    br_error (C2_HOOK_CDECL *_storedNewX)(br_geometry_v1_model*, br_renderer*, br_geometry_stored**, v11model*, br_token, br_token_value*);
+    br_error (C2_HOOK_CDECL *_storedAvail)(br_geometry_v1_model*, br_int_32*, br_token_value*);
 };
 
 typedef struct br_geometry_v1_buckets br_geometry_v1_buckets;

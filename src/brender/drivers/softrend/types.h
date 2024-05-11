@@ -177,4 +177,11 @@ typedef struct br_soft_renderer {
     br_soft_renderer_facility* renderer_facility;
 } br_soft_renderer;
 
+typedef struct {
+    br_geometry_v1_model_dispatch* dispatch;
+    const char* identifier;
+    br_soft_device* device;
+    br_soft_renderer_facility* renderer_facility;
+} br_geometry_v1_model_soft;
+
 #endif /* SOFTREND_TYPES_H */
