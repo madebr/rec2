@@ -73,3 +73,10 @@ br_boolean C2_HOOK_CDECL _M_br_geometry_v1_model_soft_isType(br_geometry_v1_mode
     return t == BRT_GEOMETRY_V1_MODEL || t == BRT_GEOMETRY || t == BRT_OBJECT;
 }
 C2_HOOK_FUNCTION(0x00540d80, _M_br_geometry_v1_model_soft_isType)
+
+br_int_32 C2_HOOK_CDECL _M_br_geometry_v1_model_soft_space(br_geometry_v1_model_soft* self) {
+
+    C2_HOOK_BUG_ON(sizeof(br_geometry_v1_model_soft) != 0x10);
+    return sizeof(br_geometry_v1_model_soft);
+}
+C2_HOOK_FUNCTION(0x00540da0, _M_br_geometry_v1_model_soft_space)
