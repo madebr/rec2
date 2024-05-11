@@ -212,6 +212,8 @@ add_library(brender_softrendr_float STATIC
     drivers/softrend/state.h
     drivers/softrend/timestmp.h
     drivers/softrend/types.h
+    drivers/softrend/v1model.c
+    drivers/softrend/v1model.h
 )
 target_include_directories(brender_softrendr_float
     PRIVATE
