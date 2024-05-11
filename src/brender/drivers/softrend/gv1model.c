@@ -61,3 +61,9 @@ void C2_HOOK_CDECL _M_br_geometry_v1_model_soft_free(br_geometry_v1_model_soft* 
     BrResFreeNoCallback(self);
 }
 C2_HOOK_FUNCTION(0x00540d50, _M_br_geometry_v1_model_soft_free)
+
+br_token C2_HOOK_CDECL _M_br_geometry_v1_model_soft_type(br_geometry_v1_model_soft* self) {
+
+    return BRT_GEOMETRY_V1_MODEL;
+}
+C2_HOOK_FUNCTION(0x00540d70, _M_br_geometry_v1_model_soft_type)
