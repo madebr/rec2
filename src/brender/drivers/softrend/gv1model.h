@@ -15,4 +15,6 @@ br_boolean C2_HOOK_CDECL _M_br_geometry_v1_model_soft_isType(br_geometry_v1_mode
 
 br_int_32 C2_HOOK_CDECL _M_br_geometry_v1_model_soft_space(br_geometry_v1_model_soft* self);
 
+br_tv_template* C2_HOOK_CDECL _M_br_geometry_v1_model_soft_templateQuery(br_geometry_v1_model_soft* self);
+
 #endif /* SOFTREND_GV1MODEL_H */
