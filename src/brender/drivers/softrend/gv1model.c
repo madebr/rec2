@@ -1,6 +1,7 @@
 #include "gv1model.h"
 
 #include "core/fw/resource.h"
+#include "core/fw/tokenval.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_geometry_v1_model_dispatch, geometryV1ModelDispatch, 0x0058be98, {
     NULL,
@@ -27,6 +28,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_geometry_v1_model_dispatch, geometryV1ModelDi
     _M_br_geometry_v1_model_soft_storedNew,
     _M_br_geometry_v1_model_soft_storedNewFixedToFloat,
     _M_br_geometry_v1_model_soft_storedAvail,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, geometryV1ModelTemplateEntries, 3, 0x0058be50, {
+    { BRT_IDENTIFIER_CSTR,      NULL, 4,    5,  3,  0,  0, },
+    { BRT_RENDERER_FACILITY_O,  NULL, 12,   5,  3,  0,  0, },
+    { BRT_FACILITY_O,           NULL, 12,   1,  3,  0,  0, },
 });
 
 br_geometry_v1_model* (C2_HOOK_STDCALL * GeometryV1ModelAllocate_original)(br_soft_renderer_facility *type, const char *id);
@@ -80,3 +86,16 @@ br_int_32 C2_HOOK_CDECL _M_br_geometry_v1_model_soft_space(br_geometry_v1_model_
     return sizeof(br_geometry_v1_model_soft);
 }
 C2_HOOK_FUNCTION(0x00540da0, _M_br_geometry_v1_model_soft_space)
+
+br_tv_template* C2_HOOK_CDECL _M_br_geometry_v1_model_soft_templateQuery(br_geometry_v1_model_soft* self) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_device, templates.geometryV1ModelTemplate, 0x24);
+    if (self->device->templates.geometryV1ModelTemplate == NULL) {
+        C2_HOOK_BUG_ON(BR_ASIZE(C2V(geometryV1ModelTemplateEntries)) != 3);
+        self->device->templates.geometryV1ModelTemplate = BrTVTemplateAllocate(self->device,
+            C2V(geometryV1ModelTemplateEntries),
+            BR_ASIZE(C2V(geometryV1ModelTemplateEntries)));
+    }
+    return self->device->templates.geometryV1ModelTemplate;
+}
+C2_HOOK_FUNCTION(0x00540db0, _M_br_geometry_v1_model_soft_templateQuery)
