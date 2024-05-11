@@ -125,3 +125,9 @@ br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_storedNewFixedToFloat(br_geo
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00540df0, _M_br_geometry_v1_model_soft_storedNewFixedToFloat)
+
+br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_storedAvail(br_geometry* self, br_int_32* psize, br_token_value* tv) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00540de0, _M_br_geometry_v1_model_soft_storedAvail)
