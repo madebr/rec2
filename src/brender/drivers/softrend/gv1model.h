@@ -25,4 +25,6 @@ br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_storedNew(br_geometry* self,
 
 br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_storedNewFixedToFloat(br_geometry* self, br_renderer* renderer, br_geometry_stored** psg, v11model* model, br_token type, br_token_value* tv);
 
+br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_storedAvail(br_geometry* self, br_int_32* psize, br_token_value* tv);
+
 #endif /* SOFTREND_GV1MODEL_H */
