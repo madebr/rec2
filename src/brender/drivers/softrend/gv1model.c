@@ -1,5 +1,7 @@
 #include "gv1model.h"
 
+#include "v1model.h"
+
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
 
