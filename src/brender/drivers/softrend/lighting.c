@@ -62,3 +62,9 @@ br_token C2_HOOK_CDECL _M_br_geometry_lighting_soft_type(br_geometry_lighting_so
     return BRT_GEOMETRY_LIGHTING;
 }
 C2_HOOK_FUNCTION(0x00540ea0, _M_br_geometry_lighting_soft_type)
+
+br_boolean C2_HOOK_CDECL _M_br_geometry_lighting_soft_isType(br_geometry_lighting_soft* self, br_token t) {
+
+    return t == BRT_GEOMETRY_LIGHTING || t == BRT_GEOMETRY || t == BRT_OBJECT;
+}
+C2_HOOK_FUNCTION(0x00540eb0, _M_br_geometry_lighting_soft_isType)
