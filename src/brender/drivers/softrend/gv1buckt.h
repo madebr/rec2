@@ -17,4 +17,6 @@ br_int_32 C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_space(br_geometry_v1_buck
 
 br_tv_template* C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_templateQuery(br_geometry_v1_buckets_soft* self);
 
+br_error C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_render(br_geometry_v1_buckets_soft* self, br_renderer* renderer, br_primitive** buckets, br_int_32 nbuckets);
+
 #endif /* SOFTREND_GV1BUCKT_H */
