@@ -62,3 +62,9 @@ void C2_HOOK_CDECL _M_br_geometry_primitives_soft_free(br_geometry_primitives_so
     BrResFreeNoCallback(self);
 }
 C2_HOOK_FUNCTION(0x005411b0, _M_br_geometry_primitives_soft_free)
+
+br_token C2_HOOK_CDECL _M_br_geometry_primitives_soft_type(br_geometry_primitives_soft* self) {
+
+    return BRT_GEOMETRY_PRIMITIVES;
+}
+C2_HOOK_FUNCTION(0x005411d0, _M_br_geometry_primitives_soft_type)
