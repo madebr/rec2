@@ -56,3 +56,9 @@ void C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_free(br_geometry_v1_buckets_so
     BrResFreeNoCallback(self);
 }
 C2_HOOK_FUNCTION(0x00541300, _M_br_geometry_v1_buckets_soft_free)
+
+br_token C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_type(br_geometry_v1_buckets_soft* self) {
+
+    return BRT_GEOMETRY_V1_BUCKETS;
+}
+C2_HOOK_FUNCTION(0x00541320, _M_br_geometry_v1_buckets_soft_type)
