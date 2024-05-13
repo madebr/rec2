@@ -25,4 +25,6 @@ br_error C2_HOOK_CDECL _M_br_geometry_primitives_soft_renderOnScreen(br_geometry
 
 br_error C2_HOOK_CDECL _M_br_geometry_primitives_soft_renderOnScreenFixedToFloat(br_geometry_primitives_soft* self, br_renderer* renderer, fmt_vertex* vertices, int nvertices, br_token type);
 
+br_error C2_HOOK_CDECL _M_br_geometry_primitives_soft_storedNew(br_geometry_primitives_soft* self, br_renderer *renderer, br_geometry_stored** psg, fmt_vertex* vertices, int nvertices, br_token type, br_token_value* tv);
+
 #endif /* SOFTREND_GPRIM_H */
