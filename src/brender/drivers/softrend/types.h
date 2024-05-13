@@ -7,7 +7,6 @@
 #define MAX_STATE_CLIP_PLANES   6
 
 typedef struct br_geometry_primitives br_geometry_primitives;
-typedef struct br_geometry_v1_buckets br_geometry_v1_buckets;
 typedef struct br_soft_renderer_state_stored br_soft_renderer_state_stored;
 typedef struct br_soft_renderer br_soft_renderer;
 typedef br_uint_32 br_timestamp;
@@ -183,5 +182,12 @@ typedef struct {
     br_soft_device* device;
     br_soft_renderer_facility* renderer_facility;
 } br_geometry_v1_model_soft;
+
+typedef struct {
+    const br_geometry_v1_buckets_dispatch* dispatch;
+    const char* identifier;
+    br_soft_device* device;
+    br_soft_renderer_facility* renderer_facility;
+} br_geometry_v1_buckets_soft;
 
 #endif /* SOFTREND_TYPES_H */
