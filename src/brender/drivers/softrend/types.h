@@ -197,4 +197,38 @@ typedef struct {
     br_soft_renderer_facility* renderer_facility;
 } br_geometry_lighting_soft;
 
+typedef struct {
+    void (C2_HOOK_CDECL*_reserved0)(br_object*);
+    void (C2_HOOK_CDECL*_reserved1)(br_object*);
+    void (C2_HOOK_CDECL*_reserved2)(br_object*);
+    void (C2_HOOK_CDECL*_reserved3)(br_object*);
+    void (C2_HOOK_CDECL*_free)(br_object*);
+    char* (C2_HOOK_CDECL*_identifier)(br_object*);
+    br_token (C2_HOOK_CDECL*_type)(br_object*);
+    br_boolean (C2_HOOK_CDECL*_isType)(br_object*, br_token);
+    br_device* (C2_HOOK_CDECL*_device)(br_object*);
+    br_int_32 (C2_HOOK_CDECL*_space)(br_object*);
+    br_tv_template* (C2_HOOK_CDECL*_templateQuery)(br_object*);
+    br_error (C2_HOOK_CDECL*_query)(br_object*,br_uint_32*,br_token);
+    br_error (C2_HOOK_CDECL*_queryBuffer)(br_object*,br_uint_32*,br_uint_32*,br_size_t,br_token);
+    br_error (C2_HOOK_CDECL*_queryMany)(br_object*,br_token_value*,void*,br_size_t,br_int_32*);
+    br_error (C2_HOOK_CDECL*_queryManySize)(br_object*,br_size_t*,br_token_value*);
+    br_error (C2_HOOK_CDECL*_queryAll)(br_object*,br_token_value*,br_size_t);
+    br_error (C2_HOOK_CDECL*_queryAllSize)(br_object*,br_size_t*);
+    br_error (C2_HOOK_CDECL*_renderF)(br_geometry_primitives*,br_renderer*,fmt_vertex*,int,br_token);
+    br_error (C2_HOOK_CDECL*_renderX)(br_geometry_primitives*,br_renderer*,fmt_vertex*,int,br_token);
+    br_error (C2_HOOK_CDECL*_renderOnScreenF)(br_geometry_primitives*,br_renderer*,fmt_vertex*,int,br_token);
+    br_error (C2_HOOK_CDECL*_renderOnScreenX)(br_geometry_primitives*,br_renderer*,fmt_vertex*,int,br_token);
+    br_error (C2_HOOK_CDECL*_storedNewF)(br_geometry_primitives*,br_renderer*,br_geometry_stored**,fmt_vertex*,int,br_token,br_token_value*);
+    br_error (C2_HOOK_CDECL*_storedNewX)(br_geometry_primitives*,br_renderer*,br_geometry_stored **,fmt_vertex*,int,br_token,br_token_value*);
+    br_error (C2_HOOK_CDECL*_storedAvail)(br_geometry_primitives*,br_int_32*,br_token_value*);
+} br_geometry_primitives_dispatch;
+
+typedef struct {
+    const br_geometry_primitives_dispatch* dispatch;
+    const char* identifier;
+    br_soft_device* device;
+    br_soft_renderer_facility* renderer_facility;
+} br_geometry_primitives_soft;
+
 #endif /* SOFTREND_TYPES_H */
