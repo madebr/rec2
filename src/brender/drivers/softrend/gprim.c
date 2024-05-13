@@ -1,5 +1,7 @@
 #include "gprim.h"
 
+#include "core/fw/resource.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_geometry_primitives_dispatch, geometryPrimitivesDispatch, 0x0058bfd8, {
     NULL,
     NULL,
@@ -52,3 +54,11 @@ br_geometry_primitives* C2_HOOK_STDCALL GeometryPrimitivesAllocate(br_soft_rende
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00541160, GeometryPrimitivesAllocate, GeometryPrimitivesAllocate_original)
+
+void C2_HOOK_CDECL _M_br_geometry_primitives_soft_free(br_geometry_primitives_soft* self) {
+
+    self->renderer_facility->dispatch->_remove((br_object_container*)self->renderer_facility, (br_object*)self);
+
+    BrResFreeNoCallback(self);
+}
+C2_HOOK_FUNCTION(0x005411b0, _M_br_geometry_primitives_soft_free)
