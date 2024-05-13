@@ -190,4 +190,11 @@ typedef struct {
     br_soft_renderer_facility* renderer_facility;
 } br_geometry_v1_buckets_soft;
 
+typedef struct {
+    const br_geometry_lighting_dispatch* dispatch;
+    const char* identifier;
+    br_soft_device* device;
+    br_soft_renderer_facility* renderer_facility;
+} br_geometry_lighting_soft;
+
 #endif /* SOFTREND_TYPES_H */
