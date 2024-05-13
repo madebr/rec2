@@ -96,3 +96,15 @@ br_tv_template* C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_templateQuery(br_ge
     return self->device->templates.geometryV1BucketsTemplate;
 }
 C2_HOOK_FUNCTION(0x00541360, _M_br_geometry_v1_buckets_soft_templateQuery)
+
+br_error (C2_HOOK_CDECL * _M_br_geometry_v1_buckets_soft_render_original)(br_geometry_v1_buckets_soft* self, br_renderer* renderer, br_primitive** buckets, br_int_32 nbuckets);
+br_error C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_render(br_geometry_v1_buckets_soft* self, br_renderer* renderer, br_primitive** buckets, br_int_32 nbuckets) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return _M_br_geometry_v1_buckets_soft_render_original(self, renderer, buckets, nbuckets);
+#else
+#error "Not implemented"
+#endif
+}
+
+C2_HOOK_FUNCTION_ORIGINAL(0x00541390, _M_br_geometry_v1_buckets_soft_render, _M_br_geometry_v1_buckets_soft_render_original)
