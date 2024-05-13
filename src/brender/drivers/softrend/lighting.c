@@ -1,5 +1,7 @@
 #include "lighting.h"
 
+#include "core/fw/resource.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_geometry_lighting_dispatch, geometryLightingDispatch, 0x0058bf40, {
     NULL,
     NULL,
@@ -46,3 +48,11 @@ br_geometry_lighting* C2_HOOK_STDCALL GeometryLightingAllocate(br_soft_renderer_
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00540e30, GeometryLightingAllocate, GeometryLightingAllocate_original)
+
+void C2_HOOK_CDECL _M_br_geometry_lighting_soft_free(br_geometry_lighting_soft* self) {
+
+    self->renderer_facility->dispatch->_remove((br_object_container*)self->renderer_facility, (br_object*)self);
+
+    BrResFreeNoCallback(self);
+}
+C2_HOOK_FUNCTION(0x00540e80, _M_br_geometry_lighting_soft_free)
