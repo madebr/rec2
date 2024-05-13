@@ -96,3 +96,14 @@ br_tv_template* C2_HOOK_CDECL _M_br_geometry_lighting_soft_templateQuery(br_geom
     return self->device->templates.geometryLightingTemplate;
 }
 C2_HOOK_FUNCTION(0x00540ee0, _M_br_geometry_lighting_soft_templateQuery)
+
+br_error (C2_HOOK_CDECL * _M_br_geometry_lighting_soft_render_original)(br_geometry_lighting_soft* self, br_soft_renderer* renderer, br_vector3* points, br_vector3* normals, br_colour* colour_in, br_colour* colour_out, br_uint_16* redirect, int pstride, int nstride, int cinstride, int coutstride, int nvertices);
+br_error C2_HOOK_CDECL _M_br_geometry_lighting_soft_render(br_geometry_lighting_soft* self, br_soft_renderer* renderer, br_vector3* points, br_vector3* normals, br_colour* colour_in, br_colour* colour_out, br_uint_16* redirect, int pstride, int nstride, int cinstride, int coutstride, int nvertices) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return _M_br_geometry_lighting_soft_render_original(self, renderer, points, normals, colour_in, colour_out, redirect, pstride, nstride, cinstride, coutstride, nvertices);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00540f10, _M_br_geometry_lighting_soft_render, _M_br_geometry_lighting_soft_render_original)
