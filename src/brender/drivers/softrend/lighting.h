@@ -15,4 +15,6 @@ br_boolean C2_HOOK_CDECL _M_br_geometry_lighting_soft_isType(br_geometry_lightin
 
 br_int_32 C2_HOOK_CDECL _M_br_geometry_lighting_soft_space(br_geometry_lighting_soft* self);
 
+br_tv_template* C2_HOOK_CDECL _M_br_geometry_lighting_soft_templateQuery(br_geometry_lighting_soft* self);
+
 #endif /* SOFTREND_LIGHTING_H */
