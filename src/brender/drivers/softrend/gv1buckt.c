@@ -1,5 +1,7 @@
 #include "gv1buckt.h"
 
+#include "core/fw/resource.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_geometry_v1_buckets_dispatch, geometryV1BucketsDispatch, 0x0058c080, {
     NULL,
     NULL,
@@ -47,3 +49,10 @@ br_geometry_v1_buckets* C2_HOOK_STDCALL GeometryV1BucketsAllocate(br_soft_render
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005412b0, GeometryV1BucketsAllocate, GeometryV1BucketsAllocate_original)
+
+void C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_free(br_geometry_v1_buckets_soft* self) {
+
+    self->renderer_facility->dispatch->_remove((br_object_container*)self->renderer_facility, (br_object*)self);
+    BrResFreeNoCallback(self);
+}
+C2_HOOK_FUNCTION(0x00541300, _M_br_geometry_v1_buckets_soft_free)
