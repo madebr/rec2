@@ -68,3 +68,10 @@ br_boolean C2_HOOK_CDECL _M_br_geometry_lighting_soft_isType(br_geometry_lightin
     return t == BRT_GEOMETRY_LIGHTING || t == BRT_GEOMETRY || t == BRT_OBJECT;
 }
 C2_HOOK_FUNCTION(0x00540eb0, _M_br_geometry_lighting_soft_isType)
+
+br_int_32 C2_HOOK_CDECL _M_br_geometry_lighting_soft_space(br_geometry_lighting_soft* self) {
+
+    C2_HOOK_BUG_ON(sizeof(br_geometry_lighting_soft) != 0x10);
+    return sizeof(br_geometry_lighting_soft);
+}
+C2_HOOK_FUNCTION(0x00540ed0, _M_br_geometry_lighting_soft_space)
