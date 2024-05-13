@@ -9,4 +9,6 @@ br_geometry_lighting* C2_HOOK_STDCALL GeometryLightingAllocate(br_soft_renderer_
 
 void C2_HOOK_CDECL _M_br_geometry_lighting_soft_free(br_geometry_lighting_soft* self);
 
+br_token C2_HOOK_CDECL _M_br_geometry_lighting_soft_type(br_geometry_lighting_soft* self);
+
 #endif /* SOFTREND_LIGHTING_H */
