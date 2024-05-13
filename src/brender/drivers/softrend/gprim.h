@@ -15,4 +15,6 @@ br_boolean C2_HOOK_CDECL _M_br_geometry_primitives_soft_isType(br_geometry_primi
 
 br_int_32 C2_HOOK_CDECL _M_br_geometry_primitives_soft_space(br_geometry_primitives_soft* self);
 
+br_tv_template* C2_HOOK_CDECL _M_br_geometry_primitives_soft_templateQuery(br_geometry_primitives_soft* self);
+
 #endif /* SOFTREND_GPRIM_H */

@@ -18,7 +18,7 @@ struct device_templates {
     struct br_tv_template* template_field_0x0c;
     struct br_tv_template* geometryV1ModelTemplate;
     struct br_tv_template* geometryV1BucketsTemplate;
-    struct br_tv_template* template_field_0x18;
+    struct br_tv_template* geometryPrimitivesTemplate;
     struct br_tv_template* geometryLightingTemplate;
     struct br_tv_template* rendererNewTemplate;
     struct br_tv_template* partCullTemplate;
