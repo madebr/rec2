@@ -62,3 +62,9 @@ br_token C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_type(br_geometry_v1_bucket
     return BRT_GEOMETRY_V1_BUCKETS;
 }
 C2_HOOK_FUNCTION(0x00541320, _M_br_geometry_v1_buckets_soft_type)
+
+br_boolean C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_isType(br_geometry_v1_buckets_soft* self, br_token t) {
+
+    return t == BRT_GEOMETRY_PRIMITIVES || t == BRT_GEOMETRY || t == BRT_OBJECT;
+}
+C2_HOOK_FUNCTION(0x00541330, _M_br_geometry_v1_buckets_soft_isType)
