@@ -56,3 +56,9 @@ void C2_HOOK_CDECL _M_br_geometry_lighting_soft_free(br_geometry_lighting_soft* 
     BrResFreeNoCallback(self);
 }
 C2_HOOK_FUNCTION(0x00540e80, _M_br_geometry_lighting_soft_free)
+
+br_token C2_HOOK_CDECL _M_br_geometry_lighting_soft_type(br_geometry_lighting_soft* self) {
+
+    return BRT_GEOMETRY_LIGHTING;
+}
+C2_HOOK_FUNCTION(0x00540ea0, _M_br_geometry_lighting_soft_type)
