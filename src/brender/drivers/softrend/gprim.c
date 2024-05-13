@@ -118,3 +118,9 @@ br_error C2_HOOK_CDECL _M_br_geometry_primitives_soft_renderOnScreen(br_geometry
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x00541260, _M_br_geometry_primitives_soft_renderOnScreen)
+
+br_error C2_HOOK_CDECL _M_br_geometry_primitives_soft_renderOnScreenFixedToFloat(br_geometry_primitives_soft* self, br_renderer* renderer, fmt_vertex* vertices, int nvertices, br_token type) {
+
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x00541290, _M_br_geometry_primitives_soft_renderOnScreenFixedToFloat)
