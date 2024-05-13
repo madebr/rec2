@@ -68,3 +68,9 @@ br_token C2_HOOK_CDECL _M_br_geometry_primitives_soft_type(br_geometry_primitive
     return BRT_GEOMETRY_PRIMITIVES;
 }
 C2_HOOK_FUNCTION(0x005411d0, _M_br_geometry_primitives_soft_type)
+
+br_boolean C2_HOOK_CDECL _M_br_geometry_primitives_soft_isType(br_geometry_primitives_soft* self, br_token t) {
+
+    return t == BRT_GEOMETRY_PRIMITIVES || t == BRT_GEOMETRY || t == BRT_OBJECT;
+}
+C2_HOOK_FUNCTION(0x005411e0, _M_br_geometry_primitives_soft_isType)
