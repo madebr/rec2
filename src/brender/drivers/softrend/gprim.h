@@ -11,4 +11,6 @@ void C2_HOOK_CDECL _M_br_geometry_primitives_soft_free(br_geometry_primitives_so
 
 br_token C2_HOOK_CDECL _M_br_geometry_primitives_soft_type(br_geometry_primitives_soft* self);
 
+br_boolean C2_HOOK_CDECL _M_br_geometry_primitives_soft_isType(br_geometry_primitives_soft* self, br_token t);
+
 #endif /* SOFTREND_GPRIM_H */
