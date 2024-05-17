@@ -25,7 +25,7 @@ void* C2_HOOK_CDECL _M_br_soft_renderer_listQuery(br_soft_renderer* self);
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_validDestination(br_soft_renderer* self, br_boolean* bp, br_object* h);
 
-br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredNew(br_soft_renderer* self, br_soft_renderer_state_stored** pss, br_uint_32 mask, br_token_value* tv);
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredNew(br_soft_renderer* self, br_renderer_state_stored_soft** pss, br_uint_32 mask, br_token_value* tv);
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredAvail(br_soft_renderer* self, br_int_32* psize, br_uint_32 mask, br_token_value* tv);
 
