@@ -71,6 +71,17 @@ void C2_HOOK_STDCALL lightingColourSpotSpecular(br_soft_renderer* self, br_vecto
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00549be0, lightingColourSpotSpecular, lightingColourSpotSpecular_original)
 
+void (C2_HOOK_STDCALL * lightingColourSpotAttnSpecular_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp);
+void C2_HOOK_STDCALL lightingColourSpotAttnSpecular(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp) {
+
+#if defined(C2_HOOKS_ENABLED)
+    lightingColourSpotAttnSpecular_original(self, p, n, param_4, alp, comp);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00549ef0, lightingColourSpotAttnSpecular, lightingColourSpotAttnSpecular_original)
+
 void (C2_HOOK_STDCALL * ActiveLightAccumulateColourSet_original)(active_light* alp);
 void C2_HOOK_STDCALL ActiveLightAccumulateColourSet(active_light* alp) {
 

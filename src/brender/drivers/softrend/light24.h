@@ -19,6 +19,8 @@ void C2_HOOK_STDCALL lightingColourPointAttnSpecular(br_soft_renderer* self, br_
 
 void C2_HOOK_STDCALL lightingColourSpotSpecular(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp);
 
+void C2_HOOK_STDCALL lightingColourSpotAttnSpecular(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp);
+
 void C2_HOOK_STDCALL ActiveLightAccumulateColourSet(active_light* alp);
 
 #endif /* SOFTREND_LIGHT24_H */
