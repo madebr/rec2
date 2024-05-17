@@ -11,6 +11,35 @@ typedef struct br_renderer_state_stored_soft br_renderer_state_stored_soft;
 typedef struct br_soft_renderer br_soft_renderer;
 typedef struct temp_face_soft temp_face_soft;
 typedef br_uint_32 br_timestamp;
+typedef void C2_HOOK_CDECL geometry_fn(br_geometry* self, br_renderer* renderer);
+typedef void C2_HOOK_CDECL surface_fn(br_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp);
+
+typedef enum {
+    C_FLAGS = 0,
+    C_X     = 1,
+    C_Y     = 2,
+    C_Z     = 3,
+    C_W     = 4,
+    C_SX    = 5,
+    C_SY    = 6,
+    C_SZ    = 7,
+    C_U     = 8,
+    C_V     = 9,
+    C_I     = 10,
+    C_A     = 10,
+    C_R     = 11,
+    C_G     = 12,
+    C_B     = 13,
+    C_UI    = 10,
+    C_UR    = 11,
+    C_UG    = 12,
+    C_UB    = 13,
+    NUM_COMPONENTS = 16,
+} brp_components;
+
+#define MAX_GEOMETRY_FNS 16
+#define MAX_SURFACE_FNS 8
+#define MAX_FACE_BLOCKS 7
 
 struct device_templates {
     struct br_tv_template* deviceTemplate;
@@ -125,7 +154,30 @@ typedef struct {
 } soft_state_clip;
 
 typedef struct {
-    undefined field_0x0[0x1e8];
+    undefined4 field_0x0;
+    undefined4 field_0x4;
+} brp_block_min;
+
+typedef struct {
+    br_uint_32 clip_slots;
+    br_scalar comp_offsets[NUM_COMPONENTS];
+    br_scalar comp_scales[NUM_COMPONENTS];
+    br_int_32 ngeometry_fns;
+    geometry_fn* geometry_fns[MAX_GEOMETRY_FNS];
+    br_int_32 ngeometry_fns_onscreen;
+    geometry_fn* geometry_fns_onscreen[MAX_GEOMETRY_FNS];
+    brp_block_min face_blocks[MAX_FACE_BLOCKS];
+    brp_block_min face_blocks_onscreen[MAX_FACE_BLOCKS];
+    br_int_8 nface_blocks;
+    br_int_8 nface_blocks_onscreen;
+    undefined field_0x17e[2];
+    br_geometry* format;
+    br_int_32 nvertex_fns;
+    surface_fn* vertex_fns[MAX_SURFACE_FNS];
+    br_int_32 nconstant_fns;
+    surface_fn* constant_fns[MAX_SURFACE_FNS];
+    br_matrix23	map_transform;
+    undefined field_0x1e4[4];
     br_boolean valid;
 } soft_state_cache;
 
@@ -271,6 +323,38 @@ typedef struct {
     br_geometry* geometry;
     br_scalar subdivide_threshold;
 } rend_block_soft;
+
+typedef struct {
+    br_token type;
+    br_vector3 position;
+    br_vector3 direction;
+    br_vector3 half;
+    br_scalar intensity;
+    undefined4 accumulate_index;
+    undefined4 accumulate_colour;
+    soft_state_light* s;
+} active_light;
+
+typedef struct {
+    br_matrix4 model_to_screen;
+    br_matrix34 view_to_model;
+    br_matrix34 model_to_environment;
+    br_matrix4 model_to_viewport;
+    br_colour colour;
+    br_vector2 min;
+    br_vector2 max;
+    br_vector4 eye_m;
+    br_vector3 eye_m_normalised;
+    br_boolean user_clip_active;
+    br_boolean light_1md;
+    active_light lights[MAX_STATE_LIGHTS];
+    undefined4 field_0x498;
+    undefined4 field_0x49c;
+    br_boolean valid_v2m;
+    br_boolean valid_m2s;
+    br_boolean valid_per_model;
+    br_boolean valid_per_scene;
+} static_cache_soft;
 
 enum {
     MASK_STATE_CULL     = BR_STATE_CULL,
