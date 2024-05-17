@@ -85,3 +85,9 @@ br_token C2_HOOK_CDECL _M_br_renderer_state_stored_soft_type(br_renderer_state_s
     return BRT_RENDERER_STATE_STORED;
 }
 C2_HOOK_FUNCTION(0x005427c0, _M_br_renderer_state_stored_soft_type)
+
+br_boolean C2_HOOK_CDECL _M_br_renderer_state_stored_soft_isType(br_renderer_state_stored_soft* self, br_token t) {
+
+    return t == BRT_RENDERER_STATE_STORED || t == BRT_OBJECT;
+}
+C2_HOOK_FUNCTION(0x005427d0, _M_br_renderer_state_stored_soft_isType)
