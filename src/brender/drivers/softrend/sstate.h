@@ -17,4 +17,6 @@ br_token C2_HOOK_CDECL _M_br_renderer_state_stored_soft_type(br_renderer_state_s
 
 br_boolean C2_HOOK_CDECL _M_br_renderer_state_stored_soft_isType(br_renderer_state_stored_soft* self, br_token t);
 
+br_size_t C2_HOOK_CDECL _M_br_renderer_state_stored_soft_space(br_renderer_state_stored_soft* self);
+
 #endif /* SOFTREND_SSTATE_H */
