@@ -85,10 +85,38 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00549ef0, lightingColourSpotAttnSpecular, lightingCo
 void (C2_HOOK_STDCALL * ActiveLightAccumulateColourSet_original)(active_light* alp);
 void C2_HOOK_STDCALL ActiveLightAccumulateColourSet(active_light* alp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
 ActiveLightAccumulateColourSet_original(alp);
 #else
-#error "Not implemented"
+
+    switch (alp->type) {
+    case BRT_DIRECT:
+        alp->accumulate_colour = lightingColourDirectSpecular;
+        break;
+    case BRT_POINT:
+        if (alp->s->attenuation_l == 0.f && alp->s->attenuation_q == 0.f) {
+            alp->accumulate_colour = lightingColourPointSpecular;
+        } else {
+            alp->accumulate_colour = lightingColourPointAttnSpecular;
+        }
+        break;
+    case BRT_SPOT:
+        if (alp->s->attenuation_l == 0.f && alp->s->attenuation_q == 0.f) {
+            alp->accumulate_colour = lightingColourSpotSpecular;
+        } else {
+            alp->accumulate_colour = lightingColourSpotAttnSpecular;
+        }
+        break;
+    case BRT_POINT_LOCAL_1:
+        alp->accumulate_colour = lightingColourLocal1;
+        break;
+    case BRT_POINT_LOCAL_2:
+        alp->accumulate_colour = lightingColourLocal2;
+        break;
+    default:
+        alp->accumulate_colour = lightingColourNull;
+        break;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00548fe0, ActiveLightAccumulateColourSet, ActiveLightAccumulateColourSet_original)

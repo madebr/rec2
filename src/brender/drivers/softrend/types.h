@@ -13,6 +13,7 @@ typedef struct temp_face_soft temp_face_soft;
 typedef br_uint_32 br_timestamp;
 typedef void C2_HOOK_CDECL geometry_fn(br_geometry* self, br_renderer* renderer);
 typedef void C2_HOOK_CDECL surface_fn(br_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp);
+typedef struct active_light active_light;
 
 typedef enum {
     C_FLAGS = 0,
@@ -324,14 +325,14 @@ typedef struct {
     br_scalar subdivide_threshold;
 } rend_block_soft;
 
-typedef struct {
+typedef struct active_light {
     br_token type;
     br_vector3 position;
     br_vector3 direction;
     br_vector3 half;
     br_scalar intensity;
     undefined4 accumulate_index;
-    undefined4 accumulate_colour;
+    void (C2_HOOK_STDCALL * accumulate_colour)(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp);
     soft_state_light* s;
 } active_light;
 
