@@ -57,3 +57,14 @@ void C2_HOOK_STDCALL ActiveLightsFind(br_soft_renderer* self) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00543f10, ActiveLightsFind, ActiveLightsFind_original)
+
+void (C2_HOOK_STDCALL * ActiveLightsUpdate_original)(br_soft_renderer* self);
+void C2_HOOK_STDCALL ActiveLightsUpdate(br_soft_renderer* self) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ActiveLightsUpdate_original(self);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00544060, ActiveLightsUpdate, ActiveLightsUpdate_original)
