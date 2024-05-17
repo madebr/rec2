@@ -9,6 +9,7 @@
 typedef struct br_geometry_primitives br_geometry_primitives;
 typedef struct br_renderer_state_stored_soft br_renderer_state_stored_soft;
 typedef struct br_soft_renderer br_soft_renderer;
+typedef struct temp_face_soft temp_face_soft;
 typedef br_uint_32 br_timestamp;
 
 struct device_templates {
@@ -244,6 +245,32 @@ typedef struct br_renderer_state_stored_soft {
     br_timestamp timestamp_cache;
     br_primitive_state* pstate;
 } br_renderer_state_stored_soft;
+
+typedef struct {
+    void* scratch;
+    temp_face_soft* temp_faces;
+    br_int_8* vertex_counts;
+    brp_vertex* temp_vertices;
+    brp_vertex** vertex_heap_pointers;
+    br_int_8* vertex_flags;
+    br_int_8* edge_flags;
+    br_int_32 nvisible_faces;
+    undefined4 field_0x20;
+    v11face* faces;
+    fmt_vertex* vertices;
+    br_colour* face_colours;
+    br_colour* vertex_colours;
+    br_int_32 nfaces;
+    br_int_32 nvertices;
+    br_int_32 nedges;
+    br_vector3 eye_l;
+    brp_block* block;
+    br_boolean block_changed;
+    br_boolean range_changed;
+    br_soft_renderer* renderer;
+    br_geometry* geometry;
+    br_scalar subdivide_threshold;
+} rend_block_soft;
 
 enum {
     MASK_STATE_CULL     = BR_STATE_CULL,
