@@ -47,6 +47,8 @@ typedef struct br_tri_strip br_tri_fan;
 typedef struct br_tri_strip br_quad_strip;
 typedef struct v11model v11model;
 typedef struct br_renderer_state_stored br_renderer_state_stored;
+typedef struct brp_block brp_block;
+typedef void C2_HOOK_CDECL brp_render_fn(brp_block* block, ...);
 
 typedef enum br_filesystem_attributes {
     BR_FS_ATTR_READABLE = 1,
@@ -2360,7 +2362,9 @@ typedef struct br_primitive_state {
     br_primitive_state_dispatch* dispatch;
 } br_primitive_state;
 
-typedef struct brp_block brp_block;
+typedef struct brp_block {
+    brp_render_fn* render;
+} brp_block;
 
 typedef struct br_primitive_state_dispatch {
     void (*__reserved0)(br_object*);
