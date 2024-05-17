@@ -348,8 +348,8 @@ typedef struct {
     br_boolean user_clip_active;
     br_boolean light_1md;
     active_light lights[MAX_STATE_LIGHTS];
-    undefined4 field_0x498;
-    undefined4 field_0x49c;
+    br_int_32 nlights_model;
+    br_int_32 nlights_view;
     br_boolean valid_v2m;
     br_boolean valid_m2s;
     br_boolean valid_per_model;
