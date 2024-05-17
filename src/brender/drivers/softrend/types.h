@@ -245,4 +245,26 @@ typedef struct br_renderer_state_stored_soft {
     br_primitive_state* pstate;
 } br_renderer_state_stored_soft;
 
+enum {
+    MASK_STATE_CULL     = BR_STATE_CULL,
+    MASK_STATE_SURFACE  = BR_STATE_SURFACE,
+    MASK_STATE_PRIMITIVE= BR_STATE_PRIMITIVE,
+    MASK_STATE_MATRIX   = BR_STATE_MATRIX,
+    MASK_STATE_ENABLE   = BR_STATE_ENABLE,
+    MASK_STATE_LIGHT    = BR_STATE_LIGHT,
+    MASK_STATE_CLIP     = BR_STATE_CLIP,
+    MASK_STATE_BOUNDS   = BR_STATE_BOUNDS,
+    MASK_STATE_CACHE    = BR_STATE_CACHE,
+
+    MASK_STATE_LOCAL    = ( MASK_STATE_CULL |
+                            MASK_STATE_SURFACE |
+                            MASK_STATE_MATRIX |
+                            MASK_STATE_ENABLE |
+                            MASK_STATE_LIGHT |
+                            MASK_STATE_CLIP |
+                            MASK_STATE_BOUNDS)
+};
+
+#define MASK_CACHED_STATES (MASK_STATE_CULL | MASK_STATE_SURFACE)
+
 #endif /* SOFTREND_TYPES_H */
