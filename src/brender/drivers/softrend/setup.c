@@ -37,3 +37,14 @@ br_error C2_HOOK_STDCALL CacheUpdate(br_soft_renderer* self) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00543d80, CacheUpdate, CacheUpdate_original)
+
+void (C2_HOOK_STDCALL * ActiveLightsFind_original)(br_soft_renderer* self);
+void C2_HOOK_STDCALL ActiveLightsFind(br_soft_renderer* self) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ActiveLightsFind_original(self);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00543f10, ActiveLightsFind, ActiveLightsFind_original)
