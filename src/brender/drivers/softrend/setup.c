@@ -1,5 +1,8 @@
 #include "setup.h"
 
+#include "light24.h"
+#include "light8.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(rend_block_soft, rend, 0x0079f980);
 
 C2_HOOK_VARIABLE_IMPLEMENT(static_cache_soft, scache, 0x0079fa00);
@@ -133,10 +136,66 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00543d80, CacheUpdate, CacheUpdate_original)
 void (C2_HOOK_STDCALL * ActiveLightsFind_original)(br_soft_renderer* self);
 void C2_HOOK_STDCALL ActiveLightsFind(br_soft_renderer* self) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ActiveLightsFind_original(self);
 #else
-#error "Not implemented"
+    int l;
+    soft_state_light* lp;
+    active_light* alp;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(static_cache_soft, nlights_model, 0x498);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(static_cache_soft, nlights_view, 0x49c);
+    C2_HOOK_BUG_ON(BR_ASIZE(C2V(scache).lights) != 16);
+    C2_HOOK_BUG_ON(BR_ASIZE(self->state.light) != 16);
+
+    C2V(scache).nlights_model = 0;
+    C2V(scache).nlights_view = 0;
+
+    alp = &C2V(scache).lights[0];
+
+    for (l = 0; l < BR_ASIZE(C2V(scache).lights); l++) {
+        lp = &self->state.light[l];
+
+        if (lp->type == BRT_NONE || lp->lighting_space != BRT_MODEL) {
+            continue;
+        }
+
+        alp->s = lp;
+        alp->intensity = 1.f / lp->attenuation_c;
+        alp->type = lp->type;
+
+        ActiveLightAccumulateIndexSet(alp);
+        ActiveLightAccumulateColourSet(alp);
+        alp++;
+        C2V(scache).nlights_model += 1;
+    }
+
+    for (l = 0; l < BR_ASIZE(self->state.light); l++) {
+        lp = &self->state.light[l];
+
+        if (lp->type == BRT_NONE || lp->lighting_space != BRT_VIEW) {
+            continue;
+        }
+
+        alp->s = lp;
+        alp->intensity = 1.f / lp->attenuation_c;
+        alp->type = lp->type;
+        BrVector3Copy(&alp->position, &lp->position);
+
+        if (lp->type == BRT_DIRECT) {
+            BrVector3Scale(&alp->direction, &lp->direction, alp->intensity);
+        } else {
+            BrVector3Copy(&alp->direction, &lp->direction);
+        }
+
+        ActiveLightAccumulateIndexSet(alp);
+        ActiveLightAccumulateColourSet(alp);
+
+        alp++;
+        C2V(scache).nlights_view += 1;
+    }
+
+    C2V(scache).light_1md = C2V(scache).nlights_view == 0 && C2V(scache).nlights_model == 1 && C2V(scache).lights[0].type == BRT_DIRECT;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00543f10, ActiveLightsFind, ActiveLightsFind_original)
