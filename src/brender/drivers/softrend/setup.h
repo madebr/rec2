@@ -7,4 +7,6 @@
 
 C2_HOOK_VARIABLE_DECLARE(rend_block_soft, rend);
 
+void C2_HOOK_STDCALL StaticCacheUpdate_PerScene(br_soft_renderer* self);
+
 #endif /* SOFTREND_SETUP_H */
