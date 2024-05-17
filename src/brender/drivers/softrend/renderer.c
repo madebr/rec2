@@ -238,8 +238,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_validDestination(br_soft_renderer* se
 }
 C2_HOOK_FUNCTION(0x00540bc0, _M_br_soft_renderer_validDestination)
 
-br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredNew(br_soft_renderer* self, br_soft_renderer_state_stored** pss, br_uint_32 mask, br_token_value* tv) {
-    br_soft_renderer_state_stored *ss;
+br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredNew(br_soft_renderer* self, br_renderer_state_stored_soft** pss, br_uint_32 mask, br_token_value* tv) {
+    br_renderer_state_stored_soft *ss;
 
     ss = RendererStateStoredSoftAllocate(self, &self->state, mask, tv);
 

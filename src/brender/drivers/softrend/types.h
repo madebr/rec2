@@ -7,7 +7,7 @@
 #define MAX_STATE_CLIP_PLANES   6
 
 typedef struct br_geometry_primitives br_geometry_primitives;
-typedef struct br_soft_renderer_state_stored br_soft_renderer_state_stored;
+typedef struct br_renderer_state_stored_soft br_renderer_state_stored_soft;
 typedef struct br_soft_renderer br_soft_renderer;
 typedef br_uint_32 br_timestamp;
 
@@ -169,7 +169,7 @@ typedef struct br_soft_renderer {
     void* object_list;
     soft_state_all state;
     soft_state_all* default_state;
-    br_soft_renderer_state_stored* last_restored;
+    br_renderer_state_stored_soft* last_restored;
     br_primitive_library* plib;
     soft_state_all state_stack[MAX_STATE_STACK];
     br_uint_32 stack_top;
@@ -230,5 +230,19 @@ typedef struct {
     br_soft_device* device;
     br_soft_renderer_facility* renderer_facility;
 } br_geometry_primitives_soft;
+
+typedef struct br_renderer_state_stored_soft {
+    const br_renderer_state_stored_dispatch* dispatch;
+    const char* identifier;
+    br_soft_device* device;
+    br_soft_renderer* renderer;
+    br_uint_32 valid;
+    soft_state_cull cull;
+    soft_state_surface surface;
+    soft_state_cache cache;
+    br_timestamp timestamp_copy_cache;
+    br_timestamp timestamp_cache;
+    br_primitive_state* pstate;
+} br_renderer_state_stored_soft;
 
 #endif /* SOFTREND_TYPES_H */
