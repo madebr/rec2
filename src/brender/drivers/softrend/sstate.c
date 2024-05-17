@@ -1,5 +1,7 @@
 #include "sstate.h"
 
+#include "core/fw/resource.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_renderer_state_stored_dispatch, rendererStateStoredDispatch, 0x0058c898, {
     NULL,
     NULL,
@@ -70,3 +72,10 @@ br_error C2_HOOK_STDCALL StateCopyFromStored(soft_state_all* dest, br_renderer_s
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00542630, StateCopyFromStored, StateCopyFromStored_original)
+
+void C2_HOOK_CDECL _M_br_renderer_state_stored_soft_free(br_renderer_state_stored_soft* self) {
+
+    self->renderer->dispatch->_remove((br_object_container*)self->renderer, (br_object*)self);
+    BrResFreeNoCallback(self);
+}
+C2_HOOK_FUNCTION(0x005427a0, _M_br_renderer_state_stored_soft_free)
