@@ -11,4 +11,6 @@ br_error C2_HOOK_STDCALL StateCopyToStored(br_renderer_state_stored_soft* dest, 
 
 br_error C2_HOOK_STDCALL StateCopyFromStored(soft_state_all* dest, br_renderer_state_stored_soft* src, br_uint_32 copy_mask, void* res);
 
+void C2_HOOK_CDECL _M_br_renderer_state_stored_soft_free(br_renderer_state_stored_soft* self);
+
 #endif /* SOFTREND_SSTATE_H */
