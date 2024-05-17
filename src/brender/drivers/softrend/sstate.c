@@ -68,10 +68,60 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00542740, RendererStateStoredSoftAllocate, RendererS
 br_error (C2_HOOK_STDCALL * StateCopyToStored_original)(br_renderer_state_stored_soft* dest, soft_state_all* src, br_uint_32 copy_mask, void* res);
 br_error C2_HOOK_STDCALL StateCopyToStored(br_renderer_state_stored_soft* dest, soft_state_all* src, br_uint_32 copy_mask, void* res) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return StateCopyToStored_original(dest, src, copy_mask, res);
 #else
-#error "Not implemented"
+    C2_HOOK_BUG_ON(MASK_STATE_SURFACE != 0x1);
+    C2_HOOK_BUG_ON(MASK_STATE_CULL != 0x40);
+    C2_HOOK_BUG_ON(MASK_CACHED_STATES != 0x41);
+    C2_HOOK_BUG_ON(MASK_STATE_CACHE != 0x100);
+    C2_HOOK_BUG_ON((unsigned)MASK_STATE_STORED != 0x80000141);
+    C2_HOOK_BUG_ON((unsigned)~MASK_STATE_LOCAL != 0xffffff80);
+
+    if (copy_mask & MASK_CACHED_STATES) {
+        copy_mask |= MASK_STATE_CACHE;
+    }
+
+    copy_mask &= MASK_STATE_STORED;
+    copy_mask &= src->valid;
+    dest->valid |= copy_mask;
+
+    if (copy_mask & ~MASK_STATE_LOCAL) {
+        if (dest->pstate != NULL) {
+            if (src->pstate != NULL) {
+                dest->pstate->dispatch->_stateCopy(dest->pstate, src->pstate, copy_mask);
+            } else {
+                dest->pstate->dispatch->_stateDefault(dest->pstate, copy_mask);
+            }
+        } else if (src->pstate != NULL) {
+            if (src->renderer->plib->dispatch->_stateNew(src->renderer->plib, &dest->pstate) == 0) {
+                if (res != NULL) {
+                    BrResAdd(res, dest->pstate);
+                }
+                dest->pstate->dispatch->_stateCopy(dest->pstate, src->pstate, copy_mask);
+            }
+        }
+    }
+
+    if (copy_mask & MASK_STATE_CULL) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_cull) != 0xc);
+        c2_memcpy(&dest->cull, &src->cull, sizeof(soft_state_cull));
+    }
+
+    if(copy_mask & MASK_STATE_SURFACE) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_surface) != 0x48);
+        c2_memcpy(&dest->surface, &src->surface, sizeof(soft_state_surface));
+    }
+
+    if (copy_mask & MASK_STATE_CACHE) {
+        C2_HOOK_BUG_ON(sizeof(soft_state_cache) != 0x1ec);
+        c2_memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
+    }
+
+    if (copy_mask != MASK_CACHED_STATES) {
+        dest->cache.valid = 0;
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00542520, StateCopyToStored, StateCopyToStored_original)
