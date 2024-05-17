@@ -91,3 +91,10 @@ br_boolean C2_HOOK_CDECL _M_br_renderer_state_stored_soft_isType(br_renderer_sta
     return t == BRT_RENDERER_STATE_STORED || t == BRT_OBJECT;
 }
 C2_HOOK_FUNCTION(0x005427d0, _M_br_renderer_state_stored_soft_isType)
+
+br_size_t C2_HOOK_CDECL _M_br_renderer_state_stored_soft_space(br_renderer_state_stored_soft* self) {
+
+    C2_HOOK_BUG_ON(sizeof(br_renderer_state_stored_soft) != 0x260);
+    return sizeof(br_renderer_state_stored_soft);
+}
+C2_HOOK_FUNCTION(0x005427f0, _M_br_renderer_state_stored_soft_space)
