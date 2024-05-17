@@ -1,6 +1,7 @@
 #include "sstate.h"
 
 #include "core/fw/resource.h"
+#include "core/fw/tokenval.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_renderer_state_stored_dispatch, rendererStateStoredDispatch, 0x0058c898, {
     NULL,
@@ -20,6 +21,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_renderer_state_stored_dispatch, rendere
     _M_br_object_queryManySize,
     _M_br_object_queryAll,
     _M_br_object_queryAllSize,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererStateStoredTemplateEntries, 4, 0x00670690, {
+    { BRT_IDENTIFIER_CSTR,  NULL,                   offsetof(br_renderer_state_stored_soft , identifier),   5,  3,  0,  0 },
+    { BRT_RENDERER_O,       NULL,                   offsetof(br_renderer_state_stored_soft , renderer),     5,  3,  0,  0 },
+    { BRT_PARTS_U32,		NULL,	                offsetof(br_renderer_state_stored_soft , valid),        5,  3,  0,  0 },
+    { NULL,                 "PRIMITIVE_STATE_O",	offsetof(br_renderer_state_stored_soft , pstate),       5,  3,  0,  0 },
 });
 
 br_renderer_state_stored_soft* (C2_HOOK_STDCALL * RendererStateStoredSoftAllocate_original)(br_soft_renderer* renderer, soft_state_all* base_state, br_uint_32 m, br_token_value* tv);
@@ -98,3 +105,18 @@ br_size_t C2_HOOK_CDECL _M_br_renderer_state_stored_soft_space(br_renderer_state
     return sizeof(br_renderer_state_stored_soft);
 }
 C2_HOOK_FUNCTION(0x005427f0, _M_br_renderer_state_stored_soft_space)
+
+br_tv_template* C2_HOOK_CDECL _M_br_renderer_state_stored_soft_templateQuery(br_renderer_state_stored_soft* self) {
+
+    if (self->device->templates.rendererStateStoredTemplate == NULL) {
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_device, templates.rendererStateStoredTemplate, 0x20);
+        C2_HOOK_BUG_ON(BR_ASIZE(C2V(rendererStateStoredTemplateEntries)) != 4);
+
+        self->device->templates.rendererStateStoredTemplate = BrTVTemplateAllocate(self->device,
+            C2V(rendererStateStoredTemplateEntries),
+            BR_ASIZE(C2V(rendererStateStoredTemplateEntries)));
+    }
+
+    return self->device->templates.rendererStateStoredTemplate;
+}
+C2_HOOK_FUNCTION(0x00542800, _M_br_renderer_state_stored_soft_templateQuery)
