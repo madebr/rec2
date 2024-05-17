@@ -2,6 +2,8 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(rend_block_soft, rend, 0x0079f980);
 
+C2_HOOK_VARIABLE_IMPLEMENT(static_cache_soft, scache, 0x0079fa00);
+
 
 void (C2_HOOK_STDCALL * StaticCacheUpdate_PerScene_original)(br_soft_renderer* self);
 void C2_HOOK_STDCALL StaticCacheUpdate_PerScene(br_soft_renderer* self) {
