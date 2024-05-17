@@ -8,10 +8,19 @@ C2_HOOK_VARIABLE_IMPLEMENT(static_cache_soft, scache, 0x0079fa00);
 void (C2_HOOK_STDCALL * StaticCacheUpdate_PerScene_original)(br_soft_renderer* self);
 void C2_HOOK_STDCALL StaticCacheUpdate_PerScene(br_soft_renderer* self) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     StaticCacheUpdate_PerScene_original(self);
 #else
-#error "Not implemented"
+    int i;
+
+    C2V(scache).user_clip_active = 0;
+
+    C2_HOOK_BUG_ON(MAX_STATE_CLIP_PLANES != 6);
+    for (i = 0; i < MAX_STATE_CLIP_PLANES; i++) {
+        if (self->state.clip[i].type == BRT_PLANE)
+            C2V(scache).user_clip_active = 1;
+    }
+    ActiveLightsFind(self);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00543a40, StaticCacheUpdate_PerScene, StaticCacheUpdate_PerScene_original)
