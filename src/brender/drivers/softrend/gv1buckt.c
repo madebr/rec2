@@ -1,5 +1,7 @@
 #include "gv1buckt.h"
 
+#include "setup.h"
+
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
 
@@ -97,14 +99,59 @@ br_tv_template* C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_templateQuery(br_ge
 }
 C2_HOOK_FUNCTION(0x00541360, _M_br_geometry_v1_buckets_soft_templateQuery)
 
-br_error (C2_HOOK_CDECL * _M_br_geometry_v1_buckets_soft_render_original)(br_geometry_v1_buckets_soft* self, br_renderer* renderer, br_primitive** buckets, br_int_32 nbuckets);
-br_error C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_render(br_geometry_v1_buckets_soft* self, br_renderer* renderer, br_primitive** buckets, br_int_32 nbuckets) {
+br_error (C2_HOOK_CDECL * _M_br_geometry_v1_buckets_soft_render_original)(br_renderer_state_stored* self, br_soft_renderer* renderer, br_primitive** buckets, br_int_32 nbuckets);
+br_error C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_render(br_renderer_state_stored* self, br_soft_renderer* renderer, br_primitive** buckets, br_int_32 nbuckets) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_geometry_v1_buckets_soft_render_original(self, renderer, buckets, nbuckets);
 #else
-#error "Not implemented"
+    br_primitive* p;
+	br_renderer_state_stored* last_state;
+	br_error r;
+	br_token last_type;
+
+	if (nbuckets <= 0) {
+        return 0;
+    }
+
+    C2_HOOK_ASSERT_ADDRESS(C2V(rend).block, 0x0079f9cc);
+    C2_HOOK_ASSERT_ADDRESS(C2V(rend).block_changed, 0x0079f9d0);
+    C2_HOOK_ASSERT_ADDRESS(C2V(rend).range_changed, 0x0079f9d4);
+    C2_HOOK_BUG_ON((unsigned)(BR_STATE_PRIMITIVE | BR_STATE_CACHE) != 0x80000100u);
+
+	last_state = self;
+	last_type = BR_NULL_TOKEN;
+	C2V(rend).block = NULL;
+
+	for (buckets += nbuckets - 1; nbuckets != 0; nbuckets--, buckets--) {
+
+		for (p = *buckets; p != NULL; p = p->next) {
+
+			if (p->stored != last_state || p->type != (br_uint_32)last_type) {
+
+				if (C2V(rend).block != NULL) {
+                    renderer->state.pstate->dispatch->_renderEnd(renderer->state.pstate, C2V(rend).block);
+                }
+				if (p->stored != NULL) {
+                    renderer->dispatch->_stateRestore((br_renderer*)renderer, p->stored, (br_uint_32)(BR_STATE_PRIMITIVE | BR_STATE_CACHE));
+                }
+				r = renderer->state.pstate->dispatch->_renderBegin(renderer->state.pstate, &C2V(rend).block, &C2V(rend).block_changed, &C2V(rend).range_changed, 0, p->type);
+
+				last_type = p->type;
+				last_state = p->stored;
+
+				if (r != 0) {
+                    continue;
+                }
+			}
+			C2V(rend).block->render(C2V(rend).block, p->v[0], p->v[1], p->v[2]);
+		}
+	}
+	if (C2V(rend).block != NULL) {
+        renderer->state.pstate->dispatch->_renderEnd(renderer->state.pstate, C2V(rend).block);
+    }
+
+	return 0;
 #endif
 }
-
 C2_HOOK_FUNCTION_ORIGINAL(0x00541390, _M_br_geometry_v1_buckets_soft_render, _M_br_geometry_v1_buckets_soft_render_original)
