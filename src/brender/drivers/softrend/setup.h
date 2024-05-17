@@ -6,6 +6,8 @@
 #include "types.h"
 
 C2_HOOK_VARIABLE_DECLARE(rend_block_soft, rend);
+C2_HOOK_VARIABLE_DECLARE(static_cache_soft, scache);
+
 
 void C2_HOOK_STDCALL StaticCacheUpdate_PerScene(br_soft_renderer* self);
 
