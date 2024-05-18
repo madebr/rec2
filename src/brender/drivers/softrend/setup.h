@@ -35,4 +35,6 @@ void C2_HOOK_STDCALL GeometryFunctionOnScreenAdd(br_soft_renderer* renderer, geo
 
 void C2_HOOK_STDCALL GeometryFunctionBothAdd(br_soft_renderer* renderer, geometry_fn* fn);
 
+void C2_HOOK_STDCALL PrimBlockReset(br_soft_renderer* renderer);
+
 #endif /* SOFTREND_SETUP_H */
