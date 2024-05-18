@@ -17,6 +17,8 @@ void C2_HOOK_STDCALL lightingIndexLocal2(br_soft_renderer* self, br_vector3* p, 
 
 void C2_HOOK_STDCALL lightingIndexPointAttn(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
 
+void C2_HOOK_STDCALL lightingIndexSpot(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+
 void C2_HOOK_STDCALL ActiveLightAccumulateIndexSet(active_light* alp);
 
 #endif /* SOFTREND_LIGHT8_H */
