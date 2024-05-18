@@ -85,10 +85,37 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0054af00, lightingIndexSpotAttn, lightingIndexSpotAt
 void (C2_HOOK_STDCALL * ActiveLightAccumulateIndexSet_original)(active_light* alp);
 void C2_HOOK_STDCALL ActiveLightAccumulateIndexSet(active_light* alp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ActiveLightAccumulateIndexSet_original(alp);
 #else
-#error "Not implemented"
+    switch (alp->type) {
+    case BRT_DIRECT:
+        alp->accumulate_index = lightingIndexDirect;
+        break;
+    case BRT_POINT:
+        if (alp->s->attenuation_l == 0.f && alp->s->attenuation_q == 0.f) {
+            alp->accumulate_index = lightingIndexPoint;
+        } else {
+            alp->accumulate_index = lightingIndexPointAttn;
+        }
+        break;
+    case BRT_SPOT:
+        if (alp->s->attenuation_l == 0.f && alp->s->attenuation_q == 0.f) {
+            alp->accumulate_index = lightingIndexSpot;
+        } else {
+            alp->accumulate_index = lightingIndexSpotAttn;
+        }
+        break;
+    case BRT_POINT_LOCAL_1:
+        alp->accumulate_index = lightingIndexLocal1;
+        break;
+    case BRT_POINT_LOCAL_2:
+        alp->accumulate_index = lightingIndexLocal2;
+        break;
+    default:
+        alp->accumulate_index = lightingIndexNull;
+        break;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0054a5f0, ActiveLightAccumulateIndexSet, ActiveLightAccumulateIndexSet_original)
