@@ -221,3 +221,35 @@ br_int_32 C2_HOOK_STDCALL GenerateSurfaceFunctions(br_soft_renderer *self, surfa
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005444a0, GenerateSurfaceFunctions, GenerateSurfaceFunctions_original)
+
+br_uint_32 C2_HOOK_STDCALL ComponentMaskToSlots(br_uint_32 cm) {
+    br_uint_32 m;
+    int i;
+    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const br_uint_32, bits, 14, 0x00670720, {
+        1 << C_X,
+        1 << C_Y,
+        1 << C_Z,
+        1 << C_W,
+        1 << C_SX,
+        1 << C_SY,
+        1 << C_SZ,
+        1 << C_U,
+        1 << C_V,
+        1 << C_I,
+        1 << C_A,
+        1 << C_R,
+        1 << C_G,
+        1 << C_B,
+    });
+
+    m = 0;
+
+    for (i = 0; cm != 0; i++, cm /= 2) {
+        if (cm & 1) {
+            m |= C2V(bits)[i];
+        }
+    }
+
+    return m;
+}
+C2_HOOK_FUNCTION(0x00544650, ComponentMaskToSlots)

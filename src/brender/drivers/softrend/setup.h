@@ -25,4 +25,6 @@ void C2_HOOK_STDCALL ActiveLightsUpdate(br_soft_renderer* self);
 
 br_int_32 C2_HOOK_STDCALL GenerateSurfaceFunctions(br_soft_renderer *self, surface_fn **fns, br_uint_32 mask);
 
+br_uint_32 C2_HOOK_STDCALL ComponentMaskToSlots(br_uint_32 cm);
+
 #endif /* SOFTREND_SETUP_H */
