@@ -27,6 +27,17 @@ void C2_HOOK_STDCALL lightingIndexPoint(br_soft_renderer* self, br_vector3* p, b
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0054a870, lightingIndexPoint, lightingIndexPoint_original)
 
+void (C2_HOOK_STDCALL * lightingIndexLocal1_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+void C2_HOOK_STDCALL lightingIndexLocal1(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
+
+#if defined(C2_HOOKS_ENABLED)
+    lightingIndexLocal1_original(self, p, n, alp, comp);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0054a9f0, lightingIndexLocal1, lightingIndexLocal1_original)
+
 void (C2_HOOK_STDCALL * ActiveLightAccumulateIndexSet_original)(active_light* alp);
 void C2_HOOK_STDCALL ActiveLightAccumulateIndexSet(active_light* alp) {
 
