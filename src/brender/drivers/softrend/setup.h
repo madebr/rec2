@@ -29,4 +29,6 @@ br_uint_32 C2_HOOK_STDCALL ComponentMaskToSlots(br_uint_32 cm);
 
 void C2_HOOK_STDCALL GeometryFunctionReset(br_soft_renderer* renderer);
 
+void C2_HOOK_STDCALL GeometryFunctionAdd(br_soft_renderer* renderer, geometry_fn* fn);
+
 #endif /* SOFTREND_SETUP_H */
