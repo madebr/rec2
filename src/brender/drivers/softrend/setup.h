@@ -23,4 +23,6 @@ void C2_HOOK_STDCALL ActiveLightsFind(br_soft_renderer* self);
 
 void C2_HOOK_STDCALL ActiveLightsUpdate(br_soft_renderer* self);
 
+br_int_32 C2_HOOK_STDCALL GenerateSurfaceFunctions(br_soft_renderer *self, surface_fn **fns, br_uint_32 mask);
+
 #endif /* SOFTREND_SETUP_H */
