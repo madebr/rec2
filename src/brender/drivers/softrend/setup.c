@@ -278,3 +278,13 @@ br_uint_32 C2_HOOK_STDCALL ComponentMaskToSlots(br_uint_32 cm) {
     return m;
 }
 C2_HOOK_FUNCTION(0x00544650, ComponentMaskToSlots)
+
+void C2_HOOK_STDCALL GeometryFunctionReset(br_soft_renderer* renderer) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.cache.ngeometry_fns, 0x624);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.cache.ngeometry_fns_onscreen, 0x668);
+
+    renderer->state.cache.ngeometry_fns = 0;
+    renderer->state.cache.ngeometry_fns_onscreen = 0;
+}
+C2_HOOK_FUNCTION(0x00544670, GeometryFunctionReset)
