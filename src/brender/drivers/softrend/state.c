@@ -389,10 +389,44 @@ C2_HOOK_FUNCTION(0x00541580, FindStateTemplate)
 void (C2_HOOK_STDCALL * TemplateActions_original)(soft_state_all *state, br_token part, br_int_32 index, br_uint_32 mask);
 void C2_HOOK_STDCALL TemplateActions(soft_state_all *state, br_token part, br_int_32 index, br_uint_32 mask) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     TemplateActions_original(state, part, index, mask);
 #else
-#error "Not implemented"
+
+    C2_HOOK_BUG_ON(TM_CLEAR_M2V_HINT != 0x80);
+    if (mask & TM_CLEAR_M2V_HINT) {
+        state->matrix.model_to_view_hint = BRT_NONE;
+    }
+
+    C2_HOOK_BUG_ON(TM_CLEAR_V2S_HINT != 0x100);
+    if (mask & TM_CLEAR_V2S_HINT) {
+        state->matrix.view_to_screen_hint = BRT_NONE;
+    }
+
+    C2_HOOK_BUG_ON(TM_INVALID_PS != 0x1000);
+    if (mask & TM_INVALID_PS) {
+        C2V(scache).valid_per_scene = 0;
+    }
+
+    C2_HOOK_BUG_ON(TM_INVALID_PM != 0x2000);
+    if (mask & TM_INVALID_PM) {
+        C2V(scache).valid_per_model = 0;
+    }
+
+    C2_HOOK_BUG_ON(TM_INVALID_V2M != 0x4000);
+    if (mask & TM_INVALID_V2M) {
+        C2V(scache).valid_v2m = 0;
+    }
+
+    C2_HOOK_BUG_ON(TM_INVALID_M2S != 0x8000);
+    if (mask & TM_INVALID_M2S) {
+        C2V(scache).valid_m2s = 0;
+    }
+
+    C2_HOOK_BUG_ON(TM_INVALID_CC != 0x10000);
+    if (mask & TM_INVALID_CC) {
+        state->cache.valid = 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00541770, TemplateActions, TemplateActions_original)
