@@ -339,3 +339,10 @@ void C2_HOOK_STDCALL PrimBlockOnScreenAdd(br_soft_renderer* renderer, brp_render
     renderer->state.cache.nface_blocks_onscreen = f + 1;
 }
 C2_HOOK_FUNCTION(0x00544790, PrimBlockOnScreenAdd)
+
+void C2_HOOK_STDCALL PrimBlockAddBoth(br_soft_renderer* renderer, brp_render_fn* fn) {
+
+    PrimBlockAdd(renderer, fn);
+    PrimBlockOnScreenAdd(renderer, fn);
+}
+C2_HOOK_FUNCTION(0x005447d0, PrimBlockAddBoth)
