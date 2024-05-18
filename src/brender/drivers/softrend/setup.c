@@ -309,3 +309,13 @@ void C2_HOOK_STDCALL GeometryFunctionBothAdd(br_soft_renderer* renderer, geometr
     GeometryFunctionOnScreenAdd(renderer, fn);
 }
 C2_HOOK_FUNCTION(0x005446f0, GeometryFunctionBothAdd)
+
+void C2_HOOK_STDCALL PrimBlockReset(br_soft_renderer* renderer) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.cache.nface_blocks, 0x71c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.cache.nface_blocks_onscreen, 0x71d);
+
+    renderer->state.cache.nface_blocks = 0;
+    renderer->state.cache.nface_blocks_onscreen = 0;
+}
+C2_HOOK_FUNCTION(0x00544730, PrimBlockReset)
