@@ -295,3 +295,10 @@ void C2_HOOK_STDCALL GeometryFunctionAdd(br_soft_renderer* renderer, geometry_fn
     renderer->state.cache.ngeometry_fns += 1;
 }
 C2_HOOK_FUNCTION(0x00544690, GeometryFunctionAdd)
+
+void C2_HOOK_STDCALL GeometryFunctionOnScreenAdd(br_soft_renderer* renderer, geometry_fn* fn) {
+
+    renderer->state.cache.geometry_fns_onscreen[renderer->state.cache.ngeometry_fns_onscreen] = fn;
+    renderer->state.cache.ngeometry_fns_onscreen += 1;
+}
+C2_HOOK_FUNCTION(0x005446c0, GeometryFunctionOnScreenAdd)
