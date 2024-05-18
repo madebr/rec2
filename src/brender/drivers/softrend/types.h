@@ -182,8 +182,8 @@ typedef struct {
 } soft_state_clip;
 
 typedef struct {
-    undefined4 field_0x0;
-    undefined4 field_0x4;
+    brp_render_fn* render;
+    brp_block* chain;
 } brp_block_min;
 
 typedef struct {
