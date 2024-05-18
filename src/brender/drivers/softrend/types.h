@@ -350,7 +350,7 @@ typedef struct active_light {
     br_vector3 direction;
     br_vector3 half;
     br_scalar intensity;
-    undefined4 accumulate_index;
+    void (C2_HOOK_STDCALL * accumulate_index)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
     void (C2_HOOK_STDCALL * accumulate_colour)(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp);
     soft_state_light* s;
 } active_light;
