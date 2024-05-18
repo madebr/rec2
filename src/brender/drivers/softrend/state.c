@@ -1,5 +1,7 @@
 #include "state.h"
 
+#include "setup.h"
+
 #include "core/fw/tokenval.h"
 
 #include "c2_string.h"
@@ -398,10 +400,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00541770, TemplateActions, TemplateActions_original)
 void (C2_HOOK_STDCALL * TouchModelToView_original)(br_soft_renderer* self);
 void C2_HOOK_STDCALL TouchModelToView(br_soft_renderer* self) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     TouchModelToView_original(self);
 #else
-#error "Not implemented"
+
+    C2V(scache).valid_v2m = 0;
+    C2V(scache).valid_m2s = 0;
+    C2V(scache).valid_per_model = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005417d0, TouchModelToView, TouchModelToView_original)
