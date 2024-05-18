@@ -61,6 +61,14 @@ typedef enum {
 #define MAX_SURFACE_FNS 8
 #define MAX_FACE_BLOCKS 7
 
+#define TM_CLEAR_M2V_HINT       0x00080
+#define TM_CLEAR_V2S_HINT       0x00100
+#define TM_INVALID_PS           0x01000
+#define TM_INVALID_PM           0x02000
+#define TM_INVALID_V2M          0x04000
+#define TM_INVALID_M2S          0x08000
+#define TM_INVALID_CC           0x10000
+
 struct device_templates {
     struct br_tv_template* deviceTemplate;
     struct br_tv_template* rendererFacilityTemplate;
