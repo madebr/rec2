@@ -512,13 +512,29 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestF(br_soft_renderer* self, b
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00542390, _M_br_soft_renderer_boundsTestF, _M_br_soft_renderer_boundsTestF_original)
 
+static void C2_HOOK_STDCALL convertBounds3FixedToFloat(br_bounds3_f* dest, br_bounds3_x* src) {
+    int i;
+
+    for (i = 0; i < 3; i++) {
+        dest->min.v[i] = BrFixedToFloat(src->min.v[i]);
+        dest->max.v[i] = BrFixedToFloat(src->max.v[i]);
+    }
+}
+
 br_error (C2_HOOK_CDECL * _M_br_soft_renderer_boundsTestX_original)(br_soft_renderer* self, br_token* r, br_bounds3_x* bounds_in);
 br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestX(br_soft_renderer* self, br_token* r, br_bounds3_x* bounds_in) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_soft_renderer_boundsTestX_original(self, r, bounds_in);
 #else
-#error "Not implemented"
+    br_bounds3 bounds;
+
+    convertBounds3FixedToFloat((br_bounds3_f*)&bounds, (br_bounds3_x*)bounds_in);
+    ModelToScreenUpdate(self);
+
+    *r = OnScreenCheck(self, &C2V(scache).model_to_screen, &bounds);
+
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00542320, _M_br_soft_renderer_boundsTestX, _M_br_soft_renderer_boundsTestX_original)
