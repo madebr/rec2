@@ -27,4 +27,6 @@ br_int_32 C2_HOOK_STDCALL GenerateSurfaceFunctions(br_soft_renderer *self, surfa
 
 br_uint_32 C2_HOOK_STDCALL ComponentMaskToSlots(br_uint_32 cm);
 
+void C2_HOOK_STDCALL GeometryFunctionReset(br_soft_renderer* renderer);
+
 #endif /* SOFTREND_SETUP_H */
