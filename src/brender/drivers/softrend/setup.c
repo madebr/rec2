@@ -125,10 +125,35 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00543a80, StaticCacheUpdate_PerModel, StaticCacheUpd
 br_error (C2_HOOK_STDCALL * CacheUpdate_original)(br_soft_renderer* self);
 br_error C2_HOOK_STDCALL CacheUpdate(br_soft_renderer* self) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return CacheUpdate_original(self);
 #else
-#error "Not implemented"
+    if (!C2V(rend).block_changed && !C2V(rend).range_changed && self->state.cache.valid) {
+        return 0;
+    }
+
+    C2_HOOK_BUG_ON(NUM_COMPONENTS != 16);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(brp_block, constant_components, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(brp_block, vertex_components, 0x1c);
+
+    self->state.cache.clip_slots = ComponentMaskToSlots(CM_W | CM_Z | COMP_S2V(C2V(rend).block->vertex_components));
+
+    self->state.pstate->dispatch->_rangesQueryF(self->state.pstate,
+        self->state.cache.comp_offsets, self->state.cache.comp_scales, NUM_COMPONENTS);
+
+    self->state.cache.map_transform.m[0][0] = self->state.surface.map_transform.m[0][0] * self->state.cache.comp_scales[C_U];
+    self->state.cache.map_transform.m[0][1] = self->state.surface.map_transform.m[0][1] * self->state.cache.comp_scales[C_V];
+    self->state.cache.map_transform.m[1][0] = self->state.surface.map_transform.m[1][0] * self->state.cache.comp_scales[C_U];
+    self->state.cache.map_transform.m[1][1] = self->state.surface.map_transform.m[1][1] * self->state.cache.comp_scales[C_V];
+
+    self->state.cache.map_transform.m[2][0] = self->state.surface.map_transform.m[2][0] * self->state.cache.comp_scales[C_U] + self->state.cache.comp_offsets[C_U];
+    self->state.cache.map_transform.m[2][1] = self->state.surface.map_transform.m[2][1] * self->state.cache.comp_scales[C_V] + self->state.cache.comp_offsets[C_V];
+
+    self->state.cache.nvertex_fns = GenerateSurfaceFunctions(self, self->state.cache.vertex_fns, C2V(rend).block->vertex_components);
+
+    self->state.cache.nconstant_fns = GenerateSurfaceFunctions(self, self->state.cache.constant_fns, C2V(rend).block->constant_components);
+
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00543d80, CacheUpdate, CacheUpdate_original)

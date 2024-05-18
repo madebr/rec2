@@ -2364,6 +2364,9 @@ typedef struct br_primitive_state {
 
 typedef struct brp_block {
     brp_render_fn* render;
+    undefined field_0x4[0x14];
+    br_uint_32 constant_components;
+    br_uint_32 vertex_components;
 } brp_block;
 
 typedef struct br_primitive_state_dispatch {
