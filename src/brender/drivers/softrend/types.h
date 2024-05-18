@@ -38,6 +38,25 @@ typedef enum {
     NUM_COMPONENTS = 16,
 } brp_components;
 
+typedef enum {
+    CM_X    = 0x00000001,
+    CM_Y    = 0x00000002,
+    CM_Z    = 0x00000004,
+    CM_W    = 0x00000008,
+    CM_SX   = 0x00000010,
+    CM_SY   = 0x00000020,
+    CM_SZ   = 0x00000040,
+    CM_U    = 0x00000080,
+    CM_V    = 0x00000100,
+    CM_I    = 0x00000200,
+    CM_A    = 0x00000400,
+    CM_R    = 0x00000800,
+    CM_G    = 0x00001000,
+    CM_B    = 0x00002000,
+} brp_component_masks;
+
+#define COMP_S2V(c) (((c) & ~(CM_SX | CM_SY | CM_SZ)) |	(((c) &  (CM_SX | CM_SY | CM_SZ)) >> 4))
+
 #define MAX_GEOMETRY_FNS 16
 #define MAX_SURFACE_FNS 8
 #define MAX_FACE_BLOCKS 7
