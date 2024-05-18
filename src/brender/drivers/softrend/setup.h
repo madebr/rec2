@@ -39,4 +39,6 @@ void C2_HOOK_STDCALL PrimBlockReset(br_soft_renderer* renderer);
 
 void C2_HOOK_STDCALL PrimBlockAdd(br_soft_renderer* renderer, brp_render_fn* fn);
 
+void C2_HOOK_STDCALL PrimBlockOnScreenAdd(br_soft_renderer* renderer, brp_render_fn* fn);
+
 #endif /* SOFTREND_SETUP_H */

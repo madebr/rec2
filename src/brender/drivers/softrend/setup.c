@@ -329,3 +329,13 @@ void C2_HOOK_STDCALL PrimBlockAdd(br_soft_renderer* renderer, brp_render_fn* fn)
     renderer->state.cache.nface_blocks = f + 1;
 }
 C2_HOOK_FUNCTION(0x00544750, PrimBlockAdd)
+
+void C2_HOOK_STDCALL PrimBlockOnScreenAdd(br_soft_renderer* renderer, brp_render_fn* fn) {
+    int f;
+
+    f = renderer->state.cache.nface_blocks_onscreen;
+    renderer->state.cache.face_blocks_onscreen[f].render = fn;
+    renderer->state.cache.face_blocks_onscreen[f + 1].chain = (brp_block*)&renderer->state.cache.face_blocks_onscreen[f];
+    renderer->state.cache.nface_blocks_onscreen = f + 1;
+}
+C2_HOOK_FUNCTION(0x00544790, PrimBlockOnScreenAdd)
