@@ -196,6 +196,25 @@ void C2_HOOK_CDECL V1Face_OS_CullOneSided(br_geometry* self, br_soft_renderer* r
 }
 C2_HOOK_FUNCTION(0x00543450, V1Face_OS_CullOneSided)
 
+void C2_HOOK_CDECL V1Face_CullTwoSided(br_geometry* self, br_soft_renderer* renderer) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.matrix.view_to_screen_hint, 0x550);
+    switch (renderer->state.matrix.view_to_screen_hint) {
+        case BRT_PERSPECTIVE:
+            V1Face_CullTwoSidedPerspective(self, renderer);
+            break;
+
+        case BRT_PARALLEL:
+            V1Face_CullTwoSidedParallel(self, renderer);
+            break;
+
+        default:
+            V1Face_CullNone(self, renderer);
+            break;
+    }
+}
+C2_HOOK_FUNCTION(0x005434e0, V1Face_CullTwoSided)
+
 void C2_HOOK_CDECL V1Face_CullTwoSidedPerspective(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     int df;
