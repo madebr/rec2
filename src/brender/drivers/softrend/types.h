@@ -112,7 +112,11 @@ typedef struct {
     br_timestamp timestamp;
 } soft_state_cull;
 
+#define TFF_REVERSED 1
 #define TFF_VISIBLE  4
+
+#define TVDIR_FRONT	0x80000000
+#define TVDIR_BACK	0x40000000
 
 typedef struct {
     undefined field_0x0[2];
