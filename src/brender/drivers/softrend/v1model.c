@@ -291,6 +291,44 @@ void C2_HOOK_CDECL V1Face_OS_CullTwoSided(br_geometry* self, br_soft_renderer* r
 }
 C2_HOOK_FUNCTION(0x005437c0, V1Face_OS_CullTwoSided)
 
+void C2_HOOK_CDECL V1Face_Outcode(br_geometry* self, br_soft_renderer* renderer) {
+    int f;
+    temp_face_soft* tfp;
+    v11face* fp;
+    br_uint_32 combined_codes;
+
+    C2_HOOK_BUG_ON(OUTCODES_NOT != 0xfff0000);
+    C2_HOOK_BUG_ON(OUTCODES_ALL != 0xfff);
+
+    C2V(rend).faces_clipped = 0;
+
+    for (f = 0; f < C2V(rend).nfaces; f++) {
+        tfp = &C2V(rend).temp_faces[f];
+        fp = &C2V(rend).faces[f];
+
+        if (!tfp->flag) {
+            continue;
+        }
+
+        combined_codes = C2V(rend).temp_vertices[fp->vertices[0]].flags |
+            C2V(rend).temp_vertices[fp->vertices[1]].flags |
+            C2V(rend).temp_vertices[fp->vertices[2]].flags;
+
+        if ((combined_codes & OUTCODES_NOT) != OUTCODES_NOT) {
+            C2V(rend).nvisible_faces -= 1;
+            tfp->flag = 0;
+            C2V(rend).vertex_counts[fp->vertices[0]] -= 1;
+            C2V(rend).vertex_counts[fp->vertices[1]] -= 1;
+            C2V(rend).vertex_counts[fp->vertices[2]] -= 1;
+        } else if (combined_codes & OUTCODES_ALL) {
+            tfp->flag |= TFF_CLIPPED;
+            tfp->codes = (br_uint_16)(combined_codes & OUTCODES_ALL);
+            C2V(rend).faces_clipped = 1;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00543850, V1Face_Outcode)
+
 br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
 br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
 
