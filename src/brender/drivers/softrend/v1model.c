@@ -94,6 +94,22 @@ void C2_HOOK_CDECL V1Face_CullNone(br_geometry* self, br_soft_renderer* renderer
 }
 C2_HOOK_FUNCTION(0x00543110, V1Face_CullNone)
 
+void C2_HOOK_CDECL V1Face_OS_CullNone(br_geometry* self, br_soft_renderer* renderer) {
+    int f;
+    temp_face_soft* tfp;
+
+    for (f = 0; f < C2V(rend).nfaces; f++) {
+
+        tfp = &C2V(rend).temp_faces[f];
+        tfp->flag = TFF_VISIBLE;
+    }
+
+    c2_memset(C2V(rend).vertex_counts, 1, C2V(rend).nvertices);
+
+    C2V(rend).nvisible_faces = C2V(rend).nfaces;
+}
+C2_HOOK_FUNCTION(0x00543190, V1Face_OS_CullNone)
+
 br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
 br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
 
