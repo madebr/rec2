@@ -116,6 +116,30 @@ void C2_HOOK_CDECL Vertex_OS_TransformProjectBoundsSurf(br_geometry* self, br_so
 }
 C2_HOOK_FUNCTION(0x005480a0, Vertex_OS_TransformProjectBoundsSurf)
 
+void C2_HOOK_CDECL Vertex_OS_TransformProjectSurf(br_geometry* self, br_soft_renderer* renderer) {
+    int v;
+    int i;
+    brp_vertex* tvp;
+    fmt_vertex* vp;
+
+    for (v = 0; v < C2V(rend).nvertices; v++) {
+        tvp = &C2V(rend).temp_vertices[v];
+        vp = &C2V(rend).vertices[v];
+
+        if (C2V(rend).vertex_counts[v] == 0) {
+            continue;
+        }
+
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &C2V(scache).model_to_screen);
+        PROJECT_VERTEX(tvp, tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
+
+        for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
+            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(scache).colour, tvp->comp);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x005482c0, Vertex_OS_TransformProjectSurf)
+
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer) {
 
     BrScratchFree(C2V(rend).scratch);
