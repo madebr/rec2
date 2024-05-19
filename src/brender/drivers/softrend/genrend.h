@@ -9,6 +9,8 @@ void C2_HOOK_CDECL Vertex_TransformProjectOutcodeBounds(br_geometry* self, br_so
 
 void C2_HOOK_CDECL Vertex_TransformProjectOutcode(br_geometry *self, br_soft_renderer* renderer);
 
+void C2_HOOK_CDECL Vertex_OS_TransformProjectBounds(br_geometry* self, br_soft_renderer* renderer);
+
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer);
 
 void C2_HOOK_CDECL Vertex_ClearFlags(br_geometry* self, br_soft_renderer* renderer);
