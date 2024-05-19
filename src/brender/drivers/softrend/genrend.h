@@ -23,6 +23,8 @@ void C2_HOOK_CDECL Vertex_OS_TransformProjectGeom(br_geometry* self, br_soft_ren
 
 void C2_HOOK_CDECL Vertex_SurfaceComponentsSurf(br_geometry* self, br_soft_renderer* renderer);
 
+void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedSurf(br_geometry* self, br_soft_renderer* renderer);
+
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer);
 
 void C2_HOOK_CDECL Vertex_ClearFlags(br_geometry* self, br_soft_renderer* renderer);
