@@ -110,6 +110,22 @@ void C2_HOOK_CDECL V1Face_OS_CullNone(br_geometry* self, br_soft_renderer* rende
 }
 C2_HOOK_FUNCTION(0x00543190, V1Face_OS_CullNone)
 
+void C2_HOOK_CDECL V1Face_CullOneSided(br_geometry* self, br_soft_renderer* renderer) {
+
+    switch (renderer->state.matrix.view_to_screen_hint) {
+    case BRT_PERSPECTIVE:
+        V1Face_CullOneSidedPerspective(self, renderer);
+        break;
+    case BRT_PARALLEL:
+        V1Face_CullOneSidedParallel(self, renderer);
+        break;
+    default:
+        V1Face_CullNone(self, renderer);
+        break;
+    }
+}
+C2_HOOK_FUNCTION(0x005431f0, V1Face_CullOneSided)
+
 void C2_HOOK_CDECL V1Face_CullOneSidedPerspective(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
