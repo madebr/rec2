@@ -228,10 +228,48 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00543f10, ActiveLightsFind, ActiveLightsFind_origina
 void (C2_HOOK_STDCALL * ActiveLightsUpdate_original)(br_soft_renderer* self);
 void C2_HOOK_STDCALL ActiveLightsUpdate(br_soft_renderer* self) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ActiveLightsUpdate_original(self);
 #else
-#error "Not implemented"
+    active_light* alp;
+    int l;
+
+    alp = C2V(scache).lights;
+    for (l = 0; l < C2V(scache).nlights_model; l++, alp++) {
+        switch (alp->type) {
+        case BRT_DIRECT:
+            BrMatrix34TApplyV(&alp->direction, &alp->s->direction, &self->state.matrix.model_to_view);
+            BrVector3Normalise(&alp->direction, &alp->direction);
+
+            BrVector3Add(&alp->half, &alp->direction, &C2V(scache).eye_m_normalised);
+            BrVector3Normalise(&alp->half, &alp->half);
+            BrVector3Scale(&alp->direction, &alp->direction, alp->intensity);
+            break;
+        case BRT_SPOT:
+            BrMatrix34TApplyV(&alp->direction, &alp->s->direction, &self->state.matrix.model_to_view);
+            BrVector3Normalise(&alp->direction, &alp->direction);
+            break;
+        case BRT_POINT:
+        case BRT_POINT_LOCAL_1:
+        case BRT_POINT_LOCAL_2:
+            BrMatrix34ApplyP(&alp->position, &alp->s->position, &C2V(scache).view_to_model);
+            break;
+        default:
+            break;
+        }
+    }
+
+    for (l = 0; l < C2V(scache).nlights_view; l++, alp++) {
+        switch (alp->type) {
+        case BRT_DIRECT:
+            BrVector3Copy(&alp->half, &alp->s->direction);
+            alp->half.v[2] += 1.f;
+            BrVector3Normalise(&alp->half, &alp->half);
+            break;
+        default:
+            break;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00544060, ActiveLightsUpdate, ActiveLightsUpdate_original)
