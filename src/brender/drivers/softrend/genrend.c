@@ -242,6 +242,27 @@ void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedSurf(br_geometry* self, br_so
 }
 C2_HOOK_FUNCTION(0x005488f0, Vertex_SurfaceComponentsTwoSidedSurf)
 
+void C2_HOOK_CDECL Vertex_SurfaceComponentsGeom(br_geometry* self, br_soft_renderer* renderer) {
+    brp_vertex* tvp;
+    fmt_vertex* vp;
+    int v;
+    int i;
+
+    for (v = 0; v < C2V(rend).nvertices; v++) {
+        tvp = &C2V(rend).temp_vertices[v];
+        vp = &C2V(rend).vertices[v];
+
+        if (C2V(rend).vertex_counts[v] == 0) {
+            continue;
+        }
+
+        for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
+            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(rend).vertex_colours[v], tvp->comp);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00548a00, Vertex_SurfaceComponentsGeom)
+
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer) {
 
     BrScratchFree(C2V(rend).scratch);
