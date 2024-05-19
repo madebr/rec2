@@ -1926,7 +1926,7 @@ typedef struct br_buffer_stored_dispatch {
     br_error (*_update)(br_buffer_stored*, br_device_pixelmap*, br_token_value*);
 } br_buffer_stored_dispatch;
 
-typedef struct brp_vertex brp_vertex;
+typedef union brp_vertex brp_vertex;
 
 typedef struct br_renderer_dispatch {
     void (C2_HOOK_CDECL *__reserved0)(br_object*);
@@ -2364,9 +2364,16 @@ typedef struct br_primitive_state {
 
 typedef struct brp_block {
     brp_render_fn* render;
-    undefined field_0x4[0x14];
+    undefined field_0x4[0xc];
+    br_token type;
+    br_uint_32 flags;
     br_uint_32 constant_components;
     br_uint_32 vertex_components;
+    undefined field_0x20[4];
+    br_uint_32 field_0x24;
+    br_uint_32 field_0x28;
+    undefined4 field_0x2c;
+    br_int_32 subdivide_tolerance;
 } brp_block;
 
 typedef struct br_primitive_state_dispatch {
