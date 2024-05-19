@@ -74,6 +74,23 @@ void C2_HOOK_CDECL Vertex_OS_TransformProjectBounds(br_geometry* self, br_soft_r
 }
 C2_HOOK_FUNCTION(0x00547d40, Vertex_OS_TransformProjectBounds)
 
+void C2_HOOK_CDECL Vertex_OS_TransformProject(br_geometry* self, br_soft_renderer* renderer) {
+    int v;
+    brp_vertex* tvp;
+
+    for (v = 0; v < C2V(rend).nvertices; v++) {
+        tvp = &C2V(rend).temp_vertices[v];
+
+        if (C2V(rend).vertex_counts[v] == 0) {
+            continue;
+        }
+
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &C2V(rend).vertices[v].p, &C2V(scache).model_to_screen);
+        PROJECT_VERTEX(tvp, tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
+    }
+}
+C2_HOOK_FUNCTION(0x00547f20, Vertex_OS_TransformProject)
+
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer) {
 
     BrScratchFree(C2V(rend).scratch);
