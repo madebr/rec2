@@ -3,13 +3,15 @@
 
 #include <brender/brender.h>
 
+#define SCRATCH_BOUNDARY 16
+#define SCRATCH_ALIGN(x) (((x) + (SCRATCH_BOUNDARY - 1)) & ~(SCRATCH_BOUNDARY-1))
+
 #define MAX_STATE_LIGHTS        16
 #define MAX_STATE_CLIP_PLANES   6
 
 typedef struct br_geometry_primitives br_geometry_primitives;
 typedef struct br_renderer_state_stored_soft br_renderer_state_stored_soft;
 typedef struct br_soft_renderer br_soft_renderer;
-typedef struct temp_face_soft temp_face_soft;
 typedef br_uint_32 br_timestamp;
 typedef void C2_HOOK_CDECL geometry_fn(br_geometry* self, br_renderer* renderer);
 typedef void C2_HOOK_CDECL surface_fn(br_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp);
@@ -109,6 +111,10 @@ typedef struct {
     br_token space;
     br_timestamp timestamp;
 } soft_state_cull;
+
+typedef struct {
+    undefined field_0x0[4];
+} temp_face_soft;
 
 typedef struct {
     br_colour colour;
@@ -325,6 +331,14 @@ typedef struct br_renderer_state_stored_soft {
     br_timestamp timestamp_cache;
     br_primitive_state* pstate;
 } br_renderer_state_stored_soft;
+
+typedef union brp_vertex {
+    br_int_32 flags;
+    br_scalar   comp  [NUM_COMPONENTS];
+    br_float    comp_f[NUM_COMPONENTS];
+    br_fixed_ls comp_x[NUM_COMPONENTS];
+    br_int_32   comp_i[NUM_COMPONENTS];
+} brp_vertex;
 
 typedef struct {
     void* scratch;
