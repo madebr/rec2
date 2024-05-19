@@ -113,13 +113,17 @@ typedef struct {
 } soft_state_cull;
 
 #define TFF_REVERSED 1
+#define TFF_CLIPPED  2
 #define TFF_VISIBLE  4
 
 #define TVDIR_FRONT	0x80000000
 #define TVDIR_BACK	0x40000000
 
+#define OUTCODES_ALL		0x00000FFF
+#define OUTCODES_NOT		0x0FFF0000
+
 typedef struct {
-    undefined field_0x0[2];
+    br_uint_16 codes;
     br_uint_8 flag;
     undefined field_0x3;
 } temp_face_soft;
@@ -357,7 +361,7 @@ typedef struct {
     br_int_8* vertex_flags;
     br_int_8* edge_flags;
     br_int_32 nvisible_faces;
-    undefined4 field_0x20;
+    br_boolean faces_clipped;
     v11face* faces;
     fmt_vertex* vertices;
     br_colour* face_colours;
