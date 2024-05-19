@@ -196,6 +196,36 @@ void C2_HOOK_CDECL V1Face_OS_CullOneSided(br_geometry* self, br_soft_renderer* r
 }
 C2_HOOK_FUNCTION(0x00543450, V1Face_OS_CullOneSided)
 
+void C2_HOOK_CDECL V1Face_CullTwoSidedPerspective(br_geometry* self, br_soft_renderer* renderer) {
+    int f;
+    int df;
+    temp_face_soft* tfp;
+    v11face* fp;
+
+    for (f = 0; f < C2V(rend).nfaces; f++) {
+        tfp = &C2V(rend).temp_faces[f];
+        fp = &C2V(rend).faces[f];
+
+        tfp->flag = TFF_VISIBLE;
+        df = TVDIR_FRONT;
+
+        if (BrVector3Dot(&fp->eqn, &C2V(scache).eye_m) < fp->eqn.v[3]) {
+            tfp->flag |= TFF_REVERSED;
+            df = TVDIR_BACK;
+        }
+
+        C2V(rend).vertex_counts[fp->vertices[0]] += 1;
+        C2V(rend).vertex_counts[fp->vertices[1]] += 1;
+        C2V(rend).vertex_counts[fp->vertices[2]] += 1;
+
+        C2V(rend).temp_vertices[fp->vertices[0]].flags |= df;
+        C2V(rend).temp_vertices[fp->vertices[1]].flags |= df;
+        C2V(rend).temp_vertices[fp->vertices[2]].flags |= df;
+    }
+    C2V(rend).nvisible_faces = C2V(rend).nfaces;
+}
+C2_HOOK_FUNCTION(0x005435a0, V1Face_CullTwoSidedPerspective)
+
 br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
 br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
 
