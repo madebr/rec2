@@ -11,6 +11,8 @@ void C2_HOOK_CDECL V1Face_CullNone(br_geometry* self, br_soft_renderer* renderer
 
 void C2_HOOK_CDECL V1Face_OS_CullNone(br_geometry* self, br_soft_renderer* renderer);
 
+void C2_HOOK_CDECL V1Face_CullOneSided(br_geometry* self, br_soft_renderer* renderer);
+
 void C2_HOOK_CDECL V1Face_CullOneSidedPerspective(br_geometry* self, br_soft_renderer* renderer);
 
 void C2_HOOK_CDECL V1Face_CullOneSidedParallel(br_geometry* self, br_soft_renderer* renderer);
