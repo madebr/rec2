@@ -384,6 +384,25 @@ void C2_HOOK_CDECL V1Face_OS_Render(br_geometry* self, br_soft_renderer* rendere
 }
 C2_HOOK_FUNCTION(0x00542830, V1Face_OS_Render)
 
+void C2_HOOK_CDECL V1Face_OSV_Render(br_geometry* self, br_soft_renderer* renderer) {
+    int f;
+    temp_face_soft* tfp;
+    v11face* fp;
+    brp_block* unclipped = renderer->state.cache.face_blocks_onscreen[renderer->state.cache.nface_blocks_onscreen].chain;
+
+    for (f = 0; f < C2V(rend).nfaces; f++) {
+        tfp = &C2V(rend).temp_faces[f];
+        fp = &C2V(rend).faces[f];
+        unclipped->render(unclipped,
+            &C2V(rend).temp_vertices[fp->vertices[0]],
+            &C2V(rend).temp_vertices[fp->vertices[1]],
+            &C2V(rend).temp_vertices[fp->vertices[2]],
+            fp,
+            tfp);
+    }
+}
+C2_HOOK_FUNCTION(0x005428b0, V1Face_OSV_Render)
+
 br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
 br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
 
