@@ -70,6 +70,30 @@ void C2_HOOK_CDECL V1Faces_ScratchAllocate(br_geometry* self, br_soft_renderer* 
 }
 C2_HOOK_FUNCTION(0x00542f90, V1Faces_ScratchAllocate)
 
+void C2_HOOK_CDECL V1Face_CullNone(br_geometry* self, br_soft_renderer* renderer) {
+    int f;
+    temp_face_soft* tfp;
+    v11face* fp;
+
+    C2_HOOK_BUG_ON(sizeof(temp_face_soft) != 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(temp_face_soft, flag, 0x2);
+    C2_HOOK_BUG_ON(TFF_VISIBLE != 0x4);
+    C2_HOOK_BUG_ON(sizeof(v11face) != 0x1c);
+
+    for (f = 0; f < C2V(rend).nfaces; f++) {
+        tfp = &C2V(rend).temp_faces[f];
+        fp = &C2V(rend).faces[f];
+
+        tfp->flag = TFF_VISIBLE;
+
+        C2V(rend).vertex_counts[fp->vertices[0]] += 1;
+        C2V(rend).vertex_counts[fp->vertices[1]] += 1;
+        C2V(rend).vertex_counts[fp->vertices[2]] += 1;
+    }
+    C2V(rend).nvisible_faces = C2V(rend).nfaces;
+}
+C2_HOOK_FUNCTION(0x00543110, V1Face_CullNone)
+
 br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
 br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
 

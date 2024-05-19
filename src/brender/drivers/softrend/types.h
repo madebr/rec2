@@ -112,8 +112,12 @@ typedef struct {
     br_timestamp timestamp;
 } soft_state_cull;
 
+#define TFF_VISIBLE  4
+
 typedef struct {
-    undefined field_0x0[4];
+    undefined field_0x0[2];
+    br_uint_8 flag;
+    undefined field_0x3;
 } temp_face_soft;
 
 typedef struct {
