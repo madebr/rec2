@@ -123,6 +123,8 @@
         (v1)->v[3] = -(v2)->v[3]; \
     } while (0)
 
+#define BrVector4Dot(v1, v2) BR_MAC4((v1)->v[0], (v2)->v[0], (v1)->v[1], (v2)->v[1], (v1)->v[2], (v2)->v[2], (v1)->v[3], (v2)->v[3])
+
 #define BR_ONE_LS 65536
 #define BR_FIXED_INT(I) ((br_fixed_ls)(((int)(I)) * BR_ONE_LS))
 #define BrFixedToFloat(s) ((float)((s) * (1.0 / (float)BR_ONE_LS)))
