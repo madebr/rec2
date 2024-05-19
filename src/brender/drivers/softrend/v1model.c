@@ -180,6 +180,22 @@ void C2_HOOK_CDECL V1Face_CullOneSidedParallel(br_geometry* self, br_soft_render
 }
 C2_HOOK_FUNCTION(0x00543380, V1Face_CullOneSidedParallel)
 
+void C2_HOOK_CDECL V1Face_OS_CullOneSided(br_geometry* self, br_soft_renderer* renderer) {
+
+    switch (renderer->state.matrix.view_to_screen_hint) {
+    case BRT_PERSPECTIVE:
+        V1Face_CullOneSidedPerspective(self, renderer);
+        break;
+    case BRT_PARALLEL:
+        V1Face_CullOneSidedParallel(self, renderer);
+        break;
+    default:
+        V1Face_OS_CullNone(self, renderer);
+        break;
+    }
+}
+C2_HOOK_FUNCTION(0x00543450, V1Face_OS_CullOneSided)
+
 br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
 br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
 
