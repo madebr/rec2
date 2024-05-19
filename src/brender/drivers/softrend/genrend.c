@@ -210,6 +210,38 @@ void C2_HOOK_CDECL Vertex_SurfaceComponentsSurf(br_geometry* self, br_soft_rende
 }
 C2_HOOK_FUNCTION(0x00548850, Vertex_SurfaceComponentsSurf)
 
+void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedSurf(br_geometry* self, br_soft_renderer* renderer) {
+    int v;
+    int i;
+    brp_vertex* tvp;
+    fmt_vertex* vp;
+    br_vector3 rev_normal;
+
+    for (v = 0; v < C2V(rend).nvertices; v++) {
+        tvp = &C2V(rend).temp_vertices[v];
+        vp = &C2V(rend).vertices[v];
+
+        if (C2V(rend).vertex_counts[v] == 0) {
+            continue;
+        }
+
+        C2_HOOK_BUG_ON(TVDIR_FRONT != 0x80000000);
+
+        if (tvp->flags & TVDIR_FRONT) {
+            for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
+                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(scache).colour, tvp->comp);
+            }
+        } else {
+            BrVector3Negate(&rev_normal, &vp->n);
+
+            for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
+                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &rev_normal, C2V(scache).colour, tvp->comp);
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x005488f0, Vertex_SurfaceComponentsTwoSidedSurf)
+
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer) {
 
     BrScratchFree(C2V(rend).scratch);
