@@ -378,3 +378,82 @@ br_boolean C2_HOOK_STDCALL ClipLineToPlane(brp_vertex* in, brp_vertex* out, br_v
     return 1;
 }
 C2_HOOK_FUNCTION(0x0054bfc0, ClipLineToPlane)
+
+br_boolean C2_HOOK_STDCALL ClipLine(br_soft_renderer* self, brp_vertex* out, brp_vertex* v0, brp_vertex* v1, br_uint_32 mask, br_uint_32 codes) {
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_px, 0x00670758, { { -1.f,  0.f,  0.f, 1.f } });
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_nx, 0x00670768, { {  1.f,  0.f,  0.f, 1.f } });
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_py, 0x00670778, { {  0.f, -1.f,  0.f, 1.f } });
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_ny, 0x00670788, { {  0.f,  1.f,  0.f, 1.f } });
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_pz, 0x00670798, { {  0.f,  0.f, -1.f, 1.f } });
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_nz, 0x006707a8, { {  0.f,  0.f,  1.f, 1.f } });
+
+    brp_vertex cv0[2];
+    brp_vertex cv1[2];
+    brp_vertex* cp_in = cv0;
+    brp_vertex* cp_out = cv1;
+    brp_vertex* cp_tmp;
+    int c;
+
+    cp_in[0] = *v0;
+    cp_in[1] = *v1;
+
+    if (codes & OUTCODE_LEFT) {
+        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_nx), mask)) {
+            return 0;
+        }
+        cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
+    }
+
+    if(codes & OUTCODE_RIGHT) {
+        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_px), mask)) {
+            return 0;
+        }
+        cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
+    }
+
+    if (codes & OUTCODE_TOP) {
+        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_py), mask)) {
+            return 0;
+        }
+        cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
+    }
+
+    if (codes & OUTCODE_BOTTOM) {
+        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_ny), mask)) {
+            return 0;
+        }
+        cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
+    }
+
+    if(codes & OUTCODE_HITHER) {
+        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_pz), mask)) {
+            return 0;
+        }
+        cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
+    }
+
+    if (codes & OUTCODE_YON) {
+        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_nz), mask)) {
+            return 0;
+        }
+        cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
+    }
+    if (C2V(scache).user_clip_active) {
+        for (c = 0; c < MAX_STATE_CLIP_PLANES; c++) {
+            if (self->state.clip[c].type != BRT_PLANE) {
+                continue;
+            }
+            if (!(codes & (OUTCODE_USER << c))) {
+                continue;
+            }
+            if (!ClipLineToPlane(cp_in, cp_out, &self->state.clip[c].plane, mask)) {
+                return 0;
+            }
+            cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
+        }
+    }
+    out[0] = cp_in[0];
+    out[1] = cp_in[1];
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0054c120, ClipLine)
