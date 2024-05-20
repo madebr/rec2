@@ -187,6 +187,8 @@ target_link_libraries(brender
 )
 
 add_library(brender_softrendr_float STATIC
+    drivers/softrend/clip.c
+    drivers/softrend/clip.h
     drivers/softrend/convert.c
     drivers/softrend/convert.h
     drivers/softrend/device.c
