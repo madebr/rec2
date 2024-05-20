@@ -325,3 +325,74 @@ void C2_HOOK_CDECL Vertex_ClearFlags(br_geometry* self, br_soft_renderer* render
     }
 }
 C2_HOOK_FUNCTION(0x005476c0, Vertex_ClearFlags)
+
+void C2_HOOK_STDCALL VertexGeometryFns(br_soft_renderer* renderer, geometry_fn* prim_outcode) {
+
+    C2_HOOK_BUG_ON(ENBL_BOUNDS != 0x10);
+    if (renderer->state.enable.flags & ENBL_BOUNDS) {
+        GeometryFunctionAdd(renderer, (geometry_fn*)Vertex_TransformProjectOutcodeBounds);
+    } else {
+        GeometryFunctionAdd(renderer, (geometry_fn*)Vertex_TransformProjectOutcode);
+    }
+
+    if (prim_outcode != NULL) {
+        GeometryFunctionAdd(renderer, prim_outcode);
+    }
+
+    if (renderer->state.cache.nvertex_fns != 0) {
+        if (renderer->state.cull.type == BRT_TWO_SIDED) {
+            if (renderer->state.surface.colour_source == BRT_GEOMETRY) {
+                GeometryFunctionAdd(renderer, (geometry_fn*)Vertex_SurfaceComponentsTwoSidedGeom);
+            } else {
+                GeometryFunctionAdd(renderer, (geometry_fn*)Vertex_SurfaceComponentsTwoSidedSurf);
+            }
+        } else {
+            if (renderer->state.surface.colour_source == BRT_GEOMETRY) {
+                GeometryFunctionAdd(renderer, (geometry_fn*)Vertex_SurfaceComponentsGeom);
+            } else {
+                GeometryFunctionAdd(renderer, (geometry_fn*)Vertex_SurfaceComponentsSurf);
+            }
+        }
+    }
+
+    if (renderer->state.cache.nvertex_fns != 0) {
+        if (renderer->state.cull.type == BRT_TWO_SIDED) {
+            if (renderer->state.enable.flags & ENBL_BOUNDS) {
+                GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_OS_TransformProjectBounds);
+            } else {
+                GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_OS_TransformProject);
+            }
+
+            if (renderer->state.surface.colour_source == BRT_GEOMETRY) {
+                GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_SurfaceComponentsTwoSidedGeom);
+            } else {
+                GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_SurfaceComponentsTwoSidedSurf);
+            }
+        } else {
+            if (renderer->state.enable.flags & ENBL_BOUNDS) {
+                if (renderer->state.surface.colour_source == BRT_GEOMETRY) {
+                    GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_OS_TransformProjectBoundsGeom);
+                } else {
+                    GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_OS_TransformProjectBoundsSurf);
+                }
+            } else {
+                if (renderer->state.surface.colour_source == BRT_GEOMETRY) {
+                    GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_OS_TransformProjectGeom);
+                } else {
+                    GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_OS_TransformProjectSurf);
+                }
+            }
+        }
+    } else {
+        if (renderer->state.enable.flags & ENBL_BOUNDS) {
+            GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_OS_TransformProjectBounds);
+        } else {
+            GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_OS_TransformProject);
+        }
+    }
+
+    if (renderer->state.surface.force_front) {
+        GeometryFunctionBothAdd(renderer, (geometry_fn*)Vertex_ForceFront);
+    }
+}
+C2_HOOK_FUNCTION(0x005476f0, VertexGeometryFns)
