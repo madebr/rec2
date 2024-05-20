@@ -1,5 +1,6 @@
 #include "clip.h"
 
+#include "rend.h"
 #include "setup.h"
 
 int ClipFaceToPlane(brp_vertex* vp, brp_vertex* verts_out, int num_in, br_vector4* plane, int cmask) {
@@ -303,3 +304,22 @@ brp_vertex* C2_HOOK_STDCALL FaceClip(br_soft_renderer* self, brp_vertex* clip_in
     return cp_in;
 }
 C2_HOOK_FUNCTION(0x0054b730, FaceClip)
+
+void C2_HOOK_STDCALL ClippedRenderTriangles(br_soft_renderer* renderer, brp_block* block, brp_vertex* cp_in, int n, br_uint_16 *fp_vertices, br_uint_16 *fp_edges) {
+    int i;
+    brp_vertex* tvp;
+
+    for (i = 0; i < n; i++) {
+        tvp = &cp_in[i];
+
+        if (tvp->flags & (TV_CLIPPED | OUTCODES_ALL)) {
+            PROJECT_VERTEX(tvp, tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
+            UPDATE_BOUNDS(tvp);
+        }
+    }
+
+    for (i = 2; i < n; i++) {
+        block->render(block, &cp_in[0], &cp_in[i - 1], &cp_in[i], fp_vertices, fp_edges);
+    }
+}
+C2_HOOK_FUNCTION(0x0054bea0, ClippedRenderTriangles)
