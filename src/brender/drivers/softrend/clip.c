@@ -323,3 +323,58 @@ void C2_HOOK_STDCALL ClippedRenderTriangles(br_soft_renderer* renderer, brp_bloc
     }
 }
 C2_HOOK_FUNCTION(0x0054bea0, ClippedRenderTriangles)
+
+br_boolean C2_HOOK_STDCALL ClipLineToPlane(brp_vertex* in, brp_vertex* out, br_vector4* plane, int cmask) {
+    br_scalar t, tu, tv;
+    int m;
+    br_scalar* usp;
+    br_scalar* vsp;
+    br_scalar* wsp;
+
+    tu = -BR_MAC4(
+        plane->v[0], in[0].comp[C_X],
+        plane->v[1], in[0].comp[C_Y],
+        plane->v[2], in[0].comp[C_Z],
+        plane->v[3], in[0].comp[C_W]);
+
+    tv = -BR_MAC4(
+        plane->v[0], in[1].comp[C_X],
+        plane->v[1], in[1].comp[C_Y],
+        plane->v[2], in[1].comp[C_Z],
+        plane->v[3], in[1].comp[C_W]);
+
+    out[0] = in[0];
+    out[1] = in[1];
+
+    if (tu <= 0.f) {
+        if (tv <= 0.f) {
+            out[1] = in[1];
+            return 1;
+        }
+        t = tu / (tu - tv);
+        usp = in[0].comp;
+        vsp = in[1].comp;
+        wsp = out[1].comp;
+        for (m = cmask ; m != 0; m >>= 1, usp++, vsp++, wsp++) {
+            if (m & 1) {
+                *wsp = *usp + t * (*vsp - *usp);
+            }
+        }
+    } else {
+        if (tv > 0.f) {
+            return 0;
+        }
+        t = tv / (tv - tu);
+        usp = in[0].comp;
+        vsp = in[1].comp;
+        wsp = out[0].comp;
+        for (m = cmask ; m != 0 ; m >>= 1, usp++, vsp++, wsp++) {
+            if (m & 1) {
+                *wsp = *vsp + t * (*usp - *vsp);
+            }
+        }
+    }
+
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0054bfc0, ClipLineToPlane)
