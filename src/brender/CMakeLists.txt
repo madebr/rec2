@@ -198,6 +198,8 @@ add_library(brender_softrendr_float STATIC
     drivers/softrend/gv1buckt.h
     drivers/softrend/gv1model.c
     drivers/softrend/gv1model.h
+    drivers/softrend/heap.c
+    drivers/softrend/heap.h
     drivers/softrend/light24.c
     drivers/softrend/light24.h
     drivers/softrend/light8.c
@@ -224,6 +226,7 @@ add_library(brender_softrendr_float STATIC
     drivers/softrend/types.h
     drivers/softrend/v1model.c
     drivers/softrend/v1model.h
+    drivers/softrend/zsrmacro.h
 )
 target_include_directories(brender_softrendr_float
     PRIVATE
