@@ -79,4 +79,6 @@ enum {
         }                                                   \
     } while (0)
 
+#define SORT_VALUE_POINT(type, z0) zprim = VIEW_Z(v0)
+
 #endif /* SOFTREND_ZSRMACRO_H */

@@ -243,3 +243,40 @@ void C2_HOOK_CDECL OpHeapAddLineConvert(brp_block* block, brp_vertex* v0, brp_ve
     }
 }
 C2_HOOK_FUNCTION(0x00547310, OpHeapAddLineConvert)
+
+void C2_HOOK_CDECL OpHeapAddPointConvert(brp_block* block, brp_vertex* v0) {
+    br_primitive* p;
+    br_scalar zprim;
+    brp_vertex outv[1];
+
+    C2_HOOK_BUG_ON(sizeof(br_primitive) + 1 * sizeof(brp_vertex) != 0x58);
+    if (!heapCheck(C2V(rend).renderer->state.hidden.heap, sizeof(br_primitive) + 1 * sizeof(brp_vertex))) {
+        return;
+    }
+
+    if (C2V(rend).renderer->state.surface.force_front) {
+        zprim = BR_SCALAR(0.0);
+    } else {
+        SORT_VALUE_POINT(C2V(rend).renderer->state.hidden.order_table->type, v0);
+    }
+
+    ConvertVertex(&outv[0], v0);
+
+    p = heapPrimitiveAdd(C2V(rend).renderer->state.hidden.heap, BRT_POINT);
+    p->v[0] = heapVertexAdd(C2V(rend).renderer->state.hidden.heap, &outv[0], 0);
+
+    if (C2V(rend).renderer->state.hidden.insert_fn != NULL) {
+        br_scalar z[1];
+        z[0] = VIEW_Z(v0);
+
+        C2V(rend).renderer->state.hidden.insert_fn(p,
+            C2V(rend).renderer->state.hidden.insert_arg1,
+            C2V(rend).renderer->state.hidden.insert_arg2,
+            C2V(rend).renderer->state.hidden.insert_arg3,
+            C2V(rend).renderer->state.hidden.order_table,
+            z);
+    } else {
+        INSERT_PRIMITIVE(C2V(rend).renderer->state.hidden.order_table, p, zprim);
+    }
+}
+C2_HOOK_FUNCTION(0x00547530, OpHeapAddPointConvert)
