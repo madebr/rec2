@@ -7,4 +7,6 @@
 
 void C2_HOOK_CDECL OpHeapAddTriangle(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2);
 
+void C2_HOOK_CDECL OpHeapAddLine(brp_block* block, brp_vertex* v0, brp_vertex* v1);
+
 #endif /* SOFREND_HEAP_H */
