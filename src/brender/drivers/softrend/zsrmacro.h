@@ -61,6 +61,22 @@ enum {
         }                                                   \
     } while(0)
 
-
+#define SORT_VALUE_EDGE(type,z0,z1) do {                    \
+        zprim = VIEW_Z(z0);                                 \
+        switch (type) {                                     \
+        case BR_SORT_AVERAGE:                               \
+            zprim += VIEW_Z(z1);                            \
+            zprim *= 1.f / 2.f;                             \
+            break;                                          \
+        case BR_SORT_MIN:                                   \
+            if (VIEW_Z(z1) < zprim) { zprim = VIEW_Z(z1); } \
+            break;                                          \
+        case BR_SORT_MAX:                                   \
+            if (VIEW_Z(z1) > zprim) { zprim = VIEW_Z(z1); } \
+            break;                                          \
+        case BR_SORT_FIRST_VERTEX:                          \
+            break;                                          \
+        }                                                   \
+    } while (0)
 
 #endif /* SOFTREND_ZSRMACRO_H */
