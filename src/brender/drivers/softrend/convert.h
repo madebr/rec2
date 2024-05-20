@@ -11,4 +11,6 @@ void C2_HOOK_CDECL RenderConvert1(brp_block* block, brp_vertex* v0);
 
 void C2_HOOK_CDECL RenderConvert2(brp_block* block, brp_vertex* v0, brp_vertex* v1);
 
+void C2_HOOK_CDECL RenderConvert3(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2);
+
 #endif /* SOFTREND_CONVERT_H */
