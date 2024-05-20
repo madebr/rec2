@@ -29,6 +29,8 @@ void C2_HOOK_CDECL Vertex_SurfaceComponentsGeom(br_geometry* self, br_soft_rende
 
 void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedGeom(br_geometry* self, br_soft_renderer* renderer);
 
+void C2_HOOK_CDECL Vertex_ForceFront(br_geometry* self, br_soft_renderer* renderer);
+
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer);
 
 void C2_HOOK_CDECL Vertex_ClearFlags(br_geometry* self, br_soft_renderer* renderer);
