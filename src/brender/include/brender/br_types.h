@@ -2369,9 +2369,9 @@ typedef struct brp_block {
     br_uint_32 flags;
     br_uint_32 constant_components;
     br_uint_32 vertex_components;
-    undefined field_0x20[4];
-    br_uint_32 field_0x24;
-    br_uint_32 field_0x28;
+    br_uint_32 convert_mask_f;
+    br_uint_32 convert_mask_x;
+    br_uint_32 convert_mask_i;
     undefined4 field_0x2c;
     br_int_32 subdivide_tolerance;
 } brp_block;
