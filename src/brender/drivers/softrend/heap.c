@@ -162,7 +162,7 @@ void C2_HOOK_CDECL OpHeapAddPoint(brp_block* block, brp_vertex* v0) {
 C2_HOOK_FUNCTION(0x00546e90, OpHeapAddPoint)
 
 void C2_HOOK_CDECL OpHeapAddTriangleConvert(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2) {
-    br_primitive *p;
+    br_primitive* p;
     br_scalar zprim;
     brp_vertex outv[3];
 
