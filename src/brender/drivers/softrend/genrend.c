@@ -293,6 +293,23 @@ void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedGeom(br_geometry* self, br_so
 }
 C2_HOOK_FUNCTION(0x00548aa0, Vertex_SurfaceComponentsTwoSidedGeom)
 
+void C2_HOOK_CDECL Vertex_ForceFront(br_geometry* self, br_soft_renderer* renderer) {
+    brp_vertex* tvp;
+    int v;
+
+    for (v = 0; v < C2V(rend).nvertices; v++) {
+        tvp = &C2V(rend).temp_vertices[v];
+
+        if (C2V(rend).vertex_counts[v] == 0) {
+            continue;
+        }
+
+        tvp->comp[C_SZ] = 0.f;
+        tvp->comp[C_Z] = tvp->comp[C_W] - BR_SCALAR_EPSILON;
+    }
+}
+C2_HOOK_FUNCTION(0x00548bd0, Vertex_ForceFront)
+
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer) {
 
     BrScratchFree(C2V(rend).scratch);
