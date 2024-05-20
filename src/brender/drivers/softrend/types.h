@@ -127,6 +127,8 @@ enum {
 #define TVDIR_FRONT 0x80000000
 #define TVDIR_BACK  0x40000000
 
+#define TV_CLIPPED  0x20000000
+
 #define OUTCODE_LEFT        0x00000001
 #define OUTCODE_RIGHT       0x00000002
 #define OUTCODE_TOP         0x00000004
