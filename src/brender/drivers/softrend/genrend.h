@@ -35,4 +35,6 @@ void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer);
 
 void C2_HOOK_CDECL Vertex_ClearFlags(br_geometry* self, br_soft_renderer* renderer);
 
+void C2_HOOK_STDCALL VertexGeometryFns(br_soft_renderer* renderer, geometry_fn* prim_outcode);
+
 #endif /* SOFTREND_GENREND_H */
