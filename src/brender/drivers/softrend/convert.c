@@ -102,3 +102,52 @@ void C2_HOOK_CDECL RenderConvert1(brp_block* block, brp_vertex* v0) {
     block->chain->render(block->chain, outv);
 }
 C2_HOOK_FUNCTION(0x005461b0, RenderConvert1)
+
+void C2_HOOK_CDECL RenderConvert2(brp_block* block, brp_vertex* v0, brp_vertex* v1) {
+    int c;
+    br_uint_32 m;
+    brp_vertex outv[2];
+
+    m = C2V(rend).block->convert_mask_f;
+    if (m != 0) {
+        for (c = 0; m != 0; c++, m >>= 1) {
+            if (m & 1) {
+                outv[0].comp_f[c] = FCONV(v0->comp[c]);
+                outv[1].comp_f[c] = FCONV(v1->comp[c]);
+            }
+        }
+    }
+
+    m = C2V(rend).block->convert_mask_x;
+    if (m != 0) {
+        for (c = 0; m != 0; c++, m >>= 1) {
+            if (m & 1) {
+                outv[0].comp_x[c] = XCONV(v0->comp[c]);
+                outv[1].comp_x[c] = XCONV(v1->comp[c]);
+            }
+        }
+    }
+
+    m = C2V(rend).block->convert_mask_i;
+    if (m != 0) {
+        for (c = 0; m != 0; c++, m >>= 1) {
+            if (m & 1) {
+                outv[0].comp_i[c] = ICONV(v0->comp[c]);
+                outv[1].comp_i[c] = ICONV(v1->comp[c]);
+            }
+        }
+    }
+
+    m = 0x0000ffff ^ (C2V(rend).block->convert_mask_i | C2V(rend).block->convert_mask_x | C2V(rend).block->convert_mask_f);
+    if (m != 0) {
+        for (c = 0; m != 0; c++, m >>= 1) {
+            if (m & 1) {
+                outv[0].comp_i[c] = v0->comp_i[c];
+                outv[1].comp_i[c] = v1->comp_i[c];
+            }
+        }
+    }
+
+    block->chain->render(block->chain, &outv[0], &outv[1]);
+}
+C2_HOOK_FUNCTION(0x00546290, RenderConvert2)
