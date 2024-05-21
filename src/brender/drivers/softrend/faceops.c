@@ -81,3 +81,31 @@ void C2_HOOK_CDECL OpTriangleConstantSurf(brp_block* block, brp_vertex* v0, brp_
     block->chain->render(block->chain, v0, v1, v2, face, fp_vertices);
 }
 C2_HOOK_FUNCTION(0x00545370, OpTriangleConstantSurf)
+
+void C2_HOOK_CDECL OpTriangleTwoSidedConstantSurf(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, v11face* face, temp_face_soft* tfp) {
+    fmt_vertex* vp;
+    br_colour colour;
+    br_vector3 rev_normal;
+    int i;
+
+    vp = &C2V(rend).vertices[face->vertices[0]];
+    colour = C2V(scache).colour;
+
+    if (C2V(rend).renderer->state.surface.colour_source == BRT_GEOMETRY) {
+        colour = C2V(rend).face_colours[face - C2V(rend).faces];
+    }
+    if (tfp->flag & TFF_REVERSED) {
+        BrVector3Negate(&rev_normal, (br_vector3*)&face->eqn);
+
+        for (i = 0; i < C2V(rend).renderer->state.cache.nconstant_fns; i++) {
+            C2V(rend).renderer->state.cache.constant_fns[i]((br_renderer*)C2V(rend).renderer, &vp->p, &vp->map, &rev_normal, colour, v0->comp);
+        }
+
+    } else {
+        for (i = 0; i < C2V(rend).renderer->state.cache.nconstant_fns; i++) {
+            C2V(rend).renderer->state.cache.constant_fns[i]((br_renderer*)C2V(rend).renderer, &vp->p, &vp->map, (br_vector3*)&face->eqn, colour, v0->comp);
+        }
+    }
+    block->chain->render(block->chain, v0, v1, v2, face, tfp);
+}
+C2_HOOK_FUNCTION(0x00545430, OpTriangleTwoSidedConstantSurf)
