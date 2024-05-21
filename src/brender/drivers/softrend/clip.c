@@ -457,3 +457,16 @@ br_boolean C2_HOOK_STDCALL ClipLine(br_soft_renderer* self, brp_vertex* out, brp
     return 1;
 }
 C2_HOOK_FUNCTION(0x0054c120, ClipLine)
+
+void C2_HOOK_STDCALL ClippedRenderLine(br_soft_renderer* renderer, brp_block* block, brp_vertex* cp_in) {
+    int i;
+    brp_vertex* tvp;
+
+    for (i = 0, tvp = cp_in; i < 2; i++, tvp++) {
+        PROJECT_VERTEX(tvp, tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
+        UPDATE_BOUNDS(tvp);
+    }
+
+    block->render(block, &cp_in[0], &cp_in[1]);
+}
+C2_HOOK_FUNCTION(0x0054c320, ClippedRenderLine)
