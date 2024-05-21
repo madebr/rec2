@@ -60,3 +60,24 @@ void C2_HOOK_CDECL OpTriangleClipConstantSurf(brp_block* block, brp_vertex* v0, 
     }
 }
 C2_HOOK_FUNCTION(0x005451c0, OpTriangleClipConstantSurf)
+
+void C2_HOOK_CDECL OpTriangleConstantSurf(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, v11face* face, br_uint_16* fp_vertices) {
+    br_colour colour;
+    fmt_vertex* vp;
+    int i;
+
+    colour = C2V(scache).colour;
+    vp = &C2V(rend).vertices[face->vertices[0]];
+
+    if (C2V(rend).renderer->state.surface.colour_source == BRT_GEOMETRY) {
+        colour = C2V(rend).face_colours[face - C2V(rend).faces];
+    }
+
+    for (i = 0; i < C2V(rend).renderer->state.cache.nconstant_fns; i++) {
+        C2V(rend).renderer->state.cache.constant_fns[i]((br_renderer*)C2V(rend).renderer, &vp->p, &vp->map, (br_vector3*)&face->eqn, colour, v0->comp);
+    }
+
+    /* FIXME: what is type of last argument? */
+    block->chain->render(block->chain, v0, v1, v2, face, fp_vertices);
+}
+C2_HOOK_FUNCTION(0x00545370, OpTriangleConstantSurf)
