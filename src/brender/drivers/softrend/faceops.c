@@ -109,3 +109,38 @@ void C2_HOOK_CDECL OpTriangleTwoSidedConstantSurf(brp_block* block, brp_vertex* 
     block->chain->render(block->chain, v0, v1, v2, face, tfp);
 }
 C2_HOOK_FUNCTION(0x00545430, OpTriangleTwoSidedConstantSurf)
+
+void C2_HOOK_CDECL OpTriangleMappingWrapFix(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, undefined4* param_5, undefined4* param_6) {
+    br_scalar scale;
+    br_scalar half;
+    br_scalar d0, d1, d2;
+    brp_vertex fixed[3];
+
+    scale = fabsf(C2V(rend).renderer->state.cache.comp_scales[C_U]);
+    half = scale / 2.f;
+    d0 = v1->comp[C_U] - v0->comp[C_U];
+    d1 = v2->comp[C_U] - v1->comp[C_U];
+    d2 = v0->comp[C_U] - v2->comp[C_U];
+
+    if (d0 > half || d0 < -half || d1 > half || d1 < -half || d2 > half || d2 < -half) {
+        if (d0 > half || d2 <-half) {
+            fixed[0] = *v0;
+            fixed[0].comp[C_U] += scale;
+            v0 = &fixed[0];
+        }
+        if (d0 < -half || d1 > half) {
+            fixed[1] = *v1;
+            fixed[1].comp[C_U] += scale;
+            v1 = &fixed[1];
+        }
+        if (d1 < -half || d2 > half) {
+            fixed[2] = *v2;
+            fixed[2].comp[C_U] += scale;
+            v2 = &fixed[2];
+        }
+    }
+
+    /* FIXME: what are the last arguments? */
+    block->chain->render(block->chain, v0, v1, v2, param_5, param_6);
+}
+C2_HOOK_FUNCTION(0x00545560, OpTriangleMappingWrapFix)
