@@ -249,3 +249,22 @@ void C2_HOOK_CDECL OpTriangleToPoints(brp_block* block, brp_vertex* v0, brp_vert
     }
 }
 C2_HOOK_FUNCTION(0x00545a80, OpTriangleToPoints)
+
+void C2_HOOK_CDECL OpTriangleToPoints_OS(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices) {
+
+    if (!C2V(rend).vertex_flags[fp_vertices[0]]) {
+        block->chain->render(block->chain, v0);
+        C2V(rend).vertex_flags[fp_vertices[0]] = 1;
+    }
+
+    if (!C2V(rend).vertex_flags[fp_vertices[1]]) {
+        block->chain->render(block->chain, v1);
+        C2V(rend).vertex_flags[fp_vertices[1]] = 1;
+    }
+
+    if (!C2V(rend).vertex_flags[fp_vertices[2]]) {
+        block->chain->render(block->chain, v2);
+        C2V(rend).vertex_flags[fp_vertices[2]] = 1;
+    }
+}
+C2_HOOK_FUNCTION(0x00545b40, OpTriangleToPoints_OS)
