@@ -230,3 +230,22 @@ void C2_HOOK_CDECL OpTriangleReplicateConstantRGB(brp_block* block, brp_vertex* 
     block->chain->render(block->chain, v0, v1, v2, fp_vertices, fp_edges);
 }
 C2_HOOK_FUNCTION(0x00545a30, OpTriangleReplicateConstantRGB)
+
+void C2_HOOK_CDECL OpTriangleToPoints(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices) {
+
+    if (!C2V(rend).vertex_flags[fp_vertices[0]] && !(v0->flags & OUTCODES_ALL)) {
+        block->chain->render(block->chain, v0);
+        C2V(rend).vertex_flags[fp_vertices[0]] = 1;
+    }
+
+    if (!C2V(rend).vertex_flags[fp_vertices[1]] && !(v1->flags & OUTCODES_ALL)) {
+        block->chain->render(block->chain, v1);
+        C2V(rend).vertex_flags[fp_vertices[1]] = 1;
+    }
+
+    if (!C2V(rend).vertex_flags[fp_vertices[2]] && !(v2->flags & OUTCODES_ALL)) {
+        block->chain->render(block->chain, v2);
+        C2V(rend).vertex_flags[fp_vertices[2]] = 1;
+    }
+}
+C2_HOOK_FUNCTION(0x00545a80, OpTriangleToPoints)
