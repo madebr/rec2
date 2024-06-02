@@ -277,3 +277,9 @@ void C2_HOOK_CDECL OpLineClip(brp_block* block, brp_vertex* v0, brp_vertex* v1) 
     }
 }
 C2_HOOK_FUNCTION(0x00545be0, OpLineClip)
+
+void C2_HOOK_STDCALL SubdivideSetThreshold(br_int_32 subdivide_tolerance) {
+
+    C2V(rend).subdivide_threshold = 1.f / (1.25f - 0.002f * (float)subdivide_tolerance);
+}
+C2_HOOK_FUNCTION(0x00545c40, SubdivideSetThreshold)
