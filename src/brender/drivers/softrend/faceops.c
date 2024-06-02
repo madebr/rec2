@@ -178,3 +178,22 @@ void C2_HOOK_CDECL OpTriangleRelightTwoSided(brp_block* block, brp_vertex* v0, b
     }
 }
 C2_HOOK_FUNCTION(0x00545720, OpTriangleRelightTwoSided)
+
+void C2_HOOK_CDECL OpTriangleToLines(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, v11face* fp) {
+
+    if (!C2V(rend).edge_flags[fp->edges[0]]) {
+        block->chain->render(block->chain, v0, v1);
+        C2V(rend).edge_flags[fp->edges[0]] = 1;
+    }
+
+    if (!C2V(rend).edge_flags[fp->edges[1]]) {
+        block->chain->render(block->chain, v1, v2);
+        C2V(rend).edge_flags[fp->edges[1]] = 1;
+    }
+
+    if (!C2V(rend).edge_flags[fp->edges[2]]) {
+        block->chain->render(block->chain, v2, v0);
+        C2V(rend).edge_flags[fp->edges[2]] = 1;
+    }
+}
+C2_HOOK_FUNCTION(0x005458e0, OpTriangleToLines)
