@@ -213,3 +213,11 @@ void C2_HOOK_CDECL OpTriangleReplicateConstant(brp_block* block, brp_vertex* v0,
     block->chain->render(block->chain, v0, v1, v2, fp_vertices, fp_edges);
 }
 C2_HOOK_FUNCTION(0x00545990, OpTriangleReplicateConstant)
+
+void C2_HOOK_CDECL OpTriangleReplicateConstantI(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices, br_uint_16* fp_edges) {
+
+    v1->comp[C_I] = v2->comp[C_I] = v0->comp[C_I];
+
+    block->chain->render(block->chain, v0, v1, v2, fp_vertices, fp_edges);
+}
+C2_HOOK_FUNCTION(0x005459f0, OpTriangleReplicateConstantI)
