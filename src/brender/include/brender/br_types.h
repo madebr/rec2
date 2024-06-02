@@ -2373,7 +2373,7 @@ typedef struct brp_block {
     br_uint_32 convert_mask_f;
     br_uint_32 convert_mask_x;
     br_uint_32 convert_mask_i;
-    undefined4 field_0x2c;
+    br_uint_32 constant_mask;
     br_int_32 subdivide_tolerance;
 } brp_block;
 

@@ -197,3 +197,19 @@ void C2_HOOK_CDECL OpTriangleToLines(brp_block* block, brp_vertex* v0, brp_verte
     }
 }
 C2_HOOK_FUNCTION(0x005458e0, OpTriangleToLines)
+
+void C2_HOOK_CDECL OpTriangleReplicateConstant(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices, br_uint_16* fp_edges) {
+    br_uint_32 m;
+    int c;
+
+    m = C2V(rend).block->constant_mask;
+
+    for (c = 0; m != 0; c++, m >>= 1) {
+        if (m & 1) {
+            v1->comp[c] = v2->comp[c] = v0->comp[c];
+        }
+    }
+
+    block->chain->render(block->chain, v0, v1, v2, fp_vertices, fp_edges);
+}
+C2_HOOK_FUNCTION(0x00545990, OpTriangleReplicateConstant)
