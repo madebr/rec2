@@ -144,3 +144,37 @@ void C2_HOOK_CDECL OpTriangleMappingWrapFix(brp_block* block, brp_vertex* v0, br
     block->chain->render(block->chain, v0, v1, v2, param_5, param_6);
 }
 C2_HOOK_FUNCTION(0x00545560, OpTriangleMappingWrapFix)
+
+void C2_HOOK_CDECL OpTriangleRelightTwoSided(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices, temp_face_soft* tfp) {
+    int i, v;
+    brp_vertex tv[3];
+    br_vector3 rev_normal;
+    br_colour colour;
+
+    colour = C2V(scache).colour;
+    if (tfp->flag & TFF_REVERSED) {
+        tv[0] = *v0;
+        tv[1] = *v1;
+        tv[2] = *v2;
+
+        for (v = 0; v < 3; v++) {
+
+            if ((tv[v].flags & (TVDIR_FRONT | TVDIR_BACK)) == (TVDIR_FRONT | TVDIR_BACK)) {
+                fmt_vertex* vp = &C2V(rend).vertices[fp_vertices[v]];
+
+                if (C2V(rend).renderer->state.surface.colour_source == BRT_GEOMETRY) {
+                    colour = C2V(rend).vertex_colours[fp_vertices[v]];
+                }
+                BrVector3Negate(&rev_normal, &vp->n);
+
+                for (i = 0; i < C2V(rend).renderer->state.cache.nvertex_fns; i++) {
+                    C2V(rend).renderer->state.cache.vertex_fns[i]((br_renderer*)C2V(rend).renderer, &vp->p, &vp->map, &rev_normal, colour, tv[v].comp);
+                }
+            }
+        }
+        block->chain->render(block->chain, &tv[0], &tv[1], &tv[2], fp_vertices, tfp);
+    } else {
+        block->chain->render(block->chain, v0, v1, v2, fp_vertices, tfp);
+    }
+}
+C2_HOOK_FUNCTION(0x00545720, OpTriangleRelightTwoSided)
