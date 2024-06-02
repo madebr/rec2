@@ -268,3 +268,12 @@ void C2_HOOK_CDECL OpTriangleToPoints_OS(brp_block* block, brp_vertex* v0, brp_v
     }
 }
 C2_HOOK_FUNCTION(0x00545b40, OpTriangleToPoints_OS)
+
+void C2_HOOK_CDECL OpLineClip(brp_block* block, brp_vertex* v0, brp_vertex* v1) {
+    brp_vertex clipped[2];
+
+    if (ClipLine(C2V(rend).renderer, clipped, v0, v1, C2V(rend).renderer->state.cache.clip_slots, v0->flags | v1->flags)) {
+        ClippedRenderLine(C2V(rend).renderer, block->chain, clipped);
+    }
+}
+C2_HOOK_FUNCTION(0x00545be0, OpLineClip)
