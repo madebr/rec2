@@ -33,4 +33,6 @@ void C2_HOOK_CDECL OpLineClip(brp_block* block, brp_vertex* v0, brp_vertex* v1);
 
 void C2_HOOK_STDCALL SubdivideSetThreshold(br_int_32 subdivide_tolerance);
 
+br_boolean C2_HOOK_CDECL subdivideCheck(brp_vertex* v0, brp_vertex* v1, brp_vertex* v2);
+
 #endif
