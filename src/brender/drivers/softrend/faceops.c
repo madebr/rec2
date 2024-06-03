@@ -283,3 +283,36 @@ void C2_HOOK_STDCALL SubdivideSetThreshold(br_int_32 subdivide_tolerance) {
     C2V(rend).subdivide_threshold = 1.f / (1.25f - 0.002f * (float)subdivide_tolerance);
 }
 C2_HOOK_FUNCTION(0x00545c40, SubdivideSetThreshold)
+
+br_boolean C2_HOOK_CDECL subdivideCheck(brp_vertex* v0, brp_vertex* v1, brp_vertex* v2) {
+    br_scalar z0,z1,z2,zt;
+
+    z0 = fabsf(v0->comp[C_Z]);
+    z1 = fabsf(v1->comp[C_Z]);
+    z2 = fabsf(v2->comp[C_Z]);
+
+    if (z0 > z1) {
+        zt = z0;
+        z0 = z1;
+        z1 = zt;
+    }
+
+    if (z0 > z2) {
+        zt = z0;
+        z0 = z2;
+        z2 = zt;
+    }
+
+    if (z1 > z2) {
+        zt = z1;
+        z1 = z2;
+        z2 = zt;
+    }
+
+    if (z0 > fabsf(C2V(rend).subdivide_threshold * z2)) {
+        return 0;
+    }
+
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0054c766, subdivideCheck)
