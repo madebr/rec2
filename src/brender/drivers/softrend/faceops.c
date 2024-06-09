@@ -371,3 +371,9 @@ void C2_HOOK_CDECL OpTriangleSubdivide(brp_block* block, brp_vertex* v0, brp_ver
     triangleSubdivide(6, block, v0, v1, v2, fp_vertices, fp_edges);
 }
 C2_HOOK_FUNCTION(0x00545c60, OpTriangleSubdivide)
+
+void C2_HOOK_CDECL OpTriangleSubdivideOnScreen(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices, br_uint_16* fp_edges) {
+
+    triangleSubdivideOnScreen(6, block, v0, v1, v2, fp_vertices, fp_edges);
+}
+C2_HOOK_FUNCTION(0x005460b0, OpTriangleSubdivideOnScreen)
