@@ -318,8 +318,25 @@ br_boolean C2_HOOK_CDECL subdivideCheck(brp_vertex* v0, brp_vertex* v1, brp_vert
 }
 C2_HOOK_FUNCTION(0x0054c766, subdivideCheck)
 
+void C2_HOOK_STDCALL triangleSubdivide(int depth, brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices, br_uint_16* fp_edges) {
+    br_uint_32 combined_codes;
+
+    combined_codes = v0->flags | v1->flags | v2->flags;
+
+    if ((combined_codes & OUTCODES_NOT) != OUTCODES_NOT) {
+        return;
+    }
+
+    if (combined_codes & OUTCODES_ALL) {
+        triangleSubdivideCheck(depth, block, v0,v1,v2, fp_vertices, fp_edges);
+    } else{
+        triangleSubdivideOnScreen(depth, block, v0, v1, v2, fp_vertices, fp_edges);
+    }
+}
+C2_HOOK_FUNCTION(0x00545de0, triangleSubdivide)
+
 void C2_HOOK_STDCALL triangleSubdivideOnScreen(int depth, brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices, br_uint_16* fp_edges) {
-    brp_vertex mid0,mid1,mid2;
+    brp_vertex mid0, mid1, mid2;
 
     if (depth > 0 && subdivideCheck(v0, v1, v2)) {
 
@@ -333,3 +350,18 @@ void C2_HOOK_STDCALL triangleSubdivideOnScreen(int depth, brp_block* block, brp_
     }
 }
 C2_HOOK_FUNCTION(0x00545f70, triangleSubdivideOnScreen)
+
+void C2_HOOK_STDCALL triangleSubdivideCheck(int depth, brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, br_uint_16* fp_vertices, br_uint_16* fp_edges) {
+    brp_vertex mid0, mid1, mid2;
+
+    if (depth > 0 && subdivideCheck(v0, v1, v2)) {
+
+        averageVertices(C2V(rend).renderer, &mid1, &mid2, &mid0, v0, v1, v2);
+        triangleSubdivide(depth - 1, block, &mid0, &mid1, &mid2, fp_vertices, fp_edges);
+        triangleSubdivide(depth - 1, block, v0,    &mid0, &mid2, fp_vertices, fp_edges);
+        triangleSubdivide(depth - 1, block, v1,    &mid1, &mid0, fp_vertices, fp_edges);
+        triangleSubdivide(depth - 1, block, v2,    &mid2, &mid1, fp_vertices, fp_edges);
+    } else {
+        block->chain->render(block->chain, v0, v1, v2, fp_vertices, fp_edges);
+    }
+}
