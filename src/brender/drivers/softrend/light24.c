@@ -1,5 +1,13 @@
 #include "light24.h"
 
+void C2_HOOK_CDECL SurfaceColourZero(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+
+    comp[C_R] = self->state.cache.comp_offsets[C_R];
+    comp[C_G] = self->state.cache.comp_offsets[C_G];
+    comp[C_B] = self->state.cache.comp_offsets[C_B];
+}
+C2_HOOK_FUNCTION(0x00548c10, SurfaceColourZero)
+
 void C2_HOOK_STDCALL lightingColourNull(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp) {
 
 }
