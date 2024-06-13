@@ -1,5 +1,10 @@
 #include "v1model.h"
 
+#include "convert.h"
+#include "faceops.h"
+#include "genrend.h"
+#include "heap.h"
+#include "rndstate.h"
 #include "setup.h"
 
 #include "core/fw/scratch.h"
@@ -403,13 +408,276 @@ void C2_HOOK_CDECL V1Face_OSV_Render(br_geometry* self, br_soft_renderer* render
 }
 C2_HOOK_FUNCTION(0x005428b0, V1Face_OSV_Render)
 
-br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
-br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
+static void C2_HOOK_STDCALL AddReplicateConstant(br_geometry_v1_model_soft* self, br_soft_renderer* renderer) {
 
-#if defined(C2_HOOKS_ENABLED)
+    if (C2V(rend).block->constant_mask == (1 << C_I)) {
+        PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleReplicateConstantI);
+#if 1
+    /* VERIFYME: this is different from Carmageddon II and BRender sources */
+    } else if (C2V(rend).block->constant_mask == ((1 << C_R) | (1 << C_G) | (1 << C_B))) {
+#else
+    } else if (C2V(rend).block->constant_mask == (1 << C_R) | (1 << C_G) | (1 << C_B)) {
+#endif
+        PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleReplicateConstantRGB);
+    } else {
+        PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleReplicateConstant);
+    }
+}
+
+static void C2_HOOK_STDCALL V1Faces_GeometryFnsUpdate(br_geometry_v1_model_soft* self, br_soft_renderer* renderer, br_boolean divert) {
+
+    GeometryFunctionReset(renderer);
+    PrimBlockReset(renderer);
+
+    GeometryFunctionBothAdd(renderer, (geometry_fn*)V1Faces_ScratchAllocate);
+    GeometryFunctionAdd(renderer, (geometry_fn*)Vertex_ClearFlags);
+
+    if (renderer->state.cull.type == BRT_TWO_SIDED) {
+        GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)Vertex_ClearFlags);
+    }
+
+    if (renderer->state.cull.type == BRT_ONE_SIDED) {
+        GeometryFunctionAdd(renderer, (geometry_fn*)V1Face_CullOneSided);
+        GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)V1Face_OS_CullOneSided);
+    } else if (renderer->state.cull.type == BRT_TWO_SIDED) {
+        GeometryFunctionAdd(renderer, (geometry_fn*)V1Face_CullTwoSided);
+        GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)V1Face_OS_CullTwoSided);
+    } else {
+        GeometryFunctionAdd(renderer, (geometry_fn*)V1Face_CullNone);
+        GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)V1Face_OS_CullNone);
+    }
+
+    VertexGeometryFns(renderer, (geometry_fn*)V1Face_Outcode);
+    GeometryFunctionAdd(renderer, (geometry_fn*)V1Face_Render);
+
+    if (renderer->state.cull.type == BRT_ONE_SIDED) {
+        GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)V1Face_OS_Render);
+    } else {
+        GeometryFunctionOnScreenAdd(renderer, (geometry_fn*)V1Face_OSV_Render);
+    }
+
+    GeometryFunctionBothAdd(renderer, (geometry_fn*)ScratchFree);
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(brp_block, convert_mask_x, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(brp_block, convert_mask_i, 0x28);
+
+    if (divert) {
+        if (C2V(rend).block->convert_mask_i != 0 || C2V(rend).block->convert_mask_x != 0) {
+            switch (C2V(rend).block->type) {
+            case BRT_POINT:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpHeapAddPointConvert);
+                break;
+            case BRT_LINE:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpHeapAddLineConvert);
+                break;
+            case BRT_TRIANGLE:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpHeapAddTriangleConvert);
+                break;
+            default:
+                break;
+            }
+        } else {
+            switch (C2V(rend).block->type) {
+            case BRT_POINT:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpHeapAddPoint);
+                break;
+            case BRT_LINE:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpHeapAddLine);
+                break;
+            case BRT_TRIANGLE:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpHeapAddTriangle);
+                break;
+            default:
+                break;
+            }
+        }
+    } else {
+        if (C2V(rend).block->convert_mask_i != 0 || C2V(rend).block->convert_mask_x != 0) {
+            switch (C2V(rend).block->type) {
+            case BRT_POINT:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)RenderConvert1);
+                break;
+            case BRT_LINE:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)RenderConvert2);
+                break;
+            case BRT_TRIANGLE:
+                PrimBlockAddBoth(renderer, (brp_render_fn*)RenderConvert3);
+                break;
+            default:
+                break;
+            }
+        }
+    }
+
+    switch (C2V(rend).block->type) {
+    case BRT_POINT:
+        PrimBlockAdd(renderer, (brp_render_fn*)OpTriangleToPoints);
+        PrimBlockOnScreenAdd(renderer, (brp_render_fn*)OpTriangleToPoints_OS);
+
+        if (renderer->state.cache.nconstant_fns != 0) {
+            AddReplicateConstant(self, renderer);
+            if (renderer->state.cull.type == BRT_TWO_SIDED) {
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleTwoSidedConstantSurf);
+            } else {
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleConstantSurf);
+            }
+        }
+        break;
+
+    case BRT_LINE:
+        PrimBlockAdd(renderer, (brp_render_fn*)OpLineClip);
+        PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleToLines);
+
+        if (renderer->state.cache.nconstant_fns != 0) {
+            AddReplicateConstant(self, renderer);
+            if (renderer->state.cull.type == BRT_TWO_SIDED) {
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleTwoSidedConstantSurf);
+            } else {
+                PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleConstantSurf);
+            }
+        }
+        break;
+
+    case BRT_TRIANGLE:
+        if (renderer->state.cache.nconstant_fns != 0) {
+            C2_HOOK_BUG_ON(BR_PRIMF_CONST_DUPLICATE != 0x2);
+            if (C2V(rend).block->flags & BR_PRIMF_CONST_DUPLICATE) {
+                AddReplicateConstant(self, renderer);
+            }
+            PrimBlockAdd(renderer, (brp_render_fn*)OpTriangleClipConstantSurf);
+
+            if (renderer->state.cull.type == BRT_TWO_SIDED) {
+                PrimBlockOnScreenAdd(renderer, (brp_render_fn*)OpTriangleTwoSidedConstantSurf);
+            } else {
+                PrimBlockOnScreenAdd(renderer, (brp_render_fn*)OpTriangleConstantSurf);
+            }
+        } else {
+            PrimBlockAdd(renderer, (brp_render_fn*)OpTriangleClip);
+        }
+
+        C2_HOOK_BUG_ON(BR_PRIMF_SUBDIVIDE != 0x4);
+
+        if (C2V(rend).block->flags & BR_PRIMF_SUBDIVIDE) {
+            PrimBlockAdd(renderer, (brp_render_fn*)OpTriangleSubdivide);
+            PrimBlockOnScreenAdd(renderer, (brp_render_fn*)OpTriangleSubdivideOnScreen);
+            SubdivideSetThreshold(C2V(rend).block->subdivide_tolerance);
+        }
+        break;
+    default:
+        break;
+    }
+
+    if ((renderer->state.cull.type == BRT_TWO_SIDED) && renderer->state.cache.nvertex_fns != 0) {
+        PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleRelightTwoSided);
+    }
+
+    if (renderer->state.surface.mapping_source == BRT_ENVIRONMENT_INFINITE ||
+        renderer->state.surface.mapping_source == BRT_ENVIRONMENT_LOCAL) {
+        PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleMappingWrapFix);
+    }
+
+    renderer->state.cache.format = self;
+}
+
+br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_soft_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
+br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_soft_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
     return V1Model_Render_original(self, renderer, model, default_state, type, on_screen);
 #else
-#error "Not implemented"
+    int i, g;
+    br_renderer_state_stored_soft* state;
+    br_error r;
+    br_boolean z_sort, z_sort_blended, divert;
+
+    CheckPrimitiveState(renderer);
+
+    C2V(rend).geometry = self;
+    C2V(rend).renderer = renderer;
+
+    C2V(scache).min = renderer->state.bounds.min;
+    C2V(scache).max = renderer->state.bounds.max;
+
+    if (!C2V(scache).valid_per_scene) {
+        StaticCacheUpdate_PerScene(renderer);
+        C2V(scache).valid_per_scene = 1;
+    }
+
+    if (!C2V(scache).valid_per_model) {
+        StaticCacheUpdate_PerModel(renderer);
+        C2V(scache).valid_per_model = 1;
+    }
+
+    for (g = 0; g < model->ngroups; g++) {
+
+        C2V(rend).faces = model->groups[g].faces;
+        C2V(rend).vertices = model->groups[g].vertices;
+        C2V(rend).face_colours = model->groups[g].face_colours.colours;
+        C2V(rend).vertex_colours = model->groups[g].vertex_colours;
+        C2V(rend).nfaces = model->groups[g].nfaces;
+        C2V(rend).nvertices = model->groups[g].nvertices;
+        C2V(rend).nedges = model->groups[g].nedges;
+
+        state = model->groups[g].stored ? model->groups[g].stored : default_state;
+
+        if (state != NULL) {
+            renderer->dispatch->_stateRestore((br_renderer*)renderer, (br_renderer_state_stored*)state, BR_STATE_ALL);
+        }
+
+        z_sort = renderer->state.hidden.type == BRT_BUCKET_SORT &&
+                 renderer->state.hidden.order_table != NULL &&
+                 renderer->state.hidden.heap != NULL;
+
+        r = renderer->state.pstate->dispatch->_renderBegin(renderer->state.pstate,
+            &C2V(rend).block, &C2V(rend).block_changed, &C2V(rend).range_changed, z_sort, type);
+
+        if (r != 0) {
+            return r;
+        }
+
+        z_sort_blended = (C2V(rend).block->flags & BR_PRIMF_BLENDED) &&
+            renderer->state.hidden.type == BRT_BUCKET_AND_BUFFER &&
+            renderer->state.hidden.order_table != NULL &&
+            renderer->state.hidden.heap != NULL;
+
+        divert = z_sort || z_sort_blended;
+
+        C2V(scache).colour = renderer->state.surface.colour & 0xffffff;
+        C2V(scache).colour |= ((int)(renderer->state.surface.opacity * 256.f)) << 24;
+
+        renderer->state.cache.face_blocks[0].chain = C2V(rend).block;
+        renderer->state.cache.face_blocks_onscreen[0].chain = C2V(rend).block;
+
+        if (C2V(rend).block_changed || C2V(rend).range_changed || !renderer->state.cache.valid) {
+            CacheUpdate(renderer);
+
+            V1Faces_GeometryFnsUpdate(self, renderer, divert);
+
+            renderer->state.cache.valid = 1;
+        }
+
+        if (on_screen) {
+            for (i = 0; i < renderer->state.cache.ngeometry_fns_onscreen; i++) {
+                renderer->state.cache.geometry_fns_onscreen[i]((br_geometry*)self, (br_renderer*)renderer);
+            }
+        } else {
+            for (i = 0; i < renderer->state.cache.ngeometry_fns; i++) {
+                renderer->state.cache.geometry_fns[i]((br_geometry*)self, (br_renderer*)renderer);
+            }
+        }
+
+        if (state != NULL) {
+            renderer->dispatch->_stateSave((br_renderer*)renderer, (br_renderer_state_stored*)state, BR_STATE_CACHE);
+            state->cache.valid = 1;
+        }
+
+        renderer->state.pstate->dispatch->_renderEnd(renderer->state.pstate, C2V(rend).block);
+    }
+
+    renderer->state.bounds.min = C2V(scache).min;
+    renderer->state.bounds.max = C2V(scache).max;
+
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00542960, V1Model_Render, V1Model_Render_original)
@@ -417,7 +685,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00542960, V1Model_Render, V1Model_Render_original)
 br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type) {
     br_error r;
 
-    r = V1Model_Render(self, renderer, model, default_state, type, 0);
+    r = V1Model_Render(self, (br_soft_renderer*)renderer, model, default_state, type, 0);
 
     return r;
 }
@@ -426,7 +694,7 @@ C2_HOOK_FUNCTION(0x00542930, _M_br_geometry_v1_model_soft_render)
 br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_renderOnScreen(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type) {
     br_error r;
 
-    r = V1Model_Render(self, renderer, model, default_state, type, 1);
+    r = V1Model_Render(self, (br_soft_renderer*)renderer, model, default_state, type, 1);
 
     return r;
 }
