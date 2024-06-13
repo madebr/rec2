@@ -84,3 +84,10 @@ void C2_HOOK_CDECL SurfaceMapGeometryMap(br_soft_renderer* self, br_vector3* p, 
     APPLY_UV(comp[C_U], comp[C_V], map->v[0], map->v[1]);
 }
 C2_HOOK_FUNCTION(0x0054b650, SurfaceMapGeometryMap)
+
+void C2_HOOK_CDECL SurfaceMapGeometryMapScale(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+
+    comp[C_U] = self->state.cache.map_transform.m[0][0] * map->v[0];
+    comp[C_V] = self->state.cache.map_transform.m[1][1] * map->v[1];
+}
+C2_HOOK_FUNCTION(0x0054b6a0, SurfaceMapGeometryMapScale)
