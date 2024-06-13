@@ -212,6 +212,8 @@ add_library(brender_softrendr_float STATIC
     drivers/softrend/light8.h
     drivers/softrend/lighting.c
     drivers/softrend/lighting.h
+    drivers/softrend/mapping.c
+    drivers/softrend/mapping.h
     drivers/softrend/object.c
     drivers/softrend/object.h
     drivers/softrend/onscreen.c
