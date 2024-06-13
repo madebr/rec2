@@ -10,6 +10,7 @@
 #define MAX_STATE_CLIP_PLANES   6
 
 typedef struct br_geometry_primitives br_geometry_primitives;
+typedef struct br_geometry_v1_model_soft br_geometry_v1_model_soft;
 typedef struct br_renderer_state_stored_soft br_renderer_state_stored_soft;
 typedef struct br_soft_renderer br_soft_renderer;
 typedef br_uint_32 br_timestamp;
@@ -52,8 +53,8 @@ typedef enum {
     CM_V    = 0x00000100,
     CM_I    = 0x00000200,
     CM_A    = 0x00000400,
-    CM_R    = 0x00000800,
     CM_G    = 0x00001000,
+    CM_R    = 0x00000800,
     CM_B    = 0x00002000,
 } brp_component_masks;
 
@@ -70,6 +71,12 @@ typedef enum {
 #define TM_INVALID_V2M          0x04000
 #define TM_INVALID_M2S          0x08000
 #define TM_INVALID_CC           0x10000
+
+enum brp_flags {
+    BR_PRIMF_CONST_DUPLICATE =  0x00000002,
+    BR_PRIMF_SUBDIVIDE =        0x00000004,
+    BR_PRIMF_BLENDED =          0x00000008,
+};
 
 struct device_templates {
     struct br_tv_template* deviceTemplate;
@@ -246,7 +253,7 @@ typedef struct {
     br_int_8 nface_blocks;
     br_int_8 nface_blocks_onscreen;
     undefined field_0x17e[2];
-    br_geometry* format;
+    br_geometry_v1_model_soft* format;
     br_int_32 nvertex_fns;
     surface_fn* vertex_fns[MAX_SURFACE_FNS];
     br_int_32 nconstant_fns;
@@ -304,7 +311,7 @@ typedef struct br_soft_renderer {
     br_soft_renderer_facility* renderer_facility;
 } br_soft_renderer;
 
-typedef struct {
+typedef struct br_geometry_v1_model_soft {
     br_geometry_v1_model_dispatch* dispatch;
     const char* identifier;
     br_soft_device* device;
@@ -403,7 +410,7 @@ typedef struct {
     br_boolean block_changed;
     br_boolean range_changed;
     br_soft_renderer* renderer;
-    br_geometry* geometry;
+    br_geometry_v1_model_soft* geometry;
     br_scalar subdivide_threshold;
 } rend_block_soft;
 
