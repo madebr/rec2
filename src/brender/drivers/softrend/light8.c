@@ -1,5 +1,11 @@
 #include "light8.h"
 
+void C2_HOOK_CDECL SurfaceIndexZero(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+
+    comp[C_I] = self->state.cache.comp_offsets[C_I];
+}
+C2_HOOK_FUNCTION(0x0054a230, SurfaceIndexZero)
+
 void C2_HOOK_STDCALL lightingIndexNull(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
 
 }
