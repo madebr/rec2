@@ -78,3 +78,9 @@ void C2_HOOK_CDECL SurfaceMapGeometryZ(br_soft_renderer* self, br_vector3* p, br
     APPLY_UV(comp[C_U], comp[C_V], p->v[0], p->v[1]);
 }
 C2_HOOK_FUNCTION(0x0054b600, SurfaceMapGeometryZ)
+
+void C2_HOOK_CDECL SurfaceMapGeometryMap(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+
+    APPLY_UV(comp[C_U], comp[C_V], map->v[0], map->v[1]);
+}
+C2_HOOK_FUNCTION(0x0054b650, SurfaceMapGeometryMap)
