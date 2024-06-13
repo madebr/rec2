@@ -11,6 +11,29 @@
             + self->state.cache.map_transform.m[2][1];      \
     } while (0)
 
+void C2_HOOK_CDECL SurfaceMapEnvironmentInfinite(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* normal, br_colour colour, br_scalar* comp) {
+    br_vector3 r, wr;
+    br_scalar d, cu, cv;
+
+    d = 2.f * BrVector3Dot(&C2V(scache).eye_m_normalised, normal);
+    BrVector3Scale(&r, normal, d);
+    BrVector3Sub(&r, &r, &C2V(scache).eye_m_normalised);
+
+    if (self->state.matrix.view_to_environment_hint != BRT_DONT_CARE) {
+        BrMatrix34ApplyV(&wr, &r, &C2V(scache).model_to_environment);
+        BrVector3Normalise(&wr, &wr);
+    } else {
+        wr = r;
+    }
+
+    cu = BrFixedToFloat(BR_ATAN2(wr.v[0], -wr.v[2]));
+
+    cv = -wr.v[1] / 2 + 0.5f;
+
+    APPLY_UV(comp[C_U], comp[C_V], cu, cv);
+}
+C2_HOOK_FUNCTION(0x0054b150, SurfaceMapEnvironmentInfinite)
+
 void C2_HOOK_CDECL SurfaceMapEnvironmentLocal(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* normal, br_colour colour, br_scalar* comp) {
     br_vector3 eye;
     br_vector3 r, wr;
