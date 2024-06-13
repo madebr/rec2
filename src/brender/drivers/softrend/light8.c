@@ -6,6 +6,12 @@ void C2_HOOK_CDECL SurfaceIndexZero(br_soft_renderer* self, br_vector3* p, br_ve
 }
 C2_HOOK_FUNCTION(0x0054a230, SurfaceIndexZero)
 
+void C2_HOOK_CDECL SurfaceIndexUnlit(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+
+    comp[C_I] = self->state.cache.comp_scales[C_I] * (((float)BR_ALPHA(colour)) / 256.f) + self->state.cache.comp_offsets[C_I];
+}
+C2_HOOK_FUNCTION(0x0054a250, SurfaceIndexUnlit)
+
 void C2_HOOK_STDCALL lightingIndexNull(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
 
 }
