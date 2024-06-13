@@ -60,3 +60,9 @@ void C2_HOOK_CDECL SurfaceMapEnvironmentLocal(br_soft_renderer* self, br_vector3
     APPLY_UV(comp[C_U], comp[C_V], cu, cv);
 }
 C2_HOOK_FUNCTION(0x0054b320, SurfaceMapEnvironmentLocal)
+
+void C2_HOOK_CDECL SurfaceMapGeometryX(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+
+    APPLY_UV(comp[C_U], comp[C_V], p->v[1], p->v[2]);
+}
+C2_HOOK_FUNCTION(0x0054b560, SurfaceMapGeometryX)
