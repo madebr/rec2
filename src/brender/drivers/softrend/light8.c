@@ -1,5 +1,8 @@
 #include "light8.h"
 
+#include "lightmac.h"
+#include "setup.h"
+
 void C2_HOOK_CDECL SurfaceIndexZero(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
 
     comp[C_I] = self->state.cache.comp_offsets[C_I];
@@ -11,6 +14,64 @@ void C2_HOOK_CDECL SurfaceIndexUnlit(br_soft_renderer* self, br_vector3* p, br_v
     comp[C_I] = self->state.cache.comp_scales[C_I] * (((float)BR_ALPHA(colour)) / 256.f) + self->state.cache.comp_offsets[C_I];
 }
 C2_HOOK_FUNCTION(0x0054a250, SurfaceIndexUnlit)
+
+void C2_HOOK_CDECL SurfaceIndexLit(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+    int i;
+    active_light* alp = C2V(scache).lights;
+    br_vector3 vp;
+    br_vector3 vn;
+    br_vector3 fvn;
+
+    if (C2V(scache).light_1md) {
+        br_scalar l, dot;
+
+        dot = BrVector3Dot(n, &alp->direction);
+
+        if (dot <= 0.0f) {
+            comp[C_I] = self->state.surface.ka;
+            CLAMP_SCALE(C_I);
+            return;
+        }
+
+        l = dot * self->state.surface.kd;
+
+        if (self->state.surface.ks != 0.0f) {
+            dot = BrVector3Dot(n, &alp->half);
+
+            if (dot > SPECULARPOW_CUTOFF) {
+                l += SPECULAR_POWER(self->state.surface.ks * alp->intensity);
+            }
+        }
+
+        comp[C_I] = l + self->state.surface.ka;
+
+        CLAMP_SCALE(C_I);
+        return;
+    }
+
+    comp[C_I] = self->state.surface.ka;
+
+    C2V(rend).eye_l = C2V(scache).eye_m_normalised;
+
+    for (i = 0; i < C2V(scache).nlights_model; i++, alp++) {
+        alp->accumulate_index(self, p, n, alp, comp);
+    }
+
+    if (C2V(scache).nlights_view != 0) {
+        BrMatrix34ApplyP(&vp, p, &self->state.matrix.model_to_view);
+        BrMatrix34TApplyV(&vn, n, &C2V(scache).view_to_model);
+        BrVector3Normalise(&fvn, &vn);
+
+        BrVector3Set(&C2V(rend).eye_l, 0.f, 0.f, 1.f);
+
+        for (i = 0; i < C2V(scache).nlights_view; i++, alp++) {
+            alp->accumulate_index(self, &vp, &fvn, alp, comp);
+        }
+    }
+
+    CLAMP_SCALE(C_I);
+}
+C2_HOOK_FUNCTION(0x0054a290, SurfaceIndexLit)
 
 void C2_HOOK_STDCALL lightingIndexNull(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
 
