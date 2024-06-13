@@ -21,4 +21,6 @@ void C2_HOOK_CDECL SurfaceMapGeometryMapScale(br_soft_renderer* self, br_vector3
 
 void C2_HOOK_CDECL SurfaceMapGeometryMapScaleTranslate(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp);
 
+void C2_HOOK_CDECL SurfaceMapGeometryMapCopy(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp);
+
 #endif /* SOFTREND_MAPPING_H */

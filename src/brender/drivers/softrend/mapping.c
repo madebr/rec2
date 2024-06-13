@@ -98,3 +98,10 @@ void C2_HOOK_CDECL SurfaceMapGeometryMapScaleTranslate(br_soft_renderer* self, b
     comp[C_V] = self->state.cache.map_transform.m[1][1] * map->v[1] + self->state.cache.map_transform.m[2][1];
 }
 C2_HOOK_FUNCTION(0x0054b6d0, SurfaceMapGeometryMapScaleTranslate)
+
+void C2_HOOK_CDECL SurfaceMapGeometryMapCopy(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+
+    comp[C_U] = map->v[0];
+    comp[C_V] = map->v[1];
+}
+C2_HOOK_FUNCTION(0x0054b710, SurfaceMapGeometryMapCopy)
