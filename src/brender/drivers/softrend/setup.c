@@ -1,7 +1,9 @@
 #include "setup.h"
 
+#include "alpha.h"
 #include "light24.h"
 #include "light8.h"
+#include "mapping.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(rend_block_soft, rend, 0x0079f980);
 
@@ -273,10 +275,85 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00544060, ActiveLightsUpdate, ActiveLightsUpdate_ori
 br_int_32 (C2_HOOK_STDCALL * GenerateSurfaceFunctions_original)(br_soft_renderer *self, surface_fn **fns, br_uint_32 mask);
 br_int_32 C2_HOOK_STDCALL GenerateSurfaceFunctions(br_soft_renderer *self, surface_fn **fns, br_uint_32 mask) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return GenerateSurfaceFunctions_original(self, fns, mask);
 #else
-#error "Not implemented"
+    br_int_32 f = 0;
+    br_matrix23* m;
+
+    if (mask & (CM_U | CM_V)) {
+        switch (self->state.surface.mapping_source) {
+        case BRT_ENVIRONMENT_LOCAL:
+            fns[f++] = (surface_fn*)SurfaceMapEnvironmentLocal;
+            break;
+
+        case BRT_ENVIRONMENT_INFINITE:
+            fns[f++] = (surface_fn*)SurfaceMapEnvironmentInfinite;
+            break;
+
+        case BRT_GEOMETRY_MAP:
+            fns[f++] = (surface_fn*)SurfaceMapGeometryMap;
+
+            m = &self->state.cache.map_transform;
+
+            if (m->m[0][1] == 0.f && m->m[1][0] == 0.f) {
+                fns[f - 1] = (surface_fn*)SurfaceMapGeometryMapScaleTranslate;
+                if (m->m[2][0] == 0.f && m->m[2][1] == 0.f) {
+                    fns[f - 1] = (surface_fn*)SurfaceMapGeometryMapScale;
+                }
+
+                if (m->m[0][0] == 1.f && m->m[1][1] == 1.f
+                        && m->m[2][0] == 0.f && m->m[2][1] == 0.f) {
+                    fns[f - 1] = (surface_fn*)SurfaceMapGeometryMapCopy;
+                }
+            }
+            break;
+        case BRT_GEOMETRY_X:
+            fns[f++] = (surface_fn*)SurfaceMapGeometryX;
+            break;
+        case BRT_GEOMETRY_Y:
+            fns[f++] = (surface_fn*)SurfaceMapGeometryY;
+            break;
+        case BRT_GEOMETRY_Z:
+        default:
+            fns[f++] = (surface_fn*)SurfaceMapGeometryZ;
+            break;
+        }
+    }
+
+    if (mask & CM_I) {
+        if (self->state.surface.lighting) {
+            fns[f++] = (surface_fn*)SurfaceIndexLit;
+        } else if (self->state.surface.colour_source == BRT_GEOMETRY) {
+            fns[f++] = (surface_fn*)SurfaceIndexUnlit;
+        } else {
+            fns[f++] = (surface_fn*)SurfaceIndexZero;
+        }
+    } else if (mask & CM_UI) {
+        if (self->state.surface.colour_source == BRT_GEOMETRY) {
+            fns[f++] = (surface_fn*)SurfaceIndexUnlit;
+        } else {
+            fns[f++] = (surface_fn*)SurfaceIndexZero;
+        }
+    }
+
+    if (mask & (CM_R | CM_G | CM_B)) {
+        if (self->state.surface.lighting) {
+            fns[f++] = (surface_fn*)SurfaceColourLit;
+        } else {
+            fns[f++] = (surface_fn*)SurfaceColourUnlit;
+        }
+    } else if (mask & (CM_UR | CM_UG | CM_UB)) {
+        fns[f++] = (surface_fn*)SurfaceColourUnlit;
+    }
+
+    if (mask & CM_A) {
+        fns[f++] = (surface_fn*)SurfaceAlpha;
+    }
+
+    fns[f] = NULL;
+
+    return f;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005444a0, GenerateSurfaceFunctions, GenerateSurfaceFunctions_original)
