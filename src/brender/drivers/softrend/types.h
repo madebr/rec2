@@ -56,6 +56,10 @@ typedef enum {
     CM_G    = 0x00001000,
     CM_R    = 0x00000800,
     CM_B    = 0x00002000,
+    CM_UI   = 0x00004000,
+    CM_UR   = 0x00008000,
+    CM_UG   = 0x00010000,
+    CM_UB   = 0x00020000,
 } brp_component_masks;
 
 #define COMP_S2V(c) (((c) & ~(CM_SX | CM_SY | CM_SZ)) |	(((c) &  (CM_SX | CM_SY | CM_SZ)) >> 4))
