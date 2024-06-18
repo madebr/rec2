@@ -66,13 +66,39 @@ void C2_HOOK_STDCALL lightingColourNull(br_soft_renderer* self, br_vector3* p, b
 }
 C2_HOOK_FUNCTION(0x005491a0, lightingColourNull)
 
-void (C2_HOOK_STDCALL * lightingColourDirectSpecular_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp);
-void C2_HOOK_STDCALL lightingColourDirectSpecular(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp) {
+void (C2_HOOK_STDCALL * lightingColourDirectSpecular_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, br_colour colour, active_light* alp, br_scalar* comp);
+void C2_HOOK_STDCALL lightingColourDirectSpecular(br_soft_renderer* self, br_vector3* p, br_vector3* n, br_colour colour, active_light* alp, br_scalar* comp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     lightingColourDirectSpecular_original(self, p, n, param_4, alp, comp);
 #else
-#error "Not implemented"
+    br_scalar dot;
+    br_scalar red, grn, blu;
+
+    dot = BrVector3Dot(&alp->direction, n);
+    if (dot <= 0.f) {
+        return;
+    }
+
+    red = BrFixedToFloat(BR_RED(colour) << 8) * dot;
+    grn = BrFixedToFloat(BR_GRN(colour) << 8) * dot;
+    blu = BrFixedToFloat(BR_BLU(colour) << 8) * dot;
+
+    if (self->state.surface.ks != 0.f) {
+        dot = BrVector3Dot(&alp->half, n);
+        if (dot > SPECULARPOW_CUTOFF) {
+            br_scalar specular;
+
+            specular = alp->intensity * SPECULAR_POWER(self->state.surface.ks);
+            red += specular;
+            grn += specular;
+            blu += specular;
+        }
+    }
+
+    comp[C_R] += red * BrFixedToFloat(BR_RED(alp->s->colour) << 8);
+    comp[C_G] += grn * BrFixedToFloat(BR_GRN(alp->s->colour) << 8);
+    comp[C_B] += blu * BrFixedToFloat(BR_BLU(alp->s->colour) << 8);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005491b0, lightingColourDirectSpecular, lightingColourDirectSpecular_original)
