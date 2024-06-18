@@ -300,13 +300,60 @@ void C2_HOOK_STDCALL lightingColourSpotSpecular(br_soft_renderer* self, br_vecto
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00549be0, lightingColourSpotSpecular, lightingColourSpotSpecular_original)
 
-void (C2_HOOK_STDCALL * lightingColourSpotAttnSpecular_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp);
-void C2_HOOK_STDCALL lightingColourSpotAttnSpecular(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp) {
+void (C2_HOOK_STDCALL * lightingColourSpotAttnSpecular_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, br_colour colour, active_light* alp, br_scalar* comp);
+void C2_HOOK_STDCALL lightingColourSpotAttnSpecular(br_soft_renderer* self, br_vector3* p, br_vector3* n, br_colour colour, active_light* alp, br_scalar* comp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     lightingColourSpotAttnSpecular_original(self, p, n, param_4, alp, comp);
 #else
-#error "Not implemented"
+    br_scalar dot;
+    br_scalar dot_spot;
+    br_scalar dist, dist2;
+    br_scalar l;
+    br_scalar attn;
+    br_vector3 dirn;
+    br_scalar red, grn, blu;
+
+    BrVector3Sub(&dirn, &alp->position, p);
+    dist = BrVector3Length(&dirn);
+    if (dist <= BR_SCALAR_EPSILON) {
+        return;
+    }
+    BrVector3InvScale(&dirn, &dirn, dist);
+    dot_spot = BrVector3Dot(&dirn, &alp->position);
+    if (dot_spot < alp->s->spot_outer) {
+        return;
+    }
+    dot = BrVector3Dot(&dirn, n);
+    dist2 = (dist < 180.f) ? dist * dist : 32767.f;
+
+    l = self->state.surface.kd * dot;
+    red = BrFixedToScalar(BR_RED(colour) << 8) * l;
+    grn = BrFixedToScalar(BR_GRN(colour) << 8) * l;
+    blu = BrFixedToScalar(BR_BLU(colour) << 8) * l;
+    if (self->state.surface.ks != 0.f) {
+        br_vector3 tmp;
+
+        BrVector3Scale(&tmp, n, 2 * dot);
+        BrVector3Sub(&tmp, &tmp, &dirn);
+        dot = BrVector3Dot(&tmp, &C2V(rend).eye_l);
+        if (dot > SPECULARPOW_CUTOFF) {
+            br_scalar specular;
+
+            specular = SPECULAR_POWER(self->state.surface.ks);
+            red += specular;
+            grn += specular;
+            blu += specular;
+        }
+    }
+    attn = 1.f / (alp->s->attenuation_q * dist2 + alp->s->attenuation_l * dist + alp->s->attenuation_c);
+    if (dot_spot < alp->s->spot_inner) {
+        attn = (alp->s->spot_outer - dot_spot) * attn / (alp->s->spot_outer - alp->s->spot_inner);
+    }
+
+    comp[C_R] += red * attn * BrFixedToFloat(BR_RED(alp->s->colour) << 8);
+    comp[C_G] += grn * attn * BrFixedToFloat(BR_GRN(alp->s->colour) << 8);
+    comp[C_B] += blu * attn * BrFixedToFloat(BR_BLU(alp->s->colour) << 8);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00549ef0, lightingColourSpotAttnSpecular, lightingColourSpotAttnSpecular_original)
