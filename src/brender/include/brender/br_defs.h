@@ -11,12 +11,17 @@
 #define PI_F 3.14159265358979323846f
 #define TAU_F 6.283185307179586f
 
+#define BR_ONE_LS 	65536 /* (1<<16) */
+
 #define BR_MAC3(a, b, c, d, e, f) ((a) * (b) + (c) * (d) + (e) * (f))
 #define BR_SQR3(a, b, c) ((a) * (a) + (b) * (b) + (c) * (c))
 #define BR_MAC4(a, b, c, d, e, f, g, h) ((a) * (b) + (c) * (d) + (e) * (f) + (g) * (h))
 
 #define BrAngleToRadian(a) ((br_scalar)((a) * (PI / 32768.0)))      // a * 0.00009587379924285257
 #define BrRadianToAngle(r) ((br_angle)(long)((r) * (32768.0 / PI))) // r * 10430.378350470453
+
+#define BrFixedToScalar(f)	((br_scalar)((f)/(float)BR_ONE_LS))
+#define BrScalarToFixed(s)	(br_fixed_ls)((s)*(br_scalar)BR_ONE_LS)
 
 #define BR_VECTOR3(a, b, c) \
     { a, b, c }

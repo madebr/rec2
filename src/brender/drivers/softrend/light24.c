@@ -1,5 +1,8 @@
 #include "light24.h"
 
+#include "lightmac.h"
+#include "setup.h"
+
 void C2_HOOK_CDECL SurfaceColourZero(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
 
     comp[C_R] = self->state.cache.comp_offsets[C_R];
@@ -15,6 +18,48 @@ void C2_HOOK_CDECL SurfaceColourUnlit(br_soft_renderer* self, br_vector3* p, br_
     comp[C_B] = self->state.cache.comp_scales[C_B] * (float)BR_BLU(colour) / 256.f + self->state.cache.comp_offsets[C_B];
 }
 C2_HOOK_FUNCTION(0x00548c40, SurfaceColourUnlit)
+
+void C2_HOOK_CDECL SurfaceColourLit(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
+    int i;
+    active_light* alp;
+    br_vector3 vp;
+    br_vector3 vn;
+    br_vector3 fvn;
+    br_scalar red, green, blue;
+
+    red = BrFixedToScalar(BR_RED(colour) << 8);
+    green = BrFixedToScalar(BR_GRN(colour) << 8);
+    blue = BrFixedToScalar(BR_BLU(colour) << 8);
+
+    comp[C_R] = self->state.surface.ka * red;
+    comp[C_G] = self->state.surface.ka * green;
+    comp[C_B] = self->state.surface.ka * blue;
+
+    BrVector3Copy(&C2V(rend).eye_l, &C2V(scache).eye_m_normalised);
+
+    alp = C2V(scache).lights;
+
+    for (i = 0; i < C2V(scache).nlights_model; i++, alp++) {
+        alp->accumulate_colour(self, p, n, colour, alp, comp);
+    }
+
+    if (C2V(scache).nlights_view != 0) {
+        BrMatrix34ApplyP(&vp, p, &self->state.matrix.model_to_view);
+        BrMatrix34TApplyV(&vn, n, &C2V(scache).view_to_model);
+        BrVector3Normalise(&fvn, &vn);
+
+        BrVector3Set(&C2V(rend).eye_l, 0.f, 0.f, 1.f);
+
+        for (i = 0; i < C2V(scache).nlights_view; i++, alp++) {
+            alp->accumulate_colour(self, &vp, &fvn, colour, alp, comp);
+        }
+    }
+
+    CLAMP_SCALE(C_R);
+    CLAMP_SCALE(C_G);
+    CLAMP_SCALE(C_B);
+}
+C2_HOOK_FUNCTION(0x00548cf0, SurfaceColourLit)
 
 void C2_HOOK_STDCALL lightingColourNull(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp) {
 
