@@ -5,7 +5,7 @@
 
 #include "brender/br_types.h"
 
-#define BR_ONE_LS ((br_fixed_ls)0x00010000)
+//#define BR_ONE_LS ((br_fixed_ls)0x00010000)
 #define BR_ONE_LU ((br_fixed_lu)0x00010000)
 #define BR_ONE_LSF ((br_fixed_ls)0x00008000)
 #define BR_ONE_LUF ((br_fixed_lu)0x00010000)
@@ -29,8 +29,8 @@
 #if 1
 #define BrFloatToScalar(f) f
 #define BrScalarToFlat(f) f
-#define BrFixedToScalar BrFixedToFloat
-#define BrScalarToFixed BrFloatToFixed
+//#define BrFixedToScalar BrFixedToFloat
+//#define BrScalarToFixed BrFloatToFixed
 
 #define BrScalarToFraction(f) f
 #define BrFractionToScalar(f) f
