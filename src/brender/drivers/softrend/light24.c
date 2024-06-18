@@ -130,13 +130,25 @@ void C2_HOOK_STDCALL lightingColourLocal2(br_soft_renderer* self, br_vector3* p,
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00549380, lightingColourLocal2, lightingColourLocal2_original)
 
-void (C2_HOOK_STDCALL * lightingColourLocal1_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp);
-void C2_HOOK_STDCALL lightingColourLocal1(br_soft_renderer* self, br_vector3* p, br_vector3* n, undefined4 param_4, active_light* alp, br_scalar* comp) {
+void (C2_HOOK_STDCALL * lightingColourLocal1_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, br_colour colour, active_light* alp, br_scalar* comp);
+void C2_HOOK_STDCALL lightingColourLocal1(br_soft_renderer* self, br_vector3* p, br_vector3* n, br_colour colour, active_light* alp, br_scalar* comp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     lightingColourLocal1_original(self, p, n, param_4, alp, comp);
 #else
-#error "Not implemented"
+    br_scalar dist2;
+	br_vector3 dirn;
+
+    BrVector3Sub(&dirn, &alp->position, p);
+    dist2 = BrVector3LengthSquared(&dirn);
+    if (dist2 <= alp->s->attenuation_q && dist2 >= BR_SCALAR_EPSILON) {
+        br_scalar attn;
+
+        attn = self->state.surface.kd * (alp->s->attenuation_q - dist2) / alp->s->attenuation_q ;
+        comp[C_R] += attn * BrFixedToFloat(BR_RED(colour)) * BR_RED(alp->s->colour);
+        comp[C_G] += attn * BrFixedToFloat(BR_GRN(colour)) * BR_GRN(alp->s->colour);
+        comp[C_B] += attn * BrFixedToFloat(BR_BLU(colour)) * BR_BLU(alp->s->colour);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00549510, lightingColourLocal1, lightingColourLocal1_original)
