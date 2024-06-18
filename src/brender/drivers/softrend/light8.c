@@ -81,10 +81,25 @@ C2_HOOK_FUNCTION(0x0054a7b0, lightingIndexNull)
 void (C2_HOOK_STDCALL * lightingIndexDirect_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
 void C2_HOOK_STDCALL lightingIndexDirect(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     lightingIndexDirect_original(self, p, n, alp, comp);
 #else
-#error "Not implemented"
+    br_scalar dot;
+    br_scalar l;
+
+    dot = BrVector3Dot(n, &alp->direction);
+    if (dot <= 0.f) {
+        return;
+    }
+    l = dot * self->state.surface.kd;
+    if (self->state.surface.ks != 0.f) {
+        dot = BrVector3Dot(&alp->half, n);
+        if (dot > SPECULARPOW_CUTOFF) {
+            l += alp->intensity * SPECULAR_POWER(self->state.surface.ks);
+        }
+    }
+
+    comp[C_I] += l;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0054a7c0, lightingIndexDirect, lightingIndexDirect_original)
