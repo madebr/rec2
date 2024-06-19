@@ -131,14 +131,6 @@ br_uint_16 C2_HOOK_STDCALL prependActorTransform(br_actor* ap, br_uint_16 t) {
     return C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_MODEL_TO_VIEW_HINT_T, ap->t.type == BR_TRANSFORM_MATRIX34_LP ? BRT_LENGTH_PRESERVING : BRT_NONE);
 }
 
-#if 0
-br_uint_16 C2_HOOK_STDCALL prependMatrix(br_matrix34* mat, br_uint_16 mat_t, br_uint_16 t) {
-    br_matrix34 mt;
-
-#error "Not implemented"
-}
-#endif
-
 void (C2_HOOK_STDCALL * actorRender_original)(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t);
 void C2_HOOK_STDCALL actorRender(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t) {
 #if 0//defined(C2_HOOKS_ENABLED)
