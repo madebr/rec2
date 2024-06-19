@@ -158,10 +158,22 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0054a9f0, lightingIndexLocal1, lightingIndexLocal1_o
 void (C2_HOOK_STDCALL * lightingIndexLocal2_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
 void C2_HOOK_STDCALL lightingIndexLocal2(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     lightingIndexLocal2_original(self, p, n, alp, comp);
 #else
-#error "Not implemented"
+    br_vector3 pos_l;
+    br_scalar len2;
+
+    BrVector3Sub(&pos_l, &alp->position, p);
+    len2 = BrVector3LengthSquared(&pos_l);
+    if (len2 <= alp->s->attenuation_q && len2 >= BR_SCALAR_EPSILON) {
+        br_scalar dot;
+
+        dot = BrVector3Dot(&pos_l, n);
+        if (dot >= 0.f) {
+            comp[C_I] += self->state.surface.kd * dot * (alp->s->attenuation_q - len2) / (alp->s->attenuation_q * sqrtf(len2)) * alp->s->attenuation_c;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0054aa80, lightingIndexLocal2, lightingIndexLocal2_original)
