@@ -107,10 +107,32 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0054a7c0, lightingIndexDirect, lightingIndexDirect_o
 void (C2_HOOK_STDCALL * lightingIndexPoint_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
 void C2_HOOK_STDCALL lightingIndexPoint(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     lightingIndexPoint_original(self, p, n, alp, comp);
 #else
-#error "Not implemented"
+    br_vector3 dirn;
+    br_scalar l;
+    br_scalar dot;
+
+    BrVector3Sub(&dirn, &alp->position, p);
+    BrVector3Normalise(&dirn, &dirn);
+    dot = BrVector3Dot(&dirn, n);
+    if (dot <= 0.f) {
+        return;
+    }
+    l = dot * self->state.surface.kd;
+    if (self->state.surface.ks != 0.f) {
+        br_vector3 tmp;
+
+        BrVector3Scale(&tmp, n, 2 * dot);
+        BrVector3Sub(&tmp, &tmp, &dirn);
+        dot = BrVector3Dot(&tmp, &C2V(rend).eye_l);
+        if (dot > SPECULARPOW_CUTOFF) {
+            l += SPECULAR_POWER(self->state.surface.ks);
+        }
+    }
+
+    comp[C_I] += alp->intensity * l;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0054a870, lightingIndexPoint, lightingIndexPoint_original)
