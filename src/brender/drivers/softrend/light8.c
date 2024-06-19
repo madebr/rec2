@@ -181,10 +181,36 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0054aa80, lightingIndexLocal2, lightingIndexLocal2_o
 void (C2_HOOK_STDCALL * lightingIndexPointAttn_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
 void C2_HOOK_STDCALL lightingIndexPointAttn(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     lightingIndexPointAttn_original(self, p, n, alp, comp);
 #else
-#error "Not implemented"
+    br_scalar attn, dot, l, dist, dist2;
+	br_vector3 dirn, dirn_norm;
+
+	BrVector3Sub(&dirn, &alp->position, p);
+    dist = BrVector3Length(&dirn);
+    if (dist <= BR_SCALAR_EPSILON) {
+        return;
+    }
+    dist2 = dist < 180.f ? dist * dist : 32767.f;
+    BrVector3InvScale(&dirn_norm, &dirn, dist);
+    dot = BrVector3Dot(&dirn_norm, n);
+    if (dot <= 0.f) {
+        return;
+    }
+    l = dot * self->state.surface.kd;
+    if (self->state.surface.ks != 0.f) {
+        br_vector3 tmp;
+
+        BrVector3Scale(&tmp, n, 2 * dot);
+        BrVector3Sub(&tmp, &tmp, &dirn_norm);
+        dot = BrVector3Dot(&tmp, &C2V(rend).eye_l);
+        if (dot > SPECULARPOW_CUTOFF) {
+            l += SPECULAR_POWER(self->state.surface.ks);
+        }
+    }
+    attn = 1.f / (alp->s->attenuation_q * dist2 + alp->s->attenuation_l * dist + alp->s->attenuation_c);
+    comp[C_I] += l * attn;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0054ab70, lightingIndexPointAttn, lightingIndexPointAttn_original)
