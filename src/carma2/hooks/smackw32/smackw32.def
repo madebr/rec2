@@ -21,7 +21,7 @@ EXPORTS
     SmackBufferNewPalette@12          @19
     SmackBufferOpen@24                @20
     SmackBufferSetPalette@4           @21
-    SmackBufferStartMultipleBlits@    @22
+    SmackBufferStartMultipleBlits@4   @22
     SmackBufferString@8               @23
     SmackBufferToBuffer@32            @24
     SmackBufferToBufferMask@40        @25
