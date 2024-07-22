@@ -3,6 +3,6 @@
 
 #include "c2_hooks.h"
 
-void C2_HOOK_CDECL VideoInit(void);
+void C2_HOOK_CDECL InitQuickTimeStuff(void);
 
 #endif //REC2_VIDEO_H
