@@ -11,6 +11,14 @@ void C2_HOOK_STDCALL ViewToModelUpdate(br_soft_renderer* self) {
 }
 C2_HOOK_FUNCTION(0x00543ec0, ViewToModelUpdate)
 
+void C2_HOOK_STDCALL ModelToScreenUpdate(br_soft_renderer* self) {
+
+    BrMatrix4Mul34(&C2V(scache).model_to_screen,
+        &self->state.matrix.model_to_view,
+        &self->state.matrix.view_to_screen);
+}
+C2_HOOK_FUNCTION(0x00543ee0, ModelToScreenUpdate)
+
 void (C2_HOOK_STDCALL * StaticCacheUpdate_PerScene_original)(br_soft_renderer* self);
 void C2_HOOK_STDCALL StaticCacheUpdate_PerScene(br_soft_renderer* self) {
 
