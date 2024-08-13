@@ -119,6 +119,7 @@ void C2_HOOK_CDECL BrMatrix4ApplyP(br_vector4* A, br_vector3* B, br_matrix4* C);
 void C2_HOOK_CDECL BrMatrix4Perspective(br_matrix4* mat, br_angle field_of_view, br_scalar aspect, br_scalar hither, br_scalar yon);
 void C2_HOOK_CDECL BrMatrix4Scale(br_matrix4* mat, br_scalar sx, br_scalar sy, br_scalar sz);
 void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, br_matrix4* B, br_matrix4* C);
+void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, const br_matrix34* B, const br_matrix4* C);
 
 // BrMem
 void C2_HOOK_CDECL BrMemFree(void* block);
