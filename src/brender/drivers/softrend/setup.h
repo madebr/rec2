@@ -11,6 +11,8 @@ C2_HOOK_VARIABLE_DECLARE(static_cache_soft, scache);
 
 void C2_HOOK_STDCALL ViewToModelUpdate(br_soft_renderer* self);
 
+void C2_HOOK_STDCALL ModelToScreenUpdate(br_soft_renderer* self);
+
 void C2_HOOK_STDCALL StaticCacheUpdate_PerScene(br_soft_renderer* self);
 
 void C2_HOOK_STDCALL StaticCacheUpdate_PerModel(br_soft_renderer *self);
