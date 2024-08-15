@@ -236,7 +236,7 @@ int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos);
 
 void C2_HOOK_FASTCALL DRrewind(FILE* pF);
 
-void C2_HOOK_FASTCALL TWT_Init(void);
+void C2_HOOK_FASTCALL InitPackFiles(void);
 
 tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path);
 

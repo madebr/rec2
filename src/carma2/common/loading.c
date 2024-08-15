@@ -1256,7 +1256,7 @@ void C2_HOOK_FASTCALL DRrewind(FILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4be0, DRrewind, DRrewind_original)
 
-void C2_HOOK_FASTCALL TWT_Init(void) {
+void C2_HOOK_FASTCALL InitPackFiles(void) {
     size_t i;
 
     C2_HOOK_BUG_ON(sizeof(tTwatVfsMountPoint) != 264);
@@ -1270,7 +1270,7 @@ void C2_HOOK_FASTCALL TWT_Init(void) {
 
     C2V(gDisableTiffConversionStackPos) = 0;
 }
-C2_HOOK_FUNCTION(0x004b4570, TWT_Init)
+C2_HOOK_FUNCTION(0x004b4570, InitPackFiles)
 
 tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     tPath_name twatFilePath;
