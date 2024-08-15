@@ -1367,7 +1367,7 @@ void C2_HOOK_FASTCALL DRForEveryArchivedFile(const char* pThe_path, const char* 
     tTWTVFS twt;
 
     PathCat(the_path, pThe_path, pArchive_name);
-    twt = TWT_MountEx(the_path);
+    twt = OpenPackFileAndSetTiffLoading(the_path);
     DRForEveryFile(the_path, pAction_routine);
     TWT_UnmountEx(twt);
 }
@@ -1413,7 +1413,7 @@ void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, 
 }
 C2_HOOK_FUNCTION(0x004b4d30, DREnumPath)
 
-tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path) {
+tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
     tTWTVFS res;
 
     res = TWT_Mount(path);
@@ -1424,7 +1424,7 @@ tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path) {
     }
     return res;
 }
-C2_HOOK_FUNCTION(0x004b4df0, TWT_MountEx)
+C2_HOOK_FUNCTION(0x004b4df0, OpenPackFileAndSetTiffLoading)
 
 void C2_HOOK_FASTCALL TWT_UnmountEx(tTWTVFS twt) {
     if (twt >= 0) {
@@ -2064,7 +2064,7 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
     twt = -1;
     if (!C2V(gApplicationDataTwtMounted)) {
-        twt = TWT_MountEx(C2V(gApplication_path));
+        twt = OpenPackFileAndSetTiffLoading(C2V(gApplication_path));
     }
     C2V(gCurrent_race_file_index) = pRace_type_index + 1;
 
@@ -2595,7 +2595,7 @@ void C2_HOOK_FASTCALL LoadInRegistees(void) {
     InitializePalettes();
 
     PathCat(the_path2, the_path, "PIXELMAP");
-    twt = TWT_MountEx(the_path2);
+    twt = OpenPackFileAndSetTiffLoading(the_path2);
     LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path2);
     TWT_UnmountEx(twt);
 
@@ -3105,7 +3105,7 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
     c2_strcpy(the_path, C2V(gApplication_path));
     PathCat(the_path, the_path, "DRONES");
     PathCat(the_path, the_path, pDrone_name);
-    twt = TWT_MountEx(the_path);
+    twt = OpenPackFileAndSetTiffLoading(the_path);
     f = OpenDrone(pDrone_name);
 
     /* Version of this text file's format */
@@ -3644,7 +3644,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     c2_strcpy(load_name, C2V(gCurrent_load_name));
     PathCat(car_path, C2V(gApplication_path), load_directory);
     PathCat(car_path, car_path, load_name);
-    twt = TWT_MountEx(car_path);
+    twt = OpenPackFileAndSetTiffLoading(car_path);
 
     pCar_spec->is_girl = 0;
     pCar_spec->driver = pDriver;

@@ -464,7 +464,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             C2_HOOK_ASSERT(s[c2_strlen(s) - 4] == '.');
             s[c2_strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
-            twt = TWT_MountEx(s2);
+            twt = OpenPackFileAndSetTiffLoading(s2);
             C2V(gFrontend_backdrop) = Frontend_LoadFrontendPixelmap(s2, name);
             TWT_UnmountEx(twt);
 
@@ -485,7 +485,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             C2_HOOK_ASSERT(s[c2_strlen(s) - 4] == '.');
             s[c2_strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
-            twt = TWT_MountEx(s2);
+            twt = OpenPackFileAndSetTiffLoading(s2);
             C2V(gFrontend_backdrop) = Frontend_LoadFrontendPixelmap(s2, name);
             TWT_UnmountEx(twt);
 

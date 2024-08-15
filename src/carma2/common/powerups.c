@@ -295,7 +295,7 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 
     parent_collision_info = NULL;
     PathCat(the_path, C2V(gApplication_path), "TAIL");
-    twt = TWT_MountEx(the_path);
+    twt = OpenPackFileAndSetTiffLoading(the_path);
     LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
     TWT_UnmountEx(twt);
     for (i = 0; i < C2V(gCount_mutant_tail_parts); i++) {
@@ -461,7 +461,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
     }
     PathCat(the_path, C2V(gApplication_path), C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
     PathCat(the_path, the_path, "POWERUPS");
-    twtvfs = TWT_MountEx(the_path);
+    twtvfs = OpenPackFileAndSetTiffLoading(the_path);
     LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path);
     TWT_UnmountEx(twtvfs);
 
@@ -657,7 +657,7 @@ void C2_HOOK_FASTCALL InitShitMines(void) {
     int i;
 
     PathCat(the_path, C2V(gApplication_path), "MINE");
-    twt = TWT_MountEx(the_path);
+    twt = OpenPackFileAndSetTiffLoading(the_path);
     LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
     TWT_UnmountEx(twt);
 
