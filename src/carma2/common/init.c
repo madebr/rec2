@@ -60,6 +60,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDefault_track_material, 0x0074b74c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gInitial_powerup_slots, 3, 0x00762130);
 C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gDAT_0074c6d0, 0x0074c6d0);
 
+void C2_HOOK_FASTCALL DoDevelopmentThings(void) {
+
+}
+
 void (C2_HOOK_FASTCALL * InitialiseDeathRace_original)(int pArgc, const char** pArgv);
 void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -93,6 +97,7 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
     C2_HOOK_BUG_ON(sizeof(C2V(gTextureMaps)) != 0x1000);
 
     PDInitialiseSystem();
+    DoDevelopmentThings();
 
     C2V(gProgram_state).sausage_eater_mode = C2V(gSausage_override);
     InitQuickTimeStuff();
