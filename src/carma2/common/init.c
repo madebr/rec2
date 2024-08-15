@@ -114,6 +114,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     BrV1dbBeginWrapper_Float();
     CreateStainlessClasses();
     PDInstallErrorHandlers();
+    InstallFindFailedHooks();
     InstallDRMemCalls();
     InstallDRFileCalls();
     tTWTVFS twt = TWT_MountEx(C2V(gApplication_path));
@@ -1054,6 +1055,10 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f9fc0, InitSmokeStuff, InitSmokeStuff_original)
+
+void C2_HOOK_FASTCALL InstallFindFailedHooks(void) {
+
+}
 
 void (C2_HOOK_FASTCALL * AllocateStandardLamp_original)(void);
 void C2_HOOK_FASTCALL AllocateStandardLamp(void) {
