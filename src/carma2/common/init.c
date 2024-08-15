@@ -69,6 +69,14 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 #if 0//defined(C2_HOOKS_ENABLED)
     InitialiseDeathRace_original(pArgc, pArgv);
 #else
+    PDInitialiseSystem();
+    DoDevelopmentThings();
+    InitialiseApplication(pArgc, pArgv);
+    C2V(gApp_initialized) = 1;
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0047dd20, InitialiseDeathRace, InitialiseDeathRace_original)
+
+void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2_HOOK_BUG_ON(sizeof(int) != 4);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, complete_race_data) != 184);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, field44_0xf4) != 244);
@@ -92,12 +100,9 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 
     C2_HOOK_BUG_ON(offsetof(tProgram_state, sausage_eater_mode) != 16);
     C2_HOOK_BUG_ON(offsetof(tProgram_state, special_screens_count) != 7192);
-    C2_HOOK_ASSERT((uintptr_t)&C2V(gProgram_state).sausage_eater_mode == 0x0075bb90);
+    C2_HOOK_ASSERT((uintptr_t) &C2V(gProgram_state).sausage_eater_mode == 0x0075bb90);
     C2_HOOK_BUG_ON(sizeof(tProgram_state) != 24272);
     C2_HOOK_BUG_ON(sizeof(C2V(gTextureMaps)) != 0x1000);
-
-    PDInitialiseSystem();
-    DoDevelopmentThings();
 
     C2V(gProgram_state).sausage_eater_mode = C2V(gSausage_override);
     InitQuickTimeStuff();
@@ -223,10 +228,8 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
     c2_memset(C2V(gUnknown_00705b80), 0, sizeof(C2V(gUnknown_00705b80)));
     TWT_UnmountEx(twt);
     C2V(gApplicationDataTwtMounted) = 0;
-    C2V(gApp_initialized) = 1;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0047dd20, InitialiseDeathRace, InitialiseDeathRace_original)
 
 int C2_HOOK_FASTCALL GetScreenSize(void) {
 
