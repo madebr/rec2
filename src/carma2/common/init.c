@@ -107,7 +107,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2V(gProgram_state).sausage_eater_mode = C2V(gSausage_override);
     InitQuickTimeStuff();
     c2_memset(C2V(gTextureMaps), 0, sizeof(C2V(gTextureMaps)));
-    TWT_Init();
+    InitPackFiles();
     MAMSInitMem();
     C2V(gAusterity_mode) = C2V(gAustere_override) || PDDoWeLeadAnAustereExistance();
     c2_srand(c2_time(NULL));
