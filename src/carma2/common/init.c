@@ -117,7 +117,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     InstallFindFailedHooks();
     InstallDRMemCalls();
     InstallDRFileCalls();
-    tTWTVFS twt = TWT_MountEx(C2V(gApplication_path));
+    tTWTVFS twt = OpenPackFileAndSetTiffLoading(C2V(gApplication_path));
     C2V(gApplicationDataTwtMounted) = 1;
     TemporaryMaterialStorageInit();
     PDInitTimer();

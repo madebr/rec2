@@ -248,7 +248,7 @@ void C2_HOOK_FASTCALL DRForEveryArchivedFile(const char* pThe_path, const char* 
 
 void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 
-tTWTVFS C2_HOOK_FASTCALL TWT_MountEx(const char* path);
+tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path);
 
 void C2_HOOK_FASTCALL TWT_UnmountEx(tTWTVFS twt);
 
