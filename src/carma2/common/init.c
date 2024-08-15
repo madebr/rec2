@@ -60,10 +60,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDefault_track_material, 0x0074b74c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gInitial_powerup_slots, 3, 0x00762130);
 C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gDAT_0074c6d0, 0x0074c6d0);
 
-void (C2_HOOK_FASTCALL * InitialiseApplication_original)(int pArgc, const char** pArgv);
-void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv) {
+void (C2_HOOK_FASTCALL * InitialiseDeathRace_original)(int pArgc, const char** pArgv);
+void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 #if 0//defined(C2_HOOKS_ENABLED)
-    InitialiseApplication_original(pArgc, pArgv);
+    InitialiseDeathRace_original(pArgc, pArgv);
 #else
     C2_HOOK_BUG_ON(sizeof(int) != 4);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, complete_race_data) != 184);
@@ -221,7 +221,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char** pArgv) {
     C2V(gApp_initialized) = 1;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0047dd20, InitialiseApplication, InitialiseApplication_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0047dd20, InitialiseDeathRace, InitialiseDeathRace_original)
 
 int C2_HOOK_FASTCALL GetScreenSize(void) {
 

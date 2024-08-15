@@ -94,7 +94,7 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
             }
         }
     }
-    InitialiseApplication(pArgc, pArgv);
+    InitialiseDeathRace(pArgc, pArgv);
     DoProgram();
     QuitGame();
 #endif
