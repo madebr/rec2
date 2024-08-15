@@ -2202,7 +2202,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     }
 
     PathCat(C2V(gRace_path), C2V(gRace_path), local_name);
-    twt = TWT_MountEx(C2V(gRace_path));
+    twt = OpenPackFileAndSetTiffLoading(C2V(gRace_path));
     PathCat(race_lighting_path, C2V(gRace_path), "LIGHTING.TXT");
     PathCat(race_desc_path, C2V(gRace_path), pFile_name);
     f = DRfopen(race_desc_path, "rt");
