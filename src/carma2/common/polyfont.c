@@ -282,7 +282,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
     PathCat(the_path, the_path, "FONTS");
     PathCat(the_path, the_path, pName);
 
-    twt = TWT_MountEx(the_path);
+    twt = OpenPackFileAndSetTiffLoading(the_path);
 
     c2_strcpy(s, the_path);
     PathCat(s, s, "FONT.TXT");
