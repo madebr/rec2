@@ -492,7 +492,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
             the_powerup->icon = find_pixelmap_name(s);
             if (the_powerup->icon != NULL) {
                 BrMapAdd(the_powerup->icon);
-                DRPixelmapConvertRGB565ToRGB555IfNeeded(the_powerup->icon, C2V(gBack_screen)->type);
+                BRPM_convert(the_powerup->icon, C2V(gBack_screen)->type);
             }
             if (the_powerup->icon != NULL) {
                 the_powerup->icon_actor = CreateActorFromPowerupMap(the_powerup->icon);

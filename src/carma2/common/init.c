@@ -1484,10 +1484,10 @@ void C2_HOOK_FASTCALL InitRace(void) {
     C2V(gInitialised_grid) = 0;
     InitializeActionReplayCamera(C2V(gAction_replay_camera_mode));
     for (i = 0; i < REC2_ASIZE(C2V(gFonts)); i++) {
-        DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gFonts)[i].images, C2V(gBack_screen)->type);
+        BRPM_convert(C2V(gFonts)[i].images, C2V(gBack_screen)->type);
     }
-    DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gIcons_pix), C2V(gBack_screen)->type);
-    DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gLit_op_stat), C2V(gBack_screen)->type);
+    BRPM_convert(C2V(gIcons_pix), C2V(gBack_screen)->type);
+    BRPM_convert(C2V(gLit_op_stat), C2V(gBack_screen)->type);
 
     ReadFFB_TXT();
     LockBackScreen(1);
