@@ -331,7 +331,7 @@ int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list
             && c2_strstr(pathUpper, ".TIF") == NULL) {
         return 0;
     }
-    ExtractPath_Dirname_Stem(pathUpper, dir_path, stem_path);
+    SepDirAndFilename(pathUpper, dir_path, stem_path);
     c2_strcpy(pList->items[pList->size], stem_path);
     if (pList->size < REC2_ASIZE(pList->items)) {
         pList->size += 1;
@@ -357,7 +357,7 @@ int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pLis
             && c2_strstr(upperPath, ".TIF") == NULL) {
         return 0;
     }
-    ExtractPath_Dirname_Stem(upperPath, dir_path, stem_path);
+    SepDirAndFilename(upperPath, dir_path, stem_path);
 
     alreadyInList = 0;
     for (i = 0; i < pList->size; i++) {
@@ -1032,7 +1032,7 @@ int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelma
 
     c2_strcpy(texturePath, texturePathNoExt);
     c2_strcat(texturePath, ".TIF");
-    ExtractPath_Dirname_Stem(texturePath, texturePathDir, texturePathStem);
+    SepDirAndFilename(texturePath, texturePathDir, texturePathStem);
     pixelmaps[0] = LoadTiffOrBrenderTexture_Ex(texturePathDir, texturePathStem, C2V(gRender_palette), C2V(gPixelFlags), &errorCode);
     return (pixelmaps[0] != NULL && errorCode == 0) ? 1 : 0;
 }
@@ -1049,7 +1049,7 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
 
     result = 0;
     if (C2V(gDisableTiffConversion)) {
-        ExtractPath_Dirname_Stem(path, path_dirname, path_stem);
+        SepDirAndFilename(path, path_dirname, path_stem);
         nbLoaded = LoadBrenderTextures(path_dirname, path_stem, pixelmaps, REC2_ASIZE(pixelmaps));
     } else {
         nbLoaded = DRPixelmapLoadMany(path, pixelmaps, REC2_ASIZE(pixelmaps));
