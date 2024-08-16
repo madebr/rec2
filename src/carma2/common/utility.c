@@ -452,7 +452,7 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbf
 }
 C2_HOOK_FUNCTION(0x005146f0, DRActorEnumRecurse)
 
-void C2_HOOK_FASTCALL ExtractPath_Dirname_Stem(const char* path, char* dirPath, char* stemPath) {
+void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath) {
     size_t pathLen;
     size_t dirLen;
     size_t stemIndex;
@@ -475,7 +475,7 @@ void C2_HOOK_FASTCALL ExtractPath_Dirname_Stem(const char* path, char* dirPath, 
     }
     stemPath[stemIndex] = '\0';
 }
-C2_HOOK_FUNCTION(0x005139a0, ExtractPath_Dirname_Stem)
+C2_HOOK_FUNCTION(0x005139a0, SepDirAndFilename)
 
 tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
     tU32 the_size;
