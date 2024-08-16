@@ -656,7 +656,7 @@ void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
             C2V(gFonts)[pFont_ID].width_table[i] = GetAnInt(file);
         }
     }
-    DRfclose(file);
+    PFfclose(file);
     C2V(gFonts)[pFont_ID].file_read_once = 1;
 #endif
 }

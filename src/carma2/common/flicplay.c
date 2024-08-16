@@ -187,7 +187,7 @@ int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
     if (pFlic_info->f != NULL) {
         BrMemFree(pFlic_info->data_start);
         pFlic_info->data_start = NULL;
-        DRfclose(pFlic_info->f);
+        PFfclose(pFlic_info->f);
         pFlic_info->f = NULL;
     }
     if (pFlic_info->data != NULL) {
@@ -827,11 +827,11 @@ int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) 
     *pData_length = GetFileLength(f);
     *pData = BrMemAllocate(*pData_length, kMem_misc);
     if (*pData == NULL) {
-        DRfclose(f);
+        PFfclose(f);
         return 0;
     }
     DRfread(*pData, 1, *pData_length, f);
-    DRfclose(f);
+    PFfclose(f);
     return 1;
 }
 C2_HOOK_FUNCTION(0x00462a90, LoadFlicData)
@@ -1209,7 +1209,7 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
     C2V(gTrans_fonts)[0] = &C2V(gFonts)[1];
     C2V(gTrans_fonts)[1] = &C2V(gFonts)[2];
 
-    DRfclose(f);
+    PFfclose(f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00463340, LoadInterfaceStrings, LoadInterfaceStrings_original)

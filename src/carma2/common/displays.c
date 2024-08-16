@@ -322,7 +322,7 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
             }
         }
     }
-    DRfclose(f);
+    PFfclose(f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00449090, InitHeadups, InitHeadups_original)

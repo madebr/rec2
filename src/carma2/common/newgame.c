@@ -28,6 +28,6 @@ void C2_HOOK_FASTCALL DefaultNetSettings(void) {
         pOptions = &C2V(gNet_settings)[i];
         ReadNetworkSettings(file, pOptions);
     }
-    DRfclose(file);
+    PFfclose(file);
 }
 C2_HOOK_FUNCTION(0x004663e0, DefaultNetSettings)

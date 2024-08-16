@@ -550,7 +550,7 @@ int C2_HOOK_FASTCALL LoadCarCrush(tCar_crush_buffer* pCar_crush_buffer, const ch
         pCar_crush_buffer->entries[i] = BrMemAllocate(sizeof(tCar_crush_buffer_entry), kMem_crush_data);
         LoadCarCrushDataEntry(f, pCar_crush_buffer->entries[i], pBrender_storage);
     }
-    DRfclose(f);
+    PFfclose(f);
     return 0;
 }
 C2_HOOK_FUNCTION(0x0042a280, LoadCarCrush)

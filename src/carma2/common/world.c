@@ -512,11 +512,11 @@ br_pixelmap* C2_HOOK_FASTCALL Read_DEFAULT_ACT(int flags, int *errorCode) {
         return NULL;
     }
     if (fread(defaultActBuffer, 0x300, 1, (FILE*)f) == 0) {
-        DRfclose(f);
+        PFfclose(f);
         *errorCode = 5;
         return NULL;
     }
-    DRfclose(f);
+    PFfclose(f);
     src = defaultActBuffer;
     if ((flags & kLoadTextureFlags_PalatteRGB555) != 0) {
         pm = BrPixelmapAllocate(BR_PMT_RGB_565, 1, 0x100, NULL, 0);
@@ -1227,7 +1227,7 @@ int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path) {
     if (f == NULL) {
         return 0;
     }
-    DRfclose(f);
+    PFfclose(f);
     GetALineAndDontArgue(f, linkPath);
     if (c2_strstr(linkPath, ".TIF") != NULL) {
         UseNativeDirSeparator(nativeLinkPath, linkPath);
@@ -2198,7 +2198,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
             matexc->next = C2V(gMaterial_exceptions);
             C2V(gMaterial_exceptions) = matexc;
         }
-        DRfclose(f);
+        PFfclose(f);
     }
 
     PathCat(C2V(gRace_path), C2V(gRace_path), local_name);
@@ -2801,7 +2801,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         LoadNonCar(g, non_car);
         PossibleService();
         C2V(gNon_car_spec_indices)[non_car->index] = i + 1;
-        DRfclose(g);
+        PFfclose(g);
     }
     FreeSmashableNonCarNames();
     for (i = 0; i < C2V(gProgram_state).track_spec.count_non_cars; i++) {
@@ -2837,7 +2837,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     if (DRStricmp(s, pFile_name) != 0) {
         FatalError(kFatalError_FileIsCorrupted_S, pFile_name);
     }
-    DRfclose(f);
+    PFfclose(f);
     for (material_exception = C2V(gMaterial_exceptions); material_exception != NULL; ) {
         tMaterial_exception* next_material_exception = material_exception->next;
         BrMemFree(material_exception->texture_name);

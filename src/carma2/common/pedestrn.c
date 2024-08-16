@@ -385,7 +385,7 @@ void C2_HOOK_FASTCALL InitPeds(void) {
         GetAString(file, (char*)(C2V(gPed_animal_names)[i]));
     }
 
-    DRfclose(file);
+    PFfclose(file);
 
     C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x34) != 52);
     C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x50) != 80);
