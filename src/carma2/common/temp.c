@@ -63,7 +63,7 @@ void C2_HOOK_FASTCALL AdaptCachedMaterials(tRendererShadingType pShading_type) {
         if (material == NULL) {
             continue;
         }
-        AdaptMaterialsForRenderer(&material, 1, pShading_type);
+        GlorifyMaterial(&material, 1, pShading_type);
         FogAccordingToGPSCDE(material);
     }
     C2V(gMaterials_to_adapt_count) = 0;
@@ -78,7 +78,7 @@ void C2_HOOK_FASTCALL AdaptFoggedMaterialsForRenderer(tRendererShadingType pShad
 
         mat = C2V(gMaterials_to_adapt)[i];
         if (mat != NULL) {
-            AdaptMaterialsForRenderer(&mat, 1, pShading_type);
+            GlorifyMaterial(&mat, 1, pShading_type);
             FogAccordingToGPSCDE(mat);
         }
     }

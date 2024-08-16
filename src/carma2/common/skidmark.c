@@ -73,7 +73,7 @@ void C2_HOOK_FASTCALL InitSkids(void) {
             if (C2V(gMaterial)[mat] == NULL) {
                 BrFatal("C:\\Carma2\\Source\\Common\\Skidmark.c", 215, "Couldn't find %s", C2V(gMaterial_names)[mat]);
             }
-            AdaptMaterialsForRenderer(&C2V(gMaterial)[mat], 1, kRendererShadingType_AmbientOnly);
+            GlorifyMaterial(&C2V(gMaterial)[mat], 1, kRendererShadingType_AmbientOnly);
             BrMaterialAdd(C2V(gMaterial)[mat]);
         }
     }
