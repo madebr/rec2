@@ -1305,7 +1305,7 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     C2V(gTwatVfsMountPoints)[twt].header = BrMemAllocate(fileSize, kMem_packed_file);
     C2V(gTwatVfsMountPoints)[twt].data = (tU8*)C2V(gTwatVfsMountPoints)[twt].header;
     c2_fread(C2V(gTwatVfsMountPoints)[twt].header, fileSize, 1, f);
-    // TWT_verify_header(C2V(gTwatVfsMountPoints)[i].header, size); // not implemented
+    SplungeSomeData(C2V(gTwatVfsMountPoints)[twt].header, fileSize);
     c2_fclose(f);
 
     tU8* fileData = (tU8*)&C2V(gTwatVfsMountPoints)[twt].header->fileHeaders[C2V(gTwatVfsMountPoints)[twt].header->nbFiles];

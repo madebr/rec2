@@ -37,6 +37,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSound_periodicity_choices, 3
     "CONTINUOUS",
 });
 
+void C2_HOOK_FASTCALL SplungeSomeData(void* data, size_t size) {
+
+}
+C2_HOOK_FUNCTION(0x00500060, SplungeSomeData)
+
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
     char line2[80];
