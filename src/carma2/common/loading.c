@@ -1454,8 +1454,8 @@ void C2_HOOK_FASTCALL ApplyTopTiffConversion(void) {
 }
 C2_HOOK_FUNCTION(0x004b4e90, ApplyTopTiffConversion)
 
-br_pixelmap* (C2_HOOK_FASTCALL * DRLoadPixelmap_original)(const char* pPath_name);
-br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name) {
+br_pixelmap* (C2_HOOK_FASTCALL * LoadPixelmap_original)(const char* pPath_name);
+br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return DRLoadPixelmap_original(pPath_name);
 #else
@@ -1466,7 +1466,7 @@ br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name) {
     return pm;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, DRLoadPixelmap, DRLoadPixelmap_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, LoadPixelmap, LoadPixelmap_original)
 
 br_pixelmap* (C2_HOOK_FASTCALL * DRLoadPixelmap2_original)(const char* pPath_name);
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap2(const char* pPath_name) {
@@ -1882,7 +1882,7 @@ void C2_HOOK_FASTCALL LoadHeadupImages(void) {
         if (C2V(gHeadup_image_info)[i].avail == eNet_or_otherwise
                 || (C2V(gHeadup_image_info)[i].avail == eNot_net && C2V(gNet_mode) == eNet_mode_none)
                 || (C2V(gHeadup_image_info)[i].avail == eNet_only && C2V(gNet_mode) != eNet_mode_none)) {
-            pixmap = DRLoadPixelmap(C2V(gHeadup_image_info)[i].name);
+            pixmap = LoadPixelmap(C2V(gHeadup_image_info)[i].name);
             DRPixelmapConvertRGB565ToRGB555IfNeeded(pixmap, C2V(gBack_screen)->type);
         } else {
             pixmap = NULL;
@@ -3351,7 +3351,7 @@ void C2_HOOK_FASTCALL LoadGear(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     c2_sscanf(str, "%d", &pCar_spec->gear_y[pIndex]);
     str = c2_strtok(NULL, "\t ,/");
     if (pIndex == 0) {
-        pCar_spec->gears_image = DRLoadPixelmap(str);
+        pCar_spec->gears_image = LoadPixelmap(str);
     }
 }
 
@@ -3404,14 +3404,14 @@ void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
         str = c2_strtok(NULL, "\t ,/");
-        pCar_spec->tacho_image[pIndex] = DRLoadPixelmap(str);
+        pCar_spec->tacho_image[pIndex] = LoadPixelmap(str);
     } else {
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
         str = c2_strtok(NULL, "\t ,/");
-        pCar_spec->tacho_image[pIndex] = DRLoadPixelmap(str);
+        pCar_spec->tacho_image[pIndex] = LoadPixelmap(str);
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->tacho_centre_x[pIndex]);
         str = c2_strtok(NULL, "\t ,/");
@@ -3446,7 +3446,7 @@ void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
         str = c2_strtok(NULL, "\t ,/");
-        pCar_spec->speedo_image[pIndex] = DRLoadPixelmap(str);
+        pCar_spec->speedo_image[pIndex] = LoadPixelmap(str);
         if (pCar_spec->speedo_image[pIndex] == NULL) {
             FatalError(kFatalError_CannotLoadSpeedoImage);
         }
@@ -3459,7 +3459,7 @@ void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
         str = c2_strtok(NULL, "\t ,/");
-        pCar_spec->speedo_image[pIndex] = DRLoadPixelmap(str);
+        pCar_spec->speedo_image[pIndex] = LoadPixelmap(str);
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->speedo_centre_x[pIndex]);
         str = c2_strtok(NULL, "\t ,/");
@@ -3810,7 +3810,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
             str = c2_strtok(NULL, "\t ,/");
             c2_sscanf(str, "%d", &pCar_spec->lhands_y[i]);
             str = c2_strtok(NULL, "\t ,/");
-            pCar_spec->lhands_images[i] = DRLoadPixelmap(str);
+            pCar_spec->lhands_images[i] = LoadPixelmap(str);
             str = c2_strtok(NULL, "\t ,/");
             c2_sscanf(str, "%d", &pCar_spec->rhands_x[i]);
             str = c2_strtok(NULL, "\t ,/");
@@ -3885,13 +3885,13 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         GetALineAndDontArgue(f, s);
         PossibleService();
         str = c2_strtok(s, "\t ,/");
-        pCar_spec->prat_cam_left = DRLoadPixelmap(str);
+        pCar_spec->prat_cam_left = LoadPixelmap(str);
         str = c2_strtok(NULL, "\t ,/");
-        pCar_spec->prat_cam_top = DRLoadPixelmap(str);
+        pCar_spec->prat_cam_top = LoadPixelmap(str);
         str = c2_strtok(NULL, "\t ,/");
-        pCar_spec->prat_cam_right = DRLoadPixelmap(str);
+        pCar_spec->prat_cam_right = LoadPixelmap(str);
         str = c2_strtok(NULL, "\t ,/");
-        pCar_spec->prat_cam_bottom = DRLoadPixelmap(str);
+        pCar_spec->prat_cam_bottom = LoadPixelmap(str);
         PossibleService();
 
         for (i = 0; i < REC2_ASIZE(pCar_spec->damage_units); i++) {
@@ -3921,7 +3921,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
                     pCar_spec->damage_units[i].periods[k] = (int)(1000.0f / temp_float / 2.0f);
                 }
                 str = c2_strtok(NULL, "\t ,/");
-                pCar_spec->damage_units[i].images = DRLoadPixelmap(str);
+                pCar_spec->damage_units[i].images = LoadPixelmap(str);
                 if (pCar_spec->damage_units[i].images == NULL) {
                     FatalError(kFatalError_CannotLoadDamageImage);
                 }
@@ -3941,7 +3941,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%d", &pCar_spec->damage_background_y);
         str = c2_strtok(NULL, "\t ,/");
-        pCar_spec->damage_background = DRLoadPixelmap(str);
+        pCar_spec->damage_background = LoadPixelmap(str);
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, dim_count, 0x378);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, dim_right, 0x3c0);

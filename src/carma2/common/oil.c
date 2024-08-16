@@ -27,7 +27,7 @@ void C2_HOOK_FASTCALL InitOilSpills(void) {
     C2_HOOK_BUG_ON(sizeof(tOil_spill_info) != 0x54);
 
     for (i = 0; i < REC2_ASIZE(C2V(gOil_pixie_names)); i++) {
-        C2V(gOil_pixies)[i] = DRLoadPixelmap(C2V(gOil_pixie_names)[i]);
+        C2V(gOil_pixies)[i] = LoadPixelmap(C2V(gOil_pixie_names)[i]);
         BrMapAdd(C2V(gOil_pixies)[i]);
     }
 

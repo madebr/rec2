@@ -162,7 +162,7 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
         C2V(gCosine_array)[i] = cosf(i / 64.0f * 3.141592653589793f / 2.0f);
     }
 
-    C2V(gEvalu) = DRLoadPixelmap("Evalu01.PIX");
+    C2V(gEvalu) = LoadPixelmap("Evalu01.PIX");
 }
 C2_HOOK_FUNCTION(0x004e4d50, InitWobbleStuff)
 
@@ -265,7 +265,7 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
     pixelFlags = C2V(gPixelFlags);
     C2V(gCurrent_splash) = the_map;
     if (the_map == NULL) {
-        C2V(gCurrent_splash) = DRLoadPixelmap(pPixmap_name);
+        C2V(gCurrent_splash) = LoadPixelmap(pPixmap_name);
         DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gCurrent_splash), C2V(gBack_screen)->type);
         if (C2V(gCurrent_splash) != NULL) {
             BrMapAdd(C2V(gCurrent_splash));

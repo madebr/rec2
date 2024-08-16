@@ -195,20 +195,20 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     C2V(gBR_fonts)[1] = C2V(BrFontProp7x9);
     C2V(gBR_fonts)[2] = C2V(gFont_7);
     C2V(gBR_fonts)[3] = C2V(gHeadup_font);
-    C2V(gRevs)[ 0] = DRLoadPixelmap("rev1.tif");
-    C2V(gRevs)[ 1] = DRLoadPixelmap("rev2.tif");
-    C2V(gRevs)[ 2] = DRLoadPixelmap("rev3.tif");
-    C2V(gRevs)[ 3] = DRLoadPixelmap("rev4.tif");
-    C2V(gRevs)[ 4] = DRLoadPixelmap("rev5.tif");
-    C2V(gRevs)[ 5] = DRLoadPixelmap("rev6.tif");
-    C2V(gRevs)[ 6] = DRLoadPixelmap("rev7.tif");
-    C2V(gRevs)[ 7] = DRLoadPixelmap("rev8.tif");
-    C2V(gRevs)[ 8] = DRLoadPixelmap("rev9.tif");
-    C2V(gRevs)[ 9] = DRLoadPixelmap("rev10.tif");
-    C2V(gRevs)[10] = DRLoadPixelmap("rev11.tif");
-    C2V(gRevs)[11] = DRLoadPixelmap("rev12.tif");
-    C2V(gRevs)[12] = DRLoadPixelmap("rev13.tif");
-    C2V(gPowerbar) = DRLoadPixelmap("powerbar.tif");
+    C2V(gRevs)[ 0] = LoadPixelmap("rev1.tif");
+    C2V(gRevs)[ 1] = LoadPixelmap("rev2.tif");
+    C2V(gRevs)[ 2] = LoadPixelmap("rev3.tif");
+    C2V(gRevs)[ 3] = LoadPixelmap("rev4.tif");
+    C2V(gRevs)[ 4] = LoadPixelmap("rev5.tif");
+    C2V(gRevs)[ 5] = LoadPixelmap("rev6.tif");
+    C2V(gRevs)[ 6] = LoadPixelmap("rev7.tif");
+    C2V(gRevs)[ 7] = LoadPixelmap("rev8.tif");
+    C2V(gRevs)[ 8] = LoadPixelmap("rev9.tif");
+    C2V(gRevs)[ 9] = LoadPixelmap("rev10.tif");
+    C2V(gRevs)[10] = LoadPixelmap("rev11.tif");
+    C2V(gRevs)[11] = LoadPixelmap("rev12.tif");
+    C2V(gRevs)[12] = LoadPixelmap("rev13.tif");
+    C2V(gPowerbar) = LoadPixelmap("powerbar.tif");
 
     C2V(gArmour_colour_map) = BrPixelmapAllocate(BR_PMT_RGBA_4444,
         C2V(gPowerbar)->width, C2V(gPowerbar)->height,
@@ -216,25 +216,25 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     C2V(gArmour_colour_map)->identifier = BrResStrDup(C2V(gArmour_colour_map), "Armour_area");
     BrMapAdd(C2V(gArmour_colour_map));
 
-    C2V(gPower_colour_map) = DRLoadPixelmap("powerbar.tif");
+    C2V(gPower_colour_map) = LoadPixelmap("powerbar.tif");
     BrMapAdd(C2V(gPower_colour_map));
 
-    C2V(gOffensive_colour_map) = DRLoadPixelmap("powerbar.tif");
+    C2V(gOffensive_colour_map) = LoadPixelmap("powerbar.tif");
     BrMapAdd(C2V(gOffensive_colour_map));
 
-    C2V(gIcon_test) = DRLoadPixelmap("icontest.tif");
+    C2V(gIcon_test) = LoadPixelmap("icontest.tif");
 
     C2V(gCurrent_rev) = C2V(gRevs)[0];
     BrMapAdd(C2V(gRevs)[0]);
 
-    C2V(gHud_curve1) = DRLoadPixelmap("hudcurve1.tif");
+    C2V(gHud_curve1) = LoadPixelmap("hudcurve1.tif");
     BrMapAdd(C2V(gHud_curve1));
-    C2V(gHud_curve2) = DRLoadPixelmap("hudcurve2.tif");
+    C2V(gHud_curve2) = LoadPixelmap("hudcurve2.tif");
     BrMapAdd(C2V(gHud_curve2));
-    C2V(gHud_curve3) = DRLoadPixelmap("hudcurve3.tif");
+    C2V(gHud_curve3) = LoadPixelmap("hudcurve3.tif");
     BrMapAdd(C2V(gHud_curve3));
 
-    C2V(gGrey_top5) = DRLoadPixelmap("greytop5.tif");
+    C2V(gGrey_top5) = LoadPixelmap("greytop5.tif");
     C2V(gDamage_hud) = BrPixelmapAllocate(BR_PMT_RGBA_4444,
         C2V(gGrey_top5)->width, C2V(gGrey_top5)->height,
         NULL, 0);
@@ -244,7 +244,7 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     C2V(gStatbarHUD5_material)->colour_map = C2V(gDamage_hud);
     BrMaterialUpdate(C2V(gStatbarHUD5_material), BR_MATU_COLOURMAP);
 
-    C2V(gTimer_lhs) = DRLoadPixelmap("timerlhs.tif");
+    C2V(gTimer_lhs) = LoadPixelmap("timerlhs.tif");
     BrMapAdd(C2V(gTimer_lhs));
     C2V(gTimerLeftHUD_material)->colour_map = C2V(gTimer_lhs);
     BrMaterialUpdate(C2V(gTimerLeftHUD_material), BR_MATU_COLOURMAP);
@@ -258,7 +258,7 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     C2V(gTimerLeftHUD_model)->vertices[1].p.v[1] = C2V(gTimerLeftHUD_model)->vertices[2].p.v[1];
     BrModelUpdate(C2V(gTimerLeftHUD_model), BR_MODU_VERTEX_POSITIONS);
 
-    C2V(gHud_timer_rhs) = DRLoadPixelmap("timerrhs.tif");
+    C2V(gHud_timer_rhs) = LoadPixelmap("timerrhs.tif");
     BrMapAdd(C2V(gHud_timer_rhs));
     C2V(gHud_timer_rhs_material)->colour_map = C2V(gHud_timer_rhs);
     BrMaterialUpdate(C2V(gHud_timer_rhs_material), BR_MATU_COLOURMAP);
@@ -273,12 +273,12 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     C2V(gTimerRightHUD_model)->vertices[1].p.v[1] = C2V(gTimerRightHUD_model)->vertices[2].p.v[1];
     BrModelUpdate(C2V(gTimerRightHUD_model), BR_MODU_VERTEX_POSITIONS);
 
-    C2V(gIcon_armour) = DRLoadPixelmap("iconarmour.tif");
-    C2V(gIcon_power) = DRLoadPixelmap("iconpower.tif");
-    C2V(gIcon_offense) = DRLoadPixelmap("iconoffense.tif");
-    C2V(gIcon_greyBloc1) = DRLoadPixelmap("greybloc1.tif");
-    C2V(gIcon_litBloc1) = DRLoadPixelmap("litbloc1.tif");
-    C2V(gIcon_grnBlock1) = DRLoadPixelmap("grnblock1.tif");
+    C2V(gIcon_armour) = LoadPixelmap("iconarmour.tif");
+    C2V(gIcon_power) = LoadPixelmap("iconpower.tif");
+    C2V(gIcon_offense) = LoadPixelmap("iconoffense.tif");
+    C2V(gIcon_greyBloc1) = LoadPixelmap("greybloc1.tif");
+    C2V(gIcon_litBloc1) = LoadPixelmap("litbloc1.tif");
+    C2V(gIcon_grnBlock1) = LoadPixelmap("grnblock1.tif");
     PathCat(path, C2V(gApplication_path), "SCROLLERS.TXT");
     f = DRfopen(path, "rt");
     if (f == NULL) {

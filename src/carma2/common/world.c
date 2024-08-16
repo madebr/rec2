@@ -1391,7 +1391,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, con
     br_pixelmap* map;
     tAdd_to_storage_result addResult;
 
-    map = DRLoadPixelmap(pName);
+    map = LoadPixelmap(pName);
     if (map == NULL) {
         return BrMapFind(pName);
     }
