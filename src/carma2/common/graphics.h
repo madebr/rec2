@@ -149,6 +149,8 @@ void C2_HOOK_FASTCALL LockBackScreen(int pValue);
 
 int C2_HOOK_FASTCALL UnlockBackScreen(int pValue);
 
+tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList);
+
 void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading);
 
 int C2_HOOK_FASTCALL FindBestMatchingPaletteIndex(br_colour pColour);
