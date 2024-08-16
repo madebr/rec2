@@ -272,10 +272,10 @@ void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void) {
 }
 C2_HOOK_FUNCTION(0x004e0c00, SetDefaultPowerupFilename)
 
-void C2_HOOK_FASTCALL ConfigureDefaultPedTextTxtPath(void) {
+void C2_HOOK_FASTCALL SetDefaultTextFileName(void) {
     C2V(gPedTextTxtPath) = "TEXT.TXT";
 }
-C2_HOOK_FUNCTION(0x0048ea00, ConfigureDefaultPedTextTxtPath)
+C2_HOOK_FUNCTION(0x0048ea00, SetDefaultTextFileName)
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedTexturePath(void) {
     C2V(gPedTexturePath) = "PIXELMAP";
@@ -286,7 +286,7 @@ void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void) {
     C2V(gPedsFolder) = "PEDS";
     SetDefaultSoundFolderName();
     SetDefaultPowerupFilename();
-    ConfigureDefaultPedTextTxtPath();
+    SetDefaultTextFileName();
     ConfigureDefaultPedTexturePath();
 }
 C2_HOOK_FUNCTION(0x004d6f10, SetDefaultPedFolderNames)

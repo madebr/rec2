@@ -70,7 +70,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_checkpoint, 3);
 
 void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
-void C2_HOOK_FASTCALL ConfigureDefaultPedTextTxtPath(void);
+void C2_HOOK_FASTCALL SetDefaultTextFileName(void);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedTexturePath(void);
 
