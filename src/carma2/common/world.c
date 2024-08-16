@@ -243,7 +243,7 @@ int C2_HOOK_FASTCALL GetAccessoryRendering(void) {
 }
 C2_HOOK_FUNCTION(0x00448f00, GetAccessoryRendering)
 
-int C2_HOOK_FASTCALL LoadBrenderTextures(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
+int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
     tPath_name tempPath;
     br_uint_32 nb;
 
@@ -267,7 +267,7 @@ int C2_HOOK_FASTCALL LoadBrenderTextures(const char* pathRoot, const char* textu
     }
     return nb;
 }
-C2_HOOK_FUNCTION(0x0048ea40, LoadBrenderTextures)
+C2_HOOK_FUNCTION(0x0048ea40, LoadBunchOfPixies)
 
 void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
     char s[256];
@@ -1010,7 +1010,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffOrBrenderTexture_Ex(const char* texturePat
     int nb;
 
     if (C2V(gDisableTiffConversion)) {
-        nb = LoadBrenderTextures(texturePathDir, textureName, textures, REC2_ASIZE(textures));
+        nb = LoadBunchOfPixies(texturePathDir, textureName, textures, REC2_ASIZE(textures));
         if (nb == 0) {
             *errorCode = 1;
             return NULL;
@@ -1050,7 +1050,7 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
     result = 0;
     if (C2V(gDisableTiffConversion)) {
         SepDirAndFilename(path, path_dirname, path_stem);
-        nbLoaded = LoadBrenderTextures(path_dirname, path_stem, pixelmaps, REC2_ASIZE(pixelmaps));
+        nbLoaded = LoadBunchOfPixies(path_dirname, path_stem, pixelmaps, REC2_ASIZE(pixelmaps));
     } else {
         nbLoaded = DRPixelmapLoadMany(path, pixelmaps, REC2_ASIZE(pixelmaps));
     }
