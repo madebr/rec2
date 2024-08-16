@@ -1454,6 +1454,11 @@ void C2_HOOK_FASTCALL ApplyTopTiffConversion(void) {
 }
 C2_HOOK_FUNCTION(0x004b4e90, ApplyTopTiffConversion)
 
+void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2) {
+
+}
+C2_HOOK_FUNCTION(0x005193f0, EnsurePixelmapAllowed)
+
 br_pixelmap* (C2_HOOK_FASTCALL * LoadPixelmap_original)(const char* pPath_name);
 br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -1462,7 +1467,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
     br_pixelmap *pm;
 
     pm = RealLoadPixelmap(pPath_name);
-    // nop_FUN_005193f0(pm, 0);
+    EnsurePixelmapAllowed(pm, 0);
     return pm;
 #endif
 }
