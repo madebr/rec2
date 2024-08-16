@@ -1461,15 +1461,15 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
 #else
     br_pixelmap *pm;
 
-    pm = DRLoadPixelmap2(pPath_name);
+    pm = RealLoadPixelmap(pPath_name);
     // nop_FUN_005193f0(pm, 0);
     return pm;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, LoadPixelmap, LoadPixelmap_original)
 
-br_pixelmap* (C2_HOOK_FASTCALL * DRLoadPixelmap2_original)(const char* pPath_name);
-br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap2(const char* pPath_name) {
+br_pixelmap* (C2_HOOK_FASTCALL * RealLoadPixelmap_original)(const char* pPath_name);
+br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return DRLoadPixelmap2_original(pPath_name);
 #else
@@ -1522,7 +1522,7 @@ br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap2(const char* pPath_name) {
     return pm;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0048ec20, DRLoadPixelmap2, DRLoadPixelmap2_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0048ec20, RealLoadPixelmap, RealLoadPixelmap_original)
 
 void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info) {
     char s[256];
