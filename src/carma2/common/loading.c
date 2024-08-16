@@ -1368,12 +1368,12 @@ void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_na
 
     PathCat(the_path, pThe_path, pArchive_name);
     twt = OpenPackFileAndSetTiffLoading(the_path);
-    DRForEveryFile(the_path, pAction_routine);
+    PFForEveryFile(the_path, pAction_routine);
     ClosePackFileAndSetTiffLoading(twt);
 }
 C2_HOOK_FUNCTION(0x0048f360, LoadInFiles)
 
-void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
+void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     int twt;
     unsigned int i;
     char buffer[256];
@@ -1393,7 +1393,7 @@ void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecur
     }
     PDForEveryFile(pThe_path, pAction_routine);
 }
-C2_HOOK_FUNCTION(0x004b4c80, DRForEveryFile)
+C2_HOOK_FUNCTION(0x004b4c80, PFForEveryFile)
 
 void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallback, void* data) {
     int twt;
@@ -4965,7 +4965,7 @@ C2_HOOK_FUNCTION(0x004f6540, LoadDATModelsCallback)
 
 void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pPath) {
     C2V(gStorageForCallbacks) = pStorage;
-    DRForEveryFile(pPath, LoadDATModelsCallback);
+    PFForEveryFile(pPath, LoadDATModelsCallback);
 }
 C2_HOOK_FUNCTION(0x004f6520, LoadTrackModels)
 
