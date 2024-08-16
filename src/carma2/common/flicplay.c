@@ -1150,7 +1150,7 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
 
     C2V(gTranslation_count) = 0;
     PathCat(the_path, C2V(gApplication_path), "TRNSLATE.TXT");
-    f = TWT_fopen(the_path, "rt");
+    f = PFfopen(the_path, "rt");
     if (f == NULL) {
         return;
     }

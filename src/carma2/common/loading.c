@@ -807,7 +807,7 @@ C2_HOOK_FUNCTION(0x004910c0, DisallowOpenToFail)
 FILE* OldDRfopen(const char* pFilename, const char* pMode) {
     FILE* fp;
 
-    fp = TWT_fopen(pFilename, pMode);
+    fp = PFfopen(pFilename, pMode);
     if (fp == NULL) {
         const char* data_pos;
         char source_check[256];
@@ -831,7 +831,7 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
                 C2V(g_source_exists) = 0;
                 return NULL;
             }
-            fp = TWT_fopen(paths_file, "rt");
+            fp = PFfopen(paths_file, "rt");
             if (fp == NULL) {
                 C2V(g_source_exists) = 0;
                 return NULL;
@@ -866,7 +866,7 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
             if (!PDCheckDriveExists(source_check)) {
                 return NULL;
             }
-            return TWT_fopen(source_check, pMode);
+            return PFfopen(source_check, pMode);
         }
         return NULL;
     } else {
@@ -1325,7 +1325,7 @@ void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt) {
 }
 C2_HOOK_FUNCTION(0x004b4730, TWT_Unmount)
 
-FILE* C2_HOOK_FASTCALL TWT_fopen(const char* pPath, const char* mode) {
+FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
     int twt;
     unsigned int i;
     int file_index;
@@ -1360,7 +1360,7 @@ FILE* C2_HOOK_FASTCALL TWT_fopen(const char* pPath, const char* mode) {
     }
     return c2_fopen(pPath, mode);
 }
-C2_HOOK_FUNCTION(0x004b4780, TWT_fopen)
+C2_HOOK_FUNCTION(0x004b4780, PFfopen)
 
 void C2_HOOK_FASTCALL DRForEveryArchivedFile(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine) {
     tPath_name the_path;
@@ -1583,7 +1583,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     PathCat(the_path, C2V(gApplication_path), "ACTORS");
     PathCat(the_path, the_path, "PROG.ACT");
 
-    C2V(gTempFile) = TWT_fopen(the_path, "rb");
+    C2V(gTempFile) = PFfopen(the_path, "rb");
     if (C2V(gTempFile) != NULL) {
         DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
         DRfclose(C2V(gTempFile));
@@ -2623,7 +2623,7 @@ void C2_HOOK_FASTCALL LoadTreeSurgery(void) {
     int i;
 
     PathCat(the_path, C2V(gApplication_path), "TreeSurgery.TXT");
-    file = TWT_fopen(the_path, "rt");
+    file = PFfopen(the_path, "rt");
     if (file == NULL) {
         C2V(gTree_surgery_pass1_count) = 0;
         C2V(gTree_surgery_pass2_count) = 0;
@@ -2662,7 +2662,7 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
     if (!PDCheckDriveExists(paths_txt)) {
         return 0;
     }
-    paths_txt_fp = TWT_fopen(paths_txt, "rt");
+    paths_txt_fp = PFfopen(paths_txt, "rt");
     if (paths_txt_fp == NULL) {
         return 0;
     }
