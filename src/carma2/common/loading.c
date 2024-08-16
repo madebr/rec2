@@ -2592,20 +2592,18 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048d8f0, RestoreOptions, RestoreOptions_original)
 
-void (C2_HOOK_FASTCALL * LoadInRegistees_original)(void);
-void C2_HOOK_FASTCALL LoadInRegistees(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    LoadInRegistees_original();
-#else
+void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes) {
     tPath_name the_path;
     tPath_name the_path2;
     tTWTVFS twt;
 
-    PathCat(the_path, C2V(gApplication_path), "REG");
+    PathCat(the_path, pRoot, pSubDir);
     DRForEveryArchivedFile(the_path, "PALETTES", DRLoadPalette);
     DRForEveryArchivedFile(the_path, "SHADETAB", DRLoadShadeTable);
-    InitializePalettes();
+
+    if (pInitialize_palettes) {
+        InitializePalettes();
+    }
 
     PathCat(the_path2, the_path, "PIXELMAP");
     twt = OpenPackFileAndSetTiffLoading(the_path2);
@@ -2616,6 +2614,16 @@ void C2_HOOK_FASTCALL LoadInRegistees(void) {
     DRForEveryArchivedFile(the_path, "MODELS", DRLoadModels);
     DRForEveryArchivedFile(the_path, "ACTORS", DRLoadActors);
     DRForEveryArchivedFile(the_path, "LIGHTS", DRLoadLights);
+
+}
+
+void (C2_HOOK_FASTCALL * LoadInRegistees_original)(void);
+void C2_HOOK_FASTCALL LoadInRegistees(void) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    LoadInRegistees_original();
+#else
+    LoadInRegisteeDir(C2V(gApplication_path), "REG", 1);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00486e10, LoadInRegistees, LoadInRegistees_original)

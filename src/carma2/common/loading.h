@@ -298,6 +298,8 @@ int C2_HOOK_FASTCALL SaveOptions(void);
 
 int C2_HOOK_FASTCALL RestoreOptions(void);
 
+void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
+
 void C2_HOOK_FASTCALL LoadInRegistees(void);
 
 void C2_HOOK_FASTCALL LoadTreeSurgery(void);
