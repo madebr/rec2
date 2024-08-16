@@ -1371,7 +1371,7 @@ C2_HOOK_FUNCTION(0x00502b80, LoadShadeTableCallback)
 void C2_HOOK_FASTCALL LoadSomeShadeTables(tBrender_storage* pStorage, const char* pPath) {
 
     C2V(gStorageForCallbacks) = pStorage;
-    DRForEveryFile(pPath, LoadShadeTableCallback);
+    PFForEveryFile(pPath, LoadShadeTableCallback);
 }
 C2_HOOK_FUNCTION(0x00502b60, LoadSomeShadeTables)
 
@@ -1388,7 +1388,7 @@ C2_HOOK_FUNCTION(0x005024b0, LoadPixelmapCallback)
 void C2_HOOK_FASTCALL LoadSomePixelmaps(tBrender_storage* pStorage, const char* pPath) {
 
     C2V(gStorageForCallbacks) = pStorage;
-    DRForEveryFile(pPath, LoadPixelmapCallback);
+    PFForEveryFile(pPath, LoadPixelmapCallback);
 }
 C2_HOOK_FUNCTION(0x00502490, LoadSomePixelmaps)
 
@@ -1441,7 +1441,7 @@ void C2_HOOK_FASTCALL LoadSomeMaterialsWithShading(tBrender_storage* pStorage, c
 
     C2V(gMaterial_shading_for_callback) = pShading;
     C2V(gStorageForCallbacks) = pStorage;
-    DRForEveryFile(pPath, LoadMaterialCallback);
+    PFForEveryFile(pPath, LoadMaterialCallback);
     C2V(gMaterial_shading_for_callback) = kRendererShadingType_Undefined;
 }
 C2_HOOK_FUNCTION(0x00502ad0, LoadSomeMaterialsWithShading)
@@ -1658,7 +1658,7 @@ C2_HOOK_FUNCTION(0x00502b20, LoadModelCallback)
 void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath) {
 
     C2V(gStorageForCallbacks) = pStorage;
-    DRForEveryFile(pPath, LoadModelCallback);
+    PFForEveryFile(pPath, LoadModelCallback);
 }
 C2_HOOK_FUNCTION(0x00502b00, LoadSomeModels)
 
