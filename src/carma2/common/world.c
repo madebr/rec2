@@ -311,7 +311,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
     if (soundfx) {
         pSpec->soundfx_type = GetALineAndInterpretCommand(pF, C2V(gSoundType_Choices), REC2_ASIZE(C2V(gSoundType_Choices)));
         if (pSpec->soundfx_type != kSoundFx_None) {
-            LoadSpecialVolumeSoundEffects(pF, &pSpec->soundfx_data);
+            ReadSoundSpec(pF, &pSpec->soundfx_data);
         }
     } else {
         pSpec->soundfx_type = kSoundFx_None;
@@ -2090,10 +2090,10 @@ void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* p
                 &generator->point.v[1],
                 &generator->point.v[2]);
         }
-        LoadSpecialVolumeSoundEffects(pF, &generator->fx);
+        ReadSoundSpec(pF, &generator->fx);
         if (generator->type == kSoundGeneratorType_noncar) {
-            LoadSpecialVolumeSoundEffects(pF, &generator->fx1_noncar);
-            LoadSpecialVolumeSoundEffects(pF, &generator->fx2_noncar);
+            ReadSoundSpec(pF, &generator->fx1_noncar);
+            ReadSoundSpec(pF, &generator->fx2_noncar);
         }
     }
 #endif
