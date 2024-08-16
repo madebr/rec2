@@ -68,7 +68,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gExplosion_sound_id);
 C2_HOOK_VARIABLE_DECLARE(tExplosion_animation, gExplosion_pix_animation_groups);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_checkpoint, 3);
 
-void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void);
+void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedTextTxtPath(void);
 

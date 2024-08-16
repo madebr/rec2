@@ -457,7 +457,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
     tPowerup* the_powerup;
 
     if (C2V(gPowerup_txt_path) == NULL) {
-        C2V(gPowerup_txt_path) = "POWERUP.TXT";
+        SetDefaultPowerupFilename();
     }
     PathCat(the_path, C2V(gApplication_path), C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
     PathCat(the_path, the_path, "POWERUPS");
