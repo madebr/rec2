@@ -73,10 +73,10 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
 }
 C2_HOOK_FUNCTION(0x00454f40, UsePathFileToDetermineIfFullInstallation)
 
-void (C2_HOOK_FASTCALL * LoadSpecialVolumeSoundEffects_original)(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
-void C2_HOOK_FASTCALL LoadSpecialVolumeSoundEffects(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
+void (C2_HOOK_FASTCALL * ReadSoundSpec_original)(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
+void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
 #if 0//defined(C2_HOOKS_ENABLED)
-    LoadSpecialVolumeSoundEffects_original(pF, pSpec);
+    ReadSoundSpec_original(pF, pSpec);
 #else
     int i;
 
@@ -107,7 +107,7 @@ void C2_HOOK_FASTCALL LoadSpecialVolumeSoundEffects(FILE* pF, tSpecial_volume_so
     pSpec->field_0xc = 0;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004569f0, LoadSpecialVolumeSoundEffects, LoadSpecialVolumeSoundEffects_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004569f0, ReadSoundSpec, ReadSoundSpec_original)
 
 void (C2_HOOK_FASTCALL * StopMusic_original)(void);
 void C2_HOOK_FASTCALL StopMusic(void) {
