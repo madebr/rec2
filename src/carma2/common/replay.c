@@ -7,7 +7,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(tActionReplayCameraMode, gAction_replay_camera_mode, 0x0079efa8);
 
-void C2_HOOK_FASTCALL DefaultQuicktimeSettings(void) {
+void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 
     if (C2V(gQuick_time_quality)[0] == '\0') {
         c2_strcpy(C2V(gQuick_time_quality), "normal");
@@ -25,7 +25,7 @@ void C2_HOOK_FASTCALL DefaultQuicktimeSettings(void) {
         c2_strcpy(C2V(gQuick_time_banner_texture_name), "ARBANNER.PIX");
     }
 }
-C2_HOOK_FUNCTION(0x004e1740, DefaultQuicktimeSettings)
+C2_HOOK_FUNCTION(0x004e1740, SetQuickTimeDefaults)
 
 void (C2_HOOK_FASTCALL * InitializeActionReplayCamera_original)(tActionReplayCameraMode pCamPos);
 void C2_HOOK_FASTCALL InitializeActionReplayCamera(tActionReplayCameraMode pCamPos) {
