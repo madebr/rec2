@@ -1005,7 +1005,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex(const char* texturePathDir, con
 }
 C2_HOOK_FUNCTION(0x004856c0, LoadTiffTexture_Ex)
 
-br_pixelmap* C2_HOOK_FASTCALL LoadTiffOrBrenderTexture_Ex(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode) {
+br_pixelmap* C2_HOOK_FASTCALL DRLdImg(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode) {
     br_pixelmap* textures[1000];
     int nb;
 
@@ -1022,7 +1022,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffOrBrenderTexture_Ex(const char* texturePat
         return LoadTiffTexture_Ex(texturePathDir, textureName, pPalette, flags | kLoadTextureFlags_SaveTextureCompressed, errorCode);
     }
 }
-C2_HOOK_FUNCTION(0x0048eb80, LoadTiffOrBrenderTexture_Ex)
+C2_HOOK_FUNCTION(0x0048eb80, DRLdImg)
 
 int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity) {
     tPath_name texturePath;
@@ -1033,7 +1033,7 @@ int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelma
     c2_strcpy(texturePath, texturePathNoExt);
     c2_strcat(texturePath, ".TIF");
     SepDirAndFilename(texturePath, texturePathDir, texturePathStem);
-    pixelmaps[0] = LoadTiffOrBrenderTexture_Ex(texturePathDir, texturePathStem, C2V(gRender_palette), C2V(gPixelFlags), &errorCode);
+    pixelmaps[0] = DRLdImg(texturePathDir, texturePathStem, C2V(gRender_palette), C2V(gPixelFlags), &errorCode);
     return (pixelmaps[0] != NULL && errorCode == 0) ? 1 : 0;
 }
 C2_HOOK_FUNCTION(0x00514570, DRPixelmapLoadMany)
