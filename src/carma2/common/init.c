@@ -227,7 +227,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     PrintMemoryDump(0, "AFTER APPLICATION INITIALISATION (JUST INITED PED SYSTEM)");
     c2_memset(C2V(gPickedup_powerups), 0, sizeof(C2V(gPickedup_powerups)));
     c2_memset(C2V(gUnknown_00705b80), 0, sizeof(C2V(gUnknown_00705b80)));
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
     C2V(gApplicationDataTwtMounted) = 0;
 #endif
 }

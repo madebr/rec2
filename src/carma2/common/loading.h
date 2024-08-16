@@ -250,7 +250,7 @@ void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecur
 
 tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path);
 
-void C2_HOOK_FASTCALL TWT_UnmountEx(tTWTVFS twt);
+void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt);
 
 void C2_HOOK_FASTCALL ApplyPreviousTiffConversion(void);
 
