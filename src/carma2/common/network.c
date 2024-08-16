@@ -26,7 +26,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004a57e0, NetPlayerStatusChanged, NetPlayerStatusCha
 
 void C2_HOOK_FASTCALL InitNetHeadups(void) {
 
-    C2V(gDigits_pix) = DRLoadPixelmap("HDIGITS.PIX");
+    C2V(gDigits_pix) = LoadPixelmap("HDIGITS.PIX");
     if (C2V(gDigits_pix) != NULL) {
         BrMapAdd(C2V(gDigits_pix));
     }

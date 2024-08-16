@@ -63,7 +63,7 @@ void C2_HOOK_FASTCALL InitSkids(void) {
 #endif
             sl = c2_strlen(c2_strtok(str, "."));
             c2_strcpy(str + sl, ".PIX");
-            pm = DRLoadPixelmap(str);
+            pm = LoadPixelmap(str);
             if (pm == NULL) {
                 FatalError(kFatalError_CantLoadPixelmapFile_S, str);
             }
