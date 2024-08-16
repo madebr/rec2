@@ -859,6 +859,16 @@ int C2_HOOK_FASTCALL UnlockBackScreen(int pValue) {
 }
 C2_HOOK_FUNCTION(0x00516c30, UnlockBackScreen)
 
+tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList) {
+
+    for (; pList != NULL; pList = pList->next) {
+        if (DRStricmp(pIdentifier, pList->texture_name) == 0) {
+            break;
+        }
+    }
+    return pList;
+}
+
 void (C2_HOOK_FASTCALL * GlorifyMaterial_original)(br_material** pMaterials, int pCount, tRendererShadingType pShading);
 void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -872,11 +882,7 @@ void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRen
         material = pMaterials[i];
 
         if (material->colour_map != NULL) {
-            for (material_exception = C2V(gMaterial_exceptions); material_exception != NULL; material_exception = material_exception->next) {
-                if (c2_strcasecmp(material->colour_map->identifier, material_exception->texture_name) == 0) {
-                    break;
-                }
-            }
+            material_exception = FindExceptionInList(material->colour_map->identifier, C2V(gMaterial_exceptions));
             if (C2V(gEnable_texture_interpolation)) {
                 if (material_exception == NULL || !(material_exception->flags & 0x1)) {
                     material->flags |= BR_MATF_MAP_INTERPOLATION;
