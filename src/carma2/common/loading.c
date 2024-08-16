@@ -1369,7 +1369,7 @@ void C2_HOOK_FASTCALL DRForEveryArchivedFile(const char* pThe_path, const char* 
     PathCat(the_path, pThe_path, pArchive_name);
     twt = OpenPackFileAndSetTiffLoading(the_path);
     DRForEveryFile(the_path, pAction_routine);
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
 }
 C2_HOOK_FUNCTION(0x0048f360, DRForEveryArchivedFile)
 
@@ -1426,14 +1426,14 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
 }
 C2_HOOK_FUNCTION(0x004b4df0, OpenPackFileAndSetTiffLoading)
 
-void C2_HOOK_FASTCALL TWT_UnmountEx(tTWTVFS twt) {
+void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
     if (twt >= 0) {
         C2V(gDisableTiffConversionStackPos)--;
         C2V(gDisableTiffConversion) = C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackPos)];
         TWT_Unmount(twt);
     }
 }
-C2_HOOK_FUNCTION(0x004b4e20, TWT_UnmountEx)
+C2_HOOK_FUNCTION(0x004b4e20, ClosePackFileAndSetTiffLoading)
 
 void C2_HOOK_FASTCALL ApplyPreviousTiffConversion(void) {
     int count;
@@ -2265,7 +2265,7 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
     }
     C2V(gRaceGroups2) = C2V(gRaceGroups);
     if (!C2V(gApplicationDataTwtMounted)) {
-        TWT_UnmountEx(twt);
+        ClosePackFileAndSetTiffLoading(twt);
     }
 #endif
 }
@@ -2608,7 +2608,7 @@ void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, 
     PathCat(the_path2, the_path, "PIXELMAP");
     twt = OpenPackFileAndSetTiffLoading(the_path2);
     LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path2);
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
 
     DRForEveryArchivedFile(the_path, "MATERIAL", DRLoadMaterials);
     DRForEveryArchivedFile(the_path, "MODELS", DRLoadModels);
@@ -3258,7 +3258,7 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
         }
     }
     PFfclose(f);
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
 }
 
 void (C2_HOOK_FASTCALL * LoadPanGameDroneInfo_original)(void);
@@ -4410,7 +4410,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     DRActorEnumRecurse(pCar_spec->car_model_actor, AttachGroovidelic, NULL);
     AttachCrushDataToActorModels(pCar_spec->car_model_actor, pCar_spec);
     PrepareCarForCrushing(pCar_spec);
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
     car_material = BrMaterialAllocate("PorterIsAWxnkxr");
     if (AddMaterialToStorage(pStorage_space, car_material) == eStorage_not_enough_room) {
         FatalError(kFatalError_InsufficientMaterialSlots);

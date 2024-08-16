@@ -2847,7 +2847,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     C2V(gMaterial_exceptions) = NULL;
     PrintMemoryDump(0, "FINISHED LOADING TRACK");
     /* nop_FUN_00486db0(race_lighting_path); */
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00504bf0, LoadTrack, LoadTrack_original)
