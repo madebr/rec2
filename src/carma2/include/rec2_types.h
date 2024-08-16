@@ -610,6 +610,11 @@ typedef struct {
     int initial_network[8];
 } tSlot_info;
 
+typedef struct {
+    float initial[3];
+    float initial_network[8];
+} tFloat_bunch_info;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,

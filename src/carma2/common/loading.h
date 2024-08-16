@@ -200,5 +200,7 @@ void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info);
 
+void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch);
+
 #endif //REC2_LOADING_H
 
