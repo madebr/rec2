@@ -234,7 +234,7 @@ void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile) {
     BrMatrix23Identity(&C2V(gPed_slick_material)->map_transform);
     C2V(gPed_slick_material)->index_shade = BrTableFind("IDENTITY.TAB");
     C2V(gPed_slick_material)->colour_map = BrTableFind("GIBSLICK");
-    AdaptMaterialsForRenderer(&C2V(gPed_slick_material), 1, kRendererShadingType_Diffuse2);
+    GlorifyMaterial(&C2V(gPed_slick_material), 1, kRendererShadingType_Diffuse2);
 
     C2V(gPed_smear_material) = BrMaterialFind("PEDSMEAR");
 
@@ -446,7 +446,7 @@ void C2_HOOK_FASTCALL InitBurningPeds(void) {
         if (C2V(gBurning_ped_materials)[i]->colour_map == NULL) {
             FatalError(kFatalError_CantFindPedTexture_S, C2V(gBurning_ped_map_names)[i]);
         }
-        AdaptMaterialsForRenderer(&C2V(gBurning_ped_materials)[i], 1, kRendererShadingType_Diffuse2);
+        GlorifyMaterial(&C2V(gBurning_ped_materials)[i], 1, kRendererShadingType_Diffuse2);
         BrMaterialAdd(C2V(gBurning_ped_materials)[i]);
     }
 

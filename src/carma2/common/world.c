@@ -1474,7 +1474,7 @@ int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const c
     if (total == 0) {
         FatalError(kFatalError_CannotLoadMaterialFileOrItIsEmpty_S, pPath);
     }
-    AdaptMaterialsForRenderer(temp_array, total, pShading);
+    GlorifyMaterial(temp_array, total, pShading);
     for (i = 0; i < total; ++i) {
         if (temp_array[i] == NULL) {
             continue;

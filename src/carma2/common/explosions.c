@@ -55,7 +55,7 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
         explosion->actor->material->flags &= ~BR_MATF_LIGHT;
         explosion->actor->material->flags |= BR_MATF_ALWAYS_VISIBLE;
         explosion->actor->material->colour_map = C2V(gBack_screen);
-        AdaptMaterialsForRenderer(&explosion->actor->material, 1, kRendererShadingType_AmbientOnly);
+        GlorifyMaterial(&explosion->actor->material, 1, kRendererShadingType_AmbientOnly);
         BrMaterialAdd(explosion->actor->material);
         explosion->actor->render_style = BR_RSTYLE_FACES;
 

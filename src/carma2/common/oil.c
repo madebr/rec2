@@ -46,7 +46,7 @@ void C2_HOOK_FASTCALL InitOilSpills(void) {
         C2V(oily_material)->colour_map = C2V(gOil_pixies)[0];
         BrMatrix23Identity(&C2V(oily_material)->map_transform);
         C2V(oily_material)->index_shade = BrTableFind("IDENTITY.TAB");
-        AdaptMaterialsForRenderer(&C2V(oily_material), 1, kRendererShadingType_Specular);
+        GlorifyMaterial(&C2V(oily_material), 1, kRendererShadingType_Specular);
         BrMaterialUpdate(C2V(oily_material), BR_MATU_ALL);
         the_model = BrModelAllocate(NULL, 4, 2);
         the_model->flags |= BR_MODF_KEEP_ORIGINAL;

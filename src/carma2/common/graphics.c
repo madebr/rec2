@@ -859,8 +859,8 @@ int C2_HOOK_FASTCALL UnlockBackScreen(int pValue) {
 }
 C2_HOOK_FUNCTION(0x00516c30, UnlockBackScreen)
 
-void (C2_HOOK_FASTCALL * AdaptMaterialsForRenderer_original)(br_material** pMaterials, int pCount, tRendererShadingType pShading);
-void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
+void (C2_HOOK_FASTCALL * GlorifyMaterial_original)(br_material** pMaterials, int pCount, tRendererShadingType pShading);
+void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
 #if 0//defined(C2_HOOKS_ENABLED)
     AdaptMaterialsForRenderer_original(pMaterials, pCount, pShading);
 #else
@@ -930,7 +930,7 @@ void C2_HOOK_FASTCALL AdaptMaterialsForRenderer(br_material** pMaterials, int pC
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005182f0, AdaptMaterialsForRenderer, AdaptMaterialsForRenderer_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x005182f0, GlorifyMaterial, GlorifyMaterial_original)
 
 int C2_HOOK_FASTCALL FindBestMatchingPaletteIndex(br_colour pColour) {
     double min_error = DBL_MAX;
