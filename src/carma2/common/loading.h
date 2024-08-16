@@ -244,7 +244,7 @@ void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt);
 
 FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode);
 
-void C2_HOOK_FASTCALL DRForEveryArchivedFile(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine);
+void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine);
 
 void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 

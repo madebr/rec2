@@ -94,7 +94,7 @@ void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* p
     name = c2_strtok(s, "\t ,/");
     name[c2_strlen(name) - 4] = '\0';
     PathCat(the_path, the_path, name);
-    LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path);
+    LoadAllImagesInDirectory(&C2V(gMisc_storage_space), the_path);
     ReadExplosionAnimation(pF, pExplosion_groups);
 }
 C2_HOOK_FUNCTION(0x004f5ec0, ReadExplosionInfo)
