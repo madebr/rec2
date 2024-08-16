@@ -82,6 +82,8 @@ int C2_HOOK_FASTCALL LoadTiffOrBrenderTexture(const char* texturePathNoExt, br_p
 
 int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path);
 
+void C2_HOOK_FASTCALL TwatPIX16(const char* pPath);
+
 void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path);
 
 int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path);
