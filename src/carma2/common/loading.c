@@ -1912,7 +1912,7 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
     tPath_name the_path;
 
     if (C2V(gPedTextTxtPath) == NULL) {
-        C2V(gPedTextTxtPath) = "TEXT.TXT";
+        SetDefaultTextFileName();
     }
     PathCat(the_path, C2V(gApplication_path), C2V(gPedTextTxtPath));
     f = DRfopen(the_path, "rt");
