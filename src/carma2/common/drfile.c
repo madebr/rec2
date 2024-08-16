@@ -66,7 +66,7 @@ br_size_t C2_HOOK_CDECL DRStdioWrite(void* buf, br_size_t size, unsigned int n, 
 C2_HOOK_FUNCTION(0x0044c770, DRStdioWrite)
 
 br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f) {
-    DRfgets(buf, buf_len, f);
+    PFfgets(buf, buf_len, f);
     return strlen(buf);
 }
 C2_HOOK_FUNCTION(0x0044c6c0, DRStdioGetLine)

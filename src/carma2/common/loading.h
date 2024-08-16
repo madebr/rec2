@@ -226,7 +226,7 @@ int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile);
 
 int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file);
 
-char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, FILE* pFile);
+char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile);
 
 int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence);
 
