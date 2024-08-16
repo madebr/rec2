@@ -1362,7 +1362,7 @@ FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
 }
 C2_HOOK_FUNCTION(0x004b4780, PFfopen)
 
-void C2_HOOK_FASTCALL DRForEveryArchivedFile(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine) {
+void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine) {
     tPath_name the_path;
     tTWTVFS twt;
 
@@ -1371,7 +1371,7 @@ void C2_HOOK_FASTCALL DRForEveryArchivedFile(const char* pThe_path, const char* 
     DRForEveryFile(the_path, pAction_routine);
     ClosePackFileAndSetTiffLoading(twt);
 }
-C2_HOOK_FUNCTION(0x0048f360, DRForEveryArchivedFile)
+C2_HOOK_FUNCTION(0x0048f360, LoadInFiles)
 
 void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     int twt;
@@ -2598,8 +2598,8 @@ void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, 
     tTWTVFS twt;
 
     PathCat(the_path, pRoot, pSubDir);
-    DRForEveryArchivedFile(the_path, "PALETTES", DRLoadPalette);
-    DRForEveryArchivedFile(the_path, "SHADETAB", DRLoadShadeTable);
+    LoadInFiles(the_path, "PALETTES", DRLoadPalette);
+    LoadInFiles(the_path, "SHADETAB", DRLoadShadeTable);
 
     if (pInitialize_palettes) {
         InitializePalettes();
@@ -2607,13 +2607,13 @@ void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, 
 
     PathCat(the_path2, the_path, "PIXELMAP");
     twt = OpenPackFileAndSetTiffLoading(the_path2);
-    LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path2);
+    LoadAllImagesInDirectory(&C2V(gMisc_storage_space), the_path2);
     ClosePackFileAndSetTiffLoading(twt);
 
-    DRForEveryArchivedFile(the_path, "MATERIAL", DRLoadMaterials);
-    DRForEveryArchivedFile(the_path, "MODELS", DRLoadModels);
-    DRForEveryArchivedFile(the_path, "ACTORS", DRLoadActors);
-    DRForEveryArchivedFile(the_path, "LIGHTS", DRLoadLights);
+    LoadInFiles(the_path, "MATERIAL", DRLoadMaterials);
+    LoadInFiles(the_path, "MODELS", DRLoadModels);
+    LoadInFiles(the_path, "ACTORS", DRLoadActors);
+    LoadInFiles(the_path, "LIGHTS", DRLoadLights);
 
 }
 
@@ -4054,7 +4054,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     c2_strcpy(pCar_spec->grid_icon_names[2], str);
     pCar_spec->grid_icon_image = NULL;
 
-    LoadAllTexturesFromTexSubdirectories(pStorage_space, car_path);
+    LoadAllImagesInDirectory(pStorage_space, car_path);
     LoadSomeShadeTables(pStorage_space, car_path);
     LoadCarMaterials(pStorage_space, car_path, pCar_spec);
     old_model_count = pStorage_space->models_count;
