@@ -6,7 +6,7 @@
 
 #include "c2_hooks.h"
 
-void C2_HOOK_FASTCALL TemporaryMaterialStorageInit(void);
+void C2_HOOK_FASTCALL InitFogificateMaterials(void);
 
 br_material* C2_HOOK_FASTCALL LoadTemporaryMaterial(const char* pName);
 

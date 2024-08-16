@@ -119,7 +119,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     InstallDRFileCalls();
     tTWTVFS twt = OpenPackFileAndSetTiffLoading(C2V(gApplication_path));
     C2V(gApplicationDataTwtMounted) = 1;
-    TemporaryMaterialStorageInit();
+    InitFogificateMaterials();
     PDInitTimer();
     InitWobbleStuff();
     LoadGeneralParameters();
@@ -1101,7 +1101,7 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
     C2V(gWait_for_it) = 0;
     C2V(gGame_to_load) = -1;
     C2V(gCurrent_race).number_of_racers = 0;
-    TemporaryMaterialStorageInit();
+    InitFogificateMaterials();
     DisableMaterialAdapt();
     C2V(gGame_initialized) = 1;
     C2V(gNet_mode_of_last_game) = C2V(gNet_mode);
@@ -1357,7 +1357,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     int i;
 
     C2V(gMap_view) = 1;
-    TemporaryMaterialStorageInit();
+    InitFogificateMaterials();
     ResetSmashableRaceTargets();
     ClearRaceMemory();
     ResetMechanics();
