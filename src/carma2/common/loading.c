@@ -843,7 +843,7 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
                 c2_strcat(source_check, C2V(gDir_separator));
             }
             c2_strcat(source_check, general_file);
-            DRfclose(fp);
+            PFfclose(fp);
             if (!PDCheckDriveExists(source_check)) {
                 PDFatalError("Carmageddon CD not in drive.");
             }
@@ -898,7 +898,7 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
             DRungetc(ch, fp);
             return fp;
         }
-        DRfclose(fp);
+        PFfclose(fp);
         return NULL;
     }
 }
@@ -934,8 +934,8 @@ FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491170, DRfopen, DRfopen_original)
 
-void (C2_HOOK_FASTCALL * DRfclose_original)(FILE* pFile);
-void C2_HOOK_FASTCALL DRfclose(FILE* pFile) {
+void (C2_HOOK_FASTCALL * PFfclose_original)(FILE* pFile);
+void C2_HOOK_FASTCALL PFfclose(FILE* pFile) {
 #if 0//defined(C2_HOOKS_ENABLED)
     DRfclose_original(pFile);
 #else
@@ -946,7 +946,7 @@ void C2_HOOK_FASTCALL DRfclose(FILE* pFile) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b4760, DRfclose, DRfclose_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4760, PFfclose, PFfclose_original)
 
 br_size_t (C2_HOOK_FASTCALL * DRfread_original)(void* buf, br_size_t size, unsigned int n, void* f);
 br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, void* f) {
@@ -1586,7 +1586,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     C2V(gTempFile) = PFfopen(the_path, "rb");
     if (C2V(gTempFile) != NULL) {
         PFfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
-        DRfclose(C2V(gTempFile));
+        PFfclose(C2V(gTempFile));
 
         for (i = 0; i < c2_strlen(C2V(gDecode_string)); i++) {
             C2V(gDecode_string)[i] -= 50;
@@ -1853,7 +1853,7 @@ void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void) {
     C2V(gDefault_water_spec_vol).screen_pixelmap = BrMapFind(C2V(gUnderwater_screen_name));
     ReadExplosionInfo(C2V(gTempFile), &C2V(gWasted_explosion_chance), &C2V(gExplosion_sound_id), &C2V(gExplosion_pix_animation_groups));
     ReadPowerupSmashables(C2V(gTempFile));
-    DRfclose(C2V(gTempFile));
+    PFfclose(C2V(gTempFile));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00487dc0, FinishLoadGeneralParameters, FinishLoadGeneralParameters_original)
@@ -1874,7 +1874,7 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     for (i = 0; i < REC2_ASIZE(C2V(gKey_mapping)); i++) {
         c2_fscanf((FILE*)f, "%d", &C2V(gKey_mapping)[i]);
     }
-    DRfclose(f);
+    PFfclose(f);
 }
 C2_HOOK_FUNCTION(0x00487e10, LoadKeyMapping)
 
@@ -1934,7 +1934,7 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
     default:
         break;
     }
-    DRfclose(f);
+    PFfclose(f);
 }
 C2_HOOK_FUNCTION(0x0048cfc0, LoadMiscStrings)
 
@@ -2021,7 +2021,7 @@ br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
     PossibleService();
     the_font->glyphs = BrMemAllocate(data_size, kMem_br_font_glyphs);
     DRfread(the_font->glyphs, data_size, 1u, f);
-    DRfclose(f);
+    PFfclose(f);
     return the_font;
 }
 C2_HOOK_FUNCTION(0x00466050, LoadBRFont)
@@ -2204,7 +2204,7 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
         }
     }
     *pCount = count_races;
-    DRfclose(f);
+    PFfclose(f);
     if (C2V(gRaceGroups) != NULL) {
         BrMemFree(C2V(gRaceGroups));
     }
@@ -2416,7 +2416,7 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
 
 #undef BAIL_IF_NEGATIVE
 
-    DRfclose(f);
+    PFfclose(f);
 
     return 1;
 }
@@ -2573,7 +2573,7 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
             }
         }
     }
-    DRfclose(f);
+    PFfclose(f);
     C2V(gMap_view) = 1;
     C2V(gMap_render_x) = 80.f;
     C2V(gMap_render_y) = 400.f;
@@ -2639,7 +2639,7 @@ void C2_HOOK_FASTCALL LoadTreeSurgery(void) {
         GetAString(file, C2V(gTree_surgery_pass2)[i].replacement);
     }
 #if defined(REC2_FIX_BUGS)
-    DRfclose(file);
+    PFfclose(file);
 #endif
 #endif
 }
@@ -2670,7 +2670,7 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
     DRungetc(paths_txt_first_char, paths_txt_fp);
     cd_pathname[0] = '\0';
     GetALineAndDontArgue(paths_txt_fp, cd_pathname);
-    DRfclose(paths_txt_fp);
+    PFfclose(paths_txt_fp);
     PathCat(cd_data_pathname, cd_pathname, "DATA");
 
     if (DRStricmp(cd_pathname, C2V(gApplication_path)) == 0) {
@@ -3072,7 +3072,7 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
     if (c2_strcmp(s, "END") != 0) {
         FatalError(kFatalError_OpponentCountMismatchesActualNumberOfOpponents);
     }
-    DRfclose(f);
+    PFfclose(f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048c930, LoadOpponents, LoadOpponents_original)
@@ -3241,7 +3241,7 @@ void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
             FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
         }
     }
-    DRfclose(f);
+    PFfclose(f);
     TWT_UnmountEx(twt);
 }
 
@@ -3281,7 +3281,7 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
             }
             LoadDrone(s);
         }
-        DRfclose(f);
+        PFfclose(f);
     }
 #endif
 }
@@ -3978,7 +3978,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         LoadHeadups(h, 0, pCar_spec);
         LoadHeadups(h, 1, pCar_spec);
         PossibleService();
-        DRfclose(h);
+        PFfclose(h);
 
         AdjustCarCoordinates(&C2V(gProgram_state).current_car);
         AdjustRenderScreenSize();
@@ -4384,8 +4384,8 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         }
     }
 
-    DRfclose(f);
-    DRfclose(g);
+    PFfclose(f);
+    PFfclose(g);
     C2V(gCurrent_car_spec) = NULL;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, field_0x18c8, 0x18c8);

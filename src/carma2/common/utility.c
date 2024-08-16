@@ -276,7 +276,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     DRungetc(ch, f);
 
     if (C2V(gDecode_thing) == '@' && ch == '@') {
-        DRfclose(f);
+        PFfclose(f);
         return;
     }
 
@@ -326,8 +326,8 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
             DRungetc(ch, f);
         }
     }
-    DRfclose(f);
-    DRfclose(d);
+    PFfclose(f);
+    PFfclose(d);
 
     PDFileUnlock(pThe_path);
     c2_unlink(pThe_path);
@@ -738,7 +738,7 @@ FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
         if (f == NULL) {
             return DRfopen(the_path, "wb");
         }
-        DRfclose(f);
+        PFfclose(f);
     }
     return NULL;
 }
@@ -903,7 +903,7 @@ void C2_HOOK_FASTCALL PrintScreen(void) {
         } else {
             PrintScreenFile16(f);
         }
-        DRfclose(f);
+        PFfclose(f);
     }
 }
 C2_HOOK_FUNCTION(0x00518780, PrintScreen)

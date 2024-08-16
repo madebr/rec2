@@ -41,7 +41,7 @@ void* C2_HOOK_CDECL DRStdioOpenWrite(const char* name, int mode) {
 C2_HOOK_FUNCTION(0x0044c720, DRStdioOpenWrite)
 
 void C2_HOOK_CDECL DRStdioClose(void* f) {
-    DRfclose(f);
+    PFfclose(f);
 }
 C2_HOOK_FUNCTION(0x0044c740, DRStdioClose)
 
