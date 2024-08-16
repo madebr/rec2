@@ -198,5 +198,7 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
 void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info);
+
 #endif //REC2_LOADING_H
 

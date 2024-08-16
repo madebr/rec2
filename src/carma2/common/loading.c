@@ -995,6 +995,25 @@ br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048ec00, DRLoadPixelmap, DRLoadPixelmap_original)
 
+void C2_HOOK_FASTCALL LoadBunchOfParameters(tSlot_info* pSlot_info) {
+    char s[256];
+    const char *str;
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pSlot_info->initial) != 3);
+    C2_HOOK_BUG_ON(REC2_ASIZE(pSlot_info->initial_network) != 8);
+
+    /* (armour|power|offensive), single player, each skill level */
+    GetThreeInts(C2V(gTempFile), &pSlot_info->initial[0], &pSlot_info->initial[1], &pSlot_info->initial[2]);
+    /* (armour|power|offensive), each network game type */
+    GetALineAndDontArgue(C2V(gTempFile), s);
+    str = c2_strtok(s, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(pSlot_info->initial_network); i++) {
+        c2_sscanf(str, "%d", &pSlot_info->initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+}
+
 void (C2_HOOK_FASTCALL * LoadGeneralParameters_original)(void);
 void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 #if defined(C2_HOOKS_ENABLED)
@@ -1076,9 +1095,180 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 
     ParseSpecialVolume(C2V(gTempFile), &C2V(gUnderwaterSpecialVolumeSettings), C2V(gUnderwaterScreenName), 0);
 
+<<<<<<< HEAD
     //unfinished
     c2_abort();
 //#error "not implemented"
+=======
+    /* Initial armour, single player, each skill level */
+    /* Initial armour, each network game type */
+    LoadBunchOParameters(&C2V(gInitial_APO)[0]);
+
+    /* Initial power, single player, each skill level */
+    /* Initial power, each network game type */
+    LoadBunchOParameters(&C2V(gInitial_APO)[1]);
+
+    /* Initial offensive, single player, each skill level */
+    /* Initial offensive, each network game type */
+    LoadBunchOParameters(&C2V(gInitial_APO)[2]);
+
+    /* Initial potential armour, single player, each skill level */
+    /* Initial potential armour, each network game type */
+    LoadBunchOParameters(&C2V(gInitial_APO_potential)[0]);
+
+    /* Initial potential power, single player, each skill level */
+    /* Initial potential power, each network game type */
+    LoadBunchOParameters(&C2V(gInitial_APO_potential)[1]);
+
+    /* Initial potential offensive, single player, each skill level */
+    /* Initial potential offensive, each network game type */
+    LoadBunchOParameters(&C2V(gInitial_APO_potential)[2]);
+
+    /* Max armour, single player, each skill level */
+    /* Max armour, each network game type */
+    LoadBunchOParameters(&C2V(gMax_APO)[0]);
+
+    /* Max power, single player, each skill level */
+    /* Max power, each network game type */
+    LoadBunchOParameters(&C2V(gMax_APO)[1]);
+
+    /* Max offensive, single player, each skill level */
+    /* Max offensive, each network game type */
+    LoadBunchOParameters(&C2V(gMax_APO)[2]);
+
+    /* APO cost, single player */
+    /* APO cost, each network game type */
+    LoadBunchOParameters(&C2V(gCost_APO));
+
+    /* Trade-in APO value, single player */
+    /* Trade-in APO value, each network game type */
+    LoadBunchOParameters(&C2V(gTrade_in_value_APO));
+
+    /* APO substitution value, single player */
+    /* APO substitution, each network game type */
+    LoadBunchOParameters(&C2V(gSubstitution_value_APO));
+
+    /* APO potential substitution value, single player */
+    /* APO potential substitution, each network game type */
+    LoadBunchOParameters(&C2V(gPotential_substitution_value_APO));
+
+    /* Armour starting value */
+    C2V(gArmour_starting_value)[0] = GetAScalar(C2V(gTempFile));
+    /* Power starting value */
+    C2V(gPower_starting_value)[0] = GetAScalar(C2V(gTempFile));
+    /* Offensive starting value */
+    C2V(gOffensive_starting_value)[0] = GetAScalar(C2V(gTempFile));
+    /* Armour per-level multiplier */
+    armour_mult = GetAScalar(C2V(gTempFile));
+    /* Power per-level multiplier */
+    power_mult = GetAScalar(C2V(gTempFile));
+    /* Offensive per-level multiplier */
+    offensive_mult = GetAScalar(C2V(gTempFile));
+    for (i = 1; i < REC2_ASIZE(C2V(gArmour_starting_value)); i++) {
+        C2V(gArmour_starting_value)[i] = C2V(gArmour_starting_value)[i - 1] * armour_mult;
+        C2V(gPower_starting_value)[i] = C2V(gPower_starting_value)[i - 1] * power_mult;
+        C2V(gOffensive_starting_value)[i] = C2V(gOffensive_starting_value)[i - 1] * offensive_mult;
+    }
+
+    /* Powerup number to use when time powerup got during network game */
+    C2V(gNet_powerup_time_replacement) = GetAnInt(C2V(gTempFile));
+
+    /* Starting money for each skill level */
+    GetThreeInts(C2V(gTempFile), &C2V(gStarting_money)[0], &C2V(gStarting_money)[1], &C2V(gStarting_money)[2]);
+    /* Starting money in network mode */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+#if defined(REC2_FIX_BUGS)
+    for (i = 0; i < REC2_ASIZE(C2V(gNet_starting_money)); i++) {
+#else
+    for (i = 0; i < 5; i++) {
+#endif
+        c2_sscanf(str, "%d", &C2V(gNet_starting_money)[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Repair cost for each skill level (cred per % damage) */
+    /* Repair cost for each net game (cred per % damage) */
+    LoadBunchOFloatParameters(&C2V(gRepair_cost));
+
+    /* Recovery cost for each skill level */
+    /* Recovery cost for each net game type */
+    LoadBunchOFloatParameters(&C2V(gRecovery_cost));
+
+    /* Car softness factor for each net skill level */
+    /* Car softness factor for each net game type */
+    LoadBunchOFloatParameters(&C2V(gCar_softness));
+
+    /* Car-to-car damage multiplier for each net skill level */
+    /* Car-to-car damage multiplier for each net game type */
+    LoadBunchOFloatParameters(&C2V(gCar_car_damage_multiplier));
+
+    /* Score targets for each net game type */
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(C2V(gNet_score_targets)); i++) {
+        c2_sscanf(str, "%d", &C2V(gNet_score_targets)[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Pickup respawn min time (seconds) */
+    C2V(gPickup_respawn_min_time_ms) = 1000 * GetAnInt(C2V(gTempFile));
+    /* Pickup respawn max extra time (seconds) */
+    C2V(gPickup_respawn_max_extra_time_ms) = 100 * GetAnInt(C2V(gTempFile));
+
+    /* Demo race rank equivalent */
+    C2V(gDemo_race_rank_equivalent) = GetAnInt(C2V(gTempFile));
+
+    /* Number of demo opponents */
+    C2V(gCount_demo_opponents) = GetAnInt(C2V(gTempFile));
+    /* Demo opponents */
+    for (i = 0; (int)i < C2V(gCount_demo_opponents); i++) {
+        C2V(gDemo_opponents)[i] = GetAnInt(C2V(gTempFile));
+    }
+
+    /* default Gravity Multiplier */
+    C2V(gDefault_gravity) = GetAScalar(C2V(gTempFile));
+
+    /* Flic sound delays */
+    /* Delay (in seconds) before sound during pre-smack flic */
+    C2V(gFlic_sound_delay_pre_smack) = GetAFloat(C2V(gTempFile));
+    /* Delay (in seconds) before sound during post-smack flic */
+    C2V(gFlic_sound_delay_post_smack) = GetAFloat(C2V(gTempFile));
+    /* Delay (in seconds) before sound during 'not in demo' flic */
+    C2V(gFlic_sound_delay_not_in_demo) = GetAFloat(C2V(gTempFile));
+    /* Delay (in seconds) before sound during post-demo slideshow flic */
+    C2V(gFlic_sound_delay_post_demo) = GetAFloat(C2V(gTempFile));
+
+    /* Time (in seconds) that credits take before they reach the recovery
+     * amount when self-increasing (if starting at zero)
+     *
+     * First line is for single-player games, second is for each type of
+     * network game. Zero means don't tick up.
+     */
+    time = GetAnInt(C2V(gTempFile));
+    for (i = 0; (int)i < REC2_ASIZE(C2V(gAuto_increase_credits_dt)); i++) {
+        C2V(gAuto_increase_credits_dt)[i] = (int)((float)(1000 * time) / (.02f * (float)C2V(gRecovery_cost).initial[i]));
+    }
+    GetALineAndDontArgue(C2V(gTempFile), s2);
+    str = c2_strtok(s2, "\t ,/");
+    for (i = 0; (int)i < REC2_ASIZE(C2V(gNet_score_targets)); i++) {
+        float t;
+        c2_sscanf(str, "%d", &t);
+        C2V(gNet_auto_increase_credits_dt)[i] = (int)((float)(1000 * t) / (.02f * (float)C2V(gRecovery_cost).initial_network[i]));
+        str = c2_strtok(NULL, "\t ,/");
+    }
+
+    /* Mutant tail thing settings */
+    /* Number of links including ball */
+    C2V(gCount_mutant_tail_parts) = GetAnInt(C2V(gTempFile));
+    /* Mass of each link */
+    C2V(gMass_mutant_tail_link) = GetAFloat(C2V(gTempFile));
+    /* Mass of ball */
+    C2V(gMass_mutant_tail_ball) = GetAFloat(C2V(gTempFile));
+
+    /*  Mine / Mortar weight */
+    C2V(gMass_mine) = GetAFloat(C2V(gTempFile));
+>>>>>>> d09069a15f (Implement LoadBunchOParameters)
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00486ef0, LoadGeneralParameters, LoadGeneralParameters_original)

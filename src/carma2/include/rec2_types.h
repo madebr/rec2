@@ -605,6 +605,11 @@ typedef struct {
     tU32 fizzle_start;
 } tHeadup_icon;
 
+typedef struct {
+    int initial[3];
+    int initial_network[8];
+} tSlot_info;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
