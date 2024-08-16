@@ -1641,7 +1641,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     /* Credits per rank for each skill level */
     GetThreeInts(C2V(gTempFile), &C2V(gCredits_per_rank)[0], &C2V(gCredits_per_rank)[1], &C2V(gCredits_per_rank)[2]);
 
-    LoadGeneralCrushSettings(C2V(gTempFile));
+    ReadCrushSettings(C2V(gTempFile));
 
     /* Time per ped kill for each skill level */
     GetThreeInts(C2V(gTempFile), &C2V(gTime_per_ped_kill)[0], &C2V(gTime_per_ped_kill)[1], &C2V(gTime_per_ped_kill)[2]);
