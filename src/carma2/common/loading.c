@@ -4825,7 +4825,7 @@ br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingTyp
     C2V(gSimple_materials)[i]->colour = colour;
     C2V(gSimple_materials)[i]->index_base = FindBestMatchingPaletteIndex(colour);
     C2V(gSimple_materials)[i]->index_range = 0;
-    AdaptMaterialsForRenderer(&C2V(gSimple_materials)[i], 1, pShading_type);
+    GlorifyMaterial(&C2V(gSimple_materials)[i], 1, pShading_type);
     BrMaterialAdd(C2V(gSimple_materials)[i]);
     return C2V(gSimple_materials)[i];
 #endif
