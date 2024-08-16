@@ -14,7 +14,7 @@ void C2_HOOK_FASTCALL CheckDemo(void) {
     tPath_name path;
 
     PathCat(path, C2V(gApplication_path), "DEMO.TXT");
-    f = TWT_fopen(path, "rt");
+    f = PFfopen(path, "rt");
     C2V(gDemo) = f != NULL;
     if (C2V(gDemo)) {
         DRfclose(f);
