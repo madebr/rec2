@@ -92,7 +92,7 @@ void C2_HOOK_FASTCALL LoadFrontendStrings(void) {
     }
     PathCat(the_path, C2V(gApplication_path), "INTRFACE");
     PathCat(the_path, the_path, "interface.txt");
-    f = TWT_fopen(the_path, "rt");
+    f = PFfopen(the_path, "rt");
     if (f == NULL) {
         FatalError(kFatalError_CannotOpenTEXT_TXT);
     }
@@ -322,7 +322,7 @@ br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder,
 
     result = NULL;
     PathCat(the_path, pFolder, "PIXIES.P16");
-    f = TWT_fopen(the_path, "rb");
+    f = PFfopen(the_path, "rb");
     if (f == NULL) {
         PathCat(the_path, pFolder, pName);
         result = DRLoadUpdatePixelmapFromTif(the_path);
