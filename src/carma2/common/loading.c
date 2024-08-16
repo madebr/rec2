@@ -1121,8 +1121,8 @@ int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b49a0, DRungetc, DRungetc_original)
 
-char* (C2_HOOK_FASTCALL * DRfgets_original)(char* buffer, br_size_t size, FILE* pFile);
-char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, FILE* pFile) {
+char* (C2_HOOK_FASTCALL * PFfgets_original)(char* buffer, br_size_t size, FILE* pFile);
+char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
 #if 0 // defined(C2_HOOKS_ENABLED)
     return DRfgets_original(buffer, size, pFile);
 #else
@@ -1157,7 +1157,7 @@ char* C2_HOOK_FASTCALL DRfgets(char* buffer, br_size_t size, FILE* pFile) {
 
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b4900, DRfgets, DRfgets_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4900, PFfgets, PFfgets_original)
 
 int (C2_HOOK_FASTCALL * DRfseek_original)(FILE* pF, int offset, int whence);
 int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence) {
@@ -1585,7 +1585,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 
     C2V(gTempFile) = PFfopen(the_path, "rb");
     if (C2V(gTempFile) != NULL) {
-        DRfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
+        PFfgets(s, REC2_ASIZE(s)-1, C2V(gTempFile));
         DRfclose(C2V(gTempFile));
 
         for (i = 0; i < c2_strlen(C2V(gDecode_string)); i++) {
@@ -2459,7 +2459,7 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
         return 0;
     }
 
-    while (DRfgets(line, sizeof(line), f)) {
+    while (PFfgets(line, sizeof(line), f)) {
         if (c2_sscanf(line, "%79s%f", token, &arg) == 2) {
             if (c2_strcmp(token, "YonFactor") == 0) {
                 SetYonFactor(arg);
@@ -2507,7 +2507,7 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
             } else if (c2_strcmp(token, "HeadupMapH") == 0) {
                 C2V(gHeadup_map_h) = (int)arg;
             } else if (c2_strcmp(token, "PlayerName") == 0) {
-                DRfgets(line, sizeof(line), f);
+                PFfgets(line, sizeof(line), f);
                 s = c2_strtok(line, "\n\r");
                 c2_strcpy(C2V(gProgram_state).player_name, s);
             } else if (c2_strcmp(token, "EVolume") == 0) {
@@ -2545,24 +2545,24 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
                 s = c2_strtok(line, "\n\r");
                 c2_strcpy(C2V(gQuick_time_quality), s);
             } else if (c2_strcmp(token, "QuickTimeCompressor") == 0) {
-                DRfgets(line, sizeof(line), f);
+                PFfgets(line, sizeof(line), f);
                 s = c2_strtok(line, "\n\r");
                 c2_strcpy(C2V(gQuick_time_compressor), s);
             } else if (c2_strcmp(token, "QuickTimeBanner") == 0) {
                 C2V(gQuick_time_banner_number) = (int)arg;
-                DRfgets(line, sizeof(line), f);
+                PFfgets(line, sizeof(line), f);
                 s = c2_strtok(line, "\n\r");
                 c2_strcpy(C2V(gQuick_time_banner_texture_name), s);
             } else if (c2_strcmp(token, "QuickTimeTempPath") == 0) {
-                DRfgets(line, sizeof(line), f);
+                PFfgets(line, sizeof(line), f);
                 s = c2_strtok(line, "\n\r");
                 c2_strcpy(C2V(gQuick_time_temp_path), s);
             } else if (c2_strcmp(token, "QuickTimeMoviePathStub") == 0) {
-                DRfgets(line, sizeof(line), f);
+                PFfgets(line, sizeof(line), f);
                 s = c2_strtok(line, "\n\r");
                 c2_strcpy(C2V(gQuick_time_movie_path_stub), s);
             } else if (c2_strcmp(token, "NetName") == 0) {
-                DRfgets(line, sizeof(line), f);
+                PFfgets(line, sizeof(line), f);
                 s = c2_strtok(line, "\n\r");
             } else if (c2_strcmp(token, "NETGAMETYPE") == 0) {
                 C2V(gNet_last_game_type) = (int)arg;
