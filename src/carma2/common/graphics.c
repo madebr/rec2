@@ -266,7 +266,7 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
     C2V(gCurrent_splash) = the_map;
     if (the_map == NULL) {
         C2V(gCurrent_splash) = LoadPixelmap(pPixmap_name);
-        DRPixelmapConvertRGB565ToRGB555IfNeeded(C2V(gCurrent_splash), C2V(gBack_screen)->type);
+        BRPM_convert(C2V(gCurrent_splash), C2V(gBack_screen)->type);
         if (C2V(gCurrent_splash) != NULL) {
             BrMapAdd(C2V(gCurrent_splash));
         }
@@ -286,8 +286,8 @@ void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name) {
 }
 C2_HOOK_FUNCTION(0x0047b990, SplashScreenWith)
 
-void (C2_HOOK_FASTCALL * DRPixelmapConvertRGB565ToRGB555IfNeeded_original)(br_pixelmap* pixelmap, int pixelType);
-void C2_HOOK_FASTCALL DRPixelmapConvertRGB565ToRGB555IfNeeded(br_pixelmap* pixelmap, int pixelType) {
+void (C2_HOOK_FASTCALL * BRPM_convert_original)(br_pixelmap* pixelmap, int pixelType);
+void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pixelmap, int pixelType) {
     br_uint_8* pixel_row_start;
     br_uint_16* pixel;
     int i;
@@ -309,7 +309,7 @@ void C2_HOOK_FASTCALL DRPixelmapConvertRGB565ToRGB555IfNeeded(br_pixelmap* pixel
     }
     pixelmap->type = BR_PMT_RGB_555;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00518700, DRPixelmapConvertRGB565ToRGB555IfNeeded, DRPixelmapConvertRGB565ToRGB555IfNeeded_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00518700, BRPM_convert, BRPM_convert_original)
 
 void (C2_HOOK_FASTCALL * AllocateCursorActors_original)(void);
 void C2_HOOK_FASTCALL AllocateCursorActors(void) {
