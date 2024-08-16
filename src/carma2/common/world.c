@@ -1038,7 +1038,7 @@ int C2_HOOK_FASTCALL LoadTiffOrBrenderTexture(const char* texturePathNoExt, br_p
 }
 C2_HOOK_FUNCTION(0x00514570, LoadTiffOrBrenderTexture)
 
-int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, const char* path) {
+int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* path) {
     int i;
     int nbLoaded;
     int result;
@@ -1077,7 +1077,7 @@ int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, co
     }
     return result;
 }
-C2_HOOK_FUNCTION(0x005024f0, LoadNPixelmapsFromPath)
+C2_HOOK_FUNCTION(0x005024f0, AddPixelmaps)
 
 void C2_HOOK_FASTCALL TwatPIX16(const char* pPath) {
 
@@ -1112,7 +1112,7 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
     for (i = 0; i < list.size; i++) {
         PathCat(tempPath, path, list.items[i]);
-        LoadNPixelmapsFromPath(C2V(gStorageForCallbacks), tempPath);
+        AddPixelmaps(C2V(gStorageForCallbacks), tempPath);
     }
 }
 C2_HOOK_FUNCTION(0x005028f0, LoadAllImagesInDirectory)
@@ -1380,7 +1380,7 @@ void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath) {
 
     StringToUpper(s, pPath);
     if (c2_strstr(s, ".PIX") != NULL) {
-        LoadNPixelmapsFromPath(C2V(gStorageForCallbacks), pPath);
+        AddPixelmaps(C2V(gStorageForCallbacks), pPath);
     }
 }
 C2_HOOK_FUNCTION(0x005024b0, LoadPixelmapCallback)
