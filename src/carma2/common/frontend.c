@@ -466,7 +466,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
             C2V(gFrontend_backdrop) = Frontend_LoadFrontendPixelmap(s2, name);
-            TWT_UnmountEx(twt);
+            ClosePackFileAndSetTiffLoading(twt);
 
             if (C2V(gFrontend_backdrop) == NULL) {
                 BrFailure("FRONTEND: Error loading background graphics.", 0);
@@ -487,7 +487,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
             C2V(gFrontend_backdrop) = Frontend_LoadFrontendPixelmap(s2, name);
-            TWT_UnmountEx(twt);
+            ClosePackFileAndSetTiffLoading(twt);
 
             if (C2V(gFrontend_backdrop) == NULL) {
                 BrFailure("FRONTEND: Error loading background graphics.", 0);

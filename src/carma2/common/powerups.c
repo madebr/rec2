@@ -297,7 +297,7 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
     PathCat(the_path, C2V(gApplication_path), "TAIL");
     twt = OpenPackFileAndSetTiffLoading(the_path);
     LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
     for (i = 0; i < C2V(gCount_mutant_tail_parts); i++) {
         int is_link;
         tCollision_info* collision_info;
@@ -463,7 +463,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
     PathCat(the_path, the_path, "POWERUPS");
     twtvfs = OpenPackFileAndSetTiffLoading(the_path);
     LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path);
-    TWT_UnmountEx(twtvfs);
+    ClosePackFileAndSetTiffLoading(twtvfs);
 
     for (i = 0; i < REC2_ASIZE(C2V(gFizzle_in)); i++) {
         C2V(gFizzle_in)[i] = find_pixelmap_name(C2V(gFizzle_names)[i]);
@@ -659,7 +659,7 @@ void C2_HOOK_FASTCALL InitShitMines(void) {
     PathCat(the_path, C2V(gApplication_path), "MINE");
     twt = OpenPackFileAndSetTiffLoading(the_path);
     LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
 
     C2_HOOK_BUG_ON(sizeof(tShit_mine) != 56);
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gShit_mines)) != 20);
