@@ -178,7 +178,7 @@ void C2_HOOK_FASTCALL InitFlame(void) {
             material->flags &= ~BR_MATF_LIGHT;
             material->flags |= BR_MATF_ALWAYS_VISIBLE;
             material->colour_map = C2V(gFlame_map)[0];
-            AdaptMaterialsForRenderer(&material, 1, kRendererShadingType_AmbientOnly);
+            GlorifyMaterial(&material, 1, kRendererShadingType_AmbientOnly);
             BrMaterialAdd(material);
             C2V(gSmoke_column)[i].frame_count[j] = 100;
         }
