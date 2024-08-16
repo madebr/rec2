@@ -133,7 +133,7 @@ void C2_HOOK_FASTCALL InitDRFonts(void);
 
 void C2_HOOK_FASTCALL UpdateMap(void);
 
-void C2_HOOK_FASTCALL InitHUDActor(void);
+void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void);
 
 void C2_HOOK_FASTCALL InitShadows(void);
 
