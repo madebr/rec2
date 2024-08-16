@@ -1272,7 +1272,7 @@ void C2_HOOK_FASTCALL InitPackFiles(void) {
 }
 C2_HOOK_FUNCTION(0x004b4570, InitPackFiles)
 
-tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
+tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
     tPath_name twatFilePath;
     FILE* f;
     tTWTVFS twt;
@@ -1315,7 +1315,7 @@ tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path) {
     }
     return twt;
 }
-C2_HOOK_FUNCTION(0x004b45b0, TWT_Mount)
+C2_HOOK_FUNCTION(0x004b45b0, OpenPackFile)
 
 void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt) {
     if (twt >= 0) {
@@ -1416,7 +1416,7 @@ C2_HOOK_FUNCTION(0x004b4d30, DREnumPath)
 tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
     tTWTVFS res;
 
-    res = TWT_Mount(path);
+    res = OpenPackFile(path);
     if (TWT_MOUNT_SUCCEEDED(res)) {
         C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackPos)] = C2V(gDisableTiffConversion);
         C2V(gDisableTiffConversionStackPos)++;

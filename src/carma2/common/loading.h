@@ -238,7 +238,7 @@ void C2_HOOK_FASTCALL DRrewind(FILE* pF);
 
 void C2_HOOK_FASTCALL InitPackFiles(void);
 
-tTWTVFS C2_HOOK_FASTCALL TWT_Mount(const char* path);
+tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path);
 
 void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt);
 
