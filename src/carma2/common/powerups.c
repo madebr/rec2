@@ -462,7 +462,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
     PathCat(the_path, C2V(gApplication_path), C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
     PathCat(the_path, the_path, "POWERUPS");
     twtvfs = OpenPackFileAndSetTiffLoading(the_path);
-    LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path);
+    LoadAllImagesInDirectory(&C2V(gMisc_storage_space), the_path);
     ClosePackFileAndSetTiffLoading(twtvfs);
 
     for (i = 0; i < REC2_ASIZE(C2V(gFizzle_in)); i++) {

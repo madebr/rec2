@@ -132,7 +132,7 @@ int C2_HOOK_FASTCALL CreateTintedPolyActor(int x0, int y0, int width, int height
             ALLOCATE_TINTED_POLY_MATERIAL(C2V(gTintedPolys)[tintedIndex].material);
             C2V(gTintedPolys)[tintedIndex].material->flags |= BR_MATF_QUAD_MAPPING;
             PathCat(the_path, C2V(gApplication_path), "fire");
-            LoadAllTexturesFromTexSubdirectories(&C2V(gMisc_storage_space), the_path);
+            LoadAllImagesInDirectory(&C2V(gMisc_storage_space), the_path);
             map = BrMapFind("testfire");
             C2V(gTintedPolys)[tintedIndex].pixelmap = map;
             C2V(gTintedPolys)[tintedIndex].material->colour_map = map;

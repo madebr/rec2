@@ -1079,7 +1079,7 @@ int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, co
 }
 C2_HOOK_FUNCTION(0x005024f0, LoadNPixelmapsFromPath)
 
-void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pStorage_space, const char* path) {
+void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path) {
     tPath_name pathCopy;
     tPath_name tempPath;
     tName_list list;
@@ -1110,7 +1110,7 @@ void C2_HOOK_FASTCALL LoadAllTexturesFromTexSubdirectories(tBrender_storage* pSt
         LoadNPixelmapsFromPath(C2V(gStorageForCallbacks), tempPath);
     }
 }
-C2_HOOK_FUNCTION(0x005028f0, LoadAllTexturesFromTexSubdirectories)
+C2_HOOK_FUNCTION(0x005028f0, LoadAllImagesInDirectory)
 
 int C2_HOOK_FASTCALL LoadTiffTextureCB(const char* filePath, tLoadDirectoryStructureCBData* data) {
     size_t filePathLength;
@@ -1661,7 +1661,7 @@ void C2_HOOK_FASTCALL LoadFolderInStorageWithShading(tBrender_storage* pStorage,
 
     LoadSomeShadeTables(pStorage, pPath);
     LoadSomePixelmaps(pStorage, pPath);
-    LoadAllTexturesFromTexSubdirectories(pStorage, pPath);
+    LoadAllImagesInDirectory(pStorage, pPath);
     LoadSomeMaterialsWithShading(pStorage, pPath, pShading);
     LoadSomeModels(pStorage, pPath);
 }
@@ -2286,11 +2286,11 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PathCat(race_desc_path, C2V(gApplication_path), "RACES");
     PathCat(race_desc_path, race_desc_path, short_track_name);
     twt2 = OpenPackFile(race_desc_path);
-    LoadAllTexturesFromTexSubdirectories(&C2V(gTrack_storage_space), race_desc_path);
+    LoadAllImagesInDirectory(&C2V(gTrack_storage_space), race_desc_path);
     TWT_Unmount(twt2);
 
     PossibleService();
-    LoadAllTexturesFromTexSubdirectories(&C2V(gTrack_storage_space), C2V(gRace_path));
+    LoadAllImagesInDirectory(&C2V(gTrack_storage_space), C2V(gRace_path));
 
     PossibleService();
     LoadSomeShadeTables(&C2V(gTrack_storage_space), C2V(gRace_path));
