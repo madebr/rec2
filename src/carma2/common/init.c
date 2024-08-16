@@ -272,12 +272,12 @@ void C2_HOOK_FASTCALL InitializeBRenderEnvironment(void) {
     }
     C2V(gDont_render_actor)->render_style = BR_RSTYLE_NONE;
     BrActorAdd(C2V(gUniverse_actor), C2V(gDont_render_actor));
-    AllocateSelf();
+    AllocateActors();
     AllocateCamera();
 }
 
-void (C2_HOOK_FASTCALL * AllocateSelf_original)(void);
-void C2_HOOK_FASTCALL AllocateSelf(void) {
+void (C2_HOOK_FASTCALL * AllocateActors_original)(void);
+void C2_HOOK_FASTCALL AllocateActors(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     AllocateSelf_original();
@@ -304,7 +304,7 @@ void C2_HOOK_FASTCALL AllocateSelf(void) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0047e320, AllocateSelf, AllocateSelf_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0047e320, AllocateActors, AllocateActors_original)
 
 void (C2_HOOK_FASTCALL * AllocateCamera_original)(void);
 void C2_HOOK_FASTCALL AllocateCamera(void) {
