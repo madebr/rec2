@@ -95,7 +95,7 @@ void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette);
 
 void C2_HOOK_FASTCALL SplashScreenWith(const char* pPixmap_name);
 
-void C2_HOOK_FASTCALL DRPixelmapConvertRGB565ToRGB555IfNeeded(br_pixelmap* pixelmap, int pixelType);
+void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pixelmap, int pixelType);
 
 void C2_HOOK_FASTCALL AllocateCursorActors(void);
 

@@ -2567,7 +2567,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
             pRace_info->map_image = BrMapFind(s);
         }
     }
-    DRPixelmapConvertRGB565ToRGB555IfNeeded(pRace_info->map_image, C2V(gBack_screen)->type);
+    BRPM_convert(pRace_info->map_image, C2V(gBack_screen)->type);
     PrintMemoryDump(0, "JUST LOADING SKY/SPEC VOLS/SCREENS/MAP");
     /* World->map transformation matrix */
     for (i = 0; i < 4; ++i) {
