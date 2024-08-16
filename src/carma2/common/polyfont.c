@@ -314,7 +314,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         glyph->index = 0;
         glyph->glyph_width = pSize;
     }
-    DRfclose(f);
+    PFfclose(f);
     c2_strcpy(s, the_path);
     PathCat(s, s, "BLANK.PIX");
     blank_map = LoadPolyFontPixiesP16(the_path, "BLANK.PIX", 1);
@@ -586,7 +586,7 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
         GetThreeInts(f, &border->br.r, &border->br.g, &border->br.b);
     }
 #if defined(REC2_FIX_BUGS)
-    DRfclose(f);
+    PFfclose(f);
 #else
     fclose(f);
 #endif

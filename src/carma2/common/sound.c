@@ -64,7 +64,7 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
         GetALineWithNoPossibleService(fp, line1);
         GetALineWithNoPossibleService(fp, line2);
         GetALineWithNoPossibleService(fp, line3);
-        DRfclose(fp);
+        PFfclose(fp);
         if (c2_strcmp(line3, "Full") != 0) {
             return;
         }

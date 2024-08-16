@@ -103,7 +103,7 @@ void C2_HOOK_FASTCALL LoadFrontendStrings(void) {
         c2_strcpy(C2V(gInterface_strings)[i], s);
         C2V(gCount_interface_strings)++;
     }
-    DRfclose(f);
+    PFfclose(f);
 }
 C2_HOOK_FUNCTION(0x00484fd0, LoadFrontendStrings)
 
@@ -154,7 +154,7 @@ void C2_HOOK_FASTCALL LoadMenuImages(void) {
     }
 
 #if defined(REC2_FIX_BUGS)
-    DRfclose(f);
+    PFfclose(f);
 #endif
 }
 
@@ -301,7 +301,7 @@ static void C2_HOOK_FASTCALL LoadMenuModels(void) {
     }
 
 #if defined(REC2_FIX_BUGS)
-    DRfclose(f);
+    PFfclose(f);
 #endif
 }
 
@@ -329,7 +329,7 @@ br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder,
         /* FUN_005193f0(result, 0); */
         return result;
     }
-    DRfclose(f);
+    PFfclose(f);
     count = BrPixelmapLoadMany(the_path, pixelmaps, REC2_ASIZE(pixelmaps));
     c2_strcpy(the_path, pName);
     str = c2_strchr(the_path, '.');
