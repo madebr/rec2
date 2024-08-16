@@ -30,7 +30,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
     C2_HOOK_START();
     C2V(gAFE) = 0;
-    ConfigurePedDefaultPaths();
+    SetDefaultPedFolderNames();
     if (strlen(lpCmdLine) > 0) {
         _strupr(lpCmdLine);
         currentArgument = strtok(lpCmdLine, " \t\n");

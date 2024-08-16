@@ -74,7 +74,7 @@ void C2_HOOK_FASTCALL ConfigureDefaultPedTextTxtPath(void);
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedTexturePath(void);
 
-void C2_HOOK_FASTCALL ConfigurePedDefaultPaths(void);
+void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void);
 
 void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void);
 

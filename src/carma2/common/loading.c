@@ -282,14 +282,14 @@ void C2_HOOK_FASTCALL ConfigureDefaultPedTexturePath(void) {
 }
 C2_HOOK_FUNCTION(0x0048f7f0, ConfigureDefaultPedTexturePath)
 
-void C2_HOOK_FASTCALL ConfigurePedDefaultPaths(void) {
+void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void) {
     C2V(gPedsFolder) = "PEDS";
     ConfigureDefaultPedSoundPath();
     ConfigureDefaultPedPowerupTxtPath();
     ConfigureDefaultPedTextTxtPath();
     ConfigureDefaultPedTexturePath();
 }
-C2_HOOK_FUNCTION(0x004d6f10, ConfigurePedDefaultPaths)
+C2_HOOK_FUNCTION(0x004d6f10, SetDefaultPedFolderNames)
 
 void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void) {
     C2V(gPedSoundPath) = "ZOMSOUND";
