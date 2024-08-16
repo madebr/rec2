@@ -262,10 +262,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrame_period_for_this_munging, 0x0079efc4);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gDrone_delta_time, 0x0079efc0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gTrack_drone_min_y, 0x0079efbc);
 
-void C2_HOOK_FASTCALL ConfigureDefaultPedSoundPath(void) {
+void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void) {
     C2V(gPedSoundPath) = NULL;
 }
-C2_HOOK_FUNCTION(0x00457570, ConfigureDefaultPedSoundPath)
+C2_HOOK_FUNCTION(0x00457570, SetDefaultSoundFolderName)
 
 void C2_HOOK_FASTCALL ConfigureDefaultPedPowerupTxtPath(void) {
     C2V(gPowerup_txt_path) = "POWERUP.TXT";
@@ -284,7 +284,7 @@ C2_HOOK_FUNCTION(0x0048f7f0, ConfigureDefaultPedTexturePath)
 
 void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void) {
     C2V(gPedsFolder) = "PEDS";
-    ConfigureDefaultPedSoundPath();
+    SetDefaultSoundFolderName();
     ConfigureDefaultPedPowerupTxtPath();
     ConfigureDefaultPedTextTxtPath();
     ConfigureDefaultPedTexturePath();
