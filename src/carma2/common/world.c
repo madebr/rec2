@@ -1079,6 +1079,10 @@ int C2_HOOK_FASTCALL LoadNPixelmapsFromPath(tBrender_storage* pStorage_space, co
 }
 C2_HOOK_FUNCTION(0x005024f0, LoadNPixelmapsFromPath)
 
+void C2_HOOK_FASTCALL TwatPIX16(const char* pPath) {
+
+}
+
 void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path) {
     tPath_name pathCopy;
     tPath_name tempPath;
@@ -1087,6 +1091,7 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
 
     C2_HOOK_BUG_ON(sizeof(tBrender_storage) != 68);
 
+    TwatPIX16(path);
     list.size = 0;
     c2_strcpy(pathCopy, path);
     C2V(gStorageForCallbacks) = pStorage_space;
