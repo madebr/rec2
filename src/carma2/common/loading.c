@@ -1529,6 +1529,22 @@ br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048ec20, RealLoadPixelmap, RealLoadPixelmap_original)
 
+void C2_HOOK_FASTCALL GetHithers(void) {
+    char s[256];
+    int result;
+    int position;
+
+    /* Hithers, general then cockpit mode */
+    GetALineAndDontArgue(C2V(gTempFile), s);
+    result = c2_sscanf(&s[c2_strspn(s, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
+    if (result == 0) {
+        FatalError(kFatalError_MysteriousX_SS, s, "GENERAL.TXT");
+    }
+    c2_sscanf(&s[position + c2_strspn(&s[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
+    C2V(gCamera_hither) *= 2;
+    C2V(gCamera_cockpit_hither) *= 2;
+}
+
 void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info) {
     char s[256];
     const char *str;
@@ -1575,8 +1591,6 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     char* str;
     char s[256];
     char s2[256];
-    int position;
-    int result;
     br_scalar armour_mult, power_mult, offensive_mult;
     int time;
 
@@ -1613,15 +1627,9 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 
     /* Disable TIFF conversion */
     C2V(gDisableTiffConversion) = GetAnInt(C2V(gTempFile));
-    /* Hithers, general then cockpit mode */
-    GetALineAndDontArgue(C2V(gTempFile), s2);
-    result = c2_sscanf(&s2[c2_strspn(s2, "\t ,")], "%f%n", &C2V(gCamera_hither), &position);
-    if (result == 0) {
-        FatalError(kFatalError_MysteriousX_SS, s2, "GENERAL.TXT");
-    }
-    c2_sscanf(&s2[position + c2_strspn(&s2[position], "\t ,")], "%f", &C2V(gCamera_cockpit_hither));
-    C2V(gCamera_hither) *= 2;
-    C2V(gCamera_cockpit_hither) *= 2;
+
+    GetHithers();
+
     /* Yon */
     C2V(gCamera_yon) = GetAFloat(C2V(gTempFile));
     /* Camera angle */
