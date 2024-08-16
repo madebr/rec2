@@ -72,7 +72,7 @@ void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
 void C2_HOOK_FASTCALL SetDefaultTextFileName(void);
 
-void C2_HOOK_FASTCALL ConfigureDefaultPedTexturePath(void);
+void C2_HOOK_FASTCALL SetDefaultPixelmapFolderName(void);
 
 void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void);
 
