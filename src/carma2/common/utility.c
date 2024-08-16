@@ -267,7 +267,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     c2_strcpy(new_file, pThe_path);
     c2_strcpy(&new_file[len - 3], "ENC");
 
-    f = TWT_fopen(pThe_path, "rt");
+    f = PFfopen(pThe_path, "rt");
     if (f == NULL) {
         FatalError(kFatalError_CantOpen_S, pThe_path);
     }
@@ -280,7 +280,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
         return;
     }
 
-    d = TWT_fopen(new_file, "wb");
+    d = PFfopen(new_file, "wb");
     if (d == NULL) {
         FatalError(kFatalError_CantOpen_S, new_file);
     }

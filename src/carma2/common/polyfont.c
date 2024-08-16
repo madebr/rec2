@@ -286,7 +286,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
 
     c2_strcpy(s, the_path);
     PathCat(s, s, "FONT.TXT");
-    f = TWT_fopen(s, "rt");
+    f = PFfopen(s, "rt");
     if (f == NULL) {
         FatalError(kFatalError_CannotLoadFontWidthTable_S, pName);
     }

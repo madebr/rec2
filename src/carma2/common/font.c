@@ -29,7 +29,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char
     int i;
 
     PathCat(pathBuffer, path, "PIXIES.P16");
-    f = TWT_fopen(pathBuffer, "rb");
+    f = PFfopen(pathBuffer, "rb");
     if (f == NULL) {
         PathCat(pathBuffer, path, glyphName);
         return DRLoadUpdatePixelmapFromTif(pathBuffer);
