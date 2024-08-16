@@ -26,6 +26,8 @@ C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gXXX_outlet);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tS3_outlet*, gIndexed_outlets, 6);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSound_periodicity_choices, 3);
 
+void C2_HOOK_FASTCALL SplungeSomeData(void* data, size_t size);
+
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
 void C2_HOOK_FASTCALL LoadSpecialVolumeSoundEffects(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
