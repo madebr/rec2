@@ -1395,7 +1395,7 @@ void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecur
 }
 C2_HOOK_FUNCTION(0x004b4c80, DRForEveryFile)
 
-void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
+void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallback, void* data) {
     int twt;
     size_t i;
     tPath_name twt_filePath;
@@ -1411,7 +1411,7 @@ void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, 
     }
     PDEnumPath(path, pCallback, data);
 }
-C2_HOOK_FUNCTION(0x004b4d30, DREnumPath)
+C2_HOOK_FUNCTION(0x004b4d30, PFForEveryFile2)
 
 tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
     tTWTVFS res;

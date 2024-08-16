@@ -1096,20 +1096,20 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     c2_strcpy(pathCopy, path);
     C2V(gStorageForCallbacks) = pStorage_space;
     if (C2V(gDisableTiffConversion)) {
-        DREnumPath(pathCopy, (tEnumPathCallback)AddTextureFileStemToList, &list);
+        PFForEveryFile2(pathCopy, (tEnumPathCallback)AddTextureFileStemToList, &list);
     }
     if (!C2V(gDisableTiffConversion)) {
         PathCat(tempPath, pathCopy, "TIFFX");
-        DREnumPath(tempPath, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+        PFForEveryFile2(tempPath, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
     }
     PathCat(tempPath, pathCopy, "PIX8");
-    DREnumPath(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
     if (!C2V(gDisableTiffConversion)) {
         PathCat(tempPath, pathCopy, "TIFFRGB");
-        DREnumPath(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+        PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
     }
     PathCat(tempPath, pathCopy, "PIX16");
-    DREnumPath(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
     for (i = 0; i < list.size; i++) {
         PathCat(tempPath, path, list.items[i]);
         LoadNPixelmapsFromPath(C2V(gStorageForCallbacks), tempPath);
