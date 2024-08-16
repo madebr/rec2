@@ -2742,21 +2742,6 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name) {
 }
 C2_HOOK_FUNCTION(0x00513970, DRPixelmapLoad)
 
-br_uint_32 C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* pFile_name, br_pixelmap** pPixelmaps, br_uint_16 pNum) {
-    br_pixelmap* the_map;
-    int number_loaded;
-    int i;
-
-    number_loaded = BrPixelmapLoadMany(pFile_name, pPixelmaps, pNum);
-    for (i = 0; i < number_loaded; i++) {
-        the_map = pPixelmaps[i];
-        the_map->row_bytes = (the_map->row_bytes + sizeof(int32_t) - 1) & ~(sizeof(int32_t) - 1);
-        the_map->base_x = 0;
-        the_map->base_y = 0;
-    }
-    return number_loaded;
-}
-
 void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name) {
     br_pixelmap* palette_array[100];
     int number_of_palettes;

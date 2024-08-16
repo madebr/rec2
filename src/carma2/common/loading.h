@@ -312,8 +312,6 @@ int C2_HOOK_FASTCALL CarmaCDinDriveOrFullGameInstalled(void);
 
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name);
 
-br_uint_32 C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* pFile_name, br_pixelmap** pPixelmaps, br_uint_16 pNum);
-
 void C2_HOOK_FASTCALL DRLoadPalette(const char* p_path);
 
 void C2_HOOK_FASTCALL DRLoadShadeTable(const char* p_path);
