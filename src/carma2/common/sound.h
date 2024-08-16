@@ -30,7 +30,7 @@ void C2_HOOK_FASTCALL SplungeSomeData(void* data, size_t size);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
-void C2_HOOK_FASTCALL LoadSpecialVolumeSoundEffects(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
+void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
 void C2_HOOK_FASTCALL StopMusic(void);
 
