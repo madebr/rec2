@@ -133,6 +133,6 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
         GetPairOfInts(f, &pFrontend->levels[i].first_item_id, &pFrontend->levels[i].last_item_id);
     }
 
-    DRfclose(f);
+    PFfclose(f);
 }
 C2_HOOK_FUNCTION(0x00466760, ReadInterfaceTxt)

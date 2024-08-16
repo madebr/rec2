@@ -589,7 +589,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
     for (i = 0; i < C2V(gNet_count_powerup_goodies); i++) {
         C2V(gNet_powerup_goodies)[i] = GetAnInt(f);
     }
-    DRfclose(f);
+    PFfclose(f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d96c0, LoadPowerups, LoadPowerups_original)

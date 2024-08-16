@@ -17,7 +17,7 @@ void C2_HOOK_FASTCALL CheckDemo(void) {
     f = PFfopen(path, "rt");
     C2V(gDemo) = f != NULL;
     if (C2V(gDemo)) {
-        DRfclose(f);
+        PFfclose(f);
     }
 }
 C2_HOOK_FUNCTION(0x004815d0, CheckDemo)

@@ -34,7 +34,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char
         PathCat(pathBuffer, path, glyphName);
         return DRLoadUpdatePixelmapFromTif(pathBuffer);
     }
-    DRfclose(f);
+    PFfclose(f);
     if (loadFromDisk) {
         C2V(gPixelmapBufferSize) = BrPixelmapLoadMany(pathBuffer, C2V(gPixelmapBuffer), REC2_ASIZE(C2V(gPixelmapBuffer)));
     }

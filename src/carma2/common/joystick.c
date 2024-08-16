@@ -22,7 +22,7 @@ void C2_HOOK_STDCALL ReadFFB_TXT(void) {
     c2_sscanf(c2_strtok(s, "\t ,/"), "%f", &C2V(gForce_feedback_upper_limit));
     GetALineAndDontArgue(f, s);
     c2_sscanf(c2_strtok(s, "\t ,/"), "%f", &C2V(Force_feedback_lower_limit));
-    DRfclose(f);
+    PFfclose(f);
 }
 
 int (C2_HOOK_FASTCALL * PlayFFBEffect_original)(const char* pEffect_name, int pArg2);
