@@ -1014,6 +1014,23 @@ void C2_HOOK_FASTCALL LoadBunchOfParameters(tSlot_info* pSlot_info) {
     }
 }
 
+void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch) {
+    char s[256];
+    const char *str;
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pBunch->initial) != 3);
+    C2_HOOK_BUG_ON(REC2_ASIZE(pBunch->initial_network) != 8);
+
+    GetThreeFloats(C2V(gTempFile), &pBunch->initial[0], &pBunch->initial[1], &pBunch->initial[2]);
+    GetALineAndDontArgue(C2V(gTempFile), s);
+    str = c2_strtok(s, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(pBunch->initial_network); i++) {
+        c2_sscanf(str, "%f", &pBunch->initial_network[i]);
+        str = c2_strtok(NULL, "\t ,/");
+    }
+}
+
 void (C2_HOOK_FASTCALL * LoadGeneralParameters_original)(void);
 void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 #if defined(C2_HOOKS_ENABLED)
