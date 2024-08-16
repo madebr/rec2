@@ -1503,7 +1503,7 @@ br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name) {
     if (!C2V(gDisableTiffConversion)) {
         pm = LoadTiffTexture_Ex(path, texture_name, C2V(gRender_palette), C2V(gPixelFlags) | 0x40, &error);
     } else {
-        if (LoadBrenderTextures(path, texture_name, pixelmaps, REC2_ASIZE(pixelmaps)) != 0) {
+        if (LoadBunchOfPixies(path, texture_name, pixelmaps, REC2_ASIZE(pixelmaps)) != 0) {
             error = 0;
             pm = pixelmaps[0];
         } else {
@@ -1517,7 +1517,7 @@ br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name) {
         if (!C2V(gDisableTiffConversion)) {
             pm = LoadTiffTexture_Ex(path, texture_name, C2V(gRender_palette), C2V(gPixelFlags) | 0x40, &error);
         } else {
-            if (LoadBrenderTextures(path, texture_name, pixelmaps, REC2_ASIZE(pixelmaps)) != 0) {
+            if (LoadBunchOfPixies(path, texture_name, pixelmaps, REC2_ASIZE(pixelmaps)) != 0) {
                 pm = pixelmaps[0];
             } else {
                 pm = NULL;
