@@ -9,7 +9,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDemo, 0x00762284);
 
-void C2_HOOK_FASTCALL CheckDemo(void) {
+void C2_HOOK_FASTCALL CheckTimedDemo(void) {
     FILE* f;
     tPath_name path;
 
@@ -20,4 +20,4 @@ void C2_HOOK_FASTCALL CheckDemo(void) {
         PFfclose(f);
     }
 }
-C2_HOOK_FUNCTION(0x004815d0, CheckDemo)
+C2_HOOK_FUNCTION(0x004815d0, CheckTimedDemo)
