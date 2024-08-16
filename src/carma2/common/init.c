@@ -150,7 +150,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     LoadInRegistees();
     UpdateMap();
     PrintMemoryDump(0, "AFTER INITIALISING GENERAL STORAGE AND LOADING IN REG");
-    InitHUDActor();
+    Init2DStuffForPolyFonts();
     InitLineStuff();
     InitSmokeStuff();
     PrintMemoryDump(0, "AFTER INITING LINE AND SMOKE STUFF");

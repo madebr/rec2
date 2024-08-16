@@ -700,11 +700,11 @@ void C2_HOOK_FASTCALL UpdateMap(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00496e30, UpdateMap, UpdateMap_original)
 
-void (C2_HOOK_FASTCALL * InitHUDActor_original)(void);
-void C2_HOOK_FASTCALL InitHUDActor(void) {
+void (C2_HOOK_FASTCALL * Init2DStuffForPolyFonts_original)(void);
+void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    InitHUDActor_original();
+    Init2DStuffForPolyFonts_original();
 #else
     br_camera* camera_data;
 
@@ -722,7 +722,7 @@ void C2_HOOK_FASTCALL InitHUDActor(void) {
     BrActorAdd(C2V(gHUD_root), C2V(gHUD_camera));
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0047e560, InitHUDActor, InitHUDActor_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0047e560, Init2DStuffForPolyFonts, Init2DStuffForPolyFonts_original)
 
 void (C2_HOOK_FASTCALL * InitShadows_original)(void);
 void C2_HOOK_FASTCALL InitShadows(void) {
