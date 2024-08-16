@@ -284,6 +284,8 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
 void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL GetHithers(void);
+
 void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info);
 
 void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch);
