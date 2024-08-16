@@ -103,7 +103,7 @@ void C2_HOOK_FASTCALL InitTrackCrushables(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042a190, InitTrackCrushables, InitTrackCrushables_original)
 
-void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file) {
+void C2_HOOK_FASTCALL ReadCrushSettings(FILE* file) {
     char s[256];
 
     while (1) {
@@ -157,7 +157,7 @@ void C2_HOOK_FASTCALL LoadGeneralCrushSettings(FILE* file) {
         }
     }
 }
-C2_HOOK_FUNCTION(0x00429bb0, LoadGeneralCrushSettings)
+C2_HOOK_FUNCTION(0x00429bb0, ReadCrushSettings)
 
 br_scalar C2_HOOK_FASTCALL SquaredDistanceFromLineSegment(br_vector3* pP, br_vector3* pA, br_vector3* pB) {
     br_vector3 v1;
