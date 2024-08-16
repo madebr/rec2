@@ -1045,29 +1045,29 @@ int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps
     PathCat(path3, path3, pName);
 
     PathCat(path2, path1, "TIFFX");
-    DREnumPath(path2, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+    PFForEveryFile2(path2, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
 
     PathCat(path4, path1, "PIX8");
-    DREnumPath(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    PFForEveryFile2(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
 
     PathCat(path2, path1, "TIFFRGB");
-    DREnumPath(path2, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    PFForEveryFile2(path2, (tEnumPathCallback)AddTextureFileStemToList, &list);
 
     PathCat(path4, path1, "PIX16");
-    DREnumPath(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    PFForEveryFile2(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
 
     if (list.size == 0) {
         PathCat(path2, path3, "TIFFX");
-        DREnumPath(path2, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+        PFForEveryFile2(path2, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
 
         PathCat(path4, path3, "PIX8");
-        DREnumPath(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
+        PFForEveryFile2(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
 
         PathCat(path2, path3, "TIFFRGB");
-        DREnumPath(path2, (tEnumPathCallback)AddTextureFileStemToList, &list);
+        PFForEveryFile2(path2, (tEnumPathCallback)AddTextureFileStemToList, &list);
 
         PathCat(path4, path3, "PIX16");
-        DREnumPath(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
+        PFForEveryFile2(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
 
         for (i = 0; i < list.size; i++) {
             pMaps[i] = LoadTiffOrBrenderTexture_Ex(path3, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
