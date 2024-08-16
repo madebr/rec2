@@ -426,7 +426,7 @@ br_pixelmap* C2_HOOK_FASTCALL DRLoadUpdatePixelmapFromTif(const char* path) {
         textureName[i] = pathBuffer[fileStart + i];
     }
     textureName[pathLen - fileStart] = '\0';
-    return LoadTiffOrBrenderTexture_Ex(pathDir, textureName, C2V(gRender_palette), C2V(gPixelFlags), &errorFlags);
+    return DRLdImg(pathDir, textureName, C2V(gRender_palette), C2V(gPixelFlags), &errorFlags);
 }
 C2_HOOK_FUNCTION(0x00513870, DRLoadUpdatePixelmapFromTif)
 
@@ -1070,11 +1070,11 @@ int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps
         PFForEveryFile2(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
 
         for (i = 0; i < list.size; i++) {
-            pMaps[i] = LoadTiffOrBrenderTexture_Ex(path3, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
+            pMaps[i] = DRLdImg(path3, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
         }
     } else {
         for (i = 0; i < list.size; i++) {
-            pMaps[i] = LoadTiffOrBrenderTexture_Ex(path1, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
+            pMaps[i] = DRLdImg(path1, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
         }
     }
     return list.size;
