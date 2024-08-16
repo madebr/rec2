@@ -271,7 +271,7 @@ void C2_HOOK_FASTCALL InitPeds(void) {
     float v;
 
     if (C2V(gPedsFolder) == NULL) {
-        ConfigurePedDefaultPaths();
+        SetDefaultPedFolderNames();
     }
 
     InitPedsForm(&C2V(gPed_forms_vtable));
