@@ -2459,7 +2459,7 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
     C2V(gMini_map_visible) = 1;
 
     DefaultNetSettings();
-    DefaultQuicktimeSettings();
+    SetQuickTimeDefaults();
 
     PathCat(the_path, C2V(gApplication_path), "OPTIONS.TXT");
     f = DRfopen(the_path, "rt");
