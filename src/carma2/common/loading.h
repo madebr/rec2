@@ -260,7 +260,7 @@ void C2_HOOK_FASTCALL DRForEveryFile(const char* pThe_path, tPDForEveryFileRecur
 
 void C2_HOOK_FASTCALL DREnumPath(const char* path, tEnumPathCallback pCallback, void* data);
 
-br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap(const char* pPath_name);
+br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
 
 br_pixelmap* C2_HOOK_FASTCALL DRLoadPixelmap2(const char* pPath_name);
 

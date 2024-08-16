@@ -135,7 +135,7 @@ void C2_HOOK_FASTCALL LoadMenuImages(void) {
 
     /* 1 to 6 are car images, 7 is driver image */
     for (i = 1; i < 8; i++) { /* FIXME: magic number */
-        C2V(gFrontend_images)[i] = DRLoadPixelmap("64by64.tif");
+        C2V(gFrontend_images)[i] = LoadPixelmap("64by64.tif");
     }
     PathCat(s, C2V(gApplication_path), "INTRFACE");
     PathCat(s, s, "MENUIMAGES.TXT");
@@ -150,7 +150,7 @@ void C2_HOOK_FASTCALL LoadMenuImages(void) {
         GetAString(f, s2);
         c2_strcpy(s, s2);
         c2_strcat(s, ".TIF");
-        C2V(gFrontend_images)[i + 8] = DRLoadPixelmap(s); /* FIXME: magic number */
+        C2V(gFrontend_images)[i + 8] = LoadPixelmap(s); /* FIXME: magic number */
     }
 
 #if defined(REC2_FIX_BUGS)
