@@ -99,7 +99,7 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
     size_t len;
 
     do {
-        result = DRfgets(s, sizeof(s), pF);
+        result = PFfgets(s, sizeof(s), pF);
         if (result == NULL) {
             pS[0] = '\0';
             return pS;
@@ -287,7 +287,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
 
     result = &line[1];
 
-    while (DRfgets(result, 256, f) || !DRfeof(f)) {
+    while (PFfgets(result, 256, f) || !DRfeof(f)) {
 
         if (result[0] == '@') {
             decode = 1;
