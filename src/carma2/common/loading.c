@@ -1896,7 +1896,7 @@ void C2_HOOK_FASTCALL LoadHeadupImages(void) {
                 || (C2V(gHeadup_image_info)[i].avail == eNot_net && C2V(gNet_mode) == eNet_mode_none)
                 || (C2V(gHeadup_image_info)[i].avail == eNet_only && C2V(gNet_mode) != eNet_mode_none)) {
             pixmap = LoadPixelmap(C2V(gHeadup_image_info)[i].name);
-            DRPixelmapConvertRGB565ToRGB555IfNeeded(pixmap, C2V(gBack_screen)->type);
+            BRPM_convert(pixmap, C2V(gBack_screen)->type);
         } else {
             pixmap = NULL;
         }
