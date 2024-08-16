@@ -2285,7 +2285,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     short_track_name[4] = '\0';
     PathCat(race_desc_path, C2V(gApplication_path), "RACES");
     PathCat(race_desc_path, race_desc_path, short_track_name);
-    twt2 = TWT_Mount(race_desc_path);
+    twt2 = OpenPackFile(race_desc_path);
     LoadAllTexturesFromTexSubdirectories(&C2V(gTrack_storage_space), race_desc_path);
     TWT_Unmount(twt2);
 
