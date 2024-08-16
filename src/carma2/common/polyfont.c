@@ -419,7 +419,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         }
     }
     C2V(gPixelmapBufferSize) = 0;
-    TWT_UnmountEx(twt);
+    ClosePackFileAndSetTiffLoading(twt);
     C2V(gSize_font_texture_pages)++;
 #endif
 }
