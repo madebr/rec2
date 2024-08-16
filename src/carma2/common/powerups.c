@@ -243,7 +243,7 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
     tPath_name the_path;
     tTWTVFS twt;
 
-    repulse = DRLoadPixelmap("REPULSE.PIX");
+    repulse = LoadPixelmap("REPULSE.PIX");
     if (repulse == NULL) {
         FatalError(kFatalError_CantFindFile_S, "REPULSE.PIX");
     }

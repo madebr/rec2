@@ -1022,7 +1022,7 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
     C2V(gBlend_model)->flags |= BR_MODF_KEEP_ORIGINAL;
     C2V(gBlend_model2)->flags |= BR_MODF_KEEP_ORIGINAL;
 
-    smoke_pm = DRLoadPixelmap("SMOKE.PIX");
+    smoke_pm = LoadPixelmap("SMOKE.PIX");
     if (smoke_pm == NULL) {
         FatalError(kFatalError_CantLoadPixelmapFile_S, "SMOKE.PIX");
     }
