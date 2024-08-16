@@ -3,6 +3,6 @@
 
 #include "c2_hooks.h"
 
-void C2_HOOK_FASTCALL CheckDemo(void);
+void C2_HOOK_FASTCALL CheckTimedDemo(void);
 
 #endif /* DEMO_H */

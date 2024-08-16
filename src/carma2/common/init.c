@@ -136,7 +136,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     PDInitScreen();
     InitializeBRenderEnvironment();
     PrintMemoryDump(0, "AFTER INITIALISING BRENDER");
-    CheckDemo();
+    CheckTimedDemo();
     InitDRFonts();
     C2V(gBig_font) = LoadBRFont("BIGFONT.FNT");
     C2V(gFont_7) = LoadBRFont("FONT7.FNT");
