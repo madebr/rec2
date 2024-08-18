@@ -1329,7 +1329,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage*
     return eStorage_allocated;
 }
 
-void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath) {
+void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
     br_pixelmap* temp_array[50];
     int total;
     int i;
@@ -1366,12 +1366,12 @@ void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath) {
         }
     }
 }
-C2_HOOK_FUNCTION(0x00502b80, LoadShadeTableCallback)
+C2_HOOK_FUNCTION(0x00502b80, LoadIfItsAShadeTable)
 
 void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
     C2V(gStorageForCallbacks) = pStorage;
-    PFForEveryFile(pPath, LoadShadeTableCallback);
+    PFForEveryFile(pPath, LoadIfItsAShadeTable);
 }
 C2_HOOK_FUNCTION(0x00502b60, LoadAllShadeTablesInDirectory)
 
