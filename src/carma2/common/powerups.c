@@ -230,18 +230,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gMutant_tail_first_collision_info, 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMutant_tail_state, 0x00705540);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074a5ec, 0x0074a5ec);
 
-void (C2_HOOK_FASTCALL * InitPowerups_original)(void);
-void C2_HOOK_FASTCALL InitPowerups(void) {
 
-#if 0// defined(C2_HOOKS_ENABLED)
-    InitPowerups_original();
-#else
+void C2_HOOK_FASTCALL InitRepulseEffects(void) {
     br_pixelmap* repulse;
     int i;
     int j;
-    tCollision_info* parent_collision_info;
-    tPath_name the_path;
-    tTWTVFS twt;
 
     repulse = LoadPixelmap("REPULSE.PIX");
     if (repulse == NULL) {
@@ -253,9 +246,9 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
     C2_HOOK_BUG_ON(sizeof(tRepulse_link) != 0x28);
 
     for (i = 0; i < REC2_ASIZE(C2V(gRepulse_links)); i++) {
-        tRepulse_link* link = &C2V(gRepulse_links)[i];
-        br_model* model;
-        br_material* material;
+        tRepulse_link *link = &C2V(gRepulse_links)[i];
+        br_model *model;
+        br_material *material;
 
         link->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
         model = BrModelAllocate(NULL, 102, 100);
@@ -280,11 +273,11 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
             model->faces[j].vertices[2] = j + 1 - model->nvertices / 2;
         }
         for (j = 0; j < model->nvertices / 2; j++) {
-            model->vertices[j].p.v[0] = (float)(j % 2);
+            model->vertices[j].p.v[0] = (float) (j % 2);
             model->vertices[j].p.v[1] = 0.f;
         }
         for (j = model->nvertices / 2; j < model->nvertices; j++) {
-            model->vertices[j].p.v[0] = (float)(j % 2);
+            model->vertices[j].p.v[0] = (float) (j % 2);
             model->vertices[j].p.v[1] = 1.f;
         }
         link->actor->model = model;
@@ -292,6 +285,20 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
         link->material = material;
         BrModelAdd(model);
     }
+}
+
+void (C2_HOOK_FASTCALL * InitPowerups_original)(void);
+void C2_HOOK_FASTCALL InitPowerups(void) {
+
+#if 0// defined(C2_HOOKS_ENABLED)
+    InitPowerups_original();
+#else
+    int i;
+    tCollision_info* parent_collision_info;
+    tPath_name the_path;
+    tTWTVFS twt;
+
+    InitRepulseEffects();
 
     parent_collision_info = NULL;
     PathCat(the_path, C2V(gApplication_path), "TAIL");
