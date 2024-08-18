@@ -296,7 +296,7 @@ void C2_HOOK_FASTCALL InitTail(void) {
     parent_collision_info = NULL;
     PathCat(the_path, C2V(gApplication_path), "TAIL");
     twt = OpenPackFileAndSetTiffLoading(the_path);
-    LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
+    LoadAllStuffInDirectory(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
     ClosePackFileAndSetTiffLoading(twt);
     for (i = 0; i < C2V(gCount_mutant_tail_parts); i++) {
         int is_link;
@@ -669,7 +669,7 @@ void C2_HOOK_FASTCALL InitShitMines(void) {
 
     PathCat(the_path, C2V(gApplication_path), "MINE");
     twt = OpenPackFileAndSetTiffLoading(the_path);
-    LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
+    LoadAllStuffInDirectory(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Specular);
     ClosePackFileAndSetTiffLoading(twt);
 
     C2_HOOK_BUG_ON(sizeof(tShit_mine) != 56);
