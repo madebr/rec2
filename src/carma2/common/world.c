@@ -1663,7 +1663,7 @@ void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPa
 }
 C2_HOOK_FUNCTION(0x00502b00, LoadSomeModels)
 
-void C2_HOOK_FASTCALL LoadFolderInStorageWithShading(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
+void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
     LoadSomeShadeTables(pStorage, pPath);
     LoadSomePixelmaps(pStorage, pPath);
@@ -1671,7 +1671,7 @@ void C2_HOOK_FASTCALL LoadFolderInStorageWithShading(tBrender_storage* pStorage,
     LoadSomeMaterialsWithShading(pStorage, pPath, pShading);
     LoadSomeModels(pStorage, pPath);
 }
-C2_HOOK_FUNCTION(0x00502cf0, LoadFolderInStorageWithShading)
+C2_HOOK_FUNCTION(0x00502cf0, LoadAllStuffInDirectory)
 
 void C2_HOOK_FASTCALL AllowDuplicates(void) {
 
