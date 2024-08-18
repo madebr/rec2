@@ -164,7 +164,7 @@ void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile) {
 
     PathCat(the_path, C2V(gApplication_path), C2V(gPedsFolder));
     PathCat(the_path, the_path, "GIBLETS");
-    LoadFolderInStorageWithShading(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Diffuse1);
+    LoadAllStuffInDirectory(&C2V(gMisc_storage_space), the_path, kRendererShadingType_Diffuse1);
 
     /*
      * ***************************
