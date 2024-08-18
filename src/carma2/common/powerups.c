@@ -287,18 +287,11 @@ void C2_HOOK_FASTCALL InitRepulseEffects(void) {
     }
 }
 
-void (C2_HOOK_FASTCALL * InitPowerups_original)(void);
-void C2_HOOK_FASTCALL InitPowerups(void) {
-
-#if 0// defined(C2_HOOKS_ENABLED)
-    InitPowerups_original();
-#else
+void C2_HOOK_FASTCALL InitTail(void) {
     int i;
     tCollision_info* parent_collision_info;
     tPath_name the_path;
     tTWTVFS twt;
-
-    InitRepulseEffects();
 
     parent_collision_info = NULL;
     PathCat(the_path, C2V(gApplication_path), "TAIL");
@@ -307,8 +300,8 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
     ClosePackFileAndSetTiffLoading(twt);
     for (i = 0; i < C2V(gCount_mutant_tail_parts); i++) {
         int is_link;
-        tCollision_info* collision_info;
-        br_model* model;
+        tCollision_info *collision_info;
+        br_model *model;
 
         is_link = i != C2V(gCount_mutant_tail_parts) - 1;
         if (is_link) {
@@ -325,7 +318,7 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
         collision_info->physics_joint1 = AllocatePhysicsJoint(1, kMem_physics_joint);
         collision_info->physics_joint1->type = eJoint_ball_n_socket;
         BrVector3SetFloat(&collision_info->physics_joint1->field_0x08,
-            0.f, 0.f, model->bounds.min.v[2] * (is_link ? 0.99f : 0.45f));
+                          0.f, 0.f, model->bounds.min.v[2] * (is_link ? 0.99f : 0.45f));
         if (i == 0) {
             C2V(gMutant_tail_first_joint) = collision_info->physics_joint1;
             C2V(gMutant_tail_first_collision_info) = collision_info;
@@ -344,7 +337,7 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
             BrVector3SetFloat(&collision_info->physics_joint1->limits[0].parent, 0.f, 0.f, 1.f);
         } else {
             BrVector3SetFloat(&collision_info->physics_joint1->field_0x14,
-                0.f, 0.f, model->bounds.min.v[2] * (is_link ? 0.99f : 0.45f));
+                              0.f, 0.f, model->bounds.min.v[2] * (is_link ? 0.99f : 0.45f));
             CollisionInfoAddChild(parent_collision_info, collision_info);
         }
         BrVector3SetFloat(&collision_info->physics_joint1->hinge_axis2, 0.f, 0.f, 1.f);
@@ -355,6 +348,17 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
         parent_collision_info = collision_info;
     }
     C2V(gMutant_tail_state) = 0;
+}
+
+void (C2_HOOK_FASTCALL * InitPowerups_original)(void);
+void C2_HOOK_FASTCALL InitPowerups(void) {
+
+#if 0// defined(C2_HOOKS_ENABLED)
+    InitPowerups_original();
+#else
+
+    InitRepulseEffects();
+    InitTail();
     InitShitMines();
 #endif
 }
