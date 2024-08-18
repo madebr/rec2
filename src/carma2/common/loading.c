@@ -2629,7 +2629,7 @@ void C2_HOOK_FASTCALL LoadInRegistees(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00486e10, LoadInRegistees, LoadInRegistees_original)
 
 void (C2_HOOK_FASTCALL * LoadTreeSurgery_original)(void);
-void C2_HOOK_FASTCALL LoadTreeSurgery(void) {
+void C2_HOOK_FASTCALL InitTreeSurgery(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     LoadTreeSurgery_original();
@@ -2659,7 +2659,7 @@ void C2_HOOK_FASTCALL LoadTreeSurgery(void) {
 #endif
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00504b30, LoadTreeSurgery, LoadTreeSurgery_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00504b30, InitTreeSurgery, LoadTreeSurgery_original)
 
 int (C2_HOOK_FASTCALL * TestForOriginalCarmaCDinDrive_original)(void);
 int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
