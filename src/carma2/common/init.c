@@ -192,7 +192,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     BrMaterialAdd(C2V(gDefault_track_material));
     InitPowerups();
     PrintMemoryDump(0, "AFTER INITING POWERUPS");
-    InitShadows();
+    InitShadow();
     PrintMemoryDump(0, "AFTER INITING SHADOW");
     InitFlics();
     AllocateStandardLamp();
