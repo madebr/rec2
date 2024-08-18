@@ -1385,12 +1385,12 @@ void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath) {
 }
 C2_HOOK_FUNCTION(0x005024b0, LoadPixelmapCallback)
 
-void C2_HOOK_FASTCALL LoadSomePixelmaps(tBrender_storage* pStorage, const char* pPath) {
+void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
     C2V(gStorageForCallbacks) = pStorage;
     PFForEveryFile(pPath, LoadPixelmapCallback);
 }
-C2_HOOK_FUNCTION(0x00502490, LoadSomePixelmaps)
+C2_HOOK_FUNCTION(0x00502490, LoadAllPixelmapsInDirectory)
 
 br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, const char* pName) {
     br_pixelmap* map;
@@ -1665,7 +1665,7 @@ C2_HOOK_FUNCTION(0x00502b00, LoadSomeModels)
 void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
     LoadAllShadeTablesInDirectory(pStorage, pPath);
-    LoadSomePixelmaps(pStorage, pPath);
+    LoadAllPixelmapsInDirectory(pStorage, pPath);
     LoadAllImagesInDirectory(pStorage, pPath);
     LoadSomeMaterialsWithShading(pStorage, pPath, pShading);
     LoadSomeModels(pStorage, pPath);
