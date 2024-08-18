@@ -2976,7 +2976,7 @@ void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner) {
 C2_HOOK_FUNCTION_ORIGINAL(0x0044bbe0, DisposeCar, DisposeCar_original)
 
 void (C2_HOOK_FASTCALL * InitAIWorld_original)(void);
-void C2_HOOK_FASTCALL InitAIWorld(void) {
+void C2_HOOK_FASTCALL InitPanGameAIWorld(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     InitAIWorld_original();
@@ -2988,7 +2988,7 @@ void C2_HOOK_FASTCALL InitAIWorld(void) {
     PrintMemoryDump(0, "AFTER LoadPanGameDroneInfo()");
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00401000, InitAIWorld, InitAIWorld_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00401000, InitPanGameAIWorld, InitAIWorld_original)
 
 void (C2_HOOK_FASTCALL * LoadOpponents_original)(void);
 void C2_HOOK_FASTCALL LoadOpponents(void) {

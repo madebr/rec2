@@ -340,7 +340,7 @@ void C2_HOOK_FASTCALL DisposeNonCarCollisionInfo(tCollision_info* pCollision_inf
 
 void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner);
 
-void C2_HOOK_FASTCALL InitAIWorld(void);
+void C2_HOOK_FASTCALL InitPanGameAIWorld(void);
 
 void C2_HOOK_FASTCALL LoadOpponents(void);
 
