@@ -71,7 +71,7 @@ void C2_HOOK_FASTCALL StringTransformToLower(char* pStr) {
 }
 C2_HOOK_FUNCTION(0x00515910, StringTransformToLower)
 
-void C2_HOOK_FASTCALL StringToUpper(char* dest, const char* src) {
+void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src) {
     size_t lenSrc;
     size_t nbLeft;
 
@@ -85,7 +85,7 @@ void C2_HOOK_FASTCALL StringToUpper(char* dest, const char* src) {
     }
     dest[0] = '\0';
 }
-C2_HOOK_FUNCTION(0x00513460, StringToUpper)
+C2_HOOK_FUNCTION(0x00513460, Uppercaseificate)
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
     return PDCheckDriveExists2(pThe_path, NULL, 0);
