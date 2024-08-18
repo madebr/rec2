@@ -51,11 +51,11 @@ void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError) {
 }
 C2_HOOK_FUNCTION(0x004b5990, DoPhysicsError)
 
-void C2_HOOK_FASTCALL SetPhysicsErrorCallback(tPhysicsError_cbfn *pError_cbfn) {
+void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn *pError_cbfn) {
 
     C2V(gPhysics_error_cb) = pError_cbfn;
 }
-C2_HOOK_FUNCTION(0x004c61f0, SetPhysicsErrorCallback)
+C2_HOOK_FUNCTION(0x004c61f0, PhysicsSetErrorHandler)
 
 void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError) {
 
@@ -88,7 +88,7 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
     InitPhysics_original();
 #else
 
-    SetPhysicsErrorCallback(DoPhysicsError);
+    PhysicsSetErrorHandler(DoPhysicsError);
     SetPhysicsBuffer(C2V(gPhysics_buffer), sizeof(C2V(gPhysics_buffer)));
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPhysics_buffer)) != 299792);
