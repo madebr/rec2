@@ -108,7 +108,7 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
         case 2:
             C2V(gTintedPolys)[tintedIndex].class = class;
             C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
-            C2V(gTintedPolys)[tintedIndex].model = CreateInterpolatedQuadModel(x0, y0, width, height, 1, 1);
+            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
             C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
             C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
             for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
@@ -122,7 +122,7 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
             C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
             C2V(gTintedPolys)[tintedIndex].material->flags |= BR_MATF_PRELIT | BR_MATF_SMOOTH;
             BrMaterialUpdate(C2V(gTintedPolys)[tintedIndex].material, BR_MATU_ALL);
-            C2V(gTintedPolys)[tintedIndex].model = CreateInterpolatedQuadModel(x0, y0, width, height, 4, 4);
+            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 4, 4);
             C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
             C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
             for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
@@ -177,7 +177,7 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
             c2_memset(C2V(gTintedPolys)[tintedIndex].tints2, 0, sizeof(C2V(gTintedPolys)[tintedIndex].tints2));
             c2_memset(C2V(gTintedPolys)[tintedIndex].tints3, 0, sizeof(C2V(gTintedPolys)[tintedIndex].tints3));
 
-            C2V(gTintedPolys)[tintedIndex].model = CreateInterpolatedQuadModel(x0, y0, width, height, 1, 1);
+            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
             C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
             C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
             for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
@@ -204,7 +204,7 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
                 extra_prims[1].v.x = BR_FIXED_INT(0);
             }
             BrMaterialUpdate(C2V(gTintedPolys)[tintedIndex].material, BR_MATU_ALL);
-            C2V(gTintedPolys)[tintedIndex].model = CreateInterpolatedQuadModel(x0, y0, width, height, 1, 1);
+            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
             C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
             C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
             for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
@@ -219,7 +219,7 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
         case 6:
             C2V(gTintedPolys)[tintedIndex].class = class;
             C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
-            C2V(gTintedPolys)[tintedIndex].model = CreateInterpolatedQuadModel(x0, y0, width, height, 1, 1);
+            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
             C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
             C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
             for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
@@ -249,7 +249,7 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
         default:
             C2V(gTintedPolys)[tintedIndex].class = class;
             C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
-            C2V(gTintedPolys)[tintedIndex].model = CreateInterpolatedQuadModel(x0, y0, width, height, 1, 1);
+            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
             C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
             C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
             for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
@@ -288,7 +288,7 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
 }
 C2_HOOK_FUNCTION(0x004d70c0, CreateTintedPoly)
 
-br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x0, int y0, int width, int height, int nbX, int nbY) {
+br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int height, int nbX, int nbY) {
     br_model* model;
     int dx;
     int dy;
@@ -335,7 +335,7 @@ br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x0, int y0, int width
     model->flags |= BR_MODF_DONT_WELD | BR_MODF_KEEP_ORIGINAL;
     return model;
 }
-C2_HOOK_FUNCTION(0x004d7ad0, CreateInterpolatedQuadModel)
+C2_HOOK_FUNCTION(0x004d7ad0, BuildTintedPolyModel)
 
 void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
     if (!C2V(gTintedPolys)[pTintedIndex].used) {
