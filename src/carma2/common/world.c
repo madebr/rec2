@@ -1368,12 +1368,12 @@ void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath) {
 }
 C2_HOOK_FUNCTION(0x00502b80, LoadShadeTableCallback)
 
-void C2_HOOK_FASTCALL LoadSomeShadeTables(tBrender_storage* pStorage, const char* pPath) {
+void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
     C2V(gStorageForCallbacks) = pStorage;
     PFForEveryFile(pPath, LoadShadeTableCallback);
 }
-C2_HOOK_FUNCTION(0x00502b60, LoadSomeShadeTables)
+C2_HOOK_FUNCTION(0x00502b60, LoadAllShadeTablesInDirectory)
 
 void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath) {
     char s[256];
@@ -1664,7 +1664,7 @@ C2_HOOK_FUNCTION(0x00502b00, LoadSomeModels)
 
 void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
-    LoadSomeShadeTables(pStorage, pPath);
+    LoadAllShadeTablesInDirectory(pStorage, pPath);
     LoadSomePixelmaps(pStorage, pPath);
     LoadAllImagesInDirectory(pStorage, pPath);
     LoadSomeMaterialsWithShading(pStorage, pPath, pShading);
@@ -2298,7 +2298,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     LoadAllImagesInDirectory(&C2V(gTrack_storage_space), C2V(gRace_path));
 
     PossibleService();
-    LoadSomeShadeTables(&C2V(gTrack_storage_space), C2V(gRace_path));
+    LoadAllShadeTablesInDirectory(&C2V(gTrack_storage_space), C2V(gRace_path));
 
     PossibleService();
     LoadTrackMaterials(&C2V(gTrack_storage_space), C2V(gRace_path));
