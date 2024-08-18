@@ -66,7 +66,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError) {
     c2_exit(pError);
 }
 
-void C2_HOOK_FASTCALL SetPhysicsBuffer(tU8* pBuffer, int pSize) {
+void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize) {
 
     C2V(gPhysics_buffer1_ptr) = pBuffer + 0 * PHYSICS_BUFFER_PART_SIZE;
     C2V(gPhysics_buffer2_ptr) = pBuffer + 1 * PHYSICS_BUFFER_PART_SIZE;
@@ -78,7 +78,7 @@ void C2_HOOK_FASTCALL SetPhysicsBuffer(tU8* pBuffer, int pSize) {
     C2V(gPhysics_other_buffer_capacity) = pSize - 3 * PHYSICS_BUFFER_PART_SIZE;
     C2V(gPhysics_other_buffer) = pBuffer + 3 * PHYSICS_BUFFER_PART_SIZE;
 }
-C2_HOOK_FUNCTION(0x004c6510, SetPhysicsBuffer)
+C2_HOOK_FUNCTION(0x004c6510, InitPhysicsWorkspace)
 
 void (C2_HOOK_FASTCALL * InitPhysics_original)(void);
 void C2_HOOK_FASTCALL InitPhysics(void) {
@@ -89,7 +89,7 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 #else
 
     PhysicsSetErrorHandler(DoPhysicsError);
-    SetPhysicsBuffer(C2V(gPhysics_buffer), sizeof(C2V(gPhysics_buffer)));
+    InitPhysicsWorkspace(C2V(gPhysics_buffer), sizeof(C2V(gPhysics_buffer)));
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPhysics_buffer)) != 299792);
 #endif
