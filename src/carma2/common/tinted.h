@@ -23,7 +23,7 @@ br_material* C2_HOOK_FASTCALL BuildTintedPolyMaterial(int pOpacity);
 
 int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
 
-br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x0, int y0, int width, int height, int nbX, int nbY);
+br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int height, int nbX, int nbY);
 
 void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex);
 
