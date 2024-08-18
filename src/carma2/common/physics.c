@@ -122,7 +122,7 @@ tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType
 }
 C2_HOOK_FUNCTION(0x004c5e00, AllocateBoxCollisionShape)
 
-tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateSphereCollisionShape(br_uint_8 pType) {
+tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateShapeSphere(br_uint_8 pType) {
     tCollision_shape_sphere* result;
 
     C2_HOOK_BUG_ON(sizeof(tCollision_shape_sphere) != 76);
@@ -130,7 +130,7 @@ tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateSphereCollisionShape(br_uint_8
     result->common.type = kCollisionShapeType_Sphere;
     return result;
 }
-C2_HOOK_FUNCTION(0x004c5d10, AllocateSphereCollisionShape)
+C2_HOOK_FUNCTION(0x004c5d10, AllocateShapeSphere)
 
 tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocateShapePolyhedron(int pCount_points, br_uint_8 pType) {
     tCollision_shape_polyhedron* result;
@@ -230,7 +230,7 @@ void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF) {
             }
         } else if (DRStricmp(s, "sphere") == 0) {
 
-            shape = (tCollision_shape*)AllocateSphereCollisionShape(kMem_collision_shape);
+            shape = (tCollision_shape*)AllocateShapeSphere(kMem_collision_shape);
 
             shape->sphere.sphere.radius = GetAScalar(pF);
             GetThreeFloats(pF,
@@ -890,7 +890,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* 
     C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
 
     collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
-    collision_info->shape = shape = (tCollision_shape*)AllocateSphereCollisionShape(kMem_collision_shape);
+    collision_info->shape = shape = (tCollision_shape*)AllocateShapeSphere(kMem_collision_shape);
     BrVector3Set(&collision_info->shape->sphere.sphere.center, 0.f, 0.f, 0.f);
     BrVector3Sub(&tv, &pModel->bounds.max, &pModel->bounds.min);
     shape->sphere.sphere.radius = (tv.v[0] + tv.v[1] + tv.v[2]) / 6.f;
