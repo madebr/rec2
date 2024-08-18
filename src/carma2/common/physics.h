@@ -58,7 +58,7 @@ void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCou
 
 void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape);
 
-tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight);
+tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight);
 
 int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_info);
 

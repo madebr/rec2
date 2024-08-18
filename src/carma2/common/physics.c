@@ -876,7 +876,7 @@ void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape) {
 C2_HOOK_FUNCTION(0x004c5f20, ProcessCollisionShape)
 
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
-tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* pModel, undefined4 pArg2, float pWeight) {
+tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight) {
 
     REC2_THISCALL_UNUSED(pArg2);
 
@@ -911,7 +911,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL CreateSphericalCollisionObject(br_model* 
     return collision_info;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004da400, CreateSphericalCollisionObject, CreateSphericalCollisionObject_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004da400, MungeSphereObject, CreateSphericalCollisionObject_original)
 
 int (C2_HOOK_FASTCALL * MarkCollisionInfoAsProcessed_original)(tCollision_info* pCollision_info);
 int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_info) {
