@@ -64,6 +64,11 @@ void C2_HOOK_FASTCALL DoDevelopmentThings(void) {
 
 }
 
+void C2_HOOK_FASTCALL InitLightingEffects(void) {
+
+}
+C2_HOOK_FUNCTION(0x00486d80, InitLightingEffects)
+
 void (C2_HOOK_FASTCALL * InitialiseDeathRace_original)(int pArgc, const char** pArgv);
 void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -159,6 +164,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2V(gHud_tinted1) = CreateTintedPoly(0, 0, 640, 480, 2, 0, 0, 0);
     C2V(gHud_tinted2) = CreateTintedPoly(0, 0, 640, 480, 3, 2, 0, 0);
     PrintMemoryDump(0, "AFTER INITING 2D STUFF");
+    InitLightingEffects();
     // FUN_00486d80(); /* NOP */
     LoadInterfaceStrings();
     PrintMemoryDump(0, "AFTER INITING INTERFACE STRINGS");
