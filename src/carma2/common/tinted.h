@@ -19,7 +19,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_006a044c);
 
 void C2_HOOK_FASTCALL InitTintedPolyStuff(void);
 
-int C2_HOOK_FASTCALL CreateTintedPolyActor(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
+int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
 
 br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x0, int y0, int width, int height, int nbX, int nbY);
 

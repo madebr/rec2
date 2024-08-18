@@ -322,11 +322,11 @@ void C2_HOOK_FASTCALL AllocateCursorActors(void) {
     mse_cross = BrMapFind("mse_corn");
     mse_cross = BrMapFind("mse_cros");
     mse_line = BrMapFind("mse_line");
-    C2V(gCursor_tinted_top) = CreateTintedPolyActor(0, 0, C2V(gCursor_line_width), C2V(gCurrent_graf_data)->height, 1, 127, 192, 0);
-    C2V(gCursor_tinted_left) = CreateTintedPolyActor(0, 0, C2V(gCurrent_graf_data)->width, C2V(gCursor_line_width), 1, 127, 192, 0);
-    C2V(gCursor_tinted_bottom) = CreateTintedPolyActor(0, 0, C2V(gCursor_line_width), C2V(gCurrent_graf_data)->height, 1, 127, 192, 0);
-    C2V(gCursor_tinted_right) = CreateTintedPolyActor(0, 0, C2V(gCurrent_graf_data)->width, C2V(gCursor_line_width), 1, 127, 192, 0);
-    C2V(gCursor_tinted_center) = CreateTintedPolyActor(0, 0, 16, 16, 1, 127, 192, 0);
+    C2V(gCursor_tinted_top) = CreateTintedPoly(0, 0, C2V(gCursor_line_width), C2V(gCurrent_graf_data)->height, 1, 127, 192, 0);
+    C2V(gCursor_tinted_left) = CreateTintedPoly(0, 0, C2V(gCurrent_graf_data)->width, C2V(gCursor_line_width), 1, 127, 192, 0);
+    C2V(gCursor_tinted_bottom) = CreateTintedPoly(0, 0, C2V(gCursor_line_width), C2V(gCurrent_graf_data)->height, 1, 127, 192, 0);
+    C2V(gCursor_tinted_right) = CreateTintedPoly(0, 0, C2V(gCurrent_graf_data)->width, C2V(gCursor_line_width), 1, 127, 192, 0);
+    C2V(gCursor_tinted_center) = CreateTintedPoly(0, 0, 16, 16, 1, 127, 192, 0);
     if (mse_line != NULL) {
         C2V(gTintedPolys)[C2V(gCursor_tinted_left)].material->colour_map = mse_line;
         C2V(gTintedPolys)[C2V(gCursor_tinted_left)].material->ka = 1.0f;
