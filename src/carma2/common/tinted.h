@@ -39,7 +39,7 @@ void C2_HOOK_FASTCALL MakeTintedInvisible(int pTintedIndex);
 
 void C2_HOOK_FASTCALL RenderTintedActors(void);
 
-void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, int pBlue);
+void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue);
 
 void C2_HOOK_FASTCALL ResetTintedVertices(int pTintedIndex, int x0, int y0, int width, int height);
 
