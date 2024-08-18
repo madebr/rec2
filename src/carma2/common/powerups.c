@@ -309,7 +309,7 @@ void C2_HOOK_FASTCALL InitTail(void) {
             collision_info = MungeBoxObject(model REC2_THISCALL_EDX, C2V(gMass_mutant_tail_link));
         } else {
             model = BrModelFind("TAILBALL");
-            collision_info = CreateSphericalCollisionObject(model REC2_THISCALL_EDX, C2V(gMass_mutant_tail_ball));
+            collision_info = MungeSphereObject(model REC2_THISCALL_EDX, C2V(gMass_mutant_tail_ball));
         }
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, physics_joint1, 0x188);
@@ -677,7 +677,7 @@ void C2_HOOK_FASTCALL InitShitMines(void) {
     for (i = 0; i < REC2_ASIZE(C2V(gShit_mines)); i++) {
         C2V(gShit_mines)[i].flags = 4;
         C2V(gShit_mines)[i].field_0x35 = 0;
-        C2V(gShit_mines)[i].collision_info = CreateSphericalCollisionObject(BrModelFind("SHITMINE.ACT") REC2_THISCALL_EDX, C2V(gMass_mine));
+        C2V(gShit_mines)[i].collision_info = MungeSphereObject(BrModelFind("SHITMINE.ACT") REC2_THISCALL_EDX, C2V(gMass_mine));
         C2V(gShit_mines)[i].collision_info->uid = i;
         C2V(gShit_mines)[i].collision_info->flags_0x238 = 0x40;
         C2V(gShit_mines)[i].collision_info->owner = &C2V(gShit_mines)[i];
