@@ -124,7 +124,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_sp
 
 tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod);
 
-int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char* pPath);
+int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath);
 
 void C2_HOOK_FASTCALL LoadIfItsAMode(const char* pPath);
 
