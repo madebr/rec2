@@ -359,7 +359,7 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 
     InitRepulseEffects();
     InitTail();
-    InitShitMines();
+    InitMineShit();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d9ea0, InitPowerups, InitPowerups_original)
@@ -662,7 +662,7 @@ void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x004efa00, ReadPowerupSmashables)
 
-void C2_HOOK_FASTCALL InitShitMines(void) {
+void C2_HOOK_FASTCALL InitMineShit(void) {
     tPath_name the_path;
     tTWTVFS twt;
     int i;
@@ -685,7 +685,7 @@ void C2_HOOK_FASTCALL InitShitMines(void) {
         BrMatrix34Translate(&C2V(gShit_mines)[i].collision_info->actor->t.t.mat, 0.f, 0.f, 0.f);
     }
 }
-C2_HOOK_FUNCTION(0x004da530, InitShitMines)
+C2_HOOK_FUNCTION(0x004da530, InitMineShit)
 
 int (C2_HOOK_FASTCALL * DoExplodingMineEffect_original)(tShit_mine *pMine);
 int C2_HOOK_FASTCALL DoExplodingMineEffect(tShit_mine *pMine) {
