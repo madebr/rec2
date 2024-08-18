@@ -5282,6 +5282,11 @@ void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
 }
 C2_HOOK_FUNCTION(0x00487ea0, LoadInterfaceStuff)
 
+void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
+
+}
+C2_HOOK_FUNCTION(0x00487eb0, InitInterfaceLoadState)
+
 void C2_HOOK_FASTCALL InitOpponentsAndDrones(tRace_info* pRace_info) {
     br_bounds3 track_bounds;
 
