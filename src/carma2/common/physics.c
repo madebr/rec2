@@ -27,7 +27,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFace_num__car, 0x0065d010, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gPhysics_reference_normal_comparison, 0x00679420);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape_polyhedron_data*, gPolyhedron_to_sort, 0x0067942c);
 
-void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError) {
+void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError) {
     char s[256];
 
     switch(pError) {
@@ -49,7 +49,7 @@ void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError) {
     }
     FatalError(1000 + pError, s);
 }
-C2_HOOK_FUNCTION(0x004b5990, OnPhysicsError)
+C2_HOOK_FUNCTION(0x004b5990, DoPhysicsError)
 
 void C2_HOOK_FASTCALL SetPhysicsErrorCallback(tPhysicsError_cbfn *pError_cbfn) {
 
@@ -88,7 +88,7 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
     InitPhysics_original();
 #else
 
-    SetPhysicsErrorCallback(OnPhysicsError);
+    SetPhysicsErrorCallback(DoPhysicsError);
     SetPhysicsBuffer(C2V(gPhysics_buffer), sizeof(C2V(gPhysics_buffer)));
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPhysics_buffer)) != 299792);
