@@ -3579,7 +3579,7 @@ C2_HOOK_FUNCTION(0x004f67a0, UpdateMaterialsForCar)
 void C2_HOOK_FASTCALL LoadCarMaterials(tBrender_storage* pStorage, const char* pPath, tCar_spec* pCar_spec) {
 
     pCar_spec->old_material_count = pStorage->materials_count;
-    LoadSomeMaterialsWithShading(pStorage, pPath, kRendererShadingType_Specular);
+    LoadAllMaterialsInDirectory(pStorage, pPath, kRendererShadingType_Specular);
     pCar_spec->new_material_count = pStorage->materials_count;
     UpdateMaterialsForCar(pStorage, pCar_spec);
 }
@@ -4909,7 +4909,7 @@ C2_HOOK_FUNCTION(0x004f6a90, SetMaterialTrackLighting)
 void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath) {
     int i;
 
-    LoadSomeMaterialsWithShading(pStorage, pPath, kRendererShadingType_Default);
+    LoadAllMaterialsInDirectory(pStorage, pPath, kRendererShadingType_Default);
     for (i = 0; i < pStorage->materials_count; i++) {
         br_material* material = pStorage->materials[i];
 
