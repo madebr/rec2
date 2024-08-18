@@ -173,7 +173,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     PrintMemoryDump(0, "AFTER INITING PHYSICS");
     InitCrushSystems();
     PrintMemoryDump(0, "AFTER INITING CRUSH SYSTEMS");
-    LoadTreeSurgery();
+    InitTreeSurgery();
     FlicPaletteAllocate();
     // FUN_00487eb0(); /* NOP */
     InitTransientBitmaps();
