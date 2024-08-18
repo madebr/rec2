@@ -15,7 +15,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gCar_crush_shape_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gDetach_type_names, 4);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPosition_type_names, 2);
 
-void C2_HOOK_FASTCALL InitCrush(void);
+void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 void C2_HOOK_FASTCALL InitTrackCrushables(void);
 

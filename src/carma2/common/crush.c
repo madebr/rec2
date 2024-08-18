@@ -82,7 +82,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSmashable_collision_type_nam
 });
 
 void (C2_HOOK_FASTCALL * InitCrush_original)(void);
-void C2_HOOK_FASTCALL InitCrush(void) {
+void C2_HOOK_FASTCALL InitCrushSystems(void) {
 #if defined(C2_HOOKS_ENABLED)
     InitCrush_original();
 #else
@@ -90,7 +90,7 @@ void C2_HOOK_FASTCALL InitCrush(void) {
 #endif
 
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrush, InitCrush_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrushSystems, InitCrush_original)
 
 void (C2_HOOK_FASTCALL * InitTrackCrushables_original)(void);
 void C2_HOOK_FASTCALL InitTrackCrushables(void) {

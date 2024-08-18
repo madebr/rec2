@@ -171,7 +171,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     PrintMemoryDump(0, "AFTER INITING ACTION REPLAY");
     InitPhysics();
     PrintMemoryDump(0, "AFTER INITING PHYSICS");
-    InitCrush();
+    InitCrushSystems();
     PrintMemoryDump(0, "AFTER INITING CRUSH SYSTEMS");
     LoadTreeSurgery();
     FlicPaletteAllocate();
