@@ -32,7 +32,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0444, 0x006a0444);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0448, 0x006a0448);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a044c, 0x006a044c);
 
-void C2_HOOK_FASTCALL InitTintedPolys(void) {
+void C2_HOOK_FASTCALL InitTintedPolyStuff(void) {
     br_camera *camera;
 
     C2_HOOK_BUG_ON(sizeof(tTintedPoly) != 0x6450);
@@ -51,7 +51,7 @@ void C2_HOOK_FASTCALL InitTintedPolys(void) {
         camera->height = C2V(gScreen)->height;
     }
 }
-C2_HOOK_FUNCTION(0x004d7040, InitTintedPolys);
+C2_HOOK_FUNCTION(0x004d7040, InitTintedPolyStuff);
 
 #define ALLOCATE_TINTED_POLY_MATERIAL(MAT) do {                                     \
         static br_token_value extra_prims[2] = {                                    \
