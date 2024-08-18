@@ -21,6 +21,8 @@ void C2_HOOK_FASTCALL InitTintedPolyStuff(void);
 
 br_material* C2_HOOK_FASTCALL BuildTintedPolyMaterial(int pOpacity);
 
+void C2_HOOK_FASTCALL GetRangeOfValuesFromPixelmap(br_pixelmap* pMap, br_uint_32* pDarkest, br_uint_32* pBrightest);
+
 int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
 
 br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int height, int nbX, int nbY);
