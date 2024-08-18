@@ -20,6 +20,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0074a5ec);
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void);
 
+void C2_HOOK_FASTCALL InitTail(void);
+
 void C2_HOOK_FASTCALL InitPowerups(void);
 
 void C2_HOOK_FASTCALL ResetPowerups(void);
