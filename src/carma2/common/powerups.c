@@ -306,7 +306,7 @@ void C2_HOOK_FASTCALL InitTail(void) {
         is_link = i != C2V(gCount_mutant_tail_parts) - 1;
         if (is_link) {
             model = BrModelFind("TAILLINK");
-            collision_info = CreateBoxCollisionShapeWithMass(model REC2_THISCALL_EDX, C2V(gMass_mutant_tail_link));
+            collision_info = MungeBoxObject(model REC2_THISCALL_EDX, C2V(gMass_mutant_tail_link));
         } else {
             model = BrModelFind("TAILBALL");
             collision_info = CreateSphericalCollisionObject(model REC2_THISCALL_EDX, C2V(gMass_mutant_tail_ball));
