@@ -1375,7 +1375,7 @@ void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, 
 }
 C2_HOOK_FUNCTION(0x00502b60, LoadAllShadeTablesInDirectory)
 
-void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath) {
+void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
@@ -1383,12 +1383,12 @@ void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath) {
         AddPixelmaps(C2V(gStorageForCallbacks), pPath);
     }
 }
-C2_HOOK_FUNCTION(0x005024b0, LoadPixelmapCallback)
+C2_HOOK_FUNCTION(0x005024b0, LoadIfItsAPixelmap)
 
 void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
     C2V(gStorageForCallbacks) = pStorage;
-    PFForEveryFile(pPath, LoadPixelmapCallback);
+    PFForEveryFile(pPath, LoadIfItsAPixelmap);
 }
 C2_HOOK_FUNCTION(0x00502490, LoadAllPixelmapsInDirectory)
 
