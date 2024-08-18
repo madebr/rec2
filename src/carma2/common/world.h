@@ -108,7 +108,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, con
 
 void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath);
 
-void C2_HOOK_FASTCALL LoadMaterialCallback(const char* pPath);
+void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 

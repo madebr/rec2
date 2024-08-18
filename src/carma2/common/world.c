@@ -1422,7 +1422,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, con
 }
 C2_HOOK_FUNCTION(0x00501560, LoadSinglePixelmap)
 
-void C2_HOOK_FASTCALL LoadMaterialCallback(const char* pPath) {
+void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
     tRendererShadingType shading;
     char s[256];
 
@@ -1435,13 +1435,13 @@ void C2_HOOK_FASTCALL LoadMaterialCallback(const char* pPath) {
         LoadMaterialsInto(C2V(gStorageForCallbacks), pPath, shading);
     }
 }
-C2_HOOK_FUNCTION(0x00502a70, LoadMaterialCallback)
+C2_HOOK_FUNCTION(0x00502a70, LoadIfItsAMaterial)
 
 void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
     C2V(gMaterial_shading_for_callback) = pShading;
     C2V(gStorageForCallbacks) = pStorage;
-    PFForEveryFile(pPath, LoadMaterialCallback);
+    PFForEveryFile(pPath, LoadIfItsAMaterial);
     C2V(gMaterial_shading_for_callback) = kRendererShadingType_Undefined;
 }
 C2_HOOK_FUNCTION(0x00502ad0, LoadAllMaterialsInDirectory)
