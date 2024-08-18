@@ -32,7 +32,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void);
 
 void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF);
 
-void C2_HOOK_FASTCALL InitShitMines(void);
+void C2_HOOK_FASTCALL InitMineShit(void);
 
 int C2_HOOK_FASTCALL DoExplodingMineEffect(tShit_mine *pMine);
 
