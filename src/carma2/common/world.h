@@ -102,7 +102,7 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath);
 
-void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath);
+void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath);
 
 br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, const char* pName);
 
