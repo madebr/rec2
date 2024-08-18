@@ -518,7 +518,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_h);
 C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_x);
 C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_y);
 
-int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth);
+int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth);
 int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight);
 
 void (C2_HOOK_FASTCALL * Init2DStuff_original)(void);
@@ -700,7 +700,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelAndMaterial(C2V(gHeadup_model), C2V(gHeadup_material), 0, BR_COLOUR_RGB(0x04, 0x0e, 0x4a), 1);
     w = (float)C2V(gHeadup_dim_w);
     h = (float)C2V(gHeadup_dim_w);
-    w_fixed = (float)Fix2DTextureWidth(C2V(gHeadup_dim_w));
+    w_fixed = (float)HighResHeadupWidth(C2V(gHeadup_dim_w));
     h_fixed = (float)HighResHeadupHeight(C2V(gHeadup_dim_w));
     BrVector2Set(&C2V(gHeadup_model)->vertices[0].map, 0.f, 0.f);
     BrVector2Set(&C2V(gHeadup_model)->vertices[1].map, 0.f, h / h_fixed);
@@ -719,7 +719,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelAndMaterial(C2V(gHeadup2_model), C2V(gHeadup2_material), 1, BR_COLOUR_RGB(0x04, 0x0e, 0x4a), 1);
     w = (float)C2V(gHeadup2_dim_w);
     h = (float)C2V(gHeadup2_dim_h);
-    w_fixed = (float)Fix2DTextureWidth(C2V(gHeadup2_dim_w));
+    w_fixed = (float)HighResHeadupWidth(C2V(gHeadup2_dim_w));
     h_fixed = (float)HighResHeadupHeight(C2V(gHeadup2_dim_h));
     BrVector2Set(&C2V(gHeadup2_model)->vertices[0].map, 0.f, 0.f);
     BrVector2Set(&C2V(gHeadup2_model)->vertices[1].map, 0.f, h / h_fixed);
@@ -734,7 +734,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelAndMaterial(C2V(gPowerupHUD_model), C2V(gPowerupHUD_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
     w = (float)C2V(gPowerupHUD_dim_w);
     h = (float)C2V(gPowerupHUD_dim_h);
-    w_fixed = (float)Fix2DTextureWidth(C2V(gPowerupHUD_dim_w));
+    w_fixed = (float)HighResHeadupWidth(C2V(gPowerupHUD_dim_w));
     h_fixed = (float)HighResHeadupHeight(C2V(gPowerupHUD_dim_h));
     BrVector2Set(&C2V(gPowerupHUD_model)->vertices[0].map, 0.f, 0.f);
     BrVector2Set(&C2V(gPowerupHUD_model)->vertices[1].map, 0.f, h / h_fixed);
@@ -749,7 +749,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelAndMaterial(C2V(gStatbarHUD1_model), C2V(gStatbarHUD1_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
     w = (float)C2V(gStatbarHUD1_dim_w);
     h = (float)C2V(gStatbarHUD1_dim_h);
-    w_fixed = (float)Fix2DTextureWidth(C2V(gStatbarHUD1_dim_w));
+    w_fixed = (float)HighResHeadupWidth(C2V(gStatbarHUD1_dim_w));
     h_fixed = (float)HighResHeadupHeight(C2V(gStatbarHUD1_dim_h));
     BrVector2Set(&C2V(gStatbarHUD1_model)->vertices[0].map, 0.f, 0.f);
     BrVector2Set(&C2V(gStatbarHUD1_model)->vertices[1].map, 0.f, h / h_fixed);
@@ -775,7 +775,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelAndMaterial(C2V(gStatbarHUD3_model), C2V(gStatbarHUD3_material), 1, BR_COLOUR_RGB(0x04, 0x0e, 0x4a), 1);
     w = (float)C2V(gStatbarHUD3_dim_w);
     h = (float)C2V(gStatbarHUD3_dim_h);
-    w_fixed = (float)Fix2DTextureWidth(C2V(gStatbarHUD3_dim_w));
+    w_fixed = (float)HighResHeadupWidth(C2V(gStatbarHUD3_dim_w));
     h_fixed = (float)HighResHeadupHeight(C2V(gStatbarHUD3_dim_h));
     BrVector2Set(&C2V(gStatbarHUD3_model)->vertices[0].map, 0.f, 0.f);
     BrVector2Set(&C2V(gStatbarHUD3_model)->vertices[1].map, 0.f, h / h_fixed);
@@ -790,7 +790,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelAndMaterial(C2V(gHUDsquare_model), C2V(gHUDsquare_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
     w = (float)C2V(gHUDsquare_dim_w);
     h = (float)C2V(gHUDsquare_dim_h);
-    w_fixed = (float)Fix2DTextureWidth(C2V(gHUDsquare_dim_w));
+    w_fixed = (float)HighResHeadupWidth(C2V(gHUDsquare_dim_w));
     h_fixed = (float)HighResHeadupHeight(C2V(gHUDsquare_dim_h));
     BrVector2Set(&C2V(gHUDsquare_model)->vertices[0].map, 0.f, 0.f);
     BrVector2Set(&C2V(gHUDsquare_model)->vertices[1].map, 0.f, h / h_fixed);
@@ -805,7 +805,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelAndMaterial(C2V(gStatbarHUD5_model), C2V(gStatbarHUD5_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
     w = (float)C2V(gStatbarHUD5_dim_w);
     h = (float)C2V(gStatbarHUD5_dim_h);
-    w_fixed = (float)Fix2DTextureWidth(C2V(gStatbarHUD5_dim_w));
+    w_fixed = (float)HighResHeadupWidth(C2V(gStatbarHUD5_dim_w));
     h_fixed = (float)HighResHeadupHeight(C2V(gStatbarHUD5_dim_h));
     BrVector2Set(&C2V(gStatbarHUD5_model)->vertices[0].map, 0.f, 0.f);
     BrVector2Set(&C2V(gStatbarHUD5_model)->vertices[1].map, 0.f, h / h_fixed);
@@ -831,7 +831,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
     Prepare2DModelAndMaterial(C2V(gTimerRightHUD_model), C2V(gTimerRightHUD_material), 1, BR_COLOUR_RGB(0x96, 0x96, 0x96), 0);
     w = (float)C2V(gTimerRightHUD_dim_w);
     h = (float)C2V(gTimerRightHUD_dim_h);
-    w_fixed = (float)Fix2DTextureWidth(C2V(gTimerRightHUD_dim_w));
+    w_fixed = (float)HighResHeadupWidth(C2V(gTimerRightHUD_dim_w));
     h_fixed = (float)HighResHeadupHeight(C2V(gTimerRightHUD_dim_h));
     BrVector2Set(&C2V(gTimerRightHUD_model)->vertices[0].map, 0.f, 0.f);
     BrVector2Set(&C2V(gTimerRightHUD_model)->vertices[1].map, 0.f, h / h_fixed);
@@ -1133,7 +1133,7 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004816b0, InitGame, InitGame_original)
 
-int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth) {
+int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth) {
     int new_width;
 
     if (C2V(gUse_actor_dimming) && C2V(gTexture_power_of_2)) {
@@ -1146,7 +1146,7 @@ int C2_HOOK_FASTCALL Fix2DTextureWidth(int pWidth) {
     }
     return new_width;
 }
-C2_HOOK_FUNCTION(0x0044ba60, Fix2DTextureWidth)
+C2_HOOK_FUNCTION(0x0044ba60, HighResHeadupWidth)
 
 int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight) {
     int new_height;
