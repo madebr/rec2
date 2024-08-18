@@ -17,6 +17,8 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv);
 
 void C2_HOOK_FASTCALL DoDevelopmentThings(void);
 
+void C2_HOOK_FASTCALL InitLightingEffects(void);
+
 void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv);
 
 int C2_HOOK_FASTCALL GetScreenSize(void);
