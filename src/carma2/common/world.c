@@ -1655,12 +1655,12 @@ void C2_HOOK_FASTCALL LoadModelCallback(const char* pPath) {
 }
 C2_HOOK_FUNCTION(0x00502b20, LoadModelCallback)
 
-void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath) {
+void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath) {
 
     C2V(gStorageForCallbacks) = pStorage;
     PFForEveryFile(pPath, LoadModelCallback);
 }
-C2_HOOK_FUNCTION(0x00502b00, LoadSomeModels)
+C2_HOOK_FUNCTION(0x00502b00, LoadAllModelsInDirectory)
 
 void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
@@ -1668,7 +1668,7 @@ void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const 
     LoadAllPixelmapsInDirectory(pStorage, pPath);
     LoadAllImagesInDirectory(pStorage, pPath);
     LoadAllMaterialsInDirectory(pStorage, pPath, pShading);
-    LoadSomeModels(pStorage, pPath);
+    LoadAllModelsInDirectory(pStorage, pPath);
 }
 C2_HOOK_FUNCTION(0x00502cf0, LoadAllStuffInDirectory)
 
