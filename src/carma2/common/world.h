@@ -132,7 +132,7 @@ void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPa
 
 void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath);
 
-void C2_HOOK_FASTCALL LoadFolderInStorageWithShading(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
+void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 
 void C2_HOOK_FASTCALL AllowDuplicates(void);
 
