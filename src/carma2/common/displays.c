@@ -174,6 +174,59 @@ void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465a70, TransDRPixelmapText, TransDRPixelmapText_original)
 
+void C2_HOOK_FASTCALL LoadHeadupMessageFile(void) {
+    FILE* f;
+    tPath_name path;
+    int i;
+    int count;
+
+    PathCat(path, C2V(gApplication_path), "SCROLLERS.TXT");
+    f = DRfopen(path, "rt");
+    if (f == NULL) {
+        BrFailure("Couldn't open ", path);
+    }
+    /*
+     * # of Headup scrolly messages
+     * Format:  Font index, Message string
+     * N.B use underscore "_" where you want a space in the string
+     **/
+    count = GetAnInt(f);
+
+    C2_HOOK_BUG_ON(sizeof(tHud_message) != 0x88);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gHud_messages)) != 46);
+
+    if (count > REC2_ASIZE(C2V(gHud_messages))) {
+        BrFailure("Error - Too many Headup messages ", path);
+    }
+    for (i = 0; i < count; i++) {
+        char s[256];
+        char *str;
+        tHud_message *hud_message;
+        int len;
+        int j;
+
+        hud_message = &C2V(gHud_messages)[i];
+        GetALineAndDontArgue(f, s);
+
+        str = c2_strtok(s, "\t ,/");
+        c2_sscanf(str, "%d", &hud_message->font1);
+
+        str = c2_strtok(NULL, "\t ,/");
+        c2_sscanf(str, "%d", &hud_message->font2);
+
+        str = c2_strtok(NULL, "\t ,/");
+        c2_strcpy(hud_message->message, str);
+
+        len = c2_strlen(hud_message->message);
+        for (j = 0; j < len; j++) {
+            if (hud_message->message[j] == '_') {
+                hud_message->message[j] = ' ';
+            }
+        }
+    }
+    PFfclose(f);
+}
+
 void (C2_HOOK_FASTCALL * InitHeadups_original)(void);
 void C2_HOOK_FASTCALL InitHeadups(void) {
 
@@ -181,10 +234,6 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     InitHeadups_original();
 #else
     int i;
-    int j;
-    FILE* f;
-    tPath_name path;
-    int count;
 
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gHeadups)) != 37);
     for (i = 0; i < REC2_ASIZE(C2V(gHeadups)); i++) {
@@ -279,50 +328,8 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
     C2V(gIcon_greyBloc1) = LoadPixelmap("greybloc1.tif");
     C2V(gIcon_litBloc1) = LoadPixelmap("litbloc1.tif");
     C2V(gIcon_grnBlock1) = LoadPixelmap("grnblock1.tif");
-    PathCat(path, C2V(gApplication_path), "SCROLLERS.TXT");
-    f = DRfopen(path, "rt");
-    if (f == NULL) {
-        BrFailure("Couldn't open ", path);
-    }
-    /*
-     * # of Headup scrolly messages
-     * Format:  Font index, Message string
-     * N.B use underscore "_" where you want a space in the string
-     **/
-    count = GetAnInt(f);
 
-    C2_HOOK_BUG_ON(sizeof(tHud_message) != 0x88);
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gHud_messages)) != 46);
-
-    if (count > REC2_ASIZE(C2V(gHud_messages))) {
-        BrFailure("Error - Too many Headup messages ", path);
-    }
-    for (i = 0; i < count; i++) {
-        char s[256];
-        char* str;
-        tHud_message* hud_message;
-        int len;
-
-        hud_message = &C2V(gHud_messages)[i];
-        GetALineAndDontArgue(f, s);
-
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &hud_message->font1);
-
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &hud_message->font2);
-
-        str = c2_strtok(NULL,"\t ,/");
-        c2_strcpy(hud_message->message, str);
-
-        len = c2_strlen(hud_message->message);
-        for (j = 0; j < len; j++) {
-            if (hud_message->message[j] == '_') {
-                hud_message->message[j] = ' ';
-            }
-        }
-    }
-    PFfclose(f);
+    LoadHeadupMessageFile();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00449090, InitHeadups, InitHeadups_original)
