@@ -376,7 +376,7 @@ void C2_HOOK_FASTCALL ResetPowerups(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004da630, ResetPowerups, ResetPowerups_original)
 
 br_actor* (C2_HOOK_FASTCALL * CreateActorFromPowerupMap_original)(br_pixelmap* pMap);
-br_actor* C2_HOOK_FASTCALL CreateActorFromPowerupMap(br_pixelmap* pMap) {
+br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pMap) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     return CreateActorFromPowerupMap_original(pMap);
@@ -422,7 +422,7 @@ br_actor* C2_HOOK_FASTCALL CreateActorFromPowerupMap(br_pixelmap* pMap) {
     return actor;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e09d0, CreateActorFromPowerupMap, CreateActorFromPowerupMap_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004e09d0, CreateBillBoard, CreateActorFromPowerupMap_original)
 
 static br_pixelmap* DRMapFindMeAPixie(const char* name) {
     char s[256];
@@ -506,7 +506,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
                 BRPM_convert(the_powerup->icon, C2V(gBack_screen)->type);
             }
             if (the_powerup->icon != NULL) {
-                the_powerup->icon_actor = CreateActorFromPowerupMap(the_powerup->icon);
+                the_powerup->icon_actor = CreateBillBoard(the_powerup->icon);
                 the_powerup->icon_actor->material->extra_prim = the_powerup->material_prims;
             }
 
