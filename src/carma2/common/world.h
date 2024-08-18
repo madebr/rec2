@@ -100,7 +100,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
 
 void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath);
 
-void C2_HOOK_FASTCALL LoadSomeShadeTables(tBrender_storage* pStorage, const char* pPath);
+void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath);
 
 void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath);
 
