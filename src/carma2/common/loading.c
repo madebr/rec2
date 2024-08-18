@@ -4040,7 +4040,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     pCar_spec->grid_icon_image = NULL;
 
     LoadAllImagesInDirectory(pStorage_space, car_path);
-    LoadSomeShadeTables(pStorage_space, car_path);
+    LoadAllShadeTablesInDirectory(pStorage_space, car_path);
     LoadCarMaterials(pStorage_space, car_path, pCar_spec);
     old_model_count = pStorage_space->models_count;
 
