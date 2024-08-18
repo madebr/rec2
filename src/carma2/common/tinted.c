@@ -81,6 +81,28 @@ br_material* C2_HOOK_FASTCALL BuildTintedPolyMaterial(int pOpacity) {
     return material;
 }
 
+void C2_HOOK_FASTCALL GetRangeOfValuesFromPixelmap(br_pixelmap* pMap, br_uint_32* pDarkest, br_uint_32* pBrightest) {
+    int y;
+    int x;
+    br_uint_32 colour;
+    br_uint_32 colour_component;
+
+    *pDarkest = 255;
+    *pBrightest = 0;
+    for (y = 0; y < pMap->height; y++) {
+        for (x = 0; x < pMap->width; x++) {
+            colour = BrPixelmapPixelGet(pMap, x, y);
+            colour_component = REC2_RGB555_B(colour);
+            if (colour_component < *pDarkest) {
+                *pDarkest = colour_component;
+            }
+            if (colour_component > *pBrightest) {
+                *pBrightest = colour_component;
+            }
+        }
+    }
+}
+
 int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3) {
     tPath_name the_path;
     int i;
@@ -91,7 +113,6 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
     br_uint_32 darkest_colour;
     br_uint_32 brightest_colour;
     br_uint_32 colour;
-    br_uint_32 colour_component;
     br_uint_32 colour_range;
 
     tintedIndex = -1;
@@ -149,21 +170,8 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
             }
 
             map = BrMapFind("coolmapx");
-            // Find darkest and brightest colour
-            darkest_colour = 255;
-            brightest_colour = 0;
-            for (y = 0; y < map->height; y++) {
-                for (x = 0; x < map->width; x++) {
-                    colour = BrPixelmapPixelGet(map, x, y);
-                    colour_component = REC2_RGB555_B(colour);
-                    if (colour_component < darkest_colour) {
-                        darkest_colour = colour_component;
-                    }
-                    if (colour_component > brightest_colour) {
-                        brightest_colour = colour_component;
-                    }
-                }
-            }
+            GetRangeOfValuesFromPixelmap(map, &darkest_colour, &brightest_colour);
+
             // Map `coolmapx` colors to [0, arg1]
             colour_range = brightest_colour - darkest_colour;
             for (y = 0; y < 64; y++) {
