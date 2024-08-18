@@ -4060,7 +4060,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         /* min_dist_squared */
         pCar_spec->detail_levels[i] = GetAScalar(f);
     }
-    LoadSomeModels(pStorage_space, car_path);
+    LoadAllModelsInDirectory(pStorage_space, car_path);
     if (version > 0) {
         PossibleService();
 

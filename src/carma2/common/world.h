@@ -128,9 +128,9 @@ int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char
 
 void C2_HOOK_FASTCALL LoadModelCallback(const char* pPath);
 
-void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath);
+void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath);
 
-void C2_HOOK_FASTCALL LoadSomeModels(tBrender_storage *pStorage, const char* pPath);
+void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath);
 
 void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 
