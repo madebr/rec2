@@ -1607,7 +1607,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pSto
 }
 C2_HOOK_FUNCTION(0x00501260, AddModelToStorage)
 
-int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char* pPath) {
+int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath) {
     int i;
     int new_ones;
     int total;
@@ -1643,14 +1643,14 @@ int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char
 
     return new_ones;
 }
-C2_HOOK_FUNCTION(0x00501e40, LoadModelsInto)
+C2_HOOK_FUNCTION(0x00501e40, AddModels)
 
 void C2_HOOK_FASTCALL LoadIfItsAMode(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".DAT") != NULL) {
-        LoadModelsInto(C2V(gStorageForCallbacks), pPath);
+        AddModels(C2V(gStorageForCallbacks), pPath);
     }
 }
 C2_HOOK_FUNCTION(0x00502b20, LoadIfItsAMode)
