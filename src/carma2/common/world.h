@@ -126,7 +126,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pSto
 
 int C2_HOOK_FASTCALL LoadModelsInto(tBrender_storage* pStorage_space, const char* pPath);
 
-void C2_HOOK_FASTCALL LoadModelCallback(const char* pPath);
+void C2_HOOK_FASTCALL LoadIfItsAMode(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath);
 
