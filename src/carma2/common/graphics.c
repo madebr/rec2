@@ -725,7 +725,7 @@ void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e560, Init2DStuffForPolyFonts, Init2DStuffForPolyFonts_original)
 
 void (C2_HOOK_FASTCALL * InitShadows_original)(void);
-void C2_HOOK_FASTCALL InitShadows(void) {
+void C2_HOOK_FASTCALL InitShadow(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     InitShadows_original();
@@ -753,7 +753,7 @@ void C2_HOOK_FASTCALL InitShadows(void) {
     BrActorAdd(C2V(gUniverse_actor), C2V(gShadow_actor));
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e99d0, InitShadows, InitShadows_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004e99d0, InitShadow, InitShadows_original)
 
 br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
     br_pixelmap* copy;

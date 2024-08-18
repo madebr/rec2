@@ -135,7 +135,7 @@ void C2_HOOK_FASTCALL UpdateMap(void);
 
 void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void);
 
-void C2_HOOK_FASTCALL InitShadows(void);
+void C2_HOOK_FASTCALL InitShadow(void);
 
 br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg);
 
