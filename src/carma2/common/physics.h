@@ -32,7 +32,7 @@ tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType
 
 tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateSphereCollisionShape(br_uint_8 pType);
 
-tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(int pCount_points, br_uint_8 pType);
+tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocateShapePolyhedron(int pCount_points, br_uint_8 pType);
 
 tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateWireFrameCollisionShape(int pcount_points, int pCount_lines, br_uint_8 pType);
 

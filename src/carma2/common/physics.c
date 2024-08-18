@@ -132,7 +132,7 @@ tCollision_shape_sphere* C2_HOOK_FASTCALL AllocateSphereCollisionShape(br_uint_8
 }
 C2_HOOK_FUNCTION(0x004c5d10, AllocateSphereCollisionShape)
 
-tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(int pCount_points, br_uint_8 pType) {
+tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocateShapePolyhedron(int pCount_points, br_uint_8 pType) {
     tCollision_shape_polyhedron* result;
     tU8* raw_memory;
 
@@ -157,7 +157,7 @@ tCollision_shape_polyhedron* C2_HOOK_FASTCALL AllocatePolyhedronCollisionShape(i
     result->common.type = kCollisionShapeType_Polyhedron;
     return result;
 }
-C2_HOOK_FUNCTION(0x004c5d70, AllocatePolyhedronCollisionShape)
+C2_HOOK_FUNCTION(0x004c5d70, AllocateShapePolyhedron)
 
 tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateWireFrameCollisionShape(int pCount_points, int pCount_lines, br_uint_8 pType) {
     tCollision_shape_wireframe* result;
@@ -219,7 +219,7 @@ void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF) {
                 c2_sprintf(s, "Ow! Physics shape is mad (having %d points is silly)", count_points);
                 PDFatalError(s);
             }
-            shape = (tCollision_shape*)AllocatePolyhedronCollisionShape(count_points, kMem_collision_shape);
+            shape = (tCollision_shape*)AllocateShapePolyhedron(count_points, kMem_collision_shape);
 
             shape->polyhedron.polyhedron.count_points = count_points;
             for (j = 0; j < count_points; j++) {
