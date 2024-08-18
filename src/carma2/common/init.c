@@ -156,8 +156,8 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     PrintMemoryDump(0, "AFTER INITING LINE AND SMOKE STUFF");
     Init2DStuff();
     InitTintedPolyStuff();
-    C2V(gHud_tinted1) = CreateTintedPolyActor(0, 0, 640, 480, 2, 0, 0, 0);
-    C2V(gHud_tinted2) = CreateTintedPolyActor(0, 0, 640, 480, 3, 2, 0, 0);
+    C2V(gHud_tinted1) = CreateTintedPoly(0, 0, 640, 480, 2, 0, 0, 0);
+    C2V(gHud_tinted2) = CreateTintedPoly(0, 0, 640, 480, 3, 2, 0, 0);
     PrintMemoryDump(0, "AFTER INITING 2D STUFF");
     // FUN_00486d80(); /* NOP */
     LoadInterfaceStrings();

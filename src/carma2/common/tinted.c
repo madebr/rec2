@@ -76,7 +76,7 @@ C2_HOOK_FUNCTION(0x004d7040, InitTintedPolyStuff);
         }                                                                           \
     } while (0)
 
-int C2_HOOK_FASTCALL CreateTintedPolyActor(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3) {
+int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3) {
     tPath_name the_path;
     int i;
     int x;
@@ -281,7 +281,7 @@ int C2_HOOK_FASTCALL CreateTintedPolyActor(int x0, int y0, int width, int height
     C2V(gTintedPolys)[tintedIndex].visible = 0;
     return tintedIndex;
 }
-C2_HOOK_FUNCTION(0x004d70c0, CreateTintedPolyActor)
+C2_HOOK_FUNCTION(0x004d70c0, CreateTintedPoly)
 
 br_model* C2_HOOK_FASTCALL CreateInterpolatedQuadModel(int x0, int y0, int width, int height, int nbX, int nbY) {
     br_model* model;
