@@ -410,6 +410,8 @@ void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race);
 
+void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
+
 void C2_HOOK_FASTCALL InitOpponentsAndDrones(tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL DisposeOpponentsAndDrones(void);
