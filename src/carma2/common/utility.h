@@ -19,7 +19,7 @@ br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void);
 
 void C2_HOOK_FASTCALL StringTransformToLower(char* pStr);
 
-void C2_HOOK_FASTCALL StringToUpper(char* dest, const char* src);
+void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
 

@@ -326,7 +326,7 @@ int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list
     tPath_name stem_path;
 
     c2_strcpy(pathCopy, path);
-    StringToUpper(pathUpper, pathCopy);
+    Uppercaseificate(pathUpper, pathCopy);
     if (c2_strstr(pathUpper, ".PIX") == NULL
             && c2_strstr(pathUpper, ".TIF") == NULL) {
         return 0;
@@ -349,7 +349,7 @@ int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pLis
     size_t i;
 
     c2_strcpy(pathCopy, path);
-    StringToUpper(upperPath, pathCopy);
+    Uppercaseificate(upperPath, pathCopy);
 
     if (c2_strstr(upperPath, ".PIX") == NULL
             && c2_strstr(upperPath, ".P16") == NULL
@@ -1336,7 +1336,7 @@ void C2_HOOK_FASTCALL LoadShadeTableCallback(const char* pPath) {
     tBrender_storage* storage_space;
     char s[256];
 
-    StringToUpper(s, pPath);
+    Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".TAB") == NULL) {
         return;
     }
@@ -1378,7 +1378,7 @@ C2_HOOK_FUNCTION(0x00502b60, LoadAllShadeTablesInDirectory)
 void C2_HOOK_FASTCALL LoadPixelmapCallback(const char* pPath) {
     char s[256];
 
-    StringToUpper(s, pPath);
+    Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".PIX") != NULL) {
         AddPixelmaps(C2V(gStorageForCallbacks), pPath);
     }
@@ -1430,7 +1430,7 @@ void C2_HOOK_FASTCALL LoadMaterialCallback(const char* pPath) {
     if (C2V(gMaterial_shading_for_callback) == kRendererShadingType_Undefined) {
         shading = kRendererShadingType_Default;
     }
-    StringToUpper(s, pPath);
+    Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".MAT") != NULL) {
         LoadMaterialsInto(C2V(gStorageForCallbacks), pPath, shading);
     }
@@ -1648,7 +1648,7 @@ C2_HOOK_FUNCTION(0x00501e40, LoadModelsInto)
 void C2_HOOK_FASTCALL LoadModelCallback(const char* pPath) {
     char s[256];
 
-    StringToUpper(s, pPath);
+    Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".DAT") != NULL) {
         LoadModelsInto(C2V(gStorageForCallbacks), pPath);
     }
@@ -2563,7 +2563,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         c2_strtok(s, ".");
         pRace_info->map_image = BrMapFind(s);
         if (pRace_info->map_image == NULL) {
-            StringToUpper(s, s);
+            Uppercaseificate(s, s);
             pRace_info->map_image = BrMapFind(s);
         }
     }
