@@ -196,7 +196,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     PrintMemoryDump(0, "AFTER INITING SHADOW");
     InitFlics();
     AllocateStandardLamp();
-    InitAIWorld();
+    InitPanGameAIWorld();
     PrintMemoryDump(0, "AFTER INITING AI WORLD");
     LoadPowerups();
     PrintMemoryDump(0, "AFTER LOADING POWERUPS");
