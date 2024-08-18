@@ -16,7 +16,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gCollision_info_uid_counter);
 C2_HOOK_VARIABLE_DECLARE(int, gNo_recursive_collision_info_rebuild);
 C2_HOOK_VARIABLE_DECLARE(int, gFace_num__car);
 
-void C2_HOOK_FASTCALL OnPhysicsError(tPhysicsError pError);
+void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError);
 
 void C2_HOOK_FASTCALL SetPhysicsErrorCallback(tPhysicsError_cbfn *pError_cbfn);
 
