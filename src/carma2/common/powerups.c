@@ -424,7 +424,7 @@ br_actor* C2_HOOK_FASTCALL CreateActorFromPowerupMap(br_pixelmap* pMap) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e09d0, CreateActorFromPowerupMap, CreateActorFromPowerupMap_original)
 
-static br_pixelmap* find_pixelmap_name(const char* name) {
+static br_pixelmap* DRMapFindMeAPixie(const char* name) {
     char s[256];
     br_pixelmap* map;
 
@@ -477,7 +477,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
     ClosePackFileAndSetTiffLoading(twtvfs);
 
     for (i = 0; i < REC2_ASIZE(C2V(gFizzle_in)); i++) {
-        C2V(gFizzle_in)[i] = find_pixelmap_name(C2V(gFizzle_names)[i]);
+        C2V(gFizzle_in)[i] = DRMapFindMeAPixie(C2V(gFizzle_names)[i]);
     }
     C2V(gFizzle_height) = C2V(gFizzle_in)[0]->height / 4;
 
@@ -500,7 +500,7 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
                 the_powerup->message[0] = '\0';
             }
             GetAString(f, s);
-            the_powerup->icon = find_pixelmap_name(s);
+            the_powerup->icon = DRMapFindMeAPixie(s);
             if (the_powerup->icon != NULL) {
                 BrMapAdd(the_powerup->icon);
                 BRPM_convert(the_powerup->icon, C2V(gBack_screen)->type);
