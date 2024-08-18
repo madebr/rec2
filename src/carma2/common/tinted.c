@@ -222,7 +222,7 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
             C2V(gTintedPolys)[tintedIndex].unknown_1 = 0;
             C2V(gTintedPolys)[tintedIndex].unknown_2 = arg1;
             BrModelAdd(C2V(gTintedPolys)[tintedIndex].model);
-            SetTintedColour(tintedIndex, 0, 0, 0);
+            SetTintedPolyColour(tintedIndex, 0, 0, 0);
             break;
         case 6:
             C2V(gTintedPolys)[tintedIndex].class = class;
@@ -485,7 +485,7 @@ void C2_HOOK_FASTCALL RenderTintedActors(void) {
 }
 C2_HOOK_FUNCTION(0x004d8290, RenderTintedActors)
 
-void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {
+void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {
     int red_differs;
     int grn_differs;
     int blu_differs;
@@ -507,7 +507,7 @@ void C2_HOOK_FASTCALL SetTintedColour(int pTintedIndex, int pRed, int pGreen, in
         BrMaterialUpdate(C2V(gTintedPolys)[pTintedIndex].material ,BR_MATU_LIGHTING);
     }
 }
-C2_HOOK_FUNCTION(0x004d82b0, SetTintedColour)
+C2_HOOK_FUNCTION(0x004d82b0, SetTintedPolyColour)
 
 void C2_HOOK_FASTCALL ResetTintedVertices(int pTintedIndex, int x0, int y0, int width, int height) {
     tTintedPoly* tinted;
