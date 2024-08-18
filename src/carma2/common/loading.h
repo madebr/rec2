@@ -302,7 +302,7 @@ void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, 
 
 void C2_HOOK_FASTCALL LoadInRegistees(void);
 
-void C2_HOOK_FASTCALL LoadTreeSurgery(void);
+void C2_HOOK_FASTCALL InitTreeSurgery(void);
 
 int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void);
 
