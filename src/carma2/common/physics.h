@@ -80,7 +80,7 @@ int C2_HOOK_FASTCALL EnumCollisionInfo(tCollision_info* pCollision_info, tEnumCo
 
 int C2_HOOK_FASTCALL FUN_00429070(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tCar_callbacks* pCar_callbacks);
 
-tCollision_info* C2_HOOK_FAKE_THISCALL CreateBoxCollisionShapeWithMass(br_model* pModel, undefined4 pArg2, float pMass);
+tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefined4 pArg2, float pMass);
 
 tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType);
 

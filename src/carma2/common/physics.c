@@ -1128,7 +1128,7 @@ int C2_HOOK_FASTCALL FUN_00429070(tCollision_info* pCollision_info_1, tCollision
 C2_HOOK_FUNCTION_ORIGINAL(0x00429070, FUN_00429070, FUN_00429070_original)
 
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateBoxCollisionShapeWithMass_original)(br_model* model, undefined4 pArg2, float pMass);
-tCollision_info* C2_HOOK_FAKE_THISCALL CreateBoxCollisionShapeWithMass(br_model* pModel, undefined4 pArg2, float pMass) {
+tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefined4 pArg2, float pMass) {
 
 #if defined(C2_HOOKS_ENABLED)
     return CreateBoxCollisionShapeWithMass_original(pModel REC2_THISCALL_EDX, pMass);
@@ -1137,7 +1137,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL CreateBoxCollisionShapeWithMass(br_model*
 #endif
 }
 
-C2_HOOK_FUNCTION_ORIGINAL(0x004da290, CreateBoxCollisionShapeWithMass, CreateBoxCollisionShapeWithMass_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004da290, MungeBoxObject, CreateBoxCollisionShapeWithMass_original)
 
 tPhysics_joint* (C2_HOOK_FASTCALL * AllocatePhysicsJoint_original)(int pCount_limits, int pType);
 tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType) {
