@@ -417,11 +417,11 @@ void C2_HOOK_FASTCALL FRONTEND_CreateItemBrenderObjects(tFrontend_brender_item* 
     model->faces[1].vertices[2] = 0;
     BrModelAdd(model);
     if (pMap != NULL) {
-        dx = Fix2DTextureWidth(pMap->width);
-        dy = Fix2DTextureWidth(pMap->height);
+        dx = HighResHeadupWidth(pMap->width);
+        dy = HighResHeadupWidth(pMap->height);
     } else {
-        dx = Fix2DTextureWidth(8);
-        dy = Fix2DTextureWidth(8);
+        dx = HighResHeadupWidth(8);
+        dy = HighResHeadupWidth(8);
     }
     map_x = (float)pWidth / (float)dx;
     map_y = (float)pHeight / (float)dy;
