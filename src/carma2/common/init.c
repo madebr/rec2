@@ -175,7 +175,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     PrintMemoryDump(0, "AFTER INITING CRUSH SYSTEMS");
     InitTreeSurgery();
     FlicPaletteAllocate();
-    // FUN_00487eb0(); /* NOP */
+    InitInterfaceLoadState();
     InitTransientBitmaps();
     PrintMemoryDump(0, "AFTER INITING OTHER INTERFACE STUFF");
     InitSound();
