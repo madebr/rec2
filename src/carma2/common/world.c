@@ -1432,7 +1432,7 @@ void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
     }
     Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".MAT") != NULL) {
-        LoadMaterialsInto(C2V(gStorageForCallbacks), pPath, shading);
+        AddMaterials(C2V(gStorageForCallbacks), pPath, shading);
     }
 }
 C2_HOOK_FUNCTION(0x00502a70, LoadIfItsAMaterial)
@@ -1468,7 +1468,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
 }
 C2_HOOK_FUNCTION(0x00501190, AddMaterialToStorage)
 
-int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading) {
+int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading) {
     int i;
     int new_ones;
     int total;
@@ -1502,7 +1502,7 @@ int C2_HOOK_FASTCALL LoadMaterialsInto(tBrender_storage* pStorage_space, const c
     }
     return new_ones;
 }
-C2_HOOK_FUNCTION(0x00502060, LoadMaterialsInto)
+C2_HOOK_FUNCTION(0x00502060, AddMaterials)
 
 br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_space, const char* pName) {
     br_material* temp;
@@ -1541,7 +1541,7 @@ void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile,
     GetALineAndDontArgue(pFile, s1);
     PathCat(s2, C2V(gApplication_path), "MATERIAL");
     PathCat(s2, s2, c2_strtok(s1, "\t ,/"));
-    LoadMaterialsInto(pStorage, s2, pShading);
+    AddMaterials(pStorage, s2, pShading);
 }
 C2_HOOK_FUNCTION(0x00501fe0, LoadSomeMaterials)
 
