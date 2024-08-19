@@ -45,7 +45,7 @@ void C2_HOOK_FASTCALL DoLoadMostRecentGame(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00491e50, DoLoadMostRecentGame, LoadLastSaveGame_original)
 
 void (C2_HOOK_FASTCALL * WriteSaveGame_original)(void);
-void C2_HOOK_FASTCALL WriteSaveGame(void) {
+void C2_HOOK_FASTCALL DoSaveGame(void) {
 
 #if defined(C2_HOOKS_ENABLED)
     WriteSaveGame_original();
@@ -53,4 +53,4 @@ void C2_HOOK_FASTCALL WriteSaveGame(void) {
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00491ac0, WriteSaveGame, WriteSaveGame_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00491ac0, DoSaveGame, WriteSaveGame_original)
