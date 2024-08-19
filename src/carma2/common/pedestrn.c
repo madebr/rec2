@@ -260,7 +260,7 @@ void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile) {
 C2_HOOK_FUNCTION(0x004cb1e0, ReadPedGiblets)
 
 void (C2_HOOK_FASTCALL * InitPeds_original)(void);
-void C2_HOOK_FASTCALL InitPeds(void) {
+void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     InitPeds_original();
 #else
@@ -403,7 +403,7 @@ void C2_HOOK_FASTCALL InitPeds(void) {
     C2V(gPed_shade) = GenerateShadeTable(8, C2V(gRender_palette), 0xd7, 0xff, 0xe9, .5f, .75f, .9f);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004cadc0, InitPeds, InitPeds_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004cadc0, InitPolyPedSystem, InitPeds_original)
 
 void (C2_HOOK_FASTCALL * InitBurningPeds_original)(void);
 void C2_HOOK_FASTCALL InitBurningPeds(void) {

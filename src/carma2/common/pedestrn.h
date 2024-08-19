@@ -19,7 +19,7 @@ void C2_HOOK_FAKE_THISCALL ScaleModel(br_model* pModel, int pArg2, float pScale)
 
 void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile);
 
-void C2_HOOK_FASTCALL InitPeds(void);
+void C2_HOOK_FASTCALL InitPolyPedSystem(void);
 
 void C2_HOOK_FASTCALL InitBurningPeds(void);
 
