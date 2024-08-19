@@ -26,7 +26,7 @@ void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds);
 
 void C2_HOOK_FASTCALL LoadNoncarActivation(FILE* pF, tNoncar_activation** pNoncar_activations, int* pCount_noncar_activations);
 
-void C2_HOOK_FASTCALL LoadAward(FILE* pF, tAward_info* pAward_info);
+void C2_HOOK_FASTCALL ReadAward(FILE* pF, tAward_info* pAward_info);
 
 void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashable_levels, int* pCount_smashable_levels, int pIs_texture_change, tBrender_storage* pBrender_storage);
 

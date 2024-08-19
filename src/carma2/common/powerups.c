@@ -637,7 +637,7 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     /* Room turn on */
     pSmashable_spec->mode_data.shrapnel.connotations.side_effects.room_turn_on_code = GetAnInt(pF);
     /* Award code */
-    LoadAward(pF, &pSmashable_spec->mode_data.shrapnel.connotations.award);
+    ReadAward(pF, &pSmashable_spec->mode_data.shrapnel.connotations.award);
     /* Count variable changes */
     pSmashable_spec->mode_data.shrapnel.connotations.count_runtime_variable_changes = GetAnInt(pF);
     for (i = 0; i < pSmashable_spec->mode_data.shrapnel.connotations.count_runtime_variable_changes; i++) {

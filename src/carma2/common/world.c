@@ -1903,7 +1903,7 @@ void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, t
     ReadShrapnelSpec(pF, pConnotations->shrapnel, &pConnotations->count_shrapnel);
     ReadSpecialEffectsSpec(pF, &pConnotations->special_effects);
     ReadSideEffects(pF, &pConnotations->side_effects);
-    LoadAward(pF, &pConnotations->award);
+    ReadAward(pF, &pConnotations->award);
     /* run-time variable changes */
     pConnotations->count_runtime_variable_changes = GetAnInt(pF);
     for (i = 0; i < pConnotations->count_runtime_variable_changes; i++) {
