@@ -2472,7 +2472,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
     PackFileRevertTiffLoading();
     ExtractColumns(pTrack_spec);
-    ApplyTopTiffConversion();
+    PackFileRerevertTiffLoading();
 
     AllocateTrackPedestrians();
     PrintMemoryDump(0, "JUST EXTRACTED COLUMNS AND LOADED IN PEDS");
@@ -2794,7 +2794,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
             modifier->skid_mark_material = LoadSingleMaterial(&C2V(gTrack_storage_space), str);
         }
     }
-    ApplyTopTiffConversion();
+    PackFileRerevertTiffLoading();
     for (i = count_material_modifiers; i < REC2_ASIZE(pRace_info->material_modifiers) - 1; i++) {
         tMaterial_modifiers* modifier = &pRace_info->material_modifiers[i];
 

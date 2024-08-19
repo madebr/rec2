@@ -1446,13 +1446,13 @@ void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void) {
 }
 C2_HOOK_FUNCTION(0x004b4e60, PackFileRevertTiffLoading)
 
-void C2_HOOK_FASTCALL ApplyTopTiffConversion(void) {
+void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void) {
 
     if (C2V(gDisableTiffConversionStackPos) != 0) { // or > 0 if it is unsigned
         C2V(gDisableTiffConversion) = C2V(gDisableTiffConversionStack)[C2V(gDisableTiffConversionStackPos)];
     }
 }
-C2_HOOK_FUNCTION(0x004b4e90, ApplyTopTiffConversion)
+C2_HOOK_FUNCTION(0x004b4e90, PackFileRerevertTiffLoading)
 
 void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2) {
 
@@ -3987,7 +3987,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         ReinitialiseRearviewCamera();
         GetALineAndDontArgue(f, s);
         if (twt >= 0) {
-            ApplyTopTiffConversion();
+            PackFileRerevertTiffLoading();
         }
         C2_HOOK_ASSERT(c2_strcmp(s, "END OF DRIVABLE STUFF") == 0);
     } else {
