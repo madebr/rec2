@@ -524,7 +524,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             item->text);
         C2V(gFrontend_count_brender_items)++;
     }
-    C2V(gFrontend_time_last_input) = PDGetTotalTime();
+    ResetInterfaceTimeout();
     FRONTEND_CreateItemBrenderObjects(&C2V(gFrontend_brender_items)[99],
         0,
         0,
@@ -647,6 +647,11 @@ static br_uint_32 GetBillboardAPOColour(int pType_APO, int pLevel) {
     }
 }
 
+void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
+
+    C2V(gFrontend_time_last_input) = PDGetTotalTime();
+}
+
 int (C2_HOOK_FASTCALL * DoFrontendMenu_original)(tFrontendMenuType pFrontend);
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
 
@@ -670,7 +675,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
     FRONTEND_Setup(pFrontendType);
     C2V(gFrontend_remove_current_backdrop) = 1;
     C2V(gFrontend_leave_current_menu) = 0;
-    C2V(gFrontend_time_last_input) = PDGetTotalTime();
+    ResetInterfaceTimeout();
     DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingin);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_spec, unknownLastInt, 0xb8c4);
     C2V(gCurrent_frontend_spec)->unknownLastInt = 0;
@@ -1143,7 +1148,7 @@ int C2_HOOK_FASTCALL FRONTEND_Tick(tFrontend_spec* pFrontend) {
         the_key = PDAnyKeyDown();
         if (the_key != -1 && the_key != 4) {
             C2V(gMouse_in_use) = 0;
-            C2V(gFrontend_time_last_input) = PDGetTotalTime();
+            ResetInterfaceTimeout();
         }
         EdgeTriggerModeOn();
         mouse_button = 0;
@@ -1152,7 +1157,7 @@ int C2_HOOK_FASTCALL FRONTEND_Tick(tFrontend_spec* pFrontend) {
             int x;
             int y;
 
-            C2V(gFrontend_time_last_input) = PDGetTotalTime();
+            ResetInterfaceTimeout();
             GetMousePosition(&x, &y);
             mouse_button = EitherMouseButtonDown();
             item_under_mouse = FRONTEND_FindItemUnderMouse(C2V(gCurrent_frontend_spec), x, y);
