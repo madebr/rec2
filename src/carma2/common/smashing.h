@@ -12,6 +12,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmash_quad, gSmash_quads, 50);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmashable_race_target, gSmashable_race_targets, 300);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_smashable_race_targets);
 
+void C2_HOOK_FASTCALL InitGlassFragments(void);
+
 void C2_HOOK_FASTCALL InitSmashing(void);
 
 void C2_HOOK_FASTCALL ReadSmashableInitialPosition(FILE* pFile, tSmashable_initial_position_spec*  pInitial_pos);

@@ -22,12 +22,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gInitial_position_sphere_wher
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmashable_race_target, gSmashable_race_targets, 300, 0x0068c898);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_race_targets, 0x0074abe0);
 
-void (C2_HOOK_FASTCALL * InitSmashing_original)(void);
-void C2_HOOK_FASTCALL InitSmashing(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitSmashing_original();
-#else
+void C2_HOOK_FASTCALL InitGlassFragments(void) {
     int i;
 
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_vertices)) != 200);
@@ -47,6 +42,17 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
         smash_vertex->actor->render_style = BR_RSTYLE_FACES;
         smash_vertex->field_0x8 = 0;
     }
+}
+
+void (C2_HOOK_FASTCALL * InitSmashing_original)(void);
+void C2_HOOK_FASTCALL InitSmashing(void) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    InitSmashing_original();
+#else
+    int i;
+
+    InitGlassFragments();
 
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_quads)) != 50);
 
