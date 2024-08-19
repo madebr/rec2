@@ -378,20 +378,9 @@ void C2_HOOK_FASTCALL ReadSettingsFile(void) {
     PFfclose(file);
 }
 
-void (C2_HOOK_FASTCALL * InitPeds_original)(void);
-void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitPeds_original();
-#else
+void C2_HOOK_FASTCALL InitFaceCaches(void) {
     int i;
     int j;
-
-    if (C2V(gPedsFolder) == NULL) {
-        SetDefaultPedFolderNames();
-    }
-
-    InitBoner(&C2V(gPed_forms_vtable));
-    ReadSettingsFile();
 
     C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x34) != 52);
     C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x50) != 80);
@@ -404,6 +393,21 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
         }
     }
     C2V(gPed_face_cache) = BrMemAllocate((C2V(gPed_cache_sizes_2)[3] + 1) * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
+}
+
+void (C2_HOOK_FASTCALL * InitPeds_original)(void);
+void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    InitPeds_original();
+#else
+
+    if (C2V(gPedsFolder) == NULL) {
+        SetDefaultPedFolderNames();
+    }
+
+    InitBoner(&C2V(gPed_forms_vtable));
+    ReadSettingsFile();
+    InitFaceCaches();
     InitNapalmNolts();
     C2V(gSelected_ped) = 0;
     C2V(gPed_shade) = GenerateShadeTable(8, C2V(gRender_palette), 0xd7, 0xff, 0xe9, .5f, .75f, .9f);
