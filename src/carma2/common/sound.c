@@ -290,23 +290,11 @@ int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void) {
     if (!C2V(gSound_enabled)) {
         return 0;
     }
-    S3StopOutletSound(C2V(gCar_outlet));
-
-    if (C2V(gSound_enabled)) {
-        S3StopOutletSound(C2V(gEngine_outlet));
-    }
-
-    if (C2V(gSound_enabled)) {
-        S3StopOutletSound(C2V(gXXX_outlet));
-    }
-
-    if (C2V(gSound_enabled)) {
-        S3StopOutletSound(C2V(gEffects_outlet));
-    }
-
-    if (C2V(gSound_enabled)) {
-        S3StopOutletSound(C2V(gPedestrians_outlet));
-    }
+    DRS3StopOutletSound(C2V(gCar_outlet));
+    DRS3StopOutletSound(C2V(gEngine_outlet));
+    DRS3StopOutletSound(C2V(gXXX_outlet));
+    DRS3StopOutletSound(C2V(gEffects_outlet));
+    DRS3StopOutletSound(C2V(gPedestrians_outlet));
     return 1;
 #endif
 }
