@@ -1855,16 +1855,26 @@ void C2_HOOK_FASTCALL ReadSmashTexture(tSmashable_item_spec* pSmash_item, tSmash
         &C2V(gTrack_storage_space));
 }
 
-void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
+void C2_HOOK_FASTCALL ReadSmashSounds(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
     int i;
 
     /* number of possible sounds */
     pConnotations->count_sounds = GetAnInt(pF);
 
     for (i = 0; i < pConnotations->count_sounds; i++) {
+        int sound;
+
         /* sound id */
-        pConnotations->sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+        sound = GetAnInt(pF);
+
+        pConnotations->sounds[i] = LoadSoundInStorage(pStorage, sound);
     }
+}
+
+void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
+    int i;
+
+    ReadSmashSounds(pF, pConnotations, pStorage);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.count_shrapnel, 0x14);
