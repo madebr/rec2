@@ -704,7 +704,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
         if (C2V(gFrontend_interpolate_steps_left) > 0) {
             int step = 16 - C2V(gFrontend_interpolate_steps_left) + 1;
 
-            FRONTEND_InterpolateModel(C2V(gFrontend_A_model_from), C2V(gFrontend_A_model_to), C2V(gFrontend_backdrop_actors)[0]->model, step, 16);
+            MorphBlob(C2V(gFrontend_A_model_from), C2V(gFrontend_A_model_to), C2V(gFrontend_backdrop_actors)[0]->model, step, 16);
             if (C2V(gFrontend_backdrop0_opacity_mode) == -1) {
                 C2V(gFrontend_backdrop0_material_prims)[1].v.x = BR_FIXED_INT(176 * (16 - step)  / 16);
             } else if (C2V(gFrontend_backdrop0_opacity_mode) == 1) {
@@ -714,7 +714,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
             }
             BrMaterialUpdate(C2V(gFrontend_backdrop_materials)[0], BR_MATU_ALL);
 
-            FRONTEND_InterpolateModel(C2V(gFrontend_B_model_from), C2V(gFrontend_B_model_to), C2V(gFrontend_backdrop_actors)[1]->model, step, 16);
+            MorphBlob(C2V(gFrontend_B_model_from), C2V(gFrontend_B_model_to), C2V(gFrontend_backdrop_actors)[1]->model, step, 16);
             if (C2V(gFrontend_backdrop1_opacity_mode) == -1) {
                 C2V(gFrontend_backdrop1_material_prims)[1].v.x = BR_FIXED_INT(176 * (16 - step)  / 16);
             } else if (C2V(gFrontend_backdrop1_opacity_mode) == 1) {
@@ -724,7 +724,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
             }
             BrMaterialUpdate(C2V(gFrontend_backdrop_materials)[1], BR_MATU_ALL);
 
-            FRONTEND_InterpolateModel(C2V(gFrontend_C_model_from), C2V(gFrontend_C_model_to), C2V(gFrontend_backdrop_actors)[2]->model, step, 16);
+            MorphBlob(C2V(gFrontend_C_model_from), C2V(gFrontend_C_model_to), C2V(gFrontend_backdrop_actors)[2]->model, step, 16);
             if (C2V(gFrontend_backdrop2_opacity_mode) == -1) {
                 C2V(gFrontend_backdrop2_material_prims)[1].v.x = BR_FIXED_INT(176 * (16 - step)  / 16);
             } else if (C2V(gFrontend_backdrop2_opacity_mode) == 1) {
@@ -857,7 +857,7 @@ void C2_HOOK_FASTCALL UpdateThrobFactor(void) {
 }
 C2_HOOK_FUNCTION(0x0046cec0, UpdateThrobFactor)
 
-void C2_HOOK_FASTCALL FRONTEND_InterpolateModel(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps) {
+void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps) {
     int i;
 
     for (i = 0; i < pModel->nvertices; i++) {
@@ -867,7 +867,7 @@ void C2_HOOK_FASTCALL FRONTEND_InterpolateModel(br_model* pModel_from, br_model*
     }
     BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
 }
-C2_HOOK_FUNCTION(0x0046f5b0, FRONTEND_InterpolateModel)
+C2_HOOK_FUNCTION(0x0046f5b0, MorphBlob)
 
 void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend) {
     int i;
