@@ -13,7 +13,7 @@ void C2_HOOK_FASTCALL RestoreSinglePlayerState(void);
 
 void C2_HOOK_FASTCALL MaybeRestoreSavedGame(void);
 
-int C2_HOOK_FASTCALL LoadTheGame(tSave_game* pSave_game);
+int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game);
 
 void C2_HOOK_FASTCALL LoadLastSaveGame(void);
 
