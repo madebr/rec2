@@ -14,7 +14,7 @@ void C2_HOOK_FASTCALL TemporaryMaterialStore(br_material* pMaterial);
 
 void C2_HOOK_FASTCALL EnableMaterialAdapt(void);
 
-void C2_HOOK_FASTCALL DisableMaterialAdapt(void);
+void C2_HOOK_FASTCALL DisableAutoFogification(void);
 
 void C2_HOOK_FASTCALL AdaptCachedMaterials(tRendererShadingType pShading_type);
 

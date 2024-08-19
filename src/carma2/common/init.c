@@ -1120,7 +1120,7 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
     C2V(gGame_to_load) = -1;
     C2V(gCurrent_race).number_of_racers = 0;
     InitFogificateMaterials();
-    DisableMaterialAdapt();
+    DisableAutoFogification();
     C2V(gGame_initialized) = 1;
     C2V(gNet_mode_of_last_game) = C2V(gNet_mode);
     C2V(gNo_races_yet) = 1;
