@@ -2467,7 +2467,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PrintMemoryDump(0, "AFTER LOADING SMASHABLE ENVIRONMENT");
 
     /* Ped specs */
-    LoadTrackPedestrians(f);
+    ReadPedSpecs(f);
     PossibleService();
 
     ApplyPreviousTiffConversion();

@@ -494,7 +494,7 @@ int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pO
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ce140, ForEachMortalPedestrianInSight, ForEachMortalPedestrianInSight_original)
 
-void C2_HOOK_FASTCALL LoadTrackPedestrians(FILE* pF) {
+void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
     int i;
     char s[256];
     char s2[256];
@@ -597,7 +597,7 @@ void C2_HOOK_FASTCALL LoadTrackPedestrians(FILE* pF) {
     C2V(gPedestrian_array) = BrMemAllocate(2000 * sizeof(tPedestrian), kMem_ped_array);
     C2_HOOK_BUG_ON(sizeof(tPedestrian) != 84);
 }
-C2_HOOK_FUNCTION(0x004ca9f0, LoadTrackPedestrians)
+C2_HOOK_FUNCTION(0x004ca9f0, ReadPedSpecs)
 
 void (C2_HOOK_FASTCALL * MaybeSpawnPedestrian_original)(br_face *pFace, br_model *pModel);
 void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel) {
