@@ -559,7 +559,7 @@ C2_HOOK_FUNCTION(0x0048f9d0, WriteS8L)
 
 void C2_HOOK_FASTCALL SkipBytes(FILE* pF, int pBytes_to_skip) {
 
-    DRfseek(pF, pBytes_to_skip, SEEK_CUR);
+    PFfseek(pF, pBytes_to_skip, SEEK_CUR);
 }
 C2_HOOK_FUNCTION(0x0048f9f0, SkipBytes)
 
@@ -1160,7 +1160,7 @@ char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4900, PFfgets, PFfgets_original)
 
 int (C2_HOOK_FASTCALL * DRfseek_original)(FILE* pF, int offset, int whence);
-int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence) {
+int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
 
 #if 0 // defined(C2_HOOKS_ENABLED)
     return DRfseek_original(pF, offset, whence);
@@ -1195,7 +1195,7 @@ int C2_HOOK_FASTCALL DRfseek(FILE* pF, int offset, int whence) {
     return c2_fseek(pF, offset, whence);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b4b70, DRfseek, DRfseek_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4b70, PFfseek, DRfseek_original)
 
 int (C2_HOOK_FASTCALL * DRftell_original)(FILE* pF);
 int C2_HOOK_FASTCALL DRftell(FILE* pF) {
