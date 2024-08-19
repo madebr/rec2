@@ -4984,7 +4984,7 @@ int C2_HOOK_FASTCALL LoadAllModelsInPath(tBrender_storage* pStorage, const char*
 }
 C2_HOOK_FUNCTION(0x004f6580, LoadAllModelsInPath)
 
-void C2_HOOK_FASTCALL LoadDATModelsCallback(const char* pPath) {
+void C2_HOOK_FASTCALL SmoothlyLoadIfItsAModel(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
@@ -4992,11 +4992,11 @@ void C2_HOOK_FASTCALL LoadDATModelsCallback(const char* pPath) {
         LoadAllModelsInPath(C2V(gStorageForCallbacks), pPath);
     }
 }
-C2_HOOK_FUNCTION(0x004f6540, LoadDATModelsCallback)
+C2_HOOK_FUNCTION(0x004f6540, SmoothlyLoadIfItsAModel)
 
 void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pPath) {
     C2V(gStorageForCallbacks) = pStorage;
-    PFForEveryFile(pPath, LoadDATModelsCallback);
+    PFForEveryFile(pPath, SmoothlyLoadIfItsAModel);
 }
 C2_HOOK_FUNCTION(0x004f6520, LoadTrackModels)
 
