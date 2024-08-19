@@ -981,11 +981,11 @@ void C2_HOOK_FASTCALL EnableLights(void) {
 }
 C2_HOOK_FUNCTION(0x0047d6d0, EnableLights)
 
-int C2_HOOK_FASTCALL SwitchToRealResolution(void) {
+int C2_HOOK_FASTCALL SwitchToHiresMode(void) {
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x0047c650, SwitchToRealResolution)
+C2_HOOK_FUNCTION(0x0047c650, SwitchToHiresMode)
 
 int C2_HOOK_FASTCALL SwitchToLoresMode(void) {
 

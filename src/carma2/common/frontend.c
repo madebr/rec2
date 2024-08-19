@@ -661,7 +661,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
     if (C2V(gSound_enabled)) {
         DRS3StopAllOutletSoundsExceptCDA();
     }
-    SwitchToRealResolution();
+    SwitchToHiresMode();
     WaitForNoKeys();
     C2V(gFrontend_remove_current_backdrop) = 0;
     MakeTintedInvisible(C2V(gHud_tinted1));
