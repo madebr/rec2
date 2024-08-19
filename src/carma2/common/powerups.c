@@ -623,7 +623,7 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
         /* Sound ID */
         pSmashable_spec->mode_data.shrapnel.connotations.sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
     }
-    ReadShrapnel(pF, pSmashable_spec->mode_data.shrapnel.connotations.shrapnel, &pSmashable_spec->mode_data.shrapnel.connotations.count_shrapnel);
+    ReadShrapnelSpec(pF, pSmashable_spec->mode_data.shrapnel.connotations.shrapnel, &pSmashable_spec->mode_data.shrapnel.connotations.count_shrapnel);
     ReadExplosionAnimation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.explosion_animation);
     ReadSlick(pF, &pSmashable_spec->mode_data.shrapnel.connotations.slick);
     ReadNonCarCuboidActivation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.activations);
