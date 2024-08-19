@@ -125,7 +125,7 @@ void C2_HOOK_FASTCALL HideSkids(void) {
 C2_HOOK_FUNCTION(0x004e9f00, HideSkids)
 
 void (C2_HOOK_FASTCALL * ReadSlick_original)(FILE* pF,tSlick_spec* pSlick_spec);
-void C2_HOOK_FASTCALL ReadSlick(FILE* pF, tSlick_spec* pSlick_spec) {
+void C2_HOOK_FASTCALL ReadSpillData(FILE* pF, tSlick_spec* pSlick_spec) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     ReadSlick_original(pF, pSlick_spec);
@@ -161,7 +161,7 @@ void C2_HOOK_FASTCALL ReadSlick(FILE* pF, tSlick_spec* pSlick_spec) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ee5e0, ReadSlick, ReadSlick_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004ee5e0, ReadSpillData, ReadSlick_original)
 
 void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial) {
 

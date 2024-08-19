@@ -625,7 +625,7 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     }
     ReadShrapnelSpec(pF, pSmashable_spec->mode_data.shrapnel.connotations.shrapnel, &pSmashable_spec->mode_data.shrapnel.connotations.count_shrapnel);
     ReadExplosion(pF, &pSmashable_spec->mode_data.shrapnel.connotations.special_effects.explosion_animation);
-    ReadSlick(pF, &pSmashable_spec->mode_data.shrapnel.connotations.special_effects.slick);
+    ReadSpillData(pF, &pSmashable_spec->mode_data.shrapnel.connotations.special_effects.slick);
     ReadNonCarCuboidActivation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.activations);
     ReadShrapnelSideEffects(pF, &pSmashable_spec->mode_data.shrapnel.connotations.side_effects);
 

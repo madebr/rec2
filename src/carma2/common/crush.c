@@ -267,7 +267,7 @@ void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashabl
         }
         ReadShrapnelSpec(pF, level->shrapnels, &level->count_shrapnels);
         ReadExplosion(pF, &level->animation);
-        ReadSlick(pF, &level->slick);
+        ReadSpillData(pF, &level->slick);
         LoadNoncarActivation(pF, &level->noncar_activations, &level->count_noncar_activations);
         ReadShrapnelSideEffects(pF, &level->side_effects);
         /*Extensions flags */
