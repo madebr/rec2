@@ -603,7 +603,7 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
 C2_HOOK_FUNCTION(0x0046d1c0, FRONTEND_Setup)
 
 void (C2_HOOK_FASTCALL * FRONTEND_RenderAuthorCredits_original)(void);
-void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void) {
+void C2_HOOK_FASTCALL ScrollCredits(void) {
 
     C2_HOOK_VARIABLE_IMPLEMENT(int, gAuthor_credits_line_count, 0x006883c0);
     C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_heights, 0x00686f04);
@@ -634,7 +634,7 @@ void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0046f630, FRONTEND_RenderAuthorCredits, FRONTEND_RenderAuthorCredits_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0046f630, ScrollCredits, FRONTEND_RenderAuthorCredits_original)
 
 void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
 
@@ -795,7 +795,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
                 PrintAPO(195, 348, 0, 2);
             }
             if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_CREDITS)) {
-                FRONTEND_RenderAuthorCredits();
+                ScrollCredits();
             }
             FRONTEND_RenderItems(C2V(gCurrent_frontend_spec));
             if (C2V(gCurrent_frontend_spec)->unknownLastInt == 0) {
