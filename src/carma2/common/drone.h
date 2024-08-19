@@ -39,6 +39,10 @@ void C2_HOOK_FASTCALL InitDroneCollisionObject(tDrone_spec *pDrone_spec);
 
 void C2_HOOK_FASTCALL CrappyLittleVector3DPrintf(const char* pMessage, br_vector3* pPosition);
 
+int C2_HOOK_FASTCALL CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing(tDrone_spec* pDrone);
+
+void C2_HOOK_FASTCALL StartProcessingThisDrone(tDrone_spec* pDrone);
+
 void C2_HOOK_FASTCALL InitDrones(void);
 
 void C2_HOOK_FASTCALL FreeThingForm(void* pData);
