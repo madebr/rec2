@@ -15,6 +15,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gRender_poly_text);
 C2_HOOK_VARIABLE_DECLARE(int, gInterface_polyfont_texture_pages);
 C2_HOOK_VARIABLE_DECLARE(int, gInterface_fonts_loaded);
 
+void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pIndex);
+
 int C2_HOOK_FASTCALL PolyFontHeight(int pIndex);
 
 int C2_HOOK_FASTCALL CharacterWidth(int pIndex, tU8 pCharacter);
@@ -41,7 +43,7 @@ void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, flo
 
 void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void);
 
-void C2_HOOK_FASTCALL CheckLoadFrontendPolyFonts(int pFont);
+void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont);
 
 void C2_HOOK_FASTCALL ClearInterfacePolyFonts(void);
 
