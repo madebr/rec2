@@ -158,6 +158,8 @@ void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF);
 
 void C2_HOOK_FASTCALL FUN_004f0430(void);
 
+void C2_HOOK_FASTCALL ReadSmokeFireChance(FILE* pF, tSmokeFireChance* pSmokeFireChance);
+
 void C2_HOOK_FASTCALL ReadSmashReplace(tSmashReplace* pReplace, FILE* pF);
 
 void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath);
