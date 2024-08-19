@@ -5287,7 +5287,7 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 }
 C2_HOOK_FUNCTION(0x00487eb0, InitInterfaceLoadState)
 
-void C2_HOOK_FASTCALL InitOpponentsAndDrones(tRace_info* pRace_info) {
+void C2_HOOK_FASTCALL InitialiseAIWorldForRace(tRace_info* pRace_info) {
     br_bounds3 track_bounds;
 
     C2V(gFirst_drone_processing) = 1;
@@ -5309,7 +5309,7 @@ void C2_HOOK_FASTCALL InitOpponentsAndDrones(tRace_info* pRace_info) {
     InitDrones();
     PrintMemoryDump(0, "AFTER InitDrones()");
 }
-C2_HOOK_FUNCTION(0x004010b0, InitOpponentsAndDrones)
+C2_HOOK_FUNCTION(0x004010b0, InitialiseAIWorldForRace)
 
 void C2_HOOK_FASTCALL DisposeOpponentsAndDrones(void) {
     DisposeOpponents();

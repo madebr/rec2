@@ -245,7 +245,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
         dr_dprintf("Returning from DoGame()");
         return;
     }
-    InitOpponentsAndDrones(&C2V(gCurrent_race));
+    InitialiseAIWorldForRace(&C2V(gCurrent_race));
     InitialiseCarsEtc(&C2V(gCurrent_race));
     InitSoundSources();
     InitLastDamageArrayEtc();
