@@ -70,7 +70,7 @@ int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL FRONTEND_SetTransitionModels(tFrontend_spec* pCurrent, tFrontend_spec* pNext);
 
-int C2_HOOK_FASTCALL FRONTEND_Tick(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_DefaultItem_Action(tFrontend_spec* pFrontend);
 
