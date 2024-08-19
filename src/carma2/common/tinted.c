@@ -469,7 +469,7 @@ void C2_HOOK_FASTCALL MakeTintedVisible(int pTintedIndex) {
 }
 C2_HOOK_FUNCTION(0x004d8220, MakeTintedVisible)
 
-void C2_HOOK_FASTCALL MakeTintedInvisible(int pTintedIndex) {
+void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
 
 #ifdef REC2_FIX_BUGS
     if (pTintedIndex < 0) {
@@ -484,7 +484,7 @@ void C2_HOOK_FASTCALL MakeTintedInvisible(int pTintedIndex) {
         C2V(gTintedPolys)[pTintedIndex].visible = 0;
     }
 }
-C2_HOOK_FUNCTION(0x004d8250, MakeTintedInvisible)
+C2_HOOK_FUNCTION(0x004d8250, TurnTintedPolyOff)
 
 void C2_HOOK_FASTCALL RenderTintedActors(void) {
     BrZbsSceneRender(C2V(gTintedPolyCamera), C2V(gTintedPolyCamera), C2V(gBack_screen), C2V(gDepth_buffer));
