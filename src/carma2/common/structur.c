@@ -44,14 +44,14 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_wrong_checkpoint, 0x00660cdc, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gHud_tinted1_visible, 0x006aaa38);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gHud_tinted2_visible, 0x006aaa3c);
 
-void C2_HOOK_FASTCALL StashCreditsAndAPO(void) {
+void C2_HOOK_FASTCALL RecordAPOAndCredits(void) {
 
     C2V(gMoney_pre_race) = C2V(gProgram_state).credits;
     C2V(gAPO_pre_race)[0] = C2V(gProgram_state).current_car.power_up_levels[0];
     C2V(gAPO_pre_race)[1] = C2V(gProgram_state).current_car.power_up_levels[1];
     C2V(gAPO_pre_race)[2] = C2V(gProgram_state).current_car.power_up_levels[2];
 }
-C2_HOOK_FUNCTION(0x004e3410, StashCreditsAndAPO)
+C2_HOOK_FUNCTION(0x004e3410, RecordAPOAndCredits)
 
 int (C2_HOOK_FASTCALL * DoPostRace_original)(tRace_result pRace_result);
 int C2_HOOK_FASTCALL DoPostRace(tRace_result pRace_result) {
@@ -251,7 +251,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
     InitLastDamageArrayEtc();
     FogificateMaterials(kRendererShadingType_Default);
     EnableAutoFogification();
-    StashCreditsAndAPO();
+    RecordAPOAndCredits();
     race_result = DoRace();
     DisableAutoFogification();
     DisposeRace();
