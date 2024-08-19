@@ -1776,7 +1776,7 @@ tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
 }
 C2_HOOK_FUNCTION(0x004ff110, GetDefaultSpecialVolumeForWater)
 
-void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF) {
+void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF) {
 
     /* //////////// GLOBAL LIGHTING DATA /////////// */
 
@@ -1789,7 +1789,7 @@ void C2_HOOK_FASTCALL LoadGlobalLighting(FILE* pF) {
     /* Ambient/Diffuse light to be used when plaything ambient says anything else */
     GetPairOfScalars(pF, &C2V(gLighting_data).ambient_else, &C2V(gLighting_data).diffuse_else);
 }
-C2_HOOK_FUNCTION(0x00486dc0, LoadGlobalLighting)
+C2_HOOK_FUNCTION(0x00486dc0, ReadGlobalLightingInfo)
 
 void C2_HOOK_FASTCALL FUN_004f0430(void) {
     int i;
@@ -2248,7 +2248,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     }
 
     if (C2V(gTrack_version) > 0) {
-        LoadGlobalLighting(f);
+        ReadGlobalLightingInfo(f);
     }
 
     /* Position of centre of start of grid */
