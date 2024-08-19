@@ -324,11 +324,11 @@ void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004451a0, FogAccordingToGPSCDE, FogAccordingToGPSCDE_original)
 
-void C2_HOOK_FASTCALL ResetDepthEffect(void) {
+void C2_HOOK_FASTCALL ChangeDepthEffect(void) {
 
     C2V(gProgram_state).current_depth_effect.type = C2V(gProgram_state).default_depth_effect.type;
     C2V(gProgram_state).current_depth_effect.sky_texture = C2V(gProgram_state).default_depth_effect.sky_texture;
     C2V(gProgram_state).current_depth_effect.start = C2V(gProgram_state).default_depth_effect.start;
     C2V(gProgram_state).current_depth_effect.end = C2V(gProgram_state).default_depth_effect.end;
 }
-C2_HOOK_FUNCTION(0x00447220, ResetDepthEffect)
+C2_HOOK_FUNCTION(0x00447220, ChangeDepthEffect)
