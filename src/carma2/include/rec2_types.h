@@ -2273,6 +2273,14 @@ typedef struct {
 } tSide_effects;
 
 typedef struct {
+    tU8 count;
+    undefined field_0x01;
+    tSmash_run_time_variable_change runtime_changes[5];
+    undefined field_0x16;
+    undefined field_0x17;
+} tVariable_changes;
+
+typedef struct {
     int count_sounds;
     int sounds[3];
     int count_shrapnel;
@@ -2281,11 +2289,7 @@ typedef struct {
     tSide_effects side_effects;
     tAward_info award;
     undefined field_0x28c[4];
-    tU8 count_runtime_variable_changes;
-    undefined field27_0x291;
-    tSmash_run_time_variable_change runtime_variable_changes[5];
-    undefined field29_0x2a6;
-    undefined field30_0x2a7;
+    tVariable_changes variable_changes;
 } tConnotations;
 
 typedef struct {

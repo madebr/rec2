@@ -1891,8 +1891,21 @@ void C2_HOOK_FASTCALL ReadSideEffects(FILE* pF, tSide_effects* pSide_effects) {
     pSide_effects->room_turn_on_code = GetAnInt(pF);
 }
 
-void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
+void C2_HOOK_FASTCALL ReadVariableChanges(FILE* pF, tVariable_changes* pVariable_changes) {
     int i;
+
+    /* run-time variable changes */
+    pVariable_changes->count = GetAnInt(pF);
+    for (i = 0; i < pVariable_changes->count; i++) {
+        int v1, v2;
+
+        GetPairOfInts(pF, &v1, &v2);
+        pVariable_changes->runtime_changes[i].field_0x0 = v2;
+        pVariable_changes->runtime_changes[i].field_0x2 = v1;
+    }
+}
+
+void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
 
     ReadSmashSounds(pF, pConnotations, pStorage);
 
@@ -1904,15 +1917,7 @@ void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, t
     ReadSpecialEffectsSpec(pF, &pConnotations->special_effects);
     ReadSideEffects(pF, &pConnotations->side_effects);
     ReadAward(pF, &pConnotations->award);
-    /* run-time variable changes */
-    pConnotations->count_runtime_variable_changes = GetAnInt(pF);
-    for (i = 0; i < pConnotations->count_runtime_variable_changes; i++) {
-        int v1, v2;
-
-        GetPairOfInts(pF, &v1, &v2);
-        pConnotations->runtime_variable_changes[i].field_0x0 = v2;
-        pConnotations->runtime_variable_changes[i].field_0x2 = v1;
-    }
+    ReadVariableChanges(pF, &pConnotations->variable_changes);
 }
 
 void (C2_HOOK_FASTCALL * LoadSmashableTrackEnvironment_original)(FILE* pF, const char* pPath);
