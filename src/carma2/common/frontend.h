@@ -44,7 +44,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 
 void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pFrontendType);
 
-void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void);
+void C2_HOOK_FASTCALL ScrollCredits(void);
 
 void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
 
