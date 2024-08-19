@@ -37,7 +37,7 @@ C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
 #else
     SaveOptions();
     if (C2V(gSave_game_out_of_sync)) {
-        WriteSaveGame();
+        DoSaveGame();
     }
     ActionReplayFinishRecording();
     DisableRecursiveCollisions();

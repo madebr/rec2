@@ -262,7 +262,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
             C2V(gSave_game_out_of_sync) = 1;
             DoEndRaceAnimation();
             DoEndRaceSummary(eRace_completed, options_result);
-            WriteSaveGame();
+            DoSaveGame();
         }
     } else {
         C2V(gProgram_state).current_race_index = C2V(gPending_race);
