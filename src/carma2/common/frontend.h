@@ -56,7 +56,7 @@ void C2_HOOK_FASTCALL PrepareAPO(int pActorIdx);
 
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontend);
 
-void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index);
+void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index);
 
 void C2_HOOK_FASTCALL UpdateThrobFactor(void);
 
