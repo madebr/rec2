@@ -330,7 +330,7 @@ void C2_HOOK_FASTCALL DRLoadLights(const char* p_path);
 
 void C2_HOOK_FASTCALL InitializePalettes(void);
 
-void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount);
+void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
 br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path);
 

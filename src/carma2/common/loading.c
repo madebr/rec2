@@ -2793,7 +2793,7 @@ void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
 
     PossibleService();
     number_of_models = BrModelLoadMany(pPath_name, model_array, REC2_ASIZE(model_array));
-    DisableVertexColours(model_array, number_of_models);
+    WhitenVertexRGB(model_array, number_of_models);
     for (i = 0; i < number_of_models; i++) {
         model_array[i]->flags = BR_MODF_UPDATEABLE;
     }
@@ -2901,7 +2901,7 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5090, InitializePalettes, InitializePalettes_original)
 
 void (C2_HOOK_FASTCALL * DisableVertexColours_original)(br_model** pModels, int pCount);
-void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {
+void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     DisableVertexColours_original(pModels, pCount);
@@ -2927,7 +2927,7 @@ void C2_HOOK_FASTCALL DisableVertexColours(br_model** pModels, int pCount) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00518690, DisableVertexColours, DisableVertexColours_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00518690, WhitenVertexRGB, DisableVertexColours_original)
 
 br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path) {
     tPath_name the_path;
@@ -4957,7 +4957,7 @@ int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const char* pPa
 
     new_ones = 0;
     count = BrModelLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
-    DisableVertexColours(temp_array, count);
+    WhitenVertexRGB(temp_array, count);
     if (count == 0) {
         FatalError(kFatalError_CannotLoadModelFileOrItIsEmpty_S, pPath);
     }
