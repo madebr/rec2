@@ -1238,7 +1238,7 @@ int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4b30, DRfsetpos, DRfsetpos_original)
 
 void (C2_HOOK_FASTCALL * DRrewind_original)(FILE* pF);
-void C2_HOOK_FASTCALL DRrewind(FILE* pF) {
+void C2_HOOK_FASTCALL PFrewind(FILE* pF) {
 
 #if 0 //defined(C2_HOOKS_ENABLED)
     return DRrewind_original(pF);
@@ -1254,7 +1254,7 @@ void C2_HOOK_FASTCALL DRrewind(FILE* pF) {
     c2_rewind(pF);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b4be0, DRrewind, DRrewind_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4be0, PFrewind, DRrewind_original)
 
 void C2_HOOK_FASTCALL InitPackFiles(void) {
     size_t i;
