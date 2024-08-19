@@ -603,11 +603,11 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
             UpdateTinted(C2V(gCursor_tinted_right));
             UpdateTinted(C2V(gCursor_tinted_center));
             RenderTintedActors();
-            MakeTintedInvisible(C2V(gCursor_tinted_top));
-            MakeTintedInvisible(C2V(gCursor_tinted_left));
-            MakeTintedInvisible(C2V(gCursor_tinted_bottom));
-            MakeTintedInvisible(C2V(gCursor_tinted_right));
-            MakeTintedInvisible(C2V(gCursor_tinted_center));
+            TurnTintedPolyOff(C2V(gCursor_tinted_top));
+            TurnTintedPolyOff(C2V(gCursor_tinted_left));
+            TurnTintedPolyOff(C2V(gCursor_tinted_bottom));
+            TurnTintedPolyOff(C2V(gCursor_tinted_right));
+            TurnTintedPolyOff(C2V(gCursor_tinted_center));
         }
     }
     C2V(last_call_time) = time_now;
