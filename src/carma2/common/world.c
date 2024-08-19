@@ -1801,6 +1801,16 @@ void C2_HOOK_FASTCALL FUN_004f0430(void) {
     }
 }
 
+void C2_HOOK_FASTCALL ReadSmokeFireChance(FILE* pF, tSmokeFireChance* pSmokeFireChance) {
+
+    /* %chance fire */
+    pSmokeFireChance->chance_fire = GetAnInt(pF);
+    if (pSmokeFireChance->chance_fire != 0) {
+        pSmokeFireChance->model_1_int = GetAnInt(pF);
+        GetPairOfInts(pF, &pSmokeFireChance->model_2_int, &pSmokeFireChance->model_3_int);
+    }
+}
+
 void C2_HOOK_FASTCALL ReadSmashReplace(tSmashReplace* pReplace, FILE* pF) {
     char s[256];
 
@@ -1810,12 +1820,7 @@ void C2_HOOK_FASTCALL ReadSmashReplace(tSmashReplace* pReplace, FILE* pF) {
     if (pReplace->model == NULL) {
         FatalError(kFatalError_CannotFindSmashActorModel_S, s);
     }
-    /* %chance fire */
-    pReplace->chance_fire = GetAnInt(pF);
-    if (pReplace->chance_fire != 0) {
-        pReplace->model_1_int = GetAnInt(pF);
-        GetPairOfInts(pF, &pReplace->model_2_int, &pReplace->model_3_int);
-    }
+    ReadSmokeFireChance(pF, &pReplace->smoke_fire_chance);
 }
 
 void (C2_HOOK_FASTCALL * LoadSmashableTrackEnvironment_original)(FILE* pF, const char* pPath);
