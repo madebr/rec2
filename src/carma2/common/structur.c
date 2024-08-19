@@ -249,7 +249,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
     InitialiseCarsEtc(&C2V(gCurrent_race));
     InitSoundSources();
     InitLastDamageArrayEtc();
-    AdaptFoggedMaterialsForRenderer(kRendererShadingType_Default);
+    FogificateMaterials(kRendererShadingType_Default);
     EnableMaterialAdapt();
     StashCreditsAndAPO();
     race_result = DoRace();
