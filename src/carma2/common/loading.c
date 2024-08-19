@@ -1198,7 +1198,7 @@ int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4b70, PFfseek, DRfseek_original)
 
 int (C2_HOOK_FASTCALL * DRftell_original)(FILE* pF);
-int C2_HOOK_FASTCALL DRftell(FILE* pF) {
+int C2_HOOK_FASTCALL PFftell(FILE* pF) {
 
 #if 0 //defined(C2_HOOKS_ENABLED)
     return DRftell_original(pF);
@@ -1212,7 +1212,7 @@ int C2_HOOK_FASTCALL DRftell(FILE* pF) {
     return c2_ftell(pF);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b4b00, DRftell, DRftell_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4b00, PFftell, DRftell_original)
 
 int (C2_HOOK_FASTCALL * DRfsetpos_original)(FILE* pF, c2_fpos_t* pos);
 int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos) {
