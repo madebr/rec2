@@ -1435,7 +1435,7 @@ void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
 }
 C2_HOOK_FUNCTION(0x004b4e20, ClosePackFileAndSetTiffLoading)
 
-void C2_HOOK_FASTCALL ApplyPreviousTiffConversion(void) {
+void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void) {
     int count;
 
     count = C2V(gDisableTiffConversionStackPos);
@@ -1444,7 +1444,7 @@ void C2_HOOK_FASTCALL ApplyPreviousTiffConversion(void) {
         C2V(gDisableTiffConversion) = C2V(gDisableTiffConversionStack)[count - 1];
     }
 }
-C2_HOOK_FUNCTION(0x004b4e60, ApplyPreviousTiffConversion)
+C2_HOOK_FUNCTION(0x004b4e60, PackFileRevertTiffLoading)
 
 void C2_HOOK_FASTCALL ApplyTopTiffConversion(void) {
 
@@ -3751,7 +3751,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     C2_HOOK_ASSERT(c2_strcmp(s, "START OF DRIVABLE STUFF") == 0);
     if (pDriver == eDriver_local_human) {
         if (twt >= 0) {
-            ApplyPreviousTiffConversion();
+            PackFileRevertTiffLoading();
         }
         for (i = 0; i < REC2_ASIZE(pCar_spec->cockpit_images); i++) {
             /* [0] Cockpit forward image file names
