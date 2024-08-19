@@ -230,7 +230,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
         return;
     }
     if (C2V(gNet_mode) == eNet_mode_none) {
-        SortOpponents();
+        DoGridPosition();
         SetInitialPositions(&C2V(gCurrent_race));
     } else {
         FRONTEND_Main(kFrontend_menu_netsync);

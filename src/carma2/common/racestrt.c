@@ -15,6 +15,11 @@ int C2_HOOK_CDECL SortGridFunction(const void* pFirst_one, const void* pSecond_o
 }
 C2_HOOK_FUNCTION(0x004e2b50, SortGridFunction)
 
+void C2_HOOK_FASTCALL DoGridPosition(void) {
+
+    SortOpponents();
+}
+
 int C2_HOOK_FASTCALL SortOpponents(void) {
     int i;
 
