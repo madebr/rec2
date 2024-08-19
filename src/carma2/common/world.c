@@ -1615,7 +1615,7 @@ int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPa
 
     new_ones = 0;
     total = BrModelLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
-    DisableVertexColours(temp_array, total);
+    WhitenVertexRGB(temp_array, total);
     if (total == 0) {
         FatalError(kFatalError_CannotLoadModelFileOrItIsEmpty_S, pPath);
     }
