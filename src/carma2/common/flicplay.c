@@ -1158,7 +1158,7 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
         GetALineAndDontArgue(f, s);
         C2V(gTranslation_count)++;
     }
-    DRrewind(f);
+    PFrewind(f);
     C2V(gTranslations) = BrMemAllocate(C2V(gTranslation_count) * sizeof(tTranslation_record), kMem_misc);
     for (i = 0; i < C2V(gTranslation_count); i++) {
         GetALineAndDontArgue(f, s);
