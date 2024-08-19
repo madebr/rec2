@@ -1880,7 +1880,7 @@ void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, t
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.count_shrapnel, 0x14);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.shrapnel, 0x18);
 
-    ReadShrapnel(pF, pConnotations->shrapnel, &pConnotations->count_shrapnel);
+    ReadShrapnelSpec(pF, pConnotations->shrapnel, &pConnotations->count_shrapnel);
     ReadExplosionAnimation(pF, &pConnotations->explosion_animation);
     ReadSlick(pF, &pConnotations->slick);
     ReadNonCarCuboidActivation(pF, &pConnotations->activations);
