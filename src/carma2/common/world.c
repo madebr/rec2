@@ -1871,6 +1871,12 @@ void C2_HOOK_FASTCALL ReadSmashSounds(FILE* pF, tConnotations* pConnotations, tB
     }
 }
 
+void C2_HOOK_FASTCALL ReadSpecialEffectsSpec(FILE* pF, tSpecial_effects_spec* pSpecial_effects) {
+
+    ReadExplosionAnimation(pF, &pSpecial_effects->explosion_animation);
+    ReadSlick(pF, &pSpecial_effects->slick);
+}
+
 void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
     int i;
 
@@ -1881,8 +1887,7 @@ void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, t
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.shrapnel, 0x18);
 
     ReadShrapnelSpec(pF, pConnotations->shrapnel, &pConnotations->count_shrapnel);
-    ReadExplosionAnimation(pF, &pConnotations->explosion_animation);
-    ReadSlick(pF, &pConnotations->slick);
+    ReadSpecialEffectsSpec(pF, &pConnotations->special_effects);
     ReadNonCarCuboidActivation(pF, &pConnotations->activations);
     ReadShrapnelSideEffects(pF, &pConnotations->side_effects);
 

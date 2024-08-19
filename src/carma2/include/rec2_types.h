@@ -2260,12 +2260,16 @@ typedef union {
 } tSmashable_item_spec_trigger;
 
 typedef struct {
+    tExplosion_animation explosion_animation;
+    tSlick_spec slick;
+} tSpecial_effects_spec;
+
+typedef struct {
     int count_sounds;
     int sounds[3];
     int count_shrapnel;
     tShrapnel_spec shrapnel[6];
-    tExplosion_animation explosion_animation;
-    tSlick_spec slick;
+    tSpecial_effects_spec special_effects;
     tNon_car_cuboid_activations activations;
     tShrapnel_side_effects side_effects;
     int extension_arg;
