@@ -1803,7 +1803,7 @@ void C2_HOOK_FASTCALL FUN_004f0430(void) {
 }
 
 void (C2_HOOK_FASTCALL * LoadSmashableTrackEnvironment_original)(FILE* pF, const char* pPath);
-void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath) {
+void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     LoadSmashableTrackEnvironment_original(pF, pPath);
@@ -1984,7 +1984,7 @@ void C2_HOOK_FASTCALL LoadSmashableTrackEnvironment(FILE* pF, const char* pPath)
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f0450, LoadSmashableTrackEnvironment, LoadSmashableTrackEnvironment_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004f0450, ReadSmashableEnvironment, LoadSmashableTrackEnvironment_original)
 
 int (C2_HOOK_FASTCALL * MaterialIsSmashableTrigger_original)(br_material *pMaterial);
 int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial) {
@@ -2418,7 +2418,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PossibleService();
 
     /* Smashable environment specs */
-    LoadSmashableTrackEnvironment(f, C2V(gRace_path));
+    ReadSmashableEnvironment(f, C2V(gRace_path));
     PrintMemoryDump(0, "AFTER LOADING SMASHABLE ENVIRONMENT");
 
     /* Ped specs */
