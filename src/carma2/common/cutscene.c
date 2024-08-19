@@ -418,6 +418,8 @@ void C2_HOOK_FASTCALL DoGoToRaceAnimation(void) {
 C2_HOOK_FUNCTION(0x0043f360, DoGoToRaceAnimation)
 
 void C2_HOOK_FASTCALL DoEndRaceAnimation(void) {
+
+    FadePaletteDown();
 }
 C2_HOOK_FUNCTION(0x0043f370, DoEndRaceAnimation)
 
