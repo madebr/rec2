@@ -139,6 +139,33 @@ void C2_HOOK_FASTCALL MakeDroneActive(tDrone_spec* pDrone_spec) {
     CrappyLittleVector3DPrintf("    Pos", &pDrone_spec->actor->t.t.translate.t);
 }
 
+int C2_HOOK_FASTCALL CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing(tDrone_spec* pDrone) {
+
+    if (C2V(gTime_stamp_for_this_munging) > pDrone->last_collide_check + 1000) {
+        pDrone->last_collide_check = C2V(gTime_stamp_for_this_munging);
+        InitDroneCollisionObject(pDrone);
+
+        return !DroneHasCollided(pDrone);
+    } else {
+        return 0;
+    }
+}
+
+void C2_HOOK_FASTCALL StartProcessingThisDrone(tDrone_spec* pDrone) {
+    tDrone_form* form = pDrone->form;
+
+    if (!C2V(gShow_drone_paths) && pDrone->field_0x44 == 0 && ((form->flags & 0x4) != 0 || C2V(gCount_active_drones) < 12))  {
+
+        if (CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing(pDrone) && MarkCollisionInfoAsProcessed(&pDrone->collision_info) == 0) {
+            SetCollisionInfoParam(&pDrone->collision_info, 0, 0, 1.875);
+            SetCollisionInfoParam(&pDrone->collision_info, 3, 1);
+            SetCollisionInfoParam(&pDrone->collision_info, 7, 1);
+            SetCollisionInfoParam(&pDrone->collision_info, 6, 1);
+            MakeDroneActive(pDrone);
+        }
+    }
+}
+
 void C2_HOOK_FASTCALL InitDrones(void) {
     int i;
 
@@ -156,23 +183,8 @@ void C2_HOOK_FASTCALL InitDrones(void) {
         tDrone_form* form = drone->form;
 
         NewDroneState(drone, 1);
-        if (form->type == kDroneType_plane && !C2V(gShow_drone_paths) && drone->field_0x44 == 0 && ((form->flags & 0x4) != 0 || C2V(gCount_active_drones) < 12))  {
-            int collision_free;
-
-            if (C2V(gTime_stamp_for_this_munging) > drone->last_collide_check + 1000) {
-                drone->last_collide_check = C2V(gTime_stamp_for_this_munging);
-                InitDroneCollisionObject(drone);
-
-                collision_free = !DroneHasCollided(drone);
-            } else {
-                collision_free = 0;
-            }
-            if (collision_free && MarkCollisionInfoAsProcessed(&drone->collision_info) == 0) {
-                SetCollisionInfoParam(&drone->collision_info, 0, 0, 1.875);
-                SetCollisionInfoParam(&drone->collision_info, 3, 1);
-                SetCollisionInfoParam(&drone->collision_info, 7, 1);
-                MakeDroneActive(drone);
-            }
+        if (form->type == kDroneType_plane) {
+            StartProcessingThisDrone(drone);
         }
     }
 }
