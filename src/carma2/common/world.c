@@ -2581,7 +2581,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     C2V(gTrack_depth_colour_red) = C2V(gProgram_state).default_depth_effect.colour.red;
     C2V(gTrack_depth_colour_green) = C2V(gProgram_state).default_depth_effect.colour.green;
     C2V(gTrack_depth_colour_blue) = C2V(gProgram_state).default_depth_effect.colour.blue;
-    ResetDepthEffect();
+    ChangeDepthEffect();
 
     if (killed_sky && C2V(gProgram_state).default_depth_effect.type != eDepth_effect_fog) {
         C2V(gProgram_state).default_depth_effect.type = eDepth_effect_fog;
