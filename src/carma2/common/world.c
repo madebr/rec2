@@ -1877,6 +1877,20 @@ void C2_HOOK_FASTCALL ReadSpecialEffectsSpec(FILE* pF, tSpecial_effects_spec* pS
     ReadSpillData(pF, &pSpecial_effects->slick);
 }
 
+void C2_HOOK_FASTCALL ReadSideEffects(FILE* pF, tSide_effects* pSide_effects) {
+
+    ReadNonCarCuboidActivation(pF, &pSide_effects->activations);
+    ReadShrapnelSideEffects(pF, &pSide_effects->side_effects);
+
+    /* Extensions flags */
+    pSide_effects->extension_flags = GetAnInt(pF);
+    if (pSide_effects->extension_flags & 0x1) {
+        pSide_effects->extension_arg = GetAnInt(pF);
+    }
+    /* Room turn on code */
+    pSide_effects->room_turn_on_code = GetAnInt(pF);
+}
+
 void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
     int i;
 
@@ -1888,16 +1902,7 @@ void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, t
 
     ReadShrapnelSpec(pF, pConnotations->shrapnel, &pConnotations->count_shrapnel);
     ReadSpecialEffectsSpec(pF, &pConnotations->special_effects);
-    ReadNonCarCuboidActivation(pF, &pConnotations->activations);
-    ReadShrapnelSideEffects(pF, &pConnotations->side_effects);
-
-    /* Extensions flags */
-    pConnotations->extension_flags = GetAnInt(pF);
-    if (pConnotations->extension_flags & 0x1) {
-        pConnotations->extension_arg = GetAnInt(pF);
-    }
-    /* Room turn on code */
-    pConnotations->room_turn_on_code = GetAnInt(pF);
+    ReadSideEffects(pF, &pConnotations->side_effects);
     LoadAward(pF, &pConnotations->award);
     /* run-time variable changes */
     pConnotations->count_runtime_variable_changes = GetAnInt(pF);

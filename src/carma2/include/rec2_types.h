@@ -2265,16 +2265,20 @@ typedef struct {
 } tSpecial_effects_spec;
 
 typedef struct {
-    int count_sounds;
-    int sounds[3];
-    int count_shrapnel;
-    tShrapnel_spec shrapnel[6];
-    tSpecial_effects_spec special_effects;
     tNon_car_cuboid_activations activations;
     tShrapnel_side_effects side_effects;
     int extension_arg;
     int extension_flags;
     int room_turn_on_code;
+} tSide_effects;
+
+typedef struct {
+    int count_sounds;
+    int sounds[3];
+    int count_shrapnel;
+    tShrapnel_spec shrapnel[6];
+    tSpecial_effects_spec special_effects;
+    tSide_effects side_effects;
     tAward_info award;
     undefined field_0x28c[4];
     tU8 count_runtime_variable_changes;
