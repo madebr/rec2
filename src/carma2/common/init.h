@@ -41,6 +41,8 @@ void C2_HOOK_FASTCALL InstallFindFailedHooks(void);
 
 void C2_HOOK_FASTCALL AllocateStandardLamp(void);
 
+void C2_HOOK_FASTCALL InitGameAccordingToSkillLevel(void);
+
 void C2_HOOK_FASTCALL InitGame(int pStart_race);
 
 int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth);

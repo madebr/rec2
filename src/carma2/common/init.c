@@ -1089,6 +1089,18 @@ void C2_HOOK_FASTCALL AllocateStandardLamp(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047e500, AllocateStandardLamp, AllocateStandardLamp_original)
 
+void C2_HOOK_FASTCALL InitGameAccordingToSkillLevel(void) {
+    int i;
+
+    C2V(gProgram_state).rank = C2V(gInitial_rank);
+    C2V(gProgram_state).credits_per_rank = C2V(gCredits_per_rank)[C2V(gProgram_state).skill_level];
+    C2V(gProgram_state).credits = C2V(gStarting_money)[C2V(gProgram_state).skill_level];
+    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO)); i++) {
+        C2V(gCurrent_APO_levels)[i] = C2V(gNet_mode) == eNet_mode_none ? C2V(gInitial_APO)[i].initial[C2V(gProgram_state).skill_level] : C2V(gInitial_APO)[i].initial_network[C2V(gCurrent_net_game)->type];
+        C2V(gCurrent_APO_potential_levels)[i] = C2V(gNet_mode) == eNet_mode_none ? C2V(gInitial_APO_potential)[i].initial[C2V(gProgram_state).skill_level] : C2V(gInitial_APO_potential)[i].initial_network[C2V(gCurrent_net_game)->type];
+    }
+}
+
 void (C2_HOOK_FASTCALL * InitGame_original)(int pStart_race);
 void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 
@@ -1123,18 +1135,13 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
     for (i = 0; i < C2V(gNumber_of_racers); i++) {
         C2V(gOpponents)[i].dead = 0;
     }
-    C2V(gProgram_state).rank = C2V(gInitial_rank);
     C2V(gProgram_state).number_of_cars = 1;
-    C2V(gProgram_state).credits_per_rank = C2V(gCredits_per_rank)[C2V(gProgram_state).skill_level];
-    C2V(gProgram_state).credits = C2V(gStarting_money)[C2V(gProgram_state).skill_level];
     C2V(gProgram_state).redo_race_index = -1;
     C2V(gProgram_state).cars_available[0] = 0;
     C2V(gProgram_state).current_car_index = 0;
     C2V(gProgram_state).game_completed = 0;
-    for (i = 0; i < REC2_ASIZE(C2V(gInitial_APO)); i++) {
-        C2V(gCurrent_APO_levels)[i] = C2V(gNet_mode) == eNet_mode_none ? C2V(gInitial_APO)[i].initial[C2V(gProgram_state).skill_level] : C2V(gInitial_APO)[i].initial_network[C2V(gCurrent_net_game)->type];
-        C2V(gCurrent_APO_potential_levels)[i] = C2V(gNet_mode) == eNet_mode_none ? C2V(gInitial_APO_potential)[i].initial[C2V(gProgram_state).skill_level] : C2V(gInitial_APO_potential)[i].initial_network[C2V(gCurrent_net_game)->type];
-    }
+
+    InitGameAccordingToSkillLevel();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004816b0, InitGame, InitGame_original)
