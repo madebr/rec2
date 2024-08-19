@@ -50,6 +50,8 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
 
 void C2_HOOK_FASTCALL Generic_LinkInEffect(void);
 
+void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActorIdx, int pAPO);
+
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontend);
 
 void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index);
