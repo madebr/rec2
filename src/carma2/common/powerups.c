@@ -626,16 +626,16 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     ReadShrapnelSpec(pF, pSmashable_spec->mode_data.shrapnel.connotations.shrapnel, &pSmashable_spec->mode_data.shrapnel.connotations.count_shrapnel);
     ReadExplosion(pF, &pSmashable_spec->mode_data.shrapnel.connotations.special_effects.explosion_animation);
     ReadSpillData(pF, &pSmashable_spec->mode_data.shrapnel.connotations.special_effects.slick);
-    ReadNonCarCuboidActivation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.activations);
-    ReadShrapnelSideEffects(pF, &pSmashable_spec->mode_data.shrapnel.connotations.side_effects);
+    ReadNonCarCuboidActivation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.side_effects.activations);
+    ReadShrapnelSideEffects(pF, &pSmashable_spec->mode_data.shrapnel.connotations.side_effects.side_effects);
 
     /* Extension flags */
-    pSmashable_spec->mode_data.shrapnel.connotations.extension_flags = GetAnInt(pF);
-    if (pSmashable_spec->mode_data.shrapnel.connotations.extension_flags & 0x1) {
-        pSmashable_spec->mode_data.shrapnel.connotations.extension_arg = GetAnInt(pF);
+    pSmashable_spec->mode_data.shrapnel.connotations.side_effects.extension_flags = GetAnInt(pF);
+    if (pSmashable_spec->mode_data.shrapnel.connotations.side_effects.extension_flags & 0x1) {
+        pSmashable_spec->mode_data.shrapnel.connotations.side_effects.extension_arg = GetAnInt(pF);
     }
     /* Room turn on */
-    pSmashable_spec->mode_data.shrapnel.connotations.room_turn_on_code = GetAnInt(pF);
+    pSmashable_spec->mode_data.shrapnel.connotations.side_effects.room_turn_on_code = GetAnInt(pF);
     /* Award code */
     LoadAward(pF, &pSmashable_spec->mode_data.shrapnel.connotations.award);
     /* Count variable changes */
