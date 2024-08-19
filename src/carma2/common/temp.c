@@ -70,7 +70,7 @@ void C2_HOOK_FASTCALL AdaptCachedMaterials(tRendererShadingType pShading_type) {
 }
 C2_HOOK_FUNCTION(0x004ea7c0, AdaptCachedMaterials)
 
-void C2_HOOK_FASTCALL AdaptFoggedMaterialsForRenderer(tRendererShadingType pShading_type) {
+void C2_HOOK_FASTCALL FogificateMaterials(tRendererShadingType pShading_type) {
     int i;
     br_material* mat;
 
@@ -84,4 +84,4 @@ void C2_HOOK_FASTCALL AdaptFoggedMaterialsForRenderer(tRendererShadingType pShad
     }
     C2V(gMaterials_to_adapt_count) = 0;
 }
-C2_HOOK_FUNCTION(0x004ea770, AdaptFoggedMaterialsForRenderer)
+C2_HOOK_FUNCTION(0x004ea770, FogificateMaterials)
