@@ -254,7 +254,7 @@ void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt);
 
 void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void);
 
-void C2_HOOK_FASTCALL ApplyTopTiffConversion(void);
+void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void);
 
 void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 

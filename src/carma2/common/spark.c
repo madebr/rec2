@@ -299,7 +299,7 @@ void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
     InitFlame();
     PossibleService();
     InitSplash(pF);
-    ApplyTopTiffConversion();
+    PackFileRerevertTiffLoading();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fdc10, LoadInKevStuff, LoadInKevStuff_original)
