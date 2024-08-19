@@ -808,7 +808,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
         if (C2V(gCurrent_frontend_spec)->unknownLastInt == 1 && C2V(gCurrent_frontend_spec) != &C2V(gFrontend_START_GAME)) {
             FRONTEND_DestroyMenu(C2V(gCurrent_frontend_spec));
             c2_strcpy(C2V(gFrontend_START_GAME).backdrop_name, C2V(gCurrent_frontend_spec)->backdrop_name);
-            FRONTEND_SetTransitionModels(C2V(gCurrent_frontend_spec), &C2V(gFrontend_START_GAME));
+            Morph_Initialise(C2V(gCurrent_frontend_spec), &C2V(gFrontend_START_GAME));
             C2V(gCurrent_frontend_spec) = &C2V(gFrontend_START_GAME);
             FRONTEND_CreateMenu(&C2V(gFrontend_START_GAME));
         }
@@ -1084,7 +1084,7 @@ int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION(0x0046ccb0, FRONTEND_DestroyMenu)
 
-void C2_HOOK_FASTCALL FRONTEND_SetTransitionModels(tFrontend_spec* pCurrent, tFrontend_spec* pNext) {
+void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec* pNext) {
 
     C2V(gFrontend_A_model_from) = C2V(gFrontend_A_models)[pCurrent->model_A_index].model;
     C2V(gFrontend_A_model_to) = C2V(gFrontend_A_models)[pNext->model_A_index].model;
@@ -1112,7 +1112,7 @@ void C2_HOOK_FASTCALL FRONTEND_SetTransitionModels(tFrontend_spec* pCurrent, tFr
 
     C2V(gFrontend_interpolate_steps_left) = 16;
 }
-C2_HOOK_FUNCTION(0x00470a90, FRONTEND_SetTransitionModels)
+C2_HOOK_FUNCTION(0x00470a90, Morph_Initialise)
 
 int C2_HOOK_FASTCALL Frontend_FindNextVisibleItem(tFrontend_spec* pFrontend, int pIndex) {
     int i;
@@ -1209,7 +1209,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
                 FRONTEND_DestroyMenu(pFrontend);
                 C2V(gCurrent_frontend_spec) = pFrontend->previous;
                 FRONTEND_CreateMenu(C2V(gCurrent_frontend_spec));
-                FRONTEND_SetTransitionModels(pFrontend, C2V(gCurrent_frontend_spec));
+                Morph_Initialise(pFrontend, C2V(gCurrent_frontend_spec));
                 for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
                     C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem = C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop;
                 }
@@ -1241,7 +1241,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
                 if (C2V(gCurrent_frontend_spec) != pFrontend->previous) {
                     C2V(gCurrent_frontend_spec)->previous = pFrontend;
                 }
-                FRONTEND_SetTransitionModels(pFrontend, C2V(gCurrent_frontend_spec));
+                Morph_Initialise(pFrontend, C2V(gCurrent_frontend_spec));
                 if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_QUIT)) {
                     C2V(gFrontend_selected_item_index) = 0;
                 } else {
