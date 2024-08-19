@@ -7,12 +7,17 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gValid_stashed_save_game, 0x00688ae4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSave_game_out_of_sync, 0x0068b8ec);
 C2_HOOK_VARIABLE_IMPLEMENT(tSave_game, gStashed_save_game, 0x00688780);
 
+void C2_HOOK_FASTCALL RestoreSinglePlayerState(void) {
+
+    LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), -1);
+    LoadTheGame(&C2V(gStashed_save_game));
+    C2V(gValid_stashed_save_game) = 0;
+}
+
 void C2_HOOK_FASTCALL MaybeRestoreSavedGame(void) {
 
     if (C2V(gValid_stashed_save_game)) {
-        LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), -1);
-        LoadTheGame(&C2V(gStashed_save_game));
-        C2V(gValid_stashed_save_game) = 0;
+        RestoreSinglePlayerState();
     }
 }
 C2_HOOK_FUNCTION(0x00466e90, MaybeRestoreSavedGame)
