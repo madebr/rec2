@@ -26,14 +26,14 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRender_poly_text, 0x0059ad28, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_fonts_loaded, 0x00686488);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_polyfont_texture_pages, 0x00686494);
 
-int C2_HOOK_FASTCALL GetPolyFontHeight(int pIndex) {
+int C2_HOOK_FASTCALL PolyFontHeight(int pIndex) {
 
     if (!C2V(gPolyFonts)[pIndex].available) {
         LoadInterfacePolyFonts();
     }
     return C2V(gPolyFonts)[pIndex].fontCharacterHeight;
 }
-C2_HOOK_FUNCTION(0x00463730, GetPolyFontHeight)
+C2_HOOK_FUNCTION(0x00463730, PolyFontHeight)
 
 int C2_HOOK_FASTCALL CharacterWidth(int pIndex, tU8 pCharacter) {
 
@@ -125,7 +125,7 @@ void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, in
             while (pText[in_end_put] == '\r' || pText[in_end_put] == ' ') {
                 in_end_put++;
             }
-            y += GetPolyFontHeight(pFont);
+            y += PolyFontHeight(pFont);
             text_x = 0;
             in_start_put = in_end_put;
             s_len = 0;
@@ -215,7 +215,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText
             while (pText[in_end_put] == '\r' || pText[in_end_put] == ' ') {
                 in_end_put++;
             }
-            y += GetPolyFontHeight(pFont);
+            y += PolyFontHeight(pFont);
             text_x = 0;
             in_start_put = in_end_put;
             s_len = 0;

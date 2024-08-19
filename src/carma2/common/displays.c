@@ -586,7 +586,7 @@ void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, 
                 x = next_x;
             }
             /* Change font */
-            pY -= (GetPolyFontHeight(C2V(gDRFont_to_polyfont_mapping)[C2V(gFonts)[-ch].id]) - GetPolyFontHeight(C2V(gDRFont_to_polyfont_mapping)[pFont->id])) / 2;
+            pY -= (PolyFontHeight(C2V(gDRFont_to_polyfont_mapping)[C2V(gFonts)[-ch].id]) - PolyFontHeight(C2V(gDRFont_to_polyfont_mapping)[pFont->id])) / 2;
             pFont = &C2V(gFonts)[-ch];
         } else {
             s_end += 1;

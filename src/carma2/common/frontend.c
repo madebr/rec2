@@ -892,7 +892,7 @@ void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend) {
         }
         if (text != NULL && !item->wrapText) {
             item->width = GetPolyFontTextWidth(item->unlitFont, text);
-            item->height = GetPolyFontHeight(item->unlitFont);
+            item->height = PolyFontHeight(item->unlitFont);
         }
     }
 }
