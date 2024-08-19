@@ -8,7 +8,7 @@
 
 intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* data);
 
-void C2_HOOK_FASTCALL ReadShrapnel(FILE* pF, tShrapnel_spec* pShrapnel_spec, int* pShrapnel_count);
+void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_spec, int* pShrapnel_count);
 
 void C2_HOOK_FASTCALL ReadShrapnelSideEffects(FILE* pF, tShrapnel_side_effects* pShrapnel_side_effects);
 
