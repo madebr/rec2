@@ -613,7 +613,7 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, type_info) != 56);
     C2_HOOK_BUG_ON(sizeof(tShrapnel_spec) != 88);
     C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, connotations.shrapnel) != 44);
-    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, connotations.explosion_animation) != 572);
+    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, connotations.special_effects.explosion_animation) != 572);
     C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 736);
 
     c2_memset(pSmashable_spec, 0, sizeof(tSmashable_item_spec));
@@ -624,8 +624,8 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
         pSmashable_spec->mode_data.shrapnel.connotations.sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
     }
     ReadShrapnelSpec(pF, pSmashable_spec->mode_data.shrapnel.connotations.shrapnel, &pSmashable_spec->mode_data.shrapnel.connotations.count_shrapnel);
-    ReadExplosionAnimation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.explosion_animation);
-    ReadSlick(pF, &pSmashable_spec->mode_data.shrapnel.connotations.slick);
+    ReadExplosionAnimation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.special_effects.explosion_animation);
+    ReadSlick(pF, &pSmashable_spec->mode_data.shrapnel.connotations.special_effects.slick);
     ReadNonCarCuboidActivation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.activations);
     ReadShrapnelSideEffects(pF, &pSmashable_spec->mode_data.shrapnel.connotations.side_effects);
 
