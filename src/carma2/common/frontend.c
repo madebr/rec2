@@ -117,14 +117,14 @@ void C2_HOOK_FASTCALL FreeInterfaceStrings(void) {
 }
 C2_HOOK_FUNCTION(0x004850d0, FreeInterfaceStrings)
 
-const char* C2_HOOK_FASTCALL GetInterfaceString(int pIndex) {
+const char* C2_HOOK_FASTCALL IString_Get(int pIndex) {
 
     if (pIndex > C2V(gCount_interface_strings)) {
         return NULL;
     }
     return C2V(gInterface_strings)[pIndex];
 }
-C2_HOOK_FUNCTION(0x00485110, GetInterfaceString)
+C2_HOOK_FUNCTION(0x00485110, IString_Get)
 
 void C2_HOOK_FASTCALL LoadMenuImages(void) {
     int i;
@@ -886,7 +886,7 @@ void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend) {
         const char* text = NULL;
 
         if (item->stringId <= 0x400) {
-            text = GetInterfaceString(item->stringId);
+            text = IString_Get(item->stringId);
         } else if (item->stringId == 0x404) {
             text = item->text;
         }
@@ -923,7 +923,7 @@ void C2_HOOK_FASTCALL FRONTEND_MainMenu_UpdateRaces(tFrontend_spec* pFrontend) {
     int race_i;
 
     group = 1 + (C2V(gCurrent_race_group) - C2V(gRaceGroups)) % 10;
-    c2_sprintf(group_text, "%s %d", GetInterfaceString(78), group);
+    c2_sprintf(group_text, "%s %d", IString_Get(78), group);
     c2_strcpy(pFrontend->items[2].text, group_text);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_scroller_spec, indexFirstScrollableItem, 0x10);
@@ -1334,7 +1334,7 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
         }
 
         brender_item->actor->render_style = BR_RSTYLE_FACES;
-        text = item->stringId >= 0x400 ? item->text : GetInterfaceString(item->stringId);
+        text = item->stringId >= 0x400 ? item->text : IString_Get(item->stringId);
         if (item->flags & 0x1) {
             if (text != NULL) {
                 RenderBlendedPolyText(item->unlitFont, text,
