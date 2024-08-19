@@ -395,6 +395,12 @@ void C2_HOOK_FASTCALL InitFaceCaches(void) {
     C2V(gPed_face_cache) = BrMemAllocate((C2V(gPed_cache_sizes_2)[3] + 1) * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
 }
 
+void C2_HOOK_FASTCALL InitOtherPedStuff(void) {
+
+    C2V(gSelected_ped) = 0;
+    C2V(gPed_shade) = GenerateShadeTable(8, C2V(gRender_palette), 0xd7, 0xff, 0xe9, .5f, .75f, .9f);
+}
+
 void (C2_HOOK_FASTCALL * InitPeds_original)(void);
 void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -409,8 +415,7 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
     ReadSettingsFile();
     InitFaceCaches();
     InitNapalmNolts();
-    C2V(gSelected_ped) = 0;
-    C2V(gPed_shade) = GenerateShadeTable(8, C2V(gRender_palette), 0xd7, 0xff, 0xe9, .5f, .75f, .9f);
+    InitOtherPedStuff();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cadc0, InitPolyPedSystem, InitPeds_original)

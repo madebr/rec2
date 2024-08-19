@@ -23,6 +23,8 @@ void C2_HOOK_FASTCALL ReadSettingsFile(void);
 
 void C2_HOOK_FASTCALL InitFaceCaches(void);
 
+void C2_HOOK_FASTCALL InitOtherPedStuff(void);
+
 void C2_HOOK_FASTCALL InitPolyPedSystem(void);
 
 void C2_HOOK_FASTCALL InitNapalmNolts(void);
