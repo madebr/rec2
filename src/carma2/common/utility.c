@@ -480,7 +480,7 @@ C2_HOOK_FUNCTION(0x005139a0, SepDirAndFilename)
 tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
     tU32 the_size;
 
-    DRfseek(pF, 0, SEEK_END);
+    PFfseek(pF, 0, SEEK_END);
     the_size = DRftell(pF);
     DRrewind(pF);
     return the_size;
