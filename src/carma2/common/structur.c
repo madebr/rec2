@@ -253,7 +253,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
     EnableMaterialAdapt();
     StashCreditsAndAPO();
     race_result = DoRace();
-    DisableMaterialAdapt();
+    DisableAutoFogification();
     DisposeRace();
     PrintMemoryDump(0, "AFTER DISPOSING RACE");
     if (C2V(gNet_mode) == eNet_mode_none) {
