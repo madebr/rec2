@@ -282,7 +282,7 @@ void C2_HOOK_FASTCALL SoundService(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00455a80, SoundService, SoundService_original)
 
 int (C2_HOOK_FASTCALL * DRStopCarSounds_original)(void);
-int C2_HOOK_FASTCALL DRStopCarSounds(void) {
+int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return DRStopCarSounds_original();
 #else
@@ -310,7 +310,7 @@ int C2_HOOK_FASTCALL DRStopCarSounds(void) {
     return 1;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004559e0, DRStopCarSounds, DRStopCarSounds_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004559e0, DRS3StopAllOutletSoundsExceptCDA, DRStopCarSounds_original)
 
 int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet) {
 
