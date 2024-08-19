@@ -42,7 +42,7 @@ void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio);
 
 void C2_HOOK_FASTCALL SoundService(void);
 
-int C2_HOOK_FASTCALL DRStopCarSounds(void);
+int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void);
 
 int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet);
 

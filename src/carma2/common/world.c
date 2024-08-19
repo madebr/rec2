@@ -2860,7 +2860,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00504bf0, LoadTrack, LoadTrack_original)
 void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space) {
     int i;
 
-    DRStopCarSounds();
+    DRS3StopAllOutletSoundsExceptCDA();
     for (i = 0; i < pStorage_space->pixelmaps_count; i++) {
         if (pStorage_space->pixelmaps[i] != NULL) {
             BrMapRemove(pStorage_space->pixelmaps[i]);
