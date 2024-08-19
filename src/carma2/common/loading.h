@@ -234,7 +234,7 @@ int C2_HOOK_FASTCALL PFftell(FILE* pF);
 
 int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos);
 
-void C2_HOOK_FASTCALL DRrewind(FILE* pF);
+void C2_HOOK_FASTCALL PFrewind(FILE* pF);
 
 void C2_HOOK_FASTCALL InitPackFiles(void);
 
