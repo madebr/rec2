@@ -223,7 +223,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     ClearEntireScreen();
     InitSkids();
     PrintMemoryDump(0, "AFTER INITING SPILLS AND SKIDS");
-    InitPeds();
+    InitPolyPedSystem();
     C2V(gProgram_state).track_spec.the_actor = NULL;
     C2V(gCD_is_in_drive) = TestForOriginalCarmaCDinDrive();
     LoadHeadupImages();
