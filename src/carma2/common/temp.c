@@ -45,10 +45,10 @@ void C2_HOOK_FASTCALL EnableMaterialAdapt(void) {
 }
 C2_HOOK_FUNCTION(0x004ea840, EnableMaterialAdapt)
 
-void C2_HOOK_FASTCALL DisableMaterialAdapt(void) {
+void C2_HOOK_FASTCALL DisableAutoFogification(void) {
     C2V(gAllow_material_adapt) = 0;
 }
-C2_HOOK_FUNCTION(0x004ea850, DisableMaterialAdapt)
+C2_HOOK_FUNCTION(0x004ea850, DisableAutoFogification)
 
 void C2_HOOK_FASTCALL AdaptCachedMaterials(tRendererShadingType pShading_type) {
     int i;
