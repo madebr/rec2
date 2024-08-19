@@ -648,7 +648,7 @@ static br_uint_32 GetBillboardAPOColour(int pType_APO, int pLevel) {
 }
 
 int (C2_HOOK_FASTCALL * DoFrontendMenu_original)(tFrontendMenuType pFrontend);
-int C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontendType) {
+int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     return DoFrontendMenu_original(pFrontendType);
@@ -817,7 +817,7 @@ int C2_HOOK_FASTCALL DoFrontendMenu(tFrontendMenuType pFrontendType) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0046d8e0, DoFrontendMenu, DoFrontendMenu_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0046d8e0, FRONTEND_Main, DoFrontendMenu_original)
 
 void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index) {
     br_model *model;
