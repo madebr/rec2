@@ -174,6 +174,12 @@ void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* p
 
 void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM);
 
+void C2_HOOK_FASTCALL AddExceptionToList(tMaterial_exception** pList, tMaterial_exception* pItem);
+
+void C2_HOOK_FASTCALL LoadExceptionsFile(const char* pPath);
+
+void C2_HOOK_FASTCALL LoadExceptionsFileForTrack(const char* pTrack_name);
+
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space);
