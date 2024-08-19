@@ -2976,7 +2976,7 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
             }
             BrActorFree(non_car->actor);
         }
-        DisposeNonCarCollisionInfo(non_car->collision_info);
+        DisposePhysicsObject(non_car->collision_info);
     }
     if (C2V(gProgram_state).non_cars != NULL) {
         BrMemFree(C2V(gProgram_state).non_cars);
