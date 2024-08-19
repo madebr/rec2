@@ -481,7 +481,7 @@ tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
     tU32 the_size;
 
     PFfseek(pF, 0, SEEK_END);
-    the_size = DRftell(pF);
+    the_size = PFftell(pF);
     DRrewind(pF);
     return the_size;
 }
