@@ -109,7 +109,7 @@ int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec) {
 }
 
 void (C2_HOOK_FASTCALL * InitDroneCollisionInfo_original)(tDrone_spec *pDrone_spec);
-void C2_HOOK_FASTCALL InitDroneCollisionInfo(tDrone_spec *pDrone_spec) {
+void C2_HOOK_FASTCALL InitDroneCollisionObject(tDrone_spec *pDrone_spec) {
 
 #if defined(C2_HOOKS_ENABLED)
     InitDroneCollisionInfo_original(pDrone_spec);
@@ -117,7 +117,7 @@ void C2_HOOK_FASTCALL InitDroneCollisionInfo(tDrone_spec *pDrone_spec) {
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0044f980, InitDroneCollisionInfo, InitDroneCollisionInfo_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0044f980, InitDroneCollisionObject, InitDroneCollisionInfo_original)
 
 void C2_HOOK_FASTCALL CrappyLittleVector3DPrintf(const char* pMessage, br_vector3* pPosition) {
     DoNotDprintf("%d: %s: %3.3f, %3.3f, %3.3f", C2V(gFrame), pMessage, pPosition->v[0], pPosition->v[1], pPosition->v[2]);
@@ -161,7 +161,7 @@ void C2_HOOK_FASTCALL InitDrones(void) {
 
             if (C2V(gTime_stamp_for_this_munging) > drone->last_collide_check + 1000) {
                 drone->last_collide_check = C2V(gTime_stamp_for_this_munging);
-                InitDroneCollisionInfo(drone);
+                InitDroneCollisionObject(drone);
 
                 collision_free = !DroneHasCollided(drone);
             } else {
