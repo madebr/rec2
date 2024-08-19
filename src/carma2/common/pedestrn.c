@@ -27,7 +27,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPed_cache_sizes_1, 4, 0x0065d7b8, {
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_face_cache_0x34*, gPed_face_caches, 4, 0x0069bc58);
 C2_HOOK_VARIABLE_IMPLEMENT(tPed_face_cache_0x50*, gPed_face_cache, 0x0069bc54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSelected_ped, 0x007447f0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPed_shade, 0x00694458);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gProx_ray_shade_table, 0x00694458);
 
 C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gPed_explosion_small_blood_cloud, 0x00694478);
 C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gPed_medium_blood_cloud, 0x00694480);
@@ -405,6 +405,12 @@ void C2_HOOK_FASTCALL InitFaceCaches(void) {
     C2V(gPed_face_cache) = BrMemAllocate((C2V(gPed_cache_sizes_2)[3] + 1) * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
 }
 
+void C2_HOOK_FASTCALL InitOtherPedStuff(void) {
+
+    C2V(gSelected_ped) = 0;
+    C2V(gProx_ray_shade_table) = GenerateShadeTable(8, C2V(gRender_palette), 0xd7, 0xff, 0xe9, .5f, .75f, .9f);
+}
+
 void (C2_HOOK_FASTCALL * InitPeds_original)(void);
 void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -419,8 +425,7 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
     ReadSettingsFile();
     InitFaceCaches();
     InitNapalmNolts();
-    C2V(gSelected_ped) = 0;
-    C2V(gPed_shade) = GenerateShadeTable(8, C2V(gRender_palette), 0xd7, 0xff, 0xe9, .5f, .75f, .9f);
+    InitOtherPedStuff();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cadc0, InitPolyPedSystem, InitPeds_original)
