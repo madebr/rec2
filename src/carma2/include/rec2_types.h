@@ -2260,7 +2260,6 @@ typedef union {
 } tSmashable_item_spec_trigger;
 
 typedef struct {
-    float removal_threshold;
     int count_sounds;
     int sounds[3];
     int count_shrapnel;
@@ -2273,12 +2272,17 @@ typedef struct {
     int extension_flags;
     int room_turn_on_code;
     tAward_info award;
-    undefined field_0x294[4];
+    undefined field_0x28c[4];
     tU8 count_runtime_variable_changes;
-    undefined field27_0x2a9;
+    undefined field27_0x291;
     tSmash_run_time_variable_change runtime_variable_changes[5];
-    undefined field29_0x2ae;
-    undefined field30_0x2af;
+    undefined field29_0x2a6;
+    undefined field30_0x2a7;
+} tConnotations;
+
+typedef struct {
+    float removal_threshold;
+    tConnotations connotations;
 } tSmashable_item_spec_shrapnel;
 
 typedef struct {

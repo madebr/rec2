@@ -612,38 +612,38 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, initial_pos) != 40);
     C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, type_info) != 56);
     C2_HOOK_BUG_ON(sizeof(tShrapnel_spec) != 88);
-    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, shrapnel) != 44);
-    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, explosion_animation) != 572);
+    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, connotations.shrapnel) != 44);
+    C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, connotations.explosion_animation) != 572);
     C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 736);
 
     c2_memset(pSmashable_spec, 0, sizeof(tSmashable_item_spec));
     /* Number of sounds */
-    pSmashable_spec->mode_data.shrapnel.count_sounds = GetAnInt(pF);
-    for (i = 0; i < pSmashable_spec->mode_data.shrapnel.count_sounds; i++) {
+    pSmashable_spec->mode_data.shrapnel.connotations.count_sounds = GetAnInt(pF);
+    for (i = 0; i < pSmashable_spec->mode_data.shrapnel.connotations.count_sounds; i++) {
         /* Sound ID */
-        pSmashable_spec->mode_data.shrapnel.sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+        pSmashable_spec->mode_data.shrapnel.connotations.sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
     }
-    ReadShrapnel(pF, pSmashable_spec->mode_data.shrapnel.shrapnel, &pSmashable_spec->mode_data.shrapnel.count_shrapnel);
-    ReadExplosionAnimation(pF, &pSmashable_spec->mode_data.shrapnel.explosion_animation);
-    ReadSlick(pF, &pSmashable_spec->mode_data.shrapnel.slick);
-    ReadNonCarCuboidActivation(pF, &pSmashable_spec->mode_data.shrapnel.activations);
-    ReadShrapnelSideEffects(pF, &pSmashable_spec->mode_data.shrapnel.side_effects);
+    ReadShrapnel(pF, pSmashable_spec->mode_data.shrapnel.connotations.shrapnel, &pSmashable_spec->mode_data.shrapnel.connotations.count_shrapnel);
+    ReadExplosionAnimation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.explosion_animation);
+    ReadSlick(pF, &pSmashable_spec->mode_data.shrapnel.connotations.slick);
+    ReadNonCarCuboidActivation(pF, &pSmashable_spec->mode_data.shrapnel.connotations.activations);
+    ReadShrapnelSideEffects(pF, &pSmashable_spec->mode_data.shrapnel.connotations.side_effects);
 
     /* Extension flags */
-    pSmashable_spec->mode_data.shrapnel.extension_flags = GetAnInt(pF);
-    if (pSmashable_spec->mode_data.shrapnel.extension_flags & 0x1) {
-        pSmashable_spec->mode_data.shrapnel.extension_arg = GetAnInt(pF);
+    pSmashable_spec->mode_data.shrapnel.connotations.extension_flags = GetAnInt(pF);
+    if (pSmashable_spec->mode_data.shrapnel.connotations.extension_flags & 0x1) {
+        pSmashable_spec->mode_data.shrapnel.connotations.extension_arg = GetAnInt(pF);
     }
     /* Room turn on */
-    pSmashable_spec->mode_data.shrapnel.room_turn_on_code = GetAnInt(pF);
+    pSmashable_spec->mode_data.shrapnel.connotations.room_turn_on_code = GetAnInt(pF);
     /* Award code */
-    LoadAward(pF, &pSmashable_spec->mode_data.shrapnel.award);
+    LoadAward(pF, &pSmashable_spec->mode_data.shrapnel.connotations.award);
     /* Count variable changes */
-    pSmashable_spec->mode_data.shrapnel.count_runtime_variable_changes = GetAnInt(pF);
-    for (i = 0; i < pSmashable_spec->mode_data.shrapnel.count_runtime_variable_changes; i++) {
+    pSmashable_spec->mode_data.shrapnel.connotations.count_runtime_variable_changes = GetAnInt(pF);
+    for (i = 0; i < pSmashable_spec->mode_data.shrapnel.connotations.count_runtime_variable_changes; i++) {
         GetPairOfInts(pF, &d1, &d2);
-        pSmashable_spec->mode_data.shrapnel.runtime_variable_changes[i].field_0x0 = d2;
-        pSmashable_spec->mode_data.shrapnel.runtime_variable_changes[i].field_0x2 = d1;
+        pSmashable_spec->mode_data.shrapnel.connotations.runtime_variable_changes[i].field_0x0 = d2;
+        pSmashable_spec->mode_data.shrapnel.connotations.runtime_variable_changes[i].field_0x2 = d1;
     }
     pSmashable_spec->trigger_type = kSmashableTrigger_Model | kSmashableTrigger_Number;
     REC2_BUG_ON((kSmashableTrigger_Model | kSmashableTrigger_Number) != 0x3);

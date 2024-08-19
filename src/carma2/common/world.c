@@ -1855,6 +1855,46 @@ void C2_HOOK_FASTCALL ReadSmashTexture(tSmashable_item_spec* pSmash_item, tSmash
         &C2V(gTrack_storage_space));
 }
 
+void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
+    int i;
+
+    /* number of possible sounds */
+    pConnotations->count_sounds = GetAnInt(pF);
+
+    for (i = 0; i < pConnotations->count_sounds; i++) {
+        /* sound id */
+        pConnotations->sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.count_shrapnel, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.shrapnel, 0x18);
+
+    ReadShrapnel(pF, pConnotations->shrapnel, &pConnotations->count_shrapnel);
+    ReadExplosionAnimation(pF, &pConnotations->explosion_animation);
+    ReadSlick(pF, &pConnotations->slick);
+    ReadNonCarCuboidActivation(pF, &pConnotations->activations);
+    ReadShrapnelSideEffects(pF, &pConnotations->side_effects);
+
+    /* Extensions flags */
+    pConnotations->extension_flags = GetAnInt(pF);
+    if (pConnotations->extension_flags & 0x1) {
+        pConnotations->extension_arg = GetAnInt(pF);
+    }
+    /* Room turn on code */
+    pConnotations->room_turn_on_code = GetAnInt(pF);
+    LoadAward(pF, &pConnotations->award);
+    /* run-time variable changes */
+    pConnotations->count_runtime_variable_changes = GetAnInt(pF);
+    for (i = 0; i < pConnotations->count_runtime_variable_changes; i++) {
+        int v1, v2;
+
+        GetPairOfInts(pF, &v1, &v2);
+        pConnotations->runtime_variable_changes[i].field_0x0 = v2;
+        pConnotations->runtime_variable_changes[i].field_0x2 = v1;
+    }
+}
+
 void (C2_HOOK_FASTCALL * LoadSmashableTrackEnvironment_original)(FILE* pF, const char* pPath);
 void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
 
@@ -1862,7 +1902,6 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
     LoadSmashableTrackEnvironment_original(pF, pPath);
 #else
     int i;
-    int j;
     char s[256];
 
     C2V(gCount_smashable_noncars) = 0;
@@ -1940,42 +1979,7 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
         default:
             /* Removal threshold */
             spec->mode_data.shrapnel.removal_threshold = GetAScalar(pF);
-
-            /* number of possible sounds */
-            spec->mode_data.shrapnel.count_sounds = GetAnInt(pF);
-
-            for (j = 0; j < spec->mode_data.shrapnel.count_sounds; j++) {
-                /* sound id */
-                spec->mode_data.shrapnel.sounds[j] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
-            }
-
-            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
-            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, count_shrapnel, 0x14);
-            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, shrapnel, 0x18);
-
-            ReadShrapnel(pF, spec->mode_data.shrapnel.shrapnel, &spec->mode_data.shrapnel.count_shrapnel);
-            ReadExplosionAnimation(pF, &spec->mode_data.shrapnel.explosion_animation);
-            ReadSlick(pF, &spec->mode_data.shrapnel.slick);
-            ReadNonCarCuboidActivation(pF, &spec->mode_data.shrapnel.activations);
-            ReadShrapnelSideEffects(pF, &spec->mode_data.shrapnel.side_effects);
-
-            /* Extensions flags */
-            spec->mode_data.shrapnel.extension_flags = GetAnInt(pF);
-            if (spec->mode_data.shrapnel.extension_flags & 0x1) {
-                spec->mode_data.shrapnel.extension_arg = GetAnInt(pF);
-            }
-            /* Room turn on code */
-            spec->mode_data.shrapnel.room_turn_on_code = GetAnInt(pF);
-            LoadAward(pF, &spec->mode_data.shrapnel.award);
-            /* run-time variable changes */
-            spec->mode_data.shrapnel.count_runtime_variable_changes = GetAnInt(pF);
-            for (j = 0; j < spec->mode_data.shrapnel.count_runtime_variable_changes; j++) {
-                int v1, v2;
-
-                GetPairOfInts(pF, &v1, &v2);
-                spec->mode_data.shrapnel.runtime_variable_changes[j].field_0x0 = v2;
-                spec->mode_data.shrapnel.runtime_variable_changes[j].field_0x2 = v1;
-            }
+            ReadConnotations(pF, &spec->mode_data.shrapnel.connotations, &C2V(gTrack_storage_space));
             break;
         }
         if (spec->mode == kSmashableMode_ReplaceModel) {
