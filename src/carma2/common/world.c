@@ -2116,6 +2116,76 @@ void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
 }
 C2_HOOK_FUNCTION(0x00502210, DodgyModelUpdate)
 
+void C2_HOOK_FASTCALL AddExceptionToList(tMaterial_exception** pList, tMaterial_exception* pItem) {
+
+    pItem->next = *pList;
+    *pList = pItem;
+}
+
+void C2_HOOK_FASTCALL LoadExceptionsFile(const char* pPath) {
+    FILE* f;
+    char* str;
+    char s[256];
+    int count;
+    int version;
+
+    f = DRfopen(pPath, "rt");
+    if (f == NULL) {
+        return;
+    }
+    GetALineAndDontArgue(f, s);
+    str = c2_strtok(s, "\t ,");
+    if (DRStricmp(str, "VERSION") != 0) {
+        FatalError(kFatalError_FileMustStartWith_SS, pPath, "VERSION");
+    }
+    str = c2_strtok(NULL, "\t ,");
+    count = c2_sscanf(str, "%d", &version);
+    if (count == 0 || version != 1) {
+        FatalError(kFatalError_CantCopeWithVersionFor_SS, str, pPath);
+    }
+    while (1) {
+        tMaterial_exception* matexc;
+
+        GetALineAndDontArgue(f, s);
+        str = c2_strtok(s, "\t ,");
+        if (DRStricmp(str, "end") == 0) {
+            break;
+        }
+        C2_HOOK_BUG_ON(sizeof(tMaterial_exception) != 12);
+        matexc = BrMemAllocate(sizeof(tMaterial_exception), kMem_exception);
+        matexc->texture_name = BrMemAllocate(c2_strlen(str) + 1, kMem_misc_string);
+        c2_strcpy(matexc->texture_name, str);
+        matexc->flags = 0;
+        while (1) {
+            str = c2_strtok(NULL, "\t ,");
+            if (str == NULL) {
+                break;
+            }
+            if (!c2_isalnum(str[0])) {
+                break;
+            }
+            if (DRStricmp(str, "nobilinear") == 0) {
+                matexc->flags |= eMaterial_exception_nobilinear;
+            } else if (DRStricmp(str, "wrap") == 0) {
+                matexc->flags |= eMaterial_exception_wrap;
+            } else {
+                FatalError(kFatalError_Mysterious_SS, str, pPath);
+            }
+        }
+        AddExceptionToList(&C2V(gMaterial_exceptions), matexc);
+    }
+    PFfclose(f);
+}
+
+void C2_HOOK_FASTCALL LoadExceptionsFileForTrack(const char* pTrack_name) {
+    tPath_name path;
+
+    c2_sprintf(path, "%s%s%s%s",
+               pTrack_name, C2V(gDir_separator),
+               C2V(gRenderer_fixup_basename), C2V(gRenderer_fixup_extension));
+    LoadExceptionsFile(path);
+}
+
 void (C2_HOOK_FASTCALL * LoadTrack_original)(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
 
@@ -2128,13 +2198,11 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     char local_directory[256];
     char local_name[256];
     char local_race_path[256];
-    char race_fixup_filename[256];
     char race_lighting_path[256];
     char race_desc_path[256];
     char actor_path[256];
     char s[256];
     FILE* f;
-    int count, version;
     char *str;
     tTWTVFS twt, twt2;
     tMaterial_exception* material_exception;
@@ -2155,56 +2223,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PathCat(C2V(gRace_path), C2V(gApplication_path), local_directory);
     c2_strcpy(local_race_path, C2V(gRace_path));
 
-    c2_sprintf(race_fixup_filename, "%s%s%s%s",
-        local_race_path, C2V(gDir_separator),
-        C2V(gRenderer_fixup_basename), C2V(gRenderer_fixup_extension));
-
-    f = DRfopen(race_fixup_filename, "rt");
-    if (f != NULL) {
-        GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,");
-        if (DRStricmp(str, "VERSION") != 0) {
-            FatalError(kFatalError_FileMustStartWith_SS, race_fixup_filename, "VERSION");
-        }
-        str = c2_strtok(NULL, "\t ,");
-        count = c2_sscanf(str, "%d", &version);
-        if (count == 0 || version != 1) {
-            FatalError(kFatalError_CantCopeWithVersionFor_SS, str, race_fixup_filename);
-        }
-        while (1) {
-            tMaterial_exception* matexc;
-
-            GetALineAndDontArgue(f, s);
-            str = c2_strtok(s, "\t ,");
-            if (DRStricmp(str, "end") == 0) {
-                break;
-            }
-            C2_HOOK_BUG_ON(sizeof(tMaterial_exception) != 12);
-            matexc = BrMemAllocate(sizeof(tMaterial_exception), kMem_exception);
-            matexc->texture_name = BrMemAllocate(c2_strlen(str) + 1, kMem_misc_string);
-            c2_strcpy(matexc->texture_name, str);
-            matexc->flags = 0;
-            while (1) {
-                str = c2_strtok(NULL, "\t ,");
-                if (str == NULL) {
-                    break;
-                }
-                if (!c2_isalnum(str[0])) {
-                    break;
-                }
-                if (DRStricmp(str, "nobilinear") == 0) {
-                    matexc->flags |= eMaterial_exception_nobilinear;
-                } else if (DRStricmp(str, "wrap") == 0) {
-                    matexc->flags |= eMaterial_exception_wrap;
-                } else {
-                    FatalError(kFatalError_Mysterious_SS, str, race_fixup_filename);
-                }
-            }
-            matexc->next = C2V(gMaterial_exceptions);
-            C2V(gMaterial_exceptions) = matexc;
-        }
-        PFfclose(f);
-    }
+    LoadExceptionsFileForTrack(local_race_path);
 
     PathCat(C2V(gRace_path), C2V(gRace_path), local_name);
     twt = OpenPackFileAndSetTiffLoading(C2V(gRace_path));
