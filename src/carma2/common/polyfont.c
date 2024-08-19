@@ -28,9 +28,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_polyfont_texture_pages, 0x00686494);
 
 int C2_HOOK_FASTCALL PolyFontHeight(int pIndex) {
 
-    if (!C2V(gPolyFonts)[pIndex].available) {
-        LoadInterfacePolyFonts();
-    }
+    CheckAvailabilityOfThisFont(pIndex);
     return C2V(gPolyFonts)[pIndex].fontCharacterHeight;
 }
 C2_HOOK_FUNCTION(0x00463730, PolyFontHeight)
@@ -54,9 +52,8 @@ int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex) {
 C2_HOOK_FUNCTION(0x00463830, GetPolyFontInterCharacterSpacing)
 
 void C2_HOOK_FASTCALL RenderInterfaceBlendedPolyText(int pFont, const char* pText, int pX, int pY, int pWidth, int pHeight, tJustification pJustification, undefined4 pParam_8) {
-    if (!C2V(gPolyFonts)[pFont].available) {
-        LoadInterfacePolyFonts();
-    }
+
+    CheckAvailabilityOfThisFont(pFont);
     TransparentPolyFontTextInABox(pFont, pText, pX, pY, pWidth, pHeight, pJustification, pParam_8, 1.0);
 }
 C2_HOOK_FUNCTION(0x00463850, RenderInterfaceBlendedPolyText)
@@ -73,9 +70,7 @@ void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, in
     int text_x;
     int max_width;
 
-    if (!C2V(gPolyFonts)[pFont].available) {
-        LoadInterfacePolyFonts();
-    }
+    CheckAvailabilityOfThisFont(pFont);
 
     in_start_put = 0;
     text_x = 0;
@@ -656,13 +651,13 @@ void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void) {
 }
 C2_HOOK_FUNCTION(0x004642d0, LoadInterfacePolyFonts)
 
-void C2_HOOK_FASTCALL CheckLoadFrontendPolyFonts(int pFont) {
+void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
 
     if (!C2V(gPolyFonts)[pFont].available) {
         LoadInterfacePolyFonts();
     }
 }
-C2_HOOK_FUNCTION(0x004640d0, CheckLoadFrontendPolyFonts)
+C2_HOOK_FUNCTION(0x004640d0, CheckAvailabilityOfThisFont)
 
 void C2_HOOK_FASTCALL ClearInterfacePolyFonts(void) {
 
@@ -719,9 +714,7 @@ int C2_HOOK_FASTCALL GetPolyFontTextWidth(int pFont, const char* pText) {
     int len;
     int i;
 
-    if (!C2V(gPolyFonts)[pFont].available) {
-        LoadInterfacePolyFonts();
-    }
+    CheckAvailabilityOfThisFont(pFont);
     len = c2_strlen(pText);
     int result = 0;
     for (i = 0; i < len; i++) {
@@ -740,9 +733,7 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
     int draw_x;
     int draw_y;
 
-    if (!C2V(gPolyFonts)[pFont].available) {
-        LoadInterfacePolyFonts();
-    }
+    CheckAvailabilityOfThisFont(pFont);
     if (pRender) {
         RemovePolyFontActors();
     }
@@ -831,9 +822,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
     int draw_y;
     br_token_value tvs[3];
 
-    if (!C2V(gPolyFonts)[pFont].available) {
-        LoadInterfacePolyFonts();
-    }
+    CheckAvailabilityOfThisFont(pFont);
     if (pRender) {
         RemovePolyFontActors();
     }
