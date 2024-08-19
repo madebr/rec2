@@ -1283,27 +1283,9 @@ int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00470c20, FRONTEND_Default_Tick, FRONTEND_Default_Tick_original)
 
-void C2_HOOK_FASTCALL Generic_UnMungeActiveItems(tFrontend_spec* pFrontend) {
+void C2_HOOK_FASTCALL Generic_MungeActiveItems(tFrontend_spec* pFrontend) {
     int i;
 
-    for (i = 0; i < C2V(gCount_connected_items_indices); i++) {
-        pFrontend->items[C2V(gConnected_items_indices)[i]].flags &= ~0x1;
-    }
-    C2V(gCount_connected_items_indices) = 0;
-}
-
-void (C2_HOOK_FASTCALL * FRONTEND_RenderItems_original)(tFrontend_spec* pFrontend);
-void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    FRONTEND_RenderItems_original(pFrontend);
-#else
-    int i;
-    br_fixed_ls blend_x;
-
-    if (C2V(gFrontend_leave_current_menu) || pFrontend->count_items <= 0) {
-        return;
-    }
     C2V(gCount_connected_items_indices) = 0;
     if (C2V(gFrontend_selected_item_index) != -1) {
         tConnected_items* gConnected_items_indices = C2V(gConnected_items);
@@ -1332,6 +1314,30 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
             }
         }
     }
+}
+
+void C2_HOOK_FASTCALL Generic_UnMungeActiveItems(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < C2V(gCount_connected_items_indices); i++) {
+        pFrontend->items[C2V(gConnected_items_indices)[i]].flags &= ~0x1;
+    }
+    C2V(gCount_connected_items_indices) = 0;
+}
+
+void (C2_HOOK_FASTCALL * FRONTEND_RenderItems_original)(tFrontend_spec* pFrontend);
+void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    FRONTEND_RenderItems_original(pFrontend);
+#else
+    int i;
+    br_fixed_ls blend_x;
+
+    if (C2V(gFrontend_leave_current_menu) || pFrontend->count_items <= 0) {
+        return;
+    }
+    Generic_MungeActiveItems(pFrontend);
     for (i = 0; i < C2V(gFrontend_count_brender_items); i++) {
         tFrontend_brender_item* brender_item = &C2V(gFrontend_brender_items)[i];
         tFrontend_item_spec* item = &pFrontend->items[i];
