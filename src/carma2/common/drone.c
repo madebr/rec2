@@ -124,7 +124,6 @@ void C2_HOOK_FASTCALL CrappyLittleVector3DPrintf(const char* pMessage, br_vector
 }
 C2_HOOK_FUNCTION(0x00451620, CrappyLittleVector3DPrintf)
 
-
 void C2_HOOK_FASTCALL MakeDroneActive(tDrone_spec* pDrone_spec) {
 
     BrMatrix34Copy(&pDrone_spec->collision_info.transform_matrix, &pDrone_spec->actor->t.t.mat);
@@ -137,6 +136,29 @@ void C2_HOOK_FASTCALL MakeDroneActive(tDrone_spec* pDrone_spec) {
     }
     DoNotDprintf("PROCESSING ON: Frame %d, Drone %d, state %d", C2V(gFrame), pDrone_spec->id, pDrone_spec->current_state);
     CrappyLittleVector3DPrintf("    Pos", &pDrone_spec->actor->t.t.translate.t);
+}
+
+int (C2_HOOK_FASTCALL * ReallyAddDroneToPHIL_original)(tDrone_spec* pDrone);
+int C2_HOOK_FASTCALL ReallyAddDroneToPHIL(tDrone_spec* pDrone) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return ReallyAddDroneToPHIL_original(pDrone);
+#else
+    if (PHILAddObject(&pDrone->collision_info)) {
+        return 0;
+    }
+    SetCollisionInfoParam(&pDrone->collision_info, 0, 0, 1.875);
+    SetCollisionInfoParam(&pDrone->collision_info, 3, 1);
+    SetCollisionInfoParam(&pDrone->collision_info, 7, 1);
+    SetCollisionInfoParam(&pDrone->collision_info, 6, 1);
+    return 1;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00451650, ReallyAddDroneToPHIL, ReallyAddDroneToPHIL_original)
+
+int C2_HOOK_FASTCALL AddDroneToPHIL(tDrone_spec* pDrone) {
+
+    return ReallyAddDroneToPHIL(pDrone);
 }
 
 void (C2_HOOK_FASTCALL * InitDrones_original)(void);
