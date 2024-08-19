@@ -622,10 +622,10 @@ void C2_HOOK_FASTCALL ScrollCredits(void) {
         y += C2V(gAuthor_credits_heights)[i];
         if (y > 30 && y < 430) {
             if (C2V(gAuthor_credits_throbs[i])) {
-                FRONTEND_RenderPolyTextLine(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i] - 1, eJust_centre, 1);
+                SolidPolyFontText(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i] - 1, eJust_centre, 1);
                 RenderBlendedPolyTextLine(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i], eJust_centre, 1, C2V(gFrontend_throb_factor));
             } else {
-                FRONTEND_RenderPolyTextLine(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i], eJust_centre, 1);
+                SolidPolyFontText(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i], eJust_centre, 1);
             }
         }
     }
@@ -1399,11 +1399,11 @@ void C2_HOOK_FASTCALL FRONTEND_DoMouse(void) {
 }
 C2_HOOK_FUNCTION(0x0046d8b0, FRONTEND_DoMouse)
 
-void C2_HOOK_FASTCALL FRONTEND_RenderPolyTextLine(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
+void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
 
     if (C2V(gPolyFonts)[pFont].available == 0) {
         LoadInterfacePolyFonts();
     }
     RenderBlendedPolyTextLine(pText, pX, pY, pFont, pJust, pRender, 1.0);
 }
-C2_HOOK_FUNCTION(0x00464df0, FRONTEND_RenderPolyTextLine)
+C2_HOOK_FUNCTION(0x00464df0, SolidPolyFontText)
