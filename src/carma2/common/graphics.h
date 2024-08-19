@@ -160,7 +160,7 @@ void C2_HOOK_FASTCALL DisableLights(void);
 
 void C2_HOOK_FASTCALL EnableLights(void);
 
-int C2_HOOK_FASTCALL SwitchToRealResolution(void);
+int C2_HOOK_FASTCALL SwitchToHiresMode(void);
 
 int C2_HOOK_FASTCALL SwitchToLoresMode(void);
 
