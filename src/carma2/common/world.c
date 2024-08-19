@@ -2310,39 +2310,54 @@ void C2_HOOK_FASTCALL MungeTrackModel(br_model* pModel) {
     BrModelUpdate(pModel, BR_MODU_FACES);
 }
 
-void C2_HOOK_FASTCALL PossibleTreeSurgery(br_model* pModel) {
+int C2_HOOK_FASTCALL ModelIsATree(br_model* pModel, char* pName_replacement) {
     int i;
-    char s[36];
 
-    if (pModel == NULL || pModel->identifier == NULL) {
-        return;
-    }
     for (i = 0; i < C2V(gTree_surgery_pass1_count); i++) {
         if (c2_strstr(pModel->identifier, C2V(gTree_surgery_pass1)->name) == pModel->identifier) {
             break;
         }
     }
-    if (i != C2V(gTree_surgery_pass1_count)) {
-        for (i = 0; i < C2V(gTree_surgery_pass2_count); i++) {
-            if (c2_strcmp(pModel->identifier, C2V(gTree_surgery_pass2)->original) == 0) {
-                br_model *replacement;
-
-                c2_strcpy(s, C2V(gTree_surgery_pass2)->replacement);
-                replacement = LoadModel(s);
-                if (replacement != NULL) {
-                    BrResFree(pModel->faces);
-                    BrResFree(pModel->vertices);
-                    pModel->faces = BrResAllocate(pModel, BrResSize(replacement->faces), BrResClass(replacement->faces));
-                    c2_memcpy(pModel->faces, replacement->faces, BrResSize(replacement->faces));
-                    pModel->nfaces = replacement->nfaces;
-                    pModel->vertices = BrResAllocate(pModel, BrResSize(replacement->vertices), BrResClass(replacement->vertices));
-                    c2_memcpy(pModel->vertices, replacement->vertices, BrResSize(replacement->vertices));
-                    pModel->nvertices = replacement->nvertices;
-                    BrModelUpdate(pModel, BR_MODU_ALL);
-                    break;
-                }
-            }
+    if (i == C2V(gTree_surgery_pass1_count)) {
+        return 0;
+    }
+    for (i = 0; i < C2V(gTree_surgery_pass2_count); i++) {
+        if (c2_strcmp(pModel->identifier, C2V(gTree_surgery_pass2)->original) == 0) {
+            c2_strcpy(pName_replacement, C2V(gTree_surgery_pass2)->replacement);
+            return 1;
         }
+    }
+    return 0;
+}
+
+void C2_HOOK_FASTCALL PerformTreeSurgery(tBrender_storage* pStorage, br_model* pModel, const char* pName_replacement) {
+    br_model *replacement;
+
+    replacement = LoadModel(pName_replacement);
+    if (replacement == NULL) {
+        return;
+    }
+    BrResFree(pModel->faces);
+    BrResFree(pModel->vertices);
+    pModel->faces = BrResAllocate(pModel, BrResSize(replacement->faces),
+                                  BrResClass(replacement->faces));
+    c2_memmove(pModel->faces, replacement->faces, BrResSize(replacement->faces));
+    pModel->nfaces = replacement->nfaces;
+    pModel->vertices = BrResAllocate(pModel, BrResSize(replacement->vertices),
+                                     BrResClass(replacement->vertices));
+    c2_memmove(pModel->vertices, replacement->vertices, BrResSize(replacement->vertices));
+    pModel->nvertices = replacement->nvertices;
+    BrModelUpdate(pModel, BR_MODU_ALL);
+}
+
+void C2_HOOK_FASTCALL PossibleTreeSurgery(br_model* pModel) {
+    char name_replacement[36];
+
+    if (pModel == NULL || pModel->identifier == NULL) {
+        return;
+    }
+    if (ModelIsATree(pModel, name_replacement)) {
+        PerformTreeSurgery(&C2V(gTrack_storage_space), pModel, name_replacement);
     }
 }
 
