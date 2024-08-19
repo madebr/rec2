@@ -35,7 +35,7 @@ int C2_HOOK_FASTCALL DroneCollisionInfoCollides(tCollision_info* pCollision_1,tC
 
 int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec);
 
-void C2_HOOK_FASTCALL InitDroneCollisionInfo(tDrone_spec *pDrone_spec);
+void C2_HOOK_FASTCALL InitDroneCollisionObject(tDrone_spec *pDrone_spec);
 
 void C2_HOOK_FASTCALL CrappyLittleVector3DPrintf(const char* pMessage, br_vector3* pPosition);
 
