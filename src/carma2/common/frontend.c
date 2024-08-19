@@ -845,7 +845,7 @@ void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
 }
 C2_HOOK_FUNCTION(0x004708a0, PrintAPO)
 
-void C2_HOOK_FASTCALL UpdateThrobFactor(void) {
+void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void) {
     tU32 time;
 
     time = PDGetTotalTime() % 750;
@@ -856,7 +856,7 @@ void C2_HOOK_FASTCALL UpdateThrobFactor(void) {
         C2V(gFrontend_throb_factor) = (double)(750 - time) / 375.;
     }
 }
-C2_HOOK_FUNCTION(0x0046cec0, UpdateThrobFactor)
+C2_HOOK_FUNCTION(0x0046cec0, FRONTEND_PingPongFlash)
 
 void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps) {
     int i;
@@ -1380,7 +1380,7 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
             }
         }
     }
-    UpdateThrobFactor();
+    FRONTEND_PingPongFlash();
     PossibleService();
     for (i = 0; i < C2V(count_connected_items); i++) {
         pFrontend->items[C2V(connected_items)[i]].flags &= ~0x1;
