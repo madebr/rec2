@@ -12,7 +12,7 @@ br_material* C2_HOOK_FASTCALL LoadTemporaryMaterial(const char* pName);
 
 void C2_HOOK_FASTCALL TemporaryMaterialStore(br_material* pMaterial);
 
-void C2_HOOK_FASTCALL EnableMaterialAdapt(void);
+void C2_HOOK_FASTCALL EnableAutoFogification(void);
 
 void C2_HOOK_FASTCALL DisableAutoFogification(void);
 

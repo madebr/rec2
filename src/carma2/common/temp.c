@@ -40,10 +40,10 @@ void C2_HOOK_FASTCALL TemporaryMaterialStore(br_material* pMaterial) {
 }
 C2_HOOK_FUNCTION(0x004ea820, TemporaryMaterialStore)
 
-void C2_HOOK_FASTCALL EnableMaterialAdapt(void) {
+void C2_HOOK_FASTCALL EnableAutoFogification(void) {
     C2V(gAllow_material_adapt) = 1;
 }
-C2_HOOK_FUNCTION(0x004ea840, EnableMaterialAdapt)
+C2_HOOK_FUNCTION(0x004ea840, EnableAutoFogification)
 
 void C2_HOOK_FASTCALL DisableAutoFogification(void) {
     C2V(gAllow_material_adapt) = 0;

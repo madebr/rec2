@@ -252,7 +252,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
     InitSoundSources();
     InitLastDamageArrayEtc();
     FogificateMaterials(kRendererShadingType_Default);
-    EnableMaterialAdapt();
+    EnableAutoFogification();
     StashCreditsAndAPO();
     race_result = DoRace();
     DisableAutoFogification();
