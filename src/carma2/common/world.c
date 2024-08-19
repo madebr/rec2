@@ -2084,7 +2084,7 @@ void C2_HOOK_FASTCALL FreeSmashableNonCarNames(void) {
 C2_HOOK_FUNCTION(0x004f0940, FreeSmashableNonCarNames)
 
 void (C2_HOOK_FASTCALL * LoadTrackSpecialVolumes_original)(FILE* pF);
-void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF) {
+void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
 
 #if defined(C2_HOOKS_ENABLED)
     LoadTrackSpecialVolumes_original(pF);
@@ -2092,7 +2092,7 @@ void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF) {
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, LoadTrackSpecialVolumes, LoadTrackSpecialVolumes_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, ReadSpecialVolumes, LoadTrackSpecialVolumes_original)
 
 void (C2_HOOK_FASTCALL * LoadTrackSoundGenerators_original)(tTrack_spec* pTrack_spec, FILE* pF);
 void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
@@ -2592,7 +2592,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         C2V(gProgram_state).default_depth_effect.colour.blue = 0xf8;
     }
     PossibleService();
-    LoadTrackSpecialVolumes(f);
+    ReadSpecialVolumes(f);
     LoadTrackSoundGenerators(pTrack_spec, f);
 
     /* REFLECTIVE WINDSCREEN SPECIFICATIONS */
