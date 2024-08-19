@@ -280,7 +280,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
         }
     }
     if (C2V(gNet_mode) == eNet_mode_none) {
-        DisposeAllCars(&C2V(gCurrent_race));
+        DisposeOpponentsCars(&C2V(gCurrent_race));
     } else {
         if ((C2V(gCurrent_net_game)->options.car_choice == eNet_car_all || C2V(gCurrent_net_game)->options.car_choice == eNet_car_novelty)
                 && !C2V(gNo_races_yet)) {
