@@ -437,6 +437,10 @@ void C2_HOOK_FASTCALL StartLoadingScreen(void) {
     SwitchToLoresMode();
     StartMusicTrack(9998);
     PossibleService();
-    SplashScreenWith("LOADSCRN.PIX");
+    if (C2V(gProgram_state).sausage_eater_mode) {
+        SplashScreenWith("LOADSCRN.PIX");
+    } else {
+        SplashScreenWith("LOADSCRN.PIX");
+    }
 }
 C2_HOOK_FUNCTION(0x0043f5c0, StartLoadingScreen)
