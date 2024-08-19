@@ -84,6 +84,8 @@ int C2_HOOK_FASTCALL FRONTEND_Default_Destroy(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL Generic_UnMungeActiveItems(tFrontend_spec* pFrontend);
+
 void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL FRONTEND_DoMouse(void);
