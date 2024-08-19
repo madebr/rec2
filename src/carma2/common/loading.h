@@ -400,7 +400,7 @@ void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage);
 
 void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath);
 
-int C2_HOOK_FASTCALL LoadAllModelsInPath(tBrender_storage* pStorage, const char* pPath);
+int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const char* pPath);
 
 void C2_HOOK_FASTCALL SmoothlyLoadIfItsAModel(const char* pPath);
 
