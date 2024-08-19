@@ -44,20 +44,13 @@ void C2_HOOK_FASTCALL InitGlassFragments(void) {
     }
 }
 
-void (C2_HOOK_FASTCALL * InitSmashing_original)(void);
-void C2_HOOK_FASTCALL InitSmashing(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitSmashing_original();
-#else
+void C2_HOOK_FASTCALL InitDecals(void) {
     int i;
-
-    InitGlassFragments();
 
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_quads)) != 50);
 
     for (i = 0; i < REC2_ASIZE(C2V(gSmash_quads)); i++) {
-        tSmash_quad* smash_quad;
+        tSmash_quad *smash_quad;
 
         smash_quad = &C2V(gSmash_quads)[i];
         smash_quad->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
@@ -73,6 +66,17 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
         smash_quad->actor->render_style = BR_RSTYLE_FACES;
         smash_quad->field_0x4 = 0;
     }
+}
+
+void (C2_HOOK_FASTCALL * InitSmashing_original)(void);
+void C2_HOOK_FASTCALL InitSmashing(void) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    InitSmashing_original();
+#else
+
+    InitGlassFragments();
+    InitDecals();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004efe00, InitSmashing, InitSmashing_original)
