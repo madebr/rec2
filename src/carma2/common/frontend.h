@@ -88,6 +88,6 @@ void C2_HOOK_FASTCALL FRONTEND_RenderItems(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL FRONTEND_DoMouse(void);
 
-void C2_HOOK_FASTCALL FRONTEND_RenderPolyTextLine(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
+void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
 
 #endif //REC2_FRONTEND_H
