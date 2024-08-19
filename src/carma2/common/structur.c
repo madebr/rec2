@@ -92,7 +92,7 @@ void C2_HOOK_FASTCALL DoProgram(void) {
                 DoLoadMostRecentGame();
                 C2V(gLoad_last_save_game) = 0;
             }
-            DoMainMenu();
+            DoMainScreen();
             break;
         case eProg_demo:
             DoProgramDemo();
