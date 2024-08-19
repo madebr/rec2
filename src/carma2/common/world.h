@@ -184,7 +184,7 @@ void C2_HOOK_FASTCALL ResetSmashing(void);
 
 void C2_HOOK_FASTCALL FreeSmashableNonCarNames(void);
 
-void C2_HOOK_FASTCALL LoadTrackSpecialVolumes(FILE* pF);
+void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF);
 
 void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF);
 
