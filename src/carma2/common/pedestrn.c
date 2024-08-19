@@ -259,22 +259,12 @@ void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile) {
 }
 C2_HOOK_FUNCTION(0x004cb1e0, ReadPedGiblets)
 
-void (C2_HOOK_FASTCALL * InitPeds_original)(void);
-void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitPeds_original();
-#else
+void C2_HOOK_FASTCALL ReadSettingsFile(void) {
     tPath_name the_path;
     FILE* file;
     int i;
     int j;
     float v;
-
-    if (C2V(gPedsFolder) == NULL) {
-        SetDefaultPedFolderNames();
-    }
-
-    InitBoner(&C2V(gPed_forms_vtable));
 
     PathCat(the_path, C2V(gApplication_path), C2V(gPedsFolder));
     PathCat(the_path, the_path, "SETTINGS.TXT");
@@ -386,6 +376,22 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
     }
 
     PFfclose(file);
+}
+
+void (C2_HOOK_FASTCALL * InitPeds_original)(void);
+void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    InitPeds_original();
+#else
+    int i;
+    int j;
+
+    if (C2V(gPedsFolder) == NULL) {
+        SetDefaultPedFolderNames();
+    }
+
+    InitBoner(&C2V(gPed_forms_vtable));
+    ReadSettingsFile();
 
     C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x34) != 52);
     C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x50) != 80);
