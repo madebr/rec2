@@ -290,7 +290,7 @@ void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
 #if 0//defined(C2_HOOKS_ENABLED)
     LoadInKevStuff_original(pF);
 #else
-    ApplyPreviousTiffConversion();
+    PackFileRevertTiffLoading();
     PossibleService();
     LoadInShrapnel();
     PossibleService();
