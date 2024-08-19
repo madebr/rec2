@@ -151,16 +151,30 @@ int C2_HOOK_FASTCALL CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingT
     }
 }
 
+int C2_HOOK_FASTCALL ReallyAddDroneToPHIL(tDrone_spec* pDrone) {
+
+    if (MarkCollisionInfoAsProcessed(&pDrone->collision_info)) {
+        return 0;
+    }
+    SetCollisionInfoParam(&pDrone->collision_info, 0, 0, 1.875);
+    SetCollisionInfoParam(&pDrone->collision_info, 3, 1);
+    SetCollisionInfoParam(&pDrone->collision_info, 7, 1);
+    SetCollisionInfoParam(&pDrone->collision_info, 6, 1);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00451650, ReallyAddDroneToPHIL)
+
+int C2_HOOK_FASTCALL AddDroneToPHIL(tDrone_spec* pDrone) {
+
+    return ReallyAddDroneToPHIL(pDrone);
+}
+
 void C2_HOOK_FASTCALL StartProcessingThisDrone(tDrone_spec* pDrone) {
     tDrone_form* form = pDrone->form;
 
     if (!C2V(gShow_drone_paths) && pDrone->field_0x44 == 0 && ((form->flags & 0x4) != 0 || C2V(gCount_active_drones) < 12))  {
 
-        if (CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing(pDrone) && MarkCollisionInfoAsProcessed(&pDrone->collision_info) == 0) {
-            SetCollisionInfoParam(&pDrone->collision_info, 0, 0, 1.875);
-            SetCollisionInfoParam(&pDrone->collision_info, 3, 1);
-            SetCollisionInfoParam(&pDrone->collision_info, 7, 1);
-            SetCollisionInfoParam(&pDrone->collision_info, 6, 1);
+        if (CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing(pDrone) && AddDroneToPHIL(pDrone)) {
             MakeDroneActive(pDrone);
         }
     }

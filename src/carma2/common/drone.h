@@ -41,6 +41,10 @@ void C2_HOOK_FASTCALL CrappyLittleVector3DPrintf(const char* pMessage, br_vector
 
 int C2_HOOK_FASTCALL CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing(tDrone_spec* pDrone);
 
+int C2_HOOK_FASTCALL ReallyAddDroneToPHIL(tDrone_spec* pDrone);
+
+int C2_HOOK_FASTCALL AddDroneToPHIL(tDrone_spec* pDrone);
+
 void C2_HOOK_FASTCALL StartProcessingThisDrone(tDrone_spec* pDrone);
 
 void C2_HOOK_FASTCALL InitDrones(void);
