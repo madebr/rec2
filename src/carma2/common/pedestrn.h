@@ -12,7 +12,7 @@ C2_HOOK_VARIABLE_DECLARE(tPedestrian*, gPedestrian_array);
 C2_HOOK_VARIABLE_DECLARE(int, gPed_count);
 C2_HOOK_VARIABLE_DECLARE(int, gCamera_is_teleporting);
 
-void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable);
+void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable);
 
 void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, float pY, float pZ);
 
