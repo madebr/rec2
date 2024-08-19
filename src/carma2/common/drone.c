@@ -124,20 +124,6 @@ void C2_HOOK_FASTCALL CrappyLittleVector3DPrintf(const char* pMessage, br_vector
 }
 C2_HOOK_FUNCTION(0x00451620, CrappyLittleVector3DPrintf)
 
-void C2_HOOK_FASTCALL MakeDroneActive(tDrone_spec* pDrone_spec) {
-
-    BrMatrix34Copy(&pDrone_spec->collision_info.transform_matrix, &pDrone_spec->actor->t.t.mat);
-    pDrone_spec->field_0x44 = 1;
-    if ((pDrone_spec->form->flags & 0x4) == 0) {
-         C2V(gCount_active_drones) += 1;
-    }
-    if (C2V(gDrone_state_functions)[pDrone_spec->current_state] != NULL) {
-        C2V(gDrone_state_functions)[pDrone_spec->current_state](pDrone_spec, eDrone_state_DEFAULT);
-    }
-    DoNotDprintf("PROCESSING ON: Frame %d, Drone %d, state %d", C2V(gFrame), pDrone_spec->id, pDrone_spec->current_state);
-    CrappyLittleVector3DPrintf("    Pos", &pDrone_spec->actor->t.t.translate.t);
-}
-
 int C2_HOOK_FASTCALL CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing(tDrone_spec* pDrone) {
 
     if (C2V(gTime_stamp_for_this_munging) > pDrone->last_collide_check + 1000) {
