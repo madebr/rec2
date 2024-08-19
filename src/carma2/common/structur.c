@@ -86,7 +86,7 @@ void C2_HOOK_FASTCALL DoProgram(void) {
             if (C2V(gNo_current_game)) {
                 LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), -1);
                 InitGame(C2V(gDev_initial_race));
-                RestoreStashedSaveGame();
+                MaybeRestoreSavedGame();
             }
             if (C2V(gAuto_load) && C2V(gLoad_last_save_game)) {
                 LoadLastSaveGame();
