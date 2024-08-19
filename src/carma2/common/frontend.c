@@ -78,6 +78,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gFrontend_wrecks_pixelmap, 0x007635e4);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontendMenuType, gFrontend_next_menu, 0x00764eec);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAuthor_credits_scroll_start_time, 0x00686834);
 C2_HOOK_VARIABLE_IMPLEMENT(tConnected_items*, gConnected_items, 0x00688ab0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_connected_items_indices, 0x00686f08);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gConnected_items_indices, 6, 0x00687018);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -1281,29 +1283,36 @@ int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00470c20, FRONTEND_Default_Tick, FRONTEND_Default_Tick_original)
 
+void C2_HOOK_FASTCALL Generic_UnMungeActiveItems(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < C2V(gCount_connected_items_indices); i++) {
+        pFrontend->items[C2V(gConnected_items_indices)[i]].flags &= ~0x1;
+    }
+    C2V(gCount_connected_items_indices) = 0;
+}
+
 void (C2_HOOK_FASTCALL * FRONTEND_RenderItems_original)(tFrontend_spec* pFrontend);
 void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     FRONTEND_RenderItems_original(pFrontend);
 #else
-    static C2_HOOK_VARIABLE_IMPLEMENT(int, count_connected_items, 0x00686f08);
-    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, connected_items, 6, 0x00687018);
     int i;
     br_fixed_ls blend_x;
 
     if (C2V(gFrontend_leave_current_menu) || pFrontend->count_items <= 0) {
         return;
     }
-    C2V(count_connected_items) = 0;
+    C2V(gCount_connected_items_indices) = 0;
     if (C2V(gFrontend_selected_item_index) != -1) {
-        tConnected_items* connected_items = C2V(gConnected_items);
+        tConnected_items* gConnected_items_indices = C2V(gConnected_items);
         int scroll_area_containing_selected_item = 0;
 
-        for (; connected_items != NULL; connected_items = connected_items->next) {
-            for (i = 0; i < connected_items->count_ranges; i++) {
-                if (connected_items->range_starts[i] <= C2V(gFrontend_selected_item_index) && C2V(gFrontend_selected_item_index) < connected_items->range_starts[i] + connected_items->range_length) {
-                    scroll_area_containing_selected_item = C2V(gFrontend_selected_item_index) - connected_items->range_starts[i] + 1;
+        for (; gConnected_items_indices != NULL; gConnected_items_indices = gConnected_items_indices->next) {
+            for (i = 0; i < gConnected_items_indices->count_ranges; i++) {
+                if (gConnected_items_indices->range_starts[i] <= C2V(gFrontend_selected_item_index) && C2V(gFrontend_selected_item_index) < gConnected_items_indices->range_starts[i] + gConnected_items_indices->range_length) {
+                    scroll_area_containing_selected_item = C2V(gFrontend_selected_item_index) - gConnected_items_indices->range_starts[i] + 1;
                     break;
                 }
             }
@@ -1312,14 +1321,14 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
             }
         }
         if (scroll_area_containing_selected_item == 0) {
-            C2V(count_connected_items) = 1;
-            C2V(connected_items)[0] = C2V(gFrontend_selected_item_index);
+            C2V(gCount_connected_items_indices) = 1;
+            C2V(gConnected_items_indices)[0] = C2V(gFrontend_selected_item_index);
             pFrontend->items[C2V(gFrontend_selected_item_index)].flags |= 0x1;
         } else {
-            for (i = 0; i < connected_items->count_ranges; i++) {
-                C2V(connected_items)[C2V(count_connected_items)] = scroll_area_containing_selected_item + connected_items->range_starts[i] - 1;
+            for (i = 0; i < gConnected_items_indices->count_ranges; i++) {
+                C2V(gConnected_items_indices)[C2V(gCount_connected_items_indices)] = scroll_area_containing_selected_item + gConnected_items_indices->range_starts[i] - 1;
                 pFrontend->items[i - 1].flags |= 0x1;
-                C2V(count_connected_items) += 1;
+                C2V(gCount_connected_items_indices) += 1;
             }
         }
     }
@@ -1382,10 +1391,7 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
     }
     FRONTEND_PingPongFlash();
     PossibleService();
-    for (i = 0; i < C2V(count_connected_items); i++) {
-        pFrontend->items[C2V(connected_items)[i]].flags &= ~0x1;
-    }
-    C2V(count_connected_items) = 0;
+    Generic_UnMungeActiveItems(pFrontend);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046e020, FRONTEND_DrawMenu, FRONTEND_RenderItems_original)
