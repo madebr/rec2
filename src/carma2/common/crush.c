@@ -216,7 +216,7 @@ void C2_HOOK_FASTCALL LoadNoncarActivation(FILE* pF, tNoncar_activation** pNonca
     }
 }
 
-void C2_HOOK_FASTCALL LoadAward(FILE* pF, tAward_info* pAward_info) {
+void C2_HOOK_FASTCALL ReadAward(FILE* pF, tAward_info* pAward_info) {
 
     pAward_info->frequency = GetALineAndInterpretCommand(pF, C2V(gRepeatability_names), REC2_ASIZE(C2V(gRepeatability_names)));
     if (pAward_info->frequency != kRepeatability_None) {
@@ -277,7 +277,7 @@ void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashabl
         }
         /* Room turn on code */
         level->room_turn_on_code = GetAnInt(pF);
-        LoadAward(pF, &level->award);
+        ReadAward(pF, &level->award);
         /* run-time variable changes */
         level->count_runtime_variable_changes = GetAnInt(pF);
         for (j = 0; j < level->count_runtime_variable_changes; j++) {
