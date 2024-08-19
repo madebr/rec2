@@ -610,7 +610,7 @@ void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d2cc0, MaybeSpawnPedestrian, MaybeSpawnPedestrian_original)
 
-void C2_HOOK_FASTCALL AllocateTrackPedestrians(void) {
+void C2_HOOK_FASTCALL FinishUpLoadingPeds(void) {
     tPedestrian* new_pedestrians;
     int i;
 
@@ -632,7 +632,7 @@ void C2_HOOK_FASTCALL AllocateTrackPedestrians(void) {
         C2_HOOK_BUG_ON(offsetof(tRace_pedestrian, ped) != 228);
     }
 }
-C2_HOOK_FUNCTION(0x004d3520, AllocateTrackPedestrians)
+C2_HOOK_FUNCTION(0x004d3520, FinishUpLoadingPeds)
 
 void (C2_HOOK_FASTCALL * DisposePedestrians_original)(void);
 void C2_HOOK_FASTCALL DisposePedestrians(void) {

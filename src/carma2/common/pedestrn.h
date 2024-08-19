@@ -35,7 +35,7 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF);
 
 void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel);
 
-void C2_HOOK_FASTCALL AllocateTrackPedestrians(void);
+void C2_HOOK_FASTCALL FinishUpLoadingPeds(void);
 
 void C2_HOOK_FASTCALL DisposePedestrians(void);
 

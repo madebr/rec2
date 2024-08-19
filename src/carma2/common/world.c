@@ -2474,7 +2474,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     ExtractColumns(pTrack_spec);
     PackFileRerevertTiffLoading();
 
-    AllocateTrackPedestrians();
+    FinishUpLoadingPeds();
     PrintMemoryDump(0, "JUST EXTRACTED COLUMNS AND LOADED IN PEDS");
 
     C2V(gTrack_actor) = pTrack_spec->the_actor;
