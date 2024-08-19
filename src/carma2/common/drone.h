@@ -23,7 +23,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrame);
 C2_HOOK_VARIABLE_DECLARE(tDrone_path_node*, gDrone_path_nodes);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_drone_path_nodes);
 
-void C2_HOOK_CDECL DroneDebug(const char* message, ...);
+void C2_HOOK_CDECL DoNotDprintf(const char* message, ...);
 
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
