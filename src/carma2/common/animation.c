@@ -13,7 +13,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gExplosion_rotate_names, 2, 0
     "randomrotate",
 });
 
-void C2_HOOK_FASTCALL ReadExplosionAnimation(FILE *pF, tExplosion_animation* pAnimation) {
+void C2_HOOK_FASTCALL ReadExplosion(FILE *pF, tExplosion_animation* pAnimation) {
     int i;
     int j;
     char s[256];
@@ -75,4 +75,4 @@ void C2_HOOK_FASTCALL ReadExplosionAnimation(FILE *pF, tExplosion_animation* pAn
         }
     }
 }
-C2_HOOK_FUNCTION(0x004ee780, ReadExplosionAnimation)
+C2_HOOK_FUNCTION(0x004ee780, ReadExplosion)
