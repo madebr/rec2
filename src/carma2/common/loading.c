@@ -4949,7 +4949,7 @@ void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char*
 }
 C2_HOOK_FUNCTION(0x004f6640, LoadTrackMaterials)
 
-int C2_HOOK_FASTCALL LoadAllModelsInPath(tBrender_storage* pStorage, const char* pPath) {
+int C2_HOOK_FASTCALL AddSmoothModels(tBrender_storage* pStorage, const char* pPath) {
     br_model* temp_array[2000];
     int count;
     int new_ones;
@@ -4982,14 +4982,14 @@ int C2_HOOK_FASTCALL LoadAllModelsInPath(tBrender_storage* pStorage, const char*
     }
     return new_ones;
 }
-C2_HOOK_FUNCTION(0x004f6580, LoadAllModelsInPath)
+C2_HOOK_FUNCTION(0x004f6580, AddSmoothModels)
 
 void C2_HOOK_FASTCALL SmoothlyLoadIfItsAModel(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".DAT") != NULL) {
-        LoadAllModelsInPath(C2V(gStorageForCallbacks), pPath);
+        AddSmoothModels(C2V(gStorageForCallbacks), pPath);
     }
 }
 C2_HOOK_FUNCTION(0x004f6540, SmoothlyLoadIfItsAModel)
