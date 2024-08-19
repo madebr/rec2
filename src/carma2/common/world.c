@@ -2095,7 +2095,7 @@ void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, ReadSpecialVolumes, LoadTrackSpecialVolumes_original)
 
 void (C2_HOOK_FASTCALL * LoadTrackSoundGenerators_original)(tTrack_spec* pTrack_spec, FILE* pF);
-void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
+void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     LoadTrackSoundGenerators_original(pTrack_spec, pF);
@@ -2149,7 +2149,7 @@ void C2_HOOK_FASTCALL LoadTrackSoundGenerators(tTrack_spec* pTrack_spec, FILE* p
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004572f0, LoadTrackSoundGenerators, LoadTrackSoundGenerators_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004572f0, ReadSoundGenerators, LoadTrackSoundGenerators_original)
 
 void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
 
@@ -2593,7 +2593,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     }
     PossibleService();
     ReadSpecialVolumes(f);
-    LoadTrackSoundGenerators(pTrack_spec, f);
+    ReadSoundGenerators(pTrack_spec, f);
 
     /* REFLECTIVE WINDSCREEN SPECIFICATIONS */
 
