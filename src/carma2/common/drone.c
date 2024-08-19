@@ -154,6 +154,13 @@ int C2_HOOK_FASTCALL AddDroneToPHIL(tDrone_spec* pDrone) {
     return ReallyAddDroneToPHIL(pDrone);
 }
 
+void C2_HOOK_FASTCALL UnPauseDroneState(tDrone_spec* pDrone) {
+
+    if (C2V(gDrone_state_functions)[pDrone->current_state] != NULL) {
+        C2V(gDrone_state_functions)[pDrone->current_state](pDrone, eDrone_state_DEFAULT);
+    }
+}
+
 void C2_HOOK_FASTCALL StartProcessingThisDrone(tDrone_spec* pDrone) {
     tDrone_form* form = pDrone->form;
 
@@ -166,9 +173,7 @@ void C2_HOOK_FASTCALL StartProcessingThisDrone(tDrone_spec* pDrone) {
             if ((pDrone->form->flags & 0x4) == 0) {
                 C2V(gCount_active_drones) += 1;
             }
-            if (C2V(gDrone_state_functions)[pDrone->current_state] != NULL) {
-                C2V(gDrone_state_functions)[pDrone->current_state](pDrone, eDrone_state_DEFAULT);
-            }
+            UnPauseDroneState(pDrone);
             DoNotDprintf("PROCESSING ON: Frame %d, Drone %d, state %d", C2V(gFrame), pDrone->id, pDrone->current_state);
             CrappyLittleVector3DPrintf("    Pos", &pDrone->actor->t.t.translate.t);
         }
