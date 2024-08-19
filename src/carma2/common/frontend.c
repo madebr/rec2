@@ -797,7 +797,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
             if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_CREDITS)) {
                 ScrollCredits();
             }
-            FRONTEND_RenderItems(C2V(gCurrent_frontend_spec));
+            FRONTEND_DrawMenu(C2V(gCurrent_frontend_spec));
             if (C2V(gCurrent_frontend_spec)->unknownLastInt == 0) {
                 FRONTEND_DoMouse();
             }
@@ -1282,7 +1282,7 @@ int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00470c20, FRONTEND_Default_Tick, FRONTEND_Default_Tick_original)
 
 void (C2_HOOK_FASTCALL * FRONTEND_RenderItems_original)(tFrontend_spec* pFrontend);
-void C2_HOOK_FASTCALL FRONTEND_RenderItems(tFrontend_spec* pFrontend) {
+void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     FRONTEND_RenderItems_original(pFrontend);
@@ -1388,7 +1388,7 @@ void C2_HOOK_FASTCALL FRONTEND_RenderItems(tFrontend_spec* pFrontend) {
     C2V(count_connected_items) = 0;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0046e020, FRONTEND_RenderItems, FRONTEND_RenderItems_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0046e020, FRONTEND_DrawMenu, FRONTEND_RenderItems_original)
 
 void C2_HOOK_FASTCALL FRONTEND_DoMouse(void) {
     if (!C2V(gFrontend_suppress_mouse)) {
