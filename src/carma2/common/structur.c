@@ -719,8 +719,8 @@ void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void) {
     C2V(gInterface_within_race_mode) = 1;
     C2V(gHud_tinted1_visible) = !!IsTintedVisible(C2V(gHud_tinted1));
     C2V(gHud_tinted2_visible) = !!IsTintedVisible(C2V(gHud_tinted2));
-    MakeTintedInvisible(C2V(gHud_tinted1));
-    MakeTintedInvisible(C2V(gHud_tinted2));
+    TurnTintedPolyOff(C2V(gHud_tinted1));
+    TurnTintedPolyOff(C2V(gHud_tinted2));
     PlayFlicsFromDisk();
     if (C2V(gNet_mode) == eNet_mode_host) {
         SendGameplayToAllPlayers(eNet_gameplay_host_paused, 0, 0, 0, 0);

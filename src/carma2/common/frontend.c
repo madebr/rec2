@@ -664,9 +664,9 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
     SwitchToHiresMode();
     WaitForNoKeys();
     C2V(gFrontend_remove_current_backdrop) = 0;
-    MakeTintedInvisible(C2V(gHud_tinted1));
-    MakeTintedInvisible(C2V(gHud_tinted2));
-    MakeTintedInvisible(C2V(gHud_tinted3));
+    TurnTintedPolyOff(C2V(gHud_tinted1));
+    TurnTintedPolyOff(C2V(gHud_tinted2));
+    TurnTintedPolyOff(C2V(gHud_tinted3));
     FRONTEND_Setup(pFrontendType);
     C2V(gFrontend_remove_current_backdrop) = 1;
     C2V(gFrontend_leave_current_menu) = 0;
