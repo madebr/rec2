@@ -801,7 +801,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
             }
             FRONTEND_DrawMenu(C2V(gCurrent_frontend_spec));
             if (C2V(gCurrent_frontend_spec)->unknownLastInt == 0) {
-                FRONTEND_DoMouse();
+                MaybeDoMouseCursor();
             }
         }
         PDScreenBufferSwap(0);
@@ -1402,14 +1402,14 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046e020, FRONTEND_DrawMenu, FRONTEND_RenderItems_original)
 
-void C2_HOOK_FASTCALL FRONTEND_DoMouse(void) {
+void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
     if (!C2V(gFrontend_suppress_mouse)) {
         LockBackScreen(1);
         DoMouseCursor();
         UnlockBackScreen(1);
     }
 }
-C2_HOOK_FUNCTION(0x0046d8b0, FRONTEND_DoMouse)
+C2_HOOK_FUNCTION(0x0046d8b0, MaybeDoMouseCursor)
 
 void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
 
