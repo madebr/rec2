@@ -25,7 +25,7 @@ void C2_HOOK_FASTCALL RenderInterfaceBlendedPolyText(int pFont, const char* pTex
 
 void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, int pRender);
 
-void C2_HOOK_FASTCALL RenderBlendedPolyText(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend);
+void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend);
 
 int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap);
 

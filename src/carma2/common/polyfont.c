@@ -57,7 +57,7 @@ void C2_HOOK_FASTCALL RenderInterfaceBlendedPolyText(int pFont, const char* pTex
     if (!C2V(gPolyFonts)[pFont].available) {
         LoadInterfacePolyFonts();
     }
-    RenderBlendedPolyText(pFont, pText, pX, pY, pWidth, pHeight, pJustification, pParam_8, 1.0);
+    TransparentPolyFontTextInABox(pFont, pText, pX, pY, pWidth, pHeight, pJustification, pParam_8, 1.0);
 }
 C2_HOOK_FUNCTION(0x00463850, RenderInterfaceBlendedPolyText)
 
@@ -151,7 +151,7 @@ void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, in
 }
 C2_HOOK_FUNCTION(0x004638b0, RenderPolyText)
 
-void C2_HOOK_FASTCALL RenderBlendedPolyText(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend) {
+void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend) {
     char s[256];
     int s_len;
     int x;
@@ -239,7 +239,7 @@ void C2_HOOK_FASTCALL RenderBlendedPolyText(int pFont, const char* pText, int pL
         TransparentPolyFontText(s, x, y, pFont, justif, C2V(gRender_poly_text), pBlend);
     }
 }
-C2_HOOK_FUNCTION(0x00463ad0, RenderBlendedPolyText)
+C2_HOOK_FUNCTION(0x00463ad0, TransparentPolyFontTextInABox)
 
 int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
     int y;
