@@ -13,7 +13,7 @@ C2_HOOK_VARIABLE_DECLARE(tRace_over_reason, gRace_over_reason);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_checkpoint_time);
 C2_HOOK_VARIABLE_DECLARE(int, gLast_wrong_checkpoint);
 
-void C2_HOOK_FASTCALL StashCreditsAndAPO(void);
+void C2_HOOK_FASTCALL RecordAPOAndCredits(void);
 
 int C2_HOOK_FASTCALL DoPostRace(tRace_result pRace_result);
 
