@@ -659,7 +659,7 @@ void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
 }
 C2_HOOK_FUNCTION(0x004640d0, CheckAvailabilityOfThisFont)
 
-void C2_HOOK_FASTCALL ClearInterfacePolyFonts(void) {
+void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
 
     if (C2V(gInterface_fonts_loaded)) {
         int i;
@@ -691,7 +691,7 @@ void C2_HOOK_FASTCALL ClearInterfacePolyFonts(void) {
         C2V(gInterface_fonts_loaded) = 0;
     }
 }
-C2_HOOK_FUNCTION(0x004640f0, ClearInterfacePolyFonts)
+C2_HOOK_FUNCTION(0x004640f0, DisposeInterfaceFonts)
 
 void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
     int i;

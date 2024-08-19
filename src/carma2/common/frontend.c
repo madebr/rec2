@@ -823,7 +823,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
                 BrMapRemove(C2V(gFrontend_backdrop));
                 BrPixelmapFree(C2V(gFrontend_backdrop));
             }
-            ClearInterfacePolyFonts();
+            DisposeInterfaceFonts();
             return C2V(gCurrent_frontend_spec)->unknownLastInt != 2;
         }
     }
