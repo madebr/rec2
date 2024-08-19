@@ -15,7 +15,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gRender_poly_text);
 C2_HOOK_VARIABLE_DECLARE(int, gInterface_polyfont_texture_pages);
 C2_HOOK_VARIABLE_DECLARE(int, gInterface_fonts_loaded);
 
-int C2_HOOK_FASTCALL GetPolyFontHeight(int pIndex);
+int C2_HOOK_FASTCALL PolyFontHeight(int pIndex);
 
 int C2_HOOK_FASTCALL CharacterWidth(int pIndex, tU8 pCharacter);
 
