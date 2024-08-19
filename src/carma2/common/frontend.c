@@ -671,6 +671,14 @@ void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActorIdx, int 
 }
 C2_HOOK_FUNCTION(0x004709b0, BuildAPO)
 
+void C2_HOOK_FASTCALL PrepareAPO(int pActorIdx) {
+
+    BrMapUpdate(C2V(gFrontend_billboard_actors)[pActorIdx]->material->colour_map, BR_MAPU_ALL);
+    BrMaterialUpdate(C2V(gFrontend_billboard_actors)[pActorIdx]->material, BR_MATU_ALL);
+    BrModelUpdate(C2V(gFrontend_billboard_actors)[pActorIdx]->model, BR_MODU_VERTICES);
+}
+C2_HOOK_FUNCTION(0x00470860, PrepareAPO)
+
 int (C2_HOOK_FASTCALL * DoFrontendMenu_original)(tFrontendMenuType pFrontend);
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
 
@@ -781,9 +789,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
                 BuildAPO(C2V(gCurrent_APO_levels)[1], C2V(gCurrent_APO_potential_levels)[1], 0, 1);
                 BuildAPO(C2V(gCurrent_APO_levels)[2], C2V(gCurrent_APO_potential_levels)[2], 0, 2);
 
-                BrMapUpdate(C2V(gFrontend_billboard_actors)[0]->material->colour_map, BR_MAPU_ALL);
-                BrMaterialUpdate(C2V(gFrontend_billboard_actors)[0]->material, BR_MATU_ALL);
-                BrModelUpdate(C2V(gFrontend_billboard_actors)[0]->model, BR_MODU_VERTICES);
+                PrepareAPO(0);
                 RenderFrontendBillboard( 95, 348, 0, 0);
                 RenderFrontendBillboard(146, 348, 0, 1);
                 RenderFrontendBillboard(195, 348, 0, 2);
