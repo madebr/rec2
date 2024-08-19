@@ -2291,12 +2291,12 @@ typedef struct {
     int count_levels;
     undefined4 field_0x4c;
     tSmashable_level* levels;
-    undefined4 field_0x54;
-    undefined4 field_0x58;
-    undefined4 field_0x5c;
+    float field_0x54;
+    float field_0x58;
+    float field_0x5c;
     float field_0x60;
-    undefined4 field_0x64;
-    undefined4 field_0x68;
+    float field_0x64;
+    float field_0x68;
     undefined4 field_0x6c;
     undefined4 field_0x70;
     undefined4 field_0x74;

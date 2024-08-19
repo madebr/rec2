@@ -1823,6 +1823,38 @@ void C2_HOOK_FASTCALL ReadSmashReplace(tSmashReplace* pReplace, FILE* pF) {
     ReadSmokeFireChance(pF, &pReplace->smoke_fire_chance);
 }
 
+void C2_HOOK_FASTCALL ReadSmashTexture(tSmashable_item_spec* pSmash_item, tSmashable_item_spec_texture_change* pTexture_change, FILE* pF) {
+    char s[256] = "";
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, levels, 0x50);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, trigger, 0x44);
+
+    pTexture_change->levels = NULL;
+    c2_strcpy(pTexture_change->undefined_0x0, s);
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, field_0x40, 0x40);
+
+    pTexture_change->field_0x40 = -1;
+    pTexture_change->trigger = pSmash_item->trigger_object;
+    pTexture_change->field_0x4c = 0;
+    pTexture_change->field_0x40 = -1;
+    pTexture_change->field_0x6c = 0;
+    pTexture_change->field_0x70 = 0;
+    pTexture_change->field_0x74 = 0;
+    pTexture_change->field_0x78 = 0;
+    pTexture_change->field_0x54 = 0.f;
+    pTexture_change->field_0x58 = 0.f;
+    pTexture_change->field_0x5c = 0.f;
+    pTexture_change->field_0x60 = 1.f;
+    pTexture_change->field_0x64 = 0.f;
+    pTexture_change->field_0x68 = 0.f;
+    LoadSmashableLevels(pF,
+        &pTexture_change->levels,
+        &pTexture_change->count_levels,
+        pSmash_item->mode == kSmashableMode_TextureChange,
+        &C2V(gTrack_storage_space));
+}
+
 void (C2_HOOK_FASTCALL * LoadSmashableTrackEnvironment_original)(FILE* pF, const char* pPath);
 void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
 
@@ -1832,9 +1864,7 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
     int i;
     int j;
     char s[256];
-    char s2[256];
 
-    s2[0] = '\0';
     C2V(gCount_smashable_noncars) = 0;
     C2V(gCount_smashable_noncar_shrapnel_actors) = 0;
     C2V(gSmashable_noncars) = BrMemAllocate(100 * sizeof(tSmashable_environment_name), kMem_smashable_env_info);
@@ -1905,31 +1935,7 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
         case kSmashableMode_Decal:
         case kSmashableMode_TextureChange:
             C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
-
-            spec->mode_data.texture_change.levels = NULL;
-            c2_strcpy(spec->mode_data.texture_change.undefined_0x0, s2);
-
-            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, field_0x40, 0x40);
-
-            spec->mode_data.texture_change.field_0x40 = -1;
-            spec->mode_data.texture_change.trigger = spec->trigger_object;
-            spec->mode_data.texture_change.field_0x4c = 0;
-            spec->mode_data.texture_change.field_0x40 = -1;
-            spec->mode_data.texture_change.field_0x6c = 0;
-            spec->mode_data.texture_change.field_0x70 = 0;
-            spec->mode_data.texture_change.field_0x74 = 0;
-            spec->mode_data.texture_change.field_0x78 = 0;
-            spec->mode_data.texture_change.field_0x54 = 0;
-            spec->mode_data.texture_change.field_0x58 = 0;
-            spec->mode_data.texture_change.field_0x5c = 0;
-            spec->mode_data.texture_change.field_0x60 = 1.f;
-            spec->mode_data.texture_change.field_0x64 = 0;
-            spec->mode_data.texture_change.field_0x68 = 0;
-            LoadSmashableLevels(pF,
-                &spec->mode_data.texture_change.levels,
-                &spec->mode_data.texture_change.count_levels,
-                spec->mode == kSmashableMode_TextureChange,
-                &C2V(gTrack_storage_space));
+            ReadSmashTexture(spec, &spec->mode_data.texture_change, pF);
             break;
         default:
             /* Removal threshold */

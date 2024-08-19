@@ -162,6 +162,8 @@ void C2_HOOK_FASTCALL ReadSmokeFireChance(FILE* pF, tSmokeFireChance* pSmokeFire
 
 void C2_HOOK_FASTCALL ReadSmashReplace(tSmashReplace* pReplace, FILE* pF);
 
+void C2_HOOK_FASTCALL ReadSmashTexture(tSmashable_item_spec* pSmash_item, tSmashable_item_spec_texture_change* pTexture_change, FILE* pF);
+
 void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath);
 
 int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial);
