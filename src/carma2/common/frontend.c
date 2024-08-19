@@ -1337,10 +1337,10 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
         text = item->stringId >= 0x400 ? item->text : IString_Get(item->stringId);
         if (item->flags & 0x1) {
             if (text != NULL) {
-                RenderBlendedPolyText(item->unlitFont, text,
+                TransparentPolyFontTextInABox(item->unlitFont, text,
                     item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1, 0.6);
             }
-            RenderBlendedPolyText(item->highFont, text,
+            TransparentPolyFontTextInABox(item->highFont, text,
                 item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1,
                 item->radioButton_selected ? 0.3 - 0.7 * C2V(gFrontend_throb_factor) : 0.6 * C2V(gFrontend_throb_factor));
         } else if (item->enabled >= 0) {
@@ -1363,7 +1363,7 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
                 BrMaterialUpdate(brender_item->material, BR_MATU_EXTRA_PRIM);
             }
             if (text != NULL) {
-                RenderBlendedPolyText(item->unlitFont, text,
+                TransparentPolyFontTextInABox(item->unlitFont, text,
                     item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1, 0.4);
             }
         }
