@@ -198,6 +198,10 @@ void C2_HOOK_FASTCALL LoadExceptionsFileForTrack(const char* pTrack_name);
 
 void C2_HOOK_FASTCALL MungeTrackModel(br_model* pModel);
 
+int C2_HOOK_FASTCALL ModelIsATree(br_model* pModel, char* pName_replacement);
+
+void C2_HOOK_FASTCALL PerformTreeSurgery(tBrender_storage* pStorage, br_model* pModel, const char* pName_replacement);
+
 void C2_HOOK_FASTCALL PossibleTreeSurgery(br_model* pModel);
 
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
