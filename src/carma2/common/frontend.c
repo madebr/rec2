@@ -691,7 +691,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
               C2V(gCurrent_frontend_spec) != &C2V(gFrontend_NETSYNC) &&
               C2V(gCurrent_frontend_spec) != &C2V(gFrontend_NETWORK_SUMMARY) &&
               C2V(gFrontend_interpolate_steps_left) == 0) {
-            C2V(gCurrent_frontend_spec)->unknownLastInt = FRONTEND_Tick(C2V(gCurrent_frontend_spec));
+            C2V(gCurrent_frontend_spec)->unknownLastInt = FRONTEND_GenericMenuHandler(C2V(gCurrent_frontend_spec));
         }
         BrPixelmapFill(C2V(gDepth_buffer), 0xffffffff);
         C2V(gBack_screen)->origin_x = 0;
@@ -736,7 +736,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
                 C2V(gCurrent_frontend_spec) == &C2V(gFrontend_NETSYNC) ||
                 C2V(gCurrent_frontend_spec) == &C2V(gFrontend_NETWORK_SUMMARY)) {
             if (C2V(gFrontend_interpolate_steps_left) == 0) {
-                C2V(gCurrent_frontend_spec)->unknownLastInt = FRONTEND_Tick(C2V(gCurrent_frontend_spec));
+                C2V(gCurrent_frontend_spec)->unknownLastInt = FRONTEND_GenericMenuHandler(C2V(gCurrent_frontend_spec));
             }
         }
         if (C2V(gFrontend_interpolate_steps_left) != 0) {
@@ -1126,7 +1126,7 @@ int C2_HOOK_FASTCALL Frontend_FindNextVisibleItem(tFrontend_spec* pFrontend, int
     return 0;
 }
 
-int C2_HOOK_FASTCALL FRONTEND_Tick(tFrontend_spec* pFrontend) {
+int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
     int original_selected_index;
 
     original_selected_index = C2V(gFrontend_selected_item_index);
@@ -1251,7 +1251,7 @@ int C2_HOOK_FASTCALL FRONTEND_Tick(tFrontend_spec* pFrontend) {
     ServiceGame();
     return C2V(gFrontend_leave_current_menu) != 0;
 }
-C2_HOOK_FUNCTION(0x0046c0d0, FRONTEND_Tick)
+C2_HOOK_FUNCTION(0x0046c0d0, FRONTEND_GenericMenuHandler)
 
 int C2_HOOK_FASTCALL FRONTEND_DefaultItem_Action(tFrontend_spec* pFrontend) {
 
