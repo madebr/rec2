@@ -38,7 +38,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gFrame, 0x00684514);
 C2_HOOK_VARIABLE_IMPLEMENT(tDrone_path_node*, gDrone_path_nodes, 0x00684508);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_drone_path_nodes, 0x00684510);
 
-void C2_HOOK_CDECL DroneDebug(const char* format, ...) {
+void C2_HOOK_CDECL DoNotDprintf(const char* format, ...) {
 // Disabled because too noisy
 #if 0
     va_list ap;
@@ -49,7 +49,7 @@ void C2_HOOK_CDECL DroneDebug(const char* format, ...) {
     va_end(ap);
 #endif
 }
-C2_HOOK_FUNCTION(0x0044cfc0, DroneDebug)
+C2_HOOK_FUNCTION(0x0044cfc0, DoNotDprintf)
 
 void (C2_HOOK_FASTCALL * LoadInDronePaths_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
@@ -71,7 +71,7 @@ void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec) {
 C2_HOOK_FUNCTION(0x004516b0, DoDefaultDroneStateAction)
 
 void C2_HOOK_FASTCALL NewDroneState(tDrone_spec* pDrone_spec, int pNew_state) {
-    DroneDebug("NewDroneState() Drone %d, Current state %d, New state %d",
+    DoNotDprintf("NewDroneState() Drone %d, Current state %d, New state %d",
         pDrone_spec->id, pDrone_spec->current_state, pNew_state);
     if (pDrone_spec->current_state != 1) {
         if (C2V(gDrone_state_functions)[pDrone_spec->current_state] != NULL) {
@@ -120,7 +120,7 @@ void C2_HOOK_FASTCALL InitDroneCollisionInfo(tDrone_spec *pDrone_spec) {
 C2_HOOK_FUNCTION_ORIGINAL(0x0044f980, InitDroneCollisionInfo, InitDroneCollisionInfo_original)
 
 void C2_HOOK_FASTCALL CrappyLittleVector3DPrintf(const char* pMessage, br_vector3* pPosition) {
-    DroneDebug("%d: %s: %3.3f, %3.3f, %3.3f", C2V(gFrame), pMessage, pPosition->v[0], pPosition->v[1], pPosition->v[2]);
+    DoNotDprintf("%d: %s: %3.3f, %3.3f, %3.3f", C2V(gFrame), pMessage, pPosition->v[0], pPosition->v[1], pPosition->v[2]);
 }
 C2_HOOK_FUNCTION(0x00451620, CrappyLittleVector3DPrintf)
 
@@ -135,7 +135,7 @@ void C2_HOOK_FASTCALL MakeDroneActive(tDrone_spec* pDrone_spec) {
     if (C2V(gDrone_state_functions)[pDrone_spec->current_state] != NULL) {
         C2V(gDrone_state_functions)[pDrone_spec->current_state](pDrone_spec, eDrone_state_DEFAULT);
     }
-    DroneDebug("PROCESSING ON: Frame %d, Drone %d, state %d", C2V(gFrame), pDrone_spec->id, pDrone_spec->current_state);
+    DoNotDprintf("PROCESSING ON: Frame %d, Drone %d, state %d", C2V(gFrame), pDrone_spec->id, pDrone_spec->current_state);
     CrappyLittleVector3DPrintf("    Pos", &pDrone_spec->actor->t.t.translate.t);
 }
 
