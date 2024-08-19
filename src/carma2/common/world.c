@@ -2186,6 +2186,84 @@ void C2_HOOK_FASTCALL LoadExceptionsFileForTrack(const char* pTrack_name) {
     LoadExceptionsFile(path);
 }
 
+void C2_HOOK_FASTCALL MungeTrackModel(br_model* pModel) {
+    int* vertex_index_buffer;
+    int (* face_index_buffer)[3];
+    int i;
+
+    vertex_index_buffer = BrMemAllocate((pModel->nvertices + 1) * sizeof(int), BR_MEMORY_APPLICATION);
+    face_index_buffer = BrMemAllocate(pModel->nfaces * 3 * sizeof(int), BR_MEMORY_APPLICATION);
+
+    for (i = 1; i < pModel->nvertices; i++) {
+        if (vertex_index_buffer[i] == 0) {
+            int j;
+
+            vertex_index_buffer[i] = i;
+            for (j = i + 1; j <= pModel->nvertices; j++) {
+                br_vector3 d;
+
+                BrVector3Sub(&d, &pModel->vertices[i - 1].p, &pModel->vertices[j - 1].p);
+                if (BrVector3LengthSquared(&d) < 1e-8f) {
+                    vertex_index_buffer[j] = i;
+                }
+            }
+        }
+    }
+    for (i = 0; i < pModel->nfaces; i++) {
+        int j;
+
+        for (j = 0; j < 3; j++) {
+            face_index_buffer[i][j] = vertex_index_buffer[1 + pModel->faces[i].vertices[j]];
+        }
+    }
+    if (pModel->nfaces > 1) {
+        for (i = 0; i < pModel->nfaces - 1; i++) {
+            int j;
+
+            for (j = i + 1; j < pModel->nfaces; j++) {
+                int l;
+
+                for (l = 0; l < 3; l++) {
+                    int m;
+                    int s1a = face_index_buffer[i][l];
+                    int s1b = face_index_buffer[i][(l + 1) % 3];
+
+                    for (m = 0; m < 3; m++) {
+                        int s2a = face_index_buffer[j][m];
+                        int s2b = face_index_buffer[j][(m + 1) % 3];
+
+                        if ((s1a == s2a && s1b == s2b) || (s1a == s2b && s1b == s2a)) {
+                            br_vector3 d21, o31b, o31a, c2;
+                            float d;
+                            int s1c, s2c;
+
+                            pModel->faces[j].flags |= 1 << m;
+                            BrVector3Sub(&d21, &pModel->vertices[s2b - 1].p, &pModel->vertices[s2a - 1].p);
+                            s1c = face_index_buffer[i][(l + 2) % 3];
+                            s2c = face_index_buffer[j][(m + 2) % 3];
+                            BrVector3Sub(&o31b, &pModel->vertices[s2c - 1].p, &pModel->vertices[s2a - 1].p);
+                            BrVector3Sub(&o31a, &pModel->vertices[s1c - 1].p, &pModel->vertices[s2c - 1].p);
+                            BrVector3Cross(&c2, &o31b, &d21);
+                            d = BrVector3Dot(&o31a, &c2);
+                            if (d < .0001f && (((pModel->faces[i].material == NULL ||
+                                                 !(pModel->faces[i].material->flags & BR_MATF_TWO_SIDED)) &&
+                                                (pModel->faces[j].material == NULL ||
+                                                 !(pModel->faces[j].material->flags & BR_MATF_TWO_SIDED))) ||
+                                               d >= -.0001f)) {
+                                pModel->faces[j].flags |= 1 << l;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    BrMemFree(vertex_index_buffer);
+    BrMemFree(face_index_buffer);
+    pModel->flags |= BR_MODF_UPDATEABLE;
+    BrModelUpdate(pModel, BR_MODU_FACES);
+}
+
 void (C2_HOOK_FASTCALL * LoadTrack_original)(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
 
@@ -2326,79 +2404,9 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     LoadTrackModels(&C2V(gTrack_storage_space), C2V(gRace_path));
 
     for (i = 0; i < C2V(gTrack_storage_space).models_count; i++) {
-        br_model* model;
-        int* vertex_index_buffer;
-        int (* face_index_buffer)[3];
 
         PossibleService();
-        model = C2V(gTrack_storage_space).models[i];
-        vertex_index_buffer = BrMemAllocate((model->nvertices + 1) * sizeof(int), BR_MEMORY_APPLICATION);
-        face_index_buffer = BrMemAllocate(model->nfaces * 3 * sizeof(int), BR_MEMORY_APPLICATION);
-
-        for (j = 1; j < model->nvertices; j++) {
-            if (vertex_index_buffer[j] == 0) {
-                int k;
-
-                vertex_index_buffer[j] = j;
-                for (k = j + 1; k <= model->nvertices; k++) {
-                    br_vector3 d;
-
-                    BrVector3Sub(&d, &model->vertices[j - 1].p, &model->vertices[k - 1].p);
-                    if (BrVector3LengthSquared(&d) < 1e-8f) {
-                        vertex_index_buffer[k] = j;
-                    }
-                }
-            }
-        }
-        for (j = 0; j < model->nfaces; j++) {
-            int k;
-
-            for (k = 0; k < 3; k++) {
-                face_index_buffer[j][k] = vertex_index_buffer[1 + model->faces[j].vertices[k]];
-            }
-        }
-        if (model->nfaces > 1) {
-            for (j = 0; j < model->nfaces - 1; j++) {
-                int k;
-
-                for (k = j + 1; k < model->nfaces; k++) {
-                    int l;
-
-                    for (l = 0; l < 3; l++) {
-                        int m;
-                        int s1a = face_index_buffer[j][l];
-                        int s1b = face_index_buffer[j][(l + 1) % 3];
-
-                        for (m = 0; m < 3; m++) {
-                            int s2a = face_index_buffer[k][m];
-                            int s2b = face_index_buffer[k][(m + 1) % 3];
-
-                            if ((s1a == s2a && s1b == s2b) || (s1a == s2b && s1b == s2a)) {
-                                br_vector3 d21, o31b, o31a, c2;
-                                float d;
-                                int s1c, s2c;
-
-                                model->faces[k].flags |= 1 << m;
-                                BrVector3Sub(&d21, &model->vertices[s2b - 1].p, &model->vertices[s2a - 1].p);
-                                s1c = face_index_buffer[j][(l + 2) % 3];
-                                s2c = face_index_buffer[k][(m + 2) % 3];
-                                BrVector3Sub(&o31b, &model->vertices[s2c - 1].p, &model->vertices[s2a - 1].p);
-                                BrVector3Sub(&o31a, &model->vertices[s1c - 1].p, &model->vertices[s2c - 1].p);
-                                BrVector3Cross(&c2, &o31b, &d21);
-                                d = BrVector3Dot(&o31a, &c2);
-                                if (d < .0001f && (((model->faces[j].material == NULL || !(model->faces[j].material->flags & BR_MATF_TWO_SIDED)) && (model->faces[k].material == NULL || !(model->faces[k].material->flags & BR_MATF_TWO_SIDED))) || d >= -.0001f)) {
-                                    model->faces[k].flags |= 1 << l;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        BrMemFree(vertex_index_buffer);
-        BrMemFree(face_index_buffer);
-        model->flags |= BR_MODF_UPDATEABLE;
-        BrModelUpdate(model, BR_MODU_FACES);
+        MungeTrackModel(C2V(gTrack_storage_space).models[i]);
     }
     PrintMemoryDump(0, "JUST LOADED IN TEXTURES/MATS/MODELS FOR TRACK");
 
