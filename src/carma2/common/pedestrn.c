@@ -239,7 +239,7 @@ void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile) {
     C2V(gPed_smear_material) = BrMaterialFind("PEDSMEAR");
 
     /* GIB SLICK! */
-    ReadSlick(pFile, &C2V(gPed_slick));
+    ReadSpillData(pFile, &C2V(gPed_slick));
 
     /* SPURTING STUMP GIBLETS */
     /* Number of spurty lumps at a time */

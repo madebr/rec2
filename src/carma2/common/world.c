@@ -1874,7 +1874,7 @@ void C2_HOOK_FASTCALL ReadSmashSounds(FILE* pF, tConnotations* pConnotations, tB
 void C2_HOOK_FASTCALL ReadSpecialEffectsSpec(FILE* pF, tSpecial_effects_spec* pSpecial_effects) {
 
     ReadExplosion(pF, &pSpecial_effects->explosion_animation);
-    ReadSlick(pF, &pSpecial_effects->slick);
+    ReadSpillData(pF, &pSpecial_effects->slick);
 }
 
 void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
