@@ -2310,6 +2310,42 @@ void C2_HOOK_FASTCALL MungeTrackModel(br_model* pModel) {
     BrModelUpdate(pModel, BR_MODU_FACES);
 }
 
+void C2_HOOK_FASTCALL PossibleTreeSurgery(br_model* pModel) {
+    int i;
+    char s[36];
+
+    if (pModel == NULL || pModel->identifier == NULL) {
+        return;
+    }
+    for (i = 0; i < C2V(gTree_surgery_pass1_count); i++) {
+        if (c2_strstr(pModel->identifier, C2V(gTree_surgery_pass1)->name) == pModel->identifier) {
+            break;
+        }
+    }
+    if (i != C2V(gTree_surgery_pass1_count)) {
+        for (i = 0; i < C2V(gTree_surgery_pass2_count); i++) {
+            if (c2_strcmp(pModel->identifier, C2V(gTree_surgery_pass2)->original) == 0) {
+                br_model *replacement;
+
+                c2_strcpy(s, C2V(gTree_surgery_pass2)->replacement);
+                replacement = LoadModel(s);
+                if (replacement != NULL) {
+                    BrResFree(pModel->faces);
+                    BrResFree(pModel->vertices);
+                    pModel->faces = BrResAllocate(pModel, BrResSize(replacement->faces), BrResClass(replacement->faces));
+                    c2_memcpy(pModel->faces, replacement->faces, BrResSize(replacement->faces));
+                    pModel->nfaces = replacement->nfaces;
+                    pModel->vertices = BrResAllocate(pModel, BrResSize(replacement->vertices), BrResClass(replacement->vertices));
+                    c2_memcpy(pModel->vertices, replacement->vertices, BrResSize(replacement->vertices));
+                    pModel->nvertices = replacement->nvertices;
+                    BrModelUpdate(pModel, BR_MODU_ALL);
+                    break;
+                }
+            }
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * LoadTrack_original)(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
 
@@ -2685,35 +2721,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
         PossibleService();
         model = C2V(gTrack_storage_space).models[i];
-        if (model != NULL && model->identifier != NULL) {
-            for (j = 0; j < C2V(gTree_surgery_pass1_count); j++) {
-                if (c2_strstr(model->identifier, C2V(gTree_surgery_pass1)->name) == model->identifier) {
-                    break;
-                }
-            }
-            if (j != C2V(gTree_surgery_pass1_count)) {
-                for (j = 0; j < C2V(gTree_surgery_pass2_count); j++) {
-                    if (c2_strcmp(model->identifier, C2V(gTree_surgery_pass2)->original) == 0) {
-                        br_model* replacement;
-
-                        c2_strcpy(s, C2V(gTree_surgery_pass2)->replacement);
-                        replacement = LoadModel(s);
-                        if (replacement != NULL) {
-                            BrResFree(model->faces);
-                            BrResFree(model->vertices);
-                            model->faces = BrResAllocate(model, BrResSize(replacement->faces), BrResClass(replacement->faces));
-                            c2_memcpy(model->faces, replacement->faces, BrResSize(replacement->faces));
-                            model->nfaces = replacement->nfaces;
-                            model->vertices = BrResAllocate(model, BrResSize(replacement->vertices), BrResClass(replacement->vertices));
-                            c2_memcpy(model->vertices, replacement->vertices, BrResSize(replacement->vertices));
-                            model->nvertices = replacement->nvertices;
-                            BrModelUpdate(model, BR_MODU_ALL);
-                            break;
-                        }
-                    }
-                }
-            }
-        }
+        PossibleTreeSurgery(model);
         if (model != NULL && (model->flags & (BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE))) {
             if (model->identifier != NULL && model->identifier[0] != '-') {
                 model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
