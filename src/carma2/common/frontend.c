@@ -659,7 +659,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
     static C2_HOOK_VARIABLE_IMPLEMENT(int, back_screen_origin_y, 0x00763708);
 
     if (C2V(gSound_enabled)) {
-        DRStopCarSounds();
+        DRS3StopAllOutletSoundsExceptCDA();
     }
     SwitchToRealResolution();
     WaitForNoKeys();
