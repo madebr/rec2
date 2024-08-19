@@ -35,7 +35,7 @@ int C2_HOOK_FASTCALL GetPolyFontHeight(int pIndex) {
 }
 C2_HOOK_FUNCTION(0x00463730, GetPolyFontHeight)
 
-int C2_HOOK_FASTCALL GetPolyFontCharacterWidthI(int pIndex, tU8 pCharacter) {
+int C2_HOOK_FASTCALL CharacterWidth(int pIndex, tU8 pCharacter) {
 
     if ('a' <= pCharacter && pCharacter <= 'z') {
         pCharacter = pCharacter - ('a' - 'A');
@@ -45,7 +45,7 @@ int C2_HOOK_FASTCALL GetPolyFontCharacterWidthI(int pIndex, tU8 pCharacter) {
     }
     return C2V(gPolyFonts)[pIndex].widthOfBlank;
 }
-C2_HOOK_FUNCTION(0x004637d0, GetPolyFontCharacterWidthI)
+C2_HOOK_FUNCTION(0x004637d0, CharacterWidth)
 
 int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex) {
 
@@ -96,7 +96,7 @@ void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, in
         }
         s[s_len + 1] = '\0';
         if (!newline) {
-            text_x += GetPolyFontCharacterWidthI(pFont, (tU8)chr);
+            text_x += CharacterWidth(pFont, (tU8)chr);
         }
         in_end_put = in_pos;
         if (text_x > max_width || newline) {
@@ -186,7 +186,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText
         }
         s[s_len + 1] = '\0';
         if (!newline) {
-            text_x += GetPolyFontCharacterWidthI(pFont, (tU8)chr);
+            text_x += CharacterWidth(pFont, (tU8)chr);
         }
         in_end_put = in_pos;
         if (text_x > max_width || newline) {
@@ -725,7 +725,7 @@ int C2_HOOK_FASTCALL GetPolyFontTextWidth(int pFont, const char* pText) {
     len = c2_strlen(pText);
     int result = 0;
     for (i = 0; i < len; i++) {
-        result += GetPolyFontCharacterWidthI(pFont, pText[i]);
+        result += CharacterWidth(pFont, pText[i]);
     }
     if (len > 1) {
         result += (len - 1) * C2V(gPolyFonts)[pFont].interCharacterSpacing;

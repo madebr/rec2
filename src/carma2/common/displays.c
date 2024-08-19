@@ -133,7 +133,7 @@ int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText)
                 inter = C2V(gPolyFonts)[polyfont].interCharacterSpacing;
             }
 
-            result += GetPolyFontCharacterWidthI(pText[i], polyfont) + inter;
+            result += CharacterWidth(pText[i], polyfont) + inter;
         }
     }
     return result;
@@ -591,7 +591,7 @@ void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, 
         } else {
             s_end += 1;
             s[s_end] = pText[i];
-            next_x += GetPolyFontCharacterWidthI(C2V(gDRFont_to_polyfont_mapping)[pFont->id], pText[i]);
+            next_x += CharacterWidth(C2V(gDRFont_to_polyfont_mapping)[pFont->id], pText[i]);
         }
     }
     if (s_end >= 0) {
