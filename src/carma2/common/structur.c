@@ -89,7 +89,7 @@ void C2_HOOK_FASTCALL DoProgram(void) {
                 MaybeRestoreSavedGame();
             }
             if (C2V(gAuto_load) && C2V(gLoad_last_save_game)) {
-                LoadLastSaveGame();
+                DoLoadMostRecentGame();
                 C2V(gLoad_last_save_game) = 0;
             }
             DoMainMenu();

@@ -15,7 +15,7 @@ void C2_HOOK_FASTCALL MaybeRestoreSavedGame(void);
 
 int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game);
 
-void C2_HOOK_FASTCALL LoadLastSaveGame(void);
+void C2_HOOK_FASTCALL DoLoadMostRecentGame(void);
 
 void C2_HOOK_FASTCALL WriteSaveGame(void);
 
