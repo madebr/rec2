@@ -2470,7 +2470,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     ReadPedSpecs(f);
     PossibleService();
 
-    ApplyPreviousTiffConversion();
+    PackFileRevertTiffLoading();
     ExtractColumns(pTrack_spec);
     ApplyTopTiffConversion();
 
@@ -2742,7 +2742,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     LoadAIWorld(f);
     PrintMemoryDump(0, "JUST LOADED IN AI WORLD");
     PrepareSmashableTrackItemIdentifiers();
-    ApplyPreviousTiffConversion();
+    PackFileRevertTiffLoading();
 
     /* number of material modifiers */
     count_material_modifiers = GetAnInt(f);

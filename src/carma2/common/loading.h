@@ -252,7 +252,7 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path);
 
 void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt);
 
-void C2_HOOK_FASTCALL ApplyPreviousTiffConversion(void);
+void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void);
 
 void C2_HOOK_FASTCALL ApplyTopTiffConversion(void);
 
