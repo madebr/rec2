@@ -2304,6 +2304,14 @@ typedef struct {
 } tSmashable_item_spec_texture_change;
 
 typedef struct {
+    br_model* model;
+    int chance_fire;
+    int model_1_int;
+    int model_2_int;
+    int model_3_int;
+} tSmashReplace;
+
+typedef struct {
     int flags;
     tSmashable_item_spec_trigger trigger_object;
     tSmashable_trigger_type trigger_type;
@@ -2314,11 +2322,7 @@ typedef struct {
         tSmashable_item_spec_texture_change texture_change;
         tU16 field_0x14; /* FIXME */
     } mode_data;
-    br_model* replace_model;
-    int replace_modelchance_fire;
-    int replace_model_2_int;
-    int replace_model_3_int;
-    int replace_model_4_int;
+    tSmashReplace replace;
     undefined4 field_0x2d4;
     undefined4 field_0x2d8;
     undefined field_0x2dc;

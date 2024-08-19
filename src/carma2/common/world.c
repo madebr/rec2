@@ -1801,6 +1801,23 @@ void C2_HOOK_FASTCALL FUN_004f0430(void) {
     }
 }
 
+void C2_HOOK_FASTCALL ReadSmashReplace(tSmashReplace* pReplace, FILE* pF) {
+    char s[256];
+
+    /* new model */
+    GetAString(pF, s);
+    pReplace->model = BrModelFind(s);
+    if (pReplace->model == NULL) {
+        FatalError(kFatalError_CannotFindSmashActorModel_S, s);
+    }
+    /* %chance fire */
+    pReplace->chance_fire = GetAnInt(pF);
+    if (pReplace->chance_fire != 0) {
+        pReplace->model_1_int = GetAnInt(pF);
+        GetPairOfInts(pF, &pReplace->model_2_int, &pReplace->model_3_int);
+    }
+}
+
 void (C2_HOOK_FASTCALL * LoadSmashableTrackEnvironment_original)(FILE* pF, const char* pPath);
 void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
 
@@ -1951,18 +1968,7 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
             break;
         }
         if (spec->mode == kSmashableMode_ReplaceModel) {
-            /* new model */
-            GetAString(pF, s2);
-            spec->replace_model = BrModelFind(s2);
-            if (spec->replace_model == NULL) {
-                FatalError(kFatalError_CannotFindSmashActorModel_S, s2);
-            }
-            /* %chance fire */
-            spec->replace_modelchance_fire = GetAnInt(pF);
-            if (spec->replace_modelchance_fire != 0) {
-                spec->replace_model_2_int = GetAnInt(pF);
-                GetPairOfInts(pF, &spec->replace_model_3_int, &spec->replace_model_4_int);
-            }
+            ReadSmashReplace(&spec->replace, pF);
         }
         /* reserved 1 */
         GetAnInt(pF);
