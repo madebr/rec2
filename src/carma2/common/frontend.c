@@ -623,7 +623,7 @@ void C2_HOOK_FASTCALL ScrollCredits(void) {
         if (y > 30 && y < 430) {
             if (C2V(gAuthor_credits_throbs[i])) {
                 SolidPolyFontText(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i] - 1, eJust_centre, 1);
-                RenderBlendedPolyTextLine(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i], eJust_centre, 1, C2V(gFrontend_throb_factor));
+                TransparentPolyFontText(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i], eJust_centre, 1, C2V(gFrontend_throb_factor));
             } else {
                 SolidPolyFontText(C2V(gAuthor_credits_texts)[i], 320, y, C2V(gAuthor_credits_fonts)[i], eJust_centre, 1);
             }
@@ -1404,6 +1404,6 @@ void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int p
     if (C2V(gPolyFonts)[pFont].available == 0) {
         LoadInterfacePolyFonts();
     }
-    RenderBlendedPolyTextLine(pText, pX, pY, pFont, pJust, pRender, 1.0);
+    TransparentPolyFontText(pText, pX, pY, pFont, pJust, pRender, 1.0);
 }
 C2_HOOK_FUNCTION(0x00464df0, SolidPolyFontText)

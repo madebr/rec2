@@ -211,7 +211,7 @@ void C2_HOOK_FASTCALL RenderBlendedPolyText(int pFont, const char* pText, int pL
             } else {
                 x = pLeft;
             }
-            RenderBlendedPolyTextLine(s, x, y, pFont, pJust, C2V(gRender_poly_text), pBlend);
+            TransparentPolyFontText(s, x, y, pFont, pJust, C2V(gRender_poly_text), pBlend);
             while (pText[in_end_put] == '\r' || pText[in_end_put] == ' ') {
                 in_end_put++;
             }
@@ -236,7 +236,7 @@ void C2_HOOK_FASTCALL RenderBlendedPolyText(int pFont, const char* pText, int pL
             x = pLeft;
             justif = pJust;
         }
-        RenderBlendedPolyTextLine(s, x, y, pFont, justif, C2V(gRender_poly_text), pBlend);
+        TransparentPolyFontText(s, x, y, pFont, justif, C2V(gRender_poly_text), pBlend);
     }
 }
 C2_HOOK_FUNCTION(0x00463ad0, RenderBlendedPolyText)
@@ -824,7 +824,7 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
 }
 C2_HOOK_FUNCTION(0x00464e40, RenderPolyTextLine)
 
-void C2_HOOK_FASTCALL RenderBlendedPolyTextLine(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pBlend_factor) {
+void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pBlend_factor) {
     int text_len;
     int i;
     int draw_x;
@@ -913,4 +913,4 @@ void C2_HOOK_FASTCALL RenderBlendedPolyTextLine(const char* pText, int pX, int p
         RemovePolyFontActors();
     }
 }
-C2_HOOK_FUNCTION(0x00465380, RenderBlendedPolyTextLine)
+C2_HOOK_FUNCTION(0x00465380, TransparentPolyFontText)
