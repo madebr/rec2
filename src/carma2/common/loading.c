@@ -4879,21 +4879,48 @@ void C2_HOOK_FASTCALL AttachCrushDataToActorModels(br_actor* pActor, tCar_spec* 
 }
 C2_HOOK_FUNCTION(0x0042a210, AttachCrushDataToActorModels)
 
-void C2_HOOK_FASTCALL SetMaterialTrackLighting(br_material* pMaterial) {
+void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
+    int need_update = 0;
+    pMaterial->user = (void*)(uintptr_t)0x5ba0;
+
+    if (pMaterial->ka <= 0.999f) {
+        need_update = 1;
+    }
+    pMaterial->ka = 1.f;
+
+    /* ka is tested twice, but kd is set the 2nd time */
+    if (pMaterial->ka < 0.999f) {
+        need_update = 1;
+    }
+    pMaterial->kd = 1.f;
+
+    if (!(pMaterial->flags & BR_MATF_SMOOTH)) {
+        need_update = 1;
+    }
+    pMaterial->flags |= BR_MATF_SMOOTH;
+
+    if (!(pMaterial->flags & BR_MATF_LIGHT)) {
+        need_update = 1;
+    }
+    pMaterial->flags |= BR_MATF_LIGHT;
+
+    if (pMaterial->flags & BR_MATF_PRELIT) {
+        need_update = 1;
+    }
+    pMaterial->flags &= ~BR_MATF_PRELIT;
+
+    if (need_update) {
+        BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
+    }
+}
+
+void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial) {
 
     if (C2V(gNbPixelBits) != 16) {
         return;
     }
-    if ((uintptr_t)pMaterial->user == 0x5ba0) { /* FIXME: what is 0x5ba0/23456 magic? */
-        float original_ka = pMaterial->ka;
-        int original_flags = pMaterial->flags;
-        pMaterial->ka = 1.f;
-        pMaterial->kd = 1.f;
-        pMaterial->flags |= BR_MATF_SMOOTH | BR_MATF_LIGHT;
-        pMaterial->flags &= ~BR_MATF_PRELIT;
-        if (original_flags != pMaterial->flags || original_ka <= 0.999f) {
-            BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
-        }
+    if ((uintptr_t)pMaterial->user == 0x5ba0) {
+        SmoothificatePowerupMaterial(pMaterial);
     } else {
         pMaterial->user = NULL;
         pMaterial->ka = C2V(gLighting_data).ambient_else;
@@ -4904,17 +4931,21 @@ void C2_HOOK_FASTCALL SetMaterialTrackLighting(br_material* pMaterial) {
         BrMaterialUpdate(pMaterial, BR_MATU_LIGHTING | BR_MATU_RENDERING);
     }
 }
-C2_HOOK_FUNCTION(0x004f6a90, SetMaterialTrackLighting)
+C2_HOOK_FUNCTION(0x004f6a90, SmoothificateWorldMaterial)
+
+void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage) {
+    int i;
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_material *material = pStorage->materials[i];
+
+        SmoothificateWorldMaterial(material);
+    }
+}
 
 void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath) {
-    int i;
 
     LoadAllMaterialsInDirectory(pStorage, pPath, kRendererShadingType_Default);
-    for (i = 0; i < pStorage->materials_count; i++) {
-        br_material* material = pStorage->materials[i];
-
-        SetMaterialTrackLighting(material);
-    }
+    SmoothlySetWorldMaterialFlags(pStorage);
 }
 C2_HOOK_FUNCTION(0x004f6640, LoadTrackMaterials)
 

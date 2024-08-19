@@ -2668,7 +2668,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
                 v11group* v11_group = &V11MODEL(model)->groups[j];
                 v11_group->face_colours.material = model->faces[*v11_group->face_user].material;
                 if (v11_group->face_colours.material != NULL) {
-                    SetMaterialTrackLighting(v11_group->face_colours.material);
+                    SmoothificateWorldMaterial(v11_group->face_colours.material);
                     if (v11_group->face_colours.material->index_shade == NULL) {
                         v11_group->face_colours.material->index_shade = BrTableFind("DRRENDER.TAB");
                         BrMaterialUpdate(v11_group->face_colours.material, BR_MATU_ALL);
