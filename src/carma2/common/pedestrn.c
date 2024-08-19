@@ -398,7 +398,7 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
         }
     }
     C2V(gPed_face_cache) = BrMemAllocate((C2V(gPed_cache_sizes_2)[3] + 1) * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
-    InitBurningPeds();
+    InitNapalmNolts();
     C2V(gSelected_ped) = 0;
     C2V(gPed_shade) = GenerateShadeTable(8, C2V(gRender_palette), 0xd7, 0xff, 0xe9, .5f, .75f, .9f);
 #endif
@@ -406,7 +406,7 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004cadc0, InitPolyPedSystem, InitPeds_original)
 
 void (C2_HOOK_FASTCALL * InitBurningPeds_original)(void);
-void C2_HOOK_FASTCALL InitBurningPeds(void) {
+void C2_HOOK_FASTCALL InitNapalmNolts(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     InitBurningPeds_original();
 #else
@@ -466,7 +466,7 @@ void C2_HOOK_FASTCALL InitBurningPeds(void) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004cb630, InitBurningPeds, InitBurningPeds_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004cb630, InitNapalmNolts, InitBurningPeds_original)
 
 int (C2_HOOK_FASTCALL * ForEachMortalPedestrianInSight_original)(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback);
 int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback) {
