@@ -636,17 +636,6 @@ void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046f630, FRONTEND_RenderAuthorCredits, FRONTEND_RenderAuthorCredits_original)
 
-static br_uint_32 GetBillboardAPOColour(int pType_APO, int pLevel) {
-
-    if (pLevel >= C2V(gCurrent_APO_potential_levels)[pType_APO]) {
-        return C2V(gFrontend_APO_Colour_2);
-    } else if (pLevel < C2V(gCurrent_APO_levels[pType_APO])) {
-        return C2V(gFrontend_APO_Colour_1);
-    } else {
-        return C2V(gFrontend_APO_Colour_3);
-    }
-}
-
 void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
 
     C2V(gFrontend_time_last_input) = PDGetTotalTime();
@@ -655,6 +644,32 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
 void C2_HOOK_FASTCALL Generic_LinkInEffect(void) {
     DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingin);
 }
+
+void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActorIdx, int pAPO) {
+    int i;
+    br_pixelmap* map;
+
+    map = C2V(gFrontend_billboard_actors)[pActorIdx]->material->colour_map;
+
+    if (pAPO == 0) {
+        BrPixelmapFill(map, 0);
+    }
+
+    for (i = 0; i < 30; i++) {
+        br_uint_32 c;
+
+        if (i >= pPotential) {
+            c = C2V(gFrontend_APO_Colour_2);
+        } else if (i < pCurrent) {
+            c = C2V(gFrontend_APO_Colour_1);
+        } else {
+            c = C2V(gFrontend_APO_Colour_3);
+        }
+
+        BrPixelmapRectangleFill(map, 4 * (i % 10), 0 + 4 * (i / 10) + 12 * pAPO, 3, 3, c);
+    }
+}
+C2_HOOK_FUNCTION(0x004709b0, BuildAPO)
 
 int (C2_HOOK_FASTCALL * DoFrontendMenu_original)(tFrontendMenuType pFrontend);
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
@@ -762,29 +777,9 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
                 C2V(gBack_screen)->origin_y = C2V(back_screen_origin_y);
             }
             if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_MAIN) && C2V(gFrontend_menu_camera) != NULL) {
-                int i;
-                BrPixelmapFill(C2V(gFrontend_billboard_actors)[0]->material->colour_map, 0);
-
-                for (i = 0; i < 30; i++) {
-                    br_uint_32 c;
-
-                    c = GetBillboardAPOColour(0, i);
-                    BrPixelmapRectangleFill(C2V(gFrontend_billboard_actors)[0]->material->colour_map, 4 * (i % 10),  0 + 4 * (i / 10), 3, 3, c);
-                }
-
-                for (i = 0; i < 30; i++) {
-                    br_uint_32 c;
-
-                    c = GetBillboardAPOColour(1, i);
-                    BrPixelmapRectangleFill(C2V(gFrontend_billboard_actors)[0]->material->colour_map, 4 * (i % 10), 12 + 4 * (i / 10), 3, 3, c);
-                }
-
-                for (i = 0; i < 30; i++) {
-                    br_uint_32 c;
-
-                    c = GetBillboardAPOColour(2, i);
-                    BrPixelmapRectangleFill(C2V(gFrontend_billboard_actors)[0]->material->colour_map, 4 * (i % 10), 24 + 4 * (i / 10), 3, 3, c);
-                }
+                BuildAPO(C2V(gCurrent_APO_levels)[0], C2V(gCurrent_APO_potential_levels)[0], 0, 0);
+                BuildAPO(C2V(gCurrent_APO_levels)[1], C2V(gCurrent_APO_potential_levels)[1], 0, 1);
+                BuildAPO(C2V(gCurrent_APO_levels)[2], C2V(gCurrent_APO_potential_levels)[2], 0, 2);
 
                 BrMapUpdate(C2V(gFrontend_billboard_actors)[0]->material->colour_map, BR_MAPU_ALL);
                 BrMaterialUpdate(C2V(gFrontend_billboard_actors)[0]->material, BR_MATU_ALL);
