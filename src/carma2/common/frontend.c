@@ -652,6 +652,10 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
     C2V(gFrontend_time_last_input) = PDGetTotalTime();
 }
 
+void C2_HOOK_FASTCALL Generic_LinkInEffect(void) {
+    DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingin);
+}
+
 int (C2_HOOK_FASTCALL * DoFrontendMenu_original)(tFrontendMenuType pFrontend);
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
 
@@ -676,7 +680,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
     C2V(gFrontend_remove_current_backdrop) = 1;
     C2V(gFrontend_leave_current_menu) = 0;
     ResetInterfaceTimeout();
-    DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingin);
+    Generic_LinkInEffect();
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_spec, unknownLastInt, 0xb8c4);
     C2V(gCurrent_frontend_spec)->unknownLastInt = 0;
 
