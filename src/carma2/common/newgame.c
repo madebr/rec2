@@ -23,7 +23,7 @@ void C2_HOOK_FASTCALL DefaultNetSettings(void) {
         return;
     }
     ReadNetworkSettings(file, &C2V(gNet_settings)[0]);
-    DRrewind(file);
+    PFrewind(file);
     for (i = 1; i < REC2_ASIZE(C2V(gNet_settings)); i++) {
         pOptions = &C2V(gNet_settings)[i];
         ReadNetworkSettings(file, pOptions);
