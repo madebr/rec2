@@ -790,9 +790,9 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
                 BuildAPO(C2V(gCurrent_APO_levels)[2], C2V(gCurrent_APO_potential_levels)[2], 0, 2);
 
                 PrepareAPO(0);
-                RenderFrontendBillboard( 95, 348, 0, 0);
-                RenderFrontendBillboard(146, 348, 0, 1);
-                RenderFrontendBillboard(195, 348, 0, 2);
+                PrintAPO( 95, 348, 0, 0);
+                PrintAPO(146, 348, 0, 1);
+                PrintAPO(195, 348, 0, 2);
             }
             if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_CREDITS)) {
                 FRONTEND_RenderAuthorCredits();
@@ -829,7 +829,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046d8e0, FRONTEND_Main, DoFrontendMenu_original)
 
-void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index) {
+void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
     br_model *model;
 
     model = C2V(gFrontend_billboard_actors)[pIndex]->model;
@@ -843,7 +843,7 @@ void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pT
     BrZbSceneRender(C2V(gFrontend_menu_camera), C2V(gFrontend_menu_camera), C2V(gBack_screen), C2V(gDepth_buffer));
     BrActorRemove(C2V(gFrontend_billboard_actors)[pIndex]);
 }
-C2_HOOK_FUNCTION(0x004708a0, RenderFrontendBillboard)
+C2_HOOK_FUNCTION(0x004708a0, PrintAPO)
 
 void C2_HOOK_FASTCALL UpdateThrobFactor(void) {
     tU32 time;
