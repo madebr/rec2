@@ -2304,11 +2304,15 @@ typedef struct {
 } tSmashable_item_spec_texture_change;
 
 typedef struct {
-    br_model* model;
     int chance_fire;
     int model_1_int;
     int model_2_int;
     int model_3_int;
+} tSmokeFireChance;
+
+typedef struct {
+    br_model* model;
+    tSmokeFireChance smoke_fire_chance;
 } tSmashReplace;
 
 typedef struct {
