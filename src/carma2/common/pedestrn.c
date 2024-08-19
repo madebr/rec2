@@ -214,11 +214,11 @@ void C2_HOOK_FASTCALL ReadPedGiblets(FILE* pFile) {
     }
 
     /* SMALL BLOOD CLOUD SPEC */
-    ReadExplosionAnimation(pFile, &C2V(gPed_explosion_small_blood_cloud));
+    ReadExplosion(pFile, &C2V(gPed_explosion_small_blood_cloud));
     /* MED BLOOD CLOUD SPEC */
-    ReadExplosionAnimation(pFile, &C2V(gPed_medium_blood_cloud));
+    ReadExplosion(pFile, &C2V(gPed_medium_blood_cloud));
     /* LARGE BLOOD CLOUD SPEC */
-    ReadExplosionAnimation(pFile, &C2V(gPed_large_blood_cloud));
+    ReadExplosion(pFile, &C2V(gPed_large_blood_cloud));
 
     C2V(gPed_slick_material) = BrMaterialAllocate("GIBSLICK");
     BrMaterialAdd(C2V(gPed_slick_material));
@@ -310,7 +310,7 @@ void C2_HOOK_FASTCALL ReadSettingsFile(void) {
     ReadPedGiblets(file);
 
     /* NAPALMED PED SPEC */
-    ReadExplosionAnimation(file, &C2V(gNapalmed_ped_animation));
+    ReadExplosion(file, &C2V(gNapalmed_ped_animation));
 
     /*
      * ***************************
