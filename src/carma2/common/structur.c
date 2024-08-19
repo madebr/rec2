@@ -233,7 +233,7 @@ void C2_HOOK_FASTCALL DoGame(void) {
         SortOpponents();
         SetInitialPositions(&C2V(gCurrent_race));
     } else {
-        DoFrontendMenu(kFrontend_menu_netsync);
+        FRONTEND_Main(kFrontend_menu_netsync);
         dr_dprintf("Returned from NetSync screen");
         SwitchToLoresMode();
     }
