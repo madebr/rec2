@@ -91,7 +91,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count, 0x007447d4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_is_teleporting, 0x00694490);
 
 void (C2_HOOK_FASTCALL * InitPedsForm_original)(tPedForms_vtable* pTable);
-void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable) {
+void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
 #if defined(C2_HOOKS_ENABLED)
 
     InitPedsForm_original(pTable);
@@ -99,7 +99,7 @@ void C2_HOOK_FASTCALL InitPedsForm(tPedForms_vtable* pTable) {
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00403ed0, InitPedsForm, InitPedsForm_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00403ed0, InitBoner, InitPedsForm_original)
 
 void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, float pY, float pZ) {
     int i;
@@ -274,7 +274,7 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
         SetDefaultPedFolderNames();
     }
 
-    InitPedsForm(&C2V(gPed_forms_vtable));
+    InitBoner(&C2V(gPed_forms_vtable));
 
     PathCat(the_path, C2V(gApplication_path), C2V(gPedsFolder));
     PathCat(the_path, the_path, "SETTINGS.TXT");
