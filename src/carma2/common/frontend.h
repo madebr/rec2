@@ -48,6 +48,8 @@ void C2_HOOK_FASTCALL FRONTEND_RenderAuthorCredits(void);
 
 void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
 
+void C2_HOOK_FASTCALL Generic_LinkInEffect(void);
+
 int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontend);
 
 void C2_HOOK_FASTCALL RenderFrontendBillboard(int pX, int pY, int pIndex, int pTex_index);
