@@ -3140,3 +3140,14 @@ void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00478c00, GrooveThoseDelics, GrooveThoseDelics_original)
+
+void (C2_HOOK_FASTCALL * FunkThoseTronics_original)(void);
+void C2_HOOK_FASTCALL FunkThoseTronics(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FunkThoseTronics_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00477230, FunkThoseTronics, FunkThoseTronics_original)

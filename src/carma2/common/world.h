@@ -228,4 +228,6 @@ void C2_HOOK_FASTCALL AnimateSky(void);
 
 void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 
+void C2_HOOK_FASTCALL FunkThoseTronics(void);
+
 #endif // REC2_WORLD_H
