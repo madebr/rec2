@@ -28,7 +28,7 @@ void C2_HOOK_FASTCALL ResetSmashableRaceTargets(void);
 
 void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 
-void C2_HOOK_FASTCALL PrepareSmashableTrackItemIdentifiers(void);
+void C2_HOOK_FASTCALL MungeSmashMaterialNames(void);
 
 void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void);
 
