@@ -208,6 +208,8 @@ void C2_HOOK_FASTCALL CheckNonCarModelBounds(void);
 
 void C2_HOOK_FASTCALL FreeExceptions(void);
 
+void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* race_lighting_path);
+
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space);

@@ -2398,6 +2398,10 @@ void C2_HOOK_FASTCALL FreeExceptions(void) {
     C2V(gMaterial_exceptions) = NULL;
 }
 
+void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* race_lighting_path) {
+
+}
+
 void (C2_HOOK_FASTCALL * LoadTrack_original)(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
 
@@ -2960,7 +2964,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PFfclose(f);
     FreeExceptions();
     PrintMemoryDump(0, "FINISHED LOADING TRACK");
-    /* nop_FUN_00486db0(race_lighting_path); */
+    LoadStaticLightingForRace(race_lighting_path);
     ClosePackFileAndSetTiffLoading(twt);
 #endif
 }
