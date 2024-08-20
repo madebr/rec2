@@ -27,16 +27,16 @@ void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 }
 C2_HOOK_FUNCTION(0x004e1740, SetQuickTimeDefaults)
 
-void (C2_HOOK_FASTCALL * InitializeActionReplayCamera_original)(tActionReplayCameraMode pCamPos);
-void C2_HOOK_FASTCALL InitializeActionReplayCamera(tActionReplayCameraMode pCamPos) {
+void (C2_HOOK_FASTCALL * SetCameraType_original)(tActionReplayCameraMode pCamPos);
+void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
 
 #if defined(C2_HOOKS_ENABLED)
-    InitializeActionReplayCamera_original(pCamPos);
+    SetCameraType_original(pCamPos);
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, InitializeActionReplayCamera, InitializeActionReplayCamera_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, SetCameraType, SetCameraType_original)
 
 void (C2_HOOK_FASTCALL * PositionExternalCamera_original)(tCar_spec* pCar_spec, tU32 pTime);
 void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
