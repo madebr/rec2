@@ -1507,7 +1507,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     SetCameraType(C2V(gAction_replay_camera_mode));
     Modify2DCopyPixelmaps();
 
-    ReadFFB_TXT();
+    SetupFFBValues();
     LockBackScreen(1);
     UnlockBackScreen(1);
 #endif

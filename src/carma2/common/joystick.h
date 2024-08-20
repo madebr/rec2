@@ -7,7 +7,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gForce_feedback_upper_limit);
 C2_HOOK_VARIABLE_DECLARE(float, Force_feedback_lower_limit);
 
 
-void C2_HOOK_STDCALL ReadFFB_TXT(void);
+void C2_HOOK_FASTCALL SetupFFBValues(void);
 
 int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2);
 
