@@ -43,4 +43,6 @@ void C2_HOOK_FASTCALL ResetPeds(void);
 
 void C2_HOOK_FASTCALL CameraIsMovingReallyFast(void);
 
+void C2_HOOK_FASTCALL LastChanceForPedEffects(void);
+
 #endif //REC2_PEDESTRN_H
