@@ -1404,7 +1404,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0046e020, FRONTEND_DrawMenu, FRONTEND_RenderItems_or
 
 void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
     if (!C2V(gFrontend_suppress_mouse)) {
-        LockBackScreen(1);
+        PossibleLock(1);
         DoMouseCursor();
         UnlockBackScreen(1);
     }

@@ -841,13 +841,13 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4980, SetBRenderScreenAndBuffers, SetBRenderScreenAndBuffers_original)
 
-void C2_HOOK_FASTCALL LockBackScreen(int pValue) {
+void C2_HOOK_FASTCALL PossibleLock(int pValue) {
 
     if (C2V(gBack_screen)->pixels == NULL) {
         BrPixelmapDirectLock(C2V(gBack_screen), 1);
     }
 }
-C2_HOOK_FUNCTION(0x00516c10, LockBackScreen)
+C2_HOOK_FUNCTION(0x00516c10, PossibleLock)
 
 int C2_HOOK_FASTCALL UnlockBackScreen(int pValue) {
 
