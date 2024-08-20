@@ -406,7 +406,7 @@ void C2_HOOK_FASTCALL SmoothlyLoadIfItsAModel(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pPath);
 
-void C2_HOOK_FASTCALL LoadNonCar(FILE* pF, tNon_car_spec* pNon_car_spec);
+void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_spec);
 
 void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void);
 
