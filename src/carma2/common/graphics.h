@@ -185,4 +185,6 @@ void C2_HOOK_FASTCALL ResetPalette(void);
 
 void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
+void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on);
+
 #endif //REC2_GRAPHICS_H

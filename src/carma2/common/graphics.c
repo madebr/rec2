@@ -1198,3 +1198,14 @@ void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004b5770, EnsureRenderPalette)
+
+void (C2_HOOK_FASTCALL * RenderAFrame_original)(int pDepth_mask_on);
+void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
+
+#if defined(C2_HOOKS_ENABLED)
+    RenderAFrame_original(pDepth_mask_on);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e4e40, RenderAFrame, RenderAFrame_original)
