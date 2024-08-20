@@ -189,4 +189,6 @@ void C2_HOOK_FASTCALL EnsureRenderPalette(void);
 
 void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on);
 
+void C2_HOOK_FASTCALL ResetLollipopQueue(void);
+
 #endif //REC2_GRAPHICS_H

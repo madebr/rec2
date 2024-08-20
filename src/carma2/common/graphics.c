@@ -1214,3 +1214,14 @@ void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4e40, RenderAFrame, RenderAFrame_original)
+
+void (C2_HOOK_FASTCALL * ResetLollipopQueue_original)(void);
+void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ResetLollipopQueue_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e4900, ResetLollipopQueue, ResetLollipopQueue_original)
