@@ -254,9 +254,9 @@ tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec
 }
 C2_HOOK_FUNCTION(0x004ae8e0, GetOpponentSpecFromCarSpec)
 
-void C2_HOOK_CDECL oppo_dprintf(const char* pMessage, ...) {
+void C2_HOOK_CDECL DoNotDprintf_opponent(const char* pMessage, ...) {
 }
-C2_HOOK_FUNCTION(0x004a8160, oppo_dprintf)
+C2_HOOK_FUNCTION(0x004a8160, DoNotDprintf_opponent)
 
 void (C2_HOOK_FASTCALL * InitOpponents_original)(tRace_info* pRace_info);
 void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
@@ -300,7 +300,7 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
         }
         C2V(gProgram_state).AI_vehicles.opponents[i].car_spec = pRace_info->opponent_list[opponent_number].car_spec;
         C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->car_ID = i | 0x200;
-        oppo_dprintf("Car '%s', car_ID %x",
+        DoNotDprintf_opponent("Car '%s', car_ID %x",
             C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->driver_name,
             C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->car_ID);
         C2V(gProgram_state).AI_vehicles.opponents[i].index = pRace_info->opponent_list[opponent_number].index;
@@ -308,7 +308,7 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
         C2V(gProgram_state).AI_vehicles.opponents[i].next_repair_check = 0;
         C2V(gProgram_state).AI_vehicles.opponents[i].repair_interval = 60000 * IRandomBetween(C2V(gMinTimeOpponentRepair), C2V(gMaxTimeOpponentRepair));
         C2V(gProgram_state).AI_vehicles.opponents[i].last_repair_time = C2V(gTime_stamp_for_this_munging);
-        oppo_dprintf("*** Opponent %s, repair_interval is %d",
+        DoNotDprintf_opponent("*** Opponent %s, repair_interval is %d",
             C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->driver_name,
             C2V(gProgram_state).AI_vehicles.opponents[i].repair_interval);
         C2V(gProgram_state).AI_vehicles.opponents[i].time_this_objective_started = C2V(gTime_stamp_for_this_munging);
@@ -360,7 +360,7 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
         car_spec = GetCarSpecFromGlobalOppoIndex(C2V(gChallenger_index__opponent));
         opponent_spec = GetOpponentSpecFromCarSpec(car_spec);
         if (opponent_spec == NULL) {
-            oppo_dprintf("ERROR - can't record dare - no opponent_spec for car_spec");
+            DoNotDprintf_opponent("ERROR - can't record dare - no opponent_spec for car_spec");
         } else {
             opponent_spec->pursue_from_start = 1;
         }
