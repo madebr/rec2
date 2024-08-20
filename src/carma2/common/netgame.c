@@ -103,3 +103,14 @@ void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pPa
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049bc70, SendGameplayToAllPlayers, SendGameplayToAllPlayers_original)
+
+void (C2_HOOK_FASTCALL * DoNetGameManagement_original)(void);
+void C2_HOOK_FASTCALL DoNetGameManagement(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoNetGameManagement_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049ab00, DoNetGameManagement, DoNetGameManagement_original)
