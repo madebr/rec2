@@ -274,11 +274,11 @@ void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00488b00, LoadCollisionShape, LoadCollisionShape_original)
 
-void (C2_HOOK_FASTCALL * UpdateCollisionBoundingBox_original)(tCollision_info* pCollision_info);
-void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_info) {
+void (C2_HOOK_FASTCALL * UpdateCollisionObject_original)(tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL UpdateCollisionObject(tCollision_info* pCollision_info) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    UpdateCollisionBoundingBox_original(pCollision_info);
+    UpdateCollisionObject_original(pCollision_info);
 #else
     tCollision_shape* shape;
     tCollision_shape* current;
@@ -307,7 +307,7 @@ void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_inf
     pCollision_info->radius = sqrtf(pCollision_info->radius_squared);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004c60a0, UpdateCollisionBoundingBox, UpdateCollisionBoundingBox_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004c60a0, UpdateCollisionObject, UpdateCollisionObject_original)
 
 int C2_HOOK_FASTCALL ArePointsColinear(const br_vector3* pV1, const br_vector3* pV2, const br_vector3* pV3) {
     br_scalar dx31, dx21;
@@ -897,7 +897,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undef
     ProcessCollisionShape(shape);
     collision_info->uid = C2V(gCollision_info_uid_counter);
     C2V(gCollision_info_uid_counter)++;
-    UpdateCollisionBoundingBox(collision_info);
+    UpdateCollisionObject(collision_info);
     collision_info->M = pWeight;
     BrVector3Set(&collision_info->I,
         REC2_SQR(shape->sphere.sphere.radius) * pWeight / 6.f,

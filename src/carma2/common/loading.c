@@ -4731,7 +4731,7 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
 
     LoadCollisionShape(&c->collision_info->shape, pF);
 
-    UpdateCollisionBoundingBox(c->collision_info);
+    UpdateCollisionObject(c->collision_info);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, ride_height, 0x1220);
 
@@ -5092,7 +5092,7 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
             pNon_car_spec->collision_info->physics_joint2->limits[0].type = eJoint_limit_10;
             pNon_car_spec->collision_info->physics_joint2->limits[0].value = pNon_car_spec->min_torque_squared;
         }
-        UpdateCollisionBoundingBox(pNon_car_spec->collision_info);
+        UpdateCollisionObject(pNon_car_spec->collision_info);
         pNon_car_spec->collision_info->actor = pNon_car_spec->actor;
         pNon_car_spec->collision_info->bb2 = pNon_car_spec->collision_info->bb1;
     } else {
@@ -5141,7 +5141,7 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
             pNon_car_spec->collision_info->physics_joint2->limits[0].type = eJoint_limit_10;
             pNon_car_spec->collision_info->physics_joint2->limits[0].value = pNon_car_spec->min_torque_squared;
         }
-        UpdateCollisionBoundingBox(pNon_car_spec->collision_info);
+        UpdateCollisionObject(pNon_car_spec->collision_info);
         pNon_car_spec->collision_info->actor = pNon_car_spec->actor;
         pNon_car_spec->collision_info->bb2 = pNon_car_spec->collision_info->bb1;
 
