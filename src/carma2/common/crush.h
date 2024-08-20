@@ -66,4 +66,6 @@ void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2);
 
 void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period);
 
+void C2_HOOK_FASTCALL CrushBendFlapRend(void);
+
 #endif // REC2_CRUSH_H

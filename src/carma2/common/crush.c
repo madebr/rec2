@@ -777,3 +777,14 @@ void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00440350, DoWheelDamage, DoWheelDamage_original)
+
+void (C2_HOOK_FASTCALL * CrushBendFlapRend_original)(void);
+void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CrushBendFlapRend_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00436170, CrushBendFlapRend, CrushBendFlapRend_original)
