@@ -40,7 +40,7 @@ C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
         DoSaveGame();
     }
     ActionReplayFinishRecording();
-    DisableRecursiveCollisions();
+    PHILDisable();
     dr_dprintf("QuitGame() - Point 1");
     if (C2V(gProgram_state).racing && C2V(gAdditional_actors) != NULL && C2V(gAdditional_actors)->children != NULL) {
         dr_dprintf("QuitGame() - Point 2");

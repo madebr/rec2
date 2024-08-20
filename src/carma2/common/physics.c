@@ -22,7 +22,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPhysics_other_buffer_capacity, 0x006940c8);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gPhysics_other_buffer, 0x006940c4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gPhysics_buffer, 299792, 0x006baa40);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCollision_info_uid_counter, 0x006a0adc);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNo_recursive_collision_info_rebuild, 0x0065d004, 1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPHIL_enabled, 0x0065d004, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFace_num__car, 0x0065d010, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gPhysics_reference_normal_comparison, 0x00679420);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape_polyhedron_data*, gPolyhedron_to_sort, 0x0067942c);
@@ -107,10 +107,10 @@ int C2_HOOK_FASTCALL ResetMechanics(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5cc0, ResetMechanics, ResetMechanics_original)
 
-void C2_HOOK_FASTCALL DisableRecursiveCollisions(void) {
-    C2V(gNo_recursive_collision_info_rebuild) = 1;
+void C2_HOOK_FASTCALL PHILDisable(void) {
+    C2V(gPHIL_enabled) = 1;
 }
-C2_HOOK_FUNCTION(0x004b5d20, DisableRecursiveCollisions)
+C2_HOOK_FUNCTION(0x004b5d20, PHILDisable)
 
 tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType) {
     tCollision_shape_box* result;
@@ -963,7 +963,7 @@ int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pP
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, box_face_ref, 0x178);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags, 0x19c);
 
-    if (C2V(gNo_recursive_collision_info_rebuild)) {
+    if (C2V(gPHIL_enabled)) {
         return 0;
     }
     if (pCollision_info->field_0x239 != 2) {

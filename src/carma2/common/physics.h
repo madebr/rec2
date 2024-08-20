@@ -13,7 +13,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gPhysics_other_buffer_capacity);
 C2_HOOK_VARIABLE_DECLARE(void*, gPhysics_other_buffer);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tU8, gPhysics_buffer, 299792);
 C2_HOOK_VARIABLE_DECLARE(int, gCollision_info_uid_counter);
-C2_HOOK_VARIABLE_DECLARE(int, gNo_recursive_collision_info_rebuild);
+C2_HOOK_VARIABLE_DECLARE(int, gPHIL_enabled);
 C2_HOOK_VARIABLE_DECLARE(int, gFace_num__car);
 
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError);
@@ -26,7 +26,7 @@ void C2_HOOK_FASTCALL InitPhysics(void);
 
 int C2_HOOK_FASTCALL ResetMechanics(void);
 
-void C2_HOOK_FASTCALL DisableRecursiveCollisions(void);
+void C2_HOOK_FASTCALL PHILDisable(void);
 
 tCollision_shape_box* C2_HOOK_FASTCALL AllocateBoxCollisionShape(br_uint_8 pType);
 

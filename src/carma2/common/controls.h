@@ -61,6 +61,8 @@ void C2_HOOK_FASTCALL SetFlag(tU32 i);
 
 void C2_HOOK_FASTCALL F4Key(void);
 
+void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void);
+
 void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void);
 
 void C2_HOOK_FASTCALL DoEditModeKey(int pIndex);
