@@ -247,3 +247,14 @@ int C2_HOOK_FASTCALL SkidSection(tS16* pSkid_id, br_vector3* pSkid_start, br_vec
     return 0;
 }
 C2_HOOK_FUNCTION(0x004e9f20, SkidSection)
+
+void (C2_HOOK_FASTCALL * SkidsPerFrame_original)(void);
+void C2_HOOK_FASTCALL SkidsPerFrame(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SkidsPerFrame_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ea720, SkidsPerFrame, SkidsPerFrame_original)
