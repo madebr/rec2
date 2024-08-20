@@ -84,8 +84,8 @@ void C2_HOOK_FASTCALL Timers_StartFrame(void) {
     for (i = 0; i < REC2_ASIZE(C2V(gTimers)); i++) {
         C2V(gTimers)[i].durations[C2V(gTimers)[i].index] = 0;
     }
-    C2V(gTimers)[TIMER_OQQ].start_time = PDGetTotalMicroTime();
-    C2V(gTimers_frame_start_time) = PDGetTotalMicroTime();
+    C2V(gTimers)[TIMER_OQQ].start_time = PDGetMicroseconds();
+    C2V(gTimers_frame_start_time) = PDGetMicroseconds();
 }
 C2_HOOK_FUNCTION(0x00504700, Timers_StartFrame)
 
@@ -97,8 +97,8 @@ void C2_HOOK_FASTCALL Timers_EndFrame(void) {
     if (C2V(gTimers_stack_size) != 0) {
         PDFatalError("Timers_EndFrame(): Timer stack mismatch.");
     }
-    C2V(gTimers)[TIMER_OQQ].durations[C2V(gTimers)[TIMER_OQQ].index] += PDGetTotalMicroTime() - C2V(gTimers)[TIMER_OQQ].start_time;
-    C2V(gTimers_frame_end_time) = PDGetTotalMicroTime();
+    C2V(gTimers)[TIMER_OQQ].durations[C2V(gTimers)[TIMER_OQQ].index] += PDGetMicroseconds() - C2V(gTimers)[TIMER_OQQ].start_time;
+    C2V(gTimers_frame_end_time) = PDGetMicroseconds();
     C2V(gTimers_frame_count)++;
     if (!C2V(gTimers_enough_samples) && C2V(gTimers_frame_count) > 64) {
         C2V(gTimers_enough_samples) = 1;
