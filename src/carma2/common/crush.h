@@ -16,7 +16,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gDetach_type_names, 4);
 
 void C2_HOOK_FASTCALL InitCrushSystems(void);
 
-void C2_HOOK_FASTCALL InitTrackCrushables(void);
+void C2_HOOK_FASTCALL ResetCrushSystems(void);
 
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* file);
 

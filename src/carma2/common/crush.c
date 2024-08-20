@@ -92,16 +92,16 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrushSystems, InitCrush_original)
 
-void (C2_HOOK_FASTCALL * InitTrackCrushables_original)(void);
-void C2_HOOK_FASTCALL InitTrackCrushables(void) {
+void (C2_HOOK_FASTCALL * ResetCrushSystems_original)(void);
+void C2_HOOK_FASTCALL ResetCrushSystems(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    InitTrackCrushables_original();
+    ResetCrushSystems_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0042a190, InitTrackCrushables, InitTrackCrushables_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0042a190, ResetCrushSystems, ResetCrushSystems_original)
 
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* file) {
     char s[256];
