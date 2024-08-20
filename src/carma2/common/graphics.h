@@ -183,4 +183,6 @@ void C2_HOOK_FASTCALL VerifyPaletteBlackness(br_pixelmap* pPalette);
 
 void C2_HOOK_FASTCALL ResetPalette(void);
 
+void C2_HOOK_FASTCALL EnsureRenderPalette(void);
+
 #endif //REC2_GRAPHICS_H
