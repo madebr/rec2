@@ -1432,7 +1432,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
         AdjustRenderScreenSize();
     }
     PrintMemoryDump(0, "DIRECTLY AFTER LOADING IN TRACK");
-    InitTrackCrushables();
+    ResetCrushSystems();
     LoadCars(&C2V(gCurrent_race));
 
     InitRaceHeadups();
