@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime);
 
 void C2_HOOK_FASTCALL ActionReplayFinishRecording(void);
 
+void C2_HOOK_FASTCALL ARMainLoopStart(void);
+
 #endif //REC2_REPLAY_H
