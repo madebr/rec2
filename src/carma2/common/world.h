@@ -222,6 +222,6 @@ void C2_HOOK_FASTCALL RemoveBoundsStructures(br_actor* pActor);
 
 void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec);
 
-void C2_HOOK_FASTCALL SaveAdditionalStuff(void);
+void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
 #endif // REC2_WORLD_H
