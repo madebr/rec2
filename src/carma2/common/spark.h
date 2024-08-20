@@ -50,4 +50,6 @@ void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF);
 
 void C2_HOOK_FASTCALL DisposeKevStuff(void);
 
+void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar);
+
 #endif //REC2_SPARK_H
