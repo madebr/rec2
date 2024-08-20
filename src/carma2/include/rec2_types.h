@@ -75,6 +75,7 @@ typedef enum {
     eNet_gameplay_checkpoint = 0,
     eNet_gameplay_wrong_checkpoint = 1,
     eNet_gameplay_host_paused = 4,
+    eNet_gameplay_host_unpaused = 5,
 } tNet_gameplay_mess;
 
 typedef enum {
