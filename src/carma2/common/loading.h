@@ -396,6 +396,8 @@ void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial);
 
 void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial);
 
+void C2_HOOK_FASTCALL MungeLightingEffects(void);
+
 void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage);
 
 void C2_HOOK_FASTCALL LoadTrackMaterials(tBrender_storage* pStorage, const char* pPath);
