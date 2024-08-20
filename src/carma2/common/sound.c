@@ -436,3 +436,14 @@ int C2_HOOK_FASTCALL DRS3SetVolume(int pVolume) {
     return S3SetVolume(pVolume);
 }
 C2_HOOK_FUNCTION(0x00455950, DRS3SetVolume)
+
+void (C2_HOOK_FASTCALL * MungeEnvironmentalSound_original)(void);
+void C2_HOOK_FASTCALL MungeEnvironmentalSound(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeEnvironmentalSound_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456e20, MungeEnvironmentalSound, MungeEnvironmentalSound_original)
