@@ -2361,6 +2361,31 @@ void C2_HOOK_FASTCALL PossibleTreeSurgery(br_model* pModel) {
     }
 }
 
+void C2_HOOK_FASTCALL CheckNonCarModelBounds(void) {
+    int i;
+
+    for (i = 0; i < C2V(gProgram_state).track_spec.count_non_cars; i++) {
+        br_actor* actor = C2V(gProgram_state).track_spec.non_car_list[i];
+        int idx;
+        tNon_car_spec* non_car;
+        int j;
+
+        if (actor == NULL) {
+            continue;
+        }
+        idx = C2V(gNon_car_spec_indices)[10 * (actor->identifier[1] - '0') + (actor->identifier[2] - '0')] + 40 - 1;
+        non_car = &C2V(gProgram_state).non_cars[idx];
+        if (non_car == NULL || non_car->collision_info->actor != NULL) {
+            continue;
+        }
+        non_car->collision_info->actor = actor;
+        for (j = 0; j < 3; j++) {
+            actor->model->bounds.min.v[j] = MIN(actor->model->bounds.min.v[j], non_car->collision_info->bb2.min.v[j]);
+            actor->model->bounds.max.v[j] = MAX(actor->model->bounds.max.v[j], non_car->collision_info->bb2.max.v[j]);
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * LoadTrack_original)(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
 
@@ -2905,24 +2930,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         PFfclose(g);
     }
     DisposeSmashEnvNonCars();
-    for (i = 0; i < C2V(gProgram_state).track_spec.count_non_cars; i++) {
-        br_actor* actor = C2V(gProgram_state).track_spec.non_car_list[i];
-        int idx;
-        tNon_car_spec* non_car;
-        if (actor == NULL) {
-            continue;
-        }
-        idx = C2V(gNon_car_spec_indices)[10 * (actor->identifier[1] - '0') + (actor->identifier[2] - '0')] + 40 - 1;
-        non_car = &C2V(gProgram_state).non_cars[idx];
-        if (non_car == NULL || non_car->collision_info->actor != NULL) {
-            continue;
-        }
-        non_car->collision_info->actor = actor;
-        for (j = 0; j < 3; j++) {
-            actor->model->bounds.min.v[j] = MIN(actor->model->bounds.min.v[j], non_car->collision_info->bb2.min.v[j]);
-            actor->model->bounds.max.v[j] = MAX(actor->model->bounds.max.v[j], non_car->collision_info->bb2.max.v[j]);
-        }
-    }
+    CheckNonCarModelBounds();
     GetSmokeShadeTables(f);
     pRace_info->count_network_start_points = GetAnInt(f);
     for (i = 0; i < pRace_info->count_network_start_points; i++) {
