@@ -7,6 +7,8 @@
 
 void C2_HOOK_FASTCALL ProcessAICars(tU32 pTime);
 
+void C2_HOOK_FASTCALL CalculateCameraStuff(tU32 pCamera_period);
+
 tRace_result C2_HOOK_FASTCALL MainGameLoop(void);
 
 tRace_result C2_HOOK_FASTCALL DoRace(void);
