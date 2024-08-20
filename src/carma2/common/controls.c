@@ -1511,3 +1511,14 @@ void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444270, PollCameraControls, PollCameraControls_original)
+
+void (C2_HOOK_FASTCALL * CheckRecoveryOfCars_original)(tU32 pEndFrameTime);
+void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CheckRecoveryOfCars_original(pEndFrameTime);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00442500, CheckRecoveryOfCars, CheckRecoveryOfCars_original)
