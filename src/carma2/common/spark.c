@@ -314,3 +314,14 @@ void C2_HOOK_FASTCALL DisposeKevStuff(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fe180, DisposeKevStuff, DisposeKevStuff_original)
+
+void (C2_HOOK_FASTCALL * StopCarBeingIt_original)(tCar_spec* pCar);
+void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar) {
+
+#if defined(C2_HOOKS_ENABLED)
+    StopCarBeingIt_original(pCar);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION(0x004fe570, StopCarBeingIt)
