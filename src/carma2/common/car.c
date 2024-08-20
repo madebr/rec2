@@ -481,3 +481,14 @@ void C2_HOOK_FASTCALL InitialiseExternalCamera(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00413580, InitialiseExternalCamera, InitialiseExternalCamera_original)
+
+void (C2_HOOK_FASTCALL * ResetCarScreens_original)(void);
+void C2_HOOK_FASTCALL ResetCarScreens(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ResetCarScreens_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0041f300, ResetCarScreens, ResetCarScreens_original)
