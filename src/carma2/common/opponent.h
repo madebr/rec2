@@ -57,7 +57,7 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex);
 
 tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec);
 
-void C2_HOOK_CDECL oppo_dprintf(const char* pMessage, ...);
+void C2_HOOK_CDECL DoNotDprintf_opponent(const char* pMessage, ...);
 
 void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info);
 
