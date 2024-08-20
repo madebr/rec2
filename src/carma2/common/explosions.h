@@ -12,4 +12,6 @@ void C2_HOOK_FASTCALL ResetExplosions(void);
 
 void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* pExplosion_sound_id, tExplosion_animation* pExplosion_groups);
 
+void C2_HOOK_FASTCALL MungeExplosions(void);
+
 #endif // REC2_EXPLOSIONS_H
