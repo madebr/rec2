@@ -40,7 +40,7 @@ void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF);
 
 int C2_HOOK_FASTCALL ArePointsColinear(const br_vector3* pV1, const br_vector3* pV2, const br_vector3* pV3);
 
-void C2_HOOK_FASTCALL UpdateCollisionBoundingBox(tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL UpdateCollisionObject(tCollision_info* pCollision_info);
 
 tPhysicsError C2_HOOK_FASTCALL ProcessTetrahedronPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron, tPolyhedron_edge_indexes* pEdges);
 
