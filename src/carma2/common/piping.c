@@ -72,3 +72,14 @@ void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatr
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c8600, PipeSingleSkidAdjustment, PipeSingleSkidAdjustment_original)
+
+void (C2_HOOK_FASTCALL * PipeCarPositions_original)(void);
+void C2_HOOK_FASTCALL PipeCarPositions(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PipeCarPositions_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c6640, PipeCarPositions, PipeCarPositions_original)
