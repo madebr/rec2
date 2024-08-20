@@ -44,7 +44,7 @@ C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
     dr_dprintf("QuitGame() - Point 1");
     if (C2V(gProgram_state).racing && C2V(gAdditional_actors) != NULL && C2V(gAdditional_actors)->children != NULL) {
         dr_dprintf("QuitGame() - Point 2");
-        SaveAdditionalStuff();
+        AutoSaveAdditionalStuff();
         dr_dprintf("QuitGame() - Point 3");
     }
     C2V(gProgram_state).racing = 0;

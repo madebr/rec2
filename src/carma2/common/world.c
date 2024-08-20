@@ -3108,13 +3108,13 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00506c20, FreeTrack, FreeTrack_original)
 
-void (C2_HOOK_FASTCALL * SaveAdditionalStuff_original)(void);
-void C2_HOOK_FASTCALL SaveAdditionalStuff(void) {
+void (C2_HOOK_FASTCALL * AutoSaveAdditionalStuff_original)(void);
+void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    SaveAdditionalStuff_original();
+    AutoSaveAdditionalStuff_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00507360, SaveAdditionalStuff, SaveAdditionalStuff_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00507360, AutoSaveAdditionalStuff, AutoSaveAdditionalStuff_original)
