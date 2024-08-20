@@ -672,3 +672,14 @@ void C2_HOOK_FASTCALL LastChanceForPedEffects(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d5970, LastChanceForPedEffects, LastChanceForPedEffects_original)
+
+void (C2_HOOK_FASTCALL * MungeNapalm_original)(void);
+void C2_HOOK_FASTCALL MungeNapalm(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeNapalm_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ce7d0, MungeNapalm, MungeNapalm_original)
