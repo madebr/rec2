@@ -2899,7 +2899,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         if (g == NULL) {
             FatalError(kFatalError_CantOpen_S, non_cars_path);
         }
-        LoadNonCar(g, non_car);
+        ReadNonCarMechanicsData(g, non_car);
         PossibleService();
         C2V(gNon_car_spec_indices)[non_car->index] = i + 1;
         PFfclose(g);
