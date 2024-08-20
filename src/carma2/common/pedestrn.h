@@ -45,4 +45,6 @@ void C2_HOOK_FASTCALL CameraIsMovingReallyFast(void);
 
 void C2_HOOK_FASTCALL LastChanceForPedEffects(void);
 
+void C2_HOOK_FASTCALL MungeNapalm(void);
+
 #endif //REC2_PEDESTRN_H
