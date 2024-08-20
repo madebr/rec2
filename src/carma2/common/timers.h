@@ -40,7 +40,7 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gTimers_frame_start_time);
 C2_HOOK_VARIABLE_DECLARE(tU32, gTimers_frame_end_time);
 C2_HOOK_VARIABLE_DECLARE(tU32, gTimers_tolerance);
 
-void C2_HOOK_FASTCALL InitTimers(void);
+void C2_HOOK_FASTCALL Timers_Init(void);
 
 void C2_HOOK_FASTCALL Timers_StartFrame(void);
 
