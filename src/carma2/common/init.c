@@ -1361,13 +1361,22 @@ static void C2_HOOK_FASTCALL InitRaceHeadups(void) {
     }
 }
 
+void C2_HOOK_FASTCALL Modify2DCopyPixelmaps(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gFonts)); i++) {
+        BRPM_convert(C2V(gFonts)[i].images, C2V(gBack_screen)->type);
+    }
+    BRPM_convert(C2V(gIcons_pix), C2V(gBack_screen)->type);
+    BRPM_convert(C2V(gLit_op_stat), C2V(gBack_screen)->type);
+}
+
 void (C2_HOOK_FASTCALL * InitRace_original)(void);
 void C2_HOOK_FASTCALL InitRace(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     InitRace_original();
 #else
-    int i;
 
     C2V(gMap_view) = 1;
     InitFogificateMaterials();
@@ -1496,11 +1505,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     }
     C2V(gInitialised_grid) = 0;
     SetCameraType(C2V(gAction_replay_camera_mode));
-    for (i = 0; i < REC2_ASIZE(C2V(gFonts)); i++) {
-        BRPM_convert(C2V(gFonts)[i].images, C2V(gBack_screen)->type);
-    }
-    BRPM_convert(C2V(gIcons_pix), C2V(gBack_screen)->type);
-    BRPM_convert(C2V(gLit_op_stat), C2V(gBack_screen)->type);
+    Modify2DCopyPixelmaps();
 
     ReadFFB_TXT();
     LockBackScreen(1);
