@@ -33,7 +33,7 @@ void C2_HOOK_FASTCALL FreeAllTintedPolyActors(void);
 
 void C2_HOOK_FASTCALL UpdateTintedPolyActor(int pTintedIndex);
 
-void C2_HOOK_FASTCALL MakeTintedVisible(int pTintedIndex);
+void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex);
 
 void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex);
 

@@ -461,13 +461,13 @@ void C2_HOOK_FASTCALL UpdateTintedPolyActor(int pTintedIndex) {
 }
 C2_HOOK_FUNCTION(0x004d7d80, UpdateTintedPolyActor)
 
-void C2_HOOK_FASTCALL MakeTintedVisible(int pTintedIndex) {
+void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex) {
     if (C2V(gTintedPolys)[pTintedIndex].used) {
         C2V(gTintedPolys)[pTintedIndex].actor->render_style = BR_RSTYLE_FACES;
         C2V(gTintedPolys)[pTintedIndex].visible = 1;
     }
 }
-C2_HOOK_FUNCTION(0x004d8220, MakeTintedVisible)
+C2_HOOK_FUNCTION(0x004d8220, TurnTintedPolyOn)
 
 void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
     if (C2V(gTintedPolys)[pTintedIndex].used) {

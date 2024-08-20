@@ -732,10 +732,10 @@ void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void) {
 
     C2V(gInterface_within_race_mode) = 0;
     if (C2V(gHud_tinted1_visible)) {
-        MakeTintedVisible(C2V(gHud_tinted1));
+        TurnTintedPolyOn(C2V(gHud_tinted1));
     }
     if (C2V(gHud_tinted2_visible)) {
-        MakeTintedVisible(C2V(gHud_tinted2));
+        TurnTintedPolyOn(C2V(gHud_tinted2));
     }
     SwitchToLoresMode();
     if (C2V(gNet_mode) == eNet_mode_host) {
