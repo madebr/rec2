@@ -514,3 +514,14 @@ void C2_HOOK_FASTCALL ResetCarScreens(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f300, ResetCarScreens, ResetCarScreens_original)
+
+void (C2_HOOK_FASTCALL * CameraBugFix_original)(tCar_spec* c, tU32 pTime);
+void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CameraBugFix_original(c, pTime);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040f760, CameraBugFix, CameraBugFix_original)
