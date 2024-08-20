@@ -728,6 +728,22 @@ void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void) {
 }
 C2_HOOK_FUNCTION(0x00504230, GoingToInterfaceFromRace)
 
+void C2_HOOK_FASTCALL GoingBackToRaceFromInterface(void) {
+
+    C2V(gInterface_within_race_mode) = 0;
+    if (C2V(gHud_tinted1_visible)) {
+        MakeTintedVisible(C2V(gHud_tinted1));
+    }
+    if (C2V(gHud_tinted2_visible)) {
+        MakeTintedVisible(C2V(gHud_tinted2));
+    }
+    SwitchToLoresMode();
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        SendGameplayToAllPlayers(eNet_gameplay_host_unpaused, 0, 0, 0, 0);
+    }
+}
+C2_HOOK_FUNCTION(0x005042a0, GoingBackToRaceFromInterface)
+
 void (C2_HOOK_FASTCALL * SendGameplayToHost_original)(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
 void C2_HOOK_FASTCALL SendGameplayToHost(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
 
