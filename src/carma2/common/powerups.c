@@ -830,3 +830,14 @@ void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db880, MungePowerupStuff, MungePowerupStuff_original)
+
+void (C2_HOOK_FASTCALL * DoPowerupPeriodics_original)(tU32 pFrame_period);
+void C2_HOOK_FASTCALL DoPowerupPeriodics(tU32 pFrame_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoPowerupPeriodics_original(pFrame_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004db1c0, DoPowerupPeriodics, DoPowerupPeriodics_original)
