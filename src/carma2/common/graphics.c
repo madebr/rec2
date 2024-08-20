@@ -576,7 +576,7 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
                 map->height);
         }
         if (C2V(draw_cursor) && C2V(draw_cursor) == 1) {
-            UnlockBackScreen(1);
+            PossibleUnlock(1);
             ResetTintedVertices(C2V(gCursor_tinted_top),
                 pos_x - 1, 0,
                 C2V(gCursor_line_width), pos_y - 9);
@@ -849,7 +849,7 @@ void C2_HOOK_FASTCALL PossibleLock(int pValue) {
 }
 C2_HOOK_FUNCTION(0x00516c10, PossibleLock)
 
-int C2_HOOK_FASTCALL UnlockBackScreen(int pValue) {
+int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
 
     if (C2V(gBack_screen)->pixels != NULL) {
         BrPixelmapDirectUnlock(C2V(gBack_screen));
@@ -857,7 +857,7 @@ int C2_HOOK_FASTCALL UnlockBackScreen(int pValue) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00516c30, UnlockBackScreen)
+C2_HOOK_FUNCTION(0x00516c30, PossibleUnlock)
 
 tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList) {
 

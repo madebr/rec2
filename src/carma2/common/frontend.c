@@ -1406,7 +1406,7 @@ void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
     if (!C2V(gFrontend_suppress_mouse)) {
         PossibleLock(1);
         DoMouseCursor();
-        UnlockBackScreen(1);
+        PossibleUnlock(1);
     }
 }
 C2_HOOK_FUNCTION(0x0046d8b0, MaybeDoMouseCursor)

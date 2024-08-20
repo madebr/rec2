@@ -822,7 +822,7 @@ static void C2_HOOK_CDECL OnErrorCallback(char* text) {
     sprintf(C2V(gFatalErrorMessage), "%s\n%s", msg, text);
     C2V(gWin32_fatal_error_exit_code) = 700;
     if (C2V(gBack_screen) != NULL && C2V(gBack_screen)->pixels != NULL) {
-        UnlockBackScreen(1);
+        PossibleUnlock(1);
     }
     if (C2V(gBr_initialized)) {
         RemoveAllBrenderDevices();
