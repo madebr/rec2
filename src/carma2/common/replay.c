@@ -94,3 +94,14 @@ void C2_HOOK_FASTCALL InitialiseActionReplay(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c6bf0, InitialiseActionReplay, InitialiseActionReplay_original)
+
+void (C2_HOOK_FASTCALL * CheckReplayTurnOn_original)(void);
+void C2_HOOK_FASTCALL CheckReplayTurnOn(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CheckReplayTurnOn_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e6ff0, CheckReplayTurnOn, CheckReplayTurnOn_original)
