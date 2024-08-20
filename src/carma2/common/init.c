@@ -1509,7 +1509,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
 
     SetupFFBValues();
     PossibleLock(1);
-    UnlockBackScreen(1);
+    PossibleUnlock(1);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00481830, InitRace, InitRace_original)
