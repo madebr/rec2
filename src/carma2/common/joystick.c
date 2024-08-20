@@ -11,7 +11,7 @@
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gForce_feedback_upper_limit, 0x00655e58, 2.7f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, Force_feedback_lower_limit, 0x00655e5c, 1.5f);
 
-void C2_HOOK_STDCALL ReadFFB_TXT(void) {
+void C2_HOOK_FASTCALL SetupFFBValues(void) {
     tPath_name path;
     FILE *f;
     char s[256];
