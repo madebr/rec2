@@ -147,4 +147,6 @@ void C2_HOOK_FASTCALL FlipUpCollisionInfo(tCollision_info* pCollision_info);
 
 void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 
+void C2_HOOK_FASTCALL EnterUserMessage(void);
+
 #endif //REC2_CONTROLS_H
