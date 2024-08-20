@@ -493,6 +493,17 @@ void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041e660, MungeCarGraphics, MungeCarGraphics_original)
 
+void (C2_HOOK_FASTCALL * DoComplexCarModels_original)(void);
+void C2_HOOK_FASTCALL DoComplexCarModels(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoComplexCarModels_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0041f2a0, DoComplexCarModels, DoComplexCarModels_original)
+
 void (C2_HOOK_FASTCALL * ResetCarScreens_original)(void);
 void C2_HOOK_FASTCALL ResetCarScreens(void) {
 
