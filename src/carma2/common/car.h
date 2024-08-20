@@ -56,4 +56,6 @@ void C2_HOOK_FASTCALL ResetCarScreens(void);
 
 void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime);
 
+void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void);
+
 #endif //REC2_CAR_H

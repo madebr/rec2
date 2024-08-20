@@ -525,3 +525,14 @@ void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040f760, CameraBugFix, CameraBugFix_original)
+
+void (C2_HOOK_FASTCALL * MungeSomeOtherCarGraphics_original)(void);
+void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeSomeOtherCarGraphics_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0041e5a0, MungeSomeOtherCarGraphics, MungeSomeOtherCarGraphics_original)
