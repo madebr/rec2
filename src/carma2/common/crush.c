@@ -766,3 +766,14 @@ void C2_HOOK_FASTCALL CrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
     }
 }
 C2_HOOK_FUNCTION(0x00440640, CrashEarnings)
+
+void (C2_HOOK_FASTCALL * DoWheelDamage_original)(tU32 pFrame_period);
+void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoWheelDamage_original(pFrame_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00440350, DoWheelDamage, DoWheelDamage_original)
