@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);
 
 void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
 
+void C2_HOOK_FASTCALL PipeCarPositions(void);
+
 #endif //REC2_PIPING_H
