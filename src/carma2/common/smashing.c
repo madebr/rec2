@@ -171,3 +171,14 @@ void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f02b0, DisposeSmashingAndExplosions,DisposeSmashingAndExplosions_original)
+
+void (C2_HOOK_FASTCALL * MungeGlassFragments_original)(void);
+void C2_HOOK_FASTCALL MungeGlassFragments(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeGlassFragments_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f00f0, MungeGlassFragments,MungeGlassFragments_original)

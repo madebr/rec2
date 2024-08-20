@@ -32,4 +32,6 @@ void C2_HOOK_FASTCALL MungeSmashMaterialNames(void);
 
 void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void);
 
+void C2_HOOK_FASTCALL MungeGlassFragments(void);
+
 #endif //REC2_SMASHING_H
