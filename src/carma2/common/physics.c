@@ -1160,3 +1160,14 @@ void C2_HOOK_FASTCALL PhysicsAddObject(tCollision_info* pParent, tCollision_info
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c63b0, PhysicsAddObject, CollisionInfoAddChild_original)
+
+void (C2_HOOK_FASTCALL * ApplyPhysicsToCar_original)(tU32 pLast_tick_time, tU32 pFrame_period);
+void C2_HOOK_FASTCALL ApplyPhysicsToCar(tU32 pLast_tick_time, tU32 pFrame_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ApplyPhysicsToCar_original(pLast_tick_time, pFrame_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00416340, ApplyPhysicsToCar, ApplyPhysicsToCar_original)
