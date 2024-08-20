@@ -34,4 +34,6 @@ void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void);
 
 void C2_HOOK_FASTCALL MungeGlassFragments(void);
 
+void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups);
+
 #endif //REC2_SMASHING_H

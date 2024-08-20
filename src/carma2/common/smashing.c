@@ -182,3 +182,14 @@ void C2_HOOK_FASTCALL MungeGlassFragments(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f00f0, MungeGlassFragments,MungeGlassFragments_original)
+
+void (C2_HOOK_FASTCALL * FlushSmashQueue_original)(int pFlush_powerups);
+void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FlushSmashQueue_original(pFlush_powerups);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ecfb0, FlushSmashQueue, FlushSmashQueue_original)
