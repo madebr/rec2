@@ -2077,11 +2077,11 @@ void C2_HOOK_FASTCALL ResetSmashing(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f5750, ResetSmashing, ResetSmashing_original)
 
-void C2_HOOK_FASTCALL FreeSmashableNonCarNames(void) {
+void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void) {
 
     BrMemFree(C2V(gSmashable_noncars));
 }
-C2_HOOK_FUNCTION(0x004f0940, FreeSmashableNonCarNames)
+C2_HOOK_FUNCTION(0x004f0940, DisposeSmashEnvNonCars)
 
 void (C2_HOOK_FASTCALL * LoadTrackSpecialVolumes_original)(FILE* pF);
 void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
@@ -2904,7 +2904,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         C2V(gNon_car_spec_indices)[non_car->index] = i + 1;
         PFfclose(g);
     }
-    FreeSmashableNonCarNames();
+    DisposeSmashEnvNonCars();
     for (i = 0; i < C2V(gProgram_state).track_spec.count_non_cars; i++) {
         br_actor* actor = C2V(gProgram_state).track_spec.non_car_list[i];
         int idx;
