@@ -52,4 +52,6 @@ void C2_HOOK_FASTCALL DisposeKevStuff(void);
 
 void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar);
 
+void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime);
+
 #endif //REC2_SPARK_H

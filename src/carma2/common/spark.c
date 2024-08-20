@@ -325,3 +325,14 @@ void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar) {
 #endif
 }
 C2_HOOK_FUNCTION(0x004fe570, StopCarBeingIt)
+
+void (C2_HOOK_FASTCALL * MungeShrapnel_original)(tU32 pTime);
+void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeShrapnel_original(pTime);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f9790, MungeShrapnel, MungeShrapnel_original)
