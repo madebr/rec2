@@ -48,4 +48,6 @@ void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
 
 void C2_HOOK_FASTCALL InitialiseExternalCamera(void);
 
+void C2_HOOK_FASTCALL ResetCarScreens(void);
+
 #endif //REC2_CAR_H
