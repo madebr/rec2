@@ -92,3 +92,14 @@ void C2_HOOK_FASTCALL ResetOilSpills(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004a6c50, ResetOilSpills)
+
+void (C2_HOOK_FASTCALL * ProcessOilSpills_original)(tU32 pFrame_period);
+void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessOilSpills_original(pFrame_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a6e50, ProcessOilSpills, ProcessOilSpills_original)
