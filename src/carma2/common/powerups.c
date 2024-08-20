@@ -819,3 +819,14 @@ void C2_HOOK_FASTCALL SetAPOToInitialValues(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00502e00, SetAPOToInitialValues)
+
+void (C2_HOOK_FASTCALL * MungePowerupStuff_original)(undefined4 pArg1);
+void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return;MungePowerupStuff_original(pArg1);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004db880, MungePowerupStuff, MungePowerupStuff_original)
