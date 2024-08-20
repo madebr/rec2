@@ -151,4 +151,6 @@ void C2_HOOK_FASTCALL EnterUserMessage(void);
 
 void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period);
 
+void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime);
+
 #endif //REC2_CONTROLS_H
