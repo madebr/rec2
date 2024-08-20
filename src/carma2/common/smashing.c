@@ -193,3 +193,14 @@ void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ecfb0, FlushSmashQueue, FlushSmashQueue_original)
+
+void (C2_HOOK_FASTCALL * MungeDelayedSideEffects_original)(void);
+void C2_HOOK_FASTCALL MungeDelayedSideEffects(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeDelayedSideEffects_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ecc80, MungeDelayedSideEffects, MungeDelayedSideEffects_original)

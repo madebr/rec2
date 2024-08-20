@@ -36,4 +36,6 @@ void C2_HOOK_FASTCALL MungeGlassFragments(void);
 
 void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups);
 
+void C2_HOOK_FASTCALL MungeDelayedSideEffects(void);
+
 #endif //REC2_SMASHING_H
