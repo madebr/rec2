@@ -44,4 +44,6 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 void C2_HOOK_FASTCALL SetAPOToInitialValues(void);
 
+void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1);
+
 #endif //REC2_POWERUPS_H
