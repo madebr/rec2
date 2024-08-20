@@ -168,3 +168,14 @@ void C2_HOOK_FASTCALL NetFullScreenMessage(int pStr_index, int pLeave_it_up_ther
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a0080, NetFullScreenMessage, NetFullScreenMessage_original)
+
+void (C2_HOOK_FASTCALL * NetSendMessageStacks_original)(void);
+void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    NetSendMessageStacks_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049fcf0, NetSendMessageStacks, NetSendMessageStacks_original)
