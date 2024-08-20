@@ -717,8 +717,8 @@ C2_HOOK_FUNCTION(0x00504170, JumpTheStart)
 void C2_HOOK_FASTCALL GoingToInterfaceFromRace(void) {
 
     C2V(gInterface_within_race_mode) = 1;
-    C2V(gHud_tinted1_visible) = !!IsTintedVisible(C2V(gHud_tinted1));
-    C2V(gHud_tinted2_visible) = !!IsTintedVisible(C2V(gHud_tinted2));
+    C2V(gHud_tinted1_visible) = !!TintedPolyIsOn(C2V(gHud_tinted1));
+    C2V(gHud_tinted2_visible) = !!TintedPolyIsOn(C2V(gHud_tinted2));
     TurnTintedPolyOff(C2V(gHud_tinted1));
     TurnTintedPolyOff(C2V(gHud_tinted2));
     PlayFlicsFromDisk();
