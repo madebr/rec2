@@ -143,6 +143,8 @@ void C2_HOOK_FASTCALL SaveShadeTables(void);
 
 void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
+void C2_HOOK_FASTCALL MungePalette(void);
+
 void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight);
 
 void C2_HOOK_FASTCALL PossibleLock(int pValue);

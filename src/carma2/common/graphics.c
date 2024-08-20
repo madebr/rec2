@@ -791,6 +791,11 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b52a0, InitPaletteAnimate, InitPaletteAnimate_original)
 
+void C2_HOOK_FASTCALL MungePalette(void) {
+
+}
+C2_HOOK_FUNCTION(0x004b5320, MungePalette)
+
 void (C2_HOOK_FASTCALL * SetBRenderScreenAndBuffers_original)(int pX_offset, int pY_offset, int pWidth, int pHeight);
 void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight) {
 
