@@ -67,3 +67,8 @@ void C2_HOOK_FASTCALL ARMainLoopStart(void) {
     C2V(gLast_replay_frame_time) = PDGetTotalTime();
 }
 C2_HOOK_FUNCTION(0x00403d40, ARMainLoopStart)
+
+void C2_HOOK_FASTCALL ARService(void) {
+
+}
+C2_HOOK_FUNCTION(0x00403d30, ARService)

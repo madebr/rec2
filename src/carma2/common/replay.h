@@ -17,4 +17,6 @@ void C2_HOOK_FASTCALL ActionReplayFinishRecording(void);
 
 void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
+void C2_HOOK_FASTCALL ARService(void);
+
 #endif //REC2_REPLAY_H
