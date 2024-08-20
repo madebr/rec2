@@ -145,7 +145,7 @@ void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
 void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight);
 
-void C2_HOOK_FASTCALL LockBackScreen(int pValue);
+void C2_HOOK_FASTCALL PossibleLock(int pValue);
 
 int C2_HOOK_FASTCALL UnlockBackScreen(int pValue);
 

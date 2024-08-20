@@ -1508,7 +1508,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     Modify2DCopyPixelmaps();
 
     SetupFFBValues();
-    LockBackScreen(1);
+    PossibleLock(1);
     UnlockBackScreen(1);
 #endif
 }
