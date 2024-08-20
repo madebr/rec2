@@ -1500,3 +1500,14 @@ void C2_HOOK_FASTCALL EnterUserMessage(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444910, EnterUserMessage, EnterUserMessage_original)
+
+void (C2_HOOK_FASTCALL * PollCameraControls_original)(tU32 pCamera_period);
+void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PollCameraControls_original(pCamera_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00444270, PollCameraControls, PollCameraControls_original)
