@@ -204,3 +204,14 @@ void C2_HOOK_FASTCALL MungeDelayedSideEffects(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ecc80, MungeDelayedSideEffects, MungeDelayedSideEffects_original)
+
+void (C2_HOOK_FASTCALL * MungeSmashEdgeTriggers_original)(tU32 pTime);
+void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeSmashEdgeTriggers_original(pTime);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f64d0, MungeSmashEdgeTriggers, MungeSmashEdgeTriggers_original)
