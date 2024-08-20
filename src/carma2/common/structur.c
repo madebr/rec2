@@ -331,7 +331,7 @@ int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness) {
 }
 C2_HOOK_FUNCTION(0x00503b00, ChooseOpponent)
 
-int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
+int C2_HOOK_FASTCALL NumberOfOpponentsStillRunning(void) {
     int i;
     int car_count;
     int result;
@@ -341,6 +341,9 @@ int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     car_count = GetCarCount(eVehicle_opponent);
     for (i = 0; i < car_count; i++) {
         the_car = GetCarSpec(eVehicle_opponent, i);
+
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, knackered, 0x1d4);
+
         if (!the_car->knackered) {
             result++;
         }
