@@ -54,4 +54,6 @@ void C2_HOOK_FASTCALL DoComplexCarModels(void);
 
 void C2_HOOK_FASTCALL ResetCarScreens(void);
 
+void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime);
+
 #endif //REC2_CAR_H
