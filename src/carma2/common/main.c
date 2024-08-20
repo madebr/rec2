@@ -19,6 +19,7 @@
 #include "replay.h"
 #include "sound.h"
 #include "structur.h"
+#include "timers.h"
 #include "utility.h"
 #include "world.h"
 
@@ -135,6 +136,9 @@ C2_HOOK_FUNCTION(0x00492050, ServiceTheGame)
 
 void C2_HOOK_FASTCALL ServiceGameInRace(void) {
 
+    Timers_Push(TIMER_SER);
     ServiceTheGame(1);
     CheckKevKeys();
+    Timers_Pop(TIMER_SER);
 }
+C2_HOOK_FUNCTION(0x004922a0, ServiceGameInRace)
