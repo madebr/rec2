@@ -853,6 +853,11 @@ void C2_HOOK_FASTCALL F4Key(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004414b0, F4Key, F4Key_original)
 
+void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void) {
+
+}
+C2_HOOK_FUNCTION(0x004415e0, EnsureSpecialVolumesHidden)
+
 void C2_HOOK_FASTCALL ShowSpecialVolumesIfRequ(void) {
 
 }
