@@ -378,7 +378,7 @@ void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info) {
 }
 C2_HOOK_FUNCTION(0x005039e0, SelectOpponents)
 
-int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void) {
+int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void) {
     int result;
     int count;
     int i;
@@ -394,7 +394,7 @@ int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void) {
     }
     return result;
 }
-C2_HOOK_FUNCTION(0x00503050, NumberOfOpponentObjectivesLeft)
+C2_HOOK_FUNCTION(0x00503050, NumberOfOpponentsLeft)
 
 void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason) {
 
