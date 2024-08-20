@@ -1522,3 +1522,14 @@ void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442500, CheckRecoveryOfCars, CheckRecoveryOfCars_original)
+
+void (C2_HOOK_FASTCALL * PollCarControls_original)(tU32 pTime_difference);
+void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PollCarControls_original(pTime_difference);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00443e80, PollCarControls, PollCarControls_original)
