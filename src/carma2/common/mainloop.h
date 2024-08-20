@@ -5,7 +5,7 @@
 
 #include "rec2_types.h"
 
-void C2_HOOK_FASTCALL ProcessAICars(tU32 pTime);
+void C2_HOOK_FASTCALL MungeAIWorld(tU32 pTime);
 
 void C2_HOOK_FASTCALL CalculateCameraStuff(tU32 pCamera_period);
 
