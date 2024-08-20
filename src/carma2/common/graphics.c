@@ -1182,3 +1182,10 @@ void C2_HOOK_FASTCALL VerifyPaletteBlackness(br_pixelmap* pPalette) {
     }
 }
 C2_HOOK_FUNCTION(0x00517fa0, VerifyPaletteBlackness)
+
+void C2_HOOK_FASTCALL ResetPalette(void) {
+
+    InitPaletteAnimate();
+    DRSetPalette(C2V(gRender_palette));
+}
+C2_HOOK_FUNCTION(0x004b5330, ResetPalette)
