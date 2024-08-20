@@ -147,7 +147,7 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
 
 void C2_HOOK_FASTCALL PossibleLock(int pValue);
 
-int C2_HOOK_FASTCALL UnlockBackScreen(int pValue);
+int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
 tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList);
 
