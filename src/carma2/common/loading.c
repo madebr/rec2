@@ -5297,7 +5297,7 @@ void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044fda0, LoadPerRaceDroneStuff, LoadPerRaceDroneStuff_original)
 
-void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info) {
+void C2_HOOK_FASTCALL LoadAIWorldForRace(tRace_info* pRace_info) {
 
     PrintMemoryDump(0,"BEFORE LoadOpponentsCars()");
     LoadPlayerCars(pRace_info);
@@ -5306,7 +5306,7 @@ void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info) {
     LoadPerRaceDroneStuff();
     PrintMemoryDump(0,"AFTER LoadPerRaceDroneStuff()");
 }
-C2_HOOK_FUNCTION(0x00401070, LoadCars)
+C2_HOOK_FUNCTION(0x00401070, LoadAIWorldForRace)
 
 void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
 
