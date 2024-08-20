@@ -224,4 +224,6 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec);
 
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
+void C2_HOOK_FASTCALL AnimateSky(void);
+
 #endif // REC2_WORLD_H
