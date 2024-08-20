@@ -6,17 +6,9 @@
 #include "brender/br_types.h"
 
 C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void);
-//
-//tU32 TrackCount(br_actor* pActor, tU32* pCount);
-//
-//void CheckNumberOfTracks();
-//
-//void ServiceTheGame(int pRacing);
 
 void C2_HOOK_FASTCALL ServiceGame(void);
 
-//void ServiceGameInRace();
-//
 C2_NORETURN void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv);
 
 void C2_HOOK_FASTCALL ServiceTheGame(int pRacing);
