@@ -482,6 +482,17 @@ void C2_HOOK_FASTCALL InitialiseExternalCamera(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00413580, InitialiseExternalCamera, InitialiseExternalCamera_original)
 
+void (C2_HOOK_FASTCALL * MungeCarGraphics_original)(tU32 pFrame_period);
+void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeCarGraphics_original(pFrame_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0041e660, MungeCarGraphics, MungeCarGraphics_original)
+
 void (C2_HOOK_FASTCALL * ResetCarScreens_original)(void);
 void C2_HOOK_FASTCALL ResetCarScreens(void) {
 
