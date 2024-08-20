@@ -28,6 +28,17 @@ void C2_HOOK_FASTCALL ProcessAICars(tU32 pFrame_period) {
 }
 C2_HOOK_FUNCTION(0x00401170, ProcessAICars)
 
+void (C2_HOOK_FASTCALL * CalculateCameraStuff_original)(tU32 pCamera_period);
+void C2_HOOK_FASTCALL CalculateCameraStuff(tU32 pCamera_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CalculateCameraStuff_original(pCamera_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004940e0, CalculateCameraStuff, CalculateCameraStuff_original)
+
 tRace_result (C2_HOOK_FASTCALL * MainGameLoop_original)(void);
 tRace_result C2_HOOK_FASTCALL MainGameLoop(void) {
 
