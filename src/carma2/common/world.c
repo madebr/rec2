@@ -2762,7 +2762,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PossibleService();
 
     PrintMemoryDump(0, "JUST ABOUT TO LOAD IN AI WORLD");
-    LoadAIWorld(f);
+    LoadAIWorldTrackInfo(f);
     PrintMemoryDump(0, "JUST LOADED IN AI WORLD");
     PrepareSmashableTrackItemIdentifiers();
     PackFileRevertTiffLoading();

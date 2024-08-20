@@ -3331,7 +3331,7 @@ void C2_HOOK_FASTCALL LoadCopCars(void) {
 }
 C2_HOOK_FUNCTION(0x004a9600, LoadCopCars)
 
-void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF) {
+void C2_HOOK_FASTCALL LoadAIWorldTrackInfo(FILE* pF) {
 
     PrintMemoryDump(0, "BEFORE LoadInOppoPaths()");
     LoadInOppoPaths(pF);
@@ -3339,7 +3339,7 @@ void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF) {
     LoadInDronePaths(pF);
     PrintMemoryDump(0, "AFTER LoadInDronePaths()");
 }
-C2_HOOK_FUNCTION(0x00401030, LoadAIWorld)
+C2_HOOK_FUNCTION(0x00401030, LoadAIWorldTrackInfo)
 
 void C2_HOOK_FASTCALL LoadGear(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char s[256];
