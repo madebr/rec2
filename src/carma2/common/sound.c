@@ -447,3 +447,14 @@ void C2_HOOK_FASTCALL MungeEnvironmentalSound(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456e20, MungeEnvironmentalSound, MungeEnvironmentalSound_original)
+
+void (C2_HOOK_FASTCALL * MungeEngineNoise_original)(void);
+void C2_HOOK_FASTCALL MungeEngineNoise(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeEngineNoise_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456070, MungeEngineNoise, MungeEngineNoise_original)
