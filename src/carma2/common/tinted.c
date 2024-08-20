@@ -742,8 +742,8 @@ void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex) {
 }
 C2_HOOK_FUNCTION(0x004d86e0, FUN_004d86e0)
 
-int C2_HOOK_FASTCALL IsTintedVisible(int pIndex) {
+int C2_HOOK_FASTCALL TintedPolyIsOn(int pIndex) {
 
     return C2V(gTintedPolys)[pIndex].visible;
 }
-C2_HOOK_FUNCTION(0x004d8cf0, IsTintedVisible)
+C2_HOOK_FUNCTION(0x004d8cf0, TintedPolyIsOn)
