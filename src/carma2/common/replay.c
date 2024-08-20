@@ -105,3 +105,14 @@ void C2_HOOK_FASTCALL CheckReplayTurnOn(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e6ff0, CheckReplayTurnOn, CheckReplayTurnOn_original)
+
+void (C2_HOOK_FASTCALL * DoActionReplay_original)(tU32 pFrame_period);
+void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoActionReplay_original(pFrame_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e68e0, DoActionReplay, DoActionReplay_original)
