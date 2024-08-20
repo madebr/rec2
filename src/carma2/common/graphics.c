@@ -1189,3 +1189,12 @@ void C2_HOOK_FASTCALL ResetPalette(void) {
     DRSetPalette(C2V(gRender_palette));
 }
 C2_HOOK_FUNCTION(0x004b5330, ResetPalette)
+
+void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
+
+    if (C2V(gPalette_munged)) {
+        ResetPalette();
+        C2V(gPalette_munged) = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x004b5770, EnsureRenderPalette)
