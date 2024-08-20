@@ -25,4 +25,6 @@ void C2_HOOK_FASTCALL InitialiseActionReplay(void);
 
 void C2_HOOK_FASTCALL CheckReplayTurnOn(void);
 
+void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period);
+
 #endif //REC2_REPLAY_H
