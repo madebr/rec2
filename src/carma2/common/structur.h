@@ -33,7 +33,7 @@ void C2_HOOK_FASTCALL DoGame(void);
 
 int C2_HOOK_FASTCALL ChooseOpponent(int pNastiness);
 
-int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
+int C2_HOOK_FASTCALL NumberOfOpponentsStillRunning(void);
 
 void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info);
 

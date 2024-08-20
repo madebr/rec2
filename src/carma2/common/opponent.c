@@ -368,7 +368,7 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
     }
     /* cops are not initialized in rec2 */
 
-    opponents_left = NumberOfOpponentsLeft();
+    opponents_left = NumberOfOpponentsStillRunning();
     if (opponents_left != 0) {
         if (C2V(gCurrent_race).race_spec->opponent_nastiness_level < 10.f) {
             int count_type_2;
