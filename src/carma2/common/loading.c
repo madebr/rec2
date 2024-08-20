@@ -4933,6 +4933,11 @@ void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial) {
 }
 C2_HOOK_FUNCTION(0x004f6a90, SmoothificateWorldMaterial)
 
+void C2_HOOK_FASTCALL MungeLightingEffects(void) {
+
+}
+C2_HOOK_FUNCTION(0x00486d60, MungeLightingEffects)
+
 void C2_HOOK_FASTCALL SmoothlySetWorldMaterialFlags(tBrender_storage* pStorage) {
     int i;
     for (i = 0; i < pStorage->materials_count; i++) {
