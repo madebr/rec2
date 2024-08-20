@@ -1495,7 +1495,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
         InitNetGameplayStuff();
     }
     C2V(gInitialised_grid) = 0;
-    InitializeActionReplayCamera(C2V(gAction_replay_camera_mode));
+    SetCameraType(C2V(gAction_replay_camera_mode));
     for (i = 0; i < REC2_ASIZE(C2V(gFonts)); i++) {
         BRPM_convert(C2V(gFonts)[i].images, C2V(gBack_screen)->type);
     }
