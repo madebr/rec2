@@ -37,7 +37,7 @@ int C2_HOOK_FASTCALL NumberOfOpponentsStillRunning(void);
 
 void C2_HOOK_FASTCALL SelectOpponents(tRace_info* pRace_info);
 
-int C2_HOOK_FASTCALL NumberOfOpponentObjectivesLeft(void);
+int C2_HOOK_FASTCALL NumberOfOpponentsLeft(void);
 
 void C2_HOOK_FASTCALL RaceCompleted(tRace_over_reason pReason);
 
