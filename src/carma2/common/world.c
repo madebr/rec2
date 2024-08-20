@@ -3129,3 +3129,14 @@ void C2_HOOK_FASTCALL AnimateSky(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00506e80, AnimateSky, AnimateSky_original)
+
+void (C2_HOOK_FASTCALL * GrooveThoseDelics_original)(void);
+void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    GrooveThoseDelics_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00478c00, GrooveThoseDelics, GrooveThoseDelics_original)

@@ -226,4 +226,6 @@ void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
 void C2_HOOK_FASTCALL AnimateSky(void);
 
+void C2_HOOK_FASTCALL GrooveThoseDelics(void);
+
 #endif // REC2_WORLD_H
