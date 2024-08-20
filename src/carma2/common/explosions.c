@@ -98,3 +98,14 @@ void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* p
     ReadExplosion(pF, pExplosion_groups);
 }
 C2_HOOK_FUNCTION(0x004f5ec0, ReadExplosionInfo)
+
+void (C2_HOOK_FASTCALL * MungeExplosions_original)(void);
+void C2_HOOK_FASTCALL MungeExplosions(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeExplosions_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004eaaf0, MungeExplosions, MungeExplosions_original)
