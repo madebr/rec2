@@ -9,7 +9,7 @@
 #include "timers.h"
 #include "utility.h"
 
-void C2_HOOK_FASTCALL ProcessAICars(tU32 pFrame_period) {
+void C2_HOOK_FASTCALL MungeAIWorld(tU32 pFrame_period) {
 
     C2V(gTime_stamp_for_this_munging) = GetTotalTime();
     if (C2V(gTime_stamp_for_this_munging) == 0) {
@@ -26,7 +26,7 @@ void C2_HOOK_FASTCALL ProcessAICars(tU32 pFrame_period) {
     C2V(gFirst_drone_processing) = 0;
     ProcessShitMines(C2V(gTime_stamp_for_this_munging));
 }
-C2_HOOK_FUNCTION(0x00401170, ProcessAICars)
+C2_HOOK_FUNCTION(0x00401170, MungeAIWorld)
 
 void (C2_HOOK_FASTCALL * CalculateCameraStuff_original)(tU32 pCamera_period);
 void C2_HOOK_FASTCALL CalculateCameraStuff(tU32 pCamera_period) {
