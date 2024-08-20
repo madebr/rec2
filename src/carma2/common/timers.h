@@ -57,21 +57,21 @@ static void inline Timers_Push(int pType) {
     } else {
         prev_type = C2V(gTimers_stack)[C2V(gTimers_stack_size) - 1];
     }
-    C2V(gTimers)[prev_type].durations[C2V(gTimers)[prev_type].index] += PDGetTotalMicroTime() - C2V(gTimers)[prev_type].start_time;
-    C2V(gTimers)[pType].start_time = PDGetTotalMicroTime();
+    C2V(gTimers)[prev_type].durations[C2V(gTimers)[prev_type].index] += PDGetMicroseconds() - C2V(gTimers)[prev_type].start_time;
+    C2V(gTimers)[pType].start_time = PDGetMicroseconds();
     C2V(gTimers_stack_size) += 1;
 }
 
 static void inline Timers_Pop(int pType) {
     int prev_type;
 
-    C2V(gTimers)[pType].durations[C2V(gTimers)[pType].index] += PDGetTotalMicroTime() - C2V(gTimers)[pType].start_time;
+    C2V(gTimers)[pType].durations[C2V(gTimers)[pType].index] += PDGetMicroseconds() - C2V(gTimers)[pType].start_time;
     if (C2V(gTimers_stack_size) > 1) {
         prev_type = C2V(gTimers_stack_size) - 1;
     } else {
         prev_type = C2V(gTimers_max_index);
     }
-    C2V(gTimers)[prev_type].start_time = PDGetTotalMicroTime();
+    C2V(gTimers)[prev_type].start_time = PDGetMicroseconds();
     C2V(gTimers_stack_size) -= 1;
 }
 

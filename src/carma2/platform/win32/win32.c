@@ -576,7 +576,7 @@ int C2_HOOK_FASTCALL PDGetTotalTime(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051d410, PDGetTotalTime, PDGetTotalTime_original)
 
-int C2_HOOK_FASTCALL PDGetTotalMicroTime(void) {
+int C2_HOOK_FASTCALL PDGetMicroseconds(void) {
 #if 0 //defined(C2_HOOKS_ENABLED)
     return PDGetTotalTime_original();
 #else
@@ -589,7 +589,7 @@ int C2_HOOK_FASTCALL PDGetTotalMicroTime(void) {
     return 0;
 #endif
 }
-C2_HOOK_FUNCTION(0x0051d990, PDGetTotalMicroTime)
+C2_HOOK_FUNCTION(0x0051d990, PDGetMicroseconds)
 
 void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
 
