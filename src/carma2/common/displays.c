@@ -677,3 +677,14 @@ int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
     return C2V(gProgram_state).credits;
 }
 C2_HOOK_FUNCTION(0x0044b470, SpendCredits)
+
+void (C2_HOOK_FASTCALL * ChangingView_original)(void);
+void C2_HOOK_FASTCALL ChangingView(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ChangingView_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044b170, ChangingView, ChangingView_original)

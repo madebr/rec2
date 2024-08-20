@@ -102,4 +102,6 @@ void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
 int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
+void C2_HOOK_FASTCALL ChangingView(void);
+
 #endif //REC2_DISPLAYS_H
