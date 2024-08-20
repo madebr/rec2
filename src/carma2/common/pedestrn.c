@@ -661,3 +661,14 @@ void C2_HOOK_FASTCALL CameraIsMovingReallyFast(void) {
     C2V(gCamera_is_teleporting) = 1;
 }
 C2_HOOK_FUNCTION(0x004d6390, CameraIsMovingReallyFast)
+
+void (C2_HOOK_FASTCALL * LastChanceForPedEffects_original)(void);
+void C2_HOOK_FASTCALL LastChanceForPedEffects(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LastChanceForPedEffects_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d5970, LastChanceForPedEffects, LastChanceForPedEffects_original)
