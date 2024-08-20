@@ -86,4 +86,6 @@ tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pTy
 
 void C2_HOOK_FASTCALL PhysicsAddObject(tCollision_info* pParent, tCollision_info* pChild);
 
+void C2_HOOK_FASTCALL ApplyPhysicsToCar(tU32 pLast_tick_time, tU32 pFrame_period);
+
 #endif //REC2_PHYSICS_H
