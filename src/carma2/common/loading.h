@@ -354,7 +354,7 @@ void C2_HOOK_FASTCALL AboutToLoadFirstCar(void);
 
 void C2_HOOK_FASTCALL LoadCopCars(void);
 
-void C2_HOOK_FASTCALL LoadAIWorld(FILE* pF);
+void C2_HOOK_FASTCALL LoadAIWorldTrackInfo(FILE* pF);
 
 void C2_HOOK_FASTCALL LoadGear(FILE* pF, int pIndex, tCar_spec* pCar_spec);
 
