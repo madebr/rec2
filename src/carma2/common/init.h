@@ -59,6 +59,8 @@ void C2_HOOK_FASTCALL AllocateRearviewPixelmap(void);
 
 void C2_HOOK_FASTCALL ReinitialiseRearviewCamera(void);
 
+void C2_HOOK_FASTCALL Modify2DCopyPixelmaps(void);
+
 void C2_HOOK_FASTCALL InitRace(void);
 
 void C2_HOOK_FASTCALL DisposeRace(void);
