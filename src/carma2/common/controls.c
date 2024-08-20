@@ -1489,3 +1489,14 @@ void C2_HOOK_FASTCALL ResetRecoveryVouchers(void) {
     C2V(gRecovery_voucher_count) = 0;
 }
 C2_HOOK_FUNCTION(0x00444710, ResetRecoveryVouchers)
+
+void (C2_HOOK_FASTCALL * EnterUserMessage_original)(void);
+void C2_HOOK_FASTCALL EnterUserMessage(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    EnterUserMessage_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00444910, EnterUserMessage, EnterUserMessage_original)
