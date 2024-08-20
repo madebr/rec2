@@ -21,4 +21,6 @@ void C2_HOOK_FASTCALL ARService(void);
 
 void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2);
 
+void C2_HOOK_FASTCALL InitialiseActionReplay(void);
+
 #endif //REC2_REPLAY_H

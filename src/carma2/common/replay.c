@@ -83,3 +83,14 @@ void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e72e0, ToggleReplay, ToggleReplay_original)
+
+void (C2_HOOK_FASTCALL * InitialiseActionReplay_original)(void);
+void C2_HOOK_FASTCALL InitialiseActionReplay(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitialiseActionReplay_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c6bf0, InitialiseActionReplay, InitialiseActionReplay_original)
