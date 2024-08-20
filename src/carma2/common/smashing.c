@@ -151,7 +151,7 @@ void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor,
 C2_HOOK_FUNCTION(0x004977f0, AddSmashableRaceTarget)
 
 void (C2_HOOK_FASTCALL * PrepareSmashableTrackItemIdentifiers_original)(void);
-void C2_HOOK_FASTCALL PrepareSmashableTrackItemIdentifiers(void) {
+void C2_HOOK_FASTCALL MungeSmashMaterialNames(void) {
 
 #if defined(C2_HOOKS_ENABLED)
     PrepareSmashableTrackItemIdentifiers_original();
@@ -159,7 +159,7 @@ void C2_HOOK_FASTCALL PrepareSmashableTrackItemIdentifiers(void) {
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f0bc0, PrepareSmashableTrackItemIdentifiers, PrepareSmashableTrackItemIdentifiers_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004f0bc0, MungeSmashMaterialNames, PrepareSmashableTrackItemIdentifiers_original)
 
 void (C2_HOOK_FASTCALL * DisposeSmashingAndExplosions_original)(void);
 void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void) {
