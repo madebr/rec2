@@ -4417,7 +4417,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00488f70, LoadCar, LoadCar_original)
 
-void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info) {
+void C2_HOOK_FASTCALL LoadOpponentsCars(tRace_info* pRace_info) {
     int i;
     int j;
     tOpp_spec* opponent;
@@ -4481,7 +4481,7 @@ void C2_HOOK_FASTCALL LoadPlayerCars(tRace_info* pRace_info) {
         SetCarStorageTexturingLevel(&C2V(gTheir_cars_storage_space), GetCarTexturingLevel(), eCTL_full);
     }
 }
-C2_HOOK_FUNCTION(0x0048cda0, LoadPlayerCars)
+C2_HOOK_FUNCTION(0x0048cda0, LoadOpponentsCars)
 
 void C2_HOOK_FASTCALL SetModelFlags(br_model* pModel, int pOwner) {
 
@@ -5300,7 +5300,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0044fda0, LoadPerRaceDroneStuff, LoadPerRaceDroneStu
 void C2_HOOK_FASTCALL LoadAIWorldForRace(tRace_info* pRace_info) {
 
     PrintMemoryDump(0,"BEFORE LoadOpponentsCars()");
-    LoadPlayerCars(pRace_info);
+    LoadOpponentsCars(pRace_info);
     LoadCopCars();
     PrintMemoryDump(0,"AFTER LoadOpponentsCars(), BEFORE LoadPerRaceDroneStuff()");
     LoadPerRaceDroneStuff();
