@@ -38,7 +38,7 @@ void C2_HOOK_FASTCALL PDInitTimer(void);
 
 int C2_HOOK_FASTCALL PDGetTotalTime(void);
 
-int C2_HOOK_FASTCALL PDGetTotalMicroTime(void);
+int C2_HOOK_FASTCALL PDGetMicroseconds(void);
 
 void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only);
 
