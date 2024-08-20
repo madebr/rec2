@@ -3118,3 +3118,14 @@ void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00507360, AutoSaveAdditionalStuff, AutoSaveAdditionalStuff_original)
+
+void (C2_HOOK_FASTCALL * AnimateSky_original)(void);
+void C2_HOOK_FASTCALL AnimateSky(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    AnimateSky_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00506e80, AnimateSky, AnimateSky_original)
