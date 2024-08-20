@@ -1433,7 +1433,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     }
     PrintMemoryDump(0, "DIRECTLY AFTER LOADING IN TRACK");
     ResetCrushSystems();
-    LoadCars(&C2V(gCurrent_race));
+    LoadAIWorldForRace(&C2V(gCurrent_race));
 
     InitRaceHeadups();
 

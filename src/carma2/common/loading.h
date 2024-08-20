@@ -410,7 +410,7 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
 
 void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void);
 
-void C2_HOOK_FASTCALL LoadCars(tRace_info* pRace_info);
+void C2_HOOK_FASTCALL LoadAIWorldForRace(tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race);
 
