@@ -2386,6 +2386,18 @@ void C2_HOOK_FASTCALL CheckNonCarModelBounds(void) {
     }
 }
 
+void C2_HOOK_FASTCALL FreeExceptions(void) {
+    tMaterial_exception* material_exception;
+
+    for (material_exception = C2V(gMaterial_exceptions); material_exception != NULL; ) {
+        tMaterial_exception* next_material_exception = material_exception->next;
+        BrMemFree(material_exception->texture_name);
+        BrMemFree(material_exception);
+        material_exception = next_material_exception;
+    }
+    C2V(gMaterial_exceptions) = NULL;
+}
+
 void (C2_HOOK_FASTCALL * LoadTrack_original)(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
 
@@ -2405,7 +2417,6 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     FILE* f;
     char *str;
     tTWTVFS twt, twt2;
-    tMaterial_exception* material_exception;
     br_pixelmap* sky;
     tU16 sky_pixels_high;
     int killed_sky;
@@ -2947,13 +2958,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         FatalError(kFatalError_FileIsCorrupted_S, pFile_name);
     }
     PFfclose(f);
-    for (material_exception = C2V(gMaterial_exceptions); material_exception != NULL; ) {
-        tMaterial_exception* next_material_exception = material_exception->next;
-        BrMemFree(material_exception->texture_name);
-        BrMemFree(material_exception);
-        material_exception = next_material_exception;
-    }
-    C2V(gMaterial_exceptions) = NULL;
+    FreeExceptions();
     PrintMemoryDump(0, "FINISHED LOADING TRACK");
     /* nop_FUN_00486db0(race_lighting_path); */
     ClosePackFileAndSetTiffLoading(twt);
