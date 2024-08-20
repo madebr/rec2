@@ -172,7 +172,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gDefault_gravity);
 C2_HOOK_VARIABLE_DECLARE(tU32, gKeys_pressed);
 //extern tSpecial_volume* gDefault_water_spec_vol;
 //extern float gNet_repair_cost[7];
-//extern tU32 gLast_replay_frame_time;
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_replay_frame_time);
 //extern tU32 gTag_start_time;
 //extern tOpponent* gOpponents;
 //extern tU32 gLast_credit_tick;

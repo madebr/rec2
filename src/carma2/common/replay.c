@@ -1,6 +1,7 @@
 #include "replay.h"
 
 #include "globvars.h"
+#include "platform.h"
 #include "utility.h"
 
 #include "c2_string.h"
@@ -59,3 +60,10 @@ void C2_HOOK_FASTCALL ActionReplayFinishRecording(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e1a20, ActionReplayFinishRecording, ActionReplayFinishRecording_original)
+
+void C2_HOOK_FASTCALL ARMainLoopStart(void) {
+
+    C2V(gAction_replay_mode) = 0;
+    C2V(gLast_replay_frame_time) = PDGetTotalTime();
+}
+C2_HOOK_FUNCTION(0x00403d40, ARMainLoopStart)
