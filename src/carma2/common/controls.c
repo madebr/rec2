@@ -1247,16 +1247,16 @@ void C2_HOOK_FASTCALL ToggleTargetLock(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004945f0, ToggleTargetLock, ToggleTargetLock_original)
 
 // Key: 'y'
-void (C2_HOOK_FASTCALL * ToggleTarget_original)(void);
-void C2_HOOK_FASTCALL ToggleTarget(void) {
+void (C2_HOOK_FASTCALL * CycleTargetLock_original)(void);
+void C2_HOOK_FASTCALL CycleTargetLock(void) {
     CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
-    ToggleTarget_original();
+    CycleTargetLock_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00494700, ToggleTarget, ToggleTarget_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00494700, CycleTargetLock, CycleTargetLock_original)
 
 // Key: ';'
 void (C2_HOOK_FASTCALL * PowerupInventoryToggle_original)(void);
