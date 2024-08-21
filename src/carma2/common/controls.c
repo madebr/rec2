@@ -563,6 +563,21 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
     },
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAllow_car_flying, 0x0067c46c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char *, gEdit_mode_names, 12, 0x005904c0, {
+    "Options",
+    "Cheat",
+    "Accessories",
+    "Powerups",
+    "Special Volumes",
+    "Pedestrians",
+    "Drones",
+    "Opponents",
+    "Prat-cam",
+    "Depth effects",
+    "Damage",
+    "Crush Test",
+});
+
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
 
@@ -929,11 +944,38 @@ C2_HOOK_FUNCTION(0x00441580, SetFlag)
 // Key: 'f4'
 void (C2_HOOK_FASTCALL * F4Key_original)(void);
 void C2_HOOK_FASTCALL F4Key(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     F4Key_original();
 #else
-#error "Not implemented"
+    if (C2V(gI_am_cheating) == 0xa11ee75d || (C2V(gI_am_cheating) != 0x564e78b9 && C2V(gNet_mode) != eNet_mode_none)) {
+        char s[256];
+
+        if (C2V(gINT_0068b8e4) == 1) {
+            FUN_0045a670();
+        }
+        if (C2V(gINT_0068b8e4) == 2) {
+            FUN_0045acf0();
+        }
+        if (C2V(gINT_0068b8e8)) {
+            FUN_00511240();
+        }
+        if (PDKeyDown(0)) {
+            C2V(gWhich_edit_mode) -= 1;
+            if (C2V(gWhich_edit_mode) < 0) {
+                C2V(gWhich_edit_mode) = REC2_ASIZE(C2V(gEdit_funcs)) - 1;
+            }
+        } else {
+            C2V(gWhich_edit_mode) += 1;
+            if (C2V(gWhich_edit_mode) >= REC2_ASIZE(C2V(gEdit_funcs))) {
+                C2V(gWhich_edit_mode) = 0;
+            }
+        }
+        c2_sprintf(s, "Edit mode: %s", C2V(gEdit_mode_names)[C2V(gWhich_edit_mode)]);
+        NewTextHeadupSlot2(4, 0, 2000, -4, s, 0);
+    } else {
+        C2V(gWhich_edit_mode) = 0;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004414b0, F4Key, F4Key_original)
