@@ -119,7 +119,7 @@ void C2_HOOK_FASTCALL UserSendMessage(void);
 
 void C2_HOOK_FASTCALL ToggleTargetLock(void);
 
-void C2_HOOK_FASTCALL ToggleTarget(void);
+void C2_HOOK_FASTCALL CycleTargetLock(void);
 
 void C2_HOOK_FASTCALL PowerupInventoryToggle(void);
 
