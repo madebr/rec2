@@ -478,7 +478,7 @@ void C2_HOOK_FASTCALL ToggleShadow(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e9960, ToggleShadow, ToggleShadow_original)
 
-void C2_HOOK_FASTCALL ToggleShadowMode(void) {
+void C2_HOOK_FASTCALL ShadowMode(void) {
 
     C2V(gFancy_shadow) = !C2V(gFancy_shadow);
     if (C2V(gFancy_shadow)) {
@@ -487,7 +487,7 @@ void C2_HOOK_FASTCALL ToggleShadowMode(void) {
         NewTextHeadupSlot(4, 0, 2000, -4, "Solid shadow");
     }
 }
-C2_HOOK_FUNCTION(0x004e9b90, ToggleShadowMode)
+C2_HOOK_FUNCTION(0x004e9b90, ShadowMode)
 
 void (C2_HOOK_FASTCALL * EnsurePaletteUp_original)(void);
 void C2_HOOK_FASTCALL EnsurePaletteUp(void) {
