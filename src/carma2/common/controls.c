@@ -1343,11 +1343,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0040e430, ViewNetPlayer, ViewNetPlayer_original)
 // Key: '`'
 void (C2_HOOK_FASTCALL * UserSendMessage_original)(void);
 void C2_HOOK_FASTCALL UserSendMessage(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     UserSendMessage_original();
 #else
-#error "Not implemented"
+    if (C2V(gNet_mode) != eNet_mode_none && C2V(gCurrent_net_game)->options.enable_text_messages) {
+        C2V(gEntering_message) = 1;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004448f0, UserSendMessage, UserSendMessage_original)
