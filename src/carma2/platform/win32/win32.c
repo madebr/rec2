@@ -264,6 +264,19 @@ int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051b040, PDGetKeyboardCharacter, PDGetKeyboardCharacter_original)
 
+void (C2_HOOK_FASTCALL * PDClearKeyboardBuffer_original)(void);
+void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    PDClearKeyboardBuffer_original();
+#else
+
+    dr_dprintf("KEYBOARD BUFFER CLEARED");
+    C2V(gKeyboardBufferLength) = 0;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051b0a0, PDClearKeyboardBuffer, PDClearKeyboardBuffer_original)
+
 C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #if defined(C2_HOOKS_ENABLED)
