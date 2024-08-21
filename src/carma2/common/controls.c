@@ -319,7 +319,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [0][11][7] */
         },
         {
-            ToggleTrackAppearingSpeed, /* [0][12][0] */
+            CycleYonFactor, /* [0][12][0] */
             NULL, /* [0][12][1] */
             NULL, /* [0][12][2] */
             NULL, /* [0][12][3] */
@@ -339,7 +339,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [0][13][7] */
         },
         {
-            ToggleSoundDetail, /* [0][14][0] */
+            CycleSoundDetailLevel, /* [0][14][0] */
             NULL, /* [0][14][1] */
             NULL, /* [0][14][2] */
             NULL, /* [0][14][3] */
@@ -382,7 +382,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
     {
         {
             TotalRepair, /* [1][ 0][0] */
-            SetAPOToPotential, /* [1][ 0][1] */
+            MaxOutAPO, /* [1][ 0][1] */
             NULL, /* [1][ 0][2] */
             NULL, /* [1][ 0][3] */
             FUN_00447330, /* [1][ 0][4] */
@@ -391,7 +391,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [1][ 0][7] */
         },
         {
-            ToggleInvulnerability, /* [1][ 1][0] */
+            CycleInvulnerability, /* [1][ 1][0] */
             NULL, /* [1][ 1][1] */
             NULL, /* [1][ 1][2] */
             NULL, /* [1][ 1][3] */
@@ -401,18 +401,18 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [1][ 1][7] */
         },
         {
-            SelectNextPedestrian, /* [1][ 2][0] */
-            FUN_004d62e0, /* [1][ 2][1] */
+            NextPedCam, /* [1][ 2][0] */
+            FindNearestPed, /* [1][ 2][1] */
             NULL, /* [1][ 2][2] */
             NULL, /* [1][ 2][3] */
-            SelectPreviousPedestrian, /* [1][ 2][4] */
-            FUN_004d62e0, /* [1][ 2][5] */
+            PrevPedCam, /* [1][ 2][4] */
+            FindNearestPed, /* [1][ 2][5] */
             NULL, /* [1][ 2][6] */
             NULL, /* [1][ 2][7] */
         },
         {
             ToggleTimerFreeze, /* [1][ 3][0] */
-            ToggleShadowMode, /* [1][ 3][1] */
+            ShadowMode, /* [1][ 3][1] */
             NULL, /* [1][ 3][2] */
             NULL, /* [1][ 3][3] */
             ToggleShadow, /* [1][ 3][4] */
