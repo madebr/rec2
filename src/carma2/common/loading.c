@@ -2454,7 +2454,7 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
     C2V(gHeadup_map_y) = 150;
     C2V(gHeadup_map_w) = 48;
     C2V(gHeadup_map_h) = 48;
-    C2V(gHeadup_detail_level) = 5;
+    C2V(gHeadup_detail_level) = kMax_headup_detail_level;
     C2V(gMap_view) = 1;
     C2V(gMini_map_visible) = 1;
 
