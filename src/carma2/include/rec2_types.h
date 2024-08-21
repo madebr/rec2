@@ -3358,6 +3358,7 @@ enum {
     eMiscString_too_late_to_cancel = 242,
     eMiscString_checkpoint_finder_turned_off = 254,
     eMiscString_checkpoint_finder_turned_on = 255,
+    eMiscString_press_return_to_commit_suicide = 286,
 };
 
 enum {
