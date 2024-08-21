@@ -793,10 +793,52 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00442300, SetRecovery, SetRecovery_original)
 int (C2_HOOK_FASTCALL * CheckRecoverCost_original)(void);
 int C2_HOOK_FASTCALL CheckRecoverCost(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return CheckRecoverCost_original();
 #else
-#error "Not implemented"
+    int recovery_cost;
+
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        return 1;
+    }
+
+    if (C2V(gProgram_state).current_car.knackered
+        || C2V(gRecovery_voucher_count) != 0
+        || (NetPlayerFromCar(&C2V(gProgram_state).current_car) != NULL && NetPlayerFromCar(&C2V(gProgram_state).current_car)->field_0x80 != 0)) {
+
+        C2V(gINT_0067c470) = 1;
+        return 1;
+    }
+
+    C2V(gINT_0067c470) = 0;
+    recovery_cost = (int)(C2V(gNet_mode) == eNet_mode_none ? C2V(gRecovery_cost).initial[C2V(gProgram_state).skill_level] : C2V(gRecovery_cost).initial[C2V(gCurrent_net_game)->type]);
+
+    if (recovery_cost > C2V(gProgram_state).credits) {
+        int remaining_cost = recovery_cost;
+        while (remaining_cost > 0
+                && C2V(gProgram_state).current_car.power_up_levels[0] != 0
+                && C2V(gProgram_state).current_car.power_up_levels[1] != 0
+                && C2V(gProgram_state).current_car.power_up_levels[2] != 0) {
+            int which;
+
+            which = IRandomBetween(0, 2);
+            if (C2V(gProgram_state).current_car.power_up_levels[which] != 0) {
+                int part_value;
+
+                C2V(gProgram_state).current_car.power_up_levels[which] -= 1;
+                part_value = (C2V(gNet_mode) == eNet_mode_none ? C2V(gTrade_in_value_APO).initial[C2V(gProgram_state).skill_level] : C2V(gTrade_in_value_APO).initial[C2V(gCurrent_net_game)->type]);
+                remaining_cost -= part_value;
+                C2V(gProgram_state).credits += part_value;
+            }
+        }
+    }
+    if (recovery_cost > C2V(gProgram_state).credits) {
+        C2V(gToo_poor_for_recovery_timeout) = PDGetTotalTime() + 2000;
+        NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_press_return_to_commit_suicide));
+        return 0;
+    }
+    SpendCredits(recovery_cost);
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442750, CheckRecoverCost, CheckRecoverCost_original)
