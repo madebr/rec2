@@ -67,6 +67,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gWasted_explosion_chance);
 C2_HOOK_VARIABLE_DECLARE(int, gExplosion_sound_id);
 C2_HOOK_VARIABLE_DECLARE(tExplosion_animation, gExplosion_pix_animation_groups);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_checkpoint, 3);
+C2_HOOK_VARIABLE_DECLARE(tSlot_info, gTrade_in_value_APO);
+C2_HOOK_VARIABLE_DECLARE(tSlot_info, gSubstitution_value_APO);
+C2_HOOK_VARIABLE_DECLARE(tSlot_info, gPotential_substitution_value_APO);
 
 void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
