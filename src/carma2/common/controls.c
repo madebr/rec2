@@ -1271,16 +1271,16 @@ void C2_HOOK_FASTCALL PowerupInventoryToggle(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004da9d0, PowerupInventoryToggle, PowerupInventoryToggle_original)
 
 // Key: '['
-void (C2_HOOK_FASTCALL * PowerupInventoryNext_original)(void);
-void C2_HOOK_FASTCALL PowerupInventoryNext(void) {
+void (C2_HOOK_FASTCALL * LeftInventory_original)(void);
+void C2_HOOK_FASTCALL LeftInventory(void) {
     CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
-    PowerupInventoryNext_original();
+    LeftInventory_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004dab80, PowerupInventoryNext, PowerupInventoryNext_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004dab80, LeftInventory, LeftInventory_original)
 
 // Key: ']'
 void (C2_HOOK_FASTCALL * RightInventory_original)(void);

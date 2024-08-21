@@ -123,7 +123,7 @@ void C2_HOOK_FASTCALL CycleTargetLock(void);
 
 void C2_HOOK_FASTCALL PowerupInventoryToggle(void);
 
-void C2_HOOK_FASTCALL PowerupInventoryNext(void);
+void C2_HOOK_FASTCALL LeftInventory(void);
 
 void C2_HOOK_FASTCALL RightInventory(void);
 
