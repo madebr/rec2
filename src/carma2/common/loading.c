@@ -378,11 +378,11 @@ void C2_HOOK_FASTCALL ConfigurePedAlienPaths(void) {
 }
 C2_HOOK_FUNCTION(0x004d6f70, ConfigurePedAlienPaths)
 
-int C2_HOOK_FASTCALL GetGoreLevel(void) {
+int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void) {
 
     return 2 - C2V(gGoreLevel);
 }
-C2_HOOK_FUNCTION(0x004d6fc0, GetGoreLevel)
+C2_HOOK_FUNCTION(0x004d6fc0, GetHowMuchBloodAndSnotToSmearAbout)
 
 void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
 
@@ -2393,7 +2393,7 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
     BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapH %d\n", C2V(gHeadup_map_h)));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "CameraType %d\n", C2V(gCamera_type)));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "ARCameraType %d\n", C2V(gAR_camera_type)));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "GoreLevel %d\n", GetGoreLevel()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "GoreLevel %d\n", GetHowMuchBloodAndSnotToSmearAbout()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "AnimalsOn %d\n", GetAnimalsOn()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "FlameThrowerOn %d\n", IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "MinesOn %d\n", IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells()));

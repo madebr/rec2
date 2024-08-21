@@ -106,7 +106,7 @@ void C2_HOOK_FASTCALL ConfigureAlienPedTexturePath(void);
 
 void C2_HOOK_FASTCALL ConfigurePedAlienPaths(void);
 
-int C2_HOOK_FASTCALL GetGoreLevel(void);
+int C2_HOOK_FASTCALL GetHowMuchBloodAndSnotToSmearAbout(void);
 
 void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
