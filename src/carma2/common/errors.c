@@ -283,14 +283,11 @@ C2_HOOK_FUNCTION(0x0044c230, FatalError)
 //    va_end(ap);
 //    PDNonFatalError(temp_str);
 //}
-//
-//// IDA: void __cdecl CloseDiagnostics()
-//void CloseDiagnostics() {
-//    LOG_TRACE("()");
-//
-//    fclose(gDiagnostic_file);
-//}
-//
+
+void C2_HOOK_FASTCALL CloseDiagnostics(void) {
+
+}
+C2_HOOK_FUNCTION(0x0044c570, CloseDiagnostics);
 
 // This function is stripped from the retail binary, we've guessed at the implementation
 void C2_HOOK_FASTCALL OpenDiagnostics(void) {
@@ -304,7 +301,7 @@ void C2_HOOK_FASTCALL OpenDiagnostics(void) {
     // todo: generate a real date
     c2_fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", __DATE__ " : " __TIME__);
 }
-C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics);
+C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics)
 
 // Renamed from dprintf to avoid collisions to stdio
 // This function is stripped from the retail binary, we've guessed at the implementation
