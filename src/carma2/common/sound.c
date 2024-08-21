@@ -402,11 +402,11 @@ int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
 }
 C2_HOOK_FUNCTION(0x00455930, DRS3SetOutletVolume)
 
-int (C2_HOOK_FASTCALL * DRS3DisableSound_original)(void);
-int C2_HOOK_FASTCALL DRS3DisableSound(void) {
+int (C2_HOOK_FASTCALL * DRS3ShutDown_original)(void);
+int C2_HOOK_FASTCALL DRS3ShutDown(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    DRS3DisableSound_original();
+    DRS3ShutDown_original();
 #else
 
     if (!C2V(gSound_enabled)) {
@@ -416,7 +416,7 @@ int C2_HOOK_FASTCALL DRS3DisableSound(void) {
     return S3DisableSound();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00455910, DRS3DisableSound, DRS3DisableSound_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00455910, DRS3ShutDown, DRS3ShutDown_original)
 
 int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag) {
 
