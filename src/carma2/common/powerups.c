@@ -688,7 +688,7 @@ void C2_HOOK_FASTCALL InitMineShit(void) {
 C2_HOOK_FUNCTION(0x004da530, InitMineShit)
 
 int (C2_HOOK_FASTCALL * DoExplodingMineEffect_original)(tShit_mine *pMine);
-int C2_HOOK_FASTCALL DoExplodingMineEffect(tShit_mine *pMine) {
+int C2_HOOK_FASTCALL MineExplode(tShit_mine *pMine) {
 
 #if defined(C2_HOOKS_ENABLED)
     return DoExplodingMineEffect_original(pMine);
@@ -696,7 +696,7 @@ int C2_HOOK_FASTCALL DoExplodingMineEffect(tShit_mine *pMine) {
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ddab0, DoExplodingMineEffect, DoExplodingMineEffect_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004ddab0, MineExplode, DoExplodingMineEffect_original)
 
 int C2_HOOK_FASTCALL CarVulnerableByMine(tCar_spec* pCar) {
 
@@ -781,7 +781,7 @@ void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime) {
             }
         }
         if (play_effect) {
-            DoExplodingMineEffect(mine);
+            MineExplode(mine);
         }
     }
 #endif

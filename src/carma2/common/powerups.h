@@ -34,7 +34,7 @@ void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF);
 
 void C2_HOOK_FASTCALL InitMineShit(void);
 
-int C2_HOOK_FASTCALL DoExplodingMineEffect(tShit_mine *pMine);
+int C2_HOOK_FASTCALL MineExplode(tShit_mine *pMine);
 
 void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime);
 
