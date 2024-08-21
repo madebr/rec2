@@ -47,7 +47,7 @@ void C2_HOOK_FASTCALL FUN00444600(void);
 
 void C2_HOOK_FASTCALL CycleMapOptions(void);
 
-void C2_HOOK_FASTCALL ToggleMapTrans(void);
+void C2_HOOK_FASTCALL ToggleMapTransparency(void);
 
 void C2_HOOK_FASTCALL SetRecovery(void);
 
