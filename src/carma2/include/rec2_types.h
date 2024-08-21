@@ -3358,6 +3358,7 @@ enum {
     eMiscString_host_abandoned_race = 87,
     eMiscString_recovery_cancelled = 125,
     eMiscString_fox_cant_do_that = 214,
+    eMiscString_message_sent = 226,
     eMiscString_too_late_to_cancel = 242,
     eMiscString_no_target_to_lock_onto = 250,
     eMiscString_locked_onto = 251,
