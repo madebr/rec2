@@ -1325,20 +1325,20 @@ void C2_HOOK_FASTCALL BuyOffense(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00503030, BuyOffense, BuyOffense_original)
 
 // Key: ' '
-void (C2_HOOK_FASTCALL * FUN0040e430_original)(void);
-void C2_HOOK_FASTCALL FUN0040e430(void) {
+void (C2_HOOK_FASTCALL * ViewNetPlayer_original)(void);
+void C2_HOOK_FASTCALL ViewNetPlayer(void) {
     CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
     int* a = (int*)0x006792bc;
     c2_printf("*%p=0x%x\n", a, *a);
     int* b = (int*)0x006792bc;
     c2_printf("*%p=0x%x\n", b, *b);
-    FUN0040e430_original();
+    ViewNetPlayer_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040e430, FUN0040e430, FUN0040e430_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0040e430, ViewNetPlayer, ViewNetPlayer_original)
 
 // Key: '`'
 void (C2_HOOK_FASTCALL * UserSendMessage_original)(void);
