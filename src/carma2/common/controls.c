@@ -530,10 +530,10 @@ C2_HOOK_FUNCTION(0x00456950, SetSoundDetailLevel)
 void (C2_HOOK_FASTCALL * ReallySetSoundDetailLevel_original)(int pLevel);
 void C2_HOOK_FASTCALL ReallySetSoundDetailLevel(int pLevel) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ReallySetSoundDetailLevel_original(pLevel);
 #else
-    DRS3StopAllOutletSounds();
+    DRS3StopAllOutletSoundsExceptCDA();
     DisposeSoundSources();
     C2V(gSound_detail_level) = pLevel;
     InitSound();
