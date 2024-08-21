@@ -155,4 +155,6 @@ void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime);
 
 void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference);
 
+void C2_HOOK_FASTCALL FUN_0045a670(void);
+
 #endif //REC2_CONTROLS_H
