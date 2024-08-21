@@ -118,7 +118,7 @@ int C2_HOOK_FASTCALL IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInn
 
 void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn);
 
-int C2_HOOK_FASTCALL GetMinesOn(void);
+int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void);
 
 void C2_HOOK_FASTCALL SetMinesOn(int pNewMinesOn);
 

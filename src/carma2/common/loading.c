@@ -414,11 +414,11 @@ void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn) {
 }
 C2_HOOK_FUNCTION(0x004d7010, SetFlameThrowerOn)
 
-int C2_HOOK_FASTCALL GetMinesOn(void) {
+int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void) {
 
     return C2V(gMinesOn);
 }
-C2_HOOK_FUNCTION(0x004d6ff0, GetMinesOn)
+C2_HOOK_FUNCTION(0x004d6ff0, IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells)
 
 void C2_HOOK_FASTCALL SetMinesOn(int pNewMinesOn) {
 
@@ -2396,7 +2396,7 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
     BAIL_IF_NEGATIVE(c2_fprintf(f, "GoreLevel %d\n", GetGoreLevel()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "AnimalsOn %d\n", GetAnimalsOn()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "FlameThrowerOn %d\n", IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MinesOn %d\n", GetMinesOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "MinesOn %d\n", IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "DronesOn %d\n", GetDronesOn()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "MiniMapVisible %i\n", C2V(gMini_map_visible)));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "SkillLevel %d\n", C2V(gProgram_state).skill_level));
