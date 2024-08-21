@@ -13,6 +13,7 @@
 #include "loading.h"
 #include "netgame.h"
 #include "network.h"
+#include "opponent.h"
 #include "physics.h"
 #include "polyfont.h"
 #include "replay.h"
@@ -577,6 +578,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char *, gEdit_mode_names, 12, 0x0059
     "Damage",
     "Crush Test",
 });
+C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gTarget_lock_car_1, 0x0068d8c4);
+C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gTarget_lock_car_2, 0x0068d6f0);
 
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
@@ -1357,11 +1360,37 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004448f0, UserSendMessage, UserSendMessage_original)
 // Key: 't'
 void (C2_HOOK_FASTCALL * ToggleTargetLock_original)(void);
 void C2_HOOK_FASTCALL ToggleTargetLock(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleTargetLock_original();
 #else
-#error "Not implemented"
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        if (C2V(gCurrent_net_game)->type == eNet_game_type_foxy) {
+            return;
+        }
+        if (!C2V(gCurrent_net_game)->options.show_powerups_on_map) {
+            return;
+        }
+    }
+    if (C2V(gTarget_lock_car_1) == NULL) {
+        NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_no_target_to_lock_onto), 0);
+    } else {
+        C2V(gTarget_lock_enabled) = !C2V(gTarget_lock_enabled);
+        if (C2V(gTarget_lock_enabled)) {
+            const char* driver_name;
+            char s[256];
+
+            if (C2V(gNet_mode) == eNet_mode_none) {
+                driver_name = GetDriverName(C2V(gTarget_lock_car_2)->car_ID >> 8, C2V(gTarget_lock_car_2)->car_ID & 0xff);
+            } else {
+                driver_name = NetPlayerFromCar(C2V(gTarget_lock_car_2))->player_name;
+            }
+            c2_sprintf(s, "%s %s", driver_name, GetMiscString(eMiscString_locked_onto));
+            NewTextHeadupSlot2(4, 0, 1500, -4, s, 0);
+        } else {
+            NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_target_lock_off), 0);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004945f0, ToggleTargetLock, ToggleTargetLock_original)
