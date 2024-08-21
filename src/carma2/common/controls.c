@@ -1295,16 +1295,16 @@ void C2_HOOK_FASTCALL RightInventory(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004daa00, RightInventory, RightInventory_original)
 
 // Key: '*' (keypad)
-void (C2_HOOK_FASTCALL * ToggleCam_original)(void);
-void C2_HOOK_FASTCALL ToggleCam(void) {
+void (C2_HOOK_FASTCALL * ChangeCameraTypeInGame_original)(void);
+void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void) {
     CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
-    ToggleCam_original();
+    ChangeCameraTypeInGame_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00444ed0, ToggleCam, ToggleCam_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00444ed0, ChangeCameraTypeInGame, ChangeCameraTypeInGame_original)
 
 // Key: 'c'
 void (C2_HOOK_FASTCALL * ToggleCockpit_original)(void);

@@ -127,7 +127,7 @@ void C2_HOOK_FASTCALL LeftInventory(void);
 
 void C2_HOOK_FASTCALL RightInventory(void);
 
-void C2_HOOK_FASTCALL ToggleCam(void);
+void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void);
 
 void C2_HOOK_FASTCALL ToggleCockpit(void);
 
