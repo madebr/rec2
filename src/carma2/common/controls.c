@@ -916,14 +916,25 @@ void C2_HOOK_FASTCALL AbortRace(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441490, AbortRace, AbortRace_original)
 
-// Key: 'f1'
 void (C2_HOOK_FASTCALL * ToggleHeadupLevel_original)(void);
 void C2_HOOK_FASTCALL ToggleHeadupLevel(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleHeadupLevel_original();
 #else
-#error "Not implemented"
+
+    if (PDKeyDown(0)) {
+        C2V(gHeadup_detail_level) -= 1;
+        if (C2V(gHeadup_detail_level) < 0) {
+            C2V(gHeadup_detail_level) = kMax_headup_detail_level;
+        }
+    } else {
+        C2V(gHeadup_detail_level) += 1;
+        if (C2V(gHeadup_detail_level) > kMax_headup_detail_level) {
+            C2V(gHeadup_detail_level) = 0;
+        }
+    }
+    NewTextHeadupSlot2(4, 0, 250, -4, GetMiscString(eMiscString_no_HUD + (C2V(gHeadup_detail_level) % 3)), 0);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444f40, ToggleHeadupLevel, ToggleHeadupLevel_original)
