@@ -576,7 +576,7 @@ void C2_HOOK_FASTCALL ToggleDoors(void) {
         return;
     }
     if (C2V(gNet_mode) == eNet_mode_none || C2V(gNet_mode) == eNet_mode_host) {
-        EnumCollisionInfo(C2V(gProgram_state).current_car.collision_info,
+        PhysicsObjectRecurse(C2V(gProgram_state).current_car.collision_info,
             ToggleDoorsCollisionInfoCallback,
             &C2V(gProgram_state).current_car);
     } else {
