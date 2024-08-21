@@ -24,6 +24,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str);
 void C2_HOOK_FASTCALL PDNonFatalError(char* pThe_str);
 int C2_HOOK_FASTCALL PDIsWindowInactive(void);
 char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar);
+int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void);
 void C2_HOOK_FASTCALL PDSetFileVariables(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void);
 void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void);

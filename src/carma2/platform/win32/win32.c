@@ -242,6 +242,28 @@ char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
 }
 C2_HOOK_FUNCTION(0x0051afe0, PDConvertToASCIILessThan128)
 
+int (C2_HOOK_FASTCALL * PDGetKeyboardCharacter_original)(void);
+int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    return PDGetKeyboardCharacter_original();
+#else
+    int key;
+    Win32ServiceMessages();
+    if (C2V(gKeyboardBufferLength) == 0) {
+        return 0;
+    }
+    key = C2V(gKeyboardBuffer)[0];
+    if (C2V(gKeyboardBufferLength) > 1) {
+        c2_memmove(&C2V(gKeyboardBuffer)[1], &C2V(gKeyboardBuffer)[0], C2V(gKeyboardBufferLength) - 1);
+    }
+    C2V(gKeyboardBufferLength) -= 1;
+    dr_dprintf("KEY RETURNED %d", key);
+    return key;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051b040, PDGetKeyboardCharacter, PDGetKeyboardCharacter_original)
+
 C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #if defined(C2_HOOKS_ENABLED)
