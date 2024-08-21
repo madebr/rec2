@@ -1618,3 +1618,14 @@ void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00443e80, PollCarControls, PollCarControls_original)
+
+void (C2_HOOK_FASTCALL * FUN_0045a670_original)(void);
+void C2_HOOK_FASTCALL FUN_0045a670(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FUN_0045a670_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045a670, FUN_0045a670, FUN_0045a670_original)
