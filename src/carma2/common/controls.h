@@ -35,7 +35,7 @@ void C2_HOOK_FASTCALL ToggleMiniMap(void);
 
 void C2_HOOK_FASTCALL ToggleDoors(void);
 
-int C2_HOOK_FASTCALL ToggleDoorsCollisionInfoCallback(tCollision_info* pCollision_info, void* data);
+int C2_HOOK_FASTCALL ToggleFlapsCB(tCollision_info* pCollision_info, void* data);
 
 int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data);
 
