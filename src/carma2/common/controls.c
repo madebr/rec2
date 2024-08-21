@@ -1283,16 +1283,16 @@ void C2_HOOK_FASTCALL PowerupInventoryNext(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004dab80, PowerupInventoryNext, PowerupInventoryNext_original)
 
 // Key: ']'
-void (C2_HOOK_FASTCALL * PowerupInventoryPrevious_original)(void);
-void C2_HOOK_FASTCALL PowerupInventoryPrevious(void) {
+void (C2_HOOK_FASTCALL * RightInventory_original)(void);
+void C2_HOOK_FASTCALL RightInventory(void) {
     CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
-    PowerupInventoryPrevious_original();
+    RightInventory_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004daa00, PowerupInventoryPrevious, PowerupInventoryPrevious_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004daa00, RightInventory, RightInventory_original)
 
 // Key: '*' (keypad)
 void (C2_HOOK_FASTCALL * ToggleCam_original)(void);
