@@ -161,4 +161,6 @@ void C2_HOOK_FASTCALL FUN_0045acf0(void);
 
 void C2_HOOK_FASTCALL FUN_00511240(void);
 
+void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex);
+
 #endif //REC2_CONTROLS_H
