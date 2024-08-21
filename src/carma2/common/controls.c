@@ -1535,6 +1535,17 @@ void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444ed0, ChangeCameraTypeInGame, ChangeCameraTypeInGame_original)
 
+void (C2_HOOK_FASTCALL * ChangeCameraType_original)(void);
+void C2_HOOK_FASTCALL ChangeCameraType(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ChangeCameraType_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040e7f0, ChangeCameraType, ChangeCameraType_original)
+
 // Key: 'c'
 void (C2_HOOK_FASTCALL * ToggleCockpit_original)(void);
 void C2_HOOK_FASTCALL ToggleCockpit(void) {

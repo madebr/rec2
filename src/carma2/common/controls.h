@@ -133,6 +133,8 @@ void C2_HOOK_FASTCALL RightInventory(void);
 
 void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void);
 
+void C2_HOOK_FASTCALL ChangeCameraType(void);
+
 void C2_HOOK_FASTCALL ToggleCockpit(void);
 
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
