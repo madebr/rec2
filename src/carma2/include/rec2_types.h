@@ -3106,6 +3106,7 @@ typedef enum {
     eNet_game_type_3 = 3, /* FIXME */
     eNet_game_type_4 = 4, /* FIXME */
     eNet_game_type_5 = 5, /* FIXME */
+    eNet_game_type_6 = 6, /* FIXME */
     eNet_game_type_foxy = 7
 } tNet_game_type;
 
