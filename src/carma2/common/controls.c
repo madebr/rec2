@@ -1716,3 +1716,14 @@ void C2_HOOK_FASTCALL FUN_00511240(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00511240, FUN_00511240, FUN_00511240_original)
+
+void (C2_HOOK_FASTCALL * BuyPSPowerup_original)(int pIndex);
+void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
+
+#if defined(C2_HOOKS_ENABLED)
+    BuyPSPowerup_original(pIndex);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00502e70, BuyPSPowerup, BuyPSPowerup_original)
