@@ -114,7 +114,7 @@ int C2_HOOK_FASTCALL GetAnimalsOn(void);
 
 void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn);
 
-int C2_HOOK_FASTCALL GetFlameThrowerOn(void);
+int C2_HOOK_FASTCALL IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense(void);
 
 void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn);
 
