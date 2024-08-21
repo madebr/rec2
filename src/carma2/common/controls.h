@@ -55,7 +55,7 @@ int C2_HOOK_FASTCALL CheckRecoverCost(void);
 
 void C2_HOOK_FASTCALL AbortRace(void);
 
-void C2_HOOK_FASTCALL ToggleHUD(void);
+void C2_HOOK_FASTCALL ToggleHeadupLevel(void);
 
 void C2_HOOK_FASTCALL SetFlag(tU32 i);
 

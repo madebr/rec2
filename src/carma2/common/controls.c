@@ -859,16 +859,16 @@ void C2_HOOK_FASTCALL AbortRace(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00441490, AbortRace, AbortRace_original)
 
 // Key: 'f1'
-void (C2_HOOK_FASTCALL * ToggleHUD_original)(void);
-void C2_HOOK_FASTCALL ToggleHUD(void) {
+void (C2_HOOK_FASTCALL * ToggleHeadupLevel_original)(void);
+void C2_HOOK_FASTCALL ToggleHeadupLevel(void) {
     CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
-    ToggleHUD_original();
+    ToggleHeadupLevel_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00444f40, ToggleHUD, ToggleHUD_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00444f40, ToggleHeadupLevel, ToggleHeadupLevel_original)
 
 void C2_HOOK_FASTCALL SetFlag(tU32 i) {
     int match;
