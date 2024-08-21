@@ -87,6 +87,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gExtendedAsciiToNormalAscii, 128, 0x
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWin32ActionReplayBufferAllocated, 0x006ad4d4);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gPDActionReplayBuffer, 0x006ad470);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPDActionReplayBufferSize, 0x006ad474);
+C2_HOOK_VARIABLE_IMPLEMENT(HPALETTE, gPDPalette, 0x006ad46c);
 
 void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
     MEMORYSTATUS memory_status;
@@ -553,10 +554,25 @@ C2_HOOK_FUNCTION(0x0051d600, PDDoWeLeadAnAustereExistance)
 
 void (C2_HOOK_FASTCALL * PDSetPaletteEntries_original)(br_pixelmap* pPalette, int pFirst_colour, int pCount);
 void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount) {
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     PDSetPaletteEntries_original(pPalette, pFirst_colour, pCount);
 #else
-#error "Not implemented"
+    int i;
+    PALETTEENTRY colours[256];
+    tU32* pixels = pPalette->pixels;
+
+    for (i = 0; i < pCount; i++) {
+        tU32 c;
+
+        c = pixels[pFirst_colour + i];
+        colours[i].peFlags = 0;
+        colours[i].peRed = c >> 16;
+        colours[i].peGreen = c >> 8;
+        colours[i].peBlue = c >> 0;
+    }
+    SetPaletteEntries(C2V(gPDPalette), pFirst_colour, pCount, colours);
+    BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gBack_screen));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c850, PDSetPaletteEntries, PDSetPaletteEntries_original)
