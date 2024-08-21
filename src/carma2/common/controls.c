@@ -580,6 +580,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char *, gEdit_mode_names, 12, 0x0059
 });
 C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gTarget_lock_car_1, 0x0068d8c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gTarget_lock_car_2, 0x0068d6f0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInventory_cycling, 0x006a0940);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gInventory_timeout, 0x006a0954);
 
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
@@ -1481,14 +1483,18 @@ void C2_HOOK_FASTCALL CycleTargetLock(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00494700, CycleTargetLock, CycleTargetLock_original)
 
+
 // Key: ';'
 void (C2_HOOK_FASTCALL * ToggleInventory_original)(void);
 void C2_HOOK_FASTCALL ToggleInventory(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleInventory_original();
 #else
-#error "Not implemented"
+    C2V(gInventory_cycling) = !C2V(gInventory_cycling);
+    if (C2V(gInventory_cycling)) {
+        C2V(gInventory_timeout) = GetTotalTime() + 3000;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da9d0, ToggleInventory, ToggleInventory_original)
