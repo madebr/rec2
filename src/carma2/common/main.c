@@ -55,7 +55,7 @@ C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
     }
     ShutdownNetIfRequired();
     if (C2V(gSound_available)) {
-        DRS3DisableSound();
+        DRS3ShutDown();
     }
     if (C2V(gBr_initialized)) {
         ClearEntireScreen();
