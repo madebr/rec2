@@ -3,6 +3,7 @@
 #include "car.h"
 #include "crush.h"
 #include "displays.h"
+#include "errors.h"
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -582,6 +583,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gTarget_lock_car_1, 0x0068d8c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gTarget_lock_car_2, 0x0068d6f0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInventory_cycling, 0x006a0940);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gInventory_timeout, 0x006a0954);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gString, 84, 0x0067c400);
 
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
@@ -1779,10 +1781,119 @@ C2_HOOK_FUNCTION(0x00444710, ResetRecoveryVouchers)
 void (C2_HOOK_FASTCALL * EnterUserMessage_original)(void);
 void C2_HOOK_FASTCALL EnterUserMessage(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     EnterUserMessage_original();
 #else
-#error "Not implemented"
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, last_key, 0x00590f64, -1);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, about_to_die, 0x0067c49c);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, next_time, 0x0067c454);
+    char* the_message;
+    int len;
+    int the_key;
+    int abuse_num;
+
+    if (!C2V(gEntering_message)) {
+        return;
+    }
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        return;
+    }
+    if (!C2V(gCurrent_net_game)->options.enable_text_messages) {
+        return;
+    }
+    the_key = PDAnyKeyDown();
+    if (C2V(gEntering_message) == 1) {
+        if (the_key != -1) {
+            return;
+        }
+        C2V(gEntering_message) = 2;
+        PDClearKeyboardBuffer();
+    }
+    if (C2V(about_to_die)) {
+        if (the_key != -1) {
+            return;
+        }
+        C2V(gEntering_message) = 0;
+        C2V(about_to_die) = 0;
+        return;
+    }
+    if (the_key == C2V(last_key)) {
+        if (C2V(next_time) < PDGetTotalTime()) {
+            C2V(next_time) += 100;
+        } else {
+            the_key = -1000;
+        }
+    } else {
+        C2V(last_key) = the_key;
+        C2V(next_time) = PDGetTotalTime() + 500;
+    }
+    switch (the_key) {
+    case -1:
+    case 0:
+        break;
+    case 2:
+    case 3:
+    case 53:
+    case 63:
+        C2V(about_to_die) = 1;
+        break;
+    case 50:
+    case 65:
+    case 70:
+        len = c2_strlen(&C2V(gString)[20]);
+        if (len > 0) {
+            C2V(gString)[20 + len - 1] = '\0';
+        }
+        break;
+    case 51:
+    case 52:
+        len = c2_strlen(C2V(gNet_players)[C2V(gThis_net_player_index)].player_name);
+        if (len <= 18) {
+            the_message = C2V(gString) + 18 - len;
+            c2_strcpy(the_message, C2V(gNet_players)[C2V(gThis_net_player_index)].player_name);
+            the_message[len + 0] = ':';
+            the_message[len + 1] = ' ';
+            C2V(gString)[REC2_ASIZE(C2V(gString)) - 1] = '\0';
+            NetSendHeadupToAllPlayers(the_message);
+            C2V(gString)[20] = '\0';
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_message_sent));
+            C2V(about_to_die) = 1;
+        }
+        break;
+    default:
+        if (C2V(gKey_mapping)[71] == the_key) {
+            C2V(about_to_die) = 1;
+        } else if (the_key <= 74 || the_key >= 106) {
+            for (;;) {
+                int raw_ch = PDGetKeyboardCharacter();
+                int ch;
+                if (raw_ch == '\0') {
+                    break;
+                }
+                ch = PDConvertToASCIILessThan128(raw_ch);
+                len = c2_strlen(&C2V(gString)[20]);
+                if (len < 64 - 1) {
+                    C2V(gString)[20 + len] = ch;
+                    if (ch < C2V(gFonts)[4].offset || ch >= C2V(gFonts)[4].offset + C2V(gFonts)[4].num_entries) {
+                        C2V(gString)[20 + len] = '\0';
+                    }
+                    C2V(gString)[20 + len + 1] = '\0';
+                    dr_dprintf("NETMESSAGE: '%s'", &C2V(gString)[20]);
+                }
+            }
+        } else if (the_key >= 81 && the_key <= 90) {
+            if (the_key == 81) {
+                abuse_num = 9;
+            } else {
+                abuse_num = the_key - 82;
+            }
+            if (C2V(gAbuse_text)[abuse_num] != NULL) {
+                c2_strcpy(&C2V(gString)[20], C2V(gAbuse_text)[abuse_num]);
+            }
+        } else {
+            C2V(gEntering_message) = 0;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444910, EnterUserMessage, EnterUserMessage_original)
