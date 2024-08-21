@@ -125,7 +125,7 @@ void C2_HOOK_FASTCALL PowerupInventoryToggle(void);
 
 void C2_HOOK_FASTCALL PowerupInventoryNext(void);
 
-void C2_HOOK_FASTCALL PowerupInventoryPrevious(void);
+void C2_HOOK_FASTCALL RightInventory(void);
 
 void C2_HOOK_FASTCALL ToggleCam(void);
 
