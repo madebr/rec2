@@ -45,7 +45,7 @@ void C2_HOOK_FASTCALL ToggleMap(void);
 
 void C2_HOOK_FASTCALL FUN00444600(void);
 
-void C2_HOOK_FASTCALL ToggleCheckpointFinder(void);
+void C2_HOOK_FASTCALL CycleMapOptions(void);
 
 void C2_HOOK_FASTCALL ToggleMapTrans(void);
 
