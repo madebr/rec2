@@ -63,7 +63,7 @@ C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
     PDRevertPalette();
     StopMusic();
     if (C2V(gBr_initialized)) {
-        RemoveAllBrenderDevices();
+        DRBrEnd();
     }
     PDShutdownSystem();
     CloseDiagnostics();

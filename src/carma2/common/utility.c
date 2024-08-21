@@ -36,10 +36,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const tU8, gOther_long_key, 16, 0x00658600
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDecode_thing, 0x00655e30, '@');
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_service, 0x006abef8);
 
-static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
-br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
+static br_error (C2_HOOK_FASTCALL * DRBrEnd_original)(void);
+br_error C2_HOOK_FASTCALL DRBrEnd(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
-    return RemoveAllBrenderDevices_original();
+    return DRBrEnd_original();
 #else
     br_device *dev;
 
@@ -58,7 +58,7 @@ br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
 
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00513400, RemoveAllBrenderDevices, RemoveAllBrenderDevices_original);
+C2_HOOK_FUNCTION_ORIGINAL(0x00513400, DRBrEnd, DRBrEnd_original);
 
 void C2_HOOK_FASTCALL StringTransformToLower(char* pStr) {
     int i;

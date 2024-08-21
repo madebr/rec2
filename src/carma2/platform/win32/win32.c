@@ -212,7 +212,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
         }
     }
     if (C2V(gBr_initialized)) {
-        RemoveAllBrenderDevices();
+        DRBrEnd();
     }
     PDShutdownSystem();
 #endif
@@ -860,7 +860,7 @@ static void C2_HOOK_CDECL OnErrorCallback(char* text) {
         PossibleUnlock(1);
     }
     if (C2V(gBr_initialized)) {
-        RemoveAllBrenderDevices();
+        DRBrEnd();
     }
     PDShutdownSystem();
 }
