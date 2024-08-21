@@ -705,18 +705,18 @@ void C2_HOOK_FASTCALL FUN00444600(void) {
 C2_HOOK_FUNCTION(0x00444600, FUN00444600)
 
 // Key: 'ctrl+tab'
-void (C2_HOOK_FASTCALL * ToggleCheckpointFinder_original)(void);
-void C2_HOOK_FASTCALL ToggleCheckpointFinder(void) {
+void (C2_HOOK_FASTCALL * CycleMapOptions_original)(void);
+void C2_HOOK_FASTCALL CycleMapOptions(void) {
     CONTROLS_START();
 #if 0//defined(C2_HOOKS_ENABLED)
-    ToggleCheckpointFinder_original();
+    CycleMapOptions_original();
 #else
 
     C2V(gCheckpoint_finder_enabled) = !C2V(gCheckpoint_finder_enabled);
     NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(C2V(gCheckpoint_finder_enabled) ? eMiscString_checkpoint_finder_turned_on : eMiscString_checkpoint_finder_turned_off), 0);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00494840, ToggleCheckpointFinder, ToggleCheckpointFinder_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00494840, CycleMapOptions, CycleMapOptions_original)
 
 // key: 'alt+tab' ('alt' in map mode)
 void (C2_HOOK_FASTCALL * ToggleMapTrans_original)(void);
