@@ -1313,11 +1313,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00502fd0, BuyPower, BuyPower_original)
 // Key: 'PgDn'
 void (C2_HOOK_FASTCALL * BuyOffense_original)(void);
 void C2_HOOK_FASTCALL BuyOffense(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     BuyOffense_original();
 #else
-#error "Not implemented"
+    if (C2V(gINT_0068b8e4) == 0 && C2V(gINT_0068b8e8) == 0) {
+        BuyPSPowerup(2);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00503030, BuyOffense, BuyOffense_original)
