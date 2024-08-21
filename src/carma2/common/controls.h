@@ -33,7 +33,7 @@ int C2_HOOK_FASTCALL GetSoundDetailLevel(void);
 
 void C2_HOOK_FASTCALL ToggleMiniMap(void);
 
-void C2_HOOK_FASTCALL ToggleDoors(void);
+void C2_HOOK_FASTCALL ToggleFlaps(void);
 
 int C2_HOOK_FASTCALL ToggleFlapsCB(tCollision_info* pCollision_info, void* data);
 
