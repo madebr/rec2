@@ -188,6 +188,28 @@ tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
 }
 C2_HOOK_FUNCTION(0x004ae7e0, GetCarSpec)
 
+const char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
+    tCar_spec* c;
+    switch (pCategory) {
+    case eVehicle_self:
+        return C2V(gProgram_state).player_name;
+    case eVehicle_opponent:
+        c = C2V(gProgram_state).AI_vehicles.opponents[pIndex].car_spec;
+        if (c != NULL) {
+            return c->driver_name;
+        }
+        return NULL;
+    case eVehicle_rozzer:
+        return "Faceless Cop";
+    case eVehicle_drone:
+        return "Innocent Civilian";
+    case eVehicle_not_really:
+    default:
+        return NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x004ae880, GetDriverName)
+
 int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
 
     switch (pCategory) {
