@@ -1526,11 +1526,15 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004daa00, RightInventory, RightInventory_original)
 // Key: '*' (keypad)
 void (C2_HOOK_FASTCALL * ChangeCameraTypeInGame_original)(void);
 void C2_HOOK_FASTCALL ChangeCameraTypeInGame(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     ChangeCameraTypeInGame_original();
 #else
-#error "Not implemented"
+    if (!C2V(gAction_replay_mode)) {
+
+        ChangeCameraType();
+        NewTextHeadupSlot2(4, 0, 1000, -4, GetMiscString(eMiscString_standard_cam) + C2V(gAction_replay_mode), 0);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444ed0, ChangeCameraTypeInGame, ChangeCameraTypeInGame_original)
