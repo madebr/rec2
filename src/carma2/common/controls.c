@@ -1398,11 +1398,85 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004945f0, ToggleTargetLock, ToggleTargetLock_origina
 // Key: 'y'
 void (C2_HOOK_FASTCALL * CycleTargetLock_original)(void);
 void C2_HOOK_FASTCALL CycleTargetLock(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     CycleTargetLock_original();
 #else
-#error "Not implemented"
+
+    if (C2V(gNet_mode) == eNet_mode_none || (C2V(gCurrent_net_game)->type != eNet_game_type_foxy && C2V(gCurrent_net_game)->options.show_players_on_map)) {
+        int category;
+        int car_index;
+        int car_count;
+        tCar_spec* car;
+
+        category = C2V(gNet_mode) != eNet_mode_none ? eVehicle_net_player : eVehicle_opponent;
+        if (C2V(gTarget_lock_car_1) == NULL) {
+            if (category == eVehicle_self) {
+                C2V(gTarget_lock_car_1) = &C2V(gProgram_state).current_car;
+            } else {
+                C2V(gTarget_lock_car_1) = GetCarSpec(category, 0);
+            }
+        }
+        if (category == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(category);
+        }
+        for (car_index = 0;; car_index++) {
+            tCar_spec* c;
+
+            if (car_index >= car_count) {
+                return;
+            }
+
+            if (category == eVehicle_self) {
+                c = &C2V(gProgram_state).current_car;
+            } else {
+                c = GetCarSpec(category, car_index);
+            }
+            if (c == C2V(gTarget_lock_car_1)) {
+                break;
+            }
+        }
+        if (car_index == car_count - 1) {
+            car_index = 0;
+        } else {
+            car_index += 1;
+        }
+
+        for (;;) {
+            for (;;) {
+                if (category == eVehicle_self) {
+                    car = &C2V(gProgram_state).current_car;
+                } else {
+                    car = GetCarSpec(category, car_index);
+                }
+                if (car_index == car_count - 1) {
+                    car_index = 0;
+                } else {
+                    car_index += 1;
+                }
+                if (car == C2V(gTarget_lock_car_1) || !car->knackered) {
+                    break;
+                }
+            }
+            if (C2V(gNet_mode) == eNet_mode_none) {
+                if (C2V(gCurrent_race).race_spec->race_type == kRaceType_Cars && !car->is_race_goal) {
+                    continue;
+                }
+                break;
+            }
+            if (C2V(gCurrent_net_game)->type != eNet_game_type_6) {
+                break;
+            }
+            if (!NetPlayerFromCar(car)->field_0x80) {
+                break;
+            }
+        }
+        C2V(gTarget_lock_enabled) = 0;
+        C2V(gTarget_lock_car_1) = car;
+        C2V(gTarget_lock_car_2) = car;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00494700, CycleTargetLock, CycleTargetLock_original)
