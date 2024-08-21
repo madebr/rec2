@@ -49,6 +49,8 @@ void C2_HOOK_FASTCALL DisposeOpponents(void);
 
 tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
 
+const char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex);
+
 int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory);
 
 void C2_HOOK_FASTCALL StunTheBugger(tOpponent_spec* pOpponent_spec, int pMilliseconds);
