@@ -8,6 +8,8 @@
 
 #define kMax_crush_datas 64
 
+#define kMax_headup_detail_level 5
+
 typedef char tPath_name[256];
 
 typedef unsigned char tU8;
@@ -3359,6 +3361,9 @@ enum {
     eMiscString_checkpoint_finder_turned_off = 254,
     eMiscString_checkpoint_finder_turned_on = 255,
     eMiscString_press_return_to_commit_suicide = 286,
+    eMiscString_no_HUD = 287,
+    eMiscString_minimal_HUD = 288,
+    eMiscString_full_HUD = 289,
 };
 
 enum {
