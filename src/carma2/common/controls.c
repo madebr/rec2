@@ -1295,11 +1295,17 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00502e50, BuyArmour, BuyArmour_original)
 // Key: 'End'
 void (C2_HOOK_FASTCALL * BuyPower_original)(void);
 void C2_HOOK_FASTCALL BuyPower(void) {
-    CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     BuyPower_original();
 #else
-#error "Not implemented"
+    if (C2V(gINT_0068b8e4) == 0 && C2V(gINT_0068b8e8) == 0) {
+        if (C2V(gNet_mode) != eNet_mode_none && C2V(gCurrent_net_game)->type == eNet_game_type_foxy && C2V(gThis_net_player_index) == C2V(gIt_or_fox)) {
+            NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_fox_cant_do_that));
+        } else {
+            BuyPSPowerup(1);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00502fd0, BuyPower, BuyPower_original)
