@@ -1246,10 +1246,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004443c0, ToggleFlying, ToggleFlying_original)
 void (C2_HOOK_FASTCALL * ScreenSmaller_original)(void);
 void C2_HOOK_FASTCALL ScreenSmaller(void) {
     CONTROLS_START();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ScreenSmaller_original();
 #else
-#error "Not implemented"
+    if (C2V(gMap_view) != 2) {
+        C2V(gRender_indent) += 1;
+        if (C2V(gRender_indent) > 8) {
+            C2V(gRender_indent) = 8;
+        }
+        AdjustRenderScreenSize();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4cd0, ScreenSmaller, ScreenSmaller_original)
