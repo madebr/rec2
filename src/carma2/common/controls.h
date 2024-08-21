@@ -113,7 +113,7 @@ void C2_HOOK_FASTCALL BuyPower(void);
 
 void C2_HOOK_FASTCALL BuyOffense(void);
 
-void C2_HOOK_FASTCALL FUN0040e430(void);
+void C2_HOOK_FASTCALL ViewNetPlayer(void);
 
 void C2_HOOK_FASTCALL UserSendMessage(void);
 
