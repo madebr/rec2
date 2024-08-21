@@ -566,11 +566,11 @@ void C2_HOOK_FASTCALL ToggleMiniMap(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004420e0, ToggleMiniMap, ToggleMiniMap_original)
 
 // Key: 'Enter'
-void (C2_HOOK_FASTCALL * ToggleDoors_original)(void);
-void C2_HOOK_FASTCALL ToggleDoors(void) {
+void (C2_HOOK_FASTCALL * ToggleFlaps_original)(void);
+void C2_HOOK_FASTCALL ToggleFlaps(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    ToggleDoors_original();
+    ToggleFlaps_original();
 #else
     if (C2V(gCountdown) || C2V(gToo_poor_for_recovery_timeout) != 0) {
         return;
@@ -588,7 +588,7 @@ void C2_HOOK_FASTCALL ToggleDoors(void) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0042dd50, ToggleDoors, ToggleDoors_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0042dd50, ToggleFlaps, ToggleFlaps_original)
 
 int C2_HOOK_FASTCALL ToggleFlapsCB(tCollision_info* pCollision_info, void* data) {
     tCar_spec *pCar_spec = data;
