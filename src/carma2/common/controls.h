@@ -26,6 +26,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY_ADV(tEdit_func*, gEdit_funcs, [2][18][8]);
 C2_HOOK_VARIABLE_DECLARE(int, gAllow_car_flying);
 C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gTarget_lock_car_1);
 C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gTarget_lock_car_2);
+C2_HOOK_VARIABLE_DECLARE(int, gInventory_cycling);
+C2_HOOK_VARIABLE_DECLARE(tU32, gInventory_timeout);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
