@@ -402,11 +402,11 @@ void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {
 }
 C2_HOOK_FUNCTION(0x004d7000, SetAnimalsOn)
 
-int C2_HOOK_FASTCALL GetFlameThrowerOn(void) {
+int C2_HOOK_FASTCALL IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense(void) {
 
     return C2V(gFlameThrowerOn);
 }
-C2_HOOK_FUNCTION(0x004d6fe0, GetFlameThrowerOn)
+C2_HOOK_FUNCTION(0x004d6fe0, IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense)
 
 void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn) {
 
@@ -2395,7 +2395,7 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
     BAIL_IF_NEGATIVE(c2_fprintf(f, "ARCameraType %d\n", C2V(gAR_camera_type)));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "GoreLevel %d\n", GetGoreLevel()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "AnimalsOn %d\n", GetAnimalsOn()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "FlameThrowerOn %d\n", GetFlameThrowerOn()));
+    BAIL_IF_NEGATIVE(c2_fprintf(f, "FlameThrowerOn %d\n", IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "MinesOn %d\n", GetMinesOn()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "DronesOn %d\n", GetDronesOn()));
     BAIL_IF_NEGATIVE(c2_fprintf(f, "MiniMapVisible %i\n", C2V(gMini_map_visible)));
