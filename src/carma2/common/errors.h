@@ -23,8 +23,8 @@ void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...);
 //
 //void NonFatalError(int pStr_index, ...);
 //
-//void CloseDiagnostics();
-//
+void C2_HOOK_FASTCALL CloseDiagnostics();
+
 void C2_HOOK_FASTCALL OpenDiagnostics(void);
 
 void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...);
