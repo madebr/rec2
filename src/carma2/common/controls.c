@@ -719,17 +719,17 @@ void C2_HOOK_FASTCALL CycleMapOptions(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00494840, CycleMapOptions, CycleMapOptions_original)
 
 // key: 'alt+tab' ('alt' in map mode)
-void (C2_HOOK_FASTCALL * ToggleMapTrans_original)(void);
-void C2_HOOK_FASTCALL ToggleMapTrans(void) {
+void (C2_HOOK_FASTCALL * ToggleMapTransparency_original)(void);
+void C2_HOOK_FASTCALL ToggleMapTransparency(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    ToggleMapTrans_original();
+    ToggleMapTransparency_original();
 #else
     C2V(gMap_trans) = !C2V(gMap_trans);
     SaveOptions();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00494880, ToggleMapTrans, ToggleMapTrans_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00494880, ToggleMapTransparency, ToggleMapTransparency_original)
 
 // Key: 'r'
 void (C2_HOOK_FASTCALL * SetRecovery_original)(void);
