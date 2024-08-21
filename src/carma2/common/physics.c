@@ -1070,16 +1070,16 @@ void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tCollision_info *pCollisio
 }
 C2_HOOK_FUNCTION(0x004b9ef0, SetCollisionInfoChildsDoNothing)
 
-int (C2_HOOK_FASTCALL * RemoveFromCollisionInfoList_original)(tCollision_info* pCollision_info);
-int C2_HOOK_FASTCALL RemoveFromCollisionInfoList(tCollision_info* pCollision_info) {
+int (C2_HOOK_FASTCALL * PHILRemoveObject_original)(tCollision_info* pCollision_info);
+int C2_HOOK_FASTCALL PHILRemoveObject(tCollision_info* pCollision_info) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return RemoveFromCollisionInfoList_original(pCollision_info);
+    return PHILRemoveObject_original(pCollision_info);
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b5ea0, RemoveFromCollisionInfoList, RemoveFromCollisionInfoList_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b5ea0, PHILRemoveObject, PHILRemoveObject_original)
 
 void C2_HOOK_FASTCALL AddCollisionInfoChild(tCollision_info* pParent, tCollision_info* pChild) {
     tCollision_info* current;

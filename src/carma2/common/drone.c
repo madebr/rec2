@@ -224,7 +224,7 @@ void C2_HOOK_FASTCALL DisposeDrones(void) {
             BrActorRemove(drone->actor);
         }
         BrActorFree(drone->actor);
-        RemoveFromCollisionInfoList(&drone->collision_info);
+        PHILRemoveObject(&drone->collision_info);
         if (drone->field_0x46) {
             FreeThingForm(drone->collision_info.shape);
             drone->field_0x46 = 0;
