@@ -15,7 +15,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const tU8, gOther_long_key, 16);
 C2_HOOK_VARIABLE_DECLARE(int, gDecode_thing);
 C2_HOOK_VARIABLE_DECLARE(tU32, last_service);
 
-br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void);
+br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
 void C2_HOOK_FASTCALL StringTransformToLower(char* pStr);
 
