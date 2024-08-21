@@ -60,4 +60,6 @@ void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
 
 void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath);
 
+void C2_HOOK_CDECL Win32ServiceMessages(void);
+
 #endif // C2_WIN32_WIN32_H
