@@ -577,7 +577,7 @@ void C2_HOOK_FASTCALL ToggleDoors(void) {
     }
     if (C2V(gNet_mode) == eNet_mode_none || C2V(gNet_mode) == eNet_mode_host) {
         PhysicsObjectRecurse(C2V(gProgram_state).current_car.collision_info,
-            ToggleDoorsCollisionInfoCallback,
+            ToggleFlapsCB,
             &C2V(gProgram_state).current_car);
     } else {
         tNet_message_chunk* chunk = NetAllocateMessageChunk(eNet_message_chunk_type_toggle_doors, 0);
@@ -590,13 +590,13 @@ void C2_HOOK_FASTCALL ToggleDoors(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042dd50, ToggleDoors, ToggleDoors_original)
 
-int C2_HOOK_FASTCALL ToggleDoorsCollisionInfoCallback(tCollision_info* pCollision_info, void* data) {
+int C2_HOOK_FASTCALL ToggleFlapsCB(tCollision_info* pCollision_info, void* data) {
     tCar_spec *pCar_spec = data;
 
     DRActorEnumRecurse(pCollision_info->actor, ToggleDoorsActorCallback, pCar_spec);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0042ddb0, ToggleDoorsCollisionInfoCallback)
+C2_HOOK_FUNCTION(0x0042ddb0, ToggleFlapsCB)
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_toggled_doors, 0x0067bd58);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tToggled_door, gToggled_doors, 16, 0x00679450);
