@@ -1640,3 +1640,14 @@ void C2_HOOK_FASTCALL FUN_0045acf0(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045acf0, FUN_0045acf0, FUN_0045acf0_original)
+
+void (C2_HOOK_FASTCALL * FUN_00511240_original)(void);
+void C2_HOOK_FASTCALL FUN_00511240(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FUN_00511240_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00511240, FUN_00511240, FUN_00511240_original)
