@@ -10,7 +10,7 @@
 #include <windows.h>
 #include <dinput.h>
 
-C2_HOOK_VARIABLE_DECLARE(int, gWin32_fatal_error_exit_code);
+C2_HOOK_VARIABLE_DECLARE(int, gExit_code);
 
 C2_HOOK_VARIABLE_DECLARE(HWND, gHWnd);
 C2_HOOK_VARIABLE_DECLARE(int, gWindowActiveState);  // FIXME: enum (0,1) => background(d3d or glide), 2=> active
@@ -42,7 +42,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gTimeLastKeyboardInput);
 C2_HOOK_VARIABLE_DECLARE(HINSTANCE, gHInstance);
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFatalErrorMessage, 512);
-C2_HOOK_VARIABLE_DECLARE(int, gFatalErrorMessageValid);
+C2_HOOK_VARIABLE_DECLARE(int, gIsFatalError);
 
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

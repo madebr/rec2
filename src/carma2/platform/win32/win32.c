@@ -3,6 +3,7 @@
 #include "win32_dinput.h"
 #include "win32_ssdx.h"
 
+#include "drmem.h"
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
@@ -41,8 +42,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gUnknown_int_0074ca94, 0x0074ca94);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gUnknown_int_0074cf48, 0x0074cf48);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFatalErrorMessage, 512, 0x006acc88);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gFatalErrorMessageValid, 0x006ad498);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gWin32_fatal_error_exit_code, 0x006ad494);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gExit_code, 0x006ad494);
 
 C2_HOOK_VARIABLE_IMPLEMENT(HWND, gHWnd, 0x006ad4c8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gWindowActiveState, 0x006621e0, 2); // FIXME: enum: 0, 1 or 2
@@ -202,13 +203,13 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
     if (pThe_str == NULL) {
         pThe_str = "NULL str1";
     }
-    C2V(gFatalErrorMessageValid) = 1;
+    C2V(gIsFatalError) = 1;
     sprintf(C2V(gFatalErrorMessage), "%s\n%s", pThe_str, "");
 
-    C2V(gWin32_fatal_error_exit_code) = 700;
+    C2V(gExit_code) = 700;
     if (C2V(gBack_screen) != NULL) {
         if (C2V(gBack_screen)->pixels != NULL) {
-            C2V(gWin32_fatal_error_exit_code) = 700;
+            C2V(gExit_code) = 700;
             PDUnlockRealBackScreen();
         }
     }
@@ -280,12 +281,46 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051b0a0, PDClearKeyboardBuffer, PDClearKeyboardBuff
 
 C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();
     PDShutdownSystem_original();
     C2_HOOK_FINISH();
 #else
-#error "Not implemented"
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, been_here, 0x006ad4d8);
+
+    C2V(gBack_screen) = NULL;
+    if (C2V(been_here)) {
+        CloseGlobalPackedFile();
+        ExitProcess(702);
+    } else {
+        C2V(been_here) = 1;
+        dr_dprintf("PDShutdownSystem()");
+        SSDXStop();
+        SSDXRelease();
+        CloseDirectInput();
+        ShowCursor(TRUE);
+        if (C2V(gHWnd) != NULL) {
+            dr_dprintf("Resizing main window...");
+            SetWindowPos(C2V(gHWnd), NULL, -100, -100, 64, 64, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
+        }
+        dr_dprintf("Servicing messages...");
+        Win32ServiceMessages();
+        dr_dprintf("Sending WM_SHOWWINDOW broadcast message...");
+        SendMessageA(HWND_BROADCAST, WM_SHOWWINDOW, TRUE, 0);
+        if (C2V(gIsFatalError)) {
+            dr_dprintf("Displaying fatal error...");
+            MessageBoxA(NULL, C2V(gFatalErrorMessage), "Carmageddon Fatal error", MB_ICONERROR);
+        }
+        if (C2V(gHWnd) != NULL) {
+            dr_dprintf("Destroying window...");
+            DestroyWindow(C2V(gHWnd));
+            C2V(gHWnd) = NULL;
+        }
+        dr_dprintf("End of PDShutdownSystem()");
+        CloseDiagnostics();
+        CloseGlobalPackedFile();
+        ExitProcess(C2V(gExit_code));
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051c110, PDShutdownSystem, PDShutdownSystem_original)
@@ -869,9 +904,9 @@ static void C2_HOOK_CDECL OnErrorCallback(char* text) {
     if (text == NULL) {
         msg = "NULL str2";
     }
-    C2V(gFatalErrorMessageValid) = 1;
+    C2V(gIsFatalError) = 1;
     sprintf(C2V(gFatalErrorMessage), "%s\n%s", msg, text);
-    C2V(gWin32_fatal_error_exit_code) = 700;
+    C2V(gExit_code) = 700;
     if (C2V(gBack_screen) != NULL && C2V(gBack_screen)->pixels != NULL) {
         PossibleUnlock(1);
     }

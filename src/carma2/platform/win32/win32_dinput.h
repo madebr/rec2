@@ -14,4 +14,6 @@ void C2_HOOK_FASTCALL KeyBegin(void);
 
 void C2_HOOK_FASTCALL Win32InitInputDevice(void);
 
+void C2_HOOK_FASTCALL CloseDirectInput(void);
+
 #endif // C2_WIN32_INPUT_H
