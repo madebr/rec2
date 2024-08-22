@@ -19,6 +19,8 @@ int C2_HOOK_FASTCALL AllocationErrorsAreFatal(void);
 
 void C2_HOOK_FASTCALL MAMSInitMem(void);
 
+void C2_HOOK_FASTCALL CloseGlobalPackedFile(void);
+
 void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle);
 
 void* C2_HOOK_CDECL DRStdlibAllocate(br_size_t size, br_uint_8 type);
