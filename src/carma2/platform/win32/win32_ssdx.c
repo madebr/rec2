@@ -45,6 +45,20 @@ C2_HOOK_VARIABLE_IMPLEMENT(LPRECT, gSSDXLockedRect, 0x006aa9dc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAttached_surface_locked, 0x006aaa0c);
 
 
+HRESULT (CALLBACK * LocalEnumAttachedSurfacesCallback_original)(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext);
+HRESULT CALLBACK LocalEnumAttachedSurfacesCallback(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    return LocalEnumAttachedSurfacesCallback_original(lpSurface, lpSurfaceDesc, lpContext);
+#else
+    int* counter = lpContext;
+    dr_dprintf("LocalEnumAttachedSurfacesCallback(): Enum-ing attached surface #%d, address 0x%p", *counter, lpSurface);
+    C2V(gAttached_surface) = lpSurface;
+    return DDENUMRET_OK;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00500070, LocalEnumAttachedSurfacesCallback, LocalEnumAttachedSurfacesCallback_original)
+
 void (C2_HOOK_FASTCALL * LocalWindowedDDSetup_original)(int pWidth, int pHeight, int* pPitch);
 void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch) {
 
