@@ -31,6 +31,8 @@ enum tSSDXFlags {
 
 void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDDX, int p_flags);
 
+void C2_HOOK_FASTCALL SSDXStop(void);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 int C2_HOOK_FASTCALL PDS3DDXInit(void);
