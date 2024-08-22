@@ -107,6 +107,17 @@ void C2_HOOK_FASTCALL SSDXRelease(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005006d0, SSDXRelease, SSDXRelease_original)
 
+void (C2_HOOK_FASTCALL * SSDXDirectDrawSetup_original)(int pWidth, int pHeight, int pBits, int* pPitch);
+void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, int* pPitch) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SSDXDirectDrawSetup_original(pWidth, pHeight, pBits, pPitch);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00500760, SSDXDirectDrawSetup, SSDXDirectDrawSetup_original)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
