@@ -96,6 +96,17 @@ void C2_HOOK_FASTCALL SSDXStop(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00500590, SSDXStop, SSDXStop_original)
 
+void (C2_HOOK_FASTCALL * SSDXRelease_original)(void);
+void C2_HOOK_FASTCALL SSDXRelease(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SSDXRelease_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005006d0, SSDXRelease, SSDXRelease_original)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
