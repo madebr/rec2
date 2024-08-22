@@ -3,6 +3,7 @@
 
 #include "win32_types.h"
 
+#include <ddraw.h>
 #include <dsound.h>
 
 #include "c2_hooks.h"
@@ -27,6 +28,8 @@ C2_HOOK_VARIABLE_DECLARE(MCI_STATUS_PARMS, gPDS3_mci_midi_status_parms);
 enum tSSDXFlags {
     SSDX_InitDirectSound = 0x2,
 };
+
+HRESULT CALLBACK LocalEnumAttachedSurfacesCallback(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext);
 
 void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch);
 
