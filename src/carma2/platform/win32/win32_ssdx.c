@@ -85,6 +85,17 @@ void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDD
 }
 C2_HOOK_FUNCTION(0x00500500, SSDXStart)
 
+void (C2_HOOK_FASTCALL * SSDXStop_original)(void);
+void C2_HOOK_FASTCALL SSDXStop(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SSDXStop_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00500590, SSDXStop, SSDXStop_original)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
