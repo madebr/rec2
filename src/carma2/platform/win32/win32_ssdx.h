@@ -37,6 +37,8 @@ void C2_HOOK_FASTCALL SSDXRelease(void);
 
 void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, int* pPitch);
 
+void C2_HOOK_FASTCALL SSDXLockAttachedSurface(void);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 int C2_HOOK_FASTCALL PDS3DDXInit(void);
