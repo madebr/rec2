@@ -1,6 +1,7 @@
 #include "drmem.h"
 
 #include "errors.h"
+#include "loading.h"
 
 #include "rec2_macros.h"
 #include "rec2_types.h"
@@ -271,6 +272,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gMem_names, 256, 0x005933e8, 
     NULL,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_resource_class, gStainless_classes, 126, 0x006815c8);
+C2_HOOK_VARIABLE_IMPLEMENT(FILE*, gGlobalPackedFile, 0x00681fa0);
 
 void C2_HOOK_FASTCALL SetNonFatalAllocationErrors(void) {
 
@@ -293,6 +295,21 @@ C2_HOOK_FUNCTION(0x0044c810, AllocationErrorsAreFatal)
 void C2_HOOK_FASTCALL MAMSInitMem(void) {
 }
 C2_HOOK_FUNCTION(0x0044c820, MAMSInitMem)
+
+void (C2_HOOK_FASTCALL * CloseGlobalPackedFile_original)(void);
+void C2_HOOK_FASTCALL CloseGlobalPackedFile(void) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    CloseGlobalPackedFile_original();
+#else
+
+    if (C2V(gGlobalPackedFile) != NULL) {
+        PFfclose(C2V(gGlobalPackedFile));
+        C2V(gGlobalPackedFile) = NULL;
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044c830, CloseGlobalPackedFile, CloseGlobalPackedFile_original)
 
 void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
     dr_dprintf("%s: pTitle=\"%s\" pFlags=%d", __FUNCTION__, pTitle, pFlags);
