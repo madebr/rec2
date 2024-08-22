@@ -118,6 +118,17 @@ void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, in
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00500760, SSDXDirectDrawSetup, SSDXDirectDrawSetup_original)
 
+void (C2_HOOK_FASTCALL * SSDXLockAttachedSurface_original)(void);
+void C2_HOOK_FASTCALL SSDXLockAttachedSurface(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SSDXLockAttachedSurface_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00500a30, SSDXLockAttachedSurface, SSDXLockAttachedSurface_original)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
