@@ -3312,10 +3312,39 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00507360, AutoSaveAdditionalStuff, AutoSaveAdditiona
 void (C2_HOOK_FASTCALL * AnimateSky_original)(void);
 void C2_HOOK_FASTCALL AnimateSky(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AnimateSky_original();
 #else
-#error "Not implemented"
+    C2_HOOK_VARIABLE_IMPLEMENT(tU32, prev_sky_animation, 0x006aafc0);
+    tU32 now;
+    tU32 now2;
+    int frame_increment;
+
+    now = GetTotalTime();
+
+    if (C2V(gTrack_flic_buffer) == NULL) {
+        return;
+    }
+    now2 = now;
+    if (now < C2V(prev_sky_animation)) {
+        now2 = 2 * C2V(prev_sky_animation) - now;
+    }
+    if (C2V(prev_sky_animation) == 0) {
+        frame_increment = 1;
+    } else {
+        frame_increment = ((now2 - C2V(prev_sky_animation)) / (C2V(gTrack_flic_descriptor).frame_period)) % (C2V(gTrack_flic_descriptor).current_frame + C2V(gTrack_flic_descriptor).frames_left);
+    }
+
+    for (; frame_increment != 0; frame_increment -= 1) {
+        if (PlayNextFlicFrame(&C2V(gTrack_flic_descriptor))) {
+            EndFlic(&C2V(gTrack_flic_descriptor));
+            StartFlic(C2V(gTrack_flic_descriptor).file_name, -1, &C2V(gTrack_flic_descriptor),
+                C2V(gTrack_flic_buffer_size), (tS8*)C2V(gTrack_flic_buffer), NULL, 0, 0, 0);
+            AssertFlicPixelmap(&C2V(gTrack_flic_descriptor), C2V(gProgram_state).default_depth_effect.sky_texture);
+        }
+        C2V(prev_sky_animation) = now;
+        SkyTextureChanged();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00506e80, AnimateSky, AnimateSky_original)
