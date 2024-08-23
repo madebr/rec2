@@ -1718,13 +1718,115 @@ int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
 }
 C2_HOOK_FUNCTION(0x004475c0, DRPixelmapHasZeros)
 
+int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixelmap* pMap) {
+    int i;
+
+    for (i = 0; i < pStorage->pixelmaps_count; i++) {
+
+        if (pStorage->pixelmaps[i] == pMap) {
+            return 1;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004479c0, StorageContainsPixelmap)
+
+void C2_HOOK_FASTCALL HideStoredTextures(tBrender_storage* pStorage) {
+    int i;
+
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_pixelmap* colour_map;
+
+        colour_map = pStorage->materials[i]->colour_map;
+
+        if (colour_map != NULL && StorageContainsPixelmap(pStorage, colour_map)) {
+            pStorage->materialProps[i] = colour_map;
+            pStorage->materials[i]->colour_map = NULL;
+            pStorage->materials[i]->flags &= ~BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL RevealStoredTransparentTextures(tBrender_storage* pStorage) {
+    int i;
+
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_pixelmap* colour_map;
+
+        colour_map = pStorage->materialProps[i];
+
+        if (colour_map != NULL && DRPixelmapHasZeros(colour_map)) {
+            pStorage->materials[i]->colour_map = pStorage->materialProps[i];
+            pStorage->materialProps[i] = NULL;
+            pStorage->materials[i]->flags |= BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL HideStoredOpaqueTextures(tBrender_storage* pStorage) {
+    int i;
+
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_pixelmap* colour_map;
+
+        colour_map = pStorage->materials[i]->colour_map;
+
+        if (colour_map != NULL && StorageContainsPixelmap(pStorage, colour_map) && !DRPixelmapHasZeros(colour_map)) {
+            pStorage->materialProps[i] = colour_map;
+            pStorage->materials[i]->colour_map = NULL;
+            pStorage->materials[i]->flags &= ~BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL RevealStoredTextures(tBrender_storage* pStorage) {
+    int i;
+
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_pixelmap* colour_map;
+
+        colour_map = pStorage->materialProps[i];
+
+        if (colour_map != NULL) {
+            pStorage->materials[i]->colour_map = colour_map;
+            pStorage->materialProps[i] = NULL;
+            pStorage->materials[i]->flags |= BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * SetCarStorageTexturingLevel_original)(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
 void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetCarStorageTexturingLevel_original(pStorage, pNew, pOld);
 #else
-#error "Not implemented"
+    switch (pNew) {
+    case eCTL_none:
+        HideStoredTextures(pStorage);
+        break;
+    case eCTL_transparent:
+        switch (pOld) {
+        case eCTL_none:
+            RevealStoredTransparentTextures(pStorage);
+            break;
+        case eCTL_full:
+            HideStoredOpaqueTextures(pStorage);
+            break;
+        default:
+            break;
+        }
+        break;
+    case eCTL_full:
+        RevealStoredTextures(pStorage);
+        break;
+    default:
+        break;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00447350, SetCarStorageTexturingLevel, SetCarStorageTexturingLevel_original)
