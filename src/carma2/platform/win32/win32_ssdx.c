@@ -453,6 +453,26 @@ void C2_HOOK_FASTCALL SSDXSetPaletteEntries(PALETTEENTRY* pPalette, int pStart, 
 }
 C2_HOOK_FUNCTION(0x00500c00, SSDXSetPaletteEntries)
 
+void C2_HOOK_FASTCALL SSDXSetPrimaryPalette(void) {
+    HRESULT result;
+
+    if (!C2V(gUse_DirectDraw)) {
+        return;
+    }
+    if (C2V(gDirectDrawPalette) == NULL) {
+        return;
+    }
+    if (C2V(gPrimary_surface) == NULL) {
+        return;
+    }
+    result = IDirectDrawSurface_SetPalette(C2V(gPrimary_surface), C2V(gDirectDrawPalette));
+    if (result == DDERR_SURFACELOST) {
+        IDirectDrawSurface_Restore(C2V(gPrimary_surface));
+        IDirectDrawSurface_SetPalette(C2V(gPrimary_surface), C2V(gDirectDrawPalette));
+    }
+}
+C2_HOOK_FUNCTION(0x00500ca0, SSDXSetPrimaryPalette)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
