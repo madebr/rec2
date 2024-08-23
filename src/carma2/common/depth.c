@@ -287,6 +287,12 @@ void C2_HOOK_FASTCALL SkyTextureChanged(void) {
 }
 C2_HOOK_FUNCTION(0x00447290, SkyTextureChanged)
 
+void C2_HOOK_FASTCALL SetSkyColour(br_colour c) {
+
+    C2V(gHorizon_material)->colour = c;
+}
+C2_HOOK_FUNCTION(0x004472b0, SetSkyColour)
+
 void (C2_HOOK_FASTCALL * FogAccordingToGPSCDE_original)(br_material* pMaterial);
 void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial) {
 
