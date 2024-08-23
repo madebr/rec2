@@ -24,7 +24,7 @@ void C2_HOOK_FASTCALL ReadSmashableInitialSpeed(FILE* pFile, tSmashable_initial_
 
 void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes);
 
-void C2_HOOK_FASTCALL ResetSmashableRaceTargets(void);
+void C2_HOOK_FASTCALL InitSmashTargets(void);
 
 void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 

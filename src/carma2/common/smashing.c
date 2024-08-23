@@ -132,11 +132,11 @@ void C2_HOOK_FASTCALL ReadMinMaxTimeInMilliseconds(FILE* pFile, int* pTimes) {
 }
 C2_HOOK_FUNCTION(0x004ee5a0, ReadMinMaxTimeInMilliseconds)
 
-void C2_HOOK_FASTCALL ResetSmashableRaceTargets(void) {
+void C2_HOOK_FASTCALL InitSmashTargets(void) {
 
     C2V(gCount_smashable_race_targets) = 0;
 }
-C2_HOOK_FUNCTION(0x004977e0, ResetSmashableRaceTargets)
+C2_HOOK_FUNCTION(0x004977e0, InitSmashTargets)
 
 void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor, int pUnknown) {
 
