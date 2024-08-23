@@ -47,6 +47,8 @@ void C2_HOOK_FASTCALL SSDXLockAttachedSurface(void);
 
 void C2_HOOK_FASTCALL SSDXUnlockAttachedSurface(void);
 
+void C2_HOOK_FASTCALL SSDXBlit(void);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 int C2_HOOK_FASTCALL PDS3DDXInit(void);
