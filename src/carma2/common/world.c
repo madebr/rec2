@@ -1694,6 +1694,30 @@ br_pixelmap* C2_HOOK_FASTCALL SwapPixelmapInStorage(br_pixelmap* pNew, br_pixelm
 }
 C2_HOOK_FUNCTION(0x00502d80, SwapPixelmapInStorage)
 
+int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
+    int x;
+    int y;
+    tU8* row_ptr;
+    tU8* pp;
+
+    if (pm->flags & BR_PMF_NO_ACCESS) {
+        return 1;
+    }
+    row_ptr = (tU8*)pm->pixels + (pm->row_bytes * pm->base_y) + pm->base_x;
+    for (y = 0; y < pm->height; y++) {
+        pp = row_ptr;
+        for (x = 0; x < pm->width; x++) {
+            if (*pp == '\0') {
+                return 1;
+            }
+            pp++;
+        }
+        row_ptr += pm->row_bytes;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004475c0, DRPixelmapHasZeros)
+
 void (C2_HOOK_FASTCALL * SetCarStorageTexturingLevel_original)(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
 void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld) {
 
