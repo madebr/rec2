@@ -281,6 +281,12 @@ void C2_HOOK_FASTCALL MungeRearviewSky(void) {
 }
 C2_HOOK_FUNCTION(0x00447280, MungeRearviewSky)
 
+void C2_HOOK_FASTCALL SkyTextureChanged(void) {
+
+    BrMaterialUpdate(C2V(gHorizon_material), BR_MATU_COLOURMAP);
+}
+C2_HOOK_FUNCTION(0x00447290, SkyTextureChanged)
+
 void (C2_HOOK_FASTCALL * FogAccordingToGPSCDE_original)(br_material* pMaterial);
 void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial) {
 
