@@ -55,6 +55,8 @@ void C2_HOOK_FASTCALL SSDXSetPaletteEntries(PALETTEENTRY* pPalette, int pStart, 
 
 void C2_HOOK_FASTCALL SSDXSetPrimaryPalette(void);
 
+void C2_HOOK_FASTCALL SSDXWindowPosOrSizeChanged(HWND pHwnd);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 int C2_HOOK_FASTCALL PDS3DDXInit(void);

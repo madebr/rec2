@@ -473,6 +473,18 @@ void C2_HOOK_FASTCALL SSDXSetPrimaryPalette(void) {
 }
 C2_HOOK_FUNCTION(0x00500ca0, SSDXSetPrimaryPalette)
 
+void C2_HOOK_FASTCALL SSDXWindowPosOrSizeChanged(HWND pHwnd) {
+
+    if (C2V(gUse_DirectDraw)) {
+        GetClientRect(pHwnd, &C2V(gSSDXWindowPos));
+        ClientToScreen(pHwnd, (POINT*)&C2V(gSSDXWindowPos).left);
+        ClientToScreen(pHwnd, (POINT*)&C2V(gSSDXWindowPos).right);
+        dr_dprintf("SSDXWindowPosOrSizeChanged(): New window rect: (%d,%d)(%d,%d)",
+            C2V(gSSDXWindowPos).left, C2V(gSSDXWindowPos).top, C2V(gSSDXWindowPos).right, C2V(gSSDXWindowPos).bottom);
+    }
+}
+C2_HOOK_FUNCTION(0x00500cf0, SSDXWindowPosOrSizeChanged)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
