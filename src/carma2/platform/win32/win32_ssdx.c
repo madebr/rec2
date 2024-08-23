@@ -419,6 +419,12 @@ void C2_HOOK_FASTCALL SSDXUnlockAttachedSurface(void) {
 }
 C2_HOOK_FUNCTION(0x00500b40, SSDXUnlockAttachedSurface)
 
+void C2_HOOK_FASTCALL SSDXBlit(void) {
+
+    IDirectDrawSurface_Blt(C2V(gPrimary_surface), &C2V(gSSDXWindowPos), C2V(gAttached_surface), &C2V(gSSDXRect), DDBLT_WAIT, NULL);
+}
+C2_HOOK_FUNCTION(0x00500bd0, SSDXBlit)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
