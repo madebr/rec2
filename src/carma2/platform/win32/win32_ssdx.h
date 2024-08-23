@@ -53,6 +53,8 @@ void C2_HOOK_FASTCALL SSDXBlit(void);
 
 void C2_HOOK_FASTCALL SSDXSetPaletteEntries(PALETTEENTRY* pPalette, int pStart, int pCount);
 
+void C2_HOOK_FASTCALL SSDXSetPrimaryPalette(void);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 int C2_HOOK_FASTCALL PDS3DDXInit(void);
