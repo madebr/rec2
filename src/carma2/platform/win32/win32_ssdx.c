@@ -244,6 +244,20 @@ void C2_HOOK_FASTCALL SSDXLockAttachedSurface(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00500a30, SSDXLockAttachedSurface, SSDXLockAttachedSurface_original)
 
+void C2_HOOK_FASTCALL SSDXUnlockAttachedSurface(void) {
+
+    if (C2V(gAttached_surface_locked)) {
+        HRESULT result = IDirectDrawSurface_Unlock(C2V(gAttached_surface), C2V(gSSDXLockedRect));
+        if (result == DD_OK) {
+            C2V(gAttached_surface_locked) = 0;
+        } else {
+            dr_dprintf("SSDXUnlockAttachedSurface(): Problem while unlocking attached surface...");
+            SSDXLogError(result);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00500b40, SSDXUnlockAttachedSurface)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
