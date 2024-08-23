@@ -138,6 +138,8 @@ void C2_HOOK_FASTCALL AllowDuplicates(void);
 
 br_pixelmap* C2_HOOK_FASTCALL SwapPixelmapInStorage(br_pixelmap* pNew, br_pixelmap* pOriginal, tBrender_storage* pStorage);
 
+int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm);
+
 void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
 
 void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
