@@ -2212,10 +2212,74 @@ C2_HOOK_FUNCTION(0x004f0940, DisposeSmashEnvNonCars)
 void (C2_HOOK_FASTCALL * LoadTrackSpecialVolumes_original)(FILE* pF);
 void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadTrackSpecialVolumes_original(pF);
 #else
-#error "Not implemented"
+
+    /* DEFAULT ENGINE NOISE */
+    C2V(gDefault_engine_noise_index) = GetAnInt(pF);
+
+    C2V(gDefault_water_spec_vol_real) = &C2V(gDefault_water_spec_vol);
+
+    /* # special effects volumes */
+    C2V(gProgram_state).special_volume_count = GetAnInt(pF);
+    if (C2V(gProgram_state).special_volume_count != 0) {
+        int i;
+
+        C2_HOOK_BUG_ON(sizeof(tSpecial_volume) != 0xdc);
+        C2V(gProgram_state).special_volumes = BrMemAllocate(C2V(gProgram_state).special_volume_count * sizeof(tSpecial_volume), kMem_special_volume);
+        for (i = 0; i < C2V(gProgram_state).special_volume_count; i++) {
+            br_bounds unit_bounds;
+            tSpecial_volume* spec = &C2V(gProgram_state).special_volumes[i];
+
+            PossibleService();
+
+            C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSpecial_effects_boundary_choices)) != 4);
+            spec->boundary_type = GetALineAndInterpretCommand(pF, C2V(gSpecial_effects_boundary_choices), REC2_ASIZE(C2V(gSpecial_effects_boundary_choices)));
+            if (spec->boundary_type == eFx_boundary_new) {
+                spec->boundary_type = eFx_boundary_box;
+            }
+            switch (spec->boundary_type) {
+            case eFx_boundary_box:
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[0][0], &spec->boundary.box.mat.m[0][1], &spec->boundary.box.mat.m[0][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[1][0], &spec->boundary.box.mat.m[1][1], &spec->boundary.box.mat.m[1][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[2][0], &spec->boundary.box.mat.m[2][1], &spec->boundary.box.mat.m[2][2]);
+                GetThreeScalars(pF, &spec->boundary.box.mat.m[3][0], &spec->boundary.box.mat.m[3][1], &spec->boundary.box.mat.m[3][2]);
+                unit_bounds.min.v[0] = -1.0f;
+                unit_bounds.min.v[1] = -1.0f;
+                unit_bounds.min.v[2] = -1.0f;
+                unit_bounds.max.v[0] =  1.0f;
+                unit_bounds.max.v[1] =  1.0f;
+                unit_bounds.max.v[2] =  1.0f;
+                GetNewBoundingBox(&spec->boundary.box.bounds, &unit_bounds, &spec->boundary.box.mat);
+                BrMatrix34Inverse(&spec->boundary.box.inv_mat, &spec->boundary.box.mat);
+                spec->boundary.box.axis_length.v[0] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[0]);
+                spec->boundary.box.axis_length.v[1] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[1]);
+                spec->boundary.box.axis_length.v[2] = BrVector3Length((br_vector3*)spec->boundary.box.inv_mat.m[2]);
+                ParseSpecialVolume(pF, spec, NULL, spec->boundary_type == eFx_boundary_box);
+                if (spec->soundfx_type != kSoundFx_None) {
+                    int j;
+
+                    for (j = 0; j < 3; j++) {
+                        spec->boundary.box.bounds.min.v[j] -= 10.f;
+                        spec->boundary.box.bounds.max.v[j] += 10.f;
+                    }
+                }
+                break;
+            case eFx_boundary_plane:
+                GetFourScalars(pF, &spec->boundary.plane.v[0], &spec->boundary.plane.v[1], &spec->boundary.plane.v[2], &spec->boundary.plane.v[3]);
+                ParseSpecialVolume(pF, spec, NULL, 1);
+                break;
+            case eFx_boundary_default:
+                ParseSpecialVolume(pF, spec, NULL, 0);
+                C2V(gDefault_water_spec_vol_real) = spec;
+                break;
+            default:
+                FatalError(kFatalError_ProblemWithSpecialVolumeNumber_I, i);
+                break;
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, ReadSpecialVolumes, LoadTrackSpecialVolumes_original)
