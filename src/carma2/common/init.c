@@ -1382,7 +1382,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     InitFogificateMaterials();
     InitSmashTargets();
     ClearAllRuntimeVariables();
-    ResetMechanics();
+    PHILInit();
     /* SetUpTestObjects(); */
     ResetTargetLock();
     ResetSmashing();
