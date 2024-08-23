@@ -3575,7 +3575,7 @@ enum {
     kFatalError_TooManyCrushLimits = 0x7a,
     kFatalError_TooManyCrushDatas = 0x7c,
     kFatalError_CannotFindSmashActorModel_S = 0x81,
-    kFatalError_ProglemWithSpecialVolumeNumber_I = 0x82,
+    kFatalError_ProblemWithSpecialVolumeNumber_I = 0x82,
     kFatalError_TooManyEnvironmentalSoundAlternatives = 0x83,
     kFatalError_CannotFindModelReferencedInSoundGeneratorList_S = 0x84,
     kFatalError_InsufficientSoundSlotsInStorageArea = 0x85,
