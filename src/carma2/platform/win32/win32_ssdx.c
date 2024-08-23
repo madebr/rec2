@@ -435,6 +435,24 @@ void C2_HOOK_FASTCALL SSDXBlit(void) {
 }
 C2_HOOK_FUNCTION(0x00500bd0, SSDXBlit)
 
+void C2_HOOK_FASTCALL SSDXSetPaletteEntries(PALETTEENTRY* pPalette, int pStart, int pCount) {
+
+    if (C2V(gUse_DirectDraw) && C2V(gDirectDrawPalette) != NULL) {
+        int i;
+
+        for (i = MAX(10, pStart); i < MIN(pStart + pCount - 1, 0xf6); i++) {
+
+            C2V(gSSDX_system_palette)[i].peRed = pPalette[i].peRed;
+            C2V(gSSDX_system_palette)[i].peGreen = pPalette[i].peGreen;
+            C2V(gSSDX_system_palette)[i].peBlue = pPalette[i].peBlue;
+        }
+        IDirectDrawPalette_SetEntries(C2V(gDirectDrawPalette), 0, pStart, pCount, C2V(gSSDX_system_palette));
+    } else {
+        IDirectDrawPalette_SetEntries(C2V(gDirectDrawPalette), 0, pStart, pCount, pPalette);
+    }
+}
+C2_HOOK_FUNCTION(0x00500c00, SSDXSetPaletteEntries)
+
 int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gPD_S3_config)) != 0x20);
