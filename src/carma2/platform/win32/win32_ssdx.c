@@ -203,10 +203,51 @@ C2_HOOK_FUNCTION(0x00500500, SSDXStart)
 void (C2_HOOK_FASTCALL * SSDXStop_original)(void);
 void C2_HOOK_FASTCALL SSDXStop(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SSDXStop_original();
 #else
-#error "Not implemented"
+
+    SSDXUnlockAttachedSurface();
+
+    if (C2V(gDirectDrawPalette) != NULL) {
+
+        dr_dprintf("SSDXStop(): Releasing palette...");
+        IDirectDrawPalette_Release(C2V(gDirectDrawPalette));
+        C2V(gDirectDrawPalette) = NULL;
+    }
+
+    if (C2V(gDirectDrawClipper) != NULL) {
+
+        dr_dprintf("SSDXStop(): Releasing clipper...");
+        IDirectDrawClipper_Release(C2V(gDirectDrawClipper));
+        C2V(gDirectDrawClipper) = NULL;
+    }
+
+    if (C2V(gUse_DirectDraw)) {
+
+        if (C2V(gAttached_surface) != NULL) {
+            dr_dprintf("SSDXStop(): Releaseing attached surface...");
+            IDirectDrawSurface_Release(C2V(gAttached_surface));
+            C2V(gAttached_surface) = NULL;
+        }
+        if (C2V(gPrimary_surface) != NULL) {
+            dr_dprintf("SSDXStop(): Releaseing primary surface...");
+            IDirectDrawSurface_Release(C2V(gPrimary_surface));
+            C2V(gPrimary_surface) = NULL;
+        }
+    } else {
+
+        if (C2V(gDirectDraw2) != NULL) {
+            dr_dprintf("SSDXStop(): Restoring display mode");
+            IDirectDraw2_RestoreDisplayMode(C2V(gDirectDraw2));
+        }
+        if (C2V(gPrimary_surface) != NULL) {
+            dr_dprintf("SSDXStop(): Releaseing primary surface...");
+            IDirectDrawSurface_Release(C2V(gPrimary_surface));
+            C2V(gAttached_surface) = NULL;
+            C2V(gPrimary_surface) = NULL;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00500590, SSDXStop, SSDXStop_original)
