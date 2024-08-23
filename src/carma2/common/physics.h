@@ -24,7 +24,7 @@ void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize);
 
 void C2_HOOK_FASTCALL InitPhysics(void);
 
-int C2_HOOK_FASTCALL ResetMechanics(void);
+int C2_HOOK_FASTCALL PHILInit(void);
 
 void C2_HOOK_FASTCALL PHILDisable(void);
 

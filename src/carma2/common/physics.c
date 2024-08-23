@@ -96,16 +96,16 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5ca0, InitPhysics, InitPhysics_original)
 
-int (C2_HOOK_FASTCALL * ResetMechanics_original)(void);
-int C2_HOOK_FASTCALL ResetMechanics(void) {
+int (C2_HOOK_FASTCALL * PHILInit_original)(void);
+int C2_HOOK_FASTCALL PHILInit(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return ResetMechanics_original();
+    return PHILInit_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b5cc0, ResetMechanics, ResetMechanics_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b5cc0, PHILInit, PHILInit_original)
 
 void C2_HOOK_FASTCALL PHILDisable(void) {
     C2V(gPHIL_enabled) = 1;
