@@ -255,10 +255,25 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00500590, SSDXStop, SSDXStop_original)
 void (C2_HOOK_FASTCALL * SSDXRelease_original)(void);
 void C2_HOOK_FASTCALL SSDXRelease(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SSDXRelease_original();
 #else
-#error "Not implemented"
+
+    if (C2V(gDirectDraw2) != NULL) {
+        dr_dprintf("SSDXStop(): Releasing DDraw2 interface...");
+        IDirectDraw2_Release(C2V(gDirectDraw2));
+        C2V(gDirectDraw2) = NULL;
+    }
+    if (C2V(gDirectDraw) != NULL) {
+        dr_dprintf("SSDXStop(): Releasing DDraw object...");
+        IDirectDraw_Release(C2V(gDirectDraw));
+        C2V(gDirectDraw) = NULL;
+    }
+    if (C2V(gDirectSound) != NULL) {
+        dr_dprintf("SSDXStop(): Releasing DSound object...");
+        IDirectSound_Release(C2V(gDirectSound));
+        C2V(gDirectSound) = NULL;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005006d0, SSDXRelease, SSDXRelease_original)
