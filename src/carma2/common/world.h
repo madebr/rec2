@@ -140,6 +140,16 @@ br_pixelmap* C2_HOOK_FASTCALL SwapPixelmapInStorage(br_pixelmap* pNew, br_pixelm
 
 int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm);
 
+int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixelmap* pMap);
+
+void C2_HOOK_FASTCALL HideStoredTextures(tBrender_storage* pStorage);
+
+void C2_HOOK_FASTCALL RevealStoredTransparentTextures(tBrender_storage* pStorage);
+
+void C2_HOOK_FASTCALL HideStoredOpaqueTextures(tBrender_storage* pStorage);
+
+void C2_HOOK_FASTCALL RevealStoredTextures(tBrender_storage* pStorage);
+
 void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
 
 void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);

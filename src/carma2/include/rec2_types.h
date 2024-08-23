@@ -849,7 +849,7 @@ typedef struct {
     br_pixelmap** shade_tables;
     br_material** materials;
     int* sounds;
-    br_material** materialProps; // FIXME: correct?
+    br_pixelmap** materialProps;
 } tBrender_storage;
 
 typedef struct {
