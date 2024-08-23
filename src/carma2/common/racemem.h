@@ -7,6 +7,6 @@
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tU8, gRace_memory, 1000);
 
-void C2_HOOK_FASTCALL ClearRaceMemory(void);
+void C2_HOOK_FASTCALL ClearAllRuntimeVariables(void);
 
 #endif /* C2_RACEMEM_H */
