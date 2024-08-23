@@ -419,6 +419,16 @@ void C2_HOOK_FASTCALL SSDXUnlockAttachedSurface(void) {
 }
 C2_HOOK_FUNCTION(0x00500b40, SSDXUnlockAttachedSurface)
 
+void C2_HOOK_FASTCALL SSDXBlitOrFlip(void) {
+
+    if (C2V(gUse_DirectDraw)) {
+        SSDXBlit();
+    } else {
+        IDirectDrawSurface_Flip(C2V(gPrimary_surface), NULL, DDFLIP_WAIT);
+    }
+}
+C2_HOOK_FUNCTION(0x00500b90, SSDXBlitOrFlip)
+
 void C2_HOOK_FASTCALL SSDXBlit(void) {
 
     IDirectDrawSurface_Blt(C2V(gPrimary_surface), &C2V(gSSDXWindowPos), C2V(gAttached_surface), &C2V(gSSDXRect), DDBLT_WAIT, NULL);
