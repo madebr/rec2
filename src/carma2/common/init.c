@@ -1381,7 +1381,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     C2V(gMap_view) = 1;
     InitFogificateMaterials();
     InitSmashTargets();
-    ClearRaceMemory();
+    ClearAllRuntimeVariables();
     ResetMechanics();
     /* SetUpTestObjects(); */
     ResetTargetLock();
