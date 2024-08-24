@@ -2192,16 +2192,16 @@ void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0960, DisposeSmashableTrackEnvironment, DisposeSmashableTrackEnvironment_original)
 
-void (C2_HOOK_FASTCALL * ResetSmashing_original)(void);
-void C2_HOOK_FASTCALL ResetSmashing(void) {
+void (C2_HOOK_FASTCALL * ReinitSmashing_original)(void);
+void C2_HOOK_FASTCALL ReinitSmashing(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    ResetSmashing_original();
+    ReinitSmashing_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f5750, ResetSmashing, ResetSmashing_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004f5750, ReinitSmashing, ReinitSmashing_original)
 
 void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void) {
 
