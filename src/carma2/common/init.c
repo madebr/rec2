@@ -69,6 +69,11 @@ void C2_HOOK_FASTCALL InitLightingEffects(void) {
 }
 C2_HOOK_FUNCTION(0x00486d80, InitLightingEffects)
 
+void C2_HOOK_FASTCALL KillLightingEffects(void) {
+
+}
+C2_HOOK_FUNCTION(0x00486d70, KillLightingEffects)
+
 void (C2_HOOK_FASTCALL * InitialiseDeathRace_original)(int pArgc, const char** pArgv);
 void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -1539,7 +1544,7 @@ void C2_HOOK_FASTCALL DisposeRace(void) {
     PossibleService();
     DisposeSoundSources();
     PossibleService();
-    // FUN_00486d70();
+    KillLightingEffects();
     DisposeOpponentsAndDrones();
     PossibleService();
     DisposePedestrians();
