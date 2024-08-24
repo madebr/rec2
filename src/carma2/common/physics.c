@@ -931,11 +931,11 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b5d40, MarkCollisionInfoAsProcessed, MarkCollisio
 
 void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info) {
 
-    FUN_004c2b20(pCollision_info, pCollision_info);
+    InternalPositionChildren(pCollision_info, pCollision_info);
 }
 C2_HOOK_FUNCTION(0x004c2b10, PositionChildren)
 
-void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot) {
+void C2_HOOK_FASTCALL InternalPositionChildren(tCollision_info *pParent, tCollision_info *pRoot) {
     if (!(pParent->flags & 0x400)) {
         pRoot = pParent;
     }
@@ -950,10 +950,10 @@ void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pR
             BrVector3Sub(&tv1, &tv1, &tv2);
             BrVector3Accumulate((br_vector3*)&child->transform_matrix.m[3], &tv1);
         }
-        FUN_004c2b20(child, pRoot);
+        InternalPositionChildren(child, pRoot);
     }
 }
-C2_HOOK_FUNCTION(0x004c2b20, FUN_004c2b20)
+C2_HOOK_FUNCTION(0x004c2b20, InternalPositionChildren)
 
 int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pParam, ...) {
     va_list va;
