@@ -3,8 +3,10 @@
 #include "animation.h"
 #include "errors.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "graphics.h"
 #include "loading.h"
+#include "platform.h"
 #include "skidmark.h"
 #include "smashing.h"
 #include "utility.h"
@@ -89,6 +91,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tRace_ped_spec*, gRace_pedestrian_specs, 0x00694138);
 C2_HOOK_VARIABLE_IMPLEMENT(tPedestrian*, gPedestrian_array, 0x00744808);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count, 0x007447d4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_nearness, 0x00694490);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTotal_count_smash_peds, 0x0074480c);
 
 void (C2_HOOK_FASTCALL * InitPedsForm_original)(tPedForms_vtable* pTable);
 void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
@@ -494,7 +497,11 @@ int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, float pMax_
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ce140, DoToPeds, DoToPeds_original)
 
+void (C2_HOOK_FASTCALL * ReadPedSpecs_original)(FILE* pF);
 void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    ReadPedSpecs_original(pF);
+#else
     int i;
     char s[256];
     char s2[256];
@@ -538,15 +545,15 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
         spec->field_0x10 = 0;
 
         /* Number of exclusion materials */
-        spec->count_exclusion_materials = GetAnInt(pF);
+        spec->exclusion.count_exclusion_materials = GetAnInt(pF);
 
-        spec->exclusion_materials = BrMemAllocate(spec->count_exclusion_materials * sizeof(tRace_spec_exclusion_material), kMem_misc_poly_ped);
+        spec->exclusion.exclusion_materials = BrMemAllocate(spec->exclusion.count_exclusion_materials * sizeof(tRace_spec_exclusion_material), kMem_misc_poly_ped);
         C2_HOOK_BUG_ON(sizeof(tRace_spec_exclusion_material) != 8);
 
         exclusions_ok_when_scared = 1;
 
-        for (j = 0; j < spec->count_exclusion_materials; j++) {
-            tRace_spec_exclusion_material* exclusion = &spec->exclusion_materials[j];
+        for (j = 0; j < spec->exclusion.count_exclusion_materials; j++) {
+            tRace_spec_exclusion_material* exclusion = &spec->exclusion.exclusion_materials[j];
 
             /* Exclusion flags (1 = OK when scared) */
             exclusion->flags = GetAnInt(pF);
@@ -560,18 +567,18 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
             }
         }
         if (exclusions_ok_when_scared) {
-            spec->exclusions_ok_when_scared = 1;
+            spec->exclusion.exclusions_ok_when_scared = 1;
         }
 
         /* Number of exception materials */
-        spec->count_exception_materials = GetAnInt(pF);
-        spec->exception_materials = BrMemAllocate(spec->count_exception_materials * sizeof(br_material*), kMem_misc_poly_ped);
+        spec->exclusion.count_exception_materials = GetAnInt(pF);
+        spec->exclusion.exception_materials = BrMemAllocate(spec->exclusion.count_exception_materials * sizeof(br_material*), kMem_misc_poly_ped);
 
-        for (j = 0; j < spec->count_exception_materials; j++) {
+        for (j = 0; j < spec->exclusion.count_exception_materials; j++) {
 
             GetAString(pF, s2);
-            spec->exception_materials[j] = BrMaterialFind(s2);
-            if (spec->exception_materials[j] == NULL) {
+            spec->exclusion.exception_materials[j] = BrMaterialFind(s2);
+            if (spec->exclusion.exception_materials[j] == NULL) {
                 FatalError(kFatalError_CannotFindPedSpawnMaterial_S, s2);
             }
         }
@@ -594,10 +601,11 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
         spec->spawn_material->identifier[7] = '?';
     }
 
-    C2V(gPedestrian_array) = BrMemAllocate(2000 * sizeof(tPedestrian), kMem_ped_array);
-    C2_HOOK_BUG_ON(sizeof(tPedestrian) != 84);
+    C2V(gPedestrian_array) = BrMemAllocate(PEDESTRIAN_MAX_COUNT * sizeof(tPedestrian), kMem_ped_array);
+    C2_HOOK_BUG_ON(sizeof(tPedestrian) != 0x54);
+#endif
 }
-C2_HOOK_FUNCTION(0x004ca9f0, ReadPedSpecs)
+C2_HOOK_FUNCTION_ORIGINAL(0x004ca9f0, ReadPedSpecs, ReadPedSpecs_original)
 
 tPed_character_instance* (C2_HOOK_FASTCALL * BuildCharacterInstance_original)(const char* pGroup_name, br_matrix34* pMat34);
 tPed_character_instance* C2_HOOK_FASTCALL BuildCharacterInstance(const char* pGroup_name, br_matrix34* pMat34) {
@@ -644,40 +652,246 @@ void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d3360, SetCharacterDirectionAR, SetCharacterDirectionAR_original)
 
+br_scalar C2_HOOK_FASTCALL AreaOfTriangle(br_vector3* pV0, br_vector3* pV1, br_vector3* pV2) {
+
+    return fabsf(pV0->v[0] * (pV1->v[2] - pV2->v[2]) + pV1->v[0] * (pV2->v[2] - pV0->v[2]) + pV2->v[0] * (pV0->v[2]  - pV1->v[2])) / 2.f;
+}
+
+void C2_HOOK_FASTCALL MakeRandomPointInTriangle(br_vector3* pDest, br_vector3* pV0, br_vector3* pV1, br_vector3* pV2) {
+    br_scalar alpha;
+    br_scalar beta;
+    br_scalar gamma;
+
+    alpha = SRandomBetween(0.1f, 0.9f);
+    beta = SRandomBetween(0.1f, 0.9f);
+    if (alpha + beta > 1.f) {
+        alpha = 1.f - alpha;
+        beta = 1.f - beta;
+    }
+    gamma = 1 - alpha - beta;
+    pDest->v[0] = gamma * pV0->v[0] + alpha * pV1->v[0] + beta * pV2->v[0];
+    pDest->v[1] = gamma * pV0->v[1] + alpha * pV1->v[1] + beta * pV2->v[1];
+    pDest->v[2] = gamma * pV0->v[2] + alpha * pV1->v[2] + beta * pV2->v[2];
+}
+
+void C2_HOOK_FASTCALL SetModelCallbacks(tPed_character_instance* pPed) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tPed_character_instance) != 0xec);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, peep, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_peep, bones, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_peep_bones, models, 0x0);
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(pPed->peep->bones->models) != 4);
+    for (i = 0; i < REC2_ASIZE(pPed->peep->bones->models); i++) {
+        int j;
+
+        C2_HOOK_BUG_ON(REC2_ASIZE(pPed->peep->bones->models[i].models) != 2);
+        for (j = 0; j < REC2_ASIZE(pPed->peep->bones->models[i].models); j++) {
+            br_model* model;
+
+            model = pPed->peep->bones->models[i].models[j];
+            if (model != NULL) {
+                model->flags |= BR_MODF_CUSTOM;
+                model->custom = TurnLimbsOnAndOff;
+            }
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL BuildPedestrian(tPedestrian* pPed, const char* pGroup_name, br_vector3* pPos, br_vector3* pDir, tPed_movement_spec* pMovement_spec, tRace_ped_exclusion_spec* pExclusion_spec) {
+    br_matrix34 mat;
+    char texture_name[32];
+    char material_name[32];
+    br_pixelmap* texture;
+    br_material* material;
+
+    BrMatrix34Identity(&mat);
+    BrVector3Copy((br_vector3*)mat.m[3], pPos);
+    pPed->character = BuildCharacterInstance(pGroup_name, &mat);
+    SetModelCallbacks(pPed->character);
+    c2_sprintf(texture_name, "%sB", pGroup_name);
+    texture = BrMapFind(texture_name);
+    if (texture == NULL) {
+        FatalError(kFatalError_CantFindPedTexture_S, texture_name);
+    }
+    c2_sprintf(material_name, "%s%d.MAT", pGroup_name, 1);
+    material = BrMaterialFind(material_name);
+    if (material != NULL) {
+        material->colour_map = texture;
+        BrMaterialUpdate(material, BR_MATU_COLOURMAP);
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, character, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, hit_points, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, action, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, movement_spec, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, exclusion_spec, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, pos, 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, speed_factor, 0x4c);
+
+    pPed->hit_points = 100;
+    pPed->movement_spec = pMovement_spec;
+    pPed->speed_factor = 1.f;
+    pPed->exclusion_spec = pExclusion_spec;
+    if (pMovement_spec->max_walk_speed_factor != 0.f) {
+        SetPedMove(pPed, 30, IRandomBetween((int)pMovement_spec->min_walk_speed_factor, (int)pMovement_spec->max_walk_speed_factor), 0, 0, 0, 0);
+    } else {
+        SetPedMove(pPed, 0, -1, 0, 0, 0, 0);
+    }
+    BrVector3Normalise(pDir, pDir);
+    SetCharacterDirectionAR(pPed->character, pDir, &C2V(y_unit_vector));
+    BrVector3Copy(&pPed->pos, pPos);
+}
+
 void (C2_HOOK_FASTCALL * SpawnPedsOnFace_original)(br_face *pFace, br_model *pModel);
 void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SpawnPedsOnFace_original(pFace, pModel);
 #else
-#error "Not implemented"
+    br_material* material;
+    tRace_ped_spec* ped_spec;
+    int i;
+    br_vector3 v0;
+    br_vector3 v1;
+    br_vector3 v2;
+    float fNew_ped_count;
+    int new_ped_count;
+
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        return;
+    }
+    if (C2V(gPed_cos_max_slope) >= pFace->n.v[1]) {
+        return;
+    }
+    material = pFace->material;
+    if (material == NULL) {
+        return;
+    }
+    if (material->identifier == NULL || c2_strlen(material->identifier) - 4 <= 7) {
+        return;
+    }
+    if (material->identifier[7] != '?') {
+        return;
+    }
+    if (C2V(gPed_count) >= PEDESTRIAN_MAX_COUNT) {
+        return;
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_ped_spec, movement, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_ped_spec, spawn_material, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_ped_spec, density, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_ped_spec, field_0x10, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_ped_spec, exclusion, 0x14);
+
+    ped_spec = NULL;
+    for (i = 0; i < C2V(gCount_race_pedestrian_specs); i++) {
+        ped_spec = &C2V(gRace_pedestrian_specs)[i];
+        if (ped_spec->spawn_material == material) {
+            break;
+        }
+    }
+
+#ifdef REC2_FIX_BUGS
+    if (ped_spec == NULL) {
+        PDFatalError("Could not find ped spec");
+    }
+#endif
+    BrVector3Copy(&v0, &pModel->vertices[pFace->vertices[0]].p);
+    BrVector3Copy(&v1, &pModel->vertices[pFace->vertices[1]].p);
+    BrVector3Copy(&v2, &pModel->vertices[pFace->vertices[2]].p);
+    if (ped_spec->density >= 0.f) {
+        fNew_ped_count = ped_spec->field_0x10 + WORLD_SCALE * WORLD_SCALE * AreaOfTriangle(&v0, &v1, &v2) * ped_spec->density / 1000.f;
+    } else {
+        fNew_ped_count = -ped_spec->density;
+    }
+    new_ped_count = (int)floorf(fNew_ped_count);
+
+    for (i = 0; i < new_ped_count; i++) {
+        char group_name[32];
+        int illegal_ped = 0;
+        br_vector3 ped_dir;
+        br_vector3 ped_pos;
+
+        if (C2V(gPed_count) >= PEDESTRIAN_MAX_COUNT) {
+            return;
+        }
+        c2_strcpy(group_name, ped_spec->group->members[IRandomBetween(0, ped_spec->group->count - 1)].name);
+        if (!C2V(gAnimalsOn)) {
+            int j;
+
+            for (j = 0; j < C2V(gPed_animal_count); j++) {
+                if (DRStricmp(C2V(gPed_animal_names)[j], group_name) == 0) {
+                    illegal_ped = 1;
+                }
+            }
+        }
+        if (illegal_ped) {
+            continue;
+        }
+        BrVector3Set(&ped_dir, SRandomPosNeg(1.f), 0.f, SRandomPosNeg(1.f));
+        MakeRandomPointInTriangle(&ped_pos, &v0, &v1, &v2);
+        BuildPedestrian(&C2V(gPedestrian_array)[C2V(gPed_count)], group_name, &ped_pos, &ped_dir,
+                        ped_spec->movement, &ped_spec->exclusion);
+
+        if (C2V(gCurrent_race).race_spec->race_type == kRaceType_SmashNPed) {
+            if (C2V(gCurrent_race).race_spec->options.smash_and_peds.ped_group_index == ped_spec->group - C2V(gPed_groups)) {
+                C2V(gPedestrian_array)[C2V(gPed_count)].flags |= 0x200;
+                AddSmashableRaceTarget(NULL, NULL, C2V(gPed_count));
+            }
+        } else if (C2V(gCurrent_race).race_spec->race_type == kRaceType_Peds) {
+            int smash_number = C2V(gCurrent_race).race_spec->options.smash_and_peds.var_smash_number;
+            if (smash_number >= 0) {
+                int j;
+                for (j = 0; j < smash_number; j++) {
+                    if (ped_spec->group - C2V(gPed_groups) == C2V(gCurrent_race).race_spec->options.smash_and_peds.var_smash_target) {
+                        C2V(gTotal_count_smash_peds) += 1;
+                        C2V(gPedestrian_array)[C2V(gPed_count)].flags |= 0x200;
+                        break;
+                    }
+                }
+            } else {
+                C2V(gTotal_count_smash_peds) += 1;
+                C2V(gPedestrian_array)[C2V(gPed_count)].flags |= 0x200;
+            }
+        }
+        C2V(gPed_count) += 1;
+    }
+    ped_spec->field_0x10 = fNew_ped_count - new_ped_count;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d2cc0, SpawnPedsOnFace, SpawnPedsOnFace_original)
 
+void (C2_HOOK_FASTCALL * FinishUpLoadingPeds_original)(void);
 void C2_HOOK_FASTCALL FinishUpLoadingPeds(void) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    FinishUpLoadingPeds_original();
+#else
     tPedestrian* new_pedestrians;
     int i;
 
     dr_dprintf("%d pedestrians, %d bytes each, total = %d bytes\n", C2V(gPed_count), sizeof(tRace_pedestrian), C2V(gPed_count) * sizeof(tRace_pedestrian));
-    C2_HOOK_BUG_ON(sizeof(tRace_pedestrian) != 320);
+    C2_HOOK_BUG_ON(sizeof(tRace_pedestrian) != 0x140);
 
     new_pedestrians = BrMemAllocate(C2V(gPed_count) * sizeof(tPedestrian), kMem_ped_array);
-    C2_HOOK_BUG_ON(sizeof(tPedestrian) != 84);
+    C2_HOOK_BUG_ON(sizeof(tPedestrian) != 0x54);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, character, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, ped, 0xe4);
 
     c2_memcpy(new_pedestrians, C2V(gPedestrian_array), C2V(gPed_count) * sizeof(tPedestrian));
-    C2_HOOK_BUG_ON(sizeof(tRace_pedestrian) != 320);
 
     BrMemFree(C2V(gPedestrian_array));
     C2V(gPedestrian_array) = new_pedestrians;
 
     for (i = 0; i < C2V(gPed_count); i++) {
 
-        C2V(gPedestrian_array)[i].race_ped->ped = &C2V(gPedestrian_array)[i];
-        C2_HOOK_BUG_ON(offsetof(tRace_pedestrian, ped) != 228);
+        C2V(gPedestrian_array)[i].character->ped = &C2V(gPedestrian_array)[i];
+        C2_HOOK_BUG_ON(offsetof(tRace_pedestrian, ped) != 0xe4);
     }
+#endif
 }
-C2_HOOK_FUNCTION(0x004d3520, FinishUpLoadingPeds)
+C2_HOOK_FUNCTION_ORIGINAL(0x004d3520, FinishUpLoadingPeds, FinishUpLoadingPeds_original)
 
 void (C2_HOOK_FASTCALL * DisposePedestrians_original)(void);
 void C2_HOOK_FASTCALL DisposePedestrians(void) {
