@@ -35,6 +35,8 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF);
 
 tPed_character_instance* C2_HOOK_FASTCALL BuildCharacterInstance(const char* pGroup_name, br_matrix34* pMat34);
 
+void C2_HOOK_CDECL TurnLimbsOnAndOff(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen);
+
 void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel);
 
 void C2_HOOK_FASTCALL FinishUpLoadingPeds(void);
