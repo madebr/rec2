@@ -190,7 +190,7 @@ void C2_HOOK_FASTCALL FixModelPointer(br_model* pModel, br_uint_16 pFlags) {
 }
 C2_HOOK_FUNCTION(0x00515fa0, FixModelPointer)
 
-void C2_HOOK_FASTCALL ProcessSmashableActorModel(br_actor* pActor) {
+void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
     int i;
 
     if (pActor->model == NULL || pActor->model->identifier == NULL) {
@@ -231,7 +231,7 @@ void C2_HOOK_FASTCALL ProcessSmashableActorModel(br_actor* pActor) {
         }
     }
 }
-C2_HOOK_FUNCTION(0x004f5cb0, ProcessSmashableActorModel)
+C2_HOOK_FUNCTION(0x004f5cb0, SetSmashableModel)
 
 intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
     unsigned int x;
@@ -288,7 +288,7 @@ intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
     } else {
         BrActorEnum(pActor, ProcessModelsCB, pTrack_spec);
     }
-    ProcessSmashableActorModel(pActor);
+    SetSmashableModel(pActor);
     return 0;
 }
 C2_HOOK_FUNCTION(0x0040cf10, ProcessModelsCB)
