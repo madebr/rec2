@@ -64,7 +64,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undef
 
 int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_info);
 
-void C2_HOOK_FASTCALL FUN_004c2b10(tCollision_info *pCollision_info);
+void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info);
 
 void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot);
 
