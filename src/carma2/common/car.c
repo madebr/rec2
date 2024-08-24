@@ -26,7 +26,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gMin_world_y, 0x00679360);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gUnknown_car_collision_info, 0x006793e4);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067939c, 0x0067939c);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWorld_callbacks, gWorld_callbacks, 0x0065cf78, {
     FUN_0041c1b0,
     FUN_0041e310,
     FUN_00414910,
@@ -90,10 +90,10 @@ int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec *pCar_spec, br_vector3 
         return 1;
     }
     C2V(gINT_0067939c) = 1;
-    r = FUN_00429070(pCar_spec->collision_info,
+    r = TestForObjectInSensiblePlace(pCar_spec->collision_info,
         C2V(gList_collision_infos),
         pVec3,
-        &C2V(gCar_callbacks));
+        &C2V(gWorld_callbacks));
     C2V(gINT_0067939c) = 0;
     return r;
 }

@@ -12,7 +12,7 @@ C2_HOOK_VARIABLE_DECLARE(br_scalar, gMin_world_y);
 C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gUnknown_car_collision_info);
 
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0067939c);
-C2_HOOK_VARIABLE_DECLARE(tCar_callbacks, gCar_callbacks);
+C2_HOOK_VARIABLE_DECLARE(tWorld_callbacks, gWorld_callbacks);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
