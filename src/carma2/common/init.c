@@ -1516,7 +1516,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00481830, InitRace, InitRace_original)
 
 void C2_HOOK_FASTCALL DisposeRace(void) {
 
-    DisposeMutantTail();
+    RemoveTail();
     PossibleService();
     DisposeSmashingAndExplosions();
     DisposeReplay();

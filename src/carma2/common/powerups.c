@@ -788,16 +788,16 @@ void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dde20, ProcessShitMines, ProcessShitMines_original)
 
-void (C2_HOOK_FASTCALL * DisposeMutantTail_original)(void);
-void C2_HOOK_FASTCALL DisposeMutantTail(void) {
+void (C2_HOOK_FASTCALL * RemoveTail_original)(void);
+void C2_HOOK_FASTCALL RemoveTail(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    DisposeMutantTail_original();
+    RemoveTail_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e06a0, DisposeMutantTail, DisposeMutantTail_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004e06a0, RemoveTail, RemoveTail_original)
 
 void (C2_HOOK_FASTCALL * CloseDownPowerUps_original)(void);
 void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
