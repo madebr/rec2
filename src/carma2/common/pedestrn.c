@@ -599,6 +599,17 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x004ca9f0, ReadPedSpecs)
 
+tPed_character_instance* (C2_HOOK_FASTCALL * BuildCharacterInstance_original)(const char* pGroup_name, br_matrix34* pMat34);
+tPed_character_instance* C2_HOOK_FASTCALL BuildCharacterInstance(const char* pGroup_name, br_matrix34* pMat34) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return BuildCharacterInstance_original(pGroup_name, pMat34);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004079a0, BuildCharacterInstance, BuildCharacterInstance_original)
+
 void (C2_HOOK_FASTCALL * SpawnPedsOnFace_original)(br_face *pFace, br_model *pModel);
 void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel) {
 
