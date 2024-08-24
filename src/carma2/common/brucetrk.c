@@ -310,6 +310,26 @@ void C2_HOOK_FASTCALL AllocateActorMatrix(tTrack_spec* pTrack_spec, tTrack_squar
     }
 }
 
+void AssertNonCars(br_actor** pNon_cars, int* pCount_non_cars, int* pTrack_count_non_cars, int* pTrack_capacity_non_cars) {
+    int i;
+    int count_nulls = 0;
+    int count_non_nulls = 0;
+
+    for (i = 0; i < *pCount_non_cars; i++) {
+
+        if (pNon_cars[i] == NULL) {
+            count_nulls += 1;
+        } else {
+            pNon_cars[count_non_nulls] = pNon_cars[i];
+            c2_sprintf(&pNon_cars[count_non_nulls]->identifier[4], "%04d", count_non_nulls);
+            count_non_nulls += 1;
+        }
+    }
+    *pTrack_count_non_cars -= count_nulls;
+    *pTrack_capacity_non_cars -= count_nulls;
+    *pCount_non_cars -= count_nulls;
+}
+
 void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
     const char* identifier;
     char s[256];
@@ -319,9 +339,6 @@ void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
     br_scalar extra_room;
     br_bounds bounds;
     int count;
-    int i;
-    int count_null_non_cars;
-    int count_non_null_non_cars;
 
     /* e.g. newcity1: "PP01 16 16 1.000 1126" */
     identifier = pTrack_spec->the_actor->identifier;
@@ -372,21 +389,7 @@ void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
         pTrack_spec->columns[0][0].actor_0x0 = pTrack_spec->the_actor;
     }
 
-    count_null_non_cars = 0;
-    count_non_null_non_cars = 0;
-    for (i = 0; i < pTrack_spec->count_non_cars; i++) {
-
-        if (pTrack_spec->non_car_list[i] == NULL) {
-            count_null_non_cars += 1;
-        } else {
-            pTrack_spec->non_car_list[count_non_null_non_cars] = pTrack_spec->non_car_list[i];
-            c2_sprintf(&pTrack_spec->non_car_list[count_non_null_non_cars]->identifier[4], "%04d", count_non_null_non_cars);
-            count_non_null_non_cars += 1;
-        }
-    }
-    C2V(gMax_count_non_cars) -= count_null_non_cars;
-    C2V(gCount_track_non_cars) -= count_null_non_cars;
-    pTrack_spec->count_non_cars -= count_null_non_cars;
+    AssertNonCars(pTrack_spec->non_car_list, &pTrack_spec->count_non_cars, &C2V(gCount_track_non_cars), &C2V(gMax_count_non_cars));
 }
 C2_HOOK_FUNCTION(0x0040cc50, ExtractColumns)
 
