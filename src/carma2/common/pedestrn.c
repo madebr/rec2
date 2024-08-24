@@ -633,6 +633,17 @@ void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pAction, int pWalk_speed
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cbcd0, SetPedMove, SetPedMove_original)
 
+void (C2_HOOK_FASTCALL * SetCharacterDirectionAR_original)(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp);
+void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetCharacterDirectionAR_original(pPed, pDir, pUp);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d3360, SetCharacterDirectionAR, SetCharacterDirectionAR_original)
+
 void (C2_HOOK_FASTCALL * SpawnPedsOnFace_original)(br_face *pFace, br_model *pModel);
 void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel) {
 
