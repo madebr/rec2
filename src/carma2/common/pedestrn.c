@@ -483,16 +483,16 @@ void C2_HOOK_FASTCALL InitNapalmNolts(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cb630, InitNapalmNolts, InitBurningPeds_original)
 
-int (C2_HOOK_FASTCALL * ForEachMortalPedestrianInSight_original)(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback);
-int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback) {
+int (C2_HOOK_FASTCALL * DoToPeds_original)(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback);
+int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return ForEachMortalPedestrianInSight_original(pCar_spec, pOnly_alive, pMax_distance, pParam_4, pData, pCallback);
+    return DoToPeds_original(pCar_spec, pOnly_alive, pMax_distance, pParam_4, pData, pCallback);
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ce140, ForEachMortalPedestrianInSight, ForEachMortalPedestrianInSight_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004ce140, DoToPeds, DoToPeds_original)
 
 void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
     int i;
