@@ -192,7 +192,7 @@ int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial);
 
 void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void);
 
-void C2_HOOK_FASTCALL ResetSmashing(void);
+void C2_HOOK_FASTCALL ReinitSmashing(void);
 
 void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void);
 
