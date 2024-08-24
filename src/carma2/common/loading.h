@@ -431,7 +431,7 @@ void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 void C2_HOOK_FASTCALL InitialiseAIWorldForRace(tRace_info* pRace_info);
 
-void C2_HOOK_FASTCALL DisposeOpponentsAndDrones(void);
+void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void);
 
 void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info);
 
