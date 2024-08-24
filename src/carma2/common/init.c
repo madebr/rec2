@@ -1384,7 +1384,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     ClearAllRuntimeVariables();
     PHILInit();
     SetUpTestObjects();
-    ResetTargetLock();
+    InitTargetLock();
     ResetSmashing();
     FUN_004f0430();  /* InitRepairAnimations() */
     ResetExplosions();
