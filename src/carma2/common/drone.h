@@ -53,7 +53,7 @@ void C2_HOOK_FASTCALL InitDrones(void);
 
 void C2_HOOK_FASTCALL FreeThingForm(void* pData);
 
-void C2_HOOK_FASTCALL DisposeDrones(void);
+void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void);
 
 void C2_HOOK_FASTCALL ProcessDrones(void);
 

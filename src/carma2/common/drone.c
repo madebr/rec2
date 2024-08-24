@@ -224,7 +224,7 @@ void C2_HOOK_FASTCALL FreeThingForm(void* pData) {
 }
 C2_HOOK_FUNCTION(0x004c5e70, FreeThingForm)
 
-void C2_HOOK_FASTCALL DisposeDrones(void) {
+void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void) {
     int i;
 
     if (C2V(gCount_drones) == 0) {
@@ -277,7 +277,7 @@ void C2_HOOK_FASTCALL DisposeDrones(void) {
     C2V(gDrone_path_nodes) = NULL;
     C2V(gCount_drone_path_nodes) = 0;
 }
-C2_HOOK_FUNCTION(0x0044fc10, DisposeDrones)
+C2_HOOK_FUNCTION(0x0044fc10, DisposeDronesRaceStuff)
 
 void (C2_HOOK_FASTCALL * ProcessDrones_original)(void);
 void C2_HOOK_FASTCALL ProcessDrones(void) {
