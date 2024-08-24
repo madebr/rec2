@@ -37,7 +37,7 @@ void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex);
 
 void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex);
 
-void C2_HOOK_FASTCALL RenderTintedActors(void);
+void C2_HOOK_FASTCALL RenderTintedPolys(void);
 
 void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue);
 
