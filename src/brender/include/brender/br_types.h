@@ -687,7 +687,7 @@ typedef br_boolean C2_HOOK_CDECL br_outfcty_enum_cbfn(char*, br_outfcty_desc*, v
 typedef struct br_actor br_actor;
 typedef struct br_model br_model;
 typedef struct br_material br_material;
-typedef void br_model_custom_cbfn(br_actor*, br_model*, br_material*, void*, br_uint_8, int);
+typedef void C2_HOOK_CDECL br_model_custom_cbfn(br_actor*, br_model*, br_material*, void*, br_uint_8, int);
 typedef int br_fmt_report_cbfn(char*);
 typedef struct br_matrix4 br_matrix4;
 typedef void br_renderbounds_cbfn(br_actor*, br_model*, br_material*, void*, br_uint_8, br_matrix4*, br_int_32*);

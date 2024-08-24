@@ -610,6 +610,18 @@ tPed_character_instance* C2_HOOK_FASTCALL BuildCharacterInstance(const char* pGr
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004079a0, BuildCharacterInstance, BuildCharacterInstance_original)
 
+void (C2_HOOK_CDECL * TurnLimbsOnAndOff_original)(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen);
+void C2_HOOK_CDECL TurnLimbsOnAndOff(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen) {
+
+#if defined(C2_HOOKS_ENABLED)
+
+    TurnLimbsOnAndOff_original(actor, model, material, render_data, style, on_screen);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d34e0, TurnLimbsOnAndOff, TurnLimbsOnAndOff_original)
+
 void (C2_HOOK_FASTCALL * SpawnPedsOnFace_original)(br_face *pFace, br_model *pModel);
 void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel) {
 
