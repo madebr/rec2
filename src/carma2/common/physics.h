@@ -80,7 +80,7 @@ void C2_HOOK_FASTCALL AddCollisionInfoChild(tCollision_info* pParent, tCollision
 
 int C2_HOOK_FASTCALL PhysicsObjectRecurse(tCollision_info* pCollision_info, tEnumCollision_cbfn* pCallback, void* pUser_data);
 
-int C2_HOOK_FASTCALL FUN_00429070(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tCar_callbacks* pCar_callbacks);
+int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tCar_callbacks* pCar_callbacks);
 
 tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefined4 pArg2, float pMass);
 

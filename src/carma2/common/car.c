@@ -90,7 +90,7 @@ int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec *pCar_spec, br_vector3 
         return 1;
     }
     C2V(gINT_0067939c) = 1;
-    r = FUN_00429070(pCar_spec->collision_info,
+    r = TestForObjectInSensiblePlace(pCar_spec->collision_info,
         C2V(gList_collision_infos),
         pVec3,
         &C2V(gCar_callbacks));
