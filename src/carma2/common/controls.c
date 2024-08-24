@@ -1728,7 +1728,7 @@ void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec) {
         }
         FlipUpCollisionInfo(pCar_spec->collision_info);
         PositionChildren(pCar_spec->collision_info);
-        for (j = 0; !FUN_0041fe50(pCar_spec, &p) && j < 10; j++) {
+        for (j = 0; !TestForCarInSensiblePlace(pCar_spec, &p) && j < 10; j++) {
             BrVector3InvScale(&p, &p, 2.f * WORLD_SCALE);
             BrVector3Accumulate(&pCar_spec->car_master_actor->t.t.translate.t, &p);
             BrVector3Copy((br_vector3*)pCar_spec->collision_info->transform_matrix.m[3], &pCar_spec->car_master_actor->t.t.translate.t);
