@@ -583,11 +583,11 @@ void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPositi
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d8350, SetTintedFromSpecialVolume, SetTintedFromSpecialVolume_original)
 
-void (C2_HOOK_FASTCALL * UpdateTinted_original)(int pIndex);
-void C2_HOOK_FASTCALL UpdateTinted(int pIndex) {
+void (C2_HOOK_FASTCALL * ProcessTintedPoly_original)(int pIndex);
+void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    UpdateTinted_original(pIndex);
+    ProcessTintedPoly_original(pIndex);
 #else
 
     if (!C2V(gTintedPolys)[pIndex].used) {
@@ -639,7 +639,7 @@ void C2_HOOK_FASTCALL UpdateTinted(int pIndex) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004d84a0, UpdateTinted, UpdateTinted_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004d84a0, ProcessTintedPoly, ProcessTintedPoly_original)
 
 void C2_HOOK_FASTCALL TintedAnimateSawToothColor(int pIndex) {
 

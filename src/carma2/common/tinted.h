@@ -45,7 +45,7 @@ void C2_HOOK_FASTCALL ResetTintedVertices(int pTintedIndex, int x0, int y0, int 
 
 void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPosition);
 
-void C2_HOOK_FASTCALL UpdateTinted(int pIndex);
+void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex);
 
 void C2_HOOK_FASTCALL TintedAnimateSawToothColor(int pIndex);
 
