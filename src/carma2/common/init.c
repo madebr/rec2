@@ -1545,7 +1545,7 @@ void C2_HOOK_FASTCALL DisposeRace(void) {
     DisposeSoundSources();
     PossibleService();
     KillLightingEffects();
-    DisposeOpponentsAndDrones();
+    DisposeAIWorldRaceStuff();
     PossibleService();
     DisposePedestrians();
     PossibleService();
