@@ -33,6 +33,8 @@ int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, float pMax_
 
 void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF);
 
+tPed_character_instance* C2_HOOK_FASTCALL BuildCharacterInstance(const char* pGroup_name, br_matrix34* pMat34);
+
 void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel);
 
 void C2_HOOK_FASTCALL FinishUpLoadingPeds(void);

@@ -2931,6 +2931,27 @@ typedef struct {
     br_material** exception_materials;
 } tRace_ped_spec;
 
+typedef struct {
+    br_model* models[2];
+} tPed_peeps_bone_models;
+
+typedef struct {
+    tPed_peeps_bone_models models[4];
+    undefined field_0x20[0x1c];
+} tPed_peep_bones;
+
+typedef struct {
+    undefined field_0x00[0x2c];
+    tPed_peep_bones* bones;
+    undefined field_0x30[0x28];
+} tPed_peep;
+
+typedef struct {
+    tPed_peep* peep;
+    undefined field_0x04[0xe4];
+    tPedestrian* ped;
+} tPed_character_instance;
+
 typedef struct tPedestrian {
     tRace_pedestrian* race_ped;
     undefined field_0x0[80];
