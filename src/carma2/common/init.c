@@ -1519,7 +1519,7 @@ void C2_HOOK_FASTCALL DisposeRace(void) {
     RemoveTail();
     PossibleService();
     CleanUpSmashStuff();
-    DisposeReplay();
+    DisposeActionReplay();
     PossibleService();
     CloseDownPowerUps();
     PossibleService();
