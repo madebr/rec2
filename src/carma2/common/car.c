@@ -83,7 +83,7 @@ void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 p
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041fc60, SetCarSuspGiveAndHeight, SetCarSuspGiveAndHeight_original)
 
-int C2_HOOK_FASTCALL FUN_0041fe50(tCar_spec *pCar_spec, br_vector3 *pVec3) {
+int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec *pCar_spec, br_vector3 *pVec3) {
     int r;
 
     if (!C2V(gProgram_state).racing) {
@@ -97,7 +97,7 @@ int C2_HOOK_FASTCALL FUN_0041fe50(tCar_spec *pCar_spec, br_vector3 *pVec3) {
     C2V(gINT_0067939c) = 0;
     return r;
 }
-C2_HOOK_FUNCTION(0x0041fe50, FUN_0041fe50)
+C2_HOOK_FUNCTION(0x0041fe50, TestForCarInSensiblePlace)
 
 void (C2_HOOK_FASTCALL * PanningExternalCamera_original)(tCar_spec* c, tU32 pTime);
 void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime) {
