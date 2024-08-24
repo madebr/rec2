@@ -597,11 +597,11 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
             TurnTintedPolyOn(C2V(gCursor_tinted_bottom));
             TurnTintedPolyOn(C2V(gCursor_tinted_right));
             TurnTintedPolyOn(C2V(gCursor_tinted_center));
-            UpdateTinted(C2V(gCursor_tinted_top));
-            UpdateTinted(C2V(gCursor_tinted_left));
-            UpdateTinted(C2V(gCursor_tinted_bottom));
-            UpdateTinted(C2V(gCursor_tinted_right));
-            UpdateTinted(C2V(gCursor_tinted_center));
+            ProcessTintedPoly(C2V(gCursor_tinted_top));
+            ProcessTintedPoly(C2V(gCursor_tinted_left));
+            ProcessTintedPoly(C2V(gCursor_tinted_bottom));
+            ProcessTintedPoly(C2V(gCursor_tinted_right));
+            ProcessTintedPoly(C2V(gCursor_tinted_center));
             RenderTintedPolys();
             TurnTintedPolyOff(C2V(gCursor_tinted_top));
             TurnTintedPolyOff(C2V(gCursor_tinted_left));
