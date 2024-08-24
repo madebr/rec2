@@ -52,7 +52,7 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairCar(void);
 
-void C2_HOOK_FASTCALL FUN_0043b8a0(tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec);
 
 void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, undefined4 pArg2, float pDamage);
 
