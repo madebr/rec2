@@ -18,6 +18,14 @@ C2_HOOK_VARIABLE_DECLARE(int, gDisableTiffConversion);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gCurrent_load_directory, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gCurrent_load_name, 256);
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gDefaultCar, 32);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gBasic_car_name, 32);
+C2_HOOK_VARIABLE_DECLARE(int, gGoreLevel);
+C2_HOOK_VARIABLE_DECLARE(int, gAnimalsOn);
+C2_HOOK_VARIABLE_DECLARE(int, gFlameThrowerOn);
+C2_HOOK_VARIABLE_DECLARE(int, gMinesOn);
+C2_HOOK_VARIABLE_DECLARE(int, gDronesOff);
+
 C2_HOOK_VARIABLE_DECLARE(tSpecial_volume, gDefault_water_spec_vol);
 
 C2_HOOK_VARIABLE_DECLARE(char*, gPedsFolder);

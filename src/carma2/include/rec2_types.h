@@ -10,6 +10,8 @@
 
 #define kMax_headup_detail_level 5
 
+#define PEDESTRIAN_MAX_COUNT 2000
+
 typedef char tPath_name[256];
 
 typedef unsigned char tU8;
@@ -2918,17 +2920,21 @@ typedef struct {
 } tRace_spec_exclusion_material;
 
 typedef struct {
-    tPed_movement_spec* movement;
-    tPed_group_spec* group;
-    br_material* spawn_material;
-    float density; /* peds per 100 square meters */
-    undefined4 field_0x10;
     tU8 count_exclusion_materials;
     tU8 count_exception_materials;
     tU8 exclusions_ok_when_scared;
     undefined field8_0x17;
-    tRace_spec_exclusion_material* exclusion_materials;
-    br_material** exception_materials;
+    tRace_spec_exclusion_material *exclusion_materials;
+    br_material **exception_materials;
+} tRace_ped_exclusion_spec;
+
+typedef struct {
+    tPed_movement_spec* movement;
+    tPed_group_spec* group;
+    br_material* spawn_material;
+    float density; /* peds per 100 square meters */
+    float field_0x10;
+    tRace_ped_exclusion_spec exclusion;
 } tRace_ped_spec;
 
 typedef struct {
@@ -2948,13 +2954,38 @@ typedef struct {
 
 typedef struct {
     tPed_peep* peep;
-    undefined field_0x04[0xe4];
+    undefined field_0x04[0xe0];
     tPedestrian* ped;
+    undefined field_0xe8[0x4];
 } tPed_character_instance;
 
+typedef enum {
+    ePed_action_walking = 0,
+    ePed_action_running = 1,
+    ePed_action_panicking = 2,
+    ePed_action_impacting = 5,
+    ePed_action_getting_up = 4,
+    ePed_action_falling = 3,
+    ePed_action_dead = 6,
+} tPed_action;
+
 typedef struct tPedestrian {
-    tRace_pedestrian* race_ped;
-    undefined field_0x0[80];
+    tPed_character_instance* character;
+    tU8 hit_points;
+    undefined field_0x05;
+    undefined field_0x06;
+    undefined field_0x07;
+    tU16 flags;
+    undefined field_0x0a;
+    undefined field_0x0b;
+    undefined4 field_0x0c;
+    tPed_action action;
+    tPed_movement_spec* movement_spec;
+    tRace_ped_exclusion_spec* exclusion_spec;
+    br_vector3 pos;
+    undefined field_0x1c[36];
+    float speed_factor;
+    undefined4 field_0x50;
 } tPedestrian;
 
 typedef struct tRace_pedestrian {
