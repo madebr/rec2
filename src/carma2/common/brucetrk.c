@@ -49,7 +49,7 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
         face = &pModel->faces[i];
 
         SpawnPedsOnFace(face, pModel);
-        if (MaterialIsSmashableTrigger(face->material)) {
+        if (SmashFaceMustBeUpdateable(face->material)) {
             if (C2V(gMr_blendy) == NULL) {
                 C2V(gMr_blendy) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
                 C2V(gMr_blendy)->render_style = BR_RSTYLE_FACES;
