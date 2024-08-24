@@ -1170,3 +1170,9 @@ float C2_HOOK_STDCALL FRandomPosNeg(float pN) {
     return FRandomBetween(-pN, pN);
 }
 C2_HOOK_FUNCTION(0x005135e0, FRandomPosNeg)
+
+br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
+
+    return SRandomBetween(-pN, pN);
+}
+C2_HOOK_FUNCTION(0x00513650, SRandomPosNeg)
