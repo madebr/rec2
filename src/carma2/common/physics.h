@@ -64,7 +64,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undef
 
 void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info);
 
-void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot);
+void C2_HOOK_FASTCALL InternalPositionChildren(tCollision_info *pParent, tCollision_info *pRoot);
 
 int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pParam, ...);
 
