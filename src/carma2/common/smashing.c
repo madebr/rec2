@@ -161,16 +161,16 @@ void C2_HOOK_FASTCALL MungeSmashMaterialNames(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0bc0, MungeSmashMaterialNames, PrepareSmashableTrackItemIdentifiers_original)
 
-void (C2_HOOK_FASTCALL * DisposeSmashingAndExplosions_original)(void);
-void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void) {
+void (C2_HOOK_FASTCALL * CleanUpSmashStuff_original)(void);
+void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    DisposeSmashingAndExplosions_original();
+    CleanUpSmashStuff_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f02b0, DisposeSmashingAndExplosions,DisposeSmashingAndExplosions_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004f02b0, CleanUpSmashStuff,CleanUpSmashStuff_original)
 
 void (C2_HOOK_FASTCALL * MungeGlassFragments_original)(void);
 void C2_HOOK_FASTCALL MungeGlassFragments(void) {
