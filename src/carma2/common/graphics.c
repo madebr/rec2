@@ -602,7 +602,7 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
             UpdateTinted(C2V(gCursor_tinted_bottom));
             UpdateTinted(C2V(gCursor_tinted_right));
             UpdateTinted(C2V(gCursor_tinted_center));
-            RenderTintedActors();
+            RenderTintedPolys();
             TurnTintedPolyOff(C2V(gCursor_tinted_top));
             TurnTintedPolyOff(C2V(gCursor_tinted_left));
             TurnTintedPolyOff(C2V(gCursor_tinted_bottom));

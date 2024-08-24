@@ -480,10 +480,10 @@ void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
 }
 C2_HOOK_FUNCTION(0x004d8250, TurnTintedPolyOff)
 
-void C2_HOOK_FASTCALL RenderTintedActors(void) {
+void C2_HOOK_FASTCALL RenderTintedPolys(void) {
     BrZbsSceneRender(C2V(gTintedPolyCamera), C2V(gTintedPolyCamera), C2V(gBack_screen), C2V(gDepth_buffer));
 }
-C2_HOOK_FUNCTION(0x004d8290, RenderTintedActors)
+C2_HOOK_FUNCTION(0x004d8290, RenderTintedPolys)
 
 void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {
     int red_differs;
