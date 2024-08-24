@@ -2157,8 +2157,8 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0450, ReadSmashableEnvironment, LoadSmashableTrackEnvironment_original)
 
-int (C2_HOOK_FASTCALL * MaterialIsSmashableTrigger_original)(br_material *pMaterial);
-int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial) {
+int (C2_HOOK_FASTCALL * SmashFaceMustBeUpdateable_original)(br_material *pMaterial);
+int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material *pMaterial) {
     int i;
 
     for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
@@ -2169,17 +2169,17 @@ int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial) {
                 || spec->mode == kSmashableMode_Remove
                 || spec->mode == kSmashableMode_ReplaceModel)) {
 #if defined(C2_HOOKS_ENABLED)
-            C2_HOOK_ASSERT(MaterialIsSmashableTrigger_original(pMaterial) == 1);
+            C2_HOOK_ASSERT(SmashFaceMustBeUpdateable_original(pMaterial) == 1);
 #endif
             return 1;
         }
     }
 #if defined(C2_HOOKS_ENABLED)
-    C2_HOOK_ASSERT(MaterialIsSmashableTrigger_original(pMaterial) == 0);
+    C2_HOOK_ASSERT(SmashFaceMustBeUpdateable_original(pMaterial) == 0);
 #endif
     return 0;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f5470, MaterialIsSmashableTrigger, MaterialIsSmashableTrigger_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004f5470, SmashFaceMustBeUpdateable, SmashFaceMustBeUpdateable_original)
 
 void (C2_HOOK_FASTCALL * DisposeSmashableTrackEnvironment_original)(void);
 void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void) {

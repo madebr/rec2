@@ -188,7 +188,7 @@ void C2_HOOK_FASTCALL ReadSideEffects(FILE* pF, tSide_effects* pSide_effects);
 
 void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath);
 
-int C2_HOOK_FASTCALL MaterialIsSmashableTrigger(br_material *pMaterial);
+int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material *pMaterial);
 
 void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void);
 
