@@ -2837,7 +2837,7 @@ typedef struct tCollision_info {
     tU8 flags_0x238;
     tU8 field_0x239;
     undefined field_0x23a[2];
-    void* owner; /* points to tCollision_info_owner (used in SetCollisionInfoParam) */
+    void* owner; /* points to tCollision_info_owner (used in PHILSetObjectProperty) */
     undefined* field_0x240;
     br_vector3 water_normal;
     br_scalar water_d; /* Created by retype action */
