@@ -48,7 +48,7 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
     for (i = 0; i < pModel->nfaces; i++) {
         face = &pModel->faces[i];
 
-        MaybeSpawnPedestrian(face, pModel);
+        SpawnPedsOnFace(face, pModel);
         if (MaterialIsSmashableTrigger(face->material)) {
             if (C2V(gMr_blendy) == NULL) {
                 C2V(gMr_blendy) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
