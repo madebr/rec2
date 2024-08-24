@@ -1392,7 +1392,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     ClearHeadups();
     ResetOilSpills();
     HideSkids();
-    CameraIsMovingReallyFast();
+    ResetPedNearness();
     PossibleService();
     ResetPeds();
     BuildColourTable(C2V(gRender_palette));
