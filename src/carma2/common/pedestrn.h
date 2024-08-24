@@ -29,7 +29,7 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void);
 
 void C2_HOOK_FASTCALL InitNapalmNolts(void);
 
-int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback);
+int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, float pMax_distance, int pParam_4, void* pData, tForEachPedestrian_cbfn* pCallback);
 
 void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF);
 
