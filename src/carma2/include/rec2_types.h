@@ -95,6 +95,14 @@ typedef int tJoy_array[8];
 typedef int tKey_array[151];
 
 typedef struct {
+    br_matrix34* mat;
+    br_bounds original_bounds;
+    br_vector3 box_centre;
+    br_scalar radius;
+    br_bounds real_bounds;
+} tBounds;
+
+typedef struct {
     int x;
     int y;
 } tMouse_coord;
@@ -3395,16 +3403,16 @@ typedef struct {
     tU8 data[];
 } tNet_message_chunk_raw;
 
-typedef struct {
-    void* callback_0x00;
-    void* callback_0x04;
-    void* callback_0x08;
-    void* callback_0x0c;
-    void* callback_0x10;
-    void* callback_0x14;
-    void* callback_0x18;
-    void* callback_0x1c;
-} tCar_callbacks;
+typedef struct tWorld_callbacks {
+    int (C2_HOOK_FASTCALL * process_forces)(void*, float*, int arg3);
+    int (C2_HOOK_FASTCALL * process_joint_forces)(undefined4, undefined4, undefined4);
+    void (C2_HOOK_FASTCALL * new_face_list)(tCollision_info*, undefined4 *);
+    int (C2_HOOK_FASTCALL * find_faces_in_box)(tBounds*, tFace_ref*, int, struct tWorld_callbacks*);
+    tNon_car_spec* (C2_HOOK_FASTCALL * pull_actor_from_world)(br_actor*);
+    void (C2_HOOK_FASTCALL * stop_groovidelic)(br_actor*);
+    float (C2_HOOK_FASTCALL * get_friction_from_face)(void*);
+    void (C2_HOOK_FASTCALL * activate_passive)(tCollision_info*);
+} tWorld_callbacks;
 
 typedef struct {
     br_actor* actor;
