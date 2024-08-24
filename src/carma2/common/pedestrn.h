@@ -9,7 +9,7 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(int, gPed_count);
-C2_HOOK_VARIABLE_DECLARE(int, gCamera_is_teleporting);
+C2_HOOK_VARIABLE_DECLARE(int, gPed_nearness);
 
 void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable);
 
@@ -41,7 +41,7 @@ void C2_HOOK_FASTCALL DisposePedestrians(void);
 
 void C2_HOOK_FASTCALL ResetPeds(void);
 
-void C2_HOOK_FASTCALL CameraIsMovingReallyFast(void);
+void C2_HOOK_FASTCALL ResetPedNearness(void);
 
 void C2_HOOK_FASTCALL LastChanceForPedEffects(void);
 
