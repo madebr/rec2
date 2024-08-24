@@ -177,7 +177,7 @@ void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
 void C2_HOOK_FASTCALL KillSplashScreen(void);
 
-void C2_HOOK_FASTCALL ResetTargetLock(void);
+void C2_HOOK_FASTCALL InitTargetLock(void);
 
 void C2_HOOK_FASTCALL SetIntegerMapRenders(void);
 
