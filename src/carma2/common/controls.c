@@ -1684,7 +1684,7 @@ void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec) {
     }
 
     if (pCar_spec->car_crush_spec != NULL && pCar_spec->car_crush_spec->field_0x4b8) {
-        FUN_0043b8a0(pCar_spec);
+        WeldCar(pCar_spec);
     }
     SetCollisionInfoChildsDoNothing(pCar_spec->collision_info, 0);
     EnableCar(pCar_spec);
