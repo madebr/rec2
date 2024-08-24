@@ -3294,7 +3294,7 @@ typedef struct {
     void *field_0x0;
     undefined4 field_0x4;
     undefined4 field_0x8;
-} tUnknown_0x006a7fc8;
+} tRepair_animation;
 
 typedef enum {
     eNet_message_chunk_type_toggle_doors = 0x2c,

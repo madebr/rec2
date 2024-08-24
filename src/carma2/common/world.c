@@ -105,7 +105,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_green, 0x0074cf2c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_blue, 0x0074cad0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gNon_car_spec_indices, 100, 0x0079ef40);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gNon_car_indices, 88, 0x0079ed30);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tUnknown_0x006a7fc8, gUnknown_0x006a7fc8, 25, 0x006a7fc8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tRepair_animation, gRepair_animations, 25, 0x006a7fc8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSpecial_effects_boundary_choices, 4, 0x00660258, {
     "BOX",
     "PLANE",
@@ -1916,14 +1916,14 @@ void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x00486dc0, ReadGlobalLightingInfo)
 
-void C2_HOOK_FASTCALL FUN_004f0430(void) {
+void C2_HOOK_FASTCALL InitRepairAnimations(void) {
     int i;
 
-    C2_HOOK_BUG_ON(sizeof(tUnknown_0x006a7fc8) != 0xc);
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gUnknown_0x006a7fc8)) != 25);
+    C2_HOOK_BUG_ON(sizeof(tRepair_animation) != 0xc);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gRepair_animations)) != 25);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gUnknown_0x006a7fc8)); i++) {
-        C2V(gUnknown_0x006a7fc8)[i].field_0x0 = 0;
+    for (i = 0; i < REC2_ASIZE(C2V(gRepair_animations)); i++) {
+        C2V(gRepair_animations)[i].field_0x0 = 0;
     }
 }
 
