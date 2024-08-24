@@ -53,6 +53,11 @@ void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError) {
 }
 C2_HOOK_FUNCTION(0x004b5990, DoPhysicsError)
 
+void C2_HOOK_FASTCALL SetUpTestObjects(void) {
+
+}
+C2_HOOK_FUNCTION(0x004b5aa0, SetUpTestObjects)
+
 void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn *pError_cbfn) {
 
     C2V(gPhysics_error_cb) = pError_cbfn;
