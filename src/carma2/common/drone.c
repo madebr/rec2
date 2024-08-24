@@ -141,10 +141,10 @@ int C2_HOOK_FASTCALL ReallyAddDroneToPHIL(tDrone_spec* pDrone) {
     if (MarkCollisionInfoAsProcessed(&pDrone->collision_info)) {
         return 0;
     }
-    SetCollisionInfoParam(&pDrone->collision_info, 0, 0, 1.875);
-    SetCollisionInfoParam(&pDrone->collision_info, 3, 1);
-    SetCollisionInfoParam(&pDrone->collision_info, 7, 1);
-    SetCollisionInfoParam(&pDrone->collision_info, 6, 1);
+    PHILSetObjectProperty(&pDrone->collision_info, 0, 0, 1.875);
+    PHILSetObjectProperty(&pDrone->collision_info, 3, 1);
+    PHILSetObjectProperty(&pDrone->collision_info, 7, 1);
+    PHILSetObjectProperty(&pDrone->collision_info, 6, 1);
     return 1;
 }
 C2_HOOK_FUNCTION(0x00451650, ReallyAddDroneToPHIL)

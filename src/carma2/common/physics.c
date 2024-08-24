@@ -955,7 +955,7 @@ void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pR
 }
 C2_HOOK_FUNCTION(0x004c2b20, FUN_004c2b20)
 
-int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pParam, ...) {
+int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pParam, ...) {
     va_list va;
     tCollision_info_owner* owner;
 
@@ -1043,7 +1043,7 @@ int C2_HOOK_CDECL SetCollisionInfoParam(tCollision_info *pCollision_info, int pP
     va_end(va);
     return 0;
 }
-C2_HOOK_FUNCTION(0x004b63b0, SetCollisionInfoParam)
+C2_HOOK_FUNCTION(0x004b63b0, PHILSetObjectProperty)
 
 void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tCollision_info *pCollision_info, tU8 pDisable) {
 
