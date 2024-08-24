@@ -30,7 +30,7 @@ void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor,
 
 void C2_HOOK_FASTCALL MungeSmashMaterialNames(void);
 
-void C2_HOOK_FASTCALL DisposeSmashingAndExplosions(void);
+void C2_HOOK_FASTCALL CleanUpSmashStuff(void);
 
 void C2_HOOK_FASTCALL MungeGlassFragments(void);
 
