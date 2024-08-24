@@ -1148,11 +1148,11 @@ void C2_HOOK_FASTCALL KillSplashScreen(void) {
 }
 C2_HOOK_FUNCTION(0x0047b960, KillSplashScreen)
 
-void C2_HOOK_FASTCALL ResetTargetLock(void) {
+void C2_HOOK_FASTCALL InitTargetLock(void) {
 
     C2V(gTarget_lock_enabled) = 0;
 }
-C2_HOOK_FUNCTION(0x004948a0, ResetTargetLock)
+C2_HOOK_FUNCTION(0x004948a0, InitTargetLock)
 
 void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
 
