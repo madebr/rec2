@@ -599,16 +599,16 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
 }
 C2_HOOK_FUNCTION(0x004ca9f0, ReadPedSpecs)
 
-void (C2_HOOK_FASTCALL * MaybeSpawnPedestrian_original)(br_face *pFace, br_model *pModel);
-void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel) {
+void (C2_HOOK_FASTCALL * SpawnPedsOnFace_original)(br_face *pFace, br_model *pModel);
+void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel) {
 
 #if defined(C2_HOOKS_ENABLED)
-    MaybeSpawnPedestrian_original(pFace, pModel);
+    SpawnPedsOnFace_original(pFace, pModel);
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004d2cc0, MaybeSpawnPedestrian, MaybeSpawnPedestrian_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004d2cc0, SpawnPedsOnFace, SpawnPedsOnFace_original)
 
 void C2_HOOK_FASTCALL FinishUpLoadingPeds(void) {
     tPedestrian* new_pedestrians;
