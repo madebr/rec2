@@ -39,6 +39,8 @@ void C2_HOOK_CDECL TurnLimbsOnAndOff(br_actor* actor, br_model* model, br_materi
 
 void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pAction, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pArg7);
 
+void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp);
+
 void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel);
 
 void C2_HOOK_FASTCALL FinishUpLoadingPeds(void);
