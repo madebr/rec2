@@ -39,7 +39,7 @@ void C2_HOOK_FASTCALL FinishUpLoadingPeds(void);
 
 void C2_HOOK_FASTCALL DisposePedestrians(void);
 
-void C2_HOOK_FASTCALL ResetPeds(void);
+void C2_HOOK_FASTCALL InitPedsForRace(void);
 
 void C2_HOOK_FASTCALL ResetPedNearness(void);
 

@@ -645,16 +645,16 @@ void C2_HOOK_FASTCALL DisposePedestrians(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cb8d0, DisposePedestrians, DisposePedestrians_original)
 
-void (C2_HOOK_FASTCALL * ResetPeds_original)(void);
-void C2_HOOK_FASTCALL ResetPeds(void) {
+void (C2_HOOK_FASTCALL * InitPedsForRace_original)(void);
+void C2_HOOK_FASTCALL InitPedsForRace(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    ResetPeds_original();
+    InitPedsForRace_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004d5bd0, ResetPeds, ResetPeds_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004d5bd0, InitPedsForRace, InitPedsForRace_original)
 
 void C2_HOOK_FASTCALL ResetPedNearness(void) {
 
