@@ -30,11 +30,11 @@ C2_HOOK_FUNCTION(0x0040dff0, SetYonFactor)
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gMr_blendy, 0x00679264);
 
-void (C2_HOOK_FASTCALL * StripBlendedFaces_original)(br_actor* pActor, br_model* pModel);
-void C2_HOOK_FASTCALL StripBlendedFaces(br_actor* pActor, br_model* pModel) {
+void (C2_HOOK_FASTCALL * MungeFaces_original)(br_actor* pActor, br_model* pModel);
+void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    StripBlendedFaces_original(pActor, pModel);
+    MungeFaces_original(pActor, pModel);
 #else
 
     int i;
@@ -95,7 +95,7 @@ void C2_HOOK_FASTCALL StripBlendedFaces(br_actor* pActor, br_model* pModel) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040d530, StripBlendedFaces, StripBlendedFaces_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0040d530, MungeFaces, MungeFaces_original)
 
 intptr_t (C2_HOOK_CDECL * FindNonCarsCB_original)(br_actor* pActor, tTrack_spec* pTrack_spec);
 intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, tTrack_spec* pTrack_spec) {
@@ -247,13 +247,13 @@ intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
         BrActorRelink(pTrack_spec->columns[z][x].actor_0x0, pActor);
         C2V(gMr_blendy) = NULL;
         if (pActor->model != NULL && !C2V(gAusterity_mode)) {
-            StripBlendedFaces(pActor, pActor->model);
+            MungeFaces(pActor, pActor->model);
         } else {
             br_actor *child;
 
             for (child = pActor->children; child != NULL; child = child->next) {
                 if (child->identifier[0] != '&') {
-                    StripBlendedFaces(child, child->model);
+                    MungeFaces(child, child->model);
                     break;
                 }
             }
