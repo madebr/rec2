@@ -929,11 +929,11 @@ int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_in
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5d40, MarkCollisionInfoAsProcessed, MarkCollisionInfoAsProcessed_original)
 
-void C2_HOOK_FASTCALL FUN_004c2b10(tCollision_info *pCollision_info) {
+void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info) {
 
     FUN_004c2b20(pCollision_info, pCollision_info);
 }
-C2_HOOK_FUNCTION(0x004c2b10, FUN_004c2b10)
+C2_HOOK_FUNCTION(0x004c2b10, PositionChildren)
 
 void C2_HOOK_FASTCALL FUN_004c2b20(tCollision_info *pParent, tCollision_info *pRoot) {
     if (!(pParent->flags & 0x400)) {
@@ -987,7 +987,7 @@ int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pP
             int v = !!va_arg(va, int);
             if (v) {
                 owner->field_0x04 |= 0x1;
-                FUN_004c2b10(pCollision_info);
+                PositionChildren(pCollision_info);
             } else {
                 owner->field_0x04 &= 0x1;
             }
