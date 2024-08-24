@@ -5349,7 +5349,7 @@ C2_HOOK_FUNCTION(0x004010b0, InitialiseAIWorldForRace)
 
 void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void) {
     DisposeOpponents();
-    DisposeDrones();
+    DisposeDronesRaceStuff();
 }
 C2_HOOK_FUNCTION(0x00401160, DisposeAIWorldRaceStuff)
 
