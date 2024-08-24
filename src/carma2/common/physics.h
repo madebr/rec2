@@ -18,6 +18,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gFace_num__car);
 
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError);
 
+void C2_HOOK_FASTCALL SetUpTestObjects(void);
+
 void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn *pError_cbfn);
 
 void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize);
