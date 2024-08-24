@@ -9,7 +9,7 @@ C2_HOOK_VARIABLE_DECLARE(undefined4*, gCrush_space);
 
 void C2_HOOK_FASTCALL DisposePiping(void);
 
-void C2_HOOK_FASTCALL DisposeReplay(void);
+void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);
 
