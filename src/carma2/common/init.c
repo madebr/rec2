@@ -1394,7 +1394,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
     HideSkids();
     ResetPedNearness();
     PossibleService();
-    ResetPeds();
+    InitPedsForRace();
     BuildColourTable(C2V(gRender_palette));
     PossibleService();
 
