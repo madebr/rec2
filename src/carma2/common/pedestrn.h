@@ -33,7 +33,7 @@ int C2_HOOK_FASTCALL ForEachMortalPedestrianInSight(tCar_spec* pCar_spec, int pO
 
 void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF);
 
-void C2_HOOK_FASTCALL MaybeSpawnPedestrian(br_face *pFace, br_model *pModel);
+void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel);
 
 void C2_HOOK_FASTCALL FinishUpLoadingPeds(void);
 
