@@ -288,7 +288,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
 
     result = &line[1];
 
-    while (PFfgets(result, 256, f) || !DRfeof(f)) {
+    while (PFfgets(result, 256, f) || !PFfeof(f)) {
 
         if (result[0] == '@') {
             decode = 1;
