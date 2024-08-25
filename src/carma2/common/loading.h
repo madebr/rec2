@@ -78,6 +78,10 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_checkpoint, 3);
 C2_HOOK_VARIABLE_DECLARE(tSlot_info, gTrade_in_value_APO);
 C2_HOOK_VARIABLE_DECLARE(tSlot_info, gSubstitution_value_APO);
 C2_HOOK_VARIABLE_DECLARE(tSlot_info, gPotential_substitution_value_APO);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_funk_type_names, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gAxis_names, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gReverseness_type_names, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_speed_control_names, 2);
 
 void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
@@ -428,6 +432,18 @@ void C2_HOOK_FASTCALL LinkDroneActorsToModelsAndSetRenderStyle(tDrone_spec* pDro
 void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone);
 
 intptr_t C2_HOOK_CDECL MrFindy(br_actor* pActor, void* data);
+
+br_actor* C2_HOOK_FASTCALL FindDroneChildActor(tDrone_spec* pDrone, const char* pName);
+
+int C2_HOOK_FASTCALL ReadPastThisLine(FILE* pF, const char* pLine);
+
+int C2_HOOK_FASTCALL MatchFGType(const char* pS);
+
+tFunk_groove_axis GetAxisFromString(const char* pS);
+
+tFunk_groove_reverseness GetReversenessFromString(const char* pS);
+
+tFunk_groove_speed_control GetSpeedControlFromString(const char* pS);
 
 void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF);
 
