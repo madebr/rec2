@@ -4729,7 +4729,7 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
 
     c->collision_info->object_friction = 0.4f;
 
-    LoadCollisionShape(&c->collision_info->shape, pF);
+    ReadMechanicsShapes(&c->collision_info->shape, pF);
 
     UpdateCollisionObject(c->collision_info);
 
@@ -5111,7 +5111,7 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
             &attached_cmpos.v[1],
             &attached_cmpos.v[2]);
 
-        LoadCollisionShape(&pNon_car_spec->collision_info->shape, pF);
+        ReadMechanicsShapes(&pNon_car_spec->collision_info->shape, pF);
 
         /* mass unattached, mass attached */
         GetPairOfFloats(pF, &pNon_car_spec->free_mass, &pNon_car_spec->attached_mass);
