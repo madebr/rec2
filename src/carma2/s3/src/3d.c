@@ -163,3 +163,9 @@ int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00565d70, S3Set3DSoundEnvironment, S3Set3DSoundEnvironment_original)
+
+void C2_HOOK_FASTCALL S3CopyBrVector3(br_vector3* pDest, br_vector3* pSrc) {
+
+    BrVector3Copy(pDest, pSrc);
+}
+C2_HOOK_FUNCTION(0x00565ec7, S3CopyBrVector3)
