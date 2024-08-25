@@ -255,4 +255,6 @@ int C2_HOOK_FASTCALL S3SetVolume(int pVolume);
 
 void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos);
 
+void C2_HOOK_FASTCALL S3BindListenerVelocityBRender(br_vector3* vel);
+
 #endif
