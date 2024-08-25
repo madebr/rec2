@@ -5291,6 +5291,17 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00487ec0, ReadNonCarMechanicsData, LoadNonCar_original)
 
+void (C2_HOOK_FASTCALL * LoadDroneActorsModels_original)(tDrone_spec* pDrone);
+void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadDroneActorsModels_original(pDrone);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00450150, LoadDroneActorsModels, LoadDroneActorsModels_original)
+
 void (C2_HOOK_FASTCALL * LoadPerRaceDroneStuff_original)(void);
 void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
 
