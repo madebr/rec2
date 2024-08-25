@@ -1129,3 +1129,38 @@ int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel* pChannel) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00569752, S3ServiceChannel)
+
+tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pVelocity, tS3_outlet* pBound_outlet) {
+    tS3_sound_source* src;
+
+    C2_HOOK_BUG_ON(sizeof(tS3_sound_source) != 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_sound_source, next, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_sound_source, prev, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_sound_source, bound_outlet, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_sound_source, position_ptr, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_sound_source, velocity_ptr, 0xc);
+
+    src = S3MemAllocate(sizeof(tS3_sound_source), kMem_S3_source);
+    if (src == NULL) {
+        C2V(gS3_last_error) = eS3_error_memory;
+        return NULL;
+    }
+    c2_memset(src, 0, sizeof(tS3_sound_source));
+    src->bound_outlet = pBound_outlet;
+    src->position_ptr = pPosition;
+    src->velocity_ptr = pVelocity;
+    if (C2V(gS3_sound_sources) != NULL) {
+        tS3_sound_source* s;
+        s = C2V(gS3_sound_sources);
+        while (s->next != NULL) {
+            s = s->next;
+        }
+        s->next = src;
+        src->prev = s;
+    } else {
+        C2V(gS3_sound_sources) = src;
+    }
+    C2V(gS3_nsound_sources) += 1;
+    return src;
+}
+C2_HOOK_FUNCTION(0x005665d4, S3CreateSoundSource)

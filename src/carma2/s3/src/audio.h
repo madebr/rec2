@@ -106,4 +106,6 @@ int C2_HOOK_FASTCALL S3SetVolume(int pVolume);
 
 int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel *pChannel);
 
+tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pVelocity, tS3_outlet* pBound_outlet);
+
 #endif // S3_AUDIO_H
