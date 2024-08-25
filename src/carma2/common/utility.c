@@ -1177,3 +1177,8 @@ br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
     return SRandomBetween(-pN, pN);
 }
 C2_HOOK_FUNCTION(0x00513650, SRandomPosNeg)
+
+void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap) {
+
+}
+C2_HOOK_FUNCTION(0x005191f0, PixelmapSwapByteOrder)
