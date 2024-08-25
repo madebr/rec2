@@ -58,8 +58,10 @@ typedef enum tS3_error_codes {
     eS3_error_soundbank = 5,
     eS3_error_bad_id = 6,
     eS3_error_bad_stag = 7,
+    eS3_error_load_sound = 8,
     eS3_error_channel_alloc = 10,
     eS3_error_function_failed = 12,
+    eS3_error_nonexistant_source = 19,
 } tS3_error_codes;
 
 typedef struct {
@@ -262,5 +264,7 @@ void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left);
 tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pVelocity, tS3_outlet* pBound_outlet);
 
 tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSourceBR(br_vector3* pPosition, br_vector3* pVelocity, tS3_outlet* pBound_outlet);
+
+int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound, tS3_sound_source* source, float pMax_distance, int pPeriod, int pRepeats, int pVolume, int pPitch, int pSpeed);
 
 #endif
