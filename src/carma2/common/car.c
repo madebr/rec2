@@ -33,7 +33,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWorld_callbacks, gWorld_callbacks, 0x0065cf78, 
     FUN_004b57d0,
     FUN_0041ff00,
     StopGroovidelic,
-    FUN_004b5970,
+    GetFrictionFromFace,
     NULL,
 });
 
