@@ -29,7 +29,7 @@ typedef struct tCar_spec tCar_spec;
 typedef struct tCar_crush_spec tCar_crush_spec;
 typedef struct tCollision_info tCollision_info;
 typedef struct tNon_car_spec tNon_car_spec;
-typedef struct tPath_section_struct tPath_section_struct;
+typedef struct tPath_section tPath_section;
 typedef struct tPowerup tPowerup;
 typedef struct tRace_list_spec tRace_list_spec;
 typedef struct tMin_message tMin_message;
@@ -1956,11 +1956,12 @@ typedef struct {
     int number_of_cops;
     int number_of_path_nodes;
     int number_of_path_sections;
-    br_vector3 cop_start_points[20];
+    br_vector3 cop_start_points[10];
+    br_vector3 cop_start_vectors[10];
     tOpponent_spec opponents[30];
     tOpponent_spec cops[10];
     tPath_node* path_nodes;
-    tPath_section_struct* path_sections;
+    tPath_section* path_sections;
 } tIntelligent_vehicles;
 
 typedef enum {
