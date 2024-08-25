@@ -5423,6 +5423,16 @@ void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00450150, LoadDroneActorsModels, LoadDroneActorsModels_original)
 
+intptr_t C2_HOOK_CDECL MrFindy(br_actor* pActor, void* data) {
+    const char* name = data;
+
+    if (DRStricmp(pActor->identifier, name) == 0) {
+        return (intptr_t)pActor;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00450b30, MrFindy)
+
 void (C2_HOOK_FASTCALL * LoadFunksAndGrooves_original)(tDrone_spec* pDrone, FILE* pF);
 void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF) {
 
