@@ -106,4 +106,6 @@ float C2_HOOK_STDCALL FRandomPosNeg(float pN);
 
 br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
 
+void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap);
+
 #endif // REC2_UTILITY_H
