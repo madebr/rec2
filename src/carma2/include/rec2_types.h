@@ -1673,7 +1673,8 @@ typedef struct tCar_spec {
     float pre_car_col_velocity_car_space;
     float field_0x13c4;
     float field_0x13c8;
-    undefined field_0x13cc[20];
+    br_vector3 vel;
+    undefined field_0x13cc[8];
     float field_0x13e0;
     int time_last_hit;
     int time_last_victim;
@@ -1793,6 +1794,13 @@ typedef struct {
     tSpecial_volume_soundfx_data fx2_noncar;
     br_vector3 point;
 } tTrackSoundGenerator;
+
+typedef struct {
+    tS3_sound_source *source;
+    br_vector3 position;
+    void* field_0x10;
+    undefined field_0x14[0x8];
+} tEnvironment_sound_source;
 
 typedef enum {
     eOOT_none = 0,
@@ -3744,6 +3752,7 @@ enum {
 enum {
     eSoundId_Done = 3004,
     eSoundId_Swingin = 3006,
+    eSoundId_Cop_Siren = 5350,
     eSoundId_OutOfTime2 = 8010,
     eSoundId_RaceComplete = 8011,
     eSoundId_Checkpoint = 8012,
