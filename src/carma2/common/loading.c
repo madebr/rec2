@@ -3078,7 +3078,7 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048c930, LoadOpponents, LoadOpponents_original)
 
-FILE* C2_HOOK_FASTCALL OpenDrone(const char* pDrone_name) {
+FILE* C2_HOOK_FASTCALL OpenDroneFile(const char* pDrone_name) {
     tPath_name the_path;
     FILE* f;
 
@@ -3093,7 +3093,7 @@ FILE* C2_HOOK_FASTCALL OpenDrone(const char* pDrone_name) {
     }
     return f;
 }
-C2_HOOK_FUNCTION(0x0044f640, OpenDrone)
+C2_HOOK_FUNCTION(0x0044f640, OpenDroneFile)
 
 void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
     tPath_name the_path;
@@ -3112,7 +3112,7 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
     PathCat(the_path, the_path, "DRONES");
     PathCat(the_path, the_path, pDrone_name);
     twt = OpenPackFileAndSetTiffLoading(the_path);
-    f = OpenDrone(pDrone_name);
+    f = OpenDroneFile(pDrone_name);
 
     /* Version of this text file's format */
     GetALineAndDontArgue(f, s);
