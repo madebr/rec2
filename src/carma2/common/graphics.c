@@ -577,19 +577,19 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
         }
         if (C2V(draw_cursor) && C2V(draw_cursor) == 1) {
             PossibleUnlock(1);
-            ResetTintedVertices(C2V(gCursor_tinted_top),
+            SetTintedPolySize(C2V(gCursor_tinted_top),
                 pos_x - 1, 0,
                 C2V(gCursor_line_width), pos_y - 9);
-            ResetTintedVertices(C2V(gCursor_tinted_left),
+            SetTintedPolySize(C2V(gCursor_tinted_left),
                 0, pos_y - 1,
                 pos_x - 9, C2V(gCursor_line_width));
-            ResetTintedVertices(C2V(gCursor_tinted_bottom),
+            SetTintedPolySize(C2V(gCursor_tinted_bottom),
                 pos_x - 1, pos_y + 5 + C2V(gCursor_line_width),
                 C2V(gCursor_line_width), C2V(gCurrent_graf_data)->height - C2V(gCursor_line_width) - pos_y + 9);
-            ResetTintedVertices(C2V(gCursor_tinted_right),
+            SetTintedPolySize(C2V(gCursor_tinted_right),
                 pos_x + 5 + C2V(gCursor_line_width), pos_y - 1,
                 C2V(gCurrent_graf_data)->width - C2V(gCursor_line_width) - pos_x + 9, C2V(gCursor_line_width));
-            ResetTintedVertices(C2V(gCursor_tinted_center),
+            SetTintedPolySize(C2V(gCursor_tinted_center),
                 pos_x - 7, pos_y - 7,
                 16, 16);
             TurnTintedPolyOn(C2V(gCursor_tinted_top));
@@ -1022,17 +1022,17 @@ void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
     C2V(gWidth) = C2V(gRender_screen)->width;
     C2V(gHeight) = C2V(gRender_screen)->height;
     ReinitialiseForwardCamera();
-    ResetTintedVertices(C2V(gHud_tinted1),
+    SetTintedPolySize(C2V(gHud_tinted1),
         C2V(gRender_screen)->base_x,
         C2V(gRender_screen)->base_y,
         C2V(gRender_screen)->width,
         C2V(gRender_screen)->height);
-    ResetTintedVertices(C2V(gHud_tinted2),
+    SetTintedPolySize(C2V(gHud_tinted2),
         C2V(gRender_screen)->base_x,
         C2V(gRender_screen)->base_y,
         C2V(gRender_screen)->width,
         C2V(gRender_screen)->height);
-    ResetTintedVertices(C2V(gHud_tinted4),
+    SetTintedPolySize(C2V(gHud_tinted4),
         C2V(gRender_screen)->base_x,
         C2V(gRender_screen)->base_y,
         C2V(gRender_screen)->width,
