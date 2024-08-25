@@ -160,11 +160,11 @@ void C2_HOOK_FASTCALL LoadMenuImages(void) {
 #endif
 }
 
-void (C2_HOOK_FASTCALL * CreateMenuActors_original)(void);
-void C2_HOOK_FASTCALL CreateMenuActors(void) {
+void (C2_HOOK_FASTCALL * FRONTEND_Setup2D_original)(void);
+void C2_HOOK_FASTCALL FRONTEND_Setup2D(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    CreateMenuActors_original();
+    FRONTEND_Setup2D_original();
 #else
     br_camera* camera;
 
@@ -228,7 +228,7 @@ void C2_HOOK_FASTCALL CreateMenuActors(void) {
     BrActorAdd(C2V(gFrontend_actor), C2V(gFrontend_backdrop_actors)[2]);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0046cf10, CreateMenuActors, CreateMenuActors_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0046cf10, FRONTEND_Setup2D, FRONTEND_Setup2D_original)
 
 static void C2_HOOK_FASTCALL LoadMenuModels(void) {
     char s[256];
@@ -552,7 +552,7 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
         InitPolyFonts();
         LoadMenuImages();
         PrintMemoryDump(0, "AFTER LoadMenuImages");
-        CreateMenuActors();
+        FRONTEND_Setup2D();
         LoadMenuModels();
         PrintMemoryDump(0, "AFTER LoadMenuModels");
         C2V(gFrontend_stuff_not_loaded) = 0;
