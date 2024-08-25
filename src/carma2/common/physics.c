@@ -187,7 +187,7 @@ tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateWireFrameCollisionShape(int
 C2_HOOK_FUNCTION(0x004c5dc0, AllocateWireFrameCollisionShape)
 
 void (C2_HOOK_FASTCALL * LoadCollisionShape_original)(tCollision_shape** pShape, FILE* pF);
-void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF) {
+void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     LoadCollisionShape_original(pShapes, pF);
@@ -277,7 +277,7 @@ void C2_HOOK_FASTCALL LoadCollisionShape(tCollision_shape** pShape, FILE* pF) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00488b00, LoadCollisionShape, LoadCollisionShape_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00488b00, ReadMechanicsShapes, LoadCollisionShape_original)
 
 void (C2_HOOK_FASTCALL * UpdateCollisionObject_original)(tCollision_info* pCollision_info);
 void C2_HOOK_FASTCALL UpdateCollisionObject(tCollision_info* pCollision_info) {
