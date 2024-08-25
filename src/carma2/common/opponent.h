@@ -69,4 +69,6 @@ void C2_HOOK_FASTCALL UnStunTheBugger(tOpponent_spec* pOpponent_spec);
 
 void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was);
 
+tS16 C2_HOOK_FASTCALL FindNearestPathSection(undefined4* pArg1, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance);
+
 #endif //REC2_OPPONENT_H
