@@ -3249,9 +3249,9 @@ typedef struct {
     float crush_limits_top;
     undefined field_0x54[24];
     undefined4 field_0x6c;
-    undefined4 field_0x70;
+    int field_0x70;
     undefined4 field_0x74;
-    undefined4 field_0x78;
+    int field_0x78;
     int count_models;
     undefined4* field_0x80;
     br_model** models;
@@ -3327,7 +3327,7 @@ typedef struct tDrone_spec {
     undefined field_0x54[20];
     float field_0x68;
     undefined4 field_0x6c;
-    undefined field_0x70[4];
+    int field_0x70;
     undefined4 field_0x74;
     undefined field_0x78[100];
     tU32 field_0xdc;

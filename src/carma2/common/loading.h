@@ -425,6 +425,12 @@ void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone);
 
 void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF);
 
+int C2_HOOK_FASTCALL ReadPastBoundsShapesHeader(FILE* pF);
+
+void C2_HOOK_FASTCALL LoadDrone(int pIndex);
+
+void C2_HOOK_FASTCALL ResetDroneCrushyModel(const br_model* pSrc, br_model* pDest);
+
 void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void);
 
 void C2_HOOK_FASTCALL LoadAIWorldForRace(tRace_info* pRace_info);

@@ -5313,13 +5313,121 @@ void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00450680, LoadFunksAndGrooves, LoadFunksAndGrooves_original)
 
+int C2_HOOK_FASTCALL ReadPastBoundsShapesHeader(FILE* pF) {
+    char s[256];
+
+    do {
+        if (PFfeof(pF)) {
+            return 0;
+        }
+        GetALineAndDontArgue(pF, s);
+    } while (c2_strcmp(s, "START OF BOUNDING SHAPES") != 0);
+    DoNotDprintf("ReadPastBoundsShapesHeader() returning TRUE");
+    return 1;
+}
+
+void C2_HOOK_FASTCALL LoadDrone(int pIndex) {
+    tDrone_spec* drone;
+    tPath_name path;
+    tTWTVFS twt;
+    FILE* f;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, collision_info.shape, 0x118);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, field_0x46, 0x46);
+
+    C2_HOOK_BUG_ON(sizeof(tDrone_spec) != 0x5d8);
+
+    drone = &C2V(gDrone_specs)[pIndex];
+    c2_strcpy(path, C2V(gApplication_path));
+    PathCat(path, path, "DRONES");
+    PathCat(path, path, drone->form->name);
+    twt = OpenPackFileAndSetTiffLoading(path);
+    LoadDroneActorsModels(drone);
+    f = OpenDroneFile(drone->form->name);
+    if (!ReadPastBoundsShapesHeader(f)) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, drone->form->name);
+    } else {
+        DoNotDprintf("DRONE.C: Reading mechanics data for drone of type %s", drone->form->name);
+        ReadMechanicsShapes(&drone->collision_info.shape, f);
+        if (drone->collision_info.shape != NULL) {
+            drone->field_0x46 = 1;
+        }
+    }
+    LoadFunksAndGrooves(drone, f);
+    PFfclose(f);
+    ClosePackFileAndSetTiffLoading(twt);
+}
+
+void C2_HOOK_FASTCALL ResetDroneCrushyModel(const br_model* pSrc, br_model* pDest) {
+
+    pDest->faces = pSrc->faces;
+    pDest->nfaces = pSrc->nfaces;
+    c2_memcpy(pDest->vertices, pSrc->vertices, pDest->nvertices * sizeof(br_vertex));
+}
+
 void (C2_HOOK_FASTCALL * LoadPerRaceDroneStuff_original)(void);
 void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadPerRaceDroneStuff_original();
 #else
-#error "Not implemented"
+    int i;
+
+    for (i = 0; i < C2V(gCount_drone_forms); i++) {
+        tDrone_form* form = &C2V(gDrone_forms)[i];
+
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x6c, 0x6c);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x70, 0x70);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x74, 0x74);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x78, 0x78);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, count_models, 0x7c);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x80, 0x80);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, models, 0x84);
+
+        form->field_0x6c = 0;
+        form->field_0x70 = -1;
+        form->field_0x74 = -1;
+        form->field_0x78 = -1;
+        form->count_models = 0;
+        form->field_0x80 = NULL;
+        form->models = NULL;
+    }
+
+    for (i = 0; i < C2V(gCount_drones); i++) {
+
+        C2V(gDrone_specs)[i].field_0x70 += 1;
+        LoadDrone(i);
+    }
+
+    for (i = 0; i < C2V(gCount_drone_forms); i++) {
+        tDrone_form* form;
+        int count_models;
+
+        form = &C2V(gDrone_forms)[i];
+        if (form->field_0x6c == 0) {
+            continue;
+        }
+        count_models = form->crushability == 0.f ? 0 : MIN(10, form->field_0x6c);
+        form->count_models = count_models;
+        if (count_models != 0) {
+            int j;
+
+            form->models = BrMemCalloc(sizeof(br_model*), count_models, kMem_drone_model_dup);
+            form->field_0x80 = BrMemCalloc(count_models, sizeof(tU8), kMem_drone_model_dup);
+
+            for (j = 0; j < count_models; j++) {
+                br_model* orig_model;
+
+                orig_model = C2V(gDroneStorage).models[form->field_0x78];
+                form->models[j] = BrModelAllocate(orig_model->identifier, orig_model->nvertices, 0);
+                form->models[j]->flags |= BR_MODF_UPDATEABLE;
+                ResetDroneCrushyModel(orig_model, form->models[j]);
+                BrModelAdd(form->models[j]);
+            }
+
+        }
+
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044fda0, LoadPerRaceDroneStuff, LoadPerRaceDroneStuff_original)
