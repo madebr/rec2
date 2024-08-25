@@ -421,6 +421,8 @@ void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pP
 
 void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_spec);
 
+int C2_HOOK_CDECL LinkyCallback(br_actor* pActor, void* data);
+
 void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone);
 
 void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF);
