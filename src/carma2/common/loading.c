@@ -5302,6 +5302,17 @@ void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00450150, LoadDroneActorsModels, LoadDroneActorsModels_original)
 
+void (C2_HOOK_FASTCALL * LoadFunksAndGrooves_original)(tDrone_spec* pDrone, FILE* pF);
+void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LoadFunksAndGrooves_original(pDrone, pF);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00450680, LoadFunksAndGrooves, LoadFunksAndGrooves_original)
+
 void (C2_HOOK_FASTCALL * LoadPerRaceDroneStuff_original)(void);
 void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
 
