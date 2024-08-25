@@ -25,6 +25,14 @@ C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gPedestrians_outlet);
 C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gXXX_outlet);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tS3_outlet*, gIndexed_outlets, 6);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSound_periodicity_choices, 3);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gCamera_left);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gCamera_position);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gCamera_velocity);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_00684540);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0079e18c);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0079e17c);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tEnvironment_sound_source, gEnvironment_sound_sources, 5);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
 
 void C2_HOOK_FASTCALL SplungeSomeData(void* data, size_t size);
 

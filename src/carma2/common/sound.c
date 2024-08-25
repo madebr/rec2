@@ -36,6 +36,14 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSound_periodicity_choices, 3
     "PERIODIC",
     "CONTINUOUS",
 });
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCamera_left, 0x0079e120);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCamera_position, 0x0079e130);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCamera_velocity, 0x0079ea60);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00684540, 0x00684540);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0079e18c, 0x0079e18c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0079e17c, 0x0079e17c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tEnvironment_sound_source, gEnvironment_sound_sources, 5, 0x00684570);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gZero_v__car, 0x0068b8d0);
 
 void C2_HOOK_FASTCALL SplungeSomeData(void* data, size_t size) {
 
@@ -375,10 +383,78 @@ C2_HOOK_FUNCTION(0x00455de0, DisposeSoundSources)
 void (C2_HOOK_FASTCALL * InitSoundSources_original)(void);
 void C2_HOOK_FASTCALL InitSoundSources(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitSoundSources_original();
 #else
-#error "Not implemented"
+    int toggle;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, sound_source, 0x1370);
+
+    if (!C2V(gSound_available)) {
+        return;
+    }
+
+    toggle = !C2V(gSound_enabled);
+    if (toggle) {
+        ToggleSoundEnable();
+    }
+
+    BrVector3Negate(&C2V(gCamera_left), (br_vector3*)C2V(gCamera_to_world).m[0]);
+    BrVector3Copy(&C2V(gCamera_position), (br_vector3*)C2V(gCamera_to_world).m[3]);
+    S3BindListenerPositionBRender(&C2V(gCamera_position));
+    S3BindListenerVelocityBRender(&C2V(gCamera_velocity));
+    S3BindListenerLeftBRender(&C2V(gCamera_left));
+    if (!C2V(gSound_sources_inited)) {
+        tVehicle_type category;
+        int i;
+
+        for (category = eVehicle_rozzer; category >= 0; category -= 1) {
+            int car_count;
+
+            car_count = category == eVehicle_self ? 1 : GetCarCount(category);
+            for (i = 0; i < car_count; i++) {
+                tCar_spec* car;
+
+                PossibleService();
+                car = category == eVehicle_self ? &C2V(gProgram_state).current_car : GetCarSpec(category, i);
+
+                if ((car != NULL && car->driver == eDriver_local_human) || C2V(gSound_detail_level) > 2 || category == eVehicle_rozzer) {
+
+                    car->sound_source = S3CreateSoundSourceBR(&car->pos, &car->vel, C2V(gEngine_outlet));
+                    if (car->sound_source != NULL) {
+                        S3BindAmbientSoundToOutlet(C2V(gEngine_outlet), category == eVehicle_rozzer ? eSoundId_Cop_Siren : car->engine_noises[0], car->sound_source, 250.f, 0, 0, 0, BR_FIXED_INT(1), BR_FIXED_INT(1));
+                    }
+                }
+            }
+        }
+
+        C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gEnvironment_sound_sources)) != 5);
+        C2_HOOK_BUG_ON(sizeof(C2V(gEnvironment_sound_sources)[0]) != 0x1c);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tEnvironment_sound_source, source, 0x0);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tEnvironment_sound_source, position, 0x4);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tEnvironment_sound_source, field_0x10, 0x10);
+
+        for (i = 0; i < REC2_ASIZE(C2V(gEnvironment_sound_sources)); i++) {
+            tEnvironment_sound_source* env_src;
+
+            env_src = &C2V(gEnvironment_sound_sources)[i];
+            env_src->field_0x10 = NULL;
+            if (env_src->source == NULL) {
+                env_src->source = S3CreateSoundSourceBR(&env_src->position, &C2V(gZero_v__car), C2V(gXXX_outlet));
+                if (env_src->source != NULL) {
+                    S3BindAmbientSoundToOutlet(C2V(gXXX_outlet), eSoundId_Cop_Siren, env_src->source, 100.f, 0, 0, 0, BR_FIXED_INT(1), BR_FIXED_INT(1));
+                }
+            }
+        }
+        C2V(gSound_sources_inited) = 1;
+    }
+    if (toggle) {
+        ToggleSoundEnable();
+    }
+
+    C2V(gINT_0079e18c) = 0;
+    C2V(gINT_0079e17c) = 0;
+    C2V(gINT_00684540) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455bb0, InitSoundSources, InitSoundSources_original)
