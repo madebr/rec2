@@ -5310,13 +5310,115 @@ int C2_HOOK_CDECL LinkyCallback(br_actor* pActor, void* data) {
 }
 C2_HOOK_FUNCTION(0x00450600, LinkyCallback)
 
+void C2_HOOK_FASTCALL LinkDroneActorsToModelsAndSetRenderStyle(tDrone_spec* pDrone, int pModel_start, int pModel_end) {
+    tLinkyCallback_context data;
+
+    data.drone = pDrone;
+    data.model_start = pModel_start;
+    data.model_end = pModel_end;
+    DRActorEnumRecurse(pDrone->model_actor, LinkyCallback, &data);
+}
+
 void (C2_HOOK_FASTCALL * LoadDroneActorsModels_original)(tDrone_spec* pDrone);
 void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadDroneActorsModels_original(pDrone);
 #else
-#error "Not implemented"
+    br_matrix34 mat;
+    tPath_name dir_path;
+    tPath_name actor_path;
+    char s[256];
+    int i;
+
+    PossibleService();
+    BrMatrix34Identity(&mat);
+    if (pDrone->model_actor != NULL) {
+        if (pDrone->model_actor->parent != NULL) {
+            BrActorRemove(pDrone->model_actor);
+        }
+        BrActorFree(pDrone->model_actor);
+        pDrone->model_actor = NULL;
+    }
+    if (pDrone->actor != NULL) {
+        BrMatrix34Copy(&mat, &pDrone->actor->t.t.mat);
+        if (pDrone->actor->parent != NULL) {
+            BrActorRemove(pDrone->actor);
+        }
+        BrActorFree(pDrone->actor);
+        pDrone->actor = NULL;
+    }
+    c2_strcpy(C2V(gCurrent_load_directory), "DRONES");
+    c2_strcpy(C2V(gCurrent_load_name), pDrone->form->name);
+    c2_strcpy(dir_path, C2V(gApplication_path));
+    PathCat(dir_path, dir_path, C2V(gCurrent_load_directory));
+    PathCat(dir_path, dir_path, C2V(gCurrent_load_name));
+
+    if (pDrone->form->model_start < 0) {
+        int material_start;
+
+        PrintMemoryDump(0,"BEFORE LOADING DRONE ACTORS/MODELS");
+        LoadAllImagesInDirectory(&C2V(gDroneStorage), dir_path);
+        LoadAllShadeTablesInDirectory(&C2V(gDroneStorage), dir_path);
+        material_start = C2V(gDroneStorage).materials_count;
+        LoadAllMaterialsInDirectory(&C2V(gDroneStorage), dir_path, kRendererShadingType_Specular);
+        for (i = material_start; i < C2V(gDroneStorage).materials_count; i++) {
+            br_material* material;
+
+            material = C2V(gDroneStorage).materials[i];
+            if (material == NULL || material->colour_map == NULL) {
+                continue;
+            }
+            material->flags |= BR_MATF_LIGHT | BR_MATF_PRELIT;
+            material->flags |= BR_MATF_SMOOTH;
+            BrMaterialUpdate(material, BR_MATU_ALL);
+            PossibleService();
+        }
+        pDrone->form->model_start = C2V(gDroneStorage).models_count;
+        LoadAllModelsInDirectory(&C2V(gDroneStorage), dir_path);
+        pDrone->form->model_end = C2V(gDroneStorage).models_count - pDrone->form->model_start;
+        if (pDrone->form->crushability != 0.f) {
+            pDrone->form->model_index = -1;
+
+            for (i = pDrone->form->model_start; i < pDrone->form->model_start + pDrone->form->model_end; i++) {
+                if (DRStricmp(C2V(gDroneStorage).models[i]->identifier, pDrone->form->name) == 0) {
+                    pDrone->form->model_index = i;
+                    break;
+                }
+            }
+            if (pDrone->form->model_index < 0) {
+                c2_sprintf(s, "Can't find model called '%s' for drone '%s'",
+                    pDrone->form->name, pDrone->form->name);
+                PDFatalError(s);
+            }
+        }
+        PrintMemoryDump(0, "AFTER LOADING DRONE ACTORS/MODELS");
+    }
+    pDrone->actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    BrMatrix34Copy(&pDrone->actor->t.t.mat, &mat);
+    c2_sprintf(s, "Drone%d", pDrone->id);
+    pDrone->actor->identifier = BrResStrDup(pDrone->actor, s);
+    BrActorAdd(C2V(gNon_track_actor), pDrone->actor);
+    PathCat(actor_path, dir_path, pDrone->form->name);
+    c2_strcat(actor_path,".ACT");
+    pDrone->model_actor = BrActorLoad(actor_path);
+    if (pDrone->model_actor == NULL) {
+        c2_sprintf(s, "Can't load drone car actor file for %s", pDrone->form->name);
+        PDFatalError(s);
+    }
+    LinkDroneActorsToModelsAndSetRenderStyle(pDrone, pDrone->form->model_start, pDrone->form->model_end);
+    pDrone->actor->render_style = BR_RSTYLE_NONE;
+    BrActorAdd(pDrone->actor, pDrone->model_actor);
+    if (!(pDrone->form->flags & 0x20)) {
+        br_model* model = pDrone->model_actor->model;
+
+        pDrone->form->field_0x54.min.v[0] = model->bounds.min.v[0] + pDrone->form->crush_limits_left    * 0.01f * (model->bounds.max.v[0] - model->bounds.min.v[0]);
+        pDrone->form->field_0x54.min.v[1] = model->bounds.min.v[1] + pDrone->form->crush_limits_bottom  * 0.01f * (model->bounds.max.v[1] - model->bounds.min.v[1]);
+        pDrone->form->field_0x54.min.v[2] = model->bounds.min.v[2] + pDrone->form->crush_limits_back    * 0.01f * (model->bounds.max.v[2] - model->bounds.min.v[2]);
+        pDrone->form->field_0x54.max.v[0] = model->bounds.max.v[0] - pDrone->form->crush_limits_right   * 0.01f * (model->bounds.max.v[0] - model->bounds.min.v[0]);
+        pDrone->form->field_0x54.max.v[1] = model->bounds.max.v[1] - pDrone->form->crush_limits_top     * 0.01f * (model->bounds.max.v[1] - model->bounds.min.v[1]);
+        pDrone->form->field_0x54.max.v[2] = model->bounds.max.v[2] - pDrone->form->crush_limits_front   * 0.01f * (model->bounds.max.v[2] - model->bounds.min.v[2]);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00450150, LoadDroneActorsModels, LoadDroneActorsModels_original)
@@ -5396,17 +5498,17 @@ void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
         tDrone_form* form = &C2V(gDrone_forms)[i];
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x6c, 0x6c);
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x70, 0x70);
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x74, 0x74);
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x78, 0x78);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, model_start, 0x70);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, model_end, 0x74);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, model_index, 0x78);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, count_models, 0x7c);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, field_0x80, 0x80);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_form, models, 0x84);
 
         form->field_0x6c = 0;
-        form->field_0x70 = -1;
-        form->field_0x74 = -1;
-        form->field_0x78 = -1;
+        form->model_start = -1;
+        form->model_end = -1;
+        form->model_index = -1;
         form->count_models = 0;
         form->field_0x80 = NULL;
         form->models = NULL;
@@ -5437,7 +5539,7 @@ void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
             for (j = 0; j < count_models; j++) {
                 br_model* orig_model;
 
-                orig_model = C2V(gDroneStorage).models[form->field_0x78];
+                orig_model = C2V(gDroneStorage).models[form->model_index];
                 form->models[j] = BrModelAllocate(orig_model->identifier, orig_model->nvertices, 0);
                 form->models[j]->flags |= BR_MODF_UPDATEABLE;
                 ResetDroneCrushyModel(orig_model, form->models[j]);

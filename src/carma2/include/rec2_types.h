@@ -3253,11 +3253,11 @@ typedef struct {
     float crush_limits_right;
     float crush_limits_bottom;
     float crush_limits_top;
-    undefined field_0x54[24];
+    br_bounds3 field_0x54;
     undefined4 field_0x6c;
-    int field_0x70;
-    undefined4 field_0x74;
-    int field_0x78;
+    int model_start;
+    int model_end;
+    int model_index;
     int count_models;
     undefined4* field_0x80;
     br_model** models;
@@ -3330,8 +3330,7 @@ typedef struct tDrone_spec {
     float field_0x48;
     float field_0x4c;
     float field_0x50;
-    undefined field_0x54[20];
-    float field_0x68;
+    br_bounds3 field_0x54;
     undefined4 field_0x6c;
     int field_0x70;
     undefined4 field_0x74;
@@ -3341,7 +3340,7 @@ typedef struct tDrone_spec {
     float field_0xe4;
     undefined field_0xe8[4];
     br_actor* actor;
-    br_actor* field_0xf0;
+    br_actor* model_actor;
     int field_0xf4;
     tCollision_info collision_info;
     undefined4* field_0x5d0;
