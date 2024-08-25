@@ -1005,10 +1005,10 @@ int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, c2_fpos_t* pos) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4ac0, DRfgetpos, DRfgetpos_original)
 
-int (C2_HOOK_FASTCALL * DRfeof_original)(FILE* pFile);
-int C2_HOOK_FASTCALL DRfeof(FILE* pFile) {
+int (C2_HOOK_FASTCALL * PFfeof_original)(FILE* pFile);
+int C2_HOOK_FASTCALL PFfeof(FILE* pFile) {
 #if 0 // defined(C2_HOOKS_ENABLED)
-    return DRfeof_original(pFile);
+    return PFfeof_original(pFile);
 #else
     tTwatVfsFile* twtFile;
 
@@ -1019,7 +1019,7 @@ int C2_HOOK_FASTCALL DRfeof(FILE* pFile) {
     return c2_feof(pFile);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b4c10, DRfeof, DRfeof_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b4c10, PFfeof, PFfeof_original)
 
 int (C2_HOOK_FASTCALL * DRferror_original)(FILE* pFile);
 int C2_HOOK_FASTCALL DRferror(FILE* pFile) {
@@ -1920,7 +1920,7 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
         FatalError(kFatalError_CannotOpenTEXT_TXT);
     }
     for (i = 0; i < REC2_ASIZE(C2V(gMisc_strings)); i++) {
-        if (DRfeof(f)) {
+        if (PFfeof(f)) {
             break;
         }
         GetALineAndDontArgue(f, s);
@@ -3277,7 +3277,7 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
         c2_memset(C2V(gDrone_forms), 0, sizeof(C2V(gDrone_forms)));
         for (C2V(gCount_drone_forms) = 0; C2V(gCount_drone_forms) < REC2_ASIZE(C2V(gDrone_forms)); C2V(gCount_drone_forms)++) {
             GetALineAndDontArgue(f, s);
-            if (c2_strcmp(s, "END OF DRONES") == 0 || DRfeof(f)) {
+            if (c2_strcmp(s, "END OF DRONES") == 0 || PFfeof(f)) {
                 break;
             }
             LoadDroneTypeInfo(s);
@@ -3991,7 +3991,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         }
         C2_HOOK_ASSERT(c2_strcmp(s, "END OF DRIVABLE STUFF") == 0);
     } else {
-        while (!DRfeof(f)) {
+        while (!PFfeof(f)) {
             GetALineAndDontArgue(f, s);
             if (c2_strcmp(s, "END OF DRIVABLE STUFF") == 0) {
                 break;
@@ -4351,7 +4351,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         }
     }
 
-    while (!DRfeof(f)) {
+    while (!PFfeof(f)) {
         GetAString(f, s);
 
         if (DRStricmp(s, "END") == 0) {
