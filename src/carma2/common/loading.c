@@ -774,6 +774,22 @@ void C2_HOOK_FASTCALL GetFiveScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, b
 }
 C2_HOOK_FUNCTION(0x00490350, GetFiveScalars)
 
+void C2_HOOK_FASTCALL GetNScalars(FILE* pF, int n, br_scalar* pS) {
+    char s[256];
+    char* str;
+    int i;
+
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    for (i = 0; i < n; i++) {
+        float f;
+        c2_sscanf(str, "%f", &f);
+        pS[i] = f;
+        str = c2_strtok(NULL, "\t ,/");
+    }
+}
+C2_HOOK_FUNCTION(0x00490460, GetNScalars)
+
 void C2_HOOK_FASTCALL GetPairOfFloats(FILE* pF, float* pF1, float* pF2) {
     char s[256];
     char* str;
