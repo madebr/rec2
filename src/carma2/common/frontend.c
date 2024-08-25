@@ -352,12 +352,12 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0046abf0, GetThisFuckingPixelmapPleaseMrTwatter, GetThisFuckingPixelmapPleaseMrTwatter_original)
 
-void (C2_HOOK_FASTCALL * FRONTEND_CreateItemBrenderObjects_original)(tFrontend_brender_item* Frontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText);
-void C2_HOOK_FASTCALL FRONTEND_CreateItemBrenderObjects(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText) {
+void (C2_HOOK_FASTCALL * FRONTEND_CreateMenuButton_original)(tFrontend_brender_item* Frontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText);
+void C2_HOOK_FASTCALL FRONTEND_CreateMenuButton(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText) {
 
     C2_HOOK_BUG_ON(sizeof(tFrontend_brender_item) != 44);
 #if 0//defined(C2_HOOKS_ENABLED)
-    FRONTEND_CreateItemBrenderObjects_original(pFrontend_brender_item, pX, pY, pWidth, pHeight, pColour, pMap, pText);
+    FRONTEND_CreateMenuButton_original(pFrontend_brender_item, pX, pY, pWidth, pHeight, pColour, pMap, pText);
 #else
     br_actor* actor;
     br_model* model;
@@ -436,7 +436,7 @@ void C2_HOOK_FASTCALL FRONTEND_CreateItemBrenderObjects(tFrontend_brender_item* 
     actor->render_style = BR_RSTYLE_NONE;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0046c5c0, FRONTEND_CreateItemBrenderObjects, FRONTEND_CreateItemBrenderObjects_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0046c5c0, FRONTEND_CreateMenuButton, FRONTEND_CreateMenuButton_original)
 
 int (C2_HOOK_FASTCALL * FRONTEND_CreateMenu_original)(tFrontend_spec* pFrontend_spec);
 int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
@@ -515,7 +515,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             height = item->height;
             y = item->y;
         }
-        FRONTEND_CreateItemBrenderObjects(
+        FRONTEND_CreateMenuButton(
             &C2V(gFrontend_brender_items)[C2V(gFrontend_count_brender_items)],
             item->x,
             y,
@@ -527,7 +527,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
         C2V(gFrontend_count_brender_items)++;
     }
     ResetInterfaceTimeout();
-    FRONTEND_CreateItemBrenderObjects(&C2V(gFrontend_brender_items)[99],
+    FRONTEND_CreateMenuButton(&C2V(gFrontend_brender_items)[99],
         0,
         0,
         0,
