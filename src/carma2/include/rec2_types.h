@@ -106,6 +106,12 @@ typedef struct {
 } tRGBColour;
 
 typedef struct {
+    tDrone_spec* drone;
+    int model_start;
+    int model_end;
+} tLinkyCallback_context;
+
+typedef struct {
     br_actor* clip;
     br_scalar length;
 } tClip_details;
