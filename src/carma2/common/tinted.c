@@ -509,7 +509,7 @@ void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen
 }
 C2_HOOK_FUNCTION(0x004d82b0, SetTintedPolyColour)
 
-void C2_HOOK_FASTCALL ResetTintedVertices(int pTintedIndex, int x0, int y0, int width, int height) {
+void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height) {
     tTintedPoly* tinted;
     int nb_x;
     int nb_y;
@@ -543,7 +543,7 @@ void C2_HOOK_FASTCALL ResetTintedVertices(int pTintedIndex, int x0, int y0, int 
     }
     BrModelUpdate(tinted->model, BR_MODU_VERTICES);
 }
-C2_HOOK_FUNCTION(0x004d8bb0, ResetTintedVertices)
+C2_HOOK_FUNCTION(0x004d8bb0, SetTintedPolySize)
 
 void (C2_HOOK_FASTCALL * SetTintedFromSpecialVolume_original)(int pIndex, br_vector3* pPosition);
 void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPosition) {
