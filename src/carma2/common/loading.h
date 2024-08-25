@@ -225,7 +225,7 @@ br_size_t C2_HOOK_FASTCALL DRfwrite(const void* buf, br_size_t size, unsigned in
 
 int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, c2_fpos_t* pos);
 
-int C2_HOOK_FASTCALL DRfeof(FILE* pFile);
+int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
 
 int C2_HOOK_FASTCALL DRferror(FILE* pFile);
 

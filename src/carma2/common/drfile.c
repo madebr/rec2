@@ -46,7 +46,7 @@ void C2_HOOK_CDECL DRStdioClose(void* f) {
 C2_HOOK_FUNCTION(0x0044c740, DRStdioClose)
 
 int C2_HOOK_CDECL DRStdioEOF(void* f) {
-    return DRfeof(f);
+    return PFfeof(f);
 }
 C2_HOOK_FUNCTION(0x0044c6a0, DRStdioEOF)
 
