@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "globvrpb.h"
 #include "network.h"
+#include "sound.h"
 
 
 int (C2_HOOK_FASTCALL * DoVerifyQuit_original)(int pReplace_background);
@@ -20,10 +21,19 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00494450, DoVerifyQuit, DoVerifyQuit_original)
 void (C2_HOOK_FASTCALL * DoMainMenu_original)(void);
 void C2_HOOK_FASTCALL DoMainScreen(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoMainMenu_original();
 #else
-#error "Not implemented"
+
+    StartMusicTrack(9998);
+    switch (FRONTEND_Main(kFrontend_menu_main)) {
+    case 0:
+        C2V(gProgram_state).prog_status = eProg_quit;
+        break;
+    case 1:
+        C2V(gProgram_state).prog_status = eProg_game_starting;
+        break;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00494540, DoMainScreen, DoMainMenu_original)
