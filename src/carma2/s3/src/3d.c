@@ -13,6 +13,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c68, 0x006b2c68);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_position_now, 0x006b2c20);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_vel_now, 0x006b2c58);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_left_now, 0x006b2c30);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_listener_pos_is_brender, 0x006b2c50);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3*, gS3_listener_pos_ptr, 0x006b2c70);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_position_old, 0x006b2c40);
 
 
 void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src) {
@@ -169,3 +172,11 @@ void C2_HOOK_FASTCALL S3CopyBrVector3(br_vector3* pDest, br_vector3* pSrc) {
     BrVector3Copy(pDest, pSrc);
 }
 C2_HOOK_FUNCTION(0x00565ec7, S3CopyBrVector3)
+
+void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos) {
+
+    C2V(gS3_listener_pos_is_brender) = 1;
+    C2V(gS3_listener_pos_ptr) = pos;
+    S3CopyBrVector3(&C2V(gS3_listener_position_old), pos);
+}
+C2_HOOK_FUNCTION(0x00565faa, S3BindListenerPositionBRender)
