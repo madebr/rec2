@@ -492,3 +492,14 @@ void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWha
     C2V(gStart_jumped) = 1;
 }
 C2_HOOK_FUNCTION(0x004ae620, WakeUpOpponentsToTheFactThatTheStartHasBeenJumped)
+
+tS16 (C2_HOOK_FASTCALL * FindNearestPathSection_original)(undefined4* pArg1, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance);
+tS16 C2_HOOK_FASTCALL FindNearestPathSection(undefined4* pArg1, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FindNearestPathSection_original(pArg1, pActor_coords, pPath_direction, pIntersect, pDistance);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a82d0, FindNearestPathSection, FindNearestPathSection_original)
