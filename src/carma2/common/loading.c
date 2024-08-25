@@ -5291,6 +5291,25 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00487ec0, ReadNonCarMechanicsData, LoadNonCar_original)
 
+int C2_HOOK_CDECL LinkyCallback(br_actor* pActor, void* data) {
+    tLinkyCallback_context* context = data;
+    int i;
+
+    if (pActor->type != BR_ACTOR_MODEL) {
+        return 0;
+    }
+    pActor->render_style = BR_RSTYLE_DEFAULT;
+    for (i = context->model_start; i < context->model_start + context->model_end; i++) {
+
+        if (DRStricmp(C2V(gDroneStorage).models[i]->identifier, pActor->model->identifier) == 0) {
+            pActor->model = C2V(gDroneStorage).models[i];
+            return 0;
+        }
+    }
+    PDFatalError("No drone model");
+}
+C2_HOOK_FUNCTION(0x00450600, LinkyCallback)
+
 void (C2_HOOK_FASTCALL * LoadDroneActorsModels_original)(tDrone_spec* pDrone);
 void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone) {
 
