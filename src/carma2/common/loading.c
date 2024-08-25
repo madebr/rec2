@@ -261,6 +261,24 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_stamp_for_this_munging, 0x0079efb8);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrame_period_for_this_munging, 0x0079efc4);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gDrone_delta_time, 0x0079efc0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gTrack_drone_min_y, 0x0079efbc);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_funk_type_names, 3, 0x00594780, {
+    "spinnyGroove",
+    "steeringGroove",
+    "spinnyFunk",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gAxis_names, 3, 0x00594790, {
+    "x",
+    "y",
+    "z",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gReverseness_type_names, 2, 0x005947a8, {
+    "forward",
+    "reverse",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFunk_speed_control_names, 2, 0x005947a0, {
+    "controller",
+    "dronespeed",
+});
 
 void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void) {
     C2V(gPedSoundPath) = NULL;
@@ -5433,13 +5451,171 @@ intptr_t C2_HOOK_CDECL MrFindy(br_actor* pActor, void* data) {
 }
 C2_HOOK_FUNCTION(0x00450b30, MrFindy)
 
+br_actor* C2_HOOK_FASTCALL FindDroneChildActor(tDrone_spec* pDrone, const char* pName) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, model_actor, 0xf0);
+    return (br_actor*)DRActorEnumRecurse(pDrone->model_actor, MrFindy, (void*)pName);
+}
+
+int C2_HOOK_FASTCALL ReadPastThisLine(FILE* pF, const char* pLine) {
+    char s[256];
+
+    for (;;) {
+        if (PFfeof(pF)) {
+            return 0;
+        }
+        GetALineAndDontArgue(pF, s);
+        if (c2_strcmp(pLine, s) == 0) {
+            return 1;
+        }
+    }
+}
+
+int C2_HOOK_FASTCALL MatchFGType(const char* pS) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gGroove_funk_type_names)) != 3);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gGroove_funk_type_names)); i++) {
+
+        if (c2_strcmp(pS, C2V(gGroove_funk_type_names)[i]) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+tFunk_groove_axis GetAxisFromString(const char* pS) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gAxis_names)) != 3);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gAxis_names)); i++) {
+
+        if (c2_strcmp(pS, C2V(gAxis_names)[i]) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+tFunk_groove_reverseness GetReversenessFromString(const char* pS) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gReverseness_type_names)) != 2);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gReverseness_type_names)); i++) {
+
+        if (c2_strcmp(pS, C2V(gReverseness_type_names)[i]) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+tFunk_groove_speed_control GetSpeedControlFromString(const char* pS) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gFunk_speed_control_names)) != 2);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gFunk_speed_control_names)); i++) {
+
+        if (c2_strcmp(pS, C2V(gFunk_speed_control_names)[i]) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 void (C2_HOOK_FASTCALL * LoadFunksAndGrooves_original)(tDrone_spec* pDrone, FILE* pF);
 void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadFunksAndGrooves_original(pDrone, pF);
 #else
-#error "Not implemented"
+
+    C2_HOOK_BUG_ON(sizeof(tFunk_grooves) != 0xa4);
+    C2_HOOK_BUG_ON(REC2_ASIZE(pDrone->funk_grooves->items) != 10);
+
+    if (!ReadPastThisLine(pF, "START OF FUNKYGROOVY STUFF")) {
+        FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, funk_grooves, 0x5d0);
+
+    if (pDrone->funk_grooves == NULL) {
+        pDrone->funk_grooves = BrMemAllocate(sizeof(tFunk_grooves), kMem_drone_funk_groove);
+    }
+    for (;;) {
+        tFunk_groove* funk_groove;
+        char s[256];
+        int axis;
+        int reverseness;
+        int speed_control;
+
+        GetALineAndDontArgue(pF, s);
+        if (c2_strcmp(s, "END OF FUNKYGROOVY STUFF") == 0 || PFfeof(pF)) {
+            break;
+        }
+        if (pDrone->funk_grooves->count >= REC2_ASIZE(pDrone->funk_grooves->items)) {
+            FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+        }
+        funk_groove = &pDrone->funk_grooves->items[pDrone->funk_grooves->count];
+        funk_groove->type = MatchFGType(s);
+        switch (funk_groove->type) {
+        case eFunk_groove_type_spinny_groove:
+            /* wheel actor */
+            GetALineAndDontArgue(pF, s);
+            funk_groove->actor = FindDroneChildActor(pDrone, s);
+            if (funk_groove->actor == NULL) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+
+            /* "x", "y" or "z" */
+            GetALineAndDontArgue(pF, s);
+            axis = GetAxisFromString(s);
+            if (axis < 0) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            funk_groove->spinny.axis = axis;
+
+            /* "controlled" or "dronespeed" */
+            GetALineAndDontArgue(pF, s);
+            speed_control = GetSpeedControlFromString(s);
+            if (speed_control < 0) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            funk_groove->spinny.speed_control = speed_control;
+
+            /* "forward" or "reverse" */
+            GetALineAndDontArgue(pF,s);
+            reverseness = GetReversenessFromString(s);
+            if (reverseness < 0) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            funk_groove->spinny.reverse = reverseness;
+
+            funk_groove->spinny.omega = REC2_PI_F * GetAScalar(pF);
+            break;
+
+        case eFunk_groove_type_steering_groove:
+            /* pivot actor */
+            GetALineAndDontArgue(pF, s);
+            funk_groove->actor = FindDroneChildActor(pDrone, s);
+            if (funk_groove->actor == NULL) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+
+            /* "forward" or "reverse" */
+            GetALineAndDontArgue(pF, s);
+            reverseness = GetReversenessFromString(s);
+            if (reverseness < 0) {
+                FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone->form->name);
+            }
+            funk_groove->steering.reverse = reverseness;
+            break;
+        }
+        pDrone->funk_grooves->count += 1;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00450680, LoadFunksAndGrooves, LoadFunksAndGrooves_original)

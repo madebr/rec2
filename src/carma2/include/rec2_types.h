@@ -3308,6 +3308,50 @@ typedef struct {
     undefined field_0x4[12];
 } tFrontend_model;
 
+typedef enum {
+    eFunk_groove_type_unknown = -1,
+    eFunk_groove_type_spinny_groove = 0,
+    eFunk_groove_type_steering_groove = 1,
+    eFunk_groove_type_spinny_funk = 2,
+} tFunk_groove_type;
+
+typedef enum {
+    tFunk_groove_axis_x = 0,
+    tFunk_groove_axis_y = 1,
+    tFunk_groove_axis_z = 2,
+} tFunk_groove_axis;
+
+typedef enum {
+    tFunk_groove_reverseness_forward = 0,
+    tFunk_groove_reverseness_backward = 1,
+} tFunk_groove_reverseness;
+
+typedef enum {
+    tFunk_groove_speed_control_controlled = 0,
+    tFunk_groove_speed_control_dronespeed = 1,
+} tFunk_groove_speed_control;
+
+typedef struct {
+    tS8 type; /* tFunk_groove_type */
+    br_actor* actor;
+    union {
+        struct {
+            unsigned int reverse: 1;        /* 0: forward, 1: reverse */
+        } steering;
+        struct {
+            br_scalar omega;
+            unsigned int axis : 2;          /* 0: x, 1: y, 2: z*/
+            unsigned int speed_control : 1; /* 0: controlled, 1: dronespeed */
+            unsigned int reverse: 1;        /* 0: forward, 1: reverse */
+        } spinny;
+    };
+} tFunk_groove;
+
+typedef struct {
+    int count;
+    tFunk_groove items[10];
+} tFunk_grooves;
+
 typedef struct tDrone_spec {
     int id;
     tDrone_form* form;
@@ -3343,7 +3387,7 @@ typedef struct tDrone_spec {
     br_actor* model_actor;
     int field_0xf4;
     tCollision_info collision_info;
-    undefined4* field_0x5d0;
+    tFunk_grooves* funk_grooves;
     undefined4 field_0x5d4;
 } tDrone_spec;
 

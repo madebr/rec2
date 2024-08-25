@@ -229,9 +229,10 @@ void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void) {
             FreeThingForm(drone->collision_info.shape);
             drone->field_0x46 = 0;
         }
-        if (drone->field_0x5d0 != NULL) {
-            BrMemFree(drone->field_0x5d0);
-            drone->field_0x5d0 = NULL;
+
+        if (drone->funk_grooves != NULL) {
+            BrMemFree(drone->funk_grooves);
+            drone->funk_grooves = NULL;
         }
     }
 
