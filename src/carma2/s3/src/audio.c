@@ -1164,3 +1164,17 @@ tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pV
     return src;
 }
 C2_HOOK_FUNCTION(0x005665d4, S3CreateSoundSource)
+
+tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSourceBR(br_vector3* pPosition, br_vector3* pVelocity, tS3_outlet* pBound_outlet) {
+    tS3_sound_source* source;
+
+    if (!C2V(gS3_enabled)) {
+        return NULL;
+    }
+    source = S3CreateSoundSource(pPosition, pVelocity, pBound_outlet);
+    if (source != NULL) {
+        source->brender_vector = 1;
+    }
+    return source;
+}
+C2_HOOK_FUNCTION(0x00566590, S3CreateSoundSourceBR)
