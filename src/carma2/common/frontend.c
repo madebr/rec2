@@ -307,11 +307,11 @@ static void C2_HOOK_FASTCALL LoadMenuModels(void) {
 #endif
 }
 
-br_pixelmap* (C2_HOOK_FASTCALL * Frontend_LoadFrontendPixelmap_original)(const char* pFolder, const char* pName);
-br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder, const char* pName) {
+br_pixelmap* (C2_HOOK_FASTCALL * GetThisFuckingPixelmapPleaseMrTwatter_original)(const char* pFolder, const char* pName);
+br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* pFolder, const char* pName) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    return Frontend_LoadFrontendPixelmap_original(pFolder, pName);
+    return GetThisFuckingPixelmapPleaseMrTwatter_original(pFolder, pName);
 #else
 
     br_pixelmap* pixelmaps[1000];
@@ -350,7 +350,7 @@ br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder,
     return result;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0046abf0, Frontend_LoadFrontendPixelmap, Frontend_LoadFrontendPixelmap_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0046abf0, GetThisFuckingPixelmapPleaseMrTwatter, GetThisFuckingPixelmapPleaseMrTwatter_original)
 
 void (C2_HOOK_FASTCALL * FRONTEND_CreateItemBrenderObjects_original)(tFrontend_brender_item* Frontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText);
 void C2_HOOK_FASTCALL FRONTEND_CreateItemBrenderObjects(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText) {
@@ -467,7 +467,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             s[c2_strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
-            C2V(gFrontend_backdrop) = Frontend_LoadFrontendPixelmap(s2, name);
+            C2V(gFrontend_backdrop) = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
             ClosePackFileAndSetTiffLoading(twt);
 
             if (C2V(gFrontend_backdrop) == NULL) {
@@ -488,7 +488,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             s[c2_strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
-            C2V(gFrontend_backdrop) = Frontend_LoadFrontendPixelmap(s2, name);
+            C2V(gFrontend_backdrop) = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
             ClosePackFileAndSetTiffLoading(twt);
 
             if (C2V(gFrontend_backdrop) == NULL) {
