@@ -1700,14 +1700,18 @@ typedef struct tCar_spec {
     int shadow_intersection_flags;
     tU32 last_bounce;
     int new_skidding;
-    undefined4 field_0x15a0;
-    undefined field_0x15a4[8];
-    br_vector3 field_0x15ac[4];
-    undefined field_0x15dc[240];
+    int old_skidding;
+    tS16 old_skid[4];
+    br_vector3 special_start[4];
+    br_vector3 prev_skid_pos[4];
+    br_vector3 field_0x160c[4];
+    br_vector3 field_0x163c[4];
+    br_vector3 nor[4];
+    br_vector3 prev_nor[4];
     float oil_remaining[4];
     float maybe_blood_remaining[4];
-    float maybe_total_length[4];
-    undefined4 field_0x16fc[4];
+    float total_length[4];
+    br_material* field_0x16fc[4];
     float proxy_ray_distance;
     int powerups[80]; /* unknown_size */
     undefined field_0x1850[80];
