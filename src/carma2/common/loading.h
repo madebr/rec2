@@ -427,6 +427,8 @@ void C2_HOOK_FASTCALL LinkDroneActorsToModelsAndSetRenderStyle(tDrone_spec* pDro
 
 void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone);
 
+intptr_t C2_HOOK_CDECL MrFindy(br_actor* pActor, void* data);
+
 void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF);
 
 int C2_HOOK_FASTCALL ReadPastBoundsShapesHeader(FILE* pF);
