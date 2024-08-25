@@ -7,8 +7,8 @@
 
 #include "c2_stdio.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmash_vertex, gSmash_vertices, 200);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmash_quad, gSmash_quads, 50);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmash_vertex, gSmash_glass_fragments, 200);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmash_quad, gSmash_decals, 50);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmashable_race_target, gSmashable_race_targets, 300);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_smashable_race_targets);
 
