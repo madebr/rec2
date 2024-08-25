@@ -3095,7 +3095,7 @@ FILE* C2_HOOK_FASTCALL OpenDrone(const char* pDrone_name) {
 }
 C2_HOOK_FUNCTION(0x0044f640, OpenDrone)
 
-void C2_HOOK_FASTCALL LoadDrone(const char* pDrone_name) {
+void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
     tPath_name the_path;
     tTWTVFS twt;
     int version;
@@ -3280,7 +3280,7 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
             if (c2_strcmp(s, "END OF DRONES") == 0 || DRfeof(f)) {
                 break;
             }
-            LoadDrone(s);
+            LoadDroneTypeInfo(s);
         }
         PFfclose(f);
     }
