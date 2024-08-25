@@ -1700,7 +1700,8 @@ typedef struct tCar_spec {
     int shadow_intersection_flags;
     tU32 last_bounce;
     int new_skidding;
-    undefined field_0x15a0[12];
+    undefined4 field_0x15a0;
+    undefined field_0x15a4[8];
     br_vector3 field_0x15ac[4];
     undefined field_0x15dc[240];
     float oil_remaining[4];
