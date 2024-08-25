@@ -253,4 +253,6 @@ int C2_HOOK_FASTCALL S3SoundStillPlaying(int pTag);
 
 int C2_HOOK_FASTCALL S3SetVolume(int pVolume);
 
+void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos);
+
 #endif
