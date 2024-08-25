@@ -20,4 +20,6 @@ int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3);
 
 void C2_HOOK_FASTCALL S3CopyBrVector3(br_vector3* pDest, br_vector3* pSrc);
 
+void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos);
+
 #endif // S3_3D_H
