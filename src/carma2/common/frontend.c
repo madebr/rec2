@@ -494,7 +494,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
             if (C2V(gFrontend_backdrop) == NULL) {
                 BrFailure("FRONTEND: Error loading background graphics.", 0);
             }
-            /* FUN_005191f0(C2V(gFrontend_backdrop)); */
+            PixelmapSwapByteOrder(C2V(gFrontend_backdrop));
             BrMapAdd(C2V(gFrontend_backdrop));
         }
     }
