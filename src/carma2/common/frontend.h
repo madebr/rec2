@@ -24,7 +24,7 @@ C2_HOOK_VARIABLE_DECLARE(tFrontendMenuType, gFrontend_next_menu);
 C2_HOOK_VARIABLE_DECLARE(tConnected_items*, gConnected_items);
 
 
-void C2_HOOK_FASTCALL LoadFrontendStrings(void);
+void C2_HOOK_FASTCALL IString_Load(void);
 
 void C2_HOOK_FASTCALL FreeInterfaceStrings(void);
 
