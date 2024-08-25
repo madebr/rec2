@@ -198,3 +198,51 @@ void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left) {
     C2V(gS3_listener_left_is_brender) = 1;
 }
 C2_HOOK_FUNCTION(0x0056602b, S3BindListenerLeftBRender)
+
+int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound, tS3_sound_source* source, float pMax_distance, int pPeriod, int pRepeats, int pVolume, int pPitch, int pSpeed) {
+    tS3_descriptor* desc;
+
+    if (!C2V(gS3_enabled)) {
+        return eS3_error_none;
+    }
+    if (source == NULL) {
+        return eS3_error_nonexistant_source;
+    }
+    desc = S3GetDescriptorByID(pSound);
+    if (desc == NULL) {
+        return eS3_error_bad_id;
+    }
+    if (desc->type != 0) {
+        return eS3_error_none;
+    }
+    if ((desc->buffer_description == NULL || (desc->flags & 2) != 0) && S3LoadSample(pSound) == eS3_error_none) {
+        return eS3_error_load_sound;
+    }
+    if (pVolume > 255) {
+        pVolume = 255;
+    }
+    if (pVolume < 0) {
+        pVolume = 128;
+    }
+    if (pPitch < 0) {
+        pPitch = BR_FIXED_INT(1);
+    }
+    if (pSpeed < 0) {
+        pSpeed = BR_FIXED_INT(1);
+    }
+    source->bound_outlet = pOutlet;
+    source->sound_id = pSound;
+    source->volume = pVolume;
+    source->max_distance_sq = pMax_distance;
+    source->period = pPeriod;
+    source->pitch = pPitch;
+    source->speed = pSpeed;
+    source->ambient = 1;
+
+    source->ambient_repeats = MAX(0, pRepeats);
+    source->time_since_last_played = pPeriod;
+    source->channel = NULL;
+    source->tag = 0;
+    return eS3_error_none;
+}
+C2_HOOK_FUNCTION(0x0056773c, S3BindAmbientSoundToOutlet)
