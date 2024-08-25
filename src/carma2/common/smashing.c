@@ -6,8 +6,8 @@
 
 #include "rec2_macros.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_vertex, gSmash_vertices, 200, 0x006b78e0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_quad, gSmash_quads, 50, 0x006a80f8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_vertex, gSmash_glass_fragments, 200, 0x006b78e0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_quad, gSmash_decals, 50, 0x006a80f8);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gInitial_smashable_position_type_names, 3, 0x0065fed0, {
     "sphereclumped",
@@ -25,12 +25,12 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_race_targets, 0x0074abe0);
 void C2_HOOK_FASTCALL InitGlassFragments(void) {
     int i;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_vertices)) != 200);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_glass_fragments)) != 200);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmash_vertices)); i++) {
+    for (i = 0; i < REC2_ASIZE(C2V(gSmash_glass_fragments)); i++) {
         tSmash_vertex *smash_vertex;
 
-        smash_vertex = &C2V(gSmash_vertices)[i];
+        smash_vertex = &C2V(gSmash_glass_fragments)[i];
         smash_vertex->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
         smash_vertex->actor->model = BrModelAllocate(NULL, 3, 1);
         smash_vertex->actor->model->faces[0].vertices[0] = 0;
@@ -47,12 +47,12 @@ void C2_HOOK_FASTCALL InitGlassFragments(void) {
 void C2_HOOK_FASTCALL InitDecals(void) {
     int i;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_quads)) != 50);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_decals)) != 50);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmash_quads)); i++) {
+    for (i = 0; i < REC2_ASIZE(C2V(gSmash_decals)); i++) {
         tSmash_quad *smash_quad;
 
-        smash_quad = &C2V(gSmash_quads)[i];
+        smash_quad = &C2V(gSmash_decals)[i];
         smash_quad->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
         smash_quad->actor->model = BrModelAllocate(NULL, 4, 2);
         smash_quad->actor->model->faces[0].vertices[0] = 0;
