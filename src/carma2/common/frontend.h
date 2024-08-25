@@ -32,7 +32,7 @@ const char* C2_HOOK_FASTCALL IString_Get(int pIndex);
 
 void C2_HOOK_FASTCALL LoadMenuImages(void);
 
-void C2_HOOK_FASTCALL CreateMenuActors(void);
+void C2_HOOK_FASTCALL FRONTEND_Setup2D(void);
 
 br_pixelmap* C2_HOOK_FASTCALL Frontend_LoadFrontendPixelmap(const char* pFolder, const char* pName);
 
