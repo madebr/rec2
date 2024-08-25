@@ -99,7 +99,7 @@ void C2_HOOK_FASTCALL LoadFrontendStrings(void) {
         FatalError(kFatalError_CannotOpenTEXT_TXT);
     }
     C2V(gCount_interface_strings) = 0;
-    for (i = 0; !DRfeof(f) && i < REC2_ASIZE(C2V(gInterface_strings)); i++) {
+    for (i = 0; !PFfeof(f) && i < REC2_ASIZE(C2V(gInterface_strings)); i++) {
         GetALineAndDontArgue(f, s);
         C2V(gInterface_strings)[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_misc_string);
         c2_strcpy(C2V(gInterface_strings)[i], s);

@@ -1495,7 +1495,7 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
     if (f == NULL) {
         return;
     }
-    while (!DRfeof(f)) {
+    while (!PFfeof(f)) {
         GetALineAndDontArgue(f, s);
         C2V(gTranslation_count)++;
     }
