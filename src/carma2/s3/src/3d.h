@@ -24,4 +24,6 @@ void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos);
 
 void C2_HOOK_FASTCALL S3BindListenerVelocityBRender(br_vector3* vel);
 
+void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left);
+
 #endif // S3_3D_H
