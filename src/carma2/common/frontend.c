@@ -83,7 +83,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gConnected_items_indices, 6, 0x00687018);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
-void C2_HOOK_FASTCALL LoadFrontendStrings(void) {
+void C2_HOOK_FASTCALL IString_Load(void) {
     tPath_name the_path;
     FILE* f;
     char s[256];
@@ -107,7 +107,7 @@ void C2_HOOK_FASTCALL LoadFrontendStrings(void) {
     }
     PFfclose(f);
 }
-C2_HOOK_FUNCTION(0x00484fd0, LoadFrontendStrings)
+C2_HOOK_FUNCTION(0x00484fd0, IString_Load)
 
 void C2_HOOK_FASTCALL FreeInterfaceStrings(void) {
     int i;
@@ -548,7 +548,7 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
     PrintMemoryDump(0, "START OF FRONTEND_Setup");
     LoadInterfaceStuff(C2V(gProgram_state).racing);
     if (C2V(gFrontend_stuff_not_loaded)) {
-        LoadFrontendStrings();
+        IString_Load();
         InitPolyFonts();
         LoadMenuImages();
         PrintMemoryDump(0, "AFTER LoadMenuImages");
