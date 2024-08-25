@@ -248,6 +248,16 @@ int C2_HOOK_FASTCALL SkidSection(tS16* pSkid_id, br_vector3* pSkid_start, br_vec
 }
 C2_HOOK_FUNCTION(0x004e9f20, SkidSection)
 
+void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar) {
+
+    pCar->field_0x15a0 = 0;
+    pCar->oil_remaining[0] = 0.f;
+    pCar->oil_remaining[1] = 0.f;
+    pCar->oil_remaining[2] = 0.f;
+    pCar->oil_remaining[3] = 0.f;
+}
+C2_HOOK_FUNCTION(0x004ea700, InitCarSkidStuff)
+
 void (C2_HOOK_FASTCALL * SkidsPerFrame_original)(void);
 void C2_HOOK_FASTCALL SkidsPerFrame(void) {
 
