@@ -200,6 +200,86 @@ void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* p
 }
 C2_HOOK_FUNCTION(0x004ea2c0, StretchMark)
 
+void C2_HOOK_FASTCALL SkidMark(tCar_spec* pCar_spec, int pWheel_num) {
+    br_material* material;
+    int skid_mask;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_info, material_modifiers, 0xf08);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, material_index, 0x1274);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, oldd, 0x1264);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, new_skidding, 0x159c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, old_skidding, 0x15a0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, old_skid, 0x15a4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, special_start, 0x15ac);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, prev_skid_pos, 0x15dc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, field_0x163c, 0x163c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, nor, 0x166c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, total_length, 0x16ec);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, oil_remaining, 0x16cc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, prev_nor, 0x169c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, field_0x16fc, 0x16fc);
+
+    material = C2V(gCurrent_race).material_modifiers[pCar_spec->material_index[pWheel_num]].skid_mark_material;
+    if (pCar_spec->oil_remaining[pWheel_num] != 0.f && pCar_spec->oldd[pWheel_num] < pCar_spec->susp_height[pWheel_num / 2]) {
+
+        pCar_spec->new_skidding |= 1 << pWheel_num;
+        material = pCar_spec->field_0x16fc[pWheel_num];
+        if (material == NULL) {
+            material = C2V(gMaterial)[0];
+        }
+    }
+    if (material == NULL) {
+        pCar_spec->old_skidding &= ~(1 << pWheel_num);
+        return;
+    }
+    skid_mask = 1 << pWheel_num;
+
+    if (!(pCar_spec->new_skidding & skid_mask) && !(pCar_spec->old_skidding & skid_mask)) {
+        return;
+    }
+    if (!(pCar_spec->new_skidding & skid_mask)) {
+
+        pCar_spec->old_skidding &= ~skid_mask;
+    } else if (!(pCar_spec->old_skidding & skid_mask)) {
+
+        pCar_spec->old_skidding |= skid_mask;
+        pCar_spec->total_length[pWheel_num] = 0.f;
+        pCar_spec->old_skid[pWheel_num] = -1;
+    } else {
+        br_vector3* world_pos;
+        br_vector3 disp;
+        br_scalar dist;
+
+        world_pos = &pCar_spec->special_start[pWheel_num];
+
+        BrVector3Sub(&disp, world_pos, &pCar_spec->prev_skid_pos[pWheel_num]);
+        dist = BrVector3Length(&disp);
+        if (dist < 0.05f) {
+            return;
+        }
+        if (SkidSection(&pCar_spec->old_skid[pWheel_num],
+                &pCar_spec->field_0x160c[pWheel_num],
+                &pCar_spec->field_0x163c[pWheel_num],
+                material,
+                world_pos,
+                &pCar_spec->nor[pWheel_num],
+                &pCar_spec->prev_skid_pos[pWheel_num],
+                &pCar_spec->prev_nor[pWheel_num],
+                pCar_spec->total_length[pWheel_num],
+                0.05f)) {
+            pCar_spec->old_skidding &= ~skid_mask;
+        }
+        pCar_spec->total_length[pWheel_num] += dist;
+        pCar_spec->oil_remaining[pWheel_num] -= dist;
+        if (pCar_spec->oil_remaining[pWheel_num] < 0.f) {
+            pCar_spec->oil_remaining[pWheel_num] = 0.f;
+        }
+    }
+    BrVector3Copy(&pCar_spec->prev_skid_pos[pWheel_num], &pCar_spec->special_start[pWheel_num]);
+    BrVector3Copy(&pCar_spec->prev_nor[pWheel_num], &pCar_spec->nor[pWheel_num]);
+}
+C2_HOOK_FUNCTION(0x004ea490, SkidMark)
+
 int C2_HOOK_FASTCALL SkidSection(tS16* pSkid_id, br_vector3* pSkid_start, br_vector3* pSkid_end, br_material* pMaterial, br_vector3* pPos, br_vector3* pNorm, br_vector3* pPrev_pos, br_vector3* pPrev_norm, br_scalar pTexture_start, br_scalar pTexture_step) {
 
     if (BrVector3Dot(pNorm, pPrev_norm) < 0.997f || fabsf(BrVector3Dot(pNorm, pPos) - BrVector3Dot(pPrev_pos, pNorm)) > 0.01f) {
@@ -250,7 +330,7 @@ C2_HOOK_FUNCTION(0x004e9f20, SkidSection)
 
 void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar) {
 
-    pCar->field_0x15a0 = 0;
+    pCar->old_skidding = 0;
     pCar->oil_remaining[0] = 0.f;
     pCar->oil_remaining[1] = 0.f;
     pCar->oil_remaining[2] = 0.f;
