@@ -918,7 +918,7 @@ void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, i
 }
 C2_HOOK_FUNCTION(0x00466ce0, FRONTEND_UpdateScrollerModels)
 
-void C2_HOOK_FASTCALL FRONTEND_MainMenu_UpdateRaces(tFrontend_spec* pFrontend) {
+void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     char group_text[12];
     int group;
     int i;
@@ -953,7 +953,7 @@ void C2_HOOK_FASTCALL FRONTEND_MainMenu_UpdateRaces(tFrontend_spec* pFrontend) {
     }
     FRONTEND_UpdateScrollerModels(pFrontend, 0);
 }
-C2_HOOK_FUNCTION(0x00467b30, FRONTEND_MainMenu_UpdateRaces)
+C2_HOOK_FUNCTION(0x00467b30, RefreshRacesScroller)
 
 int C2_HOOK_FASTCALL FRONTEND_FindItemUnderMouse(tFrontend_spec *pFrontend, int pX, int pY) {
     int i;
@@ -1250,7 +1250,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
                 for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
                     C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem = C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop;
                 }
-                FRONTEND_MainMenu_UpdateRaces(C2V(gCurrent_frontend_spec));
+                RefreshRacesScroller(C2V(gCurrent_frontend_spec));
             }
             return pFrontend->items[original_selected_index].field_0xc;
         }
