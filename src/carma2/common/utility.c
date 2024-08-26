@@ -1014,6 +1014,27 @@ void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg) {
 }
 C2_HOOK_FUNCTION(0x00518ac0, DumpVisibleActors)
 
+tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp) {
+
+    switch (pm->type) {
+
+    case BR_PMT_RGB_555:
+        return (((red & 0xf8) >> 3) << 10) | (((grn & 0xf8) >> 3) << 5) | (((blu & 0xf8) >> 3) << 0);
+    case BR_PMT_RGB_565:
+        return (((red & 0xf8) >> 3) << 11) | (((grn & 0xfc) >> 2) << 5) | (((blu & 0xf8) >> 3) << 0);
+    case BR_PMT_RGBA_8888:
+        return (alp << 24) | (red << 16) | (red << 8) | (blu << 0);
+    case BR_PMT_RGBA_4444:
+        return (((red & 0xf0) >> 4) << 8) | (((grn & 0xf0) >> 4) << 4) | (((blu & 0xf0) >> 4) << 0) | (((alp & 0xf0) >> 4) << 12);
+    case BR_PMT_ARGB_1555:
+        return (((red & 0xf8) >> 3) << 10) | (((grn & 0xf8) >> 3) << 5) | (((blu & 0xf8) >> 3) << 0) | (((alp & 0x80) >> 7) << 15);
+    case BR_PMT_RGB_888:
+    default:
+        return (red << 16) | (red << 8) | (blu << 0);
+    }
+}
+C2_HOOK_FUNCTION(0x00518d60, FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport)
+
 int (C2_HOOK_FASTCALL * LoadTextureTryAllLocations_original)(char* pName, br_pixelmap** pMaps, int pCapacity);
 int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity) {
 
