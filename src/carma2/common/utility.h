@@ -90,6 +90,8 @@ int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData);
 
 void C2_HOOK_FASTCALL DumpActorTree(br_actor* pActor, const char* pMsg);
 
+tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp);
+
 int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity);
 
 int C2_HOOK_FASTCALL PercentageChance(int pC);
