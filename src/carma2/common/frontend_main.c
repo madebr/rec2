@@ -74,3 +74,13 @@ int C2_HOOK_FASTCALL MainMenuInfunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00469a40, MainMenuInfunc)
+
+int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend) {
+
+    KillAPOactor(C2V(gFrontend_billboard_actors)[0]);
+    BrActorFree(C2V(gFrontend_menu_camera));
+    C2V(gFrontend_menu_camera) = NULL;
+    SaveOptions();
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00469df0, MainMenuOutfunc)
