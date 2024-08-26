@@ -1442,3 +1442,40 @@ char* C2_HOOK_FASTCALL MungeCommas(int pValue) {
     return C2V(munge_global_buffer);
 }
 C2_HOOK_FUNCTION(0x00518f20, MungeCommas)
+
+br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
+    br_pixelmap* map;
+    br_actor* actor;
+    br_material* material;
+    br_model* model;
+
+    map = BrPixelmapAllocate(C2V(gBack_screen)->type, 64, 64, NULL, 0);
+    model = BrModelAllocate("Billboard Model", 4, 2);
+    material = BrMaterialAllocate("Billboard Material");
+    actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    actor->identifier = "Billboard Actor";
+    actor->model = model;
+    actor->material = material;
+    actor->render_style = BR_RSTYLE_FACES;
+    model->faces[0].vertices[0] = 0;
+    model->faces[0].vertices[1] = 1;
+    model->faces[0].vertices[2] = 2;
+    model->faces[1].vertices[0] = 1;
+    model->faces[1].vertices[1] = 3;
+    model->faces[1].vertices[2] = 2;
+    model->faces[0].material = NULL;
+    model->faces[1].material = NULL;
+    BrVector3Set(&model->vertices[0].p,  0.f,   0.f, -1.05f);
+    BrVector3Set(&model->vertices[1].p, 40.f,   0.f, -1.05f);
+    BrVector3Set(&model->vertices[2].p,  0.f, -12.f, -1.05f);
+    BrVector3Set(&model->vertices[3].p, 40.f, -12.f, -1.05f);
+    material->colour = 0;
+    material->colour_map = map;
+    material->flags = BR_MATF_ALWAYS_VISIBLE;
+    model->flags |= BR_MODF_KEEP_ORIGINAL;
+    BrMapAdd(map);
+    BrMaterialAdd(material);
+    BrModelAdd(model);
+    return actor;
+}
+C2_HOOK_FUNCTION(0x0046f8a0, CreateAPOactor)
