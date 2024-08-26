@@ -94,4 +94,6 @@ void C2_HOOK_FASTCALL MaybeDoMouseCursor(void);
 
 void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
 
+char* C2_HOOK_FASTCALL MungeCommas(int pValue);
+
 #endif //REC2_FRONTEND_H
