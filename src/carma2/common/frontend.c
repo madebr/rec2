@@ -1419,3 +1419,26 @@ void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int p
     TransparentPolyFontText(pText, pX, pY, pFont, pJust, pRender, 1.0);
 }
 C2_HOOK_FUNCTION(0x00464df0, SolidPolyFontText)
+
+char* C2_HOOK_FASTCALL MungeCommas(int pValue) {
+    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, munge_global_buffer, 32, 0x006b5f20);
+    char buffer[32];
+    size_t len;
+    size_t get_pos;
+    size_t put_pos;
+    size_t remaining;
+
+    c2_sprintf(buffer, "%i", pValue);
+    len = c2_strlen(buffer);
+    for (remaining = len, get_pos = 0, put_pos = 0; get_pos < len; remaining--, get_pos++, put_pos++) {
+
+        if (remaining % 3 == 0 && get_pos != 0) {
+            C2V(munge_global_buffer)[put_pos] = C2V(gMisc_strings)[294][0];
+            put_pos += 1;
+        }
+        C2V(munge_global_buffer)[put_pos] = buffer[get_pos];
+    }
+    C2V(munge_global_buffer)[put_pos] = '\0';
+    return C2V(munge_global_buffer);
+}
+C2_HOOK_FUNCTION(0x00518f20, MungeCommas)
