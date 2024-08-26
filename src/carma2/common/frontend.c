@@ -15,6 +15,7 @@
 #include "graphics.h"
 #include "init.h"
 #include "input.h"
+#include "intrface.h"
 #include "loading.h"
 #include "main.h"
 #include "polyfont.h"
@@ -80,6 +81,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAuthor_credits_scroll_start_time, 0x00686834);
 C2_HOOK_VARIABLE_IMPLEMENT(tConnected_items*, gConnected_items, 0x00688ab0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_connected_items_indices, 0x00686f08);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gConnected_items_indices, 6, 0x00687018);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_scrollbars_updated, 0x006864f4);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -1512,3 +1514,26 @@ void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pKey, int pNum) {
     MungeMetaCharacters(pText, pKey, text);
 }
 C2_HOOK_FUNCTION(0x005190f0, MungeMetaCharactersNum)
+
+void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend) {
+
+    if (!pFrontend->loaded) {
+        LoadMenuSettings(pFrontend);
+        FuckWithWidths(pFrontend);
+        if (pFrontend->previous != NULL) {
+            pFrontend->previous->isPreviousSomeOtherMenu = 1;
+        }
+    }
+    C2V(gFrontend_scrollbars_updated) = 0;
+    EdgeTriggerModeOff();
+    WaitForNoKeys();
+    EdgeTriggerModeOn();
+}
+
+void C2_HOOK_FASTCALL FillInRaceDescription(char *pDest, int pRace_index) {
+
+    c2_strcpy(pDest, C2V(gRace_list)[pRace_index].description);
+    MungeMetaCharactersChar(pDest, 'R', '\r');
+    MungeMetaCharactersNum(pDest, 'O', C2V(gRace_list)[pRace_index].count_explicit_opponents);
+    MungeMetaCharactersNum(pDest, 'L', C2V(gRace_list)[pRace_index].count_laps);
+}
