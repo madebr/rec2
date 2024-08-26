@@ -96,4 +96,6 @@ void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int p
 
 char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
+br_actor* C2_HOOK_FASTCALL CreateAPOactor(void);
+
 #endif //REC2_FRONTEND_H
