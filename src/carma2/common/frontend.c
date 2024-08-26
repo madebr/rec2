@@ -1498,3 +1498,9 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
     }
 }
 C2_HOOK_FUNCTION(0x00518fa0, MungeMetaCharacters)
+
+void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar) {
+
+    MungeMetaCharacters(pText, pKey, &pChar);
+}
+C2_HOOK_FUNCTION(0x00519040, MungeMetaCharactersChar)
