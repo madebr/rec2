@@ -872,7 +872,7 @@ void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_m
 }
 C2_HOOK_FUNCTION(0x0046f5b0, MorphBlob)
 
-void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend) {
+void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
     int i;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_spec, count_items, 0x104);
@@ -898,7 +898,7 @@ void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend) {
         }
     }
 }
-C2_HOOK_FUNCTION(0x004666f0, FRONTEND_CompleteItemSizes)
+C2_HOOK_FUNCTION(0x004666f0, FuckWithWidths)
 
 void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, int pIndex) {
     int i;
@@ -945,7 +945,7 @@ void C2_HOOK_FASTCALL FRONTEND_MainMenu_UpdateRaces(tFrontend_spec* pFrontend) {
             item->highFont = 1;
         }
     }
-    FRONTEND_CompleteItemSizes(pFrontend);
+    FuckWithWidths(pFrontend);
     if (C2V(gIs_boundary_race) || C2V(gProgram_state).game_completed) {
         pFrontend->items[7].enabled = kFrontendItemEnabled_enabled;
     } else {
