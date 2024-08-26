@@ -25,7 +25,7 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004846e0, DoInterfaceScreen, DoInterfaceScreen_original)
 
-void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
+void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     tPath_name path;
     char buffer[256];
     char* str;
@@ -135,4 +135,4 @@ void C2_HOOK_FASTCALL ReadInterfaceTxt(tFrontend_spec* pFrontend) {
 
     PFfclose(f);
 }
-C2_HOOK_FUNCTION(0x00466760, ReadInterfaceTxt)
+C2_HOOK_FUNCTION(0x00466760, LoadMenuSettings)
