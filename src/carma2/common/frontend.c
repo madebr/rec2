@@ -1560,3 +1560,38 @@ void C2_HOOK_FASTCALL FillInRaceDescription(char *pDest, int pRace_index) {
     MungeMetaCharactersNum(pDest, 'O', C2V(gRace_list)[pRace_index].count_explicit_opponents);
     MungeMetaCharactersNum(pDest, 'L', C2V(gRace_list)[pRace_index].count_laps);
 }
+
+void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index) {
+    tPath_name pack_path;
+    char pack_filename[64];
+    char* pos_dot;
+    tTWTVFS twt;
+    int i;
+
+    pos_dot = c2_strrchr(C2V(gOpponents)[pCar_index].car_file_name, '.');
+    PathCat(pack_path, C2V(gApplication_path), "INTRFACE");
+    PathCat(pack_path, pack_path, "CARIMAGE");
+
+    c2_strcpy(pack_filename, C2V(gOpponents)[pCar_index].car_file_name);
+    pack_filename[c2_strlen(pack_filename) - 4] = '\0';
+    c2_strcat(pack_filename, "CI");
+    PathCat(pack_path, pack_path, pack_filename);
+    twt = OpenPackFileAndSetTiffLoading(pack_path);
+    for (i = 0; i < 6; i++) {
+        char pm_name[20];
+
+        c2_sprintf(pm_name, "%.*s%c.TIF", pos_dot - C2V(gOpponents)[pCar_index].car_file_name, C2V(gOpponents)[pCar_index].car_file_name, 'A' + i);
+        BrMapRemove(C2V(gFrontend_images)[i + 1]);
+        BrPixelmapFree(C2V(gFrontend_images)[i + 1]);
+        C2V(gFrontend_images)[i + 1] = GetThisFuckingPixelmapPleaseMrTwatter(pack_path, pm_name);
+        if (C2V(gFrontend_images)[i + 1] == NULL) {
+            C2V(gFrontend_images)[i + 1] = LoadPixelmap("64by64.tif");
+        }
+        BrPixelmapCopy(C2V(gFrontend_brender_items)[pBrender_index + i].field_0xc, C2V(gFrontend_images)[i + 1]);
+        BrPixelmapCopy(C2V(gFrontend_brender_items)[pBrender_index + i].field_0x10, C2V(gFrontend_brender_items)[pBrender_index + i].field_0xc);
+        BrMapUpdate(C2V(gFrontend_brender_items)[pBrender_index + i].field_0xc, BR_MAPU_ALL);
+        BrMaterialUpdate(C2V(gFrontend_brender_items)[pBrender_index + i].material, BR_MATU_COLOURMAP);
+    }
+    ClosePackFileAndSetTiffLoading(twt);
+}
+C2_HOOK_FUNCTION(0x0046aa20, MenuSetCarImage)

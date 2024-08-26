@@ -111,4 +111,6 @@ void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL FillInRaceDescription(char *pDest, int pRace_index);
 
+void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index);
+
 #endif //REC2_FRONTEND_H
