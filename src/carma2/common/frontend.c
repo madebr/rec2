@@ -1479,3 +1479,22 @@ br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
     return actor;
 }
 C2_HOOK_FUNCTION(0x0046f8a0, CreateAPOactor)
+
+void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
+    size_t len_text;
+    size_t len_repl;
+    size_t i;
+
+    len_text = c2_strlen(pText);
+    len_repl = c2_strlen(pRepl);
+
+    for (i = 0; i < len_text; i++) {
+        if (pText[i] == '@' && pText[i + 1] == pKey) {
+            c2_memmove(&pText[i + len_repl], &pText[i + 2], len_text - i - 1);
+            c2_memcpy(&pText[i], pRepl, len_repl);
+            i += len_repl;
+            len_text += len_repl - 2;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00518fa0, MungeMetaCharacters)
