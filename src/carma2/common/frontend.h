@@ -98,4 +98,6 @@ char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
 br_actor* C2_HOOK_FASTCALL CreateAPOactor(void);
 
+void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl);
+
 #endif //REC2_FRONTEND_H
