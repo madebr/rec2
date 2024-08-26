@@ -102,4 +102,6 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl);
 
 void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar);
 
+void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pKey, int pNum);
+
 #endif //REC2_FRONTEND_H
