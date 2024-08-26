@@ -62,7 +62,7 @@ void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void);
 
 void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps);
 
-void C2_HOOK_FASTCALL FRONTEND_CompleteItemSizes(tFrontend_spec* pFrontend);
+void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, int pIndex);
 
