@@ -1482,6 +1482,29 @@ br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
 }
 C2_HOOK_FUNCTION(0x0046f8a0, CreateAPOactor)
 
+void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
+
+    if (pActor != NULL) {
+
+        if (pActor->material->colour_map != NULL) {
+            BrMapRemove(pActor->material->colour_map);
+            BrPixelmapFree(pActor->material->colour_map);
+        }
+        if (pActor->material != NULL) {
+            BrMaterialRemove(pActor->material);
+            BrMaterialFree(pActor->material);
+        }
+        if (pActor->model != NULL) {
+            BrModelRemove(pActor->model);
+            BrModelFree(pActor->model);
+        }
+        if (pActor->parent != NULL) {
+            BrActorRemove(pActor);
+        }
+        BrActorFree(pActor);
+    }
+}
+
 void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
     size_t len_text;
     size_t len_repl;
