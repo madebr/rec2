@@ -100,4 +100,6 @@ br_actor* C2_HOOK_FASTCALL CreateAPOactor(void);
 
 void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl);
 
+void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar);
+
 #endif //REC2_FRONTEND_H
