@@ -1207,7 +1207,7 @@ typedef struct tFrontend_spec {
     tFrontend_level_spec levels[100];
     int count_levels;
     char unknownshortString[56];  // FIXME: unknown
-    int isPrevimousSomeOtherMenu;
+    int isPreviousSomeOtherMenu;
     undefined4 unknownLastInt;  // FIXME: unknown
 } tFrontend_spec;
 

@@ -22,6 +22,7 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gFrontend_wrecks_camera);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gFrontend_wrecks_pixelmap);
 C2_HOOK_VARIABLE_DECLARE(tFrontendMenuType, gFrontend_next_menu);
 C2_HOOK_VARIABLE_DECLARE(tConnected_items*, gConnected_items);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_scrollbars_updated);
 
 
 void C2_HOOK_FASTCALL IString_Load(void);
@@ -103,5 +104,9 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl);
 void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar);
 
 void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pKey, int pNum);
+
+void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
+
+void C2_HOOK_FASTCALL FillInRaceDescription(char *pDest, int pRace_index);
 
 #endif //REC2_FRONTEND_H
