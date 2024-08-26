@@ -955,7 +955,7 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION(0x00467b30, RefreshRacesScroller)
 
-int C2_HOOK_FASTCALL FRONTEND_FindItemUnderMouse(tFrontend_spec *pFrontend, int pX, int pY) {
+int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY) {
     int i;
 
     for (i = 0; i < pFrontend->count_items; i++) {
@@ -973,7 +973,7 @@ int C2_HOOK_FASTCALL FRONTEND_FindItemUnderMouse(tFrontend_spec *pFrontend, int 
     }
     return -1;
 }
-C2_HOOK_FUNCTION(0x004677d0, FRONTEND_FindItemUnderMouse)
+C2_HOOK_FUNCTION(0x004677d0, GetItemAtMousePos)
 
 int C2_HOOK_FASTCALL FRONTEND_FindVisibleItem(tFrontend_spec* pFrontend, int pStart_index) {
     int i;
@@ -1167,7 +1167,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
             ResetInterfaceTimeout();
             GetMousePosition(&x, &y);
             mouse_button = EitherMouseButtonDown();
-            item_under_mouse = FRONTEND_FindItemUnderMouse(C2V(gCurrent_frontend_spec), x, y);
+            item_under_mouse = GetItemAtMousePos(C2V(gCurrent_frontend_spec), x, y);
             if (item_under_mouse != -1) {
                 C2V(gFrontend_selected_item_index) = item_under_mouse;
             } else {
