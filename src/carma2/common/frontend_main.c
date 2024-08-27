@@ -340,3 +340,9 @@ int C2_HOOK_FASTCALL FRONTEND_MainMenuHandler(tFrontend_spec* pFrontend) {
     return C2V(gFrontend_leave_current_menu) != 0;
 }
 C2_HOOK_FUNCTION(0x0046a0e0, FRONTEND_MainMenuHandler)
+
+int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00469a30, OnePlayerSetup)
