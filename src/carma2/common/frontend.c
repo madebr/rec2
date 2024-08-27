@@ -9,6 +9,7 @@
 #include "frontend_netsync.h"
 #include "frontend_network.h"
 #include "frontend_networksummary.h"
+#include "frontend_options.h"
 #include "frontend_quit.h"
 #include "frontend_startgame.h"
 #include "frontend_wrecks.h"
@@ -40,7 +41,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFrontend_model, gFrontend_C_models, 6, 0x00687
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gFrontend_backdrop_actors, 3, 0x00687030);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_stuff_not_loaded, 0x0059b0d0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_spec*, gCurrent_frontend_spec, 0x00688abc);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_options, 0x00632c60, FIXMEFIXME);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_newgame, 0x005bf280, FIXMEFIXME);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gFrontend_A_model_from, 0x00688378);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gFrontend_A_model_to, 0x0068844c);
@@ -571,8 +571,8 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
         C2V(gCurrent_frontend_spec) = &C2V(gFrontend_MAIN);
         break;
     case kFrontend_menu_options:
-        FRONTEND_CreateMenu(&C2V(gFrontend_options));
-        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_options);
+        FRONTEND_CreateMenu(&C2V(gFrontend_OPTIONS));
+        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_OPTIONS);
         break;
     case kFrontend_menu_wrecks:
         FRONTEND_CreateMenu(&C2V(gFrontend_WRECKS));
@@ -993,6 +993,19 @@ int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY
     return -1;
 }
 C2_HOOK_FUNCTION(0x004677d0, GetItemAtMousePos)
+
+int C2_HOOK_FASTCALL FindNextActiveItem(tFrontend_spec* pFrontend, int pStart_index) {
+    int i;
+
+    for (i = pStart_index + 1; i < pFrontend->count_items; i++) {
+        tFrontend_item_spec *item = &pFrontend->items[i];
+
+        if (item->enabled > 0 && item->visible) {
+            return i;
+        }
+    }
+    return 0;
+}
 
 int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index) {
     int i;
@@ -1722,3 +1735,15 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x00466ec0, ToggleTyping)
+
+int C2_HOOK_FASTCALL RaceIndex(const char* pName) {
+    int i;
+
+    for (i = 0; i < C2V(gNumber_of_races); i++) {
+
+        if (DRStricmp(pName, C2V(gRace_list)[i].name) == 0) {
+            return i;
+        }
+    }
+    return C2V(gNumber_of_races);
+}

@@ -13,4 +13,6 @@ int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL FRONTEND_MainMenuHandler(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_MAIN_H */
