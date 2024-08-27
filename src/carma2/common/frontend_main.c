@@ -409,3 +409,12 @@ int C2_HOOK_FASTCALL MainMenuSelectRace(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00469ea0, MainMenuSelectRace)
+
+int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend) {
+
+    if (C2V(gProgram_state).field_0x2c) {
+        return 5;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00467270, StartFudge)
