@@ -26,16 +26,16 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_QUIT, 0x00649df0, {
     },
 });
 
-int (C2_HOOK_FASTCALL * FRONTEND_Quit_Create_original)(tFrontend_spec* pFrontend);
-int C2_HOOK_FASTCALL FRONTEND_Quit_Create(tFrontend_spec* pFrontend) {
+int (C2_HOOK_FASTCALL * Generic_Infunc_original)(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return FRONTEND_Quit_Create_original(pFrontend);
+    return Generic_Infunc_original(pFrontend);
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00470bb0, FRONTEND_Quit_Create, FRONTEND_Quit_Create_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00470bb0, Generic_Infunc, Generic_Infunc_original)
 
 int C2_HOOK_FASTCALL FRONTEND_Quit_Yes(tFrontend_spec* pFrontend) {
 
