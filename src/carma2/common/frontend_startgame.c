@@ -27,3 +27,9 @@ int C2_HOOK_FASTCALL StartGameInfunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x0046bcb0, StartGameInfunc)
+
+int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec *pFrontend) {
+
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0046bd50, FRONTEND_StartGameMenuHandler)
