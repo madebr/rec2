@@ -82,6 +82,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(tConnected_items*, gConnected_items, 0x00688ab0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_connected_items_indices, 0x00686f08);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gConnected_items_indices, 6, 0x00687018);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_scrollbars_updated, 0x006864f4);
+C2_HOOK_VARIABLE_IMPLEMENT(char*, gFrontend_current_input, 0x00688af4);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_maximum_input_length, 0x0059b0d49, 9);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFrontend_original_player_name, 32, 0x00763900);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -1595,3 +1598,54 @@ void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index) {
     ClosePackFileAndSetTiffLoading(twt);
 }
 C2_HOOK_FUNCTION(0x0046aa20, MenuSetCarImage)
+
+int C2_HOOK_FASTCALL ProcessInputString(void) {
+    int len;
+    int key;
+    int int_ch;
+
+    if (C2V(gFrontend_current_input) == NULL) {
+        return 0;
+    }
+
+    len = c2_strlen(C2V(gFrontend_current_input));
+    if (len > C2V(gFrontend_maximum_input_length)) {
+        C2V(gFrontend_current_input)[len - 1] = '\0';
+        return -1;
+    }
+    PollKeys();
+    key = PDAnyKeyDown();
+    if (key == 50) {
+        if (len > 0) {
+            C2V(gFrontend_current_input)[len - 1] = '\0';
+        }
+        return 1;
+    }
+    if (key == 63) {
+        c2_strcpy(C2V(gFrontend_current_input), C2V(gFrontend_original_player_name));
+        return -2;
+    }
+    if (key == 51) {
+        if (len == 0) {
+            c2_strcpy(C2V(gFrontend_current_input), C2V(gFrontend_original_player_name));
+        }
+        return -1;
+    }
+    int_ch = PDGetKeyboardCharacter();
+    if (int_ch != 0) {
+        char ch;
+
+        dr_dprintf("FRONTEND: Got char %d", int_ch);
+        ch = PDConvertToASCIILessThan128(int_ch);
+        dr_dprintf("FRONTEND: Char converted to %d", ch);
+        if (ch >= 0x20 && ch != 0x7f) {
+            C2V(gFrontend_current_input)[len + 0] = ch;
+            C2V(gFrontend_current_input)[len + 1] = '\0';
+            dr_dprintf("FRONTEND: Adding char %d to string. String now '%s'", int_ch, C2V(gFrontend_current_input));
+            return 1;
+        }
+        dr_dprintf("FRONTEND: Invalid Char", int_ch);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046e470, ProcessInputString)
