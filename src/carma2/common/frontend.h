@@ -26,6 +26,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_scrollbars_updated);
 C2_HOOK_VARIABLE_DECLARE(char*, gFrontend_current_input);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_maximum_input_length);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFrontend_original_player_name, 32);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_text_input_item_index);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0059b0d8);
 
 
 void C2_HOOK_FASTCALL IString_Load(void);
@@ -117,5 +119,17 @@ void C2_HOOK_FASTCALL FillInRaceDescription(char *pDest, int pRace_index);
 void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index);
 
 int C2_HOOK_FASTCALL ProcessInputString(void);
+
+void C2_HOOK_FASTCALL FrontEndShowMouse(void);
+
+void C2_HOOK_FASTCALL FrontEndHideMouse(void);
+
+void C2_HOOK_FASTCALL DodgyPause(int pTime);
+
+void C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size);
+
+void C2_HOOK_FASTCALL StopGettingInputString(void);
+
+int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
 #endif //REC2_FRONTEND_H
