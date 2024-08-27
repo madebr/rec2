@@ -85,6 +85,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_scrollbars_updated, 0x006864f4);
 C2_HOOK_VARIABLE_IMPLEMENT(char*, gFrontend_current_input, 0x00688af4);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_maximum_input_length, 0x0059b0d49, 9);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFrontend_original_player_name, 32, 0x00763900);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_text_input_item_index, 0x0068723c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_0059b0d8, 0x0059b0d8, -1);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -1649,3 +1651,64 @@ int C2_HOOK_FASTCALL ProcessInputString(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046e470, ProcessInputString)
+
+void C2_HOOK_FASTCALL FrontEndShowMouse(void) {
+
+    C2V(gFrontend_suppress_mouse) = 0;
+}
+
+void C2_HOOK_FASTCALL FrontEndHideMouse(void) {
+
+    C2V(gFrontend_suppress_mouse) = 1;
+}
+
+void C2_HOOK_FASTCALL DodgyPause(int pTime) {
+    int start;
+
+    start = PDGetTotalTime();
+    while (PDGetTotalTime() - start > pTime) {
+        /* brrrr */
+    }
+}
+
+void C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size) {
+
+    C2V(gINT_0059b0d8) = -1;
+    C2V(gFrontend_maximum_input_length) = pBuffer_size;
+    C2V(gFrontend_current_input) = pBuffer;
+    DodgyPause(200);
+}
+
+void C2_HOOK_FASTCALL StopGettingInputString(void) {
+
+    C2V(gFrontend_current_input) = NULL;
+}
+
+int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
+
+    if (C2V(gTyping)) {
+        EdgeTriggerModeOff();
+        WaitForNoKeys();
+        EdgeTriggerModeOn();
+        FrontEndShowMouse();
+        C2V(gTyping) = 0;
+        StopGettingInputString();
+        pFrontend->items[C2V(gFrontend_text_input_item_index)].unlitFont = 1;
+        pFrontend->items[C2V(gFrontend_text_input_item_index)].highFont = 1;
+        C2V(gFrontend_original_player_name)[0] = '\0';
+        SaveOptions();
+        return 0;
+    } else {
+        FrontEndHideMouse();
+        C2V(gTyping) = 1;
+        C2V(gFrontend_text_input_item_index) = C2V(gFrontend_selected_item_index);
+        pFrontend->items[C2V(gFrontend_text_input_item_index)].unlitFont = 2;
+        pFrontend->items[C2V(gFrontend_text_input_item_index)].highFont = 3;
+        c2_strcpy(pFrontend->items[C2V(gFrontend_text_input_item_index)].text, C2V(gProgram_state).player_name);
+        c2_strcpy(C2V(gFrontend_original_player_name), C2V(gProgram_state).player_name);
+        PDClearKeyboardBuffer();
+        StartGettingInputString(pFrontend->items[C2V(gFrontend_text_input_item_index)].text, 8);
+        return 0;
+    }
+}
+C2_HOOK_FUNCTION(0x00466ec0, ToggleTyping)
