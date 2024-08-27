@@ -982,21 +982,19 @@ int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY
 }
 C2_HOOK_FUNCTION(0x004677d0, GetItemAtMousePos)
 
-int C2_HOOK_FASTCALL FRONTEND_FindVisibleItem(tFrontend_spec* pFrontend, int pStart_index) {
+int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index) {
     int i;
 
-    for (;;) {
-        for (i = pStart_index - 1; i >= 0; i--) {
-            tFrontend_item_spec *item = &pFrontend->items[i];
+    for (i = pStart_index - 1; i >= 0; i--) {
+        tFrontend_item_spec *item = &pFrontend->items[i];
 
-            if (item->enabled > 0 && item->visible) {
-                return i;
-            }
+        if (item->enabled > 0 && item->visible) {
+            return i;
         }
-        pStart_index = pFrontend->count_items;
     }
+    return FindPrevActiveItem(pFrontend, pFrontend->count_items);
 }
-C2_HOOK_FUNCTION(0x00467a30, FRONTEND_FindVisibleItem)
+C2_HOOK_FUNCTION(0x00467a30, FindPrevActiveItem)
 
 void C2_HOOK_FASTCALL FRONTEND_HandleClick(tFrontend_spec* pFrontend) {
 
@@ -1183,7 +1181,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
         }
 
         if (PDKeyDown(72) || PDKeyDown(89)) {
-            C2V(gFrontend_selected_item_index) = FRONTEND_FindVisibleItem(pFrontend, C2V(gFrontend_selected_item_index));
+            C2V(gFrontend_selected_item_index) = FindPrevActiveItem(pFrontend, C2V(gFrontend_selected_item_index));
             if (!C2V(gMouse_in_use)
                     && C2V(gFrontend_selected_item_index) >= C2V(gCurrent_frontend_spec)->scrollers[0].indexFirstScrollableItem
                     && C2V(gFrontend_selected_item_index) <= C2V(gCurrent_frontend_spec)->scrollers[0].indexLastScrollableItem) {
