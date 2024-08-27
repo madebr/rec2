@@ -380,6 +380,19 @@ int C2_HOOK_FASTCALL testUp(tFrontend_spec *pFrontend) {
 }
 C2_HOOK_FUNCTION(0x0046a010, testUp)
 
+int C2_HOOK_FASTCALL testDn(tFrontend_spec *pFrontend) {
+
+    if (PDGetTotalTime() - C2V(gFrontend_last_scroll) > 400) {
+        C2V(gFrontend_last_scroll) = PDGetTotalTime();
+        if ((C2V(gCurrent_race_group) - C2V(gRaceGroups)) % 10 < 9) {
+            C2V(gCurrent_race_group) += 1;
+        }
+        RefreshRacesScroller(pFrontend);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046a080, testDn)
+
 int C2_HOOK_FASTCALL MainMenuSelectRace(tFrontend_spec* pFrontend) {
     char group_name[12];
 
