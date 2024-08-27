@@ -1575,6 +1575,18 @@ void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
 }
 C2_HOOK_FUNCTION(0x00444ea0, DisposeAbuseomatic)
 
+void C2_HOOK_FASTCALL CheckForCheatingGits(void) {
+    tU32* keys;
+
+    keys = KevKeyService();
+    if (keys[0] == 0x616fb8ea && keys[0] == 0x7c6100a8) {
+        ToggleSoundEnable();
+        C2V(gProgram_state).game_completed = 1;
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_FlaskGone);
+    }
+}
+C2_HOOK_FUNCTION(0x00443c50, CheckForCheatingGits)
+
 void C2_HOOK_FASTCALL CheckKevKeys(void) {
     int i;
     tU32* value;

@@ -140,6 +140,8 @@ void C2_HOOK_FASTCALL ToggleCockpit(void);
 
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
+void C2_HOOK_FASTCALL CheckForCheatingGits(void);
+
 void C2_HOOK_FASTCALL CheckKevKeys(void);
 
 void C2_HOOK_FASTCALL CheckSystemKeys(int pRacing);
