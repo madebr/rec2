@@ -23,7 +23,6 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gFrontend_wrecks_pixelmap);
 C2_HOOK_VARIABLE_DECLARE(tFrontendMenuType, gFrontend_next_menu);
 C2_HOOK_VARIABLE_DECLARE(tConnected_items*, gConnected_items);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_scrollbars_updated);
-C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
 C2_HOOK_VARIABLE_DECLARE(tFrontend_spec*, gCurrent_frontend_spec);
 C2_HOOK_VARIABLE_DECLARE(char*, gFrontend_current_input);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_maximum_input_length);
@@ -31,6 +30,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFrontend_original_player_name, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_text_input_item_index);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0059b0d8);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
+C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_last_scroll);
 
 
 void C2_HOOK_FASTCALL IString_Load(void);
