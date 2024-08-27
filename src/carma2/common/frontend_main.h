@@ -26,4 +26,6 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec *pFrontend);
 
 int C2_HOOK_FASTCALL MainMenuSelectRace(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL StartFudge(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_MAIN_H */
