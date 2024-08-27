@@ -88,6 +88,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_maximum_input_length, 0x0059b0d49
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFrontend_original_player_name, 32, 0x00763900);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_text_input_item_index, 0x0068723c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_0059b0d8, 0x0059b0d8, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_last_scroll, 0x0068843c);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
