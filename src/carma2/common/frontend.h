@@ -71,7 +71,7 @@ void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_m
 
 void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend);
 
-void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, int pIndex);
+void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex);
 
 void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
