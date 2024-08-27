@@ -11,6 +11,7 @@
 #include "loading.h"
 #include "main.h"
 #include "network.h"
+#include "platform.h"
 #include "polyfont.h"
 #include "utility.h"
 
@@ -364,3 +365,17 @@ int C2_HOOK_FASTCALL MultiplayerSetup(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00467eb0, MultiplayerSetup)
+
+int C2_HOOK_FASTCALL testUp(tFrontend_spec *pFrontend) {
+
+    if (PDGetTotalTime() - C2V(gFrontend_last_scroll) > 400) {
+        C2V(gFrontend_last_scroll) = PDGetTotalTime();
+        if ((C2V(gCurrent_race_group) - C2V(gRaceGroups)) % 10 > 0) {
+            C2V(gCurrent_race_group) -= 1;
+        }
+        RefreshRacesScroller(pFrontend);
+        FuckWithWidths(pFrontend);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046a010, testUp)
