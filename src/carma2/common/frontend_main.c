@@ -84,3 +84,15 @@ int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00469df0, MainMenuOutfunc)
+
+int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
+
+    ToggleTyping(pFrontend);
+    if (!C2V(gTyping) && c2_strlen(pFrontend->items[C2V(gFrontend_selected_item_index)].text) != 0) {
+
+        c2_strcpy(C2V(gProgram_state).player_name, pFrontend->items[C2V(gFrontend_selected_item_index)].text);
+        SaveOptions();
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00467050, NewGameToggleTyping)

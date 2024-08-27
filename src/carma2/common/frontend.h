@@ -28,6 +28,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_maximum_input_length);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFrontend_original_player_name, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_text_input_item_index);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0059b0d8);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
 
 
 void C2_HOOK_FASTCALL IString_Load(void);
