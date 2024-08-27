@@ -73,6 +73,8 @@ void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex);
 
+void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend);
+
 void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend,int mouse_x,int mouse_y);

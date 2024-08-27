@@ -51,6 +51,8 @@ add_library(c2_common STATIC
     frontend_loadgame.h
     frontend_netsync.c
     frontend_netsync.h
+    frontend_network.c
+    frontend_network.h
     frontend_networksummary.c
     frontend_networksummary.h
     frontend_quit.c

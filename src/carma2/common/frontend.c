@@ -7,6 +7,7 @@
 #include "frontend_loadgame.h"
 #include "frontend_main.h"
 #include "frontend_netsync.h"
+#include "frontend_network.h"
 #include "frontend_networksummary.h"
 #include "frontend_quit.h"
 #include "frontend_startgame.h"
@@ -924,6 +925,17 @@ void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex) {
     }
 }
 C2_HOOK_FUNCTION(0x00466ce0, MungeButtonModels)
+
+void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend) {
+
+    if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_MAIN)) {
+        RefreshRacesScroller(pFrontend);
+    }
+    if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_NETWORK)) {
+        RefreshNetRacesScroller(pFrontend);
+    }
+}
+C2_HOOK_FUNCTION(0x00467a70, UpdateScrollPositions)
 
 void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     char group_text[12];
