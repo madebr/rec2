@@ -96,7 +96,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
-int C2_HOOK_FASTCALL FRONTEND_Default_Destroy(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend);
 

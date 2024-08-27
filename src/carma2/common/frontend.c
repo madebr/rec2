@@ -1297,11 +1297,11 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION(0x00466450, temp)
 
-int C2_HOOK_FASTCALL FRONTEND_Default_Destroy(tFrontend_spec* pFrontend) {
+int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend) {
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x00470c10, FRONTEND_Default_Destroy)
+C2_HOOK_FUNCTION(0x00470c10, Generic_Outfunc)
 
 int (C2_HOOK_FASTCALL * FRONTEND_Default_Tick_original)(tFrontend_spec* pFrontend);
 int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend) {
