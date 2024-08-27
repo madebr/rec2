@@ -994,6 +994,19 @@ int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY
 }
 C2_HOOK_FUNCTION(0x004677d0, GetItemAtMousePos)
 
+int C2_HOOK_FASTCALL FindNextActiveItem(tFrontend_spec* pFrontend, int pStart_index) {
+    int i;
+
+    for (i = pStart_index + 1; i < pFrontend->count_items; i++) {
+        tFrontend_item_spec *item = &pFrontend->items[i];
+
+        if (item->enabled > 0 && item->visible) {
+            return i;
+        }
+    }
+    return 0;
+}
+
 int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index) {
     int i;
 
@@ -1723,3 +1736,15 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x00466ec0, ToggleTyping)
+
+int C2_HOOK_FASTCALL RaceIndex(const char* pName) {
+    int i;
+
+    for (i = 0; i < C2V(gNumber_of_races); i++) {
+
+        if (DRStricmp(pName, C2V(gRace_list)[i].name) == 0) {
+            return i;
+        }
+    }
+    return C2V(gNumber_of_races);
+}
