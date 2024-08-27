@@ -10,7 +10,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_QUIT, 0x00649df0, {
     3,                              /* count_items */
     Generic_Infunc,                 /* init */
     Generic_Outfunc,                /* destroy */
-    FRONTEND_Default_Tick,          /* tick */
+    Generic_MenuHandler,            /* tick */
     &gFrontend_MAIN,                /* previous */
     0,                              /* default_item */
     0,                              /* ??? */
