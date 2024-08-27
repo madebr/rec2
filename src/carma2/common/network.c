@@ -179,3 +179,14 @@ void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049fcf0, NetSendMessageStacks, NetSendMessageStacks_original)
+
+int (C2_HOOK_FASTCALL * NetInitialise_original)(void);
+int C2_HOOK_FASTCALL NetInitialise(void) {
+
+#if defined (C2_HOOKS_ENABLED)
+    return NetInitialise_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049d210, NetInitialise, NetInitialise_original)

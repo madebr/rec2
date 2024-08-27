@@ -41,4 +41,6 @@ void C2_HOOK_FASTCALL NetFullScreenMessage(int pStr_index, int pLeave_it_up_ther
 
 void C2_HOOK_FASTCALL NetSendMessageStacks(void);
 
+int C2_HOOK_FASTCALL NetInitialise(void);
+
 #endif // REC2_NETWORK_H
