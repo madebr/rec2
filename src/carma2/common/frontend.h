@@ -98,7 +98,7 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend);
 
-int C2_HOOK_FASTCALL FRONTEND_Default_Tick(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL Generic_MungeActiveItems(tFrontend_spec* pFrontend);
 
