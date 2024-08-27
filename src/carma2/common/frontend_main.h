@@ -22,4 +22,6 @@ int C2_HOOK_FASTCALL MultiplayerSetup(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL testUp(tFrontend_spec *pFrontend);
 
+int C2_HOOK_FASTCALL MainMenuSelectRace(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_MAIN_H */
