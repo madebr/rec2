@@ -93,7 +93,7 @@ void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec*
 
 int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend);
 
-int C2_HOOK_FASTCALL FRONTEND_DefaultItem_Action(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_Default_Destroy(tFrontend_spec* pFrontend);
 
