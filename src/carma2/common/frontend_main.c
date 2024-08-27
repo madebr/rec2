@@ -10,6 +10,7 @@
 #include "input.h"
 #include "loading.h"
 #include "main.h"
+#include "network.h"
 #include "polyfont.h"
 #include "utility.h"
 
@@ -19,6 +20,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_MAIN, 0x005a80f0, {
     FIXME TODO
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_car_image_outdated, 0x00687040);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_net_initialized, 0x0074c6b4);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_host_query, 0x006a0d38);
 
 void C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(tFrontend_spec* pFrontend) {
 
@@ -346,3 +349,18 @@ int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00469a30, OnePlayerSetup)
+
+int C2_HOOK_FASTCALL MultiplayerSetup(tFrontend_spec* pFrontend) {
+
+    C2V(gFrontend_net_initialized) = !NetInitialise();
+    if (C2V(gFrontend_net_initialized)) {
+
+        C2V(gPending_race) = -1;
+        C2V(gStart_race_sent) = 0;
+        C2V(gCurrent_race).number_of_racers = 0;
+        C2V(gLast_host_query) = 0;
+        AboutToLoadFirstCar();
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00467eb0, MultiplayerSetup)
