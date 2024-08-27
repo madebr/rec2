@@ -996,7 +996,7 @@ int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_in
 }
 C2_HOOK_FUNCTION(0x00467a30, FindPrevActiveItem)
 
-void C2_HOOK_FASTCALL FRONTEND_HandleClick(tFrontend_spec* pFrontend) {
+void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend) {
 
     int selected_index = C2V(gFrontend_selected_item_index);
     tFrontend_item_spec* selected_item = &pFrontend->items[selected_index];
@@ -1033,7 +1033,7 @@ void C2_HOOK_FASTCALL FRONTEND_HandleClick(tFrontend_spec* pFrontend) {
         pFrontend->items[selected_index].radioButton_selected = 1;
     }
 }
-C2_HOOK_FUNCTION(0x00467890, FRONTEND_HandleClick)
+C2_HOOK_FUNCTION(0x00467890, ToggleSelection)
 
 int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     char buffer[256];
@@ -1185,7 +1185,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
             if (!C2V(gMouse_in_use)
                     && C2V(gFrontend_selected_item_index) >= C2V(gCurrent_frontend_spec)->scrollers[0].indexFirstScrollableItem
                     && C2V(gFrontend_selected_item_index) <= C2V(gCurrent_frontend_spec)->scrollers[0].indexLastScrollableItem) {
-                FRONTEND_HandleClick(pFrontend);
+                ToggleSelection(pFrontend);
                 if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
                     pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
                 }
@@ -1197,7 +1197,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
             if (!C2V(gMouse_in_use)
                 && C2V(gFrontend_selected_item_index) >= C2V(gCurrent_frontend_spec)->scrollers[0].indexFirstScrollableItem
                 && C2V(gFrontend_selected_item_index) <= C2V(gCurrent_frontend_spec)->scrollers[0].indexLastScrollableItem) {
-                FRONTEND_HandleClick(pFrontend);
+                ToggleSelection(pFrontend);
                 if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
                     pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
                 }
@@ -1223,7 +1223,7 @@ int C2_HOOK_FASTCALL FRONTEND_GenericMenuHandler(tFrontend_spec* pFrontend) {
         }
 
         if (PDKeyDown(51) || PDKeyDown(52) || (mouse_button == 1 && item_under_mouse != -1)) {
-            FRONTEND_HandleClick(pFrontend);
+            ToggleSelection(pFrontend);
             if (pFrontend->items[C2V(gFrontend_selected_item_index)].field_0xc == 2) {
                 return pFrontend->items[C2V(gFrontend_selected_item_index)].field_0xc;
             }
