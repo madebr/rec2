@@ -907,7 +907,7 @@ void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION(0x004666f0, FuckWithWidths)
 
-void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, int pIndex) {
+void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex) {
     int i;
 
     tFrontend_scroller_spec* scroller = &pFrontend->scrollers[pIndex];
@@ -923,7 +923,7 @@ void C2_HOOK_FASTCALL FRONTEND_UpdateScrollerModels(tFrontend_spec* pFrontend, i
         BrModelUpdate(model, BR_MODU_VERTEX_POSITIONS);
     }
 }
-C2_HOOK_FUNCTION(0x00466ce0, FRONTEND_UpdateScrollerModels)
+C2_HOOK_FUNCTION(0x00466ce0, MungeButtonModels)
 
 void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     char group_text[12];
@@ -958,7 +958,7 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     } else {
         pFrontend->items[7].enabled = kFrontendItemEnabled_disabled;
     }
-    FRONTEND_UpdateScrollerModels(pFrontend, 0);
+    MungeButtonModels(pFrontend, 0);
 }
 C2_HOOK_FUNCTION(0x00467b30, RefreshRacesScroller)
 
