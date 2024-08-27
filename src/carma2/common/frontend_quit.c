@@ -21,7 +21,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_QUIT, 0x00649df0, {
     {
         { /* items[0] */
             257,
-            FRONTEND_DefaultItem_Action,
+            temp,
             NULL,
             0,
             17,
@@ -73,7 +73,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_QUIT, 0x00649df0, {
         },
         { /* items[2] */
             242,
-            FRONTEND_DefaultItem_Action,
+            temp,
             (tFrontend_spec*)1,
             0,
             17,
