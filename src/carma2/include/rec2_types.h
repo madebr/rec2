@@ -3776,6 +3776,7 @@ enum {
     eSoundId_Done = 3004,
     eSoundId_Swingin = 3006,
     eSoundId_Cop_Siren = 5350,
+    eSoundId_FlaskGone = 5401,
     eSoundId_OutOfTime2 = 8010,
     eSoundId_RaceComplete = 8011,
     eSoundId_Checkpoint = 8012,
