@@ -379,3 +379,20 @@ int C2_HOOK_FASTCALL testUp(tFrontend_spec *pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046a010, testUp)
+
+int C2_HOOK_FASTCALL MainMenuSelectRace(tFrontend_spec* pFrontend) {
+    char group_name[12];
+
+    C2V(gProgram_state).current_race_index = RaceIndex(pFrontend->items[C2V(gFrontend_selected_item_index)].text);
+    pFrontend->items[22].highFont = 11;
+    pFrontend->items[22].unlitFont = 11;
+    if (!C2V(gMouse_in_use)) {
+        FillInRaceDescription(pFrontend->items[22].text, C2V(gProgram_state).current_race_index);
+    }
+    C2V(gCurrent_race_group) = C2V(gRace_list)[C2V(gProgram_state).current_race_index].group;
+    c2_sprintf(group_name, "%s %d", IString_Get(78), (C2V(gCurrent_race_group) - C2V(gRaceGroups)) % 10 + 1);
+    c2_strcpy(pFrontend->items[2].text, group_name);
+    FuckWithWidths(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00469ea0, MainMenuSelectRace)
