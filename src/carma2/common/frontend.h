@@ -23,6 +23,8 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gFrontend_wrecks_pixelmap);
 C2_HOOK_VARIABLE_DECLARE(tFrontendMenuType, gFrontend_next_menu);
 C2_HOOK_VARIABLE_DECLARE(tConnected_items*, gConnected_items);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_scrollbars_updated);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
+C2_HOOK_VARIABLE_DECLARE(tFrontend_spec*, gCurrent_frontend_spec);
 C2_HOOK_VARIABLE_DECLARE(char*, gFrontend_current_input);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_maximum_input_length);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFrontend_original_player_name, 32);
@@ -78,6 +80,8 @@ void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend);
 void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend,int mouse_x,int mouse_y);
+
+int C2_HOOK_FASTCALL FindNextActiveItem(tFrontend_spec* pFrontend, int pStart_index);
 
 int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index);
 
@@ -136,5 +140,7 @@ void C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size);
 void C2_HOOK_FASTCALL StopGettingInputString(void);
 
 int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
+
+int C2_HOOK_FASTCALL RaceIndex(const char* pName);
 
 #endif //REC2_FRONTEND_H
