@@ -1114,6 +1114,25 @@ typedef enum {
     kFrontendSelectableOption = 1,
 } eFrontendSelectableType;
 
+typedef struct tStruct_00686508 {
+    undefined4 field_0x0;
+    undefined4 field_0x4;
+    undefined4 field_0x8;
+    struct tStruct_00686508* next;
+} tStruct_00686508;
+
+typedef struct tFrontend_scroller_callback {
+    tU8 flags;
+    int itemid_left_reference;
+    int itemid_start;
+    int width;
+    int value;
+    undefined4 field_0x14;
+    float field_0x18;
+    void (C2_HOOK_FASTCALL * callback)(struct tFrontend_scroller_callback *);
+    struct tFrontend_scroller_callback* next;
+} tFrontend_scroller_callback;
+
 typedef struct {
     int field_0x00;
     int field_0x04;
