@@ -1334,6 +1334,26 @@ tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void) {
 }
 C2_HOOK_FUNCTION(0x00471cf0, GetAnyActiveSlider)
 
+int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected, int pItem) {
+    int i;
+    int offset;
+
+    offset = -1;
+    for (i = 0; i < pConnected->count_ranges; i++) {
+
+        if (pItem >= pConnected->range_starts[i] && pItem < pConnected->range_starts[i] + pConnected->range_length) {
+
+            offset = pItem - pConnected->range_starts[i];
+            break;
+        }
+    }
+    if (offset == -1) {
+        return -1;
+    }
+    return pConnected->field_0x8 + offset;
+}
+C2_HOOK_FUNCTION(0x00471d70, ScrollSet_TranslateItemToIndex)
+
 int (C2_HOOK_FASTCALL * Generic_MenuHandler_original)(tFrontend_spec* pFrontend);
 int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend) {
 
