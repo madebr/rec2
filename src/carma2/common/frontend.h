@@ -106,6 +106,8 @@ tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void);
 
 int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected, int pItem);
 
+tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem);
+
 int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL Generic_MungeActiveItems(tFrontend_spec* pFrontend);
