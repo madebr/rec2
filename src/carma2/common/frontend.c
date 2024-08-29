@@ -1354,6 +1354,23 @@ int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected
 }
 C2_HOOK_FUNCTION(0x00471d70, ScrollSet_TranslateItemToIndex)
 
+tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem) {
+    tConnected_items* scrollset;
+
+    scrollset = C2V(gConnected_items);
+    while (scrollset != NULL) {
+        int i;
+
+        for (i = 0; i < scrollset->count_ranges; i++) {
+            if (pItem >= scrollset->range_starts[i] && pItem < scrollset->range_starts[i] + scrollset->range_length) {
+                return scrollset;
+            }
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x00471d30, GetScrollSet)
+
 int (C2_HOOK_FASTCALL * Generic_MenuHandler_original)(tFrontend_spec* pFrontend);
 int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend) {
 
