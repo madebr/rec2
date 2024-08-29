@@ -1129,7 +1129,7 @@ typedef struct tStruct_00686508 {
     struct tStruct_00686508* next;
 } tStruct_00686508;
 
-typedef struct tFrontend_scroller_callback {
+typedef struct tFrontend_slider {
     tU8 flags;
     int itemid_left_reference;
     int itemid_start;
@@ -1137,9 +1137,9 @@ typedef struct tFrontend_scroller_callback {
     int value;
     undefined4 field_0x14;
     float field_0x18;
-    void (C2_HOOK_FASTCALL * callback)(struct tFrontend_scroller_callback *);
-    struct tFrontend_scroller_callback* next;
-} tFrontend_scroller_callback;
+    void (C2_HOOK_FASTCALL * callback)(struct tFrontend_slider *);
+    struct tFrontend_slider* next;
+} tFrontend_slider;
 
 typedef struct {
     int field_0x00;

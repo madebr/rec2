@@ -33,7 +33,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
 C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_last_scroll);
 C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_time_last_input);
 C2_HOOK_VARIABLE_DECLARE(tStruct_00686508*, PTR_00686508);
-C2_HOOK_VARIABLE_DECLARE(tFrontend_scroller_callback*, gCurrent_frontend_scrollbars);
+C2_HOOK_VARIABLE_DECLARE(tFrontend_slider*, gCurrent_frontend_scrollbars);
 
 
 void C2_HOOK_FASTCALL IString_Load(void);
@@ -101,6 +101,8 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, int pY);
+
+tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void);
 
 int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend);
 

@@ -90,7 +90,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_text_input_item_index, 0x0068723c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_0059b0d8, 0x0059b0d8, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_last_scroll, 0x0068843c);
 C2_HOOK_VARIABLE_IMPLEMENT(tStruct_00686508*, PTR_00686508, 0x00686508);
-C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_scroller_callback*, gCurrent_frontend_scrollbars, 0x00686820);
+C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_slider*, gCurrent_frontend_scrollbars, 0x00686820);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -1315,6 +1315,24 @@ int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, i
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00471ba0, Ians_GetItemAtMousePos, Ians_GetItemAtMousePos_original)
+
+tFrontend_slider* C2_HOOK_FASTCALL GetAnyActiveSlider(void) {
+    tFrontend_slider* slider;
+
+    for (slider = C2V(gCurrent_frontend_scrollbars); slider != NULL; slider = slider->next) {
+
+        if (C2V(gFrontend_selected_item_index) >= slider->itemid_left_reference && C2V(gFrontend_selected_item_index) <= slider->itemid_left_reference + 2) {
+
+            return slider;
+        }
+        if (C2V(gFrontend_selected_item_index) >= slider->itemid_start && C2V(gFrontend_selected_item_index) <= slider->itemid_start + 2) {
+
+            return slider;
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x00471cf0, GetAnyActiveSlider)
 
 int (C2_HOOK_FASTCALL * Generic_MenuHandler_original)(tFrontend_spec* pFrontend);
 int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend) {
