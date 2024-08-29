@@ -123,7 +123,7 @@ int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend) {
     DefaultInfunc(pFrontend);
     C2V(gCurrent_frontend_scrollbars) = NULL;
     C2V(gConnected_items) = NULL;
-    C2V(PTR_00686508) = NULL;
+    C2V(gPTR_00686508) = NULL;
     return 0;
 #endif
 }
