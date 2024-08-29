@@ -89,7 +89,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFrontend_original_player_name, 32, 0x007
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_text_input_item_index, 0x0068723c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_0059b0d8, 0x0059b0d8, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_last_scroll, 0x0068843c);
-C2_HOOK_VARIABLE_IMPLEMENT(tStruct_00686508*, PTR_00686508, 0x00686508);
+C2_HOOK_VARIABLE_IMPLEMENT(tStruct_00686508*, gPTR_00686508, 0x00686508);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_slider*, gCurrent_frontend_scrollbars, 0x00686820);
 C2_HOOK_VARIABLE_IMPLEMENT(tConnected_items, gControls_scroller, 0x00688408);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gKey_names_controls, 153, 0x00688458);
@@ -1391,6 +1391,103 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
     FuckWithWidths(pFrontend);
 }
 C2_HOOK_FUNCTION(0x004720e0, RefreshScrollSet)
+
+int C2_HOOK_FASTCALL Generic_FindNextActiveItem(tFrontend_spec* pFrontend, int pItem) {
+    int start_item_group;
+    tConnected_items* connected;
+    tFrontend_slider* start_active_slider;
+    tStruct_00686508* start_up_down;
+    int i;
+    int original_selected_item_index;
+
+    original_selected_item_index = C2V(gFrontend_selected_item_index);
+    C2V(gFrontend_selected_item_index) = pItem;
+    start_active_slider = GetAnyActiveSlider();
+    start_item_group = pFrontend->items[C2V(gFrontend_selected_item_index)].group;
+    start_up_down = GetUpDown(pItem);
+
+    for (connected = C2V(gConnected_items); connected != NULL; connected = connected->next) {
+        int i;
+
+        for (i = 0; i < connected->count_ranges; i++) {
+
+            if (pItem == connected->range_starts[i] + connected->range_length - 1) {
+                break;
+            }
+        }
+        if (i < connected->count_ranges) {
+            break;
+        }
+    }
+    if (connected != NULL) {
+        int item = ScrollSet_TranslateItemToIndex(connected, pItem);
+
+        if (item == connected->field_0x8 + connected->range_length - 1 && connected->field_0x0 > connected->field_0x8 + connected->range_length) {
+            connected->field_0x8 += 1;
+            RefreshScrollSet(pFrontend);
+            C2V(gFrontend_selected_item_index) = item;
+            return pItem;
+        }
+    }
+
+    for (i = 1; i < pFrontend->count_items; i++) {
+        int next_item;
+        tFrontend_slider* next_active_slider;
+        tStruct_00686508* next_up_down;
+
+        next_item = (pItem + i) % pFrontend->count_items;
+        if (pFrontend->items[next_item].enabled <= 0) {
+            continue;
+        }
+        if (!pFrontend->items[next_item].visible) {
+            continue;
+        }
+        C2V(gFrontend_selected_item_index) = pItem;
+
+        next_active_slider = GetAnyActiveSlider();
+        if (start_active_slider != NULL && next_active_slider == start_active_slider) {
+            continue;
+        }
+        if (next_active_slider != NULL && (next_active_slider->flags & 0x1)) {
+            continue;
+        }
+        if (pFrontend->count_groups != 0 && start_item_group != 0 && start_item_group == pFrontend->items[next_item].group) {
+            continue;
+        }
+        if (connected != NULL && GetScrollSet(next_item) == connected) {
+            continue;
+        }
+        if (start_up_down == NULL) {
+            return next_item;
+        }
+        next_up_down = GetUpDown(next_item);
+        if (start_up_down != next_up_down) {
+            if (next_up_down == NULL) {
+                return next_item;
+            }
+            if (next_up_down->field_0x0 == next_item) {
+                return next_item;
+            }
+        }
+    }
+    C2V(gFrontend_selected_item_index) = original_selected_item_index;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00471dd0, Generic_FindNextActiveItem)
+
+tStruct_00686508* C2_HOOK_FASTCALL GetUpDown(int pItem) {
+    tStruct_00686508 *up_down;
+
+    for (up_down = C2V(gPTR_00686508); up_down != NULL; up_down = up_down->next) {
+        if (C2V(gFrontend_selected_item_index) == up_down->field_0x0
+                || C2V(gFrontend_selected_item_index) == up_down->field_0x4
+                || C2V(gFrontend_selected_item_index) == up_down->field_0x8) {
+
+            return up_down;
+        }
+    }
+    return NULL;
+}
 
 int (C2_HOOK_FASTCALL * Generic_MenuHandler_original)(tFrontend_spec* pFrontend);
 int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend) {
