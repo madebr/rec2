@@ -1305,6 +1305,17 @@ int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION(0x00470c10, Generic_Outfunc)
 
+int (C2_HOOK_FASTCALL * Ians_GetItemAtMousePos_original)(tFrontend_spec* pFrontend, int pX, int pY);
+int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, int pY) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return Ians_GetItemAtMousePos_original(pFrontend, pX, pY);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00471ba0, Ians_GetItemAtMousePos, Ians_GetItemAtMousePos_original)
+
 int (C2_HOOK_FASTCALL * Generic_MenuHandler_original)(tFrontend_spec* pFrontend);
 int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend) {
 
