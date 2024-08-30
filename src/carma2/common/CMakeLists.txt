@@ -43,6 +43,8 @@ add_library(c2_common STATIC
     font.h
     frontend.c
     frontend.h
+    frontend_controls.c
+    frontend_controls.h
     frontend_credits.c
     frontend_credits.h
     frontend_main.c

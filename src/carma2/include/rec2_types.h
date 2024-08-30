@@ -1126,7 +1126,7 @@ typedef struct tFrontend_slider {
     int itemid_left_reference;
     int itemid_start;
     int width;
-    int value;
+    float value;
     undefined4 field_0x14;
     float field_0x18;
     void (C2_HOOK_FASTCALL * callback)(struct tFrontend_slider *);
@@ -1202,7 +1202,8 @@ typedef struct tFrontend_item_spec {
 } tFrontend_item_spec;
 
 typedef struct tFrontend_spec {
-    char name[260];
+    char name[256];
+    int timeout;
     int count_items;
     int (C2_HOOK_FASTCALL * create)(struct tFrontend_spec*);
     int (C2_HOOK_FASTCALL * destroy)(struct tFrontend_spec*);
