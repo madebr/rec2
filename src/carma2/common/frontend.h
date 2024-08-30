@@ -115,6 +115,8 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Generic_FindNextActiveItem(tFrontend_spec* pFrontend, int pItem);
 
+int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend);
+
 tStruct_00686508* C2_HOOK_FASTCALL GetUpDown(int pItem);
 
 int C2_HOOK_FASTCALL Generic_MenuHandler(tFrontend_spec* pFrontend);

@@ -1475,6 +1475,17 @@ int C2_HOOK_FASTCALL Generic_FindNextActiveItem(tFrontend_spec* pFrontend, int p
 }
 C2_HOOK_FUNCTION(0x00471dd0, Generic_FindNextActiveItem)
 
+int (C2_HOOK_FASTCALL * Controls_Ok_original)(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return Controls_Ok_original(pFrontend);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00472d80, Controls_Ok, Controls_Ok_original)
+
 tStruct_00686508* C2_HOOK_FASTCALL GetUpDown(int pItem) {
     tStruct_00686508 *up_down;
 
