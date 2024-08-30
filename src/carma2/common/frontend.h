@@ -31,9 +31,10 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_text_input_item_index);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0059b0d8);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
 C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_last_scroll);
-C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_time_last_input);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_time_last_input);
 C2_HOOK_VARIABLE_DECLARE(tStruct_00686508*, gPTR_00686508);
 C2_HOOK_VARIABLE_DECLARE(tFrontend_slider*, gCurrent_frontend_scrollbars);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_00688444);
 C2_HOOK_VARIABLE_DECLARE(tConnected_items, gControls_scroller);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gKey_names_controls, 153);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gControls_frontend_to_key_mapping_lut, 29);
@@ -64,6 +65,8 @@ void C2_HOOK_FASTCALL ScrollCredits(void);
 void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
 
 void C2_HOOK_FASTCALL Generic_LinkInEffect(void);
+
+void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
 void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActorIdx, int pAPO);
 
@@ -115,7 +118,17 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Generic_FindNextActiveItem(tFrontend_spec* pFrontend, int pItem);
 
+int C2_HOOK_FASTCALL Generic_FindPrevActiveItem(tFrontend_spec* pFrontend, int pItem);
+
 int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend);
+
+int C2_HOOK_FASTCALL TranslateSliderItem(tFrontend_slider* pScroller, int pIndex);
+
+void C2_HOOK_FASTCALL PrepareSliders(tFrontend_spec* pFrontend);
+
+tFrontend_slider* C2_HOOK_FASTCALL GetActiveSlider(void);
+
+void C2_HOOK_FASTCALL Generic_EventEffect(void);
 
 tStruct_00686508* C2_HOOK_FASTCALL GetUpDown(int pItem);
 
