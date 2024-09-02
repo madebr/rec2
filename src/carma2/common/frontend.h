@@ -178,4 +178,6 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL RaceIndex(const char* pName);
 
+void C2_HOOK_FASTCALL ScrollUp(tFrontend_spec* pFrontend, int pScroller);
+
 #endif //REC2_FRONTEND_H
