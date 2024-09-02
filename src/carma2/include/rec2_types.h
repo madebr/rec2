@@ -3507,6 +3507,14 @@ enum {
     eMiscString_wrong_checkpoint = 43,
     eMiscString_bad_boy = 44,
     eMiscString_credit_fine = 45,
+    eMiscString_driven_to_destruction = 59,
+    eMiscString_car_crusher = 60,
+    eMiscString_smashy_things = 61,
+    eMiscString_checkpoint_stampede = 62,
+    eMiscString_sudden_death = 63,
+    eMiscString_lap_me = 64,
+    eMiscString_curse_of_the_vampire = 65,
+    eMiscString_fox_n_hounds = 66,
     eMiscString_host_abandoned_race = 87,
     eMiscString_recovery_cancelled = 125,
     eMiscString_fox_cant_do_that = 214,
@@ -3531,6 +3539,8 @@ enum {
     eMiscString_no_HUD = 287,
     eMiscString_minimal_HUD = 288,
     eMiscString_full_HUD = 289,
+
+    eMiscString_network_type_start = eMiscString_driven_to_destruction,
 };
 
 enum {

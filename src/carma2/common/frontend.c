@@ -2467,3 +2467,13 @@ int C2_HOOK_FASTCALL RaceIndex(const char* pName) {
     }
     return C2V(gNumber_of_races);
 }
+
+void C2_HOOK_FASTCALL ScrollUp(tFrontend_spec* pFrontend, int pScroller) {
+    tFrontend_scroller_spec* scroller;
+
+    scroller = &pFrontend->scrollers[pScroller];
+
+    if (scroller->indexTopItem > scroller->indexFirstScrollableItem) {
+        scroller->indexTopItem -= 1;
+    }
+}
