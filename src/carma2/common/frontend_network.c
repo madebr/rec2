@@ -2,6 +2,8 @@
 
 #include "frontend.h"
 #include "globvars.h"
+#include "utility.h"
+#include "platform.h"
 
 #include "c2_string.h"
 
@@ -20,3 +22,32 @@ void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend) {
     FuckWithWidths(pFrontend);
     MungeButtonModels(pFrontend, 0);
 }
+
+void C2_HOOK_FASTCALL UpdateNetGameTypeScroller(tFrontend_spec* pFrontend) {
+    tFrontend_scroller_spec* scroller;
+    int i;
+
+    scroller = &pFrontend->scrollers[0];
+    for (i = scroller->indexFirstScrollableItem; i < scroller->indexFirstScrollableItem + scroller->nbDisplayedAtOnce; i++) {
+        int text_idx;
+
+        text_idx = i - scroller->indexTopItem;
+        if (text_idx >= 2) {
+            /* Skip "smashy things" network type */
+            text_idx += 1;
+        }
+        c2_strcpy(pFrontend->items[i].text, GetMiscString(eMiscString_network_type_start + text_idx));
+    }
+    FuckWithWidths(pFrontend);
+}
+
+int C2_HOOK_FASTCALL NetGameTypeUp(tFrontend_spec* pFrontend) {
+
+    if (PDGetTotalTime() - C2V(gFrontend_last_scroll) > 400) {
+        C2V(gFrontend_last_scroll) = PDGetTotalTime();
+        ScrollUp(pFrontend, 0);
+    }
+    UpdateNetGameTypeScroller(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00467ce0, NetGameTypeUp)
