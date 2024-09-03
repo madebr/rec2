@@ -190,3 +190,14 @@ int C2_HOOK_FASTCALL NetInitialise(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049d210, NetInitialise, NetInitialise_original)
+
+void (C2_HOOK_FASTCALL * NetEndJoinList_original)(void);
+void C2_HOOK_FASTCALL NetEndJoinList(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    NetEndJoinList_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049dc00, NetEndJoinList, NetEndJoinList_original)
