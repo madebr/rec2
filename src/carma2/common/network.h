@@ -47,4 +47,6 @@ void C2_HOOK_FASTCALL NetEndJoinList(void);
 
 void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails);
 
+void C2_HOOK_FASTCALL StopAllThatJoinyStuffThisInstant(void);
+
 #endif // REC2_NETWORK_H

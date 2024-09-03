@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "loading.h"
+#include "network.h"
 #include "structur.h"
 #include "utility.h"
 
@@ -15,6 +16,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gNet_grid_starts, 10, 0x0059c7e8, {
     1, 0, 0, 0, 1, 1, 1, 0, 0, 0,
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gRace_index, 0x00764e98);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gLast_graph_sel, 0x00688760);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tJoinable_game, gGames_to_join, 6, 0x00688718);
 
 void C2_HOOK_FASTCALL DefaultNetSettings(void) {
     FILE* file;
@@ -64,4 +67,23 @@ void C2_HOOK_FASTCALL ReadNetGameChoices(tNet_game_type* pGame_type, tNet_game_o
     SetOptions(*pGame_type, pGame_options);
     SetGameTarget(pGame_type, pGame_options);
     *pRace_index = PickNetRace(-1, pGame_options->race_sequence_type);
+}
+
+void C2_HOOK_FASTCALL DisposeJoinList(int pExemption) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gGames_to_join)); i++) {
+        if (i == pExemption) {
+            continue;
+        }
+        if (C2V(gGames_to_join)[i].game != NULL) {
+            DisposeJoinableGame(i);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DisposeJoinableGame(int pIndex) {
+
+    NetDisposeGameDetails(C2V(gGames_to_join)[pIndex].game);
+    C2V(gGames_to_join)[pIndex].game = NULL;
 }
