@@ -43,4 +43,6 @@ void C2_HOOK_FASTCALL NetSendMessageStacks(void);
 
 int C2_HOOK_FASTCALL NetInitialise(void);
 
+void C2_HOOK_FASTCALL NetEndJoinList(void);
+
 #endif // REC2_NETWORK_H
