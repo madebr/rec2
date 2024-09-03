@@ -180,4 +180,6 @@ int C2_HOOK_FASTCALL RaceIndex(const char* pName);
 
 void C2_HOOK_FASTCALL ScrollUp(tFrontend_spec* pFrontend, int pScroller);
 
+void C2_HOOK_FASTCALL ScrollDn(tFrontend_spec* pFrontend, int pScroller);
+
 #endif //REC2_FRONTEND_H
