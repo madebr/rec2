@@ -45,4 +45,6 @@ int C2_HOOK_FASTCALL NetInitialise(void);
 
 void C2_HOOK_FASTCALL NetEndJoinList(void);
 
+void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails);
+
 #endif // REC2_NETWORK_H
