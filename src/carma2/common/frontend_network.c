@@ -125,3 +125,14 @@ int C2_HOOK_FASTCALL NetRaceUp(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00466c00, NetRaceUp)
+
+int C2_HOOK_FASTCALL NetHostChooseThisRace(tFrontend_spec* pFrontend) {
+
+    pFrontend->items[17].enabled = kFrontendItemEnabled_enabled;
+    pFrontend->items[29].enabled = kFrontendItemEnabled_disabled;
+    C2V(gProgram_state).current_race_index = RaceIndex(pFrontend->items[C2V(gFrontend_selected_item_index)].text);
+    FillInRaceDescription(pFrontend->items[30].text, C2V(gProgram_state).current_race_index);
+    FuckWithWidths(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004691a0, NetHostChooseThisRace)
