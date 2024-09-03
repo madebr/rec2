@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "loading.h"
+#include "structur.h"
 #include "utility.h"
 
 #include "rec2_types.h"
@@ -13,6 +14,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tNet_game_options, gNet_settings, 9, 0x00763960
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gNet_grid_starts, 10, 0x0059c7e8, {
     1, 0, 0, 0, 1, 1, 1, 0, 0, 0,
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gRace_index, 0x00764e98);
 
 void C2_HOOK_FASTCALL DefaultNetSettings(void) {
     FILE* file;
@@ -52,3 +54,14 @@ void C2_HOOK_FASTCALL SetOptions(tNet_game_type pGame_type, tNet_game_options* p
 
 }
 C2_HOOK_FUNCTION(0x00468140, SetOptions)
+
+void C2_HOOK_FASTCALL SetGameTarget(tNet_game_type* pGame_type, tNet_game_options* pGame_options) {
+
+}
+
+void C2_HOOK_FASTCALL ReadNetGameChoices(tNet_game_type* pGame_type, tNet_game_options* pGame_options, int* pRace_index) {
+
+    SetOptions(*pGame_type, pGame_options);
+    SetGameTarget(pGame_type, pGame_options);
+    *pRace_index = PickNetRace(-1, pGame_options->race_sequence_type);
+}
