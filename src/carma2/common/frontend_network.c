@@ -136,3 +136,16 @@ int C2_HOOK_FASTCALL NetHostChooseThisRace(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004691a0, NetHostChooseThisRace)
+
+int C2_HOOK_FASTCALL NetRaceDn(tFrontend_spec* pFrontend) {
+
+    C2V(gFrontend_net_current_roll) = PDGetTotalTime();
+    if (C2V(gFrontend_net_current_roll) - C2V(gFrontend_net_last_roll) < 300) {
+        return 0;
+    }
+    C2V(gFrontend_net_last_roll) = C2V(gFrontend_net_current_roll);
+    ScrollDn(pFrontend, 1);
+    RefreshNetRacesScroller(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00466da0, NetRaceDn)
