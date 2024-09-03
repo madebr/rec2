@@ -2,6 +2,7 @@
 
 #include "controls.h"
 #include "loading.h"
+#include "newgame.h"
 #include "platform.h"
 
 #include "brender/brender.h"
@@ -209,3 +210,9 @@ void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails) {
     }
 }
 C2_HOOK_FUNCTION(0x00688718, NetDisposeGameDetails)
+
+void C2_HOOK_FASTCALL StopAllThatJoinyStuffThisInstant(void) {
+
+    NetEndJoinList();
+    DisposeJoinList(C2V(gLast_graph_sel));
+}

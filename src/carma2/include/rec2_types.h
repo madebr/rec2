@@ -3250,6 +3250,11 @@ typedef struct {
 } tNet_game_details;
 
 typedef struct {
+    tNet_game_details* game;
+    tU32 time;
+} tJoinable_game;
+
+typedef struct {
     tPD_net_player_info pd_net_info;
     tU32 this_players_time_stamp;
     tU32 last_heard_from_him;
