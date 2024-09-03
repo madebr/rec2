@@ -201,3 +201,11 @@ void C2_HOOK_FASTCALL NetEndJoinList(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049dc00, NetEndJoinList, NetEndJoinList_original)
+
+void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails) {
+
+    if (pDetails != NULL) {
+        BrMemFree(pDetails);
+    }
+}
+C2_HOOK_FUNCTION(0x00688718, NetDisposeGameDetails)
