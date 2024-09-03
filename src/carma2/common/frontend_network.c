@@ -2,8 +2,12 @@
 
 #include "frontend.h"
 #include "globvars.h"
+#include "globvrpb.h"
+#include "init.h"
 #include "loading.h"
+#include "loadsave.h"
 #include "newgame.h"
+#include "network.h"
 #include "utility.h"
 #include "platform.h"
 
@@ -149,3 +153,15 @@ int C2_HOOK_FASTCALL NetRaceDn(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00466da0, NetRaceDn)
+
+int C2_HOOK_FASTCALL NetCancel(tFrontend_spec* pFrontend) {
+
+    StopAllThatJoinyStuffThisInstant();
+    ShutdownNetIfRequired();
+    C2V(gNet_mode) = eNet_mode_none;
+    LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), -1);
+    InitGame(C2V(gDev_initial_race));
+    MaybeRestoreSavedGame();
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00469280, NetCancel)
