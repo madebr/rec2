@@ -11,6 +11,7 @@
 #include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_item_spec, gDefaultLastInterfaceItem, 0x00604730, FIXME);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAlways_typing, 0x0068c1f0);
 
 int (C2_HOOK_FASTCALL * DoInterfaceScreen_original)(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
 int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice) {
@@ -136,3 +137,9 @@ void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     PFfclose(f);
 }
 C2_HOOK_FUNCTION(0x00466760, LoadMenuSettings)
+
+void C2_HOOK_FASTCALL ClearAlwaysTyping(void) {
+
+    C2V(gAlways_typing) = 0;
+}
+C2_HOOK_FUNCTION(0x00484630, ClearAlwaysTyping)
