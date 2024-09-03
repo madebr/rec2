@@ -19,4 +19,6 @@ int C2_HOOK_FASTCALL NetGameTypeUp(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL NetSetRaceType(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL NetGameTypeDn(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_NETWORK_H */

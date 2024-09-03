@@ -2477,3 +2477,13 @@ void C2_HOOK_FASTCALL ScrollUp(tFrontend_spec* pFrontend, int pScroller) {
         scroller->indexTopItem -= 1;
     }
 }
+
+void C2_HOOK_FASTCALL ScrollDn(tFrontend_spec* pFrontend, int pScroller) {
+    tFrontend_scroller_spec* scroller;
+
+    scroller = &pFrontend->scrollers[pScroller];
+
+    if (scroller->indexTopItem + scroller->nbDisplayedAtOnce < scroller->indexFirstScrollableItem + scroller->count) {
+        scroller->indexTopItem += 1;
+    }
+}
