@@ -15,6 +15,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_NETWORK, 0x005b39b8, {
 });
 C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_type, gFrontend_game_type, 0x00763920);
 C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_options, gFrontend_net_options, 0x00763b20);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_net_current_roll, 0x00688aa8);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_net_last_roll, 0x00686efc);
 
 void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend) {
     int i;
@@ -110,3 +112,16 @@ int C2_HOOK_FASTCALL NetGameTypeDn(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00467dc0, NetGameTypeDn)
+
+int C2_HOOK_FASTCALL NetRaceUp(tFrontend_spec* pFrontend) {
+
+    C2V(gFrontend_net_current_roll) = PDGetTotalTime();
+    if (C2V(gFrontend_net_current_roll) - C2V(gFrontend_net_last_roll) < 300) {
+        return 0;
+    }
+    C2V(gFrontend_net_last_roll) = C2V(gFrontend_net_current_roll);
+    ScrollUp(pFrontend, 1);
+    RefreshNetRacesScroller(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00466c00, NetRaceUp)
