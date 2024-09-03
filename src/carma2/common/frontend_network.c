@@ -99,3 +99,14 @@ int C2_HOOK_FASTCALL NetSetRaceType(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00468790, NetSetRaceType)
+
+int C2_HOOK_FASTCALL NetGameTypeDn(tFrontend_spec* pFrontend) {
+
+    if (PDGetTotalTime() - C2V(gFrontend_last_scroll) > 400) {
+        C2V(gFrontend_last_scroll) = PDGetTotalTime();
+        ScrollDn(pFrontend, 0);
+    }
+    UpdateNetGameTypeScroller(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00467dc0, NetGameTypeDn)
