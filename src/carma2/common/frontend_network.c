@@ -249,3 +249,49 @@ int C2_HOOK_FASTCALL NetworkStartHost(tFrontend_spec* pFrontend) {
     return NetworkJoinGoAhead(pFrontend);
 }
 C2_HOOK_FUNCTION(0x00468e80, NetworkStartHost)
+
+void C2_HOOK_FASTCALL NetworkUpdateSelectedGameInfo(tFrontend_spec* pFrontend) {
+    int netgame_idx;
+
+    netgame_idx = 0;
+    if (C2V(gFrontend_selected_item_index) >= pFrontend->scrollers[2].indexFirstScrollableItem
+            && (C2V(gFrontend_selected_item_index) <= pFrontend->scrollers[2].indexLastScrollableItem)) {
+        netgame_idx = C2V(gFrontend_selected_item_index) - pFrontend->scrollers[2].indexFirstScrollableItem;
+    }
+    if (C2V(gGames_to_join)[netgame_idx].game != NULL
+            && C2V(gGames_to_join)[netgame_idx].game->type >= 0
+            && C2V(gGames_to_join)[netgame_idx].game->type < 8) {
+
+        size_t len1;
+        size_t len2;
+        size_t len3;
+        char s[256];
+
+        if (PDGetTotalTime() - C2V(gGames_to_join)[netgame_idx].time >= 15000) {
+            DisposeJoinableGame(netgame_idx);
+            return;
+        }
+        len1 = c2_sprintf(s, "Game: %s @R", C2V(gGames_to_join)[netgame_idx].game->pd_net_info.addr + 14);
+        len2 = c2_sprintf(s + len1, "Type: %s @R", GetMiscString(eMiscString_network_type_start + C2V(gGames_to_join)[netgame_idx].game->type));
+        len3 = c2_sprintf(s + len1 + len2, "Players: %d @R", C2V(gGames_to_join)[netgame_idx].game->num_players);
+        c2_sprintf(s + len1 + len2 + len3, "Status: %s, %s ",
+                GetMiscString(eMiscString_netgame_stage_start + C2V(gGames_to_join)[netgame_idx].game->status.stage),
+                GetMiscString(C2V(gGames_to_join)[netgame_idx].game->options.open_game ? eMiscString_open : eMiscString_closed));
+        c2_sprintf(pFrontend->items[30].text, "%s", s);
+        MungeMetaCharactersChar(pFrontend->items[30].text, 'R', '\r');
+    }
+}
+
+int C2_HOOK_FASTCALL NetJoinChooseThisGame(tFrontend_spec* pFrontend) {
+    tJoinable_game* jgame;
+
+    C2V(gLast_graph_sel) = C2V(gFrontend_selected_item_index) - pFrontend->scrollers[2].indexFirstScrollableItem;
+    jgame = &C2V(gGames_to_join)[C2V(gLast_graph_sel)];
+    if (C2V(gLast_graph_sel) < 0 || jgame->game == NULL || (!jgame->game->options.open_game && !jgame->game->no_races_yet) || jgame->game->num_players >= kMax_netplayers) {
+        C2V(gLast_graph_sel) = -1;
+    }
+    pFrontend->items[17].enabled = kFrontendItemEnabled_disabled;
+    NetworkUpdateSelectedGameInfo(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004682c0, NetJoinChooseThisGame)
