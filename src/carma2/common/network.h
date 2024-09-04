@@ -51,4 +51,6 @@ void C2_HOOK_FASTCALL StopAllThatJoinyStuffThisInstant(void);
 
 tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_game_options* pOptions, int pRace_index, const char* pHost_name, int pCar_index);
 
+int C2_HOOK_FASTCALL NetJoinGame(tNet_game_details *pGame_details,char *pPlayer_name,int pCar_index);
+
 #endif // REC2_NETWORK_H
