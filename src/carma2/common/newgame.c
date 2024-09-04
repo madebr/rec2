@@ -98,3 +98,14 @@ int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_option
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00468d70, ChooseNetCar, ChooseNetCar_original)
+
+void (C2_HOOK_FASTCALL * AddToJoinList_original)(tNet_game_details* pGame);
+void C2_HOOK_FASTCALL AddToJoinList(tNet_game_details* pGame) {
+
+#if defined(C2_HOOKS_ENABLED)
+    AddToJoinList_original(pGame);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004681d0, AddToJoinList, AddToJoinList_original)
