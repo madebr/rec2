@@ -87,3 +87,14 @@ void C2_HOOK_FASTCALL DisposeJoinableGame(int pIndex) {
     NetDisposeGameDetails(C2V(gGames_to_join)[pIndex].game);
     C2V(gGames_to_join)[pIndex].game = NULL;
 }
+
+int (C2_HOOK_FASTCALL * ChooseNetCar_original)(tNet_game_details* pNet_game, tNet_game_options* pOptions, int* pCar_index, int pIm_the_host_so_fuck_off);
+int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_options* pOptions, int* pCar_index, int pIm_the_host_so_fuck_off) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return ChooseNetCar_original(pNet_game, pOptions, pCar_index, pIm_the_host_so_fuck_off);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00468d70, ChooseNetCar, ChooseNetCar_original)
