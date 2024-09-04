@@ -238,3 +238,13 @@ int C2_HOOK_FASTCALL NetJoinGame(tNet_game_details *pGame_details,char *pPlayer_
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049e970, NetJoinGame, NetJoinGame_original)
+
+void (C2_HOOK_FASTCALL * NetStartProducingJoinList_original)(tAddToJoinListProc *pAdd_proc);
+void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc *pAdd_proc) {
+#if defined(C2_HOOKS_ENABLED)
+    NetStartProducingJoinList_original(pAdd_proc);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049dbd0, NetStartProducingJoinList, NetStartProducingJoinList_original)
