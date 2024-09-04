@@ -27,4 +27,8 @@ int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_option
 
 void C2_HOOK_FASTCALL AddToJoinList(tNet_game_details* pGame);
 
+void C2_HOOK_FASTCALL SetUpOtherNetThings(tNet_game_details* pGame_details);
+
+void C2_HOOK_FASTCALL InitGamesToJoin(void);
+
 #endif //REC2_NEWGAME_H

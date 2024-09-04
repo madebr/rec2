@@ -10,6 +10,7 @@ C2_HOOK_VARIABLE_DECLARE(tMin_message*, gMin_messages);
 C2_HOOK_VARIABLE_DECLARE(tMid_message*, gMid_messages);
 C2_HOOK_VARIABLE_DECLARE(tMax_message*, gMax_messages);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_service_disable);
+C2_HOOK_VARIABLE_DECLARE(int, gNet_storage_space_initialized);
 
 void C2_HOOK_FASTCALL InitNetHeadups(void);
 
@@ -54,5 +55,9 @@ tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_g
 int C2_HOOK_FASTCALL NetJoinGame(tNet_game_details *pGame_details,char *pPlayer_name,int pCar_index);
 
 void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc *pAdd_proc);
+
+void C2_HOOK_FASTCALL InitNetStorageSpace(void);
+
+void C2_HOOK_FASTCALL DisposeNetStorageSpace(void);
 
 #endif // REC2_NETWORK_H

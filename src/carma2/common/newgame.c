@@ -1,6 +1,7 @@
 #include "newgame.h"
 
 #include "globvars.h"
+#include "init.h"
 #include "loading.h"
 #include "network.h"
 #include "structur.h"
@@ -109,3 +110,18 @@ void C2_HOOK_FASTCALL AddToJoinList(tNet_game_details* pGame) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004681d0, AddToJoinList, AddToJoinList_original)
+
+void C2_HOOK_FASTCALL SetUpOtherNetThings(tNet_game_details* pGame_details) {
+
+    C2V(gProgram_state).skill_level = 1;
+    InitGame(pGame_details->start_race);
+}
+
+void C2_HOOK_FASTCALL InitGamesToJoin(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gGames_to_join)); i++) {
+
+        C2V(gGames_to_join)[i].game = NULL;
+    }
+}
