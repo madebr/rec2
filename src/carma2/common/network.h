@@ -49,4 +49,6 @@ void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails);
 
 void C2_HOOK_FASTCALL StopAllThatJoinyStuffThisInstant(void);
 
+tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_game_options* pOptions, int pRace_index, const char* pHost_name, int pCar_index);
+
 #endif // REC2_NETWORK_H
