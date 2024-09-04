@@ -46,4 +46,6 @@ void C2_HOOK_FASTCALL NetworkUpdateSelectedGameInfo(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL NetJoinChooseThisGame(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL NetGameToggleTyping(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_NETWORK_H */
