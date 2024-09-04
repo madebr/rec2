@@ -6,6 +6,7 @@
 
 #include "c2_stdio.h"
 
+#define kMax_netplayers 12
 #define kMax_crush_datas 64
 
 #define kMax_headup_detail_level 5
@@ -3514,6 +3515,7 @@ enum {
     eMiscString_wrong_checkpoint = 43,
     eMiscString_bad_boy = 44,
     eMiscString_credit_fine = 45,
+    eMiscString_has_joined_the_game = 58,
     eMiscString_driven_to_destruction = 59,
     eMiscString_car_crusher = 60,
     eMiscString_smashy_things = 61,
