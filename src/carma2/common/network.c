@@ -216,3 +216,14 @@ void C2_HOOK_FASTCALL StopAllThatJoinyStuffThisInstant(void) {
     NetEndJoinList();
     DisposeJoinList(C2V(gLast_graph_sel));
 }
+
+tNet_game_details* (C2_HOOK_FASTCALL * NetHostGame_original)(tNet_game_type pNet_type, tNet_game_options* pOptions, int pRace_index, const char* pHost_name, int pCar_index);
+tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_game_options* pOptions, int pRace_index, const char* pHost_name, int pCar_index) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetHostGame_original(pNet_type, pOptions, pRace_index, pHost_name, pCar_index);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049e210, NetHostGame, NetHostGame_original)
