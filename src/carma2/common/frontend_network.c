@@ -307,3 +307,10 @@ int C2_HOOK_FASTCALL NetGameToggleTyping(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004670c0, NetGameToggleTyping)
+
+int C2_HOOK_FASTCALL NetworkStartJoin(tFrontend_spec* pFrontend) {
+
+    C2V(gFrontend_net_mode) = eNet_mode_thinking_about_it;
+    return NetworkJoinGoAhead(pFrontend);
+}
+C2_HOOK_FUNCTION(0x00468a50, NetworkStartJoin)
