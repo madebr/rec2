@@ -295,3 +295,15 @@ int C2_HOOK_FASTCALL NetJoinChooseThisGame(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004682c0, NetJoinChooseThisGame)
+
+int C2_HOOK_FASTCALL NetGameToggleTyping(tFrontend_spec* pFrontend) {
+
+    ToggleTyping(pFrontend);
+    if (!C2V(gTyping) && c2_strlen(pFrontend->items[C2V(gFrontend_selected_item_index)].text) != 0) {
+
+        c2_strcpy(C2V(gProgram_state).player_name, pFrontend->items[C2V(gFrontend_selected_item_index)].text);
+        SaveOptions();
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004670c0, NetGameToggleTyping)
