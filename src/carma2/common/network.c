@@ -227,3 +227,14 @@ tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_g
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049e210, NetHostGame, NetHostGame_original)
+
+int (C2_HOOK_FASTCALL * NetJoinGame_original)(tNet_game_details *pGame_details,char *pPlayer_name,int pCar_index);
+int C2_HOOK_FASTCALL NetJoinGame(tNet_game_details *pGame_details,char *pPlayer_name,int pCar_index) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetJoinGame_original(pGame_details, pPlayer_name, pCar_index);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049e970, NetJoinGame, NetJoinGame_original)
