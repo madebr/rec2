@@ -1,9 +1,11 @@
 #include "network.h"
 
 #include "controls.h"
+#include "globvars.h"
 #include "loading.h"
 #include "newgame.h"
 #include "platform.h"
+#include "world.h"
 
 #include "brender/brender.h"
 
@@ -14,6 +16,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tMid_message*, gMid_messages, 0x0068d970);
 C2_HOOK_VARIABLE_IMPLEMENT(tMax_message*, gMax_messages, 0x0068d980);
 C2_HOOK_VARIABLE_IMPLEMENT(tDynamic_message*, gDynamic_messages, 0x00690c48);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_service_disable, 0x00690c38);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_storage_space_initialized, 0x00688b1c);
 
 void (C2_HOOK_FASTCALL * NetPlayerStatusChanged_original)(tPlayer_status pNew_status);
 void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status) {
@@ -248,3 +251,21 @@ void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc *pAdd_proc) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049dbd0, NetStartProducingJoinList, NetStartProducingJoinList_original)
+
+void C2_HOOK_FASTCALL InitNetStorageSpace(void) {
+    int i;
+
+    for (i = 0; i < kMax_netplayers; i++) {
+        C2V(gCurrent_race).opponent_list[i].car_spec = NULL;
+    }
+    C2V(gNet_storage_space_initialized) = 1;
+    InitialiseStorageSpace(0, &C2V(gNet_cars_storage_space), 2000, 50, 2000, 2000, 50);
+}
+
+void C2_HOOK_FASTCALL DisposeNetStorageSpace(void) {
+
+    if (C2V(gNet_storage_space_initialized)) {
+        DisposeStorageSpace(&C2V(gNet_cars_storage_space));
+    }
+    C2V(gNet_storage_space_initialized) = 0;
+}
