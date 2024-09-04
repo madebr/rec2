@@ -45,6 +45,7 @@ typedef struct tDrone_path_node tDrone_path_node;
 typedef struct tSave_game tSave_game;
 typedef struct tPipe_smudge_data tPipe_smudge_data;
 typedef struct tPath_node tPath_node;
+typedef struct tNet_game_details tNet_game_details;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -61,6 +62,7 @@ typedef void C2_HOOK_FASTCALL tPeriodic_proc(tPowerup*, tU32);
 typedef void C2_HOOK_FASTCALL tForEachPedestrian_cbfn(tPedestrian*, tCar_spec*, float, tU32, tPedestrian_distances*);
 typedef void C2_HOOK_FASTCALL material_cbfn(br_material*);
 typedef int C2_HOOK_FASTCALL tEnumCollision_cbfn(tCollision_info* pCollision_info, void* pUser_data);
+typedef void C2_HOOK_FASTCALL tAddToJoinListProc(tNet_game_details*);
 
 typedef enum {
     eRace_over_0 = 0, /* FIXME */
@@ -3236,7 +3238,7 @@ typedef struct {
     tNet_game_stage stage;
 } tNet_game_status;
 
-typedef struct {
+typedef struct tNet_game_details {
     tPD_net_player_info pd_net_info;
     undefined4 field_0x10;
     char field_0x14[28];
