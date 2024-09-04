@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "globvrpb.h"
 #include "init.h"
+#include "intrface.h"
 #include "loading.h"
 #include "loadsave.h"
 #include "newgame.h"
@@ -21,6 +22,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_type, gFrontend_game_type, 0x00763920);
 C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_options, gFrontend_net_options, 0x00763b20);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_net_current_roll, 0x00688aa8);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_net_last_roll, 0x00686efc);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tNet_mode, gFrontend_net_mode, 0x0059c820, eNet_mode_thinking_about_it);
+C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_details*, gGame_to_join, 0x00763714);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_net_car_index, 0x007638e0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_join_host_result, 0x00764ee4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFrontend_host_join_buffer, 256, 0x00763600);
 
 void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend) {
     int i;
@@ -165,3 +171,81 @@ int C2_HOOK_FASTCALL NetCancel(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00469280, NetCancel)
+
+int C2_HOOK_FASTCALL DoMultiplayerStartStuff(tNet_mode pNet_mode) {
+
+    if (pNet_mode == eNet_mode_thinking_about_it) {
+        if (C2V(gGame_to_join) == NULL) {
+            return 0;
+        }
+        SolidPolyFontText("Joining a game", 200, 100, kPolyfont_hand_green_15pt_lit, eJust_left, 1);
+        C2V(gFrontend_net_car_index) = -1;
+
+        do {
+            C2V(gNet_join_host_result) = 0;
+
+            if (ChooseNetCar(C2V(gCurrent_net_game), &C2V(gFrontend_net_options), &C2V(gFrontend_net_car_index), 0)) {
+                InitNetStorageSpace();
+                C2V(gNet_join_host_result) = NetJoinGame(C2V(gGame_to_join), C2V(gProgram_state).player_name, C2V(gFrontend_net_car_index));
+                if (C2V(gNet_join_host_result)) {
+                    DisposeNetStorageSpace();
+                } else {
+                    LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), C2V(gCurrent_net_game)->type);
+                    SetUpOtherNetThings(C2V(gGame_to_join));
+                    ReenableNetService();
+                    c2_strcpy(C2V(gFrontend_host_join_buffer), C2V(gProgram_state).player_name);
+                    c2_strcat(C2V(gFrontend_host_join_buffer), " ");
+                    c2_strcat(C2V(gFrontend_host_join_buffer), GetMiscString(eMiscString_has_joined_the_game));
+                    NetSendHeadupToAllPlayers(C2V(gFrontend_host_join_buffer));
+                    C2V(gNet_join_host_result) = 1;
+                }
+            }
+        } while (C2V(gNet_join_host_result) == -4);
+        if (C2V(gNet_join_host_result) > 0) {
+            return 1;
+        }
+        NetDisposeGameDetails(C2V(gGame_to_join));
+    } else {
+        C2V(gFrontend_net_car_index) = -1;
+        C2V(gRace_index) = C2V(gProgram_state).current_race_index;
+        if (ChooseNetCar(C2V(gCurrent_net_game), &C2V(gFrontend_net_options), &C2V(gFrontend_net_car_index), 1)) {
+            InitNetStorageSpace();
+            if (NetHostGame(C2V(gFrontend_game_type), &C2V(gFrontend_net_options), C2V(gRace_index),
+                             C2V(gProgram_state).player_name, C2V(gFrontend_net_car_index))) {
+
+                SetUpOtherNetThings(C2V(gCurrent_net_game));
+                ReenableNetService();
+                return 1;
+            }
+            DisposeNetStorageSpace();
+            ReenableNetService();
+            NetLeaveGame(C2V(gCurrent_net_game));
+        }
+    }
+    return 0;
+}
+
+int C2_HOOK_FASTCALL NetworkJoinGoAhead(tFrontend_spec* pFrontend) {
+
+    ClearAlwaysTyping();
+    if (C2V(gLast_graph_sel) < 0) {
+        return 0;
+    }
+    StopAllThatJoinyStuffThisInstant();
+    SaveOptions();
+    C2V(gGame_to_join) = C2V(gGames_to_join)[C2V(gLast_graph_sel)].game;
+    if (DoMultiplayerStartStuff(C2V(gFrontend_net_mode)) != 0) {
+        return 1;
+    }
+    InitGamesToJoin();
+    C2V(gLast_graph_sel) = -1;
+    NetStartProducingJoinList(AddToJoinList);
+    return 0;
+}
+
+int C2_HOOK_FASTCALL NetworkStartHost(tFrontend_spec* pFrontend) {
+
+    C2V(gFrontend_net_mode) = eNet_mode_host;
+    return NetworkJoinGoAhead(pFrontend);
+}
+C2_HOOK_FUNCTION(0x00468e80, NetworkStartHost)
