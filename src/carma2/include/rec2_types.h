@@ -3524,6 +3524,11 @@ enum {
     eMiscString_lap_me = 64,
     eMiscString_curse_of_the_vampire = 65,
     eMiscString_fox_n_hounds = 66,
+    eMiscString_starting = 68,
+    eMiscString_ready = 69,
+    eMiscString_playing = 70,
+    eMiscString_closed = 71,
+    eMiscString_open = 72,
     eMiscString_host_abandoned_race = 87,
     eMiscString_recovery_cancelled = 125,
     eMiscString_driven_to_destruction_description = 194,
@@ -3557,6 +3562,7 @@ enum {
     eMiscString_minimal_HUD = 288,
     eMiscString_full_HUD = 289,
 
+    eMiscString_netgame_stage_start = eMiscString_starting,
     eMiscString_network_type_start = eMiscString_driven_to_destruction,
     eMiscString_network_type_description_start = eMiscString_driven_to_destruction_description,
 };
