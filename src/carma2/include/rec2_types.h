@@ -3498,7 +3498,24 @@ typedef struct {
 } tToggled_door;
 
 typedef struct tSave_game {
-    undefined field_0x0[0x328];
+    tU32 magic;
+    char name[8];
+    undefined field_0x00c[38];
+    char date[8];
+    undefined field_0x03a[24];
+    char time[8];
+    undefined field_0x05a[26];
+    undefined4 field_0x074[100];
+    tS32 credits;
+    undefined4 field_0x208;
+    undefined4 field_0x20c;
+    undefined4 field_0x210;
+    undefined4 field_0x214[60];
+    undefined4 field_0x304;
+    undefined4 race;
+    undefined4 field_0x30c;
+    tS32 apo_current[3];
+    tS32 apo_potential[3];
 } tSave_game;
 
 typedef union {
