@@ -255,3 +255,4 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_available, 0x00761ee4);
 //char gDir_separator[3] = "";
 
 C2_HOOK_VARIABLE_IMPLEMENT(tPixelFlags, gPixelFlags, 0x0074ca18);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNo_credits_APO_restore, 0x0074d358);

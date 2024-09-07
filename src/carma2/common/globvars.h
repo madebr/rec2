@@ -252,5 +252,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gSound_enabled);
 C2_HOOK_VARIABLE_DECLARE(int, gSound_available);
 //extern int gNumber_of_races;
 C2_HOOK_VARIABLE_DECLARE(tPixelFlags, gPixelFlags);
+C2_HOOK_VARIABLE_DECLARE(int, gNo_credits_APO_restore);
 
 #endif // REC2_GLOBVARS_H
