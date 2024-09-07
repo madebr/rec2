@@ -474,7 +474,7 @@ C2_HOOK_FUNCTION(0x00490690, StripCRNL)
 tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
     tU32 raw_long;
 
-    DRfread(&raw_long, sizeof(raw_long), 1, pF);
+    PFfread(&raw_long, sizeof(raw_long), 1, pF);
     return raw_long;
 }
 C2_HOOK_FUNCTION(0x0048f830, ReadU32)
@@ -482,7 +482,7 @@ C2_HOOK_FUNCTION(0x0048f830, ReadU32)
 tU16 C2_HOOK_FASTCALL ReadU16(FILE* pF) {
     tU16 raw_short;
 
-    DRfread(&raw_short, sizeof(raw_short), 1, pF);
+    PFfread(&raw_short, sizeof(raw_short), 1, pF);
     return raw_short;
 }
 C2_HOOK_FUNCTION(0x0048f850, ReadU16)
@@ -490,7 +490,7 @@ C2_HOOK_FUNCTION(0x0048f850, ReadU16)
 tU8 C2_HOOK_FASTCALL ReadU8(FILE* pF) {
     tU8 raw_byte;
 
-    DRfread(&raw_byte, sizeof(raw_byte), 1, pF);
+    PFfread(&raw_byte, sizeof(raw_byte), 1, pF);
     return raw_byte;
 }
 C2_HOOK_FUNCTION(0x0048f870, ReadU8)
@@ -498,7 +498,7 @@ C2_HOOK_FUNCTION(0x0048f870, ReadU8)
 float C2_HOOK_FASTCALL ReadF32(FILE* pF) {
     float f;
 
-    DRfread(&f, sizeof(f), 1, pF);
+    PFfread(&f, sizeof(f), 1, pF);
     return f;
 }
 C2_HOOK_FUNCTION(0x0048f890, ReadF32)
@@ -506,7 +506,7 @@ C2_HOOK_FUNCTION(0x0048f890, ReadF32)
 tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF) {
     tS32 raw_long;
 
-    DRfread(&raw_long, sizeof(raw_long), 1, pF);
+    PFfread(&raw_long, sizeof(raw_long), 1, pF);
     return raw_long;
 }
 C2_HOOK_FUNCTION(0x0048f8b0, ReadS32)
@@ -514,7 +514,7 @@ C2_HOOK_FUNCTION(0x0048f8b0, ReadS32)
 tS16 C2_HOOK_FASTCALL ReadS16(FILE* pF) {
     tS16 raw_short;
 
-    DRfread(&raw_short, sizeof(raw_short), 1, pF);
+    PFfread(&raw_short, sizeof(raw_short), 1, pF);
     return raw_short;
 }
 C2_HOOK_FUNCTION(0x0048f8d0, ReadS16)
@@ -522,7 +522,7 @@ C2_HOOK_FUNCTION(0x0048f8d0, ReadS16)
 tS8 C2_HOOK_FASTCALL ReadS8(FILE* pF) {
     tS8 raw_byte;
 
-    DRfread(&raw_byte, sizeof(raw_byte), 1, pF);
+    PFfread(&raw_byte, sizeof(raw_byte), 1, pF);
     return raw_byte;
 }
 C2_HOOK_FUNCTION(0x0048f8f0, ReadS8)
@@ -1001,7 +1001,7 @@ void C2_HOOK_FASTCALL PFfclose(FILE* pFile) {
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4760, PFfclose, PFfclose_original)
 
 br_size_t (C2_HOOK_FASTCALL * DRfread_original)(void* buf, br_size_t size, unsigned int n, void* f);
-br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, void* f) {
+br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, void* f) {
 #if 0 // defined(C2_HOOKS_ENABLED)
     return DRfread_original(buf, size, n, f);
 #else
@@ -1023,7 +1023,7 @@ br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, vo
     return c2_fread(buf, size, n, f);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b49f0, DRfread, DRfread_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b49f0, PFfread, DRfread_original)
 
 br_size_t (C2_HOOK_FASTCALL * DRfwrite_original)(void* buf, br_size_t size, unsigned int n, void* f);
 br_size_t C2_HOOK_FASTCALL DRfwrite(void* buf, br_size_t size, unsigned int n, void* f) {
@@ -2064,23 +2064,23 @@ br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
 
     data_size = 256 * sizeof(br_int_8);
     the_font->width = BrMemAllocate(data_size, kMem_br_font_wid);
-    DRfread(the_font->width, data_size, 1, f);
+    PFfread(the_font->width, data_size, 1, f);
     data_size = 256 * sizeof(br_uint_16);
     the_font->encoding = BrMemAllocate(data_size, kMem_br_font_enc);
-    DRfread(the_font->encoding, data_size, 1, f);
+    PFfread(the_font->encoding, data_size, 1, f);
 #if !defined(C2_BIG_ENDIAN)
     for (i = 0; i < 256; i++) {
         the_font->encoding[i] = the_font->encoding[i] >> 8 | the_font->encoding[i] << 8;
     }
 #endif
     PossibleService();
-    DRfread(&data_size, sizeof(tU32), 1, f);
+    PFfread(&data_size, sizeof(tU32), 1, f);
 #if !defined(C2_BIG_ENDIAN)
     data_size = BrSwap32(data_size);
 #endif
     PossibleService();
     the_font->glyphs = BrMemAllocate(data_size, kMem_br_font_glyphs);
-    DRfread(the_font->glyphs, data_size, 1u, f);
+    PFfread(the_font->glyphs, data_size, 1u, f);
     PFfclose(f);
     return the_font;
 }

@@ -724,7 +724,7 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel
             read_amount = pFlic_info->bytes_still_to_be_read;
         }
         if (read_amount != 0) {
-            DRfread(&pFlic_info->data_start[pFlic_info->bytes_in_buffer], 1, read_amount, pFlic_info->f);
+            PFfread(&pFlic_info->data_start[pFlic_info->bytes_in_buffer], 1, read_amount, pFlic_info->f);
         }
         pFlic_info->bytes_in_buffer += read_amount;
         pFlic_info->bytes_still_to_be_read -= read_amount;
@@ -830,7 +830,7 @@ int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) 
         PFfclose(f);
         return 0;
     }
-    DRfread(*pData, 1, *pData_length, f);
+    PFfread(*pData, 1, *pData_length, f);
     PFfclose(f);
     return 1;
 }
