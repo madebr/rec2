@@ -37,6 +37,8 @@ unsigned int C2_HOOK_CDECL c2_strtoul(const char* str, char** endptr, int base);
 
 C2_NORETURN void C2_HOOK_CDECL c2_exit(int status);
 
+int C2_HOOK_CDECL c2_atoi(const char *s);
+
 #else
 
 #include <stdlib.h>
@@ -64,6 +66,8 @@ C2_NORETURN void C2_HOOK_CDECL c2_exit(int status);
 #define c2_strtoul strtoul
 
 #define c2_exit exit
+
+#define c2_atoi atoi
 
 #endif
 
