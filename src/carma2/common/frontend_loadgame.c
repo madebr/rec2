@@ -54,3 +54,17 @@ int C2_HOOK_FASTCALL LoadGameInFunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046f750, LoadGameInFunc)
+
+int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gFrontend_billboard_actors)); i++) {
+        KillAPOactor(C2V(gFrontend_billboard_actors)[i]);
+    }
+    BrActorFree(C2V(gFrontend_menu_camera));
+    C2V(gFrontend_menu_camera) = NULL;
+    EndSavedGamesList();
+    DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingout);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046fa60, LoadGameOutFunc)
