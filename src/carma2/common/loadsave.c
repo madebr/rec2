@@ -54,3 +54,8 @@ void C2_HOOK_FASTCALL DoSaveGame(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491ac0, DoSaveGame, WriteSaveGame_original)
+
+void C2_HOOK_FASTCALL SplungeSomeData(void* pData, size_t size) {
+
+}
+C2_HOOK_FUNCTION(0x00500060, SplungeSomeData)
