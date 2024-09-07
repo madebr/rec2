@@ -168,3 +168,75 @@ int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00473220, NetOptions_CreditsRoller)
+
+int C2_HOOK_FASTCALL NetOptions_TargetRoller(tFrontend_spec* pFrontend) {
+    int increment;
+    int minimum;
+    int maximum;
+
+    C2V(gFrontend_net_current_roll) = PDGetTotalTime();
+    if (C2V(gFrontend_net_current_roll) - C2V(gFrontend_net_last_roll) < 300) {
+        return 0;
+    }
+    switch (C2V(gFrontend_game_type)) {
+    case eNet_game_type_1:
+        increment = 1;
+        minimum = 1;
+        maximum = 64;
+        break;
+    case eNet_game_type_5:
+        increment = 1;
+        minimum = 1;
+        maximum = 100;
+        break;
+    case eNet_game_type_foxy:
+        increment = 30 * 1000;
+        minimum = 30 * 1000;
+        maximum = 2 * 60 * 60 * 1000;
+        break;
+    default:
+        C2V(gFrontend_net_last_roll) = C2V(gFrontend_net_current_roll);
+        return 0;
+    }
+    if (C2V(gFrontend_selected_item_index) == 29) {
+        C2V(gFrontend_net_options).starting_target -= increment;
+    } else if ((C2V(gFrontend_selected_item_index) == 30)) {
+        C2V(gFrontend_net_options).starting_target += increment;
+    }
+    if (C2V(gFrontend_net_options).starting_target < minimum) {
+        C2V(gFrontend_net_options).starting_target = minimum;
+    } else if (C2V(gFrontend_net_options).starting_target > maximum) {
+        C2V(gFrontend_net_options).starting_target = maximum;
+    }
+    C2V(gFrontend_net_last_roll) = C2V(gFrontend_net_current_roll);
+    switch (C2V(gFrontend_game_type)) {
+    case eNet_game_type_0:
+    case eNet_game_type_2:
+    case eNet_game_type_3:
+    case eNet_game_type_4:
+    case eNet_game_type_6:
+        c2_strcpy(pFrontend->items[26].text, "----");
+        break;
+    case eNet_game_type_1:
+    case eNet_game_type_5:
+        c2_sprintf(pFrontend->items[26].text, "%i", C2V(gFrontend_net_options).starting_target);
+        break;
+    case eNet_game_type_foxy:
+        {
+            int seconds = C2V(gFrontend_net_options).starting_target / 1000;
+            int minutes = (seconds / 60) % 60;
+            int hours = seconds / 3600;
+            if (hours == 0) {
+                c2_sprintf(pFrontend->items[26].text, "%02i:%02i", minutes, seconds % 60);
+            } else {
+                c2_sprintf(pFrontend->items[26].text, "%02i:%02i:%02i", hours, minutes, seconds % 60);
+            }
+        }
+        break;
+    default:
+        break;
+    }
+    FuckWithWidths(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004732b0, NetOptions_TargetRoller)
