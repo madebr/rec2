@@ -2497,3 +2497,17 @@ void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, in
     }
 }
 C2_HOOK_FUNCTION(0x00484f70, SelectThisItemIn)
+
+int C2_HOOK_FASTCALL WhichItemIsSelectedIn(tFrontend_spec* pFrontend, int pGroup) {
+    int i;
+
+    for (i = 0; i < pFrontend->count_items; i++) {
+        tFrontend_item_spec* item = &pFrontend->items[i];
+
+        if (item->group == pGroup && item->radioButton_selected) {
+            return i;
+        }
+    }
+    return -1;
+}
+C2_HOOK_FUNCTION(0x00484f40, WhichItemIsSelectedIn)
