@@ -3497,6 +3497,10 @@ typedef struct {
     float field_0xc;
 } tToggled_door;
 
+typedef struct tSave_game {
+    undefined field_0x0[0x328];
+} tSave_game;
+
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
