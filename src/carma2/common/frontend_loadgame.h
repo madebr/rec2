@@ -28,4 +28,6 @@ int C2_HOOK_FASTCALL LoadSlot3(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL LoadSlot4(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL LoadSlot5(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_LOADGAME_H */
