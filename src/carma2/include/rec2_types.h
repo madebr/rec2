@@ -3214,6 +3214,8 @@ typedef struct {
 } tOpponent;
 
 typedef enum {
+    eNet_game_type_0 = 0, /* FIXME */
+    eNet_game_type_1 = 1, /* FIXME */
     eNet_game_type_2 = 2, /* FIXME */
     eNet_game_type_3 = 3, /* FIXME */
     eNet_game_type_4 = 4, /* FIXME */
