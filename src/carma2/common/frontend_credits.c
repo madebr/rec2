@@ -89,3 +89,14 @@ int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x0046bd60, CreditsScreenInfunc)
+
+int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < C2V(gAuthor_credits_line_count); i++) {
+        c2_free(C2V(gAuthor_credits_texts)[i]);
+    }
+    c2_free(C2V(gAuthor_credits_texts));
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0046c090, CreditsScreenOutfunc)
