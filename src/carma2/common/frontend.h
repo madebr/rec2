@@ -45,6 +45,9 @@ C2_HOOK_VARIABLE_DECLARE(int*, gAuthor_credits_throbs);
 C2_HOOK_VARIABLE_DECLARE(char**, gAuthor_credits_texts);
 C2_HOOK_VARIABLE_DECLARE(int*, gAuthor_credits_fonts);
 C2_HOOK_VARIABLE_DECLARE(int, gAuthor_credits_total_height);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_scroll_time_left);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_scroll_time_increment);
+C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_scroll_last_update);
 
 
 void C2_HOOK_FASTCALL IString_Load(void);
