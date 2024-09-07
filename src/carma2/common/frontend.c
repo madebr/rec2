@@ -100,6 +100,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gControls_frontend_to_key_mapping_lut
     57, 67, 68, 69, 71, 61, 62, 63, 64, 74,
     59, 70, 72, 73, 75, 76, 35, 65, 66,
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAuthor_credits_line_count, 0x006883c0);
+C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_heights, 0x00686f04);
+C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_throbs, 0x00687238);
+C2_HOOK_VARIABLE_IMPLEMENT(char**, gAuthor_credits_texts, 0x00688448);
+C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_fonts, 0x0068682c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAuthor_credits_total_height, 0x00686f90);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
@@ -626,13 +632,6 @@ C2_HOOK_FUNCTION(0x0046d1c0, FRONTEND_Setup)
 
 void (C2_HOOK_FASTCALL * FRONTEND_RenderAuthorCredits_original)(void);
 void C2_HOOK_FASTCALL ScrollCredits(void) {
-
-    C2_HOOK_VARIABLE_IMPLEMENT(int, gAuthor_credits_line_count, 0x006883c0);
-    C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_heights, 0x00686f04);
-    C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_throbs, 0x00687238);
-    C2_HOOK_VARIABLE_IMPLEMENT(char**, gAuthor_credits_texts, 0x00688448);
-    C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_fonts, 0x0068682c);
-    C2_HOOK_VARIABLE_IMPLEMENT(int, gAuthor_credits_total_height, 0x00686f90);
 
 #if 0//defined(C2_HOOKS_ENABLED)
     FRONTEND_RenderAuthorCredits_original();
