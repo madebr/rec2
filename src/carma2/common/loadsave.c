@@ -105,3 +105,12 @@ void C2_HOOK_FASTCALL EndSavedGamesList(void) {
     C2V(gSaved_games) = NULL;
 }
 C2_HOOK_FUNCTION(0x00491c90, EndSavedGamesList)
+
+tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
+
+    if (C2V(gSaved_games) != NULL && pN < C2V(gCount_saved_games)) {
+        return &C2V(gSaved_games)[C2V(gCount_saved_games) - pN - 1];
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x00491cb0, GetNthSavedGame)
