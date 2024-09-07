@@ -20,4 +20,6 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL TryToLoadGame(int pN);
 
+int C2_HOOK_FASTCALL LoadSlot1(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_LOADGAME_H */

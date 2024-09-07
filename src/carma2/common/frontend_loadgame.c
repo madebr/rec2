@@ -278,3 +278,23 @@ int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
     }
 }
 C2_HOOK_FUNCTION(0x0046ffd0, TryToLoadGame)
+
+static int LoadSlotN(tFrontend_spec* pFrontend, int pN) {
+
+    if (C2V(gFrontend_load_game_index_top) + pN + 1 > C2V(gFrontend_count_saved_games)) {
+        pFrontend->items[pN + 1].menuInfo = NULL;
+        return 0;
+    }
+    TryToLoadGame(pN);
+    if (C2V(gProgram_state).racing) {
+        return 1;
+    }
+    C2V(gFrontend_next_menu) = kFrontend_menu_main;
+    return 3;
+}
+
+int C2_HOOK_FASTCALL LoadSlot1(tFrontend_spec* pFrontend) {
+
+    return LoadSlotN(pFrontend, 0);
+}
+C2_HOOK_FUNCTION(0x0046fbd0, LoadSlot1)
