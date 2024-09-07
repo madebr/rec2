@@ -107,3 +107,9 @@ int C2_HOOK_CDECL c2_atoi(const char *s) {
     return atoi(s);
 }
 C2_HOOK_FUNCTION(0x00577aa0, c2_atoi)
+
+double C2_HOOK_CDECL c2_atof(const char *s) {
+
+    return atof(s);
+}
+C2_HOOK_FUNCTION(0x005779a0, c2_atof)
