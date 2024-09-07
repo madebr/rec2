@@ -3867,6 +3867,7 @@ enum {
 };
 
 enum {
+    eSoundId_LeftButton = 3000,
     eSoundId_Done = 3004,
     eSoundId_EscEsc = 3005,
     eSoundId_Swingin = 3006,
