@@ -2487,3 +2487,13 @@ void C2_HOOK_FASTCALL ScrollDn(tFrontend_spec* pFrontend, int pScroller) {
         scroller->indexTopItem += 1;
     }
 }
+
+void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, int pValue) {
+    int i;
+
+    for (i = pFrontend->radios[pGroup - 1].indexFirstItem; i <= pFrontend->radios[pGroup - 1].indexLastItem; i++) {
+
+        pFrontend->items[i].radioButton_selected = i == pValue;
+    }
+}
+C2_HOOK_FUNCTION(0x00484f70, SelectThisItemIn)
