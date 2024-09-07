@@ -8,6 +8,8 @@
 C2_HOOK_VARIABLE_DECLARE(int, gValid_stashed_save_game);
 C2_HOOK_VARIABLE_DECLARE(int, gSave_game_out_of_sync);
 C2_HOOK_VARIABLE_DECLARE(tSave_game, gStashed_save_game);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_saved_games);
+C2_HOOK_VARIABLE_DECLARE(tSave_game*, gSaved_games);
 
 void C2_HOOK_FASTCALL RestoreSinglePlayerState(void);
 
@@ -20,5 +22,9 @@ void C2_HOOK_FASTCALL DoLoadMostRecentGame(void);
 void C2_HOOK_FASTCALL DoSaveGame(void);
 
 void C2_HOOK_FASTCALL SplungeSomeData(void* pData, size_t size);
+
+void C2_HOOK_FASTCALL Encryptificate(tSave_game* pSave_games, int pCount);
+
+int C2_HOOK_FASTCALL StartSavedGamesList(void);
 
 #endif // REC2_LOADSAVE_H

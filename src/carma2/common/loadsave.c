@@ -2,10 +2,14 @@
 
 #include "globvars.h"
 #include "loading.h"
+#include "platform.h"
+#include "utility.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gValid_stashed_save_game, 0x00688ae4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSave_game_out_of_sync, 0x0068b8ec);
 C2_HOOK_VARIABLE_IMPLEMENT(tSave_game, gStashed_save_game, 0x00688780);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_saved_games, 0x0068c728);
+C2_HOOK_VARIABLE_IMPLEMENT(tSave_game*, gSaved_games, 0x0068c72c);
 
 void C2_HOOK_FASTCALL RestoreSinglePlayerState(void) {
 
@@ -59,3 +63,36 @@ void C2_HOOK_FASTCALL SplungeSomeData(void* pData, size_t size) {
 
 }
 C2_HOOK_FUNCTION(0x00500060, SplungeSomeData)
+
+void C2_HOOK_FASTCALL Encryptificate(tSave_game* pSave_games, int pCount) {
+
+    C2_HOOK_BUG_ON(sizeof(tSave_game) != 0x328);
+    SplungeSomeData(pSave_games, pCount * sizeof(tSave_game));
+}
+
+int C2_HOOK_FASTCALL StartSavedGamesList(void) {
+    tPath_name path;
+    FILE* f;
+    int filesize;
+
+    C2_HOOK_BUG_ON(sizeof(tSave_game) != 0x328);
+
+    if (C2V(gSaved_games) != NULL) {
+        PDFatalError("Saved games list already started");
+    }
+    PathCat(path, C2V(gApplication_path), "SAVEDGAMES.ARS");
+    f = DRfopen(path, "rb");
+    if (f == NULL) {
+        return 0;
+    }
+    PFfseek(f, 0, SEEK_END);
+    filesize = PFftell(f);
+    PFrewind(f);
+    C2V(gCount_saved_games) = filesize / sizeof(tSave_game);
+    C2V(gSaved_games) = BrMemAllocate(filesize, kMem_misc);
+    PFfread(C2V(gSaved_games), 1, filesize, f);
+    Encryptificate(C2V(gSaved_games), C2V(gCount_saved_games));
+    PFfclose(f);
+    return C2V(gCount_saved_games);
+}
+C2_HOOK_FUNCTION(0x00491bb0, StartSavedGamesList)
