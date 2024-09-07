@@ -106,6 +106,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_throbs, 0x00687238);
 C2_HOOK_VARIABLE_IMPLEMENT(char**, gAuthor_credits_texts, 0x00688448);
 C2_HOOK_VARIABLE_IMPLEMENT(int*, gAuthor_credits_fonts, 0x0068682c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAuthor_credits_total_height, 0x00686f90);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_scroll_time_left, 0x00763898);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_scroll_time_increment, 0x0076389c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_scroll_last_update, 0x00763894);
 
 #define COUNT_FRONTEND_INTERPOLATE_STEPS 16
 
