@@ -19,4 +19,6 @@ void C2_HOOK_FASTCALL DoLoadMostRecentGame(void);
 
 void C2_HOOK_FASTCALL DoSaveGame(void);
 
+void C2_HOOK_FASTCALL SplungeSomeData(void* pData, size_t size);
+
 #endif // REC2_LOADSAVE_H
