@@ -182,4 +182,6 @@ void C2_HOOK_FASTCALL ScrollUp(tFrontend_spec* pFrontend, int pScroller);
 
 void C2_HOOK_FASTCALL ScrollDn(tFrontend_spec* pFrontend, int pScroller);
 
+void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, int pValue);
+
 #endif //REC2_FRONTEND_H
