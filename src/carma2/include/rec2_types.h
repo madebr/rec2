@@ -3854,6 +3854,7 @@ enum {
     eSoundId_EscEsc = 3005,
     eSoundId_Swingin = 3006,
     eSoundId_Swingout = 3007,
+    eSoundId_CantAffordPart = 3100,
     eSoundId_Cop_Siren = 5350,
     eSoundId_FlaskGone = 5401,
     eSoundId_OutOfTime2 = 8010,

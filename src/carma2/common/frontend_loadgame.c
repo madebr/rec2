@@ -264,3 +264,17 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x00470020, LoadGameUpdateFunc)
+
+int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
+
+    if (DoLoadGame(C2V(gFrontend_load_game_index_top) + pN)) {
+        C2V(gAbandon_game) = 1;
+        C2V(gNo_credits_APO_restore) = 1;
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_Done);
+        return 1;
+    } else {
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_CantAffordPart);
+        return 0;
+    }
+}
+C2_HOOK_FUNCTION(0x0046ffd0, TryToLoadGame)
