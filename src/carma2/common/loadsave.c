@@ -114,3 +114,12 @@ tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
     return NULL;
 }
 C2_HOOK_FUNCTION(0x00491cb0, GetNthSavedGame)
+
+int C2_HOOK_FASTCALL DoLoadGame(int pIndex) {
+
+    if (C2V(gSaved_games) != NULL && pIndex >= 0 && pIndex < C2V(gCount_saved_games)) {
+        return DoLoadGame2(&C2V(gSaved_games)[C2V(gCount_saved_games) - pIndex - 1]);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00491e20, DoLoadGame)
