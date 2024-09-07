@@ -340,3 +340,14 @@ int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend) {
     return LoadSlotN(pFrontend, 7);
 }
 C2_HOOK_FUNCTION(0x0046ff50, LoadSlot8)
+
+int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend) {
+
+    if (C2V(gFrontend_load_game_index_top) > 0 && C2V(gFrontend_scroll_time_left) == 0) {
+        C2V(gFrontend_load_game_index_top) -= 1;
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+        C2V(gFrontend_scroll_time_left) += C2V(gFrontend_scroll_time_increment);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046fb30, LoadGameScrollUp)
