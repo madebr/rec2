@@ -56,7 +56,7 @@ int C2_HOOK_CDECL DRStdioGetChr(void* f) {
 C2_HOOK_FUNCTION(0x0044c6b0, DRStdioGetChr)
 
 br_size_t C2_HOOK_CDECL DRStdioRead(void* buf, br_size_t size, unsigned int n, void* f) {
-    return DRfread(buf, size, n, f);
+    return PFfread(buf, size, n, f);
 }
 C2_HOOK_FUNCTION(0x0044c750, DRStdioRead)
 
