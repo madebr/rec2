@@ -3,6 +3,7 @@
 #include "frontend.h"
 #include "frontend_network.h"
 #include "frontend_quit.h"
+#include "platform.h"
 
 #include "c2_string.h"
 
@@ -144,3 +145,26 @@ int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00473210, NetOptions_Outfunc)
+
+int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend) {
+
+    C2V(gFrontend_net_current_roll) = PDGetTotalTime();
+    if (C2V(gFrontend_net_current_roll) - C2V(gFrontend_net_last_roll) < 300) {
+        return 0;
+    }
+    if (C2V(gFrontend_selected_item_index) == 28) {
+        C2V(gFrontend_net_options).starting_credits += 1000;
+    } else if (C2V(gFrontend_selected_item_index) == 27) {
+        C2V(gFrontend_net_options).starting_credits -= 1000;
+    }
+    if (C2V(gFrontend_net_options).starting_credits < 0) {
+        C2V(gFrontend_net_options).starting_credits = 0;
+    } else if (C2V(gFrontend_net_options).starting_credits > 500000) {
+        C2V(gFrontend_net_options).starting_credits = 500000;
+    }
+    C2V(gFrontend_net_last_roll) = C2V(gFrontend_net_current_roll);
+    c2_sprintf(pFrontend->items[24].text, "%i", C2V(gFrontend_net_options).starting_credits);
+    FuckWithWidths(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00473220, NetOptions_CreditsRoller)
