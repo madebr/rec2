@@ -19,4 +19,6 @@ int C2_HOOK_FASTCALL NetOptions_InFunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_NETWORK_OPTIONS_H */
