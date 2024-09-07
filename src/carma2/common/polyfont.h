@@ -55,4 +55,6 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
 
 void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pBlend_factor);
 
+void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth);
+
 #endif //REC2_POLYFONT_H

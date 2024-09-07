@@ -903,3 +903,11 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
     }
 }
 C2_HOOK_FUNCTION(0x00465380, TransparentPolyFontText)
+
+void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
+
+    while (PolyFontTextWidth(pFont, pText) > pWidth) {
+        pText[c2_strlen(pText) + -1] = '\0';
+    }
+}
+C2_HOOK_FUNCTION(0x00470a50, PolyClipName)
