@@ -304,3 +304,9 @@ int C2_HOOK_FASTCALL LoadSlot2(tFrontend_spec* pFrontend) {
     return LoadSlotN(pFrontend, 1);
 }
 C2_HOOK_FUNCTION(0x0046fc50, LoadSlot2)
+
+int C2_HOOK_FASTCALL LoadSlot3(tFrontend_spec* pFrontend) {
+
+    return LoadSlotN(pFrontend, 2);
+}
+C2_HOOK_FUNCTION(0x0046fcd0, LoadSlot3)
