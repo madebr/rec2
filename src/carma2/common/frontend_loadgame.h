@@ -12,4 +12,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_load_game_index_top);
 
 int C2_HOOK_FASTCALL LoadGameInFunc(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_LOADGAME_H */
