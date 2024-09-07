@@ -45,11 +45,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0079e17c, 0x0079e17c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tEnvironment_sound_source, gEnvironment_sound_sources, 5, 0x00684570);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gZero_v__car, 0x0068b8d0);
 
-void C2_HOOK_FASTCALL SplungeSomeData(void* data, size_t size) {
-
-}
-C2_HOOK_FUNCTION(0x00500060, SplungeSomeData)
-
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
     char line2[80];

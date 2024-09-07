@@ -13,6 +13,7 @@
 #include "grafdata.h"
 #include "graphics.h"
 #include "init.h"
+#include "loadsave.h"
 #include "newgame.h"
 #include "opponent.h"
 #include "physics.h"
