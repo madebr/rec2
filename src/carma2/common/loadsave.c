@@ -96,3 +96,12 @@ int C2_HOOK_FASTCALL StartSavedGamesList(void) {
     return C2V(gCount_saved_games);
 }
 C2_HOOK_FUNCTION(0x00491bb0, StartSavedGamesList)
+
+void C2_HOOK_FASTCALL EndSavedGamesList(void) {
+
+    if (C2V(gSaved_games) != NULL) {
+        BrMemFree(C2V(gSaved_games));
+    }
+    C2V(gSaved_games) = NULL;
+}
+C2_HOOK_FUNCTION(0x00491c90, EndSavedGamesList)
