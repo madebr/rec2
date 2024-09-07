@@ -138,3 +138,9 @@ int C2_HOOK_FASTCALL NetOptions_Infunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00472ed0, NetOptions_Infunc)
+
+int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00473210, NetOptions_Outfunc)
