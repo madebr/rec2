@@ -27,4 +27,6 @@ void C2_HOOK_FASTCALL Encryptificate(tSave_game* pSave_games, int pCount);
 
 int C2_HOOK_FASTCALL StartSavedGamesList(void);
 
+void C2_HOOK_FASTCALL EndSavedGamesList(void);
+
 #endif // REC2_LOADSAVE_H
