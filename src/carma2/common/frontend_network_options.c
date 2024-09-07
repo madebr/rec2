@@ -3,6 +3,9 @@
 #include "frontend.h"
 #include "frontend_network.h"
 #include "frontend_quit.h"
+#include "globvars.h"
+#include "loading.h"
+#include "newgame.h"
 #include "platform.h"
 
 #include "c2_string.h"
@@ -240,3 +243,42 @@ int C2_HOOK_FASTCALL NetOptions_TargetRoller(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004732b0, NetOptions_TargetRoller)
+
+int C2_HOOK_FASTCALL NetOptions_Ok(tFrontend_spec* pFrontend) {
+
+    if (WhichItemIsSelectedIn(pFrontend, 1) == 2) {
+        C2V(gFrontend_net_options).show_players_on_map = 1;
+    } else {
+        C2V(gFrontend_net_options).show_players_on_map = 0;
+    }
+    if (WhichItemIsSelectedIn(pFrontend, 2) == 5) {
+        C2V(gFrontend_net_options).powerup_respawn = 1;
+    } else {
+        C2V(gFrontend_net_options).powerup_respawn = 0;
+    }
+    if (WhichItemIsSelectedIn(pFrontend, 3) == 8) {
+        C2V(gFrontend_net_options).open_game = 1;
+    } else {
+        C2V(gFrontend_net_options).open_game = 0;
+    }
+    if (WhichItemIsSelectedIn(pFrontend, 4) == 11) {
+        C2V(gFrontend_net_options).grid_start = 1;
+    } else {
+        C2V(gFrontend_net_options).grid_start = 0;
+    }
+    if (WhichItemIsSelectedIn(pFrontend, 6) == 17) {
+        C2V(gFrontend_net_options).random_car_choice = 1;
+    } else {
+        C2V(gFrontend_net_options).random_car_choice = 0;
+    }
+    C2V(gFrontend_net_options).race_sequence_type = WhichItemIsSelectedIn(pFrontend, 5) - 14;
+    C2V(gFrontend_net_options).car_choice = WhichItemIsSelectedIn(pFrontend, 7) - 20;
+
+    C2_HOOK_BUG_ON(sizeof(C2V(gNet_settings)[0]) != 0x30);
+    C2_HOOK_BUG_ON(sizeof(C2V(gFrontend_net_options)) != 0x30);
+    c2_memcpy(&C2V(gNet_settings)[0], &C2V(gFrontend_net_options), sizeof(C2V(gFrontend_net_options)));
+    c2_memcpy(&C2V(gNet_settings)[C2V(gNet_last_game_type)], &C2V(gFrontend_net_options), sizeof(C2V(gFrontend_net_options)));
+    SaveOptions();
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00473470, NetOptions_Ok)
