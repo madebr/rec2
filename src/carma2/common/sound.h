@@ -34,8 +34,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0079e17c);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tEnvironment_sound_source, gEnvironment_sound_sources, 5);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
 
-void C2_HOOK_FASTCALL SplungeSomeData(void* data, size_t size);
-
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
 void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
