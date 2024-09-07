@@ -39,6 +39,8 @@ C2_NORETURN void C2_HOOK_CDECL c2_exit(int status);
 
 int C2_HOOK_CDECL c2_atoi(const char *s);
 
+double C2_HOOK_CDECL c2_atof(const char *s);
+
 #else
 
 #include <stdlib.h>
@@ -68,6 +70,8 @@ int C2_HOOK_CDECL c2_atoi(const char *s);
 #define c2_exit exit
 
 #define c2_atoi atoi
+
+#define c2_atof atof
 
 #endif
 
