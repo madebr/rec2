@@ -29,4 +29,6 @@ int C2_HOOK_FASTCALL StartSavedGamesList(void);
 
 void C2_HOOK_FASTCALL EndSavedGamesList(void);
 
+tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN);
+
 #endif // REC2_LOADSAVE_H
