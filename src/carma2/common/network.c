@@ -270,3 +270,14 @@ void C2_HOOK_FASTCALL DisposeNetStorageSpace(void) {
     }
     C2V(gNet_storage_space_initialized) = 0;
 }
+
+tNet_message* (C2_HOOK_FASTCALL * NetBuildGuaranteedMessage_original)(tU8 pNet_message_type, int pOption);
+tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetBuildGuaranteedMessage_original(pNet_message_type, pOption);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049f680, NetBuildGuaranteedMessage, NetBuildGuaranteedMessage_original)
