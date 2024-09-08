@@ -115,3 +115,12 @@ int C2_HOOK_FASTCALL Options_MusicOn(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004746a0, Options_MusicOn)
+
+int C2_HOOK_FASTCALL Options_MusicOff(tFrontend_spec* pFrontend) {
+
+    C2V(gProgram_state).music_volume = 0;
+    DisplayVolumeSettings(pFrontend);
+    SetSoundVolumes(1);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004746e0, Options_MusicOff)
