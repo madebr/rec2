@@ -38,4 +38,6 @@ int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL LoadGameScrollDown(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_LOADGAME_H */

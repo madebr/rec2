@@ -351,3 +351,14 @@ int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046fb30, LoadGameScrollUp)
+
+int C2_HOOK_FASTCALL LoadGameScrollDown(tFrontend_spec* pFrontend) {
+
+    if (C2V(gFrontend_load_game_index_top) + 8 < C2V(gFrontend_count_saved_games) && C2V(gFrontend_scroll_time_left) == 0) {
+        C2V(gFrontend_load_game_index_top) += 1;
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+        C2V(gFrontend_scroll_time_left) += C2V(gFrontend_scroll_time_increment);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046fb80, LoadGameScrollDown)
