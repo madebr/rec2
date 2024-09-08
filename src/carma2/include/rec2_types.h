@@ -3563,6 +3563,16 @@ enum {
     eMiscString_playing = 70,
     eMiscString_closed = 71,
     eMiscString_open = 72,
+    eMiscString_status_unknown = 77,
+    eMiscString_status_ready = 78,
+    eMiscString_status_loading = 79,
+    eMiscString_status_in_wrecks_galleray = 80,
+    eMiscString_status_in_race_summary = 81,
+    eMiscString_status_not_responding = 82,
+    eMiscString_status_racing = 83,
+    eMiscString_status_in_main_menu = 84,
+    eMiscString_status_recovering = 85,
+    eMiscString_status_in_action_replay = 86,
     eMiscString_host_abandoned_race = 87,
     eMiscString_host = 88,
     eMiscString_recovery_cancelled = 125,
@@ -3605,6 +3615,7 @@ enum {
     eMiscString_netgame_stage_start = eMiscString_starting,
     eMiscString_network_type_start = eMiscString_driven_to_destruction,
     eMiscString_network_type_description_start = eMiscString_driven_to_destruction_description,
+    eMiscString_player_status_start = eMiscString_status_unknown,
 };
 
 enum {
