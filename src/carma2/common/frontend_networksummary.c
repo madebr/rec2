@@ -1,11 +1,14 @@
 #include "frontend_networksummary.h"
 
+#include "font.h"
 #include "frontend.h"
 #include "frontend_quit.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "globvrbm.h"
 #include "graphics.h"
 #include "network.h"
+#include "polyfont.h"
 #include "utility.h"
 
 #include "c2_string.h"
@@ -104,3 +107,15 @@ int C2_HOOK_FASTCALL NetSummary_Infunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00473f40, NetSummary_Infunc)
+
+void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY) {
+
+    C2V(gCar_icons_model_actor)->material->colour_map = C2V(gTextureMaps)[C2V(gCar_icons)[pCar_index].index];
+    BrMaterialUpdate(C2V(gCar_icons_model_actor)->material, BR_MATU_COLOURMAP);
+    C2V(gCar_icons_model_actor)->model = C2V(gCar_icons)[pCar_index].model;
+    BrMatrix34Translate(&C2V(gCar_icons_model_actor)->t.t.mat, (float)pX, (float)-pY, 0.f);
+    BrActorAdd(C2V(g2d_camera), C2V(gCar_icons_model_actor));
+    BrZbsSceneRender(C2V(g2d_camera), C2V(g2d_camera), C2V(gBack_screen), C2V(gDepth_buffer));
+    BrActorRemove(C2V(gCar_icons_model_actor));
+}
+C2_HOOK_FUNCTION(0x0044bac0, DrawThisCarIconNow)
