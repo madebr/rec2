@@ -258,3 +258,15 @@ int C2_HOOK_FASTCALL NetSync_MenuHandler(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x00473870, NetSync_MenuHandler)
+
+int C2_HOOK_FASTCALL NetSync_Start(tFrontend_spec* pFrontend) {
+
+    if (C2V(gNumber_of_net_players) <= 1) {
+        return 0;
+    }
+    SignalToStartRace();
+    C2V(gStart_race_sent) = 1;
+    C2V(gNo_races_yet) = 0;
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004735a0, NetSync_Start)
