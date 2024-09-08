@@ -1137,7 +1137,7 @@ typedef struct tFrontend_slider {
     int itemid_start;
     int width;
     float value;
-    undefined4 field_0x14;
+    float field_0x14;
     float field_0x18;
     void (C2_HOOK_FASTCALL * callback)(struct tFrontend_slider *);
     struct tFrontend_slider* next;
