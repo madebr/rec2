@@ -125,3 +125,14 @@ void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00499000, SetUpNetCarPositions, SetUpNetCarPositions_original)
+
+void (C2_HOOK_FASTCALL * SignalToStartRace_original)(void);
+void C2_HOOK_FASTCALL SignalToStartRace(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SignalToStartRace_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00498e70, SignalToStartRace, SignalToStartRace_original)
