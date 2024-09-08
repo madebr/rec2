@@ -4,8 +4,11 @@
 #include "frontend_main.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "init.h"
 #include "loading.h"
+#include "loadsave.h"
 #include "main.h"
+#include "network.h"
 #include "sound.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_OPTIONS, 0x00632c60, {
@@ -83,3 +86,23 @@ int C2_HOOK_FASTCALL Options_AbortRace(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00474730, Options_AbortRace)
+
+int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend) {
+
+    if (C2V(gProgram_state).racing || C2V(gNet_mode) != eNet_mode_none) {
+        if (C2V(gProgram_state).racing) {
+            C2V(gAbandon_game) = 1;
+        }
+        C2V(gProgram_state).prog_status = eProg_idling;
+        C2V(gNo_current_game) = 1;
+        return 1;
+    } else {
+        C2V(gValid_stashed_save_game) = C2V(gProgram_state).racing;
+        ShutdownNetIfRequired();
+        LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), -1);
+        InitGame(C2V(gDev_initial_race));
+        C2V(gFrontend_next_menu) = kFrontend_menu_main;
+        return 3;
+    }
+}
+C2_HOOK_FUNCTION(0x00474760, Options_AbortGame)
