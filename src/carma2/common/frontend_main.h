@@ -6,7 +6,6 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_MAIN);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_host_query);
 
 int C2_HOOK_FASTCALL MainMenuInfunc(tFrontend_spec* pFrontend);
 
