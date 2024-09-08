@@ -114,3 +114,14 @@ void C2_HOOK_FASTCALL DoNetGameManagement(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049ab00, DoNetGameManagement, DoNetGameManagement_original)
+
+void (C2_HOOK_FASTCALL * SetUpNetCarPositions_original)(void);
+void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetUpNetCarPositions_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00499000, SetUpNetCarPositions, SetUpNetCarPositions_original)

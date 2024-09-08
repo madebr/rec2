@@ -28,4 +28,6 @@ void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pPa
 
 void C2_HOOK_FASTCALL DoNetGameManagement(void);
 
+void C2_HOOK_FASTCALL SetUpNetCarPositions(void);
+
 #endif // REC2_NETGAME_H
