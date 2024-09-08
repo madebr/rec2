@@ -281,3 +281,14 @@ tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049f680, NetBuildGuaranteedMessage, NetBuildGuaranteedMessage_original)
+
+void (C2_HOOK_FASTCALL * NetGuaranteedSendMessageToHost_original)(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
+void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail) {
+
+#if defined(C2_HOOKS_ENABLED)
+    NetGuaranteedSendMessageToHost_original(pDetails, pMessage, pNotifyFail);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a5c80, NetGuaranteedSendMessageToHost, NetGuaranteedSendMessageToHost_original)
