@@ -21,4 +21,6 @@ int C2_HOOK_FASTCALL NetSync_MenuHandler(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL NetSync_Start(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_NETSYNC_H */
