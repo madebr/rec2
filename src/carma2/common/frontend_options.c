@@ -4,6 +4,7 @@
 #include "frontend_main.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "loading.h"
 #include "main.h"
 #include "sound.h"
 
@@ -63,3 +64,11 @@ int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00474530, Options_Infunc)
+
+int C2_HOOK_FASTCALL Options_Outfunc(tFrontend_spec* pFrontend) {
+
+    Generic_Outfunc(pFrontend);
+    SaveOptions();
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00474690, Options_Outfunc)
