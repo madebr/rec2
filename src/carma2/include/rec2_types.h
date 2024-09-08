@@ -66,6 +66,12 @@ typedef void C2_HOOK_FASTCALL material_cbfn(br_material*);
 typedef int C2_HOOK_FASTCALL tEnumCollision_cbfn(tCollision_info* pCollision_info, void* pUser_data);
 typedef void C2_HOOK_FASTCALL tAddToJoinListProc(tNet_game_details*);
 
+typedef enum  {
+    eNet_synch_host_first = 0,
+    eNet_synch_host_subsequent = 1,
+    eNet_synch_client = 2
+} tNet_synch_mode;
+
 typedef enum {
     eRace_over_0 = 0, /* FIXME */
     eRace_over_1 = 1, /* FIXME */
@@ -3463,6 +3469,7 @@ typedef struct {
 } tRepair_animation;
 
 typedef enum {
+    eNet_message_chunk_type_netsynch = 0xe,
     eNet_message_chunk_type_toggle_doors = 0x2c,
 } tNet_message_chunk_type;
 

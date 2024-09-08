@@ -13,6 +13,7 @@
 #include "network.h"
 #include "platform.h"
 #include "polyfont.h"
+#include "racestrt.h"
 #include "utility.h"
 
 #include "c2_string.h"
@@ -22,7 +23,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_MAIN, 0x005a80f0, {
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_car_image_outdated, 0x00687040);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_net_initialized, 0x0074c6b4);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_host_query, 0x006a0d38);
 
 void C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(tFrontend_spec* pFrontend) {
 
