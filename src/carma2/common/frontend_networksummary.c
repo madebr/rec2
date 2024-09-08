@@ -119,3 +119,45 @@ void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY) {
     BrActorRemove(C2V(gCar_icons_model_actor));
 }
 C2_HOOK_FUNCTION(0x0044bac0, DrawThisCarIconNow)
+
+void C2_HOOK_FASTCALL NetSummary_Draw(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+
+        pFrontend->items[0 + i].visible = 1;
+        pFrontend->items[12 + i].visible = 1;
+        pFrontend->items[24 + i].visible = 1;
+        pFrontend->items[36 + i].visible = 1;
+        pFrontend->items[48 + i].visible = 1;
+        pFrontend->items[65 + i].visible = 1;
+        DrawThisCarIconNow(C2V(gNet_players)[i].car_index, 88, 112 + 24 * i);
+    }
+
+    for (i = C2V(gNumber_of_net_players); i < kMax_netplayers; i++) {
+
+        pFrontend->items[0 + i].visible = 0;
+        pFrontend->items[12 + i].visible = 0;
+        pFrontend->items[24 + i].visible = 0;
+        pFrontend->items[36 + i].visible = 0;
+        pFrontend->items[48 + i].visible = 0;
+        pFrontend->items[65 + i].visible = 0;
+    }
+}
+
+int C2_HOOK_FASTCALL NetSummary_MenuHandler(tFrontend_spec* pFrontend) {
+    int result;
+
+    if (C2V(gFrontend_netsummary_first_iteration)) {
+
+        C2V(gFrontend_selected_item_index) = 79;
+        C2V(gFrontend_netsummary_first_iteration) = 0;
+    }
+    if (C2V(gProgram_state).prog_status == eProg_idling) {
+        return 1;
+    }
+    result = Generic_MenuHandler(pFrontend);
+    NetSummary_Draw(pFrontend);
+    return result;
+}
+C2_HOOK_FUNCTION(0x00474400, NetSummary_MenuHandler)
