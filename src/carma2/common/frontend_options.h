@@ -17,4 +17,6 @@ int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Options_Outfunc(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL Options_AbortRace(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_OPTIONS_H */
