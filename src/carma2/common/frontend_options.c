@@ -106,3 +106,12 @@ int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x00474760, Options_AbortGame)
+
+int C2_HOOK_FASTCALL Options_MusicOn(tFrontend_spec* pFrontend) {
+
+    C2V(gProgram_state).music_volume = 255;
+    DisplayVolumeSettings(pFrontend);
+    SetSoundVolumes(1);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004746a0, Options_MusicOn)
