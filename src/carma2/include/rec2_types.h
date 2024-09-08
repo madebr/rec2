@@ -3278,9 +3278,12 @@ typedef struct {
     int score2;
     undefined field_0x68[8];
     int wasteage_attributed;
-    undefined field_0x74[12];
+    undefined field_0x74[4];
+    undefined field_0x78[4];
+    int field_0x7c;
     int field_0x80;
-    undefined field_0x84[8];
+    undefined field_0x84[4];
+    int field_0x88;
     int next_car_index;
     int score;
     undefined field_0x94[4];
@@ -3553,6 +3556,7 @@ enum {
     eMiscString_closed = 71,
     eMiscString_open = 72,
     eMiscString_host_abandoned_race = 87,
+    eMiscString_host = 88,
     eMiscString_recovery_cancelled = 125,
     eMiscString_driven_to_destruction_description = 194,
     eMiscString_car_crusher_description = 195,
@@ -3562,6 +3566,11 @@ enum {
     eMiscString_lap_me_description = 199,
     eMiscString_curse_of_the_vampire_description = 200,
     eMiscString_fox_n_hounds_description = 201,
+    eMiscString_game_type = 207,
+    eMiscString_player = 210,
+    eMiscString_played = 211,
+    eMiscString_won = 212,
+    eMiscString_score = 213,
     eMiscString_fox_cant_do_that = 214,
     eMiscString_message_sent = 226,
     eMiscString_too_late_to_cancel = 242,
