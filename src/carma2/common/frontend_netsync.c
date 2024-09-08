@@ -270,3 +270,17 @@ int C2_HOOK_FASTCALL NetSync_Start(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x004735a0, NetSync_Start)
+
+int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend) {
+
+    if (C2V(gProgram_state).racing || C2V(gNet_mode) != eNet_mode_none) {
+
+        if (C2V(gProgram_state).racing) {
+            C2V(gAbandon_game) = 1;
+        }
+        C2V(gProgram_state).prog_status = eProg_idling;
+        C2V(gNo_current_game) = 1;
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004735d0, NetSync_Abort)
