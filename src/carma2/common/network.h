@@ -61,4 +61,6 @@ void C2_HOOK_FASTCALL InitNetStorageSpace(void);
 
 void C2_HOOK_FASTCALL DisposeNetStorageSpace(void);
 
+tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
+
 #endif // REC2_NETWORK_H
