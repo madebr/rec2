@@ -13,4 +13,6 @@ void C2_HOOK_FASTCALL NetworkSummarySetup(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL NetSummary_Infunc(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY);
+
 #endif /* FRONTEND_NETWORKSUMMARY_H */
