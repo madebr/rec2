@@ -72,3 +72,14 @@ int C2_HOOK_FASTCALL Options_Outfunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00474690, Options_Outfunc)
+
+int C2_HOOK_FASTCALL Options_AbortRace(tFrontend_spec* pFrontend) {
+    if (C2V(gProgram_state).racing) {
+        C2V(gAbandon_game) = 1;
+        if (C2V(gNet_mode) != eNet_mode_host) {
+            C2V(gProgram_state).prog_status = eProg_idling;
+        }
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00474730, Options_AbortRace)
