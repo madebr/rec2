@@ -124,3 +124,9 @@ int C2_HOOK_FASTCALL Options_MusicOff(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004746e0, Options_MusicOff)
+
+int C2_HOOK_FASTCALL Options_Ok(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00474720, Options_Ok)
