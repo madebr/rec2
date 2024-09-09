@@ -98,3 +98,26 @@ int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x0046e830, WrecksInFunc)
+
+void C2_HOOK_FASTCALL DisposeWrecksGallery(void) {
+    int i;
+
+    for (i = 0; i < C2V(gFrontend_wrecks_car_count); i++) {
+        BrActorRemove(C2V(gWreck_gallery_car_infos)[i].actor);
+    }
+    if (C2V(gFrontend_wrecks_camera) != NULL) {
+        if (C2V(gFrontend_wrecks_camera)->parent != NULL) {
+            BrActorRemove(C2V(gFrontend_wrecks_camera));
+        }
+        BrActorFree(C2V(gFrontend_wrecks_camera));
+    }
+    if (C2V(gFrontend_wrecks_actor) != NULL) {
+        if (C2V(gFrontend_wrecks_actor)->parent != NULL) {
+            BrActorRemove(C2V(gFrontend_wrecks_actor));
+        }
+        BrActorFree(C2V(gFrontend_wrecks_actor));
+    }
+    C2V(gFrontend_wrecks_actor) = NULL;
+    C2V(gFrontend_wrecks_camera) = NULL;
+}
+C2_HOOK_FUNCTION(0x0046e620, DisposeWrecksGallery)

@@ -22,4 +22,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_opponent_profile_pic_needs_update);
 
 int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL DisposeWrecksGallery(void);
+
 #endif /* FRONTEND_WRECKS_H */
