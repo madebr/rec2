@@ -310,3 +310,11 @@ void C2_HOOK_FASTCALL SetGraphicsSettingsData(tFrontend_spec* pFrontend) {
     SaveOptions();
 }
 C2_HOOK_FUNCTION(0x004b42c0, SetGraphicsSettingsData)
+
+int C2_HOOK_FASTCALL Graphics_Outfunc(tFrontend_spec* pFrontend) {
+
+    Generic_Outfunc(pFrontend);
+    SetGraphicsSettingsData(pFrontend);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00474850, Graphics_Outfunc)
