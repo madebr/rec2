@@ -12,4 +12,6 @@ void C2_HOOK_FASTCALL GetGraphicsSettingsData(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Graphics_Infunc(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL SetGraphicsSettingsData(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_GRAPHICS_H */
