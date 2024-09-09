@@ -1250,6 +1250,19 @@ typedef struct {
     br_token_value prims[3];
 } tFrontend_brender_item;
 
+typedef struct {
+    int sold;
+    undefined field_0x4[3];
+} tWreck_gallery_sell_info;
+
+typedef struct {
+    undefined field_0x0[16];
+    br_actor* actor;
+    br_matrix34 field_0x14;
+    br_matrix34 original_matrix;
+    br_matrix34 field_0x74;
+} tWreck_gallery_car_info;
+
 typedef struct tConnected_items {
     undefined4 field_0x0;
     int range_length;
