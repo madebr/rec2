@@ -5,6 +5,7 @@
 #include "depth.h"
 #include "frontend.h"
 #include "frontend_options.h"
+#include "frontend_quit.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
@@ -210,3 +211,11 @@ void C2_HOOK_FASTCALL GetGraphicsSettingsData(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x004b4090, GetGraphicsSettingsData)
+
+int C2_HOOK_FASTCALL Graphics_Infunc(tFrontend_spec* pFrontend) {
+
+    Generic_Infunc(pFrontend);
+    GetGraphicsSettingsData(pFrontend);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004747e0, Graphics_Infunc)
