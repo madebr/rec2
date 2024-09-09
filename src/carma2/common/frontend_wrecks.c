@@ -121,3 +121,11 @@ void C2_HOOK_FASTCALL DisposeWrecksGallery(void) {
     C2V(gFrontend_wrecks_camera) = NULL;
 }
 C2_HOOK_FUNCTION(0x0046e620, DisposeWrecksGallery)
+
+int C2_HOOK_FASTCALL WrecksOutFunc(tFrontend_spec* pFrontend) {
+
+    DisposeWrecksGallery();
+    DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingout);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0046ead0, WrecksOutFunc)

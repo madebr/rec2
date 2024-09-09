@@ -24,4 +24,6 @@ int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL DisposeWrecksGallery(void);
 
+int C2_HOOK_FASTCALL WrecksOutFunc(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_WRECKS_H */
