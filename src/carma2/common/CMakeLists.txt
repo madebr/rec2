@@ -47,6 +47,8 @@ add_library(c2_common STATIC
     frontend_controls.h
     frontend_credits.c
     frontend_credits.h
+    frontend_graphics.c
+    frontend_graphics.h
     frontend_main.c
     frontend_main.h
     frontend_loadgame.c
