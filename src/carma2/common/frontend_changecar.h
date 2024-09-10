@@ -21,4 +21,6 @@ int C2_HOOK_FASTCALL CarClickNext(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_CHANGECAR_H */
