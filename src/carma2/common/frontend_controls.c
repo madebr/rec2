@@ -98,3 +98,9 @@ void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider) {
     SetJoystickX((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
 }
 C2_HOOK_FUNCTION(0x004729d0, Slider_XProc)
+
+void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider) {
+
+    SetJoystickY((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
+}
+C2_HOOK_FUNCTION(0x004729f0, Slider_YProc)
