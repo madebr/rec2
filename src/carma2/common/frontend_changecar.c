@@ -185,3 +185,9 @@ int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046b620, ChangeCarOK)
+
+int C2_HOOK_FASTCALL ChangeCarCancel(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046b610, ChangeCarCancel)
