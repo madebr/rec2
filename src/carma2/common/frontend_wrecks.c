@@ -448,3 +448,17 @@ int C2_HOOK_FASTCALL ScrollToPrevCar(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046e720, ScrollToPrevCar)
+
+int C2_HOOK_FASTCALL ScrollToNextCar(tFrontend_spec* pFrontend) {
+
+    if (C2V(gFrontend_wreck_bought_car_dz) == 0.f
+            && C2V(gFrontend_wrecks_pending_hscroll) == 0.f
+            && (C2V(gFrontend_wrecks_rotate_prev_x) == -1 || C2V(gFrontend_wrecks_rotate_prev_y) == -1)) {
+
+        C2V(gFrontend_wrecks_pending_hscroll) = -30;
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+        C2V(gFrontend_opponent_profile_pic_needs_update) = 1;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046e6c0, ScrollToNextCar)
