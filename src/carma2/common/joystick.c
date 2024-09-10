@@ -102,3 +102,14 @@ void C2_HOOK_FASTCALL SetJoystickX(float pValue) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c810, SetJoystickX, SetJoystickX_original)
+
+void (C2_HOOK_FASTCALL * SetJoystickY_original)(float pValue);
+void C2_HOOK_FASTCALL SetJoystickY(float pValue) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetJoystickY_original(pValue);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045c870, SetJoystickY, SetJoystickY_original)
