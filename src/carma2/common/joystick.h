@@ -5,6 +5,7 @@
 
 C2_HOOK_VARIABLE_DECLARE(float, gForce_feedback_upper_limit);
 C2_HOOK_VARIABLE_DECLARE(float, Force_feedback_lower_limit);
+C2_HOOK_VARIABLE_DECLARE(int, gJoystick_index);
 
 
 void C2_HOOK_FASTCALL SetupFFBValues(void);
