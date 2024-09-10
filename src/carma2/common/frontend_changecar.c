@@ -55,3 +55,9 @@ int C2_HOOK_FASTCALL ChangeCarMenuInfunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x0046b4e0, ChangeCarMenuInfunc)
+
+int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend) {
+
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0046ba70, ChangeCarMenuOutfunc)
