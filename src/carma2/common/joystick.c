@@ -91,3 +91,14 @@ int C2_HOOK_FASTCALL IsJoystickDPadEnabled(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c550, IsJoystickDPadEnabled, IsJoystickDPadEnabled_original)
+
+void (C2_HOOK_FASTCALL * SetJoystickX_original)(float pValue);
+void C2_HOOK_FASTCALL SetJoystickX(float pValue) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetJoystickX_original(pValue);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045c810, SetJoystickX, SetJoystickX_original)

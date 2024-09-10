@@ -22,4 +22,6 @@ int C2_HOOK_FASTCALL GetJoystickFBBGain(void);
 
 int C2_HOOK_FASTCALL IsJoystickDPadEnabled(void);
 
+void C2_HOOK_FASTCALL SetJoystickX(float pValue);
+
 #endif /* REC2_JOYSTICK_H */
