@@ -6,6 +6,7 @@
 #include "globvars.h"
 #include "init.h"
 #include "input.h"
+#include "joystick.h"
 #include "utility.h"
 
 #include "rec2_macros.h"
@@ -33,7 +34,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gJoystickFFB, 0x0068615c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCountEnumeratedJoystickDinputDevices, 0x00686160);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(void*, gDirectInputEffects, MAX_COUNT_EFFECTS, 0x0079e0a0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDirectInputJoystickEnumerated, 0x00686170);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCurrentDirectInputJoysticksIndex, 0x00595f88, -1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDirectInputJoystickInfo, gDirectInputJoystickInfos, MAX_COUNT_JOYSTICKS, 0x0079d9c0);
 
 static int InitDirectInput(void) {
@@ -251,13 +251,13 @@ void C2_HOOK_FASTCALL AttachJoystickButtonInfos(size_t pSize, tWin32_void_voidpt
     int original_index;
     int i;
 
-    original_index = C2V(gCurrentDirectInputJoysticksIndex);
+    original_index = C2V(gJoystick_index);
     for (i = 0; i < REC2_ASIZE(C2V(gDirectInputJoystickDevices)); i++) {
         IDirectInputDevice2A *device;
 
         device = C2V(gDirectInputJoystickDevices)[i];
         if (device != NULL && C2V(gDirectInputJoystickInfos)[i].data == NULL) {
-            C2V(gCurrentDirectInputJoysticksIndex) = i;
+            C2V(gJoystick_index) = i;
             if (pSize != 0) {
                 C2V(gDirectInputJoystickInfos)[i].data = c2_malloc(pSize);
                 if (C2V(gDirectInputJoystickInfos)[i].data != NULL) {
@@ -269,17 +269,17 @@ void C2_HOOK_FASTCALL AttachJoystickButtonInfos(size_t pSize, tWin32_void_voidpt
             }
         }
     }
-    C2V(gCurrentDirectInputJoysticksIndex) = original_index;
+    C2V(gJoystick_index) = original_index;
 }
 C2_HOOK_FUNCTION(0x00459fe0, AttachJoystickButtonInfos)
 
 const char* C2_HOOK_FASTCALL GetCurrentJoystickName(void) {
-    return C2V(gDirectInputJoystickInfos)[C2V(gCurrentDirectInputJoysticksIndex)].productName;
+    return C2V(gDirectInputJoystickInfos)[C2V(gJoystick_index)].productName;
 }
 C2_HOOK_FUNCTION(0x004599d0, GetCurrentJoystickName)
 
 size_t C2_HOOK_FASTCALL GetCurrentJoystickCountButtons(void) {
-    return C2V(gDirectInputJoystickInfos)[C2V(gCurrentDirectInputJoysticksIndex)].count_buttons;
+    return C2V(gDirectInputJoystickInfos)[C2V(gJoystick_index)].count_buttons;
 }
 C2_HOOK_FUNCTION(0x00459fb0, GetCurrentJoystickCountButtons)
 
@@ -370,13 +370,13 @@ int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
                 JoystickDInputGetInfo(i, NULL, NULL);
                 AcquireDInputJoystickDevice(i);
             }
-            C2V(gCurrentDirectInputJoysticksIndex) = 0;
+            C2V(gJoystick_index) = 0;
         }
-        if (C2V(gCurrentDirectInputJoysticksIndex) < 0) {
+        if (C2V(gJoystick_index) < 0) {
             return 0;
         }
         if (InitForceFeedback()) {
-            ResetDInputJoystickFFB(C2V(gCurrentDirectInputJoysticksIndex));
+            ResetDInputJoystickFFB(C2V(gJoystick_index));
             RegisterJoystickFFBForces();
         }
     }
