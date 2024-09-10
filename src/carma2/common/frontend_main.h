@@ -18,6 +18,8 @@ int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_MainMenuHandler(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec *pFrontend);
+
 int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL MultiplayerSetup(tFrontend_spec* pFrontend);
