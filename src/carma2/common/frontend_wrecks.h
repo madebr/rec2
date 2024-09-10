@@ -32,4 +32,12 @@ int C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref);
 
 int C2_HOOK_CDECL WreckPick(br_actor* world, br_model* model, br_material* material, br_vector3* pos, br_vector3* dir, br_scalar near, br_scalar far, void* arg);
 
+int C2_HOOK_FASTCALL KeepInRange(int pIndex, int pRange);
+
+int C2_HOOK_FASTCALL GotItAlready(tCar_spec* pCar);
+
+int C2_HOOK_FASTCALL GetCarSelectedByMouse(int pX, int pY);
+
+int C2_HOOK_FASTCALL WrecksUpdateFunc(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_WRECKS_H */
