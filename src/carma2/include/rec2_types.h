@@ -3816,6 +3816,7 @@ enum {
     kFatalError_CannotFindFlicReferencedTranslation_S = 0x65,
     kFatalError_CannotOpenHeadupsFile = 0x66,
     kFatalError_CannotOpenCarResolutionDependentFile = 0x68,
+    kFatalError_CantOpenKeyNamesFile = 0x61,
     kFatalError_CantOpen_S = 0x6b,
     kFatalError_CannotLoadAGeneratedShadeTable = 0x6d,
     kFatalError_RanOutOfFunkGrooveSlotBunches = 0x71,
