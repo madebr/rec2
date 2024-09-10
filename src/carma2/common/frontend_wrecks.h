@@ -19,6 +19,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_wrecks_rotate_prev_x);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_wrecks_rotate_prev_y);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_opponent_profile_pic_needs_update);
 C2_HOOK_VARIABLE_DECLARE(int, gHierarchy_has_actor);
+C2_HOOK_VARIABLE_DECLARE(int, gPicked_wreck);
 
 
 int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend);
@@ -28,5 +29,7 @@ void C2_HOOK_FASTCALL DisposeWrecksGallery(void);
 int C2_HOOK_FASTCALL WrecksOutFunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref);
+
+int C2_HOOK_CDECL WreckPick(br_actor* world, br_model* model, br_material* material, br_vector3* pos, br_vector3* dir, br_scalar near, br_scalar far, void* arg);
 
 #endif /* FRONTEND_WRECKS_H */

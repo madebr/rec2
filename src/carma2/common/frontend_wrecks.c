@@ -26,6 +26,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_wrecks_rotate_prev_x, 0x0059b0dc,
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_wrecks_rotate_prev_y, 0x0059b0e0, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_opponent_profile_pic_needs_update, 0x00686828);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gHierarchy_has_actor, 0x00763924);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPicked_wreck, 0x00763928);
 
 
 int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend) {
@@ -140,3 +141,18 @@ int C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046f560, HeirarchyPick)
+
+int C2_HOOK_CDECL WreckPick(br_actor* world, br_model* model, br_material* material, br_vector3* pos, br_vector3* dir, br_scalar near, br_scalar far, void* arg) {
+    int i;
+
+    for (i = 0; i < C2V(gFrontend_wrecks_car_count); i++) {
+        C2V(gHierarchy_has_actor) = 0;
+        BrActorEnum(C2V(gWreck_gallery_car_infos)[i].actor, HeirarchyPick, world);
+        if (C2V(gHierarchy_has_actor)) {
+            C2V(gPicked_wreck) = i;
+            return 1;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046f4f0, WreckPick)
