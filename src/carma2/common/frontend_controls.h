@@ -22,4 +22,6 @@ void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider);
 
 int C2_HOOK_FASTCALL Controls_Infunc(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL Controls_Outfunc(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_CONTROLS_H */
