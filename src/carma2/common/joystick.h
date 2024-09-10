@@ -16,4 +16,6 @@ void C2_HOOK_FASTCALL StopJoysticks(void);
 
 float C2_HOOK_FASTCALL GetJoystickX(void);
 
+float C2_HOOK_FASTCALL GetJoystickY(void);
+
 #endif /* REC2_JOYSTICK_H */
