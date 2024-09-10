@@ -1,5 +1,7 @@
 #include "raycast.h"
 
+#include "spark.h"
+
 #include <brender/brender.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gY_picking_camera, 0x006a20d0);
@@ -153,3 +155,42 @@ int C2_HOOK_FASTCALL ActorPick2D(br_actor* ap, br_model* model, br_material* mat
     return r;
 }
 C2_HOOK_FUNCTION(0x004e3840, ActorPick2D)
+
+int C2_HOOK_FASTCALL DRActorToRoot(br_actor* a, br_actor* world, br_matrix34* m) {
+
+    if (world == a) {
+        BrMatrix34Identity(m);
+        return 1;
+    } else {
+        BrTransformToMatrix34(m, &a->t);
+        for (a = a->parent; a != NULL && world != a; a = a->parent) {
+            if (a->t.type != BR_TRANSFORM_IDENTITY) {
+                BrMatrix34PostTransform(m, &a->t);
+            }
+        }
+        return world == a;
+    }
+}
+
+int C2_HOOK_FASTCALL DRScenePick2DXY(br_actor* world, br_actor* camera, br_pixelmap* viewport, int pick_x, int pick_y, dr_pick2d_cbfn* callback, void* arg) {
+    br_matrix34 camera_tfm;
+    br_scalar scale;
+    br_scalar cos_angle;
+    br_scalar sin_angle;
+    br_camera* camera_data;
+    br_angle view_over_2;
+
+    camera_data = camera->type_data;
+    DRActorToRoot(camera, world, &camera_tfm);
+    BrMatrix34Inverse(&C2V(gPick_model_to_view__raycast), &camera_tfm);
+    view_over_2 = camera_data->field_of_view / 2;
+    cos_angle = BR_COS(view_over_2);
+    sin_angle = BR_SIN(view_over_2);
+    scale = cos_angle / sin_angle;
+    BrMatrix34PostScale(&C2V(gPick_model_to_view__raycast), scale / camera_data->aspect, scale, 1.f);
+    BrMatrix34PostShearZ(&C2V(gPick_model_to_view__raycast),
+                         (float)(2 * pick_x) / (float)viewport->width,
+                         (float)(-2 * pick_y) / (float)viewport->height);
+    return ActorPick2D(world, NULL, C2V(gBlack_material), callback, arg);
+}
+C2_HOOK_FUNCTION(0x004e36f0, DRScenePick2DXY)
