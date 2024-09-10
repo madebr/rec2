@@ -42,4 +42,6 @@ int C2_HOOK_FASTCALL WrecksUpdateFunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL ScrollToPrevCar(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL ScrollToNextCar(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_WRECKS_H */
