@@ -26,4 +26,6 @@ void C2_HOOK_FASTCALL SetJoystickX(float pValue);
 
 void C2_HOOK_FASTCALL SetJoystickY(float pValue);
 
+void C2_HOOK_FASTCALL SetJoystickFFBGain(int pValue);
+
 #endif /* REC2_JOYSTICK_H */
