@@ -6,6 +6,9 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_MAIN);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_car_image_outdated);
+C2_HOOK_VARIABLE_DECLARE(int, gFrontend_net_initialized);
+
 
 int C2_HOOK_FASTCALL MainMenuInfunc(tFrontend_spec* pFrontend);
 
