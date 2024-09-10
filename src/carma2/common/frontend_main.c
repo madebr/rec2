@@ -2,8 +2,10 @@
 
 #include "controls.h"
 #include "frontend.h"
+#include "frontend_changecar.h"
 #include "frontend_options.h"
 #include "frontend_quit.h"
+#include "frontend_wrecks.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
@@ -344,6 +346,32 @@ int C2_HOOK_FASTCALL FRONTEND_MainMenuHandler(tFrontend_spec* pFrontend) {
     return C2V(gFrontend_leave_current_menu) != 0;
 }
 C2_HOOK_FUNCTION(0x0046a0e0, FRONTEND_MainMenuHandler)
+
+void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec *pFrontend) {
+    int opponent_index;
+    tOpponent* opponent;
+
+    opponent_index = C2V(gProgram_state).cars_available[C2V(gFrontend_change_car_selected_car)];
+    opponent = &C2V(gOpponents)[opponent_index];
+
+    c2_strcpy(pFrontend->items[2].text, opponent->car_name);
+    c2_strcpy(pFrontend->items[3].text, opponent->name);
+    c2_strcpy(pFrontend->items[5].text, opponent->line4_description);
+    c2_sprintf(pFrontend->items[4].text, "%s @R%s @R%s",
+        opponent->line1_topspeed,
+        opponent->line2_weight,
+        opponent->line3_acceleration);
+    MungeMetaCharactersChar(pFrontend->items[4].text, 'R', '\r');
+    FuckWithWidths(pFrontend);
+    if (C2V(gFrontend_car_image_outdated) || C2V(gFrontend_opponent_profile_pic_needs_update)) {
+
+        MenuSetDriverImage(opponent_index, 12);
+        MenuSetCarImage(opponent_index, 6);
+        C2V(gFrontend_opponent_profile_pic_needs_update) = 0;
+        C2V(gFrontend_car_image_outdated) = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x0046b6a0, UpdateCarInfo)
 
 int C2_HOOK_FASTCALL OnePlayerSetup(tFrontend_spec* pFrontend) {
 
