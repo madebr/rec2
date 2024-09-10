@@ -25,6 +25,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_wrecks_previous_update, 0x007635ec);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_wrecks_rotate_prev_x, 0x0059b0dc, -1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_wrecks_rotate_prev_y, 0x0059b0e0, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_opponent_profile_pic_needs_update, 0x00686828);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHierarchy_has_actor, 0x00763924);
 
 
 int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend) {
@@ -129,3 +130,13 @@ int C2_HOOK_FASTCALL WrecksOutFunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x0046ead0, WrecksOutFunc)
+
+int C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
+
+    if (a == (br_actor*)ref) {
+        C2V(gHierarchy_has_actor) = 1;
+    }
+    BrActorEnum(a, HeirarchyPick, ref);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046f560, HeirarchyPick)
