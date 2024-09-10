@@ -40,4 +40,6 @@ int C2_HOOK_FASTCALL GetCarSelectedByMouse(int pX, int pY);
 
 int C2_HOOK_FASTCALL WrecksUpdateFunc(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL ScrollToPrevCar(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_WRECKS_H */
