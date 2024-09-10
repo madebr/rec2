@@ -3624,6 +3624,9 @@ enum {
     eMiscString_no_HUD = 287,
     eMiscString_minimal_HUD = 288,
     eMiscString_full_HUD = 289,
+    eMiscString_dream_on = 291,
+    eMiscString_not_wasted = 292,
+    eMiscString_already_have_it = 292,
 
     eMiscString_netgame_stage_start = eMiscString_starting,
     eMiscString_network_type_start = eMiscString_driven_to_destruction,
