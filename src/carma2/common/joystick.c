@@ -80,3 +80,14 @@ int C2_HOOK_FASTCALL GetJoystickFBBGain(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c7f0, GetJoystickFBBGain, GetJoystickFBBGain_original)
+
+int (C2_HOOK_FASTCALL * IsJoystickDPadEnabled_original)(void);
+int C2_HOOK_FASTCALL IsJoystickDPadEnabled(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return IsJoystickDPadEnabled_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045c550, IsJoystickDPadEnabled, IsJoystickDPadEnabled_original)
