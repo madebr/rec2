@@ -15,4 +15,6 @@ int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_ChangeCarMenuHandler(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_CHANGECAR_H */
