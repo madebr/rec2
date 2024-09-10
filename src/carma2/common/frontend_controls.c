@@ -272,3 +272,13 @@ int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004725a0, Controls_KeyUp)
+
+int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend) {
+
+    if (C2V(gControls_scroller).field_0x8 < C2V(gControls_scroller).field_0x0 - C2V(gControls_scroller).range_length) {
+        C2V(gControls_scroller).field_0x8 += 1;
+        RefreshScrollSet(pFrontend);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004725c0, Controls_KeyDown)
