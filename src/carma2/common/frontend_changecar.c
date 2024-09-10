@@ -161,3 +161,20 @@ int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046b640, CarClickPrev)
+
+int C2_HOOK_FASTCALL CarClickNext(tFrontend_spec* pFrontend) {
+
+    if (C2V(gFrontend_scroll_time_left) == 0) {
+        C2V(gFrontend_change_car_selected_car) += 1;
+        if (C2V(gFrontend_change_car_selected_car) >= C2V(gProgram_state).number_of_cars) {
+            C2V(gFrontend_change_car_selected_car) = 0;
+        }
+        C2V(gFrontend_opponent_profile_pic_needs_update) = 1;
+        C2V(gFrontend_car_image_outdated) = 1;
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+        UpdateCarInfo(pFrontend);
+        C2V(gFrontend_scroll_time_left) += C2V(gFrontend_scroll_time_increment);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046ba00, CarClickNext)
