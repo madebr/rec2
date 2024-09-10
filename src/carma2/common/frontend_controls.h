@@ -30,4 +30,6 @@ int C2_HOOK_FASTCALL Controls_SwitchKeyMapSet(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_CONTROLS_H */

@@ -262,3 +262,13 @@ int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x00472b00, Controls_SlotActivated)
+
+int C2_HOOK_FASTCALL Controls_KeyUp(tFrontend_spec* pFrontend) {
+
+    if (C2V(gControls_scroller).field_0x8 != 0) {
+        C2V(gControls_scroller).field_0x8 -= 1;
+        RefreshScrollSet(pFrontend);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004725a0, Controls_KeyUp)
