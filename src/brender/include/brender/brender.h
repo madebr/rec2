@@ -80,6 +80,7 @@ void C2_HOOK_CDECL BrMatrix23Scale(br_matrix23* mat, br_scalar sx, br_scalar sy)
 void C2_HOOK_CDECL BrMatrix34Identity(br_matrix34* mat);
 void C2_HOOK_CDECL BrMatrix34Translate(br_matrix34* mat, br_scalar dx, br_scalar dy, br_scalar dz);
 void C2_HOOK_CDECL BrMatrix34Pre(br_matrix34* mat, br_matrix34* A);
+void C2_HOOK_CDECL BrMatrix34Post(br_matrix34* mat, br_matrix34* A);
 void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, br_vector3* B, br_matrix34* C);
 br_scalar C2_HOOK_CDECL BrMatrix34Inverse(br_matrix34* B, br_matrix34* A);
 void C2_HOOK_CDECL BrMatrix34LPInverse(br_matrix34* A, br_matrix34* B);
@@ -110,6 +111,7 @@ void C2_HOOK_CDECL BrMatrix34PostRotateZ(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PreRotateX(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PreRotateY(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PreRotateZ(br_matrix34* mat, br_angle rz);
+void C2_HOOK_CDECL BrMatrix34RollingBall(br_matrix34 *mat, int dx,int dy, int radius);
 
 // BrMatrix4
 void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, br_matrix4* B);
