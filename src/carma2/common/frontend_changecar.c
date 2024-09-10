@@ -178,3 +178,10 @@ int C2_HOOK_FASTCALL CarClickNext(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046ba00, CarClickNext)
+
+int C2_HOOK_FASTCALL ChangeCarOK(tFrontend_spec* pFrontend) {
+
+    C2V(gProgram_state).current_car_index = C2V(gProgram_state).cars_available[C2V(gFrontend_change_car_selected_car)];
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046b620, ChangeCarOK)
