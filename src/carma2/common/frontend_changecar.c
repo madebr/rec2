@@ -9,6 +9,7 @@
 #include "graphics.h"
 #include "input.h"
 #include "platform.h"
+#include "sound.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_CHANGE_CAR, 0x005d6410, {
     FIXME TODO
@@ -143,3 +144,20 @@ int C2_HOOK_FASTCALL FRONTEND_ChangeCarMenuHandler(tFrontend_spec* pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x0046ba80, FRONTEND_ChangeCarMenuHandler)
+
+int C2_HOOK_FASTCALL CarClickPrev(tFrontend_spec* pFrontend) {
+
+    if (C2V(gFrontend_scroll_time_left) == 0) {
+        C2V(gFrontend_change_car_selected_car) -= 1;
+        if (C2V(gFrontend_change_car_selected_car) < 0) {
+            C2V(gFrontend_change_car_selected_car) = C2V(gProgram_state).number_of_cars - 1;
+        }
+        C2V(gFrontend_opponent_profile_pic_needs_update) = 1;
+        C2V(gFrontend_car_image_outdated) = 1;
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+        UpdateCarInfo(pFrontend);
+        C2V(gFrontend_scroll_time_left) += C2V(gFrontend_scroll_time_increment);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046b640, CarClickPrev)
