@@ -164,3 +164,12 @@ int C2_HOOK_FASTCALL Controls_Infunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x004725f0, Controls_Infunc)
+
+int C2_HOOK_FASTCALL Controls_Outfunc(tFrontend_spec* pFrontend) {
+
+    Generic_Outfunc(pFrontend);
+    DisposeKeyNames();
+    SaveKeyMapping();
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00472a30, Controls_Outfunc)

@@ -1939,6 +1939,26 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
 }
 C2_HOOK_FUNCTION(0x00487e10, LoadKeyMapping)
 
+void C2_HOOK_FASTCALL SaveKeyMapping(void) {
+    FILE* f;
+    tPath_name the_path;
+    int i;
+
+    PathCat(the_path, C2V(gApplication_path), "KEYMAP_X.TXT");
+    the_path[c2_strlen(the_path) - 5] = '0' + C2V(gKey_map_index);
+    PDFileUnlock(the_path);
+    f = DRfopen(the_path, "wb");
+    if (f == NULL) {
+        FatalError(kFatalError_CouldNotOpenKeyMapFile);
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gKey_mapping)); i++) {
+        c2_fprintf(f, "%d", C2V(gKey_mapping)[i]);
+        c2_fputc('\r', f);
+        c2_fputc('\n', f);
+    }
+    PFfclose(f);
+}
+
 void C2_HOOK_FASTCALL LoadHeadupImages(void) {
     int i;
     br_pixelmap* pixmap;

@@ -65,6 +65,14 @@ void C2_HOOK_FASTCALL LoadKeyNames(void) {
     PFfclose(f);
 }
 
+void C2_HOOK_FASTCALL DisposeKeyNames(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gKey_names)); i++) {
+        BrMemFree(C2V(gKey_names)[i]);
+    }
+}
+
 void C2_HOOK_FASTCALL BackupKeyMappings(void) {
     int i;
 
