@@ -58,3 +58,14 @@ float C2_HOOK_FASTCALL GetJoystickX(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c8d0, GetJoystickX, GetJoystickX_original)
+
+float (C2_HOOK_FASTCALL * GetJoystickY_original)(void);
+float C2_HOOK_FASTCALL GetJoystickY(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GetJoystickY_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045c8f0, GetJoystickY, GetJoystickY_original)
