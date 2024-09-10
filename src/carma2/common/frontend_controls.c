@@ -104,3 +104,9 @@ void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider) {
     SetJoystickY((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
 }
 C2_HOOK_FUNCTION(0x004729f0, Slider_YProc)
+
+void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider) {
+
+    SetJoystickFFBGain((int)(100.f * pSlider->value));
+}
+C2_HOOK_FUNCTION(0x00472a10, Slider_ForceProc)
