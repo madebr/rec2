@@ -462,3 +462,23 @@ int C2_HOOK_FASTCALL ScrollToNextCar(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0046e6c0, ScrollToNextCar)
+
+int C2_HOOK_FASTCALL BuyCurrentCar(tFrontend_spec* pFrontend) {
+
+    if (C2V(gFrontend_wreck_bought_car_dz) == 0.f
+            && !C2V(gWreck_gallery_sell_infos)[C2V(gFrontend_wrecks_current)].sold) {
+        tCar_spec*car;
+        tOpponent_spec* opponent;
+
+        car = GetCarSpec(eVehicle_opponent, C2V(gFrontend_wrecks_current));
+        opponent = GetOpponentSpecFromCarSpec(car);
+        C2V(gProgram_state).cars_available[C2V(gProgram_state).number_of_cars] = car->index;
+        C2V(gProgram_state).number_of_cars += 1;
+        C2V(gProgram_state).current_car_index = car->index;
+        C2V(gProgram_state).credits -= C2V(gOpponents)[opponent->index].price;
+        C2V(gFrontend_wreck_bought_car_dz) = 0.001f;
+        DRS3StartSound(C2V(gEffects_outlet), eSoundId_Done);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0046e780, BuyCurrentCar)
