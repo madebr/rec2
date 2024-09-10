@@ -1959,6 +1959,13 @@ void C2_HOOK_FASTCALL SaveKeyMapping(void) {
     PFfclose(f);
 }
 
+void C2_HOOK_FASTCALL ChangeKeyMapIndex(int pKey_map_index) {
+
+    SaveKeyMapping();
+    C2V(gKey_map_index) = pKey_map_index;
+    LoadKeyMapping();
+}
+
 void C2_HOOK_FASTCALL LoadHeadupImages(void) {
     int i;
     br_pixelmap* pixmap;
