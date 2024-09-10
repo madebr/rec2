@@ -3,6 +3,8 @@
 #include <brender/brender.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gY_picking_camera, 0x006a20d0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__raycast, 0x006a20f0);
+
 
 void (C2_HOOK_FASTCALL * InitRayCasting_original)(void);
 void C2_HOOK_FASTCALL InitRayCasting(void) {
@@ -76,3 +78,78 @@ int C2_HOOK_FASTCALL PickBoundsTestRay__raycast(br_bounds* b, br_vector3* rp, br
     return 1;
 }
 C2_HOOK_FUNCTION(0x004e3a30, PickBoundsTestRay__raycast)
+
+int C2_HOOK_FASTCALL ActorPick2D(br_actor* ap, br_model* model, br_material* material, dr_pick2d_cbfn* callback, void* arg) {
+    br_actor* a;
+    br_model* this_model;
+    br_material* this_material;
+    br_matrix34 m_to_v;
+    br_matrix34 v_to_m;
+    br_scalar t_near;
+    br_scalar t_far;
+    int r;
+    br_vector3 dir;
+
+    r = 0;
+    if (ap->model != NULL) {
+        this_model = ap->model;
+    } else {
+        this_model = model;
+    }
+    if (ap->material != NULL) {
+        this_material = ap->material;
+    } else {
+        this_material = material;
+    }
+    if (ap->render_style == BR_RSTYLE_NONE) {
+        return 0;
+    }
+    m_to_v = C2V(gPick_model_to_view__raycast);
+
+    BrMatrix34PreTransform(&C2V(gPick_model_to_view__raycast), &ap->t);
+    switch (ap->type) {
+    case BR_ACTOR_MODEL:
+        if (this_model != NULL) {
+            BrMatrix34Inverse(&v_to_m, &C2V(gPick_model_to_view__raycast));
+            r = PickBoundsTestRay__raycast(&this_model->bounds,
+                    (br_vector3 *) v_to_m.m[3], (br_vector3 *) v_to_m.m[2],
+                    0.f, BR_SCALAR_MAX, &t_near, &t_far);
+            if (r != 0) {
+                BrVector3Negate(&dir, (br_vector3 *) v_to_m.m[2]);
+                r = callback(
+                        ap, this_model, this_material, (br_vector3 *) v_to_m.m[3],
+                        &dir, t_near, t_far, arg);
+            }
+            if (r != 0) {
+                C2V(gPick_model_to_view__raycast) = m_to_v;
+                return r;
+            }
+        }
+        break;
+    case BR_ACTOR_BOUNDS:
+    case BR_ACTOR_BOUNDS_CORRECT:
+        BrMatrix34Inverse(&v_to_m, &C2V(gPick_model_to_view__raycast));
+        r = PickBoundsTestRay__raycast((br_bounds*)ap->type_data,
+                (br_vector3*)v_to_m.m[3], (br_vector3*)v_to_m.m[2],
+                0.0f, BR_SCALAR_MAX, &t_near, &t_far);
+        if (r != 0) {
+            for (a = ap->children; a != NULL; a = a->next) {
+                r = ActorPick2D(a, this_model, this_material, callback, arg);
+                if (r != 0) {
+                    break;
+                }
+            }
+        }
+        C2V(gPick_model_to_view__raycast) = m_to_v;
+        return r;
+    }
+    for (a = ap->children; a != NULL; a = a->next) {
+        r = ActorPick2D(a, this_model, this_material, callback, arg);
+        if (r != 0) {
+            break;
+        }
+    }
+    C2V(gPick_model_to_view__raycast) = m_to_v;
+    return r;
+}
+C2_HOOK_FUNCTION(0x004e3840, ActorPick2D)
