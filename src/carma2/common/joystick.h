@@ -33,6 +33,8 @@ void C2_HOOK_FASTCALL SetJoystickY(float pValue);
 
 void C2_HOOK_FASTCALL SetJoystickFFBGain(int pValue);
 
+void C2_HOOK_FASTCALL SetJoystickDPadEnabled(int pEnabled);
+
 void C2_HOOK_FASTCALL Joystick_BackupSettings(void);
 
 #endif /* REC2_JOYSTICK_H */
