@@ -173,3 +173,16 @@ int C2_HOOK_FASTCALL Controls_Outfunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00472a30, Controls_Outfunc)
+
+int C2_HOOK_FASTCALL Controls_JoystickDpadToggle(tFrontend_spec* pFrontend) {
+
+    if (C2V(gFrontend_selected_item_index) == 36) {
+        SetJoystickDPadEnabled(1);
+    } else {
+        SetJoystickDPadEnabled(0);
+    }
+    DisplayJoystickSettings(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00472400, Controls_JoystickDpadToggle)
+
