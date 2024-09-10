@@ -18,4 +18,6 @@ void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider);
 
 void C2_HOOK_FASTCALL Slider_YProc(tFrontend_slider* pSlider);
 
+void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider);
+
 #endif /* FRONTEND_CONTROLS_H */
