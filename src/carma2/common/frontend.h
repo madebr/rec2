@@ -30,6 +30,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFrontend_original_player_name, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_text_input_item_index);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0059b0d8);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tFrontend_brender_item, gFrontend_brender_items, 100);
 C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_last_scroll);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_time_last_input);
 C2_HOOK_VARIABLE_DECLARE(tStruct_00686508*, gPTR_00686508);
@@ -69,6 +70,8 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 
 void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pFrontendType);
 
+int C2_HOOK_FASTCALL FRONTEND_Redraw(void);
+
 void C2_HOOK_FASTCALL ScrollCredits(void);
 
 void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
@@ -96,6 +99,8 @@ void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex);
 void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
+
+int C2_HOOK_FASTCALL DetermineKeyArrayIndex(void);
 
 int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend,int mouse_x,int mouse_y);
 
@@ -164,6 +169,8 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl);
 void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar);
 
 void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pKey, int pNum);
+
+void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h);
 
 void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
 
