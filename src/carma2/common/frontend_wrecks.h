@@ -18,6 +18,7 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_wrecks_previous_update);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_wrecks_rotate_prev_x);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_wrecks_rotate_prev_y);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_opponent_profile_pic_needs_update);
+C2_HOOK_VARIABLE_DECLARE(int, gHierarchy_has_actor);
 
 
 int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend);
@@ -25,5 +26,7 @@ int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend);
 void C2_HOOK_FASTCALL DisposeWrecksGallery(void);
 
 int C2_HOOK_FASTCALL WrecksOutFunc(tFrontend_spec* pFrontend);
+
+int C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref);
 
 #endif /* FRONTEND_WRECKS_H */
