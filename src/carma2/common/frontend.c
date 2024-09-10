@@ -633,6 +633,34 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
 }
 C2_HOOK_FUNCTION(0x0046d1c0, FRONTEND_Setup)
 
+int C2_HOOK_FASTCALL FRONTEND_Redraw(void) {
+    int i;
+
+    C2V(gBack_screen)->origin_x = 0;
+    C2V(gBack_screen)->origin_y = 0;
+    if (C2V(gFrontend_backdrop) != NULL) {
+
+        DrPixelmapRectangleCopyPossibleLock(C2V(gBack_screen), 0, 0,
+            C2V(gFrontend_backdrop), 0, 0, C2V(gFrontend_backdrop)->width, C2V(gFrontend_backdrop)->height);
+    }
+    BrPixelmapFill(C2V(gDepth_buffer), 0xffffffff);
+    for (i = 0; i < C2V(gFrontend_count_brender_items); i++) {
+        br_actor* actor;
+
+        actor = C2V(gFrontend_brender_items)[i].actor;
+        if (C2V(gCurrent_frontend_spec)->items[i].visible) {
+            actor->render_style = BR_RSTYLE_FACES;
+        } else {
+            actor->render_style = BR_RSTYLE_NONE;
+        }
+    }
+    BrZbsSceneRender(C2V(gFrontend_actor), C2V(gFrontend_camera), C2V(gBack_screen), C2V(gDepth_buffer));
+    FRONTEND_DrawMenu(C2V(gCurrent_frontend_spec));
+    MaybeDoMouseCursor();
+    PDScreenBufferSwap(0);
+    return 0;
+}
+
 void (C2_HOOK_FASTCALL * FRONTEND_RenderAuthorCredits_original)(void);
 void C2_HOOK_FASTCALL ScrollCredits(void) {
 
@@ -1399,6 +1427,16 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
     FuckWithWidths(pFrontend);
 }
 C2_HOOK_FUNCTION(0x004720e0, RefreshScrollSet)
+
+int C2_HOOK_FASTCALL DetermineKeyArrayIndex(void) {
+    int start;
+
+    start = C2V(gFrontend_selected_item_index);
+    if (C2V(gFrontend_selected_item_index) > 52) {
+        start = C2V(gFrontend_selected_item_index) - 10;
+    }
+    return start + (C2V(gControls_scroller).field_0x8 - 43);
+}
 
 int C2_HOOK_FASTCALL Generic_FindNextActiveItem(tFrontend_spec* pFrontend, int pItem) {
     int start_item_group;
@@ -2287,6 +2325,23 @@ void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pKey, int pNum) {
     MungeMetaCharacters(pText, pKey, text);
 }
 C2_HOOK_FUNCTION(0x005190f0, MungeMetaCharactersNum)
+
+void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {
+
+#if 0
+    if (C2V(gLock_often)) {
+        PossibleUnlock(0);
+    }
+#endif
+
+    BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
+
+#if 0
+    if (C2V(gLock_often)) {
+        PossibleUnlock(0);
+    }
+#endif
+}
 
 void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend) {
 

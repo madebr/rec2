@@ -2,9 +2,12 @@
 
 #include "frontend.h"
 #include "frontend_quit.h"
+#include "input.h"
 #include "joystick.h"
 #include "loading.h"
+#include "main.h"
 #include "options.h"
+#include "sound.h"
 
 #include "rec2_macros.h"
 
@@ -195,3 +198,67 @@ int C2_HOOK_FASTCALL Controls_SwitchKeyMapSet(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00472440, Controls_SwitchKeyMapSet)
+
+int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend) {
+    int key_array_index;
+    float dy;
+    br_model* model;
+    int match;
+
+    key_array_index = DetermineKeyArrayIndex();
+    CyclePollKeys();
+    PollKeys();
+    WaitForNoKeys();
+    pFrontend->items[0].visible = 1;
+    model = C2V(gFrontend_brender_items)[0].model;
+    dy = (float)(17 * (key_array_index - C2V(gControls_scroller).field_0x8));
+    model->vertices[0].p.v[1] = model->vertices[3].p.v[1] = -(pFrontend->items[0].y + dy);
+    model->vertices[1].p.v[1] = model->vertices[2].p.v[1] = -(pFrontend->items[0].y + dy + 20);
+    BrModelUpdate(model, BR_MODU_VERTEX_POSITIONS);
+    match = -1;
+    for (;;) {
+        int key;
+
+        FRONTEND_Redraw();
+
+        key = PDAnyKeyDown();
+        if (key != -1 && key != 63) {
+            int i;
+
+            for (i = 28; i < REC2_ASIZE(C2V(gKey_mapping)); i++) {
+
+                if (C2V(gKey_mapping)[i] == key && i != C2V(gControls_frontend_to_key_mapping_lut[key_array_index])) {
+                    int j;
+
+                    for (j = 0; j < C2V(gFrontend_controls_count_keys); j++) {
+
+                        if (i == C2V(gControls_frontend_to_key_mapping_lut)[j]) {
+                            C2V(gKey_mapping)[i] = -2;
+                            match = j;
+                            break;
+                        }
+                    }
+                    if (match < 0) {
+                        DRS3StartSound(C2V(gEffects_outlet), eSoundId_CantAffordPart);
+                        key = -1;
+                        break;
+                    }
+                }
+            }
+        }
+        CyclePollKeys();
+        PollKeys();
+        ServiceGame();
+        if (key != -1 || EitherMouseButtonDown()) {
+            pFrontend->items[0].visible = 0;
+            DRS3StartSound(C2V(gEffects_outlet), eSoundId_Done);
+            WaitForNoKeys();
+            if (key != 63 && key != -1) {
+                C2V(gKey_mapping)[C2V(gControls_frontend_to_key_mapping_lut)[key_array_index]] = key;
+            }
+            RefreshScrollSet(pFrontend);
+            return 0;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00472b00, Controls_SlotActivated)
