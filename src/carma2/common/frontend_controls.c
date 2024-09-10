@@ -110,3 +110,57 @@ void C2_HOOK_FASTCALL Slider_ForceProc(tFrontend_slider* pSlider) {
     SetJoystickFFBGain((int)(100.f * pSlider->value));
 }
 C2_HOOK_FUNCTION(0x00472a10, Slider_ForceProc)
+
+int C2_HOOK_FASTCALL Controls_Infunc(tFrontend_spec* pFrontend) {
+
+    Generic_Infunc(pFrontend);
+    LoadKeyNames();
+    C2V(gFrontend_controls_count_keys) = 29;
+    BackupKeyMappings();
+    Joystick_BackupSettings();
+
+    C2V(gJoystick_index) = 0;
+
+    SelectThisItemIn(pFrontend, 1, 39 + C2V(gKey_map_index));
+
+    C2V(gControls_scroller).field_0x0 = C2V(gFrontend_controls_count_keys);
+    C2V(gControls_scroller).range_length = 10;
+    C2V(gControls_scroller).field_0x8 = 0;
+    C2V(gControls_scroller).count_ranges = 2;
+    C2V(gControls_scroller).range_starts[0] = 43;
+    C2V(gControls_scroller).range_starts[1] = 53;
+    C2V(gControls_scroller).next = NULL;
+    C2V(gConnected_items) = &C2V(gControls_scroller);
+
+    C2V(gControls_slider_1).flags = 0;
+    C2V(gControls_slider_1).itemid_left_reference = 14;
+    C2V(gControls_slider_1).itemid_start = 1;
+    C2V(gControls_slider_1).width = 236;
+    C2V(gControls_slider_1).callback = Slider_XProc;
+    C2V(gControls_slider_1).field_0x14 = 0.f;
+    C2V(gControls_slider_1).field_0x18 = 2.f;
+    C2V(gControls_slider_1).next = &C2V(gControls_slider_2);
+
+    C2V(gControls_slider_2).flags = 0;
+    C2V(gControls_slider_2).itemid_left_reference = 19;
+    C2V(gControls_slider_2).itemid_start = 4;
+    C2V(gControls_slider_2).width = 236;
+    C2V(gControls_slider_2).callback = Slider_YProc;
+    C2V(gControls_slider_2).field_0x14 = 0.f;
+    C2V(gControls_slider_2).field_0x18 = 2.f;
+    C2V(gControls_slider_2).next = &C2V(gControls_slider_3);
+
+    C2V(gControls_slider_3).flags = 0;
+    C2V(gControls_slider_3).itemid_left_reference = 23;
+    C2V(gControls_slider_3).itemid_start = 7;
+    C2V(gControls_slider_3).width = 236;
+    C2V(gControls_slider_3).callback = Slider_ForceProc;
+    C2V(gControls_slider_3).field_0x14 = 0.f;
+    C2V(gControls_slider_3).field_0x18 = 1.f;
+    C2V(gControls_slider_3).next = NULL;
+
+    DisplayJoystickSettings(pFrontend);
+    RefreshScrollSet(pFrontend);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004725f0, Controls_Infunc)

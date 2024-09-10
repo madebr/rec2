@@ -6,6 +6,11 @@
 C2_HOOK_VARIABLE_DECLARE(float, gForce_feedback_upper_limit);
 C2_HOOK_VARIABLE_DECLARE(float, Force_feedback_lower_limit);
 C2_HOOK_VARIABLE_DECLARE(int, gJoystick_index);
+C2_HOOK_VARIABLE_DECLARE(float, gOriginal_joystick_x);
+C2_HOOK_VARIABLE_DECLARE(float, gOriginal_joystick_y);
+C2_HOOK_VARIABLE_DECLARE(int, gOriginal_joystick_fbb);
+C2_HOOK_VARIABLE_DECLARE(int, gOriginal_joystick_dpad);
+C2_HOOK_VARIABLE_DECLARE(int, gOrig_joystick_index);
 
 
 void C2_HOOK_FASTCALL SetupFFBValues(void);
@@ -27,5 +32,7 @@ void C2_HOOK_FASTCALL SetJoystickX(float pValue);
 void C2_HOOK_FASTCALL SetJoystickY(float pValue);
 
 void C2_HOOK_FASTCALL SetJoystickFFBGain(int pValue);
+
+void C2_HOOK_FASTCALL Joystick_BackupSettings(void);
 
 #endif /* REC2_JOYSTICK_H */
