@@ -36,7 +36,6 @@ C2_HOOK_VARIABLE_DECLARE(tStruct_00686508*, gPTR_00686508);
 C2_HOOK_VARIABLE_DECLARE(tFrontend_slider*, gCurrent_frontend_scrollbars);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_00688444);
 C2_HOOK_VARIABLE_DECLARE(tConnected_items, gControls_scroller);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gKey_names_controls, 153);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gControls_frontend_to_key_mapping_lut, 29);
 C2_HOOK_VARIABLE_DECLARE(tU32, gAuthor_credits_scroll_start_time);
 C2_HOOK_VARIABLE_DECLARE(int, gAuthor_credits_line_count);

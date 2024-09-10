@@ -22,6 +22,7 @@
 #include "intrface.h"
 #include "loading.h"
 #include "main.h"
+#include "options.h"
 #include "polyfont.h"
 #include "platform.h"
 #include "sound.h"
@@ -94,7 +95,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(tStruct_00686508*, gPTR_00686508, 0x00686508);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_slider*, gCurrent_frontend_scrollbars, 0x00686820);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00688444, 0x00688444);
 C2_HOOK_VARIABLE_IMPLEMENT(tConnected_items, gControls_scroller, 0x00688408);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gKey_names_controls, 153, 0x00688458);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gControls_frontend_to_key_mapping_lut, 29, 0x00604888, {
     49, 50, 47, 48, 54, 45, 60, 58, 56, 46,
     57, 67, 68, 69, 71, 61, 62, 63, 64, 74,
@@ -1392,7 +1392,7 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
     for (i = 0; i < C2V(gControls_scroller).range_length; i++) {
 
         c2_strcpy(pFrontend->items[43 + i].text, GetMiscString(140 + C2V(gControls_scroller).field_0x8 + i));
-        c2_strcpy(pFrontend->items[53 + i].text, C2V(gKey_names_controls)[C2V(gKey_mapping)[C2V(gControls_frontend_to_key_mapping_lut)[i + C2V(gControls_scroller).field_0x8]] + 2]);
+        c2_strcpy(pFrontend->items[53 + i].text, C2V(gKey_names)[C2V(gKey_mapping)[C2V(gControls_frontend_to_key_mapping_lut)[i + C2V(gControls_scroller).field_0x8]] + 2]);
     }
     pFrontend->items[63].visible = C2V(gControls_scroller).field_0x8 != 0;
     pFrontend->items[64].visible = C2V(gControls_scroller).field_0x8 != C2V(gControls_scroller).field_0x0 - C2V(gControls_scroller).range_length;
