@@ -11,4 +11,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_change_car_selected_car);
 
 int C2_HOOK_FASTCALL ChangeCarMenuInfunc(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL ChangeCarMenuOutfunc(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_CHANGECAR_H */
