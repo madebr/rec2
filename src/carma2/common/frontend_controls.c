@@ -186,3 +186,12 @@ int C2_HOOK_FASTCALL Controls_JoystickDpadToggle(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION(0x00472400, Controls_JoystickDpadToggle)
 
+int C2_HOOK_FASTCALL Controls_SwitchKeyMapSet(tFrontend_spec* pFrontend) {
+
+    ChangeKeyMapIndex(C2V(gFrontend_selected_item_index) - 39);
+    SelectThisItemIn(pFrontend, 2, C2V(gKey_map_index) + 39);
+    RefreshScrollSet(pFrontend);
+    FuckWithWidths(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00472440, Controls_SwitchKeyMapSet)

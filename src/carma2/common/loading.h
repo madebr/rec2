@@ -290,6 +290,8 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void);
 
 void C2_HOOK_FASTCALL SaveKeyMapping(void);
 
+void C2_HOOK_FASTCALL ChangeKeyMapIndex(int pKey_map_index);
+
 void C2_HOOK_FASTCALL LoadHeadupImages(void);
 
 void C2_HOOK_FASTCALL LoadMiscStrings(void);
