@@ -92,3 +92,9 @@ void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec *pFrontend) {
     }
 }
 C2_HOOK_FUNCTION(0x00472210, DisplayJoystickSettings)
+
+void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider) {
+
+    SetJoystickX((pSlider->field_0x18 - pSlider->field_0x14) * pSlider->value);
+}
+C2_HOOK_FUNCTION(0x004729d0, Slider_XProc)

@@ -14,4 +14,6 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gFrontend_controls_indices, 15);
 
 void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec *pFrontend);
 
+void C2_HOOK_FASTCALL Slider_XProc(tFrontend_slider* pSlider);
+
 #endif /* FRONTEND_CONTROLS_H */
