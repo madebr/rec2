@@ -2346,6 +2346,43 @@ void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index) {
 }
 C2_HOOK_FUNCTION(0x0046aa20, MenuSetCarImage)
 
+void C2_HOOK_FASTCALL MenuSetDriverImage(int pOpponent_index, int pFrontend_index) {
+    char* pos_dot;
+    tPath_name pack_path;
+    char pack_filename[40];
+    char pm_name[20];
+    tTWTVFS twt;
+
+    pos_dot = c2_strrchr(C2V(gOpponents)[pOpponent_index].abbrev_name, '.');
+    PathCat(pack_path, C2V(gApplication_path), "INTRFACE");
+    PathCat(pack_path, pack_path, "CARIMAGE");
+    c2_strcpy(pack_filename, C2V(gOpponents)[pOpponent_index].car_file_name);
+    pack_filename[c2_strlen(pack_filename) - 4] = '\0';
+    c2_strcat(pack_filename, "CI");
+    PathCat(pack_path, pack_path, pack_filename);
+    twt = OpenPackFileAndSetTiffLoading(pack_path);
+
+    c2_sprintf(pm_name, "%.*s%c%c.TIF", pos_dot - C2V(gOpponents)[pOpponent_index].abbrev_name, C2V(gOpponents)[pOpponent_index].abbrev_name, '6', '4');
+    BrMapRemove(C2V(gFrontend_images)[7]);
+    BrPixelmapFree(C2V(gFrontend_images)[7]);
+    C2V(gFrontend_images)[7] = GetThisFuckingPixelmapPleaseMrTwatter(pack_path, pm_name);
+    if (C2V(gFrontend_images)[7] == NULL) {
+        C2V(gFrontend_images)[7] = LoadPixelmap("64by64.tif");
+    }
+    BrPixelmapCopy(C2V(gFrontend_brender_items)[pFrontend_index].field_0xc, C2V(gFrontend_images)[7]);
+    BrPixelmapCopy(C2V(gFrontend_brender_items)[pFrontend_index].field_0x10, C2V(gFrontend_brender_items)[pFrontend_index].field_0xc);
+    BrMapUpdate(C2V(gFrontend_brender_items)[pFrontend_index].field_0xc, BR_MAPU_ALL);
+
+    ClosePackFileAndSetTiffLoading(twt);
+
+    C2V(gFrontend_brender_items)[pFrontend_index].model->vertices[0].p.v[2] = -1.f;
+    C2V(gFrontend_brender_items)[pFrontend_index].model->vertices[1].p.v[2] = -1.f;
+    C2V(gFrontend_brender_items)[pFrontend_index].model->vertices[2].p.v[2] = -1.f;
+    C2V(gFrontend_brender_items)[pFrontend_index].model->vertices[3].p.v[2] = -1.f;
+    BrModelUpdate(C2V(gFrontend_brender_items)[pFrontend_index].model, BR_MODU_VERTEX_POSITIONS);
+}
+C2_HOOK_FUNCTION(0x0046b820, MenuSetDriverImage)
+
 int C2_HOOK_FASTCALL ProcessInputString(void) {
     int len;
     int key;

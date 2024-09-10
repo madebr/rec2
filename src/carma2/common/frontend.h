@@ -172,6 +172,8 @@ void C2_HOOK_FASTCALL FillInRaceDescription(char *pDest, int pRace_index);
 
 void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index);
 
+void C2_HOOK_FASTCALL MenuSetDriverImage(int pOpponent_index, int pFrontend_index);
+
 int C2_HOOK_FASTCALL ProcessInputString(void);
 
 void C2_HOOK_FASTCALL FrontEndShowMouse(void);
