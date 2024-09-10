@@ -11,6 +11,12 @@
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gForce_feedback_upper_limit, 0x00655e58, 2.7f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, Force_feedback_lower_limit, 0x00655e5c, 1.5f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gJoystick_index, 0x00595f88, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gOriginal_joystick_x, 0x00688704);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gOriginal_joystick_y, 0x00688708);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gOriginal_joystick_fbb, 0x0068870c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gOriginal_joystick_dpad, 0x00688710);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gOrig_joystick_index, 0x00688700);
+
 
 void C2_HOOK_FASTCALL SetupFFBValues(void) {
     tPath_name path;
@@ -124,3 +130,13 @@ void C2_HOOK_FASTCALL SetJoystickFFBGain(int pValue) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c7b0, SetJoystickFFBGain, SetJoystickFFBGain_original)
+
+void C2_HOOK_FASTCALL Joystick_BackupSettings(void) {
+
+    C2V(gOrig_joystick_index) = C2V(gJoystick_index);
+    C2V(gOriginal_joystick_x) = GetJoystickX();
+    C2V(gOriginal_joystick_y) = GetJoystickY();
+    C2V(gOriginal_joystick_fbb) = GetJoystickFBBGain();
+    C2V(gOriginal_joystick_dpad) = IsJoystickDPadEnabled();
+    C2V(gJoystick_index) = C2V(gOrig_joystick_index);
+}
