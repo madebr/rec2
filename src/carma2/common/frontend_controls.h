@@ -39,4 +39,6 @@ int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL Controls_JoystickToggle(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_CONTROLS_H */
