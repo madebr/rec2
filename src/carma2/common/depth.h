@@ -21,6 +21,8 @@ int C2_HOOK_FASTCALL GetDepthCueingOn(void);
 
 void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn);
 
+void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial);
+
 void C2_HOOK_FASTCALL ToggleSkyQuietly(void);
 
 void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
