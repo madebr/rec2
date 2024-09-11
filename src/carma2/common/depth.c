@@ -126,10 +126,14 @@ C2_HOOK_FUNCTION(0x00446f90, GetDepthCueingOn)
 void (C2_HOOK_FASTCALL * SetDepthCueingOn_original)(int pOn);
 void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetDepthCueingOn_original(pOn);
 #else
-#error "Not implemented"
+
+    if (C2V(gDepth_cueing_on) != pOn && C2V(gHorizon_material) != NULL) {
+        ToggleDepthCueingQuietly();
+    }
+    C2V(gDepth_cueing_on) = pOn;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00446fa0, SetDepthCueingOn, SetDepthCueingOn_original)
