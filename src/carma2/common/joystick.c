@@ -151,3 +151,14 @@ void C2_HOOK_FASTCALL Joystick_BackupSettings(void) {
     C2V(gOriginal_joystick_dpad) = IsJoystickDPadEnabled();
     C2V(gJoystick_index) = C2V(gOrig_joystick_index);
 }
+
+void (C2_HOOK_FASTCALL * EnableJoysticks_original)(void);
+void C2_HOOK_FASTCALL EnableJoysticks(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    EnableJoysticks_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045bd50, EnableJoysticks, EnableJoysticks_original)
