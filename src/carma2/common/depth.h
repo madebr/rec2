@@ -19,6 +19,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gSky_width);
 C2_HOOK_VARIABLE_DECLARE(float, gSky_height);
 C2_HOOK_VARIABLE_DECLARE(float, gSky_x_multiplier);
 C2_HOOK_VARIABLE_DECLARE(float, gSky_y_multiplier);
+C2_HOOK_VARIABLE_DECLARE(int, gHas_sky_texture);
 
 
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);

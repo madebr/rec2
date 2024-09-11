@@ -39,6 +39,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gSky_width, 0x0067c4c8);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gSky_height, 0x0067c4b4);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gSky_x_multiplier, 0x0067c4d0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gSky_y_multiplier, 0x0067c4d4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHas_sky_texture, 0x0067c4a8);
 
 
 void (C2_HOOK_FASTCALL * InstantDepthChange_original)(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
@@ -477,10 +478,11 @@ C2_HOOK_FUNCTION(0x00445e20, MungeSkyModel)
 void (C2_HOOK_FASTCALL * MungeForwardSky_original)(void);
 void C2_HOOK_FASTCALL MungeForwardSky(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeForwardSky_original();
 #else
-#error "Not implemented"
+    MungeSkyModel(C2V(gCamera), C2V(gSky_model));
+    C2V(gHas_sky_texture) = C2V(gProgram_state).default_depth_effect.sky_texture != NULL;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00447250, MungeForwardSky, MungeForwardSky_original)
