@@ -19,6 +19,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gSky_width);
 C2_HOOK_VARIABLE_DECLARE(float, gSky_height);
 C2_HOOK_VARIABLE_DECLARE(float, gSky_x_multiplier);
 C2_HOOK_VARIABLE_DECLARE(float, gSky_y_multiplier);
+C2_HOOK_VARIABLE_DECLARE(int, gHas_sky_texture);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gHorizon_material);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gSky_actor);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gSky_model);
