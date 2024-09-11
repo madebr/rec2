@@ -1264,9 +1264,9 @@ typedef struct {
 } tWreck_gallery_car_info;
 
 typedef struct tConnected_items {
-    undefined4 field_0x0;
+    int field_0x0;
     int range_length;
-    undefined4 field_0x8;
+    int field_0x8;
     int count_ranges;
     int range_starts[7];
     struct tConnected_items* next;
