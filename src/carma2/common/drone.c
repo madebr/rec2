@@ -266,21 +266,21 @@ void C2_HOOK_FASTCALL NewDroneState(tDrone_spec* pDrone_spec, int pNew_state) {
     }
 }
 
-int (C2_HOOK_FASTCALL * DroneCollisionInfoCollides_original)(tCollision_info* pCollision_1, tCollision_info* pCollision_2);
-int C2_HOOK_FASTCALL DroneCollisionInfoCollides(tCollision_info* pCollision_1, tCollision_info* pCollision_2) {
+int (C2_HOOK_FASTCALL * TestObjectOverlap_original)(tCollision_info* pCollision_1, tCollision_info* pCollision_2);
+int C2_HOOK_FASTCALL TestObjectOverlap(tCollision_info* pCollision_1, tCollision_info* pCollision_2) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return DroneCollisionInfoCollides_original(pCollision_1, pCollision_2);
+    return TestObjectOverlap_original(pCollision_1, pCollision_2);
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00428d40, DroneCollisionInfoCollides, DroneCollisionInfoCollides_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00428d40, TestObjectOverlap, TestObjectOverlap_original)
 
 int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec) {
     tCollision_info* collision = C2V(gList_collision_infos);
     for (collision = C2V(gList_collision_infos); collision != NULL; collision = collision->next) {
-        if (&pDrone_spec->collision_info != collision && DroneCollisionInfoCollides(&pDrone_spec->collision_info, collision)) {
+        if (&pDrone_spec->collision_info != collision && TestObjectOverlap(&pDrone_spec->collision_info, collision)) {
             return 1;
         }
     }
