@@ -759,7 +759,7 @@ void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCou
 }
 C2_HOOK_FUNCTION(0x004c5eb0, CalculateBoundingBox)
 
-tPhysicsError C2_HOOK_FASTCALL ProcessPolyhedronCollisionShape(tCollision_shape_polyhedron_data* pPolyhedron) {
+tPhysicsError C2_HOOK_FASTCALL ConvexHull3D(tCollision_shape_polyhedron_data* pPolyhedron) {
     int original_count_points;
     br_vector3 original_points[300];
     tPolyhedron_edge_indexes indices[894];
@@ -829,7 +829,7 @@ tPhysicsError C2_HOOK_FASTCALL ProcessPolyhedronCollisionShape(tCollision_shape_
         return ePhysicsError_UnknownShapeType;
     }
 }
-C2_HOOK_FUNCTION(0x00420fb0, ProcessPolyhedronCollisionShape)
+C2_HOOK_FUNCTION(0x00420fb0, ConvexHull3D)
 
 void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
     int i;
@@ -842,7 +842,7 @@ void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
         if (pShape->polyhedron.polyhedron.count_points < 4) {
             PhysicsError(ePhysicsError_PolyhedronHasNoPoints);
         }
-        error = ProcessPolyhedronCollisionShape(&pShape->polyhedron.polyhedron);
+        error = ConvexHull3D(&pShape->polyhedron.polyhedron);
         if (error != ePhysicsError_Ok) {
             if (error == ePhysicsError_WireFrameHasNoPoints) {
                 PDFatalError("This polyhedron is too wierd for me");
