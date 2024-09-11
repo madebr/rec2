@@ -62,7 +62,7 @@ void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn *pError_cbfn) {
 }
 C2_HOOK_FUNCTION(0x004c61f0, PhysicsSetErrorHandler)
 
-void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError) {
+void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, undefined4 pArg2) {
 
     if (C2V(gPhysics_error_cb) != NULL) {
         C2V(gPhysics_error_cb)(pError);
@@ -78,7 +78,7 @@ void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize) {
     C2V(gPhysics_buffer3_ptr) = pBuffer + 2 * PHYSICS_BUFFER_PART_SIZE;
 
     if (pSize - 3 * PHYSICS_BUFFER_PART_SIZE < PHYSICS_BUFFER_OTHER_SIZE) {
-        PhysicsError(ePhysicsError_InsufficientSizedBuffer);
+        PhysicsError(ePhysicsError_InsufficientSizedBuffer, 0);
     }
     C2V(gPhysics_other_buffer_capacity) = pSize - 3 * PHYSICS_BUFFER_PART_SIZE;
     C2V(gPhysics_other_buffer) = pBuffer + 3 * PHYSICS_BUFFER_PART_SIZE;
@@ -840,7 +840,7 @@ void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
         break;
     case kCollisionShapeType_Polyhedron:
         if (pShape->polyhedron.polyhedron.count_points < 4) {
-            PhysicsError(ePhysicsError_PolyhedronHasNoPoints);
+            PhysicsError(ePhysicsError_PolyhedronHasNoPoints, 0);
         }
         error = ConvexHull3D(&pShape->polyhedron.polyhedron);
         if (error != ePhysicsError_Ok) {
@@ -853,13 +853,13 @@ void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
         break;
     case kCollisionShapeType_Wireframe:
         if (pShape->wireframe.wireframe.count_points == 0) {
-            PhysicsError(ePhysicsError_WireFrameHasNoPoints);
+            PhysicsError(ePhysicsError_WireFrameHasNoPoints, 0);
         }
         GetBoundsFromPointList(pShape->wireframe.wireframe.points, pShape->wireframe.wireframe.count_points, &pShape->common.bb);
         break;
     case kCollisionShapeType_Wireframe_Polyhedron:
         if (pShape->polyhedron.polyhedron.count_points < 3) {
-            PhysicsError(4);
+            PhysicsError(4, 0);
         }
         AddPolyhedronCollisionShapePlanes(&pShape->polyhedron.polyhedron);
         GetBoundsFromPointList(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
@@ -874,7 +874,7 @@ void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
         pShape->sphere.sphere.radius_squared = REC2_SQR(pShape->sphere.sphere.radius);
         break;
     default:
-        PhysicsError(ePhysicsError_UnknownShapeType);
+        PhysicsError(ePhysicsError_UnknownShapeType, 0);
         break;
     }
 }
