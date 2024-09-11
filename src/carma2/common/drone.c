@@ -73,6 +73,25 @@ void C2_HOOK_FASTCALL InitDroneSpec(tDrone_spec* pDrone_spec, int pNode) {
 }
 C2_HOOK_FUNCTION(0x00451210, InitDroneSpec)
 
+void C2_HOOK_FASTCALL PreprocessDronePaths(void) {
+    int i;
+    for (i = 0; i < C2V(gCount_drone_path_nodes); i++) {
+        tDrone_path_node* node;
+        int j;
+
+        node = &C2V(gDrone_path_nodes)[i];
+        for (j = 0; j < node->count_sections; j++) {
+            tDrone_path_node_section* section;
+
+            section = &node->sections[j];
+            BrVector3Sub(&section->field_0x04, &C2V(gDrone_path_nodes)[section->node1].position, &node->position);
+            section->field_0x1c = BrVector3Length(&section->field_0x04);
+            BrVector3Normalise(&section->field_0x10, &section->field_0x04);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00451070, PreprocessDronePaths)
+
 void (C2_HOOK_FASTCALL * LoadInDronePaths_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
 
