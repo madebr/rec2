@@ -37,7 +37,7 @@ void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec);
 
 void C2_HOOK_FASTCALL NewDroneState(tDrone_spec* pDrone_spec, int pNew_state);
 
-int C2_HOOK_FASTCALL DroneCollisionInfoCollides(tCollision_info* pCollision_1,tCollision_info* pCollision_2);
+int C2_HOOK_FASTCALL TestObjectOverlap(tCollision_info* pCollision_1,tCollision_info* pCollision_2);
 
 int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec);
 
