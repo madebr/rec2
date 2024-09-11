@@ -162,3 +162,14 @@ void C2_HOOK_FASTCALL EnableJoysticks(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045bd50, EnableJoysticks, EnableJoysticks_original)
+
+void (C2_HOOK_FASTCALL * DisableJoysticks_original)(void);
+void C2_HOOK_FASTCALL DisableJoysticks(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DisableJoysticks_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045bd70, DisableJoysticks, DisableJoysticks_original)
