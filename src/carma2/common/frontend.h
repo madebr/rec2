@@ -128,13 +128,13 @@ int C2_HOOK_FASTCALL ScrollSet_TranslateItemToIndex(tConnected_items* pConnected
 
 tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem);
 
+void C2_HOOK_FASTCALL ScrollSet_DisplayEntry(tConnected_items* pScroll_set, int pItem);
+
 void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Generic_FindNextActiveItem(tFrontend_spec* pFrontend, int pItem);
 
 int C2_HOOK_FASTCALL Generic_FindPrevActiveItem(tFrontend_spec* pFrontend, int pItem);
-
-int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL TranslateSliderItem(tFrontend_slider* pScroller, int pIndex);
 
