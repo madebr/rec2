@@ -28,6 +28,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSky_actor, 0x0067c4d8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSky_model, 0x0067c4a0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tDepth_effect_type, gSwap_depth_effect_type, 0x00591190, eDepth_effect_none);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSky_texture_0079ec1c, 0x0079ec1c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSwap_depth_effect_start, 0x0079ec4c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSwap_depth_effect_end, 0x0079ec48);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSwap_depth_effect_colour_blue, 0x0079ec34);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSwap_depth_effect_colour_red, 0x0079ec3c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSwap_depth_effect_colour_green, 0x0079ec40);
 
 
 void (C2_HOOK_FASTCALL * InstantDepthChange_original)(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
@@ -131,10 +136,37 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00446fa0, SetDepthCueingOn, SetDepthCueingOn_origina
 void (C2_HOOK_FASTCALL * ToggleDepthCueingQuietly_original)(void);
 void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleDepthCueingQuietly_original();
 #else
-#error "Not implemented"
+    int temp_red;
+    int temp_green;
+    int temp_blue;
+    int temp_end;
+    int temp_start;
+    tDepth_effect_type temp_type;
+
+    temp_start = C2V(gProgram_state).current_depth_effect.start;
+    temp_end = C2V(gProgram_state).current_depth_effect.end;
+    temp_type = C2V(gProgram_state).current_depth_effect.type;
+    temp_red = C2V(gProgram_state).current_depth_effect.colour.blue;
+    temp_green = C2V(gProgram_state).current_depth_effect.colour.green;
+    temp_blue = C2V(gProgram_state).current_depth_effect.colour.blue;
+    InstantDepthChange(
+        C2V(gSwap_depth_effect_type),
+        C2V(gProgram_state).current_depth_effect.sky_texture,
+        C2V(gSwap_depth_effect_start),
+        C2V(gSwap_depth_effect_end),
+        C2V(gSwap_depth_effect_colour_red),
+        C2V(gSwap_depth_effect_colour_green),
+        C2V(gSwap_depth_effect_colour_blue),
+        C2V(gProgram_state).racing);
+    C2V(gSwap_depth_effect_start) = temp_start;
+    C2V(gSwap_depth_effect_end) = temp_end;
+    C2V(gSwap_depth_effect_type) = temp_type;
+    C2V(gSwap_depth_effect_colour_red) = temp_red;
+    C2V(gSwap_depth_effect_colour_green) = temp_green;
+    C2V(gSwap_depth_effect_colour_blue) = temp_blue;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00447070, ToggleDepthCueingQuietly, ToggleDepthCueingQuietly_original)
