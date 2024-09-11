@@ -4959,6 +4959,29 @@ void C2_HOOK_FASTCALL AttachCrushDataToActorModels(br_actor* pActor, tCar_spec* 
 }
 C2_HOOK_FUNCTION(0x0042a210, AttachCrushDataToActorModels)
 
+void C2_HOOK_FASTCALL SmoothificatePowerups(br_actor* pActor) {
+    br_model* model;
+    int i;
+
+    if (C2V(gNbPixelBits) != 16) {
+        return;
+    }
+    model = pActor->model;
+    if (model == NULL) {
+        return;
+    }
+    if (pActor->material != NULL) {
+        SmoothificatePowerupMaterial(pActor->material);
+    }
+    for (i = 0; i < model->nfaces; i++) {
+
+        if (model->faces[i].material != NULL) {
+            SmoothificatePowerupMaterial(model->faces[i].material);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004f6900, SmoothificatePowerups)
+
 void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial) {
     int need_update = 0;
     pMaterial->user = (void*)(uintptr_t)0x5ba0;
