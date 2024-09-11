@@ -29,6 +29,8 @@ void C2_HOOK_FASTCALL InitDroneSpec(tDrone_spec* pDrone_spec, int pNode);
 
 void C2_HOOK_FASTCALL PreprocessDronePaths(void);
 
+void C2_HOOK_FASTCALL AllocateAndInitDrones(void);
+
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
 void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec);
