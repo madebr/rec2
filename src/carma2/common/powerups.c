@@ -841,3 +841,20 @@ void C2_HOOK_FASTCALL DoPowerupPeriodics(tU32 pFrame_period) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db1c0, DoPowerupPeriodics, DoPowerupPeriodics_original)
+
+void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* actor, br_model* model, br_material* material, void* order_table, br_uint_8 style, int on_screen) {
+
+    if (actor->user == NULL) {
+        actor->user = (void*)(uintptr_t)GetTotalTime();
+    } else {
+        tU32 prev;
+        tU32 now;
+
+        now = GetTotalTime();
+        prev = (tU32)(uintptr_t)actor->user;
+        actor->user = (void*)(uintptr_t)now;
+        BrMatrix34PreRotateY(&actor->t.t.mat, BR_ANGLE_DEG((now - prev) / 16));
+    }
+    BrZsModelRender(actor, model, material, order_table, style, on_screen, 0);
+}
+C2_HOOK_FUNCTION(0x004df650, RenderSpinningPowerup)
