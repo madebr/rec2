@@ -740,7 +740,7 @@ tPhysicsError C2_HOOK_FASTCALL AddPolyhedronCollisionShapePlanes(tCollision_shap
 }
 C2_HOOK_FUNCTION(0x00420910, AddPolyhedronCollisionShapePlanes)
 
-void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds) {
+void C2_HOOK_FASTCALL GetBoundsFromPointList(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds) {
     int i;
 
     BrVector3Copy(&pBounds->min, &pVertices[0]);
@@ -757,7 +757,7 @@ void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCou
         }
     }
 }
-C2_HOOK_FUNCTION(0x004c5eb0, CalculateBoundingBox)
+C2_HOOK_FUNCTION(0x004c5eb0, GetBoundsFromPointList)
 
 tPhysicsError C2_HOOK_FASTCALL ConvexHull3D(tCollision_shape_polyhedron_data* pPolyhedron) {
     int original_count_points;
@@ -849,20 +849,20 @@ void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
             }
             pShape->common.type = kCollisionShapeType_Wireframe_Polyhedron;
         }
-        CalculateBoundingBox(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
+        GetBoundsFromPointList(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
         break;
     case kCollisionShapeType_Wireframe:
         if (pShape->wireframe.wireframe.count_points == 0) {
             PhysicsError(ePhysicsError_WireFrameHasNoPoints);
         }
-        CalculateBoundingBox(pShape->wireframe.wireframe.points, pShape->wireframe.wireframe.count_points, &pShape->common.bb);
+        GetBoundsFromPointList(pShape->wireframe.wireframe.points, pShape->wireframe.wireframe.count_points, &pShape->common.bb);
         break;
     case kCollisionShapeType_Wireframe_Polyhedron:
         if (pShape->polyhedron.polyhedron.count_points < 3) {
             PhysicsError(4);
         }
         AddPolyhedronCollisionShapePlanes(&pShape->polyhedron.polyhedron);
-        CalculateBoundingBox(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
+        GetBoundsFromPointList(pShape->polyhedron.polyhedron.points, pShape->polyhedron.polyhedron.count_points, &pShape->common.bb);
         break;
     case kCollisionShapeType_Sphere:
         BrVector3Copy(&pShape->common.bb.min, &pShape->sphere.sphere.center);
