@@ -1075,6 +1075,16 @@ typedef struct tHeadup {
             undefined4 field_0x10c;
             undefined4 field_0x110;
             undefined4 field_0x114;
+        } fancy_info;
+        struct {
+            char text[252];
+            tDR_font* font;
+            undefined4 field_0x100;
+            undefined4 field_0x104;
+            undefined4 field_0x108;
+            undefined4 field_0x10c;
+            undefined4 field_0x110;
+            undefined4 field_0x114;
         } image_info;
         struct {
             char text[252];
