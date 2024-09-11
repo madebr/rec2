@@ -3,6 +3,7 @@
 #include "font.h"
 #include "globvars.h"
 #include "globvrbm.h"
+#include "grafdata.h"
 #include "graphics.h"
 #include "loading.h"
 #include "polyfont.h"
@@ -102,6 +103,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_grnBlock1, 0x0067fcd4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tHud_message, gHud_messages, 46, 0x0067fd40);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCredit_multiplier, 0x00705be0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gLast_credit_amount, 0x0067f878);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_fancy_headup, 0x0067fcc0);
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
@@ -763,10 +765,48 @@ C2_HOOK_FUNCTION(0x0044a3a0, NewImageHeadupSlot)
 void (C2_HOOK_FASTCALL * DoFancyHeadup_original)(int pIndex);
 void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoFancyHeadup_original(pIndex);
 #else
-#error "Not implemented"
+    tU32 the_time;
+    int temp_ref;
+    int center;
+
+    center = C2V(gCurrent_graf_data)->width / 2;
+    the_time = GetTotalTime();
+    if (C2V(gMap_view) == 2) {
+        return;
+    }
+    if (C2V(gLast_fancy_index) >= 0 && the_time - C2V(gLast_fancy_time) <= 2000 && pIndex < C2V(gLast_fancy_index)) {
+        return;
+    }
+    temp_ref = NewImageHeadupSlot(6, 0, 2000, pIndex + 10);
+    if (temp_ref >= 0) {
+        tHeadup* the_headup;
+
+        C2V(gLast_fancy_headup) = temp_ref;
+        C2V(gLast_fancy_index) = pIndex;
+        C2V(gLast_fancy_time) = the_time;
+
+        the_headup = &C2V(gHeadups)[temp_ref];
+        the_headup->type = eHeadup_fancy;
+        the_headup->data.fancy_info.field_0x108 = 0;
+        the_headup->data.fancy_info.field_0x110 = 0;
+        switch (the_headup->justification) {
+        case eJust_left:
+            the_headup->data.fancy_info.field_0x104 = center;
+            the_headup->data.fancy_info.field_0x10c = -DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            break;
+        case eJust_right:
+            the_headup->data.fancy_info.field_0x104 = center + DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
+            the_headup->data.fancy_info.field_0x10c = center;
+            break;
+        case eJust_centre:
+            the_headup->data.fancy_info.field_0x104 =  center + DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
+            the_headup->data.fancy_info.field_0x10c = -center - DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
+            break;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044a600, DoFancyHeadup, DoFancyHeadup_original)
