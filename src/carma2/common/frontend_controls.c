@@ -350,3 +350,15 @@ int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00472d80, Controls_Ok, Controls_Ok_original)
+
+int C2_HOOK_FASTCALL Controls_JoystickToggle(tFrontend_spec* pFrontend) {
+
+    if (C2V(gFrontend_selected_item_index) == 10) {
+        EnableJoysticks();
+    } else {
+        DisableJoysticks();
+    }
+    DisplayJoystickSettings(pFrontend);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004721e0, Controls_JoystickToggle)
