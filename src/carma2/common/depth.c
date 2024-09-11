@@ -1,5 +1,6 @@
 #include "depth.h"
 
+#include "displays.h"
 #include "errors.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -174,10 +175,20 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00447070, ToggleDepthCueingQuietly, ToggleDepthCuein
 void (C2_HOOK_FASTCALL * ToggleDepthCueing_original)(void);
 void C2_HOOK_FASTCALL ToggleDepthCueing(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleDepthCueing_original();
 #else
-#error "Not implemented"
+    int enabled;
+
+    enabled = GetDepthCueingOn();
+    SetDepthCueingOn(!enabled);
+    if (C2V(gProgram_state).current_depth_effect.type != eDepth_effect_none) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_depth_cueing_on));
+    } else if (C2V(gSwap_depth_effect_type) != eDepth_effect_none) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_depth_cueing_off));
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_there_is_no_depth_cueing_for_this_race));
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00447110, ToggleDepthCueing, ToggleDepthCueing_original)
