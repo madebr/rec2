@@ -50,4 +50,6 @@ void C2_HOOK_FASTCALL DoPowerupPeriodics(tU32 pFrame_period);
 
 void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* actor, br_model* model, br_material* material, void* order_table, br_uint_8 style, int on_screen);
 
+void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
+
 #endif //REC2_POWERUPS_H
