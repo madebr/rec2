@@ -25,6 +25,9 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSpecial_effects_boundary_choices, 4
 C2_HOOK_VARIABLE_DECLARE(int, gDefault_engine_noise_index);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSoundGeneratorTypeNames, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gRace_path, 256);
+C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_width);
+C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_height);
+C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_underground);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
