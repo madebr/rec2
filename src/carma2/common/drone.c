@@ -51,6 +51,28 @@ void C2_HOOK_CDECL DoNotDprintf(const char* format, ...) {
 }
 C2_HOOK_FUNCTION(0x0044cfc0, DoNotDprintf)
 
+void C2_HOOK_FASTCALL InitDroneSpec(tDrone_spec* pDrone_spec, int pNode) {
+
+    C2_HOOK_BUG_ON(sizeof(*pDrone_spec) != 0x5d8);
+
+    DoNotDprintf("InitDroneSpec() - INITIALISING DRONE SPEC");
+    c2_memset(pDrone_spec, 0, sizeof(*pDrone_spec));
+    pDrone_spec->field_0xa_pathnode_id = pNode;
+    pDrone_spec->field_0x8_pathnode_id = pNode;
+    pDrone_spec->field_0xe = -1;
+    pDrone_spec->field_0xc = -1;
+    BrVector3Set(&pDrone_spec->field_0x18, 0.f, 0.f, 0.f);
+    BrVector3Copy(&pDrone_spec->pos, &C2V(gDrone_path_nodes)[pNode].position);
+    pDrone_spec->field_0xdc = 0;
+    pDrone_spec->field_0xf4 = -1;
+    pDrone_spec->current_state = 0;
+    pDrone_spec->field_0x5d4 = 0;
+    pDrone_spec->form = &C2V(gDrone_forms)[C2V(gDrone_path_nodes)[pNode].type];
+    pDrone_spec->field_0xe4 = 1.0f;
+    pDrone_spec->field_0x48 = 1.0f;
+}
+C2_HOOK_FUNCTION(0x00451210, InitDroneSpec)
+
 void (C2_HOOK_FASTCALL * LoadInDronePaths_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
 

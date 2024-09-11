@@ -3367,6 +3367,27 @@ typedef struct {
     br_model** models;
 } tDrone_form;
 
+typedef struct tDrone_path_node_section {
+    tS16 node1;
+    tS16 node2;
+    br_vector3 field_0x04;
+    br_vector3 field_0x10;
+    float field_0x1c;
+    tU8 type;
+    tU8 field_0x21;
+    undefined field_0x22[2];
+} tDrone_path_node_section;
+
+typedef struct tDrone_path_node {
+    br_vector3 position;
+    tDrone_path_node_section sections[8];
+    tU16 count_sections;
+    tU8 field_0x12e;
+    undefined field_0x12f;
+    tS16 type;
+    undefined field_0x132[2];
+} tDrone_path_node;
+
 typedef struct {
     br_material* material;
     br_vector3 v[3];
