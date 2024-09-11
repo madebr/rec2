@@ -416,6 +416,8 @@ int C2_HOOK_CDECL ActorModelAttachCrushData(br_actor* pActor, void* pData);
 
 void C2_HOOK_FASTCALL AttachCrushDataToActorModels(br_actor* pActor, tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL SmoothificatePowerups(br_actor* pActor);
+
 void C2_HOOK_FASTCALL SmoothificatePowerupMaterial(br_material* pMaterial);
 
 void C2_HOOK_FASTCALL SmoothificateWorldMaterial(br_material* pMaterial);
