@@ -27,6 +27,7 @@
 #define GROOVE_FUNK_MAX_PER_CAR 36
 #define REC2_PI 3.141592653589793
 #define REC2_PI_F 3.141592653589793f
+#define REC2_TAU (2 * REC2_PI)
 
 #define Vector2Equals(V1, V2) \
     ((V1)->v[0] == (V2)->v[0] && (V1)->v[1] == (V2)->v[1])
