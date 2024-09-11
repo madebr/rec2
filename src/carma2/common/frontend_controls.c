@@ -7,6 +7,7 @@
 #include "loading.h"
 #include "main.h"
 #include "options.h"
+#include "platform.h"
 #include "sound.h"
 
 #include "rec2_macros.h"
@@ -21,6 +22,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_slider, gControls_slider_3, 0x00688ac0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFrontend_controls_indices, 15, 0x00604900, {
     12, 13, 17, 18, 22, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00688748, 0x00688748);
 
 
 void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec *pFrontend) {
@@ -293,3 +295,58 @@ int C2_HOOK_FASTCALL Controls_KeyDown(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004725c0, Controls_KeyDown)
+
+int (C2_HOOK_FASTCALL * Controls_Ok_original)(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    return Controls_Ok_original(pFrontend);
+#else
+    int i;
+    int prev_item;
+
+    C2V(gINT_00688748) = -1;
+    WaitForNoKeys();
+
+    for (i = 28; i < REC2_ASIZE(C2V(gKey_mapping)); i++) {
+
+        if (C2V(gKey_mapping)[i] == -2) {
+            C2V(gINT_00688748) = i;
+            break;
+        }
+    }
+    if (C2V(gJoystick_index) == -1) {
+
+        for (i = 28; i < REC2_ASIZE(C2V(gKey_mapping)); i++) {
+
+            if (C2V(gKey_mapping)[i] >= 107 && C2V(gKey_mapping)[i] <= 142) {
+                C2V(gINT_00688748) = i;
+            }
+        }
+    }
+    if (C2V(gINT_00688748) == -1) {
+        SaveAllJoystickData();
+        return 0;
+    }
+    for (i = 0; i < C2V(gFrontend_controls_count_keys); i++) {
+        if (C2V(gControls_frontend_to_key_mapping_lut)[i] == C2V(gINT_00688748)) {
+            break;
+        }
+    }
+    ScrollSet_DisplayEntry(&C2V(gControls_scroller), i);
+    RefreshScrollSet(pFrontend);
+    prev_item = C2V(gFrontend_selected_item_index);
+    if (i < C2V(gControls_scroller).field_0x8 || i > C2V(gControls_scroller).field_0x8 + C2V(gControls_scroller).range_length) {
+        C2V(gFrontend_selected_item_index) = -1;
+    } else {
+        C2V(gFrontend_selected_item_index) = i - C2V(gControls_scroller).field_0x8 + C2V(gControls_scroller).range_starts[0];
+    }
+    if (C2V(gFrontend_selected_item_index) == -1) {
+        PDFatalError("Screwed up in Controls_Ok().");
+    }
+    Controls_SlotActivated(pFrontend);
+    C2V(gFrontend_selected_item_index) = prev_item;
+    return 4;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00472d80, Controls_Ok, Controls_Ok_original)

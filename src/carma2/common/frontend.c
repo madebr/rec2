@@ -1414,6 +1414,17 @@ tConnected_items* C2_HOOK_FASTCALL GetScrollSet(int pItem) {
 }
 C2_HOOK_FUNCTION(0x00471d30, GetScrollSet)
 
+void C2_HOOK_FASTCALL ScrollSet_DisplayEntry(tConnected_items* pScroll_set, int pItem) {
+
+    if (pItem < pScroll_set->field_0x8 || pItem >= pScroll_set->field_0x8 + pScroll_set->range_length) {
+        if (pItem < pScroll_set->field_0x0 - pScroll_set->range_length) {
+            pScroll_set->field_0x8 = pItem;
+        } else {
+            pScroll_set->field_0x8 = pScroll_set->field_0x0 - pScroll_set->range_length;
+        }
+    }
+}
+
 void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
     int i;
 
@@ -1654,17 +1665,6 @@ int C2_HOOK_FASTCALL Generic_FindPrevActiveItem(tFrontend_spec* pFrontend, int p
     C2V(gFrontend_selected_item_index) = start_selected_item_index;
     return 0;
 }
-
-int (C2_HOOK_FASTCALL * Controls_Ok_original)(tFrontend_spec* pFrontend);
-int C2_HOOK_FASTCALL Controls_Ok(tFrontend_spec* pFrontend) {
-
-#if defined(C2_HOOKS_ENABLED)
-    return Controls_Ok_original(pFrontend);
-#else
-#error "Not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00472d80, Controls_Ok, Controls_Ok_original)
 
 int C2_HOOK_FASTCALL TranslateSliderItem(tFrontend_slider* pScroller, int pIndex) {
 
