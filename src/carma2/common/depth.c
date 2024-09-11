@@ -56,6 +56,39 @@ void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00446e10, SetSkyTextureOn, SetSkyTextureOn_original)
 
+void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial) {
+    int i;
+    float tex_y;
+    int height;
+
+    if (pMaterial->colour_map == NULL) {
+        return;
+    }
+    if (pMaterial->flags & BR_MATF_MAP_INTERPOLATION) {
+        height = pMaterial->colour_map->height - 2;
+        tex_y = 1.f / (float)pMaterial->colour_map->height;
+    } else {
+        height = pMaterial->colour_map->height;
+        tex_y = 0.f;
+    }
+    for (i = 0; i < 12; i++) {
+        pModel->vertices[i].map.v[1] = 1.f - tex_y;
+    }
+    for (i = 80; i < 88; i++) {
+        pModel->vertices[i].map.v[1] = tex_y;
+    }
+    for (i = 0; i < 17; i++) {
+        int j;
+        int idx = 12 + 4 * i;
+
+        pModel->vertices[idx].map.v[1] = tex_y + (float)(17 - i) * (float)height / 18.f / pMaterial->colour_map->height;
+        for (j = 1; j < 4; j++) {
+            pModel->vertices[idx + j].map.v[1] = pModel->vertices[idx].map.v[1];
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00445500, MungeSkyVs)
+
 void (C2_HOOK_FASTCALL * ToggleSkyQuietly_original)(void);
 void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
 
