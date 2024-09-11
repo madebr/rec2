@@ -2,14 +2,19 @@
 
 #include "errors.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "loading.h"
 #include "physics.h"
+#include "platform.h"
+#include "utility.h"
 #include "world.h"
 
 #include <brender/brender.h>
 
 #include "c2_stdio.h"
 #include "c2_string.h"
+
+#include "rec2_macros.h"
 
 #include <stdarg.h>
 
@@ -92,13 +97,146 @@ void C2_HOOK_FASTCALL PreprocessDronePaths(void) {
 }
 C2_HOOK_FUNCTION(0x00451070, PreprocessDronePaths)
 
+void C2_HOOK_FASTCALL AllocateAndInitDrones(void) {
+    int i;
+    int drone_i;
+
+    C2_HOOK_BUG_ON(sizeof(tDrone_spec) != 0x5d8);
+
+    C2V(gDrone_specs) = BrMemAllocate(C2V(gCount_drones) * sizeof(tDrone_spec), kMem_drone_specs);
+    drone_i = 0;
+    for (i = 0; i < C2V(gCount_drone_path_nodes); i++) {
+        tDrone_path_node* node;
+
+        node = &C2V(gDrone_path_nodes)[i];
+        if (node->type >= 0) {
+            InitDroneSpec(&C2V(gDrone_specs)[drone_i], i);
+            drone_i += 1;
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * LoadInDronePaths_original)(FILE* pF);
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadInDronePaths_original(pF);
 #else
-#error "Not implemented"
+    char s[256];
+
+    DoNotDprintf("Start of LoadInDronePaths()...");
+    for (;;) {
+        if (!GetALineAndDontArgue(pF, s)) {
+            PDFatalError("Corrupt race text file - No drone path info");
+            break;
+        }
+        if (c2_strcmp(s, "START OF DRONE PATHS") == 0) {
+            break;
+        }
+    }
+    C2V(gCount_drones) = 0;
+    C2V(gCount_drone_path_nodes) = 0;
+    if (C2V(gNet_mode) == eNet_mode_none && !C2V(gDronesOff)) {
+        int version;
+
+        /* version */
+        version = GetAnInt(pF);
+
+        if (version > 0) {
+            int i;
+
+            if (version != 2) {
+                PDFatalError("Drones paths are not version 2");
+            }
+
+            C2_HOOK_BUG_ON(sizeof(tDrone_path_node) != 0x134);
+
+            /* n_nodes */
+            C2V(gCount_drone_path_nodes) = GetAnInt(pF);
+            if (C2V(gCount_drone_path_nodes) != 0) {
+                C2V(gDrone_path_nodes) = BrMemAllocate(C2V(gCount_drone_path_nodes) * sizeof(tDrone_path_node), kMem_drone_paths);
+            }
+            for (i = 0; i < C2V(gCount_drone_path_nodes); i++) {
+                br_scalar float_buffer[4];
+                tDrone_path_node *node = &C2V(gDrone_path_nodes)[i];
+                int j;
+
+                GetNScalars(pF, 3, float_buffer);
+                node->position.v[0] = float_buffer[0];
+                node->position.v[1] = float_buffer[1];
+                node->position.v[2] = float_buffer[2];
+
+                s[0] = '\0';
+                GetAString(pF, s);
+                Uppercaseificate(s, s);
+                node->type = -1;
+                if (c2_strlen(s) == 0) {
+                    c2_sprintf(s, "Corrupt race text file - drone type corrupt in drone node %d", i);
+                    PDFatalError(s);
+                }
+
+                if (c2_strcmp(s, "NONE") != 0) {
+                    for (j = 0; j < C2V(gCount_drone_forms); j++) {
+                        if (c2_strcmp(C2V(gDrone_forms)[j].name, s) == 0) {
+                            node->type = j;
+                        }
+                    }
+                    if (node->type < 0) {
+                        char s2[256];
+
+                        sprintf(s2, "ERROR - '%s' no such drone type in drone node %d", s, i);
+                        PDFatalError(s2);
+                    }
+                }
+                GetNScalars(pF, 1, float_buffer);
+                node->field_0x12e = (int)float_buffer[0];
+
+                C2_HOOK_BUG_ON(REC2_ASIZE(node->sections) != 8);
+
+                node->count_sections = GetAnInt(pF);
+                if (node->count_sections > REC2_ASIZE(node->sections)) {
+
+                    sprintf(s, "ERROR - drone node %d has too many sections", i);
+                    PDFatalError(s);
+                }
+
+                C2_HOOK_BUG_ON(sizeof(tDrone_path_node_section) != 0x24);
+                for (j = 0; j < node->count_sections; j++) {
+                    tDrone_path_node_section *section = &node->sections[j];
+
+                    GetNScalars(pF, 4, float_buffer);
+                    section->node1 = (int)float_buffer[0];
+                    section->node2 = (int)float_buffer[1];
+                    section->field_0x21 = (int)float_buffer[2];
+                    section->type = (int)float_buffer[3];
+                    if (section->type > 7) {
+                        PDEnterDebugger("Weird type for drone section");
+                    }
+                }
+                if (node->type >= 0) {
+                    /* FIXME: use constant for drone limit */
+                    if (C2V(gCount_drones) >= 200) {
+                        c2_sprintf(s, "Too many drones in race (limit %d)", 200);
+                        PDFatalError(s);
+                    }
+                    C2V(gCount_drones) += 1;
+                }
+            }
+        }
+    }
+    for (;;) {
+        const char *str = GetALineAndDontArgue(pF, s);
+        if (str == NULL) {
+            break;
+        }
+        if (c2_strcmp(s, "END OF DRONE PATHS") == 0) {
+            break;
+        }
+    }
+    PreprocessDronePaths();
+    AllocateAndInitDrones();
+    DoNotDprintf("End of LoadInDronePaths(), totals:");
+    DoNotDprintf("Nodes: %d", C2V(gCount_drone_path_nodes));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00450bf0, LoadInDronePaths, LoadInDronePaths_original)
