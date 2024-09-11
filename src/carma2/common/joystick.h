@@ -37,4 +37,6 @@ void C2_HOOK_FASTCALL SetJoystickDPadEnabled(int pEnabled);
 
 void C2_HOOK_FASTCALL Joystick_BackupSettings(void);
 
+void C2_HOOK_FASTCALL EnableJoysticks(void);
+
 #endif /* REC2_JOYSTICK_H */
