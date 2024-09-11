@@ -53,6 +53,8 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_greyBloc1);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_litBloc1);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_grnBlock1);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tHud_message, gHud_messages, 46);
+C2_HOOK_VARIABLE_DECLARE(int, gCredit_multiplier);
+C2_HOOK_VARIABLE_DECLARE(int, gLast_credit_amount);
 
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 

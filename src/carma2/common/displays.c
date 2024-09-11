@@ -100,6 +100,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_greyBloc1, 0x0067c4f4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_litBloc1, 0x0067fce8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_grnBlock1, 0x0067fcd4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tHud_message, gHud_messages, 46, 0x0067fd40);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCredit_multiplier, 0x00705be0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gLast_credit_amount, 0x0067f878);
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
@@ -643,10 +645,40 @@ C2_HOOK_FUNCTION(0x0045aa60, CreateAccentPolyActor)
 void (C2_HOOK_FASTCALL * EarnCredits2_original)(int pAmount, const char* pPrefix_text);
 void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     EarnCredits2_original(pAmount, pPrefix_text);
 #else
-#error "Not implemented"
+    char s[256];
+    int original_amount;
+    tU32 the_time;
+
+    if (C2V(gRace_finished)) {
+        return;
+    }
+    the_time = GetTotalTime();
+    if (pAmount == 0) {
+        return;
+    }
+    if (C2V(gCredit_multiplier) != 0) {
+        pAmount *= C2V(gCredit_multiplier);
+    }
+    original_amount = pAmount;
+    if (C2V(gLast_credit_headup__displays) >= 0 && the_time - C2V(gLast_earn_time) < 2000) {
+        pAmount += C2V(gLast_credit_amount);
+    }
+    C2V(gLast_credit_amount) = pAmount;
+    if (pAmount >= 2) {
+        c2_sprintf(s, "%s%d %s", pPrefix_text, pAmount, GetMiscString(eMiscString_credits));
+    } else if (pAmount == 1) {
+        c2_sprintf(s, "%s1 %s", pPrefix_text, GetMiscString(eMiscString_credit));
+    } else if (pAmount == -1) {
+        c2_sprintf(s, "%s%s 1 %s", pPrefix_text, GetMiscString(eMiscString_lost_credits_prefix), GetMiscString(eMiscString_credit));
+    } else {
+        c2_sprintf(s, "%s%s %d %s", GetMiscString(eMiscString_lost_credits_prefix), pPrefix_text, -pAmount, GetMiscString(eMiscString_credits));
+    }
+    C2V(gProgram_state).credits += original_amount;
+    C2V(gLast_credit_headup__displays) = NewTextHeadupSlot(4, 0, 2000, -4, s);
+    C2V(gLast_earn_time) = the_time;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044b300, EarnCredits2, EarnCredits2_original)

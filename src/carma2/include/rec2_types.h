@@ -3557,6 +3557,9 @@ enum {
 enum {
     eMiscString_minimap_on = 2,
     eMiscString_minimap_off = 3,
+    eMiscString_credits = 12,
+    eMiscString_credit = 13,
+    eMiscString_lost_credits_prefix = 14,
     eMiscString_instant_repair = 41,
     eMiscString_final_lap = 42,
     eMiscString_wrong_checkpoint = 43,
