@@ -25,6 +25,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gCount_drone_path_nodes);
 
 void C2_HOOK_CDECL DoNotDprintf(const char* message, ...);
 
+void C2_HOOK_FASTCALL InitDroneSpec(tDrone_spec* pDrone_spec, int pNode);
+
 void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF);
 
 void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec);
