@@ -100,6 +100,8 @@ void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text);
 
 void C2_HOOK_FASTCALL EarnCredits(int pAmount);
 
+int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index);
+
 void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex);
 
 int C2_HOOK_FASTCALL SpendCredits(int pAmount);

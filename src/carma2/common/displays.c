@@ -689,6 +689,77 @@ void C2_HOOK_FASTCALL EarnCredits(int pAmount) {
 }
 C2_HOOK_FUNCTION(0x0044b440, EarnCredits)
 
+int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pImage_index) {
+    int index;
+
+    index = FindAHeadupHoleWoofBarkSoundsABitRude(pSlot_index);
+    if (index >= 0) {
+        tHeadup* the_headup;
+        tHeadup_slot* headup_slot;
+
+        headup_slot = &C2V(gProgram_state).current_car.headup_slots[C2V(gProgram_state).cockpit_on][pSlot_index];
+        the_headup = &C2V(gHeadups)[index];
+        the_headup->type = eHeadup_image;
+        the_headup->slot_index = pSlot_index;
+        the_headup->justification = headup_slot->justification;
+        if (pSlot_index >= 0) {
+            the_headup->cockpit_anchored = headup_slot->cockpit_anchored;
+        } else {
+            the_headup->cockpit_anchored = 0;
+        }
+        the_headup->dimmed_background = headup_slot->dimmed_background;
+        the_headup->dim_left = headup_slot->dim_left;
+        the_headup->dim_top = headup_slot->dim_top;
+        the_headup->dim_right = headup_slot->dim_right;
+        the_headup->dim_bottom = headup_slot->dim_bottom;
+        the_headup->original_x = headup_slot->x;
+
+        switch (headup_slot->justification) {
+        case eJust_left:
+            the_headup->x = the_headup->original_x;
+            break;
+        case eJust_right:
+            the_headup->x = the_headup->original_x + DRTextWidth(&C2V(gFonts)[C2V(gHud_messages)[pImage_index].font1], C2V(gHud_messages)[pImage_index].message);
+            break;
+        case eJust_centre:
+            the_headup->x = the_headup->original_x + DRTextWidth(&C2V(gFonts)[C2V(gHud_messages)[pImage_index].font1], C2V(gHud_messages)[pImage_index].message) / 2;
+            break;
+        }
+        the_headup->y = headup_slot->y;
+        if (pFlash_rate != 0) {
+            the_headup->flash_period = 1000 / pFlash_rate;
+        } else {
+            the_headup->flash_period = 0;
+        }
+        the_headup->last_flash = 0;
+        the_headup->flash_state = 0;
+        if (pLifetime != 0) {
+            the_headup->end_time = GetTotalTime() + pLifetime;
+        } else {
+            the_headup->end_time = 0;
+        }
+        c2_strcpy(the_headup->data.image_info.text , C2V(gHud_messages)[pImage_index].message);
+        the_headup->data.image_info.field_0x100 = C2V(gHud_messages)[pImage_index].font2;
+        the_headup->data.image_info.font = &C2V(gFonts)[C2V(gHud_messages)[pImage_index].font1];
+        switch (the_headup->justification) {
+        case eJust_left:
+            the_headup->data.image_info.field_0x104 = 0;
+            the_headup->data.image_info.field_0x10c = -DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            break;
+        case eJust_right:
+            the_headup->data.image_info.field_0x104 = DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text);
+            the_headup->data.image_info.field_0x10c = 0;
+            break;
+        case eJust_centre:
+            the_headup->data.image_info.field_0x104 =  DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text) / 2;
+            the_headup->data.image_info.field_0x10c = -DRTextWidth(the_headup->data.image_info.font, the_headup->data.image_info.text) / 2;
+            break;
+        }
+    }
+    return index;
+}
+C2_HOOK_FUNCTION(0x0044a3a0, NewImageHeadupSlot)
+
 void (C2_HOOK_FASTCALL * DoFancyHeadup_original)(int pIndex);
 void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
 
