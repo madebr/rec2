@@ -15,6 +15,10 @@ C2_HOOK_VARIABLE_DECLARE(tDepth_effect_type, gSwap_depth_effect_type);
 C2_HOOK_VARIABLE_DECLARE(int, gSwap_depth_effect_colour_blue);
 C2_HOOK_VARIABLE_DECLARE(int, gSwap_depth_effect_colour_red);
 C2_HOOK_VARIABLE_DECLARE(int, gSwap_depth_effect_colour_green);
+C2_HOOK_VARIABLE_DECLARE(float, gSky_width);
+C2_HOOK_VARIABLE_DECLARE(float, gSky_height);
+C2_HOOK_VARIABLE_DECLARE(float, gSky_x_multiplier);
+C2_HOOK_VARIABLE_DECLARE(float, gSky_y_multiplier);
 
 
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
@@ -42,6 +46,14 @@ br_scalar C2_HOOK_STDCALL GetYon(void);
 void C2_HOOK_FASTCALL LoadDepthTable(char* pName, br_pixelmap** pTable, int* pPower);
 
 void C2_HOOK_FASTCALL InitDepthEffects(void);
+
+br_scalar C2_HOOK_FASTCALL Tan(br_scalar pAngle);
+
+br_scalar C2_HOOK_FASTCALL EdgeU(br_angle pSky, br_angle pView, br_angle pPerfect);
+
+br_scalar C2_HOOK_FASTCALL CalculateWrappingMultiplier(br_scalar pValue, br_scalar pYon);
+
+void C2_HOOK_FASTCALL MungeSkyModel(br_actor* pCamera, br_model* pModel);
 
 void C2_HOOK_FASTCALL MungeForwardSky(void);
 
