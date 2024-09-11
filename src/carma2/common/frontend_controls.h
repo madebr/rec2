@@ -26,6 +26,8 @@ int C2_HOOK_FASTCALL Controls_Outfunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Controls_JoystickDpadToggle(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL SaveAllJoystickData(void);
+
 int C2_HOOK_FASTCALL Controls_SwitchKeyMapSet(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend);

@@ -189,6 +189,17 @@ int C2_HOOK_FASTCALL Controls_JoystickDpadToggle(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION(0x00472400, Controls_JoystickDpadToggle)
 
+void (C2_HOOK_FASTCALL *SaveAllJoystickData_original)(void);
+void C2_HOOK_FASTCALL SaveAllJoystickData(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SaveAllJoystickData_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045bd90, SaveAllJoystickData, SaveAllJoystickData_original)
+
 int C2_HOOK_FASTCALL Controls_SwitchKeyMapSet(tFrontend_spec* pFrontend) {
 
     ChangeKeyMapIndex(C2V(gFrontend_selected_item_index) - 39);
