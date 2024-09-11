@@ -39,4 +39,6 @@ void C2_HOOK_FASTCALL Joystick_BackupSettings(void);
 
 void C2_HOOK_FASTCALL EnableJoysticks(void);
 
+void C2_HOOK_FASTCALL DisableJoysticks(void);
+
 #endif /* REC2_JOYSTICK_H */
