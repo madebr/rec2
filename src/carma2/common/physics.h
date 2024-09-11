@@ -58,7 +58,7 @@ tPhysicsError C2_HOOK_FASTCALL ProcessPolyhedronCollisionShape(tCollision_shape_
 
 void C2_HOOK_FASTCALL CalculateBoundingBox(const br_vector3* pVertices, int pCount_vertices, br_bounds3* pBounds);
 
-void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape);
+void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape);
 
 tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight);
 

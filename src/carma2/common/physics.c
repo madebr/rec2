@@ -271,7 +271,7 @@ void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
         } else {
             FatalError(kFatalError_ShapeDataIsWrong);
         }
-        ProcessCollisionShape(shape);
+        FillInShape(shape);
         *pShape = shape;
         pShape = &shape->common.next;
     }
@@ -831,7 +831,7 @@ tPhysicsError C2_HOOK_FASTCALL ProcessPolyhedronCollisionShape(tCollision_shape_
 }
 C2_HOOK_FUNCTION(0x00420fb0, ProcessPolyhedronCollisionShape)
 
-void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape) {
+void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
     int i;
     tPhysicsError error;
 
@@ -878,7 +878,7 @@ void C2_HOOK_FASTCALL ProcessCollisionShape(tCollision_shape* pShape) {
         break;
     }
 }
-C2_HOOK_FUNCTION(0x004c5f20, ProcessCollisionShape)
+C2_HOOK_FUNCTION(0x004c5f20, FillInShape)
 
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateSphericalCollisionObject_original)(br_model* pModel, float pWeight);
 tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight) {
@@ -899,7 +899,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undef
     BrVector3Set(&collision_info->shape->sphere.sphere.center, 0.f, 0.f, 0.f);
     BrVector3Sub(&tv, &pModel->bounds.max, &pModel->bounds.min);
     shape->sphere.sphere.radius = (tv.v[0] + tv.v[1] + tv.v[2]) / 6.f;
-    ProcessCollisionShape(shape);
+    FillInShape(shape);
     collision_info->uid = C2V(gCollision_info_uid_counter);
     C2V(gCollision_info_uid_counter)++;
     UpdateCollisionObject(collision_info);
