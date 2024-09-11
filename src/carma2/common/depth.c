@@ -92,10 +92,17 @@ C2_HOOK_FUNCTION(0x00445500, MungeSkyVs)
 void (C2_HOOK_FASTCALL * ToggleSkyQuietly_original)(void);
 void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleSkyQuietly_original();
 #else
-#error "Not implemented"
+    C2V(gProgram_state).default_depth_effect.sky_texture = C2V(gSky_texture_0079ec1c);
+    C2V(gSky_texture_0079ec1c) = C2V(gProgram_state).current_depth_effect.sky_texture;
+    C2V(gProgram_state).current_depth_effect.sky_texture = C2V(gProgram_state).default_depth_effect.sky_texture;
+    if (C2V(gHorizon_material) != NULL && C2V(gProgram_state).default_depth_effect.sky_texture != NULL) {
+        C2V(gHorizon_material)->colour_map = C2V(gProgram_state).current_depth_effect.sky_texture;
+        BrMaterialUpdate(C2V(gHorizon_material), BR_MATU_ALL);
+        MungeSkyVs(C2V(gSky_model), C2V(gHorizon_material));
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00446e80, ToggleSkyQuietly, ToggleSkyQuietly_original)
