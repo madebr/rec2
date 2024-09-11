@@ -48,10 +48,14 @@ C2_HOOK_FUNCTION(0x00446e00, GetSkyTextureOn)
 
 void (C2_HOOK_FASTCALL * SetSkyTextureOn_original)(int skyTextureOn);
 void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetSkyTextureOn_original(skyTextureOn);
 #else
-#error "Not implemented"
+
+    if (C2V(gSky_on) != skyTextureOn) {
+        ToggleSkyQuietly();
+    }
+    C2V(gSky_on) = skyTextureOn;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00446e10, SetSkyTextureOn, SetSkyTextureOn_original)
