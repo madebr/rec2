@@ -925,3 +925,131 @@ void C2_HOOK_CDECL RenderChangingPowerup(br_actor* actor, br_model* model, br_ma
     BrZsModelRender(actor, model, material, order_table, style, on_screen, 0);
 }
 C2_HOOK_FUNCTION(0x004dfe10, RenderChangingPowerup)
+
+br_model* C2_HOOK_FASTCALL DuplicateModel(br_model* pModel, const char* pName) {
+    br_model* copy;
+
+    copy = BrModelAllocate(pName, pModel->nvertices, pModel->nfaces);
+    if (copy == NULL) {
+        return copy;
+    }
+    BrVector3Copy(&copy->pivot, &pModel->pivot);
+    copy->flags = pModel->flags;
+    copy->user = pModel->user;
+    copy->crease_angle = pModel->crease_angle;
+    copy->radius = pModel->radius;
+    copy->bounds = pModel->bounds;
+    c2_memcpy(copy->vertices, pModel->vertices, pModel->nvertices * sizeof(br_vertex));
+    c2_memcpy(copy->faces, pModel->faces, pModel->nfaces * sizeof(br_face));
+    return copy;
+}
+
+void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor) {
+
+    if (pActor == NULL) {
+        return;
+    }
+    if (C2V(gModel_powerup_armor) == NULL || C2V(gModel_powerup_power) == NULL || C2V(gModel_powerup_offence) == NULL) {
+
+        C2V(gModel_powerup_armor) = DuplicateModel(BrModelFind("&68powerup1.ACT"), "PowArm");
+        C2V(gModel_powerup_armor)->flags |= BR_MODF_CUSTOM;
+        C2V(gModel_powerup_armor)->custom = RenderChangingPowerup;
+        BrModelAdd(C2V(gModel_powerup_armor));
+
+        C2V(gModel_powerup_power) = DuplicateModel(BrModelFind("&70powerup1.ACT"), "PowPow");
+        C2V(gModel_powerup_power)->flags |= BR_MODF_CUSTOM;
+        C2V(gModel_powerup_power)->custom = RenderChangingPowerup;
+        BrModelAdd(C2V(gModel_powerup_power));
+
+        C2V(gModel_powerup_offence) = DuplicateModel(BrModelFind("&69powerup1.ACT"), "PowOff");
+        C2V(gModel_powerup_offence)->flags |= BR_MODF_CUSTOM;
+        C2V(gModel_powerup_offence)->custom = RenderChangingPowerup;
+        BrModelAdd(C2V(gModel_powerup_offence));
+    }
+
+    if (C2V(gModel_powerup_armor) == NULL) {
+        tPath_name path;
+        char s[256];
+        FILE* f;
+        int i;
+        br_actor* actor;
+
+        PathCat(path, C2V(gApplication_path), "POWRSHIT.TXT");
+        f = DRfopen(path, "rt");
+        if (f == NULL) {
+            c2_sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            PDFatalError(s);
+        }
+        for (i = 0; i < 67; i++) {
+            GetAString(f, s);
+        }
+        actor = LoadActor(s);
+        if (actor != NULL && actor->model != NULL) {
+            C2V(gModel_powerup_armor) = DuplicateModel(actor->model, "PowArm");
+            C2V(gModel_powerup_armor)->flags |= BR_MODF_CUSTOM;
+            C2V(gModel_powerup_armor)->custom = RenderChangingPowerup;
+            BrModelAdd(C2V(gModel_powerup_armor));
+            BrActorFree(actor);
+        }
+        PFfclose(f);
+    }
+
+    if (C2V(gModel_powerup_power) == NULL) {
+        tPath_name path;
+        char s[256];
+        FILE* f;
+        int i;
+        br_actor* actor;
+
+        PathCat(path, C2V(gApplication_path), "POWRSHIT.TXT");
+        f = DRfopen(path, "rt");
+        if (f == NULL) {
+            c2_sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            PDFatalError(s);
+        }
+        for (i = 0; i < 68; i++) {
+            GetAString(f, s);
+        }
+        actor = LoadActor(s);
+        if (actor != NULL && actor->model != NULL) {
+            C2V(gModel_powerup_power) = DuplicateModel(actor->model, "PowPow");
+            C2V(gModel_powerup_power)->flags |= BR_MODF_CUSTOM;
+            C2V(gModel_powerup_power)->custom = RenderChangingPowerup;
+            BrModelAdd(C2V(gModel_powerup_power));
+            BrActorFree(actor);
+        }
+        PFfclose(f);
+    }
+
+    if (C2V(gModel_powerup_offence) == NULL) {
+        tPath_name path;
+        char s[256];
+        FILE* f;
+        int i;
+        br_actor* actor;
+
+        PathCat(path, C2V(gApplication_path), "POWRSHIT.TXT");
+        f = DRfopen(path, "rt");
+        if (f == NULL) {
+            c2_sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            PDFatalError(s);
+        }
+        for (i = 0; i < 69; i++) {
+            GetAString(f, s);
+        }
+        actor = LoadActor(s);
+        if (actor != NULL && actor->model != NULL) {
+            C2V(gModel_powerup_offence) = DuplicateModel(actor->model, "PowOff");
+            C2V(gModel_powerup_offence)->flags |= BR_MODF_CUSTOM;
+            C2V(gModel_powerup_offence)->custom = RenderChangingPowerup;
+            BrModelAdd(C2V(gModel_powerup_offence));
+            BrActorFree(actor);
+        }
+        PFfclose(f);
+    }
+    BrMatrix34PreTranslate(&pActor->t.t.mat, .0f, .1f, .0f);
+    pActor->model = C2V(gModel_powerup_armor);
+    pActor->model->flags |= BR_MODF_CUSTOM;
+    pActor->model->custom = RenderChangingPowerup;
+}
+C2_HOOK_FUNCTION(0x004df6c0, SetChangingPowerup)
