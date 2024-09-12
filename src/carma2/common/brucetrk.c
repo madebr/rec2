@@ -1,9 +1,12 @@
 #include "brucetrk.h"
 
+#include "errors.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "init.h"
+#include "loading.h"
 #include "pedestrn.h"
+#include "powerups.h"
 #include "platform.h"
 #include "smashing.h"
 #include "world.h"
@@ -97,13 +100,65 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040d530, MungeFaces, MungeFaces_original)
 
-intptr_t (C2_HOOK_CDECL * FindNonCarsCB_original)(br_actor* pActor, tTrack_spec* pTrack_spec);
-intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, tTrack_spec* pTrack_spec) {
+intptr_t (C2_HOOK_CDECL * FindNonCarsCB_original)(br_actor* pActor, void* pData);
+intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, void* pData) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return FindNonCarsCB_original(pActor, pTrack_spec);
+#if 0//defined(C2_HOOKS_ENABLED)
+    return FindNonCarsCB_original(pActor, pData);
 #else
-#error "Not implemented"
+    char s[256];
+    tTrack_spec* pTrack_spec = pData;
+
+    SetSmashableModel(pActor);
+    if (pActor->identifier[0] == '&' && pActor->model == NULL) {
+        c2_sprintf(s, "Accessory %s has no model. Well how does it pose? Awful!", pActor->identifier);
+        PDFatalError(s);
+    }
+    if (pActor->identifier[0] == '&' && '0' <= pActor->identifier[1] && pActor->identifier[1] <= '9') {
+        int id;
+        br_scalar n0;
+        br_scalar n1;
+        br_scalar n2;
+
+        id = TEXT_TO_NUMBER_4(&pActor->identifier[4]);
+        if (id < 0 || id >= pTrack_spec->count_non_cars) {
+            return 1;
+        }
+        n0 = BrVector3LengthSquared((br_vector3*)pActor->t.t.mat.m[0]);
+        n1 = BrVector3LengthSquared((br_vector3*)pActor->t.t.mat.m[1]);
+        n2 = BrVector3LengthSquared((br_vector3*)pActor->t.t.mat.m[2]);
+        if (n0 < 0.999f || n1 < 0.999f || n2 < 0.999f) {
+            dr_dprintf("non car was scaled down %s", pActor->identifier);
+            pActor->t.t.translate.t.v[0] += 2000.f;
+        }
+        if (n0 > 1.001f || n1 > 1.001f || n2 > 1.001f) {
+            BrVector3InvScale((br_vector3*)pActor->t.t.mat.m[0],
+                (br_vector3*)pActor->t.t.mat.m[0],
+                sqrtf(n0));
+            BrVector3InvScale((br_vector3*)pActor->t.t.mat.m[1],
+                (br_vector3*)pActor->t.t.mat.m[1],
+                sqrtf(n1));
+            BrVector3InvScale((br_vector3*)pActor->t.t.mat.m[2],
+                (br_vector3*)pActor->t.t.mat.m[2],
+                sqrtf(n2));
+            dr_dprintf("non car was scaled up %s", pActor->identifier);
+        }
+        pTrack_spec->non_car_list[id] = pActor;
+        pActor->type_data = NULL;
+        return 0;
+    }
+    if (pActor != NULL && pActor->identifier != NULL && pActor->identifier[1] == '\xa3') {
+        int id;
+
+        SmoothificatePowerups(pActor);
+        id = TEXT_TO_NUMBER_2(&pActor->identifier[2]);
+        if (66 <= id && id < 86) {
+            SetSpinningPowerup(pActor, 0);
+        } else if (86 <= id && id < 88) {
+            SetChangingPowerup(pActor);
+        }
+    }
+    return BrActorEnum(pActor, FindNonCarsCB, pTrack_spec);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040d1f0, FindNonCarsCB, FindNonCarsCB_original)
