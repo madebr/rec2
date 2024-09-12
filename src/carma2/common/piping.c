@@ -10,6 +10,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x00694104);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_play_ptr, 0x006768b8, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPlay_direction, 0x006768c0, 0);
 
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
@@ -91,3 +92,9 @@ tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void) {
     return C2V(gPipe_play_ptr);
 }
 C2_HOOK_FUNCTION(0x00402df0, ARGetPipePlayPtr)
+
+int C2_HOOK_FASTCALL ARGetReplayDirection(void) {
+
+    return C2V(gPlay_direction);
+}
+C2_HOOK_FUNCTION(0x004023b0, ARGetReplayDirection)
