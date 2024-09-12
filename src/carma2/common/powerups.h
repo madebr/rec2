@@ -57,4 +57,8 @@ void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
 
 void C2_HOOK_CDECL RenderChangingPowerup(br_actor* actor, br_model* model, br_material* material, void* order_table, br_uint_8 style, int on_screen);
 
+br_model* C2_HOOK_FASTCALL DuplicateModel(br_model* pModel, const char* pName);
+
+void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor);
+
 #endif //REC2_POWERUPS_H
