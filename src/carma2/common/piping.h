@@ -33,4 +33,6 @@ int C2_HOOK_FASTCALL CarTimeout(tU32 pTime);
 
 int C2_HOOK_FASTCALL CheckCar(tPipe_chunk* pChunk_ptr, int pChunk_count, tU32 pTime);
 
+void C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDefault_time, tARScanBuffer_callback* pCallback, tARScanBuffer_time_check* pTime_check);
+
 #endif //REC2_PIPING_H
