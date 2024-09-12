@@ -136,3 +136,53 @@ int C2_HOOK_FASTCALL CarTimeout(tU32 pTime) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x004c6bc0, CarTimeout)
+
+int (C2_HOOK_FASTCALL * CheckCar_original)(tPipe_chunk* pChunk_ptr, int pChunk_count, tU32 pTime);
+int C2_HOOK_FASTCALL CheckCar(tPipe_chunk* pChunk_ptr, int pChunk_count, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return CheckCar_original(pChunk_ptr, pChunk_count, pTime);
+#else
+    int i;
+    tCar_spec* car;
+    br_vector3 com_offset_c;
+    br_vector3 com_offset_w;
+    br_vector3 difference;
+    tPipe_chunk* temp_ptr;
+
+    temp_ptr = pChunk_ptr;
+    if (ARReplayForwards()) {
+        if (pTime <= C2V(gOldest_time)) {
+            return 0;
+        }
+    } else {
+        if (pTime >= C2V(gOldest_time)) {
+            return 0;
+        }
+    }
+    for (i = 0; i < pChunk_count; i++) {
+        if ((temp_ptr->subject_index & 0xffffff00) == 0) {
+            car = &C2V(gProgram_state).current_car;
+        } else {
+            car = GetCarSpec(temp_ptr->subject_index >> 8, temp_ptr->subject_index & 0xff);
+        }
+        if (car == C2V(gCar_ptr)) {
+            BrVector3Copy(&C2V(gCar_pos), (br_vector3*)temp_ptr->chunk_data.car_data.transformation.m[3]);
+            BrVector3InvScale(&com_offset_c, &car->centre_of_mass_world_scale, WORLD_SCALE);
+            BrMatrix34ApplyV(&com_offset_w, &com_offset_c, &temp_ptr->chunk_data.car_data.transformation);
+            BrVector3Accumulate(&C2V(gCar_pos), &com_offset_w);
+            BrVector3Sub(&difference, &C2V(gCar_pos), &C2V(gReference_pos));
+            if (BrVector3LengthSquared(&difference) <= C2V(gMax_distance)) {
+                C2V(gTrigger_time) = pTime;
+                return 0;
+            } else {
+                C2V(gTrigger_time) = pTime;
+                return 1;
+            }
+        }
+        ARAdvanceChunkPtr(&temp_ptr, ePipe_chunk_car);
+    }
+    return 0;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c6a30, CheckCar, CheckCar_original)
