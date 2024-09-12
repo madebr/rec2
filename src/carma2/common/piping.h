@@ -31,4 +31,6 @@ int C2_HOOK_FASTCALL ARReplayForwards(void);
 
 int C2_HOOK_FASTCALL CarTimeout(tU32 pTime);
 
+int C2_HOOK_FASTCALL CheckCar(tPipe_chunk* pChunk_ptr, int pChunk_count, tU32 pTime);
+
 #endif //REC2_PIPING_H
