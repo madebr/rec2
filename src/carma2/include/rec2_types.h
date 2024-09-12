@@ -2954,7 +2954,7 @@ typedef struct tCollision_info {
     undefined field_0x260[8];
     tU32 message_time; // 0x268
     undefined field_0x26c[560];
-    undefined4 field_0x49c;
+    undefined4 field_0x49c; /* tU32 last_car_car_collision: */
     undefined field_0x4a0[52];
     tU8 drivable_on;
     undefined field_0x4d5[3];
