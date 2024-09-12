@@ -448,13 +448,56 @@ void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
 }
 C2_HOOK_FUNCTION(0x0040cc50, ExtractColumns)
 
+void C2_HOOK_FASTCALL DisposeRuntimeBuiltModels(tTrack_spec* pTrack_spec) {
+    int z;
+
+    for (z = 0; z < pTrack_spec->ncolumns_z; z++) {
+        int x;
+
+        for (x = 0; x < pTrack_spec->ncolumns_x; x++) {
+            br_actor* a;
+
+            a = pTrack_spec->columns[z][z].actor_0x8;
+            if (a != NULL && a->model != NULL) {
+                BrModelRemove(a->model);
+                BrModelFree(a->model);
+            }
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DisposeActorMatrix(tTrack_spec* pTrack_spec, tTrack_square** pColumns) {
+
+    if (pColumns != NULL) {
+        int z;
+
+        for (z = 0; z < pTrack_spec->ncolumns_z; z++) {
+            BrMemFree(pColumns[z]);
+        }
+        BrMemFree(pColumns);
+    }
+}
+
 void (C2_HOOK_FASTCALL * DisposeColumns_original)(tTrack_spec* pTrack_spec);
 void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DisposeColumns_original(pTrack_spec);
 #else
-#error "Not implemented"
+    DisposeRuntimeBuiltModels(pTrack_spec);
+    DisposeActorMatrix(pTrack_spec, pTrack_spec->columns);
+    if (pTrack_spec->non_car_list != NULL) {
+        int i;
+
+        for (i = C2V(gCount_track_non_cars); i < pTrack_spec->count_non_cars; i++) {
+
+            if (pTrack_spec->non_car_list[i] != NULL && pTrack_spec->non_car_list[i]->parent != C2V(gNon_track_actor)) {
+                BrActorRemove(pTrack_spec->non_car_list[i]);
+                BrActorFree(pTrack_spec->non_car_list[i]);
+            }
+        }
+        BrMemFree(pTrack_spec->non_car_list);
+    }
 #endif
 }
 
