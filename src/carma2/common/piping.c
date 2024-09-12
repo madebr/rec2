@@ -2,12 +2,14 @@
 
 #include "globvars.h"
 #include "opponent.h"
+#include "utility.h"
 
 #include <brender/brender.h>
 
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x00694104);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_play_ptr, 0x006768b8, NULL);
 
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
@@ -83,3 +85,9 @@ void C2_HOOK_FASTCALL PipeCarPositions(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c6640, PipeCarPositions, PipeCarPositions_original)
+
+tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void) {
+
+    return C2V(gPipe_play_ptr);
+}
+C2_HOOK_FUNCTION(0x00402df0, ARGetPipePlayPtr)
