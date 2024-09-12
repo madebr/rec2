@@ -12,7 +12,7 @@ void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew);
 
 void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel);
 
-intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, tTrack_spec* pTrack_spec);
+intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, void* pData);
 
 void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* pArea_2);
 
