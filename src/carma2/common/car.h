@@ -10,6 +10,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tNon_car_spec*, gActive_non_car_list, 99);
 C2_HOOK_VARIABLE_DECLARE(int, gNum_active_non_cars);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gMin_world_y);
 C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gUnknown_car_collision_info);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gAverage_grid_position);
 
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0067939c);
 C2_HOOK_VARIABLE_DECLARE(tCar_callbacks, gCar_callbacks);
@@ -57,5 +58,7 @@ void C2_HOOK_FASTCALL ResetCarScreens(void);
 void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime);
 
 void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void);
+
+void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race);
 
 #endif //REC2_CAR_H
