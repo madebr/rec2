@@ -229,6 +229,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(tPhysics_joint*, gMutant_tail_first_joint, 0x006a0acc
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gMutant_tail_first_collision_info, 0x006a0908);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMutant_tail_state, 0x00705540);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074a5ec, 0x0074a5ec);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_armor, 0x006a0ae0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_power, 0x006a0ae4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_offence, 0x006a0ae8);
 
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void) {
@@ -893,3 +896,32 @@ void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity) {
     }
 }
 C2_HOOK_FUNCTION(0x004df570, SetSpinningPowerup)
+
+void C2_HOOK_CDECL RenderChangingPowerup(br_actor* actor, br_model* model, br_material* material, void* order_table, br_uint_8 style, int on_screen) {
+
+    if (actor->user == NULL) {
+        actor->user = (void*)(uintptr_t)GetTotalTime();
+        actor->model = C2V(gModel_powerup_armor);
+    } else {
+        tU32 prev;
+        tU32 now;
+        tU32 diff;
+
+        now = GetTotalTime();
+        prev = (tU32)(uintptr_t)actor->user;
+        diff = (prev - now) / 16;
+        if (diff > 15) {
+            if (actor->model == C2V(gModel_powerup_armor)) {
+                actor->model = C2V(gModel_powerup_power);
+            } else if (actor->model == C2V(gModel_powerup_power)) {
+                actor->model = C2V(gModel_powerup_offence);
+            } else {
+                actor->model = C2V(gModel_powerup_armor);
+            }
+            actor->user = (void*)(uintptr_t)now;
+        }
+        BrMatrix34PreRotateY(&actor->t.t.mat, BR_ANGLE_DEG(diff + 12));
+    }
+    BrZsModelRender(actor, model, material, order_table, style, on_screen, 0);
+}
+C2_HOOK_FUNCTION(0x004dfe10, RenderChangingPowerup)
