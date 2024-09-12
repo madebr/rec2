@@ -42,4 +42,9 @@
         (V)->v[2] = 0.5f * ((V1)->v[2] + (V2)->v[2]); \
     } while (0)
 
+#define TEXT_TO_NUMBER_1(S) ((S)[0] - '0')
+#define TEXT_TO_NUMBER_2(S) (10 * TEXT_TO_NUMBER_1(S) + TEXT_TO_NUMBER_1((S)+1))
+#define TEXT_TO_NUMBER_3(S) (10 * TEXT_TO_NUMBER_2(S) + TEXT_TO_NUMBER_1((S)+2))
+#define TEXT_TO_NUMBER_4(S) (10 * TEXT_TO_NUMBER_3(S) + TEXT_TO_NUMBER_1((S)+3))
+
 #endif // REC2_REC2_MACROS_H
