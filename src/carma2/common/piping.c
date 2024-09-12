@@ -15,6 +15,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_record_ptr, 0x006768bc, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_oldest, 0x006768ac, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gReplay_rate, 0x00676900, 0.f);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gYoungest_time, 0x00694108);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gOldest_time, 0x006940d0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCar_pos, 0x006940f0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gMax_distance, 0x006940d8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gReference_pos, 0x006940e0);
+C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gCar_ptr, 0x00694100);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTrigger_time, 0x00694110);
 
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
@@ -197,3 +203,29 @@ void C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDef
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00402e10, ARScanBuffer, ARScanBuffer_original)
+
+void C2_HOOK_FASTCALL ScanCarsPositions(tCar_spec* pCar, br_vector3* pSource_pos, br_scalar pMax_distance_sqr, tU32 pOffset_time, tU32 pTime_period, br_vector3* pCar_pos, tU32* pTime_returned) {
+    tU8* temp_ptr;
+
+    temp_ptr = ARGetPipePlayPtr();
+    C2V(gTrigger_time) = 0;
+    C2V(gMax_distance) = pMax_distance_sqr;
+    BrVector3Copy(&C2V(gReference_pos), pSource_pos);
+    C2V(gCar_ptr) = pCar;
+
+    if (ARReplayForwards()) {
+        C2V(gOldest_time) = GetTotalTime() + pOffset_time;
+        C2V(gYoungest_time) = C2V(gOldest_time) + pTime_period;
+    } else {
+        C2V(gOldest_time) = GetTotalTime() - pOffset_time;
+        C2V(gYoungest_time) = C2V(gOldest_time) - pTime_period;
+    }
+
+    ARScanBuffer(&temp_ptr, ePipe_chunk_car, GetTotalTime(), CheckCar, CarTimeout);
+    BrVector3Copy(pCar_pos, &C2V(gCar_pos));
+    if (pCar_pos->v[0] > 500.f) {
+        BrVector3Sub(pCar_pos, pCar_pos, &C2V(gInitial_position));
+    }
+    *pTime_returned = C2V(gTrigger_time);
+}
+C2_HOOK_FUNCTION(0x004c6920, ScanCarsPositions)
