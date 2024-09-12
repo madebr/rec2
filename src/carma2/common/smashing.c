@@ -21,6 +21,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gInitial_position_sphere_wher
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmashable_race_target, gSmashable_race_targets, 300, 0x0068c898);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_race_targets, 0x0074abe0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_queued_smashes, 0x006a828c);
 
 void C2_HOOK_FASTCALL InitGlassFragments(void) {
     int i;
@@ -215,3 +216,9 @@ void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f64d0, MungeSmashEdgeTriggers, MungeSmashEdgeTriggers_original)
+
+void C2_HOOK_FASTCALL InitSmashQueue(void) {
+
+    C2V(gCount_queued_smashes) = 0;
+}
+C2_HOOK_FUNCTION(0x004ecfa0, InitSmashQueue)

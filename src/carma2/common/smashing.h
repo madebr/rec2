@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmash_vertex, gSmash_glass_fragments, 200);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmash_quad, gSmash_decals, 50);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmashable_race_target, gSmashable_race_targets, 300);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_smashable_race_targets);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_queued_smashes);
 
 void C2_HOOK_FASTCALL InitGlassFragments(void);
 
@@ -39,5 +40,7 @@ void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups);
 void C2_HOOK_FASTCALL MungeDelayedSideEffects(void);
 
 void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime);
+
+void C2_HOOK_FASTCALL InitSmashQueue(void);
 
 #endif //REC2_SMASHING_H
