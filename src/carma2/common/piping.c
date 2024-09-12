@@ -14,6 +14,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPlay_direction, 0x006768c0, 0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_record_ptr, 0x006768bc, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_oldest, 0x006768ac, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gReplay_rate, 0x00676900, 0.f);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gYoungest_time, 0x00694108);
 
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
@@ -120,3 +121,18 @@ int C2_HOOK_FASTCALL ARReplayForwards(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00402300, ARReplayForwards)
+
+int C2_HOOK_FASTCALL CarTimeout(tU32 pTime) {
+
+    if (ARReplayForwards()) {
+        if (pTime > C2V(gYoungest_time)) {
+            return 0;
+        }
+    } else {
+        if (pTime < C2V(gYoungest_time)) {
+            return 0;
+        }
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004c6bc0, CarTimeout)

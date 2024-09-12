@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gPlay_direction);
 C2_HOOK_VARIABLE_DECLARE(tU8*, gPipe_record_ptr);
 C2_HOOK_VARIABLE_DECLARE(tU8*, gPipe_buffer_oldest);
 C2_HOOK_VARIABLE_DECLARE(float, gReplay_rate);
+C2_HOOK_VARIABLE_DECLARE(tU32, gYoungest_time);
 
 void C2_HOOK_FASTCALL DisposePiping(void);
 
@@ -27,5 +28,7 @@ tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void);
 int C2_HOOK_FASTCALL ARGetReplayDirection(void);
 
 int C2_HOOK_FASTCALL ARReplayForwards(void);
+
+int C2_HOOK_FASTCALL CarTimeout(tU32 pTime);
 
 #endif //REC2_PIPING_H
