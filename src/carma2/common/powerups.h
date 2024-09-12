@@ -17,6 +17,9 @@ C2_HOOK_VARIABLE_DECLARE(tPhysics_joint*, gMutant_tail_first_joint);
 C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gMutant_tail_first_collision_info);
 C2_HOOK_VARIABLE_DECLARE(int, gMutant_tail_state);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0074a5ec);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_armor);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_power);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_offence);
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void);
 
@@ -51,5 +54,7 @@ void C2_HOOK_FASTCALL DoPowerupPeriodics(tU32 pFrame_period);
 void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* actor, br_model* model, br_material* material, void* order_table, br_uint_8 style, int on_screen);
 
 void C2_HOOK_FASTCALL SetSpinningPowerup(br_actor* pActor, int pOpacity);
+
+void C2_HOOK_CDECL RenderChangingPowerup(br_actor* actor, br_model* model, br_material* material, void* order_table, br_uint_8 style, int on_screen);
 
 #endif //REC2_POWERUPS_H
