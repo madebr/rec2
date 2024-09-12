@@ -24,6 +24,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tNon_car_spec*, gActive_non_car_list, 99, 0x007
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_active_non_cars, 0x006793dc);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gMin_world_y, 0x00679360);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gUnknown_car_collision_info, 0x006793e4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gAverage_grid_position, 0x00679268);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067939c, 0x0067939c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
@@ -536,3 +537,25 @@ void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041e5a0, MungeSomeOtherCarGraphics, MungeSomeOtherCarGraphics_original)
+
+void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race) {
+
+    BrVector3SetFloat(&C2V(gAverage_grid_position), 0.0f, 0.0f, 0.0f);
+    if (pThe_race->number_of_racers <= 2) {
+        BrVector3Copy(&C2V(gAverage_grid_position), &C2V(gProgram_state).current_car.pos);
+    } else {
+        int i;
+        br_scalar total_cars;
+
+        total_cars = 0.0f;
+        for (i = 0; i < pThe_race->number_of_racers; i++) {
+            tCar_spec* car;
+
+            car = pThe_race->opponent_list[i].car_spec;
+            BrVector3Accumulate(&C2V(gAverage_grid_position), &car->pos);
+            total_cars += 1.0f;
+        }
+        BrVector3InvScale(&C2V(gAverage_grid_position), &C2V(gAverage_grid_position), total_cars);
+    }
+}
+C2_HOOK_FUNCTION(0x00413780, GetAverageGridPosition)
