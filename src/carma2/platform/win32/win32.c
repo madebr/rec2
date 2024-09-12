@@ -1081,3 +1081,43 @@ void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath) {
     c2_sprintf(pDest, "%s%s", drive, dirname);
 }
 C2_HOOK_FUNCTION(0x0056a349, PDExtractDirectory)
+
+C2_HOOK_VARIABLE_IMPLEMENT(SYSTEM_INFO, gSystem_info, 0x0079ea84);
+C2_HOOK_VARIABLE_IMPLEMENT(DWORD, gPage_size, 0x0068c830);
+
+void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory) {
+    tHeap_block_information* heap_block;
+
+    C2_HOOK_BUG_ON(offsetof(tHeap_block_information, next) != 0x48);
+    C2_HOOK_BUG_ON(offsetof(tHeap_block_information, field_0x72) != 0x72);
+    C2_HOOK_BUG_ON(sizeof(tHeap_block_information) != 0x74);
+
+    heap_block = pMemory;
+
+    if (!IsBadReadPtr(heap_block, sizeof(tHeap_block_information)) && heap_block->field_0x72 == 0x4948) {
+        for (; heap_block != NULL; heap_block = heap_block->next) {
+            tHeap_memory *block;
+
+            block = (tHeap_memory*)(heap_block + 1);
+            for (;;) {
+                DWORD size = block->flags & 0x5ffffffc;
+                DWORD current;
+                if (size == 0) {
+                    break;
+                }
+                if (!(block->flags & 0x1)) {
+                    if (C2V(gPage_size) == 0) {
+                        GetSystemInfo(&C2V(gSystem_info));
+                        C2V(gPage_size) = C2V(gSystem_info).dwPageSize;
+                    }
+                    for (current = 16 * C2V(gPage_size); current < size - 4; current += C2V(gPage_size)) {
+                        block->data[current + 16 - 16 * C2V(gPage_size)] = block->data[current + 16 - 16 * C2V(gPage_size)];
+                        block->data[current + 16]                        = block->data[current + 16];
+                    }
+                }
+                block = (tHeap_memory*)((BYTE*)block + size);
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004928a0, PDPageInMemory)
