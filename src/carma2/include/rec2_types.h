@@ -66,6 +66,8 @@ typedef void C2_HOOK_FASTCALL tForEachPedestrian_cbfn(tPedestrian*, tCar_spec*, 
 typedef void C2_HOOK_FASTCALL material_cbfn(br_material*);
 typedef int C2_HOOK_FASTCALL tEnumCollision_cbfn(tCollision_info* pCollision_info, void* pUser_data);
 typedef void C2_HOOK_FASTCALL tAddToJoinListProc(tNet_game_details*);
+typedef int C2_HOOK_FASTCALL tARScanBuffer_callback(tPipe_chunk*, int, tU32);
+typedef int C2_HOOK_FASTCALL tARScanBuffer_time_check(tU32);
 
 typedef enum  {
     eNet_synch_host_first = 0,
@@ -99,6 +101,10 @@ typedef enum {
     eDrone_state_DEFAULT = 3,
     eDrone_state_STOP = 4,
 } tDroneStateFuncState;
+
+typedef enum {
+    ePipe_chunk_car = 5,
+} tPipe_chunk_type;
 
 typedef void C2_HOOK_FASTCALL tDrone_state_function(tDrone_spec*, tDroneStateFuncState);
 
