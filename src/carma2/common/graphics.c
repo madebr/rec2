@@ -229,6 +229,20 @@ void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colo
 }
 C2_HOOK_FUNCTION(0x004b4fd0, DRSetPaletteEntries)
 
+void C2_HOOK_FASTCALL DRSetPalette3(br_pixelmap* pThe_palette, int pSet_current_palette) {
+
+    if (pSet_current_palette) {
+        c2_memcpy(C2V(gCurrent_palette_pixels), pThe_palette->pixels, 256 * sizeof(br_colour));
+    }
+    C2V(gPalette_changed) = 0;
+    if (!C2V(gFaded_palette)) {
+        PDSetPalette(pThe_palette);
+    }
+    if (pThe_palette != C2V(gRender_palette)) {
+        C2V(gPalette_munged) |= 0x1;
+    }
+}
+
 void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_current_palette) {
     ((br_int_32*)pThe_palette->pixels)[0] = 0;
     if (pSet_current_palette) {
@@ -1225,3 +1239,10 @@ void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4900, ResetLollipopQueue, ResetLollipopQueue_original)
+
+void C2_HOOK_FASTCALL RevertPalette(void) {
+
+    c2_memcpy(C2V(gRender_palette)->pixels, C2V(gOrig_render_palette)->pixels, 256 * sizeof(br_colour));
+    DRSetPalette3(C2V(gRender_palette), 1);
+}
+C2_HOOK_FUNCTION(0x004b52b0, RevertPalette)
