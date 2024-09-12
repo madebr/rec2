@@ -11,6 +11,9 @@
 C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x00694104);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_play_ptr, 0x006768b8, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPlay_direction, 0x006768c0, 0);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_record_ptr, 0x006768bc, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_oldest, 0x006768ac, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gReplay_rate, 0x00676900, 0.f);
 
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
@@ -98,3 +101,22 @@ int C2_HOOK_FASTCALL ARGetReplayDirection(void) {
     return C2V(gPlay_direction);
 }
 C2_HOOK_FUNCTION(0x004023b0, ARGetReplayDirection)
+
+int C2_HOOK_FASTCALL ARReplayForwards(void) {
+
+    if (C2V(gPipe_play_ptr) == C2V(gPipe_record_ptr)) {
+        return 0;
+    }
+    if (C2V(gPipe_play_ptr) == C2V(gPipe_buffer_oldest)) {
+        return 1;
+    }
+    if (C2V(gReplay_rate) == 0.f) {
+        return ARGetReplayDirection() > 0;
+    }
+    if (C2V(gReplay_rate) > 0.f) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+C2_HOOK_FUNCTION(0x00402300, ARReplayForwards)
