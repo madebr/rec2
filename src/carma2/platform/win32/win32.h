@@ -62,4 +62,6 @@ void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath);
 
 void C2_HOOK_CDECL Win32ServiceMessages(void);
 
+void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory);
+
 #endif // C2_WIN32_WIN32_H

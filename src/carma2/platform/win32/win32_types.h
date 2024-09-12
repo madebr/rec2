@@ -39,4 +39,16 @@ typedef struct {
     tButtonJoystickInfo* data;
 } tDirectInputJoystickInfo;
 
+typedef struct tHeap_block_information {
+    undefined field_0x0[0x48];
+    struct tHeap_block_information* next;
+    undefined field_0x4c[0x26];
+    tU16 field_0x72;
+} tHeap_block_information;
+
+typedef union {
+    tU32 flags;
+    tU8 data[1];
+} tHeap_memory;
+
 #endif // C2_WIN32_TYPES_H
