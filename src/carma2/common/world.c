@@ -118,6 +118,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundGeneratorTypeNames, 3, 
     "ACTOR",
     "POINT",
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_extra_renders, 0x006a22c0);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -3370,3 +3371,9 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00477230, FunkThoseTronics, FunkThoseTronics_original)
+
+void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
+
+    C2V(gCount_extra_renders) = 0;
+}
+C2_HOOK_FUNCTION(0x004e5cb0, InitialiseExtraRenders)
