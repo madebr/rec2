@@ -28,6 +28,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gRace_path, 256);
 C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_width);
 C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_height);
 C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_underground);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_extra_renders);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -244,5 +245,7 @@ void C2_HOOK_FASTCALL AnimateSky(void);
 void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 
 void C2_HOOK_FASTCALL FunkThoseTronics(void);
+
+void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
 #endif // REC2_WORLD_H
