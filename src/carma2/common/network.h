@@ -65,4 +65,6 @@ tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, 
 
 void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
+void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void);
+
 #endif // REC2_NETWORK_H
