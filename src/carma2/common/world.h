@@ -248,4 +248,6 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void);
 
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
+void C2_HOOK_FASTCALL ResetGrooveFlags(void);
+
 #endif // REC2_WORLD_H
