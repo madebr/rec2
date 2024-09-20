@@ -3377,3 +3377,15 @@ void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
     C2V(gCount_extra_renders) = 0;
 }
 C2_HOOK_FUNCTION(0x004e5cb0, InitialiseExtraRenders)
+
+void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
+    int i;
+
+    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+        tGroovidelic_spec* the_groove;
+
+        the_groove = &C2V(gGroovidelics_array)[i];
+        the_groove->done_this_frame = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x0047b1e0, ResetGrooveFlags)
