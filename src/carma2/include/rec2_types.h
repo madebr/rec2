@@ -76,6 +76,17 @@ typedef enum  {
 } tNet_synch_mode;
 
 typedef enum {
+    eTime_bonus_none = 0,
+    eTime_bonus_initial_pause = 1,
+    eTime_bonus_race_bonus = 2,
+    eTime_bonus_tb_up = 3,
+    eTime_bonus_tb_pause = 4,
+    eTime_bonus_tb_down = 5,
+    eTime_bonus_end_pause = 6
+} tTime_bonus_state;
+
+typedef enum {
+    eRace_not_over_yet = -1,
     eRace_over_0 = 0, /* FIXME */
     eRace_over_1 = 1, /* FIXME */
     eRace_over_2 = 2, /* FIXME */
@@ -3183,7 +3194,8 @@ typedef struct {
     int completion_bonus[3];
     int completion_bonus_peds[3];
     int completion_bonus_opponents[3];
-    undefined field_0x3c[84];
+    int completion_bonus_field_0x3c[3];
+    undefined field_0x48[72];
     int number_of_racers;
     int count_network_start_points;
     tRace_list_spec* race_spec;
@@ -3281,7 +3293,9 @@ typedef struct {
 } tPD_net_game_info;
 
 typedef enum {
-    eNet_game_XXXXX = -1 /* FIXE: remove eNet_game_XXXXX and add real stages */
+    eNet_game_XXXXX = -1, /* FIXE: remove eNet_game_XXXXX and add real stages */
+    eNet_game_stage0 = 0, /* FIXE: remove eNet_game_stage0 and add real stages */
+    eNet_game_playing = 2,
 } tNet_game_stage;
 
 typedef struct {
@@ -3608,11 +3622,20 @@ enum {
     eMiscString_credits = 12,
     eMiscString_credit = 13,
     eMiscString_lost_credits_prefix = 14,
+    eMiscString_credits_gained = 16,
+    eMiscString_credits_lost = 17,
+    eMiscString_kills = 18,
+    eMiscString_wasted = 19,
+    eMiscString_lap = 20,
+    eMiscString_cp = 21,
+    eMiscString_completion_bonus_colon = 22,
+    eMiscString_time_bonus_colon = 23,
     eMiscString_instant_repair = 41,
     eMiscString_final_lap = 42,
     eMiscString_wrong_checkpoint = 43,
     eMiscString_bad_boy = 44,
     eMiscString_credit_fine = 45,
+    eMiscString_credits_abbrev = 47,
     eMiscString_has_joined_the_game = 58,
     eMiscString_driven_to_destruction = 59,
     eMiscString_car_crusher = 60,
@@ -3643,6 +3666,7 @@ enum {
     eMiscString_depth_cueing_off = 112,
     eMiscString_there_is_no_depth_cueing_for_this_race = 113,
     eMiscString_recovery_cancelled = 125,
+    eMiscString_task_switched = 139,
     eMiscString_driven_to_destruction_description = 194,
     eMiscString_car_crusher_description = 195,
     eMiscString_smashy_things_description = 196,
@@ -3674,10 +3698,12 @@ enum {
     eMiscString_reversing_cam = 269,
     eMiscString_internal_cam = 270,
     eMiscString_camera = 271,
+    eMiscString_targets = 276,
     eMiscString_press_return_to_commit_suicide = 286,
     eMiscString_no_HUD = 287,
     eMiscString_minimal_HUD = 288,
     eMiscString_full_HUD = 289,
+    eMiscString_game_auto_saved = 290,
     eMiscString_dream_on = 291,
     eMiscString_not_wasted = 292,
     eMiscString_already_have_it = 292,
@@ -3949,6 +3975,7 @@ enum {
 };
 
 enum {
+    eSoundId_warning_buzzer_noise = 1001,
     eSoundId_LeftButton = 3000,
     eSoundId_Done = 3004,
     eSoundId_EscEsc = 3005,
@@ -3957,12 +3984,21 @@ enum {
     eSoundId_CantAffordPart = 3100,
     eSoundId_Cop_Siren = 5350,
     eSoundId_FlaskGone = 5401,
+    eSoundId_Countdown_Go = 8000,
+    eSoundId_Countdown_One = 8001,
+    eSoundId_Countdown_Two = 8002,
+    eSoundId_Countdown_Three = 8003,
+    eSoundId_Countdown_Four = 8004,
+    eSoundId_Countdown_Five = 8005,
     eSoundId_OutOfTime2 = 8010,
     eSoundId_RaceComplete = 8011,
     eSoundId_Checkpoint = 8012,
     eSoundId_WrongCheckpoint = 8013,
     eSoundId_FinalLap = 8014,
+    eSoundId_Clap = 8015,
     eSoundId_HeyYou = 8016,
+
+    eSoundId_Countdown_Start = eSoundId_Countdown_Go,
 };
 
 #endif // REC2_TYPES_H

@@ -64,4 +64,6 @@ void C2_HOOK_CDECL Win32ServiceMessages(void);
 
 void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory);
 
+void C2_HOOK_FASTCALL PDPageInProcessMemory(void);
+
 #endif // C2_WIN32_WIN32_H
