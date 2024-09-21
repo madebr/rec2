@@ -65,7 +65,7 @@ static void inline Timers_Push(int pType) {
 static void inline Timers_Pop(int pType) {
     int prev_type;
 
-    C2V(gTimers)[pType].durations[C2V(gTimers)[pType].index] += PDGetMicroseconds() - C2V(gTimers)[pType].start_time;
+    C2V(gTimers)[pType].durations[C2V(gTimers)[pType].index] +=PDGetMicroseconds() - C2V(gTimers)[pType].start_time;
     if (C2V(gTimers_stack_size) > 1) {
         prev_type = C2V(gTimers_stack_size) - 1;
     } else {
@@ -73,6 +73,13 @@ static void inline Timers_Pop(int pType) {
     }
     C2V(gTimers)[prev_type].start_time = PDGetMicroseconds();
     C2V(gTimers_stack_size) -= 1;
+}
+
+static void inline Timers_Force(int pType) {
+    C2V(gTimers)[C2V(gTimers_max_index)].durations[C2V(gTimers)[C2V(gTimers_max_index)].index] +=
+        PDGetMicroseconds() - C2V(gTimers)[C2V(gTimers_max_index)].start_time;
+    C2V(gTimers_max_index) = pType;
+    C2V(gTimers)[C2V(gTimers_max_index)].start_time = PDGetMicroseconds();
 }
 
 #endif //REC2_TIMERS_H

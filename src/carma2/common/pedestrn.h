@@ -11,6 +11,8 @@
 C2_HOOK_VARIABLE_DECLARE(tPedestrian*, gPedestrian_array);
 C2_HOOK_VARIABLE_DECLARE(int, gPed_count);
 C2_HOOK_VARIABLE_DECLARE(int, gPed_nearness);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_killed_peds);
+C2_HOOK_VARIABLE_DECLARE(int, gTotal_count_smash_peds);
 
 void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable);
 
