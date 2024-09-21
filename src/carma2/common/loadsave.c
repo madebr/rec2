@@ -1,6 +1,7 @@
 #include "loadsave.h"
 
 #include "globvars.h"
+#include "globvrpb.h"
 #include "loading.h"
 #include "platform.h"
 #include "utility.h"
@@ -84,16 +85,40 @@ void C2_HOOK_FASTCALL DoLoadMostRecentGame(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491e50, DoLoadMostRecentGame, LoadLastSaveGame_original)
 
-void (C2_HOOK_FASTCALL * WriteSaveGame_original)(void);
+void (C2_HOOK_FASTCALL * DoSaveGame_original)(void);
 void C2_HOOK_FASTCALL DoSaveGame(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    WriteSaveGame_original();
+#if 0//defined(C2_HOOKS_ENABLED)
+    DoSaveGame_original();
 #else
-#error "Not implemented"
+    tPath_name the_path;
+    tSave_game save_game;
+    FILE* f;
+
+    C2_HOOK_BUG_ON(sizeof(save_game) != 0x328);
+
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        PathCat(the_path, C2V(gApplication_path), "SAVEDGAMES.ARS");
+        PDFileUnlock(the_path);
+        f = DRfopen(the_path,"ab+");
+        if (f != NULL) {
+            PFfseek(f, 0, SEEK_END);
+            C2V(gCurrent_APO_potential_levels)[0] = C2V(gProgram_state).current_car.power_up_slots[0];
+            C2V(gCurrent_APO_potential_levels)[1] = C2V(gProgram_state).current_car.power_up_slots[1];
+            C2V(gCurrent_APO_potential_levels)[2] = C2V(gProgram_state).current_car.power_up_slots[2];
+            C2V(gCurrent_APO_levels)[0] = C2V(gProgram_state).current_car.power_up_levels[0];
+            C2V(gCurrent_APO_levels)[1] = C2V(gProgram_state).current_car.power_up_levels[1];
+            C2V(gCurrent_APO_levels)[2] = C2V(gProgram_state).current_car.power_up_levels[2];
+            MakeSavedGame(&save_game);
+            Encryptificate(&save_game, 1);
+            DRfwrite(&save_game, 1, sizeof(save_game), f);
+            PFfclose(f);
+            C2V(gSave_game_out_of_sync) = 0;
+        }
+    }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00491ac0, DoSaveGame, WriteSaveGame_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00491ac0, DoSaveGame, DoSaveGame_original)
 
 void C2_HOOK_FASTCALL SplungeSomeData(void* pData, size_t size) {
 
