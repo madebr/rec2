@@ -51,6 +51,8 @@ void C2_HOOK_FASTCALL InitialiseExternalCamera(void);
 
 void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period);
 
+void C2_HOOK_FASTCALL DoLODCarModels(void);
+
 void C2_HOOK_FASTCALL DoComplexCarModels(void);
 
 void C2_HOOK_FASTCALL ResetCarScreens(void);
