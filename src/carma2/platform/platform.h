@@ -62,7 +62,7 @@ void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn
 
 void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr);
 
-void C2_HOOK_FASTCALL PDGetFormattedTime(char* pTimeStr);
+void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr);
 
 int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord);
 
