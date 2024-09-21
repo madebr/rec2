@@ -65,4 +65,6 @@ void C2_HOOK_FASTCALL MungeNapalm(void);
 
 void C2_HOOK_FASTCALL MungePedestrians(void);
 
+void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo(void);
+
 #endif //REC2_PEDESTRN_H
