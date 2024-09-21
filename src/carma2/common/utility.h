@@ -112,4 +112,6 @@ void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat);
 
+int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state);
+
 #endif // REC2_UTILITY_H
