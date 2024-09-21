@@ -41,4 +41,6 @@ void C2_HOOK_FASTCALL EnableJoysticks(void);
 
 void C2_HOOK_FASTCALL DisableJoysticks(void);
 
+void C2_HOOK_FASTCALL MungeJoystickHeadups(void);
+
 #endif /* REC2_JOYSTICK_H */
