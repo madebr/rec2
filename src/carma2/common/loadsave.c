@@ -72,10 +72,14 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00491ce0, DoLoadGame2, LoadTheGame_original)
 void (C2_HOOK_FASTCALL * LoadLastSaveGame_original)(void);
 void C2_HOOK_FASTCALL DoLoadMostRecentGame(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LoadLastSaveGame_original();
 #else
-#error "Not implemented"
+
+    if (StartSavedGamesList()) {
+        DoLoadGame(0);
+        EndSavedGamesList();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491e50, DoLoadMostRecentGame, LoadLastSaveGame_original)
