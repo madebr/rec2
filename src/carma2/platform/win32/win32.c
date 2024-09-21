@@ -861,15 +861,18 @@ void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr) {
 }
 C2_HOOK_FUNCTION(0x0051da20, PDGetFormattedDate)
 
-void C2_HOOK_FASTCALL PDGetFormattedTime(char* pTimeStr) {
+void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
+
+    C2_HOOK_BUG_ON(LOCALE_SYSTEM_DEFAULT != 0x800);
+    C2_HOOK_BUG_ON(LOCALE_NOUSEROVERRIDE != 0x80000000);
 
     GetLocalTime(&time);
     GetTimeFormatA(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &time, NULL, buffer, sizeof(buffer));
     strcpy(pTimeStr, buffer);
 }
-C2_HOOK_FUNCTION(0x0051da90, PDGetFormattedTime)
+C2_HOOK_FUNCTION(0x0051da90, PDGetCurrentTime)
 
 int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord) {
     if (!C2V(gCursorPos_LastClick_Valid)) {

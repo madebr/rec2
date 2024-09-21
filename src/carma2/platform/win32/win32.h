@@ -66,4 +66,6 @@ void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory);
 
 void C2_HOOK_FASTCALL PDPageInProcessMemory(void);
 
+void C2_HOOK_FASTCALL PDGetCurrentTime(char* pStr);
+
 #endif // C2_WIN32_WIN32_H
