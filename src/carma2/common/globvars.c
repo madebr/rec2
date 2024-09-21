@@ -169,7 +169,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gOpponent_speed_factor, 0x007620f0);
 //float gCar_crush_min_fold;
 //float gNet_recovery_cost[7];
 //float gCar_crush_softness;
-//br_vector3* gOur_pos;
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3*, gOur_pos, 0x007634b0);
 //float gCar_crush_max_fold;
 C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage, gNet_cars_storage_space, 0x00761f00);
 //float gNet_softness[7];

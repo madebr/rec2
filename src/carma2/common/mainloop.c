@@ -34,6 +34,7 @@
 #include "spark.h"
 #include "structur.h"
 #include "timers.h"
+#include "trig.h"
 #include "utility.h"
 #include "world.h"
 
@@ -91,10 +92,25 @@ C2_HOOK_FUNCTION(0x00401170, MungeAIWorld)
 void (C2_HOOK_FASTCALL * CalculateCameraStuff_original)(tU32 pCamera_period);
 void C2_HOOK_FASTCALL CalculateCameraStuff(tU32 pCamera_period) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CalculateCameraStuff_original(pCamera_period);
 #else
-#error "Not implemented"
+    br_camera* camera;
+    br_vector3 delta_camera;
+
+    C2V(gOur_pos) = &C2V(gPlayer_car_master_actor)->t.t.translate.t;
+    PositionExternalCamera(&C2V(gProgram_state).current_car, pCamera_period);
+    BrActorToActorMatrix34(&C2V(gCamera_to_world), C2V(gCamera), C2V(gUniverse_actor));
+    BrActorToActorMatrix34(&C2V(gRearview_camera_to_world), C2V(gRearview_camera), C2V(gUniverse_actor));
+    C2V(gCamera_to_horiz_angle) = FastScalarArcTan2(C2V(gCamera_to_world).m[2][1], C2V(gCamera_to_world).m[1][1]);
+
+    camera = C2V(gCamera)->type_data;
+    C2V(gYon_squared) = C2V(gYon_multiplier) * C2V(gYon_multiplier) * camera->yon_z * camera->yon_z;
+    BrVector3Sub(&delta_camera, (br_vector3*)C2V(gCamera_to_world).m[3], &C2V(gPrev_camera_position));
+    if (BrVector3LengthSquared(&delta_camera) > 400.f) {
+        ResetPedNearness();
+    }
+    BrVector3Copy(&C2V(gPrev_camera_position), (br_vector3*)C2V(gCamera_to_world).m[3]);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004940e0, CalculateCameraStuff, CalculateCameraStuff_original)
