@@ -32,4 +32,6 @@ void C2_HOOK_FASTCALL SetUpNetCarPositions(void);
 
 void C2_HOOK_FASTCALL SignalToStartRace(void);
 
+void C2_HOOK_FASTCALL DoNetworkHeadups(int pCredits);
+
 #endif // REC2_NETGAME_H
