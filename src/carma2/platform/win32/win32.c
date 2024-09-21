@@ -1121,3 +1121,9 @@ void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory) {
     }
 }
 C2_HOOK_FUNCTION(0x004928a0, PDPageInMemory)
+
+void C2_HOOK_FASTCALL PDPageInProcessMemory(void) {
+
+    PDPageInMemory(GetProcessHeap());
+    Sleep(1500);
+}

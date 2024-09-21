@@ -12,6 +12,7 @@ C2_HOOK_VARIABLE_DECLARE(tMax_message*, gMax_messages);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_service_disable);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_storage_space_initialized);
 C2_HOOK_VARIABLE_DECLARE(int, gScore_winner);
+C2_HOOK_VARIABLE_DECLARE(int, gReceived_game_scores);
 
 void C2_HOOK_FASTCALL InitNetHeadups(void);
 

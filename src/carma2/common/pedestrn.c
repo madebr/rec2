@@ -92,6 +92,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tPedestrian*, gPedestrian_array, 0x00744808);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count, 0x007447d4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_nearness, 0x00694490);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTotal_count_smash_peds, 0x0074480c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_killed_peds, 0x007447cc);
 
 void (C2_HOOK_FASTCALL * InitPedsForm_original)(tPedForms_vtable* pTable);
 void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
