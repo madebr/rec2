@@ -27,4 +27,6 @@ void C2_HOOK_FASTCALL CheckReplayTurnOn(void);
 
 void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period);
 
+void C2_HOOK_FASTCALL PollActionReplayControls(tU32 *pFrame_period, tU32* pAverage_frame_period);
+
 #endif //REC2_REPLAY_H

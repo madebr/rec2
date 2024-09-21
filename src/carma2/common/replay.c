@@ -116,3 +116,14 @@ void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e68e0, DoActionReplay, DoActionReplay_original)
+
+void (C2_HOOK_FASTCALL * PollActionReplayControls_original)(tU32 *pFrame_period, tU32* pAverage_frame_period);
+void C2_HOOK_FASTCALL PollActionReplayControls(tU32 *pFrame_period, tU32* pAverage_frame_period) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PollActionReplayControls_original(pFrame_period, pAverage_frame_period);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e69b0, PollActionReplayControls, PollActionReplayControls_original)
