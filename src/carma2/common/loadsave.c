@@ -5,6 +5,10 @@
 #include "platform.h"
 #include "utility.h"
 
+#include "rec2_macros.h"
+
+#include "c2_string.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gValid_stashed_save_game, 0x00688ae4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSave_game_out_of_sync, 0x0068b8ec);
 C2_HOOK_VARIABLE_IMPLEMENT(tSave_game, gStashed_save_game, 0x00688780);
@@ -29,10 +33,38 @@ C2_HOOK_FUNCTION(0x00466e90, MaybeRestoreSavedGame)
 int (C2_HOOK_FASTCALL * LoadTheGame_original)(tSave_game* pSave_game);
 int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return LoadTheGame_original(pSave_game);
 #else
-#error "Not implemented"
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gProgram_state).cars_available) != 60);
+
+    if (pSave_game->magic != 0x12345678) {
+        return 0;
+    }
+    C2V(gProgram_state).skill_level = pSave_game->skill_level;
+    C2V(gProgram_state).game_completed = pSave_game->game_completed;
+    C2V(gProgram_state).current_race_index = pSave_game->current_race_index;
+    C2V(gCurrent_race_group) = C2V(gRace_list)[C2V(gProgram_state).current_race_index].group;
+    C2V(gIs_boundary_race) = pSave_game->is_boundary_race;
+    C2V(gProgram_state).credits = pSave_game->credits;
+    c2_strcpy(C2V(gProgram_state).car_name, pSave_game->car_name);
+    c2_strcpy(C2V(gProgram_state).player_name, pSave_game->player_name);
+    for (i = 0; i < C2V(gNumber_of_races); i++) {
+        C2V(gRace_list)[i].count_opponents = pSave_game->races_finished[i];
+    }
+    C2V(gProgram_state).number_of_cars = pSave_game->number_of_cars;
+    C2V(gProgram_state).current_car_index = pSave_game->current_car_index;
+    for (i = 0; i < REC2_ASIZE(C2V(gProgram_state).cars_available); i++) {
+        C2V(gProgram_state).cars_available[i] = pSave_game->cars[i];
+    }
+    for (i = 0; i < 3; i++) {
+        C2V(gCurrent_APO_levels)[i] = C2V(gProgram_state).current_car.power_up_levels[i] = pSave_game->apo_levels[i];
+        C2V(gCurrent_APO_potential_levels)[i] = C2V(gProgram_state).current_car.power_up_slots[i] = pSave_game->apo_potential[i];
+    }
+    C2V(gProgram_state).field_0x2c = 1;
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00491ce0, DoLoadGame2, LoadTheGame_original)
