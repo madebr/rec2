@@ -60,7 +60,7 @@ void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFi
 
 void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn pAction_routine);
 
-void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr);
+void C2_HOOK_FASTCALL PDGetCurrentDate(char* pTimeStr);
 
 void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr);
 
