@@ -108,4 +108,6 @@ int C2_HOOK_FASTCALL SpendCredits(int pAmount);
 
 void C2_HOOK_FASTCALL ChangingView(void);
 
+void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text);
+
 #endif //REC2_DISPLAYS_H

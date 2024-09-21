@@ -831,3 +831,14 @@ void C2_HOOK_FASTCALL ChangingView(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044b170, ChangingView, ChangingView_original)
+
+void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
+    tHeadup* the_headup;
+
+    if (pHeadup_index >= 0) {
+        the_headup = &C2V(gHeadups)[pHeadup_index];
+        c2_strcpy(the_headup->data.text_info.text, pNew_text);
+        MungeHeadupWidth(the_headup);
+    }
+}
+C2_HOOK_FUNCTION(0x0044a8d0, ChangeHeadupText)
