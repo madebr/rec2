@@ -136,3 +136,14 @@ void C2_HOOK_FASTCALL SignalToStartRace(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00498e70, SignalToStartRace, SignalToStartRace_original)
+
+void (C2_HOOK_FASTCALL * DoNetworkHeadups_original)(int pCredits);
+void C2_HOOK_FASTCALL DoNetworkHeadups(int pCredits) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoNetworkHeadups_original(pCredits);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00499360, DoNetworkHeadups, DoNetworkHeadups_original)
