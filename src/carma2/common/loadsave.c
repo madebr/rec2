@@ -159,3 +159,33 @@ int C2_HOOK_FASTCALL DoLoadGame(int pIndex) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00491e20, DoLoadGame)
+
+void C2_HOOK_FASTCALL MakeSavedGame(tSave_game* pSave_game) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gProgram_state).cars_available) != 60);
+
+    pSave_game->magic = 0x12345678;
+    pSave_game->skill_level = C2V(gProgram_state).skill_level;
+    pSave_game->game_completed = C2V(gProgram_state).game_completed;
+    pSave_game->current_race_index = C2V(gProgram_state).current_race_index;
+    pSave_game->is_boundary_race = C2V(gIs_boundary_race);
+    pSave_game->credits = C2V(gProgram_state).credits;
+    c2_strcpy(pSave_game->car_name, C2V(gProgram_state).car_name);
+    c2_strcpy(pSave_game->player_name, C2V(gProgram_state).player_name);
+    PDGetCurrentTime(pSave_game->time);
+    PDGetCurrentDate(pSave_game->date);
+    for (i = 0; i < C2V(gNumber_of_races); i++) {
+        pSave_game->races_finished[i] = C2V(gRace_list)[i].count_opponents;
+    }
+    pSave_game->number_of_cars = C2V(gProgram_state).number_of_cars;
+    pSave_game->current_car_index = C2V(gProgram_state).current_car_index;
+    for (i = 0; i < REC2_ASIZE(C2V(gProgram_state).cars_available); i++) {
+        pSave_game->cars[i] = C2V(gProgram_state).cars_available[i];
+    }
+    for (i = 0; i < 3; i++) {
+        pSave_game->apo_levels[i] = C2V(gCurrent_APO_levels)[i];
+        pSave_game->apo_potential[i] = C2V(gCurrent_APO_potential_levels)[i];
+    }
+}
+C2_HOOK_FUNCTION(0x004919a0, MakeSavedGame)
