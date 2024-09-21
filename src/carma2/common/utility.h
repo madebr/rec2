@@ -110,4 +110,6 @@ br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
 
 void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap);
 
+void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat);
+
 #endif // REC2_UTILITY_H
