@@ -156,7 +156,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gOpponent_speed_factor);
 //extern float gCar_crush_min_fold;
 //extern float gNet_recovery_cost[7];
 //extern float gCar_crush_softness;
-//extern br_vector3* gOur_pos;
+C2_HOOK_VARIABLE_DECLARE(br_vector3*, gOur_pos);
 //extern float gCar_crush_max_fold;
 C2_HOOK_VARIABLE_DECLARE(tBrender_storage, gNet_cars_storage_space);
 //extern float gNet_softness[7];
