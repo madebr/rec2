@@ -33,4 +33,6 @@ tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN);
 
 int C2_HOOK_FASTCALL DoLoadGame(int pIndex);
 
+void C2_HOOK_FASTCALL MakeSavedGame(tSave_game* pSave_game);
+
 #endif // REC2_LOADSAVE_H
