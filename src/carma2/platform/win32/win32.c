@@ -851,7 +851,7 @@ void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn
 }
 C2_HOOK_FUNCTION(0x0051c760, PDForEveryFile)
 
-void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr) {
+void C2_HOOK_FASTCALL PDGetCurrentDate(char* pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
 
@@ -859,7 +859,7 @@ void C2_HOOK_FASTCALL PDGetFormattedDate(char* pTimeStr) {
     GetDateFormatA(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &time, NULL, buffer, sizeof(buffer));
     strcpy(pTimeStr, buffer);
 }
-C2_HOOK_FUNCTION(0x0051da20, PDGetFormattedDate)
+C2_HOOK_FUNCTION(0x0051da20, PDGetCurrentDate)
 
 void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr) {
     SYSTEMTIME time;
