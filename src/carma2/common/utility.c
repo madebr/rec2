@@ -1203,3 +1203,17 @@ void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap) {
 
 }
 C2_HOOK_FUNCTION(0x005191f0, PixelmapSwapByteOrder)
+
+void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat) {
+    int seconds;
+
+    seconds = (pTime + 500) / 1000;
+    if (pFudge_colon || seconds >= 60) {
+        c2_sprintf(pStr, "%d:%02d", seconds / 60, seconds % 60);
+    } else if (pFloat) {
+        c2_sprintf(pStr, "%.1f", (float) pTime / 1000.f);
+    } else {
+        c2_sprintf(pStr, "%d", seconds);
+    }
+}
+C2_HOOK_FUNCTION(0x00514cb0, TimerString)
