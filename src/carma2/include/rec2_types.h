@@ -3585,22 +3585,22 @@ typedef struct {
 
 typedef struct tSave_game {
     tU32 magic;
-    char name[8];
-    undefined field_0x00c[38];
+    char player_name[14];
+    char car_name[32];
     char date[8];
     undefined field_0x03a[24];
     char time[8];
     undefined field_0x05a[26];
-    undefined4 field_0x074[100];
+    tS32 races_finished[100];
     tS32 credits;
-    undefined4 field_0x208;
-    undefined4 field_0x20c;
-    undefined4 field_0x210;
-    undefined4 field_0x214[60];
-    undefined4 field_0x304;
-    undefined4 race;
-    undefined4 field_0x30c;
-    tS32 apo_current[3];
+    tS32 skill_level;
+    tS32 game_completed;
+    tS32 number_of_cars;
+    tS32 cars[60];
+    tS32 current_car_index;
+    tS32 current_race_index;
+    tS32 is_boundary_race;
+    tS32 apo_levels[3];
     tS32 apo_potential[3];
 } tSave_game;
 

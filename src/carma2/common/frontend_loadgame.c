@@ -139,12 +139,12 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         char time_str[16];
         size_t len_date;
 
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, name, 0x04);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, player_name, 0x04);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, time, 0x52);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, credits, 0x204);
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, field_0x20c, 0x20c);
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, field_0x30c, 0x30c);
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, apo_current, 0x310);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, game_completed, 0x20c);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, is_boundary_race, 0x30c);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, apo_levels, 0x310);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSave_game, apo_potential, 0x31c);
 
         if (save_game == NULL) {
@@ -172,24 +172,24 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         SolidPolyFontText(text, 120, y_text, font, eJust_left, 1);
 
         c2_memset(text, 0, sizeof(text));
-        c2_strcpy(text, save_game->name);
+        c2_strcpy(text, save_game->player_name);
         PolyClipName(text, font, 127);
         SolidPolyFontText(text, 190, y_text, font, 0, 1);
 
-        if (save_game->field_0x20c) {
-            c2_sprintf(text, "! %i", 1 + (C2V(gRace_list)[save_game->race].group - C2V(gRaceGroups)));
-        } else if (save_game->field_0x30c) {
-            c2_sprintf(text, "%c %i", '\x1f', 1 + (C2V(gRace_list)[save_game->race].group - C2V(gRaceGroups)));
+        if (save_game->game_completed) {
+            c2_sprintf(text, "! %i", 1 + (C2V(gRace_list)[save_game->current_race_index].group - C2V(gRaceGroups)));
+        } else if (save_game->is_boundary_race) {
+            c2_sprintf(text, "%c %i", '\x1f', 1 + (C2V(gRace_list)[save_game->current_race_index].group - C2V(gRaceGroups)));
         } else {
-            c2_sprintf(text, "%i", 1 + (C2V(gRace_list)[save_game->race].group - C2V(gRaceGroups)));
+            c2_sprintf(text, "%i", 1 + (C2V(gRace_list)[save_game->current_race_index].group - C2V(gRaceGroups)));
         }
         SolidPolyFontText(text, 325, y_text, font, eJust_right, 1);
 
         SolidPolyFontText(MungeCommas(save_game->credits), 366, y_text, font, eJust_left, 1);
 
-        BuildAPO(save_game->apo_current[0], save_game->apo_potential[0], i, 0);
-        BuildAPO(save_game->apo_current[1], save_game->apo_potential[1], i, 1);
-        BuildAPO(save_game->apo_current[2], save_game->apo_potential[2], i, 2);
+        BuildAPO(save_game->apo_levels[0], save_game->apo_potential[0], i, 0);
+        BuildAPO(save_game->apo_levels[1], save_game->apo_potential[1], i, 1);
+        BuildAPO(save_game->apo_levels[2], save_game->apo_potential[2], i, 2);
         PrepareAPO(i);
         PrintAPO(450, y_apo, i, 0);
         PrintAPO(500, y_apo, i, 1);
