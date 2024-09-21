@@ -1217,3 +1217,15 @@ void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int 
     }
 }
 C2_HOOK_FUNCTION(0x00514cb0, TimerString)
+
+int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state) {
+    tU32 the_time;
+
+    the_time = PDGetTotalTime();
+    if (the_time - *pLast_change > pPeriod) {
+        *pCurrent_state = !*pCurrent_state;
+        *pLast_change = the_time;
+    }
+    return *pCurrent_state;
+}
+C2_HOOK_FUNCTION(0x00514db0, Flash)
