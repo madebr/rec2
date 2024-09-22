@@ -1229,3 +1229,23 @@ int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state
     return *pCurrent_state;
 }
 C2_HOOK_FUNCTION(0x00514db0, Flash)
+
+br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_material* pMat, recurse_with_mat_cbfn* pCall_back, void* pArg) {
+    br_uint_32 result;
+
+    if (pActor->material != NULL) {
+        pMat = pActor->material;
+    }
+    result = pCall_back(pActor, pMat, pArg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurseWithMat(pActor, pMat, pCall_back, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00514800, DRActorEnumRecurseWithMat)
