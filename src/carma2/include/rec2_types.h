@@ -1002,6 +1002,65 @@ typedef struct {
     tSpecial_volume_soundfx_data soundfx_data;
 } tSpecial_volume;
 
+typedef enum {
+    eFunk_mode_constant = 0,
+    eFunk_mode_distance = 1,
+    eFunk_mode_last_lap_only = 2,
+    eFunk_mode_all_laps_but_last = 3
+} tFunk_trigger_mode;
+
+typedef enum {
+    eMatrix_mod_none = -1,
+    eMatrix_mod_spin = 0,
+    eMatrix_mod_rock = 1,
+    eMatrix_mod_throb = 2,
+    eMatrix_mod_slither = 3,
+    eMatrix_mod_roll = 4
+} tMatrix_mod_type;
+
+typedef enum {
+    eTexture_animation_none = -1,
+    eTexture_animation_frames = 0,
+    eTexture_animation_flic = 1,
+    eTexture_animation_camera = 2,
+    eTexture_animation_mirror = 3
+} tTexture_animation_type;
+
+typedef struct {
+    br_vector3 v[3];
+    br_vector3 n;
+    br_scalar d;
+} tFunk_proximity;
+
+typedef enum {
+    eTime_mode_approximate = 0,
+    eTime_mode_accurate = 1
+} tAnimation_time_mode;
+
+typedef struct {
+    int owner;
+    tU32 flags;
+    br_material *material;
+    tFunk_trigger_mode mode;
+    tMatrix_mod_type matrix_mod_type;
+    tMove_mode matrix_mode;
+    undefined field_0x18[24];
+    tMove_mode lighting_animation_type;
+    undefined field_0x34[4];
+    float ambient_base;
+    float ambient_delta;
+    float direct_base;
+    float direct_delta;
+    float specular_base;
+    float specular_delta;
+    tTexture_animation_type texture_animation_type;
+    tAnimation_time_mode time_mode;
+    float last_frame;
+    undefined field_0x5c[244];
+    int proximity_count;
+    tFunk_proximity* proximity_array;
+} tFunkotronic_spec;
+
 // FIXME: PROBABLY WRONG!!!!!!
 typedef enum tCar_choice {
     eNet_car_eagle = 0,

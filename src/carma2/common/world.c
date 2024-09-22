@@ -1818,6 +1818,27 @@ void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
 }
 C2_HOOK_FUNCTION(0x00474880, SetSightDistance)
 
+br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData) {
+    int i;
+    tFunkotronic_spec* the_funk = pData;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, material, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, proximity_count, 0x150);
+
+    if (pActor->model != NULL) {
+        for (i = 0; i < pActor->model->nfaces; i++) {
+            br_face* the_face;
+
+            the_face = &pActor->model->faces[i];
+            if (the_face->material == the_funk->material) {
+                the_funk->proximity_count += 1;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004761e0, CalcProximities)
+
 void (C2_HOOK_FASTCALL * AddFunkotronics_original)(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
 void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas) {
 
