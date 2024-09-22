@@ -4,7 +4,9 @@
 #include "errors.h"
 #include "globvars.h"
 #include "globvrkm.h"
+#include "init.h"
 #include "loading.h"
+#include "skidmark.h"
 #include "spark.h"
 #include "world.h"
 #include "utility.h"
@@ -100,12 +102,86 @@ void C2_HOOK_FASTCALL ProcessModelFaceMaterials2(br_model* pModel, material_cbfn
 }
 C2_HOOK_FUNCTION(0x00448fd0, ProcessModelFaceMaterials2)
 
+void C2_HOOK_FASTCALL FogCars(void) {
+    int i;
+
+    for (i = 0; i < C2V(gCurrent_race).number_of_racers; i++) {
+        int j;
+        tCar_spec* car = C2V(gCurrent_race).opponent_list[i].car_spec;
+
+        for (j = 0; j < car->count_detail_levels; j++) {
+            SwitchCarModels(car, j);
+            ProcessMaterials(car->car_model_actor, FogAccordingToGPSCDE);
+        }
+        SwitchCarModels(car, 0);
+    }
+}
+
+void C2_HOOK_FASTCALL FrobFog(void) {
+    int i;
+    br_material* material;
+
+    if (C2V(gTrack_actor) != NULL) {
+        ProcessMaterials(C2V(gTrack_actor), FogAccordingToGPSCDE);
+    }
+    if (C2V(gNon_track_actor) != NULL) {
+        ProcessMaterials(C2V(gNon_track_actor), FogAccordingToGPSCDE);
+    }
+    FogCars();
+
+    material = BrMaterialFind("GIBSLICK");
+    if (material != NULL) {
+        FogAccordingToGPSCDE(material);
+    }
+    material = BrMaterialFind("PEDSMEAR");
+    if (material != NULL) {
+        FogAccordingToGPSCDE(material);
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gMaterial)); i++) {
+        FogAccordingToGPSCDE(C2V(gMaterial)[i]);
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gCurrent_race).material_modifiers); i++) {
+        if (C2V(gCurrent_race).material_modifiers[i].skid_mark_material != NULL) {
+            FogAccordingToGPSCDE(C2V(gCurrent_race).material_modifiers[i].skid_mark_material);
+        }
+    }
+    FogAccordingToGPSCDE(C2V(gDefault_track_material));
+}
+
 void (C2_HOOK_FASTCALL * InstantDepthChange_original)(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InstantDepthChange_original(pType, pSky_texture, pStart, pEnd, pRed, pGreen, pBlue, pParam_8);
 #else
-#error "Not implemented"
+
+    if (pType == eDepth_effect_none) {
+        pStart = 3;
+        pEnd = 3;
+    }
+    C2V(gProgram_state).current_depth_effect.sky_texture = pSky_texture;
+
+    C2V(gHorizon_material)->colour_map = pSky_texture;
+    BrMaterialUpdate(C2V(gHorizon_material), BR_MATU_ALL);
+    MungeSkyVs(C2V(gSky_model), C2V(gHorizon_material));
+
+    C2V(gProgram_state).current_depth_effect.colour.red = pRed;
+    C2V(gProgram_state).current_depth_effect.colour.green = pGreen;
+    C2V(gProgram_state).current_depth_effect.colour.blue = pBlue;
+
+    C2V(gProgram_state).default_depth_effect.colour.red = pRed;
+    C2V(gProgram_state).default_depth_effect.colour.green = pGreen;
+    C2V(gProgram_state).default_depth_effect.colour.blue = pBlue;
+
+    C2V(gProgram_state).current_depth_effect.type = pType;
+    C2V(gProgram_state).current_depth_effect.start = pStart;
+    C2V(gProgram_state).current_depth_effect.end = pEnd;
+
+    C2V(gProgram_state).default_depth_effect.type = pType;
+    C2V(gProgram_state).default_depth_effect.start = pStart;
+    C2V(gProgram_state).default_depth_effect.end = pEnd;
+    if (C2V(gNo_fog) && pParam_8) {
+        FrobFog();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00445340, InstantDepthChange, InstantDepthChange_original)
