@@ -25,6 +25,8 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gSky_actor);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gSky_model);
 
 
+intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
+
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 
 int C2_HOOK_FASTCALL GetSkyTextureOn(void);
