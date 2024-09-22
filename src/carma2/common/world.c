@@ -128,10 +128,22 @@ C2_HOOK_FUNCTION(0x00447640, GetCarTexturingLevel)
 
 void (C2_HOOK_FASTCALL * SetCarTexturingLevel_original)(tCar_texturing_level pLevel);
 void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetCarTexturingLevel_original(pLevel);
 #else
-#error "Not implemented"
+
+    if (C2V(gCar_texturing_level) != pLevel) {
+        if (C2V(gOur_car_storage_space).models_count != 0) {
+            SetCarStorageTexturingLevel(&C2V(gOur_car_storage_space), pLevel, C2V(gCar_texturing_level));
+        }
+        if (C2V(gTheir_cars_storage_space).models_count != 0) {
+            SetCarStorageTexturingLevel(&C2V(gTheir_cars_storage_space), pLevel, C2V(gCar_texturing_level));
+        }
+        if (C2V(gNet_cars_storage_space).models_count != 0) {
+            SetCarStorageTexturingLevel(&C2V(gNet_cars_storage_space), pLevel, C2V(gCar_texturing_level));
+        }
+    }
+    C2V(gCar_texturing_level) = pLevel;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00447650, SetCarTexturingLevel, SetCarTexturingLevel_original)
