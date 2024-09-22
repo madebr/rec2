@@ -172,7 +172,7 @@ int C2_HOOK_FASTCALL GetCarSimplificationLevel(void) {
 }
 C2_HOOK_FUNCTION(0x00448f20, GetCarSimplificationLevel)
 
-intptr_t C2_HOOK_CDECL ApplyMaterialCallbackOnAllModelActorsCallback(br_actor* pActor, material_cbfn* pCallback) {
+intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallback) {
 
     if (pActor->material != NULL) {
         pCallback(pActor->material);
@@ -180,9 +180,9 @@ intptr_t C2_HOOK_CDECL ApplyMaterialCallbackOnAllModelActorsCallback(br_actor* p
     if (pActor->type == BR_ACTOR_MODEL && pActor->model != NULL) {
         ProcessModelFaceMaterials2(pActor->model, pCallback);
     }
-    return BrActorEnum(pActor, (br_actor_enum_cbfn*)ApplyMaterialCallbackOnAllModelActorsCallback, pCallback);
+    return BrActorEnum(pActor, (br_actor_enum_cbfn*)ProcessMaterials, pCallback);
 }
-C2_HOOK_FUNCTION(0x00448f90, ApplyMaterialCallbackOnAllModelActorsCallback)
+C2_HOOK_FUNCTION(0x00448f90, ProcessMaterials)
 
 intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
     if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
