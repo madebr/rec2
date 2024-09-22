@@ -68,6 +68,38 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
 }
 C2_HOOK_FUNCTION(0x00413f40, SwitchCarModels)
 
+void C2_HOOK_FASTCALL ProcessModelFaceMaterials2(br_model* pModel, material_cbfn* pCallback) {
+
+    if (pModel->faces != NULL) {
+        int f;
+
+        for (f = 0; f < pModel->nfaces; f++) {
+            if (pModel->faces[f].material != NULL) {
+                pCallback(pModel->faces[f].material);
+            }
+        }
+    } else {
+        v11model* v11m = pModel->prepared;
+        int g;
+
+        for (g = 0; g < v11m->ngroups; g++) {
+            int f;
+            v11group* v11g = &v11m->groups[g];
+
+            /* FIXME: this inner-loop can be removed. */
+            for (f = 0; f < v11g->nfaces; f++) {
+#if 0
+                v11face* v11f = &v11g->faces[f];
+#endif
+                if (*v11g->face_colours.materials != NULL) {
+                    pCallback(*v11g->face_colours.materials);
+                }
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00448fd0, ProcessModelFaceMaterials2)
+
 void (C2_HOOK_FASTCALL * InstantDepthChange_original)(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8) {
 #if defined(C2_HOOKS_ENABLED)
