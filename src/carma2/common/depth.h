@@ -28,6 +28,10 @@ void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 void C2_HOOK_FASTCALL ProcessModelFaceMaterials2(br_model* pModel, material_cbfn* pCallback);
 
+void C2_HOOK_FASTCALL FogCars(void);
+
+void C2_HOOK_FASTCALL FrobFog(void);
+
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 
 int C2_HOOK_FASTCALL GetSkyTextureOn(void);
