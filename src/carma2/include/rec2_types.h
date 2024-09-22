@@ -68,6 +68,7 @@ typedef int C2_HOOK_FASTCALL tEnumCollision_cbfn(tCollision_info* pCollision_inf
 typedef void C2_HOOK_FASTCALL tAddToJoinListProc(tNet_game_details*);
 typedef int C2_HOOK_FASTCALL tARScanBuffer_callback(tPipe_chunk*, int, tU32);
 typedef int C2_HOOK_FASTCALL tARScanBuffer_time_check(tU32);
+typedef br_uint_32 C2_HOOK_FASTCALL recurse_with_mat_cbfn(br_actor*, br_material*, void*);
 
 typedef enum  {
     eNet_synch_host_first = 0,
