@@ -46,7 +46,7 @@ void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
 int C2_HOOK_FASTCALL GetCarSimplificationLevel(void);
 
-int C2_HOOK_CDECL ApplyMaterialCallbackOnAllModelActorsCallback(br_actor* pActor, material_cbfn* pCallback);
+int C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallback);
 
 intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag);
 

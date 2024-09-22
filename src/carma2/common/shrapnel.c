@@ -111,7 +111,7 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                     if (spec->type_info.ghost.actors[j] == NULL) {
                         FatalError(kFatalError_CannotFindSmashActorModel_S, s);
                     }
-                    ApplyMaterialCallbackOnAllModelActorsCallback(spec->type_info.ghost.actors[j], TemporaryMaterialStore);
+                    ProcessMaterials(spec->type_info.ghost.actors[j], TemporaryMaterialStore);
                 }
             } else {
                 br_actor* actor;
@@ -124,7 +124,7 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                 if (actor == NULL) {
                     FatalError(kFatalError_CannotFindSmashActorModel_S, s);
                 }
-                ApplyMaterialCallbackOnAllModelActorsCallback(actor, TemporaryMaterialStore);
+                ProcessMaterials(actor, TemporaryMaterialStore);
 
                 BrActorToBounds(&bounds, actor);
                 spec->type_info.ghost.bounds_dx = bounds.max.v[0] - bounds.min.v[0];
@@ -162,7 +162,7 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
             if (actor == NULL) {
                 FatalError(kFatalError_CannotFindSmashActorModel_S, s);
             }
-            ApplyMaterialCallbackOnAllModelActorsCallback(actor, TemporaryMaterialStore);
+            ProcessMaterials(actor, TemporaryMaterialStore);
             /* Number of separate actors in file */
             spec->type_info.noncar.count_actors = GetAnInt(pF);
             spec->type_info.noncar.actors = BrMemAllocate(spec->type_info.noncar.count_actors * sizeof(br_actor*), kMem_smashable_env_info);
