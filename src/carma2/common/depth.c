@@ -60,6 +60,14 @@ intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x00413f10, SwitchCarModel)
 
+void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
+
+    int data = pIndex;
+    DRActorEnumRecurse(pCar->car_model_actor, SwitchCarModel, &data);
+    pCar->field_0xe18 = data;
+}
+C2_HOOK_FUNCTION(0x00413f40, SwitchCarModels)
+
 void (C2_HOOK_FASTCALL * InstantDepthChange_original)(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8) {
 #if defined(C2_HOOKS_ENABLED)

@@ -1689,7 +1689,7 @@ typedef struct tCar_spec {
     br_actor* car_model_actor;
     br_actor* car_actor;
     int count_detail_levels;
-    float field_0xe18;
+    int field_0xe18;
     float detail_levels[2];
     int use_shell_model;
     br_model* shell_model;
