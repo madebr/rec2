@@ -42,6 +42,24 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gSky_y_multiplier, 0x0067c4d4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gHas_sky_texture, 0x0067c4a8);
 
 
+intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData) {
+
+    if (pActor->user != NULL) {
+        int* index = (int*)pData;
+        tUser_crush_data *crush_data = pActor->user;
+        br_model *model = crush_data->models[*index];
+        if (model != NULL) {
+            pActor->model = model;
+            pActor->type = BR_ACTOR_MODEL;
+            return 0;
+        }
+    }
+    pActor->model = NULL;
+    pActor->type = BR_ACTOR_NONE;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00413f10, SwitchCarModel)
+
 void (C2_HOOK_FASTCALL * InstantDepthChange_original)(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8) {
 #if defined(C2_HOOKS_ENABLED)
