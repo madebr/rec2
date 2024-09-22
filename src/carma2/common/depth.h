@@ -22,7 +22,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gSky_y_multiplier);
 C2_HOOK_VARIABLE_DECLARE(int, gHas_sky_texture);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gHorizon_material);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gForward_sky_actor);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gSky_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gForward_sky_model);
 
 
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
@@ -30,6 +30,10 @@ intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
 void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 void C2_HOOK_FASTCALL ProcessModelFaceMaterials2(br_model* pModel, material_cbfn* pCallback);
+
+void C2_HOOK_FASTCALL FogCars(void);
+
+void C2_HOOK_FASTCALL FrobFog(void);
 
 void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 
