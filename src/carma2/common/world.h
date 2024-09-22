@@ -156,6 +156,8 @@ void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tC
 
 void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
+br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData);
+
 void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
 
 void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
