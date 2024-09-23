@@ -484,4 +484,6 @@ void C2_HOOK_FASTCALL DisposeOpponentsCars(tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL GetPairOfFloatPercents(FILE* pF, float* pF1, float* pF2);
 
+void C2_HOOK_FASTCALL GetThreeFloatPercents(FILE* pF, float* pF1, float* pF2, float* pF3);
+
 #endif //REC2_LOADING_H
