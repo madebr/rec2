@@ -29,6 +29,7 @@ C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_width);
 C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_height);
 C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_underground);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_extra_renders);
+C2_HOOK_VARIABLE_DECLARE(tFunk_temp_buffer*, gFunk_temp_vertices);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -157,6 +158,8 @@ void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tC
 void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData);
+
+br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, void* pData);
 
 void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
 

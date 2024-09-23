@@ -119,6 +119,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundGeneratorTypeNames, 3, 
     "POINT",
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_extra_renders, 0x006a22c0);
+C2_HOOK_VARIABLE_IMPLEMENT(tFunk_temp_buffer*, gFunk_temp_vertices, 0x0068b830);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -1838,6 +1839,32 @@ br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat,
     return 0;
 }
 C2_HOOK_FUNCTION(0x004761e0, CalcProximities)
+
+br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, void* pData) {
+    tFunkotronic_spec* the_funk = pData;
+
+    if (pActor->model != NULL) {
+        int i;
+        for (i = 0; i < pActor->model->nfaces; i++) {
+            br_face* the_face = &pActor->model->faces[i];
+            if (the_face->material == the_funk->material) {
+                int j;
+
+                for (j = 0; j < 3; j++) {
+                    BrVector3Copy(
+                        &the_funk->proximity_array[the_funk->proximity_count].v[j],
+                        &pActor->model->vertices[the_face->vertices[j]].p);
+                    C2V(gFunk_temp_vertices)[the_funk->proximity_count].vertices[j] = &pActor->model->vertices[the_face->vertices[j]];
+                }
+                BrVector3Normalise(&the_funk->proximity_array[the_funk->proximity_count].n, &the_face->n);
+                the_funk->proximity_array[the_funk->proximity_count].d = -the_face->d;
+                the_funk->proximity_count += 1;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00476230, AddProximities)
 
 void (C2_HOOK_FASTCALL * AddFunkotronics_original)(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
 void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas) {

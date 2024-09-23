@@ -1061,6 +1061,11 @@ typedef struct {
     tFunk_proximity* proximity_array;
 } tFunkotronic_spec;
 
+typedef struct {
+    br_vertex* vertices[3];
+    br_vector3 points[3];
+} tFunk_temp_buffer;
+
 // FIXME: PROBABLY WRONG!!!!!!
 typedef enum tCar_choice {
     eNet_car_eagle = 0,
