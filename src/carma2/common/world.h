@@ -44,6 +44,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gLollipop_names, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_nature_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_path_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_object_names, 4);
+C2_HOOK_VARIABLE_DECLARE(tNet_stored_smash*, gNet_host_smashes);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
