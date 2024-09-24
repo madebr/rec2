@@ -2551,10 +2551,53 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00474ac0, AddFunkotronics, AddFunkotronics_original)
 void (C2_HOOK_FASTCALL * DisposeFunkotronics_original)(int pOwner);
 void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DisposeFunkotronics_original(pOwner);
 #else
-#error "Not implemented"
+    int i;
+
+    if (C2V(gFunkotronics_array) == NULL) {
+        return;
+    }
+    for (i = 0; i < C2V(gFunkotronics_array_size); i++) {
+        tFunkotronic_spec* the_funk = &C2V(gFunkotronics_array)[i];
+
+        PossibleService();
+        if (the_funk->owner == pOwner) {
+            the_funk->owner = -999;
+            if (the_funk->proximity_array != NULL) {
+                BrMemFree(the_funk->proximity_array);
+            }
+            if (the_funk->texture_animation_type == eTexture_animation_frames &&
+                    the_funk->texture_animation_data.frames_info.mode == eMove_texturebits) {
+                BrMemFree(the_funk->texture_animation_data.frames_info.texture_info.data);
+            }
+            switch (the_funk->texture_animation_type) {
+            case eTexture_animation_flic:
+                BrMemFree(the_funk->texture_animation_data.flic_info.flic_data);
+                EndFlic(&the_funk->texture_animation_data.flic_info.flic_descriptor);
+                BrMemFree(the_funk->material->colour_map->pixels);
+                the_funk->material->colour_map->pixels = NULL;
+                BrPixelmapFree(the_funk->material->colour_map);
+                the_funk->material->colour_map = NULL;
+                break;
+            case eTexture_animation_camera:
+                for (i = 0; i < the_funk->texture_animation_data.camera_info.count; i++) {
+                    BrActorRemove(the_funk->texture_animation_data.camera_info.actors[i]);
+                    BrActorFree(the_funk->texture_animation_data.camera_info.actors[i]);
+                }
+                break;
+            case eTexture_animation_mirror:
+                if (the_funk->texture_animation_data.mirror_info.actor != NULL) {
+                    BrActorRemove(the_funk->texture_animation_data.mirror_info.actor);
+                    BrActorFree(the_funk->texture_animation_data.mirror_info.actor);
+                }
+                break;
+            default:
+                break;
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00474950, DisposeFunkotronics, DisposeFunkotronics_original)
