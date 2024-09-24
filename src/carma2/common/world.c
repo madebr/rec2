@@ -4340,6 +4340,22 @@ intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x00448850, ProcessFaceMaterials)
 
+int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix) {
+    size_t len_ident;
+    size_t len_suffix;
+
+    len_ident = c2_strlen(pIdent);
+    len_suffix = c2_strlen(pSuffix);
+    if (pIdent == NULL) {
+        return 0;
+    }
+    if (len_ident < len_suffix) {
+        return 0;
+    }
+    return c2_strcmp(pIdent + len_ident - len_suffix, pSuffix) == 0;
+}
+C2_HOOK_FUNCTION(0x00448ce0, HasThisSuffix)
+
 void (C2_HOOK_FASTCALL * DisposeTexturingMaterials_original)(void);
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
 
