@@ -856,6 +856,11 @@ typedef enum {
 } eRaceType;
 
 typedef struct {
+    br_actor* actor;
+    br_material* material;
+} tExtra_render;
+
+typedef struct {
     int depth_bits;
     int depth_bytes;
     int doubled;
