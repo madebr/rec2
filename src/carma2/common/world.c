@@ -4400,6 +4400,20 @@ br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFace) {
 }
 C2_HOOK_FUNCTION(0x004481d0, WallUntexToPersp)
 
+br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace) {
+    br_material* old_mat;
+    br_material* new_mat;
+
+    old_mat = pModel->faces[pFace].material;
+    if (HasThisSuffix(old_mat->identifier, ".road")) {
+        new_mat = UnsuffixedMaterial(old_mat->identifier, ".road");
+    } else {
+        new_mat = NULL;
+    }
+    return new_mat;
+}
+C2_HOOK_FUNCTION(0x00447c60, RoadUntexToPersp)
+
 void (C2_HOOK_FASTCALL * DisposeTexturingMaterials_original)(void);
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
 
