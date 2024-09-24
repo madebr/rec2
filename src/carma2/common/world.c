@@ -3266,6 +3266,17 @@ int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material *pMaterial) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f5470, SmashFaceMustBeUpdateable, SmashFaceMustBeUpdateable_original)
 
+void (C2_HOOK_FASTCALL * FreeEnvSmash_original)(tSmashable_item_spec* pSmash);
+void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FreeEnvSmash_original(pSmash);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f09c0, FreeEnvSmash, FreeEnvSmash_original)
+
 void (C2_HOOK_FASTCALL * DisposeSmashableEnvironment_original)(void);
 void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void) {
 
