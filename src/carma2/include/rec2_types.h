@@ -49,6 +49,7 @@ typedef struct tPath_node tPath_node;
 typedef struct tNet_game_details tNet_game_details;
 typedef struct tNet_message tNet_message;
 typedef struct tPipe_chunk tPipe_chunk;
+typedef struct tNet_stored_smash tNet_stored_smash;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
