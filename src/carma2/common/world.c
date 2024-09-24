@@ -4370,6 +4370,20 @@ br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(char* pOld_ident, char* pSuffix
 }
 C2_HOOK_FUNCTION(0x00448d70, UnsuffixedMaterial)
 
+br_material* C2_HOOK_FASTCALL WallLinearToPersp(br_model* pModel, tU16 pFace) {
+    br_material* old_mat;
+    br_material* new_mat;
+
+    old_mat = pModel->faces[pFace].material;
+    if (HasThisSuffix(old_mat->identifier, ".pwall")) {
+        new_mat = UnsuffixedMaterial(old_mat->identifier, ".pwall");
+    } else {
+        new_mat = NULL;
+    }
+    return new_mat;
+}
+C2_HOOK_FUNCTION(0x00448390, WallLinearToPersp)
+
 void (C2_HOOK_FASTCALL * DisposeTexturingMaterials_original)(void);
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
 
