@@ -2979,22 +2979,134 @@ typedef struct {
     int owner;
     int done_this_frame;
     int block_flags;
-    struct br_actor * actor;
+    br_actor* actor;
     tLollipop_mode lollipop_mode;
     tGroove_trigger_mode mode;
     tGroove_path_mode path_type;
     tMove_mode path_mode;
     tInterrupt_status path_interrupt_status;
     float path_resumption_value;
-    undefined field_0x28[16];
-    br_vector3 field_0x38;
+    union {
+        struct {
+            union {
+                struct {
+                    float value;
+                } period;
+                struct {
+                    tFunk_texturebits *data;
+                } texture_info;
+            };
+            float x_delta;
+            float y_delta;
+            float z_delta;
+            br_vector3 centre;
+        } straight_info;
+        struct {
+            union {
+                struct {
+                    float value;
+                } period;
+                struct {
+                    tFunk_texturebits *data;
+                } texture_info;
+            };
+            float radius;
+            br_vector3 centre;
+            tAxis_comp axis;
+        } circular_info;
+        undefined field_0x28[20];
+    } path_data;
     br_vector3 object_centre;
     br_vector3 object_position;
     tGroove_object_mode object_type;
     tMove_mode object_mode; /* Created by retype action */
     tInterrupt_status object_interrupt_status; /* Created by retype action */
     float object_resumption_value;
-    undefined field_0x6c[24];
+    union {
+        struct {
+            union {
+                struct {
+                    float value;
+                } period;
+                struct {
+                    tFunk_texturebits *data;
+                } texture_info;
+            };
+            tAxis_comp axis;
+        } spin_info;
+        struct {
+            union {
+                struct {
+                    float value;
+                } period;
+                struct {
+                    tFunk_texturebits *data;
+                } texture_info;
+            };
+            float max_angle;
+            float current_angle;
+            tAxis_comp axis;
+        } rock_info;
+        struct {
+            union {
+                struct {
+                    float value;
+                } x_period;
+                struct {
+                    tFunk_texturebits *data;
+                } x_texture_info;
+            };
+            union {
+                struct {
+                    float value;
+                } y_period;
+                struct {
+                    tFunk_texturebits *data;
+                } y_texture_info;
+            };
+            union {
+                struct {
+                    float value;
+                } z_period;
+                struct {
+                    tFunk_texturebits *data;
+                } z_texture_info;
+            };
+            float x_magnitude;
+            float y_magnitude;
+            float z_magnitude;
+        } throb_info;
+        struct {
+            union {
+                struct {
+                    float value;
+                } x_period;
+                struct {
+                    tFunk_texturebits *data;
+                } x_texture_info;
+            };
+            union {
+                struct {
+                    float value;
+                } y_period;
+                struct {
+                    tFunk_texturebits *data;
+                } y_texture_info;
+            };
+            union {
+                struct {
+                    float value;
+                } z_period;
+                struct {
+                    tFunk_texturebits *data;
+                } z_texture_info;
+            };
+            float x_magnitude;
+            float y_magnitude;
+            float z_magnitude;
+        } shear_info;
+        undefined field_0x6c[24];
+    } object_data;
 } tGroovidelic_spec;
 
 typedef struct {
@@ -4039,7 +4151,9 @@ enum {
     kFatalError_CannotOpenOpponentsFile = 0x36,
     kFatalError_OpponentCountMismatchesActualNumberOfOpponents = 0x37,
     kFatalError_FunkotronicFile = 0x3e,
+    kFatalError_ErrorWithinGroovidelicFile = 0x3f,
     kFatalError_CannotFindMainMaterialInFunkotronicFile_S = 0x40,
+    kFatalError_CannotFindActorReferencedInGroovidelicFile_S = 0x41,
     kFatalError_CannotFindAnimationFramePixelmapReferencedInFunkotronicFile = 0x42,
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_InsufficientShadeTableSlots = 0x44,
