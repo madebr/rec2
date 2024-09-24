@@ -179,6 +179,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_object_names, 4, 0x00
     "throb",
     "shear",
 });
+C2_HOOK_VARIABLE_IMPLEMENT(tNet_stored_smash*, gNet_host_smashes, 0x006a55c0);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -3280,10 +3281,22 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004f09c0, FreeEnvSmash, FreeEnvSmash_original)
 void (C2_HOOK_FASTCALL * DisposeSmashableEnvironment_original)(void);
 void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DisposeSmashableEnvironment_original();
 #else
-#error "Not implemented"
+    int i;
+
+    for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
+        tSmashable_item_spec* smash = &C2V(gTrack_smashable_environment_specs)[i];
+
+        FreeEnvSmash(smash);
+    }
+    if (C2V(gCount_track_smashable_environment_specs) != 0) {
+        BrMemFree(C2V(gTrack_smashable_environment_specs));
+    }
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        BrMemFree(C2V(gNet_host_smashes));
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0960, DisposeSmashableEnvironment, DisposeSmashableEnvironment_original)
