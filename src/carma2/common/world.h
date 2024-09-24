@@ -268,6 +268,8 @@ intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData);
 
 int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix);
 
+br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(char* pOld_ident, char* pSuffix);
+
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void);
 
 intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg);
