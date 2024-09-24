@@ -188,6 +188,9 @@ br_table_find_cbfn* C2_HOOK_CDECL BrTableFindHook(br_table_find_cbfn* hook);
 // BrTransform
 void C2_HOOK_CDECL BrTransformToMatrix34(br_matrix34* mat, br_transform* xform);
 
+// BrEuler
+br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* euler);
+
 // BrV1db
 void C2_HOOK_CDECL BrV1dbBeginWrapper_Float(void);
 

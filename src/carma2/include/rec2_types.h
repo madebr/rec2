@@ -1002,6 +1002,11 @@ typedef struct {
     tSpecial_volume_soundfx_data soundfx_data;
 } tSpecial_volume;
 
+typedef struct {
+    float* v;
+    undefined4 field_0x4;
+} tGroove_funk_binding;
+
 typedef enum {
     eFunk_mode_constant = 0,
     eFunk_mode_distance = 1,
@@ -1037,6 +1042,17 @@ typedef enum {
     eTime_mode_accurate = 1
 } tAnimation_time_mode;
 
+typedef enum {
+    eFunk_camera_static = 0,
+    eFunk_camera_tracking = 1,
+} tFunk_camera_mode;
+
+typedef struct {
+    tU8 count;
+    tU8 bits[35];
+    tCar_spec* car;
+} tFunk_texturebits;
+
 typedef struct {
     int owner;
     tU32 flags;
@@ -1044,9 +1060,50 @@ typedef struct {
     tFunk_trigger_mode mode;
     tMatrix_mod_type matrix_mod_type;
     tMove_mode matrix_mode;
-    undefined field_0x18[24];
+    union {
+        struct {
+            float period;
+        } spin_info;
+        struct {
+            tFunk_texturebits* data;
+        } texture_info;
+        struct {
+            float period;
+            float x_centre;
+            float y_centre;
+            float rock_angle;
+        } rock_info;
+        struct {
+            float x_period;
+            float y_period;
+            float x_centre;
+            float y_centre;
+            float x_magnitude;
+            float y_magnitude;
+        } throb_info;
+        struct {
+            float x_period;
+            float y_period;
+            float x_magnitude;
+            float y_magnitude;
+        } slither_info;
+        struct {
+            float x_period;
+            float y_period;
+        } roll_info;
+    } matrix_mod_data;
     tMove_mode lighting_animation_type;
-    undefined field_0x34[4];
+    union {
+        struct {
+            float period;
+        } controlled;
+        struct {
+            tFunk_texturebits* data;
+        } texture_info;
+        struct {
+            float period;
+        } rock_info;
+    } lighting_animation_data;
     float ambient_base;
     float ambient_delta;
     float direct_base;
@@ -1056,7 +1113,46 @@ typedef struct {
     tTexture_animation_type texture_animation_type;
     tAnimation_time_mode time_mode;
     float last_frame;
-    undefined field_0x5c[244];
+    union {
+        struct {
+            tMove_mode mode;
+            union {
+                struct {
+                    float period;
+                } controlled;
+                struct {
+                    tFunk_texturebits *data;
+                } texture_info;
+                struct {
+                    float period;
+                } rock_info;
+            };
+            int texture_count;
+            int current_frame;
+            undefined has_matrix;
+            br_pixelmap *textures[8];
+            br_matrix23 mat[8];
+        } frames_info;
+        struct {
+            tU8* flic_data;
+            tU32 flic_data_length;
+            tFlic_descriptor flic_descriptor;
+            undefined4 field_0x68;
+        } flic_info;
+        struct {
+            tFunk_camera_mode mode;
+            int field_0x60;
+            int count;
+            br_actor* actors[8];
+        } camera_info;
+        struct {
+            int field_0x5c;
+            float yon;
+            br_actor* actor;
+            br_matrix34 mat;
+            br_bounds bounds;
+        } mirror_info;
+    } texture_animation_data;
     int proximity_count;
     tFunk_proximity* proximity_array;
 } tFunkotronic_spec;
@@ -3942,11 +4038,15 @@ enum {
     kFatalError_CannotOpenRacesFile = 0x32,
     kFatalError_CannotOpenOpponentsFile = 0x36,
     kFatalError_OpponentCountMismatchesActualNumberOfOpponents = 0x37,
+    kFatalError_FunkotronicFile = 0x3e,
+    kFatalError_CannotFindMainMaterialInFunkotronicFile_S = 0x40,
+    kFatalError_CannotFindAnimationFramePixelmapReferencedInFunkotronicFile = 0x42,
     kFatalError_InsufficientPixelmapSlots = 0x43,
     kFatalError_InsufficientShadeTableSlots = 0x44,
     kFatalError_InsufficientMaterialSlots = 0x45,
     kFatalError_InsufficientModelSlots = 0x46,
     kFatalError_CannotLoadCarActor = 0x47,
+    kFatalError_DefinedRefNumOfControlledGoorvFunkOutOfRange = 0x48,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_CannotLoadShadeTableFileOrItIsEmpty_S = 0x50,
     kFatalError_CannotLoadMaterialFileOrItIsEmpty_S = 0x51,
