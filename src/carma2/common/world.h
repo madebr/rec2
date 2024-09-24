@@ -223,7 +223,7 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath);
 
 int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material *pMaterial);
 
-void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void);
+void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void);
 
 void C2_HOOK_FASTCALL ReinitSmashing(void);
 

@@ -3266,16 +3266,16 @@ int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material *pMaterial) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f5470, SmashFaceMustBeUpdateable, SmashFaceMustBeUpdateable_original)
 
-void (C2_HOOK_FASTCALL * DisposeSmashableTrackEnvironment_original)(void);
-void C2_HOOK_FASTCALL DisposeSmashableTrackEnvironment(void) {
+void (C2_HOOK_FASTCALL * DisposeSmashableEnvironment_original)(void);
+void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    DisposeSmashableTrackEnvironment_original();
+    DisposeSmashableEnvironment_original();
 #else
 #error "Not implemented"
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f0960, DisposeSmashableTrackEnvironment, DisposeSmashableTrackEnvironment_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004f0960, DisposeSmashableEnvironment, DisposeSmashableEnvironment_original)
 
 void (C2_HOOK_FASTCALL * ReinitSmashing_original)(void);
 void C2_HOOK_FASTCALL ReinitSmashing(void) {
@@ -4310,7 +4310,7 @@ void (C2_HOOK_FASTCALL * FreeTrack_original)(tTrack_spec* pTrack_spec);
 void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
     int i;
 
-    DisposeSmashableTrackEnvironment();
+    DisposeSmashableEnvironment();
     if (C2V(gAdditional_actors) != NULL) {
         BrActorRemove(C2V(gAdditional_actors));
         BrActorFree(C2V(gAdditional_actors));
