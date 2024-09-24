@@ -2660,7 +2660,6 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
     int first_time;
     char s[256];
     char* str;
-    int i;
     float x_0;
     float x_1;
     float x_2;
@@ -2777,11 +2776,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 the_groove->path_data.straight_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
                 the_groove->path_data.straight_info.texture_info.data->count = (tU8)c2_strlen(s);
-                for (i = 0; i < the_groove->path_data.straight_info.texture_info.data->count; i++) {
-                    if (c2_strchr("THBVLRF", s[i])) {
-                        the_groove->path_data.straight_info.texture_info.data->bits[i] = s[i];
-                    }
-                }
+                texture_string_to_bits(the_groove->path_data.straight_info.texture_info.data->bits, s);
                 the_groove->path_data.straight_info.texture_info.data->car = C2V(gCurrent_car_spec);
                 break;
             default:
@@ -2810,11 +2805,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 the_groove->path_data.circular_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
                 the_groove->path_data.circular_info.texture_info.data->count = (tU8)c2_strlen(s);
-                for (i = 0; i < the_groove->path_data.circular_info.texture_info.data->count; i++) {
-                    if (c2_strchr("THBVLRF", s[i])) {
-                        the_groove->path_data.circular_info.texture_info.data->bits[i] = s[i];
-                    }
-                }
+                texture_string_to_bits(the_groove->path_data.circular_info.texture_info.data->bits, s);
                 the_groove->path_data.circular_info.texture_info.data->car = C2V(gCurrent_car_spec);
                 break;
             default:
@@ -2845,11 +2836,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 the_groove->object_data.spin_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
                 the_groove->object_data.spin_info.texture_info.data->count = (tU8)c2_strlen(s);
-                for (i = 0; i < the_groove->object_data.spin_info.texture_info.data->count; i++) {
-                    if (c2_strchr("THBVLRF", s[i])) {
-                        the_groove->object_data.spin_info.texture_info.data->bits[i] = s[i];
-                    }
-                }
+                texture_string_to_bits(the_groove->object_data.spin_info.texture_info.data->bits, s);
                 the_groove->object_data.spin_info.texture_info.data->car = C2V(gCurrent_car_spec);
                 break;
             default:
@@ -2872,11 +2859,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 the_groove->object_data.rock_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
                 the_groove->object_data.rock_info.texture_info.data->count = (tU8)c2_strlen(s);
-                for (i = 0; i < the_groove->object_data.rock_info.texture_info.data->count; i++) {
-                    if (c2_strchr("THBVLRF", s[i])) {
-                        the_groove->object_data.rock_info.texture_info.data->bits[i] = s[i];
-                    }
-                }
+                texture_string_to_bits(the_groove->object_data.rock_info.texture_info.data->bits, s);
                 the_groove->object_data.rock_info.texture_info.data->car = C2V(gCurrent_car_spec);
                 break;
             default:
@@ -2962,10 +2945,22 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00476470, AddGroovidelics, AddGroovidelics_original)
 void (C2_HOOK_FASTCALL * DisposeGroovidelics_original)(int pOwner);
 void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DisposeGroovidelics_original(pOwner);
 #else
-#error "Not implemented"
+    int i;
+
+    if (C2V(gGroovidelics_array) == NULL) {
+        return;
+    }
+    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+        tGroovidelic_spec* the_groove = &C2V(gGroovidelics_array)[i];
+
+        PossibleService();
+        if (the_groove->owner == pOwner) {
+            the_groove->owner = -999;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00476430, DisposeGroovidelics, DisposeGroovidelics_original)
