@@ -276,6 +276,8 @@ br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFace);
 
 br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace);
 
+br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pFace);
+
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void);
 
 intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg);
