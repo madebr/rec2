@@ -159,6 +159,26 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gCamera_animation_names, 2, 0
     "static",
     "tracking",
 });
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gGroove_by_proxy_actor, 0x0068b854);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gLollipop_names, 3, 0x00655bc8, {
+    "xlollipop",
+    "ylollipop",
+    "zlollipop",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_nature_names, 2, 0x00655bb0, {
+    "constant",
+    "distance",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_path_names, 2, 0x00655bd8, {
+    "straight",
+    "circular",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_object_names, 4, 0x00655be0, {
+    "spin",
+    "rock",
+    "throb",
+    "shear",
+});
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -2602,13 +2622,339 @@ void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00474950, DisposeFunkotronics, DisposeFunkotronics_original)
 
+tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void) {
+    void* new_array;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tGroovidelic_spec) != 0x84);
+
+    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+        if (C2V(gGroovidelics_array)[i].owner == -999) {
+            c2_memset(&C2V(gGroovidelics_array)[i], 0, sizeof(tGroovidelic_spec));
+            return &C2V(gGroovidelics_array)[i];
+        }
+    }
+    C2V(gGroovidelics_array_size) += 16;
+    new_array = BrMemCalloc(C2V(gGroovidelics_array_size), sizeof(tGroovidelic_spec), kMem_groove_spec);
+    if (C2V(gGroovidelics_array) != NULL) {
+        c2_memcpy(new_array, C2V(gGroovidelics_array), (C2V(gGroovidelics_array_size) - 16) * sizeof(tGroovidelic_spec));
+        ShiftBoundGrooveFunks(
+                (char*)C2V(gGroovidelics_array),
+                (char*)&C2V(gGroovidelics_array)[C2V(gGroovidelics_array_size) - 16],
+                (char*)new_array - (char*)C2V(gGroovidelics_array));
+        BrMemFree(C2V(gGroovidelics_array));
+    }
+    C2V(gGroovidelics_array) = new_array;
+    for (i = 0; i < 16; i++) {
+        C2V(gGroovidelics_array)[i + C2V(gGroovidelics_array_size) - 16].owner = -999;
+    }
+    return &C2V(gGroovidelics_array)[C2V(gGroovidelics_array_size) - 16];
+}
+
 void (C2_HOOK_FASTCALL * AddGroovidelics_original)(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
 void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AddGroovidelics_original(pF, pOwner, pParent_actor, pRef_offset, pAllowed_to_be_absent);
 #else
-#error "Not implemented"
+    int first_time;
+    char s[256];
+    char* str;
+    int i;
+    float x_0;
+    float x_1;
+    float x_2;
+    int d_0;
+    int d_1;
+    int d_2;
+    br_vector3 p;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, owner, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, block_flags, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, actor, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, lollipop_mode, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, mode, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_type, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_mode, 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_interrupt_status, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.texture_info.data, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.period.value, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.x_delta, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.y_delta, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.z_delta, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.centre, 0x38);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.period.value, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.texture_info.data, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.radius, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.centre, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.axis, 0x3c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_centre, 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_position, 0x50);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_type, 0x5c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_mode, 0x60);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_interrupt_status, 0x64);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.spin_info.period.value, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.spin_info.texture_info.data, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.spin_info.axis, 0x70);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.rock_info.period.value, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.rock_info.texture_info.data, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.rock_info.max_angle, 0x70);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.rock_info.axis, 0x78);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.throb_info.x_period, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.throb_info.y_period, 0x70);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.throb_info.z_period, 0x74);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.throb_info.x_magnitude, 0x78);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.throb_info.y_magnitude, 0x7c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.throb_info.z_magnitude, 0x80);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.x_period, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.y_period, 0x70);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.z_period, 0x74);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.x_magnitude, 0x78);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.y_magnitude, 0x7c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.z_magnitude, 0x80);
+
+    first_time = 1;
+    while (!PFfeof(pF)) {
+        tGroovidelic_spec* the_groove;
+
+        PossibleService();
+        GetALineAndDontArgue(pF, s);
+        if (c2_strcmp(s, "END OF GROOVE") == 0) {
+            break;
+        }
+
+        if (!first_time) {
+            if (c2_strcmp(s, "NEXT GROOVE") != 0) {
+                FatalError(kFatalError_ErrorWithinGroovidelicFile);
+            }
+            GetALineAndDontArgue(pF, s);
+        }
+        first_time = 0;
+
+        str = c2_strtok(s, "\t ,/");
+        the_groove = AddNewGroovidelic();
+        the_groove->owner = pOwner;
+        the_groove->block_flags = 0;
+        the_groove->actor = DRActorFindRecurse(pParent_actor, str);
+
+        if (the_groove->actor == NULL) {
+            if (!pAllowed_to_be_absent && !C2V(gAusterity_mode)) {
+                FatalError(kFatalError_CannotFindActorReferencedInGroovidelicFile_S, str);
+            }
+            if (C2V(gGroove_by_proxy_actor) == NULL) {
+                C2V(gGroove_by_proxy_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+                C2V(gGroove_by_proxy_actor)->model = LoadModel("PROXY.DAT");
+                BrModelAdd(C2V(gGroove_by_proxy_actor)->model);
+                BrActorAdd(C2V(gDont_render_actor), C2V(gGroove_by_proxy_actor));
+            }
+            the_groove->actor = C2V(gGroove_by_proxy_actor);
+        }
+        the_groove->lollipop_mode = GetALineAndInterpretCommand(pF, C2V(gLollipop_names), REC2_ASIZE(C2V(gLollipop_names)));
+        the_groove->mode = GetALineAndInterpretCommand(pF, C2V(gGroove_nature_names), REC2_ASIZE(C2V(gGroove_nature_names)));
+        the_groove->path_type = GetALineAndInterpretCommand(pF, C2V(gGroove_path_names), REC2_ASIZE(C2V(gGroove_path_names)));
+        the_groove->path_interrupt_status = eInterrupt_none;
+        the_groove->object_interrupt_status = eInterrupt_none;
+        if (the_groove->path_type != eGroove_path_none) {
+            the_groove->path_mode = GetALineAndInterpretCommand(pF, C2V(gFunk_move_names), REC2_ASIZE(C2V(gFunk_move_names)));
+        }
+        switch (the_groove->path_type) {
+        case eGroove_path_straight:
+            GetThreeFloats(pF,
+                &the_groove->path_data.straight_info.centre.v[0],
+                &the_groove->path_data.straight_info.centre.v[1],
+                &the_groove->path_data.straight_info.centre.v[2]);
+
+            if (Vector3IsZero(&the_groove->path_data.straight_info.centre)) {
+                BrVector3Copy(&the_groove->path_data.straight_info.centre,
+                    &the_groove->actor->t.t.translate.t);
+            }
+            switch (the_groove->path_mode) {
+            case eMove_controlled:
+            case eMove_absolute:
+                AddFunkGrooveBinding(pRef_offset + GetAnInt(pF), &the_groove->path_data.straight_info.period.value);
+                break;
+            case eMove_texturebits:
+                the_groove->path_data.straight_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
+                GetAString(pF, s);
+                the_groove->path_data.straight_info.texture_info.data->count = (tU8)c2_strlen(s);
+                for (i = 0; i < the_groove->path_data.straight_info.texture_info.data->count; i++) {
+                    if (c2_strchr("THBVLRF", s[i])) {
+                        the_groove->path_data.straight_info.texture_info.data->bits[i] = s[i];
+                    }
+                }
+                the_groove->path_data.straight_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                break;
+            default:
+                x_0 = GetAFloat(pF);
+                the_groove->path_data.straight_info.period.value = x_0 == 0.0f ? 0.0f : 1000.0f / x_0;
+                break;
+            }
+            GetThreeFloats(pF,
+                &the_groove->path_data.straight_info.x_delta,
+                &the_groove->path_data.straight_info.y_delta,
+                &the_groove->path_data.straight_info.z_delta);
+            break;
+        case eGroove_path_circular:
+             GetThreeFloats(pF, &p.v[0], &p.v[1], &p.v[2]);
+             BrVector3Copy(&the_groove->path_data.circular_info.centre, &p);
+             if (Vector3IsZero(&the_groove->path_data.circular_info.centre)) {
+                 BrVector3Copy(&the_groove->path_data.circular_info.centre,
+                    &the_groove->actor->t.t.translate.t);
+             }
+            switch (the_groove->path_mode) {
+            case eMove_controlled:
+            case eMove_absolute:
+                AddFunkGrooveBinding(pRef_offset + GetAnInt(pF), &the_groove->path_data.circular_info.period.value);
+                break;
+            case eMove_texturebits:
+                the_groove->path_data.circular_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
+                GetAString(pF, s);
+                the_groove->path_data.circular_info.texture_info.data->count = (tU8)c2_strlen(s);
+                for (i = 0; i < the_groove->path_data.circular_info.texture_info.data->count; i++) {
+                    if (c2_strchr("THBVLRF", s[i])) {
+                        the_groove->path_data.circular_info.texture_info.data->bits[i] = s[i];
+                    }
+                }
+                the_groove->path_data.circular_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                break;
+            default:
+                x_0 = GetAFloat(pF);
+                the_groove->path_data.circular_info.period.value = x_0 == 0.0f ? 0.0f : 1000.0f / x_0;
+                break;
+            }
+            the_groove->path_data.circular_info.radius = GetAFloat(pF);
+            the_groove->path_data.circular_info.axis =  GetALineAndInterpretCommand(pF, C2V(gAxis_names), REC2_ASIZE(C2V(gAxis_names)));
+            break;
+        default:
+            break;
+        }
+
+        the_groove->object_type = GetALineAndInterpretCommand(pF, C2V(gGroove_object_names), REC2_ASIZE(C2V(gGroove_object_names)));
+        BrVector3Copy(&the_groove->object_position, &the_groove->actor->t.t.translate.t);
+        if (the_groove->object_type != eGroove_object_none) {
+            the_groove->object_mode = GetALineAndInterpretCommand(pF, C2V(gFunk_move_names), REC2_ASIZE(C2V(gFunk_move_names)));
+        }
+        switch (the_groove->object_type) {
+        case eGroove_object_spin:
+            switch (the_groove->object_mode) {
+            case eMove_controlled:
+            case eMove_absolute:
+                AddFunkGrooveBinding(pRef_offset + GetAnInt(pF), &the_groove->object_data.spin_info.period.value);
+                break;
+            case eMove_texturebits:
+                the_groove->object_data.spin_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
+                GetAString(pF, s);
+                the_groove->object_data.spin_info.texture_info.data->count = (tU8)c2_strlen(s);
+                for (i = 0; i < the_groove->object_data.spin_info.texture_info.data->count; i++) {
+                    if (c2_strchr("THBVLRF", s[i])) {
+                        the_groove->object_data.spin_info.texture_info.data->bits[i] = s[i];
+                    }
+                }
+                the_groove->object_data.spin_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                break;
+            default:
+                x_0 = GetAFloat(pF);
+                the_groove->object_data.spin_info.period.value = (x_0 == 0.0f) ? 0.0f : (1000.0f / x_0);
+            }
+            GetThreeFloats(pF,
+                &the_groove->object_centre.v[0],
+                &the_groove->object_centre.v[1],
+                &the_groove->object_centre.v[2]);
+            the_groove->object_data.spin_info.axis = GetALineAndInterpretCommand(pF, C2V(gAxis_names), REC2_ASIZE(C2V(gAxis_names)));
+            break;
+        case eGroove_object_rock:
+            switch (the_groove->object_mode) {
+            case eMove_controlled:
+            case eMove_absolute:
+                AddFunkGrooveBinding(pRef_offset + GetAnInt(pF), &the_groove->object_data.spin_info.period.value);
+                break;
+            case eMove_texturebits:
+                the_groove->object_data.rock_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
+                GetAString(pF, s);
+                the_groove->object_data.rock_info.texture_info.data->count = (tU8)c2_strlen(s);
+                for (i = 0; i < the_groove->object_data.rock_info.texture_info.data->count; i++) {
+                    if (c2_strchr("THBVLRF", s[i])) {
+                        the_groove->object_data.rock_info.texture_info.data->bits[i] = s[i];
+                    }
+                }
+                the_groove->object_data.rock_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                break;
+            default:
+                x_0 = GetAFloat(pF);
+                the_groove->object_data.spin_info.period.value = (x_0 == 0.0f) ? 0.0f : (1000.0f / x_0);
+            }
+            GetThreeFloats(pF,
+                &the_groove->object_centre.v[0],
+                &the_groove->object_centre.v[1],
+                &the_groove->object_centre.v[2]);
+            the_groove->object_data.rock_info.axis = GetALineAndInterpretCommand(pF, C2V(gAxis_names), REC2_ASIZE(C2V(gAxis_names)));
+            the_groove->object_data.rock_info.max_angle = GetAFloat(pF);
+            break;
+        case eGroove_object_throb:
+            switch (the_groove->object_mode) {
+            case eMove_controlled:
+            case eMove_absolute:
+                GetThreeInts(pF, &d_0, &d_1, &d_2);
+                if (d_0 >= 0) {
+                    AddFunkGrooveBinding(pRef_offset + d_0, &the_groove->object_data.throb_info.x_period.value);
+                }
+                if (d_1 >= 0) {
+                    AddFunkGrooveBinding(pRef_offset + d_1, &the_groove->object_data.throb_info.y_period.value);
+                }
+                if (d_2 >= 0) {
+                    AddFunkGrooveBinding(pRef_offset + d_2, &the_groove->object_data.throb_info.z_period.value);
+                }
+                break;
+            default:
+                GetThreeFloats(pF, &x_0, &x_1, &x_2);
+                the_groove->object_data.throb_info.x_period.value = (x_0 == 0.0f) ? 0.0f : (1000.0f / x_0);
+                the_groove->object_data.throb_info.y_period.value = (x_1 == 0.0f) ? 0.0f : (1000.0f / x_1);
+                the_groove->object_data.throb_info.z_period.value = (x_2 == 0.0f) ? 0.0f : (1000.0f / x_2);
+                break;
+            }
+            GetThreeFloats(pF,
+                &the_groove->object_centre.v[0],
+                &the_groove->object_centre.v[1],
+                &the_groove->object_centre.v[2]);
+            GetThreeFloatPercents(pF,
+                &the_groove->object_data.throb_info.x_magnitude,
+                &the_groove->object_data.throb_info.y_magnitude,
+                &the_groove->object_data.throb_info.z_magnitude);
+            break;
+        case eGroove_object_shear:
+            switch (the_groove->object_mode) {
+            case eMove_controlled:
+            case eMove_absolute:
+                GetThreeInts(pF, &d_0, &d_1, &d_2);
+                if (d_0 >= 0) {
+                    AddFunkGrooveBinding(pRef_offset + d_0, &the_groove->object_data.shear_info.x_period.value);
+                }
+                if (d_1 >= 0) {
+                    AddFunkGrooveBinding(pRef_offset + d_1, &the_groove->object_data.shear_info.y_period.value);
+                }
+                if (d_2 >= 0) {
+                    AddFunkGrooveBinding(pRef_offset + d_2, &the_groove->object_data.shear_info.z_period.value);
+                }
+                break;
+            default:
+                GetThreeFloats(pF, &x_0, &x_1, &x_2);
+                the_groove->object_data.shear_info.x_period.value = x_0 == 0.0f ? 0.0f : 1000.0f / x_0;
+                the_groove->object_data.shear_info.y_period.value = x_1 == 0.0f ? 0.0f : 1000.0f / x_1;
+                the_groove->object_data.shear_info.z_period.value = x_2 == 0.0f ? 0.0f : 1000.0f / x_2;
+            }
+            GetThreeFloats(pF,
+                &the_groove->object_centre.v[0],
+                &the_groove->object_centre.v[1],
+                &the_groove->object_centre.v[2]);
+            GetThreeFloatPercents(pF,
+                &the_groove->object_data.shear_info.x_magnitude,
+                &the_groove->object_data.shear_info.y_magnitude,
+                &the_groove->object_data.shear_info.z_magnitude);
+            break;
+        default:
+            break;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00476470, AddGroovidelics, AddGroovidelics_original);
