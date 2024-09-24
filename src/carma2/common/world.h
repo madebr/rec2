@@ -272,6 +272,8 @@ br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(char* pOld_ident, char* pSuffix
 
 br_material* C2_HOOK_FASTCALL WallLinearToPersp(br_model* pModel, tU16 pFace);
 
+br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFace);
+
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void);
 
 intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg);
