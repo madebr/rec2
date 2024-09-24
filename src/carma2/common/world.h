@@ -45,6 +45,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_nature_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_path_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_object_names, 4);
 C2_HOOK_VARIABLE_DECLARE(tNet_stored_smash*, gNet_host_smashes);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tExtra_render, gExtra_renders, 6);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -295,6 +296,8 @@ void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 void C2_HOOK_FASTCALL FunkThoseTronics(void);
 
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
+
+void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);
 
 void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 

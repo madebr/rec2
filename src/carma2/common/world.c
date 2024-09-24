@@ -180,6 +180,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_object_names, 4, 0x00
     "shear",
 });
 C2_HOOK_VARIABLE_IMPLEMENT(tNet_stored_smash*, gNet_host_smashes, 0x006a55c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tExtra_render, gExtra_renders, 6, 0x006a22c8);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
@@ -4649,6 +4650,14 @@ void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
     C2V(gCount_extra_renders) = 0;
 }
 C2_HOOK_FUNCTION(0x004e5cb0, InitialiseExtraRenders)
+
+void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial) {
+
+    C2V(gExtra_renders)[C2V(gCount_extra_renders)].actor = pActor;
+    C2V(gExtra_renders)[C2V(gCount_extra_renders)].material = pMaterial;
+    C2V(gCount_extra_renders) += 1;
+}
+C2_HOOK_FUNCTION(0x004e5cc0, AddExtraRender)
 
 void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
     int i;
