@@ -262,6 +262,10 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
 void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space);
 
+void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCallback);
+
+intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData);
+
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void);
 
 intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg);
