@@ -39,6 +39,11 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_move_names, 7);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_anim_names, 4);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gTime_mode_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gCamera_animation_names, 2);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gGroove_by_proxy_actor);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gLollipop_names, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_nature_names, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_path_names, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_object_names, 4);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -183,6 +188,8 @@ void C2_HOOK_FASTCALL AddFunkGrooveBinding(int pSlot_number, float* pPeriod_addr
 void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
 
 void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
+
+tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void);
 
 void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
 
