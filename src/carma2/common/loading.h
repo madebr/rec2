@@ -85,6 +85,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_speed_control_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_per_second_time_bonus, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gAuto_increase_credits_dt, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tU32, gNet_auto_increase_credits_dt, 8);
+C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCurrent_car_spec);
 
 void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 

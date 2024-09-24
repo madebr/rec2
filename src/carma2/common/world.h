@@ -30,6 +30,15 @@ C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_height);
 C2_HOOK_VARIABLE_DECLARE(br_angle, gSky_image_underground);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_extra_renders);
 C2_HOOK_VARIABLE_DECLARE(tFunk_temp_buffer*, gFunk_temp_vertices);
+C2_HOOK_VARIABLE_DECLARE(tFunkotronic_spec*, gFunkotronics_array);
+C2_HOOK_VARIABLE_DECLARE(int, gFunkotronics_array_size);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tGroove_funk_binding, gGroove_funk_bindings, 1440);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_nature_names, 4);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_type_names, 5);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_move_names, 7);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_anim_names, 4);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gTime_mode_names, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gCamera_animation_names, 2);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -160,6 +169,16 @@ void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData);
 
 br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, void* pData);
+
+void C2_HOOK_FASTCALL ShiftBoundGrooveFunks(char* pStart, char* pEnd, ptrdiff_t pDelta);
+
+tFunkotronic_spec* C2_HOOK_FASTCALL AddNewFunkotronic(void);
+
+br_material* C2_HOOK_FASTCALL TryThisFunkLink(tCar_crush_buffer_entry* pFunk_link, const char* pStr, tFunkotronic_spec* pFunk);
+
+br_material* C2_HOOK_FASTCALL FindSmashableMaterial(const char* pStr, tFunkotronic_spec* pFunk, tCar_crush_buffer* pCar_crush_datas);
+
+void C2_HOOK_FASTCALL AddFunkGrooveBinding(int pSlot_number, float* pPeriod_address);
 
 void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
 
