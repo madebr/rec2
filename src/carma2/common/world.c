@@ -4356,6 +4356,20 @@ int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix) {
 }
 C2_HOOK_FUNCTION(0x00448ce0, HasThisSuffix)
 
+br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(char* pOld_ident, char* pSuffix) {
+    br_material* result;
+    int unsuffixed_len;
+    char* new_id;
+
+    unsuffixed_len = c2_strlen(pOld_ident) - c2_strlen(pSuffix);
+    new_id = BrMemAllocate(unsuffixed_len + 1, kMem_new_mat_id);
+    c2_sprintf(new_id, "%.*s", unsuffixed_len, pOld_ident);
+    result = BrMaterialFind(new_id);
+    BrMemFree(new_id);
+    return result;
+}
+C2_HOOK_FUNCTION(0x00448d70, UnsuffixedMaterial)
+
 void (C2_HOOK_FASTCALL * DisposeTexturingMaterials_original)(void);
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
 
