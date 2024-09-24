@@ -4414,6 +4414,41 @@ br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace) {
 }
 C2_HOOK_FUNCTION(0x00447c60, RoadUntexToPersp)
 
+br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pFace) {
+    size_t max_suffix_len;
+    br_material* mat;
+    br_material* victim;
+    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, suffixes, 3, 0x005913a0, {
+        ".road",
+        ".pwall",
+        ".lwall",
+    });
+    int s;
+    char* id;
+
+    mat = pModel->faces[pFace].material;
+    if (mat->identifier == NULL) {
+        return NULL;
+    }
+    max_suffix_len = 0;
+    for (s = 0; s < REC2_ASIZE(C2V(suffixes)); s++) {
+        if (max_suffix_len < c2_strlen(C2V(suffixes)[s])) {
+            max_suffix_len = c2_strlen(C2V(suffixes)[s]);
+        }
+    }
+    id = BrMemAllocate(c2_strlen(mat->identifier) + max_suffix_len + 1, kMem_new_mat_id);
+    for (s = 0; s < REC2_ASIZE(C2V(suffixes)); s++) {
+        c2_sprintf(id, "%s%s", mat->identifier, C2V(suffixes)[s]);
+        victim = BrMaterialFind(id);
+        if (victim != NULL) {
+            BrMaterialRemove(victim);
+            BrMaterialFree(victim);
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x00448dd0, DisposeSuffixedMaterials)
+
 void (C2_HOOK_FASTCALL * DisposeTexturingMaterials_original)(void);
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
 
