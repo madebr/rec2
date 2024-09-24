@@ -4452,10 +4452,29 @@ C2_HOOK_FUNCTION(0x00448dd0, DisposeSuffixedMaterials)
 void (C2_HOOK_FASTCALL * DisposeTexturingMaterials_original)(void);
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DisposeTexturingMaterials_original();
 #else
-#error "Not implemented"
+    switch (C2V(gWall_texturing_level)) {
+    case eWTL_linear:
+        ProcessFaceMaterials(C2V(gProgram_state).track_spec.the_actor, WallLinearToPersp);
+        break;
+    case eWTL_none:
+        ProcessFaceMaterials(C2V(gProgram_state).track_spec.the_actor, WallUntexToPersp);
+        break;
+    default:
+        break;
+    }
+    switch (C2V(gRoad_texturing_level)) {
+    case eRTL_none:
+        ProcessFaceMaterials(C2V(gProgram_state).track_spec.the_actor, RoadUntexToPersp);
+        break;
+    default:
+        break;
+    }
+    if (C2V(gWall_texturing_level) != eWTL_full || C2V(gRoad_texturing_level) != eRTL_full) {
+        ProcessFaceMaterials(C2V(gProgram_state).track_spec.the_actor, DisposeSuffixedMaterials);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004489d0, DisposeTexturingMaterials, DisposeTexturingMaterials_original)
