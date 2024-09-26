@@ -38,6 +38,8 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
 void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
+void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
+
 void C2_HOOK_FASTCALL StopMusic(void);
 
 tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
