@@ -75,6 +75,14 @@ void C2_HOOK_CDECL BrMatrix23Identity(br_matrix23* mat);
 void C2_HOOK_CDECL BrMatrix23Mul(br_matrix23* A, br_matrix23* B, br_matrix23* C);
 void C2_HOOK_CDECL BrMatrix23Rotate(br_matrix23* mat, br_angle rz);
 void C2_HOOK_CDECL BrMatrix23Scale(br_matrix23* mat, br_scalar sx, br_scalar sy);
+void C2_HOOK_CDECL BrMatrix23PreTranslate(br_matrix23* mat, br_scalar x, br_scalar y);
+void C2_HOOK_CDECL BrMatrix23PostTranslate(br_matrix23* A, br_scalar x, br_scalar y);
+void C2_HOOK_CDECL BrMatrix23PreScale(br_matrix23* mat, br_scalar sx, br_scalar sy);
+void C2_HOOK_CDECL BrMatrix23PostScale(br_matrix23* mat, br_scalar sx, br_scalar sy);
+void C2_HOOK_CDECL BrMatrix23PreShearX(br_matrix23* mat, br_scalar sy);
+void C2_HOOK_CDECL BrMatrix23PostShearX(br_matrix23* mat, br_scalar sy);
+void C2_HOOK_CDECL BrMatrix23PreShearY(br_matrix23* mat, br_scalar sx);
+void C2_HOOK_CDECL BrMatrix23PostShearY(br_matrix23* mat, br_scalar sx);
 
 // BrMatrix34
 void C2_HOOK_CDECL BrMatrix34Identity(br_matrix34* mat);
