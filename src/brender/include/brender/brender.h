@@ -16,6 +16,8 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, char* setup_string, ...)
 // BrActor
 br_actor* C2_HOOK_CDECL BrActorLoad(const char* filename);
 br_uint_32 C2_HOOK_CDECL BrActorLoadMany(const char* filename, br_actor** actors, br_uint_16 num);
+br_uint_32 C2_HOOK_CDECL BrModelSaveMany(char* filename, br_model** models, br_uint_16 num);
+br_uint_32 C2_HOOK_CDECL BrActorSave(char* filename, br_actor* ptr);
 br_actor* C2_HOOK_CDECL BrActorAllocate(br_uint_8 type, void* type_data);
 br_actor* C2_HOOK_CDECL BrActorAdd(br_actor* parent, br_actor* a);
 void C2_HOOK_CDECL BrActorRelink(br_actor* parent, br_actor* a);
