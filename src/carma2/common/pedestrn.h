@@ -69,4 +69,6 @@ void C2_HOOK_FASTCALL MungePedestrians(void);
 
 void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo(void);
 
+void C2_HOOK_FASTCALL FlushAllPedCaches(void);
+
 #endif //REC2_PEDESTRN_H

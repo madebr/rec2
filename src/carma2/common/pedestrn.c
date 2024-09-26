@@ -959,3 +959,14 @@ void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastT
 
 }
 C2_HOOK_FUNCTION(0x004d35d0, MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo)
+
+void (C2_HOOK_FASTCALL * FlushAllPedCaches_original)(void);
+void C2_HOOK_FASTCALL FlushAllPedCaches(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FlushAllPedCaches_original();
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d6c70, FlushAllPedCaches, FlushAllPedCaches_original)
