@@ -42,7 +42,9 @@
         (V)->v[1] = 0.5f * ((V1)->v[1] + (V2)->v[1]); \
         (V)->v[2] = 0.5f * ((V1)->v[2] + (V2)->v[2]); \
     } while (0)
-
+#define Vector3DistanceSquared(V1, V2) \
+    ((((V1)->v[0] - (V2)->v[0])) * (((V1)->v[0] - (V2)->v[0])) + (((V1)->v[1] - (V2)->v[1])) * (((V1)->v[1] - (V2)->v[1])) + (((V1)->v[2] - (V2)->v[2])) * (((V1)->v[2] - (V2)->v[2])))
+#define Vector3Distance(V1, V2) sqrtf(Vector3DistanceSquared((V1), (V2)))
 #define TEXT_TO_NUMBER_1(S) ((S)[0] - '0')
 #define TEXT_TO_NUMBER_2(S) (10 * TEXT_TO_NUMBER_1(S) + TEXT_TO_NUMBER_1((S)+1))
 #define TEXT_TO_NUMBER_3(S) (10 * TEXT_TO_NUMBER_2(S) + TEXT_TO_NUMBER_1((S)+2))
