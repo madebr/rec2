@@ -185,6 +185,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_object_names, 4, 0x00
 });
 C2_HOOK_VARIABLE_IMPLEMENT(tNet_stored_smash*, gNet_host_smashes, 0x006a55c0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tExtra_render, gExtra_renders, 6, 0x006a22c8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDelete_count, 0x006ab7a8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gDelete_list, 500, 0x006aafc8);
 
 #define SAW(T, PERIOD) (fmodf((T), (PERIOD)) / (PERIOD))
 
@@ -4671,6 +4673,24 @@ br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pM
     return 0;
 }
 C2_HOOK_FUNCTION(0x005072b0, ApplyTransToModels)
+
+br_uint_32 C2_HOOK_FASTCALL DeleteBastards(br_actor* pActor, br_matrix34* pMat, void* pData) {
+
+    if ((pActor != C2V(gAdditional_actors) && (pActor->identifier == NULL || pActor->identifier[0] == '&') && Vector3IsZero((br_vector3*)pMat->m[3]))
+            || (pActor->model == NULL && pActor->type == BR_ACTOR_MODEL)) {
+        int i;
+
+        for (i = 0; i < C2V(gDelete_count); i++) {
+            if (C2V(gDelete_list)[i] == pActor) {
+                return 0;
+            }
+        }
+        C2V(gDelete_list)[C2V(gDelete_count)] = pActor;
+        C2V(gDelete_count) += 1;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00507210, DeleteBastards)
 
 void (C2_HOOK_FASTCALL * AutoSaveAdditionalStuff_original)(void);
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
