@@ -46,6 +46,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_path_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_object_names, 4);
 C2_HOOK_VARIABLE_DECLARE(tNet_stored_smash*, gNet_host_smashes);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tExtra_render, gExtra_renders, 6);
+C2_HOOK_VARIABLE_DECLARE(int, gDelete_count);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gDelete_list, 500);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -292,6 +294,8 @@ void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec);
 void C2_HOOK_FASTCALL MungeMaterialSV(br_matrix34* pMat, br_material* pMat_1, br_material* pMat_2, int pAxis_0, int pAxis_1);
 
 br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pMat, void* pData);
+
+br_uint_32 C2_HOOK_FASTCALL DeleteBastards(br_actor* pActor, br_matrix34* pMat, void* pData);
 
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
