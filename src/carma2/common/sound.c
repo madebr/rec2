@@ -112,6 +112,37 @@ void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpe
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004569f0, ReadSoundSpec, ReadSoundSpec_original)
 
+void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
+    int i;
+
+    if (pSpec->periodicity == kSoundFxPeriodicity_None) {
+        c2_fprintf(pF, "NONE\t\t\t\t\t// sound time type\n");
+        return;
+    }
+
+    c2_fprintf(pF, "%s\t\t\t\t\t// sound time type\n", C2V(gSound_periodicity_choices)[pSpec->periodicity]);
+    switch (pSpec->periodicity) {
+    case kSoundFxPeriodicity_Random:
+        c2_fprintf(pF, "%.2f,%.2f\t\t\t\t\t// min,max gap\n",
+           (float)pSpec->periodic1 / 1000.f,
+           (float)pSpec->periodic2 / 1000.f);
+        break;
+    case kSoundFxPeriodicity_Periodic:
+        c2_fprintf(pF,"%.2f\t\t\t\t\t// period\n",
+            (float)pSpec->periodic1 / 1000.f);
+        break;
+    default:
+        break;
+    }
+    c2_fprintf(pF, "%d\t\t\t\t\t// max deviation\n", (int)BrFixedToFloat(100.f * pSpec->field_0x14));
+    c2_fprintf(pF, "%d\t\t\t\t\t// num sounds\n", pSpec->count_sound_alternatives);
+    for (i = 0; i < pSpec->count_sound_alternatives; i++) {
+
+        c2_fprintf(pF, "%d\t\t\t\t\t// sound ID\n", pSpec->sound_alternatives[i]);
+    }
+}
+C2_HOOK_FUNCTION(0x00457450, WriteOutSoundSpec)
+
 void (C2_HOOK_FASTCALL * StopMusic_original)(void);
 void C2_HOOK_FASTCALL StopMusic(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
