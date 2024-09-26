@@ -29,4 +29,6 @@ void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period);
 
 void C2_HOOK_FASTCALL PollActionReplayControls(tU32 *pFrame_period, tU32* pAverage_frame_period);
 
+int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void);
+
 #endif //REC2_REPLAY_H
