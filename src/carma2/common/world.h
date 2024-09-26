@@ -297,6 +297,14 @@ br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pM
 
 br_uint_32 C2_HOOK_FASTCALL DeleteBastards(br_actor* pActor, br_matrix34* pMat, void* pData);
 
+void C2_HOOK_FASTCALL PutAdditionalNonCarsOnToAdditionalActors(void);
+
+void C2_HOOK_FASTCALL PutAdditionalNonCarsOnToNonTrackActor(void);
+
+void C2_HOOK_FASTCALL DeleteAnyZeroBastards(void);
+
+void C2_HOOK_FASTCALL SaveAdditionalActors(void);
+
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
 void C2_HOOK_FASTCALL AnimateSky(void);
