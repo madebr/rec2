@@ -3415,7 +3415,9 @@ typedef struct tNon_car_spec {
     br_scalar break_off_radians_squared;
     undefined field_0x1c[80];
     int count_shrapnel_materials;
-    undefined field_0x70[20];
+    undefined field_0x70[16];
+    tS16 field_0x80;
+    undefined field_0x82[2];
     br_material* shrapnel_materials[3];
     undefined field_0x90[60];
     float free_mass;
