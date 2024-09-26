@@ -1249,3 +1249,26 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_mater
     return 0;
 }
 C2_HOOK_FUNCTION(0x00514800, DRActorEnumRecurseWithMat)
+
+br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_matrix34* pMatrix, recurse_with_trans_cbfn* pCall_back, void* pArg) {
+    br_uint_32 result;
+    br_matrix34 combined_transform;
+
+    if (pMatrix != NULL) {
+        BrMatrix34Mul(&combined_transform, pMatrix, &pActor->t.t.mat);
+    } else {
+        BrMatrix34Copy(&combined_transform, &pActor->t.t.mat);
+    }
+    result = pCall_back(pActor, &combined_transform, pArg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurseWithTrans(pActor, &combined_transform, pCall_back, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00514850, DRActorEnumRecurseWithTrans)

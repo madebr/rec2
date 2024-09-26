@@ -70,6 +70,7 @@ typedef void C2_HOOK_FASTCALL tAddToJoinListProc(tNet_game_details*);
 typedef int C2_HOOK_FASTCALL tARScanBuffer_callback(tPipe_chunk*, int, tU32);
 typedef int C2_HOOK_FASTCALL tARScanBuffer_time_check(tU32);
 typedef br_uint_32 C2_HOOK_FASTCALL recurse_with_mat_cbfn(br_actor*, br_material*, void*);
+typedef br_uint_32 C2_HOOK_FASTCALL recurse_with_trans_cbfn(br_actor*, br_matrix34*, void*);
 typedef br_material* C2_HOOK_FASTCALL tPMFMCB(br_model*, tU16);
 
 typedef enum  {
