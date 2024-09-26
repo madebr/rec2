@@ -287,6 +287,8 @@ void C2_HOOK_FASTCALL RemoveBoundsStructures(br_actor* pActor);
 
 void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec);
 
+void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec);
+
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
 void C2_HOOK_FASTCALL AnimateSky(void);
