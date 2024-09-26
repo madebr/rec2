@@ -4649,6 +4649,29 @@ void C2_HOOK_FASTCALL MungeMaterialSV(br_matrix34* pMat, br_material* pMat_1, br
 }
 C2_HOOK_FUNCTION(0x005074d0, MungeMaterialSV)
 
+br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pMat, void* pData) {
+    int i;
+
+    if (pActor->identifier == NULL) {
+        return 0;
+    }
+    if (pActor->identifier[0] == '&') {
+        return 0;
+    }
+    if (pActor->model != NULL) {
+        for (i = 0; i < pActor->model->nvertices; i++) {
+            br_vector3 p;
+
+            BrVector3Copy(&p, &pActor->model->vertices[i].p);
+            BrMatrix34ApplyP(&pActor->model->vertices[i].p, &p, pMat);
+        }
+        BrModelUpdate(pActor->model, BR_MODU_ALL);
+    }
+    BrMatrix34Identity(&pActor->t.t.mat);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005072b0, ApplyTransToModels)
+
 void (C2_HOOK_FASTCALL * AutoSaveAdditionalStuff_original)(void);
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
 
