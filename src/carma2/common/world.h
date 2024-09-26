@@ -321,6 +321,8 @@ void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
 void C2_HOOK_FASTCALL AnimateSky(void);
 
+void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor);
+
 void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 
 float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber);
