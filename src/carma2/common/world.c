@@ -4776,6 +4776,64 @@ void C2_HOOK_FASTCALL SaveAdditionalActors(void) {
 }
 C2_HOOK_FUNCTION(0x00506f40, SaveAdditionalActors)
 
+void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
+    tPath_name the_path;
+    FILE* f;
+    int i;
+
+    PathCat(the_path, C2V(gApplication_path), "SPECSAVE.TXT");
+    f = DRfopen(the_path, "wt");
+    if (f == NULL) {
+        return;
+    }
+    c2_fprintf(f, "// SPECIAL EFFECTS VOLUMES\n\n");
+    c2_fprintf(f, "%d\t\t\t\t// # special effects volumes\n\n", C2V(gProgram_state).special_volume_count);
+    for (i = 0; i < C2V(gProgram_state).special_volume_count; i++) {
+        tSpecial_volume* v;
+
+        v = &C2V(gProgram_state).special_volumes[i];
+        switch (v->boundary_type) {
+        case eFx_boundary_box:
+            c2_fprintf(f, "BOX\n");
+            c2_fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[0][0], v->boundary.box.mat.m[0][1], v->boundary.box.mat.m[0][2]);
+            c2_fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[1][0], v->boundary.box.mat.m[1][1], v->boundary.box.mat.m[1][2]);
+            c2_fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[2][0], v->boundary.box.mat.m[2][1], v->boundary.box.mat.m[2][2]);
+            c2_fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[3][0], v->boundary.box.mat.m[3][1], v->boundary.box.mat.m[3][2]);
+            break;
+        case eFx_boundary_plane:
+            c2_fprintf(f, "%.3f, %.3f, %.3f, %.3f\n", v->boundary.plane.v[0], v->boundary.plane.v[1], v->boundary.plane.v[2], v->boundary.plane.v[3]);
+            break;
+        case eFx_boundary_default:
+            c2_fprintf(f, "DEFAULT\n");
+            break;
+        default:
+            break;
+        }
+        c2_fprintf(f, "%.2f\t\t\t\t// gravity multiplier\n", v->gravity_multiplier);
+        c2_fprintf(f, "%.2f\t\t\t\t// viscosity multiplier\n", v->viscosity_multiplier);
+        c2_fprintf(f, "%.2f\t\t\t\t// Car damage per millisecond\n", v->car_damage_per_ms);
+        c2_fprintf(f, "%.2f\t\t\t\t// Pedestrian damage per millisecond\n", v->ped_damage_per_ms);
+        c2_fprintf(f, "%d\t\t\t\t\t// camera effect index\n", v->camera_special_effect_index);
+        c2_fprintf(f, "%d\t\t\t\t\t// sky colour\n", v->sky_col);
+        c2_fprintf(f, "%s\t\t\t\t// Windscreen texture to use\n", (v->screen_pixelmap != NULL) ? v->screen_pixelmap->identifier : "NONE");
+        c2_fprintf(f, "%d\t\t\t\t\t// Sound ID of entry noise\n", v->entry_noise);
+        c2_fprintf(f, "%d\t\t\t\t\t// Sound ID of exit noise\n", v->exit_noise);
+        c2_fprintf(f, "%d\t\t\t\t\t// Engine noise index\n", v->engine_noise_index);
+        c2_fprintf(f, "%d\t\t\t\t\t// material index\n", v->material_modifier_index);
+        if (v->boundary_type == eFx_boundary_box || v->boundary_type == eFx_boundary_plane) {
+            if (v->soundfx_type == kSoundFx_None) {
+                fprintf(f,"NONE\t\t\t\t\t// sound type\n");
+            } else {
+                fprintf(f,"%s\t\t\t\t\t// sound type\n", C2V(gSoundType_Choices)[v->soundfx_type]);
+                WriteOutSoundSpec(f, &v->soundfx_data);
+            }
+        }
+        c2_fprintf(f, "\n");
+    }
+    PFfclose(f);
+}
+C2_HOOK_FUNCTION(0x004ffa20, SaveSpecialVolumes)
+
 void (C2_HOOK_FASTCALL * AutoSaveAdditionalStuff_original)(void);
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
 

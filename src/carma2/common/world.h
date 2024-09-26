@@ -305,6 +305,8 @@ void C2_HOOK_FASTCALL DeleteAnyZeroBastards(void);
 
 void C2_HOOK_FASTCALL SaveAdditionalActors(void);
 
+void C2_HOOK_FASTCALL SaveSpecialVolumes(void);
+
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
 void C2_HOOK_FASTCALL AnimateSky(void);
