@@ -1,6 +1,7 @@
 #include "replay.h"
 
 #include "globvars.h"
+#include "piping.h"
 #include "platform.h"
 #include "utility.h"
 
@@ -127,3 +128,9 @@ void C2_HOOK_FASTCALL PollActionReplayControls(tU32 *pFrame_period, tU32* pAvera
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e69b0, PollActionReplayControls, PollActionReplayControls_original)
+
+int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
+
+    return C2V(gReplay_rate) == 0.f;
+}
+C2_HOOK_FUNCTION(0x00402360, ARReplayIsReallyPaused)
