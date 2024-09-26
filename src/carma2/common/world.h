@@ -291,6 +291,8 @@ void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec);
 
 void C2_HOOK_FASTCALL MungeMaterialSV(br_matrix34* pMat, br_material* pMat_1, br_material* pMat_2, int pAxis_0, int pAxis_1);
 
+br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pMat, void* pData);
+
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
 void C2_HOOK_FASTCALL AnimateSky(void);
