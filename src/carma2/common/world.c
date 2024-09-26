@@ -187,6 +187,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(tNet_stored_smash*, gNet_host_smashes, 0x006a55c0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tExtra_render, gExtra_renders, 6, 0x006a22c8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDelete_count, 0x006ab7a8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gDelete_list, 500, 0x006aafc8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSpec_vol_mode, 0x006ab940);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gSpec_vol_actors, 100, 0x006ab7b0);
 
 #define SAW(T, PERIOD) (fmodf((T), (PERIOD)) / (PERIOD))
 
@@ -4834,13 +4836,71 @@ void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
 }
 C2_HOOK_FUNCTION(0x004ffa20, SaveSpecialVolumes)
 
+int C2_HOOK_FASTCALL FindSpecVolIndex(br_actor* pActor) {
+    int i;
+
+    if (pActor == NULL) {
+        return -1;
+    }
+    for (i = 0; i < C2V(gProgram_state).special_volume_count; i++) {
+
+        if (C2V(gSpec_vol_actors)[i] == pActor) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void C2_HOOK_FASTCALL SetSpecVolMatSize(br_actor* pActor) {
+    br_model* model;
+
+    model = pActor->model;
+    MungeMaterialSV(&pActor->t.t.mat, model->faces[ 5].material, model->faces[17].material, 0, 1);
+    MungeMaterialSV(&pActor->t.t.mat, model->faces[11].material, model->faces[23].material, 1, 2);
+    MungeMaterialSV(&pActor->t.t.mat, model->faces[ 7].material, model->faces[19].material, 0, 2);
+}
+
+void C2_HOOK_FASTCALL UpdateSpecVol(void) {
+    int index;
+
+    index = FindSpecVolIndex(C2V(gLast_actor));
+    if (index >= 0) {
+        tSpecial_volume* v;
+
+        v = &C2V(gProgram_state).special_volumes[index];
+        BrMatrix34Copy(&v->boundary.box.mat, &C2V(gLast_actor)->t.t.mat);
+        FindInverseAndWorldBox(v);
+        SetSpecVolMatSize(C2V(gLast_actor));
+    }
+}
+
+void C2_HOOK_FASTCALL DoSaveAdditionalStuff(void) {
+
+    if (C2V(gSpec_vol_mode) == 0) {
+        SaveAdditionalActors();
+    } else {
+        UpdateSpecVol();
+        SaveSpecialVolumes();
+    }
+}
+
 void (C2_HOOK_FASTCALL * AutoSaveAdditionalStuff_original)(void);
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     AutoSaveAdditionalStuff_original();
 #else
-#error "Not implemented"
+    size_t len_additional_actor_path;
+    size_t len_additional_model_path;
+
+    len_additional_actor_path = c2_strlen(C2V(gAdditional_actor_path));
+    len_additional_model_path = c2_strlen(C2V(gAdditional_model_path));
+    c2_strcat(C2V(gAdditional_actor_path), " autosave");
+    c2_strcat(C2V(gAdditional_model_path), " autosave");
+    DoSaveAdditionalStuff();
+    C2V(gAdditional_actor_path)[len_additional_actor_path] = '\0';
+    C2V(gAdditional_model_path)[len_additional_model_path] = '\0';
+    FlushAllPedCaches();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00507360, AutoSaveAdditionalStuff, AutoSaveAdditionalStuff_original)
