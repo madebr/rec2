@@ -48,6 +48,8 @@ C2_HOOK_VARIABLE_DECLARE(tNet_stored_smash*, gNet_host_smashes);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tExtra_render, gExtra_renders, 6);
 C2_HOOK_VARIABLE_DECLARE(int, gDelete_count);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gDelete_list, 500);
+C2_HOOK_VARIABLE_DECLARE(int, gSpec_vol_mode);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gSpec_vol_actors, 100);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -306,6 +308,14 @@ void C2_HOOK_FASTCALL DeleteAnyZeroBastards(void);
 void C2_HOOK_FASTCALL SaveAdditionalActors(void);
 
 void C2_HOOK_FASTCALL SaveSpecialVolumes(void);
+
+int C2_HOOK_FASTCALL FindSpecVolIndex(br_actor* pActor);
+
+void C2_HOOK_FASTCALL SetSpecVolMatSize(br_actor* pActor);
+
+void C2_HOOK_FASTCALL UpdateSpecVol(void);
+
+void C2_HOOK_FASTCALL DoSaveAdditionalStuff(void);
 
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void);
 
