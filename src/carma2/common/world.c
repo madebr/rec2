@@ -4631,6 +4631,16 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00506c20, FreeTrack, FreeTrack_original)
 
+void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
+    br_bounds bnds;
+
+    BrVector3Set(&bnds.min, -1.f, -1.f, -1.f);
+    BrVector3Set(&bnds.max,  1.f,  1.f,  1.f);
+    GetNewBoundingBox(&pSpec->boundary.box.bounds, &bnds, &pSpec->boundary.box.mat);
+    BrMatrix34Inverse(&pSpec->boundary.box.inv_mat, &pSpec->boundary.box.mat);
+}
+C2_HOOK_FUNCTION(0x004ffd20, FindInverseAndWorldBox)
+
 void (C2_HOOK_FASTCALL * AutoSaveAdditionalStuff_original)(void);
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
 
