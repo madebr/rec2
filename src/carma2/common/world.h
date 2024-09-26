@@ -293,6 +293,10 @@ void C2_HOOK_FASTCALL AnimateSky(void);
 
 void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 
+float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber);
+
+br_scalar C2_HOOK_FASTCALL NormaliseDegreeAngle(br_scalar pAngle);
+
 void C2_HOOK_FASTCALL FunkThoseTronics(void);
 
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
