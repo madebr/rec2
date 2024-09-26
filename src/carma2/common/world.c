@@ -4945,6 +4945,21 @@ void C2_HOOK_FASTCALL AnimateSky(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00506e80, AnimateSky, AnimateSky_original)
 
+void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) {
+
+    BrVector3Set(pResult, 0.f, 0.f, 0.f);
+    for (;pActor != NULL && pActor != C2V(gNon_track_actor); pActor = pActor->parent) {
+        if (pActor->t.t.mat.m[0][0] == 1.f) {
+            BrVector3Accumulate(pResult, &pActor->t.t.translate.t);
+        } else {
+            br_vector3 tv;
+            BrMatrix34ApplyP(&tv, pResult, &pActor->t.t.mat);
+            BrVector3Accumulate(pResult, &tv);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00515b80, CalcActorGlobalPos)
+
 void (C2_HOOK_FASTCALL * GrooveThoseDelics_original)(void);
 void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
 
