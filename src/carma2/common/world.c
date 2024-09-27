@@ -4960,6 +4960,43 @@ void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) 
 }
 C2_HOOK_FUNCTION(0x00515b80, CalcActorGlobalPos)
 
+int (C2_HOOK_FASTCALL * PointOutOfSight_original)(br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
+int C2_HOOK_FASTCALL PointOutOfSight(br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance) {
+    br_vector3 distance_vector;
+    int i;
+
+#define CAMERA_MAX_DISTANCE(A) ((pMax_distance != 0.f) ? pMax_distance : REC2_SQR(((br_camera*)(A)->type_data)->yon_z))
+
+    if (C2V(gMirror_on__graphics)) {
+        BrVector3Sub(&distance_vector, pPoint, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
+        if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(C2V(gRearview_camera))
+                && BrVector3Dot(&distance_vector, (br_vector3*)C2V(gRearview_camera_to_world).m[2]) < 0.f) {
+
+            return 0;
+        }
+    }
+
+    for (i = 0; i < C2V(gCount_extra_renders); i++) {
+        br_actor* a = C2V(gExtra_renders)[i].actor;
+
+        BrVector3Sub(&distance_vector, pPoint, &a->t.t.translate.t);
+        if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(a)) {
+
+            return 0;
+        }
+    }
+
+    BrVector3Sub(&distance_vector, pPoint, (br_vector3*)C2V(gCamera_to_world).m[3]);
+    if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(C2V(gCamera))
+            && BrVector3Dot(&distance_vector, (br_vector3*)C2V(gCamera_to_world).m[2]) < 0.f) {
+
+        return 0;
+    }
+#undef CAMERA_MAX_DISTANCE
+    return 1;
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e5ce0, PointOutOfSight, PointOutOfSight_original)
+
 void (C2_HOOK_FASTCALL * GrooveThoseDelics_original)(void);
 void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
 
