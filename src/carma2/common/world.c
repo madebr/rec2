@@ -4997,6 +4997,174 @@ int C2_HOOK_FASTCALL PointOutOfSight(br_vector3* pPoint, undefined4 pArg2, br_sc
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e5ce0, PointOutOfSight, PointOutOfSight_original)
 
+void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it) {
+    br_scalar pos;
+    float f_the_time = (float)pTime;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_interrupt_status, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_resumption_value, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.period.value, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.x_delta, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.y_delta, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.z_delta, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.centre, 0x38);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.period.value, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.centre, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_position, 0x50);
+
+    switch (pGroove->path_type) {
+    case eGroove_path_straight:
+        if (pGroove->path_data.straight_info.x_delta != 0.0f) {
+
+            MOVE_FUNK_PARAMETER(pos, pGroove->path_mode, pGroove->path_data.straight_info.period.value, pGroove->path_data.straight_info.texture_info.data, pGroove->path_data.straight_info.x_delta, -pGroove->path_data.straight_info.x_delta);
+            pos += pGroove->path_data.straight_info.centre.v[0];
+            if (pInterrupt_it) {
+                pGroove->path_resumption_value = pos;
+                if (pos >= pMat->m[3][0]) {
+                    pGroove->path_interrupt_status = eInterrupt_greater_than;
+                } else {
+                    pGroove->path_interrupt_status = eInterrupt_less_than;
+                }
+                pMat->m[3][0] = pos;
+                BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+            } else {
+                if (pGroove->path_interrupt_status == eInterrupt_none) {
+                    pMat->m[3][0] = pos;
+                    BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                } else if (pGroove->path_interrupt_status == eInterrupt_less_than) {
+                    if (pos < pGroove->path_resumption_value) {
+                        pGroove->path_interrupt_status = eInterrupt_none;
+                        pMat->m[3][0] = pos;
+                        BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                    }
+                } else if (pos > pGroove->path_resumption_value) {
+                    pGroove->path_interrupt_status = eInterrupt_none;
+                    pMat->m[3][0] = pos;
+                    BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                }
+            }
+        }
+
+        if (pGroove->path_data.straight_info.y_delta != 0.0f) {
+
+            MOVE_FUNK_PARAMETER(pos, pGroove->path_mode, pGroove->path_data.straight_info.period.value, pGroove->path_data.straight_info.texture_info.data, pGroove->path_data.straight_info.y_delta, -pGroove->path_data.straight_info.y_delta);
+            pos += pGroove->path_data.straight_info.centre.v[1];
+            if (pInterrupt_it) {
+                pGroove->path_resumption_value = pos;
+                if (pos >= pMat->m[3][1]) {
+                    pGroove->path_interrupt_status = eInterrupt_greater_than;
+                } else {
+                    pGroove->path_interrupt_status = eInterrupt_less_than;
+                }
+                pMat->m[3][1] = pos;
+                BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+            } else {
+                if (pGroove->path_interrupt_status == eInterrupt_none) {
+                    pMat->m[3][1] = pos;
+                    BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                } else if (pGroove->path_interrupt_status == eInterrupt_less_than) {
+                    if (pos < pGroove->path_resumption_value) {
+                        pGroove->path_interrupt_status = eInterrupt_none;
+                        pMat->m[3][1] = pos;
+                        BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                    }
+                } else if (pos > pGroove->path_resumption_value) {
+                    pGroove->path_interrupt_status = eInterrupt_none;
+                    pMat->m[3][1] = pos;
+                    BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                }
+            }
+        }
+
+        if (pGroove->path_data.straight_info.z_delta != 0.0f) {
+
+            MOVE_FUNK_PARAMETER(pos, pGroove->path_mode, pGroove->path_data.straight_info.period.value, pGroove->path_data.straight_info.texture_info.data, pGroove->path_data.straight_info.z_delta, -pGroove->path_data.straight_info.z_delta);
+            pos += pGroove->path_data.straight_info.centre.v[2];
+            if (pInterrupt_it) {
+                pGroove->path_resumption_value = pos;
+                if (pos >= pMat->m[3][2]) {
+                    pGroove->path_interrupt_status = eInterrupt_greater_than;
+                } else {
+                    pGroove->path_interrupt_status = eInterrupt_less_than;
+                }
+                BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                pMat->m[3][2] = pos;
+            } else {
+                if (pGroove->path_interrupt_status == eInterrupt_none) {
+                    BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                    pMat->m[3][2] = pos;
+                } else if (pGroove->path_interrupt_status == eInterrupt_less_than) {
+                    if (pos < pGroove->path_resumption_value) {
+                        pGroove->path_interrupt_status = eInterrupt_none;
+                        BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                        pMat->m[3][2] = pos;
+                    }
+                } else if (pos > pGroove->path_resumption_value) {
+                    pGroove->path_interrupt_status = eInterrupt_none;
+                    BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.straight_info.centre);
+                    pMat->m[3][2] = pos;
+                }
+            }
+        }
+        BrVector3Copy(&pGroove->object_position, &pGroove->actor->t.t.translate.t);
+        break;
+    case eGroove_path_circular:
+        BrVector3Copy(&pGroove->actor->t.t.translate.t, &pGroove->path_data.circular_info.centre);
+        if (pGroove->path_data.circular_info.axis == eAxis_y) {
+            if (pGroove->path_data.circular_info.period.value == 0.0f) {
+                pos = 0.f;
+            } else {
+                pos = cosf(BrAngleToRadian(BrDegreeToAngle(fmodf((float)pTime, pGroove->path_data.circular_info.period.value) / pGroove->path_data.circular_info.period.value * 360.0f))) * pGroove->path_data.circular_info.radius;
+            }
+            pMat->m[3][0] = pGroove->path_data.circular_info.centre.v[0] + pos;
+        } else if (pGroove->path_data.circular_info.axis == eAxis_z) {
+            if (pGroove->path_data.circular_info.period.value == 0.0f) {
+                pos = 0.f;
+            } else {
+                pos = sinf(BrAngleToRadian(BrDegreeToAngle(fmodf((float)pTime, pGroove->path_data.circular_info.period.value) / pGroove->path_data.circular_info.period.value * 360.0f))) * pGroove->path_data.circular_info.radius;
+            }
+            pMat->m[3][0] = pGroove->path_data.circular_info.centre.v[0] + pos;
+        }
+
+        if (pGroove->path_data.circular_info.axis == eAxis_x) {
+            if (pGroove->path_data.circular_info.period.value == 0.0f) {
+                pos = 0.f;
+            } else {
+                pos = sinf(BrAngleToRadian(BrDegreeToAngle(fmodf((float)pTime, pGroove->path_data.circular_info.period.value) / pGroove->path_data.circular_info.period.value * 360.0f))) * pGroove->path_data.circular_info.radius;
+            }
+            pMat->m[3][1] = pGroove->path_data.circular_info.centre.v[1] + pos;
+        } else if (pGroove->path_data.circular_info.axis == eAxis_z) {
+            if (pGroove->path_data.circular_info.period.value == 0.0f) {
+                pos = 0.f;
+            } else {
+                pos = cosf(BrAngleToRadian(BrDegreeToAngle(fmodf((float)pTime, pGroove->path_data.circular_info.period.value) / pGroove->path_data.circular_info.period.value * 360.0f))) * pGroove->path_data.circular_info.radius;
+            }
+            pMat->m[3][1] = pGroove->path_data.circular_info.centre.v[1] + pos;
+        }
+
+        if (pGroove->path_data.circular_info.axis == eAxis_x) {
+            if (pGroove->path_data.circular_info.period.value == 0.0f) {
+                pos = 0.f;
+            } else {
+                pos = cosf(BrAngleToRadian(BrDegreeToAngle(fmodf((float)pTime, pGroove->path_data.circular_info.period.value) / pGroove->path_data.circular_info.period.value * 360.0f))) * pGroove->path_data.circular_info.radius;
+            }
+            pMat->m[3][2] = pGroove->path_data.circular_info.centre.v[1] + pos;
+        } else if (pGroove->path_data.circular_info.axis == eAxis_z) {
+            if (pGroove->path_data.circular_info.period.value == 0.0f) {
+                pos = 0.f;
+            } else {
+                pos = sinf(BrAngleToRadian(BrDegreeToAngle(fmodf((float)pTime, pGroove->path_data.circular_info.period.value) / pGroove->path_data.circular_info.period.value * 360.0f))) * pGroove->path_data.circular_info.radius;
+            }
+            pMat->m[3][2] = pGroove->path_data.circular_info.centre.v[1] + pos;
+        }
+        BrVector3Copy(&pGroove->object_position, &pGroove->actor->t.t.translate.t);
+        break;
+    default:
+        break;
+    }
+}
+C2_HOOK_FUNCTION(0x00478e30, PathGrooveBastard)
+
 void (C2_HOOK_FASTCALL * GrooveThoseDelics_original)(void);
 void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
 

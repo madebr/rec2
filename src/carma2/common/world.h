@@ -325,6 +325,8 @@ void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor);
 
 int C2_HOOK_FASTCALL PointOutOfSight(br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
 
+void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it);
+
 void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 
 float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber);
