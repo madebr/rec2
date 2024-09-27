@@ -146,6 +146,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMouse_in_use, 0x0079ecb8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_cursor_index, 0x0067be90);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_to_horiz_angle, 0x00704e44);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gYon_squared, 0x00762100);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMirror_on__graphics, 0x00704e40);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
