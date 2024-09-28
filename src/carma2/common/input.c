@@ -6,11 +6,16 @@
 
 #include "rec2_macros.h"
 
+#define NBR_ROLLING_LETTERS 500
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEdge_trigger_mode, 0x0068c1c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tJoy_array, gJoy_array, 0x0074b5c0);
 C2_HOOK_VARIABLE_IMPLEMENT(tKey_array, gKey_array, 0x0068bee0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_poll_counter, 0x0068bed4);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tMouse_coord, gCurrent_mouse_position, 0x006571f8, {-1, -1});
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_roll, 0x0068c144);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_cursor, 0x0068c140);
+C2_HOOK_VARIABLE_IMPLEMENT(tRolling_letter*, gRolling_letters, 0x0068be88);
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
@@ -248,3 +253,19 @@ int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482a00, PDAnyKeyDown, PDAnyKeyDown_original)
+
+void C2_HOOK_FASTCALL InitRollingLetters(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tRolling_letter) != 0x38);
+    C2_HOOK_BUG_ON(NBR_ROLLING_LETTERS != 500);
+    C2_HOOK_BUG_ON(NBR_ROLLING_LETTERS * sizeof(tRolling_letter) != 28000);
+
+    C2V(gLast_roll) = 0;
+    C2V(gCurrent_cursor) = -1;
+    C2V(gRolling_letters) = BrMemAllocate(NBR_ROLLING_LETTERS * sizeof(tRolling_letter), kMem_misc);
+    for (i = 0; i < NBR_ROLLING_LETTERS; i++) {
+        C2V(gRolling_letters)[i].number_of_letters = -1;
+    }
+}
+C2_HOOK_FUNCTION(0x00483c90, InitRollingLetters)

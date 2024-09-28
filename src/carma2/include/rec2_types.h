@@ -454,7 +454,83 @@ typedef enum {
 } tLoadTextureFlags;
 
 // relict from Carmageddon I
-typedef struct tInterface_spec tInterface_spec;
+
+typedef struct tFlicette {
+    int flic_index;
+    int x[2];
+    int y[2];
+} tFlicette;
+
+typedef struct tMouse_area {
+    int left[2];
+    int top[2];
+    int right[2];
+    int bottom[2];
+    int new_choice;
+    int new_mode;
+    int available_when_typing;
+    int (C2_HOOK_FASTCALL*mouse_click)(int*, int*, int, int);
+} tMouse_area;
+
+typedef struct tRectile {
+    int left[2];
+    int top[2];
+    int right[2];
+    int bottom[2];
+} tRectile;
+
+typedef struct tInterface_spec {
+    int initial_imode;
+    int first_opening_flic;
+    int second_opening_flic;
+    int end_flic_go_ahead;
+    int end_flic_escaped;
+    int end_flic_otherwise;
+    int flic_bunch_to_load;
+    int move_left_new_mode[2];
+    int move_left_delta[2];
+    int move_left_min[2];
+    int move_left_max[2];
+    int (C2_HOOK_FASTCALL*move_left_proc[2])(int*, int*);
+    int move_right_new_mode[2];
+    int move_right_delta[2];
+    int move_right_min[2];
+    int move_right_max[2];
+    int (C2_HOOK_FASTCALL*move_right_proc[2])(int*, int*);
+    int move_up_new_mode[2];
+    int move_up_delta[2];
+    int move_up_min[2];
+    int move_up_max[2];
+    int (C2_HOOK_FASTCALL*move_up_proc[2])(int*, int*);
+    int move_down_new_mode[2];
+    int move_down_delta[2];
+    int move_down_min[2];
+    int move_down_max[2];
+    int (C2_HOOK_FASTCALL*move_down_proc[2])(int*, int*);
+    int go_ahead_allowed[2];
+    int (C2_HOOK_FASTCALL*go_ahead_proc[2])(int*, int*);
+    int escape_allowed[2];
+    int (C2_HOOK_FASTCALL*escape_proc[2])(int*, int*);
+    int (C2_HOOK_FASTCALL*exit_proc)(int*, int*);
+    void (C2_HOOK_FASTCALL*draw_proc)(int, int);
+    tU32 time_out;
+    void (C2_HOOK_FASTCALL*start_proc1)(void);
+    void (C2_HOOK_FASTCALL*start_proc2)(void);
+    int (C2_HOOK_FASTCALL*done_proc)(int, int, int, int, int);
+    int font_needed;
+    int typeable[2];
+    void (C2_HOOK_FASTCALL*get_original_string)(int, int, char*, int*);
+    int escape_code;
+    int dont_save_or_load;
+    int number_of_button_flics;
+    tFlicette* flicker_on_flics;
+    tFlicette* flicker_off_flics;
+    tFlicette* pushed_flics;
+    int number_of_mouse_areas;
+    tMouse_area* mouse_areas;
+    int number_of_recopy_areas;
+    tRectile* recopy_areas;
+} tInterface_spec;
 
 typedef struct tLoadDirectoryStructureCBResult {
     char* name;
@@ -840,6 +916,22 @@ typedef struct {
     int field_0x518;
     int field_0x51c;
 } tGraf_data;
+
+typedef enum tRolling_type {
+    eRT_alpha = 0,
+    eRT_numeric = 1,
+    eRT_looping_random = 2,
+    eRT_looping_single = 3
+} tRolling_type;
+
+typedef struct tRolling_letter {
+    int letters[9];
+    int x_coord;
+    int y_coord;
+    int number_of_letters;
+    tRolling_type rolling_type;
+    float current_offset;
+} tRolling_letter;
 
 typedef enum {
     kPixelFlags_16bbp = 0x1,
