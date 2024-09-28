@@ -9,6 +9,9 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gGo_ahead_keys, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gKey_mapping, 77);
 C2_HOOK_VARIABLE_DECLARE(int, GEdge_trigger_mode);
 C2_HOOK_VARIABLE_DECLARE(tMouse_coord, gCurrent_mouse_position);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_roll);
+C2_HOOK_VARIABLE_DECLARE(int, gCurrent_cursor);
+C2_HOOK_VARIABLE_DECLARE(tRolling_letter*, gRolling_letters);
 
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 
@@ -39,5 +42,7 @@ int C2_HOOK_FASTCALL KeyIsDown2(int pKey_index);
 void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY);
 
 int C2_HOOK_FASTCALL PDAnyKeyDown(void);
+
+void C2_HOOK_FASTCALL InitRollingLetters(void);
 
 #endif // REC2_INPUT_H

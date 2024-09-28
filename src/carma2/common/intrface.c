@@ -12,6 +12,8 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_item_spec, gDefaultLastInterfaceItem, 0x00604730, FIXME);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAlways_typing, 0x0068c1f0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDisabled_count, 0x0068c1ec);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisabled_choices, 10, 0x0068c1f8);
 
 int (C2_HOOK_FASTCALL * DoInterfaceScreen_original)(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
 int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice) {
@@ -143,3 +145,51 @@ void C2_HOOK_FASTCALL ClearAlwaysTyping(void) {
     C2V(gAlways_typing) = 0;
 }
 C2_HOOK_FUNCTION(0x00484630, ClearAlwaysTyping)
+
+int C2_HOOK_FASTCALL ChoiceDisabled(int pChoice) {
+    int i;
+
+    for (i = 0; i < C2V(gDisabled_count); ++i) {
+        if (C2V(gDisabled_choices)[i] == pChoice) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_selection, int* pNew_selection, int pMode, int pSkip_disabled) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tInterface_spec, move_up_min, 0x7c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tInterface_spec, move_up_max, 0x84);
+
+    if (ChoiceDisabled(*pNew_selection)) {
+        if (!pSkip_disabled) {
+            *pNew_selection = *pOld_selection;
+        } else if (*pOld_selection < *pNew_selection) {
+            do {
+                *pNew_selection += 1;
+                if (*pNew_selection < pSpec->move_up_min[pMode]) {
+                    *pNew_selection = pSpec->move_up_max[pMode];
+                }
+                if (*pNew_selection > pSpec->move_up_max[pMode]) {
+                    *pNew_selection = pSpec->move_up_min[pMode];
+                }
+            } while (*pNew_selection != *pOld_selection && ChoiceDisabled(*pNew_selection));
+        } else {
+            do {
+                *pNew_selection -= 1;
+                if (*pNew_selection < pSpec->move_up_min[pMode]) {
+                    *pNew_selection = pSpec->move_up_max[pMode];
+                }
+                if (*pNew_selection > pSpec->move_up_max[pMode]) {
+                    *pNew_selection = pSpec->move_up_min[pMode];
+                }
+            } while (*pNew_selection != *pOld_selection && ChoiceDisabled(*pNew_selection));
+        }
+    }
+
+    if (*pOld_selection != *pNew_selection) {
+        *pOld_selection = *pNew_selection;
+    }
+}
+C2_HOOK_FUNCTION(0x00484dd0, ChangeSelection)
