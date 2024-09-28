@@ -331,6 +331,8 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
 
 void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* ref_to_world, tLollipop_mode pWhich_axis);
 
+void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it);
+
 void C2_HOOK_FASTCALL GrooveThoseDelics(void);
 
 float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber);
