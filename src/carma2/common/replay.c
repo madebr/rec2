@@ -134,3 +134,14 @@ int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
     return C2V(gReplay_rate) == 0.f;
 }
 C2_HOOK_FUNCTION(0x00402360, ARReplayIsReallyPaused)
+
+void (C2_HOOK_FASTCALL * PipeSingleGrooveStop_original)(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption);
+void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PipeSingleGrooveStop_original(pGroove_index, pMatrix, pPath_interrupt, pObject_interrupt, pPath_resumption, pObject_resumption);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c80b0, PipeSingleGrooveStop, PipeSingleGrooveStop_original)
