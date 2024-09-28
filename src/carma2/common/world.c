@@ -189,6 +189,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gDelete_count, 0x006ab7a8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gDelete_list, 500, 0x006aafc8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSpec_vol_mode, 0x006ab940);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gSpec_vol_actors, 100, 0x006ab7b0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gPrevious_groove_times, 2, 0x0068b838);
 
 #define SAW(T, PERIOD) (fmodf((T), (PERIOD)) / (PERIOD))
 
@@ -5423,10 +5424,26 @@ C2_HOOK_FUNCTION(0x00478c80, GrooveThisDelic)
 void (C2_HOOK_FASTCALL * GrooveThoseDelics_original)(void);
 void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     GrooveThoseDelics_original();
 #else
-#error "Not implemented"
+    int i;
+    float f_the_time;
+
+    if (C2V(gGroovidelics_array) != NULL) {
+        f_the_time = (float)GetTotalTime();
+        C2V(gPrevious_groove_times)[1] = C2V(gPrevious_groove_times)[0];
+        C2V(gPrevious_groove_times)[0] = (tU32)f_the_time;
+
+        for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+            tGroovidelic_spec* the_groove;
+
+            the_groove = &C2V(gGroovidelics_array)[i];
+            if (the_groove->owner != -999 && !the_groove->done_this_frame) {
+                GrooveThisDelic(the_groove, (tU32)f_the_time, 0);
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00478c00, GrooveThoseDelics, GrooveThoseDelics_original)
