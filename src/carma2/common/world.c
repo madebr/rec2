@@ -5281,6 +5281,85 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
 }
 C2_HOOK_FUNCTION(0x00479890, ObjectGrooveBastard)
 
+void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* ref_to_world, tLollipop_mode pWhich_axis) {
+    br_vector3 ref_to_subject;
+    br_vector3 fixed_axis;
+    br_vector3 vector_a;
+    br_vector3 vector_b;
+    br_matrix34 subject_to_world;
+    br_matrix34 mat;
+
+    BrActorToActorMatrix34(&subject_to_world, pSubject_actor, C2V(gNon_track_actor));
+    BrVector3Sub(&ref_to_subject, (br_vector3*)ref_to_world->m[3], (br_vector3*)subject_to_world.m[3]);
+    switch (pWhich_axis) {
+    case eLollipop_x_match:
+        BrVector3SetFloat(&vector_a, 1.f, 0.f, 0.f);
+        break;
+    case eLollipop_y_match:
+        BrVector3SetFloat(&vector_a, 0.f, 1.f, 0.f);
+        break;
+    case eLollipop_z_match:
+        BrVector3SetFloat(&vector_a, 0.f, 0.f, 1.f);
+        break;
+    case eLollipop_none:
+        c2_abort();
+        break;
+    }
+    BrVector3Cross(&vector_b, &ref_to_subject, &vector_a);
+    BrVector3Normalise(&vector_b, &vector_b);
+
+    BrVector3Cross(&fixed_axis, &vector_a, &vector_b);
+
+    switch (pWhich_axis) {
+    case eLollipop_none:
+        break;
+    case eLollipop_x_match:
+        mat.m[0][0] = vector_a.v[0];
+        mat.m[1][0] = vector_a.v[1];
+        mat.m[2][0] = vector_a.v[2];
+        mat.m[0][1] = vector_b.v[0];
+        mat.m[1][1] = vector_b.v[1];
+        mat.m[2][1] = vector_b.v[2];
+        mat.m[0][2] = fixed_axis.v[0];
+        mat.m[1][2] = fixed_axis.v[1];
+        mat.m[2][2] = fixed_axis.v[2];
+        mat.m[3][0] = 0.f;
+        mat.m[3][1] = 0.f;
+        mat.m[3][2] = 0.f;
+        break;
+    case eLollipop_y_match:
+        mat.m[0][0] = vector_b.v[0];
+        mat.m[1][0] = vector_b.v[1];
+        mat.m[2][0] = vector_b.v[2];
+        mat.m[0][1] = vector_a.v[0];
+        mat.m[1][1] = vector_a.v[1];
+        mat.m[2][1] = vector_a.v[2];
+        mat.m[0][2] = fixed_axis.v[0];
+        mat.m[1][2] = fixed_axis.v[1];
+        mat.m[2][2] = fixed_axis.v[2];
+        mat.m[3][0] = 0.f;
+        mat.m[3][1] = 0.f;
+        mat.m[3][2] = 0.f;
+        break;
+    case eLollipop_z_match:
+        mat.m[0][0] = vector_b.v[0];
+        mat.m[1][0] = vector_b.v[1];
+        mat.m[2][0] = vector_b.v[2];
+        mat.m[0][1] = fixed_axis.v[0];
+        mat.m[1][1] = fixed_axis.v[1];
+        mat.m[2][1] = fixed_axis.v[2];
+        mat.m[0][2] = vector_a.v[0];
+        mat.m[1][2] = vector_a.v[1];
+        mat.m[2][2] = vector_a.v[2];
+        mat.m[3][0] = 0.f;
+        mat.m[3][1] = 0.f;
+        mat.m[3][2] = 0.f;
+        break;
+    }
+    BrMatrix34Pre(&pSubject_actor->t.t.mat, &mat);
+}
+C2_HOOK_FUNCTION(0x004e4650, LollipopizeActor)
+
 void (C2_HOOK_FASTCALL * GrooveThoseDelics_original)(void);
 void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
 
