@@ -31,4 +31,6 @@ void C2_HOOK_FASTCALL PollActionReplayControls(tU32 *pFrame_period, tU32* pAvera
 
 int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void);
 
+void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption);
+
 #endif //REC2_REPLAY_H
