@@ -25,4 +25,6 @@ int C2_HOOK_FASTCALL ChoiceDisabled(int pChoice);
 
 void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_selection, int* pNew_selection, int pMode, int pSkip_disabled);
 
+void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode);
+
 #endif //REC2_INTRFACE_H
