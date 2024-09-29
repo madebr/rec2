@@ -8,6 +8,8 @@
 
 #include "rec2_macros.h"
 
+#include "c2_string.h"
+
 #define NBR_ROLLING_LETTERS 500
 #define ROLLING_LETTER_LOOP_RANDOM 96
 
@@ -22,6 +24,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tRolling_letter*, gRolling_letters, 0x0068be88);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gLetter_x_coords, 15, 0x0068be90);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gVisible_length, 0x0068bed0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gLetter_y_coords, 15, 0x0068be48);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gThe_length, 0x0068be84);
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
@@ -367,3 +370,12 @@ int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_ch
     return i;
 }
 C2_HOOK_FUNCTION(0x00484000, ChangeCharTo)
+
+void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str) {
+    unsigned i;
+
+    for (i = 0; (int)i < C2V(gThe_length); i++) {
+        ChangeCharTo(pSlot_index, i, i >= c2_strlen(pRevert_str) ? ' ' : pRevert_str[i]);
+    }
+}
+C2_HOOK_FUNCTION(0x00484120, RevertTyping)

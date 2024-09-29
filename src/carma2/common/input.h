@@ -14,6 +14,7 @@ C2_HOOK_VARIABLE_DECLARE(tRolling_letter*, gRolling_letters);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gLetter_x_coords, 15);
 C2_HOOK_VARIABLE_DECLARE(int, gVisible_length);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gLetter_y_coords, 15);
+C2_HOOK_VARIABLE_DECLARE(int, gThe_length);
 
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 
@@ -50,5 +51,7 @@ void C2_HOOK_FASTCALL InitRollingLetters(void);
 int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type rolling_type);
 
 int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_char);
+
+void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str);
 
 #endif // REC2_INPUT_H
