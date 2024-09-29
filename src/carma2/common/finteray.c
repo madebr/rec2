@@ -572,3 +572,33 @@ void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_
     }
 }
 C2_HOOK_FUNCTION(0x0045ecc0, CheckSingleFace)
+
+void (C2_HOOK_FASTCALL * FillInBounds_original)(tBounds* bnds);
+void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
+    br_vector3 a;
+    br_vector3 b;
+    br_vector3 c[3];
+    int i;
+
+    BrVector3Add(&a, &bnds->original_bounds.min, &bnds->original_bounds.max);
+    BrVector3Scale(&a, &a, 0.5f);
+    BrMatrix34ApplyP(&bnds->box_centre, &a, bnds->mat);
+    BrVector3Sub(&b, &bnds->original_bounds.max, &bnds->original_bounds.min);
+    bnds->radius = BrVector3Length(&b) / 2.f;
+    BrMatrix34ApplyP(&bnds->real_bounds.min, &bnds->original_bounds.min, bnds->mat);
+    BrVector3Copy(&bnds->real_bounds.max, &bnds->real_bounds.min);
+    for (i = 0; i < 3; ++i) {
+        c[i].v[0] = bnds->mat->m[i][0] * b.v[i];
+        c[i].v[1] = bnds->mat->m[i][1] * b.v[i];
+        c[i].v[2] = bnds->mat->m[i][2] * b.v[i];
+    }
+    for (i = 0; i < 3; ++i) {
+        bnds->real_bounds.min.v[i] += MIN(c[0].v[i], 0.f)
+            + MIN(c[1].v[i], 0.f)
+            + MIN(c[2].v[i], 0.f);
+        bnds->real_bounds.max.v[i] += MAX(c[0].v[i], 0.f)
+            + MAX(c[1].v[i], 0.f)
+            + MAX(c[2].v[i], 0.f);
+    }
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045f690, FillInBounds, FillInBounds_original)
