@@ -379,3 +379,9 @@ void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str) {
     }
 }
 C2_HOOK_FUNCTION(0x00484120, RevertTyping)
+
+void C2_HOOK_FASTCALL EndRollingLetters(void) {
+
+    BrMemFree(C2V(gRolling_letters));
+}
+C2_HOOK_FUNCTION(0x00483ce0, EndRollingLetters)

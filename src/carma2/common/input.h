@@ -54,4 +54,6 @@ int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_ch
 
 void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str);
 
+void C2_HOOK_FASTCALL EndRollingLetters(void);
+
 #endif // REC2_INPUT_H
