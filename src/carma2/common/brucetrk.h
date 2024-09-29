@@ -36,4 +36,6 @@ void C2_HOOK_FASTCALL DisposeActorMatrix(tTrack_spec* pTrack_spec, tTrack_square
 
 void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec);
 
+void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX, br_scalar pZ, tTrack_spec* pTrack_spec);
+
 #endif //REC2_BRUCETRK_H

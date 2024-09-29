@@ -502,3 +502,27 @@ void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec) {
 }
 
 C2_HOOK_FUNCTION_ORIGINAL(0x0040ca90, DisposeColumns, DisposeColumns_original)
+
+void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX, br_scalar pZ, tTrack_spec* pTrack_spec) {
+    br_scalar x;
+    br_scalar z;
+
+    x = (pX - pTrack_spec->origin_x) / pTrack_spec->column_size_x;
+    z = (pZ - pTrack_spec->origin_z) / pTrack_spec->column_size_z;
+    if (x < 0.0f) {
+        x = 0.0f;
+    }
+    if (x >= pTrack_spec->ncolumns_x) {
+        x = pTrack_spec->ncolumns_x - 1.0f;
+    }
+    if (z < 0.0f) {
+        z = 0.0f;
+    }
+    if (z >= pTrack_spec->ncolumns_z) {
+        z = pTrack_spec->ncolumns_z - 1.0f;
+    }
+    *pColumn_x = (tU8)x;
+    *pColumn_z = (tU8)z;
+}
+
+C2_HOOK_FUNCTION(0x0040cb90, XZToColumnXZ)
