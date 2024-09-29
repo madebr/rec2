@@ -6,6 +6,8 @@
 
 #include "rec2_macros.h"
 
+#include <math.h>
+
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPling_materials, 0x005964c0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTemp_group, 0x006861c8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNearest_face, 0x00686188);
@@ -602,3 +604,33 @@ void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
     }
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045f690, FillInBounds, FillInBounds_original)
+
+int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2) {
+    int i;
+    if (b1->min.v[0] > b2->max.v[0]
+           || b2->min.v[0] > b1->max.v[0]
+           || b1->min.v[1] > b2->max.v[1]
+           || b2->min.v[1] > b1->max.v[1]
+           || b1->min.v[2] > b2->max.v[2]
+           || b2->min.v[2] > b1->max.v[2]) {
+
+        return 0;
+    }
+
+    for (i = 0; i < 3; i++) {
+        if (!isfinite(b1->min.v[i])) {
+            return 0;
+        }
+        if (!isfinite(b1->max.v[i])) {
+            return 0;
+        }
+        if (!isfinite(b2->min.v[i])) {
+            return 0;
+        }
+        if (!isfinite(b2->max.v[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x00425ba0, BoundsOverlapTest__finteray)
