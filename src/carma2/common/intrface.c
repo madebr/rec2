@@ -1,9 +1,14 @@
 #include "intrface.h"
 
 #include "errors.h"
+#include "flicplay.h"
+#include "frontend.h"
 #include "globvars.h"
+#include "graphics.h"
+#include "input.h"
 #include "loading.h"
 #include "platform.h"
+#include "sound.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -16,6 +21,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gAlways_typing, 0x0068c1f0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisabled_count, 0x0068c1ec);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisabled_choices, 10, 0x0068c1f8);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gStart_time, 0x0068c228);
+C2_HOOK_VARIABLE_IMPLEMENT(const tInterface_spec*, gSpec, 0x0068c1e8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_mode, 0x0068c220);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_choice, 0x0068c224);
 
 void C2_HOOK_FASTCALL OriginalResetInterfaceTimeout(void) {
     C2V(gStart_time) = PDGetTotalTime();
@@ -25,12 +33,226 @@ C2_HOOK_FUNCTION(0x00484640, OriginalResetInterfaceTimeout)
 int (C2_HOOK_FASTCALL * DoInterfaceScreen_original)(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
 int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice) {
 
-    // Relict from Carmageddon 1, unused here
-    C2_HOOK_ASSUME_UNUSED();
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DoInterfaceScreen_original(pSpec, pOptions, pCurrent_choice);
 #else
-#error "Not implemented"
+    tProg_status entry_status;
+    int i;
+    int last_choice;
+    int escaped;
+    int timed_out;
+    int go_ahead;
+    int result;
+    int the_key;
+    int the_max;
+    int defeat_mode_change;
+    char the_str[256];
+
+    C2_HOOK_BUG_ON(sizeof(tInterface_spec) != 0x12c);
+
+    // Relict from Carmageddon 1, unused here
+    C2_HOOK_ASSUME_UNUSED();
+
+    entry_status = C2V(gProgram_state).prog_status;
+    C2V(gTyping_slot) = -1;
+    EdgeTriggerModeOn();
+    C2V(gSpec) = pSpec;
+    C2V(gDisabled_count) = 0;
+    LoadInterfaceStuff(C2V(gProgram_state).racing);
+    C2V(gProgram_state).dont_save_or_load = pSpec->dont_save_or_load;
+    for (i = 0; i < pSpec->number_of_button_flics; i++) {
+        LoadFlic(pSpec->flicker_on_flics[i].flic_index);
+        LoadFlic(pSpec->flicker_off_flics[i].flic_index);
+        LoadFlic(pSpec->pushed_flics[i].flic_index);
+    }
+
+    InitFlicQueue();
+    OriginalResetInterfaceTimeout();
+    C2V(gCurrent_choice) = pCurrent_choice;
+    C2V(gCurrent_mode) = pSpec->initial_imode;
+    if (pSpec->font_needed) {
+        InitRollingLetters();
+        LoadFont(0);
+    }
+    KillSplashScreen();
+    if (pSpec->start_proc1 != NULL) {
+        pSpec->start_proc1();
+    }
+    if (pSpec->start_proc2 != NULL) {
+        pSpec->start_proc2();
+    }
+    last_choice = -1;
+    ChangeSelection(pSpec, &last_choice, &C2V(gCurrent_choice), C2V(gCurrent_mode), 0);
+    WaitForNoKeys();
+    C2V(gMouse_in_use) = 0;
+    last_choice = C2V(gCurrent_choice);
+    for (;;) {
+        if (last_choice != C2V(gCurrent_choice)) {
+            ChangeSelection(pSpec, &last_choice, &C2V(gCurrent_choice), C2V(gCurrent_mode), 1);
+        }
+        last_choice = C2V(gCurrent_choice);
+        PollKeys();
+        EdgeTriggerModeOff();
+        the_key = PDAnyKeyDown();
+        if (the_key != -1 && the_key != 4) {
+            C2V(gMouse_in_use) = 0;
+            OriginalResetInterfaceTimeout();
+        }
+        EdgeTriggerModeOn();
+        if ((C2V(gTyping_slot) < 0 || C2V(gAlways_typing)) && (PDKeyDown(70) || PDKeyDown(85))) {
+            if (pSpec->move_left_delta[C2V(gCurrent_mode)] != 0) {
+                C2V(gCurrent_choice) += pSpec->move_left_delta[C2V(gCurrent_mode)];
+                if (C2V(gCurrent_choice) < pSpec->move_left_min[C2V(gCurrent_mode)]) {
+                    C2V(gCurrent_choice) = pSpec->move_left_max[C2V(gCurrent_mode)];
+                }
+                if (C2V(gCurrent_choice) > pSpec->move_left_max[C2V(gCurrent_mode)]) {
+                    C2V(gCurrent_choice) = pSpec->move_left_min[C2V(gCurrent_mode)];
+                }
+                DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+            }
+            if (pSpec->move_left_proc[C2V(gCurrent_mode)] != NULL) {
+                defeat_mode_change = pSpec->move_left_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            } else {
+                defeat_mode_change = 0;
+            }
+            if (pSpec->move_left_new_mode[C2V(gCurrent_mode)] >= 0 && !defeat_mode_change) {
+                C2V(gCurrent_mode) = pSpec->move_left_new_mode[C2V(gCurrent_mode)];
+            }
+        }
+        if ((C2V(gTyping_slot) < 0 || C2V(gAlways_typing)) && (PDKeyDown(71) || PDKeyDown(87))) {
+            if (pSpec->move_right_delta[C2V(gCurrent_mode)] != 0) {
+                C2V(gCurrent_choice) += pSpec->move_right_delta[C2V(gCurrent_mode)];
+                if (C2V(gCurrent_choice) < pSpec->move_right_min[C2V(gCurrent_mode)]) {
+                    C2V(gCurrent_choice) = pSpec->move_right_max[C2V(gCurrent_mode)];
+                }
+                if (C2V(gCurrent_choice) > pSpec->move_right_max[C2V(gCurrent_mode)]) {
+                    C2V(gCurrent_choice) = pSpec->move_right_min[C2V(gCurrent_mode)];
+                }
+                DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+            }
+            if (pSpec->move_right_proc[C2V(gCurrent_mode)] != NULL) {
+                defeat_mode_change = pSpec->move_right_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            } else {
+                defeat_mode_change = 0;
+            }
+            if (pSpec->move_right_new_mode[C2V(gCurrent_mode)] >= 0 && !defeat_mode_change) {
+                C2V(gCurrent_mode) = pSpec->move_right_new_mode[C2V(gCurrent_mode)];
+            }
+        }
+        if (PDKeyDown(72) || PDKeyDown(89)) {
+            if (pSpec->move_up_delta[C2V(gCurrent_mode)] != 0) {
+                C2V(gCurrent_choice) += pSpec->move_up_delta[C2V(gCurrent_mode)];
+                if (C2V(gCurrent_choice) < pSpec->move_up_min[C2V(gCurrent_mode)]) {
+                    C2V(gCurrent_choice) = pSpec->move_up_max[C2V(gCurrent_mode)];
+                }
+                if (C2V(gCurrent_choice) > pSpec->move_up_max[C2V(gCurrent_mode)]) {
+                    C2V(gCurrent_choice) = pSpec->move_up_min[C2V(gCurrent_mode)];
+                }
+                DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+            }
+            if (pSpec->move_up_proc[C2V(gCurrent_mode)] != NULL) {
+                defeat_mode_change = pSpec->move_up_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            } else {
+                defeat_mode_change = 0;
+            }
+            if (pSpec->move_up_new_mode[C2V(gCurrent_mode)] >= 0 && !defeat_mode_change) {
+                C2V(gCurrent_mode) = pSpec->move_up_new_mode[C2V(gCurrent_mode)];
+            }
+        }
+        if (PDKeyDown(73) || PDKeyDown(83)) {
+            if (pSpec->move_down_delta[C2V(gCurrent_mode)] != 0) {
+                C2V(gCurrent_choice) += pSpec->move_down_delta[C2V(gCurrent_mode)];
+                if (C2V(gCurrent_choice) < pSpec->move_down_min[C2V(gCurrent_mode)]) {
+                    C2V(gCurrent_choice) = pSpec->move_down_max[C2V(gCurrent_mode)];
+                }
+                if (C2V(gCurrent_choice) > pSpec->move_down_max[C2V(gCurrent_mode)]) {
+                    C2V(gCurrent_choice) = pSpec->move_down_min[C2V(gCurrent_mode)];
+                }
+                DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+            }
+            if (pSpec->move_down_proc[C2V(gCurrent_mode)] != NULL) {
+                defeat_mode_change = pSpec->move_down_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            } else {
+                defeat_mode_change = 0;
+            }
+            if (pSpec->move_down_new_mode[C2V(gCurrent_mode)] >= 0 && !defeat_mode_change) {
+                C2V(gCurrent_mode) = pSpec->move_down_new_mode[C2V(gCurrent_mode)];
+            }
+        }
+        if (C2V(gTyping_slot) >= 0 && pSpec->typeable[C2V(gCurrent_mode)] && C2V(gTyping_slot) != C2V(gCurrent_choice) && !C2V(gAlways_typing)) {
+            C2V(gCurrent_choice) = C2V(gTyping_slot);
+        }
+        if (last_choice != C2V(gCurrent_choice)) {
+            ChangeSelection(pSpec, &last_choice, &C2V(gCurrent_choice), C2V(gCurrent_mode), 1);
+        }
+        timed_out = pSpec->time_out && (PDGetTotalTime() >= C2V(gStart_time) + pSpec->time_out);
+        RemoveTransientBitmaps(1);
+        go_ahead = 1;
+        if (pSpec->go_ahead_proc[C2V(gCurrent_mode)]) {
+            go_ahead = pSpec->go_ahead_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+        }
+        if (PDKeyDown(63)) {
+            DRS3StartSound(C2V(gEffects_outlet), eSoundId_EscEsc);
+            escaped = pSpec->escape_allowed[C2V(gCurrent_mode)];
+            if (pSpec->escape_proc[C2V(gCurrent_mode)] != NULL) {
+                escaped = pSpec->escape_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            }
+        } else {
+            escaped = 0;
+        }
+        if (escaped && C2V(gTyping_slot) >= 0 && !C2V(gAlways_typing)) {
+            pSpec->get_original_string(0, C2V(gTyping_slot), the_str, &the_max);
+            escaped = 0;
+            RevertTyping(C2V(gTyping_slot), the_str);
+            C2V(gTyping) = 0;
+            C2V(gTyping_slot) = -1;
+        }
+        if (last_choice != C2V(gCurrent_choice)) {
+            ChangeSelection(pSpec, &last_choice, &C2V(gCurrent_choice), C2V(gCurrent_mode), 1);
+        }
+        if (entry_status != eProg_idling && C2V(gProgram_state).prog_status == eProg_idling) {
+            escaped = 1;
+        }
+        if (pSpec->exit_proc != NULL) {
+            if (pSpec->exit_proc(&C2V(gCurrent_choice), &C2V(gCurrent_mode))) {
+                break;
+            }
+        }
+        if (go_ahead || timed_out || escaped) {
+            break;
+        }
+    }
+
+    C2V(gTyping) = 0;
+    if (pSpec->font_needed) {
+        EndRollingLetters();
+        DisposeFont(0);
+    }
+    RemoveTransientBitmaps(1);
+    FlushFlicQueue();
+    for (i = 0; i < pSpec->number_of_button_flics; i++) {
+        UnlockFlic(pSpec->flicker_on_flics[i].flic_index);
+        UnlockFlic(pSpec->flicker_off_flics[i].flic_index);
+        UnlockFlic(pSpec->pushed_flics[i].flic_index);
+    }
+
+    if (C2V(gCurrent_choice) == pSpec->escape_code) {
+        escaped = 1;
+        go_ahead = 0;
+    }
+    if (escaped) {
+        C2V(gCurrent_choice) = pSpec->escape_code;
+    }
+    if (pSpec->done_proc != NULL) {
+        result = (pSpec->done_proc)(C2V(gCurrent_choice), C2V(gCurrent_mode), go_ahead, escaped, timed_out);
+    } else {
+        result = C2V(gCurrent_choice);
+    }
+    C2V(gProgram_state).dont_save_or_load = 0;
+    EndMouseCursor();
+    UnlockInterfaceStuff();
+    EdgeTriggerModeOff();
+    return result;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004846e0, DoInterfaceScreen, DoInterfaceScreen_original)
