@@ -3,6 +3,7 @@
 #include "errors.h"
 #include "globvars.h"
 #include "loading.h"
+#include "platform.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -14,6 +15,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_item_spec, gDefaultLastInterfaceItem, 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAlways_typing, 0x0068c1f0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisabled_count, 0x0068c1ec);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisabled_choices, 10, 0x0068c1f8);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gStart_time, 0x0068c228);
+
+void C2_HOOK_FASTCALL OriginalResetInterfaceTimeout(void) {
+    C2V(gStart_time) = PDGetTotalTime();
+}
+C2_HOOK_FUNCTION(0x00484640, OriginalResetInterfaceTimeout)
 
 int (C2_HOOK_FASTCALL * DoInterfaceScreen_original)(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
 int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice) {
