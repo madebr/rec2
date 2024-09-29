@@ -44,4 +44,6 @@ void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_
 
 void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds);
 
+int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2);
+
 #endif
