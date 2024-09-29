@@ -422,3 +422,13 @@ void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_se
     }
 }
 C2_HOOK_FUNCTION(0x00484dd0, ChangeSelection)
+
+void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode) {
+    int last_choice;
+
+    last_choice = C2V(gCurrent_choice);
+    C2V(gCurrent_choice) = pNew_choice;
+    C2V(gCurrent_mode) = pNew_mode;
+    ChangeSelection(C2V(gSpec), &last_choice, &C2V(gCurrent_choice), pNew_mode, 1);
+}
+C2_HOOK_FUNCTION(0x00484f10, ChangeSelectionTo)
