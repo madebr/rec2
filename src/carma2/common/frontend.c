@@ -1351,10 +1351,34 @@ C2_HOOK_FUNCTION(0x00470c10, Generic_Outfunc)
 int (C2_HOOK_FASTCALL * Ians_GetItemAtMousePos_original)(tFrontend_spec* pFrontend, int pX, int pY);
 int C2_HOOK_FASTCALL Ians_GetItemAtMousePos(tFrontend_spec* pFrontend, int pX, int pY) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return Ians_GetItemAtMousePos_original(pFrontend, pX, pY);
 #else
-#error "Not implemented"
+    int i;
+    tFrontend_slider* slider;
+
+    for (i = 0; i < pFrontend->count_items; i++) {
+        tFrontend_item_spec* item = &pFrontend->items[i];
+        br_model* model = C2V(gFrontend_brender_items)[i].model;
+        if (pX >= model->vertices[1].p.v[0] && pX <= model->vertices[3].p.v[0]
+                && pY >= -model->vertices[0].p.v[1] && pY <= -model->vertices[1].p.v[1]
+                && item->visible
+                && item->enabled > 0) {
+
+            return i;
+        }
+    }
+    for (slider = C2V(gCurrent_frontend_scrollbars); slider != NULL; slider = slider->next) {
+        for (i = 0; i < 3; i++) {
+            br_model* model = C2V(gFrontend_brender_items)[slider->itemid_start + i].model;
+            if (pX >= model->vertices[1].p.v[0] && pX <= model->vertices[3].p.v[0]
+                    && pY >= -model->vertices[0].p.v[1] && pY <= -model->vertices[1].p.v[1]) {
+
+                return slider->itemid_start + i;
+            }
+        }
+    }
+    return -1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00471ba0, Ians_GetItemAtMousePos, Ians_GetItemAtMousePos_original)
