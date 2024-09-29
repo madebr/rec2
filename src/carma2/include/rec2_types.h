@@ -127,6 +127,14 @@ typedef int tJoy_array[8];
 typedef int tKey_array[151];
 
 typedef struct {
+    br_matrix34* mat;
+    br_bounds original_bounds;
+    br_vector3 box_centre;
+    br_scalar radius;
+    br_bounds real_bounds;
+} tBounds;
+
+typedef struct {
     int x;
     int y;
 } tMouse_coord;
