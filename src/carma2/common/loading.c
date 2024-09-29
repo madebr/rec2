@@ -5839,6 +5839,11 @@ void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
 }
 C2_HOOK_FUNCTION(0x00487ea0, LoadInterfaceStuff)
 
+void C2_HOOK_FASTCALL UnlockInterfaceStuff(void) {
+
+}
+C2_HOOK_FUNCTION(0x0044bb80, UnlockInterfaceStuff)
+
 void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
 }
