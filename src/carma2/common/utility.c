@@ -2,11 +2,13 @@
 
 #include "errors.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "graphics.h"
 #include "init.h"
 #include "input.h"
 #include "loading.h"
 #include "main.h"
+#include "mainloop.h"
 #include "mainmenu.h"
 #include "network.h"
 #include "platform.h"
@@ -353,10 +355,18 @@ C2_HOOK_FUNCTION(0x00515870, DRStricmp)
 
 static tU32 (C2_HOOK_FASTCALL * GetTotalTime_original)(void);
 tU32 C2_HOOK_FASTCALL GetTotalTime(void) {
-#if defined(C2_HOOKS_ENABLED)
+
+#if 0//defined(C2_HOOKS_ENABLED)
     return GetTotalTime_original();
 #else
-#error "not implemented"
+
+    if (C2V(gAction_replay_mode)) {
+        return C2V(gLast_replay_frame_time);
+    }
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        return C2V(gLast_tick_count) + C2V(gFrame_period);
+    }
+    return C2V(gFrame_period) + C2V(gLast_tick_count) - C2V(gLost_time);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00514c30, GetTotalTime, GetTotalTime_original)
