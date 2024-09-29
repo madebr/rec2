@@ -591,7 +591,7 @@ typedef struct {
     int height;
     int field_0x8;
     int field_0xc;
-    int field_0x10;
+    int rolling_letter_x_pitch;
     int field_0x14;
     int field_0x18;
     int field_0x1c;

@@ -9,6 +9,7 @@
 #include "rec2_macros.h"
 
 #define NBR_ROLLING_LETTERS 500
+#define ROLLING_LETTER_LOOP_RANDOM 96
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEdge_trigger_mode, 0x0068c1c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tJoy_array, gJoy_array, 0x0074b5c0);
@@ -18,6 +19,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tMouse_coord, gCurrent_mouse_position, 0x006571f
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_roll, 0x0068c144);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_cursor, 0x0068c140);
 C2_HOOK_VARIABLE_IMPLEMENT(tRolling_letter*, gRolling_letters, 0x0068be88);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gLetter_x_coords, 15, 0x0068be90);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gVisible_length, 0x0068bed0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gLetter_y_coords, 15, 0x0068be48);
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
@@ -317,3 +321,49 @@ int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type 
     return 0;
 }
 C2_HOOK_FUNCTION(0x00483cf0, AddRollingLetter)
+
+int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_char) {
+    int x_coord;
+    int y_coord;
+    int i;
+    tRolling_letter* let;
+    tRolling_type new_type;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, save_slot_letter_height, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, rolling_letter_x_pitch, 0x10);
+
+    if (pChar_index >= C2V(gVisible_length) || pChar_index < 0) {
+        return -1;
+    }
+    y_coord = C2V(gLetter_y_coords)[pSlot_index];
+    x_coord = C2V(gLetter_x_coords)[pSlot_index] + pChar_index * C2V(gCurrent_graf_data)->rolling_letter_x_pitch;
+
+    if (pNew_char == ROLLING_LETTER_LOOP_RANDOM) {
+        new_type = eRT_looping_random;
+    } else if (pNew_char >= '0' && pNew_char <= '9') {
+        new_type = eRT_numeric;
+    } else {
+        new_type = eRT_alpha;
+    }
+
+    for (i = 0; i < NBR_ROLLING_LETTERS; i++) {
+        let = &C2V(gRolling_letters)[i];
+        if (let->number_of_letters >= 0 && x_coord == let->x_coord && y_coord == let->y_coord) {
+            break;
+        }
+    }
+    if (i >= NBR_ROLLING_LETTERS) {
+        return AddRollingLetter(pNew_char, x_coord, y_coord, new_type);
+    }
+    if (pNew_char != ROLLING_LETTER_LOOP_RANDOM) {
+        /* The (tU8) cast makes sure extended ASCII is positive. */
+        let->letters[0] = (tU8)pNew_char;
+    }
+    if (pNew_char == ' ') {
+        let->letters[0] = ' ';
+    }
+    let->rolling_type = new_type;
+    let->current_offset = (float)(C2V(gCurrent_graf_data)->save_slot_letter_height * let->number_of_letters);
+    return i;
+}
+C2_HOOK_FUNCTION(0x00484000, ChangeCharTo)

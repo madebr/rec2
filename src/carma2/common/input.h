@@ -11,6 +11,9 @@ C2_HOOK_VARIABLE_DECLARE(tMouse_coord, gCurrent_mouse_position);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_roll);
 C2_HOOK_VARIABLE_DECLARE(int, gCurrent_cursor);
 C2_HOOK_VARIABLE_DECLARE(tRolling_letter*, gRolling_letters);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gLetter_x_coords, 15);
+C2_HOOK_VARIABLE_DECLARE(int, gVisible_length);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gLetter_y_coords, 15);
 
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 
@@ -45,5 +48,7 @@ int C2_HOOK_FASTCALL PDAnyKeyDown(void);
 void C2_HOOK_FASTCALL InitRollingLetters(void);
 
 int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type rolling_type);
+
+int C2_HOOK_FASTCALL ChangeCharTo(int pSlot_index, int pChar_index, char pNew_char);
 
 #endif // REC2_INPUT_H
