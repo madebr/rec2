@@ -8,6 +8,9 @@
 C2_HOOK_VARIABLE_DECLARE(int, gAlways_typing);
 C2_HOOK_VARIABLE_DECLARE(int, gDisabled_count);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gDisabled_choices, 10);
+C2_HOOK_VARIABLE_DECLARE(tU32, gStart_time);
+
+void C2_HOOK_FASTCALL OriginalResetInterfaceTimeout(void);
 
 int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
 
