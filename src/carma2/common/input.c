@@ -1,6 +1,8 @@
 #include "input.h"
 
 #include "globvars.h"
+#include "grafdata.h"
+#include "utility.h"
 
 #include "platform.h"
 
@@ -269,3 +271,49 @@ void C2_HOOK_FASTCALL InitRollingLetters(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00483c90, InitRollingLetters)
+
+int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type rolling_type) {
+    tRolling_letter* let;
+    int i;
+
+    for (i = 0; i < NBR_ROLLING_LETTERS; i++) {
+        let = &C2V(gRolling_letters)[i];
+        if (let->number_of_letters < 0) {
+            break;
+        }
+    }
+    if (i == NBR_ROLLING_LETTERS) {
+        return -1;
+    }
+    let->x_coord = pX;
+    let->y_coord = pY;
+    let->rolling_type = rolling_type;
+    switch (rolling_type) {
+    case eRT_looping_random:
+        let->number_of_letters = 9;
+        break;
+    case eRT_looping_single:
+        let->number_of_letters = 2;
+        break;
+    default:
+        let->number_of_letters = IRandomBetween(3, 9);
+        break;
+    }
+
+    let->current_offset = (float)(let->number_of_letters * C2V(gCurrent_graf_data)->save_slot_letter_height);
+    for (i = (rolling_type != eRT_looping_random ? 1 : 0); i < let->number_of_letters; i++) {
+        if (rolling_type == eRT_numeric) {
+            /* The (tU8) cast makes sure extended ASCII is positive. */
+            let->letters[i] = (tU8)pChar;
+        } else {
+            let->letters[i] = IRandomBetween('A', 'Z' + 1);
+        }
+    }
+    if (rolling_type != eRT_looping_random) {
+        /* The (tU8) cast makes sure extended ASCII is positive. */
+        let->letters[0] = (tU8)pChar;
+    }
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00483cf0, AddRollingLetter)

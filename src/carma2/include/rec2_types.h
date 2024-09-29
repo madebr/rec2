@@ -596,7 +596,7 @@ typedef struct {
     int field_0x18;
     int field_0x1c;
     int field_0x20;
-    int field_0x24;
+    int save_slot_letter_height;
     int field_0x28;
     int field_0x2c;
     int field_0x30;

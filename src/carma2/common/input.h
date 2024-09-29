@@ -44,4 +44,6 @@ int C2_HOOK_FASTCALL PDAnyKeyDown(void);
 
 void C2_HOOK_FASTCALL InitRollingLetters(void);
 
+int C2_HOOK_FASTCALL AddRollingLetter(char pChar, int pX, int pY, tRolling_type rolling_type);
+
 #endif // REC2_INPUT_H
