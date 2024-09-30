@@ -79,6 +79,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gCurrent_cursor_index);
 C2_HOOK_VARIABLE_DECLARE(float, gCamera_to_horiz_angle);
 C2_HOOK_VARIABLE_DECLARE(float, gYon_squared);
 C2_HOOK_VARIABLE_DECLARE(int, gMirror_on__graphics);
+C2_HOOK_VARIABLE_DECLARE(int, gShadow_clip_plane_count);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
@@ -197,5 +198,7 @@ void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on);
 void C2_HOOK_FASTCALL ResetLollipopQueue(void);
 
 void C2_HOOK_FASTCALL RevertPalette(void);
+
+void C2_HOOK_FASTCALL MungeClipPlane(br_vector3* pLight, tCar_spec* pCar, br_vector3* p1, br_vector3* p2, br_vector3* pOffset);
 
 #endif //REC2_GRAPHICS_H
