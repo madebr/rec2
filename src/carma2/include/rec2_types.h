@@ -3968,6 +3968,16 @@ typedef struct {
     float field_0xc;
 } tToggled_door;
 
+typedef struct {
+    undefined4* process_forces_callback;
+    undefined4* process_join_forces_callback;
+    undefined4* new_face_list_callback;
+    undefined4* find_faces_in_box_callback;
+    tCar_spec* (C2_HOOK_FASTCALL * pull_actor_from_world_callback)(br_actor*);
+    void (C2_HOOK_FASTCALL * stop_groovidelic_callback)(br_actor*);
+    undefined4* get_fricion_from_face_callback;
+} tWorld_callbacks;
+
 typedef struct tSave_game {
     tU32 magic;
     char player_name[14];
