@@ -304,3 +304,14 @@ void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a4a40, NetReceiveAndProcessMessages, NetReceiveAndProcessMessages_original)
+
+int (C2_HOOK_FASTCALL * NetGuaranteedSendMessageToAllPlayers_original)(tNet_game_details* pDetails, tNet_message* pMessage, undefined4 *pArg3);
+int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, undefined4 *pArg3) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetGuaranteedSendMessageToAllPlayers_original(pDetails, pMessage, pArg3);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a5b50, NetGuaranteedSendMessageToAllPlayers, NetGuaranteedSendMessageToAllPlayers_original)
