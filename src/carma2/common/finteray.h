@@ -13,6 +13,7 @@ C2_HOOK_VARIABLE_DECLARE(br_actor*, gNearest_actor);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gNearest_T);
 C2_HOOK_VARIABLE_DECLARE(int, gNearest_face_group);
 C2_HOOK_VARIABLE_DECLARE(br_matrix34, gPick_model_to_view__finteray);
+C2_HOOK_VARIABLE_DECLARE(tFace_ref*, gPling_face);
 
 void C2_HOOK_FASTCALL EnablePlingMaterials(void);
 
@@ -45,5 +46,11 @@ void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_
 void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds);
 
 int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2);
+
+void C2_HOOK_FASTCALL ClipToPlaneGE(br_scalar limit, br_vector3* p, int* nv, int i);
+
+void C2_HOOK_FASTCALL ClipToPlaneLE(br_scalar limit, br_vector3* p, int* nv, int i);
+
+int C2_HOOK_FASTCALL ModelPickBox(br_actor* actor, tBounds* bnds, br_model* model, br_material* model_material, tFace_ref* face_list, int max_face, br_matrix34* pMat);
 
 #endif
