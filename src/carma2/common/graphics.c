@@ -147,6 +147,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_cursor_index, 0x0067be90);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_to_horiz_angle, 0x00704e44);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gYon_squared, 0x00762100);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMirror_on__graphics, 0x00704e40);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gShadow_clip_plane_count, 0x006a27dc);
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -1249,3 +1250,35 @@ void C2_HOOK_FASTCALL RevertPalette(void) {
     DRSetPalette3(C2V(gRender_palette), 1);
 }
 C2_HOOK_FUNCTION(0x004b52b0, RevertPalette)
+
+void C2_HOOK_FASTCALL MungeClipPlane(br_vector3* pLight, tCar_spec* pCar, br_vector3* p1, br_vector3* p2, br_vector3* pOffset) {
+    br_vector3 v1;
+    br_vector3 v2;
+    br_vector3 v3;
+    br_vector3 v4;
+    br_scalar length;
+    br_actor* new_clip;
+
+    BrMatrix34ApplyP(&v1, p1, &pCar->car_master_actor->t.t.mat);
+    BrMatrix34ApplyP(&v2, p2, &pCar->car_master_actor->t.t.mat);
+    BrVector3Sub(&v3, p2, p1);
+    BrVector3Cross(&v4, &v3, pLight);
+    if (fabsf(v4.v[0]) >= 0.01f || fabsf(v4.v[1]) >= 0.01f || fabsf(v4.v[2]) >= 0.01f) {
+        BrVector3Sub(&v3, p1, pOffset);
+        if (BrVector3Dot(&v3, &v4) > 0.f) {
+            BrVector3Negate(&v4, &v4);
+        }
+        BrVector3Normalise(&v3, &v4);
+        BrMatrix34ApplyV(&v4, &v3, &pCar->car_master_actor->t.t.mat);
+
+        new_clip = C2V(gShadow_clip_planes)[C2V(gShadow_clip_plane_count)].clip;
+        ((br_vector4*)new_clip->type_data)->v[0] = v4.v[0];
+        ((br_vector4*)new_clip->type_data)->v[1] = v4.v[1];
+        ((br_vector4*)new_clip->type_data)->v[2] = v4.v[2];
+        ((br_vector4*)new_clip->type_data)->v[3] = -BrVector3Dot(&v1, &v4);
+        length = REC2_SQR(v1.v[2] - v2.v[2]) + REC2_SQR(v1.v[0] - v2.v[0]);
+        C2V(gShadow_clip_planes)[C2V(gShadow_clip_plane_count)].length = length;
+        C2V(gShadow_clip_plane_count) += 1;
+    }
+}
+C2_HOOK_FUNCTION(0x004e9680, MungeClipPlane)
