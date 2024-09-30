@@ -3959,6 +3959,13 @@ typedef struct {
     tU8 data[];
 } tNet_message_chunk_raw;
 
+typedef struct {
+    br_actor* actor;
+    tCar_spec* car;
+    int field_0x8;
+    float field_0xc;
+} tToggled_door;
+
 typedef struct tWorld_callbacks {
     int (C2_HOOK_FASTCALL * process_forces)(void*, float*, int arg3);
     int (C2_HOOK_FASTCALL * process_joint_forces)(undefined4, undefined4, undefined4);
@@ -3969,13 +3976,6 @@ typedef struct tWorld_callbacks {
     float (C2_HOOK_FASTCALL * get_friction_from_face)(void*);
     void (C2_HOOK_FASTCALL * activate_passive)(tCollision_info*);
 } tWorld_callbacks;
-
-typedef struct {
-    br_actor* actor;
-    tCar_spec* car;
-    int field_0x8;
-    float field_0xc;
-} tToggled_door;
 
 typedef struct tSave_game {
     tU32 magic;
