@@ -229,3 +229,14 @@ void C2_HOOK_FASTCALL ScanCarsPositions(tCar_spec* pCar, br_vector3* pSource_pos
     *pTime_returned = C2V(gTrigger_time);
 }
 C2_HOOK_FUNCTION(0x004c6920, ScanCarsPositions)
+
+void (C2_HOOK_FASTCALL * PipeSingleOilSpill_original)(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap);
+void C2_HOOK_FASTCALL PipeSingleOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PipeSingleOilSpill_original(pIndex, pMat, pFull_size, pGrow_rate, pSpill_time, pStop_time, pCar, pOriginal_pos, pPixelmap);
+#else
+#error "Not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c82e0, PipeSingleOilSpill, PipeSingleOilSpill_original)
