@@ -9,6 +9,8 @@ void C2_HOOK_FASTCALL InitOilSpills(void);
 
 void C2_HOOK_FASTCALL ResetOilSpills(void);
 
+void C2_HOOK_FASTCALL SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel);
+
 void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period);
 
 #endif //REC2_OIL_H

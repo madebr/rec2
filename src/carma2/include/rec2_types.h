@@ -2792,13 +2792,13 @@ typedef struct {
     br_model* car_model;
     tCar_spec* car;
     tU32 spill_time;
-    undefined4 field_0x14;
+    tU32 stop_time;
     float full_size;
-    float field_0x1c;
+    float current_size;
     float field_0x20;
-    float field_0x24;
+    float grow_rate;
     br_vector3 original_pos;
-    br_vector3 field_0x34;
+    br_vector3 position;
     float field_0x40;
     float field_0x44;
     float field_0x48;
