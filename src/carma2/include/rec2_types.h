@@ -3810,7 +3810,9 @@ typedef struct {
     br_vector3 normal;
     int flags;
     br_scalar d;
-    undefined field_0x48[8];
+    br_actor* a;
+    tS16 g;
+    tS16 f;
 } tFace_ref;
 
 typedef struct {
