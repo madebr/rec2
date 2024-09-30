@@ -1282,3 +1282,9 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_mat
     return 0;
 }
 C2_HOOK_FUNCTION(0x00514850, DRActorEnumRecurseWithTrans)
+
+int C2_HOOK_FASTCALL NormalSideOfPlane(br_vector3* pPoint, br_vector3* pNormal, br_scalar pD) {
+
+    return BrVector3Dot(pNormal, pNormal) * (BrVector3Dot(pNormal, pPoint) - pD) >= 0.f;
+}
+C2_HOOK_FUNCTION(0x00515700, NormalSideOfPlane)
