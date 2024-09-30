@@ -1,6 +1,9 @@
 #include "finteray.h"
 
+#include "brucetrk.h"
 #include "globvars.h"
+#include "spark.h"
+#include "world.h"
 
 #include <brender/brender.h>
 
@@ -1021,3 +1024,44 @@ int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, 
     return max_face;
 }
 C2_HOOK_FUNCTION(0x0045f8c0, ActorBoxPick)
+
+int C2_HOOK_FASTCALL FindFacesInBox(tBounds* bnds, tFace_ref* face_list, int max_face, tWorld_callbacks* pWorld_callbacks) {
+    int j;
+    int x;
+    int z;
+    tU8 cx_min;
+    tU8 cx_max;
+    tU8 cz_min;
+    tU8 cz_max;
+    tTrack_spec* track_spec;
+
+    track_spec = &C2V(gProgram_state).track_spec;
+    FillInBounds(bnds);
+    XZToColumnXZ(&cx_min, &cz_min, bnds->real_bounds.min.v[0], bnds->real_bounds.min.v[2], track_spec);
+    XZToColumnXZ(&cx_max, &cz_max, bnds->real_bounds.max.v[0], bnds->real_bounds.max.v[2], track_spec);
+    if (cx_min != 0) {
+        cx_min -= 1;
+    }
+    if (cz_min != 0) {
+        cz_min -= 1;
+    }
+    if (cx_max + 1 < track_spec->ncolumns_x) {
+        cx_max += 1;
+    }
+    if (cz_max + 1 < track_spec->ncolumns_z) {
+        cz_max += 1;
+    }
+    j = 0;
+    for (x = cx_min; x <= cx_max; x++) {
+        for (z = cz_min; z <= cz_max; z++) {
+            if (track_spec->columns[z][x].actor_0x0 != NULL) {
+                j = max_face - ActorBoxPick(bnds, track_spec->columns[z][x].actor_0x0, NULL, C2V(gBlack_material), &face_list[j], max_face - j, NULL, pWorld_callbacks);
+            }
+        }
+    }
+    if (C2V(gAdditional_actors) != NULL) {
+        j = max_face - ActorBoxPick(bnds, C2V(gAdditional_actors), NULL, C2V(gBlack_material), &face_list[j], max_face - j, NULL, pWorld_callbacks);
+    }
+    return j;
+}
+C2_HOOK_FUNCTION(0x004b57d0, FindFacesInBox)
