@@ -16,6 +16,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gNearest_actor, 0x006861cc);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gNearest_T, 0x00686190);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNearest_face_group, 0x00686194);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__finteray, 0x00686198);
+C2_HOOK_VARIABLE_IMPLEMENT(tFace_ref*, gPling_face, 0x0079d858);
 
 void C2_HOOK_FASTCALL EnablePlingMaterials(void) {
 
@@ -634,3 +635,228 @@ int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x00425ba0, BoundsOverlapTest__finteray)
+
+void C2_HOOK_FASTCALL ClipToPlaneGE(br_scalar limit, br_vector3* p, int* nv, int i) {
+    int last_vertex;
+    int j;
+    int vertex;
+    int k;
+    br_vector3 p2[12];
+
+    last_vertex = *nv - 1;
+    j = 0;
+    for (vertex = 0; vertex < *nv; vertex++) {
+        if ((p[last_vertex].v[i] > limit) != (p[vertex].v[i] > limit)) {
+            for (k = 0; k < 3; k++) {
+                if (i != k) {
+                    p2[j].v[k] = (p[vertex].v[k] - p[last_vertex].v[k])
+                                 * (limit - p[last_vertex].v[i])
+                                 / (p[vertex].v[i] - p[last_vertex].v[i])
+                                 + p[last_vertex].v[k];
+                }
+            }
+            p2[j++].v[i] = limit;
+        }
+        if (p[vertex].v[i] >= limit) {
+            BrVector3Copy(&p2[j], &p[vertex]);
+            j++;
+        }
+        last_vertex = vertex;
+    }
+    *nv = j;
+    for (k = 0; k < j; k++) {
+        BrVector3Copy(&p[k], &p2[k]);
+    }
+}
+
+void C2_HOOK_FASTCALL ClipToPlaneLE(br_scalar limit, br_vector3* p, int* nv, int i) {
+    int last_vertex;
+    int j;
+    int vertex;
+    int k;
+    br_vector3 p2[12];
+
+    last_vertex = *nv - 1;
+    j = 0;
+    for (vertex = 0; vertex < *nv; vertex++) {
+        if ((p[vertex].v[i] > limit) != (p[last_vertex].v[i] > limit)) {
+            for (k = 0; k < 3; k++) {
+                if (k != i) {
+                    p2[j].v[k] = (p[vertex].v[k] - p[last_vertex].v[k])
+                                 * (limit - p[last_vertex].v[i])
+                                 / (p[vertex].v[i] - p[last_vertex].v[i])
+                                 + p[last_vertex].v[k];
+                }
+            }
+            p2[j++].v[i] = limit;
+        }
+        if (p[vertex].v[i] <= (double)limit) {
+            BrVector3Copy(&p2[j], &p[vertex]);
+            j++;
+        }
+        last_vertex = vertex;
+    }
+    *nv = j;
+    for (k = 0; k < j; k++) {
+        BrVector3Copy(&p[k], &p2[k]);
+    }
+}
+
+int C2_HOOK_FASTCALL ModelPickBox(br_actor* actor, tBounds* bnds, br_model* model, br_material* model_material, tFace_ref* face_list, int max_face, br_matrix34* pMat) {
+    int f;
+    int i;
+    int n;
+    int group;
+    int v1;
+    int v2;
+    int v3;
+    br_vector3 polygon[12];
+    br_vector3 a;
+    br_vector3 tv;
+    br_scalar t;
+    v11model* prepared;
+
+    prepared = model->prepared;
+    if (max_face <= 0) {
+        return 0;
+    }
+    for (group = 0; group < prepared->ngroups; group++) {
+        v11group* v11g;
+
+        v11g = &prepared->groups[group];
+        for (f = 0; f < v11g->nfaces; f++) {
+            v11face* v11f;
+
+            v11f = &v11g->faces[f];
+            v1 = v11f->vertices[0];
+            BrVector3Sub(&a, &v11g->vertices[v1].p, &bnds->box_centre);
+            t = BrVector3Dot(&v11f->eqn, &a);
+            if (fabsf(t) > bnds->radius) {
+                continue;
+            }
+            v2 = v11f->vertices[1];
+            v3 = v11f->vertices[2];
+
+            t = bnds->real_bounds.min.v[0];
+            if (t > v11g->vertices[v1].p.v[0]
+                && t > v11g->vertices[v2].p.v[0]
+                && t > v11g->vertices[v3].p.v[0]) {
+                continue;
+            }
+            t = bnds->real_bounds.max.v[0];
+            if (t < v11g->vertices[v1].p.v[0]
+                && t < v11g->vertices[v2].p.v[0]
+                && t < v11g->vertices[v3].p.v[0]) {
+                continue;
+            }
+            t = bnds->real_bounds.min.v[1];
+            if (t > v11g->vertices[v1].p.v[1]
+                && t > v11g->vertices[v2].p.v[1]
+                && t > v11g->vertices[v3].p.v[1]) {
+                continue;
+            }
+            t = bnds->real_bounds.max.v[1];
+            if (t < v11g->vertices[v1].p.v[1]
+                && t < v11g->vertices[v2].p.v[1]
+                && t < v11g->vertices[v3].p.v[1]) {
+                continue;
+            }
+            t = bnds->real_bounds.min.v[2];
+            if (t > v11g->vertices[v1].p.v[2]
+                && t > v11g->vertices[v2].p.v[2]
+                && t > v11g->vertices[v3].p.v[2]) {
+                continue;
+            }
+            t = bnds->real_bounds.max.v[2];
+            if (t < v11g->vertices[v1].p.v[2]
+                && t < v11g->vertices[v2].p.v[2]
+                && t < v11g->vertices[v3].p.v[2]) {
+                continue;
+            }
+            BrVector3Sub(&polygon[1], &v11g->vertices[v1].p, (br_vector3*)bnds->mat->m[3]);
+            BrVector3Sub(&polygon[2], &v11g->vertices[v2].p, (br_vector3*)bnds->mat->m[3]);
+            BrVector3Sub(&polygon[3], &v11g->vertices[v3].p, (br_vector3*)bnds->mat->m[3]);
+            BrMatrix34TApplyV(&polygon[0], &polygon[1], bnds->mat);
+            BrMatrix34TApplyV(&polygon[1], &polygon[2], bnds->mat);
+            BrMatrix34TApplyV(&polygon[2], &polygon[3], bnds->mat);
+            n = 3;
+            for (i = 0; i < 3; i++) {
+                ClipToPlaneGE(bnds->original_bounds.min.v[i], polygon, &n, i);
+                if (n < 3) {
+                    break;
+                }
+                ClipToPlaneLE(bnds->original_bounds.max.v[i], polygon, &n, i);
+                if (n < 3) {
+                    break;
+                }
+            }
+            if (n >= 3) {
+                if (pMat != NULL) {
+                    BrMatrix34ApplyP(&face_list->v[0], &v11g->vertices[v1].p, pMat);
+                    BrMatrix34ApplyP(&face_list->v[1], &v11g->vertices[v2].p, pMat);
+                    BrMatrix34ApplyP(&face_list->v[2], &v11g->vertices[v3].p, pMat);
+                    BrVector3Copy(&tv, &v11f->eqn);
+                    BrMatrix34ApplyV(&face_list->normal, &tv, pMat);
+                } else {
+                    BrVector3Copy(&face_list->v[0], &v11g->vertices[v1].p);
+                    BrVector3Copy(&face_list->v[1], &v11g->vertices[v2].p);
+                    BrVector3Copy(&face_list->v[2], &v11g->vertices[v3].p);
+                    BrVector3Copy(&face_list->normal, &v11f->eqn);
+                }
+                if (*v11g->face_colours.materials != NULL) {
+                    face_list->material = *v11g->face_colours.materials;
+                } else {
+                    face_list->material = model_material;
+                }
+                if (pMat != NULL) {
+                    face_list->d = BrVector3Dot(&face_list->v[0], &face_list->normal);
+                } else {
+                    face_list->d = v11f->eqn.v[3];
+                }
+                face_list->a = actor;
+                if (model->flags & BR_MODF_UPDATEABLE) {
+                    tS16 ff;
+
+                    face_list->g = -1;
+                    ff = v11g->face_user[f];
+                    face_list->f = ff;
+                    face_list->flags = model->faces[ff].flags;
+                    face_list->map[0] = &model->vertices[model->faces[ff].vertices[0]].map;
+                    face_list->map[1] = &model->vertices[model->faces[ff].vertices[1]].map;
+                    face_list->map[2] = &model->vertices[model->faces[ff].vertices[2]].map;
+                } else {
+                    face_list->g = group;
+                    face_list->f = f;
+                    face_list->flags = 0;
+                    if (v11f->edges[0] == 0) {
+                        face_list->flags |= 0x1;
+                    }
+                    if (v11f->edges[1] == 0) {
+                        face_list->flags |= 0x2;
+                    }
+                    if (v11f->edges[2] == 0) {
+                        face_list->flags |= 0x4;
+                    }
+                    face_list->map[0] = &v11g->vertices[v1].map;
+                    face_list->map[1] = &v11g->vertices[v2].map;
+                    face_list->map[2] = &v11g->vertices[v3].map;
+                }
+                if (face_list->material != NULL
+                        && face_list->material->identifier != NULL
+                        && face_list->material->identifier[0] == '!') {
+                    C2V(gPling_face) = face_list;
+                }
+                face_list++;
+                max_face--;
+                if (max_face == 0) {
+                    break;
+                }
+            }
+        }
+        if (max_face == 0) {
+            break;
+        }
+    }
+    return max_face;
+}
+C2_HOOK_FUNCTION(0x0045ff90, ModelPickBox)
