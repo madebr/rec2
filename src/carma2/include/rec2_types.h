@@ -24,6 +24,7 @@ typedef signed int tS32;
 
 typedef int tTWTVFS;
 typedef tU32 tPlayer_ID;
+typedef tU8 tNet_message_type;
 
 // FIXME: incomplete type
 typedef struct tCar_spec tCar_spec;
@@ -3947,6 +3948,14 @@ typedef struct {
 
 typedef struct {
     tNet_message_chunk_header header;
+    tPlayer_ID player;
+    br_scalar full_size;
+    br_scalar grow_rate;
+    br_scalar current_size;
+} tNet_message_chunk_oil_spill;
+
+typedef struct {
+    tNet_message_chunk_header header;
     tU8 data[];
 } tNet_message_chunk_raw;
 
@@ -4001,8 +4010,24 @@ typedef struct tSave_game {
 
 typedef union {
     tNet_message_chunk_raw raw;
+    tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
 } tNet_message_chunk;
+
+typedef struct {
+    undefined4 field_0x0;
+    undefined4 field_0x4;
+    undefined4 field_0x8;
+    undefined4 field_0xc;
+    undefined4 field_0x10;
+    undefined2 field_0x14;
+    undefined2 field_0x16;
+} tNet_message_header;
+
+typedef struct tNet_message {
+    tNet_message_header header;
+    tNet_message_chunk contents;
+} tNet_message;
 
 enum {
     kMiscString_ShadowNone = 104,
