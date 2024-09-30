@@ -88,10 +88,22 @@ void C2_HOOK_FASTCALL ResetOilSpills(void) {
         C2V(gOily_spills)[i].actor->render_style = BR_RSTYLE_NONE;
         C2V(gOily_spills)[i].car = NULL;
         C2V(gOily_spills)[i].car_actor = NULL;
-        C2V(gOily_spills)[i].field_0x14 = 0;
+        C2V(gOily_spills)[i].stop_time = 0;
     }
 }
 C2_HOOK_FUNCTION(0x004a6c50, ResetOilSpills)
+
+void C2_HOOK_FASTCALL  SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel) {
+
+    BrVector2Set(&pModel->vertices[0].p, -pOil->field_0x20, -pOil->field_0x20);
+    BrVector2Set(&pModel->vertices[1].p,  pOil->field_0x20, -pOil->field_0x20);
+    BrVector2Set(&pModel->vertices[2].p,  pOil->field_0x20,  pOil->field_0x20);
+    BrVector2Set(&pModel->vertices[3].p, -pOil->field_0x20,  pOil->field_0x20);
+    pOil->actor->render_style = BR_RSTYLE_FACES;
+    BrMaterialUpdate(pOil->actor->material, BR_MATU_ALL);
+    BrModelUpdate(pModel, BR_MODU_ALL);
+}
+C2_HOOK_FUNCTION(0x004a7460, SetInitialOilStuff)
 
 void (C2_HOOK_FASTCALL * ProcessOilSpills_original)(tU32 pFrame_period);
 void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
