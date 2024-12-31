@@ -21,4 +21,6 @@ void C2_HOOK_FASTCALL MungeOilsHeightAboveGround(tOil_spill_info* pOil);
 
 void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period);
 
+int C2_HOOK_FASTCALL GetOilSpillCount(void);
+
 #endif //REC2_OIL_H
