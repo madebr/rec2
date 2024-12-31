@@ -321,3 +321,9 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a6e50, ProcessOilSpills, ProcessOilSpills_original)
+
+int C2_HOOK_FASTCALL GetOilSpillCount(void) {
+
+    return REC2_ASIZE(C2V(gOily_spills));
+}
+C2_HOOK_FUNCTION(0x004a74e0, GetOilSpillCount)
