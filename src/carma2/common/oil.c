@@ -327,3 +327,14 @@ int C2_HOOK_FASTCALL GetOilSpillCount(void) {
     return REC2_ASIZE(C2V(gOily_spills));
 }
 C2_HOOK_FUNCTION(0x004a74e0, GetOilSpillCount)
+
+void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize) {
+
+    if (C2V(gOily_spills)[pIndex].car != NULL) {
+        *pActor = C2V(gOily_spills)[pIndex].actor;
+        *pSize = C2V(gOily_spills)[pIndex].full_size;
+    } else {
+        *pActor = NULL;
+    }
+}
+C2_HOOK_FUNCTION(0x004a74f0, GetOilSpillDetails)
