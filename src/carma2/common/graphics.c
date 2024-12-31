@@ -1282,3 +1282,9 @@ void C2_HOOK_FASTCALL MungeClipPlane(br_vector3* pLight, tCar_spec* pCar, br_vec
     }
 }
 C2_HOOK_FUNCTION(0x004e9680, MungeClipPlane)
+
+br_scalar C2_HOOK_FASTCALL DistanceFromPlane(br_vector3* pPos, br_scalar arg2, br_scalar pA, br_scalar pB, br_scalar pC, br_scalar pD) {
+
+    return fabsf((pPos->v[0] * pA + pPos->v[1] * pB + pPos->v[2] * pC + pD) / (pA * pA + pB * pB + pC * pC));
+}
+C2_HOOK_FUNCTION(0x0047b910, DistanceFromPlane)

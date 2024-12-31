@@ -201,4 +201,6 @@ void C2_HOOK_FASTCALL RevertPalette(void);
 
 void C2_HOOK_FASTCALL MungeClipPlane(br_vector3* pLight, tCar_spec* pCar, br_vector3* p1, br_vector3* p2, br_vector3* pOffset);
 
+br_scalar C2_HOOK_FASTCALL DistanceFromPlane(br_vector3* pPos, br_scalar arg2, br_scalar pA, br_scalar pB, br_scalar pC, br_scalar pD);
+
 #endif //REC2_GRAPHICS_H
