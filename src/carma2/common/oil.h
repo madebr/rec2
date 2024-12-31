@@ -23,4 +23,6 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period);
 
 int C2_HOOK_FASTCALL GetOilSpillCount(void);
 
+void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize);
+
 #endif //REC2_OIL_H
