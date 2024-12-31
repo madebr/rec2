@@ -234,6 +234,10 @@ void C2_HOOK_CDECL BrZbsSceneRender(br_actor* world, br_actor* camera, br_pixelm
 void C2_HOOK_CDECL BrZbModelRender(br_actor* actor, br_model* model, br_material* material, br_uint_8 style, int on_screen, int use_custom);
 void C2_HOOK_CDECL BrZsModelRender(br_actor* actor, br_model* model, br_material* material, br_order_table* order_table, br_uint_8 style, int on_screen, int use_custom);
 
+void C2_HOOK_CDECL BrZbsSceneRenderBegin(br_actor* world, br_actor* camera, br_pixelmap* colour_buffer, br_pixelmap* depth_buffer);
+void C2_HOOK_CDECL BrZbsSceneRenderAdd(br_actor* tree);
+void C2_HOOK_CDECL BrZbsSceneRenderEnd(void);
+
 br_pixelmap* C2_HOOK_CDECL DOSGfxBegin(const char* setup_string);
 
 // Various

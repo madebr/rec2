@@ -3,6 +3,12 @@
 
 #include "br_defs.h"
 
+#define BrVector2Copy(v1, v2)    \
+    do {                         \
+        (v1)->v[0] = (v2)->v[0]; \
+        (v1)->v[1] = (v2)->v[1]; \
+    } while (0)
+
 #define BrVector2Set(v1, s1, s2) \
     do {                         \
         (v1)->v[0] = (s1);       \

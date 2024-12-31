@@ -80,6 +80,9 @@ C2_HOOK_VARIABLE_DECLARE(float, gCamera_to_horiz_angle);
 C2_HOOK_VARIABLE_DECLARE(float, gYon_squared);
 C2_HOOK_VARIABLE_DECLARE(int, gMirror_on__graphics);
 C2_HOOK_VARIABLE_DECLARE(int, gShadow_clip_plane_count);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_vector3, gShadow_points, 8);
+C2_HOOK_VARIABLE_DECLARE(br_matrix34, gIdentity34);
+C2_HOOK_VARIABLE_DECLARE(int, gShadow_dim_amount);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
@@ -202,5 +205,9 @@ void C2_HOOK_FASTCALL RevertPalette(void);
 void C2_HOOK_FASTCALL MungeClipPlane(br_vector3* pLight, tCar_spec* pCar, br_vector3* p1, br_vector3* p2, br_vector3* pOffset);
 
 br_scalar C2_HOOK_FASTCALL DistanceFromPlane(br_vector3* pPos, br_scalar arg2, br_scalar pA, br_scalar pB, br_scalar pC, br_scalar pD);
+
+void C2_HOOK_FASTCALL TryThisEdge(tCar_spec* pCar, br_vector3* pLight, int pIndex_1, br_scalar pSign_1, int pIndex_2, br_scalar pSign_2, int pPoint_index_1, int pPoint_index_2, br_vector3* pOffset);
+
+void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform, br_scalar pDistance_factor);
 
 #endif //REC2_GRAPHICS_H
