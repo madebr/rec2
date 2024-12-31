@@ -14,6 +14,8 @@ C2_HOOK_VARIABLE_DECLARE(br_vector3, gAverage_grid_position);
 
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0067939c);
 C2_HOOK_VARIABLE_DECLARE(tCar_callbacks, gCar_callbacks);
+C2_HOOK_VARIABLE_DECLARE(int, gFace_count);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tFace_ref, gFace_list__car, 300);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
@@ -62,5 +64,7 @@ void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime);
 void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void);
 
 void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race);
+
+int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** pFace_refs);
 
 #endif //REC2_CAR_H
