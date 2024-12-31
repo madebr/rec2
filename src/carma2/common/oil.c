@@ -338,3 +338,9 @@ void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scala
     }
 }
 C2_HOOK_FUNCTION(0x004a74f0, GetOilSpillDetails)
+
+void C2_HOOK_FASTCALL MungeIndexedOilsHeightAboveGround(int pIndex) {
+
+    MungeOilsHeightAboveGround(&C2V(gOily_spills)[pIndex]);
+}
+C2_HOOK_FUNCTION(0x004a6e20, MungeIndexedOilsHeightAboveGround)
