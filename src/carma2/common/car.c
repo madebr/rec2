@@ -37,6 +37,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
     GetFrictionFromFace,
     NULL,
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFace_count, 0x006940b0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFace_ref, gFace_list__car, 300, 0x00744820);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -570,3 +572,14 @@ void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race) {
     }
 }
 C2_HOOK_FUNCTION(0x00413780, GetAverageGridPosition)
+
+int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** pFace_refs) {
+
+    if (pCar->collision_info->box_face_ref == C2V(gFace_num__car)
+        || (pCar->collision_info->box_face_ref == C2V(gFace_num__car) - 1 && C2V(gFace_count) < pCar->collision_info->box_face_start)) {
+        *pFace_refs = &C2V(gFace_list__car)[pCar->collision_info->box_face_start];
+        return pCar->collision_info->box_face_end - pCar->collision_info->box_face_start;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00420880, GetPrecalculatedFacesUnderCar)
