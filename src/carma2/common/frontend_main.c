@@ -129,7 +129,7 @@ int C2_HOOK_FASTCALL FRONTEND_MainMenuHandler(tFrontend_spec* pFrontend) {
     }
 
     TransparentPolyFontTextInABox(kPolyfont_hand_green_10pt_lit, "v1.02a",
-        C2V(gBack_screen)->width - GetPolyFontTextWidth(kPolyfont_hand_green_10pt_lit, "v1.02a") - 4,
+        C2V(gBack_screen)->width - PolyFontTextWidth(kPolyfont_hand_green_10pt_lit, "v1.02a") - 4,
         C2V(gBack_screen)->height - PolyFontHeight(kPolyfont_hand_green_10pt_lit) - 4,
         C2V(gBack_screen)->width,
         C2V(gBack_screen)->height,
