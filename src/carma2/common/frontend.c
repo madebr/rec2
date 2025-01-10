@@ -919,7 +919,7 @@ void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
             text = item->text;
         }
         if (text != NULL && !item->wrapText) {
-            item->width = GetPolyFontTextWidth(item->unlitFont, text);
+            item->width = PolyFontTextWidth(item->unlitFont, text);
             item->height = PolyFontHeight(item->unlitFont);
         }
     }

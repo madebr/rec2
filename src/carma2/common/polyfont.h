@@ -49,7 +49,7 @@ void C2_HOOK_FASTCALL DisposeInterfaceFonts(void);
 
 void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont);
 
-int C2_HOOK_FASTCALL GetPolyFontTextWidth(int pFont, const char* pText);
+int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText);
 
 void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
 

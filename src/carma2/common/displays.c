@@ -108,7 +108,7 @@ int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
     return DRTextWidth_original(pFont, pText);
 #else
 
-    return GetPolyFontTextWidth(C2V(gDRFont_to_polyfont_mapping)[pFont->id], pText);
+    return PolyFontTextWidth(C2V(gDRFont_to_polyfont_mapping)[pFont->id], pText);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465d50, DRTextWidth, DRTextWidth_original)
