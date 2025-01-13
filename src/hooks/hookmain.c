@@ -31,12 +31,18 @@ BOOL WINAPI DllMain(HINSTANCE hinst, DWORD dwReason, LPVOID reserved) {
 
         DetourRestoreAfterWith();
 
-        DetourTransactionBegin();
+        if (DetourTransactionBegin() != 0) {
+            printf("DetourTransactionBegin() failed\n");
+            abort();
+        }
 
         DetourUpdateThread (GetCurrentThread());
         hook_apply_all();
 
-        DetourTransactionCommit();
+        if (DetourTransactionCommit() != 0) {
+            printf("DetourTransactionCommit() failed\n");
+            abort();
+        }
 
         hook_run_functions();
 
