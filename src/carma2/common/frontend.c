@@ -9,6 +9,7 @@
 #include "frontend_netsync.h"
 #include "frontend_network.h"
 #include "frontend_networksummary.h"
+#include "frontend_newgame.h"
 #include "frontend_options.h"
 #include "frontend_quit.h"
 #include "frontend_startgame.h"
@@ -41,7 +42,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFrontend_model, gFrontend_C_models, 6, 0x00687
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gFrontend_backdrop_actors, 3, 0x00687030);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFrontend_stuff_not_loaded, 0x0059b0d0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tFrontend_spec*, gCurrent_frontend_spec, 0x00688abc);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_newgame, 0x005bf280, FIXMEFIXME);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gFrontend_A_model_from, 0x00688378);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gFrontend_A_model_to, 0x0068844c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gFrontend_B_model_from, 0x00688768);
@@ -592,8 +592,8 @@ void C2_HOOK_FASTCALL FRONTEND_Setup(tFrontendMenuType pType) {
         C2V(gCurrent_frontend_spec) = &C2V(gFrontend_CREDITS);
         break;
     case kFrontend_menu_newgame:
-        FRONTEND_CreateMenu(&C2V(gFrontend_newgame));
-        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_newgame);
+        FRONTEND_CreateMenu(&C2V(gFrontend_NEWGAME));
+        C2V(gCurrent_frontend_spec) = &C2V(gFrontend_NEWGAME);
         break;
     }
     PrintMemoryDump(0, "AFTER FRONTEND_CreateMenu");
