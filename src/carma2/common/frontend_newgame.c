@@ -214,3 +214,23 @@ int C2_HOOK_FASTCALL FRONTEND_NewGameMenuHandler(tFrontend_spec* pFrontend) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00467280, FRONTEND_NewGameMenuHandler, FRONTEND_NewGameMenuHandler_original)
+
+int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend) {
+
+    switch (C2V(gFrontend_selected_item_index)) {
+    case 2:
+        C2V(gProgram_state).skill_level = 0;
+        InitGameAccordingToSkillLevel();
+        break;
+    case 3:
+        C2V(gProgram_state).skill_level = 1;
+        InitGameAccordingToSkillLevel();
+        break;
+    case 4:
+        C2V(gProgram_state).skill_level = 2;
+        InitGameAccordingToSkillLevel();
+        break;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00467130, ChooseSkill)
