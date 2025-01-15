@@ -31,6 +31,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_text_input_item_index);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0059b0d8);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
 C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_last_scroll);
+C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_time_last_input);
 
 
 void C2_HOOK_FASTCALL IString_Load(void);
