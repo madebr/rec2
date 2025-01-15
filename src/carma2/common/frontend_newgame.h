@@ -14,4 +14,6 @@ int C2_HOOK_FASTCALL NewGameOutfunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL FRONTEND_NewGameMenuHandler(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL ChooseSkill(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_NEWGAME_H */
