@@ -3,8 +3,10 @@
 #include "frontend.h"
 #include "globvars.h"
 #include "graphics.h"
+#include "init.h"
 #include "input.h"
 #include "intrface.h"
+#include "loading.h"
 #include "sound.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_NEWGAME, 0x005bf280, {
@@ -52,3 +54,12 @@ int C2_HOOK_FASTCALL NewGameInfunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004671a0, NewGameInfunc)
+
+int C2_HOOK_FASTCALL NewGameOutfunc(tFrontend_spec* pFrontend) {
+
+    SaveOptions();
+    InitGameAccordingToSkillLevel();
+    DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingout);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00467180, NewGameOutfunc)
