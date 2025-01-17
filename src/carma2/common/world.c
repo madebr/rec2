@@ -27,7 +27,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundType_Choices, 2, 0x00660268, {"SATURATED", "SCATTERED"});
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gCar_texturing_level, 0x00591374, eCTL_full);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gRoad_texturing_level, 0x0059136c, eRTL_full);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tRoad_texturing_level, gRoad_texturing_level, 0x0059136c, eRTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWall_texturing_level, gWall_texturing_level, 0x00591370, eWTL_full);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRendering_accessories, 0x00591368, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage*, gStorageForCallbacks, 0x006b7820);
