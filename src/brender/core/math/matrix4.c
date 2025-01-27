@@ -8,9 +8,6 @@
 #define C(x, y) C->m[x][y]
 #define M(x, y) mat->m[x][y]
 
-#define BR_MAC2(a, b, c, d) ((a) * (b) + (c) * (d))
-#define BR_MAC3(a, b, c, d, e, f) ((a) * (b) + (c) * (d) + (e) * (f))
-#define BR_MAC4(a, b, c, d, e, f, g, h) ((a) * (b) + (c) * (d) + (e) * (f) + (g) * (h))
 
 void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, const br_matrix4* B) {
 
