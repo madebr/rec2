@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFile_name, tU32 pMin_size);
 
+int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath);
+
 #endif // C2_PLATFORM_H
