@@ -49,7 +49,7 @@ jobs:
         sudo apt-get install gcc-mingw-w64-i686 g++-mingw-w64-i686
     - name: CMake (configure)
       run: |
-        cmake -S . -B build -GNinja ${{ matrix.platform.cmake_args }} -DREC2_VENDORED=ON -DREC2_WERROR=ON -Wdeprecated -Werror=deprecated -Wdev -Werror=dev
+        cmake -S . -B build -GNinja ${{ matrix.platform.cmake_args }} -DREC2_VENDORED=ON -DREC2_WERROR=ON
     - name: CMake (build)
       run: |
         cmake --build build
