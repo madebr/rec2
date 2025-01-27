@@ -73,35 +73,17 @@ void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path) {
 }
 C2_HOOK_FUNCTION(0x0051c700, PDBuildAppPath)
 
-#if 0
+void (C2_HOOK_FASTCALL * PDFatalError_original)(char* pThe_str);
 void C2_HOOK_FASTCALL PDFatalError(char* pThe_str) {
-    char* str1;
-    char* str2;
-    dr_dprintf("FATAL ERROR: %s", pThe_str);
-
-    str1 = pThe_str;
-    if (str1 == NULL) {
-        str1 = "NULL str1";
-    }
-    str2 = "";
-    if (str2 == NULL) {
-        str2 = "NULL str2";
-    }
-    C2V(gIsFatalError) = 1;
-    c2_sprintf(C2V(gFatalErrorMessage), "%s %s", str1, str2);
-
-    C2V(gExitCode) = 700;
-
-    if (C2V(gReal_back_screen) != NULL && C2V(gReal_back_screen)->pixels != NULL) {
-        PDUnlockRealBackScreen();
-    }
-    if (C2V(gBr_initialized)) {
-        RemoveAllBrenderDevices();
-    }
-    PDShutdownSystem();
-}
-C2_HOOK_FUNCTION(0x0051af20, PDFatalError)
+#if defined(C2_HOOKS_ENABLED)
+    C2_HOOK_START();
+    PDFatalError_original(pThe_str);
+#else
+#error "not implemented"
 #endif
+}
+C2_HOOK_FUNCTION_ORIGINAL
+(0x0051af20, PDFatalError, PDFatalError_original)
 
 C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem() {
@@ -340,3 +322,24 @@ int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFil
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051d500, PDCheckDriveExists2, PDCheckDriveExists2_original)
+
+int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
+    HKEY hKey;
+    LSTATUS status;
+    char buffer[256];
+    DWORD lenBuffer;
+
+    status = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\SCI\\CARMAGEDDON2", 0, KEY_ALL_ACCESS, &hKey);
+    if (status == ERROR_SUCCESS) {
+        lenBuffer = sizeof(tPath_name) - 1;  // FIXME: use array_sizeof
+        status = RegQueryValueExA(hKey, "SourceLocation", NULL, NULL, (LPBYTE)pPath, &lenBuffer);
+        if (status == ERROR_SUCCESS) {
+            RegCloseKey(hKey);
+            return 1;
+        }
+        FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, NULL, status, 0, buffer, sizeof(buffer) - 1, NULL);
+        RegCloseKey(hKey);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004910d0, PDReadSourceLocation)

@@ -5,7 +5,7 @@
 
 #include "brender/br_types.h"
 
-void C2_HOOK_FASTCALL QuitGame(void);
+C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void);
 //
 //tU32 TrackCount(br_actor* pActor, tU32* pCount);
 //
