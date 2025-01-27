@@ -7,8 +7,6 @@
 #define C(x, y) C->m[x][y]
 #define M(x, y) mat->m[x][y]
 
-#define BR_MAC2(a, b, c, d) ((a) * (b) + (c) * (d))
-
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix23, mattmp1_23, 0x006b0a20);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix23, mattmp2_23, 0x006b0a38);
 
