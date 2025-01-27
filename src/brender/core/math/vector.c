@@ -2,9 +2,6 @@
 #include <math.h>
 
 
-#define BR_MAC2(A, B, C, D) ((A) * (B) + (C) * (D))
-#define BR_MAC4(A, B, C, D, E, F, G, H) ((A) * (B) + (C) * (D) + (E) * (F) + (G) * (H))
-
 void C2_HOOK_CDECL BrVector2Copy(br_vector2* v1, const br_vector2* v2) {
 
     v1->v[0] = v2->v[0];
