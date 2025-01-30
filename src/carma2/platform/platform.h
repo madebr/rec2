@@ -38,7 +38,7 @@ int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void);
 
 void C2_HOOK_FASTCALL PDInitTimer(void);
 
-int C2_HOOK_FASTCALL PDGetTotalTime(void);
+tU32 C2_HOOK_FASTCALL PDGetTotalTime(void);
 
 int C2_HOOK_FASTCALL PDGetMicroseconds(void);
 

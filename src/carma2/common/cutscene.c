@@ -56,7 +56,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     int j;
     int k;
     int currentFrame;
-    int timeStart, timeEnd;
+    tU32 timeStart, timeEnd;
     int paletteChangeCount;
     int frameCount;
     int frameStart;
@@ -297,7 +297,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                         SmackNextFrame(smackHandle);
                     }
                     keyPressed = 0;
-                    while (SmackWait(smackHandle) && PDGetTotalTime() < frameStart + 67) {
+                    while (SmackWait(smackHandle) && PDGetTotalTime() < frameStart + 67u) {
                         keyPressed = AnyKeyDown();
                         if (keyPressed) {
                             break;
@@ -372,7 +372,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                     PDScreenBufferSwap(0);
                     PDServiceSystem(0);
                     keyPressed = 0;
-                    while (SmackWait(smackHandle) && PDGetTotalTime() < frameStart + 67) {
+                    while (SmackWait(smackHandle) && PDGetTotalTime() < frameStart + 67u) {
                         keyPressed = AnyKeyDown();
                         if (keyPressed) {
                             break;
