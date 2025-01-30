@@ -32,7 +32,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0059b0d8);
 C2_HOOK_VARIABLE_DECLARE(int, gFrontend_selected_item_index);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tFrontend_brender_item, gFrontend_brender_items, 100);
 C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_last_scroll);
-C2_HOOK_VARIABLE_DECLARE(int, gFrontend_time_last_input);
+C2_HOOK_VARIABLE_DECLARE(tU32, gFrontend_time_last_input);
 C2_HOOK_VARIABLE_DECLARE(tStruct_00686508*, gPTR_00686508);
 C2_HOOK_VARIABLE_DECLARE(tFrontend_slider*, gCurrent_frontend_scrollbars);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_00688444);
@@ -186,7 +186,7 @@ void C2_HOOK_FASTCALL FrontEndShowMouse(void);
 
 void C2_HOOK_FASTCALL FrontEndHideMouse(void);
 
-void C2_HOOK_FASTCALL DodgyPause(int pTime);
+void C2_HOOK_FASTCALL DodgyPause(tU32 pTime);
 
 void C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size);
 

@@ -60,7 +60,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gFrontend_backdrop, 0x00686f8c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_selected_item_index, 0x00688770);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFrontend_brender_item, gFrontend_brender_items, 100, 0x00687248); /* FIXME: parametrize size + index of last item */
 C2_HOOK_VARIABLE_IMPLEMENT(br_colour, gFrontend_some_color, 0x00688ae8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_time_last_input, 0x0068875c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gFrontend_time_last_input, 0x0068875c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_actor, 0x0068650c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gFrontend_camera, 0x00686f94);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_token_value, gFrontend_backdrop0_material_prims, 3, 0x00686f50);
@@ -2499,8 +2499,8 @@ void C2_HOOK_FASTCALL FrontEndHideMouse(void) {
     C2V(gFrontend_suppress_mouse) = 1;
 }
 
-void C2_HOOK_FASTCALL DodgyPause(int pTime) {
-    int start;
+void C2_HOOK_FASTCALL DodgyPause(tU32 pTime) {
+    tU32 start;
 
     start = PDGetTotalTime();
     while (PDGetTotalTime() - start > pTime) {

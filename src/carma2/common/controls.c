@@ -1798,7 +1798,7 @@ void C2_HOOK_FASTCALL EnterUserMessage(void) {
 #else
     static C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, last_key, 0x00590f64, -1);
     static C2_HOOK_VARIABLE_IMPLEMENT(int, about_to_die, 0x0067c49c);
-    static C2_HOOK_VARIABLE_IMPLEMENT(int, next_time, 0x0067c454);
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, next_time, 0x0067c454);
     char* the_message;
     int len;
     int the_key;

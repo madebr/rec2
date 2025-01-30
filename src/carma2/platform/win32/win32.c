@@ -646,16 +646,15 @@ void C2_HOOK_FASTCALL PDInitTimer(void) {
 }
 C2_HOOK_FUNCTION(0x0051d7c0, PDInitTimer)
 
-int (C2_HOOK_FASTCALL * PDGetTotalTime_original)(void);
-int C2_HOOK_FASTCALL PDGetTotalTime(void) {
+tU32 (C2_HOOK_FASTCALL * PDGetTotalTime_original)(void);
+tU32 C2_HOOK_FASTCALL PDGetTotalTime(void) {
 #if 0 //defined(C2_HOOKS_ENABLED)
     return PDGetTotalTime_original();
 #else
     if (C2V(gPerformanceCounterInitialized)) {
         LARGE_INTEGER perfCountValue;
         QueryPerformanceCounter(&perfCountValue);
-        // Is it okay to convert unsigned to int here?
-        return (int)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_ms).QuadPart);
+        return (tU32)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_ms).QuadPart);
     }
     return 0;
 #endif
