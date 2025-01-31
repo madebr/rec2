@@ -15,6 +15,8 @@ br_error C2_HOOK_CDECL HostSelectorAllocateAlias(br_uint_16 *aliasp, br_uint_16 
 
 br_error C2_HOOK_CDECL HostSelectorAllocatePhysical(br_uint_16 *selp, br_uint_32 phys_addr, br_size_t size);
 
+br_error C2_HOOK_CDECL HostSelectorFree(br_uint_16 sel);
+
 br_error C2_HOOK_CDECL HostSelectorAllocateLinear(br_uint_16 *selp, br_uint_32 base, br_size_t size);
 
 br_error C2_HOOK_CDECL HostSelectorBaseSet(br_uint_16 sel, br_uint_32 base);
