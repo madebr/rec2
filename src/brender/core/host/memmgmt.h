@@ -11,4 +11,6 @@ br_error C2_HOOK_CDECL HostUnlock(br_uint_32 offset, br_uint_16 sel, br_size_t s
 
 br_error C2_HOOK_CDECL HostSelectorAllocate(br_uint_16 *selp);
 
+br_error C2_HOOK_CDECL HostSelectorLimitSet(br_uint_16 sel, br_size_t limit);
+
 #endif // REC2_MEMMGMT_H
