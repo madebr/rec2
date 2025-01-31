@@ -15,6 +15,30 @@ br_error C2_HOOK_CDECL HostSelectorAllocate(br_uint_16 *selp) {
 }
 C2_HOOK_FUNCTION(0x0053fce0, HostSelectorAllocate)
 
+br_error C2_HOOK_CDECL HostSelectorAllocateLinear(br_uint_16 *selp, br_uint_32 base, br_size_t size) {
+    br_uint_16 sel;
+    br_error r;
+    r = HostSelectorAllocate(&sel);
+    if (r != 0) {
+        return r;
+    }
+
+    r = HostSelectorBaseSet(sel, base);
+    if (r != 0) {
+        return r;
+    }
+
+    r = HostSelectorLimitSet(sel, size-1);
+    if (r != 0) {
+        return r;
+    }
+
+    *selp = sel;
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0053fcf0, HostSelectorAllocateLinear)
+
 br_error C2_HOOK_CDECL HostSelectorBaseSet(br_uint_16 sel, br_uint_32 base) {
     return 0x1002;
 }
