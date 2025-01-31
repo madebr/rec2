@@ -19,4 +19,6 @@ br_error C2_HOOK_CDECL HostSelectorLimitSet(br_uint_16 sel, br_size_t limit);
 
 br_error C2_HOOK_CDECL HostSelectorBaseQuery(br_uint_32 *basep, br_uint_16 sel);
 
+br_error C2_HOOK_CDECL HostSelectorLimitQuery(br_uint_32 *limitp, br_uint_16 sel);
+
 #endif // REC2_MEMMGMT_H
