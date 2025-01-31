@@ -74,6 +74,8 @@ add_library(brender STATIC
     core/host/memmgmt.h
     core/host/prot.c
     core/host/prot.h
+    core/host/real.c
+    core/host/real.h
     core/host/realmem.c
     core/host/realmem.h
 
