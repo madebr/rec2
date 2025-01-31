@@ -21,6 +21,8 @@ add_library(brender STATIC
     core/fw/devsetup.h
     core/fw/diag.c
     core/fw/diag.h
+    core/fw/epiprolog.c
+    core/fw/epiprolog.h
     core/fw/error.c
     core/fw/error.h
     core/fw/file.c
