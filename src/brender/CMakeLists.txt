@@ -64,6 +64,8 @@ add_library(brender STATIC
     core/host/hostcfg.h
     core/host/hstsetup.c
     core/host/hstsetup.h
+    core/host/memmgmt.c
+    core/host/memmgmt.h
 
     core/math/angles.c
     core/math/angles.h
