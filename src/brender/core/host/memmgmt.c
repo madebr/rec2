@@ -65,6 +65,11 @@ br_error C2_HOOK_CDECL HostSelectorAllocateAlias(br_uint_16 *aliasp, br_uint_16 
 }
 C2_HOOK_FUNCTION(0x0053fd00, HostSelectorAllocateAlias)
 
+br_error C2_HOOK_CDECL HostSelectorAllocatePhysical(br_uint_16 *selp, br_uint_32 phys_addr, br_size_t size) {
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x0053fd10, HostSelectorAllocatePhysical)
+
 br_error C2_HOOK_CDECL HostSelectorBaseSet(br_uint_16 sel, br_uint_32 base) {
     return 0x1002;
 }
