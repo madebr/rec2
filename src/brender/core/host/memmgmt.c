@@ -1,5 +1,7 @@
 #include "memmgmt.h"
 
+#include "core/host/real.h"
+
 br_error C2_HOOK_CDECL HostLock(br_uint_32 offset, br_uint_16 sel, br_size_t size) {
     return 0x1002;
 }
@@ -69,6 +71,18 @@ br_error C2_HOOK_CDECL HostSelectorAllocatePhysical(br_uint_16 *selp, br_uint_32
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x0053fd10, HostSelectorAllocatePhysical)
+
+br_error C2_HOOK_CDECL HostSelectorFree(br_uint_16 sel) {
+    br_uint_16 rsel;
+
+    HostSelectorReal(&rsel);
+
+    if (sel == rsel) {
+        return 0;
+    }
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x0053fd20, HostSelectorFree)
 
 br_error C2_HOOK_CDECL HostSelectorBaseSet(br_uint_16 sel, br_uint_32 base) {
     return 0x1002;
