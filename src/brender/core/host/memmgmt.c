@@ -14,3 +14,8 @@ br_error C2_HOOK_CDECL HostSelectorAllocate(br_uint_16 *selp) {
     return 0x1002;
 }
 C2_HOOK_FUNCTION(0x0053fce0, HostSelectorAllocate)
+
+br_error C2_HOOK_CDECL HostSelectorLimitSet(br_uint_16 sel, br_size_t limit) {
+    return 0x1002;
+}
+C2_HOOK_FUNCTION(0x0053fd60, HostSelectorLimitSet)
