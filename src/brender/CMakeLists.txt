@@ -60,6 +60,8 @@ add_library(brender STATIC
 
     core/host/cpuid.c
     core/host/cpuid.h
+    core/host/farmem.c
+    core/host/farmem.h
     core/host/himage.c
     core/host/himage.h
     core/host/hook.c
