@@ -24,7 +24,7 @@ int C2_HOOK_CDECL c2_rand(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00576970, c2_rand, rand_original)
 
-void C2_HOOK_CDECL c2_abort(void) {
+C2_NORETURN void C2_HOOK_CDECL c2_abort(void) {
     abort();
 }
 C2_HOOK_FUNCTION(0x00578aa0, c2_abort)

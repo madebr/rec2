@@ -15,7 +15,7 @@ void C2_HOOK_CDECL c2_srand(int seed);
 
 int C2_HOOK_CDECL c2_rand(void);
 
-void C2_HOOK_CDECL c2_abort(void);
+C2_NORETURN void C2_HOOK_CDECL c2_abort(void);
 
 void* C2_HOOK_CDECL c2_malloc(size_t size);
 
