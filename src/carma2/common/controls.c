@@ -961,6 +961,24 @@ void C2_HOOK_FASTCALL SetFlag(int i) {
 }
 C2_HOOK_FUNCTION(0x00441580, SetFlag)
 
+void C2_HOOK_FASTCALL SetFlag2(int i) {
+
+    C2V(gAllow_car_flying) = 1;
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        C2V(gCar_flying) = !C2V(gCar_flying);
+        if (C2V(gCar_flying)) {
+            NewTextHeadupSlot(4, 0, 500, -4, "We haev lift off!!");
+        } else {
+            NewTextHeadupSlot(4, 0, 500, -4, "Back down to Earth");
+        }
+        C2V(gAllow_car_flying) = C2V(gCar_flying);
+    } else {
+        C2V(gCar_flying) = 0;
+        C2V(gAllow_car_flying) = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x00444350, SetFlag2)
+
 // Key: 'f4'
 void (C2_HOOK_FASTCALL * F4Key_original)(void);
 void C2_HOOK_FASTCALL F4Key(void) {
