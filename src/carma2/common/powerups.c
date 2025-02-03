@@ -1053,3 +1053,14 @@ void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor) {
     pActor->model->custom = RenderChangingPowerup;
 }
 C2_HOOK_FUNCTION(0x004df6c0, SetChangingPowerup)
+
+int (C2_HOOK_FASTCALL * GotPowerup_original)(tCar_spec* pCar, int pIndex);
+int C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GotPowerup_original(pCar, pIndex);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d8d30, GotPowerup, GotPowerup_original)
