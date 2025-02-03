@@ -61,4 +61,6 @@ br_model* C2_HOOK_FASTCALL DuplicateModel(br_model* pModel, const char* pName);
 
 void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor);
 
+int C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex);
+
 #endif //REC2_POWERUPS_H
