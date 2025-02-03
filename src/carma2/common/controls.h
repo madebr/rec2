@@ -172,4 +172,6 @@ void C2_HOOK_FASTCALL FUN_00511240(void);
 
 void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex);
 
+void C2_HOOK_FASTCALL FinishRace(int i);
+
 #endif //REC2_CONTROLS_H

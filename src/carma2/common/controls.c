@@ -19,6 +19,7 @@
 #include "polyfont.h"
 #include "replay.h"
 #include "sound.h"
+#include "structur.h"
 #include "utility.h"
 
 #include "platform.h"
@@ -1982,7 +1983,13 @@ void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
 #if defined(C2_HOOKS_ENABLED)
     BuyPSPowerup_original(pIndex);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00502e70, BuyPSPowerup, BuyPSPowerup_original)
+
+void C2_HOOK_FASTCALL FinishRace(int i) {
+    C2V(gRace_over_reason) = eRace_over_0;
+    C2V(gAbandon_game) = 2;
+}
+C2_HOOK_FUNCTION(0x004415c0, FinishRace)
