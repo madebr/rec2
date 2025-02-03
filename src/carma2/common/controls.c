@@ -1993,3 +1993,9 @@ void C2_HOOK_FASTCALL FinishRace(int i) {
     C2V(gAbandon_game) = 2;
 }
 C2_HOOK_FUNCTION(0x004415c0, FinishRace)
+
+void C2_HOOK_FASTCALL GetPowerup(int pNum) {
+
+    GotPowerup(&C2V(gProgram_state).current_car, pNum);
+}
+C2_HOOK_FUNCTION(0x00442e80, GetPowerup)
