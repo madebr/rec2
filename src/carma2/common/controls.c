@@ -947,7 +947,7 @@ void C2_HOOK_FASTCALL ToggleHeadupLevel(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444f40, ToggleHeadupLevel, ToggleHeadupLevel_original)
 
-void C2_HOOK_FASTCALL SetFlag(tU32 i) {
+void C2_HOOK_FASTCALL SetFlag(int i) {
     int match;
 
     match = C2V(gI_am_cheating) == i;

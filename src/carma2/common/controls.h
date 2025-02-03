@@ -62,7 +62,7 @@ void C2_HOOK_FASTCALL AbortRace(void);
 
 void C2_HOOK_FASTCALL ToggleHeadupLevel(void);
 
-void C2_HOOK_FASTCALL SetFlag(tU32 i);
+void C2_HOOK_FASTCALL SetFlag(int i);
 
 void C2_HOOK_FASTCALL F4Key(void);
 
