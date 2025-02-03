@@ -64,6 +64,8 @@ void C2_HOOK_FASTCALL ToggleHeadupLevel(void);
 
 void C2_HOOK_FASTCALL SetFlag(int i);
 
+void C2_HOOK_FASTCALL SetFlag2(int i);
+
 void C2_HOOK_FASTCALL F4Key(void);
 
 void C2_HOOK_FASTCALL EnsureSpecialVolumesHidden(void);
