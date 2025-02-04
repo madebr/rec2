@@ -192,4 +192,6 @@ void C2_HOOK_FASTCALL DecreaseYon(void);
 
 void C2_HOOK_FASTCALL IncreaseYon(void);
 
+void C2_HOOK_FASTCALL CycleSoundDetailLevel(void);
+
 #endif //REC2_CONTROLS_H
