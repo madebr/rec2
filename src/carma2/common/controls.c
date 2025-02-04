@@ -2217,3 +2217,8 @@ void C2_HOOK_FASTCALL IncreaseJoystickFFB(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00511390, IncreaseJoystickFFB, IncreaseJoystickFFB_original)
+
+void C2_HOOK_FASTCALL FUN_00447330(void) {
+
+}
+C2_HOOK_FUNCTION(0x00447330, FUN_00447330)
