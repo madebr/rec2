@@ -208,4 +208,6 @@ void C2_HOOK_FASTCALL IncreaseJoystickFFB(void);
 
 void C2_HOOK_FASTCALL FUN_00447330(void);
 
+void C2_HOOK_FASTCALL FUN_00447340(void);
+
 #endif //REC2_CONTROLS_H
