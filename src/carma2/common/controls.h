@@ -188,4 +188,6 @@ void C2_HOOK_FASTCALL CycleYonFactor(void);
 
 void C2_HOOK_FASTCALL ToggleAccessoryRendering(void);
 
+void C2_HOOK_FASTCALL DecreaseYon(void);
+
 #endif //REC2_CONTROLS_H
