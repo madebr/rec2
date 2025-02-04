@@ -2018,3 +2018,13 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum) {
     GotPowerup(&C2V(gProgram_state).current_car, pNum);
 }
 C2_HOOK_FUNCTION(0x00442e80, GetPowerup)
+
+void (C2_HOOK_FASTCALL * DoSteelGonadODeath_original)(int pNum);
+void C2_HOOK_FASTCALL DoSteelGonadODeath(int pNum) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoSteelGonadODeath_original(pNum);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
