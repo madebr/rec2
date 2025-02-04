@@ -178,4 +178,6 @@ void C2_HOOK_FASTCALL FinishRace(int i);
 
 void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
+void C2_HOOK_FASTCALL DoSteelGonadODeath(int pNum);
+
 #endif //REC2_CONTROLS_H
