@@ -493,7 +493,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             GotPowerup3, /* [1][10][5] */
             GotPowerup3, /* [1][10][6] */
             GotPowerup3, /* [1][10][7] */
-        }
+        },
         {
             GotPowerup4, /* [1][11][0] */
             GotPowerup4, /* [1][11][1] */
