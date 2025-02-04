@@ -4085,6 +4085,7 @@ enum {
     eMiscString_depth_cueing_on = 111,
     eMiscString_depth_cueing_off = 112,
     eMiscString_there_is_no_depth_cueing_for_this_race = 113,
+    eMiscString_car_simplification_level_D = 119,
     eMiscString_recovery_cancelled = 125,
     eMiscString_task_switched = 139,
     eMiscString_driven_to_destruction_description = 194,
