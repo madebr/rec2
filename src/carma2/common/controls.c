@@ -17,6 +17,7 @@
 #include "opponent.h"
 #include "physics.h"
 #include "polyfont.h"
+#include "powerups.h"
 #include "replay.h"
 #include "sound.h"
 #include "structur.h"
