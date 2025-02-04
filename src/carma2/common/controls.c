@@ -2206,3 +2206,14 @@ void C2_HOOK_FASTCALL ToggleJoystickEnable(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005112d0, ToggleJoystickEnable, ToggleJoystickEnable_original)
+
+void (C2_HOOK_FASTCALL * IncreaseJoystickFFB_original)(void);
+void C2_HOOK_FASTCALL IncreaseJoystickFFB(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    IncreaseJoystickFFB_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00511390, IncreaseJoystickFFB, IncreaseJoystickFFB_original)
