@@ -29,6 +29,7 @@ C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gTarget_lock_car_2);
 C2_HOOK_VARIABLE_DECLARE(int, gInventory_cycling);
 C2_HOOK_VARIABLE_DECLARE(tU32, gInventory_timeout);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gString, 84);
+C2_HOOK_VARIABLE_DECLARE(int, gInvulnerability);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
@@ -209,5 +210,7 @@ void C2_HOOK_FASTCALL IncreaseJoystickFFB(void);
 void C2_HOOK_FASTCALL FUN_00447330(void);
 
 void C2_HOOK_FASTCALL FUN_00447340(void);
+
+void C2_HOOK_FASTCALL CycleInvulnerability(void);
 
 #endif //REC2_CONTROLS_H
