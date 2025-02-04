@@ -73,4 +73,6 @@ int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1,undefined4 pa
 
 void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefined4 *arg2);
 
+tCar_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* actor);
+
 #endif //REC2_CAR_H
