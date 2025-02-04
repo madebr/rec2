@@ -79,4 +79,6 @@ tCar_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor);
 
 float C2_HOOK_FASTCALL GetFrictionFromFace(void *arg1);
 
+void C2_HOOK_FAKE_THISCALL ControlCar1(tCar_spec* c, undefined4 arg2, br_scalar dt);
+
 #endif //REC2_CAR_H
