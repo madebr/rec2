@@ -764,12 +764,10 @@ void C2_HOOK_FASTCALL ToggleMap(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444610, ToggleMap, ToggleMap_original)
 
-void C2_HOOK_FASTCALL FUN00444600(void) {
-    CONTROLS_START();
-    // Function has empty implementation
-    // FIXME: check with 'carmshit'
+void C2_HOOK_FASTCALL ToggleHeadupMap(void) {
+
 }
-C2_HOOK_FUNCTION(0x00444600, FUN00444600)
+C2_HOOK_FUNCTION(0x00444600, ToggleHeadupMap)
 
 // Key: 'ctrl+tab'
 void (C2_HOOK_FASTCALL * CycleMapOptions_original)(void);
