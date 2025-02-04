@@ -48,7 +48,7 @@ void C2_HOOK_FASTCALL ToggleMap2(void);
 
 void C2_HOOK_FASTCALL ToggleMap(void);
 
-void C2_HOOK_FASTCALL FUN00444600(void);
+void C2_HOOK_FASTCALL ToggleHeadupMap(void);
 
 void C2_HOOK_FASTCALL CycleMapOptions(void);
 
