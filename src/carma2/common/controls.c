@@ -42,7 +42,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEntering_message, 0x0067c474);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gAbuse_text, 10, 0x0067c3c8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tCheat, gKev_keys, 94, 0x00590970, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tCheat, gKev_keys, 95, 0x00590970, {
     { 0xa11ee75d, 0xa11ee75d, SetFlag,    0xa11ee75d },
     { 0x398da28c, 0x398da28c, SetFlag,    0x564e78b9 },
     { 0x7dc510f3, 0x7dc510f3, SetFlag2,   0x00000001 },
