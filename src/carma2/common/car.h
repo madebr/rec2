@@ -69,4 +69,6 @@ int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** 
 
 int C2_HOOK_FASTCALL ProcessForcesCallback(void* arg1, float* arg2, int arg3);
 
+int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1,undefined4 param_2,undefined4 param_3);
+
 #endif //REC2_CAR_H
