@@ -180,4 +180,6 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
 void C2_HOOK_FASTCALL DoSteelGonadODeath(int pNum);
 
+void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void);
+
 #endif //REC2_CONTROLS_H

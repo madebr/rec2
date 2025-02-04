@@ -283,7 +283,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [0][ 7][7] */
         },
         {
-            ToggleCarSimplification, /* [0][ 8][0] */
+            CycleCarSimplificationLevel, /* [0][ 8][0] */
             NULL, /* [0][ 8][1] */
             NULL, /* [0][ 8][2] */
             NULL, /* [0][ 8][3] */
@@ -2026,3 +2026,15 @@ void C2_HOOK_FASTCALL DoSteelGonadODeath(int pNum) {
     NOT_IMPLEMENTED();
 #endif
 }
+
+void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void) {
+    const char *format;
+    char *buffer;
+    C2V(gCar_simplification_level) = C2V(gCar_simplification_level + 1) % 5;
+    format = GetMiscString(eMiscString_car_simplification_level_D);
+    buffer = BrMemAllocate(c2_strlen(format) + 20, kMem_simp_level);
+    sprintf(buffer, format, C2V(gCar_simplification_level));
+    NewTextHeadupSlot(4, 0, 2000, -4, buffer);
+    BrMemFree(buffer);
+}
+C2_HOOK_FUNCTION(0x00444820, CycleCarSimplificationLevel)
