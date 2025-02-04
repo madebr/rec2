@@ -223,4 +223,6 @@ void C2_HOOK_FASTCALL FindNearestPed(void);
 
 void C2_HOOK_FASTCALL ToggleTimerFreeze(void);
 
+void C2_HOOK_FASTCALL EarnDosh(void);
+
 #endif //REC2_CONTROLS_H
