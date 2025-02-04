@@ -24,6 +24,7 @@
 #include "sound.h"
 #include "structur.h"
 #include "utility.h"
+#include "world.h"
 
 #include "platform.h"
 
@@ -329,7 +330,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [0][12][1] */
             NULL, /* [0][12][2] */
             NULL, /* [0][12][3] */
-            ToggleAccessories, /* [0][12][4] */
+            ToggleAccessoryRendering, /* [0][12][4] */
             NULL, /* [0][12][5] */
             NULL, /* [0][12][6] */
             NULL, /* [0][12][7] */
@@ -2086,3 +2087,19 @@ void C2_HOOK_FASTCALL CycleYonFactor(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00444720, CycleYonFactor)
+
+void C2_HOOK_FASTCALL ToggleAccessoryRendering(void) {
+
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        int new_enabled = !GetAccessoryRendering();
+        SetAccessoryRendering(new_enabled);
+        if (new_enabled) {
+            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_accessories_on));
+        } else {
+            NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_accessories_off));
+        }
+    } else {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_net_games_always_accessorized));
+    }
+}
+C2_HOOK_FUNCTION(0x004448a0, ToggleAccessoryRendering)
