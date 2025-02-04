@@ -2319,3 +2319,14 @@ void C2_HOOK_FASTCALL LoseDosh(void) {
     EarnCredits(-5000);
 }
 C2_HOOK_FUNCTION(0x004445f0, LoseDosh)
+
+void (C2_HOOK_FASTCALL * ViewOpponent_original)(void);
+void C2_HOOK_FASTCALL ViewOpponent(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ViewOpponent_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040e590, ViewOpponent, ViewOpponent_original)
