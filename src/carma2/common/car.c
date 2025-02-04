@@ -610,3 +610,14 @@ void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefine
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00414910, NewFacesListCallback, NewFacesListCallback_original)
+
+tCar_spec* (C2_HOOK_FASTCALL * DoPullActorFromWorld_original)(br_actor* actor);
+tCar_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* actor) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DoPullActorFromWorld_original(actor);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0041ff20, DoPullActorFromWorld, DoPullActorFromWorld_original)
