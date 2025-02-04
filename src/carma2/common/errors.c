@@ -12,7 +12,7 @@
 #include <stdint.h>
 //#include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gError_messages, 186, 0x00591708,
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gError_messages, 186, 0x00591708, {
     "Unable to support this screen depth setting",
     "Couldn't allocate off-screen buffer",
     "Couldn't allocate Z-Buffer",
