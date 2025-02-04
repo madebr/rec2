@@ -186,4 +186,6 @@ void C2_HOOK_FASTCALL ToggleSky(void);
 
 void C2_HOOK_FASTCALL CycleYonFactor(void);
 
+void C2_HOOK_FASTCALL ToggleAccessoryRendering(void);
+
 #endif //REC2_CONTROLS_H
