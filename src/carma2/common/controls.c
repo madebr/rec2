@@ -589,6 +589,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gTarget_lock_car_2, 0x0068d6f0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInventory_cycling, 0x006a0940);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gInventory_timeout, 0x006a0954);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gString, 84, 0x0067c400);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInvulnerability, 0x0067c498);
 
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
@@ -2227,3 +2228,27 @@ void C2_HOOK_FASTCALL FUN_00447340(void) {
 
 }
 C2_HOOK_FUNCTION(0x00447340, FUN_00447340)
+
+void C2_HOOK_FASTCALL CycleInvulnerability(void) {
+    char message[128];
+
+    C2V(gInvulnerability) = (C2V(gInvulnerability) + 1) % 8;
+    C2V(gCar_to_view)->invulnerable_no_damage = C2V(gInvulnerability) & 1;
+    C2V(gCar_to_view)->invulnerable_no_crushage = C2V(gInvulnerability) & 2;
+    C2V(gCar_to_view)->invulnerable_no_wastage = C2V(gInvulnerability) & 4;
+    message[0] = '\0';
+    if (C2V(gInvulnerability) == 0) {
+        c2_strcpy(message, "FULLY VULNERABLE");
+    }
+    if (C2V(gCar_to_view)->invulnerable_no_damage) {
+        c2_strcat(message, " NO DAMAGE");
+    }
+    if (C2V(gCar_to_view)->invulnerable_no_crushage != 0) {
+        c2_strcat(message, " NO CRUSHAGE");
+    }
+    if (C2V(gCar_to_view)->invulnerable_no_wastage != 0) {
+        c2_strcat(message, " NO WASTAGE");
+    }
+    NewTextHeadupSlot(4, 0, 1000, -4, message);
+}
+C2_HOOK_FUNCTION(0x00444420, CycleInvulnerability)
