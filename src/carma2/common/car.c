@@ -642,3 +642,14 @@ float C2_HOOK_FASTCALL GetFrictionFromFace(void *arg1) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5970, GetFrictionFromFace, GetFrictionFromFace_original)
+
+void (C2_HOOK_FAKE_THISCALL * ControlCar1_original)(tCar_spec* c, undefined4 arg2, br_scalar dt);
+void C2_HOOK_FAKE_THISCALL ControlCar1(tCar_spec* c, undefined4 arg2, br_scalar dt) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ControlCar1_original(c, arg2, dt);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00417de0, ControlCar1, ControlCar1_original)
