@@ -2313,3 +2313,9 @@ void C2_HOOK_FASTCALL EarnDosh(void) {
     EarnCredits(5000);
 }
 C2_HOOK_FUNCTION(0x004445e0, EarnDosh)
+
+void C2_HOOK_FASTCALL LoseDosh(void) {
+
+    EarnCredits(-5000);
+}
+C2_HOOK_FUNCTION(0x004445f0, LoseDosh)
