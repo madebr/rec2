@@ -213,4 +213,6 @@ void C2_HOOK_FASTCALL FUN_00447340(void);
 
 void C2_HOOK_FASTCALL CycleInvulnerability(void);
 
+void C2_HOOK_FASTCALL ResetMan(void);
+
 #endif //REC2_CONTROLS_H
