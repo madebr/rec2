@@ -1849,9 +1849,9 @@ typedef struct tCar_spec {
     br_pixelmap* gears_image;
     int fg_index;
     int underwater_ability;
-    int invulnerable1;
-    int invulnerable2;
-    undefined field_0x1bc[4];
+    int invulnerable_no_crushage;
+    int invulnerable_no_damage;
+    int invulnerable_no_wastage;
     int is_race_goal;
     int wall_climber_mode;
     int can_be_stolen;
