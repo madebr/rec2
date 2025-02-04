@@ -225,4 +225,6 @@ void C2_HOOK_FASTCALL ToggleTimerFreeze(void);
 
 void C2_HOOK_FASTCALL EarnDosh(void);
 
+void C2_HOOK_FASTCALL LoseDosh(void);
+
 #endif //REC2_CONTROLS_H
