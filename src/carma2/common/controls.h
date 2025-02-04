@@ -227,4 +227,6 @@ void C2_HOOK_FASTCALL EarnDosh(void);
 
 void C2_HOOK_FASTCALL LoseDosh(void);
 
+void C2_HOOK_FASTCALL ViewOpponent(void);
+
 #endif //REC2_CONTROLS_H
