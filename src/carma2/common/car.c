@@ -675,3 +675,14 @@ void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* c, undefined4 arg2, br_scalar 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004173b0, ControlCar3, ControlCar3_original)
+
+void (C2_HOOK_FAKE_THISCALL * ControlCar5_original)(tCar_spec* c, undefined4 arg2, br_scalar dt);
+void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* c, undefined4 arg2, br_scalar dt) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ControlCar5_original(c, arg2, dt);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00417a20, ControlCar5, ControlCar5_original)
