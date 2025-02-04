@@ -2185,3 +2185,14 @@ void C2_HOOK_FASTCALL ToggleJoystickDPad(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00511330, ToggleJoystickDPad, ToggleJoystickDPad_original)
+
+void (C2_HOOK_FASTCALL * CycleJoystick_original)(void);
+void C2_HOOK_FASTCALL CycleJoystick(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CycleJoystick_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00511270, CycleJoystick, CycleJoystick_original)
