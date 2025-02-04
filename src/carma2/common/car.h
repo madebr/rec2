@@ -75,4 +75,6 @@ void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefine
 
 tCar_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* actor);
 
+tCar_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor);
+
 #endif //REC2_CAR_H
