@@ -2152,3 +2152,14 @@ void C2_HOOK_FASTCALL CycleSoundDetailLevel(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004447c0, CycleSoundDetailLevel)
+
+void (C2_HOOK_FASTCALL * ShowCurrentJoystickName_original)(void);
+void C2_HOOK_FASTCALL ShowCurrentJoystickName(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ShowCurrentJoystickName_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004599f0, ShowCurrentJoystickName, ShowCurrentJoystickName_original)
