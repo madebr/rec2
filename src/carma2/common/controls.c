@@ -2275,6 +2275,17 @@ void C2_HOOK_FASTCALL NextPedCam(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d6240, NextPedCam, NextPedCam_original)
 
+void (C2_HOOK_FASTCALL * PrevPedCam_original)(void);
+void C2_HOOK_FASTCALL PrevPedCam(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PrevPedCam_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d6290, PrevPedCam, PrevPedCam_original)
+
 void (C2_HOOK_FASTCALL * FindNearestPed_original)(void);
 void C2_HOOK_FASTCALL FindNearestPed(void) {
 
