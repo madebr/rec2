@@ -71,4 +71,6 @@ int C2_HOOK_FASTCALL ProcessForcesCallback(void* arg1, float* arg2, int arg3);
 
 int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1,undefined4 param_2,undefined4 param_3);
 
+void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefined4 *arg2);
+
 #endif //REC2_CAR_H

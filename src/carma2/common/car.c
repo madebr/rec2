@@ -599,3 +599,14 @@ int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1,undefined4 pa
     return 0;
 }
 C2_HOOK_FUNCTION(0x0041e310, ProcessJointForcesCallback)
+
+void (C2_HOOK_FASTCALL * NewFacesListCallback_original)(tCollision_info* pCollision, undefined4 *arg2);
+void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefined4 *arg2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    NewFacesListCallback_original(pCollision, arg2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00414910, NewFacesListCallback, NewFacesListCallback_original)
