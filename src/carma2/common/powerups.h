@@ -45,7 +45,7 @@ void C2_HOOK_FASTCALL RemoveTail(void);
 
 void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
-void C2_HOOK_FASTCALL SetAPOToInitialValues(void);
+void C2_HOOK_FASTCALL MaxOutAPO(void);
 
 void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1);
 
