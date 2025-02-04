@@ -170,8 +170,6 @@ void C2_HOOK_FASTCALL FUN_0045a670(void);
 
 void C2_HOOK_FASTCALL FUN_0045acf0(void);
 
-void C2_HOOK_FASTCALL FUN_00511240(void);
-
 void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex);
 
 void C2_HOOK_FASTCALL FinishRace(int i);
@@ -195,5 +193,7 @@ void C2_HOOK_FASTCALL IncreaseYon(void);
 void C2_HOOK_FASTCALL CycleSoundDetailLevel(void);
 
 void C2_HOOK_FASTCALL ShowCurrentJoystickName(void);
+
+void C2_HOOK_FASTCALL ToggleJoystickHeadup(void);
 
 #endif //REC2_CONTROLS_H

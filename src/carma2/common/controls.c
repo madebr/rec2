@@ -997,7 +997,7 @@ void C2_HOOK_FASTCALL F4Key(void) {
             FUN_0045acf0();
         }
         if (C2V(gINT_0068b8e8)) {
-            FUN_00511240();
+            ToggleJoystickHeadup();
         }
         if (PDKeyDown(0)) {
             C2V(gWhich_edit_mode) -= 1;
@@ -1986,17 +1986,6 @@ void C2_HOOK_FASTCALL FUN_0045acf0(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045acf0, FUN_0045acf0, FUN_0045acf0_original)
 
-void (C2_HOOK_FASTCALL * FUN_00511240_original)(void);
-void C2_HOOK_FASTCALL FUN_00511240(void) {
-
-#if defined(C2_HOOKS_ENABLED)
-    FUN_00511240_original();
-#else
-#error "Not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00511240, FUN_00511240, FUN_00511240_original)
-
 void (C2_HOOK_FASTCALL * BuyPSPowerup_original)(int pIndex);
 void C2_HOOK_FASTCALL BuyPSPowerup(int pIndex) {
 
@@ -2163,3 +2152,14 @@ void C2_HOOK_FASTCALL ShowCurrentJoystickName(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004599f0, ShowCurrentJoystickName, ShowCurrentJoystickName_original)
+
+void (C2_HOOK_FASTCALL * ToggleJoystickHeadup_original)(void);
+void C2_HOOK_FASTCALL ToggleJoystickHeadup(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ToggleJoystickHeadup_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00511240, ToggleJoystickHeadup, ToggleJoystickHeadup_original)
