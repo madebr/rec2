@@ -594,3 +594,8 @@ int C2_HOOK_FASTCALL ProcessForcesCallback(void* arg1, float* arg2, int arg3) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041c1b0, ProcessForcesCallback, ProcessForcesCallback_original)
+
+int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1,undefined4 param_2,undefined4 param_3) {
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0041e310, ProcessJointForcesCallback)
