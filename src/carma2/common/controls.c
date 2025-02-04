@@ -2296,3 +2296,14 @@ void C2_HOOK_FASTCALL FindNearestPed(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d62e0, FindNearestPed, FindNearestPed_original)
+
+void C2_HOOK_FASTCALL ToggleTimerFreeze(void) {
+
+    C2V(gFreeze_timer) = !C2V(gFreeze_timer);
+    if (C2V(gFreeze_timer)) {
+        NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_timer_frozen));
+    } else {
+        NewTextHeadupSlot(4, 0, 1000, -4, "Timer thawed out");
+    }
+}
+C2_HOOK_FUNCTION(0x00444590, ToggleTimerFreeze)

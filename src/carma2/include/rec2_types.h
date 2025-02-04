@@ -4036,6 +4036,7 @@ enum {
 };
 
 enum {
+    eMiscString_timer_frozen = 1,
     eMiscString_minimap_on = 2,
     eMiscString_minimap_off = 3,
     eMiscString_credits = 12,
