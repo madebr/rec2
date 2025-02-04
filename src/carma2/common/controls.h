@@ -196,4 +196,6 @@ void C2_HOOK_FASTCALL ShowCurrentJoystickName(void);
 
 void C2_HOOK_FASTCALL ToggleJoystickHeadup(void);
 
+void C2_HOOK_FASTCALL ToggleJoystickYAxis(void);
+
 #endif //REC2_CONTROLS_H
