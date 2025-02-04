@@ -245,4 +245,6 @@ void C2_HOOK_FASTCALL GotPowerup4(void);
 
 void C2_HOOK_FASTCALL GotPowerup5(void);
 
+void C2_HOOK_FASTCALL GotPowerup6(void);
+
 #endif //REC2_CONTROLS_H
