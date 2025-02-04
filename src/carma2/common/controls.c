@@ -2136,3 +2136,19 @@ void C2_HOOK_FASTCALL IncreaseYon(void) {
     NewTextHeadupSlot(4, 0, 2000, -4, text);
 }
 C2_HOOK_FUNCTION(0x00446a40, IncreaseYon)
+
+void C2_HOOK_FASTCALL CycleSoundDetailLevel(void) {
+    int new_level;
+
+    new_level = (C2V(gSound_detail_level) + 1) % 3;
+    ReallySetSoundDetailLevel(new_level);
+    SetSoundDetailLevel(new_level);
+    if (C2V(gSound_detail_level) == 0) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_fewest_sounds));
+    } else if (C2V(gSound_detail_level) == 1) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_partial_sound));
+    } else if (C2V(gSound_detail_level) == 2) {
+        NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_all_sounds));
+    }
+}
+C2_HOOK_FUNCTION(0x004447c0, CycleSoundDetailLevel)
