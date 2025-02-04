@@ -2355,3 +2355,9 @@ void C2_HOOK_FASTCALL GotPowerup0(void) {
     GotPowerupN(0);
 }
 C2_HOOK_FUNCTION(0x004dbdb0, GotPowerup0)
+
+void C2_HOOK_FASTCALL GotPowerup1(void) {
+
+    GotPowerupN(1);
+}
+C2_HOOK_FUNCTION(0x004dbe10, GotPowerup1)
