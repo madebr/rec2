@@ -712,7 +712,7 @@ int C2_HOOK_FASTCALL CarVulnerableByMine(tCar_spec* pCar) {
             return 0;
         }
     }
-    if (pCar->invulnerable1) {
+    if (pCar->invulnerable_no_crushage) {
         return 0;
     }
     return 1;
@@ -754,7 +754,7 @@ void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime) {
 
                     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x49c, 0x49c);
                     car->collision_info->field_0x49c = 40 + C2V(gINT_0074a5ec);
-                    if (!car->invulnerable2) {
+                    if (!car->invulnerable_no_damage) {
                         int j;
 
                         C2_HOOK_BUG_ON(REC2_ASIZE(car->damage_units) != 12);
