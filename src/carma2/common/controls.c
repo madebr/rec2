@@ -2252,3 +2252,14 @@ void C2_HOOK_FASTCALL CycleInvulnerability(void) {
     NewTextHeadupSlot(4, 0, 1000, -4, message);
 }
 C2_HOOK_FUNCTION(0x00444420, CycleInvulnerability)
+
+void (C2_HOOK_FASTCALL * ResetMan_original)(void);
+void C2_HOOK_FASTCALL ResetMan(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ResetMan_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b5ab0, ResetMan, ResetMan_original)
