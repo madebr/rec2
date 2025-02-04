@@ -451,7 +451,18 @@ void C2_HOOK_FASTCALL ProcessDrones(void) {
 #if defined(C2_HOOKS_ENABLED)
     ProcessDrones_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004512f0, ProcessDrones, ProcessDrones_original)
+
+void (C2_HOOK_FASTCALL * DroneStateFuncReset_original)(tDrone_spec* pDrone, tDroneStateFuncState state);
+void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DroneStateFuncReset_original(pDrone, state);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044cc70, DroneStateFuncReset, DroneStateFuncReset_original)
