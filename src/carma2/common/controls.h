@@ -217,4 +217,6 @@ void C2_HOOK_FASTCALL CycleInvulnerability(void);
 
 void C2_HOOK_FASTCALL ResetMan(void);
 
+void C2_HOOK_FASTCALL NextPedCam(void);
+
 #endif //REC2_CONTROLS_H
