@@ -2330,3 +2330,28 @@ void C2_HOOK_FASTCALL ViewOpponent(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e590, ViewOpponent, ViewOpponent_original)
+
+void C2_HOOK_FASTCALL GotPowerupN(int pN) {
+    int modifiers;
+
+    modifiers = 0;
+    if (PDKeyDown(0)) {
+        modifiers += 10;
+    }
+    if (PDKeyDown(1)) {
+        modifiers += 20;
+    }
+    if (PDKeyDown(2)) {
+        modifiers += 40;
+    }
+    if (PDKeyDown(4)) {
+        modifiers += 80;
+    }
+    GotPowerup(&C2V(gProgram_state).current_car, modifiers + pN);
+}
+
+void C2_HOOK_FASTCALL GotPowerup0(void) {
+
+    GotPowerupN(0);
+}
+C2_HOOK_FUNCTION(0x004dbdb0, GotPowerup0)
