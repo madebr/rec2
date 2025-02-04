@@ -219,6 +219,8 @@ void C2_HOOK_FASTCALL ResetMan(void);
 
 void C2_HOOK_FASTCALL NextPedCam(void);
 
+void C2_HOOK_FASTCALL PrevPedCam(void);
+
 void C2_HOOK_FASTCALL FindNearestPed(void);
 
 #endif //REC2_CONTROLS_H
