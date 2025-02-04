@@ -402,7 +402,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [1][ 1][1] */
             NULL, /* [1][ 1][2] */
             NULL, /* [1][ 1][3] */
-            FUN_004b5ab0, /* [1][ 1][4] */
+            ResetMan, /* [1][ 1][4] */
             NULL, /* [1][ 1][5] */
             NULL, /* [1][ 1][6] */
             NULL, /* [1][ 1][7] */
