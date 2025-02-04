@@ -2121,3 +2121,18 @@ void C2_HOOK_FASTCALL DecreaseYon(void) {
     NewTextHeadupSlot(4, 0, 2000, -4, text);
 }
 C2_HOOK_FUNCTION(0x00446ad0, DecreaseYon)
+
+void C2_HOOK_FASTCALL IncreaseYon(void) {
+    char text[256];
+    br_camera* camera;
+    int i;
+
+    C2V(gCamera_yon) += 5.f;
+    for (i = 0; i < REC2_ASIZE(C2V(gCamera_list)); i++) {
+        camera = C2V(gCamera_list)[i]->type_data;
+        camera->yon_z = C2V(gYon_multiplier) * C2V(gCamera_yon);
+    }
+    sprintf(text, GetMiscString(eMiscString_yon_increased_to_D), (int)camera->yon_z);
+    NewTextHeadupSlot(4, 0, 2000, -4, text);
+}
+C2_HOOK_FUNCTION(0x00446a40, IncreaseYon)

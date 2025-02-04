@@ -4092,6 +4092,7 @@ enum {
     eMiscString_depth_cueing_on = 111,
     eMiscString_depth_cueing_off = 112,
     eMiscString_there_is_no_depth_cueing_for_this_race = 113,
+    eMiscString_yon_increased_to_D = 114,
     eMiscString_yon_decreased_to_D = 115,
     eMiscString_car_simplification_level_D = 119,
     eMiscString_accessories_on = 120,
