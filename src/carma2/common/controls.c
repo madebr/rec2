@@ -356,13 +356,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [0][14][7] */
         },
         {
-            FUN_004599f0, /* [0][15][0] */
-            FUN_00511240, /* [0][15][1] */
-            FUN_00511280, /* [0][15][2] */
-            FUN_00511330, /* [0][15][3] */
-            FUN_00511270, /* [0][15][4] */
-            FUN_005112d0, /* [0][15][5] */
-            FUN_00511390, /* [0][15][6] */
+            ShowCurrentJoystickName, /* [0][15][0] */
+            ToggleJoystickHeadup, /* [0][15][1] */
+            ToggleJoystickYAxis, /* [0][15][2] */
+            ToggleJoystickDPad, /* [0][15][3] */
+            CycleJoystick, /* [0][15][4] */
+            ToggleJoystickEnable, /* [0][15][5] */
+            IncreaseJoystickFFB, /* [0][15][6] */
             NULL, /* [0][15][7] */
         },
         {
