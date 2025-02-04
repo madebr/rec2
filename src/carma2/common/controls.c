@@ -311,7 +311,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(tEdit_func*, gEdit_funcs, [2][18][8], 
             NULL, /* [0][10][5] */
             NULL, /* [0][10][6] */
             NULL, /* [0][10][7] */
-        }
+        },
         {
             ToggleSky, /* [0][11][0] */
             NULL, /* [0][11][1] */
