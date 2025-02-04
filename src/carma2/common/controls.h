@@ -194,4 +194,6 @@ void C2_HOOK_FASTCALL IncreaseYon(void);
 
 void C2_HOOK_FASTCALL CycleSoundDetailLevel(void);
 
+void C2_HOOK_FASTCALL ShowCurrentJoystickName(void);
+
 #endif //REC2_CONTROLS_H
