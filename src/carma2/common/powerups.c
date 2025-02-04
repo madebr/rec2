@@ -813,7 +813,7 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da730, CloseDownPowerUps, CloseDownPowerUps_original)
 
-void C2_HOOK_FASTCALL SetAPOToInitialValues(void) {
+void C2_HOOK_FASTCALL MaxOutAPO(void) {
     int i;
 
     for (i = 0; i < 3; i++) {
@@ -821,7 +821,7 @@ void C2_HOOK_FASTCALL SetAPOToInitialValues(void) {
         C2V(gProgram_state).current_car.power_up_slots[i] = C2V(gInitial_powerup_slots)[i];
     }
 }
-C2_HOOK_FUNCTION(0x00502e00, SetAPOToInitialValues)
+C2_HOOK_FUNCTION(0x00502e00, MaxOutAPO)
 
 void (C2_HOOK_FASTCALL * MungePowerupStuff_original)(undefined4 pArg1);
 void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1) {
