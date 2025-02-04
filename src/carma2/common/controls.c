@@ -189,7 +189,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gRecovery_voucher_count, 0x0067c3f8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAuto_repair, 0x0079ec54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInstant_handbrake, 0x0079ec50);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gToo_poor_for_recovery_timeout, 0x0067c47c);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCheckpoint_finder_enabled, 0x00659b28);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCheckpoint_finder_enabled, 0x00659b28, 1);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068b8e4, 0x0068b8e4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068b8e8, 0x0068b8e8);
