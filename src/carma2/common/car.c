@@ -583,3 +583,14 @@ int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** 
     return 0;
 }
 C2_HOOK_FUNCTION(0x00420880, GetPrecalculatedFacesUnderCar)
+
+int (C2_HOOK_FASTCALL * ProcessForcesCallback_original)(void* arg1, float* arg2, int arg3);
+int C2_HOOK_FASTCALL ProcessForcesCallback(void* arg1, float* arg2, int arg3) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return ProcessForcesCallback_original(arg1, arg2, arg3);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0041c1b0, ProcessForcesCallback, ProcessForcesCallback_original)

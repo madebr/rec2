@@ -67,4 +67,6 @@ void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race);
 
 int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** pFace_refs);
 
+int C2_HOOK_FASTCALL ProcessForcesCallback(void* arg1, float* arg2, int arg3);
+
 #endif //REC2_CAR_H
