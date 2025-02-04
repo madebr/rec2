@@ -182,4 +182,6 @@ void C2_HOOK_FASTCALL DoSteelGonadODeath(int pNum);
 
 void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void);
 
+void C2_HOOK_FASTCALL ToggleSky(void);
+
 #endif //REC2_CONTROLS_H
