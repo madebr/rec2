@@ -2163,3 +2163,14 @@ void C2_HOOK_FASTCALL ShowCurrentJoystickName(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004599f0, ShowCurrentJoystickName, ShowCurrentJoystickName_original)
+
+void (C2_HOOK_FASTCALL * ToggleJoystickHeadup_original)(void);
+void C2_HOOK_FASTCALL ToggleJoystickHeadup(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ToggleJoystickHeadup_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00511240, ToggleJoystickHeadup, ToggleJoystickHeadup_original)

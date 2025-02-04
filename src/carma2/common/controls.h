@@ -196,4 +196,6 @@ void C2_HOOK_FASTCALL CycleSoundDetailLevel(void);
 
 void C2_HOOK_FASTCALL ShowCurrentJoystickName(void);
 
+void C2_HOOK_FASTCALL ToggleJoystickHeadup(void);
+
 #endif //REC2_CONTROLS_H
