@@ -477,3 +477,14 @@ void C2_HOOK_FASTCALL DroneStateFuncControlledMovement(tDrone_spec* pDrone, tDro
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044d1d0, DroneStateFuncControlledMovement, DroneStateFuncControlledMovement_original)
+
+void (C2_HOOK_FASTCALL * DroneStateFuncPhysicsActive_original)(tDrone_spec* pDrone, tDroneStateFuncState state);
+void C2_HOOK_FASTCALL DroneStateFuncPhysicsActive(tDrone_spec* pDrone, tDroneStateFuncState state) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DroneStateFuncPhysicsActive_original(pDrone, state);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044eb70, DroneStateFuncPhysicsActive, DroneStateFuncPhysicsActive_original)
