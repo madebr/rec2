@@ -631,3 +631,14 @@ tCar_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor) {
     return DoPullActorFromWorld(actor);
 }
 C2_HOOK_FUNCTION(0x0041ff00, PullActorFromWorld)
+
+float (C2_HOOK_FASTCALL * GetFrictionFromFace_original)(void *arg1);
+float C2_HOOK_FASTCALL GetFrictionFromFace(void *arg1) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GetFrictionFromFace_original(arg1);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b5970, GetFrictionFromFace, GetFrictionFromFace_original)

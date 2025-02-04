@@ -77,4 +77,6 @@ tCar_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* actor);
 
 tCar_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor);
 
+float C2_HOOK_FASTCALL GetFrictionFromFace(void *arg1);
+
 #endif //REC2_CAR_H
