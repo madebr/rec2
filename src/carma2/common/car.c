@@ -27,6 +27,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gUnknown_car_collision_info, 0x0067
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gAverage_grid_position, 0x00679268);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067939c, 0x0067939c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074a5f8, 0x0074a5f8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
     ProcessForcesCallback,
     ProcessJointForcesCallback,
@@ -621,3 +622,12 @@ tCar_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* actor) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041ff20, DoPullActorFromWorld, DoPullActorFromWorld_original)
+
+tCar_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor) {
+
+    if (!C2V(gINT_0074a5f8) && !C2V(gINT_0067939c) == 0) {
+        return NULL;
+    }
+    return DoPullActorFromWorld(actor);
+}
+C2_HOOK_FUNCTION(0x0041ff00, PullActorFromWorld)
