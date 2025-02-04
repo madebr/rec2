@@ -204,4 +204,6 @@ void C2_HOOK_FASTCALL CycleJoystick(void);
 
 void C2_HOOK_FASTCALL ToggleJoystickEnable(void);
 
+void C2_HOOK_FASTCALL IncreaseJoystickFFB(void);
+
 #endif //REC2_CONTROLS_H
