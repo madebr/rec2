@@ -1288,13 +1288,14 @@ void C2_HOOK_FASTCALL Generic_MungeActiveItems(tFrontend_spec* pFrontend) {
 
     C2V(gCount_connected_items_indices) = 0;
     if (C2V(gFrontend_selected_item_index) != -1) {
-        tConnected_items* gConnected_items_indices = C2V(gConnected_items);
+        tConnected_items* connected_items = C2V(gConnected_items);
         int scroll_area_containing_selected_item = 0;
 
-        for (; gConnected_items_indices != NULL; gConnected_items_indices = gConnected_items_indices->next) {
-            for (i = 0; i < gConnected_items_indices->count_ranges; i++) {
-                if (gConnected_items_indices->range_starts[i] <= C2V(gFrontend_selected_item_index) && C2V(gFrontend_selected_item_index) < gConnected_items_indices->range_starts[i] + gConnected_items_indices->range_length) {
-                    scroll_area_containing_selected_item = C2V(gFrontend_selected_item_index) - gConnected_items_indices->range_starts[i] + 1;
+        for (; connected_items != NULL; connected_items = connected_items->next) {
+            for (i = 0; i < connected_items->count_ranges; i++) {
+                if (connected_items->range_starts[i] <= C2V(gFrontend_selected_item_index)
+                        && C2V(gFrontend_selected_item_index) < connected_items->range_starts[i] + connected_items->range_length) {
+                    scroll_area_containing_selected_item = C2V(gFrontend_selected_item_index) - connected_items->range_starts[i] + 1;
                     break;
                 }
             }
@@ -1307,9 +1308,9 @@ void C2_HOOK_FASTCALL Generic_MungeActiveItems(tFrontend_spec* pFrontend) {
             C2V(gConnected_items_indices)[0] = C2V(gFrontend_selected_item_index);
             pFrontend->items[C2V(gFrontend_selected_item_index)].flags |= 0x1;
         } else {
-            for (i = 0; i < gConnected_items_indices->count_ranges; i++) {
-                C2V(gConnected_items_indices)[C2V(gCount_connected_items_indices)] = scroll_area_containing_selected_item + gConnected_items_indices->range_starts[i] - 1;
-                pFrontend->items[i - 1].flags |= 0x1;
+            for (i = 0; i < connected_items->count_ranges; i++) {
+                C2V(gConnected_items_indices)[C2V(gCount_connected_items_indices)] = scroll_area_containing_selected_item + connected_items->range_starts[i] - 1;
+                pFrontend->items[scroll_area_containing_selected_item + connected_items->range_starts[i] - 1].flags |= 0x1;
                 C2V(gCount_connected_items_indices) += 1;
             }
         }
