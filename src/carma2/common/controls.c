@@ -2249,7 +2249,7 @@ void C2_HOOK_FASTCALL CycleInvulnerability(void) {
     C2V(gCar_to_view)->invulnerable_no_wastage = C2V(gInvulnerability) & 4;
     message[0] = '\0';
     if (C2V(gInvulnerability) == 0) {
-        strcpy(message, "FULLY VULNERABLE");
+        c2_strcpy(message, "FULLY VULNERABLE");
     }
     if (C2V(gCar_to_view)->invulnerable_no_damage) {
         c2_strcat(message, " NO DAMAGE");
