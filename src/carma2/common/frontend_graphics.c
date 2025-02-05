@@ -4,6 +4,7 @@
 #include "controls.h"
 #include "depth.h"
 #include "frontend.h"
+#include "frontend_options.h"
 #include "frontend_quit.h"
 #include "globvars.h"
 #include "graphics.h"
@@ -11,7 +12,74 @@
 #include "world.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_GRAPHICS, 0x0063e528, {
-    FIXME TODO
+    "Graphics",
+    0,
+    53,
+    Graphics_Infunc,
+    Graphics_Outfunc,
+    Generic_MenuHandler,
+    &C2V(gFrontend_OPTIONS),
+    1,
+    0,
+    0,
+    8,
+    0,
+    0,
+    {
+        { 0xf9, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x7,  temp, (void*)1,     0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x22, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x34, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x35, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x36, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x37, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x24, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x40, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x41, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x42, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x43, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x25, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x40, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x41, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x42, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x43, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x23, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x3b, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x3c, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x3d, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x28, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x44, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x45, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x46, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x2a, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x2b, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x2c, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x2d, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x26, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x27, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x29, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x2e, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x2f, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0xf8, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0xe2, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0xe3, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
+    },
 });
 
 
