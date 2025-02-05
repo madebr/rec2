@@ -745,18 +745,6 @@ void C2_HOOK_FASTCALL DoDifferenceX(tFlic_descriptor* pFlic_info, tU32 chunk_len
 #if defined(C2_HOOKS_ENABLED)
     DoDifferenceX_original(pFlic_info, chunk_length);
 #else
-    int i;
-    int j;
-    int k;
-    int first_line;
-    int line_count;
-    int number_of_packets;
-    int skip_count;
-    int size_count;
-    tU8* pixel_ptr;
-    tU8* line_pixel_ptr;
-    tU8 the_byte;
-    tU32 the_row_bytes;
 #error "Not implemented"
 #endif
 }
@@ -768,18 +756,6 @@ void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 chunk
 #if defined(C2_HOOKS_ENABLED)
     DoDifferenceTrans_original(pFlic_info, chunk_length);
 #else
-    int i;
-    int j;
-    int k;
-    int first_line;
-    int line_count;
-    int number_of_packets;
-    int skip_count;
-    int size_count;
-    tU8* pixel_ptr;
-    tU8* line_pixel_ptr;
-    tU8 the_byte;
-    tU32 the_row_bytes;
 #error "Not implemented"
 #endif
 }
@@ -791,12 +767,6 @@ void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
 #if defined(C2_HOOKS_ENABLED)
     DoBlack_original(pFlic_info, chunk_length);
 #else
-    int i;
-    int j;
-    int the_width;
-    tU8* pixel_ptr;
-    tU32 the_row_bytes;
-    tU32* line_pixel_ptr;
 #error "Not implemented"
 #endif
 }
@@ -902,12 +872,6 @@ void C2_HOOK_FASTCALL DoUncompressed(tFlic_descriptor* pFlic_info, tU32 chunk_le
 #if defined(C2_HOOKS_ENABLED)
     DoUncompressed_original(pFlic_info, chunk_length);
 #else
-    int i;
-    int j;
-    int the_width;
-    tU8* pixel_ptr;
-    tU32 the_row_bytes;
-    tU32* line_pixel_ptr;
 #error "Not implemented"
 #endif
 }
@@ -919,13 +883,6 @@ void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 chu
 #if defined(C2_HOOKS_ENABLED)
     DoUncompressedTrans_original(pFlic_info, chunk_length);
 #else
-    int i;
-    int j;
-    int the_width;
-    tU8* pixel_ptr;
-    tU8* line_pixel_ptr;
-    tU8 the_byte;
-    tU32 the_row_bytes;
 #error "Not implemented"
 #endif
 }
