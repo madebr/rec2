@@ -2340,7 +2340,7 @@ void C2_HOOK_FASTCALL ViewOpponent(void) {
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x, ViewOpponent, ViewOpponent_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0040e590, ViewOpponent, ViewOpponent_original)
 
 void C2_HOOK_FASTCALL GotPowerupN(int pN) {
     int modifiers;
