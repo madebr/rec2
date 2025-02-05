@@ -28,6 +28,57 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_net_car_index, 0x007638e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_join_host_result, 0x00764ee4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFrontend_host_join_buffer, 256, 0x00763600);
 
+
+void C2_HOOK_FASTCALL SaveSinglePlayerState(void) {
+
+    if (!C2V(gValid_stashed_save_game)) {
+        MakeSavedGame(&C2V(gStashed_save_game));
+    }
+    C2V(gValid_stashed_save_game) = 1;
+}
+
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068703c, 0x0068703c);
+
+void C2_HOOK_FASTCALL NetworkJoinSetup(void) {
+    C2V(gINT_0068703c) = 0;
+    SetAlwaysTyping();
+    InitGamesToJoin();
+    NetStartProducingJoinList(AddToJoinList);
+}
+
+int C2_HOOK_FASTCALL NetworkJoinMenuInfunc(tFrontend_spec* pFrontend) {
+    int i;
+
+    if (!pFrontend->loaded) {
+        LoadMenuSettings(pFrontend);
+    }
+    SaveSinglePlayerState();
+    pFrontend->items[30].text[0] = '\0';
+    ReadNetGameChoices(&C2V(gFrontend_game_type), &C2V(gFrontend_net_options), &C2V(gRace_index));
+    LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), C2V(gFrontend_game_type));
+    c2_strcpy(pFrontend->items[26].text, C2V(gProgram_state).player_name);
+    FuckWithWidths(pFrontend);
+    ResetInterfaceTimeout();
+
+    for (i = 0; i < pFrontend->count_items; i++) {
+        switch (i) {
+        case 19:
+        case 24:
+            pFrontend->items[i].visible = 0;
+            pFrontend->items[i].enabled = kFrontendItemEnabled_default;
+            break;
+        default:
+            pFrontend->items[i].visible = 1;
+            break;
+        }
+    }
+    UpdateNetTrackScroller(pFrontend);
+    UpdateNetGameTypeScroller(pFrontend);
+    NetworkJoinSetup();
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00467ef0, NetworkJoinMenuInfunc)
+
 void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend) {
     int i;
 
