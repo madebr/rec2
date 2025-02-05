@@ -1,4 +1,4 @@
-#include "frontend_credits.h"
+#include "frontend_graphics.h"
 
 #include "brucetrk.h"
 #include "controls.h"
