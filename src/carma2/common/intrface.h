@@ -27,4 +27,6 @@ void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_se
 
 void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode);
 
+void C2_HOOK_FASTCALL SetAlwaysTyping(void);
+
 #endif //REC2_INTRFACE_H
