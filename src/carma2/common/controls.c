@@ -2148,7 +2148,7 @@ void C2_HOOK_FASTCALL CycleSoundDetailLevel(void) {
         NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_fewest_sounds));
     } else if (C2V(gSound_detail_level) == 1) {
         NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_partial_sound));
-    } else if (gSound_detail_level == 2) {
+    } else if (C2V(gSound_detail_level) == 2) {
         NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_all_sounds));
     }
 }
