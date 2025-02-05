@@ -2049,16 +2049,16 @@ void C2_HOOK_FASTCALL ToggleSky(void) {
     new_sky_on = !C2V(gSky_on);
     if (C2V(gSky_on) != new_sky_on) {
         br_pixelmap* sky_texture = C2V(gSky_texture_0079ec1c);
-        gSky_texture_0079ec1c = gProgram_state.current_depth_effect.sky_texture;
-        gProgram_state.current_depth_effect.sky_texture = sky_texture;
-        gProgram_state.default_depth_effect.sky_texture = sky_texture;
+        C2V(gSky_texture_0079ec1c) = C2V(gProgram_state).current_depth_effect.sky_texture;
+        C2V(gProgram_state).current_depth_effect.sky_texture = sky_texture;
+        C2V(gProgram_state).default_depth_effect.sky_texture = sky_texture;
         if (C2V(gHorizon_material) != NULL && sky_texture != NULL) {
-            gHorizon_material->colour_map = sky_texture;
+            C2V(gHorizon_material)->colour_map = sky_texture;
             BrMaterialUpdate(C2V(gHorizon_material), BR_MATU_ALL);
-            MungeSkyVs(C2V(gSky_model),gHorizon_material);
+            MungeSkyVs(C2V(gSky_model), C2V(gHorizon_material));
         }
     }
-    if (gProgram_state.current_depth_effect.sky_texture != NULL) {
+    if (C2V(gProgram_state).current_depth_effect.sky_texture != NULL) {
         NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_on));
     } else if (C2V(gSky_texture_0079ec1c) != NULL) {
         NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_off));
