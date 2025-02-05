@@ -12,7 +12,36 @@
 #include "sound.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_CHANGE_CAR, 0x005d6410, {
-    FIXME TODO
+    "ChangeCar",
+    0,
+    15,
+    ChangeCarMenuInfunc,
+    ChangeCarMenuOutfunc,
+    FRONTEND_ChangeCarMenuHandler,
+    &C2V(gFrontend_MAIN),
+    0,
+    0,
+    0,
+    5,
+    0,
+    4,
+    {
+        { 0x402, CarClickPrev,      NULL,                   0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x402, CarClickNext,      NULL,                   0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x404, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x404, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x404, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x404, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x402, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x402, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x402, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x402, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x402, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x402, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x402, temp,              NULL,                   0, 0, 0, 0, 0, 0, 0, 0, 1 },
+        { 0x7,   ChangeCarOK,       &C2V(gFrontend_MAIN),   0, 0, 0, 0, 0, 0, 0, 1, 1 },
+        { 0x8,   ChangeCarCancel,   &C2V(gFrontend_MAIN),   0, 0, 0, 0, 0, 0, 0, 1, 1 },
+    },
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_change_car_selected_car, 0x00764ee8);
 
