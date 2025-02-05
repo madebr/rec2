@@ -27,6 +27,8 @@ int C2_HOOK_CDECL c2_isprint(int c);
 
 #define c2_toupper toupper
 
+#define c2_isalnum isalnum
+
 #define c2_isalpha isalpha
 
 #define c2_isdigit isdigit
