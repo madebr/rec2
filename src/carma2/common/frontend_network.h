@@ -22,6 +22,8 @@ void C2_HOOK_FASTCALL NetworkJoinSetup(void);
 
 int C2_HOOK_FASTCALL NetworkJoinMenuInfunc(tFrontend_spec* pFrontend);
 
+int C2_HOOK_FASTCALL NetworkJoinMenuOutfunc(tFrontend_spec* pFrontend);
+
 void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL UpdateNetTrackScroller(tFrontend_spec* pFrontend);

@@ -79,6 +79,13 @@ int C2_HOOK_FASTCALL NetworkJoinMenuInfunc(tFrontend_spec* pFrontend) {
 }
 C2_HOOK_FUNCTION(0x00467ef0, NetworkJoinMenuInfunc)
 
+int C2_HOOK_FASTCALL NetworkJoinMenuOutfunc(tFrontend_spec* pFrontend) {
+
+    StopAllThatJoinyStuffThisInstant();
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00468260, NetworkJoinMenuOutfunc)
+
 void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend) {
     int i;
 
