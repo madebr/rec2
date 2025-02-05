@@ -2034,7 +2034,7 @@ void C2_HOOK_FASTCALL DoSteelGonadODeath(int pNum) {
 void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void) {
     const char *format;
     char *buffer;
-    C2V(gCar_simplification_level) = (gCar_simplification_level + 1) % 5;
+    C2V(gCar_simplification_level) = C2V(gCar_simplification_level + 1) % 5;
     format = GetMiscString(eMiscString_car_simplification_level_D);
     buffer = BrMemAllocate(c2_strlen(format) + 20, kMem_simp_level);
     sprintf(buffer, format, C2V(gCar_simplification_level));
