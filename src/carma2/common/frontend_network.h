@@ -16,6 +16,12 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrontend_net_car_index);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_join_host_result);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFrontend_host_join_buffer, 256);
 
+void C2_HOOK_FASTCALL SaveSinglePlayerState(void);
+
+void C2_HOOK_FASTCALL NetworkJoinSetup(void);
+
+int C2_HOOK_FASTCALL NetworkJoinMenuInfunc(tFrontend_spec* pFrontend);
+
 void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL UpdateNetTrackScroller(tFrontend_spec* pFrontend);
