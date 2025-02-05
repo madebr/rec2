@@ -433,7 +433,7 @@ void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode) {
 }
 C2_HOOK_FUNCTION(0x00484f10, ChangeSelectionTo)
 
-void SetAlwaysTyping(void) {
+void C2_HOOK_FASTCALL SetAlwaysTyping(void) {
 
     C2V(gAlways_typing) = 1;
 }
