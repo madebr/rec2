@@ -11,6 +11,7 @@
 #include "polyfont.h"
 #include "utility.h"
 
+#include "c2_stdlib.h"
 #include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_NETWORK_SUMMARY, 0x00627398, {
