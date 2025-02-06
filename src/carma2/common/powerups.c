@@ -1058,7 +1058,7 @@ int (C2_HOOK_FASTCALL * GotPowerup_original)(tCar_spec* pCar, int pIndex);
 int C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex) {
 
 #if defined(C2_HOOKS_ENABLED)
-    GotPowerup(pCar, pIndex);
+    return GotPowerup_original(pCar, pIndex);
 #else
     NOT_IMPLEMENTED();
 #endif
