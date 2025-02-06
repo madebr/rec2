@@ -125,7 +125,7 @@ void C2_HOOK_FASTCALL BackupNetworkOptions(void) {
     c2_memcpy(&C2V(gFrontend_backup_net_options), &C2V(gFrontend_net_options), sizeof(C2V(gFrontend_net_options)));
 }
 
-int C2_HOOK_FASTCALL NetOptions_InFunc(tFrontend_spec* pFrontend) {
+int C2_HOOK_FASTCALL NetOptions_Infunc(tFrontend_spec* pFrontend) {
 
     Generic_Infunc(pFrontend);
     DisplayNetworkOptions(pFrontend);

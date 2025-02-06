@@ -15,7 +15,7 @@ void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend);
 
 void C2_HOOK_FASTCALL BackupNetworkOptions(void);
 
-int C2_HOOK_FASTCALL NetOptions_InFunc(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL NetOptions_Infunc(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend);
 
