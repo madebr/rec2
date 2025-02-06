@@ -55,7 +55,7 @@ int C2_HOOK_FASTCALL NetworkJoinMenuInfunc(tFrontend_spec* pFrontend) {
     SaveSinglePlayerState();
     pFrontend->items[30].text[0] = '\0';
     ReadNetGameChoices(&C2V(gFrontend_game_type), &C2V(gFrontend_net_options), &C2V(gRace_index));
-    LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), &C2V(gFrontend_game_type));
+    LoadRaces(C2V(gRace_list), &C2V(gNumber_of_races), C2V(gFrontend_game_type));
     c2_strcpy(pFrontend->items[26].text, C2V(gProgram_state).player_name);
     FuckWithWidths(pFrontend);
     ResetInterfaceTimeout();
@@ -75,6 +75,7 @@ int C2_HOOK_FASTCALL NetworkJoinMenuInfunc(tFrontend_spec* pFrontend) {
     UpdateNetTrackScroller(pFrontend);
     UpdateNetGameTypeScroller(pFrontend);
     NetworkJoinSetup();
+    return 0;
 }
 C2_HOOK_FUNCTION(0x00467ef0, NetworkJoinMenuInfunc)
 
