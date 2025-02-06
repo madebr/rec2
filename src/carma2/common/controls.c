@@ -913,16 +913,17 @@ int C2_HOOK_FASTCALL CheckRecoverCost(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00442750, CheckRecoverCost, CheckRecoverCost_original)
 
 // Key: 'ctrl+a'
-void (C2_HOOK_FASTCALL * AbortRace_original)(void);
-void C2_HOOK_FASTCALL AbortRace(void) {
+int (C2_HOOK_FASTCALL * AbortRace_original)(tFrontend_spec* pFrontend);
+int C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend) {
     CONTROLS_START();
 #if 0//defined(C2_HOOKS_ENABLED)
-    AbortRace_original();
+    return AbortRace_original(pFrontend);
 #else
 
     if (!C2V(gRace_finished)) {
         C2V(gAbandon_game) = 1;
     }
+    return C2V(gRace_finished);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00441490, AbortRace, AbortRace_original)
