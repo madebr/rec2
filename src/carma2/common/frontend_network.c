@@ -1,12 +1,16 @@
 #include "frontend_network.h"
 
 #include "frontend.h"
+#include "frontend_quit.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "graphics.h"
 #include "init.h"
+#include "input.h"
 #include "intrface.h"
 #include "loading.h"
 #include "loadsave.h"
+#include "main.h"
 #include "newgame.h"
 #include "network.h"
 #include "utility.h"
@@ -14,6 +18,7 @@
 
 #include "c2_string.h"
 
+#include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_NETWORK, 0x005b39b8, {
     FIXME TODO
@@ -85,6 +90,190 @@ int C2_HOOK_FASTCALL NetworkJoinMenuOutfunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00468260, NetworkJoinMenuOutfunc)
+
+void C2_HOOK_FASTCALL NetworkJoinUpdateScroller(tFrontend_spec* pFrontend) {
+    int have_game;
+    int i;
+
+    have_game = 0;
+    PossibleService();
+    for (i = 0; i < REC2_ASIZE(C2V(gGames_to_join)); i++) {
+        if (C2V(gGames_to_join)[i].game != NULL) {
+            have_game = 1;
+        }
+    }
+    if (have_game) {
+        int game_i;
+        for (i = pFrontend->scrollers[2].indexFirstScrollableItem, game_i = 0; i <= pFrontend->scrollers[2].indexLastScrollableItem; i++, game_i++) {
+            if (C2V(gGames_to_join)[game_i].time != 0 && C2V(gGames_to_join)[game_i].game != NULL) {
+                /* FIXME: game name type is wrong!!! */
+                c2_sprintf(pFrontend->items[i].text, "%s", &C2V(gGames_to_join)[game_i].game->pd_net_info.addr[0xe]);
+                pFrontend->items[i].enabled = kFrontendItemEnabled_enabled;
+            } else {
+                c2_sprintf(pFrontend->items[i].text, "%s", " ");
+                pFrontend->items[i].enabled = kFrontendItemEnabled_disabled;
+            }
+        }
+        pFrontend->items[29].enabled = kFrontendItemEnabled_enabled;
+    } else {
+        c2_sprintf(pFrontend->items[20].text, "%s", IString_Get(253));
+        c2_strcpy(pFrontend->items[21].text, " ");
+        c2_strcpy(pFrontend->items[22].text, " ");
+        c2_strcpy(pFrontend->items[23].text, " ");
+        pFrontend->items[20].enabled = kFrontendItemEnabled_disabled;
+        pFrontend->items[21].enabled = kFrontendItemEnabled_disabled;
+        pFrontend->items[22].enabled = kFrontendItemEnabled_disabled;
+        pFrontend->items[23].enabled = kFrontendItemEnabled_disabled;
+        pFrontend->items[29].enabled = kFrontendItemEnabled_disabled;
+    }
+    FuckWithWidths(pFrontend);
+}
+
+int C2_HOOK_FASTCALL FRONTEND_NetworkJoinMenuHandler(tFrontend_spec* pFrontend) {
+    int original_item_index;
+
+    original_item_index = C2V(gFrontend_selected_item_index);
+    C2V(gTyping_slot) = -1;
+    EdgeTriggerModeOn();
+    KillSplashScreen();
+    if (C2V(gTyping)) {
+        int processed = ProcessInputString();
+        FuckWithWidths(pFrontend);
+        if (processed < 0) {
+            NetGameToggleTyping(pFrontend);
+        }
+    } else {
+        int key_down;
+        int mouse_down;
+        int mouse_item;
+
+        PollKeys();
+        EdgeTriggerModeOff();
+        key_down = PDAnyKeyDown();
+        if (key_down == -1 && key_down != 4) {
+            C2V(gMouse_in_use) = 0;
+            ResetInterfaceTimeout();
+        }
+        EdgeTriggerModeOn();
+        mouse_down = 0;
+        mouse_item = original_item_index;
+        if (C2V(gMouse_in_use)) {
+            int mouse_x, mouse_y;
+
+            ResetInterfaceTimeout();
+            GetMousePosition(&mouse_x, &mouse_y);
+            mouse_down = EitherMouseButtonDown();
+            mouse_item = GetItemAtMousePos(C2V(gCurrent_frontend_spec), mouse_x, mouse_y);
+            C2V(gFrontend_selected_item_index) = mouse_item;
+            if (C2V(gFrontend_selected_item_index) == -1) {
+                C2V(gFrontend_selected_item_index) = 21;
+            }
+        }
+        if (PDKeyDown(72) || PDKeyDown(89)) {
+             C2V(gFrontend_selected_item_index) = FindPrevActiveItem(C2V(gCurrent_frontend_spec), C2V(gFrontend_selected_item_index));
+             if (!C2V(gMouse_in_use)
+                    && C2V(gFrontend_selected_item_index) >= C2V(gCurrent_frontend_spec)->scrollers[0].indexFirstScrollableItem
+                    && C2V(gFrontend_selected_item_index) <= C2V(gCurrent_frontend_spec)->scrollers[0].indexLastScrollableItem) {
+
+                 ToggleSelection(pFrontend);
+                 if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
+                     pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
+                 }
+             }
+        }
+        if (PDKeyDown(73) || PDKeyDown(83)) {
+            if (C2V(gFrontend_selected_item_index) < pFrontend->count_items - 1) {
+                C2V(gFrontend_selected_item_index) = FindNextActiveItem(C2V(gCurrent_frontend_spec), C2V(gFrontend_selected_item_index));
+            } else {
+                C2V(gFrontend_selected_item_index) = FindNextActiveItem(C2V(gCurrent_frontend_spec), -1);
+            }
+            if (!C2V(gMouse_in_use)
+                    && C2V(gFrontend_selected_item_index) >= C2V(gCurrent_frontend_spec)->scrollers[0].indexFirstScrollableItem
+                    && C2V(gFrontend_selected_item_index) <= C2V(gCurrent_frontend_spec)->scrollers[0].indexLastScrollableItem) {
+
+                ToggleSelection(pFrontend);
+                if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
+                    pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
+                }
+            }
+        }
+        if (PDKeyDown(63)) {
+            int i;
+
+            ShutdownNetIfRequired();
+            MaybeRestoreSavedGame();
+            C2V(gCurrent_frontend_spec)->default_item = C2V(gFrontend_selected_item_index);
+            FRONTEND_DestroyMenu(pFrontend);
+            C2V(gCurrent_frontend_spec) = pFrontend->previous;
+            FRONTEND_CreateMenu(C2V(gCurrent_frontend_spec));
+            Morph_Initialise(pFrontend, C2V(gCurrent_frontend_spec));
+            C2V(gFrontend_selected_item_index) = C2V(gCurrent_frontend_spec)->default_item;
+            for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
+
+                C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem = C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop;
+            }
+            UpdateScrollPositions(C2V(gCurrent_frontend_spec));
+            return 0;
+        }
+        if (PDKeyDown(51) || PDKeyDown(52) || (mouse_down == 1 && mouse_item != -1)) {
+            int result;
+
+            ToggleSelection(pFrontend);
+            if (!C2V(gMouse_in_use)
+                    && C2V(gFrontend_selected_item_index) >= C2V(gCurrent_frontend_spec)->scrollers[0].indexFirstScrollableItem
+                    && C2V(gFrontend_selected_item_index) <= C2V(gCurrent_frontend_spec)->scrollers[0].indexLastScrollableItem) {
+
+                C2V(gFrontend_selected_item_index) = 21;
+            }
+            switch (pFrontend->items[C2V(gFrontend_selected_item_index)].field_0xc) {
+            case 2:
+                return 2;
+            case 1:
+                C2V(gFrontend_leave_current_menu) = 1;
+                break;
+            }
+            if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
+                result = pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
+            } else {
+                result = pFrontend->items[C2V(gFrontend_selected_item_index)].field_0xc;
+            }
+            if (pFrontend->items[(C2V(gFrontend_selected_item_index))].menuInfo != NULL) {
+                int i;
+
+                for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
+
+                    C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop = C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem;
+                }
+                FRONTEND_DestroyMenu(pFrontend);
+                C2V(gCurrent_frontend_spec) = pFrontend->items[C2V(gFrontend_selected_item_index)].menuInfo;
+                FRONTEND_CreateMenu(C2V(gCurrent_frontend_spec));
+                if (C2V(gCurrent_frontend_spec) != pFrontend->previous) {
+                    C2V(gCurrent_frontend_spec)->previous = pFrontend;
+                }
+                Morph_Initialise(pFrontend, C2V(gCurrent_frontend_spec));
+                if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_QUIT)) {
+                    C2V(gFrontend_selected_item_index) = 0;
+                } else {
+                    C2V(gFrontend_selected_item_index) = C2V(gCurrent_frontend_spec)->default_item;
+                }
+                for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
+
+                    C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop = C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem;
+                }
+                UpdateScrollPositions(C2V(gCurrent_frontend_spec));
+            }
+            return result;
+        }
+    }
+    ServiceGame();
+    NetworkJoinUpdateScroller(pFrontend);
+    if (C2V(gFrontend_leave_current_menu)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+C2_HOOK_FUNCTION(0x00469320, FRONTEND_NetworkJoinMenuHandler)
 
 void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend) {
     int i;
