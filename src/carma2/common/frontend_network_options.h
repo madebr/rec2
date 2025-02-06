@@ -25,4 +25,8 @@ int C2_HOOK_FASTCALL NetOptions_TargetRoller(tFrontend_spec* pFrontend);
 
 int C2_HOOK_FASTCALL NetOptions_Ok(tFrontend_spec* pFrontend);
 
+void C2_HOOK_FASTCALL RestoreNetworkOptions(void);
+
+int C2_HOOK_FASTCALL NetOptions_Cancel(tFrontend_spec* pFrontend);
+
 #endif /* FRONTEND_NETWORK_OPTIONS_H */
