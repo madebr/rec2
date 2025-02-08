@@ -197,12 +197,12 @@ void C2_HOOK_FASTCALL SaveAllJoystickData(void) {
 #if defined(C2_HOOKS_ENABLED)
     SaveAllJoystickData_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045bd90, SaveAllJoystickData, SaveAllJoystickData_original)
 
-int C2_HOOK_FASTCALL Controls_SwitchKeyMapSet(tFrontend_spec* pFrontend) {
+int C2_HOOK_FASTCALL Controls_SwitchKeymapSet(tFrontend_spec* pFrontend) {
 
     ChangeKeyMapIndex(C2V(gFrontend_selected_item_index) - 39);
     SelectThisItemIn(pFrontend, 2, C2V(gKey_map_index) + 39);
@@ -210,7 +210,7 @@ int C2_HOOK_FASTCALL Controls_SwitchKeyMapSet(tFrontend_spec* pFrontend) {
     FuckWithWidths(pFrontend);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00472440, Controls_SwitchKeyMapSet)
+C2_HOOK_FUNCTION(0x00472440, Controls_SwitchKeymapSet)
 
 int C2_HOOK_FASTCALL Controls_SlotActivated(tFrontend_spec* pFrontend) {
     int key_array_index;
