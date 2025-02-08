@@ -523,6 +523,45 @@ void C2_HOOK_FASTCALL ShadowMode(void) {
 }
 C2_HOOK_FUNCTION(0x004e9b90, ShadowMode)
 
+void C2_HOOK_FASTCALL Darken(tU8* pPtr, unsigned int pDarken_amount) {
+
+    *pPtr = (pDarken_amount * *pPtr) / 256;
+}
+
+void C2_HOOK_FASTCALL SetFadedPalette(int pDegree) {
+    int j;
+
+    c2_memcpy(C2V(gScratch_pixels), C2V(gCurrent_palette)->pixels, 4 * 256);
+    for (j = 0; j < 256; j++) {
+        Darken((tU8*)&C2V(gScratch_pixels)[4 * j + 0], pDegree);
+        Darken((tU8*)&C2V(gScratch_pixels)[4 * j + 1], pDegree);
+        Darken((tU8*)&C2V(gScratch_pixels)[4 * j + 2], pDegree);
+        Darken((tU8*)&C2V(gScratch_pixels)[4 * j + 3], pDegree);
+    }
+    DRSetPalette2(C2V(gScratch_palette), 0);
+}
+
+void C2_HOOK_FASTCALL FadePaletteUp(void) {
+    int i;
+    int start_time;
+    int the_time;
+
+    if (C2V(gFaded_palette)) {
+        C2V(gFaded_palette) = 0;
+        start_time = PDGetTotalTime();
+        while (1) {
+            the_time = PDGetTotalTime() - start_time;
+            if (the_time >= 500) {
+                break;
+            }
+            i = (the_time * 256) / 500;
+            SetFadedPalette(i);
+        }
+        DRSetPalette(C2V(gCurrent_palette));
+    }
+}
+C2_HOOK_FUNCTION(0x004b5470, FadePaletteUp)
+
 void (C2_HOOK_FASTCALL * EnsurePaletteUp_original)(void);
 void C2_HOOK_FASTCALL EnsurePaletteUp(void) {
 
