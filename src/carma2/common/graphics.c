@@ -596,6 +596,8 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
     static C2_HOOK_VARIABLE_IMPLEMENT(int, button_was_down, 0x0067c3ac);
     static C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, draw_cursor, 0x0058fddc, 1);
 
+    (void)C2V(button_was_down);
+
     do {
         time_now = PDGetTotalTime();
         if (C2V(last_call_time) == 0) {
