@@ -49,6 +49,8 @@ double C2_HOOK_CDECL c2_atof(const char *s);
 
 #define c2_rand rand
 
+#define c2_rand rand
+
 #define c2_abort abort
 
 #define c2_malloc malloc
@@ -58,6 +60,8 @@ double C2_HOOK_CDECL c2_atof(const char *s);
 #define c2_free free
 
 #define c2_getenv getenv
+
+#define c2_qsort qsort
 
 #define c2_strtof strtof
 

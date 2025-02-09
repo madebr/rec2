@@ -35,7 +35,7 @@ void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
 #if defined(C2_HOOKS_ENABLED)
     SetCameraType_original(pCamPos);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, SetCameraType, SetCameraType_original)
@@ -46,7 +46,7 @@ void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
 #if defined(C2_HOOKS_ENABLED)
     PositionExternalCamera_original(pCar_spec, pTime);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040ea30, PositionExternalCamera, PositionExternalCamera_original)
@@ -57,7 +57,7 @@ void C2_HOOK_FASTCALL ActionReplayFinishRecording(void) {
 #if defined(C2_HOOKS_ENABLED)
     ActionReplayFinishRecording_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e1a20, ActionReplayFinishRecording, ActionReplayFinishRecording_original)
@@ -80,7 +80,7 @@ void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
 #if defined(C2_HOOKS_ENABLED)
     ToggleReplay_original(pArg1, pArg2);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e72e0, ToggleReplay, ToggleReplay_original)
@@ -91,7 +91,7 @@ void C2_HOOK_FASTCALL InitialiseActionReplay(void) {
 #if defined(C2_HOOKS_ENABLED)
     InitialiseActionReplay_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c6bf0, InitialiseActionReplay, InitialiseActionReplay_original)
@@ -102,7 +102,7 @@ void C2_HOOK_FASTCALL CheckReplayTurnOn(void) {
 #if defined(C2_HOOKS_ENABLED)
     CheckReplayTurnOn_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e6ff0, CheckReplayTurnOn, CheckReplayTurnOn_original)
@@ -113,7 +113,7 @@ void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period) {
 #if defined(C2_HOOKS_ENABLED)
     DoActionReplay_original(pFrame_period);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e68e0, DoActionReplay, DoActionReplay_original)
@@ -124,7 +124,7 @@ void C2_HOOK_FASTCALL PollActionReplayControls(tU32 *pFrame_period, tU32* pAvera
 #if defined(C2_HOOKS_ENABLED)
     PollActionReplayControls_original(pFrame_period, pAverage_frame_period);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e69b0, PollActionReplayControls, PollActionReplayControls_original)
@@ -141,7 +141,7 @@ void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatr
 #if defined(C2_HOOKS_ENABLED)
     PipeSingleGrooveStop_original(pGroove_index, pMatrix, pPath_interrupt, pObject_interrupt, pPath_resumption, pObject_resumption);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c80b0, PipeSingleGrooveStop, PipeSingleGrooveStop_original)

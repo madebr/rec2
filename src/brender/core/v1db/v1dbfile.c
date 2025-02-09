@@ -226,7 +226,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_transform_look_u
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_transform_look_up_F, 0x00663c28, { "br_transform_look_up", BR_ASIZE(C2V(br_transform_look_up_FM)), C2V(br_transform_look_up_FM), sizeof(br_transform) });
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct_member, br_transform_translation_FM, 1, 0x00663c38, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_transform_translation_FM, 1, 0x00663c38, {
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.translate.t), "t.translate.t", NULL },
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_transform_translation_F, 0x00663c48, { "br_transform_translation", BR_ASIZE(C2V(br_transform_translation_FM)), C2V(br_transform_translation_FM), sizeof(br_transform) });

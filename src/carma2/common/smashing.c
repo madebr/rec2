@@ -157,7 +157,7 @@ void C2_HOOK_FASTCALL MungeSmashMaterialNames(void) {
 #if defined(C2_HOOKS_ENABLED)
     PrepareSmashableTrackItemIdentifiers_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f0bc0, MungeSmashMaterialNames, PrepareSmashableTrackItemIdentifiers_original)
@@ -168,7 +168,7 @@ void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
 #if defined(C2_HOOKS_ENABLED)
     CleanUpSmashStuff_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f02b0, CleanUpSmashStuff,CleanUpSmashStuff_original)
@@ -179,7 +179,7 @@ void C2_HOOK_FASTCALL MungeGlassFragments(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeGlassFragments_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f00f0, MungeGlassFragments,MungeGlassFragments_original)
@@ -190,7 +190,7 @@ void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups) {
 #if defined(C2_HOOKS_ENABLED)
     FlushSmashQueue_original(pFlush_powerups);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ecfb0, FlushSmashQueue, FlushSmashQueue_original)
@@ -201,7 +201,7 @@ void C2_HOOK_FASTCALL MungeDelayedSideEffects(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeDelayedSideEffects_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ecc80, MungeDelayedSideEffects, MungeDelayedSideEffects_original)
@@ -212,7 +212,7 @@ void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime) {
 #if defined(C2_HOOKS_ENABLED)
     MungeSmashEdgeTriggers_original(pTime);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f64d0, MungeSmashEdgeTriggers, MungeSmashEdgeTriggers_original)

@@ -820,13 +820,15 @@ int C2_HOOK_FASTCALL SpendCredits(int pAmount) {
 }
 C2_HOOK_FUNCTION(0x0044b470, SpendCredits)
 
+#define HELLO _Pragma("error")
+
 void (C2_HOOK_FASTCALL * ChangingView_original)(void);
 void C2_HOOK_FASTCALL ChangingView(void) {
 
 #if defined(C2_HOOKS_ENABLED)
     ChangingView_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044b170, ChangingView, ChangingView_original)

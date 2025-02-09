@@ -165,7 +165,7 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id 
 #if defined(C2_HOOKS_ENABLED)
     return DRS3StartSound_original(pOutlet, pSound);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455690, DRS3StartSound, DRS3StartSound_original)
@@ -300,7 +300,7 @@ void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio) {
 #if defined(C2_HOOKS_ENABLED)
     SetSoundVolumes_original(pCD_audio);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456530, SetSoundVolumes, SetSoundVolumes_original)
@@ -310,7 +310,7 @@ void C2_HOOK_FASTCALL SoundService(void) {
 #if defined(C2_HOOKS_ENABLED)
     SoundService_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455a80, SoundService, SoundService_original)
@@ -545,7 +545,7 @@ void C2_HOOK_FASTCALL MungeEnvironmentalSound(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeEnvironmentalSound_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456e20, MungeEnvironmentalSound, MungeEnvironmentalSound_original)
@@ -556,7 +556,7 @@ void C2_HOOK_FASTCALL MungeEngineNoise(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeEngineNoise_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456070, MungeEngineNoise, MungeEngineNoise_original)

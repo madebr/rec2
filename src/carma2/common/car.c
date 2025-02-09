@@ -47,7 +47,7 @@ void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
 #if defined(C2_HOOKS_ENABLED)
     SetUpPanningCamera_original(c);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004105f0, SetUpPanningCamera, SetUpPanningCamera_original)
@@ -58,7 +58,7 @@ int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br
 #if defined(C2_HOOKS_ENABLED)
     return CollideCamera2_original(car_pos, cam_pos, old_camera_pos, manual_move, collision_info);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004122b0, CollideCamera2, CollideCamera2_original)
@@ -71,7 +71,7 @@ void C2_HOOK_FAKE_THISCALL FlyCar(tCar_spec* c, undefined4 pArg2, br_scalar dt) 
 #if defined(C2_HOOKS_ENABLED)
     FlyCar_original(c, pArg2, dt);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f4f0, FlyCar, FlyCar_original)
@@ -82,7 +82,7 @@ void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 p
 #if defined(C2_HOOKS_ENABLED)
     SetCarSuspGiveAndHeight_original(pCar, pArg2, pFront_give_factor, pRear_give_factor, pDamping_factor, pExtra_front_height, pExtra_rear_height);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041fc60, SetCarSuspGiveAndHeight, SetCarSuspGiveAndHeight_original)
@@ -109,7 +109,7 @@ void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime) {
 #if defined(C2_HOOKS_ENABLED)
     PanningExternalCamera_original(c, pTime);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004104b0, PanningExternalCamera, PanningExternalCamera_original)
@@ -120,7 +120,7 @@ int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime) {
 #if defined(C2_HOOKS_ENABLED)
     return IncidentCam_original(c, pTime);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040f790, IncidentCam, IncidentCam_original)
@@ -391,7 +391,7 @@ void C2_HOOK_FASTCALL SetInitialPosition(tRace_info* pThe_race, int pCar_index, 
 #if defined(C2_HOOKS_ENABLED)
     SetInitialPosition_original(pThe_race, pCar_index, pGrid_index);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00414510, SetInitialPosition, SetInitialPosition_original)
@@ -402,7 +402,7 @@ void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag) 
 #if defined(C2_HOOKS_ENABLED)
     InitialiseCar2_original(pCar, pClear_disabled_flag);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00413f70, InitialiseCar2, InitialiseCar2_original)
@@ -481,7 +481,7 @@ void C2_HOOK_FASTCALL InitialiseExternalCamera(void) {
 #if defined(C2_HOOKS_ENABLED)
     InitialiseExternalCamera_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00413580, InitialiseExternalCamera, InitialiseExternalCamera_original)
@@ -492,7 +492,7 @@ void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period) {
 #if defined(C2_HOOKS_ENABLED)
     MungeCarGraphics_original(pFrame_period);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041e660, MungeCarGraphics, MungeCarGraphics_original)
@@ -503,7 +503,7 @@ void C2_HOOK_FASTCALL DoLODCarModels(void) {
 #if defined(C2_HOOKS_ENABLED)
     DoLODCarModels_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f110, DoLODCarModels, DoLODCarModels_original)
@@ -514,7 +514,7 @@ void C2_HOOK_FASTCALL DoComplexCarModels(void) {
 #if defined(C2_HOOKS_ENABLED)
     DoComplexCarModels_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f2a0, DoComplexCarModels, DoComplexCarModels_original)
@@ -525,7 +525,7 @@ void C2_HOOK_FASTCALL ResetCarScreens(void) {
 #if defined(C2_HOOKS_ENABLED)
     ResetCarScreens_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f300, ResetCarScreens, ResetCarScreens_original)
@@ -536,7 +536,7 @@ void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime) {
 #if defined(C2_HOOKS_ENABLED)
     CameraBugFix_original(c, pTime);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040f760, CameraBugFix, CameraBugFix_original)
@@ -547,7 +547,7 @@ void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeSomeOtherCarGraphics_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041e5a0, MungeSomeOtherCarGraphics, MungeSomeOtherCarGraphics_original)

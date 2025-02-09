@@ -16,6 +16,22 @@ void C2_HOOK_FASTCALL Win32InitInputDevice(void);
 
 void C2_HOOK_FASTCALL CloseDirectInput(void);
 
+int C2_HOOK_FASTCALL InitForceFeedback(void);
+
+void C2_HOOK_FASTCALL KeyBegin(void);
+
+int C2_HOOK_FASTCALL JoystickDInputBegin(void);
+
+int C2_HOOK_FASTCALL InitForceFeedback(void);
+
+void C2_HOOK_FASTCALL ResetDInputJoystickFFB(int pIndex);
+
+void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void);
+
+void C2_HOOK_FASTCALL Win32InitInputDevice(void);
+
+int C2_HOOK_FASTCALL JoystickDInputBegin(void);
+
 tU32 C2_HOOK_FASTCALL PDGetJoystickButtonStates(void);
 
 #endif // C2_WIN32_INPUT_H

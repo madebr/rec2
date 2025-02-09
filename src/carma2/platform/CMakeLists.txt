@@ -30,6 +30,7 @@ if(WIN32)
             ${DSOUND_LIBRARY}
             ${WINMM_LIBRARY}
             ${WS2_32_LIBRARY}
+            IForce2::IForce2
     )
 else()
     message(FATAL_ERROR "Unsupported platform")
@@ -48,11 +49,16 @@ target_link_libraries(c2_platform
 )
 
 if(C2_STANDALONE)
-    add_executable(rec2)
-    target_link_libraries(rec2
-        PRIVATE
-            c2_common
-            c2_hooks
-            c2_platform
+    add_executable(rec2 WIN32
+        $<TARGET_OBJECTS:brender>
+        $<TARGET_OBJECTS:brender_softrendr_float>
+        $<TARGET_OBJECTS:c2_common>
+        $<TARGET_OBJECTS:c2_platform>
+    )
+    target_link_libraries(rec2 PRIVATE
+        brender
+        brender_softrendr_float
+        c2_common
+        c2_platform
     )
 endif()
