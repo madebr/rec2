@@ -39,7 +39,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDecode_thing, 0x00655e30, '@');
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_service, 0x006abef8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector3, y_unit_vector, 0x00655df0, { { 0.f, 1.f, 0.f } });
 
-static br_error (C2_HOOK_FASTCALL * DRBrEnd_original)(void);
+br_error (C2_HOOK_FASTCALL * DRBrEnd_original)(void);
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return DRBrEnd_original();
