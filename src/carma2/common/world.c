@@ -4912,7 +4912,7 @@ void C2_HOOK_FASTCALL AnimateSky(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     AnimateSky_original();
 #else
-    C2_HOOK_VARIABLE_IMPLEMENT(tU32, prev_sky_animation, 0x006aafc0);
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, prev_sky_animation, 0x006aafc0);
     tU32 now;
     tU32 now2;
     int frame_increment;
