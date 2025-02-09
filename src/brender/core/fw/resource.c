@@ -41,7 +41,7 @@ resource_header* UserToRes(void* r) {
 
 void* (C2_HOOK_CDECL * BrResAllocate_original)(void* vparent, br_size_t size, br_uint_8 res_class);
 void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_class) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResAllocate_original(vparent, size, res_class);
 #else
     resource_header* res;
@@ -87,7 +87,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005276c0, BrResAllocate, BrResAllocate_original)
 
 void (C2_HOOK_STDCALL * BrResInternalFree_original)(resource_header* res, br_boolean callback);
 void C2_HOOK_STDCALL BrResInternalFree(resource_header* res, br_boolean callback) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrResInternalFree_original(res, callback);
 #else
     void* r;
@@ -118,7 +118,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005277f0, BrResInternalFree, BrResInternalFree_origi
 void (C2_HOOK_CDECL * BrResFree_original)(void* vres);
 void C2_HOOK_CDECL BrResFree(void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrResFree_original(vres);
 #else
     BrResInternalFree(UserToRes(vres), 1);
@@ -129,7 +129,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005277c0, BrResFree, BrResFree_original)
 void (C2_HOOK_CDECL * BrResFreeNoCallback_original)(void* vres);
 void C2_HOOK_CDECL BrResFreeNoCallback(void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrResFreeNoCallback_original(vres);
 #else
     BrResInternalFree(UserToRes(vres), 0);
@@ -140,7 +140,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005278b0, BrResFreeNoCallback, BrResFreeNoCallback_o
 void* (C2_HOOK_CDECL * BrResAdd_original)(void* vparent, void* vres);
 void* C2_HOOK_CDECL BrResAdd(void* vparent, void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResAdd_original(vparent, vres);
 #else
     resource_header* res;
@@ -160,7 +160,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005278e0, BrResAdd, BrResAdd_original)
 
 void* (C2_HOOK_CDECL * BrResRemove_original)(void* vres);
 void* C2_HOOK_CDECL BrResRemove(void* vres) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResRemove_original(vres);
 #else
     resource_header* res;
@@ -175,7 +175,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527940, BrResRemove, BrResRemove_original)
 br_uint_8 (C2_HOOK_CDECL * BrResClass_original)(void* vres);
 br_uint_8 C2_HOOK_CDECL BrResClass(void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResClass_original(vres);
 #else
     resource_header* res;
@@ -189,7 +189,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527970, BrResClass, BrResClass_original)
 br_boolean (C2_HOOK_CDECL * BrResIsChild_original)(void* vparent, void* vchild);
 br_boolean C2_HOOK_CDECL BrResIsChild(void* vparent, void* vchild) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResIsChild_original(vparent, vchild);
 #else
     resource_header* parent;
@@ -212,7 +212,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527990, BrResIsChild, BrResIsChild_original)
 br_uint_32 (C2_HOOK_CDECL * BrResSize_original)(void* vres);
 br_uint_32 C2_HOOK_CDECL BrResSize(void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResSize_original(vres);
 #else
     resource_header* res;
@@ -231,7 +231,7 @@ br_uint_32 C2_HOOK_CDECL ResSizeTotal(void* vres, br_uint_32* ptotal) {
 
 br_uint_32 (C2_HOOK_CDECL * BrResSizeTotal_original)(void* vres);
 br_uint_32 C2_HOOK_CDECL BrResSizeTotal(void* vres) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResSizeTotal_original(vres);
 #else
     br_uint_32 total;
@@ -245,7 +245,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527a30, BrResSizeTotal, BrResSizeTotal_original)
 
 br_uint_32 (C2_HOOK_CDECL * BrResChildEnum_original)(void* vres, br_resenum_cbfn* callback, void* arg);
 br_uint_32 C2_HOOK_CDECL BrResChildEnum(void* vres, br_resenum_cbfn* callback, void* arg) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResChildEnum_original(vres, callback, arg);
 #else
     resource_header* res;
@@ -267,7 +267,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527b60, BrResChildEnum, BrResChildEnum_original)
 
 br_uint_32 (C2_HOOK_CDECL * BrResCheck_original)(void* vres, int no_tag);
 br_uint_32 C2_HOOK_CDECL BrResCheck(void* vres, int no_tag) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResCheck_original(vres, no_tag);
 #else
     resource_header* res;
@@ -283,7 +283,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527bd0, BrResCheck, BrResCheck_original)
 
 char* (C2_HOOK_CDECL * BrResStrDup_original)(void* vparent, const char* str);
 char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResStrDup_original(vparent, str);
 #else
     int l;
@@ -320,7 +320,7 @@ void InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* 
 
 void (C2_HOOK_CDECL * BrResDump_original)(void* vres, br_putline_cbfn* putline, void* arg);
 void C2_HOOK_CDECL BrResDump(void* vres, br_putline_cbfn* putline, void* arg) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrResDump_original(vres, putline, arg);
 #else
     resource_header* res;
@@ -333,7 +333,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527c50, BrResDump, BrResDump_original)
 
 char* (C2_HOOK_CDECL * BrResClassIdentifier_original)(br_uint_8 res_class);
 char* C2_HOOK_CDECL BrResClassIdentifier(br_uint_8 res_class) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResClassIdentifier_original(res_class);
 #else
     br_resource_class* rclass;
