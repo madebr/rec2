@@ -192,7 +192,7 @@ tDirectInputJoystickInfo* C2_HOOK_FASTCALL JoystickDInputGetInfo(int pJoystickIn
 }
 C2_HOOK_FUNCTION(0x004589d0, JoystickDInputGetInfo)
 
-WINBOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, void *pContext) {
+BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, void *pContext) {
     HRESULT hResult;
     IDirectInputDeviceA *device;
     IDirectInputDevice2A *device2;
