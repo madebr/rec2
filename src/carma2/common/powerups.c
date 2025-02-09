@@ -1364,3 +1364,13 @@ int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dec10, ShowPedestrians, ShowPedestrians_original);
+
+int (C2_HOOK_FASTCALL * HitMine_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL HitMine(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return HitMine_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dea40, HitMine, HitMine_original);
