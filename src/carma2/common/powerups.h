@@ -77,4 +77,6 @@ int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL DoInstantRepair(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
