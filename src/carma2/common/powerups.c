@@ -1354,3 +1354,13 @@ int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de820, SetInstantHandbrake, SetInstantHandbrake_original);
+
+int (C2_HOOK_FASTCALL * ShowPedestrians_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return ShowPedestrians_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dec10, ShowPedestrians, ShowPedestrians_original);
