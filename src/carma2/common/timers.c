@@ -48,10 +48,10 @@ void C2_HOOK_FASTCALL Timers_Init(void) {
     C2V(gTimers_draw_y_stride) = 9;
     C2V(gTimers_draw_y) = C2V(gBack_screen)->height > 250 ? 150 : 0;
 
-#define TIMER_COLOUR_NAME(I, NAME, R5, G6, B5)                                                        \
-    do {                                                                                              \
-        C2V(gTimers)[(I)].colour = RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5);                           \
-        c2_strncpy(C2V(gTimers)[(I)].identifier, NAME, REC2_ASIZE(C2V(gTimers)[(I)].identifier) - 1); \
+#define TIMER_COLOUR_NAME(I, NAME, R5, G6, B5)                                                      \
+    do {                                                                                            \
+        C2V(gTimers)[(I)].colour = RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5);                         \
+        c2_strncpy(C2V(gTimers)[(I)].identifier, (NAME), REC2_ASIZE(C2V(gTimers)[(I)].identifier)); \
     } while (0)
 
     TIMER_COLOUR_NAME(TIMER_MNG, "MNG", 0x1f, 0x00, 0x00);
