@@ -1574,3 +1574,13 @@ int C2_HOOK_FASTCALL PowerupCancel(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dff30, PowerupCancel, PowerupCancel_original);
+
+int (C2_HOOK_FASTCALL * GrowATail_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL GrowATail(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return GrowATail_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e02b0, GrowATail, GrowATail_original);
