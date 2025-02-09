@@ -105,4 +105,6 @@ int C2_HOOK_FASTCALL SetBouncey(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetSuspension(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
