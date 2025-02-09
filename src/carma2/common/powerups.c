@@ -1644,3 +1644,13 @@ void C2_HOOK_FASTCALL ResetInvulnerability(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc860, ResetInvulnerability, ResetInvulnerability_original)
+
+void (C2_HOOK_FASTCALL * ResetFreeRepairs_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetFreeRepairs_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc8d0, ResetFreeRepairs, ResetFreeRepairs_original)
