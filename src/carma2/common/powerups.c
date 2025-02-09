@@ -1724,3 +1724,13 @@ void C2_HOOK_FASTCALL ResetGravity(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de720, ResetGravity, ResetGravity_original)
+
+void (C2_HOOK_FASTCALL * ResetPinball_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetPinball_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de730, ResetPinball, ResetPinball_original)
