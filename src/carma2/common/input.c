@@ -13,6 +13,7 @@
 #define NBR_ROLLING_LETTERS 500
 #define ROLLING_LETTER_LOOP_RANDOM 96
 
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gGo_ahead_keys, 3, 0x00657200, { 51, 52, 106 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEdge_trigger_mode, 0x0068c1c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tJoy_array, gJoy_array, 0x0074b5c0);
 C2_HOOK_VARIABLE_IMPLEMENT(tKey_array, gKey_array, 0x0068bee0);
@@ -222,17 +223,17 @@ int C2_HOOK_FASTCALL KeyIsDown(int pKey_index) {
 
     CheckKeysForMouldiness();
     switch (pKey_index) {
-        case -2:
-            return 1;
-        case -1:
-            for (i = 0; i < REC2_ASIZE(C2V(gGo_ahead_keys)); i++) {
-                if (C2V(gKey_array)[C2V(gGo_ahead_keys)[i]]) {
-                    return 1;
-                }
+    case -2:
+        return 1;
+    case -1:
+        for (i = 0; i < REC2_ASIZE(C2V(gGo_ahead_keys)); i++) {
+            if (C2V(gKey_array)[C2V(gGo_ahead_keys)[i]]) {
+                return 1;
             }
-            return 0;
-        default:
-            return C2V(gKey_array)[C2V(gKey_mapping)[pKey_index]];
+        }
+        return 0;
+    default:
+        return C2V(gKey_array)[C2V(gKey_mapping)[pKey_index]];
     }
 #endif
 }
