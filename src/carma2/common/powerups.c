@@ -1824,3 +1824,13 @@ void C2_HOOK_FASTCALL ResetMassMultiplier(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004debf0, ResetMassMultiplier, ResetMassMultiplier_original)
+
+void (C2_HOOK_FASTCALL * ResetInstantHandbrake_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetInstantHandbrake(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetInstantHandbrake_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de850, ResetInstantHandbrake, ResetInstantHandbrake_original)
