@@ -111,4 +111,6 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL SetStupidPedestrians(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
