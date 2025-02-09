@@ -1514,3 +1514,13 @@ int C2_HOOK_FASTCALL RepulsePedestrians(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de540, RepulsePedestrians, RepulsePedestrians_original);
+
+int (C2_HOOK_FASTCALL * GainAPO_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL GainAPO(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return GainAPO_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc240, GainAPO, GainAPO_original);
