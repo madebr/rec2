@@ -159,4 +159,6 @@ int C2_HOOK_FASTCALL GainAPOPotential(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetPissed(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL NapalmPeds(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
