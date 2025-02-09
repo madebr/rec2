@@ -6,12 +6,13 @@
 
 #include "core/host/himage.h"
 #include "core/host/hstsetup.h"
+#include "core/pixelmap/pmsetup.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_boolean, active, 0x006b09b4);
 
 br_error (C2_HOOK_CDECL * BrBegin_original)(void);
 br_error C2_HOOK_CDECL BrBegin(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrBegin_original();
 #else
     C2_HOOK_START();
@@ -33,7 +34,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0052cf20, BrBegin, BrBegin_original)
 
 br_error (C2_HOOK_CDECL * BrEnd_original)(void);
 br_error C2_HOOK_CDECL BrEnd(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrEnd_original();
 #else
     br_device* dev;
