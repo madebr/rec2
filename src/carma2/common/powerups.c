@@ -373,7 +373,7 @@ void C2_HOOK_FASTCALL ResetPowerups(void) {
 #if defined(C2_HOOKS_ENABLED)
     ResetPowerups_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da630, ResetPowerups, ResetPowerups_original)
@@ -696,7 +696,7 @@ int C2_HOOK_FASTCALL MineExplode(tShit_mine *pMine) {
 #if defined(C2_HOOKS_ENABLED)
     return DoExplodingMineEffect_original(pMine);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ddab0, MineExplode, DoExplodingMineEffect_original)
@@ -797,7 +797,7 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
 #if defined(C2_HOOKS_ENABLED)
     RemoveTail_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e06a0, RemoveTail, RemoveTail_original)
@@ -808,7 +808,7 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
 #if defined(C2_HOOKS_ENABLED)
     CloseDownPowerUps_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da730, CloseDownPowerUps, CloseDownPowerUps_original)
@@ -829,7 +829,7 @@ void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1) {
 #if defined(C2_HOOKS_ENABLED)
     return;MungePowerupStuff_original(pArg1);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db880, MungePowerupStuff, MungePowerupStuff_original)
@@ -840,7 +840,7 @@ void C2_HOOK_FASTCALL DoPowerupPeriodics(tU32 pFrame_period) {
 #if defined(C2_HOOKS_ENABLED)
     DoPowerupPeriodics_original(pFrame_period);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db1c0, DoPowerupPeriodics, DoPowerupPeriodics_original)
@@ -1968,7 +1968,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004e0d50, TurnOffCloaking, TurnOffCloaking_original)
 void (C2_HOOK_FASTCALL * TheEffectsOfDrugs_original)(tPowerup* powerup, tU32 time);
 void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* powerup, tU32 time) {
 #if defined(C2_HOOKS_ENABLED)
-    TheEffectsOfDrugs(powerup, time);
+    TheEffectsOfDrugs_original(powerup, time);
 #else
     NOT_IMPLEMENTED();
 #endif
@@ -1978,7 +1978,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004dcc00, TheEffectsOfDrugs, TheEffectsOfDrugs_origi
 void (C2_HOOK_FASTCALL * DoBouncey_original)(tPowerup* powerup, tU32 time);
 void C2_HOOK_FASTCALL DoBouncey(tPowerup* powerup, tU32 time) {
 #if defined(C2_HOOKS_ENABLED)
-    DoBouncey(powerup, time);
+    DoBouncey_original(powerup, time);
 #else
     NOT_IMPLEMENTED();
 #endif
@@ -1988,7 +1988,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004de9b0, DoBouncey, DoBouncey_original)
 void (C2_HOOK_FASTCALL * MungeVouchers_original)(tPowerup* powerup, tU32 time);
 void C2_HOOK_FASTCALL MungeVouchers(tPowerup* powerup, tU32 time) {
 #if defined(C2_HOOKS_ENABLED)
-    MungeVouchers(powerup, time);
+    MungeVouchers_original(powerup, time);
 #else
     NOT_IMPLEMENTED();
 #endif
@@ -1998,7 +1998,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004de810, MungeVouchers, MungeVouchers_original)
 void (C2_HOOK_FASTCALL * PissedEffect_original)(tPowerup* powerup, tU32 time);
 void C2_HOOK_FASTCALL PissedEffect(tPowerup* powerup, tU32 time) {
 #if defined(C2_HOOKS_ENABLED)
-    PissedEffect(powerup, time);
+    PissedEffect_original(powerup, time);
 #else
     NOT_IMPLEMENTED();
 #endif

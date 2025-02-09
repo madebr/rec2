@@ -1,5 +1,8 @@
 #include "gprim.h"
 
+#include "object.h"
+
+#include "core/fw/object.h"
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
 
@@ -8,31 +11,31 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_geometry_primitives_dispatch, geometryP
     NULL,
     NULL,
     NULL,
-    _M_br_geometry_primitives_soft_free,
-    _M_br_softrend_object_identifier,
-    _M_br_geometry_primitives_soft_type,
-    _M_br_geometry_primitives_soft_isType,
-    _M_br_softrend_object_device,
-    _M_br_geometry_primitives_soft_space,
-    _M_br_br_geometry_primitives_soft_templateQuery,
-    _M_br_br_object_query,
-    _M_br_br_object_queryBuffer,
-    _M_br_br_object_queryMany,
-    _M_br_br_object_queryManySize,
-    _M_br_br_object_queryAll,
-    _M_br_br_object_queryAllSize,
-    _M_br_br_geometry_primitives_soft_render,
-    _M_br_br_geometry_primitives_soft_renderFixedToFloat,
-    _M_br_br_geometry_primitives_soft_renderOnScreen,
-    _M_br_br_geometry_primitives_soft_renderOnScreenFixedToFloat,
-    _M_br_br_geometry_primitives_soft_storedNew,
-    _M_br_br_geometry_primitives_soft_storedNewFixedToFloat,
-    _M_br_br_geometry_primitives_soft_storedAvail,
+    (void*)_M_br_geometry_primitives_soft_free,
+    (void*)_M_br_softrend_object_identifier,
+    (void*)_M_br_geometry_primitives_soft_type,
+    (void*)_M_br_geometry_primitives_soft_isType,
+    (void*)_M_br_softrend_object_device,
+    (void*)_M_br_geometry_primitives_soft_space,
+    (void*)_M_br_geometry_primitives_soft_templateQuery,
+    _M_br_object_query,
+    _M_br_object_queryBuffer,
+    _M_br_object_queryMany,
+    _M_br_object_queryManySize,
+    _M_br_object_queryAll,
+    _M_br_object_queryAllSize,
+    (void*)_M_br_geometry_primitives_soft_render,
+    (void*)_M_br_geometry_primitives_soft_renderFixedToFloat,
+    (void*)_M_br_geometry_primitives_soft_renderOnScreen,
+    (void*)_M_br_geometry_primitives_soft_renderOnScreenFixedToFloat,
+    (void*)_M_br_geometry_primitives_soft_storedNew,
+    (void*)_M_br_geometry_primitives_soft_storedNewFixedToFloat,
+    (void*)_M_br_geometry_primitives_soft_storedAvail,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, geometryPrimitivesTemplateEntries, 3, 0x0058bf90, {
-    { BRT_IDENTIFIER_CSTR,      NULL, offsetof(br_geometry_primitives_dispatch , identifier),           5,  3,  0,  0, },
-    { BRT_RENDERER_FACILITY_O,  NULL, offsetof(br_geometry_primitives_dispatch , renderer_facility),    5,  3,  0,  0, },
-    { BRT_FACILITY_O,           NULL, offsetof(br_geometry_primitives_dispatch , renderer_facility),    1,  3,  0,  0, },
+    { BRT_IDENTIFIER_CSTR,      NULL, offsetof(br_geometry_primitives_soft, identifier),           5,  3,  0,  0, },
+    { BRT_RENDERER_FACILITY_O,  NULL, offsetof(br_geometry_primitives_soft, renderer_facility),    5,  3,  0,  0, },
+    { BRT_FACILITY_O,           NULL, offsetof(br_geometry_primitives_soft, renderer_facility),    1,  3,  0,  0, },
 });
 
 br_geometry_primitives* (C2_HOOK_STDCALL * GeometryPrimitivesAllocate_original)(br_soft_renderer_facility* type, const char* id);

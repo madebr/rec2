@@ -12,7 +12,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, partCullTemplateEntr
     { BRT_SPACE_T,  NULL,   offsetof(soft_state_all, cull.space),   7,  3,  0x1001, },
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, partSurfaceTemplateEntries, 17, 0x0058c100, {
-    { BRT_COLOUR_RGB        NULL, offsetof(soft_state_all, surface.colour),         3,  3,  0, 1,        },
+    { BRT_COLOUR_RGB,       NULL, offsetof(soft_state_all, surface.colour),         3,  3,  0, 1,        },
     { BRT_OPACITY_X,        NULL, offsetof(soft_state_all, surface.opacity),        3,  14, 0, 1,        },
     { BRT_OPACITY_F,        NULL, offsetof(soft_state_all, surface.opacity),        7,  3,  0, 1,        },
     { BRT_AMBIENT_X,        NULL, offsetof(soft_state_all, surface.ka),             3,  14, 0, 1,        },
@@ -38,7 +38,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, partMatrixTemplateEn
     { BRT_VIEW_TO_SCREEN_M4_X,          NULL,   offsetof(soft_state_all, matrix.view_to_screen),            3,  26, 0,  0xb115, },
     { BRT_VIEW_TO_SCREEN_M4_F,          NULL,   offsetof(soft_state_all, matrix.view_to_screen),            7,  9,  0,  0xb115, },
     { BRT_MODEL_TO_VIEW_HINT_T,         NULL,   offsetof(soft_state_all, matrix.model_to_view_hint),        7,  3,  0,  0x6001, },
-    { BRT_VIEW_TO_SCREEN_HINT_T,        NULL,   offsetof(soft_state_all, matrix.view_to_screen_hint),       7,  3,  0,  0xb005, }.
+    { BRT_VIEW_TO_SCREEN_HINT_T,        NULL,   offsetof(soft_state_all, matrix.view_to_screen_hint),       7,  3,  0,  0xb005, },
     { BRT_VIEW_TO_ENVIRONMENT_HINT_T,   NULL,   offsetof(soft_state_all, matrix.view_to_environment_hint),  7,  3,  0,  0x3001, },
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, partEnableTemplateEntries, 6, 0x0058c550, {
@@ -99,7 +99,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_surface, partSurfaceDefault, 0x
     0,
     BRT_SURFACE,
     BRT_GEOMETRY_MAP,
-    {
+    {{
         { 1.f, 0.f, },
         { 0.f, 1.f, },
         { 0.f, 0.f, },
@@ -166,8 +166,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_hidden, partHiddenSurfaceDefaul
     0,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_bounds, partBoundsDefault, 0x0058c880, {
-    { BR_SCALAR_MAX, BR_SCALAR_MAX, },
-    { BR_SCALAR_MIN, BR_SCALAR_MIN, },
+    {{ BR_SCALAR_MAX, BR_SCALAR_MAX, }},
+    {{ BR_SCALAR_MIN, BR_SCALAR_MIN, }},
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const soft_state_cull, partCullDefault, 0x0058c6e8, {
     BRT_NONE,

@@ -61,7 +61,7 @@ void C2_HOOK_FASTCALL InitPlayers(void) {
 #if defined(C2_HOOKS_ENABLED)
     InitPlayers_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049b720, InitPlayers, InitPlayers_original)
@@ -77,7 +77,7 @@ void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index) {
 #if defined(C2_HOOKS_ENABLED)
     DeclareWinner_original(pWinner_index);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049a760, DeclareWinner, DeclareWinner_original)
@@ -88,7 +88,7 @@ void C2_HOOK_FASTCALL SendGameplay(tPlayer_ID pPlayer, tNet_gameplay_mess pMess,
 #if defined(C2_HOOKS_ENABLED)
     SendGameplay_original(pPlayer, pMess, pParam_1, pParam_2, pParam_3, pParam_4);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049bc20, SendGameplay, SendGameplay_original)
@@ -99,7 +99,7 @@ void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pPa
 #if defined(C2_HOOKS_ENABLED)
     SendGameplayToAllPlayers_original(pMess, pParam_1, pParam_2, pParam_3, pParam_4);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049bc70, SendGameplayToAllPlayers, SendGameplayToAllPlayers_original)
@@ -110,7 +110,7 @@ void C2_HOOK_FASTCALL DoNetGameManagement(void) {
 #if defined(C2_HOOKS_ENABLED)
     DoNetGameManagement_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049ab00, DoNetGameManagement, DoNetGameManagement_original)
@@ -121,7 +121,7 @@ void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
 #if defined(C2_HOOKS_ENABLED)
     SetUpNetCarPositions_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00499000, SetUpNetCarPositions, SetUpNetCarPositions_original)
@@ -132,7 +132,7 @@ void C2_HOOK_FASTCALL SignalToStartRace(void) {
 #if defined(C2_HOOKS_ENABLED)
     SignalToStartRace_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00498e70, SignalToStartRace, SignalToStartRace_original)
@@ -143,7 +143,7 @@ void C2_HOOK_FASTCALL DoNetworkHeadups(int pCredits) {
 #if defined(C2_HOOKS_ENABLED)
     DoNetworkHeadups_original(pCredits);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00499360, DoNetworkHeadups, DoNetworkHeadups_original)

@@ -14,7 +14,27 @@
 #include "sound.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_NEWGAME, 0x005bf280, {
-    FIXME TODO
+    "newgame",
+    0,
+    6,
+    NewGameInfunc,
+    NewGameOutfunc,
+    FRONTEND_NewGameMenuHandler,
+    &C2V(gFrontend_MAIN),
+    0,
+    0,
+    0,
+    10,
+    0,
+    0,
+    {
+        { 0, temp,          NULL, 0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 1, temp,          NULL, 0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 4, ChooseSkill,   NULL, 0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 3, ChooseSkill,   NULL, 0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 2, ChooseSkill,   NULL, 0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 7, temp,          NULL, 1, 17, 18, 0, 0, 0, 0, 1, 1, },
+    },
 });
 
 

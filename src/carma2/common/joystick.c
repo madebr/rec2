@@ -38,7 +38,7 @@ int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2) {
 #if defined(C2_HOOKS_ENABLED)
     return PlayFFBEffect_original(pEffect_name, pArg2);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c6b0, PlayFFBEffect, PlayFFBEffect_original)
@@ -49,7 +49,7 @@ void C2_HOOK_FASTCALL StopJoysticks(void) {
 #if defined(C2_HOOKS_ENABLED)
     StopJoysticks_original();
 #else
-#error "Notimplemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004575b0, StopJoysticks, StopJoysticks_original)
@@ -60,7 +60,7 @@ float C2_HOOK_FASTCALL GetJoystickX(void) {
 #if defined(C2_HOOKS_ENABLED)
     return GetJoystickX_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c8d0, GetJoystickX, GetJoystickX_original)
@@ -71,7 +71,7 @@ float C2_HOOK_FASTCALL GetJoystickY(void) {
 #if defined(C2_HOOKS_ENABLED)
     return GetJoystickY_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c8f0, GetJoystickY, GetJoystickY_original)
@@ -82,7 +82,7 @@ int C2_HOOK_FASTCALL GetJoystickFBBGain(void) {
 #if defined(C2_HOOKS_ENABLED)
     return GetJoystickFBBGain_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c7f0, GetJoystickFBBGain, GetJoystickFBBGain_original)
@@ -93,7 +93,7 @@ int C2_HOOK_FASTCALL IsJoystickDPadEnabled(void) {
 #if defined(C2_HOOKS_ENABLED)
     return IsJoystickDPadEnabled_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c550, IsJoystickDPadEnabled, IsJoystickDPadEnabled_original)
@@ -104,7 +104,7 @@ void C2_HOOK_FASTCALL SetJoystickX(float pValue) {
 #if defined(C2_HOOKS_ENABLED)
     SetJoystickX_original(pValue);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c810, SetJoystickX, SetJoystickX_original)
@@ -115,7 +115,7 @@ void C2_HOOK_FASTCALL SetJoystickY(float pValue) {
 #if defined(C2_HOOKS_ENABLED)
     SetJoystickY_original(pValue);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c870, SetJoystickY, SetJoystickY_original)
@@ -126,7 +126,7 @@ void C2_HOOK_FASTCALL SetJoystickFFBGain(int pValue) {
 #if defined(C2_HOOKS_ENABLED)
     SetJoystickFFBGain_original(pValue);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c7b0, SetJoystickFFBGain, SetJoystickFFBGain_original)
@@ -137,7 +137,7 @@ void C2_HOOK_FASTCALL SetJoystickDPadEnabled(int pEnabled) {
 #if defined(C2_HOOKS_ENABLED)
     SetJoystickDPadEnabled_original(pEnabled);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c570, SetJoystickDPadEnabled, SetJoystickDPadEnabled_original)
@@ -158,7 +158,7 @@ void C2_HOOK_FASTCALL EnableJoysticks(void) {
 #if defined(C2_HOOKS_ENABLED)
     EnableJoysticks_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045bd50, EnableJoysticks, EnableJoysticks_original)
@@ -169,7 +169,7 @@ void C2_HOOK_FASTCALL DisableJoysticks(void) {
 #if defined(C2_HOOKS_ENABLED)
     DisableJoysticks_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045bd70, DisableJoysticks, DisableJoysticks_original)
@@ -180,7 +180,7 @@ void C2_HOOK_FASTCALL MungeJoystickHeadups(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeJoystickHeadups_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045b3b0, MungeJoystickHeadups, MungeJoystickHeadups_original)

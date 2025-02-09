@@ -5,8 +5,10 @@
 #include "pmsetup.h"
 #include "pmutils.h"
 
+#include "core/fw/object.h"
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
+#include "core/pixelmap/pmgen.h"
 
 #include "c2_string.h"
 
@@ -63,8 +65,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_device_pixelmap_dispatch, devicePixelmapDispa
     _M_br_device_pixelmap_mem_pixelSet,
     _M_br_device_pixelmap_mem_line,
     _M_br_device_pixelmap_mem_copyBits,
-    _M_br_device_pixelmap_gen_text,
-    _M_br_device_pixelmap_gen_textBounds,
+    (void*)_M_br_device_pixelmap_gen_text,
+    (void*)_M_br_device_pixelmap_gen_textBounds,
     _M_br_device_pixelmap_mem_rowSize,
     (void*)_M_br_device_pixelmap_mem_rowSet,
     (void*)_M_br_device_pixelmap_mem_rowQuery,
@@ -82,7 +84,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, devicePixelmapTempla
     { BRT_IDENTIFIER_CSTR, NULL, offsetof(br_pixelmap, identifier), 0x5, 0x3, 0, 0, },
     { BRT_WIDTH_I32, NULL, offsetof(br_pixelmap, width),            0x5, 0xd, 0, 0, },
     { BRT_HEIGHT_I32, NULL, offsetof(br_pixelmap, height),          0x5, 0xd, 0, 0, },
-    { BRT_PIXEL_TYPE_U8, NULL, offsetof(br_pixelmap, pm_type),      0x5, 0xc, 0, 0, },
+    { BRT_PIXEL_TYPE_U8, NULL, offsetof(br_pixelmap, type),         0x5, 0xc, 0, 0, },
 });
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(pm_type_info, pmTypeInfo, 32, 0x0058b990, {

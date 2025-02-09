@@ -43,7 +43,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(fmt_vertex, bounds_vertices, 8, 0x00664d98
 });
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(v11group, bounds_face_groups, 1, 0x00664fe8, {
-    { NULL, bounds_faces, bounds_colours, NULL, bounds_vertices, bounds_colours, NULL, BR_ASIZE(bounds_faces), BR_ASIZE(bounds_vertices), 18 },
+    { NULL, bounds_faces, {(void*)bounds_colours}, NULL, bounds_vertices, bounds_colours, NULL, BR_ASIZE(bounds_faces), BR_ASIZE(bounds_vertices), 18 },
 });
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(v11model, bounds_prepared, 0x00665010, {

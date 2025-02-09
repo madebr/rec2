@@ -23,7 +23,7 @@ void C2_HOOK_FASTCALL DoOptions(void) {
 #if defined(C2_HOOKS_ENABLED)
     DoOptions_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b39f0, DoOptions, DoOptions_original)

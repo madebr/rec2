@@ -33,7 +33,7 @@ int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
     int res = LoadJoystickPreferences_original();
     return res;
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c0b0, LoadJoystickPreferences, LoadJoystickPreferences_original)
@@ -44,7 +44,7 @@ int C2_HOOK_FASTCALL AnyKeyDown(void) {
     int res = AnyKeyDown_original();
     return res;
 #else
-#error "not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482d70, AnyKeyDown, AnyKeyDown_original)
@@ -54,7 +54,7 @@ void C2_HOOK_FASTCALL WaitForNoKeys(void) {
 #if defined(C2_HOOKS_ENABLED)
     WaitForNoKeys_original();
 #else
-#error "not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004833b0, WaitForNoKeys, WaitForNoKeys_original)
@@ -74,7 +74,7 @@ int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index, undefined4 pArg2) {
 #if defined(C2_HOOKS_ENABLED)
     return PDKeyDown2_original(pKey_index, pArg2);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482590, PDKeyDown2, PDKeyDown2_original)
@@ -126,7 +126,7 @@ void C2_HOOK_FASTCALL PollKeys(void) {
     PollKeys_original();
 #else
 
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00481eb0, PollKeys, PollKeys_original)
@@ -269,7 +269,7 @@ int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
 #if defined(C2_HOOKS_ENABLED)
     return PDAnyKeyDown_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482a00, PDAnyKeyDown, PDAnyKeyDown_original)

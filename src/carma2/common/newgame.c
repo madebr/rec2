@@ -95,7 +95,7 @@ int C2_HOOK_FASTCALL ChooseNetCar(tNet_game_details* pNet_game, tNet_game_option
 #if defined(C2_HOOKS_ENABLED)
     return ChooseNetCar_original(pNet_game, pOptions, pCar_index, pIm_the_host_so_fuck_off);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00468d70, ChooseNetCar, ChooseNetCar_original)
@@ -106,7 +106,7 @@ void C2_HOOK_FASTCALL AddToJoinList(tNet_game_details* pGame) {
 #if defined(C2_HOOKS_ENABLED)
     AddToJoinList_original(pGame);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004681d0, AddToJoinList, AddToJoinList_original)

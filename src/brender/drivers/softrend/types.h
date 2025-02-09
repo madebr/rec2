@@ -297,7 +297,7 @@ typedef struct br_soft_renderer_facility {
 typedef struct {
     br_object* dest;
     br_primitive_library* prims;
-}  newRendererTokens;
+} newRendererTokens;
 
 #define MAX_STATE_STACK 32
 

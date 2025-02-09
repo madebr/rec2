@@ -32,6 +32,7 @@
 #include <tiffio.h>
 
 #include "c2_ctype.h"
+#include "c2_stdlib.h"
 #include "c2_string.h"
 #include "c2_sys/c2_stat.h"
 #include "rec2_types.h"
@@ -58,7 +59,21 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gDuplicate_model, 0x006aaa24);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDuplicate_material, 0x006aaa28);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gSight_distance_squared, 0x0068b840);
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, zlibFilesystem, 0x006631c0, TODO);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gZlibBrFileSystem, 0x006631c0, {
+    "Zlib filesystem",
+    ZlibFsGetAttributes,
+    ZlibFsOpenRead,
+    ZlibFsOpenWrite,
+    ZlibFsClose,
+    ZlibFsEof,
+    ZlibFsGetChr,
+    ZlibFsPutChr,
+    ZlibFsRead,
+    ZlibFsWrite,
+    ZlibFsGetLine,
+    ZlibFsPutLine,
+    ZlibFsAdvance,
+});
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGroovidelics_array_size, 0x0068b848);
 C2_HOOK_VARIABLE_IMPLEMENT(tGroovidelic_spec*, gGroovidelics_array, 0x0068b850);
 
@@ -1006,7 +1021,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
     }
     if (!tifExists) {
         if (pixExists && (usePix16 || useTiffx)) {
-            prevFilesystem = BrFilesystemSet(&C2V(zlibFilesystem));
+            prevFilesystem = BrFilesystemSet(&C2V(gZlibBrFileSystem));
             texture = BrPixelmapLoad(pixPathIsLink ? pixPathTarget : pixPath);
             BrFilesystemSet(prevFilesystem);
             *errorCode = (texture != NULL) ? 0 : 3;
@@ -1018,7 +1033,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
 
     if ((usePix16 || useTiffx) && ((flags & kLoadTextureFlags_ForceTiff) == 0) && pixExists) {
         if (GetLastModificationTime(tifPath) <= GetLastModificationTime(pixPathIsLink ? pixPathTarget : pixPath)) {
-            prevFilesystem = BrFilesystemSet(&C2V(zlibFilesystem));
+            prevFilesystem = BrFilesystemSet(&C2V(gZlibBrFileSystem));
             texture = BrPixelmapLoad(pixPathIsLink ? pixPathTarget : pixPath);
             BrFilesystemSet(prevFilesystem);
             *errorCode = (texture != NULL) ? 0 : 3;
@@ -1076,7 +1091,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
             }
         }
         if ((flags & kLoadTextureFlags_SaveTextureCompressed) == 0) {
-            prevFilesystem = BrFilesystemSet(&C2V(zlibFilesystem));
+            prevFilesystem = BrFilesystemSet(&C2V(gZlibBrFileSystem));
         }
         BrPixelmapSave(pixPathIsLink ? pixPathTarget : pixPath, texture);
         if ((flags & kLoadTextureFlags_SaveTextureCompressed) == 0) {
@@ -3338,7 +3353,7 @@ void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash) {
 #if defined(C2_HOOKS_ENABLED)
     FreeEnvSmash_original(pSmash);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f09c0, FreeEnvSmash, FreeEnvSmash_original)
@@ -3372,7 +3387,7 @@ void C2_HOOK_FASTCALL ReinitSmashing(void) {
 #if defined(C2_HOOKS_ENABLED)
     ReinitSmashing_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f5750, ReinitSmashing, ReinitSmashing_original)
@@ -5865,7 +5880,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051dc20, ZlibFsOpenWrite, ZlibFsOpenWrite_original)
 void (C2_HOOK_CDECL * ZlibFsClose_original)(void* context);
 void C2_HOOK_CDECL ZlibFsClose(void* context) {
 #if defined(C2_HOOKS_ENABLED)
-    ZlibFsClose(context);
+    ZlibFsClose_original(context);
 #else
     NOT_IMPLEMENTED();
 #endif
@@ -5885,7 +5900,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051dbb0, ZlibFsEof, ZlibFsEof_original)
 int (C2_HOOK_CDECL * ZlibFsGetChr_original)(void* context);
 int C2_HOOK_CDECL ZlibFsGetChr(void* context) {
 #if defined(C2_HOOKS_ENABLED)
-    return ZlibFsGetChr(context);
+    return ZlibFsGetChr_original(context);
 #else
     NOT_IMPLEMENTED();
 #endif
@@ -5915,7 +5930,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051dca0, ZlibFsRead, ZlibFsRead_original)
 br_size_t (C2_HOOK_CDECL * ZlibFsWrite_original)(void* buffer, br_size_t elem_size, unsigned int count, void* context);
 br_size_t C2_HOOK_CDECL ZlibFsWrite(void* buffer, br_size_t elem_size, unsigned int count, void* context) {
 #if defined(C2_HOOKS_ENABLED)
-    ZlibFsWrite_original(buffer, elem_size, count, context);
+    return ZlibFsWrite_original(buffer, elem_size, count, context);
 #else
     NOT_IMPLEMENTED();
 #endif

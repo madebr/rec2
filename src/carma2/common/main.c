@@ -109,7 +109,7 @@ void C2_HOOK_FASTCALL ServiceGame(void) {
 #if defined(C2_HOOKS_ENABLED)
     ServiceGame_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00492180, ServiceGame, ServiceGame_original)

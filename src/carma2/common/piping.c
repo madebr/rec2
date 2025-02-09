@@ -28,7 +28,7 @@ void C2_HOOK_FASTCALL DisposePiping(void) {
 #if defined(C2_HOOKS_ENABLED)
     DisposePiping_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004024a0, DisposePiping, DisposePiping_original)
@@ -81,7 +81,7 @@ void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatr
 #if defined(C2_HOOKS_ENABLED)
     PipeSingleSkidAdjustment_original(pSkid_num, pMatrix, pMaterial);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c8600, PipeSingleSkidAdjustment, PipeSingleSkidAdjustment_original)
@@ -92,7 +92,7 @@ void C2_HOOK_FASTCALL PipeCarPositions(void) {
 #if defined(C2_HOOKS_ENABLED)
     PipeCarPositions_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c6640, PipeCarPositions, PipeCarPositions_original)
@@ -202,7 +202,7 @@ void C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDef
 #if defined(C2_HOOKS_ENABLED)
     ARScanBuffer_original(pPtr, pType, pDefault_time, pCallback, pTime_check);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00402e10, ARScanBuffer, ARScanBuffer_original)
@@ -239,7 +239,7 @@ void C2_HOOK_FASTCALL PipeSingleOilSpill(int pIndex, br_matrix34* pMat, br_scala
 #if defined(C2_HOOKS_ENABLED)
     PipeSingleOilSpill_original(pIndex, pMat, pFull_size, pGrow_rate, pSpill_time, pStop_time, pCar, pOriginal_pos, pPixelmap);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c82e0, PipeSingleOilSpill, PipeSingleOilSpill_original)

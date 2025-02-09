@@ -25,7 +25,7 @@ void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status) {
 #if defined(C2_HOOKS_ENABLED)
 NetPlayerStatusChanged_original(pNew_status);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a57e0, NetPlayerStatusChanged, NetPlayerStatusChanged_original)
@@ -53,7 +53,7 @@ void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game) {
 #if defined(C2_HOOKS_ENABLED)
     NetLeaveGame_original(pNet_game);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049dc90, NetLeaveGame, NetLeaveGame_original)
@@ -93,7 +93,7 @@ void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage) {
 #if defined(C2_HOOKS_ENABLED)
     NetSendHeadupToEverybody_original(pMessage);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049d780, NetSendHeadupToEverybody, NetSendHeadupToEverybody_original)
@@ -104,7 +104,7 @@ void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage) {
 #if defined(C2_HOOKS_ENABLED)
     NetSendHeadupToAllPlayers_original(pMessage);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049d430, NetSendHeadupToAllPlayers, NetSendHeadupToAllPlayers_original)
@@ -114,7 +114,7 @@ void C2_HOOK_FASTCALL NetService(int pIn_race) {
 #if defined(C2_HOOKS_ENABLED)
     NetService_original(pIn_race);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5280, NetService, NetService_original)
@@ -137,7 +137,7 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(int pType, int pOpt
 #if defined(C2_HOOKS_ENABLED)
     return NetAllocateMessageChunk_original(pType, pOption);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049f860, NetAllocateMessageChunk, NetAllocateMessageChunk_original)
@@ -148,7 +148,7 @@ tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec *pCar) {
 #if defined(C2_HOOKS_ENABLED)
     return NetPlayerFromCar_original(pCar);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a69b0, NetPlayerFromCar, NetPlayerFromCar_original)
@@ -159,7 +159,7 @@ void C2_HOOK_FASTCALL NetFinishRace(tNet_game_details* pDetails, tRace_over_reas
 #if defined(C2_HOOKS_ENABLED)
     NetFinishRace_original(pDetails, pReason);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5710, NetFinishRace, NetFinishRace_original)
@@ -170,7 +170,7 @@ void C2_HOOK_FASTCALL NetFullScreenMessage(int pStr_index, int pLeave_it_up_ther
 #if defined(C2_HOOKS_ENABLED)
     NetFullScreenMessage_original(pStr_index, pLeave_it_up_there);
 #else
-#error "Not impplemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a0080, NetFullScreenMessage, NetFullScreenMessage_original)
@@ -181,7 +181,7 @@ void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
 #if defined(C2_HOOKS_ENABLED)
     NetSendMessageStacks_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049fcf0, NetSendMessageStacks, NetSendMessageStacks_original)
@@ -192,7 +192,7 @@ int C2_HOOK_FASTCALL NetInitialise(void) {
 #if defined (C2_HOOKS_ENABLED)
     return NetInitialise_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049d210, NetInitialise, NetInitialise_original)
@@ -203,7 +203,7 @@ void C2_HOOK_FASTCALL NetEndJoinList(void) {
 #if defined(C2_HOOKS_ENABLED)
     NetEndJoinList_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049dc00, NetEndJoinList, NetEndJoinList_original)
@@ -228,7 +228,7 @@ tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_g
 #if defined(C2_HOOKS_ENABLED)
     return NetHostGame_original(pNet_type, pOptions, pRace_index, pHost_name, pCar_index);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049e210, NetHostGame, NetHostGame_original)
@@ -239,7 +239,7 @@ int C2_HOOK_FASTCALL NetJoinGame(tNet_game_details *pGame_details,char *pPlayer_
 #if defined(C2_HOOKS_ENABLED)
     return NetJoinGame_original(pGame_details, pPlayer_name, pCar_index);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049e970, NetJoinGame, NetJoinGame_original)
@@ -249,7 +249,7 @@ void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc *pAdd_proc) {
 #if defined(C2_HOOKS_ENABLED)
     NetStartProducingJoinList_original(pAdd_proc);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049dbd0, NetStartProducingJoinList, NetStartProducingJoinList_original)
@@ -278,7 +278,7 @@ tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, 
 #if defined(C2_HOOKS_ENABLED)
     return NetBuildGuaranteedMessage_original(pNet_message_type, pOption);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049f680, NetBuildGuaranteedMessage, NetBuildGuaranteedMessage_original)
@@ -289,7 +289,7 @@ void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails
 #if defined(C2_HOOKS_ENABLED)
     NetGuaranteedSendMessageToHost_original(pDetails, pMessage, pNotifyFail);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5c80, NetGuaranteedSendMessageToHost, NetGuaranteedSendMessageToHost_original)
@@ -300,7 +300,7 @@ void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void) {
 #if defined(C2_HOOKS_ENABLED)
     NetReceiveAndProcessMessages_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a4a40, NetReceiveAndProcessMessages, NetReceiveAndProcessMessages_original)
@@ -311,7 +311,7 @@ int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDe
 #if defined(C2_HOOKS_ENABLED)
     return NetGuaranteedSendMessageToAllPlayers_original(pDetails, pMessage, pArg3);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5b50, NetGuaranteedSendMessageToAllPlayers, NetGuaranteedSendMessageToAllPlayers_original)
