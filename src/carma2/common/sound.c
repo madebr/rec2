@@ -7,6 +7,8 @@
 #include "utility.h"
 #include "world.h"
 
+#include "platform.h"
+
 #include <s3/s3.h>
 
 #include "c2_string.h"
@@ -314,6 +316,11 @@ void C2_HOOK_FASTCALL SoundService(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455a80, SoundService, SoundService_original)
+
+int C2_HOOK_FASTCALL IsCDAPlaying(void) {
+    return PDS3IsCDAPlaying();
+}
+C2_HOOK_FUNCTION(0x00565d1a, IsCDAPlaying)
 
 int (C2_HOOK_FASTCALL * DRStopCarSounds_original)(void);
 int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void) {
