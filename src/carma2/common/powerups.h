@@ -139,4 +139,6 @@ int C2_HOOK_FASTCALL AnnihilatePeds(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
