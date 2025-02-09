@@ -47,7 +47,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gRussels_fannies);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_quality, 32);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_compressor, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gQuick_time_banner_number);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_banner_texture_name, 32);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_banner_texture_name, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_temp_path, 256);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gQuick_time_movie_path_stub, 256);
 
