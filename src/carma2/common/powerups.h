@@ -227,4 +227,6 @@ void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL ResetGhostPeds(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
