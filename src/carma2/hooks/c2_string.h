@@ -54,8 +54,8 @@ char* C2_HOOK_CDECL c2_strpbrk(const char* dest, const char* breakset);
 #define c2_strncmp strncmp
 
 #if defined(_WIN32)
-#define c2_strcasecmp stricmp
-#define c2_strncasecmp strnicmp
+#define c2_strcasecmp _stricmp
+#define c2_strncasecmp _strnicmp
 #else
 #define c2_strcasecmp strcasecmp
 #define c2_strncasecmp strncasecmp
