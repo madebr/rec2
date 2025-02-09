@@ -163,4 +163,6 @@ int C2_HOOK_FASTCALL NapalmPeds(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL PedValium(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL PowerupCancel(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H

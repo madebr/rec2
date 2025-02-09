@@ -1564,3 +1564,13 @@ int C2_HOOK_FASTCALL PedValium(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dfec0, PedValium, PedValium_original);
+
+int (C2_HOOK_FASTCALL * PowerupCancel_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL PowerupCancel(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return PowerupCancel_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dff30, PowerupCancel, PowerupCancel_original);
