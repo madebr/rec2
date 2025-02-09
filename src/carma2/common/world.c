@@ -5831,3 +5831,14 @@ void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor) {
     }
 }
 C2_HOOK_FUNCTION(0x0047b0e0, StopGroovidelic)
+
+
+br_uint_32 (C2_HOOK_CDECL * ZlibFsGetAttributes_original)(void);
+br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    return ZlibFsGetAttributes_original();
+#else
+    return BR_FS_ATTR_READABLE | BR_FS_ATTR_WRITEABLE | BR_FS_ATTR_HAS_BINARY;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051db90, ZlibFsGetAttributes, ZlibFsGetAttributes_original);
