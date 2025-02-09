@@ -87,4 +87,6 @@ int C2_HOOK_FASTCALL SetUnderwater(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL GotTimeOrPower(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL TrashBodywork(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H

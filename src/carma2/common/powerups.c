@@ -1184,3 +1184,13 @@ int C2_HOOK_FASTCALL GotTimeOrPower(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc470, GotTimeOrPower, GotTimeOrPower_original);
+
+int (C2_HOOK_FASTCALL * TrashBodywork_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL TrashBodywork(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return TrashBodywork_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dcae0, TrashBodywork, TrashBodywork_original);
