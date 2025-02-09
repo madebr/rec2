@@ -5842,3 +5842,13 @@ br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051db90, ZlibFsGetAttributes, ZlibFsGetAttributes_original);
+
+void* (C2_HOOK_CDECL * ZlibFsOpenRead_original)(const char* buffer, br_size_t capacity, br_mode_test_cbfn* cbfn, int* type);
+void* C2_HOOK_CDECL ZlibFsOpenRead(const char* buffer, br_size_t capacity, br_mode_test_cbfn* cbfn, int* type) {
+#if defined(C2_HOOKS_ENABLED)
+    return ZlibFsOpenRead_original(buffer, capacity, cbfn, type);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051dc10, ZlibFsOpenRead, ZlibFsOpenRead_original)
