@@ -1414,3 +1414,13 @@ int C2_HOOK_FASTCALL PissOutOil(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de040, PissOutOil, PissOutOil_original);
+
+int (C2_HOOK_FASTCALL * KangerooJump_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL KangerooJump(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return KangerooJump_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de0c0, KangerooJump, KangerooJump_original);
