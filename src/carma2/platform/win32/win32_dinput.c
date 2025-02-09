@@ -285,6 +285,14 @@ size_t C2_HOOK_FASTCALL GetCurrentJoystickCountButtons(void) {
 }
 C2_HOOK_FUNCTION(0x00459fb0, GetCurrentJoystickCountButtons)
 
+tButtonJoystickInfo* C2_HOOK_FASTCALL GetCurrentJoystickData(void) {
+    if (C2V(gJoystick_index) == -1) {
+        return NULL;
+    }
+    return C2V(gDirectInputJoystickInfos)[C2V(gJoystick_index)].data;
+}
+C2_HOOK_FUNCTION(0x00459f80, GetCurrentJoystickData)
+
 void C2_HOOK_FASTCALL CollectJoystickButtonInfo(tButtonJoystickInfo* pInfo) {
     unsigned int i;
 
