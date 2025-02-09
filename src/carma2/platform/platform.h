@@ -98,6 +98,8 @@ void C2_HOOK_FASTCALL PDRevertPalette(void);
 
 void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
 
+tU32 C2_HOOK_FASTCALL PDGetJoystickButtonStates(void);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
