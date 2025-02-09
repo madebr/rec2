@@ -233,4 +233,6 @@ void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetPanickingPeds(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
