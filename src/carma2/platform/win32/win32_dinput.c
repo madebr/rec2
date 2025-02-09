@@ -673,3 +673,19 @@ tU32 C2_HOOK_FASTCALL PDGetJoystickButtonStates(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00459690, PDGetJoystickButtonStates)
+
+void C2_HOOK_FASTCALL PDSetKeysFromJoystick(int *keys) {
+    if (C2V(gJoystick_index) != 1) {
+        tU32 button_mask;
+
+        button_mask = PDGetJoystickButtonStates();
+        if (GetCurrentJoystickData() != NULL) {
+            int i;
+
+            for (i = 0; i < 32; i++) {
+                keys[107 + i] = !!(button_mask & (i << i));
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0045b360, PDSetKeysFromJoystick)
