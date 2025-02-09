@@ -69,4 +69,6 @@ int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetPedSize(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL SetPedExplode(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
