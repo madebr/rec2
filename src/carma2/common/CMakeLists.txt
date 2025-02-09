@@ -178,6 +178,7 @@ target_link_libraries(c2_common
         c2_platform
         S3::S3
         TIFF::TIFF
+        QuickTime::Dummy
 )
 
 if(REC2_DUMPERS)

@@ -33,6 +33,7 @@ else()
     find_package(TIFF REQUIRED)
 endif()
 
+add_subdirectory(external/dummyqt)
 add_subdirectory(external/iforce2)
 
 if(MSVC AND REC2_VENDORED)
