@@ -353,7 +353,7 @@ int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
 }
 C2_HOOK_FUNCTION(0x00515870, DRStricmp)
 
-static tU32 (C2_HOOK_FASTCALL * GetTotalTime_original)(void);
+tU32 (C2_HOOK_FASTCALL * GetTotalTime_original)(void);
 tU32 C2_HOOK_FASTCALL GetTotalTime(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
