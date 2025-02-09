@@ -149,6 +149,8 @@ int C2_HOOK_FASTCALL CheckCar(tPipe_chunk* pChunk_ptr, int pChunk_count, tU32 pT
 #if defined(C2_HOOKS_ENABLED)
     return CheckCar_original(pChunk_ptr, pChunk_count, pTime);
 #else
+    NOT_IMPLEMENTED();
+#if 0
     int i;
     tCar_spec* car;
     br_vector3 com_offset_c;
@@ -189,6 +191,7 @@ int C2_HOOK_FASTCALL CheckCar(tPipe_chunk* pChunk_ptr, int pChunk_count, tU32 pT
         ARAdvanceChunkPtr(&temp_ptr, ePipe_chunk_car);
     }
     return 0;
+#endif
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c6a30, CheckCar, CheckCar_original)
