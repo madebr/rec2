@@ -120,7 +120,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     InitPackFiles();
     MAMSInitMem();
     C2V(gAusterity_mode) = C2V(gAustere_override) || PDDoWeLeadAnAustereExistance();
-    c2_srand(c2_time(NULL));
+    c2_srand((unsigned int)c2_time(NULL));
     BrV1dbBeginWrapper_Float();
     CreateStainlessClasses();
     PDInstallErrorHandlers();
