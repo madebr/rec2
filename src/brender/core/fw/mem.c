@@ -71,7 +71,12 @@ char* C2_HOOK_CDECL BrMemStrDup(const char* str) {
 #else
     int l;
     char* nstr;
-    NOT_IMPLEMENTED();
+
+    l = BrStrLen(str);
+    nstr = C2V(fw).mem->allocate(l + 1, BR_MEMORY_STRING);
+    BrMemSet(nstr, 0, l + 1);
+    BrStrCpy(nstr,str);
+    return nstr;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00527680, BrMemStrDup, BrMemStrDup_original)
