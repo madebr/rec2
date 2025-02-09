@@ -5902,3 +5902,13 @@ void C2_HOOK_CDECL ZlibFsPutChr(int chr, void* context) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dc40, ZlibFsPutChr, ZlibFsPutChr_original)
+
+br_size_t (C2_HOOK_CDECL * ZlibFsRead_original)(void* buffer, br_size_t elem_size, unsigned int count, void* context);
+br_size_t C2_HOOK_CDECL ZlibFsRead(void* buffer, br_size_t elem_size, unsigned int count, void* context) {
+#if defined(C2_HOOKS_ENABLED)
+    return ZlibFsRead_original(buffer, elem_size, count, context);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051dca0, ZlibFsRead, ZlibFsRead_original)

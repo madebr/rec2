@@ -364,4 +364,6 @@ int C2_HOOK_CDECL ZlibFsGetChr(void*);
 
 void C2_HOOK_CDECL ZlibFsPutChr(int, void*);
 
+br_size_t C2_HOOK_CDECL ZlibFsRead(void*, br_size_t, unsigned int, void*);
+
 #endif // REC2_WORLD_H
