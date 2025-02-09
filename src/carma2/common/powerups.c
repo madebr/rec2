@@ -1964,3 +1964,13 @@ void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* powerup, tU32 time) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dcc00, TheEffectsOfDrugs, TheEffectsOfDrugs_original)
+
+void (C2_HOOK_FASTCALL * DoBouncey_original)(tPowerup* powerup, tU32 time);
+void C2_HOOK_FASTCALL DoBouncey(tPowerup* powerup, tU32 time) {
+#if defined(C2_HOOKS_ENABLED)
+    DoBouncey_original(powerup, time);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de9b0, DoBouncey, DoBouncey_original)
