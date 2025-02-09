@@ -56,7 +56,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gRussels_fannies, 0x006aa5c4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_quality, 32, 0x00705220);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_compressor, 32, 0x00705200);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gQuick_time_banner_number, 0x0065ef30, 1);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_banner_texture_name, 32, 0x00705340);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_banner_texture_name, 256, 0x00705340);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_temp_path, 256, 0x00705440);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gQuick_time_movie_path_stub, 256, 0x00705240);
 
