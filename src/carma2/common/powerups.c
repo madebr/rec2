@@ -1764,3 +1764,13 @@ void C2_HOOK_FASTCALL ResetSuspension(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de760, ResetSuspension, ResetSuspension_original)
+
+void (C2_HOOK_FASTCALL * ResetTyreGrip_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetTyreGrip_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de790, ResetTyreGrip, ResetTyreGrip_original)
