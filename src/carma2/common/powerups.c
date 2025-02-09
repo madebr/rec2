@@ -1384,3 +1384,13 @@ int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dec60, SetElectroBastard, SetElectroBastard_original);
+
+int (C2_HOOK_FASTCALL * SetPedHeadSize_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetPedHeadSize(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetPedHeadSize_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc7a0, SetPedHeadSize, SetPedHeadSize_original);
