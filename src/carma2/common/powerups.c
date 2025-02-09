@@ -1934,3 +1934,13 @@ void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de990, ResetPissedPeds, ResetPissedPeds_original)
+
+void (C2_HOOK_FASTCALL * ResetPissed_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetPissed(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetPissed_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004df300, ResetPissed, ResetPissed_original)
