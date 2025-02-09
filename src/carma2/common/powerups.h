@@ -117,4 +117,6 @@ int C2_HOOK_FASTCALL SetSuicidalPedestrians(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL GotVouchers(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL SetMassMultiplier(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H

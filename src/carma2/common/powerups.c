@@ -1334,3 +1334,13 @@ int C2_HOOK_FASTCALL GotVouchers(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de7d0, GotVouchers, GotVouchers_original);
+
+int (C2_HOOK_FASTCALL * SetMassMultiplier_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetMassMultiplier(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetMassMultiplier_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004debb0, SetMassMultiplier, SetMassMultiplier_original);
