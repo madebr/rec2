@@ -1,8 +1,11 @@
 #include "mem.h"
 
+#include "core/fw/fwsetup.h"
+#include "core/std/brstdlib.h"
+
 void* (C2_HOOK_CDECL * BrMemAllocate_original)(br_size_t size, br_uint_8 type);
 void* C2_HOOK_CDECL BrMemAllocate(br_size_t size, br_uint_8 type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
 return BrMemAllocate_original(size, type);
 #else
     void* b;
@@ -17,7 +20,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005275c0, BrMemAllocate, BrMemAllocate_original)
 // IDA: void __cdecl BrMemFree(void *block)
 void (C2_HOOK_CDECL * BrMemFree_original)(void* block);
 void C2_HOOK_CDECL BrMemFree(void* block) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrMemFree_original(block);
 #else
     C2V(fw).mem->free(block);
@@ -27,7 +30,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005275f0, BrMemFree, BrMemFree_original)
 
 br_size_t (C2_HOOK_CDECL * BrMemInquire_original)(br_uint_8 type);
 br_size_t C2_HOOK_CDECL BrMemInquire(br_uint_8 type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrMemInquire_original(type);
 #else
     br_size_t i;
@@ -39,7 +42,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527610, BrMemInquire, BrMemInquire_original)
 
 br_int_32 (C2_HOOK_CDECL * BrMemAlign_original)(br_uint_8 type);
 br_int_32 C2_HOOK_CDECL BrMemAlign(br_uint_8 type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrMemAlign_original(type);
 #else
     br_int_32 i = 0;
@@ -53,7 +56,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527630, BrMemAlign, BrMemAlign_original)
 
 void* (C2_HOOK_CDECL * BrMemCalloc_original)(int nelems, br_size_t size, br_uint_8 type);
 void* C2_HOOK_CDECL BrMemCalloc(int nelems, br_size_t size, br_uint_8 type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrMemCalloc_original(nelems, size, type);
 #else
     void* b;
@@ -66,7 +69,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527650, BrMemCalloc, BrMemCalloc_original)
 
 char* (C2_HOOK_CDECL * BrMemStrDup_original)(const char* str);
 char* C2_HOOK_CDECL BrMemStrDup(const char* str) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrMemStrDup_original(str);
 #else
     int l;
