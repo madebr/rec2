@@ -557,7 +557,7 @@ void C2_HOOK_FASTCALL FadePaletteUp(void) {
             i = (the_time * 256) / 500;
             SetFadedPalette(i);
         }
-        DRSetPalette(gCurrent_palette);
+        DRSetPalette(C2V(gCurrent_palette));
     }
 }
 C2_HOOK_FUNCTION(0x004b5470, FadePaletteUp)
