@@ -1974,3 +1974,13 @@ void C2_HOOK_FASTCALL DoBouncey(tPowerup* powerup, tU32 time) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de9b0, DoBouncey, DoBouncey_original)
+
+void (C2_HOOK_FASTCALL * MungeVouchers_original)(tPowerup* powerup, tU32 time);
+void C2_HOOK_FASTCALL MungeVouchers(tPowerup* powerup, tU32 time) {
+#if defined(C2_HOOKS_ENABLED)
+    MungeVouchers_original(powerup, time);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de810, MungeVouchers, MungeVouchers_original)
