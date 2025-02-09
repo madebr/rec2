@@ -913,11 +913,11 @@ int C2_HOOK_FASTCALL CheckRecoverCost(void) {
 C2_HOOK_FUNCTION_ORIGINAL(0x00442750, CheckRecoverCost, CheckRecoverCost_original)
 
 // Key: 'ctrl+a'
-void (C2_HOOK_FASTCALL * AbortRace_original)(tFrontend_spec* pFrontend);
-void C2_HOOK_FASTCALL AbortRace(tFrontend_spec* pFrontend) {
+void (C2_HOOK_FASTCALL * AbortRace_original)(void);
+void C2_HOOK_FASTCALL AbortRace(void) {
     CONTROLS_START();
 #if 0//defined(C2_HOOKS_ENABLED)
-    return AbortRace_original(pFrontend);
+    return AbortRace_original();
 #else
 
     if (!C2V(gRace_finished)) {
