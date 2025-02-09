@@ -155,4 +155,6 @@ int C2_HOOK_FASTCALL RepulsePedestrians(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL GainAPO(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL GainAPOPotential(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H

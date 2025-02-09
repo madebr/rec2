@@ -1524,3 +1524,13 @@ int C2_HOOK_FASTCALL GainAPO(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc240, GainAPO, GainAPO_original);
+
+int (C2_HOOK_FASTCALL * GainAPOPotential_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL GainAPOPotential(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return GainAPOPotential_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc4d0, GainAPOPotential, GainAPOPotential_original);
