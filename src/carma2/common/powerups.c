@@ -1344,3 +1344,13 @@ int C2_HOOK_FASTCALL SetMassMultiplier(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004debb0, SetMassMultiplier, SetMassMultiplier_original);
+
+int (C2_HOOK_FASTCALL * SetInstantHandbrake_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetInstantHandbrake_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de820, SetInstantHandbrake, SetInstantHandbrake_original);
