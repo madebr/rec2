@@ -5872,3 +5872,13 @@ void C2_HOOK_CDECL ZlibFsClose(void* context) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dba0, ZlibFsClose, ZlibFsClose_original)
+
+int (C2_HOOK_CDECL * ZlibFsEof_original)(void* context);
+int C2_HOOK_CDECL ZlibFsEof(void* context) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    return ZlibFsEof(context);
+#else
+    return 0;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051dbb0, ZlibFsEof, ZlibFsEof_original)
