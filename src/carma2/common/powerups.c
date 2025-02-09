@@ -1924,3 +1924,13 @@ void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de980, ResetLowGravityPeds, ResetLowGravityPeds_original)
+
+void (C2_HOOK_FASTCALL * ResetPissedPeds_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetPissedPeds_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de990, ResetPissedPeds, ResetPissedPeds_original)
