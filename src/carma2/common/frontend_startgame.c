@@ -19,7 +19,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_START_GAME, 0x0059c828
     0,
     0,
     0,
-    {},
+    {0},
 });
 
 
