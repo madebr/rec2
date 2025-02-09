@@ -16,4 +16,6 @@ void C2_HOOK_FASTCALL Win32InitInputDevice(void);
 
 void C2_HOOK_FASTCALL CloseDirectInput(void);
 
+tU32 C2_HOOK_FASTCALL PDGetJoystickButtonStates(void);
+
 #endif // C2_WIN32_INPUT_H
