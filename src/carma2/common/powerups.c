@@ -1204,3 +1204,13 @@ int C2_HOOK_FASTCALL TakeDrugs(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dcb90, TakeDrugs, TakeDrugs_original);
+
+int (C2_HOOK_FASTCALL * SetOpponentsSpeed_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetOpponentsSpeed(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetOpponentsSpeed_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dcca0, SetOpponentsSpeed, SetOpponentsSpeed_original);
