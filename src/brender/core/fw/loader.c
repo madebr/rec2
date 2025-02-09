@@ -161,7 +161,7 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 		img->n_functions = ed->n_entries;
 		img->functions = (void**)(arena_base + ed->export_table);
 		img->n_names = ed->n_names;
-		img->names = (char**)(arena_base + ed->name_table);
+		img->names = (const char**)(arena_base + ed->name_table);
 		img->name_ordinals = (br_uint_16*)(arena_base + ed->ordinal_table);
 
 		for (n = 0; n < img->n_functions; n++) {
