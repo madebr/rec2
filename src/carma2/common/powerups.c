@@ -1084,3 +1084,13 @@ int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc720, SetPedSpeed, SetPedSpeed_original);
+
+int (C2_HOOK_FASTCALL * SetPedSize_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetPedSize(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetPedSize_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc750, SetPedSize, SetPedSize_original);
