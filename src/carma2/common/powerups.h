@@ -151,4 +151,6 @@ int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL RepulsePedestrians(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
