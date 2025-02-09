@@ -1484,3 +1484,13 @@ int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de8a0, SetPanickingPeds, SetPanickingPeds_original);
+
+int (C2_HOOK_FASTCALL * SetLowGravityPeds_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetLowGravityPeds_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de8d0, SetLowGravityPeds, SetLowGravityPeds_original);
