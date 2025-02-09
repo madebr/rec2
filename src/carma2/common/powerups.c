@@ -1874,3 +1874,13 @@ void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004decd0, ResetMutantCorpses, ResetMutantCorpses_original)
+
+void (C2_HOOK_FASTCALL * ResetPedBrittle_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetPedBrittle(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetPedBrittle_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dca20, ResetPedBrittle, ResetPedBrittle_original)
