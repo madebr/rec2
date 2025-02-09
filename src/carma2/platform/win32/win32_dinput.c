@@ -485,7 +485,7 @@ int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, size
     /* Implementation differs */
 
     FILE *f;
-    tS32 count;
+    tU32 count;
     size_t i;
     char buffer[128];
 
