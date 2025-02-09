@@ -352,4 +352,6 @@ void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor);
 
 br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void);
 
+void* C2_HOOK_CDECL ZlibFsOpenRead(const char*, br_size_t, br_mode_test_cbfn*, int*);
+
 #endif // REC2_WORLD_H
