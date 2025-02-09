@@ -65,4 +65,6 @@ int C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex);
 
 int C2_HOOK_FASTCALL GotCredits(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
