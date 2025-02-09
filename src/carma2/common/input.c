@@ -203,6 +203,16 @@ void C2_HOOK_FASTCALL CyclePollKeys(void) {
 }
 C2_HOOK_FUNCTION(0x00482160, CyclePollKeys)
 
+void (C2_HOOK_FASTCALL * CheckKeysForMouldiness_original)(void);
+void C2_HOOK_FASTCALL CheckKeysForMouldiness(void) {
+#if defined(C2_HOOKS_ENABLED)
+    CheckKeysForMouldiness_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004821c0, CheckKeysForMouldiness, CheckKeysForMouldiness_original)
+
 int (C2_HOOK_FASTCALL * KeyIsDown_original)(int pKey_index);
 int C2_HOOK_FASTCALL KeyIsDown(int pKey_index) {
 
