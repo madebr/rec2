@@ -167,4 +167,6 @@ int C2_HOOK_FASTCALL PowerupCancel(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL GrowATail(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL CutOffTail(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
