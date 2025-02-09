@@ -605,7 +605,7 @@ void (C2_HOOK_FASTCALL * NewFacesListCallback_original)(tCollision_info* pCollis
 void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefined4 *arg2) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return NewFacesListCallback_original(pCollision, arg2);
+    NewFacesListCallback_original(pCollision, arg2);
 #else
     NOT_IMPLEMENTED();
 #endif
