@@ -348,4 +348,6 @@ void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);
 
 void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 
+void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor);
+
 #endif // REC2_WORLD_H

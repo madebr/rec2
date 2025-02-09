@@ -5818,3 +5818,16 @@ void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0047b1e0, ResetGrooveFlags)
+
+void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor) {
+    int i;
+
+    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+        tGroovidelic_spec* groove = &C2V(gGroovidelics_array)[i];
+        if (groove->path_interrupt_status == eInterrupt_none &&
+                groove->object_interrupt_status == eInterrupt_none) {
+            GrooveThisDelic(groove, C2V(gPrevious_groove_times)[i], 1);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0047b0e0, StopGroovidelic)
