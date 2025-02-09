@@ -1284,3 +1284,13 @@ int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dced0, SetTyreGrip, SetTyreGrip_original);
+
+int (C2_HOOK_FASTCALL * SetDamageMultiplier_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetDamageMultiplier_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dcf80, SetDamageMultiplier, SetDamageMultiplier_original);
