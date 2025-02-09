@@ -193,4 +193,6 @@ void C2_HOOK_FASTCALL ResetOpponentsSpeed(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetCopsSpeed(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL ResetGravity(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
