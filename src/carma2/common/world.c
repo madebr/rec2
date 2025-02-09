@@ -5932,3 +5932,13 @@ br_size_t C2_HOOK_CDECL ZlibFsGetLine(char* buffer, br_size_t capacity, void* co
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dbc0, ZlibFsGetLine, ZlibFsGetLine_original)
+
+void (C2_HOOK_CDECL * ZlibFsPutLine_original)(char* line, void* context);
+void C2_HOOK_CDECL ZlibFsPutLine(char* line, void* context) {
+#if defined(C2_HOOKS_ENABLED)
+    ZlibFsPutLine_original(line, context);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051dc60, ZlibFsPutLine, ZlibFsPutLine_original)
