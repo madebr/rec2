@@ -74,27 +74,29 @@ void C2_HOOK_FASTCALL CloseDirectInput(void) {
     }
 }
 
-static void AcquireDInputJoystickDevice(int pIndex) {
+static int AcquireDInputJoystickDevice(int pIndex) {
     IDirectInputDevice2A *device;
 
     device = C2V(gDirectInputJoystickDevices)[pIndex];
-    if (C2V(gDirectInputJoystickHandle) != NULL) {
-        HRESULT hRes;
-        const char *format_msg;
-
-        hRes = IDirectInputDevice2_Acquire(device);
-        if (hRes == DI_OK) {
-            format_msg = "Joystick #%d acquired\n";
-        } else if (hRes == DI_NOEFFECT) {
-            format_msg = "Joystick #%d already acquired\n";
-        } else if (hRes == DIERR_INVALIDPARAM) {
-            format_msg = "Joystick %d DIERR_INVALIDPARAM\n";
-        } else if (hRes == DIERR_OTHERAPPHASPRIO) {
-            format_msg = "Joystick %d DIERR_OTHERAPPHASPRIO\n";
-        } else {
-            format_msg = "Unknown Error acquiring joystick %d\n";
-        }
-        dr_dprintf(format_msg, pIndex);
+    if (C2V(gDirectInputJoystickHandle) == NULL || device == NULL) {
+        return -1;
+    }
+    switch (IDirectInputDevice2_Acquire(device)) {
+    case DI_OK:
+        dr_dprintf("Joystick #%d acquired\n", pIndex);
+        return 1;
+    case DI_NOEFFECT:
+        dr_dprintf("Joystick #%d already acquired\n", pIndex);
+        return 1;
+    case DIERR_INVALIDPARAM:
+        dr_dprintf("Joystick %d DIERR_INVALIDPARAM\n", pIndex);
+        return 0;
+    case DIERR_OTHERAPPHASPRIO:
+        dr_dprintf("Joystick %d DIERR_OTHERAPPHASPRIO\n", pIndex);
+        return 0;
+    default:
+        dr_dprintf("Unknown Error acquiring joystick %d\n", pIndex);
+        return 0;
     }
 }
 
