@@ -1124,3 +1124,13 @@ int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc830, SetInvulnerability, SetInvulnerability_original);
+
+int (C2_HOOK_FASTCALL * SetFreeRepairs_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetFreeRepairs_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc8a0, SetFreeRepairs, SetFreeRepairs_original);
