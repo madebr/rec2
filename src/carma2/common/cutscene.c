@@ -397,7 +397,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                (float) paletteChangeCount / (timeEnd - timeStart), (float) frameCount / (timeEnd - timeStart));
     PDServiceSystem(0);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION(0x0043e770, PlaySmackerFile)

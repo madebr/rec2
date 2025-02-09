@@ -1364,7 +1364,7 @@ void C2_HOOK_FASTCALL ViewNetPlayer(void) {
     c2_printf("*%p=0x%x\n", b, *b);
     ViewNetPlayer_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e430, ViewNetPlayer, ViewNetPlayer_original)
@@ -1530,7 +1530,7 @@ void C2_HOOK_FASTCALL LeftInventory(void) {
 #if defined(C2_HOOKS_ENABLED)
     LeftInventory_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dab80, LeftInventory, LeftInventory_original)
@@ -1542,7 +1542,7 @@ void C2_HOOK_FASTCALL RightInventory(void) {
 #if defined(C2_HOOKS_ENABLED)
     RightInventory_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004daa00, RightInventory, RightInventory_original)
@@ -1569,7 +1569,7 @@ void C2_HOOK_FASTCALL ChangeCameraType(void) {
 #if defined(C2_HOOKS_ENABLED)
     ChangeCameraType_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e7f0, ChangeCameraType, ChangeCameraType_original)
@@ -1581,7 +1581,7 @@ void C2_HOOK_FASTCALL ToggleCockpit(void) {
 #if defined(C2_HOOKS_ENABLED)
     ToggleCockpit_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e900, ToggleCockpit, ToggleCockpit_original)
@@ -1695,7 +1695,7 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
 #if defined(C2_HOOKS_ENABLED)
     CheckOtherRacingKeys_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442f90, CheckOtherRacingKeys, CheckOtherRacingKeys_original)
@@ -1938,7 +1938,7 @@ void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
 #if defined(C2_HOOKS_ENABLED)
     PollCameraControls_original(pCamera_period);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444270, PollCameraControls, PollCameraControls_original)
@@ -1949,7 +1949,7 @@ void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime) {
 #if defined(C2_HOOKS_ENABLED)
     CheckRecoveryOfCars_original(pEndFrameTime);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442500, CheckRecoveryOfCars, CheckRecoveryOfCars_original)
@@ -1960,7 +1960,7 @@ void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference) {
 #if defined(C2_HOOKS_ENABLED)
     PollCarControls_original(pTime_difference);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00443e80, PollCarControls, PollCarControls_original)
@@ -1971,7 +1971,7 @@ void C2_HOOK_FASTCALL FUN_0045a670(void) {
 #if defined(C2_HOOKS_ENABLED)
     FUN_0045a670_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045a670, FUN_0045a670, FUN_0045a670_original)
@@ -1982,7 +1982,7 @@ void C2_HOOK_FASTCALL FUN_0045acf0(void) {
 #if defined(C2_HOOKS_ENABLED)
     FUN_0045acf0_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045acf0, FUN_0045acf0, FUN_0045acf0_original)

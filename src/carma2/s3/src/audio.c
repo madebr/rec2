@@ -407,7 +407,7 @@ void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1) {
 #if defined(C2_HOOKS_ENABLED)
     S3Service_original(inside_cockpit, unk1);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00564358, S3Service, S3Service_original)

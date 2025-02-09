@@ -3039,7 +3039,7 @@ void C2_HOOK_FASTCALL DisposePhysicsObject(tCollision_info* pCollision_info) {
 #if defined(C2_HOOKS_ENABLED)
     DisposeNonCarCollisionInfo_original(pCollision_info);
 #else
-#error "Not implemeneted"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044bb90, DisposePhysicsObject, DisposeNonCarCollisionInfo_original)
@@ -3049,7 +3049,7 @@ void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner) {
 #if defined(C2_HOOKS_ENABLED)
     DisposeCar_original(pCar_spec, pOwner);
 #else
-#error "Not implemeneted"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044bbe0, DisposeCar, DisposeCar_original)

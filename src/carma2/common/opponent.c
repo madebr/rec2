@@ -277,7 +277,7 @@ void C2_HOOK_FASTCALL CalcPlayerConspicuousness(tOpponent_spec* pOpponent_spec) 
 #if defined(C2_HOOKS_ENABLED)
     CalcPlayerConspicuousness_original(pOpponent_spec);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004adae0, CalcPlayerConspicuousness, CalcPlayerConspicuousness_original)
@@ -288,7 +288,7 @@ void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProc
 #if defined(C2_HOOKS_ENABLED)
     ProcessPursueAndTwat_original(pOpponent_spec, pCommand);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ab190, ProcessPursueAndTwat, ProcessPursueAndTwat_original)
@@ -320,7 +320,7 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
 #if defined(C2_HOOKS_ENABLED)
     RebuildActiveCarList_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a7a80, RebuildActiveCarList, RebuildActiveCarList_original)
@@ -642,7 +642,7 @@ void C2_HOOK_FASTCALL MungeOpponents(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeOpponents_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a9e10, MungeOpponents, MungeOpponents_original)
@@ -682,7 +682,7 @@ tS16 C2_HOOK_FASTCALL FindNearestPathSection(undefined4* pArg1, br_vector3* pAct
 #if defined(C2_HOOKS_ENABLED)
     return FindNearestPathSection_original(pArg1, pActor_coords, pPath_direction, pIntersect, pDistance);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a82d0, FindNearestPathSection, FindNearestPathSection_original)

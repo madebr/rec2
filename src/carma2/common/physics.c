@@ -109,7 +109,7 @@ int C2_HOOK_FASTCALL PHILInit(void) {
 #if defined(C2_HOOKS_ENABLED)
     return PHILInit_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5cc0, PHILInit, PHILInit_original)
@@ -926,7 +926,7 @@ int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_in
 #if defined(C2_HOOKS_ENABLED)
     return MarkCollisionInfoAsProcessed_original(pCollision_info);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5d40, MarkCollisionInfoAsProcessed, MarkCollisionInfoAsProcessed_original)
@@ -1083,7 +1083,7 @@ int C2_HOOK_FASTCALL PHILRemoveObject(tCollision_info* pCollision_info) {
 #if defined(C2_HOOKS_ENABLED)
     return PHILRemoveObject_original(pCollision_info);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5ea0, PHILRemoveObject, PHILRemoveObject_original)
@@ -1129,7 +1129,7 @@ int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tCollision_info* pCollision_in
 #if defined(C2_HOOKS_ENABLED)
     return TestForObjectInSensiblePlace_original(pCollision_info_1, pCollision_info_2, pVec3, pCar_callbacks);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00429070, TestForObjectInSensiblePlace, TestForObjectInSensiblePlace_original)
@@ -1140,7 +1140,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefine
 #if defined(C2_HOOKS_ENABLED)
     return CreateBoxCollisionShapeWithMass_original(pModel REC2_THISCALL_EDX, pMass);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da290, MungeBoxObject, CreateBoxCollisionShapeWithMass_original)
@@ -1151,7 +1151,7 @@ tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pTy
 #if defined(C2_HOOKS_ENABLED)
     return AllocatePhysicsJoint_original(pCount_limits, pType);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c5e20, AllocatePhysicsJoint, AllocatePhysicsJoint_original)
@@ -1162,7 +1162,7 @@ void C2_HOOK_FASTCALL PhysicsAddObject(tCollision_info* pParent, tCollision_info
 #if defined(C2_HOOKS_ENABLED)
     CollisionInfoAddChild_original(pParent, pChild);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c63b0, PhysicsAddObject, CollisionInfoAddChild_original)
@@ -1173,7 +1173,7 @@ void C2_HOOK_FASTCALL ApplyPhysicsToCar(tU32 pLast_tick_time, tU32 pFrame_period
 #if defined(C2_HOOKS_ENABLED)
     ApplyPhysicsToCar_original(pLast_tick_time, pFrame_period);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00416340, ApplyPhysicsToCar, ApplyPhysicsToCar_original)

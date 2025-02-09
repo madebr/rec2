@@ -33,6 +33,8 @@ else()
     find_package(TIFF REQUIRED)
 endif()
 
+add_subdirectory(external/iforce2)
+
 if(MSVC AND REC2_VENDORED)
     add_subdirectory(external/dxsdk EXCLUDE_FROM_ALL)
 else()
@@ -61,9 +63,12 @@ if(KEEP_ACTIVE_IN_BACKGROUND)
 endif()
 
 option(C2_STANDALONE "Build standalone Carmageddon 2 executable" OFF)
-
 if(C2_STANDALONE)
-    message(WARNING "Standalone Carmageddon 2 executable does not work")
+    add_compile_definitions(-DREC2_STANDALONE)
+endif()
+cmake_dependent_option(REC2_ABORT_UNIMPLEMENTED "abort() on unimplemented functions" OFF C2_STANDALONE OFF)
+if(REC2_ABORT_UNIMPLEMENTED)
+    add_compile_definitions(-DREC2_ABORT_UNIMPLEMENTED)
 endif()
 
 if(MSVC)
@@ -73,6 +78,8 @@ else()
     add_compile_options(-Wall)
 endif()
 
+add_library(hooks-header-only INTERFACE)
+target_include_directories(hooks-header-only INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
 if(C2_STANDALONE)
 else()
     enable_language(CXX)
