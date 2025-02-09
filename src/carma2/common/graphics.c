@@ -531,14 +531,14 @@ void C2_HOOK_FASTCALL Darken(tU8* pPtr, unsigned int pDarken_amount) {
 void C2_HOOK_FASTCALL SetFadedPalette(int pDegree) {
     int j;
 
-    memcpy(C2V(gScratch_pixels), C2V(gCurrent_palette)->pixels, 4 * 256);
+    c2_memcpy(C2V(gScratch_pixels), C2V(gCurrent_palette)->pixels, 4 * 256);
     for (j = 0; j < 256; j++) {
         Darken((tU8*)&C2V(gScratch_pixels)[4 * j + 0], pDegree);
         Darken((tU8*)&C2V(gScratch_pixels)[4 * j + 1], pDegree);
         Darken((tU8*)&C2V(gScratch_pixels)[4 * j + 2], pDegree);
         Darken((tU8*)&C2V(gScratch_pixels)[4 * j + 3], pDegree);
     }
-    DRSetPalette2(gScratch_palette, 0);
+    DRSetPalette2(C2V(gScratch_palette), 0);
 }
 
 void C2_HOOK_FASTCALL FadePaletteUp(void) {
