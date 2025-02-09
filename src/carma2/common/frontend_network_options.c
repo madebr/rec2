@@ -285,7 +285,7 @@ C2_HOOK_FUNCTION(0x00473470, NetOptions_Ok)
 
 void C2_HOOK_FASTCALL RestoreNetworkOptions(void) {
 
-    C2_HOOK_BUG_ON(sizeof(C2V(gFrontend_backup_net_options) != 0x30);)
+    C2_HOOK_BUG_ON(sizeof(C2V(gFrontend_backup_net_options)) != 0x30);
     c2_memmove(&C2V(gFrontend_net_options), &C2V(gFrontend_backup_net_options), sizeof(C2V(gFrontend_backup_net_options)));
 }
 
