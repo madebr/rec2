@@ -207,4 +207,6 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL ResetImmortalPeds(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
