@@ -358,4 +358,6 @@ void* C2_HOOK_CDECL ZlibFsOpenWrite(const char*, int);
 
 void C2_HOOK_CDECL ZlibFsClose(void*);
 
+int C2_HOOK_CDECL ZlibFsEof(void*);
+
 #endif // REC2_WORLD_H
