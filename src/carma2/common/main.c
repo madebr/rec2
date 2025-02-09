@@ -27,6 +27,7 @@
 
 #include <s3/s3.h>
 
+#include "c2_stdlib.h"
 #include "c2_string.h"
 
 C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * QuitGame_original)(void);
