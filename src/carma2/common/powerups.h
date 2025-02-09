@@ -223,4 +223,6 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetPedHeadSize(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
