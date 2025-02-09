@@ -1794,3 +1794,13 @@ void C2_HOOK_FASTCALL ResetImmortalPeds(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dcf30, ResetImmortalPeds, ResetImmortalPeds_original)
+
+void (C2_HOOK_FASTCALL * ResetStupidPedestrians_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetStupidPedestrians_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc920, ResetStupidPedestrians, ResetStupidPedestrians_original)
