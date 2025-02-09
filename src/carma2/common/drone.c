@@ -272,7 +272,7 @@ int C2_HOOK_FASTCALL TestObjectOverlap(tCollision_info* pCollision_1, tCollision
 #if defined(C2_HOOKS_ENABLED)
     return TestObjectOverlap_original(pCollision_1, pCollision_2);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00428d40, TestObjectOverlap, TestObjectOverlap_original)
@@ -293,7 +293,7 @@ void C2_HOOK_FASTCALL InitDroneCollisionObject(tDrone_spec *pDrone_spec) {
 #if defined(C2_HOOKS_ENABLED)
     InitDroneCollisionInfo_original(pDrone_spec);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044f980, InitDroneCollisionObject, InitDroneCollisionInfo_original)

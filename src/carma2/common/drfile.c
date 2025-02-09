@@ -2,13 +2,9 @@
 
 #include "loading.h"
 
-#include "brender/brender.h"
-
 #include "rec2_types.h"
 
-#include "c2_stdlib.h"
-
-#include <string.h>
+#include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gFile_system, 0x005933a8, {
     "Carmageddon",
@@ -67,7 +63,7 @@ C2_HOOK_FUNCTION(0x0044c770, DRStdioWrite)
 
 br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f) {
     PFfgets(buf, buf_len, f);
-    return strlen(buf);
+    return c2_strlen(buf);
 }
 C2_HOOK_FUNCTION(0x0044c6c0, DRStdioGetLine)
 

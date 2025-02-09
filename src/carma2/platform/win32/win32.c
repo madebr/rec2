@@ -285,7 +285,7 @@ void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051b0a0, PDClearKeyboardBuffer, PDClearKeyboardBuffer_original)
 
-C2_NORETURN_FUNCPTR static void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
+C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     C2_HOOK_START();

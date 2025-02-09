@@ -310,7 +310,7 @@ void C2_HOOK_FASTCALL DisposeKevStuff(void) {
 #if defined(C2_HOOKS_ENABLED)
     DisposeKevStuff_original();
 #else
-#error "Not iplemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fe180, DisposeKevStuff, DisposeKevStuff_original)
@@ -321,7 +321,7 @@ void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar) {
 #if defined(C2_HOOKS_ENABLED)
     StopCarBeingIt_original(pCar);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION(0x004fe570, StopCarBeingIt)
@@ -332,7 +332,7 @@ void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
 #if defined(C2_HOOKS_ENABLED)
     MungeShrapnel_original(pTime);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f9790, MungeShrapnel, MungeShrapnel_original)

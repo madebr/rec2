@@ -16,6 +16,7 @@
 
 #include <windows.h>
 #include <dinput.h>
+#include <iforce2.h>
 
 #define MAX_COUNT_JOYSTICKS 16
 #define MAX_COUNT_EFFECTS 30
@@ -32,9 +33,31 @@ C2_HOOK_VARIABLE_IMPLEMENT(IDirectInputA*, gDirectInputJoystickHandle, 0x0068615
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(IDirectInputDevice2A*, gDirectInputJoystickDevices, MAX_COUNT_JOYSTICKS, 0x0079e060);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoystickFFB, 0x0068615c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCountEnumeratedJoystickDinputDevices, 0x00686160);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(void*, gDirectInputEffects, MAX_COUNT_EFFECTS, 0x0079e0a0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(IDirectInputEffect*, gDirectInputEffects, MAX_COUNT_EFFECTS, 0x0079e0a0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDirectInputJoystickEnumerated, 0x00686170);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDirectInputJoystickInfo, gDirectInputJoystickInfos, MAX_COUNT_JOYSTICKS, 0x0079d9c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tJoystick_force_effect, gJoystick_effects, 30, 0x00684628);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gForceFeedbackAvailable, 0x00686168);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gBasic_friction_joystick_effect_index, 0x00595f74, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gBasic_force_joystick_effect_index, 0x00595f78, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gCollision_force_joystick_effect_index, 0x00595f80, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(IFR_Project *, gIfr_project, 0x0079e040);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_joystick_effects, 0x00686164);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const GUID*, gJoystick_effect_guids, 13, 0x00589f38, {
+    &GUID_ConstantForce,
+    &GUID_RampForce,
+    &GUID_CustomForce,
+    &GUID_Square,
+    &GUID_Sine,
+    &GUID_Triangle,
+    &GUID_SawtoothUp,
+    &GUID_SawtoothDown,
+    &GUID_Spring,
+    &GUID_Spring,
+    &GUID_Damper,
+    &GUID_Inertia,
+    &GUID_Friction,
+});
 
 static int InitDirectInput(void) {
     int i;
@@ -169,11 +192,12 @@ tDirectInputJoystickInfo* C2_HOOK_FASTCALL JoystickDInputGetInfo(int pJoystickIn
 }
 C2_HOOK_FUNCTION(0x004589d0, JoystickDInputGetInfo)
 
-BOOL C2_HOOK_STDCALL Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, IDirectInputA* pDirectInput) {
+BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, void *pContext) {
     HRESULT hResult;
     IDirectInputDeviceA *device;
     IDirectInputDevice2A *device2;
     int nb;
+    IDirectInputA* pDirectInput = pContext;
 
     C2_HOOK_ASSERT(sizeof(tJoystickInputState) == 0x50);
 
@@ -181,15 +205,15 @@ BOOL C2_HOOK_STDCALL Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceIns
     c2_strncpy(C2V(gDirectInputJoystickInfos)[nb].productName, pDeviceInstance->tszProductName, 80);
     C2V(gDirectInputJoystickInfos)[nb].productName[79] = '\0';
     switch (pDeviceInstance->dwDevType) {
-        case DIDEVTYPEJOYSTICK_GAMEPAD:
-            C2V(gDirectInputJoystickInfos)[nb].count_buttons = 4;
-            break;
-        case DIDEVTYPEJOYSTICK_WHEEL:
-            C2V(gDirectInputJoystickInfos)[nb].count_buttons = 2;
-            break;
-        default:
-            C2V(gDirectInputJoystickInfos)[nb].count_buttons = 1;
-            break;
+    case DIDEVTYPEJOYSTICK_GAMEPAD:
+        C2V(gDirectInputJoystickInfos)[nb].count_buttons = 4;
+        break;
+    case DIDEVTYPEJOYSTICK_WHEEL:
+        C2V(gDirectInputJoystickInfos)[nb].count_buttons = 2;
+        break;
+    default:
+        C2V(gDirectInputJoystickInfos)[nb].count_buttons = 1;
+        break;
     }
     hResult = IDirectInput_CreateDevice(pDirectInput, &pDeviceInstance->guidInstance, &device, NULL);
     if (hResult != DI_OK) {
@@ -328,32 +352,274 @@ void C2_HOOK_FASTCALL CollectJoystickButtonInfos(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c410, CollectJoystickButtonInfos, CollectJoystickButtonInfos_original)
 
+void C2_HOOK_FASTCALL UnloadDinputFFBEffectAtIndex(int index) {
+    IDirectInputEffect* effect = C2V(gDirectInputEffects)[index];
+    if (effect != NULL) {
+        IDirectInputEffect_Unload(effect);
+    }
+}
+C2_HOOK_FUNCTION(0x00458040, UnloadDinputFFBEffectAtIndex)
+
+int C2_HOOK_FASTCALL CreateDinputEffect(int joystick_index, tJoystick_effect_description* description, const char *name) {
+    int effect_id = C2V(gCount_joystick_effects);
+    IDirectInputDevice2A *device = C2V(gDirectInputJoystickDevices)[joystick_index];
+    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(DWORD, axis, 2, 0x00684620);
+
+    C2_HOOK_BUG_ON(sizeof(tJoystick_effect_description) != 0x50);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, type, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, type_specific_params, 0x4);
+    C2_HOOK_BUG_ON(sizeof(description->type_specific_params) != 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, time_ms, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, field_0x3c, 0x3c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, field_0x48, 0x48);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, field_0x4c, 0x4c);
+
+    if (effect_id >= REC2_ASIZE(C2V(gJoystick_effects))) {
+        dr_dprintf("Reached hardcoded limit for # of effects.");
+        return -1;
+    }
+    if (device == NULL || !(C2V(gJoystickFFB) & (1 << joystick_index))) {
+        return -1;
+    }
+    C2V(gJoystick_effects)[effect_id].di_effect.dwDuration = description->time_ms != -1 ? 1000 * description->time_ms : -1;
+    C2V(gJoystick_effects)[effect_id].di_effect.dwGain = description->field_0x3c;
+    // FIXME: dwTriggerButton contains offset
+    C2V(gJoystick_effects)[effect_id].di_effect.dwTriggerButton = description->field_0x44 != -1 ? description->field_0x44 + 0x30 : -1;
+    C2V(gJoystick_effects)[effect_id].di_effect.dwTriggerRepeatInterval = description->field_0x48;
+    C2V(gJoystick_effects)[effect_id].field_0x60 = 100 * description->field_0x4c;
+    if (description->field_0x40 == 0 || (C2V(gDirectInputJoystickInfos)[joystick_index].devSubType & 0x2)) {
+        C2V(gJoystick_effects)[effect_id].di_effect.cAxes = 1;
+        C2V(gJoystick_effects)[effect_id].di_effect.rgdwAxes = C2V(axis);
+        // FIXME: offset
+        C2V(axis)[0] = 0;
+    } else if (description->field_0x40 == 1) {
+        C2V(gJoystick_effects)[effect_id].di_effect.cAxes = 1;
+        C2V(gJoystick_effects)[effect_id].di_effect.rgdwAxes = C2V(axis);
+        // FIXME: offset
+        C2V(axis)[0] = 4;
+    } else {
+        C2V(gJoystick_effects)[effect_id].di_effect.cAxes = 2;
+        C2V(gJoystick_effects)[effect_id].di_effect.rgdwAxes = C2V(axis);
+        // FIXME: offset
+        C2V(axis)[0] = 0;
+        C2V(axis)[1] = 4;
+    }
+    memcpy(&C2V(gJoystick_effects)[effect_id].type_specific_params,
+        &description->type_specific_params,
+        sizeof(tJoystick_effect_type_params));
+    C2_HOOK_BUG_ON(sizeof(DIEFFECT) != 0x34);
+    C2V(gJoystick_effects)[effect_id].di_effect.dwSize = sizeof(DIEFFECT);
+    C2V(gJoystick_effects)[effect_id].di_effect.dwFlags = DIEFF_OBJECTOFFSETS | DIEFF_POLAR;
+    C2V(gJoystick_effects)[effect_id].di_effect.dwSamplePeriod = 0;
+    C2V(gJoystick_effects)[effect_id].di_effect.rglDirection = &C2V(gJoystick_effects)[effect_id].field_0x60;
+    C2V(gJoystick_effects)[effect_id].di_effect.lpEnvelope = NULL;
+    C2V(gJoystick_effects)[effect_id].di_effect.lpvTypeSpecificParams = &C2V(gJoystick_effects)[effect_id].type_specific_params;
+    C2V(gJoystick_effects)[effect_id].field_0x64 = 0;
+
+    C2_HOOK_BUG_ON(sizeof(DICONSTANTFORCE) != 0x4);
+    C2_HOOK_BUG_ON(sizeof(DIRAMPFORCE) != 0x8);
+    C2_HOOK_BUG_ON(sizeof(DICONDITION) != 0x18);
+    switch (description->type) {
+    case eJoystick_effect_ConstantForce:
+        C2V(gJoystick_effects)[effect_id].di_effect.cbTypeSpecificParams = sizeof(DICONSTANTFORCE);
+        break;
+    case eJoystick_effect_RampForce:
+    case eJoystick_effect_CustomForce:
+    case eJoystick_effect_Square:
+    case eJoystick_effect_Sine:
+    case eJoystick_effect_Triangle:
+    case eJoystick_effect_SawtoothUp:
+        C2V(gJoystick_effects)[effect_id].di_effect.cbTypeSpecificParams = sizeof(DIRAMPFORCE);
+        break;
+    case eJoystick_effect_Spring_8:
+    case eJoystick_effect_Damper:
+    case eJoystick_effect_Inertia:
+    case eJoystick_effect_Friction:
+        C2V(gJoystick_effects)[effect_id].di_effect.cbTypeSpecificParams = sizeof(DICONDITION);
+        break;
+    case eJoystick_effect_Spring_9:
+        // FIXME: what sizeof() is this? (tye = Spring)
+        C2V(gJoystick_effects)[effect_id].di_effect.cbTypeSpecificParams = 0x30;
+        break;
+    default:
+        dr_dprintf("Illegal effect Type");
+        return -1;
+    }
+    IDirectInputDevice2_CreateEffect(device,
+        C2V(gJoystick_effect_guids)[description->type],
+        &C2V(gJoystick_effects)[effect_id].di_effect,
+        &C2V(gDirectInputEffects)[C2V(gCount_joystick_effects)],
+        NULL);
+    strcpy(C2V(gJoystick_effects)[C2V(gCount_joystick_effects)].name, name);
+    C2V(gCount_joystick_effects) += 1;
+    return effect_id;
+}
+C2_HOOK_FUNCTION(0x00457c20, CreateDinputEffect)
+
+int (C2_HOOK_FASTCALL * ReadIforceEffectsNames_original)(const char *path, char **names, size_t capacity);
+int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, size_t capacity) {
+#if defined(C2_HOOKS_ENABLED)
+    return ReadIforceEffectsNames_original(path, names, capacity);
+#else
+    /* Implementation differs */
+
+    FILE *f;
+    tU32 count;
+    size_t i;
+    char buffer[128];
+
+    f = c2_fopen(path, "rb");
+    if (f == NULL) {
+        return -1;
+    }
+    c2_rewind(f);
+    fread(buffer, 1, 4, f);
+    if (c2_memcmp(buffer, "ifpr", 4) != 0) {
+        return 0;
+    }
+    c2_fread(&count, 1, sizeof(count), f);
+    for (i = 0; i < count && i < capacity && !c2_feof(f); i++) {
+        tU32 chunk_size;
+        size_t len_name = 0;
+        char c;
+        fread(&chunk_size, 1, sizeof(tU32), f);
+
+        while ((c = c2_fgetc(f)) != '\0' && len_name < REC2_ASIZE(buffer) && !c2_feof(f)) {
+            buffer[len_name] = c;
+            len_name += 1;
+        }
+        names[i] = c2_malloc(len_name + 1);
+        c2_strncpy(names[i], buffer, len_name);
+        names[i][len_name] = '\0';
+        c2_fseek(f, chunk_size - len_name - 1 - 4, SEEK_CUR);
+    }
+    return i;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045a390, ReadIforceEffectsNames, ReadIforceEffectsNames_original)
+
+int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
+    int i;
+
+    for (i = 0; i < C2V(gCount_joystick_effects); i++) {
+        if (c2_strcmp(C2V(gJoystick_effects)[i].name, name) == 0) {
+            UnloadDinputFFBEffectAtIndex(i);
+            return i;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00458060, UnloadDinputFFBEfectwithName)
+
 int (C2_HOOK_FASTCALL * InitForceFeedback_original)(void);
 int C2_HOOK_FASTCALL InitForceFeedback(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return InitForceFeedback_original();
 #else
-#error "Not implemented"
+    tPath_name path;
+    int count_effects;
+    char *effect_names[20];
+    int i;
+
+    if (C2V(gCountEnumeratedJoystickDinputDevices) == 0) {
+        JoystickDInputBegin();
+    }
+
+    if (C2V(gJoystickFFB) != 0) {
+        int i;
+        for (i = 0; i < REC2_ASIZE(C2V(gDirectInputJoystickDevices)); i++) {
+            IDirectInputDevice2A *device = C2V(gDirectInputJoystickDevices)[i];
+            if (device != NULL && (C2V(gJoystickFFB) & (1 << i))) {
+                IDirectInputDevice2_SendForceFeedbackCommand(device, DISFFC_RESET);
+                C2V(gForceFeedbackAvailable) = 1;
+            }
+        }
+    }
+    if (!C2V(gForceFeedbackAvailable)) {
+        return 0;
+    }
+    PathCat(path, C2V(gApplication_path), "FFB.IFR");
+    C2V(gIfr_project) = IFLoadProjectFile(path, C2V(gDirectInputJoystickDevices)[C2V(gJoystick_index)]);
+    if (C2V(gIfr_project) == NULL) {
+        PDFatalError("Cant enable I-Force");
+    }
+    count_effects = ReadIforceEffectsNames(path, effect_names, REC2_ASIZE(effect_names));
+    for (i = 0; i < count_effects; i++) {
+        int count;
+        DIEFFECT di_effect;
+        IFR_Effect **effects;
+
+        effects = IFCreateEffectStructs(C2V(gIfr_project), effect_names[i], &count);
+        di_effect = *effects[0]->di_effect;
+        IDirectInputDevice2_CreateEffect(C2V(gDirectInputJoystickDevices)[C2V(gJoystick_index)], &effects[0]->guid, &di_effect, &C2V(gDirectInputEffects)[C2V(gCount_joystick_effects)], NULL);
+        c2_strcpy(C2V(gJoystick_effects)[C2V(gCount_joystick_effects)].name, effect_names[i]);
+        C2V(gCount_joystick_effects) += 1;
+        UnloadDinputFFBEfectwithName(effect_names[i]);
+    }
+    IFReleaseProject(C2V(gIfr_project));
+    return C2V(gForceFeedbackAvailable);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00457760, InitForceFeedback, InitForceFeedback_original)
 
-int (C2_HOOK_FASTCALL * ResetDInputJoystickFFB_original)(int pIndex);
-int C2_HOOK_FASTCALL ResetDInputJoystickFFB(int pIndex) {
-#if defined(C2_HOOKS_ENABLED)
+void (C2_HOOK_FASTCALL * ResetDInputJoystickFFB_original)(int pIndex);
+void C2_HOOK_FASTCALL ResetDInputJoystickFFB(int pIndex) {
+#if 0//defined(C2_HOOKS_ENABLED)
     return ResetDInputJoystickFFB_original(pIndex);
 #else
-#error "Not implemented"
+    IDirectInputDevice2A *device;
+
+    device = C2V(gDirectInputJoystickDevices)[pIndex];
+    if (device != NULL && (C2V(gJoystickFFB) & (1 << pIndex))) {
+        IDirectInputDevice2_SendForceFeedbackCommand(device, DISFFC_STOPALL);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00457ff0, ResetDInputJoystickFFB, ResetDInputJoystickFFB_original)
 
 void (C2_HOOK_FASTCALL * RegisterJoystickFFBForces_original)(void);
 void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     RegisterJoystickFFBForces_original();
 #else
-#error "Not implemented"
+    tJoystick_effect_description description;
+
+#ifdef REC2_FIX_BUGS
+    c2_memset(&description, 0, sizeof(description));
+#endif
+    description.type = eJoystick_effect_Friction;
+    description.type_specific_params.friction.field_0x0 = 0;
+    description.type_specific_params.friction.field_0x4 = 10000;
+    description.type_specific_params.friction.field_0x8 = 10000;
+    description.time_ms = 5000000;
+    description.field_0x3c = 5000;
+    description.field_0x44 = -1;
+    description.field_0x4c = 0x5a;
+    C2V(gBasic_friction_joystick_effect_index) = CreateDinputEffect(C2V(gJoystick_index), &description, "Basic Friction");
+
+#ifdef REC2_FIX_BUGS
+    c2_memset(&description, 0, sizeof(description));
+#endif
+    description.type = eJoystick_effect_ConstantForce;
+    description.type_specific_params.constant.field_0x0 = 0;
+    description.time_ms = 5000000;
+    description.field_0x38 = 1000;
+    description.field_0x3c = 5000;
+    description.field_0x44 = -1;
+    description.field_0x4c = 0x5a;
+    C2V(gBasic_force_joystick_effect_index ) = CreateDinputEffect(C2V(gJoystick_index), &description, "Basic Force");
+
+#ifdef REC2_FIX_BUGS
+    c2_memset(&description, 0, sizeof(description));
+#endif
+    description.type = eJoystick_effect_ConstantForce;
+    description.type_specific_params.constant.field_0x0 = 0;
+    description.time_ms = 1000000;
+    description.field_0x38 = 1000;
+    description.field_0x3c = 5000;
+    description.field_0x44 = -1;
+    description.field_0x4c = 0x5a;
+    C2V(gCollision_force_joystick_effect_index) = CreateDinputEffect(C2V(gJoystick_index), &description, "Collision Force");
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00458520, RegisterJoystickFFBForces, RegisterJoystickFFBForces_original)
@@ -373,12 +639,14 @@ int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
     if (!C2V(gDirectInputJoystickEnumerated)) {
         C2V(gDirectInputJoystickEnumerated) = 1;
         if (C2V(gCountEnumeratedJoystickDinputDevices) == 0) {
-            IDirectInput2_EnumDevices(C2V(gDirectInputJoystickHandle), DIDEVTYPE_JOYSTICK, (LPDIENUMDEVICESCALLBACKA)Win32DInputJoystickEnum, C2V(gDirectInputJoystickHandle), DIEDFL_ATTACHEDONLY);
+            IDirectInput_EnumDevices(C2V(gDirectInputJoystickHandle), DIDEVTYPE_JOYSTICK, Win32DInputJoystickEnum, C2V(gDirectInputJoystickHandle), DIEDFL_ATTACHEDONLY);
         }
         if (C2V(gCountEnumeratedJoystickDinputDevices) != 0) {
             for (i = 0; i < REC2_ASIZE(C2V(gDirectInputJoystickDevices)); i++) {
                 JoystickDInputGetInfo(i, NULL, NULL);
-                AcquireDInputJoystickDevice(i);
+                if (C2V(gDirectInputJoystickDevices)[i] != NULL) {
+                    AcquireDInputJoystickDevice(i);
+                }
             }
             C2V(gJoystick_index) = 0;
         }
@@ -586,7 +854,6 @@ void C2_HOOK_FASTCALL KeyBegin(void) {
     C2V(gScan_code)[118] = DIK_SPACE;
 }
 C2_HOOK_FUNCTION(0x0051ba10, KeyBegin)
-
 
 void C2_HOOK_FASTCALL Win32InitInputDevice(void) {
     HRESULT hRes;

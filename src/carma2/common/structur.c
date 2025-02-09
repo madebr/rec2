@@ -59,7 +59,7 @@ int C2_HOOK_FASTCALL DoPostRace(tRace_result pRace_result) {
 #if defined(C2_HOOKS_ENABLED)
     return DoPostRace_original(pRace_result);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e3440, DoPostRace, DoPostRace_original)
@@ -753,7 +753,7 @@ void C2_HOOK_FASTCALL SendGameplayToHost(tNet_gameplay_mess pMess, int pParam_1,
 #if defined(C2_HOOKS_ENABLED)
     SendGameplayToHost_original(pMess, pParam_1, pParam_2, pParam_3, pParam_4);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049bcb0, SendGameplayToHost, SendGameplayToHost_original)

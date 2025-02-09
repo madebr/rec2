@@ -39,7 +39,7 @@ br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_statePush(br_soft_renderer* self, br_uint_32 mask);
 
-br_error C2_HOOK_CDECL _M_br_soft_state_statePop(br_soft_renderer* self, br_uint_32 mask);
+br_error C2_HOOK_CDECL _M_br_soft_renderer_statePop(br_soft_renderer* self, br_uint_32 mask);
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_stateSave(br_soft_renderer* self, br_renderer_state_stored_soft* save, br_uint_32 mask);
 

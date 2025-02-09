@@ -63,6 +63,12 @@ int C2_HOOK_CDECL c2_rename(const char *oldname, const char *newname);
 
 #include <stdio.h>
 
+#define c2_fpos_t fpos_t
+
+#define c2_stdin    (stdin)
+#define c2_stdout   (stdout)
+#define c2_stderr   (stderr)
+
 #define c2_fopen fopen
 #define c2_fclose fclose
 #define c2_feof feof
@@ -76,9 +82,13 @@ int C2_HOOK_CDECL c2_rename(const char *oldname, const char *newname);
 #define c2_rewind rewind
 
 #define c2_fgetc fgetc
+#define c2_ungetc ungetc
 #define c2_fgets fgets
-#define c2_fputc fpuc
+#define c2_fputc fputc
 #define c2_fputs fputs
+
+#define c2_fgetpos fgetpos
+#define c2_fsetpos fsetpos
 
 #define c2_printf printf
 #define c2_fprintf fprintf
@@ -90,8 +100,14 @@ int C2_HOOK_CDECL c2_rename(const char *oldname, const char *newname);
 #define c2_fwrite fwrite
 #define c2_fread fread
 
+#define c2_fscanf fscanf
+#define c2_vfscanf vfscanf
+
 #define c2_sscanf sscanf
 #define c2_vsscanf vsscanf
+
+#define c2_unlink _unlink
+#define c2_rename rename
 
 #endif
 

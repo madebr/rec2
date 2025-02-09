@@ -267,7 +267,6 @@ static void convertM34FixedToFloat(br_matrix34_f* dest, const br_matrix34_x* src
 }
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_modelMulX(br_soft_renderer* self, br_matrix34_x* m) {
-#define CONV(d,s)
     br_matrix34 om;
     br_matrix34 cm;
 
@@ -421,7 +420,7 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_statePush(br_soft_renderer* self, br_
 }
 C2_HOOK_FUNCTION(0x00542280, _M_br_soft_renderer_statePush)
 
-br_error C2_HOOK_CDECL _M_br_soft_state_statePop(br_soft_renderer* self, br_uint_32 mask) {
+br_error C2_HOOK_CDECL _M_br_soft_renderer_statePop(br_soft_renderer* self, br_uint_32 mask) {
     soft_state_all* sp;
     br_error r;
 
@@ -434,7 +433,7 @@ br_error C2_HOOK_CDECL _M_br_soft_state_statePop(br_soft_renderer* self, br_uint
     sp->valid = 0;
     return r;
 }
-C2_HOOK_FUNCTION(0x005422c0, _M_br_soft_state_statePop)
+C2_HOOK_FUNCTION(0x005422c0, _M_br_soft_renderer_statePop)
 
 br_error C2_HOOK_CDECL _M_br_soft_renderer_stateSave(br_soft_renderer* self, br_renderer_state_stored_soft* save, br_uint_32 mask) {
 

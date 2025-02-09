@@ -7,22 +7,24 @@
 #include "object.h"
 #include "renderer.h"
 #include "state.h"
+#include "types.h"
 
 #include "core/fw/devsetup.h"
+#include "core/fw/object.h"
 #include "core/fw/objectc.h"
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
 
-HOOK_VARIABLE_DECLARE_STATIC(const struct br_renderer_facility_dispatch, rendererFacilityDispatch);
+C2_HOOK_VARIABLE_DECLARE_STATIC(const struct br_renderer_facility_dispatch, rendererFacilityDispatch);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererFacilityTemplateEntries, 3, 0x0058bbd8, {
-    { BRT_IDENTIFIER_CSTR,  NULL,	offsetof(br_renderer_facility , identifier),    5,	3,  0,  0, },
-    { BRT_RENDERER_MAX_I32, NULL,	0,					                            5,  1,  1,  0, },
-    { BRT_PARTS_TL,         NULL,	&C2V(RendererPartsTokens),                      13, 29, 0,  0, },
+    { BRT_IDENTIFIER_CSTR,  NULL,   offsetof(br_soft_renderer_facility, identifier),    5,  3,  0,  0, },
+    { BRT_RENDERER_MAX_I32, NULL,   0,                                                  5,  1,  1,  0, },
+    { BRT_PARTS_TL,         NULL,   (uintptr_t)&C2V(RendererPartsTokens),               13, 29, 0,  0, },
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererNewTemplateEntries, 3, 0x00670570, {
     { BRT_DESTINATION_O,        NULL,   offsetof(newRendererTokens, dest),  2, 3, 0, 0, },
-    { BRT_OUTPUT_FACILITY_O,    NULL	offsetof(newRendererTokens, dest),	2, 3, 0, 0, },
-    { BRT_PRIMITIVE_LIBRARY_O,  NULL,	offsetof(newRendererTokens, prims),	2, 3, 0, 0, },
+    { BRT_OUTPUT_FACILITY_O,    NULL,   offsetof(newRendererTokens, dest),  2, 3, 0, 0, },
+    { BRT_PRIMITIVE_LIBRARY_O,  NULL,   offsetof(newRendererTokens, prims), 2, 3, 0, 0, },
 });
 
 br_renderer_facility* (C2_HOOK_STDCALL * RendererFacilitySoftAllocate_original)(br_device* dev, const char* identifier);
@@ -40,8 +42,8 @@ br_renderer_facility* C2_HOOK_STDCALL RendererFacilitySoftAllocate(br_device* de
     self->dispatch = (br_renderer_facility_dispatch*)&C2V(rendererFacilityDispatch);
     self->identifier = identifier;
     self->device = (br_soft_device*)dev;
-	self->num_instances = 0;
-	self->object_list = BrObjectListAllocate(dev);
+    self->num_instances = 0;
+    self->object_list = BrObjectListAllocate(dev);
 
     StateInitialise(&self->default_state);
 
@@ -147,7 +149,7 @@ int C2_HOOK_CDECL _M_br_renderer_facility_soft_rendererNew(br_soft_renderer_faci
     if (renderer == NULL) {
         return 0x1002;
     }
-    *prenderer	= renderer;
+    *prenderer = renderer;
     return 0;
 }
 C2_HOOK_FUNCTION(0x00540730, _M_br_renderer_facility_soft_rendererNew)
@@ -157,22 +159,22 @@ static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatc
     NULL,
     NULL,
     NULL,
-    _M_br_renderer_facility_soft_free,
-    _M_br_softrend_object_identifier,
-    _M_br_renderer_facility_soft_type,
-    _M_br_renderer_facility_soft_isType,
-    _M_br_softrend_object_device,
-    _M_br_renderer_facility_soft_space,
+    (void*)_M_br_renderer_facility_soft_free,
+    (void*)_M_br_softrend_object_identifier,
+    (void*)_M_br_renderer_facility_soft_type,
+    (void*)_M_br_renderer_facility_soft_isType,
+    (void*)_M_br_softrend_object_device,
+    (void*)_M_br_renderer_facility_soft_space,
 
-    _M_br_renderer_facility_soft_templateQuery,
+    (void*)_M_br_renderer_facility_soft_templateQuery,
     _M_br_object_query,
-    _M_br_object_queryBuffer,
+    (void*)_M_br_object_queryBuffer,
     _M_br_object_queryMany,
     _M_br_object_queryManySize,
     _M_br_object_queryAll,
     _M_br_object_queryAllSize,
 
-    _M_br_renderer_facility_soft_listQuery,
+    (void*)_M_br_renderer_facility_soft_listQuery,
     _M_br_object_container_tokensMatchBegin,
     _M_br_object_container_tokensMatch,
     _M_br_object_container_tokensMatchEnd,
@@ -181,8 +183,8 @@ static C2_HOOK_VARIABLE_IMPLEMENT_INIT(const struct br_renderer_facility_dispatc
     _M_br_object_container_remove,
     _M_br_object_container_find,
     _M_br_object_container_findMany,
-    _M_br_object_container_count,
+    (void*)_M_br_object_container_count,
 
-    _M_br_renderer_facility_soft_validDestination,
-    _M_br_renderer_facility_soft_rendererNew,
+    (void*)_M_br_renderer_facility_soft_validDestination,
+    (void*)_M_br_renderer_facility_soft_rendererNew,
 });

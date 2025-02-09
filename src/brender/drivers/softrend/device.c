@@ -1,5 +1,8 @@
 #include "device.h"
 
+#include "object.h"
+
+#include "core/fw/object.h"
 #include "core/fw/objectc.h"
 #include "core/fw/resource.h"
 #include "core/fw/token.h"
@@ -10,20 +13,20 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(struct br_device_dispatch, softrendr_deviceDispa
     NULL,
     NULL,
     NULL,
-    _M_br_softrend_device_free,
-    _M_br_softrend_object_identifier,
-    _M_br_softrend_device_type,
-    _M_br_softrend_device_isType,
-    _M_br_softrend_object_device,
-    _M_br_softrend_device_space,
-    _M_br_softrend_device_templateQuery,
+    (void*)_M_br_softrend_device_free,
+    (void*)_M_br_softrend_object_identifier,
+    (void*)_M_br_softrend_device_type,
+    (void*)_M_br_softrend_device_isType,
+    (void*)_M_br_softrend_object_device,
+    (void*)_M_br_softrend_device_space,
+    (void*)_M_br_soft_device_templateQuery,
     _M_br_object_query,
-    _M_br_object_queryBuffer,
+    (void*)_M_br_object_queryBuffer,
     _M_br_object_queryMany,
     _M_br_object_queryManySize,
     _M_br_object_queryAll,
     _M_br_object_queryAllSize,
-    _M_br_softrend_device_listQuery,
+    (void*)_M_br_softrend_device_listQuery,
     _M_br_object_container_tokensMatchBegin,
     _M_br_object_container_tokensMatch,
     _M_br_object_container_tokensMatchEnd,
@@ -32,7 +35,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(struct br_device_dispatch, softrendr_deviceDispa
     _M_br_object_container_remove,
     _M_br_object_container_find,
     _M_br_object_container_findMany,
-    _M_br_object_container_count,
+    (void*)_M_br_object_container_count,
 });
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, deviceTemplateEntries, 1, 0x0058bc98, {

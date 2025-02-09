@@ -344,7 +344,7 @@ void C2_HOOK_FASTCALL SkidsPerFrame(void) {
 #if defined(C2_HOOKS_ENABLED)
     SkidsPerFrame_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ea720, SkidsPerFrame, SkidsPerFrame_original)

@@ -3,6 +3,8 @@
 #include "controls.h"
 #include "frontend.h"
 #include "frontend_changecar.h"
+#include "frontend_network.h"
+#include "frontend_newgame.h"
 #include "frontend_options.h"
 #include "frontend_quit.h"
 #include "frontend_wrecks.h"
@@ -21,7 +23,51 @@
 #include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_MAIN, 0x005a80f0, {
-    FIXME TODO
+    "Main",
+    0,
+    26,
+    MainMenuInfunc,
+    MainMenuOutfunc,
+    FRONTEND_MainMenuHandler,
+    &C2V(gFrontend_OPTIONS),
+    0,
+    0,
+    0,
+    2,
+    2,
+    1,
+    {
+        { 0x9,      OnePlayerSetup,      NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0xa,      MultiplayerSetup,    &C2V(gFrontend_NETWORK),       0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x404,    temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0x403,    testUp,              NULL,                          0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x404,    MainMenuSelectRace,  NULL,                          0, 17, 18, 0, 0, 0, 0, 1, 1, 0, 0, 1, 1, },
+        { 0x404,    MainMenuSelectRace,  NULL,                          0, 17, 18, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, },
+        { 0x404,    MainMenuSelectRace,  NULL,                          0, 17, 18, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, },
+        { 0x404,    MainMenuSelectRace,  NULL,                          0, 17, 18, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, },
+        { 0x403,    testDn,              NULL,                          0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0xf,      temp,                &C2V(gFrontend_OPTIONS),       0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x402,    temp,                &C2V(gFrontend_CHANGE_CAR),    0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x402,    temp,                &C2V(gFrontend_CHANGE_CAR),    0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x402,    temp,                &C2V(gFrontend_CHANGE_CAR),    0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x402,    temp,                &C2V(gFrontend_CHANGE_CAR),    0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x402,    temp,                &C2V(gFrontend_CHANGE_CAR),    0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x402,    temp,                &C2V(gFrontend_CHANGE_CAR),    0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0xc,      temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0x404,    temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0x404,    NewGameToggleTyping, NULL,                          0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0xec,     temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0x404,    temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0xe,      StartFudge,          &C2V(gFrontend_NEWGAME),       0, 17, 18, 0, 0, 0, 0, 1, 1, },
+        { 0x401,    temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0x401,    temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0xf7,     temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+        { 0x401,    temp,                NULL,                          0, 17, 18, 0, 0, 0, 0, 0, 1, },
+    },
+    1,
+    {
+        { 1, 8, 6, 12, 12, 12, 19 },
+    },
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_car_image_outdated, 0x00687040);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_net_initialized, 0x0074c6b4);
