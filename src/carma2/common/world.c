@@ -1065,7 +1065,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
                         int texRootIndex;
                         if (FindLastOccurrenceOfString_CaseInsensitive(&texRootIndex, tifPath, indexLastSeparator, C2V(gDir_separator))) {
                             posDir = c2_strlen(C2V(gDir_separator)) + indexLastSeparator;
-                            c2_sprintf(buf1, "%.*s%s%s", texRootIndex, tifPath, C2V(gDir_separator), C2V(gDir_separator), usePix16 ? "PIX16" : "PIX8");
+                            c2_sprintf(buf1, "%.*s%s%s", texRootIndex, tifPath, C2V(gDir_separator), usePix16 ? "PIX16" : "PIX8");
                             c2_sprintf(pixPathTarget, "%s%s%.*s%s", buf1, C2V(gDir_separator), indexSuffix - posDir, tifPath + posDir, ".PIX");
                         }
                     }
