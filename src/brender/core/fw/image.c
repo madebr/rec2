@@ -10,6 +10,7 @@
 #include "core/host/himage.h"
 #include "core/std/brstdlib.h"
 
+
 br_boolean (C2_HOOK_CDECL * BrImageAdd_original)(br_image* img);
 br_boolean C2_HOOK_CDECL BrImageAdd(br_image* img) {
 #if 0//defined(C2_HOOKS_ENABLED)

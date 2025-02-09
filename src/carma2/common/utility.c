@@ -20,6 +20,7 @@
 #include "rec2_macros.h"
 
 #include "c2_ctype.h"
+#include "c2_stdlib.h"
 #include "c2_string.h"
 
 #include <float.h>
@@ -956,10 +957,10 @@ int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
             str = "No Identifier";
         }
         c2_printf("\tName:\t\t\"%s\"\n", str);
-        c2_printf("\tAddress:\t%08x\n", pActor);
-        c2_printf("\tParent:\t\t%08x\n", pActor->parent);
+        c2_printf("\tAddress:\t%p\n", pActor);
+        c2_printf("\tParent:\t\t%p\n", pActor->parent);
         c2_printf("\tDepth:\t\t%i\n", pActor->depth);
-        c2_printf("\tModelPtr:\t0x%08x", pActor->model);
+        c2_printf("\tModelPtr:\t0x%p", pActor->model);
         if (pActor->model == NULL) {
             c2_printf("\n");
         } else {
@@ -969,7 +970,7 @@ int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
             }
             c2_printf(" (\"%s\")\n", str);
         }
-        c2_printf("\tMaterialPtr:\t0x%08x", pActor->material);
+        c2_printf("\tMaterialPtr:\t0x%p", pActor->material);
         if (pActor->material == NULL) {
             c2_printf("\n");
         } else {

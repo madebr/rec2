@@ -1,6 +1,10 @@
 #include "frontend_options.h"
 
+#include "controls.h"
 #include "frontend.h"
+#include "frontend_controls.h"
+#include "frontend_graphics.h"
+#include "frontend_loadgame.h"
 #include "frontend_main.h"
 #include "frontend_quit.h"
 #include "globvars.h"

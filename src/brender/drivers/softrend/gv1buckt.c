@@ -1,7 +1,9 @@
 #include "gv1buckt.h"
 
+#include "object.h"
 #include "setup.h"
 
+#include "core/fw/object.h"
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
 
@@ -10,21 +12,21 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_geometry_v1_buckets_dispatch, geometryV
     NULL,
     NULL,
     NULL,
-    _M_br_geometry_v1_buckets_soft_free,
-    _M_br_soft_object_identifier,
-    _M_br_geometry_v1_buckets_soft_type,
-    _M_br_geometry_v1_buckets_soft_isType,
-    _M_br_soft_object_device,
-    _M_br_geometry_v1_buckets_soft_space,
-    _M_br_geometry_v1_buckets_soft_templateQuery,
+    (void*)_M_br_geometry_v1_buckets_soft_free,
+    (void*)_M_br_softrend_object_identifier,
+    (void*)_M_br_geometry_v1_buckets_soft_type,
+    (void*)_M_br_geometry_v1_buckets_soft_isType,
+    (void*)_M_br_softrend_object_device,
+    (void*)_M_br_geometry_v1_buckets_soft_space,
+    (void*)_M_br_geometry_v1_buckets_soft_templateQuery,
     _M_br_object_query,
     _M_br_object_queryBuffer,
     _M_br_object_queryMany,
     _M_br_object_queryManySize,
     _M_br_object_queryAll,
     _M_br_object_queryAllSize,
-    _M_br_geometry_v1_buckets_soft_render,
-    _M_br_geometry_v1_buckets_soft_render,
+    (void*)_M_br_geometry_v1_buckets_soft_render,
+    (void*)_M_br_geometry_v1_buckets_soft_render,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, geometryV1BucketsTemplateEntries, 3, 0x0058c038, {
     { BRT_IDENTIFIER_CSTR,      NULL,   offsetof(br_geometry_v1_buckets_soft, identifier),          5, 3, 0, 0, },

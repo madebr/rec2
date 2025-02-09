@@ -1,0 +1,12 @@
+NAME iforce2.dll
+EXPORTS
+    IFCreateEffectStructs@12
+    IFCreateEffects@12
+    IFLoadProjectFile@8
+    IFLoadProjectObjectPointer@8
+    IFLoadProjectPointer@8
+    IFLoadProjectResource@12
+    IFReleaseEffectStructs@8
+    IFReleaseEffects@8
+    IFReleaseProject@4
+    IForceDLLMain@12

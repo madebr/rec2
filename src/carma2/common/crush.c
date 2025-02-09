@@ -86,7 +86,7 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 #if defined(C2_HOOKS_ENABLED)
     InitCrush_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 
 }
@@ -98,7 +98,7 @@ void C2_HOOK_FASTCALL ResetCrushSystems(void) {
 #if defined(C2_HOOKS_ENABLED)
     ResetCrushSystems_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042a190, ResetCrushSystems, ResetCrushSystems_original)
@@ -682,7 +682,7 @@ void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
 #if defined(C2_HOOKS_ENABLED)
     PrepareCarForCrushing_original(pCar_spec);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042aa20, PrepareCarForCrushing, PrepareCarForCrushing_original)
@@ -693,7 +693,7 @@ void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 #if defined(C2_HOOKS_ENABLED)
     TotallyRepairACar_original(pCar_spec);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00439510, TotallyRepairACar, TotallyRepairACar_original)
@@ -712,7 +712,7 @@ void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec) {
 #if defined(C2_HOOKS_ENABLED)
     WeldCar_original(pCar_spec);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043b8a0, WeldCar, WeldCar_original)
@@ -723,7 +723,7 @@ void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, undefined4 
 #if defined(C2_HOOKS_ENABLED)
     TotallySpamTheModel_original(pCar_spec REC2_THISCALL_EDX, pDamage);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00431610, TotallySpamTheModel, TotallySpamTheModel_original)
@@ -734,7 +734,7 @@ void C2_HOOK_FASTCALL DoDamage(tCar_spec *pCar, tDamage_type pDamage_type, int p
 #if defined(C2_HOOKS_ENABLED)
     DoDamage_original(pCar, pDamage_type, pMagnitude);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043f930, DoDamage, DoDamage_original)
@@ -745,7 +745,7 @@ int C2_HOOK_FASTCALL DoCrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
 #if defined(C2_HOOKS_ENABLED)
     return DoCrashEarnings_original(pCar1, pCar2);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00440660, DoCrashEarnings, DoCrashEarnings_original)
@@ -756,7 +756,7 @@ void C2_HOOK_FASTCALL SortOutSmoke(tCar_spec* pCar) {
 #if defined(C2_HOOKS_ENABLED)
     SortOutSmoke_original(pCar);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00440230, SortOutSmoke, SortOutSmoke_original)
@@ -776,7 +776,7 @@ void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period) {
 #if defined(C2_HOOKS_ENABLED)
     DoWheelDamage_original(pFrame_period);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00440350, DoWheelDamage, DoWheelDamage_original)
@@ -787,7 +787,7 @@ void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
 #if defined(C2_HOOKS_ENABLED)
     CrushBendFlapRend_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00436170, CrushBendFlapRend, CrushBendFlapRend_original)

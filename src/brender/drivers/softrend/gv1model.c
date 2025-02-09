@@ -1,8 +1,12 @@
 #include "gv1model.h"
 
+#include "object.h"
 #include "v1model.h"
 
+#include "core/fw/object.h"
+#include "core/fw/objectc.h"
 #include "core/fw/resource.h"
+#include "core/fw/token.h"
 #include "core/fw/tokenval.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_geometry_v1_model_dispatch, geometryV1ModelDispatch, 0x0058be98, {
@@ -10,26 +14,26 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_geometry_v1_model_dispatch, geometryV1ModelDi
     NULL,
     NULL,
     NULL,
-    _M_br_geometry_v1_model_soft_free,
-    _M_br_softrend_object_identifier,
-    _M_br_geometry_v1_model_soft_type,
-    _M_br_geometry_v1_model_soft_isType,
-    _M_br_softrend_object_device,
-    _M_br_geometry_v1_model_soft_space,
-    _M_br_geometry_v1_model_soft_templateQuery,
+    (void*)_M_br_geometry_v1_model_soft_free,
+    (void*)_M_br_softrend_object_identifier,
+    (void*)_M_br_geometry_v1_model_soft_type,
+    (void*)_M_br_geometry_v1_model_soft_isType,
+    (void*)_M_br_softrend_object_device,
+    (void*)_M_br_geometry_v1_model_soft_space,
+    (void*)_M_br_geometry_v1_model_soft_templateQuery,
     _M_br_object_query,
-    _M_br_object_queryBuffer,
+    (void*)_M_br_object_queryBuffer,
     _M_br_object_queryMany,
-    _M_br_object_queryManySize,
-    _M_br_object_queryAll,
-    _M_br_object_queryAllSize,
-    _M_br_geometry_v1_model_soft_render,
-    _M_br_geometry_v1_model_soft_renderFixedToFloat,
-    _M_br_geometry_v1_model_soft_renderOnScreen,
-    _M_br_geometry_v1_model_soft_renderOnScreenFixedToFloat,
-    _M_br_geometry_v1_model_soft_storedNew,
-    _M_br_geometry_v1_model_soft_storedNewFixedToFloat,
-    _M_br_geometry_v1_model_soft_storedAvail,
+    (void*)_M_br_object_queryManySize,
+    (void*)_M_br_object_queryAll,
+    (void*)_M_br_object_queryAllSize,
+    (void*)_M_br_geometry_v1_model_soft_render,
+    (void*)_M_br_geometry_v1_model_soft_renderFixedToFloat,
+    (void*)_M_br_geometry_v1_model_soft_renderOnScreen,
+    (void*)_M_br_geometry_v1_model_soft_renderOnScreenFixedToFloat,
+    (void*)_M_br_geometry_v1_model_soft_storedNew,
+    (void*)_M_br_geometry_v1_model_soft_storedNewFixedToFloat,
+    (void*)_M_br_geometry_v1_model_soft_storedAvail,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, geometryV1ModelTemplateEntries, 3, 0x0058be50, {
     { BRT_IDENTIFIER_CSTR,      NULL, offsetof(br_geometry_v1_model_soft, identifier),           5,  3,  0,  0, },

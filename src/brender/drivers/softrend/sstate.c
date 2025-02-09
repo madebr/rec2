@@ -1,11 +1,14 @@
 #include "sstate.h"
 
+#include "object.h"
+
+#include "core/fw/object.h"
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
 
 #include "c2_string.h"
 
-#define MASK_STATE_STORED (	MASK_STATE_CULL | \
+#define MASK_STATE_STORED ( MASK_STATE_CULL | \
                             MASK_STATE_SURFACE | \
                             MASK_STATE_PRIMITIVE | \
                             MASK_STATE_CACHE)
@@ -15,25 +18,25 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_renderer_state_stored_dispatch, rendere
     NULL,
     NULL,
     NULL,
-    _M_br_renderer_state_stored_soft_free,
-    _M_br_object_soft_identifier,
-    _M_br_renderer_state_stored_soft_type,
-    _M_br_renderer_state_stored_soft_isType,
-    _M_br_object_soft_device,
-    _M_br_renderer_state_stored_soft_space,
-    _M_br_renderer_state_stored_soft_templateQuery,
+    (void*)_M_br_renderer_state_stored_soft_free,
+    (void*)_M_br_softrend_object_identifier,
+    (void*)_M_br_renderer_state_stored_soft_type,
+    (void*)_M_br_renderer_state_stored_soft_isType,
+    (void*)_M_br_softrend_object_device,
+    (void*)_M_br_renderer_state_stored_soft_space,
+    (void*)_M_br_renderer_state_stored_soft_templateQuery,
     _M_br_object_query,
-    _M_br_object_queryBuffer,
+    (void*)_M_br_object_queryBuffer,
     _M_br_object_queryMany,
     _M_br_object_queryManySize,
     _M_br_object_queryAll,
     _M_br_object_queryAllSize,
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, rendererStateStoredTemplateEntries, 4, 0x00670690, {
-    { BRT_IDENTIFIER_CSTR,  NULL,                   offsetof(br_renderer_state_stored_soft , identifier),   5,  3,  0,  0 },
-    { BRT_RENDERER_O,       NULL,                   offsetof(br_renderer_state_stored_soft , renderer),     5,  3,  0,  0 },
-    { BRT_PARTS_U32,		NULL,	                offsetof(br_renderer_state_stored_soft , valid),        5,  3,  0,  0 },
-    { NULL,                 "PRIMITIVE_STATE_O",	offsetof(br_renderer_state_stored_soft , pstate),       5,  3,  0,  0 },
+    { BRT_IDENTIFIER_CSTR,  NULL,                   offsetof(br_renderer_state_stored_soft, identifier),   5,  3,  0,  0 },
+    { BRT_RENDERER_O,       NULL,                   offsetof(br_renderer_state_stored_soft, renderer),     5,  3,  0,  0 },
+    { BRT_PARTS_U32,        NULL,                   offsetof(br_renderer_state_stored_soft, valid),        5,  3,  0,  0 },
+    { BR_NULL_TOKEN,        "PRIMITIVE_STATE_O",    offsetof(br_renderer_state_stored_soft, pstate),       5,  3,  0,  0 },
 });
 
 br_renderer_state_stored_soft* (C2_HOOK_STDCALL * RendererStateStoredSoftAllocate_original)(br_soft_renderer* renderer, soft_state_all* base_state, br_uint_32 m, br_token_value* tv);

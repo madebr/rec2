@@ -71,7 +71,7 @@ void C2_HOOK_FASTCALL ResetExplosions(void) {
 #if defined(C2_HOOKS_ENABLED)
     ResetExplosions_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004eaac0, ResetExplosions, ResetExplosions_original)
@@ -105,7 +105,7 @@ void C2_HOOK_FASTCALL MungeExplosions(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeExplosions_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004eaaf0, MungeExplosions, MungeExplosions_original)

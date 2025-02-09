@@ -110,7 +110,7 @@ void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
 
     InitPedsForm_original(pTable);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00403ed0, InitBoner, InitPedsForm_original)
@@ -503,7 +503,7 @@ int C2_HOOK_FASTCALL DoToPeds(tCar_spec* pCar_spec, int pOnly_alive, float pMax_
 #if defined(C2_HOOKS_ENABLED)
     return DoToPeds_original(pCar_spec, pOnly_alive, pMax_distance, pParam_4, pData, pCallback);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ce140, DoToPeds, DoToPeds_original)
@@ -624,7 +624,7 @@ tPed_character_instance* C2_HOOK_FASTCALL BuildCharacterInstance(const char* pGr
 #if defined(C2_HOOKS_ENABLED)
     return BuildCharacterInstance_original(pGroup_name, pMat34);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004079a0, BuildCharacterInstance, BuildCharacterInstance_original)
@@ -636,7 +636,7 @@ void C2_HOOK_CDECL TurnLimbsOnAndOff(br_actor* actor, br_model* model, br_materi
 
     TurnLimbsOnAndOff_original(actor, model, material, render_data, style, on_screen);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d34e0, TurnLimbsOnAndOff, TurnLimbsOnAndOff_original)
@@ -647,7 +647,7 @@ void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pAction, int pWalk_speed
 #if defined(C2_HOOKS_ENABLED)
     SetPedMove_original(pPed, pAction, pWalk_speed_factor, pArg4, pArg5, pArg6, pArg7);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cbcd0, SetPedMove, SetPedMove_original)
@@ -658,7 +658,7 @@ void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_
 #if defined(C2_HOOKS_ENABLED)
     SetCharacterDirectionAR_original(pPed, pDir, pUp);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d3360, SetCharacterDirectionAR, SetCharacterDirectionAR_original)
@@ -910,7 +910,7 @@ void C2_HOOK_FASTCALL DisposePedestrians(void) {
 #if defined(C2_HOOKS_ENABLED)
     DisposePedestrians_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cb8d0, DisposePedestrians, DisposePedestrians_original)
@@ -921,7 +921,7 @@ void C2_HOOK_FASTCALL InitPedsForRace(void) {
 #if defined(C2_HOOKS_ENABLED)
     InitPedsForRace_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d5bd0, InitPedsForRace, InitPedsForRace_original)
@@ -938,7 +938,7 @@ void C2_HOOK_FASTCALL LastChanceForPedEffects(void) {
 #if defined(C2_HOOKS_ENABLED)
     LastChanceForPedEffects_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d5970, LastChanceForPedEffects, LastChanceForPedEffects_original)
@@ -949,7 +949,7 @@ void C2_HOOK_FASTCALL MungeNapalm(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungeNapalm_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ce7d0, MungeNapalm, MungeNapalm_original)
@@ -960,7 +960,7 @@ void C2_HOOK_FASTCALL MungePedestrians(void) {
 #if defined(C2_HOOKS_ENABLED)
     MungePedestrians_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d3740, MungePedestrians, MungePedestrians_original)
@@ -976,7 +976,7 @@ void C2_HOOK_FASTCALL FlushAllPedCaches(void) {
 #if defined(C2_HOOKS_ENABLED)
     FlushAllPedCaches_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d6c70, FlushAllPedCaches, FlushAllPedCaches_original)

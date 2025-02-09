@@ -1,5 +1,6 @@
 if(C2_STANDALONE)
     add_library(c2_hooks INTERFACE)
+    target_link_libraries(c2_hooks INTERFACE hooks-header-only)
 else()
     add_library(c2_hooks STATIC
         c2_ctype.c

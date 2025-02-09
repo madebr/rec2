@@ -16,7 +16,9 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_item_spec, gDefaultLastInterfaceItem, 0x00604730, FIXME);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_item_spec, gDefaultLastInterfaceItem, 0x00604730, {
+    0x401, temp, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 1,
+});
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAlways_typing, 0x0068c1f0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDisabled_count, 0x0068c1ec);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisabled_choices, 10, 0x0068c1f8);

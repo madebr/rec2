@@ -770,7 +770,7 @@ void C2_HOOK_FASTCALL UpdateMap(void) {
 #if defined(C2_HOOKS_ENABLED)
     UpdateMap_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00496e30, UpdateMap, UpdateMap_original)
@@ -1285,7 +1285,7 @@ void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
 #if defined(C2_HOOKS_ENABLED)
     RenderAFrame_original(pDepth_mask_on);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4e40, RenderAFrame, RenderAFrame_original)
@@ -1296,7 +1296,7 @@ void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
 #if defined(C2_HOOKS_ENABLED)
     ResetLollipopQueue_original();
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4900, ResetLollipopQueue, ResetLollipopQueue_original)

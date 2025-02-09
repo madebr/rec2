@@ -788,7 +788,7 @@ void C2_HOOK_FASTCALL DoDifferenceX(tFlic_descriptor* pFlic_info, tU32 chunk_len
 #if defined(C2_HOOKS_ENABLED)
     DoDifferenceX_original(pFlic_info, chunk_length);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00462390, DoDifferenceX, DoDifferenceX_original)
@@ -799,7 +799,7 @@ void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 chunk
 #if defined(C2_HOOKS_ENABLED)
     DoDifferenceTrans_original(pFlic_info, chunk_length);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00462480, DoDifferenceTrans, DoDifferenceTrans_original)
@@ -810,7 +810,7 @@ void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
 #if defined(C2_HOOKS_ENABLED)
     DoBlack_original(pFlic_info, chunk_length);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00462580, DoBlack, DoBlack_original)
@@ -915,7 +915,7 @@ void C2_HOOK_FASTCALL DoUncompressed(tFlic_descriptor* pFlic_info, tU32 chunk_le
 #if defined(C2_HOOKS_ENABLED)
     DoUncompressed_original(pFlic_info, chunk_length);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00462780, DoUncompressed, DoUncompressed_original)
@@ -926,7 +926,7 @@ void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 chu
 #if defined(C2_HOOKS_ENABLED)
     DoUncompressedTrans_original(pFlic_info, chunk_length);
 #else
-#error "Not implemented"
+    NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004627f0, DoUncompressedTrans, DoUncompressedTrans_original)

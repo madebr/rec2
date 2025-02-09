@@ -3,6 +3,8 @@
 
 #include "rec2_types.h"
 
+#include <dinput.h>
+
 typedef void(C2_HOOK_FASTCALL * tWin32_void_voidptr_cbfn)(void*);
 
 typedef struct {
@@ -50,5 +52,55 @@ typedef union {
     tU32 flags;
     tU8 data[1];
 } tHeap_memory;
+
+typedef enum {
+    eJoystick_effect_ConstantForce = 0,
+    eJoystick_effect_RampForce = 1,
+    eJoystick_effect_CustomForce = 2,
+    eJoystick_effect_Square = 3,
+    eJoystick_effect_Sine = 4,
+    eJoystick_effect_Triangle = 5,
+    eJoystick_effect_SawtoothUp = 6,
+    eJoystick_effect_SawtoothDown = 7,
+    eJoystick_effect_Spring_8 = 8,
+    eJoystick_effect_Spring_9 = 9,
+    eJoystick_effect_Damper = 10,
+    eJoystick_effect_Inertia = 11,
+    eJoystick_effect_Friction = 12,
+} tJoystick_description_type;
+
+typedef union {
+    struct {
+        undefined4 field_0x0;
+    } constant;
+    struct {
+        undefined4 field_0x0;
+        undefined4 field_0x4;
+        undefined4 field_0x8;
+    } friction;
+    undefined field_0x0[24];
+} tJoystick_effect_type_params;
+
+typedef struct {
+    tJoystick_description_type type;
+    tJoystick_effect_type_params type_specific_params;
+    undefined field_0x1c[24];
+    undefined4 time_ms;
+    undefined4 field_0x38;
+    undefined4 field_0x3c;
+    undefined4 field_0x40;
+    int field_0x44;
+    undefined4 field_0x48;
+    undefined4 field_0x4c;
+} tJoystick_effect_description;
+
+typedef struct {
+    DIEFFECT di_effect;
+    undefined type_specific_params[44];
+    undefined field_0x4c[20];
+    LONG field_0x60;
+    undefined4 field_0x64;
+    char name[128];
+} tJoystick_force_effect;
 
 #endif // C2_WIN32_TYPES_H
