@@ -1855,12 +1855,12 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* powerup, tCar_spec* car) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dec90, ResetElectroBastard, ResetElectroBastard_original)
 
-void (C2_HOOK_FASTCALL * ResedPedHeadSize_original)(tPowerup* powerup, tCar_spec* car);
-void C2_HOOK_FASTCALL ResedPedHeadSize(tPowerup* powerup, tCar_spec* car) {
+void (C2_HOOK_FASTCALL * ResetPedHeadSize_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetPedHeadSize(tPowerup* powerup, tCar_spec* car) {
 #if defined(C2_HOOKS_ENABLED)
-    ResedPedHeadSize_original(powerup, car);
+    ResetPedHeadSize_original(powerup, car);
 #else
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004dca00, ResedPedHeadSize, ResedPedHeadSize_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004dca00, ResetPedHeadSize, ResetPedHeadSize_original)
