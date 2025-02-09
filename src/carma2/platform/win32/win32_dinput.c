@@ -615,3 +615,53 @@ void C2_HOOK_FASTCALL Win32InitInputDevice(void) {
     C2V(gJoystick_deadzone) = 8000;
 }
 C2_HOOK_FUNCTION(0x0051cbf0, Win32InitInputDevice)
+
+tU32 C2_HOOK_FASTCALL PDGetJoystickButtonStates(void) {
+    IDirectInputDevice2 *device;
+    HRESULT res;
+
+    if (C2V(gJoystick_index) == -1) {
+        return 0;
+    }
+    device = C2V(gDirectInputJoystickDevices)[C2V(gJoystick_index)];
+    if (device == NULL) {
+        return 0;
+    }
+    res = IDirectInputDevice2_Poll(device);
+    if (FAILED(res)) {
+        switch (res) {
+        case DIERR_INPUTLOST:
+        case DIERR_NOTACQUIRED:
+            if (AcquireDInputJoystickDevice(C2V(gJoystick_index)) == 0) {
+                dr_dprintf("couldn't reacquire joystick %d ", C2V(gJoystick_index));
+                return 0;
+            }
+            break;
+        default:
+            dr_dprintf("Can't poll, unknown error\n");
+            return 0;
+        }
+    } else {
+        DIJOYSTATE device_state;
+        tU32 button_mask;
+        int i;
+
+        C2_HOOK_BUG_ON(sizeof(device_state) != 0x50);
+        res = IDirectInputDevice2_GetDeviceState(device, sizeof(device_state), &device_state);
+        if (FAILED(res)) {
+            if (res == DIERR_INPUTLOST) {
+                AcquireDInputJoystickDevice(C2V(gJoystick_index));
+            }
+            return 0;
+        }
+        button_mask = 0;
+        for (i = 0; i < 32; i++) {
+            if (device_state.rgbButtons[i] & 0x80) {
+                button_mask |= (1 << i);
+            }
+        }
+        return button_mask;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00459690, PDGetJoystickButtonStates)
