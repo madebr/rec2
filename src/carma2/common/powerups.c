@@ -1154,3 +1154,13 @@ int C2_HOOK_FASTCALL FreezeTimer(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc930, FreezeTimer, FreezeTimer_original);
+
+int (C2_HOOK_FASTCALL * SetEngineFactor_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetEngineFactor(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetEngineFactor_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dca30, SetEngineFactor, SetEngineFactor_original);
