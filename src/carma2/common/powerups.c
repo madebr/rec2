@@ -1844,3 +1844,13 @@ void C2_HOOK_FASTCALL HidePedestrians(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dec40, HidePedestrians, HidePedestrians_original)
+
+void (C2_HOOK_FASTCALL * ResetElectroBastard_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetElectroBastard_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dec90, ResetElectroBastard, ResetElectroBastard_original)
