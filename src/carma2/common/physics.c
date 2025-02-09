@@ -7,6 +7,7 @@
 
 #include <brender/brender.h>
 
+#include <stdarg.h>
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
