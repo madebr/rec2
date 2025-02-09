@@ -131,4 +131,6 @@ int C2_HOOK_FASTCALL SetPedHeadSize(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL ShitMine(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL PissOutOil(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
