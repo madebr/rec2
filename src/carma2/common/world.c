@@ -5862,3 +5862,13 @@ void* C2_HOOK_CDECL ZlibFsOpenWrite(const char* path, int type) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dc20, ZlibFsOpenWrite, ZlibFsOpenWrite_original)
+
+void (C2_HOOK_CDECL * ZlibFsClose_original)(void* context);
+void C2_HOOK_CDECL ZlibFsClose(void* context) {
+#if defined(C2_HOOKS_ENABLED)
+    ZlibFsClose_original(context);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051dba0, ZlibFsClose, ZlibFsClose_original)
