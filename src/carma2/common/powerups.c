@@ -1594,3 +1594,13 @@ int C2_HOOK_FASTCALL CutOffTail(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e04c0, CutOffTail, CutOffTail_original);
+
+int (C2_HOOK_FASTCALL * TurnOnCloaking_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return TurnOnCloaking_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e0c40, TurnOnCloaking, TurnOnCloaking_original);
