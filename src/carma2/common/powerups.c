@@ -1624,3 +1624,13 @@ void C2_HOOK_FASTCALL ResetPedSize(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc9d0, ResetPedSize, ResetPedSize_original)
+
+void (C2_HOOK_FASTCALL * ResetPedExplode_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetPedExplode_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dca10, ResetPedExplode, ResetPedExplode_original)
