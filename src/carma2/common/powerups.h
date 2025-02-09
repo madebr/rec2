@@ -211,4 +211,6 @@ void C2_HOOK_FASTCALL ResetImmortalPeds(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetStupidPedestrians(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
