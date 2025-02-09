@@ -199,4 +199,6 @@ void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL ResetBouncey(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
