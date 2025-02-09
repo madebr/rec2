@@ -243,4 +243,6 @@ void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* powerup, tU32 time);
 
+void C2_HOOK_FASTCALL DoBouncey(tPowerup* powerup, tU32 time);
+
 #endif //REC2_POWERUPS_H
