@@ -1274,3 +1274,13 @@ int C2_HOOK_FASTCALL SetSuspension(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dce80, SetSuspension, SetSuspension_original);
+
+int (C2_HOOK_FASTCALL * SetTyreGrip_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetTyreGrip_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dced0, SetTyreGrip, SetTyreGrip_original);
