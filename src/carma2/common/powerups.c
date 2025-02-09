@@ -1294,3 +1294,13 @@ int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dcf80, SetDamageMultiplier, SetDamageMultiplier_original);
+
+int (C2_HOOK_FASTCALL * SetImmortalPeds_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetImmortalPeds_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dcf00, SetImmortalPeds, SetImmortalPeds_original);
