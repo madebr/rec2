@@ -127,4 +127,6 @@ int C2_HOOK_FASTCALL HitMine(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL SetPedHeadSize(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
