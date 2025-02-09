@@ -181,4 +181,6 @@ void C2_HOOK_FASTCALL ResetInvulnerability(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetFreeRepairs(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
