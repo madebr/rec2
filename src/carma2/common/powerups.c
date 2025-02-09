@@ -1234,3 +1234,13 @@ int C2_HOOK_FASTCALL SetGravity(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dcda0, SetGravity, SetGravity_original);
+
+int (C2_HOOK_FASTCALL * SetPinball_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetPinball(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetPinball_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dcdd0, SetPinball, SetPinball_original);
