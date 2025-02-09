@@ -5942,3 +5942,13 @@ void C2_HOOK_CDECL ZlibFsPutLine(char* line, void* context) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dc60, ZlibFsPutLine, ZlibFsPutLine_original)
+
+void (C2_HOOK_CDECL * ZlibFsAdvance_original)(br_size_t advance, void* context);
+void C2_HOOK_CDECL ZlibFsAdvance(br_size_t advance, void* context) {
+#if defined(C2_HOOKS_ENABLED)
+    ZlibFsAdvance_original(advance, context);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051db60, ZlibFsAdvance, ZlibFsAdvance_original)
