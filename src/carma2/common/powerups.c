@@ -1694,3 +1694,13 @@ void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de610, PukeDrugsBackUp, PukeDrugsBackUp_original)
+
+void (C2_HOOK_FASTCALL * ResetOpponentsSpeed_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetOpponentsSpeed(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetOpponentsSpeed_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de6b0, ResetOpponentsSpeed, ResetOpponentsSpeed_original)
