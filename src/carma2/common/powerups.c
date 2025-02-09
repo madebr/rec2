@@ -1894,3 +1894,13 @@ void C2_HOOK_FASTCALL ResetGhostPeds(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de9a0, ResetGhostPeds, ResetGhostPeds_original)
+
+void (C2_HOOK_FASTCALL * ResetDancingPeds_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetDancingPeds(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetDancingPeds_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de960, ResetDancingPeds, ResetDancingPeds_original)
