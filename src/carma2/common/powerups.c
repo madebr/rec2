@@ -1954,3 +1954,13 @@ void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e0d50, TurnOffCloaking, TurnOffCloaking_original)
+
+void (C2_HOOK_FASTCALL * TheEffectsOfDrugs_original)(tPowerup* powerup, tU32 time);
+void C2_HOOK_FASTCALL TheEffectsOfDrugs(tPowerup* powerup, tU32 time) {
+#if defined(C2_HOOKS_ENABLED)
+    TheEffectsOfDrugs_original(powerup, time);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dcc00, TheEffectsOfDrugs, TheEffectsOfDrugs_original)
