@@ -140,7 +140,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tLose_proc*, gLose_procs, 56, 0x0065e9f0, 
     HidePedestrians,
     NULL,
     ResetElectroBastard,
-    ResedPedHeadSize,
+    ResetPedHeadSize,
     ResetMutantCorpses,
     NULL,
     NULL,
@@ -1854,3 +1854,13 @@ void C2_HOOK_FASTCALL ResetElectroBastard(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dec90, ResetElectroBastard, ResetElectroBastard_original)
+
+void (C2_HOOK_FASTCALL * ResetPedHeadSize_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetPedHeadSize(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetPedHeadSize_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dca00, ResetPedHeadSize, ResetPedHeadSize_original)
