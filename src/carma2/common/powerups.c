@@ -1634,3 +1634,13 @@ void C2_HOOK_FASTCALL ResetPedExplode(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dca10, ResetPedExplode, ResetPedExplode_original)
+
+void (C2_HOOK_FASTCALL * ResetInvulnerability_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetInvulnerability(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetInvulnerability_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc860, ResetInvulnerability, ResetInvulnerability_original)
