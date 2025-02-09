@@ -174,7 +174,7 @@ typedef struct tToggle_element {
     int in_game_only;
     int exact_modifiers;
     int on_last_time;
-    void (*action_proc)(void);
+    void (C2_HOOK_FASTCALL *action_proc)(void);
 } tToggle_element;
 
 typedef struct tCheat {
