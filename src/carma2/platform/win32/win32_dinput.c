@@ -688,4 +688,4 @@ void C2_HOOK_FASTCALL PDSetKeysFromJoystick(int *keys) {
         }
     }
 }
-C2_HOOK_FUNCTION(0x, PDSetKeysFromJoystick)
+C2_HOOK_FUNCTION(0x0045b360, PDSetKeysFromJoystick)
