@@ -1374,3 +1374,13 @@ int C2_HOOK_FASTCALL HitMine(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dea40, HitMine, HitMine_original);
+
+int (C2_HOOK_FASTCALL * SetElectroBastard_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetElectroBastard_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dec60, SetElectroBastard, SetElectroBastard_original);
