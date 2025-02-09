@@ -740,7 +740,7 @@ typedef struct br_resource_class { // size: 20
 } br_resource_class;
 
 typedef struct br_filesystem {
-    char* identifier;
+    const char* identifier;
     brfile_attributes_cbfn* attributes;
     brfile_open_read_cbfn* open_read;
     brfile_open_write_cbfn* open_write;
