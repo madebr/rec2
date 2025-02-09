@@ -1104,3 +1104,13 @@ int C2_HOOK_FASTCALL SetPedExplode(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc7d0, SetPedExplode, SetPedExplode_original);
+
+int (C2_HOOK_FASTCALL * PickAtRandom_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL PickAtRandom(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return PickAtRandom_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de7a0, PickAtRandom, PickAtRandom_original);
