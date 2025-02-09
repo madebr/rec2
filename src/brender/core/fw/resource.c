@@ -14,15 +14,19 @@
 #define RES_ALIGN 4
 #define RESOURCE_SIZE(RES) ((RES)->size_h << 18)  | ((RES)->size_m << 10) | ((RES)->size_l << 2)
 
-#if !defined(C2_HOOKS_ENABLED)
-void* ResToUser(resource_header* r) {
+void* ResToUserWithClass(resource_header* r, br_uint_8 class) {
     br_int_32 align;
 
-    align = C2V(fw).resource_class_index[r->class]->alignment;
+    align = C2V(fw).resource_class_index[class]->alignment;
     if (align <= 0) {
         align = RES_ALIGN;
     }
     return (void*)(((br_size_t)r + sizeof(resource_header) + align - 1) & ~(align - 1));
+}
+
+void* ResToUser(resource_header* r) {
+
+    return ResToUserWithClass(r, r->class);
 }
 
 resource_header* UserToRes(void* r) {
@@ -39,11 +43,10 @@ resource_header* UserToRes(void* r) {
     }
     return (resource_header*)(p - (sizeof(resource_header) - 1));
 }
-#endif
 
 void* (C2_HOOK_CDECL * BrResAllocate_original)(void* vparent, br_size_t size, br_uint_8 res_class);
 void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_class) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResAllocate_original(vparent, size, res_class);
 #else
     resource_header* res;
@@ -82,6 +85,12 @@ void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_c
         BrSimpleAddHead(&parent->children, &res->node);
     }
 
+#if 0
+    if ((uintptr_t)UserToRes(ResToUser(res)) != (uintptr_t)res) {
+        c2_abort();
+    }
+#endif
+
     return ResToUser(res);
 #endif
 }
@@ -89,17 +98,21 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005276c0, BrResAllocate, BrResAllocate_original)
 
 void (C2_HOOK_STDCALL * BrResInternalFree_original)(resource_header* res, br_boolean callback);
 void C2_HOOK_STDCALL BrResInternalFree(resource_header* res, br_boolean callback) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrResInternalFree_original(res, callback);
 #else
     void* r;
+    br_uint_8 original_class;
 
     if (res->class == BR_MEMORY_FREE) {
         return;
     }
+
+    original_class = res->class;
+    res->class = BR_MEMORY_FREE;
     if (callback != 0) {
-        if (C2V(fw).resource_class_index[res->class]->free_cb != NULL) {
-            C2V(fw).resource_class_index[res->class]->free_cb(ResToUser(res), res->class, RESOURCE_SIZE(res));
+        if (C2V(fw).resource_class_index[original_class]->free_cb != NULL) {
+            C2V(fw).resource_class_index[original_class]->free_cb(ResToUserWithClass(res, original_class), res->class, RESOURCE_SIZE(res));
         }
     }
 
@@ -120,7 +133,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005277f0, BrResInternalFree, BrResInternalFree_origi
 void (C2_HOOK_CDECL * BrResFree_original)(void* vres);
 void C2_HOOK_CDECL BrResFree(void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrResFree_original(vres);
 #else
     BrResInternalFree(UserToRes(vres), 1);
@@ -131,7 +144,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005277c0, BrResFree, BrResFree_original)
 void (C2_HOOK_CDECL * BrResFreeNoCallback_original)(void* vres);
 void C2_HOOK_CDECL BrResFreeNoCallback(void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrResFreeNoCallback_original(vres);
 #else
     BrResInternalFree(UserToRes(vres), 0);
@@ -142,7 +155,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005278b0, BrResFreeNoCallback, BrResFreeNoCallback_o
 void* (C2_HOOK_CDECL * BrResAdd_original)(void* vparent, void* vres);
 void* C2_HOOK_CDECL BrResAdd(void* vparent, void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResAdd_original(vparent, vres);
 #else
     resource_header* res;
@@ -162,7 +175,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005278e0, BrResAdd, BrResAdd_original)
 
 void* (C2_HOOK_CDECL * BrResRemove_original)(void* vres);
 void* C2_HOOK_CDECL BrResRemove(void* vres) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResRemove_original(vres);
 #else
     resource_header* res;
@@ -177,7 +190,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527940, BrResRemove, BrResRemove_original)
 br_uint_8 (C2_HOOK_CDECL * BrResClass_original)(void* vres);
 br_uint_8 C2_HOOK_CDECL BrResClass(void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResClass_original(vres);
 #else
     resource_header* res;
@@ -191,7 +204,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527970, BrResClass, BrResClass_original)
 br_boolean (C2_HOOK_CDECL * BrResIsChild_original)(void* vparent, void* vchild);
 br_boolean C2_HOOK_CDECL BrResIsChild(void* vparent, void* vchild) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResIsChild_original(vparent, vchild);
 #else
     resource_header* parent;
@@ -214,7 +227,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527990, BrResIsChild, BrResIsChild_original)
 br_uint_32 (C2_HOOK_CDECL * BrResSize_original)(void* vres);
 br_uint_32 C2_HOOK_CDECL BrResSize(void* vres) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResSize_original(vres);
 #else
     resource_header* res;
@@ -233,7 +246,7 @@ br_uint_32 C2_HOOK_CDECL ResSizeTotal(void* vres, br_uint_32* ptotal) {
 
 br_uint_32 (C2_HOOK_CDECL * BrResSizeTotal_original)(void* vres);
 br_uint_32 C2_HOOK_CDECL BrResSizeTotal(void* vres) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResSizeTotal_original(vres);
 #else
     br_uint_32 total;
@@ -247,7 +260,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527a30, BrResSizeTotal, BrResSizeTotal_original)
 
 br_uint_32 (C2_HOOK_CDECL * BrResChildEnum_original)(void* vres, br_resenum_cbfn* callback, void* arg);
 br_uint_32 C2_HOOK_CDECL BrResChildEnum(void* vres, br_resenum_cbfn* callback, void* arg) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResChildEnum_original(vres, callback, arg);
 #else
     resource_header* res;
@@ -269,13 +282,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527b60, BrResChildEnum, BrResChildEnum_original)
 
 br_uint_32 (C2_HOOK_CDECL * BrResCheck_original)(void* vres, int no_tag);
 br_uint_32 C2_HOOK_CDECL BrResCheck(void* vres, int no_tag) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResCheck_original(vres, no_tag);
 #else
     resource_header* res;
 
     res = UserToRes(vres);
-    if ((res->magic_ptr ==  res) & (res->magic_num == 0xdeadbeef)) {
+    if ((res->magic_ptr == res) && (res->magic_num == 0xdeadbeef)) {
         return 1;
     }
     return 0;
@@ -285,7 +298,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527bd0, BrResCheck, BrResCheck_original)
 
 char* (C2_HOOK_CDECL * BrResStrDup_original)(void* vparent, const char* str);
 char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResStrDup_original(vparent, str);
 #else
     int l;
@@ -299,7 +312,6 @@ char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00527c10, BrResStrDup, BrResStrDup_original)
 
-#if !defined(C2_HOOKS_ENABLED)
 void InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* arg, int level) {
     int i;
     char* cp;
@@ -318,11 +330,10 @@ void InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* 
         InternalResourceDump(child, putline, arg, level + 1);
     }
 }
-#endif
 
 void (C2_HOOK_CDECL * BrResDump_original)(void* vres, br_putline_cbfn* putline, void* arg);
 void C2_HOOK_CDECL BrResDump(void* vres, br_putline_cbfn* putline, void* arg) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrResDump_original(vres, putline, arg);
 #else
     resource_header* res;
@@ -335,7 +346,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00527c50, BrResDump, BrResDump_original)
 
 char* (C2_HOOK_CDECL * BrResClassIdentifier_original)(br_uint_8 res_class);
 char* C2_HOOK_CDECL BrResClassIdentifier(br_uint_8 res_class) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrResClassIdentifier_original(res_class);
 #else
     br_resource_class* rclass;
