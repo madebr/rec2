@@ -5882,3 +5882,13 @@ int C2_HOOK_CDECL ZlibFsEof(void* context) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dbb0, ZlibFsEof, ZlibFsEof_original)
+
+int (C2_HOOK_CDECL * ZlibFsGetChr_original)(void* context);
+int C2_HOOK_CDECL ZlibFsGetChr(void* context) {
+#if defined(C2_HOOKS_ENABLED)
+    return ZlibFsGetChr_original(context);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051db40, ZlibFsGetChr, ZlibFsGetChr_original)
