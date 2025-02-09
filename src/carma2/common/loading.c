@@ -1884,7 +1884,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     GetALineAndDontArgue(C2V(gTempFile), s2);
     str = c2_strtok(s2, "\t ,/");
     for (i = 0; (int)i < REC2_ASIZE(C2V(gNet_score_targets)); i++) {
-        float t;
+        int t;
         c2_sscanf(str, "%d", &t);
         C2V(gNet_auto_increase_credits_dt)[i] = (int)((float)(1000 * t) / (.02f * (float)C2V(gRecovery_cost).initial_network[i]));
         str = c2_strtok(NULL, "\t ,/");
