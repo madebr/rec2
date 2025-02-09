@@ -247,4 +247,6 @@ void C2_HOOK_FASTCALL DoBouncey(tPowerup* powerup, tU32 time);
 
 void C2_HOOK_FASTCALL MungeVouchers(tPowerup* powerup, tU32 time);
 
+void C2_HOOK_FASTCALL PissedEffect(tPowerup* powerup, tU32 time);
+
 #endif //REC2_POWERUPS_H
