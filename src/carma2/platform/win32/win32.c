@@ -35,7 +35,10 @@
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_spec_index, 0x00662200, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_data_index, 0x00662204, 1);
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGraf_spec, gGraf_specs, 2, 0x00662208); // FIXME: implement
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tGraf_spec, gGraf_specs, 2, 0x00662208, {
+    { 8, 1, 0, 320, 200, 0, 0, "32X20X8", "320x200 init string", 320, 320, 200, 0 },
+    { 8, 1, 0, 640, 480, 0, 0, "64X48X8", "640x480 init string", 640, 640, 480, 0 },
+});
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gUnknown_int_0074ca94, 0x0074ca94);
