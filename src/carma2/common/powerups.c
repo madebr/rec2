@@ -86,7 +86,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tGot_proc*, gGot_procs, 56, 0x0065e910, {
     SetMutantCorpses,
     ShitMine,
     PissOutOil,
-    KangeroooJump,
+    KangerooJump,
     AnnihilatePeds,
     RepulseOpponents,
     SetPedBrittle,
