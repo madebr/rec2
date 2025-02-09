@@ -1434,3 +1434,13 @@ int C2_HOOK_FASTCALL AnnihilatePeds(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de140, AnnihilatePeds, AnnihilatePeds_original);
+
+int (C2_HOOK_FASTCALL * RepulseOpponents_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return RepulseOpponents_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de1e0, RepulseOpponents, RepulseOpponents_original);
