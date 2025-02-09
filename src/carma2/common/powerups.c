@@ -1774,3 +1774,13 @@ void C2_HOOK_FASTCALL ResetTyreGrip(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de790, ResetTyreGrip, ResetTyreGrip_original)
+
+void (C2_HOOK_FASTCALL * ResetDamageMultiplier_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetDamageMultiplier(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetDamageMultiplier_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de780, ResetDamageMultiplier, ResetDamageMultiplier_original)
