@@ -5922,3 +5922,13 @@ br_size_t C2_HOOK_CDECL ZlibFsWrite(void* buffer, br_size_t elem_size, unsigned 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dcd0, ZlibFsWrite, ZlibFsWrite_original)
+
+br_size_t (C2_HOOK_CDECL * ZlibFsGetLine_original)(char* buffer, br_size_t capacity, void* context);
+br_size_t C2_HOOK_CDECL ZlibFsGetLine(char* buffer, br_size_t capacity, void* context) {
+#if defined(C2_HOOKS_ENABLED)
+    return ZlibFsGetLine_original(buffer, capacity, context);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051dbc0, ZlibFsGetLine, ZlibFsGetLine_original)

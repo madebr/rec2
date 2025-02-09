@@ -368,4 +368,6 @@ br_size_t C2_HOOK_CDECL ZlibFsRead(void*, br_size_t, unsigned int, void*);
 
 br_size_t C2_HOOK_CDECL ZlibFsWrite(void*, br_size_t, unsigned int, void*);
 
+br_size_t C2_HOOK_CDECL ZlibFsGetLine(char*, br_size_t, void*);
+
 #endif // REC2_WORLD_H
