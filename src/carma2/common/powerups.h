@@ -129,6 +129,8 @@ int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL SetPedHeadSize(tPowerup* powerup, tCar_spec* car);
 
+int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* powerup, tCar_spec* car);
+
 int C2_HOOK_FASTCALL ShitMine(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL PissOutOil(tPowerup* powerup, tCar_spec* car);
