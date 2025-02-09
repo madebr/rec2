@@ -1734,3 +1734,13 @@ void C2_HOOK_FASTCALL ResetPinball(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de730, ResetPinball, ResetPinball_original)
+
+void (C2_HOOK_FASTCALL * ResetWallclimb_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetWallclimb(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetWallclimb_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de740, ResetWallclimb, ResetWallclimb_original)
