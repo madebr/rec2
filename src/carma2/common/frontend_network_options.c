@@ -141,7 +141,7 @@ int C2_HOOK_FASTCALL NetOptions_Infunc(tFrontend_spec* pFrontend) {
     C2V(gPTR_00686508) = &C2V(gUNK_006886e8);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00472ed0, NetOptions_InFunc)
+C2_HOOK_FUNCTION(0x00472ed0, NetOptions_Infunc)
 
 int C2_HOOK_FASTCALL NetOptions_Outfunc(tFrontend_spec* pFrontend) {
 
