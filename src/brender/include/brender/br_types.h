@@ -1598,7 +1598,7 @@ typedef struct br_image {
     br_uint_32 n_functions;
     void** functions;
     br_uint_32 n_names;
-    char** names;
+    const char** names;
     br_uint_16* name_ordinals;
     br_uint_16 n_imports;
     br_image** imports;
@@ -1703,8 +1703,8 @@ typedef br_error br_exception;
 typedef void br_resident_fn();
 typedef struct br_tv_template_entry {
     br_token token;
-    char* name;
-    br_int_32 offset;
+    const char* name;
+    uintptr_t offset;
     br_int_16 flags;
     br_int_16 conv;
     uintptr_t conv_arg;
@@ -2607,7 +2607,7 @@ typedef struct host_exception_hook {
     br_uint_8 scratch[256];
 } host_exception_hook;
 
-typedef struct host_regs {
+typedef union host_regs {
     struct {
         br_uint_32 edi;
         br_uint_32 esi;
