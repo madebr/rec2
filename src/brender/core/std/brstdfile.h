@@ -7,11 +7,11 @@
 
 C2_HOOK_VARIABLE_DECLARE(br_filesystem*, _BrDefaultFilesystem);
 
-br_uint_32 C2_HOOK_CDECL BrStdioAttributes();
+br_uint_32 C2_HOOK_CDECL BrStdioAttributes(void);
 
-void* C2_HOOK_CDECL BrStdioOpenRead(char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result);
+void* C2_HOOK_CDECL BrStdioOpenRead(const char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result);
 
-void* C2_HOOK_CDECL BrStdioOpenWrite(char* name, int mode);
+void* C2_HOOK_CDECL BrStdioOpenWrite(const char* name, int mode);
 
 void C2_HOOK_CDECL BrStdioClose(void* f);
 

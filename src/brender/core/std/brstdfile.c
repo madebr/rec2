@@ -28,7 +28,7 @@ br_uint_32 C2_HOOK_CDECL BrStdioAttributes(void) {
 }
 C2_HOOK_FUNCTION(0x0053f660, BrStdioAttributes)
 
-void* C2_HOOK_CDECL BrStdioOpenRead(char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result) {
+void* C2_HOOK_CDECL BrStdioOpenRead(const char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result) {
     FILE* fh;
     br_uint_8 magics[16];
     int open_mode;
@@ -66,7 +66,7 @@ void* C2_HOOK_CDECL BrStdioOpenRead(char* name, br_size_t n_magics, br_mode_test
 }
 C2_HOOK_FUNCTION(0x0053f670, BrStdioOpenRead)
 
-void* C2_HOOK_CDECL BrStdioOpenWrite(char* name, int mode) {
+void* C2_HOOK_CDECL BrStdioOpenWrite(const char* name, int mode) {
     FILE* fh;
 
     if (mode == BR_FS_MODE_TEXT) {
