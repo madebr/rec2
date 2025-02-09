@@ -1864,3 +1864,13 @@ void C2_HOOK_FASTCALL ResetPedHeadSize(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dca00, ResetPedHeadSize, ResetPedHeadSize_original)
+
+void (C2_HOOK_FASTCALL * ResetMutantCorpses_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetMutantCorpses(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetMutantCorpses_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004decd0, ResetMutantCorpses, ResetMutantCorpses_original)
