@@ -187,4 +187,6 @@ void C2_HOOK_FASTCALL ResetEngineFactor(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
