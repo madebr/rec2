@@ -1814,3 +1814,13 @@ void C2_HOOK_FASTCALL ResetSuicidalPeds(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dcf70, ResetSuicidalPeds, ResetSuicidalPeds_original)
+
+void (C2_HOOK_FASTCALL * ResetMassMultiplier_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetMassMultiplier(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetMassMultiplier_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004debf0, ResetMassMultiplier, ResetMassMultiplier_original)
