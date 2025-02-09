@@ -1064,3 +1064,13 @@ int C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d8d30, GotPowerup, GotPowerup_original)
+
+int (C2_HOOK_FASTCALL * GotCredits_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL GotCredits(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return GotCredits_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc170, GotCredits, GotCredits_original);
