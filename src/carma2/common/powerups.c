@@ -1454,3 +1454,13 @@ int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc800, SetPedBrittle, SetPedBrittle_original);
+
+int (C2_HOOK_FASTCALL * SetGhostPeds_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetGhostPeds(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetGhostPeds_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de930, SetGhostPeds, SetGhostPeds_original);
