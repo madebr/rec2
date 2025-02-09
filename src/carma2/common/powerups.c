@@ -1684,3 +1684,13 @@ void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de600, ResetUnderwater, ResetUnderwater_original)
+
+void (C2_HOOK_FASTCALL * PukeDrugsBackUp_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL PukeDrugsBackUp(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    PukeDrugsBackUp_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de610, PukeDrugsBackUp, PukeDrugsBackUp_original)
