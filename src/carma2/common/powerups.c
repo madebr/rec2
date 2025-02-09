@@ -1674,3 +1674,13 @@ void C2_HOOK_FASTCALL ResetEngineFactor(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004de5d0, ResetEngineFactor, ResetEngineFactor_original)
+
+void (C2_HOOK_FASTCALL * ResetUnderwater_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetUnderwater(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetUnderwater_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de600, ResetUnderwater, ResetUnderwater_original)
