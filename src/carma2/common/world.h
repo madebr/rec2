@@ -350,4 +350,6 @@ void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 
 void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor);
 
+br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void);
+
 #endif // REC2_WORLD_H
