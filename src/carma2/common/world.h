@@ -360,4 +360,6 @@ void C2_HOOK_CDECL ZlibFsClose(void*);
 
 int C2_HOOK_CDECL ZlibFsEof(void*);
 
+int C2_HOOK_CDECL ZlibFsGetChr(void*);
+
 #endif // REC2_WORLD_H
