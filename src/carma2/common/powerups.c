@@ -1664,3 +1664,13 @@ void C2_HOOK_FASTCALL UnfreezeTimer(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc970, UnfreezeTimer, UnfreezeTimer_original)
+
+void (C2_HOOK_FASTCALL * ResetEngineFactor_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetEngineFactor(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetEngineFactor_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de5d0, ResetEngineFactor, ResetEngineFactor_original)
