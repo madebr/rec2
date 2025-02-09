@@ -82,7 +82,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tGot_proc*, gGot_procs, 56, 0x0065e910, {
     ShowPedestrians,
     HitMine,
     SetElectroBastard,
-    SetPedHeadSizs,
+    SetPedHeadSize,
     SetMutantCorpses,
     ShitMine,
     PissOutOil,
