@@ -5852,3 +5852,13 @@ void* C2_HOOK_CDECL ZlibFsOpenRead(const char* buffer, br_size_t capacity, br_mo
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dc10, ZlibFsOpenRead, ZlibFsOpenRead_original)
+
+void* (C2_HOOK_CDECL * ZlibFsOpenWrite_original)(const char* path, int type);
+void* C2_HOOK_CDECL ZlibFsOpenWrite(const char* path, int type) {
+#if defined(C2_HOOKS_ENABLED)
+    return ZlibFsOpenWrite_original(path, type);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051dc20, ZlibFsOpenWrite, ZlibFsOpenWrite_original)
