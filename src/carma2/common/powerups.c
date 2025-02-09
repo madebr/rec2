@@ -1584,3 +1584,13 @@ int C2_HOOK_FASTCALL GrowATail(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e02b0, GrowATail, GrowATail_original);
+
+int (C2_HOOK_FASTCALL * CutOffTail_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL CutOffTail(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return CutOffTail_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e04c0, CutOffTail, CutOffTail_original);
