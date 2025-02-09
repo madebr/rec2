@@ -1314,3 +1314,13 @@ int C2_HOOK_FASTCALL SetStupidPedestrians(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc8f0, SetStupidPedestrians, SetStupidPedestrians_original);
+
+int (C2_HOOK_FASTCALL * SetSuicidalPedestrians_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL SetSuicidalPedestrians(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return SetSuicidalPedestrians_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dcf40, SetSuicidalPedestrians, SetSuicidalPedestrians_original);
