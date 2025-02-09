@@ -237,4 +237,6 @@ void C2_HOOK_FASTCALL ResetLowGravityPeds(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetPissedPeds(tPowerup* powerup, tCar_spec* car);
 
+void C2_HOOK_FASTCALL ResetPissed(tPowerup* powerup, tCar_spec* car);
+
 #endif //REC2_POWERUPS_H
