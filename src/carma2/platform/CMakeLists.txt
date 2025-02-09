@@ -49,7 +49,7 @@ target_link_libraries(c2_platform
 )
 
 if(C2_STANDALONE)
-    add_executable(rec2
+    add_executable(rec2 WIN32
         $<TARGET_OBJECTS:brender>
         $<TARGET_OBJECTS:brender_softrendr_float>
         $<TARGET_OBJECTS:c2_common>
