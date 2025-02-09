@@ -354,4 +354,6 @@ br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void);
 
 void* C2_HOOK_CDECL ZlibFsOpenRead(const char*, br_size_t, br_mode_test_cbfn*, int*);
 
+void* C2_HOOK_CDECL ZlibFsOpenWrite(const char*, int);
+
 #endif // REC2_WORLD_H
