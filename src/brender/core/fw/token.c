@@ -521,7 +521,7 @@ void C2_HOOK_CDECL BrTokenBegin(void) {
 }
 C2_HOOK_FUNCTION(0x0052f030, BrTokenBegin)
 
-br_token C2_HOOK_CDECL BrTokenCreate(char* identifier, br_token type) {
+br_token C2_HOOK_CDECL BrTokenCreate(const char* identifier, br_token type) {
     br_token_entry* te;
     int i;
     int l;
@@ -598,7 +598,7 @@ br_token C2_HOOK_CDECL BrTokenType(br_token t) {
 }
 C2_HOOK_FUNCTION(0x0052f1f0, BrTokenType)
 
-br_int_32 C2_HOOK_CDECL BrTokenCount(char* pattern) {
+br_int_32 C2_HOOK_CDECL BrTokenCount(const char* pattern) {
     br_token_entry* te;
     int n;
 
@@ -622,7 +622,7 @@ br_int_32 C2_HOOK_CDECL BrTokenCount(char* pattern) {
 }
 C2_HOOK_FUNCTION(0x0052f220, BrTokenCount)
 
-br_token C2_HOOK_CDECL BrTokenFind(char* pattern) {
+br_token C2_HOOK_CDECL BrTokenFind(const char* pattern) {
     br_token_entry* te;
 
     te = (br_token_entry*)C2V(fw).tokens.head;
@@ -636,7 +636,7 @@ br_token C2_HOOK_CDECL BrTokenFind(char* pattern) {
 }
 C2_HOOK_FUNCTION(0x0052f270, BrTokenFind)
 
-br_int_32 C2_HOOK_CDECL BrTokenFindMany(char* pattern, br_token* tokens, br_int_32 max_tokens) {
+br_int_32 C2_HOOK_CDECL BrTokenFindMany(const char* pattern, br_token* tokens, br_int_32 max_tokens) {
     br_token_entry* te;
     int n;
 
@@ -654,7 +654,7 @@ br_int_32 C2_HOOK_CDECL BrTokenFindMany(char* pattern, br_token* tokens, br_int_
 }
 C2_HOOK_FUNCTION(0x0052f2b0, BrTokenFindMany)
 
-br_token C2_HOOK_CDECL BrTokenFindType(br_token* ptype, char* base, br_token* types, br_int_32 ntypes) {
+br_token C2_HOOK_CDECL BrTokenFindType(br_token* ptype, const char* base, br_token* types, br_int_32 ntypes) {
     br_token_entry* te;
     int l;
     int t;
