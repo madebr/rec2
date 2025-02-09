@@ -1604,3 +1604,13 @@ int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e0c40, TurnOnCloaking, TurnOnCloaking_original);
+
+void (C2_HOOK_FASTCALL * ResetPedSpeed_original)(tPowerup* powerup, tCar_spec* car);
+void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    ResetPedSpeed_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc9c0, ResetPedSpeed, ResetPedSpeed_original)
