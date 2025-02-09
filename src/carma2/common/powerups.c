@@ -1544,3 +1544,13 @@ int C2_HOOK_FASTCALL SetPissed(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004df220, SetPissed, SetPissed_original);
+
+int (C2_HOOK_FASTCALL * NapalmPeds_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL NapalmPeds(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return NapalmPeds_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004de190, NapalmPeds, NapalmPeds_original);
