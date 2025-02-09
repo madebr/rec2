@@ -1144,3 +1144,13 @@ int C2_HOOK_FASTCALL DoInstantRepair(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dc990, DoInstantRepair, DoInstantRepair_original);
+
+int (C2_HOOK_FASTCALL * FreezeTimer_original)(tPowerup* powerup, tCar_spec* car);
+int C2_HOOK_FASTCALL FreezeTimer(tPowerup* powerup, tCar_spec* car) {
+#if defined(C2_HOOKS_ENABLED)
+    return FreezeTimer_original(powerup, car);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dc930, FreezeTimer, FreezeTimer_original);
