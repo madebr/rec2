@@ -39,6 +39,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gS3_last_service_time, 0x007a0568);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel*, gS3_unbound_channels, 0x007a056c);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel*, gS3_last_unbound_channel, 0x007a059c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_enable_midi, 0x0079feb8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gS3_tag_seed, 0x007a0564);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_dirname);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_dirname) {
@@ -1208,3 +1209,9 @@ int C2_HOOK_FASTCALL S3CalculatePriority(int pPriority, int pVolumeFactor) {
     return pPriority + pVolumeFactor / 40;
 }
 C2_HOOK_FUNCTION(0x00565b4b, S3CalculatePriority)
+
+int C2_HOOK_FASTCALL S3GenerateTag(tS3_outlet* outlet) {
+    C2V(gS3_tag_seed) += 256;
+    return C2V(gS3_tag_seed) | outlet->id;
+}
+C2_HOOK_FUNCTION(0x00565864, S3GenerateTag)
