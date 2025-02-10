@@ -1305,3 +1305,8 @@ tS3_error_codes C2_HOOK_FASTCALL S3PlayMIDI(tS3_channel* pChannel) {
     return PDS3StartMidiChannel(pChannel);
 }
 C2_HOOK_FUNCTION(0x0056a493, S3PlayMIDI)
+
+int C2_HOOK_FASTCALL S3SetMIDIVolume2(tS3_channel* pChannel, int pVolume) {
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00569d3f, S3SetMIDIVolume2)
