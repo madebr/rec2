@@ -96,6 +96,8 @@ int C2_HOOK_FASTCALL S3ReleaseSound(int pSound_id);
 
 double C2_HOOK_STDCALL S3FRandomBetween(double pMin, double pMax);
 
+int C2_HOOK_STDCALL S3IRandomBetween(int pMin, int pMax, int pDefault);
+
 int C2_HOOK_FASTCALL S3IRandomBetweenLog(int pMin, int pMax, int pDefault);
 
 int C2_HOOK_FASTCALL S3FreeUnboundChannels(void);
