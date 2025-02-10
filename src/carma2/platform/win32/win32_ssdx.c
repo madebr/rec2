@@ -8,6 +8,7 @@
 
 #include <ddraw.h>
 
+#include "c2_stdlib.h"
 #include "c2_string.h"
 
 #include "rec2_macros.h"
@@ -46,6 +47,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gAttached_surface_locked, 0x006aaa0c);
 C2_HOOK_VARIABLE_IMPLEMENT(RECT, gSSDXWindowPos, 0x006aa9e8);
 C2_HOOK_VARIABLE_IMPLEMENT(MCI_OPEN_PARMS, mci_open_params, 0x007a0540);
 C2_HOOK_VARIABLE_IMPLEMENT(MCI_PLAY_PARMS, mci_play_parms, 0x007a0530);
+C2_HOOK_VARIABLE_IMPLEMENT(MCI_PLAY_PARMS, gPDS3_cda_play_parms, 0x007a04e0);
 
 
 HRESULT (CALLBACK * LocalEnumAttachedSurfacesCallback_original)(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext);
@@ -845,3 +847,30 @@ tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
     return eS3_error_none;
 }
 C2_HOOK_FUNCTION(0x00569b93, PDS3StartMidiChannel)
+
+tS3_error_codes C2_HOOK_FASTCALL PDS3PlayCDAChannel(tS3_channel* pChannel) {
+    char* endptr;
+
+    PDS3CheckCDAMedia(pChannel);
+    if (!C2V(gPDS3_cda_media_present)) {
+        return eS3_error_start_cda;
+    }
+    C2V(gPDS3_cda_paused) = 0;
+    C2V(gPDS3_cda_track) = c2_strtoul(pChannel->descriptor->path, &endptr, 10);
+    C2V(gPDS3_cda_status_parms).dwItem = MCI_STATUS_MODE;
+    mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_STATUS, MCI_WAIT | MCI_STATUS_ITEM, (DWORD_PTR)&C2V(gPDS3_cda_status_parms));
+    if (C2V(gPDS3_cda_status_parms).dwReturn == MCI_MODE_NOT_READY
+            || C2V(gPDS3_cda_status_parms).dwReturn == MCI_MODE_OPEN) {
+        return eS3_error_start_cda;
+    }
+    C2V(gPDS3_cda_play_parms).dwFrom = C2V(gPDS3_cda_track) % 256;
+    if (C2V(gPDS3_cda_track) + 1 < C2V(gPDS3_Number_of_tracks)) {
+        C2V(gPDS3_cda_play_parms).dwTo = (C2V(gPDS3_cda_track) + 1) % 256;
+        mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_PLAY, MCI_FROM | MCI_TO, (DWORD_PTR)&C2V(gPDS3_cda_play_parms));
+    } else {
+        mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_PLAY, MCI_FROM, (DWORD_PTR)&C2V(gPDS3_cda_play_parms));
+    }
+    C2V(gPDS3_cda_is_playing) = 1;
+    return eS3_error_none;
+}
+C2_HOOK_FUNCTION(0x00569f92, PDS3PlayCDAChannel)
