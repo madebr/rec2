@@ -46,6 +46,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0079e18c, 0x0079e18c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0079e17c, 0x0079e17c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tEnvironment_sound_source, gEnvironment_sound_sources, 5, 0x00684570);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gZero_v__car, 0x0068b8d0);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00595c44, 0x00595c44, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_track_finished_check, 0x00684548);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00595c20, 0x00595c20, 9998);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCDA_started_playing, 0x0068454c);
 C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gUNK_0068455c, 0x0068455c);
@@ -151,6 +153,18 @@ void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* 
     }
 }
 C2_HOOK_FUNCTION(0x00457450, WriteOutSoundSpec)
+
+void C2_HOOK_FASTCALL StartMusic(void) {
+
+    if (!C2V(gINT_00595c44) || C2V(gProgram_state).music_volume >= 128) {
+        if (!IsCDAPlaying()) {
+            C2V(gNext_track_finished_check) = PDGetTotalTime() + 10000;
+            dr_dprintf("CDINFO: StartMusic(): New gNext_track_finished_check %d", C2V(gNext_track_finished_check));
+            C2V(gINT_00684568) = DRS3StartCDA(C2V(gINT_00595c20));
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004568c0, StartMusic)
 
 void (C2_HOOK_FASTCALL * StopMusic_original)(void);
 void C2_HOOK_FASTCALL StopMusic(void) {
