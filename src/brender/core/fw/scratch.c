@@ -8,7 +8,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, scratchString, 512, 0x00666ea8, "SCR
 
 void* (C2_HOOK_CDECL * BrScratchAllocate_original)(br_size_t size);
 void* C2_HOOK_CDECL BrScratchAllocate(br_size_t size) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrScratchAllocate_original(size);
 #else
     if (C2V(fw).scratch_inuse != 0) {
@@ -32,7 +32,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00529e80, BrScratchAllocate, BrScratchAllocate_origi
 
 void (C2_HOOK_CDECL * BrScratchFree_original)(void* scratch);
 void C2_HOOK_CDECL BrScratchFree(void* scratch) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrScratchFree_original(scratch);
 #else
     C2V(fw).scratch_inuse = 0;
@@ -42,7 +42,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00529ef0, BrScratchFree, BrScratchFree_original)
 
 void (C2_HOOK_CDECL * BrScratchFlush_original)(void);
 void C2_HOOK_CDECL BrScratchFlush(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     BrScratchFlush_original();
 #else
     if (C2V(fw).scratch_inuse != 0) {
@@ -59,7 +59,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00529f00, BrScratchFlush, BrScratchFlush_original)
 
 br_size_t (C2_HOOK_CDECL * BrScratchInquire_original)(void);
 br_size_t C2_HOOK_CDECL BrScratchInquire(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrScratchInquire_original();
 #else
     return C2V(fw).scratch_size;
@@ -69,7 +69,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00529f40, BrScratchInquire, BrScratchInquire_origina
 
 char* (C2_HOOK_CDECL * BrScratchString_original)(void);
 char* C2_HOOK_CDECL BrScratchString(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrScratchString_original();
 #else
     return C2V(scratchString);
@@ -79,7 +79,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00529f50, BrScratchString, BrScratchString_original)
 
 br_size_t (C2_HOOK_CDECL * BrScratchStringSize_original)(void);
 br_size_t C2_HOOK_CDECL BrScratchStringSize(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BrScratchStringSize_original();
 #else
     return sizeof(C2V(scratchString));
