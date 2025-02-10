@@ -63,6 +63,7 @@ typedef enum tS3_error_codes {
     eS3_error_function_failed = 12,
     eS3_error_load_song = 13,
     eS3_error_start_song = 15,
+    eS3_error_start_cda = 16,
     eS3_error_nonexistant_source = 19,
 } tS3_error_codes;
 
