@@ -143,6 +143,18 @@ void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* 
 }
 C2_HOOK_FUNCTION(0x00457450, WriteOutSoundSpec)
 
+void C2_HOOK_FASTCALL StartMusic(void) {
+
+    if (!C2V(gINT_00595c44) || C2V(gProgram_state).music_volume >= 128) {
+        if (!IsCDAPlaying()) {
+            C2V(gNext_track_finished_check) = PDGetTotalTime() + 10000;
+            dr_dprintf("CDINFO: StartMusic(): New gNext_track_finished_check %d", C2V(gNext_track_finished_check));
+            C2V(gINT_00684568) = DRS3StartCDA(C2V(gINT_00595c20));
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004568c0, StartMusic)
+
 void (C2_HOOK_FASTCALL * StopMusic_original)(void);
 void C2_HOOK_FASTCALL StopMusic(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
