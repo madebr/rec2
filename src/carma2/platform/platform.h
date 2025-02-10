@@ -112,6 +112,8 @@ void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav
 
 void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor);
 
+int C2_HOOK_FASTCALL PDS3UpdateChannelFrequency(tS3_channel* pChannel);
+
 char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
 
 int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
