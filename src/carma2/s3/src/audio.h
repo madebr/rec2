@@ -23,6 +23,7 @@ C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_last_service_time);
 C2_HOOK_VARIABLE_DECLARE(tS3_channel*, gS3_unbound_channels);
 C2_HOOK_VARIABLE_DECLARE(tS3_channel*, gS3_last_unbound_channel);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_enable_midi);
+C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_tag_seed);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
@@ -117,5 +118,7 @@ int C2_HOOK_FASTCALL S3IsCDAEnabled(void);
 void C2_HOOK_FASTCALL S3CalculateRandomizedFields(tS3_channel* chan, tS3_descriptor* desc);
 
 int C2_HOOK_FASTCALL S3CalculatePriority(int pPriority, int pVolumeFactor);
+
+int C2_HOOK_FASTCALL S3GenerateTag(tS3_outlet* outlet);
 
 #endif // S3_AUDIO_H
