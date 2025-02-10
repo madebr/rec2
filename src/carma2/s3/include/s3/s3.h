@@ -59,9 +59,12 @@ typedef enum tS3_error_codes {
     eS3_error_bad_id = 6,
     eS3_error_bad_stag = 7,
     eS3_error_load_sound = 8,
+    eS3_error_start_sound = 9,
     eS3_error_channel_alloc = 10,
     eS3_error_function_failed = 12,
     eS3_error_load_song = 13,
+    eS3_error_start_song = 15,
+    eS3_error_start_cda = 16,
     eS3_error_nonexistant_source = 19,
 } tS3_error_codes;
 
@@ -233,6 +236,8 @@ void C2_HOOK_FASTCALL S3StopAllOutletSounds(void);
 int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
 
 int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
+
+int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
 tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag);
 
