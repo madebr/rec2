@@ -198,6 +198,7 @@ target_include_directories(brender
 target_link_libraries(brender
     PUBLIC
         c2_hooks
+        c2_platform
 )
 
 add_library(brender_softrendr_float STATIC

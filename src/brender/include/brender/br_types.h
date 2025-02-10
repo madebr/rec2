@@ -1586,6 +1586,7 @@ typedef struct br_image_section {
     br_size_t mem_size;
     br_uint_32 data_offset;
     br_uint_32 data_size;
+    br_uint_32 flags; /* Added by rec2 */
 } br_image_section;
 
 typedef struct br_image br_image;
