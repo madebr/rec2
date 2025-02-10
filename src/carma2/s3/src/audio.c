@@ -1265,3 +1265,8 @@ tS3_channel* C2_HOOK_FASTCALL S3AllocateChannel(tS3_outlet* pOutlet, int pPriori
     return NULL;
 }
 C2_HOOK_FUNCTION(0x00565904, S3AllocateChannel)
+
+int C2_HOOK_FASTCALL S3MIDILoadSong2(tS3_channel* pChannel) {
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00569b86, S3MIDILoadSong2)

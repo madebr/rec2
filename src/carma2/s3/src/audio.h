@@ -123,4 +123,6 @@ int C2_HOOK_FASTCALL S3GenerateTag(tS3_outlet* outlet);
 
 tS3_channel* C2_HOOK_FASTCALL S3AllocateChannel(tS3_outlet* pOutlet, int pPriority);
 
+int C2_HOOK_FASTCALL S3MIDILoadSong2(tS3_channel* pChannel);
+
 #endif // S3_AUDIO_H
