@@ -116,6 +116,8 @@ int C2_HOOK_FASTCALL PDS3UpdateChannelFrequency(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel);
 
+tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel);
+
 char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
 
 int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
