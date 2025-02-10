@@ -114,4 +114,6 @@ tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSourceBR(br_vector3* pPosition, 
 
 int C2_HOOK_FASTCALL S3IsCDAEnabled(void);
 
+void C2_HOOK_FASTCALL S3CalculateRandomizedFields(tS3_channel* chan, tS3_descriptor* desc);
+
 #endif // S3_AUDIO_H
