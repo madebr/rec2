@@ -26,6 +26,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gPDS3_Number_of_tracks);
 C2_HOOK_VARIABLE_DECLARE(MCI_STATUS_PARMS, gPDS3_mci_midi_status_parms);
 C2_HOOK_VARIABLE_DECLARE(MCI_OPEN_PARMS, mci_open_params);
 C2_HOOK_VARIABLE_DECLARE(MCI_PLAY_PARMS, mci_play_parms);
+C2_HOOK_VARIABLE_DECLARE(MCI_PLAY_PARMS, gPDS3_cda_play_parms);
 
 enum tSSDXFlags {
     SSDX_InitDirectSound = 0x2,
@@ -98,5 +99,7 @@ int C2_HOOK_FASTCALL PDS3UpdateChannelFrequency(tS3_channel* pChannel);
 int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel);
 
 tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel);
+
+tS3_error_codes C2_HOOK_FASTCALL PDS3PlayCDAChannel(tS3_channel* pChannel);
 
 #endif // C2_WIN32_SSDX_H
