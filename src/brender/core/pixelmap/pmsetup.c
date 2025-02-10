@@ -257,7 +257,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, nameOrdinals_BRPMAP1, 77, 0x00
 });
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_image, Image_BRMAP1, 0x0066de68, {
     { 0 },
-    "BRMAP1",
+    "BRPMAP1",
     2,
     0,
     1,
