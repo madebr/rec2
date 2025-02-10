@@ -1325,3 +1325,11 @@ int C2_HOOK_FASTCALL S3SetMIDIVolume(tS3_channel* pChannel, int pVolume) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0056a505, S3SetMIDIVolume)
+
+tS3_error_codes C2_HOOK_FASTCALL S3PlayCDA(tS3_channel* pChannel) {
+    if (!C2V(gS3_CDA_enabled)) {
+        return eS3_error_none;
+    }
+    return PDS3PlayCDAChannel(pChannel);
+}
+C2_HOOK_FUNCTION(0x00565bd3, S3PlayCDA)
