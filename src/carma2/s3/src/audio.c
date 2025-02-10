@@ -40,6 +40,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel*, gS3_unbound_channels, 0x007a056c);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel*, gS3_last_unbound_channel, 0x007a059c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_enable_midi, 0x0079feb8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gS3_tag_seed, 0x007a0564);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_sample_filter, gS3_sample_filter_func, 0x007a0760);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_sample_filter, gS3_sample_filter_disable_func, 0x007a0764);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_dirname);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_dirname) {
@@ -1278,3 +1280,16 @@ tS3_error_codes C2_HOOK_FASTCALL S3MIDILoadSong(tS3_channel* pChannel) {
     return eS3_error_none;
 }
 C2_HOOK_FUNCTION(0x0056a473, S3MIDILoadSong)
+
+int C2_HOOK_FASTCALL S3ExecuteSampleFilterFuncs(tS3_channel* pChannel) {
+
+    if (((pChannel->descriptor->effects_enabled == 0) & C2V(gS3_effects_enabled)) != 0) {
+        C2V(gS3_sample_filter_func)(1, pChannel->tag);
+        pChannel->descriptor->effects_enabled = 1;
+    } else if (((C2V(gS3_effects_enabled) == 0) & pChannel->descriptor->effects_enabled) != 0) {
+        C2V(gS3_sample_filter_disable_func)(1, pChannel->tag);
+        pChannel->descriptor->effects_enabled = 0;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00564de0, S3ExecuteSampleFilterFuncs)
