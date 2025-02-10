@@ -26,6 +26,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gS3_enable_midi);
 C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_tag_seed);
 C2_HOOK_VARIABLE_DECLARE(tS3_sample_filter, gS3_sample_filter_func);
 C2_HOOK_VARIABLE_DECLARE(tS3_sample_filter, gS3_sample_filter_disable_func);
+C2_HOOK_VARIABLE_DECLARE(tS3_channel, gS3_channel_template);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
@@ -138,5 +139,7 @@ int C2_HOOK_FASTCALL S3SetMIDIVolume2(tS3_channel* pChannel, int pVolume);
 int C2_HOOK_FASTCALL S3SetMIDIVolume(tS3_channel* pChannel, int pVolume);
 
 tS3_error_codes C2_HOOK_FASTCALL S3PlayCDA(tS3_channel* pChannel);
+
+int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
 #endif // S3_AUDIO_H
