@@ -137,4 +137,6 @@ int C2_HOOK_FASTCALL S3SetMIDIVolume2(tS3_channel* pChannel, int pVolume);
 
 int C2_HOOK_FASTCALL S3SetMIDIVolume(tS3_channel* pChannel, int pVolume);
 
+tS3_error_codes C2_HOOK_FASTCALL S3PlayCDA(tS3_channel* pChannel);
+
 #endif // S3_AUDIO_H
