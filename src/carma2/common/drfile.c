@@ -19,7 +19,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gFile_system, 0x005933a8, {
     &DRStdioWrite,
     &DRStdioGetLine,
     NULL,
-    NULL,
+    DRStdioAdvance,
 });
 C2_HOOK_VARIABLE_IMPLEMENT(br_filesystem*, gOld_file_system, 0x006815c4);
 
