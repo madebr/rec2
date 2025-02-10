@@ -225,3 +225,9 @@ void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_d
     return pd_handle;
 }
 C2_HOOK_FUNCTION(0x0056907c, S3BufferWav)
+
+int C2_HOOK_FASTCALL S3PlaySample(tS3_channel* pChannel) {
+
+    return PDS3PlaySample(pChannel);
+}
+C2_HOOK_FUNCTION(0x00569865, S3PlaySample)
