@@ -1293,3 +1293,15 @@ int C2_HOOK_FASTCALL S3ExecuteSampleFilterFuncs(tS3_channel* pChannel) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00564de0, S3ExecuteSampleFilterFuncs)
+
+tS3_error_codes C2_HOOK_FASTCALL S3PlayMIDI(tS3_channel* pChannel) {
+
+    if (!C2V(gS3_enable_midi) || pChannel->type != 1) {
+        return eS3_error_none;
+    }
+
+    PDS3StopMidiChannel(pChannel);
+    pChannel->active = 1;
+    return PDS3StartMidiChannel(pChannel);
+}
+C2_HOOK_FUNCTION(0x0056a493, S3PlayMIDI)
