@@ -170,6 +170,57 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455690, DRS3StartSound, DRS3StartSound_original)
 
+int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound) {
+    if (C2V(gSound_enabled)) {
+        return S3StartSound(pOutlet, pSound);
+    } else {
+        return 0;
+    }
+}
+
+int C2_HOOK_FASTCALL DRS3StartCDA(int pSound) {
+
+    if (pSound == 9999 || pSound == 9998 || pSound == 9997) {
+        C2V(gINT_00595c20) = pSound;
+    }
+    if (!C2V(gCD_is_disabled) && C2V(gMusic_available) && !C2V(gINT_00684554) && !C2V(gINT_00684568) && S3IsCDAEnabled()) {
+        dr_dprintf("CDINFO: DRS3StartCDA(): Requested track id %d", pSound);
+        C2V(gCDA_started_playing) = 1;
+        S3StopOutletSound(C2V(gMusic_outlet));
+        if (C2V(gSound_enabled)) {
+            if (C2V(gProgram_state).cockpit_on != 0 && C2V(gProgram_state).cockpit_image_index >= 0) {
+                S3Service(1, 0);
+            } else {
+                S3Service(0, 0);
+            }
+            /* Random CDA track */
+            if (pSound == 9999 || pSound == 9998 || pSound == 9997) {
+                do {
+                    switch (pSound) {
+                    case 9997:
+                        pSound = C2V(gRandom_CDA_tunes_2)[IRandomBetween(0, REC2_ASIZE(C2V(gRandom_CDA_tunes_2)) - 1)];
+                        break;
+                    case 9998:
+                        pSound = C2V(gRandom_CDA_tunes_1)[IRandomBetween(0, REC2_ASIZE(C2V(gRandom_CDA_tunes_1)) - 1)];
+                        break;
+                    default:
+                        pSound = C2V(gRandom_CDA_tunes)[IRandomBetween(0, REC2_ASIZE(C2V(gRandom_CDA_tunes)) - 1)];
+                    }
+                } while (pSound == C2V(gLast_tune));
+            }
+            C2V(gLast_tune) = pSound;
+            C2V(gINT_00684554) = DRS3StartSoundNoPiping(C2V(gMusic_outlet), pSound);
+            C2V(gINT_00684568) = C2V(gINT_00684554);
+            if (!C2V(gINT_00684554)) {
+                dr_dprintf("CDINFO: DRS3StartCDA(): Chosen actual CD track %d", pSound);
+            }
+            C2V(gUNK_0068455c) = 0;
+        }
+    }
+    return C2V(gINT_00684568);
+}
+C2_HOOK_FUNCTION(0x004566d0, DRS3StartCDA)
+
 void (C2_HOOK_FASTCALL * InitSound_original)(void);
 void C2_HOOK_FASTCALL InitSound(void) {
 
