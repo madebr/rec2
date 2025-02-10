@@ -783,3 +783,15 @@ int C2_HOOK_FASTCALL PDS3IsSamplePlaying(tS3_channel* pChannel) {
     PDS3StopSampleChannel(pChannel);
     return 0;
 }
+
+int C2_HOOK_FASTCALL PDS3UpdateChannelFrequency(tS3_channel* pChannel) {
+
+    if (pChannel->type == 0 && pChannel->descriptor != NULL && pChannel->descriptor->type == pChannel->type) {
+        IDirectSoundBuffer* sound_buffer = pChannel->descriptor->pd_handle;
+        if (sound_buffer != NULL) {
+            IDirectSoundBuffer_SetFrequency(sound_buffer, MIN(pChannel->rate, 100000));
+        }
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0056967e, PDS3UpdateChannelFrequency)
