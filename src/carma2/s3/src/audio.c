@@ -1324,6 +1324,7 @@ int C2_HOOK_FASTCALL S3SetMIDIVolume(tS3_channel* pChannel, int pVolume) {
     if (C2V(gS3_enable_midi)) {
         S3SetMIDIVolume2(pChannel, pVolume);
     }
+    return 0;
 }
 C2_HOOK_FUNCTION(0x0056a505, S3SetMIDIVolume)
 
