@@ -1191,3 +1191,15 @@ int C2_HOOK_FASTCALL S3IsCDAEnabled(void) {
     return !!C2V(gS3_CDA_enabled);
 }
 C2_HOOK_FUNCTION(0x00565bbc, S3IsCDAEnabled)
+
+void C2_HOOK_FASTCALL S3CalculateRandomizedFields(tS3_channel* chan, tS3_descriptor* desc) {
+    int vol;
+
+    vol = S3IRandomBetween(desc->min_volume, desc->max_volume, 128);
+    chan->source_volume = vol;
+    chan->volume_multiplier = vol;
+    if (desc->type == 0 && desc->buffer_description != NULL) {
+        chan->rate = S3IRandomBetweenLog(desc->min_pitch, desc->max_pitch, desc->buffer_description->sample_rate);
+    }
+}
+C2_HOOK_FUNCTION(0x00564200, S3CalculateRandomizedFields)
