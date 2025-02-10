@@ -1203,3 +1203,8 @@ void C2_HOOK_FASTCALL S3CalculateRandomizedFields(tS3_channel* chan, tS3_descrip
     }
 }
 C2_HOOK_FUNCTION(0x00564200, S3CalculateRandomizedFields)
+
+int C2_HOOK_FASTCALL S3CalculatePriority(int pPriority, int pVolumeFactor) {
+    return pPriority + pVolumeFactor / 40;
+}
+C2_HOOK_FUNCTION(0x00565b4b, S3CalculatePriority)

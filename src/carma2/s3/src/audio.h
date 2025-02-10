@@ -116,4 +116,6 @@ int C2_HOOK_FASTCALL S3IsCDAEnabled(void);
 
 void C2_HOOK_FASTCALL S3CalculateRandomizedFields(tS3_channel* chan, tS3_descriptor* desc);
 
+int C2_HOOK_FASTCALL S3CalculatePriority(int pPriority, int pVolumeFactor);
+
 #endif // S3_AUDIO_H
