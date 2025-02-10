@@ -5,6 +5,7 @@ add_library(c2_platform STATIC
 
 if(WIN32)
     target_sources(c2_platform PRIVATE
+        win32/win32_br_platform.c
         win32/win32_ssdx.c
         win32/win32_ssdx.h
         win32/win32_dinput.c
