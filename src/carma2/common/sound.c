@@ -49,6 +49,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gZero_v__car, 0x0068b8d0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00595c44, 0x00595c44, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_track_finished_check, 0x00684548);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00595c20, 0x00595c20, 9998);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gServicing_sound, 0x00684558);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_sound_service, 0x00684544);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCDA_started_playing, 0x0068454c);
 C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gUNK_0068455c, 0x0068455c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_tune, 0x00595c50, -1);
@@ -384,10 +386,40 @@ void C2_HOOK_FASTCALL SoundService(void) {
 #if defined(C2_HOOKS_ENABLED)
     SoundService_original();
 #else
-    NOT_IMPLEMENTED();
+
+    if (!C2V(gSound_enabled)) {
+        return;
+    }
+    if (C2V(gServicing_sound)) {
+        return;
+    }
+    C2V(gServicing_sound) = 1;
+    C2V(gLast_sound_service) = PDGetTotalTime();
+    if (C2V(gCDA_started_playing)) {
+        tU32 now = PDGetTotalTime();
+        if (now > C2V(gNext_track_finished_check) && !IsCDAPlaying()) {
+            dr_dprintf("CDINFO: SoundService(): Stopping & starting CD, time %d, gNext_track_finished_check %d",
+                    now, C2V(gNext_track_finished_check));
+            StopMusic();
+            StartMusic();
+        }
+    }
+    DRS3Service();
+    gServicing_sound = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455a80, SoundService, SoundService_original)
+
+void C2_HOOK_FASTCALL DRS3Service(void) {
+
+    if (C2V(gSound_enabled)) {
+        if (C2V(gProgram_state).cockpit_on  && C2V(gProgram_state).cockpit_image_index >= 0) {
+            S3Service(1, 1);
+        } else {
+            S3Service(0, 1);
+        }
+    }
+}
 
 int C2_HOOK_FASTCALL IsCDAPlaying(void) {
     return PDS3IsCDAPlaying();
