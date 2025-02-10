@@ -93,4 +93,6 @@ int C2_HOOK_FASTCALL PDS3IsSamplePlaying(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL PDS3UpdateChannelFrequency(tS3_channel* pChannel);
 
+int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel);
+
 #endif // C2_WIN32_SSDX_H
