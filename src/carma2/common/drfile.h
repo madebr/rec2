@@ -24,6 +24,8 @@ br_size_t C2_HOOK_CDECL DRStdioWrite(void* buf, br_size_t size, unsigned int n, 
 
 br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f);
 
+void C2_HOOK_CDECL DRStdioAdvance(br_size_t count, void *f);
+
 void C2_HOOK_FASTCALL InstallDRFileCalls(void);
 
 #endif // REC2_DRFILE_H
