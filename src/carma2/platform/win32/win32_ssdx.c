@@ -44,6 +44,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(PALETTEENTRY, gSSDX_system_palette, 256, 0x006a
 C2_HOOK_VARIABLE_IMPLEMENT(LPRECT, gSSDXLockedRect, 0x006aa9dc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAttached_surface_locked, 0x006aaa0c);
 C2_HOOK_VARIABLE_IMPLEMENT(RECT, gSSDXWindowPos, 0x006aa9e8);
+C2_HOOK_VARIABLE_IMPLEMENT(MCI_OPEN_PARMS, mci_open_params, 0x007a0540);
+C2_HOOK_VARIABLE_IMPLEMENT(MCI_PLAY_PARMS, mci_play_parms, 0x007a0530);
 
 
 HRESULT (CALLBACK * LocalEnumAttachedSurfacesCallback_original)(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext);
@@ -812,3 +814,34 @@ int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel) {
     }
     return 1;
 }
+
+tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
+    char path[256];
+    MCIERROR err;
+
+    path[0] = '\0';
+    c2_strcpy(path, pChannel->descriptor->path);
+    c2_strcat(path, ".MID");
+    C2V(mci_open_params).lpstrElementName = path;
+    C2V(mci_open_params).lpstrDeviceType = "sequencer";
+    err = mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD_PTR)&C2V(mci_open_params));
+    MCIDEVICEID device = C2V(mci_open_params).wDeviceID;
+    if (err != 0) {
+        return eS3_error_start_song;
+    }
+    C2V(gPDS3_mci_midi_status_parms).dwItem = MCI_VD_STATUS_FORWARD;
+    err = mciSendCommandA(device, MCI_STATUS, MCI_STATUS_ITEM, (DWORD_PTR)&C2V(gPDS3_mci_midi_status_parms));
+    if (err != 0) {
+        mciSendCommandA(device, MCI_CLOSE, 0, 0);
+        return eS3_error_start_song;
+    }
+    err = mciSendCommandA(device, MCI_PLAY, 0, (DWORD_PTR)&C2V(mci_play_parms));
+    if (err != 0) {
+        mciSendCommandA(device, MCI_CLOSE, 0, 0);
+        return eS3_error_start_song;
+    }
+    pChannel->mciDevice = device;
+    C2V(gPDS3_midi_playing) = 1;
+    return eS3_error_none;
+}
+C2_HOOK_FUNCTION(0x00569b93, PDS3StartMidiChannel)
