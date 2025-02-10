@@ -104,8 +104,8 @@ typedef struct {
 } tS3_wav_info;
 
 // FIXME: add call convention!!
-typedef void ( * tS3_outlet_callback)(tS3_outlet*, tS3_sound_tag, tS3_termination_reason);
-typedef void ( * tS3_sample_filter)(tS3_effect_tag, tS3_sound_tag);
+typedef void (C2_HOOK_FASTCALL * tS3_outlet_callback)(tS3_outlet*, tS3_sound_tag, tS3_termination_reason);
+typedef void (C2_HOOK_FASTCALL * tS3_sample_filter)(tS3_effect_tag, tS3_sound_tag);
 
 typedef struct tS3_vector3 {
     tF32 x;
