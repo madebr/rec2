@@ -131,4 +131,6 @@ tS3_error_codes C2_HOOK_FASTCALL S3MIDILoadSong(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL S3ExecuteSampleFilterFuncs(tS3_channel* pChannel);
 
+tS3_error_codes C2_HOOK_FASTCALL S3PlayMIDI(tS3_channel* pChannel);
+
 #endif // S3_AUDIO_H
