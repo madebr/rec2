@@ -125,4 +125,6 @@ tS3_channel* C2_HOOK_FASTCALL S3AllocateChannel(tS3_outlet* pOutlet, int pPriori
 
 int C2_HOOK_FASTCALL S3MIDILoadSong2(tS3_channel* pChannel);
 
+tS3_error_codes C2_HOOK_FASTCALL S3MIDILoadSong(tS3_channel* pChannel);
+
 #endif // S3_AUDIO_H
