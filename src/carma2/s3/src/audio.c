@@ -1270,3 +1270,11 @@ int C2_HOOK_FASTCALL S3MIDILoadSong2(tS3_channel* pChannel) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00569b86, S3MIDILoadSong2)
+
+tS3_error_codes C2_HOOK_FASTCALL S3MIDILoadSong(tS3_channel* pChannel) {
+    if (S3MIDILoadSong2(pChannel) != 0) {
+        return eS3_error_load_song;
+    }
+    return eS3_error_none;
+}
+C2_HOOK_FUNCTION(0x0056a473, S3MIDILoadSong)
