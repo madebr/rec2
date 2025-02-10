@@ -121,4 +121,6 @@ int C2_HOOK_FASTCALL S3CalculatePriority(int pPriority, int pVolumeFactor);
 
 int C2_HOOK_FASTCALL S3GenerateTag(tS3_outlet* outlet);
 
+tS3_channel* C2_HOOK_FASTCALL S3AllocateChannel(tS3_outlet* pOutlet, int pPriority);
+
 #endif // S3_AUDIO_H
