@@ -5,6 +5,8 @@
 #include "core/fw/image.h"
 #include "core/fw/resource.h"
 
+#include "br_platform.h"
+
 #define IMAGE_DOS_SIGNATURE                 0x5A4D      /* MZ */
 #define IMAGE_NT_SIGNATURE                  0x00004550  /* PE00 */
 #define IMAGE_FILE_MACHINE_I386              0x014c     /* Intel 386. */
@@ -21,6 +23,10 @@
 #define IMAGE_REL_BASED_HIGH                  1
 #define IMAGE_REL_BASED_LOW                   2
 #define IMAGE_REL_BASED_HIGHLOW               3
+
+#define IMAGE_SECTION_FLAG_MEM_EXECUTE      0x20000000  /* Section is executable. */
+#define IMAGE_SECTION_FLAG_MEM_READ         0x40000000  /* Section is readable. */
+#define IMAGE_SECTION_FLAG_MEM_WRITE        0x80000000  /* Section is writeable. */
 
 #define READ_BLOCK(var, fh) \
     do { \
@@ -46,7 +52,7 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 	br_uint_32 pe;
 	br_image* img;
 	br_uint_8* arena_base;
-	int arena_size,arena_align;
+	int arena_size, arena_align;
 	int i;
 	br_uint_32 offset;
 	unsigned int n;
@@ -115,13 +121,16 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 		img->sections[i].mem_size	 = section_header.virtual_size;
 		img->sections[i].data_size 	 = section_header.data_size;
 		img->sections[i].data_offset = section_header.data_offset;
+#ifdef REC2_STANDALONE
+		img->sections[i].flags       = section_header.flags;  /* Added by rec2 */
+#endif /* REC2_STANDALONE */
 	}
 
 	arena_size = nt_header.image_size;
 	arena_align = nt_header.section_alignment;
 
 	arena_base = BrResAllocate(img, arena_size + (arena_align - 1), BR_MEMORY_IMAGE_ARENA);
-	arena_base = (br_uint_8*) (((int)arena_base+arena_align - 1) & (~(arena_align - 1)));
+	arena_base = (br_uint_8*) (((uintptr_t)arena_base+arena_align - 1) & (~(arena_align - 1)));
 
     C2_HOOK_BUG_ON(sizeof(pe) + sizeof(coff_header) + sizeof(nt_header) != 0xf8);
     C2_HOOK_BUG_ON(sizeof(section_header) != 0x28);
@@ -156,7 +165,7 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 
 		ed = (export_directory*)(arena_base + nt_header.directories[DIRECTORY_EXPORT].rva);
 
-		img->identifier = (char*)(arena_base + ed->name);
+		img->identifier = BrResStrDup(img, (char*)(arena_base + ed->name));  /* BrResStrDup added by rec2 */
 		img->ordinal_base = ed->ordinal_base;
 		img->n_functions = ed->n_entries;
 		img->functions = (void**)(arena_base + ed->export_table);
@@ -220,7 +229,7 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 		}
 	}
 
-	if ((br_uint_32)arena_base != nt_header.image_base && nt_header.directories[DIRECTORY_BASERELOC].size != 0) {
+	if ((uintptr_t)arena_base != (uintptr_t)nt_header.image_base && nt_header.directories[DIRECTORY_BASERELOC].size != 0) {
 		basereloc_header* header;
 		br_uint_16* entry;
 		br_uint_8* fixup;
@@ -228,7 +237,7 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 		br_int_16 delta_h, delta_l;
 
 		offset = 0;
-		delta = (br_int_32)arena_base - nt_header.image_base;
+		delta = (uintptr_t)arena_base - nt_header.image_base;
 		delta_h = (br_uint_16)(delta >> 16);
 		delta_l = (br_uint_16)(delta & 0xFFFF);
 
@@ -268,6 +277,23 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 			}
 		}
 	}
+
+#ifdef REC2_STANDALONE
+    /* Added by rec2: fixes DEP */
+    for (i = 0; i < coff_header.n_sections; i++) {
+        br_uint_32 map_flags = 0;
+        if (img->sections[i].flags & IMAGE_SECTION_FLAG_MEM_EXECUTE) {
+            map_flags |= kMemory_section_executable;
+        }
+        if (img->sections[i].flags & IMAGE_SECTION_FLAG_MEM_READ) {
+            map_flags |= kMemory_section_read;
+        }
+        if (img->sections[i].flags & IMAGE_SECTION_FLAG_MEM_WRITE) {
+            map_flags |= kMemory_section_write;
+        }
+        PDMapImageSection(img->sections[i].base, img->sections[i].mem_size, map_flags);
+    }
+#endif /* REC2_STANDALONE */
 
 	return img;
 #endif

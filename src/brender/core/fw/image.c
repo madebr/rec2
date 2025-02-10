@@ -10,6 +10,7 @@
 #include "core/host/himage.h"
 #include "core/std/brstdlib.h"
 
+#include "br_platform.h"
 
 br_boolean (C2_HOOK_CDECL * BrImageAdd_original)(br_image* img);
 br_boolean C2_HOOK_CDECL BrImageAdd(br_image* img) {
@@ -214,6 +215,9 @@ void C2_HOOK_CDECL BrImageDereference(br_image* image) {
 #if 0//defined(C2_HOOKS_ENABLED)
     BrImageDereference_original(image);
 #else
+#ifdef REC2_STANDALONE
+    int i;
+#endif
     image->ref_count--;
 
     if (image->ref_count <= 0) {
@@ -224,6 +228,12 @@ void C2_HOOK_CDECL BrImageDereference(br_image* image) {
             HostImageUnload(image->type_pointer);
             // fall through
         default:
+#ifdef REC2_STANDALONE
+            /* Added by rec2: fixes DEP */
+            for (i = 0; i < image->n_sections; i++) {
+                PDMapImageSection(image->sections[i].base, image->sections[i].mem_size, kMemory_section_read | kMemory_section_write);
+            }
+#endif
             BrRemove(&image->node);
             BrResFree(image);
         }
