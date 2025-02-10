@@ -42,6 +42,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_enable_midi, 0x0079feb8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gS3_tag_seed, 0x007a0564);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_sample_filter, gS3_sample_filter_func, 0x007a0760);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_sample_filter, gS3_sample_filter_disable_func, 0x007a0764);
+C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel, gS3_channel_template, 0x007a06e0);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_dirname);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_dirname) {
@@ -1333,3 +1334,82 @@ tS3_error_codes C2_HOOK_FASTCALL S3PlayCDA(tS3_channel* pChannel) {
     return PDS3PlayCDAChannel(pChannel);
 }
 C2_HOOK_FUNCTION(0x00565bd3, S3PlayCDA)
+
+int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
+    tS3_channel* channel;
+    tS3_descriptor* desc;
+
+    if (!C2V(gS3_enabled)) {
+        return 0;
+    }
+    if (pOutlet == NULL) {
+        C2V(gS3_last_error) = eS3_error_bad_id;
+        return 0;
+    }
+    desc = S3GetDescriptorByID(pSound);
+    if (desc == NULL) {
+        C2V(gS3_last_error) = eS3_error_bad_id;
+        return 0;
+    }
+
+    C2_HOOK_BUG_ON(sizeof(C2V(gS3_channel_template)) != 0x78);
+
+    c2_memset(&C2V(gS3_channel_template), 0, sizeof(C2V(gS3_channel_template)));
+    S3CalculateRandomizedFields(&C2V(gS3_channel_template), desc);
+    channel = S3AllocateChannel(pOutlet, S3CalculatePriority(C2V(gS3_channel_template).volume_multiplier, desc->priority));
+    if (channel == NULL) {
+        C2V(gS3_last_error) = eS3_error_channel_alloc;
+        return 0;
+    }
+    channel->source_volume = C2V(gS3_channel_template).source_volume;
+    channel->volume_multiplier = C2V(gS3_channel_template).volume_multiplier;
+    channel->field_0x28 = C2V(gS3_channel_template).field_0x28;
+    channel->rate = C2V(gS3_channel_template).rate;
+
+    if (desc->type == 0 && (desc->buffer_description == NULL || desc->flags == 2)) {
+        if (!S3LoadSample(pSound)) {
+            channel->needs_service = 1;
+            C2V(gS3_last_error) = eS3_error_load_sound;
+            return 0;
+        }
+    }
+    if (channel->descriptor != NULL && channel->descriptor->type == 1 && channel->descriptor->sample_id != pSound) {
+        S3ClearBufferOfMidiChannel(channel->tag);
+    }
+    channel->spatial_sound = 0;
+    channel->sound_source_ptr = NULL;
+    channel->descriptor = desc;
+    channel->type = desc->type;
+    channel->repetitions = MAX(0, desc->repeat_rate);
+    channel->needs_service = 0;
+    channel->termination_reason = eS3_tr_natural;
+    channel->tag = S3GenerateTag(pOutlet);
+    if (desc->type == 1 && desc->buffer_description == NULL) {
+        if (S3MIDILoadSong(channel)) {
+            channel->needs_service = 1;
+            return 0;
+        }
+    } else if (channel->type == 0) {
+        S3ExecuteSampleFilterFuncs(channel);
+        if (S3PlaySample(channel) == 0) {
+            C2V(gS3_last_error) = eS3_error_start_sound;
+            channel->needs_service = 1;
+            return 0;
+        }
+    } else if (channel->type == 1) {
+        if (S3PlayMIDI(channel)) {
+            channel->needs_service = 1;
+            C2V(gS3_last_error) = eS3_error_start_song;
+            return 0;
+        }
+        S3SetMIDIVolume(channel, channel->volume_multiplier);
+    } else if (channel->type == 2) {
+        if (S3PlayCDA(channel)) {
+            channel->needs_service = 1;
+            C2V(gS3_last_error) = eS3_error_start_cda;
+            return 0;
+        }
+    }
+    return channel->tag;
+}
+C2_HOOK_FUNCTION(0x00564565, S3StartSound)
