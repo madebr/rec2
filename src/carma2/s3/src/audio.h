@@ -110,4 +110,6 @@ tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pV
 
 tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSourceBR(br_vector3* pPosition, br_vector3* pVelocity, tS3_outlet* pBound_outlet);
 
+int C2_HOOK_FASTCALL S3IsCDAEnabled(void);
+
 #endif // S3_AUDIO_H

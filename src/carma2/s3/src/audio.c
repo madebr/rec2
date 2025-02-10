@@ -1178,3 +1178,8 @@ tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSourceBR(br_vector3* pPosition, 
     return source;
 }
 C2_HOOK_FUNCTION(0x00566590, S3CreateSoundSourceBR)
+
+int C2_HOOK_FASTCALL S3IsCDAEnabled(void) {
+    return !!C2V(gS3_CDA_enabled);
+}
+C2_HOOK_FUNCTION(0x00565bbc, S3IsCDAEnabled)
