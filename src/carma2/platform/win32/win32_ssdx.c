@@ -814,6 +814,7 @@ int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel) {
         PDS3UpdateChannelVolume(pChannel);
         PDS3UpdateChannelFrequency(pChannel);
     }
+    return 1;
 }
 
 tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
