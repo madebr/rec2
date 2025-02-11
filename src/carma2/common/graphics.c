@@ -162,6 +162,37 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_matrix34, gIdentity34, 0x00655e00, {
     }
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gShadow_dim_amount, 0x006a2440);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tOppo_status_messages, gOppo_status_messages, 9, 0x0068d6f8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInitMap_done, 0x0068d8cc);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gHeadup_map_x_float, 0x0074abdc);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gHeadup_map_y_float, 0x0074abd8);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gHeadup_map_w_float, 0x0074abcc);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gHeadup_map_h_float, 0x0074ab80);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gUINT_0074ab88, 0x0074ab88);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gUINT_0074ab8c, 0x0074ab8c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074ab94, 0x0074ab94);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074abec, 0x0074abec);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074abe4, 0x0074abe4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074ab98, 0x0074ab98);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gMap_overlay, 0x0068d8d8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gMini_map, 0x0068d8dc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gCheckpoint_numbers, 0x0068d6e4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmashy_dot, 0x0068d884);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gAlt_meter, 0x0068c87c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCheckpoint_digit_height, 0x0068c860);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCheckpoint_digit_center_x, 0x0068d8bc);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gCheckpoint_digit_center_y, 0x0068c85c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMini_map_x, 0x0074aba0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMini_map_y, 0x0074aba4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074abd4, 0x0074abd4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074abd0, 0x0074abd0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00655f04, 0x00655f04);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00655f08, 0x00655f08);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0068d8a0, 0x0068d8a0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0068d8a4, 0x0068d8a4);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0074ab9c, 0x0074ab9c);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0074abb8, 0x0074abb8);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gMini_map_arrow_z, 0x0068d8a8);
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
 
@@ -764,16 +795,137 @@ void C2_HOOK_FASTCALL InitDRFonts(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00465a40, InitDRFonts, InitDRFonts_original)
 
-void (C2_HOOK_FASTCALL * UpdateMap_original)(void);
-void C2_HOOK_FASTCALL UpdateMap(void) {
+void C2_HOOK_FASTCALL ReadMoodMessages(void) {
+    tPath_name path;
+    FILE *f;
+    int mood;
+
+    PathCat(path, C2V(gApplication_path), "STATUS.TXT");
+    f = PFfopen(path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CantFindFile_S, "STATUS.TXT");
+    }
+    for (mood = 0; mood < REC2_ASIZE(C2V(gOppo_status_messages)); mood += 1) {
+        int i;
+
+        C2_HOOK_ASSERT(mood < REC2_ASIZE(C2V(gOppo_status_messages)));
+
+        C2V(gOppo_status_messages)[mood].count = GetAnInt(f);
+        C2_HOOK_ASSERT(C2V(gOppo_status_messages)[mood].count < REC2_ASIZE(C2V(gOppo_status_messages)[mood].messages));
+        for (i = 0; i < C2V(gOppo_status_messages)[mood].count; i++) {
+            char s[256];
+
+            GetALineAndDontArgue(f, s);
+            C2V(gOppo_status_messages)[mood].messages[i] = (char *) BrMemAllocate(c2_strlen(s) + 1, kMem_misc_string);
+            c2_strcpy(C2V(gOppo_status_messages)[mood].messages[i], s);
+        }
+    }
+    PFfclose(f);
+}
+
+void (C2_HOOK_FASTCALL * InitMap_original)(void);
+void C2_HOOK_FASTCALL InitMap(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    UpdateMap_original();
+    InitMap_original();
 #else
-    NOT_IMPLEMENTED();
+
+    if (!C2V(gInitMap_done)) {
+        C2V(gHeadup_map_x_float) = (float)C2V(gHeadup_map_x);
+        C2V(gHeadup_map_y_float) = (float)C2V(gHeadup_map_y);
+        C2V(gHeadup_map_w_float) = (float)C2V(gHeadup_map_w);
+        C2V(gHeadup_map_h_float) = (float)C2V(gHeadup_map_h);
+    } else {
+        C2V(gHeadup_map_x) = ((int)C2V(gHeadup_map_x_float) + 3) & ~3;
+        C2V(gHeadup_map_y) = (int)C2V(gHeadup_map_y_float);
+        C2V(gHeadup_map_w) = ((int)C2V(gHeadup_map_w_float) + 3) % ~3;
+        C2V(gHeadup_map_h) = (int)C2V(gHeadup_map_h_float);
+    }
+    if (C2V(gHeadup_map_x) % 4 != 0) {
+        C2V(gHeadup_map_x) -= C2V(gHeadup_map_x) % 4;
+        C2V(gHeadup_map_x_float) = (float)C2V(gHeadup_map_x);
+    }
+    if (C2V(gHeadup_map_w) % 4 != 0) {
+        C2V(gHeadup_map_w) -= C2V(gHeadup_map_w) % 4;
+        C2V(gHeadup_map_w_float) = (float)C2V(gHeadup_map_w);
+    }
+    if (C2V(gHeadup_map_w) > 64) {
+        C2V(gHeadup_map_w) = 64;
+        C2V(gHeadup_map_w_float) = 64.f;
+    }
+    if (C2V(gHeadup_map_h) > 64) {
+        C2V(gHeadup_map_h) = 64;
+        C2V(gHeadup_map_h_float) = 64.f;
+    }
+    C2V(gUINT_0074ab8c) = (int)(3.f + 0.3f * (float)C2V(gHeadup_map_w)) & ~3;
+    C2V(gUINT_0074ab88) = (int)(3.f + 0.3f * (float)C2V(gHeadup_map_h)) & ~3;
+    if (C2V(gUINT_0074ab8c) > C2V(gUINT_0074ab88)) {
+        C2V(gUINT_0074ab88) = C2V(gUINT_0074ab8c);
+    } else {
+        C2V(gUINT_0074ab8c) = C2V(gUINT_0074ab88);
+    }
+    C2V(gINT_0074ab94) = C2V(gHeadup_map_w) + 2 * C2V(gUINT_0074ab88);
+    C2V(gINT_0074abec) = C2V(gHeadup_map_h) + 2 * C2V(gUINT_0074ab88);
+    C2V(gINT_0074abe4) = C2V(gHeadup_map_w) / 2;
+    C2V(gINT_0074ab98) = C2V(gHeadup_map_h) / 2;
+    if (C2V(gMap_overlay) == NULL) {
+        int side = MAX(C2V(gINT_0074abec), C2V(gINT_0074ab94));
+        C2V(gMap_overlay) = DRPixelmapAllocate(C2V(gBack_screen)->type, side, side, NULL, 0);
+    }
+    C2V(gMini_map_x) = C2V(gHeadup_map_x) + C2V(gHeadup_map_w) / 16;
+    C2V(gMini_map_y) = C2V(gHeadup_map_y) + C2V(gHeadup_map_h) / 16;
+    if (C2V(gMini_map_x) % 2 != 0) {
+        C2V(gMini_map_x) -= 1;
+    }
+    C2V(gINT_0074abd4) = C2V(gHeadup_map_w) / 2 - C2V(gMini_map_x) + C2V(gHeadup_map_x);
+    C2V(gINT_0074abd0) = C2V(gHeadup_map_h) / 2 - C2V(gMini_map_y) + C2V(gHeadup_map_y);
+    if (C2V(gMini_map) != NULL) {
+        BrPixelmapFree(C2V(gMini_map));
+    }
+    C2V(gINT_00655f04) = C2V(gHeadup_map_x);
+    C2V(gINT_00655f08) = C2V(gHeadup_map_y);
+    C2V(gMini_map) = DRPixelmapAllocateSub(C2V(gBack_screen),
+        C2V(gMini_map_x),
+        C2V(gMini_map_y),
+        C2V(gHeadup_map_w) - (C2V(gHeadup_map_w) + 8) / 8 + 8,
+        C2V(gHeadup_map_h) - C2V(gHeadup_map_h) / 8);
+    C2V(gMini_map)->pixels = (br_uint_8*)C2V(gMini_map)->pixels + C2V(gMini_map_y) * C2V(gMini_map)->row_bytes + C2V(gMini_map_x);
+    C2V(gMini_map)->base_x = C2V(gMini_map_x);
+    C2V(gMini_map)->base_y = 0;
+    C2V(gFLOAT_0068d8a0) = (float)C2V(gINT_0074abd4);
+    C2V(gFLOAT_0068d8a4) = (float)C2V(gINT_0074abd0);
+    C2V(gMini_map_arrow_z) = 0.f;
+    C2V(gFLOAT_0074ab9c) = REC2_SQR((float)(C2V(gINT_0074ab98) + C2V(gINT_0074abe4)) * 0.45f);
+    C2V(gFLOAT_0074abb8) = REC2_SQR((float)(C2V(gCurrent_graf_data)->field_0x51c + 1));
+    if (!C2V(gInitMap_done)) {
+        C2V(gCheckpoint_numbers) = LoadPixelmap("CPNUMB.PIX");
+        if (C2V(gCheckpoint_numbers) == NULL) {
+            FatalError(kFatalError_CantFindFile_S, "CPNUMB.PIX");
+        }
+        BRPM_convert(C2V(gCheckpoint_numbers), C2V(gBack_screen)->type);
+        C2V(gSmashy_dot) = LoadPixelmap("SMASHY.PIX");
+        if (C2V(gSmashy_dot) == NULL) {
+            FatalError(kFatalError_CantFindFile_S, "SMASHY.PIX");
+        }
+        BRPM_convert(C2V(gSmashy_dot), C2V(gBack_screen)->type);
+        C2V(gAlt_meter) = LoadPixelmap("ALTMETER.PIX");
+        if (C2V(gAlt_meter) == NULL) {
+            FatalError(kFatalError_CantFindFile_S, "ALTMETER.PIX");
+        }
+        C2V(gCheckpoint_digit_height) = C2V(gCheckpoint_numbers)->height / 10;
+        C2V(gCheckpoint_digit_center_y) = C2V(gCheckpoint_digit_height) / 2;
+        C2V(gCheckpoint_digit_center_x) = C2V(gCheckpoint_numbers)->width / 2;
+        C2V(gIcons_pix) = LoadPixelmap("CARICONS.PIX");
+        if (C2V(gIcons_pix) != NULL) {
+            BRPM_convert(C2V(gIcons_pix), C2V(gBack_screen)->type);
+            BrMapAdd(C2V(gIcons_pix));
+        }
+        ReadMoodMessages();
+    }
+    C2V(gInitMap_done) = 1;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00496e30, UpdateMap, UpdateMap_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00496e30, InitMap, InitMap_original)
 
 void (C2_HOOK_FASTCALL * Init2DStuffForPolyFonts_original)(void);
 void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void) {
