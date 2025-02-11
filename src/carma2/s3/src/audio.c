@@ -1286,8 +1286,8 @@ int C2_HOOK_FASTCALL S3CalculatePriority(int pPriority, int pVolumeFactor) {
 C2_HOOK_FUNCTION(0x00565b4b, S3CalculatePriority)
 
 int C2_HOOK_FASTCALL S3GenerateTag(tS3_outlet* outlet) {
-    gS3_tag_seed += 256;
-    return gS3_tag_seed | outlet->id;
+    C2V(gS3_tag_seed) += 256;
+    return C2V(gS3_tag_seed) | outlet->id;
 }
 C2_HOOK_FUNCTION(0x00565864, S3GenerateTag)
 
