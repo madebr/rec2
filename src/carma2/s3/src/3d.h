@@ -34,4 +34,6 @@ void C2_HOOK_FASTCALL S3CopyVector3(void* pDest, void* pSrc, int pIs_BRender);
 
 void C2_HOOK_FASTCALL S3UpdateListenerVectors(void);
 
+int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource);
+
 #endif // S3_3D_H
