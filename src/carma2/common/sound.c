@@ -373,10 +373,34 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00455080, InitSound, InitSound_original)
 
 void (C2_HOOK_FASTCALL * SetSoundVolumes_original)(int pCD_audio);
 void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetSoundVolumes_original(pCD_audio);
 #else
-    NOT_IMPLEMENTED();
+    if (!C2V(gSound_enabled)) {
+        return;
+    }
+    if (C2V(gEffects_outlet) != NULL) {
+        DRS3SetOutletVolume(C2V(gEffects_outlet), C2V(gProgram_state).effects_volume);
+    }
+    DRS3SetOutletVolume(C2V(gCar_outlet), C2V(gProgram_state).effects_volume);
+    DRS3SetOutletVolume(C2V(gEngine_outlet), C2V(gProgram_state).effects_volume);
+    DRS3SetOutletVolume(C2V(gDriver_outlet), C2V(gProgram_state).effects_volume);
+    DRS3SetOutletVolume(C2V(gPedestrians_outlet), C2V(gProgram_state).effects_volume);
+    DRS3SetOutletVolume(C2V(gCar_outlet), C2V(gProgram_state).effects_volume);
+    if (C2V(gINT_00595c44)) {
+        dr_dprintf("CD: Setting volume to %d", C2V(gProgram_state).music_volume);
+        if (!C2V(gCDA_started_playing) && !pCD_audio) {
+            dr_dprintf("CD: Hasn't played yet, so not stopping/starting it");
+        } else {
+            if (C2V(gProgram_state).music_volume < 128) {
+                StopMusic();
+            } else {
+                StartMusic();
+            }
+        }
+    } else {
+        DRS3SetOutletVolume(C2V(gMusic_outlet), C2V(gProgram_state).music_volume);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456530, SetSoundVolumes, SetSoundVolumes_original)
