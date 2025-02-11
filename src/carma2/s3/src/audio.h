@@ -27,6 +27,7 @@ C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_tag_seed);
 C2_HOOK_VARIABLE_DECLARE(tS3_sample_filter, gS3_sample_filter_func);
 C2_HOOK_VARIABLE_DECLARE(tS3_sample_filter, gS3_sample_filter_disable_func);
 C2_HOOK_VARIABLE_DECLARE(tS3_channel, gS3_channel_template);
+C2_HOOK_VARIABLE_DECLARE(int, gS3_delta_time);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
@@ -51,6 +52,8 @@ int C2_HOOK_FASTCALL S3StopOutletSound(tS3_outlet* pOutlet);
 int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
 
 tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag);
+
+void C2_HOOK_FASTCALL S3UpdateListenerVectors(void);
 
 void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
 

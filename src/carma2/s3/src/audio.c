@@ -43,6 +43,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gS3_tag_seed, 0x007a0564);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_sample_filter, gS3_sample_filter_func, 0x007a0760);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_sample_filter, gS3_sample_filter_disable_func, 0x007a0764);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel, gS3_channel_template, 0x007a06e0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_delta_time, 0x007a075c);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_dirname);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_dirname) {

@@ -32,4 +32,6 @@ int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound,
 
 void C2_HOOK_FASTCALL S3CopyVector3(void* pDest, void* pSrc, int pIs_BRender);
 
+void C2_HOOK_FASTCALL S3UpdateListenerVectors(void);
+
 #endif // S3_3D_H
