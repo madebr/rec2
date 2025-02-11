@@ -1427,3 +1427,20 @@ int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
     return channel->tag;
 }
 C2_HOOK_FUNCTION(0x00564565, S3StartSound)
+
+tS3_error_codes C2_HOOK_FASTCALL S3MIDITagHasStoppedPlaying(int pTag) {
+    tS3_channel* channel;
+
+    if (!C2V(gS3_enable_midi)) {
+        return eS3_error_digi_init;
+    }
+    channel = S3GetChannelForTag(pTag);
+    if (channel == NULL) {
+        return eS3_error_bad_stag;
+    }
+    if (channel->type != 1) {
+        return eS3_error_digi_init;
+    }
+    return PDS3IsMIDIStopped(channel);
+}
+C2_HOOK_FUNCTION(0x0056a687, S3MIDITagHasStoppedPlaying)
