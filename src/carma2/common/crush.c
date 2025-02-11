@@ -7,6 +7,7 @@
 #include "loading.h"
 #include "platform.h"
 #include "powerups.h"
+#include "physics.h"
 #include "shrapnel.h"
 #include "skidmark.h"
 #include "smashing.h"
@@ -80,17 +81,80 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSmashable_collision_type_nam
     "passthrough",
     "edges",
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(undefined4, gCrush_array_0067a190, 10, 0x0067a190);
+C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gDAT_00679440, 0x00679440);
+C2_HOOK_VARIABLE_IMPLEMENT(tCrush_info_buffer, gDetached_bit_crush_info_buffer, 0x006796a0);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gDetached_bit_collision_infos, 0x00679448);
+C2_HOOK_VARIABLE_IMPLEMENT(tDriver, gDetached_bit_driver, 0x006796ac);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPhysics_joint*, gTrack_crush_joints, 32, 0x0067bd68);
+C2_HOOK_VARIABLE_IMPLEMENT(tCrush_info_buffer, gSplit_car_crush_info_buffer, 0x0067b7b8);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gSplit_car_collision_infos, 0x0067a188);
+C2_HOOK_VARIABLE_IMPLEMENT(tDriver, gSplit_car_driver, 0x0067b7c4);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape_sphere*, gGonad_sphere_collision_shape, 0x006796b4);
 
-void (C2_HOOK_FASTCALL * InitCrush_original)(void);
+void (C2_HOOK_FASTCALL * InitCrushSystems_original)(void);
 void C2_HOOK_FASTCALL InitCrushSystems(void) {
-#if defined(C2_HOOKS_ENABLED)
-    InitCrush_original();
+#if 0//defined(C2_HOOKS_ENABLED)
+    InitCrushSystems_original();
 #else
-    NOT_IMPLEMENTED();
-#endif
+    int i;
 
+    C2_HOOK_BUG_ON(sizeof(tCrush_info) != 0x104);
+    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gCrush_array_0067a190)); i++) {
+        C2V(gCrush_array_0067a190)[i] = 0;
+    }
+    C2V(gDAT_00679440) = 0;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCrush_info_buffer, crush_infos, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCrush_info_buffer, capacity, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCrush_info, collision_object, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCrush_info, field_0xdc, 0xdc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCrush_info, field_0xe0, 0xe0);
+
+    C2V(gDetached_bit_crush_info_buffer).capacity = 16;
+    C2V(gDetached_bit_crush_info_buffer).crush_infos = BrMemAllocate(C2V(gDetached_bit_crush_info_buffer).capacity * sizeof(tCrush_info), kMem_crush_data);
+    C2V(gDetached_bit_collision_infos) = BrMemAllocate(C2V(gDetached_bit_crush_info_buffer).capacity * sizeof(tCollision_info),kMem_crush_data);
+    for (i = 0; i < C2V(gDetached_bit_crush_info_buffer).capacity; i++) {
+        C2V(gDetached_bit_crush_info_buffer).crush_infos[i].field_0xdc = 1.f;
+        C2V(gDetached_bit_crush_info_buffer).crush_infos[i].field_0xe0 = 0.28985506f;
+        C2V(gDetached_bit_crush_info_buffer).crush_infos[i].collision_object = &C2V(gDetached_bit_collision_infos)[i];
+        // FIXME: AllocateShapePolyhedron should return tCollision_shape pointer
+        C2V(gDetached_bit_collision_infos)[i].shape = (tCollision_shape*)AllocateShapePolyhedron(16, kMem_crush_data);
+    }
+    C2V(gDetached_bit_driver) = eDriver_detached_bit;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gTrack_crush_joints)); i++) {
+        C2V(gTrack_crush_joints)[i] = AllocatePhysicsJoint(3, kMem_crush_data);
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_shape, common.next, 0x34);
+
+    C2V(gSplit_car_crush_info_buffer).capacity = 3;
+    C2V(gSplit_car_crush_info_buffer).crush_infos = BrMemAllocate(C2V(gSplit_car_crush_info_buffer).capacity * sizeof(tCrush_info), kMem_crush_data);
+    C2V(gSplit_car_collision_infos) = BrMemAllocate(C2V(gSplit_car_crush_info_buffer).capacity * sizeof(tCollision_info),kMem_crush_data);
+    for (i = 0; i < C2V(gSplit_car_crush_info_buffer).capacity; i++) {
+        int j;
+        tCollision_shape* shape = NULL;
+        for (j = 0; j < 4; j++) {
+            tCollision_shape* polyhedron = (tCollision_shape*)AllocateShapePolyhedron(16, kMem_crush_data);
+            if (shape != NULL) {
+                shape->common.next = polyhedron;
+            } else {
+                C2V(gSplit_car_collision_infos)[i].shape = polyhedron;
+            }
+            shape = polyhedron;
+        }
+        if (shape != NULL) {
+            shape->common.next = NULL;
+        }
+    }
+    C2V(gSplit_car_driver) = eDriver_split_car;
+    C2V(gGonad_sphere_collision_shape) = AllocateShapeSphere(kMem_crush_data);
+#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrushSystems, InitCrush_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrushSystems, InitCrushSystems_original)
 
 void (C2_HOOK_FASTCALL * ResetCrushSystems_original)(void);
 void C2_HOOK_FASTCALL ResetCrushSystems(void) {
