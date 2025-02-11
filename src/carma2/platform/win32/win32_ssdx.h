@@ -102,4 +102,6 @@ tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel);
 
 tS3_error_codes C2_HOOK_FASTCALL PDS3PlayCDAChannel(tS3_channel* pChannel);
 
+void C2_HOOK_FASTCALL PDS3ServiceCDA(void);
+
 #endif // C2_WIN32_SSDX_H

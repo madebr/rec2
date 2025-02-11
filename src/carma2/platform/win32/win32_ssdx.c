@@ -6,6 +6,8 @@
 #include "globvars.h"
 #include "graphics.h"
 
+#include "platform.h"
+
 #include <ddraw.h>
 
 #include "c2_stdlib.h"
@@ -48,6 +50,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(RECT, gSSDXWindowPos, 0x006aa9e8);
 C2_HOOK_VARIABLE_IMPLEMENT(MCI_OPEN_PARMS, mci_open_params, 0x007a0540);
 C2_HOOK_VARIABLE_IMPLEMENT(MCI_PLAY_PARMS, mci_play_parms, 0x007a0530);
 C2_HOOK_VARIABLE_IMPLEMENT(MCI_PLAY_PARMS, gPDS3_cda_play_parms, 0x007a04e0);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gPDS3_last_cda_status_update, 0x006b2dc4);
 
 
 HRESULT (CALLBACK * LocalEnumAttachedSurfacesCallback_original)(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext);
@@ -874,3 +877,19 @@ tS3_error_codes C2_HOOK_FASTCALL PDS3PlayCDAChannel(tS3_channel* pChannel) {
     return eS3_error_none;
 }
 C2_HOOK_FUNCTION(0x00569f92, PDS3PlayCDAChannel)
+
+void C2_HOOK_FASTCALL PDS3ServiceCDA(void) {
+    tU32 now;
+
+    if (!C2V(gPDS3_cda_initialized)) {
+        return;
+    }
+    now = PDGetTotalTime();
+    if (now > C2V(gPDS3_last_cda_status_update) + 3000) {
+        C2V(gPDS3_cda_status_parms).dwCallback = (DWORD_PTR)C2V(gHWnd);
+        C2V(gPDS3_cda_status_parms).dwItem = MCI_STATUS_MODE;
+        C2V(gPDS3_last_cda_status_update) = now;
+        mciSendCommandA(C2V(gPDS3_mci_open_parms).wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_NOTIFY, (DWORD_PTR)&C2V(gPDS3_cda_status_parms));
+        C2V(gPDS3_cda_is_playing) = C2V(gPDS3_cda_status_parms).dwReturn == MCI_MODE_PLAY;
+    }
+}
