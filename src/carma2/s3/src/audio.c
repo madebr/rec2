@@ -1444,3 +1444,14 @@ tS3_error_codes C2_HOOK_FASTCALL S3MIDITagHasStoppedPlaying(int pTag) {
     return PDS3IsMIDIStopped(channel);
 }
 C2_HOOK_FUNCTION(0x0056a687, S3MIDITagHasStoppedPlaying)
+
+int C2_HOOK_FASTCALL S3ServiceMIDIChannel(tS3_channel* pChannel) {
+
+    if (C2V(gS3_enable_midi) && pChannel->type == 1) {
+        if (S3MIDITagHasStoppedPlaying(pChannel->tag)) {
+            S3PlayMIDI(pChannel);
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0056a866, S3ServiceMIDIChannel)
