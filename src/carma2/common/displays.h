@@ -45,7 +45,6 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gGrey_top5);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDamage_hud);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gTimer_lhs);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gHud_timer_rhs);
-C2_HOOK_VARIABLE_DECLARE(br_material*, gHud_timer_rhs_material);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_armour);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_power);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_offense);

@@ -93,7 +93,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gGrey_top5, 0x0067fcf4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gDamage_hud, 0x0074cf00);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gTimer_lhs, 0x0074ca80);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gHud_timer_rhs, 0x0074ca44);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHud_timer_rhs_material, 0x0074cac0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_armour, 0x006815b8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_power, 0x006815b4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIcon_offense, 0x0067c4f0);
@@ -313,8 +312,8 @@ void C2_HOOK_FASTCALL InitHeadups(void) {
 
     C2V(gHud_timer_rhs) = LoadPixelmap("timerrhs.tif");
     BrMapAdd(C2V(gHud_timer_rhs));
-    C2V(gHud_timer_rhs_material)->colour_map = C2V(gHud_timer_rhs);
-    BrMaterialUpdate(C2V(gHud_timer_rhs_material), BR_MATU_COLOURMAP);
+    C2V(gTimerRightHUD_material)->colour_map = C2V(gHud_timer_rhs);
+    BrMaterialUpdate(C2V(gTimerRightHUD_material), BR_MATU_COLOURMAP);
 
     C2V(gTimerRightHUD_model)->vertices[1].p.v[0] = (float)C2V(gTimerRightHUD_dim_x);
     C2V(gTimerRightHUD_model)->vertices[0].p.v[0] = C2V(gTimerRightHUD_model)->vertices[1].p.v[0];
