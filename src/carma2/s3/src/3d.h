@@ -38,4 +38,6 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource);
 
 int C2_HOOK_FASTCALL S3UpdateSourceVectors(void);
 
+int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient);
+
 #endif // S3_3D_H
