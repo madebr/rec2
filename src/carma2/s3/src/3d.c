@@ -254,3 +254,13 @@ int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound,
     return eS3_error_none;
 }
 C2_HOOK_FUNCTION(0x0056773c, S3BindAmbientSoundToOutlet)
+
+void C2_HOOK_FASTCALL S3CopyVector3(void* pDest, void* pSrc, int pIs_BRender) {
+
+    if (pIs_BRender) {
+        S3CopyBrVector3(pDest, pSrc);
+    } else {
+        S3CopyS3Vector3(pDest, pSrc);
+    }
+}
+C2_HOOK_FUNCTION(0x005676da, S3CopyVector3)
