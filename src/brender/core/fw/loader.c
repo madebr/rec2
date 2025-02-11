@@ -121,7 +121,9 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 		img->sections[i].mem_size	 = section_header.virtual_size;
 		img->sections[i].data_size 	 = section_header.data_size;
 		img->sections[i].data_offset = section_header.data_offset;
+#ifdef REC2_STANDALONE
 		img->sections[i].flags       = section_header.flags;  /* Added by rec2 */
+#endif /* REC2_STANDALONE */
 	}
 
 	arena_size = nt_header.image_size;
@@ -276,6 +278,7 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
 		}
 	}
 
+#ifdef REC2_STANDALONE
     /* Added by rec2: fixes DEP */
     for (i = 0; i < coff_header.n_sections; i++) {
         br_uint_32 map_flags = 0;
@@ -290,6 +293,7 @@ br_image* C2_HOOK_STDCALL ImageLoad(char* name) {
         }
         PDMapImageSection(img->sections[i].base, img->sections[i].mem_size, map_flags);
     }
+#endif /* REC2_STANDALONE */
 
 	return img;
 #endif
