@@ -2,6 +2,8 @@
 
 #include "sample.h"
 
+#include "platform.h"
+
 #include "rec2_macros.h"
 
 #include <math.h>
@@ -348,3 +350,15 @@ int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056711c, S3Calculate3D, S3Calculate3D_original)
+
+int C2_HOOK_FASTCALL S3Service3D(tS3_channel* pChannel) {
+    int updated;
+
+    updated = S3Calculate3D(pChannel, pChannel->sound_source_ptr != NULL && !!pChannel->sound_source_ptr->ambient);
+    if (updated) {
+        PDS3UpdateChannelVolume(pChannel);
+        PDS3UpdateChannelFrequency(pChannel);
+    }
+    return updated;
+}
+C2_HOOK_FUNCTION(0x00567575, S3Service3D)
