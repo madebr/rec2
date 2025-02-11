@@ -8,3 +8,6 @@
 	path = external/dxsdk/dxsdk
 	url = https://github.com/madebr/dxsdk
 	branch = v7.0a
+[submodule "zlib"]
+	path = external/zlib/zlib
+	url = https://github.com/madler/zlib.git
