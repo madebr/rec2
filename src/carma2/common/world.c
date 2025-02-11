@@ -5861,7 +5861,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051db90, ZlibFsGetAttributes, ZlibFsGetAttributes_o
 
 void* (C2_HOOK_CDECL * ZlibFsOpenRead_original)(const char* buffer, br_size_t capacity, br_mode_test_cbfn* cbfn, int* type);
 void* C2_HOOK_CDECL ZlibFsOpenRead(const char* buffer, br_size_t capacity, br_mode_test_cbfn* cbfn, int* type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ZlibFsOpenRead_original(buffer, capacity, cbfn, type);
 #else
     return gzopen(buffer, "rb");
@@ -5871,20 +5871,23 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051dc10, ZlibFsOpenRead, ZlibFsOpenRead_original)
 
 void* (C2_HOOK_CDECL * ZlibFsOpenWrite_original)(const char* path, int type);
 void* C2_HOOK_CDECL ZlibFsOpenWrite(const char* path, int type) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ZlibFsOpenWrite_original(path, type);
 #else
-    NOT_IMPLEMENTED();
+    if (type != BR_FS_MODE_BINARY) {
+        return NULL;
+    }
+    return gzopen(path, "wb");
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dc20, ZlibFsOpenWrite, ZlibFsOpenWrite_original)
 
 void (C2_HOOK_CDECL * ZlibFsClose_original)(void* context);
 void C2_HOOK_CDECL ZlibFsClose(void* context) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ZlibFsClose_original(context);
 #else
-    NOT_IMPLEMENTED();
+    gzclose(context);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dba0, ZlibFsClose, ZlibFsClose_original)
@@ -5901,70 +5904,92 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051dbb0, ZlibFsEof, ZlibFsEof_original)
 
 int (C2_HOOK_CDECL * ZlibFsGetChr_original)(void* context);
 int C2_HOOK_CDECL ZlibFsGetChr(void* context) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ZlibFsGetChr_original(context);
 #else
-    NOT_IMPLEMENTED();
+    return gzgetc((gzFile)context);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051db40, ZlibFsGetChr, ZlibFsGetChr_original)
 
 void (C2_HOOK_CDECL * ZlibFsPutChr_original)(int, void*);
 void C2_HOOK_CDECL ZlibFsPutChr(int chr, void* context) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ZlibFsPutChr_original(chr, context);
 #else
-    NOT_IMPLEMENTED();
+    gzputc(context, chr);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dc40, ZlibFsPutChr, ZlibFsPutChr_original)
 
 br_size_t (C2_HOOK_CDECL * ZlibFsRead_original)(void* buffer, br_size_t elem_size, unsigned int count, void* context);
 br_size_t C2_HOOK_CDECL ZlibFsRead(void* buffer, br_size_t elem_size, unsigned int count, void* context) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ZlibFsRead_original(buffer, elem_size, count, context);
 #else
-    NOT_IMPLEMENTED();
+    int bytes_read = gzread(context, buffer, elem_size * count);
+    if (bytes_read < 0) {
+        return 0;
+    }
+    return bytes_read / elem_size;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dca0, ZlibFsRead, ZlibFsRead_original)
 
 br_size_t (C2_HOOK_CDECL * ZlibFsWrite_original)(void* buffer, br_size_t elem_size, unsigned int count, void* context);
 br_size_t C2_HOOK_CDECL ZlibFsWrite(void* buffer, br_size_t elem_size, unsigned int count, void* context) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ZlibFsWrite_original(buffer, elem_size, count, context);
 #else
-    NOT_IMPLEMENTED();
+    int bytes_written = gzwrite(context, buffer, elem_size * count);
+    return bytes_written / elem_size;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dcd0, ZlibFsWrite, ZlibFsWrite_original)
 
 br_size_t (C2_HOOK_CDECL * ZlibFsGetLine_original)(char* buffer, br_size_t capacity, void* context);
 br_size_t C2_HOOK_CDECL ZlibFsGetLine(char* buffer, br_size_t capacity, void* context) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ZlibFsGetLine_original(buffer, capacity, context);
 #else
-    NOT_IMPLEMENTED();
+    br_size_t i;
+    for (i = 0; i < capacity - 1; i++) {
+        int c = gzgetc((gzFile)context);
+        if (c == EOF) {
+            return i;
+        }
+        if (c == '\n') {
+            return i;
+        }
+        buffer[i] = c;
+    }
+    return i;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dbc0, ZlibFsGetLine, ZlibFsGetLine_original)
 
 void (C2_HOOK_CDECL * ZlibFsPutLine_original)(char* line, void* context);
 void C2_HOOK_CDECL ZlibFsPutLine(char* line, void* context) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ZlibFsPutLine_original(line, context);
 #else
-    NOT_IMPLEMENTED();
+    char newline = '\n';
+    size_t len = c2_strlen(line);
+    gzwrite(context, line, len);
+    gzwrite(context, &newline, 1);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dc60, ZlibFsPutLine, ZlibFsPutLine_original)
 
 void (C2_HOOK_CDECL * ZlibFsAdvance_original)(br_size_t advance, void* context);
 void C2_HOOK_CDECL ZlibFsAdvance(br_size_t advance, void* context) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ZlibFsAdvance_original(advance, context);
 #else
-    NOT_IMPLEMENTED();
+    while (advance != 0) {
+        gzgetc((gzFile)context);
+        advance -= 1;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051db60, ZlibFsAdvance, ZlibFsAdvance_original)
