@@ -44,6 +44,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(tS3_sample_filter, gS3_sample_filter_func, 0x007a0760
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_sample_filter, gS3_sample_filter_disable_func, 0x007a0764);
 C2_HOOK_VARIABLE_IMPLEMENT(tS3_channel, gS3_channel_template, 0x007a06e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_delta_time, 0x007a075c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_inside_cockpit, 0x007a0560);
+C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gS3_last_service_time_spatial, 0x006b2c14);
 
 int (C2_HOOK_FASTCALL * S3Init_original)(const char* pPath, int pLow_memory_mode, const char* pSound_dirname);
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_dirname) {
@@ -406,13 +408,68 @@ tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00564ae2, S3StopSound, S3StopSound_original)
 
-void (C2_HOOK_FASTCALL * S3Service_original)(int inside_cockpit, int unk1);
-void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1) {
+void (C2_HOOK_FASTCALL * S3Service_original)(int pInside_cockpit, int pThings_moved);
+void C2_HOOK_FASTCALL S3Service(int pInside_cockpit, int pThings_moved) {
 
-#if defined(C2_HOOKS_ENABLED)
-    S3Service_original(inside_cockpit, unk1);
+#if 0//defined(C2_HOOKS_ENABLED)
+    S3Service_original(pInside_cockpit, pThings_moved);
 #else
-    NOT_IMPLEMENTED();
+    tU32 now;
+    int spatial_serviced = 0;
+    tS3_outlet* o;
+
+    C2V(gS3_inside_cockpit) = pInside_cockpit;
+    if (!C2V(gS3_enabled)) {
+        return;
+    }
+    now = PDGetTotalTime();
+    C2V(gS3_delta_time) = now - C2V(gS3_last_service_time);
+    C2V(gS3_last_service_time) = now;
+    S3ServiceChannels(C2V(gS3_delta_time));
+    if (pThings_moved == 1) {
+        S3UpdateListenerVectors();
+        S3UpdateSourceVectors();
+    }
+    for (o = C2V(gS3_outlets); o != NULL; o = o->next) {
+        tS3_channel* c;
+        for (c = o->channel_list; c != NULL; c = c->next) {
+            if (c->needs_service) {
+                c->needs_service = 0;
+                if (c->descriptor != NULL && c->descriptor->flags == 2) {
+                    S3ReleaseSound(c->descriptor->sample_id);
+                }
+                c->active = 0;
+                if (c->type != 1) {
+                    c->tag = 0;
+                }
+            } else {
+                if (c->spatial_sound && c->active) {
+                    if (S3Service3D(c) == 0) {
+                        if (c->sound_source_ptr == NULL) {
+                            S3StopChannel(c);
+                        }
+                        else if (c->sound_source_ptr->ambient) {
+                            S3UpdateSoundSource(NULL, -1, c->sound_source_ptr, -1.f, -1, -1, 0, -1, -1);
+                        }
+                    }
+                    else if (c->sound_source_ptr != NULL && c->sound_source_ptr->ambient && !S3SoundStillPlaying(c->tag)) {
+                        S3UpdateSoundSource(NULL, -1, c->sound_source_ptr, -1.f, -1, -1, 0, -1, -1);
+                    }
+                } else if (c->type == 1 && c->active) {
+                    S3ServiceMIDIChannel(c);
+                }
+            }
+            if (pThings_moved < 2 && C2V(gS3_last_service_time_spatial) < C2V(gS3_last_service_time))  {
+                spatial_serviced = 1;
+                if (!c->active && c->spatial_sound == 2) {
+                    /* FUN_0056a280(c); */  /* nop function */
+                }
+            }
+        }
+    }
+    if (spatial_serviced) {
+        C2V(gS3_last_service_time_spatial) = C2V(gS3_last_service_time);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00564358, S3Service, S3Service_original)

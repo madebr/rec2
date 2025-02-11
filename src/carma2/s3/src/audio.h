@@ -28,6 +28,8 @@ C2_HOOK_VARIABLE_DECLARE(tS3_sample_filter, gS3_sample_filter_func);
 C2_HOOK_VARIABLE_DECLARE(tS3_sample_filter, gS3_sample_filter_disable_func);
 C2_HOOK_VARIABLE_DECLARE(tS3_channel, gS3_channel_template);
 C2_HOOK_VARIABLE_DECLARE(int, gS3_delta_time);
+C2_HOOK_VARIABLE_DECLARE(int, gS3_inside_cockpit);
+C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_last_service_time_spatial);
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 
