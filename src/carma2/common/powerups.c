@@ -340,7 +340,7 @@ void C2_HOOK_FASTCALL InitTail(void) {
             BrVector3SetFloat(&collision_info->physics_joint1->limits[0].parent, 0.f, 0.f, 1.f);
         } else {
             BrVector3SetFloat(&collision_info->physics_joint1->field_0x14,
-                              0.f, 0.f, model->bounds.min.v[2] * (is_link ? 0.99f : 0.45f));
+                              0.f, 0.f, model->bounds.max.v[2] * (is_link ? 0.99f : 0.45f));
             PhysicsAddObject(parent_collision_info, collision_info);
         }
         BrVector3SetFloat(&collision_info->physics_joint1->hinge_axis2, 0.f, 0.f, 1.f);
