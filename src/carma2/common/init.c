@@ -158,7 +158,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     PrintMemoryDump(0, "AFTER LOADING MISC STRING");
     InitialiseStorageSpace(0, &C2V(gMisc_storage_space), 1000, 5, 1000, 1000, 10);
     LoadInRegistees();
-    UpdateMap();
+    InitMap();
     PrintMemoryDump(0, "AFTER INITIALISING GENERAL STORAGE AND LOADING IN REG");
     Init2DStuffForPolyFonts();
     InitLineStuff();

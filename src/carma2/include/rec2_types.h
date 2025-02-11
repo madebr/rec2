@@ -2160,6 +2160,11 @@ typedef struct {
     undefined field_0x14[0x8];
 } tEnvironment_sound_source;
 
+typedef struct {
+    int count;
+    char *messages[10];
+} tOppo_status_messages;
+
 typedef enum {
     eOOT_none = 0,
     eOOT_complete_race = 1,
