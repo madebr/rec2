@@ -14,6 +14,16 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gEase_of_detachment_names, 5);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gCar_crush_shape_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gDetach_type_names, 4);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPosition_type_names, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(undefined4, gCrush_array_0067a190, 10);
+C2_HOOK_VARIABLE_DECLARE(undefined4, gDAT_00679440);
+C2_HOOK_VARIABLE_DECLARE(tCrush_info_buffer, gDetached_bit_crush_info_buffer);
+C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gDetached_bit_collision_infos);
+C2_HOOK_VARIABLE_DECLARE(tDriver, gDetached_bit_driver);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tPhysics_joint*, gTrack_crush_joints, 32);
+C2_HOOK_VARIABLE_DECLARE(tCrush_info_buffer, gSplit_car_crush_info_buffer);
+C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gSplit_car_collision_infos);
+C2_HOOK_VARIABLE_DECLARE(tDriver, gSplit_car_driver);
+C2_HOOK_VARIABLE_DECLARE(tCollision_shape_sphere*, gGonad_sphere_collision_shape);
 
 void C2_HOOK_FASTCALL InitCrushSystems(void);
 
