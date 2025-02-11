@@ -298,3 +298,43 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00567b2d, S3UpdateSourcePosition, S3UpdateSourcePosition_original)
+
+int C2_HOOK_FASTCALL S3UpdateSourceVectors(void) {
+    tS3_sound_source* source;
+
+    for (source = C2V(gS3_sound_sources); source != NULL; source = source->next) {
+        if (!source->ambient) {
+            continue;
+        }
+        if (source->period > 0) {
+            source->time_since_last_played += C2V(gS3_delta_time);
+        }
+        if (source->channel != NULL && source->tag != source->channel->tag) {
+            S3StopChannel(source->channel);
+            source->channel = NULL;
+            source->tag = 0;
+        }
+        if (source->channel == NULL) {
+            if (source->period < source->time_since_last_played && source->period != 0 && source->tag == 0) {
+                if (source->volume > 0) {
+                    if (S3UpdateSourcePosition(source) == 0) {
+                        source->channel = NULL;
+                        source->tag = 0;
+                    }
+                }
+                source->time_since_last_played = 0;
+            }
+            else if ((!source->ambient_repeats || source->period == 0) && source->tag == 0) {
+                if (source->volume > 0) {
+                    if (S3UpdateSourcePosition(source) == 0) {
+                        source->channel = NULL;
+                        source->tag = 0;
+                    }
+                }
+                source->time_since_last_played = 0;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00567ea5, S3UpdateSourceVectors)
