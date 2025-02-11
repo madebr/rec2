@@ -287,3 +287,14 @@ void C2_HOOK_FASTCALL S3UpdateListenerVectors(void) {
     }
 }
 C2_HOOK_FUNCTION(0x005675ce, S3UpdateListenerVectors)
+
+int (C2_HOOK_FASTCALL * S3UpdateSourcePosition_original)(tS3_sound_source *pSource);
+int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return S3UpdateSourcePosition_original(pSource);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00567b2d, S3UpdateSourcePosition, S3UpdateSourcePosition_original)
