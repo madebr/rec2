@@ -264,3 +264,26 @@ void C2_HOOK_FASTCALL S3CopyVector3(void* pDest, void* pSrc, int pIs_BRender) {
     }
 }
 C2_HOOK_FUNCTION(0x005676da, S3CopyVector3)
+
+void C2_HOOK_FASTCALL S3UpdateListenerVectors(void) {
+
+    if (C2V(gS3_listener_pos_ptr) != NULL) {
+        S3CopyVector3(&C2V(gS3_listener_position_now), C2V(gS3_listener_pos_ptr), C2V(gS3_listener_pos_is_brender));
+    }
+    if (C2V(gS3_listener_vel_ptr) != NULL) {
+        S3CopyVector3(&C2V(gS3_listener_vel_now), C2V(gS3_listener_vel_ptr), C2V(gS3_listener_vel_is_brender));
+    } else {
+        C2V(gS3_listener_vel_now).v[0] = (C2V(gS3_listener_position_now).v[0] - C2V(gS3_listener_position_old).v[0]) * (float)C2V(gS3_delta_time) / 1000.f;
+        C2V(gS3_listener_vel_now).v[1] = (C2V(gS3_listener_position_now).v[1] - C2V(gS3_listener_position_old).v[1]) * (float)C2V(gS3_delta_time) / 1000.f;
+        C2V(gS3_listener_vel_now).v[2] = (C2V(gS3_listener_position_now).v[2] - C2V(gS3_listener_position_old).v[2]) * (float)C2V(gS3_delta_time) / 1000.f;
+        BrVector3Copy(&C2V(gS3_listener_position_old), &C2V(gS3_listener_position_now));
+    }
+    if (C2V(gS3_listener_left_ptr) != NULL) {
+        S3CopyVector3(&C2V(gS3_listener_left_now), C2V(gS3_listener_left_ptr), C2V(gS3_listener_left_is_brender));
+    } else {
+        C2V(gS3_listener_left_now).v[0] = C2V(gS3_listener_position_now).v[0] - 1.f;
+        C2V(gS3_listener_left_now).v[1] = C2V(gS3_listener_position_now).v[1];
+        C2V(gS3_listener_left_now).v[2] = C2V(gS3_listener_position_now).v[2];
+    }
+}
+C2_HOOK_FUNCTION(0x005675ce, S3UpdateListenerVectors)
