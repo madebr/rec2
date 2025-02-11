@@ -40,4 +40,6 @@ int C2_HOOK_FASTCALL S3UpdateSourceVectors(void);
 
 int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient);
 
+int C2_HOOK_FASTCALL S3Service3D(tS3_channel* pChannel);
+
 #endif // S3_3D_H
