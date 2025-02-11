@@ -29,8 +29,10 @@ cmake_dependent_option(REC2_DUMPERS "Build struct/enum dumpers" FALSE GENDUMPER_
 
 if(REC2_VENDORED)
     add_subdirectory(external/libtiff EXCLUDE_FROM_ALL)
+    add_subdirectory(external/zlib EXCLUDE_FROM_ALL)
 else()
     find_package(TIFF REQUIRED)
+    find_package(ZLIB REQUIRED)
 endif()
 
 add_subdirectory(external/dummyqt)
