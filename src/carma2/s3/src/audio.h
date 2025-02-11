@@ -56,6 +56,8 @@ int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
 
 tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag);
 
+void C2_HOOK_FASTCALL S3UpdateListenerVectors(void);
+
 void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
 
 int C2_HOOK_FASTCALL S3DisableSound(void);
