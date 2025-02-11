@@ -1426,7 +1426,7 @@ int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
 
     C2_HOOK_BUG_ON(sizeof(C2V(gS3_channel_template)) != 0x78);
 
-    memset(&C2V(gS3_channel_template), 0, sizeof(C2V(gS3_channel_template)));
+    c2_memset(&C2V(gS3_channel_template), 0, sizeof(C2V(gS3_channel_template)));
     S3CalculateRandomizedFields(&C2V(gS3_channel_template), desc);
     channel = S3AllocateChannel(pOutlet, S3CalculatePriority(C2V(gS3_channel_template).volume_multiplier, desc->priority));
     if (channel == NULL) {
