@@ -1142,6 +1142,19 @@ int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel* pChannel) {
 }
 C2_HOOK_FUNCTION(0x00569752, S3ServiceChannel)
 
+void C2_HOOK_FASTCALL S3ServiceChannels(int pDelta_time) {
+    tS3_outlet* o;
+
+    for (o = C2V(gS3_outlets); o != NULL; o = o->next) {
+        tS3_channel* c;
+        for (c = o->channel_list; c != NULL; c = c->next) {
+            S3ServiceChannel(c);
+        }
+    }
+    PDS3ServiceCDA();
+}
+C2_HOOK_FUNCTION(0x0056a28d, S3ServiceChannels)
+
 tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pVelocity, tS3_outlet* pBound_outlet) {
     tS3_sound_source* src;
 
