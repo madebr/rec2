@@ -147,4 +147,6 @@ tS3_error_codes C2_HOOK_FASTCALL S3PlayCDA(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
+tS3_error_codes C2_HOOK_FASTCALL S3MIDITagHasStoppedPlaying(int pTag);
+
 #endif // S3_AUDIO_H
