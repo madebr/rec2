@@ -30,6 +30,7 @@
 #include "rec2_macros.h"
 
 #include <tiffio.h>
+#include <zlib.h>
 
 #include "c2_ctype.h"
 #include "c2_stdlib.h"
@@ -5863,7 +5864,7 @@ void* C2_HOOK_CDECL ZlibFsOpenRead(const char* buffer, br_size_t capacity, br_mo
 #if defined(C2_HOOKS_ENABLED)
     return ZlibFsOpenRead_original(buffer, capacity, cbfn, type);
 #else
-    NOT_IMPLEMENTED();
+    return gzopen(buffer, "rb");
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051dc10, ZlibFsOpenRead, ZlibFsOpenRead_original)
