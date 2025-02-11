@@ -1148,10 +1148,13 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004da290, MungeBoxObject, CreateBoxCollisionShapeWit
 tPhysics_joint* (C2_HOOK_FASTCALL * AllocatePhysicsJoint_original)(int pCount_limits, int pType);
 tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return AllocatePhysicsJoint_original(pCount_limits, pType);
 #else
-    NOT_IMPLEMENTED();
+    C2_HOOK_BUG_ON(offsetof(tPhysics_joint, limits) != 0x54);
+    C2_HOOK_BUG_ON(sizeof(tPhysics_joint_limit) != 0x20);
+
+    return BrMemAllocate(offsetof(tPhysics_joint, limits) + pCount_limits * sizeof(tPhysics_joint_limit), pType);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c5e20, AllocatePhysicsJoint, AllocatePhysicsJoint_original)
