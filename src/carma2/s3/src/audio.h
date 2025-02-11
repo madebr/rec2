@@ -112,6 +112,8 @@ int C2_HOOK_FASTCALL S3SetVolume(int pVolume);
 
 int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel *pChannel);
 
+void C2_HOOK_FASTCALL S3ServiceChannels(int pDelta_time);
+
 tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pVelocity, tS3_outlet* pBound_outlet);
 
 tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSourceBR(br_vector3* pPosition, br_vector3* pVelocity, tS3_outlet* pBound_outlet);
