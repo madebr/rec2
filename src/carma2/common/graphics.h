@@ -83,6 +83,38 @@ C2_HOOK_VARIABLE_DECLARE(int, gShadow_clip_plane_count);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_vector3, gShadow_points, 8);
 C2_HOOK_VARIABLE_DECLARE(br_matrix34, gIdentity34);
 C2_HOOK_VARIABLE_DECLARE(int, gShadow_dim_amount);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tOppo_status_messages, gOppo_status_messages, 9);
+C2_HOOK_VARIABLE_DECLARE(int, gInitMap_done);
+C2_HOOK_VARIABLE_DECLARE(float, gHeadup_map_x_float);
+C2_HOOK_VARIABLE_DECLARE(float, gHeadup_map_y_float);
+C2_HOOK_VARIABLE_DECLARE(float, gHeadup_map_w_float);
+C2_HOOK_VARIABLE_DECLARE(float, gHeadup_map_h_float);
+C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074ab88);
+C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074ab8c);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0074ab94);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0074abec);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0074abe4);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0074ab98);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gMap_overlay);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gMini_map);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCheckpoint_numbers);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gSmashy_dot);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gAlt_meter);
+C2_HOOK_VARIABLE_DECLARE(int, gCheckpoint_digit_height);
+C2_HOOK_VARIABLE_DECLARE(int, gCheckpoint_digit_center_x);
+C2_HOOK_VARIABLE_DECLARE(tU32, gCheckpoint_digit_center_y);
+C2_HOOK_VARIABLE_DECLARE(int, gCheckpoint_digit_height);
+C2_HOOK_VARIABLE_DECLARE(int, gMini_map_x);
+C2_HOOK_VARIABLE_DECLARE(int, gMini_map_y);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0074abd4);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0074abd0);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_00655f04);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_00655f08);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0068d8a0);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0068d8a4);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074ab9c);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074abb8);
+C2_HOOK_VARIABLE_DECLARE(float, gMini_map_arrow_z);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
@@ -146,7 +178,9 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 void C2_HOOK_FASTCALL InitDRFonts(void);
 
-void C2_HOOK_FASTCALL UpdateMap(void);
+void C2_HOOK_FASTCALL ReadMoodMessages(void);
+
+void C2_HOOK_FASTCALL InitMap(void);
 
 void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void);
 
