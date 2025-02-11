@@ -1742,6 +1742,8 @@ typedef struct {
 
 typedef enum tDriver {
     eDriver_non_car_unused_slot = 0,
+    eDriver_detached_bit = 2,
+    eDriver_split_car = 3,
     eDriver_4 = 4,
     eDriver_oppo = 6,
     eDriver_net_human = 7,
@@ -3352,6 +3354,21 @@ typedef struct tCollision_info {
     tU8 drivable_on;
     undefined field_0x4d5[3];
 } tCollision_info;
+
+typedef struct {
+    undefined field_0x0[0x8];
+    tCollision_info* collision_object;
+    undefined field_0xc[0xd0];
+    float field_0xdc;
+    float field_0xe0;
+    undefined field_0xe4[0x20];
+} tCrush_info;
+
+typedef struct {
+    tCrush_info* crush_infos;
+    int capacity;
+    undefined4 field_0x8;
+} tCrush_info_buffer;
 
 typedef struct {
     tU32 time;
