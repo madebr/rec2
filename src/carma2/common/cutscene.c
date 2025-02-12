@@ -16,17 +16,8 @@
 #include "platform.h"
 
 #include "c2_string.h"
-
-#if defined(C2_HOOKS_ENABLED)
-#define USE_SMACKW32 1
-#else
-#define USE_SMACKW32 0
-#endif
-
-#if USE_SMACKW32
 #include "smack.h"
 #include "win32/win32.h"
-#endif
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSmackerActor, 0x0079eca4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSmackerModel, 0x0079ecac);
@@ -35,11 +26,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmackerBackPalette, 0x0079ec9c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmackerPrevBackPalette, 0x0079eca0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gSmackMaterials, 15, 0x0079ec60);
 
-#if USE_SMACKW32
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gSmackerBuffer, 0x0067c3b0);
 #define SMACKER_INTERPOLATE
 #define SMACKER_ANTIALIASING
-#endif
 
 void C2_HOOK_FASTCALL DoSCILogo(void) {
 }
@@ -50,7 +39,6 @@ void C2_HOOK_FASTCALL DoStainlessLogo(void) {
 C2_HOOK_FUNCTION(0x0043e760, DoStainlessLogo)
 
 void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
-#if USE_SMACKW32
     int mati;
     int i;
     int j;
@@ -396,9 +384,6 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                frameCount, 1000 * (timeEnd - timeStart), paletteChangeCount,
                (float) paletteChangeCount / (timeEnd - timeStart), (float) frameCount / (timeEnd - timeStart));
     PDServiceSystem(0);
-#else
-    NOT_IMPLEMENTED();
-#endif
 }
 C2_HOOK_FUNCTION(0x0043e770, PlaySmackerFile)
 

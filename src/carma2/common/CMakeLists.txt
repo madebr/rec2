@@ -180,6 +180,7 @@ target_link_libraries(c2_common
         TIFF::TIFF
         ZLIB::ZLIB
         QuickTime::Dummy
+        Smackw32::Smackw32
 )
 
 if(REC2_DUMPERS)
