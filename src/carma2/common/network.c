@@ -20,6 +20,17 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_storage_space_initialized, 0x00688b1c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gScore_winner, 0x00659c2c, 20);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gReceived_game_scores, 0x0074a694);
 
+void (C2_HOOK_FASTCALL * BroadcastStatus_original)(void);
+void C2_HOOK_FASTCALL BroadcastStatus(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    BroadcastStatus_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a4ac0, BroadcastStatus, BroadcastStatus_original)
+
 void (C2_HOOK_FASTCALL * NetPlayerStatusChanged_original)(tPlayer_status pNew_status);
 void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status) {
 #if defined(C2_HOOKS_ENABLED)
