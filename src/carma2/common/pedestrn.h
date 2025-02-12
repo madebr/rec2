@@ -71,4 +71,6 @@ void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastT
 
 void C2_HOOK_FASTCALL FlushAllPedCaches(void);
 
+undefined4 C2_HOOK_FASTCALL CBPassiveCollision(undefined4* pArg1, undefined4 pArg2, undefined4* pArg3);
+
 #endif //REC2_PEDESTRN_H
