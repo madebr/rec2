@@ -39,6 +39,8 @@ tU32* C2_HOOK_FASTCALL KevKeyService(void);
 
 void C2_HOOK_FASTCALL CyclePollKeys(void);
 
+void C2_HOOK_FASTCALL ResetPollKeys(void);
+
 void C2_HOOK_FASTCALL CheckKeysForMouldiness(void);
 
 int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
