@@ -1040,3 +1040,13 @@ void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc900, CBLoadForm, CBLoadForm_original)
+
+void (C2_HOOK_FASTCALL * CBDisposeForm_original)(undefined4* pArg1);
+void C2_HOOK_FASTCALL CBDisposeForm(undefined4* pArg1) {
+#if defined(C2_HOOKS_ENABLED)
+    CBDisposeForm_original(pArg1);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cc940, CBDisposeForm, CBDisposeForm_original)
