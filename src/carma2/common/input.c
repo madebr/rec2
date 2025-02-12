@@ -199,10 +199,10 @@ void C2_HOOK_FASTCALL ResetPollKeys(void) {
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gJoy_array)) != 8);
 
     for (i = 0; i < REC2_ASIZE(C2V(gKey_array)); i++) {
-        gKey_array[i] = 0;
+        C2V(gKey_array)[i] = 0;
     }
     for (i = 0; i < REC2_ASIZE(C2V(gJoy_array)); i++) {
-        gJoy_array[i] = -1;
+        C2V(gJoy_array)[i] = -1;
     }
 }
 C2_HOOK_FUNCTION(0x004821a0, ResetPollKeys)
