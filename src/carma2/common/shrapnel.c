@@ -1,11 +1,14 @@
 #include "shrapnel.h"
 
+#include "crush.h"
 #include "errors.h"
 #include "loading.h"
 #include "smashing.h"
 #include "temp.h"
 #include "utility.h"
 #include "world.h"
+
+#include "platform.h"  /* For PDFatalError */
 
 #include "c2_string.h"
 
@@ -245,10 +248,41 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004ef550, ReadShrapnelSideEffects, ReadShrapnelSideE
 
 void (C2_HOOK_FASTCALL * ReadNonCarCuboidActivation_original)(FILE* pF, tNon_car_cuboid_activations* pNon_car_cuboid_activations);
 void C2_HOOK_FASTCALL ReadNonCarCuboidActivation(FILE* pF, tNon_car_cuboid_activations* pNon_car_cuboid_activations) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ReadNonCarCuboidActivation_original(pF, pNon_car_cuboid_activations);
 #else
-    NOT_IMPLEMENTED();
+
+    /* no. of non car cuboids activated */
+    pNon_car_cuboid_activations->count_activations = GetAnInt(pF);
+    if (pNon_car_cuboid_activations->count_activations != 0) {
+        int i;
+
+        C2_HOOK_BUG_ON(sizeof(tNon_car_cuboid_activation) != 0x40);
+
+#if 1
+        /* FIXME: remove once we found something */
+        PDFatalError("Non-zero non car cuboid activation detected! Notify rec2 developers!");
+#endif
+        pNon_car_cuboid_activations->activations = BrMemAllocate(pNon_car_cuboid_activations->count_activations * sizeof(tNon_car_cuboid_activation), kMem_smash_side_effects);
+        for (i = 0; i < pNon_car_cuboid_activations->count_activations; i++) {
+            int i1, i2;
+
+            GetPairOfInts(pF, &i1, &i2);
+            pNon_car_cuboid_activations->activations[i].field_0x0 = (tS16)(i1 * 1000);
+            pNon_car_cuboid_activations->activations[i].field_0x2 = (tS16)(i2 * 1000);
+            pNon_car_cuboid_activations->activations[i].field_0x4 = GetALineAndInterpretCommand(pF, C2V(gPosition_type_names), REC2_ASIZE(C2V(gPosition_type_names)));
+            pNon_car_cuboid_activations->activations[i].field_0x8 = (tS8)GetAnInt(pF);
+            LoadMinMax(pF, &pNon_car_cuboid_activations->activations[i].bounds);
+            GetPairOfFloats(pF,
+                &pNon_car_cuboid_activations->activations[i].field_0x24,
+                &pNon_car_cuboid_activations->activations[i].field_0x28);
+            pNon_car_cuboid_activations->activations[i].field_0x2c = GetAScalar(pF);
+            pNon_car_cuboid_activations->activations[i].field_0x30 = GetAScalar(pF);
+            pNon_car_cuboid_activations->activations[i].field_0x34 = GetAScalar(pF);
+            pNon_car_cuboid_activations->activations[i].field_0x38 = GetAScalar(pF);
+            pNon_car_cuboid_activations->activations[i].field_0x3c = GetAScalar(pF) / 10.f;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004efce0, ReadNonCarCuboidActivation, ReadNonCarCuboidActivation_original)

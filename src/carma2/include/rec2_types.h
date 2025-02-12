@@ -2628,8 +2628,24 @@ typedef struct {
 } tSlick_spec;
 
 typedef struct {
+    tS16 field_0x0;
+    tS16 field_0x2;
+    int field_0x4;
+    tS8 field_0x8;
+    undefined field_0x9[3];
+    br_bounds3 bounds;
+    float field_0x24;
+    float field_0x28;
+    float field_0x2c;
+    float field_0x30;
+    float field_0x34;
+    float field_0x38;
+    float field_0x3c;
+} tNon_car_cuboid_activation;
+
+typedef struct {
     int count_activations;
-    struct tNon_car_cuboid_activation* activations;
+    tNon_car_cuboid_activation* activations;
 } tNon_car_cuboid_activations;
 
 typedef struct {
