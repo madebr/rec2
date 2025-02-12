@@ -23,6 +23,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gShrapnel_type_names, 4, 0x00
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gShrapnel_ghost_actor_count, 0x006a3338);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gSmashable_noncar_shrapnel_actors, 100, 0x006a5140);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSmash_side_effect_direction_names, 3, 0x0065fef0, {
+    "parallel",
+    "towards",
+    "away",
+});
 
 
 intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* data) {
@@ -238,10 +243,54 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004eed70, ReadShrapnelSpec, ReadShrapnel_original)
 
 void (C2_HOOK_FASTCALL * ReadShrapnelSideEffects_original)(FILE* pF, tShrapnel_side_effects* pShrapnel_side_effects);
 void C2_HOOK_FASTCALL ReadShrapnelSideEffects(FILE* pF, tShrapnel_side_effects* pShrapnel_side_effects) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ReadShrapnelSideEffects_original(pF, pShrapnel_side_effects);
 #else
-    NOT_IMPLEMENTED();
+
+    /* Count smash activation cuboids */
+    pShrapnel_side_effects->count_side_effects = GetAnInt(pF);
+    if (pShrapnel_side_effects->count_side_effects != 0) {
+        int i;
+
+        C2_HOOK_BUG_ON(sizeof(tSmash_side_effect) != 0x4c);
+#if 0
+        /* FIXME: remove once we found something */
+        PDFatalError("Non-zero non shash side effect detected! Notify rec2 developers!");
+#endif
+        pShrapnel_side_effects->side_effects = BrMemAllocate(pShrapnel_side_effects->count_side_effects * sizeof(tSmash_side_effect), kMem_smash_side_effects);
+        for (i = 0; i < pShrapnel_side_effects->count_side_effects; i++) {
+            int i1, i2;
+            char s[256];
+
+            GetPairOfInts(pF, &i1, &i2);
+            pShrapnel_side_effects->side_effects[i].field_0x0 = 1000 * i1;
+            pShrapnel_side_effects->side_effects[i].field_0x2 = 1000 * i2;
+
+            GetAString(pF, s);
+            c2_strcpy(pShrapnel_side_effects->side_effects[i].field_0x8, s);
+            if (c2_strcmp(s, "*") == 0) {
+                pShrapnel_side_effects->side_effects[i].field_0x28 = 0;
+            } else if (s[0] == '*' && DRStricmp(s + c2_strlen(s) - 4, ".MAT") == 0) {
+                pShrapnel_side_effects->side_effects[i].field_0x28 = 1;
+            } else if (DRStricmp(s + c2_strlen(s) - 4, ".DAT") == 0 || DRStricmp(s + c2_strlen(s) - 4, ".ACT") == 0) {
+                pShrapnel_side_effects->side_effects[i].field_0x28 = 2;
+            } else if (DRStricmp(s, "&*") == 0) {
+                pShrapnel_side_effects->side_effects[i].field_0x28 = 3;
+            } else if (s[0] == '&' && '0' <= s[1] && s[1] <= '9') {
+                pShrapnel_side_effects->side_effects[i].field_0x28 = 6;
+            } else if (DRStricmp(s + c2_strlen(s) - 4, ".MAT") == 0) {
+                pShrapnel_side_effects->side_effects[i].field_0x28 = 4;
+            } else if (DRStricmp(s + c2_strlen(s) - 4, ".DAT") == 0 || DRStricmp(s + c2_strlen(s) - 4, ".ACT") == 0) {
+                pShrapnel_side_effects->side_effects[i].field_0x28 = 5;
+            } else {
+                pShrapnel_side_effects->side_effects[i].field_0x28 = 0;
+            }
+            pShrapnel_side_effects->side_effects[i].field_0x4 = GetALineAndInterpretCommand(pF, C2V(gPosition_type_names), REC2_ASIZE(C2V(gPosition_type_names)));
+            LoadMinMax(pF, &pShrapnel_side_effects->side_effects[i].bounds);
+            pShrapnel_side_effects->side_effects[i].field_0x44 = GetALineAndInterpretCommand(pF, C2V(gSmash_side_effect_direction_names), REC2_ASIZE(C2V(gSmash_side_effect_direction_names)));
+            pShrapnel_side_effects->side_effects[i].field_0x48 = GetAScalar(pF);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ef550, ReadShrapnelSideEffects, ReadShrapnelSideEffects_original)
