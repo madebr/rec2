@@ -73,7 +73,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_s, 0x006a
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_ms, 0x006ad1f0);
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_us, 0x006ac858);
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTimeLastKeyboardInput, 0x006ad49c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimeLastKeyboardInput, 0x006ad49c);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_diaghandler, gPD_error_handler, 0x006aceb0);
 
