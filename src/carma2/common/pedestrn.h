@@ -73,4 +73,6 @@ void C2_HOOK_FASTCALL FlushAllPedCaches(void);
 
 undefined4 C2_HOOK_FASTCALL CBPassiveCollision(undefined4* pArg1, undefined4 pArg2, undefined4* pArg3);
 
+int C2_HOOK_FASTCALL CBActiveHalted(undefined4* pArg1, undefined4* pArg2);
+
 #endif //REC2_PEDESTRN_H
