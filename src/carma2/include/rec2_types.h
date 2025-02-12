@@ -2848,6 +2848,10 @@ typedef struct {
 } tSkid;
 
 typedef struct {
+    undefined field_0x0[0x50];
+} tPed_form;
+
+typedef struct {
     undefined4 (C2_HOOK_FASTCALL * field_0x0)(undefined4*, undefined4, undefined4*);
     undefined4 (C2_HOOK_FASTCALL * field_0x4)(undefined4*, undefined4*);
     void (C2_HOOK_FASTCALL * field_0x8)(undefined4*, undefined4*);
