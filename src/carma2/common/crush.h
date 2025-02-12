@@ -13,6 +13,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gCrush_type_names, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gEase_of_detachment_names, 5);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gCar_crush_shape_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gDetach_type_names, 4);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPosition_type_names, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(undefined4, gCrush_array_0067a190, 10);
 C2_HOOK_VARIABLE_DECLARE(undefined4, gDAT_00679440);
 C2_HOOK_VARIABLE_DECLARE(tCrush_info_buffer, gDetached_bit_crush_info_buffer);
