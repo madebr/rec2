@@ -23,7 +23,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gASCII_table, 151, 0x006ad1f8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gASCII_shift_table, 151, 0x006ac588);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gScan_code, 151, 0x006b3470);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gScan_code, 256, 0x006b3470);
 
 C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTINPUTA, gDirectInput, 0x006acc78);
 
@@ -960,10 +960,85 @@ C2_HOOK_FUNCTION(0x0045b360, PDSetKeysFromJoystick)
 void (C2_HOOK_FASTCALL * PDSetKeyArray_original)(int* pKeys, int pMark);
 void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PDSetKeyArray_original(pKeys, pMark);
 #else
-    NOT_IMPLEMENTED();
+    BYTE diKeys[256];
+    HRESULT res;
+    int i;
+
+    C2V(gKeys_pressed) = 0;
+    Win32ServiceMessages();
+    if (C2V(gWindowActiveState) != 2) {
+        *pKeys = 0;
+        return;
+    }
+    if (C2V(gTimeLastKeyboardInput) != 0) {
+        if (PDGetTotalTime() < C2V(gTimeLastKeyboardInput) + 1000) {
+            *pKeys = 0;
+            return;
+        }
+    }
+    C2V(gTimeLastKeyboardInput) = 0;
+    res = IDirectInputDevice_GetDeviceState(C2V(gDirectInputDevice), sizeof(diKeys), diKeys);
+    if (res != DI_OK) {
+        dr_dprintf("ACTIVE but couldn't get keyboard device state on 1st attempt");
+        dr_dprintf("Keyboard input lost; reacquiring...");
+        if (C2V(gDirectInputDevice) != NULL) {
+            IDirectInputDevice_Acquire(C2V(gDirectInputDevice));
+        }
+        res = IDirectInputDevice_GetDeviceState(C2V(gDirectInputDevice), sizeof(diKeys), diKeys);
+        if (res != DI_OK) {
+            dr_dprintf("Couldn't get keyboard device state on 2nd attempt");
+            dr_dprintf("Zeroing pKeys");
+            *pKeys = 0;
+            return;
+        }
+        dr_dprintf("Keyboard reacquired OK.");
+    }
+    for (i = 0; i < 151; i++) {
+        int scan_code;
+
+        scan_code = C2V(gScan_code)[12 + i];
+        if (scan_code == 0) {
+            continue;
+        }
+        if (scan_code == 0xff) {
+            switch (i) {
+            case 0:
+                if ((diKeys[C2V(gScan_code)[20]] & 0x80) || (diKeys[C2V(gScan_code)[17]] & 0x80)) {
+                    pKeys[0] = pMark;
+                } else if (pKeys[0] == pMark) {
+                    pKeys[0] = 0;
+                }
+                break;
+            case 1:
+                if ((diKeys[C2V(gScan_code)[21]] & 0x80) || (diKeys[C2V(gScan_code)[18]] & 0x80)) {
+                    pKeys[1] = pMark;
+                } else if (pKeys[1] == pMark) {
+                    pKeys[1] = 0;
+                }
+                break;
+            case 2:
+            case 3:
+                if ((diKeys[C2V(gScan_code)[22]] & 0x80) || (diKeys[C2V(gScan_code)[19]] & 0x80)) {
+                    pKeys[2] = pMark;
+                    pKeys[3] = pMark;
+                } else if (pKeys[2] == pMark || pKeys[3] == pMark) {
+                    pKeys[2] = 0;
+                    pKeys[3] = 0;
+                }
+                break;
+            }
+        } else {
+            if (diKeys[scan_code] & 0x80) {
+                pKeys[i] = pMark;
+                C2V(gKeys_pressed) = C2V(gKeys_pressed) << 8 | (i + 1);
+            } else if (pKeys[i] == pMark) {
+                pKeys[i] = 0;
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051cef0, PDSetKeyArray, PDSetKeyArray_original)
