@@ -444,3 +444,14 @@ void C2_HOOK_FASTCALL EndRollingLetters(void) {
     BrMemFree(C2V(gRolling_letters));
 }
 C2_HOOK_FUNCTION(0x00483ce0, EndRollingLetters)
+
+void (C2_HOOK_FASTCALL * SetJoystickArrays_original)(int* pKeys, int pMark);
+void C2_HOOK_FASTCALL SetJoystickArrays(int* pKeys, int pMark) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetJoystickArrays_original(pKeys, pMark);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00482770, SetJoystickArrays, SetJoystickArrays_original)

@@ -62,4 +62,6 @@ void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str);
 
 void C2_HOOK_FASTCALL EndRollingLetters(void);
 
+void C2_HOOK_FASTCALL SetJoystickArrays(int* pKeys, int pMark);
+
 #endif // REC2_INPUT_H
