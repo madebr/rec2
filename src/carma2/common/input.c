@@ -129,8 +129,10 @@ void C2_HOOK_FASTCALL PollKeys(void) {
 #if defined(C2_HOOKS_ENABLED)
     PollKeys_original();
 #else
-
-    NOT_IMPLEMENTED();
+    C2V(gKey_poll_counter) += 1;
+    PDSetKeyArray(C2V(gKey_array), C2V(gKey_poll_counter));
+    SetJoystickArrays(C2V(gKey_array), C2V(gKey_poll_counter));
+    C2V(gLast_poll_keys) = PDGetTotalTime();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00481eb0, PollKeys, PollKeys_original)
