@@ -6,6 +6,8 @@
 #include "c2_hooks.h"
 #include "c2_stdio.h"
 
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSmash_side_effect_direction_names, 3);
+
 intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* data);
 
 void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_spec, int* pShrapnel_count);
