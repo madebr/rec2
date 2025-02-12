@@ -1186,10 +1186,17 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004c5e20, AllocatePhysicsJoint, AllocatePhysicsJoint
 void (C2_HOOK_FASTCALL * CollisionInfoAddChild_original)(tCollision_info* pParent, tCollision_info* pChild);
 void C2_HOOK_FASTCALL PhysicsAddObject(tCollision_info* pParent, tCollision_info* pChild) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CollisionInfoAddChild_original(pParent, pChild);
 #else
-    NOT_IMPLEMENTED();
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, next, 0x220);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, child, 0x224);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, parent, 0x228);
+
+    pChild->next = pParent->child;
+    pParent->child = pChild;
+    pChild->parent = pParent;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c63b0, PhysicsAddObject, CollisionInfoAddChild_original)
