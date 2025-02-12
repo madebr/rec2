@@ -87,4 +87,6 @@ void C2_HOOK_FASTCALL CBDisposeForm(undefined4* pArg1);
 
 void C2_HOOK_FASTCALL CBLoadPersonality(undefined4* pArg1, FILE* pF);
 
+void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1);
+
 #endif //REC2_PEDESTRN_H

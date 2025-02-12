@@ -1060,3 +1060,13 @@ void C2_HOOK_FASTCALL CBLoadPersonality(undefined4* pArg1, FILE* pF) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc950, CBLoadPersonality, CBLoadPersonality_original)
+
+void (C2_HOOK_FASTCALL * CBDisposePersonality_original)(undefined4* pArg1);
+void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1) {
+#if defined(C2_HOOKS_ENABLED)
+    CBDisposePersonality_original(pArg1);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ccaa0, CBDisposePersonality, CBDisposePersonality_original)
