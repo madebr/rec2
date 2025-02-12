@@ -26,6 +26,7 @@ int C2_HOOK_FASTCALL PDIsWindowInactive(void);
 char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar);
 int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void);
 void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void);
+void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark);
 void C2_HOOK_FASTCALL PDSetFileVariables(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void);
 void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void);

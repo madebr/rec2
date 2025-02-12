@@ -956,3 +956,14 @@ void C2_HOOK_FASTCALL PDSetKeysFromJoystick(int *keys) {
     }
 }
 C2_HOOK_FUNCTION(0x0045b360, PDSetKeysFromJoystick)
+
+void (C2_HOOK_FASTCALL * PDSetKeyArray_original)(int* pKeys, int pMark);
+void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PDSetKeyArray_original(pKeys, pMark);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0051cef0, PDSetKeyArray, PDSetKeyArray_original)
