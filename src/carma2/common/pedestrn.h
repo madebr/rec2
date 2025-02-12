@@ -79,4 +79,6 @@ void C2_HOOK_FASTCALL CBMovedByPhysics(undefined4* pArg1, undefined4* pArg2, und
 
 int C2_HOOK_FASTCALL CBMoveCompleted(undefined4* pArg1);
 
+void C2_HOOK_FASTCALL CBFillInObject(undefined4* pArg1, undefined4 pArg2);
+
 #endif //REC2_PEDESTRN_H
