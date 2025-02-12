@@ -51,7 +51,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gGiblet_min_max_time, 2, 0x006a0408);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGiblet_size_count, 0x0069bc18);
 C2_HOOK_VARIABLE_IMPLEMENT(tPed_giblet_size_spec*, gGiblet_sizes, 0x00694274);
 
-C2_HOOK_VARIABLE_IMPLEMENT(tPedForms_vtable, gPed_forms_vtable, 0x0065d778);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPedForms_vtable, gPed_forms_vtable, 0x0065d778, {
+    CBPassiveCollision,
+    CBActiveHalted,
+    CBMovedByPhysics,
+    CBMoveCompleted,
+    CBFillInObject,
+    CBLoadForm,
+    CBDisposeForm,
+    CBLoadPersonality,
+    CBDisposePersonality,
+});
 C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_process_distance, 0x00694118);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_process_distance_inner, 0x0069bc1c);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_popup_distance, 0x006944bc);
