@@ -22,13 +22,14 @@ set(SMACKW_LIB "${SMACKW32_IMPLIB}")
 set(SMACKW_DEP "smackw32-implib")
 
 if(SMACKW_LIB)
-    add_library(smackw INTERFACE)
-    target_link_libraries(smackw
+    add_library(smackw32 INTERFACE)
+    add_library(Smackw32::Smackw32 ALIAS smackw32)
+    target_link_libraries(smackw32
         INTERFACE
             "${SMACKW_LIB}"
     )
-    target_include_directories(smackw
+    target_include_directories(smackw32
         INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include"
     )
-    add_dependencies(smackw ${SMACKW_DEP})
+    add_dependencies(smackw32 ${SMACKW_DEP})
 endif()
