@@ -1137,10 +1137,34 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00429070, TestForObjectInSensiblePlace, TestForObjec
 tCollision_info* (C2_HOOK_FAKE_THISCALL * CreateBoxCollisionShapeWithMass_original)(br_model* model, undefined4 pArg2, float pMass);
 tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefined4 pArg2, float pMass) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return CreateBoxCollisionShapeWithMass_original(pModel REC2_THISCALL_EDX, pMass);
 #else
-    NOT_IMPLEMENTED();
+    tCollision_info* box;
+    br_vector3 tv1;
+
+    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
+
+    box = BrMemAllocate(sizeof(tCollision_info), kMem_collision_shape);
+    box->shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
+    box->shape->box.common.bb = pModel->bounds;
+    FillInShape(box->shape);
+    box->uid = C2V(gCollision_info_uid_counter);
+    C2V(gCollision_info_uid_counter) += 1;
+    UpdateCollisionObject(box);
+    box->M = pMass;
+    BrVector3Sub(&tv1, &pModel->bounds.max, &pModel->bounds.min);
+    BrVector3Scale(&tv1, &tv1, .5f);
+    BrVector3Set(&box->I,
+        (REC2_SQR(tv1.v[1]) + REC2_SQR(tv1.v[2])) * pMass / 12.f,
+        (REC2_SQR(tv1.v[0]) + REC2_SQR(tv1.v[2])) * pMass / 12.f,
+        (REC2_SQR(tv1.v[0]) + REC2_SQR(tv1.v[1])) * pMass / 12.f);
+    BrVector3SetFloat(&box->field7_0x54, 0.f, 1/-17.25f, 0.f);
+    box->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    BrMatrix34Copy(&box->actor->t.t.mat, &box->transform_matrix);
+    box->actor->model = pModel;
+    box->box_face_ref = C2V(gFace_num__car) - 2;
+    return box;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da290, MungeBoxObject, CreateBoxCollisionShapeWithMass_original)
