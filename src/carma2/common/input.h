@@ -16,6 +16,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gLetter_x_coords, 15);
 C2_HOOK_VARIABLE_DECLARE(int, gVisible_length);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gLetter_y_coords, 15);
 C2_HOOK_VARIABLE_DECLARE(int, gThe_length);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_poll_keys);
 
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 
