@@ -1020,3 +1020,13 @@ int C2_HOOK_FASTCALL CBMoveCompleted(undefined4* pArg1) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cbf20, CBMoveCompleted, CBMoveCompleted_original)
+
+void (C2_HOOK_FASTCALL * CBFillInObject_original)(undefined4* pArg1, undefined4 pArg2);
+void C2_HOOK_FASTCALL CBFillInObject(undefined4* pArg1, undefined4 pArg2) {
+#if defined(C2_HOOKS_ENABLED)
+    CBFillInObject_original(pArg1, pArg2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ccab0, CBFillInObject, CBFillInObject_original)
