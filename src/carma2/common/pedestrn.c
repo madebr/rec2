@@ -1010,3 +1010,13 @@ void C2_HOOK_FASTCALL CBMovedByPhysics(undefined4* pArg1, undefined4* pArg2, und
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d2930, CBMovedByPhysics, CBMovedByPhysics_original)
+
+int (C2_HOOK_FASTCALL * CBMoveCompleted_original)(undefined4* pArg1);
+int C2_HOOK_FASTCALL CBMoveCompleted(undefined4* pArg1) {
+#if defined(C2_HOOKS_ENABLED)
+    return CBMoveCompleted_original(pArg1);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cbf20, CBMoveCompleted, CBMoveCompleted_original)
