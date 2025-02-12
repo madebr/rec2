@@ -2649,8 +2649,19 @@ typedef struct {
 } tNon_car_cuboid_activations;
 
 typedef struct {
+    tS16 field_0x0;
+    tS16 field_0x2;
+    undefined4 field_0x4;
+    char field_0x8[0x20];
+    undefined4 field_0x28;
+    br_bounds3 bounds;
+    undefined4 field_0x44;
+    float field_0x48;
+} tSmash_side_effect;
+
+typedef struct {
     int count_side_effects;
-    struct tShrapnel_side_effect* side_effects;
+    tSmash_side_effect* side_effects;
 } tShrapnel_side_effects;
 
 typedef struct {
