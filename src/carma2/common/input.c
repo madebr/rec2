@@ -272,7 +272,32 @@ int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
 #if defined(C2_HOOKS_ENABLED)
     return PDAnyKeyDown_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    CheckKeysForMouldiness();
+
+    C2_HOOK_BUG_ON(142 < REC2_ASIZE(C2V(gKey_array)));
+
+    CheckKeysForMouldiness();
+    for (i = 142; i >= 0; --i) {
+        if (C2V(gKey_array)[i] && i != 4) {
+            if (!C2V(gEdge_trigger_mode)) {
+                return i;
+            }
+            switch (PDKeyDown2(i, 0)) {
+                case tKey_down_no:
+                case tKey_down_still:
+                    return -1;
+                case tKey_down_yes:
+                case tKey_down_repeat:
+                    return i;
+            }
+        }
+    }
+    if (C2V(gEdge_trigger_mode)) {
+        PDKeyDown2(0, 1);
+    }
+    return -1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482a00, PDAnyKeyDown, PDAnyKeyDown_original)
