@@ -83,4 +83,6 @@ void C2_HOOK_FASTCALL CBFillInObject(undefined4* pArg1, undefined4 pArg2);
 
 void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF);
 
+void C2_HOOK_FASTCALL CBDisposeForm(undefined4* pArg1);
+
 #endif //REC2_PEDESTRN_H
