@@ -990,3 +990,13 @@ undefined4 C2_HOOK_FASTCALL CBPassiveCollision(undefined4* pArg1, undefined4 pAr
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cdc00, CBPassiveCollision, CBPassiveCollision_original)
+
+int (C2_HOOK_FASTCALL * CBActiveHalted_original)(undefined4* pArg1, undefined4* pArg2);
+int C2_HOOK_FASTCALL CBActiveHalted(undefined4* pArg1, undefined4* pArg2) {
+#if defined(C2_HOOKS_ENABLED)
+    return CBActiveHalted_original(pArg1, pArg2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d1020, CBActiveHalted, CBActiveHalted_original)
