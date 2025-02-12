@@ -1000,3 +1000,13 @@ int C2_HOOK_FASTCALL CBActiveHalted(undefined4* pArg1, undefined4* pArg2) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d1020, CBActiveHalted, CBActiveHalted_original)
+
+void (C2_HOOK_FASTCALL * CBMovedByPhysics_original)(undefined4* pArg1, undefined4* pArg2, undefined4 pArg3);
+void C2_HOOK_FASTCALL CBMovedByPhysics(undefined4* pArg1, undefined4* pArg2, undefined4 pArg3) {
+#if defined(C2_HOOKS_ENABLED)
+    CBMovedByPhysics_original(pArg1, pArg2, pArg3);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d2930, CBMovedByPhysics, CBMovedByPhysics_original)
