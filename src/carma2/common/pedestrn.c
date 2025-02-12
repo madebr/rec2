@@ -1030,3 +1030,13 @@ void C2_HOOK_FASTCALL CBFillInObject(undefined4* pArg1, undefined4 pArg2) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ccab0, CBFillInObject, CBFillInObject_original)
+
+void (C2_HOOK_FASTCALL * CBLoadForm_original)(tPed_form* pPed_form, FILE* pF);
+void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF) {
+#if defined(C2_HOOKS_ENABLED)
+    CBLoadForm_original(pPed_form, pF);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cc900, CBLoadForm, CBLoadForm_original)
