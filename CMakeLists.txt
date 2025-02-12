@@ -37,6 +37,7 @@ endif()
 
 add_subdirectory(external/dummyqt)
 add_subdirectory(external/iforce2)
+add_subdirectory(external/smackw32)
 
 if(MSVC AND REC2_VENDORED)
     add_subdirectory(external/dxsdk EXCLUDE_FROM_ALL)
