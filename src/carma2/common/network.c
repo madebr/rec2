@@ -2,7 +2,9 @@
 
 #include "controls.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "loading.h"
+#include "netgame.h"
 #include "newgame.h"
 #include "platform.h"
 #include "world.h"
@@ -34,9 +36,21 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004a4ac0, BroadcastStatus, BroadcastStatus_original)
 void (C2_HOOK_FASTCALL * NetPlayerStatusChanged_original)(tPlayer_status pNew_status);
 void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status) {
 #if defined(C2_HOOKS_ENABLED)
-NetPlayerStatusChanged_original(pNew_status);
+    NetPlayerStatusChanged_original(pNew_status);
 #else
-    NOT_IMPLEMENTED();
+    if (C2V(gNet_mode) != eNet_mode_none && C2V(gNet_players)[C2V(gThis_net_player_index)].player_status != pNew_status) {
+        C2V(gNet_players)[C2V(gThis_net_player_index)].player_status = pNew_status;
+        BroadcastStatus();
+        if (C2V(gProgram_state).current_car.disabled) {
+            if (pNew_status >= 6 && pNew_status != ePlayer_status_recovering) {
+                EnableCar(&C2V(gProgram_state).current_car);
+            }
+        } else {
+            if (pNew_status < 6) {
+                DisableCar(&C2V(gProgram_state).current_car);
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a57e0, NetPlayerStatusChanged, NetPlayerStatusChanged_original)
