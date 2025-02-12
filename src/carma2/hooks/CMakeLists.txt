@@ -28,7 +28,6 @@ else()
         c2_sys/c2_stat.c
         c2_sys/c2_stat.h
     )
-    add_subdirectory(smackw32)
     target_include_directories(c2_hooks
         PRIVATE
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
@@ -37,7 +36,7 @@ else()
     target_link_libraries(c2_hooks
         PUBLIC
             hooks_interface
-            smackw
+            Smackw32::Smackw32
     )
 endif()
 
