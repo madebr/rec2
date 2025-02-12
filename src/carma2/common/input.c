@@ -191,6 +191,21 @@ tU32* C2_HOOK_FASTCALL KevKeyService(void) {
 }
 C2_HOOK_FUNCTION(0x00482f10, KevKeyService)
 
+void C2_HOOK_FASTCALL ResetPollKeys(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gKey_array)) != 151);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gJoy_array)) != 8);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gKey_array)); i++) {
+        C2V(gKey_array)[i] = 0;
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gJoy_array)); i++) {
+        C2V(gJoy_array)[i] = -1;
+    }
+}
+C2_HOOK_FUNCTION(0x004821a0, ResetPollKeys)
+
 void C2_HOOK_FASTCALL CyclePollKeys(void) {
     int i;
 
