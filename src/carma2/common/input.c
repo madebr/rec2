@@ -40,11 +40,14 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0045c0b0, LoadJoystickPreferences, LoadJoystickPrefe
 
 int (C2_HOOK_FASTCALL * AnyKeyDown_original)(void);
 int C2_HOOK_FASTCALL AnyKeyDown(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     int res = AnyKeyDown_original();
     return res;
 #else
-    NOT_IMPLEMENTED();
+    int the_key;
+
+    the_key = PDAnyKeyDown();
+    return (the_key != -1 && the_key != 4) || EitherMouseButtonDown();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00482d70, AnyKeyDown, AnyKeyDown_original)
