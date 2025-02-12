@@ -13,6 +13,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gPed_nearness);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_killed_peds);
 C2_HOOK_VARIABLE_DECLARE(int, gTotal_count_smash_peds);
 
+void C2_HOOK_FASTCALL ClearOutMorphs(void);
+
 void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable);
 
 void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, float pY, float pZ);
