@@ -26,6 +26,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gLetter_x_coords, 15, 0x0068be90);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gVisible_length, 0x0068bed0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gLetter_y_coords, 15, 0x0068be48);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gThe_length, 0x0068be84);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_poll_keys, 0x0068c1c8);
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
@@ -223,10 +224,14 @@ C2_HOOK_FUNCTION(0x00482160, CyclePollKeys)
 
 void (C2_HOOK_FASTCALL * CheckKeysForMouldiness_original)(void);
 void C2_HOOK_FASTCALL CheckKeysForMouldiness(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CheckKeysForMouldiness_original();
 #else
-    NOT_IMPLEMENTED();
+    if (PDGetTotalTime() - C2V(gLast_poll_keys) > 500) {
+        ResetPollKeys();
+        CyclePollKeys();
+        PollKeys();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004821c0, CheckKeysForMouldiness, CheckKeysForMouldiness_original)
