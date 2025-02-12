@@ -14,6 +14,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gNet_storage_space_initialized);
 C2_HOOK_VARIABLE_DECLARE(int, gScore_winner);
 C2_HOOK_VARIABLE_DECLARE(int, gReceived_game_scores);
 
+void C2_HOOK_FASTCALL BroadcastStatus(void);
+
 void C2_HOOK_FASTCALL InitNetHeadups(void);
 
 void C2_HOOK_FASTCALL DisposeNetHeadups(void);
