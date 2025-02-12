@@ -103,14 +103,60 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count, 0x007447d4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_nearness, 0x00694490);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTotal_count_smash_peds, 0x0074480c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_killed_peds, 0x007447cc);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPedForms_vtable*, gPed_table, 0x0067697c, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tPed_form*, gPed_forms, 20, 0x00676928, { 0 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_peep*, gPed_personalities, 50, 0x00677260);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tPed_move*, gPed_moves, 250, 0x00676980, { 0 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_remap*, gPed_remaps, 10, 0x00677238);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_morph, gPed_morphs, 20, 0x00677730);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gPed_sin_table, 256, 0x00677328);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(float, gPed_cos_table, 256, 0x00676e30);
+C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gDAT_00677728, 0x00677728);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_00677230, 0x00677230);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067772c, 0x0067772c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPed_overall_movement_disabled, 0x00676978, 0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_retain_root_mode, 0x00677234);
+
+void C2_HOOK_FASTCALL ClearOutMorphs(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPed_morphs)); i++) {
+        C2V(gPed_morphs)[i].field_0x4 = 0;
+    }
+}
 
 void (C2_HOOK_FASTCALL * InitPedsForm_original)(tPedForms_vtable* pTable);
 void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
 
     InitPedsForm_original(pTable);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPed_forms)) != 20);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPed_personalities)) != 50);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPed_moves)) != 250);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPed_remaps)) != 10);
+
+    C2V(gPed_table) = pTable;
+    c2_memset(C2V(gPed_forms), 0, sizeof(C2V(gPed_forms)));
+    c2_memset(C2V(gPed_personalities), 0, sizeof(C2V(gPed_personalities)));
+    c2_memset(C2V(gPed_moves), 0, sizeof(C2V(gPed_moves)));
+    c2_memset(C2V(gPed_remaps), 0, sizeof(C2V(gPed_remaps)));
+
+    ClearOutMorphs();
+
+    for (i = 0; i < 256; i++) {
+        float a = (i * 256) * 2 * REC2_PI_F / 256.f / 256.f;
+        C2V(gPed_sin_table)[i] = sinf(a);
+        C2V(gPed_cos_table)[i] = cosf(a);
+    }
+
+    C2V(gDAT_00677728) = 0;
+    C2V(gFLOAT_00677230) = 1.f;
+    C2V(gINT_0067772c) = 0;
+    C2V(gPed_overall_movement_disabled) = 0;
+    C2V(gPed_retain_root_mode) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00403ed0, InitBoner, InitPedsForm_original)
