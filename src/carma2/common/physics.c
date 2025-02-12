@@ -1143,7 +1143,6 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefine
     NOT_IMPLEMENTED();
 #endif
 }
-
 C2_HOOK_FUNCTION_ORIGINAL(0x004da290, MungeBoxObject, CreateBoxCollisionShapeWithMass_original)
 
 tPhysics_joint* (C2_HOOK_FASTCALL * AllocatePhysicsJoint_original)(int pCount_limits, int pType);
