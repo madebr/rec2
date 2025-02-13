@@ -21,13 +21,15 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074a718);
 C2_HOOK_VARIABLE_DECLARE(tU16, gGuarantee_number);
 C2_HOOK_VARIABLE_DECLARE(int, gNext_guarantee);
 C2_HOOK_VARIABLE_DECLARE(int, gDont_allow_joiners);
-C2_HOOK_VARIABLE_DECLARE(void*, gMessage_to_free);
+C2_HOOK_VARIABLE_DECLARE(tNet_message_memory*, gMessage_to_free);
 C2_HOOK_VARIABLE_DECLARE(int, gJoin_list_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gBastard_has_answered);
 C2_HOOK_VARIABLE_DECLARE(int, gTime_for_next_one);
 C2_HOOK_VARIABLE_DECLARE(int, gJoin_poll_index);
 C2_HOOK_VARIABLE_DECLARE(tNet_game_details*, gCurrent_join_poll_game);
 C2_HOOK_VARIABLE_DECLARE(tAddToJoinListProc*, gAdd_proc);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_status_broadcast);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_flush_message);
 
 void C2_HOOK_FASTCALL BroadcastStatus(void);
 
@@ -54,6 +56,8 @@ void C2_HOOK_FASTCALL CheckForPendingStartRace(void);
 void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
 
 void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
+
+void C2_HOOK_FASTCALL NetFreeExcessMemory(void);
 
 void C2_HOOK_FASTCALL NetService(int pIn_race);
 
