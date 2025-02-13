@@ -30,13 +30,15 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gUINT_0074a718, 0x0074a718);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU16, gGuarantee_number, 0x00659d30, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNext_guarantee, 0x0068d958);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDont_allow_joiners, 0x0068d960);
-C2_HOOK_VARIABLE_IMPLEMENT(void*, gMessage_to_free, 0x00690c48);
+C2_HOOK_VARIABLE_IMPLEMENT(tNet_message_memory*, gMessage_to_free, 0x00690c48);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoin_list_mode, 0x00690c54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gBastard_has_answered, 0x0068d978);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTime_for_next_one, 0x00690238);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoin_poll_index, 0x0068d95c);
 C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_details*, gCurrent_join_poll_game, 0x00690c34);
 C2_HOOK_VARIABLE_IMPLEMENT(tAddToJoinListProc*, gAdd_proc, 0x00690230);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_status_broadcast, 0x00690c80);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_flush_message, 0x00690c4c);
 
 #define MIN_MESSAGES_CAPACITY 200
 #define MID_MESSAGES_CAPACITY 200
@@ -209,12 +211,55 @@ void C2_HOOK_FASTCALL ResendGuaranteedMessages(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a6080, ResendGuaranteedMessages, ResendGuaranteedMessages_original);
 
+void C2_HOOK_FASTCALL NetFreeExcessMemory(void) {
+
+    while (C2V(gMessage_to_free) != NULL && C2V(gMessage_to_free)->message.contents.raw.header.type == eNetMsg_none) {
+        tNet_message_memory* next = C2V(gMessage_to_free)->next;
+        BrMemFree(C2V(gMessage_to_free));
+        C2V(gMessage_to_free) = next;
+    }
+}
+
 void (C2_HOOK_FASTCALL * NetService_original)(int pIn_race);
 void C2_HOOK_FASTCALL NetService(int pIn_race) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     NetService_original(pIn_race);
 #else
-    NOT_IMPLEMENTED();
+    tU32 time;
+
+    if (C2V(gIn_net_service) || C2V(gNet_service_disable)) {
+        return;
+    }
+    time = PDGetTotalTime();
+    C2V(gIn_net_service) = 1;
+    if (C2V(gJoin_list_mode)) {
+        NetFreeExcessMemory();
+        DoNextJoinPoll();
+        NetReceiveAndProcessMessages();
+    } else {
+        if (C2V(gNet_mode) != eNet_mode_none) {
+            NetFreeExcessMemory();
+            if (!pIn_race) {
+                NetReceiveAndProcessMessages();
+            }
+            if (time - C2V(gLast_status_broadcast) > 1000) {
+                C2V(gLast_status_broadcast) = PDGetTotalTime();
+                BroadcastStatus();
+            }
+            CheckForDisappearees();
+            if (C2V(gNet_mode) == eNet_mode_host) {
+                CheckForPendingStartRace();
+                CheckForNeedyEnvironmentRecipients();
+            }
+        }
+    }
+    if (C2V(gJoin_list_mode) || C2V(gNet_mode) != eNet_mode_none) {
+        ResendGuaranteedMessages();
+        if (time > C2V(gLast_flush_message) + 200u || !C2V(gProgram_state).racing) {
+            NetSendMessageStacks();
+        }
+    }
+    C2V(gIn_net_service) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5280, NetService, NetService_original)
