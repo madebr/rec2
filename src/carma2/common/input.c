@@ -458,7 +458,7 @@ C2_HOOK_FUNCTION(0x00483ce0, EndRollingLetters)
 void (C2_HOOK_FASTCALL * SetJoystickArrays_original)(int* pKeys, int pMark);
 void C2_HOOK_FASTCALL SetJoystickArrays(int* pKeys, int pMark) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetJoystickArrays_original(pKeys, pMark);
 #else
     int i;
