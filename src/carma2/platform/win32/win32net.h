@@ -15,4 +15,6 @@ void C2_HOOK_FASTCALL NetNowIPXLocalTarget2String(char* pString, struct sockaddr
 
 int C2_HOOK_FASTCALL BroadcastMessage(void);
 
+int C2_HOOK_FASTCALL PDNetGetHeaderSize(void);
+
 #endif // C2_WIN32_NET_H
