@@ -251,4 +251,6 @@ void C2_HOOK_FASTCALL GotPowerup8(void);
 
 void C2_HOOK_FASTCALL GotPowerup9(void);
 
+void C2_HOOK_FASTCALL InitAbuseomatic(void);
+
 #endif //REC2_CONTROLS_H
