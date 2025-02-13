@@ -1203,3 +1203,12 @@ tU32 C2_HOOK_FASTCALL PDGetJoy1Button4(void) {
     return C2V(gJoy1_info).dwButtons & (1 << 3);
 }
 C2_HOOK_FUNCTION(0x0051d320, PDGetJoy1Button4)
+
+int C2_HOOK_FASTCALL PDGetJoy1X(void) {
+
+    if (C2V(gJoystick_index) == -1) {
+        return -1;
+    }
+    return GetDirectInputJoy1X();
+}
+C2_HOOK_FUNCTION(0x0051d230, PDGetJoy1X)
