@@ -45,4 +45,6 @@ void C2_HOOK_FASTCALL ScanCarsPositions(tCar_spec* pCar, br_vector3* pSource_pos
 
 void C2_HOOK_FASTCALL PipeSingleOilSpill(int pIndex, br_matrix34* pMat, br_scalar pFull_size, br_scalar pGrow_rate, tU32 pSpill_time, tU32 pStop_time, tCar_spec* pCar, br_vector3* pOriginal_pos, br_pixelmap* pPixelmap);
 
+void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, int pArg3, int pArg4, int pPitch, br_vector3* pPosition);
+
 #endif //REC2_PIPING_H
