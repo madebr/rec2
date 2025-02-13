@@ -2409,3 +2409,40 @@ void C2_HOOK_FASTCALL GotPowerup9(void) {
     GotPowerupN(9);
 }
 C2_HOOK_FUNCTION(0x004dc110, GotPowerup9)
+
+void C2_HOOK_FASTCALL InitAbuseomatic(void) {
+    char path[256];
+    char s[256];
+    FILE* f;
+    int i;
+    int len;
+
+    C2V(gString)[20] = '\0';
+    PDBuildAppPath(path);
+    c2_strcat(path, "ABUSE.TXT");
+    for (i = 0; i < REC2_ASIZE(C2V(gAbuse_text)); i++) {
+        C2V(gAbuse_text)[i] = NULL;
+    }
+    f = PFfopen(path, "rt");
+    if (f == NULL) {
+        return;
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gAbuse_text)); i++) {
+        if (PFfgets(s, REC2_ASIZE(s) - 1, f) == NULL) {
+            break;
+        }
+        len = c2_strlen(s);
+        if (len > 63) {
+            s[63] = '\0';
+        }
+        len = c2_strlen(s);
+        while (len != 0 && s[len - 1] < ' ') {
+            s[len - 1] = '\0';
+            len--;
+        }
+        C2V(gAbuse_text)[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_abuse_text);
+        c2_strcpy(C2V(gAbuse_text)[i], s);
+    }
+    PFfclose(f);
+}
+C2_HOOK_FUNCTION(0x00444d70, InitAbuseomatic)
