@@ -65,6 +65,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(JOYINFOEX, gJoy2_info, 0x006ac820);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00595f98, 0x00595f98, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00595f9c, 0x00595f9c, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gUINT_006ad094, 0x006ad094);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006ad0b8, 0x006ad0b8);
 
 static int InitDirectInput(void) {
     int i;
@@ -1270,3 +1271,24 @@ tU32 C2_HOOK_FASTCALL PDGetJoy2Button4(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0051d3d0, PDGetJoy2Button4)
+
+int C2_HOOK_FASTCALL PDGetJoy2X(void) {
+
+    if (C2V(gJoy1_valid) && (C2V(gINT_006ad0b8) & 0x2)) {
+        return C2V(gJoy1_info).dwRpos;
+    }
+    if (C2V(gJoy2_valid)) {
+        return C2V(gJoy2_info).dwXpos;
+    }
+    return -1;
+}
+C2_HOOK_FUNCTION(0x0051d270, PDGetJoy2X)
+
+int C2_HOOK_FASTCALL PDGetJoy2Y(void) {
+
+    if (!C2V(gJoy2_valid)) {
+        return -1;
+    }
+    return C2V(gJoy2_info).dwYpos;
+}
+C2_HOOK_FUNCTION(0x0051d2a0, PDGetJoy2Y)
