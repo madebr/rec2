@@ -63,10 +63,14 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00482d70, AnyKeyDown, AnyKeyDown_original)
 
 void (C2_HOOK_FASTCALL * WaitForNoKeys_original)(void);
 void C2_HOOK_FASTCALL WaitForNoKeys(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     WaitForNoKeys_original();
 #else
-    NOT_IMPLEMENTED();
+
+    while (AnyKeyDown() || EitherMouseButtonDown()) {
+        CheckQuit();
+    }
+    CheckQuit();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004833b0, WaitForNoKeys, WaitForNoKeys_original)
