@@ -106,10 +106,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004924a0, GameMain, GameMain_original)
 void (C2_HOOK_FASTCALL * ServiceGame_original)(void);
 void C2_HOOK_FASTCALL ServiceGame(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ServiceGame_original();
 #else
-    NOT_IMPLEMENTED();
+    ServiceTheGame(0);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00492180, ServiceGame, ServiceGame_original)
