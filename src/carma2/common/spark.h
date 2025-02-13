@@ -25,6 +25,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gNum_splash_types);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_material*, gSplash_material, 20);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSplash, gSplash, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gSpark_flags);
+C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIt_shade_table);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -53,5 +54,7 @@ void C2_HOOK_FASTCALL DisposeKevStuff(void);
 void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime);
+
+void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
 #endif //REC2_SPARK_H
