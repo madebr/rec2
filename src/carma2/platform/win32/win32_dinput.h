@@ -42,4 +42,6 @@ int C2_HOOK_FASTCALL GetDirectInputJoy1X(void);
 
 int C2_HOOK_FASTCALL GetDirectInputJoy1Y(void);
 
+tU32 C2_HOOK_FASTCALL PDGetJoy1Button1(void);
+
 #endif // C2_WIN32_INPUT_H
