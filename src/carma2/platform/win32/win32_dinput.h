@@ -9,6 +9,7 @@
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gASCII_table, 151);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gASCII_shift_table, 151);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gScan_code, 256);
+C2_HOOK_VARIABLE_DECLARE(int, gJoystick_deadzone);
 
 void C2_HOOK_FASTCALL KeyBegin(void);
 
