@@ -125,6 +125,8 @@ tU32 C2_HOOK_FASTCALL PDGetJoy2Button3(void);
 
 tU32 C2_HOOK_FASTCALL PDGetJoy2Button4(void);
 
+int C2_HOOK_FASTCALL PDGetJoy2X(void);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
