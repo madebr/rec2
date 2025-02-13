@@ -50,4 +50,6 @@ tU32 C2_HOOK_FASTCALL PDGetJoy1Button3(void);
 
 tU32 C2_HOOK_FASTCALL PDGetJoy1Button4(void);
 
+int C2_HOOK_FASTCALL PDGetJoy1X(void);
+
 #endif // C2_WIN32_INPUT_H
