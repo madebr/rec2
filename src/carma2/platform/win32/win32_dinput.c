@@ -1258,3 +1258,15 @@ tU32 C2_HOOK_FASTCALL PDGetJoy2Button3(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0051d3a0, PDGetJoy2Button3)
+
+tU32 C2_HOOK_FASTCALL PDGetJoy2Button4(void) {
+
+    if (C2V(gJoy1_valid) && C2V(gUINT_006ad094) > 7) {
+        return C2V(gJoy1_info).dwButtons & (1 << 7);
+    }
+    if (C2V(gJoy2_valid)) {
+        return C2V(gJoy2_info).dwButtons & (1 << 3);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0051d3d0, PDGetJoy2Button4)
