@@ -154,6 +154,17 @@ void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049d430, NetSendHeadupToAllPlayers, NetSendHeadupToAllPlayers_original)
 
+void (C2_HOOK_FASTCALL * DoNextJoinPoll_original)(void);
+void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoNextJoinPoll_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049ec70, DoNextJoinPoll, DoNextJoinPoll_original)
+
 void (C2_HOOK_FASTCALL * NetService_original)(int pIn_race);
 void C2_HOOK_FASTCALL NetService(int pIn_race) {
 #if defined(C2_HOOKS_ENABLED)
