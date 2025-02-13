@@ -1212,3 +1212,12 @@ int C2_HOOK_FASTCALL PDGetJoy1X(void) {
     return GetDirectInputJoy1X();
 }
 C2_HOOK_FUNCTION(0x0051d230, PDGetJoy1X)
+
+int C2_HOOK_FASTCALL PDGetJoy1Y(void) {
+
+    if (C2V(gJoystick_index) == -1) {
+        return -1;
+    }
+    return GetDirectInputJoy1Y();
+}
+C2_HOOK_FUNCTION(0x0051d250, PDGetJoy1Y)
