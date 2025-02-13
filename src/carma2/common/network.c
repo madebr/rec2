@@ -7,6 +7,7 @@
 #include "netgame.h"
 #include "newgame.h"
 #include "platform.h"
+#include "spark.h"
 #include "world.h"
 
 #include "brender/brender.h"
@@ -21,6 +22,19 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_service_disable, 0x00690c38);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_storage_space_initialized, 0x00688b1c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gScore_winner, 0x00659c2c, 20);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gReceived_game_scores, 0x0074a694);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gMessage_header_size, 0x0068d98c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gIn_net_service, 0x00690c3c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gOnly_receive_guarantee_replies, 0x00690c44);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gUINT_0074a690, 0x0074a690);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gUINT_0074a718, 0x0074a718);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU16, gGuarantee_number, 0x00659d30, 1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNext_guarantee, 0x0068d958);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDont_allow_joiners, 0x0068d960);
+C2_HOOK_VARIABLE_IMPLEMENT(void*, gMessage_to_free, 0x00690c48);
+
+#define MIN_MESSAGES_CAPACITY 200
+#define MID_MESSAGES_CAPACITY 200
+#define MAX_MESSAGES_CAPACITY 200
 
 void (C2_HOOK_FASTCALL * BroadcastStatus_original)(void);
 void C2_HOOK_FASTCALL BroadcastStatus(void) {
@@ -214,10 +228,46 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0049fcf0, NetSendMessageStacks, NetSendMessageStacks
 int (C2_HOOK_FASTCALL * NetInitialise_original)(void);
 int C2_HOOK_FASTCALL NetInitialise(void) {
 
-#if defined (C2_HOOKS_ENABLED)
+#if 0//defined (C2_HOOKS_ENABLED)
     return NetInitialise_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tMin_message) != 0x5c);
+    C2_HOOK_BUG_ON(sizeof(tMid_message) != 0x84);
+    C2_HOOK_BUG_ON(sizeof(tMax_message) != 0x204);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents.raw.header.type, 0x19);
+
+    InitAbuseomatic();
+    C2V(gNet_service_disable) = 0;
+    C2V(gIn_net_service) = 0;
+    C2V(gMessage_header_size) = PDNetGetHeaderSize();
+    C2V(gOnly_receive_guarantee_replies) = 0;
+    C2V(gMin_messages) = BrMemAllocate(MIN_MESSAGES_CAPACITY * (C2V(gMessage_header_size) + sizeof(tMin_message)), kMem_net_min_messages);
+    C2V(gMid_messages) = BrMemAllocate(MID_MESSAGES_CAPACITY * (C2V(gMessage_header_size) + sizeof(tMid_message)), kMem_net_mid_messages);
+    C2V(gMax_messages) = BrMemAllocate(MAX_MESSAGES_CAPACITY * (C2V(gMessage_header_size) + sizeof(tMax_message)), kMem_net_max_messages);
+
+    for (i = 0; i < MIN_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)&C2V(gMin_messages)[i])->contents.raw.header.type = eNetMsg_none;
+    }
+    for (i = 0; i < MID_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)&C2V(gMid_messages)[i])->contents.raw.header.type = eNetMsg_none;
+    }
+    for (i = 0; i < MAX_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)&C2V(gMax_messages)[i])->contents.raw.header.type = eNetMsg_none;
+    }
+    C2V(gNet_initialised) = PDNetInitialise() == 0;
+    if (C2V(gNet_initialised)) {
+        InitNetHeadups();
+    }
+    GenerateItFoxShadeTable();
+    C2V(gDont_allow_joiners) = 0;
+    C2V(gUINT_0074a690) = PDGetTotalTime();
+    C2V(gUINT_0074a718) = PDGetTotalTime();
+    C2V(gNext_guarantee) = 0;
+    C2V(gMessage_to_free) = NULL;
+    C2V(gGuarantee_number) = ((tU16)PDGetTotalTime() & 0x3ff) + 1;
+    return !C2V(gNet_initialised);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049d210, NetInitialise, NetInitialise_original)
