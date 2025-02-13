@@ -27,6 +27,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_splash_types, 0x006aa5a4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gSplash_material, 20, 0x006a9130);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSplash, gSplash, 32, 0x006a82b8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSpark_flags, 0x006aa57c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIt_shade_table, 0x006aa5ac);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
@@ -336,3 +337,11 @@ void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f9790, MungeShrapnel, MungeShrapnel_original)
+
+void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
+
+    if (C2V(gIt_shade_table) == NULL) {
+        C2V(gIt_shade_table) = GenerateDarkenedShadeTable(16, C2V(gRender_palette), 0, 255, 254, .25f, .5f, .75f, .6f);
+    }
+}
+C2_HOOK_FUNCTION(0x004fb9c0, GenerateItFoxShadeTable)
