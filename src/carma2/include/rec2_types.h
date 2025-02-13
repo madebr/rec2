@@ -4485,6 +4485,7 @@ enum {
 };
 
 enum {
+    eSoundId_pratcam_whirr_noise = 1000,
     eSoundId_warning_buzzer_noise = 1001,
     eSoundId_LeftButton = 3000,
     eSoundId_Done = 3004,
