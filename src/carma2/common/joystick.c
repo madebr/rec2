@@ -16,6 +16,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gOriginal_joystick_y, 0x00688708);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gOriginal_joystick_fbb, 0x0068870c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gOriginal_joystick_dpad, 0x00688710);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gOrig_joystick_index, 0x00688700);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gJoystick_x_steering, 0x00595f90, 1.f);
 
 
 void C2_HOOK_FASTCALL SetupFFBValues(void) {
