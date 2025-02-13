@@ -36,4 +36,6 @@ tU32 C2_HOOK_FASTCALL PDGetJoystickButtonStates(void);
 
 void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark);
 
+void C2_HOOK_FASTCALL PDReadJoysticks(void);
+
 #endif // C2_WIN32_INPUT_H
