@@ -13,6 +13,15 @@ C2_HOOK_VARIABLE_DECLARE(int, gNet_service_disable);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_storage_space_initialized);
 C2_HOOK_VARIABLE_DECLARE(int, gScore_winner);
 C2_HOOK_VARIABLE_DECLARE(int, gReceived_game_scores);
+C2_HOOK_VARIABLE_DECLARE(int, gMessage_header_size);
+C2_HOOK_VARIABLE_DECLARE(int, gIn_net_service);
+C2_HOOK_VARIABLE_DECLARE(int, gOnly_receive_guarantee_replies);
+C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074a690);
+C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074a718);
+C2_HOOK_VARIABLE_DECLARE(tU16, gGuarantee_number);
+C2_HOOK_VARIABLE_DECLARE(int, gNext_guarantee);
+C2_HOOK_VARIABLE_DECLARE(int, gDont_allow_joiners);
+C2_HOOK_VARIABLE_DECLARE(void*, gMessage_to_free);
 
 void C2_HOOK_FASTCALL BroadcastStatus(void);
 
