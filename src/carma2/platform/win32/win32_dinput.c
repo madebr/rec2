@@ -62,6 +62,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gJoy1_valid, 0x006ad4b8);
 C2_HOOK_VARIABLE_IMPLEMENT(JOYINFOEX, gJoy1_info, 0x006ac7e8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoy2_valid, 0x006ad4bc);
 C2_HOOK_VARIABLE_IMPLEMENT(JOYINFOEX, gJoy2_info, 0x006ac820);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00595f98, 0x00595f98, 1);
 
 static int InitDirectInput(void) {
     int i;
@@ -1065,3 +1066,53 @@ void C2_HOOK_FASTCALL PDReadJoysticks(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0051d1d0, PDReadJoysticks)
+
+int C2_HOOK_FASTCALL GetDirectInputJoy1X(void) {
+    IDirectInputDevice2A* device;
+    HRESULT res;
+    DIJOYSTATE joy_state;
+    int x;
+
+    if (C2V(gJoystick_index) == -1) {
+        return -1;
+    }
+    device = C2V(gDirectInputJoystickDevices)[C2V(gJoystick_index)];
+    if (device == NULL) {
+        return -1;
+    }
+    if (!C2V(gINT_00595f98)) {
+        return -1;
+    }
+    res = IDirectInputDevice2_Poll(device);
+    if (res != DI_OK) {
+        if (res == DIERR_INPUTLOST || res == DIERR_NOTACQUIRED) {
+            if (AcquireDInputJoystickDevice(C2V(gJoystick_index)) == 0) {
+                dr_dprintf("couldn't reacquire joystick %d ", C2V(gJoystick_index));
+            }
+        } else {
+            dr_dprintf("Can't poll, unknown error\n");
+        }
+        return -1;
+    }
+
+    res = IDirectInputDevice_GetDeviceState(device, sizeof(joy_state), &joy_state);
+    if (res != DI_OK) {
+        if (res == DIERR_INPUTLOST) {
+            if (AcquireDInputJoystickDevice(C2V(gJoystick_index)) == 0) {
+                dr_dprintf("couldn't reacquire joystick %d ", C2V(gJoystick_index));
+            }
+        } else {
+            dr_dprintf("Can't poll, unknown error\n");
+        }
+        return -1;
+    }
+    x = (int)((float)(joy_state.lX - 0x7fff) * C2V(gJoystick_x_steering) + (float)0x7fff);
+    if (x > 0xffff) {
+        x = 0xffff;
+    }
+    if (x < 0) {
+        x = 0;
+    }
+    return x;
+}
+C2_HOOK_FUNCTION(0x00459050, GetDirectInputJoy1X)
