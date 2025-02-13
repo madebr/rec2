@@ -38,4 +38,6 @@ void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark);
 
 void C2_HOOK_FASTCALL PDReadJoysticks(void);
 
+int C2_HOOK_FASTCALL GetDirectInputJoy1X(void);
+
 #endif // C2_WIN32_INPUT_H
