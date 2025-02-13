@@ -58,6 +58,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const GUID*, gJoystick_effect_guids, 13, 0
     &GUID_Inertia,
     &GUID_Friction,
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gJoy1_valid, 0x006ad4b8);
+C2_HOOK_VARIABLE_IMPLEMENT(JOYINFOEX, gJoy1_info, 0x006ac7e8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gJoy2_valid, 0x006ad4bc);
+C2_HOOK_VARIABLE_IMPLEMENT(JOYINFOEX, gJoy2_info, 0x006ac820);
 
 static int InitDirectInput(void) {
     int i;
@@ -1042,3 +1046,22 @@ void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051cef0, PDSetKeyArray, PDSetKeyArray_original)
+
+void C2_HOOK_FASTCALL PDReadJoysticks(void) {
+
+    if (C2V(gJoystick_index) != -1) {
+        C2V(gJoy1_valid) = 1;
+        return;
+    }
+    if (C2V(gJoy1_valid)) {
+        if (joyGetPosEx(0, &C2V(gJoy1_info)) != JOYERR_NOERROR) {
+            C2V(gJoy1_valid) = 0;
+        }
+    }
+    if (C2V(gJoy2_valid)) {
+        if (joyGetPosEx(1, &C2V(gJoy2_info)) != JOYERR_NOERROR) {
+            C2V(gJoy2_valid) = 0;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0051d1d0, PDReadJoysticks)
