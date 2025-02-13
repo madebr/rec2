@@ -4075,6 +4075,18 @@ typedef struct tSave_game {
     tS32 apo_potential[3];
 } tSave_game;
 
+typedef struct tMin_message {
+    tU8 buffer[92];
+} tMin_message;
+
+typedef struct tMid_message {
+    tU8 buffer[132];
+} tMid_message;
+
+typedef struct tMax_message {
+    tU8 buffer[516];
+} tMax_message;
+
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
@@ -4511,5 +4523,10 @@ enum {
 
     eSoundId_Countdown_Start = eSoundId_Countdown_Go,
 };
+
+enum {
+    eNetMsg_none = 0xff,
+};
+
 
 #endif // REC2_TYPES_H
