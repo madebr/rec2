@@ -47,6 +47,8 @@ void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
 
 void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
+void C2_HOOK_FASTCALL CheckForDisappearees(void);
+
 void C2_HOOK_FASTCALL NetService(int pIn_race);
 
 void C2_HOOK_FASTCALL DisableNetService(void);
