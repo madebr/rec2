@@ -31,6 +31,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU16, gGuarantee_number, 0x00659d30, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNext_guarantee, 0x0068d958);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDont_allow_joiners, 0x0068d960);
 C2_HOOK_VARIABLE_IMPLEMENT(void*, gMessage_to_free, 0x00690c48);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gJoin_list_mode, 0x00690c54);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBastard_has_answered, 0x0068d978);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTime_for_next_one, 0x00690238);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gJoin_poll_index, 0x0068d95c);
+C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_details*, gCurrent_join_poll_game, 0x00690c34);
+C2_HOOK_VARIABLE_IMPLEMENT(tAddToJoinListProc*, gAdd_proc, 0x00690230);
 
 #define MIN_MESSAGES_CAPACITY 200
 #define MID_MESSAGES_CAPACITY 200
@@ -321,10 +327,17 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0049e970, NetJoinGame, NetJoinGame_original)
 
 void (C2_HOOK_FASTCALL * NetStartProducingJoinList_original)(tAddToJoinListProc *pAdd_proc);
 void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc *pAdd_proc) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     NetStartProducingJoinList_original(pAdd_proc);
 #else
-    NOT_IMPLEMENTED();
+
+    C2V(gJoin_list_mode) = 1;
+    C2V(gBastard_has_answered) = 0;
+    C2V(gTime_for_next_one) = 1;
+    C2V(gJoin_poll_index) = 0;
+    C2V(gCurrent_join_poll_game) = NULL;
+    C2V(gAdd_proc) = pAdd_proc;
+    PDNetStartProducingJoinList();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049dbd0, NetStartProducingJoinList, NetStartProducingJoinList_original)
