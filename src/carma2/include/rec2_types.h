@@ -4108,6 +4108,11 @@ typedef struct tNet_message {
     tNet_message_chunk contents;
 } tNet_message;
 
+typedef struct tNet_message_memory {
+    struct tNet_message_memory* next;
+    tNet_message message;
+} tNet_message_memory;
+
 enum {
     kMiscString_ShadowNone = 104,
     kMiscString_ShadowUsOnly = 105,
