@@ -25,6 +25,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gJoy1_x);
 C2_HOOK_VARIABLE_DECLARE(int, gJoy1_y);
 C2_HOOK_VARIABLE_DECLARE(int, gJoy2_x);
 C2_HOOK_VARIABLE_DECLARE(int, gJoy2_y);
+C2_HOOK_VARIABLE_DECLARE(int, gLast_key_down);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_key_down_time);
+C2_HOOK_VARIABLE_DECLARE(int, gModifiers_down);
 
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 
@@ -36,7 +39,9 @@ void C2_HOOK_FASTCALL EdgeTriggerModeOn(void);
 
 void C2_HOOK_FASTCALL EdgeTriggerModeOff(void);
 
-int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index, undefined4 pArg2);
+int C2_HOOK_FASTCALL AnyModifiersDown(void);
+
+tKey_down_result C2_HOOK_FASTCALL EdgeTriggeryKey(int pKey_index, int pReset);
 
 int C2_HOOK_FASTCALL EitherMouseButtonDown(void);
 
