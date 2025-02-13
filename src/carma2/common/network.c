@@ -176,6 +176,17 @@ void C2_HOOK_FASTCALL CheckForDisappearees(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a4da0, CheckForDisappearees, CheckForDisappearees_original);
 
+void (C2_HOOK_FASTCALL * CheckForPendingStartRace_original)(void);
+void C2_HOOK_FASTCALL CheckForPendingStartRace(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CheckForPendingStartRace_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a5240, CheckForPendingStartRace, CheckForPendingStartRace_original);
+
 void (C2_HOOK_FASTCALL * NetService_original)(int pIn_race);
 void C2_HOOK_FASTCALL NetService(int pIn_race) {
 #if defined(C2_HOOKS_ENABLED)
