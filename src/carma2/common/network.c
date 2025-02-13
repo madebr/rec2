@@ -187,6 +187,17 @@ void C2_HOOK_FASTCALL CheckForPendingStartRace(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5240, CheckForPendingStartRace, CheckForPendingStartRace_original);
 
+void (C2_HOOK_FASTCALL * CheckForNeedyEnvironmentRecipients_original)(void);
+void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CheckForNeedyEnvironmentRecipients_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049b9a0, CheckForNeedyEnvironmentRecipients, CheckForNeedyEnvironmentRecipients_original);
+
 void (C2_HOOK_FASTCALL * NetService_original)(int pIn_race);
 void C2_HOOK_FASTCALL NetService(int pIn_race) {
 #if defined(C2_HOOKS_ENABLED)
