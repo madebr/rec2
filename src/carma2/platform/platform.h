@@ -105,6 +105,8 @@ void C2_HOOK_FASTCALL PDSetKeysFromJoystick(int *keys);
 
 void C2_HOOK_FASTCALL PDReadJoysticks(void);
 
+tU32 C2_HOOK_FASTCALL PDGetJoy1Button1(void);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);

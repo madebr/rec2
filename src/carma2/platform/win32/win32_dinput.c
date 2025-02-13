@@ -1167,3 +1167,12 @@ int C2_HOOK_FASTCALL GetDirectInputJoy1Y(void) {
     return y;
 }
 C2_HOOK_FUNCTION(0x00459370, GetDirectInputJoy1Y)
+
+tU32 C2_HOOK_FASTCALL PDGetJoy1Button1(void) {
+
+    if (!C2V(gJoy1_valid)) {
+        return 0;
+    }
+    return C2V(gJoy1_info).dwButtons & (1 << 0);
+}
+C2_HOOK_FUNCTION(0x0051d2c0, PDGetJoy1Button1)
