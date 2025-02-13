@@ -35,6 +35,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gJoy1_x, 0x0068be44);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoy1_y, 0x0068c13c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoy2_x, 0x0068be40);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gJoy2_y, 0x0068becc);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_key_down, 0x0065720c, -1000);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_key_down_time, 0x0068c1d0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gModifiers_down, 0x0068bed8);
 
 int (C2_HOOK_FASTCALL * LoadJoystickPreferences_original)(void);
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
@@ -85,15 +88,70 @@ void C2_HOOK_FASTCALL EdgeTriggerModeOff(void) {
 }
 C2_HOOK_FUNCTION(0x00484610, EdgeTriggerModeOff)
 
-int (C2_HOOK_FASTCALL * PDKeyDown2_original)(int pKey_index, undefined4 pArg2);
-int C2_HOOK_FASTCALL PDKeyDown2(int pKey_index, undefined4 pArg2) {
-#if defined(C2_HOOKS_ENABLED)
+int C2_HOOK_FASTCALL AnyModifiersDown(void) {
+    int i;
+
+    for (i = 0; i < 11; i++) {
+        if (C2V(gKey_array)[i] != 0) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+tKey_down_result (C2_HOOK_FASTCALL * EdgeTriggeryKey_original)(int pKey_index, int pReset);
+tKey_down_result C2_HOOK_FASTCALL EdgeTriggeryKey(int pKey_index, int pReset) {
+#if 0//defined(C2_HOOKS_ENABLED)
     return PDKeyDown2_original(pKey_index, pArg2);
 #else
-    NOT_IMPLEMENTED();
+    tU32 now;
+
+    if (pReset) {
+        C2V(gLast_key_down) = -1;
+        C2V(gLast_key_down_time) = 0;
+        return tKey_down_no;
+    }
+    CheckKeysForMouldiness();
+    if (!C2V(gEdge_trigger_mode)) {
+        return C2V(gKey_array)[pKey_index];
+    }
+    if (C2V(gKey_array)[pKey_index] == 0) {
+        if (pKey_index == C2V(gLast_key_down)) {
+            C2V(gLast_key_down_time) = 0;
+            C2V(gLast_key_down) = -1000;
+        }
+        return tKey_down_no;
+    }
+    now = PDGetTotalTime();
+    if (pKey_index == C2V(gLast_key_down)) {
+        if (C2V(gModifiers_down) == AnyModifiersDown()) {
+            if (now - C2V(gLast_key_down_time) < 300) {
+                return tKey_down_still;
+            } else {
+                C2V(gLast_key_down_time) = now;
+                return tKey_down_repeat;
+            }
+        } else {
+            C2V(gLast_key_down_time) = 0;
+            C2V(gLast_key_down) = -C2V(gLast_key_down);
+            return tKey_down_no;
+        }
+    }
+    if (pKey_index == -C2V(gLast_key_down)) {
+        return tKey_down_no;
+    }
+    if (pKey_index < 11) {
+        C2V(gLast_key_down_time) = 0;
+        C2V(gLast_key_down) = -1000;
+        return tKey_down_yes;
+    }
+    C2V(gLast_key_down) = pKey_index;
+    C2V(gLast_key_down_time) = now;
+    C2V(gModifiers_down) = AnyModifiersDown();
+    return tKey_down_yes;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00482590, PDKeyDown2, PDKeyDown2_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00482590, EdgeTriggeryKey, EdgeTriggeryKey_original)
 
 int (C2_HOOK_FASTCALL * EitherMouseButtonDown_original)(void);
 int C2_HOOK_FASTCALL EitherMouseButtonDown(void) {
@@ -127,7 +185,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004824c0, EitherMouseButtonDown, EitherMouseButtonDo
 int C2_HOOK_FASTCALL PDKeyDown(int pKey_index) {
     tKey_down_result result;
 
-    result = PDKeyDown2(pKey_index, 0);
+    result = EdgeTriggeryKey(pKey_index, 0);
     if (!C2V(gEdge_trigger_mode) || pKey_index <= 10) {
         return result != tKey_down_no;
     }
@@ -318,7 +376,7 @@ int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
             if (!C2V(gEdge_trigger_mode)) {
                 return i;
             }
-            switch (PDKeyDown2(i, 0)) {
+            switch (EdgeTriggeryKey(i, 0)) {
                 case tKey_down_no:
                 case tKey_down_still:
                     return -1;
@@ -329,7 +387,7 @@ int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
         }
     }
     if (C2V(gEdge_trigger_mode)) {
-        PDKeyDown2(0, 1);
+        EdgeTriggeryKey(0, 1);
     }
     return -1;
 #endif
