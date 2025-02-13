@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "loading.h"
 #include "opponent.h"
+#include "piping.h"
 #include "utility.h"
 #include "world.h"
 
@@ -187,10 +188,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00456910, StopMusic, StopMusic_original)
 tS3_sound_tag (C2_HOOK_FASTCALL * DRS3StartSound_original)(tS3_outlet* pOutlet, tS3_sound_id pSound);
 tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DRS3StartSound_original(pOutlet, pSound);
 #else
-    NOT_IMPLEMENTED();
+    if (!C2V(gSound_enabled)) {
+        return 0;
+    }
+    if (!(pSound == eSoundId_pratcam_whirr_noise || (pSound >= 3000 && pSound <= 3007) || (pSound >= 5300 && pSound <= 5320))) {
+        PipeSingleSound(pOutlet, pSound, 0, 0, -1, NULL);
+    }
+    return S3StartSound(pOutlet, pSound);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455690, DRS3StartSound, DRS3StartSound_original)
