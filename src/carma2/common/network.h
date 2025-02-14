@@ -31,6 +31,7 @@ C2_HOOK_VARIABLE_DECLARE(tAddToJoinListProc*, gAdd_proc);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_status_broadcast);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_flush_message);
 C2_HOOK_VARIABLE_DECLARE(tU32, gAsk_time);
+C2_HOOK_VARIABLE_DECLARE(tPlayer_ID, gLocal_net_ID);
 
 void C2_HOOK_FASTCALL BroadcastStatus(void);
 
@@ -129,5 +130,7 @@ void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void);
 int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, undefined4 *pArg3);
 
 int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage);
+
+int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id);
 
 #endif // REC2_NETWORK_H
