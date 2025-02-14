@@ -156,6 +156,17 @@ void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049d430, NetSendHeadupToAllPlayers, NetSendHeadupToAllPlayers_original)
 
+tNet_message* (C2_HOOK_FASTCALL * NetBuildMessage_original)(undefined pArg1, undefined4 pArg2);
+tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetBuildMessage_original(pArg1, pArg2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049f650, NetBuildMessage, NetBuildMessage_original)
+
 void (C2_HOOK_FASTCALL * DoNextJoinPoll_original)(void);
 void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
 
