@@ -30,6 +30,7 @@ C2_HOOK_VARIABLE_DECLARE(tNet_game_details*, gCurrent_join_poll_game);
 C2_HOOK_VARIABLE_DECLARE(tAddToJoinListProc*, gAdd_proc);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_status_broadcast);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_flush_message);
+C2_HOOK_VARIABLE_DECLARE(tU32, gAsk_time);
 
 void C2_HOOK_FASTCALL BroadcastStatus(void);
 
@@ -50,6 +51,16 @@ void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
 tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2);
 
 int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* message, void* pAddress);
+
+tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void);
+
+void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void);
+
+int C2_HOOK_FASTCALL NetJoinGameLowLevel(tNet_game_details* pGame_details, const char* pName);
+
+void C2_HOOK_FASTCALL LeaveTempGame(void);
+
+void C2_HOOK_FASTCALL NetLeaveGameLowLevel(void);
 
 void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
