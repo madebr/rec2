@@ -80,6 +80,8 @@ void C2_HOOK_FASTCALL DisableNetService(void);
 
 void C2_HOOK_FASTCALL ReenableNetService(void);
 
+tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize);
+
 tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(int pType, int pOption);
 
 tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec *pCar);
