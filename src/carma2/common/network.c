@@ -583,10 +583,20 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004a0080, NetFullScreenMessage, NetFullScreenMessage
 void (C2_HOOK_FASTCALL * NetSendMessageStacks_original)(void);
 void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     NetSendMessageStacks_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2V(gLast_flush_message) = PDGetTotalTime();
+
+    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+
+        if (C2V(gNet_players)[i].field_0xcc != NULL) {
+            NetReallySendMessageToPlayer(C2V(gCurrent_net_game), C2V(gNet_players)[i].field_0xcc, C2V(gNet_players)[i].ID);
+            C2V(gNet_players)[i].field_0xcc = NULL;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049fcf0, NetSendMessageStacks, NetSendMessageStacks_original)
