@@ -778,3 +778,29 @@ int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, 
     return -3;
 }
 C2_HOOK_FUNCTION(0x0049eea0, NetReallySendMessageToPlayer)
+
+void* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pNet_player, int pSize) {
+    tNet_message* message;
+    int offset;
+
+    C2_HOOK_BUG_ON(sizeof(tNet_message_header) != 0x18);
+
+    if (pNet_player == &C2V(gNet_players)[C2V(gThis_net_player_index)]) {
+        PDFatalError("Trying to send network message to self");
+    }
+    message = pNet_player->field_0xcc;
+    if (pNet_player->field_0xcc != NULL && pNet_player->field_0xcc->header.field_0x16 + pSize > 512) {
+        NetReallySendMessageToPlayer(C2V(gCurrent_net_game), pNet_player->field_0xcc, pNet_player->ID);
+        pNet_player->field_0xcc = message = NULL;
+    }
+    if (message == NULL) {
+        pNet_player->field_0xcc = message = NetAllocateMessage(512);
+        message->header.field_0x16 = (tU16)sizeof(tNet_message_header);
+        message->header.field_0x14 = 0;
+    }
+    offset = message->header.field_0x16;
+    message->header.field_0x16 += (tU16)pSize;
+    message->header.field_0x14 += 1;
+    return (tU8*)message + offset;
+}
+C2_HOOK_FUNCTION(0x004a5140, NetGetToPlayerContentsSize)
