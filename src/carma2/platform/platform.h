@@ -100,6 +100,8 @@ void C2_HOOK_FASTCALL PDNetLeaveGame(void);
 
 tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, void** gRemote_addr);
 
+int C2_HOOK_FASTCALL PDNetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
+
 int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path);
 
 void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void);
