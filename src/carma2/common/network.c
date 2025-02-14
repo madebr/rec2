@@ -655,3 +655,13 @@ int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDe
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5b50, NetGuaranteedSendMessageToAllPlayers, NetGuaranteedSendMessageToAllPlayers_original)
+
+int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage) {
+
+    if (pMessage->header.field_0x14 == 0xff) {
+        return -1;
+    }
+    pMessage->contents.raw.header.type = eNetMsg_none;
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0049ff50, NetDisposeMessage)
