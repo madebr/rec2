@@ -213,7 +213,7 @@ int C2_HOOK_FASTCALL NetJoinGameLowLevel(tNet_game_details* pGame_details, const
 
 void C2_HOOK_FASTCALL LeaveTempGame(void) {
 
-    if (C2V(gCurrent_join_poll_game)) {
+    if (C2V(gCurrent_join_poll_game) != NULL) {
         NetLeaveGameLowLevel();
     }
     C2V(gTime_for_next_one) = 1;
