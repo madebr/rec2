@@ -42,6 +42,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tAddToJoinListProc*, gAdd_proc, 0x00690230);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_status_broadcast, 0x00690c80);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_flush_message, 0x00690c4c);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAsk_time, 0x0068d984);
+C2_HOOK_VARIABLE_IMPLEMENT(tPlayer_ID, gLocal_net_ID, 0x0074b7dc);
 
 #define MIN_MESSAGES_CAPACITY 200
 #define MID_MESSAGES_CAPACITY 200
@@ -758,3 +759,22 @@ int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message
     return 0;
 }
 C2_HOOK_FUNCTION(0x0049ff50, NetDisposeMessage)
+
+int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id) {
+    int i;
+
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        return -1;
+    }
+
+    pMessage->header.field_0x8 = C2V(gLocal_net_ID);
+    pMessage->header.field_0x10 = PDGetTotalTime();
+
+    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+        if (C2V(gNet_players)[i].ID == pPlayer_id) {
+            return PDNetSendMessageToAddress(pNet_game, pMessage, &C2V(gNet_players)[i].pd_net_info);
+        }
+    }
+    return -3;
+}
+C2_HOOK_FUNCTION(0x0049eea0, NetReallySendMessageToPlayer)
