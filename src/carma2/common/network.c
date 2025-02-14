@@ -581,11 +581,11 @@ void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a5c80, NetGuaranteedSendMessageToHost, NetGuaranteedSendMessageToHost_original)
 
-tNet_message* (C2_HOOK_FASTCALL * NetGetNextMessage_original)(tNet_game_details* pDetails, void* pAddress);
-tNet_message* C2_HOOK_FASTCALL NetGetNextMessage(tNet_game_details* pDetails, void* pAddress) {
+tNet_message* (C2_HOOK_FASTCALL * NetGetNextMessage_original)(tNet_game_details* pDetails, void** pSender_address);
+tNet_message* C2_HOOK_FASTCALL NetGetNextMessage(tNet_game_details* pDetails, void** pSender_address) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return NetGetNextMessage_original(pDetails, pAddress);
+    return NetGetNextMessage_original(pDetails, pSender_address);
 #else
     NOT_IMPLEMENTED();
 #endif
