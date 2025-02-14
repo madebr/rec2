@@ -4088,6 +4088,20 @@ typedef struct tMax_message {
     tU8 buffer[516];
 } tMax_message;
 
+typedef struct {
+    tNet_message* message;
+    undefined4 send_time;
+    undefined4 next_resend_time;
+    tU32 resend_period;
+    undefined4 recieved;
+    undefined pd_address[16];
+    tPlayer_ID local_id;
+    tU32 (C2_HOOK_FASTCALL*NotifyFail)(tU32 time, tNet_message* pMessage);
+    undefined2 field_0x2c;
+    undefined field_0x2e[2];
+    undefined4 field_0x30;
+} tGuaranteed_message;
+
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
