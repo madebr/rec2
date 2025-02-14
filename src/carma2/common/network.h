@@ -47,6 +47,8 @@ void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage);
 
 void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
 
+tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2);
+
 void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
 void C2_HOOK_FASTCALL CheckForDisappearees(void);
