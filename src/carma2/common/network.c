@@ -376,10 +376,86 @@ C2_HOOK_FUNCTION(0x0049d3f0, ReenableNetService)
 tNet_message* (C2_HOOK_FASTCALL * NetAllocateMessage_original)(int pSize);
 tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return NetAllocateMessage_original(pSize);
 #else
-    NOT_IMPLEMENTED();
+    void* pointer;
+    tNet_message* message;
+
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, rr_min, 0x00690c60);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, rr_mid, 0x00690c64);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, rr_max, 0x00690c68);
+
+    C2_HOOK_BUG_ON(sizeof(tMin_message) - sizeof(void*) != 0x58);
+    C2_HOOK_BUG_ON(sizeof(tMid_message) - sizeof(void*) != 0x80);
+    C2_HOOK_BUG_ON(sizeof(tMax_message) - sizeof(void*) != 0x200);
+
+    pointer = NULL;
+    if (pSize <= sizeof(tMin_message) - sizeof(void*)) {
+        int i;
+
+        for (i = 0; i < MIN_MESSAGES_CAPACITY; i++) {
+            if (((tNet_message*)&C2V(gMin_messages)[C2V(rr_min)])->contents.raw.header.type == eNetMsg_none) {
+                pointer = &C2V(gMin_messages)[C2V(rr_min)];
+                break;
+            }
+            C2V(rr_min)++;
+            if (C2V(rr_min) >= MIN_MESSAGES_CAPACITY) {
+                C2V(rr_min) = 0;
+            }
+        }
+    }
+    if (pointer == NULL && pSize <= sizeof(tMid_message) - sizeof(void*)) {
+        int i;
+
+        for (i = 0; i < MID_MESSAGES_CAPACITY; i++) {
+            if (((tNet_message*)&C2V(gMid_messages)[C2V(rr_mid)])->contents.raw.header.type == eNetMsg_none) {
+                pointer = &C2V(gMid_messages)[C2V(rr_mid)];
+                break;
+            }
+            C2V(rr_mid)++;
+            if (C2V(rr_mid) >= MID_MESSAGES_CAPACITY) {
+                C2V(rr_mid) = 0;
+            }
+        }
+    }
+    if (pointer == NULL && pSize <= sizeof(tMax_message) - sizeof(void*)) {
+        int i;
+
+        for (i = 0; i < MAX_MESSAGES_CAPACITY; i++) {
+            if (((tNet_message*)&C2V(gMax_messages)[C2V(rr_max)])->contents.raw.header.type == eNetMsg_none) {
+                pointer = &C2V(gMax_messages)[C2V(rr_max)];
+                break;
+            }
+            C2V(rr_max)++;
+            if (C2V(rr_max) >= MAX_MESSAGES_CAPACITY) {
+                C2V(rr_max) = 0;
+            }
+        }
+    }
+    if (pointer == NULL) {
+        tNet_message_memory* new_message = BrMemAllocate(sizeof(tDynamic_message*) + C2V(gMessage_header_size) + pSize, kMem_dynamic_message);
+        if (new_message != NULL) {
+            tNet_message_memory* last_message;
+            if (C2V(gMessage_to_free) != NULL) {
+                for (last_message = C2V(gMessage_to_free); last_message->next != NULL; last_message = last_message->next) {
+                }
+                last_message->next = new_message;
+            } else {
+                C2V(gMessage_to_free) = new_message;
+            }
+            pointer = &new_message->message;
+        }
+    }
+    if (pointer == NULL) {
+        abort();
+        message = NULL;
+    } else {
+        message = (tNet_message*)((tU8*)pointer + C2V(gMessage_header_size));
+        message->header.field_0xc = 1;
+        message->header.field_0x4 = MESSAGE_MAGIC_NUMBER;
+    }
+    return message;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049fdb0, NetAllocateMessage, NetAllocateMessage_original)
