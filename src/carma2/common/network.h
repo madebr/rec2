@@ -50,7 +50,7 @@ void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
 
 tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2);
 
-int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* message, void* pAddress);
+int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
 
 tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void);
 
