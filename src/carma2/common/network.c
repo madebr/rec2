@@ -8,6 +8,7 @@
 #include "newgame.h"
 #include "platform.h"
 #include "spark.h"
+#include "utility.h"
 #include "world.h"
 
 #include "brender/brender.h"
@@ -44,6 +45,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAsk_time, 0x0068d984);
 #define MIN_MESSAGES_CAPACITY 200
 #define MID_MESSAGES_CAPACITY 200
 #define MAX_MESSAGES_CAPACITY 200
+
+#define MESSAGE_MAGIC_NUMBER 0x763a5059
 
 void (C2_HOOK_FASTCALL * BroadcastStatus_original)(void);
 void C2_HOOK_FASTCALL BroadcastStatus(void) {
@@ -597,13 +600,47 @@ void C2_HOOK_FASTCALL ReceivedMessage(tNet_message* pMessage, void* pSender_addr
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a0260, ReceivedMessage, ReceivedMessage_original)
 
+void C2_HOOK_FASTCALL CheckCheckSum(tNet_message* pMessage) {
+}
+
+void C2_HOOK_FASTCALL StatReceivePacket(void) {
+}
+
+void C2_HOOK_FASTCALL NetReallyDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage) {
+    pMessage->contents.raw.header.type = eNetMsg_none;
+}
+
 void (C2_HOOK_FASTCALL * NetReceiveAndProcessMessages_original)(void);
 void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     NetReceiveAndProcessMessages_original();
 #else
-    NOT_IMPLEMENTED();
+    int old_net_service;
+
+    old_net_service = C2V(gIn_net_service);
+    if (C2V(gNet_mode) != eNet_mode_none || C2V(gJoin_list_mode)) {
+        C2V(gIn_net_service) = 1;
+        while (1) {
+            tNet_message *message;
+            void *sender_address;
+
+            message = NetGetNextMessage(C2V(gCurrent_net_game), &sender_address);
+            if (message == NULL) {
+                break;
+            }
+            if (message->header.field_0x14 != 0) {
+                tU32 receive_time = GetRaceTime();
+                if (message->header.field_0x4 == MESSAGE_MAGIC_NUMBER) {
+                    CheckCheckSum(message);
+                    StatReceivePacket();
+                    ReceivedMessage(message, sender_address, receive_time);
+                }
+                NetReallyDisposeMessage(C2V(gCurrent_net_game), message);
+            }
+        }
+    }
+    C2V(gIn_net_service) = old_net_service;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a4a40, NetReceiveAndProcessMessages, NetReceiveAndProcessMessages_original)

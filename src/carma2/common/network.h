@@ -116,6 +116,12 @@ tNet_message* C2_HOOK_FASTCALL NetGetNextMessage(tNet_game_details* pDetails, vo
 
 void C2_HOOK_FASTCALL ReceivedMessage(tNet_message* pMessage, void* pSender_address, tU32 pReceive_time);
 
+void C2_HOOK_FASTCALL CheckCheckSum(tNet_message* pMessage);
+
+void C2_HOOK_FASTCALL StatReceivePacket(void);
+
+void C2_HOOK_FASTCALL NetReallyDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage);
+
 void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void);
 
 int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, undefined4 *pArg3);
