@@ -3801,7 +3801,8 @@ typedef struct {
     undefined field_0x94[4];
     struct br_matrix34 initial_position;
     struct tCar_spec * car;
-    undefined field_0xcc[8];
+    tNet_message* field_0xcc;
+    undefined field_0xd0[4];
 } tNet_game_player_info;
 
 typedef enum {
