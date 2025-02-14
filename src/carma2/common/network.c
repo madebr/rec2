@@ -217,6 +217,7 @@ void C2_HOOK_FASTCALL LeaveTempGame(void) {
         NetLeaveGameLowLevel();
     }
     C2V(gTime_for_next_one) = 1;
+    C2V(gCurrent_join_poll_game) = NULL;
 }
 
 void C2_HOOK_FASTCALL NetLeaveGameLowLevel(void) {
