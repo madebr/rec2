@@ -394,3 +394,10 @@ int C2_HOOK_FASTCALL PDNetGetHeaderSize(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x0051a6a0, PDNetGetHeaderSize)
+
+int C2_HOOK_FASTCALL PDNetJoinGame(tNet_game_details* pGame_details, const char* pName) {
+
+    dr_dprintf("PDNetJoinGame()");
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0051a0a0, PDNetJoinGame)

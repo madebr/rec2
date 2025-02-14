@@ -17,4 +17,6 @@ int C2_HOOK_FASTCALL BroadcastMessage(void);
 
 int C2_HOOK_FASTCALL PDNetGetHeaderSize(void);
 
+int C2_HOOK_FASTCALL PDNetJoinGame(tNet_game_details* pGame_details, const char* pName);
+
 #endif // C2_WIN32_NET_H
