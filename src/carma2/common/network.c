@@ -8,6 +8,7 @@
 #include "newgame.h"
 #include "platform.h"
 #include "spark.h"
+#include "timers.h"
 #include "utility.h"
 #include "world.h"
 
@@ -592,10 +593,15 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004a5c80, NetGuaranteedSendMessageToHost, NetGuarant
 tNet_message* (C2_HOOK_FASTCALL * NetGetNextMessage_original)(tNet_game_details* pDetails, void** pSender_address);
 tNet_message* C2_HOOK_FASTCALL NetGetNextMessage(tNet_game_details* pDetails, void** pSender_address) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return NetGetNextMessage_original(pDetails, pSender_address);
 #else
-    NOT_IMPLEMENTED();
+    tNet_message* message;
+
+    Timers_Push(TIMER_LLR);
+    message = PDNetGetNextMessage(pDetails, pSender_address);
+    Timers_Pop(TIMER_LLR);
+    return message;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049ff70, NetGetNextMessage, NetGetNextMessage_original)
