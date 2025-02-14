@@ -468,3 +468,17 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
     return NULL;
 }
 C2_HOOK_FUNCTION(0x0051a380, PDNetGetNextMessage)
+
+int C2_HOOK_FASTCALL PDNetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress) {
+
+    /* FIXME: sizeof(struct sockaddr) == 16 */
+
+    if (sendto(C2V(gSocket), (const char*)pMessage, pMessage->header.field_0x16, 0, pAddress, 14) == SOCKET_ERROR) {
+        dr_dprintf("PDNetSendMessageToAddress(): Error on sendto() - WSAGetLastError=%d", WSAGetLastError());
+        NetDisposeMessage(pDetails, pMessage);
+        return 1;
+    }
+    NetDisposeMessage(pDetails,(tNet_message *)pMessage);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0051a630, PDNetSendMessageToAddress)
