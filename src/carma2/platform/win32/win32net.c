@@ -429,7 +429,8 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
     sa_len = sizeof(C2V(gListen_address));
     msg = NetAllocateMessage(512);
     receive_buffer = (char*)msg;
-    if (recvfrom(C2V(gSocket), receive_buffer, 512, 0, &C2V(gListen_address), &sa_len) == SOCKET_ERROR) {
+    res = recvfrom(C2V(gSocket), receive_buffer, 512, 0, &C2V(gListen_address), &sa_len) != SOCKET_ERROR;
+    if (!res) {
         res = WSAGetLastError() != WSAEWOULDBLOCK;
 #if 0
         if (res) {
