@@ -23,4 +23,6 @@ void C2_HOOK_FASTCALL PDNetHostFinishGame(void);
 
 void C2_HOOK_FASTCALL PDNetLeaveGame(void);
 
+tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, void** gRemote_addr);
+
 #endif // C2_WIN32_NET_H
