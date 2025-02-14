@@ -133,4 +133,6 @@ int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message
 
 int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id);
 
+void* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pNet_player, int pSize);
+
 #endif // REC2_NETWORK_H
