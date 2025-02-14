@@ -94,6 +94,8 @@ int C2_HOOK_FASTCALL PDNetGetHeaderSize(void);
 
 int C2_HOOK_FASTCALL PDNetJoinGame(tNet_game_details* pGame_details, const char* pName);
 
+void C2_HOOK_FASTCALL PDNetHostFinishGame(void);
+
 int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path);
 
 void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void);
