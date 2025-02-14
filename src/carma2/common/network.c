@@ -586,6 +586,17 @@ tNet_message* C2_HOOK_FASTCALL NetGetNextMessage(tNet_game_details* pDetails, vo
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049ff70, NetGetNextMessage, NetGetNextMessage_original)
 
+void (C2_HOOK_FASTCALL * ReceivedMessage_original)(tNet_message* pMessage, void* pSender_address, tU32 pReceive_time);
+void C2_HOOK_FASTCALL ReceivedMessage(tNet_message* pMessage, void* pSender_address, tU32 pReceive_time) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ReceivedMessage_original(pMessage, pSender_address, pReceive_time);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a0260, ReceivedMessage, ReceivedMessage_original)
+
 void (C2_HOOK_FASTCALL * NetReceiveAndProcessMessages_original)(void);
 void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void) {
 
