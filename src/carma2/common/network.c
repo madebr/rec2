@@ -167,6 +167,17 @@ tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049f650, NetBuildMessage, NetBuildMessage_original)
 
+int (C2_HOOK_FASTCALL * NetSendMessageToAddress_original)(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
+int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetSendMessageToAddress_original(pDetails, pMessage, pAddress);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049ee50, NetSendMessageToAddress, NetSendMessageToAddress_original)
+
 void (C2_HOOK_FASTCALL * DoNextJoinPoll_original)(void);
 void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
 
