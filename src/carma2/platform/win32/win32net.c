@@ -407,3 +407,9 @@ void C2_HOOK_FASTCALL PDNetHostFinishGame(void) {
     dr_dprintf("PDNetHostFinishGame()");
 }
 C2_HOOK_FUNCTION(0x0051a0c0, PDNetHostFinishGame)
+
+void C2_HOOK_FASTCALL PDNetLeaveGame(void) {
+
+    dr_dprintf("PDNetLeaveGame()");
+}
+C2_HOOK_FUNCTION(0x0051a0b0, PDNetLeaveGame)

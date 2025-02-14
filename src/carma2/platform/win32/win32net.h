@@ -21,4 +21,6 @@ int C2_HOOK_FASTCALL PDNetJoinGame(tNet_game_details* pGame_details, const char*
 
 void C2_HOOK_FASTCALL PDNetHostFinishGame(void);
 
+void C2_HOOK_FASTCALL PDNetLeaveGame(void);
+
 #endif // C2_WIN32_NET_H
