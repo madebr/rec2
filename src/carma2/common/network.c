@@ -12,6 +12,8 @@
 #include "utility.h"
 #include "world.h"
 
+#include "c2_string.h"
+
 #include "brender/brender.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_initialised, 0x0068d96c);
@@ -43,6 +45,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_status_broadcast, 0x00690c80);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_flush_message, 0x00690c4c);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAsk_time, 0x0068d984);
 C2_HOOK_VARIABLE_IMPLEMENT(tPlayer_ID, gLocal_net_ID, 0x0074b7dc);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGuaranteed_message, gGuarantee_list, 200, 0x0068d990);
 
 #define MIN_MESSAGES_CAPACITY 200
 #define MID_MESSAGES_CAPACITY 200
@@ -298,13 +301,85 @@ void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049b9a0, CheckForNeedyEnvironmentRecipients, CheckForNeedyEnvironmentRecipients_original);
 
+void C2_HOOK_FASTCALL GetCheckSum(tNet_message* pMessage) {
+
+}
+
 void (C2_HOOK_FASTCALL * ResendGuaranteedMessages_original)(void);
 void C2_HOOK_FASTCALL ResendGuaranteedMessages(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ResendGuaranteedMessages_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    int j;
+    tU32 time;
+
+    C2_HOOK_BUG_ON(sizeof(tGuaranteed_message) != 0x34);
+
+    i = 0;
+    time = PDGetTotalTime();
+    for (j = 0; j < C2V(gNext_guarantee); j++) {
+        if (i != j) {
+            c2_memcpy(&C2V(gGuarantee_list)[i], &C2V(gGuarantee_list)[j], sizeof(tGuaranteed_message));
+        }
+        if (!C2V(gGuarantee_list)[i].recieved) {
+            if (C2V(gGuarantee_list)[i].message->header.field_0x14 != 0xff) {
+                PDFatalError("Dodgy message in guarantee list");
+            }
+            if (C2V(gGuarantee_list)[i].NotifyFail != NULL) {
+                C2V(gGuarantee_list)[i].recieved |= C2V(gGuarantee_list)[i].NotifyFail(time - C2V(gGuarantee_list)[i].send_time, C2V(gGuarantee_list)[i].message);
+            } else {
+                if (time - C2V(gGuarantee_list)[i].send_time > 10000) {
+                    C2V(gGuarantee_list)[i].recieved = 1;
+                }
+            }
+        }
+        if (!C2V(gGuarantee_list)[j].recieved) {
+            if (time > C2V(gGuarantee_list)[i].next_resend_time) {
+                /* guarantee number is appended to message (and not part of the header) */
+                *(tU16*)(&C2V(gGuarantee_list)[j].message->contents.raw.data[C2V(gGuarantee_list)[j].message->contents.raw.header.size]) = C2V(gGuarantee_list)[i].field_0x2c;
+                if (C2V(gGuarantee_list)[i].field_0x30 == 1) {
+                    GetCheckSum(C2V(gGuarantee_list)[i].message);
+                    PDNetSendMessageToAddress(C2V(gCurrent_net_game), C2V(gGuarantee_list)[i].message, &C2V(gGuarantee_list)[i].pd_address);
+                } else if (!C2V(gGuarantee_list)[i].field_0x30) {
+                    int k;
+
+                    for (k = 0; i < C2V(gNumber_of_net_players); k++) {
+                        if (C2V(gNet_players)[k].ID == C2V(gGuarantee_list)[i].local_id) {
+                            break;
+                        }
+                    }
+                    if (k != C2V(gNumber_of_net_players)) {
+                        int guarantee_size = 0;
+                        void* message_data;
+                        tNet_message_chunk* message_chunk;
+
+                        message_chunk = &C2V(gGuarantee_list)[i].message->contents;
+                        for (k = 0; k < 2; k++) {
+                            guarantee_size += message_chunk->raw.header.size;
+                            message_chunk = (tNet_message_chunk*)((tU8*)message_chunk + message_chunk->raw.header.size);
+                        }
+                        message_data = NetGetToPlayerContentsSize(&C2V(gNet_players)[k], guarantee_size);
+                        c2_memcpy(message_data, &C2V(gGuarantee_list)[i].message->contents, guarantee_size);
+                    } else {
+                        i++;
+                        continue;
+                    }
+                } else {
+                    PDFatalError("oops - guaranteed messages");
+                }
+                C2V(gGuarantee_list)[i].resend_period = (tU32)(C2V(gGuarantee_list)[i].resend_period * 1.2f);
+                C2V(gGuarantee_list)[i].next_resend_time += C2V(gGuarantee_list)[i].resend_period;
+                i++;
+            }
+        } else if ((i <= 0 || C2V(gGuarantee_list)[i - 1].message != C2V(gGuarantee_list)[i].message)
+                   && (C2V(gNext_guarantee) <= i + 1 || C2V(gGuarantee_list)[j + 1].message != C2V(gGuarantee_list)[i].message)) {
+            C2V(gGuarantee_list)[i].message->header.field_0x14 = 0;
+            NetDisposeMessage(C2V(gCurrent_net_game), C2V(gGuarantee_list)[j].message);
+        }
+    }
+    C2V(gNext_guarantee) = j;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a6080, ResendGuaranteedMessages, ResendGuaranteedMessages_original);

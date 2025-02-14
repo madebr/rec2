@@ -32,6 +32,7 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gLast_status_broadcast);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_flush_message);
 C2_HOOK_VARIABLE_DECLARE(tU32, gAsk_time);
 C2_HOOK_VARIABLE_DECLARE(tPlayer_ID, gLocal_net_ID);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tGuaranteed_message, gGuarantee_list, 200);
 
 void C2_HOOK_FASTCALL BroadcastStatus(void);
 
@@ -70,6 +71,8 @@ void C2_HOOK_FASTCALL CheckForDisappearees(void);
 void C2_HOOK_FASTCALL CheckForPendingStartRace(void);
 
 void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
+
+void C2_HOOK_FASTCALL GetCheckSum(tNet_message* pMessage);
 
 void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
