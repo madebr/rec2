@@ -3,6 +3,8 @@
 #include "win32.h"
 
 #include "errors.h"
+#include "globvrpb.h"
+#include "network.h"
 #include "platform.h"
 
 #include "c2_string.h"
@@ -18,10 +20,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPathNetworkIniValid, 0x006ad4c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tU16, gIpx_sock_addr, 0x006ac12c);
 C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr, gLocal_address, 0x006ac310);
 C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr, gLocal_address_2, 0x006abf08);
-C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr*, gPtr_local_address, 0x006ac358);
+C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr*, gPtr_local_address, 0x006ac358); /* FIXME: rename to gLocal_addr_ipx? */
 C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr, gListen_address, 0x006ac118);
-C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr*, gPtr_listen_address, 0x006ac340);
+C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr*, gPtr_listen_address, 0x006ac340);  /* FIXME: rename to gRemote_addr_ipx? */
 C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr, gBroadcast_address, 0x006ac300);
+C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr, gLast_received_addr, 0x006ac348);
 C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr*, gPtr_broadcast_address, 0x006abf00);
 C2_HOOK_VARIABLE_IMPLEMENT(WSADATA, gWSA_data, 0x006ac170);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(SOCKET, gSocket, 0x006619b0, -1);
@@ -413,3 +416,55 @@ void C2_HOOK_FASTCALL PDNetLeaveGame(void) {
     dr_dprintf("PDNetLeaveGame()");
 }
 C2_HOOK_FUNCTION(0x0051a0b0, PDNetLeaveGame)
+
+tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, void** pSender_address) {
+    char addr_str[32];
+    int sa_len;
+    int res;
+    tNet_message* msg;
+    char* receive_buffer;
+
+    sa_len = 14;  /* FIXME: sizeof(C2V(gListen_address)) == 16 */
+    msg = NetAllocateMessage(512);
+    receive_buffer = (char*)msg;
+    res = recvfrom(C2V(gSocket), receive_buffer, 512, 0, &C2V(gListen_address), &sa_len) != SOCKET_ERROR;
+    if (!res) {
+        res = WSAGetLastError() != WSAEWOULDBLOCK;
+#if 0
+        if (res) {
+            sprintf(str, "PDNetGetNextMessage(): Error on recvfrom() - WSAGetLastError=%d", res);
+            PDFatalError(str);
+        }
+#endif
+    } else {
+        NetNowIPXLocalTarget2String(addr_str, C2V(gPtr_listen_address));
+        if (!SameEthernetAddress(C2V(gPtr_local_address), C2V(gPtr_listen_address))) {
+            int msg_type;
+
+            msg_type = GetMessageTypeFromMessage(receive_buffer);
+            switch (msg_type) {
+            case 1:
+                if (C2V(gNet_mode) == eNet_mode_host) {
+                    dr_dprintf("PDNetGetNextMessage(): Received '%s' from '%s', replying to joiner", receive_buffer, addr_str);
+                    MakeMessageToSend(2);
+                    if (sendto(C2V(gSocket), C2V(gSend_buffer), c2_strlen(C2V(gSend_buffer)) + 1, 0, &C2V(gListen_address), sizeof(C2V(gListen_address))) == SOCKET_ERROR) {
+                        dr_dprintf("PDNetGetNextMessage(): Error on sendto() - WSAGetLastError=%d", WSAGetLastError());
+                    }
+                }
+                break;
+            case 2:
+                // no-op
+                break;
+            default:
+                dr_dprintf("PDNetGetNextMessage(): res is %d, received message type %d from '%s', passing up", res, msg->contents.raw.header.type, addr_str);
+                c2_memcpy(&C2V(gLast_received_addr), C2V(gPtr_listen_address), sizeof(C2V(gLast_received_addr)));
+                *pSender_address = &C2V(gLast_received_addr);
+                return msg;
+            }
+        }
+    }
+    msg->header.field_0x14 = 0;
+    NetDisposeMessage(pDetails, msg);
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x0051a380, PDNetGetNextMessage)
