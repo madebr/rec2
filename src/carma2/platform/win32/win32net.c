@@ -401,3 +401,9 @@ int C2_HOOK_FASTCALL PDNetJoinGame(tNet_game_details* pGame_details, const char*
     return 0;
 }
 C2_HOOK_FUNCTION(0x0051a0a0, PDNetJoinGame)
+
+void C2_HOOK_FASTCALL PDNetHostFinishGame(void) {
+
+    dr_dprintf("PDNetHostFinishGame()");
+}
+C2_HOOK_FUNCTION(0x0051a0c0, PDNetHostFinishGame)
