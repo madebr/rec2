@@ -39,6 +39,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_details*, gCurrent_join_poll_game, 0x00690c
 C2_HOOK_VARIABLE_IMPLEMENT(tAddToJoinListProc*, gAdd_proc, 0x00690230);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_status_broadcast, 0x00690c80);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_flush_message, 0x00690c4c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAsk_time, 0x0068d984);
 
 #define MIN_MESSAGES_CAPACITY 200
 #define MID_MESSAGES_CAPACITY 200
@@ -178,13 +179,83 @@ int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_m
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049ee50, NetSendMessageToAddress, NetSendMessageToAddress_original)
 
+tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void) {
+
+    C2_HOOK_BUG_ON(sizeof(tNet_game_details) != 0x78);
+
+    return BrMemAllocate(sizeof(tNet_game_details), kMem_net_pid_details);
+}
+
+void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void) {
+
+    if (C2V(gCurrent_join_poll_game) != NULL) {
+        BrMemFree(C2V(gCurrent_join_poll_game));
+        C2V(gCurrent_join_poll_game) = NULL;
+    }
+}
+
+int C2_HOOK_FASTCALL NetJoinGameLowLevel(tNet_game_details* pGame_details, const char* pName) {
+
+    return PDNetJoinGame(pGame_details, pName);
+}
+
+void C2_HOOK_FASTCALL LeaveTempGame(void) {
+
+    if (C2V(gCurrent_join_poll_game) != NULL) {
+        NetLeaveGameLowLevel();
+    }
+    C2V(gTime_for_next_one) = 1;
+    C2V(gCurrent_join_poll_game) = NULL;
+}
+
+void C2_HOOK_FASTCALL NetLeaveGameLowLevel(void) {
+
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        PDNetHostFinishGame();
+    } else {
+        PDNetLeaveGame();
+    }
+}
+
 void (C2_HOOK_FASTCALL * DoNextJoinPoll_original)(void);
 void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoNextJoinPoll_original();
 #else
-    NOT_IMPLEMENTED();
+
+    if (C2V(gTime_for_next_one)) {
+        C2V(gCurrent_join_poll_game) = NetAllocatePIDGameDetails();
+        if (C2V(gCurrent_join_poll_game) == NULL) {
+            return;
+        }
+        if (!PDNetGetNextJoinGame(C2V(gCurrent_join_poll_game), C2V(gJoin_poll_index))) {
+            C2V(gJoin_poll_index) = 0;
+            DisposeCurrentJoinPollGame();
+            return;
+        }
+        if (!NetJoinGameLowLevel(C2V(gCurrent_join_poll_game), "!TEMP!")) {
+            tNet_message* message;
+            C2V(gTime_for_next_one) = 0;
+            message = NetBuildMessage(0, 0);
+            NetSendMessageToAddress(C2V(gCurrent_join_poll_game), message, &C2V(gCurrent_join_poll_game)->pd_net_info);
+            C2V(gBastard_has_answered) = 0;
+            C2V(gAsk_time) = PDGetTotalTime();
+        } else {
+            DisposeCurrentJoinPollGame();
+        }
+        C2V(gJoin_poll_index) += 1;
+    } else {
+        if (C2V(gBastard_has_answered)) {
+            C2V(gAdd_proc)(C2V(gCurrent_join_poll_game));
+            LeaveTempGame();
+        } else {
+            if (PDGetTotalTime() - C2V(gAsk_time) > 10000) {
+                LeaveTempGame();
+                DisposeCurrentJoinPollGame();
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049ec70, DoNextJoinPoll, DoNextJoinPoll_original)
