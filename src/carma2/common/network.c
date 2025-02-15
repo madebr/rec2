@@ -327,7 +327,7 @@ void C2_HOOK_FASTCALL ResendGuaranteedMessages(void) {
             if (C2V(gGuarantee_list)[i].message->header.field_0x14 != 0xff) {
                 PDFatalError("Dodgy message in guarantee list");
             }
-            if (gGuarantee_list[i].NotifyFail != NULL) {
+            if (C2V(gGuarantee_list)[i].NotifyFail != NULL) {
                 C2V(gGuarantee_list)[i].recieved |= C2V(gGuarantee_list)[i].NotifyFail(time - C2V(gGuarantee_list)[i].send_time, C2V(gGuarantee_list)[i].message);
             } else {
                 if (time - C2V(gGuarantee_list)[i].send_time > 10000) {
@@ -335,7 +335,7 @@ void C2_HOOK_FASTCALL ResendGuaranteedMessages(void) {
                 }
             }
         }
-        if (!gGuarantee_list[j].recieved) {
+        if (!C2V(gGuarantee_list)[j].recieved) {
             if (time > C2V(gGuarantee_list)[i].next_resend_time) {
                 /* guarantee number is appended to message (and not part of the header) */
                 *(tU16*)(&C2V(gGuarantee_list)[j].message->contents.raw.data[C2V(gGuarantee_list)[j].message->contents.raw.header.size]) = C2V(gGuarantee_list)[i].field_0x2c;
