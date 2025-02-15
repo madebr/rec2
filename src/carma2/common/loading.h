@@ -22,6 +22,8 @@ void C2_HOOK_FASTCALL GetThreeInts(tTWTFILE* pF, int* pF1, int* pF2, int* pF3);
 
 float C2_HOOK_FASTCALL GetAFloat(tTWTFILE* pF);
 
+float C2_HOOK_FASTCALL GetAScalar(tTWTFILE* pF);
+
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
 void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile);

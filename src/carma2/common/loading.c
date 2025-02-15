@@ -88,6 +88,11 @@ float C2_HOOK_FASTCALL GetAFloat(tTWTFILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004900e0, GetAFloat, GetAFloat_original)
 
+float C2_HOOK_FASTCALL GetAScalar(tTWTFILE* pF) {
+    return GetAFloat(pF);
+}
+C2_HOOK_FUNCTION(0x0048fb80, GetAScalar)
+
 tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
