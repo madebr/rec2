@@ -218,5 +218,15 @@ size_t C2_HOOK_CDECL c2_fread(void *ptr, size_t size, size_t nmemb, FILE *stream
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00576fa0, c2_fread, c2_fread_original)
 
+int C2_HOOK_CDECL c2_sscanf(const char* str, const char* format, ...) {
+    va_list ap;
+    int result;
+
+    va_start(ap, format);
+    result = vsscanf(str, format, ap);
+    va_end(ap);
+    return result;
+}
+C2_HOOK_FUNCTION(0x00575cb0, c2_sscanf)
 
 #endif
