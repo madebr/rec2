@@ -1026,7 +1026,7 @@ void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark) {
         if (scan_code == 0xff) {
             switch (i) {
             case 0:
-                if ((diKeys[C2V(gScan_code)[20]] & 0x80) || (diKeys[gScan_code[17]] & 0x80)) {
+                if ((diKeys[C2V(gScan_code)[20]] & 0x80) || (diKeys[C2V(gScan_code)[17]] & 0x80)) {
                     pKeys[0] = pMark;
                 } else if (pKeys[0] == pMark) {
                     pKeys[0] = 0;
