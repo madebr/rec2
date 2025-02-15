@@ -404,7 +404,7 @@ int C2_HOOK_FASTCALL CreateDinputEffect(int joystick_index, tJoystick_effect_des
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tJoystick_effect_description, field_0x4c, 0x4c);
 
     if (effect_id >= REC2_ASIZE(C2V(gJoystick_effects))) {
-    dr_dprintf("Reached hardcoded limit for # of effects.");
+        dr_dprintf("Reached hardcoded limit for # of effects.");
         return -1;
     }
     if (device == NULL || !(C2V(gJoystickFFB) & (1 << joystick_index))) {
