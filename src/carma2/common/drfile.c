@@ -67,8 +67,8 @@ br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f) {
 }
 C2_HOOK_FUNCTION(0x0044c6c0, DRStdioGetLine)
 
-int C2_HOOK_CDECL DRStdioAdvance(br_size_t count, void *f) {
-    return PFfseek((FILE*)f, count, SEEK_CUR);
+void C2_HOOK_CDECL DRStdioAdvance(br_size_t count, void *f) {
+    PFfseek((FILE*)f, count, SEEK_CUR);
 }
 C2_HOOK_FUNCTION(0x0044c6f0, DRStdioAdvance)
 
