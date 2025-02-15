@@ -28,9 +28,9 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation() {
         line1[0] = '\0';
         line2[0] = '\0';
         line3[0] = '\0';
-        DRreadline(fp, line1);
-        DRreadline(fp, line2);
-        DRreadline(fp, line3);
+        GetALineWithNoPossibleService(fp, line1);
+        GetALineWithNoPossibleService(fp, line2);
+        GetALineWithNoPossibleService(fp, line3);
         DRfclose(fp);
         if (strcmp(line3, "Full") != 0) {
             return;

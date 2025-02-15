@@ -46,17 +46,6 @@ tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b4780, DRfopen, DRfopen_original)
 
-char* (C2_HOOK_FASTCALL * DRreadline_original)(tTWTFILE* pFile, char* pBuffer);
-char* C2_HOOK_FASTCALL DRreadline(tTWTFILE* pFile, char* pBuffer) {
-#if defined(C2_HOOKS_ENABLED)
-    char* res = DRreadline_original(pFile, pBuffer);
-    return res;
-#else
-#error "not implemented"
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00490f30, DRreadline, DRreadline_original)
-
 void (C2_HOOK_FASTCALL * DRfclose_original)(tTWTFILE* pFile);
 void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile) {
 #if defined(C2_HOOKS_ENABLED)
