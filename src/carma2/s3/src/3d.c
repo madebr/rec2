@@ -343,7 +343,7 @@ C2_HOOK_FUNCTION(0x00567ea5, S3UpdateSourceVectors)
 
 int (C2_HOOK_FASTCALL * S3Calculate3D_original)(tS3_channel* pChannel, int pAmbient);
 int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
-#if defined(C2_HOOKS_ENABLE)
+#if defined(C2_HOOKS_ENABLED)
     return S3Calculate3D_original(pChannel, pAmbient);
 #else
     NOT_IMPLEMENTED();
