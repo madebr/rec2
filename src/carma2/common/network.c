@@ -777,7 +777,7 @@ void (C2_HOOK_FASTCALL * ReceivedMessage_original)(tNet_message* pMessage, void*
 void C2_HOOK_FASTCALL ReceivedMessage(tNet_message* pMessage, void* pSender_address, tU32 pReceive_time) {
 
 #if defined(C2_HOOKS_ENABLED)
-    ReceivedMessage(pMessage, pSender_address, pReceive_time);
+    ReceivedMessage_original(pMessage, pSender_address, pReceive_time);
 #else
     NOT_IMPLEMENTED();
 #endif
