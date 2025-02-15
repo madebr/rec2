@@ -1,7 +1,8 @@
 #include "loading.h"
 
-#include <brender/brender.h>
+#include "utility.h"
 
+#include <brender/brender.h>
 #include "rec2_macros.h"
 
 #include "c2_stdio.h"
@@ -32,6 +33,26 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
     }
 }
 C2_HOOK_FUNCTION(0x00490690, StripCRNL)
+
+int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount) {
+    int i;
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+
+    str = c2_strtok(s, "\t ,/");
+    if (pCount <= 0) {
+        return -1;
+    }
+    for (i = 0; i < pCount; i++) {
+        if (DRStricmp(str, pString_list[i]) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+C2_HOOK_FUNCTION(0x0048fa70, GetALineAndInterpretCommand)
 
 tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
