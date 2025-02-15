@@ -266,7 +266,7 @@ void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0049ec70, DoNextjoinPoll, DoNextjoinPoll_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0049ec70, DoNextJoinPoll, DoNextJoinPoll_original)
 
 void (C2_HOOK_FASTCALL * CheckForDisappearees_original)(void);
 void C2_HOOK_FASTCALL CheckForDisappearees(void) {
