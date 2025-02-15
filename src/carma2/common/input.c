@@ -123,7 +123,7 @@ tKey_down_result C2_HOOK_FASTCALL EdgeTriggeryKey(int pKey_index, int pReset) {
         return tKey_down_no;
     }
     now = PDGetTotalTime();
-    if (pKey_index == gLast_key_down) {
+    if (pKey_index == C2V(gLast_key_down)) {
         if (C2V(gModifiers_down) == AnyModifiersDown()) {
             if (now - C2V(gLast_key_down_time) < 300) {
                 return tKey_down_still;
