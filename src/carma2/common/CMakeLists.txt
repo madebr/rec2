@@ -25,6 +25,8 @@ add_library(c2_common STATIC
     structur.h
     utility.c
     utility.h
+    world.c
+    world.h
 
     ../include/rec2_macros.h
     ../include/rec2_types.h

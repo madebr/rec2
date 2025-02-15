@@ -12,6 +12,8 @@
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
 
+C2_HOOK_VARIABLE_DECLARE(int, gRusselsFannies);
+
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);

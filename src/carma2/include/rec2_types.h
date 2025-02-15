@@ -50,6 +50,12 @@ typedef struct tWobble_spec {
 } tWobble_spec;
 
 typedef enum {
+    kSoundFx_None = -1,
+    kSoundFx_Saturated = 0,
+    kSoundFx_Scattered = 1,
+} tSpecial_volume_soundfx_type;
+
+typedef enum {
     kSoundFxPeriodicity_Random = 0,
     kSoundFxPeriodicity_Periodic = 1,
     kSoundFxPeriodicity_Continuous = 2,
@@ -65,6 +71,23 @@ typedef struct {
     tS16 soundAlternatives[5];
     tS16 unknown3;
 } tSpecial_volume_soundfx_data;
+
+typedef struct {
+    char unknown1[136];
+    br_scalar gravity_multiplier;
+    br_scalar viscosity_multiplier;
+    float car_damage_per_ms;
+    float ped_damage_per_ms;
+    int camera_special_effect_index;
+    int sky_col;
+    int entry_noise;
+    int exit_noise;
+    int engine_noise_index;
+    br_pixelmap* screen_pixelmap;
+    int material_modifier_index;
+    tSpecial_volume_soundfx_type soundfx_type;
+    tSpecial_volume_soundfx_data soundfx_data;
+} tSpecial_volume;
 
 enum {
     // FIXME: add all c2 memory tags
