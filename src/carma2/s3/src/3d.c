@@ -294,7 +294,7 @@ int (C2_HOOK_FASTCALL * S3UpdateSourcePosition_original)(tS3_sound_source *pSour
 int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return S3UpdateSourcePosition(pSource);
+    return S3UpdateSourcePosition_original(pSource);
 #else
     NOT_IMPLEMENTED();
 #endif
