@@ -142,7 +142,7 @@ void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
     c2_memset(C2V(gPed_forms), 0, sizeof(C2V(gPed_forms)));
     c2_memset(C2V(gPed_personalities), 0, sizeof(C2V(gPed_personalities)));
     c2_memset(C2V(gPed_moves), 0, sizeof(C2V(gPed_moves)));
-    c2_memset(C2V(gPed_remaps), 0, sizeof(C2V(gPed_personalities)));
+    c2_memset(C2V(gPed_remaps), 0, sizeof(C2V(gPed_remaps)));
 
     ClearOutMorphs();
 
