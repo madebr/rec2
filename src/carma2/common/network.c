@@ -26,7 +26,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_service_disable, 0x00690c38);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_storage_space_initialized, 0x00688b1c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gScore_winner, 0x00659c2c, 20);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gReceived_game_scores, 0x0074a694);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNet_service_disable, 0x00690c38);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMessage_header_size, 0x0068d98c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gIn_net_service, 0x00690c3c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gOnly_receive_guarantee_replies, 0x00690c44);

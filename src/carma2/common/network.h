@@ -13,7 +13,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gNet_service_disable);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_storage_space_initialized);
 C2_HOOK_VARIABLE_DECLARE(int, gScore_winner);
 C2_HOOK_VARIABLE_DECLARE(int, gReceived_game_scores);
-C2_HOOK_VARIABLE_DECLARE(int, gNet_service_disable);
 C2_HOOK_VARIABLE_DECLARE(int, gMessage_header_size);
 C2_HOOK_VARIABLE_DECLARE(int, gIn_net_service);
 C2_HOOK_VARIABLE_DECLARE(int, gOnly_receive_guarantee_replies);
