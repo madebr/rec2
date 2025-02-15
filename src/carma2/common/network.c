@@ -472,7 +472,7 @@ tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
 
         for (i = 0; i < MIN_MESSAGES_CAPACITY; i++) {
             if (((tNet_message*)&C2V(gMin_messages)[C2V(rr_min)])->contents.raw.header.type == eNetMsg_none) {
-                pointer = &gMin_messages[C2V(rr_min)];
+                pointer = &C2V(gMin_messages)[C2V(rr_min)];
                 break;
             }
             C2V(rr_min)++;
