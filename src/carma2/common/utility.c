@@ -1,8 +1,11 @@
 #include "utility.h"
 
+#include "globvars.h"
 #include "platform.h"
 
 #include "c2_ctype.h"
+
+#include <string.h>
 
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
@@ -31,6 +34,18 @@ char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS) {
     return GetALineWithNoPossibleService(pF, pS);
 }
 C2_HOOK_FUNCTION(0x00491090, GetALineAndDontArgue)
+
+void C2_HOOK_FASTCALL PathCat(char* pDestn_str, char* pStr_1, char* pStr_2) {
+
+    if (pDestn_str != pStr_1) { // Added to avoid strcpy overlap checks
+        strcpy(pDestn_str, pStr_1);
+    }
+    if (strlen(pStr_2) != 0) {
+        strcat(pDestn_str, C2V(gDir_separator));
+        strcat(pDestn_str, pStr_2);
+    }
+}
+C2_HOOK_FUNCTION(0x00513690, PathCat)
 
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
     int val;
