@@ -93,6 +93,20 @@ float C2_HOOK_FASTCALL GetAScalar(tTWTFILE* pF) {
 }
 C2_HOOK_FUNCTION(0x0048fb80, GetAScalar)
 
+void C2_HOOK_FASTCALL GetThreeFloats(tTWTFILE * pF, float* pF1, float* pF2, float* pF3) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF3);
+}
+C2_HOOK_FUNCTION(0x0048fc90, GetThreeFloats)
+
 tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
