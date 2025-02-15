@@ -1303,4 +1303,4 @@ int C2_HOOK_FASTCALL PDGetJoy2Y(void) {
     }
     return C2V(gJoy2_info).dwYpos;
 }
-C2_HOOK_FUNCTION(0x0051d2a0, PDGetJoy1X)
+C2_HOOK_FUNCTION(0x0051d2a0, PDGetJoy2Y)
