@@ -3411,7 +3411,7 @@ typedef struct {
     undefined field_0xc[0xd0];
     float field_0xdc;
     float field_0xe0;
-    undefined field_0xe4[0x2c];
+    undefined field_0xe4[0x20];
 } tCrush_info;
 
 typedef struct {
