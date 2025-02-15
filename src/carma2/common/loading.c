@@ -64,6 +64,20 @@ int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0048fb00, GetAnInt, GetAnInt_original)
 
+void C2_HOOK_FASTCALL GetThreeInts(tTWTFILE* pF, int* pF1, int* pF2, int* pF3) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = c2_strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = c2_strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+    str = c2_strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF3);
+}
+C2_HOOK_FUNCTION(0x0048fe30, GetThreeInts)
+
 tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
