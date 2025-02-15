@@ -237,12 +237,12 @@ void C2_HOOK_FASTCALL DoNextJoinPoll(void) {
         if (C2V(gCurrent_join_poll_game) == NULL) {
             return;
         }
-        if (!PDNetGetNextJoinGame(C2V(gCurrent_join_poll_game), gJoin_poll_index)) {
+        if (!PDNetGetNextJoinGame(C2V(gCurrent_join_poll_game), C2V(gJoin_poll_index))) {
             C2V(gJoin_poll_index) = 0;
             DisposeCurrentJoinPollGame();
             return;
         }
-        if (!NetJoinGameLowLevel(gCurrent_join_poll_game, "!TEMP!")) {
+        if (!NetJoinGameLowLevel(C2V(gCurrent_join_poll_game), "!TEMP!")) {
             tNet_message* message;
             C2V(gTime_for_next_one) = 0;
             message = NetBuildMessage(0, 0);
