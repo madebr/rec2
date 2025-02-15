@@ -185,7 +185,7 @@ void C2_HOOK_FASTCALL S3CopyS3Vector3(tS3_vector3* pDest, tS3_vector3* pSrc) {
     pDest->y = pSrc->y;
     pDest->z = pSrc->z;
 }
-C2_HOOK_FUNCTION(0x0056770a, S3CopyBrVector3)
+C2_HOOK_FUNCTION(0x0056770a, S3CopyS3Vector3)
 
 void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos) {
 
