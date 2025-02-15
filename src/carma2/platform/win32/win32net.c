@@ -419,7 +419,7 @@ C2_HOOK_FUNCTION(0x0051a0b0, PDNetLeaveGame)
 
 tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, void** pSender_address) {
     char addr_str[32];
-    unsigned int sa_len;
+    int sa_len;
     int res;
     tNet_message* msg;
     char* receive_buffer;
