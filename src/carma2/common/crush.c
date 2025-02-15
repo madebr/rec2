@@ -100,7 +100,7 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
     int i;
 
     C2_HOOK_BUG_ON(sizeof(tCrush_info) != 0x104);
-    C2_HOOK_BUG_ON(sizeof(tCollision_Info) != 0x4d8);
+    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
 
     for (i = 0; i < REC2_ASIZE(C2V(gCrush_array_0067a190)); i++) {
         C2V(gCrush_array_0067a190)[i] = 0;
