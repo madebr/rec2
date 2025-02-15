@@ -107,6 +107,16 @@ void C2_HOOK_FASTCALL GetThreeFloats(tTWTFILE * pF, float* pF1, float* pF2, floa
 }
 C2_HOOK_FUNCTION(0x0048fc90, GetThreeFloats)
 
+void (C2_HOOK_FASTCALL * GetAString_original)(tTWTFILE* pF, char* pString);
+void C2_HOOK_FASTCALL GetAString(tTWTFILE* pF, char* pString) {
+#if defined(C2_HOOKS_ENABLED)
+    GetAString_original(pF, pString);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00490630, GetAString, GetAString_original)
+
 tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
