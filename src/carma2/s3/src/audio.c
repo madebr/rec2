@@ -469,7 +469,7 @@ void C2_HOOK_FASTCALL S3Service(int pInside_cockpit, int pThings_moved) {
         }
     }
     if (spatial_serviced) {
-        C2V(gS3_last_service_time_spatial) = gS3_last_service_time;
+        C2V(gS3_last_service_time_spatial) = C2V(gS3_last_service_time);
     }
 #endif
 }
