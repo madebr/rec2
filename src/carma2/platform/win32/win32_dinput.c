@@ -613,6 +613,9 @@ void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void) {
 #else
     tJoystick_effect_description description;
 
+#ifdef REC2_FIX_BUGS
+    c2_memset(&description, 0, sizeof(description));
+#endif
     description.type = eJoystick_effect_Friction;
     description.type_specific_params.friction.field_0x0 = 0;
     description.type_specific_params.friction.field_0x4 = 10000;
@@ -623,6 +626,9 @@ void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void) {
     description.field_0x4c = 0x5a;
     C2V(gBasic_friction_joystick_effect_index) = CreateDinputEffect(C2V(gJoystick_index), &description, "Basic Friction");
 
+#ifdef REC2_FIX_BUGS
+    c2_memset(&description, 0, sizeof(description));
+#endif
     description.type = eJoystick_effect_ConstantForce;
     description.type_specific_params.constant.field_0x0 = 0;
     description.time_ms = 5000000;
@@ -632,6 +638,9 @@ void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void) {
     description.field_0x4c = 0x5a;
     C2V(gBasic_force_joystick_effect_index ) = CreateDinputEffect(C2V(gJoystick_index), &description, "Basic Force");
 
+#ifdef REC2_FIX_BUGS
+    c2_memset(&description, 0, sizeof(description));
+#endif
     description.type = eJoystick_effect_ConstantForce;
     description.type_specific_params.constant.field_0x0 = 0;
     description.time_ms = 1000000;
