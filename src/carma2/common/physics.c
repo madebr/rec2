@@ -1143,7 +1143,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefine
     tCollision_info* box;
     br_vector3 tv1;
 
-    C2_HOOK_BUG_ON(sizeof(sizeof(tCollision_info)) != 0x4d8);
+    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
 
     box = BrMemAllocate(sizeof(tCollision_info), kMem_collision_shape);
     box->shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
