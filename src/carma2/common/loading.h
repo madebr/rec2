@@ -14,6 +14,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
 
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 
+int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pString_list, int pCount);
+
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
 void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile);
