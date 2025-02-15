@@ -424,9 +424,7 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
     tNet_message* msg;
     char* receive_buffer;
 
-    C2_HOOK_BUG_ON(sizeof(C2V(gListen_address)) != 0xe);
-
-    sa_len = sizeof(C2V(gListen_address));
+    sa_len = 14;  /* FIXME: sizeof(C2V(gListen_address)) == 16 */
     msg = NetAllocateMessage(512);
     receive_buffer = (char*)msg;
     res = recvfrom(C2V(gSocket), receive_buffer, 512, 0, &C2V(gListen_address), &sa_len) != SOCKET_ERROR;
@@ -460,7 +458,7 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
             default:
                 dr_dprintf("PDNetGetNextMessage(): res is %d, received message type %d from '%s', passing up", res, msg->contents.raw.header.type, addr_str);
                 c2_memcpy(&C2V(gLast_received_addr), C2V(gPtr_listen_address), sizeof(C2V(gLast_received_addr)));
-                *pSender_address = &gLast_received_addr;
+                *pSender_address = &C2V(gLast_received_addr);
                 return msg;
             }
         }
