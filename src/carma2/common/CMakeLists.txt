@@ -1,4 +1,6 @@
 add_library(c2_common STATIC
+    crush.c
+    crush.h
     drfile.c
     drfile.h
     drmem.c

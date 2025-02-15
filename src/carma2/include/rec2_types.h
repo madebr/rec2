@@ -1,6 +1,8 @@
 #ifndef REC2_TYPES_H
 #define REC2_TYPES_H
 
+#include <brender/br_types.h>
+
 typedef char tPath_name[256];
 
 typedef unsigned char tU8;
