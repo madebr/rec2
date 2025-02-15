@@ -16,8 +16,6 @@ void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
-char* C2_HOOK_FASTCALL DRreadline(tTWTFILE* pFile, char* pBuffer);
-
 void C2_HOOK_FASTCALL DRfclose(tTWTFILE* pFile);
 
 br_size_t C2_HOOK_FASTCALL DRfread(void* buf, br_size_t size, unsigned int n, void* f);
