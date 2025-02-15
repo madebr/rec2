@@ -22,3 +22,13 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00490f30, GetALineWithNoPossibleService, GetALineWithNoPossibleService_original)
+
+void (C2_HOOK_FASTCALL * PossibleService_original)(void);
+void C2_HOOK_FASTCALL PossibleService(void) {
+#if defined(C2_HOOKS_ENABLED)
+    PossibleService_original();
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x005155d0, PossibleService, PossibleService_original)
