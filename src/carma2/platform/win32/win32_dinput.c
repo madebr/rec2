@@ -1234,7 +1234,7 @@ int C2_HOOK_FASTCALL PDGetJoy1Y(void) {
     }
     return GetDirectInputJoy1Y();
 }
-C2_HOOK_FUNCTION(0x0051d250, PDGetJoy1X)
+C2_HOOK_FUNCTION(0x0051d250, PDGetJoy1Y)
 
 tU32 C2_HOOK_FASTCALL PDGetJoy2Button1(void) {
 
