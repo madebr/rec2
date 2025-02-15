@@ -462,7 +462,7 @@ tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
     static C2_HOOK_VARIABLE_IMPLEMENT(int, rr_mid, 0x00690c64);
     static C2_HOOK_VARIABLE_IMPLEMENT(int, rr_max, 0x00690c68);
 
-    C2_HOOK_BUG_ON(sizeof(tMin_message) - sizeof(void*) != 0x60);
+    C2_HOOK_BUG_ON(sizeof(tMin_message) - sizeof(void*) != 0x58);
     C2_HOOK_BUG_ON(sizeof(tMid_message) - sizeof(void*) != 0x80);
     C2_HOOK_BUG_ON(sizeof(tMax_message) - sizeof(void*) != 0x200);
 
