@@ -270,7 +270,7 @@ void C2_HOOK_FASTCALL ReadShrapnelSideEffects(FILE* pF, tShrapnel_side_effects* 
             c2_strcpy(pShrapnel_side_effects->side_effects[i].field_0x8, s);
             if (c2_strcmp(s, "*") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 0;
-            } else if (s[0] = '*' && DRStricmp(s + c2_strlen(s) - 4, ".MAT") == 0) {
+            } else if (s[0] == '*' && DRStricmp(s + c2_strlen(s) - 4, ".MAT") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 1;
             } else if (DRStricmp(s + c2_strlen(s) - 4, ".DAT") == 0 || DRStricmp(s + c2_strlen(s) - 4, ".ACT") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 2;
