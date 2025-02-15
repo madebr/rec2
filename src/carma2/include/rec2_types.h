@@ -49,6 +49,23 @@ typedef struct tWobble_spec {
     int time_started;
 } tWobble_spec;
 
+typedef enum {
+    kSoundFxPeriodicity_Random = 0,
+    kSoundFxPeriodicity_Periodic = 1,
+    kSoundFxPeriodicity_Continuous = 2,
+} tSpecial_volume_soundfx_periodicity_type;
+
+typedef struct {
+    tSpecial_volume_soundfx_periodicity_type periodicity;
+    float periodic1;
+    float periodic2;
+    tU32 unknown1;
+    int nbEnvironmentalSoundAlternatives;
+    tS32 unknown2; // fixedpoint integer? (* 16 / 100)
+    tS16 soundAlternatives[5];
+    tS16 unknown3;
+} tSpecial_volume_soundfx_data;
+
 enum {
     // FIXME: add all c2 memory tags
     kMem_packed_file = 0xd0,
