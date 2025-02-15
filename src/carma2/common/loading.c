@@ -54,6 +54,16 @@ int C2_HOOK_FASTCALL GetALineAndInterpretCommand(tTWTFILE* pF, const char** pStr
 }
 C2_HOOK_FUNCTION(0x0048fa70, GetALineAndInterpretCommand)
 
+int (C2_HOOK_FASTCALL * GetAnInt_original)(tTWTFILE* pF);
+int C2_HOOK_FASTCALL GetAnInt(tTWTFILE* pF) {
+#if defined(C2_HOOKS_ENABLED)
+    return GetAnInt_original(pF);
+#else
+#error "not implemented"
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0048fb00, GetAnInt, GetAnInt_original)
+
 tTWTFILE* (C2_HOOK_FASTCALL * DRfopen_original)(const char* pFilename, const char* pMode);
 tTWTFILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 #if defined(C2_HOOKS_ENABLED)
