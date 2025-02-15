@@ -283,12 +283,12 @@ void (C2_HOOK_FASTCALL * CheckForPendingStartRace_original)(void);
 void C2_HOOK_FASTCALL CheckForPendingStartRace(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    CheckForPendingStartRace_original_original();
+    CheckForPendingStartRace_original();
 #else
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a5240, CheckForPendingStartRace, CheckForPendingStartRace_original_original);
+C2_HOOK_FUNCTION_ORIGINAL(0x004a5240, CheckForPendingStartRace, CheckForPendingStartRace_original);
 
 void (C2_HOOK_FASTCALL * CheckForNeedyEnvironmentRecipients_original)(void);
 void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
