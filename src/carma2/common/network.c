@@ -612,7 +612,7 @@ int C2_HOOK_FASTCALL NetInitialise(void) {
     C2_HOOK_BUG_ON(sizeof(tMin_message) != 0x5c);
     C2_HOOK_BUG_ON(sizeof(tMid_message) != 0x84);
     C2_HOOK_BUG_ON(sizeof(tMax_message) != 0x204);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tMax_message, contents.raw.header.type, 0x19);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents.raw.header.type, 0x19);
 
     InitAbuseomatic();
     C2V(gNet_service_disable) = 0;
