@@ -471,9 +471,9 @@ C2_HOOK_FUNCTION(0x0051a380, PDNetGetNextMessage)
 
 int C2_HOOK_FASTCALL PDNetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress) {
 
-    C2_HOOK_BUG_ON(sizeof(struct sockaddr) != 0xe);
+    /* FIXME: sizeof(struct sockaddr) == 16 */
 
-    if (sendto(C2V(gSocket), (const char*)pMessage, pMessage->header.field_0x16, 0, pAddress, sizeof(struct sockaddr)) == SOCKET_ERROR) {
+    if (sendto(C2V(gSocket), (const char*)pMessage, pMessage->header.field_0x16, 0, pAddress, 14) == SOCKET_ERROR) {
         dr_dprintf("PDNetSendMessageToAddress(): Error on sendto() - WSAGetLastError=%d", WSAGetLastError());
         NetDisposeMessage(pDetails, pMessage);
         return 1;
