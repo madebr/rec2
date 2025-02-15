@@ -2,6 +2,8 @@
 
 #include "platform.h"
 
+#include "c2_ctype.h"
+
 static br_error (C2_HOOK_FASTCALL * RemoveAllBrenderDevices_original)(void);
 br_error C2_HOOK_FASTCALL RemoveAllBrenderDevices(void) {
     return RemoveAllBrenderDevices_original();
@@ -29,6 +31,20 @@ char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS) {
     return GetALineWithNoPossibleService(pF, pS);
 }
 C2_HOOK_FUNCTION(0x00491090, GetALineAndDontArgue)
+
+int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
+    int val;
+
+    while (1) {
+        val = c2_tolower(*p1) - c2_tolower(*p2);
+        if (val != 0 || *p1 == '\0' || *p2 == '\0') {
+            return val;
+        }
+        p1++;
+        p2++;
+    }
+}
+C2_HOOK_FUNCTION(0x00515870, DRStricmp)
 
 void (C2_HOOK_FASTCALL * PossibleService_original)(void);
 void C2_HOOK_FASTCALL PossibleService(void) {
