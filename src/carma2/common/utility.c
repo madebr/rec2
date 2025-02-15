@@ -23,6 +23,13 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00490f30, GetALineWithNoPossibleService, GetALineWithNoPossibleService_original)
 
+char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS) {
+
+    PossibleService();
+    return GetALineWithNoPossibleService(pF, pS);
+}
+C2_HOOK_FUNCTION(0x00491090, GetALineAndDontArgue)
+
 void (C2_HOOK_FASTCALL * PossibleService_original)(void);
 void C2_HOOK_FASTCALL PossibleService(void) {
 #if defined(C2_HOOKS_ENABLED)

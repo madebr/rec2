@@ -14,6 +14,8 @@ int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
 
 char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(tTWTFILE* pF, char* pS);
 
+char* C2_HOOK_FASTCALL GetALineAndDontArgue(tTWTFILE* pF, char* pS);
+
 void C2_HOOK_FASTCALL PossibleService(void);
 
 #endif // REC2_UTILITY_H
