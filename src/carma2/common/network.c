@@ -299,7 +299,7 @@ void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0049b9a0, CheckForNeedyEnvironmentRecipients_original, CheckForNeedyEnvironmentRecipients_original);
+C2_HOOK_FUNCTION_ORIGINAL(0x0049b9a0, CheckForNeedyEnvironmentRecipients, CheckForNeedyEnvironmentRecipients_original);
 
 void C2_HOOK_FASTCALL GetCheckSum(tNet_message* pMessage) {
 
