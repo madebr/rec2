@@ -6,7 +6,7 @@ br_device* C2_HOOK_CDECL BrDrv1SoftRendBegin(const char* arguments);
 
 void (C2_HOOK_CDECL * _BrBeginHook_original)(void);
 void C2_HOOK_CDECL _BrBeginHook(void) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     _BrBeginHook_original();
 #else
     BrDevAddStatic(NULL, BrDrv1SoftRendBegin, NULL);
