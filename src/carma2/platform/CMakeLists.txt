@@ -3,9 +3,15 @@ add_library(c2_platform STATIC
     rec2_logging.c
 )
 
+add_library(c2_platform_brender STATIC
+    platform.h
+)
+
 if(WIN32)
-    target_sources(c2_platform PRIVATE
+    target_sources(c2_platform_brender PRIVATE
         win32/win32_br_platform.c
+    )
+    target_sources(c2_platform PRIVATE
         win32/win32_ssdx.c
         win32/win32_ssdx.h
         win32/win32_dinput.c
@@ -46,6 +52,15 @@ target_link_libraries(c2_platform
         brender
         brender_softrendr_float
         c2_common
+        c2_hooks
+)
+target_include_directories(c2_platform_brender
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+)
+target_link_libraries(c2_platform_brender
+    PUBLIC
+        brender
         c2_hooks
 )
 

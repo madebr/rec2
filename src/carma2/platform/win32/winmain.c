@@ -7,6 +7,8 @@
 #include "loading.h"
 #include "main.h"
 
+#include "rec2_macros.h"
+
 #include <windows.h>
 
 #include <string.h>
@@ -88,7 +90,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     C2V(gHInstance) = hInstance;
     C2V(gNShowCmd) = nShowCmd;
     C2V(gPathNetworkIni)[0] = '\0';
-    DWORD lenCwd = GetCurrentDirectoryA(240, C2V(gPathNetworkIni)); // FIXME: use C2_ARRAY_SIZE
+    DWORD lenCwd = GetCurrentDirectoryA(REC2_ASIZE(C2V(gPathNetworkIni)), C2V(gPathNetworkIni));
     if (lenCwd != 0) {
         strcat(C2V(gPathNetworkIni), "\\");
         strcat(C2V(gPathNetworkIni), "NETWORK.INI");
