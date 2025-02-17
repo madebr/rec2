@@ -1,4 +1,6 @@
 add_library(brender STATIC
+    $<TARGET_OBJECTS:c2_platform_brender>
+
     core/fw/assocarr.c
     core/fw/assocarr.h
     core/fw/brbegin.c
@@ -185,6 +187,9 @@ add_library(brender STATIC
     core/v1db/v1dbfile.c
     core/v1db/v1dbfile.h
 )
+if(MSVC)
+    set_property(TARGET brender PROPERTY ARCHIVE_OUTPUT_NAME "libbrender")
+endif()
 
 if(REC2_FIX_BUGS)
     target_compile_definitions(brender PRIVATE BRENDER_FIX_BUGS)
@@ -270,3 +275,50 @@ target_compile_definitions(brender_softrendr_float
         BrDrv1Begin=BrDrv1SoftRendBegin
         BASED_FLOAT
 )
+
+if(C2_STANDALONE)
+    add_library(brender-shared SHARED
+        dll/brender1.def
+        $<TARGET_OBJECTS:c2_platform_brender>
+        $<TARGET_OBJECTS:brender>
+        $<TARGET_OBJECTS:brender_softrendr_float>
+    )
+    target_include_directories(brender-shared
+        PUBLIC
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    )
+    set_property(TARGET brender-shared PROPERTY OUTPUT_NAME "brender")
+
+    add_library(brender-brcore1-shared SHARED
+        dll/dllmain.c
+        dll/brcore1.def
+    )
+    target_link_libraries(brender-brcore1-shared PRIVATE brender-shared)
+    set_property(TARGET brender-brcore1-shared PROPERTY OUTPUT_NAME "brcore1")
+    if(MSVC)
+        target_compile_options(brender-brcore1-shared PRIVATE "/Zl")
+        target_link_options(brender-brcore1-shared PRIVATE "/ENTRY:DllMain")
+    endif()
+
+    add_library(brender-brpmap1-shared SHARED
+        dll/dllmain.c
+        dll/brpmap1.def
+    )
+    target_link_libraries(brender-brpmap1-shared PRIVATE brender-shared)
+    set_property(TARGET brender-brpmap1-shared PROPERTY OUTPUT_NAME "brpmap1")
+    if(MSVC)
+        target_compile_options(brender-brpmap1-shared PRIVATE "/Zl")
+        target_link_options(brender-brpmap1-shared PRIVATE "/ENTRY:DllMain")
+    endif()
+
+    add_library(brender-brhost1-shared SHARED
+        dll/dllmain.c
+        dll/brhost1.def
+    )
+    target_link_libraries(brender-brhost1-shared PRIVATE brender-shared)
+    set_property(TARGET brender-brhost1-shared PROPERTY OUTPUT_NAME "brhost1")
+    if(MSVC)
+        target_compile_options(brender-brhost1-shared PRIVATE "/Zl")
+        target_link_options(brender-brhost1-shared PRIVATE "/ENTRY:DllMain")
+    endif()
+endif()
