@@ -53,8 +53,7 @@ target_include_directories(c2_platform
 )
 target_link_libraries(c2_platform
     PUBLIC
-        brender
-        brender_softrendr_float
+        BRender::Headers
         c2_common
         c2_hooks
 )
@@ -64,21 +63,19 @@ target_include_directories(c2_platform_brender
 )
 target_link_libraries(c2_platform_brender
     PUBLIC
-        brender
+        BRender::Headers
         c2_hooks
 )
 
 if(C2_STANDALONE)
     add_executable(rec2 WIN32
-        $<TARGET_OBJECTS:brender>
-        $<TARGET_OBJECTS:brender_softrendr_float>
         $<TARGET_OBJECTS:c2_common>
         $<TARGET_OBJECTS:c2_platform>
     )
     target_link_libraries(rec2 PRIVATE
-        brender
-        brender_softrendr_float
+        BRender::BRender
         c2_common
         c2_platform
     )
+    add_dependencies(rec2 brender_driver_d3d)
 endif()

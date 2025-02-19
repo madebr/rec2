@@ -298,15 +298,15 @@ void C2_HOOK_CDECL _M_br_object_container_tokensMatchEnd(br_object_container* se
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d670, _M_br_object_container_tokensMatchEnd, _M_br_object_container_tokensMatchEnd_original)
 
-br_error (C2_HOOK_CDECL * BrObjectContainerFree_original)(br_object_container* self, br_token type, char* pattern, br_token_value* tv);
-br_error C2_HOOK_CDECL BrObjectContainerFree(br_object_container* self, br_token type, char* pattern, br_token_value* tv) {
+br_error (C2_HOOK_CDECL * BrObjectContainerFree_original)(br_object_container* self, br_token type, const char* pattern, br_token_value* tv);
+br_error C2_HOOK_CDECL BrObjectContainerFree(br_object_container* self, br_token type, const char* pattern, br_token_value* tv) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     return BrObjectContainerFree_original(self, type, pattern, tv);
 #else
     br_error r;
     br_object** handles;
-    br_int_32 count;
+    br_uint_32 count;
     br_int_32 n;
     br_int_32 i;
 

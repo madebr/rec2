@@ -8,7 +8,7 @@
 #include "core/fw/token.h"
 #include "core/fw/tokenval.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(struct br_device_dispatch, softrendr_deviceDispatch, 0x0058bcb0, {
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_device_dispatch, softrendr_deviceDispatch, 0x0058bcb0, {
     NULL,
     NULL,
     NULL,

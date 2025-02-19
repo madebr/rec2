@@ -52,7 +52,7 @@ if(NOT C2_STANDALONE)
     target_compile_definitions(rec2 PRIVATE "HOOK_INIT_FUNCTION=c2_hook_init")
     target_compile_definitions(rec2 PRIVATE "HOOK_DEINIT_FUNCTION=c2_hook_deinit")
     target_sources(rec2 PRIVATE
-        $<TARGET_OBJECTS:brender>
+        $<TARGET_OBJECTS:brender-static>
         $<TARGET_OBJECTS:brender_softrendr_float>
         $<TARGET_OBJECTS:c2_common>
         $<TARGET_OBJECTS:c2_hooks>
@@ -60,7 +60,6 @@ if(NOT C2_STANDALONE)
     )
     target_link_libraries(rec2
         PRIVATE
-            brender
             c2_common
             c2_hooks
             c2_platform

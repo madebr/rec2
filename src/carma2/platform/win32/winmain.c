@@ -44,6 +44,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
                 C2V(gNoCutscenes) = 1;
             } else if (strcmp(currentArgument, "-D3D") == 0) {
                 C2V(gRenderer) = "D3D";
+            } else if (strcmp(currentArgument, "-D3D_REC2") == 0) {
+                C2V(gRenderer) = "D3D_REC2";
             } else if (strcmp(currentArgument, "-ZOMBIE") == 0) {
                 ConfigureZombiePedTexturePath();
             } else if (strcmp(currentArgument, "-BLOOD") == 0) {
