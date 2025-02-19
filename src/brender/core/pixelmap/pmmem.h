@@ -27,7 +27,7 @@ br_int_32 C2_HOOK_CDECL _M_br_device_pixelmap_mem_space(br_device_pixelmap* self
 
 br_tv_template* C2_HOOK_CDECL _M_br_device_pixelmap_mem_queryTemplate(br_device_pixelmap* self);
 
-br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_validSource(br_device_pixelmap* self, br_object* h);
+br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_validSource(br_device_pixelmap* self, br_boolean* b, br_object* h);
 
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_resize(br_device_pixelmap* self, br_int_32 width, br_int_32 height);
 

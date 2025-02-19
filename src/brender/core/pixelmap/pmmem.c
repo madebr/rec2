@@ -243,7 +243,7 @@ br_tv_template* C2_HOOK_CDECL _M_br_device_pixelmap_mem_queryTemplate(br_device_
 }
 C2_HOOK_FUNCTION(0x00539860, _M_br_device_pixelmap_mem_queryTemplate)
 
-br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_validSource(br_device_pixelmap* self, br_object* h) {
+br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_validSource(br_device_pixelmap* self, br_boolean* b,  br_object* h) {
 
     return 0;
 }

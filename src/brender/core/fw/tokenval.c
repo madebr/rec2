@@ -54,7 +54,7 @@ void C2_HOOK_STDCALL templateMakeMap(br_tv_template* template) {
     if (!template->names_resolved) {
         templateResolveNames(template);
     }
-    max = min = template->entries->token;
+    max = min = template->entries[0].token;
     for (i = 0; i < template->n_entries; i++) {
         tp = &template->entries[i];
         if (tp->token < min) {

@@ -25,6 +25,6 @@ br_boolean C2_HOOK_CDECL _M_br_object_container_tokensMatch(br_object_container*
 
 void C2_HOOK_CDECL _M_br_object_container_tokensMatchEnd(br_object_container* self, void* arg);
 
-br_error C2_HOOK_CDECL BrObjectContainerFree(br_object_container* self, br_token type, char* pattern, br_token_value* tv);
+br_error C2_HOOK_CDECL BrObjectContainerFree(br_object_container* self, br_token type, const char* pattern, br_token_value* tv);
 
 #endif // REC2_OBJECTC_H
