@@ -99,4 +99,7 @@ if(REC2_STANDALONE)
         c2_common
         c2_platform
     )
+    if(REC2_PLATFORM_WIN32)
+        add_dependencies(rec2 brender_driver_d3d)
+    endif()
 endif()
