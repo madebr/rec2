@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "loading.h"
+#include "platform.h"
 #include "utility.h"
 
 #include "rec2_types.h"
@@ -45,16 +46,16 @@ int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c6b0, PlayFFBEffect, PlayFFBEffect_original)
 
-void (C2_HOOK_FASTCALL * StopJoysticks_original)(void);
-void C2_HOOK_FASTCALL StopJoysticks(void) {
+void (C2_HOOK_FASTCALL * InitJoysticks_original)(void);
+void C2_HOOK_FASTCALL InitJoysticks(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    StopJoysticks_original();
+#if 0//defined(C2_HOOKS_ENABLED)
+    InitJoysticks_original();
 #else
-    NOT_IMPLEMENTED();
+    PDInitJoysticks();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004575b0, StopJoysticks, StopJoysticks_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004575b0, InitJoysticks, InitJoysticks_original)
 
 float (C2_HOOK_FASTCALL * GetJoystickX_original)(void);
 float C2_HOOK_FASTCALL GetJoystickX(void) {
