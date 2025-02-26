@@ -519,6 +519,23 @@ int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
 }
 C2_HOOK_FUNCTION(0x00458060, UnloadDinputFFBEfectwithName)
 
+int C2_HOOK_FASTCALL ResetForceFeedback(void) {
+	int result;
+
+    result = 0;
+    if (C2V(gJoystickFFB) != 0) {
+        int i;
+        for (i = 0; i < REC2_ASIZE(C2V(gDirectInputJoystickDevices)); i++) {
+            IDirectInputDevice2A *device = C2V(gDirectInputJoystickDevices)[i];
+            if (device != NULL && (C2V(gJoystickFFB) & (1 << i))) {
+                IDirectInputDevice2_SendForceFeedbackCommand(device, DISFFC_RESET);
+                result = 1;
+            }
+        }
+    }
+    return result;
+}
+
 int (C2_HOOK_FASTCALL * InitForceFeedback_original)(void);
 int C2_HOOK_FASTCALL InitForceFeedback(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -533,15 +550,8 @@ int C2_HOOK_FASTCALL InitForceFeedback(void) {
         JoystickDInputBegin();
     }
 
-    if (C2V(gJoystickFFB) != 0) {
-        int i;
-        for (i = 0; i < REC2_ASIZE(C2V(gDirectInputJoystickDevices)); i++) {
-            IDirectInputDevice2A *device = C2V(gDirectInputJoystickDevices)[i];
-            if (device != NULL && (C2V(gJoystickFFB) & (1 << i))) {
-                IDirectInputDevice2_SendForceFeedbackCommand(device, DISFFC_RESET);
-                C2V(gForceFeedbackAvailable) = 1;
-            }
-        }
+    if (ResetForceFeedback()) {
+        C2V(gForceFeedbackAvailable) = 1;
     }
     if (!C2V(gForceFeedbackAvailable)) {
         return 0;
@@ -1292,3 +1302,12 @@ int C2_HOOK_FASTCALL PDGetJoy2Y(void) {
     return C2V(gJoy2_info).dwYpos;
 }
 C2_HOOK_FUNCTION(0x0051d2a0, PDGetJoy2Y)
+
+void C2_HOOK_FASTCALL PDInitJoysticks(void) {
+
+    if (C2V(gCountEnumeratedJoystickDinputDevices) == 0) {
+        JoystickDInputBegin();
+    }
+
+    ResetForceFeedback();
+}
