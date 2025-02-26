@@ -118,6 +118,8 @@ void C2_HOOK_FASTCALL PDSetKeysFromJoystick(int *keys);
 
 void C2_HOOK_FASTCALL PDReadJoysticks(void);
 
+void C2_HOOK_FASTCALL PDInitJoysticks(void);
+
 tU32 C2_HOOK_FASTCALL PDGetJoy1Button1(void);
 
 tU32 C2_HOOK_FASTCALL PDGetJoy1Button2(void);
