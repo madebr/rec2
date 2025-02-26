@@ -27,18 +27,23 @@ if(WIN32)
             DIRECTINPUT_VERSION=0x0500
             DIRECTSOUND_VERSION=0x0500
     )
+<<<<<<< HEAD
     find_library(DSOUND_LIBRARY NAMES dsound)
     find_library(WINMM_LIBRARY NAMES winmm)
     find_library(WS2_32_LIBRARY NAMES ws2_32)
+    option(SOUND_ENABLED "Enable sound with DirectSound" ON)
     target_link_libraries(c2_platform
         PRIVATE
             DirectX::dinput
             DirectX::dxguid
-            ${DSOUND_LIBRARY}
-            ${WINMM_LIBRARY}
-            ${WS2_32_LIBRARY}
+            winmm
+            ws2_32
             IForce2::IForce2
     )
+    if(SOUND_ENABLED)
+        target_link_libraries(c2_platform PRIVATE dsound)
+        target_compile_definitions(c2_platform PRIVATE DSOUND_ENABLED)
+    endif()
 else()
     message(FATAL_ERROR "Unsupported platform")
 endif()

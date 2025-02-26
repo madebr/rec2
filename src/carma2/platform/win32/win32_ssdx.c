@@ -199,7 +199,11 @@ void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDD
     C2V(gHWnd_SSDX) = p_hWnd;
     if (p_flags & 0x2) {
         dr_dprintf("SSDXStart(): Calling DirectSoundCreate()...");
+#ifdef DSOUND_ENABLED
         hRes = DirectSoundCreate(0, &C2V(gDirectSound), NULL);
+#else
+        hRes = DSERR_GENERIC;
+#endif
     }
     if (hRes != DS_OK) {
         SSDXLogError(hRes);
@@ -512,6 +516,7 @@ int C2_HOOK_FASTCALL PDS3Init(void) {
 C2_HOOK_FUNCTION(0x0056992f, PDS3Init)
 
 int C2_HOOK_FASTCALL PDS3DDXInit(void) {
+#ifdef DSOUND_ENABLED
     int i;
 
     if (FAILED(DirectSoundCreate(0, &C2V(gPD_S3_direct_sound), NULL))) {
@@ -527,6 +532,9 @@ int C2_HOOK_FASTCALL PDS3DDXInit(void) {
     }
     S3Enable();
     return 1;
+#else
+    return 0;
+#endif
 }
 C2_HOOK_FUNCTION(0x00569a2c, PDS3DDXInit)
 
