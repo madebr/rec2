@@ -44,7 +44,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00470bb0, Generic_Infunc, Generic_Infunc_original)
 
 int C2_HOOK_FASTCALL Options_Quit(tFrontend_spec* pFrontend) {
 
-    StopJoysticks();
+    InitJoysticks();
     QuitGame();
     return 2;
 }
