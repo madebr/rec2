@@ -66,6 +66,8 @@ void C2_HOOK_FASTCALL PDGetCurrentDate(char* pTimeStr);
 
 void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr);
 
+void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only);
+
 int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord);
 
 void C2_HOOK_FASTCALL PDInstallErrorHandlers(void);

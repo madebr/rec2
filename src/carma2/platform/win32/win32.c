@@ -1132,3 +1132,15 @@ void C2_HOOK_FASTCALL PDPageInProcessMemory(void) {
     PDPageInMemory(GetProcessHeap());
     Sleep(1500);
 }
+
+void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only) {
+
+    if (pIgnore_read_only) {
+        DWORD flags = GetFileAttributesA(pPath);
+        if (flags != INVALID_FILE_ATTRIBUTES) {
+            SetFileAttributesA(pPath, flags & ~FILE_ATTRIBUTE_READONLY);
+        }
+    }
+    DeleteFileA(pPath);
+}
+C2_HOOK_FUNCTION(0x0051d4d0, PDFileDelete)
