@@ -51,17 +51,6 @@ void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040ea30, PositionExternalCamera, PositionExternalCamera_original)
 
-void (C2_HOOK_FASTCALL * ActionReplayFinishRecording_original)(void);
-void C2_HOOK_FASTCALL ActionReplayFinishRecording(void) {
-
-#if defined(C2_HOOKS_ENABLED)
-    ActionReplayFinishRecording_original();
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004e1a20, ActionReplayFinishRecording, ActionReplayFinishRecording_original)
-
 void C2_HOOK_FASTCALL ARMainLoopStart(void) {
 
     C2V(gAction_replay_mode) = 0;

@@ -4235,6 +4235,8 @@ enum {
     eMiscString_internal_cam = 270,
     eMiscString_camera = 271,
     eMiscString_targets = 276,
+    eMiscString_please_wait = 280,
+    eMiscString_post_processing = 282,
     eMiscString_press_return_to_commit_suicide = 286,
     eMiscString_no_HUD = 287,
     eMiscString_minimal_HUD = 288,

@@ -1,12 +1,32 @@
 #include "video.h"
 
 #include "globvars.h"
+#include "graphics.h"
+#include "platform.h"
 
+#include <FileTypesAndCreators.h>
+#include <GXMath.h>
 #include <Movies.h>
 #include <QTML.h>
+#include <Script.h>
+#include <TextUtils.h>
+
+#include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gQuickTime_initialized, 0x006a0c24);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gShow_status_message, 0x006a23b8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gStatus_message_1, 0x006a23bc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gStatus_message_2, 0x006a23c0);
+C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gNext_replay_record_state, 0x006a0c50);
+C2_HOOK_VARIABLE_IMPLEMENT(short, gQuicktime_movie_file, 0x006a0af0);
+C2_HOOK_VARIABLE_IMPLEMENT(Movie, gQuicktime_movie, 0x006a0c30);
+C2_HOOK_VARIABLE_IMPLEMENT(Handle, gQuicktime_frame_pixmap_handle, 0x006a0c34);
+C2_HOOK_VARIABLE_IMPLEMENT(Handle, gQuicktime_image_description_handle, 0x006a0c40);
+C2_HOOK_VARIABLE_IMPLEMENT(Handle, gQuicktime_compressed_frame_handle, 0x006a0c3c);
+C2_HOOK_VARIABLE_IMPLEMENT(ImageSequence, gQuicktime_image_sequence, 0x006a0af4);
+C2_HOOK_VARIABLE_IMPLEMENT(Media, gQuicktime_media, 0x006a0afc);
+C2_HOOK_VARIABLE_IMPLEMENT(Track, gQuicktime_track, 0x006a0c10);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gQuicktime_movie_counter, 0x006a0c2c);
 
 void (C2_HOOK_CDECL * InitQuickTimeStuff_original)(void);
 void C2_HOOK_CDECL InitQuickTimeStuff(void) {
@@ -39,3 +59,89 @@ void C2_HOOK_FASTCALL WriteBannerFrame(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e1250, WriteBannerFrame, WriteBannerFrame_original)
+
+void C2_HOOK_FASTCALL ShowStatusMessage(int msg1, int msg2) {
+
+    C2V(gShow_status_message) = 1;
+    C2V(gStatus_message_1) = msg1;
+    C2V(gStatus_message_2) = msg2;
+}
+
+void C2_HOOK_FASTCALL TidyMovieARDisplay(void) {
+    undefined4 state;
+
+    state = C2V(gNext_replay_record_state);
+    C2V(gNext_replay_record_state) = 20;
+    RenderAFrame(1);
+    RenderAFrame(1);
+    C2V(gNext_replay_record_state) = state;
+}
+
+void C2_HOOK_FASTCALL FreeOffQTshite(void) {
+    tPath_name path;
+
+    if (C2V(gQuicktime_movie_file) != 0) {
+        CloseMovieFile(C2V(gQuicktime_movie_file));
+    }
+    DisposeMovie(C2V(gQuicktime_movie));
+    PDFileDelete(C2V(gQuick_time_temp_path), 1);
+    c2_sprintf(path, "%s.#Res", C2V(gQuick_time_temp_path));
+    PDFileDelete(path, 1);
+    if (C2V(gQuicktime_frame_pixmap_handle) != NULL) {
+        DisposeHandle(C2V(gQuicktime_frame_pixmap_handle));
+        C2V(gQuicktime_frame_pixmap_handle) = NULL;
+    }
+    if (C2V(gQuicktime_image_description_handle) != NULL) {
+        DisposeHandle(C2V(gQuicktime_image_description_handle));
+        C2V(gQuicktime_image_description_handle) = NULL;
+    }
+    if (C2V(gQuicktime_compressed_frame_handle) != NULL) {
+        DisposeHandle(C2V(gQuicktime_compressed_frame_handle));
+        C2V(gQuicktime_compressed_frame_handle) = NULL;
+    }
+}
+
+int C2_HOOK_FASTCALL MovieStopRecordingAndSave(void) {
+
+    if (C2V(gNext_replay_record_state) == 4) {
+        FSSpec fs_spec;
+        TimeValue duration;
+        tPath_name path;
+
+        C2V(gNext_replay_record_state) = 5;
+        ShowStatusMessage(eMiscString_post_processing, eMiscString_please_wait);
+        TidyMovieARDisplay();
+        WriteBannerFrame();
+        C2V(gNext_replay_record_state) = 0;
+        CDSequenceEnd(C2V(gQuicktime_image_sequence));
+        EndMediaEdits(C2V(gQuicktime_media));
+        duration = GetMediaDuration(C2V(gQuicktime_media));
+        if (duration != 0) {
+            InsertMediaIntoTrack(C2V(gQuicktime_track), 0, 0, duration, IntToFixed(1));
+        }
+        if (C2V(gQuicktime_movie_file) != 0) {
+            CloseMovieFile(C2V(gQuicktime_movie_file));
+        }
+        c2_sprintf(path, "%s%3.3d.MOV", C2V(gQuick_time_movie_path_stub), C2V(gQuicktime_movie_counter));
+        C2V(gQuicktime_movie_counter) += 1;
+        fs_spec.vRefNum = 0;
+        fs_spec.parID = 0;
+        c2_strcpy(fs_spec.name, path);
+        c2pstr(fs_spec.name);
+        FlattenMovieData(C2V(gQuicktime_movie), flattenAddMovieToDataFork, &fs_spec, sigMoviePlayer, smSystemScript, createMovieFileDeleteCurFile);
+        FreeOffQTshite();
+    }
+    return 1;
+}
+
+void (C2_HOOK_FASTCALL * MovieStopRecordingIfNecessary_original)(void);
+void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    ActionReplayFinishRecording_original();
+#else
+    MovieStopRecordingAndSave();
+    KillStatusMessage();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e1a20, MovieStopRecordingIfNecessary, MovieStopRecordingIfNecessary_original)

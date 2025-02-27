@@ -13,8 +13,6 @@ void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos);
 
 void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime);
 
-void C2_HOOK_FASTCALL ActionReplayFinishRecording(void);
-
 void C2_HOOK_FASTCALL ARMainLoopStart(void);
 
 void C2_HOOK_FASTCALL ARService(void);
