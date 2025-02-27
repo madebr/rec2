@@ -29,3 +29,13 @@ void C2_HOOK_FASTCALL KillStatusMessage(void) {
     C2V(gShow_status_message) = 0;
 }
 C2_HOOK_FUNCTION(0x004e2110, KillStatusMessage)
+
+void (C2_HOOK_FASTCALL * WriteBannerFrame_original)(void);
+void C2_HOOK_FASTCALL WriteBannerFrame(void) {
+#if defined(C2_HOOKS_ENABLED)
+    WriteBannerFrame_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e1250, WriteBannerFrame, WriteBannerFrame_original)
