@@ -5,4 +5,6 @@
 
 void C2_HOOK_CDECL InitQuickTimeStuff(void);
 
+void C2_HOOK_FASTCALL KillStatusMessage(void);
+
 #endif //REC2_VIDEO_H
