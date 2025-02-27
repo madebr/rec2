@@ -3,6 +3,10 @@
 
 #include "MacTypes.h"
 
+#include "Files.h"
+
+#include "MacMemory.h"
+
 extern OSErr InitializeQTML(long flag);
 
 #endif /* __QTML__ */
