@@ -6,6 +6,7 @@
 #include <QTML.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gQuickTime_initialized, 0x006a0c24);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gShow_status_message, 0x006a23b8);
 
 void (C2_HOOK_CDECL * InitQuickTimeStuff_original)(void);
 void C2_HOOK_CDECL InitQuickTimeStuff(void) {
@@ -22,3 +23,9 @@ void C2_HOOK_CDECL InitQuickTimeStuff(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e1700, InitQuickTimeStuff, InitQuickTimeStuff_original)
+
+void C2_HOOK_FASTCALL KillStatusMessage(void) {
+
+    C2V(gShow_status_message) = 0;
+}
+C2_HOOK_FUNCTION(0x004e2110, KillStatusMessage)
