@@ -5,6 +5,14 @@
 extern "C" {
 #endif
 
+#ifdef _WIN32
+#define SMACK_STDCALL __stdcall
+#define SMACK_FASTCALL __fastcall
+#else
+#define SMACK_STDCALL
+#define SMACK_FASTCALL
+#endif
+
 typedef void* SMACK_HDC;
 
 typedef struct SMACK_RGBQUAD {
@@ -183,34 +191,34 @@ typedef struct _SMACKBLIT* HSMACKBLIT;
 typedef void* SMACK_HDIGDRIVER;
 typedef void* SMACK_HWND;
 
-int __stdcall SmackSoundUseMSS(SMACK_HDIGDRIVER hDrv);
-int __stdcall SmackSoundUseDirectSound(SMACK_HWND hWnd);
-unsigned int __stdcall SmackUseMMX(unsigned int flag);
+int SMACK_STDCALL SmackSoundUseMSS(SMACK_HDIGDRIVER hDrv);
+int SMACK_STDCALL SmackSoundUseDirectSound(SMACK_HWND hWnd);
+unsigned int SMACK_STDCALL SmackUseMMX(unsigned int flag);
 
-HSMACK __stdcall SmackOpen(const char*, unsigned int uFlags, unsigned int uExtraBuffers);
-HSMACKBLIT __stdcall SmackBlitOpen(unsigned int uSurfaceFormat);
-void __stdcall SmackToBuffer(HSMACK, unsigned int uX, unsigned int uY, unsigned int uPitch, unsigned int uHeight, void *pBuffer, unsigned int uFlags);
-void __stdcall SmackBlitSetPalette(HSMACKBLIT hBlit, void *pPalette, unsigned int uPalType);
-unsigned int __stdcall SmackDoFrame(HSMACK);
-unsigned int __stdcall SmackToBufferRect(HSMACK, unsigned int uSmackSurface);
-void __stdcall SmackBlit(HSMACKBLIT, void *pDest, unsigned int uDestPitch, unsigned int uDestX, unsigned int uDestY, void *pSrc, unsigned int uSrcPitch, unsigned int uSrcX, unsigned int uSrcY, unsigned int uSrcZ, unsigned int uSrcW);
-void __stdcall SmackNextFrame(HSMACK);
-unsigned int __stdcall SmackWait(HSMACK);
-unsigned int __stdcall SmackSoundOnOff(HSMACK, unsigned int bOn);
-void __stdcall SmackClose(HSMACK);
-void __stdcall SmackBufferClose(HSMACKBUF);
-void __stdcall SmackBlitClose(HSMACKBLIT);
-int __stdcall SmackBlitClear(HSMACKBLIT a1, unsigned short *pFrameData, unsigned int uTargetSurfacePitch, unsigned int uOutX, unsigned int uOutY, unsigned int uOutZ, unsigned int uOutW, int a8);
+HSMACK SMACK_STDCALL SmackOpen(const char*, unsigned int uFlags, unsigned int uExtraBuffers);
+HSMACKBLIT SMACK_STDCALL SmackBlitOpen(unsigned int uSurfaceFormat);
+void SMACK_STDCALL SmackToBuffer(HSMACK, unsigned int uX, unsigned int uY, unsigned int uPitch, unsigned int uHeight, void *pBuffer, unsigned int uFlags);
+void SMACK_STDCALL SmackBlitSetPalette(HSMACKBLIT hBlit, void *pPalette, unsigned int uPalType);
+unsigned int SMACK_STDCALL SmackDoFrame(HSMACK);
+unsigned int SMACK_STDCALL SmackToBufferRect(HSMACK, unsigned int uSmackSurface);
+void SMACK_STDCALL SmackBlit(HSMACKBLIT, void *pDest, unsigned int uDestPitch, unsigned int uDestX, unsigned int uDestY, void *pSrc, unsigned int uSrcPitch, unsigned int uSrcX, unsigned int uSrcY, unsigned int uSrcZ, unsigned int uSrcW);
+void SMACK_STDCALL SmackNextFrame(HSMACK);
+unsigned int SMACK_STDCALL SmackWait(HSMACK);
+unsigned int SMACK_STDCALL SmackSoundOnOff(HSMACK, unsigned int bOn);
+void SMACK_STDCALL SmackClose(HSMACK);
+void SMACK_STDCALL SmackBufferClose(HSMACKBUF);
+void SMACK_STDCALL SmackBlitClose(HSMACKBLIT);
+int SMACK_STDCALL SmackBlitClear(HSMACKBLIT a1, unsigned short *pFrameData, unsigned int uTargetSurfacePitch, unsigned int uOutX, unsigned int uOutY, unsigned int uOutZ, unsigned int uOutW, int a8);
 
 
-int __stdcall SmackBufferOpen(SMACK_HWND a1, long a2, long a3, long a4, long a5, long a6);
-int __fastcall SmackVolumePan(HSMACK a3, long a4, long a5, long a6);
+int SMACK_STDCALL SmackBufferOpen(SMACK_HWND a1, long a2, long a3, long a4, long a5, long a6);
+int SMACK_FASTCALL SmackVolumePan(HSMACK a3, long a4, long a5, long a6);
 
-int __stdcall SmackGoto(HSMACK a1, long a2);
+int SMACK_STDCALL SmackGoto(HSMACK a1, long a2);
 
-void __stdcall SmackBufferNewPalette(HSMACKBUF a1, void *a2, unsigned int a3);
+void SMACK_STDCALL SmackBufferNewPalette(HSMACKBUF a1, void *a2, unsigned int a3);
 
-void __stdcall SmackColorRemapWithTrans(HSMACK a1, void *a2, unsigned int a3, unsigned int a4, unsigned int a5);
+void SMACK_STDCALL SmackColorRemapWithTrans(HSMACK a1, void *a2, unsigned int a3, unsigned int a4, unsigned int a5);
 
 
 #if defined(__cplusplus)
