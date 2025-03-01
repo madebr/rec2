@@ -73,7 +73,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_s, 0x006a
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_ms, 0x006ad1f0);
 C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_us, 0x006ac858);
 
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimeLastKeyboardInput, 0x006ad49c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_app_activated, 0x006ad49c);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_diaghandler, gPD_error_handler, 0x006aceb0);
 
@@ -459,11 +459,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
                     SetWindowPos(C2V(gHWnd), NULL, 0, 0, C2V(gScreenWidth), C2V(gScreenHeight), SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
                 }
                 C2V(gWindowActiveState) = 2;
-                if (C2V(gPerformanceCounterInitialized)) {
-                    LARGE_INTEGER li;
-                    QueryPerformanceCounter(&li);
-                    C2V(gTimeLastKeyboardInput) = (int)((li.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_ms).QuadPart);
-                }
+                C2V(gTime_app_activated) = PDGetTotalTime();
             } else {
                 if (C2V(gBack_screen) != NULL && C2V(gBack_screen)->pixels != NULL) {
                     return 1;

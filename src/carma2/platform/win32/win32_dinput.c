@@ -991,13 +991,13 @@ void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark) {
         *pKeys = 0;
         return;
     }
-    if (C2V(gTimeLastKeyboardInput) != 0) {
-        if (PDGetTotalTime() < C2V(gTimeLastKeyboardInput) + 1000) {
+    if (C2V(gTime_app_activated) != 0) {
+        if (PDGetTotalTime() < C2V(gTime_app_activated) + 1000) {
             *pKeys = 0;
             return;
         }
     }
-    C2V(gTimeLastKeyboardInput) = 0;
+    C2V(gTime_app_activated) = 0;
     res = IDirectInputDevice_GetDeviceState(C2V(gDirectInputDevice), sizeof(diKeys), diKeys);
     if (res != DI_OK) {
         dr_dprintf("ACTIVE but couldn't get keyboard device state on 1st attempt");
