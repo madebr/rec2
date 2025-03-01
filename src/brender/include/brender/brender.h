@@ -11,7 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontProp4x6);
 C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontProp7x9);
 
 void C2_HOOK_CDECL BrV1dbBeginWrapper_Float(void);
-br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, char* setup_string, ...);
+br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string, ...);
 
 // BrActor
 br_actor* C2_HOOK_CDECL BrActorLoad(const char* filename);
@@ -107,7 +107,7 @@ void C2_HOOK_CDECL BrMatrix34PostScale(br_matrix34* mat, br_scalar sx, br_scalar
 void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, br_transform* xform);
 void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, br_transform* xform);
 void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, br_vector3* B, br_matrix34* C);
-void C2_HOOK_CDECL BrMatrix34LPNormalise(br_matrix34* A, br_matrix34* B);
+void C2_HOOK_CDECL BrMatrix34LPNormalise(br_matrix34* A, const br_matrix34* B);
 void C2_HOOK_CDECL BrMatrix34PreRotate(br_matrix34* mat, br_angle r, br_vector3* axis);
 void C2_HOOK_CDECL BrMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3* a);
 void C2_HOOK_CDECL BrMatrix34PreTranslate(br_matrix34* mat, br_scalar x, br_scalar y, br_scalar z);
@@ -122,6 +122,7 @@ void C2_HOOK_CDECL BrMatrix34PreRotateX(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PreRotateY(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PreRotateZ(br_matrix34* mat, br_angle rz);
 void C2_HOOK_CDECL BrMatrix34RollingBall(br_matrix34 *mat, int dx,int dy, int radius);
+br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* mat);
 
 // BrMatrix4
 void C2_HOOK_CDECL BrMatrix4Copy(br_matrix4* A, br_matrix4* B);
@@ -248,7 +249,7 @@ br_uint_32 C2_HOOK_CDECL BrSwap32(br_uint_32 l);
 br_diaghandler* C2_HOOK_CDECL BrDiagHandlerSet(br_diaghandler* newdh);
 
 void C2_HOOK_CDECL _BrEndHook(void);
-br_error C2_HOOK_CDECL BrDevFind(br_device** pdev, char* pattern);
+br_error C2_HOOK_CDECL BrDevFind(br_device** pdev, const char* pattern);
 br_error C2_HOOK_CDECL BrDevRemove(br_device* dev);
 
 // Carmageddon 2 adaptation

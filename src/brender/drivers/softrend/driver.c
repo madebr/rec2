@@ -18,8 +18,8 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, DriverTimestamp, 0x0079feb0);
 
-br_device* (C2_HOOK_CDECL * BrDrv1Begin_original)(char* arguments);
-br_device* C2_HOOK_CDECL BrDrv1Begin(char* arguments) {
+br_device* (C2_HOOK_CDECL * BrDrv1Begin_original)(const char* arguments);
+br_device* C2_HOOK_CDECL BrDrv1Begin(const char* arguments) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return BrDrv1Begin_original(arguments);
 #else

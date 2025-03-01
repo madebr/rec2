@@ -27,7 +27,7 @@ void C2_HOOK_CDECL BrDevLastBeginSet(br_pixelmap* pm) {
 }
 C2_HOOK_FUNCTION(0x00528d60, BrDevLastBeginSet)
 
-br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, char* setup_string, ...) {
+br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string, ...) {
     va_list vl;
     br_uint_32 i;
     br_token_value tv[64];
@@ -53,14 +53,14 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, char* setup_string, ...)
 }
 C2_HOOK_FUNCTION(0x00528d70, BrDevBeginVar)
 
-br_error C2_HOOK_CDECL BrDevBegin(br_pixelmap** ppm, char* setup_string) {
+br_error C2_HOOK_CDECL BrDevBegin(br_pixelmap** ppm, const char* setup_string) {
 
     return BrDevBeginTV(ppm, setup_string, NULL);
 }
 C2_HOOK_FUNCTION(0x00528df0, BrDevBegin)
 
-br_error (C2_HOOK_CDECL * BrDevBeginTV_original)(br_pixelmap** ppm, char* setup_string, br_token_value* setup_tv);
-br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, char* setup_string, br_token_value* setup_tv) {
+br_error (C2_HOOK_CDECL * BrDevBeginTV_original)(br_pixelmap** ppm, const char* setup_string, br_token_value* setup_tv);
+br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, const char* setup_string, br_token_value* setup_tv) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return BrDevBeginTV_original(ppm, setup_string, setup_tv);
 #else
@@ -211,8 +211,8 @@ br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, char* setup_string, br_to
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528e10, BrDevBeginTV, BrDevBeginTV_original)
 
-br_pixelmap* (C2_HOOK_CDECL * BrDevBeginOld_original)(char* setup_string);
-br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(char* setup_string) {
+br_pixelmap* (C2_HOOK_CDECL * BrDevBeginOld_original)(const char* setup_string);
+br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(const char* setup_string) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return BrDevBeginOld_original(setup_string);
 #else

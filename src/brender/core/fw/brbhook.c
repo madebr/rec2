@@ -2,7 +2,7 @@
 
 #include "devlist.h"
 
-br_device* C2_HOOK_CDECL BrDrv1SoftRendBegin(char* arguments);
+br_device* C2_HOOK_CDECL BrDrv1SoftRendBegin(const char* arguments);
 
 void (C2_HOOK_CDECL * _BrBeginHook_original)(void);
 void C2_HOOK_CDECL _BrBeginHook(void) {
