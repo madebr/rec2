@@ -182,7 +182,7 @@ void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes) {
 }
 C2_HOOK_FUNCTION(0x005002d0, SSDXLogError)
 
-void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDDX, int p_flags) {
+void C2_HOOK_FASTCALL SSDXStart(void *p_hWnd, int p_DirectDraw, int p_EnumerateDDX, int p_flags) {
     HRESULT hRes;
 
     hRes = 0;
