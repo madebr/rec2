@@ -4,6 +4,7 @@
 #include "win32net.h"
 
 #include "errors.h"
+#include "globvars.h"
 #include "loading.h"
 #include "main.h"
 
@@ -13,9 +14,6 @@
 
 #include <string.h>
 
-
-C2_HOOK_VARIABLE_IMPLEMENT(int, gAFE, 0x0074d3dc);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNoCutscenes, 0x0068b894);
 
 C2_HOOK_VARIABLE_IMPLEMENT(HINSTANCE, gHInstance, 0x006acea4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNShowCmd, 0x006ace9c);
