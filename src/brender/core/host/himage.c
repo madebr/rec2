@@ -2,8 +2,8 @@
 
 #include <windows.h>
 
-void* (C2_HOOK_CDECL * HostImageLoad_original)(char* name);
-void* C2_HOOK_CDECL HostImageLoad(char* name) {
+void* (C2_HOOK_CDECL * HostImageLoad_original)(const char* name);
+void* C2_HOOK_CDECL HostImageLoad(const char* name) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return HostImageLoad_original(name);
 #else
@@ -24,8 +24,8 @@ void C2_HOOK_CDECL HostImageUnload(void* image) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fb60, HostImageUnload, HostImageUnload_original)
 
-void* (C2_HOOK_CDECL * HostImageLookupName_original)(void* img, char* name, br_uint_32 hint);
-void* C2_HOOK_CDECL HostImageLookupName(void* img, char* name, br_uint_32 hint) {
+void* (C2_HOOK_CDECL * HostImageLookupName_original)(void* img, const char* name, br_uint_32 hint);
+void* C2_HOOK_CDECL HostImageLookupName(void* img, const char* name, br_uint_32 hint) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return HostImageLookupName_original(img, name, hint);
 #else

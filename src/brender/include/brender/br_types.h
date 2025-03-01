@@ -680,10 +680,10 @@ typedef br_uint_32 C2_HOOK_CDECL br_resclass_enum_cbfn(br_resource_class*, void*
 typedef int C2_HOOK_CDECL br_qsort_cbfn(const void*, const void*);
 typedef br_uint_32 C2_HOOK_CDECL br_resenum_cbfn(void*, void*);
 typedef struct br_device br_device;
-typedef br_device* br_device_begin_fn(char*);
-typedef br_boolean C2_HOOK_CDECL br_device_enum_cbfn(char*, br_uint_32, char*, char*, char*, char*, void*);
+typedef br_device* br_device_begin_fn(const char*);
+typedef br_boolean C2_HOOK_CDECL br_device_enum_cbfn(const char*, br_uint_32, char*, char*, char*, char*, void*);
 typedef struct br_outfcty_desc br_outfcty_desc;
-typedef br_boolean C2_HOOK_CDECL br_outfcty_enum_cbfn(char*, br_outfcty_desc*, void*);
+typedef br_boolean C2_HOOK_CDECL br_outfcty_enum_cbfn(const char*, br_outfcty_desc*, void*);
 typedef struct br_actor br_actor;
 typedef struct br_model br_model;
 typedef struct br_material br_material;
@@ -1785,9 +1785,9 @@ typedef struct br_device_dispatch {
     br_error (*_addFront)(br_object_container*, br_object*);
     br_error (*_removeFront)(br_object_container*, br_object**);
     br_error (*_remove)(br_object_container*, br_object*);
-    br_error (*_find)(br_object_container*, br_object**, br_token, char*, br_token_value*);
-    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, char*, br_token_value*);
-    br_error (*_count)(br_object_container*, br_uint_32*, br_token, char*, br_token_value*);
+    br_error (*_find)(br_object_container*, br_object**, br_token, const char*, br_token_value*);
+    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, const char*, br_token_value*);
+    br_error (*_count)(br_object_container*, br_uint_32*, br_token, const char*, br_token_value*);
 } br_device_dispatch;
 
 // br_device. Not sure when this is used
@@ -2343,9 +2343,9 @@ typedef struct br_renderer_facility_dispatch {
     br_error (*_addFront)(br_object_container*, br_object*);
     br_error (*_removeFront)(br_object_container*, br_object**);
     br_error (*_remove)(br_object_container*, br_object*);
-    br_error (*_find)(br_object_container*, br_object**, br_token, char*, br_token_value*);
-    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, char*, br_token_value*);
-    br_error (*_count)(br_object_container*, br_uint_32*, br_token, char*, br_token_value*);
+    br_error (*_find)(br_object_container*, br_object**, br_token, const char*, br_token_value*);
+    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, const char*, br_token_value*);
+    br_error (*_count)(br_object_container*, br_uint_32*, br_token, const char*, br_token_value*);
     br_error (*_validDestination)(br_renderer_facility*, br_boolean*, br_object*);
     br_error (*_rendererNew)(br_renderer_facility*, br_renderer**, br_token_value*);
 } br_renderer_facility_dispatch;
@@ -2380,9 +2380,9 @@ typedef struct br_output_facility_dispatch {
     br_error (*_addFront)(br_object_container*, br_object*);
     br_error (*_removeFront)(br_object_container*, br_object**);
     br_error (*_remove)(br_object_container*, br_object*);
-    br_error (*_find)(br_object_container*, br_object**, br_token, char*, br_token_value*);
-    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, char*, br_token_value*);
-    br_error (*_count)(br_object_container*, br_uint_32*, br_token, char*, br_token_value*);
+    br_error (*_find)(br_object_container*, br_object**, br_token, const char*, br_token_value*);
+    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, const char*, br_token_value*);
+    br_error (*_count)(br_object_container*, br_uint_32*, br_token, const char*, br_token_value*);
     br_error (*_validSource)(br_output_facility*, br_boolean*, br_object*);
     br_error (*_pixelmapNew)(br_output_facility*, br_device_pixelmap**, br_token_value*);
     br_error (*_clutNew)(br_output_facility*, br_device_clut**, br_token_value*);
@@ -2471,9 +2471,9 @@ typedef struct br_primitive_library_dispatch {
     br_error (*_addFront)(br_object_container*, br_object*);
     br_error (*_removeFront)(br_object_container*, br_object**);
     br_error (*_remove)(br_object_container*, br_object*);
-    br_error (*_find)(br_object_container*, br_object**, br_token, char*, br_token_value*);
-    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, char*, br_token_value*);
-    br_error (*_count)(br_object_container*, br_uint_32*, br_token, char*, br_token_value*);
+    br_error (*_find)(br_object_container*, br_object**, br_token, const char*, br_token_value*);
+    br_error (*_findMany)(br_object_container*, br_object**, br_int_32, br_int_32*, br_token, const char*, br_token_value*);
+    br_error (*_count)(br_object_container*, br_uint_32*, br_token, const char*, br_token_value*);
     br_error (*_stateNew)(br_primitive_library*, br_primitive_state**);
     br_error (*_bufferStoredNew)(br_primitive_library*, br_buffer_stored**, br_token, br_device_pixelmap*, br_token_value*);
     br_error (*_bufferStoredAvail)(br_primitive_library*, br_int_32*, br_token, br_token_value*);

@@ -9,15 +9,15 @@ br_boolean C2_HOOK_CDECL BrImageAdd(br_image* img);
 
 br_boolean C2_HOOK_CDECL BrImageRemove(br_image* img);
 
-br_image* C2_HOOK_CDECL BrImageFind(char* pattern);
+br_image* C2_HOOK_CDECL BrImageFind(const char* pattern);
 
-br_image* C2_HOOK_STDCALL imageLoadHost(char* name);
+br_image* C2_HOOK_STDCALL imageLoadHost(const char* name);
 
 br_image* C2_HOOK_CDECL BrImageReference(char* name);
 
-void* C2_HOOK_STDCALL imageLookupName(br_image* img, char* name, br_uint_32 hint);
+void* C2_HOOK_STDCALL imageLookupName(br_image* img, const char* name, br_uint_32 hint);
 
-void* C2_HOOK_CDECL BrImageLookupName(br_image* img, char* name, br_uint_32 hint);
+void* C2_HOOK_CDECL BrImageLookupName(br_image* img, const char* name, br_uint_32 hint);
 
 void* C2_HOOK_CDECL BrImageLookupOrdinal(br_image* img, br_uint_32 ordinal);
 

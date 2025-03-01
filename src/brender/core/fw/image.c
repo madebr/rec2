@@ -34,8 +34,8 @@ br_boolean C2_HOOK_CDECL BrImageRemove(br_image* img) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052fef0, BrImageRemove, BrImageRemove_original)
 
-br_image* (C2_HOOK_CDECL * BrImageFind_original)(char* pattern);
-br_image* C2_HOOK_CDECL BrImageFind(char* pattern) {
+br_image* (C2_HOOK_CDECL * BrImageFind_original)(const char* pattern);
+br_image* C2_HOOK_CDECL BrImageFind(const char* pattern) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return BrImageFind_original(pattern);
 #else
@@ -56,7 +56,7 @@ br_image* C2_HOOK_CDECL BrImageFind(char* pattern) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052ff10, BrImageFind, BrImageFind_original)
 
-br_image* C2_HOOK_STDCALL imageLoadHost(char* name) {
+br_image* C2_HOOK_STDCALL imageLoadHost(const char* name) {
     br_image* img;
     void* host_image;
 
@@ -133,8 +133,8 @@ br_image* C2_HOOK_CDECL BrImageReference(char* name) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052ffa0, BrImageReference, BrImageReference_original)
 
-void* (C2_HOOK_STDCALL * imageLookupName_original)(br_image* img, char* name, br_uint_32 hint);
-void* C2_HOOK_STDCALL imageLookupName(br_image* img, char* name, br_uint_32 hint) {
+void* (C2_HOOK_STDCALL * imageLookupName_original)(br_image* img, const char* name, br_uint_32 hint);
+void* C2_HOOK_STDCALL imageLookupName(br_image* img, const char* name, br_uint_32 hint) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return imageLookupName_original(img, name, hint);
 #else
@@ -165,8 +165,8 @@ void* C2_HOOK_STDCALL imageLookupName(br_image* img, char* name, br_uint_32 hint
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00530260, imageLookupName, imageLookupName_original)
 
-void* (C2_HOOK_CDECL * BrImageLookupName_original)(br_image* img, char* name, br_uint_32 hint);
-void* C2_HOOK_CDECL BrImageLookupName(br_image* img, char* name, br_uint_32 hint) {
+void* (C2_HOOK_CDECL * BrImageLookupName_original)(br_image* img, const char* name, br_uint_32 hint);
+void* C2_HOOK_CDECL BrImageLookupName(br_image* img, const char* name, br_uint_32 hint) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return BrImageLookupName_original(img, name, hint);
 #else

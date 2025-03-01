@@ -101,8 +101,8 @@ br_error C2_HOOK_CDECL _M_br_object_container_removeFront(br_object_container* s
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d260, _M_br_object_container_removeFront, _M_br_object_container_removeFront_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_find_original)(br_object_container* self, br_object** ph, br_token type, char* pattern, br_token_value* tv);
-br_error C2_HOOK_CDECL _M_br_object_container_find(br_object_container* self, br_object** ph, br_token type, char* pattern, br_token_value* tv) {
+br_error (C2_HOOK_CDECL * _M_br_object_container_find_original)(br_object_container* self, br_object** ph, br_token type, const char* pattern, br_token_value* tv);
+br_error C2_HOOK_CDECL _M_br_object_container_find(br_object_container* self, br_object** ph, br_token type, const char* pattern, br_token_value* tv) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_container_find_original(self, ph, type, pattern, tv);
@@ -142,8 +142,8 @@ br_error C2_HOOK_CDECL _M_br_object_container_find(br_object_container* self, br
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d2b0, _M_br_object_container_find, _M_br_object_container_find_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_findMany_original)(br_object_container* self, br_object** objects, br_int_32 max_objects, br_int_32* num_objects, br_token type, char* pattern, br_token_value* tv);
-br_error C2_HOOK_CDECL _M_br_object_container_findMany(br_object_container* self, br_object** objects, br_int_32 max_objects, br_int_32* num_objects, br_token type, char* pattern, br_token_value* tv) {
+br_error (C2_HOOK_CDECL * _M_br_object_container_findMany_original)(br_object_container* self, br_object** objects, br_int_32 max_objects, br_int_32* num_objects, br_token type, const char* pattern, br_token_value* tv);
+br_error C2_HOOK_CDECL _M_br_object_container_findMany(br_object_container* self, br_object** objects, br_int_32 max_objects, br_int_32* num_objects, br_token type, const char* pattern, br_token_value* tv) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
     return _M_br_object_container_findMany_original(self, objects, max_objects, num_objects, type, pattern, tv);
@@ -189,8 +189,8 @@ br_error C2_HOOK_CDECL _M_br_object_container_findMany(br_object_container* self
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0052d390, _M_br_object_container_findMany, _M_br_object_container_findMany_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_count_original)(br_object_container* self, br_uint_32* pcount, br_token type, char* pattern, br_token_value* tv);
-br_error C2_HOOK_CDECL _M_br_object_container_count(br_object_container* self, br_uint_32* pcount, br_token type, char* pattern, br_token_value* tv) {
+br_error (C2_HOOK_CDECL * _M_br_object_container_count_original)(br_object_container* self, br_uint_32* pcount, br_token type, const char* pattern, br_token_value* tv);
+br_error C2_HOOK_CDECL _M_br_object_container_count(br_object_container* self, br_uint_32* pcount, br_token type, const char* pattern, br_token_value* tv) {
 
 
 #if 0//defined(C2_HOOKS_ENABLED)
