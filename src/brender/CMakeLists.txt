@@ -281,7 +281,7 @@ target_compile_definitions(brender_softrendr_float
         BASED_FLOAT
 )
 
-if(C2_STANDALONE)
+if(REC2_STANDALONE)
     add_library(brender-shared SHARED
         dll/brender1.def
         $<TARGET_OBJECTS:c2_platform_brender>
