@@ -12,7 +12,7 @@
 
 C2_HOOK_VARIABLE_DECLARE(int, gExit_code);
 
-C2_HOOK_VARIABLE_DECLARE(HWND, gHWnd);
+C2_HOOK_VARIABLE_DECLARE(void*, gHWnd);
 C2_HOOK_VARIABLE_DECLARE(int, gWindowActiveState);  // FIXME: enum (0,1) => background(d3d or glide), 2=> active
 
 C2_HOOK_VARIABLE_DECLARE(int, gWindowMovingResizing);

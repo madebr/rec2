@@ -12,6 +12,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
 C2_HOOK_VARIABLE_DECLARE(int, gMsg_header_strlen);
 C2_HOOK_VARIABLE_DECLARE(tPD_S3_config, gPD_S3_config);
 C2_HOOK_VARIABLE_DECLARE(int, gJoystick_deadzone);
+C2_HOOK_VARIABLE_DECLARE(void*, gHWnd);
 
 int GetRegisterSourceLocation(char* buffer, int* buffer_size);
 
