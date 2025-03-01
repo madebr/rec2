@@ -67,7 +67,7 @@ target_link_libraries(c2_platform_brender
         c2_hooks
 )
 
-if(C2_STANDALONE)
+if(REC2_STANDALONE)
     add_executable(rec2 WIN32
         $<TARGET_OBJECTS:c2_common>
         $<TARGET_OBJECTS:c2_platform>

@@ -1,4 +1,4 @@
-if(C2_STANDALONE)
+if(REC2_STANDALONE)
     add_library(c2_hooks INTERFACE)
     target_link_libraries(c2_hooks INTERFACE hooks-header-only)
 else()
@@ -45,7 +45,7 @@ target_include_directories(c2_hooks
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )
 
-if(NOT C2_STANDALONE)
+if(NOT REC2_STANDALONE)
     add_hook_injector(rec2-injector)
 
     add_hook_plugin(rec2)

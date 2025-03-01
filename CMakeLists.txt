@@ -75,11 +75,12 @@ if(KEEP_ACTIVE_IN_BACKGROUND)
     add_compile_definitions(KEEP_ACTIVE_IN_BACKGROUND)
 endif()
 
-option(C2_STANDALONE "Build standalone Carmageddon 2 executable" OFF)
-if(C2_STANDALONE)
+
+cmake_dependent_option(REC2_STANDALONE "Build standalone Carmageddon 2 executable" OFF "REC2_PLATFORM_WIN32" ON)
+if(REC2_STANDALONE)
     add_compile_definitions(-DREC2_STANDALONE)
 endif()
-cmake_dependent_option(REC2_ABORT_UNIMPLEMENTED "abort() on unimplemented functions" OFF C2_STANDALONE OFF)
+cmake_dependent_option(REC2_ABORT_UNIMPLEMENTED "abort() on unimplemented functions" OFF REC2_STANDALONE OFF)
 if(REC2_ABORT_UNIMPLEMENTED)
     add_compile_definitions(-DREC2_ABORT_UNIMPLEMENTED)
 endif()
@@ -93,7 +94,7 @@ endif()
 
 add_library(hooks-header-only INTERFACE)
 target_include_directories(hooks-header-only INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
-if(C2_STANDALONE)
+if(REC2_STANDALONE)
 else()
     enable_language(CXX)
     if(NOT MSVC)
@@ -111,7 +112,7 @@ add_subdirectory(src/carma2)
 
 set(CARM2_LOCATION "" CACHE FILEPATH "Path of Carmageddon II")
 if(CARM2_LOCATION)
-    if(C2_STANDALONE)
+    if(REC2_STANDALONE)
         add_custom_target(copy_rec2
             COMMEND "Copying rec2 to \"${CARM2_LOCATION}\""
             COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE_NAME:rec2>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2>"
