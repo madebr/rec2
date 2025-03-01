@@ -17,7 +17,6 @@
 
 #include "c2_string.h"
 #include "smack.h"
-#include "win32/win32.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSmackerActor, 0x0079eca4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSmackerModel, 0x0079ecac);
