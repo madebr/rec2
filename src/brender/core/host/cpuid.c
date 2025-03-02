@@ -2,7 +2,10 @@
 
 #include "c2_hooks.h"
 
-#include <intrin.h>
+#if defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__)
+#include <mmintrin.h>
+#endif
+#include <string.h>
 
 br_token cpu_types[] = {
     BRT_INTEL_386,
@@ -13,6 +16,35 @@ br_token cpu_types[] = {
     BRT_INTEL_PENTIUM,
     BRT_INTEL_PENTIUM_PRO,
 };
+
+static void cpuid_wrapper(int(*values)[4], int function) {
+    _Static_assert(sizeof(*values) == 16, "In total, cpuid returns 16 bytes");
+    memset(*values, 0, sizeof(*values));
+
+#ifdef _MSC_VER
+#if  defined(_M_IX86) || defined(_M_X64)
+    __cpuid(cpuid_res, 0);
+#endif
+#elif defined(__i386__)
+    __asm__ __volatile__(
+            "        pushl %%ebx        \n"
+            "        xorl %%ecx,%%ecx   \n"
+            "        cpuid              \n"
+            "        movl %%ebx, %%esi  \n"
+            "        popl %%ebx         \n"
+            : "=a"((*values)[0]), "=b"((*values)[1]), "=c"((*values)[2]), "=d"((*values)[3])
+            : "a"(0));
+#elif defined(__x86_64__)
+    __asm__ __volatile__(
+        "        pushq %%rbx        \n"
+        "        xorq %%rcx,%%rcx   \n"
+        "        cpuid              \n"
+        "        movq %%rbx, %%rsi  \n"
+        "        popq %%rbx         \n"
+        : "=a"((*cpuid_res)[0]), "=b"((*cpuid_res)[1]), "=c"((*cpuid_res)[2]), "=d"((*cpuid_res)[3])
+        : "a"(0));
+#endif
+}
 
 void C2_HOOK_CDECL CPUInfo(br_token* processor_type, br_uint_32* features) {
     int is_486_or_newer = 0;
@@ -94,11 +126,11 @@ void C2_HOOK_CDECL CPUInfo(br_token* processor_type, br_uint_32* features) {
     if (!has_cpuid) {
         return;
     }
-    __cpuid(cpuid_res, 0);
+    cpuid_wrapper(&cpuid_res, 0);
     if (cpuid_res[0] < 1) {
         return;
     }
-    __cpuid(cpuid_res, 1);
+    cpuid_wrapper(&cpuid_res, 1);
     cpu_family = (cpuid_res[0] >> 8) & 0xf;
     if (cpu_family >= BR_ASIZE(cpu_types)) {
         *processor_type = BRT_INTEL_PENTIUM_PRO;
