@@ -40,7 +40,11 @@ char* C2_HOOK_CDECL c2_strpbrk(const char* dest, const char* breakset);
 #include <string.h>
 
 #define c2_memcmp memcmp
+#ifdef _WIN32
 #define c2_memicmp _memicmp
+#else
+#define c2_memicmp memcmp
+#endif
 #define c2_memcpy memcpy
 #define c2_memmove memmove
 #define c2_memset memset

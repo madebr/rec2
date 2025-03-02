@@ -603,21 +603,21 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSoundInStorage(tBrender_storage* pSt
 C2_HOOK_FUNCTION_ORIGINAL(0x00501930, LoadSoundInStorage, LoadSoundInStorage_original)
 
 int C2_HOOK_FASTCALL IsValidFile(const char* path) {
-    struct c2_stat stat;
+    struct c2_stat s;
 
-    return c2_stat32(path, &stat) == 0;
+    return c2_stat32(path, &s) == 0;
 }
 C2_HOOK_FUNCTION(0x00486c00, IsValidFile)
 
 int C2_HOOK_FASTCALL GetLastModificationTime(const char* path) {
-    struct c2_stat stat;
+    struct c2_stat s;
     int res;
 
-    res = c2_stat32(path, &stat);
+    res = c2_stat32(path, &s);
     if (res == -1) {
         return 0;
     }
-    return stat.st_mtime;
+    return s.st_mtime;
 }
 C2_HOOK_FUNCTION(0x00486be0, GetLastModificationTime)
 
@@ -636,7 +636,7 @@ br_pixelmap* C2_HOOK_FASTCALL Read_DEFAULT_ACT(const char* textureDir, int flags
         *errorCode = 5;
         return NULL;
     }
-    if (fread(defaultActBuffer, 0x300, 1, (FILE*)f) == 0) {
+    if (fread(defaultActBuffer, REC2_ASIZE(defaultActBuffer), 1, (FILE*)f) == 0) {
         PFfclose(f);
         *errorCode = 5;
         return NULL;
