@@ -14,7 +14,12 @@ int C2_HOOK_CDECL c2_fstat32(int fd, struct _stat32 *buffer);
 
 #include <sys/stat.h>
 
+#ifdef _WIN32
 #define c2_fstat32 _fstat32
+#else
+#define c2_fstat32 fstat
+#define _stat32 stat
+#endif
 
 #endif
 

@@ -106,7 +106,12 @@ int C2_HOOK_CDECL c2_rename(const char *oldname, const char *newname);
 #define c2_sscanf sscanf
 #define c2_vsscanf vsscanf
 
+#ifdef _WIN32
 #define c2_unlink _unlink
+#else
+#include <unistd.h>
+#define c2_unlink unlink
+#endif
 #define c2_rename rename
 
 #endif
