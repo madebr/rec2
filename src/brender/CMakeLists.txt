@@ -327,64 +327,66 @@ if(REC2_STANDALONE)
         target_link_options(brender-brhost1-shared PRIVATE "/ENTRY:DllMain")
     endif()
 
-    add_library(brender_driver_d3d SHARED
-        drivers/d3d/d3d.def
-        drivers/d3d/backend.c
-        drivers/d3d/backend.h
-        drivers/d3d/devclut.c
-        drivers/d3d/devclut.h
-        drivers/d3d/device.c
-        drivers/d3d/device.h
-        drivers/d3d/devpixmp.c
-        drivers/d3d/devpixmp.h
-        drivers/d3d/devpmsys.c
-        drivers/d3d/devpmsys.h
-        drivers/d3d/driver.c
-        drivers/d3d/match.c
-        drivers/d3d/match.h
-        drivers/d3d/object.c
-        drivers/d3d/object.h
-        drivers/d3d/outfcty.c
-        drivers/d3d/outfcty.h
-        drivers/d3d/plib.c
-        drivers/d3d/plib.h
-        drivers/d3d/prim_l15.c
-        drivers/d3d/prim_l15.h
-        drivers/d3d/prim_p15.h
-        drivers/d3d/prim_p15.c
-        drivers/d3d/prim_t15.c
-        drivers/d3d/prim_t15.h
-        drivers/d3d/pstate.c
-        drivers/d3d/pstate.h
-        drivers/d3d/renderfuncs.c
-        drivers/d3d/renderfuncs.h
-        drivers/d3d/sbuffer.c
-        drivers/d3d/sbuffer.h
-        drivers/d3d/texture.c
-        drivers/d3d/texture.h
-        drivers/d3d/timestmp.c
-        drivers/d3d/timestmp.h
-        drivers/d3d/types.h
-    )
-    target_compile_definitions(brender_driver_d3d PRIVATE DIRECTDRAW_VERSION=0x500)
-    target_include_directories(brender_driver_d3d
-        PRIVATE
-            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    )
-    target_link_libraries(brender_driver_d3d
-        PRIVATE
-            brender-brcore1-shared
-            brender-brpmap1-shared
-            brender-brhost1-shared
-            c2_hooks
-    )
-    target_compile_definitions(brender_driver_d3d
-        PRIVATE
-            BASED_FLOAT
-    )
-    set_property(TARGET brender_driver_d3d PROPERTY PREFIX "")
-    set_property(TARGET brender_driver_d3d PROPERTY OUTPUT_NAME "d3d_rec2")
+    if(REC2_PLATFORM_WIN32)
+        add_library(brender_driver_d3d SHARED
+            drivers/d3d/d3d.def
+            drivers/d3d/backend.c
+            drivers/d3d/backend.h
+            drivers/d3d/devclut.c
+            drivers/d3d/devclut.h
+            drivers/d3d/device.c
+            drivers/d3d/device.h
+            drivers/d3d/devpixmp.c
+            drivers/d3d/devpixmp.h
+            drivers/d3d/devpmsys.c
+            drivers/d3d/devpmsys.h
+            drivers/d3d/driver.c
+            drivers/d3d/match.c
+            drivers/d3d/match.h
+            drivers/d3d/object.c
+            drivers/d3d/object.h
+            drivers/d3d/outfcty.c
+            drivers/d3d/outfcty.h
+            drivers/d3d/plib.c
+            drivers/d3d/plib.h
+            drivers/d3d/prim_l15.c
+            drivers/d3d/prim_l15.h
+            drivers/d3d/prim_p15.h
+            drivers/d3d/prim_p15.c
+            drivers/d3d/prim_t15.c
+            drivers/d3d/prim_t15.h
+            drivers/d3d/pstate.c
+            drivers/d3d/pstate.h
+            drivers/d3d/renderfuncs.c
+            drivers/d3d/renderfuncs.h
+            drivers/d3d/sbuffer.c
+            drivers/d3d/sbuffer.h
+            drivers/d3d/texture.c
+            drivers/d3d/texture.h
+            drivers/d3d/timestmp.c
+            drivers/d3d/timestmp.h
+            drivers/d3d/types.h
+        )
+        target_compile_definitions(brender_driver_d3d PRIVATE DIRECTDRAW_VERSION=0x500)
+        target_include_directories(brender_driver_d3d
+            PRIVATE
+                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+                "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        )
+        target_link_libraries(brender_driver_d3d
+            PRIVATE
+                brender-brcore1-shared
+                brender-brpmap1-shared
+                brender-brhost1-shared
+                c2_hooks
+        )
+        target_compile_definitions(brender_driver_d3d
+            PRIVATE
+                BASED_FLOAT
+        )
+        set_property(TARGET brender_driver_d3d PROPERTY PREFIX "")
+        set_property(TARGET brender_driver_d3d PROPERTY OUTPUT_NAME "d3d_rec2")
+    endif()
 
     add_library(BRender::BRender ALIAS brender-shared)
 else()

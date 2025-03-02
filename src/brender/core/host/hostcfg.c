@@ -2,7 +2,9 @@
 
 #include "core/fw/diag.h"
 
+#ifdef _WIN32
 #include <windows.h>
+#endif
 
 const char* (C2_HOOK_CDECL * HostDefaultDevice_original)(void);
 const char* C2_HOOK_CDECL HostDefaultDevice(void) {
@@ -22,9 +24,13 @@ br_boolean C2_HOOK_CDECL HostIniSectionExists(char* ini_file, char* section_name
 #if 0//defined(C2_HOOKS_ENABLED)
     return HostIniSectionExists_original(ini_file, section_name);
 #else
+#ifdef _WIN32
     char buffer[5];
 
     return GetPrivateProfileSectionA(section_name, buffer, sizeof(buffer), ini_file) != 0;
+#else
+    return 0;
+#endif
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fbb0, HostIniSectionExists, HostIniSectionExists_original)
@@ -36,10 +42,14 @@ br_error C2_HOOK_CDECL HostIniQuery(char* ini_file, char* section_name, char* en
 #if 0//defined(C2_HOOKS_ENABLED)
     return HostIniQuery_original(ini_file, section_name, entry, Buffer, max, size);
 #else
+#ifdef _WIN32
     static char default_entry[] = "";
 
     *size = (br_uint_16)GetPrivateProfileStringA(section_name, entry, default_entry, Buffer, max, ini_file);
     return 0;
+#else
+    return 0x1002;
+#endif
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fbe0, HostIniQuery, HostIniQuery_original)
@@ -51,6 +61,7 @@ br_error C2_HOOK_CDECL HostRegistryQuery(void* hKey, char* Path, char* entry, ch
 #if 0//defined(C2_HOOKS_ENABLED)
     return HostRegistryQuery_original(hKey, Path, entry, Buffer, max, size);
 #else
+#ifdef _WIN32
     DWORD cbData;
     DWORD type;
 
@@ -70,6 +81,9 @@ br_error C2_HOOK_CDECL HostRegistryQuery(void* hKey, char* Path, char* entry, ch
     }
     *size = (br_uint_16)cbData;
     return 0;
+#else
+    return 0x1002;
+#endif
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fc10, HostRegistryQuery, HostRegistryQuery_original)

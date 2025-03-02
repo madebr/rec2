@@ -27,7 +27,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr, gBroadcast_address, 0x006ac300);
 C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr, gLast_received_addr, 0x006ac348);
 C2_HOOK_VARIABLE_IMPLEMENT(struct sockaddr*, gPtr_broadcast_address, 0x006abf00);
 C2_HOOK_VARIABLE_IMPLEMENT(WSADATA, gWSA_data, 0x006ac170);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(SOCKET, gSocket, 0x006619b0, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(SOCKET, gSocket, 0x006619b0, SOCKET_ERROR);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gLocal_address_text, 32, 0x006ac320);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_networks, 0x006ac128);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMsg_header_strlen, 0x006abf04);
@@ -35,6 +35,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gSpecial_server, 0x006ac578);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV(char, gIpx_network_numbers, [16][4], 0x006ac130);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gSend_buffer, 512, 0x006ac360);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gReceive_buffer, 512, 0x006abf18);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_hosts, 0x006ac35c);
+C2_HOOK_VARIABLE_IMPLEMENT(tPD_net_game_info*, gJoinable_games, 0x006ac574);
 
 void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
     char buffer[16];
@@ -213,9 +215,6 @@ int C2_HOOK_FASTCALL PDNetShutdown(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00519a10, PDNetShutdown, PDNetShutdown_original)
-
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_hosts, 0x006ac35c);
-C2_HOOK_VARIABLE_IMPLEMENT(tPD_net_game_info*, gJoinable_games, 0x006ac574);
 
 void C2_HOOK_FASTCALL PDNetStartProducingJoinList(void) {
 
@@ -428,14 +427,8 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
     msg = NetAllocateMessage(512);
     receive_buffer = (char*)msg;
     res = recvfrom(C2V(gSocket), receive_buffer, 512, 0, &C2V(gListen_address), &sa_len) != SOCKET_ERROR;
-    if (!res) {
-        res = WSAGetLastError() != WSAEWOULDBLOCK;
-#if 0
-        if (res) {
-            sprintf(str, "PDNetGetNextMessage(): Error on recvfrom() - WSAGetLastError=%d", res);
-            PDFatalError(str);
-        }
-#endif
+    if (res == SOCKET_ERROR) {
+        WSAGetLastError();
     } else {
         NetNowIPXLocalTarget2String(addr_str, C2V(gPtr_listen_address));
         if (!SameEthernetAddress(C2V(gPtr_local_address), C2V(gPtr_listen_address))) {

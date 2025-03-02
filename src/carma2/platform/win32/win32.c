@@ -225,8 +225,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
     PDShutdownSystem();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL
-(0x0051af20, PDFatalError, PDFatalError_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0051af20, PDFatalError, PDFatalError_original)
 
 void C2_HOOK_FASTCALL PDNonFatalError(const char* pThe_str) {
     dr_dprintf("*** ERROR...");
@@ -433,10 +432,9 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
         break;
     case WM_CHAR:
         if (0x1f < (char)wParam  && (char)wParam != 0x7f) {
-            // FIXME: use C2_ARRSIZE
-            if (C2V(gKeyboardBufferLength) >= 20) {
-                memmove(C2V(gKeyboardBuffer), &C2V(gKeyboardBuffer)[1], 19); // FIXME: use ARRAY_SIZEOF or something similar
-                C2V(gKeyboardBufferLength) = 19; // FIXME: use ARRAY_SIZEOF or something similar
+            if (C2V(gKeyboardBufferLength) >= REC2_ASIZE(C2V(gKeyboardBuffer))) {
+                memmove(C2V(gKeyboardBuffer), &C2V(gKeyboardBuffer)[1], REC2_ASIZE(C2V(gKeyboardBuffer)) - 1);
+                C2V(gKeyboardBufferLength) = REC2_ASIZE(C2V(gKeyboardBuffer)) - 1;
             }
             C2V(gKeyboardBuffer)[C2V(gKeyboardBufferLength)] = (char)wParam;
             C2V(gKeyboardBufferLength)++;
