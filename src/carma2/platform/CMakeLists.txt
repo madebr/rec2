@@ -7,7 +7,7 @@ add_library(c2_platform_brender STATIC
     platform.h
 )
 
-if(WIN32)
+if(REC2_PLATFORM_WIN32)
     target_sources(c2_platform_brender PRIVATE
         win32/win32_br_platform.c
     )
@@ -43,8 +43,30 @@ if(WIN32)
         target_link_libraries(c2_platform PRIVATE dsound)
         target_compile_definitions(c2_platform PRIVATE DSOUND_ENABLED)
     endif()
+elseif(REC2_PLATFORM_SDL3)
+    target_sources(c2_platform_brender PRIVATE
+        sdl3/sdl3_br_platform.c
+        sdl3/sdl3_br_platform.h
+    )
+    target_link_libraries(c2_platform_brender PRIVATE SDL3::SDL3)
+    target_sources(c2_platform PRIVATE
+        sdl3/main.c
+        sdl3/sdl3.c
+        sdl3/sdl3.h
+        sdl3/sdl3_input.c
+        sdl3/sdl3_input.h
+        sdl3/sdl3_net.c
+        sdl3/sdl3_net.h
+        sdl3/sdl3_ssdx.c
+        sdl3/sdl3_ssdx.h
+    )
+    target_link_libraries(c2_platform PRIVATE SDL3::SDL3)
 else()
     message(FATAL_ERROR "Unsupported platform")
+endif()
+
+if(REC2_PLATFORM_SDL3)
+    find_package(SDL3 REQUIRED CONFIG)
 endif()
 
 target_include_directories(c2_platform
@@ -77,5 +99,7 @@ if(REC2_STANDALONE)
         c2_common
         c2_platform
     )
-    add_dependencies(rec2 brender_driver_d3d)
+    if(REC2_PLATFORM_WIN32)
+        add_dependencies(rec2 brender_driver_d3d)
+    endif()
 endif()

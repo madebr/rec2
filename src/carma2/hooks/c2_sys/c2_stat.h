@@ -13,9 +13,15 @@ int C2_HOOK_CDECL c2_stat32(const char* path, struct c2_stat* buffer);
 
 #else
 
+#ifdef _WIN32
 #define c2_stat _stat32
 
 #define c2_stat32 _stat32
+#else
+#define c2_stat stat
+
+#define c2_stat32 stat
+#endif
 
 #endif
 
