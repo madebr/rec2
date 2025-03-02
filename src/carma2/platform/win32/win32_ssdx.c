@@ -627,7 +627,7 @@ int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel) {
 }
 C2_HOOK_FUNCTION(0x00569401, PDReverseAudio)
 
-char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void) {
+const char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void) {
 
     if (!C2V(gS3_working_directory_initialized)) {
         DWORD len_res;

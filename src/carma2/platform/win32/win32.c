@@ -228,7 +228,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
 C2_HOOK_FUNCTION_ORIGINAL
 (0x0051af20, PDFatalError, PDFatalError_original)
 
-void C2_HOOK_FASTCALL PDNonFatalError(char* pThe_str) {
+void C2_HOOK_FASTCALL PDNonFatalError(const char* pThe_str) {
     dr_dprintf("*** ERROR...");
     dr_dprintf(pThe_str);
 }
@@ -686,7 +686,7 @@ void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
     ShowCursor(0);
 }
 
-int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path) {
+int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path) {
     DWORD dwAttributes;
 
     dwAttributes = GetFileAttributesA(pThe_path);

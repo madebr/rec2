@@ -46,7 +46,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gIsFatalError);
 
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path);
+int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path);
 
 int C2_HOOK_CDECL IsNetworkShare(const char* path);
 

@@ -23,7 +23,7 @@ void C2_HOOK_FASTCALL PDInitialiseSystem(void);
 void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path);
 void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr);
 void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str);
-void C2_HOOK_FASTCALL PDNonFatalError(char* pThe_str);
+void C2_HOOK_FASTCALL PDNonFatalError(const char* pThe_str);
 int C2_HOOK_FASTCALL PDIsWindowInactive(void);
 char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar);
 int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void);
@@ -105,7 +105,7 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
 
 int C2_HOOK_FASTCALL PDNetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
 
-int C2_HOOK_FASTCALL PDFileUnlock(char* pThe_path);
+int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path);
 
 void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void);
 
@@ -163,7 +163,7 @@ int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel);
 
 tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel);
 
-char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
+const char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
 
 int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
 
