@@ -38,7 +38,7 @@ void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch)
 
 void C2_HOOK_FASTCALL SSDXLogError(HRESULT hRes);
 
-void C2_HOOK_FASTCALL SSDXStart(HWND p_hWnd, int p_DirectDraw, int p_EnumerateDDX, int p_flags);
+void C2_HOOK_FASTCALL SSDXStart(void *p_hWnd, int p_DirectDraw, int p_EnumerateDDX, int p_flags);
 
 void C2_HOOK_FASTCALL SSDXStop(void);
 
@@ -72,7 +72,7 @@ void C2_HOOK_FASTCALL PDS3ReleaseSound(tS3_descriptor* pSound_descriptor);
 
 int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel);
 
-char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
+const char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void);
 
 int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel);
 
