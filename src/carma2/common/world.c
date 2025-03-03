@@ -59,6 +59,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tRendererShadingType, gMaterial_shading_for_call
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gDuplicate_model, 0x006aaa24);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDuplicate_material, 0x006aaa28);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gSight_distance_squared, 0x0068b840);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDecal, gDecals, 50, 0x006a80f8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_net_smash, gQueued_net_smashes, 50, 0x006a3940);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSize_powerup_queue, 0x006a55bc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_host_smashes, 0x006a6d3c);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gZlibBrFileSystem, 0x006631c0, {
     "Zlib filesystem",
@@ -3386,10 +3390,33 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004f0960, DisposeSmashableEnvironment, DisposeSmasha
 void (C2_HOOK_FASTCALL * ReinitSmashing_original)(void);
 void C2_HOOK_FASTCALL ReinitSmashing(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ReinitSmashing_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_glass_fragments)) != 200);
+    C2_HOOK_BUG_ON(sizeof(C2V(gSmash_glass_fragments)[0]) != 0x38);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gDecals)) != 50);
+    C2_HOOK_BUG_ON(sizeof(C2V(gDecals)[0]) != 0x8);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gQueued_net_smashes)) != 50);
+    C2_HOOK_BUG_ON(sizeof(C2V(gQueued_net_smashes)[0]) != 0x38);
+    C2_HOOK_BUG_ON(sizeof(tStored_smash) != 0x38);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmash_glass_fragments)); i++) {
+        C2V(gSmash_glass_fragments)[i].field_0x8 = 0;
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gDecals)); i++) {
+        C2V(gDecals)[i].time = 0;
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gQueued_net_smashes)); i++) {
+        C2V(gQueued_net_smashes)[i].field_0x4 = 0;
+    }
+    C2V(gSize_powerup_queue) = 0;
+    C2V(gCount_host_smashes) = 0;
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        C2V(gNet_host_smashes) = BrMemAllocate(1000 * sizeof(tStored_smash), kMem_stored_smash);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f5750, ReinitSmashing, ReinitSmashing_original)

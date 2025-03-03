@@ -2613,6 +2613,20 @@ typedef enum {
 } tSmashable_item_mode;
 
 typedef struct {
+    br_actor* actor;
+    tU32 time;
+} tDecal;
+typedef struct {
+    undefined4 field_0x0;
+    undefined4 field_0x4;
+    undefined4 field_0x8[12];
+} tQueued_net_smash;
+
+typedef struct { /* FIXME: maybe equal to tQueued_net_smash */
+    undefined4 field_0x0[14];
+} tStored_smash;
+
+typedef struct {
     int field_0x0;
     float field_0x4;
     float field_0x8;
