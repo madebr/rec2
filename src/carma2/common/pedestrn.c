@@ -1206,3 +1206,13 @@ void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ccaa0, CBDisposePersonality, CBDisposePersonality_original)
+
+tPed_peep* (C2_HOOK_FASTCALL * ReadPersonality_original)(const char* pName);
+tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
+#if defined(C2_HOOKS_ENABLED)
+    return ReadPersonality_original(pName);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00406ab0, ReadPersonality, ReadPersonality_original)
