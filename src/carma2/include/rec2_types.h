@@ -1412,6 +1412,12 @@ typedef struct {
     tExplosion_frame frames[10];
 } tExplosion;
 
+typedef struct {
+    int type; /* FIXME: enum (0: non_car, 1: smash)*/
+    int active;
+    undefined4 field_0x8[48];
+} tSmash_explosion;
+
 typedef enum {
     kRendererShadingType_Undefined = -1,
     kRendererShadingType_Default = 1,
