@@ -1412,6 +1412,12 @@ typedef struct {
     tExplosion_frame frames[10];
 } tExplosion;
 
+typedef struct {
+    undefined4 field_0x0;
+    undefined4 field_0x4;
+    undefined4 field_0x8[48];
+} tSmash_explosion;
+
 typedef enum {
     kRendererShadingType_Undefined = -1,
     kRendererShadingType_Default = 1,

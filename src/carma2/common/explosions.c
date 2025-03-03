@@ -15,6 +15,7 @@
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tExplosion, gExplosions, 50, 0x006a55c8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_explosion, gSmash_explosions, 20, 0x006a6d40);
 
 void (C2_HOOK_FASTCALL * InitExplosions_original)(void);
 void C2_HOOK_FASTCALL InitExplosions(void) {
@@ -68,10 +69,25 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004ea880, InitExplosions, InitExplosions_original)
 void (C2_HOOK_FASTCALL * ResetExplosions_original)(void);
 void C2_HOOK_FASTCALL ResetExplosions(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ResetExplosions_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gExplosions)) != 50);
+    C2_HOOK_BUG_ON(sizeof(C2V(gExplosions)[0]) != 0x78);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_explosions)) != 20);
+    C2_HOOK_BUG_ON(sizeof(C2V(gSmash_explosions)[0]) != 0xc8);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gExplosions)); i++) {
+        C2V(gExplosions)[i].start = 0;
+        C2V(gExplosions)[i].finished = 0;
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gSmash_explosions)); i++) {
+        C2V(gSmash_explosions)[i].field_0x4 = 0;
+    }
+
+
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004eaac0, ResetExplosions, ResetExplosions_original)
