@@ -3463,14 +3463,24 @@ typedef struct {
 } tPed_movement_spec;
 
 typedef struct {
+    undefined field_0x0[0x12c];
+} tPed_cache_006944c0;
+
+typedef struct {
     undefined field_0x0[0x50];
 } tPed_face_cache_0x50;
 
-typedef struct  {
+typedef struct tPed_face_cache_0x34 {
     tPed_face_cache_0x50* field_0x0;
     undefined field_0x4;
     tU8 count;
-    undefined field_0x6[46];
+    undefined field_0x6;
+    undefined field_0x7;
+    undefined4 field_0x8;
+    struct tPed_face_cache_0x34* next;
+    struct tPed_face_cache_0x34* prev;
+    undefined4 field_0x14;
+    undefined field_0x18[0x1c];
 } tPed_face_cache_0x34;
 
 typedef struct {
@@ -3496,7 +3506,7 @@ typedef struct {
     undefined4 field_0x0;
     br_actor* actors[7];
     undefined field_0x8[76];
-} tBurning_ped;
+} tNapalm_bolt;
 
 typedef struct {
     tU8 flags;

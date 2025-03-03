@@ -26,7 +26,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPed_cache_sizes_2, 4, 0x0065d7a8, {
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPed_cache_sizes_1, 4, 0x0065d7b8, {
     40, 25, 15, 5,
 });
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_face_cache_0x34*, gPed_face_caches, 4, 0x0069bc58);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_face_cache_0x34*, gPed_face_cache_heads, 4, 0x0069bc58);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_face_cache_0x34*, gPed_face_caches, 4, 0x006a03f8);
 C2_HOOK_VARIABLE_IMPLEMENT(tPed_face_cache_0x50*, gPed_face_cache, 0x0069bc54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSelected_ped, 0x007447f0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPed_shade, 0x00694458);
@@ -86,7 +87,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tExplosion_animation, gNapalmed_ped_animation, 0x0069
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gBurning_ped_materials, 7, 0x0069fd88);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gBurning_ped_models, 7, 0x00694308);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tBurning_ped, gBurning_peds, 5, 0x0069b9f0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tNapalm_bolt, gNapalm_bolts, 5, 0x0069b9f0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gBurning_ped_map_names, 7, 0x0065e598, {
     "Ex00006",
     "Ex00006",
@@ -116,6 +117,29 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_00677230, 0x00677230);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067772c, 0x0067772c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPed_overall_movement_disabled, 0x00676978, 0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_retain_root_mode, 0x00677234);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_changed_points, 0x0069412c);
+C2_HOOK_VARIABLE_IMPLEMENT(tTWTVFS, gTwtPeds, 0x00694498);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_score_multiplier, 0x0069bce4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_recent_points, 0x0069bc30);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPipe_halted_ped_status, 0x006a0410);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gImmortal_peds, 0x00744810);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPeds_suicidal, 0x007447ac);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gMutant_speed, 0x007447a4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gExploding_pedestrians, 0x007447b0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_dismemberfest, 0x007447e4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBlind_pedestrians, 0x007447d0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDancing_peds, 0x007447a8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPanicking_peds, 0x007447f8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDrunk_pedestrians, 0x007447b8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gEthereal_pedestrians, 0x007447a0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPedestrian_speed_factor, 0x007447e0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gPed_scale, 0x007447c0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gAverage_ped_scale, 0x0069bc24);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_head_scale, 0x00744800);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_gravity_multiplier, 0x007447dc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBOOL_00744804, 0x00744804);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_valium_left, 0x00744804);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_cache_006944c0, gPed_cache_006944c0, 100, 0x006944c0);
 
 void C2_HOOK_FASTCALL ClearOutMorphs(void) {
     int i;
@@ -446,10 +470,10 @@ void C2_HOOK_FASTCALL InitFaceCaches(void) {
     C2_HOOK_BUG_ON(sizeof(tPed_face_cache_0x50) != 80);
 
     for (i = 0; i < REC2_ASIZE(C2V(gPed_cache_sizes_1)); i++) {
-        C2V(gPed_face_caches)[i] = BrMemAllocate(C2V(gPed_cache_sizes_1)[i] * sizeof(tPed_face_cache_0x34), kMem_ped_face_cache);
+        C2V(gPed_face_cache_heads)[i] = BrMemAllocate(C2V(gPed_cache_sizes_1)[i] * sizeof(tPed_face_cache_0x34), kMem_ped_face_cache);
         for (j = 0; j < C2V(gPed_cache_sizes_1)[i]; j++) {
-            C2V(gPed_face_caches)[i][j].field_0x0 = BrMemAllocate(C2V(gPed_cache_sizes_2)[i] * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
-            C2V(gPed_face_caches)[i][j].count = C2V(gPed_cache_sizes_2)[i];
+            C2V(gPed_face_cache_heads)[i][j].field_0x0 = BrMemAllocate(C2V(gPed_cache_sizes_2)[i] * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
+            C2V(gPed_face_cache_heads)[i][j].count = C2V(gPed_cache_sizes_2)[i];
         }
     }
     C2V(gPed_face_cache) = BrMemAllocate((C2V(gPed_cache_sizes_2)[3] + 1) * sizeof(tPed_face_cache_0x50), kMem_ped_face_cache);
@@ -525,14 +549,14 @@ void C2_HOOK_FASTCALL InitNapalmNolts(void) {
         BrMaterialAdd(C2V(gBurning_ped_materials)[i]);
     }
 
-    C2_HOOK_BUG_ON(sizeof(tBurning_ped) != 0x6c);
-    for (i = 0; i < REC2_ASIZE(C2V(gBurning_peds)); i++) {
-        C2V(gBurning_peds)[i].field_0x0 = 0;
+    C2_HOOK_BUG_ON(sizeof(tNapalm_bolt) != 0x6c);
+    for (i = 0; i < REC2_ASIZE(C2V(gNapalm_bolts)); i++) {
+        C2V(gNapalm_bolts)[i].field_0x0 = 0;
         for (j = 0; j < REC2_ASIZE(C2V(gBurning_ped_materials)); j++) {
             br_actor* actor;
 
             actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-            C2V(gBurning_peds)[i].actors[j] = actor;
+            C2V(gNapalm_bolts)[i].actors[j] = actor;
             actor->material = C2V(gBurning_ped_materials)[j];
             actor->model = C2V(gBurning_ped_models)[j];
             actor->render_style = BR_RSTYLE_NONE;
@@ -961,13 +985,79 @@ void C2_HOOK_FASTCALL DisposePedestrians(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cb8d0, DisposePedestrians, DisposePedestrians_original)
 
+void C2_HOOK_FASTCALL ResetPedFaceCache(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPed_cache_sizes_1)); i++) {
+        int j;
+
+        C2V(gPed_face_caches)[i] = C2V(gPed_face_cache_heads)[i];
+        for (j = 0; j < C2V(gPed_cache_sizes_1)[i]; j++) {
+            C2V(gPed_face_cache_heads)[i][j].field_0x14 = 0;
+            if (j != C2V(gPed_cache_sizes_1)[REC2_ASIZE(C2V(gPed_cache_sizes_1)) - 1]) {
+                C2V(gPed_face_cache_heads)[i][j].next = &C2V(gPed_face_cache_heads)[i][j + 1];
+                C2V(gPed_face_cache_heads)[i][j + 1].prev = &C2V(gPed_face_cache_heads)[i][j];
+            } else {
+                C2V(gPed_face_cache_heads)[i][j].next = &C2V(gPed_face_cache_heads)[i][0];
+                C2V(gPed_face_cache_heads)[i][0].prev = &C2V(gPed_face_cache_heads)[i][j];
+            }
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL ResetPedSystem(void) {
+    ResetPedFaceCache();
+}
+
+void C2_HOOK_FASTCALL ResetNapalmBolts(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gNapalm_bolts)); i++) {
+        int j;
+
+        C2V(gNapalm_bolts)[0].field_0x0 = 0;
+        for (j = 0; j < REC2_ASIZE(C2V(gNapalm_bolts)[0].actors); j++) {
+            C2V(gNapalm_bolts)[0].actors[j]->render_style = BR_RSTYLE_NONE;
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * InitPedsForRace_original)(void);
 void C2_HOOK_FASTCALL InitPedsForRace(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitPedsForRace_original();
 #else
-    NOT_IMPLEMENTED();
+    C2_HOOK_BUG_ON(sizeof(C2V(gPed_cache_006944c0)) != 30000);
+
+    ResetPedSystem();
+    C2V(gPed_count) = 0;
+    C2V(gCount_changed_points) = 0;
+    C2V(gTwtPeds) = -1;
+    C2V(gTotal_count_smash_peds) = 0;
+    C2V(gPed_score_multiplier) = 0;
+    C2V(gPed_recent_points) = 0;
+    C2V(gPipe_halted_ped_status) = 0;
+    C2V(gImmortal_peds) = 0;
+    C2V(gPeds_suicidal) = 0;
+    C2V(gMutant_speed) = 0.f;
+    C2V(gExploding_pedestrians) = 0;
+    C2V(gPed_dismemberfest) = 0;
+    C2V(gBlind_pedestrians) = 0;
+    C2V(gDancing_peds) = 0;
+    C2V(gPanicking_peds) = 0;
+    C2V(gDrunk_pedestrians) = 0;
+    C2V(gEthereal_pedestrians) = 0;
+    C2V(gPedestrian_speed_factor) = 1.f;
+    BrVector3Set(&C2V(gPed_scale), 1.f, 1.f, 1.f);
+    C2V(gAverage_ped_scale) = 1.f;
+    C2V(gPed_head_scale) = 1.f;
+    C2V(gPed_gravity_multiplier) = 1.f;
+    C2V(gBOOL_00744804) = 0;
+    C2V(gCount_killed_peds) = 0;
+    C2V(gPed_valium_left) = 0;
+    ResetNapalmBolts();
+    c2_memset(C2V(gPed_cache_006944c0), 0, sizeof(C2V(gPed_cache_006944c0)));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d5bd0, InitPedsForRace, InitPedsForRace_original)
