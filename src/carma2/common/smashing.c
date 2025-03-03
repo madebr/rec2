@@ -1,13 +1,13 @@
 #include "smashing.h"
 
 #include "loading.h"
+#include "world.h"
 
 #include <brender/brender.h>
 
 #include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_vertex, gSmash_glass_fragments, 200, 0x006b78e0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_quad, gSmash_decals, 50, 0x006a80f8);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gInitial_smashable_position_type_names, 3, 0x0065fed0, {
     "sphereclumped",
@@ -48,12 +48,12 @@ void C2_HOOK_FASTCALL InitGlassFragments(void) {
 void C2_HOOK_FASTCALL InitDecals(void) {
     int i;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_decals)) != 50);
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gDecals)) != 50);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmash_decals)); i++) {
-        tSmash_quad *smash_quad;
+    for (i = 0; i < REC2_ASIZE(C2V(gDecals)); i++) {
+        tDecal *smash_quad;
 
-        smash_quad = &C2V(gSmash_decals)[i];
+        smash_quad = &C2V(gDecals)[i];
         smash_quad->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
         smash_quad->actor->model = BrModelAllocate(NULL, 4, 2);
         smash_quad->actor->model->faces[0].vertices[0] = 0;
@@ -65,7 +65,7 @@ void C2_HOOK_FASTCALL InitDecals(void) {
         smash_quad->actor->model->flags |= BR_MODF_UPDATEABLE;
         BrModelAdd(smash_quad->actor->model);
         smash_quad->actor->render_style = BR_RSTYLE_FACES;
-        smash_quad->field_0x4 = 0;
+        smash_quad->time = 0;
     }
 }
 
