@@ -3544,14 +3544,34 @@ typedef struct {
 } tPed_peep_bones;
 
 typedef struct {
-    undefined field_0x00[0x2c];
+    char name[32];
+    undefined field_0x20[0xc];
     tPed_peep_bones* bones;
     undefined field_0x30[0x28];
 } tPed_peep;
 
 typedef struct {
-    tPed_peep* peep;
-    undefined field_0x04[0xe0];
+    tPed_peep* personality;
+    undefined field_0x4;
+    undefined field_0x5;
+    undefined field_0x6;
+    undefined field_0x7;
+    undefined field_0x8;
+    undefined field_0x9;
+    undefined field_0xa;
+    undefined field_0xb;
+    undefined field_0xc;
+    undefined field_0xd;
+    undefined field_0xe;
+    undefined field_0xf;
+    undefined field_0x10[4];
+    undefined4 field_0x14;
+    undefined field_0x18[0x10];
+    undefined4 field_0x28;
+    br_matrix34 field_0x2c;
+    br_matrix34 field_0x5c;
+    br_matrix34 field_0x8c;
+    undefined field_0xbc[0x28];
     tPedestrian* ped;
     undefined field_0xe8[0x4];
 } tPed_character_instance;
@@ -4487,6 +4507,7 @@ enum {
     kFatalError_TooManyEnvironmentalSoundAlternatives = 0x83,
     kFatalError_CannotFindModelReferencedInSoundGeneratorList_S = 0x84,
     kFatalError_InsufficientSoundSlotsInStorageArea = 0x85,
+    kFatalError_BonerError_UnableToAllocateMemory = 0x87,
     kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CannotFindPedSpawnMaterial_S = 0xa4,
     kFatalError_CannotMovePedIndexOutOfRangeForMaterial_S = 0xa5,
