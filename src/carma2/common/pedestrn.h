@@ -91,4 +91,6 @@ void C2_HOOK_FASTCALL CBLoadPersonality(undefined4* pArg1, FILE* pF);
 
 void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1);
 
+tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName);
+
 #endif //REC2_PEDESTRN_H
