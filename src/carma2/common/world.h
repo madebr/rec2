@@ -7,6 +7,7 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gSize_powerup_queue);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gSight_distance_squared);
 C2_HOOK_VARIABLE_DECLARE(tBrender_storage*, gStorageForCallbacks);
 C2_HOOK_VARIABLE_DECLARE(int, gGroovidelics_array_size);
@@ -51,6 +52,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gDelete_list, 500);
 C2_HOOK_VARIABLE_DECLARE(int, gSpec_vol_mode);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gSpec_vol_actors, 100);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tU32, gPrevious_groove_times, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tDecal, gDecals, 50);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
