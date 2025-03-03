@@ -688,13 +688,60 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ca9f0, ReadPedSpecs, ReadPedSpecs_original)
 
+tPed_peep* FindOrOpenPersonality(const char* pName) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPed_personalities)); i++) {
+        if (C2V(gPed_personalities)[i] == NULL) {
+            continue;
+        }
+        if (c2_strcmp(C2V(gPed_personalities)[i]->name, pName) == 0) {
+            return C2V(gPed_personalities)[i];
+        }
+    }
+    return ReadPersonality(pName);
+}
+
 tPed_character_instance* (C2_HOOK_FASTCALL * BuildCharacterInstance_original)(const char* pGroup_name, br_matrix34* pMat34);
 tPed_character_instance* C2_HOOK_FASTCALL BuildCharacterInstance(const char* pGroup_name, br_matrix34* pMat34) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BuildCharacterInstance_original(pGroup_name, pMat34);
 #else
-    NOT_IMPLEMENTED();
+    tPed_character_instance* instance;
+
+    C2_HOOK_BUG_ON(sizeof(tPed_character_instance) != 0xec);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x4, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x6, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x7, 0x7);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x8, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x9, 0x9);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0xa, 0xa);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0xc, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x14, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x28, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x2c, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x5c, 0x5c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, field_0x8c, 0x8c);
+
+    instance = BrMemAllocate(sizeof(tPed_character_instance), kBoner_mem_type_char_instance);
+    if (instance == NULL) {
+        FatalError(kFatalError_BonerError_UnableToAllocateMemory, 0);
+    }
+    instance->personality = FindOrOpenPersonality(pGroup_name);
+    instance->field_0x4 = 0xff;
+    instance->field_0x6 = 0xff;
+    instance->field_0x7 = 0xff;
+    instance->field_0x8 = 0;
+    instance->field_0x9 = 0;
+    instance->field_0xa = 0;
+    instance->field_0xc = 0;
+    instance->field_0x14 = 0;
+    instance->field_0x28 = 0;
+    instance->field_0x2c = *pMat34;
+    BrMatrix34Identity(&instance->field_0x5c);
+    BrMatrix34Identity(&instance->field_0x8c);
+    return instance;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004079a0, BuildCharacterInstance, BuildCharacterInstance_original)
@@ -759,19 +806,19 @@ void C2_HOOK_FASTCALL SetModelCallbacks(tPed_character_instance* pPed) {
     int i;
 
     C2_HOOK_BUG_ON(sizeof(tPed_character_instance) != 0xec);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, peep, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, personality, 0x0);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_peep, bones, 0x2c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_peep_bones, models, 0x0);
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(pPed->peep->bones->models) != 4);
-    for (i = 0; i < REC2_ASIZE(pPed->peep->bones->models); i++) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(pPed->personality->bones->models) != 4);
+    for (i = 0; i < REC2_ASIZE(pPed->personality->bones->models); i++) {
         int j;
 
-        C2_HOOK_BUG_ON(REC2_ASIZE(pPed->peep->bones->models[i].models) != 2);
-        for (j = 0; j < REC2_ASIZE(pPed->peep->bones->models[i].models); j++) {
+        C2_HOOK_BUG_ON(REC2_ASIZE(pPed->personality->bones->models[i].models) != 2);
+        for (j = 0; j < REC2_ASIZE(pPed->personality->bones->models[i].models); j++) {
             br_model* model;
 
-            model = pPed->peep->bones->models[i].models[j];
+            model = pPed->personality->bones->models[i].models[j];
             if (model != NULL) {
                 model->flags |= BR_MODF_CUSTOM;
                 model->custom = TurnLimbsOnAndOff;
