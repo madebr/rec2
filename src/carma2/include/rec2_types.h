@@ -2871,13 +2871,30 @@ typedef struct {
     undefined field_0x0[0x50];
 } tPed_form;
 
+typedef enum {
+    ePed_remap_axis_positive_x = 0,
+    ePed_remap_axis_positive_y = 1,
+    ePed_remap_axis_positive_z = 2,
+    ePed_remap_axis_negative_x = 3,
+    ePed_remap_axis_negative_y = 4,
+    ePed_remap_axis_negative_z = 5,
+} tPed_remap_axis;
+
+typedef struct {
+    char name[40];
+    tPed_remap_axis general_remap[3];
+    tPed_remap_axis powerup_axis[3];
+} tPed_remap_bone;
+
+typedef struct {
+    char name[40];
+    int count_bones;
+    tPed_remap_bone* bones;
+} tPed_remap;
+
 typedef struct {
     undefined field_0x0[0x50];
 } tPed_move;
-
-typedef struct {
-    undefined field_0x0[0x30];
-} tPed_remap;
 
 typedef struct {
     undefined field_0x0[4];

@@ -91,6 +91,8 @@ void C2_HOOK_FASTCALL CBLoadPersonality(undefined4* pArg1, FILE* pF);
 
 void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1);
 
+tPed_remap* C2_HOOK_FASTCALL LoadPedRemaps(const char *pFile_name);
+
 FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName);
 
 FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName);
