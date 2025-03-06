@@ -1267,6 +1267,17 @@ FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName) {
 }
 C2_HOOK_FUNCTION(0x004cbaa0, BonerOpenPersonality)
 
+FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, C2V(gApplication_path), C2V(gPedsFolder));
+    PathCat(path, path, "FORMS");
+    PathCat(path, path, pName);
+    c2_strcat(path, ".TXT");
+    return DRfopen(path, "rt");
+}
+C2_HOOK_FUNCTION(0x004cb980, BonerOpenCharacterForm)
+
 tPed_peep* (C2_HOOK_FASTCALL * ReadPersonality_original)(const char* pName);
 tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
 #if defined(C2_HOOKS_ENABLED)
