@@ -1278,6 +1278,16 @@ FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName) {
 }
 C2_HOOK_FUNCTION(0x004cb980, BonerOpenCharacterForm)
 
+FILE* C2_HOOK_FASTCALL BonerOpenMoves(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, C2V(gApplication_path), C2V(gPedsFolder));
+    PathCat(path, path, "MOVES");
+    PathCat(path, path, pName);
+    return DRfopen(path, "rb");
+}
+C2_HOOK_FUNCTION(0x004cbb50, BonerOpenMoves)
+
 int C2_HOOK_FASTCALL DRVector3NonZero(br_vector3* pV) {
     return pV->v[0] == 0.f && pV->v[1] == 0.f && pV->v[2] == 0.f;
 }
