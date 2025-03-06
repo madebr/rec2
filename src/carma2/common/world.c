@@ -1801,6 +1801,10 @@ void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const 
 }
 C2_HOOK_FUNCTION(0x00502cf0, LoadAllStuffInDirectory)
 
+void C2_HOOK_FASTCALL DisallowDuplicates(void) {
+}
+C2_HOOK_FUNCTION(0x00502d60, DisallowDuplicates)
+
 void C2_HOOK_FASTCALL AllowDuplicates(void) {
 
     C2V(gDisallowDuplicates) = 0;
