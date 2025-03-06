@@ -95,6 +95,8 @@ FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName);
 
 FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName);
 
+int C2_HOOK_FASTCALL DRVector3NonZero(br_vector3* pV);
+
 tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName);
 
 #endif //REC2_PEDESTRN_H

@@ -1278,6 +1278,11 @@ FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName) {
 }
 C2_HOOK_FUNCTION(0x004cb980, BonerOpenCharacterForm)
 
+int C2_HOOK_FASTCALL DRVector3NonZero(br_vector3* pV) {
+    return pV->v[0] == 0.f && pV->v[1] == 0.f && pV->v[2] == 0.f;
+}
+C2_HOOK_FUNCTION(0x00516350, DRVector3NonZero)
+
 tPed_peep* (C2_HOOK_FASTCALL * ReadPersonality_original)(const char* pName);
 tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
 #if defined(C2_HOOKS_ENABLED)
