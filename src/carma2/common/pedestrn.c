@@ -51,6 +51,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_initial_speed_spec, gGiblet_initial_speed,
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gGiblet_min_max_time, 2, 0x006a0408);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gGiblet_size_count, 0x0069bc18);
 C2_HOOK_VARIABLE_IMPLEMENT(tPed_giblet_size_spec*, gGiblet_sizes, 0x00694274);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_vector3, g_Ped_x_unit_vector, 0x0058f2a8, { { 1.f, 0.f, 0.f}});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_vector3, g_Ped_y_unit_vector, 0x0058f2b8, { { 0.f, 1.f, 0.f}});
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_vector3, g_Ped_z_unit_vector, 0x0058f2c8, { { 0.f, 0.f, 1.f}});
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPedForms_vtable, gPed_forms_vtable, 0x0065d778, {
     CBPassiveCollision,
@@ -141,6 +144,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gBOOL_00744804, 0x00744804);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_valium_left, 0x00744804);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_cache_006944c0, gPed_cache_006944c0, 100, 0x006944c0);
 
+#define PED_SCALAR_EPSILON (2.384186e-6f)
+
 void C2_HOOK_FASTCALL ClearOutMorphs(void) {
     int i;
 
@@ -184,6 +189,21 @@ void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00403ed0, InitBoner, InitPedsForm_original)
+
+void C2_HOOK_FASTCALL DRVector3SafeCross(br_vector3* pDest, const br_vector3* pA, const br_vector3* pB) {
+
+    BrVector3Cross(pDest, pA, pB);
+    if (fabsf(pDest->v[0]) < PED_SCALAR_EPSILON && fabsf(pDest->v[0]) < PED_SCALAR_EPSILON && fabsf(pDest->v[2]) < PED_SCALAR_EPSILON) {
+        if (fabsf(pA->v[0]) <= fabsf(pA->v[1]) && fabsf(pA->v[0]) <= fabsf(pA->v[2])) {
+            BrVector3Cross(pDest, pA, &C2V(g_Ped_x_unit_vector));
+        } else if (fabsf(pA->v[1]) <= fabsf(pA->v[0]) && fabsf(pA->v[1]) <= fabsf(pA->v[2])) {
+            BrVector3Cross(pDest, pA, &C2V(g_Ped_y_unit_vector));
+        } else {
+            BrVector3Cross(pDest, pA, &C2V(g_Ped_z_unit_vector));
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00403f90, DRVector3SafeCross)
 
 void C2_HOOK_FAKE_THISCALL ScaleModelXYZ(br_model* pModel, int pArg2, float pX, float pY, float pZ) {
     int i;
