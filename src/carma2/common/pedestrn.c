@@ -1254,6 +1254,19 @@ void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ccaa0, CBDisposePersonality, CBDisposePersonality_original)
 
+FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, C2V(gApplication_path), C2V(gPedsFolder));
+    PathCat(path, path, "PEEPS");
+    PathCat(path, path, pName);
+    C2V(gTwtPeds) = OpenPackFileAndSetTiffLoading(path);
+    PathCat(path, path, pName);
+    c2_strcat(path, ".TXT");
+    return DRfopen(path, "rt");
+}
+C2_HOOK_FUNCTION(0x004cbaa0, BonerOpenPersonality)
+
 tPed_peep* (C2_HOOK_FASTCALL * ReadPersonality_original)(const char* pName);
 tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
 #if defined(C2_HOOKS_ENABLED)
