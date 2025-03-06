@@ -158,6 +158,8 @@ void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const
 
 void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 
+void C2_HOOK_FASTCALL DisallowDuplicates(void);
+
 void C2_HOOK_FASTCALL AllowDuplicates(void);
 
 br_pixelmap* C2_HOOK_FASTCALL SwapPixelmapInStorage(br_pixelmap* pNew, br_pixelmap* pOriginal, tBrender_storage* pStorage);
