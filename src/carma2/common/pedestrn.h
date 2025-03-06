@@ -103,6 +103,20 @@ FILE* C2_HOOK_FASTCALL BonerOpenMoves(const char* pName);
 
 int C2_HOOK_FASTCALL DRVector3NonZero(br_vector3* pV);
 
-tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName);
+void C2_HOOK_FASTCALL BonerReadPersonalityModels(const char* pName);
+
+void C2_HOOK_FASTCALL RemapVector(br_vector3* pV, const tPed_remap_bone* pRemap);
+
+tPed_remap* C2_HOOK_FASTCALL FindOrOpenRemap(const char* pName);
+
+void C2_HOOK_FASTCALL Flip3DStoBRaxes(br_matrix34* pMat);
+
+tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const char* pLooping_reset_flags, const br_vector3* pMovement_direction, tU32 pFlags);
+
+tPed_move* C2_HOOK_FASTCALL FindOrOpenMove(const char* pName, tPed_form* pForm, const char* pLooping_reset_flags, const br_vector3* pMovement_direction, tU32 flags);
+
+tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName);
+
+tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName);
 
 #endif //REC2_PEDESTRN_H

@@ -51,6 +51,8 @@ typedef struct tNet_game_details tNet_game_details;
 typedef struct tNet_message tNet_message;
 typedef struct tPipe_chunk tPipe_chunk;
 typedef struct tNet_stored_smash tNet_stored_smash;
+typedef struct tPhysics_joint tPhysics_joint;
+typedef struct tPed_personality tPed_personality;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -322,6 +324,34 @@ typedef enum {
     eCar_owner_self = 2,
     eCar_owner_not_allowed = 3
 } tCar_detail_ownership;
+
+typedef enum {
+    eJoint_none = 0,
+    eJoint_hinge = 1,
+    eJoint_universal = 2,
+    eJoint_ball_n_socket = 3,
+    eJoint_quick_hinge = 4,
+    eJoint_translation = 5,
+} tPhysics_joint_type;
+
+typedef enum {
+    ePed_form_collision_type_box = 0,
+    ePed_form_collision_type_polyhedron = 1,
+    ePed_form_collision_type_line = 2,
+    ePed_form_collision_type_polygon = 3,
+    ePed_form_collision_type_sphere = 4,
+    ePed_form_collision_type_none = 8,
+} tPed_form_collision_detection_type;
+
+typedef enum {
+    ePed_form_bone_hinge_none = eJoint_none,
+    ePed_form_bone_hinge_hinge = eJoint_hinge,
+    ePed_form_bone_hinge_universal = eJoint_universal,
+    ePed_form_bone_hinge_ball_n_socket = eJoint_ball_n_socket,
+    ePed_form_bone_hinge_quick_hinge = eJoint_quick_hinge,
+    ePed_form_bone_hinge_phantom = 8,
+    ePed_form_bone_hinge_false = 9,
+} tPed_form_bone_hinge_type;
 
 typedef struct {
     tCar_detail_ownership ownership;
@@ -2868,8 +2898,13 @@ typedef struct {
 } tSkid;
 
 typedef struct {
-    undefined field_0x0[0x50];
-} tPed_form;
+    int id;
+    int frametime;
+    tU32 flags;
+    char biped_export_filename[40];
+    char looping_reset_flags[40];
+    br_vector3 movement_direction;
+} tPed_form_move_buffer_item;
 
 typedef enum {
     ePed_remap_axis_positive_x = 0,
@@ -2893,8 +2928,79 @@ typedef struct {
 } tPed_remap;
 
 typedef struct {
-    undefined field_0x0[0x50];
+    undefined field_0x0[4];
+    br_actor** actors;
+} tPed_form_actor_set;
+
+typedef struct {
+    tPed_form_collision_detection_type type;
+    tCollision_info* collision_info;
+} tPed_form_simple_phys;
+
+typedef struct {
+    tU8 field_0x0;
+    undefined field_0x1[3];
+    tCollision_info** collision_infos;
+} tPed_form_boned_phys;
+
+typedef struct {
+    char name[40];
+    tS8 parent_index;
+    undefined field_0x5[3];
+    tPed_remap_bone *remapped_bone;
+    tPhysics_joint* hinge;
+} tPed_form_bone;
+
+typedef struct {
+    tU8 euler1;
+    tU8 euler2;
+    tU8 euler3;
+} tPed_move_frame_axis;
+
+typedef struct {
+    br_matrix34 mat;
+    tPed_move_frame_axis* axis;
+} tPed_move_frame;
+
+typedef struct {
+    char name[40];
+    tS16 count_frames;
+    tU8 field_0x2a;
+    tU8 looping_reset_flags;
+    tU32 frametime;
+    tU32 move_flags;
+    br_vector3 field_0x34;
+    br_vector3 field_0x40;
+    tPed_move_frame* frames;
 } tPed_move;
+
+typedef struct {
+    int id;
+    tPed_move* move;
+} tPed_form_move;
+
+typedef struct {
+    undefined field_0x0[0x30];
+} tPed_form_dismembered_character;
+
+typedef struct {
+    char name[40];
+    tU8 count_moves;
+    tU8 count_bones;
+    tU8 max_rendering_at_once;
+    tU8 max_simple_physicing_at_once;
+    tU8 max_boned_physicing_at_once;
+    tU8 max_stored_dismembered_characters;
+    undefined field_0x2e[2];
+    tPed_form_actor_set* actor_sets;
+    tPed_form_boned_phys* boned_physicing;
+    tPed_form_simple_phys* simple_physicing;
+    tPed_form_bone* bones;
+    tPed_form_move* moves;
+    tPed_remap* remap;
+    tPed_form_dismembered_character** stored_dismembered_characters;
+    undefined field_0x4c[4];
+} tPed_form;
 
 typedef struct {
     undefined field_0x0[4];
@@ -2910,7 +3016,7 @@ typedef struct {
     void (C2_HOOK_FASTCALL * fill_in_object)(undefined4*, undefined4);
     void (C2_HOOK_FASTCALL * load_form)(tPed_form* pPed_form, FILE* pF);
     void (C2_HOOK_FASTCALL * dispose_form)(undefined4*);
-    void (C2_HOOK_FASTCALL * load_personality)(undefined4*, FILE*);
+    void (C2_HOOK_FASTCALL * load_personality)(tPed_personality*, FILE*);
     void (C2_HOOK_FASTCALL * dispose_personality)(undefined4*);
 } tPedForms_vtable;
 
@@ -3347,16 +3453,7 @@ typedef struct {
     br_vector3 parent;
 } tPhysics_joint_limit;
 
-typedef enum {
-    eJoint_none = 0,
-    eJoint_hinge = 1,
-    eJoint_universal = 2,
-    eJoint_ball_n_socket = 3,
-    eJoint_quick_hinge = 4,
-    eJoint_translation = 5,
-} tPhysics_joint_type;
-
-typedef struct {
+typedef struct tPhysics_joint {
     tPhysics_joint_type type;
     br_scalar friction;
     br_vector3 field_0x08;
@@ -3557,18 +3654,38 @@ typedef struct {
 
 typedef struct {
     tPed_peeps_bone_models models[4];
-    undefined field_0x20[0x1c];
-} tPed_peep_bones;
+    br_vector3 field_0x20;
+    br_vector3 field_0x2c;
+    tPhysics_joint* hinge;
+} tPed_personality_bone;
+
+typedef enum {
+    ePed_personality_floating = -1,
+    ePed_personality_grounded = 0,
+} tPed_personality_move_grounding_mode;
 
 typedef struct {
+    tPed_personality_move_grounding_mode grounding_mode;
+    float grounding_offset;
+    float scale_factor;
+} tPed_personality_move;
+
+typedef struct tPed_personality {
     char name[32];
-    undefined field_0x20[0xc];
-    tPed_peep_bones* bones;
-    undefined field_0x30[0x28];
-} tPed_peep;
+    undefined field_0x20[0x8];
+    tPed_form* form;
+    tPed_personality_bone* bones;
+    tPed_personality_move* moves;
+    br_bounds3 bb;
+    float M;
+    undefined field_0x50[4];
+    br_vector3 centre_of_mass;
+    float radius;
+    undefined field_0x64[4];
+} tPed_personality;
 
 typedef struct {
-    tPed_peep* personality;
+    tPed_personality* personality;
     undefined field_0x4;
     undefined field_0x5;
     undefined field_0x6;
@@ -4524,7 +4641,16 @@ enum {
     kFatalError_TooManyEnvironmentalSoundAlternatives = 0x83,
     kFatalError_CannotFindModelReferencedInSoundGeneratorList_S = 0x84,
     kFatalError_InsufficientSoundSlotsInStorageArea = 0x85,
+    kFatalError_BonerError_UnableToOpenFile_S = 0x86,
     kFatalError_BonerError_UnableToAllocateMemory = 0x87,
+    kFatalError_BonerError_UnableToLinkForm_to_personality_S = 0x88,
+    kFatalError_BonerError_UnableToFindModel_S = 0x89,
+    kFatalError_BonerError_UnableToFindBone_S = 0x8a,
+    kFatalError_BonerError_TooManyFormsLoaded = 0x8b,
+    eFatalError_BonerError_TooManyPersonalitiesLoaded = 0x8c,
+    kFatalError_BonerError_TooManyMovesLoaded = 0x8d,
+    kFatalError_BonerError_SyntaxErrorInFormFileExpected_S = 0x8f,
+    kFatalError_BonerError_IllegalMoveID_S = 0x90,
     kFatalError_CannotOpenPedFile_S = 0xa0,
     kFatalError_CannotFindPedSpawnMaterial_S = 0xa4,
     kFatalError_CannotMovePedIndexOutOfRangeForMaterial_S = 0xa5,

@@ -6,9 +6,11 @@
 #include "globvrpb.h"
 #include "graphics.h"
 #include "loading.h"
+#include "physics.h"
 #include "platform.h"
 #include "skidmark.h"
 #include "smashing.h"
+#include "trig.h"
 #include "utility.h"
 #include "world.h"
 
@@ -54,6 +56,33 @@ C2_HOOK_VARIABLE_IMPLEMENT(tPed_giblet_size_spec*, gGiblet_sizes, 0x00694274);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_vector3, g_Ped_x_unit_vector, 0x0058f2a8, { { 1.f, 0.f, 0.f}});
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_vector3, g_Ped_y_unit_vector, 0x0058f2b8, { { 0.f, 1.f, 0.f}});
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_vector3, g_Ped_z_unit_vector, 0x0058f2c8, { { 0.f, 0.f, 1.f}});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPed_form_collision_type_names, 9, 0x0058f230, {
+    "BOX",
+    "POLYHEDRON",
+    "LINE",
+    "POLYGON",
+    "SPHERE",
+    "",
+    "",
+    "",
+    "NONE",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPed_form_bone_joint_type_names, 10, 0x0058f258, {
+    "NONE",
+    "HINGE",
+    "UNIVERSAL",
+    "BALLNSOCKET",
+    "QUICKHINGE",
+    "",
+    "",
+    "",
+    "PHANTOM",
+    "FALSE",
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPed_form_joint_limit_type_names, 2, 0x0058f280, {
+    "PLANE",
+    "UNIVERSAL",
+});
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPedForms_vtable, gPed_forms_vtable, 0x0065d778, {
     CBPassiveCollision,
@@ -107,9 +136,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count, 0x007447d4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_nearness, 0x00694490);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTotal_count_smash_peds, 0x0074480c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_killed_peds, 0x007447cc);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPedForms_vtable*, gPed_table, 0x0067697c, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tPed_form*, gPed_forms, 20, 0x00676928, { 0 });
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_peep*, gPed_personalities, 50, 0x00677260);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_personality*, gPed_personalities, 50, 0x00677260);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tPed_move*, gPed_moves, 250, 0x00676980, { 0 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_remap*, gPed_remaps, 10, 0x00677238);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_morph, gPed_morphs, 20, 0x00677730);
@@ -143,6 +171,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gPed_gravity_multiplier, 0x007447dc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gBOOL_00744804, 0x00744804);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_valium_left, 0x00744804);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_cache_006944c0, gPed_cache_006944c0, 100, 0x006944c0);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPedForms_vtable*, gPed_vtable, 0x0067697c, NULL);
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
 
@@ -167,7 +196,7 @@ void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPed_moves)) != 250);
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPed_remaps)) != 10);
 
-    C2V(gPed_table) = pTable;
+    C2V(gPed_vtable) = pTable;
     c2_memset(C2V(gPed_forms), 0, sizeof(C2V(gPed_forms)));
     c2_memset(C2V(gPed_personalities), 0, sizeof(C2V(gPed_personalities)));
     c2_memset(C2V(gPed_moves), 0, sizeof(C2V(gPed_moves)));
@@ -708,7 +737,7 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ca9f0, ReadPedSpecs, ReadPedSpecs_original)
 
-tPed_peep* FindOrOpenPersonality(const char* pName) {
+tPed_personality* FindOrOpenPersonality(const char* pName) {
     int i;
 
     for (i = 0; i < REC2_ASIZE(C2V(gPed_personalities)); i++) {
@@ -827,8 +856,8 @@ void C2_HOOK_FASTCALL SetModelCallbacks(tPed_character_instance* pPed) {
 
     C2_HOOK_BUG_ON(sizeof(tPed_character_instance) != 0xec);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, personality, 0x0);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_peep, bones, 0x2c);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_peep_bones, models, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, bones, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality_bone, models, 0x0);
 
     C2_HOOK_BUG_ON(REC2_ASIZE(pPed->personality->bones->models) != 4);
     for (i = 0; i < REC2_ASIZE(pPed->personality->bones->models); i++) {
@@ -1324,8 +1353,550 @@ int C2_HOOK_FASTCALL DRVector3NonZero(br_vector3* pV) {
 }
 C2_HOOK_FUNCTION(0x00516350, DRVector3NonZero)
 
-tPed_peep* (C2_HOOK_FASTCALL * ReadPersonality_original)(const char* pName);
-tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
+void C2_HOOK_FASTCALL BonerReadPersonalityModels(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, C2V(gApplication_path), C2V(gPedsFolder));
+    PathCat(path, path, "PEEPS");
+    PathCat(path, path, pName);
+    DisallowDuplicates();
+    LoadAllStuffInDirectory(&C2V(gPedStorage), path, kRendererShadingType_Diffuse1);
+    AllowDuplicates();
+}
+
+void C2_HOOK_FASTCALL RemapVector(br_vector3* pV, const tPed_remap_bone* pRemap) {
+    int i;
+    br_vector3 original;
+
+    if (pRemap == NULL) {
+        return;
+    }
+    BrVector3Copy(&original, pV);
+    for (i = 0; i < 3; i++) {
+        float v = original.v[(int)pRemap->general_remap[i] % 3];
+        if ((int)pRemap->general_remap[i] >= 3) {
+            v = -v;
+        }
+        pV->v[i] = v;
+    }
+}
+
+tPed_remap* C2_HOOK_FASTCALL FindOrOpenRemap(const char* pName) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPed_remaps)); i++) {
+        if (C2V(gPed_remaps)[i] != NULL && c2_strcmp(C2V(gPed_remaps)[i]->name, pName) == 0) {
+            return C2V(gPed_remaps)[i];
+        }
+    }
+    return LoadPedRemaps(pName);
+}
+
+void C2_HOOK_FASTCALL Flip3DStoBRaxes(br_matrix34* pMat) {
+    br_vector3 tv;
+    float f;
+
+    BrVector3Copy(&tv, (br_vector3*)pMat->m[1]);
+    BrVector3Copy((br_vector3*)pMat->m[1], (br_vector3*)pMat->m[2]);
+    BrVector3Negate((br_vector3*)pMat->m[2], &tv);
+
+    f = pMat->m[0][1];
+    pMat->m[0][1] = pMat->m[0][2];
+    pMat->m[0][2] = -f;
+
+    f = pMat->m[1][1];
+    pMat->m[1][1] = pMat->m[1][2];
+    pMat->m[1][2] = -f;
+
+    f = pMat->m[2][1];
+    pMat->m[2][1] = pMat->m[2][2];
+    pMat->m[2][2] = -f;
+
+    f = pMat->m[3][1];
+    pMat->m[3][1] = pMat->m[3][2];
+    pMat->m[3][2] = -f;
+}
+
+tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const char* pLooping_reset_flags, const br_vector3* pMovement_direction, tU32 pFlags) {
+    FILE* f;
+    tPed_move* move;
+    int i;
+    char bone_names[50][36];
+    tS32 count_bones_in_anim_file;
+    br_vector3 rot_pos;
+    br_vector3 move_pos;
+
+    C2_HOOK_BUG_ON(sizeof(tPed_move) != 0x50);
+    C2_HOOK_BUG_ON(sizeof(tPed_move_frame) != 0x34);
+    C2_HOOK_BUG_ON(sizeof(tPed_move_frame_axis) != 0x3);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_move, frames, 0x4c);
+
+    f = BonerOpenMoves(pName);
+    if (f == NULL) {
+        FatalError(kFatalError_BonerError_UnableToOpenFile_S, pName);
+    }
+    move = BrMemAllocate(sizeof(tPed_move), kBoner_mem_type_sequence);
+    if (move == NULL) {
+        FatalError(kFatalError_BonerError_UnableToAllocateMemory);
+    }
+    count_bones_in_anim_file = ReadS32(f);
+    move->count_frames = ReadS32(f);
+    for (i = 0; i < count_bones_in_anim_file; i++) {
+        PFfread(bone_names[i], 1, 33, f);
+        PFfseek(f, sizeof(tU32) * ReadS32(f), SEEK_CUR);
+    }
+    BrVector3Set(&move_pos, 0.f, 0.f, 0.f);
+    move->frames = BrMemAllocate(move->count_frames * sizeof(tPed_move_frame), kMem_boner_type_frames);
+    for (i = 0; i < move->count_frames; i++) {
+        int j;
+
+        move->frames[i].axis = BrMemAllocate(pForm->count_bones * sizeof(tPed_move_frame_axis), kBoner_mem_type_frame_2);
+        for (j = 0; j < count_bones_in_anim_file; j++) {
+            br_matrix34 mat;
+            int k = 0;
+            const char* bone_name_anim_file = bone_names[j];
+
+            for (k = 0; k < 4; k++) {
+                int l;
+
+                for (l = 0; l < 3; l++) {
+                    mat.m[k][l] = ReadF32(f);
+                }
+            }
+            for (k = 0; k < pForm->count_bones; k++) {
+                if (c2_strcmp(pForm->bones[k].name, bone_name_anim_file) == 0) {
+                    br_euler e;
+                    br_matrix34 mat_lp;
+
+                    Flip3DStoBRaxes(&mat);
+                    BrMatrix34LPNormalise(&mat_lp, &mat);
+                    if (pForm->bones[k].parent_index == -1) {
+                        c2_memmove(&move->frames[i].mat, &mat_lp, 9 * sizeof(float));
+                        if (i != 0) {
+                            BrVector3Sub((br_vector3*)move->frames[i].mat.m[3], (br_vector3*)mat_lp.m[3], &rot_pos);
+                            BrVector3Accumulate(&move_pos, (br_vector3*)move->frames[i].mat.m[3]);
+                        }
+                        BrVector3Copy(&rot_pos, (br_vector3*)mat_lp.m[3]);
+                    }
+                    e.order = 0;
+                    BrMatrix34ToEuler(&e, &mat_lp);
+                    move->frames[i].axis[k].euler1 = e.a / 256;
+                    move->frames[i].axis[k].euler2 = e.b / 256;
+                    move->frames[i].axis[k].euler3 = e.c / 256;
+                    break;
+                }
+            }
+        }
+    }
+    if (c2_strchr(pLooping_reset_flags, 'X') != NULL) {
+        move->frames[0].mat.m[3][0] = -move_pos.v[0];
+        move_pos.v[0] = 0.f;
+        move->looping_reset_flags |= 0x1;
+    } else {
+        if (move->count_frames > 1) {
+            move->frames[0].mat.m[3][0] = move->frames[1].mat.m[3][0];
+            move_pos.v[0] += move->frames[0].mat.m[3][0];
+        } else {
+            move->frames[0].mat.m[3][0] = 0.f;
+        }
+    }
+    if (c2_strchr(pLooping_reset_flags, 'Y') != NULL) {
+        move->frames[0].mat.m[3][1] = -move_pos.v[1];
+        move_pos.v[1] = 0.f;
+        move->looping_reset_flags |= 0x2;
+    } else {
+        if (move->count_frames > 1) {
+            move->frames[0].mat.m[3][1] = move->frames[1].mat.m[3][1];
+            move_pos.v[1] += move->frames[0].mat.m[3][1];
+        } else {
+            move->frames[0].mat.m[3][1] = 0.f;
+        }
+    }
+    if (c2_strchr(pLooping_reset_flags, 'Z') != NULL) {
+        move->frames[0].mat.m[3][2] = -move_pos.v[2];
+        move_pos.v[2] = 0.f;
+        move->looping_reset_flags |= 0x4;
+    } else {
+        if (move->count_frames > 1) {
+            move->frames[0].mat.m[3][2] = move->frames[1].mat.m[3][2];
+            move_pos.v[2] += move->frames[0].mat.m[3][2];
+        } else {
+            move->frames[0].mat.m[3][2] = 0.f;
+        }
+    }
+
+    if (BrVector3LengthSquared(&move_pos) != 0.f && !(move->looping_reset_flags & 0x1)) {
+        move->field_0x2a = 0;
+        BrVector3Normalise(&move->field_0x34, &move_pos);
+        if (BrVector3LengthSquared(pMovement_direction) != 0) {
+            BrVector3Copy(&move->field_0x40, pMovement_direction);
+        } else {
+            BrVector3Copy(&move->field_0x40, &move->field_0x34);
+        }
+    } else {
+        move->field_0x2a = 1;
+        if (BrVector3LengthSquared(pMovement_direction) != 0) {
+            BrVector3Copy(&move->field_0x40, pMovement_direction);
+        } else {
+            BrVector3Set(&move->field_0x40, 0.f, 0.f, 1.f);
+        }
+        BrVector3Set(&move->field_0x34, 0.f, 0.f, 0.f);
+    }
+    move->move_flags = pFlags;
+    PFfclose(f);
+    c2_strcpy(move->name, pName);
+
+    for (i = 0; ; i++) {
+        if (i >= REC2_ASIZE(C2V(gPed_moves))) {
+            FatalError(kFatalError_BonerError_TooManyMovesLoaded);
+        }
+        if (C2V(gPed_moves)[i] == NULL) {
+            C2V(gPed_moves)[i] = move;
+            break;
+        }
+    }
+    return move;
+}
+
+tPed_move* C2_HOOK_FASTCALL FindOrOpenMove(const char* pName, tPed_form* pForm, const char* pLooping_reset_flags, const br_vector3* pMovement_direction, tU32 flags) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPed_moves)); i++) {
+        if (C2V(gPed_moves)[i] != NULL) {
+            if (c2_strcmp(C2V(gPed_moves)[i]->name, pName) == 0) {
+                return C2V(gPed_moves)[i];
+            }
+        }
+    }
+    return ReadMove(pName, pForm, pLooping_reset_flags, pMovement_direction, flags);
+}
+
+tPed_form* (C2_HOOK_FASTCALL * SetUpCharacterForm_original)(const char* pName);
+tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
+#if 0//defined(C2_HOOKS_ENABLED)
+    return SetUpCharacterForm_original(pName);
+#else
+    FILE* f;
+    tPed_form* form;
+    int max_simple_physicing_at_once;
+    int max_boned_physicing_at_once;
+    int max_rendering_at_once;
+    tPed_form_move_buffer_item form_moves[100];
+    char s[256];
+    int i;
+    float total_mass;
+
+    f = BonerOpenCharacterForm(pName);
+    if (f == NULL) {
+        FatalError(kFatalError_BonerError_UnableToOpenFile_S, pName);
+    }
+
+    C2_HOOK_BUG_ON(sizeof(tPed_form) != 0x50);
+
+    form = BrMemAllocate(sizeof(tPed_form), kBoner_mem_type_form);
+    if (form == NULL) {
+        FatalError(kFatalError_BonerError_UnableToAllocateMemory);
+    }
+
+    /* Max simple physicing at once */
+    max_simple_physicing_at_once = GetAnInt(f);
+
+    /* Max boned physicing at once */
+    max_boned_physicing_at_once = GetAnInt(f);
+
+    /* Max rendering at once */
+    max_rendering_at_once = GetAnInt(f);
+
+    /* Max stored dismembered characters */
+    form->max_stored_dismembered_characters = GetAnInt(f);
+
+    GetALineAndDontArgue(f, s);
+    form->remap = FindOrOpenRemap(s);
+
+    while (!PFfeof(f)) {
+        GetALineAndDontArgue(f, s);
+        if (c2_strcmp(s, "NEXT BONE") == 0) {
+            form->count_bones += 1;
+        } else if (c2_strcmp(s, "END OF BONES") == 0) {
+            form->count_bones += 1;
+            break;
+        }
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, max_simple_physicing_at_once, 0x2b);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, max_boned_physicing_at_once, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, max_rendering_at_once, 0x2a);
+    C2_HOOK_BUG_ON(sizeof(tPed_form_actor_set) != 0x8);
+    C2_HOOK_BUG_ON(sizeof(tPed_form_simple_phys) != 0x8);
+    C2_HOOK_BUG_ON(sizeof(tPed_form_boned_phys) != 0x8);
+    C2_HOOK_BUG_ON(sizeof(tPed_form_bone) != 0x34);
+
+    form->max_simple_physicing_at_once = max_simple_physicing_at_once;
+    form->max_boned_physicing_at_once = max_boned_physicing_at_once;
+    form->max_rendering_at_once = max_rendering_at_once;
+    form->actor_sets = BrMemAllocate(max_rendering_at_once * sizeof(tPed_form_actor_set), kBoner_mem_type_actor_sets);
+    form->simple_physicing = BrMemAllocate(max_simple_physicing_at_once * sizeof(tPed_form_simple_phys), kBoner_mem_type_simple_phys);
+    form->boned_physicing = BrMemAllocate(max_boned_physicing_at_once * sizeof(tPed_form_boned_phys), kBoner_mem_type_boned_phys);
+    form->bones = BrMemAllocate(form->count_bones * sizeof(tPed_form_bone), kBoner_mem_type_bone_info);
+    PFrewind(f);
+    for (i = 0; i < 5; i++) {
+        GetALineAndDontArgue(f, s);
+    }
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "START OF BONES") != 0) {
+        FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
+    }
+    for (i = 0; i < max_boned_physicing_at_once; i++) {
+        form->boned_physicing[i].collision_infos = BrMemAllocate(form->count_bones * sizeof(tCollision_info*), kBoner_mem_type_boned_coll);
+    }
+    total_mass = 0.f;
+    for (i = 0; i < form->count_bones; i++) {
+        float mass;
+        tPed_form_bone* bone;
+        int j;
+
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form_bone, name, 0x0);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form_bone, remapped_bone, 0x2c);
+
+        bone = &form->bones[i];
+
+        GetALineAndDontArgue(f, bone->name);
+
+        bone->remapped_bone = NULL;
+        if (form->remap != NULL) {
+            int j;
+
+            for (j = 0; j < form->remap->count_bones; j++) {
+                if (c2_strcmp(bone->name, form->remap->bones[j].name) == 0) {
+                    bone->remapped_bone = &form->remap->bones[j];
+                    break;
+                }
+            }
+        }
+
+        /* Mass in kg */
+        mass = GetAScalar(f) / 1000.f;
+        total_mass += mass;
+
+        if (mass == 0.f) {
+
+            for (j = 0; j < max_boned_physicing_at_once; j++) {
+                form->boned_physicing[j].field_0x0 = 0;
+                form->boned_physicing[j].collision_infos[i] = NULL;
+            }
+        } else {
+            tPed_form_collision_detection_type collision_detection_type;
+            tPed_form_bone_hinge_type joint_type;
+            tPhysics_joint* joint;
+
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form_bone, parent_index, 0x28);
+
+            /* Collision detection type */
+            collision_detection_type = GetALineAndInterpretCommand(f, C2V(gPed_form_collision_type_names), REC2_ASIZE(C2V(gPed_form_collision_type_names)));
+            joint_type = GetALineAndInterpretCommand(f, C2V(gPed_form_bone_joint_type_names), REC2_ASIZE(C2V(gPed_form_bone_joint_type_names)));
+            joint = NULL;
+            if (joint_type < 0 || joint_type == ePed_form_bone_hinge_none) {
+                bone->parent_index = -1;
+            } else {
+                /* Index of parent */
+                bone->parent_index = GetAnInt(f);
+                if (joint_type != ePed_form_bone_hinge_phantom && joint_type != ePed_form_bone_hinge_false) {
+                    int count_limits;
+                    int is_rotate;
+                    int j;
+
+                    /* Number of limits */
+                    count_limits = GetAnInt(f);
+                    joint = AllocatePhysicsJoint(count_limits, kMem_physics_joint);
+                    joint->type = joint_type;
+                    joint->count_limits = count_limits;
+                    is_rotate = 0;
+                    for (j = 0; j < count_limits; j++) {
+                        tPhysics_joint_limit* limit = &joint->limits[j];
+
+                        if (is_rotate) {
+                            br_scalar angle;
+                            br_matrix34 mat;
+
+                            is_rotate = 0;
+                            /* Angle to rotate cross-product */
+                            angle = GetAScalar(f);
+                            DRVector3SafeCross(&limit->child, &joint->limits[j - 1].child, &joint->limits[j - 1].parent);
+                            BrMatrix34Rotate(&mat, BR_ANGLE_DEG(angle), &joint->limits[j - 1].parent);
+                            BrMatrix34ApplyV(&limit->parent, &joint->limits[j].child, &mat);
+                        } else {
+                            /* Limit type */
+                            limit->type = GetALineAndInterpretCommand(f,
+                                C2V(gPed_form_joint_limit_type_names),
+                                REC2_ASIZE(C2V(gPed_form_joint_limit_type_names)));
+                            /* Child vector */
+                            GetAVector(f, &limit->child);
+                            /* Parent vector */
+                            GetAVector(f, &limit->parent);
+
+                            RemapVector(&limit->child, bone->remapped_bone);
+                            RemapVector(&limit->parent, form->bones[bone->parent_index].remapped_bone);
+
+                            is_rotate = limit->type == eJoint_limit_universal;
+                            /* Maximum angle allowed between above two vectors */
+                            limit->value = FastFloatCos((int) GetAScalar);
+                        }
+                        BrVector3Normalise(&limit->child, &limit->child);
+                        BrVector3Normalise(&limit->parent, &limit->parent);
+                    }
+                    if (joint->type == eJoint_hinge || joint->type == eJoint_quick_hinge) {
+                        /* Hinge axis */
+                        GetAVector(f, &joint->hinge_axis);
+                        BrVector3Copy(&joint->parent_bone_axis, &joint->hinge_axis);
+                        RemapVector(&joint->hinge_axis, bone->remapped_bone);
+                        RemapVector(&joint->parent_bone_axis, form->bones[bone->parent_index].remapped_bone);
+                        if (fabsf(joint->hinge_axis.v[0]) > fabsf(joint->hinge_axis.v[1]) && fabsf(joint->hinge_axis.v[0]) > fabsf(joint->hinge_axis.v[2])) {
+                            BrVector3Cross(&joint->hinge_axis2, &joint->hinge_axis, &C2V(g_Ped_y_unit_vector));
+                            BrVector3Cross(&joint->hinge_axis3, &joint->hinge_axis, &C2V(g_Ped_z_unit_vector));
+                        } else if (fabsf(joint->hinge_axis.v[1]) > fabsf(joint->hinge_axis.v[0]) && fabsf(joint->hinge_axis.v[1]) > fabsf(joint->hinge_axis.v[2])) {
+                            BrVector3Cross(&joint->hinge_axis2, &joint->hinge_axis, &C2V(g_Ped_x_unit_vector));
+                            BrVector3Cross(&joint->hinge_axis3, &joint->hinge_axis, &C2V(g_Ped_z_unit_vector));
+                        } else {
+                            BrVector3Cross(&joint->hinge_axis2, &joint->hinge_axis, &C2V(g_Ped_x_unit_vector));
+                            BrVector3Cross(&joint->hinge_axis3, &joint->hinge_axis, &C2V(g_Ped_y_unit_vector));
+                        }
+                    }
+                }
+            }
+            bone->hinge = joint;
+            for (j = 0; j < max_boned_physicing_at_once; j++) {
+                tCollision_info* coll_info;
+
+                C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
+
+                coll_info = BrMemAllocate(sizeof(tCollision_info), kBoner_mem_type_boned_coll_obj);
+                form->boned_physicing[j].collision_infos[i] = coll_info;
+                coll_info->uid = i;
+                coll_info->M = mass;
+                switch (collision_detection_type) {
+                case ePed_form_collision_type_box:
+                    coll_info->shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
+                    break;
+                case ePed_form_collision_type_polyhedron:
+                case ePed_form_collision_type_polygon:
+                case ePed_form_collision_type_none:
+                    coll_info->shape = NULL;
+                case ePed_form_collision_type_line:
+                    coll_info->shape = (tCollision_shape*)AllocateWireFrameCollisionShape(2, 1, kMem_collision_shape);
+                    coll_info->shape->wireframe.wireframe.lines[0].index1 = 0;
+                    coll_info->shape->wireframe.wireframe.lines[0].index2 = 1;
+                    break;
+                case ePed_form_collision_type_sphere:
+                    coll_info->shape = (tCollision_shape*)AllocateShapeSphere(kMem_collision_shape);
+                    break;
+                }
+                form->boned_physicing[j].field_0x0 = 0;
+            }
+        }
+        GetALineAndDontArgue(f, s);
+        if (c2_strcmp(s, "NEXT BONE") != 0 && c2_strcmp(s, "END OF BONES") != 0) {
+            FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "NEXT BONE");
+        }
+    }
+    for (i = 0; i < max_simple_physicing_at_once; i++) {
+        tCollision_info* coll_info;
+        coll_info = BrMemAllocate(sizeof(tCollision_info), kBoner_mem_type_simple_coll_obj);
+        form->simple_physicing[i].collision_info = coll_info;
+        coll_info->M = total_mass;
+        coll_info->shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
+        form->simple_physicing[i].type = kCollisionShapeType_Box;
+    }
+
+    for (i = 0; i < max_rendering_at_once; i++) {
+        int j;
+
+        form->actor_sets[i].actors = BrMemAllocate(sizeof(br_actor*) * form->count_bones, kBoner_mem_type_actor_ptrs);
+        for (j = 0; j < form->count_bones; j++) {
+            form->actor_sets[i].actors[j] = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            form->actor_sets[i].actors[j]->render_style = BR_RSTYLE_FACES;
+        }
+    }
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "START OF MOVES") != 0) {
+        FatalError(kFatalError_BonerError_UnableToOpenFile_S, "START OF MOVES");
+    }
+    form->count_moves = 0;
+    for (i = 0;; i++) {
+        const char* str;
+
+        GetALineAndDontArgue(f, s);
+        if (c2_strcmp(s, "END OF MOVES") == 0) {
+            break;
+        } else if (PFfeof(f)) {
+            FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "END OF MOVES");
+        }
+        /* ID */
+        str = c2_strtok(s, "\t ,/");
+        c2_sscanf(str, "%d", &form_moves[i].id);
+
+        /* Default frame rate */
+        form_moves[i].frametime = 1000 / GetAnInt(f);
+
+        /* Looping reset flags */
+        GetAString(f, form_moves[i].looping_reset_flags);
+
+        /* Direction of movement */
+        GetAVector(f, &form_moves[i].movement_direction);
+        if (DRVector3NonZero(&form_moves[i].movement_direction)) {
+            BrVector3Normalise(&form_moves[i].movement_direction, &form_moves[i].movement_direction);
+        }
+
+        /* Biped export file name */
+        GetAString(f, form_moves[i].biped_export_filename);
+
+        /* Flags */
+        form_moves[i].flags = GetAnInt(f);
+
+        form->count_moves += 1;
+    }
+
+    if (C2V(gPed_vtable)->load_form != NULL) {
+        C2V(gPed_vtable)->load_form(form, f);
+    }
+    PFfclose(f);
+
+    C2_HOOK_BUG_ON(sizeof(tPed_form_move) != 8);
+
+    form->moves = BrMemAllocate(form->count_moves * sizeof(tPed_form_move), kBoner_mem_type_moves);
+    for (i = 0; i < form->count_moves; i++) {
+        form->moves[i].id = form_moves[i].id;
+        form->moves[i].move = FindOrOpenMove(form_moves[i].biped_export_filename,
+                form,
+                form_moves[i].looping_reset_flags,
+                &form_moves[i].movement_direction,
+                form_moves[i].flags);
+        form->moves[i].move->frametime = form_moves[i].frametime;
+    }
+
+    C2_HOOK_BUG_ON(sizeof(tPed_form_dismembered_character) != 0x30);
+
+    form->stored_dismembered_characters = BrMemAllocate(form->max_stored_dismembered_characters * sizeof(tPed_form_dismembered_character*), kBoner_mem_type_stored_ptrs);
+    for (i = 0; i < form->max_stored_dismembered_characters; i++) {
+        form->stored_dismembered_characters[i] = BrMemAllocate(form->count_bones * sizeof(tPed_form_dismembered_character), kBoner_mem_type_stored);
+    }
+
+    c2_strcpy(form->name, pName);
+    for (i = 0; ; i++) {
+        if (i >= REC2_ASIZE(C2V(gPed_forms))) {
+            FatalError(kFatalError_BonerError_TooManyFormsLoaded);
+        }
+        if (C2V(gPed_forms)[i] == NULL) {
+            C2V(gPed_forms)[i] = form;
+            break;
+        }
+    }
+    return form;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00404f60, SetUpCharacterForm, SetUpCharacterForm_original)
+
+tPed_personality* (C2_HOOK_FASTCALL * ReadPersonality_original)(const char* pName);
+tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
 #if defined(C2_HOOKS_ENABLED)
     return ReadPersonality_original(pName);
 #else
