@@ -1289,3 +1289,31 @@ int C2_HOOK_FASTCALL NormalSideOfPlane(br_vector3* pPoint, br_vector3* pNormal, 
     return BrVector3Dot(pNormal, pNormal) * (BrVector3Dot(pNormal, pPoint) - pD) >= 0.f;
 }
 C2_HOOK_FUNCTION(0x00515700, NormalSideOfPlane)
+
+br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier) {
+    br_material* the_material;
+    char s[256];
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, name_suffix, 0x006abefc);
+
+    the_material = BrMaterialAllocate(NULL);
+    the_material->flags = pMaterial->flags;
+    the_material->ka = pMaterial->ka;
+    the_material->kd = pMaterial->kd;
+    the_material->ks = pMaterial->ks;
+    the_material->power = pMaterial->power;
+    the_material->colour = pMaterial->colour;
+    the_material->index_base = pMaterial->index_base;
+    the_material->index_range = pMaterial->index_range;
+    the_material->index_shade = pMaterial->index_shade;
+    the_material->index_blend = pMaterial->index_blend;
+    the_material->colour_map = pMaterial->colour_map;
+    c2_memcpy(&the_material->map_transform, &pMaterial->map_transform, sizeof(the_material->map_transform));
+    if (pSet_identifier) {
+        c2_sprintf(s, "%s(%d)", pMaterial->identifier, C2V(name_suffix));
+        C2V(name_suffix) += 1;
+        the_material->identifier = BrResStrDup(the_material, s);
+    }
+    BrMaterialAdd(the_material);
+    return the_material;
+}
+C2_HOOK_FUNCTION(0x00515780, DRMaterialClone)
