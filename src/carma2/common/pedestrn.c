@@ -1971,6 +1971,17 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00404f60, SetUpCharacterForm, SetUpCharacterForm_original)
 
+FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName) {
+    tPath_name path;
+
+    PathCat(path, C2V(gApplication_path), C2V(gPedsFolder));
+    PathCat(path, path, "MOVES");
+    PathCat(path, path, pName);
+    c2_strcat(path, ".TXT");
+    return DRfopen(path, "rt");
+}
+C2_HOOK_FUNCTION(0x004cba10, BonerOpenDefaultMoves)
+
 tPed_personality* (C2_HOOK_FASTCALL * ReadPersonality_original)(const char* pName);
 tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
 #if defined(C2_HOOKS_ENABLED)

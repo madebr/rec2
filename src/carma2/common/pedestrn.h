@@ -119,6 +119,8 @@ tPed_move* C2_HOOK_FASTCALL FindOrOpenMove(const char* pName, tPed_form* pForm, 
 
 tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName);
 
+FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName);
+
 tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName);
 
 #endif //REC2_PEDESTRN_H
