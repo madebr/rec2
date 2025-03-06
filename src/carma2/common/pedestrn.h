@@ -93,6 +93,8 @@ void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1);
 
 FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName);
 
+FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName);
+
 tPed_peep* C2_HOOK_FASTCALL ReadPersonality(const char* pName);
 
 #endif //REC2_PEDESTRN_H
