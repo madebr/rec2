@@ -86,6 +86,8 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefine
 
 tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pType);
 
+tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint, int pType);
+
 void C2_HOOK_FASTCALL PhysicsAddObject(tCollision_info* pParent, tCollision_info* pChild);
 
 void C2_HOOK_FASTCALL ApplyPhysicsToCar(tU32 pLast_tick_time, tU32 pFrame_period);

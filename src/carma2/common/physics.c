@@ -1183,6 +1183,17 @@ tPhysics_joint* C2_HOOK_FASTCALL AllocatePhysicsJoint(int pCount_limits, int pTy
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c5e20, AllocatePhysicsJoint, AllocatePhysicsJoint_original)
 
+tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint, int pType) {
+    size_t size;
+    tPhysics_joint* clone;
+
+    size = offsetof(tPhysics_joint, limits) + pJoint->count_limits * sizeof(tPhysics_joint_limit);
+    clone = BrMemAllocate(size, pType);
+    c2_memcpy(clone, pJoint, size);
+    return clone;
+}
+C2_HOOK_FUNCTION(0x004c5e40, ClonePhysicsJoint)
+
 void (C2_HOOK_FASTCALL * CollisionInfoAddChild_original)(tCollision_info* pParent, tCollision_info* pChild);
 void C2_HOOK_FASTCALL PhysicsAddObject(tCollision_info* pParent, tCollision_info* pChild) {
 
