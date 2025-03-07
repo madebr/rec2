@@ -1303,6 +1303,16 @@ void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ccaa0, CBDisposePersonality, CBDisposePersonality_original)
 
+FILE* C2_HOOK_FASTCALL BonerOpenRemaps(const char* pFile_name) {
+    tPath_name path;
+
+    PathCat(path, C2V(gApplication_path), C2V(gPedsFolder));
+    PathCat(path, path, "REMAPS");
+    PathCat(path, path, pFile_name);
+    return DRfopen(path, "rb");
+}
+C2_HOOK_FUNCTION(0x004cbbb0, BonerOpenRemaps)
+
 tPed_remap* (C2_HOOK_FASTCALL * LoadPedRemaps_original)(const char *pFile_name);
 tPed_remap* C2_HOOK_FASTCALL LoadPedRemaps(const char *pFile_name) {
 
