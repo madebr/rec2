@@ -89,7 +89,7 @@ void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF);
 
 void C2_HOOK_FASTCALL CBDisposeForm(undefined4* pArg1);
 
-void C2_HOOK_FASTCALL CBLoadPersonality(undefined4* pArg1, FILE* pF);
+void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pArg1, FILE* pF);
 
 void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1);
 
@@ -120,6 +120,14 @@ tPed_move* C2_HOOK_FASTCALL FindOrOpenMove(const char* pName, tPed_form* pForm, 
 tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName);
 
 FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName);
+
+tPed_form* C2_HOOK_FASTCALL FindOrOpenForm(const char* pName);
+
+void C2_HOOK_FASTCALL RemapModelAxis(br_model* pModel, const tPed_remap_bone* pRemap);
+
+br_model* C2_HOOK_FASTCALL BonerCloneModel(br_model *pModel, int pIndex, int pUpdateable);
+
+float C2_HOOK_FASTCALL CalcBoundsRadius(const br_bounds3* pBounds);
 
 tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName);
 

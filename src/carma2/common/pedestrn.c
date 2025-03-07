@@ -83,6 +83,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPed_form_joint_limit_type_na
     "PLANE",
     "UNIVERSAL",
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gPedestrian_character_cloned_materials, 50, 0x00676d68);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_pedestrian_personality_cloned_materials, 0x0067772c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPed_personality_grounding_type_names, 1, 0x0058f288, {
+    "GROUND",
+});
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPedForms_vtable, gPed_forms_vtable, 0x0065d778, {
     CBPassiveCollision,
@@ -1291,8 +1296,8 @@ void C2_HOOK_FASTCALL CBDisposeForm(undefined4* pArg1) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc940, CBDisposeForm, CBDisposeForm_original)
 
-void (C2_HOOK_FASTCALL * CBLoadPersonality_original)(undefined4* pArg1, FILE* pF);
-void C2_HOOK_FASTCALL CBLoadPersonality(undefined4* pArg1, FILE* pF) {
+void (C2_HOOK_FASTCALL * CBLoadPersonality_original)(tPed_personality* pArg1, FILE* pF);
+void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pArg1, FILE* pF) {
 #if defined(C2_HOOKS_ENABLED)
     CBLoadPersonality_original(pArg1, pF);
 #else
@@ -1982,12 +1987,328 @@ FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName) {
 }
 C2_HOOK_FUNCTION(0x004cba10, BonerOpenDefaultMoves)
 
+tPed_form* C2_HOOK_FASTCALL FindOrOpenForm(const char* pName) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPed_forms)); i++) {
+        if (C2V(gPed_forms)[i] != NULL) {
+            if (c2_strcmp(C2V(gPed_forms)[i]->name, pName) == 0) {
+                return C2V(gPed_forms)[i];
+            }
+        }
+    }
+    return SetUpCharacterForm(pName);
+}
+
+void C2_HOOK_FASTCALL RemapModelAxis(br_model* pModel, const tPed_remap_bone* pRemap) {
+    if (pRemap != NULL) {
+        int i;
+
+        for (i = 0; i < pModel->nvertices; i++) {
+            RemapVector(&pModel->vertices[i].p, pRemap);
+        }
+    }
+    BrModelUpdate(pModel, BR_MODU_ALL);
+}
+
+br_model* C2_HOOK_FASTCALL BonerCloneModel(br_model *pModel, int pIndex, int pUpdateable) {
+    char identifier[40];
+    char* str;
+    br_model* clone;
+    br_material* original_material;
+    br_material* cloned_material;
+    int i;
+
+    c2_strcpy(identifier, pModel->identifier);
+    str = c2_strtok(identifier, ".");
+    c2_sprintf(str + c2_strlen(str), "%d.DAT", pIndex);
+    clone = BrModelAllocate(str, pModel->nvertices ,pModel->nfaces);
+    c2_memmove(clone->vertices, pModel->vertices, pModel->nvertices * sizeof(br_vertex));
+    c2_memmove(clone->faces, pModel->faces, pModel->nfaces * sizeof(br_face));
+    c2_strcpy(identifier, pModel->faces->material->identifier);
+    str = c2_strtok(identifier, ".");
+    c2_sprintf(str + c2_strlen(str), "%d.MAT", pIndex);
+    original_material = pModel->faces[0].material;
+    cloned_material = BrMaterialFind(str);
+    if (cloned_material == NULL && C2V(gCount_pedestrian_personality_cloned_materials) < REC2_ASIZE(C2V(gPedestrian_character_cloned_materials))) {
+        cloned_material = DRMaterialClone(original_material, 0);
+        cloned_material->identifier = BrResStrDup(cloned_material, identifier);
+        BrMaterialUpdate(cloned_material, BR_MATU_ALL);
+        C2V(gPedestrian_character_cloned_materials)[C2V(gCount_pedestrian_personality_cloned_materials)] = cloned_material;
+        C2V(gCount_pedestrian_personality_cloned_materials) += 1;
+    }
+    for (i = 0; i < pModel->nfaces; i++) {
+        if (pModel->faces[i].material == original_material) {
+            pModel->faces[i].material = cloned_material;
+        }
+    }
+    if (pUpdateable) {
+        clone->flags |= BR_MODF_UPDATEABLE;
+    } else {
+        clone->flags &= ~BR_MODF_UPDATEABLE;
+    }
+    BrModelAdd(clone);
+    return clone;
+}
+
+float C2_HOOK_FASTCALL CalcBoundsRadius(const br_bounds3* pBounds) {
+    float v;
+    float r;
+
+    r = 0.f;
+
+    v = fabsf(pBounds->min.v[0]);
+    if (v > r) {
+        r = v;
+    }
+    v = fabsf(pBounds->min.v[1]);
+    if (v > r) {
+        r = v;
+    }
+    v = fabsf(pBounds->min.v[2]);
+    if (v > r) {
+        r = v;
+    }
+    v = fabsf(pBounds->max.v[0]);
+    if (v > r) {
+        r = v;
+    }
+    v = fabsf(pBounds->max.v[1]);
+    if (v > r) {
+        r = v;
+    }
+    v = fabsf(pBounds->max.v[2]);
+    if (v > r) {
+        r = v;
+    }
+    return r;
+}
+
 tPed_personality* (C2_HOOK_FASTCALL * ReadPersonality_original)(const char* pName);
 tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return ReadPersonality_original(pName);
 #else
-    NOT_IMPLEMENTED();
+    FILE* f;
+    FILE* g;
+    FILE* move_f;
+    tPed_personality* personality;
+    char default_moves_file[256];
+    char s[256];
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tPed_personality) != 0x68);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, form, 0x28);
+
+    f = BonerOpenPersonality(pName);
+    if (f == NULL) {
+        FatalError(kFatalError_BonerError_UnableToOpenFile_S, pName);
+    }
+    personality = BrMemAllocate(sizeof(tPed_personality), kBoner_mem_type_person);
+    if (personality == NULL) {
+        FatalError(kFatalError_BonerError_UnableToAllocateMemory);
+    }
+
+    /* Form file to use */
+    GetALineAndDontArgue(f, s);
+    personality->form = FindOrOpenForm(s);
+    if (personality->form == NULL) {
+        FatalError(kFatalError_BonerError_UnableToLinkForm_to_personality_S, s);
+    }
+
+    /* Default moves file to use */
+    GetALineAndDontArgue(f, default_moves_file);
+    BonerReadPersonalityModels(pName);
+
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "START OF BONES") != 0) {
+        FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
+    }
+
+    C2_HOOK_BUG_ON(sizeof(tPed_personality_bone) != 0x3c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, bones, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality_bone, models, 0x0);
+
+    personality->bones = BrMemAllocate(personality->form->count_bones * sizeof(tPed_personality_bone), kBoner_mem_type_person_parts);
+    for (i = 0; i < personality->form->count_bones; i++) {
+        int bone_index;
+        char *str;
+        char s2[256];
+        int model_i;
+        int j;
+
+        GetALineAndDontArgue(f, s);
+        for (bone_index = 0; bone_index < personality->form->count_bones; bone_index++) {
+            if (c2_strcmp(personality->form->bones[bone_index].name, s) == 0) {
+                break;
+            }
+        }
+        GetALineAndDontArgue(f, s2);
+        if (DRStricmp(s2, "NULL") != 0 && bone_index >= personality->form->count_bones) {
+            FatalError(kFatalError_BonerError_UnableToFindBone_S, s);
+        }
+        str = s2;
+        model_i = 0;
+        for (;;) {
+            char* comma_str = c2_strchr(str, ',');
+            char* next_str;
+            if (comma_str != NULL) {
+                *comma_str = '\0';
+                next_str = comma_str + 1;
+            } else {
+                next_str = NULL;
+            }
+            if (DRStricmp(str, "NULL") != 0) {
+                br_model* model = BrModelFind(str);
+                personality->bones[bone_index].models[model_i].models[0] = model;
+                if (model == NULL) {
+                    FatalError(kFatalError_BonerError_UnableToFindModel_S, str);
+                }
+                RemapModelAxis(model, personality->form->bones[bone_index].remapped_bone);
+            }
+            str = next_str;
+            if (str == NULL) {
+                break;
+            }
+            model_i += 1;
+        }
+        for (j = 0; j < 4; j++) {
+            if (personality->bones[bone_index].models[j].models[0] == NULL) {
+                break;
+            }
+            personality->bones[bone_index].models[j].models[1] = BonerCloneModel(personality->bones[bone_index].models[j].models[0], 1, 1);
+            personality->bones[bone_index].models[j].models[0]->flags |= BR_MODF_UPDATEABLE;
+            BrModelUpdate(personality->bones[bone_index].models[j].models[0], BR_MODU_ALL);
+        }
+
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality_bone, field_0x20, 0x20);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality_bone, field_0x2c, 0x2c);
+
+        if (personality->form->bones[bone_index].parent_index >= 0) {
+            GetAVector(f, &personality->bones[bone_index].field_0x20);
+            RemapVector(&personality->bones[bone_index].field_0x20, personality->form->bones[bone_index].remapped_bone);
+            GetAVector(f, &personality->bones[bone_index].field_0x2c);
+            RemapVector(&personality->bones[bone_index].field_0x2c, personality->form->bones[personality->form->bones[bone_index].parent_index].remapped_bone);
+            if (personality->form->bones[bone_index].hinge != NULL) {
+                tPhysics_joint* hinge_copy = ClonePhysicsJoint(personality->form->bones[bone_index].hinge, kMem_physics_joint);
+                BrVector3Copy(&hinge_copy->field_0x08, &personality->bones[bone_index].field_0x20);
+                BrVector3Copy(&hinge_copy->field_0x14, &personality->bones[bone_index].field_0x2c);
+                personality->bones[bone_index].hinge = hinge_copy;
+            }
+        }
+    }
+    personality->M = personality->form->simple_physicing[0].collision_info->M;
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "END OF BONES") != 0) {
+        FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "END OF BONES");
+    }
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "START OF MOVES") != 0) {
+        FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF MOVES");
+    }
+
+    C2_HOOK_BUG_ON(sizeof(tPed_personality_move) != 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, moves, 0x30);
+
+    personality->moves = BrMemAllocate(personality->form->count_moves * sizeof(tPed_personality_move), kBoner_mem_type_person_moves);
+    for (i = 0; i < personality->form->count_moves; i++) {
+        personality->moves[i].scale_factor = 1.f;
+        personality->moves[i].grounding_mode = ePed_personality_floating;
+    }
+    g = BonerOpenDefaultMoves(default_moves_file);
+    if (g == NULL) {
+        FatalError(kFatalError_BonerError_UnableToOpenFile_S, default_moves_file);
+    }
+    GetALineAndDontArgue(g, s);
+    if (c2_strcmp(s, "START OF MOVES") != 0) {
+        FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
+    }
+    move_f = g;
+    for (;;) {
+        int move_id;
+        char* str;
+
+        /* ID or "END OF MOVES" */
+        GetALineAndDontArgue(move_f, s);
+        if (c2_strcmp(s, "END OF MOVES") == 0 || PFfeof(move_f)) {
+            if (move_f == g) {
+                PFfclose(g);
+                move_f = f;
+                continue;
+            } else {
+                move_f = NULL;
+                break;
+            }
+        }
+        str = c2_strtok(s, "\t ,/");
+        c2_sscanf(str, "%d", &move_id);
+        for (i = 0; i < personality->form->count_moves; i++) {
+            if (move_id == personality->form->moves[i].id) {
+                /* Scaling factor */
+                personality->moves[i].scale_factor = GetAScalar(move_f);
+                /* Grounding mode */
+                personality->moves[i].grounding_mode = GetALineAndInterpretCommand(move_f, C2V(gPed_personality_grounding_type_names), REC2_ASIZE(C2V(gPed_personality_grounding_type_names)));
+                /* Grounding offset */
+                personality->moves[i].grounding_offset = GetAScalar(move_f);
+                break;
+            }
+        }
+        if (i == personality->form->count_moves) {
+            c2_sprintf(s, "%s/%d", personality->name, move_id);
+            FatalError(kFatalError_BonerError_IllegalMoveID_S, s);
+        }
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, bb, 0x34);
+
+    /* Bounding box */
+    GetAVector(f, &personality->bb.min);
+    GetAVector(f, &personality->bb.max);
+    RemapVector(&personality->bb.min, personality->form->bones[0].remapped_bone);
+    RemapVector(&personality->bb.max, personality->form->bones[0].remapped_bone);
+    if (personality->bb.max.v[0] < personality->bb.min.v[0]) {
+        float tv;
+        tv = personality->bb.max.v[0];
+        personality->bb.max.v[0] = personality->bb.min.v[0];
+        personality->bb.min.v[0] = tv;
+    }
+    if (personality->bb.max.v[1] < personality->bb.min.v[1]) {
+        float tv;
+        tv = personality->bb.max.v[1];
+        personality->bb.max.v[1] = personality->bb.min.v[1];
+        personality->bb.min.v[1] = tv;
+    }
+    if (personality->bb.max.v[2] < personality->bb.min.v[2]) {
+        float tv;
+        tv = personality->bb.max.v[2];
+        personality->bb.max.v[2] = personality->bb.min.v[2];
+        personality->bb.min.v[2] = tv;
+    }
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, centre_of_mass, 0x54);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, radius, 0x60);
+
+    /* Centre of mass */
+    GetAVector(f, &personality->centre_of_mass);
+    RemapVector(&personality->centre_of_mass, personality->form->bones[0].remapped_bone);
+    personality->radius = CalcBoundsRadius(&personality->bb);
+
+    if (C2V(gPed_vtable)->load_personality != NULL) {
+        C2V(gPed_vtable)->load_personality(personality, f);
+    }
+
+    PFfclose(f);
+    c2_strcpy(personality->name, pName);
+    for (i = 0; ; i++) {
+        if (i >= REC2_ASIZE(C2V(gPed_personalities))) {
+            FatalError(eFatalError_BonerError_TooManyPersonalitiesLoaded);
+        }
+        if (C2V(gPed_personalities)[i] == NULL) {
+            C2V(gPed_personalities)[i] = personality;
+            break;
+        }
+    }
+    return personality;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00406ab0, ReadPersonality, ReadPersonality_original)
