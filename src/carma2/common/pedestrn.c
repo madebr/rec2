@@ -172,6 +172,14 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gBOOL_00744804, 0x00744804);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_valium_left, 0x00744804);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPed_cache_006944c0, gPed_cache_006944c0, 100, 0x006944c0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPedForms_vtable*, gPed_vtable, 0x0067697c, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPed_remap_axis_choices, 6, 0x0058f290, {
+    "+X",
+    "+Y",
+    "+Z",
+    "-X",
+    "-Y",
+    "-Z",
+});
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
 
@@ -1313,16 +1321,74 @@ FILE* C2_HOOK_FASTCALL BonerOpenRemaps(const char* pFile_name) {
 }
 C2_HOOK_FUNCTION(0x004cbbb0, BonerOpenRemaps)
 
-tPed_remap* (C2_HOOK_FASTCALL * LoadPedRemaps_original)(const char *pFile_name);
-tPed_remap* C2_HOOK_FASTCALL LoadPedRemaps(const char *pFile_name) {
+tPed_remap* (C2_HOOK_FASTCALL * ReadRemap_original)(const char *pFile_name);
+tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char *pFile_name) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return LoadPedRemaps_original(pFile_name);
+#if 0//defined(C2_HOOKS_ENABLED)
+    return ReadRemap_original(pFile_name);
 #else
-    NOT_IMPLEMENTED();
+    FILE* f;
+    tPed_remap* remap;
+    char s[256];
+    int i;
+
+    if (c2_strcmp(pFile_name, "NONE") == 0) {
+        return NULL;
+    }
+    f = BonerOpenRemaps(pFile_name);
+    if (f == NULL) {
+        FatalError(kFatalError_BonerError_UnableToOpenFile_S, pFile_name);
+    }
+
+    C2_HOOK_BUG_ON(sizeof(tPed_remap) != 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_remap, count_bones, 0x28);
+    C2_HOOK_BUG_ON(sizeof(tPed_remap_bone) != 0x40);
+
+    remap = BrMemAllocate(sizeof(tPed_remap), kBoner_mem_type_remap);
+    if (remap == NULL) {
+        FatalError(kFatalError_BonerError_UnableToAllocateMemory);
+    }
+    remap->count_bones = 0;
+    GetALineAndDontArgue(f, s);
+    if (c2_strcmp(s, "START OF BONES") != 0) {
+        FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
+    }
+    while (!PFfeof(f)) {
+        GetALineAndDontArgue(f, s);
+        /* FIXME: should be 'c2_strcmp(s, "END OF BONES") == 0'? */
+        if ((remap->count_bones == 0 && c2_strcmp(s, "END OF BONES") != 0) || c2_strcmp(s, "NEXT BONE") == 0) {
+            remap->count_bones += 1;
+        }
+    }
+    remap->bones = BrMemAllocate(sizeof(tPed_remap_bone) * remap->count_bones, kBoner_mem_type_remap);
+    PFrewind(f);
+    GetALineAndDontArgue(f, s);
+    for (i = 0; i < remap->count_bones; i++) {
+        int j;
+
+        GetALineAndDontArgue(f, remap->bones[i].name);
+        for (j = 0; j < 3; j++) {
+            remap->bones[i].general_remap[j] = GetALineAndInterpretCommand(f, C2V(gPed_remap_axis_choices), REC2_ASIZE(C2V(gPed_remap_axis_choices)));
+        }
+        for (j = 0; j < 3; j++) {
+            remap->bones[i].powerup_axis[j] = GetALineAndInterpretCommand(f, C2V(gPed_remap_axis_choices), REC2_ASIZE(C2V(gPed_remap_axis_choices)));
+        }
+        GetALineAndDontArgue(f, s);
+    }
+    c2_strcpy(remap->name, pFile_name);
+    for (i = 0; ; i++) {
+        if (i >= REC2_ASIZE(C2V(gPed_remaps))) {
+            FatalError(kFatalError_BonerError_TooManyRemapsLoaded);
+        }
+        if (C2V(gPed_remaps)[i] == NULL) {
+            C2V(gPed_remaps)[i] = remap;
+            break;
+        }
+    }
+    return remap;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00404410, LoadPedRemaps, LoadPedRemaps_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00404410, ReadRemap, ReadRemap_original)
 
 FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName) {
     tPath_name path;
@@ -1399,7 +1465,7 @@ tPed_remap* C2_HOOK_FASTCALL FindOrOpenRemap(const char* pName) {
             return C2V(gPed_remaps)[i];
         }
     }
-    return LoadPedRemaps(pName);
+    return ReadRemap(pName);
 }
 
 void C2_HOOK_FASTCALL Flip3DStoBRaxes(br_matrix34* pMat) {

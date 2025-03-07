@@ -4649,6 +4649,7 @@ enum {
     kFatalError_BonerError_TooManyFormsLoaded = 0x8b,
     eFatalError_BonerError_TooManyPersonalitiesLoaded = 0x8c,
     kFatalError_BonerError_TooManyMovesLoaded = 0x8d,
+    kFatalError_BonerError_TooManyRemapsLoaded = 0x8e,
     kFatalError_BonerError_SyntaxErrorInFormFileExpected_S = 0x8f,
     kFatalError_BonerError_IllegalMoveID_S = 0x90,
     kFatalError_CannotOpenPedFile_S = 0xa0,
