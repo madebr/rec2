@@ -2999,7 +2999,10 @@ typedef struct {
     tPed_form_move* moves;
     tPed_remap* remap;
     tPed_form_dismembered_character** stored_dismembered_characters;
-    undefined field_0x4c[4];
+    tS8 non_humanoid;
+    tS8 index_head_bone;
+    tS8 axis_when_lying_down_A;
+    tS8 axis_when_lying_down_B;
 } tPed_form;
 
 typedef struct {

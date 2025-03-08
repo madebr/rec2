@@ -185,6 +185,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPed_remap_axis_choices, 6, 0
     "-Y",
     "-Z",
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gForm_non_humanoid_names, 1, 0x0065e560, {
+    "NONHUMANOID",
+});
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
 
@@ -1278,10 +1281,26 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004ccab0, CBFillInObject, CBFillInObject_original)
 
 void (C2_HOOK_FASTCALL * CBLoadForm_original)(tPed_form* pPed_form, FILE* pF);
 void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CBLoadForm_original(pPed_form, pF);
 #else
-    NOT_IMPLEMENTED();
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, non_humanoid, 0x4c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, index_head_bone, 0x4d);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, axis_when_lying_down_A, 0x4e);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form, axis_when_lying_down_B, 0x4f);
+
+    /* Other stuff */
+
+    pPed_form->non_humanoid = GetALineAndInterpretCommand(pF, C2V(gForm_non_humanoid_names), REC2_ASIZE(C2V(gForm_non_humanoid_names))) == 0;
+
+    /* Index of head bone */
+    pPed_form->index_head_bone = GetAnInt(pF);
+
+    /* Direction axis when lying down (A) */
+    pPed_form->axis_when_lying_down_A = GetAnInt(pF);
+
+    /* Direction axis when lying down (B) */
+    pPed_form->axis_when_lying_down_B = GetAnInt(pF);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc900, CBLoadForm, CBLoadForm_original)
