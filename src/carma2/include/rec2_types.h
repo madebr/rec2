@@ -75,6 +75,10 @@ typedef int C2_HOOK_FASTCALL tARScanBuffer_time_check(tU32);
 typedef br_uint_32 C2_HOOK_FASTCALL recurse_with_mat_cbfn(br_actor*, br_material*, void*);
 typedef br_uint_32 C2_HOOK_FASTCALL recurse_with_trans_cbfn(br_actor*, br_matrix34*, void*);
 typedef br_material* C2_HOOK_FASTCALL tPMFMCB(br_model*, tU16);
+typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_reset(void);
+typedef int C2_HOOK_FASTCALL tPiping_chunk_callback_calc_length(void*);
+typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_apply(void*);
+typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_undo(void*, void*);
 
 typedef enum  {
     eNet_synch_host_first = 0,
@@ -119,6 +123,15 @@ typedef enum {
     eDrone_state_DEFAULT = 3,
     eDrone_state_STOP = 4,
 } tDroneStateFuncState;
+
+typedef struct {
+    tPiping_chunk_callback_reset* reset;
+    int length;
+    tPiping_chunk_callback_calc_length* calc_length;
+    tPiping_chunk_callback_apply* apply;
+    undefined4 field_0x10;
+    tPiping_chunk_callback_undo* undo;
+} tPiping_chunk_callback;
 
 typedef enum {
     ePipe_chunk_car = 5,

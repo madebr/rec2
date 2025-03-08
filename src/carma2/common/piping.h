@@ -27,9 +27,15 @@ void C2_HOOK_FASTCALL StartPipingSession2(tPipe_chunk_type pType, int pMunge_ree
 
 void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
 
+void C2_HOOK_FASTCALL AREndPipingSession(void);
+
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
 void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void *pData, int pSize);
+
+int C2_HOOK_FASTCALL LengthOfChunk(void* pChunk, int pType);
+
+void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...);
 
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);
 

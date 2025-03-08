@@ -28,6 +28,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPipe_chunk_type, gReentrancy_array, 5, 0x00676
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gLocal_buffer, 0x006768b4, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, gLocal_buffer_size, 0x006768f4, 0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gMr_chunky, 0x006768a0, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPiping_chunk_callback*, gPipe_chunk_vtable, 0x006768e8, NULL);
 
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
@@ -75,6 +76,11 @@ void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) {
 }
 C2_HOOK_FUNCTION(0x004025e0, ARStartPipingSession)
 
+void C2_HOOK_FASTCALL AREndPipingSession(void) {
+
+    EndPipingSession2(1);
+}
+
 void (C2_HOOK_FASTCALL * EndPipingSession2_original)(int pMunge_reentrancy);
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
 
@@ -106,6 +112,59 @@ void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void *pDat
     C2V(gLocal_buffer_size) = new_size;
 }
 C2_HOOK_FUNCTION(0x004028a0, ARAddDataToSession)
+
+int C2_HOOK_FASTCALL LengthOfChunk(void* pChunk, int pType) {
+    int length;
+
+    length = C2V(gPipe_chunk_vtable)[pType].length + sizeof(void*);
+    if (C2V(gPipe_chunk_vtable)[pType].calc_length != NULL) {
+        length += C2V(gPipe_chunk_vtable)[pType].calc_length(pChunk);
+    }
+    return length;
+}
+
+void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCount, ...) {
+    char buffer[5000];
+
+    ARStartPipingSession(pType);
+    if (C2V(gPipe_buffer_start) != NULL && !C2V(gAction_replay_mode) && C2V(gProgram_state).racing) {
+        int i;
+        va_list ap;
+
+        va_start(ap, pCount);
+        for (i = 0; i < pCount; i++) {
+            int size;
+            int offset;
+
+            size = va_arg(ap, int);
+            offset = va_arg(ap, int);
+            if (size < 0) {
+                uintptr_t pv = va_arg(ap, uintptr_t);
+                c2_memcpy(buffer + sizeof(uintptr_t) + offset, &pv, sizeof(pv));
+            } else {
+                uintptr_t pv = va_arg(ap, uintptr_t);
+                if (size == 1) {
+                    tU8 b = (tU8)pv;
+                    c2_memcmp(buffer + sizeof(uintptr_t) + offset, &b, sizeof(b));
+                } else if (size == 2) {
+                    tU16 s = (tU16)pv;
+                    c2_memcmp(buffer + sizeof(uintptr_t) + offset, &s, sizeof(s));
+                } else if (size == 4) {
+                    tU32 i = (tU32)pv;
+                    c2_memcmp(buffer + sizeof(uintptr_t) + offset, &i, sizeof(i));
+                } else if (pv != 0) {
+                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, (void*)pv, size);
+                }
+            }
+        }
+        va_end(ap);
+        c2_memcpy(buffer, &pOwner, sizeof(uintptr_t));
+
+        ARAddDataToSession(pType, pOwner, buffer, LengthOfChunk(buffer, pType) - sizeof(void*));
+    }
+    AREndPipingSession();
+}
+C2_HOOK_FUNCTION(0x00402bd0, ARDoSingleVariedSession)
 
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void) {
     int i;
