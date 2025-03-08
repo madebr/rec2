@@ -28,6 +28,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPHIL_enabled, 0x0065d004, 1);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gFace_num__car, 0x0065d010, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gPhysics_reference_normal_comparison, 0x00679420);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape_polyhedron_data*, gPolyhedron_to_sort, 0x0067942c);
+C2_HOOK_VARIABLE_IMPLEMENT(tPHIL_queued_objects, gPhil_queued_objects, 0x006923f0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_count_list_collision_infos, 0x006923e0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_count_queued_objects, 0x00692dc0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_count_queued_removed_objects, 0x00692dbc);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gPHIL_list_collision_infos, 0x0074a5f0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_munging_objects, 0x0074a5e8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_doing_physics, 0x0074a5f8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_object_added, 0x006923e4);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gPHIL_last_physics_tick, 0x0074a5ec);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_mechanics_time_sync, 0x0074a5e4);
+
 
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage) {
     char s[256];
@@ -106,10 +117,28 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004b5ca0, InitPhysics, InitPhysics_original)
 int (C2_HOOK_FASTCALL * PHILInit_original)(void);
 int C2_HOOK_FASTCALL PHILInit(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return PHILInit_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPhil_queued_objects).headers) != 100);
+    C2_HOOK_BUG_ON(sizeof(C2V(gPhil_queued_objects).headers[0]) != 0x18);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPhil_queued_objects).headers); i++) {
+        C2V(gPhil_queued_objects).headers[i].collision_info = NULL;
+    }
+    C2V(gPHIL_count_list_collision_infos) = 0;
+    C2V(gPHIL_count_queued_objects) = 0;
+    C2V(gPHIL_count_queued_removed_objects) = 0;
+    C2V(gPHIL_list_collision_infos) = NULL;
+    C2V(gPHIL_munging_objects) = 0;
+    C2V(gPHIL_doing_physics) = 0;
+    C2V(gPHIL_object_added) = 0;
+    C2V(gPHIL_last_physics_tick) = 0;
+    C2V(gPHIL_mechanics_time_sync) = 1;
+    C2V(gPHIL_enabled) = 0;
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b5cc0, PHILInit, PHILInit_original)

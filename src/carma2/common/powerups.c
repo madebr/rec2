@@ -228,7 +228,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tRepulse_link, gRepulse_links, 6, 0x006a0960);
 C2_HOOK_VARIABLE_IMPLEMENT(tPhysics_joint*, gMutant_tail_first_joint, 0x006a0acc);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gMutant_tail_first_collision_info, 0x006a0908);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMutant_tail_state, 0x00705540);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074a5ec, 0x0074a5ec);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_armor, 0x006a0ae0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_power, 0x006a0ae4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_offence, 0x006a0ae8);
@@ -753,7 +752,7 @@ void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime) {
                     car->collision_info->disable_move_rotate = 0;
 
                     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x49c, 0x49c);
-                    car->collision_info->field_0x49c = 40 + C2V(gINT_0074a5ec);
+                    car->collision_info->field_0x49c = 40 + C2V(gPHIL_last_physics_tick);
                     if (!car->invulnerable_no_damage) {
                         int j;
 

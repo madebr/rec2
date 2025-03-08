@@ -3545,6 +3545,28 @@ typedef struct tCollision_info {
 } tCollision_info;
 
 typedef struct {
+    tCollision_info* collision_info;
+    undefined field_0x4[4];
+    undefined4 field_0x8;
+    undefined field_0xc[0xc];
+} tPHIL_queued_header;
+
+typedef struct {
+    undefined field_0x0[0x64 - 0x0];
+} tPHIL_queued_object_info;
+
+typedef union {
+    struct {
+        tPHIL_queued_object_info _field_0x0;
+        undefined _field_0x64;
+        tPHIL_queued_header headers[100];
+    };
+    struct {
+        tPHIL_queued_object_info objects[25];
+    };
+} tPHIL_queued_objects;
+
+typedef struct {
     undefined field_0x0[0x8];
     tCollision_info* collision_object;
     undefined field_0xc[0xd0];
