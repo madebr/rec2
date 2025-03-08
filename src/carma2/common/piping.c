@@ -21,6 +21,13 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gMax_distance, 0x006940d8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gReference_pos, 0x006940e0);
 C2_HOOK_VARIABLE_IMPLEMENT(tCar_spec*, gCar_ptr, 0x00694100);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTrigger_time, 0x00694110);
+C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gUNK_0069410c, 0x0069410c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_start, 0x00676908, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gReentrancy_count, 0x006768e4, 0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPipe_chunk_type, gReentrancy_array, 5, 0x006768d0);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gLocal_buffer, 0x006768b4, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, gLocal_buffer_size, 0x006768f4, 0);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gMr_chunky, 0x006768a0, NULL);
 
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
@@ -42,6 +49,31 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004c6c60, DisposeActionReplay)
+
+void C2_HOOK_FASTCALL StartPipingSession2(tPipe_chunk_type pType, int pMunge_reentrancy) {
+
+    if (C2V(gPipe_buffer_start) == NULL || C2V(gAction_replay_mode) || !C2V(gProgram_state).racing) {
+        return;
+    }
+    /* Header of gLocal_buffer is { int chunk_type, int chunk_data_size } */
+    if (pMunge_reentrancy) {
+        if (C2V(gReentrancy_count) != 0) {
+            C2V(gReentrancy_array)[C2V(gReentrancy_count) - 1] = ((tPipe_chunk*)C2V(gLocal_buffer))->type;
+            EndPipingSession2(0);
+        }
+        C2V(gReentrancy_count) += 1;
+    }
+    ((tPipe_chunk*)C2V(gLocal_buffer))->type = pType;
+    ((tPipe_chunk*)C2V(gLocal_buffer))->count = 0;
+    C2V(gLocal_buffer_size) = 2 * sizeof(int);
+    C2V(gMr_chunky) = C2V(gLocal_buffer) + 2 * sizeof(int);
+}
+
+void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType) {
+
+    StartPipingSession2(pType, 1);
+}
+C2_HOOK_FUNCTION(0x004025e0, ARStartPipingSession)
 
 void (C2_HOOK_FASTCALL * EndPipingSession2_original)(int pMunge_reentrancy);
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
