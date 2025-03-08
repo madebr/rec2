@@ -1315,12 +1315,52 @@ void C2_HOOK_FASTCALL CBDisposeForm(undefined4* pArg1) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc940, CBDisposeForm, CBDisposeForm_original)
 
-void (C2_HOOK_FASTCALL * CBLoadPersonality_original)(tPed_personality* pArg1, FILE* pF);
-void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pArg1, FILE* pF) {
+void (C2_HOOK_FASTCALL * CBLoadPersonality_original)(tPed_personality* pPersonality, FILE* pF);
+void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pPersonality, FILE* pF) {
 #if defined(C2_HOOKS_ENABLED)
-    CBLoadPersonality_original(pArg1, pF);
+    CBLoadPersonality_original(pPersonality, pF);
 #else
-    NOT_IMPLEMENTED();
+    char s[256];
+    tPath_name path;
+    FILE* sound_f;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tPed_personality_sounds) != 0x84);
+    C2_HOOK_BUG_ON(REC2_ASIZE(((tPed_personality_sounds*)NULL)->sounds) != 11);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, sounds, 0x64)
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, jump_height, 0x50)
+
+    /* Name of sound definition file */
+    GetAString(pF, s);
+
+    PathCat(path, C2V(gApplication_path), C2V(gPedsFolder));
+    PathCat(path, path, "SOUND");
+    PathCat(path, path, s);
+    sound_f = DRfopen(path, "rt");
+    if (sound_f == NULL) {
+        FatalError(kFatalError_CannotOpenPedFile_S, s);
+    }
+
+    pPersonality->sounds = BrMemAllocate(sizeof(tPed_personality_sounds), kMem_misc_poly_ped);
+
+    for (i = 0; i < REC2_ASIZE(pPersonality->sounds->sounds); i++) {
+        int j;
+
+        pPersonality->sounds->sounds[i].count_sounds = GetAnInt(sound_f);
+        for (j = 0; j < pPersonality->sounds->sounds[i].count_sounds; j++) {
+            pPersonality->sounds->sounds[i].sounds[j] = LoadSingleSound(&C2V(gPedStorage), GetAnInt(sound_f));
+        }
+    }
+    PFfclose(sound_f);
+
+    pPersonality->jump_height = 0.f;
+    while (!PFfeof(pF)) {
+        GetAString(pF, s);
+        if (DRStricmp(s,"JUMPHEIGHT") == 0) {
+            pPersonality->jump_height = GetAScalar(pF);
+        }
+    }
+    ClosePackFileAndSetTiffLoading(C2V(gTwtPeds));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc950, CBLoadPersonality, CBLoadPersonality_original)

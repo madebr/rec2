@@ -89,7 +89,7 @@ void C2_HOOK_FASTCALL CBLoadForm(tPed_form* pPed_form, FILE* pF);
 
 void C2_HOOK_FASTCALL CBDisposeForm(undefined4* pArg1);
 
-void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pArg1, FILE* pF);
+void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pPersonality, FILE* pF);
 
 void C2_HOOK_FASTCALL CBDisposePersonality(undefined4* pArg1);
 

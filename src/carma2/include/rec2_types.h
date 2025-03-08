@@ -3680,6 +3680,13 @@ typedef struct {
     float scale_factor;
 } tPed_personality_move;
 
+typedef struct {
+    struct {
+        tU16 count_sounds;
+        tU16 sounds[5];
+    } sounds[11];
+} tPed_personality_sounds;
+
 typedef struct tPed_personality {
     char name[32];
     undefined field_0x20[0x8];
@@ -3688,10 +3695,10 @@ typedef struct tPed_personality {
     tPed_personality_move* moves;
     br_bounds3 bb;
     float M;
-    undefined field_0x50[4];
+    float jump_height;
     br_vector3 centre_of_mass;
     float radius;
-    undefined field_0x64[4];
+    tPed_personality_sounds* sounds;
 } tPed_personality;
 
 typedef struct {
