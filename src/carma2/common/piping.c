@@ -43,6 +43,17 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 }
 C2_HOOK_FUNCTION(0x004c6c60, DisposeActionReplay)
 
+void (C2_HOOK_FASTCALL * EndPipingSession2_original)(int pMunge_reentrancy);
+void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
+
+#if defined(C2_HOOKS_ENABLED)
+    EndPipingSession2_original(pMunge_reentrancy);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00402660, EndPipingSession2, EndPipingSession2_original)
+
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void) {
     int i;
     int j;
