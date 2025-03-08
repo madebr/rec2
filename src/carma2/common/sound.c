@@ -119,7 +119,7 @@ void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpe
     }
     for (i = 0; i < pSpec->count_sound_alternatives; i++) {
 
-        pSpec->sound_alternatives[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+        pSpec->sound_alternatives[i] = LoadSingleSound(&C2V(gTrack_storage_space), GetAnInt(pF));
     }
     pSpec->field_0xc = 0;
 #endif
