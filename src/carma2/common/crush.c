@@ -327,7 +327,7 @@ void C2_HOOK_FASTCALL LoadSmashableLevels(FILE* pF, tSmashable_level** pSmashabl
         for (j = 0; j < level->count_sounds; j++) {
             /* sound ID */
             sound = GetAnInt(pF);
-            level->sounds[j] = LoadSoundInStorage(pBrender_storage, sound);
+            level->sounds[j] = LoadSingleSound(pBrender_storage, sound);
         }
         ReadShrapnelSpec(pF, level->shrapnels, &level->count_shrapnels);
         ReadExplosion(pF, &level->animation);
