@@ -23,6 +23,10 @@ void C2_HOOK_FASTCALL DisposePiping(void);
 
 void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
+void C2_HOOK_FASTCALL StartPipingSession2(tPipe_chunk_type pType, int pMunge_reentrancy);
+
+void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
+
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);

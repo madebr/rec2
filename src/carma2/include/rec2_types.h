@@ -124,6 +124,12 @@ typedef enum {
     ePipe_chunk_car = 5,
 } tPipe_chunk_type;
 
+typedef struct tPipe_chunk {
+    tPipe_chunk_type type;
+    tU32 count;
+    char data[];
+} tPipe_chunk;
+
 typedef void C2_HOOK_FASTCALL tDrone_state_function(tDrone_spec*, tDroneStateFuncState);
 
 typedef int tJoy_array[8];
