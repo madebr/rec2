@@ -3622,7 +3622,9 @@ typedef struct {
 } tPed_movement_spec;
 
 typedef struct {
-    undefined field_0x0[0x12c];
+    undefined field_0x0[0x80];
+    undefined4 field_0x80;
+    undefined field_0x84[0xa8];
 } tPed_cache_006944c0;
 
 typedef struct {
@@ -3746,13 +3748,13 @@ typedef struct {
     undefined field_0x9;
     undefined field_0xa;
     undefined field_0xb;
-    undefined field_0xc;
-    undefined field_0xd;
-    undefined field_0xe;
-    undefined field_0xf;
+    undefined4 field_0xc;
     undefined field_0x10[4];
     undefined4 field_0x14;
-    undefined field_0x18[0x10];
+    undefined field_0x18[0x4];
+    undefined2 field_0x1c;
+    undefined2 field_0x1e;
+    undefined field_0x20[0x8];
     undefined4 field_0x28;
     br_matrix34 field_0x2c;
     br_matrix34 field_0x5c;
@@ -3781,7 +3783,7 @@ typedef struct tPedestrian {
     tU16 flags;
     undefined field_0x0a;
     undefined field_0x0b;
-    undefined4 field_0x0c;
+    tPed_cache_006944c0* field_0x0c;
     tPed_action action;
     tPed_movement_spec* movement_spec;
     tRace_ped_exclusion_spec* exclusion_spec;
@@ -4705,6 +4707,9 @@ enum {
     kFatalError_BonerError_SyntaxErrorInFormFileExpected_S = 0x8f,
     kFatalError_BonerError_IllegalMoveID_S = 0x90,
     kFatalError_CannotOpenPedFile_S = 0xa0,
+    kFatalError_CoreMoveMissingFor_SS = 0xa1,
+    kFatalError_BadMoveAttemptedFor_SS = 0xa2,
+    kFatalError_CyclicMoveDefinitionFor_SS = 0xa3,
     kFatalError_CannotFindPedSpawnMaterial_S = 0xa4,
     kFatalError_CannotMovePedIndexOutOfRangeForMaterial_S = 0xa5,
     kFatalError_CannotGroupPedIndexOutOfRangeForMaterial_S = 0xa6,

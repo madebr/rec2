@@ -188,6 +188,126 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gPed_remap_axis_choices, 6, 0
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gForm_non_humanoid_names, 1, 0x0065e560, {
     "NONHUMANOID",
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(int, gPed_move_fsm, [118][7], 0x0065d7f0, {
+    {   0,  -2,   5,   6, 111,  31, 112 },
+    {   0,   0,   5,   6, 111,  31, 112 },
+    {   0,   1,   5,   6, 111,  31, 112 },
+    {   0,   2,   5,   6, 111,  31, 112 },
+    {   0,   2,   5,   6, 111,  31, 112 },
+    {   0,   2,   2,   6, 111,  31, 112 },
+    {   0,   2,   2,   6, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,   2,   5,   6, 111,  31, 112 },
+    {   0,  10,   5,   6, 111,  31, 112 },
+    {   0,   2,   5,   6, 111,  31, 112 },
+    {   0,  10,   5,   6, 111,  31, 112 },
+    {   0,   1,   5,   6, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -2,  50,  51, 111,  31, 112 },
+    {   1,  30,  31,  31, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -2,  50,  51, 111,  31, 112 },
+    {   1,  40,  50,  51, 111,  31, 112 },
+    {   1,  40,  50,  51, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  52,  50,  51, 111,  31, 112 },
+    {   1,  52,  50,  51, 111,  31, 112 },
+    {   1,  40,  50,  51, 111,  31, 112 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  72,  71,  71,  71,  71,  71 },
+    {   1,  -2,  72,  72,  72,  72,  72 },
+    {   1,  -1,  -1,  -1,  -1,  -1,  -1 },
+    {   1,  -2,  74,  74,  74,  74,  74 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -2,  82,  83,  80,  80,  80 },
+    {   0,  -2,  84,  85,  81,  81,  81 },
+    {   0,  80,  82,  83,  80,  80,  80 },
+    {   0,  80,  82,  83,  80,  80,  80 },
+    {   0,  81,  84,  85,  81,  81,  81 },
+    {   0,  81,  84,  85,  81,  81,  81 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  91,  90,  90,  90,  90,  90 },
+    {   0,  -2,  91,  91,  91,  91,  91 },
+    {   0,  91,  92,  92,  92,  92,  92 },
+    {   0,  94,  93,  93,  93,  93,  93 },
+    {   0,  -2,  94,  94,  94,  94,  94 },
+    {   0,  -2,  95,  95,  95,  95,  95 },
+    {   0,  91,  96,  96,  96,  96,  96 },
+    {   0,  72,  97,  97,  97,  97,  97 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   0,  -3,  -3,  -3,  -3,  -3,  -3 },
+    {   1,  72, 110, 110, 110, 110, 110 },
+    {   1,  -2, 111, 111, 111,  31, 112 },
+    {   1,  -2, 112, 112, 111,  31, 112 },
+    {   0,  91, 113, 113, 113, 113, 113 },
+    {   2,   2,   2,   2,   2,   2,   3 },
+    {   4,   2,   2,   2,  10,  11,  13 },
+    { -41, -41, -41,   0,   2,   2,   2 },
+    {   2,   2,   3,   4,   4,  10,  11 },
+});
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
 
@@ -846,13 +966,88 @@ int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pPed,int pMove_ac
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040a050, SetCharacterMove, SetCharacterMove_original)
 
-void (C2_HOOK_FASTCALL * SetPedMove_original)(tPedestrian* pPed, int pAction, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pArg7);
-void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pAction, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pArg7) {
+void (C2_HOOK_FASTCALL * SetPedMove_original)(tPedestrian* pPed, int ppMove_action, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pAction);
+void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pMove_action, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pAction) {
 
 #if defined(C2_HOOKS_ENABLED)
-    SetPedMove_original(pPed, pAction, pWalk_speed_factor, pArg4, pArg5, pArg6, pArg7);
+    SetPedMove_original(pPed, pMove_action, pWalk_speed_factor, pArg4, pArg5, pArg6, pAction);
 #else
-    NOT_IMPLEMENTED();
+    tPed_action original_action;
+    int original_move_id;
+    undefined2 original_field_0x1e;
+    undefined2 original_field_0x1c;
+    br_vector3 original_pos;
+    br_matrix34* character_matrix;
+    int new_move_lut_id;
+    int i;
+
+    original_action = pPed->action;
+    original_move_id = pPed->character->personality->form->moves[pPed->character->field_0x7].id;
+    original_field_0x1e = pPed->character->field_0x1e;
+    original_field_0x1c = pPed->character->field_0x1c;
+    character_matrix = GetCharacterMatrixPtr(pPed->character);
+    BrVector3Copy(&original_pos, (br_vector3*)character_matrix->m[3]);
+    if (pAction >= 0 && pMove_action >= 0 && pPed->action != ePed_action_dead) {
+        pPed->action = pAction;
+    }
+    if (C2V(gDrunk_pedestrians)) {
+        new_move_lut_id = 4;
+    } else if (C2V(gDancing_peds)) {
+        new_move_lut_id = 3;
+    } else if (C2V(gPanicking_peds)) {
+        new_move_lut_id = 5;
+    } else if (pPed->character->field_0xc & 0x8) {
+        new_move_lut_id = 1;
+    } else if (pPed->character->field_0xc & 0x20) {
+        new_move_lut_id = 2;
+    } else {
+        new_move_lut_id = 0;
+    }
+    if (new_move_lut_id != 0) {
+        pMove_action = C2V(gPed_move_fsm)[pMove_action][new_move_lut_id + 1];
+    }
+    if (pMove_action == 112 || pMove_action == 31 || pMove_action == 111) {
+        pPed->action = ePed_action_running;
+    }
+    if (pPed->field_0x0c != NULL && pMove_action != 112 && pMove_action != 31
+            && pMove_action != 40 && pMove_action != 41 && pMove_action != 42) {
+        pPed->field_0x0c->field_0x80 = 0;
+    }
+    for (i = 0; i < 10; i++) {
+        int move_result;
+        float speed;
+
+        speed = (float)pWalk_speed_factor;
+        if (C2V(gPedestrian_speed_factor) != 0.f) {
+            speed /= C2V(gPedestrian_speed_factor);
+        }
+        move_result = SetCharacterMove(pPed->character, pMove_action, speed, pArg4, pArg5, pArg6);
+        if (move_result == 2) {
+            pMove_action = C2V(gPed_move_fsm)[pMove_action][1 + 0];
+            if (pMove_action < -1) {
+                char buffer[256];
+
+                c2_sprintf(buffer, "%d", pMove_action);
+                if (pMove_action == -2) {
+                    FatalError(kFatalError_CoreMoveMissingFor_SS, buffer, pPed->character->personality->name);
+                } else {
+                    FatalError(kFatalError_BadMoveAttemptedFor_SS, buffer, pPed->character->personality->name);
+                }
+            }
+        }
+        if (pMove_action == -1 || move_result != 2) {
+            break;
+        }
+    }
+    if (i >= 10) {
+        char buffer[256];
+
+        c2_sprintf(buffer, "%d", pMove_action);
+        FatalError(kFatalError_CyclicMoveDefinitionFor_SS, buffer, pPed->character->personality->name);
+    }
+    PipeSinglePedMove(pPed, original_field_0x1c, original_move_id,
+        pMove_action, original_field_0x1e, pWalk_speed_factor, pArg5, pArg4,
+        &original_pos, (br_vector3*)character_matrix->m[3], original_action, pPed->action, &pPed->character->field_0x8c);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cbcd0, SetPedMove, SetPedMove_original)
