@@ -3703,7 +3703,7 @@ typedef struct tPed_personality {
 
 typedef struct {
     tPed_personality* personality;
-    undefined field_0x4;
+    tS8 field_0x4;
     undefined field_0x5;
     undefined field_0x6;
     undefined field_0x7;
@@ -3724,7 +3724,7 @@ typedef struct {
     br_matrix34 field_0x8c;
     undefined field_0xbc[0x28];
     tPedestrian* ped;
-    undefined field_0xe8[0x4];
+    br_matrix34* field_0xe8;
 } tPed_character_instance;
 
 typedef enum {
