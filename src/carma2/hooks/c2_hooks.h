@@ -23,6 +23,7 @@
 // FIXME: rewrite to C2_HOOK_STATIC_ASSERT
 #define C2_HOOK_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
 #define C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(T, M, O) C2_HOOK_BUG_ON(((uintptr_t)&(((T*)0)->M)) != O)
+#define C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(T, M, S) C2_HOOK_BUG_ON(sizeof(((T*)0)->M) != (S))
 
 #if defined(_WIN32) && (defined(_M_IX86) || defined(_X86_))
 #define C2_HOOK_CDECL __cdecl
@@ -77,6 +78,7 @@ void c2_hook_vdebugf(const char* function, const char* format, va_list ap);
 #define C2_HOOK_ASSERT_ADDRESS(DATA, ADDR)
 #define C2_HOOK_BUG_ON(condition)
 #define C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(T, M, O)
+#define C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(T, M, O)
 
 #define C2_HOOK_CDECL
 #define C2_HOOK_FASTCALL
