@@ -835,6 +835,17 @@ void C2_HOOK_CDECL TurnLimbsOnAndOff(br_actor* actor, br_model* model, br_materi
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d34e0, TurnLimbsOnAndOff, TurnLimbsOnAndOff_original)
 
+int (C2_HOOK_FASTCALL * SetCharacterMove_original)(tPed_character_instance* pPed,int pMove_action, float pSpeed, int pArg4, int pArg5, undefined4 pArg6);
+int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pPed,int pMove_action, float pSpeed, int pArg4, int pArg5, undefined4 pArg6) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return SetCharacterMove_original(pPed, pMove_action, pSpeed, pArg4, pArg5, pArg6);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040a050, SetCharacterMove, SetCharacterMove_original)
+
 void (C2_HOOK_FASTCALL * SetPedMove_original)(tPedestrian* pPed, int pAction, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pArg7);
 void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pAction, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pArg7) {
 
