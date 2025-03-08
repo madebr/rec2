@@ -15,6 +15,10 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tU8, gPhysics_buffer, 299792);
 C2_HOOK_VARIABLE_DECLARE(int, gCollision_info_uid_counter);
 C2_HOOK_VARIABLE_DECLARE(int, gPHIL_enabled);
 C2_HOOK_VARIABLE_DECLARE(int, gFace_num__car);
+C2_HOOK_VARIABLE_DECLARE(int, gPHIL_doing_physics);
+C2_HOOK_VARIABLE_DECLARE(int, gPHIL_object_added);
+C2_HOOK_VARIABLE_DECLARE(tU32, gPHIL_last_physics_tick);
+C2_HOOK_VARIABLE_DECLARE(int, gPHIL_mechanics_time_sync);
 
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage);
 
