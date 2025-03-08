@@ -3540,6 +3540,13 @@ typedef struct tCollision_info {
 } tCollision_info;
 
 typedef struct {
+    tCollision_info* collision_info;
+    undefined field_0x4[4];
+    undefined4 field_0x8;
+    undefined field_0xc[0xc];
+} tPhil_object_info_00692458;
+
+typedef struct {
     undefined field_0x0[0x8];
     tCollision_info* collision_object;
     undefined field_0xc[0xd0];
