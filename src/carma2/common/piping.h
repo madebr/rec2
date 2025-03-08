@@ -29,6 +29,8 @@ void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
 
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
+void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void *pData, int pSize);
+
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);
 
 void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);

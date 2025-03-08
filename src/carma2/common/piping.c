@@ -8,6 +8,8 @@
 
 #include "rec2_macros.h"
 
+#include "c2_string.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(undefined4*, gCrush_space, 0x00694104);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_play_ptr, 0x006768b8, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPlay_direction, 0x006768c0, 0);
@@ -85,6 +87,27 @@ void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00402660, EndPipingSession2, EndPipingSession2_original)
+
+void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void *pData, int pSize) {
+    int new_size;
+
+    if (C2V(gPipe_buffer_start) == NULL || C2V(gAction_replay_mode) || !C2V(gProgram_state).racing) {
+        return;
+    }
+    new_size = C2V(gLocal_buffer_size) + pSize + sizeof(void*);
+    if (new_size <= 15000) {
+        return;
+    }
+    ((tPipe_chunk*)C2V(gLocal_buffer))->count += 1;
+    *((uintptr_t*)C2V(gMr_chunky)) = pOwner;
+    C2V(gMr_chunky) += sizeof(uintptr_t);
+    if (pSize != 0) {
+        c2_memcpy(C2V(gMr_chunky), pData, pSize);
+    }
+    C2V(gMr_chunky) += pSize;
+    C2V(gLocal_buffer_size) = new_size;
+}
+C2_HOOK_FUNCTION(0x004028a0, ARAddDataToSession)
 
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void) {
     int i;
