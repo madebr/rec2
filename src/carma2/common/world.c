@@ -578,11 +578,11 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pSto
     return eStorage_allocated;
 }
 
-tAdd_to_storage_result (C2_HOOK_FASTCALL * LoadSoundInStorage_original)(tBrender_storage* pStorage_space, int pSound_id);
-tAdd_to_storage_result C2_HOOK_FASTCALL LoadSoundInStorage(tBrender_storage* pStorage_space, int pSound_id) {
+tAdd_to_storage_result (C2_HOOK_FASTCALL * LoadSingleSound_original)(tBrender_storage* pStorage_space, int pSound_id);
+tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
-    return LoadSoundInStorage_original(pStorage_space, pSound_id);
+    return LoadSingleSound_original(pStorage_space, pSound_id);
 #else
 
     if (S3GetBufferDescription(pSound_id) != NULL) {
@@ -604,7 +604,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSoundInStorage(tBrender_storage* pSt
     return 0;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00501930, LoadSoundInStorage, LoadSoundInStorage_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x00501930, LoadSingleSound, LoadSingleSound_original)
 
 int C2_HOOK_FASTCALL IsValidFile(const char* path) {
     struct c2_stat s;
@@ -3169,7 +3169,7 @@ void C2_HOOK_FASTCALL ReadSmashSounds(FILE* pF, tConnotations* pConnotations, tB
         /* sound id */
         sound = GetAnInt(pF);
 
-        pConnotations->sounds[i] = LoadSoundInStorage(pStorage, sound);
+        pConnotations->sounds[i] = LoadSingleSound(pStorage, sound);
     }
 }
 

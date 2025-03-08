@@ -624,7 +624,7 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     pSmashable_spec->mode_data.shrapnel.connotations.count_sounds = GetAnInt(pF);
     for (i = 0; i < pSmashable_spec->mode_data.shrapnel.connotations.count_sounds; i++) {
         /* Sound ID */
-        pSmashable_spec->mode_data.shrapnel.connotations.sounds[i] = LoadSoundInStorage(&C2V(gTrack_storage_space), GetAnInt(pF));
+        pSmashable_spec->mode_data.shrapnel.connotations.sounds[i] = LoadSingleSound(&C2V(gTrack_storage_space), GetAnInt(pF));
     }
     ReadShrapnelSpec(pF, pSmashable_spec->mode_data.shrapnel.connotations.shrapnel, &pSmashable_spec->mode_data.shrapnel.connotations.count_shrapnel);
     ReadExplosion(pF, &pSmashable_spec->mode_data.shrapnel.connotations.special_effects.explosion_animation);
