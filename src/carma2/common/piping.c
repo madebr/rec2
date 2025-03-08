@@ -8,6 +8,10 @@
 
 #include "rec2_macros.h"
 
+#include "c2_string.h"
+
+#include <stdarg.h>
+
 C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x00694104);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_play_ptr, 0x006768b8, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPlay_direction, 0x006768c0, 0);
@@ -29,6 +33,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gLocal_buffer, 0x006768b4, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, gLocal_buffer_size, 0x006768f4, 0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gMr_chunky, 0x006768a0, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPiping_chunk_callback*, gPipe_chunk_vtable, 0x006768e8, NULL);
+
+#define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
@@ -377,3 +383,46 @@ void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, int pArg3
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c84a0, PipeSingleSound, PipeSingleSound_original)
+
+void C2_HOOK_FASTCALL PipeSinglePedMove(tPedestrian* pPed, tS16 pArg2, tS16 pOriginal_move_id, tS16 pMove_id, undefined4 pArg5,undefined4 pArg6, int pArg7, undefined4 pArg8, br_vector3* pOriginal_pos, br_vector3* pPos, int pOriginal_action, int pAction, br_matrix34* pArg13) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, move_id, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, original_move_id, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, field_0x4, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, field_0x6, 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, field_0x8, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, field_0xc, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, field_0x10, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, original_pos, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, pos, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, original_action, 0x2c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, action, 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_move_data, field_0x34, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, move_id, 2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, original_move_id, 2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, field_0x4, 2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, field_0x6, 2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, field_0x8, 4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, field_0xc, 4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, field_0x10, 4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, original_pos, 12);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, pos, 12);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, original_action, 4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, action, 4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_move_data, field_0x34, 48);
+
+    C2V(gUNK_0069410c) = pArg5;
+    ARDoSingleVariedSession(ePipe_chunk_ped_move, (uintptr_t)pPed, 12,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, original_move_id), pOriginal_move_id,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, move_id),          pMove_id,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, field_0x6),        pArg2,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, field_0xc),        pArg5,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, field_0x8),        pArg5,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, field_0x4),        pArg7 != 0,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, field_0x10),       pArg8,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, original_pos),     pOriginal_pos,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, pos),              pPos,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, original_action),  pOriginal_action,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, action),           pAction,
+        SIZE_OFFSET_PIPING(tPipe_ped_move_data, field_0x34),       pArg13);
+}
+C2_HOOK_FUNCTION(0x004c8b30, PipeSinglePedMove)

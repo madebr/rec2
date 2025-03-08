@@ -133,8 +133,24 @@ typedef struct {
     tPiping_chunk_callback_undo* undo;
 } tPiping_chunk_callback;
 
+typedef struct {
+    tS16 move_id;
+    tS16 original_move_id;
+    tS16 field_0x4;
+    tS16 field_0x6;
+    undefined4 field_0x8;
+    undefined4 field_0xc;
+    undefined4 field_0x10;
+    br_vector3 original_pos;
+    br_vector3 pos;
+    int original_action;
+    int action;
+    br_matrix34 field_0x34;
+} tPipe_ped_move_data;
+
 typedef enum {
     ePipe_chunk_car = 5,
+    ePipe_chunk_ped_move = 42,
 } tPipe_chunk_type;
 
 typedef struct tPipe_chunk {
