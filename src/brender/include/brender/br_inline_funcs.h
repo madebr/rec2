@@ -81,11 +81,11 @@
         (v1)->v[2] += (v2)->v[2];   \
     } while (0)
 
-#define BrVector3Scale(v1, v2, s)    \
-    do {                             \
-        (v1)->v[0] = (v2)->v[0] * s; \
-        (v1)->v[1] = (v2)->v[1] * s; \
-        (v1)->v[2] = (v2)->v[2] * s; \
+#define BrVector3Scale(v1, v2, s)      \
+    do {                               \
+        (v1)->v[0] = (v2)->v[0] * (s); \
+        (v1)->v[1] = (v2)->v[1] * (s); \
+        (v1)->v[2] = (v2)->v[2] * (s); \
     } while (0)
 
 #define BrVector3InvScale(v1, v2, s)       \
