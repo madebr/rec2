@@ -408,10 +408,22 @@ C2_HOOK_FUNCTION(0x004e4370, FindYVerticallyBelow)
 br_scalar (C2_HOOK_FASTCALL * FindYVerticallyBelow2_original)(br_vector3* pCast_point);
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return FindYVerticallyBelow2_original(pCast_point);
 #else
-    NOT_IMPLEMENTED();
+    br_scalar result;
+    int number_of_attempts;
+    br_vector3 cast_point;
+
+    BrVector3Copy(&cast_point, pCast_point);
+    for (number_of_attempts = 0; number_of_attempts <= 10; number_of_attempts += 1) {
+        result = FindYVerticallyBelow(&cast_point);
+        cast_point.v[1] += .2f;
+        if (result >= -100.f) {
+            return result;
+        }
+    }
+    return result;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4600, FindYVerticallyBelow2, FindYVerticallyBelow2_original)
