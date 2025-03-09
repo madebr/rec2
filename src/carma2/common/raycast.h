@@ -27,6 +27,10 @@ int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* model, br_material* materia
 
 int C2_HOOK_CDECL FindYVerticallyBelowCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT_near, float pT_far, void* pArg);
 
+int C2_HOOK_FASTCALL DRScenePick2D(br_actor* world, br_actor* camera, dr_pick2d_cbfn* callback, void* arg);
+
+br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow(br_vector3* pPosition);
+
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point);
 
 #endif //REC2_RAYCAST_H
