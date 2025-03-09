@@ -3041,9 +3041,14 @@ typedef struct {
 } tPed_form;
 
 typedef struct {
-    undefined field_0x0[4];
-    int field_0x4;
-    undefined field_0x8[0x154];
+    float field_0x0;
+    float field_0x4;
+    br_vector3 field_0x8;
+    br_vector3 field_0x14;
+    br_vector3 field_0x20;
+    undefined field_0x2c;
+    undefined field_0x2d[0x10][6];
+    undefined field_0x8d[0xcf];
 } tPed_morph;
 
 typedef struct {
@@ -3743,23 +3748,26 @@ typedef struct {
     tS8 field_0x4;
     undefined field_0x5;
     undefined field_0x6;
-    undefined field_0x7;
-    undefined field_0x8;
-    undefined field_0x9;
+    tS8 field_0x7;
+    tS8 field_0x8;
+    tU8 field_0x9;
     undefined field_0xa;
     undefined field_0xb;
     undefined4 field_0xc;
     undefined field_0x10[4];
     undefined4 field_0x14;
-    undefined field_0x18[0x4];
+    undefined4 field_0x18;
     undefined2 field_0x1c;
     undefined2 field_0x1e;
-    undefined field_0x20[0x8];
+    undefined2 field_0x20;
+    undefined field_0x22[0x2];
+    undefined4 field_0x24;
     undefined4 field_0x28;
     br_matrix34 field_0x2c;
     br_matrix34 field_0x5c;
     br_matrix34 field_0x8c;
-    undefined field_0xbc[0x28];
+    tPed_morph* field_0xbc;
+    undefined field_0xc0[0x24];
     tPedestrian* ped;
     br_matrix34* field_0xe8;
 } tPed_character_instance;

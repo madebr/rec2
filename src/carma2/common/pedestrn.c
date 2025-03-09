@@ -7,7 +7,9 @@
 #include "graphics.h"
 #include "loading.h"
 #include "physics.h"
+#include "piping.h"
 #include "platform.h"
+#include "raycast.h"
 #include "skidmark.h"
 #include "smashing.h"
 #include "trig.h"
@@ -966,13 +968,186 @@ void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, u
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00407b30, SetCharacterBonePositions, SetCharacterBonePositions_original)
 
+void C2_HOOK_FASTCALL ResetAnimation(tPed_character_instance* pPed) {
+
+    pPed->field_0x1c = 0;
+    pPed->field_0x24 = 0;
+    pPed->field_0x18 = 0;
+    pPed->field_0x8 = -1;
+    if (pPed->field_0xbc != NULL) {
+        pPed->field_0xbc->field_0x4 = 0;
+        pPed->field_0xbc = NULL;
+    }
+}
+
+void C2_HOOK_FASTCALL SetOnGroundVector(tPed_character_instance* pPed, br_vector3* pPos, br_vector3* pNew_pos) {
+    float cast_y;
+
+    cast_y = FindYVerticallyBelow2(pPos);
+    pNew_pos->v[0] = pPos->v[0];
+    pNew_pos->v[1] = cast_y + pPed->personality->moves[pPed->field_0x7].grounding_offset;
+    pNew_pos->v[2] = pPos->v[2];
+}
+
+void C2_HOOK_FASTCALL RecalculateOrientationOfRoot(tPed_character_instance* pPed) {
+    br_matrix34* character_matrix;
+    tPed_form* form;
+    br_matrix34 mat34;
+
+    character_matrix = GetCharacterMatrixPtr(pPed);
+    form = pPed->personality->form;
+    BrMatrix34LPInverse(&mat34, &form->moves[pPed->field_0x7].move->frames[pPed->field_0x1c].mat);
+    BrMatrix34Mul(&pPed->field_0x8c, &mat34, character_matrix);
+    BrVector3Set((br_vector3*)pPed->field_0x8c.m[3], 0.f, 0.f, 0.f);
+}
+
 int (C2_HOOK_FASTCALL * SetCharacterMove_original)(tPed_character_instance* pPed,int pMove_action, float pSpeed, int pArg4, int pArg5, undefined4 pArg6);
 int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pPed,int pMove_action, float pSpeed, int pArg4, int pArg5, undefined4 pArg6) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return SetCharacterMove_original(pPed, pMove_action, pSpeed, pArg4, pArg5, pArg6);
 #else
-    NOT_IMPLEMENTED();
+    tPed_personality* personality;
+    tPed_form* form;
+    tPed_move* original_ped_move;
+    tPed_move* ped_move;
+    tPed_morph* ped_morph;
+    br_matrix34* character_matrix;
+    int move_id;
+    tS8 original_field_0x7;
+    undefined2 original_0x1e;
+    float new_field_0x1e_0x20;
+    tPed_move_frame* ped_frame;
+
+    personality = pPed->personality;
+    form = personality->form;
+    original_field_0x7 = pPed->field_0x7;
+    original_ped_move = NULL;
+    if (original_field_0x7 >= 0) {
+        original_ped_move = form->moves[pPed->field_0x7].move;
+    }
+    character_matrix = GetCharacterMatrixPtr(pPed);
+    move_id = pMove_action & ~0x40000000;
+    if (move_id >= 0) {
+        int i;
+
+        for (i = 0; i < form->count_moves; i++) {
+            if (form->moves[i].id == move_id) {
+                if (pArg4 >= 0) {
+                    pPed->field_0x7 = (tS8)i;
+                    pPed->field_0x8 = -1;
+                    if (pArg5 != 0) {
+                        pPed->field_0x9 |= 0x2;
+                    } else {
+                        pPed->field_0x9 &= ~0x2;
+                    }
+                } else {
+                    pPed->field_0x8 = (tS8)i;
+                    if (pArg5 != 0) {
+                        pPed->field_0x9 |= 0x4;
+                    } else {
+                        pPed->field_0x9 &= ~0x4;
+                    }
+                }
+                break;
+            }
+        }
+        if (i == form->count_moves) {
+            return 2;
+        }
+    }
+    original_0x1e = pPed->field_0x1e;
+    if (pSpeed >= 0.f) {
+        new_field_0x1e_0x20 = pSpeed;
+    } else {
+        new_field_0x1e_0x20 = -(float) form->moves[original_field_0x7].move->frametime * pSpeed;
+    }
+    if (pArg4 >= 0) {
+        pPed->field_0x1e = (undefined2)new_field_0x1e_0x20;;
+    } else {
+        pPed->field_0x20 = (undefined2)new_field_0x1e_0x20;
+    }
+    if ((original_field_0x7 >= 0 && form->moves[original_field_0x7].id == move_id && !(pMove_action & 0x40000000U))
+           || move_id < 0 || pArg4 < 0) {
+        return 1;
+    }
+    ped_move = personality->form->moves[pPed->field_0x7].move;
+    if (original_ped_move != NULL && original_ped_move->field_0x2a == 0 && !C2V(gPed_overall_movement_disabled)) {
+        int i;
+
+        for (i = 0; i < pPed->field_0x1c; i++) {
+        }
+    }
+    if (original_ped_move != NULL) {
+        ped_frame = &original_ped_move->frames[pPed->field_0x1c];
+    }
+    ResetAnimation(pPed);
+    if (pArg4 != 0 && original_ped_move != NULL && pArg6 != 0) {
+        int i;
+
+        for (i = 0; i < REC2_ASIZE(C2V(gPed_morphs)); i++) {
+            if (!C2V(gPed_morphs)[i].field_0x4) {
+                pPed->field_0xbc = &C2V(gPed_morphs)[i];
+                break;
+            }
+        }
+    }
+    ped_morph = pPed->field_0xbc;
+    if (ped_morph == NULL) {
+        pArg4 = 0;
+    }
+    if (pArg4 != 0) {
+        br_euler e;
+        float sum;
+        int i;
+
+        BrVector3Copy(&ped_morph->field_0x20, &original_ped_move->field_0x40);
+        if (original_0x1e != 0 && original_ped_move->field_0x2a == 0) {
+            BrVector3InvScale(&ped_morph->field_0x8, &ped_morph->field_0x20, (float)(original_ped_move->count_frames * original_0x1e));
+        } else {
+            BrVector3Set(&ped_morph->field_0x8, 0.f, 0.f, 0.f);
+        }
+        if (new_field_0x1e_0x20 != 0 && ped_move->field_0x2a == 0) {
+            BrVector3InvScale(&ped_morph->field_0x14, &ped_move->field_0x34, (float)(ped_move->count_frames * new_field_0x1e_0x20));
+        } else {
+            BrVector3Set(&ped_morph->field_0x14, 0.f, 0.f, 0.f);
+        }
+        e.order = 0;
+        BrMatrix34ToEuler(&e, &ped_frame->mat);
+        ped_morph->field_0x2d[0][0] = e.a / 256;
+        ped_morph->field_0x2d[0][1] = e.b / 256;
+        ped_morph->field_0x2d[0][2] = e.c / 256;
+        BrMatrix34ToEuler(&e, &ped_move->frames[0].mat);
+        ped_morph->field_0x2d[0][3] = e.a / 256;
+        ped_morph->field_0x2d[0][4] = e.b / 256;
+        ped_morph->field_0x2d[0][5] = e.c / 256;
+
+        sum = 0.f;
+        for (i = 1; i < form->count_bones; i++) {
+            ped_morph->field_0x2d[i][6*i+0] = ped_frame->axis[i].euler1;
+            ped_morph->field_0x2d[i][6*i+1] = ped_frame->axis[i].euler2;
+            ped_morph->field_0x2d[i][6*i+2] = ped_frame->axis[i].euler3;
+            ped_morph->field_0x2d[i][6*i+3] = ped_move->frames->axis[i].euler1 - ped_frame->axis[i].euler1 ;
+            ped_morph->field_0x2d[i][6*i+4] = ped_move->frames->axis[i].euler2 - ped_frame->axis[i].euler2 ;
+            ped_morph->field_0x2d[i][6*i+5] = ped_move->frames->axis[i].euler3 - ped_frame->axis[i].euler3 ;
+            sum += (float)(abs(ped_morph->field_0x2d[i][6*i+3]) + abs(ped_morph->field_0x2d[i][6*i+4]) + abs(ped_morph->field_0x2d[i][6*i+5]));
+        }
+        pPed->field_0xbc->field_0x2c = !!(pArg4 & 0x40000000);
+        ped_morph->field_0x0 = 0.f;
+        ped_morph->field_0x4 = 1.f / (sum * 3.f * (float)form->count_bones * (pArg4 & (~0x40000000)) / 64.f);
+        pPed->field_0x24 = 0;
+    }
+
+    if (C2V(gPed_retain_root_mode)) {
+        RecalculateOrientationOfRoot(pPed);
+        SetCharacterBonePositions(pPed, 3, 0);
+    } else {
+        if (personality->moves[pPed->field_0x7].grounding_mode == ePed_personality_grounded) {
+            SetOnGroundVector(pPed, (br_vector3*)character_matrix->m[3], (br_vector3*)character_matrix->m[3]);
+        }
+        SetCharacterBonePositions(pPed, 0, 0);
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040a050, SetCharacterMove, SetCharacterMove_original)
