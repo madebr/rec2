@@ -15,6 +15,12 @@
         (v1)->v[1] = (s2);       \
     } while (0)
 
+#define BrVector2Scale(v1, v2, s)      \
+    do {                               \
+        (v1)->v[0] = (s) * (v2)->v[0]; \
+        (v1)->v[1] = (s) * (v2)->v[1]; \
+    } while (0)
+
 #define BrVector3Length(v1) BR_LENGTH3((v1)->v[0], (v1)->v[1], (v1)->v[2])
 #define BrVector3LengthSquared(v1) BR_SQR3((v1)->v[0], (v1)->v[1], (v1)->v[2])
 #define BrVector3Dot(v1, v2) BR_MAC3((v1)->v[0], (v2)->v[0], (v1)->v[1], (v2)->v[1], (v1)->v[2], (v2)->v[2])
