@@ -124,6 +124,11 @@ int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
 }
 C2_HOOK_FUNCTION(0x00402360, ARReplayIsReallyPaused)
 
+float C2_HOOK_FASTCALL ARGetReplayRate(void) {
+    return C2V(gReplay_rate);
+}
+C2_HOOK_FUNCTION(0x00402390, ARGetReplayRate)
+
 void (C2_HOOK_FASTCALL * PipeSingleGrooveStop_original)(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption);
 void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption) {
 
