@@ -194,3 +194,14 @@ int C2_HOOK_FASTCALL DRScenePick2DXY(br_actor* world, br_actor* camera, br_pixel
     return ActorPick2D(world, NULL, C2V(gBlack_material), callback, arg);
 }
 C2_HOOK_FUNCTION(0x004e36f0, DRScenePick2DXY)
+
+br_scalar (C2_HOOK_FASTCALL * FindYVerticallyBelow2_original)(br_vector3* pCast_point);
+br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FindYVerticallyBelow2_original(pCast_point);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e4600, FindYVerticallyBelow2, FindYVerticallyBelow2_original)
