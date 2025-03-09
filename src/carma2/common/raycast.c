@@ -1,6 +1,6 @@
 #include "raycast.h"
 
-
+#include "brucetrk.h"
 #include "globvars.h"
 #include "spark.h"
 
@@ -368,6 +368,42 @@ int C2_HOOK_CDECL FindYVerticallyBelowCallBack(br_actor* pActor, br_model* pMode
     return 0;
 }
 C2_HOOK_FUNCTION(0x004e4570, FindYVerticallyBelowCallBack)
+
+int C2_HOOK_FASTCALL DRScenePick2D(br_actor* world, br_actor* camera, dr_pick2d_cbfn* callback, void* arg) {
+    br_matrix34 camera_tfm;
+    br_scalar scale;
+    br_camera* camera_data;
+
+    camera_data = (br_camera*)camera->type_data;
+    DRActorToRoot(camera, world, &camera_tfm);
+    BrMatrix34Inverse(&C2V(gPick_model_to_view__raycast), &camera_tfm);
+    scale = cosf(BrAngleToRadian(camera_data->field_of_view / 2)) / sinf(BrAngleToRadian(camera_data->field_of_view / 2));
+
+    BrMatrix34PostScale(&C2V(gPick_model_to_view__raycast), scale / camera_data->aspect, scale, 1.0f);
+    return ActorPick2D(world, NULL, C2V(gBlack_material), callback, arg);
+}
+
+br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow(br_vector3* pPosition) {
+    tU8 cx;
+    tU8 cz;
+    tU8 x;
+    tU8 z;
+    tTrack_spec* track_spec;
+
+    track_spec = &C2V(gProgram_state).track_spec;
+    XZToColumnXZ(&cx, &cz, pPosition->v[0], pPosition->v[2], track_spec);
+    C2V(gHighest_y_below) = BR_SCALAR_MIN;
+    BrVector3Copy(&C2V(gY_picking_camera)->t.t.translate.t, pPosition);
+    for (x = MAX(cx - 1, 0); x < MIN(cx + 2, track_spec->ncolumns_x); x++) {
+        for (z = MAX(cz - 1, 0); z < MIN(cz + 2, track_spec->ncolumns_z); z++) {
+            if (track_spec->columns[z][x].actor_0x0 != NULL) {
+                DRScenePick2D(track_spec->columns[z][x].actor_0x0, C2V(gY_picking_camera), FindYVerticallyBelowCallBack, NULL);
+            }
+        }
+    }
+    return C2V(gHighest_y_below);
+}
+C2_HOOK_FUNCTION(0x004e4370, FindYVerticallyBelow)
 
 br_scalar (C2_HOOK_FASTCALL * FindYVerticallyBelow2_original)(br_vector3* pCast_point);
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
