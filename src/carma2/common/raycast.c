@@ -1,5 +1,7 @@
 #include "raycast.h"
 
+
+#include "globvars.h"
 #include "spark.h"
 
 #include <brender/brender.h>
@@ -357,6 +359,15 @@ int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* model, br_material* materia
     return 0;
 }
 C2_HOOK_FUNCTION(0x004e3d90, DRModelPick2D_raycast)
+
+int C2_HOOK_CDECL FindYVerticallyBelowCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT_near, float pT_far, void* pArg) {
+
+    if (C2V(gProgram_state).current_car.car_actor != pActor) {
+        DRModelPick2D_raycast(pModel, pMaterial, pRay_pos, pRay_dir, pT_near, pT_far, FindYVerticallyBelowPolyCallBack, pArg);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e4570, FindYVerticallyBelowCallBack)
 
 br_scalar (C2_HOOK_FASTCALL * FindYVerticallyBelow2_original)(br_vector3* pCast_point);
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
