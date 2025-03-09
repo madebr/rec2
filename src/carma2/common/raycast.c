@@ -6,6 +6,8 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gY_picking_camera, 0x006a20d0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__raycast, 0x006a20f0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gHighest_y_below, 0x006a2120);
+C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gMaterial_below, 0x0070518c);
 
 
 void (C2_HOOK_FASTCALL * InitRayCasting_original)(void);
@@ -194,6 +196,20 @@ int C2_HOOK_FASTCALL DRScenePick2DXY(br_actor* world, br_actor* camera, br_pixel
     return ActorPick2D(world, NULL, C2V(gBlack_material), callback, arg);
 }
 C2_HOOK_FUNCTION(0x004e36f0, DRScenePick2DXY)
+
+int C2_HOOK_CDECL FindYVerticallyBelowPolyCallBack(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pContext) {
+
+    if (pMaterial != NULL && pMaterial->identifier != NULL
+            && pMaterial->identifier[0] != '!'
+            && pMaterial->identifier[0] != '>') {
+        if (C2V(gHighest_y_below) < pPoint->v[1]) {
+            C2V(gHighest_y_below) = pPoint->v[1];
+            C2V(gMaterial_below) = pMaterial;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e45b0, FindYVerticallyBelowPolyCallBack)
 
 br_scalar (C2_HOOK_FASTCALL * FindYVerticallyBelow2_original)(br_vector3* pCast_point);
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
