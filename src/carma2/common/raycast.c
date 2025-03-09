@@ -4,6 +4,8 @@
 
 #include <brender/brender.h>
 
+#include "rec2_macros.h"
+
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gY_picking_camera, 0x006a20d0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__raycast, 0x006a20f0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gHighest_y_below, 0x006a2120);
@@ -210,6 +212,151 @@ int C2_HOOK_CDECL FindYVerticallyBelowPolyCallBack(br_model* pModel, br_material
     return 0;
 }
 C2_HOOK_FUNCTION(0x004e45b0, FindYVerticallyBelowPolyCallBack)
+
+int C2_HOOK_FASTCALL BadDiv_raycast(br_scalar a, br_scalar b) {
+
+    return fabsf(b) < 1.0f && fabs(a) > fabs(b) * BR_SCALAR_MAX;
+}
+
+void C2_HOOK_FASTCALL DRVector2AccumulateScale_raycast(br_vector2* a, br_vector2* b, br_scalar s) {
+
+    a->v[0] = b->v[0] * s + a->v[0];
+    a->v[1] = b->v[1] * s + a->v[1];
+}
+
+int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* model, br_material* material, br_vector3* ray_pos, br_vector3* ray_dir, br_scalar t_near, br_scalar t_far, dr_modelpick2d_raycast_cbfn* callback, void* arg) {
+    int f;
+    int axis_m;
+    int axis_0;
+    int axis_1;
+    int group;
+    br_scalar t;
+    br_scalar d;
+    br_vector3 p;
+    float u0;
+    float u1;
+    float u2;
+    float v0;
+    float v1;
+    float v2;
+    br_scalar v0i1;
+    br_scalar v0i2;
+    float alpha;
+    float beta;
+    float f_d;
+    float f_n;
+    br_scalar s_alpha;
+    br_scalar s_beta;
+    br_vector2 map;
+    int v;
+    int e;
+    int r;
+    br_material* this_material;
+    br_scalar numerator;
+    v11face* v11f;
+    v11group* v11g;
+    br_vector4* eqn;
+
+    t_near -= 0.001f;
+    t_far += 0.001f;
+    for (group = 0; group < V11MODEL(model)->ngroups; group++) {
+        v11g = &V11MODEL(model)->groups[group];
+        for (f = 0; f < v11g->nfaces; f++) {
+            v11f = &v11g->faces[f];
+            eqn = &v11f->eqn;
+            if (v11g->face_colours.materials[0] != NULL) {
+                this_material = v11g->face_colours.materials[0];
+            } else {
+                this_material = material;
+            }
+            d = BrVector3Dot(eqn, ray_dir);
+            if ((fabsf(d) >= 2.3841858e-7f && this_material != NULL && (this_material->flags & (BR_MATF_TWO_SIDED | BR_MATF_ALWAYS_VISIBLE)) != 0) || d <= 0.0) {
+                numerator = BrVector3Dot(eqn, ray_pos) - eqn->v[3];
+                if (!BadDiv_raycast(numerator, d)) {
+                    t = -(numerator / d);
+                    if (t >= t_near && t <= t_far) {
+                        BrVector3Scale(&p, ray_dir, t);
+                        BrVector3Accumulate(&p, ray_pos);
+                        axis_m = (fabsf(eqn->v[1]) > fabsf(eqn->v[0])) ? 1 : 0;
+                        if (fabsf(eqn->v[2]) > fabsf(eqn->v[axis_m])) {
+                            axis_m = 2;
+                        }
+                        if (axis_m == 0) {
+                            axis_0 = 1;
+                            axis_1 = 2;
+                        } else if (axis_m == 1) {
+                            axis_0 = 0;
+                            axis_1 = 2;
+                        } else if (axis_m == 2) {
+                            axis_0 = 0;
+                            axis_1 = 1;
+                        }
+
+                        v0 = v11g->vertices[v11f->vertices[0]].p.v[axis_0];
+                        u0 = v11g->vertices[v11f->vertices[0]].p.v[axis_1];
+
+                        v1 = v11g->vertices[v11f->vertices[1]].p.v[axis_0] - v0;
+                        u1 = v11g->vertices[v11f->vertices[1]].p.v[axis_1] - u0;
+                        v2 = v11g->vertices[v11f->vertices[2]].p.v[axis_0] - v0;
+                        u2 = v11g->vertices[v11f->vertices[2]].p.v[axis_1] - u0;
+
+                        v0i1 = p.v[axis_0] - v0;
+                        v0i2 = p.v[axis_1] - u0;
+                        if (fabs(v1) > 2.3841858e-7f) {
+                            f_d = v0i2 * v1 - u1 * v0i1;
+                            f_n = u2 * v1 - u1 * v2;
+                            if (f_n == 0.) {
+                                continue;
+                            }
+                            beta = f_d / f_n;
+                            alpha = (v0i1 - beta * v2) / v1;
+                        } else {
+                            beta = v0i1 / v2;
+                            alpha = (v0i2 - beta * u2) / u1;
+                        }
+
+                        if (alpha >= 0.0 && beta >= 0.0 && beta + alpha <= 1.0) {
+                            s_alpha = alpha;
+                            s_beta = beta;
+                            BrVector2Scale(&map, &v11g->vertices[v11f->vertices[1]].map, s_alpha);
+                            DRVector2AccumulateScale_raycast(
+                                &map,
+                                &v11g->vertices[v11f->vertices[2]].map,
+                                s_beta);
+                            DRVector2AccumulateScale_raycast(
+                                &map,
+                                &v11g->vertices[v11f->vertices[0]].map,
+                                1.0f - (s_alpha + s_beta));
+                            v = 0;
+                            e = 1;
+                            if (s_alpha <= s_beta) {
+                                if (0.5f - s_beta / 2.0f > s_alpha) {
+                                    e = 0;
+                                }
+                                if (1.0f - s_beta * 2.0f < s_alpha) {
+                                    v = 1;
+                                }
+                            } else {
+                                if (1.0f - s_beta * 2.0f > s_alpha) {
+                                    e = 2;
+                                }
+                                if (0.5f - s_beta / 2.0f < s_alpha) {
+                                    v = 2;
+                                }
+                            }
+                            r = callback(model, this_material, ray_pos, ray_dir, t, f, e, v, &p, &map, arg);
+                            if (r != 0) {
+                                return r;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e3d90, DRModelPick2D_raycast)
 
 br_scalar (C2_HOOK_FASTCALL * FindYVerticallyBelow2_original)(br_vector3* pCast_point);
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
