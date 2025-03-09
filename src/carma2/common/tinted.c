@@ -470,6 +470,12 @@ void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex) {
 C2_HOOK_FUNCTION(0x004d8220, TurnTintedPolyOn)
 
 void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
+
+#ifdef REC2_FIX_BUGS
+    if (pTintedIndex < 0) {
+        return;
+    }
+#endif
     if (C2V(gTintedPolys)[pTintedIndex].used) {
         (C2V(gTintedPolys)[pTintedIndex].actor)->render_style = BR_RSTYLE_NONE;
         C2V(gTintedPolys)[pTintedIndex].color_red = 0;
