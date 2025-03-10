@@ -1363,6 +1363,17 @@ tCollision_info* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed) {
 }
 C2_HOOK_FUNCTION(0x00409040, GetRootObject)
 
+void (C2_HOOK_FASTCALL * SetCharacterDirection_original)(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp);
+void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return SetCharacterDirection_original(pPed, pDir, pUp);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040a730, SetCharacterDirection, SetCharacterDirection_original)
+
 void (C2_HOOK_FASTCALL * SetCharacterDirectionAR_original)(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp);
 void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp) {
 
