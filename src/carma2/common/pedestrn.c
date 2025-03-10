@@ -10,6 +10,7 @@
 #include "piping.h"
 #include "platform.h"
 #include "raycast.h"
+#include "replay.h"
 #include "skidmark.h"
 #include "smashing.h"
 #include "trig.h"
@@ -309,6 +310,16 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(int, gPed_move_fsm, [118][7], 0x0065d7
     {   4,   2,   2,   2,  10,  11,  13 },
     { -41, -41, -41,   0,   2,   2,   2 },
     {   2,   2,   3,   4,   4,  10,  11 },
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPow2_array, 32, 0x0058f2d8, {
+           0x1,           0x2,           0x4,           0x8,
+          0x10,          0x20,          0x40,          0x80,
+         0x100,         0x200,         0x400,         0x800,
+        0x1000,        0x2000,        0x4000,        0x8000,
+       0x10000,       0x20000,       0x40000,       0x80000,
+      0x100000,      0x200000,      0x400000,      0x800000,
+     0x1000000,     0x2000000,     0x4000000,     0x8000000,
+    0x10000000,    0x20000000,    0x40000000,    0x80000000
 });
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
@@ -982,10 +993,88 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00407e70, SetBoner, SetBoner_original)
 void (C2_HOOK_FASTCALL * SetCharacterBonePositions_original)(tPed_character_instance* pPed, undefined4 pArg2, undefined4 pArg3);
 void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, undefined4 pArg2, undefined4 pArg3) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetCharacterBonePositions_original(pPed, pArg2, pArg3);
 #else
-    NOT_IMPLEMENTED();
+    tPed_personality *personality;
+    tPed_form* form;
+    tPed_form_actor_set* actor_set;
+    tPed_move_frame* ped_move_frame;
+    int i;
+
+    if (pPed->field_0x7 < 0) {
+        return;
+    }
+    if ((pPed->field_0x14 & 0x4) && (pPed->field_0x14 & 0x2) && pPed->field_0xe8 == NULL) {
+        return;
+    }
+    pPed->field_0x9 &= ~0x1;
+    if (pPed->field_0xbc != NULL) {
+        MorphCharacterBonePositions(pPed, 0);
+        return;
+    }
+    personality = pPed->personality;
+    form = personality->form;
+    actor_set = NULL;
+    if (pPed->field_0x4 >= 0) {
+        actor_set = &form->actor_sets[pPed->field_0x4];
+    }
+    ped_move_frame = &form->moves[pPed->field_0x7].move->frames[pPed->field_0x1c];
+    for (i = 0; i < form->count_bones; i++) {
+        int parent_index = form->bones[i].parent_index;
+
+        if (parent_index >= 0) {
+            if (!(C2V(gPow2_array)[i] & pPed->field_0xc) && !(C2V(gPow2_array)[parent_index] & pPed->field_0xc)
+                    && pArg2 != 1 && pArg2 != 2 && actor_set != NULL) {
+                br_matrix34* mat;
+                br_matrix34* parent_mat;
+                tPed_move_frame_axis* axis;
+
+                if (pPed->field_0xe8 != NULL) {
+                    mat = &pPed->field_0xe8[i];
+                    parent_mat = &pPed->field_0xe8[parent_index];
+                } else {
+                    mat = &actor_set->actors[i]->t.t.mat;
+                    parent_mat = &actor_set->actors[parent_index]->t.t.mat;
+                }
+                axis = &ped_move_frame->axis[i];
+
+                SetBoner(pPed, mat, parent_mat, &pPed->field_0x8c, axis->euler1, axis->euler2, axis->euler3,
+                    &personality->bones[i].field_0x20, &personality->bones[i].field_0x2c);
+            }
+        } else {
+            if (pArg2 != 3 && !(pPed->field_0x14 & 0x4)) {
+                br_matrix34* mat;
+                br_vector3 original_pos;
+
+                if (pPed->field_0x4 < 0) {
+                    mat = &pPed->field_0x2c;
+                } else if (pPed->field_0xe8 == NULL) {
+                    mat = &form->actor_sets[pPed->field_0x4].actors[0]->t.t.mat;
+                } else {
+                    mat = pPed->field_0xe8;
+                }
+                BrVector3Copy(&original_pos, (br_vector3*)mat->m[3]);
+                if (pArg2 != 2) {
+                    BrMatrix34Mul(mat, &ped_move_frame->mat, &pPed->field_0x8c);
+                }
+                if (pArg3 == 0 || C2V(gPed_overall_movement_disabled)) {
+                    BrVector3Copy((br_vector3*)mat->m[3], &original_pos);
+                } else {
+                    br_vector3 move;
+                    br_vector3 delta;
+
+                    BrVector3Scale(&move, (br_vector3*)ped_move_frame->mat.m[3], personality->moves[pPed->field_0x7].scale_factor);
+                    BrMatrix34ApplyV(&delta, &move, &pPed->field_0x5c);
+                    if (C2V(gAction_replay_mode) && ARGetReplayRate() < 0) {
+                        BrVector3Sub((br_vector3*)mat->m[3], &original_pos, &delta);
+                    } else {
+                        BrVector3Add((br_vector3*)mat->m[3], &original_pos, &delta);
+                    }
+                }
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00407b30, SetCharacterBonePositions, SetCharacterBonePositions_original)
