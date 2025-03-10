@@ -135,6 +135,10 @@ typedef struct {
 } tPiping_chunk_callback;
 
 typedef struct {
+    br_vector3 direction;
+} tPipe_ped_dir_data;
+
+typedef struct {
     tS16 move_id;
     tS16 original_move_id;
     tS16 field_0x4;
@@ -151,6 +155,7 @@ typedef struct {
 
 typedef enum {
     ePipe_chunk_car = 5,
+    ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
 } tPipe_chunk_type;
 
