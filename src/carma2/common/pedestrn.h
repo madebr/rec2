@@ -65,6 +65,10 @@ tCollision_info* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed);
 
 void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp);
 
+int C2_HOOK_FASTCALL OrientationChanged(float pCos_angle, const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2);
+
+void C2_HOOK_FASTCALL AssertRootObjectsMatrix(tPed_character_instance* pPed);
+
 void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp);
 
 br_scalar C2_HOOK_FASTCALL AreaOfTriangle(br_vector3* pV0, br_vector3* pV1, br_vector3* pV2);

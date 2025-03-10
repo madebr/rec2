@@ -1374,13 +1374,56 @@ void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040a730, SetCharacterDirection, SetCharacterDirection_original)
 
+int C2_HOOK_FASTCALL OrientationChanged(float pCos_angle, const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2) {
+
+    return BrVector3Dot((br_vector3*)pOrientation_1->m[0], (br_vector3*)pOrientation_2->m[0]) < pCos_angle
+        || BrVector3Dot((br_vector3*)pOrientation_1->m[1], (br_vector3*)pOrientation_2->m[1]) < pCos_angle
+        || BrVector3Dot((br_vector3*)pOrientation_1->m[2], (br_vector3*)pOrientation_2->m[2]) < pCos_angle;
+}
+
+void C2_HOOK_FASTCALL AssertRootObjectsMatrix(tPed_character_instance* pPed) {
+    tCollision_info* collision_info;
+    int i;
+
+    if (pPed->field_0x14 & 0x1) {
+        collision_info = pPed->personality->form->simple_physicing[pPed->field_0x5].collision_info;
+    } else {
+        collision_info = GetRootObject(pPed);
+    }
+    for (i = 0; i < 3; i++) {
+        int j;
+
+        for (j = 0; j < 3; j++) {
+            collision_info->transform_matrix.m[i][j] = collision_info->actor->t.t.mat.m[i][j];
+        }
+    }
+    collision_info->flags |= 0x100;
+}
+
 void (C2_HOOK_FASTCALL * SetCharacterDirectionAR_original)(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp);
 void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp) {
 
 #if defined(C2_HOOKS_ENABLED)
     SetCharacterDirectionAR_original(pPed, pDir, pUp);
 #else
-    NOT_IMPLEMENTED();
+    tCollision_info* collision_info;
+    if (pPed->field_0x14 & 0x1) {
+        collision_info = pPed->personality->form->simple_physicing[pPed->field_0x5].collision_info;
+    } else {
+        collision_info = GetRootObject(pPed);
+    }
+    if (!C2V(gAction_replay_mode) || C2V(gBOOL_00744804)) {
+        if (!(pPed->field_0x14 & 0x4) && C2V(gProgram_state).racing) {
+
+            C2_HOOK_BUG_ON(sizeof(*C2V(gPedestrian_array)[0]) != 0x54);
+
+            PipeSinglePedDir((pPed->ped->field_0x06 << 16) | (pPed->ped - C2V(gPedestrian_array)), pDir);
+        }
+        SetCharacterDirection(pPed, pDir, pUp);
+        if (C2V(gProgram_state).racing && OrientationChanged(0.7f, &collision_info->transform_matrix, &collision_info->actor->t.t.mat)) {
+            AssertRootObjectsMatrix(pPed);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d3360, SetCharacterDirectionAR, SetCharacterDirectionAR_original)
