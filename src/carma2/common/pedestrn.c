@@ -968,6 +968,17 @@ int C2_HOOK_FASTCALL MorphCharacterBonePositions(tPed_character_instance* pPed, 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004097b0, MorphCharacterBonePositions, MorphCharacterBonePositions_original)
 
+void (C2_HOOK_FASTCALL * SetBoner_original)(tPed_character_instance* pPed, br_matrix34* pMat, br_matrix34* pParent_mat, br_matrix34* pArg4, tU8 pAngle_x, tU8 pAngle_y, tU8 pAngle_z, br_vector3* pArg8, br_vector3* pParg9);
+void C2_HOOK_FASTCALL SetBoner(tPed_character_instance* pPed, br_matrix34* pMat, br_matrix34* pParent_mat, br_matrix34* pArg4, tU8 pAngle_x, tU8 pAngle_y, tU8 pAngle_z, br_vector3* pArg8, br_vector3* pParg9) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetBoner_original(pPed, pMat, pParent_mat, pArg4, pAngle_x, pAngle_y, pAngle_z, pArg8, pParg9);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00407e70, SetBoner, SetBoner_original)
+
 void (C2_HOOK_FASTCALL * SetCharacterBonePositions_original)(tPed_character_instance* pPed, undefined4 pArg2, undefined4 pArg3);
 void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, undefined4 pArg2, undefined4 pArg3) {
 
