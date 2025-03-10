@@ -61,6 +61,8 @@ int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pPed,int pMove_ac
 
 void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pAction, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pArg7);
 
+tCollision_info* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed);
+
 void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp);
 
 br_scalar C2_HOOK_FASTCALL AreaOfTriangle(br_vector3* pV0, br_vector3* pV1, br_vector3* pV2);

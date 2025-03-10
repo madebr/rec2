@@ -1349,6 +1349,20 @@ void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pMove_action, int pWalk_
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cbcd0, SetPedMove, SetPedMove_original)
 
+tCollision_info* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed) {
+    tPed_form* form;
+    int i;
+
+    form = pPed->personality->form;
+    for (i = 0; i < form->count_bones; i++) {
+        if (form->boned_physicing[pPed->field_0x5].collision_infos[i]->shape != NULL) {
+            return form->boned_physicing[pPed->field_0x5].collision_infos[i];
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x00409040, GetRootObject)
+
 void (C2_HOOK_FASTCALL * SetCharacterDirectionAR_original)(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp);
 void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp) {
 
