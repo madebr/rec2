@@ -33,6 +33,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gLocal_buffer, 0x006768b4, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, gLocal_buffer_size, 0x006768f4, 0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gMr_chunky, 0x006768a0, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPiping_chunk_callback*, gPipe_chunk_vtable, 0x006768e8, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_phys_end, 0x006768f0, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_working_end, 0x006768c4, NULL);
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
@@ -101,10 +103,49 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00403750, LengthOfSession, LengthOfSession_original)
 void (C2_HOOK_FASTCALL * EndPipingSession2_original)(int pMunge_reentrancy);
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     EndPipingSession2_original(pMunge_reentrancy);
 #else
-    NOT_IMPLEMENTED();
+
+    if (C2V(gPipe_buffer_start) == NULL || C2V(gAction_replay_mode) || !C2V(gProgram_state).racing) {
+        return;
+    }
+    /* End session with buffer size */
+    *(tS16*)(C2V(gLocal_buffer) + C2V(gLocal_buffer_size)) = C2V(gLocal_buffer_size);
+    C2V(gLocal_buffer_size) += sizeof(tS16);
+
+    if (((tPipe_chunk*)C2V(gLocal_buffer))->count != 0 && C2V(gLocal_buffer_size) <= 15000) {
+        if (C2V(gPipe_buffer_phys_end) < C2V(gPipe_record_ptr) + C2V(gLocal_buffer_size)) {
+            C2V(gPipe_buffer_working_end) = C2V(gPipe_record_ptr);
+            C2V(gPipe_buffer_oldest) = C2V(gPipe_buffer_start);
+            C2V(gPipe_record_ptr) = C2V(gPipe_buffer_start);
+        }
+        while (C2V(gPipe_record_ptr) <= C2V(gPipe_buffer_oldest) && C2V(gPipe_buffer_oldest) < C2V(gPipe_record_ptr) + C2V(gLocal_buffer_size)) {
+            // Remove older sessions
+            C2V(gPipe_buffer_oldest) += LengthOfSession((tPipe_chunk*)C2V(gPipe_buffer_oldest));
+
+            if (C2V(gPipe_buffer_working_end) <= C2V(gPipe_buffer_oldest)) {
+                C2V(gPipe_buffer_working_end) = C2V(gPipe_buffer_phys_end);
+                C2V(gPipe_buffer_oldest) = C2V(gPipe_buffer_start);
+            }
+        }
+        if (C2V(gPipe_buffer_oldest) == NULL) {
+            C2V(gPipe_buffer_oldest) = C2V(gPipe_record_ptr);
+        }
+        c2_memcpy(C2V(gPipe_record_ptr), C2V(gLocal_buffer), C2V(gLocal_buffer_size));
+        C2V(gPipe_record_ptr) += C2V(gLocal_buffer_size);
+        if (C2V(gPipe_buffer_working_end) < C2V(gPipe_record_ptr)) {
+            C2V(gPipe_buffer_working_end) = C2V(gPipe_record_ptr);
+        }
+    }
+    if (pMunge_reentrancy) {
+        if (C2V(gReentrancy_count) != 0) {
+            C2V(gReentrancy_count) -= 1;
+        }
+        if (C2V(gReentrancy_count) != 0) {
+            StartPipingSession2(C2V(gReentrancy_array)[C2V(gReentrancy_count) - 1], 0);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00402660, EndPipingSession2, EndPipingSession2_original)
