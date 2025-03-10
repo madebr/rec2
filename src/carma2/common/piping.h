@@ -29,6 +29,8 @@ void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
 
 void C2_HOOK_FASTCALL AREndPipingSession(void);
 
+tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession);
+
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
 
 void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void *pData, int pSize);

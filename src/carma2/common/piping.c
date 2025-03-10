@@ -87,6 +87,17 @@ void C2_HOOK_FASTCALL AREndPipingSession(void) {
     EndPipingSession2(1);
 }
 
+tU32 (C2_HOOK_FASTCALL * LengthOfSession_original)(tPipe_chunk* pSession);
+tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return LengthOfSession_original(pSession);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00403750, LengthOfSession, LengthOfSession_original)
+
 void (C2_HOOK_FASTCALL * EndPipingSession2_original)(int pMunge_reentrancy);
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
 
