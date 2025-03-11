@@ -522,3 +522,43 @@ void C2_HOOK_FASTCALL DRMatrix23PostRotate(br_matrix23* mat, br_angle rz) {
     BrMatrix23Copy(mat, &C2V(mat23tmp1));
 }
 C2_HOOK_FUNCTION(0x005132a0, DRMatrix23PostRotate)
+
+void C2_HOOK_FASTCALL DRMatrix34RotateCos(br_matrix34* pDest, const br_vector3* pAxis, float pCosA) {
+    float sinA;
+    float mc;
+    float mcx;
+    float mcxz;
+    float mcxy;
+    float sz;
+    float sy;
+    float sx;
+    float mcyz;
+
+    if (pCosA < -1.f) {
+        pCosA = -1.f;
+    } else if (pCosA > 1.f) {
+        pCosA = 1.f;
+    }
+    sinA = sqrtf(1.f - pCosA * pCosA);
+    mc = 1.f - pCosA;
+    mcx = pAxis->v[0] * mc;
+    mcxy = pAxis->v[1] * mcx;
+    mcxz = pAxis->v[2] * mcx;
+    mcyz = pAxis->v[2] * pAxis->v[1] * mc;
+    sx = pAxis->v[0] * sinA;
+    sy = pAxis->v[1] * sinA;
+    sz = pAxis->v[2] * sinA;
+    pDest->m[0][0] = pAxis->v[0] * pAxis->v[0] * mc + pCosA;
+    pDest->m[0][1] = sz + mcxy;
+    pDest->m[0][2] = mcxz - sy;
+    pDest->m[1][0] = mcxy - sz;
+    pDest->m[1][1] = pAxis->v[1] * pAxis->v[1] * mc + pCosA;
+    pDest->m[1][2] = sx + mcyz;
+    pDest->m[2][0] = sy + mcxz;
+    pDest->m[2][1] = mcyz - sx;
+    pDest->m[2][2] = pAxis->v[2] * pAxis->v[2] * mc + pCosA;
+    pDest->m[3][0] = 0.f;
+    pDest->m[3][1] = 0.f;
+    pDest->m[3][2] = 0.f;
+}
+C2_HOOK_FUNCTION(0x0040aed0, DRMatrix34RotateCos)
