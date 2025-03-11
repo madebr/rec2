@@ -1363,6 +1363,15 @@ tCollision_info* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed) {
 }
 C2_HOOK_FUNCTION(0x00409040, GetRootObject)
 
+void C2_HOOK_FASTCALL DropPointOntoPlane(const br_vector3* pPoint, const br_vector3* pPlane, br_vector3* pDest) {
+    float dot;
+
+    dot = -BrVector3Dot(pPlane, pPoint);
+    BrVector3Scale(pDest, pPlane, dot);
+    BrVector3Accumulate(pDest, pPoint);
+}
+C2_HOOK_FUNCTION(0x0040b030, DropPointOntoPlane)
+
 void (C2_HOOK_FASTCALL * SetCharacterDirection_original)(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp);
 void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp) {
 
