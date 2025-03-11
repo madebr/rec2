@@ -65,6 +65,8 @@ tCollision_info* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed);
 
 void C2_HOOK_FASTCALL DropPointOntoPlane(const br_vector3* pPoint, const br_vector3* pPlane, br_vector3* pDest);
 
+void C2_HOOK_FASTCALL OrthogonalVector(br_vector3* pDest, const br_vector3* pA, const br_vector3* pB);
+
 void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp);
 
 int C2_HOOK_FASTCALL OrientationChanged(float pCos_angle, const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2);

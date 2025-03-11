@@ -1372,6 +1372,19 @@ void C2_HOOK_FASTCALL DropPointOntoPlane(const br_vector3* pPoint, const br_vect
 }
 C2_HOOK_FUNCTION(0x0040b030, DropPointOntoPlane)
 
+void C2_HOOK_FASTCALL OrthogonalVector(br_vector3* pDest, const br_vector3* pA, const br_vector3* pB) {
+
+    BrVector3Cross(pDest, pA, pB);
+    if (fabsf(pDest->v[0]) < 2.384186e-06f && fabsf(pDest->v[1]) < 2.384186e-06f && fabsf(pDest->v[1]) < 2.384186e-06f) {
+        if (fabsf(pA->v[0]) <= fabsf(pA->v[2])) {
+            BrVector3Cross(pDest, pA, &C2V(g_Ped_x_unit_vector));
+        } else {
+            BrVector3Cross(pDest, pA, &C2V(g_Ped_z_unit_vector));
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00404150, OrthogonalVector)
+
 void (C2_HOOK_FASTCALL * SetCharacterDirection_original)(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp);
 void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp) {
 
