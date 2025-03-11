@@ -777,6 +777,23 @@ int C2_HOOK_CDECL LinkCrushModel(br_actor* pActor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x0048bfa0, LinkCrushModel)
 
+intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData) {
+    tAccumulateSquashVertices_UserData* context = pData;
+    tUser_crush_data* crush_data = actor->user;
+
+    if (crush_data != NULL && crush_data->crush_data != NULL) {
+        int i;
+
+        for (i = 0; i < REC2_ASIZE(crush_data->models); i++) {
+            if (crush_data->models[i] != NULL) {
+                context->count_vertices += crush_data->models[i]->nvertices;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042ac70, AccumulateSquashVertices)
+
 void (C2_HOOK_FASTCALL * PrepareCarForCrushing_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
 

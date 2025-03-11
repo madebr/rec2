@@ -126,6 +126,12 @@ typedef enum {
 } tDroneStateFuncState;
 
 typedef struct {
+    size_t count_vertices;
+    float bens_z_min;
+    float bens_z_max;
+} tAccumulateSquashVertices_UserData;
+
+typedef struct {
     tPiping_chunk_callback_reset* reset;
     int length;
     tPiping_chunk_callback_calc_length* calc_length;
