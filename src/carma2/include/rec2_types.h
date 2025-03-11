@@ -3611,6 +3611,12 @@ typedef struct {
 } tCrush_info_buffer;
 
 typedef struct {
+    tCar_spec* car_spec;
+    int count;
+    undefined4 field_0x8;
+} tCrush_list_item;
+
+typedef struct {
     tU32 time;
     br_vector3* pos_origin;
     br_vector3* pos_victim;

@@ -12,7 +12,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gAuto_repair);
 C2_HOOK_VARIABLE_DECLARE(int, gInstant_handbrake);
 C2_HOOK_VARIABLE_DECLARE(tU32, gToo_poor_for_recovery_timeout);
 C2_HOOK_VARIABLE_DECLARE(int, gCheckpoint_finder_enabled);
-
+C2_HOOK_VARIABLE_DECLARE(int, gCount_toggled_doors);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e4);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e8);
 C2_HOOK_VARIABLE_DECLARE(int, gHad_auto_recover);

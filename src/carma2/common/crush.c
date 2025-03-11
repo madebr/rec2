@@ -1,6 +1,7 @@
 #include "crush.h"
 
 #include "animation.h"
+#include "controls.h"
 #include "errors.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -91,6 +92,15 @@ C2_HOOK_VARIABLE_IMPLEMENT(tCrush_info_buffer, gSplit_car_crush_info_buffer, 0x0
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gSplit_car_collision_infos, 0x0067a188);
 C2_HOOK_VARIABLE_IMPLEMENT(tDriver, gSplit_car_driver, 0x0067b7c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape_sphere*, gGonad_sphere_collision_shape, 0x006796b4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_list_item, gCrush_lists, 8, 0x006796c8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_queued_drone_crushes, 0x006796bc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_crush_detach_list, 0x0067bad0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067bdfc, 0x0067bdfc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_net_crush_detach_list, 0x0067bdf0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_net_crush_semi_detach_bit_list, 0x0067b838);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_net_crush_full_detach_bit_list, 0x0067bd60);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_net_crush_reattach_bit_list, 0x0067b7c8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_car_damage_crush_list, 0x0067b7cc);
 
 void (C2_HOOK_FASTCALL * InitCrushSystems_original)(void);
 void C2_HOOK_FASTCALL InitCrushSystems(void) {
@@ -156,13 +166,43 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrushSystems, InitCrushSystems_original)
 
+void C2_HOOK_FASTCALL ClearCrushLists(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gCrush_lists)) != 8);
+    C2_HOOK_BUG_ON(sizeof(C2V(gCrush_lists)[0]) != 0xc);
+
+    for (i = 0; C2V(gCrush_lists)[i].car_spec != NULL; i++) {
+        C2V(gCrush_lists)[i].car_spec = NULL;
+    }
+}
+
 void (C2_HOOK_FASTCALL * ResetCrushSystems_original)(void);
 void C2_HOOK_FASTCALL ResetCrushSystems(void) {
 
 #if defined(C2_HOOKS_ENABLED)
     ResetCrushSystems_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gTrack_crush_joints)) != 32);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gTrack_crush_joints)); i++) {
+        C2V(gTrack_crush_joints)[i]->type = eJoint_none;
+    }
+    C2V(gDetached_bit_crush_info_buffer).field_0x8 = 0;
+    C2V(gSplit_car_crush_info_buffer).field_0x8 = 0;
+    ClearCrushLists();
+    C2V(gCount_queued_drone_crushes) = 0;
+    C2V(gCount_crush_detach_list) = 0;
+    C2V(gINT_0067bdfc) = 0;
+    C2V(gCount_toggled_doors) = 0;
+    C2V(gCrush_data_entry_counter) = 0;
+    C2V(gCount_net_crush_detach_list) = 0;
+    C2V(gCount_net_crush_semi_detach_bit_list) = 0;
+    C2V(gCount_net_crush_full_detach_bit_list) = 0;
+    C2V(gCount_net_crush_reattach_bit_list) = 0;
+    C2V(gCount_car_damage_crush_list) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042a190, ResetCrushSystems, ResetCrushSystems_original)

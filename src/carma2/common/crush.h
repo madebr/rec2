@@ -27,6 +27,8 @@ C2_HOOK_VARIABLE_DECLARE(tCollision_shape_sphere*, gGonad_sphere_collision_shape
 
 void C2_HOOK_FASTCALL InitCrushSystems(void);
 
+void C2_HOOK_FASTCALL ClearCrushLists(void);
+
 void C2_HOOK_FASTCALL ResetCrushSystems(void);
 
 void C2_HOOK_FASTCALL ReadCrushSettings(FILE* file);
