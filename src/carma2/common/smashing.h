@@ -29,6 +29,8 @@ void C2_HOOK_FASTCALL InitSmashTargets(void);
 
 void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor, int pUnknown);
 
+void C2_HOOK_FASTCALL SplondificatalizeIdentifier(br_material* pMaterial, char** ppIdentifier, int pIndex);
+
 void C2_HOOK_FASTCALL MungeSmashMaterialNames(void);
 
 void C2_HOOK_FASTCALL CleanUpSmashStuff(void);

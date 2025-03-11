@@ -1,8 +1,12 @@
 #include "smashing.h"
 
 #include "loading.h"
+#include "platform.h"
+#include "world.h"
 
 #include <brender/brender.h>
+
+#include "c2_string.h"
 
 #include "rec2_macros.h"
 
@@ -151,16 +155,55 @@ void C2_HOOK_FASTCALL AddSmashableRaceTarget(br_model* pModel, br_actor* pActor,
 }
 C2_HOOK_FUNCTION(0x004977f0, AddSmashableRaceTarget)
 
-void (C2_HOOK_FASTCALL * PrepareSmashableTrackItemIdentifiers_original)(void);
+void C2_HOOK_FASTCALL SplondificatalizeIdentifier(br_material* pMaterial, char** ppIdentifier, int pIndex) {
+    int len;
+    char original_suffix[64];
+    char new_identifier[64];
+    char* suffix_ptr;
+
+    c2_strcpy(new_identifier, *ppIdentifier);
+    len = c2_strlen(new_identifier);
+    if (len < 4) {
+        c2_sprintf(new_identifier, "Smash material %s has a name that is less than 4 characters long", *ppIdentifier);
+        PDFatalError(new_identifier);
+    }
+    suffix_ptr = new_identifier + len - 4;
+    c2_strcpy(original_suffix, suffix_ptr);
+    c2_sprintf(suffix_ptr, "        ");
+    c2_sprintf(&new_identifier[5], "%cx", '|');
+    new_identifier[6] = (char)(pIndex + 1);
+    c2_strcat(new_identifier, original_suffix);
+    if (c2_strlen(*ppIdentifier) < 12) {
+        BrResFree(*ppIdentifier);
+        *ppIdentifier = BrResStrDup(pMaterial, new_identifier);
+    } else {
+        c2_strcpy(*ppIdentifier, new_identifier);
+    }
+}
+
+void (C2_HOOK_FASTCALL * MungeSmashMaterialNames_original)(void);
 void C2_HOOK_FASTCALL MungeSmashMaterialNames(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PrepareSmashableTrackItemIdentifiers_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 0x2e0);
+
+    for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
+        tSmashable_item_spec* item_spec = &C2V(gTrack_smashable_environment_specs)[i];
+
+        if (item_spec->trigger_type == kSmashableTrigger_Material) {
+            SplondificatalizeIdentifier(
+                item_spec->trigger_object.material,
+                &item_spec->trigger_object.material->identifier,
+                i);
+        }
+    }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f0bc0, MungeSmashMaterialNames, PrepareSmashableTrackItemIdentifiers_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004f0bc0, MungeSmashMaterialNames, MungeSmashMaterialNames_original)
 
 void (C2_HOOK_FASTCALL * CleanUpSmashStuff_original)(void);
 void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
