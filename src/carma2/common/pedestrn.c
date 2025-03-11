@@ -1388,10 +1388,81 @@ C2_HOOK_FUNCTION(0x00404150, OrthogonalVector)
 void (C2_HOOK_FASTCALL * SetCharacterDirection_original)(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp);
 void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return SetCharacterDirection_original(pPed, pDir, pUp);
 #else
-    NOT_IMPLEMENTED();
+    int keep_direction;
+    tPed_move* move;
+    br_matrix34* character_matrix;
+    br_vector3 original_pos;
+    br_vector3 norm_dir;
+    br_vector3 norm_up;
+    br_vector3 local_138;
+    br_vector3 local_12c;
+    br_vector3 local_120;
+    br_vector3 local_114;
+    br_vector3 local_fc;
+    br_vector3 local_e4;
+    br_matrix34 inv_field_0x8c;
+    br_matrix34 local_c0;
+    br_matrix34 local_60;
+    br_matrix34 local_30;
+
+    if (pPed->field_0x7 < 0) {
+        return;
+    }
+    if ((pPed->field_0x14 & 0x4) && !C2V(gAction_replay_mode)) {
+        return;
+    }
+    if (pDir == NULL) {
+        pDir = &pPed->field_0xc0;
+        pUp = &pPed->field_0xcc;
+        keep_direction = 1;
+    } else {
+        BrVector3Normalise(&pPed->field_0xc0, pDir);
+        BrVector3Copy(&pPed->field_0xcc, pUp);
+        keep_direction = 0;
+    }
+    move = pPed->personality->form->moves[pPed->field_0x7].move;
+    character_matrix = GetCharacterMatrixPtr(pPed);
+    BrMatrix34Inverse(&inv_field_0x8c, &pPed->field_0x8c);
+    BrVector3Copy(&original_pos, (br_vector3*)character_matrix->m[3]);
+    BrVector3Set((br_vector3*)character_matrix->m[3], 0.f, 0.f, 0.f);
+    BrMatrix34Mul(&local_c0, character_matrix, &inv_field_0x8c);
+    if (pUp != NULL) {
+        BrVector3Normalise(&norm_up, pUp);
+    } else {
+        BrVector3Set(&norm_up, 0.f, 1.f, 0.f);
+    }
+    BrVector3Normalise(&norm_dir, pDir);
+    BrVector3Copy(&local_12c, &move->field_0x40);
+    if (pPed->field_0xbc != NULL) {
+        tPed_morph* morph = pPed->field_0xbc;
+        Vector3Lerp(&local_12c, &local_12c, &morph->field_0x20, morph->field_0x0);
+        BrVector3Normalise(&local_12c, &local_12c);
+    }
+    DropPointOntoPlane(&norm_dir, &norm_up, &local_e4);
+    DropPointOntoPlane(&local_12c, &norm_up, &local_114);
+    BrVector3Normalise(&local_fc, &local_e4);
+    BrVector3Normalise(&local_114, &local_114);
+    OrthogonalVector(&local_138, &local_114, &local_fc);
+    BrVector3Normalise(&local_120, &local_138);
+    DRMatrix34RotateCos(&pPed->field_0x8c, &local_120, BrVector3Dot(&local_fc, &local_114));
+    BrVector3Set(&local_138, -norm_up.v[0], 0.f, norm_up.v[2]);
+    BrVector3Normalise(&local_120, &local_138);
+    local_120.v[1] = 0.0;
+    DRMatrix34RotateCos(&local_60, &local_120, norm_up.v[1]);
+    BrMatrix34Pre(&pPed->field_0x8c, &local_60);
+    DRVector3SafeCross(&local_138, &local_fc, &norm_dir);
+    BrVector3Normalise(&local_120, &local_138);
+    DRMatrix34RotateCos(&local_30, &local_120, BrVector3Dot(&local_fc, &norm_dir));
+    BrMatrix34Mul(&pPed->field_0x5c, &pPed->field_0x8c, &local_30);
+    BrMatrix34Post(&local_c0, &pPed->field_0x8c);
+    BrVector3Accumulate((br_vector3*)local_c0.m[3], &original_pos);
+    BrMatrix34LPNormalise(character_matrix, &local_c0);
+    if (!keep_direction) {
+        SetCharacterBonePositions(pPed, 3, 0);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040a730, SetCharacterDirection, SetCharacterDirection_original)

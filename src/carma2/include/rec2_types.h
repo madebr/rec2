@@ -3773,7 +3773,9 @@ typedef struct {
     br_matrix34 field_0x5c;
     br_matrix34 field_0x8c;
     tPed_morph* field_0xbc;
-    undefined field_0xc0[0x24];
+    br_vector3 field_0xc0;
+    br_vector3 field_0xcc;
+    br_vector3 field_0xd8;
     tPedestrian* ped;
     br_matrix34* field_0xe8;
 } tPed_character_instance;

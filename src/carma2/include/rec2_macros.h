@@ -44,6 +44,11 @@
     } while (0)
 #define Vector3DistanceSquared(V1, V2) \
     ((((V1)->v[0] - (V2)->v[0])) * (((V1)->v[0] - (V2)->v[0])) + (((V1)->v[1] - (V2)->v[1])) * (((V1)->v[1] - (V2)->v[1])) + (((V1)->v[2] - (V2)->v[2])) * (((V1)->v[2] - (V2)->v[2])))
+#define Vector3Lerp(D, V1, V2, S) do {                          \
+        (D)->v[0] = (V1)->v[0] * (S) + (V2)->v[0] * (1 - (S));  \
+        (D)->v[1] = (V1)->v[1] * (S) + (V2)->v[1] * (1 - (S));  \
+        (D)->v[2] = (V1)->v[2] * (S) + (V2)->v[2] * (1 - (S));  \
+    } while (0)
 #define Vector3Distance(V1, V2) sqrtf(Vector3DistanceSquared((V1), (V2)))
 #define TEXT_TO_NUMBER_1(S) ((S)[0] - '0')
 #define TEXT_TO_NUMBER_2(S) (10 * TEXT_TO_NUMBER_1(S) + TEXT_TO_NUMBER_1((S)+1))
