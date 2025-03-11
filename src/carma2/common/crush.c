@@ -794,6 +794,52 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x0042ac70, AccumulateSquashVertices)
 
+void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor) {
+    int i;
+    float d_min, d_max;
+    br_vector3 min_v, max_v;
+
+    if (pModel == NULL || pParent_model == NULL) {
+        return;
+    }
+    d_max = d_min = BR_SCALAR_MAX;
+    BrMatrix34ApplyP(&min_v, &pModel->bounds.min, &pActor->t.t.mat);
+    BrMatrix34ApplyP(&max_v, &pModel->bounds.max, &pActor->t.t.mat);
+
+    for (i = 0; i < pParent_model->nvertices; i++) {
+        float d;
+
+        d = Vector3Distance(&min_v, &pParent_model->vertices[i].p);
+        if (d < d_min) {
+            pDetach_data->min_vertex = i;
+            d_min = d;
+        }
+
+        d = Vector3Distance(&max_v, &pParent_model->vertices[i].p);
+        if (d < d_max) {
+            pDetach_data->max_vertex = i;
+            d_max = d;
+        }
+    }
+}
+
+intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data) {
+    tUser_crush_data* user_crush_data;
+
+    user_crush_data = actor->user;
+    if (user_crush_data != NULL && user_crush_data->models[0] != NULL
+            && user_crush_data->crush_data != NULL && user_crush_data->crush_data->detach_data != NULL) {
+        tUser_crush_data* parent_user_crush_data;
+
+        parent_user_crush_data = actor->parent->user;
+
+        CalculateReferencePoints(user_crush_data->models[0], parent_user_crush_data->models[0],
+            user_crush_data->crush_data->detach_data, actor);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042be20, InitModelCrushDataCB)
+
 void (C2_HOOK_FASTCALL * PrepareCarForCrushing_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
 

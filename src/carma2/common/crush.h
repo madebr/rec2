@@ -61,6 +61,10 @@ int C2_HOOK_CDECL LinkCrushModel(br_actor* pActor, void* pData);
 
 intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData);
 
+void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor);
+
+intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data);
+
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec * pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
