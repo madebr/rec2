@@ -3505,6 +3505,10 @@ typedef struct {
 } tCrush_model_pool;
 
 typedef struct {
+    tU16 v[3];
+} tCompressed_vector3;
+
+typedef struct {
     undefined field_0x0[12];
 } tUser_detail_level_model;
 
