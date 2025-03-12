@@ -3205,6 +3205,11 @@ typedef struct tSmashable_level {
     tSmashable_texture_level_collision_type collision_type;
 } tSmashable_level;
 
+typedef struct {
+    tCar_spec* car;
+    float value;
+} tInitPhysCrushDataCB_Data;
+
 typedef struct  {
     tU8 field_0x0;
     undefined field_0x1;
@@ -3216,12 +3221,12 @@ typedef struct  {
     tU16 field_0xc;
     tU16 hinge1;
     tU16 hinge2;
-    undefined field_0x12[2];
+    tU16 field_0x12;
     tU8 field_0x14;
     tU8 field_0x15;
     undefined field_0x16[2];
-    undefined4 field_0x18;
-    undefined field_0x1c[4];
+    float field_0x18;
+    float field_0x1c;
     tU8 kev_o_flap;
     undefined field_0x21[7];
     tU8 is_door;
@@ -3269,7 +3274,7 @@ typedef struct  {
     undefined field_0xc[24];
     tDetach_type type;
     undefined4 field_0x28;
-    int field_0x2c;
+    tCar_spec* field_0x2c;
     tU16 field_0x30;
     undefined field_0x32[2];
     int count_shape_points; /* >0 if shape is poly, ==0 if box */
