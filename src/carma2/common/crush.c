@@ -823,6 +823,17 @@ void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pPare
     }
 }
 
+void (C2_HOOK_FASTCALL * SetUpShapeLimitingStuff_original)(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetUpShapeLimitingStuff_original(pCar_crush, pCar_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042b0e0, SetUpShapeLimitingStuff, SetUpShapeLimitingStuff_original)
+
 intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data) {
     tUser_crush_data* user_crush_data;
 
