@@ -811,6 +811,20 @@ int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2) {
 }
 C2_HOOK_FUNCTION(0x0042acb0, IncreasingCompare)
 
+int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
+    float v1 = *(const float*)pValue1;
+    float v2 = *(const float*)pValue2;
+
+    if (v2 < v1) {
+        return -1;
+    } else if (v2 == v1) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+C2_HOOK_FUNCTION(0x0042ace0, DecreasingCompare)
+
 void C2_HOOK_FASTCALL CheckHingePointOrder(tCar_crush_flap_data* pHinge, br_model* pModel, br_vector3* pPos) {
     br_vector3 tv1, tv2, tv3;
 

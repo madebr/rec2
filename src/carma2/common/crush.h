@@ -63,6 +63,8 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData);
 
 int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2);
 
+int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
+
 tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel);
 
 tU16 C2_HOOK_FASTCALL FindNearestParentVertex(br_actor* pActor, br_vector3* pPos);
