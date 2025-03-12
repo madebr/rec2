@@ -797,6 +797,22 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x0042ac70, AccumulateSquashVertices)
 
+tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel) {
+    tU16 closest_vertex = 0;
+    br_scalar closest_dist = BR_SCALAR_MAX;
+    tU16 i;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        br_scalar d = Vector3DistanceSquared(pPoint, &pModel->vertices[i].p);
+        if (d < closest_dist) {
+            closest_dist = d;
+            closest_vertex = i;
+        }
+    }
+    return closest_vertex;
+}
+C2_HOOK_FUNCTION(0x0042bb00, FindNearestVertex)
+
 void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor) {
     int i;
     float d_min, d_max;
