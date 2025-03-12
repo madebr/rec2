@@ -602,9 +602,12 @@ int C2_HOOK_FASTCALL LoadCarCrush(tCar_crush_buffer* pCar_crush_buffer, const ch
     if (version != 4) {
         FatalError(kFatalError_WrongCrushDataFileVersion_SDD, pPath, version, 4);
     }
+
     C2_HOOK_BUG_ON(sizeof(tCar_crush_spec) != 1404);
     car_crush = BrMemAllocate(sizeof(tCar_crush_spec), kMem_crush_data);
     *pCar_crush_spec = car_crush;
+
+    /* Sub member: Master-crush data */
     for (i = 0; i < 3; i++) {
         for (j = 0; j < 2; j++) {
             /* [0] Number of 'X/Y/Z mins' entries.
@@ -614,11 +617,11 @@ int C2_HOOK_FASTCALL LoadCarCrush(tCar_crush_buffer* pCar_crush_buffer, const ch
             if (count == 0) {
                 continue;
             }
-            if (count > REC2_ASIZE(car_crush->limits[i].min_max[j])) {
+            if (count > 2) {
                 FatalError(kFatalError_TooManyCrushLimits);
             }
             for (k = 0; k < count; k++) {
-                car_crush->limits[i].min_max[j][k] = GetAScalar(f);
+                car_crush->limits[i][j].values[k] = GetAScalar(f);
             }
         }
     }
