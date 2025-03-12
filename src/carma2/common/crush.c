@@ -797,6 +797,23 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x0042ac70, AccumulateSquashVertices)
 
+void C2_HOOK_FASTCALL CheckHingePointOrder(tCar_crush_flap_data* pHinge, br_model* pModel, br_vector3* pPos) {
+    br_vector3 tv1, tv2, tv3;
+
+    BrVector3Sub(&tv1, &pModel->vertices[pHinge->hinge1].p, &pModel->vertices[pHinge->hinge0].p);
+    BrVector3Sub(&tv2, &pModel->vertices[pHinge->hinge2].p, &pModel->vertices[pHinge->hinge0].p);
+    BrVector3Cross(&tv3, &tv2, &tv1);
+    Vector3Average(&tv1, &pModel->bounds.min, &pModel->bounds.max);
+    BrVector3Sub(&tv1, &tv1, pPos);
+    if (BrVector3Dot(&tv1, &tv3) > 0.f) {
+        tU16 tmp;
+
+        tmp = pHinge->hinge0;
+        pHinge->hinge0 = pHinge->hinge1;
+        pHinge->hinge1 = tmp;
+    }
+}
+
 tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel) {
     tU16 closest_vertex = 0;
     br_scalar closest_dist = BR_SCALAR_MAX;
@@ -813,6 +830,16 @@ tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel) {
 }
 C2_HOOK_FUNCTION(0x0042bb00, FindNearestVertex)
 
+tU16 C2_HOOK_FASTCALL FindNearestParentVertex(br_actor* pActor, br_vector3* pPos) {
+    br_vector3 p;
+
+    if (pActor->parent == NULL || pActor->parent->user == NULL || ((tUser_crush_data*)pActor->parent->user)->models[0] == NULL) {
+        PDFatalError("I can't cope flapping bit doesn't have a valid parent");
+    }
+    BrMatrix34ApplyP(&p, pPos, &pActor->t.t.mat);
+    return FindNearestVertex(&p,  ((tUser_crush_data*)pActor->parent->user)->models[0]);
+}
+
 void (C2_HOOK_FASTCALL * SetUpSemiDetachJointStuff_original)(tCar_crush_detach_data* pDetach_data, br_model* pModel, br_bounds3* pBounds);
 void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_data, br_model* pModel, br_bounds3* pBounds) {
 
@@ -823,6 +850,50 @@ void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x10042cf0, SetUpSemiDetachJointStuff, SetUpSemiDetachJointStuff_original)
+
+intptr_t C2_HOOK_CDECL InitPhysCrushDataCB(br_actor* actor, void* data) {
+    tInitPhysCrushDataCB_Data* context;
+    tUser_crush_data* user_crush_data;
+    tCar_crush_buffer_entry* crush_data;
+    br_model* model;
+    tCar_crush_flap_data* flap_data;
+
+    context = data;
+    user_crush_data = actor->user;
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    crush_data = user_crush_data->crush_data;
+    model = user_crush_data->models[0];
+    if (crush_data == NULL || model == NULL) {
+        return 0;
+    }
+    crush_data->field_0x24 = (
+            (model->bounds.max.v[2] - model->bounds.min.v[2])
+          * (model->bounds.max.v[1] - model->bounds.min.v[1])
+          * (model->bounds.max.v[0] - model->bounds.min.v[0])) * context->value;
+    if (crush_data->field_0x24 < 0.01f) {
+        crush_data->field_0x24 = 0.01f;
+    }
+    flap_data = crush_data->flap_data;
+    if (flap_data != NULL) {
+        br_vector3 tv;
+        if ((flap_data->kev_o_flap & 0x2) == 0) {
+            CheckHingePointOrder(flap_data, model, &context->car->collision_info->cmpos);
+        }
+        flap_data->field_0xc = FindNearestParentVertex(actor, &model->vertices[flap_data->hinge0].p);
+        flap_data->field_0x12 = FindNearestParentVertex(actor, &model->vertices[flap_data->hinge2].p);
+        BrVector3Sub(&tv, &model->vertices[flap_data->hinge2].p, &model->vertices[flap_data->hinge1].p);
+        flap_data->field_0x1c = BrVector3Length(&tv) / 2.f;
+    }
+    if (crush_data->detach_data != NULL) {
+        crush_data->detach_data->field_0x2c = context->car;
+
+        SetUpSemiDetachJointStuff(crush_data->detach_data, model, &context->car->collision_info->bb1);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042b7f0, InitPhysCrushDataCB)
 
 void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor) {
     int i;

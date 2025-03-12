@@ -3200,6 +3200,11 @@ typedef struct tSmashable_level {
     tSmashable_texture_level_collision_type collision_type;
 } tSmashable_level;
 
+typedef struct {
+    tCar_spec* car;
+    float value;
+} tInitPhysCrushDataCB_Data;
+
 typedef struct  {
     tU8 field_0x0;
     undefined field_0x1;
