@@ -3283,7 +3283,7 @@ typedef struct {
 } tCar_crush_buffer;
 
 typedef struct {
-    float min_max[2][2];
+    float values[4];
 } tCar_crush_limit;
 
 typedef struct {
@@ -3302,8 +3302,8 @@ typedef struct tCar_crush_spec {
     undefined2 field_0x26;
     int field_0x28;
     int count_limits[3][2];
-    tCar_crush_limit limits[3];
-    undefined field_0x74[192];
+    tCar_crush_limit limits[3][2];
+    undefined field_0xa4[144];
     tU8 field_0x134;
     undefined field_0x135[15];
     tU8 field_0x144;
