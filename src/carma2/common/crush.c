@@ -813,6 +813,17 @@ tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel) {
 }
 C2_HOOK_FUNCTION(0x0042bb00, FindNearestVertex)
 
+void (C2_HOOK_FASTCALL * SetUpSemiDetachJointStuff_original)(tCar_crush_detach_data* pDetach_data, br_model* pModel, br_bounds3* pBounds);
+void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_data, br_model* pModel, br_bounds3* pBounds) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetUpSemiDetachJointStuff_original(pDetach_data, pModel, pBounds);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x10042cf0, SetUpSemiDetachJointStuff, SetUpSemiDetachJointStuff_original)
+
 void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor) {
     int i;
     float d_min, d_max;

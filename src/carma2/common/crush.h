@@ -63,6 +63,8 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData);
 
 tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel);
 
+void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_data, br_model* pModel, br_bounds3* pBounds);
+
 void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor);
 
 void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);
