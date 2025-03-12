@@ -797,6 +797,20 @@ intptr_t C2_HOOK_CDECL AccumulateSquashVertices(br_actor* actor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x0042ac70, AccumulateSquashVertices)
 
+int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2) {
+    float v1 = *(const float*)pValue1;
+    float v2 = *(const float*)pValue2;
+
+    if (v1 < v2) {
+        return -1;
+    } else if (v1 == v2) {
+        return 0;
+    } else {
+        return 1;
+    }
+}
+C2_HOOK_FUNCTION(0x0042acb0, IncreasingCompare)
+
 void C2_HOOK_FASTCALL CheckHingePointOrder(tCar_crush_flap_data* pHinge, br_model* pModel, br_vector3* pPos) {
     br_vector3 tv1, tv2, tv3;
 
