@@ -3231,6 +3231,31 @@ typedef enum {
     eDetachType_kev_o_flap=5
 } tDetach_type;
 
+typedef struct {
+    br_vector3 field_0x0;
+    br_vector3 field_0xc;
+    br_vector3 field_0x18;
+    undefined field_0x24[0x14];
+} tCar_crush_reordered_shape_info;
+
+typedef struct {
+    tCollision_shape_polyhedron* field_0x0;
+    tCollision_shape_polyhedron* field_0x4;
+    undefined4 field_0x8;
+    int count_points;
+    int count_points_add_8;
+    undefined field_0x14[4];
+    tCar_crush_reordered_shape_info* field_0x18;
+} tCar_crush_shape_info;
+
+typedef struct {
+    struct {
+        int network_id;
+        undefined field_0x4;
+        undefined field_0x5[3];
+    } items[12];
+} tCar_crush_network_shapes;
+
 typedef struct  {
     undefined4 field_0x0;
     float force;
@@ -3291,13 +3316,13 @@ typedef struct {
 } tCar_crush_vertex_data;
 
 typedef struct tCar_crush_spec {
-    int field_0x0;
-    undefined* field_0x4;
+    int count_shapes;
+    tCar_crush_shape_info* field_0x4;
     int expand_bounding_box;
     tCollision_shape *field_0xc;
     undefined field_0x10[12];
     int version_le_100;
-    undefined* field_0x20;
+    tCar_crush_network_shapes* network_stuff;
     undefined2 field_0x24;
     undefined2 field_0x26;
     int field_0x28;
@@ -3325,12 +3350,12 @@ typedef struct tCar_crush_spec {
     float snappability_factor;
     float split_y_pos;
     undefined field_0x4c4[8];
-    br_actor* actor;
+    br_actor* actor; /* ->user is tCar_spec pointer */
     br_actor* model_actor;
     undefined field_0x4d4[132];
     br_vector3 driver_position;
-    struct tCollisionShape_Polyhedron * field1245_0x564[4];
-    int field_0x574;
+    tCollision_shape_wireframe* field_0x564[4];
+    tU32 field_0x574;
     int nb_entries;
 } tCar_crush_spec;
 

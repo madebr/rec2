@@ -67,6 +67,14 @@ void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_
 
 intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data);
 
+void C2_HOOK_FASTCALL CopyShapePolyhedron(tCollision_shape_polyhedron* pDest, const tCollision_shape_polyhedron* pSrc);
+
+void C2_HOOK_FASTCALL InitNetworkShapesStuff(tCar_crush_spec* pCar_crush);
+
+void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tCollision_info* pCollision_info, tCar_spec* pCar_spec);
+
+void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec);
+
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec * pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);

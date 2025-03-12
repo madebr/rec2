@@ -854,6 +854,118 @@ intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data) {
 }
 C2_HOOK_FUNCTION(0x0042be20, InitModelCrushDataCB)
 
+void C2_HOOK_FASTCALL CopyShapePolyhedron(tCollision_shape_polyhedron* pDest, const tCollision_shape_polyhedron* pSrc) {
+    int i;
+
+    pDest->common.type = kCollisionShapeType_Polyhedron;
+    pDest->polyhedron.count_points = pSrc->polyhedron.count_points;
+    for (i = 0; i < pSrc->polyhedron.count_points; i++) {
+        BrVector3Copy(&pDest->polyhedron.points[i], &pSrc->polyhedron.points[i]);
+    }
+    FillInShape((tCollision_shape*)pDest);
+}
+
+void C2_HOOK_FASTCALL InitNetworkShapesStuff(tCar_crush_spec* pCar_crush) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_network_shapes) != 0x60);
+
+    pCar_crush->field_0x24 = 0;
+    pCar_crush->field_0x26 = 0;
+
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        pCar_crush->network_stuff = BrMemAllocate(sizeof(tCar_crush_network_shapes), kMem_crush_data);
+        for (i = 1; i < C2V(gNumber_of_net_players); i++) {
+            pCar_crush->network_stuff->items[i - 1].network_id = C2V(gNet_players)[i].ID;
+            pCar_crush->network_stuff->items[i - 1].field_0x4 = 0;
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tCollision_info* pCollision_info, tCar_spec* pCar_spec) {
+    tCollision_shape* shape;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_shape_info) != 0x1c);
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_reordered_shape_info) != 0x38);
+
+    pCar_crush->count_shapes = 0;
+    for (shape = pCollision_info->shape; shape != NULL; shape = shape->common.next) {
+        pCar_crush->count_shapes += 1;
+    }
+
+    pCar_crush->field_0x4 = BrMemAllocate(pCar_crush->count_shapes * sizeof(tCar_crush_shape_info), kMem_crush_data);
+    for (i = 0, shape = pCollision_info->shape; shape != NULL; shape = shape->common.next, i++) {
+        int j;
+        tCar_crush_shape_info* crush_shape_info = &pCar_crush->field_0x4[i];
+
+        crush_shape_info->count_points = shape->polyhedron.polyhedron.count_points;
+        crush_shape_info->count_points_add_8 = crush_shape_info->count_points + 8;
+        crush_shape_info->field_0x0 = AllocateShapePolyhedron(crush_shape_info->count_points_add_8, kMem_crush_data);
+        CopyShapePolyhedron(crush_shape_info->field_0x0, (tCollision_shape_polyhedron*)shape);
+        crush_shape_info->field_0x4 = AllocateShapePolyhedron(crush_shape_info->count_points_add_8, kMem_crush_data);
+        crush_shape_info->field_0x18 = BrMemAllocate(crush_shape_info->count_points_add_8 * sizeof(tCar_crush_reordered_shape_info), kMem_crush_data);
+        for (j = 0; j < crush_shape_info->count_points; j++) {
+            BrVector3Copy(&crush_shape_info->field_0x18[j].field_0x0, &shape->polyhedron.polyhedron.points[j]);
+            BrVector3Copy(&crush_shape_info->field_0x18[j].field_0xc, &crush_shape_info->field_0x18[j].field_0x0);
+            BrVector3Copy(&crush_shape_info->field_0x18[j].field_0x18, &crush_shape_info->field_0x18[j].field_0x0);
+        }
+        crush_shape_info->field_0x8 = 0;
+    }
+    pCar_crush->field_0xc = pCollision_info->shape;
+    pCollision_info->shape = (tCollision_shape*)pCar_crush->field_0x4->field_0x0;
+    for (i = 0; i < pCar_crush->count_shapes - 1; i++) {
+        pCar_crush->field_0x4[i].field_0x0->common.next = (tCollision_shape*)pCar_crush->field_0x4[i + 1].field_0x0;
+    }
+    pCar_crush->field_0x4[pCar_crush->count_shapes - 1].field_0x0->common.next = NULL;
+    pCar_crush->expand_bounding_box = 0;
+    SetUpShapeLimitingStuff(pCar_crush, pCar_spec);
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        InitNetworkShapesStuff(pCar_crush);
+    }
+}
+
+void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec) {
+    tCar_crush_spec* car_crush;
+    tCollision_info* collision_info;
+    int i;
+
+    car_crush = pCar_spec->car_crush_spec;
+    collision_info = pCar_spec->collision_info;
+    if (car_crush == NULL || collision_info == NULL) {
+        return;
+    }
+    for (i = 0; i < 3; i++) {
+        car_crush->limits[i][0].values[car_crush->count_limits[i][0]] = collision_info->bb1.min.v[i] - 0.02898551f;
+        car_crush->limits[i][1].values[car_crush->count_limits[i][1]] = collision_info->bb1.max.v[i] + 0.02898551f;
+        car_crush->count_limits[i][0] += 1;
+        car_crush->count_limits[i][1] += 1;
+    }
+    InitShapeStuff(car_crush, collision_info, pCar_spec);
+    for (i = 0; i < 4; i++) {
+        car_crush->field_0x564[i] = AllocateWireFrameCollisionShape(2, 1, kMem_crush_data);
+        BrVector3InvScale(&car_crush->field_0x564[i]->wireframe.points[0], &pCar_spec->wpos[i], WORLD_SCALE);
+        BrVector3InvScale(&car_crush->field_0x564[i]->wireframe.points[1], &pCar_spec->wpos[i], WORLD_SCALE);
+        car_crush->field_0x564[i]->wireframe.points[1].v[1] = 0.f;
+        car_crush->field_0x564[i]->wireframe.lines[0].index1 = 0;
+        car_crush->field_0x564[i]->wireframe.lines[0].index2 = 1;
+
+        FillInShape((tCollision_shape*)car_crush->field_0x564[i]);
+    }
+    car_crush->actor->user = pCar_spec;
+    car_crush->field_0x574 = 0;
+    for (i = 0; ; i++) {
+        int c = c2_tolower(pCar_spec->name[i]);
+        if (c == 0) {
+            break;
+        }
+        car_crush->field_0x574 *= 2;
+        car_crush->field_0x574 += c;
+        car_crush->field_0x574 &= 0xffff;
+    }
+}
+C2_HOOK_FUNCTION(0x0042ad10, InitPhysMasterCrushData)
+
 void (C2_HOOK_FASTCALL * PrepareCarForCrushing_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
 
