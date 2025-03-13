@@ -67,6 +67,8 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
 
 tU16 C2_HOOK_FASTCALL CrushLimitNumber(br_vector3* pPoint, tCar_crush_limit* pLimits, int* pCount_limits, int* pInvalid);
 
+void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec);
+
 tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel);
 
 tU16 C2_HOOK_FASTCALL FindNearestParentVertex(br_actor* pActor, br_vector3* pPos);
@@ -75,11 +77,15 @@ void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_
 
 intptr_t C2_HOOK_CDECL InitPhysCrushDataCB(br_actor* actor, void* data);
 
+void C2_HOOK_FASTCALL InitPhysCrushData(tCar_spec* pCar_spec);
+
 void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor);
 
 void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);
 
 intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data);
+
+void C2_HOOK_FASTCALL InitModelCrushData(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL CopyShapePolyhedron(tCollision_shape_polyhedron* pDest, const tCollision_shape_polyhedron* pSrc);
 
@@ -91,7 +97,13 @@ void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data);
 
-void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec * pCar_spec);
+intptr_t C2_HOOK_CDECL InitVertexDataCB(br_actor* pActor, void* data);
+
+void C2_HOOK_FASTCALL InitVertexData(tCar_spec* pCar_spec);
+
+void C2_HOOK_FASTCALL CheckWheelPositions(const tCar_spec* pCar_spec);
+
+void C2_HOOK_FASTCALL InitPhysModCrushData(tCar_spec * pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 

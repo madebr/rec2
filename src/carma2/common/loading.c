@@ -4473,7 +4473,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     pCar_spec->field_0x18c8 = 0;
     DRActorEnumRecurse(pCar_spec->car_model_actor, AttachGroovidelic, NULL);
     AttachCrushDataToActorModels(pCar_spec->car_model_actor, pCar_spec);
-    PrepareCarForCrushing(pCar_spec);
+    InitPhysModCrushData(pCar_spec);
     ClosePackFileAndSetTiffLoading(twt);
     car_material = BrMaterialAllocate("PorterIsAWxnkxr");
     if (AddMaterialToStorage(pStorage_space, car_material) == eStorage_not_enough_room) {
