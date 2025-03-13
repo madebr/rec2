@@ -3521,7 +3521,9 @@ typedef struct {
 } tModel_detail_vertex_data;
 
 typedef struct {
-    undefined field_0x0[12];
+    undefined field_0x0[4];
+    tModel_detail_vertex_data* field_0x4;
+    undefined field_0x8[4];
 } tUser_detail_level_model;
 
 typedef struct {
