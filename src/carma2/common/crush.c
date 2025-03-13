@@ -1257,7 +1257,7 @@ void C2_HOOK_FASTCALL InitPhysModCrushData(tCar_spec* pCar_spec) {
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0042aa20, InitPhysModCrushData, PrepareCarForCrushing_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0042aa20, InitPhysModCrushData, InitPhysModCrushData_original)
 
 void (C2_HOOK_FASTCALL * TotallyRepairACar_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
