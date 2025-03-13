@@ -908,7 +908,7 @@ void C2_HOOK_FASTCALL SetUpSemiDetachJointStuff(tCar_crush_detach_data* pDetach_
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x10042cf0, SetUpSemiDetachJointStuff, SetUpSemiDetachJointStuff_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0042bb90, SetUpSemiDetachJointStuff, SetUpSemiDetachJointStuff_original)
 
 intptr_t C2_HOOK_CDECL InitPhysCrushDataCB(br_actor* actor, void* data) {
     tInitPhysCrushDataCB_Data* context;
