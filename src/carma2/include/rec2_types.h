@@ -3247,7 +3247,10 @@ typedef struct {
     br_vector3 field_0x0;
     br_vector3 field_0xc;
     br_vector3 field_0x18;
-    undefined field_0x24[0x14];
+    float field_0x24;
+    tU16 field_0x28;
+    undefined field_0x2a[2];
+    undefined field_0x2c[0xc];
 } tCar_crush_reordered_shape_info;
 
 typedef struct {
@@ -3348,7 +3351,9 @@ typedef struct tCar_crush_spec {
     int field_0x28;
     tCar_crush_count_limits count_limits;
     tCar_crush_limits limits;
-    undefined field_0xa4[144];
+    tCar_crush_count_limits field_0xa4;
+    tCar_crush_limits field_0xbc;
+    br_bounds3 field_0x11c;
     tU8 field_0x134;
     undefined field_0x135[15];
     tU8 field_0x144;
