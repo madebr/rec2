@@ -80,6 +80,7 @@ typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_reset(void);
 typedef int C2_HOOK_FASTCALL tPiping_chunk_callback_calc_length(void*);
 typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_apply(void*);
 typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_undo(void*, void*);
+typedef intptr_t C2_HOOK_FASTCALL tDRActorEnumRecurseWithTranslation_cbfn(br_actor*, br_vector3*, void*);
 
 typedef enum  {
     eNet_synch_host_first = 0,
