@@ -996,6 +996,46 @@ void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pPare
     }
 }
 
+intptr_t C2_HOOK_FASTCALL SoftnessOfNearestPointCB(br_actor* pActor, br_vector3* pPoint, void* pData) {
+    tUser_crush_data* user_crush_data = pActor->user;
+    tCar_crush_buffer_entry* crush_data;
+    br_model* model;
+    tSoftnessOfNearestPointCB_Context* context = pData;
+    br_vector3 delta_point;
+    float dist_bb_min;
+    float dist_bb_max;
+    float dist_p;
+    int i;
+
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    crush_data = user_crush_data->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
+    model = user_crush_data->models[0];
+    if (model == NULL) {
+        return 0;
+    }
+    BrVector3Sub(&delta_point, context->point, pPoint);
+    dist_bb_min = Vector3DistanceSquared(&delta_point, &model->bounds.min);
+    dist_bb_max = Vector3DistanceSquared(&delta_point, &model->bounds.max);
+    dist_p = MAX(dist_bb_min, dist_bb_max);
+    if (dist_p - Vector3DistanceSquared(&model->bounds.max, &model->bounds.min) <= context->distance) {
+        for (i = 0; i < model->nvertices; i++) {
+            float d;
+            d = Vector3DistanceSquared(&model->vertices[i].p, &delta_point);
+            if (d < context->distance) {
+                context->distance = d;
+                context->softness_factor = crush_data->softness_factor;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042b590, SoftnessOfNearestPointCB)
+
 intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* cbfn, void* pContext) {
     br_vector3 delta;
     intptr_t result;
