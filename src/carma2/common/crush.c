@@ -1229,3 +1229,14 @@ void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00436170, CrushBendFlapRend, CrushBendFlapRend_original)
+
+void (C2_HOOK_FASTCALL * LinkSmashies_original)(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data);
+void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LinkSmashies_original(pActor, pCrush_data, pVertex_data);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f57c0, LinkSmashies, LinkSmashies_original)
