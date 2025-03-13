@@ -3211,6 +3211,12 @@ typedef struct {
     float value;
 } tInitPhysCrushDataCB_Data;
 
+typedef struct {
+    br_vector3* point;
+    float distance;
+    float softness_factor;
+} tSoftnessOfNearestPointCB_Context;
+
 typedef struct  {
     tU8 field_0x0;
     undefined field_0x1;
