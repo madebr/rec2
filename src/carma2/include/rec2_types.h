@@ -3322,6 +3322,14 @@ typedef struct {
 } tCar_crush_limit;
 
 typedef struct {
+    tCar_crush_limit limits[3][2];
+} tCar_crush_limits;
+
+typedef struct {
+    int counts[3][2];
+} tCar_crush_count_limits;
+
+typedef struct {
     undefined field_0x0[6];
 } tCar_crush_vertex_data;
 
@@ -3336,8 +3344,8 @@ typedef struct tCar_crush_spec {
     undefined2 field_0x24;
     undefined2 field_0x26;
     int field_0x28;
-    int count_limits[3][2];
-    tCar_crush_limit limits[3][2];
+    tCar_crush_count_limits count_limits;
+    tCar_crush_limits limits;
     undefined field_0xa4[144];
     tU8 field_0x134;
     undefined field_0x135[15];
