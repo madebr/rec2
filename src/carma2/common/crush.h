@@ -89,6 +89,8 @@ void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tCollision_inf
 
 void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data);
+
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec * pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
