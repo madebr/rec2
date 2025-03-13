@@ -1103,6 +1103,17 @@ void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec) {
 }
 C2_HOOK_FUNCTION(0x0042ad10, InitPhysMasterCrushData)
 
+void (C2_HOOK_FASTCALL * SetFlapCheckVertices_original)(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data);
+void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetFlapCheckVertices_original(pFlap_data, pModel, pVertex_data);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042c0e0, SetFlapCheckVertices, SetFlapCheckVertices_original)
+
 void (C2_HOOK_FASTCALL * PrepareCarForCrushing_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL PrepareCarForCrushing(tCar_spec* pCar_spec) {
 
