@@ -1061,13 +1061,109 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br
 }
 C2_HOOK_FUNCTION(0x0042b760, DRActorEnumRecurseWithTranslation)
 
+float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* pPoint) {
+    tSoftnessOfNearestPointCB_Context softcb_data;
+
+    softcb_data.point = pPoint;
+    softcb_data.distance = BR_SCALAR_MAX;
+    softcb_data.softness_factor = 1.f;
+
+    DRActorEnumRecurseWithTranslation(pCar_spec->car_model_actor, NULL, SoftnessOfNearestPointCB, &softcb_data);
+    return softcb_data.softness_factor;
+}
+
 void (C2_HOOK_FASTCALL * SetUpShapeLimitingStuff_original)(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetUpShapeLimitingStuff_original(pCar_crush, pCar_spec);
 #else
-    NOT_IMPLEMENTED();
+    br_bounds3 wheel_all_bounds;
+    int i;
+
+    BrVector3Copy(&wheel_all_bounds.min, &pCar_spec->wpos[0]);
+    BrVector3Copy(&wheel_all_bounds.max, &wheel_all_bounds.min);
+    for (i = 1; i < 4; i++) {
+        int j;
+
+        for (j = 0; j < 3; j++) {
+            if (pCar_spec->wpos[i].v[j] < wheel_all_bounds.min.v[j]) {
+                wheel_all_bounds.min.v[j] = pCar_spec->wpos[i].v[j];
+            } else if (pCar_spec->wpos[i].v[j] > wheel_all_bounds.max.v[j]) {
+                wheel_all_bounds.max.v[j] = pCar_spec->wpos[i].v[j];
+            }
+        }
+    }
+    BrVector3InvScale(&wheel_all_bounds.min, &wheel_all_bounds.min, WORLD_SCALE);
+    BrVector3InvScale(&wheel_all_bounds.max, &wheel_all_bounds.max, WORLD_SCALE);
+    for (i = 0; i < REC2_ASIZE(pCar_spec->wheel_actors); i++) {
+        br_actor* wheel_actor = pCar_spec->wheel_actors[i];
+        tUser_crush_data* user_crush_data;
+        br_model* wheel_model;
+        br_matrix34 wheel_to_car;
+        br_bounds3 wheel_bounds;
+        int j;
+
+        if (wheel_actor == NULL) {
+            continue;
+        }
+        user_crush_data = wheel_actor->user;
+        if (user_crush_data == NULL) {
+            continue;
+        }
+        wheel_model = user_crush_data->models[0];
+        if (wheel_model == NULL) {
+            continue;
+        }
+        BrActorToActorMatrix34(&wheel_to_car, wheel_actor, pCar_spec->car_model_actor);
+        BrVector3Add(&wheel_bounds.min, &wheel_model->bounds.min, (br_vector3*)wheel_to_car.m[3]);
+        BrVector3Add(&wheel_bounds.max, &wheel_model->bounds.max, (br_vector3*)wheel_to_car.m[3]);
+        for (j = 0; j < 3; j++) {
+
+            if (wheel_bounds.min.v[j] < wheel_all_bounds.min.v[j]) {
+                wheel_all_bounds.min.v[j] = wheel_bounds.min.v[j];
+            } else if (wheel_bounds.max.v[j] > wheel_all_bounds.max.v[j]) {
+                wheel_all_bounds.max.v[j] = wheel_bounds.max.v[j];
+            }
+        }
+    }
+    for (i = 0; i < 3; i++) {
+        int j;
+
+        for (j = 0; j < pCar_crush->count_limits.counts[i][0]; j++) {
+            pCar_crush->field_0xbc.limits[i][0].values[j] = pCar_crush->limits.limits[i][0].values[j];
+        }
+        pCar_crush->field_0xbc.limits[i][0].values[pCar_crush->count_limits.counts[i][0]] = wheel_all_bounds.max.v[i];
+        pCar_crush->field_0xa4.counts[i][0] += 1;
+
+        for (j = 0; j < pCar_crush->count_limits.counts[i][1]; j++) {
+            pCar_crush->field_0xbc.limits[i][1].values[j] = pCar_crush->limits.limits[i][1].values[j];
+        }
+        pCar_crush->field_0xbc.limits[i][1].values[pCar_crush->count_limits.counts[i][1]] = wheel_all_bounds.min.v[i];
+        pCar_crush->field_0xa4.counts[i][1] += 1;
+    }
+    for (i = 0; i < 3; i++) {
+        c2_qsort(pCar_crush->field_0xbc.limits[i][0].values, pCar_crush->field_0xa4.counts[i][0], sizeof(float), DecreasingCompare);
+        c2_qsort(pCar_crush->field_0xbc.limits[i][1].values, pCar_crush->field_0xa4.counts[i][1], sizeof(float), IncreasingCompare);
+    }
+    for (i = 0; i < pCar_crush->count_shapes; i++) {
+        int j;
+        tCar_crush_shape_info* shape_info = &pCar_crush->field_0x4[i];
+
+        for (j = 0; j < shape_info->count_points; j++) {
+            int failed;
+
+            shape_info->field_0x18[j].field_0x28 = CrushLimitNumber(
+                &shape_info->field_0x18[j].field_0x18,
+                &pCar_crush->field_0xbc, &pCar_crush->field_0xa4,
+                &failed);
+            if (failed == 0) {
+                shape_info->field_0x18[j].field_0x24 = SoftnessOfNearestPoint(pCar_spec, &shape_info->field_0x18[j].field_0x18);
+            } else {
+                shape_info->field_0x18[j].field_0x24 = 0.f;
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042b0e0, SetUpShapeLimitingStuff, SetUpShapeLimitingStuff_original)
