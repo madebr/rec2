@@ -81,6 +81,8 @@ void C2_HOOK_FASTCALL InitPhysCrushData(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pParent_model, tCar_crush_detach_data* pDetach_data, br_actor* pActor);
 
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* cbfn, void* pContext);
+
 void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);
 
 intptr_t C2_HOOK_CDECL InitModelCrushDataCB(br_actor* actor, void* data);

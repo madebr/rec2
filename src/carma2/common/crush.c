@@ -996,6 +996,31 @@ void C2_HOOK_FASTCALL CalculateReferencePoints(br_model* pModel, br_model* pPare
     }
 }
 
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br_vector3* pDelta, tDRActorEnumRecurseWithTranslation_cbfn* cbfn, void* pContext) {
+    br_vector3 delta;
+    intptr_t result;
+    br_actor* a;
+
+    if (pDelta == NULL) {
+        BrVector3Set(&delta, 0.f, 0.f, 0.f);
+    } else {
+        BrVector3Add(&delta, (br_vector3*)pActor->t.t.mat.m[3], pDelta);
+    }
+
+    result = cbfn(pActor, &delta, pContext);
+    if (result != 0) {
+        return result;
+    }
+    for(a = pActor->children; a != NULL; a = a->next) {
+        result = DRActorEnumRecurseWithTranslation(a, &delta, cbfn, pContext);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042b760, DRActorEnumRecurseWithTranslation)
+
 void (C2_HOOK_FASTCALL * SetUpShapeLimitingStuff_original)(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL SetUpShapeLimitingStuff(tCar_crush_spec* pCar_crush, tCar_spec* pCar_spec) {
 
