@@ -825,6 +825,17 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
 }
 C2_HOOK_FUNCTION(0x0042ace0, DecreasingCompare)
 
+tU16 (C2_HOOK_FASTCALL * CrushLimitNumber_original)(br_vector3* pPoint, tCar_crush_limit* pLimits, int* pCount_limits, int* pInvalid);
+tU16 C2_HOOK_FASTCALL CrushLimitNumber(br_vector3* pPoint, tCar_crush_limit* pLimits, int* pCount_limits, int* pInvalid) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return CrushLimitNumber_original(pPoint, pLimits, pCount_limits, pInvalid);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042b4c0, CrushLimitNumber, CrushLimitNumber_original)
+
 void C2_HOOK_FASTCALL CheckHingePointOrder(tCar_crush_flap_data* pHinge, br_model* pModel, br_vector3* pPos) {
     br_vector3 tv1, tv2, tv3;
 
