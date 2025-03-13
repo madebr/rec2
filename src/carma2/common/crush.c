@@ -616,7 +616,7 @@ int C2_HOOK_FASTCALL LoadCarCrush(tCar_crush_buffer* pCar_crush_buffer, const ch
             /* [0] Number of 'X/Y/Z mins' entries.
              * [1] Number of 'X/Y/Z maxs' entries. */
             count = GetAnInt(f);
-            car_crush->count_limits[i][j] = count;
+            car_crush->count_limits.counts[i][j] = count;
             if (count == 0) {
                 continue;
             }
@@ -624,7 +624,7 @@ int C2_HOOK_FASTCALL LoadCarCrush(tCar_crush_buffer* pCar_crush_buffer, const ch
                 FatalError(kFatalError_TooManyCrushLimits);
             }
             for (k = 0; k < count; k++) {
-                car_crush->limits[i][j].values[k] = GetAScalar(f);
+                car_crush->limits.limits[i][j].values[k] = GetAScalar(f);
             }
         }
     }
@@ -828,8 +828,8 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
 }
 C2_HOOK_FUNCTION(0x0042ace0, DecreasingCompare)
 
-tU16 (C2_HOOK_FASTCALL * CrushLimitNumber_original)(br_vector3* pPoint, tCar_crush_limit* pLimits, int* pCount_limits, int* pInvalid);
-tU16 C2_HOOK_FASTCALL CrushLimitNumber(br_vector3* pPoint, tCar_crush_limit* pLimits, int* pCount_limits, int* pInvalid) {
+tU16 (C2_HOOK_FASTCALL * CrushLimitNumber_original)(br_vector3* pPoint, tCar_crush_limits* pLimits, tCar_crush_count_limits* pCount_limits, int* pInvalid);
+tU16 C2_HOOK_FASTCALL CrushLimitNumber(br_vector3* pPoint, tCar_crush_limits* pLimits, tCar_crush_count_limits* pCount_limits, int* pInvalid) {
 
 #if defined(C2_HOOKS_ENABLED)
     return CrushLimitNumber_original(pPoint, pLimits, pCount_limits, pInvalid);
@@ -1110,10 +1110,10 @@ void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec) {
         return;
     }
     for (i = 0; i < 3; i++) {
-        car_crush->limits[i][0].values[car_crush->count_limits[i][0]] = collision_info->bb1.min.v[i] - 0.02898551f;
-        car_crush->limits[i][1].values[car_crush->count_limits[i][1]] = collision_info->bb1.max.v[i] + 0.02898551f;
-        car_crush->count_limits[i][0] += 1;
-        car_crush->count_limits[i][1] += 1;
+        car_crush->limits.limits[i][0].values[car_crush->count_limits.counts[i][0]] = collision_info->bb1.min.v[i] - 0.02898551f;
+        car_crush->limits.limits[i][1].values[car_crush->count_limits.counts[i][1]] = collision_info->bb1.max.v[i] + 0.02898551f;
+        car_crush->count_limits.counts[i][0] += 1;
+        car_crush->count_limits.counts[i][1] += 1;
     }
     InitShapeStuff(car_crush, collision_info, pCar_spec);
     for (i = 0; i < 4; i++) {
@@ -1158,7 +1158,7 @@ void C2_HOOK_FASTCALL InitModelVertexData(tModel_detail_vertex_data* pVertex_dat
         int invalid;
 
         CompressVector3(&pVertex_data[i].p, &pModel->vertices[i].p, -10.f, 10.f);
-        pVertex_data[i].limit_number = CrushLimitNumber(&pModel->vertices[i].p, (tCar_crush_limit*)pCar_crush_spec->limits, (int*)pCar_crush_spec->count_limits, &invalid);
+        pVertex_data[i].limit_number = CrushLimitNumber(&pModel->vertices[i].p, &pCar_crush_spec->limits, &pCar_crush_spec->count_limits, &invalid);
     }
     if (pDetail_level == 0 && pCrush_data != NULL && pCrush_data->flap_data != NULL) {
 
@@ -1202,8 +1202,8 @@ void C2_HOOK_FASTCALL InitVertexData(tCar_spec* pCar_spec) {
         return;
     }
     for (i = 0; i < 3; i++) {
-        c2_qsort(car_crush_spec->limits[i][0].values, car_crush_spec->count_limits[i][0], sizeof(float), DecreasingCompare);
-        c2_qsort(car_crush_spec->limits[i][1].values, car_crush_spec->count_limits[i][1], sizeof(float), IncreasingCompare);
+        c2_qsort(car_crush_spec->limits.limits[i][0].values, car_crush_spec->count_limits.counts[i][0], sizeof(float), DecreasingCompare);
+        c2_qsort(car_crush_spec->limits.limits[i][1].values, car_crush_spec->count_limits.counts[i][1], sizeof(float), IncreasingCompare);
     }
     DRActorEnumRecurse(pCar_spec->car_model_actor, InitVertexDataCB, pCar_spec);
 }
