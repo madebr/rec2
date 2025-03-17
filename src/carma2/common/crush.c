@@ -266,26 +266,6 @@ void C2_HOOK_FASTCALL ReadCrushSettings(FILE* file) {
 }
 C2_HOOK_FUNCTION(0x00429bb0, ReadCrushSettings)
 
-br_scalar C2_HOOK_FASTCALL SquaredDistanceFromLineSegment(br_vector3* pP, br_vector3* pA, br_vector3* pB) {
-    br_vector3 v1;
-    br_vector3 v2;
-    br_scalar f;
-
-    BrVector3Sub(&v1, pB, pA);
-    BrVector3Sub(&v2, pP, pA);
-    /* FIXME: numerator and denominator are mixed up?! */
-    f = BrVector3Dot(&v1, &v1) / BrVector3Dot(&v2, &v1);
-    if (f < 0.f) {
-        f = 0.f;
-    } else if (f > 1.f) {
-        f = 1.f;
-    }
-    BrVector3Scale(&v1, &v1, f);
-    BrVector3Sub(&v2, &v2, &v1);
-    return BrVector3Dot(&v2, &v2);
-}
-C2_HOOK_FUNCTION(0x0042c300, SquaredDistanceFromLineSegment)
-
 void C2_HOOK_FASTCALL LoadMinMax(FILE* pF, br_bounds3* pBounds) {
     float x1, x2;
     float y1, y2;
@@ -1401,6 +1381,26 @@ void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec) {
     }
 }
 C2_HOOK_FUNCTION(0x0042ad10, InitPhysMasterCrushData)
+
+float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB) {
+    br_vector3 pAB;
+    br_vector3 pAP;
+    br_vector3 pProj;
+    float proj;
+
+    BrVector3Sub(&pAB, pB, pA);
+    BrVector3Sub(&pAP, pP, pA);
+    proj = BrVector3Dot(&pAP, &pAB) / BrVector3Dot(&pAB, &pAB);
+    if (proj < 0.f) {
+        proj = 0.f;
+    } else if (proj > 1.f) {
+        proj = 1.f;
+    }
+    BrVector3Scale(&pProj, &pAB, proj);
+    BrVector3Sub(&pProj, &pAP, &pProj);
+    return BrVector3LengthSquared(&pProj);
+}
+C2_HOOK_FUNCTION(0x0042c300, PointEdgeDistSq)
 
 void (C2_HOOK_FASTCALL * SetFlapCheckVertices_original)(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data);
 void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data) {
