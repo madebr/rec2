@@ -900,7 +900,7 @@ void C2_HOOK_FASTCALL CheckHingePointOrder(tCar_crush_flap_data* pHinge, br_mode
     }
 }
 
-tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel) {
+tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_model* pModel) {
     tU16 closest_vertex = 0;
     br_scalar closest_dist = BR_SCALAR_MAX;
     tU16 i;

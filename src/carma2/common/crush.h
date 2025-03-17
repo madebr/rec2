@@ -69,7 +69,7 @@ tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crus
 
 void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec);
 
-tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, br_model* pModel);
+tU16 C2_HOOK_FASTCALL FindNearestVertex(br_vector3* pPoint, const br_model* pModel);
 
 tU16 C2_HOOK_FASTCALL FindNearestParentVertex(br_actor* pActor, br_vector3* pPos);
 
