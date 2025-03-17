@@ -1678,6 +1678,31 @@ intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* data) {
 }
 C2_HOOK_FUNCTION(0x004f55d0, MungeMaterialCB)
 
+void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_material* pMaterial_1, br_material* pMaterial_2, int pCapacity_indices, tU16* pIndices, int* pCount_indices, int pCapacity_vertices, tCar_crush_vertex_data* pVertices, int* pCount_vertices, br_vector3* pNormal) {
+    tMungeMaterialCB_Context munge_material_cb_ctx;
+
+    munge_material_cb_ctx.material_0x0 = pMaterial_1;
+    munge_material_cb_ctx.material_0x4 = pMaterial_2;
+    munge_material_cb_ctx.capacity_indices = pCapacity_indices;
+    munge_material_cb_ctx.indices = pIndices;
+    munge_material_cb_ctx.capacity_vertices = pCapacity_vertices;
+    munge_material_cb_ctx.count_indices = 0;
+    munge_material_cb_ctx.vertices = pVertices;
+    munge_material_cb_ctx.count_vertices = 0;
+
+    if (pRecursive) {
+        DRActorEnumRecurse(pActor, MungeMaterialCB, &munge_material_cb_ctx);
+    } else {
+        MungeMaterialCB(pActor, &munge_material_cb_ctx);
+    }
+    if (munge_material_cb_ctx.count_indices != 0) {
+        BrVector3Normalise(pNormal, &munge_material_cb_ctx.field_0x20);
+    }
+    *pCount_indices = munge_material_cb_ctx.count_indices;
+    *pCount_vertices = munge_material_cb_ctx.count_vertices;
+}
+C2_HOOK_FUNCTION(0x004f54d0, MungeMaterial)
+
 void (C2_HOOK_FASTCALL * LinkSmashies_original)(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data);
 void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data) {
 

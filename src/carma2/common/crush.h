@@ -133,6 +133,8 @@ void C2_HOOK_FASTCALL CrushBendFlapRend(void);
 
 intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* data);
 
+void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_material* pMaterial_1, br_material* pMaterial_2, int pCapacity_indices, tU16* pIndices, int* pCount_indices, int pCapacity_vertices, tCar_crush_vertex_data* pVertices, int* pCount_vertices, br_vector3* pNormal);
+
 void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data);
 
 #endif // REC2_CRUSH_H
