@@ -3281,7 +3281,8 @@ typedef struct  {
     undefined4 field_0x28;
     tCar_spec* field_0x2c;
     tU16 field_0x30;
-    undefined field_0x32[2];
+    tU8 field_0x32;
+    tU8 field_0x33;
     int count_shape_points; /* >0 if shape is poly, ==0 if box */
     int shape_points[16];
     undefined field_0x78[16];
