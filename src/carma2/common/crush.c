@@ -1401,6 +1401,26 @@ void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec) {
 }
 C2_HOOK_FUNCTION(0x0042ad10, InitPhysMasterCrushData)
 
+float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* pA, const br_vector3* pB) {
+    br_vector3 pAB;
+    br_vector3 pAP;
+    br_vector3 pProj;
+    float proj;
+
+    BrVector3Sub(&pAB, pB, pA);
+    BrVector3Sub(&pAP, pP, pA);
+    proj = BrVector3Dot(&pAP, &pAB) / BrVector3Dot(&pAB, &pAB);
+    if (proj < 0.f) {
+        proj = 0.f;
+    } else if (proj > 1.f) {
+        proj = 1.f;
+    }
+    BrVector3Scale(&pProj, &pAB, proj);
+    BrVector3Sub(&pProj, &pAP, &pProj);
+    return BrVector3LengthSquared(&pProj);
+}
+C2_HOOK_FUNCTION(0x0042c300, PointEdgeDistSq)
+
 void (C2_HOOK_FASTCALL * SetFlapCheckVertices_original)(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data);
 void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data) {
 
