@@ -1625,6 +1625,59 @@ void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00436170, CrushBendFlapRend, CrushBendFlapRend_original)
 
+intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* data) {
+    tMungeMaterialCB_Context* context = data;
+    br_model* model;
+    int face_i;
+
+    model = pActor->model;
+    if (model == NULL) {
+        return 0;
+    }
+    for (face_i = 0; face_i < model->nfaces; face_i++) {
+        br_face* face = &model->faces[face_i];
+
+        if (face->material == context->material_0x0) {
+            face->material = context->material_0x4;
+            if (context->indices != NULL && context->count_indices < context->capacity_indices) {
+                int i;
+
+                for (i = 0; i < 3; i++) {
+                    int j;
+                    int found = 0;
+
+                    for (j = 0; j < context->count_indices; j++) {
+                        if (face->vertices[i] == context->indices[j]) {
+                            if (context->vertices != NULL && context->count_vertices < context->capacity_vertices) {
+                                context->vertices[context->count_vertices].field_0x0[i] = (tU16)j;
+                            }
+                            found = 1;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        if (context->count_indices != 0) {
+                            BrVector3Accumulate(&context->field_0x20, &face->n);
+                        } else {
+                            BrVector3Copy(&context->field_0x20, &face->n);
+                        }
+                        if (context->vertices != NULL && context->count_vertices < context->capacity_vertices) {
+                            context->vertices[context->count_vertices].field_0x0[i] = (tU16)context->count_indices;
+                        }
+                        context->indices[context->count_indices] = face->vertices[i];
+                        context->count_indices += 1;
+                    }
+                }
+            }
+            if (context->vertices != NULL && context->count_vertices < context->capacity_vertices) {
+                context->count_vertices += 1;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004f55d0, MungeMaterialCB)
+
 void (C2_HOOK_FASTCALL * LinkSmashies_original)(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data);
 void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data) {
 

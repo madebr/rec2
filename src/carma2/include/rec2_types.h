@@ -53,6 +53,7 @@ typedef struct tPipe_chunk tPipe_chunk;
 typedef struct tNet_stored_smash tNet_stored_smash;
 typedef struct tPhysics_joint tPhysics_joint;
 typedef struct tPed_personality tPed_personality;
+typedef struct tCar_crush_vertex_data tCar_crush_vertex_data;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -201,6 +202,18 @@ typedef struct {
     int model_start;
     int model_end;
 } tLinkyCallback_context;
+
+typedef struct {
+    br_material* material_0x0;
+    br_material* material_0x4;
+    int capacity_indices;
+    tU16* indices;
+    int count_indices;
+    int capacity_vertices;
+    tCar_crush_vertex_data* vertices;
+    int count_vertices;
+    br_vector3 field_0x20;
+} tMungeMaterialCB_Context;
 
 typedef struct {
     br_actor* clip;
@@ -3335,8 +3348,8 @@ typedef struct {
     int counts[3][2];
 } tCar_crush_count_limits;
 
-typedef struct {
-    undefined field_0x0[6];
+typedef struct tCar_crush_vertex_data {
+    tU16 field_0x0[3];
 } tCar_crush_vertex_data;
 
 typedef struct tCar_crush_spec {
