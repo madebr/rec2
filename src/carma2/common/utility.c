@@ -1127,6 +1127,26 @@ tU32 C2_HOOK_FASTCALL GetRaceTime(void) {
 }
 C2_HOOK_FUNCTION(0x00514c70, GetRaceTime)
 
+intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data) {
+    const char* name = data;
+    br_model* model = pActor->model;
+    int face_i;
+
+    if (model != NULL) {
+        for (face_i = 0; face_i < model->nfaces; face_i++) {
+            br_face *face = &model->faces[face_i];
+
+            if (face->material != NULL
+                    && face->material->identifier != NULL
+                    && c2_strcmp(face->material->identifier, name) == 0) {
+                return (intptr_t)face->material;
+            }
+        }
+    }
+    return (intptr_t)NULL;
+}
+C2_HOOK_FUNCTION(0x00515d90, FindMaterialCB)
+
 void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent) {
     char* s = NULL;
 
