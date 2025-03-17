@@ -100,6 +100,8 @@ int C2_HOOK_FASTCALL PercentageChance(int pC);
 
 tU32 C2_HOOK_FASTCALL GetRaceTime(void);
 
+intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data);
+
 void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent);
 
 void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent);
