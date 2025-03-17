@@ -102,6 +102,8 @@ tU32 C2_HOOK_FASTCALL GetRaceTime(void);
 
 intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data);
 
+br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive);
+
 void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent);
 
 void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent);
