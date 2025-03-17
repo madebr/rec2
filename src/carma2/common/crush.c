@@ -828,13 +828,40 @@ int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2) {
 }
 C2_HOOK_FUNCTION(0x0042ace0, DecreasingCompare)
 
-tU16 (C2_HOOK_FASTCALL * CrushLimitNumber_original)(br_vector3* pPoint, tCar_crush_limits* pLimits, tCar_crush_count_limits* pCount_limits, int* pInvalid);
-tU16 C2_HOOK_FASTCALL CrushLimitNumber(br_vector3* pPoint, tCar_crush_limits* pLimits, tCar_crush_count_limits* pCount_limits, int* pInvalid) {
+tU16 (C2_HOOK_FASTCALL * CrushLimitNumber_original)(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid);
+tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid) {
 
 #if defined(C2_HOOKS_ENABLED)
     return CrushLimitNumber_original(pPoint, pLimits, pCount_limits, pInvalid);
 #else
-    NOT_IMPLEMENTED();
+    tU16 number;
+    int i;
+
+    *pInvalid = 0;
+    number = 0;
+    for (i = 2; i >= 0; i--) {
+        int j;
+        tU16 mi = 0;
+        tU16 ma = 0;
+
+        for (j = 0; j < pCount_limits->counts[i][0] - 1; j++) {
+            if (pPoint->v[i] > pLimits->limits[i][0].values[j]) {
+                *pInvalid = 0;
+                break;
+            }
+            mi += 1;
+        }
+
+        for (j = 0; j < pCount_limits->counts[i][1] - 1; j++) {
+            if (pPoint->v[i] < pLimits->limits[i][1].values[j]) {
+                *pInvalid = 0;
+                break;
+            }
+            ma += 1;
+        }
+        number = (number << 4) | (mi << 2) | (ma << 0);
+    }
+    return number;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042b4c0, CrushLimitNumber, CrushLimitNumber_original)

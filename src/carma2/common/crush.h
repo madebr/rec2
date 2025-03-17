@@ -65,7 +65,7 @@ int C2_HOOK_CDECL IncreasingCompare(const void* pValue1, const void* pValue2);
 
 int C2_HOOK_CDECL DecreasingCompare(const void* pValue1, const void* pValue2);
 
-tU16 C2_HOOK_FASTCALL CrushLimitNumber(br_vector3* pPoint, tCar_crush_limits* pLimits, tCar_crush_count_limits* pCount_limits, int* pInvalid);
+tU16 C2_HOOK_FASTCALL CrushLimitNumber(const br_vector3* pPoint, const tCar_crush_limits* pLimits, const tCar_crush_count_limits* pCount_limits, int* pInvalid);
 
 void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec);
 
