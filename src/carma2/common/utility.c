@@ -1147,6 +1147,16 @@ intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data) {
 }
 C2_HOOK_FUNCTION(0x00515d90, FindMaterialCB)
 
+br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive) {
+
+    if (pRecursive) {
+        return (br_material*)DRActorEnumRecurse(pActor, FindMaterialCB, (void*)pName);
+    } else {
+        return (br_material*)FindMaterialCB(pActor, (void*)pName);
+    }
+}
+C2_HOOK_FUNCTION(0x00515c40, FindMaterial)
+
 void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent) {
     char* s = NULL;
 
