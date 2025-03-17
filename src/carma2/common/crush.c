@@ -1709,7 +1709,57 @@ void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pC
 #if defined(C2_HOOKS_ENABLED)
     LinkSmashies_original(pActor, pCrush_data, pVertex_data);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < pCrush_data->count_smashables; i++) {
+        tCar_crush_smashable_part* smashable;
+        int j;
+        tU16 indices[50];
+        int count_indices;
+        tCar_crush_vertex_data vertices[50];
+        int count_vertices;
+
+        C2_HOOK_BUG_ON(sizeof(vertices[0]) != 6);
+        C2_HOOK_BUG_ON(sizeof(vertices[0].field_0x0[0]) != 2);
+
+        smashable = &pCrush_data->smashables[i];
+        smashable->funk_material = FindMaterial(smashable->material_name, pActor, 0);
+        if (smashable->funk_material == NULL) {
+            FatalError(kFatalError_CannotFindSmashMaterial_S, smashable->material_name);
+        }
+        MungeMaterial(pActor, 0, smashable->funk_material, smashable->funk_material,
+            REC2_ASIZE(indices), indices, &count_indices,
+            REC2_ASIZE(vertices), vertices, &count_vertices, &smashable->field_0x60);
+        for (j = 0; j < count_indices; j++) {
+            if (j == 0) {
+                BrVector3Copy(&smashable->field_0x54, &pActor->model->vertices[indices[j]].p);
+            } else {
+                BrVector3Accumulate(&smashable->field_0x54, &pActor->model->vertices[indices[j]].p);
+            }
+        }
+        if (count_indices != 0) {
+            BrVector3InvScale(&smashable->field_0x54, &smashable->field_0x54, (float)count_indices);
+        }
+        smashable->field_0x6c = count_indices;
+        if (count_indices != 0) {
+            smashable->field_0x70 = BrMemAllocate(count_indices * sizeof(tU16), kMem_smash_poly_array);
+            c2_memcpy(smashable->field_0x70, indices, count_indices * sizeof(tU16));
+        } else {
+            smashable->field_0x70 = NULL;
+        }
+        smashable->field_0x74 = count_vertices;
+        if (count_vertices != 0) {
+            smashable->field_0x78 = BrMemAllocate(count_vertices * sizeof(tCar_crush_vertex_data), kMem_smash_vertex_array);
+            c2_memcpy(smashable->field_0x78, vertices, count_vertices * sizeof(tCar_crush_vertex_data));
+        } else {
+            smashable->field_0x78 = NULL;
+        }
+        BrResFree(smashable->funk_material->identifier);
+        smashable->funk_material->identifier = NULL;
+        smashable->field_0x4c = 0;
+        smashable->funk_material->colour_map = smashable->levels->pixelmaps[0];
+        BrMaterialUpdate(smashable->funk_material, BR_MATU_COLOURMAP);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f57c0, LinkSmashies, LinkSmashies_original)

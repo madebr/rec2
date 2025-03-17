@@ -3307,12 +3307,14 @@ typedef struct {
     int funk;
     br_material* funk_material;
     int count_smashable_levels;
-    undefined field_0x4c[4];
+    undefined4 field_0x4c;
     tSmashable_level* levels;
-    undefined field_0x56[28];
-    undefined4* field_0x70;
-    undefined field_0x74[4];
-    undefined4* field_0x78;
+    br_vector3 field_0x54;
+    br_vector3 field_0x60;
+    int field_0x6c;
+    tU16* field_0x70;
+    int field_0x74;
+    tCar_crush_vertex_data* field_0x78;
 } tCar_crush_smashable_part;
 
 typedef struct {
