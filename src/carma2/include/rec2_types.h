@@ -4015,14 +4015,14 @@ typedef struct {
 
 typedef enum {
     kActionReplayCameraMode_Standard = 0,
-    tActionReplayCameraMode_Panning = 1,
-    tActionReplayCameraMode_ActionTracking = 2,
-    tActionReplayCameraMode_Manual = 3,
-    tActionReplayCameraMode_Rigid = 4,
-    tActionReplayCameraMode_Peds = 5,
-    tActionReplayCameraMode_Drone = 6,
-    tActionReplayCameraMode_Reversing = 7,
-    tActionReplayCameraMode_Internal = 8,
+    kActionReplayCameraMode_Panning = 1,
+    kActionReplayCameraMode_ActionTracking = 2,
+    kActionReplayCameraMode_Manual = 3,
+    kActionReplayCameraMode_Rigid = 4,
+    kActionReplayCameraMode_Peds = 5,
+    kActionReplayCameraMode_Drone = 6,
+    kActionReplayCameraMode_Reversing = 7,
+    kActionReplayCameraMode_Internal = 8,
 } tActionReplayCameraMode;
 
 typedef enum {

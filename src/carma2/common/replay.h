@@ -6,6 +6,7 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(tActionReplayCameraMode, gAction_replay_camera_mode);
+C2_HOOK_VARIABLE_DECLARE(int, gAction_replay_manual_camera_target_type);
 
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void);
 

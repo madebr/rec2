@@ -484,7 +484,7 @@ void C2_HOOK_FASTCALL InitialiseCarsEtc(tRace_info* pThe_race) {
         }
     }
     C2V(gCamera_yaw) = 0;
-    if (C2V(gAction_replay_camera_mode) == tActionReplayCameraMode_Manual) {
+    if (C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_Manual) {
         C2V(gCamera_type) = 0;
         C2V(gAction_replay_camera_mode) = kActionReplayCameraMode_Standard;
     }
