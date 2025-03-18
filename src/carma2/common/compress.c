@@ -24,3 +24,11 @@ void C2_HOOK_FASTCALL CompressVector3(tCompressed_vector3* pDest, const br_vecto
     pDest->v[2] = DRScalarToU16(pSrc->v[2], pMin, pMax);
 }
 C2_HOOK_FUNCTION(0x00516490, CompressVector3)
+
+void C2_HOOK_FASTCALL ExpandVector3(br_vector3* pDest, const tCompressed_vector3 *pSrc, float pMin, float pMax) {
+
+   pDest->v[0] = DRU16ToScalar(pSrc->v[0], pMin, pMax);
+   pDest->v[1] = DRU16ToScalar(pSrc->v[1], pMin, pMax);
+   pDest->v[2] = DRU16ToScalar(pSrc->v[2], pMin, pMax);
+}
+C2_HOOK_FUNCTION(0x00516570, ExpandVector3)
