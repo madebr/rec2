@@ -3553,6 +3553,12 @@ typedef struct {
 } tCompressed_vector3;
 
 typedef struct {
+    tCompressed_vector3 m0;
+    tCompressed_vector3 m1;
+    tCompressed_vector3 p;
+} tCompressed_matrix3;
+
+typedef struct {
     tCompressed_vector3 p;
     tU8 flags;
     undefined field_0x7;
