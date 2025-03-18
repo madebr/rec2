@@ -2066,7 +2066,8 @@ typedef struct tCar_spec {
     br_matrix34 last_safe_positions[20];
     int wheel_slip;
     float damping;
-    undefined field_0x1200[16];
+    float sk[2];
+    float sb[2];
     float steerable_suspension_give;
     float susp_give;
     float susp_height[2];
