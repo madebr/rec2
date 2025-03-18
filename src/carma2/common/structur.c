@@ -582,7 +582,7 @@ void C2_HOOK_FASTCALL CheckCheckpoints(void) {
     if (C2V(gNet_mode) == eNet_mode_client) {
         return;
     }
-    if (C2V(gNet_mode) == eNet_mode_host && C2V(gCurrent_net_game)->type != eNet_game_type_5 && C2V(gCurrent_net_game)->type != eNet_game_type_3 && C2V(gCurrent_net_game)->type != eNet_game_type_4) {
+    if (C2V(gNet_mode) == eNet_mode_host && C2V(gCurrent_net_game)->type != eNet_game_type_5 && C2V(gCurrent_net_game)->type != eNet_game_type_checkpoint && C2V(gCurrent_net_game)->type != eNet_game_type_4) {
         return;
     }
     for (cat = eVehicle_self; cat <= C2V(gNet_mode); cat++) {
@@ -621,7 +621,7 @@ void C2_HOOK_FASTCALL CheckCheckpoints(void) {
                             }
                         } else {
                             net_player = NetPlayerFromCar(car);
-                            if (C2V(gCurrent_net_game)->type == eNet_game_type_3) {
+                            if (C2V(gCurrent_net_game)->type == eNet_game_type_checkpoint) {
                                 if (net_player->score2 & (1 << i)) {
                                     net_player->score2 &= ~(1 << i);
                                     SendGameplay(net_player->ID, eNet_gameplay_checkpoint, i, 0, 0, 0);

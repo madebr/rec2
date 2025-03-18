@@ -1,13 +1,20 @@
 #include "netgame.h"
 
 #include "globvars.h"
+#include "globvrpb.h"
 #include "opponent.h"
 #include "platform.h"
+#include "utility.h"
 
 #include <brender/brender.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInitialised_grid, 0x0074a738);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gIt_or_fox, 0x0074a734);
+C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_player_info*, gLast_lepper, 0x0068d924);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_it_change, 0x0068d928);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNot_shown_race_type_headup, 0x0068d934);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWinner_declared, 0x0068d938);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_for_punishment, 0x0068d92c);
 
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
@@ -55,13 +62,67 @@ void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
 }
 C2_HOOK_FUNCTION(0x004992e0, EnableCar)
 
+void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
+
+    C2_HOOK_BUG_ON(sizeof(tNet_game_details) != 0x78);
+    C2_HOOK_BUG_ON(sizeof(tNet_game_options) != 0x30);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_details, field_0x10, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_details, field_0x14, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_details, start_race, 0x38);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_details, options, 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_details, type, 0x74);
+    C2_HOOK_BUG_ON(sizeof(tNet_game_player_info) != 0xd4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_player_info, reposition_time, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_player_info, score2, 0x64);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_player_info, credits, 0x68);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_player_info, wasted, 0x6c);
+
+    PossibleService();
+    switch (C2V(gCurrent_net_game)->type) {
+    case eNet_game_type_fight_to_death:
+        pPlayer->score2 = 100;
+        break;
+    case eNet_game_type_1:
+    case eNet_game_type_2:
+    case eNet_game_type_4:
+    case eNet_game_type_5:
+    case eNet_game_type_6:
+        pPlayer->score2 = 0;
+        break;
+    case eNet_game_type_checkpoint:
+        pPlayer->score2 = 0xffff;
+        break;
+    case eNet_game_type_foxy:
+        pPlayer->score2 = 0;
+        break;
+    default:
+        abort();
+    }
+    pPlayer->credits = C2V(gCurrent_net_game)->options.starting_credits;
+    pPlayer->wasted = 0;
+    pPlayer->reposition_time = 0;
+}
+C2_HOOK_FUNCTION(0x0049b690, InitialisePlayerScore)
+
 void (C2_HOOK_FASTCALL * InitPlayers_original)(void);
 void C2_HOOK_FASTCALL InitPlayers(void) {
 
 #if defined(C2_HOOKS_ENABLED)
     InitPlayers_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+        InitialisePlayerScore(&C2V(gNet_players)[i]);
+    }
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        C2V(gLast_it_change) = 0;
+        C2V(gLast_lepper) = NULL;
+    }
+    C2V(gTime_for_punishment) = 0;
+    C2V(gNot_shown_race_type_headup) = 1;
+    C2V(gIt_or_fox) = -1;
+    C2V(gWinner_declared) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049b720, InitPlayers, InitPlayers_original)

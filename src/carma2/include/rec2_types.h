@@ -4076,10 +4076,10 @@ typedef struct {
 } tOpponent;
 
 typedef enum {
-    eNet_game_type_0 = 0, /* FIXME */
+    eNet_game_type_fight_to_death = 0,
     eNet_game_type_1 = 1, /* FIXME */
     eNet_game_type_2 = 2, /* FIXME */
-    eNet_game_type_3 = 3, /* FIXME */
+    eNet_game_type_checkpoint = 3,
     eNet_game_type_4 = 4, /* FIXME */
     eNet_game_type_5 = 5, /* FIXME */
     eNet_game_type_6 = 6, /* FIXME */
@@ -4140,7 +4140,8 @@ typedef struct {
     int opponent_list_index;
     undefined field_0x60[4];
     int score2;
-    undefined field_0x68[8];
+    int credits;
+    int wasted;
     int wasteage_attributed;
     undefined field_0x74[4];
     undefined field_0x78[4];
