@@ -1,5 +1,6 @@
 #include "replay.h"
 
+#include "car.h"
 #include "globvars.h"
 #include "piping.h"
 #include "platform.h"
@@ -8,6 +9,7 @@
 #include "c2_string.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(tActionReplayCameraMode, gAction_replay_camera_mode, 0x0079efa8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAction_replay_manual_camera_target_type, 0x00679278);
 
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 
@@ -59,10 +61,24 @@ C2_HOOK_FUNCTION(0x0040e700, MungeCarMaterials)
 void (C2_HOOK_FASTCALL * SetCameraType_original)(tActionReplayCameraMode pCamPos);
 void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetCameraType_original(pCamPos);
 #else
-    NOT_IMPLEMENTED();
+
+    C2V(gAction_replay_camera_mode) = pCamPos;
+    switch (pCamPos) {
+    case kActionReplayCameraMode_Standard:
+    case kActionReplayCameraMode_Rigid:
+    case kActionReplayCameraMode_Reversing:
+        InitialiseExternalCamera();
+        break;
+    case kActionReplayCameraMode_Manual:
+        C2V(gAction_replay_manual_camera_target_type) = 0;
+        break;
+    default:
+        break;
+    }
+    MungeCarMaterials(&C2V(gProgram_state).current_car, C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_Internal);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, SetCameraType, SetCameraType_original)
