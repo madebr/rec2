@@ -2490,6 +2490,7 @@ typedef struct {
     int fizzle_stage;
     int fizzle_direction;
     tU32 fizzle_start;
+    br_actor* icon_actor;
 } tHeadup_icon;
 
 typedef enum {
