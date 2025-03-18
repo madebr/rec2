@@ -13,5 +13,8 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gCar_to_view_id);
 C2_HOOK_VARIABLE_DECLARE(int, gCamera_reset);
 C2_HOOK_VARIABLE_DECLARE(int, gCamera_sign);
 C2_HOOK_VARIABLE_DECLARE(br_angle, gCamera_yaw);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gCamera_height);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gView_direction);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gMin_camera_car_distance);
 
 #endif //REC2_GLOBVRKM_H
