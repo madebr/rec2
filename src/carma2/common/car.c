@@ -76,13 +76,51 @@ void C2_HOOK_FAKE_THISCALL FlyCar(tCar_spec* c, undefined4 pArg2, br_scalar dt) 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f4f0, FlyCar, FlyCar_original)
 
-void (C2_HOOK_FAKE_THISCALL * SetCarSuspGiveAndHeight_original)(tCar_spec* pCar, undefined4 pArg2, br_scalar pFront_give_factor, br_scalar pRear_give_factor, br_scalar pDamping_factor, br_scalar pExtra_front_height, br_scalar pExtra_rear_height);
-void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 pArg2, br_scalar pFront_give_factor, br_scalar pRear_give_factor, br_scalar pDamping_factor, br_scalar pExtra_front_height, br_scalar pExtra_rear_height) {
+float C2_HOOK_FASTCALL GetCarOverallBoundsMinY(tCar_spec* pCar) {
+    float rear_min;
+    float front_min;
+    float min_value;
 
-#if defined(C2_HOOKS_ENABLED)
+    rear_min = (pCar->wpos[0].v[1] - pCar->susp_height[0]) / WORLD_SCALE;
+    front_min = (pCar->wpos[2].v[1] - pCar->susp_height[1]) / WORLD_SCALE;
+    min_value = pCar->collision_info->bb1.min.v[1];
+
+    min_value = MIN(min_value, rear_min);
+    min_value = MIN(min_value, front_min);
+    return min_value;
+}
+
+void (C2_HOOK_FAKE_THISCALL * SetCarSuspGiveAndHeight_original)(tCar_spec* pCar, undefined4 pArg2, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height);
+void C2_HOOK_FAKE_THISCALL SetCarSuspGiveAndHeight(tCar_spec* pCar, undefined4 pArg2, float pFront_give_factor, float pRear_give_factor, float pDamping_factor, float pExtra_front_height, float pExtra_rear_height) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
     SetCarSuspGiveAndHeight_original(pCar, pArg2, pFront_give_factor, pRear_give_factor, pDamping_factor, pExtra_front_height, pExtra_rear_height);
 #else
-    NOT_IMPLEMENTED();
+    float ratio;
+    float front_give;
+    float rear_give;
+    float damping;
+
+#define UNK_SUSPENION_FACTOR 5.0f
+
+    front_give = pCar->susp_give * pFront_give_factor * WORLD_SCALE;
+    rear_give = pCar->steerable_suspension_give * pRear_give_factor * WORLD_SCALE;
+    damping = pCar->damping * pDamping_factor;
+    ratio = fabsf((pCar->wpos[0].v[2] - pCar->centre_of_mass_world_scale.v[2]) / (pCar->wpos[2].v[2] - pCar->centre_of_mass_world_scale.v[2]));
+    pCar->sk[0] = (pCar->collision_info->M / (ratio + 1.0f)) * UNK_SUSPENION_FACTOR / rear_give;
+    pCar->sb[0] = (pCar->collision_info->M / (ratio + 1.0f)) * sqrtf(UNK_SUSPENION_FACTOR) / sqrtf(rear_give);
+    ratio = 1.0f / ratio;
+    pCar->sk[1] = (pCar->collision_info->M / (ratio + 1.0f)) * UNK_SUSPENION_FACTOR / front_give;
+    pCar->sb[1] = (pCar->collision_info->M / (ratio + 1.0f)) * sqrtf(UNK_SUSPENION_FACTOR) / sqrtf(front_give);
+
+    pCar->sb[0] *= damping;
+    pCar->sb[1] *= damping;
+    pCar->susp_height[0] = pCar->ride_height + rear_give + pExtra_rear_height;
+    pCar->susp_height[1] = pCar->ride_height + front_give + pExtra_front_height;
+
+    pCar->collision_info->bb2.min.v[1] = GetCarOverallBoundsMinY(pCar);
+
+#undef UNK_SUSPENION_FACTOR
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041fc60, SetCarSuspGiveAndHeight, SetCarSuspGiveAndHeight_original)
