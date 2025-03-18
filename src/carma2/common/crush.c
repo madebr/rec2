@@ -1421,13 +1421,35 @@ float C2_HOOK_FASTCALL PointEdgeDistSq(const br_vector3* pP, const br_vector3* p
 }
 C2_HOOK_FUNCTION(0x0042c300, PointEdgeDistSq)
 
-void (C2_HOOK_FASTCALL * SetFlapCheckVertices_original)(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data);
-void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data *pFlap_data, br_model* pModel, tModel_detail_vertex_data* pVertex_data) {
+void (C2_HOOK_FASTCALL * SetFlapCheckVertices_original)(tCar_crush_flap_data *pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data);
+void C2_HOOK_FASTCALL SetFlapCheckVertices(tCar_crush_flap_data *pFlap_data, const br_model* pModel, tModel_detail_vertex_data* pVertex_data) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetFlapCheckVertices_original(pFlap_data, pModel, pVertex_data);
 #else
-    NOT_IMPLEMENTED();
+    const br_vector3 *p0, *p1, *p2;
+    br_vector3 hinge01;
+    br_vector3 hinge02;
+    br_vector3 hinge_normal;
+    int i;
+
+    p0 = &pModel->vertices[pFlap_data->hinge0].p;
+    p1 = &pModel->vertices[pFlap_data->hinge1].p;
+    p2 = &pModel->vertices[pFlap_data->hinge2].p;
+
+    BrVector3Sub(&hinge02, p2, p0);
+    BrVector3Sub(&hinge01, p1, p0);
+    BrVector3Cross(&hinge_normal, &hinge01, &hinge02);
+    BrVector3Normalise(&hinge_normal, &hinge_normal);
+
+    for (i = 0; i < pModel->nvertices; i++) {
+
+        if (PointEdgeDistSq(&pModel->vertices[i].p, p0, p1) > 0.00021004f && BrVector3Dot(&hinge_normal, &pModel->vertices[i].p) - BrVector3Dot(&hinge_normal, p0) > -0.001449275f) {
+            pVertex_data[i].flags |= 0x2;
+        } else {
+            pVertex_data[i].flags &= ~0x2;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042c0e0, SetFlapCheckVertices, SetFlapCheckVertices_original)

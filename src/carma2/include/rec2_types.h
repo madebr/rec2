@@ -3546,7 +3546,7 @@ typedef struct {
 
 typedef struct {
     tCompressed_vector3 p;
-    undefined field_0x6;
+    tU8 flags;
     undefined field_0x7;
     tS16 limit_number;
 } tModel_detail_vertex_data;
