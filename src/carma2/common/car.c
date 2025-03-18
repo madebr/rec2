@@ -40,6 +40,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFace_count, 0x006940b0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFace_ref, gFace_list__car, 300, 0x00744820);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_mode, 0x00679294);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_frozen, 0x006792b8);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -516,10 +518,35 @@ C2_HOOK_FUNCTION(0x004148d0, SetInitialPositions)
 void (C2_HOOK_FASTCALL * InitialiseExternalCamera_original)(void);
 void C2_HOOK_FASTCALL InitialiseExternalCamera(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitialiseExternalCamera_original();
 #else
-    NOT_IMPLEMENTED();
+    br_scalar ts;
+    tCar_spec* c;
+    br_angle yaw;
+
+    c = C2V(gCar_to_view);
+    if (!C2V(gProgram_state).racing) {
+        c = &C2V(gProgram_state).current_car;
+    }
+    C2V(gCamera_height) = c->pos.v[1];
+    BrVector3Set(&C2V(gView_direction), c->direction.v[0], 0.0f, c->direction.v[2]);
+    BrVector3Normalise(&C2V(gView_direction), &C2V(gView_direction));
+    ts = -BrVector3Dot(&C2V(gView_direction), (br_vector3*)c->car_master_actor->t.t.mat.m[2]);
+    C2V(gCamera_sign) = ts < 0;
+    C2V(gCamera_mode) = 0;
+    if (C2V(gCamera_sign)) {
+        yaw = -C2V(gCamera_yaw);
+    } else {
+        yaw = C2V(gCamera_yaw);
+    }
+    DrVector3RotateY(&C2V(gView_direction), yaw);
+    C2V(gMin_camera_car_distance) = 0.6f;
+    C2V(gCamera_frozen) = 0;
+    C2V(gCamera_mode) = -2;
+    if (C2V(gCountdown) && (C2V(gNet_mode) == eNet_mode_none || C2V(gCurrent_net_game)->options.grid_start) && C2V(gCountdown) > 4) {
+        C2V(gCamera_height) += 10.f;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00413580, InitialiseExternalCamera, InitialiseExternalCamera_original)
@@ -724,3 +751,15 @@ void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* c, undefined4 arg2, br_scalar 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00417a20, ControlCar5, ControlCar5_original)
+
+void C2_HOOK_FASTCALL DrVector3RotateY(br_vector3* v, br_angle t) {
+    br_scalar c;
+    br_scalar s;
+    br_scalar ts;
+
+    c = cosf(BrAngleToRadian(t));
+    s = sinf(BrAngleToRadian(t));
+    ts = v->v[0] * c + v->v[2] * s;
+    v->v[2] = v->v[2] * c - v->v[0] * s;
+    v->v[0] = ts;
+}

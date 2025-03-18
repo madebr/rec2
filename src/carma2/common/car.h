@@ -16,6 +16,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0067939c);
 C2_HOOK_VARIABLE_DECLARE(tCar_callbacks, gCar_callbacks);
 C2_HOOK_VARIABLE_DECLARE(int, gFace_count);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tFace_ref, gFace_list__car, 300);
+C2_HOOK_VARIABLE_DECLARE(int, gCamera_mode);
+C2_HOOK_VARIABLE_DECLARE(int, gCamera_frozen);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
@@ -88,5 +90,7 @@ void C2_HOOK_FAKE_THISCALL ControlCar2(tCar_spec* c, undefined4 arg2, br_scalar 
 void C2_HOOK_FAKE_THISCALL ControlCar3(tCar_spec* c, undefined4 arg2, br_scalar dt);
 
 void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* c, undefined4 arg2, br_scalar dt);
+
+void C2_HOOK_FASTCALL DrVector3RotateY(br_vector3* v, br_angle t);
 
 #endif //REC2_CAR_H
