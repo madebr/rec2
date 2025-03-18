@@ -20,12 +20,17 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0074a5ec);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_armor);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_power);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_offence);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gInventory, 20);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0a6c);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0a5c);
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void);
 
 void C2_HOOK_FASTCALL InitTail(void);
 
 void C2_HOOK_FASTCALL InitPowerups(void);
+
+void C2_HOOK_FASTCALL EmptyInventory(void);
 
 void C2_HOOK_FASTCALL ResetPowerups(void);
 

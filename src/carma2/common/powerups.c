@@ -232,6 +232,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074a5ec, 0x0074a5ec);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_armor, 0x006a0ae0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_power, 0x006a0ae4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_offence, 0x006a0ae8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gInventory, 20, 0x006a0a70);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0a6c, 0x006a0a6c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0a5c, 0x006a0a5c);
 
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void) {
@@ -366,6 +369,20 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d9ea0, InitPowerups, InitPowerups_original)
+
+void C2_HOOK_FASTCALL EmptyInventory(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gInventory)) != 20);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gInventory)); i++) {
+        C2V(gInventory)[i] = -1;
+    }
+    C2V(gInventory_selected) = -1;
+    C2V(gINT_006a0a6c) = 0;
+    C2V(gINT_006a0a5c) = 0;
+}
+C2_HOOK_FUNCTION(0x004da600, EmptyInventory)
 
 void (C2_HOOK_FASTCALL * ResetPowerups_original)(void);
 void C2_HOOK_FASTCALL ResetPowerups(void) {
