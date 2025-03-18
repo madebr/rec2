@@ -7,6 +7,11 @@
 
 C2_HOOK_VARIABLE_DECLARE(int, gInitialised_grid);
 C2_HOOK_VARIABLE_DECLARE(int, gIt_or_fox);
+C2_HOOK_VARIABLE_DECLARE(tNet_game_player_info*, gLast_lepper);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_it_change);
+C2_HOOK_VARIABLE_DECLARE(int, gNot_shown_race_type_headup);
+C2_HOOK_VARIABLE_DECLARE(int, gWinner_declared);
+C2_HOOK_VARIABLE_DECLARE(tU32, gTime_for_punishment);
 
 void C2_HOOK_FASTCALL DefaultNetName(void);
 
@@ -15,6 +20,8 @@ void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_length);
 void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar);
+
+void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer);
 
 void C2_HOOK_FASTCALL InitPlayers(void);
 

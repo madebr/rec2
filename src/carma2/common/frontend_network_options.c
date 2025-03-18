@@ -113,9 +113,9 @@ void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend) {
     }
     c2_sprintf(pFrontend->items[24].text, "%i", C2V(gFrontend_net_options).starting_credits);
     switch (C2V(gFrontend_game_type)) {
-    case eNet_game_type_0:
+    case eNet_game_type_fight_to_death:
     case eNet_game_type_2:
-    case eNet_game_type_3:
+    case eNet_game_type_checkpoint:
     case eNet_game_type_4:
     case eNet_game_type_6:
         pFrontend->items[25].stringId = 232;
@@ -135,9 +135,9 @@ void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend) {
     pFrontend->items[30].enabled = kFrontendItemEnabled_enabled;
     pFrontend->items[29].enabled = kFrontendItemEnabled_enabled;
     switch (C2V(gFrontend_game_type)) {
-    case eNet_game_type_0:
+    case eNet_game_type_fight_to_death:
     case eNet_game_type_2:
-    case eNet_game_type_3:
+    case eNet_game_type_checkpoint:
     case eNet_game_type_4:
     case eNet_game_type_6:
         pFrontend->items[25].enabled = kFrontendItemEnabled_disabled;
@@ -261,9 +261,9 @@ int C2_HOOK_FASTCALL NetOptions_TargetRoller(tFrontend_spec* pFrontend) {
     }
     C2V(gFrontend_net_last_roll) = C2V(gFrontend_net_current_roll);
     switch (C2V(gFrontend_game_type)) {
-    case eNet_game_type_0:
+    case eNet_game_type_fight_to_death:
     case eNet_game_type_2:
-    case eNet_game_type_3:
+    case eNet_game_type_checkpoint:
     case eNet_game_type_4:
     case eNet_game_type_6:
         c2_strcpy(pFrontend->items[26].text, "----");
