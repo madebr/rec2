@@ -2500,6 +2500,12 @@ typedef enum {
     ePowerup_whole_race = 3,
 } tPowerup_type;
 
+typedef struct {
+    br_actor* actor;
+    int index;
+    tU32 respawn_time;
+} tRespawn_powerup;
+
 typedef enum {
     eNet_powerup_local = 0,
     eNet_powerup_global = 1,

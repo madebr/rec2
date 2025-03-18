@@ -1,6 +1,7 @@
 #include "powerups.h"
 
 #include "animation.h"
+#include "controls.h"
 #include "crush.h"
 #include "errors.h"
 #include "globvars.h"
@@ -235,6 +236,12 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gModel_powerup_offence, 0x006a0ae8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gInventory, 20, 0x006a0a70);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0a6c, 0x006a0a6c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0a5c, 0x006a0a5c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tRespawn_powerup, gRespawn_powerups, 100, 0x006a0458);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInventory_selected, 0x006a0a58);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_icons, 0x006a0944);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_goody_time, 0x006a0aec);
+C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gDAT_006a0958, 0x006a0958);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_cloaked_cars, 0x006a0454);
 
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void) {
@@ -370,6 +377,24 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d9ea0, InitPowerups, InitPowerups_original)
 
+void C2_HOOK_FASTCALL RemoveRepulseEffect(tRepulse_link* pRepulse) {
+
+    pRepulse->time = 0;
+    if (pRepulse->actor->parent == C2V(gNon_track_actor)) {
+        BrActorRemove(pRepulse->actor);
+    }
+}
+
+void C2_HOOK_FASTCALL ResetRepulseEffects(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gRepulse_links)) != 6);
+
+    for (i = 0; i < REC2_ASIZE(C2V(gRepulse_links)); i++) {
+        RemoveRepulseEffect(&C2V(gRepulse_links)[i]);
+    }
+}
+
 void C2_HOOK_FASTCALL EmptyInventory(void) {
     int i;
 
@@ -387,10 +412,37 @@ C2_HOOK_FUNCTION(0x004da600, EmptyInventory)
 void (C2_HOOK_FASTCALL * ResetPowerups_original)(void);
 void C2_HOOK_FASTCALL ResetPowerups(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ResetPowerups_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gRespawn_powerups)) != 100);
+    C2_HOOK_BUG_ON(sizeof(C2V(gRespawn_powerups)[0]) != 0xc);
+
+    C2V(gRace_powerup_respawn_bools) = C2V(gPowerup_respawn_specs)[C2V(gNet_mode) == eNet_mode_none ? 0 : 1].bools;
+
+    for (i = 0; i < C2V(gNumber_of_powerups); i++) {
+        C2V(gPowerup_array)[i].got_time = 0;
+        C2V(gPowerup_array)[i].current_value = -1;
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gRespawn_powerups)); i++) {
+        C2V(gRespawn_powerups)[i].actor = NULL;
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gPickedup_powerups)); i++) {
+        if (C2V(gPickedup_powerups)[i].icon_actor != NULL) {
+            C2V(gPickedup_powerups)[i].icon_actor->render_style = BR_RSTYLE_NONE;
+        }
+    }
+    EmptyInventory();
+
+    C2V(gNumber_of_icons) = 0;
+    C2V(gDAT_006a0958) = 0;
+    C2V(gInventory_cycling) = 0;
+    C2V(gInventory_timeout) = 0;
+    C2V(gCount_cloaked_cars) = 0;
+    ResetRepulseEffects();
+    C2V(gNext_goody_time) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da630, ResetPowerups, ResetPowerups_original)

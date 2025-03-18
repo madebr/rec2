@@ -23,12 +23,22 @@ C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_offence);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gInventory, 20);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0a6c);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0a5c);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tRespawn_powerup, gRespawn_powerups, 100);
+C2_HOOK_VARIABLE_DECLARE(int, gInventory_selected);
+C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_icons);
+C2_HOOK_VARIABLE_DECLARE(tU32, gNext_goody_time);
+C2_HOOK_VARIABLE_DECLARE(undefined4, gDAT_006a0958);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_cloaked_cars);
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void);
 
 void C2_HOOK_FASTCALL InitTail(void);
 
 void C2_HOOK_FASTCALL InitPowerups(void);
+
+void C2_HOOK_FASTCALL RemoveRepulseEffect(tRepulse_link* pRepulse);
+
+void C2_HOOK_FASTCALL ResetRepulseEffects(void);
 
 void C2_HOOK_FASTCALL EmptyInventory(void);
 
