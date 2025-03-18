@@ -32,3 +32,22 @@ void C2_HOOK_FASTCALL ExpandVector3(br_vector3* pDest, const tCompressed_vector3
    pDest->v[2] = DRU16ToScalar(pSrc->v[2], pMin, pMax);
 }
 C2_HOOK_FUNCTION(0x00516570, ExpandVector3)
+
+void C2_HOOK_FASTCALL CompressMatrix34(tCompressed_matrix3* pCompressed_matrix3, int* pInactive, const br_matrix34* pMatrix) {
+    br_vector3 pos;
+
+    if (pMatrix->m[3][0] < 500.f) {
+        *pInactive = 0;
+        BrVector3Copy(&pos, (const br_vector3*)pMatrix->m[3]);
+    } else {
+        *pInactive = 1;
+        BrVector3Set(&pos,
+            pMatrix->m[3][0] - 1000.f,
+            pMatrix->m[3][1] - 1000.f,
+            pMatrix->m[3][2] - 1000.f);
+    }
+    CompressVector3(&pCompressed_matrix3->m0, (const br_vector3*)pMatrix->m[0], -1.1f, 1.1f);
+    CompressVector3(&pCompressed_matrix3->m1, (const br_vector3*)pMatrix->m[1], -1.1f, 1.1f);
+    CompressVector3(&pCompressed_matrix3->p, &pos, -300.f, 300.f);
+}
+C2_HOOK_FUNCTION(0x005165e0, CompressMatrix34)
