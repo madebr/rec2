@@ -13,7 +13,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__raycast, 0x006a20f0
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gHighest_y_below, 0x006a2120);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gMaterial_below, 0x0070518c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gLowest_y_above, 0x006a20dc);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gHighest_y_below, 0x006a2120);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCurrent_y, 0x006a20e0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gAbove_model, 0x006a20e4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gBelow_model, 0x006a20d4);
@@ -455,3 +454,12 @@ int C2_HOOK_CDECL FindHighestPolyCallBack__raycast(br_model* pModel, br_material
     return 0;
 }
 C2_HOOK_FUNCTION(0x004e4300, FindHighestPolyCallBack__raycast)
+
+int C2_HOOK_CDECL FindHighestCallBack__raycast(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
+
+    if (C2V(gProgram_state).current_car.car_actor != pActor) {
+        DRModelPick2D_raycast(pModel, pMaterial, pRay_pos, pRay_dir, pT_near, pT_far, FindHighestPolyCallBack__raycast, pArg);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e3d50, FindHighestCallBack__raycast)
