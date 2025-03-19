@@ -463,3 +463,20 @@ int C2_HOOK_CDECL FindHighestCallBack__raycast(br_actor* pActor, br_model* pMode
     return 0;
 }
 C2_HOOK_FUNCTION(0x004e3d50, FindHighestCallBack__raycast)
+
+void C2_HOOK_FASTCALL FindBestY(br_vector3* pPosition, br_actor* pWorld, br_scalar pStarting_height, br_scalar* pNearest_y_above, br_scalar* pNearest_y_below, br_model** pNearest_above_model, br_model** pNearest_below_model, int* pNearest_above_face_index, int* pNearest_below_face_index) {
+
+    C2V(gLowest_y_above) = 30000.0;
+    C2V(gHighest_y_below) = -30000.0;
+    C2V(gCurrent_y) = pPosition->v[1] + 1.192093e-5f;
+    BrVector3Copy(&C2V(gY_picking_camera)->t.t.translate.t, pPosition);
+    C2V(gY_picking_camera)->t.t.mat.m[3][1] += pStarting_height;
+    DRScenePick2D(pWorld, C2V(gY_picking_camera), FindHighestCallBack__raycast, 0);
+    *pNearest_y_above = C2V(gLowest_y_above);
+    *pNearest_y_below = C2V(gHighest_y_below);
+    *pNearest_above_model = C2V(gAbove_model);
+    *pNearest_below_model = C2V(gBelow_model);
+    *pNearest_above_face_index = C2V(gAbove_face_index);
+    *pNearest_below_face_index = C2V(gBelow_face_index);
+}
+C2_HOOK_FUNCTION(0x004e3bc0, FindBestY)
