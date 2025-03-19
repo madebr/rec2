@@ -12,6 +12,13 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gY_picking_camera, 0x006a20d0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__raycast, 0x006a20f0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gHighest_y_below, 0x006a2120);
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gMaterial_below, 0x0070518c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gLowest_y_above, 0x006a20dc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gHighest_y_below, 0x006a2120);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCurrent_y, 0x006a20e0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gAbove_model, 0x006a20e4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gBelow_model, 0x006a20d4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAbove_face_index, 0x006a20e8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBelow_face_index, 0x006a20d8);
 
 
 void (C2_HOOK_FASTCALL * InitRayCasting_original)(void);
@@ -427,3 +434,24 @@ br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4600, FindYVerticallyBelow2, FindYVerticallyBelow2_original)
+
+int C2_HOOK_CDECL FindHighestPolyCallBack__raycast(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pArg) {
+    br_scalar the_y;
+
+    the_y = pPoint->v[1];
+    if (the_y > C2V(gCurrent_y)) {
+        if (the_y < C2V(gLowest_y_above)) {
+            C2V(gLowest_y_above) = the_y;
+            C2V(gAbove_face_index) = pF;
+            C2V(gAbove_model) = pModel;
+        }
+    } else {
+        if (the_y > C2V(gHighest_y_below)) {
+            C2V(gHighest_y_below) = the_y;
+            C2V(gBelow_face_index) = pF;
+            C2V(gBelow_model) = pModel;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e4300, FindHighestPolyCallBack__raycast)
