@@ -6,6 +6,13 @@
 #include "rec2_types.h"
 
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gY_picking_camera);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gLowest_y_above);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gHighest_y_below);
+C2_HOOK_VARIABLE_DECLARE(br_scalar, gCurrent_y);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gAbove_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gBelow_model);
+C2_HOOK_VARIABLE_DECLARE(int, gAbove_face_index);
+C2_HOOK_VARIABLE_DECLARE(int, gBelow_face_index);
 
 void C2_HOOK_FASTCALL InitRayCasting(void);
 
@@ -32,5 +39,7 @@ int C2_HOOK_FASTCALL DRScenePick2D(br_actor* world, br_actor* camera, dr_pick2d_
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow(br_vector3* pPosition);
 
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point);
+
+int C2_HOOK_CDECL FindHighestPolyCallBack__raycast(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pArg);
 
 #endif //REC2_RAYCAST_H
