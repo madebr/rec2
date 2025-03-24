@@ -1260,3 +1260,11 @@ tCollision_info* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
     return C2V(gPHIL_list_collision_infos);
 }
 C2_HOOK_FUNCTION(0x004b5fd0, PHIGetFirstObject)
+
+tCollision_info* C2_HOOK_FASTCALL PHILGetNextObject(tCollision_info* pCollision_info) {
+    if (!C2V(gPHIL_enabled)) {
+        return NULL;
+    }
+    return pCollision_info->next;
+}
+C2_HOOK_FUNCTION(0x004b5ff0, PHILGetNextObject)

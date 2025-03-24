@@ -94,4 +94,6 @@ void C2_HOOK_FASTCALL ApplyPhysicsToCar(tU32 pLast_tick_time, tU32 pFrame_period
 
 tCollision_info* C2_HOOK_FASTCALL PHILGetFirstObject(void);
 
+tCollision_info* C2_HOOK_FASTCALL PHILGetNextObject(tCollision_info* pCollision_info);
+
 #endif //REC2_PHYSICS_H
