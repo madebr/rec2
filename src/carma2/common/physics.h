@@ -96,4 +96,6 @@ tCollision_info* C2_HOOK_FASTCALL PHILGetFirstObject(void);
 
 tCollision_info* C2_HOOK_FASTCALL PHILGetNextObject(tCollision_info* pCollision_info);
 
+void C2_HOOK_FASTCALL InternalPrepareObject(tCollision_info* pObject);
+
 #endif //REC2_PHYSICS_H

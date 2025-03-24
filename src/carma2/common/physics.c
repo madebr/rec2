@@ -1268,3 +1268,14 @@ tCollision_info* C2_HOOK_FASTCALL PHILGetNextObject(tCollision_info* pCollision_
     return pCollision_info->next;
 }
 C2_HOOK_FUNCTION(0x004b5ff0, PHILGetNextObject)
+
+void (C2_HOOK_FASTCALL * InternalPrepareObject_original)(tCollision_info* pObject);
+void C2_HOOK_FASTCALL InternalPrepareObject(tCollision_info* pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InternalPrpareObject_original(pObject);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b99e0, InternalPrepareObject, InternalPrepareObject_original)
