@@ -1240,3 +1240,11 @@ void C2_HOOK_FASTCALL ApplyPhysicsToCars(tU32 pLast_tick_time, tU32 pFrame_perio
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00416340, ApplyPhysicsToCars, ApplyPhysicsToCars_original)
+
+tCollision_info* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
+    if (!C2V(gPHIL_enabled)) {
+        return NULL;
+    }
+    return C2V(gPHIL_list_collision_infos);
+}
+C2_HOOK_FUNCTION(0x004b5fd0, PHILGetFirstObject)
