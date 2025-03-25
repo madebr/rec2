@@ -3700,7 +3700,13 @@ typedef struct {
 } tPHIL_queued_header;
 
 typedef struct {
-    undefined field_0x0[0x64 - 0x0];
+    tCollision_info* collision_info;
+    undefined2 field_0x4;
+    undefined field_0x6[0x2];
+    undefined4 field_0x8;
+    undefined field_0xc[0x60 - 0xc];
+    undefined flags;
+    undefined field_0x61[3];
 } tPHIL_queued_object_info;
 
 typedef union {
