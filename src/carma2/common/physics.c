@@ -1359,3 +1359,17 @@ int C2_HOOK_FASTCALL PHILMakeObjectActive(tCollision_info* pObject, const br_vec
     return 0;
 }
 C2_HOOK_FUNCTION(0x004b6090, PHILMakeObjectActive)
+
+void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original) {
+    tCollision_info* item = pList;
+
+    for (item = pList; item != NULL; item = item->next) {
+        if (item->disable_move_rotate) {
+            CheckForObjectHierachyTouchingAnotherObject(pObject, item, pList_original);
+            if (item->child != NULL) {
+                CheckForObjectHierachyTouchingObjectList(pObject, item->child, pList_original);
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004ba190, CheckForObjectHierachyTouchingObjectList)
