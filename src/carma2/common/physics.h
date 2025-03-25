@@ -110,4 +110,14 @@ void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tCollision_info* 
 
 int C2_HOOK_FASTCALL PHILAddActiveObject(tCollision_info* pInfo, undefined4* pArg2, const br_vector3* pArg3, const br_vector3* pArg4);
 
+void C2_HOOK_FASTCALL SwapPair(tCollision_info* pObj1, tCollision_info* pObj2);
+
+void C2_HOOK_FASTCALL CheckObjectsPostionInList(tCollision_info* pObject, tCollision_info** pList);
+
+void C2_HOOK_FASTCALL MakeObjectDoSomething(tCollision_info* pObject, tCollision_info* pList);
+
+void C2_HOOK_FASTCALL AddObjectToReducedList(tCollision_info* pObject, tCollision_info** pReduced_list);
+
+void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** pList);
+
 #endif //REC2_PHYSICS_H

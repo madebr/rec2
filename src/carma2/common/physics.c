@@ -1393,3 +1393,76 @@ int C2_HOOK_FASTCALL PHILAddActiveObject(tCollision_info* pInfo, undefined4* pAr
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b6210, PHILAddActiveObject, PHILAddActiveObject_original)
+
+void C2_HOOK_FASTCALL SwapPair(tCollision_info* pObj1, tCollision_info* pObj2) {
+    tCollision_info* obj1_prev;
+    tCollision_info* obj2_next;
+
+    obj1_prev = pObj1->prev;
+    obj2_next = pObj2->next;
+    if (obj1_prev != NULL) {
+        obj1_prev->next = pObj2;
+    }
+    if (obj2_next != NULL) {
+        obj2_next->prev = pObj1;
+    }
+    pObj1->prev = pObj2;
+    pObj2->prev = obj1_prev;
+    pObj1->next = obj2_next;
+    pObj2->next = pObj1;
+}
+
+void C2_HOOK_FASTCALL CheckObjectsPostionInList(tCollision_info* pObject, tCollision_info** pList) {
+
+    if (pObject->prev != NULL && pObject->transform_matrix.m[3][0] < pObject->prev->transform_matrix.m[3][0]) {
+        do {
+            SwapPair(pObject->prev, pObject);
+        } while (pObject->prev != NULL && pObject->transform_matrix.m[3][0] < pObject->prev->transform_matrix.m[3][0]);
+        if (pObject->prev == NULL) {
+            *pList = pObject;
+        }
+    } else if (pObject->next != NULL && pObject->transform_matrix.m[3][0] > pObject->next->transform_matrix.m[3][0]) {
+        do {
+            SwapPair(pObject, pObject->next);
+        } while (pObject->next != NULL && pObject->transform_matrix.m[3][0] > pObject->next->transform_matrix.m[3][0]);
+    }
+}
+
+void C2_HOOK_FASTCALL MakeObjectDoSomething(tCollision_info* pObject, tCollision_info* pList) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, parent, 0x228);
+
+    if (pObject->disable_move_rotate) {
+        while (pObject->parent != NULL && pObject->parent->physics_joint1 != NULL && pObject->parent->physics_joint1->type != eJoint_none) {
+            pObject = pObject->parent;
+        }
+        pObject->box_face_ref = C2V(gFace_num__car) - 2;
+        pObject->disable_move_rotate = 0;
+        if (pObject->child != NULL || pObject->physics_joint1 != NULL || pObject->physics_joint2 != NULL) {
+            if (pObject->field_0x218 == 0) {
+                MoveJointedObject(pObject REC2_THISCALL_EDX, 0.f);
+            }
+            MakeObjectListDoSomething(pObject->child);
+        }
+        CheckForObjectHierachyTouchingObjectList(pObject, pList, pList);
+    }
+}
+
+void C2_HOOK_FASTCALL AddObjectToReducedList(tCollision_info* pObject, tCollision_info** pReduced_list) {
+
+    pObject->field_0x234 = *pReduced_list;
+    pReduced_list[0] = pObject;
+}
+
+void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** pList) {
+
+    InternalPrepareObject(pObject);
+    C2V(gPrepared_objects) = 1;
+    CheckObjectsPostionInList(pObject, pList);
+    if (C2V(gINT_006940ac)) {
+        MakeObjectDoSomething(pObject, *pList);
+    }
+    if (C2V(gReduced_object_list) != NULL) {
+        AddObjectToReducedList(pObject, C2V(gReduced_object_list));
+    }
+}
+C2_HOOK_FUNCTION(0x004b9770, PrepareObject)
