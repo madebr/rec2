@@ -134,6 +134,20 @@ typedef struct {
 } tAccumulateSquashVertices_UserData;
 
 typedef struct {
+    tU16 v[3];
+} tCompressed_vector3;
+
+typedef struct {
+    tCompressed_vector3 m0;
+    tCompressed_vector3 m1;
+    tCompressed_vector3 p;
+} tCompressed_matrix3;
+
+typedef struct {
+    tCompressed_vector3 m[4];
+} tCompressed_matrix34;
+
+typedef struct {
     tPiping_chunk_callback_reset* reset;
     int length;
     tPiping_chunk_callback_calc_length* calc_length;
@@ -165,11 +179,19 @@ typedef struct {
     br_matrix34 field_0x34;
 } tPipe_ped_move_data;
 
+typedef struct {
+    tS16 field_0x48;
+    tS16 field_0x74;
+    tS16 field_0x70;
+    tCompressed_matrix34 matrix;
+} tPipe_drone_corner_pos;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_chunk_drone_render = 60,
+    ePipe_chunk_drone_corner_pos = 61,
 } tPipe_chunk_type;
 
 typedef struct tPipe_chunk {
@@ -3552,16 +3574,6 @@ typedef struct {
     int model_count;
     int count_detail_levels;
 } tCrush_model_pool;
-
-typedef struct {
-    tU16 v[3];
-} tCompressed_vector3;
-
-typedef struct {
-    tCompressed_vector3 m0;
-    tCompressed_vector3 m1;
-    tCompressed_vector3 p;
-} tCompressed_matrix3;
 
 typedef struct {
     tCompressed_vector3 p;
