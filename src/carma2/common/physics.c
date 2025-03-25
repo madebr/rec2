@@ -1287,6 +1287,7 @@ void C2_HOOK_FAKE_THISCALL MoveJointedObject(tCollision_info* pObject, undefined
     MoveJointedObject_original(pObject, pArg2, pDelta_time);
 #else
     NOT_IMPLEMENTED();
+#endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b7510, MoveJointedObject, MoveJointedObject_original)
 
