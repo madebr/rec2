@@ -22,6 +22,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gCount_active_drones);
 C2_HOOK_VARIABLE_DECLARE(int, gFrame);
 C2_HOOK_VARIABLE_DECLARE(tDrone_path_node*, gDrone_path_nodes);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_drone_path_nodes);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gRender_bounds_centre);
 
 void C2_HOOK_CDECL DoNotDprintf(const char* message, ...);
 
@@ -80,5 +81,7 @@ void C2_HOOK_FASTCALL DroneStateFuncControlledMovement(tDrone_spec* pDrone, tDro
 void C2_HOOK_FASTCALL DroneStateFuncPhysicsActive(tDrone_spec* pDrone, tDroneStateFuncState state);
 
 void C2_HOOK_FASTCALL DroneStateFuncStationaryPassive(tDrone_spec* pDrone, tDroneStateFuncState state);
+
+int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pPos);
 
 #endif //REC2_DRONE_H
