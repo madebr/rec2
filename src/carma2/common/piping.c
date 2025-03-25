@@ -488,3 +488,13 @@ void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir) {
         SIZE_OFFSET_PIPING(tPipe_ped_dir_data, direction),       pDir);
 }
 C2_HOOK_FUNCTION(0x004c8b10, PipeSinglePedDir)
+
+void C2_HOOK_FASTCALL PipeSingleDroneRender(tDrone_spec* pDrone_spec, int pRender) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_drone_render, render, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_drone_render, render, 0x2);
+
+    ARDoSingleVariedSession(ePipe_chunk_drone_render, pDrone_spec->id, 1,
+        SIZE_OFFSET_PIPING(tPipe_drone_render, render),         pRender);
+}
+C2_HOOK_FUNCTION(0x004c8ea0, PipeSingleDroneRender)
