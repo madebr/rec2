@@ -65,6 +65,14 @@ void C2_HOOK_FASTCALL ProcessDrones(void);
 
 void C2_HOOK_FASTCALL StopRenderingThisDrone(tDrone_spec* pDrone_spec);
 
+void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone);
+
+void C2_HOOK_FASTCALL ReallyRemoveDroneFromPHIL(tDrone_spec* pDrone);
+
+void C2_HOOK_FASTCALL PauseDroneState(tDrone_spec* pDrone);
+
+void C2_HOOK_FASTCALL StopProcessingThisDrone(tDrone_spec* pDrone, int pForce);
+
 void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state);
 
 void C2_HOOK_FASTCALL DroneStateFuncControlledMovement(tDrone_spec* pDrone, tDroneStateFuncState state);

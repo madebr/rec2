@@ -467,6 +467,36 @@ void C2_HOOK_FASTCALL StopRenderingThisDrone(tDrone_spec* pDrone_spec) {
 }
 C2_HOOK_FUNCTION(0x004516d0, StopRenderingThisDrone)
 
+void C2_HOOK_FASTCALL RemoveDroneFromPHIL(tDrone_spec* pDrone) {
+    ReallyRemoveDroneFromPHIL(pDrone);
+}
+
+void C2_HOOK_FASTCALL ReallyRemoveDroneFromPHIL(tDrone_spec* pDrone) {
+    PHILRemoveObject(&pDrone->collision_info);
+}
+
+void C2_HOOK_FASTCALL PauseDroneState(tDrone_spec* pDrone) {
+    if (C2V(gDrone_state_functions)[pDrone->current_state] != NULL) {
+        C2V(gDrone_state_functions)[pDrone->current_state](pDrone, 2);
+    }
+}
+
+void C2_HOOK_FASTCALL StopProcessingThisDrone(tDrone_spec* pDrone, int pForce) {
+
+    if (pDrone->field_0x44) {
+        if (pForce || (!(pDrone->form->flags & 0x4) && pDrone->current_state != 3 && C2V(gCount_active_drones) > 0)) {
+            pDrone->field_0x44 = 0;
+            C2V(gCount_active_drones) -= 1;
+            StopRenderingThisDrone(pDrone);
+            RemoveDroneFromPHIL(pDrone);
+            PauseDroneState(pDrone);
+            DoNotDprintf("PROCESSING OFF: Frame %d, Drone %d, state %d", C2V(gFrame), pDrone->id, pDrone->current_state);
+            CrappyLittleVector3DPrintf("     Pos", &pDrone->actor->t.t.translate.t);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00451710, StopProcessingThisDrone)
+
 void (C2_HOOK_FASTCALL * DroneStateFuncReset_original)(tDrone_spec* pDrone, tDroneStateFuncState state);
 void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state) {
 
