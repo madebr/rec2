@@ -43,6 +43,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_active_drones, 0x00681fb4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFrame, 0x00684514);
 C2_HOOK_VARIABLE_IMPLEMENT(tDrone_path_node*, gDrone_path_nodes, 0x00684508);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_drone_path_nodes, 0x00684510);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gRender_bounds_centre, 0x006820c0);
 
 void C2_HOOK_CDECL DoNotDprintf(const char* format, ...) {
 // Disabled because too noisy
@@ -540,3 +541,11 @@ void C2_HOOK_FASTCALL DroneStateFuncStationaryPassive(tDrone_spec* pDrone, tDron
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044ec50, DroneStateFuncStationaryPassive, DroneStateFuncStationaryPassive_original)
+
+int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pPos) {
+
+    return fabsf(C2V(gRender_bounds_centre).v[0] - pPos->v[0]) < 15.f
+        && fabsf(C2V(gRender_bounds_centre).v[1] - pPos->v[1]) < 12.f
+        && fabsf(C2V(gRender_bounds_centre).v[2] - pPos->v[2]) < 15.f;
+}
+C2_HOOK_FUNCTION(0x0044ca90, DroneCarWithinRenderingDistance)
