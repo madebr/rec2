@@ -57,4 +57,8 @@ void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime);
 
 void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
+void C2_HOOK_FASTCALL ForEveryModelMaterial(br_model* pModel, tMaterialMaybeUpdate_cbfn* pCallback);
+
+intptr_t C2_HOOK_CDECL ForEveryActorMaterial(br_actor* pActor, void* pContext);
+
 #endif //REC2_SPARK_H
