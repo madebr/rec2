@@ -466,3 +466,14 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
     ForEveryCarMaterial(pCar_spec, UnBlendifyMaterialCB, 1);
 }
 C2_HOOK_FUNCTION(0x004fed40, UnBlendifyCar)
+
+intptr_t C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial) {
+
+    if (GetBlendificatiousnessOfMaterial(pMaterial) == 25) {
+        return 0;
+    }
+    BlendifyMaterial(pMaterial, 25);
+    BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004fed00, BlendifyMaterialCB)
