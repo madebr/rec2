@@ -460,3 +460,9 @@ intptr_t C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x004fed50, UnBlendifyMaterialCB)
+
+void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
+
+    ForEveryCarMaterial(pCar_spec, UnBlendifyMaterialCB, 1);
+}
+C2_HOOK_FUNCTION(0x004fed40, UnBlendifyCar)
