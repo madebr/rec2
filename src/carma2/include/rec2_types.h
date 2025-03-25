@@ -82,6 +82,7 @@ typedef int C2_HOOK_FASTCALL tPiping_chunk_callback_calc_length(void*);
 typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_apply(void*);
 typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_undo(void*, void*);
 typedef intptr_t C2_HOOK_FASTCALL tDRActorEnumRecurseWithTranslation_cbfn(br_actor*, br_vector3*, void*);
+typedef int C2_HOOK_FASTCALL tDrone_form_within_rendering_distance_cbfn(const br_vector3 *pPos);
 
 typedef enum  {
     eNet_synch_host_first = 0,
@@ -4229,7 +4230,7 @@ typedef struct {
     int model_end;
     int model_index;
     int count_models;
-    undefined4* field_0x80;
+    tU8* field_0x80;
     br_model** models;
 } tDrone_form;
 

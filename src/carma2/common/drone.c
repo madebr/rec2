@@ -45,6 +45,12 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gFrame, 0x00684514);
 C2_HOOK_VARIABLE_IMPLEMENT(tDrone_path_node*, gDrone_path_nodes, 0x00684508);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_drone_path_nodes, 0x00684510);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gRender_bounds_centre, 0x006820c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tDrone_form_within_rendering_distance_cbfn*, gDrone_form_withing_rendering_distance_functions, 4, 0x00594760, {
+    DroneCarWithinRenderingDistance,
+    DronePlaneWithinRenderingDistance,
+    DroneTrainWithinRenderingDistance,
+    DronePlaneWithinRenderingDistance,
+});
 
 void C2_HOOK_CDECL DoNotDprintf(const char* format, ...) {
 // Disabled because too noisy
@@ -499,13 +505,64 @@ void C2_HOOK_FASTCALL StopProcessingThisDrone(tDrone_spec* pDrone, int pForce) {
 }
 C2_HOOK_FUNCTION(0x00451710, StopProcessingThisDrone)
 
+void C2_HOOK_FASTCALL ResetDroneModel(tDrone_spec* pDrone) {
+
+    C2_HOOK_BUG_ON(sizeof(pDrone->form->field_0x80[0]) != 1);
+
+    if (pDrone->field_0xf4 >= 0) {
+        ResetDroneCrushyModel(C2V(gDroneStorage).models[pDrone->form->model_index],
+            pDrone->form->models[pDrone->field_0xf4]);
+        pDrone->form->field_0x80[pDrone->field_0xf4] = 0;
+        pDrone->field_0xf4 = -1;
+        pDrone->model_actor->model = C2V(gDroneStorage).models[pDrone->form->model_index];
+    }
+}
+
+void C2_HOOK_FASTCALL SemiInitDroneSpec(tDrone_spec* pDrone) {
+
+    DoNotDprintf("SemiInitDroneSpec() - REINITIALISING DRONE SPEC");
+    pDrone->field_0xa_pathnode_id = pDrone->field_0x8_pathnode_id;
+    pDrone->field_0xe = -1;
+    pDrone->field_0xc = -1;
+    pDrone->field_0x14 = 0;
+    pDrone->field_0x10 = 0;
+    BrVector3Set(&pDrone->field_0x18, 0.f, 0.f, 0.f);
+    BrVector3Copy(&pDrone->pos, &C2V(gDrone_path_nodes)[pDrone->field_0xa_pathnode_id].position);
+    pDrone->field_0xdc = 0;
+    pDrone->field_0xe4 = 1.0;
+    pDrone->field_0x48 = 1.0;
+    ResetDroneModel(pDrone);
+    pDrone->field_0x45 = C2V(gDrone_form_withing_rendering_distance_functions)[pDrone->form->type](&pDrone->actor->t.t.translate.t);
+    pDrone->field_0x5d4 = 0;
+    PipeDroneMatrix(pDrone);
+}
+
 void (C2_HOOK_FASTCALL * DroneStateFuncReset_original)(tDrone_spec* pDrone, tDroneStateFuncState state);
 void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DroneStateFuncReset_original(pDrone, state);
 #else
-    NOT_IMPLEMENTED();
+    switch (state) {
+    case eDrone_state_START:
+        DoNotDprintf("DroneStateFuncReset() START");
+        StopRenderingThisDrone(pDrone);
+        StopProcessingThisDrone(pDrone, 1);
+        SemiInitDroneSpec(pDrone);
+        BrVector3Copy(&pDrone->actor->t.t.translate.t, &C2V(gDrone_path_nodes)[pDrone->field_0x8_pathnode_id].position);
+        break;
+    case eDrone_state_RUN:
+        DoNotDprintf("DroneStateFuncReset() RUN");
+        if (!C2V(gShow_drone_paths)) {
+            NewDroneState(pDrone,2);
+        }
+        break;
+    case eDrone_state_STOP:
+        DoNotDprintf("DroneStateFuncReset() STOP");
+        break;
+    default:
+        break;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044cc70, DroneStateFuncReset, DroneStateFuncReset_original)

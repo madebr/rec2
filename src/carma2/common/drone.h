@@ -23,6 +23,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gFrame);
 C2_HOOK_VARIABLE_DECLARE(tDrone_path_node*, gDrone_path_nodes);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_drone_path_nodes);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gRender_bounds_centre);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tDrone_form_within_rendering_distance_cbfn*, gDrone_form_withing_rendering_distance_functions, 4);
 
 void C2_HOOK_CDECL DoNotDprintf(const char* message, ...);
 
@@ -73,6 +74,8 @@ void C2_HOOK_FASTCALL ReallyRemoveDroneFromPHIL(tDrone_spec* pDrone);
 void C2_HOOK_FASTCALL PauseDroneState(tDrone_spec* pDrone);
 
 void C2_HOOK_FASTCALL StopProcessingThisDrone(tDrone_spec* pDrone, int pForce);
+
+void C2_HOOK_FASTCALL SemiInitDroneSpec(tDrone_spec* pDrone);
 
 void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state);
 
