@@ -5,6 +5,7 @@
 #include "globvrpb.h"
 #include "loading.h"
 #include "physics.h"
+#include "piping.h"
 #include "platform.h"
 #include "utility.h"
 #include "world.h"
@@ -455,6 +456,16 @@ void C2_HOOK_FASTCALL ProcessDrones(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004512f0, ProcessDrones, ProcessDrones_original)
+
+void C2_HOOK_FASTCALL StopRenderingThisDrone(tDrone_spec* pDrone_spec) {
+    if (pDrone_spec->actor->render_style == BR_RSTYLE_FACES) {
+        DoNotDprintf("STOP RENDERING: %d", pDrone_spec->id);
+        C2V(gCount_rendered_drones) -= 1;
+        pDrone_spec->actor->render_style = BR_RSTYLE_NONE;
+        PipeSingleDroneRender(pDrone_spec, 0);
+    }
+}
+C2_HOOK_FUNCTION(0x004516d0, StopRenderingThisDrone)
 
 void (C2_HOOK_FASTCALL * DroneStateFuncReset_original)(tDrone_spec* pDrone, tDroneStateFuncState state);
 void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state) {
