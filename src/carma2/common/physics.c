@@ -1279,3 +1279,13 @@ void C2_HOOK_FASTCALL InternalPrepareObject(tCollision_info* pObject) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b99e0, InternalPrepareObject, InternalPrepareObject_original)
+
+void (C2_HOOK_FAKE_THISCALL * MoveJointedObject_original)(tCollision_info* pObject, undefined4 pArg2, float pDelta_time);
+void C2_HOOK_FAKE_THISCALL MoveJointedObject(tCollision_info* pObject, undefined4 pArg2, float pDelta_time) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MoveJointedObject_original(pObject, pArg2, pDelta_time);
+#else
+    NOT_IMPLEMENTED();
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b7510, MoveJointedObject, MoveJointedObject_original)
