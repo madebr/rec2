@@ -4,9 +4,12 @@
 #include "errors.h"
 #include "finteray.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "globvrme.h"
 #include "globvrpb.h"
 #include "loading.h"
+#include "mainloop.h"
+#include "physics.h"
 #include "platform.h"
 #include "structur.h"
 #include "utility.h"
@@ -339,13 +342,130 @@ void C2_HOOK_FASTCALL RemoveAnythingStillInList(tCollision_info** pList, int pCo
 }
 C2_HOOK_FUNCTION(0x004a7ef0, RemoveAnythingStillInList)
 
+void C2_HOOK_FASTCALL NoteCarsCurrentlyUsed(tCollision_info** pCollision_infos, int* pCount) {
+    tCollision_info* info;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags_0x238, 0x238);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, owner, 0x23c);
+
+    for (info = PHILGetFirstObject(); info != NULL; info = PHILGetNextObject(info)) {
+        if (info != NULL && info->owner != NULL && info->flags_0x238 == 1 && ((tCar_spec*)info->owner)->driver > 5) {
+            pCollision_infos[*pCount] = info;
+            *pCount += 1;
+        }
+    }
+}
+
+int C2_HOOK_FASTCALL IsNetCarActive(const br_vector3* pPoint) {
+    br_vector3 tv;
+
+    BrVector3Sub(&tv, &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, pPoint);
+    if (BrVector3LengthSquared(&tv) < 100.f) {
+        return 1;
+    }
+    if (C2V(gCar_to_view) != &C2V(gProgram_state).current_car) {
+        BrVector3Sub(&tv, &C2V(gCar_to_view)->car_master_actor->t.t.translate.t, pPoint);
+        return BrVector3LengthSquared(&tv) < 100.f;
+    }
+    return 0;
+}
+
 void (C2_HOOK_FASTCALL * RebuildActiveCarList_original)(void);
 void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     RebuildActiveCarList_original();
 #else
-    NOT_IMPLEMENTED();
+    int new_count_active_cars = C2V(gNum_active_cars);
+
+    if (C2V(gActive_car_list_rebuild_required)) {
+        int count_used_cars;
+        tCollision_info* used_cars[1000];
+        int i;
+
+        C2V(gActive_car_list_rebuild_required) = 0;
+
+        count_used_cars = 0;
+        NoteCarsCurrentlyUsed(used_cars, &count_used_cars);
+
+        new_count_active_cars = 0;
+        for (i = 0; i < GetCarCount(eVehicle_self); i++) {
+            tCar_spec* car;
+
+            if (i > 0) {
+                PDFatalError("mGet_car_count( eVehicle_self ) > 1 - I didn't know this could happen!");
+            }
+            car = GetCarSpec(eVehicle_self, i);
+            if (!car->disabled || C2V(gAction_replay_mode)) {
+                car->active = 1;
+                C2V(gActive_car_list)[new_count_active_cars] = car;
+                new_count_active_cars += 1;
+                AddIfNotInList(car->collision_info, used_cars, count_used_cars);
+            }
+        }
+        if (C2V(gNet_mode) == eNet_mode_host) {
+            for (i = 0; i < GetCarCount(eVehicle_net_player); i++) {
+                tCar_spec* car;
+
+                car = GetCarSpec(eVehicle_net_player, i);
+                if (!car->disabled) {
+                    car->active = 1;
+                    C2V(gActive_car_list)[new_count_active_cars] = car;
+                    new_count_active_cars += 1;
+
+                    AddIfNotInList(car->collision_info, used_cars, count_used_cars);
+                } else {
+                    car->active = 0;
+                }
+            }
+        } else if (C2V(gNet_mode) == eNet_mode_client) {
+            for (i = 0; i = GetCarCount(eVehicle_net_player); i++) {
+                tCar_spec* car;
+
+                car = GetCarSpec(eVehicle_net_player, i);
+                if (!car->disabled && IsNetCarActive(&car->car_master_actor->t.t.translate.t)) {
+                    car->active = 1;
+                    C2V(gActive_car_list)[new_count_active_cars] = car;
+                    new_count_active_cars += 1;
+                    AddIfNotInList(car->collision_info, used_cars, count_used_cars);
+                } else {
+                    car->active = 0;
+                }
+            }
+        }
+
+        for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
+            tCar_spec* car;
+
+            car = GetCarSpec(eVehicle_opponent, i);
+            if (C2V(gProgram_state).AI_vehicles.opponents[i].physics_me || C2V(gAction_replay_mode)) {
+                car->active = 1;
+                C2V(gActive_car_list)[new_count_active_cars] = car;
+                new_count_active_cars += 1;
+                AddIfNotInList(car->collision_info,used_cars, count_used_cars);
+            } else {
+                car->active = 0;
+            }
+        }
+
+        for (i = 0; i < C2V(gNumber_of_cops_before_faffage); i++) {
+            tCar_spec* car;
+
+            car = GetCarSpec(eVehicle_rozzer, i);
+            if (C2V(gProgram_state).AI_vehicles.cops[i].physics_me || C2V(gAction_replay_mode)) {
+                car->active = 1;
+                C2V(gActive_car_list)[new_count_active_cars] = car;
+                new_count_active_cars += 1;
+                AddIfNotInList(car->collision_info, used_cars, count_used_cars);
+            } else {
+                car->active = 0;
+            }
+        }
+        RemoveAnythingStillInList(used_cars, count_used_cars);
+    }
+    if (C2V(gNum_active_cars) != new_count_active_cars) {
+        C2V(gNum_active_cars) = new_count_active_cars;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a7a80, RebuildActiveCarList, RebuildActiveCarList_original)

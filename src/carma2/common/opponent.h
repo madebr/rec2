@@ -45,6 +45,10 @@ void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info**
 
 void C2_HOOK_FASTCALL RemoveAnythingStillInList(tCollision_info** pList, int pCount);
 
+void C2_HOOK_FASTCALL NoteCarsCurrentlyUsed(tCollision_info** pCollision_infos, int* pCount);
+
+int C2_HOOK_FASTCALL IsNetCarActive(const br_vector3* pPoint);
+
 void C2_HOOK_FASTCALL RebuildActiveCarList(void);
 
 void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
