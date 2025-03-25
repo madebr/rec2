@@ -128,4 +128,10 @@ int C2_HOOK_FASTCALL NormalSideOfPlane(br_vector3* pPoint, br_vector3* pNormal, 
 
 br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier);
 
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialTablishly(br_material *pMaterial);
+
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialPrimitively(br_material *pMaterial);
+
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material *pMaterial);
+
 #endif // REC2_UTILITY_H
