@@ -1316,3 +1316,46 @@ int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tCollision_info
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b9f90, CheckForObjectHierachyTouchingAnotherObject, CheckForObjectHierachyTouchingAnotherObject_original)
+
+int C2_HOOK_FASTCALL PHILMakeObjectActive(tCollision_info* pObject, const br_vector3* pVel, const br_vector3* pOmega, int pArg4) {
+    tQueued_object_info* object_info;
+
+    if (C2V(gPHIL_enabled)) {
+        return 0;
+    }
+    object_info = pObject->field_0x240;
+    if (pObject->field_0x239 == 2) {
+        object_info->field_0x8 = 2;
+        if (pVel != NULL) {
+            BrVector3Copy(&object_info->field_0x18, pVel);
+        }
+        if (pOmega != NULL) {
+            BrVector3Copy(&object_info->field_0x24, pOmega);
+        }
+        if (pArg4) {
+            object_info->field_0x4 |= 0x2;
+        } else {
+            object_info->field_0x4 &= ~0x2;
+        }
+        return 0;
+    }
+    if (object_info == NULL) {
+        return 2;
+    }
+    object_info->field_0x8 = 2;
+    pObject->flags &= ~0x20;
+    if (pArg4) {
+        object_info->field_0x4 |= 0x2;
+    } else {
+        object_info->field_0x4 &= 0x2;
+    }
+    if (pVel != NULL) {
+        BrVector3Copy(&pObject->v, pVel);
+    }
+    if (pOmega != NULL) {
+        BrVector3Copy(&pObject->omega, pOmega);
+    }
+    ResetCarSpecialVolume(pObject);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004b6090, PHILMakeObjectActive)

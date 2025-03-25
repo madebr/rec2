@@ -104,4 +104,6 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject);
 
 int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original);
 
+int C2_HOOK_FASTCALL PHILMakeObjectActive(tCollision_info* pObject, const br_vector3* pVel, const br_vector3* pOmega, int pArg4);
+
 #endif //REC2_PHYSICS_H
