@@ -29,6 +29,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_icons);
 C2_HOOK_VARIABLE_DECLARE(tU32, gNext_goody_time);
 C2_HOOK_VARIABLE_DECLARE(undefined4, gDAT_006a0958);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_cloaked_cars);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gCloaked_cars, 12);
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void);
 
@@ -187,6 +188,8 @@ int C2_HOOK_FASTCALL GrowATail(tPowerup* powerup, tCar_spec* car);
 int C2_HOOK_FASTCALL CutOffTail(tPowerup* powerup, tCar_spec* car);
 
 int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* powerup, tCar_spec* car);
+
+void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car);
 

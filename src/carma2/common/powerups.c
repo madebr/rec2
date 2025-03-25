@@ -242,6 +242,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_icons, 0x006a0944);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_goody_time, 0x006a0aec);
 C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gDAT_006a0958, 0x006a0958);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_cloaked_cars, 0x006a0454);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gCloaked_cars, 12, 0x006a0910);
 
 
 void C2_HOOK_FASTCALL InitRepulseEffects(void) {
@@ -1683,6 +1684,23 @@ int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* powerup, tCar_spec* car) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e0c40, TurnOnCloaking, TurnOnCloaking_original);
+
+void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar_spec) {
+
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        int i;
+
+        for (i = 0; i < C2V(gCount_cloaked_cars); i++) {
+            if (C2V(gCloaked_cars)[i] == pCar_spec) {
+                c2_memmove(&C2V(gCloaked_cars)[i], &C2V(gCloaked_cars)[i + 1],
+                    (REC2_ASIZE(C2V(gCloaked_cars)) - i - 1) * sizeof(tCar_spec *));
+                C2V(gCount_cloaked_cars) -= 1;
+                break;
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004e0cb0, RemoveFromCloakingList)
 
 void (C2_HOOK_FASTCALL * ResetPedSpeed_original)(tPowerup* powerup, tCar_spec* car);
 void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car) {
