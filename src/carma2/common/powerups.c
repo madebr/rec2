@@ -1702,6 +1702,21 @@ void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar_spec) {
 }
 C2_HOOK_FUNCTION(0x004e0cb0, RemoveFromCloakingList)
 
+int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar_spec) {
+
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        int i;
+
+        for (i = 0; i < C2V(gCount_cloaked_cars); i++) {
+            if (C2V(gCloaked_cars)[i] == pCar_spec) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e0d10, IsCarCloaked)
+
 void (C2_HOOK_FASTCALL * ResetPedSpeed_original)(tPowerup* powerup, tCar_spec* car);
 void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car) {
 #if defined(C2_HOOKS_ENABLED)

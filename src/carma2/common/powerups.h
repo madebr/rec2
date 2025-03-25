@@ -191,6 +191,8 @@ int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar_spec);
 
+int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar_spec);
+
 void C2_HOOK_FASTCALL ResetPedSpeed(tPowerup* powerup, tCar_spec* car);
 
 void C2_HOOK_FASTCALL ResetPedSize(tPowerup* powerup, tCar_spec* car);
