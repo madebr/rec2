@@ -1289,3 +1289,18 @@ void C2_HOOK_FAKE_THISCALL MoveJointedObject(tCollision_info* pObject, undefined
     NOT_IMPLEMENTED();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b7510, MoveJointedObject, MoveJointedObject_original)
+
+void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject) {
+
+    while (pObject != NULL) {
+        if (pObject->disable_move_rotate) {
+            pObject->disable_move_rotate = 0;
+            pObject->box_face_ref = C2V(gFace_num__car) - 2;
+        }
+        if (pObject->child != NULL) {
+            MakeObjectListDoSomething(pObject->child);
+        }
+        pObject = pObject->next;
+    }
+}
+C2_HOOK_FUNCTION(0x004b9f40, MakeObjectListDoSomething)

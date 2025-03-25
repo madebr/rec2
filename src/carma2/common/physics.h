@@ -100,4 +100,6 @@ void C2_HOOK_FASTCALL InternalPrepareObject(tCollision_info* pObject);
 
 void C2_HOOK_FAKE_THISCALL MoveJointedObject(tCollision_info* pObject, undefined4 pArg2, float pDelta_time);
 
+void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject);
+
 #endif //REC2_PHYSICS_H
