@@ -327,6 +327,18 @@ void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info**
 }
 C2_HOOK_FUNCTION(0x004a7ea0, AddIfNotInList)
 
+void C2_HOOK_FASTCALL RemoveAnythingStillInList(tCollision_info** pList, int pCount) {
+    int i;
+
+    for (i = 0; i < pCount; i++) {
+        if (pList[i] != NULL) {
+            PHILRemoveObject(pList[i]);
+            pList[i]->field183_0x1d8 = 0;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004a7ef0, RemoveAnythingStillInList)
+
 void (C2_HOOK_FASTCALL * RebuildActiveCarList_original)(void);
 void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
 
