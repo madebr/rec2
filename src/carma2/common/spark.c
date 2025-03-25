@@ -477,3 +477,9 @@ intptr_t C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x004fed00, BlendifyMaterialCB)
+
+void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar_spec) {
+
+    ForEveryCarMaterial(pCar_spec, BlendifyMaterialCB, 1);
+}
+C2_HOOK_FUNCTION(0x004fecf0, BlendifyCar)
