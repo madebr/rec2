@@ -1305,3 +1305,14 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject) {
     }
 }
 C2_HOOK_FUNCTION(0x004b9f40, MakeObjectListDoSomething)
+
+int (C2_HOOK_FASTCALL * CheckForObjectHierachyTouchingAnotherObject_original)(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original);
+int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return CheckForObjectHierachyTouchingAnotherObject_original(pObject, pList, pList_2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b9f90, CheckForObjectHierachyTouchingAnotherObject, CheckForObjectHierachyTouchingAnotherObject_original)

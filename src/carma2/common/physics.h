@@ -102,4 +102,6 @@ void C2_HOOK_FAKE_THISCALL MoveJointedObject(tCollision_info* pObject, undefined
 
 void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject);
 
+int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original);
+
 #endif //REC2_PHYSICS_H
