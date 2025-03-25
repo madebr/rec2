@@ -67,4 +67,6 @@ void C2_HOOK_FASTCALL PipeSinglePedMove(tPedestrian* pPed, tS16 pArg2, tS16 pOri
 
 void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir);
 
+void C2_HOOK_FASTCALL PipeSingleDroneRender(tDrone_spec* pDrone_spec, int pRender);
+
 #endif //REC2_PIPING_H

@@ -147,6 +147,10 @@ typedef struct {
 } tPipe_ped_dir_data;
 
 typedef struct {
+    tU16 render;
+} tPipe_drone_render;
+
+typedef struct {
     tS16 move_id;
     tS16 original_move_id;
     tS16 field_0x4;
@@ -165,6 +169,7 @@ typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
+    ePipe_chunk_drone_render = 60,
 } tPipe_chunk_type;
 
 typedef struct tPipe_chunk {
