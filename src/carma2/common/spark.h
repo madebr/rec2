@@ -71,4 +71,6 @@ void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec);
 
 intptr_t C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial);
 
+void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar_spec);
+
 #endif //REC2_SPARK_H
