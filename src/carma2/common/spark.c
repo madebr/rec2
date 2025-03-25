@@ -345,3 +345,46 @@ void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004fb9c0, GenerateItFoxShadeTable)
+
+void C2_HOOK_FASTCALL ForEveryModelMaterial(br_model* pModel, tMaterialMaybeUpdate_cbfn* pCallback) {
+    int i;
+    int need_update;
+
+    if (pModel == NULL) {
+        return;
+    }
+    need_update = 0;
+    for (i = 0; i < pModel->prepared->ngroups; i++) {
+        br_material *material = pModel->faces[pModel->prepared->groups[i].face_user[0]].material;
+
+        if (material != NULL) {
+            need_update |= pCallback(material);
+        }
+    }
+    if (need_update) {
+        BrModelUpdate(pModel, BR_MODU_PRIMITIVE_COLOURS);
+    }
+}
+
+intptr_t C2_HOOK_CDECL ForEveryActorMaterial(br_actor* pActor, void *pContext) {
+    tUser_crush_data* user_crush_data;
+    tMaterialMaybeUpdate_cbfn* callback;
+
+    callback = pContext;
+    if (pActor->type != BR_ACTOR_MODEL) {
+        return 0;
+    }
+    if (pActor->model == NULL) {
+        return 0;
+    }
+    user_crush_data = pActor->user;
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    if (pActor->material != NULL) {
+        callback(pActor->material);
+    }
+    ForEveryModelMaterial(pActor->model, callback);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004fe8a0, ForEveryActorMaterial)
