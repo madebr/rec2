@@ -42,6 +42,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_mechanics_time_sync, 0x0074a5e4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPrepared_objects, 0x00692dcc);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info**, gReduced_object_list, 0x006940a8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006940ac, 0x006940ac);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_object_info, gPHIL_queued_objects, 1, 0x006923f0);
 
 
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage) {
@@ -1458,3 +1459,64 @@ void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** 
     }
 }
 C2_HOOK_FUNCTION(0x004b9770, PrepareObject)
+
+int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject) {
+    int i;
+    tPHIL_queued_header* object_info;
+
+    if (C2V(gPHIL_enabled)) {
+        return 0;
+    }
+    if (C2V(gPHIL_munging_objects) && !C2V(gPHIL_object_added)) {
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_object_info, object, 0x0);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_object_info, field_0x8, 0x8);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_object_info, flags, 0x60);
+
+        C2V(gPhil_queued_objects).objects[C2V(gPHIL_count_queued_objects)].collision_info = pObject;
+        C2V(gPhil_queued_objects).objects[C2V(gPHIL_count_queued_objects)].field_0x8 = 1;
+        C2V(gPhil_queued_objects).objects[C2V(gPHIL_count_queued_objects)].flags = 0;
+        pObject->field_0x240 = &C2V(gPhil_queued_objects).objects[C2V(gPHIL_count_queued_objects)];
+        pObject->field_0x239 = 2;
+        C2V(gPHIL_count_queued_objects) += 1;
+        return 0;
+    }
+    object_info = NULL;
+    for (i = 0; i < REC2_ASIZE(C2V(gPhil_queued_objects).headers); i++) {
+        tPHIL_queued_header* current_object_info = &C2V(gPhil_queued_objects).headers[i];
+
+        if (current_object_info->collision_info == NULL) {
+            if (object_info == NULL) {
+                object_info = current_object_info;
+            }
+        } else if (current_object_info->collision_info == pObject) {
+            return 2;
+        }
+    }
+    if (object_info == NULL) {
+        return 1;
+    }
+    c2_memset(object_info, 0, sizeof(*object_info));
+    object_info->collision_info = pObject;
+    object_info->field_0x8 = 1;
+    pObject->field_0x240 = object_info;
+    pObject->flags |= 0x20;
+    pObject->field_0x239 = 1;
+    C2V(gPHIL_count_list_collision_infos) += 1;
+    if (C2V(gPHIL_list_collision_infos) != NULL) {
+        pObject->next = C2V(gPHIL_list_collision_infos)->next;
+        C2V(gPHIL_list_collision_infos)->next = pObject;
+        pObject->prev = C2V(gPHIL_list_collision_infos);
+        if (pObject->next != NULL) {
+            pObject->next->prev = pObject;
+        }
+    } else {
+        C2V(gPHIL_list_collision_infos) = pObject;
+        pObject->next = NULL;
+        pObject->prev = NULL;
+    }
+    if (C2V(gPHIL_doing_physics)) {
+        PrepareObject(pObject, &C2V(gPHIL_list_collision_infos));
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004b5d40, PHILAddObject)
