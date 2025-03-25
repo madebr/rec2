@@ -3667,12 +3667,12 @@ typedef struct tCollision_info {
     tCollision_info* parent;
     tCollision_info* prev;
     tCollision_info* field_0x230;
-    undefined field_0x234[4];
+    void* field_0x234;
     tU8 flags_0x238;
     tU8 field_0x239;
     undefined field_0x23a[2];
     void* owner; /* points to tCollision_info_owner (used in PHILSetObjectProperty) */
-    undefined* field_0x240;
+    void* field_0x240;
     br_vector3 water_normal;
     br_scalar water_d; /* Created by retype action */
     br_scalar water_depth_factor;
@@ -3693,6 +3693,23 @@ typedef struct {
     undefined4 field_0x8;
     undefined field_0xc[0xc];
 } tPhil_object_info_00692458;
+
+typedef struct {
+    tCollision_info* object;
+    undefined2 field_0x4;
+    undefined field_0x6[0x2];
+    undefined4 field_0x8;
+    undefined field_0xc[0xc];
+    br_vector3 field_0x18;
+    br_vector3 field_0x24;
+    undefined field_0x30[0xc];
+    undefined field_0x3c;
+    undefined field_0x3d[3];
+    undefined4 field_0x40;
+    undefined field_0x44[0x1c];
+    undefined flags;
+    undefined field_0x61[3];
+} tQueued_object_info;
 
 typedef struct {
     undefined field_0x0[0x8];

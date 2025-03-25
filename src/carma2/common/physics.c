@@ -1,5 +1,6 @@
 #include "physics.h"
 
+#include "car.h"
 #include "errors.h"
 #include "loading.h"
 #include "platform.h"
@@ -38,6 +39,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_doing_physics, 0x0074a5f8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_object_added, 0x006923e4);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gPHIL_last_physics_tick, 0x0074a5ec);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPHIL_mechanics_time_sync, 0x0074a5e4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPrepared_objects, 0x00692dcc);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info**, gReduced_object_list, 0x006940a8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006940ac, 0x006940ac);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_object_info, gPHIL_queued_objects, 1, 0x006923f0);
 
 
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError) {
