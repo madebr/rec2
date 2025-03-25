@@ -314,6 +314,19 @@ void C2_HOOK_FASTCALL DisposeOpponentPaths(void) {
 }
 C2_HOOK_FUNCTION(0x004a9c50, DisposeOpponentPaths)
 
+void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info** pList, int pCount) {
+    int i;
+
+    for (i = 0; i < pCount; i++) {
+        if (pList[i] == pObject) {
+            pList[i] = NULL;
+            return;
+        }
+    }
+    PHILAddActiveObject(pObject, NULL, NULL, NULL);
+}
+C2_HOOK_FUNCTION(0x004a7ea0, AddIfNotInList)
+
 void (C2_HOOK_FASTCALL * RebuildActiveCarList_original)(void);
 void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
 

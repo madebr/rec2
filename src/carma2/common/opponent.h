@@ -41,6 +41,8 @@ void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProc
 
 void C2_HOOK_FASTCALL DisposeOpponentPaths(void);
 
+void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info** pList, int pCount);
+
 void C2_HOOK_FASTCALL RebuildActiveCarList(void);
 
 void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
