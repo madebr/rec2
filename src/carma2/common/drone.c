@@ -1,5 +1,6 @@
 #include "drone.h"
 
+#include "compress.h"
 #include "errors.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -576,3 +577,33 @@ void C2_HOOK_FASTCALL CalcRenderBoundsCentre(void) {
     BrVector3Add(&C2V(gRender_bounds_centre), (br_vector3 *) C2V(gCamera_to_world).m[3], &tv);
 }
 C2_HOOK_FUNCTION(0x00451bd0, CalcRenderBoundsCentre)
+
+void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone) {
+    tCompressed_matrix34 compressed_mat;
+    tS16 compressed_field_0x70;
+    tS16 compressed_field_0x48;
+    tS16 compressed_field_0x74;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, field_0x48, 0x48);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, field_0xd8, 0xd8);
+    C2_HOOK_BUG_ON(sizeof(pDrone->field_0xd8) != 1);
+
+    compressed_mat.m[0].v[0] = DRScalarToU16(pDrone->actor->t.t.mat.m[0][0], -1.f, 1.f);
+    compressed_mat.m[0].v[1] = DRScalarToU16(pDrone->actor->t.t.mat.m[0][1], -1.f, 1.f);
+    compressed_mat.m[0].v[2] = DRScalarToU16(pDrone->actor->t.t.mat.m[0][2], -1.f, 1.f);
+    compressed_mat.m[1].v[0] = DRScalarToU16(pDrone->actor->t.t.mat.m[1][0], -1.f, 1.f);
+    compressed_mat.m[1].v[1] = DRScalarToU16(pDrone->actor->t.t.mat.m[1][1], -1.f, 1.f);
+    compressed_mat.m[1].v[2] = DRScalarToU16(pDrone->actor->t.t.mat.m[1][2], -1.f, 1.f);
+    compressed_mat.m[2].v[0] = DRScalarToU16(pDrone->actor->t.t.mat.m[2][0], -1.f, 1.f);
+    compressed_mat.m[2].v[1] = DRScalarToU16(pDrone->actor->t.t.mat.m[2][1], -1.f, 1.f);
+    compressed_mat.m[2].v[2] = DRScalarToU16(pDrone->actor->t.t.mat.m[2][2], -1.f, 1.f);
+    compressed_mat.m[3].v[0] = DRScalarToU16(pDrone->actor->t.t.mat.m[3][0], -1000.f, 1000.f);
+    compressed_mat.m[3].v[1] = DRScalarToU16(pDrone->actor->t.t.mat.m[3][1], -1000.f, 1000.f);
+    compressed_mat.m[3].v[2] = DRScalarToU16(pDrone->actor->t.t.mat.m[3][2], -1000.f, 1000.f);
+
+    compressed_field_0x70 = DRScalarToU16(MIN(100.f, pDrone->field_0x70), 0.f, 100.f);
+    compressed_field_0x74 = DRScalarToU16(pDrone->field_0x74, 0.f, 1.f);
+    compressed_field_0x48 = DRScalarToU16(pDrone->field_0xd8 ? pDrone->field_0x48 : -pDrone->field_0x48, -500.f, 500.f);
+    PipeSingleDroneCornerPos(pDrone, compressed_field_0x48, compressed_field_0x74, compressed_field_0x70, &compressed_mat);
+}
+C2_HOOK_FUNCTION(0x0044cfd0, PipeDroneMatrix)

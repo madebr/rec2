@@ -4370,8 +4370,10 @@ typedef struct tDrone_spec {
     br_bounds3 field_0x54;
     undefined4 field_0x6c;
     int field_0x70;
-    undefined4 field_0x74;
-    undefined field_0x78[100];
+    float field_0x74;
+    undefined field_0x78[96];
+    undefined field_0xd8;
+    undefined field_0xd9[3];
     tU32 field_0xdc;
     undefined4 field_0xe0;
     float field_0xe4;
