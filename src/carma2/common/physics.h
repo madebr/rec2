@@ -120,4 +120,6 @@ void C2_HOOK_FASTCALL AddObjectToReducedList(tCollision_info* pObject, tCollisio
 
 void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** pList);
 
+int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject);
+
 #endif //REC2_PHYSICS_H
