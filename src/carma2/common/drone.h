@@ -63,6 +63,8 @@ void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void);
 
 void C2_HOOK_FASTCALL ProcessDrones(void);
 
+void C2_HOOK_FASTCALL StopRenderingThisDrone(tDrone_spec* pDrone_spec);
+
 void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state);
 
 void C2_HOOK_FASTCALL DroneStateFuncControlledMovement(tDrone_spec* pDrone, tDroneStateFuncState state);
