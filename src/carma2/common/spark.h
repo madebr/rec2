@@ -65,4 +65,6 @@ intptr_t C2_HOOK_CDECL ForEveryActorMaterialNoGrooves(br_actor* pActor, void* pC
 
 void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves);
 
+intptr_t C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial);
+
 #endif //REC2_SPARK_H
