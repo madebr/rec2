@@ -566,3 +566,13 @@ int C2_HOOK_FASTCALL DroneTrainWithinRenderingDistance(const br_vector3* pPos) {
 
 }
 C2_HOOK_FUNCTION(0x0044cb30, DroneTrainWithinRenderingDistance)
+
+void C2_HOOK_FASTCALL CalcRenderBoundsCentre(void) {
+    br_vector3 tv;
+
+    BrVector3Negate(&tv, (br_vector3 *) C2V(gCamera_to_world).m[2]);
+    BrVector3Normalise(&tv, &tv);
+    BrVector3Scale(&tv, &tv, 5.f);
+    BrVector3Add(&C2V(gRender_bounds_centre), (br_vector3 *) C2V(gCamera_to_world).m[3], &tv);
+}
+C2_HOOK_FUNCTION(0x00451bd0, CalcRenderBoundsCentre)

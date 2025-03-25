@@ -88,4 +88,6 @@ int C2_HOOK_FASTCALL DronePlaneWithinRenderingDistance(const br_vector3* pPos);
 
 int C2_HOOK_FASTCALL DroneTrainWithinRenderingDistance(const br_vector3* pPos);
 
+void C2_HOOK_FASTCALL CalcRenderBoundsCentre(void);
+
 #endif //REC2_DRONE_H
