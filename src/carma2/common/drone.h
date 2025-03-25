@@ -84,4 +84,6 @@ void C2_HOOK_FASTCALL DroneStateFuncStationaryPassive(tDrone_spec* pDrone, tDron
 
 int C2_HOOK_FASTCALL DroneCarWithinRenderingDistance(const br_vector3* pPos);
 
+int C2_HOOK_FASTCALL DronePlaneWithinRenderingDistance(const br_vector3* pPos);
+
 #endif //REC2_DRONE_H
