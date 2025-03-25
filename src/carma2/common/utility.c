@@ -1347,3 +1347,37 @@ br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_i
     return the_material;
 }
 C2_HOOK_FUNCTION(0x00515780, DRMaterialClone)
+
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialTablishly(br_material *pMaterial) {
+
+    if (pMaterial->index_blend == BrTableFind("BLEND75.TAB")) {
+        return 25;
+    }
+    if (pMaterial->index_blend == BrTableFind("BLEND50.TAB")) {
+        return 50;
+    }
+    if (pMaterial->index_blend == BrTableFind("BLEND25.TAB")) {
+        return 75;
+    }
+    return 100;
+}
+
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialPrimitively(br_material *pMaterial) {
+    br_token_value* prims = pMaterial->extra_prim;
+
+    if (prims != NULL && prims[0].t == BRT_BLEND_B && prims[0].v.b && prims[1].t == BRT_OPACITY_X) {
+        return (100 * BrFixedToInt(prims[1].v.x)) >> 8;
+    }
+    return 100;
+}
+
+int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material *pMaterial) {
+
+    if (C2V(gScreen)->type == BR_PMT_INDEX_8) {
+        return GetBlendificatiousnessOfMaterialTablishly(pMaterial);
+    }
+    else {
+        return GetBlendificatiousnessOfMaterialPrimitively(pMaterial);
+    }
+}
+C2_HOOK_FUNCTION(0x00518e70, GetBlendificatiousnessOfMaterial)
