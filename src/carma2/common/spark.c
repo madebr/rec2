@@ -414,3 +414,38 @@ intptr_t C2_HOOK_CDECL ForEveryActorMaterialNoGrooves(br_actor* pActor, void* pC
     return 0;
 }
 C2_HOOK_FUNCTION(0x004fe930, ForEveryActorMaterialNoGrooves)
+
+void (C2_HOOK_FASTCALL * ForEveryCarMaterial_original)(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves);
+void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ForEveryCarMaterial_original(pCar_spec, pCallback, pGrooves);
+#else
+    tUser_crush_data* user_crush_data = pCar_spec->car_model_actor->user;
+#if 0
+    int i;
+#endif
+
+    if (pCar_spec->car_master_actor->material != NULL) {
+        pCallback(pCar_spec->car_master_actor->material);
+    }
+    ForEveryModelMaterial(pCar_spec->shell_model, pCallback);
+    ForEveryModelMaterial(user_crush_data->models[1], pCallback);
+    if (pGrooves) {
+        DRActorEnumRecurse(pCar_spec->car_model_actor, ForEveryActorMaterial, pCallback);
+    } else {
+        DRActorEnumRecurse(pCar_spec->car_model_actor, ForEveryActorMaterialNoGrooves, pCallback);
+    }
+    NOT_IMPLEMENTED();
+#if 0
+    /* FIXME: incomplete */
+    for (i = 0; i < pCar_spec->car_crush_spec->field_0x270; i++) {
+        ForEveryModelMaterial(pCar_spec->car_crush_spec->field_0x274[i].actor->model, pCallback);
+    }
+    for (i = 0; i < pCar_spec->car_crush_spec->field_0x2b0; i++) {
+        ForEveryModelMaterial(pCar_spec->car_crush_spec->field_0x2b4[i].actor->model, pCallback);
+    }
+#endif
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fe640, ForEveryCarMaterial, ForEveryCarMaterial_original)
