@@ -108,4 +108,6 @@ int C2_HOOK_FASTCALL PHILMakeObjectActive(tCollision_info* pObject, const br_vec
 
 void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original);
 
+int C2_HOOK_FASTCALL PHILAddActiveObject(tCollision_info* pInfo, undefined4* pArg2, const br_vector3* pArg3, const br_vector3* pArg4);
+
 #endif //REC2_PHYSICS_H

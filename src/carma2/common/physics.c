@@ -1373,3 +1373,23 @@ void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tCollision_info* 
     }
 }
 C2_HOOK_FUNCTION(0x004ba190, CheckForObjectHierachyTouchingObjectList)
+
+int (C2_HOOK_FASTCALL * PHILAddActiveObject_original)(tCollision_info* pInfo, undefined4* pArg2, const br_vector3* pArg3, const br_vector3* pArg4);
+int C2_HOOK_FASTCALL PHILAddActiveObject(tCollision_info* pInfo, undefined4* pArg2, const br_vector3* pArg3, const br_vector3* pArg4) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PHILAddActiveObject_original(pInfo, pArg2, pArg3, pArg4);
+#else
+    if (C2V(gPHIL_enabled)) {
+        return 0;
+    }
+    if (PHILAddObject(pInfo) != 0) {
+        return 0;
+    }
+    if (pArg2 != NULL && !C2V(gPHIL_enabled)) {
+        NOT_IMPLEMENTED();
+    }
+    return PHILMakeObjectActive(pInfo, pArg3, pArg4, 0);
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b6210, PHILAddActiveObject, PHILAddActiveObject_original)
