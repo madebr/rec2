@@ -3665,13 +3665,14 @@ typedef struct tCollision_info {
     undefined field_0x1df;
     undefined field_0x1e0[8];
     br_matrix34 field_0x1e8;
-    undefined field_0x218[8];
+    undefined4 field_0x218;
+    float field_0x21c;
     tCollision_info* next;
     tCollision_info* child;
     tCollision_info* parent;
     tCollision_info* prev;
     tCollision_info* field_0x230;
-    undefined field_0x234[4];
+    void* field_0x234;
     tU8 flags_0x238;
     tU8 field_0x239;
     undefined field_0x23a[2];
