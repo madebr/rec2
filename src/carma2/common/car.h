@@ -93,4 +93,6 @@ void C2_HOOK_FAKE_THISCALL ControlCar5(tCar_spec* c, undefined4 arg2, br_scalar 
 
 void C2_HOOK_FASTCALL DrVector3RotateY(br_vector3* v, br_angle t);
 
+intptr_t C2_HOOK_CDECL ActorFunks(br_actor* pActor, void* pContext);
+
 #endif //REC2_CAR_H
