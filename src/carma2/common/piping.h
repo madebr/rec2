@@ -18,6 +18,7 @@ C2_HOOK_VARIABLE_DECLARE(br_scalar, gMax_distance);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gReference_pos);
 C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCar_ptr);
 C2_HOOK_VARIABLE_DECLARE(tU32, gTrigger_time);
+C2_HOOK_VARIABLE_DECLARE(tPipe_smudge_data*, gSmudge_space);
 
 int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
 
@@ -72,5 +73,7 @@ void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir);
 void C2_HOOK_FASTCALL PipeSingleDroneRender(tDrone_spec* pDrone_spec, int pRender);
 
 void C2_HOOK_FASTCALL PipeSingleDroneCornerPos(tDrone_spec* pDrone, tS16 pField_0x48, tS16 pField_0x74, tS16 pField_0x70, tCompressed_matrix34* pMatrix);
+
+void C2_HOOK_FASTCALL AddSmudgeToPipingSession(tU16 pCar_ID, int pModel_index, int pVertex_count, tSmudged_vertex* pCoordinates);
 
 #endif //REC2_PIPING_H
