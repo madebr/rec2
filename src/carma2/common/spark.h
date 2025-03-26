@@ -75,4 +75,6 @@ void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec);
+
 #endif //REC2_SPARK_H
