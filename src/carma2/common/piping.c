@@ -35,6 +35,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gMr_chunky, 0x006768a0, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPiping_chunk_callback*, gPipe_chunk_vtable, 0x006768e8, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_phys_end, 0x006768f0, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_working_end, 0x006768c4, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x006940d4);
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
@@ -534,3 +535,19 @@ void C2_HOOK_FASTCALL PipeSingleDroneCornerPos(tDrone_spec* pDrone, tS16 pField_
         SIZE_OFFSET_PIPING(tPipe_drone_corner_pos, matrix.m[3]),        &pMatrix->m[3]);
 }
 C2_HOOK_FUNCTION(0x004c8ec0, PipeSingleDroneCornerPos)
+
+void C2_HOOK_FASTCALL AddSmudgeToPipingSession(tU16 pCar_ID, int pModel_index, int pVertex_count, tSmudged_vertex* pCoordinates) {
+    tU32 data_size;
+
+    if (C2V(gSmudge_space) != NULL) {
+        if (pVertex_count > 600) {
+            pVertex_count = 600;
+        }
+        C2V(gSmudge_space)->vertex_count = pVertex_count;
+        C2V(gSmudge_space)->model_index = pModel_index;
+        c2_memcpy(C2V(gSmudge_space)->vertex_changes, pCoordinates, pVertex_count * sizeof(tSmudged_vertex));
+        data_size = offsetof(tPipe_smudge_data, vertex_changes) + pVertex_count * sizeof(tSmudged_vertex);
+        ARAddDataToSession(ePipe_chunk_smudge, pCar_ID, C2V(gSmudge_space), data_size);
+    }
+}
+C2_HOOK_FUNCTION(0x004c6ea0, AddSmudgeToPipingSession)
