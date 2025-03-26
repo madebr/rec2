@@ -483,3 +483,14 @@ void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar_spec) {
     ForEveryCarMaterial(pCar_spec, BlendifyMaterialCB, 1);
 }
 C2_HOOK_FUNCTION(0x004fecf0, BlendifyCar)
+
+void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+        if (C2V(gSmoke_column)[i].car == pCar_spec) {
+            C2V(gSmoke_column)[i].lifetime = 0;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004fca70, StopCarSmokingInstantly)
