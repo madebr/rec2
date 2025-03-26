@@ -1,6 +1,7 @@
 #include "powerups.h"
 
 #include "animation.h"
+#include "car.h"
 #include "controls.h"
 #include "crush.h"
 #include "errors.h"
@@ -14,6 +15,7 @@
 #include "platform.h"
 #include "shrapnel.h"
 #include "skidmark.h"
+#include "spark.h"
 #include "utility.h"
 #include "world.h"
 
@@ -2059,10 +2061,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004df300, ResetPissed, ResetPissed_original)
 
 void (C2_HOOK_FASTCALL * TurnOffCloaking_original)(tPowerup* powerup, tCar_spec* car);
 void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* powerup, tCar_spec* car) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     TurnOffCloaking_original(powerup, car);
 #else
-    NOT_IMPLEMENTED();
+
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        UnBlendifyCar(car);
+        RemoveFromCloakingList(car);
+        MasterEnableCarFunks(car);
+        RestoreCarPixelmaps(car);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e0d50, TurnOffCloaking, TurnOffCloaking_original)
