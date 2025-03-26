@@ -912,3 +912,14 @@ void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f8e10, MasterEnableCarFunks, MasterEnableCarFunks_original)
+
+int C2_HOOK_FASTCALL RestorePixelmap(br_material* pMaterial) {
+
+    if (pMaterial->colour_map != (br_pixelmap*)pMaterial->user) {
+        pMaterial->colour_map = (br_pixelmap*)pMaterial->user;
+        BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+        return 1;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004f9760, RestorePixelmap)
