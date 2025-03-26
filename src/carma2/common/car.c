@@ -862,3 +862,21 @@ void C2_HOOK_FASTCALL DrVector3RotateY(br_vector3* v, br_angle t) {
     v->v[2] = v->v[2] * c - v->v[0] * s;
     v->v[0] = ts;
 }
+
+intptr_t C2_HOOK_CDECL ActorFunks(br_actor* pActor, void* pContext) {
+    tFunk_index_cbfn* funk_index_callback = pContext;
+    tUser_crush_data *user_crush_data = pActor->user;
+    int i;
+
+    if (user_crush_data == NULL || user_crush_data->crush_data == NULL || user_crush_data->crush_data->smashables == NULL) {
+        return 0;
+    }
+    for (i = 0; i < user_crush_data->crush_data->count_smashables; i++) {
+        int funk_index = user_crush_data->crush_data->smashables[i].funk;
+        if (funk_index >= 0) {
+            funk_index_callback(funk_index);
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004f8dc0, ActorFunks)
