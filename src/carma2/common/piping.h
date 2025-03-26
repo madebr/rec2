@@ -19,6 +19,8 @@ C2_HOOK_VARIABLE_DECLARE(br_vector3, gReference_pos);
 C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCar_ptr);
 C2_HOOK_VARIABLE_DECLARE(tU32, gTrigger_time);
 
+int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
+
 void C2_HOOK_FASTCALL DisposePiping(void);
 
 void C2_HOOK_FASTCALL DisposeActionReplay(void);
