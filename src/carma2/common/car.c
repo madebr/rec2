@@ -12,6 +12,7 @@
 #include "physics.h"
 #include "raycast.h"
 #include "replay.h"
+#include "spark.h"
 #include "utility.h"
 #include "world.h"
 
@@ -923,3 +924,10 @@ int C2_HOOK_FASTCALL RestorePixelmap(br_material* pMaterial) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004f9760, RestorePixelmap)
+
+void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
+
+    MasterEnableCarFunks(pCar_spec);
+    ForEveryCarMaterial(pCar_spec, RestorePixelmap, 1);
+}
+C2_HOOK_FUNCTION(0x004f9620, RestoreCarPixelmaps)
