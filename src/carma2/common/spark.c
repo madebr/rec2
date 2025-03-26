@@ -4,6 +4,7 @@
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
+#include "piping.h"
 #include "utility.h"
 
 #include "rec2_macros.h"
@@ -494,3 +495,77 @@ void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec) {
     }
 }
 C2_HOOK_FUNCTION(0x004fca70, StopCarSmokingInstantly)
+
+void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec) {
+    br_model* model;
+    br_model* b_model;
+    br_actor* actor;
+    br_actor* bonny;
+    int j;
+    int n;
+    int v;
+    int group;
+    tSmudged_vertex data[1000];
+
+    if (!C2V(gAction_replay_mode)) {
+        return;
+    }
+    actor = pCar_spec->car_actor;
+    model = actor->model;
+    bonny = pCar_spec->car_actor;
+    n = 0;
+    if ((model->flags & BR_MODF_KEEP_ORIGINAL) || (model->flags & BR_MODF_UPDATEABLE)) {
+        ARStartPipingSession(ePipe_chunk_smudge);
+        j = 0;
+        for (group = 0; group < model->prepared->ngroups; group++) {
+            for (v = 0; v < model->prepared->groups[group].nvertices; v++) {
+                if ((model->prepared->groups[group].vertex_colours[v] >> 24) != 0) {
+                    data[n].vertex_index = j;
+                    data[n].light_index = -((tS32)(model->prepared->groups[group].vertex_colours[v] >> 24));
+                    n += 1;
+                    model->prepared->groups[group].vertex_colours[v] = 0;
+                    if (model->flags & BR_MODF_UPDATEABLE) {
+                        model->vertices[model->prepared->groups[group].vertex_user[v]].index = 0;
+                    }
+                    if (n >= REC2_ASIZE(data)) {
+                        group = model->prepared->ngroups;
+                        break;
+                    }
+                }
+                j += 1;
+            }
+        }
+        if (n != 0) {
+            AddSmudgeToPipingSession(pCar_spec->car_ID, 0, n, data);
+        }
+        if (bonny != actor) {
+            /* This branch is never taken */
+            b_model = bonny->model;
+            n = 0;
+            j = 0;
+            for (group = 0; group < b_model->prepared->ngroups; group++) {
+                for (v = 0; v < b_model->prepared->groups[group].nvertices; v++) {
+                    if ((b_model->prepared->groups[group].vertex_colours[v] >> 24) != 0) {
+                        data[n].vertex_index = j;
+                        data[n].light_index = -b_model->prepared->groups[group].nvertices;
+                        n += 1;
+                        b_model->prepared->groups[group].vertex_colours[v] = 0;
+                        if (b_model->flags & BR_MODF_UPDATEABLE) {
+                            b_model->vertices[b_model->prepared->groups[group].vertex_user[v]].index = 0;
+                        }
+                        if (n >= REC2_ASIZE(data)) {
+                            group = b_model->prepared->groups[group].nvertices;
+                            break;
+                        }
+                    }
+                    j += 1;
+                }
+            }
+            if (n != 0) {
+                AddSmudgeToPipingSession(pCar_spec->car_ID, 0, n, data);
+            }
+        }
+        AREndPipingSession();
+    }
+}
+C2_HOOK_FUNCTION(0x, PipeInstantUnSmudge)
