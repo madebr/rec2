@@ -99,4 +99,6 @@ void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pFunk_index);
 
 void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec);
 
+int C2_HOOK_FASTCALL RestorePixelmap(br_material* pMaterial);
+
 #endif //REC2_CAR_H
