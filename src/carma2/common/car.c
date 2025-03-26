@@ -880,3 +880,9 @@ intptr_t C2_HOOK_CDECL ActorFunks(br_actor* pActor, void* pContext) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x004f8dc0, ActorFunks)
+
+void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pFunk_index) {
+
+    C2V(gFunkotronics_array)[pFunk_index].flags &= ~0x2;
+}
+C2_HOOK_FUNCTION(0x0047b2e0, MasterEnableFunkotronic)
