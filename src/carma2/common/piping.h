@@ -5,7 +5,7 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tPipe_smudge_data*, gSmudge_space);
+C2_HOOK_VARIABLE_DECLARE(undefined4*, gCrush_space);
 C2_HOOK_VARIABLE_DECLARE(tU8*, gPipe_play_ptr);
 C2_HOOK_VARIABLE_DECLARE(int, gPlay_direction);
 C2_HOOK_VARIABLE_DECLARE(tU8*, gPipe_record_ptr);

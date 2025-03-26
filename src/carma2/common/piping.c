@@ -12,7 +12,7 @@
 
 #include <stdarg.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x00694104);
+C2_HOOK_VARIABLE_IMPLEMENT(undefined4*, gCrush_space, 0x00694104);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_play_ptr, 0x006768b8, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPlay_direction, 0x006768c0, 0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_record_ptr, 0x006768bc, NULL);
@@ -58,9 +58,9 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004024a0, DisposePiping, DisposePiping_original)
 void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 
     DisposePiping();
-    if (C2V(gSmudge_space) != NULL) {
-        BrMemFree(C2V(gSmudge_space));
-        C2V(gSmudge_space) = NULL;
+    if (C2V(gCrush_space) != NULL) {
+        BrMemFree(C2V(gCrush_space));
+        C2V(gCrush_space) = NULL;
     }
 }
 C2_HOOK_FUNCTION(0x004c6c60, DisposeActionReplay)
