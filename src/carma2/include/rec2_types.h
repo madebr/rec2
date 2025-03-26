@@ -2078,7 +2078,7 @@ typedef struct tCar_spec {
     float field_0x4c8;
     float damage_multiplier;
     float grip_multiplier;
-    undefined field_0x4d4[4];
+    float field_0x4d4;
     tDamage_unit damage_units[12];
     int frame_start_damage[3];
     float last_impact_location;
@@ -2132,7 +2132,8 @@ typedef struct tCar_spec {
     int number_of_wheels_on_ground;
     br_actor* wheel_actors[6];
     br_actor* pivot_actors[6];
-    undefined field_0x131c[32];
+    undefined field_0x131c[16];
+    float wheel_dam_offset[4];
     float damage_magnitude_accumulator;
     float revs;
     float target_revs;
@@ -2194,8 +2195,7 @@ typedef struct tCar_spec {
     float total_length[4];
     br_material* field_0x16fc[4];
     float proxy_ray_distance;
-    int powerups[80]; /* unknown_size */
-    undefined field_0x1850[80];
+    int powerups[100];
     tU32 time_to_recover;
     undefined field_0x18a4[4];
     int power_up_levels[3];
@@ -2203,7 +2203,7 @@ typedef struct tCar_spec {
     int horn_sound_tag;
     int is_girl;
     tU8 field_0x18c8;
-    undefined field_0x18c9[3];
+    tU32 repair_time;
     int field_0x18cc;
     float softness_factor;
     tCar_crush_spec* car_crush_spec;
@@ -3420,9 +3420,9 @@ typedef struct tCar_crush_spec {
     undefined field_0x1d0[28];
     br_vector3 field_0x1ec[6];
     undefined field_0x1f8[60];
-    undefined4 field_0x270;
+    int field_0x270;
     undefined field_0x274[60];
-    undefined4 field_0x2b0;
+    int field_0x2b0;
     undefined field_0x2b4[516];
     tU8 field_0x4b8;
     undefined field_0x4b9[3];
@@ -3698,7 +3698,9 @@ typedef struct tCollision_info {
     br_scalar water_depth_factor;
     tSpecial_volume* last_special_volume;
     tSpecial_volume* auto_special_volume;
-    undefined field_0x260[8];
+    undefined field_0x260[1];
+    undefined field_0x261;
+    undefined field_0x262[6];
     tU32 message_time; // 0x268
     undefined field_0x26c[560];
     undefined4 field_0x49c; /* tU32 last_car_car_collision: */
