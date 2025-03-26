@@ -38,6 +38,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_working_end, 0x006768c4, NULL
 
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
+int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void) {
+
+    return C2V(gPipe_buffer_start) != NULL;
+}
+C2_HOOK_FUNCTION(0x004025a0, ARIsActionReplayAvailable)
+
 void (C2_HOOK_FASTCALL * DisposePiping_original)(void);
 void C2_HOOK_FASTCALL DisposePiping(void) {
 
