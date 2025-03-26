@@ -95,4 +95,6 @@ void C2_HOOK_FASTCALL DrVector3RotateY(br_vector3* v, br_angle t);
 
 intptr_t C2_HOOK_CDECL ActorFunks(br_actor* pActor, void* pContext);
 
+void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pFunk_index);
+
 #endif //REC2_CAR_H
