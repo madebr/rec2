@@ -160,6 +160,18 @@ typedef struct {
 } tPiping_chunk_callback;
 
 typedef struct {
+    tU16 vertex_index;
+    tU16 light_index;
+} tSmudged_vertex;
+
+typedef struct tPipe_smudge_data {
+    tU16 vertex_count;
+    undefined field_0x2[2];
+    int model_index;
+    tSmudged_vertex vertex_changes[];
+} tPipe_smudge_data;
+
+typedef struct {
     br_vector3 direction;
 } tPipe_ped_dir_data;
 
@@ -191,6 +203,7 @@ typedef struct {
 
 typedef enum {
     ePipe_chunk_car = 5,
+    ePipe_chunk_smudge = 19,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_chunk_drone_render = 60,
