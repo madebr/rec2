@@ -886,3 +886,29 @@ void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pFunk_index) {
     C2V(gFunkotronics_array)[pFunk_index].flags &= ~0x2;
 }
 C2_HOOK_FUNCTION(0x0047b2e0, MasterEnableFunkotronic)
+
+void (C2_HOOK_FASTCALL * MasterEnableCarFunks_original)(tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MasterEnableCarFunks_original(pCar_spec);
+#else
+#if 0
+    int i;
+#endif
+
+    DRActorEnumRecurse(pCar_spec->car_model_actor, ActorFunks, MasterEnableFunkotronic);
+
+    NOT_IMPLEMENTED();
+#if 0
+    for (i = 0; i < pCar_spec->car_crush_spec->field_0x2b0; i++) {
+        ActorFunks(pCar_spec->car_crush_spec->field_0x274[i].actor, MasterEnableFunkotronic);
+    }
+
+    for (i = 0; i < pCar_spec->car_crush_spec->count_of_field_0x2b0; i++) {
+        ActorFunks(pCar_spec->car_crush_spec->field_0x2b4[0].actor, MasterEnableFunkotronic);
+    }
+#endif
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f8e10, MasterEnableCarFunks, MasterEnableCarFunks_original)

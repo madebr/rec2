@@ -97,4 +97,6 @@ intptr_t C2_HOOK_CDECL ActorFunks(br_actor* pActor, void* pContext);
 
 void C2_HOOK_FASTCALL MasterEnableFunkotronic(int pFunk_index);
 
+void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec);
+
 #endif //REC2_CAR_H
