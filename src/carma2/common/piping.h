@@ -78,4 +78,6 @@ void C2_HOOK_FASTCALL AddSmudgeToPipingSession(tU16 pCar_ID, int pModel_index, i
 
 void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue);
+
 #endif //REC2_PIPING_H

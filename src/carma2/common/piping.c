@@ -558,3 +558,10 @@ void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, tCar_spec* pCar_spec) {
         SIZE_OFFSET_PIPING(tPipe_single_ds_model, field_0x0), pArg1);
 }
 C2_HOOK_FUNCTION(0x004c8e30, PipeSingleDSModel)
+
+void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue) {
+
+    ARDoSingleVariedSession(ePipe_single_vector3, (uintptr_t)pDest, 1,
+        SIZE_OFFSET_PIPING(tPipe_single_vector, vector), pValue);
+}
+C2_HOOK_FUNCTION(0x004c8e80, PipeSingleVector3)
