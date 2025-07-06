@@ -209,6 +209,11 @@ typedef struct {
     br_vector3 vector;
 } tPipe_single_vector;
 
+typedef struct {
+    int enable;
+    int block_flags;
+} tPipe_single_groove_on_of;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_smudge = 19,

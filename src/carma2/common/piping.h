@@ -80,4 +80,6 @@ void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue);
 
+void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor *pActor, int pBlock_flags);
+
 #endif //REC2_PIPING_H
