@@ -5879,6 +5879,19 @@ void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor) {
 }
 C2_HOOK_FUNCTION(0x0047b0e0, StopGroovidelic)
 
+tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor) {
+    int i;
+
+    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+        tGroovidelic_spec* groove = &C2V(gGroovidelics_array)[i];
+
+        if (groove->actor == pActor) {
+            return groove;
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x0047b360, ActorsGroove)
 
 br_uint_32 (C2_HOOK_CDECL * ZlibFsGetAttributes_original)(void);
 br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void) {
