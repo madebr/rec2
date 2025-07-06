@@ -205,12 +205,17 @@ typedef struct {
     tS16 field_0x0;
 } tPipe_single_ds_model;
 
+typedef struct {
+    br_vector3 vector;
+} tPipe_single_vector;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_single_ds_model = 56,
+    ePipe_single_vector3 = 58,
     ePipe_chunk_drone_render = 60,
     ePipe_chunk_drone_corner_pos = 61,
 } tPipe_chunk_type;
