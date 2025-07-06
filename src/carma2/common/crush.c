@@ -1592,6 +1592,18 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 }
 C2_HOOK_FUNCTION(0x0042deb0, MakeCarModelsMaterialsSingleSided)
 
+void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info *pShape) {
+    int i;
+
+    pShape->count_points = pShape->original_count_points;
+    for (i = 0; i < pShape->count_points; i++) {
+        BrVector3Copy(
+            &pShape->field_0x18[i].field_0x18,
+            &pShape->field_0x18[i].field_0x2c);
+    }
+}
+C2_HOOK_FUNCTION(0x00439fd0, CompletelyUnBendCollisionShape)
+
 void (C2_HOOK_FASTCALL * TotallyRepairACar_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 

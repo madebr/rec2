@@ -3333,7 +3333,7 @@ typedef struct {
     undefined4 field_0x8;
     int count_points;
     int count_points_add_8;
-    undefined field_0x14[4];
+    int original_count_points;
     tCar_crush_reordered_shape_info* field_0x18;
 } tCar_crush_shape_info;
 
