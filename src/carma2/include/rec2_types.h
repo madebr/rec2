@@ -3442,7 +3442,8 @@ typedef struct tCar_crush_spec {
     tCar_crush_vertex_data* field_0x1cc;
     undefined field_0x1d0[28];
     br_vector3 field_0x1ec[6];
-    undefined field_0x1f8[60];
+    br_vector3 field_0x234[4];
+    br_vector3 field_0x264;
     int field_0x270;
     undefined field_0x274[60];
     int field_0x2b0;
