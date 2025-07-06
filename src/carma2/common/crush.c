@@ -1622,6 +1622,17 @@ void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043b8a0, WeldCar, WeldCar_original)
 
+void (C2_HOOK_FASTCALL * ReAttachBit_original)(tCar_spec* pCar_spec, br_actor* pActor_arg2, br_actor* pActor_arg3, tCollision_info *pObject);
+void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar_spec, br_actor* pActor_arg2, br_actor* pActor_arg3, tCollision_info *pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ReAttachBit_original(pCar_spec, pActor_arg2, pActor_arg3, pObject);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00434010, ReAttachBit, ReAttachBit_original)
+
 void (C2_HOOK_FAKE_THISCALL * TotallySpamTheModel_original)(tCar_spec* pCar_spec, undefined4 pArg2, float pDamage);
 void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, undefined4 pArg2, float pDamage) {
 

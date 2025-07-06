@@ -123,6 +123,8 @@ void C2_HOOK_FASTCALL TotallyRepairCar(void);
 
 void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar_spec, br_actor* pActor_arg2, br_actor* pActor_arg3, tCollision_info *pObject);
+
 void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, undefined4 pArg2, float pDamage);
 
 void C2_HOOK_FASTCALL DoDamage(tCar_spec *pCar, tDamage_type pDamage_type, int pMagnitude);
