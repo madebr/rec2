@@ -113,6 +113,10 @@ void C2_HOOK_FASTCALL CheckWheelPositions(const tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL InitPhysModCrushData(tCar_spec * pCar_spec);
 
+void C2_HOOK_CDECL MakeModelMaterialsSingleSided(br_model *pModel);
+
+intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg);
+
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairCar(void);

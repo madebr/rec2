@@ -1562,6 +1562,36 @@ void C2_HOOK_FASTCALL InitPhysModCrushData(tCar_spec* pCar_spec) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042aa20, InitPhysModCrushData, InitPhysModCrushData_original)
 
+void C2_HOOK_CDECL MakeModelMaterialsSingleSided(br_model *pModel) {
+    if (pModel != NULL) {
+        int g;
+
+        for (g = 0; g < pModel->prepared->ngroups; g++) {
+            br_material *mat = pModel->faces[*pModel->prepared->groups[g].face_user].material;
+            if (mat != NULL && (mat->flags & BR_MATF_TWO_SIDED) && mat->identifier != NULL && mat->identifier[0] == 'S') {
+                mat->flags &= ~BR_MATF_TWO_SIDED;
+                BrMaterialUpdate(mat, BR_MATU_RENDERING);
+            }
+        }
+    }
+}
+
+intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg) {
+    tUser_crush_data* user_crush = (tUser_crush_data*)pActor->user;
+    tCar_spec *car_spec = (tCar_spec*)pArg;
+    if (user_crush != NULL) {
+        int i;
+
+        for (i = 0; i < car_spec->count_detail_levels; i++) {
+            if (user_crush->models[i] != NULL) {
+                MakeModelMaterialsSingleSided(user_crush->models[i]);
+            }
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0042deb0, MakeCarModelsMaterialsSingleSided)
+
 void (C2_HOOK_FASTCALL * TotallyRepairACar_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 
