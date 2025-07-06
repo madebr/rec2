@@ -3056,21 +3056,6 @@ void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00476430, DisposeGroovidelics, DisposeGroovidelics_original)
 
-tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor) {
-    int i;
-
-    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
-        tGroovidelic_spec* the_groove;
-
-        the_groove = &C2V(gGroovidelics_array)[i];
-        if (the_groove->actor == pActor) {
-            return the_groove;
-        }
-    }
-    return NULL;
-}
-C2_HOOK_FUNCTION(0x0047b360, FindGroovidelicForActor)
-
 tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
 
     return C2V(gDefault_water_spec_vol_real);
@@ -5879,6 +5864,19 @@ void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor) {
 }
 C2_HOOK_FUNCTION(0x0047b0e0, StopGroovidelic)
 
+tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor) {
+    int i;
+
+    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+        tGroovidelic_spec* groove = &C2V(gGroovidelics_array)[i];
+
+        if (groove->actor == pActor) {
+            return groove;
+        }
+    }
+    return NULL;
+}
+C2_HOOK_FUNCTION(0x0047b360, ActorsGroove)
 
 br_uint_32 (C2_HOOK_CDECL * ZlibFsGetAttributes_original)(void);
 br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void) {
