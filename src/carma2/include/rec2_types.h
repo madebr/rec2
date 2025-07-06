@@ -3327,7 +3327,7 @@ typedef struct {
     float field_0x24;
     tU16 field_0x28;
     undefined field_0x2a[2];
-    undefined field_0x2c[0xc];
+    br_vector3 field_0x2c;
 } tCar_crush_reordered_shape_info;
 
 typedef struct {
@@ -3336,7 +3336,7 @@ typedef struct {
     undefined4 field_0x8;
     int count_points;
     int count_points_add_8;
-    undefined field_0x14[4];
+    int original_count_points;
     tCar_crush_reordered_shape_info* field_0x18;
 } tCar_crush_shape_info;
 
