@@ -551,3 +551,10 @@ void C2_HOOK_FASTCALL AddSmudgeToPipingSession(tU16 pCar_ID, int pModel_index, i
     }
 }
 C2_HOOK_FUNCTION(0x004c6ea0, AddSmudgeToPipingSession)
+
+void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, tCar_spec* pCar_spec) {
+
+    ARDoSingleVariedSession(ePipe_single_ds_model, (uintptr_t)pCar_spec, 1,
+        SIZE_OFFSET_PIPING(tPipe_single_ds_model, field_0x0), pArg1);
+}
+C2_HOOK_FUNCTION(0x004c8e30, PipeSingleDSModel)
