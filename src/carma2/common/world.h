@@ -206,8 +206,6 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
 
 void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
-tGroovidelic_spec* C2_HOOK_FASTCALL FindGroovidelicForActor(br_actor* pActor);
-
 tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void);
 
 void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF);
@@ -353,6 +351,8 @@ void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);
 void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 
 void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor);
+
+tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor);
 
 br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void);
 

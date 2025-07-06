@@ -4926,7 +4926,7 @@ int C2_HOOK_CDECL AttachGroovidelic(br_actor* pActor, void* pData) {
 
     user_crush = pActor->user;
     if (user_crush != NULL) {
-        user_crush->groove = FindGroovidelicForActor(pActor);
+        user_crush->groove = ActorsGroove(pActor);
     }
     return 0;
 }
