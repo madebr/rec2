@@ -1,7 +1,12 @@
 #include "smashing.h"
 
+#include "globvars.h"
 #include "loading.h"
+#include "piping.h"
 #include "platform.h"
+#include "replay.h"
+#include "sound.h"
+#include "utility.h"
 #include "world.h"
 
 #include <brender/brender.h>
@@ -264,3 +269,31 @@ void C2_HOOK_FASTCALL InitSmashQueue(void) {
     C2V(gCount_queued_smashes) = 0;
 }
 C2_HOOK_FUNCTION(0x004ecfa0, InitSmashQueue)
+
+void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec) {
+
+    if (pCar_spec == &C2V(gProgram_state).current_car && C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_Internal) {
+        MungeCarMaterials(pCar_spec, 1);
+    }
+}
+
+void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel) {
+    br_pixelmap* texture;
+
+    pSmashable->field_0x4c = pLevel;
+    texture = pSmashable->levels[pLevel].pixelmaps[IRandomBetween(0, pSmashable->levels[pLevel].count_pixelmaps - 1)];
+    PipeSingleSmashTextureChange(pCar_spec, pSmashable->funk_material, texture);
+    pSmashable->funk_material->user = texture;
+    if (pCar_spec->field_0x1960 == NULL) {
+        pSmashable->funk_material->colour_map = texture;
+    }
+    BrMaterialUpdate(pSmashable->funk_material, BR_MATU_COLOURMAP);
+    MungeInternalCarGlass(pCar_spec);
+    if (pLevel == 0 && pSmashable->funk >= 0) {
+        EnableFunkotronic(pSmashable->funk);
+    }
+    if (pCar_spec != NULL && pCar_spec->driver == eDriver_local_human && C2V(gProgram_state).racing) {
+        DRS3StartSound(C2V(gCar_outlet),  eSoundId_SmashRepair);
+    }
+}
+C2_HOOK_FUNCTION(0x004ef840, ActuallyRepairSmash)
