@@ -107,4 +107,6 @@ int C2_HOOK_FASTCALL TestForNan(float* f);
 
 void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar);
 
+void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection);
+
 #endif //REC2_CAR_H
