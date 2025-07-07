@@ -88,4 +88,6 @@ void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3 *pDest, br_model* 
 
 void C2_HOOK_FASTCALL AddModelMashToPipingSession(br_model* pModel, br_vector3* pMash);
 
+void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture);
+
 #endif //REC2_PIPING_H
