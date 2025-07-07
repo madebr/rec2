@@ -2267,7 +2267,7 @@ typedef struct tCar_spec {
     tU16 old_material_count;
     tU16 new_material_count;
     undefined4 field_0x195c;
-    undefined field_0x1960[4];
+    br_pixelmap* field_0x1960;
 } tCar_spec;
 
 typedef struct {
@@ -5028,6 +5028,7 @@ enum {
     eSoundId_Swingin = 3006,
     eSoundId_Swingout = 3007,
     eSoundId_CantAffordPart = 3100,
+    eSoundId_SmashRepair = 4550,
     eSoundId_Cop_Siren = 5350,
     eSoundId_FlaskGone = 5401,
     eSoundId_Countdown_Go = 8000,
