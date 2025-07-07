@@ -2268,7 +2268,7 @@ typedef struct tCar_spec {
     tU16 old_material_count;
     tU16 new_material_count;
     undefined4 field_0x195c;
-    undefined field_0x1960[4];
+    br_pixelmap* field_0x1960;
 } tCar_spec;
 
 typedef struct {
@@ -3332,7 +3332,7 @@ typedef struct  {
     tU8 field_0x14;
     tU8 field_0x15;
     undefined field_0x16[2];
-    undefined4 field_0x18;
+    float field_0x18;
     float field_0x1c;
     tU8 kev_o_flap;
     undefined field_0x21[7];
@@ -3377,7 +3377,7 @@ typedef struct {
 } tCar_crush_network_shapes;
 
 typedef struct  {
-    undefined4 field_0x0;
+    float field_0x0;
     float force;
     tU16 min_vertex;
     tU16 max_vertex;
@@ -5006,6 +5006,7 @@ enum {
     eSoundId_Swingin = 3006,
     eSoundId_Swingout = 3007,
     eSoundId_CantAffordPart = 3100,
+    eSoundId_SmashRepair = 4550,
     eSoundId_Cop_Siren = 5350,
     eSoundId_FlaskGone = 5401,
     eSoundId_Countdown_Go = 8000,
