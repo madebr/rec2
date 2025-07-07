@@ -1605,6 +1605,17 @@ void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_materia
 }
 C2_HOOK_FUNCTION(0x00431590, JitModelUpdate)
 
+void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
+
+    if ((pModel->flags & BR_MODF_CUSTOM) && pModel->user) {
+        pModel->user = (void*)(uintptr_t)1;
+    } else {
+        pModel->custom = JitModelUpdate;
+        pModel->flags |= BR_MODF_CUSTOM;
+    }
+}
+C2_HOOK_FUNCTION(0x004315e0, SetModelForUpdate)
+
 intptr_t (C2_HOOK_CDECL * TotallyRepairModels_original)(br_actor* pActor, void* pUser);
 intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser) {
 

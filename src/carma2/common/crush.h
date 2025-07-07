@@ -119,6 +119,8 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 
 void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen);
 
+void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel);
+
 intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser);
 
 int C2_HOOK_FASTCALL TotallyRepairObject(tCollision_info* pCollision_info, void* pUser_data);
