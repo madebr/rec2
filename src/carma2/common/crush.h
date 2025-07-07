@@ -143,6 +143,8 @@ void C2_HOOK_FASTCALL CompletelyUnBendOtherThings(tCar_spec* pCar_spec);
 
 intptr_t C2_HOOK_CDECL EnableGroovers(br_actor *pActor, void* pData);
 
+int C2_HOOK_FASTCALL MoveCarToSensiblePlace(tCar_spec* pCar_spec);
+
 int C2_HOOK_FASTCALL SwapShapesIfPossible(tCar_spec *pCar_spec);
 
 void C2_HOOK_FASTCALL DoCompletelyUnBentThings(tCar_spec* pCar_spec);

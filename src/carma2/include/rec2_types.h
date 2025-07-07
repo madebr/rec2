@@ -3459,7 +3459,7 @@ typedef struct tCar_crush_spec {
     tCar_crush_shape_info* field_0x4;
     int expand_bounding_box;
     tCollision_shape *field_0xc;
-    undefined field_0x10[12];
+    br_vector3 field_0x10;
     int version_le_100;
     tCar_crush_network_shapes* network_stuff;
     undefined2 field_0x24;

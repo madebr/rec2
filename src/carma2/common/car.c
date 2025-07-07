@@ -38,7 +38,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gMin_world_y, 0x00679360);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gUnknown_car_collision_info, 0x006793e4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gAverage_grid_position, 0x00679268);
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067939c, 0x0067939c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gTesting_car_for_sensible_place, 0x0067939c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074a5f8, 0x0074a5f8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
     ProcessForcesCallback,
@@ -145,12 +145,12 @@ int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec *pCar_spec, br_vector3 
     if (!C2V(gProgram_state).racing) {
         return 1;
     }
-    C2V(gINT_0067939c) = 1;
+    C2V(gTesting_car_for_sensible_place) = 1;
     r = TestForObjectInSensiblePlace(pCar_spec->collision_info,
         C2V(gList_collision_infos),
         pVec3,
         &C2V(gCar_callbacks));
-    C2V(gINT_0067939c) = 0;
+    C2V(gTesting_car_for_sensible_place) = 0;
     return r;
 }
 C2_HOOK_FUNCTION(0x0041fe50, TestForCarInSensiblePlace)
@@ -952,7 +952,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0041ff20, DoPullActorFromWorld, DoPullActorFromWorld
 
 tCar_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor) {
 
-    if (!C2V(gINT_0074a5f8) && !C2V(gINT_0067939c) == 0) {
+    if (!C2V(gINT_0074a5f8) && !C2V(gTesting_car_for_sensible_place) == 0) {
         return NULL;
     }
     return DoPullActorFromWorld(actor);

@@ -1827,13 +1827,201 @@ intptr_t C2_HOOK_CDECL EnableGroovers(br_actor *pActor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x00439910, EnableGroovers)
 
+void C2_HOOK_FASTCALL ClipPointToPolyhedron(br_vector3* pPoint, tCollision_shape_polyhedron_data* pPolyhedron) {
+    int i;
+    for (i = 0; i < pPolyhedron->count_planes; i++) {
+        br_vector4* plane = &pPolyhedron->planes[i];
+        br_scalar proj_factor;
+
+        proj_factor = BrVector3Dot(plane, pPoint) + plane->v[3];
+        if (proj_factor < 0.f) {
+            br_vector3 proj;
+
+            BrVector3Scale(&proj, plane, -proj_factor);
+            BrVector3Accumulate(pPoint, &proj);
+        }
+    }
+}
+
+int C2_HOOK_FASTCALL PointIsOutsideShape(br_vector3* pPoint, tCollision_shape_polyhedron_data* pPolyhedron) {
+    int i;
+
+    for (i = 0; i < pPolyhedron->count_planes; i++) {
+        br_vector4* plane = &pPolyhedron->planes[i];
+
+        if (BrVector3Dot(plane, pPoint) + plane->v[3] < -1e-5f) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+int C2_HOOK_FASTCALL PointIsOutsideLimits(tCar_crush_shape_info* pShape, int pPoint_index, tCar_crush_limits* pLimits) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(pLimits->limits) != 0x60);
+    C2_HOOK_BUG_ON(sizeof(pLimits->limits[0]) != 0x20);
+    C2_HOOK_BUG_ON(sizeof(pLimits->limits[0][0]) != 0x10);
+    C2_HOOK_BUG_ON(sizeof(pLimits->limits[0][0].values[0]) != 0x4);
+
+    tU16 flags = pShape->field_0x18[pPoint_index].field_0x28;
+    for (i = 0; i < 3; i++) {
+        br_scalar v = pShape->field_0x18[pPoint_index].field_0x18.v[i];
+
+        if (v < pLimits->limits[i][0].values[(flags >> 0) & 0x3]) {
+            return 1;
+        }
+        if (v > pLimits->limits[i][1].values[(flags >> 2) & 0x3]) {
+            return 1;
+        }
+        flags >>= 4;
+    }
+    return 0;
+}
+
+void C2_HOOK_FASTCALL QuantizeVector3(br_vector3* pV) {
+    tCompressed_vector3 cv3;
+
+    CompressVector3(&cv3, pV, -2.5f, 2.5f);
+    ExpandVector3(pV, &cv3, -2.5f, 2.5f);
+}
+
+void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tCollision_shape* pCollision_shape) {
+    pCar_spec->collision_info->shape = pCollision_shape;
+    UpdateCollisionObject(pCar_spec->collision_info);
+    pCar_spec->collision_info->bb2.min.v[1] = GetCarOverallBoundsMinY(pCar_spec);
+}
+
+int C2_HOOK_FASTCALL MoveCarToSensiblePlace(tCar_spec* pCar_spec) {
+    br_vector3 original_pos;
+    float factor;
+    int i;
+    br_vector3 prev_delta;
+
+    factor = 0.007246377f;
+    BrVector3Set(&prev_delta, 0.f, 0.f, 0.f);
+    BrVector3Copy(&original_pos, (br_vector3*)&pCar_spec->collision_info->transform_matrix.m[3]);
+    for (i = 0; i < 10; i++) {
+        br_vector3 delta;
+
+        if (TestForCarInSensiblePlace(pCar_spec, &delta)) {
+            return 1;
+        }
+        if (BrVector3Dot(&prev_delta, &delta) <= 0.707107f) {
+            BrVector3Copy(&prev_delta, &delta);
+            factor = 0.007246377f;
+        } else {
+            factor *= 2.f;
+        }
+        BrVector3Scale(&delta, &delta, factor);
+        BrVector3Accumulate((br_vector3*)&pCar_spec->collision_info->transform_matrix.m[3], &delta);
+    }
+    BrVector3Copy((br_vector3*)&pCar_spec->collision_info->transform_matrix.m[3], &original_pos);
+    return 0;
+}
+
 int (C2_HOOK_FASTCALL * SwapShapesIfPossible_original)(tCar_spec *pCar_spec);
 int C2_HOOK_FASTCALL SwapShapesIfPossible(tCar_spec *pCar_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return SwapShapesIfPossible_original(pCar_spec);
 #else
-    NOT_IMPLEMENTED();
+    tCar_crush_spec* car_crush = pCar_spec->car_crush_spec;
+    tCollision_shape_polyhedron* first_poly;
+    tCollision_shape_polyhedron* last_poly;
+    tCollision_shape* original_shape;
+    int i;
+
+    if (car_crush == NULL) {
+        return 0;
+    }
+    if (car_crush->count_shapes == 0) {
+        return 0;
+    }
+    if (car_crush->field_0x4 == NULL) {
+        return 0;
+    }
+    if (!car_crush->version_le_100) {
+        car_crush->expand_bounding_box = 0;
+        return 0;
+    }
+    first_poly = NULL;
+    last_poly = NULL;
+    for (i = 0; i < car_crush->count_shapes; i++) {
+        tCar_crush_shape_info* shape = &car_crush->field_0x4[i];
+        if (!shape->field_0x8) {
+            if (car_crush->expand_bounding_box & 0x4) {
+                int j;
+
+                for (j = 0; j < shape->count_points; j++) {
+                    tCar_crush_reordered_shape_info* shape_field_0x18 = &shape->field_0x18[j];
+
+                    ClipPointToPolyhedron(&shape_field_0x18->field_0x18, &shape->field_0x0->polyhedron);
+                    if (PointIsOutsideShape(&shape_field_0x18->field_0x18, &shape->field_0x0->polyhedron)
+                            || PointIsOutsideLimits(shape, j, &car_crush->field_0xbc)) {
+                        BrVector3Copy(&shape_field_0x18->field_0x18, &shape_field_0x18->field_0xc);
+                    }
+                    if (DRVector3TestForNan(&shape_field_0x18->field_0x18)) {
+                        PDEnterDebugger("NaN");
+                    }
+                }
+            }
+            if (car_crush->expand_bounding_box & 0x2) {
+                int j;
+
+                shape->field_0x4->polyhedron.count_points = shape->count_points;
+                for (j = 0; j < shape->count_points; j++) {
+                    tCar_crush_reordered_shape_info* shape_field_0x18 = &shape->field_0x18[j];
+
+                    if (C2V(gNet_mode) != eNet_mode_none) {
+                        QuantizeVector3(&shape_field_0x18->field_0x18);
+                    }
+                    BrVector3Copy(&shape->field_0x4->polyhedron.points[j],
+                        &shape_field_0x18->field_0x18);
+                }
+                FillInShape((tCollision_shape*)shape->field_0x4);
+            }
+            if (first_poly == NULL) {
+                first_poly = shape->field_0x4;
+            }
+            if (last_poly != NULL) {
+                last_poly->common.next = (tCollision_shape*)shape->field_0x4;
+            }
+            last_poly = shape->field_0x4;
+        }
+    }
+    if (first_poly == NULL) {
+        return 0;
+    }
+    original_shape = pCar_spec->collision_info->shape;
+    SwapCarShapes(pCar_spec, (tCollision_shape*)first_poly);
+    if (!(car_crush->expand_bounding_box & 0x4)) {
+        if (!MoveCarToSensiblePlace(pCar_spec)) {
+            SwapCarShapes(pCar_spec, original_shape);
+            return 1;
+        }
+    }
+    if (car_crush->expand_bounding_box & 0x8) {
+        BrVector3Copy(&pCar_spec->collision_info->cmpos,
+            &car_crush->field_0x10);
+    }
+    car_crush->expand_bounding_box = 0;
+    for (i = 0; i < car_crush->count_shapes; i++) {
+        tCar_crush_shape_info* shape = &car_crush->field_0x4[i];
+        if (!shape->field_0x8) {
+            tCollision_shape_polyhedron* poly;
+            int j;
+
+            poly = shape->field_0x0;
+            shape->field_0x0 = shape->field_0x4;
+            shape->field_0x4 = poly;
+            for (j = 0; j < shape->count_points; j++) {
+                BrVector3Copy(&shape->field_0x18->field_0xc,
+                    &shape->field_0x18->field_0x18);
+            }
+        }
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004349c0, SwapShapesIfPossible, SwapShapesIfPossible_original)
