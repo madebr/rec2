@@ -1,5 +1,6 @@
 #include "piping.h"
 
+#include "compress.h"
 #include "globvars.h"
 #include "opponent.h"
 #include "utility.h"
@@ -578,3 +579,12 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
         SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_to), pTransform_type);
 }
 C2_HOOK_FUNCTION(0x004c8ff0, PipeSingleTransformType)
+
+void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3 *pDest, br_model* pModel, br_vector3* pSrc) {
+    int i;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        CompressVector3(&pDest[i], &pSrc[i], -10.f, 10.f);
+    }
+}
+C2_HOOK_FUNCTION(0x0043bf30, ARCompressModelMash)
