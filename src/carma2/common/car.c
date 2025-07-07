@@ -31,6 +31,8 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
+#include <math.h>
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCar_simplification_level, 0x006793d8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tNon_car_spec*, gActive_non_car_list, 99, 0x0079eda0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_active_non_cars, 0x006793dc);
@@ -1093,3 +1095,12 @@ void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
     ForEveryCarMaterial(pCar_spec, RestorePixelmap, 1);
 }
 C2_HOOK_FUNCTION(0x004f9620, RestoreCarPixelmaps)
+
+int C2_HOOK_FASTCALL TestForNan(float* f) {
+
+    if (f == NULL) {
+        return 0;
+    }
+    return isnan(*f);
+}
+C2_HOOK_FUNCTION(0x005160f0, TestForNan)
