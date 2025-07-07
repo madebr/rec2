@@ -669,9 +669,6 @@ int C2_HOOK_FASTCALL ToggleFlapsCB(tCollision_info* pCollision_info, void* data)
 }
 C2_HOOK_FUNCTION(0x0042ddb0, ToggleFlapsCB)
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_toggled_doors, 0x0067bd58);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tToggled_door, gToggled_doors, 16, 0x00679450);
-
 int (C2_HOOK_CDECL * ToggleDoorsActorCallback_original)(br_actor* pActor, void* data);
 int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data) {
 
