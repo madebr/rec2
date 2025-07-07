@@ -1678,10 +1678,27 @@ C2_HOOK_FUNCTION(0x00439a10, TotallyRepairObject)
 intptr_t (C2_HOOK_CDECL * BattenDownTheHatches_original)(br_actor* pActor, void* pUser);
 intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return BattenDownTheHatches_original(pActor, pUser);
 #else
-    NOT_IMPLEMENTED();
+    tUser_crush_data* user_crush_data = pActor->user;
+    tCar_crush_buffer_entry* crush_data;
+    tCar_spec* car_spec = pUser;
+
+    if (user_crush_data == NULL) {
+        return 0;
+    }
+    crush_data = user_crush_data->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
+    if (crush_data->flap_data == NULL) {
+        return 0;
+    }
+    if (crush_data->flap_data->field_0x0 && !crush_data->flap_data->kev_o_flap) {
+        StopFlapping(pActor, car_spec);
+    }
+    return 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004398d0, BattenDownTheHatches, BattenDownTheHatches_original)
