@@ -665,7 +665,7 @@ void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone) {
 }
 C2_HOOK_FUNCTION(0x0044cfd0, PipeDroneMatrix)
 
-int C2_HOOK_FASTCALL OkToViewDrones(void) {
+int C2_HOOK_FASTCALL OKToViewDrones(void) {
     return 0;
 }
-C2_HOOK_FUNCTION(0x00452680, OkToViewDrones)
+C2_HOOK_FUNCTION(0x00452680, OKToViewDrones)
