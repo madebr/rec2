@@ -3047,3 +3047,12 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00406ab0, ReadPersonality, ReadPersonality_original)
+
+tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void) {
+
+    if (C2V(gPed_count) == 0) {
+        return NULL;
+    }
+    return C2V(gPedestrian_array)[C2V(gSelected_ped)].character;
+}
+C2_HOOK_FUNCTION(0x004d6210, GetTestPed)
