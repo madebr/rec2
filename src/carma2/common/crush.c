@@ -1616,6 +1616,40 @@ void C2_HOOK_FASTCALL SetModelForUpdate(br_model* pModel) {
 }
 C2_HOOK_FUNCTION(0x004315e0, SetModelForUpdate)
 
+void (C2_HOOK_FASTCALL * TotallyRepairModel_original)(br_model* pModel);
+void C2_HOOK_FASTCALL TotallyRepairModel(br_model* pModel) {
+    tUser_detail_level_model* user_detail_model;
+    tModel_detail_vertex_data* vertex_detail_data;
+    int i;
+    br_vector3 vector_mash[1024];
+
+    if (pModel == NULL) {
+        return;
+    }
+    user_detail_model = pModel->user;
+    if (user_detail_model == NULL) {
+        return;
+    }
+    vertex_detail_data = user_detail_model->field_0x4;
+    if (vertex_detail_data == NULL) {
+        return;
+    }
+    if (pModel->nvertices > REC2_ASIZE(vector_mash)) {
+        PDFatalError("Holy polygons Batman! There's a lot of vertices on that model.");
+    }
+    for (i = 0; i < pModel->nvertices; i++) {
+        br_vector3 pos;
+
+        ExpandVector3(&pos, &vertex_detail_data[i].p, -10.f, 10.f);
+        BrVector3Sub(&vector_mash[i], &pos, &pModel->vertices[i].p);
+        BrVector3Copy(&pModel->vertices[i].p, &pos);
+        vertex_detail_data[i].flags &= ~0x4;
+    }
+    AddModelMashToPipingSession(pModel, vector_mash);
+    SetModelForUpdate(pModel);
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00439a20, TotallyRepairModel, TotallyRepairModel_original)
+
 intptr_t (C2_HOOK_CDECL * TotallyRepairModels_original)(br_actor* pActor, void* pUser);
 intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser) {
 
