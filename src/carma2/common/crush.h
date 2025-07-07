@@ -155,4 +155,6 @@ void C2_HOOK_FASTCALL MungeMaterial(br_actor* pActor, int pRecursive, br_materia
 
 void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pCrush_data, tModel_detail_vertex_data* pVertex_data);
 
+int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
+
 #endif // REC2_CRUSH_H

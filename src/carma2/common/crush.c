@@ -25,6 +25,8 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
+#include <math.h>
+
 C2_HOOK_VARIABLE_IMPLEMENT(float, gDistortion_factor,0x00679698 );
 C2_HOOK_VARIABLE_IMPLEMENT(float, gMin_crush_force, 0x006796b8);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gMax_crush_force, 0x0067bdec);
@@ -1924,3 +1926,12 @@ void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pC
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f57c0, LinkSmashies, LinkSmashies_original)
+
+int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV) {
+
+    if (pV == NULL) {
+        return 0;
+    }
+    return isnan(pV->v[0]) || isnan(pV->v[1]) || isnan(pV->v[2]);
+}
+C2_HOOK_FUNCTION(0x00516160, DRVector3TestForNan)
