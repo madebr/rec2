@@ -1612,6 +1612,17 @@ int C2_HOOK_FASTCALL TotallyRepairObject(tCollision_info* pCollision_info, void*
 }
 C2_HOOK_FUNCTION(0x00439a10, TotallyRepairObject)
 
+intptr_t (C2_HOOK_CDECL * BattenDownTheHatches_original)(br_actor* pActor, void* pUser);
+intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return BattenDownTheHatches_original(pActor, pUser);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004398d0, BattenDownTheHatches, BattenDownTheHatches_original)
+
 void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec *pCar_spec) {
     int i;
 

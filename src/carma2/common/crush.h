@@ -121,6 +121,8 @@ intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser);
 
 int C2_HOOK_FASTCALL TotallyRepairObject(tCollision_info* pCollision_info, void* pUser_data);
 
+intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser);
+
 void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec *pCar_spec);
 
 void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info *pShape);
