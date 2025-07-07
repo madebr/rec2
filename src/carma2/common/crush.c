@@ -1638,6 +1638,20 @@ void C2_HOOK_FASTCALL CompletelyUnBendWheels(tCar_spec* pCar_spec) {
 }
 C2_HOOK_FUNCTION(0x0043a010, CompletelyUnBendWheels)
 
+intptr_t C2_HOOK_CDECL EnableGroovers(br_actor *pActor, void* pData) {
+    tUser_crush_data *user_crush;
+
+    user_crush = pActor->user;
+    if (user_crush != NULL && user_crush->groove != NULL) {
+        PipeSingleGrooveOnOff(1, pActor, 3);
+        EnableGroovidelic(pActor, 3);
+        PipeSingleTransformType(pActor, BR_TRANSFORM_MATRIX34_LP);
+        pActor->t.type = BR_TRANSFORM_MATRIX34_LP;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00439910, EnableGroovers)
+
 void (C2_HOOK_FASTCALL * TotallyRepairACar_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 
