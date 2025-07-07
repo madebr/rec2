@@ -664,3 +664,8 @@ void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone) {
     PipeSingleDroneCornerPos(pDrone, compressed_field_0x48, compressed_field_0x74, compressed_field_0x70, &compressed_mat);
 }
 C2_HOOK_FUNCTION(0x0044cfd0, PipeDroneMatrix)
+
+int C2_HOOK_FASTCALL OkToViewDrones(void) {
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00452680, OkToViewDrones)

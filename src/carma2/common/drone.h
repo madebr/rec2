@@ -95,4 +95,6 @@ void C2_HOOK_FASTCALL CalcRenderBoundsCentre(void);
 
 void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone);
 
+int C2_HOOK_FASTCALL OkToViewDrones(void);
+
 #endif //REC2_DRONE_H
