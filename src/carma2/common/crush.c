@@ -1712,6 +1712,17 @@ intptr_t C2_HOOK_CDECL EnableGroovers(br_actor *pActor, void* pData) {
 }
 C2_HOOK_FUNCTION(0x00439910, EnableGroovers)
 
+int (C2_HOOK_FASTCALL * SwapShapesIfPossible_original)(tCar_spec *pCar_spec);
+int C2_HOOK_FASTCALL SwapShapesIfPossible(tCar_spec *pCar_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return SwapShapesIfPossible_original(pCar_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004349c0, SwapShapesIfPossible, SwapShapesIfPossible_original)
+
 void (C2_HOOK_FASTCALL * TotallyRepairACar_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
 

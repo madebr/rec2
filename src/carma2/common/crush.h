@@ -133,6 +133,8 @@ void C2_HOOK_FASTCALL CompletelyUnBendWheels(tCar_spec* pCar_spec);
 
 intptr_t C2_HOOK_CDECL EnableGroovers(br_actor *pActor, void* pData);
 
+int C2_HOOK_FASTCALL SwapShapesIfPossible(tCar_spec *pCar_spec);
+
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairCar(void);
