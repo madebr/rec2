@@ -191,6 +191,7 @@ EXPORTS
     BrNewList
     BrObjectContainerFree
     BrObjectListAllocate
+    BrOnScreenCheck
     BrParseFixed
     BrParseFloat
     BrParseInteger

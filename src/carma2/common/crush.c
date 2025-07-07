@@ -1597,6 +1597,14 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 }
 C2_HOOK_FUNCTION(0x0042deb0, MakeCarModelsMaterialsSingleSided)
 
+void C2_HOOK_CDECL JitModelUpdate(br_actor* pActor, br_model* pModel, br_material* pMaterial, void* pOrder_table, br_uint_8 pStyle, int pOn_screen) {
+
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+    pModel->flags &= ~BR_MODF_CUSTOM;
+    BrZsModelRender(pActor, pModel, pMaterial, pOrder_table, pStyle, BrOnScreenCheck(&pModel->bounds), 0);
+}
+C2_HOOK_FUNCTION(0x00431590, JitModelUpdate)
+
 intptr_t (C2_HOOK_CDECL * TotallyRepairModels_original)(br_actor* pActor, void* pUser);
 intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser) {
 
