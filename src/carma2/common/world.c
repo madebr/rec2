@@ -15,6 +15,7 @@
 #include "loading.h"
 #include "opponent.h"
 #include "pedestrn.h"
+#include "piping.h"
 #include "replay.h"
 #include "shrapnel.h"
 #include "skidmark.h"
@@ -5865,6 +5866,13 @@ void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
     }
 }
 C2_HOOK_FUNCTION(0x0047b1e0, ResetGrooveFlags)
+
+void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex) {
+
+    C2V(gFunkotronics_array)[pIndex].flags |= 0x1;
+    PipeSingleFunkEnable(pIndex, 0);
+}
+C2_HOOK_FUNCTION(0x0047b250, DisableFunkotronic)
 
 void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor) {
     int i;
