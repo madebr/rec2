@@ -1998,6 +1998,17 @@ void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00436170, CrushBendFlapRend, CrushBendFlapRend_original)
 
+void (C2_HOOK_FASTCALL * StopFlapping_original)(br_actor* pActor, tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    StopFlapping_original(pActor, pCar_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004387d0, StopFlapping, StopFlapping_original)
+
 intptr_t C2_HOOK_CDECL MungeMaterialCB(br_actor* pActor, void* data) {
     tMungeMaterialCB_Context* context = data;
     br_model* model;
