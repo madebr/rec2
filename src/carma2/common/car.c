@@ -1128,3 +1128,14 @@ void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar) {
     }
 }
 C2_HOOK_FUNCTION(0x0040f510, CheckDisablePlingMaterials)
+
+void (C2_HOOK_FASTCALL * GeneralisedPositionExternalCamera_original)(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection);
+void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection) {
+
+#if defined(C2_HOOKS_ENABLED)
+    GeneralisedPositionExternalCamera_original(pCar, pMat, pPos, pSpeed, pSpeedo_speed, pDirection);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00410c60, GeneralisedPositionExternalCamera, GeneralisedPositionExternalCamera_original)
