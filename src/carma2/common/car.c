@@ -1104,3 +1104,27 @@ int C2_HOOK_FASTCALL TestForNan(float* f) {
     return isnan(*f);
 }
 C2_HOOK_FUNCTION(0x005160f0, TestForNan)
+
+void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar) {
+    br_matrix34* mat;
+    br_scalar height;
+    int i;
+
+    height = 0.f;
+    if (pCar->collision_info->water_d == 10000.f) {
+        DisablePlingMaterials();
+    } else {
+        mat = &pCar->car_master_actor->t.t.mat;
+        for (i = 0; i < 3; i++) {
+            if (mat->m[i][1] > 0.f) {
+                height += pCar->collision_info->bb2.max.v[i] * mat->m[i][1];
+            } else {
+                height += pCar->collision_info->bb2.min.v[i] * mat->m[i][1];
+            }
+        }
+        if (mat->m[3][1] / WORLD_SCALE + height < pCar->collision_info->water_d) {
+            DisablePlingMaterials();
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0040f510, CheckDisablePlingMaterials)
