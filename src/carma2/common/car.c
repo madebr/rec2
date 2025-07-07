@@ -1139,3 +1139,14 @@ void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matr
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00410c60, GeneralisedPositionExternalCamera, GeneralisedPositionExternalCamera_original)
+
+void (C2_HOOK_FASTCALL * FrozenCamera_original)(tCar_spec* pCar, tU32 pTime);
+void C2_HOOK_FASTCALL FrozenCamera(tCar_spec* pCar, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FrozenCamera_original(pCar, pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040ef90, FrozenCamera, FrozenCamera_original)
