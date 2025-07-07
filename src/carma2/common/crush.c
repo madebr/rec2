@@ -1710,13 +1710,17 @@ intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return BattenDownTheHatches_original(pActor, pUser);
 #else
+    tUser_crush_data* user_crush_data = pActor->user;
     tCar_crush_buffer_entry* crush_data;
     tCar_spec* car_spec = pUser;
 
-    if (pActor->user == NULL) {
+    if (user_crush_data == NULL) {
         return 0;
     }
-    crush_data = pActor->user;
+    crush_data = user_crush_data->crush_data;
+    if (crush_data == NULL) {
+        return 0;
+    }
     if (crush_data->flap_data == NULL) {
         return 0;
     }
