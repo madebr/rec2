@@ -352,6 +352,8 @@ void C2_HOOK_FASTCALL ResetGrooveFlags(void);
 
 void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex);
 
+void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex);
+
 void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor);
 
 tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor);
