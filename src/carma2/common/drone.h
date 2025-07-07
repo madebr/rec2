@@ -97,4 +97,6 @@ void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone);
 
 int C2_HOOK_FASTCALL OKToViewDrones(void);
 
+br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
+
 #endif //REC2_DRONE_H
