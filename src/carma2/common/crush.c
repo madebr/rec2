@@ -1592,6 +1592,17 @@ intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void*
 }
 C2_HOOK_FUNCTION(0x0042deb0, MakeCarModelsMaterialsSingleSided)
 
+intptr_t (C2_HOOK_CDECL * TotallyRepairModels_original)(br_actor* pActor, void* pUser);
+intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return TotallyRepairModels_original(pActor, pUser);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00439a20, TotallyRepairModels, TotallyRepairModels_original)
+
 void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info *pShape) {
     int i;
 

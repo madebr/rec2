@@ -117,6 +117,8 @@ void C2_HOOK_CDECL MakeModelMaterialsSingleSided(br_model *pModel);
 
 intptr_t C2_HOOK_CDECL MakeCarModelsMaterialsSingleSided(br_actor* pActor, void* pArg);
 
+intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser);
+
 void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info *pShape);
 
 void C2_HOOK_FASTCALL CompletelyUnBendWheels(tCar_spec* pCar_spec);
