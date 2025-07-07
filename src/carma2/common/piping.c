@@ -1,6 +1,7 @@
 #include "piping.h"
 
 #include "compress.h"
+#include "errors.h"
 #include "globvars.h"
 #include "opponent.h"
 #include "utility.h"
@@ -38,6 +39,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_phys_end, 0x006768f0, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_working_end, 0x006768c4, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x006940d4);
 
+#define CRUSH_SPACE_SIZE 0x4000
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
 int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void) {
@@ -591,3 +593,21 @@ void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3 *pDest, br_model* 
     }
 }
 C2_HOOK_FUNCTION(0x0043bf30, ARCompressModelMash)
+
+void C2_HOOK_FASTCALL AddModelMashToPipingSession(br_model* pModel, br_vector3* pMash) {
+    size_t size;
+    tPipe_model_mash* pipe_model_mash;
+
+    pipe_model_mash = (tPipe_model_mash*)gCrush_space;
+    if (pipe_model_mash == NULL) {
+        return;
+    }
+    size = pModel->nvertices * sizeof(tCompressed_vector3) + sizeof(br_model*);
+    if (size > CRUSH_SPACE_SIZE) {
+        FatalError(kFatalError_ChunkIsTooLargeToPipe);
+    }
+    pipe_model_mash->model = pModel;
+    ARCompressModelMash(pipe_model_mash->vectors, pModel, pMash);
+    ARAddDataToSession(ePipe_model_mash, -1, pipe_model_mash, size);
+}
+C2_HOOK_FUNCTION(0x004c7550, AddModelMashToPipingSession)

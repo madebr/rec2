@@ -219,9 +219,15 @@ typedef struct {
     tS8 type_to;
 } tPipe_single_transform_type;
 
+typedef struct {
+    br_model* model;
+    tCompressed_vector3 vectors[];
+} tPipe_model_mash;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_smudge = 19,
+    ePipe_model_mash = 24,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_single_groove_on_off = 51,
@@ -4897,6 +4903,7 @@ enum {
     kFatalError_CannotFindSmashModel_S = 0x79,
     kFatalError_TooManyCrushLimits = 0x7a,
     kFatalError_TooManyCrushDatas = 0x7c,
+    kFatalError_ChunkIsTooLargeToPipe = 0x7d,
     kFatalError_CannotFindSmashActorModel_S = 0x81,
     kFatalError_ProblemWithSpecialVolumeNumber_I = 0x82,
     kFatalError_TooManyEnvironmentalSoundAlternatives = 0x83,
