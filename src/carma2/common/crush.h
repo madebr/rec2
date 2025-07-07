@@ -129,11 +129,17 @@ void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec *pCar_spec);
 
 void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info *pShape);
 
+void C2_HOOK_FASTCALL CompletelyUnBendCollisionShapes(tCar_spec* pCar_spec);
+
 void C2_HOOK_FASTCALL CompletelyUnBendWheels(tCar_spec* pCar_spec);
+
+void C2_HOOK_FASTCALL CompletelyUnBendOtherThings(tCar_spec* pCar_spec);
 
 intptr_t C2_HOOK_CDECL EnableGroovers(br_actor *pActor, void* pData);
 
 int C2_HOOK_FASTCALL SwapShapesIfPossible(tCar_spec *pCar_spec);
+
+void C2_HOOK_FASTCALL DoCompletelyUnBentThings(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 

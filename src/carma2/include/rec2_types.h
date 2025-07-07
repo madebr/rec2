@@ -3336,7 +3336,7 @@ typedef struct {
     float field_0x24;
     tU16 field_0x28;
     undefined field_0x2a[2];
-    undefined field_0x2c[0xc];
+    br_vector3 field_0x2c;
 } tCar_crush_reordered_shape_info;
 
 typedef struct {
@@ -3427,6 +3427,14 @@ typedef struct tCar_crush_vertex_data {
     tU16 field_0x0[3];
 } tCar_crush_vertex_data;
 
+typedef struct tCar_bit_spec {
+    br_actor* field_0x0;
+    br_actor* field_0x4;
+    tCollision_info* field_0x8;
+    undefined4 field_0xc;
+    undefined4 field_0x10;
+} tCar_bit_spec;
+
 typedef struct tCar_crush_spec {
     int count_shapes;
     tCar_crush_shape_info* field_0x4;
@@ -3457,9 +3465,10 @@ typedef struct tCar_crush_spec {
     br_vector3 field_0x234[4];
     br_vector3 field_0x264;
     int field_0x270;
-    undefined field_0x274[60];
+    tCar_bit_spec field_0x274[3];
     int field_0x2b0;
-    undefined field_0x2b4[516];
+    tCar_bit_spec field_0x2b4[3];
+    undefined field_0x2f0[456];
     tU8 field_0x4b8;
     undefined field_0x4b9[3];
     float snappability_factor;
