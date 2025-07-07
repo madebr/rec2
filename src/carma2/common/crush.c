@@ -1603,6 +1603,13 @@ intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00439a20, TotallyRepairModels, TotallyRepairModels_original)
 
+int C2_HOOK_FASTCALL TotallyRepairObject(tCollision_info* pCollision_info, void* pUser_data) {
+
+    DRActorEnumRecurse(pCollision_info->actor, TotallyRepairModels, pUser_data);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00439a10, TotallyRepairObject)
+
 void C2_HOOK_FASTCALL CompletelyUnBendCollisionShape(tCar_crush_shape_info *pShape) {
     int i;
 
