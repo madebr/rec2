@@ -568,8 +568,16 @@ C2_HOOK_FUNCTION(0x004c8e80, PipeSingleVector3)
 
 void C2_HOOK_FASTCALL PipeSingleGrooveOnOff(int pOn, br_actor *pActor, int pBlock_flags) {
 
-    ARDoSingleVariedSession(ePipe_single_groove_on_off, pActor, 2,
+    ARDoSingleVariedSession(ePipe_single_groove_on_off, (uintptr_t)pActor, 2,
         SIZE_OFFSET_PIPING(tPipe_single_groove_on_of, enable), pOn,
         SIZE_OFFSET_PIPING(tPipe_single_groove_on_of, block_flags), pBlock_flags);
 }
 C2_HOOK_FUNCTION(0x004c8d80, PipeSingleGrooveOnOff)
+
+void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_type) {
+
+    ARDoSingleVariedSession(ePipe_single_transform_type, (uintptr_t)pActor, 2,
+        SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_from), pActor->t.type,
+        SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_to), pTransform_type);
+}
+C2_HOOK_FUNCTION(0x, PipeSingleTransformType)
