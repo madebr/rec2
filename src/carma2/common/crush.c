@@ -1623,6 +1623,13 @@ intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004398d0, BattenDownTheHatches, BattenDownTheHatches_original)
 
+int C2_HOOK_FASTCALL BattenDownTheObjects(tCollision_info* pCollision_info, void* pUser_data) {
+
+    DRActorEnumRecurse(pCollision_info->actor, BattenDownTheHatches, pUser_data);
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004398c0, BattenDownTheObjects)
+
 void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec *pCar_spec) {
     int i;
 
