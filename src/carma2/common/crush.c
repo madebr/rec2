@@ -1986,3 +1986,14 @@ int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV) {
     return isnan(pV->v[0]) || isnan(pV->v[1]) || isnan(pV->v[2]);
 }
 C2_HOOK_FUNCTION(0x00516160, DRVector3TestForNan)
+
+void (C2_HOOK_FASTCALL * RemoveCarFromCrushLists_original)(tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    RemoveCarFromCrushLists_original(pCar_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00429d90, RemoveCarFromCrushLists, RemoveCarFromCrushLists_original)

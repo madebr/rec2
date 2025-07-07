@@ -165,4 +165,6 @@ void C2_HOOK_FASTCALL LinkSmashies(br_actor* pActor, tCar_crush_buffer_entry* pC
 
 int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
+void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec);
+
 #endif // REC2_CRUSH_H
