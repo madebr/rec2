@@ -24,6 +24,14 @@ C2_HOOK_VARIABLE_DECLARE(tCrush_info_buffer, gSplit_car_crush_info_buffer);
 C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gSplit_car_collision_infos);
 C2_HOOK_VARIABLE_DECLARE(tDriver, gSplit_car_driver);
 C2_HOOK_VARIABLE_DECLARE(tCollision_shape_sphere*, gGonad_sphere_collision_shape);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_toggled_doors);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tToggled_door, gToggled_doors, 16);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_net_detach_list_item, gNet_crush_detach_list, 8);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_net_semi_detach_bit_list_item, gNet_crush_semi_detach_bit_list, 8);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_net_full_detach_bit_list_item, gNet_crush_full_detach_bit_list, 8);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_net_reattach_bit_list_item, gNet_crush_reattach_bit_list, 8);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_detach_list_item, gCrush_detach_list, 16);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_damge_crush_list_item, gCar_damage_crush_list, 8);
 
 void C2_HOOK_FASTCALL InitCrushSystems(void);
 

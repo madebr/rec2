@@ -109,6 +109,14 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_net_crush_semi_detach_bit_list, 0x0067b83
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_net_crush_full_detach_bit_list, 0x0067bd60);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_net_crush_reattach_bit_list, 0x0067b7c8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_car_damage_crush_list, 0x0067b7cc);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_toggled_doors, 0x0067bd58);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tToggled_door, gToggled_doors, 16, 0x00679450);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_detach_list_item, gNet_crush_detach_list, 8, 0x0067a290);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_semi_detach_bit_list_item, gNet_crush_semi_detach_bit_list, 8, 0x0067b840);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_full_detach_bit_list_item, gNet_crush_full_detach_bit_list, 8, 0x0067b7d8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_reattach_bit_list_item, gNet_crush_reattach_bit_list, 8, 0x0067be10);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_detach_list_item, gCrush_detach_list, 16, 0x00679558);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_damge_crush_list_item, gCar_damage_crush_list, 8, 0x0067bd18);
 
 void (C2_HOOK_FASTCALL * InitCrushSystems_original)(void);
 void C2_HOOK_FASTCALL InitCrushSystems(void) {
@@ -2361,10 +2369,82 @@ C2_HOOK_FUNCTION(0x00516160, DRVector3TestForNan)
 void (C2_HOOK_FASTCALL * RemoveCarFromCrushLists_original)(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     RemoveCarFromCrushLists_original(pCar_spec);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    int new_count;
+
+    C2_HOOK_BUG_ON(sizeof(tCrush_net_detach_list_item) != 0x24);
+    C2_HOOK_BUG_ON(sizeof(tCrush_net_semi_detach_bit_list_item) != 0x4c);
+    C2_HOOK_BUG_ON(sizeof(tCrush_net_full_detach_bit_list_item) != 0xc);
+    C2_HOOK_BUG_ON(sizeof(tCrush_net_reattach_bit_list_item) != 0xc);
+    C2_HOOK_BUG_ON(sizeof(tCrush_detach_list_item) != 0x14);
+    C2_HOOK_BUG_ON(sizeof(tToggled_door) != 0x10);
+    C2_HOOK_BUG_ON(sizeof(tCar_damge_crush_list_item) != 0x8);
+
+    new_count = 0;
+    for (i = 0; i < C2V(gCount_net_crush_detach_list); i++) {
+        if (C2V(gNet_crush_detach_list)[i].car != pCar_spec) {
+            C2V(gNet_crush_detach_list)[new_count] = C2V(gNet_crush_detach_list)[i];
+            new_count += 1;
+        }
+    }
+    C2V(gCount_net_crush_detach_list) = new_count;
+
+    new_count = 0;
+    for (i = 0; i < C2V(gCount_net_crush_semi_detach_bit_list); i++) {
+        if (C2V(gNet_crush_semi_detach_bit_list)[i].car != pCar_spec) {
+            C2V(gNet_crush_semi_detach_bit_list)[new_count] = C2V(gNet_crush_semi_detach_bit_list)[i];
+            new_count += 1;
+        }
+    }
+    C2V(gCount_net_crush_semi_detach_bit_list) = new_count;
+
+    new_count = 0;
+    for (i = 0; i < C2V(gCount_net_crush_full_detach_bit_list); i++) {
+        if (C2V(gNet_crush_full_detach_bit_list)[i].car != pCar_spec) {
+            C2V(gNet_crush_full_detach_bit_list)[new_count] = C2V(gNet_crush_full_detach_bit_list)[i];
+            new_count += 1;
+        }
+    }
+    C2V(gCount_net_crush_full_detach_bit_list) = new_count;
+
+    new_count = 0;
+    for (i = 0; i < C2V(gCount_net_crush_reattach_bit_list); i++) {
+        if (C2V(gNet_crush_reattach_bit_list)[i].car != pCar_spec) {
+            C2V(gNet_crush_reattach_bit_list)[new_count] = C2V(gNet_crush_reattach_bit_list)[i];
+            new_count += 1;
+        }
+    }
+    C2V(gCount_net_crush_reattach_bit_list) = new_count;
+
+    new_count = 0;
+    for (i = 0; i < C2V(gCount_crush_detach_list); i++) {
+        if (C2V(gCrush_detach_list)[i].car != pCar_spec) {
+            C2V(gCrush_detach_list)[new_count] = C2V(gCrush_detach_list)[i];
+            new_count += 1;
+        }
+    }
+    C2V(gCount_crush_detach_list) = new_count;
+
+    new_count = 0;
+    for (i = 0; i < C2V(gCount_toggled_doors); i++) {
+        if (C2V(gToggled_doors)[i].car != pCar_spec) {
+            C2V(gToggled_doors)[new_count] = C2V(gToggled_doors)[i];
+            new_count += 1;
+        }
+    }
+    C2V(gCount_toggled_doors) = new_count;
+
+    new_count = 0;
+    for (i = 0; i < C2V(gCount_car_damage_crush_list); i++) {
+        if (C2V(gCar_damage_crush_list)[i].car != pCar_spec) {
+            C2V(gCar_damage_crush_list)[new_count] = C2V(gCar_damage_crush_list)[i];
+            new_count += 1;
+        }
+    }
+    C2V(gCount_car_damage_crush_list) = new_count;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00429d90, RemoveCarFromCrushLists, RemoveCarFromCrushLists_original)

@@ -3502,6 +3502,39 @@ typedef struct tCar_crush_spec {
     int nb_entries;
 } tCar_crush_spec;
 
+typedef struct tCrush_net_detach_list_item {
+    undefined4 field_0x0;
+    tCar_spec* car;
+    undefined field_0x8[28];
+} tCrush_net_detach_list_item;
+
+typedef struct tCrush_net_semi_detach_bit_list_item {
+    undefined4 field_0x0;
+    tCar_spec* car;
+    undefined field_0x8[68];
+} tCrush_net_semi_detach_bit_list_item;
+
+typedef struct tCrush_net_full_detach_bit_list_item {
+    tCar_spec* car;
+    undefined field_0x4[8];
+} tCrush_net_full_detach_bit_list_item;
+
+typedef struct tCrush_net_reattach_bit_list_item {
+    tCar_spec* car;
+    undefined field_0x4[8];
+} tCrush_net_reattach_bit_list_item;
+
+typedef struct tCrush_detach_list_item {
+    undefined4 field_0x0;
+    tCar_spec* car;
+    undefined field_0x8[12];
+} tCrush_detach_list_item;
+
+typedef struct tCar_damge_crush_list_item {
+    tCar_spec* car;
+    int damage;
+} tCar_damge_crush_list_item;
+
 typedef struct {
     int owner;
     int done_this_frame;
