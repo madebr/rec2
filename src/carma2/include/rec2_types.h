@@ -214,6 +214,11 @@ typedef struct {
     int block_flags;
 } tPipe_single_groove_on_of;
 
+typedef struct {
+    tS8 type_from;
+    tS8 type_to;
+} tPipe_single_transform_type;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_smudge = 19,
@@ -224,6 +229,7 @@ typedef enum {
     ePipe_single_vector3 = 58,
     ePipe_chunk_drone_render = 60,
     ePipe_chunk_drone_corner_pos = 61,
+    ePipe_single_transform_type = 68,
 } tPipe_chunk_type;
 
 typedef struct tPipe_chunk {
