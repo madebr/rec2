@@ -49,4 +49,6 @@ void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel);
 
+void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec *pCar_Spec, tCar_crush_buffer_entry *pSmash_data);
+
 #endif //REC2_SMASHING_H

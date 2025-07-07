@@ -1,7 +1,12 @@
 #include "smashing.h"
 
+#include "globvars.h"
 #include "loading.h"
+#include "piping.h"
 #include "platform.h"
+#include "replay.h"
+#include "sound.h"
+#include "utility.h"
 #include "world.h"
 
 #include <brender/brender.h>
@@ -293,3 +298,17 @@ void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smash
     }
 }
 C2_HOOK_FUNCTION(0x004ef840, ActuallyRepairSmash)
+
+void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec *pCar_Spec, tCar_crush_buffer_entry *pSmash_data) {
+    int i;
+
+    for (i = 0; i < pSmash_data->count_smashables; i++) {
+        tCar_crush_smashable_part* smashable;
+
+        smashable = &pSmash_data->smashables[i];
+        if (smashable->field_0x4c) {
+            ActuallyRepairSmash(pCar_Spec, smashable, 0);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004ef9c0, TotallyRepairSmash)
