@@ -620,3 +620,10 @@ void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_mate
         SIZE_OFFSET_PIPING(tPipe_smash_texture_change, texture2), pTexture);
 }
 C2_HOOK_FUNCTION(0x004c8a10, PipeSingleSmashTextureChange)
+
+void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
+
+    ARDoSingleVariedSession(ePipe_funk_enable, (uintptr_t)pIndex, 1,
+        SIZE_OFFSET_PIPING(tPipe_funk_enable, flags), pFlags);
+}
+C2_HOOK_FUNCTION(0x004c8de0, PipeSingleFunkEnable)

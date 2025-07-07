@@ -90,4 +90,6 @@ void C2_HOOK_FASTCALL AddModelMashToPipingSession(br_model* pModel, br_vector3* 
 
 void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture);
 
+void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
+
 #endif //REC2_PIPING_H
