@@ -611,3 +611,12 @@ void C2_HOOK_FASTCALL AddModelMashToPipingSession(br_model* pModel, br_vector3* 
     ARAddDataToSession(ePipe_model_mash, -1, pipe_model_mash, size);
 }
 C2_HOOK_FUNCTION(0x004c7550, AddModelMashToPipingSession)
+
+void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_material* pMaterial, br_pixelmap* pTexture) {
+
+    ARDoSingleVariedSession(ePipe_smash_texture_change, (uintptr_t)pMaterial, 3,
+        SIZE_OFFSET_PIPING(tPipe_smash_texture_change, car_spec), pCar_spec,
+        SIZE_OFFSET_PIPING(tPipe_smash_texture_change, texture1), pMaterial->colour_map,
+        SIZE_OFFSET_PIPING(tPipe_smash_texture_change, texture2), pTexture);
+}
+C2_HOOK_FUNCTION(0x004c8a10, PipeSingleSmashTextureChange)

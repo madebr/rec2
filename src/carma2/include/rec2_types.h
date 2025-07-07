@@ -228,6 +228,7 @@ typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_smudge = 19,
     ePipe_model_mash = 24,
+    ePipe_smash_texture_change = 36,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_single_groove_on_off = 51,
@@ -243,6 +244,13 @@ typedef struct tPipe_chunk {
     tU32 count;
     char data[];
 } tPipe_chunk;
+
+typedef struct {
+    tCar_spec* car_spec;
+    undefined4 field_0x4;
+    br_pixelmap* texture1;
+    br_pixelmap* texture2;
+} tPipe_smash_texture_change;
 
 typedef void C2_HOOK_FASTCALL tDrone_state_function(tDrone_spec*, tDroneStateFuncState);
 
