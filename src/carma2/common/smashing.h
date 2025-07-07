@@ -45,4 +45,8 @@ void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime);
 
 void C2_HOOK_FASTCALL InitSmashQueue(void);
 
+void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec);
+
+void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smashable_part* pSmashable, int pLevel);
+
 #endif //REC2_SMASHING_H
