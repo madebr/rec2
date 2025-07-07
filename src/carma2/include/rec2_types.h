@@ -224,6 +224,10 @@ typedef struct {
     tCompressed_vector3 vectors[];
 } tPipe_model_mash;
 
+typedef struct {
+    tU16 flags;
+} tPipe_funk_enable;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_smudge = 19,
@@ -232,6 +236,7 @@ typedef enum {
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_single_groove_on_off = 51,
+    ePipe_funk_enable = 54,
     ePipe_single_ds_model = 56,
     ePipe_single_vector3 = 58,
     ePipe_chunk_drone_render = 60,
