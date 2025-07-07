@@ -669,3 +669,9 @@ int C2_HOOK_FASTCALL OKToViewDrones(void) {
     return 0;
 }
 C2_HOOK_FUNCTION(0x00452680, OKToViewDrones)
+
+br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void) {
+
+    return &C2V(gDrone_specs)[C2V(gCurrent_selected_drone)].actor->t.t.mat;
+}
+C2_HOOK_FUNCTION(0x00452690, GetCurrentViewDroneMat)
