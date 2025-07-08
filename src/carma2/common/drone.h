@@ -101,4 +101,6 @@ br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
 
 void C2_HOOK_FASTCALL StartRenderingThisDrone(tDrone_spec* pDrone);
 
+br_vector3* C2_HOOK_FASTCALL GetCurrentViewDroneDirection(void);
+
 #endif //REC2_DRONE_H
