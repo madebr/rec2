@@ -118,6 +118,8 @@ void C2_HOOK_FASTCALL CheckCameraHither(void);
 
 void C2_HOOK_FASTCALL AmIGettingBoredWatchingCameraSpin(void);
 
+void C2_HOOK_FASTCALL SaveCameraPosition(int i);
+
 void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmega, tU32 pTime);
 
 void C2_HOOK_FASTCALL NormalPositionExternalCamera(tCar_spec* pCar, tU32 pTime);
