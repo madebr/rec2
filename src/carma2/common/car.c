@@ -1311,3 +1311,14 @@ void C2_HOOK_FASTCALL CollideCameraWithOtherCars(br_vector3* pPos, br_vector3* p
     // empty
 }
 C2_HOOK_FUNCTION(0x00413570, CollideCameraWithOtherCars)
+
+void (C2_HOOK_FASTCALL * PointCameraAtCar_original)(br_vector3* pPos, br_matrix34* pMat, float pFov_factor);
+void C2_HOOK_FASTCALL PointCameraAtCar(br_vector3* pPos, br_matrix34* pMat, float pFov_factor) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PointCameraAtCar_original(pPos, pMat, pFov_factor);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00411fc0, PointCameraAtCar, PointCameraAtCar_original)
