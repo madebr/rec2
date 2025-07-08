@@ -1222,6 +1222,16 @@ void C2_HOOK_FASTCALL SaveCameraPosition(int i) {
 }
 C2_HOOK_FUNCTION(0x00410be0, SaveCameraPosition)
 
+void C2_HOOK_FASTCALL RestoreCameraPosition(int i) {
+
+    if (C2V(gSave_camera)[i].saved != 0) {
+        C2V(gCamera_zoom) = C2V(gSave_camera)[i].zoom;
+        C2V(gCamera_yaw) = C2V(gSave_camera)[i].yaw;
+        C2V(gSave_camera)[i].saved = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x00410c20, RestoreCameraPosition)
+
 void (C2_HOOK_FASTCALL * GeneralisedPositionExternalCamera_original)(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmeage, tU32 pTime);
 void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmeage, tU32 pTime) {
 
