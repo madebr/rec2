@@ -51,6 +51,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tDrone_form_within_rendering_distance_cbfn
     DroneTrainWithinRenderingDistance,
     DronePlaneWithinRenderingDistance,
 });
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector3, gDefault_drone_direction, 0x005947c0, { 0.f, 0.f, -1.f });
 
 void C2_HOOK_CDECL DoNotDprintf(const char* format, ...) {
 // Disabled because too noisy
@@ -695,3 +696,14 @@ void C2_HOOK_FASTCALL StartRenderingThisDrone(tDrone_spec* pDrone) {
     }
 }
 C2_HOOK_FUNCTION(0x00451810, StartRenderingDrone)
+
+br_vector3* C2_HOOK_FASTCALL GetCurrentViewDroneDirection(void) {
+
+    StartRenderingThisDrone(&C2V(gDrone_specs)[C2V(gCurrent_selected_drone)]);
+    if (BrVector3LengthSquared(&C2V(gDrone_specs)[C2V(gCurrent_selected_drone)].field_0x18) > 0.f) {
+        return &C2V(gDrone_specs)[C2V(gCurrent_selected_drone)].field_0x18;
+    } else {
+        return &C2V(gDefault_drone_direction);
+    }
+}
+C2_HOOK_FUNCTION(0x004526c0, GetCurrentViewDroneDirection)
