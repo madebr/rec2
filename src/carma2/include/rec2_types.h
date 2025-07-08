@@ -137,6 +137,17 @@ typedef struct tSave_camera {
 } tSave_camera;
 
 typedef struct {
+    int field_0x0_bit0 : 1;
+    int field_0x0_bit1 : 1;
+    int field_0x0_bit2 : 1;
+    int field_0x0_bit3 : 1;
+    int field_0x0_bit4 : 1;
+    int field_0x0_bit5 : 1;
+    int field_0x0_bit6 : 1;
+    int field_0x0_bit7 : 1;
+} tCamera_key_flags;
+
+typedef struct {
     size_t count_vertices;
     float bens_z_min;
     float bens_z_max;
