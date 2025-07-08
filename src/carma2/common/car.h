@@ -122,17 +122,23 @@ void C2_HOOK_FASTCALL SaveCameraPosition(int i);
 
 void C2_HOOK_FASTCALL RestoreCameraPosition(int i);
 
-void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmega, tU32 pTime);
+void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmega, tU32 pTime_difference);
 
 void C2_HOOK_FASTCALL NormalPositionExternalCamera(tCar_spec* pCar, tU32 pTime);
 
 void C2_HOOK_FASTCALL SetPanningFieldOfView(void);
 
-void C2_HOOK_FASTCALL FrozenCamera(tCar_spec* pCar, tU32 pTime);
+void C2_HOOK_FASTCALL FrozenCamera(tCar_spec* pCar, tU32 pTime_difference);
 
-void C2_HOOK_FASTCALL PositionPedCam(tPed_character_instance* pPed_character, tU32 pTime);
+void C2_HOOK_FASTCALL PositionPedCam(tPed_character_instance* pPed_character, tU32 pTime_difference);
 
-void C2_HOOK_FASTCALL PositionDroneCam(tU32 pTime);
+void C2_HOOK_FASTCALL PositionDroneCam(tU32 pTime_difference);
+
+void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3* pVn, br_vector3* pOmega, float pSpeed, float pSpeedo_speed, tU32 pTime);
+
+void C2_HOOK_FASTCALL CollideCameraWithOtherCars(br_vector3* pPos, br_vector3* pCamera_pos);
+
+void C2_HOOK_FASTCALL PointCameraAtCar(br_vector3* pPos, br_matrix34* pMat, float pFov_factor);
 
 void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3* pVn, br_vector3* pOmega, float pSpeed, float pSpeedo_speed, tU32 pTime_difference);
 
