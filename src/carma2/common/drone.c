@@ -675,3 +675,23 @@ br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void) {
     return &C2V(gDrone_specs)[C2V(gCurrent_selected_drone)].actor->t.t.mat;
 }
 C2_HOOK_FUNCTION(0x00452690, GetCurrentViewDroneMat)
+
+void C2_HOOK_FASTCALL StartRenderingThisDrone(tDrone_spec* pDrone) {
+
+    if (pDrone->actor->render_style == BR_RSTYLE_FACES) {
+        return;
+    }
+    if (C2V(gShow_drone_paths) && pDrone->actor->render_style == BR_RSTYLE_BOUNDING_FACES) {
+        return;
+    }
+    if (C2V(gShow_drone_paths) || (pDrone->field_0x44 && C2V(gCount_rendered_drones) < 10)) {
+
+        DoNotDprintf("START RENDERING: %d", pDrone->id);
+        C2V(gCount_rendered_drones) += 1;
+        pDrone->actor->render_style = BR_RSTYLE_FACES;
+        PipeSingleDroneRender(pDrone, 1);
+    } else {
+        NewDroneState(pDrone,1);
+    }
+}
+C2_HOOK_FUNCTION(0x00451810, StartRenderingDrone)
