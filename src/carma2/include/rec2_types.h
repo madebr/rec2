@@ -4156,6 +4156,7 @@ typedef struct {
 } tRace_info;
 
 typedef enum {
+    kActionReplayCameraMode_Invalid = -1,
     kActionReplayCameraMode_Standard = 0,
     kActionReplayCameraMode_Panning = 1,
     kActionReplayCameraMode_ActionTracking = 2,
@@ -4714,6 +4715,8 @@ enum {
     eMiscString_won = 212,
     eMiscString_score = 213,
     eMiscString_fox_cant_do_that = 214,
+    eMiscString_watching = 217,
+    eMiscString_race_leader = 218,
     eMiscString_message_sent = 226,
     eMiscString_too_late_to_cancel = 242,
     eMiscString_no_target_to_lock_onto = 250,

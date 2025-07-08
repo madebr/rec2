@@ -1,7 +1,13 @@
 #include "replay.h"
 
 #include "car.h"
+#include "controls.h"
+#include "drone.h"
+#include "finteray.h"
 #include "globvars.h"
+#include "globvrkm.h"
+#include "loading.h"
+#include "pedestrn.h"
 #include "piping.h"
 #include "platform.h"
 #include "utility.h"
@@ -10,6 +16,12 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT(tActionReplayCameraMode, gAction_replay_camera_mode, 0x0079efa8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAction_replay_manual_camera_target_type, 0x00679278);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU8, gCamera_type_allowed_replay, 9, 0x0058f600, {
+    1, 1, 1, 1, 1, 0, 0, 1, 1,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU8, gCamera_type_allowed_gameplay, 9, 0x0058f610, {
+    1, 0, 0, 0, 1, 0, 0, 1, 1,
+});
 
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 
@@ -81,13 +93,97 @@ void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, SetCameraType, SetCameraType_original)
 
+int C2_HOOK_FASTCALL IsCameraTypeAllowed(tActionReplayCameraMode pCamera_type) {
+
+    if (C2V(gAction_replay_mode) && !C2V(gCamera_type_allowed_replay)[pCamera_type]) {
+        return 0;
+    }
+    if (!C2V(gAction_replay_mode) && !C2V(gCamera_type_allowed_gameplay)[pCamera_type]) {
+        return 0;
+    }
+    if (pCamera_type > 8) {
+        return 0;
+    }
+    if (pCamera_type == kActionReplayCameraMode_Drone && !OKToViewDrones()) {
+        return 0;
+    }
+    if (pCamera_type == kActionReplayCameraMode_Peds && C2V(gPed_count) == 0) {
+        return 0;
+    }
+    return 1;
+}
+
 void (C2_HOOK_FASTCALL * PositionExternalCamera_original)(tCar_spec* pCar_spec, tU32 pTime);
 void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PositionExternalCamera_original(pCar_spec, pTime);
 #else
-    NOT_IMPLEMENTED();
+    br_camera* camera;
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(tActionReplayCameraMode, old_camera_mode, 0x101b7a3c, kActionReplayCameraMode_Invalid);
+
+    camera = C2V(gCamera)->type_data;
+    CheckCameraHither();
+    if (!IsCameraTypeAllowed(C2V(gAction_replay_camera_mode))) {
+        ChangeCameraType();
+    }
+    AmIGettingBoredWatchingCameraSpin();
+    if (!C2V(gProgram_state).cockpit_on) {
+        tCar_spec* c;
+
+        if (C2V(gOpponent_viewing_mode) && C2V(gAction_replay_mode)) {
+            c = &C2V(gProgram_state).current_car;
+        } else {
+            c = C2V(gCar_to_view);
+        }
+        if (c->car_master_actor->t.t.translate.t.v[0] <= 500.f) {
+            if (C2V(old_camera_mode) != C2V(gAction_replay_camera_mode)) {
+                camera->field_of_view = BR_ANGLE_DEG(C2V(gCamera_angle));
+            }
+            camera->hither_z = C2V(gCamera_hither);
+            switch (C2V(gAction_replay_camera_mode)) {
+            case kActionReplayCameraMode_Standard:
+            case kActionReplayCameraMode_Rigid:
+            case kActionReplayCameraMode_Reversing:
+                NormalPositionExternalCamera(c, pTime);
+                break;
+            case kActionReplayCameraMode_Panning:
+                CheckDisablePlingMaterials(c);
+                SetPanningFieldOfView();
+                if (C2V(old_camera_mode) != kActionReplayCameraMode_Panning) {
+                    SetUpPanningCamera(c);
+                }
+                PanningExternalCamera(c, pTime);
+                EnablePlingMaterials();
+                break;
+            case kActionReplayCameraMode_ActionTracking:
+                CheckDisablePlingMaterials(c);
+                SetPanningFieldOfView();
+                if (!IncidentCam(c, pTime)) {
+                    if (C2V(old_camera_mode) != C2V(gAction_replay_camera_mode)) {
+                        SetUpPanningCamera(c);
+                    }
+                    PanningExternalCamera(c, pTime);
+                    EnablePlingMaterials();
+                }
+                break;
+            case kActionReplayCameraMode_Manual:
+                FrozenCamera(c, pTime);
+                break;
+            case kActionReplayCameraMode_Peds:
+                PositionPedCam(GetTestPed(), pTime);
+                break;
+            case kActionReplayCameraMode_Drone:
+                PositionDroneCam(pTime);
+                break;
+            case kActionReplayCameraMode_Internal:
+                camera->hither_z = C2V(gCamera_cockpit_hither);
+                PositionCarMountedCamera(c, pTime);
+                break;
+            }
+            C2V(old_camera_mode) = C2V(gAction_replay_camera_mode);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040ea30, PositionExternalCamera, PositionExternalCamera_original)

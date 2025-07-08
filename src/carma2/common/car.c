@@ -4,6 +4,7 @@
 #include "controls.h"
 #include "crush.h"
 #include "depth.h"
+#include "displays.h"
 #include "drone.h"
 #include "finteray.h"
 #include "globvars.h"
@@ -14,12 +15,14 @@
 #include "netgame.h"
 #include "network.h"
 #include "opponent.h"
+#include "pedestrn.h"
 #include "physics.h"
 #include "powerups.h"
 #include "raycast.h"
 #include "replay.h"
 #include "skidmark.h"
 #include "spark.h"
+#include "structur.h"
 #include "utility.h"
 #include "world.h"
 
@@ -56,6 +59,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gFace_count, 0x006940b0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFace_ref, gFace_list__car, 300, 0x00744820);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_mode, 0x00679294);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_frozen, 0x006792b8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gOpponent_viewing_mode, 0x006792bc);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNet_player_to_view_index, 0x0058f5fc, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gPanning_camera_angle, 0x00679304);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gZero_v__car, 0x0068b8d0);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -1151,16 +1158,85 @@ tCar_spec* C2_HOOK_FASTCALL GetRaceLeader(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040f4a0, GetRaceLeader, GetRaceLeader_original)
 
-void (C2_HOOK_FASTCALL * GeneralisedPositionExternalCamera_original)(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection);
-void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection) {
+void C2_HOOK_FASTCALL CheckCameraHither(void) {
+    br_camera *cam;
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, old_hither, 0x0067931c);
+
+    cam = gCamera->type_data;
+    if (TestForNan(&cam->hither_z)) {
+        cam->hither_z = (float)C2V(old_hither);
+    }
+    old_hither = (int)cam->hither_z;
+}
+
+void C2_HOOK_FASTCALL AmIGettingBoredWatchingCameraSpin(void) {
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, time_of_death, 0x00679298);
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, headup_timer, 0x00679320);
+    char s[256];
+
+    if (C2V(gNet_mode) != eNet_mode_none
+            && (C2V(gCurrent_net_game)->type == eNet_game_type_4
+                    || C2V(gCurrent_net_game)->type == eNet_game_type_fight_to_death)) {
+        if (!gRace_finished) {
+            C2V(time_of_death) = 0;
+            C2V(gOpponent_viewing_mode) = 0;
+        } else if (C2V(time_of_death) == 0) {
+            C2V(time_of_death) = GetRaceTime();
+        } else if (GetRaceTime() >= C2V(time_of_death) + 10000) {
+            if (C2V(gOpponent_viewing_mode) == 0) {
+                C2V(gOpponent_viewing_mode) = 1;
+                C2V(gNet_player_to_view_index) = -2;
+                ViewNetPlayer();
+            }
+            if (C2V(gNet_player_to_view_index) >= C2V(gNumber_of_net_players)) {
+                C2V(gNet_player_to_view_index) = -2;
+                ViewNetPlayer();
+            }
+            if (gNet_player_to_view_index < 0 && gCar_to_view != GetRaceLeader()) {
+                gNet_player_to_view_index = -2;
+                ViewNetPlayer();
+            }
+            if ((GetRaceTime() > C2V(headup_timer) + 1000 || C2V(headup_timer) > GetRaceTime()) && C2V(gRace_over_reason) == eRace_not_over_yet) {
+                strcpy(s, GetMiscString(eMiscString_watching));
+                strcat(s, " ");
+                if (C2V(gNet_player_to_view_index) >= 0) {
+                    strcat(s, gNet_players[gNet_player_to_view_index].player_name);
+                } else {
+                    strcat(s, GetMiscString(eMiscString_race_leader));
+                }
+                C2V(headup_timer) = GetRaceTime();
+                NewTextHeadupSlot(6, 0, 500, -4, s);
+            }
+        }
+    }
+}
+
+void (C2_HOOK_FASTCALL * GeneralisedPositionExternalCamera_original)(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmeage, tU32 pTime);
+void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmeage, tU32 pTime) {
 
 #if defined(C2_HOOKS_ENABLED)
-    GeneralisedPositionExternalCamera_original(pCar, pMat, pPos, pSpeed, pSpeedo_speed, pDirection);
+    GeneralisedPositionExternalCamera_original(pCar, pMat, pPos, pSpeed, pSpeedo_speed, pDirection, pOmega, pTime);
 #else
     NOT_IMPLEMENTED();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00410c60, GeneralisedPositionExternalCamera, GeneralisedPositionExternalCamera_original)
+
+void C2_HOOK_FASTCALL NormalPositionExternalCamera(tCar_spec* pCar, tU32 pTime) {
+
+    GeneralisedPositionExternalCamera(pCar, &pCar->car_master_actor->t.t.mat,
+        &pCar->pos, pCar->speed, pCar->speedo_speed, &pCar->direction, &pCar->collision_info->omega, pTime);
+}
+
+void C2_HOOK_FASTCALL SetPanningFieldOfView(void) {
+    br_camera* camera_ptr;
+
+    camera_ptr = C2V(gCamera)->type_data;
+    if (C2V(gPanning_camera_angle) == 0) {
+        C2V(gPanning_camera_angle) = BrDegreeToAngle(C2V(gCamera_angle) * 0.7f);
+    }
+    camera_ptr->field_of_view = C2V(gPanning_camera_angle);
+}
 
 void (C2_HOOK_FASTCALL * FrozenCamera_original)(tCar_spec* pCar, tU32 pTime);
 void C2_HOOK_FASTCALL FrozenCamera(tCar_spec* pCar, tU32 pTime) {
@@ -1172,3 +1248,28 @@ void C2_HOOK_FASTCALL FrozenCamera(tCar_spec* pCar, tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040ef90, FrozenCamera, FrozenCamera_original)
+
+void C2_HOOK_FASTCALL PositionPedCam(tPed_character_instance* pPed_character, tU32 pTime) {
+
+    if (pPed_character == NULL) {
+        ChangeCameraType();
+    } else {
+        br_matrix34* mat;
+
+        mat = GetCharacterMatrixPtr(pPed_character);
+        GeneralisedPositionExternalCamera(NULL, mat, (br_vector3*)mat->m[3],
+            0.f, 0.f, &pPed_character->field_0xc0, &C2V(gZero_v__car), pTime);
+    }
+}
+
+void C2_HOOK_FASTCALL PositionDroneCam(tU32 pTime) {
+
+    if (OKToViewDrones()) {
+        br_matrix34* mat;
+        br_vector3* dir;
+
+        mat = GetCurrentViewDroneMat();
+        dir = GetCurrentViewDroneDirection();
+        GeneralisedPositionExternalCamera(NULL, mat, (br_vector3*)mat->m[3], 0.f, 0.f, dir, &C2V(gZero_v__car), pTime);
+    }
+}
