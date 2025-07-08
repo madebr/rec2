@@ -99,4 +99,6 @@ int C2_HOOK_FASTCALL OKToViewDrones(void);
 
 br_matrix34* C2_HOOK_FASTCALL GetCurrentViewDroneMat(void);
 
+void C2_HOOK_FASTCALL StartRenderingThisDrone(tDrone_spec* pDrone);
+
 #endif //REC2_DRONE_H
