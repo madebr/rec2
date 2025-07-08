@@ -136,4 +136,6 @@ void C2_HOOK_FASTCALL PositionDroneCam(tU32 pTime);
 
 void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3* pVn, br_vector3* pOmega, float pSpeed, float pSpeedo_speed, tU32 pTime_difference);
 
+void C2_HOOK_FASTCALL CollideCameraWithOtherCars(br_vector3* pPos, br_vector3* pCamera_pos);
+
 #endif //REC2_CAR_H

@@ -1306,3 +1306,9 @@ void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00411980, SwingCamera, SwingCamera_original)
+
+void C2_HOOK_FASTCALL CollideCameraWithOtherCars(br_vector3* pPos, br_vector3* pCamera_pos) {
+
+    // empty
+}
+C2_HOOK_FUNCTION(0x00413570, CollideCameraWithOtherCarsl)
