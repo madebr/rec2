@@ -64,6 +64,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNet_player_to_view_index, 0x0058f5fc, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gPanning_camera_angle, 0x00679304);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gZero_v__car, 0x0068b8d0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSave_camera, gSave_camera, 2, 0x006792c8);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_scalar, gCamera_zoom, 0x00655f40, 0.2f);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
