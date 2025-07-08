@@ -1295,3 +1295,14 @@ void C2_HOOK_FASTCALL PositionDroneCam(tU32 pTime) {
         GeneralisedPositionExternalCamera(NULL, mat, (br_vector3*)mat->m[3], 0.f, 0.f, dir, &C2V(gZero_v__car), pTime);
     }
 }
+
+void (C2_HOOK_FASTCALL * SwingCamera_original)(br_matrix34* pM1, br_matrix34* pM2, br_vector3* pVn, br_vector3* pOmega, float pSpeed, float pSpeeo_speed, tU32 pTime_difference);
+void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3* pVn, br_vector3* pOmega, float pSpeed, float pSpeedo_speed, tU32 pTime_difference) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SwingCamera_original(pM1, pM2, pVn, pOmega, pSpeed, pSpeedo_speed, pTime_difference);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00411980, SwingCamera, SwingCamera_original)
