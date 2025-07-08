@@ -130,6 +130,12 @@ typedef enum {
     eDrone_state_STOP = 4,
 } tDroneStateFuncState;
 
+typedef struct tSave_camera {
+    int saved;
+    br_scalar zoom;
+    br_angle yaw;
+} tSave_camera;
+
 typedef struct {
     size_t count_vertices;
     float bens_z_min;

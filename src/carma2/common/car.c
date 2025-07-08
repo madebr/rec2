@@ -63,6 +63,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gOpponent_viewing_mode, 0x006792bc);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNet_player_to_view_index, 0x0058f5fc, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gPanning_camera_angle, 0x00679304);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gZero_v__car, 0x0068b8d0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSave_camera, gSave_camera, 2, 0x006792c8);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -1210,6 +1211,16 @@ void C2_HOOK_FASTCALL AmIGettingBoredWatchingCameraSpin(void) {
         }
     }
 }
+
+void C2_HOOK_FASTCALL SaveCameraPosition(int i) {
+
+    if (C2V(gSave_camera)[i].saved != 1) {
+        C2V(gSave_camera)[i].zoom = C2V(gCamera_zoom);
+        C2V(gSave_camera)[i].yaw = C2V(gCamera_yaw);
+        C2V(gSave_camera)[i].saved = 1;
+    }
+}
+C2_HOOK_FUNCTION(0x00410be0, SaveCameraPosition)
 
 void (C2_HOOK_FASTCALL * GeneralisedPositionExternalCamera_original)(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmeage, tU32 pTime);
 void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmeage, tU32 pTime) {
