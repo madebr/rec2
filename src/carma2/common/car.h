@@ -18,6 +18,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gFace_count);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tFace_ref, gFace_list__car, 300);
 C2_HOOK_VARIABLE_DECLARE(int, gCamera_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gCamera_frozen);
+C2_HOOK_VARIABLE_DECLARE(int, gOpponent_viewing_mode);
+C2_HOOK_VARIABLE_DECLARE(int, gNet_player_to_view_index);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
@@ -111,8 +114,20 @@ void C2_HOOK_FASTCALL PositionCarMountedCamera(tCar_spec* pCar, tU32 pTime);
 
 tCar_spec* C2_HOOK_FASTCALL GetRaceLeader(void);
 
-void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection);
+void C2_HOOK_FASTCALL CheckCameraHither(void);
+
+void C2_HOOK_FASTCALL AmIGettingBoredWatchingCameraSpin(void);
+
+void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection, br_vector3* pOmega, tU32 pTime);
+
+void C2_HOOK_FASTCALL NormalPositionExternalCamera(tCar_spec* pCar, tU32 pTime);
+
+void C2_HOOK_FASTCALL SetPanningFieldOfView(void);
 
 void C2_HOOK_FASTCALL FrozenCamera(tCar_spec* pCar, tU32 pTime);
+
+void C2_HOOK_FASTCALL PositionPedCam(tPed_character_instance* pPed_character, tU32 pTime);
+
+void C2_HOOK_FASTCALL PositionDroneCam(tU32 pTime);
 
 #endif //REC2_CAR_H
