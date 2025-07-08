@@ -109,6 +109,8 @@ void C2_HOOK_FASTCALL CheckDisablePlingMaterials(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL PositionCarMountedCamera(tCar_spec* pCar, tU32 pTime);
 
+tCar_spec* C2_HOOK_FASTCALL GetRaceLeader(void);
+
 void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matrix34* pMat, br_vector3* pPos, float pSpeed, float pSpeedo_speed, br_vector3* pDirection);
 
 void C2_HOOK_FASTCALL FrozenCamera(tCar_spec* pCar, tU32 pTime);
