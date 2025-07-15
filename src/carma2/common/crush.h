@@ -191,4 +191,6 @@ int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
 void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec);
 
+int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tCollision_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal);
+
 #endif // REC2_CRUSH_H
