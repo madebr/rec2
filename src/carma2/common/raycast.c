@@ -480,3 +480,11 @@ void C2_HOOK_FASTCALL FindBestY(br_vector3* pPosition, br_actor* pWorld, br_scal
     *pNearest_below_face_index = C2V(gBelow_face_index);
 }
 C2_HOOK_FUNCTION(0x004e3bc0, FindBestY)
+
+void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* pDest, const br_vector3* pOrigin, const br_matrix34* pMatrix) {
+    br_vector3 tv;
+
+    BrVector3Sub(&tv, pOrigin, (br_vector3*)pMatrix->m[3]);
+    BrMatrix34TApplyV(pDest, &tv, pMatrix);
+}
+C2_HOOK_FUNCTION(0x004225b0, DrMatrix34ApplyLPInverse)
