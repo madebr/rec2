@@ -106,7 +106,7 @@ void C2_HOOK_CDECL BrMatrix34PreScale(br_matrix34* mat, br_scalar sx, br_scalar 
 void C2_HOOK_CDECL BrMatrix34PostScale(br_matrix34* mat, br_scalar sx, br_scalar sy, br_scalar sz);
 void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, br_transform* xform);
 void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, br_transform* xform);
-void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, br_vector3* B, br_matrix34* C);
+void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, const br_vector3* B, const br_matrix34* C);
 void C2_HOOK_CDECL BrMatrix34LPNormalise(br_matrix34* A, const br_matrix34* B);
 void C2_HOOK_CDECL BrMatrix34PreRotate(br_matrix34* mat, br_angle r, br_vector3* axis);
 void C2_HOOK_CDECL BrMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3* a);
