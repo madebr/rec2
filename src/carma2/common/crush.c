@@ -2462,3 +2462,14 @@ int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, co
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00461740, ShapeRayCast, ShapeRayCast_original)
+
+void (C2_HOOK_FASTCALL * KnackerThisCar_original)(tCar_spec* pCar);
+void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
+
+#if defined(C2_HOOKS_ENABLED)
+    KnackerThisCar_original(pCar);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0043f5f0, KnackerThisCar, KnackerThisCar_original)
