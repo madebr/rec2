@@ -151,6 +151,8 @@ void C2_HOOK_FASTCALL CheckSystemKeys(int pRacing);
 
 void C2_HOOK_FASTCALL CheckToggles(int pRacing);
 
+void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar);
+
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
 
 void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec);
