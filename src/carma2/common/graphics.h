@@ -36,6 +36,10 @@ C2_HOOK_VARIABLE_DECLARE(int, gNext_transient);
 
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_x);
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_y);
+C2_HOOK_VARIABLE_DECLARE(int, gMap_render_x_i);
+C2_HOOK_VARIABLE_DECLARE(int, gMap_render_y_i);
+C2_HOOK_VARIABLE_DECLARE(int, gMap_render_width_i);
+C2_HOOK_VARIABLE_DECLARE(int, gMap_render_height_i);
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_width);
 C2_HOOK_VARIABLE_DECLARE(float, gMap_render_height);
 

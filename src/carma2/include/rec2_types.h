@@ -1043,8 +1043,8 @@ typedef struct {
     int field_0x3dc;
     int field_0x3e0;
     int field_0x3e4;
-    int field_0x3e8;
-    int field_0x3ec;
+    int map_render_x_marg;
+    int map_render_y_marg;
     int field_0x3f0;
     int field_0x3f4;
     int field_0x3f8;
@@ -4659,6 +4659,9 @@ enum {
     eMiscString_timer_frozen = 1,
     eMiscString_minimap_on = 2,
     eMiscString_minimap_off = 3,
+    eMiscString_repairing_for_free = 4,
+    eMiscString_repair_cost_colon = 5,
+    eMiscString_recovery_cost_colon = 7,
     eMiscString_credits = 12,
     eMiscString_credit = 13,
     eMiscString_lost_credits_prefix = 14,
@@ -4676,6 +4679,7 @@ enum {
     eMiscString_bad_boy = 44,
     eMiscString_credit_fine = 45,
     eMiscString_credits_abbrev = 47,
+    eMiscString_recovering_for_free = 48,
     eMiscString_has_joined_the_game = 58,
     eMiscString_driven_to_destruction = 59,
     eMiscString_car_crusher = 60,
@@ -4702,6 +4706,7 @@ enum {
     eMiscString_status_in_action_replay = 86,
     eMiscString_host_abandoned_race = 87,
     eMiscString_host = 88,
+    eMiscString_cant_afford_to_recover = 96,
     eMiscString_track_appears_very_quickly = 100,
     eMiscString_track_appears_quite_quickly = 101,
     eMiscString_track_appears_quite_late = 102,
@@ -5065,6 +5070,8 @@ enum {
     eSoundId_Swingout = 3007,
     eSoundId_CantAffordPart = 3100,
     eSoundId_SmashRepair = 4550,
+    eSoundId_DamageRepair = 5200,
+    eSoundId_Horn = 5209,
     eSoundId_Cop_Siren = 5350,
     eSoundId_FlaskGone = 5401,
     eSoundId_Countdown_Go = 8000,
