@@ -151,4 +151,6 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pTotal_deflection);
 
+void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
+
 #endif //REC2_CAR_H

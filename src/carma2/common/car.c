@@ -75,6 +75,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gOld_yaw__car, 0x006792e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_has_collided, 0x006793e0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gOld_zoom, 0x006792e4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInTheSea, 0x00679364);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gWild_start, 0x006793a8);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gQuite_wild_end, 0x006793ac);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gQuite_wild_start, 0x006793b0);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gOn_me_wheels_start, 0x006793b4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gWoz_upside_down_at_all, 0x006793b8);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -2026,3 +2031,13 @@ float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pT
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043b840, RepairCar, RepairCar_original)
+
+void C2_HOOK_FASTCALL CancelPendingCunningStunt(void) {
+
+    C2V(gQuite_wild_end) = 0;
+    C2V(gQuite_wild_start) = 0;
+    C2V(gOn_me_wheels_start) = 0;
+    C2V(gWoz_upside_down_at_all) = 0;
+    C2V(gWild_start) = 0;
+}
+C2_HOOK_FUNCTION(0x0041e580, CancelPendingCunningStunt)
