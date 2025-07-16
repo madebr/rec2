@@ -149,4 +149,6 @@ void C2_HOOK_FASTCALL PointCameraAtCar(br_vector3* pPos, br_matrix34* pMat, floa
 
 int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
+float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pTotal_deflection);
+
 #endif //REC2_CAR_H

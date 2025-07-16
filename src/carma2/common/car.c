@@ -2015,3 +2015,14 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
     return C2V(gInTheSea);
 }
 C2_HOOK_FUNCTION(0x00414ca0, IsCarInTheSea);
+
+float (C2_HOOK_FASTCALL * RepairCar_original)(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pTotal_deflection);
+float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pTotal_deflection) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return RepairCar_original(pCar_ID, pFrame_period, pTotal_deflection);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0043b840, RepairCar, RepairCar_original)
