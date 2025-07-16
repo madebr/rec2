@@ -569,3 +569,14 @@ void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec) {
     }
 }
 C2_HOOK_FUNCTION(0x004fc740, PipeInstantUnSmudge)
+
+void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+        if (C2V(gSmoke_column)[i].car == pCar && C2V(gSmoke_column)[i].lifetime > 2000) {
+            C2V(gSmoke_column)[i].lifetime = 2000;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004fca40, StopCarSmoking)

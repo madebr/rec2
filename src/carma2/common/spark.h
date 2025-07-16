@@ -77,4 +77,6 @@ void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec);
 
+void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar);
+
 #endif //REC2_SPARK_H
