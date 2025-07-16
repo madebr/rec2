@@ -1676,10 +1676,47 @@ C2_HOOK_FUNCTION(0x00413570, CollideCameraWithOtherCarsl)
 void (C2_HOOK_FASTCALL * PointCameraAtCar_original)(br_vector3* pPos, br_matrix34* pMat, float pFov_factor);
 void C2_HOOK_FASTCALL PointCameraAtCar(br_vector3* pPos, br_matrix34* pMat, float pFov_factor) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PointCameraAtCar(pPos, pMat, pFov_factor);
 #else
-    NOT_IMPLEMENTED();
+    br_vector3 vn;
+    br_vector3 tv;
+    br_vector3 tv2;
+    br_scalar dist;
+    br_scalar frac;
+    br_angle theta;
+    br_vector3* pos;
+    br_camera* camera_ptr;
+    int swoop;
+
+    camera_ptr = C2V(gCamera)->type_data;
+    theta = (br_angle)(pFov_factor * camera_ptr->field_of_view / 5.f);
+    swoop = C2V(gCountdown) && C2V(gCamera_height) > pPos->v[1] + 0.01f;
+    if (swoop) {
+        BrVector3Sub(&tv, &C2V(gAverage_grid_position), pPos);
+        frac = (C2V(gCamera_height) - pPos->v[1]) / 10.0f;
+        BrVector3Scale(&tv, &tv, frac);
+        BrVector3Add(&tv, pPos, &tv);
+        pos = &tv;
+        theta = (br_angle)((1.0f - frac) * (float)theta);
+    } else {
+        pos = pPos;
+    }
+    BrVector3Sub(&vn, pPos, (br_vector3*)pMat->m[2]);
+    vn.v[1] = 0.f;
+    BrVector3Normalise(&vn, &vn);
+    pMat->m[0][0] = -vn.v[2];
+    pMat->m[0][1] = 0.0f;
+    pMat->m[0][2] = vn.v[0];
+    pMat->m[1][0] = 0.0f;
+    pMat->m[1][1] = 1.0f;
+    pMat->m[1][2] = 0.0f;
+    pMat->m[2][0] = -vn.v[0];
+    pMat->m[2][1] = 0.0f;
+    pMat->m[2][2] = -vn.v[2];
+    BrVector3Sub(&tv2, pos, (br_vector3*)pMat->m[3]);
+    dist = BrVector3Dot(&tv2, &vn);
+    BrMatrix34PreRotateX(pMat, theta - BrRadianToAngle(atan2f(pMat->m[3][1] - pos->v[1], dist)));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00411fc0, PointCameraAtCar, PointCameraAtCar_original)
