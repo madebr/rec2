@@ -84,4 +84,6 @@ void C2_HOOK_FASTCALL MungeEnvironmentalSound(void);
 
 void C2_HOOK_FASTCALL MungeEngineNoise(void);
 
+int C2_HOOK_FASTCALL DRS3StopSound(tS3_sound_tag pSound_tag);
+
 #endif // REC2_SOUND_H
