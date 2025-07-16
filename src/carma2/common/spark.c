@@ -568,4 +568,4 @@ void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec) {
         AREndPipingSession();
     }
 }
-C2_HOOK_FUNCTION(0x, PipeInstantUnSmudge)
+C2_HOOK_FUNCTION(0x004fc740, PipeInstantUnSmudge)
