@@ -55,6 +55,7 @@ EXPORTS
     BrMatrix34Post
     BrMatrix34PostRotateX
     BrMatrix34PostRotateY
+    BrMatrix34PostRotateZ
     BrMatrix34PostScale
     BrMatrix34PostShearX
     BrMatrix34PostShearY
@@ -62,7 +63,9 @@ EXPORTS
     BrMatrix34PostTransform
     BrMatrix34PostTranslate
     BrMatrix34Pre
+    BrMatrix34PreRotateX
     BrMatrix34PreRotateY
+    BrMatrix34PreRotateZ
     BrMatrix34PreScale
     BrMatrix34PreTransform
     BrMatrix34PreTranslate
