@@ -74,6 +74,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCamera_pos_before_collide, 0x006792e8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gOld_yaw__car, 0x006792e0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCamera_has_collided, 0x006793e0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gOld_zoom, 0x006792e4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gInTheSea, 0x00679364);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -2008,3 +2009,9 @@ void C2_HOOK_FASTCALL PointCameraAtCar(br_vector3* pPos, br_matrix34* pMat, floa
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00411fc0, PointCameraAtCar, PointCameraAtCar_original)
+
+int C2_HOOK_FASTCALL IsCarInTheSea(void) {
+
+    return C2V(gInTheSea);
+}
+C2_HOOK_FUNCTION(0x00414ca0, IsCarInTheSea);

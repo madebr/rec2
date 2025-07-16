@@ -21,6 +21,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gCamera_frozen);
 C2_HOOK_VARIABLE_DECLARE(int, gOpponent_viewing_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_player_to_view_index);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
+C2_HOOK_VARIABLE_DECLARE(int, gInTheSea);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
@@ -145,5 +146,7 @@ void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3
 void C2_HOOK_FASTCALL CollideCameraWithOtherCars(br_vector3* pPos, br_vector3* pCamera_pos);
 
 void C2_HOOK_FASTCALL PointCameraAtCar(br_vector3* pPos, br_matrix34* pMat, float pFov_factor);
+
+int C2_HOOK_FASTCALL IsCarInTheSea(void);
 
 #endif //REC2_CAR_H
