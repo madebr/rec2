@@ -1693,6 +1693,7 @@ void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar) {
     CheckHorn3D(pCar);
 #else
     NOT_IMPLEMENTED();
+#endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00443ba0, CheckHorn3D, CheckHorn3D_original)
 
