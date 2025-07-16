@@ -138,4 +138,6 @@ int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, 
 
 void* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pNet_player, int pSize);
 
+tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
+
 #endif // REC2_NETWORK_H

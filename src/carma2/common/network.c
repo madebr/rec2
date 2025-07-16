@@ -894,3 +894,9 @@ void* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pNet_pl
     return (tU8*)message + offset;
 }
 C2_HOOK_FUNCTION(0x004a5140, NetGetToPlayerContentsSize)
+
+tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
+
+    return C2V(gNet_players)[C2V(gThis_net_player_index)].player_status;
+}
+C2_HOOK_FUNCTION(0x004a5b30, NetGetPlayerStatus)
