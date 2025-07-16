@@ -1686,6 +1686,16 @@ void C2_HOOK_FASTCALL CheckToggles(int pRacing) {
     }
 }
 
+void (C2_HOOK_FASTCALL * CheckHorn3D_original)(tCar_spec* pCar);
+void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CheckHorn3D(pCar);
+#else
+    NOT_IMPLEMENTED();
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00443ba0, CheckHorn3D, CheckHorn3D_original)
+
 void (C2_HOOK_FASTCALL * CheckOtherRacingKeys_original)(void);
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
 
