@@ -701,3 +701,12 @@ void C2_HOOK_FASTCALL MungeEngineNoise(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456070, MungeEngineNoise, MungeEngineNoise_original)
+
+int C2_HOOK_FASTCALL DRS3StopSound(tS3_sound_tag pSound_tag) {
+
+    if (!C2V(gSound_enabled)) {
+        return 0;
+    }
+    return S3StopSound(pSound_tag);
+}
+C2_HOOK_FUNCTION(0x00455840, DRS3StopSound)
