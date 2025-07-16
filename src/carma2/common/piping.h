@@ -92,4 +92,6 @@ void C2_HOOK_FASTCALL PipeSingleSmashTextureChange(tCar_spec* pCar_spec, br_mate
 
 void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags);
 
+void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
+
 #endif //REC2_PIPING_H

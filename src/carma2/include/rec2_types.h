@@ -247,6 +247,7 @@ typedef struct {
 
 typedef enum {
     ePipe_chunk_car = 5,
+    ePipe_chunk_special = 8,
     ePipe_chunk_smudge = 19,
     ePipe_model_mash = 24,
     ePipe_smash_texture_change = 36,
@@ -514,6 +515,10 @@ typedef enum {
     ePed_form_bone_hinge_phantom = 8,
     ePed_form_bone_hinge_false = 9,
 } tPed_form_bone_hinge_type;
+
+typedef enum tSpecial_type {
+    ePipe_special_fade = 0,
+} tSpecial_type;
 
 typedef struct {
     tCar_detail_ownership ownership;
