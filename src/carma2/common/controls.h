@@ -18,7 +18,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e8);
 C2_HOOK_VARIABLE_DECLARE(int, gHad_auto_recover);
 C2_HOOK_VARIABLE_DECLARE(tU32, gPalette_fade_time);
 C2_HOOK_VARIABLE_DECLARE(int, gRecover_timer);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_00590f60);
 C2_HOOK_VARIABLE_DECLARE(int, gToo_late);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0067c470);
 C2_HOOK_VARIABLE_DECLARE(int, gWhich_edit_mode);
@@ -30,6 +29,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gInventory_cycling);
 C2_HOOK_VARIABLE_DECLARE(tU32, gInventory_timeout);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gString, 84);
 C2_HOOK_VARIABLE_DECLARE(int, gInvulnerability);
+C2_HOOK_VARIABLE_DECLARE(int, gCancel_recover);
+C2_HOOK_VARIABLE_DECLARE(int, gRepair_last_time);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_repair_time);
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
@@ -156,6 +158,14 @@ void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar);
 int C2_HOOK_FASTCALL CarWorldOffFallenCheckThingy(tCar_spec* pCar, int pCheck_around);
 
 int C2_HOOK_FASTCALL HasCarFallenOffWorld(tCar_spec* pCar);
+
+void C2_HOOK_FASTCALL CheckHornLocal(tCar_spec* pCar);
+
+void C2_HOOK_FASTCALL CheckHorns(void);
+
+void C2_HOOK_FASTCALL CheckMapRenderMove(void);
+
+void C2_HOOK_FASTCALL SetFlipUpCar(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
 
