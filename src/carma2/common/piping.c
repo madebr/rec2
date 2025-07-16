@@ -627,3 +627,9 @@ void C2_HOOK_FASTCALL PipeSingleFunkEnable(int pIndex, int pFlags) {
         SIZE_OFFSET_PIPING(tPipe_funk_enable, flags), pFlags);
 }
 C2_HOOK_FUNCTION(0x004c8de0, PipeSingleFunkEnable)
+
+void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
+
+    ARDoSingleVariedSession(ePipe_chunk_special, pType, 0);
+}
+C2_HOOK_FUNCTION(0x004c8530, PipeSingleSpecial)
