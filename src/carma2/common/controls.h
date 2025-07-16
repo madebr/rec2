@@ -155,6 +155,8 @@ void C2_HOOK_FASTCALL CheckHorn3D(tCar_spec* pCar);
 
 int C2_HOOK_FASTCALL CarWorldOffFallenCheckThingy(tCar_spec* pCar, int pCheck_around);
 
+int C2_HOOK_FASTCALL HasCarFallenOffWorld(tCar_spec* pCar);
+
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
 
 void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec);

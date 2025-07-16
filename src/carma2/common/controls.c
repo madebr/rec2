@@ -1707,6 +1707,12 @@ int C2_HOOK_FASTCALL CarWorldOffFallenCheckThingy(tCar_spec* pCar, int pCheck_ar
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442140, CarWorldOffFallenCheckThingy, CarWorldOffFallenCheckThingy_original)
 
+int C2_HOOK_FASTCALL HasCarFallenOffWorld(tCar_spec* pCar) {
+
+    return CarWorldOffFallenCheckThingy(pCar, 1);
+}
+C2_HOOK_FUNCTION(0x00442130, HasCarFallenOffWorld)
+
 void (C2_HOOK_FASTCALL * CheckOtherRacingKeys_original)(void);
 void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
 
