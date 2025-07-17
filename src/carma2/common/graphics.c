@@ -193,6 +193,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0068d8a4, 0x0068d8a4);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0074ab9c, 0x0074ab9c);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0074abb8, 0x0074abb8);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gMini_map_arrow_z, 0x0068d8a8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_lollipops, 0x006a22c4);
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
 
@@ -1445,10 +1446,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004e4e40, RenderAFrame, RenderAFrame_original)
 void (C2_HOOK_FASTCALL * ResetLollipopQueue_original)(void);
 void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ResetLollipopQueue_original();
 #else
-    NOT_IMPLEMENTED();
+    C2V(gNumber_of_lollipops) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4900, ResetLollipopQueue, ResetLollipopQueue_original)
