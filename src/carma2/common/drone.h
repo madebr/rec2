@@ -101,6 +101,8 @@ void C2_HOOK_FASTCALL SemiInitDroneSpec(tDrone_spec* pDrone);
 
 void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncState state);
 
+void C2_HOOK_FASTCALL MoveThisDronePlane(tDrone_spec* pDrone);
+
 void C2_HOOK_FASTCALL DroneStateFuncControlledMovement(tDrone_spec* pDrone, tDroneStateFuncState state);
 
 void C2_HOOK_FASTCALL DroneStateFuncPhysicsActive(tDrone_spec* pDrone, tDroneStateFuncState state);

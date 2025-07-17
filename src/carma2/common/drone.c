@@ -732,6 +732,17 @@ void C2_HOOK_FASTCALL DroneStateFuncReset(tDrone_spec* pDrone, tDroneStateFuncSt
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044cc70, DroneStateFuncReset, DroneStateFuncReset_original)
 
+void (C2_HOOK_FASTCALL * MoveThisDronePlane_original)(tDrone_spec* pDrone);
+void C2_HOOK_FASTCALL MoveThisDronePlane(tDrone_spec* pDrone) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MoveThisDronePlane_original(pDrone);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0044d2a0, MoveThisDronePlane, MoveThisDronePlane_original)
+
 void (C2_HOOK_FASTCALL * DroneStateFuncControlledMovement_original)(tDrone_spec* pDrone, tDroneStateFuncState state);
 void C2_HOOK_FASTCALL DroneStateFuncControlledMovement(tDrone_spec* pDrone, tDroneStateFuncState state) {
 
