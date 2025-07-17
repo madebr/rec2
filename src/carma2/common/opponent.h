@@ -24,6 +24,22 @@ C2_HOOK_VARIABLE_DECLARE(float, gOpponent_nastyness_frigger);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gIn_view_distance);
 C2_HOOK_VARIABLE_DECLARE(int, gChallenger_index__opponent);
 C2_HOOK_VARIABLE_DECLARE(tU8*, gBit_per_node);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_dk_yel);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_md_yel);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_yel);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_dk_red);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_md_red);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_red);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_dk_grn);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_md_grn);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_grn);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_dk_blu);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_blu);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_dk_turq);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_turq);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_dk_gry);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_md_gry);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_gry);
 
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
 

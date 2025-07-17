@@ -79,7 +79,7 @@ void C2_HOOK_FASTCALL MungeAIWorld(tU32 pFrame_period) {
     C2V(gDrone_delta_time) = (float)pFrame_period / 1000.f;
     C2V(gFrame_period_for_this_munging) = pFrame_period;
     Timers_Push(TIMER_DRN);
-    ProcessDrones();
+    DoDronePerGameFrameStuff();
     Timers_Pop(TIMER_DRN);
     Timers_Push(TIMER_OPP);
     MungeOpponents();
