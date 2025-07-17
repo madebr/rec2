@@ -633,3 +633,13 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType) {
     ARDoSingleVariedSession(ePipe_chunk_special, pType, 0);
 }
 C2_HOOK_FUNCTION(0x004c8530, PipeSingleSpecial)
+
+void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, undefined4 pParam1, tU16 pParam2, tU16 pParam3) {
+
+    // FIXME: is this a bug, or is pParam2 intentionally ignored?
+    ARDoSingleVariedSession(ePipe_chunk_single_drone_straight_pos, pDrone->id, 3,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, field_0x0), pParam1,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, field_0x4), pParam3,
+        SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, field_0x6), pParam3);
+}
+C2_HOOK_FUNCTION(0x004c8f30, PipeSingleDroneStraightPos)
