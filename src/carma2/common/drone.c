@@ -754,13 +754,60 @@ void C2_HOOK_FASTCALL MoveThisDroneCar(tDrone_spec* pDrone) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044e540, MoveThisDroneCar, MoveThisDroneCar_original)
 
+void C2_HOOK_FASTCALL InitDroneDrivingInfo(tDrone_spec* pDrone) {
+
+    pDrone->field_0xdc = 0;
+    pDrone->field_0xe4 = 0.f;
+    pDrone->field_0x48 = 0.f;
+    pDrone->field_0x4c = 0.f;
+}
+
+void C2_HOOK_FASTCALL PossiblyPipeDroneMovement(tDrone_spec* pDrone) {
+
+    switch (pDrone->field_0xdc) {
+    case 1:
+        PipeSingleDroneStraightPos(pDrone,
+            pDrone->field_0x10,
+            DRScalarToU16(pDrone->field_0x48, -500.f, 500.f),
+            DRScalarToU16(pDrone->field_0x4c, 0.f, 255.f));
+        break;
+    case 2:
+        PipeDroneMatrix(pDrone);
+        break;
+    default:
+        PDEnterDebugger("Keith");
+        break;
+    }
+}
+
 void (C2_HOOK_FASTCALL * DroneStateFuncControlledMovement_original)(tDrone_spec* pDrone, tDroneStateFuncState state);
 void C2_HOOK_FASTCALL DroneStateFuncControlledMovement(tDrone_spec* pDrone, tDroneStateFuncState state) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DroneStateFuncControlledMovement_original(pDrone, state);
 #else
-    NOT_IMPLEMENTED();
+
+    switch (state) {
+    case eDrone_state_START:
+        DoNotDprintf("DroneStateFuncControlledMovement() START");
+        InitDroneDrivingInfo(pDrone);
+        break;
+    case eDrone_state_RUN:
+        DoNotDprintf("DroneStateFuncControlledMovement() RUN");
+        if (pDrone->field_0x44) {
+            if (pDrone->form->type == kDroneType_plane) {
+                MoveThisDronePlane(pDrone);
+            } else {
+                MoveThisDroneCar(pDrone);
+            }
+            PossiblyPipeDroneMovement(pDrone);
+            return;
+        }
+        break;
+    default:
+        DoNotDprintf("DroneStateFuncControlledMovement() DEFAULT");
+        break;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044d1d0, DroneStateFuncControlledMovement, DroneStateFuncControlledMovement_original)
