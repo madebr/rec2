@@ -534,7 +534,7 @@ void C2_HOOK_FASTCALL ProcessThisDrone(int pIndex) {
         DoNotDprintf("REASSERTING OBJECT MATRIX: v length %f, Frame %d, Drone %d, state %d: ",
             BrVector3Length(&drone->field_0x18), C2V(gFrame), drone->id, drone->current_state);
         if (drone->current_state == 2) {
-            CrappyLittleDrivingStateInfoDprintf(drone);
+            CrappyLittleDrivingStateInfoDprintf();
         }
     }
     BrVector3InvScale(&drone->field_0x18, &drone->field_0x18, C2V(gDrone_delta_time));
