@@ -653,6 +653,15 @@ int C2_HOOK_FASTCALL DronePlaneWithinProcessingDistance(const br_vector3* pPos) 
 }
 C2_HOOK_FUNCTION(0x0044cbd0, DronePlaneWithinProcessingDistance)
 
+int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3* pPos) {
+
+    return fabsf(C2V(gRender_bounds_centre).v[0] - pPos->v[0]) < 43.f
+           && fabsf(C2V(gRender_bounds_centre).v[1] - pPos->v[1]) < 31.f
+           && fabsf(C2V(gRender_bounds_centre).v[2] - pPos->v[2]) < 43.f;
+
+}
+C2_HOOK_FUNCTION(0x0044cc20, DroneTrainWithinProcessingDistance)
+
 void C2_HOOK_FASTCALL CalcRenderBoundsCentre(void) {
     br_vector3 tv;
 

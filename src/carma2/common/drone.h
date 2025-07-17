@@ -97,6 +97,8 @@ int C2_HOOK_FASTCALL DroneCarWithinProcessingDistance(const br_vector3* pPos);
 
 int C2_HOOK_FASTCALL DronePlaneWithinProcessingDistance(const br_vector3* pPos);
 
+int C2_HOOK_FASTCALL DroneTrainWithinProcessingDistance(const br_vector3* pPos);
+
 void C2_HOOK_FASTCALL CalcRenderBoundsCentre(void);
 
 void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone);
