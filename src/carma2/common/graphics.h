@@ -119,6 +119,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0068d8a4);
 C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074ab9c);
 C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074abb8);
 C2_HOOK_VARIABLE_DECLARE(float, gMini_map_arrow_z);
+C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_lollipops);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
