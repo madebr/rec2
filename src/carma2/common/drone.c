@@ -45,7 +45,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gFrame, 0x00684514);
 C2_HOOK_VARIABLE_IMPLEMENT(tDrone_path_node*, gDrone_path_nodes, 0x00684508);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_drone_path_nodes, 0x00684510);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gRender_bounds_centre, 0x006820c0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tDrone_form_within_rendering_distance_cbfn*, gDrone_form_withing_rendering_distance_functions, 4, 0x00594760, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tDrone_form_within_rendering_distance_cbfn*, gDrone_form_within_rendering_distance_functions, 4, 0x00594760, {
     DroneCarWithinRenderingDistance,
     DronePlaneWithinRenderingDistance,
     DroneTrainWithinRenderingDistance,
@@ -544,7 +544,7 @@ void C2_HOOK_FASTCALL SemiInitDroneSpec(tDrone_spec* pDrone) {
     pDrone->field_0xe4 = 1.0;
     pDrone->field_0x48 = 1.0;
     ResetDroneModel(pDrone);
-    pDrone->field_0x45 = C2V(gDrone_form_withing_rendering_distance_functions)[pDrone->form->type](&pDrone->actor->t.t.translate.t);
+    pDrone->field_0x45 = C2V(gDrone_form_within_rendering_distance_functions)[pDrone->form->type](&pDrone->actor->t.t.translate.t);
     pDrone->field_0x5d4 = 0;
     PipeDroneMatrix(pDrone);
 }
