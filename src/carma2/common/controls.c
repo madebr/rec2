@@ -22,6 +22,7 @@
 #include "piping.h"
 #include "polyfont.h"
 #include "powerups.h"
+#include "raycast.h"
 #include "replay.h"
 #include "sound.h"
 #include "spark.h"
@@ -1706,10 +1707,64 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00443ba0, CheckHorn3D, CheckHorn3D_original)
 int (C2_HOOK_FASTCALL * CarWorldOffFallenCheckThingy_original)(tCar_spec* pCar, int pCheck_arounnd);
 int C2_HOOK_FASTCALL CarWorldOffFallenCheckThingy(tCar_spec* pCar, int pCheck_around) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return CarWorldOffFallenCheckThingy_original(pCar, pCheck_around);
 #else
-    NOT_IMPLEMENTED();
+    if (C2V(gCar_flying) && pCar != NULL && pCar->driver == eDriver_local_human) {
+        return 0;
+    }
+    if (C2V(gAction_replay_mode)) {
+        return 0;
+    }
+    if (pCar->number_of_wheels_on_ground != 0) {
+        int i;
+
+        for (i = pCar->collision_info->box_face_start; i < pCar->collision_info->box_face_end; i++) {
+            const tFace_ref *face_ref;
+            face_ref = &C2V(gFace_list__car)[i];
+            if (face_ref->material != NULL && face_ref->material->identifier != NULL && face_ref->material->identifier[0] == '^') {
+                return 1;
+            }
+        }
+        return 0;
+    } else {
+        br_vector3 car_pos;
+        br_vector3 offset_c;
+        br_vector3 offset_w;
+        int result;
+
+        BrVector3Copy(&car_pos, &pCar->car_master_actor->t.t.translate.t);
+        car_pos.v[1] += 0.5f;
+        if (FindYVerticallyBelow2(&car_pos) >= -100.f) {
+            if (C2V(gMaterial_below)->identifier != NULL && C2V(gMaterial_below)->identifier[0] == '^') {
+                return 1;
+            }
+            return 0;
+        } else {
+            BrVector3Set(&offset_c, 0.f, 1.f, 0.f);
+            BrMatrix34ApplyV(&offset_w, &offset_c, &pCar->car_master_actor->t.t.mat);
+            BrVector3Add(&car_pos, &pCar->car_master_actor->t.t.translate.t, &offset_w);
+            if (FindYVerticallyBelow2(&car_pos) >= -100.f) {
+                return 0;
+            }
+            if (!pCheck_around) {
+                return 1;
+            }
+            pCar->car_master_actor->t.t.translate.t.v[0] += .05f;
+            result = CarWorldOffFallenCheckThingy(pCar, 0);
+            pCar->car_master_actor->t.t.translate.t.v[0] -= .05f;
+            if (!result) {
+                return 0;
+            }
+            pCar->car_master_actor->t.t.translate.t.v[2] += .05f;
+            result = CarWorldOffFallenCheckThingy(pCar, 0);
+            pCar->car_master_actor->t.t.translate.t.v[2] -= .05f;
+            if (!result) {
+                return 0;
+            }
+            return 1;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442140, CarWorldOffFallenCheckThingy, CarWorldOffFallenCheckThingy_original)
