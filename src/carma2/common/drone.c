@@ -492,13 +492,52 @@ void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec *pDrone) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00451e70, DoDroneFunkyGroovyThings, DoDroneFunkyGroovyThings_original)
 
+void C2_HOOK_FASTCALL CrappyLittleDrivingStateInfoDprintf(void) {
+}
+
+int C2_HOOK_FASTCALL DroneOrientationChanged(tDrone_spec* pDrone, float pDot) {
+    br_actor* actor;
+
+    actor = pDrone->actor;
+
+    if (BrVector3Dot((br_vector3*)pDrone->collision_info.transform_matrix.m[0], (br_vector3*)actor->t.t.mat.m[0]) < pDot) {
+        return 1;
+    }
+    if (BrVector3Dot((br_vector3*)pDrone->collision_info.transform_matrix.m[1], (br_vector3*)actor->t.t.mat.m[1]) < pDot) {
+        return 1;
+    }
+    if (BrVector3Dot((br_vector3*)pDrone->collision_info.transform_matrix.m[2], (br_vector3*)actor->t.t.mat.m[2]) < pDot) {
+        return 1;
+    }
+    return 0;
+}
+
 void (C2_HOOK_FASTCALL * ProcessThisDrone_original)(int pIndex);
 void C2_HOOK_FASTCALL ProcessThisDrone(int pIndex) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ProcessThisDrone_original(pIndex);
 #else
-    NOT_IMPLEMENTED();
+    tDrone_spec* drone;
+
+    drone = &C2V(gDrone_specs)[pIndex];
+    BrVector3Copy(&drone->pos, &drone->actor->t.t.translate.t);
+    if (C2V(gDrone_state_functions)[drone->current_state] != NULL) {
+        C2V(gDrone_state_functions)[drone->current_state](drone, eDrone_state_RUN);
+    }
+    if (drone->field_0x45) {
+        DoDroneFunkyGroovyThings(drone);
+    }
+    BrVector3Sub(&drone->field_0x18, &drone->actor->t.t.translate.t, &drone->pos);
+    if (drone->field_0x44 && DroneOrientationChanged(drone, .92f) && BrVector3Length(&drone->field_0x18) > 1.f) {
+        BrMatrix34Copy(&drone->collision_info.transform_matrix, &drone->actor->t.t.mat);
+        DoNotDprintf("REASSERTING OBJECT MATRIX: v length %f, Frame %d, Drone %d, state %d: ",
+            BrVector3Length(&drone->field_0x18), C2V(gFrame), drone->id, drone->current_state);
+        if (drone->current_state == 2) {
+            CrappyLittleDrivingStateInfoDprintf(drone);
+        }
+    }
+    BrVector3InvScale(&drone->field_0x18, &drone->field_0x18, C2V(gDrone_delta_time));
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00451ca0, ProcessThisDrone, ProcessThisDrone_original)

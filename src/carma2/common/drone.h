@@ -75,6 +75,10 @@ void C2_HOOK_FASTCALL MakeAISimpleEditSectionHere(br_model* pModel, int pVert_in
 
 void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec *pDrone);
 
+void C2_HOOK_FASTCALL CrappyLittleDrivingStateInfoDprintf(void);
+
+int C2_HOOK_FASTCALL DroneOrientationChanged(tDrone_spec* pDrone, float pDot);
+
 void C2_HOOK_FASTCALL ProcessThisDrone(int pIndex);
 
 void C2_HOOK_FASTCALL InitialiseEditModelsEtc(void);
