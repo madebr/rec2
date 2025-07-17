@@ -477,6 +477,17 @@ void C2_HOOK_FASTCALL ProcessThisDrone(int pIndex) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00451ca0, ProcessThisDrone, ProcessThisDrone_original)
 
+void (C2_HOOK_FASTCALL * InitialiseEditModelsEtc_original)(void);
+void C2_HOOK_FASTCALL InitialiseEditModelsEtc(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InitialiseEditModelsEtc_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00452ba0, InitialiseEditModelsEtc, InitialiseEditModelsEtc_original)
+
 void (C2_HOOK_FASTCALL * ProcessDrones_original)(void);
 void C2_HOOK_FASTCALL ProcessDrones(void) {
 

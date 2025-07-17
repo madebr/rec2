@@ -67,6 +67,8 @@ void C2_HOOK_FASTCALL MakeAISimpleEditSectionHere(br_model* pModel, int pVert_in
 
 void C2_HOOK_FASTCALL ProcessThisDrone(int pIndex);
 
+void C2_HOOK_FASTCALL InitialiseEditModelsEtc(void);
+
 void C2_HOOK_FASTCALL ProcessDrones(void);
 
 void C2_HOOK_FASTCALL StopRenderingThisDrone(tDrone_spec* pDrone_spec);
