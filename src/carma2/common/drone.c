@@ -481,6 +481,17 @@ void C2_HOOK_FASTCALL MakeAISimpleEditSectionHere(br_model* pModel, int pVert_in
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004020e0, MakeAISimpleEditSectionHere, MakeAISimpleEditSectionHere_original)
 
+void (C2_HOOK_FASTCALL * DoDroneFunkyGroovyThings_original)(tDrone_spec *pDrone);
+void C2_HOOK_FASTCALL DoDroneFunkyGroovyThings(tDrone_spec *pDrone) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoDroneFunkyGroovyThings_original(pDrone);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00451e70, DoDroneFunkyGroovyThings, DoDroneFunkyGroovyThings_original)
+
 void (C2_HOOK_FASTCALL * ProcessThisDrone_original)(int pIndex);
 void C2_HOOK_FASTCALL ProcessThisDrone(int pIndex) {
 
