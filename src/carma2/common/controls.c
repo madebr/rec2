@@ -1752,27 +1752,27 @@ void C2_HOOK_FASTCALL CheckMapRenderMove(void) {
     float old_x;
     float old_y;
 
-    old_y = gMap_render_y;
-    old_x = gMap_render_x;
+    old_y = C2V(gMap_render_y);
+    old_x = C2V(gMap_render_x);
     if (C2V(gMap_view) == 2) {
         amount = (int)(C2V(gFrame_period) / 10.f);
         KeyIsDown(8);
         if (KeyIsDown(31)) {
-            C2V(gMap_render_y) -= amount;
+            C2V(gMap_render_y) -= (float)amount;
         } else if (KeyIsDown(32)) {
-            C2V(gMap_render_y) += amount;
+            C2V(gMap_render_y) += (float)amount;
         }
         if (KeyIsDown(33)) {
-            C2V(gMap_render_x) -= amount;
+            C2V(gMap_render_x) -= (float)amount;
         } else if (KeyIsDown(34)) {
-            C2V(gMap_render_x) += amount;
+            C2V(gMap_render_x) += (float)amount;
         }
         if (C2V(gMap_render_x) != old_x || C2V(gMap_render_y) != old_y) {
             SetIntegerMapRenders();
             if (C2V(gMap_render_x_i) < C2V(gCurrent_graf_data)->map_render_x_marg) {
                 C2V(gMap_render_x) = (float)((C2V(gCurrent_graf_data)->map_render_x_marg + 3) & ~3);
             }
-            if (C2V(gMap_render_y_i) < gCurrent_graf_data->map_render_y_marg) {
+            if (C2V(gMap_render_y_i) < C2V(gCurrent_graf_data)->map_render_y_marg) {
                 C2V(gMap_render_y) = (float)((C2V(gCurrent_graf_data)->map_render_y_marg + 1) & ~1);
             }
             if (C2V(gBack_screen)->width - C2V(gCurrent_graf_data)->map_render_x_marg - C2V(gMap_render_width_i) < C2V(gMap_render_x_i)) {
@@ -1800,21 +1800,22 @@ int C2_HOOK_FASTCALL TradeInAPO(tS32 cost) {
             type = IRandomBetween(0, 2);
             if (C2V(gProgram_state).current_car.power_up_levels[type] != 0) {
                 C2V(gProgram_state).current_car.power_up_levels[type] -= 1;
+
+                if (C2V(gNet_mode) == eNet_mode_none) {
+                    value = C2V(gTrade_in_value_APO).initial[C2V(gProgram_state).skill_level];
+                }
+                else {
+                    value = C2V(gTrade_in_value_APO).initial_network[C2V(gCurrent_net_game)->type];
+                }
+                cost -= value;
+                if (C2V(gNet_mode) == eNet_mode_none) {
+                    value = C2V(gTrade_in_value_APO).initial[C2V(gProgram_state).skill_level];
+                }
+                else {
+                    value = C2V(gTrade_in_value_APO).initial_network[C2V(gCurrent_net_game)->type];
+                }
+                C2V(gProgram_state).credits += value;
             }
-            if (C2V(gNet_mode) == eNet_mode_none) {
-                value = C2V(gTrade_in_value_APO).initial[C2V(gProgram_state).skill_level];
-            }
-            else {
-                value = C2V(gTrade_in_value_APO).initial_network[C2V(gCurrent_net_game)->type];
-            }
-            cost -= value;
-            if (C2V(gNet_mode) == eNet_mode_none) {
-                value = C2V(gTrade_in_value_APO).initial[C2V(gProgram_state).skill_level];
-            }
-            else {
-                value = C2V(gTrade_in_value_APO).initial_network[C2V(gCurrent_net_game)->type];
-            }
-            C2V(gProgram_state).credits += value;
         }
     }
     if (cost < 0) {
@@ -1956,7 +1957,7 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
     CheckMapRenderMove();
     CheckHorns();
     CheckForBeingOutOfThisWorld();
-    if (C2V(gPalette_fade_time)) {
+    if (C2V(gPalette_fade_time) != 0) {
         SortOutRecover(car);
     } else if (C2V(gNet_mode) != eNet_mode_none && NetGetPlayerStatus() == ePlayer_status_recovering) {
         NetPlayerStatusChanged(ePlayer_status_racing);
@@ -2015,9 +2016,9 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
                 }
                 SpendCredits(cost);
             }
-            total_repair_cost += cost;
-            if (total_repair_cost) {
-                if (gFree_repairs) {
+            C2V(total_repair_cost) += cost;
+            if (C2V(total_repair_cost)) {
+                if (C2V(gFree_repairs)) {
                     NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_repairing_for_free));
                 } else {
                     c2_sprintf(s, "%s %d", GetMiscString(eMiscString_repair_cost_colon), C2V(total_repair_cost));
@@ -2040,6 +2041,19 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
     if (C2V(NeedToExpandBoundingBox)) {
         C2V(NeedToExpandBoundingBox) = C2V(gProgram_state).current_car.car_crush_spec->expand_bounding_box;
     }
+    if (C2V(gToo_poor_for_recovery_timeout)) {
+        if (PDGetTotalTime() < C2V(gToo_poor_for_recovery_timeout)) {
+            if (PDKeyDown(51)) {
+                NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_cant_afford_to_recover));
+                DoFancyHeadup(27);
+                KnackerThisCar(&C2V(gProgram_state).current_car);
+                SendGameplayToHost(3, 0, 0, 0, 0);
+            }
+        } else {
+            C2V(gToo_poor_for_recovery_timeout) = 0;
+        }
+    }
+
     if (!C2V(gRecover_car) || C2V(gProgram_state).current_car.knackered) {
         C2V(gHad_auto_recover) = 0;
     } else {
