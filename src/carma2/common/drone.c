@@ -455,6 +455,17 @@ void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void) {
 }
 C2_HOOK_FUNCTION(0x0044fc10, DisposeDronesRaceStuff)
 
+void (C2_HOOK_FASTCALL * MakeAISimpleEditSectionHere_original)(br_model* pModel, int pVert_index, int pFace_index, tDrone_path_node* pNode, br_vector3* pPos, br_material* pMaterial1, br_material* pMaterial2);
+void C2_HOOK_FASTCALL MakeAISimpleEditSectionHere(br_model* pModel, int pVert_index, int pFace_index, tDrone_path_node* pNode, br_vector3* pPos, br_material* pMaterial1, br_material* pMaterial2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MakeAISimpleEditSectionHere_original(pModel, pVert_index, pFace_index, pNode, pPos, pMaterial1, pMaterial2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004020e0, MakeAISimpleEditSectionHere, MakeAISimpleEditSectionHere_original)
+
 void (C2_HOOK_FASTCALL * ProcessDrones_original)(void);
 void C2_HOOK_FASTCALL ProcessDrones(void) {
 
