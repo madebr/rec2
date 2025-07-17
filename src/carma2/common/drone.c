@@ -5,6 +5,7 @@
 #include "globvars.h"
 #include "globvrpb.h"
 #include "loading.h"
+#include "opponent.h"
 #include "physics.h"
 #include "piping.h"
 #include "platform.h"
@@ -51,7 +52,20 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tDrone_form_within_rendering_distance_cbfn
     DroneTrainWithinRenderingDistance,
     DronePlaneWithinRenderingDistance,
 });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tDrone_form_within_processing_distance_cbfn*, gDrone_form_within_processing_distance_functions, 4, 0x00594760, {
+    DroneCarWithinProcessingDistance,
+    DronePlaneWithinProcessingDistance,
+    DroneTrainWithinProcessingDistance,
+    DronePlaneWithinProcessingDistance,
+});
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector3, gDefault_drone_direction, 0x005947c0, { 0.f, 0.f, -1.f });
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gElasticatey_drone_path_model, 0x00684520);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gDrone_path_model_actor, 0x00684528);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDrone_paths_elasticating, 0x00684530);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSelected_drone_path_node_index, 0x005947b0, -1);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSelected_edit_drone_path, 0x005947b4, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_drone_edit_path_munge, 0x006820cc);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSelected_drone_path_index, 0x005947b8, -1);
 
 void C2_HOOK_CDECL DoNotDprintf(const char* format, ...) {
 // Disabled because too noisy
@@ -489,16 +503,81 @@ void C2_HOOK_FASTCALL InitialiseEditModelsEtc(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00452ba0, InitialiseEditModelsEtc, InitialiseEditModelsEtc_original)
 
-void (C2_HOOK_FASTCALL * ProcessDrones_original)(void);
-void C2_HOOK_FASTCALL ProcessDrones(void) {
+void C2_HOOK_FASTCALL UpdateEditModels(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    ProcessDrones_original();
+    if (C2V(gDrone_path_model_actor) != NULL && C2V(gElasticatey_drone_path_model) != NULL && C2V(gDrone_paths_elasticating) && C2V(gSelected_drone_path_node_index) >= 0) {
+        MakeAISimpleEditSectionHere(C2V(gElasticatey_drone_path_model), 0, 0,
+            &C2V(gDrone_path_nodes)[C2V(gSelected_drone_path_node_index)],
+            &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t,
+            C2V(gMat_dk_grn), C2V(gMat_lt_grn));
+        BrModelUpdate(C2V(gElasticatey_drone_path_model), BR_MATU_ALL);
+    }
+    if (C2V(gSelected_edit_drone_path) >= 0 && C2V(gTime_stamp_for_this_munging) > C2V(gNext_drone_edit_path_munge)) {
+        C2V(gSelected_edit_drone_path) = -1;
+        InitialiseEditModelsEtc();
+    }
+    if (C2V(gSelected_drone_path_index) >= 0) {
+        if (C2V(gTime_stamp_for_this_munging) % 700 <= 700) {
+            C2V(gDrone_specs)[C2V(gSelected_drone_path_index)].actor->render_style = BR_RSTYLE_FACES;
+        } else {
+            C2V(gDrone_specs)[C2V(gSelected_drone_path_index)].actor->render_style = BR_RSTYLE_BOUNDING_FACES;
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DoDroneDistanceChecks(tDrone_spec* pDrone) {
+
+    if (C2V(gTrack_drone_min_y) - 50 > pDrone->actor->t.t.translate.t.v[1]) {
+        NewDroneState(pDrone, 5);
+    } else {
+        int process_drone;
+
+        CalcRenderBoundsCentre();
+        process_drone = C2V(gDrone_form_within_rendering_distance_functions)[pDrone->form->type](&pDrone->actor->t.t.translate.t);
+        pDrone->field_0x45 = process_drone;
+        if (!process_drone) {
+            if (!(pDrone->form->flags & 0x4)) {
+                process_drone = C2V(gDrone_form_within_processing_distance_functions)[pDrone->form->type](&pDrone->actor->t.t.translate.t);
+            }
+        }
+        if (!process_drone) {
+            StopProcessingThisDrone(pDrone, 0);
+        } else if (!pDrone->field_0x45 || C2V(gFirst_drone_processing)) {
+            StartProcessingThisDrone(pDrone);
+        }
+        if (pDrone->field_0x45) {
+            StartRenderingThisDrone(pDrone);
+        } else {
+            StopRenderingThisDrone(pDrone);
+        }
+    }
+}
+
+void (C2_HOOK_FASTCALL * DoDronePerGameFrameStuff_original)(void);
+void C2_HOOK_FASTCALL DoDronePerGameFrameStuff(void) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    DoDronePerGameFrameStuff_original();
 #else
-    NOT_IMPLEMENTED();
+
+    UpdateEditModels();
+    C2V(gINT_006844fc) = 0;
+    C2V(gINT_006820d4) = 0;
+    if (C2V(gDrones_unmodified)) {
+        int i;
+        tDrone_spec *drone = &C2V(gDrone_specs)[i];
+
+        for (i = 0; i < C2V(gCount_drones); i++) {
+            DoDroneDistanceChecks(drone);
+            if (drone->current_state != 5) {
+                ProcessThisDrone(i);
+            }
+            DoNotDprintf("FINISHED processing Drone %d, state %d", drone->id, drone->current_state);
+        }
+    }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004512f0, ProcessDrones, ProcessDrones_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004512f0, DoDronePerGameFrameStuff, DoDronePerGameFrameStuff_original)
 
 void C2_HOOK_FASTCALL StopRenderingThisDrone(tDrone_spec* pDrone_spec) {
     if (pDrone_spec->actor->render_style == BR_RSTYLE_FACES) {

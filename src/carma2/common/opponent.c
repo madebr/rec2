@@ -36,6 +36,22 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gOpponent_nastyness_frigger, 0x0065a3cc, 
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gIn_view_distance, 0x00691764);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gChallenger_index__opponent, 0x0065a3c8, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(tU8*, gBit_per_node, 0x0069175c);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_yel, 0x00676858, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_yel, 0x0067685c, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_yel, 0x00676860, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_red, 0x00676864, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_red, 0x00676868, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_red, 0x0067686c, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_grn, 0x00676870, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_grn, 0x00676874, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_grn, 0x00676878, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_blu, 0x0067687c, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_blu, 0x00676880, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_turq, 0x00676884, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_turq, 0x00676888, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_gry, 0x0067688c, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_gry, 0x00676890, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_gry, 0x00676894, NULL);
 
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector) {
     br_transform trans;
