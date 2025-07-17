@@ -324,6 +324,7 @@ int C2_HOOK_FASTCALL CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingT
         return 0;
     }
 }
+C2_HOOK_FUNCTION(0x004518e0, CheckDroneInSensiblePlaceBeforeStartingToProcessTheCuntingThing)
 
 int C2_HOOK_FASTCALL ReallyAddDroneToPHIL(tDrone_spec* pDrone) {
 
