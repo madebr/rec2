@@ -13,6 +13,7 @@ C2_HOOK_VARIABLE_DECLARE(br_model*, gAbove_model);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gBelow_model);
 C2_HOOK_VARIABLE_DECLARE(int, gAbove_face_index);
 C2_HOOK_VARIABLE_DECLARE(int, gBelow_face_index);
+C2_HOOK_VARIABLE_DECLARE(br_material*, gMaterial_below);
 
 void C2_HOOK_FASTCALL InitRayCasting(void);
 
