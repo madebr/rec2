@@ -262,7 +262,7 @@ C2_HOOK_FUNCTION(0x004516b0, DoDefaultDroneStateAction)
 void C2_HOOK_FASTCALL NewDroneState(tDrone_spec* pDrone_spec, int pNew_state) {
     DoNotDprintf("NewDroneState() Drone %d, Current state %d, New state %d",
         pDrone_spec->id, pDrone_spec->current_state, pNew_state);
-    if (pDrone_spec->current_state != 1) {
+    if (pDrone_spec->current_state != pNew_state) {
         if (C2V(gDrone_state_functions)[pDrone_spec->current_state] != NULL) {
             C2V(gDrone_state_functions)[pDrone_spec->current_state](pDrone_spec, eDrone_state_STOP);
         }
