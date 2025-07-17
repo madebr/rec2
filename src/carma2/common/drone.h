@@ -63,6 +63,8 @@ void C2_HOOK_FASTCALL FreeThingForm(void* pData);
 
 void C2_HOOK_FASTCALL DisposeDronesRaceStuff(void);
 
+void C2_HOOK_FASTCALL MakeAISimpleEditSectionHere(br_model* pModel, int pVert_index, int pFace_index, tDrone_path_node* pNode, br_vector3* pPos, br_material* pMaterial1, br_material* pMaterial2);
+
 void C2_HOOK_FASTCALL ProcessDrones(void);
 
 void C2_HOOK_FASTCALL StopRenderingThisDrone(tDrone_spec* pDrone_spec);
