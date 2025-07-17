@@ -565,9 +565,10 @@ void C2_HOOK_FASTCALL DoDronePerGameFrameStuff(void) {
     C2V(gINT_006820d4) = 0;
     if (C2V(gDrones_unmodified)) {
         int i;
-        tDrone_spec *drone = &C2V(gDrone_specs)[i];
 
         for (i = 0; i < C2V(gCount_drones); i++) {
+            tDrone_spec *drone = &C2V(gDrone_specs)[i];
+
             DoDroneDistanceChecks(drone);
             if (drone->current_state != 5) {
                 ProcessThisDrone(i);
