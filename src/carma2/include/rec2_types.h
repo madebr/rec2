@@ -84,6 +84,7 @@ typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_apply(void*);
 typedef void C2_HOOK_FASTCALL tPiping_chunk_callback_undo(void*, void*);
 typedef intptr_t C2_HOOK_FASTCALL tDRActorEnumRecurseWithTranslation_cbfn(br_actor*, br_vector3*, void*);
 typedef int C2_HOOK_FASTCALL tDrone_form_within_rendering_distance_cbfn(const br_vector3 *pPos);
+typedef int C2_HOOK_FASTCALL tDrone_form_within_processing_distance_cbfn(const br_vector3 *pPos);
 typedef void C2_HOOK_FASTCALL tFunk_index_cbfn(int pFunk_index);
 
 typedef enum  {
