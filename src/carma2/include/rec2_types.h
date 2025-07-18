@@ -3772,7 +3772,7 @@ typedef struct tCollision_info {
     tCollision_shape* shape;
     br_bounds3 bb1;
     br_bounds3 bb2;
-    br_vector3 field7_0x54;
+    br_vector3 field_0x54;
     br_scalar world_friction;
     br_scalar object_friction;
     br_vector3 v;
@@ -3781,7 +3781,8 @@ typedef struct tCollision_info {
     br_matrix34 transform_matrix;
     undefined field_0xbc[48];
     tU8 disable_move_rotate;
-    undefined field_0xed[3];
+    undefined field_0xed;
+    undefined field_0xee[2];
     undefined4 field_0xf0;
     br_bounds3 field_0xf4;
     br_bounds3 field_0x10c;
