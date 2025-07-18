@@ -797,6 +797,18 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004add50, InitOpponents, InitOpponents_original)
 
+void C2_HOOK_FASTCALL CalcNegativeXVector(br_vector3* pNegative_x_vector, br_vector3* pStart, br_vector3* pFinish, br_scalar pLength) {
+    br_vector3 positive_y_vector;
+    br_vector3 path_vector;
+
+    BrVector3Sub(&path_vector, pFinish, pStart);
+    BrVector3Set(&positive_y_vector, 0.f, 1.f, 0.f);
+    BrVector3Cross(pNegative_x_vector, &path_vector, &positive_y_vector);
+    BrVector3Normalise(pNegative_x_vector, pNegative_x_vector);
+    BrVector3Scale(pNegative_x_vector, pNegative_x_vector, pLength);
+}
+C2_HOOK_FUNCTION(0x00401fe0, CalcNegativeXVector)
+
 void (C2_HOOK_FASTCALL * MungeOpponents_original)(void);
 void C2_HOOK_FASTCALL MungeOpponents(void) {
 
