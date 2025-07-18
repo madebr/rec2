@@ -394,7 +394,7 @@ C2_HOOK_FUNCTION(0x004518e0, CheckDroneInSensiblePlaceBeforeStartingToProcessThe
 
 int C2_HOOK_FASTCALL ReallyAddDroneToPHIL(tDrone_spec* pDrone) {
 
-    if (MarkCollisionInfoAsProcessed(&pDrone->collision_info)) {
+    if (PHILAddObject(&pDrone->collision_info)) {
         return 0;
     }
     PHILSetObjectProperty(&pDrone->collision_info, 0, 0, 1.875);

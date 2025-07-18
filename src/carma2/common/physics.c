@@ -955,17 +955,6 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undef
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da400, MungeSphereObject, CreateSphericalCollisionObject_original)
 
-int (C2_HOOK_FASTCALL * MarkCollisionInfoAsProcessed_original)(tCollision_info* pCollision_info);
-int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_info) {
-
-#if defined(C2_HOOKS_ENABLED)
-    return MarkCollisionInfoAsProcessed_original(pCollision_info);
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004b5d40, MarkCollisionInfoAsProcessed, MarkCollisionInfoAsProcessed_original)
-
 void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info) {
 
     InternalPositionChildren(pCollision_info, pCollision_info);

@@ -62,8 +62,6 @@ void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape);
 
 tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight);
 
-int C2_HOOK_FASTCALL MarkCollisionInfoAsProcessed(tCollision_info* pCollision_info);
-
 void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info);
 
 void C2_HOOK_FASTCALL InternalPositionChildren(tCollision_info *pParent, tCollision_info *pRoot);
