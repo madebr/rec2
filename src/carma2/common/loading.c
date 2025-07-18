@@ -5785,8 +5785,9 @@ void C2_HOOK_FASTCALL LoadPerRaceDroneStuff(void) {
     }
 
     for (i = 0; i < C2V(gCount_drones); i++) {
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, field_0x6c, 0x6c);
 
-        C2V(gDrone_specs)[i].field_0x70 += 1;
+        C2V(gDrone_specs)[i].field_0x6c += 1;
         LoadDrone(i);
     }
 
