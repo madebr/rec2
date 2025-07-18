@@ -809,6 +809,16 @@ void C2_HOOK_FASTCALL CalcNegativeXVector(br_vector3* pNegative_x_vector, br_vec
 }
 C2_HOOK_FUNCTION(0x00401fe0, CalcNegativeXVector)
 
+void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOpponent_spec* pOpponent_spec) {
+
+    BrVector3Sub(&pOpponent_spec->player_to_oppo_v, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t);
+    pOpponent_spec->player_to_oppo_d = BrVector3Length(&pOpponent_spec->player_to_oppo_v);
+    if (pOpponent_spec->player_to_oppo_d < C2V(gIn_view_distance)) {
+        pOpponent_spec->last_in_view = C2V(gTime_stamp_for_this_munging);
+    }
+}
+C2_HOOK_FUNCTION(0x004a9550, CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck)
+
 void (C2_HOOK_FASTCALL * MungeOpponents_original)(void);
 void C2_HOOK_FASTCALL MungeOpponents(void) {
 
