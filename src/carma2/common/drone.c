@@ -2,6 +2,7 @@
 
 #include "compress.h"
 #include "errors.h"
+#include "finteray.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "loading.h"
@@ -314,10 +315,61 @@ int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec) {
 void (C2_HOOK_FASTCALL * InitDroneCollisionInfo_original)(tDrone_spec *pDrone_spec);
 void C2_HOOK_FASTCALL InitDroneCollisionObject(tDrone_spec *pDrone_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitDroneCollisionInfo_original(pDrone_spec);
 #else
-    NOT_IMPLEMENTED();
+    br_bounds3 bnds;
+    br_vector3 size;
+    tCollision_shape* original_shape;
+
+    BrActorToBounds(&bnds, pDrone_spec->actor);
+    bnds.min.v[1] += .001f;
+    if (pDrone_spec->field_0x46) {
+        original_shape = pDrone_spec->collision_info.shape;
+    }
+    c2_memset(&pDrone_spec->collision_info, 0, sizeof(pDrone_spec->collision_info));
+    if (pDrone_spec->field_0x46) {
+        pDrone_spec->collision_info.shape = original_shape;
+    } else {
+        pDrone_spec->collision_info.shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_drone_collision_stuff);
+        pDrone_spec->collision_info.shape->box.common.bb = bnds;
+        pDrone_spec->collision_info.shape->box.common.field_0x1c = bnds;
+        pDrone_spec->collision_info.shape->box.common.next = NULL;
+        pDrone_spec->field_0x46 = 1;
+    }
+    pDrone_spec->collision_info.flags_0x238 = 16;
+    pDrone_spec->collision_info.owner = pDrone_spec;
+    pDrone_spec->collision_info.actor = pDrone_spec->actor;
+    pDrone_spec->collision_info.M =  pDrone_spec->form->M;
+    BrVector3Set(&pDrone_spec->collision_info.cmpos, .0f, .09f, .0f);
+    BrVector3Set(&pDrone_spec->collision_info.field_0x54, .0f, -.4f / WORLD_SCALE, .0f);
+    BrMatrix34Copy(&pDrone_spec->collision_info.transform_matrix, &pDrone_spec->actor->t.t.mat);
+    pDrone_spec->collision_info.box_face_ref = C2V(gFace_num__car) - 2;
+    pDrone_spec->collision_info.field_0x1a0 = 0x100000;
+    FillInShape(pDrone_spec->collision_info.shape);
+    UpdateCollisionObject(&pDrone_spec->collision_info);
+    GetNewBoundingBox(&pDrone_spec->collision_info.field_0xf4,
+        &pDrone_spec->collision_info.bb1,
+        &pDrone_spec->collision_info.transform_matrix);
+    BrVector3Sub(&size, &bnds.max, &bnds.min);
+    pDrone_spec->collision_info.I.v[0] = (size.v[2] * size.v[2] + size.v[1] * size.v[1]) * pDrone_spec->collision_info.M / 12.f;
+    pDrone_spec->collision_info.I.v[1] = (size.v[2] * size.v[2] + size.v[0] * size.v[0]) * pDrone_spec->collision_info.M / 12.f;
+    pDrone_spec->collision_info.I.v[2] = (size.v[1] * size.v[1] + size.v[0] * size.v[0]) * pDrone_spec->collision_info.M / 12.f;
+    // FIXME: is this calculation correct?
+    pDrone_spec->collision_info.cmpos.v[0] = bnds.min.v[0] + .01f * pDrone_spec->form->center.v[1] * size.v[0];
+    pDrone_spec->collision_info.cmpos.v[1] = bnds.min.v[1] + .01f * pDrone_spec->form->center.v[2] * size.v[1];
+    pDrone_spec->collision_info.cmpos.v[2] = bnds.min.v[2] + .01f * pDrone_spec->form->center.v[0] * size.v[2];
+    if (pDrone_spec->form->type == kDroneType_train) {
+        pDrone_spec->collision_info.world_friction = -.75;
+    }
+    pDrone_spec->collision_info.disable_move_rotate = 1;
+    pDrone_spec->collision_info.field_0xed = 1;
+    pDrone_spec->collision_info.flags |= 0x40;
+    pDrone_spec->collision_info.drivable_on = !!(pDrone_spec->form->flags & 0x8);
+    BrVector3SetFloat(&pDrone_spec->collision_info.v, .0f, .0f, .0f);
+    BrVector3SetFloat(&pDrone_spec->collision_info.omega, .0f, .0f, .0f);
+    BrVector3SetFloat(&pDrone_spec->collision_info.rotate_omega, .0f, .0f, .0f);
+    BrVector3SetFloat(&pDrone_spec->collision_info.velocity_car_space, .0f, .0f, .0f);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044f980, InitDroneCollisionObject, InitDroneCollisionInfo_original)

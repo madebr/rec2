@@ -945,7 +945,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undef
         REC2_SQR(shape->sphere.sphere.radius) * pWeight / 6.f,
         REC2_SQR(shape->sphere.sphere.radius) * pWeight / 6.f,
         REC2_SQR(shape->sphere.sphere.radius) * pWeight / 6.f);
-    BrVector3SetFloat(&collision_info->field7_0x54, 0.f, -0.05797102f, 0.f);
+    BrVector3SetFloat(&collision_info->field_0x54, 0.f, -0.05797102f, 0.f);
     collision_info->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
     BrMatrix34Copy(&collision_info->actor->t.t.mat, &collision_info->transform_matrix);
     collision_info->actor->model = pModel;
@@ -1194,7 +1194,7 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefine
         (REC2_SQR(tv1.v[1]) + REC2_SQR(tv1.v[2])) * pMass / 12.f,
         (REC2_SQR(tv1.v[0]) + REC2_SQR(tv1.v[2])) * pMass / 12.f,
         (REC2_SQR(tv1.v[0]) + REC2_SQR(tv1.v[1])) * pMass / 12.f);
-    BrVector3SetFloat(&box->field7_0x54, 0.f, 1/-17.25f, 0.f);
+    BrVector3SetFloat(&box->field_0x54, 0.f, 1/-17.25f, 0.f);
     box->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
     BrMatrix34Copy(&box->actor->t.t.mat, &box->transform_matrix);
     box->actor->model = pModel;
