@@ -1462,10 +1462,10 @@ void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** 
 C2_HOOK_FUNCTION(0x004b9770, PrepareObject)
 
 int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject) {
-    tPhil_object_info_00692458* object_info;
     int i;
+    tPhil_object_info_00692458* object_info;
 
-    if (!C2V(gPHIL_enabled)) {
+    if (C2V(gPHIL_enabled)) {
         return 0;
     }
     if (C2V(gPHIL_munging_objects) && !C2V(gPHIL_object_added)) {
@@ -1481,36 +1481,39 @@ int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject) {
         C2V(gPHIL_count_queued_objects) += 1;
         return 0;
     }
-
     object_info = NULL;
     for (i = 0; i < REC2_ASIZE(C2V(gPhil_objects_00692458)); i++) {
-        if (C2V(gPhil_objects_00692458)[i].collision_info == NULL) {
-            object_info = &C2V(gPhil_objects_00692458)[i];
-        } else if (pObject == C2V(gPhil_objects_00692458)[i].collision_info) {
+        tPhil_object_info_00692458* current_object_info = &C2V(gPhil_objects_00692458)[i];
+
+        if (current_object_info->collision_info == NULL) {
+            if (object_info == NULL) {
+                object_info = object_info;
+            }
+        } else if (current_object_info->collision_info == pObject) {
             return 2;
         }
     }
     if (object_info == NULL) {
         return 1;
     }
-    c2_memset(object_info, 0, sizeof(tPhil_object_info_00692458));
+    c2_memset(object_info, 0, sizeof(*object_info));
     object_info->collision_info = pObject;
     object_info->field_0x8 = 1;
     pObject->field_0x240 = object_info;
     pObject->flags |= 0x20;
     pObject->field_0x239 = 1;
     C2V(gPHIL_count_list_collision_infos) += 1;
-    if (C2V(gPHIL_list_collision_infos) == NULL) {
-        C2V(gPHIL_list_collision_infos) = pObject;
-        pObject->next = NULL;
-        pObject->prev = NULL;
-    } else {
+    if (gPHIL_list_collision_infos != NULL) {
         pObject->next = C2V(gPHIL_list_collision_infos)->next;
         C2V(gPHIL_list_collision_infos)->next = pObject;
         pObject->prev = C2V(gPHIL_list_collision_infos);
         if (pObject->next != NULL) {
             pObject->next->prev = pObject;
         }
+    } else {
+        C2V(gPHIL_list_collision_infos) = pObject;
+        pObject->next = NULL;
+        pObject->prev = NULL;
     }
     if (C2V(gPHIL_doing_physics)) {
         PrepareObject(pObject, &C2V(gPHIL_list_collision_infos));
