@@ -89,6 +89,8 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info);
 
 void C2_HOOK_FASTCALL CalcNegativeXVector(br_vector3* pNegative_x_vector, br_vector3* pStart, br_vector3* pFinish, br_scalar pLength);
 
+void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOpponent_spec* pOpponent_spec);
+
 void C2_HOOK_FASTCALL MungeOpponents(void);
 
 void C2_HOOK_FASTCALL UnStunTheBugger(tOpponent_spec* pOpponent_spec);
