@@ -96,4 +96,6 @@ void C2_HOOK_FASTCALL PipeSingleSpecial(tSpecial_type pType);
 
 void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, undefined4 pParam1, tU16 pParam2, tU16 pParam3);
 
+void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec *pOpponent_spec, int pEnable);
+
 #endif //REC2_PIPING_H
