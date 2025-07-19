@@ -1175,3 +1175,14 @@ void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tP
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004aa900, ProcessCurrentObjective, ProcessCurrentObjective_original)
+
+void (C2_HOOK_FASTCALL * TeleportOpponentToNearestSafeLocation_original)(tOpponent_spec* pOpponent_spec);
+void C2_HOOK_FASTCALL TeleportOpponentToNearestSafeLocation(tOpponent_spec* pOpponent_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    TeleportOpponentToNearestSafeLocation_original(pOpponent_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a9180, TeleportOpponentToNearestSafeLocation, TeleportOpponentToNearestSafeLocation_original)
