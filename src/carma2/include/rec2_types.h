@@ -87,6 +87,12 @@ typedef int C2_HOOK_FASTCALL tDrone_form_within_rendering_distance_cbfn(const br
 typedef int C2_HOOK_FASTCALL tDrone_form_within_processing_distance_cbfn(const br_vector3 *pPos);
 typedef void C2_HOOK_FASTCALL tFunk_index_cbfn(int pFunk_index);
 
+typedef enum {
+    eFPR_OK = 0,
+    eFPR_end_of_path = 1,
+    eFPR_given_up = 2,
+} tFollow_path_result;
+
 typedef enum  {
     eNet_synch_host_first = 0,
     eNet_synch_host_subsequent = 1,
