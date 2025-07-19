@@ -93,6 +93,8 @@ void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOp
 
 void C2_HOOK_FASTCALL ProcessThisOpponent(tOpponent_spec* pOpponent_spec);
 
+void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee);
+
 void C2_HOOK_FASTCALL MungeOpponents(void);
 
 void C2_HOOK_FASTCALL UnStunTheBugger(tOpponent_spec* pOpponent_spec);
