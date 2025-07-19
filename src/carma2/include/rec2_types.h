@@ -2468,7 +2468,12 @@ typedef struct {
     tS16 follow_path_data__first_section_no;
     tS16 follow_path_last__struggle_section;
     undefined field42_0xee[2];
-    undefined4 field43_0xf0;
+    unsigned int number_of_struggles : 8;
+    unsigned int has_moved_during_this_task : 1;
+    unsigned int made_it : 1;
+    unsigned int cheating_0xf0 : 1;
+    unsigned int cornering : 1;
+    unsigned int left_not_right : 1;
     undefined4 field44_0xf4;
     undefined field45_0xf8[4];
     float field46_0xfc;

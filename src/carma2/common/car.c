@@ -80,6 +80,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gQuite_wild_end, 0x006793ac);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gQuite_wild_start, 0x006793b0);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gOn_me_wheels_start, 0x006793b4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWoz_upside_down_at_all, 0x006793b8);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStop_opponents_moving, 0x00676854, 0);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
