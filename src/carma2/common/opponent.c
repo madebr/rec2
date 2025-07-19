@@ -1154,3 +1154,14 @@ int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
     return 1;
 }
 C2_HOOK_FUNCTION(0x004ab100, ShiftOpponentsProjectedRoute)
+
+void (C2_HOOK_FASTCALL * ChooseNewObjective_original)(tOpponent_spec* pOpponent_spec, int pMust_choose_one);
+void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMust_choose_one) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ChooseNewObjective_original(pOpponent_spec, pMust_choose_one);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ace70, ChooseNewObjective, ChooseNewObjective_original)
