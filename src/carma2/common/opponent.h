@@ -144,6 +144,8 @@ void C2_HOOK_FASTCALL CalcRaceRoute(tOpponent_spec *pOpponent_spec);
 
 tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle);
 
+void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec);
+
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 
 void C2_HOOK_FASTCALL TeleportOpponentToNearestSafeLocation(tOpponent_spec* pOpponent_spec);
