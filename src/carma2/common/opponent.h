@@ -100,6 +100,12 @@ void C2_HOOK_FASTCALL TurnOpponentPhysicsOff(tOpponent_spec* pOpponent_spec);
 
 int C2_HOOK_FASTCALL  TimeToStopStruggling(tOpponent_spec* pOpponent_spec);
 
+void C2_HOOK_FASTCALL DisplayOpponentRecoveringHeadup(tOpponent_spec* pOpponent_spec);
+
+void C2_HOOK_FASTCALL OiStopCheating(tOpponent_spec* pOpponent_spec);
+
+void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec);
+
 void C2_HOOK_FASTCALL ProcessThisOpponent(tOpponent_spec* pOpponent_spec);
 
 void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee);

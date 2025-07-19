@@ -22,6 +22,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gOpponent_viewing_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gNet_player_to_view_index);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
 C2_HOOK_VARIABLE_DECLARE(int, gInTheSea);
+C2_HOOK_VARIABLE_DECLARE(int, gStop_opponents_moving);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
