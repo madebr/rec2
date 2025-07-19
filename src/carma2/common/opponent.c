@@ -10,6 +10,7 @@
 #include "loading.h"
 #include "mainloop.h"
 #include "physics.h"
+#include "piping.h"
 #include "platform.h"
 #include "structur.h"
 #include "trig.h"
@@ -848,6 +849,16 @@ void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOp
     }
 }
 C2_HOOK_FUNCTION(0x004a9550, CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck)
+
+void C2_HOOK_FASTCALL TurnOpponentPhysicsOn(tOpponent_spec* pOpponent_spec) {
+    pOpponent_spec->car_spec->car_master_actor->render_style = BR_RSTYLE_DEFAULT;
+    PipeSingleOppoRenderage(pOpponent_spec, 1);
+    if (!pOpponent_spec->physics_me) {
+        pOpponent_spec->physics_me = 1;
+        C2V(gActive_car_list_rebuild_required) = 1;
+    }
+}
+C2_HOOK_FUNCTION(0x004a7960, TurnOpponentPhysicsOn)
 
 void (C2_HOOK_FASTCALL * ProcessThisOpponent_original)(tOpponent_spec* pOpponent_spec);
 void C2_HOOK_FASTCALL ProcessThisOpponent(tOpponent_spec* pOpponent_spec) {
