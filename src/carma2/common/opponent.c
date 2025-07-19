@@ -1507,6 +1507,26 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004af960, ProcessFollowPath, ProcessFollowPath_original)
 
+void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec) {
+
+    DoNotDprintf_opponent("%s: Objective Completed", pOpponent_spec->car_spec->driver_name);
+    pOpponent_spec->new_objective_required = 1;
+    switch (pOpponent_spec->current_objective) {
+    case eOOT_complete_race:
+        C2V(gNum_of_opponents_completing_race) -= 1;
+        break;
+    case eOOT_pursue_and_twat:
+        C2V(gNum_of_opponents_pursuing) -= 1;
+        break;
+    case eOOT_get_near_player:
+        C2V(gNum_of_opponents_getting_near) -= 1;
+        break;
+    default:
+        break;
+    }
+}
+C2_HOOK_FUNCTION(0x004ace20, ObjectiveComplete)
+
 void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 #if defined(C2_HOOKS_ENABLED)
