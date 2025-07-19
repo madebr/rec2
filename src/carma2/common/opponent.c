@@ -1139,3 +1139,18 @@ int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int
     }
 }
 C2_HOOK_FUNCTION(0x004ae9e0, GetOpponentsRealSection)
+
+int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces) {
+    size_t i;
+
+    if (pOpponent_spec->nnext_sections <= pPlaces) {
+        return 0;
+    }
+    for (i = 0; i < REC2_ASIZE(pOpponent_spec->next_sections) - pPlaces; i++) {
+        pOpponent_spec->next_sections[i].section_no = pOpponent_spec->next_sections[pPlaces + i].section_no;
+        pOpponent_spec->next_sections[i].direction = pOpponent_spec->next_sections[pPlaces + i].direction;
+    }
+    pOpponent_spec->nnext_sections -= pPlaces;
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004ab100, ShiftOpponentsProjectedRoute)

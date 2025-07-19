@@ -2438,8 +2438,7 @@ typedef struct {
     tS16 players_section_when_last_calced_full_path;
     undefined field_0x80[2];
     int nnext_sections;
-    tRoute_section next_sections[11];
-    undefined field25_0xac[4];
+    tRoute_section next_sections[12];
     unsigned int new_objective_required : 1;         // @0xb0  // 0x1
     unsigned int finished_for_this_race : 1;         // @0xb0  // 0x2
     unsigned int knackeredness_detected : 1;         // @0xb0  // 0x4

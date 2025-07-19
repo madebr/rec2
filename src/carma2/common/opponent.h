@@ -120,4 +120,6 @@ tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pPursuee, br_vector3*
 
 int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no);
 
+int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces);
+
 #endif //REC2_OPPONENT_H
