@@ -43,6 +43,8 @@ C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_gry);
 C2_HOOK_VARIABLE_DECLARE(int, gNum_of_opponents_pursuing);
 C2_HOOK_VARIABLE_DECLARE(int, gNum_of_opponents_getting_near);
 C2_HOOK_VARIABLE_DECLARE(int, gNum_of_opponents_completing_race);
+C2_HOOK_VARIABLE_DECLARE(float, gDefinite_no_cop_pursuit_speed);
+C2_HOOK_VARIABLE_DECLARE(float, gCop_pursuit_speed_percentage_multiplier);
 
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
 
@@ -127,6 +129,14 @@ tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pPursuee, br_vector3*
 int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no);
 
 int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces);
+
+int C2_HOOK_FASTCALL AlreadyPursuingCar(tOpponent_spec* pOpponent_spec, tCar_spec* pPursuee);
+
+int C2_HOOK_FASTCALL LastTwatterAPlayer(tOpponent_spec* pOpponent_spec);
+
+int C2_HOOK_FASTCALL LastTwatteeAPlayer(tOpponent_spec* pOpponent_spec);
+
+int C2_HOOK_FASTCALL HeadOnWithPlayerPossible(tOpponent_spec* pOpponent_spec);
 
 void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMust_choose_one);
 
