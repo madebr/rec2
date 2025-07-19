@@ -1127,3 +1127,15 @@ tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, br_vector3* pAc
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a82d0, FindNearestGeneralSection, FindNearestGeneralSection_original)
+
+int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no) {
+
+    if (pSection_no >= 20000) {
+        return pOpponent_spec->next_sections[pSection_no - 20000].section_no;
+    } else if (pSection_no >= 15000) {
+        return pSection_no - 15000;
+    } else {
+        return pSection_no;
+    }
+}
+C2_HOOK_FUNCTION(0x004ae9e0, GetOpponentsRealSection)

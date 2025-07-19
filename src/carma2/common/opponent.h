@@ -118,4 +118,6 @@ tS16 C2_HOOK_FASTCALL FindNearestPathSection(br_vector3* pActor_coords, br_vecto
 
 tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pPursuee, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect,float* pDistance);
 
+int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no);
+
 #endif //REC2_OPPONENT_H
