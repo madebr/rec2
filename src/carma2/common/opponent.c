@@ -251,7 +251,7 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
                 C2V(gBIG_APC_index) = i;
             }
 
-            FindNearestPathSection(NULL, &C2V(gProgram_state).AI_vehicles.cop_start_points[i], &cop_to_section, &intersect, &distance);
+            FindNearestPathSection(&C2V(gProgram_state).AI_vehicles.cop_start_points[i], &cop_to_section, &intersect, &distance);
             BrVector3Cross(&C2V(gProgram_state).AI_vehicles.cop_start_vectors[i],
                 &C2V(y_unit_vector), &cop_to_section);
             BrVector3Sub(&section_v, &intersect, &C2V(gProgram_state).AI_vehicles.cop_start_points[i]);
@@ -1112,13 +1112,18 @@ void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWha
 }
 C2_HOOK_FUNCTION(0x004ae620, WakeUpOpponentsToTheFactThatTheStartHasBeenJumped)
 
-tS16 (C2_HOOK_FASTCALL * FindNearestPathSection_original)(undefined4* pArg1, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance);
-tS16 C2_HOOK_FASTCALL FindNearestPathSection(undefined4* pArg1, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
+tS16 C2_HOOK_FASTCALL FindNearestPathSection(br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
+
+    return FindNearestGeneralSection(NULL, pActor_coords, pPath_direction, pIntersect, pDistance);
+}
+
+tS16 (C2_HOOK_FASTCALL * FindNearestGeneralSection_original)(tCar_spec* pCar, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance);
+tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return FindNearestPathSection_original(pArg1, pActor_coords, pPath_direction, pIntersect, pDistance);
+    return FindNearestGeneralSection_original(pCar, pActor_coords, pPath_direction, pIntersect, pDistance);
 #else
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a82d0, FindNearestPathSection, FindNearestPathSection_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004a82d0, FindNearestGeneralSection, FindNearestGeneralSection_original)
