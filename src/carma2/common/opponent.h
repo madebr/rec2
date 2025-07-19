@@ -98,6 +98,8 @@ void C2_HOOK_FASTCALL TurnOpponentPhysicsOn(tOpponent_spec* pOpponent_spec);
 
 void C2_HOOK_FASTCALL TurnOpponentPhysicsOff(tOpponent_spec* pOpponent_spec);
 
+int C2_HOOK_FASTCALL  TimeToStopStruggling(tOpponent_spec* pOpponent_spec);
+
 void C2_HOOK_FASTCALL ProcessThisOpponent(tOpponent_spec* pOpponent_spec);
 
 void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee);
