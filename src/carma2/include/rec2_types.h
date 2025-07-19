@@ -252,6 +252,10 @@ typedef struct {
     tU16 field_0x6;
 } tPipe_single_drone_straight_pos;
 
+typedef struct {
+    tU16 enable;
+} tPipe_single_oppo_renderage;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_special = 8,
@@ -268,6 +272,7 @@ typedef enum {
     ePipe_chunk_drone_corner_pos = 61,
     ePipe_chunk_single_drone_straight_pos = 62,
     ePipe_single_transform_type = 68,
+    ePipe_chunk_single_oppo_renderage = 69,
 } tPipe_chunk_type;
 
 typedef struct tPipe_chunk {

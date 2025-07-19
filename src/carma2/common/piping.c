@@ -643,3 +643,10 @@ void C2_HOOK_FASTCALL PipeSingleDroneStraightPos(tDrone_spec* pDrone, undefined4
         SIZE_OFFSET_PIPING(tPipe_single_drone_straight_pos, field_0x6), pParam3);
 }
 C2_HOOK_FUNCTION(0x004c8f30, PipeSingleDroneStraightPos)
+
+void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec *pOpponent_spec, int pEnable) {
+
+    ARDoSingleVariedSession(ePipe_chunk_single_oppo_renderage, 1,
+        SIZE_OFFSET_PIPING(tPipe_single_oppo_renderage, enable), pEnable);
+}
+C2_HOOK_FUNCTION(0x004c9020, PipeSingleOppoRenderage)
