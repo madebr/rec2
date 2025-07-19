@@ -21,6 +21,8 @@
 
 #include "c2_string.h"
 
+#define CAR_SPEC_IS_ROZZER(CAR_SPEC) (VEHICLE_TYPE_FROM_ID((CAR_SPEC)->car_ID) == eVehicle_rozzer)
+
 C2_HOOK_VARIABLE_IMPLEMENT(int, gActive_car_list_rebuild_required, 0x0069173c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gBIG_APC_index, 0x0065a3c4, -1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_cops_before_faffage, 0x00691744);
@@ -297,10 +299,34 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004aa400, PointVisibleFromHere, PointVisibleFromHere
 void (C2_HOOK_FASTCALL * CalcPlayerConspicuousness_original)(tOpponent_spec* pOpponent_spec);
 void C2_HOOK_FASTCALL CalcPlayerConspicuousness(tOpponent_spec* pOpponent_spec)  {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CalcPlayerConspicuousness_original(pOpponent_spec);
 #else
-    NOT_IMPLEMENTED();
+    br_vector3 pos_in_cop_space;
+    br_matrix34 inverse_transform;
+
+    if (pOpponent_spec->next_player_visibility_check >= C2V(gTime_stamp_for_this_munging)) {
+        return;
+    }
+    pOpponent_spec->player_in_view_now = 0;
+    if (CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec)) {
+        pOpponent_spec->next_player_visibility_check = C2V(gTime_stamp_for_this_munging) + IRandomBetween(0, 900) + 100;
+        if (pOpponent_spec->player_to_oppo_d < 20.f) {
+            BrMatrix34LPInverse(&inverse_transform, &pOpponent_spec->car_spec->car_master_actor->t.t.mat);
+            BrMatrix34ApplyP(&pos_in_cop_space, &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &inverse_transform);
+            if (pos_in_cop_space.v[2] < 0.f && PointVisibleFromHere(&C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t)) {
+                pOpponent_spec->player_in_view_now = 1;
+                pOpponent_spec->acknowledged_piv = 0;
+            }
+        }
+    } else {
+        pOpponent_spec->next_player_visibility_check = C2V(gTime_stamp_for_this_munging) + IRandomBetween(0, 900) + 4000;
+        dr_dprintf("%s: Time now: %9.2f; next vis check at %9.2f", pOpponent_spec->car_spec->driver_name, C2V(gTime_stamp_for_this_munging) / 1000.f, pOpponent_spec->next_player_visibility_check / 1000.0f);
+        if (pOpponent_spec->player_to_oppo_d < 50.f && PointVisibleFromHere(&C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t)) {
+            pOpponent_spec->player_in_view_now = 1;
+            pOpponent_spec->acknowledged_piv = 0;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004adae0, CalcPlayerConspicuousness, CalcPlayerConspicuousness_original)

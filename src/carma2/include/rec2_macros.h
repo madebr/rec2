@@ -55,4 +55,6 @@
 #define TEXT_TO_NUMBER_3(S) (10 * TEXT_TO_NUMBER_2(S) + TEXT_TO_NUMBER_1((S)+2))
 #define TEXT_TO_NUMBER_4(S) (10 * TEXT_TO_NUMBER_3(S) + TEXT_TO_NUMBER_1((S)+3))
 
+#define VEHICLE_TYPE_FROM_ID(id) ((tVehicle_type)(id >> 8))
+
 #endif // REC2_REC2_MACROS_H
