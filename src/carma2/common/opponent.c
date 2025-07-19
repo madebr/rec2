@@ -22,6 +22,8 @@
 
 #include "c2_string.h"
 
+#include <stdarg.h>
+
 #define CAR_SPEC_IS_ROZZER(CAR_SPEC) (VEHICLE_TYPE_FROM_ID((CAR_SPEC)->car_ID) == eVehicle_rozzer)
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gActive_car_list_rebuild_required, 0x0069173c);
@@ -1186,3 +1188,36 @@ void C2_HOOK_FASTCALL TeleportOpponentToNearestSafeLocation(tOpponent_spec* pOpp
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a9180, TeleportOpponentToNearestSafeLocation, TeleportOpponentToNearestSafeLocation_original)
+
+void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_objective_type pObjective_type, ...) {
+    va_list ap;
+
+    if (pOpponent_spec->current_objective != eOOT_none) {
+        ProcessCurrentObjective(pOpponent_spec, ePOC_die);
+    }
+    pOpponent_spec->current_objective = pObjective_type;
+    pOpponent_spec->time_this_objective_started = C2V(gTime_stamp_for_this_munging);
+    pOpponent_spec->time_for_this_objective_to_finish = C2V(gTime_stamp_for_this_munging) + IRandomBetween(20, 60) * 1000;
+    if (pObjective_type == eOOT_pursue_and_twat) {
+        pOpponent_spec->time_for_this_objective_to_finish += 90000;
+    }
+    switch (pObjective_type) {
+    case eOOT_complete_race:
+        C2V(gNum_of_opponents_completing_race) += 1;
+        break;
+    case eOOT_pursue_and_twat:
+        va_start(ap, pObjective_type);
+        pOpponent_spec->pursue_car_data__pursuee = va_arg(ap, tCar_spec*);
+        va_end(ap);
+        C2V(gNum_of_opponents_pursuing) += 1;
+        break;
+    case eOOT_get_near_player:
+        C2V(gNum_of_opponents_getting_near) += 1;
+        break;
+    default:
+        break;
+    }
+    dr_dprintf("%s: NewObjective() - type %d", pOpponent_spec->car_spec->driver_name, pObjective_type);
+    ProcessCurrentObjective(pOpponent_spec, ePOC_start);
+}
+C2_HOOK_FUNCTION(0x004aad70, NewObjective)
