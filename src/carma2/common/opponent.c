@@ -819,6 +819,17 @@ void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOp
 }
 C2_HOOK_FUNCTION(0x004a9550, CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck)
 
+void (C2_HOOK_FASTCALL * ProcessThisOpponent_original)(tOpponent_spec* pOpponent_spec);
+void C2_HOOK_FASTCALL ProcessThisOpponent(tOpponent_spec* pOpponent_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessThisOpponent_original(pOpponent_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004aa570, ProcessThisOpponent, ProcessThisOpponent_original)
+
 void (C2_HOOK_FASTCALL * MungeOpponents_original)(void);
 void C2_HOOK_FASTCALL MungeOpponents(void) {
 
