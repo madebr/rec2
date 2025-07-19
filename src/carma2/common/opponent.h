@@ -40,6 +40,9 @@ C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_turq);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_dk_gry);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_md_gry);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gMat_lt_gry);
+C2_HOOK_VARIABLE_DECLARE(int, gNum_of_opponents_pursuing);
+C2_HOOK_VARIABLE_DECLARE(int, gNum_of_opponents_getting_near);
+C2_HOOK_VARIABLE_DECLARE(int, gNum_of_opponents_completing_race);
 
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector);
 
@@ -94,6 +97,10 @@ void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOp
 void C2_HOOK_FASTCALL ProcessThisOpponent(tOpponent_spec* pOpponent_spec);
 
 void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee);
+
+void C2_HOOK_FASTCALL RecordNextTrailNode(tCar_spec* pPursuee);
+
+void C2_HOOK_FASTCALL ClearTwattageOccurrenceVariables(tOpponent_spec* pOpponent_spec);
 
 void C2_HOOK_FASTCALL MungeOpponents(void);
 

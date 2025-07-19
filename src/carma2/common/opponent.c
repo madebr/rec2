@@ -12,6 +12,7 @@
 #include "physics.h"
 #include "platform.h"
 #include "structur.h"
+#include "trig.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -52,6 +53,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_turq, 0x00676888, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_gry, 0x0067688c, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_gry, 0x00676890, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_gry, 0x00676894, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_of_opponents_pursuing, 0x00691718);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_of_opponents_getting_near, 0x00691740);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_of_opponents_completing_race, 0x00691758);
 
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector) {
     br_transform trans;
@@ -850,13 +854,167 @@ void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee) {
 }
 C2_HOOK_FUNCTION(0x004aa490, StartRecordingTrail)
 
+void C2_HOOK_FASTCALL RecordNextTrailNode(tCar_spec* pPursuee) {
+    tPursuee_trail* trail;
+    br_scalar length;
+    br_vector3 car_to_last_point_v;
+    br_vector3 offset_v;
+    br_vector3 start1;
+    br_vector3 finish1;
+    br_vector3 start2;
+    br_vector3 finish2;
+    int visible;
+
+    trail = &pPursuee->my_trail;
+    trail->nodes_shifted_this_frame = 0;
+    if (trail->time_of_next_recording >= C2V(gTime_stamp_for_this_munging)) {
+        return;
+    }
+    trail->time_of_next_recording = C2V(gTime_stamp_for_this_munging) + 500;
+    if (BrVector3Dot(&pPursuee->direction, &trail->base_heading) < FastScalarCos(30)) {
+        trail->has_deviated_recently = 1;
+    }
+    BrVector3Sub(&car_to_last_point_v, &trail->trail_nodes[trail->number_of_nodes - 2], &pPursuee->car_master_actor->t.t.translate.t);
+    length = BrVector3Length(&car_to_last_point_v);
+    if (length < .3f) {
+        return;
+    }
+    CalcNegativeXVector(&offset_v, &trail->trail_nodes[trail->number_of_nodes - 2], &pPursuee->car_master_actor->t.t.translate.t, .5f);
+
+    BrVector3Add(&start1, &trail->trail_nodes[trail->number_of_nodes - 2], &offset_v);
+    BrVector3Add(&finish1, &pPursuee->car_master_actor->t.t.translate.t, &offset_v);
+    BrVector3Sub(&start2, &trail->trail_nodes[trail->number_of_nodes - 2], &offset_v);
+    BrVector3Sub(&finish2, &pPursuee->car_master_actor->t.t.translate.t, &offset_v);
+    visible = 1;
+    if (!pPursuee->my_trail.has_deviated_recently) {
+        visible = PointVisibleFromHere(&start1, &finish1);
+        if (!visible) {
+            visible = PointVisibleFromHere(&start2, &finish2);
+        }
+        if (!visible) {
+            visible = PointVisibleFromHere(&trail->trail_nodes[trail->number_of_nodes - 2], &pPursuee->car_master_actor->t.t.translate.t);
+        }
+    }
+
+    C2_HOOK_BUG_ON(sizeof(pPursuee->my_trail.trail_nodes[0]) != 0x120);
+
+    if (pPursuee->my_trail.has_deviated_recently || !visible) {
+        if ((visible && length > 2.0f) || (!visible && length > 1.5f)) {
+            if (pPursuee->my_trail.number_of_nodes < REC2_ASIZE(pPursuee->my_trail.trail_nodes)) {
+                pPursuee->my_trail.number_of_nodes += 1;
+            } else {
+                c2_memmove(&pPursuee->my_trail.trail_nodes[0], &pPursuee->my_trail.trail_nodes[1], sizeof(pPursuee->my_trail.trail_nodes[0]));
+                pPursuee->my_trail.nodes_shifted_this_frame = 1;
+            }
+            pPursuee->my_trail.has_deviated_recently = 0;
+            BrVector3Copy(&trail->base_heading, &pPursuee->direction);
+        }
+    }
+    BrVector3Copy(&trail->trail_nodes[trail->number_of_nodes - 1], &pPursuee->car_master_actor->t.t.translate.t);
+}
+
+void C2_HOOK_FASTCALL ClearTwattageOccurrenceVariables(tOpponent_spec* pOpponent_spec) {
+
+    pOpponent_spec->car_spec->big_bang = 0;
+    pOpponent_spec->car_spec->scary_bang = 0;
+    pOpponent_spec->car_spec->grudge_raised_recently = 0;
+    pOpponent_spec->car_spec->last_person_to_hit_us = NULL;
+    pOpponent_spec->car_spec->last_person_we_hit = NULL;
+}
+
 void (C2_HOOK_FASTCALL * MungeOpponents_original)(void);
 void C2_HOOK_FASTCALL MungeOpponents(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeOpponents_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    int un_stun_flag;
+
+    un_stun_flag = 0;
+    if (C2V(gProgram_state).AI_vehicles.number_of_opponents == 0 && C2V(gNumber_of_cops_before_faffage) == 0) {
+        return;
+    }
+    if (C2V(gProgram_state).AI_vehicles.number_of_path_nodes == 0) {
+        return;
+    }
+    if (C2V(gProgram_state).AI_vehicles.number_of_path_sections == 0) {
+        return;
+    }
+    C2V(gAcme_frame_count) += 1;
+    if (!C2V(gAcknowledged_start) && C2V(gCountdown) == 0) {
+        C2V(gAcknowledged_start) = 1;
+        if (!C2V(gStart_jumped)) {
+            un_stun_flag = 1;
+        }
+    }
+    if (C2V(gProgram_state).current_car.no_of_processes_recording_my_trail == 0) {
+        StartRecordingTrail(&C2V(gProgram_state).current_car);
+    } else {
+        RecordNextTrailNode(&C2V(gProgram_state).current_car);
+    }
+    C2V(gNum_of_opponents_pursuing) = 0;
+    C2V(gNum_of_opponents_getting_near) = 0;
+    C2V(gNum_of_opponents_completing_race) = 0;
+    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
+        tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.opponents[i];
+
+        if (!oppo->finished_for_this_race) {
+            switch (oppo->current_objective) {
+            case eOOT_pursue_and_twat:
+                C2V(gNum_of_opponents_pursuing) += 1;
+                break;
+            case eOOT_get_near_player:
+                C2V(gNum_of_opponents_getting_near) += 1;
+                break;
+            case eOOT_complete_race:
+                C2V(gNum_of_opponents_completing_race) += 1;
+                break;
+            }
+        }
+    }
+    for (i = 0; i < C2V(gProgram_state.AI_vehicles.number_of_opponents); i++) {
+        tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.opponents[i];
+
+        if (!oppo->finished_for_this_race) {
+            if (un_stun_flag) {
+                UnStunTheBugger(oppo);
+            }
+            CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(oppo);
+            CalcPlayerConspicuousness(oppo);
+            ProcessThisOpponent(oppo);
+            ClearTwattageOccurrenceVariables(oppo);
+        }
+    }
+    for (i = 0; i < C2V(gNumber_of_cops_before_faffage); i++) {
+        tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.cops[i];
+
+        if (!oppo->finished_for_this_race) {
+            if (un_stun_flag) {
+                UnStunTheBugger(oppo);
+            }
+            CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(oppo);
+            CalcPlayerConspicuousness(oppo);
+            ProcessThisOpponent(oppo);
+            ClearTwattageOccurrenceVariables(oppo);
+            oppo->murder_reported = 0;
+        }
+    }
+    if (C2V(gNext_grudge_reduction) < C2V(gTime_stamp_for_this_munging)) {
+        C2V(gNext_grudge_reduction) = C2V(gTime_stamp_for_this_munging) + 5000;
+
+        for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
+            tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.opponents[i];
+
+            if (!oppo->finished_for_this_race) {
+                if (C2V(gOpponents)[i].psyche.grudge_against_player > C2V(gGrudge_reduction_per_period)) {
+                    C2V(gOpponents)[i].psyche.grudge_against_player -= C2V(gGrudge_reduction_per_period);
+                }
+            }
+        }
+    }
+    RebuildActiveCarList();
+    C2V(gFirst_frame) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a9e10, MungeOpponents, MungeOpponents_original)
