@@ -1165,3 +1165,13 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ace70, ChooseNewObjective, ChooseNewObjective_original)
+
+void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
+void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+#if defined(C2_HOOKS_ENABLED)
+    ProcessCurrentObjective_original(pOpponent_spec, pCommand);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004aa900, ProcessCurrentObjective, ProcessCurrentObjective_original)
