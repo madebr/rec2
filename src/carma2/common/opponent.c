@@ -1620,6 +1620,21 @@ int C2_HOOK_FASTCALL RematerialiseOpponentOnNearestSection(tOpponent_spec* pOppo
 }
 C2_HOOK_FUNCTION(0x004a8170, RematerialiseOpponentOnNearestSection)
 
+void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+
+    switch (pCommand) {
+    case ePOC_start:
+        pOpponent_spec->car_spec->brake_force = 15.f * pOpponent_spec->car_spec->collision_info->M;
+        break;
+    case ePOC_run:
+        pOpponent_spec->car_spec->brake_force = 15.f * pOpponent_spec->car_spec->collision_info->M;
+        break;
+    default:
+        break;
+    }
+}
+C2_HOOK_FUNCTION(0x004abc00, ProcessWaitForSomeHaplessSod)
+
 void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 #if defined(C2_HOOKS_ENABLED)
