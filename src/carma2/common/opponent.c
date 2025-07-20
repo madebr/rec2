@@ -1531,6 +1531,18 @@ void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec) {
 }
 C2_HOOK_FUNCTION(0x004ace20, ObjectiveComplete)
 
+int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection) {
+
+    if (pOpponent_spec->nnext_sections >= REC2_ASIZE(pOpponent_spec->next_sections)) {
+        return 0;
+    }
+    pOpponent_spec->next_sections[pOpponent_spec->nnext_sections].section_no = pSection_no;
+    pOpponent_spec->next_sections[pOpponent_spec->nnext_sections].direction = pDirection;
+    pOpponent_spec->nnext_sections += 1;
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004ab150, AddToOpponentsProjectedRoute)
+
 void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 #if defined(C2_HOOKS_ENABLED)
