@@ -1503,7 +1503,7 @@ int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject) {
     pObject->flags |= 0x20;
     pObject->field_0x239 = 1;
     C2V(gPHIL_count_list_collision_infos) += 1;
-    if (gPHIL_list_collision_infos != NULL) {
+    if (C2V(gPHIL_list_collision_infos) != NULL) {
         pObject->next = C2V(gPHIL_list_collision_infos)->next;
         C2V(gPHIL_list_collision_infos)->next = pObject;
         pObject->prev = C2V(gPHIL_list_collision_infos);
