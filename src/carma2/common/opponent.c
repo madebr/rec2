@@ -1646,6 +1646,83 @@ void C2_HOOK_FASTCALL CalcReturnToStartPointRoute(tOpponent_spec* pOpponent_spec
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004abf60, CalcReturnToStartPointRoute, CalcReturnToStartPointRoute_original)
 
+int C2_HOOK_FASTCALL TeleportCopToStart(tOpponent_spec* pOpponent_spec) {
+    br_vector3 wank;
+
+    if (!pOpponent_spec->cheating || !CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec)) {
+        return 0;
+    }
+    BrVector3Sub(&wank, &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->start_pos);
+    if (BrVector3Length(&wank) <= C2V(gIn_view_distance)) {
+        return 0;
+    }
+    BrVector3Copy(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &pOpponent_spec->start_pos);
+    PointActorAlongThisBloodyVector(pOpponent_spec->car_spec->car_master_actor, &pOpponent_spec->start_direction);
+    pOpponent_spec->physics_me = 0;
+    RematerialiseOpponent(pOpponent_spec, 0.0);
+    TurnOpponentPhysicsOff(pOpponent_spec);
+    RebuildActiveCarList();
+    NewObjective(pOpponent_spec, eOOT_wait_for_some_hapless_sod);
+    return 1;
+}
+
+void C2_HOOK_FASTCALL ProcessReturnToStart(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+    br_vector3 section_v;
+    br_vector3 our_pos_xz;
+    br_vector3 cop_to_start;
+    br_scalar distance;
+    int res;
+
+    switch (pCommand) {
+    case ePOC_start:
+        DoNotDprintf_opponent("%s: ProcessReturnToStart() - new objective started", pOpponent_spec->car_spec->driver_name);
+        pOpponent_spec->return_to_start_data.waiting_near_start = 0;
+        pOpponent_spec->return_to_start_data.section_no = FindNearestPathSection(&pOpponent_spec->start_pos, &section_v, &pOpponent_spec->return_to_start_data.nearest_path_point, &distance);
+        pOpponent_spec->return_to_start_data.nearest_path_point.v[1] = 0.0;
+        CalcReturnToStartPointRoute(pOpponent_spec);
+        ProcessFollowPath(pOpponent_spec, ePOC_start, 0, 0, 0);
+        break;
+    case ePOC_run:
+        if (TeleportCopToStart(pOpponent_spec)) {
+            break;
+        }
+        if (pOpponent_spec->return_to_start_data.waiting_near_start) {
+            pOpponent_spec->car_spec->brake_force = pOpponent_spec->car_spec->collision_info->M * 15.0f;
+        } else {
+            BrVector3Copy(&our_pos_xz, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t);
+            our_pos_xz.v[1] = 0.0f;
+            BrVector3Sub(&cop_to_start, &pOpponent_spec->start_pos, &our_pos_xz);
+            if (BrVector3Length(&cop_to_start) >= 10.0) {
+                if (pOpponent_spec->follow_path_data__section_no > 20000) {
+                    ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data__section_no - 20000);
+                    pOpponent_spec->follow_path_data__section_no = 20000;
+                }
+                if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections) - 1) {
+                    CalcReturnToStartPointRoute(pOpponent_spec);
+                }
+                res = ProcessFollowPath(pOpponent_spec, ePOC_run, 0, 0, 0);
+                if (res == eFPR_given_up || res == eFPR_end_of_path) {
+                    if (res == eFPR_given_up) {
+                        DoNotDprintf_opponent("%s: Restarting return_to_start route because ProcessFollowPath() gave up.", pOpponent_spec->car_spec->driver_name);
+                    } else {
+                        DoNotDprintf_opponent("%s: Restarting return_to_start route because ran out of path!", pOpponent_spec->car_spec->driver_name);
+                    }
+                    ClearOpponentsProjectedRoute(pOpponent_spec);
+                    CalcReturnToStartPointRoute(pOpponent_spec);
+                    ProcessFollowPath(pOpponent_spec, ePOC_start, 0, 0, 0);
+                }
+            } else {
+                pOpponent_spec->return_to_start_data.waiting_near_start = 1;
+                pOpponent_spec->car_spec->brake_force = pOpponent_spec->car_spec->collision_info->M * 15.0f;
+            }
+        }
+        break;
+    default:
+        break;
+    }
+}
+C2_HOOK_FUNCTION(0x004abc40, ProcessReturnToStart)
+
 void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 #if defined(C2_HOOKS_ENABLED)
