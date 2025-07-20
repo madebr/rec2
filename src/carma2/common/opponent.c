@@ -1982,7 +1982,7 @@ void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_object
     default:
         break;
     }
-    dr_dprintf("%s: NewObjective() - type %d", pOpponent_spec->car_spec->driver_name, pObjective_type);
+    DoNotDprintf_opponent("%s: NewObjective() - type %d", pOpponent_spec->car_spec->driver_name, pObjective_type);
     ProcessCurrentObjective(pOpponent_spec, ePOC_start);
 }
 C2_HOOK_FUNCTION(0x004aad70, NewObjective)
