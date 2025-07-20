@@ -1493,7 +1493,7 @@ void (C2_HOOK_FASTCALL * CalcRaceRoute_original)(tOpponent_spec *pOpponent_spec)
 void C2_HOOK_FASTCALL CalcRaceRoute(tOpponent_spec *pOpponent_spec) {
 
 #if defined(C2_HOOKS_ENABLED)
-    CalcRaceRoute(pOpponent_spec);
+    CalcRaceRoute_original(pOpponent_spec);
 #else
     NOT_IMPLEMENTED();
 #endif
