@@ -2417,6 +2417,10 @@ typedef struct tReturn_to_start_data {
     tU8 waiting_near_start;
 } tReturn_to_start_data;
 
+typedef struct tRun_away_data {
+    tU32 time_to_stop;
+} tRun_away_data;
+
 typedef struct {
     int index;
     tOpponent_objective_type current_objective;
@@ -2441,7 +2445,7 @@ typedef struct {
     tU32 time_this_objective_started;
     tU32 time_for_this_objective_to_finish;
     tS16 players_section_when_last_calced_full_path;
-    undefined field_0x80[2];
+    undefined field_0x7a[2];
     int nnext_sections;
     tRoute_section next_sections[12];
     unsigned int new_objective_required : 1;         // @0xb0  // 0x1
@@ -2499,8 +2503,8 @@ typedef struct {
         tRun_away_data run_away_data;
     */
     undefined field_0x178[24];
+    tRun_away_data run_away_data;
     tReturn_to_start_data return_to_start_data;
-    undefined field_0x1a3;
 } tOpponent_spec;
 
 typedef struct tPath_node {
