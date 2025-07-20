@@ -1267,7 +1267,7 @@ void (C2_HOOK_FASTCALL * InternalPrepareObject_original)(tCollision_info* pObjec
 void C2_HOOK_FASTCALL InternalPrepareObject(tCollision_info* pObject) {
 
 #if defined(C2_HOOKS_ENABLED)
-    InternalPrpareObject_original(pObject);
+    InternalPrepareObject_original(pObject);
 #else
     NOT_IMPLEMENTED();
 #endif
