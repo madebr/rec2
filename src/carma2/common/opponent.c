@@ -1347,7 +1347,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
     }
     if (GET_CAR_SPEED_FACTOR(pOpponent_spec->car_spec) == 0.f) {
         DoNotDprintf_opponent("%s: Decided to freeze", pOpponent_spec->car_spec->driver_name);
-        pOpponent_spec->pursuing_player_before_freeze = pOpponent_spec->current_objective == eOOT_pursue_and_twat || pOpponent_spec->pursue_car_data__pursuee == &gProgram_state.current_car;
+        pOpponent_spec->pursuing_player_before_freeze = pOpponent_spec->current_objective == eOOT_pursue_and_twat || pOpponent_spec->pursue_car_data__pursuee == &C2V(gProgram_state).current_car;
         NewObjective(pOpponent_spec, eOOT_frozen);
         return;
     }
