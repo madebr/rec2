@@ -145,6 +145,10 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
     int count_sections;
     int i;
 
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, current_car, 0xac);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, player_name, 0x1a10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, special_volumes, 0x1c00);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, AI_vehicles, 0x1c20);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, AI_vehicles.number_of_path_nodes, 0x1c28);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, AI_vehicles.number_of_path_sections, 0x1c2c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tProgram_state, AI_vehicles.path_nodes, 0x5ec0);
