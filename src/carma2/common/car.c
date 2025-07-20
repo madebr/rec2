@@ -1446,7 +1446,7 @@ void (C2_HOOK_FASTCALL * PositionCarMountedCamera_original)(tCar_spec* pCar, tU3
 void C2_HOOK_FASTCALL PositionCarMountedCamera(tCar_spec* pCar, tU32 pTime) {
 
 #if defined(C2_HOOKS_ENABLED)
-    PositionCarMountedCamera_original(pCar, pTime) {
+    PositionCarMountedCamera_original(pCar, pTime);
 #else
     NOT_IMPLEMENTED();
 #endif
