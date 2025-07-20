@@ -1483,7 +1483,7 @@ void C2_HOOK_FASTCALL AmIGettingBoredWatchingCameraSpin(void) {
     if (C2V(gNet_mode) != eNet_mode_none
             && (C2V(gCurrent_net_game)->type == eNet_game_type_4
                     || C2V(gCurrent_net_game)->type == eNet_game_type_fight_to_death)) {
-        if (!gRace_finished) {
+        if (!C2V(gRace_finished)) {
             C2V(time_of_death) = 0;
             C2V(gOpponent_viewing_mode) = 0;
         } else if (C2V(time_of_death) == 0) {
