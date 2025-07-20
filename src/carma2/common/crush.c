@@ -2456,7 +2456,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00429d90, RemoveCarFromCrushLists, RemoveCarFromCrus
 int (C2_HOOK_FASTCALL * ShapeRayCast_original)(const br_vector3* p1, const br_vector3* p2, const tCollision_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal);
 int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tCollision_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal) {
 #if defined(C2_HOOKS_ENABLED)
-    return ShapeRayCast_original(p1, p2, pHsape, pPos, pFactor, pNormal);
+    return ShapeRayCast_original(p1, p2, pShape, pPos, pFactor, pNormal);
 #else
     NOT_IMPLEMENTED();
 #endif
