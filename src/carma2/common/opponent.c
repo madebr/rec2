@@ -1504,7 +1504,7 @@ tFollow_path_result (C2_HOOK_FASTCALL * ProcessFollowPath_original)(tOpponent_sp
 tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return ProcessFollowPath_original(pOpponent_spec, pCommand, pPursuit_mnode, pIgnore_mode, pNever_struggle);
+    return ProcessFollowPath_original(pOpponent_spec, pCommand, pPursuit_mode, pIgnore_end, pNever_struggle);
 #else
     NOT_IMPLEMENTED();
 #endif
