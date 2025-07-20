@@ -590,7 +590,7 @@ void C2_HOOK_FASTCALL AddModelMashToPipingSession(br_model* pModel, br_vector3* 
     size_t size;
     tPipe_model_mash* pipe_model_mash;
 
-    pipe_model_mash = (tPipe_model_mash*)gCrush_space;
+    pipe_model_mash = (tPipe_model_mash*)C2V(gCrush_space);
     if (pipe_model_mash == NULL) {
         return;
     }
