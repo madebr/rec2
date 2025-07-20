@@ -293,8 +293,8 @@ void C2_HOOK_FASTCALL ActuallyRepairSmash(tCar_spec* pCar_spec, tCar_crush_smash
     if (pLevel == 0 && pSmashable->funk >= 0) {
         EnableFunkotronic(pSmashable->funk);
     }
-    if (pCar_spec != NULL && pCar_spec->driver == eDriver_local_human && gProgram_state.racing) {
-        DRS3StartSound(gCar_outlet,  eSoundId_SmashRepair);
+    if (pCar_spec != NULL && pCar_spec->driver == eDriver_local_human && C2V(gProgram_state).racing) {
+        DRS3StartSound(C2V(gCar_outlet),  eSoundId_SmashRepair);
     }
 }
 C2_HOOK_FUNCTION(0x004ef840, ActuallyRepairSmash)
