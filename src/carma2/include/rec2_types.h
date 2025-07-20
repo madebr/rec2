@@ -2292,13 +2292,12 @@ typedef struct tCar_spec {
     float proxy_ray_distance;
     int powerups[100];
     tU32 time_to_recover;
-    undefined field_0x18a4[4];
+    tU32 repair_time;
     int power_up_levels[3];
     int power_up_slots[3];
     int horn_sound_tag;
     int is_girl;
     tU8 field_0x18c8;
-    tU32 repair_time;
     int field_0x18cc;
     float softness_factor;
     tCar_crush_spec* car_crush_spec;
@@ -2459,12 +2458,12 @@ typedef struct {
     unsigned int murder_reported : 1;                // @0xb0  // 0x800
     undefined4 field_0xb4;
     tComplete_race_data complete_race_data;
-    undefined field29_0xba[2];
+    undefined field_0xba[2];
     /* FIXME: START tFollow_path_data */
     tU32 follow_path_data__struggle_time;
     int follow_path_data__last_finished_struggle_time;
-    undefined4 field32_0xc4;
-    undefined field33_0xc8[4];
+    undefined4 field_0xc4;
+    undefined field_0xc8[4];
     float follow_path_data__prev_acc;
     float follow_path_data__desired_speed;
     float follow_path_data__desired_speed2;
@@ -2473,35 +2472,35 @@ typedef struct {
     tS16 follow_path_data__section_no;
     tS16 follow_path_data__first_section_no;
     tS16 follow_path_last__struggle_section;
-    undefined field42_0xee[2];
+    undefined field_0xee[2];
     unsigned int number_of_struggles : 8;
     unsigned int has_moved_during_this_task : 1;
     unsigned int made_it : 1;
     unsigned int cheating_0xf0 : 1;
     unsigned int cornering : 1;
     unsigned int left_not_right : 1;
-    undefined4 field44_0xf4;
-    undefined field45_0xf8[4];
-    float field46_0xfc;
-    float field47_0x100;
-    float field48_0x104;
-    float field49_0x108;
+    undefined4 field_0xf4;
+    undefined field_0xf8[4];
+    float field_0xfc;
+    float field_0x100;
+    float field_0x104;
+    float field_0x108;
     float follow_path_data__corner_width;
-    int field51_0x110;
+    int field_0x110;
     /* FIXME: start tPursue_car_data */
     tCar_spec* pursue_car_data__pursuee;
-    undefined field53_0x118[16];
+    undefined field_0x118[16];
     tU32 time_last_away_from_pursuee;
     br_vector3 pursue_car_data__direct_line_nodes_p;
-    undefined field56_0x138[60];
+    undefined field_0x138[60];
     float pursue_car_data__direct_line_section__width;
     /* FIXME: missing:
         tLevitate_data levitate_data;
         tRun_away_data run_away_data;
     */
-    undefined field58_0x178[24];
+    undefined field_0x178[24];
     tReturn_to_start_data return_to_start_data;
-    undefined field63_0x1a3;
+    undefined field_0x1a3;
 } tOpponent_spec;
 
 typedef struct tPath_node {
