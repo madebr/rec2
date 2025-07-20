@@ -273,7 +273,7 @@ C2_HOOK_FUNCTION(0x004ecfa0, InitSmashQueue)
 
 void C2_HOOK_FASTCALL MungeInternalCarGlass(tCar_spec* pCar_spec) {
 
-    if (pCar_spec == &gProgram_state.current_car && gAction_replay_camera_mode == kActionReplayCameraMode_Internal) {
+    if (pCar_spec == &C2V(gProgram_state).current_car && C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_Internal) {
         MungeCarMaterials(pCar_spec, 1);
     }
 }
