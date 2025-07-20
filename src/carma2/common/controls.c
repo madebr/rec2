@@ -1910,8 +1910,8 @@ void C2_HOOK_FASTCALL CheckForBeingOutOfThisWorld(void) {
     static C2_HOOK_VARIABLE_IMPLEMENT(tU32, the_time, 0x0067c3f4);
     static C2_HOOK_VARIABLE_IMPLEMENT(tU32, sLast_check, 0x0067c480);
 
-    the_time = PDGetTotalTime();
-    if (C2V(gProgram_state.current_car.disabled)) {
+    C2V(the_time) = PDGetTotalTime();
+    if (C2V(gProgram_state).current_car.disabled) {
         C2V(gRecover_timer) = 0;
         return;
     }
@@ -2022,8 +2022,8 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
         if (C2V(gProgram_state).current_car.car_crush_spec != NULL && C2V(gProgram_state).current_car.car_crush_spec->field_0x4b8 != 0) {
             FlipUpCar(&C2V(gProgram_state).current_car);
         }
-        if (!C2V(gAuto_repair) && C2V(gRepair_last_time) == 0 && GetTotalTime() - gLast_repair_time < 1200) {
-            gAuto_repair = 1;
+        if (!C2V(gAuto_repair) && C2V(gRepair_last_time) == 0 && GetTotalTime() - C2V(gLast_repair_time) < 1200) {
+            C2V(gAuto_repair) = 1;
         }
         C2V(gLast_repair_time) = GetTotalTime();
         C2V(gRepair_last_time) = 1;
