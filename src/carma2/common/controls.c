@@ -1782,7 +1782,7 @@ void C2_HOOK_FASTCALL CheckHornLocal(tCar_spec* pCar) {
     } else if (!pCar->keys.horn && pCar->horn_sound_tag != 0) {
         while (S3SoundStillPlaying(pCar->horn_sound_tag) != 0) {
             DRS3StopSound(pCar->horn_sound_tag);
-            DRS3StopOutletSound(gEffects_outlet);
+            DRS3StopOutletSound(C2V(gEffects_outlet));
         }
         if (!S3SoundStillPlaying(pCar->horn_sound_tag)) {
             pCar->horn_sound_tag = 0;
@@ -1793,7 +1793,7 @@ void C2_HOOK_FASTCALL CheckHornLocal(tCar_spec* pCar) {
 void C2_HOOK_FASTCALL CheckHorns(void) {
     int i;
 
-    if (C2V(gNet_mode) != C2V(eNet_mode_none)) {
+    if (C2V(gNet_mode) != eNet_mode_none) {
         for (i = 0; i < C2V(gNumber_of_net_players); i++) {
             CheckHorn3D(C2V(gNet_players)[i].car);
         }
