@@ -1554,6 +1554,17 @@ void C2_HOOK_FASTCALL TopUpRandomRoute(tOpponent_spec* pOpponent_spec, int pSect
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a93c0, TopUpRandomRoute, TopUpRandomRoute_original)
 
+void (C2_HOOK_FASTCALL * ProcessGetNearPlayer_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
+void C2_HOOK_FASTCALL ProcessGetNearPlayer(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessGetNearPlayer_original(pOpponent_spec, pCommand);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ac890, ProcessGetNearPlayer, ProcessGetNearPlayer_original)
+
 void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 #if defined(C2_HOOKS_ENABLED)
