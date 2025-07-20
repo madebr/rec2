@@ -93,6 +93,13 @@ typedef enum {
     eFPR_given_up = 2,
 } tFollow_path_result;
 
+typedef enum tPath_section_type_enum {
+    ePST_normal = 0,
+    ePST_race_path = 1,
+    ePST_cheat_only = 2,
+    ePST_count = 3
+} tPath_section_type_enum;
+
 typedef enum  {
     eNet_synch_host_first = 0,
     eNet_synch_host_subsequent = 1,
