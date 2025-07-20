@@ -334,7 +334,7 @@ void C2_HOOK_FASTCALL CalcPlayerConspicuousness(tOpponent_spec* pOpponent_spec) 
         }
     } else {
         pOpponent_spec->next_player_visibility_check = C2V(gTime_stamp_for_this_munging) + IRandomBetween(0, 900) + 4000;
-        dr_dprintf("%s: Time now: %9.2f; next vis check at %9.2f", pOpponent_spec->car_spec->driver_name, C2V(gTime_stamp_for_this_munging) / 1000.f, pOpponent_spec->next_player_visibility_check / 1000.0f);
+        DoNotDprintf_opponent("%s: Time now: %9.2f; next vis check at %9.2f", pOpponent_spec->car_spec->driver_name, C2V(gTime_stamp_for_this_munging) / 1000.f, pOpponent_spec->next_player_visibility_check / 1000.0f);
         if (pOpponent_spec->player_to_oppo_d < 50.f && PointVisibleFromHere(&C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t)) {
             pOpponent_spec->player_in_view_now = 1;
             pOpponent_spec->acknowledged_piv = 0;
