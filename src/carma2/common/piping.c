@@ -575,7 +575,7 @@ void C2_HOOK_FASTCALL PipeSingleTransformType(br_actor* pActor, tS16 pTransform_
         SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_from), pActor->t.type,
         SIZE_OFFSET_PIPING(tPipe_single_transform_type, type_to), pTransform_type);
 }
-C2_HOOK_FUNCTION(0x, PipeSingleTransformType)
+C2_HOOK_FUNCTION(0x004c8ff0, PipeSingleTransformType)
 
 void C2_HOOK_FASTCALL ARCompressModelMash(tCompressed_vector3 *pDest, br_model* pModel, br_vector3* pSrc) {
     int i;
