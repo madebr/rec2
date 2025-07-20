@@ -3753,6 +3753,8 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         FatalError(kFatalError_RanOutOfFunkGrooveSlotBunches);
     }
 
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, proxy_ray_distance, 0x170c);
+
     if (c2_strcmp(pCar_name, "STELLA.TXT") == 0) {
         pCar_spec->proxy_ray_distance = 6.0f;
     } else {
