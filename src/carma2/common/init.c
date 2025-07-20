@@ -89,10 +89,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0047dd20, InitialiseDeathRace, InitialiseDeathRace_o
 void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2_HOOK_BUG_ON(sizeof(int) != 4);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, complete_race_data) != 184);
-    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, field44_0xf4) != 244);
+    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, field_0xf4) != 0xf4);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, follow_path_data__corner_width) != 268);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, time_last_away_from_pursuee) != 296);
-    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, field58_0x178) != 376);
+    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, field_0x178) != 0x178);
     C2_HOOK_BUG_ON(sizeof(tOpponent_spec) != 420);
 
     C2_HOOK_BUG_ON(sizeof(tIntelligent_vehicles) != 17064);
@@ -105,7 +105,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2_HOOK_BUG_ON(offsetof(tCar_spec, my_trail) != 5112);
     C2_HOOK_BUG_ON(offsetof(tCar_spec, last_person_we_hit) != 5476);
     C2_HOOK_BUG_ON(offsetof(tCar_spec, maybe_blood_remaining) != 5852);
-    C2_HOOK_BUG_ON(offsetof(tCar_spec, softness_factor) != 6352);
+    C2_HOOK_BUG_ON(offsetof(tCar_spec, softness_factor) != 0x18d0);
     C2_HOOK_BUG_ON(sizeof(tCar_spec) != 6500);
 
     C2_HOOK_BUG_ON(offsetof(tProgram_state, sausage_eater_mode) != 16);
