@@ -1071,8 +1071,8 @@ void C2_HOOK_FASTCALL PipeDroneMatrix(tDrone_spec* pDrone) {
     tS16 compressed_field_0x74;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, field_0x48, 0x48);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, field_0xd8, 0xd8);
-    C2_HOOK_BUG_ON(sizeof(pDrone->field_0xd8) != 1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, left_turn, 0xd8);
+    C2_HOOK_BUG_ON(sizeof(pDrone->left_turn) != 1);
 
     compressed_mat.m[0].v[0] = DRScalarToU16(pDrone->actor->t.t.mat.m[0][0], -1.f, 1.f);
     compressed_mat.m[0].v[1] = DRScalarToU16(pDrone->actor->t.t.mat.m[0][1], -1.f, 1.f);
