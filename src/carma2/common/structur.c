@@ -46,6 +46,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gHud_tinted2_visible, 0x006aaa3c);
 
 void C2_HOOK_FASTCALL RecordAPOAndCredits(void) {
 
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, power_up_levels, 0x18a8);
+
     C2V(gMoney_pre_race) = C2V(gProgram_state).credits;
     C2V(gAPO_pre_race)[0] = C2V(gProgram_state).current_car.power_up_levels[0];
     C2V(gAPO_pre_race)[1] = C2V(gProgram_state).current_car.power_up_levels[1];
