@@ -120,7 +120,7 @@ int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br
     br_vector3 nor;
     br_vector3 delta;
 
-    hither = ((br_camera*)gCamera->type_data)->hither_z * 3.0f;
+    hither = ((br_camera*)C2V(gCamera)->type_data)->hither_z * 3.0f;
     C2V(gCamera_has_collided) = 0;
     non_car_coll_index = 0;
     loop_done = 0;
