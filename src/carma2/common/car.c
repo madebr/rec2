@@ -1545,7 +1545,7 @@ void C2_HOOK_FASTCALL DoCameraControls(tCamera_key_flags *pCamera_controls, tU32
     static C2_HOOK_VARIABLE_IMPLEMENT(int, last_swirl_mode, 0x0067930c);
 
     flag = 0;
-    swirl_mode = !GetRuntimeVariable(99) && gRace_finished && !gAction_replay_mode && (C2V(gCar_to_view) == &C2V(gProgram_state).current_car || C2V(gCar_to_view)->knackered);
+    swirl_mode = !GetRuntimeVariable(99) && C2V(gRace_finished) && !C2V(gAction_replay_mode) && (C2V(gCar_to_view) == &C2V(gProgram_state).current_car || C2V(gCar_to_view)->knackered);
     up_and_down_mode = swirl_mode && !C2V(gCamera_has_collided);
     going_down = C2V(gCamera_zoom) > 1.0;
     if (C2V(last_swirl_mode) != swirl_mode) {
@@ -1570,7 +1570,7 @@ void C2_HOOK_FASTCALL DoCameraControls(tCamera_key_flags *pCamera_controls, tU32
             float zoom;
 
             C2V(gCamera_zoom) -= (float)pTime_difference * 5.f / 10000.f / (float)(2 * swirl_mode + 1);
-            if (C2V(gAction_replay_camera_mode == kActionReplayCameraMode_Peds)) {
+            if (C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_Peds) {
                 zoom = 0.001f;
             } else {
                 zoom = 0.1f;
@@ -1657,7 +1657,7 @@ void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matr
     int swoop;
 
     m1 = &C2V(gCamera)->t.t.mat;
-    swoop = C2V(gCountdown) && gCamera_height > pPos->v[1] + 0.001f;
+    swoop = C2V(gCountdown) && C2V(gCamera_height) > pPos->v[1] + 0.001f;
     BrVector3Copy(&old_camera_pos, &C2V(gCamera)->t.t.translate.t);
     if (!C2V(gProgram_state).cockpit_on) {
         int manual_swing;
@@ -1778,7 +1778,7 @@ void C2_HOOK_FASTCALL GeneralisedPositionExternalCamera(tCar_spec* pCar, br_matr
         BrVector3Copy(&C2V(gCamera_pos_before_collide), &C2V(gCamera)->t.t.translate.t);
         CollideCameraWithOtherCars(pPos, &C2V(gCamera)->t.t.translate.t);
         CollideCamera2(pPos, &C2V(gCamera)->t.t.translate.t, &old_camera_pos,
-            manual_swing || gCamera_key_flags.field_0x0_bit1 || gCamera_key_flags.field_0x0_bit2, pCar != NULL ? pCar->collision_info : NULL);
+            manual_swing || C2V(gCamera_key_flags).field_0x0_bit1 || C2V(gCamera_key_flags).field_0x0_bit2, pCar != NULL ? pCar->collision_info : NULL);
         if (C2V(gCamera_has_collided) && swoop) {
             C2V(gCamera_height) = pPos->v[1];
         }
