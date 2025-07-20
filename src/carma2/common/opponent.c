@@ -1543,6 +1543,17 @@ int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
 }
 C2_HOOK_FUNCTION(0x004ab150, AddToOpponentsProjectedRoute)
 
+void (C2_HOOK_FASTCALL * TopUpRandomRoute_original)(tOpponent_spec* pOpponent_spec, int pSections_to_add);
+void C2_HOOK_FASTCALL TopUpRandomRoute(tOpponent_spec* pOpponent_spec, int pSections_to_add) {
+
+#if defined(C2_HOOKS_ENABLED)
+    TopUpRandomRoute_original(pOpponent_spec, pSections_to_add);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a93c0, TopUpRandomRoute, TopUpRandomRoute_original)
+
 void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 #if defined(C2_HOOKS_ENABLED)
