@@ -1304,7 +1304,7 @@ int (C2_HOOK_FASTCALL * CheckForObjectHierachyTouchingAnotherObject_original)(tC
 int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return CheckForObjectHierachyTouchingAnotherObject_original(pObject, pList, pList_2);
+    return CheckForObjectHierachyTouchingAnotherObject_original(pObject, pList, pList_original);
 #else
     NOT_IMPLEMENTED();
 #endif
