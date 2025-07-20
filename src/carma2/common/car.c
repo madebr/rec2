@@ -1498,17 +1498,17 @@ void C2_HOOK_FASTCALL AmIGettingBoredWatchingCameraSpin(void) {
                 C2V(gNet_player_to_view_index) = -2;
                 ViewNetPlayer();
             }
-            if (gNet_player_to_view_index < 0 && gCar_to_view != GetRaceLeader()) {
-                gNet_player_to_view_index = -2;
+            if (C2V(gNet_player_to_view_index) < 0 && C2V(gCar_to_view) != GetRaceLeader()) {
+                C2V(gNet_player_to_view_index) = -2;
                 ViewNetPlayer();
             }
             if ((GetRaceTime() > C2V(headup_timer) + 1000 || C2V(headup_timer) > GetRaceTime()) && C2V(gRace_over_reason) == eRace_not_over_yet) {
-                strcpy(s, GetMiscString(eMiscString_watching));
-                strcat(s, " ");
+                c2_strcpy(s, GetMiscString(eMiscString_watching));
+                c2_strcat(s, " ");
                 if (C2V(gNet_player_to_view_index) >= 0) {
-                    strcat(s, gNet_players[gNet_player_to_view_index].player_name);
+                    c2_strcat(s, C2V(gNet_players)[C2V(gNet_player_to_view_index)].player_name);
                 } else {
-                    strcat(s, GetMiscString(eMiscString_race_leader));
+                    c2_strcat(s, GetMiscString(eMiscString_race_leader));
                 }
                 C2V(headup_timer) = GetRaceTime();
                 NewTextHeadupSlot(6, 0, 500, -4, s);
