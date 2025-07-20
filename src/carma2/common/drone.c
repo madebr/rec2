@@ -1123,7 +1123,7 @@ void C2_HOOK_FASTCALL StartRenderingThisDrone(tDrone_spec* pDrone) {
         NewDroneState(pDrone,1);
     }
 }
-C2_HOOK_FUNCTION(0x00451810, StartRenderingDrone)
+C2_HOOK_FUNCTION(0x00451810, StartRenderingThisDrone)
 
 br_vector3* C2_HOOK_FASTCALL GetCurrentViewDroneDirection(void) {
 
