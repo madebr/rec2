@@ -1723,12 +1723,162 @@ void C2_HOOK_FASTCALL ProcessReturnToStart(tOpponent_spec* pOpponent_spec, tProc
 }
 C2_HOOK_FUNCTION(0x004abc40, ProcessReturnToStart)
 
+void C2_HOOK_FASTCALL ClearOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec) {
+
+    pOpponent_spec->nnext_sections = 0;
+}
+
+void C2_HOOK_FASTCALL ProcessCompleteRace(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+
+    switch (pCommand) {
+    case ePOC_start:
+        DoNotDprintf_opponent("%s: ProcessCompleteRace() - new objective started", pOpponent_spec->car_spec->driver_name);
+        ClearOpponentsProjectedRoute(pOpponent_spec);
+        CalcRaceRoute(pOpponent_spec);
+        ProcessFollowPath(pOpponent_spec, ePOC_start, 0, 0, 0);
+        break;
+    case ePOC_run:
+        if (pOpponent_spec->follow_path_data__section_no > 20000) {
+            ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data__section_no - 20000);
+            pOpponent_spec->follow_path_data__section_no = 20000;
+        }
+        if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections) - 1 && !pOpponent_spec->complete_race_data.finished_calcing_race_route) {
+            CalcRaceRoute(pOpponent_spec);
+        }
+        if (pOpponent_spec->nnext_sections == 0) {
+            switch (ProcessFollowPath(pOpponent_spec, ePOC_run, 0, 0, 0)) {
+            case eFPR_end_of_path:
+                DoNotDprintf_opponent("%s: Giving up following race path because ran out of race path", pOpponent_spec->car_spec->driver_name);
+                NewObjective(pOpponent_spec, eOOT_get_near_player);
+                break;
+            case eFPR_given_up:
+                ClearOpponentsProjectedRoute(pOpponent_spec);
+                CalcRaceRoute(pOpponent_spec);
+                ProcessFollowPath(pOpponent_spec, ePOC_start, 0, 0, 0);
+                break;
+            default:
+                ObjectiveComplete(pOpponent_spec);
+                break;
+            }
+        }
+        break;
+    }
+}
+
+void C2_HOOK_FASTCALL ProcessRunAway(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+    tS16 section_no;
+    br_scalar distance;
+    br_vector3 intersect;
+    br_vector3 direction_v;
+    char str[256];
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tOpponent_spec, run_away_data, 0x190);
+
+    switch (pCommand) {
+    case ePOC_start:
+        DoNotDprintf_opponent("%s: ProcessRunAway() - new objective started", pOpponent_spec->car_spec->driver_name);
+        pOpponent_spec->run_away_data.time_to_stop = C2V(gTime_stamp_for_this_munging) + 1000 * IRandomBetween(30, 90);
+        ClearOpponentsProjectedRoute(pOpponent_spec);
+        section_no = FindNearestPathSection(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &direction_v, &intersect, &distance);
+        if (BrVector3Dot(&pOpponent_spec->car_spec->direction, &direction_v) < 0.0f) {
+            AddToOpponentsProjectedRoute(pOpponent_spec, section_no, 0);
+        } else {
+            AddToOpponentsProjectedRoute(pOpponent_spec, section_no, 1);
+        }
+        TopUpRandomRoute(pOpponent_spec, -1);
+        ProcessFollowPath(pOpponent_spec, ePOC_start, 0, 0, 0);
+        sprintf(str, "%s: Shit! I'm out of here...", pOpponent_spec->car_spec->driver_name);
+        break;
+    case ePOC_run:
+        if (C2V(gTime_stamp_for_this_munging) <= pOpponent_spec->run_away_data.time_to_stop) {
+            if (pOpponent_spec->follow_path_data__section_no > 20000) {
+                ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data__section_no - 20000);
+                pOpponent_spec->follow_path_data__section_no = 20000;
+            }
+            if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections)) {
+                TopUpRandomRoute(pOpponent_spec, REC2_ASIZE(pOpponent_spec->next_sections) - pOpponent_spec->nnext_sections);
+            }
+            if (ProcessFollowPath(pOpponent_spec, ePOC_run, 0, 0, 0) == eFPR_given_up) {
+                ClearOpponentsProjectedRoute(pOpponent_spec);
+                section_no = FindNearestPathSection(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &direction_v, &intersect, &distance);
+                if (BrVector3Dot(&pOpponent_spec->car_spec->direction, &direction_v) < 0.0f) {
+                    AddToOpponentsProjectedRoute(pOpponent_spec, section_no, 0);
+                } else {
+                    AddToOpponentsProjectedRoute(pOpponent_spec, section_no, 1);
+                }
+                TopUpRandomRoute(pOpponent_spec, -1);
+                ProcessFollowPath(pOpponent_spec, ePOC_start, 0, 0, 0);
+            }
+        } else {
+            ObjectiveComplete(pOpponent_spec);
+        }
+        break;
+    default:
+        break;
+    }
+}
+
+void C2_HOOK_FASTCALL ProcessFrozen(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
+
+    switch (pCommand) {
+    case ePOC_start:
+        DoNotDprintf_opponent("%d ProcessFrozen() - new task started", pOpponent_spec->index);
+        DoNotDprintf_opponent("%s: Rematerialising from ePOC_start in ProcessFrozen()...", pOpponent_spec->car_spec->driver_name);
+        RematerialiseOpponentOnNearestSection(pOpponent_spec, 0.f);
+        pOpponent_spec->car_spec->acc_force = 0.f;
+        pOpponent_spec->car_spec->brake_force = 15.f * pOpponent_spec->car_spec->collision_info->M;
+        break;
+    case ePOC_run:
+        pOpponent_spec->car_spec->brake_force = 15.f * pOpponent_spec->car_spec->collision_info->M;
+        break;
+    case ePOC_die:
+        pOpponent_spec->car_spec->brake_force = 0.f;
+        break;
+    }
+}
+
 void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ProcessCurrentObjective_original(pOpponent_spec, pCommand);
 #else
-    NOT_IMPLEMENTED();
+    switch (pOpponent_spec->current_objective) {
+    case eOOT_none:
+        break;
+    case eOOT_complete_race:
+        ProcessCompleteRace(pOpponent_spec, pCommand);
+        break;
+    case eOOT_pursue_and_twat:
+        ProcessPursueAndTwat(pOpponent_spec, pCommand);
+        break;
+    case eOOT_run_away:
+        ProcessRunAway(pOpponent_spec, pCommand);
+        break;
+    case eOOT_get_near_player:
+        ProcessGetNearPlayer(pOpponent_spec, pCommand);
+        break;
+    case eOOT_levitate:
+        ProcessLevitate(pOpponent_spec, pCommand);
+        break;
+    case eOOT_knackered_and_freewheeling:
+        // FIXME: is keys correct?
+        c2_memset(&pOpponent_spec->car_spec->keys, 0, sizeof(pOpponent_spec->car_spec->keys));
+        pOpponent_spec->car_spec->acc_force = 0.f;
+        pOpponent_spec->car_spec->brake_force = 0.f;
+        pOpponent_spec->car_spec->curvature = 0.f;
+        break;
+    case eOOT_frozen:
+        ProcessFrozen(pOpponent_spec, pCommand);
+        break;
+    case eOOT_wait_for_some_hapless_sod:
+        ProcessWaitForSomeHaplessSod(pOpponent_spec, pCommand);
+        break;
+    case eOOT_return_to_start:
+        ProcessReturnToStart(pOpponent_spec, pCommand);
+        break;
+    default:
+        break;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004aa900, ProcessCurrentObjective, ProcessCurrentObjective_original)
