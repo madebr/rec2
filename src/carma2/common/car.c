@@ -1468,11 +1468,11 @@ void C2_HOOK_FASTCALL CheckCameraHither(void) {
     br_camera *cam;
     static C2_HOOK_VARIABLE_IMPLEMENT(int, old_hither, 0x0067931c);
 
-    cam = gCamera->type_data;
+    cam = C2V(gCamera)->type_data;
     if (TestForNan(&cam->hither_z)) {
         cam->hither_z = (float)C2V(old_hither);
     }
-    old_hither = (int)cam->hither_z;
+    C2V(old_hither) = (int)cam->hither_z;
 }
 
 void C2_HOOK_FASTCALL AmIGettingBoredWatchingCameraSpin(void) {
