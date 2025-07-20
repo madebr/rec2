@@ -1077,7 +1077,7 @@ void C2_HOOK_FASTCALL RecordNextTrailNode(tCar_spec* pPursuee) {
         }
     }
 
-    C2_HOOK_BUG_ON(sizeof(pPursuee->my_trail.trail_nodes[0]) != 0x120);
+    C2_HOOK_BUG_ON(sizeof(pPursuee->my_trail.trail_nodes) != 0x12c);
 
     if (pPursuee->my_trail.has_deviated_recently || !visible) {
         if ((visible && length > 2.0f) || (!visible && length > 1.5f)) {
@@ -1154,7 +1154,7 @@ void C2_HOOK_FASTCALL MungeOpponents(void) {
             }
         }
     }
-    for (i = 0; i < C2V(gProgram_state.AI_vehicles.number_of_opponents); i++) {
+    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
         tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.opponents[i];
 
         if (!oppo->finished_for_this_race) {
