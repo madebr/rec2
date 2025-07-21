@@ -1234,13 +1234,113 @@ tS16 C2_HOOK_FASTCALL FindNearestPathSection(br_vector3* pActor_coords, br_vecto
     return FindNearestGeneralSection(NULL, pActor_coords, pPath_direction, pIntersect, pDistance);
 }
 
+void C2_HOOK_FASTCALL WeightedFindNearestNodeAndSection(tCar_spec* pCar, br_vector3* pActor_coords, tS16* pNearest_node_section_no, tS16* pNearest_node, br_scalar* pT, float pWeight) {
+    int section_no;
+    int no_sections;
+    tS16 nearest_section;
+    br_scalar nearest_node_distance_squared;
+    br_scalar closest_distance_squared;
+    br_scalar the_distance_squared;
+    br_scalar t;
+    br_scalar length_squared_a;
+    br_vector3 a;
+    br_vector3 p;
+
+    *pNearest_node_section_no = -1;
+    *pNearest_node = -1;
+    nearest_node_distance_squared = BR_SCALAR_MAX;
+    closest_distance_squared = BR_SCALAR_MAX;
+    if (pCar != NULL) {
+        no_sections = pCar->my_trail.number_of_nodes - 1;
+    } else {
+        no_sections = C2V(gProgram_state).AI_vehicles.number_of_path_sections;
+    }
+    for (section_no = 0; section_no < no_sections; section_no++) {
+        br_vector3* start;
+        br_vector3* finish;
+
+        if (pCar != NULL) {
+            start = &pCar->my_trail.trail_nodes[section_no + 0];
+            finish = &pCar->my_trail.trail_nodes[section_no + 1];
+        } else {
+            start = &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[0]].pos;
+            finish = &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[1]].pos;
+        }
+        BrVector3Sub(&a, finish, start);
+        a.v[1] *= pWeight;
+        BrVector3Sub(&p, pActor_coords, start);
+        p.v[1] *= pWeight;
+        the_distance_squared = Vector3DistanceSquared(&p, &a);
+        if (the_distance_squared < closest_distance_squared) {
+            if (pCar != NULL) {
+                *pNearest_node = section_no;
+            } else {
+                *pNearest_node = C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[1];
+            }
+            nearest_section = section_no + 0;
+            closest_distance_squared = the_distance_squared;
+        }
+        the_distance_squared = BrVector3LengthSquared(&p);
+        if (the_distance_squared < closest_distance_squared) {
+            if (pCar != NULL) {
+                *pNearest_node = section_no + 1;
+            } else {
+                *pNearest_node = C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[0];
+            }
+            nearest_section = section_no;
+            closest_distance_squared = the_distance_squared;
+        }
+        length_squared_a = BrVector3LengthSquared(&a);
+        if (length_squared_a >= 0.0001f) {
+            t = BrVector3Dot(&p, &a) / length_squared_a;
+            if (t >= 0 && t <= 1.f) {
+                *pNearest_node_section_no = section_no;
+                *pT = t;
+                nearest_node_distance_squared = the_distance_squared;
+            }
+        }
+    }
+    if (nearest_node_distance_squared <= closest_distance_squared) {
+        *pNearest_node = -1;
+    } else {
+        *pNearest_node_section_no = nearest_section;
+    }
+}
+
 tS16 (C2_HOOK_FASTCALL * FindNearestGeneralSection_original)(tCar_spec* pCar, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance);
 tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return FindNearestGeneralSection_original(pCar, pActor_coords, pPath_direction, pIntersect, pDistance);
 #else
-    NOT_IMPLEMENTED();
+    tS16 nearest_node_section_no;
+    tS16 nearest_node;
+    float t;
+    br_vector3 delta;
+
+    WeightedFindNearestNodeAndSection(pCar, pActor_coords, &nearest_node_section_no, &nearest_node, &t, 2.f);
+
+    if (pCar != NULL) {
+        BrVector3Sub(&delta,
+                &pCar->my_trail.trail_nodes[nearest_node_section_no + 1],
+                &pCar->my_trail.trail_nodes[nearest_node_section_no + 0]);
+    } else {
+        BrVector3Sub(&delta,
+            &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[nearest_node_section_no].node_indices[1]].pos,
+            &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[nearest_node_section_no].node_indices[0]].pos);
+    }
+    if (nearest_node >= 0) {
+        BrVector3Copy(pIntersect, pCar != NULL ? &pCar->my_trail.trail_nodes[nearest_node] : &C2V(gProgram_state).AI_vehicles.path_nodes[nearest_node_section_no].pos);
+    } else {
+        BrVector3Scale(pIntersect, &delta, t);
+        BrVector3Accumulate(pIntersect, &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[nearest_node_section_no].node_indices[0]].pos);
+    }
+    BrVector3InvScale(pPath_direction, &delta, BrVector3Length(&delta));
+    *pDistance = Vector3Distance(pActor_coords, pIntersect);
+    if (pCar != NULL) {
+        nearest_node_section_no += 15000;
+    }
+    return nearest_node_section_no;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a82d0, FindNearestGeneralSection, FindNearestGeneralSection_original)
