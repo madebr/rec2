@@ -2429,6 +2429,35 @@ typedef struct tRun_away_data {
 } tRun_away_data;
 
 typedef struct {
+    tU32 struggle_time;
+    int last_finished_struggle_time;
+    undefined4 field_0x08;
+    undefined field_0x0c[4];
+    float prev_acc;
+    float desired_speed;
+    float desired_speed2;
+    float last_distance;
+    br_vector3 cheaty_intersect;
+    tS16 section_no;
+    tS16 first_section_no;
+    tS16 struggle_section;
+    undefined field_0x32[2];
+    unsigned int number_of_struggles: 8;
+    unsigned int has_moved_during_this_task: 1;
+    unsigned int made_it: 1;
+    unsigned int cheating_0xf0: 1;
+    unsigned int cornering: 1;
+    unsigned int left_not_right: 1;
+    undefined4 field_0x38;
+    int moving_to_intersect;
+    br_vector2 field_0x40;
+    float field_0x48;
+    float field_0x4c;
+    float corner_width;
+    int corner_section;
+} tFollow_path_data;
+
+typedef struct {
     int index;
     tOpponent_objective_type current_objective;
     tCar_spec* car_spec;
@@ -2470,34 +2499,7 @@ typedef struct {
     undefined4 field_0xb4;
     tComplete_race_data complete_race_data;
     undefined field_0xba[2];
-    /* FIXME: START tFollow_path_data */
-    tU32 follow_path_data__struggle_time;
-    int follow_path_data__last_finished_struggle_time;
-    undefined4 field_0xc4;
-    undefined field_0xc8[4];
-    float follow_path_data__prev_acc;
-    float follow_path_data__desired_speed;
-    float follow_path_data__desired_speed2;
-    float follow_path_data__last_distance;
-    br_vector3 follow_path_data__cheaty_intersect;
-    tS16 follow_path_data__section_no;
-    tS16 follow_path_data__first_section_no;
-    tS16 follow_path_last__struggle_section;
-    undefined field_0xee[2];
-    unsigned int number_of_struggles : 8;
-    unsigned int has_moved_during_this_task : 1;
-    unsigned int made_it : 1;
-    unsigned int cheating_0xf0 : 1;
-    unsigned int cornering : 1;
-    unsigned int left_not_right : 1;
-    undefined4 field_0xf4;
-    undefined field_0xf8[4];
-    float field_0xfc;
-    float field_0x100;
-    float field_0x104;
-    float field_0x108;
-    float follow_path_data__corner_width;
-    int field_0x110;
+    tFollow_path_data follow_path;
     /* FIXME: start tPursue_car_data */
     tCar_spec* pursue_car_data__pursuee;
     undefined field_0x118[16];

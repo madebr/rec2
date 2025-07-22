@@ -893,9 +893,9 @@ C2_HOOK_FUNCTION(0x004a79a0, TurnOpponentPhysicsOff)
 
 int C2_HOOK_FASTCALL  TimeToStopStruggling(tOpponent_spec* pOpponent_spec) {
 
-    return (float)(750 * (pOpponent_spec->number_of_struggles - 1))
+    return (float)(750 * (pOpponent_spec->follow_path.number_of_struggles - 1))
         + 30.f * pOpponent_spec->car_spec->collision_info->M
-        + (float)(pOpponent_spec->follow_path_data__struggle_time + 2750) < C2V(gTime_stamp_for_this_munging);
+        + (float)(pOpponent_spec->follow_path.struggle_time + 2750) < C2V(gTime_stamp_for_this_munging);
 }
 C2_HOOK_FUNCTION(0x004af8d0, TimeToStopStruggling)
 
@@ -932,8 +932,8 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
         default:
             if (!pOpponent_spec->car_spec->knackered
                     && (pOpponent_spec->car_spec->collision_info->last_special_volume != NULL && pOpponent_spec->car_spec->collision_info->last_special_volume->gravity_multiplier < 1.f)
-                        || !pOpponent_spec->has_moved_during_this_task
-                        || (pOpponent_spec->follow_path_data__struggle_time != 0 && !TimeToStopStruggling(pOpponent_spec))) {
+                        || !pOpponent_spec->follow_path.has_moved_during_this_task
+                        || (pOpponent_spec->follow_path.struggle_time != 0 && !TimeToStopStruggling(pOpponent_spec))) {
 
                 DisplayOpponentRecoveringHeadup(pOpponent_spec);
             }
@@ -946,16 +946,16 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
         case eOOT_run_away:
         case eOOT_get_near_player:
         case eOOT_return_to_start:
-            if (pOpponent_spec->follow_path_data__section_no < 15000
-                    || pOpponent_spec->follow_path_data__section_no >= 20000) {
-                int section = pOpponent_spec->follow_path_data__section_no - 20000;
+            if (pOpponent_spec->follow_path.section_no < 15000
+                    || pOpponent_spec->follow_path.section_no >= 20000) {
+                int section = pOpponent_spec->follow_path.section_no - 20000;
                 if (section >= 0 && section < pOpponent_spec->nnext_sections - 1) {
                     br_vector3 direction_v;
                     br_vector3 intersect;
                     br_scalar distance;
 
                     tS16 nearest_section = FindNearestPathSection(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &direction_v, &intersect, &distance);
-                    tS16 real_section = GetOpponentsRealSection(pOpponent_spec, pOpponent_spec->follow_path_data__section_no);
+                    tS16 real_section = GetOpponentsRealSection(pOpponent_spec, pOpponent_spec->follow_path.section_no);
 
                     if (nearest_section != real_section) {
                         int i;
@@ -967,11 +967,11 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
                         }
                         if (i < pOpponent_spec->nnext_sections) {
                             ShiftOpponentsProjectedRoute(pOpponent_spec, i);
-                            pOpponent_spec->follow_path_data__section_no = 20000;
+                            pOpponent_spec->follow_path.section_no = 20000;
                         } else {
                             br_vector3 dir;
 
-                            pOpponent_spec->follow_path_data__section_no = 20000;
+                            pOpponent_spec->follow_path.section_no = 20000;
                             pOpponent_spec->nnext_sections = 1;
                             pOpponent_spec->next_sections[0].section_no = nearest_section;
                             BrVector3Sub(&dir, &intersect, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t);
@@ -1853,9 +1853,9 @@ void C2_HOOK_FASTCALL ProcessReturnToStart(tOpponent_spec* pOpponent_spec, tProc
             our_pos_xz.v[1] = 0.0f;
             BrVector3Sub(&cop_to_start, &pOpponent_spec->start_pos, &our_pos_xz);
             if (BrVector3Length(&cop_to_start) >= 10.0) {
-                if (pOpponent_spec->follow_path_data__section_no > 20000) {
-                    ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data__section_no - 20000);
-                    pOpponent_spec->follow_path_data__section_no = 20000;
+                if (pOpponent_spec->follow_path.section_no > 20000) {
+                    ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path.section_no - 20000);
+                    pOpponent_spec->follow_path.section_no = 20000;
                 }
                 if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections) - 1) {
                     CalcReturnToStartPointRoute(pOpponent_spec);
@@ -1898,9 +1898,9 @@ void C2_HOOK_FASTCALL ProcessCompleteRace(tOpponent_spec* pOpponent_spec, tProce
         ProcessFollowPath(pOpponent_spec, ePOC_start, 0, 0, 0);
         break;
     case ePOC_run:
-        if (pOpponent_spec->follow_path_data__section_no > 20000) {
-            ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data__section_no - 20000);
-            pOpponent_spec->follow_path_data__section_no = 20000;
+        if (pOpponent_spec->follow_path.section_no > 20000) {
+            ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path.section_no - 20000);
+            pOpponent_spec->follow_path.section_no = 20000;
         }
         if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections) - 1 && !pOpponent_spec->complete_race_data.finished_calcing_race_route) {
             CalcRaceRoute(pOpponent_spec);
@@ -1951,9 +1951,9 @@ void C2_HOOK_FASTCALL ProcessRunAway(tOpponent_spec* pOpponent_spec, tProcess_ob
         break;
     case ePOC_run:
         if (C2V(gTime_stamp_for_this_munging) <= pOpponent_spec->run_away_data.time_to_stop) {
-            if (pOpponent_spec->follow_path_data__section_no > 20000) {
-                ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data__section_no - 20000);
-                pOpponent_spec->follow_path_data__section_no = 20000;
+            if (pOpponent_spec->follow_path.section_no > 20000) {
+                ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path.section_no - 20000);
+                pOpponent_spec->follow_path.section_no = 20000;
             }
             if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections)) {
                 TopUpRandomRoute(pOpponent_spec, REC2_ASIZE(pOpponent_spec->next_sections) - pOpponent_spec->nnext_sections);
