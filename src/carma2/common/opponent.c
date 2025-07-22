@@ -2089,3 +2089,14 @@ void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_object
     ProcessCurrentObjective(pOpponent_spec, ePOC_start);
 }
 C2_HOOK_FUNCTION(0x004aad70, NewObjective)
+
+int (C2_HOOK_FASTCALL * GetOpponentsFirstSection_original)(const tOpponent_spec* pOpponent_spec);
+int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GetOpponentsFirstSection(pOpponent_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004aea00, GetOpponentsFirstSection, GetOpponentsFirstSection_original)
