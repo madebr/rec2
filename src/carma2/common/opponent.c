@@ -1151,6 +1151,8 @@ void C2_HOOK_FASTCALL MungeOpponents(void) {
             case eOOT_complete_race:
                 C2V(gNum_of_opponents_completing_race) += 1;
                 break;
+            default:
+                break;
             }
         }
     }
