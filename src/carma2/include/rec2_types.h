@@ -2408,6 +2408,15 @@ typedef enum {
 } tOpponent_objective_type;
 
 typedef struct {
+    br_vector2 field_0x00;
+    float field_0x08;
+    float field_0x0c;
+    undefined4 left_not_right;
+    undefined4 section;
+    undefined4 field_0x18;
+} tCorner;
+
+typedef struct {
     tS16 section_no;
     tU8 direction;
     undefined field_0x3;
