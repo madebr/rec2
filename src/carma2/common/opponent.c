@@ -2100,3 +2100,14 @@ int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_sp
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004aea00, GetOpponentsFirstSection, GetOpponentsFirstSection_original)
+
+tS16 (C2_HOOK_FASTCALL * GetOpponentsSectionMaxSpeed_original)(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
+tS16 C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GetOpponentsSectionMaxSpeed_original(pOpponent_spec, pSection, pTowards_finish);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004aedf0, GetOpponentsSectionMaxSpeed, GetOpponentsSectionMaxSpeed_original)
