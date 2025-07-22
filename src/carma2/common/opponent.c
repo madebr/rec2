@@ -600,25 +600,25 @@ C2_HOOK_FUNCTION(0x004ae880, GetDriverName)
 int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
 
     switch (pCategory) {
-        case eVehicle_self:
-            return 1;
-        case eVehicle_net_player:
-            if (C2V(gNet_mode) != eNet_mode_none) {
-                return C2V(gNumber_of_net_players) - 1;
-            } else {
-                return 0;
-            }
-            break;
-        case eVehicle_opponent:
-            return C2V(gProgram_state).AI_vehicles.number_of_opponents;
-        case eVehicle_rozzer:
-            return C2V(gNumber_of_cops_before_faffage);
-        case eVehicle_drone:
+    case eVehicle_self:
+        return 1;
+    case eVehicle_net_player:
+        if (C2V(gNet_mode) != eNet_mode_none) {
+            return C2V(gNumber_of_net_players) - 1;
+        } else {
             return 0;
-        case eVehicle_not_really:
-            return C2V(gNum_active_non_cars);
-        default:
-            return 0;
+        }
+        break;
+    case eVehicle_opponent:
+        return C2V(gProgram_state).AI_vehicles.number_of_opponents;
+    case eVehicle_rozzer:
+        return C2V(gNumber_of_cops_before_faffage);
+    case eVehicle_drone:
+        return 0;
+    case eVehicle_not_really:
+        return C2V(gNum_active_non_cars);
+    default:
+        return 0;
     }
 }
 C2_HOOK_FUNCTION(0x004ae790, GetCarCount)
