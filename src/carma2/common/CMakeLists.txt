@@ -117,6 +117,8 @@ add_library(c2_common STATIC
     oil.h
     opponent.c
     opponent.h
+    oppoproc.c
+    oppoproc.h
     options.c
     options.h
     pedestrn.c
