@@ -2408,6 +2408,11 @@ typedef enum {
 } tOpponent_objective_type;
 
 typedef struct {
+    int field_0x0 : 1;
+    int field_0x4;
+} tSOC;
+
+typedef struct {
     br_vector2 field_0x00;
     float field_0x08;
     float field_0x0c;
