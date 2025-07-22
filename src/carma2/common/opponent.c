@@ -2133,3 +2133,14 @@ int C2_HOOK_FASTCALL RematerialiseOpponentOnThisSection(tOpponent_spec* pOpponen
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004a7f20, RematerialiseOpponentOnThisSection, RematerialiseOpponentOnThisSection_original)
+
+float (C2_HOOK_FASTCALL * GetOpponentsSectionWidth_original)(const tOpponent_spec* pOpponent_spec, tS16 pSection);
+float C2_HOOK_FASTCALL GetOpponentsSectionWidth(const tOpponent_spec* pOpponent_spec, tS16 pSection) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GetOpponentsSectionWidth_original(pOpponent_spec, pSection);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004aece0, GetOpponentsSectionWidth, GetOpponentsSectionWidth_original)
