@@ -980,6 +980,9 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
                     }
                 }
             }
+            break;
+        default:
+            break;
         }
     }
 }
