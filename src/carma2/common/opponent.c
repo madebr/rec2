@@ -1580,9 +1580,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
             NewObjective(pOpponent_spec, eOOT_wait_for_some_hapless_sod);
             return;
         } else if (pOpponent_spec->pursue_from_start) {
-            int grudge;
 
-            grudge = MAX(20, C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player);
             C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player = (int)MIN(100, MAX(20, C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player) + 20 + 40 * pOpponent_spec->nastiness);
             NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &C2V(gProgram_state).current_car);
             return;
