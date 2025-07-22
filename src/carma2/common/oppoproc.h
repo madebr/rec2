@@ -13,4 +13,6 @@ int C2_HOOK_FASTCALL GetStraight(br_vector2* pStart, br_vector2* pFinish, float*
 
 int C2_HOOK_FASTCALL CalcCorners(tCorner* pCorners, int pSection, float pWidth, br_vector2* pStart, tOpponent_spec* pOpponent_spec);
 
+int C2_HOOK_FASTCALL CalcSOCs(int pNext_section, int pCount_corners, tCorner *pCorners, tOpponent_spec *pOpponent_spec, tSOC* pSocs);
+
 #endif //REC2_OPPONENT_H
