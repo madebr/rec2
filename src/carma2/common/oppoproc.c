@@ -14,3 +14,14 @@ int C2_HOOK_FASTCALL GetStraight(br_vector2* pStart, br_vector2* pFinish, float*
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b13d0, GetStraight, GetStraight_original)
+
+int (C2_HOOK_FASTCALL * CalcCorners_original)(tCorner* pCorners, int pSection, float pWidth, br_vector2* pStart, tOpponent_spec* pOpponent_spec);
+int C2_HOOK_FASTCALL CalcCorners(tCorner* pCorners, int pSection, float pWidth, br_vector2* pStart, tOpponent_spec* pOpponent_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return CalcCorners_original(pCorners, pSection, pWidth, pStart, pOpponent_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b1560, CalcCorners, CalcCorners_original)
