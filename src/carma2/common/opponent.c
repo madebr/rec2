@@ -931,9 +931,9 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
             break;
         default:
             if (!pOpponent_spec->car_spec->knackered
-                    && (pOpponent_spec->car_spec->collision_info->last_special_volume != NULL && pOpponent_spec->car_spec->collision_info->last_special_volume->gravity_multiplier < 1.f)
+                    && ((pOpponent_spec->car_spec->collision_info->last_special_volume != NULL && pOpponent_spec->car_spec->collision_info->last_special_volume->gravity_multiplier < 1.f)
                         || !pOpponent_spec->follow_path.has_moved_during_this_task
-                        || (pOpponent_spec->follow_path.struggle_time != 0 && !TimeToStopStruggling(pOpponent_spec))) {
+                        || (pOpponent_spec->follow_path.struggle_time != 0 && !TimeToStopStruggling(pOpponent_spec)))) {
 
                 DisplayOpponentRecoveringHeadup(pOpponent_spec);
             }
