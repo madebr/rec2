@@ -2122,3 +2122,14 @@ tS16 C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004aed50, GetOpponentsSectionMinSpeed, GetOpponentsSectionMinSpeed_original)
+
+int (C2_HOOK_FASTCALL * RematerialiseOpponentOnThisSection_original)(tOpponent_spec* pOpponent_spec, tS16 pSection_no, float pSpeed);
+int C2_HOOK_FASTCALL RematerialiseOpponentOnThisSection(tOpponent_spec* pOpponent_spec, tS16 pSection_no, float pSpeed) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return RematerialiseOpponentOnThisSection_original(pOpponent_spec, pSection, pSpeed);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a7f20, RematerialiseOpponentOnThisSection, RematerialiseOpponentOnThisSection_original)
