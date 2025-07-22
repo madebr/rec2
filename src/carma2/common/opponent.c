@@ -2111,3 +2111,14 @@ tS16 C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004aedf0, GetOpponentsSectionMaxSpeed, GetOpponentsSectionMaxSpeed_original)
+
+tS16 (C2_HOOK_FASTCALL * GetOpponentsSectionMinSpeed_original)(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
+tS16 C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GetOpponentsSectionMinSpeed_original(pOpponent_spec, pSection, pTowards_finish);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004aed50, GetOpponentsSectionMinSpeed, GetOpponentsSectionMinSpeed_original)
