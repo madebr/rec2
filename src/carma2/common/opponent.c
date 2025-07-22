@@ -478,7 +478,7 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
                 }
             }
         } else if (C2V(gNet_mode) == eNet_mode_client) {
-            for (i = 0; i = GetCarCount(eVehicle_net_player); i++) {
+            for (i = 0; i < GetCarCount(eVehicle_net_player); i++) {
                 tCar_spec* car;
 
                 car = GetCarSpec(eVehicle_net_player, i);
