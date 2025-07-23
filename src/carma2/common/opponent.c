@@ -2107,6 +2107,35 @@ void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_object
 }
 C2_HOOK_FUNCTION(0x004aad70, NewObjective)
 
+tS16 C2_HOOK_FASTCALL CalcNextTrailSection(const tOpponent_spec* pOpponent_spec, int pSection) {
+    int section_no;
+    tPursuee_trail* trail;
+
+    trail = &pOpponent_spec->pursue_car_data.pursuee->my_trail;
+    section_no = pSection - 15000;
+
+    if (trail->number_of_nodes - 2 > section_no) {
+        return pSection + 1;
+    }
+    return -1;
+}
+
+int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spec, tS16 pCurrent_section) {
+
+    if (pCurrent_section < 20000) {
+        if (pCurrent_section < 15000) {
+            return -1;
+        } else {
+            return CalcNextTrailSection(pOpponent_spec, pCurrent_section);
+        }
+    } else if (pCurrent_section - 19999 >= pOpponent_spec->nnext_sections || (!pOpponent_spec->cheating && C2V(gProgram_state).AI_vehicles.path_sections[pCurrent_section - 19999].type == ePST_cheat_only)) {
+        return -1;
+    } else {
+        return pCurrent_section + 1;
+    }
+}
+C2_HOOK_FUNCTION(0x004aea30, GetOpponentsNextSection)
+
 int (C2_HOOK_FASTCALL * GetOpponentsFirstSection_original)(const tOpponent_spec* pOpponent_spec);
 int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
 
