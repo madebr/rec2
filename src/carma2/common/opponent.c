@@ -2092,7 +2092,7 @@ void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_object
         break;
     case eOOT_pursue_and_twat:
         va_start(ap, pObjective_type);
-        pOpponent_spec->pursue_car_data__pursuee = va_arg(ap, tCar_spec*);
+        pOpponent_spec->pursue_car_data.pursuee = va_arg(ap, tCar_spec*);
         va_end(ap);
         C2V(gNum_of_opponents_pursuing) += 1;
         break;
