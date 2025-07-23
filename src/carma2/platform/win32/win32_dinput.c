@@ -339,12 +339,12 @@ void C2_HOOK_FASTCALL CollectJoystickButtonInfo(tButtonJoystickInfo* pInfo) {
         } else {
             pInfo->buttons[i] = -1;
         }
-        pInfo->field3_0xd4 = 1;
-        pInfo->field4_0xd8 = 1.0f;
-        pInfo->field5_0xdc = 1.0f;
-        pInfo->field6_0xe0 = 0; /* or 0.f */
-        pInfo->field7_0xe4 = 50;
-        pInfo->field8_0xe8 = 0; /* or 0.f */
+        pInfo->field_0xd4 = 1;
+        pInfo->field_0xd8 = 1.0f;
+        pInfo->field_0xdc = 1.0f;
+        pInfo->field_0xe0 = 0; /* or 0.f */
+        pInfo->field_0xe4 = 50;
+        pInfo->field_0xe8 = 0; /* or 0.f */
     }
 }
 C2_HOOK_FUNCTION(0x0045c370, CollectJoystickButtonInfo)
@@ -1345,3 +1345,20 @@ void C2_HOOK_FASTCALL PDPlayFFBEffect(const char* effectName) {
     }
 }
 C2_HOOK_FUNCTION(0x0045c720, PDPlayFFBEffect)
+
+int (C2_HOOK_FASTCALL * PDIsJoystickDPadEnabled_original)(void);
+int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PDIsJoystickDPadEnabled_original();
+#else
+    tButtonJoystickInfo* joystick_info;
+
+    joystick_info = GetCurrentJoystickData();
+    if (joystick_info == NULL) {
+        return 0;
+    }
+    return joystick_info->field_0xe0;
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045c550, PDIsJoystickDPadEnabled, PDIsJoystickDPadEnabled_original)

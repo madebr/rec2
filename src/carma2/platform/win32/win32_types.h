@@ -23,12 +23,12 @@ typedef struct {
     char productName[80];
     size_t count_buttons;
     int buttons[32]; /* index if available, -1 if not */
-    int field3_0xd4;
-    float field4_0xd8;
-    float field5_0xdc;
-    int field6_0xe0; /* float or int. init=0 */
-    int field7_0xe4; /* init = 50*/
-    int field8_0xe8; /* float or int. init=0 */
+    int field_0xd4;
+    float field_0xd8;
+    float field_0xdc;
+    int field_0xe0; /* float or int. init=0 */
+    int field_0xe4; /* init = 50*/
+    int field_0xe8; /* float or int. init=0 */
 } tButtonJoystickInfo;
 
 typedef struct {

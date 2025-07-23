@@ -2469,7 +2469,7 @@ void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference) {
             }
         }
         if (!(keys.left || keys.right)) {
-            if (IsJoystickDPadEnabled()) {
+            if (PDIsJoystickDPadEnabled()) {
                 if (C2V(gJoy_array)[0] > 10) {
                     keys.left = 1;
                 }
@@ -2498,7 +2498,7 @@ void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference) {
             keys.acc = 1;
         }
         if (!keys.acc) {
-            if (IsJoystickDPadEnabled()) {
+            if (PDIsJoystickDPadEnabled()) {
                 if (C2V(gJoy_array)[2] > 10) {
                     keys.acc = 1;
                 }
@@ -2512,7 +2512,7 @@ void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference) {
             keys.dec = 1;
         }
         if (!keys.dec) {
-            if (IsJoystickDPadEnabled()) {
+            if (PDIsJoystickDPadEnabled()) {
                 if (C2V(gJoy_array)[3] > 10) {
                     keys.dec = 1;
                 }
