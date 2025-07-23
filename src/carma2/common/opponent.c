@@ -1680,6 +1680,17 @@ void C2_HOOK_FASTCALL CalcRaceRoute(tOpponent_spec *pOpponent_spec) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004aae20, CalcRaceRoute, CalcRaceRoute_original)
 
+void (C2_HOOK_FASTCALL * SetMaxSpeedFromSOCs_original)(tSOC* socs, int count_socs, float* pDesired_speed, float pSpeed, const br_vector2* pPos2d, tCorner* pCorner, tOpponent_spec* pOpponent_spec);
+void C2_HOOK_FASTCALL SetMaxSpeedFromSOCs(tSOC* socs, int count_socs, float* pDesired_speed, float pSpeed, const br_vector2* pPos2d, tCorner* pCorner, tOpponent_spec* pOpponent_spec) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetMaxSpeedFromSOCs_original(socs, count_socs, pDesired_speed, pSpeed, pPos2d, pCorner, pOpponent_spec);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b18b0, SetMaxSpeedFromSOCs, SetMaxSpeedFromSOCs_original)
+
 tFollow_path_result (C2_HOOK_FASTCALL * ProcessFollowPath_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle);
 tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle) {
 
