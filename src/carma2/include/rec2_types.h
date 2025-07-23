@@ -2444,22 +2444,22 @@ typedef struct tRun_away_data {
 
 typedef struct {
     tU32 struggle_time;
-    int last_finished_struggle_time;
-    undefined4 field_0x08;
-    undefined field_0x0c[4];
+    tU32 last_finished_struggle_time;
+    tU32 field_0x08;
+    tU32 borrowed_time_start;
     float prev_acc;
+    float prev_acc_error;
     float desired_speed;
-    float desired_speed2;
     float last_distance;
     br_vector3 cheaty_intersect;
     tS16 section_no;
     tS16 first_section_no;
-    tS16 struggle_section;
+    tS16 last_struggle_section;
     undefined field_0x32[2];
     unsigned int number_of_struggles: 8;
     unsigned int has_moved_during_this_task: 1;
     unsigned int made_it: 1;
-    unsigned int cheating_0xf0: 1;
+    unsigned int cheating: 1;
     unsigned int cornering: 1;
     unsigned int left_not_right: 1;
     undefined4 field_0x38;
@@ -2470,6 +2470,35 @@ typedef struct {
     float corner_width;
     int corner_section;
 } tFollow_path_data;
+
+typedef struct tPath_node {
+    br_vector3 pos;
+    tU16 sections[8];
+    tU8 number_of_sections;
+    undefined field_0x1d[3];
+} tPath_node;
+
+typedef struct tPath_section {
+    tU16 node_indices[2];
+    tU8 min_speed[2];
+    tU8 max_speed[2];
+    br_scalar width;
+    br_scalar length;
+    tU8 type;
+    tU8 one_way;
+} tPath_section;
+
+typedef struct {
+    tCar_spec* pursuee;
+    tU32 time_of_next_visibility_check;
+    tU32 start_backup_time;
+    tU32 time_last_twatted_em;
+    tU32 time_pursuee_last_visible;
+    tU32 time_last_away_from_pursuee;
+    tPath_node direct_line_nodes[2];
+    tPath_section direct_line_section;
+    tU8 state;
+} tPursue_car_data;
 
 typedef struct {
     int index;
@@ -2512,40 +2541,12 @@ typedef struct {
     unsigned int murder_reported : 1;                // @0xb0  // 0x800
     undefined4 field_0xb4;
     tComplete_race_data complete_race_data;
-    undefined field_0xba[2];
-    tFollow_path_data follow_path;
-    /* FIXME: start tPursue_car_data */
-    tCar_spec* pursue_car_data__pursuee;
-    undefined field_0x118[16];
-    tU32 time_last_away_from_pursuee;
-    br_vector3 pursue_car_data__direct_line_nodes_p;
-    undefined field_0x138[60];
-    float pursue_car_data__direct_line_section__width;
-    /* FIXME: missing:
-        tLevitate_data levitate_data;
-        tRun_away_data run_away_data;
-    */
-    undefined field_0x178[24];
+    tFollow_path_data follow_path_data;
+    tPursue_car_data pursue_car_data;
+    undefined field_0x184[12];
     tRun_away_data run_away_data;
     tReturn_to_start_data return_to_start_data;
 } tOpponent_spec;
-
-typedef struct tPath_node {
-    br_vector3 pos;
-    tU16 sections[8];
-    tU8 number_of_sections;
-    undefined field_0x1d[3];
-} tPath_node;
-
-typedef struct tPath_section {
-    tU16 node_indices[2];
-    tU8 min_speed[2];
-    tU8 max_speed[2];
-    br_scalar width;
-    br_scalar length;
-    tU8 type;
-    tU8 one_way;
-} tPath_section;
 
 typedef struct {
     int number_of_opponents;
