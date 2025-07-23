@@ -1873,9 +1873,9 @@ void C2_HOOK_FASTCALL ProcessReturnToStart(tOpponent_spec* pOpponent_spec, tProc
             our_pos_xz.v[1] = 0.0f;
             BrVector3Sub(&cop_to_start, &pOpponent_spec->start_pos, &our_pos_xz);
             if (BrVector3Length(&cop_to_start) >= 10.0) {
-                if (pOpponent_spec->follow_path.section_no > 20000) {
-                    ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path.section_no - 20000);
-                    pOpponent_spec->follow_path.section_no = 20000;
+                if (pOpponent_spec->follow_path_data.section_no > 20000) {
+                    ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data.section_no - 20000);
+                    pOpponent_spec->follow_path_data.section_no = 20000;
                 }
                 if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections) - 1) {
                     CalcReturnToStartPointRoute(pOpponent_spec);
