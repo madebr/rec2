@@ -15,8 +15,9 @@
 
 #define BR_MAC2(A, B, C, D) ((A) * (B) + (C) * (D))
 #define BR_MAC3(a, b, c, d, e, f) ((a) * (b) + (c) * (d) + (e) * (f))
-#define BR_SQR3(a, b, c) ((a) * (a) + (b) * (b) + (c) * (c))
 #define BR_MAC4(a, b, c, d, e, f, g, h) ((a) * (b) + (c) * (d) + (e) * (f) + (g) * (h))
+#define BR_SQR2(a, b) BR_MAC2((a), (a), (b), (b))
+#define BR_SQR3(a, b, c) BR_MAC3((a), (a), (b), (b), (c), (c))
 
 #define BrAngleToRadian(a) ((br_scalar)((a) * (PI / 32768.0)))      // a * 0.00009587379924285257
 #define BrRadianToAngle(r) ((br_angle)(long)((r) * (32768.0 / PI))) // r * 10430.378350470453

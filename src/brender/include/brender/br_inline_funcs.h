@@ -3,6 +3,10 @@
 
 #include "br_defs.h"
 
+#define BrVector2Length(v1) BR_LENGTH2((v1)->v[0], (v1)->v[1])
+#define BrVector2LengthSquared(v1) BR_SQR2((v1)->v[0], (v1)->v[1])
+#define BrVector2Dot(v1, v2) BR_MAC2((v1)->v[0], (v2)->v[0], (v1)->v[1], (v2)->v[1])
+
 #define BrVector2Copy(v1, v2)    \
     do {                         \
         (v1)->v[0] = (v2)->v[0]; \
@@ -13,6 +17,12 @@
     do {                         \
         (v1)->v[0] = (s1);       \
         (v1)->v[1] = (s2);       \
+    } while (0)
+
+#define BrVector2Sub(v1, v2, v3)               \
+    do {                                       \
+        (v1)->v[0] = (v2)->v[0] - (v3)->v[0] ; \
+        (v1)->v[1] = (v2)->v[1] - (v3)->v[1] ; \
     } while (0)
 
 #define BrVector2Scale(v1, v2, s)      \
