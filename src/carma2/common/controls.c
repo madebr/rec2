@@ -2082,6 +2082,8 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
             }
         }
     } else {
+        (void)C2V(stopped_repairing);
+
         C2V(gRepair_last_time) = 0;
         C2V(stopped_repairing) = 0;
         C2V(total_repair_cost) = 0;
