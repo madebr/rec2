@@ -90,17 +90,6 @@ int C2_HOOK_FASTCALL GetJoystickFBBGain(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045c7f0, GetJoystickFBBGain, GetJoystickFBBGain_original)
 
-int (C2_HOOK_FASTCALL * IsJoystickDPadEnabled_original)(void);
-int C2_HOOK_FASTCALL IsJoystickDPadEnabled(void) {
-
-#if defined(C2_HOOKS_ENABLED)
-    return IsJoystickDPadEnabled_original();
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0045c550, IsJoystickDPadEnabled, IsJoystickDPadEnabled_original)
-
 void (C2_HOOK_FASTCALL * SetJoystickX_original)(float pValue);
 void C2_HOOK_FASTCALL SetJoystickX(float pValue) {
 
@@ -151,7 +140,7 @@ void C2_HOOK_FASTCALL Joystick_BackupSettings(void) {
     C2V(gOriginal_joystick_x) = GetJoystickX();
     C2V(gOriginal_joystick_y) = GetJoystickY();
     C2V(gOriginal_joystick_fbb) = GetJoystickFBBGain();
-    C2V(gOriginal_joystick_dpad) = IsJoystickDPadEnabled();
+    C2V(gOriginal_joystick_dpad) = PDIsJoystickDPadEnabled();
     C2V(gJoystick_index) = C2V(gOrig_joystick_index);
 }
 
