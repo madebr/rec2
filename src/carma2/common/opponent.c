@@ -2144,7 +2144,7 @@ int (C2_HOOK_FASTCALL * RematerialiseOpponentOnThisSection_original)(tOpponent_s
 int C2_HOOK_FASTCALL RematerialiseOpponentOnThisSection(tOpponent_spec* pOpponent_spec, tS16 pSection_no, float pSpeed) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return RematerialiseOpponentOnThisSection_original(pOpponent_spec, pSection, pSpeed);
+    return RematerialiseOpponentOnThisSection_original(pOpponent_spec, pSection_no, pSpeed);
 #else
     NOT_IMPLEMENTED();
 #endif
