@@ -907,11 +907,12 @@ void C2_HOOK_FASTCALL TurnOpponentPhysicsOff(tOpponent_spec* pOpponent_spec) {
 }
 C2_HOOK_FUNCTION(0x004a79a0, TurnOpponentPhysicsOff)
 
-int C2_HOOK_FASTCALL  TimeToStopStruggling(tOpponent_spec* pOpponent_spec) {
+int C2_HOOK_FASTCALL TimeToStopStruggling(tOpponent_spec* pOpponent_spec) {
 
-    return (float)(750 * (pOpponent_spec->follow_path.number_of_struggles - 1))
-        + 30.f * pOpponent_spec->car_spec->collision_info->M
-        + (float)(pOpponent_spec->follow_path.struggle_time + 2750) < C2V(gTime_stamp_for_this_munging);
+    return C2V(gTime_stamp_for_this_munging) >
+        (float)(750 * (pOpponent_spec->follow_path_data.number_of_struggles - 1))
+            + 30.f * pOpponent_spec->car_spec->collision_info->M
+            + (float)(pOpponent_spec->follow_path_data.struggle_time + 2750);
 }
 C2_HOOK_FUNCTION(0x004af8d0, TimeToStopStruggling)
 
