@@ -187,3 +187,9 @@ void C2_HOOK_FASTCALL MungeJoystickHeadups(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045b3b0, MungeJoystickHeadups, MungeJoystickHeadups_original)
+
+int C2_HOOK_FASTCALL HasCurrentJoystick(void) {
+
+    return C2V(gJoystick_index) != -1;
+}
+C2_HOOK_FUNCTION(0x0045a0f0, HasCurrentJoystick)
