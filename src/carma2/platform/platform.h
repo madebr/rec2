@@ -127,6 +127,8 @@ void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index);
 
 int C2_HOOK_FASTCALL PDFindJoystickEffect(const char* effectName);
 
+void C2_HOOK_FASTCALL PDPlayFFBEffect(const char* effectName);
+
 tU32 C2_HOOK_FASTCALL PDGetJoy1Button1(void);
 
 tU32 C2_HOOK_FASTCALL PDGetJoy1Button2(void);
