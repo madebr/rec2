@@ -89,10 +89,10 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0047dd20, InitialiseDeathRace, InitialiseDeathRace_o
 void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2_HOOK_BUG_ON(sizeof(int) != 4);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, complete_race_data) != 184);
-    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, field_0xf4) != 0xf4);
-    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, follow_path_data__corner_width) != 268);
-    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, time_last_away_from_pursuee) != 296);
-    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, field_0x178) != 0x178);
+    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, time_for_this_objective_to_finish) != 0x74);
+    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, follow_path_data.corner_width) != 0xbc + 0x50);
+    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, pursue_car_data) != 0x114);
+    C2_HOOK_BUG_ON(offsetof(tOpponent_spec, pursue_car_data.time_last_away_from_pursuee) != 0x114 + 0x14);
     C2_HOOK_BUG_ON(sizeof(tOpponent_spec) != 420);
 
     C2_HOOK_BUG_ON(sizeof(tIntelligent_vehicles) != 17064);
