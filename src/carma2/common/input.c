@@ -334,11 +334,11 @@ int C2_HOOK_FASTCALL KeyIsDown(int pKey_index) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00483040, KeyIsDown, KeyIsDown_original)
 
-int C2_HOOK_FASTCALL KeyIsDown2(int pKey_index) {
+int C2_HOOK_FASTCALL KeyIsDownNoMouldiness(int pKey_index) {
 
     return C2V(gKey_array)[C2V(gKey_mapping)[pKey_index]];
 }
-C2_HOOK_FUNCTION(0x004833a0, KeyIsDown2)
+C2_HOOK_FUNCTION(0x004833a0, KeyIsDownNoMouldiness)
 
 void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY) {
 
