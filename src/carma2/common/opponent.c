@@ -2111,7 +2111,7 @@ int (C2_HOOK_FASTCALL * GetOpponentsFirstSection_original)(const tOpponent_spec*
 int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return GetOpponentsFirstSection(pOpponent_spec);
+    return GetOpponentsFirstSection_original(pOpponent_spec);
 #else
     NOT_IMPLEMENTED();
 #endif
