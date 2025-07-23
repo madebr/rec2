@@ -1334,3 +1334,14 @@ int C2_HOOK_FASTCALL PDFindJoystickEffect(const char* effectName) {
     return -1;
 }
 C2_HOOK_FUNCTION(0x004580e0, PDFindJoystickEffect)
+
+void C2_HOOK_FASTCALL PDPlayFFBEffect(const char* effectName) {
+
+    if (C2V(gForceFeedbackAvailable)) {
+        int index = PDFindJoystickEffect(effectName);
+        if (index != -1) {
+            PDPlayFFBEffectIndex(index);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0045c720, PDPlayFFBEffect)
