@@ -100,6 +100,13 @@ typedef enum tPath_section_type_enum {
     ePST_count = 3
 } tPath_section_type_enum;
 
+typedef enum tPursue_car_state {
+    ePCS_what_now = 0,
+    ePCS_following_trail = 1,
+    ePCS_following_line_of_sight = 2,
+    ePCS_backing_up = 3
+} tPursue_car_state;
+
 typedef enum  {
     eNet_synch_host_first = 0,
     eNet_synch_host_subsequent = 1,
