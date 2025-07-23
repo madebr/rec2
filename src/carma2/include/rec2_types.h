@@ -5145,6 +5145,7 @@ enum {
     eSoundId_FinalLap = 8014,
     eSoundId_Clap = 8015,
     eSoundId_HeyYou = 8016,
+    eSoundId_TyreScreeching = 9000,
 
     eSoundId_Countdown_Start = eSoundId_Countdown_Go,
 };

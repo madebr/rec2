@@ -14,6 +14,7 @@
 #include "graphics.h"
 #include "init.h"
 #include "input.h"
+#include "joystick.h"
 #include "loading.h"
 #include "netgame.h"
 #include "network.h"
@@ -22,6 +23,7 @@
 #include "piping.h"
 #include "polyfont.h"
 #include "powerups.h"
+#include "pratcam.h"
 #include "raycast.h"
 #include "replay.h"
 #include "sound.h"
@@ -2422,13 +2424,153 @@ void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442500, CheckRecoveryOfCars, CheckRecoveryOfCars_original)
 
+void C2_HOOK_FASTCALL BrakeInstantly(void) {
+    int i;
+    br_scalar speed_squared;
+
+    C2V(gProgram_state).current_car.revs = 0.f;
+    speed_squared = BrVector3LengthSquared(&C2V(gProgram_state).current_car.collision_info->v);
+    if (C2V(gProgram_state).current_car.number_of_wheels_on_ground != 0 && speed_squared > .0001f) {
+        PratcamEvent(41);
+        for (i = 0; i < 5; i++) {
+            DRS3StartSound(C2V(gCar_outlet), eSoundId_TyreScreeching + i);
+        }
+    }
+    if (speed_squared > .1f) {
+        PDPlayFFBEffect("Instant_Handbrake");
+    }
+    BrVector3Set(&C2V(gProgram_state).current_car.collision_info->v, 0.f, 0.f, 0.f);
+}
+
 void (C2_HOOK_FASTCALL * PollCarControls_original)(tU32 pTime_difference);
 void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PollCarControls_original(pTime_difference);
 #else
-    NOT_IMPLEMENTED();
+    tCar_controls keys;
+    tJoystick joystick;
+    tCar_spec* c;
+
+    c = &C2V(gProgram_state).current_car;
+    CheckKeysForMouldiness();
+    c2_memset(&keys, 0, sizeof(tCar_controls));
+    joystick.left = -1;
+    joystick.right = -1;
+    joystick.acc = -1;
+    joystick.dec = -1;
+    if (!C2V(gEntering_message)) {
+
+        if (C2V(gKey_mapping)[47] < 143 && C2V(gKey_mapping)[48] < 143) {
+            if (KeyIsDownNoMouldiness(47)) {
+                keys.left = 1;
+            }
+            if (KeyIsDownNoMouldiness(48)) {
+                keys.right = 1;
+            }
+        }
+        if (!(keys.left || keys.right)) {
+            if (IsJoystickDPadEnabled()) {
+                if (C2V(gJoy_array)[0] > 10) {
+                    keys.left = 1;
+                }
+                if (C2V(gJoy_array)[1] > 10) {
+                    keys.right = 1;
+                }
+            } else {
+                joystick.left = C2V(gJoy_array)[0];
+                joystick.right = C2V(gJoy_array)[1];
+                if (C2V(gJoy_array)[0] < 0 && C2V(gJoy_array)[1] < 0) {
+                    joystick.left = 0;
+                }
+            }
+        }
+        if (KeyIsDownNoMouldiness(13)) {
+            keys.holdw = 1;
+        }
+        if (KeyIsDownNoMouldiness(54) || C2V(gRace_finished)) {
+            if (C2V(gInstant_handbrake) && !C2V(gRace_finished)) {
+                BrakeInstantly();
+            } else {
+                keys.brake = 1;
+            }
+        }
+        if (KeyIsDownNoMouldiness(49) && !C2V(gRace_finished) && !c->knackered && !C2V(gWait_for_it)) {
+            keys.acc = 1;
+        }
+        if (!keys.acc) {
+            if (IsJoystickDPadEnabled()) {
+                if (C2V(gJoy_array)[2] > 10) {
+                    keys.acc = 1;
+                }
+            } else {
+                if (HasCurrentJoystick()) {
+                    joystick.acc = C2V(gJoy_array)[2];
+                }
+            }
+        }
+        if (KeyIsDownNoMouldiness(50) && !C2V(gRace_finished) && !c->knackered && !C2V(gWait_for_it)) {
+            keys.dec = 1;
+        }
+        if (!keys.dec) {
+            if (IsJoystickDPadEnabled()) {
+                if (C2V(gJoy_array)[3] > 10) {
+                    keys.dec = 1;
+                }
+            } else {
+                if (HasCurrentJoystick()) {
+                    joystick.dec = C2V(gJoy_array)[3];
+                }
+            }
+        }
+
+        if (C2V(gCredit_multiplier)) {
+            int temp;
+
+            temp = keys.acc;
+            keys.acc = keys.dec;
+            keys.dec = temp;
+
+            temp = keys.left;
+            keys.left = keys.right;
+            keys.right = temp;
+
+            temp = joystick.left;
+            joystick.left = joystick.right;
+            joystick.right = temp;
+
+            temp = joystick.acc;
+            joystick.acc = joystick.dec;
+            joystick.dec = temp;
+        }
+        if (KeyIsDownNoMouldiness(56) && c->gear >= 0) {
+            keys.change_down = 1;
+            c->just_changed_gear = 1;
+            if (keys.acc || joystick.acc > 32000) {
+                c->traction_control = 0;
+            } else if (c->gear > 1 && !c->keys.change_down) {
+                c->gear -= 1;
+            }
+            if (C2V(gCountdown) != 0 && !c->keys.change_down) {
+                JumpTheStart();
+            }
+        }
+        if (C2V(gCar_flying)) {
+            if (KeyIsDownNoMouldiness(14)) {
+                keys.up = 1;
+            }
+            if (KeyIsDownNoMouldiness(12)) {
+                keys.down = 1;
+            }
+        }
+        if (KeyIsDownNoMouldiness(59)) {
+            if (!C2V(gEntering_message)) {
+                keys.horn = 1;
+            }
+        }
+    }
+    c->keys = keys;
+    c->joystick = joystick;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00443e80, PollCarControls, PollCarControls_original)
