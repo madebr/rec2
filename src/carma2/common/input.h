@@ -59,7 +59,7 @@ void C2_HOOK_FASTCALL CheckKeysForMouldiness(void);
 
 int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
 
-int C2_HOOK_FASTCALL KeyIsDown2(int pKey_index);
+int C2_HOOK_FASTCALL KeyIsDownNoMouldiness(int pKey_index);
 
 void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY);
 

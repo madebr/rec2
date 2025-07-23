@@ -1673,7 +1673,7 @@ void C2_HOOK_FASTCALL CheckToggles(int pRacing) {
             continue;
         }
         new_state = 0;
-        if (C2V(gToggle_array)[i].key1 == -2 || KeyIsDown2(C2V(gToggle_array)[i].key1)) {
+        if (C2V(gToggle_array)[i].key1 == -2 || KeyIsDownNoMouldiness(C2V(gToggle_array)[i].key1)) {
             if (C2V(gToggle_array)[i].key2 == -2 && C2V(gToggle_array)[i].exact_modifiers) {
                 if (!PDKeyDown(0) && !PDKeyDown(1) && !PDKeyDown(2) && !PDKeyDown(3)) {
                     new_state = 1;
