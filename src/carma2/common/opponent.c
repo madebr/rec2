@@ -949,8 +949,8 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
         default:
             if (!pOpponent_spec->car_spec->knackered
                     && ((pOpponent_spec->car_spec->collision_info->last_special_volume != NULL && pOpponent_spec->car_spec->collision_info->last_special_volume->gravity_multiplier < 1.f)
-                        || !pOpponent_spec->follow_path.has_moved_during_this_task
-                        || (pOpponent_spec->follow_path.struggle_time != 0 && !TimeToStopStruggling(pOpponent_spec)))) {
+                        || !pOpponent_spec->follow_path_data.has_moved_during_this_task
+                        || (pOpponent_spec->follow_path_data.struggle_time != 0 && !TimeToStopStruggling(pOpponent_spec)))) {
 
                 DisplayOpponentRecoveringHeadup(pOpponent_spec);
             }
@@ -963,16 +963,16 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
         case eOOT_run_away:
         case eOOT_get_near_player:
         case eOOT_return_to_start:
-            if (pOpponent_spec->follow_path.section_no < 15000
-                    || pOpponent_spec->follow_path.section_no >= 20000) {
-                int section = pOpponent_spec->follow_path.section_no - 20000;
+            if (pOpponent_spec->follow_path_data.section_no < 15000
+                    || pOpponent_spec->follow_path_data.section_no >= 20000) {
+                int section = pOpponent_spec->follow_path_data.section_no - 20000;
                 if (section >= 0 && section < pOpponent_spec->nnext_sections - 1) {
                     br_vector3 direction_v;
                     br_vector3 intersect;
                     br_scalar distance;
 
                     tS16 nearest_section = FindNearestPathSection(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &direction_v, &intersect, &distance);
-                    tS16 real_section = GetOpponentsRealSection(pOpponent_spec, pOpponent_spec->follow_path.section_no);
+                    tS16 real_section = GetOpponentsRealSection(pOpponent_spec, pOpponent_spec->follow_path_data.section_no);
 
                     if (nearest_section != real_section) {
                         int i;
@@ -984,11 +984,11 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
                         }
                         if (i < pOpponent_spec->nnext_sections) {
                             ShiftOpponentsProjectedRoute(pOpponent_spec, i);
-                            pOpponent_spec->follow_path.section_no = 20000;
+                            pOpponent_spec->follow_path_data.section_no = 20000;
                         } else {
                             br_vector3 dir;
 
-                            pOpponent_spec->follow_path.section_no = 20000;
+                            pOpponent_spec->follow_path_data.section_no = 20000;
                             pOpponent_spec->nnext_sections = 1;
                             pOpponent_spec->next_sections[0].section_no = nearest_section;
                             BrVector3Sub(&dir, &intersect, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t);
