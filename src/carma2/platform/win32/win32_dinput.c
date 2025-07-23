@@ -1311,3 +1311,13 @@ void C2_HOOK_FASTCALL PDInitJoysticks(void) {
 
     ResetForceFeedback();
 }
+
+void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index) {
+    IDirectInputEffect* effect;
+
+    effect = C2V(gDirectInputEffects)[index];
+    if (effect != NULL) {
+        IDirectInputEffect_Start(effect, 1, DIES_NODOWNLOAD);
+    }
+    return;
+}

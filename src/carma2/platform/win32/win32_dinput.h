@@ -69,4 +69,6 @@ int C2_HOOK_FASTCALL PDGetJoy2Y(void);
 
 void C2_HOOK_FASTCALL PDInitJoysticks(void);
 
+void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index);
+
 #endif // C2_WIN32_INPUT_H
