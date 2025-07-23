@@ -26,7 +26,7 @@ int C2_HOOK_FASTCALL CalcCorners(tCorner* pCorners, int pSection, float pWidth, 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b1560, CalcCorners, CalcCorners_original)
 
-int (C2_HOOK_FASTCALL * CalcSOCs_original_original)(int pNext_section, int pCount_corners, tCorner *pCorners, tOpponent_spec *pOpponent_spec, tSOC* pSocs);
+int (C2_HOOK_FASTCALL * CalcSOCs_original)(int pNext_section, int pCount_corners, tCorner *pCorners, tOpponent_spec *pOpponent_spec, tSOC* pSocs);
 int C2_HOOK_FASTCALL CalcSOCs(int pNext_section, int pCount_corners, tCorner *pCorners, tOpponent_spec *pOpponent_spec, tSOC* pSocs) {
 
 #if defined(C2_HOOKS_ENABLED)
@@ -35,4 +35,4 @@ int C2_HOOK_FASTCALL CalcSOCs(int pNext_section, int pCount_corners, tCorner *pC
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x, CalcSOCs, CalcSOCs_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x004b1ab0, CalcSOCs, CalcSOCs_original)
