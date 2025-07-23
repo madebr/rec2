@@ -17,7 +17,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gJoystick_y_throttle);
 
 void C2_HOOK_FASTCALL SetupFFBValues(void);
 
-int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2);
+int C2_HOOK_FASTCALL PlayExclusiveFFBEffect(const char* pEffect_name, int pArg2);
 
 void C2_HOOK_FASTCALL InitJoysticks(void);
 
