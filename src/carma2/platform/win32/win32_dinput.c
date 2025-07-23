@@ -1321,3 +1321,16 @@ void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index) {
     }
     return;
 }
+
+int C2_HOOK_FASTCALL PDFindJoystickEffect(const char* effectName) {
+    int i;
+
+    for (i = 0; i < C2V(gCount_joystick_effects); i++) {
+
+        if (c2_strcmp(effectName, C2V(gJoystick_effects[i].name)) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+C2_HOOK_FUNCTION(0x004580e0, PDFindJoystickEffect)
