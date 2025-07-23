@@ -1327,7 +1327,7 @@ int C2_HOOK_FASTCALL PDFindJoystickEffect(const char* effectName) {
 
     for (i = 0; i < C2V(gCount_joystick_effects); i++) {
 
-        if (c2_strcmp(effectName, C2V(gJoystick_effects[i].name)) == 0) {
+        if (c2_strcmp(effectName, C2V(gJoystick_effects)[i].name) == 0) {
             return i;
         }
     }
