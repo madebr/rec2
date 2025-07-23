@@ -193,4 +193,6 @@ int C2_HOOK_FASTCALL PDS3IsSamplePlaying(tS3_channel* pChannel);
 
 void C2_HOOK_FASTCALL PDPageInProcessMemory(void);
 
+int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void);
+
 #endif // C2_PLATFORM_H

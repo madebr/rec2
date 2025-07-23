@@ -167,7 +167,7 @@ void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec *pFrontend) {
     C2V(gControls_slider_1).value = C2V(gControls_slider_1).field_0x14 + GetJoystickX() / (C2V(gControls_slider_1).field_0x18 - C2V(gControls_slider_1).field_0x14);
     C2V(gControls_slider_2).value = C2V(gControls_slider_2).field_0x14 + GetJoystickY() / (C2V(gControls_slider_2).field_0x18 - C2V(gControls_slider_2).field_0x14);
     C2V(gControls_slider_3).value = 0.01f * (float)GetJoystickFBBGain();
-    if (IsJoystickDPadEnabled()) {
+    if (PDIsJoystickDPadEnabled()) {
         pFrontend->items[36].unlitFont = 1;
         pFrontend->items[36].highFont = 1;
         pFrontend->items[37].unlitFont = 0;
