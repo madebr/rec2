@@ -1918,9 +1918,9 @@ void C2_HOOK_FASTCALL ProcessCompleteRace(tOpponent_spec* pOpponent_spec, tProce
         ProcessFollowPath(pOpponent_spec, ePOC_start, 0, 0, 0);
         break;
     case ePOC_run:
-        if (pOpponent_spec->follow_path.section_no > 20000) {
-            ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path.section_no - 20000);
-            pOpponent_spec->follow_path.section_no = 20000;
+        if (pOpponent_spec->follow_path_data.section_no > 20000) {
+            ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data.section_no - 20000);
+            pOpponent_spec->follow_path_data.section_no = 20000;
         }
         if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections) - 1 && !pOpponent_spec->complete_race_data.finished_calcing_race_route) {
             CalcRaceRoute(pOpponent_spec);
@@ -1971,9 +1971,9 @@ void C2_HOOK_FASTCALL ProcessRunAway(tOpponent_spec* pOpponent_spec, tProcess_ob
         break;
     case ePOC_run:
         if (C2V(gTime_stamp_for_this_munging) <= pOpponent_spec->run_away_data.time_to_stop) {
-            if (pOpponent_spec->follow_path.section_no > 20000) {
-                ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path.section_no - 20000);
-                pOpponent_spec->follow_path.section_no = 20000;
+            if (pOpponent_spec->follow_path_data.section_no > 20000) {
+                ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data.section_no - 20000);
+                pOpponent_spec->follow_path_data.section_no = 20000;
             }
             if (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections)) {
                 TopUpRandomRoute(pOpponent_spec, REC2_ASIZE(pOpponent_spec->next_sections) - pOpponent_spec->nnext_sections);
