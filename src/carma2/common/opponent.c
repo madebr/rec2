@@ -2584,10 +2584,20 @@ C2_HOOK_FUNCTION(0x004aec40, GetOpponentsSectionFinishNodePoint)
 int (C2_HOOK_FASTCALL * GetOpponentsFirstSection_original)(const tOpponent_spec* pOpponent_spec);
 int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return GetOpponentsFirstSection_original(pOpponent_spec);
 #else
-    NOT_IMPLEMENTED();
+
+    if (pOpponent_spec->current_objective != eOOT_pursue_and_twat) {
+        return 20000;
+    }
+    if (pOpponent_spec->pursue_car_data.state == ePCS_following_trail) {
+        return pOpponent_spec->follow_path_data.section_no;
+    }
+    if (pOpponent_spec->pursue_car_data.state == ePCS_following_line_of_sight) {
+        return 10000;
+    }
+    return 20000;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004aea00, GetOpponentsFirstSection, GetOpponentsFirstSection_original)
