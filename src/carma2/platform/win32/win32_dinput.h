@@ -71,4 +71,6 @@ void C2_HOOK_FASTCALL PDInitJoysticks(void);
 
 void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index);
 
+int C2_HOOK_FASTCALL PDFindJoystickEffect(const char* effectName);
+
 #endif // C2_WIN32_INPUT_H
