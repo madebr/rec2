@@ -1818,7 +1818,7 @@ C2_HOOK_FUNCTION(0x004abc00, ProcessWaitForSomeHaplessSod)
 void (C2_HOOK_FASTCALL * CalcReturnToStartPointRoute_original)(tOpponent_spec* pOpponent_spec);
 void C2_HOOK_FASTCALL CalcReturnToStartPointRoute(tOpponent_spec* pOpponent_spec) {
 
-#if defined(C2_HOOKS_ENABBLED)
+#if defined(C2_HOOKS_ENABLED)
     CalcReturnToStartPointRoute_original(pOpponent_spec);
 #else
     NOT_IMPLEMENTED();
