@@ -35,16 +35,16 @@ void C2_HOOK_FASTCALL SetupFFBValues(void) {
     PFfclose(f);
 }
 
-int (C2_HOOK_FASTCALL * PlayFFBEffect_original)(const char* pEffect_name, int pArg2);
-int C2_HOOK_FASTCALL PlayFFBEffect(const char* pEffect_name, int pArg2) {
+int (C2_HOOK_FASTCALL * PlayExclusiveFFBEffect_original)(const char* pEffect_name, int pArg2);
+int C2_HOOK_FASTCALL PlayExclusiveFFBEffect(const char* pEffect_name, int pArg2) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return PlayFFBEffect_original(pEffect_name, pArg2);
+    return PlayExclusiveFFBEffect_original(pEffect_name, pArg2);
 #else
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0045c6b0, PlayFFBEffect, PlayFFBEffect_original)
+C2_HOOK_FUNCTION_ORIGINAL(0x0045c6b0, PlayExclusiveFFBEffect, PlayExclusiveFFBEffect_original)
 
 void (C2_HOOK_FASTCALL * InitJoysticks_original)(void);
 void C2_HOOK_FASTCALL InitJoysticks(void) {
