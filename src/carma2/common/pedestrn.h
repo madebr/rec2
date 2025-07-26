@@ -187,6 +187,6 @@ void C2_HOOK_FASTCALL EnableOverallMovement(void);
 
 br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed);
 
-void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* ped, tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tCollision_info* pCollision_info);
 
 #endif //REC2_PEDESTRN_H
