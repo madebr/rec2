@@ -1889,6 +1889,17 @@ void C2_HOOK_FASTCALL StopCharacterMorphing(tPed_character_instance* pCharacter)
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004096f0, StopCharacterMorphing, StopCharacterMorphing_original)
 
+void (C2_HOOK_CDECL * SetCharacterPhysicsLevelAR_original)(tPed_character_instance* pCharacter, tU32 pLevel);
+void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacter, tU32 pLevel) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetCharacterPhysicsLevelAR(pCharacter, pLevel);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cc860, SetCharacterPhysicsLevelAR, SetCharacterPhysicsLevelAR_original)
+
 void (C2_HOOK_FASTCALL * MungePedestrians_original)(void);
 void C2_HOOK_FASTCALL MungePedestrians(void) {
 

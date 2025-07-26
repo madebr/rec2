@@ -99,6 +99,8 @@ void C2_HOOK_FASTCALL MungeNapalm(void);
 
 void C2_HOOK_FASTCALL StopCharacterMorphing(tPed_character_instance* pCharacter);
 
+void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacter, tU32 pLevel);
+
 void C2_HOOK_FASTCALL MungePedestrians(void);
 
 void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo(void);
