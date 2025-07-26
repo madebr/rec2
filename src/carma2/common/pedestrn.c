@@ -3230,3 +3230,14 @@ void C2_HOOK_FASTCALL SetCharacterMoveAR(tPed_character_instance* pCharacter, in
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d1c60, SetCharacterMoveAR, SetCharacterMoveAR_original)
+
+tPed_face_cache_0x34* (C2_HOOK_FASTCALL * RecacheAndSetFace_original)(tPedestrian* pPed, int* pArg2, int* pArg3, br_vector3* pArg4, int pArg5, tU32 pTime);
+tPed_face_cache_0x34* C2_HOOK_FASTCALL RecacheAndSetFace(tPedestrian* pPed, int* pArg2, int* pArg3, br_vector3* pArg4, int pArg5, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return RecacheAndSetFace_original(pPed, pArg2, pArg3, pArg4, pArg5, pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d1d70, RecacheAndSetFace, RecacheAndSetFace_original)
