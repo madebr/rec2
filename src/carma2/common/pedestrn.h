@@ -175,4 +175,6 @@ tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void);
 
 undefined4 C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pCharacter, int pIndex);
 
+undefined4 C2_HOOK_FASTCALL MakeCharacterRenderable(tPed_character_instance* pCharacter);
+
 #endif //REC2_PEDESTRN_H

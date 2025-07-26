@@ -3133,3 +3133,21 @@ undefined4 C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pC
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00408200, MakeCharacterRenderable2, MakeCharacterRenderable2_original)
+
+undefined4 C2_HOOK_FASTCALL MakeCharacterRenderable(tPed_character_instance* pCharacter) {
+    int i;
+
+    if (pCharacter->field_0x4 >= 0) {
+        return 2;
+    }
+    for (i = 0; i < pCharacter->personality->form->max_rendering_at_once; i++) {
+        if (!pCharacter->personality->form->actor_sets[i].field_0x0) {
+            break;
+        }
+    }
+    if (i == pCharacter->personality->form->max_rendering_at_once) {
+        return 1;
+    }
+    return MakeCharacterRenderable2(pCharacter, i);
+}
+C2_HOOK_FUNCTION(0x004083b0, MakeCharacterRenderable)
