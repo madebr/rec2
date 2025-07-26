@@ -3208,3 +3208,14 @@ void C2_HOOK_FASTCALL DoPostElectricution(tPedestrian* pPed, tU32 pTime, float p
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc6e0, DoPostElectricution, DoPostElectricution_original)
+
+void (C2_HOOK_FASTCALL * MakePedNoise_original)(tPedestrian* pPed, int pArg2, int pArg3, tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tCollision_info* pCollision_info) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MakePedNoise(pPed, pArg2, pArg3, pCollision_info);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cd880, MakePedNoise, MakePedNoise_original)

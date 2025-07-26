@@ -191,4 +191,6 @@ void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tCollision_info* pCollis
 
 void C2_HOOK_FASTCALL DoPostElectricution(tPedestrian* pPed, tU32 pTime, float pF1, float pF2);
 
+void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tCollision_info* pCollision_info);
+
 #endif //REC2_PEDESTRN_H
