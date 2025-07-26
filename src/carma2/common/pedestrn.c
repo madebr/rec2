@@ -3241,3 +3241,12 @@ tPed_face_cache_0x34* C2_HOOK_FASTCALL RecacheAndSetFace(tPedestrian* pPed, int*
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d1d70, RecacheAndSetFace, RecacheAndSetFace_original)
+
+float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance* pCharacter, int pMoveNum) {
+
+    if (pMoveNum < 0 || pMoveNum > pCharacter->personality->form->count_moves) {
+        BrFailure("MoveNum out of range in GetClearance()");
+    }
+    return pCharacter->personality->moves[pMoveNum].grounding_offset;
+}
+C2_HOOK_FUNCTION(0x0040bae0, GetClearanceFromCharacterInstance)
