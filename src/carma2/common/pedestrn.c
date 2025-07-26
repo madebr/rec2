@@ -3250,3 +3250,14 @@ float C2_HOOK_FASTCALL GetClearanceFromCharacterInstance(tPed_character_instance
     return pCharacter->personality->moves[pMoveNum].grounding_offset;
 }
 C2_HOOK_FUNCTION(0x0040bae0, GetClearanceFromCharacterInstance)
+
+void (C2_HOOK_FASTCALL * SetCharacterPosition_original)(tPed_character_instance* pCharacter, br_vector3* pPos, int pArg3);
+void C2_HOOK_FASTCALL SetCharacterPosition(tPed_character_instance* pCharacter, br_vector3* pPos, int pArg3) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetCharacterPosition_original(pCharacter, pPos, pArg3);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040b0a0, SetCharacterPosition, SetCharacterPosition_original)
