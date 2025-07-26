@@ -3174,3 +3174,9 @@ void C2_HOOK_FASTCALL DisableOverallMovement(void) {
     C2V(gPed_overall_movement_disabled) = 1;
 }
 C2_HOOK_FUNCTION(0x0040c600, DisableOverallMovement)
+
+void C2_HOOK_FASTCALL EnableOverallMovement(void) {
+
+    C2V(gPed_overall_movement_disabled) = 0;
+}
+C2_HOOK_FUNCTION(0x0040c610, EnableOverallMovement)
