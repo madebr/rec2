@@ -3275,3 +3275,14 @@ void C2_HOOK_FASTCALL SetPedXZDirection(tPedestrian* pPed, br_vector3* pDir, flo
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc2c0, SetPedXZDirection, SetPedXZDirection_original)
+
+float (C2_HOOK_FASTCALL * RescanPedProximity_original)(tPedestrian* pPed, br_vector3* pArg2);
+float C2_HOOK_FASTCALL RescanPedProximity(tPedestrian* pPed, br_vector3* pArg2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return RescanPedProximity_original(pPed, pArg2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cfab0, RescanPedProximity, RescanPedProximity_original)
