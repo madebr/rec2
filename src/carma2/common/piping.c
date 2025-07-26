@@ -662,7 +662,7 @@ C2_HOOK_FUNCTION(0x004c8a90, PipeSinglePedStatus)
 
 void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3* pPos, const br_vector3 *pVelocity) {
 
-    ARDoSingleVariedSession(ePipe_chunk_single_ped_pos, 2,
+    ARDoSingleVariedSession(ePipe_chunk_single_ped_pos, (uintptr_t)pPed, 2,
         SIZE_OFFSET_PIPING(tPipe_single_ped_pos, p), pPos,
         SIZE_OFFSET_PIPING(tPipe_single_ped_pos, v), pVelocity);
 }
