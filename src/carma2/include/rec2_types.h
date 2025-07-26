@@ -295,6 +295,11 @@ typedef struct {
     br_vector3 v;
 } tPipe_single_ped_pos;
 
+typedef struct {
+    undefined4 field_0x0;
+    undefined4 field_0x4;
+} tPipe_single_vanished_dismembered;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_special = 8,
@@ -307,6 +312,7 @@ typedef enum {
     ePipe_chunk_single_ped_pos = 46,
     ePipe_single_groove_on_off = 51,
     ePipe_funk_enable = 54,
+    ePipe_chunk_single_vanished_dismembered = 55,
     ePipe_single_ds_model = 56,
     ePipe_single_vector3 = 58,
     ePipe_chunk_drone_render = 60,
