@@ -3122,3 +3122,14 @@ tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void) {
     return C2V(gPedestrian_array)[C2V(gSelected_ped)].character;
 }
 C2_HOOK_FUNCTION(0x004d6210, GetTestPed)
+
+undefined4 (C2_HOOK_FASTCALL * MakeCharacterRenderable2_original)(tPed_character_instance* pCharacter, int pIndex);
+undefined4 C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pCharacter, int pIndex) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return MakeCharacterRenderable2(pCharacter, pIndex);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00408200, MakeCharacterRenderable2, MakeCharacterRenderable2_original)

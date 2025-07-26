@@ -173,4 +173,6 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName);
 
 tPed_character_instance* C2_HOOK_FASTCALL GetTestPed(void);
 
+undefined4 C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pCharacter, int pIndex);
+
 #endif //REC2_PEDESTRN_H
