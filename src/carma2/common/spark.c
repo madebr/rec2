@@ -580,3 +580,15 @@ void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar) {
     }
 }
 C2_HOOK_FUNCTION(0x004fca40, StopCarSmoking)
+
+void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tCollision_info* pObject) {
+    size_t i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+
+        if (C2V(gSmoke_column)[i].collision_info == pObject) {
+            C2V(gSmoke_column)[i].lifetime = 0;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004fca90, StopObjectSmokingInstantly)
