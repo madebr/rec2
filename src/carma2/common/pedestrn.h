@@ -97,6 +97,8 @@ void C2_HOOK_FASTCALL LastChanceForPedEffects(void);
 
 void C2_HOOK_FASTCALL MungeNapalm(void);
 
+void C2_HOOK_FASTCALL StopCharacterMorphing(tPed_character_instance* pCharacter);
+
 void C2_HOOK_FASTCALL MungePedestrians(void);
 
 void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo(void);

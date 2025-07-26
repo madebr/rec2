@@ -1878,6 +1878,17 @@ void C2_HOOK_FASTCALL MungeNapalm(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ce7d0, MungeNapalm, MungeNapalm_original)
 
+void (C2_HOOK_FASTCALL * StopCharacterMorphing_original)(tPed_character_instance* pCharacter);
+void C2_HOOK_FASTCALL StopCharacterMorphing(tPed_character_instance* pCharacter) {
+
+#if defined(C2_HOOKS_ENABLED)
+    StopCharacterMorphing_original(pCharacter);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004096f0, StopCharacterMorphing, StopCharacterMorphing_original)
+
 void (C2_HOOK_FASTCALL * MungePedestrians_original)(void);
 void C2_HOOK_FASTCALL MungePedestrians(void) {
 
