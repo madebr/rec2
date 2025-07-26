@@ -3261,3 +3261,14 @@ void C2_HOOK_FASTCALL SetCharacterPosition(tPed_character_instance* pCharacter, 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040b0a0, SetCharacterPosition, SetCharacterPosition_original)
+
+void (C2_HOOK_FASTCALL * SetPedXZDirection_original)(tPedestrian* pPed, br_vector3* pDir, float pArg3, tU32 pTime);
+void C2_HOOK_FASTCALL SetPedXZDirection(tPedestrian* pPed, br_vector3* pDir, float pArg3, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetPedXZDirection_original(pPed, pDir, pArg3, pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cc2c0, SetPedXZDirection, SetPedXZDirection_original)
