@@ -3180,7 +3180,8 @@ typedef struct {
 } tPed_remap;
 
 typedef struct {
-    undefined field_0x0[4];
+    undefined field_0x0;
+    undefined field_0x1[0x4 - 0x1];
     br_actor** actors;
 } tPed_form_actor_set;
 
