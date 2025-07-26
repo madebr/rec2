@@ -1933,6 +1933,17 @@ void C2_HOOK_FAKE_THISCALL ScoreForKilledPedestrian(tPedestrian* pPed, undefined
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cd260, ScoreForKilledPedestrian, ScoreForKilledPedestrian_original)
 
+int (C2_HOOK_FASTCALL * SetCharacterPhysicsLevel_original)(tPed_character_instance* pCharacter, int pLevel);
+int C2_HOOK_FASTCALL SetCharacterPhysicsLevel(tPed_character_instance* pCharacter, int pLevel) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return SetCharacterPhysicsLevel_original(pCharacter, pLevel);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00409570, SetCharacterPhysicsLevel, SetCharacterPhysicsLevel_original)
+
 void (C2_HOOK_FASTCALL * MungePedestrians_original)(void);
 void C2_HOOK_FASTCALL MungePedestrians(void) {
 

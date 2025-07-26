@@ -107,6 +107,8 @@ void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed);
 
 void C2_HOOK_FAKE_THISCALL ScoreForKilledPedestrian(tPedestrian* pPed, undefined4 pArg2, float pHeight);
 
+int C2_HOOK_FASTCALL SetCharacterPhysicsLevel(tPed_character_instance* pCharacter, int pLevel);
+
 void C2_HOOK_FASTCALL MungePedestrians(void);
 
 void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo(void);
