@@ -290,6 +290,11 @@ typedef struct {
     br_matrix34 field_0x20;
 } tPipe_single_ped_status;
 
+typedef struct {
+    br_vector3 p;
+    br_vector3 v;
+} tPipe_single_ped_pos;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_special = 8,
@@ -299,6 +304,7 @@ typedef enum {
     ePipe_chunk_single_ped_status = 40,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
+    ePipe_chunk_single_ped_pos = 46,
     ePipe_single_groove_on_off = 51,
     ePipe_funk_enable = 54,
     ePipe_single_ds_model = 56,
