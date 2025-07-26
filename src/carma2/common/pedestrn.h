@@ -185,4 +185,6 @@ void C2_HOOK_FASTCALL DisableOverallMovement(void);
 
 void C2_HOOK_FASTCALL EnableOverallMovement(void);
 
+br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed);
+
 #endif //REC2_PEDESTRN_H
