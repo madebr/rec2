@@ -3219,3 +3219,14 @@ void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tCol
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cd880, MakePedNoise, MakePedNoise_original)
+
+void (C2_HOOK_FASTCALL * SetCharacterMoveAR_original)(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, undefined4 pArg4, undefined4 pArg5, undefined4 pArg6);
+void C2_HOOK_FASTCALL SetCharacterMoveAR(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, undefined4 pArg4, undefined4 pArg5, undefined4 pArg6) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetCharacterMoveAR_original(pCharacter, pMove_action, pSpeed, pArg4, pArg5, pArg6);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d1c60, SetCharacterMoveAR, SetCharacterMoveAR_original)

@@ -193,4 +193,6 @@ void C2_HOOK_FASTCALL DoPostElectricution(tPedestrian* pPed, tU32 pTime, float p
 
 void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tCollision_info* pCollision_info);
 
+void C2_HOOK_FASTCALL SetCharacterMoveAR(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, undefined4 pArg4, undefined4 pArg5, undefined4 pArg6);
+
 #endif //REC2_PEDESTRN_H
