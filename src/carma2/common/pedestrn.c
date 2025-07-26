@@ -3197,3 +3197,14 @@ void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tCollision_info* pCollis
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cce70, KillPedestrian, KillPedestrian_original)
+
+void (C2_HOOK_FASTCALL * DoPostElectricution_original)(tPedestrian* pPed, tU32 pTime, float pF1, float pF2);
+void C2_HOOK_FASTCALL DoPostElectricution(tPedestrian* pPed, tU32 pTime, float pF1, float pF2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoPostElectricution_original(pPed, pTime, pF1, pF2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cc6e0, DoPostElectricution, DoPostElectricution_original)

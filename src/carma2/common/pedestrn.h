@@ -189,4 +189,6 @@ br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed);
 
 void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tCollision_info* pCollision_info);
 
+void C2_HOOK_FASTCALL DoPostElectricution(tPedestrian* pPed, tU32 pTime, float pF1, float pF2);
+
 #endif //REC2_PEDESTRN_H
