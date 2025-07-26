@@ -103,6 +103,8 @@ void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacte
 
 undefined4 C2_HOOK_FASTCALL CharacterNoLongerRenderable(tPed_character_instance* pCharacter);
 
+void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed);
+
 void C2_HOOK_FASTCALL MungePedestrians(void);
 
 void C2_HOOK_FASTCALL MakeFlagWavingBastardWaveHisFlagWhichIsTheProbablyTheLastThingHeWillEverDo(void);

@@ -1911,6 +1911,17 @@ undefined4 C2_HOOK_FASTCALL CharacterNoLongerRenderable(tPed_character_instance*
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00408400, CharacterNoLongerRenderable, CharacterNoLongerRenderable_original)
 
+void (C2_HOOK_FASTCALL * OneLessPed_original)(tPedestrian* pPed);
+void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed) {
+
+#if defined(C2_HOOKS_ENABLED)
+    OneLessPed(pPed);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cd160, OneLessPed, OneLessPed_original)
+
 void (C2_HOOK_FASTCALL * MungePedestrians_original)(void);
 void C2_HOOK_FASTCALL MungePedestrians(void) {
 
