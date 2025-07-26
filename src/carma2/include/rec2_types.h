@@ -276,12 +276,27 @@ typedef struct {
     tU16 enable;
 } tPipe_single_oppo_renderage;
 
+typedef struct {
+    undefined field_0x00;
+    undefined field_0x01;
+    undefined field_0x02;
+    undefined field_0x03;
+    tS8 field_0x04;
+    tU8 field_0x05;
+    undefined field_0x06;
+    tU8 field_0x07;
+    br_vector3 field_0x08;
+    br_vector3 field_0x14;
+    br_matrix34 field_0x20;
+} tPipe_single_ped_status;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_special = 8,
     ePipe_chunk_smudge = 19,
     ePipe_model_mash = 24,
     ePipe_smash_texture_change = 36,
+    ePipe_chunk_single_ped_status = 40,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_single_groove_on_off = 51,
