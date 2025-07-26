@@ -674,4 +674,4 @@ void C2_HOOK_FASTCALL PipeSingleVanishedDismembered(const tPedestrian* pPed, und
         SIZE_OFFSET_PIPING(tPipe_single_vanished_dismembered, field_0x0), pArg2,
         SIZE_OFFSET_PIPING(tPipe_single_vanished_dismembered, field_0x4), pArg2);
 }
-C2_HOOK_FUNCTION(0x004c8e10, PipeSinglePedPos)
+C2_HOOK_FUNCTION(0x004c8e10, PipeSingleVanishedDismembered)
