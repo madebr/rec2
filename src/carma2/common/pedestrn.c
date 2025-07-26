@@ -3168,3 +3168,9 @@ int C2_HOOK_FASTCALL MakeCharacterCollideworthy(tPed_character_instance *pCharac
     return MakeCharacterCollideworthy2(pCharacter, pArg2, pArg3, -1);
 }
 C2_HOOK_FUNCTION(0x00409030, MakeCharacterCollideworthy)
+
+void C2_HOOK_FASTCALL DisableOverallMovement(void) {
+
+    C2V(gPed_overall_movement_disabled) = 1;
+}
+C2_HOOK_FUNCTION(0x0040c600, DisableOverallMovement)

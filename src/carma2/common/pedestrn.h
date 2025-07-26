@@ -181,4 +181,6 @@ int C2_HOOK_FASTCALL MakeCharacterCollideworthy2(tPed_character_instance* pChara
 
 int C2_HOOK_FASTCALL MakeCharacterCollideworthy(tPed_character_instance *pCharacter, int pArg2, undefined4 pArg3);
 
+void C2_HOOK_FASTCALL DisableOverallMovement(void);
+
 #endif //REC2_PEDESTRN_H
