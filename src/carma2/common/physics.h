@@ -68,6 +68,8 @@ void C2_HOOK_FASTCALL InternalPositionChildren(tCollision_info *pParent, tCollis
 
 int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pParam, ...);
 
+float C2_HOOK_FASTCALL PHILGetObjectProperty(tCollision_info *pCollision_info, int pParam);
+
 void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tCollision_info *pCollision_info, tU8 pDisable);
 
 void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tCollision_info *pCollision_info, tU8 pDisable);

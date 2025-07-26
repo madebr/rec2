@@ -1071,6 +1071,38 @@ int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pP
 }
 C2_HOOK_FUNCTION(0x004b63b0, PHILSetObjectProperty)
 
+float C2_HOOK_FASTCALL PHILGetObjectProperty(tCollision_info *pCollision_info, int pParam) {
+    tCollision_info_owner* owner;
+
+    owner = (tCollision_info_owner*)pCollision_info->field_0x240;
+    if (C2V(gPHIL_enabled) || owner == NULL) {
+        return 0.f;
+    }
+    switch (pParam) {
+    case 0:
+        return owner->field_0x10;
+    case 1:
+        return (float)!!(owner->field_0x04 & 0x1);
+    case 2:
+        return owner->field_0x0c;
+    case 3:
+        return (float)!!(pCollision_info->flags & 0x40);
+    case 4:
+        return (float)!!(pCollision_info->flags & 0x8);
+    case 5:
+        return (float)!!(pCollision_info->flags & 0x10);
+    case 6:
+        return (float)!!(owner->field_0x04 & 0x4);
+    case 7:
+        return (float)!!(owner->field_0x04 & 0x8);
+    case 8:
+        return owner->field_0x14;
+    default:
+        return 5.f;
+    }
+}
+C2_HOOK_FUNCTION(0x004b6530, PHILGetObjectProperty)
+
 void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tCollision_info *pCollision_info, tU8 pDisable) {
 
     while (pCollision_info != NULL) {
