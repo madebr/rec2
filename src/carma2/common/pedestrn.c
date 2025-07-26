@@ -3151,3 +3151,14 @@ undefined4 C2_HOOK_FASTCALL MakeCharacterRenderable(tPed_character_instance* pCh
     return MakeCharacterRenderable2(pCharacter, i);
 }
 C2_HOOK_FUNCTION(0x004083b0, MakeCharacterRenderable)
+
+int (C2_HOOK_FASTCALL * MakeCharacterCollideworthy2_original)(tPed_character_instance* pCharacter, int pArg2, undefined4 pArg3, int pArg4);
+int C2_HOOK_FASTCALL MakeCharacterCollideworthy2(tPed_character_instance* pCharacter, int pArg2, undefined4 pArg3, int pArg4) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return MakeCharacterCollideworthy2_original(pCharacter, pArg2, pArg3, pArg4);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00408c30, MakeCharacterCollideworthy2, MakeCharacterCollideworthy2_original)
