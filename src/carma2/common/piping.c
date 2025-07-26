@@ -642,3 +642,20 @@ void C2_HOOK_FASTCALL PipeSingleOppoRenderage(tOpponent_spec *pOpponent_spec, in
         SIZE_OFFSET_PIPING(tPipe_single_oppo_renderage, enable), pEnable);
 }
 C2_HOOK_FUNCTION(0x004c9020, PipeSingleOppoRenderage)
+
+void C2_HOOK_FASTCALL PipeSinglePedStatus(tPedestrian* pPed, undefined pArg2, undefined pArg3, undefined pArg4, undefined pArg5, tS8 pArg6, tU8 pArg7, undefined pArg8, tU8 pArg9, const br_vector3* pArg10, const br_vector3* pArg11, const br_matrix34* pArg12) {
+
+    ARDoSingleVariedSession(ePipe_chunk_single_ped_status, (uintptr_t)pPed, 11,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x00), pArg2,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x01), pArg3,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x02), pArg4,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x03), pArg5,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x04), pArg6,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x05), pArg7,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x06), pArg8,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x07), pArg9,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x08), pArg10,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x14), pArg11,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_status, field_0x20), pArg12);
+}
+C2_HOOK_FUNCTION(0x004c8a90, PipeSinglePedStatus)
