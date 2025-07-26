@@ -1900,6 +1900,17 @@ void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacte
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cc860, SetCharacterPhysicsLevelAR, SetCharacterPhysicsLevelAR_original)
 
+undefined4 (C2_HOOK_FASTCALL * CharacterNoLongerRenderable_original)(tPed_character_instance* pCharacter);
+undefined4 C2_HOOK_FASTCALL CharacterNoLongerRenderable(tPed_character_instance* pCharacter) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return CharacterNoLongerRenderable_original(pCharacter);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00408400, CharacterNoLongerRenderable, CharacterNoLongerRenderable_original)
+
 void (C2_HOOK_FASTCALL * MungePedestrians_original)(void);
 void C2_HOOK_FASTCALL MungePedestrians(void) {
 
