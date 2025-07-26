@@ -3186,3 +3186,14 @@ br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed) {
     return (br_vector3*)GetCharacterMatrixPtr(pPed->character).m[3];
 }
 C2_HOOK_FUNCTION(0x004cadb0, GetPedPos)
+
+void (C2_HOOK_FASTCALL * KillPedestrian_original)(tPedestrian* ped, tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* ped, tCollision_info* pCollision_info) {
+
+#if defined(C2_HOOKS_ENABLED)
+    KillPedestrian_original(pPed, pCollision_info);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cce70, KillPedestrian, KillPedestrian_original)
