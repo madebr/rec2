@@ -102,4 +102,6 @@ void C2_HOOK_FASTCALL PipeSinglePedStatus(const tPedestrian* pPed, undefined pAr
 
 void C2_HOOK_FASTCALL PipeSinglePedPos(const tPedestrian* pPed, const br_vector3* pPos, const br_vector3 *pVelocity);
 
+void C2_HOOK_FASTCALL PipeSingleVanishedDismembered(const tPedestrian* pPed, undefined4 pArg2, undefined4 pArg3);
+
 #endif //REC2_PIPING_H
