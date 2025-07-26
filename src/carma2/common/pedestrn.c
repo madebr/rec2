@@ -1922,6 +1922,17 @@ void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cd160, OneLessPed, OneLessPed_original)
 
+void (C2_HOOK_FAKE_THISCALL * ScoreForKilledPedestrian_original)(tPedestrian* pPed, undefined4 pArg2, float pHeight);
+void C2_HOOK_FAKE_THISCALL ScoreForKilledPedestrian(tPedestrian* pPed, undefined4 pArg2, float pHeight) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ScoreForKilledPedestrian(pPed REC2_THISCALL_EDX, pHeight);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cd260, ScoreForKilledPedestrian, ScoreForKilledPedestrian_original)
+
 void (C2_HOOK_FASTCALL * MungePedestrians_original)(void);
 void C2_HOOK_FASTCALL MungePedestrians(void) {
 
