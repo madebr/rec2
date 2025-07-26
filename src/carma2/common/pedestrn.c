@@ -3183,7 +3183,7 @@ C2_HOOK_FUNCTION(0x0040c610, EnableOverallMovement)
 
 br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed) {
 
-    return (br_vector3*)GetCharacterMatrixPtr(pPed->character).m[3];
+    return (br_vector3*)GetCharacterMatrixPtr(pPed->character)->m[3];
 }
 C2_HOOK_FUNCTION(0x004cadb0, GetPedPos)
 
