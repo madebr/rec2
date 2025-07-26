@@ -3162,3 +3162,9 @@ int C2_HOOK_FASTCALL MakeCharacterCollideworthy2(tPed_character_instance* pChara
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00408c30, MakeCharacterCollideworthy2, MakeCharacterCollideworthy2_original)
+
+int C2_HOOK_FASTCALL MakeCharacterCollideworthy(tPed_character_instance *pCharacter, int pArg2, undefined4 pArg3) {
+
+    return MakeCharacterCollideworthy2(pCharacter, pArg2, pArg3, -1);
+}
+C2_HOOK_FUNCTION(0x00409030, MakeCharacterCollideworthy)
