@@ -3294,3 +3294,14 @@ void C2_HOOK_FASTCALL PedScanForObjects(tPedestrian* pPed, tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cef80, PedScanForObjects, PedScanForObjects_original)
+
+void (C2_HOOK_FASTCALL * MungeCharacterAnimation_original)(tPed_character_instance* pCharacter, tU32 pTime);
+void C2_HOOK_FASTCALL MungeCharacterAnimation(tPed_character_instance* pCharacter, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeCharacterAnimation(pCharacter, pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00409ca0, MungeCharacterAnimation, MungeCharacterAnimation_original)
