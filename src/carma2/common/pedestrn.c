@@ -3283,3 +3283,14 @@ void C2_HOOK_FASTCALL RescanPedProximity(tPedestrian* pPed, br_vector3* pArg2) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004cfab0, RescanPedProximity, RescanPedProximity_original)
+
+void (C2_HOOK_FASTCALL * PedScanForObjects_original)(tPedestrian* pPed, tU32 pTime);
+void C2_HOOK_FASTCALL PedScanForObjects(tPedestrian* pPed, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PedScanForObjects_original(pPed, pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004cef80, PedScanForObjects, PedScanForObjects_original)

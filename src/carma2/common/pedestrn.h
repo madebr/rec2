@@ -205,4 +205,6 @@ void C2_HOOK_FASTCALL SetPedXZDirection(tPedestrian* pPed, br_vector3* pDir, flo
 
 void C2_HOOK_FASTCALL RescanPedProximity(tPedestrian* pPed, br_vector3* pArg2);
 
+void C2_HOOK_FASTCALL PedScanForObjects(tPedestrian* pPed, tU32 pTime);
+
 #endif //REC2_PEDESTRN_H
