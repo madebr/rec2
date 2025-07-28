@@ -4689,16 +4689,26 @@ typedef struct {
     tU8 data[];
 } tNet_message_chunk_raw;
 
+typedef struct tWorld_callbacks {
+    int (C2_HOOK_FASTCALL * process_forces)(void*, float*, int arg3);
+    int (C2_HOOK_FASTCALL * process_joint_forces)(undefined4, undefined4, undefined4);
+    void (C2_HOOK_FASTCALL * new_face_list)(tCollision_info*, undefined4 *);
+    int (C2_HOOK_FASTCALL * find_faces_in_box)(tBounds*, tFace_ref*, int, struct tWorld_callbacks*);
+    tCar_spec* (C2_HOOK_FASTCALL * pull_actor_from_world)(br_actor*);
+    void (C2_HOOK_FASTCALL * stop_groovidelic)(br_actor*);
+    float (C2_HOOK_FASTCALL * get_friction_from_face)(void*);
+    void* activate_passive;
+} tWorld_callbacks;
+
 typedef struct {
-    void* callback_0x00;
-    void* callback_0x04;
-    void* callback_0x08;
-    void* callback_0x0c;
-    void* callback_0x10;
-    void* callback_0x14;
+    tWorld_callbacks* world_callbacks;
+    void (C2_HOOK_FASTCALL *pre_collisions)(void);
+    void (C2_HOOK_FASTCALL *post_collision)(void);
+    void (C2_HOOK_FASTCALL *changed_objects)(tCollision_info*, undefined4);
+    int (C2_HOOK_FASTCALL *active_halted)(tCollision_info*);
+    int (C2_HOOK_FASTCALL *passive_activated)(tCollision_info*);
     void* callback_0x18;
-    void* callback_0x1c;
-} tCar_callbacks;
+} tPhysics_callbacks;
 
 typedef struct {
     br_actor* actor;
@@ -4706,17 +4716,6 @@ typedef struct {
     int field_0x8;
     float field_0xc;
 } tToggled_door;
-
-typedef struct {
-    undefined4* process_forces_callback;
-    undefined4* process_join_forces_callback;
-    undefined4* new_face_list_callback;
-    undefined4* find_faces_in_box_callback;
-    tCar_spec* (C2_HOOK_FASTCALL * pull_actor_from_world_callback)(br_actor*);
-    void (C2_HOOK_FASTCALL * stop_groovidelic_callback)(br_actor*);
-    undefined4* get_fricion_from_face_callback;
-    undefined4* activate_passive;
-} tWorld_callbacks;
 
 typedef struct tSave_game {
     tU32 magic;
