@@ -1647,3 +1647,14 @@ void C2_HOOK_FASTCALL ProcessGravity(tPHIL_queued_header* pObject_info, tCollisi
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b6ec0, ProcessGravity, ProcessGravity_original)
+
+void (C2_HOOK_FASTCALL * ProcessDrag2_original)(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pDrag, int pObject_info_flags, tSpecial_volume* pSpecial_volume);
+void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pDrag, int pObject_info_flags, tSpecial_volume* pSpecial_volume) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessDrag2_original(pObject_info, pObject, pDrag, pObject_info_flags, pSpecial_volume);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b6ce0, ProcessDrag2, ProcessDrag2_original)
