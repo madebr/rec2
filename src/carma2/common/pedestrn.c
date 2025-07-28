@@ -3388,17 +3388,17 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
             tPed_form_bone_hinge_type joint_type;
             tPhysics_joint* joint;
 
-            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form_bone, parent_index, 0x28);
+            C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_form_bone, indices, 0x28);
 
             /* Collision detection type */
             collision_detection_type = GetALineAndInterpretCommand(f, C2V(gPed_form_collision_type_names), REC2_ASIZE(C2V(gPed_form_collision_type_names)));
             joint_type = GetALineAndInterpretCommand(f, C2V(gPed_form_bone_joint_type_names), REC2_ASIZE(C2V(gPed_form_bone_joint_type_names)));
             joint = NULL;
             if (joint_type < 0 || joint_type == ePed_form_bone_hinge_none) {
-                bone->parent_index = -1;
+                bone->indices[0] = -1;
             } else {
                 /* Index of parent */
-                bone->parent_index = GetAnInt(f);
+                bone->indices[0] = GetAnInt(f);
                 if (joint_type != ePed_form_bone_hinge_phantom && joint_type != ePed_form_bone_hinge_false) {
                     int count_limits;
                     int is_rotate;
@@ -3434,7 +3434,7 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
                             GetAVector(f, &limit->parent);
 
                             RemapVector(&limit->child, bone->remapped_bone);
-                            RemapVector(&limit->parent, form->bones[bone->parent_index].remapped_bone);
+                            RemapVector(&limit->parent, form->bones[bone->indices[0]].remapped_bone);
 
                             is_rotate = limit->type == eJoint_limit_universal;
                             /* Maximum angle allowed between above two vectors */
@@ -3448,7 +3448,7 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
                         GetAVector(f, &joint->hinge_axis);
                         BrVector3Copy(&joint->parent_bone_axis, &joint->hinge_axis);
                         RemapVector(&joint->hinge_axis, bone->remapped_bone);
-                        RemapVector(&joint->parent_bone_axis, form->bones[bone->parent_index].remapped_bone);
+                        RemapVector(&joint->parent_bone_axis, form->bones[bone->indices[0]].remapped_bone);
                         if (fabsf(joint->hinge_axis.v[0]) > fabsf(joint->hinge_axis.v[1]) && fabsf(joint->hinge_axis.v[0]) > fabsf(joint->hinge_axis.v[2])) {
                             BrVector3Cross(&joint->hinge_axis2, &joint->hinge_axis, &C2V(g_Ped_y_unit_vector));
                             BrVector3Cross(&joint->hinge_axis3, &joint->hinge_axis, &C2V(g_Ped_z_unit_vector));
