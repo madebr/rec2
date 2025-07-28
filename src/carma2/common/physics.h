@@ -132,4 +132,6 @@ void C2_HOOK_FASTCALL PHILActivatePassive(tCollision_info* pObject);
 
 void C2_HOOK_FASTCALL TestAutoSpecialVolume(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL MungeSpecialVolume(tCollision_info* pObject);
+
 #endif //REC2_PHYSICS_H

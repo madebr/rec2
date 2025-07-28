@@ -1626,3 +1626,14 @@ void C2_HOOK_FASTCALL TestAutoSpecialVolume(tCollision_info* pObject) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ff5d0, TestAutoSpecialVolume, TestAutoSpecialVolume_original)
+
+void (C2_HOOK_FASTCALL * MungeSpecialVolume_original)(tCollision_info* pObject);
+void C2_HOOK_FASTCALL MungeSpecialVolume(tCollision_info* pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeSpecialVolume_original(pObject);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ff410, MungeSpecialVolume, MungeSpecialVolume_original)
