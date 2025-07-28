@@ -195,4 +195,6 @@ int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, co
 
 void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar);
 
+void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar);
+
 #endif // REC2_CRUSH_H

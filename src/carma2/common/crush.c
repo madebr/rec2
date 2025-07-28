@@ -2473,3 +2473,14 @@ void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043f5f0, KnackerThisCar, KnackerThisCar_original)
+
+void (C2_HOOK_FASTCALL * RecordLastDamage_original)(tCar_spec* pCar);
+void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar) {
+
+#if defined(C2_HOOKS_ENABLED)
+    RecordLastDamage_original(pCar);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0043f9f0, RecordLastDamage, RecordLastDamage_original)
