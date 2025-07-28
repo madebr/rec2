@@ -1583,8 +1583,8 @@ int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject) {
 }
 C2_HOOK_FUNCTION(0x004b5d40, PHILAddObject)
 
-void (C2_HOOK_FASTCALL * PHILDoPhysics_original)(tCar_callbacks* pCallbacks, tU32 pLast_tick_time, tU32 pFrame_period);
-void C2_HOOK_FASTCALL PHILDoPhysics(tCar_callbacks* pCallbacks, tU32 pLast_tick_time, tU32 pFrame_period) {
+void (C2_HOOK_FASTCALL * PHILDoPhysics_original)(tPhysics_callbacks* pCallbacks, tU32 pLast_tick_time, tU32 pFrame_period);
+void C2_HOOK_FASTCALL PHILDoPhysics(tPhysics_callbacks* pCallbacks, tU32 pLast_tick_time, tU32 pFrame_period) {
 
 #if defined(C2_HOOKS_ENABLED)
     PHILDoPhysics_original(pCallbacks, pLast_tick_time, pFrame_period);
