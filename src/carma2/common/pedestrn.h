@@ -210,6 +210,8 @@ void C2_HOOK_FASTCALL PedScanForObjects(tPedestrian* pPed, tU32 pTime);
 
 void C2_HOOK_FASTCALL MungeCharacterAnimation(tPed_character_instance* pCharacter, tU32 pTime, undefined4 pArg3);
 
+void C2_HOOK_FASTCALL SetCharacterBoneModelAR(tPed_character_instance* pCharacter, int pArg2, undefined4 pArg3, int pArg4);
+
 br_matrix34* C2_HOOK_FASTCALL GetBoneMatrixPtr(tPed_character_instance* pCharacter, int pBone_index);
 
 void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tCollision_info* pObject, tCollision_info* pOpt_speed_object, float pArg4, br_vector3* pArg5, int pArg6);
