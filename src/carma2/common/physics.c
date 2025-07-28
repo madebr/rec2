@@ -1564,3 +1564,14 @@ void C2_HOOK_FASTCALL PHILDoPhysics(tCar_callbacks* pCallbacks, tU32 pLast_tick_
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b6630, PHILDoPhysics, PHILDoPhysics_original)
+
+int C2_HOOK_FASTCALL TimeToSendData(void) {
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, last_physics_send_time, 0x00659c30, -1);
+
+    if (C2V(gPHIL_last_physics_tick) > C2V(last_physics_send_time) && C2V(gPHIL_last_physics_tick) < C2V(last_physics_send_time) + 80) {
+        return 0;
+    }
+    C2V(last_physics_send_time) = C2V(gPHIL_last_physics_tick);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004978d0, TimeToSendData)
