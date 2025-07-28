@@ -4734,6 +4734,16 @@ typedef struct tWorld_callbacks {
     void (C2_HOOK_FASTCALL * activate_passive)(tCollision_info*);
 } tWorld_callbacks;
 
+typedef struct {
+    tWorld_callbacks* world_callbacks;
+    void (C2_HOOK_FASTCALL *pre_collision)(void);
+    void (C2_HOOK_FASTCALL *post_collision)(void);
+    void (C2_HOOK_FASTCALL *changed_objects)(tCollision_info*, undefined4);
+    int (C2_HOOK_FASTCALL *active_halted)(tCollision_info*);
+    int (C2_HOOK_FASTCALL *passive_activated)(tCollision_info*);
+    void* callback_0x18;
+} tPhysics_callbacks;
+
 typedef struct tSave_game {
     tU32 magic;
     char player_name[14];
