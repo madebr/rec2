@@ -3331,6 +3331,17 @@ void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tCollision_info* pObject, tCo
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ccff0, DoGiblets, DoGiblets_original)
 
+void (C2_HOOK_FASTCALL * DoSpurt_original)(br_matrix34* pArg1, br_vector3* pArg2, br_vector3* pArg3, br_vector3* pArg4);
+void C2_HOOK_FASTCALL DoSpurt(br_matrix34* pArg1, br_vector3* pArg2, br_vector3* pArg3, br_vector3* pArg4) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoSpurt_original(pArg1, pArg2, pArg3, pArg4);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d5820, DoSpurt, DoSpurt_original)
+
 br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index) {
 
     return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index]->model;
