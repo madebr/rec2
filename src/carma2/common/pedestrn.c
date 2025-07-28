@@ -1893,7 +1893,7 @@ void (C2_HOOK_CDECL * SetCharacterPhysicsLevelAR_original)(tPed_character_instan
 void C2_HOOK_CDECL SetCharacterPhysicsLevelAR(tPed_character_instance* pCharacter, tU32 pLevel) {
 
 #if defined(C2_HOOKS_ENABLED)
-    SetCharacterPhysicsLevelAR(pCharacter, pLevel);
+    SetCharacterPhysicsLevelAR_original(pCharacter, pLevel);
 #else
     NOT_IMPLEMENTED();
 #endif
