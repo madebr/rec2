@@ -4702,7 +4702,7 @@ typedef struct tWorld_callbacks {
 
 typedef struct {
     tWorld_callbacks* world_callbacks;
-    void (C2_HOOK_FASTCALL *pre_collisions)(void);
+    void (C2_HOOK_FASTCALL *pre_collision)(void);
     void (C2_HOOK_FASTCALL *post_collision)(void);
     void (C2_HOOK_FASTCALL *changed_objects)(tCollision_info*, undefined4);
     int (C2_HOOK_FASTCALL *active_halted)(tCollision_info*);
