@@ -3374,3 +3374,40 @@ int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter) {
     return pCharacter->field_0xa;
 }
 C2_HOOK_FUNCTION(0x0040b590, GetCharacterModelSet)
+
+int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, int pArg2, int pArg3, int pArg4) {
+
+    if (pArg3 >= 4
+            || pArg2 >= pCharacter->personality->form->count_bones
+            || pArg2 < 0
+            || pCharacter->field_0x4 < 0) {
+        return 0;
+    }
+    if (pArg3 < 0) {
+        br_actor* actor;
+        int i;
+
+        actor = pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pArg2];
+        for (i = 0; i < 4; i++) {
+            if (pCharacter->personality->bones[pArg2].models[i].models[pCharacter->field_0xa] == actor->model) {
+                break;
+            }
+        }
+        if (i == 4) {
+            i = 0;
+        }
+        actor->model = pCharacter->personality->bones[pArg2].models[i].models[pArg4];
+        pCharacter->field_0xa = pArg4;
+    } else {
+        br_model* model;
+
+        pCharacter->field_0xa = pArg4;
+        model = pCharacter->personality->bones[pArg2].models[pArg3].models[pArg4];
+        if (model == NULL) {
+            return 0;
+        }
+        pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pArg2]->model = model;
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x0040b420, SetCharacterBoneModel)

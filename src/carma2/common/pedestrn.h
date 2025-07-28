@@ -221,4 +221,6 @@ br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pChara
 
 int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter);
 
+int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, int pArg2, int pArg3, int pArg4);
+
 #endif //REC2_PEDESTRN_H
