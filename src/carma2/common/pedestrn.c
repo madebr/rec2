@@ -3411,3 +3411,12 @@ int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, 
     return 1;
 }
 C2_HOOK_FUNCTION(0x0040b420, SetCharacterBoneModel)
+
+void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pArg2, int pArg3) {
+    int i;
+
+    for (i = 0; i < pCharacter->personality->form->count_bones; i++) {
+        SetCharacterBoneModel(pCharacter, i, pArg2, pArg3);
+    }
+}
+C2_HOOK_FUNCTION(0x0040b530, SetCharacterAllBonesModel)
