@@ -212,4 +212,6 @@ void C2_HOOK_FASTCALL MungeCharacterAnimation(tPed_character_instance* pCharacte
 
 br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
 
+int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter);
+
 #endif //REC2_PEDESTRN_H
