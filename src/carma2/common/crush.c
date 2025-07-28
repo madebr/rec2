@@ -2477,10 +2477,22 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0043f5f0, KnackerThisCar, KnackerThisCar_original)
 void (C2_HOOK_FASTCALL * RecordLastDamage_original)(tCar_spec* pCar);
 void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     RecordLastDamage_original(pCar);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(pCar->damage_units); i++) {
+        pCar->damage_units[i].last_level = pCar->damage_units[i].damage_level;
+    }
+    pCar->damage_magnitude_accumulator = 0.0;
+    pCar->last_impact_location = eImpact_unknown;
+    pCar->pre_car_col_mat = pCar->car_master_actor->t.t.mat;
+    pCar->pre_car_col_knackered = pCar->knackered;
+    pCar->pre_car_col_speed = pCar->speed;
+    BrVector3Copy(&pCar->pre_car_col_direction, &pCar->direction);
+    BrVector3Copy(&pCar->pre_car_col_velocity, &pCar->collision_info->v);
+    BrVector3Copy(&pCar->pre_car_col_velocity_car_space, &pCar->collision_info->velocity_car_space);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043f9f0, RecordLastDamage, RecordLastDamage_original)
