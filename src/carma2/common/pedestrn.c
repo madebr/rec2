@@ -1533,12 +1533,12 @@ void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_
     if (!C2V(gAction_replay_mode) || C2V(gBOOL_00744804)) {
         if (!(pPed->field_0x14 & 0x4) && C2V(gProgram_state).racing) {
 
-            C2_HOOK_BUG_ON(sizeof(*C2V(gPedestrian_array)[0]) != 0x54);
+            C2_HOOK_BUG_ON(sizeof(C2V(gPedestrian_array)[0]) != 0x54);
 
             PipeSinglePedDir((pPed->ped->field_0x06 << 16) | (pPed->ped - C2V(gPedestrian_array)), pDir);
         }
         SetCharacterDirection(pPed, pDir, pUp);
-        if (C2V(gProgram_state).racing && OrientationChanged(0.7f, &collision_info->transform_matrix, &collision_info->actor->t.t.mat)) {
+        if (C2V(gProgram_state).racing && OrientationChanged(&collision_info->transform_matrix, &collision_info->actor->t.t.mat, .7f)) {
             AssertRootObjectsMatrix(pPed);
         }
     }
