@@ -2058,7 +2058,7 @@ void (C2_HOOK_FASTCALL * CheckForDeAttachmentOfNonCars_original)(tU32 pTime);
 void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime) {
 
 #if defined(C2_HOOKS_ENABLED)
-    CheckForDeattachmentOfNoncars_original(pTime);
+    CheckForDeAttachmentOfNonCars_original(pTime);
 #else
     NOT_IMPLEMENTED();
 #endif
