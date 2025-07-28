@@ -3213,7 +3213,7 @@ void (C2_HOOK_FASTCALL * MakePedNoise_original)(tPedestrian* pPed, int pArg2, in
 void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tCollision_info* pCollision_info) {
 
 #if defined(C2_HOOKS_ENABLED)
-    MakePedNoise(pPed, pArg2, pArg3, pCollision_info);
+    MakePedNoise_original(pPed, pArg2, pArg3, pCollision_info);
 #else
     NOT_IMPLEMENTED();
 #endif
