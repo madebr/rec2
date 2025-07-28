@@ -210,4 +210,6 @@ void C2_HOOK_FASTCALL PedScanForObjects(tPedestrian* pPed, tU32 pTime);
 
 void C2_HOOK_FASTCALL MungeCharacterAnimation(tPed_character_instance* pCharacter, tU32 pTime, undefined4 pArg3);
 
+br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
+
 #endif //REC2_PEDESTRN_H

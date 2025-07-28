@@ -3308,3 +3308,9 @@ void C2_HOOK_FASTCALL MungeCharacterAnimation(tPed_character_instance* pCharacte
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00409ca0, MungeCharacterAnimation, MungeCharacterAnimation_original)
+
+br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index) {
+
+    return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index]->model;
+}
+C2_HOOK_FUNCTION(0x0040b570, GetCharacterBoneModel)
