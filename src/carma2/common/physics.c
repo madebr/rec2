@@ -1647,3 +1647,4 @@ void C2_HOOK_FASTCALL ProcessGravity(tPhil_object_info_00692458* pObject_info, t
     NOT_IMPLEMENTED();
 #endif
 }
+C2_HOOK_FUNCTION_ORIGINAL(0x004b6ec0, ProcessGravity, ProcessGravity_original)
