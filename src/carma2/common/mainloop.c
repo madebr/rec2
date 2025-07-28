@@ -60,8 +60,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gCamera_period, 0x0074abf0);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gPrev_task_switched_message, 0x0068c834);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWindow_inactive, 0x0068c838);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTotal_bonus_post_race, 0x0068c774);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_active_cars, 0x0074c9ec);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gActive_car_list, 25, 0x0074c7c0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gQueued_wasted_messages_count, 0x0068c760);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_wasted_message_start, 0x0068c77c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gQueued_wasted_messages, 5, 0x0068c748);
