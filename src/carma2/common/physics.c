@@ -1604,3 +1604,14 @@ int C2_HOOK_FASTCALL TimeToSendData(void) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x004978d0, TimeToSendData)
+
+void (C2_HOOK_FASTCALL * PHILActivatePassive_original)(tCollision_info* pObject);
+void C2_HOOK_FASTCALL PHILActivatePassive(tCollision_info* pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PHILActivatePassive_original(pObject);
+#else
+    NOT_IMPLEMENTED():
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x, PHILActivatePassive, PHILActivatePassive_original)

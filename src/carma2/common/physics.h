@@ -128,4 +128,6 @@ void C2_HOOK_FASTCALL PHILDoPhysics(tPhysics_callbacks* pCallbacks, tU32 pLast_t
 
 int C2_HOOK_FASTCALL TimeToSendData(void);
 
+void C2_HOOK_FASTCALL PHILActivatePassive(tCollision_info* pObject);
+
 #endif //REC2_PHYSICS_H
