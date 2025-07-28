@@ -213,7 +213,7 @@ void (C2_HOOK_FASTCALL * SendCarData_original)(tU32 pNext_frame_time);
 void C2_HOOK_FASTCALL SendCarData(tU32 pNext_frame_time) {
 
 #if defined(C2_HOOKS_ENABLED)
-    SendCarData_original(pNext_frame_data);
+    SendCarData_original(pNext_frame_time);
 #else
     NOT_IMPLEMENTED();
 #endif
