@@ -1003,8 +1003,8 @@ int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, 
         if (C2V(gActorBoxPick_StopGroovidelics) && BoundsOverlapTest__finteray(&bnds->real_bounds, &this_model->bounds)) {
             n = ModelPickBox(ap, bnds, this_model, this_material, &face_list[i], max_face, pMat);
             if (pMat != NULL && max_face != n) {
-                if (pWorld_callbacks != NULL && pWorld_callbacks->stop_groovidelic_callback != NULL) {
-                    pWorld_callbacks->stop_groovidelic_callback(ap);
+                if (pWorld_callbacks != NULL && pWorld_callbacks->stop_groovidelic != NULL) {
+                    pWorld_callbacks->stop_groovidelic(ap);
                 }
             }
             i = max_face - n;
