@@ -217,4 +217,6 @@ void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tCollision_info* pObject, tCo
 
 void C2_HOOK_FASTCALL DoSpurt(br_matrix34* pArg1, br_vector3* pArg2, br_vector3* pArg3, br_vector3* pArg4);
 
+br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
+
 #endif //REC2_PEDESTRN_H
