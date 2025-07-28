@@ -277,7 +277,7 @@ tRace_result C2_HOOK_FASTCALL MainGameLoop(void) {
             ControlOurCar(C2V(gFrame_period));
 
             Timers_Push(TIMER_PHS);
-            ApplyPhysicsToCar(C2V(gLast_tick_count) - C2V(gRace_start), C2V(gFrame_period));
+            ApplyPhysicsToCars(C2V(gLast_tick_count) - C2V(gRace_start), C2V(gFrame_period));
             Timers_Pop(TIMER_PHS);
 
             MungeSomeOtherCarGraphics();
