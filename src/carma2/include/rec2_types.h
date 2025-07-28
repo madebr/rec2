@@ -4697,7 +4697,7 @@ typedef struct tWorld_callbacks {
     tCar_spec* (C2_HOOK_FASTCALL * pull_actor_from_world)(br_actor*);
     void (C2_HOOK_FASTCALL * stop_groovidelic)(br_actor*);
     float (C2_HOOK_FASTCALL * get_friction_from_face)(void*);
-    void* activate_passive;
+    void (C2_HOOK_FASTCALL * activate_passive)(tCollision_info*);
 } tWorld_callbacks;
 
 typedef struct {
