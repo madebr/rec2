@@ -3420,3 +3420,23 @@ void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharac
     }
 }
 C2_HOOK_FUNCTION(0x0040b530, SetCharacterAllBonesModel)
+
+void C2_HOOK_FASTCALL SetPedStartRun(tPedestrian* pPed) {
+
+    if (pPed->field_0x0c != NULL) {
+        pPed->field_0x0c->field_0x80 = 100;
+        pPed->field_0x0c->field_0xb8 = .09f;
+    }
+}
+
+void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int pArg3) {
+
+    if (!(pPed->character->field_0xc & 0x8) && !(pPed->character->field_0xc & 0x20) && pPed->field_0x0c != NULL) {
+
+        SetPedStartRun(pPed);
+        SetPedMove(pPed, pArg3 ? 40 : 41, pPed->field_0x0c->field_0x80, 0, 0, pTime, ePed_action_running);
+    } else {
+        SetPedMove(pPed, pArg3 ? 40 : 41, -1, 0, 0, pTime, ePed_action_running);
+    }
+}
+C2_HOOK_FUNCTION(0x004cc660, StartPedRunning)

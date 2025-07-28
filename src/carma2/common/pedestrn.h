@@ -225,4 +225,8 @@ int C2_HOOK_FASTCALL SetCharacterBoneModel(tPed_character_instance* pCharacter, 
 
 void C2_HOOK_FASTCALL SetCharacterAllBonesModel(tPed_character_instance* pCharacter, int pArg2, int pArg3);
 
+void C2_HOOK_FASTCALL SetPedStartRun(tPedestrian* pPed);
+
+void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int pArg3);
+
 #endif //REC2_PEDESTRN_H
