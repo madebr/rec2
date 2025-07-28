@@ -316,7 +316,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(int, gPed_move_fsm, [118][7], 0x0065d7
     { -41, -41, -41,   0,   2,   2,   2 },
     {   2,   2,   3,   4,   4,  10,  11 },
 });
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPow2_array, 32, 0x0058f2d8, {
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const int, gPow2_array, 32, 0x0058f2d8, {
            0x1,           0x2,           0x4,           0x8,
           0x10,          0x20,          0x40,          0x80,
          0x100,         0x200,         0x400,         0x800,
