@@ -482,7 +482,7 @@ int C2_HOOK_FASTCALL TestForCarInSensiblePlace(tCar_spec *pCar_spec, br_vector3 
     r = TestForObjectInSensiblePlace(pCar_spec->collision_info,
         C2V(gList_collision_infos),
         pVec3,
-        &C2V(gCar_callbacks));
+        &C2V(gWorld_callbacks));
     C2V(gTesting_car_for_sensible_place) = 0;
     return r;
 }
