@@ -2331,7 +2331,7 @@ void C2_HOOK_FASTCALL MungePedHeadAnim(tPedestrian* pPed, tU32 pTime) {
 }
 
 void C2_HOOK_FASTCALL MakeEmBleed(tPedestrian* pPed, tU32 pTime) {
-    C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_bleed_giblet_time, 0x006a0428);
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_bleed_giblet_time, 0x006a0428);
 
     if (GET_PED_COLLISION_OBJECT(pPed)->last_special_volume != NULL && GET_PED_COLLISION_OBJECT(pPed)->last_special_volume->gravity_multiplier < 1.f) {
         return;
