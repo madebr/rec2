@@ -1636,3 +1636,14 @@ void C2_HOOK_FASTCALL MungeSpecialVolume(tCollision_info* pObject) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ff410, MungeSpecialVolume, MungeSpecialVolume_original)
+
+void (C2_HOOK_FASTCALL * ProcessGravity_original)(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pGravity);
+void C2_HOOK_FASTCALL ProcessGravity(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pGravity) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessGravity_original(pObject_info, pObject, pGravity);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b6ec0, ProcessGravity, ProcessGravity_original)
