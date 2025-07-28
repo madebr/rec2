@@ -2295,13 +2295,9 @@ typedef struct tCar_spec {
     tS3_sound_source* sound_source;
      br_matrix34 pre_car_col_mat;
     float pre_car_col_speed;
-    float pre_car_col_direction;
-    float field_0x13ac;
-    float field_0x13b0;
+    br_vector3 pre_car_col_direction;
     br_vector3 pre_car_col_velocity;
-    float pre_car_col_velocity_car_space;
-    float field_0x13c4;
-    float field_0x13c8;
+    br_vector3 pre_car_col_velocity_car_space;
     br_vector3 vel;
     undefined field_0x13cc[8];
     float field_0x13e0;
