@@ -1183,8 +1183,8 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurse(tCollision_info* pCollision_info, tEnu
 }
 C2_HOOK_FUNCTION(0x004c6470, PhysicsObjectRecurse)
 
-int (C2_HOOK_FASTCALL * TestForObjectInSensiblePlace_original)(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tCar_callbacks* pCar_callbacks);
-int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tCar_callbacks* pCar_callbacks) {
+int (C2_HOOK_FASTCALL * TestForObjectInSensiblePlace_original)(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks);
+int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
 
 #if defined(C2_HOOKS_ENABLED)
     return TestForObjectInSensiblePlace_original(pCollision_info_1, pCollision_info_2, pVec3, pCar_callbacks);
