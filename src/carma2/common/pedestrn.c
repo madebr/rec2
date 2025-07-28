@@ -3340,3 +3340,14 @@ br_matrix34* C2_HOOK_FASTCALL GetBoneMatrixPtr(tPed_character_instance* pCharact
     return &pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index]->t.t.mat;
 }
 C2_HOOK_FUNCTION(0x00407ad0, GetBoneMatrixPtr)
+
+void (C2_HOOK_FASTCALL * DoGiblets_original)(tPedestrian* pPed, tCollision_info* pObject, tCollision_info* pOpt_speed_object, float pArg4, br_vector3* pArg5, int pArg6);
+void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tCollision_info* pObject, tCollision_info* pOpt_speed_object, float pArg4, br_vector3* pArg5, int pArg6) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoGiblets_original(pPed, pObject, pOpt_speed_object, pArg4, pArg5, pArg6);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ccff0, DoGiblets, DoGiblets_original)
