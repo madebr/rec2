@@ -12,6 +12,12 @@ C2_HOOK_VARIABLE_DECLARE(int, gPed_count);
 C2_HOOK_VARIABLE_DECLARE(int, gPed_nearness);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_killed_peds);
 C2_HOOK_VARIABLE_DECLARE(int, gTotal_count_smash_peds);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_active_peds);
+C2_HOOK_VARIABLE_DECLARE(int, gPeds_already_munged);
+C2_HOOK_VARIABLE_DECLARE(tPedestrian*, gPedestrians_in_sight);
+C2_HOOK_VARIABLE_DECLARE(tU32, gPed_last_munging);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_scare_time);
+C2_HOOK_VARIABLE_DECLARE(tPed_cache_006944c0, gPed_cache_00694328);
 
 void C2_HOOK_FASTCALL ClearOutMorphs(void);
 
@@ -108,6 +114,46 @@ void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed);
 void C2_HOOK_FAKE_THISCALL ScoreForKilledPedestrian(tPedestrian* pPed, undefined4 pArg2, float pHeight);
 
 int C2_HOOK_FASTCALL SetCharacterPhysicsLevel(tPed_character_instance* pCharacter, int pLevel);
+
+void C2_HOOK_FASTCALL MakePedVanish(tPedestrian* pPed);
+
+int C2_HOOK_FASTCALL PedFallingForever(tPedestrian* pPed);
+
+void C2_HOOK_FASTCALL KillNapalmBolt(tNapalm_bolt* pBolt);
+
+void C2_HOOK_FASTCALL SetNextRandomTurn(tPedestrian* pPed, tU32 pTime);
+
+void C2_HOOK_FASTCALL InitProcessData(tPedestrian* pPed, tU32 pTime);
+
+void C2_HOOK_FASTCALL AcceleratePed(tPedestrian* pPed, tU32 pTime);
+
+void C2_HOOK_FASTCALL SetCharacterPositionAR(tPed_character_instance* pCharacter, br_vector3* pPos, int pArg3);
+
+void C2_HOOK_FASTCALL StopSmoothTurning(tPedestrian* pPed);
+
+void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed);
+
+int C2_HOOK_FASTCALL PedAnimCausesMovement(tPedestrian* pPed);
+
+void C2_HOOK_FASTCALL SmoothTurnPedestrian(tPedestrian* pPed, tU32 pTime);
+
+void C2_HOOK_FASTCALL RandomWander(tPedestrian* pPed, tU32 pTime);
+
+void C2_HOOK_FASTCALL ResetScanDirection(tPedestrian* pPed);
+
+void C2_HOOK_FASTCALL CheckForAvoidingAction(tPedestrian* pPed, tU32 pTime);
+
+void C2_HOOK_FASTCALL SetRandomOmega(tCollision_info* pObject, float pMax);
+
+void C2_HOOK_FASTCALL CheckPowerupMoveSubstitution(tPedestrian* pPed, tU32 pTime);
+
+void C2_HOOK_FASTCALL StillifyCorpse(tPedestrian* pPed, tU32 pTime, undefined4 pArg3);
+
+void C2_HOOK_FASTCALL MakeEmBleed(tPedestrian* pPed, tU32 pTime);
+
+void C2_HOOK_FASTCALL SetPedHeadAnim(tPedestrian *pPed, undefined* pArg2, tU32 pTime);
+
+void C2_HOOK_FASTCALL ScarePedestrian(tPedestrian* pPed, tU32 pTime, int pArg3, int pArg4);
 
 void C2_HOOK_FASTCALL MungePedestrians(void);
 

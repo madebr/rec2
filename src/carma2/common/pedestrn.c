@@ -1,6 +1,7 @@
 #include "pedestrn.h"
 
 #include "animation.h"
+#include "car.h"
 #include "errors.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -13,6 +14,7 @@
 #include "replay.h"
 #include "skidmark.h"
 #include "smashing.h"
+#include "spark.h"
 #include "trig.h"
 #include "utility.h"
 #include "world.h"
@@ -24,6 +26,8 @@
 
 #include "rec2_macros.h"
 #include "rec2_types.h"
+
+#define GET_PED_COLLISION_OBJECT(PED) ( ((PED)->character->field_0x14 & 1) ? (PED)->character->personality->form->simple_physicing[(PED)->character->field_0x5].collision_info : GetRootObject((PED)->character))
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPed_cache_sizes_2, 4, 0x0065d7a8, {
     5, 10, 40, 75,
@@ -157,6 +161,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0067772c, 0x0067772c);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPed_overall_movement_disabled, 0x00676978, 0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_retain_root_mode, 0x00677234);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_changed_points, 0x0069412c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_vector3, gChanged_points, 10, 0x0069bc68);
 C2_HOOK_VARIABLE_IMPLEMENT(tTWTVFS, gTwtPeds, 0x00694498);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_score_multiplier, 0x0069bce4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_recent_points, 0x0069bc30);
@@ -320,6 +325,26 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPow2_array, 32, 0x0058f2d8, {
       0x100000,      0x200000,      0x400000,      0x800000,
      0x1000000,     0x2000000,     0x4000000,     0x8000000,
     0x10000000,    0x20000000,    0x40000000,    0x80000000
+});
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_active_peds, 0x007447ec);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPeds_already_munged, 0x0069bce0);
+C2_HOOK_VARIABLE_IMPLEMENT(tPedestrian*, gPedestrians_in_sight, 0x007447b4);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gPed_last_munging, 0x00694130);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_scare_time, 0x006a042c);
+C2_HOOK_VARIABLE_IMPLEMENT(tPed_cache_006944c0, gPed_cache_00694328, 0x00694328);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const br_vector3, gPed_bone_look_vecs, 9, 0x0065e4f4, {
+    { {  0.f,  1.f,  0.f } },
+    { {  0.f, -1.f,  0.f } },
+    { {  0.f, -1.f,  0.f } },
+    { {  0.f, -1.f,  0.f } },
+    { {  0.f, -1.f,  0.f } },
+    { {  1.f,  0.f,  0.f } },
+    { {  1.f,  0.f,  0.f } },
+    { { -1.f,  0.f,  0.f } },
+    { { -1.f,  0.f,  0.f } },
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(undefined, gPed_scare_head_anim_byte_array, 8, 0x0065e4d8, {
+    4, 1, 2, 1, 99, 0, 0, 0,
 });
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
@@ -1021,7 +1046,7 @@ void C2_HOOK_FASTCALL SetCharacterBonePositions(tPed_character_instance* pPed, u
     }
     ped_move_frame = &form->moves[pPed->field_0x7].move->frames[pPed->field_0x1c];
     for (i = 0; i < form->count_bones; i++) {
-        int parent_index = form->bones[i].parent_index;
+        int parent_index = form->bones[i].indices[0];
 
         if (parent_index >= 0) {
             if (!(C2V(gPow2_array)[i] & pPed->field_0xc) && !(C2V(gPow2_array)[parent_index] & pPed->field_0xc)
@@ -1944,13 +1969,805 @@ int C2_HOOK_FASTCALL SetCharacterPhysicsLevel(tPed_character_instance* pCharacte
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00409570, SetCharacterPhysicsLevel, SetCharacterPhysicsLevel_original)
 
+void C2_HOOK_FASTCALL MakePedVanish(tPedestrian* pPed) {
+
+    PipeSinglePedPos(pPed, &pPed->pos, &C2V(gZero_v__car));
+    pPed->flags |= 0x80;
+    C2V(gPipe_halted_ped_status) = 1;
+    SetCharacterPhysicsLevelAR(pPed->character, 0);
+    CharacterNoLongerRenderable(pPed->character);
+    C2V(gPipe_halted_ped_status) = 0;
+    OneLessPed(pPed);
+}
+
+int C2_HOOK_FASTCALL PedFallingForever(tPedestrian* pPed) {
+
+    if (pPed->flags & 0x80) {
+        return 0;
+    }
+    MakePedVanish(pPed);
+    if (pPed->hit_points > 0) {
+        ScoreForKilledPedestrian(pPed REC2_THISCALL_EDX, pPed->pos.v[1] - FindYVerticallyBelow(&pPed->pos));
+    }
+    return 1;
+}
+
+void C2_HOOK_FASTCALL KillNapalmBolt(tNapalm_bolt* pBolt) {
+    size_t i;
+
+    for (i = 0; i < REC2_ASIZE(pBolt->actors); i++) {
+        pBolt->actors[i]->render_style = BR_RSTYLE_NONE;
+    }
+    pBolt->field_0x0 = 0;
+}
+
+void C2_HOOK_FASTCALL SetNextRandomTurn(tPedestrian* pPed, tU32 pTime) {
+
+    if (pPed->movement_spec->max_time_between != 0) {
+        pPed->field_0x0c->next_turn_time = pTime + IRandomBetween(pPed->movement_spec->min_time_between, pPed->movement_spec->max_time_between);
+    } else {
+        pPed->field_0x0c->next_turn_time = 0;
+    }
+}
+
+void C2_HOOK_FASTCALL InitProcessData(tPedestrian* pPed, tU32 pTime) {
+    tPed_cache_006944c0* ped_field_0x0c;
+
+    C2_HOOK_BUG_ON(sizeof(tPed_cache_006944c0) != 0x12c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x18, 0x18);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x19, 0x19);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x1c, 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x21, 0x21);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x23, 0x23);
+#if 0
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x24, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x25, 0x25);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x26, 0x26);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x27, 0x27);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x28, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x29, 0x29);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x2a, 0x2a);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x2b, 0x2b);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x2c, 0x2c);
+#endif
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x2e, 0x2e);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x6c, 0x6c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x80, 0x80);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x84, 0x84);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x88, 0x88);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x8c, 0x8c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x90, 0x90);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x94, 0x94);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x98, 0x98);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x9c, 0x9c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0xa0, 0xa0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0xc0, 0xc0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0xc4, 0xc4);
+
+    ped_field_0x0c = pPed->field_0x0c;
+    if (ped_field_0x0c->field_0xb0 != NULL) {
+        ped_field_0x0c->field_0xb0->field_0x14 = NULL;
+        ped_field_0x0c->field_0xb0 = NULL;
+    }
+    SetNextRandomTurn(pPed, pTime);
+    ped_field_0x0c->field_0x18 = 0;
+    ped_field_0x0c->field_0x6c = 0;
+    ped_field_0x0c->field_0x80 = 0;
+    ped_field_0x0c->field_0x19 = 0;
+    ped_field_0x0c->field_0xc0 = 0;
+    ped_field_0x0c->field_0x1c = NULL;
+    ped_field_0x0c->field_0x2e = 0;
+    ped_field_0x0c->field_0x21 = 0;
+    ped_field_0x0c->field_0xa0 = -1;
+    ped_field_0x0c->field_0x9c = 0;
+    ped_field_0x0c->field_0x88 = 0;
+    ped_field_0x0c->field_0x8c = 0;
+    ped_field_0x0c->field_0x84 = C2V(gPed_spurting_period);
+    ped_field_0x0c->field_0xc4 &= ~0x1;
+    ped_field_0x0c->field_0x94 = 0;
+    ped_field_0x0c->field_0x90 = 0;
+    ped_field_0x0c->field_0x98 = 0;
+    ped_field_0x0c->field_0x23[0] = 0;
+    ped_field_0x0c->field_0x23[1] = 0;
+    ped_field_0x0c->field_0x23[2] = 0;
+    ped_field_0x0c->field_0x23[3] = 0;
+    ped_field_0x0c->field_0x23[4] = 0;
+    ped_field_0x0c->field_0x23[5] = 0;
+    ped_field_0x0c->field_0x23[6] = 0;
+    ped_field_0x0c->field_0x23[7] = 0;
+    ped_field_0x0c->field_0x23[8] = 0;
+    ped_field_0x0c->field_0x23[9] = 0;
+}
+
+void C2_HOOK_FASTCALL AcceleratePed(tPedestrian* pPed, tU32 pTime) {
+
+    if (pPed->field_0x0c != NULL && pPed->field_0x0c->field_0x80 != 0) {
+        int speed;
+
+        if (!C2V(gAction_replay_mode) || ARGetReplayRate() >= 0.f) {
+            speed = (int)((float)pPed->field_0x0c->field_0x80 - (float)C2V(gFrame_period) * pPed->field_0x0c->field_0xb8);
+            pPed->field_0x0c->field_0x80 = speed;
+            if (speed <= 30) {
+                speed = 30;
+                pPed->field_0x0c->field_0x80 = 0;
+            }
+            pPed->field_0x0c->field_0x80 = MAX(30, pPed->field_0x0c->field_0x80);
+        } else {
+            speed = (int)((float)pPed->field_0x0c->field_0x80 + (float)C2V(gFrame_period) * pPed->field_0x0c->field_0xb8);
+            pPed->field_0x0c->field_0x80 = speed;
+            if (speed >= 100) {
+                speed = 100;
+                pPed->field_0x0c->field_0x80 = 0;
+            }
+        }
+        if (C2V(gPedestrian_speed_factor) == 0.f) {
+            SetCharacterMoveAR(pPed->character, -1, (float)speed, 0, 0, pTime);
+        } else {
+            SetCharacterMoveAR(pPed->character, -1, (float)speed / C2V(gPedestrian_speed_factor), 0, 0, pTime);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL SetCharacterPositionAR(tPed_character_instance* pCharacter, br_vector3* pPos, int pArg3) {
+    br_vector3 current_pos;
+    br_matrix34* mat;
+
+    mat = GetCharacterMatrixPtr(pCharacter);
+    BrVector3Copy(&current_pos, (br_vector3*)mat->m[3]);
+    SetCharacterPosition(pCharacter, pPos, pArg3);
+    if (!(pCharacter->field_0x14 & 0x4)) {
+        PipeSinglePedPos(pCharacter->ped, &current_pos, (br_vector3*)GetCharacterMatrixPtr(pCharacter)->m[3]);
+    }
+}
+
+void C2_HOOK_FASTCALL StopSmoothTurning(tPedestrian* pPed) {
+
+    pPed->field_0x0c->field_0x6c = 0;
+}
+
+void C2_HOOK_FASTCALL SetThisPedPhysicing(tPedestrian* pPed) {
+
+    StopSmoothTurning(pPed);
+    SetCharacterPhysicsLevelAR(pPed->character, 5);
+}
+
+int C2_HOOK_FASTCALL PedAnimCausesMovement(tPedestrian* pPed) {
+
+    return !pPed->character->personality->form->moves[pPed->character->field_0x7].move->field_0x2a;
+}
+
+void C2_HOOK_FASTCALL SmoothTurnPedestrian(tPedestrian* pPed, tU32 pTime) {
+    tPed_cache_006944c0* ped_cache;
+
+    ped_cache = pPed->field_0x0c;
+    if (pTime < ped_cache->field_0x70) {
+        float t;
+        float invt;
+        br_vector3 dir;
+
+        t = (float)(pTime - ped_cache->field_0x6c) / (float)(ped_cache->field_0x70 - ped_cache->field_0x6c);
+        invt = 1.f - t;
+
+        BrVector3Set(&dir,
+            t * ped_cache->field_0x54.v[0] + invt * ped_cache->field_0x60.v[0],
+            t * ped_cache->field_0x54.v[1] + invt * ped_cache->field_0x60.v[1],
+            t * ped_cache->field_0x54.v[2] + invt * ped_cache->field_0x60.v[2]);
+        SetCharacterDirectionAR(pPed->character, &dir, &pPed->character->field_0xcc);
+    } else {
+        StopSmoothTurning(pPed);
+        SetCharacterDirectionAR(pPed->character, &pPed->field_0x0c->field_0x48, &pPed->character->field_0xcc);
+    }
+}
+
+void C2_HOOK_FASTCALL RandomWander(tPedestrian* pPed, tU32 pTime) {
+
+    if (pPed->field_0x0c->next_turn_time != 0 && pTime >= pPed->field_0x0c->next_turn_time) {
+        br_matrix34 mat;
+        br_vector3 dir_old;
+        br_vector3 dirxz_old;
+        br_vector3 dirxz_new;
+        tPed_cache_006944c0 state_old;
+
+        SetNextRandomTurn(pPed, pTime);
+        if (PercentageChance(50)) {
+            BrMatrix34Rotate(&mat,  IRandomBetween(BR_ANGLE_DEG(10), pPed->movement_spec->max_random_angle), &C2V(y_unit_vector));
+        } else {
+            BrMatrix34Rotate(&mat, -IRandomBetween(BR_ANGLE_DEG(10), pPed->movement_spec->max_random_angle), &C2V(y_unit_vector));
+        }
+        BrVector3Set(&dirxz_old, pPed->character->field_0xc0.v[0], 0.f, pPed->character->field_0xc0.v[2]);
+        BrMatrix34ApplyV(&dirxz_new, &dirxz_old, &mat);
+
+        state_old = *pPed->field_0x0c;
+        BrVector3Copy(&dir_old, &pPed->character->field_0xc0);
+
+        SetPedXZDirection(pPed, &dirxz_new, 1.f, pTime);
+        RescanPedProximity(pPed, &dirxz_new);
+        if (pPed->field_0x0c->field_0x18) {
+            *pPed->field_0x0c = state_old;
+            SetPedXZDirection(pPed, &dir_old, 0.f, pTime);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL ResetScanDirection(tPedestrian* pPed) {
+    BrVector3Set(&pPed->field_0x0c->field_0x0c, 0.f, 0.f, 0.f);
+}
+
+void C2_HOOK_FASTCALL CheckForAvoidingAction(tPedestrian* pPed, tU32 pTime) {
+    br_vector3* ped_pos;
+    float dist_squared;
+
+    ped_pos = GetPedPos(pPed);
+    dist_squared = Vector3DistanceSquared(ped_pos, &pPed->field_0x0c->field_0x3c);
+    if (dist_squared >= C2V(gPed_min_dist_avoid_collisions_squared)) {
+        ResetScanDirection(pPed);
+    } else {
+        float act_dist;
+
+        if (dist_squared > C2V(gPed_reach_squared)) {
+            act_dist = (sqrtf(dist_squared) - sqrtf(C2V(gPed_reach_squared))) * FRandomBetween(.7f, 1.f);
+            act_dist = MIN(act_dist, .5f);
+        } else {
+            act_dist = .0f;
+        }
+        if (pPed->field_0x0c->field_0x18 == 1 && (C2V(gPeds_suicidal) || C2V(gBlind_pedestrians) || (act_dist == .0f && pPed->action == ePed_action_running && PercentageChance(100)))) {
+            pPed->field_0x0c->field_0x18 = 0;
+        } else if (!(C2V(gPeds_suicidal) && (pPed->field_0x0c->field_0x18 & 0x4))) {
+            float first_ped_prox;
+            int v_non_zero;
+            br_vector3 new_dir;
+            br_vector3 new_0xa4;
+            br_vector3 tv;
+
+            if (pPed->field_0x0c->field_0x18 == 4) {
+                if (pTime < pPed->field_0x0c->field_0x90) {
+                    return;
+                }
+                pPed->field_0x0c->field_0x90 = pTime + IRandomBetween(200, 500);
+            }
+            v_non_zero = !Vector3IsZero(&pPed->field_0x0c->field_0x30);
+
+            if (dist_squared == .0f) {
+                BrVector3Copy(&new_dir, &pPed->field_0x0c->field_0xa4);
+            } else {
+
+                if (fabsf(BrVector3Dot(&pPed->field_0x0c->field_0xa4, &pPed->character->field_0xc0)) > .985f) {
+                    BrVector3Set(&tv, 0.f, (float)(PercentageChance(50) ? -1 : 1), 0.f);
+                } else {
+                    DRVector3SafeCross(&tv, &pPed->field_0x0c->field_0xa4, &pPed->character->field_0xc0);
+                }
+                DRVector3SafeCross(&new_dir, &tv, &pPed->field_0x0c->field_0xa4);
+                if (v_non_zero && BrVector3Dot(&pPed->field_0x0c->field_0x30, &new_dir) < 0.f) {
+                    BrVector3Negate(&tv, &tv);
+                    DRVector3SafeCross(&new_dir, &tv, &pPed->field_0x0c->field_0xa4);
+                }
+            }
+            SetPedXZDirection(pPed, &new_dir, act_dist, pTime);
+            BrVector3Copy(&new_0xa4, &pPed->field_0x0c->field_0xa4);
+            first_ped_prox = RescanPedProximity(pPed, &new_dir);
+            if (pPed->field_0x0c->field_0x18 != 0 && dist_squared != 0.f) {
+                tPed_cache_006944c0 prev_field_0x0c;
+                br_vector3 other_dir;
+
+                BrVector3Negate(&tv, &tv);
+                DRVector3SafeCross(&other_dir, &tv, &new_0xa4);
+                SetPedXZDirection(pPed, &other_dir, act_dist, pTime);
+                prev_field_0x0c = *pPed->field_0x0c;
+                if (RescanPedProximity(pPed, &other_dir) <= first_ped_prox) {
+                    *pPed->field_0x0c = prev_field_0x0c;
+                    SetPedXZDirection(pPed, &new_dir, act_dist, pTime);
+                    ResetScanDirection(pPed);
+                }
+            }
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL SetRandomOmega(tCollision_info* pObject, float pMax) {
+
+#ifdef REC2_FIX_BUGS
+    BrVector3Set(&pObject->omega, SRandomPosNeg(1.f), SRandomPosNeg(1.f), SRandomPosNeg(1.f));
+    BrVector3Normalise(&pObject->omega, &pObject->omega);
+    BrVector3Scale(&pObject->omega, &pObject->omega, pMax);
+#else
+    BrVector3Set(&pObject->omega, SRandomPosNeg(1.f), SRandomPosNeg(1.f), SRandomPosNeg(1.f));
+    BrVector3Scale(&pObject->omega, &pObject->omega, &pMax / BrVector3Length(&tv));
+#endif
+}
+
+void C2_HOOK_FASTCALL CheckPowerupMoveSubstitution(tPedestrian* pPed, tU32 pTime) {
+    int current_state;
+    int next_state_idx;
+
+    current_state = pPed->character->personality->form->moves[pPed->character->field_0x7].id;
+    if (C2V(gDrunk_pedestrians)) {
+        next_state_idx = 4;
+    } else if (C2V(gDancing_peds)) {
+        next_state_idx = 3;
+    } else if (C2V(gPanicking_peds)) {
+        next_state_idx = 5;
+    } else {
+        if (current_state == 112 || current_state == 31 || current_state == 111) {
+            SetPedMove(pPed, 30, -1, 0, 0, pTime, -1);
+        }
+        return;
+    }
+    if (current_state != C2V(gPed_move_fsm)[current_state][next_state_idx + 1]) {
+        SetPedMove(pPed, C2V(gPed_move_fsm)[current_state][next_state_idx + 1], -1, 0, 0, pTime, -1);
+    }
+}
+
+void C2_HOOK_FASTCALL StillifyCorpse(tPedestrian* pPed, tU32 pTime, undefined4 pArg3) {
+
+    if (C2V(gMutant_speed) == 0.f) {
+        SetCharacterMoveAR(pPed->character, -1, 0.f, pArg3, 0, pTime);
+    } else {
+        SetCharacterMoveAR(pPed->character, -1, -C2V(gMutant_speed), pArg3, 0, pTime);
+    }
+}
+
+void C2_HOOK_FASTCALL MungePedHeadAnim(tPedestrian* pPed, tU32 pTime) {
+    tPed_cache_006944c0* ped_field_0x0c;
+
+    ped_field_0x0c = pPed->field_0x0c;
+    if (ped_field_0x0c != NULL
+            && ped_field_0x0c->field_0x1c != NULL
+            && pTime > ped_field_0x0c->field_0x78 + 125) {
+
+        ped_field_0x0c->field_0x1a += 1;
+        if (ped_field_0x0c->field_0x1a >= ped_field_0x0c->field_0x1c[0]) {
+            ped_field_0x0c->field_0x1a = 1;
+        }
+        if (ped_field_0x0c->field_0x1c[ped_field_0x0c->field_0x1a + 1] == 99) {
+            ped_field_0x0c->field_0x1c = NULL;
+        } else {
+            ped_field_0x0c->field_0x78 = pTime;
+            SetCharacterBoneModelAR(pPed->character,
+                pPed->character->personality->form->index_head_bone,
+                ped_field_0x0c->field_0x1c[ped_field_0x0c->field_0x1a + 1],
+                pPed->hit_points <= 0);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL MakeEmBleed(tPedestrian* pPed, tU32 pTime) {
+    C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_bleed_giblet_time, 0x006a0428);
+
+    if (GET_PED_COLLISION_OBJECT(pPed)->last_special_volume != NULL && GET_PED_COLLISION_OBJECT(pPed)->last_special_volume->gravity_multiplier < 1.f) {
+        return;
+    }
+    if (C2V(gGoreLevel) <= 0) {
+        return;
+    }
+    if (C2V(gMutant_speed) != 0.f && pPed->hit_points <= 0 && pPed->action == ePed_action_dead && pTime - C2V(last_bleed_giblet_time) > 300 && PercentageChance(40)) {
+
+        C2V(last_bleed_giblet_time) = pTime;
+        DoGiblets(pPed, GET_PED_COLLISION_OBJECT(pPed), NULL, .06f, &pPed->pos, C2V(gGiblet_scrape_start));
+    }
+    if (pPed->character->field_0xc != 0 && pPed->field_0x0c != NULL && pTime - pPed->field_0x0c->field_0x88 > pPed->field_0x0c->field_0x84) {
+        int i;
+
+        if (pPed->hit_points <= 0) {
+            pPed->field_0x0c->field_0x84 = (tU32)((float)pPed->field_0x0c->field_0x84 * 1.2f);
+            if (pPed->field_0x0c->field_0x84 > 1000) {
+                pPed->field_0x0c->field_0x84 = 0;
+            }
+        }
+        for (i = 1; i < pPed->character->personality->form->count_bones; i++) {
+            if ((pPed->character->field_0xc & C2V(gPow2_array)[i]) && !(pPed->character->field_0x10 & C2V(gPow2_array)[i])) {
+                tCollision_info* object;
+                br_vector3* bone_v;
+                int other_bone_index;
+
+                object = pPed->character->personality->form->boned_physicing[pPed->character->field_0x6].collision_infos[i];
+                if (pPed->field_0x0c->field_0x23[i] < C2V(gPed_spurty_lumps_count) && BrVector3Length(&object->v) == 0.f) {
+                    pPed->field_0x0c->field_0x23[i] = 0;
+                } else {
+                    br_matrix34* bone_matrix;
+                    br_vector3 bone_look;
+
+                    if (pPed->field_0x0c->field_0x23[i] != 0) {
+                        pPed->field_0x0c->field_0x23[i] -= C2V(gPed_spurty_lumps_count);
+                    }
+
+                    bone_matrix = GetBoneMatrixPtr(pPed->character, i);
+                    BrVector3Copy(&bone_look, (br_vector3*)bone_matrix->m[0]);
+                    DoSpurt(bone_matrix, &pPed->character->personality->bones[i].field_0x20, &bone_look, &object->v);
+                }
+                other_bone_index = pPed->character->personality->form->bones[0].indices[i];
+                if (pPed->character->field_0xc & C2V(gPow2_array)[other_bone_index]) {
+                    bone_v = &pPed->character->personality->form[0].boned_physicing[pPed->character->field_0x6].collision_infos[other_bone_index]->v;
+                    if (pPed->field_0x0c->field_0x23[i] == 0) {
+                        continue;
+                    }
+                } else {
+                    bone_v = &pPed->character->field_0xd8;
+                }
+                if (BrVector3LengthSquared(bone_v) != 0.f || pPed->field_0x0c->field_0x84 != 0) {
+                    br_matrix34* other_bone_matrix;
+                    br_vector3 other_bone_look;
+
+                    other_bone_matrix = GetBoneMatrixPtr(pPed->character, other_bone_index);
+                    if (other_bone_index!= 0) {
+                        BrVector3Copy(&other_bone_look, (br_vector3*)other_bone_matrix->m[0]);
+                    } else {
+                        BrMatrix34ApplyV(&other_bone_look, &C2V(gPed_bone_look_vecs)[i - 1], other_bone_matrix);
+                    }
+                    DoSpurt(other_bone_matrix, &pPed->character->personality->bones[i].field_0x2c, &other_bone_look, bone_v);
+                }
+            }
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL SetPedHeadAnim(tPedestrian *pPed, undefined* pArg2, tU32 pTime) {
+
+    if (pPed->hit_points > 0 && pPed->field_0x0c != NULL) {
+        pPed->field_0x0c->field_0x1c = pArg2;
+        pPed->field_0x0c->field_0x78 = pTime;
+        pPed->field_0x0c->field_0x1a = 0;
+        SetCharacterBoneModelAR (pPed->character, pPed->character->personality->form->index_head_bone, pPed->field_0x0c->field_0x1c[1], 0);
+    }
+}
+
+void C2_HOOK_FASTCALL ScarePedestrian(tPedestrian* pPed, tU32 pTime, int pArg3, int pArg4) {
+
+    pPed->action = pPed->action;
+    if (((pPed->action != ePed_action_running && pPed->action != ePed_action_panicking) || pArg4) && pPed->action != ePed_action_getting_up) {
+        if (pArg3) {
+            SetPedMove(pPed, C2V(gPed_move_fsm)[114][IRandomBetween(0, 7)], -1, 0, 1, pTime, ePed_action_panicking);
+            MakePedNoise(pPed, 6, 0, NULL);
+            SetPedHeadAnim(pPed, C2V(gPed_scare_head_anim_byte_array), pTime);
+        } else {
+            StartPedRunning(pPed, pTime, 0);
+        }
+    }
+    pPed->field_0x28 = pTime;
+}
+
 void (C2_HOOK_FASTCALL * MungePedestrians_original)(void);
 void C2_HOOK_FASTCALL MungePedestrians(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungePedestrians_original();
 #else
-    NOT_IMPLEMENTED();
+    tU32 the_time;
+    unsigned int count_scared_pedestrians;
+    tPedestrian* scared_pedestrians[10];
+    int scare_now;
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_cache_006944c0, field_0x98, 0x98);
+    C2_HOOK_BUG_ON(sizeof(C2V(gPed_cache_00694328)) != 0x12c);
+
+    the_time = GetTotalTime();
+
+    if (C2V(gPed_valium_left) != 0) {
+        C2V(gPed_valium_left) -= C2V(gFrame_period);
+        if (C2V(gPed_valium_left) < 0) {
+            C2V(gPed_valium_left) = 0;
+        }
+    }
+    C2V(gCount_active_peds) = 0;
+    C2V(gPedestrians_in_sight) = NULL;
+    C2V(gPeds_already_munged) = GetTotalTime() == C2V(gPed_last_munging);
+    C2V(gPed_last_munging) = GetTotalTime();
+    count_scared_pedestrians = 0;
+    if (the_time > C2V(gLast_scare_time) + 300 && !C2V(gBlind_pedestrians) && C2V(gPed_valium_left) == 0) {
+        scare_now = 1;
+        C2V(gLast_scare_time) = the_time;
+    } else {
+        scare_now = 0;
+    }
+    if (!C2V(gAction_replay_mode)) {
+        for (i = 0; i < C2V(gPed_count); i++) {
+            tPedestrian* ped;
+            br_vector3 ped_distance;
+
+            ped = &C2V(gPedestrian_array)[i];
+            BrVector3Sub(&ped_distance, (br_vector3*)C2V(gCamera_to_world).m[3], &ped->pos);
+            if ((((ped->flags & 0x80)
+                        || fabsf(ped_distance.v[0]) >= C2V(gPed_process_distance)
+                        || fabsf(ped_distance.v[1]) >= C2V(gPed_process_distance_inner)
+                        || fabsf(ped_distance.v[2]) >= C2V(gPed_process_distance)) && (ped->field_0x0c == NULL || ped->field_0x0c->field_0x8c == 0 || the_time - ped->field_0x0c->field_0x8c >= 7500))
+                    || (!(ped->flags & 0x1)
+                        && !C2V(gPed_nearness)
+                        && fabsf(ped_distance.v[0]) <= C2V(gPed_popup_distance)
+                        && fabsf(ped_distance.v[1]) <= C2V(gPed_popup_distance_inner)
+                        && fabsf(ped_distance.v[2]) <= C2V(gPed_popup_distance))) {
+                ped->flags &= ~0x1;
+            } else {
+                ped->flags |= 0x1;
+                if (scare_now && ped->action == ePed_action_walking && count_scared_pedestrians < REC2_ASIZE(scared_pedestrians)) {
+                    scared_pedestrians[count_scared_pedestrians] = ped;
+                    count_scared_pedestrians += 1;
+                }
+            }
+        }
+    }
+    for (i = 0; i < C2V(gPed_count); i++) {
+        tPedestrian* ped = &C2V(gPedestrian_array)[i];
+        br_vector3* ped_pos;
+
+        if (!(ped->flags & 0x1)) {
+            tPed_character_instance *character;
+
+            character = ped->character;
+            if (character->field_0x4 >= 0 && !C2V(gAction_replay_mode)) {
+                undefined4 prev_field_0x10;
+                PipeSinglePedStatus(ped,
+                    1, 0, 1, 0,
+                    character->field_0x4, 255,
+                    character->field_0x5, 255,
+                    &character->field_0xc0,
+                    &character->field_0xcc,
+                    &character->field_0x8c);
+                if (character->field_0xbc != NULL) {
+                    StopCharacterMorphing(character);
+                }
+                if (character->field_0x14 & 0x4) {
+                    PedFallingForever(ped);
+                }
+                prev_field_0x10 = ped->character->field_0x10;
+                SetCharacterPhysicsLevel(ped->character, 0);
+                CharacterNoLongerRenderable(ped->character);
+                if (ped->character->field_0x10 != prev_field_0x10) {
+                    PipeSingleVanishedDismembered(ped, prev_field_0x10, ped->character->field_0x10);
+                }
+                if (ped->field_0x0c != NULL && ped->field_0x0c->field_0x98 != 0) {
+                    if (ped->field_0x0c->field_0x98 >= 0) {
+                        if (ped->hit_points > 0) {
+                            ScoreForKilledPedestrian(ped REC2_THISCALL_EDX, 0.f);
+                        }
+                        StopObjectSmokingInstantly(ped->character->personality->form->simple_physicing[ped->character->field_0x5].collision_info);
+                        ped->field_0x0c->field_0x98 = 0;
+                        MakePedVanish(ped);
+                    } else {
+                        KillNapalmBolt(&C2V(gNapalm_bolts)[-ped->field_0x0c->field_0x98 + 1]);
+                    }
+                }
+            }
+            continue;
+        }
+        if (ped->character->field_0x4 < 0 && !C2V(gAction_replay_mode)) {
+            /* FIXME: should MakeCharacterRenderable return an enum? */
+            if (MakeCharacterRenderable(ped->character) == 1) {
+                ped->flags &= ~0x1;
+                continue;
+            }
+            /* FIXME: does MakeCharacterCollideWorthy return a enum or count (use REC2_ASIZE)? */
+            if (MakeCharacterCollideworthy(ped->character, 0, 0) == 21) {
+                CharacterNoLongerRenderable(ped->character);
+                ped->flags &= ~0x1;
+                continue;
+            }
+            PipeSinglePedStatus(ped, 0, 1, 0, 1,
+                255, ped->character->field_0x4,
+                255, ped->character->field_0x5,
+                &ped->character->field_0xc0,
+                &ped->character->field_0xcc,
+                &ped->character->field_0x8c);
+        }
+        ped->next = C2V(gPedestrians_in_sight);
+        C2V(gPedestrians_in_sight) = ped;
+        if (!C2V(gAction_replay_mode)) {
+            if (ped->flags & 0x20) {
+                ped->flags |= 0x40;
+            } else {
+                ped->flags |= 0x20;
+            }
+        }
+        if (ped->speed_factor != C2V(gPedestrian_speed_factor) && ped->hit_points > 0) {
+            SetCharacterMove(ped->character, -1, -1.f, 0, 0, 0);
+            if (ped->speed_factor == 0.f) {
+                EnableOverallMovement();
+            }
+            if (C2V(gPedestrian_speed_factor) != 0.f) {
+                SetCharacterMove(ped->character, -1, (float)ped->character->field_0x1e / C2V(gPedestrian_speed_factor), 0, 0, 0);
+            } else {
+                DisableOverallMovement();
+            }
+            ped->speed_factor = C2V(gPedestrian_speed_factor);
+        }
+        C2V(gCount_active_peds) += 1;
+        if (ped->field_0x0c == NULL || ped->field_0x0c == &C2V(gPed_cache_00694328)) {
+            if (C2V(gAction_replay_mode)) {
+                ped->field_0x0c = &C2V(gPed_cache_00694328);
+            } else {
+                tU32 oldest_time;
+                int oldest_index;
+                size_t j;
+
+                oldest_time = the_time + 1;
+                oldest_index = 0;
+
+                for (j = 0; j < REC2_ASIZE(C2V(gPed_cache_006944c0)); j++) {
+                    if (C2V(gPed_cache_006944c0)[i].field_0xb4 == NULL) {
+                        ped->field_0x0c = &C2V(gPed_cache_006944c0)[j];
+                    }
+                    if (C2V(gPed_cache_006944c0)[i].field_0x74 < oldest_time) {
+                        oldest_index = j;
+                        oldest_time = C2V(gPed_cache_006944c0)[j].field_0x74;
+                    }
+                }
+                if (j == REC2_ASIZE(C2V(gPed_cache_006944c0))) {
+                    /* FIXME: should these 2 lines be reversed? */
+                    ped->field_0x0c = &C2V(gPed_cache_006944c0)[oldest_index];
+                    C2V(gPed_cache_006944c0)[oldest_index].field_0xb4->field_0x0c = NULL;
+                }
+            }
+            InitProcessData(ped, the_time);
+        }
+        ped->field_0x0c->field_0xb4 = ped;
+        ped->field_0x0c->field_0x74 = the_time;
+        ped->field_0x0c->field_0xc4 &= ~0x2;
+
+        ped_pos = GetPedPos(ped);
+        if (!C2V(gAction_replay_mode)) {
+            if (ped->character->field_0x14) {
+                if (C2V(gPed_gravity_multiplier) != PHILGetObjectProperty(GET_PED_COLLISION_OBJECT(ped), 0)) {
+                    PHILSetObjectProperty(GET_PED_COLLISION_OBJECT(ped), 0, C2V(gPed_gravity_multiplier));
+                    if (ped->character->field_0x6 >= 0) {
+                        int j;
+
+                        for (j = 0; j < ped->character->personality->form->count_bones; j++) {
+                            PHILSetObjectProperty(ped->character->personality->form->boned_physicing[ped->character->field_0x6].collision_infos[j], 0, C2V(gPed_gravity_multiplier));
+                        }
+                    }
+                }
+            }
+            if (!C2V(gAction_replay_mode)) {
+                if (GET_PED_COLLISION_OBJECT(ped)->last_special_volume != NULL && GET_PED_COLLISION_OBJECT(ped)->last_special_volume->gravity_multiplier < 1.f) {
+                    if (ped->field_0x0c->field_0x98 < 0) {
+                        KillNapalmBolt(&C2V(gNapalm_bolts)[1 - ped->field_0x0c->field_0x98]);
+                    } else if (ped->field_0x0c->field_0x98 > 0) {
+                        StopObjectSmokingInstantly(ped->character->personality->form->simple_physicing[ped->character->field_0x5].collision_info);
+                        ped->field_0x0c->field_0x98 = 0;
+                    }
+                    if (ped->field_0x0c->field_0x94 == 0) {
+                        ped->field_0x0c->field_0x94 = the_time;
+                    }
+                    if (ped->hit_points > 0) {
+                        if (ped->character->personality->form->moves[ped->character->field_0x7].id != 110) {
+                            SetPedMove(ped, 110, -1, 0, 0, the_time, ePed_action_impacting);
+                        }
+                        if (the_time - ped->field_0x0c->field_0x94 > 30000) {
+                            KillPedestrian(ped, NULL);
+                        }
+                    } else {
+                        if (ped->character->personality->form->moves[ped->character->field_0x7].id != 94) {
+                            SetPedMove(ped, 94, -1, 0, 0, the_time, ePed_action_impacting);
+                        }
+                    }
+                } else {
+                    ped->field_0x0c->field_0x94 = 0;
+                }
+                if (ped->field_0x0c->field_0x98 > 0 && ped->hit_points > 0) {
+                    if (the_time >= (tU32)ped->field_0x0c->field_0x98 && !C2V(gImmortal_peds)) {
+                        KillPedestrian(ped, NULL);
+                        DoPostElectricution(ped, the_time, .0f, .5f);
+                        ped->field_0x0c->field_0x98 = 0;
+                    } else {
+                        MakePedNoise(ped, 6, 0, NULL);
+                    }
+                }
+            }
+        }
+
+        if (!(ped->character->field_0x14 & 0x4)
+                && (ped->action == ePed_action_walking || ped->action == ePed_action_running)
+                && (!C2V(gAction_replay_mode) || C2V(gBOOL_00744804))) {
+            int j;
+            int nearby_changed_point;
+            tPed_face_cache_0x34* face_cache;
+            int cache_bool1;
+            int cache_bool2;
+            br_vector3 cache_pos1;
+
+            AcceleratePed(ped, the_time);
+            ped->flags &= ~0x6;
+            nearby_changed_point = 0;
+            for (j = 0; j < C2V(gCount_changed_points); j++) {
+                if (Vector3DistanceSquared(&C2V(gChanged_points)[j], &ped->pos) < 400.f) {
+                    nearby_changed_point = 1;
+                    break;
+                }
+            }
+            face_cache = RecacheAndSetFace(ped, &cache_bool1, &cache_bool2, &cache_pos1, C2V(gBOOL_00744804) | nearby_changed_point, the_time);
+            if (face_cache == NULL) {
+                face_cache = RecacheAndSetFace(ped, &cache_bool1, &cache_bool2, &cache_pos1, C2V(gBOOL_00744804) | nearby_changed_point, the_time);
+            }
+            if (cache_bool1 && ped->action != ePed_action_falling && ped->action != ePed_action_dead && ped->action != ePed_action_impacting) {
+                if (ped->action == ePed_action_falling || (face_cache->field_0x30 != NULL && ped_pos->v[1] - cache_pos1.v[1] - GetClearanceFromCharacterInstance(ped->character, 0) <= ped->character->personality->jump_height + .4347826f && C2V(gPed_cos_max_slope) < face_cache->field_0x30->normal.v[1])) {
+                    SetCharacterPositionAR(ped->character, &cache_pos1, 1);
+                    if (ped->field_0x0c->field_0x6c) {
+                        StopSmoothTurning(ped);
+                        SetPedXZDirection(ped, &ped->field_0x0c->field_0x54, 0.f, the_time);
+                    } else {
+                        SetPedXZDirection(ped, &ped->character->field_0xc0, 0.f, the_time);
+                    }
+                    cache_bool2 = 1;
+                } else {
+                    if (!(ped->flags & 0x40)) {
+                        MakePedVanish(ped);
+                        continue;
+                    }
+                    face_cache->field_0x30 = NULL;
+                    dr_dprintf("!!!!!! %0x turned on physics due to falling (%s)", (unsigned)(uintptr_t)ped, ped->character->personality->name);
+                    SetThisPedPhysicing(ped);
+                    SetPedMove(ped, 72, -1, 0, 0, the_time, ePed_action_falling);
+                    ped->action = ePed_action_falling;
+                }
+            }
+
+
+            if (!(ped->character->field_0x14 & 0x4) && ped->hit_points > 0) {
+                if (C2V(gBOOL_00744804)) {
+                    cache_bool2 = 1;
+                }
+                if (!cache_bool2) {
+                    cache_bool2 = BrVector3Dot(&ped->character->field_0xc0, &ped->field_0x0c->field_0x0c) < .9998f;
+                }
+                if (cache_bool2 && face_cache->field_0x30 != NULL && !ped->field_0x0c->field_0x6c) {
+                    RescanPedProximity(ped, NULL);
+                }
+                if (face_cache->field_0x30 != NULL && PedAnimCausesMovement(ped)) {
+                    if (ped->field_0x0c->field_0x6c) {
+                        SmoothTurnPedestrian(ped, the_time);
+                        RescanPedProximity(ped, NULL);
+                    } else {
+                        RandomWander(ped, the_time);
+                    }
+                    PedScanForObjects(ped, the_time);
+                    if (ped->field_0x0c->field_0x18) {
+                        CheckForAvoidingAction(ped, the_time);
+                    }
+                }
+            }
+        }
+        if (!C2V(gAction_replay_mode)) {
+            if (!(ped->character->field_0x14 & 0x4)
+                    && GET_PED_COLLISION_OBJECT(ped)->last_special_volume != NULL
+                    && GET_PED_COLLISION_OBJECT(ped)->last_special_volume->gravity_multiplier < 1.f
+                    && C2V(gGravity_multiplier) == 1.f
+                    && GET_PED_COLLISION_OBJECT(ped)->water_depth_factor == 1.f) {
+                SetThisPedPhysicing(ped);
+                SetRandomOmega(GET_PED_COLLISION_OBJECT(ped), 2.f);
+            }
+        }
+        CheckPowerupMoveSubstitution(ped, the_time);
+        MungeCharacterAnimation(ped->character, the_time);
+        if (!(ped->character->field_0x14 & 0x4)) {
+            tCollision_info* simple_coll_info = ped->character->personality->form->simple_physicing[ped->character->field_0x5].collision_info;
+            if (simple_coll_info != NULL) {
+                BrVector3Copy(&simple_coll_info->v, &ped->character->field_0xd8);
+                if (ped->hit_points <= 0
+                        && ped->action == ePed_action_dead && ped->character->personality->form->moves[ped->character->field_0x7].id != 113
+                        && ((C2V(gMutant_speed) != 0.f && ped->character->field_0x1e == 0)
+                                || (C2V(gMutant_speed) == .0f && ped->character->field_0x1e != 0))) {
+                    /* FIXME: 0 in Windows, 6 in mac version */
+                    StillifyCorpse(ped, the_time, 0);
+                }
+            }
+        }
+        BrVector3Copy(&ped->pos, ped_pos);
+        if (!C2V(gAction_replay_mode)) {
+            MungePedHeadAnim(ped, the_time);
+            MakeEmBleed(ped, the_time);
+            if (scare_now && (ped->action == ePed_action_running || ped->hit_points <= 0 || ped->action == ePed_action_impacting)) {
+                unsigned int j;
+
+                for (j = 0; j < count_scared_pedestrians; j++) {
+                    if (scared_pedestrians[j]->action == ePed_action_walking && Vector3DistanceSquared(ped_pos, &scared_pedestrians[j]->pos) < REC2_SQR(3.f)) {
+                        ScarePedestrian(ped, the_time, 1, 0);
+                    }
+                }
+            }
+        }
+    }
+
+    C2V(gPed_nearness) = 0;
+    C2V(gCount_changed_points) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d3740, MungePedestrians, MungePedestrians_original)
