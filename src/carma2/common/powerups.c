@@ -2113,3 +2113,17 @@ void C2_HOOK_FASTCALL PissedEffect(tPowerup* powerup, tU32 time) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004df3b0, PissedEffect, PissedEffect_original)
+
+void (C2_HOOK_FASTCALL * SendMines_original)(tU32 pNext_frame_time);
+void C2_HOOK_FASTCALL SendMines(tU32 pNext_frame_time) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SendMines_original(pNext_frame_time);
+#else
+    if (C2V(gNet_mode) != eNet_mode_host) {
+        return;
+    }
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004dcfb0, SendMines, SendMines_original)
