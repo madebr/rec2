@@ -30,6 +30,7 @@ typedef tU8 tNet_message_type;
 typedef struct tCar_spec tCar_spec;
 typedef struct tCar_crush_spec tCar_crush_spec;
 typedef struct tCollision_info tCollision_info;
+typedef struct tFace_ref tFace_ref;
 typedef struct tNon_car_spec tNon_car_spec;
 typedef struct tPath_section tPath_section;
 typedef struct tPowerup tPowerup;
@@ -4081,8 +4082,10 @@ typedef struct tPed_face_cache_0x34 {
     undefined4 field_0x8;
     struct tPed_face_cache_0x34* next;
     struct tPed_face_cache_0x34* prev;
-    undefined4 field_0x14;
-    undefined field_0x18[0x1c];
+    tPedestrian* field_0x14;
+    br_bounds3* field_0x18;
+    undefined field_0x1c[0x14];
+    tFace_ref* field_0x30;
 } tPed_face_cache_0x34;
 
 typedef struct {
@@ -4190,7 +4193,7 @@ typedef struct {
     undefined field_0xa;
     undefined field_0xb;
     undefined4 field_0xc;
-    undefined field_0x10[4];
+    undefined4 field_0x10;
     undefined4 field_0x14;
     undefined4 field_0x18;
     undefined2 field_0x1c;
@@ -4214,15 +4217,15 @@ typedef enum {
     ePed_action_walking = 0,
     ePed_action_running = 1,
     ePed_action_panicking = 2,
-    ePed_action_impacting = 5,
-    ePed_action_getting_up = 4,
     ePed_action_falling = 3,
+    ePed_action_getting_up = 4,
+    ePed_action_impacting = 5,
     ePed_action_dead = 6,
 } tPed_action;
 
 typedef struct tPedestrian {
     tPed_character_instance* character;
-    tU8 hit_points;
+    tS8 hit_points;
     undefined field_0x05;
     undefined2 field_0x06;
     tU16 flags;
@@ -4233,9 +4236,10 @@ typedef struct tPedestrian {
     tPed_movement_spec* movement_spec;
     tRace_ped_exclusion_spec* exclusion_spec;
     br_vector3 pos;
-    undefined field_0x1c[36];
+    tU32 field_0x28;
+    undefined field_0x2c[0x4c - 0x2c];
     float speed_factor;
-    undefined4 field_0x50;
+    tPedestrian* next;
 } tPedestrian;
 
 typedef struct tRace_pedestrian {
@@ -4546,7 +4550,7 @@ typedef struct tDrone_path_node {
     undefined field_0x132[2];
 } tDrone_path_node;
 
-typedef struct {
+typedef struct tFace_ref {
     br_material* material;
     br_vector3 v[3];
     br_vector2* map[3];
