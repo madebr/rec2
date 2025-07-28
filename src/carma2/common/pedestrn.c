@@ -3127,7 +3127,7 @@ undefined4 (C2_HOOK_FASTCALL * MakeCharacterRenderable2_original)(tPed_character
 undefined4 C2_HOOK_FASTCALL MakeCharacterRenderable2(tPed_character_instance* pCharacter, int pIndex) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return MakeCharacterRenderable2(pCharacter, pIndex);
+    return MakeCharacterRenderable2_original(pCharacter, pIndex);
 #else
     NOT_IMPLEMENTED();
 #endif
