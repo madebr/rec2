@@ -1467,7 +1467,7 @@ void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040a730, SetCharacterDirection, SetCharacterDirection_original)
 
-int C2_HOOK_FASTCALL OrientationChanged(float pCos_angle, const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2) {
+int C2_HOOK_FASTCALL OrientationChanged(const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2, float pCos_angle) {
 
     return BrVector3Dot((br_vector3*)pOrientation_1->m[0], (br_vector3*)pOrientation_2->m[0]) < pCos_angle
         || BrVector3Dot((br_vector3*)pOrientation_1->m[1], (br_vector3*)pOrientation_2->m[1]) < pCos_angle

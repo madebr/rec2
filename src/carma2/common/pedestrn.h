@@ -69,7 +69,7 @@ void C2_HOOK_FASTCALL OrthogonalVector(br_vector3* pDest, const br_vector3* pA, 
 
 void C2_HOOK_FASTCALL SetCharacterDirection(tPed_character_instance* pPed, const br_vector3* pDir, const br_vector3* pUp);
 
-int C2_HOOK_FASTCALL OrientationChanged(float pCos_angle, const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2);
+int C2_HOOK_FASTCALL OrientationChanged(const br_matrix34* pOrientation_1, const br_matrix34* pOrientation_2, float pCos_angle);
 
 void C2_HOOK_FASTCALL AssertRootObjectsMatrix(tPed_character_instance* pPed);
 
