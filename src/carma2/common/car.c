@@ -2117,3 +2117,13 @@ void C2_HOOK_FASTCALL StopSkid(tCar_spec* pC) {
         DRS3StopSound(C2V(gSkid_tag)[1]);
     }
 }
+
+void (C2_HOOK_FASTCALL * APTCPreCollision_original)(void);
+void C2_HOOK_FASTCALL APTCPreCollision(void) {
+#if defined(C2_HOOKS_ENABLED)
+    APTCPreCollision_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00415890, APTCPreCollision, APTCPreCollision_original)

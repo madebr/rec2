@@ -170,4 +170,6 @@ void C2_HOOK_FASTCALL PrepareCars(tU32 pFrame_start_time);
 
 void C2_HOOK_FASTCALL StopSkid(tCar_spec* pC);
 
+void C2_HOOK_FASTCALL APTCPreCollision(void);
+
 #endif //REC2_CAR_H
