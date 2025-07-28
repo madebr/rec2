@@ -2053,3 +2053,14 @@ void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00416500, FinishCars, FinishCars_original)
+
+void (C2_HOOK_FASTCALL * CheckForDeAttachmentOfNonCars_original)(tU32 pTime);
+void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CheckForDeattachmentOfNoncars_original(pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004203c0, CheckForDeAttachmentOfNonCars, CheckForDeAttachmentOfNonCars_original)

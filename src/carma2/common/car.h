@@ -156,4 +156,6 @@ void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
 void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime);
 
+void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime);
+
 #endif //REC2_CAR_H
