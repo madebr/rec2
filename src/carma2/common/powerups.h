@@ -273,4 +273,6 @@ void C2_HOOK_FASTCALL MungeVouchers(tPowerup* powerup, tU32 time);
 
 void C2_HOOK_FASTCALL PissedEffect(tPowerup* powerup, tU32 time);
 
+void C2_HOOK_FASTCALL SendMines(tU32 pNext_frame_time);
+
 #endif //REC2_POWERUPS_H
