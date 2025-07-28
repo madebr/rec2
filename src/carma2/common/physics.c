@@ -1615,3 +1615,14 @@ void C2_HOOK_FASTCALL PHILActivatePassive(tCollision_info* pObject) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b71b0, PHILActivatePassive, PHILActivatePassive_original)
+
+void (C2_HOOK_FASTCALL * TestAutoSpecialVolume_original)(tCollision_info* pObject);
+void C2_HOOK_FASTCALL TestAutoSpecialVolume(tCollision_info* pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    TestAutoSpecialVolume_original(pObject);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ff5d0, TestAutoSpecialVolume, TestAutoSpecialVolume_original)
