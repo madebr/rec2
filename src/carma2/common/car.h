@@ -174,4 +174,6 @@ void C2_HOOK_FASTCALL APTCPreCollision(void);
 
 void C2_HOOK_FASTCALL APTCPostCollision(void);
 
+void C2_HOOK_FASTCALL APTCChangedObjects(tCollision_info* pArg1, undefined4 pArg2);
+
 #endif //REC2_CAR_H
