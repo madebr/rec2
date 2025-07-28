@@ -1915,7 +1915,7 @@ void (C2_HOOK_FASTCALL * OneLessPed_original)(tPedestrian* pPed);
 void C2_HOOK_FASTCALL OneLessPed(tPedestrian* pPed) {
 
 #if defined(C2_HOOKS_ENABLED)
-    OneLessPed(pPed);
+    OneLessPed_original(pPed);
 #else
     NOT_IMPLEMENTED();
 #endif
