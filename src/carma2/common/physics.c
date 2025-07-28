@@ -2,8 +2,12 @@
 
 #include "car.h"
 #include "errors.h"
+#include "globvrpb.h"
 #include "loading.h"
+#include "netgame.h"
+#include "opponent.h"
 #include "platform.h"
+#include "powerups.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -1268,13 +1272,38 @@ void C2_HOOK_FASTCALL PhysicsAddObject(tCollision_info* pParent, tCollision_info
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c63b0, PhysicsAddObject, CollisionInfoAddChild_original)
 
+void C2_HOOK_FASTCALL GetNonCars(void) {
+    int i;
+    int j;
+
+    C2V(gNum_cars_and_non_cars) = C2V(gNum_active_non_cars) + C2V(gNum_active_cars);
+    for (i = C2V(gNum_active_cars), j = 0; i < C2V(gNum_cars_and_non_cars); i++, j++) {
+        C2V(gActive_car_list)[i] = (tCar_spec*)C2V(gActive_non_car_list)[j];
+    }
+}
+
 void (C2_HOOK_FASTCALL * ApplyPhysicsToCars_original)(tU32 pLast_tick_time, tU32 pFrame_period);
 void C2_HOOK_FASTCALL ApplyPhysicsToCars(tU32 pLast_tick_time, tU32 pFrame_period) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ApplyPhysicsToCars_original(pLast_tick_time, pFrame_period);
 #else
-    NOT_IMPLEMENTED();
+
+    if (C2V(gFreeze_mechanics)) {
+        return;
+    }
+    if (C2V(gNet_mode) == eNet_mode_client) {
+        ForceRebuildActiveCarList();
+    }
+    GetNonCars();
+    PrepareCars(pLast_tick_time);
+    PHILDoPhysics(&C2V(gCar_callbacks), pLast_tick_time, pFrame_period);
+    if (TimeToSendData()) {
+        SendCarData(C2V(gPHIL_last_physics_tick));
+        SendMines(C2V(gPHIL_last_physics_tick));
+    }
+    FinishCars(pLast_tick_time + pFrame_period, pFrame_period);
+    CheckForDeAttachmentOfNonCars(pFrame_period);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00416340, ApplyPhysicsToCars, ApplyPhysicsToCars_original)

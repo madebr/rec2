@@ -23,6 +23,7 @@
 #include "raycast.h"
 #include "replay.h"
 #include "skidmark.h"
+#include "sound.h"
 #include "spark.h"
 #include "structur.h"
 #include "utility.h"
@@ -38,6 +39,11 @@
 
 #include <math.h>
 
+C2_HOOK_VARIABLE_IMPLEMENT(int, gOver_shoot, 0x0074a5f4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gActive_car_list, 139, 0x0074c7c0); /* FIXME: uncertain about array length */
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_cars_and_non_cars, 0x0079ef2c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_active_cars, 0x0074c9ec);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gFreeze_mechanics, 0x006793a0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCar_simplification_level, 0x006793d8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tNon_car_spec*, gActive_non_car_list, 99, 0x0079eda0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_active_non_cars, 0x006793dc);
@@ -81,6 +87,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gQuite_wild_start, 0x006793b0);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gOn_me_wheels_start, 0x006793b4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWoz_upside_down_at_all, 0x006793b8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStop_opponents_moving, 0x00676854, 0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gSkid_tag, 2, 0x006793c0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gLast_car_to_skid, 2, 0x006793c8);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -2064,3 +2072,48 @@ void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004203c0, CheckForDeAttachmentOfNonCars, CheckForDeAttachmentOfNonCars_original)
+
+void C2_HOOK_FASTCALL PrepareCars(tU32 pFrame_start_time) {
+    int i;
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_frame_start, 0x006793f4);
+
+    C2V(last_frame_start) = pFrame_start_time;
+    for (i = 0; i < C2V(gNum_cars_and_non_cars); i++) {
+        tCar_spec* car;
+
+        car = C2V(gActive_car_list)[i];
+        car->frame_collision_flag = C2V(gOver_shoot) && car->collision_info->collision_flag;
+        if (car != NULL && car->driver >= eDriver_oppo) {
+            RecordLastDamage(car);
+            if (car->driver == eDriver_oppo && C2V(gStop_opponents_moving)) {
+                car->acc_force = 0.f;
+                car->brake_force = 0.f;
+                car->keys.acc = 0;
+                car->keys.dec = 0;
+                car->joystick.acc = -1;
+                car->joystick.dec = -1;
+            }
+            if (!car->wheel_slip) {
+                StopSkid(car);
+            }
+            if (car->driver == eDriver_net_human && pFrame_start_time - 1000 > car->collision_info->message_time) {
+                car->keys.acc = 0;
+                car->keys.dec = 0;
+                car->joystick.acc = -1;
+                car->joystick.dec = -1;
+                car->keys.horn = 0;
+            }
+            SetSmokeLastDamageLevel(car);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL StopSkid(tCar_spec* pC) {
+
+    if (C2V(gLast_car_to_skid)[0] == pC) {
+        DRS3StopSound(C2V(gSkid_tag)[0]);
+    }
+    if (C2V(gLast_car_to_skid)[1] == pC) {
+        DRS3StopSound(C2V(gSkid_tag)[1]);
+    }
+}

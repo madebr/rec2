@@ -5,6 +5,12 @@
 
 #include "c2_hooks.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gOver_shoot);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gActive_car_list, 139);
+C2_HOOK_VARIABLE_DECLARE(int, gNum_cars_and_non_cars);
+C2_HOOK_VARIABLE_DECLARE(int, gNum_active_cars);
+C2_HOOK_VARIABLE_DECLARE(int, gNum_active_non_cars);
+C2_HOOK_VARIABLE_DECLARE(int, gFreeze_mechanics);
 C2_HOOK_VARIABLE_DECLARE(int, gCar_simplification_level);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tNon_car_spec*, gActive_non_car_list, 99);
 C2_HOOK_VARIABLE_DECLARE(int, gNum_active_non_cars);
@@ -23,6 +29,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gNet_player_to_view_index);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
 C2_HOOK_VARIABLE_DECLARE(int, gInTheSea);
 C2_HOOK_VARIABLE_DECLARE(int, gStop_opponents_moving);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gSkid_tag, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gLast_car_to_skid, 2);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
@@ -157,5 +165,9 @@ void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime);
 
 void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime);
+
+void C2_HOOK_FASTCALL PrepareCars(tU32 pFrame_start_time);
+
+void C2_HOOK_FASTCALL StopSkid(tCar_spec* pC);
 
 #endif //REC2_CAR_H
