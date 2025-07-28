@@ -1926,7 +1926,7 @@ void (C2_HOOK_FAKE_THISCALL * ScoreForKilledPedestrian_original)(tPedestrian* pP
 void C2_HOOK_FAKE_THISCALL ScoreForKilledPedestrian(tPedestrian* pPed, undefined4 pArg2, float pHeight) {
 
 #if defined(C2_HOOKS_ENABLED)
-    ScoreForKilledPedestrian(pPed REC2_THISCALL_EDX, pHeight);
+    ScoreForKilledPedestrian_original(pPed REC2_THISCALL_EDX, pHeight);
 #else
     NOT_IMPLEMENTED();
 #endif
