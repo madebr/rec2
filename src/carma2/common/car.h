@@ -178,4 +178,6 @@ void C2_HOOK_FASTCALL APTCChangedObjects(tCollision_info* pArg1, undefined4 pArg
 
 int C2_HOOK_FASTCALL APTCActiveHalted(tCollision_info* pArg1);
 
+int C2_HOOK_FASTCALL APTCPassiveActivated(tCollision_info* pArg1);
+
 #endif //REC2_CAR_H
