@@ -300,6 +300,14 @@ typedef struct {
     undefined4 field_0x4;
 } tPipe_single_vanished_dismembered;
 
+typedef struct {
+    undefined2 field_0x0;
+    undefined2 field_0x2;
+    undefined2 field_0x4;
+    undefined2 field_0x6;
+    br_model* model;
+} tPipe_single_ped_model_change;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_special = 8,
@@ -310,6 +318,7 @@ typedef enum {
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
     ePipe_chunk_single_ped_pos = 46,
+    ePipe_chunk_single_ped_model_change = 47,
     ePipe_single_groove_on_off = 51,
     ePipe_funk_enable = 54,
     ePipe_chunk_single_vanished_dismembered = 55,
