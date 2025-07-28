@@ -30,6 +30,7 @@ typedef tU8 tNet_message_type;
 typedef struct tCar_spec tCar_spec;
 typedef struct tCar_crush_spec tCar_crush_spec;
 typedef struct tCollision_info tCollision_info;
+typedef struct tFace_ref tFace_ref;
 typedef struct tNon_car_spec tNon_car_spec;
 typedef struct tPath_section tPath_section;
 typedef struct tPowerup tPowerup;
@@ -54,6 +55,7 @@ typedef struct tNet_stored_smash tNet_stored_smash;
 typedef struct tPhysics_joint tPhysics_joint;
 typedef struct tPed_personality tPed_personality;
 typedef struct tCar_crush_vertex_data tCar_crush_vertex_data;
+typedef struct tPed_face_cache_0x34 tPed_face_cache_0x34;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -3213,8 +3215,7 @@ typedef struct {
 
 typedef struct {
     char name[40];
-    tS8 parent_index;
-    undefined field_0x5[3];
+    tS8 indices[4];
     tPed_remap_bone *remapped_bone;
     tPhysics_joint* hinge;
 } tPed_form_bone;
@@ -3990,9 +3991,57 @@ typedef struct {
 } tPed_movement_spec;
 
 typedef struct {
-    undefined field_0x0[0x80];
+    br_vector3 field_0x00;
+    br_vector3 field_0x0c;
+    undefined field_0x18;
+    undefined field_0x19;
+    undefined field_0x1a;
+    undefined field_0x1b[0x1b-0x1a];
+    undefined* field_0x1c;
+    undefined field_0x20[1];
+    undefined field_0x21;
+    undefined field_0x22[1];
+    undefined field_0x23[10];
+    undefined field_0x2d[1];
+    undefined2 field_0x2e;
+    br_vector3 field_0x30;
+    br_vector3 field_0x3c;
+    br_vector3 field_0x48;
+    br_vector3 field_0x54;
+    br_vector3 field_0x60;
+    tU32 field_0x6c;
+    tU32 field_0x70;
+    tU32 field_0x74;
+    tU32 field_0x78;
+    tU32 next_turn_time;
     undefined4 field_0x80;
-    undefined field_0x84[0xa8];
+    tU32 field_0x84;
+    tU32 field_0x88;
+    tU32 field_0x8c;
+    tU32 field_0x90;
+    tU32 field_0x94;
+    int field_0x98;
+    undefined4 field_0x9c;
+    int field_0xa0;
+    br_vector3 field_0xa4;
+    tPed_face_cache_0x34* field_0xb0;
+    tPedestrian* field_0xb4;
+    float field_0xb8;
+    undefined field_0xbc[0x4];
+    undefined4 field_0xc0;
+    int field_0xc4;
+    undefined2 field_0xc8;
+    undefined field_0xca;
+    undefined field_0xcb[1];
+    br_vector3 field_0xcc;
+    br_vector3 field_0xd8;
+    br_vector3 field_0xe4;
+    br_vector3 field_0xf0;
+    br_vector3 field_0xfc;
+    br_vector3 field_0x108;
+    undefined field_0x114[0x124-0x114];
+    float field_0x124;
+    float field_0x128;
 } tPed_cache_006944c0;
 
 typedef struct {
@@ -4008,8 +4057,10 @@ typedef struct tPed_face_cache_0x34 {
     undefined4 field_0x8;
     struct tPed_face_cache_0x34* next;
     struct tPed_face_cache_0x34* prev;
-    undefined4 field_0x14;
-    undefined field_0x18[0x1c];
+    tPedestrian* field_0x14;
+    br_bounds3* field_0x18;
+    undefined field_0x1c[0x14];
+    tFace_ref* field_0x30;
 } tPed_face_cache_0x34;
 
 typedef struct {
@@ -4117,7 +4168,7 @@ typedef struct {
     undefined field_0xa;
     undefined field_0xb;
     undefined4 field_0xc;
-    undefined field_0x10[4];
+    undefined4 field_0x10;
     undefined4 field_0x14;
     undefined4 field_0x18;
     undefined2 field_0x1c;
@@ -4141,15 +4192,15 @@ typedef enum {
     ePed_action_walking = 0,
     ePed_action_running = 1,
     ePed_action_panicking = 2,
-    ePed_action_impacting = 5,
-    ePed_action_getting_up = 4,
     ePed_action_falling = 3,
+    ePed_action_getting_up = 4,
+    ePed_action_impacting = 5,
     ePed_action_dead = 6,
 } tPed_action;
 
 typedef struct tPedestrian {
     tPed_character_instance* character;
-    tU8 hit_points;
+    tS8 hit_points;
     undefined field_0x05;
     undefined2 field_0x06;
     tU16 flags;
@@ -4160,9 +4211,10 @@ typedef struct tPedestrian {
     tPed_movement_spec* movement_spec;
     tRace_ped_exclusion_spec* exclusion_spec;
     br_vector3 pos;
-    undefined field_0x1c[36];
+    tU32 field_0x28;
+    undefined field_0x2c[0x4c - 0x2c];
     float speed_factor;
-    undefined4 field_0x50;
+    tPedestrian* next;
 } tPedestrian;
 
 typedef struct tRace_pedestrian {
@@ -4473,7 +4525,7 @@ typedef struct tDrone_path_node {
     undefined field_0x132[2];
 } tDrone_path_node;
 
-typedef struct {
+typedef struct tFace_ref {
     br_material* material;
     br_vector3 v[3];
     br_vector2* map[3];
