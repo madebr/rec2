@@ -2127,3 +2127,13 @@ void C2_HOOK_FASTCALL APTCPreCollision(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00415890, APTCPreCollision, APTCPreCollision_original)
+
+void (C2_HOOK_FASTCALL * APTCPostCollision_original)(void);
+void C2_HOOK_FASTCALL APTCPostCollision(void) {
+#if defined(C2_HOOKS_ENABLED)
+    APTCPostCollision_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00416070, APTCPostCollision, APTCPostCollision_original)

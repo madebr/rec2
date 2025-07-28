@@ -172,4 +172,6 @@ void C2_HOOK_FASTCALL StopSkid(tCar_spec* pC);
 
 void C2_HOOK_FASTCALL APTCPreCollision(void);
 
+void C2_HOOK_FASTCALL APTCPostCollision(void);
+
 #endif //REC2_CAR_H
