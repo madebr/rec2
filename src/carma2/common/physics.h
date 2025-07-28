@@ -136,4 +136,6 @@ void C2_HOOK_FASTCALL MungeSpecialVolume(tCollision_info* pObject);
 
 void C2_HOOK_FASTCALL ProcessGravity(tPhil_object_info_00692458* pObject_info, tCollision_info* pObject, float pGravity);
 
+void C2_HOOK_FASTCALL ProcessDrag2(tPhil_object_info_00692458* pObject_info, tCollision_info* pObject, float pDrag, int pObject_info_flags, tSpecial_volume* pSpecial_volume);
+
 #endif //REC2_PHYSICS_H
