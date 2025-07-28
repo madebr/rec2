@@ -122,4 +122,6 @@ void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** 
 
 int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL PHILDoPhysics(tCar_callbacks* pCallbacks, tU32 pLast_tick_time, tU32 pFrame_period);
+
 #endif //REC2_PHYSICS_H
