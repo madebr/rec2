@@ -4719,6 +4719,7 @@ typedef struct {
     tCar_spec* (C2_HOOK_FASTCALL * pull_actor_from_world_callback)(br_actor*);
     void (C2_HOOK_FASTCALL * stop_groovidelic_callback)(br_actor*);
     undefined4* get_fricion_from_face_callback;
+    undefined4* activate_passive;
 } tWorld_callbacks;
 
 typedef struct tSave_game {
