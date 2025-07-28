@@ -3169,7 +3169,7 @@ tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const 
 
                     Flip3DStoBRaxes(&mat);
                     BrMatrix34LPNormalise(&mat_lp, &mat);
-                    if (pForm->bones[k].parent_index == -1) {
+                    if (pForm->bones[k].indices[0] == -1) {
                         c2_memmove(&move->frames[i].mat, &mat_lp, 9 * sizeof(float));
                         if (i != 0) {
                             BrVector3Sub((br_vector3*)move->frames[i].mat.m[3], (br_vector3*)mat_lp.m[3], &rot_pos);
