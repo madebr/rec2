@@ -197,4 +197,6 @@ void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar);
 
+void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar);
+
 #endif // REC2_CRUSH_H

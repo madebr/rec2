@@ -2484,3 +2484,12 @@ void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0043f9f0, RecordLastDamage, RecordLastDamage_original)
+
+void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(pCar->damage_units); i++) {
+        pCar->damage_units[i].smoke_last_level = pCar->damage_units[i].damage_level;
+    }
+}
+C2_HOOK_FUNCTION(0x00440210, SetSmokeLastDamageLevel)
