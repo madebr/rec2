@@ -208,3 +208,14 @@ void C2_HOOK_FASTCALL DoNetworkHeadups(int pCredits) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00499360, DoNetworkHeadups, DoNetworkHeadups_original)
+
+void (C2_HOOK_FASTCALL * SendCarData_original)(tU32 pNext_frame_time);
+void C2_HOOK_FASTCALL SendCarData(tU32 pNext_frame_time) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SendCarData_original(pNext_frame_data);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00497900, SendCarData, SendCarData_original)
