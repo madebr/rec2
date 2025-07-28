@@ -3802,11 +3802,11 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality_bone, field_0x20, 0x20);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality_bone, field_0x2c, 0x2c);
 
-        if (personality->form->bones[bone_index].parent_index >= 0) {
+        if (personality->form->bones[bone_index].indices[0] >= 0) {
             GetAVector(f, &personality->bones[bone_index].field_0x20);
             RemapVector(&personality->bones[bone_index].field_0x20, personality->form->bones[bone_index].remapped_bone);
             GetAVector(f, &personality->bones[bone_index].field_0x2c);
-            RemapVector(&personality->bones[bone_index].field_0x2c, personality->form->bones[personality->form->bones[bone_index].parent_index].remapped_bone);
+            RemapVector(&personality->bones[bone_index].field_0x2c, personality->form->bones[personality->form->bones[bone_index].indices[0]].remapped_bone);
             if (personality->form->bones[bone_index].hinge != NULL) {
                 tPhysics_joint* hinge_copy = ClonePhysicsJoint(personality->form->bones[bone_index].hinge, kMem_physics_joint);
                 BrVector3Copy(&hinge_copy->field_0x08, &personality->bones[bone_index].field_0x20);
