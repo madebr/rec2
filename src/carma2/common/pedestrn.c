@@ -3305,3 +3305,27 @@ void C2_HOOK_FASTCALL MungeCharacterAnimation(tPed_character_instance* pCharacte
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00409ca0, MungeCharacterAnimation, MungeCharacterAnimation_original)
+
+void C2_HOOK_FASTCALL SetCharacterBoneModelAR(tPed_character_instance* pCharacter, int pArg2, undefined4 pArg3, int pArg4) {
+
+    if (pCharacter->field_0x4 >= 0) {
+        if (pArg2 >= 0) {
+            PipeSinglePedModelChange(pCharacter->ped,
+                pArg2,
+                GetCharacterBoneModel(pCharacter, pArg2),
+                pArg3,
+                GetCharacterModelSet(pCharacter),
+                pArg4);
+            SetCharacterBoneModel(pCharacter, pArg2, pArg3, pArg4);
+        } else {
+            PipeSinglePedModelChange(pCharacter->ped,
+                pArg2,
+                0,
+                -1,
+                GetCharacterModelSet(pCharacter),
+                pArg4);
+            SetCharacterAllBonesModel(pCharacter, pArg3, pArg4);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004cfa30, SetCharacterBoneModelAR)
