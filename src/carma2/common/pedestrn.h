@@ -219,4 +219,6 @@ void C2_HOOK_FASTCALL DoSpurt(br_matrix34* pArg1, br_vector3* pArg2, br_vector3*
 
 br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pCharacter, int pBone_index);
 
+int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter);
+
 #endif //REC2_PEDESTRN_H

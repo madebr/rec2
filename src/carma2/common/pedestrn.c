@@ -3368,3 +3368,9 @@ br_model* C2_HOOK_FASTCALL GetCharacterBoneModel(tPed_character_instance* pChara
     return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[pBone_index]->model;
 }
 C2_HOOK_FUNCTION(0x0040b570, GetCharacterBoneModel)
+
+int C2_HOOK_FASTCALL GetCharacterModelSet(tPed_character_instance* pCharacter) {
+
+    return pCharacter->field_0xa;
+}
+C2_HOOK_FUNCTION(0x0040b590, GetCharacterModelSet)
