@@ -988,8 +988,8 @@ int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, 
             if (!BoundsOverlapTest__finteray(&br_bnds, &bnds->original_bounds)) {
                 return max_face;
             }
-            if (pWorld_callbacks != NULL && pWorld_callbacks->pull_actor_from_world_callback != NULL) {
-                if (pWorld_callbacks->pull_actor_from_world_callback(ap) != NULL) {
+            if (pWorld_callbacks != NULL && pWorld_callbacks->pull_actor_from_world != NULL) {
+                if (pWorld_callbacks->pull_actor_from_world(ap) != NULL) {
                     return max_face;
                 }
             }
