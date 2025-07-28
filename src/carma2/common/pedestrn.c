@@ -3299,7 +3299,7 @@ void (C2_HOOK_FASTCALL * MungeCharacterAnimation_original)(tPed_character_instan
 void C2_HOOK_FASTCALL MungeCharacterAnimation(tPed_character_instance* pCharacter, tU32 pTime) {
 
 #if defined(C2_HOOKS_ENABLED)
-    MungeCharacterAnimation(pCharacter, pTime);
+    MungeCharacterAnimation_original(pCharacter, pTime);
 #else
     NOT_IMPLEMENTED();
 #endif
