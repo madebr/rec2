@@ -1521,7 +1521,7 @@ void C2_HOOK_FASTCALL AssertRootObjectsMatrix(tPed_character_instance* pPed) {
 void (C2_HOOK_FASTCALL * SetCharacterDirectionAR_original)(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp);
 void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SetCharacterDirectionAR_original(pPed, pDir, pUp);
 #else
     tCollision_info* collision_info;
