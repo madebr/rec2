@@ -134,4 +134,6 @@ void C2_HOOK_FASTCALL TestAutoSpecialVolume(tCollision_info* pObject);
 
 void C2_HOOK_FASTCALL MungeSpecialVolume(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL ProcessGravity(tPhil_object_info_00692458* pObject_info, tCollision_info* pObject, float pGravity);
+
 #endif //REC2_PHYSICS_H
