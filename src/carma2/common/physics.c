@@ -1297,7 +1297,7 @@ void C2_HOOK_FASTCALL ApplyPhysicsToCars(tU32 pLast_tick_time, tU32 pFrame_perio
     }
     GetNonCars();
     PrepareCars(pLast_tick_time);
-    PHILDoPhysics(&C2V(gCar_callbacks), pLast_tick_time, pFrame_period);
+    PHILDoPhysics(&C2V(gCar_physics_callbacks), pLast_tick_time, pFrame_period);
     if (TimeToSendData()) {
         SendCarData(C2V(gPHIL_last_physics_tick));
         SendMines(C2V(gPHIL_last_physics_tick));

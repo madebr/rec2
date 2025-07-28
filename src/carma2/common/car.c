@@ -53,7 +53,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gAverage_grid_position, 0x00679268);
 
 C2_HOOK_VARIABLE_IMPLEMENT(int, gTesting_car_for_sensible_place, 0x0067939c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0074a5f8, 0x0074a5f8);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWorld_callbacks, gWorld_callbacks, 0x0065cf78, {
     ProcessForcesCallback,
     ProcessJointForcesCallback,
     NewFacesListCallback,
@@ -61,6 +61,16 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_callbacks, gCar_callbacks, 0x0065cf78, {
     PullActorFromWorld,
     StopGroovidelic,
     GetFrictionFromFace,
+    NULL,
+});
+
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPhysics_callbacks, gCar_physics_callbacks, 0x0058f6e0, {
+    &C2V(gWorld_callbacks),
+    APTCPreCollision,
+    APTCPostCollision,
+    APTCChangedObjects,
+    APTCActiveHalted,
+    APTCPassiveActivated,
     NULL,
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gFace_count, 0x006940b0);

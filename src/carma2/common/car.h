@@ -19,7 +19,8 @@ C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gUnknown_car_collision_info);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gAverage_grid_position);
 
 C2_HOOK_VARIABLE_DECLARE(int, gTesting_car_for_sensible_place);
-C2_HOOK_VARIABLE_DECLARE(tCar_callbacks, gCar_callbacks);
+C2_HOOK_VARIABLE_DECLARE(tWorld_callbacks, gWorld_callbacks);
+C2_HOOK_VARIABLE_DECLARE(tPhysics_callbacks, gCar_physics_callbacks);
 C2_HOOK_VARIABLE_DECLARE(int, gFace_count);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tFace_ref, gFace_list__car, 300);
 C2_HOOK_VARIABLE_DECLARE(int, gCamera_mode);
