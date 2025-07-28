@@ -54,6 +54,7 @@ typedef struct tNet_stored_smash tNet_stored_smash;
 typedef struct tPhysics_joint tPhysics_joint;
 typedef struct tPed_personality tPed_personality;
 typedef struct tCar_crush_vertex_data tCar_crush_vertex_data;
+typedef struct tPed_face_cache_0x34 tPed_face_cache_0x34;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -4014,9 +4015,57 @@ typedef struct {
 } tPed_movement_spec;
 
 typedef struct {
-    undefined field_0x0[0x80];
+    br_vector3 field_0x00;
+    br_vector3 field_0x0c;
+    undefined field_0x18;
+    undefined field_0x19;
+    undefined field_0x1a;
+    undefined field_0x1b[0x1b-0x1a];
+    undefined* field_0x1c;
+    undefined field_0x20[1];
+    undefined field_0x21;
+    undefined field_0x22[1];
+    undefined field_0x23[10];
+    undefined field_0x2d[1];
+    undefined2 field_0x2e;
+    br_vector3 field_0x30;
+    br_vector3 field_0x3c;
+    br_vector3 field_0x48;
+    br_vector3 field_0x54;
+    br_vector3 field_0x60;
+    tU32 field_0x6c;
+    tU32 field_0x70;
+    tU32 field_0x74;
+    tU32 field_0x78;
+    tU32 next_turn_time;
     undefined4 field_0x80;
-    undefined field_0x84[0xa8];
+    tU32 field_0x84;
+    tU32 field_0x88;
+    tU32 field_0x8c;
+    tU32 field_0x90;
+    tU32 field_0x94;
+    int field_0x98;
+    undefined4 field_0x9c;
+    int field_0xa0;
+    br_vector3 field_0xa4;
+    tPed_face_cache_0x34* field_0xb0;
+    tPedestrian* field_0xb4;
+    float field_0xb8;
+    undefined field_0xbc[0x4];
+    undefined4 field_0xc0;
+    int field_0xc4;
+    undefined2 field_0xc8;
+    undefined field_0xca;
+    undefined field_0xcb[1];
+    br_vector3 field_0xcc;
+    br_vector3 field_0xd8;
+    br_vector3 field_0xe4;
+    br_vector3 field_0xf0;
+    br_vector3 field_0xfc;
+    br_vector3 field_0x108;
+    undefined field_0x114[0x124-0x114];
+    float field_0x124;
+    float field_0x128;
 } tPed_cache_006944c0;
 
 typedef struct {
