@@ -2042,3 +2042,14 @@ void C2_HOOK_FASTCALL CancelPendingCunningStunt(void) {
     C2V(gWild_start) = 0;
 }
 C2_HOOK_FUNCTION(0x0041e580, CancelPendingCunningStunt)
+
+void (C2_HOOK_FASTCALL * FinishCars_original)(tU32 pLast_frame_time, tU32 pTime);
+void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FinishCars_original(pLast_frame_time, pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00416500, FinishCars, FinishCars_original)
