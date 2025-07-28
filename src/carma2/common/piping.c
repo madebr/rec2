@@ -675,3 +675,14 @@ void C2_HOOK_FASTCALL PipeSingleVanishedDismembered(const tPedestrian* pPed, und
         SIZE_OFFSET_PIPING(tPipe_single_vanished_dismembered, field_0x4), pArg2);
 }
 C2_HOOK_FUNCTION(0x004c8e10, PipeSingleVanishedDismembered)
+
+void C2_HOOK_FASTCALL PipeSinglePedModelChange(tPedestrian* pPed, undefined4 pArg2, br_model* pModel, undefined4 pArg4, undefined4 pArg5, undefined4 pArg6) {
+
+    ARDoSingleVariedSession(ePipe_chunk_single_ped_model_change, (uintptr_t)pPed, 5,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_model_change, field_0x0), pArg2,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_model_change, model), pModel,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_model_change, field_0x2), pArg4,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_model_change, field_0x4), pArg5,
+        SIZE_OFFSET_PIPING(tPipe_single_ped_model_change, field_0x6), pArg6);
+}
+C2_HOOK_FUNCTION(0x004c8c80, PipeSinglePedModelChange)
