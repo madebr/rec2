@@ -1724,3 +1724,14 @@ void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tCollision_info* pObjects, tPhysic
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b6be0, ChangedObjectsCallbacks, ChangedObjectsCallbacks_original)
+
+void (C2_HOOK_FASTCALL * ResetObjectList_original)(tCollision_info* pObjects);
+void C2_HOOK_FASTCALL ResetObjectList(tCollision_info* pObjects) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ResetObjectList(pObjects);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c2600, ResetObjectList, ResetObjectList_original)
