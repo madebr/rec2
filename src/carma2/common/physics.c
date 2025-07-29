@@ -1713,3 +1713,14 @@ void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tCollision_info* pObject, und
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c2830, InterpolateSingleObject, InterpolateSingleObject_original)
+
+void (C2_HOOK_FASTCALL * ChangedObjectsCallbacks_original)(tCollision_info* pObjects, tPhysics_callbacks* pCallbacks, tU32 pPeriod);
+void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tCollision_info* pObjects, tPhysics_callbacks* pCallbacks, tU32 pPeriod) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ChangedObjectsCallbacks_original(pObjects, pCallbacks, pPeriod);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b6be0, ChangedObjectsCallbacks, ChangedObjectsCallbacks_original)

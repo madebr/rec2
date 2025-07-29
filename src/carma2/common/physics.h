@@ -148,4 +148,6 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_ma
 
 void C2_HOOK_FASTCALL InterpolateSingleObject(tCollision_info* pObject, tU32 pTime, float pDt);
 
+void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tCollision_info* pObjects, tPhysics_callbacks* pCallbacks, tU32 pPeriod);
+
 #endif //REC2_PHYSICS_H
