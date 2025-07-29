@@ -88,6 +88,7 @@ typedef intptr_t C2_HOOK_FASTCALL tDRActorEnumRecurseWithTranslation_cbfn(br_act
 typedef int C2_HOOK_FASTCALL tDrone_form_within_rendering_distance_cbfn(const br_vector3 *pPos);
 typedef int C2_HOOK_FASTCALL tDrone_form_within_processing_distance_cbfn(const br_vector3 *pPos);
 typedef void C2_HOOK_FASTCALL tFunk_index_cbfn(int pFunk_index);
+typedef void C2_HOOK_FASTCALL tWorld_callback_active_passive_cbfn(tCollision_info*);
 
 typedef enum {
     eFPR_OK = 0,
@@ -3921,9 +3922,12 @@ typedef struct tCollision_info {
 
 typedef struct {
     tCollision_info* collision_info;
-    undefined field_0x4[4];
+    undefined2 field_0x4;
+    undefined field_0x6[0x8 - 0x6];
     undefined4 field_0x8;
-    undefined field_0xc[0xc];
+    float field_0xc;
+    float field_0x10;
+    float field_0x14;
 } tPhil_object_info_00692458;
 
 typedef struct {
@@ -3931,14 +3935,12 @@ typedef struct {
     undefined2 field_0x4;
     undefined field_0x6[0x2];
     undefined4 field_0x8;
-    undefined field_0xc[0xc];
+    float field_0xc;
+    float field_0x10;
+    float field_0x14;
     br_vector3 field_0x18;
     br_vector3 field_0x24;
-    undefined field_0x30[0xc];
-    undefined field_0x3c;
-    undefined field_0x3d[3];
-    undefined4 field_0x40;
-    undefined field_0x44[0x1c];
+    br_matrix34 field_0x30;
     undefined flags;
     undefined field_0x61[3];
 } tQueued_object_info;
