@@ -1680,3 +1680,14 @@ void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tCollision_info* pObject) {
     }
 }
 C2_HOOK_FUNCTION(0x004b6e90, MarkObjectAndChildrenAsPassive)
+
+void (C2_HOOK_FASTCALL * DoCollisions_original)(tCollision_info** pObject_list, tWorld_callbacks* pWorld_callbacks);
+void C2_HOOK_FASTCALL DoCollisions(tCollision_info** pObject_list, tWorld_callbacks* pWorld_callbacks) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoCollisions_original(pObject_list, pWorld_callbacks);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ba6b0, DoCollisions, DoCollisions_original)

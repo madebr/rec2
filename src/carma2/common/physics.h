@@ -142,4 +142,6 @@ void C2_HOOK_FASTCALL LevelOutOnSurface(tCollision_info *pObject);
 
 void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL DoCollisions(tCollision_info** pObject_list, tWorld_callbacks* pWorld_callbacks);
+
 #endif //REC2_PHYSICS_H
