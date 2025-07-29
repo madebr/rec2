@@ -146,4 +146,6 @@ void C2_HOOK_FASTCALL DoCollisions(tCollision_info** pObject_list, tWorld_callba
 
 int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_matrix34* pMatrix);
 
+void C2_HOOK_FASTCALL InterpolateSingleObject(tCollision_info* pObject, tU32 pTime, float pDt);
+
 #endif //REC2_PHYSICS_H

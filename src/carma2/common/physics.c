@@ -1702,3 +1702,14 @@ int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_ma
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b61a0, PHILSetPassiveObjectsMatrix, PHILSetPassiveObjectsMatrix_original)
+
+void (C2_HOOK_FAKE_THISCALL * InterpolateSingleObject_original)(tCollision_info* pObject, undefined4 arg2, float pDt);
+void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tCollision_info* pObject, undefined4 arg2, float pDt) {
+
+#if defined(C2_HOOKS_ENABLED)
+    InterpolateSingleObject_original(pObject, arg2, pDt);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c2830, InterpolateSingleObject, InterpolateSingleObject_original)
