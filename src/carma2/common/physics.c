@@ -1670,3 +1670,13 @@ void C2_HOOK_FASTCALL LevelOutOnSurface(tCollision_info *pObject) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b6fb0, LevelOutOnSurface, LevelOutOnSurface_original)
+
+void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tCollision_info* pObject) {
+    tCollision_info *child;
+
+    pObject->field_0xf0 = 2;
+    for (child = pObject->child; child != NULL; child = child->next) {
+        MarkObjectAndChildrenAsPassive(child);
+    }
+}
+C2_HOOK_FUNCTION(0x004b6e90, MarkObjectAndChildrenAsPassive)
