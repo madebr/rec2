@@ -154,4 +154,6 @@ void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tCollision_info* pObject, tU3
 
 void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tCollision_info* pObjects, tPhysics_callbacks* pCallbacks, tU32 pPeriod);
 
+void C2_HOOK_FASTCALL ResetObjectList(tCollision_info* pObjects);
+
 #endif //REC2_PHYSICS_H
