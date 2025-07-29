@@ -142,4 +142,6 @@ void C2_HOOK_FASTCALL ProcessGravity(tPHIL_queued_header* pObject_info, tCollisi
 
 void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pDrag, int pObject_info_flags, tSpecial_volume* pSpecial_volume);
 
+void C2_HOOK_FASTCALL LevelOutOnSurface(tCollision_info *pObject);
+
 #endif //REC2_PHYSICS_H
