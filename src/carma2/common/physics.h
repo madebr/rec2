@@ -144,4 +144,6 @@ void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tCollision_info* pObject);
 
 void C2_HOOK_FASTCALL DoCollisions(tCollision_info** pObject_list, tWorld_callbacks* pWorld_callbacks);
 
+int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_matrix34* pMatrix);
+
 #endif //REC2_PHYSICS_H

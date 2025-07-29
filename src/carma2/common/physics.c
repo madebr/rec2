@@ -1691,3 +1691,14 @@ void C2_HOOK_FASTCALL DoCollisions(tCollision_info** pObject_list, tWorld_callba
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ba6b0, DoCollisions, DoCollisions_original)
+
+int (C2_HOOK_FASTCALL * PHILSetPassiveObjectsMatrix_original)(tCollision_info* pObject, br_matrix34* pMatrix);
+int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_matrix34* pMatrix) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PHILSetPassiveObjectMatrix(pObject, pMatrix);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b61a0, PHILSetPassiveObjectsMatrix, PHILSetPassiveObjectsMatrix_original)
