@@ -1659,3 +1659,14 @@ void C2_HOOK_FASTCALL ProcessDrag2(tPhil_object_info_00692458* pObject_info, tCo
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004b6ce0, ProcessDrag2, ProcessDrag2_original)
+
+void (C2_HOOK_FASTCALL * LevelOutOnSurface_original)(tCollision_info *pObject);
+void C2_HOOK_FASTCALL LevelOutOnSurface(tCollision_info *pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LevelOutOnSurface_original(pObject);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004b6fb0, LevelOutOnSurface, LevelOutOnSurface_original)
