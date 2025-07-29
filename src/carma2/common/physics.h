@@ -144,4 +144,6 @@ void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* pObject_info, tCollision
 
 void C2_HOOK_FASTCALL LevelOutOnSurface(tCollision_info *pObject);
 
+void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tCollision_info* pObject);
+
 #endif //REC2_PHYSICS_H
