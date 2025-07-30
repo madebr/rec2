@@ -318,6 +318,27 @@ void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatr
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c8600, PipeSingleSkidAdjustment, PipeSingleSkidAdjustment_original)
 
+void C2_HOOK_FASTCALL AddNonCarToPipingSession(tCollision_info* pObject, br_actor* pActor) {
+    tNon_car_spec* non_car;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, car_ID, 0x80);
+
+    non_car = (tNon_car_spec*)pActor->type_data;
+    ARAddVariedDataToSession(ePipe_chunk_non_car, (uintptr_t)non_car->car_ID, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, actor), pActor,
+        SIZE_OFFSET_PIPING(tPipe_chunk_non_car, matrix), &pActor->t.t.mat);
+}
+
+int C2_HOOK_FASTCALL PipeObjectPosition(tCollision_info* pObject, void* pContext) {
+    if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
+        AddNonCarToPipingSession(pObject, pObject->actor);
+    } else if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 0x20) {
+        AddNonCarToPipingSession(pObject, pObject->actor);
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004c68a0, PipeObjectPosition)
+
 void (C2_HOOK_FASTCALL * PipeCarPositions_original)(void);
 void C2_HOOK_FASTCALL PipeCarPositions(void) {
 
