@@ -323,6 +323,7 @@ typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_single_graphpical_wheel_stuff = 6,
     ePipe_chunk_special = 8,
+    ePipe_chunk_non_car = 14,
     ePipe_chunk_smudge = 19,
     ePipe_model_mash = 24,
     ePipe_smash_texture_change = 36,
@@ -3878,11 +3879,12 @@ typedef struct tCollision_info {
     br_bounds3 field_0x124;
     float radius_squared;
     float radius;
-    undefined field_0x144[48];
+    br_matrix34 field_0x144;
     tU16 box_face_start;
     tU16 box_face_end;
     tU16 box_face_ref;
-    undefined field_0x17a[14];
+    undefined field_0x17a[2];
+    br_vector3 field_0x17c;
     tPhysics_joint* physics_joint1;
     tPhysics_joint* physics_joint2;
     tU8 uid;

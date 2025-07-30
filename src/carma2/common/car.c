@@ -1,5 +1,6 @@
 #include "car.h"
 
+#include "brucetrk.h"
 #include "compress.h"
 #include "controls.h"
 #include "crush.h"
@@ -2148,13 +2149,123 @@ int C2_HOOK_FASTCALL PipeNonCarObject(tCollision_info* pCollision_info, void* pU
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004207a0, PipeNonCarObject, PipeNonCarObject_original)
 
+void C2_HOOK_FASTCALL PipeNonCars(void) {
+    int i;
+
+    ARStartPipingSession(ePipe_chunk_non_car);
+    for (i = 0; i < C2V(gNum_active_non_cars); i++) {
+        tNon_car_spec* non_car;
+
+        non_car = C2V(gActive_non_car_list)[i];
+        if (non_car->field_0x80 != -1) {
+            PhysicsObjectRecurse(non_car->collision_info, PipeNonCarObject, NULL);
+        }
+    }
+    AREndPipingSession();
+}
+
 void (C2_HOOK_FASTCALL * CheckForDeAttachmentOfNonCars_original)(tU32 pTime);
 void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CheckForDeAttachmentOfNonCars_original(pTime);
 #else
-    NOT_IMPLEMENTED();
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, total_time, 0x00679418);
+    int new_count;
+
+    new_count = 0;
+    if (C2V(gNum_active_non_cars) != 0) {
+        PipeNonCars();
+        C2V(total_time) += pTime;
+        if (C2V(total_time) >= 1000) {
+            int i;
+
+            C2V(total_time) = 0;
+            for (i = 0; i < C2V(gNum_active_non_cars); i++) {
+                tNon_car_spec* non_car;
+
+                non_car = C2V(gActive_non_car_list)[i];
+
+                if (non_car->actor->t.t.translate.t.v[1] < C2V(gMin_world_y) - 10.f) {
+                    non_car->collision_info->disable_move_rotate = 1;
+                }
+                if (TestForNan(&non_car->actor->t.t.translate.t.v[1])) {
+                    BrVector3Set(&non_car->collision_info->omega, 0.f, 0.f, 0.f);
+                    BrMatrix34Identity(&non_car->actor->t.t.mat);
+                    BrVector3Set(&non_car->actor->t.t.translate.t, 2000.f, 0.f, 0.f);
+                    non_car->collision_info->disable_move_rotate = 1;
+                }
+                C2V(gActive_non_car_list)[new_count] = non_car;
+                if (non_car->collision_info->disable_move_rotate && non_car->driver == eDriver_4) {
+                    int j;
+                    int drop;
+                    br_actor *non_car_actor;
+
+                    drop = 1;
+                    non_car_actor = non_car->actor;
+                    for (j = 0; j < C2V(gNum_cars_and_non_cars); j++) {
+                        tCar_spec *car;
+
+                        car = C2V(gActive_car_list)[j];
+                        if (car != (tCar_spec*)non_car && !car->collision_info->disable_move_rotate) {
+                            br_matrix34 mat;
+                            br_bounds3 bb;
+
+                            BrMatrix34Mul(&mat, &non_car_actor->t.t.mat, &car->collision_info->field_0x144);
+                            GetNewBoundingBox(&bb, &non_car_actor->model->bounds, &mat);
+                            if (!(bb.min.v[0] > car->collision_info->field_0x124.max.v[0]
+                                  || bb.min.v[1] > car->collision_info->field_0x124.max.v[1]
+                                  || bb.min.v[2] > car->collision_info->field_0x124.max.v[2]
+                                  || car->collision_info->field_0x124.min.v[0] > bb.max.v[0]
+                                  || car->collision_info->field_0x124.min.v[1] > bb.max.v[1]
+                                  || car->collision_info->field_0x124.min.v[2] > bb.max.v[2])) {
+                                drop = 0;
+                                break;
+                            }
+                        }
+                    }
+                    if (drop) {
+                        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x17c, 0x17c);
+
+                        if (non_car->flags & 0x10000) {
+                            if (Vector3DistanceSquared(&non_car->collision_info->field_0x17c,
+                                    (br_vector3*)non_car->collision_info->transform_matrix.m[3]) > REC2_SQR(.005f)) {
+                                drop = 0;
+                            } else {
+                                BrVector3Copy((br_vector3 *) &non_car->collision_info->transform_matrix.m[3],
+                                    &non_car->collision_info->field_0x17c);
+                            }
+                        }
+                        if ((tCar_spec*)non_car != C2V(gCar_to_view)) {
+                            BrActorRemove(non_car_actor);
+                            ClearSplashes(non_car->collision_info);
+                            new_count -= 1;
+                            non_car->driver = eDriver_non_car_unused_slot;
+                            if (non_car->field_0x80 != -1) {
+                                tU8 col_x;
+                                tU8 col_z;
+                                br_actor *parent;
+
+                                XZToColumnXZ(&col_x, &col_z, non_car_actor->t.t.mat.m[3][0],
+                                    non_car_actor->t.t.mat.m[3][2], &C2V(gProgram_state).track_spec);
+                                parent = C2V(gTrack_actor);
+                                if (C2V(gProgram_state).track_spec.columns[col_z][col_x].actor_0x0 != NULL) {
+                                    parent = C2V(gProgram_state).track_spec.columns[col_z][col_x].actor_0x0;
+                                }
+                                BrActorAdd(parent, non_car_actor);
+                            } else if (C2V(gAdditional_actors) != NULL) {
+                                BrActorAdd(C2V(gAdditional_actors), non_car_actor);
+                            }
+                            non_car_actor->type_data = NULL;
+                            PHILRemoveObject(non_car->collision_info);
+                        }
+                    }
+                }
+                new_count += 1;
+            }
+            C2V(gNum_active_non_cars) = new_count;
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004203c0, CheckForDeAttachmentOfNonCars, CheckForDeAttachmentOfNonCars_original)

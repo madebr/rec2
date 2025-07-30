@@ -170,6 +170,8 @@ void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime);
 
 int C2_HOOK_FASTCALL PipeNonCarObject(tCollision_info* pCollision_info, void* pUser_data);
 
+void C2_HOOK_FASTCALL PipeNonCars(void);
+
 void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime);
 
 void C2_HOOK_FASTCALL PrepareCars(tU32 pFrame_start_time);
