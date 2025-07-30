@@ -163,6 +163,8 @@ float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pT
 
 void C2_HOOK_FASTCALL CancelPendingCunningStunt(void);
 
+void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
+
 void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime);
 
 void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime);

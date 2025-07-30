@@ -2061,6 +2061,17 @@ void C2_HOOK_FASTCALL CancelPendingCunningStunt(void) {
 }
 C2_HOOK_FUNCTION(0x0041e580, CancelPendingCunningStunt)
 
+void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar) {
+
+    pCar->steering_angle = BrRadianToDegree(atanf((pCar->wpos[0].v[2] - pCar->wpos[2].v[2]) * (pCar->field_0x1260 + pCar->curvature)));
+    pCar->lr_sus_position = (pCar->wpos[0].v[1] - pCar->oldd[0]) / WORLD_SCALE;
+    pCar->rr_sus_position = (pCar->wpos[1].v[1] - pCar->oldd[1]) / WORLD_SCALE;
+    pCar->lf_sus_position = (pCar->wpos[2].v[1] - pCar->oldd[2]) / WORLD_SCALE;
+    pCar->rf_sus_position = (pCar->wpos[3].v[1] - pCar->oldd[3]) / WORLD_SCALE;
+    PipeSingleGraphicalWheelStuff(pCar);
+}
+C2_HOOK_FUNCTION(0x004157e0, CalcGraphicalWheelStuff)
+
 void (C2_HOOK_FASTCALL * FinishCars_original)(tU32 pLast_frame_time, tU32 pTime);
 void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime) {
 
