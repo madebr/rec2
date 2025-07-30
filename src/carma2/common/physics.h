@@ -163,4 +163,6 @@ void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tCollision_info* pObjects, tPhysic
 
 void C2_HOOK_FASTCALL ResetObjectList(tCollision_info* pObjects);
 
+int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tCollision_info* pObject, tEnumCollision_cbfn* pCallback, void* pContext);
+
 #endif //REC2_PHYSICS_H

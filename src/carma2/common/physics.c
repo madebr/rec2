@@ -1907,3 +1907,20 @@ void C2_HOOK_FASTCALL ResetObjectList(tCollision_info* pObjects) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c2600, ResetObjectList, ResetObjectList_original)
+
+typedef int C2_HOOK_FASTCALL tPhysicsObject_cbfn(tCollision_info* pObject, void* pContext);
+
+int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tCollision_info* pObject, tEnumCollision_cbfn* pCallback, void* pContext) {
+    tCollision_info* child;
+
+    for (child = pObject->child; child != NULL; child = child->next) {
+        int r;
+
+        r = PhysicsObjectRecurse(child, pCallback, pContext);
+        if (r != 0) {
+            return r;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004c64b0, PhysicsObjectRecurseChildren)
