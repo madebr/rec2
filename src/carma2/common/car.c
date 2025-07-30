@@ -99,6 +99,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gWoz_upside_down_at_all, 0x006793b8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStop_opponents_moving, 0x00676854, 0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gSkid_tag, 2, 0x006793c0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gLast_car_to_skid, 2, 0x006793c8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCar_to_view_original_v, 0x00679390);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -2075,10 +2076,63 @@ C2_HOOK_FUNCTION(0x004157e0, CalcGraphicalWheelStuff)
 void (C2_HOOK_FASTCALL * FinishCars_original)(tU32 pLast_frame_time, tU32 pTime);
 void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     FinishCars_original(pLast_frame_time, pTime);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    if (C2V(gCar_flying)) {
+        BrMatrix34Copy(&C2V(gCar_to_view)->collision_info->actor->t.t.mat,
+            &C2V(gCar_to_view)->collision_info->transform_matrix);
+    }
+    for (i = 0; i < C2V(gNum_cars_and_non_cars); i++) {
+        tCar_spec* car;
+        float original_speed;
+        br_vector3 minus_k;
+
+        car = C2V(gActive_car_list)[i];
+        BrMatrix34ApplyP(&car->pos, &car->collision_info->cmpos, &car->car_master_actor->t.t.mat);
+        original_speed = car->speed;
+        car->speed = BR_LENGTH2(car->collision_info->v.v[0], car->collision_info->v.v[2]) / 1000.f;
+        BrVector3Negate(&minus_k, (br_vector3*)&car->car_master_actor->t.t.mat.m[2]);
+        if (original_speed < 0.0001f && car->speed > 0.0001f) {
+            car->speed = .0001f;
+        }
+        if (car->speed > .0001f) {
+            BrVector3Normalise(&car->direction, &car->collision_info->v);
+        } else {
+            float ts;
+            if (BrVector3Dot(&car->direction, &minus_k) < 0.f ) {
+                ts = 1.f;
+            } else {
+                ts = -1.f;
+            }
+            BrVector3SetFloat(&minus_k, 0.f, 0.f, ts);
+            BrMatrix34ApplyV(&car->direction, &minus_k, &car->car_master_actor->t.t.mat);
+        }
+        if (car != NULL && car->driver >= eDriver_oppo) {
+            int wheel;
+
+            car->speedo_speed = BrVector3Dot(&minus_k, &car->collision_info->v) / 1000.f;
+            CalcGraphicalWheelStuff(car);
+
+            for (wheel = 0; wheel < 4; wheel++) {
+                if (car->oldd[wheel] < car->susp_height[wheel / 2] && C2V(gCurrent_race).material_modifiers[car->material_index[wheel]].smoke_type >= 2 && !car->collision_info->disable_move_rotate) {
+                    GenerateContinuousSmoke(car, wheel, pTime);
+                }
+            }
+        }
+    }
+    if (pLast_frame_time < C2V(gPHIL_last_physics_tick) && C2V(gCar_to_view)->speed > .0001f) {
+        br_vector3 tv;
+        br_scalar dt;
+
+        dt = (C2V(gPHIL_last_physics_tick) - pLast_frame_time) / 40.f;
+        BrVector3Sub(&tv, &C2V(gCar_to_view_original_v), &C2V(gCar_to_view)->collision_info->v);
+        BrVector3Scale(&tv, &tv, dt);
+        BrVector3Accumulate(&tv, &C2V(gCar_to_view)->collision_info->v);
+        BrVector3Normalise(&C2V(gCar_to_view)->direction, &tv);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00416500, FinishCars, FinishCars_original)

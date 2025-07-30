@@ -21,6 +21,7 @@
 
 #define BrAngleToRadian(a) ((br_scalar)((a) * (PI / 32768.0)))      // a * 0.00009587379924285257
 #define BrRadianToAngle(r) ((br_angle)(long)((r) * (32768.0 / PI))) // r * 10430.378350470453
+#define BrRadianToDegree(r) ((r) * (180.f / PI_F))                  // r * 57.29577951308232
 
 #define BrFixedToScalar(f)	((br_scalar)((f)/(float)BR_ONE_LS))
 #define BrScalarToFixed(s)	(br_fixed_ls)((s)*(br_scalar)BR_ONE_LS)

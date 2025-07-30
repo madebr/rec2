@@ -3869,7 +3869,7 @@ typedef struct tCollision_info {
     br_vector3 pos;
     br_matrix34 transform_matrix;
     undefined field_0xbc[48];
-    tU8 disable_move_rotate;
+    tU8 disable_move_rotate; /* FIXME: rename to doing_nothing_flag? */
     undefined field_0xed;
     undefined field_0xee[2];
     undefined4 field_0xf0;
