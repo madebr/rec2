@@ -311,8 +311,17 @@ typedef struct {
     br_model* model;
 } tPipe_single_ped_model_change;
 
+typedef struct {
+    tU16 steering_angle;
+    tU8 lf_sus_position;
+    tU8 rf_sus_position;
+    tU8 lr_sus_position;
+    tU8 rr_sus_position;
+} tPipe_single_graphical_wheel_stuff;
+
 typedef enum {
     ePipe_chunk_car = 5,
+    ePipe_chunk_single_graphpical_wheel_stuff = 6,
     ePipe_chunk_special = 8,
     ePipe_chunk_smudge = 19,
     ePipe_model_mash = 24,
