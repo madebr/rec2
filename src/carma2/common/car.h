@@ -80,6 +80,8 @@ void C2_HOOK_FASTCALL ResetCarScreens(void);
 
 void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime);
 
+void C2_HOOK_FASTCALL SetTextureBits(tCar_spec* pCar);
+
 void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void);
 
 void C2_HOOK_FASTCALL GetAverageGridPosition(tRace_info* pThe_race);

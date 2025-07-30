@@ -1203,13 +1203,33 @@ void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040f760, CameraBugFix, CameraBugFix_original)
 
+void C2_HOOK_FASTCALL SetTextureBits(tCar_spec* pCar) {
+
+    pCar->field_0x18cc = 0;
+    if (pCar->keys.brake || (pCar->brake_force != 0.f && fabsf(pCar->collision_info->velocity_car_space.v[2]) > 7.2463765e-05f)) {
+        pCar->field_0x18cc |= 0x4;
+    }
+    if (pCar->gear < 4 || (!(pCar != NULL && pCar->driver == eDriver_local_human) && pCar->collision_info->velocity_car_space.v[2] > 0.f)) {
+        pCar->field_0x18cc |= 0x8;
+    }
+}
+
 void (C2_HOOK_FASTCALL * MungeSomeOtherCarGraphics_original)(void);
 void C2_HOOK_FASTCALL MungeSomeOtherCarGraphics(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeSomeOtherCarGraphics_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < C2V(gNum_active_cars); i++) {
+        tCar_spec* car;
+
+        car = C2V(gActive_car_list)[i];
+        if (car->car_master_actor->render_style != BR_RSTYLE_NONE && !C2V(gAction_replay_mode)) {
+            SetTextureBits(car);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041e5a0, MungeSomeOtherCarGraphics, MungeSomeOtherCarGraphics_original)
