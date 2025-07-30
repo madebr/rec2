@@ -52,6 +52,10 @@ void C2_HOOK_FASTCALL AddNonCarToPipingSession(tCollision_info* pObject, br_acto
 
 int C2_HOOK_FASTCALL PipeObjectPosition(tCollision_info* pObject, void* pContext);
 
+void C2_HOOK_FASTCALL AddCarToPipingSession(int pCar_id, br_matrix34* pMatrix, br_vector3* pV, float pSpeedo_speed, float pRevs, int pGear, int pFrame_collision_flag, undefined4 pArg7);
+
+void C2_HOOK_FASTCALL AddDamageToPipingSession(int pCar_id, tU8 *pDamage_deltas);
+
 void C2_HOOK_FASTCALL PipeCarPositions(void);
 
 tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void);
