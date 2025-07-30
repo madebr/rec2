@@ -2137,6 +2137,17 @@ void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00416500, FinishCars, FinishCars_original)
 
+int (C2_HOOK_FASTCALL * PipeNonCarObject_original)(tCollision_info* pCollision_info, void* pUser_data);
+int C2_HOOK_FASTCALL PipeNonCarObject(tCollision_info* pCollision_info, void* pUser_data) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return PipeNonCarObject(pCollision_info, pUser_data);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004207a0, PipeNonCarObject, PipeNonCarObject_original)
+
 void (C2_HOOK_FASTCALL * CheckForDeAttachmentOfNonCars_original)(tU32 pTime);
 void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime) {
 
