@@ -86,4 +86,6 @@ void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 
 
 void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
 
+void C2_HOOK_FASTCALL ClearSplashes(tCollision_info* pObject);
+
 #endif //REC2_SPARK_H
