@@ -234,6 +234,47 @@ void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCou
 }
 C2_HOOK_FUNCTION(0x00402bd0, ARDoSingleVariedSession)
 
+void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCount, ...) {
+    char buffer[5000];
+
+    if (C2V(gPipe_buffer_start) != NULL && !C2V(gAction_replay_mode) && C2V(gProgram_state).racing) {
+        int i;
+        va_list ap;
+
+        va_start(ap, pCount);
+        for (i = 0; i < pCount; i++) {
+            int size;
+            int offset;
+
+            size = va_arg(ap, int);
+            offset = va_arg(ap, int);
+            if (size < 0) {
+                uintptr_t pv = va_arg(ap, uintptr_t);
+                c2_memcpy(buffer + sizeof(uintptr_t) + offset, &pv, sizeof(pv));
+            } else {
+                uintptr_t pv = va_arg(ap, uintptr_t);
+                if (size == 1) {
+                    tU8 b = (tU8)pv;
+                    c2_memcmp(buffer + sizeof(uintptr_t) + offset, &b, sizeof(b));
+                } else if (size == 2) {
+                    tU16 s = (tU16)pv;
+                    c2_memcmp(buffer + sizeof(uintptr_t) + offset, &s, sizeof(s));
+                } else if (size == 4) {
+                    tU32 i = (tU32)pv;
+                    c2_memcmp(buffer + sizeof(uintptr_t) + offset, &i, sizeof(i));
+                } else if (pv != 0) {
+                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, (void*)pv, size);
+                }
+            }
+        }
+        va_end(ap);
+        c2_memcpy(buffer, &pOwner, sizeof(uintptr_t));
+
+        ARAddDataToSession(pType, pOwner, buffer, LengthOfChunk(buffer, pType) - sizeof(void*));
+    }
+}
+C2_HOOK_FUNCTION(0x00402930, ARAddVariedDataToSession)
+
 void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void) {
     int i;
     int j;
