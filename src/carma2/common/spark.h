@@ -81,4 +81,6 @@ void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
+
 #endif //REC2_SPARK_H

@@ -592,3 +592,14 @@ void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tCollision_info* pObject) {
     }
 }
 C2_HOOK_FUNCTION(0x004fca90, StopObjectSmokingInstantly)
+
+void (C2_HOOK_FASTCALL * CreatePuffOfSmoke_original)(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
+void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CreatePuffOfSmoke_original(pPos, pV, pStrength, pDecay_factor, pType);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fb330, CreatePuffOfSmoke, CreatePuffOfSmoke_original)
