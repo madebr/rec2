@@ -2177,7 +2177,7 @@ void C2_HOOK_FASTCALL PipeNonCars(void) {
         tNon_car_spec* non_car;
 
         non_car = C2V(gActive_non_car_list)[i];
-        if (non_car->field_0x80 != -1) {
+        if (non_car->car_ID != -1) {
             PhysicsObjectRecurse(non_car->collision_info, PipeNonCarObject, NULL);
         }
     }
