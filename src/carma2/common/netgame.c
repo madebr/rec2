@@ -215,6 +215,9 @@ void C2_HOOK_FASTCALL SendCarData(tU32 pNext_frame_time) {
 #if defined(C2_HOOKS_ENABLED)
     SendCarData_original(pNext_frame_time);
 #else
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        return;
+    }
     NOT_IMPLEMENTED();
 #endif
 }
