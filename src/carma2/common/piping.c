@@ -4,6 +4,7 @@
 #include "errors.h"
 #include "globvars.h"
 #include "opponent.h"
+#include "physics.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -339,13 +340,110 @@ int C2_HOOK_FASTCALL PipeObjectPosition(tCollision_info* pObject, void* pContext
 }
 C2_HOOK_FUNCTION(0x004c68a0, PipeObjectPosition)
 
+void C2_HOOK_FASTCALL AddCarToPipingSession(int pCar_id, br_matrix34* pMatrix, br_vector3* pV, float pSpeedo_speed, float pRevs, int pGear, int pFrame_collision_flag, undefined4 pArg7) {
+    tPipe_car_chunk chunk;
+    chunk.revs = (int)pRevs / 10;
+    chunk.frame_collision_flag = pFrame_collision_flag;
+    chunk.gear = pGear + 1;
+
+    ARAddVariedDataToSession(ePipe_chunk_car, (uintptr_t)pCar_id, 5,
+        SIZE_OFFSET_PIPING(tPipe_car_chunk, mat), pMatrix,
+        SIZE_OFFSET_PIPING(tPipe_car_chunk, v), pV,
+        SIZE_OFFSET_PIPING(tPipe_car_chunk, speedo_speed), (int)(pSpeedo_speed * 468100.f),
+        SIZE_OFFSET_PIPING(tPipe_car_chunk, flags), chunk.flags,
+        SIZE_OFFSET_PIPING(tPipe_car_chunk, field_0x40), chunk.flags);
+}
+
+void C2_HOOK_FASTCALL AddDamageToPipingSession(int pCar_id, tU8 *pDamage_deltas) {
+    tU8 damage_deltas[12];
+
+    C2_HOOK_BUG_ON(sizeof(damage_deltas) != 12);
+
+    c2_memcpy(damage_deltas, pDamage_deltas, sizeof(damage_deltas));
+    ARAddDataToSession(ePipe_chunk_damage, (uintptr_t)pCar_id, damage_deltas, sizeof(damage_deltas));
+}
+
 void (C2_HOOK_FASTCALL * PipeCarPositions_original)(void);
 void C2_HOOK_FASTCALL PipeCarPositions(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PipeCarPositions_original();
 #else
-    NOT_IMPLEMENTED();
+    int category;
+    int car_count;
+    int car_index;
+    int session_started;
+
+    ARStartPipingSession(ePipe_chunk_car);
+    for (category = eVehicle_self; category < eVehicle_not_really; category++) {
+
+        car_count = category == eVehicle_self ? 1 : GetCarCount(category);
+        for (car_index = 0; car_index < car_count; car_index++) {
+            tCar_spec* car;
+
+            car = category == eVehicle_self ? &C2V(gProgram_state).current_car : GetCarSpec(category, car_index);
+            AddCarToPipingSession((category << 8) | car_index,
+                &car->car_master_actor->t.t.mat,
+                &car->collision_info->v,
+                car->speedo_speed,
+                car->revs,
+                (int)car->gear,
+                car->frame_collision_flag,
+                car->field_0x18cc);
+        }
+    }
+    AREndPipingSession();
+
+    session_started = 0;
+    category = eVehicle_self;
+    car_count = category == eVehicle_self ? 1 : GetCarCount(category);
+    for (car_index = 0; car_index < car_count; car_index++) {
+        tCar_spec *car;
+
+        car = category == eVehicle_self ? &C2V(gProgram_state).current_car : GetCarSpec(category, car_index);
+        if (car->active) {
+            size_t i;
+            tS8 damage_deltas[12];
+            int any_damage;
+
+            C2_HOOK_BUG_ON(REC2_ASIZE(car->damage_units) != 12);
+
+            any_damage = 0;
+            for (i = 0; i < REC2_ASIZE(car->damage_units); i++) {
+                int damage;
+                int damage_delta;
+
+                damage = car->damage_units[i].damage_level;
+                damage_delta = damage - car->frame_start_damage[i];
+                car->frame_start_damage[i] = damage;
+                damage_deltas[i] = damage_delta;
+                any_damage |= damage_delta;
+            }
+            if (any_damage) {
+                if (!session_started) {
+                    ARStartPipingSession(ePipe_chunk_damage);
+                    session_started = 1;
+                }
+                AddDamageToPipingSession((category << 8) | car_index, damage_deltas);
+            }
+        }
+    }
+    if (session_started) {
+        AREndPipingSession();
+    }
+
+    ARStartPipingSession(ePipe_chunk_non_car);
+    for (category = eVehicle_self; category < eVehicle_not_really; category++) {
+
+        car_count = category == eVehicle_self ? 1 : GetCarCount(category);
+        for (car_index = 0; car_index < car_count; car_index++) {
+            tCar_spec *car;
+
+            car = category == eVehicle_self ? &C2V(gProgram_state).current_car : GetCarSpec(category, car_index);
+            PhysicsObjectRecurseChildren(car->collision_info, PipeObjectPosition, NULL);
+        }
+    }
+    AREndPipingSession();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c6640, PipeCarPositions, PipeCarPositions_original)

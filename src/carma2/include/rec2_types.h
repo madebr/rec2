@@ -320,6 +320,21 @@ typedef struct {
 } tPipe_single_graphical_wheel_stuff;
 
 typedef struct {
+    br_matrix34 mat;
+    br_vector3 v;
+    tS16 speedo_speed;
+    union {
+        tU16 flags;
+        struct {
+            tU16 revs: 11;
+            tU16 frame_collision_flag: 1;
+            tU16 gear: 4;
+        };
+    };
+    int field_0x40;
+} tPipe_car_chunk;
+
+typedef struct {
     br_actor* actor;
     br_matrix34 matrix;
 } tPipe_chunk_non_car;
@@ -327,6 +342,7 @@ typedef struct {
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_single_graphpical_wheel_stuff = 6,
+    ePipe_chunk_damage = 7,
     ePipe_chunk_special = 8,
     ePipe_chunk_non_car = 14,
     ePipe_chunk_smudge = 19,
@@ -2303,7 +2319,7 @@ typedef struct tCar_spec {
     undefined field_0x1348[12];
     float max_force_front;
     float max_force_rear;
-    float gear;
+    float gear; /* FIXME: should be an int? */
     int just_changed_gear;
     int max_gear;
     float speed_revs_ratio;
