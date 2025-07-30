@@ -2266,7 +2266,7 @@ typedef struct tCar_spec {
     float field_0x1260;
     float oldd[4];
     int material_index[4];
-    undefined field_0x1284[16];
+    int dust_time[4];
     br_vector3 mu;
     float traction_multiplier;
     float downforce_to_weight;
