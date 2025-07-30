@@ -4255,7 +4255,7 @@ typedef struct tNon_car_spec {
     undefined field_0x1c[80];
     int count_shrapnel_materials;
     undefined field_0x70[16];
-    tS16 field_0x80;
+    tS16 car_ID;
     undefined field_0x82[2];
     br_material* shrapnel_materials[3];
     undefined field_0x90[60];
