@@ -667,3 +667,14 @@ void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fb330, CreatePuffOfSmoke, CreatePuffOfSmoke_original)
+
+void (C2_HOOK_FASTCALL * ClearSplashes_original)(tCollision_info* pObject);
+void C2_HOOK_FASTCALL ClearSplashes(tCollision_info* pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ClearSplashes_original(pObject);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fee70, ClearSplashes)
