@@ -2261,7 +2261,7 @@ void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime) {
                             ClearSplashes(non_car->collision_info);
                             new_count -= 1;
                             non_car->driver = eDriver_non_car_unused_slot;
-                            if (non_car->field_0x80 != -1) {
+                            if (non_car->car_ID != -1) {
                                 tU8 col_x;
                                 tU8 col_z;
                                 br_actor *parent;
