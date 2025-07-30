@@ -2121,6 +2121,9 @@ void C2_HOOK_FASTCALL SendMines(tU32 pNext_frame_time) {
 #if defined(C2_HOOKS_ENABLED)
     SendMines_original(pNext_frame_time);
 #else
+    if (C2V(gNet_mode) != eNet_mode_host) {
+        return;
+    }
     NOT_IMPLEMENTED();
 #endif
 }
