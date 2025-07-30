@@ -26,6 +26,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(br_material*, gSplash_material, 20);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSplash, gSplash, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gSpark_flags);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIt_shade_table);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDust_rotate, 0x006aa568);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -80,6 +81,8 @@ void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec);
 void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tCollision_info* pObject);
+
+void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 pTime);
 
 void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
 
