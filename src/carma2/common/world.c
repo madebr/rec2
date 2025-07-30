@@ -4750,7 +4750,7 @@ void C2_HOOK_FASTCALL PutAdditionalNonCarsOnToAdditionalActors(void) {
     for (i = 0; i < C2V(gNum_active_non_cars); i++) {
         tNon_car_spec *non_car = C2V(gActive_non_car_list)[i];
 
-        if (non_car->field_0x80 == -1 && non_car->actor->parent == C2V(gNon_track_actor)) {
+        if (non_car->car_ID == -1 && non_car->actor->parent == C2V(gNon_track_actor)) {
             BrActorRemove(non_car->actor);
             BrActorAdd(C2V(gAdditional_actors), non_car->actor);
         }
@@ -4763,7 +4763,7 @@ void C2_HOOK_FASTCALL PutAdditionalNonCarsOnToNonTrackActor(void) {
     for (i = 0; i < C2V(gNum_active_non_cars); i++) {
         tNon_car_spec *non_car = C2V(gActive_non_car_list)[i];
 
-        if (non_car->field_0x80 == -1 && non_car->actor->parent == C2V(gAdditional_actors)) {
+        if (non_car->car_ID == -1 && non_car->actor->parent == C2V(gAdditional_actors)) {
             BrActorRemove(non_car->actor);
             BrActorAdd(C2V(gNon_track_actor), non_car->actor);
         }
