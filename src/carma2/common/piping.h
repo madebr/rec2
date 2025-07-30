@@ -48,6 +48,10 @@ void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void);
 
 void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial);
 
+void C2_HOOK_FASTCALL AddNonCarToPipingSession(tCollision_info* pObject, br_actor* pActor);
+
+int C2_HOOK_FASTCALL PipeObjectPosition(tCollision_info* pObject, void* pContext);
+
 void C2_HOOK_FASTCALL PipeCarPositions(void);
 
 tU8* C2_HOOK_FASTCALL ARGetPipePlayPtr(void);

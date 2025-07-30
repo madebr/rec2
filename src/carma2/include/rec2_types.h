@@ -319,6 +319,11 @@ typedef struct {
     tU8 rr_sus_position;
 } tPipe_single_graphical_wheel_stuff;
 
+typedef struct {
+    br_actor* actor;
+    br_matrix34 matrix;
+} tPipe_chunk_non_car;
+
 typedef enum {
     ePipe_chunk_car = 5,
     ePipe_chunk_single_graphpical_wheel_stuff = 6,
