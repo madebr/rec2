@@ -728,7 +728,7 @@ void C2_HOOK_FASTCALL PipeSinglePedModelChange(tPedestrian* pPed, undefined4 pAr
 }
 C2_HOOK_FUNCTION(0x004c8c80, PipeSinglePedModelChange)
 
-void PipeSingleGraphicalWheelStuff(tCar_spec* pCar) {
+void C2_HOOK_FASTCALL PipeSingleGraphicalWheelStuff(tCar_spec* pCar) {
 
     ARDoSingleVariedSession(ePipe_chunk_single_graphpical_wheel_stuff, (uintptr_t)pCar, 5,
         SIZE_OFFSET_PIPING(tPipe_single_graphical_wheel_stuff, steering_angle), (tU16)(pCar->steering_angle * (32767.f / 60.f)),
