@@ -2200,6 +2200,17 @@ void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00440350, DoWheelDamage, DoWheelDamage_original)
 
+void (C2_HOOK_FASTCALL * CrushCar_original)(tCar_spec* pCar, br_actor* pActor, tCar_crush* pCrush);
+void C2_HOOK_FASTCALL CrushCar(tCar_spec* pCar, br_actor* pActor, tCar_crush* pCrush) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CrushCar_original(pCar, pActor, pCrush);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004363f0, CrushCar, CrushCar_original)
+
 void (C2_HOOK_FASTCALL * CrushBendFlapRend_original)(void);
 void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
 

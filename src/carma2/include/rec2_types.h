@@ -3993,6 +3993,15 @@ typedef struct {
 } tCrush_info_buffer;
 
 typedef struct {
+    int count;
+    br_vector3 vectors[4];
+    br_vector3 field_0x34;
+    float field_0x40;
+    br_vector3 field_0x44;
+    undefined4 field_0x50;
+} tCar_crush;
+
+typedef struct {
     tCar_spec* car_spec;
     int count;
     undefined4 field_0x8;
