@@ -22,3 +22,14 @@ void C2_HOOK_FASTCALL DoFlapping(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004381b0, DoFlapping, DoFlapping_original)
+
+void (C2_HOOK_FASTCALL * DoFullyDetaching_original)(void);
+void C2_HOOK_FASTCALL DoFullyDetaching(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoFullyDetaching_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00438900, DoFullyDetaching, DoFullyDetaching_original)
