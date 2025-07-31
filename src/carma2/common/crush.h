@@ -179,11 +179,17 @@ void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period);
 
 void C2_HOOK_FASTCALL CrushCar(tCar_spec* pCar, br_actor* pActor, tCar_crush* pCrush);
 
+void C2_HOOK_FASTCALL DoSpams(void);
+
 void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc);
 
 void C2_HOOK_FASTCALL ExpandCrush(tCar_crush* pDest, const tCompressed_car_crush* pSrc);
 
+void C2_HOOK_FASTCALL DoCrushing(void);
+
 void C2_HOOK_FASTCALL CrushDroneObject(undefined4* pArg1, int pArg2, undefined* pArg3, br_vector3* pArg4);
+
+void C2_HOOK_FASTCALL DoDroneCrushing(void);
 
 void C2_HOOK_FASTCALL CrushBendFlapRend(void);
 

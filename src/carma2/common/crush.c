@@ -6,9 +6,11 @@
 #include "controls.h"
 #include "depth.h"
 #include "errors.h"
+#include "flap.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "loading.h"
+#include "network.h"
 #include "piping.h"
 #include "platform.h"
 #include "powerups.h"
@@ -117,6 +119,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_full_detach_bit_list_item, gNet_crus
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_reattach_bit_list_item, gNet_crush_reattach_bit_list, 8, 0x0067be10);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_detach_list_item, gCrush_detach_list, 16, 0x00679558);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_damge_crush_list_item, gCar_damage_crush_list, 8, 0x0067bd18);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_queued_drone_crushes, 0x006796bc);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_drone_crush, gQueued_drone_crushes, 4, 0x0067bad8);
 
 void (C2_HOOK_FASTCALL * InitCrushSystems_original)(void);
 void C2_HOOK_FASTCALL InitCrushSystems(void) {
@@ -2211,6 +2215,15 @@ void C2_HOOK_FASTCALL CrushCar(tCar_spec* pCar, br_actor* pActor, tCar_crush* pC
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004363f0, CrushCar, CrushCar_original)
 
+void C2_HOOK_FASTCALL DoSpams(void) {
+    int i;
+
+    for (i = 0; i < C2V(gCount_car_damage_crush_list); i++) {
+        TotallySpamTheModel(C2V(gCar_damage_crush_list)[i].car REC2_THISCALL_EDX, C2V(gCar_damage_crush_list)[i].damage);
+    }
+    C2V(gCount_car_damage_crush_list) = 0;
+}
+
 void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc) {
     int i;
 
@@ -2241,6 +2254,55 @@ void C2_HOOK_FASTCALL ExpandCrush(tCar_crush* pDest, const tCompressed_car_crush
 }
 C2_HOOK_FUNCTION(0x004369c0, ExpandCrush)
 
+void C2_HOOK_FASTCALL SendCrush(tCar_spec* pCar, tCompressed_car_crush* pCrush) {
+    tNet_message_chunk* message;
+
+    message = NetStartBroadcastContents(eNet_message_chunk_type_car_crush, 0);
+    if (message != NULL) {
+        message->car_crush.car_id = NetPlayerFromCar(pCar)->ID;
+        c2_memcpy(&message->car_crush.car_crush, pCrush, sizeof(tCompressed_car_crush));
+        NetBroadcastContents(message);
+    }
+}
+
+void C2_HOOK_FASTCALL DoCrushing(void) {
+    int list_i;
+
+    C2_HOOK_BUG_ON(sizeof(tCar_crush) != 0x54);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, car_crush_spec, 0x18d4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, bendability_factor, 0x148);
+
+    for (list_i = 0; C2V(gCrush_lists)[list_i].car_spec != NULL; list_i++) {
+        int i;
+        tCar_spec* car = C2V(gCrush_lists)[list_i].car_spec;
+
+        for (i = 0; i < C2V(gCrush_lists)[list_i].count; i++) {
+            tCar_crush* crush;
+            float amount;
+
+            crush = &C2V(gCrush_lists)[list_i].items[i];
+            amount = car->car_crush_spec->bendability_factor * crush->field_0x40;
+            if (!(car != NULL && car->driver == eDriver_local_human)) {
+                amount *= 1.f - (1.f - ((float)C2V(gCurrent_race).index / (float)C2V(gNumber_of_races)) * 99.f / 20.f);
+            }
+            if (amount > C2V(gMin_bend_force)) {
+                if (PercentageChance((int)C2V(gChance_of_bending))) {
+                    crush->field_0x40 = -crush->field_0x40;
+                } else {
+                    if (C2V(gNet_mode != eNet_mode_none)) {
+                        tCompressed_car_crush compressed_crush;
+
+                        CompressCrush(&compressed_crush, crush);
+                        SendCrush(car, &compressed_crush);
+                        ExpandCrush(crush, &compressed_crush);
+                    }
+                    CrushCar(car, car->car_master_actor, crush);
+                }
+            }
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * CrushDroneObject_original)(undefined4* pArg1, int pArg2, undefined* pArg3, br_vector3* pArg4);
 void C2_HOOK_FASTCALL CrushDroneObject(undefined4* pArg1, int pArg2, undefined* pArg3, br_vector3* pArg4) {
 
@@ -2252,13 +2314,66 @@ void C2_HOOK_FASTCALL CrushDroneObject(undefined4* pArg1, int pArg2, undefined* 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042d180, CrushDroneObject, CrushDroneObject_original)
 
+void C2_HOOK_FASTCALL DoDroneCrushing(void) {
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tQueued_drone_crush) != 0x90);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush, field_0x0, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush, count, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush, items, 0x8);
+    C2_HOOK_BUG_ON(sizeof(tQueued_drone_crush_item) != 0x44);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, count, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x4, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x34, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tQueued_drone_crush_item, field_0x38, 0x38);
+
+    for (i = 0; i < C2V(gCount_queued_drone_crushes); i++) {
+        tQueued_drone_crush* queued_drone_crush;
+        int j;
+
+        queued_drone_crush = &C2V(gQueued_drone_crushes)[i];
+        for (j = 0; j < queued_drone_crush->count; j++) {
+            br_vector3 tv;
+
+            if (queued_drone_crush->items[j].field_0x34 > 5.f) {
+                queued_drone_crush->items[j].field_0x34 = 5.f;
+            }
+            BrVector3Scale(&tv, &queued_drone_crush->items[j].field_0x38, queued_drone_crush->items[j].field_0x34);
+            CrushDroneObject(queued_drone_crush->field_0x0, queued_drone_crush->items[j].count, queued_drone_crush->items[j].field_0x4, &tv);
+        }
+    }
+    C2V(gCount_queued_drone_crushes) = 0;
+}
+
+void C2_HOOK_FASTCALL DoShapeSwapping(void) {
+    int i;
+
+    for (i = 0; i < C2V(gNum_active_cars); i++) {
+        tCar_spec* car;
+
+        car = C2V(gActive_car_list)[i];
+        if (car != NULL && car->driver >= eDriver_oppo && car->car_crush_spec != NULL && (car->car_crush_spec->expand_bounding_box & 0x1)) {
+            SwapShapesIfPossible(car);
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * CrushBendFlapRend_original)(void);
 void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CrushBendFlapRend_original();
 #else
-    NOT_IMPLEMENTED();
+
+    DoSpams();
+    DoCrushing();
+    DoDroneCrushing();
+    DoShapeSwapping();
+    DoFlapping();
+    DoDetaching();
+    DoFullyDetaching();
+    DoBending();
+    ClearCrushLists();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00436170, CrushBendFlapRend, CrushBendFlapRend_original)

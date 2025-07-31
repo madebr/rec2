@@ -4018,6 +4018,19 @@ typedef struct {
 } tCrush_list_item;
 
 typedef struct {
+    int count;
+    undefined field_0x4[0x30];
+    float field_0x34;
+    br_vector3 field_0x38;
+} tQueued_drone_crush_item;
+
+typedef struct {
+    undefined4* field_0x0;
+    int count;
+    tQueued_drone_crush_item items[2];
+} tQueued_drone_crush;
+
+typedef struct {
     tU32 time;
     br_vector3* pos_origin;
     br_vector3* pos_victim;
@@ -4714,6 +4727,7 @@ typedef struct {
 
 typedef enum {
     eNet_message_chunk_type_netsynch = 0xe,
+    eNet_message_chunk_type_car_crush = 0x20,
     eNet_message_chunk_type_toggle_doors = 0x2c,
 } tNet_message_chunk_type;
 
@@ -4736,6 +4750,12 @@ typedef struct {
     br_scalar grow_rate;
     br_scalar current_size;
 } tNet_message_chunk_oil_spill;
+
+typedef struct {
+    tNet_message_chunk_header header;
+    int car_id;
+    tCompressed_car_crush car_crush;
+} tNet_message_car_crush;
 
 typedef struct {
     tNet_message_chunk_header header;
@@ -4820,6 +4840,7 @@ typedef struct {
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
+    tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
 } tNet_message_chunk;
 
