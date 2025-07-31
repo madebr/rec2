@@ -179,6 +179,8 @@ void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period);
 
 void C2_HOOK_FASTCALL CrushCar(tCar_spec* pCar, br_actor* pActor, tCar_crush* pCrush);
 
+void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_crush* pSrc);
+
 void C2_HOOK_FASTCALL CrushBendFlapRend(void);
 
 void C2_HOOK_FASTCALL StopFlapping(br_actor* pActor, tCar_spec* pCar_spec);

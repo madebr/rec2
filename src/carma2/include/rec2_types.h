@@ -4002,6 +4002,16 @@ typedef struct {
 } tCar_crush;
 
 typedef struct {
+    tU8 count;
+    undefined field_0x1;
+    tCompressed_vector3 vectors[4];
+    tU16 field_0x1a;
+    tCompressed_vector3 field_0x1c;
+    undefined field_0x22[2];
+    undefined4 field_0x24;
+} tCompressed_car_crush;
+
+typedef struct {
     tCar_spec* car_spec;
     int count;
     undefined4 field_0x8;
