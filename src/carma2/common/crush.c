@@ -2241,6 +2241,17 @@ void C2_HOOK_FASTCALL ExpandCrush(tCar_crush* pDest, const tCompressed_car_crush
 }
 C2_HOOK_FUNCTION(0x004369c0, ExpandCrush)
 
+void (C2_HOOK_FASTCALL * CrushDroneObject_original)(undefined4* pArg1, int pArg2, undefined* pArg3, br_vector3* pArg4);
+void C2_HOOK_FASTCALL CrushDroneObject(undefined4* pArg1, int pArg2, undefined* pArg3, br_vector3* pArg4) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CrushDroneObject_original(pArg1, pArg2, pArg3, pArg4);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042d180, CrushDroneObject, CrushDroneObject_original)
+
 void (C2_HOOK_FASTCALL * CrushBendFlapRend_original)(void);
 void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
 
