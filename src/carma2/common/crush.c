@@ -2224,6 +2224,23 @@ void C2_HOOK_FASTCALL CompressCrush(tCompressed_car_crush* pDest, const tCar_cru
 }
 C2_HOOK_FUNCTION(0x00436940, CompressCrush)
 
+void C2_HOOK_FASTCALL ExpandCrush(tCar_crush* pDest, const tCompressed_car_crush* pSrc) {
+    int i;
+
+    pDest->count = pSrc->count;
+    ExpandVector3(&pDest->vectors[0], &pSrc->vectors[0], -2.5f, 2.5f);
+    BrVector3Copy(&pDest->field_0x34, &pSrc->vectors[0]);
+    for (i = 1; i < pSrc->count; i++) {
+        ExpandVector3(&pDest->vectors[i], &pSrc->vectors[i], -2.5f, 2.5f);
+        BrVector3Accumulate(&pDest->field_0x34, &pDest->vectors[i]);
+    }
+    BrVector3InvScale(&pDest->field_0x34, &pDest->field_0x34, (float)pDest->count);
+    pDest->field_0x40 = DRU16ToScalar(pSrc->field_0x1a, -1.f, 1.f);
+    ExpandVector3(&pDest->field_0x44, &pSrc->field_0x1c, -1.f, 1.f);
+    pDest->field_0x50 = pSrc->field_0x24;
+}
+C2_HOOK_FUNCTION(0x004369c0, ExpandCrush)
+
 void (C2_HOOK_FASTCALL * CrushBendFlapRend_original)(void);
 void C2_HOOK_FASTCALL CrushBendFlapRend(void) {
 
