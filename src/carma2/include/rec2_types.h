@@ -4014,7 +4014,7 @@ typedef struct {
 typedef struct {
     tCar_spec* car_spec;
     int count;
-    undefined4 field_0x8;
+    tCar_crush items[4];
 } tCrush_list_item;
 
 typedef struct {
