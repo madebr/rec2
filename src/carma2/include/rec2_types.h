@@ -3676,7 +3676,7 @@ typedef struct tCrush_detach_list_item {
 
 typedef struct tCar_damge_crush_list_item {
     tCar_spec* car;
-    int damage;
+    float damage;
 } tCar_damge_crush_list_item;
 
 typedef struct {
