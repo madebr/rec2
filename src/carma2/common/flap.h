@@ -9,4 +9,6 @@ void C2_HOOK_FASTCALL DoFlapping(void);
 
 void C2_HOOK_FASTCALL DoFullyDetaching(void);
 
+void C2_HOOK_FASTCALL DoBending(void);
+
 #endif
