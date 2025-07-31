@@ -41,7 +41,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gMin_split_damage, 0x0067bd64);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gMax_split_damage, 0x0067b7d0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gChance_of_inverse_buckle, 0x0067be04);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFlap_inertia_fudge_biscuit, 0x0067b7b4);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gBatty_gravity, 0x0067be7c);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gBatty_gravity, 0x0067be78);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gTorque_to_snap_per_tonne, 0x0067bdf8);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gMax_detach_time_ms, 0x00679550);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gNormal_force_to_detach, 0x0067944c);
@@ -255,7 +255,7 @@ void C2_HOOK_FASTCALL ReadCrushSettings(FILE* file) {
 
     /* FLAPPING AND JOINT SNAPPING */
     C2V(gFlap_inertia_fudge_biscuit) = GetAScalar(file);
-    C2V(gBatty_gravity) = GetAScalar(file);
+    C2V(gBatty_gravity).v[1] = GetAScalar(file);
     C2V(gTorque_to_snap_per_tonne) = GetAScalar(file);
 
     /* DETACHING */
