@@ -33,3 +33,14 @@ void C2_HOOK_FASTCALL DoFullyDetaching(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00438900, DoFullyDetaching, DoFullyDetaching_original)
+
+void (C2_HOOK_FASTCALL * DoBending_original)(void);
+void C2_HOOK_FASTCALL DoBending(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoBending_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00438a90, DoBending, DoBending_original)
