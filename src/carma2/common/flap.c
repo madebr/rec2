@@ -1,0 +1,13 @@
+#include "flap.h"
+
+
+void (C2_HOOK_FASTCALL * DoFlapping_original)(void);
+void C2_HOOK_FASTCALL DoFlapping(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoFlapping_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004381b0, DoFlapping, DoFlapping_original)
