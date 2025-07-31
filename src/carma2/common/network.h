@@ -140,4 +140,6 @@ void* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pNet_pl
 
 tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
+tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tS32 pSize_decider);
+
 #endif // REC2_NETWORK_H

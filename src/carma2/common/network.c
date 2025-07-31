@@ -900,3 +900,14 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
     return C2V(gNet_players)[C2V(gThis_net_player_index)].player_status;
 }
 C2_HOOK_FUNCTION(0x004a5b30, NetGetPlayerStatus)
+
+tNet_message_chunk* (C2_HOOK_FASTCALL * NetStartBroadcastContents_original)(tNet_message_type pType, tS32 pSize_decider);
+tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tS32 pSize_decider) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetStartBroadcastContents_original(pType, pSize_decider);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049f9c0, NetStartBroadcastContents, NetStartBroadcastContents_original)
