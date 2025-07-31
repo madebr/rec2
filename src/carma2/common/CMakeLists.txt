@@ -39,6 +39,8 @@ add_library(c2_common STATIC
     explosions.h
     finteray.c
     finteray.h
+    flap.c
+    flap.h
     flicplay.c
     flicplay.h
     font.c
