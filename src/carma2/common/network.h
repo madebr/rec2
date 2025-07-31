@@ -142,4 +142,6 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
 tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tS32 pSize_decider);
 
+void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage);
+
 #endif // REC2_NETWORK_H

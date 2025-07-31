@@ -911,3 +911,14 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049f9c0, NetStartBroadcastContents, NetStartBroadcastContents_original)
+
+void (C2_HOOK_FASTCALL * NetBroadcastContents_original)(tNet_message_chunk* pMessage);
+void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage) {
+
+#if defined(C2_HOOKS_ENABLED)
+    NetBroadcastContents_original(pMessage);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049fb70, NetBroadcastContents, NetBroadcastContents_original)
