@@ -7,4 +7,6 @@ void C2_HOOK_FASTCALL DoDetaching(void);
 
 void C2_HOOK_FASTCALL DoFlapping(void);
 
+void C2_HOOK_FASTCALL DoFullyDetaching(void);
+
 #endif
