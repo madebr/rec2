@@ -352,6 +352,7 @@ typedef enum {
     ePipe_chunk_special = 8,
     ePipe_chunk_non_car = 14,
     ePipe_chunk_smudge = 19,
+    ePipe_chunk_flap_bits = 23,
     ePipe_model_mash = 24,
     ePipe_smash_texture_change = 36,
     ePipe_chunk_single_ped_status = 40,
@@ -3621,7 +3622,8 @@ typedef struct tCar_crush_spec {
     tCar_crush_limits field_0xbc;
     br_bounds3 field_0x11c;
     tU8 field_0x134;
-    undefined field_0x135[15];
+    undefined field_0x135[3];
+    br_vector3 field_0x138;
     tU8 field_0x144;
     undefined field_0x145[3];
     float bendability_factor;
