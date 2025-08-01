@@ -512,7 +512,7 @@ void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, const br_vector3* B, const b
 }
 C2_HOOK_FUNCTION(0x00533620, BrMatrix34TApplyP)
 
-void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, const br_vector3* B,const  br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, const br_vector3* B, const  br_matrix34* C) {
 
     // translation elements are presumed zero or irrelevant
     A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
