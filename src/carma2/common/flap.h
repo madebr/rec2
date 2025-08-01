@@ -13,6 +13,10 @@ void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel);
 
 intptr_t C2_HOOK_FASTCALL FlapBit(br_actor* pActor, br_matrix34* pMat, void* pContext);
 
+void C2_HOOK_FASTCALL FlapBits(tCar_spec* pCar);
+
+void C2_HOOK_FASTCALL StartFlapping(br_actor* pActor, tCar_spec* pCar, tU8 pBits, float pArg4);
+
 void C2_HOOK_FASTCALL DoFlapping(void);
 
 void C2_HOOK_FASTCALL DoFullyDetaching(void);
