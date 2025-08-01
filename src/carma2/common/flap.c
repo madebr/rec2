@@ -12,6 +12,17 @@ void C2_HOOK_FASTCALL DoDetaching(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00436ad0, DoDetaching, DoDetaching_original)
 
+void (C2_HOOK_FASTCALL * SetBitForDetachment_original)(br_actor* pActor, tCar_spec* pCar, float pArg3, int pArg4);
+void C2_HOOK_FASTCALL SetBitForDetachment(br_actor* pActor, tCar_spec* pCar, float pArg3, int pArg4) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SetBitForDetachment(pActor, pCar, pArg3, pArg4);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042d7e0, SetBitForDetachment, SetBitForDetachment_original)
+
 void (C2_HOOK_FASTCALL * DoFlapping_original)(void);
 void C2_HOOK_FASTCALL DoFlapping(void) {
 
