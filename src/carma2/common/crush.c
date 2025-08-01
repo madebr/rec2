@@ -886,6 +886,7 @@ void C2_HOOK_FASTCALL InitModelMasterCrushData(tCar_spec* pCar_spec) {
     tCar_crush_spec* car_crush;
 
     C2_HOOK_BUG_ON(sizeof(tCar_crush_vertex_data) != 0x6);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x1cc, 0x1cc);
 
     car_crush = pCar_spec->car_crush_spec;
     if (car_crush != NULL) {
