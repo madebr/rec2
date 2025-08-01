@@ -2162,7 +2162,7 @@ int (C2_HOOK_FASTCALL * PipeNonCarObject_original)(tCollision_info* pCollision_i
 int C2_HOOK_FASTCALL PipeNonCarObject(tCollision_info* pCollision_info, void* pUser_data) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return PipeNonCarObject(pCollision_info, pUser_data);
+    return PipeNonCarObject_original(pCollision_info, pUser_data);
 #else
     NOT_IMPLEMENTED();
 #endif
