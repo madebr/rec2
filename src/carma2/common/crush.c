@@ -189,7 +189,7 @@ void C2_HOOK_FASTCALL ClearCrushLists(void) {
     int i;
 
     C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gCrush_lists)) != 8);
-    C2_HOOK_BUG_ON(sizeof(C2V(gCrush_lists)[0]) != 0xc);
+    C2_HOOK_BUG_ON(sizeof(C2V(gCrush_lists)[0]) != 0x158);
 
     for (i = 0; C2V(gCrush_lists)[i].car_spec != NULL; i++) {
         C2V(gCrush_lists)[i].car_spec = NULL;
