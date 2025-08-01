@@ -23,6 +23,24 @@ void C2_HOOK_FASTCALL SetBitForDetachment(br_actor* pActor, tCar_spec* pCar, flo
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042d7e0, SetBitForDetachment, SetBitForDetachment_original)
 
+void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel) {
+    int g;
+
+    if (pModel == NULL) {
+        return;
+    }
+    for (g = 0; g < pModel->prepared->ngroups; g++) {
+        br_material* material;
+
+        material = pModel->faces[*pModel->prepared->groups[g].face_user].material;
+        if (material != NULL && !(material->flags & BR_MATF_TWO_SIDED)) {
+            material->flags |= BR_MATF_TWO_SIDED;
+            BrMaterialUpdate(material, BR_MATU_RENDERING);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0042d950, MakeModelMaterialsDoubleSided)
+
 void (C2_HOOK_FASTCALL * DoFlapping_original)(void);
 void C2_HOOK_FASTCALL DoFlapping(void) {
 
