@@ -41,6 +41,17 @@ void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel) {
 }
 C2_HOOK_FUNCTION(0x0042d950, MakeModelMaterialsDoubleSided)
 
+intptr_t (C2_HOOK_FASTCALL * FlapBit_original)(br_actor* pActor, br_matrix34* pMat, void* pContext);
+intptr_t C2_HOOK_FASTCALL FlapBit(br_actor* pActor, br_matrix34* pMat, void* pContext) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FlapBit_original(pActor, pMat, pContext);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004384c0, FlapBit, FlapBit_original)
+
 void (C2_HOOK_FASTCALL * DoFlapping_original)(void);
 void C2_HOOK_FASTCALL DoFlapping(void) {
 
