@@ -2368,7 +2368,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00416300, APTCChangedObjects, APTCChangedObjects_ori
 int (C2_HOOK_FASTCALL * APTCActiveHalted_original)(tCollision_info* pArg1);
 int C2_HOOK_FASTCALL APTCActiveHalted(tCollision_info* pArg1) {
 #if defined(C2_HOOKS_ENABLED)
-    APTCActiveHalted_original(pArg1);
+    return APTCActiveHalted_original(pArg1);
 #else
     NOT_IMPLEMENTED();
 #endif
