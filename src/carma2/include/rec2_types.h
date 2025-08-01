@@ -179,6 +179,11 @@ typedef struct {
 } tAccumulateSquashVertices_UserData;
 
 typedef struct {
+    tCar_spec* car;
+    br_vector3 force;
+} tFlapBit_arg;
+
+typedef struct {
     tU16 v[3];
 } tCompressed_vector3;
 
