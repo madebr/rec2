@@ -119,7 +119,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_full_detach_bit_list_item, gNet_crus
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_reattach_bit_list_item, gNet_crush_reattach_bit_list, 8, 0x0067be10);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_detach_list_item, gCrush_detach_list, 16, 0x00679558);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_damge_crush_list_item, gCar_damage_crush_list, 8, 0x0067bd18);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_queued_drone_crushes, 0x006796bc);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_drone_crush, gQueued_drone_crushes, 4, 0x0067bad8);
 
 void (C2_HOOK_FASTCALL * InitCrushSystems_original)(void);
