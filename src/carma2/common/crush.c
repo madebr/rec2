@@ -1178,6 +1178,31 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithTranslation(br_actor* pActor, br
 }
 C2_HOOK_FUNCTION(0x0042b760, DRActorEnumRecurseWithTranslation)
 
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurseWithSnart(br_actor* pActor, const br_matrix34 *pMat, tDRActorEnumRecurseWithSnart_cbfn* pCallback, void* pContext) {
+    br_actor* child;
+    br_matrix34 mat;
+    intptr_t result;
+
+    if (pMat != NULL) {
+        BrMatrix34Mul(&mat, &pActor->t.t.mat, pMat);
+    } else {
+        BrMatrix34Identity(&mat);
+    }
+    result = pCallback(pActor, &mat, pContext);
+    if (result != 0) {
+        return result;
+    }
+    for (child = pActor->children; child != NULL; child = child->next) {
+
+        result = DRActorEnumRecurseWithSnart(child, &mat, pCallback, pContext);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x005148c0, DRActorEnumRecurseWithSnart)
+
 float C2_HOOK_FASTCALL SoftnessOfNearestPoint(tCar_spec* pCar_spec, br_vector3* pPoint) {
     tSoftnessOfNearestPointCB_Context softcb_data;
 
