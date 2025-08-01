@@ -32,6 +32,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_net_full_detach_bit_list_item, gNet_crush_
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_net_reattach_bit_list_item, gNet_crush_reattach_bit_list, 8);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_detach_list_item, gCrush_detach_list, 16);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_damge_crush_list_item, gCar_damage_crush_list, 8);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gBatty_gravity);
 
 void C2_HOOK_FASTCALL InitCrushSystems(void);
 
