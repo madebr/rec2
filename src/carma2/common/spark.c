@@ -677,4 +677,4 @@ void C2_HOOK_FASTCALL ClearSplashes(tCollision_info* pObject) {
     NOT_IMPLEMENTED();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fee70, ClearSplashes)
+C2_HOOK_FUNCTION_ORIGINAL(0x004fee70, ClearSplashes, ClearSplashes_original)
