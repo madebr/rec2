@@ -2314,7 +2314,7 @@ void C2_HOOK_FASTCALL DoCrushing(void) {
                 if (PercentageChance((int)C2V(gChance_of_bending))) {
                     crush->field_0x40 = -crush->field_0x40;
                 } else {
-                    if (C2V(gNet_mode != eNet_mode_none)) {
+                    if (C2V(gNet_mode) != eNet_mode_none) {
                         tCompressed_car_crush compressed_crush;
 
                         CompressCrush(&compressed_crush, crush);
