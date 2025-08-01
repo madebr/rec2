@@ -86,7 +86,7 @@ void C2_HOOK_FASTCALL PipeSingleDroneCornerPos(tDrone_spec* pDrone, tS16 pField_
 
 void C2_HOOK_FASTCALL AddSmudgeToPipingSession(tU16 pCar_ID, int pModel_index, int pVertex_count, tSmudged_vertex* pCoordinates);
 
-void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, void* pThing);
 
 void C2_HOOK_FASTCALL PipeSingleVector3(br_vector3* pDest, br_vector3* pValue);
 
