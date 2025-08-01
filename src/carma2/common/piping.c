@@ -714,7 +714,7 @@ void C2_HOOK_FASTCALL PipeSingleDSModel(tU16 pArg1, void* pThing) {
      *         0 | tCar_spec*
      *         1 | br_model*
      */
-    ARDoSingleVariedSession(ePipe_single_ds_model, (uintptr_t)pCar_spec, 1,
+    ARDoSingleVariedSession(ePipe_single_ds_model, (uintptr_t)pThing, 1,
         SIZE_OFFSET_PIPING(tPipe_single_ds_model, field_0x0), pArg1);
 }
 C2_HOOK_FUNCTION(0x004c8e30, PipeSingleDSModel)
