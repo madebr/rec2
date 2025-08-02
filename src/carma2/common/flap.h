@@ -41,6 +41,10 @@ void C2_HOOK_FASTCALL DoFullyDetaching(void);
 
 void C2_HOOK_FASTCALL BendCar(tCar_spec* pCar, br_angle pAngle_x, br_angle pAngle_y, br_angle pAngle_z, const br_vector3* pArg5, float pArg6, int pArg7);
 
+br_angle C2_HOOK_FASTCALL QuantizeAngle(br_angle pAngle, br_angle pMin, br_angle pMax, br_angle pQuant);
+
+int C2_HOOK_FASTCALL BendCarOneForce(tCar_spec* pCar, tCar_crush* pCar_crush);
+
 void C2_HOOK_FASTCALL DoBending(void);
 
 #endif
