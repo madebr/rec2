@@ -29,6 +29,8 @@ void C2_HOOK_FASTCALL StartFlapping(br_actor* pActor, tCar_spec* pCar, tU8 pBits
 
 void C2_HOOK_FASTCALL DoFlapping(void);
 
+int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tCollision_info* pObject);
+
 void C2_HOOK_FASTCALL DoFullyDetaching(void);
 
 void C2_HOOK_FASTCALL DoBending(void);
