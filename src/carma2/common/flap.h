@@ -9,6 +9,8 @@ tCollision_info* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, b
 
 tCollision_info* C2_HOOK_FASTCALL SemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, int* pArg4, br_vector3* pArg5, br_bounds3* pArg6, br_vector3* pArg7, br_vector3* pArg8);
 
+int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, br_vector3* pP33, br_bounds3* pBounds, br_actor* pActor);
+
 void C2_HOOK_FASTCALL DoDetaching(void);
 
 void C2_HOOK_FASTCALL SetBitForDetachment(br_actor* pActor, tCar_spec* pCar, float pArg3, int pArg4);
