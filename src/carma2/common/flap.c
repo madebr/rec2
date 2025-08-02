@@ -348,10 +348,45 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004314b0, SendFullyDetachBit, SendFullyDetachBit_ori
 void (C2_HOOK_FASTCALL * MungeDetachLists_original)(tCar_crush_spec* pCar_crush);
 void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeDetachLists_original(pCar_crush);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    int new_count;
+
+    new_count = 0;
+    for (i = 0; i < pCar_crush->field_0x270; i++) {
+        tCar_bit_spec* car_bit = &pCar_crush->field_0x274[i];
+
+        /* FIXME: what is type ot tCar_bit_spec::field_0xc? */
+        if (car_bit->field_0xc[10] == 1) {
+            if (i != new_count) {
+                pCar_crush->field_0x274[new_count] = *car_bit;
+                new_count += 1;
+            }
+        } else if (car_bit->field_0xc[10] == 2) {
+            pCar_crush->field_0x2b4[pCar_crush->field_0x2b0] = *car_bit;
+            pCar_crush->field_0x2b0 += 1;
+        }
+    }
+    pCar_crush->field_0x270 = new_count;
+
+    new_count = 0;
+    for (i = 0; i < pCar_crush->field_0x2b0; i++) {
+        tCar_bit_spec* car_bit = &pCar_crush->field_0x2b4[i];
+
+        /* FIXME: what is type ot tCar_bit_spec::field_0xc? */
+        if (car_bit->field_0xc[10] == 1) {
+            pCar_crush->field_0x274[pCar_crush->field_0x270] = *car_bit;
+            pCar_crush->field_0x270 += 1;
+        } else if (car_bit->field_0xc[10] == 2) {
+            if (i != new_count) {
+                pCar_crush->field_0x2b4[new_count] = *car_bit;
+                new_count += 1;
+            }
+        }
+    }
+    pCar_crush->field_0x2b0 = new_count;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042f3d0, MungeDetachLists, MungeDetachLists_original)
