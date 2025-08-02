@@ -710,3 +710,18 @@ int C2_HOOK_FASTCALL DRS3StopSound(tS3_sound_tag pSound_tag) {
     return S3StopSound(pSound_tag);
 }
 C2_HOOK_FUNCTION(0x00455840, DRS3StopSound)
+
+int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const tS3_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed) {
+
+    if (!C2V(gSound_enabled)) {
+        return 0;
+    }
+    if (pVolume != 0
+            && pSound_id != eSoundId_pratcam_whirr_noise
+            && !(pSound_id >= 3000 && pSound_id <= 3007)
+            && !(pSound_id >= 5300 && pSound_id <= 5320)) {
+        PipeSingleSound(pOutlet, pSound_id, pVolume, 0, pPitch, pInitial_position);
+    }
+    return DRS3StartSound3D(pOutlet, pSound_id, pInitial_position, pInitial_velocity, pRepeats, pVolume, pPitch, pSpeed);
+}
+C2_HOOK_FUNCTION(0x00455f80, DRS3StartSound3D)
