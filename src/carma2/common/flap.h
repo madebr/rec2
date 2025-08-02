@@ -33,6 +33,8 @@ int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tCollision_
 
 void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush);
+
 void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec *pCar, tCollision_info* pObject);
 
 void C2_HOOK_FASTCALL DoFullyDetaching(void);

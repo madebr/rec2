@@ -343,6 +343,17 @@ void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tCollision_info* pObje
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004314b0, SendFullyDetachBit, SendFullyDetachBit_original)
 
+void (C2_HOOK_FASTCALL * MungeDetachLists_original)(tCar_crush_spec* pCar_crush);
+void C2_HOOK_FASTCALL MungeDetachLists(tCar_crush_spec* pCar_crush) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeDetachLists_original(pCar_crush);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042f3d0, MungeDetachLists, MungeDetachLists_original)
+
 void (C2_HOOK_FASTCALL * DoFullyDetaching_original)(void);
 void C2_HOOK_FASTCALL DoFullyDetaching(void) {
 
