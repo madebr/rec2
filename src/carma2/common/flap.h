@@ -5,6 +5,8 @@
 
 #include "rec2_types.h"
 
+tCollision_info* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds);
+
 void C2_HOOK_FASTCALL DoDetaching(void);
 
 void C2_HOOK_FASTCALL SetBitForDetachment(br_actor* pActor, tCar_spec* pCar, float pArg3, int pArg4);
