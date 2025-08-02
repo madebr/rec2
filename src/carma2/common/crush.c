@@ -622,7 +622,7 @@ int C2_HOOK_FASTCALL LoadCarCrush(tCar_crush_buffer* pCar_crush_buffer, const ch
         FatalError(kFatalError_WrongCrushDataFileVersion_SDD, pPath, version, 4);
     }
 
-    C2_HOOK_BUG_ON(sizeof(tCar_crush_spec) != 1404);
+    C2_HOOK_BUG_ON(sizeof(tCar_crush_spec) != 0x57c);
     car_crush = BrMemAllocate(sizeof(tCar_crush_spec), kMem_crush_data);
     *pCar_crush_spec = car_crush;
 
