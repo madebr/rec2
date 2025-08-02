@@ -31,6 +31,8 @@ void C2_HOOK_FASTCALL DoFlapping(void);
 
 int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tCollision_info* pObject);
+
 void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec *pCar, tCollision_info* pObject);
 
 void C2_HOOK_FASTCALL DoFullyDetaching(void);
