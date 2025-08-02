@@ -144,4 +144,6 @@ tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type
 
 void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage);
 
+int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_details* pNet_game, tNet_message* pMessage, undefined4 pArg3);
+
 #endif // REC2_NETWORK_H
