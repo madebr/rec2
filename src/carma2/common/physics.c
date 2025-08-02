@@ -1868,7 +1868,7 @@ int (C2_HOOK_FASTCALL * PHILSetPassiveObjectsMatrix_original)(tCollision_info* p
 int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_matrix34* pMatrix) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return PHILSetPassiveObjectMatrix(pObject, pMatrix);
+    return PHILSetPassiveObjectsMatrix_original(pObject, pMatrix);
 #else
     NOT_IMPLEMENTED();
 #endif
