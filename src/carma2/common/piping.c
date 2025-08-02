@@ -595,8 +595,8 @@ void C2_HOOK_FASTCALL PipeSingleOilSpill(int pIndex, br_matrix34* pMat, br_scala
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c82e0, PipeSingleOilSpill, PipeSingleOilSpill_original)
 
-void (C2_HOOK_FASTCALL * PipeSingleSound_original)(tS3_outlet* pOutlet, int pSound, int pArg3, int pArg4, int pPitch, br_vector3* pPopPosition);
-void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, int pArg3, int pArg4, int pPitch, br_vector3* pPosition) {
+void (C2_HOOK_FASTCALL * PipeSingleSound_original)(tS3_outlet* pOutlet, int pSound, int pArg3, int pArg4, int pPitch, const br_vector3* pPopPosition);
+void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, int pArg3, int pArg4, int pPitch, const br_vector3* pPosition) {
 
 #if defined(C2_HOOKS_ENABLED)
     PipeSingleSound_original(pOutlet, pSound, pArg3, pArg4, pPitch, pPosition);
