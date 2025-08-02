@@ -6,6 +6,17 @@
 #include "piping.h"
 
 
+tCollision_info* (C2_HOOK_FASTCALL * DetachBit_original)(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds);
+tCollision_info* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DetachBit_original(pCar, pActor, pBounds);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00433350, DetachBit, DetachBit_original)
+
 void (C2_HOOK_FASTCALL * DoDetaching_original)(void);
 void C2_HOOK_FASTCALL DoDetaching(void) {
 
