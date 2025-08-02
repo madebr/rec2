@@ -39,6 +39,17 @@ int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, b
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042dbd0, GetSDBJointPosAndBounds, GetSDBJointPosAndBounds_original)
 
+void (C2_HOOK_FASTCALL * SendSemiDetachBit_original)(tCar_spec* pCar, br_actor* pActor, float pArg3, undefined4* pArg4);
+void C2_HOOK_FASTCALL SendSemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, undefined4* pArg4) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SendSemiDetachBit_original(pCar, pActor, pArg3, pArg4);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042dab0, SendSemiDetachBit, SendSemiDetachBit_original)
+
 void (C2_HOOK_FASTCALL * DoDetaching_original)(void);
 void C2_HOOK_FASTCALL DoDetaching(void) {
 
