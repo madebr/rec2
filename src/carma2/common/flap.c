@@ -321,6 +321,17 @@ int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tCollision_
 }
 C2_HOOK_FUNCTION(0x00434910, BitObjectIsSufficientlyOutsideCarObjectToDetach)
 
+void (C2_HOOK_FASTCALL * FullyDetachBit_original)(tCar_spec *pCar, tCollision_info* pObject);
+void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tCollision_info* pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FullyDetachBit_original(pCar, pObject);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0042f4e0, FullyDetachBit, FullyDetachBit_original)
+
 void (C2_HOOK_FASTCALL * DoFullyDetaching_original)(void);
 void C2_HOOK_FASTCALL DoFullyDetaching(void) {
 
