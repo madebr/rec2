@@ -17,6 +17,17 @@ tCollision_info* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, b
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00433350, DetachBit, DetachBit_original)
 
+tCollision_info* (C2_HOOK_FASTCALL * SemiDetachBit_original)(tCar_spec* pCar, br_actor* pActor, float pArg3, int* pArg4, br_vector3* pArg5, br_bounds3* pArg6, br_vector3* pArg7, br_vector3* pArg8);
+tCollision_info* C2_HOOK_FASTCALL SemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, int* pArg4, br_vector3* pArg5, br_bounds3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return SemiDetachBit_original(pCar, pActor, pArg3, pArg4, pArg5, pArg6, pArg7, pArg8);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00436d60, SemiDetachBit, SemiDetachBit_original)
+
 void (C2_HOOK_FASTCALL * DoDetaching_original)(void);
 void C2_HOOK_FASTCALL DoDetaching(void) {
 
