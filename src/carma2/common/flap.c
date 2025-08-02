@@ -467,6 +467,17 @@ void C2_HOOK_FASTCALL DoFullyDetaching(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00438900, DoFullyDetaching, DoFullyDetaching_original)
 
+void (C2_HOOK_FASTCALL * BendCar_original)(tCar_spec* pCar, br_angle pAngle_x, br_angle pAngle_y, br_angle pAngle_z, const br_vector3* pArg5, float pArg6, int pArg7);
+void C2_HOOK_FASTCALL BendCar(tCar_spec* pCar, br_angle pAngle_x, br_angle pAngle_y, br_angle pAngle_z, const br_vector3* pArg5, float pArg6, int pArg7) {
+
+#if defined(C2_HOOKS_ENABLED)
+    BendCar_original(pCar, pAngle_x, pAngle_y, pAngle_z, pArg5, pArg6, pArg7);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00433c70, BendCar, BendCar_original)
+
 void (C2_HOOK_FASTCALL * DoBending_original)(void);
 void C2_HOOK_FASTCALL DoBending(void) {
 

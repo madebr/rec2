@@ -39,6 +39,8 @@ void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec *pCar, tCollision_info* pObject);
 
 void C2_HOOK_FASTCALL DoFullyDetaching(void);
 
+void C2_HOOK_FASTCALL BendCar(tCar_spec* pCar, br_angle pAngle_x, br_angle pAngle_y, br_angle pAngle_z, const br_vector3* pArg5, float pArg6, int pArg7);
+
 void C2_HOOK_FASTCALL DoBending(void);
 
 #endif
