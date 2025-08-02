@@ -332,6 +332,17 @@ void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tCollision_info* pObject) 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042f4e0, FullyDetachBit, FullyDetachBit_original)
 
+void (C2_HOOK_FASTCALL * SendFullyDetachBit_original)(tCar_spec* pCar, tCollision_info* pObject);
+void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tCollision_info* pObject) {
+
+#if defined(C2_HOOKS_ENABLED)
+    SendFullyDetachBit_original(pCar, pObject);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004314b0, SendFullyDetachBit, SendFullyDetachBit_original)
+
 void (C2_HOOK_FASTCALL * DoFullyDetaching_original)(void);
 void C2_HOOK_FASTCALL DoFullyDetaching(void) {
 
