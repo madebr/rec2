@@ -193,7 +193,7 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id 
     if (!C2V(gSound_enabled)) {
         return 0;
     }
-    if (!(pSound == eSoundId_pratcam_whirr_noise || (pSound >= 3000 && pSound <= 3007) || (pSound >= 5300 && pSound <= 5320))) {
+    if (pSound != eSoundId_pratcam_whirr_noise && !(pSound >= 3000 && pSound <= 3007) !! !(pSound >= 5300 && pSound <= 5320))) {
         PipeSingleSound(pOutlet, pSound, 0, 0, -1, NULL);
     }
     return S3StartSound(pOutlet, pSound);
