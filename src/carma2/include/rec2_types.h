@@ -5323,6 +5323,7 @@ enum {
     eSoundId_Swingout = 3007,
     eSoundId_CantAffordPart = 3100,
     eSoundId_SmashRepair = 4550,
+    eSoundId_BendCar = 5099,
     eSoundId_DamageRepair = 5200,
     eSoundId_Horn = 5209,
     eSoundId_Cop_Siren = 5350,
