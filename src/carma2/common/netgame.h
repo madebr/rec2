@@ -33,6 +33,8 @@ void C2_HOOK_FASTCALL SendGameplay(tPlayer_ID pPlayer, tNet_gameplay_mess pMess,
 
 void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
 
+void C2_HOOK_FASTCALL CalcPlayerScores(void);
+
 void C2_HOOK_FASTCALL DoNetGameManagement(void);
 
 void C2_HOOK_FASTCALL SetUpNetCarPositions(void);

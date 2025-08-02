@@ -165,6 +165,17 @@ void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pPa
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049bc70, SendGameplayToAllPlayers, SendGameplayToAllPlayers_original)
 
+void (C2_HOOK_FASTCALL * CalcPlayerScores_original)(void);
+void C2_HOOK_FASTCALL CalcPlayerScores(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CalcPlayerScores_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049abf0, CalcPlayerScores, CalcPlayerScores_original)
+
 void (C2_HOOK_FASTCALL * DoNetGameManagement_original)(void);
 void C2_HOOK_FASTCALL DoNetGameManagement(void) {
 
