@@ -65,7 +65,7 @@ void (C2_HOOK_FASTCALL * SetBitForDetachment_original)(br_actor* pActor, tCar_sp
 void C2_HOOK_FASTCALL SetBitForDetachment(br_actor* pActor, tCar_spec* pCar, float pArg3, int pArg4) {
 
 #if defined(C2_HOOKS_ENABLED)
-    SetBitForDetachment(pActor, pCar, pArg3, pArg4);
+    SetBitForDetachment_original(pActor, pCar, pArg3, pArg4);
 #else
     NOT_IMPLEMENTED();
 #endif
