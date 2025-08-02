@@ -1,7 +1,11 @@
 #include "flap.h"
 
 #include "car.h"
+#include "compress.h"
 #include "crush.h"
+#include "globvars.h"
+#include "globvrpb.h"
+#include "network.h"
 #include "physics.h"
 #include "piping.h"
 
@@ -50,13 +54,131 @@ void C2_HOOK_FASTCALL SendSemiDetachBit(tCar_spec* pCar, br_actor* pActor, float
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0042dab0, SendSemiDetachBit, SendSemiDetachBit_original)
 
+int C2_HOOK_FASTCALL BitIsInBentPartOfCar(br_actor* pActor, float pArg2, float pArg3) {
+    tCar_spec* car;
+    float delta;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, old_frame_mat, 0x1c);
+
+    if (pActor->user == NULL) {
+        return 1;
+    }
+    /* FIXME: what type is stored in pActor->user? */
+    car = *(tCar_spec**)pActor->user;
+    if (car == NULL) {
+        return 1;
+    }
+    delta = .4f * (pArg2 - pArg3);
+    if (delta < 0.f) {
+        return pArg3 + delta > car->old_frame_mat.m[2][2];
+    } else {
+        return pArg3 + delta < car->old_frame_mat.m[3][2];
+    }
+}
+
+void C2_HOOK_FASTCALL SendDetachBit(tCar_spec* pCar, br_actor* pActor) {
+    tNet_message* message;
+    br_vector3 p1;
+    br_vector3 p2;
+    br_vector3 p3;
+    br_bounds3 bnds;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.ID, 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.field_0x4, 0x20);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.field_0x8, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.bounds_min, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.bounds_max, 0x2e);
+
+#if !defined(C2_HOOKS_ENABLED)
+    NOT_IMPLEMENTED(); /* FIXME: what type is pActor->user? */
+#endif
+
+    message = NetBuildGuaranteedMessage(51, 0);
+    message->guaranteed.contents.detach_bit.ID = NetPlayerFromCar(pCar)->ID;
+    message->guaranteed.contents.detach_bit.field_0x4 = ((undefined**)pActor->user)[0x8][0x20];
+    message->guaranteed.contents.detach_bit.field_0x8 = C2V(gPHIL_last_physics_tick) + 120;
+    if (!GetSDBJointPosAndBounds(&p1, &p2, &p3, &bnds, pActor)) {
+        CompressVector3(&message->guaranteed.contents.detach_bit.bounds_min, &bnds.min, -10.f, 10.f);
+        CompressVector3(&message->guaranteed.contents.detach_bit.bounds_max, &bnds.max, -10.f, 10.f);
+        NetGuaranteedSendMessageToEverybody(C2V(gCurrent_net_game), message, 0);
+    }
+}
+
 void (C2_HOOK_FASTCALL * DoDetaching_original)(void);
 void C2_HOOK_FASTCALL DoDetaching(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoDetaching_original();
 #else
-    NOT_IMPLEMENTED();
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x174, 0x174);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x180, 0x180);
+
+    if (C2V(gNet_mode) == eNet_mode_none || C2V(gNet_mode) == eNet_mode_host) {
+        int new_count_crush_detach_list;
+        int i;
+
+        new_count_crush_detach_list = 0;
+        for (i = 0; i < C2V(gCount_crush_detach_list); i++) {
+            tCrush_detach_list_item* detach_list_item;
+            int keep;
+            int synced;
+
+            detach_list_item = &C2V(gCrush_detach_list)[i];
+            keep = 1;
+            synced = 0;
+            if (C2V(gPHIL_last_physics_tick) >= detach_list_item->time) {
+                keep = 0;
+
+                if (!((detach_list_item->car->car_crush_spec->field_0x144
+                            && BitIsInBentPartOfCar(detach_list_item->actor,
+                                   detach_list_item->car->car_crush_spec->field_0x174,
+                                   detach_list_item->car->car_crush_spec->field_0x180))
+                        || detach_list_item->car->car_crush_spec->field_0x4b8)) {
+
+                    if (C2V(gNet_mode) == eNet_mode_none) {
+                        if (detach_list_item->field_0x10) {
+
+                            DetachBit(detach_list_item->car, detach_list_item->actor, NULL);
+                        } else {
+                            SemiDetachBit(detach_list_item->car, detach_list_item->actor, detach_list_item->field_0x8, &keep, NULL, NULL, NULL, NULL);
+                        }
+                    } else {
+                        if (detach_list_item->field_0x10) {
+                            int j;
+
+                            for (j = 0; j < C2V(gCount_net_crush_detach_list); j++) {
+                                if (C2V(gNet_crush_detach_list)[j].actor == detach_list_item->actor) {
+                                    synced = 1;
+                                    break;
+                                }
+                            }
+                            if (!synced) {
+                                SendDetachBit(detach_list_item->car, detach_list_item->actor);
+                            }
+                        } else {
+                            int j;
+
+                            for (j = 0; j < C2V(gCount_net_crush_semi_detach_bit_list); j++) {
+                                if (C2V(gNet_crush_semi_detach_bit_list)[j].actor == detach_list_item->actor) {
+                                    synced = 1;
+                                    break;
+                                }
+                            }
+                            if (!synced) {
+                                SendSemiDetachBit(detach_list_item->car, detach_list_item->actor, detach_list_item->field_0x8, NULL);
+                            }
+                        }
+                    }
+                }
+            }
+            if (keep && i != new_count_crush_detach_list) {
+                C2V(gCrush_detach_list)[new_count_crush_detach_list] = C2V(gCrush_detach_list)[i];
+                new_count_crush_detach_list += 1;
+            }
+        }
+        C2V(gCount_crush_detach_list) = new_count_crush_detach_list;
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00436ad0, DoDetaching, DoDetaching_original)

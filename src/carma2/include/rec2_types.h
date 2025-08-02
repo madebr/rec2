@@ -3629,7 +3629,11 @@ typedef struct tCar_crush_spec {
     float bendability_factor;
     float bend_z_min;
     float bend_z_max;
-    undefined field_0x154[120];
+    undefined field_0x154[0x174 - 0x154];
+    float field_0x174;
+    undefined field_0x178[0x180 - 0x178];
+    float field_0x180;
+    undefined field_0x184[0x1cc - 0x184];
     tCar_crush_vertex_data* field_0x1cc;
     undefined field_0x1d0[28];
     br_vector3 field_0x1ec[6];
@@ -3655,13 +3659,13 @@ typedef struct tCar_crush_spec {
 } tCar_crush_spec;
 
 typedef struct tCrush_net_detach_list_item {
-    undefined4 field_0x0;
+    br_actor* actor;
     tCar_spec* car;
     undefined field_0x8[28];
 } tCrush_net_detach_list_item;
 
 typedef struct tCrush_net_semi_detach_bit_list_item {
-    undefined4 field_0x0;
+    br_actor* actor;
     tCar_spec* car;
     undefined field_0x8[68];
 } tCrush_net_semi_detach_bit_list_item;
@@ -3677,9 +3681,11 @@ typedef struct tCrush_net_reattach_bit_list_item {
 } tCrush_net_reattach_bit_list_item;
 
 typedef struct tCrush_detach_list_item {
-    undefined4 field_0x0;
+    br_actor* actor;
     tCar_spec* car;
-    undefined field_0x8[12];
+    float field_0x8;
+    tU32 time;
+    undefined4 field_0x10;
 } tCrush_detach_list_item;
 
 typedef struct tCar_damge_crush_list_item {
@@ -4766,6 +4772,19 @@ typedef struct {
 } tNet_message_car_crush;
 
 typedef struct {
+    int ID;
+    tU8 field_0x4;
+    undefined field_0x5[0x8 - 0x5];
+    tU32 field_0x8;
+    tCompressed_vector3 bounds_min;
+    tCompressed_vector3 bounds_max;
+} tNet_message_chunk_detach_bit;
+
+typedef struct {
+    tNet_message_chunk_header header;
+} tNet_message_guaranteed;
+
+typedef struct {
     tNet_message_chunk_header header;
     tU8 data[];
 } tNet_message_chunk_raw;
@@ -4850,6 +4869,7 @@ typedef union {
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
+    tNet_message_chunk_detach_bit detach_bit; /* type = 0x33 */
 } tNet_message_chunk;
 
 typedef struct {
@@ -4862,9 +4882,17 @@ typedef struct {
     undefined2 field_0x16;
 } tNet_message_header;
 
+typedef struct {
+    tNet_message_guaranteed header;
+    tNet_message_chunk contents;
+} tNet_guaranteed_body;
+
 typedef struct tNet_message {
     tNet_message_header header;
-    tNet_message_chunk contents;
+    union {
+        tNet_message_chunk contents;
+        tNet_guaranteed_body guaranteed;
+    };
 } tNet_message;
 
 typedef struct tNet_message_memory {
