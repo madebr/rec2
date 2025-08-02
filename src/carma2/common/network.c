@@ -922,3 +922,14 @@ void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049fb70, NetBroadcastContents, NetBroadcastContents_original)
+
+int (C2_HOOK_FASTCALL * NetGuaranteedSendMessageToEverybody_original)(tNet_game_details* pNet_game, tNet_message* pMessage, undefined4 pArg3);
+int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_details* pNet_game, tNet_message* pMessage, undefined4 pArg3) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return NetGuaranteedSendMessageToEverybody_original(pNet_game, pMessage, pArg3);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004a5bc0, NetGuaranteedSendMessageToEverybody, NetGuaranteedSendMessageToEverybody_original)
