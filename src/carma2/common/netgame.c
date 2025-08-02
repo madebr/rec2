@@ -2,7 +2,9 @@
 
 #include "globvars.h"
 #include "globvrpb.h"
+#include "network.h"
 #include "opponent.h"
+#include "physics.h"
 #include "platform.h"
 #include "utility.h"
 
@@ -15,6 +17,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_it_change, 0x0068d928);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNot_shown_race_type_headup, 0x0068d934);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWinner_declared, 0x0068d938);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_for_punishment, 0x0068d92c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068d920, 0x0068d920);
 
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
@@ -176,13 +179,53 @@ void C2_HOOK_FASTCALL CalcPlayerScores(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049abf0, CalcPlayerScores, CalcPlayerScores_original)
 
+void C2_HOOK_FASTCALL SendPlayerScores(void) {
+    tNet_message_chunk* the_contents;
+    int i;
+
+    the_contents = NetStartBroadcastContents(24, 0);
+    if (the_contents == NULL) {
+        return;
+    }
+    switch (C2V(gCurrent_net_game)->type) {
+    case eNet_game_type_2:
+        the_contents->scores.general_score = C2V(gINT_0068d920);
+        break;
+    case eNet_game_type_6:
+        the_contents->scores.general_score = 0;
+        for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+            if (C2V(gNet_players)[i].field_0x80) {
+                the_contents->scores.general_score |= 1 << i;
+            }
+        }
+        break;
+    case eNet_game_type_foxy:
+        the_contents->scores.general_score = C2V(gNet_players)[C2V(gIt_or_fox)].ID;
+        break;
+    default:
+        break;
+    }
+    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+        the_contents->scores.scores[i] = C2V(gNet_players)[i].score2;
+    }
+    NetBroadcastContents(the_contents);
+}
+
 void (C2_HOOK_FASTCALL * DoNetGameManagement_original)(void);
 void C2_HOOK_FASTCALL DoNetGameManagement(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoNetGameManagement_original();
 #else
-    NOT_IMPLEMENTED();
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, last_playerscores_sent, 0x00659c34, -1);
+
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        CalcPlayerScores();
+        if (C2V(gPHIL_last_physics_tick) <= C2V(last_playerscores_sent) || C2V(gPHIL_last_physics_tick) >= C2V(last_playerscores_sent) + 80) {
+            C2V(last_playerscores_sent) = C2V(gPHIL_last_physics_tick);
+            SendPlayerScores();
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049ab00, DoNetGameManagement, DoNetGameManagement_original)
