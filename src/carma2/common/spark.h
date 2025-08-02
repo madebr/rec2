@@ -26,7 +26,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(br_material*, gSplash_material, 20);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSplash, gSplash, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gSpark_flags);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIt_shade_table);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDust_rotate, 0x006aa568);
+C2_HOOK_VARIABLE_DECLARE(int, gDust_rotate);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
