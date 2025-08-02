@@ -1901,7 +1901,7 @@ void (C2_HOOK_FASTCALL * ResetObjectList_original)(tCollision_info* pObjects);
 void C2_HOOK_FASTCALL ResetObjectList(tCollision_info* pObjects) {
 
 #if defined(C2_HOOKS_ENABLED)
-    ResetObjectList(pObjects);
+    ResetObjectList_original(pObjects);
 #else
     NOT_IMPLEMENTED();
 #endif
