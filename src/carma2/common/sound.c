@@ -711,7 +711,7 @@ int C2_HOOK_FASTCALL DRS3StopSound(tS3_sound_tag pSound_tag) {
 }
 C2_HOOK_FUNCTION(0x00455840, DRS3StopSound)
 
-int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const tS3_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed) {
+int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed) {
 
     if (!C2V(gSound_enabled)) {
         return 0;
