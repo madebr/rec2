@@ -303,6 +303,24 @@ void C2_HOOK_FASTCALL DoFlapping(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004381b0, DoFlapping, DoFlapping_original)
 
+int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tCollision_info* pObject) {
+    tPhysics_joint* joint = pObject->physics_joint1;
+    int i;
+
+    for (i = 0; i < joint->count_limits; i++) {
+        br_vector3 tv;
+        br_vector3 tv2;
+
+        BrMatrix34ApplyV(&tv, &joint->limits[i].child, &pObject->actor->t.t.mat);
+        BrMatrix34TApplyV(&tv2, &tv, &pObject->parent->actor->t.t.mat);
+        if (BrVector3Dot(&joint->limits[i].parent, &tv2) > sqrtf(.5f)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x00434910, BitObjectIsSufficientlyOutsideCarObjectToDetach)
+
 void (C2_HOOK_FASTCALL * DoFullyDetaching_original)(void);
 void C2_HOOK_FASTCALL DoFullyDetaching(void) {
 
