@@ -283,7 +283,7 @@ void C2_HOOK_FASTCALL InitLastDamageArrayEtc(void) {
     int car_count;
     tCar_spec* car;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(car->frame_start_damage) != 3);
+    C2_HOOK_BUG_ON(REC2_ASIZE(car->frame_start_damage) != 12);
 
     for (cat = eVehicle_self; cat <= eVehicle_not_really; cat++) {
         if (cat == eVehicle_self) {
