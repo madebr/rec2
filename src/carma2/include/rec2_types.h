@@ -3601,8 +3601,8 @@ typedef struct tCar_bit_spec {
     br_actor* field_0x0;
     br_actor* field_0x4;
     tCollision_info* field_0x8;
-    undefined4 field_0xc;
-    undefined4 field_0x10;
+    undefined4* field_0xc;
+    tU32 field_0x10;
 } tCar_bit_spec;
 
 typedef struct tCar_crush_spec {
@@ -3672,7 +3672,8 @@ typedef struct tCrush_net_semi_detach_bit_list_item {
 
 typedef struct tCrush_net_full_detach_bit_list_item {
     tCar_spec* car;
-    undefined field_0x4[8];
+    tCollision_info* object;
+    undefined field_0x8[0xc - 0x8];
 } tCrush_net_full_detach_bit_list_item;
 
 typedef struct tCrush_net_reattach_bit_list_item {

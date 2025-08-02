@@ -7,7 +7,9 @@
 #include "globvrpb.h"
 #include "network.h"
 #include "physics.h"
+#include "platform.h"
 #include "piping.h"
+#include "utility.h"
 
 
 tCollision_info* (C2_HOOK_FASTCALL * DetachBit_original)(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds);
@@ -357,10 +359,75 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0042f3d0, MungeDetachLists, MungeDetachLists_origina
 void (C2_HOOK_FASTCALL * DoFullyDetaching_original)(void);
 void C2_HOOK_FASTCALL DoFullyDetaching(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoFullyDetaching_original();
 #else
-    NOT_IMPLEMENTED();
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, car_crush_spec, 0x18d4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_crush_spec, field_0x270, 0x270);
+
+    if (C2V(gNet_mode) == eNet_mode_none || C2V(gNet_mode) == eNet_mode_host) {
+        int i;
+
+        for (i = 0; i < C2V(gNum_active_cars); i++) {
+            tCar_spec* car;
+
+            car = C2V(gActive_car_list)[i];
+            if (car != NULL && car->driver >= eDriver_oppo && car->car_crush_spec != NULL) {
+                tCar_crush_spec* car_crush;
+                int j;
+
+                car_crush = car->car_crush_spec;
+                for (j = 0; j < car_crush->field_0x270; j++) {
+                    int detach;
+                    tCar_bit_spec* bit_car = &car_crush->field_0x274[j];
+                    tU32 dt;
+
+#if !defined(C2_HOOKS_ENABLED)
+                    NOT_IMPLEMENTED();
+#endif
+                    /* FIXME: What (enum) type does field_0xc have? */
+                    switch (bit_car->field_0xc[9]) {
+                    case 0:
+                    case 1:
+                        detach = BitObjectIsSufficientlyOutsideCarObjectToDetach(bit_car->field_0x8);
+                        dt = PDGetTotalTime() - bit_car->field_0x10;
+                        if (dt < C2V(gMax_detach_time_ms)) {
+                            detach &= PercentageChance((int)((float)(100 * dt) / (float)C2V(gMax_detach_time_ms)));
+                        }
+                        break;
+                    case 2:
+                    case 4:
+                        detach = 1;
+                        break;
+                    default:
+                        detach = 0;
+                        break;
+                    }
+                    if (detach) {
+                        if (C2V(gNet_mode) == eNet_mode_none) {
+                            FullyDetachBit(car, bit_car->field_0x8);
+                        } else {
+                            int bit_synced;
+                            int k;
+
+                            bit_synced = 0;
+                            for (k = 0; k < C2V(gCount_net_crush_full_detach_bit_list); k++) {
+                                if (C2V(gNet_crush_full_detach_bit_list)[k].object == bit_car->field_0x8) {
+                                    bit_synced = 1;
+                                    break;
+                                }
+                            }
+                            if (!bit_synced) {
+                                SendFullyDetachBit(car, bit_car->field_0x8);
+                            }
+                        }
+                    }
+                }
+                MungeDetachLists(car_crush);
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00438900, DoFullyDetaching, DoFullyDetaching_original)

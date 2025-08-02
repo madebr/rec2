@@ -36,6 +36,8 @@ C2_HOOK_VARIABLE_DECLARE(br_vector3, gBatty_gravity);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_crush_detach_list);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_net_crush_detach_list);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_net_crush_semi_detach_bit_list);
+C2_HOOK_VARIABLE_DECLARE(int, gCount_net_crush_full_detach_bit_list);
+C2_HOOK_VARIABLE_DECLARE(float, gMax_detach_time_ms);
 
 void C2_HOOK_FASTCALL InitCrushSystems(void);
 
