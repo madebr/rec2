@@ -180,6 +180,8 @@ void C2_HOOK_FASTCALL EnterUserMessage(void);
 
 void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period);
 
+void C2_HOOK_FASTCALL ExplodeCar(tCar_spec* pCar);
+
 void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime);
 
 void C2_HOOK_FASTCALL BrakeInstantly(void);

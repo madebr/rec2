@@ -2413,13 +2413,69 @@ void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444270, PollCameraControls, PollCameraControls_original)
 
+void C2_HOOK_FASTCALL ExplodeCar(tCar_spec* pCar) {
+    br_vector3 tv;
+    br_vector3 v;
+    br_vector3 pos;
+
+    pCar->collision_info->field_0x49c = 0;
+    BrVector3Set(&tv,
+        pCar->collision_info->cmpos.v[0],
+        pCar->collision_info->cmpos.v[1],
+        pCar->collision_info->bb2.min.v[2] + .3f * (pCar->collision_info->bb2.max.v[2] - pCar->collision_info->bb2.min.v[2]));
+    BrVector3Scale(&v, &pCar->collision_info->v, WORLD_SCALE);
+    BrMatrix34ApplyP(&pos, &tv, &pCar->car_master_actor->t.t.mat);
+    CreatePuffOfSmoke(&pos, &v, 1.f, 1.f, 7);
+
+    tv.v[2] = pCar->collision_info->bb2.min.v[2] + .7f * (pCar->collision_info->bb2.max.v[2] - pCar->collision_info->bb2.min.v[2]);
+    BrMatrix34ApplyP(&pos, &tv, &pCar->car_master_actor->t.t.mat);
+    CreatePuffOfSmoke(&pos, &v, 1.f, 1.f, 7);
+    if (pCar->car_crush_spec->field_0x4b8) {
+        WeldCar(pCar);
+    }
+    DisableCar(pCar);
+}
+
 void (C2_HOOK_FASTCALL * CheckRecoveryOfCars_original)(tU32 pEndFrameTime);
 void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CheckRecoveryOfCars_original(pEndFrameTime);
 #else
-    NOT_IMPLEMENTED();
+
+    if (C2V(gProgram_state).current_car.time_to_recover != 0) {
+        if (C2V(gProgram_state).current_car.knackered) {
+            C2V(gProgram_state).current_car.time_to_recover = 0;
+        } else {
+            int time;
+            char str[256];
+
+            time = (C2V(gProgram_state).current_car.time_to_recover - pEndFrameTime + 1000) / 1000;
+            c2_sprintf(str, "%s %d %s",
+                GetMiscString(eMiscString_recovery_in),
+                time,
+                GetMiscString(time > 1 ? eMiscString_seconds : eMiscString_second));
+            if (!C2V(gToo_late) && C2V(gCancel_recover)) {
+                NewTextHeadupSlot2(4, 0, 2000, -1, str, 0);
+            }
+            if (pEndFrameTime >= C2V(gProgram_state).current_car.time_to_recover) {
+                RecoverCar();
+            }
+        }
+    }
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        int i;
+
+        for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+            if (i != C2V(gThis_net_player_index) && C2V(gNet_players)[i].car->time_to_recover != 0 && pEndFrameTime >= C2V(gNet_players)[i].car->time_to_recover) {
+                C2V(gNet_players)[i].player_status = ePlayer_status_recovering;
+                C2V(gNet_players)[i].car->collision_info->field_0x261 = 0xff;
+                C2V(gNet_players)[i].car->collision_info->message_time = pEndFrameTime;
+                ExplodeCar(C2V(gNet_players)[i].car);
+                C2V(gNet_players)[i].car->time_to_recover = 0;
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00442500, CheckRecoveryOfCars, CheckRecoveryOfCars_original)
