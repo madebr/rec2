@@ -2402,6 +2402,17 @@ void C2_HOOK_FASTCALL EnterUserMessage(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444910, EnterUserMessage, EnterUserMessage_original)
 
+void (C2_HOOK_FASTCALL * CheckMapMoveKeys_original)(int pKey0);
+void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CheckMapMoveKeys_original(pKey0);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00497620, CheckMapMoveKeys, CheckMapMoveKeys_original)
+
 void (C2_HOOK_FASTCALL * PollCameraControls_original)(tU32 pCamera_period);
 void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
 

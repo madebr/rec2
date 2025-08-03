@@ -178,6 +178,8 @@ void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 
 void C2_HOOK_FASTCALL EnterUserMessage(void);
 
+void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0);
+
 void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period);
 
 void C2_HOOK_FASTCALL ExplodeCar(tCar_spec* pCar);
