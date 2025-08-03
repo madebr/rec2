@@ -2402,13 +2402,45 @@ void C2_HOOK_FASTCALL EnterUserMessage(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444910, EnterUserMessage, EnterUserMessage_original)
 
+void C2_HOOK_FASTCALL MapChanged(void) {
+
+    InitMap();
+    SaveOptions();
+}
+
 void (C2_HOOK_FASTCALL * CheckMapMoveKeys_original)(int pKey0);
 void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CheckMapMoveKeys_original(pKey0);
 #else
-    NOT_IMPLEMENTED();
+
+    if (KeyIsDown(31) && pKey0) {
+        C2V(gHeadup_map_y_float) -= (float)C2V(gFrame_period) / 20.f;
+        if (C2V(gHeadup_map_y_float) < 0.f) {
+            C2V(gHeadup_map_y_float) = 0.f;
+        }
+        MapChanged();
+    } else if (KeyIsDown(32) && pKey0) {
+        C2V(gHeadup_map_y_float) += (float)C2V(gFrame_period) / 20.f;
+        if (C2V(gHeadup_map_y_float) + C2V(gHeadup_map_h_float) > (float)C2V(gBack_screen)->height) {
+            C2V(gHeadup_map_y_float) = (float)(C2V(gBack_screen)->height - C2V(gHeadup_map_h));
+        }
+        MapChanged();
+    }
+    if (KeyIsDown(33) && pKey0) {
+        C2V(gHeadup_map_x_float) -= (float)C2V(gFrame_period) / 20.f;
+        if (C2V(gHeadup_map_x_float) < 0.f) {
+            C2V(gHeadup_map_x_float) = 0.f;
+        }
+        MapChanged();
+    } else if (KeyIsDown(34) && pKey0) {
+        C2V(gHeadup_map_x_float) += (float)C2V(gFrame_period) / 20.f;
+        if (C2V(gHeadup_map_x_float) + C2V(gHeadup_map_w_float) + 8.f > (float)C2V(gBack_screen)->width) {
+            C2V(gHeadup_map_x_float) = (float)(C2V(gBack_screen)->width - C2V(gHeadup_map_w) - 8);
+        }
+        MapChanged();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00497620, CheckMapMoveKeys, CheckMapMoveKeys_original)
