@@ -2416,10 +2416,25 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00497620, CheckMapMoveKeys, CheckMapMoveKeys_origina
 void (C2_HOOK_FASTCALL * PollCameraControls_original)(tU32 pCamera_period);
 void C2_HOOK_FASTCALL PollCameraControls(tU32 pCamera_period) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     PollCameraControls_original(pCamera_period);
 #else
-    NOT_IMPLEMENTED();
+    int down0;
+
+    down0 = PDKeyDown(0);
+    if (down0 || PDKeyDown(1)) {
+        CheckMapMoveKeys(down0);
+        C2V(gCamera_key_flags).field_0x0_bit1 = 0;
+        C2V(gCamera_key_flags).field_0x0_bit2 = 0;
+        C2V(gCamera_key_flags).field_0x0_bit3 = 0;
+        C2V(gCamera_key_flags).field_0x0_bit4 = 0;
+    } else {
+        C2V(gCamera_key_flags).field_0x0_bit1 = KeyIsDownNoMouldiness(31);
+        C2V(gCamera_key_flags).field_0x0_bit2 = KeyIsDownNoMouldiness(32);
+        C2V(gCamera_key_flags).field_0x0_bit3 = KeyIsDownNoMouldiness(33);
+        C2V(gCamera_key_flags).field_0x0_bit4 = KeyIsDownNoMouldiness(34);
+        C2V(gCamera_key_flags).field_0x0_bit0 = PDKeyDown(2);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00444270, PollCameraControls, PollCameraControls_original)
