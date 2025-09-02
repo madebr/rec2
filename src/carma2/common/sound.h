@@ -33,6 +33,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0079e18c);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0079e17c);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tEnvironment_sound_source, gEnvironment_sound_sources, 5);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gOld_camera_position);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
