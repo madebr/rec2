@@ -5,6 +5,7 @@
 #include "loading.h"
 #include "opponent.h"
 #include "piping.h"
+#include "replay.h"
 #include "utility.h"
 #include "world.h"
 
@@ -57,6 +58,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gLast_tune, 0x00595c50, -1);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRandom_CDA_tunes, 8, 0x00595c78, { 9600, 9601, 9602, 9603, 9604, 9605, 9606, 9607 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRandom_CDA_tunes_1, 4, 0x00595c98, { 9600, 9601, 9602, 9603 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRandom_CDA_tunes_2, 4, 0x00595ca8, { 9604, 9605, 9606, 9607 });
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gOld_camera_position, 0x0079e180);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
@@ -694,10 +696,89 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00456e20, MungeEnvironmentalSound, MungeEnvironmenta
 void (C2_HOOK_FASTCALL * MungeEngineNoise_original)(void);
 void C2_HOOK_FASTCALL MungeEngineNoise(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeEngineNoise_original();
 #else
-    NOT_IMPLEMENTED();
+    int cat;
+    int stop_all;
+
+    if (!C2V(gSound_available) || !C2V(gProgram_state).racing) {
+        return;
+    }
+    BrVector3Copy(&C2V(gCamera_position), (br_vector3*)&C2V(gCamera_to_world).m[3][0]);
+    BrVector3Negate(&C2V(gCamera_left), (br_vector3*)&C2V(gCamera_to_world).m[0][0]);
+    if (C2V(gFrame_period) != 0) {
+        BrVector3Sub(&C2V(gCamera_velocity), &C2V(gCamera_position), &C2V(gOld_camera_position));
+        BrVector3InvScale(&C2V(gCamera_velocity), &C2V(gCamera_velocity), C2V(gFrame_period) / 1000.0f);
+    } else {
+        BrVector3Set(&C2V(gCamera_velocity), 0.0f, 0.0f, 0.0f);
+    }
+    BrVector3Copy(&C2V(gOld_camera_position), &C2V(gCamera_position));
+    stop_all = C2V(gAction_replay_mode) && (fabsf(ARGetReplayRate()) > 1.0f || ARGetReplayRate() == 0.0f);
+    for (cat = eVehicle_rozzer; cat >= 0; cat--) {
+        int car_count;
+        int i;
+
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (i = 0; i < car_count; i++) {
+            tCar_spec* the_car;
+
+            if (cat == eVehicle_self) {
+                the_car = &C2V(gProgram_state).current_car;
+            } else {
+                the_car = GetCarSpec(cat, i);
+            }
+            if ((the_car != NULL && the_car->driver == eDriver_local_human)
+                    || C2V(gSound_detail_level) > 2 || cat == eVehicle_rozzer) {
+                float pitch;
+                float vol;
+                int type_of_engine_noise;
+
+                BrVector3Copy(&the_car->vel, &the_car->collision_info->v);
+                if (cat == eVehicle_rozzer) {
+                    vol = 255.0f;
+                    pitch = (float)BR_FIXED_INT(1);
+                } else {
+                    if (the_car->collision_info->last_special_volume != NULL) {
+                        type_of_engine_noise = the_car->collision_info->last_special_volume->engine_noise_index;
+                    } else {
+                        type_of_engine_noise = 0;
+                    }
+                    pitch = 40960.0f + 10.0f * the_car->revs;
+                    if (C2V(gAction_replay_mode)) {
+                        pitch *= fabsf(ARGetReplayRate());
+                    }
+                    if (type_of_engine_noise == 1) {
+                        pitch *= 0.75f;
+                    } else if (type_of_engine_noise == 2) {
+                        pitch *= 0.55f;
+                    }
+
+                    pitch = MAX(pitch, 4096.0f);
+                    pitch = MIN(pitch, 131072.0f);
+
+                    vol = 96.0f + the_car->revs * 0.0015f;
+                    if (type_of_engine_noise == 1) {
+                        vol *= 5.0f;
+                    } else if (type_of_engine_noise == 2) {
+                        vol *= 2.0f;
+                    } else {
+                        vol *= 2.5f;
+                    }
+                    vol = MIN(vol, 255);
+                }
+                if (the_car->field_0x4d4 > 1.0f) {
+                    vol *= 1.0f + (the_car->field_0x4d4 - 1.0f) / 12.0f;
+                }
+                S3UpdateSoundSource(C2V(gEngine_outlet), -1, the_car->sound_source, (float)(C2V(gAction_replay_mode) ? 300 : 250), 0, 0, (int)vol, (int)pitch, BR_FIXED_INT(1));
+            }
+        }
+    }
+    SoundService();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456070, MungeEngineNoise, MungeEngineNoise_original)
