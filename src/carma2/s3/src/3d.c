@@ -9,6 +9,7 @@
 
 #include <math.h>
 #include <stddef.h>
+#include <string.h>
 
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c6c, 0x006b2c6c);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c4c, 0x006b2c4c);
@@ -294,10 +295,100 @@ C2_HOOK_FUNCTION(0x005675ce, S3UpdateListenerVectors)
 int (C2_HOOK_FASTCALL * S3UpdateSourcePosition_original)(tS3_sound_source *pSource);
 int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3UpdateSourcePosition_original(pSource);
 #else
-    NOT_IMPLEMENTED();
+    if (pSource == NULL) {
+        return 0;
+    }
+    if (C2V(gS3_enabled) && pSource->ambient) {
+        tS3_outlet* outlet;
+        tS3_descriptor* descriptor;
+
+        outlet = pSource->bound_outlet;
+        descriptor = S3GetDescriptorByID(pSource->sound_id);
+        if (descriptor == NULL) {
+            C2V(gS3_last_error) = eS3_error_bad_id;
+            return eS3_error_none;
+        }
+        if (descriptor->buffer_description == NULL) {
+            return eS3_error_nonexistant_source;
+        }
+        if (descriptor->type != 0) {
+            return eS3_error_none;
+        }
+        memset(&C2V(gS3_channel_template), 0, sizeof(tS3_channel));
+        C2V(gS3_channel_template).source_volume = pSource->volume;
+        C2V(gS3_channel_template).rate = S3IRandomBetweenLog(descriptor->min_pitch,
+                descriptor->max_pitch,
+                descriptor->buffer_description->sample_rate);
+        if (pSource->pitch < 0) {
+            pSource->pitch = BR_FIXED_INT(1);
+        }
+        if (pSource->speed < 0) {
+            pSource->speed = BR_FIXED_INT(1);
+        }
+        C2V(gS3_channel_template).rate = (int)(ldexpf((float)pSource->pitch, -16) * (float)C2V(gS3_channel_template).rate);
+        if (!outlet->independent_pitch) {
+            C2V(gS3_channel_template).rate = (int)(ldexpf((float)pSource->speed, -16) * (float)C2V(gS3_channel_template).rate);
+        }
+        C2V(gS3_channel_template).source_rate = C2V(gS3_channel_template).rate;
+        C2V(gS3_channel_template).sound_source_ptr = pSource;
+        if (pSource->velocity_ptr == NULL) {
+            S3CopyVector3(&C2V(gS3_channel_template).prev_position, pSource->position_ptr, pSource->brender_vector);
+        }
+        C2V(gS3_channel_template).max_distance_squared = pSource->max_distance_sq;
+        if (S3Calculate3D(&C2V(gS3_channel_template), 1) != 0) {
+            tS3_channel* channel;
+
+            channel = S3AllocateChannel(outlet, S3CalculatePriority(C2V(gS3_channel_template).volume_multiplier, descriptor->priority));
+            if (channel == NULL) {
+                C2V(gS3_last_error) = eS3_error_channel_alloc;
+                pSource->tag = 0;
+                pSource->channel = NULL;
+                return eS3_error_none;
+            }
+            if ((descriptor->buffer_description == NULL || (descriptor->flags & 0x2)) && S3LoadSample(pSource->sound_id) == 0) {
+                C2V(gS3_last_error) = eS3_error_load_sound;
+                channel->needs_service = 1;
+                return eS3_error_none;
+            }
+            channel->volume_multiplier = C2V(gS3_channel_template).volume_multiplier;
+            channel->field_0x28 = C2V(gS3_channel_template).field_0x28;
+            channel->rate = C2V(gS3_channel_template).rate;
+            channel->position.x = C2V(gS3_channel_template).position.x;
+            channel->position.y = C2V(gS3_channel_template).position.y;
+            channel->position.z = C2V(gS3_channel_template).position.z;
+            channel->velocity.x = C2V(gS3_channel_template).velocity.x;
+            channel->velocity.y = C2V(gS3_channel_template).velocity.y;
+            channel->velocity.z = C2V(gS3_channel_template).velocity.z;
+            channel->prev_position.x = C2V(gS3_channel_template).prev_position.x;
+            channel->prev_position.y = C2V(gS3_channel_template).prev_position.y;
+            channel->prev_position.z = C2V(gS3_channel_template).prev_position.z;
+            channel->source_volume = C2V(gS3_channel_template).source_volume;
+            channel->source_rate = C2V(gS3_channel_template).source_rate;
+            channel->max_distance_squared = C2V(gS3_channel_template).max_distance_squared;
+            channel->spatial_sound = 2;
+            channel->sound_source_ptr = pSource;
+            channel->descriptor = descriptor;
+            channel->tag = S3GenerateTag(outlet);
+            channel->repetitions = pSource->ambient_repeats;
+            channel->needs_service = 0;
+            channel->termination_reason = 0;
+            S3ExecuteSampleFilterFuncs(channel);
+            if (S3PlaySample(channel) == 0) {
+                channel->needs_service = 1;
+                C2V(gS3_last_error) = eS3_error_start_sound;
+                return 0;
+            }
+            pSource->tag = channel->tag;
+            pSource->channel = channel;
+            return channel->tag;
+        }
+    }
+    pSource->tag = 0;
+    pSource->channel = NULL;
+    return eS3_error_none;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00567b2d, S3UpdateSourcePosition, S3UpdateSourcePosition_original)
