@@ -435,10 +435,81 @@ C2_HOOK_FUNCTION(0x00567ea5, S3UpdateSourceVectors)
 
 int (C2_HOOK_FASTCALL * S3Calculate3D_original)(tS3_channel* pChannel, int pAmbient);
 int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return S3Calculate3D_original(pChannel, pAmbient);
 #else
-    NOT_IMPLEMENTED();
+    float dist_squared;
+    float dist;
+    float sound_volume_factor;
+    br_vector3 dir_pos_listener;
+    br_vector3 dir_left;
+
+    if (pChannel->sound_source_ptr != NULL) {
+        tS3_sound_source* sound_source = pChannel->sound_source_ptr;
+
+        if (sound_source->position_ptr != NULL) {
+            S3CopyVector3(&pChannel->position, sound_source->position_ptr, sound_source->brender_vector);
+        }
+        if (sound_source->velocity_ptr != NULL) {
+            S3CopyVector3(&pChannel->velocity, sound_source->velocity_ptr, sound_source->brender_vector);
+        } else {
+            pChannel->velocity.x = (pChannel->position.x - pChannel->prev_position.x) * (float)C2V(gS3_delta_time) / 1000.f;
+            pChannel->velocity.y = (pChannel->position.y - pChannel->prev_position.y) * (float)C2V(gS3_delta_time) / 1000.f;
+            pChannel->velocity.z = (pChannel->position.z - pChannel->prev_position.z) * (float)C2V(gS3_delta_time) / 1000.f;
+            pChannel->prev_position.x = pChannel->position.x;
+            pChannel->prev_position.y = pChannel->position.y;
+            pChannel->prev_position.z = pChannel->position.z;
+        }
+    }
+    dist_squared =
+              (pChannel->position.x - C2V(gS3_listener_position_now).v[0]) * (pChannel->position.x - C2V(gS3_listener_position_now).v[0])
+            + (pChannel->position.y - C2V(gS3_listener_position_now).v[1]) * (pChannel->position.y - C2V(gS3_listener_position_now).v[1])
+            + (pChannel->position.z - C2V(gS3_listener_position_now).v[2]) * (pChannel->position.z - C2V(gS3_listener_position_now).v[2]);
+
+    if (dist_squared < 0.f) {
+        dist_squared = -dist_squared;
+    }
+    if (dist_squared > pChannel->max_distance_squared) {
+        return 0;
+    }
+    dist = dist_squared != 0.f ? sqrtf(dist_squared) : 0.f;
+    if (pAmbient && dist != 0.f) {
+        float doppler;
+
+        doppler = 1.f -
+                ( (pChannel->velocity.x - C2V(gS3_listener_vel_now).v[0]) * (pChannel->position.x - C2V(gS3_listener_position_now).v[0])
+                + (pChannel->velocity.y - C2V(gS3_listener_vel_now).v[1]) * (pChannel->position.y - C2V(gS3_listener_position_now).v[1])
+                + (pChannel->velocity.z - C2V(gS3_listener_vel_now).v[2]) * (pChannel->position.z - C2V(gS3_listener_position_now).v[2])) / dist / C2V(gFLOAT_006b2c68);
+        if (doppler > 2.f) {
+            doppler = 2.f;
+        } else if (doppler < .5f) {
+            doppler = .5f;
+        }
+        pChannel->rate = (int)((float)pChannel->source_rate * doppler);
+    } else {
+        pChannel->rate = pChannel->source_rate;
+    }
+    sound_volume_factor = 1.f / (1.f + dist / 6.f);
+    if (!C2V(gS3_inside_cockpit)) {
+        sound_volume_factor *= 1.3f;
+    }
+    dir_pos_listener.v[0] = pChannel->position.x - C2V(gS3_listener_position_now).v[0];
+    dir_pos_listener.v[1] = pChannel->position.y - C2V(gS3_listener_position_now).v[1];
+    dir_pos_listener.v[2] = pChannel->position.z - C2V(gS3_listener_position_now).v[2];
+    dir_left.v[0] = C2V(gS3_listener_left_now).v[0];
+    dir_left.v[1] = C2V(gS3_listener_left_now).v[1];
+    dir_left.v[2] = C2V(gS3_listener_left_now).v[2];
+    BrVector3Normalise(&dir_left, &dir_left);
+    BrVector3Normalise(&dir_pos_listener, &dir_pos_listener);
+    pChannel->field_0x28 = -BrVector3Dot(&dir_left, &dir_pos_listener);
+    pChannel->volume_multiplier = (int)((float)pChannel->source_volume * sound_volume_factor);
+    if (pChannel->volume_multiplier < 0) {
+        pChannel->volume_multiplier = 0;
+    }
+    if (pChannel->volume_multiplier > 255) {
+        pChannel->volume_multiplier = 255;
+    }
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0056711c, S3Calculate3D, S3Calculate3D_original)
