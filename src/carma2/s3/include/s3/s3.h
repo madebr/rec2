@@ -181,7 +181,7 @@ typedef struct tS3_channel {
     float field_0x28;
     tS3_vector3 position;
     tS3_vector3 velocity;
-    tS3_vector3 lastpos;
+    tS3_vector3 prev_position;
     int source_volume;
     int source_rate;
     float max_distance_squared;
