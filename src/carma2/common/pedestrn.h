@@ -275,4 +275,6 @@ void C2_HOOK_FASTCALL SetPedStartRun(tPedestrian* pPed);
 
 void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int pArg3);
 
+br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(tPed_character_instance* pCharacter);
+
 #endif //REC2_PEDESTRN_H

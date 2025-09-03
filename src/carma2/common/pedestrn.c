@@ -4257,3 +4257,12 @@ void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int pArg3) 
     }
 }
 C2_HOOK_FUNCTION(0x004cc660, StartPedRunning)
+
+br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(tPed_character_instance* pCharacter) {
+
+    if (pCharacter->field_0x4 < 0) {
+        return NULL;
+    }
+    return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0];
+}
+C2_HOOK_FUNCTION(0x00407b10, GetCharacterActorPtr)
