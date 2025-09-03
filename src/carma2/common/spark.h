@@ -88,4 +88,6 @@ void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float 
 
 void C2_HOOK_FASTCALL ClearSplashes(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL CreateSmokeColumn2(undefined4 pArg1, br_actor* pActor, tCar_spec* pCar, tCollision_info* pObject, undefined4 pArg5, undefined4 pArg6, undefined4 pArg7);
+
 #endif //REC2_SPARK_H
