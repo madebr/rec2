@@ -4139,7 +4139,7 @@ typedef struct {
     tPedestrian* field_0xb4;
     float field_0xb8;
     undefined field_0xbc[0x4];
-    undefined4 field_0xc0;
+    tCar_spec* field_0xc0;
     int field_0xc4;
     undefined2 field_0xc8;
     undefined field_0xca;
@@ -4194,9 +4194,13 @@ typedef struct {
 } tPed_group_spec;
 
 typedef struct {
-    undefined4 field_0x0;
+    tPedestrian* ped;
     br_actor* actors[7];
-    undefined field_0x8[76];
+    undefined4 field_0x20;
+    undefined4 field_0x24;
+    tU32 field_0x28;
+    br_vector3 field_0x2c[5];
+    tCar_spec* field_0x68;
 } tNapalm_bolt;
 
 typedef struct {
@@ -5364,6 +5368,7 @@ enum {
     eSoundId_Swingin = 3006,
     eSoundId_Swingout = 3007,
     eSoundId_CantAffordPart = 3100,
+    eSoundId_NapalmHitCrackls = 3702,
     eSoundId_SmashRepair = 4550,
     eSoundId_BendCar = 5099,
     eSoundId_DamageRepair = 5200,
