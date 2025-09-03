@@ -678,3 +678,14 @@ void C2_HOOK_FASTCALL ClearSplashes(tCollision_info* pObject) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fee70, ClearSplashes, ClearSplashes_original)
+
+void (C2_HOOK_FASTCALL * CreateSmokeColumn2_original)(undefined4 pArg1, br_actor* pActor, tCar_spec* pCar, tCollision_info* pObject, undefined4 pArg5, undefined4 pArg6, undefined4 pArg7);
+void C2_HOOK_FASTCALL CreateSmokeColumn2(undefined4 pArg1, br_actor* pActor, tCar_spec* pCar, tCollision_info* pObject, undefined4 pArg5, undefined4 pArg6, undefined4 pArg7) {
+
+#if defined(C2_HOOKS_ENABLED)
+    CreateSmokeColumn2_original(pArg1, pActor, pCar, pObject, pArg5, pArg6, pArg7);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fb630, CreateSmokeColumn2, CreateSmokeColumn2_original)
