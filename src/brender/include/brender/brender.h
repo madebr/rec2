@@ -91,6 +91,7 @@ void C2_HOOK_CDECL BrMatrix34Identity(br_matrix34* mat);
 void C2_HOOK_CDECL BrMatrix34Translate(br_matrix34* mat, br_scalar dx, br_scalar dy, br_scalar dz);
 void C2_HOOK_CDECL BrMatrix34Pre(br_matrix34* mat, const br_matrix34* A);
 void C2_HOOK_CDECL BrMatrix34Post(br_matrix34* mat, const br_matrix34* A);
+void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, const br_vector3* B, const br_matrix34* C);
 void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, const br_vector3* B, const br_matrix34* C);
 br_scalar C2_HOOK_CDECL BrMatrix34Inverse(br_matrix34* B, const br_matrix34* A);
 void C2_HOOK_CDECL BrMatrix34LPInverse(br_matrix34* A, const br_matrix34* B);
