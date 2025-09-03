@@ -73,6 +73,7 @@ EXPORTS
     BrMatrix34RotateX
     BrMatrix34RotateY
     BrMatrix34Scale
+    BrMatrix34TApplyP
     BrMatrix34TApplyV
     BrMatrix34Translate
     BrModelAdd
