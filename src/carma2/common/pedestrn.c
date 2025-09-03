@@ -3,6 +3,7 @@
 #include "animation.h"
 #include "car.h"
 #include "errors.h"
+#include "explosions.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
@@ -14,6 +15,7 @@
 #include "replay.h"
 #include "skidmark.h"
 #include "smashing.h"
+#include "sound.h"
 #include "spark.h"
 #include "trig.h"
 #include "utility.h"
@@ -345,6 +347,15 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const br_vector3, gPed_bone_look_vecs, 9, 
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(undefined, gPed_scare_head_anim_byte_array, 8, 0x0065e4d8, {
     4, 1, 2, 1, 99, 0, 0, 0,
+});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const float, gFlamed_ped_flame_scales, 7, 0x0065e5b8, {
+    .275f,
+    .2245f,
+    .2f,
+    .175f,
+    .15f,
+    .075f,
+    .05f,
 });
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
@@ -774,7 +785,7 @@ void C2_HOOK_FASTCALL InitNapalmNolts(void) {
 
     C2_HOOK_BUG_ON(sizeof(tNapalm_bolt) != 0x6c);
     for (i = 0; i < REC2_ASIZE(C2V(gNapalm_bolts)); i++) {
-        C2V(gNapalm_bolts)[i].field_0x0 = 0;
+        C2V(gNapalm_bolts)[i].ped = NULL;
         for (j = 0; j < REC2_ASIZE(C2V(gBurning_ped_materials)); j++) {
             br_actor* actor;
 
@@ -1828,7 +1839,7 @@ void C2_HOOK_FASTCALL ResetNapalmBolts(void) {
     for (i = 0; i < REC2_ASIZE(C2V(gNapalm_bolts)); i++) {
         int j;
 
-        C2V(gNapalm_bolts)[0].field_0x0 = 0;
+        C2V(gNapalm_bolts)[0].ped = NULL;
         for (j = 0; j < REC2_ASIZE(C2V(gNapalm_bolts)[0].actors); j++) {
             C2V(gNapalm_bolts)[0].actors[j]->render_style = BR_RSTYLE_NONE;
         }
@@ -1895,10 +1906,144 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004d5970, LastChanceForPedEffects, LastChanceForPedE
 void (C2_HOOK_FASTCALL * MungeNapalm_original)(void);
 void C2_HOOK_FASTCALL MungeNapalm(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeNapalm_original();
 #else
-    NOT_IMPLEMENTED();
+    tU32 the_time;
+    int i;
+
+    the_time = GetTotalTime();
+    ARStartPipingSession(ePipe_chunk_burning_ped);
+    for (i = 0; i < REC2_ASIZE(C2V(gNapalm_bolts)); i++) {
+        tNapalm_bolt* bolt;
+        int bolt_hit_target;
+
+        bolt = &C2V(gNapalm_bolts)[i];
+        if (bolt->ped == NULL) {
+            continue;
+        }
+
+        bolt_hit_target = 0;
+        if (C2V(gAction_replay_mode)) {
+            bolt_hit_target = 1;
+        } else {
+
+            if (!(bolt->ped->flags & 0x1)) {
+                bolt->ped->field_0x0c->field_0x98 = 0;
+                KillNapalmBolt(bolt);
+            } else {
+                tU32 delta_time;
+                tCollision_info* object;
+                float dt;
+                br_vector3 delta_move;
+                float delta_length_sq;
+
+                delta_time = the_time - bolt->field_0x28;
+                if (the_time - bolt->field_0x24 > 50) {
+
+                    C2_HOOK_BUG_ON((REC2_ASIZE(bolt->field_0x2c) - 1) * sizeof(br_vector3) != 0x30);
+
+                    c2_memmove(&bolt->field_0x2c[1], &bolt->field_0x2c[0], (REC2_ASIZE(bolt->field_0x2c) - 1) * sizeof(br_vector3));
+                    BrVector3Sub(&bolt->field_0x2c[0], &bolt->ped->pos, &bolt->actors[0]->t.t.translate.t);
+                    BrVector3Normalise(&bolt->field_0x2c[0], &bolt->field_0x2c[0]);
+                    BrVector3Scale(&bolt->field_0x2c[0], &bolt->field_0x2c[0], FRandomBetween(.8f, 1.25f));
+                    if (delta_time < 500) {
+                        bolt->field_0x2c[0].v[1] += (float)(500 - delta_time) * 2.f / 1000.f;
+                    }
+                }
+                dt = (float)C2V(gFrame_period) * 2.f / 1000.f;
+                bolt->actors[0]->t.t.translate.t.v[0] += dt * bolt->field_0x2c[0].v[0];
+                bolt->actors[0]->t.t.translate.t.v[1] += dt * bolt->field_0x2c[0].v[1];
+                bolt->actors[0]->t.t.translate.t.v[2] += dt * bolt->field_0x2c[0].v[2];
+                object = bolt->ped->character->personality->form->simple_physicing[bolt->ped->character->field_0x5].collision_info;
+                BrVector3Sub(&delta_move, &bolt->actors[0]->t.t.translate.t, &object->actor->t.t.translate.t);
+                delta_length_sq = BrVector3LengthSquared(&delta_move);
+                if (delta_length_sq < REC2_SQR(object->bb1.max.v[0])
+                        || delta_length_sq < REC2_SQR(object->bb1.max.v[1])
+                        || delta_length_sq < REC2_SQR(object->bb1.max.v[2])
+                        || delta_length_sq < REC2_SQR(object->bb1.min.v[0])
+                        || delta_length_sq < REC2_SQR(object->bb1.min.v[1])
+                        || delta_length_sq < REC2_SQR(object->bb1.min.v[2])) {
+                    int j;
+
+                    for (j = 0; j < REC2_ASIZE(bolt->actors); j++) {
+                        br_vector3 delta_world;
+
+                        if (j != 0) {
+                            BrVector3Sub(&delta_move, &bolt->actors[j]->t.t.translate.t, &object->actor->t.t.translate.t);
+                        }
+                        BrMatrix34TApplyP(&delta_world, &delta_move, &object->actor->t.t.mat);
+                        if (delta_world.v[0] <= object->bb1.max.v[0]
+                                && delta_world.v[0] >= object->bb1.min.v[0]
+                                && delta_world.v[1] <= object->bb1.max.v[1]
+                                && delta_world.v[1] >= object->bb1.min.v[1]
+                                && delta_world.v[2] <= object->bb1.max.v[2]
+                                && delta_world.v[2] >= object->bb1.min.v[2]) {
+                            bolt_hit_target = 1;
+                            break;
+                        }
+                    }
+                }
+                if (bolt_hit_target) {
+                    br_actor* character_actor;
+
+                    Explode(&C2V(gNapalmed_ped_animation), GetCharacterActorPtr(bolt->ped->character), &bolt->ped->character->personality->bb, &bolt->ped->character->personality->form->simple_physicing[bolt->ped->character->field_0x5].collision_info->cmpos);
+                    bolt->ped->field_0x0c->field_0x98 = the_time + 15000;
+                    character_actor = GetCharacterActorPtr(bolt->ped->character);
+                    bolt->ped->field_0x0c->field_0xc0 = bolt->field_0x68;
+                    bolt->ped->field_0x0c->field_0x2e |= 0x20;
+                    ScarePedestrian(bolt->ped, the_time, 1, 1);
+                    CreateSmokeColumn2(2, character_actor, NULL, bolt->ped->character->personality->form->simple_physicing[bolt->ped->character->field_0x5].collision_info, 0, IRandomBetween(0, character_actor->model->prepared->groups->nvertices), 25000);
+                    DRS3StartSound3D(C2V(gPedestrians_outlet), eSoundId_NapalmHitCrackls,
+                        &bolt->ped->pos, &C2V(gZero_v__car), 1, 255, BR_FIXED_INT(1), BR_FIXED_INT(1));
+                    if (bolt->ped->hit_points > 0 && bolt->field_0x68 != NULL && bolt->field_0x68->driver == eDriver_local_human) {
+                        PipeSinglePedIncident(bolt->ped, bolt->field_0x68->collision_info->actor);
+                    }
+                    KillNapalmBolt(bolt);
+                }
+            }
+        }
+        if (!bolt_hit_target) {
+            br_vector3 flame_positions[7];
+            int j;
+            tU32 time = the_time;
+
+            C2_HOOK_BUG_ON(REC2_ASIZE(flame_positions) != REC2_ASIZE(C2V(gFlamed_ped_flame_scales)));
+            c2_memset(flame_positions, 0, sizeof(flame_positions));
+            for (j = 0; i < REC2_ASIZE(flame_positions); i++) {
+                br_actor* actor = bolt->actors[j];
+                if (!C2V(gAction_replay_mode)) {
+                    time = (int)((float)time - 0.036f);
+                    if (j != 0) {
+                        int vert_index;
+
+                        if (time < bolt->field_0x28) {
+                            break;
+                        }
+                        vert_index = (bolt->field_0x24 - time) / 50;
+                        vert_index = vert_index >= 0 ? vert_index : 0;
+                        actor->t.t.translate.t.v[0] = bolt->actors[j - 1]->t.t.translate.t.v[0] - bolt->field_0x2c[vert_index].v[0] * .036f;
+                        actor->t.t.translate.t.v[1] = bolt->actors[j - 1]->t.t.translate.t.v[1] - bolt->field_0x2c[vert_index].v[1] * .036f;
+                        actor->t.t.translate.t.v[2] = bolt->actors[j - 1]->t.t.translate.t.v[2] - bolt->field_0x2c[vert_index].v[2] * .036f;
+                        actor->render_style = BR_RSTYLE_FACES;
+                    }
+                } else if (actor->render_style != BR_RSTYLE_FACES) {
+                    break;
+                }
+                actor->t = C2V(gCamera)->t;
+                BrMatrix34PreScale(&actor->t.t.mat,
+                    (float)actor->material->colour_map->width * C2V(gFlamed_ped_flame_scales)[j] / 128.f,
+                    (float)actor->material->colour_map->height * C2V(gFlamed_ped_flame_scales)[j] / 128.f,
+                    1.f);
+                BrMatrix34PreRotateZ(&actor->t.t.mat,
+                    (br_angle)actor->t.t.translate.t.v[0] ^ (br_angle)actor->t.t.translate.t.v[1] ^ (br_angle)actor->t.t.translate.t.v[2]);
+                actor->render_style = BR_RSTYLE_FACES;
+                BrVector3Copy(&flame_positions[j], &actor->t.t.translate.t);
+            }
+            AddBurningPedToSession(i, bolt->ped, flame_positions);
+        }
+    }
+    AREndPipingSession();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ce7d0, MungeNapalm, MungeNapalm_original)
@@ -1998,7 +2143,7 @@ void C2_HOOK_FASTCALL KillNapalmBolt(tNapalm_bolt* pBolt) {
     for (i = 0; i < REC2_ASIZE(pBolt->actors); i++) {
         pBolt->actors[i]->render_style = BR_RSTYLE_NONE;
     }
-    pBolt->field_0x0 = 0;
+    pBolt->ped = NULL;
 }
 
 void C2_HOOK_FASTCALL SetNextRandomTurn(tPedestrian* pPed, tU32 pTime) {
