@@ -125,3 +125,15 @@ void C2_HOOK_FASTCALL MungeExplosions(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004eaaf0, MungeExplosions, MungeExplosions_original)
+
+void (C2_HOOK_FASTCALL * Explode_original)(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos);
+void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos) {
+
+#if defined(C2_HOOKS_ENABLED)
+    Explode_original(pExplosion_animation, pActor, pBounds, pPos);
+#else
+    NOT_IMPLEMENTED();
+#endif
+
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ead00, Explode, Explode_original)

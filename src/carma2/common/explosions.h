@@ -14,4 +14,6 @@ void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* p
 
 void C2_HOOK_FASTCALL MungeExplosions(void);
 
+void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos);
+
 #endif // REC2_EXPLOSIONS_H
