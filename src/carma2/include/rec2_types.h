@@ -347,6 +347,11 @@ typedef struct {
 } tPipe_ped_incident;
 
 typedef struct {
+    tPedestrian* ped;
+    br_vector3 positions[7];
+} tPipe_burning_ped;
+
+typedef struct {
     br_actor* actor;
     br_matrix34 matrix;
 } tPipe_chunk_non_car;
@@ -375,6 +380,7 @@ typedef enum {
     ePipe_chunk_drone_render = 60,
     ePipe_chunk_drone_corner_pos = 61,
     ePipe_chunk_single_drone_straight_pos = 62,
+    ePipe_chunk_burning_ped = 64,
     ePipe_single_transform_type = 68,
     ePipe_chunk_single_oppo_renderage = 69,
 } tPipe_chunk_type;
