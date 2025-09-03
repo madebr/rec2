@@ -863,3 +863,13 @@ void C2_HOOK_FASTCALL PipeSingleGraphicalWheelStuff(tCar_spec* pCar) {
 
 }
 C2_HOOK_FUNCTION(0x004c83f0, PipeSingleGraphicalWheelStuff)
+
+void C2_HOOK_FASTCALL PipeSinglePedIncident(tPedestrian* pPed, br_actor* pActor) {
+
+    C2V(gUNK_0069410c) = 0;
+    ARDoSingleVariedSession(ePipe_chunk_ped_incident, 0, 3,
+        SIZE_OFFSET_PIPING(tPipe_ped_incident, field_0x0, 0),
+        SIZE_OFFSET_PIPING(tPipe_ped_incident, ped, pPed),
+        SIZE_OFFSET_PIPING(tPipe_ped_incident, actor, actor));
+}
+C2_HOOK_FUNCTION(0x004c8580, PipeSinglePedIncident)

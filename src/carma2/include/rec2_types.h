@@ -341,11 +341,18 @@ typedef struct {
 } tPipe_car_chunk;
 
 typedef struct {
+    undefined4 field_0x0;
+    tPedestrian* ped;
+    br_actor* actor;
+} tPipe_ped_incident;
+
+typedef struct {
     br_actor* actor;
     br_matrix34 matrix;
 } tPipe_chunk_non_car;
 
 typedef enum {
+    ePipe_chunk_ped_incident = 1,
     ePipe_chunk_car = 5,
     ePipe_chunk_single_graphpical_wheel_stuff = 6,
     ePipe_chunk_damage = 7,
