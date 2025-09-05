@@ -2139,3 +2139,14 @@ void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d8d40, GotPowerupEarwig, GotPowerupEarwig_original)
+
+void (C2_HOOK_FASTCALL * LosePowerupX_original)(tPowerup* pPowerup, undefined4 pArg2);
+void C2_HOOK_FASTCALL LosePowerupX(tPowerup* pPowerup, undefined4 pArg2) {
+
+#if defined(C2_HOOKS_ENABLED)
+    LosePowerupX_original(pPowerup, pArg2);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004db630, LosePowerupX, LosePowerupX_original)

@@ -277,4 +277,6 @@ void C2_HOOK_FASTCALL SendMines(tU32 pNext_frame_time);
 
 void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory);
 
+void C2_HOOK_FASTCALL LosePowerupX(tPowerup* pPowerup, undefined4 pArg2);
+
 #endif //REC2_POWERUPS_H
