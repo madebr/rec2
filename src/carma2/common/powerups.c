@@ -2128,3 +2128,14 @@ void C2_HOOK_FASTCALL SendMines(tU32 pNext_frame_time) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dcfb0, SendMines, SendMines_original)
+
+void (C2_HOOK_FASTCALL * GotPowerupEarwig_original)(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory);
+void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory) {
+
+#if defined(C2_HOOKS_ENABLED)
+    GotPowerupEarwig_original(pCar, pIndex, pMessage, pSelect_inventory);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d8d40, GotPowerupEarwig, GotPowerupEarwig_original)

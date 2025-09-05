@@ -275,4 +275,6 @@ void C2_HOOK_FASTCALL PissedEffect(tPowerup* powerup, tU32 time);
 
 void C2_HOOK_FASTCALL SendMines(tU32 pNext_frame_time);
 
+void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage, int pSelect_inventory);
+
 #endif //REC2_POWERUPS_H
