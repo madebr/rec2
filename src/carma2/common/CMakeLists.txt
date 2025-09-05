@@ -77,6 +77,8 @@ add_library(c2_common STATIC
     frontend_startgame.h
     frontend_wrecks.c
     frontend_wrecks.h
+    funk.c
+    funk.h
     globvars.c
     globvars.h
     globvrbm.c
