@@ -682,6 +682,16 @@ int C2_HOOK_FASTCALL DRS3SetVolume(int pVolume) {
 }
 C2_HOOK_FUNCTION(0x00455950, DRS3SetVolume)
 
+void C2_HOOK_FASTCALL MungeSoundGenerators(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeSoundGenerators_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456ea0, MungeSoundGenerators, MungeSoundGenerators_original)
+
 void (C2_HOOK_FASTCALL * MungeEnvironmentalSound_original)(void);
 void C2_HOOK_FASTCALL MungeEnvironmentalSound(void) {
 

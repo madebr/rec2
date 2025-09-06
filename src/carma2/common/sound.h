@@ -81,6 +81,8 @@ int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
 
 int C2_HOOK_FASTCALL DRS3SetVolume(int pVolume);
 
+void C2_HOOK_FASTCALL MungeSoundGenerators(void);
+
 void C2_HOOK_FASTCALL MungeEnvironmentalSound(void);
 
 void C2_HOOK_FASTCALL MungeEngineNoise(void);
