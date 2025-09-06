@@ -2161,3 +2161,14 @@ void C2_HOOK_FASTCALL KeyboardPowerupFinished(tPowerup* pPowerup, int pSelect_ne
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db730, KeyboardPowerupFinished, KeyboardPowerupFinished_original)
+
+int (C2_HOOK_FASTCALL * GotPowerupX_original)(tCar_spec* pCar, int pIndex, int pArg3, int pMessage, tU32 pTime);
+int C2_HOOK_FASTCALL GotPowerupX(tCar_spec* pCar, int pIndex, int pArg3, int pMessage, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GotPowerupX_original(pCar, pIndex, pArg3, pMessage, pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004d9150, GotPowerupX, GotPowerupX_original)

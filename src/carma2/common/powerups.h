@@ -281,4 +281,6 @@ void C2_HOOK_FASTCALL LosePowerupX(tPowerup* pPowerup, undefined4 pArg2);
 
 void C2_HOOK_FASTCALL KeyboardPowerupFinished(tPowerup* pPowerup, int pSelect_new);
 
+int C2_HOOK_FASTCALL GotPowerupX(tCar_spec* pCar, int pIndex, int pArg3, int pMessage, tU32 pTime);
+
 #endif //REC2_POWERUPS_H
