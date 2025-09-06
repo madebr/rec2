@@ -2150,3 +2150,14 @@ void C2_HOOK_FASTCALL LosePowerupX(tPowerup* pPowerup, undefined4 pArg2) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db630, LosePowerupX, LosePowerupX_original)
+
+void (C2_HOOK_FASTCALL * KeyboardPowerupFinished_original)(tPowerup* pPowerup, int pSelect_new);
+void C2_HOOK_FASTCALL KeyboardPowerupFinished(tPowerup* pPowerup, int pSelect_new) {
+
+#if defined(C2_HOOKS_ENABLED)
+    KeyboardPowerupFinished_original(pPowerup, pSelect_new);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004db730, KeyboardPowerupFinished, KeyboardPowerupFinished_original)

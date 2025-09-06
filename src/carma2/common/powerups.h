@@ -279,4 +279,6 @@ void C2_HOOK_FASTCALL GotPowerupEarwig(tCar_spec* pCar, int pIndex, int pMessage
 
 void C2_HOOK_FASTCALL LosePowerupX(tPowerup* pPowerup, undefined4 pArg2);
 
+void C2_HOOK_FASTCALL KeyboardPowerupFinished(tPowerup* pPowerup, int pSelect_new);
+
 #endif //REC2_POWERUPS_H
