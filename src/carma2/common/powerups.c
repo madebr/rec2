@@ -5,10 +5,12 @@
 #include "controls.h"
 #include "crush.h"
 #include "errors.h"
+#include "funk.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
 #include "init.h"
+#include "input.h"
 #include "loading.h"
 #include "network.h"
 #include "physics.h"
@@ -906,13 +908,121 @@ void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db880, MungePowerupStuff, MungePowerupStuff_original)
 
+tU32 C2_HOOK_FASTCALL GetNextGoodyTime(tU32 pTime) {
+
+    return pTime + IRandomBetween(C2V(gNet_powerup_time_between_goodies_min), C2V(gNet_powerup_time_between_goodies_max));
+}
+
+void C2_HOOK_FASTCALL AutoGoody(tU32 pTime) {
+
+    if (C2V(gNext_goody_time) == 0) {
+        C2V(gNext_goody_time) = GetNextGoodyTime(pTime);
+    } else if (C2V(gNet_mode) != eNet_mode_none
+            && !C2V(gRace_finished)
+            && !C2V(gProgram_state).current_car.knackered
+            && C2V(gCurrent_net_game)->options.random_car_choice
+            && pTime > C2V(gNext_goody_time)) {
+        C2V(gNext_goody_time) = GetNextGoodyTime(pTime);
+        GotPowerupEarwig(&C2V(gProgram_state).current_car, C2V(gNet_powerup_goodies)[IRandomBetween(0, C2V(gNet_count_powerup_goodies) - 1)], 2, 0);
+    }
+}
+
+void C2_HOOK_FASTCALL PeriodicCloaking(void) {
+
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        int i;
+
+        for (i = 0; i < C2V(gCount_cloaked_cars); i++) {
+            DoCamouflageThing(C2V(gCloaked_cars)[i]);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL LosePowerup(tPowerup* pPowerup) {
+
+    LosePowerupX(pPowerup, 1);
+}
+
+int C2_HOOK_FASTCALL GotPowerupXX(tCar_spec* pCar, int pArg2, int pArg3) {
+    int value;
+
+    value = 0;
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        if (pCar != NULL && pCar->driver ==  eDriver_local_human) {
+            value = 1;
+        }
+    }
+    return GotPowerupX(pCar, pArg2, value, pArg3, 0);
+}
+
+void C2_HOOK_FASTCALL MungeKeyboardPowerup(void) {
+    tPowerup* powerup;
+
+    if (C2V(gInventory_selected) < 0) {
+        return;
+    }
+    if (C2V(gCountdown)) {
+        return;
+    }
+    if (C2V(gRace_finished)) {
+        return;
+    }
+    if (C2V(gProgram_state).current_car.knackered) {
+        return;
+    }
+    powerup = &C2V(gPowerup_array)[C2V(gInventory)[C2V(gInventory_selected)]];
+    if (C2V(gINT_006a0a5c)) {
+        C2V(gINT_006a0a5c) = KeyIsDown(61);
+    } else if (C2V(gINT_006a0a6c) != KeyIsDown(61)) {
+        C2V(gINT_006a0a6c) = !C2V(gINT_006a0a6c) && !C2V(gProgram_state).current_car.knackered;
+        if (C2V(gINT_006a0a6c)) {
+            int result;
+
+            result = GotPowerupXX(&C2V(gProgram_state).current_car, C2V(gInventory)[C2V(gInventory_selected)], 1);
+            if (result >= 0 && powerup->initial_value < 0) {
+                powerup->value += 1;
+                if (powerup->value >= 0) {
+                    KeyboardPowerupFinished(powerup, 1);
+                }
+        } else
+            LosePowerup(powerup);
+        }
+    }
+    if (powerup->initial_value > 0 && C2V(gINT_006a0a6c)) {
+        powerup->value -= C2V(gFrame_period);
+        if (powerup->value <= 0) {
+            KeyboardPowerupFinished(powerup, 1);
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * DoPowerupPeriodics_original)(tU32 pFrame_period);
 void C2_HOOK_FASTCALL DoPowerupPeriodics(tU32 pFrame_period) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoPowerupPeriodics_original(pFrame_period);
 #else
-    NOT_IMPLEMENTED();
+    tU32 the_time;
+    int i;
+
+    the_time = GetTotalTime();
+    AutoGoody(the_time);
+    PeriodicCloaking();
+    for (i = 0; i < C2V(gNumber_of_powerups); i++) {
+        tPowerup* powerup;
+
+        powerup = &C2V(gPowerup_array)[i];
+        if (powerup->got_time != 0) {
+            if (powerup->type == ePowerup_timed && the_time >= powerup->lose_time && powerup->initial_value == 0) {
+                LosePowerup(powerup);
+            } else if (powerup->current_value == 0 && powerup->initial_value == 0) {
+                LosePowerup(powerup);
+            } else if (powerup->periodic_proc != NULL) {
+                powerup->periodic_proc(powerup, pFrame_period);
+            }
+        }
+    }
+    MungeKeyboardPowerup();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db1c0, DoPowerupPeriodics, DoPowerupPeriodics_original)

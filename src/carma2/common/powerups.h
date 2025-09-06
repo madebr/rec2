@@ -65,6 +65,18 @@ void C2_HOOK_FASTCALL MaxOutAPO(void);
 
 void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1);
 
+tU32 C2_HOOK_FASTCALL GetNextGoodyTime(tU32 pTime);
+
+void C2_HOOK_FASTCALL AutoGoody(tU32 pTime);
+
+void C2_HOOK_FASTCALL PeriodicCloaking(void);
+
+void C2_HOOK_FASTCALL LosePowerup(tPowerup* pPowerup);
+
+int C2_HOOK_FASTCALL GotPowerupXX(tCar_spec* pCar, int pArg2, int pArg3);
+
+void C2_HOOK_FASTCALL MungeKeyboardPowerup(void);
+
 void C2_HOOK_FASTCALL DoPowerupPeriodics(tU32 pFrame_period);
 
 void C2_HOOK_CDECL RenderSpinningPowerup(br_actor* actor, br_model* model, br_material* material, void* order_table, br_uint_8 style, int on_screen);
