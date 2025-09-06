@@ -2766,7 +2766,7 @@ typedef struct tPowerup{
     tPowerup_type type;
     undefined4 got_time;
     int duration;
-    int lose_time;
+    tU32 lose_time;
     int group_inclusion;
     struct br_pixelmap * icon;
     int fizzle_type;
