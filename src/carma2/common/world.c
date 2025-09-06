@@ -6065,3 +6065,14 @@ void C2_HOOK_CDECL ZlibFsAdvance(br_size_t advance, void* context) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051db60, ZlibFsAdvance, ZlibFsAdvance_original)
+
+tSpecial_volume* (C2_HOOK_FASTCALL * FindSpecialVolume_original)(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
+tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FindSpecialVolume_original(pP, pLast_vol, pArg3);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ff120, FindSpecialVolume, FindSpecialVolume_original)
