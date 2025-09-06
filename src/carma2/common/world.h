@@ -384,4 +384,6 @@ void C2_HOOK_CDECL ZlibFsPutLine(char*, void*);
 
 void C2_HOOK_CDECL ZlibFsAdvance(br_size_t, void*);
 
+tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
+
 #endif // REC2_WORLD_H
