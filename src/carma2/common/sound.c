@@ -2,6 +2,7 @@
 
 #include "errors.h"
 #include "globvars.h"
+#include "graphics.h"
 #include "loading.h"
 #include "opponent.h"
 #include "piping.h"
@@ -695,10 +696,28 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00456ea0, MungeSoundGenerators, MungeSoundGenerators
 void (C2_HOOK_FASTCALL * MungeEnvironmentalSound_original)(void);
 void C2_HOOK_FASTCALL MungeEnvironmentalSound(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeEnvironmentalSound_original();
 #else
-    NOT_IMPLEMENTED();
+
+    if (C2V(gAmbient_sound)) {
+        int i;
+
+        for (i = 0; i < REC2_ASIZE(C2V(gEnvironment_sound_sources)); i++) {
+            C2V(gEnvironment_sound_sources)[i].field_0x18 = 0;
+        }
+        if (!C2V(gFaded_palette)) {
+            FindSpecialVolume((br_vector3*)C2V(gCamera_to_world).m[3], 0, 1);
+            MungeSoundGenerators();
+        }
+        for (i = 0; i < REC2_ASIZE(C2V(gEnvironment_sound_sources)); i++) {
+
+            if (C2V(gEnvironment_sound_sources)[i].field_0x18 == 0 && C2V(gEnvironment_sound_sources)[i].field_0x10 != NULL) {
+                S3UpdateSoundSource(C2V(gXXX_outlet), -1, C2V(gEnvironment_sound_sources)[i].source, -1.f, -1, -1, 0, -1, -1);
+                C2V(gEnvironment_sound_sources)[i].field_0x10 = NULL;
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456e20, MungeEnvironmentalSound, MungeEnvironmentalSound_original)
