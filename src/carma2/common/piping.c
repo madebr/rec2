@@ -877,7 +877,7 @@ C2_HOOK_FUNCTION(0x004c8580, PipeSinglePedIncident)
 void C2_HOOK_FASTCALL AddBurningPedToSession(int pIndex, tPedestrian* pPed, br_vector3* pPositions) {
 
     ARDoSingleVariedSession(ePipe_chunk_burning_ped, 0, 2,
-        SIZE_OFFSET_PIPING(tPipe_burning_ped, ped, pPed),
-        SIZE_OFFSET_PIPING(tPipe_burning_ped, positions, pPositions));
+        SIZE_OFFSET_PIPING(tPipe_burning_ped, ped), pPed,
+        SIZE_OFFSET_PIPING(tPipe_burning_ped, positions), pPositions);
 }
 C2_HOOK_FUNCTION(0x004c7e70, AddBurningPedToSession)
