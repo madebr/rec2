@@ -111,6 +111,12 @@ void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale) {
 }
 C2_HOOK_FUNCTION(0x00516240, ModelScale)
 
+float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF) {
+
+    return BrVector3Dot(pP, pN) - pF;
+}
+C2_HOOK_FUNCTION(0x005162a0, DistanceFromFaceND)
+
 void C2_HOOK_FASTCALL ResetSparks(void) {
 
     C2V(gSpark_flags) = 0;
