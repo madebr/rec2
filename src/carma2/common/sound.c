@@ -159,6 +159,17 @@ void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* 
 }
 C2_HOOK_FUNCTION(0x00457450, WriteOutSoundSpec)
 
+void (C2_HOOK_FASTCALL * DoEnvSound_original)(tSpecial_volume* pVolume, br_vector3* pP, tSpecial_volume_soundfx_type pType, tSpecial_volume_soundfx_data* pSound_data, float pSound_dist, br_vector3 *pSound_dir);
+void C2_HOOK_FASTCALL DoEnvSound(tSpecial_volume* pVolume, br_vector3* pP, tSpecial_volume_soundfx_type pType, tSpecial_volume_soundfx_data* pSound_data, float pSound_dist, br_vector3 *pSound_dir) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoEnvSound_original(pVolume, pP, pType, pSound_data, pSound_dist, pSound_dir;
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456af0, DoEnvSound, DoEnvSound_original)
+
 void C2_HOOK_FASTCALL StartMusic(void) {
 
     if (!C2V(gINT_00595c44) || C2V(gProgram_state).music_volume >= 128) {
