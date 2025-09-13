@@ -6069,10 +6069,91 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051db60, ZlibFsAdvance, ZlibFsAdvance_original)
 tSpecial_volume* (C2_HOOK_FASTCALL * FindSpecialVolume_original)(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
 tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return FindSpecialVolume_original(pP, pLast_vol, pArg3);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    tSpecial_volume* result;
+
+    result = NULL;
+    for (i = 0; i < C2V(gProgram_state).special_volume_count && (result == NULL || pArg3); i++) {
+        tSpecial_volume* v = &C2V(gProgram_state).special_volumes[i];
+        tSpecial_volume* sound_volume = NULL;
+        tSpecial_volume* containing_volume = sound_volume;
+        float sound_dist = 1e7f;
+        br_vector3 sound_dir;
+
+        if (v->boundary_type == eFx_boundary_box) {
+            if (pP->v[0] > v->boundary.box.bounds.min.v[0]
+                    && pP->v[0] < v->boundary.box.bounds.max.v[0]
+                    && pP->v[1] > v->boundary.box.bounds.min.v[1]
+                    && pP->v[1] < v->boundary.box.bounds.max.v[1]
+                    && pP->v[2] > v->boundary.box.bounds.min.v[2]
+                    && pP->v[2] < v->boundary.box.bounds.max.v[2]) {
+                br_vector3 pnt_norm;
+                float fartest_dist;
+                int fartest_bnds_axis;
+                int j;
+
+                BrMatrix34ApplyP(&pnt_norm, pP, &v->boundary.box.inv_mat);
+                fartest_dist = 0.f;
+                for (j = 0; j < 3; j++) {
+                    float dist;
+                    int bnds_axis;
+                    if (pnt_norm.v[j] <= -1.f) {
+                        dist = -1.f - pnt_norm.v[j];
+                        bnds_axis = j + 3;
+                    } else if (pnt_norm.v[j] > 1.f) {
+                        dist = pnt_norm.v[j] - 1.f;
+                        bnds_axis = j;
+                    } else {
+                        dist = 0.f;
+                    }
+                    if (dist > fartest_dist) {
+                        fartest_bnds_axis = bnds_axis;
+                        fartest_dist = dist;
+                    }
+                }
+                if (fartest_dist != 0.f && v->soundfx_type != kSoundFx_None) {
+                    int axis = fartest_bnds_axis % 3;
+
+                    fartest_dist /= v->boundary.box.axis_length.v[axis];
+                    if (fartest_dist < 1e7f) {
+                        float delta = (float)(fartest_bnds_axis < 3 ? 1 : -1);
+                        BrVector3Scale(&sound_dir, (br_vector3*)v->boundary.box.mat.m[axis], delta);
+                        sound_volume = v;
+                        sound_dist = fartest_dist;
+                    }
+                } else if (fartest_dist == 0.f) {
+                    containing_volume = v;
+                }
+            }
+        } else if (v->boundary_type == eFx_boundary_plane) {
+            float dist;
+
+            dist = DistanceFromFaceND(pP, (br_vector3*)&v->boundary.plane, v->boundary.box.mat.m[1][0]);
+            containing_volume = v;
+            if (dist >= 0.f) {
+                containing_volume = NULL;
+                if (dist < 1e7f && v->soundfx_type != kSoundFx_None) {
+                    BrVector3Copy(&sound_dir, &v->boundary.plane);
+                    sound_volume = v;
+                    sound_dist = dist;
+                }
+            }
+        }
+        if (containing_volume != NULL) {
+            sound_dist = 0.f;
+            sound_volume = containing_volume;
+            if (result == NULL) {
+                result = containing_volume;
+            }
+        }
+        if (pArg3 && sound_volume != NULL && sound_dist < 10.f) {
+            DoEnvSound(sound_volume, pP, sound_volume->soundfx_type, &sound_volume->soundfx_data, sound_dist, &sound_dir);
+        }
+    }
+    return result;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ff120, FindSpecialVolume, FindSpecialVolume_original)
