@@ -38,6 +38,8 @@ void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f);
 
 void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale);
 
+float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF);
+
 void C2_HOOK_FASTCALL ResetSparks(void);
 
 void C2_HOOK_FASTCALL LoadInShrapnel(void);
