@@ -537,3 +537,14 @@ void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos,
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e000, ProcessNearbyActors, ProcessNearbyActors_original)
+
+intptr_t (C2_HOOK_CDECL * FoundAnActor_original)(br_actor* pActor, void* pContext);
+intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FoundAnActor_original(pActor, pContext);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040e290, FoundAnActor, FoundAnActor_original)
