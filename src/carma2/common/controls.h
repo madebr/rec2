@@ -277,9 +277,10 @@ void C2_HOOK_FASTCALL GotPowerup9(void);
 
 void C2_HOOK_FASTCALL InitAbuseomatic(void);
 
+void C2_HOOK_FASTCALL LookLeft(void);
 
 void C2_HOOK_FASTCALL LookForward(void);
 
-void C2_HOOK_FASTCALL LookLeft(void);
+void C2_HOOK_FASTCALL LookRight(void);
 
 #endif //REC2_CONTROLS_H
