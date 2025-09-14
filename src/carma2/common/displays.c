@@ -1,5 +1,6 @@
 #include "displays.h"
 
+#include "controls.h"
 #include "font.h"
 #include "globvars.h"
 #include "globvrbm.h"
@@ -825,10 +826,60 @@ C2_HOOK_FUNCTION(0x0044b470, SpendCredits)
 void (C2_HOOK_FASTCALL * ChangingView_original)(void);
 void C2_HOOK_FASTCALL ChangingView(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ChangingView_original();
 #else
-    NOT_IMPLEMENTED();
+    tU32 the_time;
+
+    the_time = PDGetTotalTime() - C2V(gProgram_state).view_change_start;
+    if (C2V(gProgram_state).new_view == eView_undefined) {
+        return;
+    }
+    C2V(gScreen_wobble_x) = 0;
+    C2V(gScreen_wobble_y) = 0;
+    if (the_time > 175 && C2V(gProgram_state).which_view == C2V(gProgram_state).new_view) {
+        switch (C2V(gProgram_state).pending_view) {
+        case eView_undefined:
+            C2V(gProgram_state).new_view = eView_undefined;
+            break;
+        case eView_left:
+            LookLeft();
+            break;
+        case eView_forward:
+            LookForward();
+            break;
+        case eView_right:
+            LookRight();
+            break;
+        }
+    } else {
+        if (the_time < 88) {
+            if (C2V(gProgram_state).old_view < C2V(gProgram_state).new_view) {
+                C2V(gScreen_wobble_x) = (int)((double)the_time * (double)C2V(gCurrent_graf_data)->cock_margin_x * -2. / 175.);
+            } else {
+                C2V(gScreen_wobble_x) = (int)((double)the_time * (double)C2V(gCurrent_graf_data)->cock_margin_x * 2. / 175.);
+            }
+        } else {
+            C2V(gProgram_state).which_view = C2V(gProgram_state).new_view;
+            switch (C2V(gProgram_state).new_view) {
+            case eView_left:
+                C2V(gProgram_state).cockpit_image_index = 1;
+                break;
+            case eView_forward:
+                C2V(gProgram_state).cockpit_image_index = 0;
+                break;
+            case eView_right:
+                C2V(gProgram_state).cockpit_image_index = 2;
+                break;
+            }
+            AdjustRenderScreenSize();
+            if (C2V(gProgram_state).new_view <= C2V(gProgram_state).old_view) {
+                C2V(gScreen_wobble_x) = (int)((double)(175 - the_time) * (double)C2V(gCurrent_graf_data)->cock_margin_x * -2. / 175.);
+            } else {
+                C2V(gScreen_wobble_x) = (int)((double)(175 - the_time) * (double)C2V(gCurrent_graf_data)->cock_margin_x * 2. / 175.);
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0044b170, ChangingView, ChangingView_original)
