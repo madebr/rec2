@@ -40,4 +40,6 @@ void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX,
 
 void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos, float pMax_dist, int pMatch_type, int pIdentifier_value, int pIdentifier_index, int pMatch_flags, tNearbyActors_cbfn* pCallback, void* pContext);
 
+intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext);
+
 #endif //REC2_BRUCETRK_H
