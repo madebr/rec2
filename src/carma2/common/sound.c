@@ -716,6 +716,7 @@ intptr_t C2_HOOK_FASTCALL FoundSoundSource(br_actor* pActor, tEnvironment_sound_
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00457260, FoundSoundSource, FoundSoundSource_original)
 
+void (C2_HOOK_FASTCALL * MungeSoundGenerators_original)(void);
 void C2_HOOK_FASTCALL MungeSoundGenerators(void) {
 
 #if defined(C2_HOOKS_ENABLED)
