@@ -170,6 +170,17 @@ void C2_HOOK_FASTCALL DoEnvSound(tSpecial_volume* pVolume, br_vector3* pP, tSpec
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456af0, DoEnvSound, DoEnvSound_original)
 
+void (C2_HOOK_FASTCALL * DoAnEnvironmentalSound_original)(void* pSrc_object, tEnvironment_sound_generator_info* pEnv_info, int pVolume, br_vector3* pPos);
+void C2_HOOK_FASTCALL DoAnEnvironmentalSound(void* pSrc_object, tEnvironment_sound_generator_info* pEnv_info, int pVolume, br_vector3* pPos) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoAnEnvironmentalSound_original(pSrc_object, pEnv_info, pVolume, pPos);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00456c60, DoAnEnvironmentalSound, DoAnEnvironmentalSound_original)
+
 void C2_HOOK_FASTCALL StartMusic(void) {
 
     if (!C2V(gINT_00595c44) || C2V(gProgram_state).music_volume >= 128) {
