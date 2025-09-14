@@ -280,4 +280,6 @@ void C2_HOOK_FASTCALL InitAbuseomatic(void);
 
 void C2_HOOK_FASTCALL LookLeft(void);
 
+void C2_HOOK_FASTCALL LookForward(void);
+
 #endif //REC2_CONTROLS_H
