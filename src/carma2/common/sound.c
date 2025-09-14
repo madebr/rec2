@@ -1,5 +1,7 @@
 #include "sound.h"
 
+#include "brucetrk.h"
+#include "car.h"
 #include "errors.h"
 #include "globvars.h"
 #include "graphics.h"
@@ -44,9 +46,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSound_periodicity_choices, 3
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCamera_left, 0x0079e120);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCamera_position, 0x0079e130);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCamera_velocity, 0x0079ea60);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_00684540, 0x00684540);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0079e18c, 0x0079e18c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0079e17c, 0x0079e17c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_sound_generator_munging, 0x00684540);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_environmental_sound_sources, 0x0079e18c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gEnvironmental_sound_sources_buffer_index, 0x0079e17c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tEnvironment_sound_source, gEnvironment_sound_sources, 5, 0x00684570);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00595c44, 0x00595c44, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_track_finished_check, 0x00684548);
@@ -60,6 +62,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRandom_CDA_tunes, 8, 0x00595c78, { 9
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRandom_CDA_tunes_1, 4, 0x00595c98, { 9600, 9601, 9602, 9603 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gRandom_CDA_tunes_2, 4, 0x00595ca8, { 9604, 9605, 9606, 9607 });
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gOld_camera_position, 0x0079e180);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV(tEnvironment_sound_generator_info, gEnvironmental_sound_sources_buffer, [2][20], 0x0079e1a0);
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char line1[80];
@@ -644,9 +647,9 @@ void C2_HOOK_FASTCALL InitSoundSources(void) {
         ToggleSoundEnable();
     }
 
-    C2V(gINT_0079e18c) = 0;
-    C2V(gINT_0079e17c) = 0;
-    C2V(gINT_00684540) = 0;
+    C2V(gCount_environmental_sound_sources) = 0;
+    C2V(gEnvironmental_sound_sources_buffer_index) = 0;
+    C2V(gNext_sound_generator_munging) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455bb0, InitSoundSources, InitSoundSources_original)
@@ -719,10 +722,73 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00457260, FoundSoundSource, FoundSoundSource_origina
 void (C2_HOOK_FASTCALL * MungeSoundGenerators_original)(void);
 void C2_HOOK_FASTCALL MungeSoundGenerators(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeSoundGenerators_original();
 #else
-    NOT_IMPLEMENTED();
+    if (C2V(gAmbient_sound)) {
+        int i;
+
+        if (GetTotalTime() - C2V(gNext_sound_generator_munging) >= 200) {
+            tEnvironment_sound_generator_vector found_sources;
+
+            C2V(gNext_sound_generator_munging) += 200;
+            found_sources.sources = C2V(gEnvironmental_sound_sources_buffer)[C2V(gEnvironmental_sound_sources_buffer_index) ^ 1];
+            ProcessNearbyActors(&C2V(gProgram_state).track_spec, (br_vector3*)C2V(gCamera_to_world).m[3], 10.f, 1, ')', 0, 0x1003, FoundSoundSource, &found_sources);
+            for (i = 0; i < C2V(gProgram_state).count_track_sound_generators; i++) {
+                tTrackSoundGenerator* generator = &C2V(gProgram_state).track_sound_generators[i];
+                if (generator->type == kSoundGeneratorType_point && Vector3DistanceSquared(&generator->point, (br_vector3*)C2V(gCamera_to_world).m[3]) < 10.f * 10.f) {
+                    tEnvironment_sound_generator_info* src = &found_sources.sources[found_sources.count];
+                    src->generator = generator;
+                    src->soundfx = generator->fx;
+                    src->pos = generator->point;
+                    src->actor = NULL;
+                    found_sources.count += 1;
+                }
+            }
+            for (i = 0; i < C2V(gNum_active_non_cars); i++) {
+                tNon_car_spec* c = C2V(gActive_non_car_list)[i];
+                br_actor* a = c->collision_info->actor;
+                int src_count = found_sources.count;
+                if (a != NULL && a->model !=NULL
+                        && a->model->identifier != NULL && a->model->identifier[0] == ')'
+                        && Vector3DistanceSquared(&a->t.t.translate.t, (br_vector3*)C2V(gCamera_to_world).m[3]) < 10.f * 10.f) {
+                    FoundSoundSource(a, &found_sources);
+                    if (src_count < found_sources.count && !Vector3IsZero(&c->collision_info->v)) {
+                        found_sources.sources[src_count].soundfx = found_sources.sources[src_count].generator->fx1_noncar;
+                    }
+                }
+            }
+            for (i = 0; i < found_sources.count; i++) {
+                int j;
+                tEnvironment_sound_generator_info * src_now = &found_sources.sources[i];
+
+                for (j = 0; j < C2V(gCount_environmental_sound_sources); j++) {
+                    tEnvironment_sound_generator_info* src_prev = &C2V(gEnvironmental_sound_sources_buffer)[C2V(gEnvironmental_sound_sources_buffer_index)][j];
+
+                    if (src_now->generator == src_prev->generator && src_now->actor == src_prev->actor) {
+                        src_now->soundfx.field_0xc = src_prev->soundfx.field_0xc;
+                        break;
+                    }
+                }
+            }
+            C2V(gEnvironmental_sound_sources_buffer_index) ^= 1;
+            C2V(gCount_environmental_sound_sources) = found_sources.count;
+        }
+
+        for (i = 0; i < C2V(gCount_environmental_sound_sources); i++) {
+            br_vector3 delta;
+            tEnvironment_sound_generator_info* src;
+            void *src_obj;
+
+            src = &C2V(gEnvironmental_sound_sources_buffer)[C2V(gEnvironmental_sound_sources_buffer_index)][i];
+            BrVector3Sub(&delta, &src->pos, (br_vector3*)C2V(gCamera_to_world).m[3]);
+            src_obj = src->actor;
+            if (src_obj == NULL) {
+                src_obj = src->generator;
+            }
+            DoAnEnvironmentalSound(src_obj, src, (int)((10.f - BrVector3LengthSquared(&delta)) * 255.f / 10.f), &src->pos);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00456ea0, MungeSoundGenerators, MungeSoundGenerators_original)
