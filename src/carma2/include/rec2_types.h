@@ -90,6 +90,7 @@ typedef int C2_HOOK_FASTCALL tDrone_form_within_rendering_distance_cbfn(const br
 typedef int C2_HOOK_FASTCALL tDrone_form_within_processing_distance_cbfn(const br_vector3 *pPos);
 typedef void C2_HOOK_FASTCALL tFunk_index_cbfn(int pFunk_index);
 typedef void C2_HOOK_FASTCALL tWorld_callback_active_passive_cbfn(tCollision_info*);
+typedef intptr_t C2_HOOK_FASTCALL tNearbyActors_cbfn(br_actor*, void*);
 
 typedef enum {
     eFPR_OK = 0,
