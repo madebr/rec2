@@ -2493,6 +2493,11 @@ typedef struct {
 
 typedef struct {
     int count;
+    tEnvironment_sound_generator_info* sources;
+} tEnvironment_sound_generator_vector;
+
+typedef struct {
+    int count;
     char *messages[10];
 } tOppo_status_messages;
 
