@@ -9,6 +9,7 @@
 #include "powerups.h"
 #include "platform.h"
 #include "smashing.h"
+#include "utility.h"
 #include "world.h"
 
 #include "c2_string.h"
@@ -533,7 +534,89 @@ void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos,
 #if defined(C2_HOOKS_ENABLED)
     ProcessNearbyActors_original(pTrack, pPos, pMax_dist, pMatch_type, pIdentifier_value, pIdentifier_index, pMatch_flags, pCallback, pContext);
 #else
-    NOT_IMPLEMENTED();
+    tFoundAnActor_context found_an_actor_context;
+    float p;
+    int x, xmin, xmax;
+    int z, zmin, zmax;
+
+    found_an_actor_context.identifier_index = pIdentifier_index;
+    found_an_actor_context.identifier_value = pIdentifier_value;
+    found_an_actor_context.max_dist_squared = pMax_dist * pMax_dist;
+    x = (int)((pPos->v[0] - pTrack->origin_x) / pTrack->column_size_x);
+    p = pTrack->origin_x + (float)x * pTrack->column_size_x;
+    xmin = x;
+    while (pPos->v[0] < p + pMax_dist) {
+        if (xmin == 0) {
+            break;
+        }
+        p -= pTrack->column_size_x;
+        xmin -= 1;
+    }
+    p = pTrack->origin_x + (float)x * pTrack->column_size_x + pTrack->column_size_x;
+    xmax = x;
+    while (pPos->v[0] + pMax_dist > p) {
+        if (xmax + 1 >= pTrack->ncolumns_x) {
+            break;
+        }
+        p += pTrack->column_size_x;
+        xmin += 1;
+    }
+
+    z = (int)((pPos->v[2] - pTrack->origin_z) / pTrack->column_size_z);
+    p = pTrack->origin_z + (float)z * pTrack->column_size_z;
+    zmin = z;
+    while (pPos->v[2] < p + pMax_dist) {
+        if (zmin == 0) {
+            break;
+        }
+        p -= pTrack->column_size_z;
+        zmin -= 1;
+    }
+    p = pTrack->origin_z + (float)z * pTrack->column_size_z + pTrack->column_size_z;
+    zmax = z;
+    while (pPos->v[2] + pMax_dist > p) {
+        if (zmax + 1 >= pTrack->ncolumns_z) {
+            break;
+        }
+        p += pTrack->column_size_z;
+        zmin += 1;
+    }
+    if (xmin < 0) {
+        xmin = 0;
+    } else if (xmin >= pTrack->ncolumns_x) {
+        xmin = pTrack->ncolumns_x - 1;
+    }
+    if (xmax < 0) {
+        xmax = 0;
+    } else if (xmax >= pTrack->ncolumns_x) {
+        xmax = pTrack->ncolumns_x - 1;
+    }
+    if (zmin < 0) {
+        zmin = 0;
+    } else if (zmin >= pTrack->ncolumns_z) {
+        zmin = pTrack->ncolumns_z - 1;
+    }
+    if (zmax < 0) {
+        zmax = 0;
+    } else if (xmax >= pTrack->ncolumns_z) {
+        zmax = pTrack->ncolumns_z - 1;
+    }
+
+    found_an_actor_context.match_type = pMatch_type;
+    found_an_actor_context.match_flags = pMatch_flags;
+    found_an_actor_context.max_dist_axis = pMax_dist;
+    found_an_actor_context.pos = pPos;
+    found_an_actor_context.callback = pCallback;
+    found_an_actor_context.callback_context = pContext;
+    for (x = xmin; x < xmax; x++) {
+        for (z = zmin; z < zmax; z++) {
+            if (pTrack->columns[z][x].actor_0x0 != NULL) {
+                if (DRActorEnumRecurse(pTrack->columns[z][x].actor_0x0, FoundAnActor, &found_an_actor_context)) {
+                    return;
+                }
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e000, ProcessNearbyActors, ProcessNearbyActors_original)
