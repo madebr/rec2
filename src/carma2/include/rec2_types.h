@@ -424,6 +424,18 @@ typedef struct {
 } tRGBColour;
 
 typedef struct {
+    int match_type;
+    char identifier_value;
+    tS8 identifier_index;
+    tU16 match_flags;
+    float max_dist_axis;
+    float max_dist_squared;
+    br_vector3* pos;
+    int (C2_HOOK_FASTCALL * callback)(br_actor*, void*);
+    void* callback_context;
+} tFoundAnActor_context;
+
+typedef struct {
     tDrone_spec* drone;
     int model_start;
     int model_end;
