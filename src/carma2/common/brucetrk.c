@@ -526,3 +526,14 @@ void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX,
 }
 
 C2_HOOK_FUNCTION(0x0040cb90, XZToColumnXZ)
+
+void (C2_HOOK_FASTCALL * ProcessNearbyActors_original)(tTrack_spec* pTrack, br_vector3* pPos, float pMax_dist, int pMatch_type, int pIdentifier_value, int pIdentifier_index, int pMatch_flags, tNearbyActors_cbfn* pCallback, void* pContext);
+void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos, float pMax_dist, int pMatch_type, int pIdentifier_value, int pIdentifier_index, int pMatch_flags, tNearbyActors_cbfn* pCallback, void* pContext) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ProcessNearbyActors_original(pTrack, pPos, pMax_dist, pMatch_type, pIdentifier_value, pIdentifier_index, pMatch_flags, pCallback, pContext);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0040e000, ProcessNearbyActors, ProcessNearbyActors_original)
