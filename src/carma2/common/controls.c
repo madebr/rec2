@@ -3170,3 +3170,21 @@ void C2_HOOK_FASTCALL InitAbuseomatic(void) {
     PFfclose(f);
 }
 C2_HOOK_FUNCTION(0x00444d70, InitAbuseomatic)
+
+void C2_HOOK_FASTCALL LookLeft(void) {
+
+    PratcamEvent(27);
+    C2V(gProgram_state).old_view = C2V(gProgram_state).which_view;
+    if (C2V(gProgram_state).which_view == eView_left) {
+        LookForward();
+    } else if (C2V(gProgram_state).which_view == eView_right) {
+        LookForward();
+        C2V(gProgram_state).pending_view = eView_left;
+    } else {
+        ClearWobbles();
+        C2V(gProgram_state).new_view = eView_left;
+        C2V(gProgram_state).view_change_start = PDGetTotalTime();
+        C2V(gProgram_state).pending_view = eView_undefined;
+    }
+}
+C2_HOOK_FUNCTION(0x00441e10, LookLeft)
