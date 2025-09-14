@@ -85,6 +85,8 @@ int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
 
 int C2_HOOK_FASTCALL DRS3SetVolume(int pVolume);
 
+intptr_t C2_HOOK_FASTCALL FoundSoundSource(br_actor* pActor, tEnvironment_sound_generator_vector* pContext);
+
 void C2_HOOK_FASTCALL MungeSoundGenerators(void);
 
 void C2_HOOK_FASTCALL MungeEnvironmentalSound(void);
