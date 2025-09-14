@@ -2485,6 +2485,13 @@ typedef struct {
 } tEnvironment_sound_source;
 
 typedef struct {
+    tSpecial_volume_soundfx_data soundfx;
+    tTrackSoundGenerator* generator;
+    br_actor* actor;
+    br_vector3 pos;
+} tEnvironment_sound_generator_info;
+
+typedef struct {
     int count;
     char *messages[10];
 } tOppo_status_messages;
