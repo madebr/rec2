@@ -3205,3 +3205,21 @@ void C2_HOOK_FASTCALL LookForward(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00441ec0, LookForward)
+
+void C2_HOOK_FASTCALL LookRight(void) {
+
+    PratcamEvent(28);
+    C2V(gProgram_state).old_view = C2V(gProgram_state).which_view;
+    if (C2V(gProgram_state).which_view == eView_right) {
+        LookForward();
+    } else if (C2V(gProgram_state).which_view == eView_left) {
+        LookForward();
+        C2V(gProgram_state).pending_view = eView_right;
+    } else {
+        ClearWobbles();
+        C2V(gProgram_state).new_view = eView_right;
+        C2V(gProgram_state).view_change_start = PDGetTotalTime();
+        C2V(gProgram_state).pending_view = eView_undefined;
+    }
+}
+C2_HOOK_FUNCTION(0x00441f20, LookRight)
