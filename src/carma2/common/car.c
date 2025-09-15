@@ -2384,3 +2384,9 @@ int C2_HOOK_FASTCALL APTCPassiveActivated(tCollision_info* pArg1) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004162b0, APTCPassiveActivated, APTCPassiveActivated_original)
+
+float C2_HOOK_STDCALL frac(float pN) {
+
+    return pN - (float)(int)pN;
+}
+C2_HOOK_FUNCTION(0x00515c20, frac)

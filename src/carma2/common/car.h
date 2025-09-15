@@ -191,4 +191,6 @@ int C2_HOOK_FASTCALL APTCActiveHalted(tCollision_info* pArg1);
 
 int C2_HOOK_FASTCALL APTCPassiveActivated(tCollision_info* pArg1);
 
+float C2_HOOK_STDCALL frac(float pN);
+
 #endif //REC2_CAR_H
