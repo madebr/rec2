@@ -5259,6 +5259,7 @@ enum {
     kFatalError_InsufficientModelSlots = 0x46,
     kFatalError_CannotLoadCarActor = 0x47,
     kFatalError_DefinedRefNumOfControlledGoorvFunkOutOfRange = 0x48,
+    kFatalError_UsedRefNumOfControlledGroovidelicFunkotronicIsOutOfRange = 0x49,
     kFatalError_CantLoadPixelmapFile_S = 0x4f,
     kFatalError_CannotLoadShadeTableFileOrItIsEmpty_S = 0x50,
     kFatalError_CannotLoadMaterialFileOrItIsEmpty_S = 0x51,
