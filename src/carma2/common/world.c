@@ -6171,3 +6171,18 @@ void C2_HOOK_FAKE_THISCALL ControlBoundFunkGroove(int pSlot_number, undefined4 p
     }
 }
 C2_HOOK_FUNCTION(0x004748a0, ControlBoundFunkGroove)
+
+float C2_HOOK_FAKE_THISCALL ControlBoundFunkGroovePlus(int pSlot_number, undefined4 pArg2, float pValue) {
+
+    if (pSlot_number < 0) {
+        return 0.f;
+    }
+    if (pSlot_number >= REC2_ASIZE(C2V(gGroove_funk_bindings))) {
+        FatalError(kFatalError_UsedRefNumOfControlledGroovidelicFunkotronicIsOutOfRange);
+    }
+    if (!C2V(gGroove_funk_bindings)[pSlot_number].field_0x4) {
+        *C2V(gGroove_funk_bindings)[pSlot_number].v = fmodf(*C2V(gGroove_funk_bindings)[pSlot_number].v + pValue, 1.f);
+    }
+    return *C2V(gGroove_funk_bindings)[pSlot_number].v;
+}
+C2_HOOK_FUNCTION(0x004748e0, ControlBoundFunkGroovePlus)
