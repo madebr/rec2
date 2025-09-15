@@ -386,4 +386,6 @@ void C2_HOOK_CDECL ZlibFsAdvance(br_size_t, void*);
 
 tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
 
+void C2_HOOK_FAKE_THISCALL ControlBoundFunkGroove(int pSlot_number, undefined4 pArg2, float pValue);
+
 #endif // REC2_WORLD_H
