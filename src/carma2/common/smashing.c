@@ -2,6 +2,7 @@
 
 #include "globvars.h"
 #include "loading.h"
+#include "physics.h"
 #include "piping.h"
 #include "platform.h"
 #include "replay.h"
@@ -31,6 +32,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gInitial_position_sphere_wher
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmashable_race_target, gSmashable_race_targets, 300, 0x0068c898);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_race_targets, 0x0074abe0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_queued_smashes, 0x006a828c);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_munge_smash_edge_triggers, 0x006a82a4);
 
 void C2_HOOK_FASTCALL InitGlassFragments(void) {
     int i;
@@ -257,10 +259,23 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004ecc80, MungeDelayedSideEffects, MungeDelayedSideE
 void (C2_HOOK_FASTCALL * MungeSmashEdgeTriggers_original)(tU32 pTime);
 void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeSmashEdgeTriggers_original(pTime);
 #else
-    NOT_IMPLEMENTED();
+
+    if (C2V(gLast_munge_smash_edge_triggers) != C2V(gPHIL_last_physics_tick)) {
+        int i;
+
+        for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
+            tSmashable_item_spec* item;
+
+            item = &C2V(gTrack_smashable_environment_specs)[i];
+            if (item->field_0x10 != 0 && item->field_0x10 != pTime) {
+                C2V(gTrack_smashable_environment_specs)[i].field_0x10 = 0;
+            }
+        }
+    }
+    C2V(gLast_munge_smash_edge_triggers) = C2V(gPHIL_last_physics_tick);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f64d0, MungeSmashEdgeTriggers, MungeSmashEdgeTriggers_original)
