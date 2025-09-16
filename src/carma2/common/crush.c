@@ -15,6 +15,7 @@
 #include "platform.h"
 #include "powerups.h"
 #include "physics.h"
+#include "replay.h"
 #include "shrapnel.h"
 #include "skidmark.h"
 #include "smashing.h"
@@ -120,6 +121,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_net_reattach_bit_list_item, gNet_crush_r
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_detach_list_item, gCrush_detach_list, 16, 0x00679558);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_damge_crush_list_item, gCar_damage_crush_list, 8, 0x0067bd18);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_drone_crush, gQueued_drone_crushes, 4, 0x0067bad8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(float, gWobble_spam_y, 8, 0x00590020,
+    { 0.0f, -0.15f, 0.4f, 0.15f, -0.4f, 0.25f, 0.0f, -0.25f });
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(float, gWobble_spam_z, 8, 0x00590040,
+    { 0.4f, -0.25f, 0.0f, 0.25f, 0.0f, 0.15f, -0.4f, -0.15f });
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gWheel_circ_to_width, 0x00590060, .16f);
 
 void (C2_HOOK_FASTCALL * InitCrushSystems_original)(void);
 void C2_HOOK_FASTCALL InitCrushSystems(void) {
@@ -2221,10 +2227,91 @@ C2_HOOK_FUNCTION(0x00440640, CrashEarnings)
 void (C2_HOOK_FASTCALL * DoWheelDamage_original)(tU32 pFrame_period);
 void C2_HOOK_FASTCALL DoWheelDamage(tU32 pFrame_period) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoWheelDamage_original(pFrame_period);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    if (C2V(gAction_replay_mode) && ARReplayIsReallyPaused()) {
+        return;
+    }
+
+    for (i = 0; i < C2V(gNum_active_cars); i++) {
+        tCar_spec* car;
+
+        car = C2V(gActive_car_list)[i];
+        if ((car != NULL && car->driver >= eDriver_oppo) && !(car->car_crush_spec != NULL && car->car_crush_spec->field_0x144)) {
+            int j;
+
+            for (j = 0; j < REC2_ASIZE(car->wheel_dam_offset); j++) {
+                int damage;
+                br_scalar y_amount;
+                br_scalar z_amount;
+                br_scalar wheel_circum;
+
+                if (car->wheel_actors[j] == NULL) {
+                    continue;
+                }
+                damage = car->damage_units[8 + j].damage_level;
+                if (damage <= 30 || C2V(gRace_finished)) {
+                    car->wheel_dam_offset[j] = 0.f;
+                    continue;
+                }
+                if (PointOutOfSight(&car->pos REC2_THISCALL_EDX, 32.f)) {
+                    break;
+                }
+                y_amount = (damage - 30) * C2V(gWobble_spam_y)[damage % 8];
+                z_amount = (damage - 30) * C2V(gWobble_spam_z)[damage % 8];
+                BrMatrix34PreRotateY(&car->wheel_actors[j]->t.t.mat, BrDegreeToAngle(y_amount < 0 ? y_amount + 360.f : y_amount));
+                BrMatrix34PreRotateZ(&car->wheel_actors[j]->t.t.mat, BrDegreeToAngle(z_amount < 0 ? z_amount + 360.f : z_amount));
+                if (j < 2 && car->wheel_actors[4 + j] != NULL) {
+                    BrMatrix34PreRotateY(&car->wheel_actors[4 + j]->t.t.mat, BrDegreeToAngle(y_amount < 0 ? y_amount + 360.f : y_amount));
+                    BrMatrix34PreRotateZ(&car->wheel_actors[4 + j]->t.t.mat, BrDegreeToAngle(z_amount < 0 ? z_amount + 360.f : z_amount));
+                }
+                switch (j) {
+                case 0:
+                    if (car->driven_wheels_spin_ref_1 < 0) {
+                        wheel_circum = car->non_driven_wheels_circum;
+                    } else {
+                        wheel_circum = car->driven_wheels_circum;
+                    }
+                    break;
+                case 1:
+                    if (car->driven_wheels_spin_ref_2 < 0) {
+                        wheel_circum = car->non_driven_wheels_circum;
+                    } else {
+                        wheel_circum = car->driven_wheels_circum;
+                    }
+                    break;
+                case 2:
+                    if (car->driven_wheels_spin_ref_3 < 0) {
+                        wheel_circum = car->non_driven_wheels_circum;
+                    } else {
+                        wheel_circum = car->driven_wheels_circum;
+                    }
+                    break;
+                case 3:
+                    if (car->driven_wheels_spin_ref_4 < 0) {
+                        wheel_circum = car->non_driven_wheels_circum;
+                    } else {
+                        wheel_circum = car->driven_wheels_circum;
+                    }
+                    break;
+                default:
+                    c2_abort();
+                    break;
+                }
+                if (C2V(gNet_mode) == eNet_mode_none || car->driver == eDriver_local_human) {
+                    br_vector3 temp_vector;
+                    br_vector3 wonky_vector;
+
+                    BrVector3Set(&temp_vector, wheel_circum * C2V(gWheel_circ_to_width), 0.f, 0.f);
+                    BrMatrix34ApplyV(&wonky_vector, &temp_vector, &car->wheel_actors[j]->t.t.mat);
+                    car->wheel_dam_offset[j] = fabsf(wonky_vector.v[1]);
+                }
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00440350, DoWheelDamage, DoWheelDamage_original)
