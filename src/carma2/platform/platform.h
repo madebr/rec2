@@ -153,6 +153,8 @@ int C2_HOOK_FASTCALL PDGetJoy2X(void);
 
 int C2_HOOK_FASTCALL PDGetJoy2Y(void);
 
+tButtonJoystickInfo* C2_HOOK_FASTCALL PDGetCurrentJoystickData(void);
+
 int C2_HOOK_FASTCALL PDS3Init(void);
 
 void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
