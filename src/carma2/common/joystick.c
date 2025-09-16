@@ -166,6 +166,17 @@ void C2_HOOK_FASTCALL DisableJoysticks(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045bd70, DisableJoysticks, DisableJoysticks_original)
 
+void (C2_HOOK_FASTCALL * FUN_0045b0a0_original)(tHeadup_text_buffer* pText_buffer);
+void C2_HOOK_FASTCALL FUN_0045b0a0(tHeadup_text_buffer* pText_buffer) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FUN_0045b0a0_original(pText_buffer);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0045b0a0, FUN_0045b0a0, FUN_0045b0a0_original)
+
 void (C2_HOOK_FASTCALL * MungeJoystickHeadups_original)(void);
 void C2_HOOK_FASTCALL MungeJoystickHeadups(void) {
 

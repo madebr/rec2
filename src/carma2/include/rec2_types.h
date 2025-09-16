@@ -4397,6 +4397,22 @@ typedef struct {
     int field_0xe8; /* float or int. init=0 */
 } tButtonJoystickInfo;
 
+typedef struct tHeadup_text {
+    char text[40];
+    undefined field_0x28[0x38 - 0x28];
+    struct tHeadup_text* next;
+} tHeadup_text;
+
+typedef struct {
+    tHeadup_text* texts;
+    tHeadup_text* field_0x4;
+    int count;
+    int pos_last_add;
+    int field_0x10;
+    int field_0x14;
+    tHeadup_text* text_last_add;
+} tHeadup_text_buffer;
+
 typedef struct {
     int timer_increments[3];
     int count_quads;

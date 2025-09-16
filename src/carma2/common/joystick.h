@@ -3,6 +3,8 @@
 
 #include "c2_hooks.h"
 
+#include "rec2_types.h"
+
 C2_HOOK_VARIABLE_DECLARE(float, gForce_feedback_upper_limit);
 C2_HOOK_VARIABLE_DECLARE(float, Force_feedback_lower_limit);
 C2_HOOK_VARIABLE_DECLARE(int, gJoystick_index);
@@ -40,6 +42,8 @@ void C2_HOOK_FASTCALL Joystick_BackupSettings(void);
 void C2_HOOK_FASTCALL EnableJoysticks(void);
 
 void C2_HOOK_FASTCALL DisableJoysticks(void);
+
+void C2_HOOK_FASTCALL FUN_0045b0a0(tHeadup_text_buffer* pText_buffer);
 
 void C2_HOOK_FASTCALL MungeJoystickHeadups(void);
 
