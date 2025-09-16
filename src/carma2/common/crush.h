@@ -40,6 +40,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gCount_net_crush_full_detach_bit_list);
 C2_HOOK_VARIABLE_DECLARE(float, gMax_detach_time_ms);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_list_item, gCrush_lists, 8);
 C2_HOOK_VARIABLE_DECLARE(float, gMin_bend_force);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(float, gWobble_spam_y, 8);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(float, gWobble_spam_z, 8);
+C2_HOOK_VARIABLE_DECLARE(float, gWheel_circ_to_width);
 
 void C2_HOOK_FASTCALL InitCrushSystems(void);
 
