@@ -34,6 +34,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gSkid_tag, 2);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gLast_car_to_skid, 2);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gCar_to_view_original_v);
 C2_HOOK_VARIABLE_DECLARE(tCamera_key_flags, gCamera_key_flags);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_cunning_stunt);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
@@ -70,6 +71,8 @@ void C2_HOOK_FASTCALL InitialiseCarsEtc(tRace_info* pThe_race);
 void C2_HOOK_FASTCALL SetInitialPositions(tRace_info* pThe_race);
 
 void C2_HOOK_FASTCALL InitialiseExternalCamera(void);
+
+void C2_HOOK_FASTCALL SetAmbientPratCam(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period);
 
