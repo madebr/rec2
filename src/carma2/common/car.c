@@ -15,11 +15,14 @@
 #include "loading.h"
 #include "netgame.h"
 #include "network.h"
+#include "oil.h"
 #include "opponent.h"
 #include "pedestrn.h"
 #include "physics.h"
 #include "piping.h"
+#include "platform.h"
 #include "powerups.h"
+#include "pratcam.h"
 #include "racemem.h"
 #include "raycast.h"
 #include "replay.h"
@@ -27,6 +30,7 @@
 #include "sound.h"
 #include "spark.h"
 #include "structur.h"
+#include "trig.h"
 #include "utility.h"
 #include "world.h"
 
@@ -96,11 +100,12 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gWild_start, 0x006793a8);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gQuite_wild_end, 0x006793ac);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gQuite_wild_start, 0x006793b0);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gOn_me_wheels_start, 0x006793b4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gWoz_upside_down_at_all, 0x006793b8);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gWoz_upside_down_at_all, 0x006793b8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStop_opponents_moving, 0x00676854, 0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gSkid_tag, 2, 0x006793c0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gLast_car_to_skid, 2, 0x006793c8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCar_to_view_original_v, 0x00679390);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_cunning_stunt, 0x006793a4);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -1148,13 +1153,292 @@ void C2_HOOK_FASTCALL InitialiseExternalCamera(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00413580, InitialiseExternalCamera, InitialiseExternalCamera_original)
 
+void C2_HOOK_FASTCALL SetAmbientPratCam(tCar_spec* pCar) {
+    br_scalar vcs_x;
+    br_scalar vcs_y;
+    br_scalar vcs_z;
+    br_scalar abs_vcs_x;
+    br_scalar abs_vcs_y;
+    br_scalar abs_vcs_z;
+    br_scalar abs_omega_x;
+    br_scalar abs_omega_y;
+    br_scalar abs_omega_z;
+    tU32 the_time;
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_time_on_ground, 0x00679370);
+
+    if (C2V(gRace_finished)) {
+        return;
+    }
+    the_time = GetTotalTime();
+    if (pCar->number_of_wheels_on_ground != 0) {
+        C2V(last_time_on_ground) = the_time;
+    }
+    vcs_x = pCar->collision_info->velocity_car_space.v[0] / 1000.f;
+    vcs_y = pCar->collision_info->velocity_car_space.v[1] / 1000.f;
+    vcs_z = pCar->collision_info->velocity_car_space.v[2] / 1000.f;
+    abs_vcs_x = fabsf(vcs_x);
+    abs_vcs_y = fabsf(vcs_y);
+    abs_vcs_z = fabsf(vcs_z);
+    abs_omega_x = fabsf(pCar->collision_info->omega.v[0]);
+    abs_omega_y = fabsf(pCar->collision_info->omega.v[1]);
+    abs_omega_z = fabsf(pCar->collision_info->omega.v[2]);
+
+    if (abs_omega_x > 4.5f || abs_omega_z > 4.5f) {
+        ChangeAmbientPratcam(9);
+    } else if (abs_omega_y > 4.5f) {
+        ChangeAmbientPratcam(12);
+    } else if (abs_omega_x > 3.f || abs_omega_z > 3.f) {
+        ChangeAmbientPratcam(8);
+    } else if (abs_omega_y > 3.f) {
+        ChangeAmbientPratcam(11);
+    } else if (pCar->car_master_actor->t.t.mat.m[1][1] < 0.1f) {
+        ChangeAmbientPratcam(44);
+    } else if (abs_vcs_y > abs_vcs_z && abs_vcs_y > abs_vcs_x && vcs_y < -.004f) {
+        ChangeAmbientPratcam(6);
+    } else if (the_time - C2V(last_time_on_ground) > 500) {
+        ChangeAmbientPratcam(5);
+    } else if (abs_vcs_x > abs_vcs_z && vcs_x > .001f) {
+        ChangeAmbientPratcam(26);
+    } else if (abs_vcs_x > abs_vcs_z && vcs_x < -.001f) {
+        ChangeAmbientPratcam(25);
+    } else if (abs_omega_x > 1.5f || abs_omega_z > 1.5f) {
+        ChangeAmbientPratcam(7);
+    } else if (abs_omega_y > 1.5f) {
+        ChangeAmbientPratcam(10);
+    } else if (abs_vcs_z > .01f) {
+        ChangeAmbientPratcam(3);
+    } else if (abs_vcs_z > .004f) {
+        ChangeAmbientPratcam(2);
+    } else if (abs_vcs_z > .0015f) {
+        ChangeAmbientPratcam(1);
+    } else {
+        ChangeAmbientPratcam(0);
+    }
+}
+
 void (C2_HOOK_FASTCALL * MungeCarGraphics_original)(tU32 pFrame_period);
 void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeCarGraphics_original(pFrame_period);
 #else
-    NOT_IMPLEMENTED();
+    tU32 the_time;
+    int car;
+    int cat;
+
+    if (C2V(gNet_mode) != eNet_mode_none
+            && C2V(gCurrent_net_game)->type == eNet_game_type_foxy
+            && C2V(gThis_net_player_index) == C2V(gIt_or_fox)) {
+        C2V(gProgram_state).current_car.power_up_levels[1] = 0;
+    }
+    SetAmbientPratCam(&C2V(gProgram_state).current_car);
+
+    the_time = PDGetTotalTime();
+    for (cat = eVehicle_self; cat <= eVehicle_net_player; cat++) {
+        int car_count;
+
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (car = 0; car < car_count; car++) {
+            tCar_spec* the_car;
+
+            if (cat == eVehicle_self) {
+                the_car = &C2V(gProgram_state).current_car;
+            } else {
+                the_car = GetCarSpec(cat, car);
+            }
+            if (!(the_car != NULL && the_car->driver == eDriver_local_human) && PointOutOfSight(&the_car->pos REC2_THISCALL_EDX, C2V(gYon_squared))) {
+                the_car->car_master_actor->render_style = BR_RSTYLE_NONE;
+            } else {
+                the_car->car_master_actor->render_style = BR_RSTYLE_DEFAULT;
+            }
+        }
+    }
+    if (!(C2V(gCar_to_view) != NULL && C2V(gCar_to_view)->driver == eDriver_oppo)) {
+        C2V(gCar_to_view)->car_master_actor->render_style = BR_RSTYLE_DEFAULT;
+    }
+
+    for (car = 0; car < C2V(gNum_active_cars); car++) {
+        tCar_spec* the_car;
+
+        the_car = C2V(gActive_car_list)[car];
+        if (the_car->car_master_actor->render_style != BR_RSTYLE_NONE && the_car != NULL && the_car->driver >= eDriver_oppo) {
+            br_scalar car_x;
+            br_scalar car_z;
+            int oily_count;
+            int i;
+
+            the_car->shadow_intersection_flags = 0;
+            car_x = the_car->car_master_actor->t.t.translate.t.v[0];
+            car_z = the_car->car_master_actor->t.t.translate.t.v[2];
+            oily_count = GetOilSpillCount();
+
+            for (i = 0; i < oily_count; i++) {
+                br_actor* oily_actor;
+                br_scalar oily_size;
+
+                GetOilSpillDetails(i, &oily_actor, &oily_size);
+                if (oily_actor != NULL) {
+                    br_scalar car_radius;
+
+                    car_radius = the_car->collision_info->shape->common.bb.max.v[2] / WORLD_SCALE * 1.5f;
+                    if (oily_actor->t.t.translate.t.v[0] - oily_size < car_x + car_radius
+                            && oily_actor->t.t.translate.t.v[0] + oily_size > car_x - car_radius
+                            && oily_actor->t.t.translate.t.v[2] - oily_size < car_z + car_radius
+                            && oily_actor->t.t.translate.t.v[2] + oily_size > car_z - car_radius) {
+                        the_car->shadow_intersection_flags |= 1 << i;
+                    }
+                }
+            }
+            if (the_car->driver < eDriver_net_human && (!C2V(gAction_replay_mode) || !ARReplayIsReallyPaused())) {
+                if (C2V(gCountdown)) {
+                    float sine_angle;
+                    float raw_revs;
+                    float rev_reducer;
+
+                    sine_angle = FRandomBetween(.4f, 1.6f) * ((float)GetTotalTime() / ((float)C2V(gCountdown) * 100.f));
+                    sine_angle = frac(sine_angle) * 360.0f;
+                    sine_angle = FastScalarSin((int)sine_angle);
+                    raw_revs = the_car->red_line * fabsf(sine_angle);
+                    rev_reducer = (11.f - (float)(C2V(gCountdown))) / 10.f;
+                    the_car->revs = rev_reducer * raw_revs;
+                } else {
+                    the_car->revs = (the_car->speedo_speed / 0.003f - (float)(int)(the_car->speedo_speed / 0.003))
+                                    * (float)(the_car->red_line - 800)
+                                    + 800.f;
+                }
+            }
+            for (i = 0; i < the_car->number_of_steerable_wheels; i++) {
+                ControlBoundFunkGroove(the_car->steering_ref[i] REC2_THISCALL_EDX, the_car->steering_angle);
+            }
+            for (i = 0; i < REC2_ASIZE(the_car->rf_sus_ref); i++) {
+                ControlBoundFunkGroove(the_car->rf_sus_ref[i] REC2_THISCALL_EDX, the_car->rf_sus_position);
+                if ((i & 1) != 0) {
+                    ControlBoundFunkGroove(the_car->lf_sus_ref[i] REC2_THISCALL_EDX, -the_car->lf_sus_position);
+                } else {
+                    ControlBoundFunkGroove(the_car->lf_sus_ref[i] REC2_THISCALL_EDX, the_car->lf_sus_position);
+                }
+            }
+            for (i = 0; i < REC2_ASIZE(the_car->rr_sus_ref); i++) {
+                ControlBoundFunkGroove(the_car->rr_sus_ref[i] REC2_THISCALL_EDX, the_car->rr_sus_position);
+                if ((i & 1) != 0) {
+                    ControlBoundFunkGroove(the_car->lr_sus_ref[i] REC2_THISCALL_EDX, -the_car->lr_sus_position);
+                } else {
+                    ControlBoundFunkGroove(the_car->lr_sus_ref[i] REC2_THISCALL_EDX, the_car->lr_sus_position);
+                }
+            }
+            if (!C2V(gAction_replay_mode) || !ARReplayIsReallyPaused()) {
+                float wheel_speed;
+
+                wheel_speed = -(the_car->speedo_speed / the_car->non_driven_wheels_circum * (float)C2V(gFrame_period));
+                if (C2V(gAction_replay_mode) && ARGetReplayDirection() < 0) {
+                    wheel_speed = -wheel_speed;
+                }
+                ControlBoundFunkGroovePlus(the_car->non_driven_wheels_spin_ref_1 REC2_THISCALL_EDX, wheel_speed);
+                ControlBoundFunkGroovePlus(the_car->non_driven_wheels_spin_ref_2 REC2_THISCALL_EDX, wheel_speed);
+                ControlBoundFunkGroovePlus(the_car->non_driven_wheels_spin_ref_3 REC2_THISCALL_EDX, wheel_speed);
+                ControlBoundFunkGroovePlus(the_car->non_driven_wheels_spin_ref_4 REC2_THISCALL_EDX, wheel_speed);
+                if (the_car->driver >= eDriver_net_human) {
+                    if (the_car->gear != 0.f) {
+                        wheel_speed = -(the_car->revs
+                                        * the_car->speed_revs_ratio
+                                        * (float)the_car->gear
+                                        * (float)C2V(gFrame_period)
+                                        / (1000.f * WORLD_SCALE))
+                                        / the_car->driven_wheels_circum;
+                    } else if (the_car->keys.brake) {
+                        wheel_speed = 0.0;
+                    } else {
+                        wheel_speed = -(the_car->speedo_speed / the_car->driven_wheels_circum * (float)C2V(gFrame_period));
+                    }
+                    if (C2V(gAction_replay_mode) && ARGetReplayDirection() < 0) {
+                        wheel_speed = -wheel_speed;
+                    }
+                }
+                ControlBoundFunkGroovePlus(the_car->driven_wheels_spin_ref_1 REC2_THISCALL_EDX, wheel_speed);
+                ControlBoundFunkGroovePlus(the_car->driven_wheels_spin_ref_2 REC2_THISCALL_EDX, wheel_speed);
+                ControlBoundFunkGroovePlus(the_car->driven_wheels_spin_ref_3 REC2_THISCALL_EDX, wheel_speed);
+                ControlBoundFunkGroovePlus(the_car->driven_wheels_spin_ref_4 REC2_THISCALL_EDX, wheel_speed);
+            }
+            if (C2V(gAction_replay_mode)) {
+                MungeSpecialVolume(the_car->collision_info);
+            } else if (the_car->driver == eDriver_local_human && the_car->collision_info->M < 5.f) {
+                br_scalar abs_omega_x;
+                br_scalar abs_omega_y;
+                br_scalar abs_omega_z;
+                int spinning_wildly;
+
+                abs_omega_x = (WORLD_SCALE * WORLD_SCALE * the_car->collision_info->I.v[0] + 3.30f) / 2.f * fabsf(the_car->collision_info->omega.v[0]);
+                abs_omega_y = (WORLD_SCALE * WORLD_SCALE * the_car->collision_info->I.v[1] + 3.57f) / 2.f * fabsf(the_car->collision_info->omega.v[1]);
+                abs_omega_z = (WORLD_SCALE * WORLD_SCALE * the_car->collision_info->I.v[2] + 0.44f) / 2.f * fabsf(the_car->collision_info->omega.v[2]);
+                spinning_wildly = abs_omega_x > 26.4f || abs_omega_y > 49.98f || abs_omega_z > 3.52f;
+                if (spinning_wildly && the_time - C2V(gLast_cunning_stunt) > 10000) {
+                    if (C2V(gWild_start) == 0
+                            || (the_car->collision_info->last_special_volume != NULL && the_car->collision_info->last_special_volume->gravity_multiplier != 1.f)) {
+                        C2V(gWild_start) = the_time;
+                    } else if (the_time - C2V(gWild_start) >= 500) {
+                        DoFancyHeadup(18);
+                        EarnCredits(C2V(gCunning_stunt_bonus)[C2V(gProgram_state).skill_level]);
+                        C2V(gLast_cunning_stunt) = the_time;
+                        C2V(gOn_me_wheels_start) = 0;
+                        C2V(gQuite_wild_end) = 0;
+                        C2V(gQuite_wild_start) = 0;
+                        C2V(gWoz_upside_down_at_all) = 0;
+                    }
+                } else {
+                    int spinning_mildly;
+
+                    C2V(gWild_start) = 0;
+                    spinning_mildly = abs_omega_x > 1.65f || abs_omega_z > .22f;
+                    if (the_car->number_of_wheels_on_ground < 4) {
+                        C2V(gOn_me_wheels_start) = 0;
+                        if (the_car->number_of_wheels_on_ground == 0 && spinning_mildly) {
+                            if (C2V(gQuite_wild_start) == 0) {
+                                C2V(gQuite_wild_start) = the_time;
+                            }
+                            if (the_car->car_master_actor->t.t.mat.m[1][1] < -.8f) {
+                                C2V(gWoz_upside_down_at_all) = the_time;
+                            }
+                        } else {
+                            C2V(gQuite_wild_end) = the_time;
+                        }
+                    } else {
+                        if (C2V(gQuite_wild_end) == 0) {
+                            C2V(gQuite_wild_end) = the_time;
+                        }
+                        if (C2V(gQuite_wild_start) == 0
+                                || the_time - C2V(gLast_cunning_stunt) <= 10000) {
+                            C2V(gWild_start) = 0;
+                        } else if (C2V(gQuite_wild_end) - C2V(gQuite_wild_start) >= 2000
+                                && C2V(gQuite_wild_start) <= C2V(gWoz_upside_down_at_all)
+                                && C2V(gWoz_upside_down_at_all) <= C2V(gQuite_wild_end)) {
+
+                            if (C2V(gOn_me_wheels_start) != 0) {
+                                if (the_time - C2V(gOn_me_wheels_start) > 500
+                                        && !(the_car->collision_info->last_special_volume != NULL && the_car->collision_info->last_special_volume->gravity_multiplier != 1.f)) {
+                                    DoFancyHeadup(18);
+                                    EarnCredits(C2V(gCunning_stunt_bonus)[C2V(gProgram_state).skill_level]);
+                                    C2V(gLast_cunning_stunt) = PDGetTotalTime();
+                                    C2V(gQuite_wild_start) = 0;
+                                    C2V(gQuite_wild_end) = 0;
+                                    C2V(gOn_me_wheels_start) = 0;
+                                    C2V(gWoz_upside_down_at_all) = 0;
+                                } else {
+                                    C2V(gWild_start) = 0;
+                                }
+                            } else if (the_time - C2V(gQuite_wild_end) < 300) {
+                                C2V(gOn_me_wheels_start) = the_time;
+                                C2V(gWild_start) = 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041e660, MungeCarGraphics, MungeCarGraphics_original)

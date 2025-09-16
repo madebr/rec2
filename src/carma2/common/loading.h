@@ -15,6 +15,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gMisc_strings, 300);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
 C2_HOOK_VARIABLE_DECLARE(int, gKey_map_index);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gKey_mapping, 77);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCunning_stunt_bonus, 3);
 
 C2_HOOK_VARIABLE_DECLARE(int, gDisableTiffConversion);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gCurrent_load_directory, 256);
