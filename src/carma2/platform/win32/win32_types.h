@@ -20,18 +20,6 @@ typedef struct {
 } tJoystickInputState;
 
 typedef struct {
-    char productName[80];
-    size_t count_buttons;
-    int buttons[32]; /* index if available, -1 if not */
-    int field_0xd4;
-    float field_0xd8;
-    float field_0xdc;
-    int field_0xe0; /* float or int. init=0 */
-    int field_0xe4; /* init = 50*/
-    int field_0xe8; /* float or int. init=0 */
-} tButtonJoystickInfo;
-
-typedef struct {
     tU32 buttonMask;
     tU32 axisMask;
     int devSubType;
