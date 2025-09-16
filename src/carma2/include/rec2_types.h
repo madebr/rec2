@@ -4387,7 +4387,7 @@ typedef struct tNon_car_spec {
 
 typedef struct {
     char productName[80];
-    int count_buttons;
+    size_t count_buttons;
     int buttons[32]; /* index if available, -1 if not */
     int field_0xd4;
     float field_0xd8;

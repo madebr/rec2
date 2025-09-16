@@ -1,10 +1,13 @@
 #include "joystick.h"
 
+#include "displays.h"
 #include "globvars.h"
+#include "input.h"
 #include "loading.h"
 #include "platform.h"
 #include "utility.h"
 
+#include "rec2_macros.h"
 #include "rec2_types.h"
 
 #include "c2_string.h"
@@ -19,6 +22,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gOriginal_joystick_dpad, 0x00688710);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gOrig_joystick_index, 0x00688700);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gJoystick_x_steering, 0x00595f90, 1.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gJoystick_y_throttle, 0x00595f94, 1.f);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00596308, 0x00596308, -1);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068b8e4, 0x0068b8e4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068b8e8, 0x0068b8e8);
+C2_HOOK_VARIABLE_IMPLEMENT(tHeadup_text_buffer, gJoystick_headup_buffer_0079d8a0, 0x0079d8a0);
 
 
 void C2_HOOK_FASTCALL SetupFFBValues(void) {
@@ -177,13 +184,195 @@ void C2_HOOK_FASTCALL FUN_0045b0a0(tHeadup_text_buffer* pText_buffer) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045b0a0, FUN_0045b0a0, FUN_0045b0a0_original)
 
+int C2_HOOK_FASTCALL FUN_CheckJoystickHeadupButtons(tButtonJoystickInfo** pJoystick_info) {
+
+    if (!PDKeyDown(65)) {
+        return 1;
+    }
+    if (C2V(gINT_00596308) != -1) {
+        C2V(gINT_00596308) = -1;
+    } else {
+        tHeadup_text* text;
+        int last_index;
+        size_t i;
+
+        *pJoystick_info = PDGetCurrentJoystickData();
+        if (*pJoystick_info == NULL) {
+            return 0;
+        }
+
+        i = 0;
+        last_index = -1;
+        for (text = C2V(gJoystick_headup_buffer_0079d8a0).texts; text != NULL; text = text->next, i++) {
+            if (text == C2V(gJoystick_headup_buffer_0079d8a0).text_last_add) {
+                last_index = i;
+            }
+        }
+        for (i = 0; i < (*pJoystick_info)->count_buttons; i++) {
+            if ((*pJoystick_info)->buttons[i] == last_index && (*pJoystick_info)->buttons[i] != -1) {
+                (*pJoystick_info)->buttons[i] = -1;
+            }
+        }
+    }
+    while (PDKeyDown(65)) {
+        /* brr */
+        /* FIXME: replace with udelay */
+    }
+    return 1;
+}
+
 void (C2_HOOK_FASTCALL * MungeJoystickHeadups_original)(void);
 void C2_HOOK_FASTCALL MungeJoystickHeadups(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeJoystickHeadups_original();
 #else
-    NOT_IMPLEMENTED();
+    tButtonJoystickInfo* joystick_info;
+    tHeadup_text* headup_text;
+    int i;
+
+    joystick_info = NULL;
+    headup_text = NULL;
+    if (C2V(gINT_0068b8e8)) {
+        tU32 the_time;
+
+        the_time = PDGetTotalTime();
+        if (FUN_CheckJoystickHeadupButtons(&joystick_info) && C2V(gINT_00596308) == -1) {
+
+            if (PDKeyDown(64) && C2V(gINT_00596308) == -1) {
+                int i;
+                tHeadup_text* headup_text2;
+
+                i = 0;
+                for (headup_text2 = C2V(gJoystick_headup_buffer_0079d8a0).texts; headup_text2 != NULL; i++, headup_text2 = headup_text2->next) {
+                    if (headup_text2 == C2V(gJoystick_headup_buffer_0079d8a0).text_last_add) {
+                        C2V(gINT_00596308) = i;
+                    }
+                }
+                while (PDKeyDown(64)) {
+                    /* brr */
+                    /* FIXME: replace with udelay */
+                }
+            }
+            if (PDKeyDown(66)) {
+                if (C2V(gJoystick_headup_buffer_0079d8a0).text_last_add != NULL
+                        && C2V(gJoystick_headup_buffer_0079d8a0).text_last_add != C2V(gJoystick_headup_buffer_0079d8a0).texts) {
+                    int i;
+
+                    C2V(gJoystick_headup_buffer_0079d8a0).text_last_add = C2V(gJoystick_headup_buffer_0079d8a0).texts;
+                    C2V(gJoystick_headup_buffer_0079d8a0).pos_last_add -= 1;
+                    for (i = 0; i < C2V(gJoystick_headup_buffer_0079d8a0).pos_last_add; i++) {
+                        C2V(gJoystick_headup_buffer_0079d8a0).text_last_add = C2V(gJoystick_headup_buffer_0079d8a0).text_last_add->next;
+                    }
+                }
+                while (PDGetTotalTime() - the_time < 100) {
+                    /* brr */
+                    /* FIXME: replace with udelay */
+                }
+            }
+            if (PDKeyDown(67)) {
+                if (C2V(gJoystick_headup_buffer_0079d8a0).text_last_add != NULL
+                        && C2V(gJoystick_headup_buffer_0079d8a0).text_last_add->next != NULL) {
+                    C2V(gJoystick_headup_buffer_0079d8a0).pos_last_add += 1;
+                    C2V(gJoystick_headup_buffer_0079d8a0).text_last_add = C2V(gJoystick_headup_buffer_0079d8a0).text_last_add->next;
+                }
+                while (PDGetTotalTime() - the_time < 100) {
+                    /* brr */
+                    /* FIXME: replace with udelay */
+                }
+            }
+            if (PDKeyDown(68)) {
+                int i;
+                tHeadup_text* last_text;
+                int last_pos;
+
+                last_text = C2V(gJoystick_headup_buffer_0079d8a0).text_last_add;
+                last_pos = C2V(gJoystick_headup_buffer_0079d8a0).pos_last_add;
+
+                for (i = 0; i < C2V(gJoystick_headup_buffer_0079d8a0).field_0x10 - 1; i++) {
+                    if (last_text != NULL && last_text != C2V(gJoystick_headup_buffer_0079d8a0).texts) {
+                        int j;
+                        tHeadup_text* headup_text2;
+
+                        last_pos -= 1;
+                        C2V(gJoystick_headup_buffer_0079d8a0).text_last_add = C2V(gJoystick_headup_buffer_0079d8a0).texts;
+                        headup_text2 = C2V(gJoystick_headup_buffer_0079d8a0).texts;
+                        C2V(gJoystick_headup_buffer_0079d8a0).pos_last_add = last_pos;
+
+                        for (j = 0; j < last_pos; j++) {
+                            headup_text2 = headup_text2->next;
+                            C2V(gJoystick_headup_buffer_0079d8a0).text_last_add = headup_text2;
+                        }
+                    }
+                }
+                while (PDKeyDown(68)) {
+                    /* brr */
+                    /* FIXME: replace with udelay */
+                }
+            }
+            if (PDKeyDown(69)) {
+                int i;
+                tHeadup_text* headup_text2;
+
+                headup_text2 = C2V(gJoystick_headup_buffer_0079d8a0).text_last_add;
+
+                for (i = 0; i < C2V(gJoystick_headup_buffer_0079d8a0).field_0x10 - 1; i++) {
+                    if (headup_text2 != NULL && headup_text2->next != NULL) {
+                        C2V(gJoystick_headup_buffer_0079d8a0).pos_last_add += 1;
+                        headup_text2 = headup_text2->next;
+                        C2V(gJoystick_headup_buffer_0079d8a0).text_last_add = headup_text2;
+                    }
+                }
+                while (PDKeyDown(69)) {
+                    /* brr */
+                    /* FIXME: replace with udelay */
+                }
+            }
+        }
+        FUN_0045b0a0(&C2V(gJoystick_headup_buffer_0079d8a0));
+        headup_text = C2V(gJoystick_headup_buffer_0079d8a0).field_0x4;
+        joystick_info = PDGetCurrentJoystickData();
+        if (joystick_info == NULL) {
+            return;
+        }
+    } else if (C2V(gINT_0068b8e4)) {
+        return;
+    }
+
+    for (i = 0; i < REC2_ASIZE(C2V(gRace_head_ups)); i++) {
+
+        if (C2V(gINT_0068b8e8) && headup_text != NULL) {
+            int font;
+            char s[80];
+
+            if (i == C2V(gINT_00596308)) {
+                font = -3;
+            } else if (headup_text == C2V(gJoystick_headup_buffer_0079d8a0).text_last_add) {
+                font = -1;
+            } else {
+                font = -2;
+            }
+            ChangeHeadupFont(C2V(gRace_head_ups)[i], font);
+            if (i == C2V(gINT_00596308)) {
+                c2_sprintf(s, "%s      ???", headup_text->text);
+            } else if (joystick_info == NULL) {
+                c2_sprintf(s, "%s", headup_text->text);
+            } else {
+                size_t j;
+
+                c2_sprintf(s, "%s", headup_text->text);
+                for (j = 0; j < joystick_info->count_buttons; j++) {
+                    if (i == joystick_info->buttons[j]) {
+                        c2_sprintf(s, "%s      #%02d", headup_text->text, (int)j);
+                    }
+                }
+            }
+            ChangeHeadupText(C2V(gRace_head_ups)[i], s);
+            headup_text = headup_text->next;
+        } else {
+            ChangeHeadupText(C2V(gRace_head_ups)[i], "");
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0045b3b0, MungeJoystickHeadups, MungeJoystickHeadups_original)
