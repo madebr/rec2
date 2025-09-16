@@ -894,3 +894,11 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
     }
 }
 C2_HOOK_FUNCTION(0x0044a8d0, ChangeHeadupText)
+
+void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont) {
+
+    if (pHeadup_index >= 0) {
+        C2V(gHeadups)[pHeadup_index].data.image_info.font = &C2V(gFonts)[-pFont];
+    }
+}
+C2_HOOK_FUNCTION(0x0044a920, ChangeHeadupFont)
