@@ -317,13 +317,13 @@ size_t C2_HOOK_FASTCALL GetCurrentJoystickCountButtons(void) {
 }
 C2_HOOK_FUNCTION(0x00459fb0, GetCurrentJoystickCountButtons)
 
-tButtonJoystickInfo* C2_HOOK_FASTCALL GetCurrentJoystickData(void) {
+tButtonJoystickInfo* C2_HOOK_FASTCALL PDGetCurrentJoystickData(void) {
     if (C2V(gJoystick_index) == -1) {
         return NULL;
     }
     return C2V(gDirectInputJoystickInfos)[C2V(gJoystick_index)].data;
 }
-C2_HOOK_FUNCTION(0x00459f80, GetCurrentJoystickData)
+C2_HOOK_FUNCTION(0x00459f80, PDGetCurrentJoystickData)
 
 void C2_HOOK_FASTCALL CollectJoystickButtonInfo(tButtonJoystickInfo* pInfo) {
     unsigned int i;
@@ -964,7 +964,7 @@ void C2_HOOK_FASTCALL PDSetKeysFromJoystick(int *keys) {
         tU32 button_mask;
 
         button_mask = PDGetJoystickButtonStates();
-        if (GetCurrentJoystickData() != NULL) {
+        if (PDGetCurrentJoystickData() != NULL) {
             int i;
 
             for (i = 0; i < 32; i++) {
@@ -1354,7 +1354,7 @@ int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void) {
 #else
     tButtonJoystickInfo* joystick_info;
 
-    joystick_info = GetCurrentJoystickData();
+    joystick_info = PDGetCurrentJoystickData();
     if (joystick_info == NULL) {
         return 0;
     }
