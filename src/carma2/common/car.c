@@ -106,6 +106,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gSkid_tag, 2, 0x006793c0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gLast_car_to_skid, 2, 0x006793c8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCar_to_view_original_v, 0x00679390);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_cunning_stunt, 0x006793a4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gPed_actor, 0x006792b4);
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -1479,10 +1480,15 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0041f300, ResetCarScreens, ResetCarScreens_original)
 void (C2_HOOK_FASTCALL * CameraBugFix_original)(tCar_spec* c, tU32 pTime);
 void C2_HOOK_FASTCALL CameraBugFix(tCar_spec* c, tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CameraBugFix_original(c, pTime);
 #else
-    NOT_IMPLEMENTED();
+    if (C2V(gAction_replay_mode)
+            && (C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_ActionTracking || C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_Panning)
+            && C2V(gPed_actor) != NULL
+            && !C2V(gProgram_state).cockpit_on) {
+        IncidentCam(c, pTime);
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040f760, CameraBugFix, CameraBugFix_original)
