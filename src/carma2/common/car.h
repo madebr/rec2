@@ -197,4 +197,6 @@ int C2_HOOK_FASTCALL APTCPassiveActivated(tCollision_info* pArg1);
 
 float C2_HOOK_STDCALL frac(float pN);
 
+void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car);
+
 #endif //REC2_CAR_H

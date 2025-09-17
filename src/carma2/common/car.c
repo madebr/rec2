@@ -2680,3 +2680,14 @@ float C2_HOOK_STDCALL frac(float pN) {
     return pN - (float)(int)pN;
 }
 C2_HOOK_FUNCTION(0x00515c20, frac)
+
+void C2_HOOK_FASTCALL MakeLiftGoUp(tNon_car_spec* pNon_car) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, flags, 0x100);
+
+    if (C2V(gNet_mode) != eNet_mode_client) {
+        pNon_car->flags &= ~0xff;
+        pNon_car->flags |= 0x1;
+    }
+}
+C2_HOOK_FUNCTION(0x00418230, MakeLiftGoUp)
