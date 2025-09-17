@@ -326,3 +326,14 @@ void C2_HOOK_FASTCALL TotallyRepairSmash(tCar_spec *pCar_Spec, tCar_crush_buffer
     }
 }
 C2_HOOK_FUNCTION(0x004ef9c0, TotallyRepairSmash)
+
+void (C2_HOOK_FASTCALL * ApplyInitialMovement_original)(undefined4* pArg1, br_vector3* pArg2, br_vector3* pArg3, br_vector3* pArg4, float pArg5, br_vector3* pArg6, br_vector3* pArg7, br_vector3* pArg8);
+void C2_HOOK_FASTCALL ApplyInitialMovement(undefined4* pArg1, br_vector3* pArg2, br_vector3* pArg3, br_vector3* pArg4, float pArg5, br_vector3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ApplyInitialMovement_original(pArg1, pArg2, pArg3, pArg4, pArg5, pArg6, pArg7, pArg8);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004eb180, ApplyInitialMovement, ApplyInitialMovement_original)
