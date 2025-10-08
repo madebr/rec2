@@ -84,10 +84,8 @@ void C2_HOOK_FASTCALL ResetExplosions(void) {
         C2V(gExplosions)[i].finished = 0;
     }
     for (i = 0; i < REC2_ASIZE(C2V(gSmash_explosions)); i++) {
-        C2V(gSmash_explosions)[i].field_0x4 = 0;
+        C2V(gSmash_explosions)[i].active = 0;
     }
-
-
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004eaac0, ResetExplosions, ResetExplosions_original)
