@@ -228,4 +228,6 @@ void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar);
 
 float C2_HOOK_FASTCALL BashObject(tCollision_info* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
 
+float C2_HOOK_FASTCALL SmashEnvironment(tCollision_info* pObject, undefined4* pArg2, float pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
+
 #endif // REC2_CRUSH_H
