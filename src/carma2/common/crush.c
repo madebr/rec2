@@ -2784,3 +2784,14 @@ void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
     }
 }
 C2_HOOK_FUNCTION(0x00440210, SetSmokeLastDamageLevel)
+
+float (C2_HOOK_FASTCALL * BashObject_original)(tCollision_info* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
+float C2_HOOK_FASTCALL BashObject(tCollision_info* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return BashObject_original(pObject, pActor, pArg3, pArg4, pArg5, pArg6, pArg7, pArg8);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f52f0, BashObject, BashObject_original)
