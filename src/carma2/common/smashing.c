@@ -1,5 +1,8 @@
 #include "smashing.h"
 
+#include "car.h"
+#include "crush.h"
+#include "explosions.h"
 #include "globvars.h"
 #include "loading.h"
 #include "physics.h"
@@ -18,6 +21,7 @@
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_vertex, gSmash_glass_fragments, 200, 0x006b78e0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_quad, gSmash_decals, 50, 0x006a80f8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gZero_vector__smash, 0x006abee8);
 
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gInitial_smashable_position_type_names, 3, 0x0065fed0, {
     "sphereclumped",
@@ -245,13 +249,105 @@ void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ecfb0, FlushSmashQueue, FlushSmashQueue_original)
 
+void C2_HOOK_FASTCALL DoDelayedNonCar(tU32 pTime, tDelayed_non_car* pDelayed_non_car) {
+    int i;
+    int number_started;
+    tDelayed_non_car_actor_item* read_action;
+    tDelayed_non_car_actor_item* write_action;
+
+    read_action = pDelayed_non_car->actor_time_actions;
+    write_action = read_action;
+    number_started = 0;
+
+    for (i = 0; i < pDelayed_non_car->count_actions; read_action++, i++) {
+        if (pTime < read_action->time) {
+            *write_action++ = *read_action;
+        } else if (read_action->actor->type_data == NULL) {
+            tNon_car_spec *non_car;
+
+            non_car = DoPullActorFromWorld(read_action->actor);
+            if (non_car != NULL) {
+                if (non_car->flags & 0x10000) {
+                    MakeLiftGoUp(non_car);
+                } else {
+                    br_vector3 speed;
+                    br_vector3 omega;
+
+                    ApplyInitialMovement(pDelayed_non_car->field_0x18, &pDelayed_non_car->field_0x0, &speed, &omega, 1.f, &C2V(gZero_vector__smash),
+                             &pDelayed_non_car->field_0xc, &read_action->actor->t.t.translate.t);
+                    BrVector3InvScale(&non_car->collision_info->v, &speed, WORLD_SCALE);
+                    BrVector3Scale(&non_car->collision_info->omega, &omega, .0958738f);
+                }
+                non_car->collision_info->disable_move_rotate = 0;
+            }
+            number_started += 1;
+        }
+    }
+    pDelayed_non_car->count_actions -= number_started;
+}
+
+void C2_HOOK_FASTCALL DoDelayedSmash(tDelayed_smash* pDelayed_smash) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0xc, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x1c, 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x38, 0x38);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x80, 0x80);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x8c, 0x8c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x90, 0x90);
+
+    if (pDelayed_smash->field_0x88 == 1) {
+        if (pDelayed_smash->field_0x80->identifier[0] == '&' && (pDelayed_smash->field_0x80->identifier[1] >= '0' && pDelayed_smash->field_0x80->identifier[1] <= '9')) {
+            DoPullActorFromWorld(pDelayed_smash->field_0x80);
+            pDelayed_smash->field_0x80->identifier[3] = '!';
+            BashObject(
+                pDelayed_smash->field_0x90, pDelayed_smash->field_0x80,
+                pDelayed_smash->field_0x8c, &pDelayed_smash->field_0xc,
+                &pDelayed_smash->field_0x0, &pDelayed_smash->field_0x1c,
+                1, 0);
+            return;
+        }
+    }
+    SmashEnvironment(
+        pDelayed_smash->field_0x90, &pDelayed_smash->field_0x38,
+        pDelayed_smash->field_0x8c, &pDelayed_smash->field_0xc,
+        &pDelayed_smash->field_0x0, &pDelayed_smash->field_0x1c,
+        1, 0);
+}
+
 void (C2_HOOK_FASTCALL * MungeDelayedSideEffects_original)(void);
 void C2_HOOK_FASTCALL MungeDelayedSideEffects(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeDelayedSideEffects_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    tU32 the_time;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmash_explosion, what.non_car, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmash_explosion, what.non_car.count_actions, 0x24);
+
+    the_time = PDGetTotalTime();
+    for (i = 0; i < REC2_ASIZE(C2V(gSmash_explosions)); i++) {
+        tSmash_explosion* delayed_effect = &C2V(gSmash_explosions)[i];
+
+        if (delayed_effect->active) {
+            switch (delayed_effect->type) {
+            case 0:
+                DoDelayedNonCar(the_time, &delayed_effect->what.non_car);
+                if (delayed_effect->what.non_car.count_actions == 0) {
+                    delayed_effect->active = 0;
+                }
+                break;
+            case 1:
+                if (the_time >= delayed_effect->what.smash.field_0x18) {
+                    DoDelayedSmash(&delayed_effect->what.smash);
+                    delayed_effect->active = 0;
+                }
+                break;
+            }
+        }
+
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ecc80, MungeDelayedSideEffects, MungeDelayedSideEffects_original)

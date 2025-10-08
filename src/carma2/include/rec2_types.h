@@ -1746,9 +1746,41 @@ typedef struct {
 } tExplosion;
 
 typedef struct {
-    undefined4 field_0x0;
-    undefined4 field_0x4;
-    undefined4 field_0x8[48];
+    br_actor* actor;
+    tU32 time;
+} tDelayed_non_car_actor_item;
+
+typedef struct {
+    br_vector3 field_0x0;
+    br_vector3 field_0xc;
+    undefined4* field_0x18;
+    int count_actions;
+    tDelayed_non_car_actor_item actor_time_actions[20];
+} tDelayed_non_car;
+
+typedef struct {
+    br_vector3 field_0x0;
+    br_vector3 field_0xc;
+    tU32 field_0x18;
+    br_vector3 field_0x1c;
+    undefined field_0x28[0x38 - 0x28];
+    undefined4 field_0x38;
+    undefined field_0x3c[0x80 - 0x3c];
+    br_actor *field_0x80;
+    undefined field_0x84[0x88 - 0x84];
+    undefined4 field_0x88;
+    float field_0x8c;
+    tCollision_info* field_0x90;
+    undefined field_0x94[0xc0 - 0x94];
+} tDelayed_smash;
+
+typedef struct {
+    int type; /* FIXME: enum (0: non_car, 1: smash)*/
+    int active;
+    union {
+        tDelayed_non_car non_car;
+        tDelayed_smash smash;
+    } what;
 } tSmash_explosion;
 
 typedef enum {
