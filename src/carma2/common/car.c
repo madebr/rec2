@@ -1595,7 +1595,7 @@ tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* actor) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041ff20, DoPullActorFromWorld, DoPullActorFromWorld_original)
 
-tCar_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor) {
+tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor) {
 
     if (!C2V(gINT_0074a5f8) && !C2V(gTesting_car_for_sensible_place) == 0) {
         return NULL;
