@@ -27,6 +27,11 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tSplash, gSplash, 32);
 C2_HOOK_VARIABLE_DECLARE(int, gSpark_flags);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIt_shade_table);
 C2_HOOK_VARIABLE_DECLARE(int, gDust_rotate);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tReplay_splash, gReplay_splashes, 10);
+C2_HOOK_VARIABLE_DECLARE(int, gReplay_splash_flags);
+C2_HOOK_VARIABLE_DECLARE(tU32, gNext_AFE_color_cycle);
+C2_HOOK_VARIABLE_DECLARE(int, gAFE_color_cycle);
+C2_HOOK_VARIABLE_DECLARE(int, gShrapnel_flags);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -55,6 +60,12 @@ void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF);
 void C2_HOOK_FASTCALL DisposeKevStuff(void);
 
 void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar);
+
+void C2_HOOK_FASTCALL MungeSplash(tU32 pTime);
+
+void C2_HOOK_FASTCALL ReplayShrapnel(tU32 pTime);
+
+void C2_HOOK_FASTCALL KillShrapnel(int i);
 
 void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime);
 
