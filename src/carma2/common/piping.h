@@ -128,4 +128,6 @@ void C2_HOOK_FASTCALL AddBurningPedToSession(int pIndex, tPedestrian* pPed, br_v
 
 void C2_HOOK_FASTCALL PipeSinglePHILObject(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, br_vector3* pPos, tU16 pAge, br_material* pMaterial);
+
 #endif //REC2_PIPING_H

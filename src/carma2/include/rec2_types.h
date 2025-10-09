@@ -365,12 +365,19 @@ typedef struct {
     br_matrix34 matrix;
 } tPipe_phil_object;
 
+typedef struct {
+    br_vector3 pos;
+    tU16 age;
+    br_material* material;
+} tPipe_chunk_shrapnel;
+
 typedef enum {
     ePipe_chunk_ped_incident = 1,
     ePipe_chunk_car = 5,
     ePipe_chunk_single_graphpical_wheel_stuff = 6,
     ePipe_chunk_damage = 7,
     ePipe_chunk_special = 8,
+    ePipe_chunk_shrapnel = 11,
     ePipe_chunk_non_car = 14,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_flap_bits = 23,
