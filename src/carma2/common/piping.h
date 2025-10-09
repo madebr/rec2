@@ -130,4 +130,6 @@ void C2_HOOK_FASTCALL PipeSinglePHILObject(tCollision_info* pObject);
 
 void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, br_vector3* pPos, tU16 pAge, br_material* pMaterial);
 
+void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, tSmoke_column* pSmoke_column, int pVertex, int pColour);
+
 #endif //REC2_PIPING_H

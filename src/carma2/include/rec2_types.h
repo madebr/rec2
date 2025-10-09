@@ -186,6 +186,13 @@ typedef struct {
 } tFlapBit_arg;
 
 typedef struct {
+    int field_0x0;
+    tCar_spec* car;
+    tCollision_info* collision_info;
+    br_actor* car_actor;
+} tSmoke_column_core;
+
+typedef struct {
     tU16 v[3];
 } tCompressed_vector3;
 
@@ -372,6 +379,11 @@ typedef struct {
     br_material* material;
 } tPipe_chunk_shrapnel;
 
+typedef struct {
+    tSmoke_column_core core;
+    tU16 vertex;
+} tPipe_chunk_smoke_column;
+
 typedef enum {
     ePipe_chunk_ped_incident = 1,
     ePipe_chunk_car = 5,
@@ -380,6 +392,7 @@ typedef enum {
     ePipe_chunk_special = 8,
     ePipe_chunk_shrapnel = 11,
     ePipe_chunk_non_car = 14,
+    ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_flap_bits = 23,
     ePipe_model_mash = 24,
@@ -4746,10 +4759,7 @@ typedef struct tFace_ref {
 } tFace_ref;
 
 typedef struct {
-    undefined field_0x0[4];
-    tCar_spec* car;
-    tCollision_info* collision_info;
-    br_actor* car_actor;
+    tSmoke_column_core core;
     int time;
     int lifetime;
     undefined field_0x18[4];

@@ -708,7 +708,7 @@ void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec) {
     int i;
 
     for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
-        if (C2V(gSmoke_column)[i].car == pCar_spec) {
+        if (C2V(gSmoke_column)[i].core.car == pCar_spec) {
             C2V(gSmoke_column)[i].lifetime = 0;
         }
     }
@@ -793,7 +793,7 @@ void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar) {
     int i;
 
     for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
-        if (C2V(gSmoke_column)[i].car == pCar && C2V(gSmoke_column)[i].lifetime > 2000) {
+        if (C2V(gSmoke_column)[i].core.car == pCar && C2V(gSmoke_column)[i].lifetime > 2000) {
             C2V(gSmoke_column)[i].lifetime = 2000;
         }
     }
@@ -805,7 +805,7 @@ void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tCollision_info* pObject) {
 
     for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
 
-        if (C2V(gSmoke_column)[i].collision_info == pObject) {
+        if (C2V(gSmoke_column)[i].core.collision_info == pObject) {
             C2V(gSmoke_column)[i].lifetime = 0;
         }
     }
