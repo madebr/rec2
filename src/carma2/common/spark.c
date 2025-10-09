@@ -695,3 +695,14 @@ void C2_HOOK_FASTCALL CreateSmokeColumn2(undefined4 pArg1, br_actor* pActor, tCa
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fb630, CreateSmokeColumn2, CreateSmokeColumn2_original)
+
+void (C2_HOOK_FASTCALL * MungeSmokeColumn_original)(tU32 pTime);
+void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeSmokeColumn_original(pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fba40, MungeSmokeColumn, MungeSmokeColumn_original)
