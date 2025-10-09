@@ -1019,3 +1019,9 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, br_vector3 *pPos) {
         && BrVector3Dot(&car_crush->field_0x548, pPos) - car_crush->field_0x554 < 0.f;
 }
 C2_HOOK_FUNCTION(0x0042df70, IsOnNonCarHalf)
+
+void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int fire_point) {
+
+    /* empty */
+}
+C2_HOOK_FUNCTION(0x004fc9c0, SmudgeCar)
