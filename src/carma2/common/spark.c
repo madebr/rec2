@@ -724,3 +724,22 @@ void C2_HOOK_FASTCALL CreateSplash(tCollision_info* pObject, tU32 pTime) {
         &pObject->bb1, &pObject->actor->t.t.mat, pTime);
 }
 C2_HOOK_FUNCTION(0x004fda40, CreateSplash)
+
+void C2_HOOK_FASTCALL GetVelocitiesFromMatrices(br_vector3* pVel, br_vector3* pRot, br_matrix34* pMat_now, br_matrix34* pMat_prev, tU32 pTime) {
+    br_quat quat_now;
+    br_quat quat_prev;
+    br_quat quat_speed;
+    br_scalar ts;
+
+    ts = (float)pTime / 1000.f;
+    BrVector3Sub(pVel, (br_vector3*)pMat_prev->m[3], (br_vector3*)pMat_now->m[3]);
+    BrVector3InvScale(pVel, pVel, ts);
+    BrMatrix34ToQuat(&quat_now, pMat_now);
+    BrMatrix34ToQuat(&quat_prev, pMat_now);
+    BrQuatInvert(&quat_now, &quat_now);
+    BrQuatMul(&quat_speed, &quat_now, &quat_prev);
+    pRot->v[0] = 2 * quat_speed.x / ts;
+    pRot->v[1] = 2 * quat_speed.y / ts;
+    pRot->v[2] = 2 * quat_speed.z / ts;
+}
+C2_HOOK_FUNCTION(0x004fda70, GetVelocitiesFromMatrices)

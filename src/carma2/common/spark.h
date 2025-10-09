@@ -98,4 +98,6 @@ void C2_HOOK_FASTCALL GeneralCreateSplash(tCollision_info* pObject, br_vector3* 
 
 void C2_HOOK_FASTCALL CreateSplash(tCollision_info* pObject, tU32 pTime);
 
+void C2_HOOK_FASTCALL GetVelocitiesFromMatrices(br_vector3* pVel, br_vector3* pRot, br_matrix34* pMat_now, br_matrix34* pMat_prev, tU32 pTime);
+
 #endif //REC2_SPARK_H
