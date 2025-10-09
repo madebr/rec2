@@ -135,6 +135,11 @@ void C2_HOOK_CDECL BrMatrix4Scale(br_matrix4* mat, br_scalar sx, br_scalar sy, b
 void C2_HOOK_CDECL BrMatrix4Mul(br_matrix4* A, br_matrix4* B, br_matrix4* C);
 void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, const br_matrix34* B, const br_matrix4* C);
 
+// BrQuaternion
+br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, const br_matrix34* mat);
+br_quat* C2_HOOK_CDECL BrQuatInvert(br_quat* q, const br_quat* qq);
+br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, const br_quat* l, const br_quat* r);
+
 // BrMem
 void C2_HOOK_CDECL BrMemFree(void* block);
 void* C2_HOOK_CDECL BrMemAllocate(br_size_t size, br_uint_8 type);
