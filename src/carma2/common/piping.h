@@ -126,4 +126,6 @@ void C2_HOOK_FASTCALL PipeSinglePedIncident(tPedestrian* pPed, br_actor* pActor)
 
 void C2_HOOK_FASTCALL AddBurningPedToSession(int pIndex, tPedestrian* pPed, br_vector3* pPositions);
 
+void C2_HOOK_FASTCALL PipeSinglePHILObject(tCollision_info* pObject);
+
 #endif //REC2_PIPING_H
