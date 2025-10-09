@@ -902,3 +902,12 @@ void C2_HOOK_FASTCALL AddBurningPedToSession(int pIndex, tPedestrian* pPed, br_v
         SIZE_OFFSET_PIPING(tPipe_burning_ped, positions), pPositions);
 }
 C2_HOOK_FUNCTION(0x004c7e70, AddBurningPedToSession)
+
+void C2_HOOK_FASTCALL PipeSinglePHILObject(tCollision_info* pObject) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_phil_object, matrix, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_phil_object, matrix, 0x30);
+
+    ARDoSingleVariedSession(ePipe_chunk_phil_object, (uintptr_t)pObject, 1,
+        SIZE_OFFSET_PIPING(tPipe_phil_object, matrix), &pObject->actor->t.t.mat);
+}
+C2_HOOK_FUNCTION(0x004c8cc0, PipeSinglePHILObject)

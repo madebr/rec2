@@ -383,6 +383,7 @@ typedef enum {
     ePipe_chunk_ped_physics = 43,
     ePipe_chunk_single_ped_pos = 46,
     ePipe_chunk_single_ped_model_change = 47,
+    ePipe_chunk_phil_object = 48,
     ePipe_single_groove_on_off = 51,
     ePipe_funk_enable = 54,
     ePipe_chunk_single_vanished_dismembered = 55,
