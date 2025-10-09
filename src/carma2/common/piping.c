@@ -100,6 +100,17 @@ void C2_HOOK_FASTCALL AREndPipingSession(void) {
     EndPipingSession2(1);
 }
 
+tPipe_chunk_data* (C2_HOOK_FASTCALL * FindNextChunk_original)(tPipe_chunk_type pType, uintptr_t pOwner);
+tPipe_chunk_data* C2_HOOK_FASTCALL FindNextChunk(tPipe_chunk_type pType, uintptr_t pOwner) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return FindNextChunk_original(pType, pOwner);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004030f0, FindNextChunk, FindNextChunk_original)
+
 tU32 (C2_HOOK_FASTCALL * LengthOfSession_original)(tPipe_chunk* pSession);
 tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession) {
 
