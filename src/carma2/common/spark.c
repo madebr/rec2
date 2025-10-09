@@ -1009,3 +1009,13 @@ void C2_HOOK_FASTCALL FlameAnimate(int c, br_vector3* pPos, tU32 pTime) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fbdd0, FlameAnimate, FlameAnimate_original)
+
+int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, br_vector3 *pPos) {
+    tCar_crush_spec* car_crush;
+
+    car_crush = pCar->car_crush_spec;
+    return car_crush != NULL
+        && car_crush->field_0x4b8 != 0
+        && BrVector3Dot(&car_crush->field_0x548, pPos) - car_crush->field_0x554 < 0.f;
+}
+C2_HOOK_FUNCTION(0x0042df70, IsOnNonCarHalf)
