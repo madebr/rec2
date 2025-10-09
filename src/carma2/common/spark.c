@@ -998,3 +998,14 @@ void C2_HOOK_FASTCALL DoSmokeColumn(int i, tU32 pTime, br_vector3* pRet_car_pos)
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fc0e0, DoSmokeColumn, DoSmokeColumn_original)
+
+void (C2_HOOK_FASTCALL * FlameAnimate_original)(int c, br_vector3* pPos, tU32 pTime);
+void C2_HOOK_FASTCALL FlameAnimate(int c, br_vector3* pPos, tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    FlameAnimate_Original(c, pPos, pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fbdd0, FlameAnimate, FlameAnimate_original)

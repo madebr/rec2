@@ -115,4 +115,6 @@ void C2_HOOK_FASTCALL DrMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3*
 
 void C2_HOOK_FASTCALL DoSmokeColumn(int i, tU32 pTime, br_vector3* pRet_car_pos);
 
+void C2_HOOK_FASTCALL FlameAnimate(int c, br_vector3* pPos, tU32 pTime);
+
 #endif //REC2_SPARK_H
