@@ -743,3 +743,35 @@ void C2_HOOK_FASTCALL GetVelocitiesFromMatrices(br_vector3* pVel, br_vector3* pR
     pRot->v[2] = 2 * quat_speed.z / ts;
 }
 C2_HOOK_FUNCTION(0x004fda70, GetVelocitiesFromMatrices)
+
+void C2_HOOK_FASTCALL DrMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3* a) {
+    br_scalar t;
+    br_scalar s;
+    br_scalar c;
+    br_scalar txy;
+    br_scalar txz;
+    br_scalar tyz;
+    br_scalar sx;
+    br_scalar sy;
+    br_scalar sz;
+
+    s = FastScalarSinAngle(r);
+    c = FastScalarCosAngle(r);
+    t = 1.0f - c;
+    txy = t * a->v[0] * a->v[1];
+    txz = t * a->v[0] * a->v[2];
+    tyz = t * a->v[1] * a->v[2];
+    sx = a->v[0] * s;
+    sy = a->v[1] * s;
+    sz = a->v[2] * s;
+    mat->m[0][0] = a->v[0] * a->v[0] * t + c;
+    mat->m[0][1] = sz + txy;
+    mat->m[0][2] = txz - sy;
+    mat->m[1][0] = txy - sz;
+    mat->m[1][1] = a->v[1] * a->v[1] * t + c;
+    mat->m[1][2] = sx + tyz;
+    mat->m[2][0] = sy + txz;
+    mat->m[2][1] = tyz - sx;
+    mat->m[2][2] = a->v[2] * a->v[2] * t + c;
+}
+C2_HOOK_FUNCTION(0x004f9e80, DrMatrix34Rotate)
