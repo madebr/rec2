@@ -32,6 +32,8 @@ void C2_HOOK_FASTCALL ARStartPipingSession(tPipe_chunk_type pType);
 
 void C2_HOOK_FASTCALL AREndPipingSession(void);
 
+tPipe_chunk_data* C2_HOOK_FASTCALL FindNextChunk(tPipe_chunk_type pType, uintptr_t pOwner);
+
 tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession);
 
 void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy);
