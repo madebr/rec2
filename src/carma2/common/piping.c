@@ -660,6 +660,16 @@ void C2_HOOK_FASTCALL PipeSinglePedMove(tPedestrian* pPed, tS16 pArg2, tS16 pOri
 }
 C2_HOOK_FUNCTION(0x004c8b30, PipeSinglePedMove)
 
+void C2_HOOK_FASTCALL PipeSinglePedPhysics(int pId, br_matrix34* pMat) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_physics_data, matrix, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_ped_physics_data, matrix, 0x30);
+
+    ARDoSingleVariedSession(ePipe_chunk_ped_physics, (uintptr_t)pId, 1,
+        SIZE_OFFSET_PIPING(tPipe_ped_physics_data, matrix),       pMat);
+}
+C2_HOOK_FUNCTION(0x004c8bd0, PipeSinglePedPhysics)
+
 void C2_HOOK_FASTCALL PipeSinglePedDir(int pId, const br_vector3* pDir) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_ped_dir_data, direction, 0x0);
