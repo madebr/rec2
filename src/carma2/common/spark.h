@@ -119,4 +119,6 @@ void C2_HOOK_FASTCALL FlameAnimate(int c, br_vector3* pPos, tU32 pTime);
 
 int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, br_vector3 *pPos);
 
+void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int fire_point);
+
 #endif //REC2_SPARK_H
