@@ -117,4 +117,6 @@ void C2_HOOK_FASTCALL DoSmokeColumn(int i, tU32 pTime, br_vector3* pRet_car_pos)
 
 void C2_HOOK_FASTCALL FlameAnimate(int c, br_vector3* pPos, tU32 pTime);
 
+int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, br_vector3 *pPos);
+
 #endif //REC2_SPARK_H

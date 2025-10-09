@@ -3744,7 +3744,9 @@ typedef struct tCar_crush_spec {
     undefined field_0x4c4[8];
     br_actor* actor; /* ->user is tCar_spec pointer */
     br_actor* model_actor;
-    undefined field_0x4d4[132];
+    undefined field_0x4d4[0x548 - 0x4d4];
+    br_vector3 field_0x548;
+    float field_0x554;
     br_vector3 driver_position;
     tCollision_shape_wireframe* field_0x564[4];
     tU32 field_0x574;
