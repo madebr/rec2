@@ -4776,6 +4776,19 @@ typedef struct {
 } tSplash;
 
 typedef struct {
+    union {
+        br_actor* actor;
+        tPedestrian* ped;
+        tCollision_info* phil_object;
+    } object;
+    undefined4 type;
+    float water_density;
+    br_vector3 normal;
+    float field_0x18;
+    br_bounds3 bb;
+} tReplay_splash;
+
+typedef struct {
     br_model* model;
     undefined field_0x4[12];
 } tFrontend_model;

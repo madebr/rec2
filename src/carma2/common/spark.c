@@ -4,7 +4,12 @@
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
+#include "opponent.h"
+#include "pedestrn.h"
+#include "physics.h"
 #include "piping.h"
+#include "replay.h"
+#include "trig.h"
 #include "utility.h"
 
 #include "rec2_macros.h"
@@ -30,6 +35,16 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSplash, gSplash, 32, 0x006a82b8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSpark_flags, 0x006aa57c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIt_shade_table, 0x006aa5ac);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDust_rotate, 0x006aa568);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tReplay_splash, gReplay_splashes, 10, 0x006aa388);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gReplay_splash_flags, 0x006aa574);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_AFE_color_cycle, 0x006b7884);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAFE_color_cycle, 0x006aa5b0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gShrapnel_flags, 0x006aa584);
+
+#define CHARS1_TO_INT(A)            ((A) - '0')
+#define CHARS2_TO_INT(A, B)         (10 * CHARS1_TO_INT(A) + CHARS1_TO_INT(B))
+#define CHARS3_TO_INT(A, B, C)      (10 * CHARS2_TO_INT(A, B) + CHARS1_TO_INT(C))
+#define CHARS4_TO_INT(A, B, C, D)   (10 * CHARS3_TO_INT(A, B, C) + CHARS1_TO_INT(D))
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
@@ -335,13 +350,210 @@ void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar) {
 }
 C2_HOOK_FUNCTION(0x004fe570, StopCarBeingIt)
 
+void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
+
+    if (C2V(gNum_splash_types) == 0) {
+        return;
+    }
+    if (C2V(gAction_replay_mode) && ARGetReplayRate() != 0.f) {
+        tVehicle_type type;
+        int i;
+
+        for (type = eVehicle_net_player; type <= eVehicle_rozzer; type++) {
+
+            for (i = 0; i < type == eVehicle_self ? 1 : GetCarCount(type); i++) {
+                tCar_spec* car;
+
+                if (type == eVehicle_self) {
+                    car = &C2V(gProgram_state).current_car;
+                } else {
+                    car = GetCarSpec(type, i);
+                }
+                if (car->collision_info->water_d != 10000.f && !(car != NULL && car->driver == eDriver_local_human)) {
+                    CreateSplash(car->collision_info, pTime);
+                }
+            }
+        }
+        if (C2V(gProgram_state).current_car.collision_info->water_d != 10000.f) {
+            CreateSplash(C2V(gProgram_state).current_car.collision_info, pTime);
+        }
+        for (i = 0; i < REC2_ASIZE(C2V(gReplay_splashes)); i++) {
+            tReplay_splash *replay_splash = &C2V(gReplay_splashes)[i];
+
+            if (C2V(gReplay_splash_flags) & (1 << i)) {
+                switch (replay_splash->type) {
+                case 1:
+                    {
+                        const char* ident = replay_splash->object.actor->identifier;
+                        tPipe_chunk_data *chunk_non_car = FindNextChunk(ePipe_chunk_non_car, CHARS4_TO_INT(ident[4], ident[5], ident[6], ident[7]));
+                        if (chunk_non_car != NULL) {
+                            br_vector3 vel;
+                            br_vector3 rot;
+
+                            GetVelocitiesFromMatrices(&vel, &rot, &replay_splash->object.actor->t.t.mat, &chunk_non_car->data.non_car.matrix, pTime);
+                            GeneralCreateSplash(NULL, &vel, &rot, &replay_splash->normal, replay_splash->water_density, &replay_splash->bb, &replay_splash->object.actor->t.t.mat, pTime);
+                        }
+                    }
+                    break;
+                case 2:
+                    {
+                        int id = (replay_splash->object.ped - C2V(gPedestrian_array)) | (replay_splash->object.ped->field_0x06 << 16);
+                        br_actor* actor = GetCharacterActorPtr(replay_splash->object.ped->character);
+                        tPipe_chunk_data *chunk_ped_physics = FindNextChunk(ePipe_chunk_ped_physics, id);
+                        if (chunk_ped_physics != NULL) {
+                            br_vector3 vel;
+                            br_vector3 rot;
+
+                            GetVelocitiesFromMatrices(&vel, &rot, &actor->t.t.mat, &chunk_ped_physics->data.ped_physics.matrix, pTime);
+                            GeneralCreateSplash(NULL, &vel, &rot, &replay_splash->normal, replay_splash->water_density, &replay_splash->bb, &replay_splash->object.actor->t.t.mat, pTime);
+                        }
+                    }
+                    break;
+                case 255:
+                    {
+                        tPipe_chunk_data *chunk_ped_phil_object = FindNextChunk(ePipe_chunk_phil_object, (uintptr_t)replay_splash->object.phil_object);
+                        if (chunk_ped_phil_object != NULL) {
+                            br_vector3 vel;
+                            br_vector3 rot;
+
+                            GetVelocitiesFromMatrices(&vel, &rot, &replay_splash->object.actor->t.t.mat, &chunk_ped_phil_object->data.phil_object.matrix, pTime);
+                            GeneralCreateSplash(NULL, &vel, &rot, &replay_splash->normal, replay_splash->water_density, &replay_splash->bb, &replay_splash->object.actor->t.t.mat, pTime);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    } else if (!C2V(gAction_replay_mode)) {
+        tCollision_info* object;
+
+        for (object = PHILGetFirstObject(); object != NULL; object = PHILGetNextObject(object)) {
+
+            if (object->water_d != 10000.f && object->last_special_volume != NULL && object->last_special_volume->gravity_multiplier < 1.f) {
+                if (object != NULL && object->owner != NULL && object->flags_0x238 == 1 && object->owner != NULL && ((tCar_spec*)object->owner)->driver == eDriver_local_human) {
+                    CreateSplash(object, 100);
+                } else {
+                    CreateSplash(object, pTime);
+                }
+            }
+        }
+    }
+    if (C2V(gSplash_flags)) {
+        int i;
+
+        for (i = 0; i < REC2_ASIZE(C2V(gSplash)); i++) {
+            tSplash *splash = &C2V(gSplash)[i];
+
+            if (!(C2V(gSplash_flags) & (1 << i))) {
+                continue;
+            }
+            if (splash->just_done || (C2V(gAction_replay_mode) && ARGetReplayRate() == 0.f)) {
+                br_scalar dt;
+
+                dt = splash->size * splash->scale_x;
+                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[0], (br_vector3*)C2V(gCamera_to_world).m[0], dt);
+                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[1], (br_vector3*)C2V(gCamera_to_world).m[1], splash->size);
+                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[2], (br_vector3*)C2V(gCamera_to_world).m[2], splash->size);
+                if (C2V(gProgram_state).cockpit_on) {
+                    br_scalar ts;
+
+                    ts = sqrtf(REC2_SQR(C2V(gCamera_to_world).m[0][2]) + REC2_SQR(C2V(gCamera_to_world.m[0][0])));
+                    DRMatrix34PreRotateZ(&splash->actor->t.t.mat, -FastScalarArcTan2Angle(C2V(gCamera_to_world).m[0][1], ts));
+                }
+                splash->just_done = 0;
+            } else {
+                C2V(gSplash_flags) &= ~(1 << i);
+                if (splash->actor->parent != NULL) {
+                    BrActorRemove(splash->actor);
+                }
+            }
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL ReplayShrapnel(tU32 pTime) {
+    int i;
+    br_matrix34* mat;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gShrapnel)); i++) {
+        mat = &C2V(gShrapnel)[i].actor->t.t.mat;
+        if (C2V(gShrapnel_flags) & (1 << i)) {
+            C2V(gShrapnel)[i].age += (tU32)(ARGetReplayRate() * (float)pTime);
+            DrMatrix34Rotate(mat, C2V(gShrapnel)[i].age * BR_ANGLE_DEG(1), &C2V(gShrapnel)[i].axis);
+            BrMatrix34PreShearX(mat, C2V(gShrapnel)[i].shear1, C2V(gShrapnel)[i].shear2);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL KillShrapnel(int i) {
+
+    if (C2V(gShrapnel)[i].actor->parent != NULL) {
+        BrActorRemove(gShrapnel[i].actor);
+    }
+    C2V(gShrapnel_flags) &= ~(1 << i);
+}
+
 void (C2_HOOK_FASTCALL * MungeShrapnel_original)(tU32 pTime);
 void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeShrapnel_original(pTime);
 #else
-    NOT_IMPLEMENTED();
+    MungeSmokeColumn(pTime);
+    MungeSplash(pTime);
+
+    if (C2V(gAFE)) {
+        tU32 now = GetTotalTime();
+        if (now - C2V(gNext_AFE_color_cycle) > 100) {
+            C2V(gAFE_color_cycle) = 1;
+            C2V(gNext_AFE_color_cycle) = now;
+        } else {
+            C2V(gAFE_color_cycle) = 0;
+        }
+    }
+    if (C2V(gAction_replay_mode)) {
+        ReplayShrapnel(pTime);
+    } else {
+        int i;
+
+        ARStartPipingSession(ePipe_chunk_shrapnel);
+        for (i = 0; i < REC2_ASIZE(C2V(gShrapnel)); i++) {
+            br_matrix34* mat;
+            br_scalar ts;
+
+            mat = &C2V(gShrapnel)[i].actor->t.t.mat;
+            if (!(C2V(gShrapnel_flags) & (1 << i))) {
+                continue;
+            }
+            if (C2V(gShrapnel)[i].age == -1) {
+                KillShrapnel(i);
+            } else {
+                br_vector3 disp;
+
+                if (C2V(gShrapnel)[i].time_sync != 0) {
+                    BrVector3Scale(&disp, &C2V(gShrapnel)[i].v, (float)C2V(gShrapnel)[i].time_sync / 1000.f);
+                    C2V(gShrapnel)[i].time_sync = 0;
+                } else {
+                    BrVector3Scale(&disp, &C2V(gShrapnel)[i].v, pTime / 1000.0f);
+                    C2V(gShrapnel)[i].age += pTime;
+                }
+                BrVector3Accumulate((br_vector3*)mat->m[3], &disp);
+                C2V(gShrapnel)[i].v.v[1] -= (float)(10 * pTime) / 1000.f / WORLD_SCALE; /* Fall acceleration */
+                DrMatrix34Rotate(mat, BR_ANGLE_DEG(C2V(gShrapnel)[i].age), &C2V(gShrapnel)[i].axis);
+                BrMatrix34PreShearX(mat, C2V(gShrapnel)[i].shear1, C2V(gShrapnel)[i].shear2);
+                ts = 1.f - BrVector3Length(&C2V(gShrapnel)[i].v) / 1.4f * (float)pTime / 1000.f;
+                if (ts < .1f) {
+                    ts = .1f;
+                }
+                BrVector3Scale(&C2V(gShrapnel)[i].v, &C2V(gShrapnel)[i].v, ts);
+                AddShrapnelToPipingSession(i + ((gShrapnel[i].age > 1000 || pTime > C2V(gShrapnel)[i].age) << 15), (br_vector3*)mat->m[3], C2V(gShrapnel)[i].age - pTime, C2V(gShrapnel)[i].actor->material);
+                if (C2V(gShrapnel)[i].age > 1000) {
+                    C2V(gShrapnel)[i].age = -1;
+                }
+            }
+        }
+        AREndPipingSession();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f9790, MungeShrapnel, MungeShrapnel_original)
