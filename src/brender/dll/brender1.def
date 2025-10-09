@@ -67,6 +67,9 @@ EXPORTS
     BrMatrix34PreRotateY
     BrMatrix34PreRotateZ
     BrMatrix34PreScale
+    BrMatrix34PreShearX
+    BrMatrix34PreShearY
+    BrMatrix34PreShearZ
     BrMatrix34PreTransform
     BrMatrix34PreTranslate
     BrMatrix34RollingBall
@@ -75,6 +78,7 @@ EXPORTS
     BrMatrix34Scale
     BrMatrix34TApplyP
     BrMatrix34TApplyV
+    BrMatrix34ToQuat
     BrMatrix34Translate
     BrModelAdd
     BrModelAddMany
@@ -106,6 +110,8 @@ EXPORTS
     BrPixelmapRectangleFill
     BrPixelmapSave
     BrPixelmapTextWidth
+    BrQuatInvert
+    BrQuatMul
     BrResClassAdd
     BrSetScreenZOffset
     BrTableAdd
