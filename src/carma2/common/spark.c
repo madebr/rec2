@@ -717,3 +717,10 @@ void C2_HOOK_FASTCALL GeneralCreateSplash(tCollision_info* pObject, br_vector3* 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fcbb0, GeneralCreateSplash, GeneralCreateSplash_original)
+
+void C2_HOOK_FASTCALL CreateSplash(tCollision_info* pObject, tU32 pTime) {
+
+    GeneralCreateSplash(pObject, &pObject->v, &pObject->omega, &pObject->water_normal, pObject->water_d,
+        &pObject->bb1, &pObject->actor->t.t.mat, pTime);
+}
+C2_HOOK_FUNCTION(0x004fda40, CreateSplash)
