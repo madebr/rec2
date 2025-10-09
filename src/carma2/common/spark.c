@@ -987,3 +987,14 @@ void C2_HOOK_FASTCALL DrMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3*
     mat->m[2][2] = a->v[2] * a->v[2] * t + c;
 }
 C2_HOOK_FUNCTION(0x004f9e80, DrMatrix34Rotate)
+
+void (C2_HOOK_FASTCALL * DoSmokeColumn_original)(int i, tU32 pTime, br_vector3* pRet_car_pos);
+void C2_HOOK_FASTCALL DoSmokeColumn(int i, tU32 pTime, br_vector3* pRet_car_pos) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoSmokeColumn_original(i, pTime, pRet_car_pos);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004fc0e0, DoSmokeColumn, DoSmokeColumn_original)
