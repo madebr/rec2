@@ -18,6 +18,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gFace_num__car);
 C2_HOOK_VARIABLE_DECLARE(tWorld_callback_active_passive_cbfn*, gPHIL_original_activate_passive);
 C2_HOOK_VARIABLE_DECLARE(tPhysics_callbacks*, gPHIL_callbacks);
 C2_HOOK_VARIABLE_DECLARE(tU32, gPHIL_last_physics_tick);
+C2_HOOK_VARIABLE_DECLARE(int, gPHIL_mechanics_time_sync);
 
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError);
 
