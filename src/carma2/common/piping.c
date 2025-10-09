@@ -931,3 +931,15 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, br_vector3
     }
 }
 C2_HOOK_FUNCTION(0x004c6f40, AddShrapnelToPipingSession)
+
+void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, tSmoke_column* pSmoke_column, int pVertex, int pColour) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke_column, core, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke_column, core, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_smoke_column, vertex, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_smoke_column, vertex, 0x2);
+
+    ARAddVariedDataToSession(ePipe_chunk_smoke_column, pColour << 14 | pIndex, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke_column, core), &pSmoke_column->core,
+        SIZE_OFFSET_PIPING(tPipe_chunk_smoke_column, vertex), pVertex);
+}
+C2_HOOK_FUNCTION(0x004c70c0, AddSmokeColumnToPipingSession)
