@@ -94,4 +94,6 @@ void C2_HOOK_FASTCALL CreateSmokeColumn2(undefined4 pArg1, br_actor* pActor, tCa
 
 void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime);
 
+void C2_HOOK_FASTCALL GeneralCreateSplash(tCollision_info* pObject, br_vector3* pVel,br_vector3* pOmega, br_vector3* pNormal, float pWater_density, br_bounds3* pBounds, br_matrix34* pMat, tU32 pTime);
+
 #endif //REC2_SPARK_H
