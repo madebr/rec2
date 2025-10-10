@@ -253,6 +253,8 @@ void C2_HOOK_FASTCALL LoseDosh(void);
 
 void C2_HOOK_FASTCALL ViewOpponent(void);
 
+void C2_HOOK_FASTCALL MungeRepulseRays(tU32 pTime);
+
 void C2_HOOK_FASTCALL GotPowerupN(int pN);
 
 void C2_HOOK_FASTCALL GotPowerup0(void);

@@ -3054,6 +3054,17 @@ void C2_HOOK_FASTCALL ViewOpponent(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0040e590, ViewOpponent, ViewOpponent_original)
 
+void (C2_HOOK_FASTCALL * MungeRepulseRays_original)(tU32 pTime);
+void C2_HOOK_FASTCALL MungeRepulseRays(tU32 pTime) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MungeRepulseRays_original(pTime);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004db8e0, MungeRepulseRays, MungeRepulseRays_original)
+
 void C2_HOOK_FASTCALL GotPowerupN(int pN) {
     int modifiers;
 
