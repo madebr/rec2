@@ -352,6 +352,17 @@ void C2_HOOK_FASTCALL MungeDelayedSideEffects(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ecc80, MungeDelayedSideEffects, MungeDelayedSideEffects_original)
 
+void (C2_HOOK_FASTCALL * DoPowerupRespawnSmash_original)(br_actor *pActor);
+void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor *pActor) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoPowerupRespawnSmash_original(pActor);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004ecea0, DoPowerupRespawnSmash, DoPowerupRespawnSmash_original)
+
 void (C2_HOOK_FASTCALL * MungeSmashEdgeTriggers_original)(tU32 pTime);
 void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime) {
 
