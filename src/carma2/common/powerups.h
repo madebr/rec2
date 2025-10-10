@@ -63,6 +63,8 @@ void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 void C2_HOOK_FASTCALL MaxOutAPO(void);
 
+void C2_HOOK_FASTCALL CheckRespawnQueue(tU32 pTime);
+
 void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1);
 
 tU32 C2_HOOK_FASTCALL GetNextGoodyTime(tU32 pTime);

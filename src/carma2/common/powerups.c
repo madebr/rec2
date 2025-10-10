@@ -14,9 +14,11 @@
 #include "loading.h"
 #include "network.h"
 #include "physics.h"
+#include "piping.h"
 #include "platform.h"
 #include "shrapnel.h"
 #include "skidmark.h"
+#include "smashing.h"
 #include "spark.h"
 #include "utility.h"
 #include "world.h"
@@ -897,13 +899,34 @@ void C2_HOOK_FASTCALL MaxOutAPO(void) {
 }
 C2_HOOK_FUNCTION(0x00502e00, MaxOutAPO)
 
+void C2_HOOK_FASTCALL CheckRespawnQueue(tU32 pTime) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gRespawn_powerups)); i++) {
+        tRespawn_powerup *respawn_powerup = &C2V(gRespawn_powerups)[i];
+        if (respawn_powerup->actor == NULL || pTime < respawn_powerup->respawn_time) {
+            continue;
+        }
+        if (respawn_powerup->actor->render_style != BR_RSTYLE_FACES) {
+            respawn_powerup->actor->render_style = BR_RSTYLE_FACES;
+        }
+        PipeSinglePowerupRespawn(respawn_powerup->actor, respawn_powerup->index);
+        DoPowerupRespawnSmash(respawn_powerup->actor);
+        respawn_powerup->actor = NULL;
+    }
+}
+
 void (C2_HOOK_FASTCALL * MungePowerupStuff_original)(undefined4 pArg1);
 void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungePowerupStuff_original(pArg1);
 #else
-    NOT_IMPLEMENTED();
+    tU32 time;
+
+    time = GetTotalTime();
+    MungeRepulseRays();
+    CheckRespawnQueue(time);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db880, MungePowerupStuff, MungePowerupStuff_original)
