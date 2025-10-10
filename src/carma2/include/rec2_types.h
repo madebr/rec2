@@ -4784,18 +4784,18 @@ typedef struct tFace_ref {
 typedef struct {
     tSmoke_column_core core;
     int time;
-    int lifetime;
-    undefined field_0x18[4];
+    tU32 lifetime;
+    int count;
     int colour;
-    undefined field_0x20[4];
-    struct br_actor * flame_actor;
+    int whiter;
+    br_actor * flame_actor;
     int frame_count[3];
-    undefined field_0x34[12];
+    br_vector3 pos;
     float scale_x[3];
     float scale_y[3];
     float offset_x[3];
     float offset_z[3];
-    int smudge_timer;
+    tU32 smudge_timer;
     int vertex_index;
     int upright;
 } tSmoke_column;
