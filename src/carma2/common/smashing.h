@@ -42,6 +42,8 @@ void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups);
 
 void C2_HOOK_FASTCALL MungeDelayedSideEffects(void);
 
+void C2_HOOK_FASTCALL DoPowerupRespawnSmash(br_actor *pActor);
+
 void C2_HOOK_FASTCALL MungeSmashEdgeTriggers(tU32 pTime);
 
 void C2_HOOK_FASTCALL InitSmashQueue(void);
