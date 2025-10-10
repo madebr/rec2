@@ -384,6 +384,10 @@ typedef struct {
     tU16 vertex;
 } tPipe_chunk_smoke_column;
 
+typedef struct {
+    int index;
+} tPipe_chunk_powerup_respawn;
+
 typedef enum {
     ePipe_chunk_ped_incident = 1,
     ePipe_chunk_car = 5,
@@ -413,6 +417,7 @@ typedef enum {
     ePipe_chunk_drone_corner_pos = 61,
     ePipe_chunk_single_drone_straight_pos = 62,
     ePipe_chunk_burning_ped = 64,
+    ePipe_chunk_powerup_respawn = 65,
     ePipe_single_transform_type = 68,
     ePipe_chunk_single_oppo_renderage = 69,
 } tPipe_chunk_type;
