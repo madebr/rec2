@@ -908,13 +908,120 @@ void C2_HOOK_FASTCALL CreateSmokeColumn2(undefined4 pArg1, br_actor* pActor, tCa
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fb630, CreateSmokeColumn2, CreateSmokeColumn2_original)
 
+void C2_HOOK_FASTCALL ReplaySmokeColumn(tU32 pTime) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+        if (C2V(gColumn_flags) & (1 << i)) {
+            br_vector3 dummy;
+
+            DoSmokeColumn(i, pTime, &dummy);
+            if (C2V(gSmoke_column)[i].colour == 0) {
+                FlameAnimate(i, &C2V(gSmoke_column)[i].pos, pTime);
+            }
+        }
+    }
+}
+
 void (C2_HOOK_FASTCALL * MungeSmokeColumn_original)(tU32 pTime);
 void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeSmokeColumn_original(pTime);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    if (C2V(gColumn_flags) == 0) {
+        return;
+    }
+    if (C2V(gAction_replay_mode)) {
+        ReplaySmokeColumn(pTime);
+        return;
+    }
+
+    C2V(gPHIL_mechanics_time_sync) = 1;
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+        if (!(C2V(gColumn_flags) & (1 << i))) {
+            continue;
+        }
+        if (C2V(gSmoke_column)[i].lifetime >= pTime) {
+            tCollision_info* object;
+            tCar_spec* c;
+            br_vector3 car_pos;
+
+            C2V(gSmoke_column)[i].lifetime -= pTime;
+            object = C2V(gSmoke_column)[i].core.collision_info;
+            c = C2V(gSmoke_column)[i].core.car;
+            DoSmokeColumn(i, pTime, &car_pos);
+            if (C2V(gSmoke_column)[i].core.field_0x0 == 1 && c->car_crush_spec->field_0x4b8 != 0) {
+                if (IsOnNonCarHalf(c, &car_pos)) {
+                    C2V(gSmoke_column)[i].lifetime = 0;
+                }
+            }
+            if (C2V(gSmoke_column)[i].colour == 0) {
+                FlameAnimate(i, &C2V(gSmoke_column)[i].pos, pTime);
+                if (C2V(gSmoke_column)[i].core.field_0x0 == 1) {
+                    if (C2V(gSmoke_column)[i].smudge_timer >= pTime) {
+                        C2V(gSmoke_column)[i].smudge_timer -= pTime;
+                    } else {
+                        C2V(gSmoke_column)[i].smudge_timer += 2000;
+                        SmudgeCar(c, C2V(gSmoke_column)[i].vertex_index);
+                        if (c->knackered) {
+                            int plane;
+
+                            plane = IRandomBetween(0, REC2_ASIZE(C2V(gSmoke_column)[i].core.car->fire_vertex) - 1);
+                            SmudgeCar(c, C2V(gSmoke_column)[i].core.car->fire_vertex[plane]);
+                        }
+                    }
+                }
+            }
+            C2V(gSmoke_column)[i].time += pTime;
+            if (C2V(gSmoke_column)[i].time > 200) {
+                br_vector3 pos;
+                br_vector3 v;
+                br_scalar decay_factor;
+
+                C2V(gSmoke_column)[i].time -= pTime;
+                C2V(gSmoke_column)[i].count += 1;
+                pos.v[0] = C2V(gSmoke_column)[i].pos.v[0] + SRandomBetween(-.03f, .03f);
+                pos.v[1] = C2V(gSmoke_column)[i].pos.v[1] + (C2V(gSmoke_column)[i].colour == 0) * .05f;
+                pos.v[2] = C2V(gSmoke_column)[i].pos.v[2] + SRandomBetween(-.03f, .03f);
+                if (!(C2V(gSmoke_column)[i].whiter & 0x2) || IRandomBetween(0, 3)) {
+                    if (gSmoke_column[i].whiter > 0) {
+                        gSmoke_column[i].whiter = 2;
+                    } else {
+                        gSmoke_column[i].whiter = -2;
+                    }
+                } else {
+                    C2V(gSmoke_column[i].whiter) &= 0x1;
+                }
+                decay_factor = ((float)(C2V(gSmoke_column)[i].whiter > 0) + 1.f) / 2.f;
+                if (C2V(gSmoke_column)[i].lifetime < 4000) {
+                    decay_factor = C2V(gSmoke_column)[i].lifetime * decay_factor / 4000.0f;
+                }
+                if (C2V(gSmoke_column)[i].core.collision_info == NULL) {
+                    BrVector3SetFloat(&v, 0.f, 2.8985507f, 0.f);
+                } else {
+                    BrVector3Cross(&v, &object->omega, &car_pos);
+                    BrMatrix34ApplyV(&car_pos, &v, &object->actor->t.t.mat);
+                    v.v[0] = car_pos.v[0] + WORLD_SCALE * object->v.v[0];
+                    v.v[1] = car_pos.v[1] + WORLD_SCALE * object->v.v[1];
+                    v.v[2] = car_pos.v[2] + WORLD_SCALE * object->v.v[2];
+                }
+                CreatePuffOfSmoke(&pos, &v, decay_factor, decay_factor, C2V(gSmoke_column)[i].colour + 16);
+            }
+        } else {
+            if (C2V(gSmoke_column)[i].core.field_0x0 != 0) {
+                ARStartPipingSession(ePipe_chunk_smoke_column);
+                AddSmokeColumnToPipingSession(i, &C2V(gSmoke_column)[i], C2V(gSmoke_column)[i].vertex_index, C2V(gSmoke_column)[i].colour);
+                AREndPipingSession();
+            }
+            C2V(gColumn_flags) &= ~(1 << i);
+            if (C2V(gSmoke_column)[i].colour == 0) {
+                BrActorRemove(C2V(gSmoke_column)[i].flame_actor);
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004fba40, MungeSmokeColumn, MungeSmokeColumn_original)
