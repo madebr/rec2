@@ -132,4 +132,6 @@ void C2_HOOK_FASTCALL AddShrapnelToPipingSession(int pShrapnel_index, br_vector3
 
 void C2_HOOK_FASTCALL AddSmokeColumnToPipingSession(int pIndex, tSmoke_column* pSmoke_column, int pVertex, int pColour);
 
+void C2_HOOK_FASTCALL PipeSinglePowerupRespawn(br_actor* pActor, int pPowerup_id);
+
 #endif //REC2_PIPING_H
