@@ -341,10 +341,18 @@ C2_HOOK_FUNCTION(0x004ea700, InitCarSkidStuff)
 void (C2_HOOK_FASTCALL * SkidsPerFrame_original)(void);
 void C2_HOOK_FASTCALL SkidsPerFrame(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     SkidsPerFrame_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSkids)); i++) {
+        tSkid *skid = &C2V(gSkids)[i];
+
+        if (skid->actor->render_style != BR_RSTYLE_NONE) {
+            BrVector3Copy(&skid->actor->t.t.translate.t, &skid->pos);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ea720, SkidsPerFrame, SkidsPerFrame_original)
