@@ -1784,3 +1784,14 @@ void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_sp
     }
 }
 C2_HOOK_FUNCTION(0x004e7650, ProcessShadow)
+
+void (C2_HOOK_FASTCALL * MapStuffBeforeRender_original)(void);
+void C2_HOOK_FASTCALL MapStuffBeforeRender(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    MapStuffBeforeRender_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00496be0, MapStuffBeforeRender, MapStuffBeforeRender_original)
