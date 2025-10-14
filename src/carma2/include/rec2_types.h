@@ -388,6 +388,12 @@ typedef struct {
     int index;
 } tPipe_chunk_powerup_respawn;
 
+typedef struct {
+    br_vector3 *origin;
+    br_vector3 *victim;
+    tU32 time;
+} tPipe_chunk_repulse_ray;
+
 typedef enum {
     ePipe_chunk_ped_incident = 1,
     ePipe_chunk_car = 5,
@@ -401,6 +407,7 @@ typedef enum {
     ePipe_chunk_flap_bits = 23,
     ePipe_model_mash = 24,
     ePipe_smash_texture_change = 36,
+    ePipe_chunk_repulse_ray = 37,
     ePipe_chunk_single_ped_status = 40,
     ePipe_chunk_ped_dir = 41,
     ePipe_chunk_ped_move = 42,
