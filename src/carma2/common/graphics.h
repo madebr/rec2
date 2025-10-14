@@ -264,4 +264,6 @@ void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_sp
 
 void C2_HOOK_FASTCALL MapStuffBeforeRender(void);
 
+void C2_HOOK_FASTCALL DoACompleteRenderPass(int pMirror, br_matrix34* pCamera_to_world, br_actor* pCamera, br_pixelmap* pScreen, br_pixelmap* pDepth);
+
 #endif //REC2_GRAPHICS_H

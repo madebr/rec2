@@ -1795,3 +1795,14 @@ void C2_HOOK_FASTCALL MapStuffBeforeRender(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00496be0, MapStuffBeforeRender, MapStuffBeforeRender_original)
+
+void (C2_HOOK_FASTCALL * DoACompleteRenderPass_original)(int pMirror, br_matrix34* pCamera_to_world, br_actor* pCamera, br_pixelmap* pScreen, br_pixelmap* pDepth);
+void C2_HOOK_FASTCALL DoACompleteRenderPass(int pMirror, br_matrix34* pCamera_to_world, br_actor* pCamera, br_pixelmap* pScreen, br_pixelmap* pDepth) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoACompleteRenderPass_original(pMirror, pCamera_to_world, pCamera, pScreen, pDepth);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e54f0, DoACompleteRenderPass, DoACompleteRenderPass_original)
