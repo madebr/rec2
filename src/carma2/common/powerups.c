@@ -925,7 +925,7 @@ void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1) {
     tU32 time;
 
     time = GetTotalTime();
-    MungeRepulseRays(pTime);
+    MungeRepulseRays(time);
     CheckRespawnQueue(time);
 #endif
 }
