@@ -901,7 +901,7 @@ void (C2_HOOK_FASTCALL * MungePowerupStuff_original)(undefined4 pArg1);
 void C2_HOOK_FASTCALL MungePowerupStuff(undefined4 pArg1) {
 
 #if defined(C2_HOOKS_ENABLED)
-    return;MungePowerupStuff_original(pArg1);
+    MungePowerupStuff_original(pArg1);
 #else
     NOT_IMPLEMENTED();
 #endif
