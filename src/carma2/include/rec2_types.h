@@ -394,6 +394,11 @@ typedef struct {
     tU32 time;
 } tPipe_chunk_repulse_ray;
 
+typedef struct {
+    tS8 wobble_x;
+    tS8 wobble_y;
+} tPipe_chunk_screen_wobble;
+
 typedef enum {
     ePipe_chunk_ped_incident = 1,
     ePipe_chunk_car = 5,
@@ -401,6 +406,7 @@ typedef enum {
     ePipe_chunk_damage = 7,
     ePipe_chunk_special = 8,
     ePipe_chunk_shrapnel = 11,
+    ePipe_chunk_screen_wobble = 12,
     ePipe_chunk_non_car = 14,
     ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
