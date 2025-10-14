@@ -3058,10 +3058,88 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0040e590, ViewOpponent, ViewOpponent_original)
 void (C2_HOOK_FASTCALL * MungeRepulseRays_original)(tU32 pTime);
 void C2_HOOK_FASTCALL MungeRepulseRays(tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeRepulseRays_original(pTime);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    ARStartPipingSession(ePipe_chunk_repulse_ray);
+    for (i = 0; i < REC2_ASIZE(C2V(gRepulse_links)); i++) {
+        tRepulse_link* link = &C2V(gRepulse_links)[i];
+        tU32 delta_time;
+        br_model *model;
+        br_vector3 delta;
+        br_vector3 dir;
+        br_vector3 delta_orth;
+        br_vector3 delta_unit;
+        br_vector3 y_unit;
+        br_vector3 orth_dirs[5];
+        br_vector3 orth_pieces1[5];
+        br_vector3 orth_pieces2[5];
+        br_vector3 p;
+        int blend;
+        int j;
+        float percentage;
+
+        if (link->time == 0) {
+            continue;
+        }
+        delta_time = pTime - link->time;
+        if (delta_time >= 700) {
+            link->time = 0;
+            if (link->actor->parent == C2V(gNon_track_actor)) {
+                BrActorRemove(link->actor);
+            }
+            continue;
+        }
+        BrVector3Sub(&delta, link->pos_victim, link->pos_origin);
+        model = link->actor->model;
+        if (delta.v[0] == 0.f && delta.v[2] == 0.f) {
+            continue;
+        }
+        BrVector3Scale(&delta_unit, &delta, 1.f / (float)(model->nvertices / 2 - 1));
+        BrVector3Normalise(&dir, &delta);
+        BrVector3Set(&y_unit, 0.f, 1.f, 0.f);
+        BrVector3Cross(&delta_orth, &delta, &y_unit);
+        BrVector3Copy(&p, link->pos_origin);
+        BrVector3Normalise(&orth_dirs[0], &delta_orth);
+        for (j = 1; j < 5; j++) {
+            br_matrix34 mat;
+
+            BrMatrix34Rotate(&mat, (i * (br_angle)0x10000) / 5, &dir);
+            BrMatrix34ApplyV(&orth_dirs[i], &orth_dirs[0], &mat);
+        }
+        for (j = 0; j < 5; j++) {
+            BrVector3Scale(&orth_pieces1[i], &orth_dirs[i], link->field_0x18);
+            BrVector3Scale(&orth_pieces2[i], &orth_dirs[i], link->field_0x1c);
+        }
+        for (j = 0; j < model->nvertices / 2; j++) {
+            BrVector3Accumulate(&p, &delta_unit);
+            BrVector3Add(&model->vertices[j].p, &p, &orth_pieces1[j % 5]);
+            BrVector3Add(&model->vertices[j + model->nvertices / 2].p, &p, &orth_pieces2[j % 5]);
+        }
+        percentage = (float)delta_time / 700.f;
+        if (percentage > .9f) {
+            blend = 25;
+        } else if (percentage > .8f) {
+            blend = 50;
+        } else if (percentage > .7f) {
+            blend = 75;
+        } else {
+            blend = 100;
+        }
+        if (blend != link->field_0x10) {
+            BlendifyMaterial(link->material, blend);
+            BrMaterialUpdate(link->material, BR_MATU_ALL);
+            link->field_0x10 = blend;
+        }
+        BrModelUpdate(model, BR_MODU_ALL);
+        if (link->actor->parent != C2V(gNon_track_actor)) {
+            BrActorAdd(C2V(gNon_track_actor), link->actor);
+        }
+        AddRepulseRayToPipingSession(i, link->pos_origin, link->pos_victim, link->time);
+    }
+    AREndPipingSession();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004db8e0, MungeRepulseRays, MungeRepulseRays_original)
