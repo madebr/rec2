@@ -122,6 +122,7 @@ C2_HOOK_VARIABLE_DECLARE(float, gMini_map_arrow_z);
 C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_lollipops);
 C2_HOOK_VARIABLE_DECLARE(int, gScreen_wobble_x);
 C2_HOOK_VARIABLE_DECLARE(int, gScreen_wobble_y);
+C2_HOOK_VARIABLE_DECLARE(int, gHud_actor_storage_size);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
@@ -242,6 +243,10 @@ void C2_HOOK_FASTCALL VerifyPaletteBlackness(br_pixelmap* pPalette);
 void C2_HOOK_FASTCALL ResetPalette(void);
 
 void C2_HOOK_FASTCALL EnsureRenderPalette(void);
+
+void C2_HOOK_FASTCALL CleanPolyFontDanglers(void);
+
+void C2_HOOK_FASTCALL StartRenderingHeadups(void);
 
 void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on);
 

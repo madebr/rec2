@@ -12,6 +12,7 @@
 #include "loading.h"
 #include "oil.h"
 #include "physics.h"
+#include "polyfont.h"
 #include "tinted.h"
 #include "utility.h"
 #include "world.h"
@@ -196,6 +197,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gMini_map_arrow_z, 0x0068d8a8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_lollipops, 0x006a22c4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gScreen_wobble_x, 0x00705188);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gScreen_wobble_y, 0x00705184);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gHud_actor_storage_size, 0x00703e28);
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
 
@@ -1433,6 +1435,26 @@ void C2_HOOK_FASTCALL EnsureRenderPalette(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004b5770, EnsureRenderPalette)
+
+void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {
+    int i;
+
+    for (i = 0; i < C2V(gCount_polyfont_glyph_actors); i++) {
+        br_actor* a = C2V(gPolyfont_glyph_actors)[i];
+        if (a->parent != NULL) {
+            BrActorRemove(a);
+        }
+    }
+    C2V(gCount_polyfont_glyph_actors) = 0;
+}
+
+void C2_HOOK_FASTCALL StartRenderingHeadups(void) {
+
+    CleanPolyFontDanglers();
+    C2V(gHud_actor_storage_size) = 0;
+    C2V(gRender_poly_text) = 0;
+}
+C2_HOOK_FUNCTION(0x004e5a70, StartRenderingHeadups)
 
 void (C2_HOOK_FASTCALL * RenderAFrame_original)(int pDepth_mask_on);
 void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
