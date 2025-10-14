@@ -967,3 +967,15 @@ void C2_HOOK_FASTCALL AddRepulseRayToPipingSession(int pIndex, br_vector3* pOrig
         SIZE_OFFSET_PIPING(tPipe_chunk_repulse_ray, time), pTime);
 }
 C2_HOOK_FUNCTION(0x004c7940, AddRepulseRayToPipingSession)
+
+void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_screen_wobble, wobble_x, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_screen_wobble, wobble_x, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_screen_wobble, wobble_y, 0x1);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_screen_wobble, wobble_y, 0x1);
+
+    ARDoSingleVariedSession(ePipe_chunk_screen_wobble, 0, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_screen_wobble, wobble_x), pWobble_x,
+        SIZE_OFFSET_PIPING(tPipe_chunk_screen_wobble, wobble_y), pWobble_y);
+}
+C2_HOOK_FUNCTION(0x004c8090, PipeSingleScreenWobble)
