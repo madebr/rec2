@@ -262,4 +262,6 @@ void C2_HOOK_FASTCALL TryThisEdge(tCar_spec* pCar, br_vector3* pLight, int pInde
 
 void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform, br_scalar pDistance_factor);
 
+void C2_HOOK_FASTCALL MapStuffBeforeRender(void);
+
 #endif //REC2_GRAPHICS_H
