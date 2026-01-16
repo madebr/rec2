@@ -950,6 +950,23 @@ void C2_HOOK_FASTCALL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, 
 }
 C2_HOOK_FUNCTION(0x0047cbd0, DimRectangle)
 
+void C2_HOOK_FASTCALL DimAFewBits(void) {
+    int i;
+
+#define DIM_INDEX C2V(gProgram_state).cockpit_on && C2V(gProgram_state).cockpit_image_index >= 0
+    for (i = 0; i < C2V(gProgram_state).current_car.dim_count[DIM_INDEX]; i++) {
+        DimRectangle(
+            C2V(gBack_screen),
+            C2V(gProgram_state).current_car.dim_left[DIM_INDEX][i],
+            C2V(gProgram_state).current_car.dim_top[DIM_INDEX][i],
+            C2V(gProgram_state).current_car.dim_right[DIM_INDEX][i],
+            C2V(gProgram_state).current_car.dim_bottom[DIM_INDEX][i],
+            1);
+    }
+#undef DIM_INDEX
+}
+C2_HOOK_FUNCTION(0x004496f0, DimAFewBits)
+
 void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
 
     C2V(gDim_model)->vertices[1].p.v[0] = (float)pLeft;
