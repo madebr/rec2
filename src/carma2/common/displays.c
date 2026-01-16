@@ -902,3 +902,26 @@ void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont) {
     }
 }
 C2_HOOK_FUNCTION(0x0044a920, ChangeHeadupFont)
+
+void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
+
+    C2V(gDim_model)->vertices[1].p.v[0] = (float)pLeft;
+    C2V(gDim_model)->vertices[0].p.v[0] = C2V(gDim_model)->vertices[1].p.v[0];
+    C2V(gDim_model)->vertices[3].p.v[0] = (float)pRight;
+    C2V(gDim_model)->vertices[2].p.v[0] = C2V(gDim_model)->vertices[3].p.v[0];
+    C2V(gDim_model)->vertices[3].p.v[1] = -(float)pTop;
+    C2V(gDim_model)->vertices[0].p.v[1] = C2V(gDim_model)->vertices[3].p.v[1];
+    C2V(gDim_model)->vertices[2].p.v[1] = -(float)pBottom;
+    C2V(gDim_model)->vertices[1].p.v[1] = C2V(gDim_model)->vertices[2].p.v[1];
+    BrModelUpdate(C2V(gDim_model), BR_MODU_VERTEX_POSITIONS);
+    gDim_actor->render_style = BR_RSTYLE_FACES;
+    if (gDim_actor->prev == NULL) {
+        BrActorAdd(C2V(g2d_camera), C2V(gDim_actor));
+    }
+    BrZbsSceneRender(C2V(g2d_camera), C2V(g2d_camera), C2V(gBack_screen), C2V(gDepth_buffer));
+    if (C2V(gDim_actor)->parent != NULL) {
+        BrActorRemove(C2V(gDim_actor));
+    }
+    C2V(gDim_actor)->render_style = BR_RSTYLE_NONE;
+}
+C2_HOOK_FUNCTION(0x0047cad0, DeviouslyDimRectangle)
