@@ -121,4 +121,6 @@ void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, i
 
 void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
 
+void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time);
+
 #endif //REC2_DISPLAYS_H

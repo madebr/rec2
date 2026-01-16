@@ -1749,17 +1749,17 @@ typedef struct tHeadup {
         struct {
             char text[252];
             tDR_font* font;
-            undefined4 field_0x100;
-            undefined4 field_0x104;
+            tU32 font_index;
+            int offset;
             undefined4 field_0x108;
-            undefined4 field_0x10c;
-            undefined4 field_0x110;
-            undefined4 field_0x114;
+            int end_offset;
+            undefined4 fancy_stage;
+            tU32 start_time;
         } fancy_info;
         struct {
             char text[252];
             tDR_font* font;
-            undefined4 field_0x100;
+            tU32 font_index;
             undefined4 field_0x104;
             undefined4 field_0x108;
             undefined4 field_0x10c;
