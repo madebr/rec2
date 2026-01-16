@@ -992,7 +992,7 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     C2V(gTranslucent_smoke) = 1; /* maybe? */
     C2V(gEnable_perspective_maps) = 1;
     C2V(gNoTransients) = 1;
-    C2V(gUse_actor_dimming) = 1;
+    C2V(gDevious_2d) = 1;
 
     C2V(gScreen)->origin_x = 0;
     C2V(gScreen)->origin_y = 0;

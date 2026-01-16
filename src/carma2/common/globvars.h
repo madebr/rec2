@@ -66,7 +66,7 @@ C2_HOOK_VARIABLE_DECLARE(const char*, gRenderer_fixup_extension);
 C2_HOOK_VARIABLE_DECLARE(int, gNo_render_indent);
 C2_HOOK_VARIABLE_DECLARE(int, gTranslucent_smoke);
 C2_HOOK_VARIABLE_DECLARE(int, gEnable_perspective_maps);
-C2_HOOK_VARIABLE_DECLARE(int, gUse_actor_dimming);
+C2_HOOK_VARIABLE_DECLARE(int, gDevious_2d);
 
 C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_actors);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gActor_array, 100);
