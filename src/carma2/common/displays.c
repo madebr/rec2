@@ -1,6 +1,7 @@
 #include "displays.h"
 
 #include "controls.h"
+#include "depth.h"
 #include "font.h"
 #include "globvars.h"
 #include "globvrbm.h"
@@ -902,6 +903,52 @@ void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont) {
     }
 }
 C2_HOOK_FUNCTION(0x0044a920, ChangeHeadupFont)
+
+void C2_HOOK_FASTCALL DimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
+    tU8* ptr;
+    tU8* depth_table_ptr;
+    tU8* right_ptr;
+    int x;
+    int y;
+    int line_skip;
+    int width;
+
+    if (C2V(gDevious_2d)) {
+        DeviouslyDimRectangle(pPixelmap, pLeft, pTop, pRight, pBottom, pKnock_out_corners);
+        return;
+    }
+
+    ptr = (tU8*)pPixelmap->pixels + pLeft + pPixelmap->row_bytes * pTop;
+    line_skip = pPixelmap->row_bytes - pRight + pLeft;
+    depth_table_ptr = C2V(gDepth_shade_table)->pixels;
+    x = C2V(gDepth_shade_table)->row_bytes * C2V(gDim_amount);
+    width = pRight - pLeft;
+
+    if (pKnock_out_corners) {
+        ptr++;
+        for (right_ptr = ptr + width - 2; ptr < right_ptr; ptr++) {
+            *ptr = depth_table_ptr[*ptr + x];
+        }
+        ptr += line_skip + 1;
+        for (y = pTop + 1; y < (pBottom - 1); y++, ptr += line_skip) {
+            for (right_ptr = ptr + width; ptr < right_ptr; ptr++) {
+                *ptr = depth_table_ptr[*ptr + x];
+            }
+        }
+        ptr++;
+        for (right_ptr = ptr + width - 2; ptr < right_ptr; ptr++) {
+            *ptr = depth_table_ptr[*ptr + x];
+        }
+    } else {
+        for (y = pTop; y < pBottom; y++) {
+            for (right_ptr = ptr + width; ptr < right_ptr; ptr++) {
+                *ptr = depth_table_ptr[*ptr + x];
+            }
+            ptr += line_skip;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0047cbd0, DimRectangle)
 
 void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners) {
 
