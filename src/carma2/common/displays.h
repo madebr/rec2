@@ -111,4 +111,6 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text);
 
 void C2_HOOK_FASTCALL ChangeHeadupFont(int pHeadup_index, int pFont);
 
+void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners);
+
 #endif //REC2_DISPLAYS_H
