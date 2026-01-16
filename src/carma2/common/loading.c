@@ -52,7 +52,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisableTiffConversionStack, 2, 0x00692068
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_cockpit_hither, 0x007634ac);
 C2_HOOK_VARIABLE_IMPLEMENT(FILE*, gTempFile, 0x0068c6ec);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gCamera_angle, 0x0074d354);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gHeadupBackgroundBrightness, 0x0079ec14);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gDim_amount, 0x0079ec14);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gInitial_rank, 0x0074b76c);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gCredits_per_rank, 3, 0x0074b760);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gTime_per_ped_kill, 3, 0x00763530);
@@ -1687,7 +1687,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     /* Camera angle */
     C2V(gCamera_angle) = GetAFloat(C2V(gTempFile));
     /* Headup background brightness amount */
-    C2V(gHeadupBackgroundBrightness) = GetAnInt(C2V(gTempFile));
+    C2V(gDim_amount) = GetAnInt(C2V(gTempFile));
     /* Initial rank */
     C2V(gInitial_rank) = GetAnInt(C2V(gTempFile));
     /* Credits per rank for each skill level */

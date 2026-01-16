@@ -89,6 +89,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gAuto_increase_credits_dt, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tU32, gNet_auto_increase_credits_dt, 8);
 C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCurrent_car_spec);
 C2_HOOK_VARIABLE_DECLARE(tFloat_bunch_info, gRepair_cost);
+C2_HOOK_VARIABLE_DECLARE(int, gDim_amount);
 
 void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
