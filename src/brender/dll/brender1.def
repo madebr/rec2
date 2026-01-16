@@ -109,6 +109,7 @@ EXPORTS
     BrPixelmapRectangleCopy
     BrPixelmapRectangleFill
     BrPixelmapSave
+    BrPixelmapText
     BrPixelmapTextWidth
     BrQuatInvert
     BrQuatMul
