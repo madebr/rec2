@@ -6,9 +6,11 @@
 #include "globvars.h"
 #include "globvrbm.h"
 #include "globvrkm.h"
+#include "globvrpb.h"
 #include "grafdata.h"
 #include "graphics.h"
 #include "loading.h"
+#include "netgame.h"
 #include "polyfont.h"
 #include "utility.h"
 
@@ -743,7 +745,7 @@ int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pL
             the_headup->end_time = 0;
         }
         c2_strcpy(the_headup->data.image_info.text , C2V(gHud_messages)[pImage_index].message);
-        the_headup->data.image_info.field_0x100 = C2V(gHud_messages)[pImage_index].font2;
+        the_headup->data.image_info.font_index = C2V(gHud_messages)[pImage_index].font2;
         the_headup->data.image_info.font = &C2V(gFonts)[C2V(gHud_messages)[pImage_index].font1];
         switch (the_headup->justification) {
         case eJust_left:
@@ -805,19 +807,19 @@ void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
         the_headup = &C2V(gHeadups)[temp_ref];
         the_headup->type = eHeadup_fancy;
         the_headup->data.fancy_info.field_0x108 = 0;
-        the_headup->data.fancy_info.field_0x110 = 0;
+        the_headup->data.fancy_info.fancy_stage = 0;
         switch (the_headup->justification) {
         case eJust_left:
-            the_headup->data.fancy_info.field_0x104 = center;
-            the_headup->data.fancy_info.field_0x10c = -DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
+            the_headup->data.fancy_info.offset = center;
+            the_headup->data.fancy_info.end_offset = -DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text);
             break;
         case eJust_right:
-            the_headup->data.fancy_info.field_0x104 = center + DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
-            the_headup->data.fancy_info.field_0x10c = center;
+            the_headup->data.fancy_info.offset = center + DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
+            the_headup->data.fancy_info.end_offset = center;
             break;
         case eJust_centre:
-            the_headup->data.fancy_info.field_0x104 =  center + DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
-            the_headup->data.fancy_info.field_0x10c = -center - DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
+            the_headup->data.fancy_info.offset =  center + DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
+            the_headup->data.fancy_info.end_offset = -center - DRTextWidth(the_headup->data.fancy_info.font, the_headup->data.fancy_info.text) / 2;
             break;
         }
     }
@@ -1047,3 +1049,190 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
     }
 }
 C2_HOOK_FUNCTION(0x0044a9d0, DoDamageScreen)
+
+void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time) {
+    int i;
+    int x_offset;
+    int y_offset;
+    tHeadup* the_headup;
+
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        DoNetScores();
+    }
+    if (C2V(gQueued_headup_count) && PDGetTotalTime() - C2V(gLast_centre_headup) >= 1000) {
+        NewTextHeadupSlot(4,
+            C2V(gQueued_headups)[0].flash_rate,
+            C2V(gQueued_headups)[0].lifetime,
+            C2V(gQueued_headups)[0].font_index,
+            C2V(gQueued_headups)[0].text);
+        KillOldestQueuedHeadup();
+    }
+    if (C2V(gHeadup_detail_level) == 0 || C2V(gHeadup_detail_level) == 3) {
+        MoveHeadupTo(C2V(gTimer_headup), 634, 2);
+    } else {
+        MoveHeadupTo(C2V(gTimer_headup), 389, 13);
+    }
+
+    for (i = 0; i < REC2_ASIZE(C2V(gHeadups)); i++) {
+        the_headup = &C2V(gHeadups)[i];
+        if (the_headup->type != eHeadup_unused
+                && (C2V(gProgram_state).which_view == eView_forward || !the_headup->cockpit_anchored)
+                && (the_headup->type == eHeadup_image
+                    || the_headup->type == eHeadup_fancy
+                    || (the_headup->type == eHeadup_text && the_headup->data.text_info.text[0] != '\0')
+                    || ((the_headup->type == eHeadup_coloured_text || the_headup->type == eHeadup_box_text)
+                        && the_headup->data.text_info.text[0] != '\0'))) {
+            if (the_headup->type == eHeadup_fancy || the_headup->end_time == 0 || pThe_time < the_headup->end_time) {
+                if (the_headup->flash_period == 0
+                        || Flash(the_headup->flash_period, &the_headup->last_flash, &the_headup->flash_state)) {
+
+                    switch (the_headup->type) {
+                    case eHeadup_text:
+                        if (the_headup->cockpit_anchored) {
+                            y_offset = C2V(gScreen_wobble_y);
+                        } else {
+                            y_offset = 0;
+                        }
+                        if (the_headup->cockpit_anchored) {
+                            x_offset = C2V(gScreen_wobble_x);
+                        } else {
+                            x_offset = 0;
+                        }
+                        BrPixelmapText(
+                            C2V(gRender_screen),
+                            x_offset + the_headup->x,
+                            y_offset + the_headup->y,
+                            the_headup->data.text_info.colour,
+                            the_headup->data.text_info.font,
+                            the_headup->data.text_info.text);
+                        break;
+                    case eHeadup_coloured_text:
+                        if (C2V(gHeadup_detail_level) == 2 || C2V(gHeadup_detail_level) == 5
+                                || (i != C2V(gCredits_won_headup)
+                                    && i != C2V(gPed_kill_count_headup)
+                                    && i != C2V(gCar_kill_count_headup)
+                                    && i != C2V(gLaps_headup))) {
+                            if (the_headup->clever) {
+                                if (the_headup->cockpit_anchored) {
+                                    y_offset = C2V(gScreen_wobble_y);
+                                } else {
+                                    y_offset = 0;
+                                }
+                                if (the_headup->cockpit_anchored) {
+                                    x_offset = C2V(gScreen_wobble_x);
+                                } else {
+                                    x_offset = 0;
+                                }
+                                TransDRPixelmapCleverText(
+                                        gBack_screen,
+                                        x_offset + the_headup->x,
+                                        y_offset + the_headup->y,
+                                        the_headup->data.coloured_text_info.coloured_font,
+                                        the_headup->data.coloured_text_info.text,
+                                        the_headup->right_edge);
+                            } else {
+                                if (the_headup->cockpit_anchored) {
+                                    y_offset = C2V(gScreen_wobble_y);
+                                } else {
+                                    y_offset = 0;
+                                }
+                                if (the_headup->cockpit_anchored) {
+                                    x_offset = C2V(gScreen_wobble_x);
+                                } else {
+                                    x_offset = 0;
+                                }
+                                TransDRPixelmapText(
+                                        gBack_screen,
+                                        x_offset + the_headup->x,
+                                        y_offset + the_headup->y,
+                                        the_headup->data.coloured_text_info.coloured_font,
+                                        the_headup->data.coloured_text_info.text,
+                                        the_headup->right_edge);
+                            }
+                        }
+                        break;
+                    case eHeadup_image:
+                        RenderPolyTextLine(the_headup->data.image_info.text,
+                             the_headup->original_x + the_headup->data.image_info.field_0x104,
+                             the_headup->y,
+                             the_headup->data.image_info.font_index, eJust_centre, 0);
+                        break;
+
+                    case eHeadup_fancy:
+                        switch (the_headup->data.fancy_info.fancy_stage) {
+                        case 0:
+                            the_headup->data.fancy_info.offset -= 325 * C2V(gFrame_period) / 1000;
+                            if (the_headup->data.fancy_info.offset <= 0) {
+                                the_headup->data.fancy_info.offset = 0;
+                                the_headup->data.fancy_info.fancy_stage = 1;
+                                the_headup->data.fancy_info.start_time = GetTotalTime();
+                            }
+                            RenderPolyTextLine(the_headup->data.fancy_info.text,
+                                the_headup->data.fancy_info.offset,
+                                the_headup->y,
+                                the_headup->data.fancy_info.font_index,
+                                eJust_centre,
+                                0);
+                            break;
+                        case 1:
+                            if (pThe_time - the_headup->data.fancy_info.start_time > 1000) {
+                                the_headup->data.fancy_info.fancy_stage = 2;
+                                the_headup->data.fancy_info.start_time = GetTotalTime();
+                            }
+                            RenderPolyTextLine(the_headup->data.fancy_info.text,
+                                the_headup->data.fancy_info.offset,
+                                the_headup->y,
+                                the_headup->data.fancy_info.font_index,
+                                eJust_centre,
+                                0);
+                            break;
+                        case 2:
+                            the_headup->data.fancy_info.offset -= 325 * C2V(gFrame_period) / 1000;
+                            if (the_headup->data.fancy_info.offset <= the_headup->data.fancy_info.end_offset) {
+                                ClearHeadup(i);
+                            } else {
+                                RenderPolyTextLine(the_headup->data.fancy_info.text,
+                                    the_headup->data.fancy_info.offset,
+                                    the_headup->y,
+                                    the_headup->data.fancy_info.font_index,
+                                    eJust_centre,
+                                    0);
+                            }
+                            break;
+                        default:
+                            break;
+                        }
+                        break;
+
+                    case eHeadup_box_text:
+                        if (the_headup->cockpit_anchored) {
+                            y_offset = C2V(gScreen_wobble_y);
+                        } else {
+                            y_offset = 0;
+                        }
+                        if (the_headup->cockpit_anchored) {
+                            x_offset = C2V(gScreen_wobble_x);
+                        } else {
+                            x_offset = 0;
+                        }
+                        OoerrIveGotTextInMeBoxMissus(
+                            the_headup->data.coloured_text_info.coloured_font - C2V(gFonts),
+                            the_headup->data.coloured_text_info.text,
+                            C2V(gRender_screen),
+                            C2V(gRender_screen)->width / 10,
+                            x_offset + the_headup->y,
+                            9 * C2V(gRender_screen)->width / 10,
+                            y_offset + the_headup->y + 60,
+                            1);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            } else {
+                ClearHeadup(i);
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00449b10, DoHeadups)
