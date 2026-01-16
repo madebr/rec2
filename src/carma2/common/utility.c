@@ -39,6 +39,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const tU8, gOther_long_key, 16, 0x00658600
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDecode_thing, 0x00655e30, '@');
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_service, 0x006abef8);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector3, y_unit_vector, 0x00655df0, { { 0.f, 1.f, 0.f } });
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, g16bit_palette, 0x006b63f4);
+C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette_source, 0x006b63f0);
 
 br_error (C2_HOOK_FASTCALL * DRBrEnd_original)(void);
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
@@ -1381,3 +1383,51 @@ int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material *pMaterial) {
     }
 }
 C2_HOOK_FUNCTION(0x00518e70, GetBlendificatiousnessOfMaterial)
+
+tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
+    tU32* src_entry;
+    int red;
+    int green;
+    int blue;
+
+    src_entry = pPal->pixels;
+    switch (C2V(gBack_screen)->type) {
+    case BR_PMT_RGB_555:
+        red = (src_entry[pEntry] >> 9) & 0x7c00;
+        green = (src_entry[pEntry] >> 6) & 0x03e0;
+        blue = (src_entry[pEntry] >> 3) & 0x001f;
+        break;
+    case BR_PMT_RGB_565:
+        red = (src_entry[pEntry] >> 8) & 0xf800;
+        green = (src_entry[pEntry] >> 5) & 0x07e0;
+        blue = (src_entry[pEntry] >> 3) & 0x001f;
+        break;
+    default:
+        BrFailure("Unsupported back buffer type.");
+    }
+    return red | green | blue;
+}
+
+br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
+    tU16* dst_entry;
+    int value;
+
+    if (C2V(g16bit_palette) == NULL) {
+        C2V(g16bit_palette) = BrPixelmapAllocate(BR_PMT_RGB_565, 1, 256, NULL, 0);
+        if (C2V(g16bit_palette) == NULL) {
+            FatalError(kFatalError_OOM_S, "16-bit palette");
+        }
+    }
+    if (!C2V(gPalette_changed) || pSrc != C2V(gPalette_source)) {
+        value = 0;
+        dst_entry = C2V(g16bit_palette)->pixels;
+        for (value = 0; value < 256; value++) {
+            *dst_entry = PaletteEntry16Bit(pSrc, value);
+            dst_entry++;
+        }
+        C2V(gPalette_changed) = 1;
+        C2V(gPalette_source) = pSrc;
+    }
+    return C2V(g16bit_palette);
+}
+C2_HOOK_FUNCTION(0x005170c0, PaletteOf16Bits)
