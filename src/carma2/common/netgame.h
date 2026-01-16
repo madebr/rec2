@@ -48,4 +48,6 @@ void C2_HOOK_FASTCALL DoNetworkHeadups(int pCredits);
 
 void C2_HOOK_FASTCALL SendCarData(tU32 pNext_frame_time);
 
+void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores);
+
 #endif // REC2_NETGAME_H

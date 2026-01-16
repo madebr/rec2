@@ -276,3 +276,14 @@ void C2_HOOK_FASTCALL SendCarData(tU32 pNext_frame_time) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00497900, SendCarData, SendCarData_original)
+
+void (C2_HOOK_FASTCALL * DoNetScores2_original)(int pOnly_sort_scores);
+void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoNetScores2_original(pOnly_sort_scores);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00499a00, DoNetScores2, DoNetScores2_original)
