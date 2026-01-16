@@ -1154,7 +1154,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004816b0, InitGame, InitGame_original)
 int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth) {
     int new_width;
 
-    if (C2V(gUse_actor_dimming) && C2V(gTexture_power_of_2)) {
+    if (C2V(gDevious_2d) && C2V(gTexture_power_of_2)) {
         new_width = 1;
         while (pWidth > new_width) {
             new_width *= 2;
