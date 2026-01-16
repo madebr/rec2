@@ -1169,7 +1169,7 @@ C2_HOOK_FUNCTION(0x0044ba60, HighResHeadupWidth)
 int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight) {
     int new_height;
 
-    if (C2V(gUse_actor_dimming) && C2V(gTexture_power_of_2)) {
+    if (C2V(gDevious_2d) && C2V(gTexture_power_of_2)) {
         new_height = 1;
         while (pHeight > new_height) {
             new_height *= 2;
