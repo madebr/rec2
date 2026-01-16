@@ -287,3 +287,9 @@ void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00499a00, DoNetScores2, DoNetScores2_original)
+
+void C2_HOOK_FASTCALL DoNetScores(void) {
+
+    DoNetScores2(0);
+}
+C2_HOOK_FUNCTION(0x004999f0, DoNetScores)
