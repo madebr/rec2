@@ -764,6 +764,18 @@ int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pL
 }
 C2_HOOK_FUNCTION(0x0044a3a0, NewImageHeadupSlot)
 
+void C2_HOOK_FASTCALL MoveHeadupTo(int pHeadup_index, int pX, int pY) {
+    int delta_x;
+
+    if (pHeadup_index >= 0) {
+        delta_x = C2V(gHeadups)[pHeadup_index].x - C2V(gHeadups)[pHeadup_index].original_x;
+        C2V(gHeadups)[pHeadup_index].original_x = pX;
+        C2V(gHeadups)[pHeadup_index].x = delta_x + pX;
+        C2V(gHeadups)[pHeadup_index].y = pY;
+    }
+}
+C2_HOOK_FUNCTION(0x0044a860, MoveHeadupTo)
+
 void (C2_HOOK_FASTCALL * DoFancyHeadup_original)(int pIndex);
 void C2_HOOK_FASTCALL DoFancyHeadup(int pIndex) {
 
