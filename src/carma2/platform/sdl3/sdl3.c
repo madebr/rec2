@@ -649,7 +649,7 @@ void PDAllocateScreenAndBack(void) {
     gTranslucent_smoke = 1; /* maybe? */
     gEnable_perspective_maps = 1;
     gNoTransients = 1;
-    gUse_actor_dimming = 1;
+    gDevious_2d = 1;
 
     gScreen->origin_x = 0;
     gScreen->origin_y = 0;
