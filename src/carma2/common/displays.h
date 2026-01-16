@@ -117,4 +117,6 @@ void C2_HOOK_FASTCALL DimAFewBits(void);
 
 void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pKnock_out_corners);
 
+void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
+
 #endif //REC2_DISPLAYS_H
