@@ -1431,3 +1431,32 @@ br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
     return C2V(g16bit_palette);
 }
 C2_HOOK_FUNCTION(0x005170c0, PaletteOf16Bits)
+
+void C2_HOOK_FASTCALL Copy8BitTo16Bit(br_pixelmap* pDst, br_pixelmap* pSrc, br_pixelmap* pPalette) {
+    int x;
+    int y;
+    tU8* src_start;
+    tU16* dst_start;
+    tU16* palette_entry;
+
+    palette_entry = PaletteOf16Bits(pPalette)->pixels;
+    for (y = 0; y < pDst->height; y++) {
+        src_start = (tU8*)pSrc->pixels + pSrc->row_bytes * y;
+        dst_start = (tU16*)((tU8*)pDst->pixels + pDst->row_bytes * y);
+        for (x = 0; x < pDst->width; x++) {
+            *dst_start = palette_entry[*src_start];
+            src_start++;
+            dst_start++;
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DRPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
+
+    if (dst->type == src->type) {
+        BrPixelmapCopy(dst, src);
+    } else if (dst->type != BR_PMT_INDEX_8 && src->type == BR_PMT_INDEX_8) {
+        Copy8BitTo16Bit(dst, src, C2V(gCurrent_palette));
+    }
+}
+C2_HOOK_FUNCTION(0x00517d90, DRPixelmapCopy)
