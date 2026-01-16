@@ -5,6 +5,7 @@
 #include "font.h"
 #include "globvars.h"
 #include "globvrbm.h"
+#include "globvrkm.h"
 #include "grafdata.h"
 #include "graphics.h"
 #include "loading.h"
@@ -989,3 +990,48 @@ void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, i
     C2V(gDim_actor)->render_style = BR_RSTYLE_NONE;
 }
 C2_HOOK_FUNCTION(0x0047cad0, DeviouslyDimRectangle)
+
+void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
+    int i;
+    int y_pitch;
+    int the_step;
+    int the_wobble_x;
+    int the_wobble_y;
+    br_pixelmap* the_image;
+    tDamage_unit* the_damage;
+
+    if (&C2V(gProgram_state).current_car != C2V(gCar_to_view)) {
+        return;
+    }
+    if (C2V(gProgram_state).cockpit_on && C2V(gProgram_state).cockpit_image_index >= 0) {
+        if (C2V(gProgram_state).which_view != eView_forward) {
+            return;
+        }
+        the_wobble_x = C2V(gScreen_wobble_x);
+        the_wobble_y = C2V(gScreen_wobble_y);
+    } else {
+        the_wobble_x = C2V(gProgram_state).current_car.damage_x_offset;
+        the_wobble_y = C2V(gProgram_state).current_car.damage_y_offset;
+    }
+
+    DRPixelmapCopy(C2V(gDamage_hud), C2V(gGrey_top5));
+
+    for (i = 0; i < REC2_ASIZE(C2V(gProgram_state).current_car.damage_units); i++) {
+        the_damage = &C2V(gProgram_state).current_car.damage_units[i];
+        if (i != eDamage_driver) {
+            the_image = the_damage->images;
+            the_step = 5 * the_damage->damage_level / 100;
+            y_pitch = (the_image->height / 2) / 5;
+            DRPixelmapRectangleMaskedCopy(
+                gDamage_hud,
+                the_wobble_x + C2V(gProgram_state).current_car.damage_units[i].x_coord,
+                the_wobble_y + C2V(gProgram_state).current_car.damage_units[i].y_coord,
+                the_image,
+                0,
+                y_pitch * (2 * the_step + ((pThe_time / the_damage->periods[the_step]) & 1)),
+                the_image->width,
+                y_pitch);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0044a9d0, DoDamageScreen)
