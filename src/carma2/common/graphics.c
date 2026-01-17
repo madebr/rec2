@@ -1806,3 +1806,21 @@ void C2_HOOK_FASTCALL DoACompleteRenderPass(int pMirror, br_matrix34* pCamera_to
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e54f0, DoACompleteRenderPass, DoACompleteRenderPass_original)
+
+void C2_HOOK_FUNCTION DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2, int pY2, int pColour) {
+    tU8* d_ptr;
+    tS32 y_delta;
+    tS32 x_delta;
+    tU32 current_y;
+    tU32 current_x;
+    int row_bytes;
+    int x;
+    int y;
+    int the_diff;
+
+    if (C2V(gBack_screen)->type == BR_PMT_RGB_565) {
+        pColour = PaletteEntry16Bit(gRender_palette, pColour);
+    }
+    BrPixelmapLine(pDestn, pX1, pY1, pX2, pY2, pColour);
+}
+C2_HOOK_FUNCTION(0x0047b450, DRDrawLine)
