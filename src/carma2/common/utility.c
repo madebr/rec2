@@ -1407,6 +1407,7 @@ tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
     }
     return red | green | blue;
 }
+C2_HOOK_FUNCTION(0x00516fd0, PaletteEntry16Bit)
 
 br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
     tU16* dst_entry;
