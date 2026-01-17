@@ -123,6 +123,8 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time);
 
 void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time);
 
+void C2_HOOK_FASTCALL DoInstruments(tU32 pThe_time);
+
 void C2_HOOK_FASTCALL PoshDrawLine(br_pixelmap* pDestn, int pX1, float pAngle, int pY1, int pX2, int pY2, int pColour);
 
 #endif //REC2_DISPLAYS_H
