@@ -1236,3 +1236,26 @@ void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time) {
     }
 }
 C2_HOOK_FUNCTION(0x00449b10, DoHeadups)
+
+void C2_HOOK_FASTCALL PoshDrawLine(br_pixelmap* pDestn, int pX1, float pAngle, int pY1, int pX2, int pY2, int pColour) {
+
+    // FIXME: order of arguments is non-sensical (pX1 and pAngle should be switched)
+    if (pColour < 0) {
+        if (pAngle >= 0.785 && pAngle <= 5.498 && (pAngle <= 2.356 || pAngle >= 3.926)) {
+            if ((pAngle <= 0.785 || pAngle >= 1.57) && (pAngle <= 3.926 || pAngle >= 4.712)) {
+                DRDrawLine(pDestn, pX1 - 1, pY1, pX2 - 1, pY2, -pColour - 1);
+                DRDrawLine(pDestn, pX1 + 1, pY1, pX2 + 1, pY2, 1 - pColour);
+            } else {
+                DRDrawLine(pDestn, pX1 - 1, pY1, pX2 - 1, pY2, 1 - pColour);
+                DRDrawLine(pDestn, pX1 + 1, pY1, pX2 + 1, pY2, -pColour - 1);
+            }
+        } else {
+            DRDrawLine(pDestn, pX1, pY1 + 1, pX2, pY2 + 1, -pColour - 1);
+            DRDrawLine(pDestn, pX1, pY1 - 1, pX2, pY2 - 1, 1 - pColour);
+        }
+        DRDrawLine(pDestn, pX1, pY1, pX2, pY2, -pColour);
+    } else {
+        DRDrawLine(pDestn, pX1, pY1, pX2, pY2, pColour);
+    }
+}
+C2_HOOK_FUNCTION(0x0047c740, PoshDrawLine)
