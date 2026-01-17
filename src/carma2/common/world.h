@@ -51,6 +51,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gDelete_list, 500);
 C2_HOOK_VARIABLE_DECLARE(int, gSpec_vol_mode);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gSpec_vol_actors, 100);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tU32, gPrevious_groove_times, 2);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gHud_actor_storage, 128);
 
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
@@ -343,6 +344,8 @@ float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber);
 br_scalar C2_HOOK_FASTCALL NormaliseDegreeAngle(br_scalar pAngle);
 
 void C2_HOOK_FASTCALL FunkThoseTronics(void);
+
+void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor);
 
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 

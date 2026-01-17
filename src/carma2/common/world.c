@@ -211,6 +211,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gDelete_list, 500, 0x006aafc8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSpec_vol_mode, 0x006ab940);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gSpec_vol_actors, 100, 0x006ab7b0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gPrevious_groove_times, 2, 0x0068b838);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gHud_actor_storage, 128, 0x00704e60);
 
 #define SAW(T, PERIOD) (fmodf((T), (PERIOD)) / (PERIOD))
 
@@ -5840,6 +5841,15 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00477230, FunkThoseTronics, FunkThoseTronics_original)
 
+void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor) {
+
+    if (C2V(gHud_actor_storage_size) >= REC2_ASIZE(C2V(gHud_actor_storage))) {
+        BrFailure("Not enough HUD actor storage");
+    }
+    C2V(gHud_actor_storage)[C2V(gHud_actor_storage_size)] = pActor;
+    C2V(gHud_actor_storage_size) += 1;
+}
+C2_HOOK_FUNCTION(0x004e5ad0, RenderThisHeadup)
 
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
 
