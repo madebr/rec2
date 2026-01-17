@@ -11,6 +11,7 @@ C2_HOOK_VARIABLE_DECLARE(char*, gCurrent_palette_pixels);
 C2_HOOK_VARIABLE_DECLARE(int, gFaded_palette);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_splash);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tWobble_spec, gWobble_array, 5);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(float, gCosine_array, 64);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCurrent_palette);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gRender_palette);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tDR_font, gFonts, 24);
