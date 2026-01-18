@@ -365,6 +365,22 @@ int C2_HOOK_FASTCALL GetPedCount(void) {
 }
 C2_HOOK_FUNCTION(0x004d2c40, GetPedCount)
 
+int C2_HOOK_FASTCALL GetPedPosition(int pIndex, br_vector3* pPos) {
+
+    if (C2V(gPedestrian_array)[pIndex].hit_points <= 0) {
+        return 0;
+    }
+    if (!(C2V(gPedestrian_array)[pIndex].flags & 0x1) && C2V(gMap_view) != 2) {
+        return 0;
+    }
+    if (C2V(gCurrent_race).race_spec->race_type == kRaceType_Peds && !(C2V(gPedestrian_array)[pIndex].flags & 0x200)) {
+        return 0;
+    }
+    BrVector3Copy(pPos, &C2V(gPedestrian_array)[pIndex].pos);
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004d2c50, GetPedPosition)
+
 void C2_HOOK_FASTCALL ClearOutMorphs(void) {
     int i;
 
