@@ -301,4 +301,10 @@ int C2_HOOK_FASTCALL GotPowerupX(tCar_spec* pCar, int pIndex, int pArg3, int pMe
 
 int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowerup, tHeadup_icon* pIcon, int pX, int pY, int pUpdate_x);
 
+void C2_HOOK_FASTCALL DrawPowerupIcons2(tU32 pTime, tHeadup_icon* pHeadup_icons, int* pCount_icons, int pMax_count_icons, int pX, int pY);
+
+void C2_HOOK_FASTCALL DrawKeyPowerups(tU32 pTime);
+
+void C2_HOOK_FASTCALL DrawPowerups(tU32 pTime);
+
 #endif //REC2_POWERUPS_H

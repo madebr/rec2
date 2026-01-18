@@ -4,6 +4,7 @@
 #include "car.h"
 #include "controls.h"
 #include "crush.h"
+#include "displays.h"
 #include "errors.h"
 #include "funk.h"
 #include "globvars.h"
@@ -2431,3 +2432,107 @@ int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowe
     return 0;
 }
 C2_HOOK_FUNCTION(0x004daff0, DrawSinglePowerupIcon)
+
+void C2_HOOK_FASTCALL DrawPowerupIcons2(tU32 pTime, tHeadup_icon* pHeadup_icons, int* pCount_icons, int pMax_count_icons, int pX, int pY) {
+    int i;
+    int y;
+    tPowerup *the_powerup;
+    tHeadup_icon *the_icon;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, power_up_icon_y_pitch, 0x29c);
+
+    y =  pY;
+    for (i = 0; i < *pCount_icons && i < pMax_count_icons; i++) {
+        the_powerup = the_icon->powerup;
+        if (the_powerup->icon == NULL) {
+            continue;
+        }
+        y += C2V(gCurrent_graf_data)->power_up_icon_y_pitch;
+        if (the_icon->fizzle_stage < 4) {
+            if (the_icon->fizzle_direction < 0) {
+                the_icon->fizzle_stage = 3 - (pTime - the_icon->fizzle_start) / 150;
+            } else {
+                the_icon->fizzle_stage = (pTime - the_icon->fizzle_start) / 150;
+            }
+            if (the_icon->fizzle_stage > 4) {
+                the_icon->fizzle_stage = 4;
+            } else if (the_icon->fizzle_stage < 0) {
+                c2_memmove(the_icon, &the_icon[1], sizeof(tHeadup_icon) * (*pCount_icons - i - 1));
+                *pCount_icons -= 1;
+                continue;
+            }
+        }
+        DrawSinglePowerupIcon(1, pTime, the_icon->powerup, the_icon, pX, y, 0);
+    }
+}
+
+void C2_HOOK_FASTCALL DrawKeyPowerups(tU32 pTime) {
+    int x;
+    int i;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, keyboard_powerup_x, 0x2a4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, keyboard_powerup_y, 0x2a8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, keyboard_powerup_bg_y, 0x2ac);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, keyboard_powerup_bg_bottom, 0x2b0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, keyboard_powerup_bg_x, 0x2b4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, keyboard_powerup_spacing_x, 0x2b8);
+
+    if (C2V(gInventory_cycling)) {
+        if (C2V(gInventory_selected) >= 0) {
+            if (GetTotalTime() >= C2V(gInventory_timeout)) {
+                C2V(gInventory_timeout) = 0;
+                C2V(gInventory_cycling) = 0;
+            }
+            x = C2V(gCurrent_graf_data)->keyboard_powerup_x;
+            i = C2V(gInventory_selected);
+            do {
+                if (C2V(gInventory)[i] >= 0) {
+                    x = DrawSinglePowerupIcon(0, pTime, &C2V(gPowerup_array)[C2V(gInventory)[i]], NULL,
+                        x, C2V(gCurrent_graf_data)->keyboard_powerup_y, 1) + C2V(gCurrent_graf_data)->keyboard_powerup_spacing_x;
+                }
+                i += 1;
+                if (i >= REC2_ASIZE(C2V(gInventory))) {
+                    i = 0;
+                }
+            } while (i != C2V(gInventory_selected));
+            if (x >= 0) {
+                DimRectangle(C2V(gBack_screen), C2V(gCurrent_graf_data)->keyboard_powerup_bg_x, C2V(gCurrent_graf_data)->keyboard_powerup_bg_y,
+                    x, C2V(gCurrent_graf_data)->keyboard_powerup_bg_bottom, 1);
+                i = C2V(gInventory_selected);
+                x = C2V(gCurrent_graf_data)->keyboard_powerup_x;
+                TransDRPixelmapText(C2V(gBack_screen),
+                    C2V(gCurrent_graf_data)->keyboard_powerup_bg_x + 1, C2V(gCurrent_graf_data)->keyboard_powerup_bg_bottom - 9,
+                    &C2V(gFonts)[2],
+                    C2V(gPowerup_array)[C2V(gInventory)[C2V(gInventory_selected)]].message,
+                    C2V(gCurrent_graf_data)->keyboard_powerup_bg_x + 100);
+                do {
+                    if (C2V(gInventory)[i] >= 0 && C2V(gInventory_cycling)) {
+                        x = DrawSinglePowerupIcon(1, pTime, &C2V(gPowerup_array)[C2V(gInventory)[i]], NULL,
+                            x, C2V(gCurrent_graf_data)->keyboard_powerup_y, 1) + C2V(gCurrent_graf_data)->keyboard_powerup_spacing_x;
+                    }
+                    i += 1;
+                    if (i >= REC2_ASIZE(C2V(gInventory))) {
+                        i = 0;
+                    }
+                } while (i != C2V(gInventory_selected));
+            }
+        }
+    } else {
+        if (C2V(gInventory_selected) >= 0) {
+            DrawSinglePowerupIcon(1, pTime, C2V(gPowerup_array) + C2V(gInventory)[C2V(gInventory_selected)], NULL,
+            C2V(gCurrent_graf_data)->keyboard_powerup_x, C2V(gCurrent_graf_data)->keyboard_powerup_y, 0);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DrawPowerups(tU32 pTime) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, power_up_icon_x, 0x290);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, power_up_icon_y, 0x298);
+
+    DrawPowerupIcons2(pTime, C2V(gPickedup_powerups), &C2V(gNumber_of_icons), 5,
+        C2V(gCurrent_graf_data)->power_up_icon_x,
+        C2V(gCurrent_graf_data)->power_up_icon_y);
+    DrawKeyPowerups(pTime);
+}
+C2_HOOK_FUNCTION(0x004dad00, DrawPowerups)
