@@ -1,6 +1,7 @@
 #include "graphics.h"
 
 #include "car.h"
+#include "controls.h"
 #include "depth.h"
 #include "displays.h"
 #include "errors.h"
@@ -15,10 +16,12 @@
 #include "loading.h"
 #include "oil.h"
 #include "mainloop.h"
+#include "network.h"
 #include "polyfont.h"
 #include "physics.h"
 #include "polyfont.h"
 #include "tinted.h"
+#include "trig.h"
 #include "utility.h"
 #include "world.h"
 
@@ -1965,3 +1968,17 @@ void C2_HOOK_FASTCALL DrawCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pT
     }
 }
 C2_HOOK_FUNCTION(0x004969e0, DrawCheckpoint)
+
+void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    br_vector3 pos_mapspace;
+    br_vector2 p;
+
+    BrMatrix34ApplyP(&pos_mapspace, &C2V(gCurrent_race).checkpoints[pCheckpoint].pos, &C2V(gCurrent_race).map_transformation);
+    BrVector2Sub(&p, &pos_mapspace, &C2V(gOrigin_map));
+    BrVector2Add(&p, &p, &C2V(gOrigin_headup_map));
+    BrMatrix23TApplyV(&C2V(gCurrent_race).checkpoints[pCheckpoint].map_position,
+        &p, &C2V(gMatrix23_0068c880));
+    C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[0] += (float)C2V(gINT_0074abd4);
+    C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[1] += (float)C2V(gINT_0074abd0);
+}
+C2_HOOK_FUNCTION(0x00496940, CalcMapCheckpoint2)

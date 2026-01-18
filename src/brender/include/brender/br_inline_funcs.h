@@ -19,6 +19,12 @@
         (v1)->v[1] = (s2);       \
     } while (0)
 
+#define BrVector2Add(v1, v2, v3)               \
+    do {                                       \
+        (v1)->v[0] = (v2)->v[0] + (v3)->v[0] ; \
+        (v1)->v[1] = (v2)->v[1] + (v3)->v[1] ; \
+    } while (0)
+
 #define BrVector2Sub(v1, v2, v3)               \
     do {                                       \
         (v1)->v[0] = (v2)->v[0] - (v3)->v[0] ; \
