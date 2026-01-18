@@ -20,6 +20,8 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gPed_last_munging);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_scare_time);
 C2_HOOK_VARIABLE_DECLARE(tPed_cache_006944c0, gPed_cache_00694328);
 
+int C2_HOOK_FASTCALL GetPedCount(void);
+
 void C2_HOOK_FASTCALL ClearOutMorphs(void);
 
 void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable);
