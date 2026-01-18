@@ -85,6 +85,7 @@ void C2_HOOK_CDECL BrMatrix23PreShearX(br_matrix23* mat, br_scalar sy);
 void C2_HOOK_CDECL BrMatrix23PostShearX(br_matrix23* mat, br_scalar sy);
 void C2_HOOK_CDECL BrMatrix23PreShearY(br_matrix23* mat, br_scalar sx);
 void C2_HOOK_CDECL BrMatrix23PostShearY(br_matrix23* mat, br_scalar sx);
+void C2_HOOK_CDECL BrMatrix23TApplyV(br_vector2* A, const br_vector2* B, const br_matrix23* C);
 
 // BrMatrix34
 void C2_HOOK_CDECL BrMatrix34Identity(br_matrix34* mat);
@@ -95,7 +96,7 @@ void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, const br_vector3* B, const b
 void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, const br_vector3* B, const br_matrix34* C);
 br_scalar C2_HOOK_CDECL BrMatrix34Inverse(br_matrix34* B, const br_matrix34* A);
 void C2_HOOK_CDECL BrMatrix34LPInverse(br_matrix34* A, const br_matrix34* B);
-void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, br_vector3* B, const br_matrix34* C);
+void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, const br_vector3* B, const br_matrix34* C);
 void C2_HOOK_CDECL BrMatrix34Scale(br_matrix34* mat, br_scalar sx, br_scalar sy, br_scalar sz);
 void C2_HOOK_CDECL BrMatrix34PostTranslate(br_matrix34* mat, br_scalar x, br_scalar y, br_scalar z);
 void C2_HOOK_CDECL BrMatrix34Mul(br_matrix34* A, const br_matrix34* B, const br_matrix34* C);
