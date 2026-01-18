@@ -1942,3 +1942,34 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32
     BrVector2Copy(&C2V(gCurrent_race).checkpoints[pCheckpoint].map_position, &p);
 }
 C2_HOOK_FUNCTION(0x004968f0, CalcMapCheckpoint)
+
+void C2_HOOK_FASTCALL DrawCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_flash, 0x0068d8e8);
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, flash_rate, 0x0068d8ec);
+
+    if ((pCheckpoint >= 0 && pCheckpoint < C2V(gCurrent_race).check_point_count
+            && C2V(gTrack_version) >= 1 && pTarget == 0) || Flash(300, &C2V(last_flash), &C2V(flash_rate))) {
+
+        if (C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[0] >= 0.f
+                && C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[0] < (float)pMap->width
+                && C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[1] >= 0.f
+                && C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[1] < (float)pMap->height) {
+
+            if (C2V(gMap_view) == 2) {
+                PossibleLock(1);
+            }
+            DRPixelmapRectangleMaskedCopy(pMap,
+                (int)(C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[0] - (float)C2V(gCheckpoint_digit_center_x)),
+                (int)(C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[1] - (float)C2V(gCheckpoint_digit_center_y)),
+                C2V(gCheckpoint_numbers),
+                0,
+                pCheckpoint * C2V(gCheckpoint_digit_height),
+                C2V(gCheckpoint_numbers)->width,
+                C2V(gCheckpoint_digit_height));
+            if (C2V(gMap_view) == 2) {
+                PossibleUnlock(1);
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004969e0, DrawCheckpoint)
