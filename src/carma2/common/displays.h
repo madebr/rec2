@@ -57,6 +57,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gLast_credit_amount);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPrev_ps_apo_levels, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPrev_ps_drawn_levels, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPS_apo_level_changed, 3);
+C2_HOOK_VARIABLE_DECLARE(br_matrix23, gMatrix23_0068c880);
+C2_HOOK_VARIABLE_DECLARE(br_vector3, gOrigin_map);
 
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 

@@ -111,6 +111,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_fancy_headup, 0x0067fcc0);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPrev_ps_apo_levels, 3, 0x005913ec, { -1, -1, -1});
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPrev_ps_drawn_levels, 3, 0x005913f8, { -1, -1, -1});
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPS_apo_level_changed, 3, 0x005913e0, { 1, 1, 1});
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix23, gMatrix23_0068c880, 0x0068c880);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gOrigin_map, 0x0068c868);
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
