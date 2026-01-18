@@ -92,6 +92,8 @@ void C2_HOOK_FASTCALL ClearQueuedHeadups(void);
 
 void C2_HOOK_FASTCALL DoPSPowerHeadup(int pLevel, const char* pAPO_str);
 
+void C2_HOOK_FASTCALL DoPSPowerupHeadups(void);
+
 int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it);
 
 int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText);
