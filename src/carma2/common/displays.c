@@ -108,6 +108,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tHud_message, gHud_messages, 46, 0x0067fd40);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCredit_multiplier, 0x00705be0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gLast_credit_amount, 0x0067f878);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_fancy_headup, 0x0067fcc0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPrev_ps_apo_levels, 3, 0x005913ec, { -1, -1, -1});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPrev_ps_drawn_levels, 3, 0x005913f8, { -1, -1, -1});
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gPS_apo_level_changed, 3, 0x005913e0, { 1, 1, 1});
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
@@ -496,6 +499,113 @@ void C2_HOOK_FASTCALL ClearQueuedHeadups(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004497b0, ClearQueuedHeadups)
+
+void C2_HOOK_FASTCALL DoPSPowerHeadup(int pLevel, const char* pAPO_str) {
+    int changed;
+    br_pixelmap *dest_pm;
+    br_pixelmap *icon;
+    int count_slots;
+    int level;
+    int i;
+    int j;
+    int delta;
+    int delta_x = 2;
+
+    switch (pAPO_str[0]) {
+    case 'A':
+        dest_pm = C2V(gArmour_colour_map);
+        icon = C2V(gIcon_armour);
+        count_slots = C2V(gProgram_state).current_car.power_up_slots[0];
+        if (pLevel != C2V(gPrev_ps_apo_levels)[0]
+                || C2V(gProgram_state).current_car.power_up_slots[0] != C2V(gPrev_ps_drawn_levels)[0]) {
+            C2V(gPS_apo_level_changed)[0] = 1;
+        } else {
+            C2V(gPS_apo_level_changed)[0] = 1;
+        }
+        C2V(gPrev_ps_drawn_levels)[0] = C2V(gProgram_state).current_car.power_up_slots[0];
+        C2V(gPrev_ps_apo_levels)[0] = pLevel;
+        changed = C2V(gPS_apo_level_changed)[0];
+        break;
+    case 'P':
+        dest_pm = C2V(gPower_colour_map);
+        icon = C2V(gIcon_power);
+        count_slots = C2V(gProgram_state).current_car.power_up_slots[1];
+        if (pLevel != C2V(gPrev_ps_apo_levels)[1]
+                || C2V(gProgram_state).current_car.power_up_slots[1] != C2V(gPrev_ps_drawn_levels)[1]) {
+            C2V(gPS_apo_level_changed)[1] = 1;
+        } else {
+            C2V(gPS_apo_level_changed)[1] = 1;
+        }
+        C2V(gPrev_ps_drawn_levels)[1] = C2V(gProgram_state).current_car.power_up_slots[1];
+        C2V(gPrev_ps_apo_levels)[1] = pLevel;
+        changed = C2V(gPS_apo_level_changed)[1];
+        break;
+    case 'O':
+        dest_pm = C2V(gOffensive_colour_map);
+        icon = C2V(gIcon_offense);
+        count_slots = C2V(gProgram_state).current_car.power_up_slots[2];
+        if (pLevel != C2V(gPrev_ps_apo_levels)[2]
+                || C2V(gProgram_state).current_car.power_up_slots[2] != C2V(gPrev_ps_drawn_levels)[2]) {
+            C2V(gPS_apo_level_changed)[2] = 1;
+        } else {
+            C2V(gPS_apo_level_changed)[2] = 1;
+        }
+        C2V(gPrev_ps_drawn_levels)[2] = C2V(gProgram_state).current_car.power_up_slots[2];
+        C2V(gPrev_ps_apo_levels)[2] = pLevel;
+        changed = C2V(gPS_apo_level_changed)[2];
+        break;
+    }
+    if (changed) {
+        DRPixelmapCopy(dest_pm, C2V(gPowerbar));
+        DRPixelmapRectangleMaskedCopy(dest_pm, delta_x, 0, icon, 0, 0, icon->width, icon->height);
+        count_slots = count_slots - pLevel;
+        level = pLevel;
+
+        /* Draw staggered APO levels */
+        for (i = 0; i < 15; i += 5) {
+            for (j = 0; j < 10; j++) {
+                delta = delta_x;
+                if (level > 0) {
+                    DRPixelmapRectangleMaskedCopy(dest_pm,
+                        j * C2V(gIcon_litBloc1)->width + delta + icon->width + 2, i,
+                        C2V(gIcon_litBloc1), 0, 0, C2V(gIcon_litBloc1)->width, C2V(gIcon_litBloc1)->height);
+                    level -= 1;
+                } else if (count_slots > 0) {
+                    DRPixelmapRectangleMaskedCopy(dest_pm,
+                        j * C2V(gIcon_grnBlock1)->width + delta + icon->width + 2, i,
+                        C2V(gIcon_grnBlock1), 0, 0, C2V(gIcon_grnBlock1)->width, C2V(gIcon_grnBlock1)->height);
+                    count_slots -= 1;
+                } else {
+                    DRPixelmapRectangleMaskedCopy(dest_pm,
+                      j * C2V(gIcon_greyBloc1)->width + delta + icon->width + 2, i,
+                      C2V(gIcon_greyBloc1), 0, 0, C2V(gIcon_greyBloc1)->width, C2V(gIcon_greyBloc1)->height);
+                }
+            }
+            delta -= 2;
+        }
+        switch (pAPO_str[0]) {
+        case 'A':
+            BrMapUpdate(C2V(gArmour_colour_map), BR_MAPU_ALL);
+            C2V(gArmour_material)->colour_map = C2V(gArmour_colour_map);
+            BrMaterialUpdate(C2V(gArmour_material), BR_MATU_COLOURMAP);
+            break;
+        case 'P':
+            BrMapUpdate(gPower_colour_map, BR_MAPU_ALL);
+            C2V(gPower_material)->colour_map = gPower_colour_map;
+            BrMaterialUpdate(C2V(gPower_material), BR_MATU_COLOURMAP);
+            break;
+        case 'O':
+            BrMapUpdate(gOffensive_colour_map, BR_MAPU_ALL);
+            C2V(gOffence_material)->colour_map = gOffensive_colour_map;
+            BrMaterialUpdate(C2V(gOffence_material), BR_MATU_COLOURMAP);
+            break;
+        }
+    }
+    C2V(gArmour_actor)->render_style = BR_RSTYLE_FACES;
+    C2V(gPower_actor)->render_style = BR_RSTYLE_FACES;
+    C2V(gOffense_actor)->render_style = BR_RSTYLE_FACES;
+}
+C2_HOOK_FUNCTION(0x00449830, DoPSPowerHeadup)
 
 int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it) {
     int index;
