@@ -607,6 +607,14 @@ void C2_HOOK_FASTCALL DoPSPowerHeadup(int pLevel, const char* pAPO_str) {
 }
 C2_HOOK_FUNCTION(0x00449830, DoPSPowerHeadup)
 
+void C2_HOOK_FASTCALL DoPSPowerupHeadups(void) {
+
+    DoPSPowerHeadup(C2V(gProgram_state).current_car.power_up_levels[0], "A");
+    DoPSPowerHeadup(C2V(gProgram_state).current_car.power_up_levels[1], "P");
+    DoPSPowerHeadup(C2V(gProgram_state).current_car.power_up_levels[2], "O");
+}
+C2_HOOK_FUNCTION(0x004497b0, DoPSPowerupHeadups)
+
 int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it) {
     int index;
     tHeadup* the_headup;
