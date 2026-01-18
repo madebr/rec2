@@ -42,6 +42,7 @@ EXPORTS
     BrMatrix23PostScale
     BrMatrix23Rotate
     BrMatrix23Scale
+    BrMatrix23TApplyV
     BrMatrix34ApplyP
     BrMatrix34ApplyV
     BrMatrix34Copy
