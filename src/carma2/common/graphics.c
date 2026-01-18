@@ -1987,3 +1987,31 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU3
     C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[1] += (float)C2V(gINT_0074abd0);
 }
 C2_HOOK_FUNCTION(0x00496940, CalcMapCheckpoint2)
+
+void C2_HOOK_FASTCALL DrawMapSmallBlip(br_pixelmap* pScreen, tU32 pTime, const br_vector3 *pPos, int pColour) {
+    br_colour bVar1;
+    int iVar2;
+    int iStackY_2c;
+    br_vector3 map_pos;
+
+    if (pTime & 0x100) {
+        pColour = 0;
+    }
+    BrMatrix34ApplyP(&map_pos, pPos, &C2V(gCurrent_race).map_transformation);
+    if (map_pos.v[0] >= 0.f && map_pos.v[0] < (float)pScreen->width
+            && map_pos.v[1] >= 0 && map_pos.v[1] < (float)pScreen->height) {
+
+        if (C2V(gMap_view) == 2) {
+            PossibleLock(1);
+        }
+        if (C2V(gBack_screen)->type == BR_PMT_INDEX_8) {
+            ((br_uint_8*)pScreen->pixels)[(int)map_pos.v[1] * pScreen->row_bytes + (int)map_pos.v[0]] = pColour;
+        } else {
+            ((br_uint_16*)pScreen->pixels)[(int)map_pos.v[1] * pScreen->row_bytes + (int)map_pos.v[0]] = PaletteEntry16Bit(C2V(gRender_palette), pColour);
+        }
+        if (C2V(gMap_view) == 2) {
+            PossibleUnlock(1);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004967c0, DrawMapSmallBlip)
