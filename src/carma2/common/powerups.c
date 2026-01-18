@@ -454,6 +454,47 @@ void C2_HOOK_FASTCALL ResetPowerups(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004da630, ResetPowerups, ResetPowerups_original)
 
+void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime) {
+    float f;
+    float scale;
+    float angle;
+    br_fixed_ls prev_opacity;
+
+    if (pIcon == NULL) {
+        pPowerup->icon_actor->render_style = BR_RSTYLE_FACES;
+        BrVector3Set(&pIcon->icon_actor->t.t.translate.t, (float)pX + 16.f, (float)-(pY + 16), 0.f);
+        RenderThisHeadup(pIcon->icon_actor);
+        return;
+    }
+    if (pIcon->icon_actor != NULL) {
+        pIcon->icon_actor->render_style = BR_RSTYLE_FACES;
+        if (pScale) {
+            f = (float)(pTime - pIcon->fizzle_start) / 600.f;
+            if (pIcon->fizzle_direction >= 0) {
+                scale = 1.f + 5.f * (1.f - f);
+                angle = 1.f - f;
+            } else {
+                scale = 1.01f - f;
+                angle = f;
+            }
+            BrMatrix34Scale(&pIcon->icon_actor->t.t.mat, scale, scale, 1.f);
+            BrMatrix34PostRotateZ(&pIcon->icon_actor->t.t.mat, BrScalarToFixed(1.f - angle / 2.f));
+            pIcon->icon_actor->material->extra_prim[1].v.x = BR_FIXED_INT((1.f - angle) * 255.f);
+            BrMaterialUpdate(pIcon->icon_actor->material, BR_MATU_EXTRA_PRIM);
+        } else {
+            prev_opacity = pIcon->icon_actor->material->extra_prim[1].v.x;
+            pIcon->icon_actor->material->extra_prim[1].v.x = 0xff0000;
+            if (prev_opacity != pIcon->icon_actor->material->extra_prim[1].v.x) {
+                BrMaterialUpdate(pIcon->icon_actor->material, BR_MATU_EXTRA_PRIM);
+            }
+            BrMatrix34Identity(&pIcon->icon_actor->t.t.mat);
+        }
+        BrVector3Set(&pIcon->icon_actor->t.t.translate.t, (float)pX + 16.f, (float)-(pY + 16.f), 0.f);
+        RenderThisHeadup(pIcon->icon_actor);
+    }
+}
+C2_HOOK_FUNCTION(0x004e07f0, PrintPowerupIconIn3D)
+
 br_actor* (C2_HOOK_FASTCALL * CreateActorFromPowerupMap_original)(br_pixelmap* pMap);
 br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pMap) {
 

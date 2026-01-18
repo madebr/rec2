@@ -45,6 +45,8 @@ void C2_HOOK_FASTCALL EmptyInventory(void);
 
 void C2_HOOK_FASTCALL ResetPowerups(void);
 
+void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime);
+
 br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL LoadPowerups(void);
