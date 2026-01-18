@@ -1934,3 +1934,11 @@ void C2_HOOK_FASTCALL DoSomeThingsToCheckpoints(br_pixelmap* pMap, tU32 pTime, t
     }
 }
 C2_HOOK_FUNCTION(0x00495ba0, DoSomeThingsToCheckpoints)
+
+void C2_HOOK_FASTCALL CalcMapCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    br_vector3 p;
+
+    BrMatrix34ApplyP(&p, &C2V(gCurrent_race).checkpoints[pCheckpoint].pos, &C2V(gCurrent_race).map_transformation);
+    BrVector2Copy(&C2V(gCurrent_race).checkpoints[pCheckpoint].map_position, &p);
+}
+C2_HOOK_FUNCTION(0x004968f0, CalcMapCheckpoint)
