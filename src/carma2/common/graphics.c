@@ -6,11 +6,15 @@
 #include "errors.h"
 #include "finteray.h"
 #include "globvars.h"
+#include "globvrbm.h"
 #include "grafdata.h"
+#include "graphics.h"
 #include "init.h"
 #include "input.h"
 #include "loading.h"
 #include "oil.h"
+#include "mainloop.h"
+#include "polyfont.h"
 #include "physics.h"
 #include "polyfont.h"
 #include "tinted.h"
@@ -1522,6 +1526,66 @@ br_scalar C2_HOOK_FASTCALL DistanceFromPlane(br_vector3* pPos, br_scalar arg2, b
     return fabsf((pPos->v[0] * pA + pPos->v[1] * pB + pPos->v[2] * pC + pD) / (pA * pA + pB * pB + pC * pC));
 }
 C2_HOOK_FUNCTION(0x0047b910, DistanceFromPlane)
+
+void C2_HOOK_FASTCALL DoTestHeadup(void) {
+    static C2_HOOK_VARIABLE_IMPLEMENT(int, do_headup_material, 0x006815c0);
+
+    C2V(do_headup_material) = !C2V(do_headup_material);
+    if (C2V(do_headup_material)) {
+        BrMapUpdate(C2V(gCurrent_rev), BR_MAPU_ALL);
+        C2V(gStatbarHUD1_material)->colour_map = C2V(gCurrent_rev);
+        BrMaterialUpdate(C2V(gStatbarHUD1_material), BR_MATU_COLOURMAP);
+    } else {
+        BrMapUpdate(C2V(gDamage_hud), BR_MAPU_ALL);
+        C2V(gStatbarHUD5_material)->colour_map = C2V(gDamage_hud);
+        BrMaterialUpdate(C2V(gStatbarHUD5_material), BR_MATU_COLOURMAP);
+    }
+    if (C2V(gNet_mode) == eNet_mode_none) {
+        BrMatrix34Translate(&C2V(gArmour_actor)->t.t.mat, 0.f, 0.f, 0.f);
+        BrMatrix34Translate(&C2V(gPower_actor)->t.t.mat, 0.f, 0.f, 0.f);
+        BrMatrix34Translate(&C2V(gOffense_actor)->t.t.mat, 0.f, 0.f, 0.f);
+        if (C2V(gHeadup_detail_level) % 3 > 0) {
+            BrMatrix34Translate(&C2V(gStatbarHUD1_actor)->t.t.mat, 142.f, 0.f, 0.f);
+            BrMatrix34Translate(&C2V(gStatbarHUD5_actor)->t.t.mat, -178.f, 0.f, 0.f);
+            RenderThisHeadup(C2V(gStatbarHUD1_actor));
+            RenderThisHeadup(C2V(gStatbarHUD5_actor));
+            RenderThisHeadup(C2V(gTimerLeftHUD_actor));
+            RenderThisHeadup(C2V(gTimerRightHUD_actor));
+            if (C2V(gHeadup_detail_level) % 3 > 1) {
+                RenderThisHeadup(C2V(gArmour_actor));
+                RenderThisHeadup(C2V(gPower_actor));
+                RenderThisHeadup(C2V(gOffense_actor));
+                RenderThisHeadup(C2V(gStatbarRightHUD_actor));
+                RenderThisHeadup(C2V(gStatbarHUD3_actor));
+                BrMatrix34Translate(&C2V(gStatbarHUD1_actor)->t.t.mat, 0.f, 0.f, 0.f);
+                BrMatrix34Translate(&C2V(gStatbarHUD5_actor)->t.t.mat, 0.f, 0.f, 0.f);
+            } else {
+                RenderPolyTextLine(C2V(gHeadup_oppo_ped_text), 335, 50, kPolyfont_ingame_medium_blue, eJust_centre, 0);
+            }
+        }
+        if (C2V(gHeadup_detail_level) >= 1) {
+            RenderThisHeadup(C2V(gHeadup_actor));
+        }
+    } else {
+        if (C2V(gHeadup_detail_level) % 3 >= 1) {
+            BrMatrix34Translate(&C2V(gStatbarHUD5_actor)->t.t.mat, -448.f, 0.f, 0.f);
+            RenderThisHeadup(C2V(gStatbarHUD5_actor));
+            RenderThisHeadup(C2V(gStatbarHUD1_actor));
+            if (gHeadup_detail_level % 3 >= 2) {
+                BrMatrix34Translate(&C2V(gArmour_actor)->t.t.mat, 48.f, 35.f, 0.f);
+                BrMatrix34Translate(&C2V(gPower_actor)->t.t.mat, -102.f, 5.f, 0.f);
+                BrMatrix34Translate(&C2V(gOffense_actor)->t.t.mat, -252.f, -25.f, 0.f);
+                RenderThisHeadup(C2V(gArmour_actor));
+                RenderThisHeadup(C2V(gPower_actor));
+                RenderThisHeadup(C2V(gOffense_actor));
+            }
+        }
+        if (C2V(gHeadup_detail_level) >= 3) {
+            RenderThisHeadup(C2V(gHeadup_actor));
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0044b6a0, DoTestHeadup)
 
 void C2_HOOK_FASTCALL TryThisEdge(tCar_spec* pCar, br_vector3* pLight, int pIndex_1, br_scalar pSign_1, int pIndex_2, br_scalar pSign_2, int pPoint_index_1, int pPoint_index_2, br_vector3* pOffset) {
     br_scalar dot_1;
