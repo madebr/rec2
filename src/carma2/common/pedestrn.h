@@ -22,6 +22,8 @@ C2_HOOK_VARIABLE_DECLARE(tPed_cache_006944c0, gPed_cache_00694328);
 
 int C2_HOOK_FASTCALL GetPedCount(void);
 
+int C2_HOOK_FASTCALL GetPedPosition(int pIndex, br_vector3* pPos);
+
 void C2_HOOK_FASTCALL ClearOutMorphs(void);
 
 void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable);
