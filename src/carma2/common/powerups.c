@@ -8,6 +8,7 @@
 #include "funk.h"
 #include "globvars.h"
 #include "globvrpb.h"
+#include "grafdata.h"
 #include "graphics.h"
 #include "init.h"
 #include "input.h"
@@ -2346,3 +2347,87 @@ int C2_HOOK_FASTCALL GotPowerupX(tCar_spec* pCar, int pIndex, int pArg3, int pMe
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d9150, GotPowerupX, GotPowerupX_original)
+
+int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowerup, tHeadup_icon* pIcon, int pX, int pY, int pUpdate_x) {
+    br_pixelmap *fizzle_pix;
+    char s[8];
+    int timer;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, power_up_space_between_icon_text_dx, 0x294);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, power_up_space_between_icon_text_dy, 0x2a0);
+
+    if (pIcon != NULL && pIcon->fizzle_stage < 4) {
+        fizzle_pix = C2V(gFizzle_in)[pPowerup->fizzle_type];
+        if (pDraw) {
+            PrintPowerupIconIn3D(pX, pY, pIcon, pPowerup, 1, pTime);
+        }
+        if (pUpdate_x) {
+            return pX + fizzle_pix->width;
+        }
+        return 0;
+    }
+    if (pDraw) {
+        PrintPowerupIconIn3D(pX, pY, pIcon, pPowerup, 0, pTime);
+    }
+    if (pPowerup->initial_value < 0) {
+        c2_sprintf(s, "%d", -pPowerup->value);
+        if (pDraw) {
+            TransDRPixelmapText(C2V(gBack_screen),
+                pX + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dx,
+                pY + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dy,
+                &C2V(gFonts)[2],
+                s,
+                pX + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dx + 30);
+        }
+        if (pUpdate_x) {
+            return pX + DRTextWidth(&C2V(gFonts)[2], s);
+        }
+    } else if (pPowerup->initial_value > 0) {
+        TimerString(pPowerup->value, s, 0, 0, 1);
+        if (pDraw) {
+            TransDRPixelmapText(C2V(gBack_screen),
+                pX + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dx,
+                pY + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dy,
+                &C2V(gFonts)[2],
+                s,
+                pX + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dx + 30);
+        }
+        if (pUpdate_x) {
+            return pX + DRTextWidth(&C2V(gFonts)[2], s);
+        }
+    } else if (pPowerup->type == ePowerup_timed) {
+
+        timer = pPowerup->lose_time - pTime;
+        if (timer < 0) {
+            timer = 0;
+        }
+        TimerString(timer, s, 0, 0, 1);
+        if (pDraw) {
+            TransDRPixelmapText(C2V(gBack_screen),
+                pX + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dx,
+                pY + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dy,
+                &C2V(gFonts)[1],
+                s,
+                pX + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dx + 30);
+        }
+        if (pUpdate_x) {
+            return pX + DRTextWidth(&C2V(gFonts)[1], s);
+        }
+    } else if (pPowerup->current_value > 0) {
+
+        c2_sprintf(s, "%d", pPowerup->current_value);
+        if (pDraw) {
+            TransDRPixelmapText(C2V(gBack_screen),
+                pX + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dx,
+                pY + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dy,
+                &C2V(gFonts)[2],
+                s,
+                pX + C2V(gCurrent_graf_data)->power_up_space_between_icon_text_dx + 30);
+        }
+        if (pUpdate_x) {
+            return pX + DRTextWidth(&C2V(gFonts)[2], s);
+        }
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004daff0, DrawSinglePowerupIcon)
