@@ -124,6 +124,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_lollipops);
 C2_HOOK_VARIABLE_DECLARE(int, gScreen_wobble_x);
 C2_HOOK_VARIABLE_DECLARE(int, gScreen_wobble_y);
 C2_HOOK_VARIABLE_DECLARE(int, gHud_actor_storage_size);
+C2_HOOK_VARIABLE_DECLARE(br_matrix34, gSheer_mat);
+C2_HOOK_VARIABLE_DECLARE(int, gAR_fudge_headups);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
@@ -278,5 +280,7 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32
 void C2_HOOK_FASTCALL DrawCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
 
 void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
+
+void C2_HOOK_FASTCALL DrawMapSmallBlip(br_pixelmap* pScreen, tU32 pTime, const br_vector3 *pPos, int pColour);
 
 #endif //REC2_GRAPHICS_H
