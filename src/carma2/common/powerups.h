@@ -33,6 +33,8 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gCloaked_cars, 12);
 
 int C2_HOOK_FASTCALL GetPowerupCount(void);
 
+void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition);
+
 void C2_HOOK_FASTCALL InitRepulseEffects(void);
 
 void C2_HOOK_FASTCALL InitTail(void);

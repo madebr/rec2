@@ -259,6 +259,11 @@ int C2_HOOK_FASTCALL GetPowerupCount(void) {
 }
 C2_HOOK_FUNCTION(0x004df1e0, GetPowerupCount)
 
+void C2_HOOK_FASTCALL GetPowerupPosition(int pIndex, br_vector3* pPosition) {
+
+}
+C2_HOOK_FUNCTION(0x004df1f0, GetPowerupPosition)
+
 void C2_HOOK_FASTCALL InitRepulseEffects(void) {
     br_pixelmap* repulse;
     int i;
