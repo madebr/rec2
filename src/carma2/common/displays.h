@@ -54,6 +54,9 @@ C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gIcon_grnBlock1);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tHud_message, gHud_messages, 46);
 C2_HOOK_VARIABLE_DECLARE(int, gCredit_multiplier);
 C2_HOOK_VARIABLE_DECLARE(int, gLast_credit_amount);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPrev_ps_apo_levels, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPrev_ps_drawn_levels, 3);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPS_apo_level_changed, 3);
 
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 
@@ -86,6 +89,8 @@ int C2_HOOK_FASTCALL FindAHeadupHoleWoofBarkSoundsABitRude(int pSlot_index);
 void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void);
 
 void C2_HOOK_FASTCALL ClearQueuedHeadups(void);
+
+void C2_HOOK_FASTCALL DoPSPowerHeadup(int pLevel, const char* pAPO_str);
 
 int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pLifetime, int pFont_index, const char* pText, int pQueue_it);
 
