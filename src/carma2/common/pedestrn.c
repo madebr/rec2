@@ -360,6 +360,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const float, gFlamed_ped_flame_scales, 7, 
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
 
+int C2_HOOK_FASTCALL GetPedCount(void) {
+    return C2V(gPed_count);
+}
+C2_HOOK_FUNCTION(0x004d2c40, GetPedCount)
+
 void C2_HOOK_FASTCALL ClearOutMorphs(void) {
     int i;
 
