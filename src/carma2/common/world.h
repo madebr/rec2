@@ -21,6 +21,7 @@ C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec*, gTrack_smashable_environment_spe
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmashable_item_spec*, gSmashable_track_indexable_triggers, 100);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tRepair_animation, gRepair_animations, 25);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gAdditional_actors);
+C2_HOOK_VARIABLE_DECLARE(int, gTrack_version);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSpecial_effects_boundary_choices, 4);
 C2_HOOK_VARIABLE_DECLARE(int, gDefault_engine_noise_index);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSoundGeneratorTypeNames, 3);
