@@ -253,6 +253,12 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_cloaked_cars, 0x006a0454);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gCloaked_cars, 12, 0x006a0910);
 
 
+int C2_HOOK_FASTCALL GetPowerupCount(void) {
+
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004df1e0, GetPowerupCount)
+
 void C2_HOOK_FASTCALL InitRepulseEffects(void) {
     br_pixelmap* repulse;
     int i;

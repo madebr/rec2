@@ -31,6 +31,8 @@ C2_HOOK_VARIABLE_DECLARE(undefined4, gDAT_006a0958);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_cloaked_cars);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gCloaked_cars, 12);
 
+int C2_HOOK_FASTCALL GetPowerupCount(void);
+
 void C2_HOOK_FASTCALL InitRepulseEffects(void);
 
 void C2_HOOK_FASTCALL InitTail(void);
