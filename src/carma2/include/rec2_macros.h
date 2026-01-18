@@ -29,6 +29,8 @@
 #define REC2_PI 3.141592653589793
 #define REC2_PI_F 3.141592653589793f
 #define REC2_TAU (2 * REC2_PI)
+#define REC2_PI_OVER_2   1.57079632679489661923
+#define REC2_3PI_OVER_2  4.71238898038468985769
 
 #define Vector2Equals(V1, V2) \
     ((V1)->v[0] == (V2)->v[0] && (V1)->v[1] == (V2)->v[1])
