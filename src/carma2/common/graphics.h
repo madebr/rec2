@@ -98,8 +98,6 @@ C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074ab88);
 C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074ab8c);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0074ab94);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0074abec);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_0074abe4);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_0074ab98);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gMap_overlay);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gMini_map);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gCheckpoint_numbers);
@@ -127,6 +125,14 @@ C2_HOOK_VARIABLE_DECLARE(int, gHud_actor_storage_size);
 C2_HOOK_VARIABLE_DECLARE(br_matrix34, gSheer_mat);
 C2_HOOK_VARIABLE_DECLARE(int, gAR_fudge_headups);
 C2_HOOK_VARIABLE_DECLARE_ARRAY_ADV(const int, gArrows, [2][4][60]);
+C2_HOOK_VARIABLE_DECLARE(br_matrix34, gCar_in_map_space);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_map_half_width);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_map_half_height);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068c858);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068d890);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0068d6e0);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074ab90);
+C2_HOOK_VARIABLE_DECLARE(br_vector2, gVector2_0068d6d8);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
@@ -287,5 +293,7 @@ void C2_HOOK_FASTCALL DrawMapSmallBlip(br_pixelmap* pScreen, tU32 pTime, const b
 br_uint_32 C2_HOOK_FASTCALL OppositeColour(br_uint_32 pColour);
 
 void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3 *pPos, br_uint_32 pColour);
+
+void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pTime, br_matrix34* pTrans, const br_vector3* pPos, br_uint_32 pColour);
 
 #endif //REC2_GRAPHICS_H
