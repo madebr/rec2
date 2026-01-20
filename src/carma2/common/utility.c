@@ -1409,6 +1409,29 @@ tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
 }
 C2_HOOK_FUNCTION(0x00516fd0, PaletteEntry16Bit)
 
+tU16 C2_HOOK_FASTCALL Colour24BitTo16Bit(br_colour pColour) {
+    int red;
+    int green;
+    int blue;
+
+    switch (C2V(gBack_screen)->type) {
+    case BR_PMT_RGB_555:
+        red = (pColour >> 9) & 0xf800;
+        green = (pColour >> 6) & 0x03e0;
+        blue = (pColour >> 3) & 0x001f;
+        break;
+    case BR_PMT_RGB_565:
+        red = (pColour >> 8) & 0xf800;
+        green = (pColour >> 5) & 0x07e0;
+        blue = (pColour >> 3) & 0x001f;
+        break;
+    default:
+        BrFailure("Unsupported back buffer type.");
+    }
+    return red | green | blue;
+}
+C2_HOOK_FUNCTION(0x00517050, PaletteEntry16Bit)
+
 br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
     tU16* dst_entry;
     int value;
