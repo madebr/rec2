@@ -127,6 +127,14 @@ C2_HOOK_VARIABLE_DECLARE(int, gHud_actor_storage_size);
 C2_HOOK_VARIABLE_DECLARE(br_matrix34, gSheer_mat);
 C2_HOOK_VARIABLE_DECLARE(int, gAR_fudge_headups);
 C2_HOOK_VARIABLE_DECLARE_ARRAY_ADV(const int, gArrows, [2][4][60]);
+C2_HOOK_VARIABLE_DECLARE(br_matrix34, gCar_in_map_space);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_map_half_width);
+C2_HOOK_VARIABLE_DECLARE(int, gHeadup_map_half_height);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068c858);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068d890);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0068d6e0);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074ab90);
+C2_HOOK_VARIABLE_DECLARE(br_vector2, gVector2_0068d6d8);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
