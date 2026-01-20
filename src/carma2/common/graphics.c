@@ -2000,9 +2000,6 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU3
 C2_HOOK_FUNCTION(0x00496940, CalcMapCheckpoint2)
 
 void C2_HOOK_FASTCALL DrawMapSmallBlip(br_pixelmap* pScreen, tU32 pTime, const br_vector3 *pPos, int pColour) {
-    br_colour bVar1;
-    int iVar2;
-    int iStackY_2c;
     br_vector3 map_pos;
 
     if (pTime & 0x100) {
