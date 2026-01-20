@@ -288,6 +288,6 @@ br_uint_32 C2_HOOK_FASTCALL OppositeColour(br_uint_32 pColour);
 
 void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3 *pPos, br_uint_32 pColour);
 
-void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pTime, br_matrix34* pTrans, br_vector3* pPos, br_uint_32 pColour);
+void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pTime, br_matrix34* pTrans, const br_vector3* pPos, br_uint_32 pColour);
 
 #endif //REC2_GRAPHICS_H

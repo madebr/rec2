@@ -2093,7 +2093,7 @@ void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, c
 }
 C2_HOOK_FUNCTION(0x00495a00, DrawArrow)
 
-void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pTime, br_matrix34* pTrans, br_vector3* pPos, br_uint_32 pColour) {
+void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pTime, br_matrix34* pTrans, const br_vector3* pPos, br_uint_32 pColour) {
     tU32 time_diff;
     br_vector3 map_pos;
     float tv1;
