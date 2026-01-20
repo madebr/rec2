@@ -37,6 +37,20 @@
         (v1)->v[1] = (s) * (v2)->v[1]; \
     } while (0)
 
+#define BrVector2Normalise(v1, v2)                               \
+    do {                                                         \
+        br_scalar _scale;                                        \
+        _scale = BR_LENGTH2((v2)->v[0], (v2)->v[1]); \
+        if (_scale > BR_SCALAR_EPSILON * 2) {                    \
+            _scale = 1.0f / _scale;                              \
+            (v1)->v[0] = (v2)->v[0] * _scale;                    \
+            (v1)->v[1] = (v2)->v[1] * _scale;                    \
+        } else {                                                 \
+            (v1)->v[0] = 1.0f;                                   \
+            (v1)->v[1] = 0.0f;                                   \
+        }                                                        \
+    } while (0)
+
 #define BrVector3Length(v1) BR_LENGTH3((v1)->v[0], (v1)->v[1], (v1)->v[2])
 #define BrVector3LengthSquared(v1) BR_SQR3((v1)->v[0], (v1)->v[1], (v1)->v[2])
 #define BrVector3Dot(v1, v2) BR_MAC3((v1)->v[0], (v2)->v[0], (v1)->v[1], (v2)->v[1], (v1)->v[2], (v2)->v[2])
