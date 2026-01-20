@@ -59,6 +59,11 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPrev_ps_drawn_levels, 3);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gPS_apo_level_changed, 3);
 C2_HOOK_VARIABLE_DECLARE(br_matrix23, gMatrix23_0068c880);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gOrigin_map);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const int, gCar_map_colours, 4);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068d6f4);
+C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074abc4);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068d8b8);
+C2_HOOK_VARIABLE_DECLARE(br_vector2, gVector2_0068d8b0);
 
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 
@@ -135,5 +140,11 @@ void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time);
 void C2_HOOK_FASTCALL DoInstruments(tU32 pThe_time);
 
 void C2_HOOK_FASTCALL PoshDrawLine(br_pixelmap* pDestn, int pX1, float pAngle, int pY1, int pX2, int pY2, int pColour);
+
+br_uint_32 C2_HOOK_FASTCALL CarArrowColour(tCar_spec *pCar,tVehicle_type pCategory);
+
+void C2_HOOK_FASTCALL DrawCarArrow(br_pixelmap* pScreen, tCar_spec *pCar, tU32 pTime, const br_vector3* pPosition, tVehicle_type category);
+
+void C2_HOOK_FASTCALL DoMapOverlays(br_pixelmap* pScreen);
 
 #endif //REC2_DISPLAYS_H
