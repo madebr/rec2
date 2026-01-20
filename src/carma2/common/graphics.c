@@ -2092,3 +2092,119 @@ void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, c
     }
 }
 C2_HOOK_FUNCTION(0x00495a00, DrawArrow)
+
+void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pTime, br_matrix34* pTrans, br_vector3* pPos, br_uint_32 pColour) {
+    tU32 time_diff;
+    br_vector3 map_pos;
+    float tv1;
+    float tv2;
+    int local_pos[2];
+    int colour;
+    int colours[2];
+    float bearing;
+    int arrow_index;
+    int size;
+
+    time_diff = pTime - C2V(gMap_time);
+    BrMatrix34ApplyP(&map_pos, pPos, &C2V(gCurrent_race).map_transformation);
+    map_pos.v[2] = 0.0;
+    if (((pCar != NULL && pCar->driver == eDriver_oppo) || (pCar != NULL && pCar->driver == eDriver_net_human))
+            && (!pCar->knackered || pCar == C2V(gTarget_lock_car_1))
+            && (C2V(gCurrent_race).race_spec->race_type != kRaceType_Cars || pCar->is_race_goal)
+            && (C2V(gNet_mode) == eNet_mode_none
+                    || (C2V(gCurrent_net_game)->options.race_sequence_type == eNet_game_type_6 && NetPlayerFromCar(pCar)->field_0x80 == 0)
+                    || (C2V(gCurrent_net_game)->options.race_sequence_type == eNet_game_type_foxy && pCar == C2V(gNet_players)[C2V(gIt_or_fox)].car)
+                    || (C2V(gCurrent_net_game)->options.race_sequence_type != eNet_game_type_6 && C2V(gCurrent_net_game)->options.race_sequence_type != eNet_game_type_foxy))) {
+
+        local_pos[0] = (int)((float)(C2V(gHeadup_map_half_width) + C2V(gINT_0068d890) + C2V(gUINT_0074ab8c)) - map_pos.v[0]);
+        local_pos[1] = (int)((float)(C2V(gHeadup_map_half_height) + C2V(gINT_0068c858) + C2V(gUINT_0074ab88)) - map_pos.v[1]);
+        tv1 = 0.f -map_pos.v[2];
+        tv2 = (float)local_pos[1] * (float)local_pos[1] + (float)local_pos[0] * (float)local_pos[0] + tv1 * tv1;
+        if (((C2V(gTarget_lock_car_2) == NULL
+                || (!C2V(gTarget_lock_enabled) && tv2 < C2V(gFLOAT_0074ab90))
+                || (C2V(gTarget_lock_enabled) && pCar == C2V(gTarget_lock_car_2))))
+                        && !pCar->knackered) {
+
+            C2V(gVector2_0068d6d8).v[0] = (float)local_pos[0];
+            C2V(gVector2_0068d6d8).v[1] = (float)local_pos[1];
+            C2V(gFLOAT_0068d6e0) = tv1;
+            C2V(gTarget_lock_car_2) = pCar;
+            C2V(gFLOAT_0074ab90) = tv2;
+        }
+    }
+    if (C2V(gMini_map_visible) || C2V(gMap_view) == 2) {
+        BrMatrix34Mul(&C2V(gCar_in_map_space), pTrans, &C2V(gCurrent_race).map_transformation);
+        bearing = FastScalarArcTan2(C2V(gCar_in_map_space).m[2][0], C2V(gCar_in_map_space).m[2][1]);
+        bearing = (360.f - bearing + 12.25f) / 22.5f;
+        arrow_index = ((int)bearing) % 16;
+        if (pCar == NULL || pCar->driver != eDriver_local_human || (pTime & 0x100)) {
+            DrawArrow(pScreen, arrow_index, &map_pos, pColour);
+        }
+        colours[0] = pColour;
+        colours[1] = OppositeColour(pColour);
+        if (C2V(gBack_screen)->type != BR_PMT_INDEX_8) {
+            colours[0] = PaletteEntry16Bit(C2V(gRender_palette), pColour);
+            colours[1] = PaletteEntry16Bit(C2V(gRender_palette), colours[1]);
+        }
+        colour = colours[pTime & 0x100];
+        if (C2V(gNet_mode) != eNet_mode_none
+                && C2V(gCurrent_net_game)->type == eNet_game_type_foxy
+                && pCar == C2V(gNet_players)[C2V(gIt_or_fox)].car) {
+
+            BrPixelmapLine(pScreen,
+                (int)(map_pos.v[0] - 8.f),
+                (int)(map_pos.v[1] - 8.f),
+                (int)(map_pos.v[0] + 8.f),
+                (int)(map_pos.v[1] - 8.f),
+                colour);
+            BrPixelmapLine(pScreen,
+                (int)(map_pos.v[0] - 8.f),
+                (int)(map_pos.v[1] + 8.f),
+                (int)(map_pos.v[0] + 8.f),
+                (int)(map_pos.v[1] + 8.f),
+                colour);
+            BrPixelmapLine(pScreen,
+                (int)(map_pos.v[0] - 8.f),
+                (int)(map_pos.v[1] - 8.f),
+                (int)(map_pos.v[0] - 8.f),
+                (int)(map_pos.v[1] + 8.f),
+                colour);
+            BrPixelmapLine(pScreen,
+                (int)(map_pos.v[0] + 8.f),
+                (int)(map_pos.v[1] - 8.f),
+                (int)(map_pos.v[0] + 8.f),
+                (int)(map_pos.v[1] + 8.f),
+                colour);
+        }
+        if (time_diff <= 500 && pCar != NULL && pCar->driver == eDriver_local_human) {
+
+            size = (35000 - 70 * time_diff) / 500;
+
+            BrPixelmapLine(pScreen,
+                (int)(map_pos.v[0] - 0.5f) - size,
+                (int)(map_pos.v[1] - 0.5f) - size,
+                (int)(map_pos.v[0] + 0.5f) + size,
+                (int)(map_pos.v[1] - 0.5f) + size,
+                colour);
+            BrPixelmapLine(pScreen,
+                (int)(map_pos.v[0] - 0.5f) - size,
+                (int)(map_pos.v[1] + 0.5f) + size,
+                (int)(map_pos.v[0] + 0.5f) + size,
+                (int)(map_pos.v[1] + 0.5f) + size,
+                colour);
+            BrPixelmapLine(pScreen,
+                (int)(map_pos.v[0] - 0.5f) - size,
+                (int)(map_pos.v[1] - 0.5f) - size,
+                (int)(map_pos.v[0] - 0.5f) - size,
+                (int)(map_pos.v[1] + 0.5f) + size,
+                colour);
+            BrPixelmapLine(pScreen,
+                (int)(map_pos.v[0] + 0.5f) + size,
+                (int)(map_pos.v[1] - 0.5f) - size,
+                (int)(map_pos.v[0] + 0.5f) + size,
+                (int)(map_pos.v[1] + 0.5f) + size,
+                colour);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00496270, DrawMapBlip)
