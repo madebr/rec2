@@ -202,6 +202,26 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_lollipops, 0x006a22c4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gScreen_wobble_x, 0x00705188);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gScreen_wobble_y, 0x00705184);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gHud_actor_storage_size, 0x00703e28);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(const int, gArrows, [2][4][60], 0x006593a0, {
+    {
+        // inner arrow (=fill)
+        { 10,  0,  0, -1,  0,  1,  0,  0, -1,  0, -2,  0,  1, -1,  1,  1,  1, -2,  2,  2,  2, },
+        { 11,  0,  0, -1,  0,  1,  0,  0, -1,  1, -1,  1, -2, -2,  1, -1,  1,  0,  1,  1,  1,  1,  2, },
+        {  9,  0,  0, -2,  0, -1,  0,  1,  0,  0, -1,  1, -1,  2, -2,  0,  1,  0,  2, },
+        { 11,  0,  0, -1,  0,  1,  0, -2, -1, -1, -1,  0, -1,  1, -1,  2, -1, -1,  1,  0,  1, -1,  2, },
+    },
+    {
+        // outer arrow (=border)
+        { 26,  1, -3,  1, -2,  1, -1,  2, -1,  2,  0,  2,  1,  3,  1,  3,  2,  3,  3,  2,  3,  1,  3,  1,  2,  0,  2, -1,  2,
+          -1,  3, -2,  3, -3,  3, -3,  2, -3,  1, -2,  1, -2,  0, -2, -1, -1, -1, -1, -2, -1, -3,  0, -3, },
+        { 22,  0, -3,  1, -3,  2, -3,  2, -2,  2, -1,  2,  0,  2,  1,  2,  2,  2,  3,  1,  3,  0,  3,  0,  2, -1,  2, -2,  2,
+          -3,  2, -3,  1, -3,  0, -2,  0, -2, -1, -1, -1, -1, -2,  0, -2, },
+        { 24,  1, -3,  2, -3,  3, -3,  3, -2,  3, -1,  2, -1,  2,  0,  2,  1,  1,  1,  1,  2,  1,  3,  0,  3, -1,  3, -1,  2,
+          -1,  1, -2,  1, -3,  1, -3,  0, -3, -1, -2, -1, -1, -1, -1, -2,  0, -2,  1, -2, },
+        { 22, -3, -2, -2, -2, -1, -2,  0, -2,  1, -2,  2, -2,  3, -2,  3, -1,  3,  0,  2,  0,  2,  1,  1,  1,  1,  2,  0,  2,
+           0,  3, -1,  3, -2,  3, -2,  2, -2,  1, -2,  0, -3,  0, -3, -1, },
+    },
+});
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
 
@@ -2015,3 +2035,72 @@ void C2_HOOK_FASTCALL DrawMapSmallBlip(br_pixelmap* pScreen, tU32 pTime, const b
     }
 }
 C2_HOOK_FUNCTION(0x004967c0, DrawMapSmallBlip)
+
+br_uint_32 C2_HOOK_FASTCALL OppositeColour(br_uint_32 pColour) {
+    if (pColour < 0xe0) {
+        if ((pColour & 7) < 4) {
+            return 0xff;
+        } else {
+            return 0;
+        }
+    } else {
+        if ((pColour & 0xf) < 8) {
+            return 0xff;
+        } else {
+            return 0;
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3 *pPos, br_uint_32 pColour) {
+    int colours[2];
+    int colour;
+    int x;
+    int y;
+    int temp;
+    int point_count;
+    const int* arrow_ptr;
+    int i;
+    int j;
+
+    if (pColour == 0xffffffff) {
+        colours[0] = 0x0;
+        colours[1] = 0x84;
+    } else {
+        colours[0] = pColour;
+        colours[1] = OppositeColour(pColour);
+    }
+
+    if (C2V(gBack_screen)->type != BR_PMT_INDEX_8) {
+        colours[0] = PaletteEntry16Bit(gRender_palette, colours[0]);
+        colours[1] = PaletteEntry16Bit(gRender_palette, colours[1]);
+        if (pColour == 0xffffffff) {
+            colours[1] = Colour24BitTo16Bit(0xff00ff);
+        }
+    }
+
+    for (i = 0; i < REC2_ASIZE(colours); i++) {
+        colour = colours[i];
+        point_count = C2V(gArrows)[i][pArrow_index & 0x3][0];
+        arrow_ptr = &C2V(gArrows)[i][pArrow_index & 0x3][1];
+        for (j = 0; j < point_count; j++, arrow_ptr += 2) {
+            if (pArrow_index & 0x8) {
+                x = -arrow_ptr[0];
+                y = -arrow_ptr[1];
+            } else {
+                x = arrow_ptr[0];
+                y = arrow_ptr[1];
+            }
+            if (pArrow_index & 0x4) {
+                temp = x;
+                x = -y;
+                y = temp;
+            }
+            BrPixelmapPixelSet(pScreen,
+                (int)(pPos->v[0] + x),
+                (int)(pPos->v[1] + y),
+                colour);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00495a00, DrawArrow)
