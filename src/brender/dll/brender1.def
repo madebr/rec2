@@ -38,6 +38,7 @@ EXPORTS
     BrMaterialUpdate
     BrMatrix23Copy
     BrMatrix23Identity
+    BrMatrix23LPNormalise
     BrMatrix23Mul
     BrMatrix23PostScale
     BrMatrix23Rotate
