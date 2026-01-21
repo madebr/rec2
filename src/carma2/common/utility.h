@@ -146,4 +146,6 @@ void C2_HOOK_FASTCALL Copy8BitTo16Bit(br_pixelmap* pDst, br_pixelmap* pSrc, br_p
 
 void C2_HOOK_FASTCALL DRPixelmapCopy(br_pixelmap* dst, br_pixelmap* src);
 
+int C2_HOOK_FASTCALL sign(int pNumber);
+
 #endif // REC2_UTILITY_H

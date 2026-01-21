@@ -1484,3 +1484,15 @@ void C2_HOOK_FASTCALL DRPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
     }
 }
 C2_HOOK_FUNCTION(0x00517d90, DRPixelmapCopy)
+
+int C2_HOOK_FASTCALL sign(int pNumber) {
+
+    if (pNumber > 0) {
+        return 1;
+    } else if (pNumber < 0) {
+        return -1;
+    } else {
+        return 0;
+    }
+}
+C2_HOOK_FUNCTION(0x00514930, sign)
