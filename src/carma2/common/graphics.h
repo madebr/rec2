@@ -135,6 +135,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0068d890);
 C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0068d6e0);
 C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074ab90);
 C2_HOOK_VARIABLE_DECLARE(br_vector2, gVector2_0068d6d8);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(const int, gMini_map_glowing_line_animation_indices, 5);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
@@ -297,5 +298,11 @@ br_uint_32 C2_HOOK_FASTCALL OppositeColour(br_uint_32 pColour);
 void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, const br_vector3 *pPos, br_uint_32 pColour);
 
 void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pTime, br_matrix34* pTrans, const br_vector3* pPos, br_uint_32 pColour);
+
+void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, br_pixelmap* pPalette);
+
+void C2_HOOK_FASTCALL DR8BitFancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period);
+
+void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap *pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period);
 
 #endif //REC2_GRAPHICS_H

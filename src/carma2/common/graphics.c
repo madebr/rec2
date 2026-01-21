@@ -230,6 +230,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068d890, 0x0068d890);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0068d6e0, 0x0068d6e0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_0074ab90, 0x0074ab90);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector2, gVector2_0068d6d8, 0x0068d6d8);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const int, gMini_map_glowing_line_animation_indices, 5, 0x006569b0, {
+    0, 1, 2, 1, 0
+});
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
 
@@ -2216,3 +2219,32 @@ void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pT
     }
 }
 C2_HOOK_FUNCTION(0x00496270, DrawMapBlip)
+
+void C2_HOOK_FASTCALL DRPixelmapBlendedLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, br_pixelmap* pPalette) {
+
+    DRDrawLine(pMap, pX1, pY1, pX2, pY2, pColour);
+}
+
+void C2_HOOK_FASTCALL DR8BitFancyDrawLine(br_pixelmap* pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period) {
+    int anim_index;
+
+    anim_index = (PDGetTotalTime() / pTime_period) % BR_ASIZE(C2V(gMini_map_glowing_line_animation_indices));
+    DRPixelmapBlendedLine(pMap, pX1, pY1, pX2, pY2, pColour, C2V(gMini_map_glowing_line_palettes)[C2V(gMini_map_glowing_line_animation_indices)[anim_index]]);
+    if (fabsf((float)(pY2 - pY1)) < fabsf((float)(pX2 - pX1))) {
+        DRPixelmapBlendedLine(pMap, pX1, pY1 - 1, pX2, pY2 - 1, pColour, C2V(gMini_map_glowing_line_palettes)[C2V(gMini_map_glowing_line_animation_indices)[anim_index]]);
+        DRPixelmapBlendedLine(pMap, pX1, pY1 + 1, pX2, pY2 + 1, pColour, C2V(gMini_map_glowing_line_palettes)[C2V(gMini_map_glowing_line_animation_indices)[anim_index]]);
+    } else {
+        DRPixelmapBlendedLine(pMap, pX1 - 1, pY1, pX2 - 1, pY2, pColour, C2V(gMini_map_glowing_line_palettes)[C2V(gMini_map_glowing_line_animation_indices)[anim_index]]);
+        DRPixelmapBlendedLine(pMap, pX1 + 1, pY1, pX2 + 1, pY2, pColour, C2V(gMini_map_glowing_line_palettes)[C2V(gMini_map_glowing_line_animation_indices)[anim_index]]);
+    }
+}
+
+void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap *pMap, int pX1, int pY1, int pX2, int pY2, br_uint_32 pColour, tU32 pTime_period) {
+
+    if (pMap->type == BR_PMT_INDEX_8) {
+        DR8BitFancyDrawLine(pMap, pX1, pY1, pX2, pY2, pColour, pTime_period);
+    } else {
+        BrPixelmapLine(pMap, pX1, pY1, pX2, pY2, PaletteEntry16Bit(C2V(gRender_palette), pColour));
+    }
+}
+C2_HOOK_FUNCTION(0x0047d2b0, FancyDrawLine)
