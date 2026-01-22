@@ -67,6 +67,10 @@ C2_HOOK_VARIABLE_DECLARE(br_vector2, gVector2_0068d8b0);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0068c874);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0068c878);
 C2_HOOK_VARIABLE_DECLARE(br_vector2, gOrigin_headup_map);
+C2_HOOK_VARIABLE_DECLARE(int, gBack_original_origin_x);
+C2_HOOK_VARIABLE_DECLARE(int, gBack_original_origin_y);
+C2_HOOK_VARIABLE_DECLARE(int, gBack_original_base_x);
+C2_HOOK_VARIABLE_DECLARE(int, gBack_original_base_y);
 
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 
@@ -161,5 +165,9 @@ void C2_HOOK_FASTCALL DoDirectionFinderStuff(br_pixelmap* pMap);
 void C2_HOOK_FASTCALL DoNearestOpponentRelativeheightMarkerStuff(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL MapOverlay(void);
+
+void C2_HOOK_FASTCALL FinishMap(void);
+
+void C2_HOOK_FASTCALL MapStuffAfterRender(void);
 
 #endif //REC2_DISPLAYS_H
