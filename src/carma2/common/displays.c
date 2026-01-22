@@ -1677,3 +1677,14 @@ void C2_HOOK_FASTCALL DoMapOverlays(br_pixelmap* pScreen) {
     }
 }
 C2_HOOK_FUNCTION(0x00495e10, DoMapOverlays)
+
+void (C2_HOOK_FASTCALL * DoOpponentStatusHeadup_original)(void);
+void C2_HOOK_FASTCALL DoOpponentStatusHeadup(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoOpponentStatusHeadup_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00494900, DoOpponentStatusHeadup, DoOpponentStatusHeadup_original)

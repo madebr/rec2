@@ -147,4 +147,6 @@ void C2_HOOK_FASTCALL DrawCarArrow(br_pixelmap* pScreen, tCar_spec *pCar, tU32 p
 
 void C2_HOOK_FASTCALL DoMapOverlays(br_pixelmap* pScreen);
 
+void C2_HOOK_FASTCALL DoOpponentStatusHeadup(void);
+
 #endif //REC2_DISPLAYS_H
