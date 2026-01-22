@@ -25,8 +25,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimers_frame_start_time, 0x006aaa58);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimers_frame_end_time, 0x006aaa50);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTimers_tolerance, 0x006aaa5c);
 
-#define RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5) (C2V(gBack_screen)->type == BR_PMT_RGB_565 ? (((R5) << 11) | ((G6) << 5) | (B5)) : (((R5) << 10) | (((G6) >> 1) << 5) | (B5)))
-
 void C2_HOOK_FASTCALL Timers_Init(void) {
     int i;
     int j;
