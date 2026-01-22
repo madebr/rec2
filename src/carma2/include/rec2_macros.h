@@ -59,4 +59,6 @@
 
 #define VEHICLE_TYPE_FROM_ID(id) ((tVehicle_type)(id >> 8))
 
+#define RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5) (C2V(gBack_screen)->type == BR_PMT_RGB_565 ? (((R5) << 11) | ((G6) << 5) | (B5)) : (((R5) << 10) | (((G6) >> 1) << 5) | (B5)))
+
 #endif // REC2_REC2_MACROS_H
