@@ -11,8 +11,14 @@
 #include "graphics.h"
 #include "loading.h"
 #include "netgame.h"
+#include "network.h"
+#include "opponent.h"
+#include "pedestrn.h"
 #include "polyfont.h"
+#include "powerups.h"
+#include "smashing.h"
 #include "utility.h"
+#include "world.h"
 
 #include "platform.h"
 
@@ -123,6 +129,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_vector2, gVector2_0068d8b0, 0x0068d8b0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068c874, 0x0068c874);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068c878, 0x0068c878);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector2, gOrigin_headup_map, 0x0068d898);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBack_original_origin_x, 0x0068d6ec);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBack_original_origin_y, 0x0068d6e8);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBack_original_base_x, 0x0068d88c);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gBack_original_base_y, 0x0068d888);
 
 int (C2_HOOK_FASTCALL * DRTextWidth_original)(const tDR_font* pFont, const char* pText);
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
@@ -1918,3 +1928,30 @@ void C2_HOOK_FASTCALL MapOverlay(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004950b0, MapOverlay)
+
+void C2_HOOK_FASTCALL FinishMap(void) {
+
+    C2V(gBack_screen)->origin_x = C2V(gBack_original_origin_x);
+    C2V(gBack_screen)->origin_y = C2V(gBack_original_origin_y);
+    C2V(gBack_screen)->base_x = C2V(gBack_original_base_x);
+    C2V(gBack_screen)->base_y = C2V(gBack_original_base_y);
+}
+
+void C2_HOOK_FASTCALL MapStuffAfterRender(void) {
+    if (C2V(gCurrent_race).map_image == NULL) {
+        return;
+    }
+    if (C2V(gMap_view) == 2) {
+        BrVector2Set(&C2V(gOrigin_headup_map), 0.f, 0.f);
+        DoMapOverlays(C2V(gBack_screen));
+        FinishMap();
+    }
+    else if (C2V(gMap_view) == 1) {
+      if (!C2V(gAction_replay_mode)
+                && !(C2V(gNet_mode) != eNet_mode_none && C2V(gCurrent_net_game)->type == eNet_game_type_foxy && C2V(gThis_net_player_index) == C2V(gIt_or_fox))) {
+
+            MapOverlay();
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00496d80, MapStuffAfterRender)
