@@ -1688,3 +1688,22 @@ void C2_HOOK_FASTCALL DoOpponentStatusHeadup(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00494900, DoOpponentStatusHeadup, DoOpponentStatusHeadup_original)
+
+void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
+    int p2_x;
+    int p2_y;
+
+    if (pCheckpoint >= 0 && pCheckpoint < C2V(gCurrent_race).check_point_count) {
+        if (C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[0] < 0.f) {
+            p2_x = 8;
+            p2_y = (int)((C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[1] - (float)C2V(gINT_0074abd0))
+                * ((float)C2V(gINT_0074abd4) / ((float)C2V(gINT_0074abd4) - C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[0]))
+                + (float)C2V(gINT_0074abd0));
+        } else {
+            p2_x = (int)(C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[0] + 8.f);
+            p2_y = (int)C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[1];
+        }
+        FancyDrawLine(pMap, C2V(gINT_0074abd4) + 8, C2V(gINT_0074abd0), p2_x, p2_y, 132, 100);
+    }
+}
+C2_HOOK_FUNCTION(0x00496b10, CheckPointLine);

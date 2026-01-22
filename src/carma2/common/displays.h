@@ -149,4 +149,6 @@ void C2_HOOK_FASTCALL DoMapOverlays(br_pixelmap* pScreen);
 
 void C2_HOOK_FASTCALL DoOpponentStatusHeadup(void);
 
+void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
+
 #endif //REC2_DISPLAYS_H
