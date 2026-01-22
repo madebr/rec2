@@ -2251,3 +2251,14 @@ void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap *pMap, int pX1, int pY1, int pX2
     }
 }
 C2_HOOK_FUNCTION(0x0047d2b0, FancyDrawLine)
+
+void (C2_HOOK_FASTCALL * DRPixelmapRotatedAndFeatheredCopy_original)(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans);
+void C2_HOOK_FASTCALL DRPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DRPixelmapRotatedAndFeatheredCopy_original(pMat, pDest, pDest_x, pDest_y, pSrc, pSrc_x, pSrc_y, pSrc_width, pSrc_height, pTrans);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0047cd40, DRPixelmapRotatedAndFeatheredCopy, DRPixelmapRotatedAndFeatheredCopy_original)
