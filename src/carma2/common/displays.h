@@ -64,6 +64,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gINT_0068d6f4);
 C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074abc4);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0068d8b8);
 C2_HOOK_VARIABLE_DECLARE(br_vector2, gVector2_0068d8b0);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068c874);
+C2_HOOK_VARIABLE_DECLARE(int, gINT_0068c878);
+C2_HOOK_VARIABLE_DECLARE(br_vector2, gOrigin_headup_map);
 
 int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText);
 
@@ -152,5 +155,11 @@ void C2_HOOK_FASTCALL DoOpponentStatusHeadup(void);
 void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
 
 void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget);
+
+void C2_HOOK_FASTCALL DoDirectionFinderStuff(br_pixelmap* pMap);
+
+void C2_HOOK_FASTCALL DoNearestOpponentRelativeheightMarkerStuff(br_pixelmap* pMap);
+
+void C2_HOOK_FASTCALL MapOverlay(void);
 
 #endif //REC2_DISPLAYS_H
