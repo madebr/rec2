@@ -287,3 +287,9 @@ void C2_HOOK_FASTCALL ActualActionReplayHeadups(int pSpecial_zappy_bastard) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e6280, ActualActionReplayHeadups, ActualActionReplayHeadups_original)
+
+void C2_HOOK_FASTCALL DoActionReplayHeadups(void) {
+
+    ActualActionReplayHeadups(0);
+}
+C2_HOOK_FUNCTION(0x004e6277, DoActionReplayHeadups)
