@@ -27,4 +27,6 @@ int C2_HOOK_FASTCALL InitMovie(void);
 
 int C2_HOOK_FASTCALL CreateMovie(void);
 
+int C2_HOOK_FASTCALL GenerateOneMovieFrame(void);
+
 #endif //REC2_VIDEO_H
