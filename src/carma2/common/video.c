@@ -156,3 +156,13 @@ int C2_HOOK_FASTCALL GetMovieWidth(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004e2140, GetMovieWidth)
+
+int C2_HOOK_FASTCALL GetMovieHeight(void) {
+
+    if (C2V(gNbPixelBits) == 16) {
+        return C2V(gCurrent_graf_data)->height / 2;
+    } else {
+        return C2V(gCurrent_graf_data)->height;
+    }
+}
+C2_HOOK_FUNCTION(0x004e2160, GetMovieHeight)
