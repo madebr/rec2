@@ -1,6 +1,7 @@
 #include "video.h"
 
 #include "globvars.h"
+#include "grafdata.h"
 #include "graphics.h"
 #include "platform.h"
 
@@ -145,3 +146,13 @@ void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e1a20, MovieStopRecordingIfNecessary, MovieStopRecordingIfNecessary_original)
+
+int C2_HOOK_FASTCALL GetMovieWidth(void) {
+
+    if (C2V(gNbPixelBits) == 16) {
+        return C2V(gCurrent_graf_data)->width / 2;
+    } else {
+        return C2V(gCurrent_graf_data)->width;
+    }
+}
+C2_HOOK_FUNCTION(0x004e2140, GetMovieWidth)

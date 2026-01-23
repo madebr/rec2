@@ -19,4 +19,6 @@ int C2_HOOK_FASTCALL MovieStopRecordingAndSave(void);
 
 void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void);
 
+int C2_HOOK_FASTCALL GetMovieWidth(void);
+
 #endif //REC2_VIDEO_H
