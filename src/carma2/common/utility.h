@@ -148,4 +148,6 @@ void C2_HOOK_FASTCALL DRPixelmapCopy(br_pixelmap* dst, br_pixelmap* src);
 
 int C2_HOOK_FASTCALL sign(int pNumber);
 
+void C2_HOOK_FASTCALL WaitFor(tU32 pDelay);
+
 #endif // REC2_UTILITY_H
