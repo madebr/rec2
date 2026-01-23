@@ -186,3 +186,14 @@ int C2_HOOK_FASTCALL InitMovie(void) {
     return 1;
 }
 C2_HOOK_FUNCTION(0x004e0f20, InitMovie)
+
+int (C2_HOOK_FASTCALL * CreateMovie_original)(void);
+int C2_HOOK_FASTCALL CreateMovie(void) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return CreateMovie_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e0fe0, CreateMovie, CreateMovie_original)

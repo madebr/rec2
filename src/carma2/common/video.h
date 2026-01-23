@@ -25,4 +25,6 @@ int C2_HOOK_FASTCALL GetMovieHeight(void);
 
 int C2_HOOK_FASTCALL InitMovie(void);
 
+int C2_HOOK_FASTCALL CreateMovie(void);
+
 #endif //REC2_VIDEO_H
