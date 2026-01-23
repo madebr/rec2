@@ -1955,3 +1955,61 @@ void C2_HOOK_FASTCALL MapStuffAfterRender(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00496d80, MapStuffAfterRender)
+
+void C2_HOOK_FASTCALL CleanPolyFontDangler(void) {
+    int i;
+    br_actor* a;
+
+    for (i = 0; i < C2V(gCount_polyfont_glyph_actors); i++) {
+        a = C2V(gPolyfont_glyph_actors)[i];
+        if (a->parent != NULL) {
+            BrActorRemove(a);
+        }
+    }
+    C2V(gCount_polyfont_glyph_actors) = 0;
+}
+
+void C2_HOOK_FASTCALL StopRenderingHeadups(void) {
+    int original_origin_x;
+    int original_origin_y;
+    int original_base_x;
+    int original_base_Y;
+    int i;
+    br_actor* a;
+
+    if (C2V(gCount_polyfont_glyph_actors) != 0) {
+        BrActorAdd(C2V(gHUD_root), C2V(gString_root_actor));
+    }
+    for (i = 0; i < C2V(gHud_actor_storage_size); i++) {
+        a = C2V(gHud_actor_storage)[i];
+        if (a != NULL && a->prev == NULL) {
+            BrActorAdd(C2V(gHUD_root), a);
+        }
+    }
+    original_origin_x = C2V(gRender_screen)->origin_x;
+    original_origin_y = C2V(gRender_screen)->origin_y;
+    original_base_x = C2V(gRender_screen)->base_x;
+    original_base_Y = C2V(gRender_screen)->base_y;
+    C2V(gRender_screen)->origin_x = 0;
+    C2V(gRender_screen)->origin_y = 0;
+    C2V(gRender_screen)->base_x = 0;
+    C2V(gRender_screen)->base_y = 0;
+    BrZbSceneRender(C2V(gHUD_root), C2V(gHUD_camera), C2V(gRender_screen), C2V(gDepth_buffer));
+    C2V(gRender_screen)->origin_x = original_origin_x;
+    C2V(gRender_screen)->origin_y = original_origin_y;
+    C2V(gRender_screen)->base_x = original_base_x;
+    C2V(gRender_screen)->base_y = original_base_Y;
+    if (C2V(gString_root_actor)->parent != NULL) {
+        BrActorRemove(C2V(gString_root_actor));
+    }
+    for (i = 0; i < C2V(gHud_actor_storage_size); i++) {
+        a = C2V(gHud_actor_storage)[i];
+        if (a != NULL && a->parent != NULL) {
+            BrActorRemove(a);
+        }
+    }
+    C2V(gHud_actor_storage_size) = 0;
+    CleanPolyFontDangler();
+    C2V(gRender_poly_text) = 1;
+}
+C2_HOOK_FUNCTION(0x10062ae8, StopRenderingHeadups)
