@@ -1496,3 +1496,13 @@ int C2_HOOK_FASTCALL sign(int pNumber) {
     }
 }
 C2_HOOK_FUNCTION(0x00514930, sign)
+
+void C2_HOOK_FASTCALL WaitFor(tU32 pDelay) {
+    tU32 start_time;
+
+    start_time = PDGetTotalTime();
+    while (start_time + pDelay > PDGetTotalTime() && !AnyKeyDown()) {
+        SoundService();
+    }
+}
+C2_HOOK_FUNCTION(0x100b8ab0, WaitFor)
