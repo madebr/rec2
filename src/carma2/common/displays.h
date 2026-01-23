@@ -170,4 +170,8 @@ void C2_HOOK_FASTCALL FinishMap(void);
 
 void C2_HOOK_FASTCALL MapStuffAfterRender(void);
 
+void C2_HOOK_FASTCALL CleanPolyFontDangler(void);
+
+void C2_HOOK_FASTCALL StopRenderingHeadups(void);
+
 #endif //REC2_DISPLAYS_H
