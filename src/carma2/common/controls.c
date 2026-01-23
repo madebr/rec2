@@ -3312,3 +3312,42 @@ void C2_HOOK_FASTCALL LookRight(void) {
     }
 }
 C2_HOOK_FUNCTION(0x00441f20, LookRight)
+
+void C2_HOOK_FASTCALL DisplayUserMessage(void) {
+    char* the_message;
+    int len;
+    tDR_font* font;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGraf_data, net_message_enter_y, 0x4b4);
+
+    font = &C2V(gFonts)[6];
+    the_message = &C2V(gString)[20];
+    if (!C2V(gEntering_message) || C2V(gNet_mode) == eNet_mode_none) {
+        return;
+    }
+
+    len = c2_strlen(the_message);
+    if (len < 63 && (PDGetTotalTime() & 0x200)) {
+        the_message[len] = '_';
+        the_message[len + 1] = '\0';
+    }
+    DimRectangle(C2V(gBack_screen),
+        15 * C2V(gBack_screen)->width / 100,
+        C2V(gCurrent_graf_data)->net_message_enter_y - font->height,
+        85 * C2V(gBack_screen)->width / 100,
+        C2V(gCurrent_graf_data)->net_message_enter_y + 6 * font->height,
+        1);
+
+    TransDRPixelmapText(C2V(gBack_screen), 20 * C2V(gBack_screen)->width / 100, C2V(gCurrent_graf_data)->net_message_enter_y, font, GetMiscString(eMiscString_enter_message), 100);
+    OoerrIveGotTextInMeBoxMissus(
+        6,
+        the_message,
+        C2V(gBack_screen),
+        20 * C2V(gBack_screen)->width / 100,
+        C2V(gCurrent_graf_data)->net_message_enter_y + 2 * font->height,
+        80 * C2V(gBack_screen)->width / 100,
+        C2V(gCurrent_graf_data)->net_message_enter_y + 6 * font->height,
+        0);
+    the_message[len] = '\0';
+}
+C2_HOOK_FUNCTION(0x00444c00, DisplayUserMessage)

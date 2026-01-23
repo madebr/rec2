@@ -1290,7 +1290,7 @@ typedef struct {
     int field_0x4a8;
     int field_0x4ac;
     int field_0x4b0;
-    int field_0x4b4;
+    int net_message_enter_y;
     int field_0x4b8;
     int field_0x4bc;
     int field_0x4c0;
@@ -5183,6 +5183,7 @@ enum {
     eMiscString_watching = 217,
     eMiscString_race_leader = 218,
     eMiscString_message_sent = 226,
+    eMiscString_enter_message = 226,
     eMiscString_too_late_to_cancel = 242,
     eMiscString_no_target_to_lock_onto = 250,
     eMiscString_locked_onto = 251,

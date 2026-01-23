@@ -286,4 +286,6 @@ void C2_HOOK_FASTCALL LookForward(void);
 
 void C2_HOOK_FASTCALL LookRight(void);
 
+void C2_HOOK_FASTCALL DisplayUserMessage(void);
+
 #endif //REC2_CONTROLS_H
