@@ -105,7 +105,7 @@ void C2_HOOK_FASTCALL FreeOffQTshite(void) {
 int C2_HOOK_FASTCALL MovieStopRecordingAndSave(void) {
 
     if (C2V(gNext_replay_record_state) == 4) {
-        FSSpec fs_spec;
+        struct FSSpec fs_spec;
         TimeValue duration;
         tPath_name path;
 
