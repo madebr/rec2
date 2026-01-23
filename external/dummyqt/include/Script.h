@@ -3,6 +3,7 @@
 
 enum {
     smSystemScript = -1,
+    smCurrentScript = -2,
 };
 
 #endif /* __SCRIPT__ */

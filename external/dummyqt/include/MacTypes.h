@@ -20,4 +20,11 @@ enum {
     noErr                         = 0
 };
 
+struct Rect {
+    short               top;
+    short               left;
+    short               bottom;
+    short               right;
+};
+
 #endif /* __MACTYPES__ */
