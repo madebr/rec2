@@ -36,4 +36,6 @@ float C2_HOOK_FASTCALL ARGetReplayRate(void);
 
 void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption);
 
+void C2_HOOK_FASTCALL ActualActionReplayHeadups(int pSpecial_zappy_bastard);
+
 #endif //REC2_REPLAY_H

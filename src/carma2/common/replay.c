@@ -276,3 +276,14 @@ void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatr
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c80b0, PipeSingleGrooveStop, PipeSingleGrooveStop_original)
+
+void (C2_HOOK_FASTCALL * ActualActionReplayHeadups_original)(int pSpecial_zappy_bastard);
+void C2_HOOK_FASTCALL ActualActionReplayHeadups(int pSpecial_zappy_bastard) {
+
+#if defined(C2_HOOKS_ENABLED)
+    ActualActionReplayHeadups_original(pSpecial_zappy_bastard);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e6280, ActualActionReplayHeadups, ActualActionReplayHeadups_original)
