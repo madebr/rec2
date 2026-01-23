@@ -4,6 +4,7 @@
 #include "grafdata.h"
 #include "graphics.h"
 #include "platform.h"
+#include "utility.h"
 
 #include <FileTypesAndCreators.h>
 #include <GXMath.h>
@@ -30,6 +31,10 @@ C2_HOOK_VARIABLE_IMPLEMENT(Track, gQuicktime_track, 0x006a0c10);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gQuicktime_movie_counter, 0x006a0c2c);
 C2_HOOK_VARIABLE_IMPLEMENT(struct FSSpec, gQt_file_spec, 0x006a0b08);
 C2_HOOK_VARIABLE_IMPLEMENT(struct Rect, gQuicktime_rect, 0x006a0c18);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gRecording_paused, 0x006a0c28);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gRecording_time, 0x006a0c54);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gRecording_mouse_disabled, 0x006baa28);
+
 
 void (C2_HOOK_CDECL * InitQuickTimeStuff_original)(void);
 void C2_HOOK_CDECL InitQuickTimeStuff(void) {
@@ -208,3 +213,64 @@ int C2_HOOK_FASTCALL GenerateOneMovieFrame(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e1c70, GenerateOneMovieFrame, GenerateOneMovieFrame_original)
+
+void C2_HOOK_FASTCALL TrapS3SoundOutput(void) {
+}
+
+void C2_HOOK_FASTCALL FreeS3SoundOutput(void) {
+}
+
+int C2_HOOK_FASTCALL MovieRecordFrame(br_pixelmap *pScreen, int pFrame_period) {
+    tU32 remaining;
+
+    switch (C2V(gNext_replay_record_state)) {
+    case 1:
+        C2V(gNext_replay_record_state) = 2;
+        return 0;
+    case 2:
+        WaitFor(2000);
+        if (InitMovie()) {
+            C2V(gNext_replay_record_state) = 10;
+            ShowStatusMessage(eMiscString_movie_error, eMiscString_aborting);
+            return 0;
+        }
+        C2V(gNext_replay_record_state) = 3;
+        ShowStatusMessage(eMiscString_initialising_movie, eMiscString_please_wait);
+        return 0;
+    case 3:
+        if (CreateMovie()) {
+            C2V(gNext_replay_record_state) = 10;
+            ShowStatusMessage(eMiscString_movie_error, eMiscString_aborting);
+            return 0;
+        }
+        C2V(gNext_replay_record_state) = 4;
+        ShowStatusMessage(eMiscString_recording_movie, 0);
+        TrapS3SoundOutput();
+        return 0;
+    case 4:
+        if (!C2V(gRecording_paused)) {
+            remaining = C2V(gRecording_time) + pFrame_period;
+            C2V(gRecording_paused) = 0;
+            for (; remaining > 1000 / 18; remaining -= 1000 / 18) {
+                if (GenerateOneMovieFrame() != 0) {
+                    C2V(gNext_replay_record_state) = 10;
+                    ShowStatusMessage(eMiscString_movie_error, eMiscString_aborting);
+                    return 0;
+                }
+            }
+            C2V(gRecording_time) = remaining;
+            return 0;
+        }
+        break;
+    case 5:
+        C2V(gRecording_mouse_disabled) = 0;
+        return 0;
+    case 10:
+        WaitFor(2000);
+        FreeOffQTshite();
+        FreeS3SoundOutput();
+        return 0;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x004e1da0, MovieRecordFrame)
