@@ -38,4 +38,6 @@ void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatr
 
 void C2_HOOK_FASTCALL ActualActionReplayHeadups(int pSpecial_zappy_bastard);
 
+void C2_HOOK_FASTCALL DoActionReplayHeadups(void);
+
 #endif //REC2_REPLAY_H
