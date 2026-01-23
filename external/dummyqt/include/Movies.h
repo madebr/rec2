@@ -43,4 +43,12 @@ extern Movie  FlattenMovieData(
     ScriptCode      scriptTag,
     long            createMovieFileFlags);
 
+extern OSErr CreateMovieFile(
+    const FSSpec *  fileSpec,
+    OSType          creator,
+    ScriptCode      scriptTag,
+    long            createMovieFileFlags,
+    short *         resRefNum,
+    Movie *         newmovie);
+
 #endif /* __MOVIES__ */

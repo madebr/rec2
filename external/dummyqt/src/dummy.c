@@ -64,3 +64,7 @@ Movie FlattenMovieData(Movie theMovie, long movieFlattenFlags, const FSSpec *the
     (void)createMovieFileFlags;
     return NULL;
 }
+
+OSErr CreateMovieFile(const FSSpec* fileSpec, OSType creator, ScriptCode scriptTag, long createMovieFileFlags, short* resRefNum, Movie* newmovie) {
+    return 1;
+}
