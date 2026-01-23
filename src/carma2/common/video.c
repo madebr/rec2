@@ -28,6 +28,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(ImageSequence, gQuicktime_image_sequence, 0x006a0af4)
 C2_HOOK_VARIABLE_IMPLEMENT(Media, gQuicktime_media, 0x006a0afc);
 C2_HOOK_VARIABLE_IMPLEMENT(Track, gQuicktime_track, 0x006a0c10);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gQuicktime_movie_counter, 0x006a0c2c);
+C2_HOOK_VARIABLE_IMPLEMENT(struct FSSpec, gQt_file_spec, 0x006a0b08);
+C2_HOOK_VARIABLE_IMPLEMENT(struct Rect, gQuicktime_rect, 0x006a0c18);
 
 void (C2_HOOK_CDECL * InitQuickTimeStuff_original)(void);
 void C2_HOOK_CDECL InitQuickTimeStuff(void) {
@@ -166,3 +168,21 @@ int C2_HOOK_FASTCALL GetMovieHeight(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004e2160, GetMovieHeight)
+
+int C2_HOOK_FASTCALL InitMovie(void) {
+
+    C2V(gQuicktime_rect).top = 0;
+    C2V(gQuicktime_rect).left = 0;
+    C2V(gQuicktime_rect).right = GetMovieWidth();
+    C2V(gQuicktime_rect).bottom = GetMovieHeight();
+    if (CreateMovieFile(&C2V(gQt_file_spec), sigMoviePlayer, smCurrentScript, createMovieFileDeleteCurFile, &C2V(gQuicktime_movie_file), &C2V(gQuicktime_movie)) == noErr) {
+        return 0;
+    }
+    PathCat(C2V(gQuick_time_temp_path), C2V(gApplication_path), "QTTMP");
+    PathCat(C2V(gQuick_time_movie_path_stub), C2V(gApplication_path), "MOVIE");
+    if (!CreateMovieFile(&C2V(gQt_file_spec), sigMoviePlayer, smCurrentScript, createMovieFileDeleteCurFile, &C2V(gQuicktime_movie_file), &C2V(gQuicktime_movie)) == noErr) {
+        return 0;
+    }
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004e0f20, InitMovie)
