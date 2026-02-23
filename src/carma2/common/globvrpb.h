@@ -14,5 +14,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gPending_race);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_detail_info, gCar_details, 60);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_0074b780);
 C2_HOOK_VARIABLE_DECLARE(int, gStart_race_sent);
+C2_HOOK_VARIABLE_DECLARE(int, gRendering_mirror);
 
 #endif // REC2_GLOBVRPB_H
