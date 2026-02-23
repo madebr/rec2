@@ -46,4 +46,6 @@ void C2_HOOK_FASTCALL ARSetReplayRate(float rate);
 
 void C2_HOOK_FASTCALL SynchronizeActionReplay(void);
 
+void C2_HOOK_FASTCALL DoActionReplayPostSwap(void);
+
 #endif //REC2_REPLAY_H
