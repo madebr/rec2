@@ -7,6 +7,8 @@
 
 C2_HOOK_VARIABLE_DECLARE(tActionReplayCameraMode, gAction_replay_camera_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gAction_replay_manual_camera_target_type);
+C2_HOOK_VARIABLE_DECLARE(tU32, gLast_synch_time);
+C2_HOOK_VARIABLE_DECLARE(int, gSingle_frame_mode);
 
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void);
 
@@ -41,5 +43,7 @@ void C2_HOOK_FASTCALL ActualActionReplayHeadups(int pSpecial_zappy_bastard);
 void C2_HOOK_FASTCALL DoActionReplayHeadups(void);
 
 void C2_HOOK_FASTCALL ARSetReplayRate(float rate);
+
+void C2_HOOK_FASTCALL SynchronizeActionReplay(void);
 
 #endif //REC2_REPLAY_H
