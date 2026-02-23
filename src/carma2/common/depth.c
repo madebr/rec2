@@ -616,7 +616,7 @@ void C2_HOOK_FASTCALL MungeForwardSky(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     MungeForwardSky_original();
 #else
-    MungeSkyModel(C2V(gCamera), C2V(gSky_model));
+    MungeSkyModel(C2V(gCamera), C2V(gForward_sky_model));
     C2V(gHas_sky_texture) = C2V(gProgram_state).default_depth_effect.sky_texture != NULL;
 #endif
 }
