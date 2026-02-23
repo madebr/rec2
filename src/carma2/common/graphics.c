@@ -18,6 +18,7 @@
 #include "mainloop.h"
 #include "netgame.h"
 #include "network.h"
+#include "opponent.h"
 #include "polyfont.h"
 #include "physics.h"
 #include "piping.h"
@@ -254,6 +255,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_oppobar_target_wasted, 0x0068d8d0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gPrevious_rear_yon, 0x006a234c);
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
+#define SHADOW_MAX_RENDER_DISTANCE 36.0f
 
 void C2_HOOK_FASTCALL ClearWobbles(void) {
     int i;
@@ -2596,3 +2598,63 @@ void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack(br_pixelmap* pDest, br_pixelmap* pS
     }
 }
 C2_HOOK_FUNCTION(0x0047d5b0, DRPixelmapCopyMapBlack)
+
+void C2_HOOK_FASTCALL RenderShadows(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform) {
+    int i;
+    int cat;
+    int car_count;
+    tCar_spec* the_car;
+    br_vector3 camera_to_car;
+    br_scalar distance_factor;
+
+    if (C2V(gShadow_level) == eShadow_none) {
+        return;
+    }
+    for (cat = eVehicle_self;; ++cat) {
+        if (C2V(gShadow_level) == eShadow_everyone) {
+            if (cat >= eVehicle_not_really) {
+                break;
+            }
+        } else {
+            if (cat > (C2V(gShadow_level) == eShadow_us_and_opponents ? eVehicle_rozzer : eVehicle_self)) {
+                break;
+            }
+        }
+
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (i = 0; i < car_count; i++) {
+            if (cat == eVehicle_self) {
+                the_car = &C2V(gProgram_state).current_car;
+            } else {
+                the_car = GetCarSpec(cat, i);
+            }
+            if (!the_car->active) {
+                continue;
+            }
+            if (IsCarCloaked(the_car)) {
+                continue;
+            }
+            if (C2V(gAction_replay_mode)) {
+                continue;
+            }
+
+            BrVector3Sub(&camera_to_car, (br_vector3*)C2V(gCamera_to_world).m[3], &the_car->car_master_actor->t.t.translate.t);
+            distance_factor = BrVector3LengthSquared(&camera_to_car);
+            if (distance_factor <= SHADOW_MAX_RENDER_DISTANCE) {
+                ProcessShadow(the_car, C2V(gUniverse_actor), &C2V(gProgram_state).track_spec, C2V(gCamera), &C2V(gCamera_to_world), distance_factor);
+            }
+        }
+    }
+    if (C2V(gFancy_shadow)) {
+        for (i = 0; i < C2V(gSaved_table_count); i++) {
+            C2V(gSaved_shade_tables)[i].original->height = C2V(gSaved_shade_tables)[i].copy->height;
+            C2V(gSaved_shade_tables)[i].original->pixels = C2V(gSaved_shade_tables)[i].copy->pixels;
+            BrTableUpdate(C2V(gSaved_shade_tables)[i].original, BR_TABU_ALL);
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004e74d0, RenderShadows)
