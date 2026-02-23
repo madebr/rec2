@@ -136,6 +136,8 @@ C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0068d6e0);
 C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_0074ab90);
 C2_HOOK_VARIABLE_DECLARE(br_vector2, gVector2_0068d6d8);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const int, gMini_map_glowing_line_animation_indices, 5);
+C2_HOOK_VARIABLE_DECLARE(br_matrix34, gSheer_mat);
+C2_HOOK_VARIABLE_DECLARE(int, gAR_fudge_headups);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 

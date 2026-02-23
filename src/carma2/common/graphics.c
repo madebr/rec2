@@ -1,12 +1,14 @@
 #include "graphics.h"
 
 #include "car.h"
+#include "controls.h"
 #include "depth.h"
 #include "displays.h"
 #include "errors.h"
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrbm.h"
+#include "globvrpb.h"
 #include "grafdata.h"
 #include "graphics.h"
 #include "init.h"
@@ -14,11 +16,18 @@
 #include "loading.h"
 #include "oil.h"
 #include "mainloop.h"
+#include "netgame.h"
+#include "network.h"
 #include "polyfont.h"
 #include "physics.h"
+#include "piping.h"
 #include "polyfont.h"
+#include "powerups.h"
+#include "replay.h"
 #include "tinted.h"
+#include "trig.h"
 #include "utility.h"
+#include "video.h"
 #include "world.h"
 
 #include "platform.h"
@@ -233,6 +242,13 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_vector2, gVector2_0068d6d8, 0x0068d6d8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const int, gMini_map_glowing_line_animation_indices, 5, 0x006569b0, {
     0, 1, 2, 1, 0
 });
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_matrix34, gSheer_mat, 0x0065fb20, {
+    { { 1.0, 0.0, 0.0 },
+      { 0.0, 1.0, 0.0 },
+      { 0.0, 0.0, 1.0 },
+      { 0.0, 0.0, 0.0 } }
+});
+C2_HOOK_VARIABLE_IMPLEMENT(int, gAR_fudge_headups, 0x006a2358);
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
 
@@ -1491,13 +1507,192 @@ void C2_HOOK_FASTCALL StartRenderingHeadups(void) {
 }
 C2_HOOK_FUNCTION(0x004e5a70, StartRenderingHeadups)
 
+void C2_HOOK_FASTCALL CalculateWobblitude(tU32 pThe_time) {
+    int i;
+    tU32 time_going;
+    double angle;
+    double mod_angle;
+    double cosine_over_angle;
+
+    if (C2V(gProgram_state).new_view != eView_undefined) {
+        return;
+    }
+    C2V(gScreen_wobble_x) = 0;
+    C2V(gScreen_wobble_y) = 0;
+    for (i = 0; i < REC2_ASIZE(C2V(gWobble_array)); i++) {
+        if (C2V(gWobble_array)[i].time_started != 0) {
+            time_going = pThe_time - C2V(gWobble_array)[i].time_started;
+            if (time_going > 1000) {
+                C2V(gWobble_array)[i].time_started = 0;
+            } else {
+                mod_angle = fmodf(time_going / C2V(gWobble_array)[i].period, TAU_F);
+                if (mod_angle > 1.5f * PI_F) {
+                    cosine_over_angle = C2V(gCosine_array)[(unsigned int)((TAU_F - mod_angle) / PI_F * 128.f)];
+                } else if (mod_angle > PI_F) {
+                    cosine_over_angle = -C2V(gCosine_array)[(unsigned int)((mod_angle - PI_F) / PI_F * 128.f)];
+                } else if (mod_angle > .5f * PI_F) {
+                    cosine_over_angle = -C2V(gCosine_array)[(unsigned int)((PI_F - mod_angle) / PI_F * 128.f)];
+                } else {
+                    cosine_over_angle = C2V(gCosine_array)[(unsigned int)(mod_angle / PI_F * 128.f)];
+                }
+                angle = cosine_over_angle / (1.f + time_going * .0035f);
+                C2V(gScreen_wobble_x) += (int)(C2V(gWobble_array)[i].amplitude_x * angle);
+                C2V(gScreen_wobble_y) += (int)(C2V(gWobble_array)[i].amplitude_y * angle);
+            }
+        }
+    }
+    if (C2V(gScreen_wobble_x) > C2V(gCurrent_graf_data)->cock_margin_x) {
+        C2V(gScreen_wobble_x) = C2V(gCurrent_graf_data)->cock_margin_x;
+    } else if (C2V(gScreen_wobble_x) < -gCurrent_graf_data->cock_margin_x) {
+        C2V(gScreen_wobble_x) = -C2V(gCurrent_graf_data)->cock_margin_x;
+    }
+    if (C2V(gScreen_wobble_y) > C2V(gCurrent_graf_data)->cock_margin_y) {
+        C2V(gScreen_wobble_y) = C2V(gCurrent_graf_data)->cock_margin_y;
+    } else if (C2V(gScreen_wobble_y) < -C2V(gCurrent_graf_data)->cock_margin_y) {
+        C2V(gScreen_wobble_y) = -C2V(gCurrent_graf_data)->cock_margin_y;
+    }
+    PipeSingleScreenWobble(C2V(gScreen_wobble_x), C2V(gScreen_wobble_y));
+}
+
 void (C2_HOOK_FASTCALL * RenderAFrame_original)(int pDepth_mask_on);
 void C2_HOOK_FASTCALL RenderAFrame(int pDepth_mask_on) {
 
 #if defined(C2_HOOKS_ENABLED)
     RenderAFrame_original(pDepth_mask_on);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    int x_shift;
+    int y_shift;
+    int cockpit_on;
+    int real_origin_x = 0;
+    int real_origin_y = 0;
+    int real_base_x = 0;
+    int real_base_y = 0;
+    char* old_pixels;
+    br_matrix34 old_camera_matrix;
+    br_matrix34 old_mirror_cam_matrix;
+    tU32 the_time;
+
+    C2V(gRender_screen)->pixels = C2V(gBack_screen)->pixels;
+    the_time = GetTotalTime();
+    old_pixels = C2V(gRender_screen)->pixels;
+    cockpit_on = C2V(gProgram_state).cockpit_on && C2V(gProgram_state).cockpit_image_index >= 0 && C2V(gMap_view) != 2;
+    C2V(gMirror_on__graphics) = C2V(gProgram_state).mirror_on && cockpit_on && C2V(gProgram_state).which_view == eView_forward;
+
+    StartRenderingHeadups();
+    MapStuffBeforeRender();
+    if (!C2V(gAction_replay_mode)) {
+        CalculateWobblitude(the_time);
+    }
+    if (cockpit_on) {
+        if (-C2V(gScreen_wobble_x) > C2V(gX_offset)) {
+            x_shift = -C2V(gX_offset);
+        } else if (C2V(gScreen_wobble_x) + C2V(gX_offset) + C2V(gRender_screen)->width > C2V(gBack_screen)->width) {
+            x_shift = C2V(gBack_screen)->width - C2V(gRender_screen)->width - C2V(gX_offset);
+        } else {
+            x_shift = C2V(gScreen_wobble_x);
+        }
+        if (-C2V(gScreen_wobble_y) > C2V(gY_offset)) {
+            y_shift = -C2V(gY_offset);
+        } else if (C2V(gScreen_wobble_y) + C2V(gY_offset) + C2V(gRender_screen)->height > C2V(gBack_screen)->height) {
+            y_shift = C2V(gBack_screen)->height - C2V(gRender_screen)->height - C2V(gY_offset);
+        } else {
+            y_shift = C2V(gScreen_wobble_y);
+        }
+    } else {
+        x_shift = 0;
+        y_shift = 0;
+    }
+    BrMatrix34Copy(&old_camera_matrix, &C2V(gCamera)->t.t.mat);
+    if (C2V(gMirror_on__graphics)) {
+        BrMatrix34Copy(&old_mirror_cam_matrix, &C2V(gRearview_camera)->t.t.mat);
+    }
+    if (cockpit_on) {
+        C2V(gSheer_mat).m[2][1] = y_shift / (float)C2V(gRender_screen)->height;
+        C2V(gSheer_mat).m[2][0] = -x_shift / (float)C2V(gRender_screen)->width;
+        BrMatrix34Pre(&C2V(gCamera)->t.t.mat, &C2V(gSheer_mat));
+        C2V(gCamera)->t.t.translate.t.v[0] -= C2V(gScreen_wobble_x) * 1.5f / C2V(gRender_screen)->width / WORLD_SCALE;
+        C2V(gCamera)->t.t.translate.t.v[1] += C2V(gScreen_wobble_y) * 1.5f / C2V(gRender_screen)->width / WORLD_SCALE;
+    }
+    C2V(gRender_screen)->pixels = (char*)C2V(gRender_screen)->pixels + x_shift + y_shift * C2V(gRender_screen)->row_bytes;
+    if (C2V(gRender_indent) && C2V(gMap_view) != 2) {
+        BrPixelmapRectangleFill(
+                C2V(gBack_screen),
+                0,
+                0,
+                C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width,
+                C2V(gProgram_state).current_render_top,
+                0);
+        BrPixelmapRectangleFill(
+                C2V(gBack_screen),
+                0,
+                C2V(gProgram_state).current_render_bottom,
+                C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width,
+                C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height - C2V(gProgram_state).current_render_bottom,
+                0);
+        BrPixelmapRectangleFill(
+                C2V(gBack_screen),
+                0,
+                C2V(gProgram_state).current_render_top,
+                C2V(gProgram_state).current_render_left,
+                C2V(gProgram_state).current_render_bottom - C2V(gProgram_state).current_render_top,
+                0);
+        BrPixelmapRectangleFill(
+                C2V(gBack_screen),
+                C2V(gProgram_state).current_render_right,
+                C2V(gProgram_state).current_render_top,
+                C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width - C2V(gProgram_state).current_render_right,
+                C2V(gProgram_state).current_render_bottom - C2V(gProgram_state).current_render_top,
+                0);
+    }
+    C2V(gRendering_mirror) = 0;
+    for (i = 0; i < 1; i++) {
+        DoACompleteRenderPass(0, &C2V(gCamera_to_world), C2V(gCamera), C2V(gRender_screen), C2V(gDepth_buffer));
+    }
+    C2V(gCamera)->t.t.mat = old_camera_matrix;
+    if (C2V(gMirror_on__graphics)) {
+        DoACompleteRenderPass(1, &C2V(gRearview_camera_to_world), C2V(gRearview_camera), C2V(gRearview_screen), C2V(gRearview_depth_buffer));
+        C2V(gRearview_camera)->t.t.mat = old_mirror_cam_matrix;
+    }
+    RenderTintedPolys();
+    if (C2V(gMap_view) != 2) {
+        DimAFewBits();
+        DoDamageScreen(the_time);
+        if (!C2V(gAction_replay_mode) || C2V(gAR_fudge_headups)) {
+            DoHeadups(the_time);
+        }
+        DoInstruments(the_time);
+        if (!C2V(gAction_replay_mode) || C2V(gAR_fudge_headups)) {
+            DrawPowerups(the_time);
+        }
+    }
+    if (C2V(gMap_view) != 2 && (!C2V(gAction_replay_mode) || C2V(gAR_fudge_headups))) {
+        DoTestHeadup();
+        DoPSPowerupHeadups();
+    }
+    MapStuffAfterRender();
+    if (C2V(gNet_mode) != eNet_mode_none) {
+        DisplayUserMessage();
+    }
+    if (C2V(gAction_replay_mode)) {
+        MovieRecordFrame(C2V(gBack_screen), C2V(gFrame_period));
+    }
+    if (C2V(gAction_replay_mode) && !C2V(gAR_fudge_headups)) {
+        DoActionReplayHeadups();
+    }
+    StopRenderingHeadups();
+    if (C2V(gAction_replay_mode)) {
+        SynchronizeActionReplay();
+    } else {
+        PipeSingleFrameFinish();
+    }
+    C2V(gRender_screen)->pixels = old_pixels;
+    if (!C2V(gPalette_fade_time) || GetRaceTime() > C2V(gPalette_fade_time) + 500u) {
+        PDScreenBufferSwap(0);
+    }
+    if (C2V(gAction_replay_mode)) {
+        DoActionReplayPostSwap();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e4e40, RenderAFrame, RenderAFrame_original)
