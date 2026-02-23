@@ -7,6 +7,7 @@
 #include "globvars.h"
 #include "globvrkm.h"
 #include "loading.h"
+#include "main.h"
 #include "pedestrn.h"
 #include "piping.h"
 #include "platform.h"
@@ -22,6 +23,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU8, gCamera_type_allowed_replay, 9, 0x005
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU8, gCamera_type_allowed_gameplay, 9, 0x0058f610, {
     1, 0, 0, 0, 1, 0, 0, 1, 1,
 });
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSingle_frame_mode, 0x006a23c4);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_synch_time, 0x006a23d4);
 
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 
@@ -298,3 +301,16 @@ void C2_HOOK_FASTCALL ARSetReplayRate(float rate) {
     C2V(gReplay_rate) = rate;
 }
 C2_HOOK_FUNCTION(0x004023a0, ARSetReplayRate)
+
+void C2_HOOK_FASTCALL SynchronizeActionReplay(void) {
+
+    while (ARGetReplayRate() != 0.f && (float)(PDGetTotalTime() - C2V(gLast_synch_time)) < (float)C2V(gFrame_period) / fabsf(ARGetReplayRate())) {
+        ServiceGameInRace();
+    }
+    C2V(gLast_synch_time) = PDGetTotalTime();
+    if (C2V(gSingle_frame_mode)) {
+        ARSetReplayRate(0.f);
+        C2V(gSingle_frame_mode) = 0;
+    }
+}
+C2_HOOK_FUNCTION(0x004e7110, SynchronizeActionReplay)
