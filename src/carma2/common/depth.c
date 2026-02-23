@@ -7,9 +7,12 @@
 #include "globvrpb.h"
 #include "init.h"
 #include "loading.h"
+#include "platform.h"
 #include "replay.h"
 #include "skidmark.h"
 #include "spark.h"
+#include "tinted.h"
+#include "trig.h"
 #include "world.h"
 #include "utility.h"
 
@@ -47,6 +50,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gHas_sky_texture, 0x0067c4a8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gRearview_sky_actor, 0x0067c4c0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gOld_fov, 0x0067c4ac);
 C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gOld_yon, 0x0067c4b8);
+C2_HOOK_VARIABLE_IMPLEMENT(tSpecial_volume*, gLast_camera_special_volume, 0x0079ec44);
 
 #define ACTOR_CAMERA(ACTOR) ((br_camera*)((ACTOR)->type_data))
 
@@ -782,3 +786,74 @@ void C2_HOOK_FASTCALL DoWobbleCamera(br_actor* pCamera) {
     pCamera->t.t.mat.m[2][2] += FastScalarSin((int)fmod(f_time / period22 * 360.f, 360.f)) * mag22;
 }
 C2_HOOK_FUNCTION(0x00446680, DoWobbleCamera)
+
+void C2_HOOK_FASTCALL DoDrugWobbleCamera(br_actor* pCamera) {
+    float f_time;
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag00, 0x005911d0, 0.03f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag01, 0x005911d4, 0.03f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag02, 0x005911d8, 0.03f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag10, 0x005911dc, 0.2f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag11, 0x005911e0, 0.07f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag12, 0x005911e4, 0.03f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag20, 0x005911e8, 0.02f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag21, 0x005911ec, 0.03f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag22, 0x005911f0, 0.01f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period00, 0x005911f4, 550.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period01, 0x005911f8, 700.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period02, 0x005911fc, 200.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period10, 0x00591200, 100.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period11, 0x00591204, 1300.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period12, 0x00591208, 500.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period20, 0x0059120c, 800.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period21, 0x00591210, 1500.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period22, 0x00591214, 300.f);
+
+    f_time = (float)PDGetTotalTime();
+    pCamera->t.t.mat.m[0][0] += FastScalarSin((int)fmod(f_time / C2V(period00) * 360.f, 360.f)) * C2V(mag00);
+    pCamera->t.t.mat.m[0][1] += FastScalarSin((int)fmod(f_time / C2V(period01) * 360.f, 360.f)) * C2V(mag01);
+    pCamera->t.t.mat.m[0][2] += FastScalarSin((int)fmod(f_time / C2V(period02) * 360.f, 360.f)) * C2V(mag02);
+    pCamera->t.t.mat.m[1][0] += FastScalarSin((int)fmod(f_time / C2V(period10) * 360.f, 360.f)) * C2V(mag10);
+    pCamera->t.t.mat.m[1][1] += FastScalarSin((int)fmod(f_time / C2V(period11) * 360.f, 360.f)) * C2V(mag11);
+    pCamera->t.t.mat.m[1][2] += FastScalarSin((int)fmod(f_time / C2V(period12) * 360.f, 360.f)) * C2V(mag12);
+    pCamera->t.t.mat.m[2][0] += FastScalarSin((int)fmod(f_time / C2V(period20) * 360.f, 360.f)) * C2V(mag20);
+    pCamera->t.t.mat.m[2][1] += FastScalarSin((int)fmod(f_time / C2V(period21) * 360.f, 360.f)) * C2V(mag21);
+    pCamera->t.t.mat.m[2][2] += FastScalarSin((int)fmod(f_time / C2V(period22) * 360.f, 360.f)) * C2V(mag22);
+}
+
+int C2_HOOK_FASTCALL DoSubAquaCam(void) {
+
+    if (InWater(C2V(gHud_tinted1))) {
+        TurnTintedPolyOn(C2V(gHud_tinted1));
+        return 1;
+    } else {
+        TurnTintedPolyOff(C2V(gHud_tinted1));
+        return 0;
+    }
+}
+
+void C2_HOOK_FASTCALL DoSpecialCameraEffect(br_actor* pCamera, br_matrix34* pCamera_to_world) {
+
+    UpdateTintedPolys();
+    if (C2V(gOn_drugs) || !C2V(gAction_replay_mode)) {
+        TurnTintedPolyOn(C2V(gHud_tinted2));
+        DoDrugWobbleCamera(pCamera);
+    } else {
+        TurnTintedPolyOff(C2V(gHud_tinted2));
+        C2V(gLast_camera_special_volume) = FindSpecialVolume((br_vector3*)pCamera_to_world->m[3], C2V(gLast_camera_special_volume), 0);
+        if (C2V(gLast_camera_special_volume) != NULL) {
+            if (C2V(gLast_camera_special_volume)->camera_special_effect_index == 0) {
+                DoWobbleCamera(pCamera);
+            }
+        }
+        if (C2V(gHas_sky_texture) && C2V(gSky_on)) {
+            if ((C2V(gProgram_state).current_depth_effect.sky_texture != NULL) == (C2V(gLast_camera_special_volume) != NULL && C2V(gLast_camera_special_volume)->sky_col == -2)) {
+                ToggleSkyQuietly();
+            }
+        }
+    }
+    SetTintedPolyRefMaterial(C2V(gHud_tinted1), (br_vector3*)pCamera_to_world->m[3]);
+    if (DoSubAquaCam()) {
+        DoWobbleCamera(pCamera);
+    }
+}
+C2_HOOK_FUNCTION(0x00446340, DoSpecialCameraEffect)

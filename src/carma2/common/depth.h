@@ -28,6 +28,7 @@ C2_HOOK_VARIABLE_DECLARE(br_model*, gForward_sky_model);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gRearview_sky_actor);
 C2_HOOK_VARIABLE_DECLARE(br_angle, gOld_fov);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gOld_yon);
+C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gLast_camera_special_volume);
 
 
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
@@ -93,5 +94,11 @@ void C2_HOOK_FASTCALL DoHorizon(br_pixelmap* pRender_buffer, br_pixelmap* pDepth
 void C2_HOOK_FASTCALL DepthEffectSky(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world);
 
 void C2_HOOK_FASTCALL DoWobbleCamera(br_actor* pCamera);
+
+void C2_HOOK_FASTCALL DoDrugWobbleCamera(br_actor* pCamera);
+
+int C2_HOOK_FASTCALL DoSubAquaCam(void);
+
+void C2_HOOK_FASTCALL DoSpecialCameraEffect(br_actor* pCamera, br_matrix34* pCamera_to_world);
 
 #endif //REC2_DEPTH_H
