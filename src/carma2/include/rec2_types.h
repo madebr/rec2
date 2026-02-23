@@ -400,7 +400,12 @@ typedef struct {
     tS8 wobble_y;
 } tPipe_chunk_screen_wobble;
 
+typedef struct {
+    tU32 time;
+} tPipe_chunk_frame_finish;
+
 typedef enum {
+    ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
     ePipe_chunk_car = 5,
     ePipe_chunk_single_graphpical_wheel_stuff = 6,
