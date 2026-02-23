@@ -47,6 +47,8 @@ void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPo
 
 br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex);
 
+void C2_HOOK_FASTCALL UpdateTintedPolys(void);
+
 void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPosition);
 
 void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex);
