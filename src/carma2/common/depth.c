@@ -162,7 +162,7 @@ void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* 
 
     C2V(gHorizon_material)->colour_map = pSky_texture;
     BrMaterialUpdate(C2V(gHorizon_material), BR_MATU_ALL);
-    MungeSkyVs(C2V(gSky_model), C2V(gHorizon_material));
+    MungeSkyVs(C2V(gForward_sky_model), C2V(gHorizon_material));
 
     C2V(gProgram_state).current_depth_effect.colour.red = pRed;
     C2V(gProgram_state).current_depth_effect.colour.green = pGreen;
