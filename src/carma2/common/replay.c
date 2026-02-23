@@ -6,6 +6,7 @@
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrkm.h"
+#include "graphics.h"
 #include "loading.h"
 #include "main.h"
 #include "pedestrn.h"
@@ -314,3 +315,9 @@ void C2_HOOK_FASTCALL SynchronizeActionReplay(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004e7110, SynchronizeActionReplay)
+
+void C2_HOOK_FASTCALL DoActionReplayPostSwap(void) {
+
+    RemoveTransientBitmaps(1);
+}
+C2_HOOK_FUNCTION(0x004e6260, DoActionReplayPostSwap)
