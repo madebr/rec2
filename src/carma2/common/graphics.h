@@ -138,6 +138,8 @@ C2_HOOK_VARIABLE_DECLARE(br_vector2, gVector2_0068d6d8);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(const int, gMini_map_glowing_line_animation_indices, 5);
 C2_HOOK_VARIABLE_DECLARE(br_matrix34, gSheer_mat);
 C2_HOOK_VARIABLE_DECLARE(int, gAR_fudge_headups);
+C2_HOOK_VARIABLE_DECLARE(tOpponent_Status, gPrevious_opponent_status);
+C2_HOOK_VARIABLE_DECLARE(tU32, gTime_oppobar_target_wasted);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
@@ -278,6 +280,12 @@ void C2_HOOK_FASTCALL DoTestHeadup(void);
 void C2_HOOK_FASTCALL TryThisEdge(tCar_spec* pCar, br_vector3* pLight, int pIndex_1, br_scalar pSign_1, int pIndex_2, br_scalar pSign_2, int pPoint_index_1, int pPoint_index_2, br_vector3* pOffset);
 
 void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform, br_scalar pDistance_factor);
+
+void C2_HOOK_FASTCALL InitNearestCar(void);
+
+void C2_HOOK_FASTCALL StartMap(void);
+
+void C2_HOOK_FASTCALL CopyMapToScreen(void);
 
 void C2_HOOK_FASTCALL MapStuffBeforeRender(void);
 

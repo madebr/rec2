@@ -249,6 +249,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_matrix34, gSheer_mat, 0x0065fb20, {
       { 0.0, 0.0, 0.0 } }
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAR_fudge_headups, 0x006a2358);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tOpponent_Status, gPrevious_opponent_status, 0x00659b20, eOpponent_status_Uninitialized);
+C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_oppobar_target_wasted, 0x0068d8d0);
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
 
@@ -2075,13 +2077,75 @@ void C2_HOOK_FASTCALL ProcessShadow(tCar_spec* pCar, br_actor* pWorld, tTrack_sp
 }
 C2_HOOK_FUNCTION(0x004e7650, ProcessShadow)
 
+void C2_HOOK_FASTCALL InitNearestCar(void) {
+
+    C2V(gINT_0068d6f4) = -1;
+    if (C2V(gNet_mode) != eNet_mode_none && C2V(gCurrent_net_game)->type == eNet_game_type_foxy) {
+        C2V(gTarget_lock_car_2) = NULL;
+    } else if (C2V(gPrevious_opponent_status) == eOpponent_status_Wasted && C2V(gTarget_lock_car_1) != NULL) {
+        if (PDGetTotalTime() - C2V(gTime_oppobar_target_wasted) > 2500) {
+            C2V(gTarget_lock_car_2) = NULL;
+            C2V(gTarget_lock_car_1) = NULL;
+            if (C2V(gTarget_lock_enabled)) {
+                C2V(gTarget_lock_enabled) = 0;
+            }
+        } else {
+            C2V(gFLOAT_0074ab90) = 0.f;
+        }
+    } else if (gTarget_lock_enabled) {
+        C2V(gFLOAT_0074ab90) = 0.f;
+    } else {
+        C2V(gTarget_lock_car_2) = NULL;
+    }
+}
+
+void C2_HOOK_FASTCALL StartMap(void) {
+
+    C2V(gBack_original_origin_x) = C2V(gBack_screen)->origin_x;
+    C2V(gBack_original_origin_y) = C2V(gBack_screen)->origin_y;
+    C2V(gBack_original_base_x) = C2V(gBack_screen)->base_x;
+    C2V(gBack_original_base_y) = C2V(gBack_screen)->base_y;
+    C2V(gBack_screen)->origin_x = 0;
+    C2V(gBack_screen)->origin_y = 0;
+    C2V(gBack_screen)->base_x = 0;
+    C2V(gBack_screen)->base_y = 0;
+}
+
+void C2_HOOK_FASTCALL CopyMapToScreen(void) {
+
+    if (C2V(gCurrent_race).map_image != NULL) {
+        if (C2V(gGraf_data_index) == 0) {
+            DRPixelmapCopy(C2V(gBack_screen), C2V(gCurrent_race).map_image);
+        } else {
+            PossibleUnlock(1);
+            DRPixelmapRectangleCopy(C2V(gBack_screen),
+                -C2V(gBack_screen)->origin_x,
+                -C2V(gBack_screen)->origin_y,
+                C2V(gCurrent_race).map_image,
+                C2V(gCurrent_race).map_image->origin_x,
+                C2V(gCurrent_race).map_image->origin_y,
+                640, 480);
+        }
+    }
+    DimRectangleClipped(C2V(gBack_screen),
+        C2V(gMap_render_x_i) - C2V(gCurrent_graf_data)->map_render_x_marg,
+        C2V(gMap_render_y_i) - C2V(gCurrent_graf_data)->map_render_y_marg,
+        C2V(gMap_render_width_i) + C2V(gMap_render_x_i) + C2V(gCurrent_graf_data)->map_render_x_marg,
+        C2V(gMap_render_height_i) + C2V(gMap_render_y_i) + C2V(gCurrent_graf_data)->map_render_y_marg,
+        1);
+}
+
 void (C2_HOOK_FASTCALL * MapStuffBeforeRender_original)(void);
 void C2_HOOK_FASTCALL MapStuffBeforeRender(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MapStuffBeforeRender_original();
 #else
-    NOT_IMPLEMENTED();
+    InitNearestCar();
+    if (C2V(gCurrent_race).map_image != NULL && C2V(gMap_view) == 2) {
+        StartMap();
+        CopyMapToScreen();
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00496be0, MapStuffBeforeRender, MapStuffBeforeRender_original)
