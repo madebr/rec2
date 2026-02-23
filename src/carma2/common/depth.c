@@ -251,7 +251,7 @@ void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
     if (C2V(gHorizon_material) != NULL && C2V(gProgram_state).default_depth_effect.sky_texture != NULL) {
         C2V(gHorizon_material)->colour_map = C2V(gProgram_state).current_depth_effect.sky_texture;
         BrMaterialUpdate(C2V(gHorizon_material), BR_MATU_ALL);
-        MungeSkyVs(C2V(gSky_model), C2V(gHorizon_material));
+        MungeSkyVs(C2V(gForward_sky_model), C2V(gHorizon_material));
     }
 #endif
 }
