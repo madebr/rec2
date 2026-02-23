@@ -4,8 +4,10 @@
 #include "errors.h"
 #include "globvars.h"
 #include "globvrkm.h"
+#include "globvrpb.h"
 #include "init.h"
 #include "loading.h"
+#include "replay.h"
 #include "skidmark.h"
 #include "spark.h"
 #include "world.h"
@@ -42,6 +44,11 @@ C2_HOOK_VARIABLE_IMPLEMENT(float, gSky_height, 0x0067c4b4);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gSky_x_multiplier, 0x0067c4d0);
 C2_HOOK_VARIABLE_IMPLEMENT(float, gSky_y_multiplier, 0x0067c4d4);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gHas_sky_texture, 0x0067c4a8);
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gRearview_sky_actor, 0x0067c4c0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gOld_fov, 0x0067c4ac);
+C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gOld_yon, 0x0067c4b8);
+
+#define ACTOR_CAMERA(ACTOR) ((br_camera*)((ACTOR)->type_data))
 
 
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData) {
@@ -701,3 +708,42 @@ void C2_HOOK_FASTCALL ChangeDepthEffect(void) {
     C2V(gProgram_state).current_depth_effect.end = C2V(gProgram_state).default_depth_effect.end;
 }
 C2_HOOK_FUNCTION(0x00447220, ChangeDepthEffect)
+
+void C2_HOOK_FASTCALL DoHorizon(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world) {
+    br_angle yaw;
+    br_actor* actor;
+
+    yaw = BrRadianToAngle(atan2(pCamera_to_world->m[2][0], pCamera_to_world->m[2][2]));
+    if (C2V(gProgram_state).cockpit_on || (C2V(gAction_replay_mode) && C2V(gAction_replay_camera_mode) != kActionReplayCameraMode_Standard)
+            || C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_Internal || C2V(gAdapt_sky_model_for_cockpit)) {
+
+        if (C2V(gRendering_mirror)) {
+            actor = C2V(gRearview_sky_actor);
+        } else {
+            actor = C2V(gForward_sky_actor);
+            if (ACTOR_CAMERA(C2V(gCamera))->field_of_view != C2V(gOld_fov) || ACTOR_CAMERA(C2V(gCamera))->yon_z != C2V(gOld_yon)) {
+                C2V(gOld_fov) = ACTOR_CAMERA(C2V(gCamera))->field_of_view;
+                C2V(gOld_yon) = ACTOR_CAMERA(C2V(gCamera))->yon_z;
+                MungeSkyModel(C2V(gCamera), C2V(gForward_sky_model));
+            }
+        }
+        BrMatrix34RotateY(&actor->t.t.mat, yaw);
+        BrVector3Copy(&actor->t.t.translate.t, (br_vector3*)pCamera_to_world->m[3]);
+        C2V(gHorizon_material)->map_transform.m[0][0] = 1.f;
+        C2V(gHorizon_material)->map_transform.m[0][1] = 0.f;
+        C2V(gHorizon_material)->map_transform.m[1][0] = 0.f;
+        C2V(gHorizon_material)->map_transform.m[1][1] = 1.f;
+        C2V(gHorizon_material)->map_transform.m[2][0] = -BrFixedToFloat(yaw) / BrFixedToFloat(C2V(gSky_image_width));
+        C2V(gHorizon_material)->map_transform.m[2][1] = 0.f;
+        BrMaterialUpdate(C2V(gHorizon_material), BR_MATU_ALL);
+        actor->render_style = BR_RSTYLE_FACES;
+        BrZbSceneRenderAdd(actor);
+        actor->render_style = BR_RSTYLE_NONE;
+    }
+}
+
+void C2_HOOK_FASTCALL DepthEffectSky(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world) {
+
+    DoHorizon(pRender_buffer, pDepth_buffer, pCamera, pCamera_to_world);
+}
+C2_HOOK_FUNCTION(0x00445cb0, DepthEffectSky)
