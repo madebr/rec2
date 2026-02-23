@@ -979,3 +979,13 @@ void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y) {
         SIZE_OFFSET_PIPING(tPipe_chunk_screen_wobble, wobble_y), pWobble_y);
 }
 C2_HOOK_FUNCTION(0x004c8090, PipeSingleScreenWobble)
+
+void C2_HOOK_FASTCALL PipeSingleFrameFinish(void) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_frame_finish, time, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_frame_finish, time, 0x4);
+
+    ARDoSingleVariedSession(ePipe_chunk_frame_finish, 0, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_frame_finish, time), GetTotalTime());
+}
+C2_HOOK_FUNCTION(0x004c8340, PipeSingleFrameFinish)

@@ -138,4 +138,6 @@ void C2_HOOK_FASTCALL AddRepulseRayToPipingSession(int pIndex, br_vector3* pOrig
 
 void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y);
 
+void C2_HOOK_FASTCALL PipeSingleFrameFinish(void);
+
 #endif //REC2_PIPING_H
