@@ -515,6 +515,35 @@ void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen
 }
 C2_HOOK_FUNCTION(0x004d82b0, SetTintedPolyColour)
 
+void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPosition) {
+    tSpecial_volume* volume;
+    br_vector3 dir;
+    br_vector3 nor;
+    br_scalar t;
+    br_material* mat;
+
+    volume = C2V(gCar_to_view)->collision_info->last_special_volume;
+    if (volume != NULL && volume->gravity_multiplier < 1.f || C2V(gAction_replay_mode)) {
+        BrVector3Set(&dir, 0.f, 200.f, 0.f);
+        DisablePlingMaterials();
+        FindFace(pPosition, &dir, &nor, &t, &mat);
+        EnablePlingMaterials();
+        if (t >= 100.f || mat == NULL || mat->identifier == NULL || strlen(mat->identifier) == 0) {
+            C2V(gTintedPolys)[pTintedIndex].field_0x28 = 0;
+            C2V(gTintedPolys)[pTintedIndex].material2 = NULL;
+        } else if (mat->identifier[0] == '!' || mat->identifier[0] == '#') {
+            C2V(gTintedPolys)[pTintedIndex].field_0x28 = '#';
+            C2V(gTintedPolys)[pTintedIndex].material2 = mat;
+        } else if (mat->identifier[0] == '@') {
+            C2V(gTintedPolys)[pTintedIndex].field_0x28 = '@';
+            C2V(gTintedPolys)[pTintedIndex].material2 = mat;
+        }
+    } else {
+        C2V(gTintedPolys)[pTintedIndex].field_0x28 = 0;
+        C2V(gTintedPolys)[pTintedIndex].material2 = NULL;
+    }
+}
+
 void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height) {
     tTintedPoly* tinted;
     int nb_x;
