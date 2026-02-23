@@ -2150,6 +2150,17 @@ void C2_HOOK_FASTCALL MapStuffBeforeRender(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00496be0, MapStuffBeforeRender, MapStuffBeforeRender_original)
 
+void (C2_HOOK_FASTCALL * DoARenderPass_original)(br_matrix34* pMat34, br_actor* pCamera, br_pixelmap* pColour, br_pixelmap* pDepth, float pYon_factor, int pShadows, int pEffects);
+void C2_HOOK_FASTCALL DoARenderPass(br_matrix34* pMat34, br_actor* pCamera, br_pixelmap* pColour, br_pixelmap* pDepth, float pYon_factor, int pShadows, int pEffects) {
+
+#if defined(C2_HOOKS_ENABLED)
+    DoARenderPass_original)pMat34, pCamera, pColour, pDepth, pYon_factor, pShadows, pEffects);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e5680, DoARenderPass, DoARenderPass_original)
+
 void (C2_HOOK_FASTCALL * DoACompleteRenderPass_original)(int pMirror, br_matrix34* pCamera_to_world, br_actor* pCamera, br_pixelmap* pScreen, br_pixelmap* pDepth);
 void C2_HOOK_FASTCALL DoACompleteRenderPass(int pMirror, br_matrix34* pCamera_to_world, br_actor* pCamera, br_pixelmap* pScreen, br_pixelmap* pDepth) {
 
