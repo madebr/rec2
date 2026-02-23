@@ -544,6 +544,15 @@ void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPo
     }
 }
 
+br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex) {
+
+    if (C2V(gTintedPolys)[pTintedIndex].field_0x28 != '#') {
+        return NULL;
+    }
+    return C2V(gTintedPolys)[pTintedIndex].material2;
+}
+C2_HOOK_FUNCTION(0x004d8470, InWater)
+
 void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height) {
     tTintedPoly* tinted;
     int nb_x;
