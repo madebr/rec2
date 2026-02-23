@@ -747,3 +747,38 @@ void C2_HOOK_FASTCALL DepthEffectSky(br_pixelmap* pRender_buffer, br_pixelmap* p
     DoHorizon(pRender_buffer, pDepth_buffer, pCamera, pCamera_to_world);
 }
 C2_HOOK_FUNCTION(0x00445cb0, DepthEffectSky)
+
+void C2_HOOK_FASTCALL DoWobbleCamera(br_actor* pCamera) {
+    float f_time;
+
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag00, 0x00591194, 0.02f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag01, 0x00591198, 0.02f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag02, 0x0059119c, 0.02f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag10, 0x005911a0, 0.15f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag11, 0x005911a4, 0.05f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, mag12, 0x005911a8, 0.02f);
+    static C2_HOOK_VARIABLE_IMPLEMENT(float, mag20, 0x005911ac);
+    static C2_HOOK_VARIABLE_IMPLEMENT(float, mag21, 0x005911b0);
+    static C2_HOOK_VARIABLE_IMPLEMENT(float, mag22, 0x005911b4);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period00, 0x005911ac, 3000.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period01, 0x005911b0, 3000.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period02, 0x005911b4, 4000.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period10, 0x005911b8, 2200.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period11, 0x005911bc, 3300.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period12, 0x005911c0, 3100.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period20, 0x005911c4, 2800.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period21, 0x005911c8, 2500.f);
+    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period22, 0x005911cc, 3900.f);
+
+    f_time = (float)PDGetTotalTime();
+    pCamera->t.t.mat.m[0][0] += FastScalarSin((int)fmod(f_time / period00 * 360.f, 360.f)) * mag00;
+    pCamera->t.t.mat.m[0][1] += FastScalarSin((int)fmod(f_time / period01 * 360.f, 360.f)) * mag01;
+    pCamera->t.t.mat.m[0][2] += FastScalarSin((int)fmod(f_time / period02 * 360.f, 360.f)) * mag02;
+    pCamera->t.t.mat.m[1][0] += FastScalarSin((int)fmod(f_time / period10 * 360.f, 360.f)) * mag10;
+    pCamera->t.t.mat.m[1][1] += FastScalarSin((int)fmod(f_time / period11 * 360.f, 360.f)) * mag11;
+    pCamera->t.t.mat.m[1][2] += FastScalarSin((int)fmod(f_time / period12 * 360.f, 360.f)) * mag12;
+    pCamera->t.t.mat.m[2][0] += FastScalarSin((int)fmod(f_time / period20 * 360.f, 360.f)) * mag20;
+    pCamera->t.t.mat.m[2][1] += FastScalarSin((int)fmod(f_time / period21 * 360.f, 360.f)) * mag21;
+    pCamera->t.t.mat.m[2][2] += FastScalarSin((int)fmod(f_time / period22 * 360.f, 360.f)) * mag22;
+}
+C2_HOOK_FUNCTION(0x00446680, DoWobbleCamera)

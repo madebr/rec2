@@ -92,4 +92,6 @@ void C2_HOOK_FASTCALL DoHorizon(br_pixelmap* pRender_buffer, br_pixelmap* pDepth
 
 void C2_HOOK_FASTCALL DepthEffectSky(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world);
 
+void C2_HOOK_FASTCALL DoWobbleCamera(br_actor* pCamera);
+
 #endif //REC2_DEPTH_H
