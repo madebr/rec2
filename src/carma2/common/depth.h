@@ -24,7 +24,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gHas_sky_texture);
 C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDepth_shade_table);
 C2_HOOK_VARIABLE_DECLARE(br_material*, gHorizon_material);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gForward_sky_actor);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gSky_model);
+C2_HOOK_VARIABLE_DECLARE(br_model*, gForward_sky_model);
 
 
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);
