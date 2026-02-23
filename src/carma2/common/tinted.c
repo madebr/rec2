@@ -553,6 +553,15 @@ br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex) {
 }
 C2_HOOK_FUNCTION(0x004d8470, InWater)
 
+void C2_HOOK_FASTCALL UpdateTintedPolys(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gTintedPolys)); i++) {
+        ProcessTintedPoly(i);
+    }
+}
+C2_HOOK_FUNCTION(0x004d8a20, UpdateTintedPolys)
+
 void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height) {
     tTintedPoly* tinted;
     int nb_x;
