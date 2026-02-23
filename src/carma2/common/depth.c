@@ -29,7 +29,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gWater_shade_table_power, 0x0067c4cc);
 
 C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHorizon_material, 0x0067c4e0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gForward_sky_actor, 0x0067c4d8);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSky_model, 0x0067c4a0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gForward_sky_model, 0x0067c4a0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tDepth_effect_type, gSwap_depth_effect_type, 0x00591190, eDepth_effect_none);
 C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSky_texture_0079ec1c, 0x0079ec1c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSwap_depth_effect_start, 0x0079ec4c);
@@ -475,10 +475,10 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
         C2V(gHorizon_material)->flags |= BR_MATF_PERSPECTIVE;
     }
     C2V(gHorizon_material)->flags |= BR_MATF_MAP_INTERPOLATION;
-    C2V(gSky_model) = CreateHorizonModel(C2V(gCamera));
-    BrModelAdd(C2V(gSky_model));
+    C2V(gForward_sky_model) = CreateHorizonModel(C2V(gCamera));
+    BrModelAdd(C2V(gForward_sky_model));
     C2V(gForward_sky_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-    C2V(gForward_sky_actor)->model = C2V(gSky_model);
+    C2V(gForward_sky_actor)->model = C2V(gForward_sky_model);
     C2V(gForward_sky_actor)->material = C2V(gHorizon_material);
     C2V(gForward_sky_actor)->render_style = BR_RSTYLE_NONE;
     BrActorAdd(C2V(gUniverse_actor), C2V(gForward_sky_actor));
