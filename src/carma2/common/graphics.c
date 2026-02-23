@@ -2453,3 +2453,40 @@ void C2_HOOK_FASTCALL DRPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pi
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0047cd40, DRPixelmapRotatedAndFeatheredCopy, DRPixelmapRotatedAndFeatheredCopy_original)
+
+void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack8Bit(br_pixelmap* pDest, br_pixelmap* pSrc) {
+    tU16 dest_row_bytes = pDest->row_bytes;
+    tU16 src_row_bytes = pSrc->row_bytes;
+    tU8 *dest_pixels = pDest->pixels;
+    tU16 dest_width = pDest->width;
+    tU16 src_width = pSrc->width;
+    tU8 *src_pixels = pSrc->pixels;
+    tU32 src_width_dwords = src_width / sizeof(tU32);
+    tU32 dwords_remaining;
+    int y;
+
+    for (y = 0; y < (int)pSrc->height; y++) {
+
+        for (dwords_remaining = src_width_dwords; dwords_remaining != 0; dwords_remaining--, src_pixels+=4, dest_pixels+=4) {
+            tU8 p0 = src_pixels[0];
+            tU8 p1 = src_pixels[1];
+            tU8 p2 = src_pixels[2];
+            tU8 p3 = src_pixels[3];
+            dest_pixels[0] = p0 != 0 ? p0 : 0xf0;
+            dest_pixels[1] = p1 != 0 ? p1 : 0xf0;
+            dest_pixels[2] = p2 != 0 ? p2 : 0xf0;
+            dest_pixels[3] = p3 != 0 ? p3 : 0xf0;
+        }
+        src_pixels += src_row_bytes - src_width;
+        dest_pixels += dest_row_bytes - dest_width;
+    }
+}
+
+void C2_HOOK_FASTCALL DRPixelmapCopyMapBlack(br_pixelmap* pDest, br_pixelmap* pSrc) {
+    if (pDest->type == BR_PMT_INDEX_8) {
+        DRPixelmapCopyMapBlack8Bit(pDest, pSrc);
+    } else {
+        BrPixelmapCopy(pDest, pSrc);
+    }
+}
+C2_HOOK_FUNCTION(0x0047d5b0, DRPixelmapCopyMapBlack)
