@@ -40,4 +40,6 @@ void C2_HOOK_FASTCALL ActualActionReplayHeadups(int pSpecial_zappy_bastard);
 
 void C2_HOOK_FASTCALL DoActionReplayHeadups(void);
 
+void C2_HOOK_FASTCALL ARSetReplayRate(float rate);
+
 #endif //REC2_REPLAY_H

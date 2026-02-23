@@ -293,3 +293,8 @@ void C2_HOOK_FASTCALL DoActionReplayHeadups(void) {
     ActualActionReplayHeadups(0);
 }
 C2_HOOK_FUNCTION(0x004e6277, DoActionReplayHeadups)
+
+void C2_HOOK_FASTCALL ARSetReplayRate(float rate) {
+    C2V(gReplay_rate) = rate;
+}
+C2_HOOK_FUNCTION(0x004023a0, ARSetReplayRate)
