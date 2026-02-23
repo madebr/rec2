@@ -251,6 +251,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_matrix34, gSheer_mat, 0x0065fb20, {
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAR_fudge_headups, 0x006a2358);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tOpponent_Status, gPrevious_opponent_status, 0x00659b20, eOpponent_status_Uninitialized);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_oppobar_target_wasted, 0x0068d8d0);
+C2_HOOK_VARIABLE_IMPLEMENT(float, gPrevious_rear_yon, 0x006a234c);
 
 #define SHADOW_D_IGNORE_FLAG 10000.f
 
@@ -2167,7 +2168,37 @@ void C2_HOOK_FASTCALL DoACompleteRenderPass(int pMirror, br_matrix34* pCamera_to
 #if defined(C2_HOOKS_ENABLED)
     DoACompleteRenderPass_original(pMirror, pCamera_to_world, pCamera, pScreen, pDepth);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    br_matrix34 mat;
+
+    C2V(gRendering_mirror) = pMirror;
+    if (pMirror && C2V(gPrevious_rear_yon) != ((br_camera*)pCamera->type_data)->yon_z) {
+        C2V(gPrevious_rear_yon) = ((br_camera*)pCamera->type_data)->yon_z;
+        MungeRearviewSky();
+    }
+    if (!C2V(gRendering_mirror)) {
+        C2V(gRear_pixelmap)->base_x = 0;
+        C2V(gRear_pixelmap)->base_y = 0;
+        for (i = 0; i < C2V(gCount_extra_renders); i++) {
+            tExtra_render *extra_render = &C2V(gExtra_renders)[i];
+
+            C2V(gRear_pixelmap)->origin_x = extra_render->material->colour_map->width / 2;
+            C2V(gRear_pixelmap)->origin_y = extra_render->material->colour_map->height / 2;
+            C2V(gRear_pixelmap)->width = extra_render->material->colour_map->width;
+            C2V(gRear_pixelmap)->height = extra_render->material->colour_map->width;
+            if (C2V(gRear_pixelmap)->width == C2V(gRear_pixelmap)->row_bytes) {
+                C2V(gRear_pixelmap)->flags |= BR_PMF_ROW_WHOLEPIXELS;
+            } else {
+                C2V(gRear_pixelmap)->flags &= ~BR_PMF_ROW_WHOLEPIXELS;
+            }
+            BrActorToActorMatrix34(&mat, extra_render->actor, C2V(gUniverse_actor));
+            DoARenderPass(&mat, extra_render->actor, C2V(gRear_pixelmap), C2V(gDepth_buffer), 1.f, 0, 0);
+            DRPixelmapCopyMapBlack(extra_render->material->colour_map, C2V(gRear_pixelmap));
+            BrMaterialUpdate(extra_render->material, BR_MATU_COLOURMAP);
+        }
+    }
+    DoARenderPass(C2V(pCamera_to_world), pCamera, pScreen, pDepth, 1.f, !pMirror, !pMirror);
+    C2V(gRendering_mirror) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e54f0, DoACompleteRenderPass, DoACompleteRenderPass_original)

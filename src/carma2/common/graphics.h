@@ -140,6 +140,7 @@ C2_HOOK_VARIABLE_DECLARE(br_matrix34, gSheer_mat);
 C2_HOOK_VARIABLE_DECLARE(int, gAR_fudge_headups);
 C2_HOOK_VARIABLE_DECLARE(tOpponent_Status, gPrevious_opponent_status);
 C2_HOOK_VARIABLE_DECLARE(tU32, gTime_oppobar_target_wasted);
+C2_HOOK_VARIABLE_DECLARE(float, gPrevious_rear_yon);
 
 void C2_HOOK_FASTCALL ClearWobbles(void);
 
