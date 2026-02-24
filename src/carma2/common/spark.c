@@ -45,6 +45,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gShrapnel_flags, 0x006aa584);
 C2_HOOK_VARIABLE_IMPLEMENT(br_camera*, gSpark_cam, 0x006a82b0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix4, gCameraToScreen, 0x006a8718);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSpark, gSparks, 32, 0x006a9b80);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tBRender_smoke*, gBR_smoke_pointers, 35, 0x006a8760);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gN_BR_smoke_structs, 0x006aa56c);
 
 #define CHARS1_TO_INT(A)            ((A) - '0')
 #define CHARS2_TO_INT(A, B)         (10 * CHARS1_TO_INT(A) + CHARS1_TO_INT(B))
@@ -1355,3 +1357,37 @@ int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2) {
     }
 }
 C2_HOOK_FUNCTION(0x004fb2f0, CmpSmokeZ)
+
+void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
+    int i;
+    int j;
+    tBRender_smoke* smoke;
+    tU8 red;
+    tU8 grn;
+    tU8 blu;
+
+    BrQsort(C2V(gBR_smoke_pointers), C2V(gN_BR_smoke_structs), sizeof(void*), CmpSmokeZ);
+
+    for (i = 0; i < C2V(gN_BR_smoke_structs); i++) {
+        smoke = C2V(gBR_smoke_pointers)[C2V(gN_BR_smoke_structs) - 1 - i];
+        BrVector3Copy(&C2V(gBlend_actor)->t.t.translate.t, &smoke->pos);
+        C2V(gBlend_actor)->t.t.mat.m[0][0] = smoke->r;
+        C2V(gBlend_actor)->t.t.mat.m[1][1] = smoke->r / smoke->aspect;
+        C2V(gBlend_actor)->material = smoke->material;
+        C2V(gBlend_actor)->material->extra_prim[1].v.x = BrFloatToFixed(smoke->strength * 150.f);
+        BrMaterialUpdate(C2V(gBlend_actor)->material, BR_MATU_EXTRA_PRIM);
+
+        red = BR_RED(smoke->col);
+        grn = BR_GRN(smoke->col);
+        blu = BR_BLU(smoke->col);
+        for (j = 0; j < smoke->model->nvertices; j++) {
+            smoke->model->vertices[j].red = red;
+            smoke->model->vertices[j].grn = grn;
+            smoke->model->vertices[j].blu = blu;
+        }
+        BrModelUpdate(smoke->model, BR_MODU_VERTEX_COLOURS);
+        C2V(gBlend_actor)->model = smoke->model;
+        BrZbsSceneRenderAdd(C2V(gBlend_actor));
+    }
+}
+C2_HOOK_FUNCTION(0x004fb1b0, RenderRecordedSmokeCircles)
