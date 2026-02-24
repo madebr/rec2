@@ -1132,3 +1132,24 @@ void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int fire_point) {
     /* empty */
 }
 C2_HOOK_FUNCTION(0x004fc9c0, SmudgeCar)
+
+void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {
+
+    if (pCol != 0) {
+        C2V(gLine_model)->vertices[0].red = 0xff;
+        C2V(gLine_model)->vertices[0].grn = 0xff;
+        C2V(gLine_model)->vertices[0].blu = 0xff;
+        C2V(gLine_model)->vertices[1].red = 0xff;
+        C2V(gLine_model)->vertices[1].grn = 0xff;
+        C2V(gLine_model)->vertices[1].blu = 0xff;
+    } else {
+        C2V(gLine_model)->vertices[0].red = 0xff;
+        C2V(gLine_model)->vertices[0].grn = 0x00;
+        C2V(gLine_model)->vertices[0].blu = 0x00;
+        C2V(gLine_model)->vertices[1].red = 0xff;
+        C2V(gLine_model)->vertices[1].grn = 0xff;
+        C2V(gLine_model)->vertices[1].blu = 0x00;
+    }
+    BrModelUpdate(C2V(gLine_model), BR_MODU_ALL);
+}
+C2_HOOK_FUNCTION(0x004f7cb0, SetLineModelCols)

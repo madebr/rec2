@@ -123,4 +123,6 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, br_vector3 *pPos);
 
 void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int fire_point);
 
+void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol);
+
 #endif //REC2_SPARK_H
