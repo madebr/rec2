@@ -82,6 +82,9 @@ EXPORTS
     BrMatrix34TApplyV
     BrMatrix34ToQuat
     BrMatrix34Translate
+    BrMatrix4Mul
+    BrMatrix4Perspective
+    BrMatrix4Scale
     BrModelAdd
     BrModelAddMany
     BrModelAllocate
@@ -134,6 +137,7 @@ EXPORTS
     BrZbsSceneRender
     BrZbsSceneRenderAdd
     BrZbsSceneRenderBegin
+    BrZbsSceneRenderEnd
     BrZsModelRender
     BrAbort
     BrAddHead
