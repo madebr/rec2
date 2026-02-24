@@ -1153,3 +1153,14 @@ void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {
     BrModelUpdate(C2V(gLine_model), BR_MODU_ALL);
 }
 C2_HOOK_FUNCTION(0x004f7cb0, SetLineModelCols)
+
+int (C2_HOOK_FASTCALL * DrawLine3D_original)(br_vector3* start, br_vector3* end, br_pixelmap* pScreen, br_pixelmap* pDepth_buffer, br_pixelmap* shade_table);
+int C2_HOOK_FASTCALL DrawLine3D(br_vector3* start, br_vector3* end, br_pixelmap* pScreen, br_pixelmap* pDepth_buffer, br_pixelmap* shade_table) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return DrawLine3D_original(start, end, pScreen, pDepth_buffer, shade_table);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004f6b80, DrawLine3D, DrawLine3D_original)
