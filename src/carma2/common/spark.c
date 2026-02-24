@@ -1339,3 +1339,19 @@ void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDe
     }
 }
 C2_HOOK_FUNCTION(0x004f7450, RenderSparks)
+
+int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2) {
+    tBRender_smoke** a;
+    tBRender_smoke** b;
+
+    a = (tBRender_smoke**)p1;
+    b = (tBRender_smoke**)p2;
+    if ((*a)->pos.v[2] < (*b)->pos.v[2]) {
+        return -1;
+    } else if ((*a)->pos.v[2] > (*b)->pos.v[2]) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+C2_HOOK_FUNCTION(0x004fb2f0, CmpSmokeZ)
