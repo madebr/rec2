@@ -287,4 +287,6 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(tPed_character_instance* pCharac
 
 void C2_HOOK_FASTCALL RenderLimbs(void);
 
+void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world);
+
 #endif //REC2_PEDESTRN_H
