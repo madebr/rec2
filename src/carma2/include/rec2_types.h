@@ -3331,16 +3331,14 @@ typedef enum {
 } tMaterial_exception_flags;
 
 typedef struct {
-    undefined4 field_0x0;
-    undefined4 field_0x4;
-    undefined4 field_0x8;
-    float field_0xc;
-    float field_0x10;
-    float field_0x14;
-    float field_0x18;
-    struct br_material* material;
-    struct br_model* model;
-} tSmoke_info;
+    br_vector3 pos;
+    br_scalar r;
+    br_scalar strength;
+    br_colour col;
+    float aspect;
+    br_material* material;
+    br_model* model;
+} tBRender_smoke;
 
 typedef struct {
     br_actor* actor;

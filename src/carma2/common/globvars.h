@@ -84,7 +84,7 @@ C2_HOOK_VARIABLE_DECLARE(br_material*, gLine_material);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gBlend_model);
 C2_HOOK_VARIABLE_DECLARE(br_model*, gBlend_model2);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gBlend_actor);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmoke_info, gSmoke_infos, 35);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tBRender_smoke, gBR_smoke_structs, 35);
 
 C2_HOOK_VARIABLE_DECLARE(int, gNo_current_game);
 C2_HOOK_VARIABLE_DECLARE(int, gWaiting_for_unpause);

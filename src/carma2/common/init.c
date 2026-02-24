@@ -990,8 +990,8 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
     C2V(gBlend_model) = BrModelAllocate("gBlend_model", 4, 2);
     C2V(gBlend_model2) = BrModelAllocate("gBlend_model2", 6, 4);
     C2V(gBlend_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_infos)); i++) {
-        C2V(gSmoke_infos)[i].material = BrMaterialAllocate("some smoke");
+    for (i = 0; i < REC2_ASIZE(C2V(gBR_smoke_structs)); i++) {
+        C2V(gBR_smoke_structs)[i].material = BrMaterialAllocate("some smoke");
     }
     if (C2V(gBlend_model) == NULL || C2V(gBlend_actor) == NULL) {
         FatalError(kFatalError_OOM_S);
@@ -1040,11 +1040,11 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
     smoke_pm->map = C2V(gRender_palette);
     BrMapAdd(smoke_pm);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_infos)); i++) {
-        C2V(gSmoke_infos)[i].material->flags = BR_MATF_LIGHT | BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_PERSPECTIVE;
-        C2V(gSmoke_infos)[i].material->extra_prim = fadealpha;
-        C2V(gSmoke_infos)[i].material->colour_map = smoke_pm;
-        BrMaterialAdd(C2V(gSmoke_infos)[i].material);
+    for (i = 0; i < REC2_ASIZE(C2V(gBR_smoke_structs)); i++) {
+        C2V(gBR_smoke_structs)[i].material->flags = BR_MATF_LIGHT | BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_PERSPECTIVE;
+        C2V(gBR_smoke_structs)[i].material->extra_prim = fadealpha;
+        C2V(gBR_smoke_structs)[i].material->colour_map = smoke_pm;
+        BrMaterialAdd(C2V(gBR_smoke_structs)[i].material);
     }
 
     BrVector2Set(&C2V(gBlend_model)->vertices[0].map, 0.f, 1.f - 1.f / (float)smoke_pm->height);

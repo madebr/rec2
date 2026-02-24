@@ -98,7 +98,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gLine_material, 0x0074ca4c);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gBlend_model, 0x0074cf30);
 C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gBlend_model2, 0x0074cf94);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gBlend_actor, 0x0074caac);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmoke_info, gSmoke_infos, 35, 0x006a87f0);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tBRender_smoke, gBR_smoke_structs, 35, 0x006a87f0);
 
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gNo_current_game, 0x00655dc0, 1);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gWaiting_for_unpause, 0x0074b7d8);
