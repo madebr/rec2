@@ -1010,6 +1010,19 @@ typedef enum tAdd_to_storage_result {
     eStorage_allocated = 2
 } tAdd_to_storage_result;
 
+typedef enum {
+    eOpponent_status_Uninitialized = -1,
+    eOpponent_status_Racing = 0,
+    eOpponent_status_Trying_to_kill_you = 1,
+    eOpponent_status_Running_away = 2,
+    eOpponent_status_Trying_to_get_to_you = 3,
+    eOpponent_status_Frozen = 4,
+    eOpponent_status_Confused = 5,
+    eOpponent_status_On_grid = 6,
+    eOpponent_status_Stunned = 7,
+    eOpponent_status_Wasted = 8
+} tOpponent_Status;
+
 typedef struct {
     int width;
     int height;
