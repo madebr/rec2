@@ -1,7 +1,9 @@
 #include "spark.h"
 
+#include "depth.h"
 #include "errors.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "graphics.h"
 #include "loading.h"
 #include "opponent.h"
@@ -40,6 +42,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gReplay_splash_flags, 0x006aa574);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_AFE_color_cycle, 0x006b7884);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAFE_color_cycle, 0x006aa5b0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gShrapnel_flags, 0x006aa584);
+C2_HOOK_VARIABLE_IMPLEMENT(br_camera*, gSpark_cam, 0x006a82b0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix4, gCameraToScreen, 0x006a8718);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSpark, gSparks, 32, 0x006a9b80);
 
 #define CHARS1_TO_INT(A)            ((A) - '0')
 #define CHARS2_TO_INT(A, B)         (10 * CHARS1_TO_INT(A) + CHARS1_TO_INT(B))
@@ -1164,3 +1169,173 @@ int C2_HOOK_FASTCALL DrawLine3D(br_vector3* start, br_vector3* end, br_pixelmap*
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f6b80, DrawLine3D, DrawLine3D_original)
+
+void C2_HOOK_FASTCALL SetWorldToScreen(br_pixelmap* pScreen) {
+    br_matrix4 mat;
+    br_matrix4 mat2;
+
+    BrMatrix4Perspective(&mat, C2V(gSpark_cam)->field_of_view, C2V(gSpark_cam)->aspect, -C2V(gSpark_cam)->hither_z, -C2V(gSpark_cam)->yon_z);
+    BrMatrix4Scale(&mat2, (float)(pScreen->width / 2), (float)(pScreen->height / 2), 1.0f);
+    BrMatrix4Mul(&C2V(gCameraToScreen), &mat, &mat2);
+}
+
+void C2_HOOK_FASTCALL ReplaySparks(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, tU32 pTime) {
+    int i;
+    br_vector3 pos;
+    br_vector3 o;
+    br_vector3 p;
+    br_vector3 tv;
+    br_vector3 new_pos;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSparks)); i++) {
+        if (C2V(gSpark_flags) & (1 << i)) {
+            if (C2V(gSparks)[i].car != NULL) {
+                BrMatrix34ApplyP(&tv, &o, &C2V(gSparks)[i].car->car_master_actor->t.t.mat);
+                BrVector3Copy(&o, &tv);
+                BrMatrix34ApplyP(&pos, &C2V(gSparks)[i].pos, &C2V(gSparks)[i].car->car_master_actor->t.t.mat);
+            } else {
+                BrVector3Copy(&pos, &C2V(gSparks)[i].pos);
+            }
+            BrVector3Add(&o, &pos, &C2V(gSparks)[i].length);
+            if (C2V(gRendering_mirror)) {
+                BrVector3Sub(&tv, &pos, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
+                BrMatrix34TApplyV(&new_pos, &tv, &C2V(gRearview_camera_to_world));
+                BrVector3Sub(&tv, &o, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
+                BrMatrix34TApplyV(&p, &tv, &C2V(gRearview_camera_to_world));
+            } else {
+                BrVector3Sub(&tv, &pos, (br_vector3*)C2V(gCamera_to_world).m[3]);
+                BrMatrix34TApplyV(&new_pos, &tv, &C2V(gCamera_to_world));
+                BrVector3Sub(&tv, &o, (br_vector3*)C2V(gCamera_to_world).m[3]);
+                BrMatrix34TApplyV(&p, &tv, &C2V(gCamera_to_world));
+            }
+            if (C2V(gNo_2d_effects)) {
+                SetLineModelCols(C2V(gSparks)[i].colour);
+            }
+            if (C2V(gSparks)[i].colour != 0) {
+                DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gFog_shade_table));
+            } else {
+                DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gAcid_shade_table));
+            }
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime) {
+    int i;
+    int time;
+    br_vector3 tv;
+    br_vector3 o;
+    br_vector3 p;
+    br_vector3 pos;
+    br_vector3 new_pos;
+    br_scalar ts;
+
+    C2_HOOK_BUG_ON(sizeof(tSpark) != 0x40);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, count, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, pos, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, v, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, length, 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, normal, 0x28);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, time_sync, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, car, 0x38);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, colour, 0x3c);
+
+    C2V(gSpark_cam) = pCamera->type_data;
+    SetWorldToScreen(pRender_screen);
+
+    if (C2V(gSpark_flags) == 0) {
+        return;
+    }
+
+    if (C2V(gNo_2d_effects)) {
+        BrActorRemove(C2V(gLine_actor));
+        BrActorAdd(pCamera, C2V(gLine_actor));
+    }
+
+    if (gAction_replay_mode) {
+        ReplaySparks(pRender_screen, pDepth_buffer, pCamera, pTime);
+        if (C2V(gNo_2d_effects)) {
+            BrActorRemove(C2V(gLine_actor));
+            BrActorAdd(C2V(gDont_render_actor), C2V(gLine_actor));
+        }
+        return;
+    }
+    ARStartPipingSession(ePipe_chunk_spark);
+    for (i = 0; i < REC2_ASIZE(C2V(gSparks)); i++) {
+        if (!((1u << i) & C2V(gSpark_flags))) {
+            continue;
+        }
+        if (C2V(gSparks)[i].count <= 0) {
+            C2V(gSparks)[i].count = 0;
+            C2V(gSpark_flags) &= ~(1u << i);
+        }
+        ts = BrVector3Dot(&C2V(gSparks)[i].normal, &C2V(gSparks)[i].v);
+        BrVector3Scale(&tv, &C2V(gSparks)[i].normal, ts);
+        BrVector3Sub(&C2V(gSparks)[i].v, &C2V(gSparks)[i].v, &tv);
+        if (C2V(gSparks)[i].time_sync) {
+            BrVector3Scale(&o, &C2V(gSparks)[i].v, C2V(gSparks)[i].time_sync / 1000.f);
+            C2V(gSparks)[i].count += C2V(gSparks)[i].time_sync - pTime;
+            C2V(gSparks)[i].time_sync = 0;
+        } else {
+            BrVector3Scale(&o, &C2V(gSparks)[i].v, pTime / 1000.f);
+            C2V(gSparks)[i].count -= pTime;
+        }
+        BrVector3Accumulate(&C2V(gSparks)[i].pos, &o);
+        time = 1000 - C2V(gSparks)[i].count;
+        if (time > 150) {
+            time = 150;
+        }
+        ts = -time / 1000.f;
+        if (C2V(gSparks)[i].colour) {
+            ts /= 2.0;
+        }
+        BrVector3Scale(&C2V(gSparks)[i].length, &C2V(gSparks)[i].v, ts);
+        ts = pTime * 10.f / (WORLD_SCALE * 100.f);
+        if (C2V(gSparks)[i].car != NULL) {
+            BrMatrix34ApplyV(&tv, &C2V(gSparks)[i].length, &C2V(gSparks)[i].car->car_master_actor->t.t.mat);
+            BrVector3Copy(&C2V(gSparks)[i].length, &tv);
+            BrMatrix34ApplyP(&pos, &C2V(gSparks)[i].pos, &C2V(gSparks)[i].car->car_master_actor->t.t.mat);
+            BrVector3Copy(&o, &tv);
+            C2V(gSparks)[i].v.v[0] -= C2V(gSparks)[i].car->car_master_actor->t.t.mat.m[0][1] * ts;
+            C2V(gSparks)[i].v.v[1] -= C2V(gSparks)[i].car->car_master_actor->t.t.mat.m[1][1] * ts;
+            C2V(gSparks)[i].v.v[2] -= C2V(gSparks)[i].car->car_master_actor->t.t.mat.m[2][1] * ts;
+        } else {
+            BrVector3Copy(&pos, &C2V(gSparks)[i].pos);
+            C2V(gSparks)[i].v.v[1] -= ts;
+        }
+        AddSparkToPipingSession(i + (C2V(gSparks)[i].colour << 8), &pos, &C2V(gSparks)[i].length);
+        BrVector3Add(&o, &C2V(gSparks)[i].length, &pos);
+        if (C2V(gRendering_mirror)) {
+            BrVector3Sub(&tv, &pos, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
+            BrMatrix34TApplyV(&new_pos, &tv, &C2V(gRearview_camera_to_world));
+            BrVector3Sub(&tv, &o, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
+            BrMatrix34TApplyV(&p, &tv, &C2V(gRearview_camera_to_world));
+        } else {
+            BrVector3Sub(&tv, &pos, (br_vector3*)C2V(gCamera_to_world).m[3]);
+            BrMatrix34TApplyV(&new_pos, &tv, &C2V(gCamera_to_world));
+            BrVector3Sub(&tv, &o, (br_vector3*)C2V(gCamera_to_world).m[3]);
+            BrMatrix34TApplyV(&p, &tv, &C2V(gCamera_to_world));
+        }
+        BrVector3SetFloat(&tv, FRandomBetween(-0.1f, 0.1f), FRandomBetween(-0.1f, 0.1f), FRandomBetween(-0.1f, 0.1f));
+        BrVector3Accumulate(&C2V(gSparks)[i].v, &tv);
+        ts = 1.0f - BrVector3Length(&C2V(gSparks)[i].v) / 1.4f * pTime / 1000.0f;
+        if (ts < 0.1f) {
+            ts = 0.1f;
+        }
+        BrVector3Scale(&C2V(gSparks)[i].v, &C2V(gSparks)[i].v, ts);
+        if (C2V(gNo_2d_effects)) {
+            SetLineModelCols(gSparks[i].colour);
+        }
+        if (C2V(gSparks)[i].colour != 0) {
+            DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gFog_shade_table));
+        } else {
+            DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gAcid_shade_table));
+        }
+    }
+    AREndPipingSession();
+    if (C2V(gNo_2d_effects)) {
+        BrActorRemove(C2V(gLine_actor));
+        BrActorAdd(C2V(gDont_render_actor), C2V(gLine_actor));
+    }
+}
+C2_HOOK_FUNCTION(0x004f7450, RenderSparks)
