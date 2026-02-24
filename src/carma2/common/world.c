@@ -6196,3 +6196,12 @@ float C2_HOOK_FAKE_THISCALL ControlBoundFunkGroovePlus(int pSlot_number, undefin
     return *C2V(gGroove_funk_bindings)[pSlot_number].v;
 }
 C2_HOOK_FUNCTION(0x004748e0, ControlBoundFunkGroovePlus)
+
+void C2_HOOK_FASTCALL ProcessTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform) {
+
+    RenderTrack(pWorld, pTrack_spec, pCamera, pCamera_to_world_transform);
+    if (C2V(gAdditional_actors)) {
+        BrZbSceneRenderAdd(C2V(gAdditional_actors));
+    }
+}
+C2_HOOK_FUNCTION(0x00506e50, ProcessTrack)
