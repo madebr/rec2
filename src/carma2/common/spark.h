@@ -125,4 +125,6 @@ void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int fire_point);
 
 void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol);
 
+int C2_HOOK_FASTCALL DrawLine3D(br_vector3* start, br_vector3* end, br_pixelmap* pScreen, br_pixelmap* pDepth_buffer, br_pixelmap* shade_table);
+
 #endif //REC2_SPARK_H
