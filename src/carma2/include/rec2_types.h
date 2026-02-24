@@ -409,6 +409,17 @@ typedef struct {
     br_vector3 v;
 } tPipe_chunk_spark;
 
+typedef struct {
+    tS16 v[3];
+} tReduced_pos;
+
+typedef struct {
+    tReduced_pos pos;
+    tU16 radius;
+    tU8 strength;
+    tU8 type;
+} tPipe_chunk_smoke;
+
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
@@ -420,6 +431,7 @@ typedef enum {
     ePipe_chunk_shrapnel = 11,
     ePipe_chunk_screen_wobble = 12,
     ePipe_chunk_non_car = 14,
+    ePipe_chunk_smoke = 15,
     ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
     ePipe_chunk_flap_bits = 23,
