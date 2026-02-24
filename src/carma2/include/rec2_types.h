@@ -3340,6 +3340,17 @@ typedef struct {
     br_model* model;
 } tBRender_smoke;
 
+typedef struct tSmoke {
+    tU32 time_sync;
+    br_vector3 pos;
+    br_vector3 v;
+    br_scalar radius;
+    br_scalar strength;
+    br_scalar decay_factor;
+    tU8 type;
+    tU8 pipe_me;
+} tSmoke;
+
 typedef struct {
     br_actor* actor;
     br_model* model;

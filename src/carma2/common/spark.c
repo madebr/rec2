@@ -47,6 +47,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_matrix4, gCameraToScreen, 0x006a8718);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSpark, gSparks, 32, 0x006a9b80);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tBRender_smoke*, gBR_smoke_pointers, 35, 0x006a8760);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gN_BR_smoke_structs, 0x006aa56c);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmoke, gSmoke, 25, 0x006a8ce0);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSmoke_flags, 0x006aa590);
 
 #define CHARS1_TO_INT(A)            ((A) - '0')
 #define CHARS2_TO_INT(A, B)         (10 * CHARS1_TO_INT(A) + CHARS1_TO_INT(B))
@@ -1391,3 +1393,194 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
     }
 }
 C2_HOOK_FUNCTION(0x004fb1b0, RenderRecordedSmokeCircles)
+
+void C2_HOOK_FASTCALL RecordSmokeCircle(br_vector3* pCent, br_scalar pR, br_scalar pStrength, br_colour pShade, br_scalar pAspect) {
+
+    if (C2V(gRendering_mirror)) {
+        DRMatrix34TApplyP(&C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].pos, pCent, &C2V(gRearview_camera_to_world));
+    } else {
+        DRMatrix34TApplyP(&C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].pos, pCent, &C2V(gCamera_to_world));
+    }
+
+    C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].r = pR;
+    C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].strength = pStrength;
+    C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].col = pShade;
+    C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].aspect = pAspect;
+    C2V(gBR_smoke_pointers)[C2V(gN_BR_smoke_structs)] = &C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)];
+    if (pShade == C2V(gShade_list)[7]) {
+        C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].model = C2V(gBlend_model2);
+    } else {
+        C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].model = C2V(gBlend_model);
+    }
+    C2V(gN_BR_smoke_structs) += 1;
+}
+
+void C2_HOOK_FASTCALL SmokeCircle3D(br_vector3* o, br_scalar r, br_scalar strength, br_scalar pAspect, br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_colour pShade, br_actor* pCamera) {
+
+    if (C2V(gNo_2d_effects)) {
+        RecordSmokeCircle(o, r, strength, pShade, pAspect);
+    }
+}
+
+void C2_HOOK_FASTCALL DrawTheGlow(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera) {
+    int i;
+    br_scalar strength;
+    br_vector3 tv;
+    tU32 seed;
+
+    if (C2V(gColumn_flags) != 0) {
+        seed = rand();
+        srand(GetTotalTime());
+        for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+            if (((1u << i) & C2V(gColumn_flags)) != 0 && C2V(gSmoke_column)[i].colour <= 1) {
+                strength = 0.5f;
+                if (C2V(gSmoke_column)[i].lifetime < 4000) {
+                    strength = C2V(gSmoke_column)[i].lifetime * 0.5f / 4000.f;
+                }
+                BrVector3Set(&tv, C2V(gSmoke_column)[i].pos.v[0], C2V(gSmoke_column)[i].pos.v[1] + 0.02f, C2V(gSmoke_column)[i].pos.v[2]);
+                SmokeCircle3D(&tv, 0.07f, strength, SRandomBetween(0.5f, 0.99f), pRender_screen, pDepth_buffer, C2V(gShade_list)[7], pCamera);
+            }
+        }
+        srand(seed);
+    }
+}
+
+void C2_HOOK_FASTCALL ReplaySmoke(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera) {
+    br_scalar aspect;
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke)); i++) {
+        if (C2V(gSmoke_flags) & (1u << i)) {
+            aspect = 1.f + (C2V(gSmoke)[i].radius - .05f) * 4.f / 2.f;
+            if (C2V(C2V(gSmoke))[i].type & 0x10) {
+                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius / aspect, C2V(gSmoke)[i].strength, 1.f,
+                    pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
+            } else {
+                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gSmoke)[i].strength, aspect,
+                    pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
+            }
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime) {
+    int i;
+    int j;
+    br_vector3 tv;
+    br_scalar aspect;
+    br_scalar ts;
+    tU32 seed;
+    tU32 not_lonely;
+
+    not_lonely = 0;
+    if (C2V(gNo_2d_effects)) {
+        C2V(gBlend_actor)->render_style = BR_RSTYLE_FACES;
+        if (C2V(gBlend_actor)->parent != NULL) {
+            BrActorRemove(C2V(gBlend_actor));
+        }
+        BrActorAdd(pCamera, C2V(gBlend_actor));
+        C2V(gN_BR_smoke_structs) = 0;
+    }
+    DrawTheGlow(pRender_screen, pDepth_buffer, pCamera);
+
+    if (C2V(gSmoke_flags) == 0) {
+        if (C2V(gNo_2d_effects)) {
+            if (C2V(gBlend_actor)->parent != NULL) {
+                BrActorRemove(C2V(gBlend_actor));
+            }
+            BrActorAdd(C2V(gDont_render_actor), C2V(gBlend_actor));
+        }
+        return;
+    }
+
+    seed = rand();
+    if (C2V(gAction_replay_mode)) {
+        ReplaySmoke(pRender_screen, pDepth_buffer, pCamera);
+        srand(seed);
+        if (C2V(gNo_2d_effects)) {
+            RenderRecordedSmokeCircles();
+            if (C2V(gBlend_actor)->parent != NULL) {
+                BrActorRemove(gBlend_actor);
+            }
+            BrActorAdd(gDont_render_actor, gBlend_actor);
+        }
+        return;
+    }
+    ARStartPipingSession(ePipe_chunk_smoke);
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke)); i++) {
+        if (C2V(gSmoke_flags) & (1u << i)) {
+            if (C2V(gSmoke)[i].strength > 0.0) {
+                if (C2V(gSmoke)[i].time_sync != 0) {
+                    BrVector3Scale(&tv, &C2V(gSmoke)[i].v, C2V(gSmoke)[i].time_sync / 1000.0f);
+                    C2V(gSmoke)[i].time_sync = 0;
+                } else {
+                    BrVector3Scale(&tv, &C2V(gSmoke)[i].v, pTime / 1000.0f);
+                }
+                BrVector3Accumulate(&C2V(gSmoke)[i].pos, &tv);
+            } else {
+                gSmoke_flags &= ~(1u << i);
+            }
+        }
+    }
+    for (i = 0; i < REC2_ASIZE(C2V(gSmoke)); i++) {
+        if (gSmoke_flags & (1u << i)) {
+            if ((C2V(gSmoke)[i].type & 0xf) == 7) {
+                not_lonely |= 1u << i;
+            } else if (!(not_lonely & (1u << i))) {
+                for (j = i + 1; j < REC2_ASIZE(C2V(gSmoke)); j++) {
+                    if ((gSmoke_flags & (1u << j))) {
+                        BrVector3Sub(&tv, &C2V(gSmoke)[i].pos, &C2V(gSmoke)[i].pos);
+                        ts = BrVector3LengthSquared(&tv);
+                        if (REC2_SQR(C2V(gSmoke)[i].radius + C2V(gSmoke)[j].radius) > ts) {
+                            not_lonely |= (1u << j) | (1u << i);
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!((1u << i) & not_lonely)) {
+                C2V(gSmoke)[i].strength = C2V(gSmoke)[i].strength / 2.f;
+            }
+            aspect = 1.f + (C2V(gSmoke)[i].radius - .05f) * 4.f / 2.f;
+            if ((C2V(gSmoke)[i].type & 0x10)) {
+                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius / aspect, C2V(gBR_smoke_structs)[i].strength, 1.0, pRender_screen, pDepth_buffer, gShade_list[C2V(gSmoke)[i].type & 0xf], pCamera);
+            } else {
+                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gBR_smoke_structs)[i].strength, aspect, pRender_screen, pDepth_buffer, gShade_list[C2V(gSmoke)[i].type & 0xf], pCamera);
+            }
+            if (C2V(gSmoke)[i].pipe_me) {
+                AddSmokeToPipingSession(i, C2V(gSmoke)[i].type, &C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gSmoke)[i].strength);
+            }
+            C2V(gSmoke)[i].radius = pTime / 1000.0f * C2V(gSmoke)[i].strength * .5f + C2V(gSmoke)[i].radius;
+            C2V(gSmoke)[i].strength -= pTime * C2V(gSmoke)[i].decay_factor / 1000.0f;
+            if (C2V(gSmoke)[i].radius > 0.3f) {
+                C2V(gSmoke)[i].radius = 0.3f;
+            }
+            if (C2V(gSmoke)[i].strength > 0.0f) {
+                ts = 1.0f - pTime * 0.002f;
+                if (ts < 0.5f) {
+                    ts = 0.5f;
+                }
+                BrVector3Scale(&C2V(gSmoke)[i].v, &C2V(gSmoke)[i].v, ts);
+                if (fabs(C2V(gSmoke)[i].v.v[1]) < 0.43478259f && (C2V(gSmoke)[i].type & 0xfu) < 7) {
+                    if (C2V(gSmoke)[i].v.v[1] >= 0.0) {
+                        C2V(gSmoke)[i].v.v[1] = 0.43478259f;
+                    } else {
+                        C2V(gSmoke)[i].v.v[1] += 0.43478259f;
+                    }
+                }
+            } else {
+                gSmoke_flags &= ~(1u << i);
+            }
+        }
+    }
+    AREndPipingSession();
+    srand(seed);
+    if (C2V(gNo_2d_effects)) {
+        RenderRecordedSmokeCircles();
+        if (C2V(gBlend_actor)->parent != NULL) {
+            BrActorRemove(C2V(gBlend_actor));
+        }
+        BrActorAdd(C2V(gDont_render_actor), C2V(gBlend_actor));
+    }
+}
+C2_HOOK_FUNCTION(0x004fa910, RenderSmoke)
