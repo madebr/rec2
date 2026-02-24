@@ -404,6 +404,11 @@ typedef struct {
     tU32 time;
 } tPipe_chunk_frame_finish;
 
+typedef struct {
+    br_vector3 p;
+    br_vector3 v;
+} tPipe_chunk_spark;
+
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
@@ -411,6 +416,7 @@ typedef enum {
     ePipe_chunk_single_graphpical_wheel_stuff = 6,
     ePipe_chunk_damage = 7,
     ePipe_chunk_special = 8,
+    ePipe_chunk_spark = 10,
     ePipe_chunk_shrapnel = 11,
     ePipe_chunk_screen_wobble = 12,
     ePipe_chunk_non_car = 14,

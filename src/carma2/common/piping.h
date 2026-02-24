@@ -140,4 +140,6 @@ void C2_HOOK_FASTCALL PipeSingleScreenWobble(int pWobble_x, int pWobble_y);
 
 void C2_HOOK_FASTCALL PipeSingleFrameFinish(void);
 
+void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV);
+
 #endif //REC2_PIPING_H
