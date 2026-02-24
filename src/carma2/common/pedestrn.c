@@ -4463,3 +4463,8 @@ void C2_HOOK_FASTCALL RenderLimbs(void) {
     C2V(gPed_count_limbed_actors) = 0;
 }
 C2_HOOK_FUNCTION(0x004d3610, RenderLimbs)
+
+void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world) {
+    // Empty
+}
+C2_HOOK_FUNCTION(0x, RenderLollipos)
