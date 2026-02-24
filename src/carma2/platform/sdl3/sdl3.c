@@ -646,7 +646,7 @@ void PDAllocateScreenAndBack(void) {
     gRenderer_fixup_basename = "VOODOO";
     gRenderer_fixup_extension = ".TXT";
     gNo_render_indent = 1;
-    gTranslucent_smoke = 1; /* maybe? */
+    gNo_2d_effects = 1; /* maybe? */
     gEnable_perspective_maps = 1;
     gNoTransients = 1;
     gDevious_2d = 1;
