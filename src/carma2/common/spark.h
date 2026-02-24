@@ -136,4 +136,6 @@ void C2_HOOK_FASTCALL ReplaySparks(br_pixelmap* pRender_screen, br_pixelmap* pDe
 
 void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime);
 
+int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
+
 #endif //REC2_SPARK_H
