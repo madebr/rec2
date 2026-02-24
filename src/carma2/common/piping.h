@@ -142,4 +142,8 @@ void C2_HOOK_FASTCALL PipeSingleFrameFinish(void);
 
 void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV);
 
+void C2_HOOK_FASTCALL SaveReducedPos(tReduced_pos* p, br_vector3* v);
+
+void C2_HOOK_FASTCALL AddSmokeToPipingSession(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength);
+
 #endif //REC2_PIPING_H
