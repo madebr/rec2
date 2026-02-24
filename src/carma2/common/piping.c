@@ -989,3 +989,16 @@ void C2_HOOK_FASTCALL PipeSingleFrameFinish(void) {
         SIZE_OFFSET_PIPING(tPipe_chunk_frame_finish, time), GetTotalTime());
 }
 C2_HOOK_FUNCTION(0x004c8340, PipeSingleFrameFinish)
+
+void C2_HOOK_FASTCALL AddSparkToPipingSession(int pSpark_index, const br_vector3* pPos, const br_vector3* pV) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_spark, p, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, p, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_spark, v, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_spark, v, 0xc);
+
+    ARDoSingleVariedSession(ePipe_chunk_spark, pSpark_index, 2,
+        SIZE_OFFSET_PIPING(tPipe_chunk_spark, p), pPos,
+        SIZE_OFFSET_PIPING(tPipe_chunk_spark, v), pV);
+}
+C2_HOOK_FUNCTION(0x004c6f20, AddSparkToPipingSession)
