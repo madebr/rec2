@@ -357,6 +357,9 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const float, gFlamed_ped_flame_scales, 7, 
     .075f,
     .05f,
 });
+C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gLimbs_actor, 0x006a0424);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count_limbed_actors, 0x006a0420);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPed_limbed_actors, 30, 0x00694280);
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
 
@@ -4432,3 +4435,31 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(tPed_character_instance* pCharac
     return pCharacter->personality->form->actor_sets[pCharacter->field_0x4].actors[0];
 }
 C2_HOOK_FUNCTION(0x00407b10, GetCharacterActorPtr)
+
+void C2_HOOK_FASTCALL RenderLimbs(void) {
+    int i;
+    int j;
+
+    if (C2V(gLimbs_actor) == NULL) {
+        C2V(gLimbs_actor) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        C2V(gLimbs_actor)->identifier = "Limbs_actor";
+        BrActorAdd(C2V(gUniverse_actor), C2V(gLimbs_actor));
+    }
+    for (i = 0; i < C2V(gPed_count_limbed_actors); i++) {
+        br_actor* a = C2V(gPed_limbed_actors)[i];
+        tPed_character_instance* ped = a->type_data;
+        tPed_form* form = ped->personality->form;
+        br_actor** bone_actors = form->actor_sets[ped->field_0x4].actors;
+        for (j = 1; j < form->count_bones; j++) {
+            if (!(C2V(gPow2_array)[j] & ped->field_0xc)) {
+                BrActorAdd(C2V(gLimbs_actor), bone_actors[j]);
+            }
+        }
+    }
+    BrZbsSceneRenderAdd(C2V(gLimbs_actor));
+    while (C2V(gLimbs_actor)->children != NULL) {
+        BrActorRemove(C2V(gLimbs_actor)->children);
+    }
+    C2V(gPed_count_limbed_actors) = 0;
+}
+C2_HOOK_FUNCTION(0x004d3610, RenderLimbs)

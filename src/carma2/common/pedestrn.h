@@ -19,6 +19,9 @@ C2_HOOK_VARIABLE_DECLARE(tPedestrian*, gPedestrians_in_sight);
 C2_HOOK_VARIABLE_DECLARE(tU32, gPed_last_munging);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_scare_time);
 C2_HOOK_VARIABLE_DECLARE(tPed_cache_006944c0, gPed_cache_00694328);
+C2_HOOK_VARIABLE_DECLARE(br_actor*, gLimbs_actor);
+C2_HOOK_VARIABLE_DECLARE(int, gPed_count_limbed_actors);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gPed_limbed_actors, 30);
 
 int C2_HOOK_FASTCALL GetPedCount(void);
 
@@ -281,5 +284,7 @@ void C2_HOOK_FASTCALL SetPedStartRun(tPedestrian* pPed);
 void C2_HOOK_FASTCALL StartPedRunning(tPedestrian* pPed, tU32 pTime, int pArg3);
 
 br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(tPed_character_instance* pCharacter);
+
+void C2_HOOK_FASTCALL RenderLimbs(void);
 
 #endif //REC2_PEDESTRN_H
