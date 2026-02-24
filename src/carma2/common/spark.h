@@ -35,6 +35,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gShrapnel_flags);
 C2_HOOK_VARIABLE_DECLARE(br_camera*, gSpark_cam);
 C2_HOOK_VARIABLE_DECLARE(br_matrix4, gCameraToScreen);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSpark, gSparks, 32);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tBRender_smoke*, gBR_smoke_pointers, 35);
+C2_HOOK_VARIABLE_DECLARE(int, gN_BR_smoke_structs);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -137,5 +139,7 @@ void C2_HOOK_FASTCALL ReplaySparks(br_pixelmap* pRender_screen, br_pixelmap* pDe
 void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime);
 
 int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
+
+void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
 
 #endif //REC2_SPARK_H

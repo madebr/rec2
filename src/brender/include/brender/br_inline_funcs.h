@@ -172,4 +172,5 @@
 #define BR_FIXED_UINT(I) ((br_fixed_ls)(((unsigned int)(I)) * BR_ONE_LS))
 #define BrFixedToFloat(s) ((float)((s) * (1.0 / (float)BR_ONE_LS)))
 #define BrFixedToInt(s) ((s) / BR_ONE_LS)
+#define BrFloatToFixed(f)	((br_fixed_ls)((f)*(float)BR_ONE_LS))
 #endif
