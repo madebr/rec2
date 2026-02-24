@@ -989,7 +989,7 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     C2V(gRenderer_fixup_basename) = "VOODOO";
     C2V(gRenderer_fixup_extension) = ".TXT";
     C2V(gNo_render_indent) = 1;
-    C2V(gTranslucent_smoke) = 1; /* maybe? */
+    C2V(gNo_2d_effects) = 1; /* maybe? */
     C2V(gEnable_perspective_maps) = 1;
     C2V(gNoTransients) = 1;
     C2V(gDevious_2d) = 1;

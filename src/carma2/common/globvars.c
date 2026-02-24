@@ -73,7 +73,7 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gNo_fog, 0x0074ca10);
 C2_HOOK_VARIABLE_IMPLEMENT(const char*, gRenderer_fixup_basename, 0x0074c9f4);
 C2_HOOK_VARIABLE_IMPLEMENT(const char*, gRenderer_fixup_extension, 0x0074ca6c);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gNo_render_indent, 0x0074cf8c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTranslucent_smoke, 0x0074cf68);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gNo_2d_effects, 0x0074cf68);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEnable_perspective_maps, 0x0074ca54);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gDevious_2d, 0x0074cf60);
 

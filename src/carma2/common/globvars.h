@@ -64,7 +64,7 @@ C2_HOOK_VARIABLE_DECLARE(int, gNo_fog);
 C2_HOOK_VARIABLE_DECLARE(const char*, gRenderer_fixup_basename);
 C2_HOOK_VARIABLE_DECLARE(const char*, gRenderer_fixup_extension);
 C2_HOOK_VARIABLE_DECLARE(int, gNo_render_indent);
-C2_HOOK_VARIABLE_DECLARE(int, gTranslucent_smoke);
+C2_HOOK_VARIABLE_DECLARE(int, gNo_2d_effects);
 C2_HOOK_VARIABLE_DECLARE(int, gEnable_perspective_maps);
 C2_HOOK_VARIABLE_DECLARE(int, gDevious_2d);
 
