@@ -37,6 +37,8 @@ C2_HOOK_VARIABLE_DECLARE(br_matrix4, gCameraToScreen);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tSpark, gSparks, 32);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tBRender_smoke*, gBR_smoke_pointers, 35);
 C2_HOOK_VARIABLE_DECLARE(int, gN_BR_smoke_structs);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmoke, gSmoke, 25);
+C2_HOOK_VARIABLE_DECLARE(int, gSmoke_flags);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -141,5 +143,15 @@ void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDe
 int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2);
 
 void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void);
+
+void C2_HOOK_FASTCALL RecordSmokeCircle(br_vector3* pCent, br_scalar pR, br_scalar pStrength, br_colour pShade, br_scalar pAspect);
+
+void C2_HOOK_FASTCALL SmokeCircle3D(br_vector3* o, br_scalar r, br_scalar strength, br_scalar pAspect, br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_colour pShade, br_actor* pCamera);
+
+void C2_HOOK_FASTCALL DrawTheGlow(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera);
+
+void C2_HOOK_FASTCALL ReplaySmoke(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera);
+
+void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime);
 
 #endif //REC2_SPARK_H
