@@ -32,6 +32,9 @@ C2_HOOK_VARIABLE_DECLARE(int, gReplay_splash_flags);
 C2_HOOK_VARIABLE_DECLARE(tU32, gNext_AFE_color_cycle);
 C2_HOOK_VARIABLE_DECLARE(int, gAFE_color_cycle);
 C2_HOOK_VARIABLE_DECLARE(int, gShrapnel_flags);
+C2_HOOK_VARIABLE_DECLARE(br_camera*, gSpark_cam);
+C2_HOOK_VARIABLE_DECLARE(br_matrix4, gCameraToScreen);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tSpark, gSparks, 32);
 
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
@@ -126,5 +129,11 @@ void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int fire_point);
 void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol);
 
 int C2_HOOK_FASTCALL DrawLine3D(br_vector3* start, br_vector3* end, br_pixelmap* pScreen, br_pixelmap* pDepth_buffer, br_pixelmap* shade_table);
+
+void C2_HOOK_FASTCALL SetWorldToScreen(br_pixelmap* pScreen);
+
+void C2_HOOK_FASTCALL ReplaySparks(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, tU32 pTime);
+
+void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime);
 
 #endif //REC2_SPARK_H

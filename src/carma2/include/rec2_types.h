@@ -732,6 +732,17 @@ typedef struct {
     char name[16];
 } tCar_detail_info;
 
+typedef struct {
+    int count;
+    br_vector3 pos;
+    br_vector3 v;
+    br_vector3 length;
+    br_vector3 normal;
+    tU32 time_sync;
+    tCar_spec* car;
+    tU8 colour;
+} tSpark;
+
 typedef struct tDynamic_message {
     struct tDynamic_message* next;
     char data[];
