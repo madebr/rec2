@@ -6,6 +6,8 @@
 
 #include "c2_hooks.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gRender_alternative_track_actors);
+
 br_scalar C2_HOOK_STDCALL GetYonFactor(void);
 
 void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew);
@@ -41,5 +43,7 @@ void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX,
 void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos, float pMax_dist, int pMatch_type, int pIdentifier_value, int pIdentifier_index, int pMatch_flags, tNearbyActors_cbfn* pCallback, void* pContext);
 
 intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext);
+
+void C2_HOOK_FASTCALL RenderTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world);
 
 #endif //REC2_BRUCETRK_H
