@@ -150,4 +150,6 @@ int C2_HOOK_FASTCALL sign(int pNumber);
 
 void C2_HOOK_FASTCALL WaitFor(tU32 pDelay);
 
+void DRMatrix34TApplyP(br_vector3* pA, br_vector3* pB, br_matrix34* pC);
+
 #endif // REC2_UTILITY_H
