@@ -896,6 +896,12 @@ typedef enum {
     kLoadTextureFlags_SaveTextureCompressed = 0x40,
 } tLoadTextureFlags;
 
+typedef struct {
+    tCar_spec* car;
+    tPedestrian* ped;
+    tU32 start_time;
+} tProximity_ray;
+
 // relict from Carmageddon I
 
 typedef struct tFlicette {
