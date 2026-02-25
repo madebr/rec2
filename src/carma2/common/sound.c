@@ -237,6 +237,12 @@ int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pS
     }
 }
 
+tS3_outlet* C2_HOOK_FASTCALL GetOutletFromIndex(int pIndex) {
+
+    return C2V(gIndexed_outlets)[pIndex];
+}
+C2_HOOK_FUNCTION(0x004566a0, GetOutletFromIndex)
+
 int C2_HOOK_FASTCALL GetIndexFromOutlet(tS3_outlet* pOutlet) {
     int i;
 

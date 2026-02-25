@@ -53,6 +53,8 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id 
 
 int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
+tS3_outlet* C2_HOOK_FASTCALL GetOutletFromIndex(int pIndex);
+
 int C2_HOOK_FASTCALL GetIndexFromOutlet(tS3_outlet* pOutlet);
 
 int C2_HOOK_FASTCALL DRS3StartCDA(int pSound);
