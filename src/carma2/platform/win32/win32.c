@@ -96,6 +96,8 @@ C2_HOOK_VARIABLE_IMPLEMENT(HPALETTE, gPDPalette, 0x006ad46c);
 C2_HOOK_VARIABLE_IMPLEMENT(SYSTEM_INFO, gSystem_info, 0x0079ea84);
 C2_HOOK_VARIABLE_IMPLEMENT(DWORD, gPage_size, 0x0068c830);
 
+#define Win32AllocateActionReplayBuffer PDReallyAllocateActionReplayBuffer
+
 void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
     MEMORYSTATUS memory_status;
     unsigned int bufferSize;
