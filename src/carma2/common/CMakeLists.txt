@@ -147,6 +147,8 @@ add_library(c2_common STATIC
     raycast.h
     replay.c
     replay.h
+    replay_callbacks.c
+    replay_callbacks.h
     shrapnel.c
     shrapnel.h
     smashing.c
