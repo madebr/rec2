@@ -6,6 +6,7 @@
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrkm.h"
+#include "globvrpb.h"
 #include "graphics.h"
 #include "input.h"
 #include "loading.h"
@@ -13,9 +14,12 @@
 #include "pedestrn.h"
 #include "piping.h"
 #include "platform.h"
+#include "replay_callbacks.h"
 #include "utility.h"
 
 #include "c2_string.h"
+
+#include "rec2_macros.h"
 
 C2_HOOK_VARIABLE_IMPLEMENT(tActionReplayCameraMode, gAction_replay_camera_mode, 0x0079efa8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gAction_replay_manual_camera_target_type, 0x00679278);
@@ -220,10 +224,18 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004e72e0, ToggleReplay, ToggleReplay_original)
 void (C2_HOOK_FASTCALL * InitialiseActionReplay_original)(void);
 void C2_HOOK_FASTCALL InitialiseActionReplay(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitialiseActionReplay_original();
 #else
-    NOT_IMPLEMENTED();
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gReplay_callbacks)) != 70);
+
+    ARInitialise(!C2V(gAusterity_mode) && C2V(gNet_mode) == eNet_mode_none, REC2_ASIZE(C2V(gReplay_callbacks)), C2V(gReplay_callbacks));
+    if (!C2V(gAusterity_mode) && C2V(gNet_mode) == eNet_mode_none) {
+        C2V(gCrush_space) = BrMemAllocate(0x4000, kMem_pipe_model_geometry);
+    } else {
+        C2V(gCrush_space) = NULL;
+    }
+    C2V(gSmudge_space) = (tPipe_smudge_data*)C2V(gCrush_space);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c6bf0, InitialiseActionReplay, InitialiseActionReplay_original)
