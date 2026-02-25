@@ -1458,10 +1458,18 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0041f110, DoLODCarModels, DoLODCarModels_original)
 void (C2_HOOK_FASTCALL * DoComplexCarModels_original)(void);
 void C2_HOOK_FASTCALL DoComplexCarModels(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoComplexCarModels_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    tCar_spec* car;
+
+    for (i = 0; i < C2V(gNum_active_cars); i++) {
+        car = C2V(gActive_car_list)[i];
+        if (car != NULL && car->driver >= eDriver_oppo) {
+            SwitchCarModels(car, 0);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f2a0, DoComplexCarModels, DoComplexCarModels_original)
