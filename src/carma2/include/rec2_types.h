@@ -252,6 +252,13 @@ typedef struct {
 } tPipe_ped_move_data;
 
 typedef struct {
+    int pitch;
+    br_vector3 position;
+    tS16 outlet;
+    tS16 volume;
+} tPipe_shunk_single_sound;
+
+typedef struct {
     br_matrix34 matrix;
 } tPipe_ped_physics_data;
 
@@ -438,6 +445,7 @@ typedef struct {
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
+    ePipe_chunk_single_sound = 2,
     ePipe_chunk_car = 5,
     ePipe_chunk_single_graphpical_wheel_stuff = 6,
     ePipe_chunk_damage = 7,
