@@ -290,6 +290,16 @@ void C2_HOOK_FASTCALL CopyMapToScreen(void);
 
 void C2_HOOK_FASTCALL MapStuffBeforeRender(void);
 
+void C2_HOOK_FASTCALL FoxyStuff(br_matrix34* pMat34, br_actor* pCamera, br_pixelmap* pColour, br_pixelmap* pDepth);
+
+int C2_HOOK_FASTCALL ConditionallyFillWithSky(br_pixelmap* pPixelmap);
+
+void C2_HOOK_FASTCALL FixificateClipulatingPlaneyThings(br_actor* pCamera);
+
+void C2_HOOK_FASTCALL ProcessNonTrackActors(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world);
+
+void C2_HOOK_FASTCALL CancelificateClipulatingPlaneyThings(void);
+
 void C2_HOOK_FASTCALL DoARenderPass(br_matrix34* pMat34, br_actor* pCamera, br_pixelmap* pColour, br_pixelmap* pDepth, float pYon_factor, int pShadows, int pEffects);
 
 void C2_HOOK_FASTCALL DoACompleteRenderPass(int pMirror, br_matrix34* pCamera_to_world, br_actor* pCamera, br_pixelmap* pScreen, br_pixelmap* pDepth);
