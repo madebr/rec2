@@ -5,6 +5,7 @@
 #include "globvars.h"
 #include "opponent.h"
 #include "physics.h"
+#include "platform.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -51,6 +52,18 @@ void C2_HOOK_FASTCALL ARResetPiping(void) {
     C2V(gReentrancy_count) = 0;
 }
 C2_HOOK_FUNCTION(0x004023e0, ARResetPiping)
+
+void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** buffer, tU32* size) {
+
+    PDReallyAllocateActionReplayBuffer();
+    if (buffer != NULL) {
+        *buffer = C2V(gPDActionReplayBuffer);
+    }
+    if (size != NULL) {
+        *size = C2V(gPDActionReplayBufferSize);
+    }
+}
+C2_HOOK_FUNCTION(0x0051b9a0, PDAllocateActionReplayBuffer)
 
 int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void) {
 
