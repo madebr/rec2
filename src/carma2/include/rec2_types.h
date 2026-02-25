@@ -366,6 +366,15 @@ typedef struct {
 } tPipe_burning_ped;
 
 typedef struct {
+    void (C2_HOOK_FASTCALL * reset)(void);
+    tU32 length;
+    int (C2_HOOK_FASTCALL * calc_length)(tPipe_chunk* pChunk);
+    void (C2_HOOK_FASTCALL * apply)(tPipe_chunk** pChunk);
+    undefined4 flags;
+    void (C2_HOOK_FASTCALL * undo)(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk);
+} tReplay_callback;
+
+typedef struct {
     br_actor* actor;
     br_matrix34 matrix;
 } tPipe_chunk_non_car;

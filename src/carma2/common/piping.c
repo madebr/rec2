@@ -36,10 +36,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPipe_chunk_type, gReentrancy_array, 5, 0x00676
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gLocal_buffer, 0x006768b4, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, gLocal_buffer_size, 0x006768f4, 0);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gMr_chunky, 0x006768a0, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tPiping_chunk_callback*, gPipe_chunk_vtable, 0x006768e8, NULL);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const tReplay_callback*, gPipe_callbacks, 0x006768e8, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_phys_end, 0x006768f0, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU8*, gPipe_buffer_working_end, 0x006768c4, NULL);
 C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x006940d4);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPipe_count_callbacks, 0x00676910, 0);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, gPipe_buffer_size, 0x006768ec, 0);
 
 #define CRUSH_SPACE_SIZE 0x4000
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
@@ -64,6 +66,22 @@ void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** buffer, tU32* size) {
     }
 }
 C2_HOOK_FUNCTION(0x0051b9a0, PDAllocateActionReplayBuffer)
+
+void C2_HOOK_FASTCALL ARInitialise(int pEnable, int pCount_callbacks, const tReplay_callback* pCallbacks) {
+
+    if (pEnable) {
+        C2V(gPipe_callbacks) = pCallbacks;
+        C2V(gPipe_count_callbacks) = pCount_callbacks;
+        PDAllocateActionReplayBuffer(&C2V(gPipe_buffer_start), &C2V(gPipe_buffer_size));
+        C2V(gPipe_buffer_phys_end) = C2V(gPipe_buffer_start) + C2V(gPipe_buffer_size);
+        C2V(gLocal_buffer) = BrMemAllocate(15000, kMem_pipe_model_geometry);
+    } else {
+        C2V(gPipe_buffer_start) = NULL;
+        C2V(gLocal_buffer) = NULL;
+    }
+    ARResetPiping();
+}
+C2_HOOK_FUNCTION(0x00402410, ARInitialise)
 
 int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void) {
 
@@ -218,9 +236,9 @@ C2_HOOK_FUNCTION(0x004028a0, ARAddDataToSession)
 int C2_HOOK_FASTCALL LengthOfChunk(void* pChunk, int pType) {
     int length;
 
-    length = C2V(gPipe_chunk_vtable)[pType].length + sizeof(void*);
-    if (C2V(gPipe_chunk_vtable)[pType].calc_length != NULL) {
-        length += C2V(gPipe_chunk_vtable)[pType].calc_length(pChunk);
+    length = C2V(gPipe_callbacks)[pType].length + sizeof(void*);
+    if (C2V(gPipe_callbacks)[pType].calc_length != NULL) {
+        length += C2V(gPipe_callbacks)[pType].calc_length(pChunk);
     }
     return length;
 }
