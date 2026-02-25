@@ -7,6 +7,7 @@
 #include "globvars.h"
 #include "globvrkm.h"
 #include "graphics.h"
+#include "input.h"
 #include "loading.h"
 #include "main.h"
 #include "pedestrn.h"
@@ -26,6 +27,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU8, gCamera_type_allowed_gameplay, 9, 0x0
 });
 C2_HOOK_VARIABLE_IMPLEMENT(int, gSingle_frame_mode, 0x006a23c4);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_synch_time, 0x006a23d4);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_down, 0x006a2374);
 
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 
@@ -229,10 +231,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004c6bf0, InitialiseActionReplay, InitialiseActionRe
 void (C2_HOOK_FASTCALL * CheckReplayTurnOn_original)(void);
 void C2_HOOK_FASTCALL CheckReplayTurnOn(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     CheckReplayTurnOn_original();
 #else
-    NOT_IMPLEMENTED();
+    if (!C2V(gAction_replay_mode)) {
+        if (!KeyIsDown(58) || C2V(gEntering_message)) {
+            C2V(gKey_down) = -1;
+        } else if (C2V(gKey_down) == -1) {
+            ToggleReplay(0, 0);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e6ff0, CheckReplayTurnOn, CheckReplayTurnOn_original)

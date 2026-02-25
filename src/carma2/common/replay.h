@@ -9,6 +9,7 @@ C2_HOOK_VARIABLE_DECLARE(tActionReplayCameraMode, gAction_replay_camera_mode);
 C2_HOOK_VARIABLE_DECLARE(int, gAction_replay_manual_camera_target_type);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_synch_time);
 C2_HOOK_VARIABLE_DECLARE(int, gSingle_frame_mode);
+C2_HOOK_VARIABLE_DECLARE(int, gKey_down);
 
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void);
 
