@@ -13,6 +13,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gMsg_header_strlen);
 C2_HOOK_VARIABLE_DECLARE(tPD_S3_config, gPD_S3_config);
 C2_HOOK_VARIABLE_DECLARE(int, gJoystick_deadzone);
 C2_HOOK_VARIABLE_DECLARE(void*, gHWnd);
+C2_HOOK_VARIABLE_DECLARE(void*, gPDActionReplayBuffer);
+C2_HOOK_VARIABLE_DECLARE(int, gPDActionReplayBufferSize);
 
 int GetRegisterSourceLocation(char* buffer, int* buffer_size);
 
@@ -196,5 +198,7 @@ int C2_HOOK_FASTCALL PDS3IsSamplePlaying(tS3_channel* pChannel);
 void C2_HOOK_FASTCALL PDPageInProcessMemory(void);
 
 int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void);
+
+void C2_HOOK_FASTCALL PDReallyAllocateActionReplayBuffer(void);
 
 #endif // C2_PLATFORM_H

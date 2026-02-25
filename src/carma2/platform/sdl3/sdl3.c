@@ -182,7 +182,7 @@ void Win32ServiceMessages() {
     }
 }
 
-void Win32AllocateActionReplayBuffer(void) {
+void PDReallyAllocateActionReplayBuffer(void) {
     gPDActionReplayBufferSize = 8000000;
     gPDActionReplayBuffer = SDL_malloc(gPDActionReplayBufferSize);
     if (gPDActionReplayBuffer == NULL) {
