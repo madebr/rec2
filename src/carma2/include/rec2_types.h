@@ -420,6 +420,12 @@ typedef struct {
     tU8 type;
 } tPipe_chunk_smoke;
 
+typedef struct {
+    tU16 ped_index;
+    tU16 car_ID;
+    tU32 time;
+} tPipe_chunk_prox_ray;
+
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
@@ -434,6 +440,7 @@ typedef enum {
     ePipe_chunk_smoke = 15,
     ePipe_chunk_smoke_column = 17,
     ePipe_chunk_smudge = 19,
+    ePipe_chunk_prox_ray = 21,
     ePipe_chunk_flap_bits = 23,
     ePipe_model_mash = 24,
     ePipe_smash_texture_change = 36,

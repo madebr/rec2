@@ -146,4 +146,6 @@ void C2_HOOK_FASTCALL SaveReducedPos(tReduced_pos* p, br_vector3* v);
 
 void C2_HOOK_FASTCALL AddSmokeToPipingSession(int pIndex, tU8 pType, br_vector3* pPos, br_scalar pRadius, br_scalar pStrength);
 
+void AddProxRayToPipingSession(int pRay_index, tCar_spec* pCar, tU16 pPed_index, tU32 pTime);
+
 #endif //REC2_PIPING_H
