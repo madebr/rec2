@@ -19,10 +19,15 @@ C2_HOOK_VARIABLE_DECLARE(br_vector3, gReference_pos);
 C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCar_ptr);
 C2_HOOK_VARIABLE_DECLARE(tU32, gTrigger_time);
 C2_HOOK_VARIABLE_DECLARE(tPipe_smudge_data*, gSmudge_space);
+C2_HOOK_VARIABLE_DECLARE(const tReplay_callback*, gPipe_callbacks);
+C2_HOOK_VARIABLE_DECLARE(int, gPipe_count_callbacks);
+C2_HOOK_VARIABLE_DECLARE(tU32, gPipe_buffer_size);
 
 void C2_HOOK_FASTCALL ARResetPiping(void);
 
 void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** buffer, tU32* size);
+
+void C2_HOOK_FASTCALL ARInitialise(int pEnable, int pCount_callbacks, const tReplay_callback* pCallbacks);
 
 int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
 
