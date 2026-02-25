@@ -6,6 +6,8 @@
 #include "opponent.h"
 #include "physics.h"
 #include "platform.h"
+#include "smashing.h"
+#include "sound.h"
 #include "utility.h"
 
 #include <brender/brender.h>
@@ -646,13 +648,31 @@ void C2_HOOK_FASTCALL PipeSingleOilSpill(int pIndex, br_matrix34* pMat, br_scala
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c82e0, PipeSingleOilSpill, PipeSingleOilSpill_original)
 
-void (C2_HOOK_FASTCALL * PipeSingleSound_original)(tS3_outlet* pOutlet, int pSound, int pArg3, int pArg4, int pPitch, const br_vector3* pPopPosition);
-void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, int pArg3, int pArg4, int pPitch, const br_vector3* pPosition) {
+void (C2_HOOK_FASTCALL * PipeSingleSound_original)(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPopPosition);
+void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPosition) {
 
-#if defined(C2_HOOKS_ENABLED)
-    PipeSingleSound_original(pOutlet, pSound, pArg3, pArg4, pPitch, pPosition);
+#if 0//defined(C2_HOOKS_ENABLED)
+    PipeSingleSound_original(pOutlet, pSound, pL_volume, pR_volume, pPitch, pPosition);
 #else
-    NOT_IMPLEMENTED();
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_shunk_single_sound, pitch, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_shunk_single_sound, pitch, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_shunk_single_sound, position, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_shunk_single_sound, position, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_shunk_single_sound, outlet, 0x10);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_shunk_single_sound, outlet, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_shunk_single_sound, volume, 0x12);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_shunk_single_sound, volume, 0x2);
+
+    if (!C2V(gAction_replay_mode) && C2V(gProgram_state).racing) {
+        if (pPosition == NULL) {
+            pPosition = &C2V(gZero_vector__smash);
+        }
+        ARDoSingleVariedSession(ePipe_chunk_single_sound, pSound, 4,
+            SIZE_OFFSET_PIPING(tPipe_shunk_single_sound, pitch),           pPitch,
+            SIZE_OFFSET_PIPING(tPipe_shunk_single_sound, position),        pPosition,
+            SIZE_OFFSET_PIPING(tPipe_shunk_single_sound, outlet),          (tS16)GetIndexFromOutlet(pOutlet),
+            SIZE_OFFSET_PIPING(tPipe_shunk_single_sound, volume),          (tS16)((pR_volume << 8) + (pL_volume)));
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c84a0, PipeSingleSound, PipeSingleSound_original)
