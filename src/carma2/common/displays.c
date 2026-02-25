@@ -1565,18 +1565,17 @@ br_uint_32 C2_HOOK_FASTCALL CarArrowColour(tCar_spec *pCar, tVehicle_type pCateg
     tNet_game_player_info* net_player;
 
     if (C2V(gNet_mode) != eNet_mode_none && pCar->shrapnel_materials[0] != NULL) {
-        if (pCar->knackered) {
-            return 0x0;
-        } else {
-            return C2V(gCar_map_colours)[pCategory];
-        }
-    }
-    else {
         net_player = NetPlayerFromCar(pCar);
         if (net_player->field_0x80) {
             return 0xffffffff;
         } else {
             return pCar->shrapnel_materials[0]->index_base;
+        }
+    } else {
+        if (pCar->knackered) {
+            return 0x0;
+        } else {
+            return C2V(gCar_map_colours)[pCategory];
         }
     }
 }
