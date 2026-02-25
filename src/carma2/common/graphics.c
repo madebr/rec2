@@ -2552,6 +2552,37 @@ void C2_HOOK_FASTCALL FancyDrawLine(br_pixelmap *pMap, int pX1, int pY1, int pX2
 }
 C2_HOOK_FUNCTION(0x0047d2b0, FancyDrawLine)
 
+void C2_HOOK_FASTCALL DR16BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height) {
+    int width_div_2;
+    int height_div_2;
+    int dy;
+    tU16 *ptr_write;
+    float src_f_x;
+    float src_f_y;
+    int width;
+
+    width_div_2 = pSrc_width / 2;
+    height_div_2 = pSrc_height / 2;
+    for (dy = -height_div_2; dy < height_div_2; dy++, pDest_y++) {
+        src_f_x = (float)pSrc_x - (pMat->m[0][0] * (float)width_div_2 + pMat->m[0][1] * (float)dy);
+        src_f_y = (float)pSrc_y + (pMat->m[1][0] * (float)width_div_2 + pMat->m[1][1] * (float)dy) + (float)pSrc_height / 2.f;
+        if (-width_div_2 < width_div_2) {
+            width = 2 * width_div_2;
+            ptr_write = (tU16*)((tU8*)pDest->pixels + pDest_y * pDest->row_bytes) + pDest_x;
+            for (; width != 0; width--) {
+                *ptr_write++ = *((tU16*)((tU8*)pSrc->pixels + ((int)src_f_y * pSrc->row_bytes)) + width_div_2 + (int)src_f_x);
+                src_f_x += pMat->m[0][0];
+                src_f_y -= pMat->m[1][0];
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x0047d0d0, DR16BitPixelmapRotatedAndFeatheredCopy)
+
+void C2_HOOK_FASTCALL DR8BitPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans) {
+    NOT_IMPLEMENTED();
+}
+
 void (C2_HOOK_FASTCALL * DRPixelmapRotatedAndFeatheredCopy_original)(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans);
 void C2_HOOK_FASTCALL DRPixelmapRotatedAndFeatheredCopy(br_matrix23* pMat, br_pixelmap* pDest, tS16 pDest_x, tS16 pDest_y, br_pixelmap* pSrc, tS16 pSrc_x, tS16 pSrc_y, tS16 pSrc_width, tS16 pSrc_height, int pTrans) {
 
