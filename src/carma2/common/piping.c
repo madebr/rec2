@@ -43,6 +43,15 @@ C2_HOOK_VARIABLE_IMPLEMENT(tPipe_smudge_data*, gSmudge_space, 0x006940d4);
 #define CRUSH_SPACE_SIZE 0x4000
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
+void C2_HOOK_FASTCALL ARResetPiping(void) {
+
+    C2V(gPipe_record_ptr) = C2V(gPipe_buffer_start);
+    C2V(gPipe_buffer_working_end) = C2V(gPipe_buffer_phys_end);
+    C2V(gPipe_buffer_oldest) = NULL;
+    C2V(gReentrancy_count) = 0;
+}
+C2_HOOK_FUNCTION(0x004023e0, ARResetPiping)
+
 int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void) {
 
     return C2V(gPipe_buffer_start) != NULL;

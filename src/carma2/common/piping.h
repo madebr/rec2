@@ -20,6 +20,8 @@ C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCar_ptr);
 C2_HOOK_VARIABLE_DECLARE(tU32, gTrigger_time);
 C2_HOOK_VARIABLE_DECLARE(tPipe_smudge_data*, gSmudge_space);
 
+void C2_HOOK_FASTCALL ARResetPiping(void);
+
 int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
 
 void C2_HOOK_FASTCALL DisposePiping(void);
