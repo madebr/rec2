@@ -360,6 +360,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const float, gFlamed_ped_flame_scales, 7, 
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gLimbs_actor, 0x006a0424);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count_limbed_actors, 0x006a0420);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPed_limbed_actors, 30, 0x00694280);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tProximity_ray, gProximity_rays, 20, 0x00694140);
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
 
@@ -1909,6 +1910,87 @@ void C2_HOOK_FASTCALL InitPedsForRace(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d5bd0, InitPedsForRace, InitPedsForRace_original)
+
+void C2_HOOK_FASTCALL RenderElectroBastardRays(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime) {
+    tU32 the_time;
+    int i;
+    float seed;
+    br_vector3 car_pos;
+    br_vector3 ped_pos;
+    br_vector3 car_pos_cam;
+    br_vector3 ped_pos_cam;
+    br_vector3 car_add;
+    br_vector3 car_add_c;
+    br_vector3 ray;
+    br_vector3 r1;
+    br_vector3 from_pos;
+    br_vector3 to_pos;
+    br_model* car_model;
+    br_scalar distance;
+    br_scalar t;
+    int model_updated = 0;
+
+    the_time = GetTotalTime();
+    ARStartPipingSession(ePipe_chunk_prox_ray);
+    for (i = 0; i < REC2_ASIZE(C2V(gProximity_rays)); i++) {
+
+        if (C2V(gProximity_rays)[i].start_time == 0) {
+            continue;
+        }
+        if (the_time - C2V(gProximity_rays)[i].start_time >= 500) {
+            C2V(gProximity_rays)[i].start_time = 0;
+            continue;
+        }
+        if (C2V(gNo_2d_effects) && !model_updated) {
+            BrActorRemove(C2V(gLine_actor));
+            BrActorAdd(C2V(gCamera), C2V(gLine_actor));
+            C2V(gLine_model)->vertices[0].red = 0x80;
+            C2V(gLine_model)->vertices[0].grn = 0x80;
+            C2V(gLine_model)->vertices[0].blu = 0x80;
+            C2V(gLine_model)->vertices[1].red = 0xff;
+            C2V(gLine_model)->vertices[1].grn = 0xff;
+            C2V(gLine_model)->vertices[1].blu = 0xff;
+            BrModelUpdate(C2V(gLine_model), BR_MODU_ALL);
+            model_updated = 1;
+        }
+        AddProxRayToPipingSession(i, C2V(gProximity_rays)[i].car, C2V(gProximity_rays)[i].ped - C2V(gPedestrian_array), C2V(gProximity_rays)[i].start_time);
+        car_model =  C2V(gProximity_rays)[i].car->car_actor->model;
+
+        BrVector3Set(&car_add_c, 0.f, (car_model->bounds.max.v[1] - car_model->bounds.min.v[1]) / -5.f, 0.f);
+        BrMatrix34ApplyV(&car_add, &car_add_c, &C2V(gProximity_rays)[i].car->car_master_actor->t.t.mat);
+        BrVector3Add(&car_pos, &C2V(gProximity_rays)[i].car->pos, &car_add);
+        BrVector3Copy(&ped_pos, &C2V(gProximity_rays)[i].ped->pos);
+        DRMatrix34TApplyP(&car_pos_cam, &car_pos, &C2V(gCamera_to_world));
+        DRMatrix34TApplyP(&ped_pos_cam, &ped_pos, &C2V(gCamera_to_world));
+
+        BrVector3Sub(&r1, &ped_pos_cam, &car_pos_cam);
+        distance = BrVector3Length(&r1);
+        BrVector3Normalise(&r1, &r1);
+
+        BrVector3Copy(&from_pos, &car_pos_cam);
+
+        seed = ped_pos.v[0] + ped_pos.v[1] + ped_pos.v[2] + car_pos.v[0] + car_pos.v[1] + car_pos.v[2];
+        srand(the_time + (int)seed);
+
+        for (t = 0.f; t < distance; t += .05f) {
+            BrVector3Scale(&ray, &r1, t);
+            BrVector3Add(&to_pos, &ray, &car_pos_cam);
+            to_pos.v[0] += SRandomPosNeg(.1f);
+            to_pos.v[1] += SRandomPosNeg(.1f);
+            to_pos.v[2] += SRandomPosNeg(.1f);
+            DrawLine3D(&to_pos, &from_pos, pRender_screen, pDepth_buffer, C2V(gProx_ray_shade_table));
+            BrVector3Copy(&from_pos, &to_pos);
+            t += .05f;
+        }
+        DrawLine3D(&ped_pos_cam, &from_pos, pRender_screen, pDepth_buffer, C2V(gProx_ray_shade_table));
+    }
+    AREndPipingSession();
+    if (C2V(gNo_2d_effects) && model_updated) {
+        BrActorRemove(C2V(gLine_actor));
+        BrActorAdd(C2V(gDont_render_actor), C2V(gLine_actor));
+    }
+}
+C2_HOOK_FUNCTION(0x004d5d60, RenderElectroBastardRays)
 
 void C2_HOOK_FASTCALL ResetPedNearness(void) {
 

@@ -22,6 +22,7 @@ C2_HOOK_VARIABLE_DECLARE(tPed_cache_006944c0, gPed_cache_00694328);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gLimbs_actor);
 C2_HOOK_VARIABLE_DECLARE(int, gPed_count_limbed_actors);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gPed_limbed_actors, 30);
+C2_HOOK_VARIABLE_DECLARE_ARRAY(tProximity_ray, gProximity_rays, 20);
 
 int C2_HOOK_FASTCALL GetPedCount(void);
 
@@ -104,6 +105,8 @@ void C2_HOOK_FASTCALL FinishUpLoadingPeds(void);
 void C2_HOOK_FASTCALL DisposePedestrians(void);
 
 void C2_HOOK_FASTCALL InitPedsForRace(void);
+
+void C2_HOOK_FASTCALL RenderElectroBastardRays(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime);
 
 void C2_HOOK_FASTCALL ResetPedNearness(void);
 
