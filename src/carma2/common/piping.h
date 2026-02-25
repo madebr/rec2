@@ -22,6 +22,8 @@ C2_HOOK_VARIABLE_DECLARE(tPipe_smudge_data*, gSmudge_space);
 
 void C2_HOOK_FASTCALL ARResetPiping(void);
 
+void C2_HOOK_FASTCALL PDAllocateActionReplayBuffer(tU8** buffer, tU32* size);
+
 int C2_HOOK_FASTCALL ARIsActionReplayAvailable(void);
 
 void C2_HOOK_FASTCALL DisposePiping(void);
