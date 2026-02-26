@@ -775,15 +775,15 @@ void C2_HOOK_FASTCALL DoWobbleCamera(br_actor* pCamera) {
     static C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, period22, 0x005911cc, 3900.f);
 
     f_time = (float)PDGetTotalTime();
-    pCamera->t.t.mat.m[0][0] += FastScalarSin((int)fmod(f_time / period00 * 360.f, 360.f)) * mag00;
-    pCamera->t.t.mat.m[0][1] += FastScalarSin((int)fmod(f_time / period01 * 360.f, 360.f)) * mag01;
-    pCamera->t.t.mat.m[0][2] += FastScalarSin((int)fmod(f_time / period02 * 360.f, 360.f)) * mag02;
-    pCamera->t.t.mat.m[1][0] += FastScalarSin((int)fmod(f_time / period10 * 360.f, 360.f)) * mag10;
-    pCamera->t.t.mat.m[1][1] += FastScalarSin((int)fmod(f_time / period11 * 360.f, 360.f)) * mag11;
-    pCamera->t.t.mat.m[1][2] += FastScalarSin((int)fmod(f_time / period12 * 360.f, 360.f)) * mag12;
-    pCamera->t.t.mat.m[2][0] += FastScalarSin((int)fmod(f_time / period20 * 360.f, 360.f)) * mag20;
-    pCamera->t.t.mat.m[2][1] += FastScalarSin((int)fmod(f_time / period21 * 360.f, 360.f)) * mag21;
-    pCamera->t.t.mat.m[2][2] += FastScalarSin((int)fmod(f_time / period22 * 360.f, 360.f)) * mag22;
+    pCamera->t.t.mat.m[0][0] += FastScalarSin((int)fmod(f_time / C2V(period00) * 360.f, 360.f)) * C2V(mag00);
+    pCamera->t.t.mat.m[0][1] += FastScalarSin((int)fmod(f_time / C2V(period01) * 360.f, 360.f)) * C2V(mag01);
+    pCamera->t.t.mat.m[0][2] += FastScalarSin((int)fmod(f_time / C2V(period02) * 360.f, 360.f)) * C2V(mag02);
+    pCamera->t.t.mat.m[1][0] += FastScalarSin((int)fmod(f_time / C2V(period10) * 360.f, 360.f)) * C2V(mag10);
+    pCamera->t.t.mat.m[1][1] += FastScalarSin((int)fmod(f_time / C2V(period11) * 360.f, 360.f)) * C2V(mag11);
+    pCamera->t.t.mat.m[1][2] += FastScalarSin((int)fmod(f_time / C2V(period12) * 360.f, 360.f)) * C2V(mag12);
+    pCamera->t.t.mat.m[2][0] += FastScalarSin((int)fmod(f_time / C2V(period20) * 360.f, 360.f)) * C2V(mag20);
+    pCamera->t.t.mat.m[2][1] += FastScalarSin((int)fmod(f_time / C2V(period21) * 360.f, 360.f)) * C2V(mag21);
+    pCamera->t.t.mat.m[2][2] += FastScalarSin((int)fmod(f_time / C2V(period22) * 360.f, 360.f)) * C2V(mag22);
 }
 C2_HOOK_FUNCTION(0x00446680, DoWobbleCamera)
 
