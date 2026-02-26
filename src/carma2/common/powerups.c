@@ -2547,3 +2547,19 @@ void C2_HOOK_FASTCALL DrawPowerups(tU32 pTime) {
     DrawKeyPowerups(pTime);
 }
 C2_HOOK_FUNCTION(0x004dad00, DrawPowerups)
+
+void C2_HOOK_FASTCALL MayQueuePowerupRespawn(int pPowerup_index, br_actor* actor) {
+    int i;
+
+    if (actor != NULL && C2V(gRace_powerup_respawn_bools)[pPowerup_index] && (C2V(gNet_mode) == eNet_mode_none || C2V(gCurrent_net_game)->options.powerup_respawn)) {
+        for (i = 0; i < REC2_ASIZE(C2V(gRespawn_powerups)); i++) {
+            if (C2V(gRespawn_powerups)[i].actor != NULL) {
+                C2V(gRespawn_powerups)[i].actor = actor;
+                C2V(gRespawn_powerups)[i].index = pPowerup_index;;
+                C2V(gRespawn_powerups)[i].respawn_time = GetTotalTime() + C2V(gPickup_respawn_max_extra_time_ms) / 2 + C2V(gPickup_respawn_min_time_ms);
+                break;
+            }
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x004e0750, MayQueuePowerupRespawn)
