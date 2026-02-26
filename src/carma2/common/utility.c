@@ -1230,6 +1230,24 @@ void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent) {
 }
 C2_HOOK_FUNCTION(0x00515e70, BlendifyMaterial)
 
+void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags) {
+
+    C2_HOOK_BUG_ON(sizeof(v11group) != 0x24);
+
+    if (pModel->nvertices != 0 && pModel->nfaces != 0) {
+        int i;
+
+        BrModelUpdate(pModel, pFlags);
+        for (i = 0; i < V11MODEL(pModel)->ngroups; i++) {
+            v11group* v11g;
+
+            v11g = &V11MODEL(pModel)->groups[i];
+            *v11g->face_colours.materials = pModel->faces[*v11g->face_user].material;
+        }
+    }
+}
+C2_HOOK_FUNCTION(0x00515fa0, DRModelUpdateAndKevificateMaterials)
+
 float C2_HOOK_STDCALL FRandomPosNeg(float pN) {
 
     return FRandomBetween(-pN, pN);

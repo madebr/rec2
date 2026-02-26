@@ -18,8 +18,6 @@ intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, void* pData);
 
 void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* pArea_2);
 
-void C2_HOOK_FASTCALL FixModelPointer(br_model* pModel, br_uint_16 pFlags);
-
 void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor);
 
 intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data);
