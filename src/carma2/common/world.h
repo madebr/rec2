@@ -7,6 +7,7 @@
 
 #include "rec2_types.h"
 
+C2_HOOK_VARIABLE_DECLARE(int, gSize_powerup_queue);
 C2_HOOK_VARIABLE_DECLARE(br_scalar, gSight_distance_squared);
 C2_HOOK_VARIABLE_DECLARE(tBrender_storage*, gStorageForCallbacks);
 C2_HOOK_VARIABLE_DECLARE(int, gGroovidelics_array_size);
