@@ -210,6 +210,16 @@ void C2_HOOK_FASTCALL ARService(void) {
 }
 C2_HOOK_FUNCTION(0x00403d30, ARService)
 
+void (C2_HOOK_FASTCALL * TurnOnActionReplay_original)(void);
+void C2_HOOK_FASTCALL TurnOnActionReplay(void) {
+#if defined(C2_HOOKS_ENABLED)
+    TurnOnActionReplay_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e71c0, TurnOnActionReplay, TurnOnActionReplay_original)
+
 void (C2_HOOK_FASTCALL * ToggleReplay_original)(int* pArg1, int* pArg2);
 void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
 
