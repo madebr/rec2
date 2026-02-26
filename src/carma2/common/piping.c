@@ -1130,3 +1130,14 @@ void C2_HOOK_FASTCALL PipeSingleShrapnelShower(uintptr_t pId, undefined4 pArg2, 
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c8870, PipeSingleShrapnelShower, PipeSingleShrapnelShower_original)
+
+void (C2_HOOK_FASTCALL * PipeSingleGibShower_original)(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, undefined4 pArg5, br_vector3* pArg6, br_vector3* pArg7, br_vector3* pArg8);
+void C2_HOOK_FASTCALL PipeSingleGibShower(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, undefined4 pArg5, br_vector3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PipeSingleGibShower_original(pId, pArg2, pArg3, pArg4, pArg5, pArg6, pArg7, pArg8);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c8ce0, PipeSingleGibShower, PipeSingleGibShower_original)
