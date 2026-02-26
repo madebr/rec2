@@ -360,9 +360,11 @@ void C2_HOOK_FASTCALL FlushPowerupQueue(void) {
     C2V(gSize_powerup_queue) = 0;
 }
 
+#if !defined(C2_HOOKS_ENABLED)
 void C2_HOOK_FASTCALL SmashItIntoVerySmallPiecesIndeed(tCar_spec* pCar, undefined4 pArg2, br_actor* pActor, undefined4 pArg4, undefined4 pArg5, void* pArg6, void* pArg7, undefined4 pArg8) {
     NOT_IMPLEMENTED();
 }
+#endif
 
 void (C2_HOOK_FASTCALL * FlushSmashQueue_original)(int pFlush_powerups);
 void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups) {
