@@ -8,6 +8,7 @@
 #include "physics.h"
 #include "piping.h"
 #include "platform.h"
+#include "powerups.h"
 #include "replay.h"
 #include "sound.h"
 #include "utility.h"
@@ -37,6 +38,12 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmashable_race_target, gSmashable_race_targets
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_race_targets, 0x0074abe0);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_queued_smashes, 0x006a828c);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_munge_smash_edge_triggers, 0x006a82a4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPowerup_queue_item, gPowerup_queue, 50, 0x006a4430);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_smash, gQueued_smashes, 20, 0x006a4698);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gSize_powerup_queue, 0x006a55bc);
+C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gMatrix34_006b78a0, 0x006b78a0);
+C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gVector3_006a4688, 0x006a4688);
+C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a3334, 0x006a3334);
 
 void C2_HOOK_FASTCALL InitGlassFragments(void) {
     int i;
@@ -238,13 +245,63 @@ void C2_HOOK_FASTCALL MungeGlassFragments(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f00f0, MungeGlassFragments,MungeGlassFragments_original)
 
+void C2_HOOK_FASTCALL FlushPowerupQueue(void) {
+    int i;
+    C2_HOOK_BUG_ON(sizeof(tPowerup_queue_item) != 0xc);
+
+    for (i = 0; i < C2V(gSize_powerup_queue); i++) {
+        GotPowerup(C2V(gPowerup_queue)[i].car, C2V(gPowerup_queue)[i].powerup_index);
+        MayQueuePowerupRespawn(C2V(gPowerup_queue)[i].powerup_index, C2V(gPowerup_queue)[i].actor);
+    }
+    C2V(gSize_powerup_queue) = 0;
+}
+
+void C2_HOOK_FASTCALL SmashItIntoVerySmallPiecesIndeed(tCar_spec* pCar, undefined4 pArg2, br_actor* pActor, undefined4 pArg4, undefined4 pArg5, void* pArg6, void* pArg7, undefined4 pArg8) {
+    NOT_IMPLEMENTED();
+}
+
 void (C2_HOOK_FASTCALL * FlushSmashQueue_original)(int pFlush_powerups);
 void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups) {
 
 #if defined(C2_HOOKS_ENABLED)
     FlushSmashQueue_original(pFlush_powerups);
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    int j;
+    tQueued_smash* queued_smash;
+
+    C2_HOOK_BUG_ON(sizeof(tQueued_smash) != 0x88);
+
+    for (i = 0; i < C2V(gCount_queued_smashes); i++) {
+        queued_smash = &C2V(gQueued_smashes)[i];
+        if (queued_smash->actor->model != NULL) {
+            if (queued_smash->field_0x40 != 0) {
+                C2V(gMatrix34_006b78a0) = queued_smash->field_0x4c;
+                BrVector3Copy(&C2V(gVector3_006a4688), &queued_smash->field_0x7c);
+            }
+            C2V(gINT_006a3334) = queued_smash->field_0x40 != 0;
+            SmashItIntoVerySmallPiecesIndeed(
+                    queued_smash->car, queued_smash->field_0x4, queued_smash->actor,
+                    queued_smash->field_0x48, queued_smash->field_0x10, &queued_smash->field_0x14,
+                    &queued_smash->field_0x2c, queued_smash->field_0x38);
+        }
+    }
+    for (i = 0; i < C2V(gCount_queued_smashes); i++) {
+        queued_smash = &C2V(gQueued_smashes)[i];
+
+        if (queued_smash->field_0x44) {
+            DRModelUpdateAndKevificateMaterials(queued_smash->actor->model, BR_MODU_ALL);
+            for (j = i + 1; j < C2V(gCount_queued_smashes); j++) {
+                if (queued_smash->actor->model == C2V(gQueued_smashes)[j].actor->model) {
+                    queued_smash->field_0x44 = 0;
+                }
+            }
+        }
+    }
+    if (!pFlush_powerups) {
+        FlushPowerupQueue();
+    }
+    C2V(gCount_queued_smashes) = 0;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ecfb0, FlushSmashQueue, FlushSmashQueue_original)
