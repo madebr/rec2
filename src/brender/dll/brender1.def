@@ -55,6 +55,7 @@ EXPORTS
     BrMatrix34ToEuler
     BrMatrix34Mul
     BrMatrix34Post
+    BrMatrix34PostRotate
     BrMatrix34PostRotateX
     BrMatrix34PostRotateY
     BrMatrix34PostRotateZ
