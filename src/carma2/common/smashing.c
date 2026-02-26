@@ -40,7 +40,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_queued_smashes, 0x006a828c);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_munge_smash_edge_triggers, 0x006a82a4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPowerup_queue_item, gPowerup_queue, 50, 0x006a4430);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_smash, gQueued_smashes, 20, 0x006a4698);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSize_powerup_queue, 0x006a55bc);
 C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gMatrix34_006b78a0, 0x006b78a0);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gVector3_006a4688, 0x006a4688);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a3334, 0x006a3334);

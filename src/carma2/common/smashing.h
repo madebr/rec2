@@ -17,7 +17,6 @@ C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_vector__smash);
 
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tPowerup_queue_item, gPowerup_queue, 50);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tQueued_smash, gQueued_smashes, 20);
-C2_HOOK_VARIABLE_DECLARE(int, gSize_powerup_queue);
 C2_HOOK_VARIABLE_DECLARE(br_matrix34, gMatrix34_006b78a0);
 C2_HOOK_VARIABLE_DECLARE(br_vector3, gVector3_006a4688);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_006a3334);
