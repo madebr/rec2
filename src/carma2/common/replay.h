@@ -33,6 +33,8 @@ void C2_HOOK_FASTCALL DoZappyActionReplayHeadups(void);
 
 void C2_HOOK_FASTCALL PreProcess(int pFrame_period);
 
+void C2_HOOK_FASTCALL PostProcess(int pFrame_period);
+
 void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2);
 
 void C2_HOOK_FASTCALL InitialiseActionReplay(void);
