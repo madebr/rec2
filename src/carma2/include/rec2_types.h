@@ -3445,8 +3445,15 @@ typedef struct tSmoke {
 typedef struct {
     br_actor* actor;
     br_model* model;
-    undefined4 field_0x8;
-    undefined field_0xc[44];
+    tU32 end_time;
+    tU32 field_0xc;
+    tU32 field_0x10;
+    tU32 time_last_move;
+    tU32 field_0x18;
+    br_vector3 v;
+    br_vector3 omega;
+    undefined field_0x34;
+    undefined field_0x35[0x38-0x35];
 } tSmash_vertex;
 
 typedef struct {

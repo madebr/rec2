@@ -62,7 +62,7 @@ void C2_HOOK_FASTCALL InitGlassFragments(void) {
         BrModelAdd(smash_vertex->actor->model);
         smash_vertex->model = smash_vertex->actor->model;
         smash_vertex->actor->render_style = BR_RSTYLE_FACES;
-        smash_vertex->field_0x8 = 0;
+        smash_vertex->end_time = 0;
     }
 }
 
@@ -232,6 +232,38 @@ void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f02b0, CleanUpSmashStuff,CleanUpSmashStuff_original)
+
+void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32  pTime, float pDelta_time) {
+    float f_dt;
+    float omega;
+    br_vector3 pos;
+    br_vector3 axis;
+    br_actor* actor;
+
+    f_dt = pDelta_time / 1000.f;
+    if (f_dt != 0.f && !pFragment->field_0x34) {
+
+        pFragment->actor->t.t.translate.t.v[0] += pFragment->v.v[0] * f_dt / WORLD_SCALE;
+        pFragment->actor->t.t.translate.t.v[1] += (pFragment->v.v[1] * f_dt - 9.8f / 2.f * C2V(gGravity_multiplier) * REC2_SQR(f_dt)) / WORLD_SCALE;
+        pFragment->actor->t.t.translate.t.v[2] += pFragment->v.v[2] * f_dt / WORLD_SCALE;
+        pFragment->v.v[1] -= f_dt * C2V(gGravity_multiplier) / WORLD_SCALE;
+        omega = BrVector3Length(&pFragment->omega);
+        BrVector3InvScale(&axis, &pFragment->omega, omega);
+        if (fabsf(f_dt * omega) >= 0.0001) {
+            actor = pFragment->actor;
+            BrVector3Copy(&pos, &actor->t.t.translate.t);
+            BrVector3Set(&actor->t.t.translate.t, 0.f, 0.f, 0.f);
+            BrMatrix34PostRotate(&actor->t.t.mat, BrRadianToAngle(omega * f_dt), &axis);
+            BrVector3Copy(&actor->t.t.translate.t, &pos);
+        }
+    }
+    if (pTime < pFragment->field_0x10) {
+        pFragment->actor->render_style = BR_RSTYLE_FACES;
+    } else {
+        pFragment->actor->render_style = BR_RSTYLE_NONE;
+    }
+}
+C2_HOOK_FUNCTION(0x004f00ca, DoFragMovement)
 
 void (C2_HOOK_FASTCALL * MungeGlassFragments_original)(void);
 void C2_HOOK_FASTCALL MungeGlassFragments(void) {

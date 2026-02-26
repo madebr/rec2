@@ -43,7 +43,7 @@ void C2_HOOK_FASTCALL MungeSmashMaterialNames(void);
 
 void C2_HOOK_FASTCALL CleanUpSmashStuff(void);
 
-void C2_HOOK_FASTCALL MungeGlassFragments(void);
+void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32  pTime, float pDelta_time);
 
 void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups);
 
