@@ -93,6 +93,12 @@ typedef void C2_HOOK_FASTCALL tFunk_index_cbfn(int pFunk_index);
 typedef void C2_HOOK_FASTCALL tWorld_callback_active_passive_cbfn(tCollision_info*);
 typedef intptr_t C2_HOOK_FASTCALL tNearbyActors_cbfn(br_actor*, void*);
 typedef void C2_HOOK_FASTCALL tDoSomethingsToCheckpoints_cbfn(br_pixelmap* pMap, int pCheckPoint, tU32 pTime, int pEnable);
+typedef void C2_HOOK_FASTCALL tTurn_on_AR_callback(void);
+typedef void C2_HOOK_FASTCALL tTurn_off_AR_callback(void);
+typedef void C2_HOOK_FASTCALL tAfter_AR_callback(void);
+typedef void C2_HOOK_FASTCALL tZappy_AR_callback(void);
+typedef void C2_HOOK_FASTCALL tPreprocess_AR_callback(int pFrame_period);
+typedef void C2_HOOK_FASTCALL tPostProcess_AR_callback(int pFrame_period);
 
 typedef enum {
     eFPR_OK = 0,
