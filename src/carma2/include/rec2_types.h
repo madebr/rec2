@@ -5255,6 +5255,7 @@ enum {
     eMiscString_cp = 21,
     eMiscString_completion_bonus_colon = 22,
     eMiscString_time_bonus_colon = 23,
+    eMiscString_action_replay_unavailable = 37,
     eMiscString_instant_repair = 41,
     eMiscString_final_lap = 42,
     eMiscString_wrong_checkpoint = 43,

@@ -2,6 +2,7 @@
 
 #include "car.h"
 #include "controls.h"
+#include "displays.h"
 #include "drone.h"
 #include "finteray.h"
 #include "globvars.h"
@@ -273,10 +274,17 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004e6980, PostProcess, PostProcess_original)
 void (C2_HOOK_FASTCALL * ToggleReplay_original)(int* pArg1, int* pArg2);
 void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     ToggleReplay_original(pArg1, pArg2);
 #else
-    NOT_IMPLEMENTED();
+    if (C2V(gAction_replay_mode)) {
+        RenderAFrame(1);
+        RenderAFrame(1);
+    }
+    if (!ARToggleReplay(TurnOnActionReplay, TurnOffActionReplay, AfterActionReplay,
+            DoZappyActionReplayHeadups, PreProcess, PostProcess, pArg1, pArg2)) {
+        NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_action_replay_unavailable));
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e72e0, ToggleReplay, ToggleReplay_original)
