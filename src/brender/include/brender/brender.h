@@ -118,6 +118,7 @@ void C2_HOOK_CDECL BrMatrix34PostShearX(br_matrix34* mat, br_scalar sy, br_scala
 void C2_HOOK_CDECL BrMatrix34PostShearY(br_matrix34* mat, br_scalar sx, br_scalar sz);
 void C2_HOOK_CDECL BrMatrix34PostShearZ(br_matrix34* mat, br_scalar sx, br_scalar sy);
 void C2_HOOK_CDECL BrMatrix34PreShearX(br_matrix34* mat, br_scalar sy, br_scalar sz);
+void C2_HOOK_CDECL BrMatrix34PostRotate(br_matrix34* mat, br_angle r, const br_vector3* axis);
 void C2_HOOK_CDECL BrMatrix34PostRotateX(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PostRotateY(br_matrix34* mat, br_angle ry);
 void C2_HOOK_CDECL BrMatrix34PostRotateZ(br_matrix34* mat, br_angle ry);
