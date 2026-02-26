@@ -112,6 +112,8 @@ void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pP
 
 void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent);
 
+void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags);
+
 float C2_HOOK_STDCALL FRandomPosNeg(float pN);
 
 br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
