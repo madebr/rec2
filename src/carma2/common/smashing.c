@@ -451,12 +451,12 @@ void C2_HOOK_FASTCALL DoDelayedNonCar(tU32 pTime, tDelayed_non_car* pDelayed_non
 
 void C2_HOOK_FASTCALL DoDelayedSmash(tDelayed_smash* pDelayed_smash) {
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0xc, 0xc);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x1c, 0x1c);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x38, 0x38);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x80, 0x80);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x8c, 0x8c);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayes_smash, field_0x90, 0x90);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayed_smash, field_0xc, 0xc);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayed_smash, field_0x1c, 0x1c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayed_smash, field_0x38, 0x38);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayed_smash, field_0x80, 0x80);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayed_smash, field_0x8c, 0x8c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDelayed_smash, field_0x90, 0x90);
 
     if (pDelayed_smash->field_0x88 == 1) {
         if (pDelayed_smash->field_0x80->identifier[0] == '&' && (pDelayed_smash->field_0x80->identifier[1] >= '0' && pDelayed_smash->field_0x80->identifier[1] <= '9')) {
