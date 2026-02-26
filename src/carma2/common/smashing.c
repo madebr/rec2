@@ -321,13 +321,30 @@ int C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
 }
 C2_HOOK_FUNCTION(0x004f0150, MungeGlassFragments2)
 
+#if !defined(C2_HOOKS_ENABLED)
+void C2_HOOK_FASTCALL MungeAnimationRepairs(void) {
+    tU32 the_time;
+    tRepair_animation* animation;
+    int i;
+
+    the_time = GetTotalTime();
+    for (i = 0; i < REC2_ASIZE(C2V(gRepair_animations)); i++) {
+        animation = &C2V(gRepair_animations)[i];
+        if (animation->field_0x0 != NULL && the_time - animation->field_0x4 >= 150) {
+            NOT_IMPLEMENTED();
+        }
+    }
+}
+#endif
+
 void (C2_HOOK_FASTCALL * MungeGlassFragments_original)(void);
 void C2_HOOK_FASTCALL MungeGlassFragments(void) {
 
 #if defined(C2_HOOKS_ENABLED)
     MungeGlassFragments_original();
 #else
-    NOT_IMPLEMENTED();
+    MungeGlassFragments2(0);
+    MungeAnimationRepairs();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f00f0, MungeGlassFragments,MungeGlassFragments_original)
