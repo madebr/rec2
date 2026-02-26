@@ -250,6 +250,16 @@ void C2_HOOK_FASTCALL DoZappyActionReplayHeadups(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e6900, DoZappyActionReplayHeadups, DoZappyActionReplayHeadups_original)
 
+void (C2_HOOK_FASTCALL * PreProcess_original)(int pFrame_period);
+void C2_HOOK_FASTCALL PreProcess(int pFrame_period) {
+#if defined(C2_HOOKS_ENABLED)
+    PreProcess_original(pFrame_period);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e6950, PreProcess, PreProcess_original)
+
 void (C2_HOOK_FASTCALL * ToggleReplay_original)(int* pArg1, int* pArg2);
 void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
 
