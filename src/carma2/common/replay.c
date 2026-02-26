@@ -250,7 +250,7 @@ void C2_HOOK_FASTCALL CheckReplayTurnOn(void) {
         if (!KeyIsDown(58) || C2V(gEntering_message)) {
             C2V(gKey_down) = -1;
         } else if (C2V(gKey_down) == -1) {
-            ToggleReplay(0, 0);
+            ToggleReplay(NULL, NULL);
         }
     }
 #endif
