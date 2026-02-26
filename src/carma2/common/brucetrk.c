@@ -229,24 +229,6 @@ void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* p
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f5ae0, GetModelTextureArea, GetModelTextureArea_original)
 
-void C2_HOOK_FASTCALL FixModelPointer(br_model* pModel, br_uint_16 pFlags) {
-
-    C2_HOOK_BUG_ON(sizeof(v11group) != 0x24);
-
-    if (pModel->nvertices != 0 && pModel->nfaces != 0) {
-        int i;
-
-        BrModelUpdate(pModel, pFlags);
-        for (i = 0; i < V11MODEL(pModel)->ngroups; i++) {
-            v11group* v11g;
-
-            v11g = &V11MODEL(pModel)->groups[i];
-            *v11g->face_colours.materials = pModel->faces[*v11g->face_user].material;
-        }
-    }
-}
-C2_HOOK_FUNCTION(0x00515fa0, FixModelPointer)
-
 void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
     int i;
 
@@ -339,7 +321,7 @@ intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
             BrResFree(C2V(gMr_blendy)->model->faces);
             C2V(gMr_blendy)->model->faces = new_faces;
 
-            FixModelPointer(C2V(gMr_blendy)->model, BR_MODU_ALL);
+            DRModelUpdateAndKevificateMaterials(C2V(gMr_blendy)->model, BR_MODU_ALL);
             pTrack_spec->columns[z][x].actor_0x8 = C2V(gMr_blendy);
         }
     } else {
