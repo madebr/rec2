@@ -3410,7 +3410,7 @@ void C2_HOOK_FASTCALL ReinitSmashing(void) {
     C2_HOOK_BUG_ON(sizeof(tStored_smash) != 0x38);
 
     for (i = 0; i < REC2_ASIZE(C2V(gSmash_glass_fragments)); i++) {
-        C2V(gSmash_glass_fragments)[i].field_0x8 = 0;
+        C2V(gSmash_glass_fragments)[i].end_time = 0;
     }
     for (i = 0; i < REC2_ASIZE(C2V(gDecals)); i++) {
         C2V(gDecals)[i].time = 0;
