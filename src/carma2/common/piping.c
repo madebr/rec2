@@ -1106,12 +1106,12 @@ C2_HOOK_FUNCTION(0x004c7010, AddSmokeToPipingSession)
 
 void AddProxRayToPipingSession(int pRay_index, tCar_spec* pCar, tU16 pPed_index, tU32 pTime) {
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(ePipe_chunk_prox_ray, ped_index, 0x0);
-    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(ePipe_chunk_prox_ray, ped_index, 0x2);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(ePipe_chunk_prox_ray, car_ID, 0x2);
-    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(ePipe_chunk_prox_ray, car_ID, 0x2);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(ePipe_chunk_prox_ray, time, 0x4);
-    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(ePipe_chunk_prox_ray, time, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_prox_ray, ped_index, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_prox_ray, ped_index, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_prox_ray, car_ID, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_prox_ray, car_ID, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_prox_ray, time, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_prox_ray, time, 0x4);
 
     ARDoSingleVariedSession(ePipe_chunk_prox_ray, pRay_index, 3,
         SIZE_OFFSET_PIPING(tPipe_chunk_prox_ray, ped_index), (tU16)pPed_index,
