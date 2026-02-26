@@ -311,4 +311,6 @@ void C2_HOOK_FASTCALL DrawKeyPowerups(tU32 pTime);
 
 void C2_HOOK_FASTCALL DrawPowerups(tU32 pTime);
 
+void C2_HOOK_FASTCALL MayQueuePowerupRespawn(int pPowerup_index, br_actor* actor);
+
 #endif //REC2_POWERUPS_H
