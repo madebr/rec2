@@ -48,6 +48,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, gPipe_buffer_size, 0x006768ec, 0);
 #define CRUSH_SPACE_SIZE 0x4000
 #define SIZE_OFFSET_PIPING(T, M) ((int)sizeof(((T*)NULL)->M)), ((int)offsetof(T, M))
 
+int (C2_HOOK_FASTCALL * ARToggleReplay_original)(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_off_AR_callback* pTurn_off_AR_cb, tAfter_AR_callback* pAfter_AR_cb, tZappy_AR_callback* pZappy_AR_cb, tPreprocess_AR_callback* pPreprocess_cb, tPostProcess_AR_callback* pPostProcess_cb, int* pArg7, int* pArg8);
+int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_off_AR_callback* pTurn_off_AR_cb, tAfter_AR_callback* pAfter_AR_cb, tZappy_AR_callback* pZappy_AR_cb, tPreprocess_AR_callback* pPreprocess_cb, tPostProcess_AR_callback* pPostProcess_cb, int* pArg7, int* pArg8) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return ARToggleReplay_original(pTurn_on_AR_cb, pTurn_off_AR_cb, pAfter_AR_cb, pZappy_AR_cb, pPreprocess_cb, pPostProcess_cb, pArg7, pArg8);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x00403d60, ARToggleReplay, ARToggleReplay_original)
+
 void C2_HOOK_FASTCALL ARResetPiping(void) {
 
     C2V(gPipe_record_ptr) = C2V(gPipe_buffer_start);
