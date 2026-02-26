@@ -1119,3 +1119,14 @@ void AddProxRayToPipingSession(int pRay_index, tCar_spec* pCar, tU16 pPed_index,
         SIZE_OFFSET_PIPING(tPipe_chunk_prox_ray, time), pTime);
 }
 C2_HOOK_FUNCTION(0x004c74c0, AddProxRayToPipingSession)
+
+void (C2_HOOK_FASTCALL * PipeSingleShrapnelShower_original)(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, br_vector3* pArg5, br_vector3* pArg6, float pArg7, br_vector3* pArg8, br_vector3* pArg9, undefined4 pArg10, br_bounds3* pArg11, undefined4 pArg12, br_matrix34* pArg13, br_vector3* pArg14, void* pArg15);
+void C2_HOOK_FASTCALL PipeSingleShrapnelShower(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, undefined4 pArg4, br_vector3* pArg5, br_vector3* pArg6, float pArg7, br_vector3* pArg8, br_vector3* pArg9, undefined4 pArg10, br_bounds3* pArg11, undefined4 pArg12, br_matrix34* pArg13, br_vector3* pArg14, void* pArg15) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PipeSingleShrapnelShower_original(pId, pArg2, pArg3, pArg4, pArg5, pArg6, pArg7, pArg8, pArg9, pArg10, pArg11, pArg12, pArg13, pArg14, pArg15);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c8870, PipeSingleShrapnelShower, PipeSingleShrapnelShower_original)
