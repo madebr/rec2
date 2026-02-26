@@ -48,6 +48,8 @@ void C2_HOOK_FASTCALL KillFragment(tSmash_vertex* pFragment);
 
 void C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race);
 
+void C2_HOOK_FASTCALL MungeAnimationRepairs(void);
+
 void C2_HOOK_FASTCALL MungeGlassFragments(void);
 
 void C2_HOOK_FASTCALL FlushSmashQueue(int pFlush_powerups);
