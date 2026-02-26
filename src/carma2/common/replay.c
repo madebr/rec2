@@ -220,6 +220,16 @@ void C2_HOOK_FASTCALL TurnOnActionReplay(void) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004e71c0, TurnOnActionReplay, TurnOnActionReplay_original)
 
+void (C2_HOOK_FASTCALL * TurnOffActionReplay_original)(void);
+void C2_HOOK_FASTCALL TurnOffActionReplay(void) {
+#if defined(C2_HOOKS_ENABLED)
+    TurnOffActionReplay_original();
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004e7270, TurnOffActionReplay, TurnOffActionReplay_original)
+
 void (C2_HOOK_FASTCALL * ToggleReplay_original)(int* pArg1, int* pArg2);
 void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
 
