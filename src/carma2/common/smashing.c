@@ -265,6 +265,62 @@ void C2_HOOK_FASTCALL DoFragMovement(tSmash_vertex* pFragment, tU32  pTime, floa
 }
 C2_HOOK_FUNCTION(0x004f00ca, DoFragMovement)
 
+void C2_HOOK_FASTCALL KillFragment(tSmash_vertex* pFragment) {
+
+    BrActorRemove(pFragment->actor);
+    pFragment->end_time = 0;
+}
+
+int C2_HOOK_FASTCALL MungeGlassFragments2(int pEnd_race) {
+    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, prev_glass_munge, 0x006a7fc0);
+    tU32 the_time;
+    float f_prev_glass_munge;
+    tSmash_vertex* fragment;
+    tU32 field_0x18;
+    int i;
+    int j;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_glass_fragments)) != 200);
+    C2_HOOK_BUG_ON(sizeof(tSmash_vertex) != 0x38);
+
+    the_time = GetTotalTime();
+    if (C2V(prev_glass_munge) != 0) {
+        f_prev_glass_munge = (float)C2V(prev_glass_munge);
+        for (i = 0; i < REC2_ASIZE(C2V(gSmash_glass_fragments)); i++) {
+            fragment = &C2V(gSmash_glass_fragments)[i];
+            if (fragment->end_time != 0) {
+                if ((the_time < fragment->end_time || (C2V(gAction_replay_mode) && ARGetReplayRate() <= 0.f)) && the_time >= fragment->field_0xc) {
+                    DoFragMovement(fragment, the_time, (float)the_time - f_prev_glass_munge);
+                    if (fragment->field_0x34) {
+                        fragment->field_0x34 = 0;
+                    }
+                    fragment->time_last_move = the_time;
+                } else {
+                    field_0x18 = fragment->field_0x18;
+
+                    if (the_time >= fragment->end_time) {
+                        if (!(field_0x18 & 0x80000000)) {
+                            PipeSingleShrapnelShower(field_0x18, fragment->time_last_move, 0, 0, NULL, NULL, 0.f, NULL, NULL, 0, NULL, 0, NULL, NULL, NULL);
+                        } else if (field_0x18 & 0x40000000) {
+                            PipeSingleGibShower(field_0x18, fragment->time_last_move, 0, 0, 0, NULL, NULL, NULL);
+                        } else {
+                            PipeSingleBloodSpurt(field_0x18, fragment->time_last_move, 0, NULL, NULL, NULL);
+                        }
+                    }
+                    for (j = 0; j < REC2_ASIZE(C2V(gSmash_glass_fragments)); j++) {
+                        if (C2V(gSmash_glass_fragments)[j].end_time != 0 &&
+                                C2V(gSmash_glass_fragments)[j].field_0x18 == field_0x18) {
+                            KillFragment(fragment);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    C2V(prev_glass_munge) = the_time;
+}
+C2_HOOK_FUNCTION(0x004f0150, MungeGlassFragments2)
+
 void (C2_HOOK_FASTCALL * MungeGlassFragments_original)(void);
 void C2_HOOK_FASTCALL MungeGlassFragments(void) {
 
