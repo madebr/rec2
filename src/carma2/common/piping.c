@@ -1141,3 +1141,14 @@ void C2_HOOK_FASTCALL PipeSingleGibShower(uintptr_t pId, undefined4 pArg2, undef
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c8ce0, PipeSingleGibShower, PipeSingleGibShower_original)
+
+void (C2_HOOK_FASTCALL * PipeSingleBloodSpurt_original)(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6);
+void C2_HOOK_FASTCALL PipeSingleBloodSpurt(uintptr_t pId, undefined4 pArg2, undefined4 pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6) {
+
+#if defined(C2_HOOKS_ENABLED)
+    PipeSingleBloodSpurt_original(pId, pArg2, pArg3, pArg4, pArg5, pArg6);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004c8d40, PipeSingleBloodSpurt, PipeSingleBloodSpurt_original)
