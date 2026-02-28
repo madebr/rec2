@@ -110,6 +110,8 @@ void C2_HOOK_FASTCALL RenderElectroBastardRays(br_pixelmap* pRender_screen, br_p
 
 void C2_HOOK_FASTCALL ResetPedNearness(void);
 
+void C2_HOOK_FASTCALL PossiblePedSmear(tPedestrian* pPed);
+
 void C2_HOOK_FASTCALL LastChanceForPedEffects(void);
 
 void C2_HOOK_FASTCALL MungeNapalm(void);
