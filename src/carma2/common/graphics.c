@@ -2520,8 +2520,8 @@ void C2_HOOK_FASTCALL DrawArrow(br_pixelmap* pScreen, br_uint_32 pArrow_index, c
     }
 
     if (C2V(gBack_screen)->type != BR_PMT_INDEX_8) {
-        colours[0] = PaletteEntry16Bit(gRender_palette, colours[0]);
-        colours[1] = PaletteEntry16Bit(gRender_palette, colours[1]);
+        colours[0] = PaletteEntry16Bit(C2V(gRender_palette), colours[0]);
+        colours[1] = PaletteEntry16Bit(C2V(gRender_palette), colours[1]);
         if (pColour == 0xffffffff) {
             colours[1] = Colour24BitTo16Bit(0xff00ff);
         }
