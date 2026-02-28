@@ -1804,7 +1804,7 @@ void C2_HOOK_FASTCALL DoTestHeadup(void) {
             BrMatrix34Translate(&C2V(gStatbarHUD5_actor)->t.t.mat, -448.f, 0.f, 0.f);
             RenderThisHeadup(C2V(gStatbarHUD5_actor));
             RenderThisHeadup(C2V(gStatbarHUD1_actor));
-            if (gHeadup_detail_level % 3 >= 2) {
+            if (C2V(gHeadup_detail_level) % 3 >= 2) {
                 BrMatrix34Translate(&C2V(gArmour_actor)->t.t.mat, 48.f, 35.f, 0.f);
                 BrMatrix34Translate(&C2V(gPower_actor)->t.t.mat, -102.f, 5.f, 0.f);
                 BrMatrix34Translate(&C2V(gOffense_actor)->t.t.mat, -252.f, -25.f, 0.f);
