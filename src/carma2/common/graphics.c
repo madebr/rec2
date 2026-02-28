@@ -1550,7 +1550,7 @@ void C2_HOOK_FASTCALL CalculateWobblitude(tU32 pThe_time) {
     }
     if (C2V(gScreen_wobble_x) > C2V(gCurrent_graf_data)->cock_margin_x) {
         C2V(gScreen_wobble_x) = C2V(gCurrent_graf_data)->cock_margin_x;
-    } else if (C2V(gScreen_wobble_x) < -gCurrent_graf_data->cock_margin_x) {
+    } else if (C2V(gScreen_wobble_x) < -C2V(gCurrent_graf_data)->cock_margin_x) {
         C2V(gScreen_wobble_x) = -C2V(gCurrent_graf_data)->cock_margin_x;
     }
     if (C2V(gScreen_wobble_y) > C2V(gCurrent_graf_data)->cock_margin_y) {
