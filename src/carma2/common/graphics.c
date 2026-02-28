@@ -2450,7 +2450,7 @@ void C2_HOOK_FASTCALL CalcMapCheckpoint2(br_pixelmap* pMap, int pCheckpoint, tU3
     br_vector2 p;
 
     BrMatrix34ApplyP(&pos_mapspace, &C2V(gCurrent_race).checkpoints[pCheckpoint].pos, &C2V(gCurrent_race).map_transformation);
-    BrVector2Sub(&p, &C2V(pos_mapspace), &C2V(gOrigin_map));
+    BrVector2Sub(&p, &pos_mapspace, &C2V(gOrigin_map));
     BrVector2Add(&p, &p, &C2V(gOrigin_headup_map));
     BrMatrix23TApplyV(&C2V(gCurrent_race).checkpoints[pCheckpoint].map_position,
         &p, &C2V(gMatrix23_0068c880));
