@@ -4394,7 +4394,7 @@ typedef struct {
     undefined field_0xbc[0x4];
     tCar_spec* field_0xc0;
     int field_0xc4;
-    undefined2 field_0xc8;
+    tS16 field_0xc8;
     undefined field_0xca;
     undefined field_0xcb[1];
     br_vector3 field_0xcc;

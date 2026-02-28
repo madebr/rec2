@@ -1998,13 +1998,53 @@ void C2_HOOK_FASTCALL ResetPedNearness(void) {
 }
 C2_HOOK_FUNCTION(0x004d6390, ResetPedNearness)
 
+void C2_HOOK_FASTCALL PossiblePedSmear(tPedestrian* pPed) {
+    br_vector3 pos;
+    tPed_cache_006944c0* smear_info = pPed->field_0x0c;
+
+    if (smear_info == NULL) {
+        return;
+    }
+    if ((smear_info->field_0xc4 & 0x2) && smear_info->field_0xca >= 2) {
+        BrVector3Scale(&pos, &smear_info->field_0xe4, 1.f / (float)smear_info->field_0xca);
+        if (!(smear_info->field_0xc4 & 0x1)) {
+            smear_info->field_0xc8 = -1;
+            smear_info->field_0xc4 |= 0x1;
+        } else if (SkidSection(
+                &smear_info->field_0xc8,
+                &smear_info->field_0xcc,
+                &smear_info->field_0xd8,
+                C2V(gPed_smear_material),
+                &pos,
+                &smear_info->field_0xf0,
+                &smear_info->field_0xfc,
+                &smear_info->field_0x108,
+                0.0f,
+                smear_info->field_0x124 - smear_info->field_0x128 + 0.1f)) {
+            smear_info->field_0xc4 &= ~0x1;
+        }
+        BrVector3Copy(&smear_info->field_0xfc, &pos);
+        BrVector3Copy(&smear_info->field_0x108, &smear_info->field_0xf0);
+    } else {
+        smear_info->field_0xc4 &= ~0x1;
+    }
+}
+
 void (C2_HOOK_FASTCALL * LastChanceForPedEffects_original)(void);
 void C2_HOOK_FASTCALL LastChanceForPedEffects(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     LastChanceForPedEffects_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(C2V(gPedestrian_array)); i++) {
+        tPedestrian* ped = &C2V(gPedestrian_array)[i];
+
+        if (ped->flags & 0x1) {
+            PossiblePedSmear(ped);
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004d5970, LastChanceForPedEffects, LastChanceForPedEffects_original)
