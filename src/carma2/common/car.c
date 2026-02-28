@@ -1444,6 +1444,16 @@ void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period) {
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041e660, MungeCarGraphics, MungeCarGraphics_original)
 
+intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData) {
+    tUser_crush_data *crush_data = pActor->user;
+
+    if (crush_data != NULL && crush_data->groove == NULL) {
+        pActor->type = BR_ACTOR_NONE;
+    }
+    return 0;
+}
+C2_HOOK_FUNCTION(0x0041f280, TurnOffNonGroovers)
+
 void (C2_HOOK_FASTCALL * DoLODCarModels_original)(void);
 void C2_HOOK_FASTCALL DoLODCarModels(void) {
 
