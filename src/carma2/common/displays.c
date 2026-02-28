@@ -1284,7 +1284,7 @@ void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time) {
                                     x_offset = 0;
                                 }
                                 TransDRPixelmapCleverText(
-                                        gBack_screen,
+                                        C2V(gBack_screen),
                                         x_offset + the_headup->x,
                                         y_offset + the_headup->y,
                                         the_headup->data.coloured_text_info.coloured_font,
@@ -1302,7 +1302,7 @@ void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time) {
                                     x_offset = 0;
                                 }
                                 TransDRPixelmapText(
-                                        gBack_screen,
+                                        C2V(gBack_screen),
                                         x_offset + the_headup->x,
                                         y_offset + the_headup->y,
                                         the_headup->data.coloured_text_info.coloured_font,
