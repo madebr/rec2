@@ -2354,7 +2354,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004e54f0, DoACompleteRenderPass, DoACompleteRenderPa
 void C2_HOOK_FASTCALL DRDrawLine(br_pixelmap* pDestn, int pX1, int pY1, int pX2, int pY2, int pColour) {
 
     if (C2V(gBack_screen)->type == BR_PMT_RGB_565) {
-        pColour = PaletteEntry16Bit(gRender_palette, pColour);
+        pColour = PaletteEntry16Bit(C2V(gRender_palette), pColour);
     }
     BrPixelmapLine(pDestn, pX1, pY1, pX2, pY2, pColour);
 }
