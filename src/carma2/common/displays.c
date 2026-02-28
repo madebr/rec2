@@ -1738,7 +1738,7 @@ void C2_HOOK_FASTCALL CheckpointLine(br_pixelmap* pMap, int pCheckpoint, tU32 pT
         FancyDrawLine(pMap, C2V(gINT_0074abd4) + 8, C2V(gINT_0074abd0), p2_x, p2_y, 132, 100);
     }
 }
-C2_HOOK_FUNCTION(0x00496b10, CheckPointLine);
+C2_HOOK_FUNCTION(0x00496b10, CheckpointLine);
 
 void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, tU32 pTime, int pTarget) {
     static C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_flash, 0x0068d8f0);
