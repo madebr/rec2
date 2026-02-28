@@ -612,13 +612,13 @@ void C2_HOOK_FASTCALL DoPSPowerHeadup(int pLevel, const char* pAPO_str) {
             BrMaterialUpdate(C2V(gArmour_material), BR_MATU_COLOURMAP);
             break;
         case 'P':
-            BrMapUpdate(gPower_colour_map, BR_MAPU_ALL);
-            C2V(gPower_material)->colour_map = gPower_colour_map;
+            BrMapUpdate(C2V(gPower_colour_map), BR_MAPU_ALL);
+            C2V(gPower_material)->colour_map = C2V(gPower_colour_map);
             BrMaterialUpdate(C2V(gPower_material), BR_MATU_COLOURMAP);
             break;
         case 'O':
-            BrMapUpdate(gOffensive_colour_map, BR_MAPU_ALL);
-            C2V(gOffence_material)->colour_map = gOffensive_colour_map;
+            BrMapUpdate(C2V(gOffensive_colour_map), BR_MAPU_ALL);
+            C2V(gOffence_material)->colour_map = C2V(gOffensive_colour_map);
             BrMaterialUpdate(C2V(gOffence_material), BR_MATU_COLOURMAP);
             break;
         }
