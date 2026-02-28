@@ -1757,7 +1757,7 @@ void C2_HOOK_FASTCALL DrawOffsetCheckpoint(br_pixelmap* pMap, int pCheckpoint, t
                 (int)(C2V(gCurrent_race).checkpoints[pCheckpoint].map_position.v[1] - (float)C2V(gCheckpoint_digit_center_y)),
                 C2V(gCheckpoint_numbers),
                 0, pCheckpoint * C2V(gCheckpoint_digit_height),
-                C2V(gCheckpoint_numbers->width), C2V(gCheckpoint_digit_height));
+                C2V(gCheckpoint_numbers)->width, C2V(gCheckpoint_digit_height));
         }
     }
 }
