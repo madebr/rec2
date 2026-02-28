@@ -107,6 +107,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_spec*, gLast_car_to_skid, 2, 0x006793c8);
 C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gCar_to_view_original_v, 0x00679390);
 C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_cunning_stunt, 0x006793a4);
 C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gPed_actor, 0x006792b4);
+C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV_INIT(const float, gCar_simplification_factor, [2][5], 0x0058f6b0, {
+    { 20.0f, 3.0f, 1.5f, 0.75f, 0.0f },
+    { 50.0f, 5.0f, 2.5f, 1.50f, 0.0f }
+});
 
 void (C2_HOOK_FASTCALL * SetUpPanningCamera_original)(tCar_spec* c);
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
@@ -1457,10 +1461,39 @@ C2_HOOK_FUNCTION(0x0041f280, TurnOffNonGroovers)
 void (C2_HOOK_FASTCALL * DoLODCarModels_original)(void);
 void C2_HOOK_FASTCALL DoLODCarModels(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     DoLODCarModels_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    int j;
+    int variant;
+    tCar_spec* car;
+    br_vector3 tv;
+    float level;
+
+    for (i = 0; i < C2V(gNum_active_cars); i++) {
+        car = C2V(gActive_car_list)[i];
+
+        if (car != NULL && car->driver >= eDriver_oppo && car->car_master_actor->render_style != BR_RSTYLE_NONE) {
+            BrVector3Sub(&tv, &car->car_master_actor->t.t.translate.t, (br_vector3*)C2V(gCamera_to_world).m[3]);
+            level = C2V(gCar_simplification_factor)[C2V(gGraf_spec_index)][C2V(gCar_simplification_level)] >= 0.001f ? BrVector3LengthSquared(&tv) / C2V(gCar_simplification_factor)[C2V(gGraf_spec_index)][C2V(gCar_simplification_level)] : BR_SCALAR_MAX;
+
+            for (j = car->count_detail_levels - 1; j > 0; j--) {
+                if (car->detail_levels[j] < level) {
+                    break;
+                }
+            }
+            if (j > 0) {
+                variant = j;
+                DRActorEnumRecurse(car->car_model_actor, SwitchCarModel, &variant);
+                car->field_0xe18 = variant;
+            } else if (!C2V(gAction_replay_mode) && car->use_shell_model && car->shell_model != NULL) {
+                DRActorEnumRecurse(car->car_model_actor, TurnOffNonGroovers, NULL);
+                car->car_model_actor->type = BR_ACTOR_MODEL;
+                car->car_model_actor->model = car->shell_model;
+            }
+        }
+    }
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0041f110, DoLODCarModels, DoLODCarModels_original)
