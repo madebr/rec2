@@ -36,6 +36,7 @@ C2_HOOK_VARIABLE_DECLARE(br_vector3, gCar_to_view_original_v);
 C2_HOOK_VARIABLE_DECLARE(tCamera_key_flags, gCamera_key_flags);
 C2_HOOK_VARIABLE_DECLARE(tU32, gLast_cunning_stunt);
 C2_HOOK_VARIABLE_DECLARE(br_actor*, gPed_actor);
+C2_HOOK_VARIABLE_DECLARE_ARRAY_ADV(const float, gCar_simplification_factor, [2][5]);
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
