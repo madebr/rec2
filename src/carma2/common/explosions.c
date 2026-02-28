@@ -113,13 +113,77 @@ void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* p
 }
 C2_HOOK_FUNCTION(0x004f5ec0, ReadExplosionInfo)
 
+int C2_HOOK_FAKE_THISCALL PointOutOfSightNotAR(const br_vector3* pPoint, undefined4 pArg2, float pMax_distance) {
+
+    if (C2V(gAction_replay_mode)) {
+        return 1;
+    }
+    return PointOutOfSight(pPoint, pArg2, pMax_distance);
+}
+
 void (C2_HOOK_FASTCALL * MungeExplosions_original)(void);
 void C2_HOOK_FASTCALL MungeExplosions(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     MungeExplosions_original();
 #else
-    NOT_IMPLEMENTED();
+    int i;
+    tU32 now;
+
+    now = GetTotalTime();
+    for (i = 0; i < REC2_ASIZE(C2V(gExplosions)); i++) {
+        tExplosion* explosion = &C2V(gExplosions)[i];
+        int frame;
+        undefined prev_frame;
+        br_vector3 tv;
+
+        if (explosion->start == 0) {
+            continue;
+        }
+        frame = (now - explosion->start) / explosion->period;
+        prev_frame = explosion->field_0x8;
+        if (now < explosion->start) {
+            if (explosion->actor->parent != NULL) {
+                BrActorRemove(explosion->actor);
+            }
+            continue;
+        }
+        if (frame >= explosion->count_frames) {
+            if (explosion->actor->parent != NULL) {
+                BrActorRemove(explosion->actor);
+            }
+            explosion->finished = 1;
+            continue;
+        }
+        if (PointOutOfSightNotAR(&explosion->collision_actor->t.t.translate.t REC2_THISCALL_EDX, 0.f)) {
+            if (explosion->actor->parent != NULL) {
+                BrActorRemove(explosion->actor);
+            }
+            continue;
+        }
+        explosion->field_0x8 = frame;
+        if (explosion->actor->parent == NULL) {
+            BrActorAdd(C2V(gNon_track_actor), explosion->actor);
+        }
+        if (frame != prev_frame) {
+            explosion->actor->material->colour_map = explosion->frames[frame].map;
+            BrMaterialUpdate(explosion->actor->material, BR_MATU_ALL);
+        }
+        if (explosion->actor->material->colour_map == NULL) {
+            if (explosion->actor->parent != NULL) {
+                BrActorRemove(explosion->actor);
+            }
+            continue;
+        }
+        explosion->actor->t.t.mat = C2V(gCamera)->t.t.mat;
+        BrMatrix34ApplyV(&tv, &explosion->field_0x1c, &explosion->collision_actor->t.t.mat);
+        BrVector3Accumulate(&explosion->actor->t.t.translate.t, &tv);
+        BrMatrix34PreScale(&explosion->actor->t.t.mat,
+            (float)explosion->actor->material->colour_map->width * explosion->field_0x14 / 128.f,
+            (float)explosion->actor->material->colour_map->height * explosion->field_0x14 / 128.f,
+            1.f);
+        BrMatrix34PreRotateZ(&explosion->actor->t.t.mat, explosion->angle);
+}
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004eaaf0, MungeExplosions, MungeExplosions_original)
