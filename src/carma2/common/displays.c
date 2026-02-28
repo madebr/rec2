@@ -1773,7 +1773,7 @@ void C2_HOOK_FASTCALL DoDirectionFinderStuff(br_pixelmap* pMap) {
     if ((C2V(gMini_map_visible) || C2V(gMap_view) == 2)
             && C2V(gCheckpoint_finder_enabled)
             && (C2V(gCurrent_race).race_spec->race_type == kRaceType_Carma1 ||
-                C2V(gCurrent_race.race_spec)->race_type == kRaceType_Checkpoints)) {
+                C2V(gCurrent_race).race_spec->race_type == kRaceType_Checkpoints)) {
         DoSomeThingsToCheckpoints(pMap, the_time, CheckpointLine, 0);
     }
     if (C2V(gCurrent_race).race_spec->race_type >= kRaceType_Smash) {
@@ -1867,8 +1867,8 @@ void C2_HOOK_FASTCALL MapOverlay(void) {
     BrMatrix34ApplyP(&C2V(gOrigin_map), &C2V(gPlayer_car_master_actor)->t.t.translate.t,  &C2V(gCurrent_race).map_transformation);
     C2V(gOrigin_headup_map).v[0] = C2V(gOrigin_map).v[0] - (float)(C2V(gINT_0074ab94) / 2);
     C2V(gOrigin_headup_map).v[1] = C2V(gOrigin_map).v[1] - (float)(C2V(gINT_0074abec) / 2);
-    C2V(gINT_0068c878) = (int)(gOrigin_headup_map.v[0] + .5f);
-    C2V(gINT_0068c874) = (int)(gOrigin_headup_map.v[1] + .5f);
+    C2V(gINT_0068c878) = (int)(C2V(gOrigin_headup_map).v[0] + .5f);
+    C2V(gINT_0068c874) = (int)(C2V(gOrigin_headup_map).v[1] + .5f);
     if (C2V(gINT_0068c878) < 0 || C2V(gINT_0068c874) < 0
             || C2V(gCurrent_race).map_image->width < C2V(gINT_0068c878)
             || C2V(gCurrent_race).map_image->height < C2V(gINT_0068c874)) {
@@ -1879,12 +1879,12 @@ void C2_HOOK_FASTCALL MapOverlay(void) {
         C2V(gINT_0068d890) = 0;
         BrPixelmapRectangleCopy(C2V(gMap_overlay),
             0, 0,
-            gCurrent_race.map_image,
+            C2V(gCurrent_race).map_image,
             C2V(gINT_0068c878), C2V(gINT_0068c874) - C2V(gINT_0068c858),
             C2V(gINT_0074ab94), C2V(gINT_0074ab94));
     } else {
         C2V(gINT_0068c858) = 0;
-        C2V(gINT_0068d890) = (gINT_0074abec - gINT_0074ab94) / 2;
+        C2V(gINT_0068d890) = (C2V(gINT_0074abec) - C2V(gINT_0074ab94)) / 2;
         BrPixelmapRectangleCopy(C2V(gMap_overlay),
             0, 0,
             C2V(gCurrent_race).map_image,
