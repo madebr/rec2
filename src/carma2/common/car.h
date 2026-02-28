@@ -77,6 +77,8 @@ void C2_HOOK_FASTCALL SetAmbientPratCam(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL MungeCarGraphics(tU32 pFrame_period);
 
+intptr_t C2_HOOK_CDECL TurnOffNonGroovers(br_actor* pActor, void* pData);
+
 void C2_HOOK_FASTCALL DoLODCarModels(void);
 
 void C2_HOOK_FASTCALL DoComplexCarModels(void);
