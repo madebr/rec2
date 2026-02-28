@@ -466,7 +466,7 @@ void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
                 if (C2V(gProgram_state).cockpit_on) {
                     br_scalar ts;
 
-                    ts = sqrtf(REC2_SQR(C2V(gCamera_to_world).m[0][2]) + REC2_SQR(C2V(gCamera_to_world.m[0][0])));
+                    ts = sqrtf(REC2_SQR(C2V(gCamera_to_world).m[0][2]) + REC2_SQR(C2V(gCamera_to_world).m[0][0]));
                     DRMatrix34PreRotateZ(&splash->actor->t.t.mat, -FastScalarArcTan2Angle(C2V(gCamera_to_world).m[0][1], ts));
                 }
                 splash->just_done = 0;
@@ -497,7 +497,7 @@ void C2_HOOK_FASTCALL ReplayShrapnel(tU32 pTime) {
 void C2_HOOK_FASTCALL KillShrapnel(int i) {
 
     if (C2V(gShrapnel)[i].actor->parent != NULL) {
-        BrActorRemove(gShrapnel[i].actor);
+        BrActorRemove(C2V(gShrapnel)[i].actor);
     }
     C2V(gShrapnel_flags) &= ~(1 << i);
 }
@@ -555,7 +555,7 @@ void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
                     ts = .1f;
                 }
                 BrVector3Scale(&C2V(gShrapnel)[i].v, &C2V(gShrapnel)[i].v, ts);
-                AddShrapnelToPipingSession(i + ((gShrapnel[i].age > 1000 || pTime > C2V(gShrapnel)[i].age) << 15), (br_vector3*)mat->m[3], C2V(gShrapnel)[i].age - pTime, C2V(gShrapnel)[i].actor->material);
+                AddShrapnelToPipingSession(i + ((C2V(gShrapnel)[i].age > 1000 || pTime > C2V(gShrapnel)[i].age) << 15), (br_vector3*)mat->m[3], C2V(gShrapnel)[i].age - pTime, C2V(gShrapnel)[i].actor->material);
                 if (C2V(gShrapnel)[i].age > 1000) {
                     C2V(gShrapnel)[i].age = -1;
                 }
