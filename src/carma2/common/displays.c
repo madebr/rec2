@@ -1474,7 +1474,7 @@ void C2_HOOK_FASTCALL DoInstruments(tU32 pThe_time) {
                 }
                 if (speed_mph <= C2V(gProgram_state).current_car.max_speed) {
                     the_angle = DEG_TO_RAD(C2V(gProgram_state).current_car.speedo_start_angle[C2V(gProgram_state).cockpit_on]
-                        + ((float)C2V(gProgram_state).current_car.speedo_end_angle[C2V(gProgram_state).cockpit_on] - (float)C2V(gProgram_state).current_car.speedo_start_angle[gProgram_state.cockpit_on]) * speed_mph
+                        + ((float)C2V(gProgram_state).current_car.speedo_end_angle[C2V(gProgram_state).cockpit_on] - (float)C2V(gProgram_state).current_car.speedo_start_angle[C2V(gProgram_state).cockpit_on]) * speed_mph
                             / (float)C2V(gProgram_state).current_car.max_speed);
                 } else {
                     the_angle = DEG_TO_RAD((float)C2V(gProgram_state).current_car.speedo_end_angle[C2V(gProgram_state).cockpit_on]);
