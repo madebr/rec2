@@ -5011,8 +5011,8 @@ void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) 
 }
 C2_HOOK_FUNCTION(0x00515b80, CalcActorGlobalPos)
 
-int (C2_HOOK_FASTCALL * PointOutOfSight_original)(br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
-int C2_HOOK_FASTCALL PointOutOfSight(br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance) {
+int (C2_HOOK_FASTCALL * PointOutOfSight_original)(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
+int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance) {
     br_vector3 distance_vector;
     int i;
 
