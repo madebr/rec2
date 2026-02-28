@@ -2097,7 +2097,7 @@ void C2_HOOK_FASTCALL InitNearestCar(void) {
         } else {
             C2V(gFLOAT_0074ab90) = 0.f;
         }
-    } else if (gTarget_lock_enabled) {
+    } else if (C2V(gTarget_lock_enabled)) {
         C2V(gFLOAT_0074ab90) = 0.f;
     } else {
         C2V(gTarget_lock_car_2) = NULL;
