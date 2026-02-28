@@ -1197,7 +1197,7 @@ void C2_HOOK_FASTCALL DoDamageScreen(tU32 pThe_time) {
             the_step = 5 * the_damage->damage_level / 100;
             y_pitch = (the_image->height / 2) / 5;
             DRPixelmapRectangleMaskedCopy(
-                gDamage_hud,
+                C2V(gDamage_hud),
                 the_wobble_x + C2V(gProgram_state).current_car.damage_units[i].x_coord,
                 the_wobble_y + C2V(gProgram_state).current_car.damage_units[i].y_coord,
                 the_image,
