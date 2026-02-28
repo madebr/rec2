@@ -1153,8 +1153,8 @@ void C2_HOOK_FASTCALL DeviouslyDimRectangle(br_pixelmap* pPixelmap, int pLeft, i
     C2V(gDim_model)->vertices[2].p.v[1] = -(float)pBottom;
     C2V(gDim_model)->vertices[1].p.v[1] = C2V(gDim_model)->vertices[2].p.v[1];
     BrModelUpdate(C2V(gDim_model), BR_MODU_VERTEX_POSITIONS);
-    gDim_actor->render_style = BR_RSTYLE_FACES;
-    if (gDim_actor->prev == NULL) {
+    C2V(gDim_actor)->render_style = BR_RSTYLE_FACES;
+    if (C2V(gDim_actor)->prev == NULL) {
         BrActorAdd(C2V(g2d_camera), C2V(gDim_actor));
     }
     BrZbsSceneRender(C2V(g2d_camera), C2V(g2d_camera), C2V(gBack_screen), C2V(gDepth_buffer));
