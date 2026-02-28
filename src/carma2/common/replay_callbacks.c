@@ -790,7 +790,7 @@ void (C2_HOOK_FASTCALL * ResetSmoke_original)(void);
 void C2_HOOK_FASTCALL ResetSmoke(void) {
 
 #if defined(C2_HOOKS_ENABLED)
-    ResetSmoke_original(pChunk);
+    ResetSmoke_original();
 #else
     NOT_IMPLEMENTED();
 #endif
