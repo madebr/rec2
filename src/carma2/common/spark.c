@@ -1256,7 +1256,7 @@ void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDe
         BrActorAdd(pCamera, C2V(gLine_actor));
     }
 
-    if (gAction_replay_mode) {
+    if (C2V(gAction_replay_mode)) {
         ReplaySparks(pRender_screen, pDepth_buffer, pCamera, pTime);
         if (C2V(gNo_2d_effects)) {
             BrActorRemove(C2V(gLine_actor));
@@ -1328,7 +1328,7 @@ void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDe
         }
         BrVector3Scale(&C2V(gSparks)[i].v, &C2V(gSparks)[i].v, ts);
         if (C2V(gNo_2d_effects)) {
-            SetLineModelCols(gSparks[i].colour);
+            SetLineModelCols(C2V(gSparks)[i].colour);
         }
         if (C2V(gSparks)[i].colour != 0) {
             DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gFog_shade_table));
