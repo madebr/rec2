@@ -996,13 +996,13 @@ void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime) {
                 pos.v[1] = C2V(gSmoke_column)[i].pos.v[1] + (C2V(gSmoke_column)[i].colour == 0) * .05f;
                 pos.v[2] = C2V(gSmoke_column)[i].pos.v[2] + SRandomBetween(-.03f, .03f);
                 if (!(C2V(gSmoke_column)[i].whiter & 0x2) || IRandomBetween(0, 3)) {
-                    if (gSmoke_column[i].whiter > 0) {
-                        gSmoke_column[i].whiter = 2;
+                    if (C2V(gSmoke_column)[i].whiter > 0) {
+                        C2V(gSmoke_column)[i].whiter = 2;
                     } else {
-                        gSmoke_column[i].whiter = -2;
+                        C2V(gSmoke_column)[i].whiter = -2;
                     }
                 } else {
-                    C2V(gSmoke_column[i].whiter) &= 0x1;
+                    C2V(gSmoke_column)[i].whiter &= 0x1;
                 }
                 decay_factor = ((float)(C2V(gSmoke_column)[i].whiter > 0) + 1.f) / 2.f;
                 if (C2V(gSmoke_column)[i].lifetime < 4000) {
