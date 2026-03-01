@@ -13,6 +13,8 @@ add_library(c2_common STATIC
     brucetrk.h
     car.c
     car.h
+    compress.c
+    compress.h
     controls.c
     controls.h
     crush.c
