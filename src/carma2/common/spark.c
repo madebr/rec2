@@ -1452,7 +1452,7 @@ void C2_HOOK_FASTCALL ReplaySmoke(br_pixelmap* pRender_screen, br_pixelmap* pDep
     for (i = 0; i < REC2_ASIZE(C2V(gSmoke)); i++) {
         if (C2V(gSmoke_flags) & (1u << i)) {
             aspect = 1.f + (C2V(gSmoke)[i].radius - .05f) * 4.f / 2.f;
-            if (C2V(C2V(gSmoke))[i].type & 0x10) {
+            if (C2V(gSmoke)[i].type & 0x10) {
                 SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius / aspect, C2V(gSmoke)[i].strength, 1.f,
                     pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
             } else {
@@ -1500,9 +1500,9 @@ void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDep
         if (C2V(gNo_2d_effects)) {
             RenderRecordedSmokeCircles();
             if (C2V(gBlend_actor)->parent != NULL) {
-                BrActorRemove(gBlend_actor);
+                BrActorRemove(C2V(gBlend_actor));
             }
-            BrActorAdd(gDont_render_actor, gBlend_actor);
+            BrActorAdd(C2V(gDont_render_actor), C2V(gBlend_actor));
         }
         return;
     }
@@ -1518,17 +1518,17 @@ void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDep
                 }
                 BrVector3Accumulate(&C2V(gSmoke)[i].pos, &tv);
             } else {
-                gSmoke_flags &= ~(1u << i);
+                C2V(gSmoke_flags) &= ~(1u << i);
             }
         }
     }
     for (i = 0; i < REC2_ASIZE(C2V(gSmoke)); i++) {
-        if (gSmoke_flags & (1u << i)) {
+        if (C2V(gSmoke_flags) & (1u << i)) {
             if ((C2V(gSmoke)[i].type & 0xf) == 7) {
                 not_lonely |= 1u << i;
             } else if (!(not_lonely & (1u << i))) {
                 for (j = i + 1; j < REC2_ASIZE(C2V(gSmoke)); j++) {
-                    if ((gSmoke_flags & (1u << j))) {
+                    if ((C2V(gSmoke_flags) & (1u << j))) {
                         BrVector3Sub(&tv, &C2V(gSmoke)[i].pos, &C2V(gSmoke)[i].pos);
                         ts = BrVector3LengthSquared(&tv);
                         if (REC2_SQR(C2V(gSmoke)[i].radius + C2V(gSmoke)[j].radius) > ts) {
@@ -1543,9 +1543,9 @@ void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDep
             }
             aspect = 1.f + (C2V(gSmoke)[i].radius - .05f) * 4.f / 2.f;
             if ((C2V(gSmoke)[i].type & 0x10)) {
-                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius / aspect, C2V(gBR_smoke_structs)[i].strength, 1.0, pRender_screen, pDepth_buffer, gShade_list[C2V(gSmoke)[i].type & 0xf], pCamera);
+                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius / aspect, C2V(gBR_smoke_structs)[i].strength, 1.0, pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
             } else {
-                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gBR_smoke_structs)[i].strength, aspect, pRender_screen, pDepth_buffer, gShade_list[C2V(gSmoke)[i].type & 0xf], pCamera);
+                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gBR_smoke_structs)[i].strength, aspect, pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
             }
             if (C2V(gSmoke)[i].pipe_me) {
                 AddSmokeToPipingSession(i, C2V(gSmoke)[i].type, &C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gSmoke)[i].strength);
@@ -1569,7 +1569,7 @@ void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDep
                     }
                 }
             } else {
-                gSmoke_flags &= ~(1u << i);
+                C2V(gSmoke_flags) &= ~(1u << i);
             }
         }
     }
