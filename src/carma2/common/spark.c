@@ -1038,7 +1038,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004fba40, MungeSmokeColumn, MungeSmokeColumn_origina
 void (C2_HOOK_FASTCALL * GeneralCreateSplash_original)(tCollision_info* pObject, br_vector3* pVel,br_vector3* pOmega, br_vector3* pNormal, float pWater_density, br_bounds3* pBounds, br_matrix34* pMat, tU32 pTime);
 void C2_HOOK_FASTCALL GeneralCreateSplash(tCollision_info* pObject, br_vector3* pVel,br_vector3* pOmega, br_vector3* pNormal, float pWater_density, br_bounds3* pBounds, br_matrix34* pMat, tU32 pTime) {
 
-#if defined(C2_OOKS_ENABLED)
+#if defined(C2_HOOKS_ENABLED)
     GeneralCreateSplash_original(pObject, pVel, pOmega, pNormal, pWater_density, pBounds, pMat, pTime);
 #else
     NOT_IMPLEMENTED();
