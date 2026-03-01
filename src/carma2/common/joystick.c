@@ -1,5 +1,6 @@
 #include "joystick.h"
 
+#include "controls.h"
 #include "displays.h"
 #include "globvars.h"
 #include "input.h"
@@ -23,8 +24,6 @@ C2_HOOK_VARIABLE_IMPLEMENT(int, gOrig_joystick_index, 0x00688700);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gJoystick_x_steering, 0x00595f90, 1.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gJoystick_y_throttle, 0x00595f94, 1.f);
 C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gINT_00596308, 0x00596308, -1);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068b8e4, 0x0068b8e4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068b8e8, 0x0068b8e8);
 C2_HOOK_VARIABLE_IMPLEMENT(tHeadup_text_buffer, gJoystick_headup_buffer_0079d8a0, 0x0079d8a0);
 
 

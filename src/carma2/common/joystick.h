@@ -16,8 +16,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gOrig_joystick_index);
 C2_HOOK_VARIABLE_DECLARE(float, gJoystick_x_steering);
 C2_HOOK_VARIABLE_DECLARE(float, gJoystick_y_throttle);
 C2_HOOK_VARIABLE_DECLARE(int, gINT_00596308);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e4);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e8);
 C2_HOOK_VARIABLE_DECLARE(tHeadup_text_buffer, gJoystick_headup_buffer_0079d8a0);
 
 
