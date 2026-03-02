@@ -286,7 +286,9 @@ void C2_HOOK_CDECL BrPixelmapBegin(void) {
     for (i = 0; i < BR_ASIZE(C2V(pm_resourceClasses)); i++) {
         BrResClassAdd(&C2V(pm_resourceClasses)[i]);
     }
+#if !defined(REC2_STANDALONE)
     BrImageAdd(&C2V(Image_BRMAP1));
+#endif
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005395a0, BrPixelmapBegin, BrPixelmapBegin_original)
@@ -297,7 +299,9 @@ void C2_HOOK_CDECL BrPixelmapEnd(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     BrPixelmapEnd_original();
 #else
+#if !defined(REC2_STANDALONE)
     BrImageRemove(&C2V(Image_BRMAP1));
+#endif
     BrResFree(C2V(_pixelmap).res);
     BrMemSet(&C2V(_pixelmap), 0, sizeof(br_pixelmap_state));
 #endif

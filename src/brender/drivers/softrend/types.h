@@ -19,29 +19,6 @@ typedef void C2_HOOK_CDECL surface_fn(br_renderer* self, br_vector3* p, br_vecto
 typedef struct active_light active_light;
 
 typedef enum {
-    C_FLAGS = 0,
-    C_X     = 1,
-    C_Y     = 2,
-    C_Z     = 3,
-    C_W     = 4,
-    C_SX    = 5,
-    C_SY    = 6,
-    C_SZ    = 7,
-    C_U     = 8,
-    C_V     = 9,
-    C_I     = 10,
-    C_A     = 10,
-    C_R     = 11,
-    C_G     = 12,
-    C_B     = 13,
-    C_UI    = 10,
-    C_UR    = 11,
-    C_UG    = 12,
-    C_UB    = 13,
-    NUM_COMPONENTS = 16,
-} brp_components;
-
-typedef enum {
     CM_X    = 0x00000001,
     CM_Y    = 0x00000002,
     CM_Z    = 0x00000004,
@@ -383,14 +360,6 @@ typedef struct br_renderer_state_stored_soft {
     br_timestamp timestamp_cache;
     br_primitive_state* pstate;
 } br_renderer_state_stored_soft;
-
-typedef union brp_vertex {
-    br_int_32 flags;
-    br_scalar   comp  [NUM_COMPONENTS];
-    br_float    comp_f[NUM_COMPONENTS];
-    br_fixed_ls comp_x[NUM_COMPONENTS];
-    br_int_32   comp_i[NUM_COMPONENTS];
-} brp_vertex;
 
 typedef struct {
     void* scratch;
