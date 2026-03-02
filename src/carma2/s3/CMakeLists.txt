@@ -19,7 +19,7 @@ target_include_directories(s3
 target_link_libraries(s3
     PUBLIC
         c2_hooks
-        brender
+        BRender::Headers
         rec2_headers
         c2_platform
 )

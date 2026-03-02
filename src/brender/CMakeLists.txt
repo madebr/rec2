@@ -1,4 +1,9 @@
-add_library(brender STATIC
+add_library(brender_headers INTERFACE)
+add_library(BRender::Headers ALIAS brender_headers)
+target_include_directories(brender_headers INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+
+add_library(brender-static STATIC
     $<TARGET_OBJECTS:c2_platform_brender>
 
     core/fw/assocarr.c
@@ -188,19 +193,19 @@ add_library(brender STATIC
     core/v1db/v1dbfile.h
 )
 if(MSVC)
-    set_property(TARGET brender PROPERTY ARCHIVE_OUTPUT_NAME "libbrender")
+    set_property(TARGET brender-static PROPERTY ARCHIVE_OUTPUT_NAME "libbrender")
 endif()
 
 if(REC2_FIX_BUGS)
-    target_compile_definitions(brender PRIVATE BRENDER_FIX_BUGS)
+    target_compile_definitions(brender-static PRIVATE BRENDER_FIX_BUGS)
 endif()
-target_include_directories(brender
+target_include_directories(brender-static
     PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
 )
-target_link_libraries(brender
+target_link_libraries(brender-static
     PUBLIC
         c2_hooks
         c2_platform
@@ -267,7 +272,7 @@ target_include_directories(brender_softrendr_float
 )
 target_link_libraries(brender_softrendr_float
     PRIVATE
-        brender
+        brender-static
         c2_hooks
 )
 target_compile_definitions(brender_softrendr_float
@@ -280,13 +285,10 @@ if(REC2_STANDALONE)
     add_library(brender-shared SHARED
         dll/brender1.def
         $<TARGET_OBJECTS:c2_platform_brender>
-        $<TARGET_OBJECTS:brender>
+        $<TARGET_OBJECTS:brender-static>
         $<TARGET_OBJECTS:brender_softrendr_float>
     )
-    target_include_directories(brender-shared
-        PUBLIC
-            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    )
+    set_property(TARGET brender-shared PROPERTY PREFIX "")
     set_property(TARGET brender-shared PROPERTY OUTPUT_NAME "brender")
 
     add_library(brender-brcore1-shared SHARED
@@ -294,6 +296,7 @@ if(REC2_STANDALONE)
         dll/brcore1.def
     )
     target_link_libraries(brender-brcore1-shared PRIVATE brender-shared)
+    set_property(TARGET brender-brcore1-shared PROPERTY PREFIX "")
     set_property(TARGET brender-brcore1-shared PROPERTY OUTPUT_NAME "brcore1")
     if(MSVC)
         target_compile_options(brender-brcore1-shared PRIVATE "/Zl")
@@ -305,6 +308,7 @@ if(REC2_STANDALONE)
         dll/brpmap1.def
     )
     target_link_libraries(brender-brpmap1-shared PRIVATE brender-shared)
+    set_property(TARGET brender-brpmap1-shared PROPERTY PREFIX "")
     set_property(TARGET brender-brpmap1-shared PROPERTY OUTPUT_NAME "brpmap1")
     if(MSVC)
         target_compile_options(brender-brpmap1-shared PRIVATE "/Zl")
@@ -316,9 +320,12 @@ if(REC2_STANDALONE)
         dll/brhost1.def
     )
     target_link_libraries(brender-brhost1-shared PRIVATE brender-shared)
+    set_property(TARGET brender-brhost1-shared PROPERTY PREFIX "")
     set_property(TARGET brender-brhost1-shared PROPERTY OUTPUT_NAME "brhost1")
     if(MSVC)
         target_compile_options(brender-brhost1-shared PRIVATE "/Zl")
         target_link_options(brender-brhost1-shared PRIVATE "/ENTRY:DllMain")
     endif()
 endif()
+
+add_library(BRender::BRender ALIAS brender-static)
