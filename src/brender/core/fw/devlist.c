@@ -322,7 +322,7 @@ br_error C2_HOOK_CDECL BrDevContainedCount(br_int_32* pcount, br_token type, con
     return BrDevContainedCount_original(pcount, type, pattern, tv);
 #else
     int i;
-    br_int_32 n;
+    br_uint_32 n;
     br_int_32 total;
     br_error r;
 

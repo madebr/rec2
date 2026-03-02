@@ -200,13 +200,17 @@ void C2_HOOK_CDECL HostBegin(void) {
     RealSelectorBegin();
 #endif
 
+#if !defined(REC2_STANDALONE)
     BrImageAdd(&C2V(Image_BRHOST1));
+#endif
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0053fab0, HostBegin, HostBegin_original)
 
 void C2_HOOK_CDECL HostEnd(void) {
+#if !defined(REC2_STANDALONE)
     BrImageRemove(&C2V(Image_BRHOST1));
+#endif
 
 #if defined(__I86__)
     RealSelectorEnd();

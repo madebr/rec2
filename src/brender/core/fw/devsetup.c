@@ -211,8 +211,8 @@ br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, const char* setup_string,
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00528e10, BrDevBeginTV, BrDevBeginTV_original)
 
-br_pixelmap* (C2_HOOK_CDECL * BrDevBeginOld_original)(char* setup_string);
-br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(char* setup_string) {
+br_pixelmap* (C2_HOOK_CDECL * BrDevBeginOld_original)(const char* setup_string);
+br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(const char* setup_string) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return BrDevBeginOld_original(setup_string);
 #else

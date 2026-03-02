@@ -681,7 +681,9 @@ br_error C2_HOOK_CDECL BrFwBegin(void) {
     BrTokenBegin();
     BrSystemConfigBegin();
     C2V(fw).bAlreadyLoadedDrivers = 0;
+#if !defined(REC2_STANDALONE)
     BrImageAdd(&C2V(Image_BRCORE1));
+#endif
 
     return 0;
 #endif
@@ -697,7 +699,9 @@ br_error C2_HOOK_CDECL BrFwEnd(void) {
     if (!C2V(fw).active) {
         return 0x1006;
     }
+#if !defined(REC2_STANDALONE)
     BrImageRemove(&C2V(Image_BRCORE1));
+#endif
     BrResFree(C2V(fw).res);
     BrMemSet(&C2V(fw), 0, sizeof(C2V(fw)));
     return 0;
