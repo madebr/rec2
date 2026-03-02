@@ -27,4 +27,6 @@ tU32* C2_HOOK_FASTCALL KevKeyService(void);
 
 void C2_HOOK_FASTCALL CyclePollKeys(void);
 
+void C2_HOOK_FASTCALL CheckKeysForMouldiness(void);
+
 #endif // REC2_INPUT_H
