@@ -173,7 +173,7 @@ target_include_directories(c2_common
 target_link_libraries(c2_common
     PUBLIC
         rec2_headers
-        brender
+        BRender::Headers
         c2_hooks
         c2_platform
         S3::S3
