@@ -368,12 +368,10 @@ void C2_HOOK_FASTCALL StartProcessingThisDrone(tDrone_spec* pDrone) {
 void (C2_HOOK_FASTCALL * InitDrones_original)(void);
 void C2_HOOK_FASTCALL InitDrones(void) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     InitDrones_original();
 #else
     int i;
-
-    NOT_IMPLEMENTED();
 
     C2_HOOK_BUG_ON(sizeof(tDrone_spec) != 1496);
 
