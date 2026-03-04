@@ -2733,13 +2733,20 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum) {
 }
 C2_HOOK_FUNCTION(0x00442e80, GetPowerup)
 
+void C2_HOOK_FASTCALL SteelBollock(void) {
+
+    SphericizeCar(C2V(gCar_to_view));
+    NewTextHeadupSlot(4, 0, 2000, -4, "STEEL GONAD O' DEATH");
+}
+
 void (C2_HOOK_FASTCALL * RichardsSphere_original)(int pNum);
 void C2_HOOK_FASTCALL RichardsSphere(int pNum) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     RichardsSphere_original(pNum);
 #else
-    NOT_IMPLEMENTED();
+    TotallyRepairACar(C2V(gCar_to_view));
+    SteelBollock();
 #endif
 }
 
