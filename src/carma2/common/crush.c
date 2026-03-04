@@ -102,7 +102,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tPhysics_joint*, gTrack_crush_joints, 32, 0x006
 C2_HOOK_VARIABLE_IMPLEMENT(tCrush_info_buffer, gSplit_car_crush_info_buffer, 0x0067b7b8);
 C2_HOOK_VARIABLE_IMPLEMENT(tCollision_info*, gSplit_car_collision_infos, 0x0067a188);
 C2_HOOK_VARIABLE_IMPLEMENT(tDriver, gSplit_car_driver, 0x0067b7c4);
-C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape_sphere*, gGonad_sphere_collision_shape, 0x006796b4);
+C2_HOOK_VARIABLE_IMPLEMENT(tCollision_shape*, gGonad_sphere_collision_shape, 0x006796b4);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCrush_list_item, gCrush_lists, 8, 0x006796c8);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_queued_drone_crushes, 0x006796bc);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_crush_detach_list, 0x0067bad0);
@@ -186,7 +186,7 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
         }
     }
     C2V(gSplit_car_driver) = eDriver_split_car;
-    C2V(gGonad_sphere_collision_shape) = AllocateShapeSphere(kMem_crush_data);
+    C2V(gGonad_sphere_collision_shape) = (tCollision_shape*)AllocateShapeSphere(kMem_crush_data);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00429fa0, InitCrushSystems, InitCrushSystems_original)
@@ -2784,3 +2784,64 @@ float C2_HOOK_FASTCALL SmashEnvironment(tCollision_info* pObject, undefined4* pA
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004f1140, SmashEnvironment, SmashEnvironment_original)
+
+void C2_HOOK_FASTCALL SphericizeModel(br_model* pModel, const br_vector3* pCenter, br_scalar pRadius) {
+    int i;
+    br_vector3 tv;
+
+    for (i = 0; i < pModel->nvertices; i++) {
+        BrVector3Sub(&tv, &pModel->vertices[i].p, pCenter);
+        BrVector3Normalise(&tv, &tv);
+        BrVector3Scale(&pModel->vertices[i].p, &tv, pRadius);
+    }
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+}
+
+void C2_HOOK_FASTCALL SphericizePhysics(tCar_spec* pCar, const br_vector3* pCenter, br_scalar pRadius) {
+    br_vector3 delta;
+
+    C2V(gGonad_sphere_collision_shape)->sphere.sphere.radius = pRadius;
+    BrVector3Copy(&C2V(gGonad_sphere_collision_shape)->sphere.sphere.center, pCenter);
+    C2V(gGonad_sphere_collision_shape)->common.next = NULL;
+    FillInShape(C2V(gGonad_sphere_collision_shape));
+    pCar->collision_info->shape = C2V(gGonad_sphere_collision_shape);
+    UpdateCollisionObject(pCar->collision_info);
+    BrVector3Copy(&pCar->collision_info->cmpos, pCenter);
+    pCar->collision_info->M = 50.f;
+    BrVector3Set(&pCar->collision_info->I,
+        REC2_SQR(pCar->collision_info->shape->sphere.sphere.radius) * pCar->collision_info->M / WORLD_SCALE,
+        REC2_SQR(pCar->collision_info->shape->sphere.sphere.radius) * pCar->collision_info->M / WORLD_SCALE,
+        REC2_SQR(pCar->collision_info->shape->sphere.sphere.radius) * pCar->collision_info->M / WORLD_SCALE);
+    pCar->collision_info->world_friction = 16.f;
+    C2V(gGonad_sphere_collision_shape)->common.type = kCollisionShapeType_Box;
+    while (!TestForCarInSensiblePlace(pCar, &delta)) {
+        BrVector3InvScale(&delta, &delta, 2.f * WORLD_SCALE);
+        BrVector3Accumulate((br_vector3*)&pCar->collision_info->transform_matrix.m[3], &delta);
+    }
+    C2V(gGonad_sphere_collision_shape)->common.type = kCollisionShapeType_Sphere;
+    pCar->field_0x18c8 = 2;
+}
+void (C2_HOOK_FASTCALL * SphericizeCar_original)(tCar_spec* pCar);
+void C2_HOOK_FASTCALL SphericizeCar(tCar_spec* pCar) {
+
+#if 0//defined(C2_HOOKS_ENABLED)
+    SphericizeCar_original(pCar);
+#else
+    br_vector3 center;
+    br_scalar radius;
+    br_model* shell_model;
+
+    shell_model = pCar->shell_model;
+    if (shell_model != NULL) {
+        Vector3Average(&center, &shell_model->bounds.min, &shell_model->bounds.max);
+        radius = Vector3Distance(&center, &shell_model->bounds.min);
+        SphericizeModel(shell_model, &center, radius);
+        pCar->car_model_actor->children = NULL;
+        SphericizePhysics(pCar, &center, radius);
+        pCar->invulnerable_no_crushage = 1;
+        pCar->invulnerable_no_damage = 1;
+        pCar->use_shell_model = 1;
+    }
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x004391d0, SphericizeCar, SphericizeCar_original)

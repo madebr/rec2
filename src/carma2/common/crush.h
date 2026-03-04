@@ -24,7 +24,7 @@ C2_HOOK_VARIABLE_DECLARE_ARRAY(tPhysics_joint*, gTrack_crush_joints, 32);
 C2_HOOK_VARIABLE_DECLARE(tCrush_info_buffer, gSplit_car_crush_info_buffer);
 C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gSplit_car_collision_infos);
 C2_HOOK_VARIABLE_DECLARE(tDriver, gSplit_car_driver);
-C2_HOOK_VARIABLE_DECLARE(tCollision_shape_sphere*, gGonad_sphere_collision_shape);
+C2_HOOK_VARIABLE_DECLARE(tCollision_shape*, gGonad_sphere_collision_shape);
 C2_HOOK_VARIABLE_DECLARE(int, gCount_toggled_doors);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tToggled_door, gToggled_doors, 16);
 C2_HOOK_VARIABLE_DECLARE_ARRAY(tCrush_net_detach_list_item, gNet_crush_detach_list, 8);
@@ -227,5 +227,11 @@ void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar);
 float C2_HOOK_FASTCALL BashObject(tCollision_info* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
 
 float C2_HOOK_FASTCALL SmashEnvironment(tCollision_info* pObject, undefined4* pArg2, float pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
+
+void C2_HOOK_FASTCALL SphericizeModel(br_model* pModel, const br_vector3* pCenter, br_scalar pRadius);
+
+void C2_HOOK_FASTCALL SphericizePhysics(tCar_spec* pCar, const br_vector3* pCenter, br_scalar pRadius);
+
+void C2_HOOK_FASTCALL SphericizeCar(tCar_spec* pCar);
 
 #endif // REC2_CRUSH_H
