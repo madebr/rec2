@@ -201,6 +201,8 @@ void C2_HOOK_FASTCALL FinishRace(int i);
 
 void C2_HOOK_FASTCALL GetPowerup(int pNum);
 
+void C2_HOOK_FASTCALL SteelBollock(void);
+
 void C2_HOOK_FASTCALL RichardsSphere(int pNum);
 
 void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void);
