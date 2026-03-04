@@ -145,7 +145,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tCheat, gKev_keys, 95, 0x00590970, {
     { 0x1f56cde5, 0x1f56cde5, GetPowerup, 0x0000005e },
     { 0x1784995b, 0x1784995b, GetPowerup, 0x00000060 },
     { 0x3003eccb, 0x3003eccb, GetPowerup, 0x00000061 },
-    { 0x4b054b60, 0x4b054b60, DoSteelGonadODeath, 0x00000000 },
+    { 0x4b054b60, 0x4b054b60, RichardsSphere, 0x00000000 },
     { 0x00000000, 0x00000000, NULL,       0x00000000 },
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tToggle_element, gToggle_array, 44, 0x005900a0, {
@@ -2733,11 +2733,11 @@ void C2_HOOK_FASTCALL GetPowerup(int pNum) {
 }
 C2_HOOK_FUNCTION(0x00442e80, GetPowerup)
 
-void (C2_HOOK_FASTCALL * DoSteelGonadODeath_original)(int pNum);
-void C2_HOOK_FASTCALL DoSteelGonadODeath(int pNum) {
+void (C2_HOOK_FASTCALL * RichardsSphere_original)(int pNum);
+void C2_HOOK_FASTCALL RichardsSphere(int pNum) {
 
 #if defined(C2_HOOKS_ENABLED)
-    DoSteelGonadODeath_original(pNum);
+    RichardsSphere_original(pNum);
 #else
     NOT_IMPLEMENTED();
 #endif
