@@ -173,4 +173,8 @@ int C2_HOOK_FASTCALL GetObjectNetworkStuff(tCollision_info* pObject, tU8* pBuffe
 
 int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tCollision_info* pObject, tU8* pNet_data, int pRemaining);
 
+int C2_HOOK_FASTCALL SizeOfObjectNetworkStuff(tPhysics_joint_type pType);
+
+int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tCollision_info* pObject);
+
 #endif //REC2_PHYSICS_H

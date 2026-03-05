@@ -1965,3 +1965,31 @@ int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tCollision_info* pObject, tU8* pNe
     return total_size;
 }
 C2_HOOK_FUNCTION(0x0049cd00, GetHierarchyNetworkStuff)
+
+int C2_HOOK_FASTCALL SizeOfObjectNetworkStuff(tPhysics_joint_type pType) {
+    switch (pType & 0xf) {
+    case eJoint_none:
+        return 0x28; // FIXME!
+    case eJoint_hinge:
+    case eJoint_quick_hinge:
+        return 0xc; // FIXME!
+    case eJoint_universal:
+    case eJoint_ball_n_socket:
+        return 0x10; // FIXME!
+    default:
+        PhysicsError(9, "netphys got messed up");
+        return 0;
+    }
+}
+
+int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tCollision_info* pObject) {
+    int size;
+    tCollision_info* child;
+
+    size = SizeOfObjectNetworkStuff(pObject->physics_joint1 != NULL ? pObject->physics_joint1->type : eJoint_none);
+    for (child = pObject->child; child != NULL; child = child->next) {
+        size += GetHierarchyNetworkSize(child);
+    }
+    return size;
+}
+C2_HOOK_FUNCTION(0x0049ce60, GetHierarchyNetworkSize)
