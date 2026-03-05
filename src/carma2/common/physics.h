@@ -169,4 +169,6 @@ void C2_HOOK_FASTCALL ResetObjectList(tCollision_info* pObjects);
 
 int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tCollision_info* pObject, tEnumCollision_cbfn* pCallback, void* pContext);
 
+int C2_HOOK_FASTCALL GetObjectNetworkStuff(tCollision_info* pObject, tU8* pBuffer, int pSize);
+
 #endif //REC2_PHYSICS_H
