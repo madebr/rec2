@@ -15,12 +15,14 @@
 #include "input.h"
 #include "loading.h"
 #include "network.h"
+#include "pedestrn.h"
 #include "physics.h"
 #include "piping.h"
 #include "platform.h"
 #include "shrapnel.h"
 #include "skidmark.h"
 #include "smashing.h"
+#include "sound.h"
 #include "spark.h"
 #include "utility.h"
 #include "world.h"
@@ -1825,10 +1827,16 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004de190, NapalmPeds, NapalmPeds_original);
 
 int (C2_HOOK_FASTCALL * PedValium_original)(tPowerup* powerup, tCar_spec* car);
 int C2_HOOK_FASTCALL PedValium(tPowerup* powerup, tCar_spec* car) {
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return PedValium_original(powerup, car);
 #else
-    NOT_IMPLEMENTED();
+    if (!CalmDownAllPeds()) {
+        return -1;
+    }
+
+    NewTextHeadupSlot(4,0, 3000, -4, GetMiscString(eMiscString_pedestrians_are_calm_now));
+    DRS3StartSound2(C2V(gCar_outlet), eSoundId_PedValium, 1, 0xff, 0xff, -1, -1);
+    return powerup - C2V(gPowerup_array);
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004dfec0, PedValium, PedValium_original);
