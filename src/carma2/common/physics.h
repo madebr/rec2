@@ -19,6 +19,8 @@ C2_HOOK_VARIABLE_DECLARE(int, gPHIL_doing_physics);
 C2_HOOK_VARIABLE_DECLARE(int, gPHIL_object_added);
 C2_HOOK_VARIABLE_DECLARE(tU32, gPHIL_last_physics_tick);
 C2_HOOK_VARIABLE_DECLARE(int, gPHIL_mechanics_time_sync);
+C2_HOOK_VARIABLE_DECLARE(tWorld_callback_active_passive_cbfn*, gPHIL_original_activate_passive);
+C2_HOOK_VARIABLE_DECLARE(tPhysics_callbacks*, gPHIL_callbacks);
 
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage);
 
@@ -128,6 +130,12 @@ void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** 
 
 int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject);
 
+void C2_HOOK_FASTCALL PHILMungeObjects(tCollision_info* pObjects);
+
+void C2_HOOK_FASTCALL FlushQueuedAddsAndRemoves(void);
+
+void C2_HOOK_FASTCALL PHILInterpolateObjects(tCollision_info* pObjects, tU32 pTime);
+
 void C2_HOOK_FASTCALL PHILDoPhysics(tPhysics_callbacks* pCallbacks, tU32 pLast_tick_time, tU32 pFrame_period);
 
 int C2_HOOK_FASTCALL TimeToSendData(void);
@@ -141,6 +149,8 @@ void C2_HOOK_FASTCALL MungeSpecialVolume(tCollision_info* pObject);
 void C2_HOOK_FASTCALL ProcessGravity(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pGravity);
 
 void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pDrag, int pObject_info_flags, tSpecial_volume* pSpecial_volume);
+
+void C2_HOOK_FASTCALL ProcessDrag(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pDrag);
 
 void C2_HOOK_FASTCALL LevelOutOnSurface(tCollision_info *pObject);
 
