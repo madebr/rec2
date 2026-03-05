@@ -239,6 +239,10 @@ int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
 
 int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
+int C2_HOOK_FASTCALL DRS3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, unsigned int pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
+
+int C2_HOOK_FASTCALL S3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, unsigned int pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
+
 tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag);
 
 void C2_HOOK_FASTCALL S3Service(int inside_cockpit, int unk1);
