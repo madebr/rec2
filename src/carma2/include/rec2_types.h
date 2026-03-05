@@ -5232,12 +5232,24 @@ typedef struct {
     undefined4 field_0x30;
 } tGuaranteed_message;
 
+typedef struct {
+    tNet_message_chunk_header header;
+    tS8 mine_index;
+    undefined field_0x3;
+    undefined field_0x4;
+    undefined field_0x5;
+    undefined field_0x6[0x8-0x6];
+    tS32 field_0x8;
+    tU8 object_hierarchy[];
+} tNet_message_chunk_mine_explode;
+
 typedef union {
     tNet_message_chunk_raw raw;
     tNet_message_chunk_scores scores; /* type = 0x18 */
     tNet_message_chunk_oil_spill oil_spill; /* type = 0x1f*/
     tNet_message_car_crush car_crush; /* type = 0x20 */
     tNet_message_chunk_toggle_doors toggle_doors; /* type = 0x2c */
+    tNet_message_chunk_mine_explode mine_explode; /* type = 0x31 */
     tNet_message_chunk_detach_bit detach_bit; /* type = 0x33 */
 } tNet_message_chunk;
 
@@ -5708,6 +5720,7 @@ enum {
     eSoundId_DamageRepair = 5200,
     eSoundId_Horn = 5209,
     eSoundId_Cop_Siren = 5350,
+    eSoundId_Explosion = 5400,
     eSoundId_FlaskGone = 5401,
     eSoundId_Countdown_Go = 8000,
     eSoundId_Countdown_One = 8001,

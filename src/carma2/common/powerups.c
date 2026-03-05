@@ -6,6 +6,7 @@
 #include "crush.h"
 #include "displays.h"
 #include "errors.h"
+#include "explosions.h"
 #include "funk.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -821,13 +822,53 @@ void C2_HOOK_FASTCALL InitMineShit(void) {
 }
 C2_HOOK_FUNCTION(0x004da530, InitMineShit)
 
+void C2_HOOK_FASTCALL FillInMine(tNet_message_chunk* pChunk, tShit_mine* pMine, int pArg3) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.mine_index, 0x2);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.field_0x3, 0x3);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.field_0x4, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.field_0x5, 0x5);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.field_0x8, 0x8);
+
+    pChunk->mine_explode.mine_index = pMine - C2V(gShit_mines);
+    pChunk->mine_explode.field_0x3 = pMine->field_0x35;
+    pChunk->mine_explode.field_0x4 = pMine->field_0x34;
+    pChunk->mine_explode.field_0x5 = NetPlayerFromCar(pMine->field_0x30) - C2V(gNet_players);
+    pChunk->mine_explode.field_0x8 = pArg3;
+    GetHierarchyNetworkStuff(pMine->collision_info, pChunk->mine_explode.object_hierarchy, NET_OBJECT_HIERARCHY_DEFAULT_SIZE);
+}
+
 int (C2_HOOK_FASTCALL * DoExplodingMineEffect_original)(tShit_mine *pMine);
 int C2_HOOK_FASTCALL MineExplode(tShit_mine *pMine) {
 
-#if defined(C2_HOOKS_ENABLED)
+#if 0//defined(C2_HOOKS_ENABLED)
     return DoExplodingMineEffect_original(pMine);
 #else
-    NOT_IMPLEMENTED();
+    tNet_message* message;
+    br_vector3 offset;
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents, 0x18);
+
+    if (pMine->flags & 0x2) {
+        return 0;
+    }
+    pMine->flags |= 0x2;
+    if (C2V(gNet_mode) == eNet_mode_host) {
+        message = NetBuildGuaranteedMessage(49, GetHierarchyNetworkSize(pMine->collision_info));
+        FillInMine(&message->contents, pMine, -1);
+        NetGuaranteedSendMessageToAllPlayers(C2V(gCurrent_net_game), message, 0);
+    }
+    PHILRemoveObject(pMine->collision_info);
+    pMine->next_think_time = GetTotalTime() + 1600;
+    BrVector3Negate(&offset, &C2V(gExplosion_pix_animation_groups).groups[0].offset);
+    Explode(&C2V(gExplosion_pix_animation_groups), pMine->collision_info->actor, &pMine->collision_info->actor->model->bounds, &offset);
+    DRS3StartSound3D(C2V(gCar_outlet), eSoundId_Explosion, &pMine->collision_info->actor->t.t.translate.t, &C2V(gZero_v__car), 1, 255, BR_FIXED_INT(1), BR_FIXED_INT(1));
+    PipeSingleEndShitMine(pMine->collision_info->actor);
+    if (pMine->collision_info->actor->parent != NULL) {
+        BrActorRemove(pMine->collision_info->actor);
+    }
+    pMine->collision_info->actor->render_style = BR_RSTYLE_NONE;
+    return 1;
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004ddab0, MineExplode, DoExplodingMineEffect_original)
