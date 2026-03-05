@@ -1152,3 +1152,13 @@ void C2_HOOK_FASTCALL PipeSingleBloodSpurt(uintptr_t pId, undefined4 pArg2, unde
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004c8d40, PipeSingleBloodSpurt, PipeSingleBloodSpurt_original)
+
+void C2_HOOK_FASTCALL PipeSingleEndShitMine(br_actor* pActor) {
+
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_chunk_end_shit_mine, m, 0x0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_chunk_end_shit_mine, m, 0x30);
+
+    ARDoSingleVariedSession(ePipe_chunk_end_shit_mine, (uintptr_t)pActor, 1,
+        SIZE_OFFSET_PIPING(tPipe_chunk_end_shit_mine, m), &pActor->t.t.mat);
+}
+C2_HOOK_FUNCTION(0x004c8fd0, PipeSingleEndShitMine)
