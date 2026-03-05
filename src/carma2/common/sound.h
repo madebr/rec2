@@ -51,6 +51,8 @@ void C2_HOOK_FASTCALL StopMusic(void);
 
 tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
+tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, tU32 pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
+
 int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
 tS3_outlet* C2_HOOK_FASTCALL GetOutletFromIndex(int pIndex);
