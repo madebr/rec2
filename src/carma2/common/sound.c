@@ -229,6 +229,21 @@ tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id 
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x00455690, DRS3StartSound, DRS3StartSound_original)
 
+tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, tU32 pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch) {
+    if (!C2V(gSound_enabled)) {
+        return 0;
+    }
+    if (pOutlet != C2V(gMusic_outlet)
+            && pSound != 1000
+            && !(pSound >= 3000 && pSound <= 3007)
+            && !(pSound >= 5300 && pSound <= 5320)
+            && (pLeft_volume != 0 || pRight_volume != 0)) {
+            PipeSingleSound(pOutlet, pSound, pLeft_volume, pRight_volume, pLeft_pitch, NULL);
+        }
+    return S3StartSound2(pOutlet, pSound, pRepeats, pLeft_volume, pRight_volume, pLeft_pitch, pRight_pitch);
+}
+C2_HOOK_FUNCTION(0x00455710, DRS3StartSound2)
+
 int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound) {
     if (C2V(gSound_enabled)) {
         return S3StartSound(pOutlet, pSound);
