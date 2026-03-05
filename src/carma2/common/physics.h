@@ -23,6 +23,8 @@ C2_HOOK_VARIABLE_DECLARE(tWorld_callback_active_passive_cbfn*, gPHIL_original_ac
 C2_HOOK_VARIABLE_DECLARE(tPhysics_callbacks*, gPHIL_callbacks);
 C2_HOOK_VARIABLE_DECLARE(tU32, gPHIL_last_physics_tick);
 
+#define NET_OBJECT_HIERARCHY_DEFAULT_SIZE 72
+
 void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage);
 
 void C2_HOOK_FASTCALL SetUpTestObjects(void);
