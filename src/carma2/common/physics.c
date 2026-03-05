@@ -1937,3 +1937,31 @@ int C2_HOOK_FASTCALL GetObjectNetworkStuff(tCollision_info* pObject, tU8* pBuffe
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0049c0d0, GetObjectNetworkStuff, GetObjectNetworkStuff_original)
+
+int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tCollision_info* pObject, tU8* pNet_data, int pRemaining) {
+    int size;
+    int total_size;
+    tCollision_info* child;
+
+    size = GetObjectNetworkStuff(pObject, pNet_data, pRemaining);
+    if (size < 0) {
+        return -1;
+    }
+    total_size = size;
+    pRemaining -= size;
+    if (pObject->child != NULL) {
+        *pNet_data |= 0x80; // Mark parent node
+        for (child = pObject->child; child != NULL; child = child->next) {
+            size = GetHierarchyNetworkStuff(child, &pNet_data[total_size], pRemaining);
+            if (size < 0) {
+                return -1;
+            }
+            pNet_data[total_size] |= 0x40; // Mark child node
+            total_size += size;
+            pRemaining -= size;
+        }
+        pNet_data[total_size] &= ~0x40; //
+    }
+    return total_size;
+}
+C2_HOOK_FUNCTION(0x0049cd00, GetHierarchyNetworkStuff)
