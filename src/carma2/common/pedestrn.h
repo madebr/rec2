@@ -164,7 +164,7 @@ void C2_HOOK_FASTCALL StillifyCorpse(tPedestrian* pPed, tU32 pTime, undefined4 p
 
 void C2_HOOK_FASTCALL MakeEmBleed(tPedestrian* pPed, tU32 pTime);
 
-void C2_HOOK_FASTCALL SetPedHeadAnim(tPedestrian *pPed, undefined* pArg2, tU32 pTime);
+void C2_HOOK_FASTCALL SetPedHeadAnim(tPedestrian *pPed, const tPed_anim_seq* pSeq, tU32 pTime);
 
 void C2_HOOK_FASTCALL ScarePedestrian(tPedestrian* pPed, tU32 pTime, int pArg3, int pArg4);
 
@@ -293,5 +293,7 @@ br_actor* C2_HOOK_FASTCALL GetCharacterActorPtr(tPed_character_instance* pCharac
 void C2_HOOK_FASTCALL RenderLimbs(void);
 
 void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world);
+
+int C2_HOOK_FASTCALL CalmDownAllPeds(void);
 
 #endif //REC2_PEDESTRN_H

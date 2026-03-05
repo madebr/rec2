@@ -344,8 +344,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const br_vector3, gPed_bone_look_vecs, 9, 
     { { -1.f,  0.f,  0.f } },
     { { -1.f,  0.f,  0.f } },
 });
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(undefined, gPed_scare_head_anim_byte_array, 8, 0x0065e4d8, {
-    4, 1, 2, 1, 99, 0, 0, 0,
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const tPed_anim_seq, gScare_ped_anim_sequence, 0x0065e4d8, {
+    4, { 1, 2, 1, 99 }
 });
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const float, gFlamed_ped_flame_scales, 7, 0x0065e5b8, {
     .275f,
@@ -360,6 +360,9 @@ C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gLimbs_actor, 0x006a0424);
 C2_HOOK_VARIABLE_IMPLEMENT(int, gPed_count_limbed_actors, 0x006a0420);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gPed_limbed_actors, 30, 0x00694280);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tProximity_ray, gProximity_rays, 20, 0x00694140);
+C2_HOOK_VARIABLE_IMPLEMENT_INIT(const tPed_anim_seq, gCalm_ped_anim_sequence, 0x0065e4e4, {
+    2, { 0, 99 },
+});
 
 #define PED_SCALAR_EPSILON (2.384186e-6f)
 
@@ -2605,16 +2608,16 @@ void C2_HOOK_FASTCALL MungePedHeadAnim(tPedestrian* pPed, tU32 pTime) {
             && pTime > ped_field_0x0c->field_0x78 + 125) {
 
         ped_field_0x0c->field_0x1a += 1;
-        if (ped_field_0x0c->field_0x1a >= ped_field_0x0c->field_0x1c[0]) {
+        if (ped_field_0x0c->field_0x1a >= ped_field_0x0c->field_0x1c->count) {
             ped_field_0x0c->field_0x1a = 1;
         }
-        if (ped_field_0x0c->field_0x1c[ped_field_0x0c->field_0x1a + 1] == 99) {
+        if (ped_field_0x0c->field_0x1c->poses[ped_field_0x0c->field_0x1a] == 99) {
             ped_field_0x0c->field_0x1c = NULL;
         } else {
             ped_field_0x0c->field_0x78 = pTime;
             SetCharacterBoneModelAR(pPed->character,
                 pPed->character->personality->form->index_head_bone,
-                ped_field_0x0c->field_0x1c[ped_field_0x0c->field_0x1a + 1],
+                ped_field_0x0c->field_0x1c->poses[ped_field_0x0c->field_0x1a],
                 pPed->hit_points <= 0);
         }
     }
@@ -2690,13 +2693,13 @@ void C2_HOOK_FASTCALL MakeEmBleed(tPedestrian* pPed, tU32 pTime) {
     }
 }
 
-void C2_HOOK_FASTCALL SetPedHeadAnim(tPedestrian *pPed, undefined* pArg2, tU32 pTime) {
+void C2_HOOK_FASTCALL SetPedHeadAnim(tPedestrian *pPed, const tPed_anim_seq* pSeq, tU32 pTime) {
 
     if (pPed->hit_points > 0 && pPed->field_0x0c != NULL) {
-        pPed->field_0x0c->field_0x1c = pArg2;
+        pPed->field_0x0c->field_0x1c = pSeq;
         pPed->field_0x0c->field_0x78 = pTime;
         pPed->field_0x0c->field_0x1a = 0;
-        SetCharacterBoneModelAR (pPed->character, pPed->character->personality->form->index_head_bone, pPed->field_0x0c->field_0x1c[1], 0);
+        SetCharacterBoneModelAR(pPed->character, pPed->character->personality->form->index_head_bone, pPed->field_0x0c->field_0x1c->poses[0], 0);
     }
 }
 
@@ -2707,7 +2710,7 @@ void C2_HOOK_FASTCALL ScarePedestrian(tPedestrian* pPed, tU32 pTime, int pArg3, 
         if (pArg3) {
             SetPedMove(pPed, C2V(gPed_move_fsm)[114][IRandomBetween(0, 7)], -1, 0, 1, pTime, ePed_action_panicking);
             MakePedNoise(pPed, 6, 0, NULL);
-            SetPedHeadAnim(pPed, C2V(gPed_scare_head_anim_byte_array), pTime);
+            SetPedHeadAnim(pPed, &C2V(gScare_ped_anim_sequence), pTime);
         } else {
             StartPedRunning(pPed, pTime, 0);
         }
@@ -4593,3 +4596,22 @@ void C2_HOOK_FASTCALL RenderLollipops(br_pixelmap* pRender_buffer, br_pixelmap* 
     // Empty
 }
 C2_HOOK_FUNCTION(0x00445ca0, RenderLollipops)
+
+int C2_HOOK_FASTCALL CalmDownAllPeds(void) {
+    tU32 now;
+    int i;
+
+    now = GetTotalTime();
+
+    for (i = 0; i < C2V(gPed_count); i++) {
+        tPedestrian* ped = &C2V(gPedestrian_array)[i];
+
+        if (ped->field_0x0c != NULL && ped->hit_points > 0 && ped->action == ePed_action_running) {
+            SetPedMove(ped, 30, IRandomBetween((int)ped->movement_spec->min_walk_speed_factor, (int)ped->movement_spec->max_walk_speed_factor), 0, 1, now, ePed_action_walking);
+            SetPedHeadAnim(ped, &C2V(gCalm_ped_anim_sequence), now);
+        }
+    }
+    C2V(gPed_valium_left) = 5000;
+    return 1;
+}
+C2_HOOK_FUNCTION(0x004d6dc0, CalmDownAllPeds)
