@@ -449,6 +449,10 @@ typedef struct {
     tU32 time;
 } tPipe_chunk_prox_ray;
 
+typedef struct {
+    br_matrix34 m;
+} tPipe_chunk_end_shit_mine;
+
 typedef enum {
     ePipe_chunk_frame_finish = 0,
     ePipe_chunk_ped_incident = 1,
@@ -486,6 +490,7 @@ typedef enum {
     ePipe_chunk_single_drone_straight_pos = 62,
     ePipe_chunk_burning_ped = 64,
     ePipe_chunk_powerup_respawn = 65,
+    ePipe_chunk_end_shit_mine = 65,
     ePipe_single_transform_type = 68,
     ePipe_chunk_single_oppo_renderage = 69,
 } tPipe_chunk_type;
