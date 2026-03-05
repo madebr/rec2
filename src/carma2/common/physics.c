@@ -1926,3 +1926,14 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tCollision_info* pObject, tEnu
     return 0;
 }
 C2_HOOK_FUNCTION(0x004c64b0, PhysicsObjectRecurseChildren)
+
+int (C2_HOOK_FASTCALL * GetObjectNetworkStuff_original)(tCollision_info* pObject, tU8* pBuffer, int pSize);
+int C2_HOOK_FASTCALL GetObjectNetworkStuff(tCollision_info* pObject, tU8* pBuffer, int pSize) {
+
+#if defined(C2_HOOKS_ENABLED)
+    return GetObjectNetworkStuff_original(pObject, pBuffer, pSize);
+#else
+    NOT_IMPLEMENTED();
+#endif
+}
+C2_HOOK_FUNCTION_ORIGINAL(0x0049c0d0, GetObjectNetworkStuff, GetObjectNetworkStuff_original)
