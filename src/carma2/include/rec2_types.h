@@ -57,6 +57,7 @@ typedef struct tPhysics_joint tPhysics_joint;
 typedef struct tPed_personality tPed_personality;
 typedef struct tCar_crush_vertex_data tCar_crush_vertex_data;
 typedef struct tPed_face_cache_0x34 tPed_face_cache_0x34;
+typedef struct tPed_anim_seq tPed_anim_seq;
 
 typedef char tPed_animal_name[50]; /* FIXME: should not really exist */
 
@@ -4384,7 +4385,7 @@ typedef struct {
     undefined field_0x19;
     undefined field_0x1a;
     undefined field_0x1b[0x1b-0x1a];
-    undefined* field_0x1c;
+    const tPed_anim_seq* field_0x1c;
     undefined field_0x20[1];
     undefined field_0x21;
     undefined field_0x22[1];
@@ -4607,6 +4608,11 @@ typedef struct tPedestrian {
     float speed_factor;
     tPedestrian* next;
 } tPedestrian;
+
+typedef struct tPed_anim_seq {
+    tU8 count;
+    tU8 poses[];
+} tPed_anim_seq;
 
 typedef struct tRace_pedestrian {
     undefined field_0x0[228];
