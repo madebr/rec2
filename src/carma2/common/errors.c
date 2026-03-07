@@ -210,8 +210,6 @@ void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     int sub_int;
     va_list ap;
 
-    C2_HOOK_STARTF("pStr_index=%d", pStr_index);
-
     if (pStr_index < 1000) {
         c2_strcpy(the_str, C2V(gError_messages)[pStr_index]);
     } else {

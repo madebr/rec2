@@ -34,9 +34,7 @@
 C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * QuitGame_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     QuitGame_original();
-    C2_HOOK_FINISH();
 #else
     SaveOptions();
     if (C2V(gSave_game_out_of_sync)) {
@@ -76,7 +74,6 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00491f70, QuitGame, QuitGame_original)
 
 C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * GameMain_original)(int pArgc, const char** pArgv);
 void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
-    C2_HOOK_START();
 #if 0//defined(C2_HOOKS_ENABLED)
     GameMain_original(pArgc, pArgv);
 #else
@@ -100,7 +97,6 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     DoProgram();
     QuitGame();
 #endif
-    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x004924a0, GameMain, GameMain_original)
 

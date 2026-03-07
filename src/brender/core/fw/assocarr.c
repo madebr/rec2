@@ -12,7 +12,6 @@
 br_associative_array* C2_HOOK_CDECL BrAssociativeArrayAllocate(void) {
     br_associative_array* pArray;
 
-    C2_HOOK_START();
 #if defined(C2_HOOKS_ENABLED)
     if ((uintptr_t)&C2V(fw).res != (uintptr_t)0x0079f918) {
         C2_HOOK_DEBUGF("fw.res at wrong location. Expected 0x%x, but got 0x%p", 0x0079f918, &C2V(fw).res);
@@ -29,7 +28,6 @@ br_associative_array* C2_HOOK_CDECL BrAssociativeArrayAllocate(void) {
     }
     pArray->max_elements = 10;
     pArray->num_elements = 0;
-    C2_HOOK_FINISH();
     return pArray;
 }
 C2_HOOK_FUNCTION(0x00531500, BrAssociativeArrayAllocate)
@@ -55,11 +53,9 @@ br_error C2_HOOK_STDCALL BrAssociativeArraySetEntry(br_associative_array* pArray
     br_uint_16 i;
     br_token_value* temp;
 
-    C2_HOOK_START();
     for (i = 0; i < pArray->num_elements; i++) {
         if (pArray->tv[i].t == t) {
             br_error res = Set_Associative_Array_Value(pArray, i, v);
-            C2_HOOK_FINISH();
             return res;
         }
     }
@@ -67,7 +63,6 @@ br_error C2_HOOK_STDCALL BrAssociativeArraySetEntry(br_associative_array* pArray
         pArray->tv[pArray->num_elements].t = t;
         Set_Associative_Array_Value(pArray, pArray->num_elements, v);
         pArray->num_elements += 1;
-        C2_HOOK_FINISH();
         return 0;
     }
     temp = BrResAllocate(pArray, (pArray->max_elements + 10) * sizeof(br_token_value), BR_MEMORY_APPLICATION);
@@ -75,13 +70,11 @@ br_error C2_HOOK_STDCALL BrAssociativeArraySetEntry(br_associative_array* pArray
     BrResFree(pArray->tv);
     pArray->tv = temp;
     if (temp == NULL) {
-        C2_HOOK_FINISH();
         return 0x1002;
     }
     pArray->max_elements += 10;
     Set_Associative_Array_Value(pArray, pArray->num_elements, v);
     pArray->num_elements += 1;
-    C2_HOOK_FINISH();
     return 0;
 }
 C2_HOOK_FUNCTION(0x00531540, BrAssociativeArraySetEntry)
@@ -90,7 +83,6 @@ br_error C2_HOOK_STDCALL BrAssociativeArrayRemoveEntry(br_associative_array* pAr
     br_uint_16 i;
     br_boolean bFound;
 
-    C2_HOOK_START();
     bFound = 0;
     for (i = 0; i < pArray->num_elements; i++) {
         if (pArray->tv[i].t == t) {
@@ -106,10 +98,8 @@ br_error C2_HOOK_STDCALL BrAssociativeArrayRemoveEntry(br_associative_array* pAr
             BrMemCpy(&pArray->tv[i], &pArray->tv[i+1], sizeof(br_token_value));
         }
         pArray->num_elements--;
-        C2_HOOK_FINISH();
         return 0; // BRE_OK
     }
-    C2_HOOK_FINISH();
     return 0x1002; // BRE_NOTFOUND
 }
 C2_HOOK_FUNCTION(0x00531750, BrAssociativeArrayRemoveEntry)

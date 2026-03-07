@@ -28,7 +28,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 #else
     char* currentArgument;
 
-    C2_HOOK_START();
     C2V(gAFE) = 0;
     SetDefaultPedFolderNames();
     if (strlen(lpCmdLine) > 0) {
@@ -99,7 +98,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     const char* args[] = { "Carmageddon" };
 
     GameMain(1, args);
-    C2_HOOK_FINISH();
 #endif
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x0051aaa0, WinMain, WinMain_original);

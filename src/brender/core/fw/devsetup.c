@@ -32,7 +32,6 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string
     br_uint_32 i;
     br_token_value tv[64];
 
-    C2_HOOK_START();
     va_start(vl, setup_string);
     for (i = 0; ; i++) {
         if (i == BR_ASIZE(tv)) {
@@ -48,7 +47,6 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string
     tv[i].t = BR_NULL_TOKEN;
     tv[i].v.p = NULL;
     br_error res = BrDevBeginTV(ppm, setup_string, tv);
-    C2_HOOK_FINISH();
     return res;
 }
 C2_HOOK_FUNCTION(0x00528d70, BrDevBeginVar)

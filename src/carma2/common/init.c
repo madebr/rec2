@@ -529,9 +529,6 @@ C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_h);
 C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_x);
 C2_HOOK_VARIABLE_DECLARE(int, gOffence_dim_y);
 
-int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth);
-int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight);
-
 void (C2_HOOK_FASTCALL * Init2DStuff_original)(void);
 void C2_HOOK_FASTCALL Init2DStuff(void) {
 

@@ -52,7 +52,6 @@ br_error C2_HOOK_CDECL BrV1dbBegin(void) {
     C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).enabled_clip_planes == (uintptr_t)0x0079f410);
     C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).enabled_horizon_planes == (uintptr_t)0x0079f424);
 
-    C2_HOOK_START();
     if (C2V(v1db).active) {
         return 4103;
     }
@@ -81,7 +80,6 @@ br_error C2_HOOK_CDECL BrV1dbBegin(void) {
     C2V(v1db).enabled_horizon_planes.max = 6;
     C2V(v1db).enabled_horizon_planes.type = BR_ACTOR_HORIZONTAL_PLANE;
     C2V(v1db).enabled_horizon_planes.name = "horizon plane";
-    C2_HOOK_FINISH();
     return 0;
 }
 C2_HOOK_FUNCTION(0x00525860, BrV1dbBegin)
@@ -296,10 +294,8 @@ void C2_HOOK_CDECL BrZbsEnd(void) {
 C2_HOOK_FUNCTION(0x00525eb0, BrZbsEnd)
 
 void C2_HOOK_CDECL BrV1dbBeginWrapper_Float(void) {
-    C2_HOOK_START();
     BrBegin();
     BrV1dbBegin();
-    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION(0x00525f50, BrV1dbBeginWrapper_Float)
 

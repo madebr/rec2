@@ -645,9 +645,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00458520, RegisterJoystickFFBForces, RegisterJoystic
 int (C2_HOOK_FASTCALL * JoystickDInputBegin_original)(void);
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
 #if 0 // defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     int res = JoystickDInputBegin_original();
-    C2_HOOK_FINISH();
     return res;
 #else
     int i;

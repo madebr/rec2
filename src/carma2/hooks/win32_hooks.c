@@ -33,10 +33,8 @@ C2_HOOK_FUNCTION_ORIGINAL(SetWindowPos, SetWindowPos_hook, SetWindowPos_original
 
 HMODULE (WINAPI * LoadLibraryA_original)(LPCSTR lpLibFileName);
 HMODULE WINAPI LoadLibraryA_hook(LPCSTR lpLibFileName) {
-    C2_HOOK_START();
     HMODULE hRes = LoadLibraryA_original(lpLibFileName);
     C2_HOOK_DEBUGF("%s -> %p", lpLibFileName, hRes);
-    C2_HOOK_FINISH();
     return hRes;
 }
 C2_HOOK_FUNCTION_ORIGINAL(LoadLibraryA, LoadLibraryA_hook, LoadLibraryA_original)

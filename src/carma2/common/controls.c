@@ -40,15 +40,6 @@
 
 #include "rec2_macros.h"
 
-#define DEBUG_CONTROLS
-
-#if defined(DEBUG_CONTROLS)
-#include "c2_stdio.h"
-#define CONTROLS_START() c2_fprintf(c2_stderr, "%s: start\n", __FUNCTION__); C2_HOOK_DEBUGF("")
-#else
-#define CONTROLS_START()
-#endif
-
 C2_HOOK_VARIABLE_IMPLEMENT(int, gEntering_message, 0x0067c474);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gAbuse_text, 10, 0x0067c3c8);
 C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tCheat, gKev_keys, 95, 0x00590970, {
@@ -630,7 +621,6 @@ C2_HOOK_FUNCTION(0x004569e0, GetSoundDetailLevel)
 // Key: 'm'
 void (C2_HOOK_FASTCALL * ToggleMiniMap_original)(void);
 void C2_HOOK_FASTCALL ToggleMiniMap(void) {
-    CONTROLS_START();
 #if 0//defined(C2_HOOKS_ENABLED)
     ToggleMiniMap_original();
 #else
@@ -781,7 +771,6 @@ C2_HOOK_FUNCTION(0x00444600, ToggleHeadupMap)
 // Key: 'ctrl+tab'
 void (C2_HOOK_FASTCALL * CycleMapOptions_original)(void);
 void C2_HOOK_FASTCALL CycleMapOptions(void) {
-    CONTROLS_START();
 #if 0//defined(C2_HOOKS_ENABLED)
     CycleMapOptions_original();
 #else
@@ -808,7 +797,6 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00494880, ToggleMapTransparency, ToggleMapTransparen
 // Key: 'r'
 void (C2_HOOK_FASTCALL * SetRecovery_original)(void);
 void C2_HOOK_FASTCALL SetRecovery(void) {
-    CONTROLS_START();
 #if 0//defined(C2_HOOKS_ENABLED)
     SetRecovery_original();
 #else
@@ -920,7 +908,6 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00442750, CheckRecoverCost, CheckRecoverCost_origina
 // Key: 'ctrl+a'
 void (C2_HOOK_FASTCALL * AbortRace_original)(void);
 void C2_HOOK_FASTCALL AbortRace(void) {
-    CONTROLS_START();
 #if 0//defined(C2_HOOKS_ENABLED)
     AbortRace_original();
 #else
@@ -1361,7 +1348,6 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00503030, BuyOffense, BuyOffense_original)
 // Key: ' '
 void (C2_HOOK_FASTCALL * ViewNetPlayer_original)(void);
 void C2_HOOK_FASTCALL ViewNetPlayer(void) {
-    CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
     int* a = (int*)0x006792bc;
     c2_printf("*%p=0x%x\n", a, *a);
@@ -1531,7 +1517,6 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004da9d0, ToggleInventory, ToggleInventory_original)
 // Key: '['
 void (C2_HOOK_FASTCALL * LeftInventory_original)(void);
 void C2_HOOK_FASTCALL LeftInventory(void) {
-    CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
     LeftInventory_original();
 #else
@@ -1543,7 +1528,6 @@ C2_HOOK_FUNCTION_ORIGINAL(0x004dab80, LeftInventory, LeftInventory_original)
 // Key: ']'
 void (C2_HOOK_FASTCALL * RightInventory_original)(void);
 void C2_HOOK_FASTCALL RightInventory(void) {
-    CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
     RightInventory_original();
 #else
@@ -1582,7 +1566,6 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0040e7f0, ChangeCameraType, ChangeCameraType_origina
 // Key: 'c'
 void (C2_HOOK_FASTCALL * ToggleCockpit_original)(void);
 void C2_HOOK_FASTCALL ToggleCockpit(void) {
-    CONTROLS_START();
 #if defined(C2_HOOKS_ENABLED)
     ToggleCockpit_original();
 #else

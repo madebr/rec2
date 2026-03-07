@@ -580,25 +580,6 @@ br_uint_32 C2_HOOK_FASTCALL _BrISqrt64(uint64_t a) {
 }
 C2_HOOK_FUNCTION(0x00537a13, _BrISqrt64)
 
-#if 0
-// working inprecise
-uint16_t C2_HOOK_CDECL _BrFastSqrt32(uint32_t v) {
-    uint32_t exp;
-
-    if (v == 0) {
-        return v;
-    }
-    for (exp = 31; (v >> exp) == 0; exp--) {
-    }
-    // Exponent must be multiple of 2 (because square root divides exponent by 2)
-    exp = (exp | 1) + 1;
-    // Normalise number: exponent in [0..31], mantissa in [0x40-0xff]
-    v = (v << (31 - exp)) >> 24;
-    v = fast_sqrt_table[2*v-0x40];
-    return (v << 16) >> (32 - (exp >> 1));
-}
-#endif
-
 uint16_t C2_HOOK_CDECL _BrFastSqrt32(uint32_t v) {
     uint32_t exp;
 

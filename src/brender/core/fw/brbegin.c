@@ -15,7 +15,6 @@ br_error C2_HOOK_CDECL BrBegin(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return BrBegin_original();
 #else
-    C2_HOOK_START();
     if (C2V(active)) {
         return 4103;
     }
@@ -26,7 +25,6 @@ br_error C2_HOOK_CDECL BrBegin(void) {
 
     _BrBeginHook();
 
-    C2_HOOK_FINISH();
     return 0;
 #endif
 }

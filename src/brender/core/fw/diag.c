@@ -14,7 +14,6 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, _diag_scratch, 128, 0x006ad928);
 void C2_HOOK_CDECL BrFailure(const char* s, ...) {
     va_list args;
     const char failure_header[10] = "Failure: ";
-    C2_HOOK_START();
 
     BrStrCpy(C2V(_diag_scratch), failure_header);
 
@@ -30,7 +29,6 @@ void C2_HOOK_CDECL BrFailure(const char* s, ...) {
 #ifdef BRENDER_FIX_BUGS
     abort();
 #endif
-    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION(0x00527c80, BrFailure)
 

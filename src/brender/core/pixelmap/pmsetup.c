@@ -295,7 +295,6 @@ C2_HOOK_FUNCTION_ORIGINAL(0x005395a0, BrPixelmapBegin, BrPixelmapBegin_original)
 
 void (C2_HOOK_CDECL * BrPixelmapEnd_original)(void);
 void C2_HOOK_CDECL BrPixelmapEnd(void) {
-    C2_HOOK_START();
 #if 0//defined(C2_HOOKS_ENABLED)
     BrPixelmapEnd_original();
 #else
@@ -305,6 +304,5 @@ void C2_HOOK_CDECL BrPixelmapEnd(void) {
     BrResFree(C2V(_pixelmap).res);
     BrMemSet(&C2V(_pixelmap), 0, sizeof(br_pixelmap_state));
 #endif
-    C2_HOOK_FINISH();
 }
 C2_HOOK_FUNCTION_ORIGINAL(0x005395f0, BrPixelmapEnd, BrPixelmapEnd_original)

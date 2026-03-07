@@ -182,8 +182,8 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0053c200, _M_br_device_pixelmap_null_pixelQuery, _M_
 
 br_error (C2_HOOK_CDECL * _M_br_device_pixelmap_null_pixelAddressQuery_original)(br_device_pixelmap* self, void** pptr, br_uint_32* pqual, br_point* p);
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_null_pixelAddressQuery(br_device_pixelmap* self, void** pptr, br_uint_32* pqual, br_point* p) {
-    return _M_br_device_pixelmap_null_pixelAddressQuery_original(self, pptr, pqual, p);
 #if 0//defined(C2_HOOKS_ENABLED)
+    return _M_br_device_pixelmap_null_pixelAddressQuery_original(self, pptr, pqual, p);
 #else
     return 0;
 #endif

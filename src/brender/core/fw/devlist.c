@@ -181,10 +181,8 @@ C2_HOOK_FUNCTION_ORIGINAL(0x00528800, BrDevRemove, BrDevRemove_original)
 br_error (C2_HOOK_CDECL * BrDevFind_original)(br_device** pdev, const char* pattern);
 br_error C2_HOOK_CDECL BrDevFind(br_device** pdev, const char* pattern) {
 #if 0//defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     br_error res = BrDevFind_original(pdev, pattern);
     C2_HOOK_DEBUGF("pattern=%s res=%d", pattern, res);
-    C2_HOOK_FINISH();
     return res;
 #else
     int i;

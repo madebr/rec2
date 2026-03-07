@@ -199,9 +199,7 @@ C2_HOOK_FUNCTION(0x004568c0, StartMusic)
 void (C2_HOOK_FASTCALL * StopMusic_original)(void);
 void C2_HOOK_FASTCALL StopMusic(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     StopMusic_original();
-    C2_HOOK_FINISH();
 #else
     if (C2V(gCD_fully_installed) && C2V(gMusic_available) && C2V(gINT_00684568) != 0) {
         S3StopSound(C2V(gINT_00684568));

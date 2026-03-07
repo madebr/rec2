@@ -204,7 +204,6 @@ C2_HOOK_FUNCTION(0x0051c700, PDBuildAppPath)
 void (C2_HOOK_FASTCALL * PDFatalError_original)(const char* pThe_str);
 void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
 #if 0 //defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     PDFatalError_original(pThe_str);
 #else
     dr_dprintf("FATAL ERROR: %s", pThe_str);
@@ -289,9 +288,7 @@ C2_HOOK_FUNCTION_ORIGINAL(0x0051b0a0, PDClearKeyboardBuffer, PDClearKeyboardBuff
 C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
-    C2_HOOK_START();
     PDShutdownSystem_original();
-    C2_HOOK_FINISH();
 #else
     static C2_HOOK_VARIABLE_IMPLEMENT(int, been_here, 0x006ad4d8);
 
