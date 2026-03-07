@@ -1,6 +1,6 @@
 #include "matrix4.h"
 
-#include <math.h>
+#include "c2_math.h"
 #include "c2_string.h"
 
 #define A(x, y) A->m[x][y]

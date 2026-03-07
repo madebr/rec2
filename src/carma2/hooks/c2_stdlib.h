@@ -21,7 +21,11 @@
 
 #define c2_qsort qsort
 
+#if defined(_MSC_VER) && _MSC_VER < 1300
+#define c2_strtof(V,X) (float)strtod(V,X)
+#else
 #define c2_strtof strtof
+#endif
 
 #define c2_strtod strtod
 

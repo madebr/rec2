@@ -87,8 +87,10 @@ br_int_32 C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_space(br_geometry_v1_buck
 // FUNCTION: CARMA2_HW 0x00541360
 br_tv_template* C2_HOOK_CDECL _M_br_geometry_v1_buckets_soft_templateQuery(br_geometry_v1_buckets_soft* self) {
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_device, templates.geometryV1BucketsTemplate, 0x28);
     C2_HOOK_BUG_ON(BR_ASIZE(geometryV1BucketsTemplateEntries) != 3);
+#endif
 
     if (self->device->templates.geometryV1BucketsTemplate == NULL) {
         self->device->templates.geometryV1BucketsTemplate = BrTVTemplateAllocate(self->device,

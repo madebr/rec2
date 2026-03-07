@@ -1,0 +1,16 @@
+targets:
+  CARMA2_HW:
+    filename: CARMA2_HW.EXE
+    source_root: src
+    hash:
+      sha256: 9b896c2cbb170c01b3e9f904ce5e1808db29fe5b51184a5d55a6d19b1799b58d
+  D3D:
+    filename: d3d.bdd
+    source_root: src/brender/drivers/d3d
+    hash:
+      sha256: 5722433d8b66f9b613a399618e48ff27256eb396cce8b9fa2a3032b91c32b55c
+  LAUNCHER:
+    filename: carma2.exe
+    source_root: src/launcher
+    hash:
+      sha256: 784f8dfc126b5065331a600b722a29485337389836cdc30f5ca45072a64ccdff

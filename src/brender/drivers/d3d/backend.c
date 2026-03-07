@@ -841,7 +841,11 @@ int C2_HOOK_CDECL DetectD3DDevices(void) {
     }
     gActive_window = GetActiveWindow();
     if (gOriginal_wndproc == NULL) {
+#ifdef _M_IX86
+        gOriginal_wndproc = (WNDPROC)SetWindowLong(gActive_window, GWL_WNDPROC, (LONG)D3DWndProc);
+#else
         gOriginal_wndproc = (WNDPROC)SetWindowLongPtrA(gActive_window, GWLP_WNDPROC, (LONG_PTR)D3DWndProc);
+#endif
     }
     d3d_debug_printf("Jims Brender driver for D3D  version 0.0.1");
     d3d_debug_printf("------------------------------------------");

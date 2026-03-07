@@ -263,6 +263,8 @@ BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, 
     IDirectInputDevice2A *device2;
     int nb;
     IDirectInputA* pDirectInput = pContext;
+    DIPROPRANGE diphRange;
+    DIPROPDWORD zoneProp;
 
     C2_HOOK_ASSERT(sizeof(tJoystickInputState) == 0x50);
 
@@ -315,7 +317,6 @@ BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, 
         dr_dprintf("Could not set dinput coop level\n");
         return DIENUM_STOP;
     }
-    DIPROPRANGE diphRange;
     diphRange.diph.dwSize = sizeof(diphRange);
     diphRange.diph.dwHeaderSize = sizeof(diphRange.diph);
     diphRange.diph.dwObj = offsetof(tJoystickInputState, xaxis);
@@ -328,7 +329,6 @@ BOOL CALLBACK Win32DInputJoystickEnum(const DIDEVICEINSTANCEA* pDeviceInstance, 
         IDirectInputDevice2_Release(device2);
         return DIENUM_CONTINUE;
     }
-    DIPROPDWORD zoneProp;
     zoneProp.diph.dwSize = sizeof(zoneProp);
     zoneProp.diph.dwHeaderSize = sizeof(zoneProp.diph);
     diphRange.diph.dwObj = offsetof(tJoystickInputState, xaxis);
@@ -928,13 +928,14 @@ void C2_HOOK_FASTCALL KeyBegin(void) {
 // FUNCTION: CARMA2_HW 0x0051cbf0
 void C2_HOOK_FASTCALL Win32InitInputDevice(void) {
     HRESULT hRes;
+    GUID guid_sysKeyboard;
 
     hRes = DirectInputCreateA(gHInstance, DIRECTINPUT_VERSION, &gDirectInput, NULL);
     if (hRes != S_OK) {
         PDFatalError("Unable to create DirectInput object - please check that DirectX is installed");
     }
 
-    GUID guid_sysKeyboard = GUID_SysKeyboard;
+    guid_sysKeyboard = GUID_SysKeyboard;
     hRes = IDirectInput_CreateDevice(gDirectInput, &guid_sysKeyboard, &gDirectInputDevice, NULL);
     if (hRes != S_OK) {
         PDFatalError("Direct Input: Can't create device");

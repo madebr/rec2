@@ -2,7 +2,7 @@
 
 #include "vector.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 
 // GLOBAL: CARMA2_HW 0x006b09c0

@@ -8,7 +8,9 @@
 
 #include "platform.h"
 
+#include <windows.h>
 #include <ddraw.h>
+#include <mmsystem.h>
 
 #include "c2_stdlib.h"
 #include "c2_string.h"
@@ -896,6 +898,7 @@ int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel) {
 tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
     char path[256];
     MCIERROR err;
+    MCIDEVICEID device;
 
     path[0] = '\0';
     c2_strcpy(path, pChannel->descriptor->path);
@@ -903,7 +906,7 @@ tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
     mci_open_params.lpstrElementName = path;
     mci_open_params.lpstrDeviceType = "sequencer";
     err = mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD_PTR)&mci_open_params);
-    MCIDEVICEID device = mci_open_params.wDeviceID;
+    device = mci_open_params.wDeviceID;
     if (err != 0) {
         return eS3_error_start_song;
     }

@@ -450,7 +450,7 @@ void C2_HOOK_CDECL BrActorToScreenMatrix4(br_matrix4* m, br_actor* a, br_actor* 
     }
 }
 
-void BrMatrix34ApplyBounds(br_bounds* A, br_bounds* B, br_matrix34* C) {
+void C2_HOOK_CDECL BrMatrix34ApplyBounds(br_bounds* A, br_bounds* B, br_matrix34* C) {
     int i;
     int j;
     br_scalar a;

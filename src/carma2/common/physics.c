@@ -413,7 +413,7 @@ int C2_HOOK_FASTCALL ArePointsColinear(const br_vector3* pV1, const br_vector3* 
     return 1;
 }
 
-static br_scalar inline C2_HOOK_FASTCALL PlaneValue(const br_vector4* pPlane, const br_vector3* pP) {
+static br_scalar C2_HOOK_FASTCALL PlaneValue(const br_vector4* pPlane, const br_vector3* pP) {
 
     return BrVector3Dot(pPlane, pP) + pPlane->v[3];
 }
@@ -513,7 +513,6 @@ typedef enum {
 
 static tPlane_side calculate_plane_side(br_vector4* pPlane, br_vector3* pPoint) {
     br_scalar s;
-
 
     s = PlaneValue(pPlane, pPoint);
     if (s < -1e-6f) {
@@ -995,10 +994,12 @@ void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info) {
 
 // FUNCTION: CARMA2_HW 0x004c2b20
 void C2_HOOK_FASTCALL InternalPositionChildren(tCollision_info *pParent, tCollision_info *pRoot) {
+    tCollision_info *child;
+
     if (!(pParent->flags & 0x400)) {
         pRoot = pParent;
     }
-    for (tCollision_info *child = pParent->child; child != NULL; child = child->next) {
+    for (child = pParent->child; child != NULL; child = child->next) {
         if (pParent->flags & 0x400) {
             BrMatrix34Mul(&pParent->transform_matrix, &pParent->field_0x1e8, &pRoot->transform_matrix);
         } else {
@@ -1169,6 +1170,7 @@ void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tCollision_info *pCollisio
 int C2_HOOK_FASTCALL PHILRemoveObject(tCollision_info* pCollision_info) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c63d0
@@ -1210,6 +1212,7 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurse(tCollision_info* pCollision_info, tEnu
 int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004da290
@@ -1350,6 +1353,7 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject) {
 int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004b6090
@@ -1804,6 +1808,7 @@ void C2_HOOK_FASTCALL DoCollisions(tCollision_info** pObject_list, tWorld_callba
 int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_matrix34* pMatrix) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c2830
@@ -1845,6 +1850,7 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tCollision_info* pObject, tEnu
 int C2_HOOK_FASTCALL GetObjectNetworkStuff(tCollision_info* pObject, tU8* pBuffer, int pSize) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0049cd00

@@ -83,13 +83,13 @@ int gRender_acc_poly_actor;
 br_token_value gAccent_poly_prims[] = {
     {
         BRT_BLEND_B,
-        { .b = 1 },
+        { 1 },
     }, {
         BRT_OPACITY_X,
-        { .x = 0x4b0000 },
+        { 0x4b0000 },
     }, {
         BR_NULL_TOKEN,
-        { .u32 = 0 },
+        { 0 },
     },
 };
 
@@ -546,8 +546,10 @@ int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
 
     C2_HOOK_BUG_ON(sizeof(tHeadup) != 356);
 
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON((int)&((tHeadup*)0)->data.text_info.text != 0x4c);
     C2_HOOK_BUG_ON((int)&((tHeadup*)0)->data.coloured_text_info.coloured_font != 0x148);
+#endif
 
     width = 0;
     if (pHeadup->type == eHeadup_box_text) {

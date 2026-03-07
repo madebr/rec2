@@ -208,8 +208,11 @@ br_size_t C2_HOOK_CDECL _M_br_renderer_state_stored_soft_space(br_renderer_state
 br_tv_template* C2_HOOK_CDECL _M_br_renderer_state_stored_soft_templateQuery(br_renderer_state_stored_soft* self) {
 
     if (self->device->templates.rendererStateStoredTemplate == NULL) {
+
+#ifndef REC2_MATCHING
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_device, templates.rendererStateStoredTemplate, 0x20);
         C2_HOOK_BUG_ON(BR_ASIZE(rendererStateStoredTemplateEntries) != 4);
+#endif
 
         self->device->templates.rendererStateStoredTemplate = BrTVTemplateAllocate(self->device,
             rendererStateStoredTemplateEntries,

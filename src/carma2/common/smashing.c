@@ -431,6 +431,11 @@ void C2_HOOK_FASTCALL DoDelayedNonCar(tU32 pTime, tDelayed_non_car* pDelayed_non
                     br_vector3 speed;
                     br_vector3 omega;
 
+#ifdef REC2_FIX_BUGS
+                    BrVector3Set(&speed, 0.f, 0.f, 0.f);
+                    BrVector3Set(&omega, 0.f, 0.f, 0.f);
+#endif
+
                     ApplyInitialMovement(pDelayed_non_car->field_0x18, &pDelayed_non_car->field_0x0, &speed, &omega, 1.f, &gZero_vector__smash,
                              &pDelayed_non_car->field_0xc, &read_action->actor->t.t.translate.t);
                     BrVector3InvScale(&non_car->collision_info->v, &speed, WORLD_SCALE);
@@ -477,8 +482,10 @@ void C2_HOOK_FASTCALL MungeDelayedSideEffects(void) {
     int i;
     tU32 the_time;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmash_explosion, what.non_car, 0x8);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmash_explosion, what.non_car.count_actions, 0x24);
+#endif
 
     the_time = PDGetTotalTime();
     for (i = 0; i < REC2_ASIZE(gSmash_explosions); i++) {

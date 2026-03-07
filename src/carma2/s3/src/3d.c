@@ -7,7 +7,7 @@
 
 #include "rec2_macros.h"
 
-#include <math.h>
+#include "c2_math.h"
 #include <stddef.h>
 #include <string.h>
 

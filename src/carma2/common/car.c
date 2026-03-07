@@ -42,7 +42,7 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 
 // GLOBAL: CARMA2_HW 0x0074a5f4
@@ -573,6 +573,7 @@ void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime) {
 int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004ff530
@@ -1612,10 +1613,12 @@ int C2_HOOK_FASTCALL GetPrecalculatedFacesUnderCar(tCar_spec* pCar, tFace_ref** 
 int C2_HOOK_FASTCALL ProcessForcesCallback(void* arg1, float* arg2, int arg3) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0041e310
 int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 param_2, undefined4 param_3) {
+
     return 0;
 }
 
@@ -1629,6 +1632,7 @@ void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefine
 tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* actor) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x0041ff00
@@ -1644,6 +1648,7 @@ tNon_car_spec* C2_HOOK_FASTCALL PullActorFromWorld(br_actor* actor) {
 float C2_HOOK_FASTCALL GetFrictionFromFace(void *arg1) {
 
     NOT_IMPLEMENTED();
+    return 0.f;
 }
 
 // FUNCTION: CARMA2_HW 0x00417de0
@@ -1787,6 +1792,7 @@ void C2_HOOK_FASTCALL PositionCarMountedCamera(tCar_spec* pCar, tU32 pTime) {
 tCar_spec* C2_HOOK_FASTCALL GetRaceLeader(void) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 void C2_HOOK_FASTCALL CheckCameraHither(void) {
@@ -2169,6 +2175,12 @@ void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3
     br_scalar cos_dtheta;
     br_scalar sign;
     int manual_swing;
+    br_scalar v16;
+    br_scalar v17;
+    br_scalar v18;
+    br_scalar abs_v18;
+    br_angle v8;
+    br_angle v9;
     // GLOBAL: CARMA2_HW 0x0058f63c
     static int elapsed_time = -1;
     // GLOBAL: CARMA2_HW 0x00679338
@@ -2228,17 +2240,17 @@ void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3
     if (!gCar_flying) {
         DrVector3RotateY(pVn, yaw);
     }
-    br_scalar v16 = pVn->v[0] * gView_direction.v[0] + pVn->v[2] * gView_direction.v[2];
-    br_scalar v17 = pVn->v[0] * gView_direction.v[2] - pVn->v[2] * gView_direction.v[0];
+    v16 = pVn->v[0] * gView_direction.v[0] + pVn->v[2] * gView_direction.v[2];
+    v17 = pVn->v[0] * gView_direction.v[2] - pVn->v[2] * gView_direction.v[0];
 
     if (v16 < 0.5f && gCamera_yaw == 0) {
         gUNK_006792f8 = 1;
     }
 
-    br_scalar v18 = pOmega->v[0] * pM1->m[0][1] + pOmega->v[1] * pM1->m[1][1] + pOmega->v[2] * pM1->m[2][1];
-    br_scalar abs_v18 = fabsf(v18);
-    br_angle v8 = BrRadianToAngle((float)pTime_difference * (abs_v18 + REC2_PI_F / 36.f) / 1000.f);
-    br_angle v9 = BrRadianToAngle(sqrtf(fabsf(v17)));
+    v18 = pOmega->v[0] * pM1->m[0][1] + pOmega->v[1] * pM1->m[1][1] + pOmega->v[2] * pM1->m[2][1];
+    abs_v18 = fabsf(v18);
+    v8 = BrRadianToAngle((float)pTime_difference * (abs_v18 + REC2_PI_F / 36.f) / 1000.f);
+    v9 = BrRadianToAngle(sqrtf(fabsf(v17)));
 
     if (!(gUNK_006792f4 == 0 && v16 > 0.f && v9 < v8) && !gCar_flying && !manual_swing) {
         br_angle omega;
@@ -2336,6 +2348,7 @@ int C2_HOOK_FASTCALL IsCarInTheSea(void) {
 float C2_HOOK_FASTCALL RepairCar(tU16 pCar_ID, tU32 pFrame_period, br_scalar* pTotal_deflection) {
 
     NOT_IMPLEMENTED();
+    return 0.f;
 }
 
 // FUNCTION: CARMA2_HW 0x0041e580
@@ -2421,6 +2434,7 @@ void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime) {
 int C2_HOOK_FASTCALL PipeNonCarObject(tCollision_info* pCollision_info, void* pUser_data) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 void C2_HOOK_FASTCALL PipeNonCars(void) {
@@ -2609,12 +2623,14 @@ void C2_HOOK_FASTCALL APTCChangedObjects(tCollision_info* pArg1, undefined4 pArg
 int C2_HOOK_FASTCALL APTCActiveHalted(tCollision_info* pArg1) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004162b0
 int C2_HOOK_FASTCALL APTCPassiveActivated(tCollision_info* pArg1) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00515c20

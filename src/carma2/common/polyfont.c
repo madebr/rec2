@@ -713,10 +713,11 @@ void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
 int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
     int len;
     int i;
+    int result;
 
     CheckAvailabilityOfThisFont(pFont);
     len = c2_strlen(pText);
-    int result = 0;
+    result = 0;
     for (i = 0; i < len; i++) {
         result += CharacterWidth(pFont, pText[i]);
     }

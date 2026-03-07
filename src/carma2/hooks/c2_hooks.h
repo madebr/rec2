@@ -2,7 +2,11 @@
 #define C2_HOOKS_H
 
 #if defined(_MSC_VER)
+#ifdef REC2_MATCHING
+#define C2_NORETURN
+#else
 #define C2_NORETURN __declspec(noreturn)
+#endif
 #define C2_NORETURN_FUNCPTR
 #define C2_NAKED __declspec(naked)
 #else
@@ -11,9 +15,14 @@
 #define C2_NAKED __attribute__((__naked__))
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER < 1200
+#define C2_FUNCTION "<unknown>"
+#else
+#define C2_FUNCTION __FUNCTION__
+#endif
 extern C2_NORETURN void rec2_error(const char *reason, const char *function, const char *file, int line);
-#define NOT_IMPLEMENTED() rec2_error("Not implemented", __FUNCTION__, __FILE__, __LINE__)
-#define UNUSED() rec2_error("Unused", __FUNCTION__, __FILE__, __LINE__)
+#define NOT_IMPLEMENTED() rec2_error("Not implemented", C2_FUNCTION, __FILE__, __LINE__)
+#define UNUSED() rec2_error("Unused", C2_FUNCTION, __FILE__, __LINE__)
 
 #ifdef REC2_MATCHING
 

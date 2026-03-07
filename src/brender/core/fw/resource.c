@@ -24,12 +24,12 @@ void* ResToUserWithClass(resource_header* r, br_uint_8 class) {
     return (void*)(((br_size_t)r + sizeof(resource_header) + align - 1) & ~(align - 1));
 }
 
-void* ResToUser(resource_header* r) {
+void* C2_HOOK_CDECL ResToUser(resource_header* r) {
 
     return ResToUserWithClass(r, r->class);
 }
 
-resource_header* UserToRes(void* r) {
+resource_header* C2_HOOK_CDECL UserToRes(void* r) {
     br_uint_8* p;
 
     p = (br_uint_8*)r - 1;
@@ -243,7 +243,7 @@ char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str) {
     return nstr;
 }
 
-void InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* arg, int level) {
+void C2_HOOK_CDECL InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* arg, int level) {
     int i;
     char* cp;
     resource_header* child;

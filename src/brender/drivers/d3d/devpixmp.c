@@ -481,6 +481,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_rectangleFill(br_device_pixelma
 // FUNCTION: D3D 0x10001910
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_pixelSet(br_device_pixelmap_d3d* self, br_point* p, br_uint_32 colour) {
     abort();
+    return 0xa005;
 }
 
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_flush(br_device_pixelmap_d3d* self) {
@@ -494,9 +495,11 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_synchronise(br_device_pixelmap_
 // FUNCTION: D3D 0x10001d70
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_directLock(br_device_pixelmap_d3d* self, br_boolean block) {
     abort();
+    return 0xa005;
 }
 
 // FUNCTION: D3D 0x10001e40
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_directUnlock(br_device_pixelmap_d3d* self) {
     abort();
+    return 0xa005;
 }

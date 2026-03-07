@@ -3240,10 +3240,12 @@ void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pPersonality, FILE* pF
     FILE* sound_f;
     int i;
 
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON(sizeof(tPed_personality_sounds) != 0x84);
     C2_HOOK_BUG_ON(REC2_ASIZE(((tPed_personality_sounds*)NULL)->sounds) != 11);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, sounds, 0x64)
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, jump_height, 0x50)
+#endif
 
     /* Name of sound definition file */
     GetAString(pF, s);

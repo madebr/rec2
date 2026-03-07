@@ -5,12 +5,12 @@
 
 #include "brender/br_types.h"
 
-br_uint_32 BrSwap32(br_uint_32 l);
+br_uint_32 C2_HOOK_CDECL BrSwap32(br_uint_32 l);
 
-br_uint_16 BrSwap16(br_uint_16 s);
+br_uint_16 C2_HOOK_CDECL BrSwap16(br_uint_16 s);
 
-br_float BrSwapFloat(br_float f);
+br_float C2_HOOK_CDECL BrSwapFloat(br_float f);
 
-void* BrSwapBlock(void* block, int count, int size);
+void* C2_HOOK_CDECL BrSwapBlock(void* block, int count, int size);
 
 #endif // REC2_BSWAP_H

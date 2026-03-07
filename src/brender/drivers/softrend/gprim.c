@@ -91,8 +91,10 @@ br_int_32 C2_HOOK_CDECL _M_br_geometry_primitives_soft_space(br_geometry_primiti
 // FUNCTION: CARMA2_HW 0x00541210
 br_tv_template* C2_HOOK_CDECL _M_br_geometry_primitives_soft_templateQuery(br_geometry_primitives_soft* self) {
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_device , templates.geometryPrimitivesTemplate, 0x2c);
     C2_HOOK_BUG_ON(BR_ASIZE(geometryPrimitivesTemplateEntries) != 3);
+#endif
     if (self->device->templates.geometryPrimitivesTemplate == NULL) {
         self->device->templates.geometryPrimitivesTemplate = BrTVTemplateAllocate(self->device,
             geometryPrimitivesTemplateEntries,

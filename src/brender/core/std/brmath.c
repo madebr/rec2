@@ -1,6 +1,6 @@
 #include "brmath.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 // FUNCTION: CARMA2_HW 0x0053f4a0
 float C2_HOOK_CDECL BrFloatFloor(float f) {

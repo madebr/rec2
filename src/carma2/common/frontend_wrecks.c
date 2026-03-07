@@ -208,7 +208,7 @@ int C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f4f0
-int C2_HOOK_CDECL WreckPick(br_actor* world, br_model* model, br_material* material, br_vector3* pos, br_vector3* dir, br_scalar near, br_scalar far, void* arg) {
+int C2_HOOK_CDECL WreckPick(br_actor* world, br_model* model, br_material* material, br_vector3* pos, br_vector3* dir, br_scalar pNear, br_scalar pFar, void* arg) {
     int i;
 
     for (i = 0; i < gFrontend_wrecks_car_count; i++) {

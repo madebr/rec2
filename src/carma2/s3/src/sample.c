@@ -174,6 +174,7 @@ void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_d
     FILE* f;
     int file_size;
     tS3_wav_info wav_info;
+    tS3_wav_file* wav_buffer;
     void* pd_handle;
 
     if (gS3_low_memory_mode) {
@@ -200,7 +201,7 @@ void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_d
         gS3_last_error = eS3_error_readfile;
         return NULL;
     }
-    tS3_wav_file* wav_buffer = S3MemAllocate(file_size, kMem_S3_Windows_95_load_WAV_file);
+    wav_buffer = S3MemAllocate(file_size, kMem_S3_Windows_95_load_WAV_file);
     if (wav_buffer == NULL) {
         c2_fclose(f);
         gS3_last_error = eS3_error_memory;

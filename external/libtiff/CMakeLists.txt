@@ -11,6 +11,7 @@ if(REC2_MATCHING)
         libtiff-3.4/libtiff/tif_dumpmode.c
         libtiff-3.4/libtiff/tif_error.c
         libtiff-3.4/libtiff/tif_fax3.c
+        libtiff-3.4/libtiff/tif_fax3sm.c
         libtiff-3.4/libtiff/tif_flush.c
         libtiff-3.4/libtiff/tif_getimage.c
         libtiff-3.4/libtiff/tif_jpeg.c

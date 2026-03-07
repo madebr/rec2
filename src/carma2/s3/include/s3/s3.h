@@ -127,7 +127,7 @@ typedef struct {
 
 typedef struct tS3_descriptor {
     int sample_id;
-    undefined4 type;
+    tS3_type type;
     int priority;
     int repeat_rate;
     int min_volume;

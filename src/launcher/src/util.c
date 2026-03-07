@@ -28,7 +28,7 @@ int ComboboxClearAllOptions(HWND Wnd, int nIDDlgItem) {
     return -1;
 }
 
-void SendDialogMessageFormat(HWND hDlg, int idDlgItem, UINT Msg, WPARAM wParam, char *format, ...) {
+void C2_HOOK_CDECL SendDialogMessageFormat(HWND hDlg, int idDlgItem, UINT Msg, WPARAM wParam, char *format, ...) {
     static char buffer[200];
     va_list va;
 

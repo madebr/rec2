@@ -31,7 +31,7 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 
 // GLOBAL: CARMA2_HW 0x00679698
@@ -260,6 +260,10 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCrush_info, field_0xdc, 0xdc);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCrush_info, field_0xe0, 0xe0);
 
+#ifndef REC2_MATCHING
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_shape, common.next, 0x34);
+#endif
+
     gDetached_bit_crush_info_buffer.capacity = 16;
     gDetached_bit_crush_info_buffer.crush_infos = BrMemAllocate(gDetached_bit_crush_info_buffer.capacity * sizeof(tCrush_info), kMem_crush_data);
     gDetached_bit_collision_infos = BrMemAllocate(gDetached_bit_crush_info_buffer.capacity * sizeof(tCollision_info),kMem_crush_data);
@@ -275,8 +279,6 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
     for (i = 0; i < REC2_ASIZE(gTrack_crush_joints); i++) {
         gTrack_crush_joints[i] = AllocatePhysicsJoint(3, kMem_crush_data);
     }
-
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_shape, common.next, 0x34);
 
     gSplit_car_crush_info_buffer.capacity = 3;
     gSplit_car_crush_info_buffer.crush_infos = BrMemAllocate(gSplit_car_crush_info_buffer.capacity * sizeof(tCrush_info), kMem_crush_data);
@@ -1950,13 +1952,14 @@ int C2_HOOK_FASTCALL PointIsOutsideShape(br_vector3* pPoint, tCollision_shape_po
 
 int C2_HOOK_FASTCALL PointIsOutsideLimits(tCar_crush_shape_info* pShape, int pPoint_index, tCar_crush_limits* pLimits) {
     int i;
+    tU16 flags;
 
     C2_HOOK_BUG_ON(sizeof(pLimits->limits) != 0x60);
     C2_HOOK_BUG_ON(sizeof(pLimits->limits[0]) != 0x20);
     C2_HOOK_BUG_ON(sizeof(pLimits->limits[0][0]) != 0x10);
     C2_HOOK_BUG_ON(sizeof(pLimits->limits[0][0].values[0]) != 0x4);
 
-    tU16 flags = pShape->field_0x18[pPoint_index].field_0x28;
+    flags = pShape->field_0x18[pPoint_index].field_0x28;
     for (i = 0; i < 3; i++) {
         br_scalar v = pShape->field_0x18[pPoint_index].field_0x18.v[i];
 
@@ -2210,6 +2213,7 @@ void C2_HOOK_FASTCALL DoDamage(tCar_spec *pCar, tDamage_type pDamage_type, int p
 int C2_HOOK_FASTCALL DoCrashEarnings(tCar_spec* pCar1, tCar_spec* pCar2) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00440230
@@ -2699,7 +2703,9 @@ void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec) {
 
 // FUNCTION: CARMA2_HW 0x00461740
 int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tCollision_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal) {
+
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0043f5f0
@@ -2738,12 +2744,14 @@ void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
 float C2_HOOK_FASTCALL BashObject(tCollision_info* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8) {
 
     NOT_IMPLEMENTED();
+    return 0.f;
 }
 
 // FUNCTION: CARMA2_HW 0x004f1140
 float C2_HOOK_FASTCALL SmashEnvironment(tCollision_info* pObject, undefined4* pArg2, float pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8) {
 
     NOT_IMPLEMENTED();
+    return 0.f;
 }
 
 void C2_HOOK_FASTCALL SphericizeModel(br_model* pModel, const br_vector3* pCenter, br_scalar pRadius) {

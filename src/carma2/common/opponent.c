@@ -1825,6 +1825,11 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
     br_scalar effective_speed_factor;
     int count_corners;
     int count_socs;
+    int straight_section_no;
+    br_scalar unk1;
+    br_scalar unk2;
+    br_scalar unk3;
+    br_scalar curv;
 
     car_spec = pOpponent_spec->car_spec;
     engine_damage = car_spec->damage_units[eDamage_engine].damage_level;
@@ -1917,11 +1922,6 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
                 }
             }
         }
-        int straight_section_no;
-        br_scalar unk1;
-        br_scalar unk2;
-        br_scalar unk3;
-        br_scalar curv;
 
         straight_section_no = GetStraight(&start2d, &finish2d, &width, pOpponent_spec->follow_path_data.section_no, pOpponent_spec);
         BrVector2Set(&oppo_pos2d,
@@ -2155,6 +2155,7 @@ void C2_HOOK_FASTCALL ProcessLevitate(tOpponent_spec* pOpponent_spec, tProcess_o
 int C2_HOOK_FASTCALL RematerialiseOpponent(tOpponent_spec* pOpponent_spec, br_scalar pSpeed) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004a8170
@@ -2583,12 +2584,14 @@ int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_sp
 tS16 C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004aed50
 tS16 C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004a7f20

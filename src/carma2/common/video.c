@@ -221,12 +221,14 @@ int C2_HOOK_FASTCALL InitMovie(void) {
 int C2_HOOK_FASTCALL CreateMovie(void) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004e1c70
 int C2_HOOK_FASTCALL GenerateOneMovieFrame(void) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 void C2_HOOK_FASTCALL TrapS3SoundOutput(void) {

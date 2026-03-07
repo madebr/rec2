@@ -340,7 +340,7 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_rangesQueryX(br_primitive_state
 #include <stdio.h>
 #endif
 
-#include <math.h>
+#include "c2_math.h"
 
 #include "drv.h"
 #include "shortcut.h"

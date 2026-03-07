@@ -99,6 +99,9 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 }
 
 void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
+    tTWTVFS twt;
+
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON(sizeof(int) != 4);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, complete_race_data) != 184);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, time_for_this_objective_to_finish) != 0x74);
@@ -125,6 +128,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2_HOOK_ASSERT((uintptr_t) &gProgram_state.sausage_eater_mode == 0x0075bb90);
     C2_HOOK_BUG_ON(sizeof(tProgram_state) != 24272);
     C2_HOOK_BUG_ON(sizeof(gTextureMaps) != 0x1000);
+#endif
 
     gProgram_state.sausage_eater_mode = gSausage_override;
     InitQuickTimeStuff();
@@ -139,7 +143,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     InstallFindFailedHooks();
     InstallDRMemCalls();
     InstallDRFileCalls();
-    tTWTVFS twt = OpenPackFileAndSetTiffLoading(gApplication_path);
+    twt = OpenPackFileAndSetTiffLoading(gApplication_path);
     gApplicationDataTwtMounted = 1;
     InitFogificateMaterials();
     PDInitTimer();
@@ -369,7 +373,7 @@ void C2_HOOK_FASTCALL AllocateCamera(void) {
     SetSightDistance(camera_ptr->yon_z);
 }
 
-static void inline Prepare2DModelAndMaterial(br_model* pModel, br_material* pMaterial, int pConfigure_vertices, br_colour pColour, int pFadeAlpha) {
+static void Prepare2DModelAndMaterial(br_model* pModel, br_material* pMaterial, int pConfigure_vertices, br_colour pColour, int pFadeAlpha) {
     static br_token_value fadealpha[3] = {
             { BRT_BLEND_B , {1}},
             { BRT_OPACITY_X, {0x800000} }, /* 50%*/
@@ -396,7 +400,7 @@ static void inline Prepare2DModelAndMaterial(br_model* pModel, br_material* pMat
     pModel->flags |= BR_MODF_KEEP_ORIGINAL;
 }
 
-static void inline Prepare2DModelToDim(br_model* pModel, int pX, int pY, int pW, int pH) {
+static void Prepare2DModelToDim(br_model* pModel, int pX, int pY, int pW, int pH) {
 
     pModel->vertices[0].p.v[0] = pModel->vertices[1].p.v[0] = (float)pX;
     pModel->vertices[0].p.v[1] = pModel->vertices[3].p.v[1] = (float)-pY;

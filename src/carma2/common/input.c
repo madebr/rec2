@@ -93,6 +93,7 @@ int gModifiers_down;
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00482d70
@@ -374,7 +375,9 @@ int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
 
     CheckKeysForMouldiness();
 
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON(142 < REC2_ASIZE(gKey_array));
+#endif
 
     CheckKeysForMouldiness();
     for (i = 142; i >= 0; --i) {

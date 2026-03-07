@@ -664,7 +664,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
         }
         FRONTEND_CreateMenuButton(
             &gFrontend_brender_items[gFrontend_count_brender_items],
-            item->x,
+            (tS16)item->x,
             y,
             width,
             height,
@@ -2592,7 +2592,7 @@ int C2_HOOK_FASTCALL ProcessInputString(void) {
         char ch;
 
         dr_dprintf("FRONTEND: Got char %d", int_ch);
-        ch = PDConvertToASCIILessThan128(int_ch);
+        ch = PDConvertToASCIILessThan128((char)int_ch);
         dr_dprintf("FRONTEND: Char converted to %d", ch);
         if (ch >= 0x20 && ch != 0x7f) {
             gFrontend_current_input[len + 0] = ch;

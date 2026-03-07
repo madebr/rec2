@@ -147,5 +147,32 @@ br_int_32 C2_HOOK_CDECL BrVSprintfN(char* buf, br_size_t buf_size, const char* f
 
 // FUNCTION: CARMA2_HW 0x0053f410
 br_int_32 C2_HOOK_CDECL BrVSScanf(char* buf, const char* fmt, va_list args) {
+
+#ifdef REC2_MATCHING
+    int i;
+    unsigned long arg_block[16];
+
+    for(i=0; i < 16; i++)
+        arg_block[i] = va_arg(args,unsigned long);
+
+    return c2_sscanf(buf, fmt,
+        arg_block[0],
+        arg_block[1],
+        arg_block[2],
+        arg_block[3],
+        arg_block[4],
+        arg_block[5],
+        arg_block[6],
+        arg_block[7],
+        arg_block[8],
+        arg_block[9],
+        arg_block[10],
+        arg_block[11],
+        arg_block[12],
+        arg_block[13],
+        arg_block[14],
+        arg_block[15]);
+#else
     return c2_vsscanf(buf, fmt, args);
+#endif
 }

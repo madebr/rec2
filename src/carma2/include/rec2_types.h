@@ -2008,9 +2008,9 @@ typedef enum {
 } eFrontendSelectableType;
 
 typedef struct tStruct_00686508 {
-    undefined4 field_0x0;
-    undefined4 field_0x4;
-    undefined4 field_0x8;
+    int field_0x0;
+    int field_0x4;
+    int field_0x8;
     struct tStruct_00686508* next;
 } tStruct_00686508;
 

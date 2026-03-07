@@ -3,7 +3,7 @@
 
 // Inspired by BRender SDK includes  (https://rr2000.cwaboard.co.uk/R4/BRENDER/BRENDER.zip)
 
-#include <math.h> // sqrtf
+#include <c2_math.h> // sqrtf
 
 #define PI 3.14159265358979323846
 #define TAU 6.283185307179586

@@ -49,8 +49,7 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string
     va_end(vl);
     tv[i].t = BR_NULL_TOKEN;
     tv[i].v.p = NULL;
-    br_error res = BrDevBeginTV(ppm, setup_string, tv);
-    return res;
+    return BrDevBeginTV(ppm, setup_string, tv);
 }
 
 // FUNCTION: CARMA2_HW 0x00528df0

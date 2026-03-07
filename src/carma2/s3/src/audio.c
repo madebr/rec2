@@ -638,7 +638,7 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
         gS3_soundbank_buffer = buffer;
         gS3_soundbank_buffer_len = file_size;
     } else {
-        struct _stat32 stat;
+        struct_c2_stat32 stat;
         int fd;
 
         C2_HOOK_BUG_ON(_O_BINARY != 0x8000);
@@ -751,7 +751,7 @@ int C2_HOOK_FASTCALL S3SoundBankReadEntry(tS3_soundbank_read_ctx *pContext, cons
     const char* dir_name;
     double f1, f2;
     int count;
-    
+
 // GLOBAL: CARMA2_HW 0x006b2c8c
 char cda_dir_name[4];
 

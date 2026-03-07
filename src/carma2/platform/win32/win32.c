@@ -26,12 +26,15 @@
 #include <windows.h>
 #include <dinput.h>
 
-#if defined(C2_WIN32_DEBUG)
-#define DR_DPRINTF(...) dr_dprintf(__VA_ARGS__)
-#else
-#define DR_DPRINTF(...)
+#ifndef GET_SC_WPARAM
 #endif
 
+#if defined(_MSC_VER) && _MSC_VER < 1200
+#define GET_SC_WPARAM(wParam) ((int)wParam &0xfff0)
+#define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
+typedef LONG LSTATUS;
+#define __debugbreak() __asm int 3
+#endif
 
 // GLOBAL: CARMA2_HW 0x00662200
 int gDefault_spec_index = 1;
@@ -413,9 +416,9 @@ void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void) {
 }
 
 void DeActivateApp(void) {
-    DR_DPRINTF("DeActivateApp() - START");
+    dr_dprintf("DeActivateApp() - START");
     if (!gWindowMovingResizing && gWindowActiveState == 2) {
-        DR_DPRINTF("DeActivateApp() - deactivating app");
+        dr_dprintf("DeActivateApp() - deactivating app");
         gWindowMovingResizing = 1;
         if (gDirectInputDevice != NULL) {
             IDirectInputDevice_Unacquire(gDirectInputDevice);
@@ -426,7 +429,7 @@ void DeActivateApp(void) {
         gWindowActiveState = (strcmp(gRenderer, "D3D") == 0) ? 0 : 1;
         gWindowMovingResizing = 0;
     }
-    DR_DPRINTF("DeActivateApp() - END; active state now %d", gWindowActiveState);
+    dr_dprintf("DeActivateApp() - END; active state now %d", gWindowActiveState);
 }
 
 // FUNCTION: CARMA2_HW 0x0051b0c0
@@ -441,13 +444,13 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
         EndPaint(hWnd, &paint);
         return 0;
     case WM_DESTROY:
-        DR_DPRINTF("WM_DESTROY received - doing nothing.");
+        dr_dprintf("WM_DESTROY received - doing nothing.");
         break;
 #if !defined(KEEP_ACTIVE_IN_BACKGROUND)
     case WM_MOVE:
     case WM_SIZE:
         if (IsIconic(hWnd)) {
-            DR_DPRINTF("WM_SIZE/WM_MOVE: Window is iconic");
+            dr_dprintf("WM_SIZE/WM_MOVE: Window is iconic");
             DeActivateApp();
         }
         break;
@@ -515,16 +518,16 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
             gKeyboardBufferLength++;
             strncpy(buffer, gKeyboardBuffer, gKeyboardBufferLength);
             buffer[gKeyboardBufferLength] = '\0';
-            DR_DPRINTF("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
+            dr_dprintf("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
         }
         break;
 #if !defined(KEEP_ACTIVE_IN_BACKGROUND)
     case WM_ACTIVATEAPP:
-        DR_DPRINTF("WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
+        dr_dprintf("WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
                    wParam, lParam, GetForegroundWindow(), gHWnd, hWnd, IsIconic(gHWnd));
         if (gHWnd != NULL) {
             if (GetForegroundWindow() == gHWnd && !IsIconic(gHWnd)) {
-                DR_DPRINTF("Activating app");
+                dr_dprintf("Activating app");
                 if (gDirectInputDevice != NULL) {
                     IDirectInputDevice_Acquire(gDirectInputDevice);
                 }
@@ -545,8 +548,7 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
     default:
         break;
     }
-    LRESULT res = DefWindowProcA(hWnd, uMsg, wParam, lParam);
-    return res;
+    return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 }
 
 // FUNCTION: CARMA2_HW 0x0051cab0
@@ -562,7 +564,7 @@ int C2_HOOK_FASTCALL PDGetASCIIFromKey(int pKey) {
 // FUNCTION: CARMA2_HW 0x0051cad0
 void C2_HOOK_CDECL Win32ServiceMessages(void) {
     MSG msg;
-    DR_DPRINTF("Win32ServiceMessages() - START");
+    dr_dprintf("Win32ServiceMessages() - START");
     while (1) {
         if (gWindowActiveState == 1) {
             SetForegroundWindow(gHWnd);
@@ -570,35 +572,35 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
 
         if (gWindowActiveState == 0) {
             if (GetMessageA(&msg, NULL, 0, 0) == -1) {
-                DR_DPRINTF("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
+                dr_dprintf("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
                 break;
             }
         } else {
             if (PeekMessageA(&msg, NULL, 0, 0, 1) == 0) {
-                DR_DPRINTF("Win32ServiceMessages() - breaking cos PeekMessage() returned 0");
+                dr_dprintf("Win32ServiceMessages() - breaking cos PeekMessage() returned 0");
                 break;
             }
             if (gWindowActiveState == 0) {
                 if (GetMessageA(&msg, NULL, 0, 0) == -1) {
-                    DR_DPRINTF("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
+                    dr_dprintf("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
                     break;
                 }
             }
         }
         if (msg.message == WM_QUIT) {
-            DR_DPRINTF("WM_QUIT received.");
+            dr_dprintf("WM_QUIT received.");
             if (gWindowActiveState == 2) {
-                DR_DPRINTF("Active, so lock the surface");
-                DR_DPRINTF("QuitGame being called...");
+                dr_dprintf("Active, so lock the surface");
+                dr_dprintf("QuitGame being called...");
                 QuitGame();
             }
             PDShutdownSystem();
         }
         TranslateMessage(&msg);
-        DR_DPRINTF("Win32ServiceMessages() - dispatching message...");
+        dr_dprintf("Win32ServiceMessages() - dispatching message...");
         DispatchMessageA(&msg);
     }
-    DR_DPRINTF("Win32ServiceMessages() - END");
+    dr_dprintf("Win32ServiceMessages() - END");
 }
 
 // FUNCTION: CARMA2_HW 0x0051d500
@@ -1104,12 +1106,13 @@ int GetRegisterSourceLocation(char* buffer, int* buffer_size) {
 
 // FUNCTION: CARMA2_HW 0x0051c900
 void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
+    POINT pnt;
+
     if (gWindowActiveState != 2) {
         *pX = gPD_mouse_position.x;
         *pY = gPD_mouse_position.y;
         return;
     }
-    POINT pnt;
     GetCursorPos(&pnt);
     ScreenToClient(gHWnd, &pnt);
     *pX = pnt.x;

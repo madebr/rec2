@@ -24,7 +24,7 @@
 #include "c2_string.h"
 
 #include <float.h>
-#include <math.h>
+#include "c2_math.h"
 
 
 // GLOBAL: CARMA2_HW 0x006abef4
@@ -247,7 +247,7 @@ void C2_HOOK_FASTCALL EncodeLine2(char* pS) {
             count = 0;
         }
         if (pS[i] == '\t') {
-            pS[i] = 0x9f;
+            pS[i] = (char)0x9f;
         }
 
         c = pS[i] - 0x20;
@@ -1173,20 +1173,20 @@ void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pP
 
     // GLOBAL: CARMA2_HW 0x00661688
     static br_token_value alpha25[] = {
-        { BRT_BLEND_B, { .b = 1 } },
-        { BRT_OPACITY_X, { .x = 0x400000 } },
+        { BRT_BLEND_B, { /*.b = */ 1 } },
+        { BRT_OPACITY_X, { /*.x = */ 0x400000 } },
         { 0 },
     };
     // GLOBAL: CARMA2_HW 0x006616a0
     static br_token_value alpha50[] = {
-        { BRT_BLEND_B, { .b = 1 } },
-        { BRT_OPACITY_X, { .x = 0x800000 } },
+        { BRT_BLEND_B, { /*.b = */ 1 } },
+        { BRT_OPACITY_X, { /*.x = */ 0x800000 } },
         { 0 },
     };
     // GLOBAL: CARMA2_HW 0x006616b8
     static br_token_value alpha75[] = {
-        { BRT_BLEND_B, { .b = 1 } },
-        { BRT_OPACITY_X, { .x = 0xc00000 } },
+        { BRT_BLEND_B, { /*.b = */ 1 } },
+        { BRT_OPACITY_X, { /*.x = */ 0xc00000 } },
         { 0 },
     };
 

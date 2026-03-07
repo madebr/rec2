@@ -91,7 +91,7 @@ void C2_HOOK_CDECL BrStdioClose(void* f) {
 
 // FUNCTION: CARMA2_HW 0x0053f8e0
 int C2_HOOK_CDECL BrStdioEof(void* f) {
-    return c2_feof(f);
+    return c2_feof((FILE*)f);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f8f0

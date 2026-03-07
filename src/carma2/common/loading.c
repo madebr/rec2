@@ -31,6 +31,7 @@
 #include "rec2_logging.h"
 #include "rec2_macros.h"
 
+#include "c2_math.h"
 #include "c2_stdio.h"
 #include "c2_stdlib.h"
 #include "c2_string.h"
@@ -202,8 +203,8 @@ br_pixelmap* gHeadup_images[45];
 
 // GLOBAL: CARMA2_HW 0x00655e38
 char gDecode_string[14] = {
-    0x9b, 0x52, 0x93, 0x9f, 0x52, 0x98, 0x9b,
-    0x96, 0x96, 0x9e, 0x9b, 0xa0, 0x99, 0x00,
+    (char)0x9b, (char)0x52, (char)0x93, (char)0x9f, (char)0x52, (char)0x98, (char)0x9b,
+    (char)0x96, (char)0x96, (char)0x9e, (char)0x9b, (char)0xa0, (char)0x99, (char)0x00,
 };
 
 // GLOBAL: CARMA2_HW 0x00761b80
@@ -1449,6 +1450,7 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
     FILE* f;
     tTWTVFS twt;
     tU32 fileSize;
+    tU8* fileData;
     tU32 i;
 
     // file header must be 56 bytes for compatibility with .TWT files
@@ -1480,7 +1482,7 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
     SplungeSomeData(gTwatVfsMountPoints[twt].header, fileSize);
     c2_fclose(f);
 
-    tU8* fileData = (tU8*)&gTwatVfsMountPoints[twt].header->fileHeaders[gTwatVfsMountPoints[twt].header->nbFiles];
+    fileData = (tU8*)&gTwatVfsMountPoints[twt].header->fileHeaders[gTwatVfsMountPoints[twt].header->nbFiles];
     for (i = 0; i < gTwatVfsMountPoints[twt].header->nbFiles; i++) {
         gTwatVfsMountPoints[twt].header->fileHeaders[i].data = fileData;
         fileData += (gTwatVfsMountPoints[twt].header->fileHeaders[i].fileSize + 3u) & ~3u;
@@ -3730,6 +3732,8 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     int count_vertices;
     br_material* car_material;
     tCrush_model_pool model_pool;
+    v11model* v11;
+    int all_fire_zero;
 
     C2_HOOK_BUG_ON(sizeof(*pCar_spec) != 6500);
     c2_memset(pCar_spec, 0, sizeof(*pCar_spec));
@@ -4410,12 +4414,12 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     LoadCarShrapnelMaterials(f, pCar_spec);
 
     count_vertices = 0;
-    v11model* v11 = pCar_spec->car_actor->model->prepared;
+    v11 = pCar_spec->car_actor->model->prepared;
     for (i = 0; i < v11->ngroups; i++) {
         count_vertices += v11->groups[i].nvertices;
     }
 
-    int all_fire_zero = 1;
+    all_fire_zero = 1;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, fire_vertex, 0xac);
     C2_HOOK_BUG_ON(REC2_ASIZE(pCar_spec->fire_vertex) != 12);
@@ -5374,8 +5378,8 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
                     /* pause at the top */
                     pNon_car_spec->translation_parameters->pause_at_top = GetAnInt(pF);
 
-                    pNon_car_spec->translation_parameters->forward_resistance = exp2f(pNon_car_spec->translation_parameters->forward_resistance);
-                    pNon_car_spec->translation_parameters->reverse_resistance = exp2f(pNon_car_spec->translation_parameters->reverse_resistance);
+                    pNon_car_spec->translation_parameters->forward_resistance = (float)exp(0.43 * (double)pNon_car_spec->translation_parameters->forward_resistance);
+                    pNon_car_spec->translation_parameters->reverse_resistance = (float)exp(0.43 * (double)pNon_car_spec->translation_parameters->reverse_resistance);
                 } else if (DRStricmp(s, "RISE_WHEN_HIT") == 0) {
                     pNon_car_spec->flags |= 0x20000;
                 } else if (DRStricmp(s, "RISE_WHEN_DRIVEN_ON") == 0) {
@@ -5718,10 +5722,12 @@ void C2_HOOK_FASTCALL LoadDrone(int pIndex) {
     tTWTVFS twt;
     FILE* f;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, collision_info.shape, 0x118);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, field_0x46, 0x46);
 
     C2_HOOK_BUG_ON(sizeof(tDrone_spec) != 0x5d8);
+#endif
 
     drone = &gDrone_specs[pIndex];
     c2_strcpy(path, gApplication_path);

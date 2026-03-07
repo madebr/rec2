@@ -205,12 +205,14 @@ void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage) {
 tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0049ee50
 int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void) {
@@ -531,12 +533,14 @@ tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
 tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(int pType, int pOption) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x004a69b0
 tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec *pCar) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x004a5710
@@ -570,10 +574,12 @@ void C2_HOOK_FASTCALL NetSendMessageStacks(void) {
 int C2_HOOK_FASTCALL NetInitialise(void) {
     int i;
 
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON(sizeof(tMin_message) != 0x5c);
     C2_HOOK_BUG_ON(sizeof(tMid_message) != 0x84);
     C2_HOOK_BUG_ON(sizeof(tMax_message) != 0x204);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents.raw.header.type, 0x19);
+#endif
 
     InitAbuseomatic();
     gNet_service_disable = 0;
@@ -636,12 +642,14 @@ void C2_HOOK_FASTCALL StopAllThatJoinyStuffThisInstant(void) {
 tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_game_options* pOptions, int pRace_index, const char* pHost_name, int pCar_index) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x0049e970
 int C2_HOOK_FASTCALL NetJoinGame(tNet_game_details *pGame_details,char *pPlayer_name,int pCar_index) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0049dbd0
@@ -678,6 +686,7 @@ void C2_HOOK_FASTCALL DisposeNetStorageSpace(void) {
 tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x004a5c80
@@ -745,6 +754,7 @@ void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void) {
 int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, undefined4 *pArg3) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0049ff50
@@ -812,6 +822,7 @@ tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void) {
 tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tS32 pSize_decider) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x0049fb70
@@ -824,4 +835,5 @@ void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage) {
 int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_details* pNet_game, tNet_message* pMessage, undefined4 pArg3) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }

@@ -317,7 +317,7 @@ void C2_HOOK_FASTCALL CloseGlobalPackedFile(void) {
 
 // FUNCTION: CARMA2_HW 0x0044c850
 void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
-    dr_dprintf("%s: pTitle=\"%s\" pFlags=%d", __FUNCTION__, pTitle, pFlags);
+
 }
 
 // FUNCTION: CARMA2_HW 0x0044c8c0

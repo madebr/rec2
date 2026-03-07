@@ -101,7 +101,9 @@ br_image* C2_HOOK_STDCALL ImageLoad(const char* name) {
 
 	img->type = BR_IMG_FRAMEWORK;
 
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON(sizeof(br_image_section) != 0x18);
+#endif
 	img->sections = BrResAllocate(img, sizeof(br_image_section) * coff_header.n_sections, BR_MEMORY_IMAGE_SECTIONS);
 
 	if (nt_header.section_alignment & (nt_header.section_alignment - 1)) {

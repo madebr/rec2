@@ -582,6 +582,7 @@ void C2_HOOK_FASTCALL ApplySound(tPipe_chunk** pChunk) {
 int C2_HOOK_FASTCALL CalcCrushLength(tPipe_chunk* pChunk) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c9040
@@ -720,6 +721,7 @@ void C2_HOOK_FASTCALL ApplyFlame(tPipe_chunk** pChunk) {
 int C2_HOOK_FASTCALL CalcSmudgeLength(tPipe_chunk* pChunk) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c9060
@@ -786,6 +788,7 @@ void C2_HOOK_FASTCALL UndoFlap(tPipe_chunk** pChunk, tPipe_chunk* pPrev_chunk) {
 int C2_HOOK_FASTCALL CalcModelMashLength(tPipe_chunk* pChunk) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c9840
@@ -900,6 +903,7 @@ void C2_HOOK_FASTCALL UndoSmashModelChange(tPipe_chunk** pChunk, tPipe_chunk* pP
 int C2_HOOK_FASTCALL CalcRemoveFacesLength(tPipe_chunk* pChunk) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c9a10
@@ -954,6 +958,7 @@ void C2_HOOK_FASTCALL ApplyRepulseRay(tPipe_chunk** pChunk) {
 int C2_HOOK_FASTCALL CalcEndMyBendLength(tPipe_chunk* pChunk) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c9950

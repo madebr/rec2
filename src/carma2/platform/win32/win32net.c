@@ -155,12 +155,12 @@ int C2_HOOK_FASTCALL PDNetInitialise(void) {
 
     c2_memset(gBroadcast_address.sa_data, 0, sizeof(gListen_address.sa_data));
     gBroadcast_address.sa_family = AF_IPX;
-    gBroadcast_address.sa_data[4] = 0xff;
-    gBroadcast_address.sa_data[5] = 0xff;
-    gBroadcast_address.sa_data[6] = 0xff;
-    gBroadcast_address.sa_data[7] = 0xff;
-    gBroadcast_address.sa_data[8] = 0xff;
-    gBroadcast_address.sa_data[9] = 0xff;
+    gBroadcast_address.sa_data[4] = 0xffu;
+    gBroadcast_address.sa_data[5] = 0xffu;
+    gBroadcast_address.sa_data[6] = 0xffu;
+    gBroadcast_address.sa_data[7] = 0xffu;
+    gBroadcast_address.sa_data[8] = 0xffu;
+    gBroadcast_address.sa_data[9] = 0xffu;
     gBroadcast_address.sa_data[10] = gIpx_sock_addr & 0xff;
     gBroadcast_address.sa_data[11] = gIpx_sock_addr >> 8;
     gPtr_broadcast_address = &gBroadcast_address;

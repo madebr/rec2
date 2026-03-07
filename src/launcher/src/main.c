@@ -93,7 +93,7 @@ LRESULT CALLBACK LauncherWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lPar
 }
 
 void ReadRegisterConfiguration(void) {
-    LSTATUS success;
+    LONG success;
     HKEY hKey;
     DWORD size;
     DWORD type;
@@ -203,6 +203,7 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
     HKEY h;
     char* exename;
     char* command;
+    static int DAT_004137f8;
 
     g_hInstance = hInst;
     if (CoInitialize(NULL) < 0) {
@@ -224,7 +225,6 @@ int APIENTRY WinMain(HINSTANCE hInst, HINSTANCE hInstPrev, PSTR cmdline, int cmd
     SetCapture(g_Dialog);
     PostMessageA(g_Dialog, 0x483, 0, 0);
 
-    static int DAT_004137f8;
     while (PeekMessageA(&msg, NULL, 0, 0, 0) != 0) {
         GetMessageA(&msg, NULL, 0, 0);
         TranslateMessage(&msg);

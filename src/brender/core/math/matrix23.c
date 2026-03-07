@@ -1,6 +1,6 @@
 #include "matrix23.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 #define A(x, y) A->m[x][y]
 #define B(x, y) B->m[x][y]

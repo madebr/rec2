@@ -36,10 +36,11 @@
 #include "c2_ctype.h"
 #include "c2_stdlib.h"
 #include "c2_string.h"
-#include "c2_sys/c2_stat.h"
+#include "c2_sys_stat.h"
 #include "rec2_types.h"
 
 #include <assert.h>
+#include <c2_sys_stat.h>
 
 #define RGB565_R(V) (((V) & 0xf800) >> 11)
 #define RGB565_G(V) (((V) & 0x07e0) >> 5)
@@ -755,14 +756,14 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStora
 
 // FUNCTION: CARMA2_HW 0x00486c00
 int C2_HOOK_FASTCALL IsValidFile(const char* path) {
-    struct c2_stat s;
+    struct_c2_stat32 s;
 
     return c2_stat32(path, &s) == 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00486be0
 int C2_HOOK_FASTCALL GetLastModificationTime(const char* path) {
-    struct c2_stat s;
+    struct_c2_stat32 s;
     int res;
 
     res = c2_stat32(path, &s);
@@ -2282,6 +2283,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
     float yon_factor;
     float fov_factor;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, flags, 0x4);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, material, 0x8);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, mode, 0xc);
@@ -2345,6 +2347,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
     C2_HOOK_BUG_ON(sizeof(tFunk_temp_buffer) != 0x30);
     C2_HOOK_BUG_ON(sizeof(tFunk_texturebits) != 0x28);
     C2_HOOK_BUG_ON(500 * sizeof(tFunk_temp_buffer) != 24000);
+#endif
 
     gFunk_temp_vertices = BrMemAllocate(500 * sizeof(tFunk_temp_buffer), BR_MEMORY_APPLICATION);
     first_time = 1;
@@ -2884,6 +2887,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
     int d_2;
     br_vector3 p;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, owner, 0x0);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, block_flags, 0x8);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, actor, 0xc);
@@ -2927,6 +2931,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.x_magnitude, 0x78);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.y_magnitude, 0x7c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.z_magnitude, 0x80);
+#endif
 
     first_time = 1;
     while (!PFfeof(pF)) {
@@ -3313,9 +3318,11 @@ void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, t
 
     ReadSmashSounds(pF, pConnotations, pStorage);
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.count_shrapnel, 0x14);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.shrapnel, 0x18);
+#endif
 
     ReadShrapnelSpec(pF, pConnotations->shrapnel, &pConnotations->count_shrapnel);
     ReadSpecialEffectsSpec(pF, &pConnotations->special_effects);
@@ -5090,6 +5097,7 @@ void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, 
     br_scalar pos;
     float f_the_time = (float)pTime;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_interrupt_status, 0x20);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_resumption_value, 0x24);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.period.value, 0x28);
@@ -5100,6 +5108,7 @@ void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.period.value, 0x28);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.centre, 0x30);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_position, 0x50);
+#endif
 
     switch (pGroove->path_type) {
     case eGroove_path_straight:
@@ -5263,6 +5272,7 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
     br_bounds* bounds;
     float f_the_time = (float)pTime;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_type, 0x5c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_interrupt_status, 0x64);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_resumption_value, 0x68);
@@ -5282,6 +5292,7 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.x_magnitude, 0x78);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.y_magnitude, 0x7c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.z_magnitude, 0x80);
+#endif
 
     switch (pGroove->object_type) {
     case eGroove_object_spin:

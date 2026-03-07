@@ -35,7 +35,9 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     return WinMain_original(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 #else
     char* currentArgument;
-
+    WNDCLASSA wndCls;
+    LANGID langId;
+    const char* args[1];
     gAFE = 0;
     SetDefaultPedFolderNames();
     if (strlen(lpCmdLine) > 0) {
@@ -70,7 +72,6 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     if (FindWindowA(gCarma2WndClassName, NULL) != NULL) {
         ExitProcess(703);
     }
-    WNDCLASSA wndCls;
     wndCls.style = CS_DBLCLKS | CS_HREDRAW | CS_VREDRAW;
     wndCls.lpfnWndProc = Carma2MainWndProc;
     wndCls.cbClsExtra = 0;
@@ -86,7 +87,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
                                  0, 0, 4, 4, NULL, NULL, gHInstance, NULL);
     UpdateWindow(gHWnd);
     SetFocus(gHWnd);
-    LANGID langId = GetSystemDefaultLangID();
+    langId = GetSystemDefaultLangID();
     if (strcmp(gRegionDescriminator, "AUDIQUATTRO") == 0 && PRIMARYLANGID(langId) == LANG_JAPANESE) {
         MessageBoxA(NULL, "Sorry, this is the Western European version of Carmageddon II - Carpocalypse Now.\n\nThis version can not run on this machine.\n",
                     "Carmageddon II - Carpocalypse Now", MB_ICONERROR);
@@ -97,15 +98,16 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     gHInstance = hInstance;
     gNShowCmd = nShowCmd;
     gPathNetworkIni[0] = '\0';
-    DWORD lenCwd = GetCurrentDirectoryA(REC2_ASIZE(gPathNetworkIni), gPathNetworkIni);
-    if (lenCwd != 0) {
+    if (GetCurrentDirectoryA(REC2_ASIZE(gPathNetworkIni), gPathNetworkIni) != 0) {
         strcat(gPathNetworkIni, "\\");
         strcat(gPathNetworkIni, "NETWORK.INI");
     }
 
-    const char* args[] = { "Carmageddon" };
+    args[0] = "Carmageddon";
 
-    GameMain(1, args);
+    GameMain(REC2_ASIZE(args), args);
+#ifdef REC2_FIX_BUGS
+    return 0;
+#endif
 #endif
 }
-;

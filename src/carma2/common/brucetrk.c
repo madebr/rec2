@@ -51,6 +51,7 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
     int j;
     int k;
     br_face* face;
+    br_face* blendy_face;
     int changed_one;
 
     changed_one = 0;
@@ -68,7 +69,7 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
                 gMr_blendy->model->nvertices = 0;
                 gMr_blendy->model->flags |= BR_MODF_UPDATEABLE;
             }
-            br_face *blendy_face = &gMr_blendy->model->faces[gMr_blendy->model->nfaces];
+            blendy_face = &gMr_blendy->model->faces[gMr_blendy->model->nfaces];
             gMr_blendy->model->nfaces += 1;
             c2_memcpy(blendy_face, face, sizeof(br_face));
             for (j = 0; j < 3; j++) {
@@ -584,6 +585,7 @@ void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos,
 intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0040d7c0

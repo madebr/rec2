@@ -44,7 +44,7 @@
 #include "c2_string.h"
 
 #include <float.h>
-#include <math.h>
+#include "c2_math.h"
 
 
 // GLOBAL: CARMA2_HW 0x006a22f8

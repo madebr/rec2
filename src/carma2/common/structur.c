@@ -77,6 +77,7 @@ void C2_HOOK_FASTCALL RecordAPOAndCredits(void) {
 int C2_HOOK_FASTCALL DoPostRace(tRace_result pRace_result) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00503c50

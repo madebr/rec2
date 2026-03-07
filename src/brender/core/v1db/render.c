@@ -260,7 +260,6 @@ void C2_HOOK_STDCALL sceneRenderWorld(br_actor* world) {
     for (a = world->children; a != NULL; a = a->next) {
         actorRender(a, model, material, render_data, style, v1db.ttype);
     }
-    return;
 }
 
 // FUNCTION: CARMA2_HW 0x00521fe0
