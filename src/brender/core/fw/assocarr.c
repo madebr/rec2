@@ -9,16 +9,11 @@
 
 #include "c2_stdlib.h"
 
+// FUNCTION: CARMA2_HW 0x00531500
 br_associative_array* C2_HOOK_CDECL BrAssociativeArrayAllocate(void) {
     br_associative_array* pArray;
 
-#if defined(C2_HOOKS_ENABLED)
-    if ((uintptr_t)&C2V(fw).res != (uintptr_t)0x0079f918) {
-        C2_HOOK_DEBUGF("fw.res at wrong location. Expected 0x%x, but got 0x%p", 0x0079f918, &C2V(fw).res);
-        c2_abort();
-    }
-#endif
-    pArray = BrResAllocate(C2V(fw).res, sizeof(br_associative_array), BR_MEMORY_SCRATCH);
+    pArray = BrResAllocate(fw.res, sizeof(br_associative_array), BR_MEMORY_SCRATCH);
     if (pArray == NULL) {
         return NULL;
     }
@@ -30,7 +25,6 @@ br_associative_array* C2_HOOK_CDECL BrAssociativeArrayAllocate(void) {
     pArray->num_elements = 0;
     return pArray;
 }
-C2_HOOK_FUNCTION(0x00531500, BrAssociativeArrayAllocate)
 
 br_error C2_HOOK_CDECL Set_Associative_Array_Value(br_associative_array* pArray, int index, br_value v) {
 
@@ -49,6 +43,7 @@ br_error C2_HOOK_CDECL Set_Associative_Array_Value(br_associative_array* pArray,
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00531540
 br_error C2_HOOK_STDCALL BrAssociativeArraySetEntry(br_associative_array* pArray, br_token t, br_value v) {
     br_uint_16 i;
     br_token_value* temp;
@@ -77,8 +72,8 @@ br_error C2_HOOK_STDCALL BrAssociativeArraySetEntry(br_associative_array* pArray
     pArray->num_elements += 1;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00531540, BrAssociativeArraySetEntry)
 
+// FUNCTION: CARMA2_HW 0x00531750
 br_error C2_HOOK_STDCALL BrAssociativeArrayRemoveEntry(br_associative_array* pArray, br_token t) {
     br_uint_16 i;
     br_boolean bFound;
@@ -102,8 +97,8 @@ br_error C2_HOOK_STDCALL BrAssociativeArrayRemoveEntry(br_associative_array* pAr
     }
     return 0x1002; // BRE_NOTFOUND
 }
-C2_HOOK_FUNCTION(0x00531750, BrAssociativeArrayRemoveEntry)
 
+// FUNCTION: CARMA2_HW 0x00531810
 br_error C2_HOOK_STDCALL BrAssociativeArrayQuery(br_associative_array* pArray, br_token t, br_value* pValue) {
     br_uint_16 i;
 
@@ -115,4 +110,3 @@ br_error C2_HOOK_STDCALL BrAssociativeArrayQuery(br_associative_array* pArray, b
     }
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x00531810, BrAssociativeArrayQuery)

@@ -12,13 +12,18 @@
 //#include "c2_stddef.h"
 #include "c2_stdio.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap_state, _pixelmap, 0x0079f950);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_resource_class, pm_resourceClasses, 2, 0x0058b968, {
+
+// GLOBAL: CARMA2_HW 0x0079f950
+br_pixelmap_state _pixelmap;
+
+// GLOBAL: CARMA2_HW 0x0058b968
+br_resource_class pm_resourceClasses[] = {
     { 0u, "PIXELMAP", BR_MEMORY_PIXELMAP, NULL, 0u },
     { 0u, "PIXELS",     BR_MEMORY_PIXELS, NULL, 32u }
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(void*, functionPointers_BRPMAP1, 77, 0x0066dd30, {
+// GLOBAL: CARMA2_HW 0x0066dd30
+void* functionPointers_BRPMAP1[] = {
     PixelmapCopyBitsClip,
     PixelmapLineClip,
     PixelmapPointClip,
@@ -96,8 +101,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(void*, functionPointers_BRPMAP1, 77, 0x006
     _M_br_device_pixelmap_null_rectangleStretchCopyFrom,
     _M_br_device_pixelmap_null_rectangleStretchCopyTo,
     _M_br_device_pixelmap_null_resize
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, namePointers_BRPMAP1, 77, 0x0066db58, {
+};
+
+// GLOBAL: CARMA2_HW 0x0066db58
+const char* namePointers_BRPMAP1[] = {
     "_PixelmapCopyBitsClip",
     "_PixelmapLineClip",
     "_PixelmapPointClip",
@@ -175,8 +182,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, namePointers_BRPMAP1, 77, 0x0
     "__M_br_device_pixelmap_null_rectangleStretchCopyFrom",
     "__M_br_device_pixelmap_null_rectangleStretchCopyTo",
     "__M_br_device_pixelmap_null_resize"
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, nameOrdinals_BRPMAP1, 77, 0x0066dc90, {
+};
+
+// GLOBAL: CARMA2_HW 0x0066dc90
+br_uint_16 nameOrdinals_BRPMAP1[77] = {
     0,
     1,
     2,
@@ -254,55 +263,49 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, nameOrdinals_BRPMAP1, 77, 0x00
     74,
     75,
     76,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_image, Image_BRMAP1, 0x0066de68, {
+};
+
+// GLOBAL: CARMA2_HW 0x0066de68
+br_image Image_BRMAP1 = {
     { 0 },
     "BRPMAP1",
     2,
     0,
     1,
-    BR_ASIZE(C2V(functionPointers_BRPMAP1)),
-    C2V(functionPointers_BRPMAP1),
-    BR_ASIZE(C2V(namePointers_BRPMAP1)),
-    C2V(namePointers_BRPMAP1),
-    C2V(nameOrdinals_BRPMAP1),
+    BR_ASIZE(functionPointers_BRPMAP1),
+    functionPointers_BRPMAP1,
+    BR_ASIZE(namePointers_BRPMAP1),
+    namePointers_BRPMAP1,
+    nameOrdinals_BRPMAP1,
     0,
     NULL,
     0,
     NULL,
     NULL
-});
+};
 
-void (C2_HOOK_CDECL * BrPixelmapBegin_original)(void);
+// FUNCTION: CARMA2_HW 0x005395a0
 void C2_HOOK_CDECL BrPixelmapBegin(void) {
-    C2_HOOK_BUG_ON(sizeof(br_pixelmap_state) != 12);
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrPixelmapBegin_original();
-#else
     int i;
 
-    BrMemSet(&C2V(_pixelmap), 0, sizeof(br_pixelmap_state));
-    C2V(_pixelmap).res = BrResAllocate(NULL, 0, BR_MEMORY_ANCHOR);
-    for (i = 0; i < BR_ASIZE(C2V(pm_resourceClasses)); i++) {
-        BrResClassAdd(&C2V(pm_resourceClasses)[i]);
-    }
-#if !defined(REC2_STANDALONE)
-    BrImageAdd(&C2V(Image_BRMAP1));
-#endif
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x005395a0, BrPixelmapBegin, BrPixelmapBegin_original)
+    C2_HOOK_BUG_ON(sizeof(br_pixelmap_state) != 12);
 
-void (C2_HOOK_CDECL * BrPixelmapEnd_original)(void);
-void C2_HOOK_CDECL BrPixelmapEnd(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrPixelmapEnd_original();
-#else
-#if !defined(REC2_STANDALONE)
-    BrImageRemove(&C2V(Image_BRMAP1));
-#endif
-    BrResFree(C2V(_pixelmap).res);
-    BrMemSet(&C2V(_pixelmap), 0, sizeof(br_pixelmap_state));
+    BrMemSet(&_pixelmap, 0, sizeof(br_pixelmap_state));
+    _pixelmap.res = BrResAllocate(NULL, 0, BR_MEMORY_ANCHOR);
+    for (i = 0; i < BR_ASIZE(pm_resourceClasses); i++) {
+        BrResClassAdd(&pm_resourceClasses[i]);
+    }
+#if !defined(REC2_MATCHING)
+    BrImageAdd(&Image_BRMAP1);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005395f0, BrPixelmapEnd, BrPixelmapEnd_original)
+
+// FUNCTION: CARMA2_HW 0x005395f0
+void C2_HOOK_CDECL BrPixelmapEnd(void) {
+
+#if !defined(REC2_MATCHING)
+    BrImageRemove(&Image_BRMAP1);
+#endif
+    BrResFree(_pixelmap.res);
+    BrMemSet(&_pixelmap, 0, sizeof(br_pixelmap_state));
+}

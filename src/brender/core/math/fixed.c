@@ -2,9 +2,10 @@
 
 #include <assert.h>
 
-#define fixed_cos_table ((unsigned short*)&C2V(fixed_sin_table)[64])
+#define fixed_cos_table ((unsigned short*)&fixed_sin_table[64])
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(unsigned short, fixed_sin_table, 322, 0x0066cc2c, {
+// GLOBAL: CARMA2_HW 0x0066cc2c
+unsigned short fixed_sin_table[322] = {
     // start sin table
     0x0000, 0x0324, 0x0647, 0x096a, 0x0c8b, 0x0fab, 0x12c7, 0x15e1,
     0x18f8, 0x1c0b, 0x1f19, 0x2223, 0x2527, 0x2826, 0x2b1e, 0x2e10,
@@ -48,9 +49,10 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(unsigned short, fixed_sin_table, 32
     0x7640, 0x776b, 0x7883, 0x7989, 0x7a7c, 0x7b5c, 0x7c29, 0x7ce2,
     0x7d89, 0x7e1c, 0x7e9c, 0x7f08, 0x7f61, 0x7fa6, 0x7fd7, 0x7ff5,
     0x7fff, 0x7fff,
-});
+};
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(unsigned short, fixed_asin_table, 257, 0x0066ceb0, {
+// GLOBAL: CARMA2_HW 0x0066ceb0
+unsigned short fixed_asin_table[257] = {
     0xc001, 0xc519, 0xc737, 0xc8d7, 0xca37, 0xcb6d, 0xcc87, 0xcd8a,
     0xce7c, 0xcf5f, 0xd037, 0xd104, 0xd1c9, 0xd286, 0xd33c, 0xd3ed,
     0xd498, 0xd53e, 0xd5df, 0xd67c, 0xd716, 0xd7ac, 0xd83f, 0xd8cf,
@@ -84,9 +86,10 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(unsigned short, fixed_asin_table, 2
     0x2b68, 0x2c13, 0x2cc4, 0x2d7a, 0x2e37, 0x2efc, 0x2fc9, 0x30a1,
     0x3184, 0x3276, 0x3379, 0x3493, 0x35c9, 0x3729, 0x38c9, 0x3ae7,
     0x4000,
-});
+};
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(unsigned short, fixed_acos_table, 257, 0x0066d0b2, {
+// GLOBAL: CARMA2_HW 0x0066d0b2
+static unsigned short fixed_acos_table[257] = {
     0x7fff, 0x7ae7, 0x78c9, 0x7729, 0x75c9, 0x7493, 0x7379, 0x7276,
     0x7184, 0x70a1, 0x6fc9, 0x6efc, 0x6e37, 0x6d7a, 0x6cc4, 0x6c13,
     0x6b68, 0x6ac2, 0x6a21, 0x6984, 0x68ea, 0x6854, 0x67c1, 0x6731,
@@ -120,9 +123,10 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(unsigned short, fixed_acos_table, 2
     0x1497, 0x13ec, 0x133b, 0x1285, 0x11c8, 0x1103, 0x1036, 0x0f5e,
     0x0e7b, 0x0d89, 0x0c86, 0x0b6c, 0x0a36, 0x08d6, 0x0736, 0x0518,
     0x0000,
-});
+};
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(unsigned short, fixed_atan_table, 257, 0x0066d2b4, {
+// GLOBAL: CARMA2_HW 0x0066d2b4
+static unsigned short fixed_atan_table[257] = {
     0x0000, 0x0028, 0x0051, 0x007a, 0x00a2, 0x00cb, 0x00f4, 0x011d,
     0x0145, 0x016e, 0x0197, 0x01bf, 0x01e8, 0x0211, 0x0239, 0x0262,
     0x028b, 0x02b3, 0x02dc, 0x0304, 0x032d, 0x0355, 0x037e, 0x03a6,
@@ -156,9 +160,10 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(unsigned short, fixed_atan_table, 2
     0x1eaf, 0x1ec5, 0x1eda, 0x1ef0, 0x1f05, 0x1f1b, 0x1f30, 0x1f45,
     0x1f5a, 0x1f6f, 0x1f84, 0x1f99, 0x1fad, 0x1fc2, 0x1fd7, 0x1feb,
     0x2000,
-});
+};
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(uint16_t, fast_sqrt_table, 192, 0x0066d4b6, {
+// GLOBAL: CARMA2_HW 0x0066d4b6
+static uint16_t fast_sqrt_table[192] = {
     0x8000, 0x80ff, 0x81fc, 0x82f7, 0x83f0, 0x84e7, 0x85dd, 0x86d1,
     0x87c3, 0x88b4, 0x89a3, 0x8a90, 0x8b7c, 0x8c66, 0x8d4e, 0x8e36,
     0x8f1b, 0x9000, 0x90e2, 0x91c4, 0x92a4, 0x9383, 0x9460, 0x953c,
@@ -183,9 +188,10 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(uint16_t, fast_sqrt_table, 192, 0x0
     0xf3b4, 0xf43a, 0xf4c0, 0xf546, 0xf5cb, 0xf651, 0xf6d6, 0xf75a,
     0xf7de, 0xf863, 0xf8e6, 0xf96a, 0xf9ed, 0xfa70, 0xfaf3, 0xfb75,
     0xfbf7, 0xfc79, 0xfcfb, 0xfd7c, 0xfdfd, 0xfe7e, 0xfeff, 0xff7f,
-});
+};
 
-static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(uint16_t, fast_rsqrt_table, 192, 0x0066d636, {
+// GLOBAL: CARMA2_HW 0x0066d636
+static uint16_t fast_rsqrt_table[192] = {
     0xffff, 0xfe05, 0xfc17, 0xfa33, 0xf85b, 0xf68c, 0xf4c8, 0xf30d,
     0xf15b, 0xefb3, 0xee13, 0xec7b, 0xeaeb, 0xe964, 0xe7e3, 0xe66b,
     0xe4f9, 0xe38e, 0xe229, 0xe0cc, 0xdf74, 0xde23, 0xdcd7, 0xdb91,
@@ -210,8 +216,9 @@ static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(uint16_t, fast_rsqrt_table, 192, 0x
     0x8675, 0x862b, 0x85e1, 0x8598, 0x8550, 0x8508, 0x84c0, 0x8479,
     0x8432, 0x83ec, 0x83a6, 0x8361, 0x831c, 0x82d7, 0x8293, 0x824f,
     0x820c, 0x81c9, 0x8186, 0x8144, 0x8103, 0x80c1, 0x8080, 0x8040,
-});
+};
 
+// FUNCTION: CARMA2_HW 0x00537110
 br_fixed_ls C2_HOOK_CDECL BrFixedAbs(br_fixed_ls a) {
 
     if (a < 0) {
@@ -219,157 +226,156 @@ br_fixed_ls C2_HOOK_CDECL BrFixedAbs(br_fixed_ls a) {
     }
     return a;
 }
-C2_HOOK_FUNCTION(0x00537110, BrFixedAbs)
 
+// FUNCTION: CARMA2_HW 0x00537120
 br_fixed_ls C2_HOOK_FASTCALL BrFixedMul(br_fixed_ls a, br_fixed_ls b) {
 
     return ((long long)a * (long long)b) >> 16;
 }
-C2_HOOK_FUNCTION(0x00537120, BrFixedMul)
 
+// FUNCTION: CARMA2_HW 0x00537131
 br_fixed_ls C2_HOOK_CDECL BrFixedMac2(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d) >> 16;
 }
-C2_HOOK_FUNCTION(0x00537131, BrFixedMac2)
 
+// FUNCTION: CARMA2_HW 0x00537154
 br_fixed_ls C2_HOOK_CDECL BrFixedMac3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f) >> 16;
 }
-C2_HOOK_FUNCTION(0x00537154, BrFixedMac3)
 
+// FUNCTION: CARMA2_HW 0x00537181
 br_fixed_ls C2_HOOK_CDECL BrFixedMac4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f, br_fixed_ls g, br_fixed_ls h) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f + (long long)g * (long long)h) >> 16;
 }
-C2_HOOK_FUNCTION(0x00537181, BrFixedMac4)
 
+// FUNCTION: CARMA2_HW 0x005371b8
 br_fixed_ls C2_HOOK_CDECL BrFixedLength2(br_fixed_ls a, br_fixed_ls b) {
 
     return _BrISqrt64((long long)a * (long long)a + (long long)b * (long long)b);
 }
-C2_HOOK_FUNCTION(0x005371b8, BrFixedLength2)
 
+// FUNCTION: CARMA2_HW 0x005371dc
 br_fixed_ls C2_HOOK_CDECL BrFixedLength3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
 
     return _BrISqrt64((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c);
 }
-C2_HOOK_FUNCTION(0x005371dc, BrFixedLength3)
 
+// FUNCTION: CARMA2_HW 0x00537209
 br_fixed_ls C2_HOOK_CDECL BrFixedLength4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
 
     return _BrISqrt64((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c + (long long)d * (long long)d);
 }
-C2_HOOK_FUNCTION(0x00537209, BrFixedLength4)
 
+// FUNCTION: CARMA2_HW 0x0053723f
 br_fixed_ls C2_HOOK_CDECL BrFixedRLength2(br_fixed_ls a, br_fixed_ls b) {
 
     return _BrFastRSqrt64((long long)a * (long long)a + (long long)b * (long long)b);
 }
-C2_HOOK_FUNCTION(0x0053723f, BrFixedRLength2)
 
+// FUNCTION: CARMA2_HW 0x00537263
 br_fixed_ls C2_HOOK_CDECL BrFixedRLength3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
 
     return _BrFastRSqrt64((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c);
 }
-C2_HOOK_FUNCTION(0x00537263, BrFixedRLength3)
 
+// FUNCTION: CARMA2_HW 0x00537290
 br_fixed_ls C2_HOOK_CDECL BrFixedRLength4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
 
     return _BrFastRSqrt64((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c + (long long)d * (long long)d);
 }
-C2_HOOK_FUNCTION(0x00537290, BrFixedRLength4)
 
+// FUNCTION: CARMA2_HW 0x005372c6
 br_fixed_ls C2_HOOK_CDECL BrFixedDiv(br_fixed_ls a, br_fixed_ls b) {
 
     return (((long long)a) << 16) / (long long)b;
 }
-C2_HOOK_FUNCTION(0x005372c6, BrFixedDiv)
 
+// FUNCTION: CARMA2_HW 0x005372db
 br_fixed_ls C2_HOOK_CDECL BrFixedDivR(br_fixed_ls a, br_fixed_ls b) {
 
     return (((long long)a) << 16 | ((((uint32_t)(a)) & 0x80000000) ? 0xffff : 0x0)) / b;
 }
-C2_HOOK_FUNCTION(0x005372db, BrFixedDivR)
 
+// FUNCTION: CARMA2_HW 0x005372f1
 br_fixed_ls C2_HOOK_CDECL BrFixedDivF(br_fixed_ls a, br_fixed_ls b) {
 
     return (((long long)a) << 31) / b;
 }
-C2_HOOK_FUNCTION(0x005372f1, BrFixedDivF)
 
+// FUNCTION: CARMA2_HW 0x00537322
 br_fixed_ls C2_HOOK_CDECL BrFixedMulDiv(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
 
     return ((long long)a * (long long)b) / (long long)c;
 }
-C2_HOOK_FUNCTION(0x00537322, BrFixedMulDiv)
 
+// FUNCTION: CARMA2_HW 0x00537332
 br_fixed_ls C2_HOOK_CDECL BrFixedMac2Div(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d) / (long long)e;
 }
-C2_HOOK_FUNCTION(0x00537332, BrFixedMac2Div)
 
+// FUNCTION: CARMA2_HW 0x00537354
 br_fixed_ls C2_HOOK_CDECL BrFixedMac3Div(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f, br_fixed_ls g) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f) / (long long)g;
 }
-C2_HOOK_FUNCTION(0x00537354, BrFixedMac3Div)
 
+// FUNCTION: CARMA2_HW 0x00537380
 br_fixed_ls C2_HOOK_CDECL BrFixedMac4Div(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f, br_fixed_ls g, br_fixed_ls h, br_fixed_ls i) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f + (long long)g * (long long)h) / (long long)i;
 }
-C2_HOOK_FUNCTION(0x00537380, BrFixedMac4Div)
 
+// FUNCTION: CARMA2_HW 0x005373b6
 br_fixed_ls C2_HOOK_CDECL BrFixedFMac2(br_fixed_lsf a, br_fixed_ls b, br_fixed_lsf c, br_fixed_ls d) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d) >> 15;
 }
-C2_HOOK_FUNCTION(0x005373b6, BrFixedFMac2)
 
+// FUNCTION: CARMA2_HW 0x005373db
 br_fixed_ls C2_HOOK_CDECL BrFixedFMac3(br_fixed_lsf a, br_fixed_ls b, br_fixed_lsf c, br_fixed_ls d, br_fixed_lsf e, br_fixed_ls f) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f) >> 15;
 }
-C2_HOOK_FUNCTION(0x005373db, BrFixedFMac3)
 
+// FUNCTION: CARMA2_HW 0x0053740b
 br_fixed_ls C2_HOOK_CDECL BrFixedFMac4(br_fixed_lsf a, br_fixed_ls b, br_fixed_lsf c, br_fixed_ls d, br_fixed_lsf e, br_fixed_ls f, br_fixed_lsf g, br_fixed_ls h) {
 
     return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f + (long long)g * (long long)h) >> 15;
 }
-C2_HOOK_FUNCTION(0x0053740b, BrFixedFMac4)
 
+// FUNCTION: CARMA2_HW 0x00537446
 br_fixed_ls C2_HOOK_CDECL BrFixedRcp(br_fixed_ls a) {
 
     return (br_fixed_ls)(((long long)0x100000000) / a);
 }
-C2_HOOK_FUNCTION(0x00537446, BrFixedRcp)
 
+// FUNCTION: CARMA2_HW 0x00537457
 br_fixed_ls C2_HOOK_CDECL BrFixedSqr(br_fixed_ls a) {
 
     return ((long long)a * (long long)a) >> 16;
 }
-C2_HOOK_FUNCTION(0x00537457, BrFixedSqr)
 
+// FUNCTION: CARMA2_HW 0x00537467
 br_fixed_ls C2_HOOK_CDECL BrFixedSqr2(br_fixed_ls a, br_fixed_ls b) {
 
     return ((long long)a * (long long)a + (long long)b * (long long)b) >> 16;
 }
-C2_HOOK_FUNCTION(0x00537467, BrFixedSqr2)
 
+// FUNCTION: CARMA2_HW 0x00537488
 br_fixed_ls C2_HOOK_CDECL BrFixedSqr3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
 
     return ((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c) >> 16;
 }
-C2_HOOK_FUNCTION(0x00537488, BrFixedSqr3)
 
+// FUNCTION: CARMA2_HW 0x005374b2
 br_fixed_ls C2_HOOK_CDECL BrFixedSqr4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
 
     return ((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c + (long long)d * (long long)d) >> 16;
 }
-C2_HOOK_FUNCTION(0x005374b2, BrFixedSqr4)
 
 static int16_t fixed_lut_interpolate(uint16_t *table, uint32_t value) {
     uint16_t idx = value >> 8;
@@ -379,55 +385,56 @@ static int16_t fixed_lut_interpolate(uint16_t *table, uint32_t value) {
     return basew + errw;
 }
 
+// FUNCTION: CARMA2_HW 0x005374e5
 br_fixed_ls C2_HOOK_CDECL BrFixedSin(br_angle a) {
 
-    return 2 * fixed_lut_interpolate(C2V(fixed_sin_table), a);
+    return 2 * fixed_lut_interpolate(fixed_sin_table, a);
 }
-C2_HOOK_FUNCTION(0x005374e5, BrFixedSin)
 
+// FUNCTION: CARMA2_HW 0x00537516
 br_fixed_ls C2_HOOK_CDECL BrFixedCos(br_angle a) {
 
     return 2 * fixed_lut_interpolate(fixed_cos_table, a);
 }
-C2_HOOK_FUNCTION(0x00537516, BrFixedCos)
 
+// FUNCTION: CARMA2_HW 0x00537547
 br_angle C2_HOOK_CDECL BrFixedASin(br_fixed_ls a) {
 
     assert(a <= BrFloatToFixed(1.f) && "a must be <= BrFloatToFixed(1.f)");
     assert(a >= BrFloatToFixed(-1.f) && "a must be >= BrFloatToFixed(-1.f)");
 
-    return fixed_lut_interpolate(C2V(fixed_asin_table), (a+0x10000) >> 1);
+    return fixed_lut_interpolate(fixed_asin_table, (a+0x10000) >> 1);
 }
-C2_HOOK_FUNCTION(0x00537547, BrFixedASin)
 
+// FUNCTION: CARMA2_HW 0x0053757b
 br_angle C2_HOOK_CDECL BrFixedACos(br_fixed_ls a) {
 
     assert(a <= BrFloatToFixed(1.f) && "a must be <= BrFloatToFixed(1.f)");
     assert(a >= BrFloatToFixed(-1.f) && "a must be >= BrFloatToFixed(-1.f)");
 
-    return fixed_lut_interpolate(C2V(fixed_acos_table), (a+0x10000) >> 1);
+    return fixed_lut_interpolate(fixed_acos_table, (a+0x10000) >> 1);
 }
-C2_HOOK_FUNCTION(0x0053757b, BrFixedACos)
 
+// FUNCTION: CARMA2_HW 0x005375af
 br_angle C2_HOOK_CDECL BrFixedATan2(br_fixed_ls x, br_fixed_ls y) {
 
     if (y > 0) {
         if (x >= 0) {
             if (x > y) {
-                return fixed_lut_interpolate(C2V(fixed_atan_table), ((((unsigned long long)y)<<32) / x) >> 16);              // atan(y / x)
+                return fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)y)<<32) / x) >> 16);              // atan(y / x)
             } else if (x == y) {
                 return 0x2000;                                                              // PI / 4
             } else {
-                return 0x4000 - fixed_lut_interpolate(C2V(fixed_atan_table), ((((unsigned long long)x)<<32) / y) >> 16);     // PI/2 - atan(x / y)
+                return 0x4000 - fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)x)<<32) / y) >> 16);     // PI/2 - atan(x / y)
             }
         } else {
             x = -x;
             if (x < y) {
-                return 0x4000 + fixed_lut_interpolate(C2V(fixed_atan_table), ((((unsigned long long)x)<<32) / y) >> 16);     // PI/2 + atan(x / y)
+                return 0x4000 + fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)x)<<32) / y) >> 16);     // PI/2 + atan(x / y)
             } else if (x == y) {
                 return 0x6000;                                                              // 3 * PI / 4
             } else {
-                return 0x8000 - fixed_lut_interpolate(C2V(fixed_atan_table), ((((unsigned long long)y)<<32) / x) >> 16);     // PI - atan(y / x)
+                return 0x8000 - fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)y)<<32) / x) >> 16);     // PI - atan(y / x)
             }
         }
     } else if (y < 0) {
@@ -435,19 +442,19 @@ br_angle C2_HOOK_CDECL BrFixedATan2(br_fixed_ls x, br_fixed_ls y) {
         if (x < 0) {
             x = -x;
             if (x > y) {
-                return 0x8000 + fixed_lut_interpolate(C2V(fixed_atan_table), ((((unsigned long long)y)<<32) / x) >> 16);     // PI + atan(y / x)
+                return 0x8000 + fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)y)<<32) / x) >> 16);     // PI + atan(y / x)
             } else if (x == y) {
                 return 0xa000;                                                              // 5 * PI / 4
             } else {
-                return 0xc000 - fixed_lut_interpolate(C2V(fixed_atan_table), ((((unsigned long long)x)<<32) / y) >> 16);     // 3 * PI / 2 - atan(x / y)
+                return 0xc000 - fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)x)<<32) / y) >> 16);     // 3 * PI / 2 - atan(x / y)
             }
         } else {
             if (x < y) {
-                return 0xc000 + fixed_lut_interpolate(C2V(fixed_atan_table), ((((unsigned long long)x)<<32) / y) >> 16);     // 3 * PI / 2 + atan(x / y)
+                return 0xc000 + fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)x)<<32) / y) >> 16);     // 3 * PI / 2 + atan(x / y)
             } else if (x == y) {
                 return 0xe000;                                                              // 7 * PI / 4
             } else {
-                return -fixed_lut_interpolate(C2V(fixed_atan_table), ((((unsigned long long)y)<<32) / x) >> 16);             // 2 * pi - atan(y / x)
+                return -fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)y)<<32) / x) >> 16);             // 2 * pi - atan(y / x)
             }
         }
     } else {
@@ -458,8 +465,8 @@ br_angle C2_HOOK_CDECL BrFixedATan2(br_fixed_ls x, br_fixed_ls y) {
         }
     }
 }
-C2_HOOK_FUNCTION(0x005375af, BrFixedATan2)
 
+// FUNCTION: CARMA2_HW 0x005377b3
 br_angle C2_HOOK_CDECL BrFixedATan2Fast(br_fixed_ls x, br_fixed_ls y) {
     if (y > 0) {
         if (x >= 0) {
@@ -509,8 +516,8 @@ br_angle C2_HOOK_CDECL BrFixedATan2Fast(br_fixed_ls x, br_fixed_ls y) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x005377b3, BrFixedATan2Fast)
 
+// FUNCTION: CARMA2_HW 0x005378bb
 uint16_t C2_HOOK_CDECL _BrISqrt32(uint32_t a) {
     // Shifting nth root algorithm
     uint32_t err;
@@ -551,8 +558,8 @@ uint16_t C2_HOOK_CDECL _BrISqrt32(uint32_t a) {
     }
     return est;
 }
-C2_HOOK_FUNCTION(0x005378bb, _BrISqrt32)
 
+// FUNCTION: CARMA2_HW 0x00537a13
 br_uint_32 C2_HOOK_FASTCALL _BrISqrt64(uint64_t a) {
     // Shifting nth root algorithm
     uint64_t err;
@@ -578,8 +585,8 @@ br_uint_32 C2_HOOK_FASTCALL _BrISqrt64(uint64_t a) {
     }
     return (br_uint_32)est;
 }
-C2_HOOK_FUNCTION(0x00537a13, _BrISqrt64)
 
+// FUNCTION: CARMA2_HW 0x00537cba
 uint16_t C2_HOOK_CDECL _BrFastSqrt32(uint32_t v) {
     uint32_t exp;
 
@@ -592,11 +599,11 @@ uint16_t C2_HOOK_CDECL _BrFastSqrt32(uint32_t v) {
     exp = (exp | 1) + 1;
     // Normalise number: exponent in [0..31], mantissa in [0x40-0xff]
     v = (v << (32 - exp)) >> 24;
-    v = C2V(fast_sqrt_table)[v-0x40];
+    v = fast_sqrt_table[v-0x40];
     return (v << 16) >> (32 - (exp >> 1));
 }
-C2_HOOK_FUNCTION(0x00537cba, _BrFastSqrt32)
 
+// FUNCTION: CARMA2_HW 0x00537ce5
 uint32_t C2_HOOK_CDECL _BrFastRSqrt32(uint32_t v) {
     uint32_t exp;
 
@@ -607,11 +614,11 @@ uint32_t C2_HOOK_CDECL _BrFastRSqrt32(uint32_t v) {
     }
     exp = exp | 1;
     v = (v << (31 - exp)) >> 24;
-    v = C2V(fast_rsqrt_table)[v-0x40];
+    v = fast_rsqrt_table[v-0x40];
     return v >> (exp >> 1);
 }
-C2_HOOK_FUNCTION(0x00537ce5, _BrFastRSqrt32)
 
+// FUNCTION: CARMA2_HW 0x00537d0e
 br_uint_32 C2_HOOK_FASTCALL _BrFastRSqrt64(uint64_t v) {
     uint32_t exp;
     uint32_t tmp;
@@ -625,7 +632,7 @@ br_uint_32 C2_HOOK_FASTCALL _BrFastRSqrt64(uint64_t v) {
         }
         exp = (31-exp) & 0xfe;
         v = (v << exp) >> 56;
-        v = C2V(fast_rsqrt_table)[v-0x40];
+        v = fast_rsqrt_table[v-0x40];
         return (br_uint_32)(v >> ((30 - exp) >> 1));
     }
     tmp = (br_uint_32)v;
@@ -633,7 +640,6 @@ br_uint_32 C2_HOOK_FASTCALL _BrFastRSqrt64(uint64_t v) {
     }
     exp = exp | 1;
     v = (v << (31 - exp)) >> 24;
-    v = C2V(fast_rsqrt_table)[v-0x40];
+    v = fast_rsqrt_table[v-0x40];
     return (br_uint_32)((v << 16) >> (exp >> 1));
 }
-C2_HOOK_FUNCTION(0x00537d0e, _BrFastRSqrt64)

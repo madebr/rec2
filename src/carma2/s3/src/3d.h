@@ -3,12 +3,12 @@
 
 #include <s3/s3.h>
 
-C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_006b2c6c);
-C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_006b2c4c);
-C2_HOOK_VARIABLE_DECLARE(float, gFLOAT_006b2c68);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gS3_listener_position_now);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gS3_listener_vel_now);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gS3_listener_left_now);
+extern float gFLOAT_006b2c6c;
+extern float gFLOAT_006b2c4c;
+extern float gFLOAT_006b2c68;
+extern br_vector3 gS3_listener_position_now;
+extern br_vector3 gS3_listener_vel_now;
+extern br_vector3 gS3_listener_left_now;
 
 void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src);
 

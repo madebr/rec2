@@ -5,9 +5,9 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_primitive_library_d3d, PrimitiveLibraryD3D);
+extern br_primitive_library_d3d PrimitiveLibraryD3D;
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(br_token, PrimPartsD3DTokens, 3);
+extern br_token PrimPartsD3DTokens[3];
 
 br_error C2_HOOK_CDECL PrimitiveLibraryD3DInitialise(br_primitive_library_d3d* self, br_device_d3d* dev);
 

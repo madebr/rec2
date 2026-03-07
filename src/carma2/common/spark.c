@@ -18,55 +18,118 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gSmoke_on, 0x00660110, 1);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gShade_list, 16, 0x006b7840);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int*, gShade_table, 0x00660140, &gShade_list[8]); /* FIXME: rename to gDust_table*/
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_dust_tables, 0x006a82b4);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gShrapnel_model, 2, 0x006aa588);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gBlack_material, 0x006b7880);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tShrapnel, gShrapnel, 30, 0x006a9180);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gColumn_flags, 0x006aa59c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gLollipop_model, 0x006aa380);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gFlame_map, 20, 0x006a8638);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmoke_column, gSmoke_column, 10, 0x006a96a8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSplash_flags, 0x006aa570);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSplash_model, 0x006a8758);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_splash_types, 0x006aa5a4);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gSplash_material, 20, 0x006a9130);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSplash, gSplash, 32, 0x006a82b8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSpark_flags, 0x006aa57c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gIt_shade_table, 0x006aa5ac);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDust_rotate, 0x006aa568);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tReplay_splash, gReplay_splashes, 10, 0x006aa388);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gReplay_splash_flags, 0x006aa574);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_AFE_color_cycle, 0x006b7884);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gAFE_color_cycle, 0x006aa5b0);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gShrapnel_flags, 0x006aa584);
-C2_HOOK_VARIABLE_IMPLEMENT(br_camera*, gSpark_cam, 0x006a82b0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_matrix4, gCameraToScreen, 0x006a8718);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSpark, gSparks, 32, 0x006a9b80);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tBRender_smoke*, gBR_smoke_pointers, 35, 0x006a8760);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gN_BR_smoke_structs, 0x006aa56c);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmoke, gSmoke, 25, 0x006a8ce0);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSmoke_flags, 0x006aa590);
+
+// GLOBAL: CARMA2_HW 0x00660110
+int gSmoke_on = 1;
+
+// GLOBAL: CARMA2_HW 0x006b7840
+int gShade_list[16];
+
+// GLOBAL: CARMA2_HW 0x00660140
+int* gShade_table = &gShade_list[8]; /* FIXME: rename to gDust_table*/
+
+// GLOBAL: CARMA2_HW 0x006a82b4
+int gNum_dust_tables;
+
+// GLOBAL: CARMA2_HW 0x006aa588
+br_model* gShrapnel_model[2];
+
+// GLOBAL: CARMA2_HW 0x006b7880
+br_material* gBlack_material;
+
+// GLOBAL: CARMA2_HW 0x006a9180
+tShrapnel gShrapnel[30];
+
+// GLOBAL: CARMA2_HW 0x006aa59c
+int gColumn_flags;
+
+// GLOBAL: CARMA2_HW 0x006aa380
+br_model* gLollipop_model;
+
+// GLOBAL: CARMA2_HW 0x006a8638
+br_pixelmap* gFlame_map[20];
+
+// GLOBAL: CARMA2_HW 0x006a96a8
+tSmoke_column gSmoke_column[10];
+
+// GLOBAL: CARMA2_HW 0x006aa570
+int gSplash_flags;
+
+// GLOBAL: CARMA2_HW 0x006a8758
+br_model* gSplash_model;
+
+// GLOBAL: CARMA2_HW 0x006aa5a4
+int gNum_splash_types;
+
+// GLOBAL: CARMA2_HW 0x006a9130
+br_material* gSplash_material[20];
+
+// GLOBAL: CARMA2_HW 0x006a82b8
+tSplash gSplash[32];
+
+// GLOBAL: CARMA2_HW 0x006aa57c
+int gSpark_flags;
+
+// GLOBAL: CARMA2_HW 0x006aa5ac
+br_pixelmap* gIt_shade_table;
+
+// GLOBAL: CARMA2_HW 0x006aa568
+int gDust_rotate;
+
+// GLOBAL: CARMA2_HW 0x006aa388
+tReplay_splash gReplay_splashes[10];
+
+// GLOBAL: CARMA2_HW 0x006aa574
+int gReplay_splash_flags;
+
+// GLOBAL: CARMA2_HW 0x006b7884
+tU32 gNext_AFE_color_cycle;
+
+// GLOBAL: CARMA2_HW 0x006aa5b0
+int gAFE_color_cycle;
+
+// GLOBAL: CARMA2_HW 0x006aa584
+int gShrapnel_flags;
+
+// GLOBAL: CARMA2_HW 0x006a82b0
+br_camera* gSpark_cam;
+
+// GLOBAL: CARMA2_HW 0x006a8718
+br_matrix4 gCameraToScreen;
+
+// GLOBAL: CARMA2_HW 0x006a9b80
+tSpark gSparks[32];
+
+// GLOBAL: CARMA2_HW 0x006a8760
+tBRender_smoke* gBR_smoke_pointers[35];
+
+// GLOBAL: CARMA2_HW 0x006aa56c
+int gN_BR_smoke_structs;
+
+// GLOBAL: CARMA2_HW 0x006a8ce0
+tSmoke gSmoke[25];
+
+// GLOBAL: CARMA2_HW 0x006aa590
+int gSmoke_flags;
 
 #define CHARS1_TO_INT(A)            ((A) - '0')
 #define CHARS2_TO_INT(A, B)         (10 * CHARS1_TO_INT(A) + CHARS1_TO_INT(B))
 #define CHARS3_TO_INT(A, B, C)      (10 * CHARS2_TO_INT(A, B) + CHARS1_TO_INT(C))
 #define CHARS4_TO_INT(A, B, C, D)   (10 * CHARS3_TO_INT(A, B, C) + CHARS1_TO_INT(D))
 
+// FUNCTION: CARMA2_HW 0x004fc9d0
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
 
-    C2V(gSmoke_on) = pSmoke_on;
+    gSmoke_on = pSmoke_on;
 }
-C2_HOOK_FUNCTION(0x004fc9d0, SetSmokeOn)
 
+// FUNCTION: CARMA2_HW 0x004fca30
 int C2_HOOK_FASTCALL GetSmokeOn(void) {
 
-    return C2V(gSmoke_on);
+    return gSmoke_on;
 }
-C2_HOOK_FUNCTION(0x004fca30, GetSmokeOn)
 
+// FUNCTION: CARMA2_HW 0x004fb910
 void C2_HOOK_FASTCALL GenerateSmokeShades(void) {
     static int rb = 0x00;
     static int gb = 0x00;
@@ -90,18 +153,18 @@ void C2_HOOK_FASTCALL GenerateSmokeShades(void) {
 
 #define RGB(R, G, B) (((R) << 16) | ((G) << 8) | ((B) << 0))
 
-    C2V(gShade_list)[0] = RGB(rb, gb, bb);
-    C2V(gShade_list)[1] = RGB(rl, gl, bl);
-    C2V(gShade_list)[3] = RGB(rs, gs, bs);
-    C2V(gShade_list)[4] = C2V(gShade_list)[3];
-    C2V(gShade_list)[2] = RGB(rm, gm, bm);
-    C2V(gShade_list)[7] = RGB(rd, gd, bd);
+    gShade_list[0] = RGB(rb, gb, bb);
+    gShade_list[1] = RGB(rl, gl, bl);
+    gShade_list[3] = RGB(rs, gs, bs);
+    gShade_list[4] = gShade_list[3];
+    gShade_list[2] = RGB(rm, gm, bm);
+    gShade_list[7] = RGB(rd, gd, bd);
 
 #undef RGB
 
 }
-C2_HOOK_FUNCTION(0x004fb910, GenerateSmokeShades)
 
+// FUNCTION: CARMA2_HW 0x004fdb70
 void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f) {
     int i;
     int red;
@@ -111,19 +174,19 @@ void C2_HOOK_FASTCALL GetSmokeShadeTables(FILE* f) {
     float half;
     float three_quarter;
 
-    C2V(gNum_dust_tables) = GetAnInt(f);
-    if (C2V(gNum_dust_tables) > 8) {
-        C2V(gNum_dust_tables) = 8;
+    gNum_dust_tables = GetAnInt(f);
+    if (gNum_dust_tables > 8) {
+        gNum_dust_tables = 8;
     }
-    for (i = 0; i < C2V(gNum_dust_tables); i++) {
+    for (i = 0; i < gNum_dust_tables; i++) {
         PossibleService();
         GetThreeInts(f, &red, &green, &blue);
         GetThreeScalars(f, &quarter, &half, &three_quarter);
-        C2V(gShade_table)[i] = (red << 24) | (green << 8) | (blue << 0);
+        gShade_table[i] = (red << 24) | (green << 8) | (blue << 0);
     }
 }
-C2_HOOK_FUNCTION(0x004fdb70, GetSmokeShadeTables)
 
+// FUNCTION: CARMA2_HW 0x00516240
 void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale) {
     int i;
 
@@ -133,53 +196,53 @@ void C2_HOOK_FASTCALL ModelScale(br_model* pModel, float pScale) {
     }
     BrModelUpdate(pModel, BR_MODU_ALL);
 }
-C2_HOOK_FUNCTION(0x00516240, ModelScale)
 
+// FUNCTION: CARMA2_HW 0x005162a0
 float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF) {
 
     return BrVector3Dot(pP, pN) - pF;
 }
-C2_HOOK_FUNCTION(0x005162a0, DistanceFromFaceND)
 
+// FUNCTION: CARMA2_HW 0x004f87a0
 void C2_HOOK_FASTCALL ResetSparks(void) {
 
-    C2V(gSpark_flags) = 0;
+    gSpark_flags = 0;
 }
-C2_HOOK_FUNCTION(0x004f87a0, ResetSparks)
 
 void C2_HOOK_FASTCALL LoadInShrapnel(void) {
 
-    C2V(gShrapnel_model)[0] = LoadModel("FRAG4.DAT");
-    ModelScale(C2V(gShrapnel_model)[0], 0.5f);
-    C2V(gShrapnel_model)[1] = LoadModel("FRAG5.DAT");
-    ModelScale(C2V(gShrapnel_model)[1], 0.5f);
-    BrModelAdd(C2V(gShrapnel_model)[0]);
-    BrModelAdd(C2V(gShrapnel_model)[1]);
-    C2V(gBlack_material) = GetSimpleMaterial("M14.MAT", 4);
-    C2V(gNon_track_actor)->material = C2V(gBlack_material);
+    gShrapnel_model[0] = LoadModel("FRAG4.DAT");
+    ModelScale(gShrapnel_model[0], 0.5f);
+    gShrapnel_model[1] = LoadModel("FRAG5.DAT");
+    ModelScale(gShrapnel_model[1], 0.5f);
+    BrModelAdd(gShrapnel_model[0]);
+    BrModelAdd(gShrapnel_model[1]);
+    gBlack_material = GetSimpleMaterial("M14.MAT", 4);
+    gNon_track_actor->material = gBlack_material;
 }
 
 void C2_HOOK_FASTCALL InitShrapnel(void) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gShrapnel)); i++) {
-        C2V(gShrapnel)[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        C2V(gShrapnel)[i].actor->parent = NULL;
-        C2V(gShrapnel)[i].actor->model = C2V(gShrapnel_model)[i % 2];
-        C2V(gShrapnel)[i].actor->render_style = BR_RSTYLE_DEFAULT;
-        C2V(gShrapnel)[i].actor->t.type = BR_TRANSFORM_MATRIX34;
-        C2V(gShrapnel)[i].actor->material = BrMaterialFind("DEBRIS.MAT");
-        C2V(gShrapnel)[i].age = 0;
-        C2V(gShrapnel)[i].shear1 = FRandomBetween(-2.f, 2.f);
-        C2V(gShrapnel)[i].shear2 = FRandomBetween(-2.f, 2.f);
-        BrVector3SetFloat(&C2V(gShrapnel)[i].axis,
+    for (i = 0; i < REC2_ASIZE(gShrapnel); i++) {
+        gShrapnel[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        gShrapnel[i].actor->parent = NULL;
+        gShrapnel[i].actor->model = gShrapnel_model[i % 2];
+        gShrapnel[i].actor->render_style = BR_RSTYLE_DEFAULT;
+        gShrapnel[i].actor->t.type = BR_TRANSFORM_MATRIX34;
+        gShrapnel[i].actor->material = BrMaterialFind("DEBRIS.MAT");
+        gShrapnel[i].age = 0;
+        gShrapnel[i].shear1 = FRandomBetween(-2.f, 2.f);
+        gShrapnel[i].shear2 = FRandomBetween(-2.f, 2.f);
+        BrVector3SetFloat(&gShrapnel[i].axis,
             FRandomBetween(-1.f, 1.f),
             FRandomBetween(-1.f, 1.f),
             FRandomBetween(-1.f, 1.f));
-        BrVector3Normalise(&C2V(gShrapnel)[i].axis, &C2V(gShrapnel)[i].axis);
+        BrVector3Normalise(&gShrapnel[i].axis, &gShrapnel[i].axis);
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004fc3a0
 void C2_HOOK_FASTCALL InitFlame(void) {
     int i;
     int j;
@@ -187,58 +250,58 @@ void C2_HOOK_FASTCALL InitFlame(void) {
     br_actor* actor;
     br_material* material;
 
-    C2V(gColumn_flags) = 0;
-    C2V(gLollipop_model) = BrModelAllocate("Lollipop", 4, 2);
+    gColumn_flags = 0;
+    gLollipop_model = BrModelAllocate("Lollipop", 4, 2);
     c2_strcpy(name, "FLAMES.PIX");
-    c2_strcpy(C2V(gCurrent_load_directory), "COMMON");
-    if (LoadTextureTryAllLocations(name, C2V(gFlame_map), REC2_ASIZE(C2V(gFlame_map))) != REC2_ASIZE(C2V(gFlame_map))) {
+    c2_strcpy(gCurrent_load_directory, "COMMON");
+    if (LoadTextureTryAllLocations(name, gFlame_map, REC2_ASIZE(gFlame_map)) != REC2_ASIZE(gFlame_map)) {
         FatalError(kFatalError_CantLoadPixelmapFile_S, name);
     }
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gFlame_map)) != 20);
-    BrMapAddMany(C2V(gFlame_map), REC2_ASIZE(C2V(gFlame_map)));
+    C2_HOOK_BUG_ON(REC2_ASIZE(gFlame_map) != 20);
+    BrMapAddMany(gFlame_map, REC2_ASIZE(gFlame_map));
 
     C2_HOOK_BUG_ON(sizeof(tSmoke_column) != 124);
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmoke_column)) != 10);
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmoke_column) != 10);
+    for (i = 0; i < REC2_ASIZE(gSmoke_column); i++) {
 
-        C2V(gSmoke_column)[i].flame_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
-        for (j = 0; j < REC2_ASIZE(C2V(gSmoke_column)[i].frame_count); j++) {
+        gSmoke_column[i].flame_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+        for (j = 0; j < REC2_ASIZE(gSmoke_column[i].frame_count); j++) {
             actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
             material = BrMaterialAllocate(NULL);
-            BrActorAdd(C2V(gSmoke_column)[i].flame_actor, actor);
-            actor->model = C2V(gLollipop_model);
+            BrActorAdd(gSmoke_column[i].flame_actor, actor);
+            actor->model = gLollipop_model;
             actor->material = material;
             material->flags &= ~BR_MATF_LIGHT;
             material->flags |= BR_MATF_ALWAYS_VISIBLE;
-            material->colour_map = C2V(gFlame_map)[0];
+            material->colour_map = gFlame_map[0];
             GlorifyMaterial(&material, 1, kRendererShadingType_AmbientOnly);
             BrMaterialAdd(material);
-            C2V(gSmoke_column)[i].frame_count[j] = 100;
+            gSmoke_column[i].frame_count[j] = 100;
         }
     }
-    C2V(gLollipop_model)->nvertices = 4;
-    BrVector3SetFloat(&C2V(gLollipop_model)->vertices[0].p, -.5f, 0.f, .0f);
-    BrVector3SetFloat(&C2V(gLollipop_model)->vertices[1].p, .5f, 0.f, .0f);
-    BrVector3SetFloat(&C2V(gLollipop_model)->vertices[2].p, .5f, 1.f, .0f);
-    BrVector3SetFloat(&C2V(gLollipop_model)->vertices[3].p, -.5f, 1.f, .0f);
-    BrVector2Set(&C2V(gLollipop_model)->vertices[0].map, 0.f, 1.f);
-    BrVector2Set(&C2V(gLollipop_model)->vertices[1].map, 1.f, 1.f);
-    BrVector2Set(&C2V(gLollipop_model)->vertices[2].map, 1.f, 0.f);
-    BrVector2Set(&C2V(gLollipop_model)->vertices[3].map, 0.f, 0.f);
+    gLollipop_model->nvertices = 4;
+    BrVector3SetFloat(&gLollipop_model->vertices[0].p, -.5f, 0.f, .0f);
+    BrVector3SetFloat(&gLollipop_model->vertices[1].p, .5f, 0.f, .0f);
+    BrVector3SetFloat(&gLollipop_model->vertices[2].p, .5f, 1.f, .0f);
+    BrVector3SetFloat(&gLollipop_model->vertices[3].p, -.5f, 1.f, .0f);
+    BrVector2Set(&gLollipop_model->vertices[0].map, 0.f, 1.f);
+    BrVector2Set(&gLollipop_model->vertices[1].map, 1.f, 1.f);
+    BrVector2Set(&gLollipop_model->vertices[2].map, 1.f, 0.f);
+    BrVector2Set(&gLollipop_model->vertices[3].map, 0.f, 0.f);
 
-    C2V(gLollipop_model)->nfaces = 2;
-    C2V(gLollipop_model)->faces[0].vertices[0] = 0;
-    C2V(gLollipop_model)->faces[0].vertices[1] = 1;
-    C2V(gLollipop_model)->faces[0].vertices[2] = 2;
-    C2V(gLollipop_model)->faces[1].vertices[0] = 0;
-    C2V(gLollipop_model)->faces[1].vertices[1] = 2;
-    C2V(gLollipop_model)->faces[1].vertices[2] = 3;
-    C2V(gLollipop_model)->faces[0].smoothing = 1;
-    C2V(gLollipop_model)->faces[1].smoothing = 1;
-    BrModelAdd(C2V(gLollipop_model));
+    gLollipop_model->nfaces = 2;
+    gLollipop_model->faces[0].vertices[0] = 0;
+    gLollipop_model->faces[0].vertices[1] = 1;
+    gLollipop_model->faces[0].vertices[2] = 2;
+    gLollipop_model->faces[1].vertices[0] = 0;
+    gLollipop_model->faces[1].vertices[1] = 2;
+    gLollipop_model->faces[1].vertices[2] = 3;
+    gLollipop_model->faces[0].smoothing = 1;
+    gLollipop_model->faces[1].smoothing = 1;
+    BrModelAdd(gLollipop_model);
 }
-C2_HOOK_FUNCTION(0x004fc3a0, InitFlame)
 
+// FUNCTION: CARMA2_HW 0x004fdde0
 void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
     int i;
     int num_files;
@@ -248,12 +311,12 @@ void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
     char s[256];
     br_pixelmap* splash_maps[20];
 
-    C2V(gSplash_flags) = 0;
-    C2V(gSplash_model) = BrModelAllocate("Splash", 4, 2);
-    c2_strcpy(C2V(gCurrent_load_directory), "COMMON");
+    gSplash_flags = 0;
+    gSplash_model = BrModelAllocate("Splash", 4, 2);
+    c2_strcpy(gCurrent_load_directory, "COMMON");
     if (pF != NULL) {
         num = GetAnInt(pF);
-        C2V(gNum_splash_types) = 0;
+        gNum_splash_types = 0;
         for (i = 0; i < num; i++) {
             GetAString(pF, s);
 #if 0
@@ -261,68 +324,64 @@ void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
 #else
             c2_strcpy(the_path, s);
 #endif
-            num_files = LoadTextureTryAllLocations(the_path, &splash_maps[C2V(gNum_splash_types)], REC2_ASIZE(splash_maps));
+            num_files = LoadTextureTryAllLocations(the_path, &splash_maps[gNum_splash_types], REC2_ASIZE(splash_maps));
             if (num_files == 0) {
                 FatalError(kFatalError_CantLoadPixelmapFile_S, the_path);
             }
-            C2V(gNum_splash_types) += num_files;
+            gNum_splash_types += num_files;
         }
     } else {
         c2_strcpy(the_path, "SPLSHBLU.PIX");
-        C2V(gNum_splash_types) = LoadTextureTryAllLocations(the_path, splash_maps, REC2_ASIZE(splash_maps));
+        gNum_splash_types = LoadTextureTryAllLocations(the_path, splash_maps, REC2_ASIZE(splash_maps));
     }
-    BrMapAddMany(splash_maps, C2V(gNum_splash_types));
-    for (i = 0; i < C2V(gNum_splash_types); i++) {
-        C2V(gSplash_material)[i] = BrMaterialAllocate(NULL);
-        C2V(gSplash_material)[i]->flags &= ~BR_MATF_LIGHT;
-        C2V(gSplash_material)[i]->flags |= BR_MATF_ALWAYS_VISIBLE;
-        C2V(gSplash_material)[i]->colour_map = splash_maps[i];
-        BrMaterialAdd(C2V(gSplash_material)[i]);
+    BrMapAddMany(splash_maps, gNum_splash_types);
+    for (i = 0; i < gNum_splash_types; i++) {
+        gSplash_material[i] = BrMaterialAllocate(NULL);
+        gSplash_material[i]->flags &= ~BR_MATF_LIGHT;
+        gSplash_material[i]->flags |= BR_MATF_ALWAYS_VISIBLE;
+        gSplash_material[i]->colour_map = splash_maps[i];
+        BrMaterialAdd(gSplash_material[i]);
     }
-    C2V(gSplash_model)->nvertices = 4;
-    BrVector3SetFloat(&C2V(gSplash_model)->vertices[0].p, -0.5f, 0.0f, 0.0f);
-    BrVector3SetFloat(&C2V(gSplash_model)->vertices[1].p,  0.5f, 0.0f, 0.0f);
-    BrVector3SetFloat(&C2V(gSplash_model)->vertices[2].p,  0.5f, 1.0f, 0.0f);
-    BrVector3SetFloat(&C2V(gSplash_model)->vertices[3].p, -0.5f, 1.0f, 0.0f);
-    BrVector2Set(&C2V(gSplash_model)->vertices[0].map, 0.0f, 1.0f);
-    BrVector2Set(&C2V(gSplash_model)->vertices[1].map, 1.0f, 1.0f);
-    BrVector2Set(&C2V(gSplash_model)->vertices[2].map, 1.0f, 0.0f);
-    BrVector2Set(&C2V(gSplash_model)->vertices[3].map, 0.0f, 0.0f);
-    C2V(gSplash_model)->nfaces = 2;
-    C2V(gSplash_model)->faces[0].vertices[0] = 0;
-    C2V(gSplash_model)->faces[0].vertices[1] = 1;
-    C2V(gSplash_model)->faces[0].vertices[2] = 2;
-    C2V(gSplash_model)->faces[1].vertices[0] = 0;
-    C2V(gSplash_model)->faces[1].vertices[1] = 2;
-    C2V(gSplash_model)->faces[1].vertices[2] = 3;
-    C2V(gSplash_model)->faces[0].smoothing = 1;
-    C2V(gSplash_model)->faces[1].smoothing = 1;
-    BrModelAdd(C2V(gSplash_model));
-    for (i = 0; i < REC2_ASIZE(C2V(gSplash)); i++) {
-        C2V(gSplash)[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        actor = C2V(gSplash)[i].actor;
-        actor->model = C2V(gSplash_model);
-        if (C2V(gNum_splash_types) != 0) {
-            actor->material = C2V(gSplash_material)[IRandomBetween(0, C2V(gNum_splash_types) - 1)];
+    gSplash_model->nvertices = 4;
+    BrVector3SetFloat(&gSplash_model->vertices[0].p, -0.5f, 0.0f, 0.0f);
+    BrVector3SetFloat(&gSplash_model->vertices[1].p,  0.5f, 0.0f, 0.0f);
+    BrVector3SetFloat(&gSplash_model->vertices[2].p,  0.5f, 1.0f, 0.0f);
+    BrVector3SetFloat(&gSplash_model->vertices[3].p, -0.5f, 1.0f, 0.0f);
+    BrVector2Set(&gSplash_model->vertices[0].map, 0.0f, 1.0f);
+    BrVector2Set(&gSplash_model->vertices[1].map, 1.0f, 1.0f);
+    BrVector2Set(&gSplash_model->vertices[2].map, 1.0f, 0.0f);
+    BrVector2Set(&gSplash_model->vertices[3].map, 0.0f, 0.0f);
+    gSplash_model->nfaces = 2;
+    gSplash_model->faces[0].vertices[0] = 0;
+    gSplash_model->faces[0].vertices[1] = 1;
+    gSplash_model->faces[0].vertices[2] = 2;
+    gSplash_model->faces[1].vertices[0] = 0;
+    gSplash_model->faces[1].vertices[1] = 2;
+    gSplash_model->faces[1].vertices[2] = 3;
+    gSplash_model->faces[0].smoothing = 1;
+    gSplash_model->faces[1].smoothing = 1;
+    BrModelAdd(gSplash_model);
+    for (i = 0; i < REC2_ASIZE(gSplash); i++) {
+        gSplash[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        actor = gSplash[i].actor;
+        actor->model = gSplash_model;
+        if (gNum_splash_types != 0) {
+            actor->material = gSplash_material[IRandomBetween(0, gNum_splash_types - 1)];
         } else {
             actor->material = NULL;
         }
-        C2V(gSplash)[i].scale_x = SRandomBetween(0.9f, 1.1f) * (2 * IRandomBetween(0, 1) - 1);
+        gSplash[i].scale_x = SRandomBetween(0.9f, 1.1f) * (2 * IRandomBetween(0, 1) - 1);
     }
 }
-C2_HOOK_FUNCTION(0x004fdde0, InitSplash)
 
+// FUNCTION: CARMA2_HW 0x004fdc00
 void C2_HOOK_FASTCALL FreeSmokeShadeTables(void) {
 
 }
-C2_HOOK_FUNCTION(0x004fdc00, FreeSmokeShadeTables)
 
-void (C2_HOOK_FASTCALL * LoadInKevStuff_original)(FILE* pF);
+// FUNCTION: CARMA2_HW 0x004fdc10
 void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    LoadInKevStuff_original(pF);
-#else
     PackFileRevertTiffLoading();
     PossibleService();
     LoadInShrapnel();
@@ -333,38 +392,27 @@ void C2_HOOK_FASTCALL LoadInKevStuff(FILE* pF) {
     PossibleService();
     InitSplash(pF);
     PackFileRerevertTiffLoading();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fdc10, LoadInKevStuff, LoadInKevStuff_original)
 
-void (C2_HOOK_FASTCALL * DisposeKevStuff_original)(void);
+// FUNCTION: CARMA2_HW 0x004fe180
 void C2_HOOK_FASTCALL DisposeKevStuff(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DisposeKevStuff_original();
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fe180, DisposeKevStuff, DisposeKevStuff_original)
 
 void (C2_HOOK_FASTCALL * StopCarBeingIt_original)(tCar_spec* pCar);
+// FUNCTION: CARMA2_HW 0x004fe570
 void C2_HOOK_FASTCALL StopCarBeingIt(tCar_spec* pCar) {
 
-#if defined(C2_HOOKS_ENABLED)
-    StopCarBeingIt_original(pCar);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION(0x004fe570, StopCarBeingIt)
 
 void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
 
-    if (C2V(gNum_splash_types) == 0) {
+    if (gNum_splash_types == 0) {
         return;
     }
-    if (C2V(gAction_replay_mode) && ARGetReplayRate() != 0.f) {
+    if (gAction_replay_mode && ARGetReplayRate() != 0.f) {
         tVehicle_type type;
         int i;
 
@@ -374,7 +422,7 @@ void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
                 tCar_spec* car;
 
                 if (type == eVehicle_self) {
-                    car = &C2V(gProgram_state).current_car;
+                    car = &gProgram_state.current_car;
                 } else {
                     car = GetCarSpec(type, i);
                 }
@@ -383,13 +431,13 @@ void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
                 }
             }
         }
-        if (C2V(gProgram_state).current_car.collision_info->water_d != 10000.f) {
-            CreateSplash(C2V(gProgram_state).current_car.collision_info, pTime);
+        if (gProgram_state.current_car.collision_info->water_d != 10000.f) {
+            CreateSplash(gProgram_state.current_car.collision_info, pTime);
         }
-        for (i = 0; i < REC2_ASIZE(C2V(gReplay_splashes)); i++) {
-            tReplay_splash *replay_splash = &C2V(gReplay_splashes)[i];
+        for (i = 0; i < REC2_ASIZE(gReplay_splashes); i++) {
+            tReplay_splash *replay_splash = &gReplay_splashes[i];
 
-            if (C2V(gReplay_splash_flags) & (1 << i)) {
+            if (gReplay_splash_flags & (1 << i)) {
                 switch (replay_splash->type) {
                 case 1:
                     {
@@ -406,7 +454,7 @@ void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
                     break;
                 case 2:
                     {
-                        int id = (replay_splash->object.ped - C2V(gPedestrian_array)) | (replay_splash->object.ped->field_0x06 << 16);
+                        int id = (replay_splash->object.ped - gPedestrian_array) | (replay_splash->object.ped->field_0x06 << 16);
                         br_actor* actor = GetCharacterActorPtr(replay_splash->object.ped->character);
                         tPipe_chunk_data *chunk_ped_physics = FindNextChunk(ePipe_chunk_ped_physics, id);
                         if (chunk_ped_physics != NULL) {
@@ -433,7 +481,7 @@ void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
                 }
             }
         }
-    } else if (!C2V(gAction_replay_mode)) {
+    } else if (!gAction_replay_mode) {
         tCollision_info* object;
 
         for (object = PHILGetFirstObject(); object != NULL; object = PHILGetNextObject(object)) {
@@ -447,31 +495,31 @@ void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
             }
         }
     }
-    if (C2V(gSplash_flags)) {
+    if (gSplash_flags) {
         int i;
 
-        for (i = 0; i < REC2_ASIZE(C2V(gSplash)); i++) {
-            tSplash *splash = &C2V(gSplash)[i];
+        for (i = 0; i < REC2_ASIZE(gSplash); i++) {
+            tSplash *splash = &gSplash[i];
 
-            if (!(C2V(gSplash_flags) & (1 << i))) {
+            if (!(gSplash_flags & (1 << i))) {
                 continue;
             }
-            if (splash->just_done || (C2V(gAction_replay_mode) && ARGetReplayRate() == 0.f)) {
+            if (splash->just_done || (gAction_replay_mode && ARGetReplayRate() == 0.f)) {
                 br_scalar dt;
 
                 dt = splash->size * splash->scale_x;
-                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[0], (br_vector3*)C2V(gCamera_to_world).m[0], dt);
-                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[1], (br_vector3*)C2V(gCamera_to_world).m[1], splash->size);
-                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[2], (br_vector3*)C2V(gCamera_to_world).m[2], splash->size);
-                if (C2V(gProgram_state).cockpit_on) {
+                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[0], (br_vector3*)gCamera_to_world.m[0], dt);
+                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[1], (br_vector3*)gCamera_to_world.m[1], splash->size);
+                BrVector3Scale((br_vector3*)splash->actor->t.t.mat.m[2], (br_vector3*)gCamera_to_world.m[2], splash->size);
+                if (gProgram_state.cockpit_on) {
                     br_scalar ts;
 
-                    ts = sqrtf(REC2_SQR(C2V(gCamera_to_world).m[0][2]) + REC2_SQR(C2V(gCamera_to_world).m[0][0]));
-                    DRMatrix34PreRotateZ(&splash->actor->t.t.mat, -FastScalarArcTan2Angle(C2V(gCamera_to_world).m[0][1], ts));
+                    ts = sqrtf(REC2_SQR(gCamera_to_world.m[0][2]) + REC2_SQR(gCamera_to_world.m[0][0]));
+                    DRMatrix34PreRotateZ(&splash->actor->t.t.mat, -FastScalarArcTan2Angle(gCamera_to_world.m[0][1], ts));
                 }
                 splash->just_done = 0;
             } else {
-                C2V(gSplash_flags) &= ~(1 << i);
+                gSplash_flags &= ~(1 << i);
                 if (splash->actor->parent != NULL) {
                     BrActorRemove(splash->actor);
                 }
@@ -484,96 +532,91 @@ void C2_HOOK_FASTCALL ReplayShrapnel(tU32 pTime) {
     int i;
     br_matrix34* mat;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gShrapnel)); i++) {
-        mat = &C2V(gShrapnel)[i].actor->t.t.mat;
-        if (C2V(gShrapnel_flags) & (1 << i)) {
-            C2V(gShrapnel)[i].age += (tU32)(ARGetReplayRate() * (float)pTime);
-            DrMatrix34Rotate(mat, C2V(gShrapnel)[i].age * BR_ANGLE_DEG(1), &C2V(gShrapnel)[i].axis);
-            BrMatrix34PreShearX(mat, C2V(gShrapnel)[i].shear1, C2V(gShrapnel)[i].shear2);
+    for (i = 0; i < REC2_ASIZE(gShrapnel); i++) {
+        mat = &gShrapnel[i].actor->t.t.mat;
+        if (gShrapnel_flags & (1 << i)) {
+            gShrapnel[i].age += (tU32)(ARGetReplayRate() * (float)pTime);
+            DrMatrix34Rotate(mat, gShrapnel[i].age * BR_ANGLE_DEG(1), &gShrapnel[i].axis);
+            BrMatrix34PreShearX(mat, gShrapnel[i].shear1, gShrapnel[i].shear2);
         }
     }
 }
 
 void C2_HOOK_FASTCALL KillShrapnel(int i) {
 
-    if (C2V(gShrapnel)[i].actor->parent != NULL) {
-        BrActorRemove(C2V(gShrapnel)[i].actor);
+    if (gShrapnel[i].actor->parent != NULL) {
+        BrActorRemove(gShrapnel[i].actor);
     }
-    C2V(gShrapnel_flags) &= ~(1 << i);
+    gShrapnel_flags &= ~(1 << i);
 }
 
-void (C2_HOOK_FASTCALL * MungeShrapnel_original)(tU32 pTime);
+// FUNCTION: CARMA2_HW 0x004f9790
 void C2_HOOK_FASTCALL MungeShrapnel(tU32 pTime) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    MungeShrapnel_original(pTime);
-#else
     MungeSmokeColumn(pTime);
     MungeSplash(pTime);
 
-    if (C2V(gAFE)) {
+    if (gAFE) {
         tU32 now = GetTotalTime();
-        if (now - C2V(gNext_AFE_color_cycle) > 100) {
-            C2V(gAFE_color_cycle) = 1;
-            C2V(gNext_AFE_color_cycle) = now;
+        if (now - gNext_AFE_color_cycle > 100) {
+            gAFE_color_cycle = 1;
+            gNext_AFE_color_cycle = now;
         } else {
-            C2V(gAFE_color_cycle) = 0;
+            gAFE_color_cycle = 0;
         }
     }
-    if (C2V(gAction_replay_mode)) {
+    if (gAction_replay_mode) {
         ReplayShrapnel(pTime);
     } else {
         int i;
 
         ARStartPipingSession(ePipe_chunk_shrapnel);
-        for (i = 0; i < REC2_ASIZE(C2V(gShrapnel)); i++) {
+        for (i = 0; i < REC2_ASIZE(gShrapnel); i++) {
             br_matrix34* mat;
             br_scalar ts;
 
-            mat = &C2V(gShrapnel)[i].actor->t.t.mat;
-            if (!(C2V(gShrapnel_flags) & (1 << i))) {
+            mat = &gShrapnel[i].actor->t.t.mat;
+            if (!(gShrapnel_flags & (1 << i))) {
                 continue;
             }
-            if (C2V(gShrapnel)[i].age == -1) {
+            if (gShrapnel[i].age == -1) {
                 KillShrapnel(i);
             } else {
                 br_vector3 disp;
 
-                if (C2V(gShrapnel)[i].time_sync != 0) {
-                    BrVector3Scale(&disp, &C2V(gShrapnel)[i].v, (float)C2V(gShrapnel)[i].time_sync / 1000.f);
-                    C2V(gShrapnel)[i].time_sync = 0;
+                if (gShrapnel[i].time_sync != 0) {
+                    BrVector3Scale(&disp, &gShrapnel[i].v, (float)gShrapnel[i].time_sync / 1000.f);
+                    gShrapnel[i].time_sync = 0;
                 } else {
-                    BrVector3Scale(&disp, &C2V(gShrapnel)[i].v, pTime / 1000.0f);
-                    C2V(gShrapnel)[i].age += pTime;
+                    BrVector3Scale(&disp, &gShrapnel[i].v, pTime / 1000.0f);
+                    gShrapnel[i].age += pTime;
                 }
                 BrVector3Accumulate((br_vector3*)mat->m[3], &disp);
-                C2V(gShrapnel)[i].v.v[1] -= (float)(10 * pTime) / 1000.f / WORLD_SCALE; /* Fall acceleration */
-                DrMatrix34Rotate(mat, BR_ANGLE_DEG(C2V(gShrapnel)[i].age), &C2V(gShrapnel)[i].axis);
-                BrMatrix34PreShearX(mat, C2V(gShrapnel)[i].shear1, C2V(gShrapnel)[i].shear2);
-                ts = 1.f - BrVector3Length(&C2V(gShrapnel)[i].v) / 1.4f * (float)pTime / 1000.f;
+                gShrapnel[i].v.v[1] -= (float)(10 * pTime) / 1000.f / WORLD_SCALE; /* Fall acceleration */
+                DrMatrix34Rotate(mat, BR_ANGLE_DEG(gShrapnel[i].age), &gShrapnel[i].axis);
+                BrMatrix34PreShearX(mat, gShrapnel[i].shear1, gShrapnel[i].shear2);
+                ts = 1.f - BrVector3Length(&gShrapnel[i].v) / 1.4f * (float)pTime / 1000.f;
                 if (ts < .1f) {
                     ts = .1f;
                 }
-                BrVector3Scale(&C2V(gShrapnel)[i].v, &C2V(gShrapnel)[i].v, ts);
-                AddShrapnelToPipingSession(i + ((C2V(gShrapnel)[i].age > 1000 || pTime > C2V(gShrapnel)[i].age) << 15), (br_vector3*)mat->m[3], C2V(gShrapnel)[i].age - pTime, C2V(gShrapnel)[i].actor->material);
-                if (C2V(gShrapnel)[i].age > 1000) {
-                    C2V(gShrapnel)[i].age = -1;
+                BrVector3Scale(&gShrapnel[i].v, &gShrapnel[i].v, ts);
+                AddShrapnelToPipingSession(i + ((gShrapnel[i].age > 1000 || pTime > gShrapnel[i].age) << 15), (br_vector3*)mat->m[3], gShrapnel[i].age - pTime, gShrapnel[i].actor->material);
+                if (gShrapnel[i].age > 1000) {
+                    gShrapnel[i].age = -1;
                 }
             }
         }
         AREndPipingSession();
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f9790, MungeShrapnel, MungeShrapnel_original)
 
+// FUNCTION: CARMA2_HW 0x004fb9c0
 void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
 
-    if (C2V(gIt_shade_table) == NULL) {
-        C2V(gIt_shade_table) = GenerateDarkenedShadeTable(16, C2V(gRender_palette), 0, 255, 254, .25f, .5f, .75f, .6f);
+    if (gIt_shade_table == NULL) {
+        gIt_shade_table = GenerateDarkenedShadeTable(16, gRender_palette, 0, 255, 254, .25f, .5f, .75f, .6f);
     }
 }
-C2_HOOK_FUNCTION(0x004fb9c0, GenerateItFoxShadeTable)
 
 void C2_HOOK_FASTCALL ForEveryModelMaterial(br_model* pModel, tMaterialMaybeUpdate_cbfn* pCallback) {
     int i;
@@ -595,6 +638,7 @@ void C2_HOOK_FASTCALL ForEveryModelMaterial(br_model* pModel, tMaterialMaybeUpda
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004fe8a0
 intptr_t C2_HOOK_CDECL ForEveryActorMaterial(br_actor* pActor, void *pContext) {
     tUser_crush_data* user_crush_data;
     tMaterialMaybeUpdate_cbfn* callback;
@@ -616,8 +660,8 @@ intptr_t C2_HOOK_CDECL ForEveryActorMaterial(br_actor* pActor, void *pContext) {
     ForEveryModelMaterial(pActor->model, callback);
     return 0;
 }
-C2_HOOK_FUNCTION(0x004fe8a0, ForEveryActorMaterial)
 
+// FUNCTION: CARMA2_HW 0x004fe930
 intptr_t C2_HOOK_CDECL ForEveryActorMaterialNoGrooves(br_actor* pActor, void* pContext) {
     tUser_crush_data* user_crush_data;
     tMaterialMaybeUpdate_cbfn* callback;
@@ -642,18 +686,15 @@ intptr_t C2_HOOK_CDECL ForEveryActorMaterialNoGrooves(br_actor* pActor, void* pC
     ForEveryModelMaterial(pActor->model, callback);
     return 0;
 }
-C2_HOOK_FUNCTION(0x004fe930, ForEveryActorMaterialNoGrooves)
 
-void (C2_HOOK_FASTCALL * ForEveryCarMaterial_original)(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves);
+// FUNCTION: CARMA2_HW 0x004fe640
 void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUpdate_cbfn* pCallback, int pGrooves) {
-
-#if defined(C2_HOOKS_ENABLED)
-    ForEveryCarMaterial_original(pCar_spec, pCallback, pGrooves);
-#else
-    tUser_crush_data* user_crush_data = pCar_spec->car_model_actor->user;
 #if 0
     int i;
 #endif
+
+    tUser_crush_data* user_crush_data = pCar_spec->car_model_actor->user;
+    NOT_IMPLEMENTED();
 
     if (pCar_spec->car_master_actor->material != NULL) {
         pCallback(pCar_spec->car_master_actor->material);
@@ -665,7 +706,6 @@ void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUp
     } else {
         DRActorEnumRecurse(pCar_spec->car_model_actor, ForEveryActorMaterialNoGrooves, pCallback);
     }
-    NOT_IMPLEMENTED();
 #if 0
     /* FIXME: incomplete */
     for (i = 0; i < pCar_spec->car_crush_spec->field_0x270; i++) {
@@ -675,10 +715,9 @@ void C2_HOOK_FASTCALL ForEveryCarMaterial(tCar_spec* pCar_spec, tMaterialMaybeUp
         ForEveryModelMaterial(pCar_spec->car_crush_spec->field_0x2b4[i].actor->model, pCallback);
     }
 #endif
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fe640, ForEveryCarMaterial, ForEveryCarMaterial_original)
 
+// FUNCTION: CARMA2_HW 0x004fed50
 intptr_t C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial) {
 
     if (GetBlendificatiousnessOfMaterial(pMaterial) == 100) {
@@ -688,14 +727,14 @@ intptr_t C2_HOOK_FASTCALL UnBlendifyMaterialCB(br_material* pMaterial) {
     BrMaterialUpdate(pMaterial, BR_MATU_ALL);
     return 1;
 }
-C2_HOOK_FUNCTION(0x004fed50, UnBlendifyMaterialCB)
 
+// FUNCTION: CARMA2_HW 0x004fed40
 void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
 
     ForEveryCarMaterial(pCar_spec, UnBlendifyMaterialCB, 1);
 }
-C2_HOOK_FUNCTION(0x004fed40, UnBlendifyCar)
 
+// FUNCTION: CARMA2_HW 0x004fed00
 intptr_t C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial) {
 
     if (GetBlendificatiousnessOfMaterial(pMaterial) == 25) {
@@ -705,25 +744,25 @@ intptr_t C2_HOOK_FASTCALL BlendifyMaterialCB(br_material* pMaterial) {
     BrMaterialUpdate(pMaterial, BR_MATU_ALL);
     return 1;
 }
-C2_HOOK_FUNCTION(0x004fed00, BlendifyMaterialCB)
 
+// FUNCTION: CARMA2_HW 0x004fecf0
 void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar_spec) {
 
     ForEveryCarMaterial(pCar_spec, BlendifyMaterialCB, 1);
 }
-C2_HOOK_FUNCTION(0x004fecf0, BlendifyCar)
 
+// FUNCTION: CARMA2_HW 0x004fca70
 void C2_HOOK_FASTCALL StopCarSmokingInstantly(tCar_spec* pCar_spec) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
-        if (C2V(gSmoke_column)[i].core.car == pCar_spec) {
-            C2V(gSmoke_column)[i].lifetime = 0;
+    for (i = 0; i < REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.car == pCar_spec) {
+            gSmoke_column[i].lifetime = 0;
         }
     }
 }
-C2_HOOK_FUNCTION(0x004fca70, StopCarSmokingInstantly)
 
+// FUNCTION: CARMA2_HW 0x004fc740
 void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec) {
     br_model* model;
     br_model* b_model;
@@ -735,7 +774,7 @@ void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec) {
     int group;
     tSmudged_vertex data[1000];
 
-    if (!C2V(gAction_replay_mode)) {
+    if (!gAction_replay_mode) {
         return;
     }
     actor = pCar_spec->car_actor;
@@ -796,31 +835,31 @@ void C2_HOOK_FASTCALL PipeInstantUnSmudge(tCar_spec* pCar_spec) {
         AREndPipingSession();
     }
 }
-C2_HOOK_FUNCTION(0x004fc740, PipeInstantUnSmudge)
 
+// FUNCTION: CARMA2_HW 0x004fca40
 void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
-        if (C2V(gSmoke_column)[i].core.car == pCar && C2V(gSmoke_column)[i].lifetime > 2000) {
-            C2V(gSmoke_column)[i].lifetime = 2000;
+    for (i = 0; i < REC2_ASIZE(gSmoke_column); i++) {
+        if (gSmoke_column[i].core.car == pCar && gSmoke_column[i].lifetime > 2000) {
+            gSmoke_column[i].lifetime = 2000;
         }
     }
 }
-C2_HOOK_FUNCTION(0x004fca40, StopCarSmoking)
 
+// FUNCTION: CARMA2_HW 0x004fca90
 void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tCollision_info* pObject) {
     size_t i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
+    for (i = 0; i < REC2_ASIZE(gSmoke_column); i++) {
 
-        if (C2V(gSmoke_column)[i].core.collision_info == pObject) {
-            C2V(gSmoke_column)[i].lifetime = 0;
+        if (gSmoke_column[i].core.collision_info == pObject) {
+            gSmoke_column[i].lifetime = 0;
         }
     }
 }
-C2_HOOK_FUNCTION(0x004fca90, StopObjectSmokingInstantly)
 
+// FUNCTION: CARMA2_HW 0x004fa5b0
 void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 pTime) {
     br_vector3 pos;
     br_vector3 v;
@@ -876,139 +915,119 @@ void C2_HOOK_FASTCALL GenerateContinuousSmoke(tCar_spec* pCar, int pWheel, tU32 
     BrMatrix34ApplyP(&pos, &tv, &pCar->car_master_actor->t.t.mat);
     BrMatrix34ApplyV(&v, &vcs, &pCar->car_master_actor->t.t.mat);
 
-    colour = C2V(gDust_rotate) + C2V(gCurrent_race).material_modifiers[pCar->material_index[pWheel]].smoke_type - 2;
-    while (colour >= C2V(gNum_dust_tables)) {
-        colour -= C2V(gNum_dust_tables);
+    colour = gDust_rotate + gCurrent_race.material_modifiers[pCar->material_index[pWheel]].smoke_type - 2;
+    while (colour >= gNum_dust_tables) {
+        colour -= gNum_dust_tables;
     }
     CreatePuffOfSmoke(&pos, &v, decay_factor, 2 * decay_factor, colour + 8);
 }
-C2_HOOK_FUNCTION(0x004fa5b0, GenerateContinuousSmoke)
 
-void (C2_HOOK_FASTCALL * CreatePuffOfSmoke_original)(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType);
+// FUNCTION: CARMA2_HW 0x004fb330
 void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float pStrength, float pDecay_factor, int pType) {
 
-#if defined(C2_HOOKS_ENABLED)
-    CreatePuffOfSmoke_original(pPos, pV, pStrength, pDecay_factor, pType);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fb330, CreatePuffOfSmoke, CreatePuffOfSmoke_original)
 
-void (C2_HOOK_FASTCALL * ClearSplashes_original)(tCollision_info* pObject);
+// FUNCTION: CARMA2_HW 0x004fee70
 void C2_HOOK_FASTCALL ClearSplashes(tCollision_info* pObject) {
 
-#if defined(C2_HOOKS_ENABLED)
-    ClearSplashes_original(pObject);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fee70, ClearSplashes, ClearSplashes_original)
 
-void (C2_HOOK_FASTCALL * CreateSmokeColumn2_original)(undefined4 pArg1, br_actor* pActor, tCar_spec* pCar, tCollision_info* pObject, undefined4 pArg5, undefined4 pArg6, undefined4 pArg7);
+// FUNCTION: CARMA2_HW 0x004fb630
 void C2_HOOK_FASTCALL CreateSmokeColumn2(undefined4 pArg1, br_actor* pActor, tCar_spec* pCar, tCollision_info* pObject, undefined4 pArg5, undefined4 pArg6, undefined4 pArg7) {
 
-#if defined(C2_HOOKS_ENABLED)
-    CreateSmokeColumn2_original(pArg1, pActor, pCar, pObject, pArg5, pArg6, pArg7);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fb630, CreateSmokeColumn2, CreateSmokeColumn2_original)
 
 void C2_HOOK_FASTCALL ReplaySmokeColumn(tU32 pTime) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
-        if (C2V(gColumn_flags) & (1 << i)) {
+    for (i = 0; i < REC2_ASIZE(gSmoke_column); i++) {
+        if (gColumn_flags & (1 << i)) {
             br_vector3 dummy;
 
             DoSmokeColumn(i, pTime, &dummy);
-            if (C2V(gSmoke_column)[i].colour == 0) {
-                FlameAnimate(i, &C2V(gSmoke_column)[i].pos, pTime);
+            if (gSmoke_column[i].colour == 0) {
+                FlameAnimate(i, &gSmoke_column[i].pos, pTime);
             }
         }
     }
 }
 
-void (C2_HOOK_FASTCALL * MungeSmokeColumn_original)(tU32 pTime);
+// FUNCTION: CARMA2_HW 0x004fba40
 void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    MungeSmokeColumn_original(pTime);
-#else
     int i;
 
-    if (C2V(gColumn_flags) == 0) {
+    if (gColumn_flags == 0) {
         return;
     }
-    if (C2V(gAction_replay_mode)) {
+    if (gAction_replay_mode) {
         ReplaySmokeColumn(pTime);
         return;
     }
 
-    C2V(gPHIL_mechanics_time_sync) = 1;
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
-        if (!(C2V(gColumn_flags) & (1 << i))) {
+    gPHIL_mechanics_time_sync = 1;
+    for (i = 0; i < REC2_ASIZE(gSmoke_column); i++) {
+        if (!(gColumn_flags & (1 << i))) {
             continue;
         }
-        if (C2V(gSmoke_column)[i].lifetime >= pTime) {
+        if (gSmoke_column[i].lifetime >= pTime) {
             tCollision_info* object;
             tCar_spec* c;
             br_vector3 car_pos;
 
-            C2V(gSmoke_column)[i].lifetime -= pTime;
-            object = C2V(gSmoke_column)[i].core.collision_info;
-            c = C2V(gSmoke_column)[i].core.car;
+            gSmoke_column[i].lifetime -= pTime;
+            object = gSmoke_column[i].core.collision_info;
+            c = gSmoke_column[i].core.car;
             DoSmokeColumn(i, pTime, &car_pos);
-            if (C2V(gSmoke_column)[i].core.field_0x0 == 1 && c->car_crush_spec->field_0x4b8 != 0) {
+            if (gSmoke_column[i].core.field_0x0 == 1 && c->car_crush_spec->field_0x4b8 != 0) {
                 if (IsOnNonCarHalf(c, &car_pos)) {
-                    C2V(gSmoke_column)[i].lifetime = 0;
+                    gSmoke_column[i].lifetime = 0;
                 }
             }
-            if (C2V(gSmoke_column)[i].colour == 0) {
-                FlameAnimate(i, &C2V(gSmoke_column)[i].pos, pTime);
-                if (C2V(gSmoke_column)[i].core.field_0x0 == 1) {
-                    if (C2V(gSmoke_column)[i].smudge_timer >= pTime) {
-                        C2V(gSmoke_column)[i].smudge_timer -= pTime;
+            if (gSmoke_column[i].colour == 0) {
+                FlameAnimate(i, &gSmoke_column[i].pos, pTime);
+                if (gSmoke_column[i].core.field_0x0 == 1) {
+                    if (gSmoke_column[i].smudge_timer >= pTime) {
+                        gSmoke_column[i].smudge_timer -= pTime;
                     } else {
-                        C2V(gSmoke_column)[i].smudge_timer += 2000;
-                        SmudgeCar(c, C2V(gSmoke_column)[i].vertex_index);
+                        gSmoke_column[i].smudge_timer += 2000;
+                        SmudgeCar(c, gSmoke_column[i].vertex_index);
                         if (c->knackered) {
                             int plane;
 
-                            plane = IRandomBetween(0, REC2_ASIZE(C2V(gSmoke_column)[i].core.car->fire_vertex) - 1);
-                            SmudgeCar(c, C2V(gSmoke_column)[i].core.car->fire_vertex[plane]);
+                            plane = IRandomBetween(0, REC2_ASIZE(gSmoke_column[i].core.car->fire_vertex) - 1);
+                            SmudgeCar(c, gSmoke_column[i].core.car->fire_vertex[plane]);
                         }
                     }
                 }
             }
-            C2V(gSmoke_column)[i].time += pTime;
-            if (C2V(gSmoke_column)[i].time > 200) {
+            gSmoke_column[i].time += pTime;
+            if (gSmoke_column[i].time > 200) {
                 br_vector3 pos;
                 br_vector3 v;
                 br_scalar decay_factor;
 
-                C2V(gSmoke_column)[i].time -= pTime;
-                C2V(gSmoke_column)[i].count += 1;
-                pos.v[0] = C2V(gSmoke_column)[i].pos.v[0] + SRandomBetween(-.03f, .03f);
-                pos.v[1] = C2V(gSmoke_column)[i].pos.v[1] + (C2V(gSmoke_column)[i].colour == 0) * .05f;
-                pos.v[2] = C2V(gSmoke_column)[i].pos.v[2] + SRandomBetween(-.03f, .03f);
-                if (!(C2V(gSmoke_column)[i].whiter & 0x2) || IRandomBetween(0, 3)) {
-                    if (C2V(gSmoke_column)[i].whiter > 0) {
-                        C2V(gSmoke_column)[i].whiter = 2;
+                gSmoke_column[i].time -= pTime;
+                gSmoke_column[i].count += 1;
+                pos.v[0] = gSmoke_column[i].pos.v[0] + SRandomBetween(-.03f, .03f);
+                pos.v[1] = gSmoke_column[i].pos.v[1] + (gSmoke_column[i].colour == 0) * .05f;
+                pos.v[2] = gSmoke_column[i].pos.v[2] + SRandomBetween(-.03f, .03f);
+                if (!(gSmoke_column[i].whiter & 0x2) || IRandomBetween(0, 3)) {
+                    if (gSmoke_column[i].whiter > 0) {
+                        gSmoke_column[i].whiter = 2;
                     } else {
-                        C2V(gSmoke_column)[i].whiter = -2;
+                        gSmoke_column[i].whiter = -2;
                     }
                 } else {
-                    C2V(gSmoke_column)[i].whiter &= 0x1;
+                    gSmoke_column[i].whiter &= 0x1;
                 }
-                decay_factor = ((float)(C2V(gSmoke_column)[i].whiter > 0) + 1.f) / 2.f;
-                if (C2V(gSmoke_column)[i].lifetime < 4000) {
-                    decay_factor = C2V(gSmoke_column)[i].lifetime * decay_factor / 4000.0f;
+                decay_factor = ((float)(gSmoke_column[i].whiter > 0) + 1.f) / 2.f;
+                if (gSmoke_column[i].lifetime < 4000) {
+                    decay_factor = gSmoke_column[i].lifetime * decay_factor / 4000.0f;
                 }
-                if (C2V(gSmoke_column)[i].core.collision_info == NULL) {
+                if (gSmoke_column[i].core.collision_info == NULL) {
                     BrVector3SetFloat(&v, 0.f, 2.8985507f, 0.f);
                 } else {
                     BrVector3Cross(&v, &object->omega, &car_pos);
@@ -1017,42 +1036,36 @@ void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime) {
                     v.v[1] = car_pos.v[1] + WORLD_SCALE * object->v.v[1];
                     v.v[2] = car_pos.v[2] + WORLD_SCALE * object->v.v[2];
                 }
-                CreatePuffOfSmoke(&pos, &v, decay_factor, decay_factor, C2V(gSmoke_column)[i].colour + 16);
+                CreatePuffOfSmoke(&pos, &v, decay_factor, decay_factor, gSmoke_column[i].colour + 16);
             }
         } else {
-            if (C2V(gSmoke_column)[i].core.field_0x0 != 0) {
+            if (gSmoke_column[i].core.field_0x0 != 0) {
                 ARStartPipingSession(ePipe_chunk_smoke_column);
-                AddSmokeColumnToPipingSession(i, &C2V(gSmoke_column)[i], C2V(gSmoke_column)[i].vertex_index, C2V(gSmoke_column)[i].colour);
+                AddSmokeColumnToPipingSession(i, &gSmoke_column[i], gSmoke_column[i].vertex_index, gSmoke_column[i].colour);
                 AREndPipingSession();
             }
-            C2V(gColumn_flags) &= ~(1 << i);
-            if (C2V(gSmoke_column)[i].colour == 0) {
-                BrActorRemove(C2V(gSmoke_column)[i].flame_actor);
+            gColumn_flags &= ~(1 << i);
+            if (gSmoke_column[i].colour == 0) {
+                BrActorRemove(gSmoke_column[i].flame_actor);
             }
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fba40, MungeSmokeColumn, MungeSmokeColumn_original)
 
-void (C2_HOOK_FASTCALL * GeneralCreateSplash_original)(tCollision_info* pObject, br_vector3* pVel,br_vector3* pOmega, br_vector3* pNormal, float pWater_density, br_bounds3* pBounds, br_matrix34* pMat, tU32 pTime);
+// FUNCTION: CARMA2_HW 0x004fcbb0
 void C2_HOOK_FASTCALL GeneralCreateSplash(tCollision_info* pObject, br_vector3* pVel,br_vector3* pOmega, br_vector3* pNormal, float pWater_density, br_bounds3* pBounds, br_matrix34* pMat, tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
-    GeneralCreateSplash_original(pObject, pVel, pOmega, pNormal, pWater_density, pBounds, pMat, pTime);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fcbb0, GeneralCreateSplash, GeneralCreateSplash_original)
 
+// FUNCTION: CARMA2_HW 0x004fda40
 void C2_HOOK_FASTCALL CreateSplash(tCollision_info* pObject, tU32 pTime) {
 
     GeneralCreateSplash(pObject, &pObject->v, &pObject->omega, &pObject->water_normal, pObject->water_d,
         &pObject->bb1, &pObject->actor->t.t.mat, pTime);
 }
-C2_HOOK_FUNCTION(0x004fda40, CreateSplash)
 
+// FUNCTION: CARMA2_HW 0x004fda70
 void C2_HOOK_FASTCALL GetVelocitiesFromMatrices(br_vector3* pVel, br_vector3* pRot, br_matrix34* pMat_now, br_matrix34* pMat_prev, tU32 pTime) {
     br_quat quat_now;
     br_quat quat_prev;
@@ -1070,8 +1083,8 @@ void C2_HOOK_FASTCALL GetVelocitiesFromMatrices(br_vector3* pVel, br_vector3* pR
     pRot->v[1] = 2 * quat_speed.y / ts;
     pRot->v[2] = 2 * quat_speed.z / ts;
 }
-C2_HOOK_FUNCTION(0x004fda70, GetVelocitiesFromMatrices)
 
+// FUNCTION: CARMA2_HW 0x004f9e80
 void C2_HOOK_FASTCALL DrMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3* a) {
     br_scalar t;
     br_scalar s;
@@ -1102,30 +1115,20 @@ void C2_HOOK_FASTCALL DrMatrix34Rotate(br_matrix34* mat, br_angle r, br_vector3*
     mat->m[2][1] = tyz - sx;
     mat->m[2][2] = a->v[2] * a->v[2] * t + c;
 }
-C2_HOOK_FUNCTION(0x004f9e80, DrMatrix34Rotate)
 
-void (C2_HOOK_FASTCALL * DoSmokeColumn_original)(int i, tU32 pTime, br_vector3* pRet_car_pos);
+// FUNCTION: CARMA2_HW 0x004fc0e0
 void C2_HOOK_FASTCALL DoSmokeColumn(int i, tU32 pTime, br_vector3* pRet_car_pos) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoSmokeColumn_original(i, pTime, pRet_car_pos);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fc0e0, DoSmokeColumn, DoSmokeColumn_original)
 
-void (C2_HOOK_FASTCALL * FlameAnimate_original)(int c, br_vector3* pPos, tU32 pTime);
+// FUNCTION: CARMA2_HW 0x004fbdd0
 void C2_HOOK_FASTCALL FlameAnimate(int c, br_vector3* pPos, tU32 pTime) {
 
-#if defined(C2_HOOKS_ENABLED)
-    FlameAnimate_original(c, pPos, pTime);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004fbdd0, FlameAnimate, FlameAnimate_original)
 
+// FUNCTION: CARMA2_HW 0x0042df70
 int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, br_vector3 *pPos) {
     tCar_crush_spec* car_crush;
 
@@ -1134,53 +1137,47 @@ int C2_HOOK_FASTCALL IsOnNonCarHalf(tCar_spec* pCar, br_vector3 *pPos) {
         && car_crush->field_0x4b8 != 0
         && BrVector3Dot(&car_crush->field_0x548, pPos) - car_crush->field_0x554 < 0.f;
 }
-C2_HOOK_FUNCTION(0x0042df70, IsOnNonCarHalf)
 
+// FUNCTION: CARMA2_HW 0x004fc9c0
 void C2_HOOK_FASTCALL SmudgeCar(tCar_spec* pCar, int fire_point) {
 
     /* empty */
 }
-C2_HOOK_FUNCTION(0x004fc9c0, SmudgeCar)
 
+// FUNCTION: CARMA2_HW 0x004f7cb0
 void C2_HOOK_FASTCALL SetLineModelCols(tU8 pCol) {
 
     if (pCol != 0) {
-        C2V(gLine_model)->vertices[0].red = 0xff;
-        C2V(gLine_model)->vertices[0].grn = 0xff;
-        C2V(gLine_model)->vertices[0].blu = 0xff;
-        C2V(gLine_model)->vertices[1].red = 0xff;
-        C2V(gLine_model)->vertices[1].grn = 0xff;
-        C2V(gLine_model)->vertices[1].blu = 0xff;
+        gLine_model->vertices[0].red = 0xff;
+        gLine_model->vertices[0].grn = 0xff;
+        gLine_model->vertices[0].blu = 0xff;
+        gLine_model->vertices[1].red = 0xff;
+        gLine_model->vertices[1].grn = 0xff;
+        gLine_model->vertices[1].blu = 0xff;
     } else {
-        C2V(gLine_model)->vertices[0].red = 0xff;
-        C2V(gLine_model)->vertices[0].grn = 0x00;
-        C2V(gLine_model)->vertices[0].blu = 0x00;
-        C2V(gLine_model)->vertices[1].red = 0xff;
-        C2V(gLine_model)->vertices[1].grn = 0xff;
-        C2V(gLine_model)->vertices[1].blu = 0x00;
+        gLine_model->vertices[0].red = 0xff;
+        gLine_model->vertices[0].grn = 0x00;
+        gLine_model->vertices[0].blu = 0x00;
+        gLine_model->vertices[1].red = 0xff;
+        gLine_model->vertices[1].grn = 0xff;
+        gLine_model->vertices[1].blu = 0x00;
     }
-    BrModelUpdate(C2V(gLine_model), BR_MODU_ALL);
+    BrModelUpdate(gLine_model, BR_MODU_ALL);
 }
-C2_HOOK_FUNCTION(0x004f7cb0, SetLineModelCols)
 
-int (C2_HOOK_FASTCALL * DrawLine3D_original)(br_vector3* start, br_vector3* end, br_pixelmap* pScreen, br_pixelmap* pDepth_buffer, br_pixelmap* shade_table);
+// FUNCTION: CARMA2_HW 0x004f6b80
 int C2_HOOK_FASTCALL DrawLine3D(br_vector3* start, br_vector3* end, br_pixelmap* pScreen, br_pixelmap* pDepth_buffer, br_pixelmap* shade_table) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return DrawLine3D_original(start, end, pScreen, pDepth_buffer, shade_table);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f6b80, DrawLine3D, DrawLine3D_original)
 
 void C2_HOOK_FASTCALL SetWorldToScreen(br_pixelmap* pScreen) {
     br_matrix4 mat;
     br_matrix4 mat2;
 
-    BrMatrix4Perspective(&mat, C2V(gSpark_cam)->field_of_view, C2V(gSpark_cam)->aspect, -C2V(gSpark_cam)->hither_z, -C2V(gSpark_cam)->yon_z);
+    BrMatrix4Perspective(&mat, gSpark_cam->field_of_view, gSpark_cam->aspect, -gSpark_cam->hither_z, -gSpark_cam->yon_z);
     BrMatrix4Scale(&mat2, (float)(pScreen->width / 2), (float)(pScreen->height / 2), 1.0f);
-    BrMatrix4Mul(&C2V(gCameraToScreen), &mat, &mat2);
+    BrMatrix4Mul(&gCameraToScreen, &mat, &mat2);
 }
 
 void C2_HOOK_FASTCALL ReplaySparks(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, tU32 pTime) {
@@ -1191,39 +1188,47 @@ void C2_HOOK_FASTCALL ReplaySparks(br_pixelmap* pRender_screen, br_pixelmap* pDe
     br_vector3 tv;
     br_vector3 new_pos;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSparks)); i++) {
-        if (C2V(gSpark_flags) & (1 << i)) {
-            if (C2V(gSparks)[i].car != NULL) {
-                BrMatrix34ApplyP(&tv, &o, &C2V(gSparks)[i].car->car_master_actor->t.t.mat);
+    for (i = 0; i < REC2_ASIZE(gSparks); i++) {
+        if (gSpark_flags & (1 << i)) {
+            if (gSparks[i].car != NULL) {
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+                BrMatrix34ApplyP(&tv, &o, &gSparks[i].car->car_master_actor->t.t.mat);
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
                 BrVector3Copy(&o, &tv);
-                BrMatrix34ApplyP(&pos, &C2V(gSparks)[i].pos, &C2V(gSparks)[i].car->car_master_actor->t.t.mat);
+                BrMatrix34ApplyP(&pos, &gSparks[i].pos, &gSparks[i].car->car_master_actor->t.t.mat);
             } else {
-                BrVector3Copy(&pos, &C2V(gSparks)[i].pos);
+                BrVector3Copy(&pos, &gSparks[i].pos);
             }
-            BrVector3Add(&o, &pos, &C2V(gSparks)[i].length);
-            if (C2V(gRendering_mirror)) {
-                BrVector3Sub(&tv, &pos, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
-                BrMatrix34TApplyV(&new_pos, &tv, &C2V(gRearview_camera_to_world));
-                BrVector3Sub(&tv, &o, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
-                BrMatrix34TApplyV(&p, &tv, &C2V(gRearview_camera_to_world));
+            BrVector3Add(&o, &pos, &gSparks[i].length);
+            if (gRendering_mirror) {
+                BrVector3Sub(&tv, &pos, (br_vector3*)gRearview_camera_to_world.m[3]);
+                BrMatrix34TApplyV(&new_pos, &tv, &gRearview_camera_to_world);
+                BrVector3Sub(&tv, &o, (br_vector3*)gRearview_camera_to_world.m[3]);
+                BrMatrix34TApplyV(&p, &tv, &gRearview_camera_to_world);
             } else {
-                BrVector3Sub(&tv, &pos, (br_vector3*)C2V(gCamera_to_world).m[3]);
-                BrMatrix34TApplyV(&new_pos, &tv, &C2V(gCamera_to_world));
-                BrVector3Sub(&tv, &o, (br_vector3*)C2V(gCamera_to_world).m[3]);
-                BrMatrix34TApplyV(&p, &tv, &C2V(gCamera_to_world));
+                BrVector3Sub(&tv, &pos, (br_vector3*)gCamera_to_world.m[3]);
+                BrMatrix34TApplyV(&new_pos, &tv, &gCamera_to_world);
+                BrVector3Sub(&tv, &o, (br_vector3*)gCamera_to_world.m[3]);
+                BrMatrix34TApplyV(&p, &tv, &gCamera_to_world);
             }
-            if (C2V(gNo_2d_effects)) {
-                SetLineModelCols(C2V(gSparks)[i].colour);
+            if (gNo_2d_effects) {
+                SetLineModelCols(gSparks[i].colour);
             }
-            if (C2V(gSparks)[i].colour != 0) {
-                DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gFog_shade_table));
+            if (gSparks[i].colour != 0) {
+                DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, gFog_shade_table);
             } else {
-                DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gAcid_shade_table));
+                DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, gAcid_shade_table);
             }
         }
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004f7450
 void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime) {
     int i;
     int time;
@@ -1244,106 +1249,106 @@ void C2_HOOK_FASTCALL RenderSparks(br_pixelmap* pRender_screen, br_pixelmap* pDe
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, car, 0x38);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSpark, colour, 0x3c);
 
-    C2V(gSpark_cam) = pCamera->type_data;
+    gSpark_cam = pCamera->type_data;
     SetWorldToScreen(pRender_screen);
 
-    if (C2V(gSpark_flags) == 0) {
+    if (gSpark_flags == 0) {
         return;
     }
 
-    if (C2V(gNo_2d_effects)) {
-        BrActorRemove(C2V(gLine_actor));
-        BrActorAdd(pCamera, C2V(gLine_actor));
+    if (gNo_2d_effects) {
+        BrActorRemove(gLine_actor);
+        BrActorAdd(pCamera, gLine_actor);
     }
 
-    if (C2V(gAction_replay_mode)) {
+    if (gAction_replay_mode) {
         ReplaySparks(pRender_screen, pDepth_buffer, pCamera, pTime);
-        if (C2V(gNo_2d_effects)) {
-            BrActorRemove(C2V(gLine_actor));
-            BrActorAdd(C2V(gDont_render_actor), C2V(gLine_actor));
+        if (gNo_2d_effects) {
+            BrActorRemove(gLine_actor);
+            BrActorAdd(gDont_render_actor, gLine_actor);
         }
         return;
     }
     ARStartPipingSession(ePipe_chunk_spark);
-    for (i = 0; i < REC2_ASIZE(C2V(gSparks)); i++) {
-        if (!((1u << i) & C2V(gSpark_flags))) {
+    for (i = 0; i < REC2_ASIZE(gSparks); i++) {
+        if (!((1u << i) & gSpark_flags)) {
             continue;
         }
-        if (C2V(gSparks)[i].count <= 0) {
-            C2V(gSparks)[i].count = 0;
-            C2V(gSpark_flags) &= ~(1u << i);
+        if (gSparks[i].count <= 0) {
+            gSparks[i].count = 0;
+            gSpark_flags &= ~(1u << i);
         }
-        ts = BrVector3Dot(&C2V(gSparks)[i].normal, &C2V(gSparks)[i].v);
-        BrVector3Scale(&tv, &C2V(gSparks)[i].normal, ts);
-        BrVector3Sub(&C2V(gSparks)[i].v, &C2V(gSparks)[i].v, &tv);
-        if (C2V(gSparks)[i].time_sync) {
-            BrVector3Scale(&o, &C2V(gSparks)[i].v, C2V(gSparks)[i].time_sync / 1000.f);
-            C2V(gSparks)[i].count += C2V(gSparks)[i].time_sync - pTime;
-            C2V(gSparks)[i].time_sync = 0;
+        ts = BrVector3Dot(&gSparks[i].normal, &gSparks[i].v);
+        BrVector3Scale(&tv, &gSparks[i].normal, ts);
+        BrVector3Sub(&gSparks[i].v, &gSparks[i].v, &tv);
+        if (gSparks[i].time_sync) {
+            BrVector3Scale(&o, &gSparks[i].v, gSparks[i].time_sync / 1000.f);
+            gSparks[i].count += gSparks[i].time_sync - pTime;
+            gSparks[i].time_sync = 0;
         } else {
-            BrVector3Scale(&o, &C2V(gSparks)[i].v, pTime / 1000.f);
-            C2V(gSparks)[i].count -= pTime;
+            BrVector3Scale(&o, &gSparks[i].v, pTime / 1000.f);
+            gSparks[i].count -= pTime;
         }
-        BrVector3Accumulate(&C2V(gSparks)[i].pos, &o);
-        time = 1000 - C2V(gSparks)[i].count;
+        BrVector3Accumulate(&gSparks[i].pos, &o);
+        time = 1000 - gSparks[i].count;
         if (time > 150) {
             time = 150;
         }
         ts = -time / 1000.f;
-        if (C2V(gSparks)[i].colour) {
+        if (gSparks[i].colour) {
             ts /= 2.0;
         }
-        BrVector3Scale(&C2V(gSparks)[i].length, &C2V(gSparks)[i].v, ts);
+        BrVector3Scale(&gSparks[i].length, &gSparks[i].v, ts);
         ts = pTime * 10.f / (WORLD_SCALE * 100.f);
-        if (C2V(gSparks)[i].car != NULL) {
-            BrMatrix34ApplyV(&tv, &C2V(gSparks)[i].length, &C2V(gSparks)[i].car->car_master_actor->t.t.mat);
-            BrVector3Copy(&C2V(gSparks)[i].length, &tv);
-            BrMatrix34ApplyP(&pos, &C2V(gSparks)[i].pos, &C2V(gSparks)[i].car->car_master_actor->t.t.mat);
+        if (gSparks[i].car != NULL) {
+            BrMatrix34ApplyV(&tv, &gSparks[i].length, &gSparks[i].car->car_master_actor->t.t.mat);
+            BrVector3Copy(&gSparks[i].length, &tv);
+            BrMatrix34ApplyP(&pos, &gSparks[i].pos, &gSparks[i].car->car_master_actor->t.t.mat);
             BrVector3Copy(&o, &tv);
-            C2V(gSparks)[i].v.v[0] -= C2V(gSparks)[i].car->car_master_actor->t.t.mat.m[0][1] * ts;
-            C2V(gSparks)[i].v.v[1] -= C2V(gSparks)[i].car->car_master_actor->t.t.mat.m[1][1] * ts;
-            C2V(gSparks)[i].v.v[2] -= C2V(gSparks)[i].car->car_master_actor->t.t.mat.m[2][1] * ts;
+            gSparks[i].v.v[0] -= gSparks[i].car->car_master_actor->t.t.mat.m[0][1] * ts;
+            gSparks[i].v.v[1] -= gSparks[i].car->car_master_actor->t.t.mat.m[1][1] * ts;
+            gSparks[i].v.v[2] -= gSparks[i].car->car_master_actor->t.t.mat.m[2][1] * ts;
         } else {
-            BrVector3Copy(&pos, &C2V(gSparks)[i].pos);
-            C2V(gSparks)[i].v.v[1] -= ts;
+            BrVector3Copy(&pos, &gSparks[i].pos);
+            gSparks[i].v.v[1] -= ts;
         }
-        AddSparkToPipingSession(i + (C2V(gSparks)[i].colour << 8), &pos, &C2V(gSparks)[i].length);
-        BrVector3Add(&o, &C2V(gSparks)[i].length, &pos);
-        if (C2V(gRendering_mirror)) {
-            BrVector3Sub(&tv, &pos, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
-            BrMatrix34TApplyV(&new_pos, &tv, &C2V(gRearview_camera_to_world));
-            BrVector3Sub(&tv, &o, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
-            BrMatrix34TApplyV(&p, &tv, &C2V(gRearview_camera_to_world));
+        AddSparkToPipingSession(i + (gSparks[i].colour << 8), &pos, &gSparks[i].length);
+        BrVector3Add(&o, &gSparks[i].length, &pos);
+        if (gRendering_mirror) {
+            BrVector3Sub(&tv, &pos, (br_vector3*)gRearview_camera_to_world.m[3]);
+            BrMatrix34TApplyV(&new_pos, &tv, &gRearview_camera_to_world);
+            BrVector3Sub(&tv, &o, (br_vector3*)gRearview_camera_to_world.m[3]);
+            BrMatrix34TApplyV(&p, &tv, &gRearview_camera_to_world);
         } else {
-            BrVector3Sub(&tv, &pos, (br_vector3*)C2V(gCamera_to_world).m[3]);
-            BrMatrix34TApplyV(&new_pos, &tv, &C2V(gCamera_to_world));
-            BrVector3Sub(&tv, &o, (br_vector3*)C2V(gCamera_to_world).m[3]);
-            BrMatrix34TApplyV(&p, &tv, &C2V(gCamera_to_world));
+            BrVector3Sub(&tv, &pos, (br_vector3*)gCamera_to_world.m[3]);
+            BrMatrix34TApplyV(&new_pos, &tv, &gCamera_to_world);
+            BrVector3Sub(&tv, &o, (br_vector3*)gCamera_to_world.m[3]);
+            BrMatrix34TApplyV(&p, &tv, &gCamera_to_world);
         }
         BrVector3SetFloat(&tv, FRandomBetween(-0.1f, 0.1f), FRandomBetween(-0.1f, 0.1f), FRandomBetween(-0.1f, 0.1f));
-        BrVector3Accumulate(&C2V(gSparks)[i].v, &tv);
-        ts = 1.0f - BrVector3Length(&C2V(gSparks)[i].v) / 1.4f * pTime / 1000.0f;
+        BrVector3Accumulate(&gSparks[i].v, &tv);
+        ts = 1.0f - BrVector3Length(&gSparks[i].v) / 1.4f * pTime / 1000.0f;
         if (ts < 0.1f) {
             ts = 0.1f;
         }
-        BrVector3Scale(&C2V(gSparks)[i].v, &C2V(gSparks)[i].v, ts);
-        if (C2V(gNo_2d_effects)) {
-            SetLineModelCols(C2V(gSparks)[i].colour);
+        BrVector3Scale(&gSparks[i].v, &gSparks[i].v, ts);
+        if (gNo_2d_effects) {
+            SetLineModelCols(gSparks[i].colour);
         }
-        if (C2V(gSparks)[i].colour != 0) {
-            DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gFog_shade_table));
+        if (gSparks[i].colour != 0) {
+            DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, gFog_shade_table);
         } else {
-            DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, C2V(gAcid_shade_table));
+            DrawLine3D(&p, &new_pos, pRender_screen, pDepth_buffer, gAcid_shade_table);
         }
     }
     AREndPipingSession();
-    if (C2V(gNo_2d_effects)) {
-        BrActorRemove(C2V(gLine_actor));
-        BrActorAdd(C2V(gDont_render_actor), C2V(gLine_actor));
+    if (gNo_2d_effects) {
+        BrActorRemove(gLine_actor);
+        BrActorAdd(gDont_render_actor, gLine_actor);
     }
 }
-C2_HOOK_FUNCTION(0x004f7450, RenderSparks)
 
+// FUNCTION: CARMA2_HW 0x004fb2f0
 int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2) {
     tBRender_smoke** a;
     tBRender_smoke** b;
@@ -1358,8 +1363,8 @@ int C2_HOOK_CDECL CmpSmokeZ(const void* p1, const void* p2) {
         return 0;
     }
 }
-C2_HOOK_FUNCTION(0x004fb2f0, CmpSmokeZ)
 
+// FUNCTION: CARMA2_HW 0x004fb1b0
 void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
     int i;
     int j;
@@ -1368,16 +1373,16 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
     tU8 grn;
     tU8 blu;
 
-    BrQsort(C2V(gBR_smoke_pointers), C2V(gN_BR_smoke_structs), sizeof(void*), CmpSmokeZ);
+    BrQsort(gBR_smoke_pointers, gN_BR_smoke_structs, sizeof(void*), CmpSmokeZ);
 
-    for (i = 0; i < C2V(gN_BR_smoke_structs); i++) {
-        smoke = C2V(gBR_smoke_pointers)[C2V(gN_BR_smoke_structs) - 1 - i];
-        BrVector3Copy(&C2V(gBlend_actor)->t.t.translate.t, &smoke->pos);
-        C2V(gBlend_actor)->t.t.mat.m[0][0] = smoke->r;
-        C2V(gBlend_actor)->t.t.mat.m[1][1] = smoke->r / smoke->aspect;
-        C2V(gBlend_actor)->material = smoke->material;
-        C2V(gBlend_actor)->material->extra_prim[1].v.x = BrFloatToFixed(smoke->strength * 150.f);
-        BrMaterialUpdate(C2V(gBlend_actor)->material, BR_MATU_EXTRA_PRIM);
+    for (i = 0; i < gN_BR_smoke_structs; i++) {
+        smoke = gBR_smoke_pointers[gN_BR_smoke_structs - 1 - i];
+        BrVector3Copy(&gBlend_actor->t.t.translate.t, &smoke->pos);
+        gBlend_actor->t.t.mat.m[0][0] = smoke->r;
+        gBlend_actor->t.t.mat.m[1][1] = smoke->r / smoke->aspect;
+        gBlend_actor->material = smoke->material;
+        gBlend_actor->material->extra_prim[1].v.x = BrFloatToFixed(smoke->strength * 150.f);
+        BrMaterialUpdate(gBlend_actor->material, BR_MATU_EXTRA_PRIM);
 
         red = BR_RED(smoke->col);
         grn = BR_GRN(smoke->col);
@@ -1388,36 +1393,35 @@ void C2_HOOK_FASTCALL RenderRecordedSmokeCircles(void) {
             smoke->model->vertices[j].blu = blu;
         }
         BrModelUpdate(smoke->model, BR_MODU_VERTEX_COLOURS);
-        C2V(gBlend_actor)->model = smoke->model;
-        BrZbsSceneRenderAdd(C2V(gBlend_actor));
+        gBlend_actor->model = smoke->model;
+        BrZbsSceneRenderAdd(gBlend_actor);
     }
 }
-C2_HOOK_FUNCTION(0x004fb1b0, RenderRecordedSmokeCircles)
 
 void C2_HOOK_FASTCALL RecordSmokeCircle(br_vector3* pCent, br_scalar pR, br_scalar pStrength, br_colour pShade, br_scalar pAspect) {
 
-    if (C2V(gRendering_mirror)) {
-        DRMatrix34TApplyP(&C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].pos, pCent, &C2V(gRearview_camera_to_world));
+    if (gRendering_mirror) {
+        DRMatrix34TApplyP(&gBR_smoke_structs[gN_BR_smoke_structs].pos, pCent, &gRearview_camera_to_world);
     } else {
-        DRMatrix34TApplyP(&C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].pos, pCent, &C2V(gCamera_to_world));
+        DRMatrix34TApplyP(&gBR_smoke_structs[gN_BR_smoke_structs].pos, pCent, &gCamera_to_world);
     }
 
-    C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].r = pR;
-    C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].strength = pStrength;
-    C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].col = pShade;
-    C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].aspect = pAspect;
-    C2V(gBR_smoke_pointers)[C2V(gN_BR_smoke_structs)] = &C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)];
-    if (pShade == C2V(gShade_list)[7]) {
-        C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].model = C2V(gBlend_model2);
+    gBR_smoke_structs[gN_BR_smoke_structs].r = pR;
+    gBR_smoke_structs[gN_BR_smoke_structs].strength = pStrength;
+    gBR_smoke_structs[gN_BR_smoke_structs].col = pShade;
+    gBR_smoke_structs[gN_BR_smoke_structs].aspect = pAspect;
+    gBR_smoke_pointers[gN_BR_smoke_structs] = &gBR_smoke_structs[gN_BR_smoke_structs];
+    if (pShade == gShade_list[7]) {
+        gBR_smoke_structs[gN_BR_smoke_structs].model = gBlend_model2;
     } else {
-        C2V(gBR_smoke_structs)[C2V(gN_BR_smoke_structs)].model = C2V(gBlend_model);
+        gBR_smoke_structs[gN_BR_smoke_structs].model = gBlend_model;
     }
-    C2V(gN_BR_smoke_structs) += 1;
+    gN_BR_smoke_structs += 1;
 }
 
 void C2_HOOK_FASTCALL SmokeCircle3D(br_vector3* o, br_scalar r, br_scalar strength, br_scalar pAspect, br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_colour pShade, br_actor* pCamera) {
 
-    if (C2V(gNo_2d_effects)) {
+    if (gNo_2d_effects) {
         RecordSmokeCircle(o, r, strength, pShade, pAspect);
     }
 }
@@ -1428,17 +1432,17 @@ void C2_HOOK_FASTCALL DrawTheGlow(br_pixelmap* pRender_screen, br_pixelmap* pDep
     br_vector3 tv;
     tU32 seed;
 
-    if (C2V(gColumn_flags) != 0) {
+    if (gColumn_flags != 0) {
         seed = rand();
         srand(GetTotalTime());
-        for (i = 0; i < REC2_ASIZE(C2V(gSmoke_column)); i++) {
-            if (((1u << i) & C2V(gColumn_flags)) != 0 && C2V(gSmoke_column)[i].colour <= 1) {
+        for (i = 0; i < REC2_ASIZE(gSmoke_column); i++) {
+            if (((1u << i) & gColumn_flags) != 0 && gSmoke_column[i].colour <= 1) {
                 strength = 0.5f;
-                if (C2V(gSmoke_column)[i].lifetime < 4000) {
-                    strength = C2V(gSmoke_column)[i].lifetime * 0.5f / 4000.f;
+                if (gSmoke_column[i].lifetime < 4000) {
+                    strength = gSmoke_column[i].lifetime * 0.5f / 4000.f;
                 }
-                BrVector3Set(&tv, C2V(gSmoke_column)[i].pos.v[0], C2V(gSmoke_column)[i].pos.v[1] + 0.02f, C2V(gSmoke_column)[i].pos.v[2]);
-                SmokeCircle3D(&tv, 0.07f, strength, SRandomBetween(0.5f, 0.99f), pRender_screen, pDepth_buffer, C2V(gShade_list)[7], pCamera);
+                BrVector3Set(&tv, gSmoke_column[i].pos.v[0], gSmoke_column[i].pos.v[1] + 0.02f, gSmoke_column[i].pos.v[2]);
+                SmokeCircle3D(&tv, 0.07f, strength, SRandomBetween(0.5f, 0.99f), pRender_screen, pDepth_buffer, gShade_list[7], pCamera);
             }
         }
         srand(seed);
@@ -1449,20 +1453,21 @@ void C2_HOOK_FASTCALL ReplaySmoke(br_pixelmap* pRender_screen, br_pixelmap* pDep
     br_scalar aspect;
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke)); i++) {
-        if (C2V(gSmoke_flags) & (1u << i)) {
-            aspect = 1.f + (C2V(gSmoke)[i].radius - .05f) * 4.f / 2.f;
-            if (C2V(gSmoke)[i].type & 0x10) {
-                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius / aspect, C2V(gSmoke)[i].strength, 1.f,
-                    pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
+    for (i = 0; i < REC2_ASIZE(gSmoke); i++) {
+        if (gSmoke_flags & (1u << i)) {
+            aspect = 1.f + (gSmoke[i].radius - .05f) * 4.f / 2.f;
+            if (gSmoke[i].type & 0x10) {
+                SmokeCircle3D(&gSmoke[i].pos, gSmoke[i].radius / aspect, gSmoke[i].strength, 1.f,
+                    pRender_screen, pDepth_buffer, gShade_list[gSmoke[i].type & 0xf], pCamera);
             } else {
-                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gSmoke)[i].strength, aspect,
-                    pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
+                SmokeCircle3D(&gSmoke[i].pos, gSmoke[i].radius, gSmoke[i].strength, aspect,
+                    pRender_screen, pDepth_buffer, gShade_list[gSmoke[i].type & 0xf], pCamera);
             }
         }
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004fa910
 void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDepth_buffer, br_actor* pCamera, br_matrix34* pCamera_to_world, tU32 pTime) {
     int i;
     int j;
@@ -1473,65 +1478,65 @@ void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDep
     tU32 not_lonely;
 
     not_lonely = 0;
-    if (C2V(gNo_2d_effects)) {
-        C2V(gBlend_actor)->render_style = BR_RSTYLE_FACES;
-        if (C2V(gBlend_actor)->parent != NULL) {
-            BrActorRemove(C2V(gBlend_actor));
+    if (gNo_2d_effects) {
+        gBlend_actor->render_style = BR_RSTYLE_FACES;
+        if (gBlend_actor->parent != NULL) {
+            BrActorRemove(gBlend_actor);
         }
-        BrActorAdd(pCamera, C2V(gBlend_actor));
-        C2V(gN_BR_smoke_structs) = 0;
+        BrActorAdd(pCamera, gBlend_actor);
+        gN_BR_smoke_structs = 0;
     }
     DrawTheGlow(pRender_screen, pDepth_buffer, pCamera);
 
-    if (C2V(gSmoke_flags) == 0) {
-        if (C2V(gNo_2d_effects)) {
-            if (C2V(gBlend_actor)->parent != NULL) {
-                BrActorRemove(C2V(gBlend_actor));
+    if (gSmoke_flags == 0) {
+        if (gNo_2d_effects) {
+            if (gBlend_actor->parent != NULL) {
+                BrActorRemove(gBlend_actor);
             }
-            BrActorAdd(C2V(gDont_render_actor), C2V(gBlend_actor));
+            BrActorAdd(gDont_render_actor, gBlend_actor);
         }
         return;
     }
 
     seed = rand();
-    if (C2V(gAction_replay_mode)) {
+    if (gAction_replay_mode) {
         ReplaySmoke(pRender_screen, pDepth_buffer, pCamera);
         srand(seed);
-        if (C2V(gNo_2d_effects)) {
+        if (gNo_2d_effects) {
             RenderRecordedSmokeCircles();
-            if (C2V(gBlend_actor)->parent != NULL) {
-                BrActorRemove(C2V(gBlend_actor));
+            if (gBlend_actor->parent != NULL) {
+                BrActorRemove(gBlend_actor);
             }
-            BrActorAdd(C2V(gDont_render_actor), C2V(gBlend_actor));
+            BrActorAdd(gDont_render_actor, gBlend_actor);
         }
         return;
     }
     ARStartPipingSession(ePipe_chunk_smoke);
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke)); i++) {
-        if (C2V(gSmoke_flags) & (1u << i)) {
-            if (C2V(gSmoke)[i].strength > 0.0) {
-                if (C2V(gSmoke)[i].time_sync != 0) {
-                    BrVector3Scale(&tv, &C2V(gSmoke)[i].v, C2V(gSmoke)[i].time_sync / 1000.0f);
-                    C2V(gSmoke)[i].time_sync = 0;
+    for (i = 0; i < REC2_ASIZE(gSmoke); i++) {
+        if (gSmoke_flags & (1u << i)) {
+            if (gSmoke[i].strength > 0.0) {
+                if (gSmoke[i].time_sync != 0) {
+                    BrVector3Scale(&tv, &gSmoke[i].v, gSmoke[i].time_sync / 1000.0f);
+                    gSmoke[i].time_sync = 0;
                 } else {
-                    BrVector3Scale(&tv, &C2V(gSmoke)[i].v, pTime / 1000.0f);
+                    BrVector3Scale(&tv, &gSmoke[i].v, pTime / 1000.0f);
                 }
-                BrVector3Accumulate(&C2V(gSmoke)[i].pos, &tv);
+                BrVector3Accumulate(&gSmoke[i].pos, &tv);
             } else {
-                C2V(gSmoke_flags) &= ~(1u << i);
+                gSmoke_flags &= ~(1u << i);
             }
         }
     }
-    for (i = 0; i < REC2_ASIZE(C2V(gSmoke)); i++) {
-        if (C2V(gSmoke_flags) & (1u << i)) {
-            if ((C2V(gSmoke)[i].type & 0xf) == 7) {
+    for (i = 0; i < REC2_ASIZE(gSmoke); i++) {
+        if (gSmoke_flags & (1u << i)) {
+            if ((gSmoke[i].type & 0xf) == 7) {
                 not_lonely |= 1u << i;
             } else if (!(not_lonely & (1u << i))) {
-                for (j = i + 1; j < REC2_ASIZE(C2V(gSmoke)); j++) {
-                    if ((C2V(gSmoke_flags) & (1u << j))) {
-                        BrVector3Sub(&tv, &C2V(gSmoke)[i].pos, &C2V(gSmoke)[i].pos);
+                for (j = i + 1; j < REC2_ASIZE(gSmoke); j++) {
+                    if ((gSmoke_flags & (1u << j))) {
+                        BrVector3Sub(&tv, &gSmoke[i].pos, &gSmoke[i].pos);
                         ts = BrVector3LengthSquared(&tv);
-                        if (REC2_SQR(C2V(gSmoke)[i].radius + C2V(gSmoke)[j].radius) > ts) {
+                        if (REC2_SQR(gSmoke[i].radius + gSmoke[j].radius) > ts) {
                             not_lonely |= (1u << j) | (1u << i);
                             break;
                         }
@@ -1539,48 +1544,47 @@ void C2_HOOK_FASTCALL RenderSmoke(br_pixelmap* pRender_screen, br_pixelmap* pDep
                 }
             }
             if (!((1u << i) & not_lonely)) {
-                C2V(gSmoke)[i].strength = C2V(gSmoke)[i].strength / 2.f;
+                gSmoke[i].strength = gSmoke[i].strength / 2.f;
             }
-            aspect = 1.f + (C2V(gSmoke)[i].radius - .05f) * 4.f / 2.f;
-            if ((C2V(gSmoke)[i].type & 0x10)) {
-                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius / aspect, C2V(gBR_smoke_structs)[i].strength, 1.0, pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
+            aspect = 1.f + (gSmoke[i].radius - .05f) * 4.f / 2.f;
+            if ((gSmoke[i].type & 0x10)) {
+                SmokeCircle3D(&gSmoke[i].pos, gSmoke[i].radius / aspect, gBR_smoke_structs[i].strength, 1.0, pRender_screen, pDepth_buffer, gShade_list[gSmoke[i].type & 0xf], pCamera);
             } else {
-                SmokeCircle3D(&C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gBR_smoke_structs)[i].strength, aspect, pRender_screen, pDepth_buffer, C2V(gShade_list)[C2V(gSmoke)[i].type & 0xf], pCamera);
+                SmokeCircle3D(&gSmoke[i].pos, gSmoke[i].radius, gBR_smoke_structs[i].strength, aspect, pRender_screen, pDepth_buffer, gShade_list[gSmoke[i].type & 0xf], pCamera);
             }
-            if (C2V(gSmoke)[i].pipe_me) {
-                AddSmokeToPipingSession(i, C2V(gSmoke)[i].type, &C2V(gSmoke)[i].pos, C2V(gSmoke)[i].radius, C2V(gSmoke)[i].strength);
+            if (gSmoke[i].pipe_me) {
+                AddSmokeToPipingSession(i, gSmoke[i].type, &gSmoke[i].pos, gSmoke[i].radius, gSmoke[i].strength);
             }
-            C2V(gSmoke)[i].radius = pTime / 1000.0f * C2V(gSmoke)[i].strength * .5f + C2V(gSmoke)[i].radius;
-            C2V(gSmoke)[i].strength -= pTime * C2V(gSmoke)[i].decay_factor / 1000.0f;
-            if (C2V(gSmoke)[i].radius > 0.3f) {
-                C2V(gSmoke)[i].radius = 0.3f;
+            gSmoke[i].radius = pTime / 1000.0f * gSmoke[i].strength * .5f + gSmoke[i].radius;
+            gSmoke[i].strength -= pTime * gSmoke[i].decay_factor / 1000.0f;
+            if (gSmoke[i].radius > 0.3f) {
+                gSmoke[i].radius = 0.3f;
             }
-            if (C2V(gSmoke)[i].strength > 0.0f) {
+            if (gSmoke[i].strength > 0.0f) {
                 ts = 1.0f - pTime * 0.002f;
                 if (ts < 0.5f) {
                     ts = 0.5f;
                 }
-                BrVector3Scale(&C2V(gSmoke)[i].v, &C2V(gSmoke)[i].v, ts);
-                if (fabs(C2V(gSmoke)[i].v.v[1]) < 0.43478259f && (C2V(gSmoke)[i].type & 0xfu) < 7) {
-                    if (C2V(gSmoke)[i].v.v[1] >= 0.0) {
-                        C2V(gSmoke)[i].v.v[1] = 0.43478259f;
+                BrVector3Scale(&gSmoke[i].v, &gSmoke[i].v, ts);
+                if (fabs(gSmoke[i].v.v[1]) < 0.43478259f && (gSmoke[i].type & 0xfu) < 7) {
+                    if (gSmoke[i].v.v[1] >= 0.0) {
+                        gSmoke[i].v.v[1] = 0.43478259f;
                     } else {
-                        C2V(gSmoke)[i].v.v[1] += 0.43478259f;
+                        gSmoke[i].v.v[1] += 0.43478259f;
                     }
                 }
             } else {
-                C2V(gSmoke_flags) &= ~(1u << i);
+                gSmoke_flags &= ~(1u << i);
             }
         }
     }
     AREndPipingSession();
     srand(seed);
-    if (C2V(gNo_2d_effects)) {
+    if (gNo_2d_effects) {
         RenderRecordedSmokeCircles();
-        if (C2V(gBlend_actor)->parent != NULL) {
-            BrActorRemove(C2V(gBlend_actor));
+        if (gBlend_actor->parent != NULL) {
+            BrActorRemove(gBlend_actor);
         }
-        BrActorAdd(C2V(gDont_render_actor), C2V(gBlend_actor));
+        BrActorAdd(gDont_render_actor, gBlend_actor);
     }
 }
-C2_HOOK_FUNCTION(0x004fa910, RenderSmoke)

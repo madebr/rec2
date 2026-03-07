@@ -7,33 +7,33 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gSound_detail_level);
-C2_HOOK_VARIABLE_DECLARE(int, gCD_fully_installed);
-C2_HOOK_VARIABLE_DECLARE(int, gSound_sources_inited);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gEffects_outlet);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gEngine_outlet);
-C2_HOOK_VARIABLE_DECLARE(int, gMusic_available);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_00684554);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_00684568);
-C2_HOOK_VARIABLE_DECLARE(int, gVirgin_pass);
-C2_HOOK_VARIABLE_DECLARE(int, gOld_sound_detail_level);
-C2_HOOK_VARIABLE_DECLARE(int, gCD_is_disabled);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gDriver_outlet);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gMusic_outlet);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gCar_outlet);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gPedestrians_outlet);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gXXX_outlet);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tS3_outlet*, gIndexed_outlets, 6);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gSound_periodicity_choices, 3);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gCamera_left);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gCamera_position);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gCamera_velocity);
-C2_HOOK_VARIABLE_DECLARE(tU32, gNext_sound_generator_munging);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_environmental_sound_sources);
-C2_HOOK_VARIABLE_DECLARE(int, gEnvironmental_sound_sources_buffer_index);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tEnvironment_sound_source, gEnvironment_sound_sources, 5);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gOld_camera_position);
+extern int gSound_detail_level;
+extern int gCD_fully_installed;
+extern int gSound_sources_inited;
+extern tS3_outlet* gEffects_outlet;
+extern tS3_outlet* gEngine_outlet;
+extern int gMusic_available;
+extern int gINT_00684554;
+extern int gINT_00684568;
+extern int gVirgin_pass;
+extern int gOld_sound_detail_level;
+extern int gCD_is_disabled;
+extern tS3_outlet* gDriver_outlet;
+extern tS3_outlet* gMusic_outlet;
+extern tS3_outlet* gCar_outlet;
+extern tS3_outlet* gPedestrians_outlet;
+extern tS3_outlet* gXXX_outlet;
+extern tS3_outlet* gIndexed_outlets[6];
+extern const char* gSound_periodicity_choices[3];
+extern br_vector3 gCamera_left;
+extern br_vector3 gCamera_position;
+extern br_vector3 gCamera_velocity;
+extern tU32 gNext_sound_generator_munging;
+extern int gCount_environmental_sound_sources;
+extern int gEnvironmental_sound_sources_buffer_index;
+extern tEnvironment_sound_source gEnvironment_sound_sources[5];
+extern br_vector3 gZero_v__car;
+extern br_vector3 gOld_camera_position;
 
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 

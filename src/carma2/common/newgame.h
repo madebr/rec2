@@ -5,11 +5,11 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tNet_game_options, gNet_settings, 9);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gNet_grid_starts, 10);
-C2_HOOK_VARIABLE_DECLARE(int, gRace_index);
-C2_HOOK_VARIABLE_DECLARE(int, gLast_graph_sel);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tJoinable_game,  gGames_to_join, 6);
+extern tNet_game_options gNet_settings[9];
+extern int gNet_grid_starts[10];
+extern int gRace_index;
+extern int gLast_graph_sel;
+extern tJoinable_game gGames_to_join[6];
 
 void C2_HOOK_FASTCALL DefaultNetSettings(void);
 

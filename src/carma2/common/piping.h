@@ -5,23 +5,23 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(undefined4*, gCrush_space);
-C2_HOOK_VARIABLE_DECLARE(tU8*, gPipe_play_ptr);
-C2_HOOK_VARIABLE_DECLARE(int, gPlay_direction);
-C2_HOOK_VARIABLE_DECLARE(tU8*, gPipe_record_ptr);
-C2_HOOK_VARIABLE_DECLARE(tU8*, gPipe_buffer_oldest);
-C2_HOOK_VARIABLE_DECLARE(float, gReplay_rate);
-C2_HOOK_VARIABLE_DECLARE(tU32, gYoungest_time);
-C2_HOOK_VARIABLE_DECLARE(tU32, gOldest_time);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gCar_pos);
-C2_HOOK_VARIABLE_DECLARE(br_scalar, gMax_distance);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gReference_pos);
-C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCar_ptr);
-C2_HOOK_VARIABLE_DECLARE(tU32, gTrigger_time);
-C2_HOOK_VARIABLE_DECLARE(tPipe_smudge_data*, gSmudge_space);
-C2_HOOK_VARIABLE_DECLARE(const tReplay_callback*, gPipe_callbacks);
-C2_HOOK_VARIABLE_DECLARE(int, gPipe_count_callbacks);
-C2_HOOK_VARIABLE_DECLARE(tU32, gPipe_buffer_size);
+extern undefined4* gCrush_space;
+extern tU8* gPipe_play_ptr;
+extern int gPlay_direction;
+extern tU8* gPipe_record_ptr;
+extern tU8* gPipe_buffer_oldest;
+extern float gReplay_rate;
+extern tU32 gYoungest_time;
+extern tU32 gOldest_time;
+extern br_vector3 gCar_pos;
+extern br_scalar gMax_distance;
+extern br_vector3 gReference_pos;
+extern tCar_spec* gCar_ptr;
+extern tU32 gTrigger_time;
+extern tPipe_smudge_data* gSmudge_space;
+extern const tReplay_callback* gPipe_callbacks;
+extern int gPipe_count_callbacks;
+extern tU32 gPipe_buffer_size;
 
 int C2_HOOK_FASTCALL ARToggleReplay(tTurn_on_AR_callback* pTurn_on_AR_cb, tTurn_off_AR_callback* pTurn_off_AR_cb, tAfter_AR_callback* pAfter_AR_cb, tZappy_AR_callback* pZappy_AR_cb, tPreprocess_AR_callback* pPreprocess_cb, tPostProcess_AR_callback* pPostProcess_cb, int* pArg7, int* pArg8);
 

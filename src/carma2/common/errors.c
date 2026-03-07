@@ -12,7 +12,8 @@
 #include <stdint.h>
 //#include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gError_messages, 186, 0x00591708, {
+// GLOBAL: CARMA2_HW 0x00591708
+const char* gError_messages[186] = {
     "Unable to support this screen depth setting",
     "Couldn't allocate off-screen buffer",
     "Couldn't allocate Z-Buffer",
@@ -197,11 +198,14 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gError_messages, 186, 0x00591
     "Duplicate pixelmap \"%\"",
     "Oh my God! Attempt made to write to packed file \"%\". This is stupid.",
     "Could not create textures pages \"%\".",
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gError_code, 0x006b2e00);
+};
+
+// GLOBAL: CARMA2_HW 0x006b2e00
+int gError_code;
 
 FILE* gDiagnostic_file;
 
+// FUNCTION: CARMA2_HW 0x0044c230
 void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     char the_str[1024];
     char* sub_str;
@@ -211,7 +215,7 @@ void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     va_list ap;
 
     if (pStr_index < 1000) {
-        c2_strcpy(the_str, C2V(gError_messages)[pStr_index]);
+        c2_strcpy(the_str, gError_messages[pStr_index]);
     } else {
         c2_strcpy(the_str, "Physics Error: %");
     }
@@ -249,7 +253,6 @@ void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     dr_dprintf(the_str);
     PDFatalError(the_str);
 }
-C2_HOOK_FUNCTION(0x0044c230, FatalError)
 
 //// IDA: void __cdecl NonFatalError(int pStr_index, ...)
 //void NonFatalError(int pStr_index, ...) {
@@ -282,12 +285,13 @@ C2_HOOK_FUNCTION(0x0044c230, FatalError)
 //    PDNonFatalError(temp_str);
 //}
 
+// FUNCTION: CARMA2_HW 0x0044c570
 void C2_HOOK_FASTCALL CloseDiagnostics(void) {
 
 }
-C2_HOOK_FUNCTION(0x0044c570, CloseDiagnostics);
 
 // This function is stripped from the retail binary, we've guessed at the implementation
+// FUNCTION: CARMA2_HW 0x0044c580
 void C2_HOOK_FASTCALL OpenDiagnostics(void) {
     // FIXME: use c2_stdio functions
 //    gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
@@ -299,18 +303,13 @@ void C2_HOOK_FASTCALL OpenDiagnostics(void) {
     // todo: generate a real date
     c2_fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", __DATE__ " : " __TIME__);
 }
-C2_HOOK_FUNCTION(0x0044c580, OpenDiagnostics)
 
 // Renamed from dprintf to avoid collisions to stdio
 // This function is stripped from the retail binary, we've guessed at the implementation
+// FUNCTION: CARMA2_HW 0x0044c590
 void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...) {
     va_list args;
     tU32 the_time;
-
-    // FIXME: use c2_stdio functions
-    va_start(args, fmt_string);
-    C2_HOOK_VDEBUGF(fmt_string, args);
-    va_end(args);
 
     if (gDiagnostic_file == NULL) {
         OpenDiagnostics();
@@ -326,4 +325,3 @@ void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...) {
 
     c2_fflush(gDiagnostic_file);
 }
-C2_HOOK_FUNCTION(0x0044c590, dr_dprintf);

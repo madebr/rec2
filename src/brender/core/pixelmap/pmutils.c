@@ -3,6 +3,7 @@
 #if defined(__I86__) || defined(_M_IX86)
 C2_NAKED
 #endif
+// FUNCTION: CARMA2_HW 0x0053e682
 br_uint_16 C2_HOOK_CDECL GetSysQual(void) {
 #if defined(__I86__) || defined(_M_IX86)
 #if defined(_MSC_VER)
@@ -20,4 +21,3 @@ br_uint_16 C2_HOOK_CDECL GetSysQual(void) {
     return 0;
 #endif
 }
-C2_NO_HOOK_FUNCTION(0x0053e682, GetSysQual)

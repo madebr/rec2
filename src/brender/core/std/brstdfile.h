@@ -5,7 +5,7 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_filesystem*, _BrDefaultFilesystem);
+extern br_filesystem* _BrDefaultFilesystem;
 
 br_uint_32 C2_HOOK_CDECL BrStdioAttributes(void);
 

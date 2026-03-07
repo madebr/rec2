@@ -1,126 +1,341 @@
 #include "globvrbm.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gPrat_actor, 0x0074ca90);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, g2d_camera, 0x0074cac4);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gPowerupHUD_actor, 0x0074cf34);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gStatbarHUD1_actor, 0x0074ca7c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHeadup2_actor, 0x0074cab0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHUDsquare_actor, 0x0074cef0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gMapHUD_actor, 0x0074cf0c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTimerRightHUD_actor, 0x0074ca24);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gOffense_actor, 0x0074ca84);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTimerLeftHUD_actor, 0x0074ca40);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gPower_actor, 0x0074ca98);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHUDcurve_actor, 0x0074ca68);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gStatbarRightHUD_actor, 0x0074ca58);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHeadup_actor, 0x0074cef4);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gStatbarHUD5_actor, 0x0074cf18);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gDim_actor, 0x0074cf24);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gArmour_actor, 0x0074cf80);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gHUD_root_actor, 0x0074c9f8);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gStatbarHUD3_actor, 0x0074ca14);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTestFont_actor, 0x0074cabc);
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gPrat_model, 0x0074cefc);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gMapHUD_model, 0x0074ca78);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gStatbarRightHUD_model, 0x0074cf6c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gTestFont_model, 0x0074cf54);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gHeadup_model, 0x0074caa0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gHUDsquare_model, 0x0074ca3c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gTimerRightHUD_model, 0x0074cad8);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gOffence_model, 0x0074ca64);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gTimerLeftHUD_model, 0x0074cf88);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gPower_model, 0x0074cee0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gStatbarHUD5_model, 0x0074ca88);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gStatbarHUD3_model, 0x0074cf44);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gStatbarHUD1_model, 0x0074ca50);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gPowerupHUD_model, 0x0074cf4c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gHeadup2_model, 0x0074cf3c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gDim_model, 0x0074ca70);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gHUDcurve_model, 0x0074cef8);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gArmour_model, 0x0074cf08);
+// GLOBAL: CARMA2_HW 0x0074ca90
+br_actor* gPrat_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gPowerupHUD_material, 0x0074cf78);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gTestFont_material, 0x0074cf28);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gArmour_material, 0x0074ca38);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gStatbarHUD1_material, 0x0074cf14);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gStatbarHUD5_material, 0x0074c9fc);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHeadup_material, 0x0074cf50);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gStatbarHUD3_material, 0x0074cacc);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gOffence_material, 0x0074ca9c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gPower_material, 0x0074cf58);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gStatbarRightHUD_material, 0x0074ca8c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gPrat_material, 0x0074ca30);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHUDcurve_material, 0x0074caa4);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gMapHUD_material, 0x0074cf70);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHeadup2_material, 0x0074cf1c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gTimerRightHUD_material, 0x0074cac0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDim_material, 0x0074cad4);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gHUDsquare_material, 0x0074cf40);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gTimerLeftHUD_material, 0x0074cf64);
+// GLOBAL: CARMA2_HW 0x0074cac4
+br_actor* g2d_camera;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup_dim_w, 0x00655e64, 0xc0);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup_dim_h, 0x00655e68, 0x26);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup_dim_x, 0x00655e6c, 0x44);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup_dim_y, 0x00655e70, 0x1b3);
+// GLOBAL: CARMA2_HW 0x0074cf34
+br_actor* gPowerupHUD_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup2_dim_w, 0x00655e74, 0xb8);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup2_dim_h, 0x00655e78, 0x17);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup2_dim_x, 0x00655e7c, 0x124);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHeadup2_dim_y, 0x00655e80, 0x1c3);
+// GLOBAL: CARMA2_HW 0x0074ca7c
+br_actor* gStatbarHUD1_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPowerupHUD_dim_w, 0x00655e84, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPowerupHUD_dim_h, 0x00655e88, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPowerupHUD_dim_x, 0x00655e8c, 0xa);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPowerupHUD_dim_y, 0x00655e90, 0x8c);
+// GLOBAL: CARMA2_HW 0x0074cab0
+br_actor* gHeadup2_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD1_dim_w, 0x00655e94, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD1_dim_h, 0x00655e98, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gStatbarHUD1_dim_x, 0x0068b8f0);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gStatbarHUD1_dim_y, 0x0068b8f4);
+// GLOBAL: CARMA2_HW 0x0074cef0
+br_actor* gHUDsquare_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD3_dim_w, 0x00655eac, 0x8e);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD3_dim_h, 0x00655eb0, 0x26);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD3_dim_x, 0x00655eb4, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD3_dim_y, 0x00655eb8, 0xa);
+// GLOBAL: CARMA2_HW 0x0074cf0c
+br_actor* gMapHUD_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHUDsquare_dim_w, 0x00655ebc, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHUDsquare_dim_h, 0x00655ec0, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHUDsquare_dim_x, 0x00655ec4, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gHUDsquare_dim_y, 0x0068b8f8);
+// GLOBAL: CARMA2_HW 0x0074ca24
+br_actor* gTimerRightHUD_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD5_dim_w, 0x00655ec8, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD5_dim_h, 0x00655ecc, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarHUD5_dim_x, 0x00655ed0, 0x240);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gStatbarHUD5_dim_y, 0x0068b8fc);
+// GLOBAL: CARMA2_HW 0x0074ca84
+br_actor* gOffense_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarRightHUD_dim_w, 0x00655eec, 0xb2);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarRightHUD_dim_h, 0x00655ef0, 0x26);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarRightHUD_dim_x, 0x00655ef4, 0x18e);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gStatbarRightHUD_dim_y, 0x00655ef8, 0xa);
+// GLOBAL: CARMA2_HW 0x0074ca40
+br_actor* gTimerLeftHUD_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gTimerLeftHUD_dim_w, 0x00655ed4, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gTimerLeftHUD_dim_h, 0x00655ed8, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gTimerLeftHUD_dim_x, 0x00655edc, 0x10e);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTimerLeftHUD_dim_y, 0x0068b900);
+// GLOBAL: CARMA2_HW 0x0074ca98
+br_actor* gPower_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gTimerRightHUD_dim_w, 0x00655ee0, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gTimerRightHUD_dim_h, 0x00655ee4, 0x40);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gTimerRightHUD_dim_x, 0x00655ee8, 0x14e);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTimerRightHUD_dim_y, 0x0068b904);
+// GLOBAL: CARMA2_HW 0x0074ca68
+br_actor* gHUDcurve_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gArmour_dim_w, 0x00655f0c, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gArmour_dim_h, 0x00655f10, 0x10);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gArmour_dim_x, 0x00655f14, 0x95);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gArmour_dim_y, 0x00655f18, 0x31);
+// GLOBAL: CARMA2_HW 0x0074ca58
+br_actor* gStatbarRightHUD_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPower_dim_w, 0x00655f1c, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPower_dim_h, 0x00655f20, 0x10);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPower_dim_x, 0x00655f24, 0x12a);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPower_dim_y, 0x00655f28, 0x31);
+// GLOBAL: CARMA2_HW 0x0074cef4
+br_actor* gHeadup_actor;
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gOffence_dim_w, 0x00655f2c, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gOffence_dim_h, 0x00655f30, 0x10);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gOffence_dim_x, 0x00655f34, 0x1c0);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gOffence_dim_y, 0x00655f38, 0x31);
+// GLOBAL: CARMA2_HW 0x0074cf18
+br_actor* gStatbarHUD5_actor;
 
+// GLOBAL: CARMA2_HW 0x0074cf24
+br_actor* gDim_actor;
+
+// GLOBAL: CARMA2_HW 0x0074cf80
+br_actor* gArmour_actor;
+
+// GLOBAL: CARMA2_HW 0x0074c9f8
+br_actor* gHUD_root_actor;
+
+// GLOBAL: CARMA2_HW 0x0074ca14
+br_actor* gStatbarHUD3_actor;
+
+// GLOBAL: CARMA2_HW 0x0074cabc
+br_actor* gTestFont_actor;
+
+
+// GLOBAL: CARMA2_HW 0x0074cefc
+br_model* gPrat_model;
+
+// GLOBAL: CARMA2_HW 0x0074ca78
+br_model* gMapHUD_model;
+
+// GLOBAL: CARMA2_HW 0x0074cf6c
+br_model* gStatbarRightHUD_model;
+
+// GLOBAL: CARMA2_HW 0x0074cf54
+br_model* gTestFont_model;
+
+// GLOBAL: CARMA2_HW 0x0074caa0
+br_model* gHeadup_model;
+
+// GLOBAL: CARMA2_HW 0x0074ca3c
+br_model* gHUDsquare_model;
+
+// GLOBAL: CARMA2_HW 0x0074cad8
+br_model* gTimerRightHUD_model;
+
+// GLOBAL: CARMA2_HW 0x0074ca64
+br_model* gOffence_model;
+
+// GLOBAL: CARMA2_HW 0x0074cf88
+br_model* gTimerLeftHUD_model;
+
+// GLOBAL: CARMA2_HW 0x0074cee0
+br_model* gPower_model;
+
+// GLOBAL: CARMA2_HW 0x0074ca88
+br_model* gStatbarHUD5_model;
+
+// GLOBAL: CARMA2_HW 0x0074cf44
+br_model* gStatbarHUD3_model;
+
+// GLOBAL: CARMA2_HW 0x0074ca50
+br_model* gStatbarHUD1_model;
+
+// GLOBAL: CARMA2_HW 0x0074cf4c
+br_model* gPowerupHUD_model;
+
+// GLOBAL: CARMA2_HW 0x0074cf3c
+br_model* gHeadup2_model;
+
+// GLOBAL: CARMA2_HW 0x0074ca70
+br_model* gDim_model;
+
+// GLOBAL: CARMA2_HW 0x0074cef8
+br_model* gHUDcurve_model;
+
+// GLOBAL: CARMA2_HW 0x0074cf08
+br_model* gArmour_model;
+
+
+// GLOBAL: CARMA2_HW 0x0074cf78
+br_material* gPowerupHUD_material;
+
+// GLOBAL: CARMA2_HW 0x0074cf28
+br_material* gTestFont_material;
+
+// GLOBAL: CARMA2_HW 0x0074ca38
+br_material* gArmour_material;
+
+// GLOBAL: CARMA2_HW 0x0074cf14
+br_material* gStatbarHUD1_material;
+
+// GLOBAL: CARMA2_HW 0x0074c9fc
+br_material* gStatbarHUD5_material;
+
+// GLOBAL: CARMA2_HW 0x0074cf50
+br_material* gHeadup_material;
+
+// GLOBAL: CARMA2_HW 0x0074cacc
+br_material* gStatbarHUD3_material;
+
+// GLOBAL: CARMA2_HW 0x0074ca9c
+br_material* gOffence_material;
+
+// GLOBAL: CARMA2_HW 0x0074cf58
+br_material* gPower_material;
+
+// GLOBAL: CARMA2_HW 0x0074ca8c
+br_material* gStatbarRightHUD_material;
+
+// GLOBAL: CARMA2_HW 0x0074ca30
+br_material* gPrat_material;
+
+// GLOBAL: CARMA2_HW 0x0074caa4
+br_material* gHUDcurve_material;
+
+// GLOBAL: CARMA2_HW 0x0074cf70
+br_material* gMapHUD_material;
+
+// GLOBAL: CARMA2_HW 0x0074cf1c
+br_material* gHeadup2_material;
+
+// GLOBAL: CARMA2_HW 0x0074cac0
+br_material* gTimerRightHUD_material;
+
+// GLOBAL: CARMA2_HW 0x0074cad4
+br_material* gDim_material;
+
+// GLOBAL: CARMA2_HW 0x0074cf40
+br_material* gHUDsquare_material;
+
+// GLOBAL: CARMA2_HW 0x0074cf64
+br_material* gTimerLeftHUD_material;
+
+
+// GLOBAL: CARMA2_HW 0x00655e64
+int gHeadup_dim_w = 0xc0;
+
+// GLOBAL: CARMA2_HW 0x00655e68
+int gHeadup_dim_h = 0x26;
+
+// GLOBAL: CARMA2_HW 0x00655e6c
+int gHeadup_dim_x = 0x44;
+
+// GLOBAL: CARMA2_HW 0x00655e70
+int gHeadup_dim_y = 0x1b3;
+
+
+// GLOBAL: CARMA2_HW 0x00655e74
+int gHeadup2_dim_w = 0xb8;
+
+// GLOBAL: CARMA2_HW 0x00655e78
+int gHeadup2_dim_h = 0x17;
+
+// GLOBAL: CARMA2_HW 0x00655e7c
+int gHeadup2_dim_x = 0x124;
+
+// GLOBAL: CARMA2_HW 0x00655e80
+int gHeadup2_dim_y = 0x1c3;
+
+
+// GLOBAL: CARMA2_HW 0x00655e84
+int gPowerupHUD_dim_w = 0x40;
+
+// GLOBAL: CARMA2_HW 0x00655e88
+int gPowerupHUD_dim_h = 0x40;
+
+// GLOBAL: CARMA2_HW 0x00655e8c
+int gPowerupHUD_dim_x = 0xa;
+
+// GLOBAL: CARMA2_HW 0x00655e90
+int gPowerupHUD_dim_y = 0x8c;
+
+
+// GLOBAL: CARMA2_HW 0x00655e94
+int gStatbarHUD1_dim_w = 0x80;
+
+// GLOBAL: CARMA2_HW 0x00655e98
+int gStatbarHUD1_dim_h = 0x80;
+
+// GLOBAL: CARMA2_HW 0x0068b8f0
+int gStatbarHUD1_dim_x;
+
+// GLOBAL: CARMA2_HW 0x0068b8f4
+int gStatbarHUD1_dim_y;
+
+
+// GLOBAL: CARMA2_HW 0x00655eac
+int gStatbarHUD3_dim_w = 0x8e;
+
+// GLOBAL: CARMA2_HW 0x00655eb0
+int gStatbarHUD3_dim_h = 0x26;
+
+// GLOBAL: CARMA2_HW 0x00655eb4
+int gStatbarHUD3_dim_x = 0x80;
+
+// GLOBAL: CARMA2_HW 0x00655eb8
+int gStatbarHUD3_dim_y = 0xa;
+
+
+// GLOBAL: CARMA2_HW 0x00655ebc
+int gHUDsquare_dim_w = 0x80;
+
+// GLOBAL: CARMA2_HW 0x00655ec0
+int gHUDsquare_dim_h = 0x40;
+
+// GLOBAL: CARMA2_HW 0x00655ec4
+int gHUDsquare_dim_x = 0x40;
+
+// GLOBAL: CARMA2_HW 0x0068b8f8
+int gHUDsquare_dim_y;
+
+
+// GLOBAL: CARMA2_HW 0x00655ec8
+int gStatbarHUD5_dim_w = 0x40;
+
+// GLOBAL: CARMA2_HW 0x00655ecc
+int gStatbarHUD5_dim_h = 0x80;
+
+// GLOBAL: CARMA2_HW 0x00655ed0
+int gStatbarHUD5_dim_x = 0x240;
+
+// GLOBAL: CARMA2_HW 0x0068b8fc
+int gStatbarHUD5_dim_y;
+
+
+// GLOBAL: CARMA2_HW 0x00655eec
+int gStatbarRightHUD_dim_w = 0xb2;
+
+// GLOBAL: CARMA2_HW 0x00655ef0
+int gStatbarRightHUD_dim_h = 0x26;
+
+// GLOBAL: CARMA2_HW 0x00655ef4
+int gStatbarRightHUD_dim_x = 0x18e;
+
+// GLOBAL: CARMA2_HW 0x00655ef8
+int gStatbarRightHUD_dim_y = 0xa;
+
+
+// GLOBAL: CARMA2_HW 0x00655ed4
+int gTimerLeftHUD_dim_w = 0x40;
+
+// GLOBAL: CARMA2_HW 0x00655ed8
+int gTimerLeftHUD_dim_h = 0x40;
+
+// GLOBAL: CARMA2_HW 0x00655edc
+int gTimerLeftHUD_dim_x = 0x10e;
+
+// GLOBAL: CARMA2_HW 0x0068b900
+int gTimerLeftHUD_dim_y;
+
+
+// GLOBAL: CARMA2_HW 0x00655ee0
+int gTimerRightHUD_dim_w = 0x40;
+
+// GLOBAL: CARMA2_HW 0x00655ee4
+int gTimerRightHUD_dim_h = 0x40;
+
+// GLOBAL: CARMA2_HW 0x00655ee8
+int gTimerRightHUD_dim_x = 0x14e;
+
+// GLOBAL: CARMA2_HW 0x0068b904
+int gTimerRightHUD_dim_y;
+
+
+// GLOBAL: CARMA2_HW 0x00655f0c
+int gArmour_dim_w = 0x80;
+
+// GLOBAL: CARMA2_HW 0x00655f10
+int gArmour_dim_h = 0x10;
+
+// GLOBAL: CARMA2_HW 0x00655f14
+int gArmour_dim_x = 0x95;
+
+// GLOBAL: CARMA2_HW 0x00655f18
+int gArmour_dim_y = 0x31;
+
+
+// GLOBAL: CARMA2_HW 0x00655f1c
+int gPower_dim_w = 0x80;
+
+// GLOBAL: CARMA2_HW 0x00655f20
+int gPower_dim_h = 0x10;
+
+// GLOBAL: CARMA2_HW 0x00655f24
+int gPower_dim_x = 0x12a;
+
+// GLOBAL: CARMA2_HW 0x00655f28
+int gPower_dim_y = 0x31;
+
+
+// GLOBAL: CARMA2_HW 0x00655f2c
+int gOffence_dim_w = 0x80;
+
+// GLOBAL: CARMA2_HW 0x00655f30
+int gOffence_dim_h = 0x10;
+
+// GLOBAL: CARMA2_HW 0x00655f34
+int gOffence_dim_x = 0x1c0;
+
+// GLOBAL: CARMA2_HW 0x00655f38
+int gOffence_dim_y = 0x31;

@@ -6,12 +6,8 @@
 #define XCONV(V)    (br_fixed_ls)((V)*65536.f)
 #define ICONV       (br_int_32)
 
-void (C2_HOOK_STDCALL * ConvertVertex_original)(brp_vertex* dest, brp_vertex* src);
+// FUNCTION: CARMA2_HW 0x005460e0
 void C2_HOOK_STDCALL ConvertVertex(brp_vertex* dest, brp_vertex* src) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    ConvertVertex_original(dest, src);
-#else
     int c;
     br_uint_32 m;
 
@@ -19,7 +15,7 @@ void C2_HOOK_STDCALL ConvertVertex(brp_vertex* dest, brp_vertex* src) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(brp_block, convert_mask_x, 0x24);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(brp_block, convert_mask_i, 0x28);
 
-    m = C2V(rend).block->convert_mask_f;
+    m = rend.block->convert_mask_f;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 0x1) {
@@ -28,7 +24,7 @@ void C2_HOOK_STDCALL ConvertVertex(brp_vertex* dest, brp_vertex* src) {
         }
     }
 
-    m = C2V(rend).block->convert_mask_x;
+    m = rend.block->convert_mask_x;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 0x1) {
@@ -37,7 +33,7 @@ void C2_HOOK_STDCALL ConvertVertex(brp_vertex* dest, brp_vertex* src) {
         }
     }
 
-    m = C2V(rend).block->convert_mask_i;
+    m = rend.block->convert_mask_i;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 0x1) {
@@ -46,7 +42,7 @@ void C2_HOOK_STDCALL ConvertVertex(brp_vertex* dest, brp_vertex* src) {
         }
     }
 
-    m = 0x0000ffff ^ (C2V(rend).block->convert_mask_i | C2V(rend).block->convert_mask_x | C2V(rend).block->convert_mask_f);
+    m = 0x0000ffff ^ (rend.block->convert_mask_i | rend.block->convert_mask_x | rend.block->convert_mask_f);
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 0x1) {
@@ -54,16 +50,15 @@ void C2_HOOK_STDCALL ConvertVertex(brp_vertex* dest, brp_vertex* src) {
             }
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005460e0, ConvertVertex, ConvertVertex_original)
 
+// FUNCTION: CARMA2_HW 0x005461b0
 void C2_HOOK_CDECL RenderConvert1(brp_block* block, brp_vertex* v0) {
     int c;
     br_uint_32 m;
     brp_vertex outv[1];
 
-    m = C2V(rend).block->convert_mask_f;
+    m = rend.block->convert_mask_f;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -72,7 +67,7 @@ void C2_HOOK_CDECL RenderConvert1(brp_block* block, brp_vertex* v0) {
         }
     }
 
-    m = C2V(rend).block->convert_mask_x;
+    m = rend.block->convert_mask_x;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -81,7 +76,7 @@ void C2_HOOK_CDECL RenderConvert1(brp_block* block, brp_vertex* v0) {
         }
     }
 
-    m = C2V(rend).block->convert_mask_i;
+    m = rend.block->convert_mask_i;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -90,7 +85,7 @@ void C2_HOOK_CDECL RenderConvert1(brp_block* block, brp_vertex* v0) {
         }
     }
 
-    m = 0x0000ffff ^ (C2V(rend).block->convert_mask_i | C2V(rend).block->convert_mask_x | C2V(rend).block->convert_mask_f);
+    m = 0x0000ffff ^ (rend.block->convert_mask_i | rend.block->convert_mask_x | rend.block->convert_mask_f);
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -101,14 +96,14 @@ void C2_HOOK_CDECL RenderConvert1(brp_block* block, brp_vertex* v0) {
 
     block->chain->render(block->chain, outv);
 }
-C2_HOOK_FUNCTION(0x005461b0, RenderConvert1)
 
+// FUNCTION: CARMA2_HW 0x00546290
 void C2_HOOK_CDECL RenderConvert2(brp_block* block, brp_vertex* v0, brp_vertex* v1) {
     int c;
     br_uint_32 m;
     brp_vertex outv[2];
 
-    m = C2V(rend).block->convert_mask_f;
+    m = rend.block->convert_mask_f;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -118,7 +113,7 @@ void C2_HOOK_CDECL RenderConvert2(brp_block* block, brp_vertex* v0, brp_vertex* 
         }
     }
 
-    m = C2V(rend).block->convert_mask_x;
+    m = rend.block->convert_mask_x;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -128,7 +123,7 @@ void C2_HOOK_CDECL RenderConvert2(brp_block* block, brp_vertex* v0, brp_vertex* 
         }
     }
 
-    m = C2V(rend).block->convert_mask_i;
+    m = rend.block->convert_mask_i;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -138,7 +133,7 @@ void C2_HOOK_CDECL RenderConvert2(brp_block* block, brp_vertex* v0, brp_vertex* 
         }
     }
 
-    m = 0x0000ffff ^ (C2V(rend).block->convert_mask_i | C2V(rend).block->convert_mask_x | C2V(rend).block->convert_mask_f);
+    m = 0x0000ffff ^ (rend.block->convert_mask_i | rend.block->convert_mask_x | rend.block->convert_mask_f);
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -150,14 +145,14 @@ void C2_HOOK_CDECL RenderConvert2(brp_block* block, brp_vertex* v0, brp_vertex* 
 
     block->chain->render(block->chain, &outv[0], &outv[1]);
 }
-C2_HOOK_FUNCTION(0x00546290, RenderConvert2)
 
+// FUNCTION: CARMA2_HW 0x005463f0
 void C2_HOOK_CDECL RenderConvert3(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2) {
     int c;
     br_uint_32 m;
     brp_vertex outv[3];
 
-    m = C2V(rend).block->convert_mask_f;
+    m = rend.block->convert_mask_f;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -168,7 +163,7 @@ void C2_HOOK_CDECL RenderConvert3(brp_block* block, brp_vertex* v0, brp_vertex* 
         }
     }
 
-    m = C2V(rend).block->convert_mask_x;
+    m = rend.block->convert_mask_x;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -179,7 +174,7 @@ void C2_HOOK_CDECL RenderConvert3(brp_block* block, brp_vertex* v0, brp_vertex* 
         }
     }
 
-    m = C2V(rend).block->convert_mask_i;
+    m = rend.block->convert_mask_i;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -191,7 +186,7 @@ void C2_HOOK_CDECL RenderConvert3(brp_block* block, brp_vertex* v0, brp_vertex* 
     }
 
 
-    m = 0x0000ffff ^ (C2V(rend).block->convert_mask_i | C2V(rend).block->convert_mask_x | C2V(rend).block->convert_mask_f);
+    m = 0x0000ffff ^ (rend.block->convert_mask_i | rend.block->convert_mask_x | rend.block->convert_mask_f);
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -204,14 +199,14 @@ void C2_HOOK_CDECL RenderConvert3(brp_block* block, brp_vertex* v0, brp_vertex* 
 
     block->chain->render(block->chain, &outv[0], &outv[1], &outv[2]);
 }
-C2_HOOK_FUNCTION(0x005463f0, RenderConvert3)
 
+// FUNCTION: CARMA2_HW 0x005465e0
 void C2_HOOK_CDECL RenderConvert4(brp_block* block, brp_vertex* v0, brp_vertex* v1, brp_vertex* v2, brp_vertex* v3) {
     int c;
     br_uint_32 m;
     brp_vertex outv[4];
 
-    m = C2V(rend).block->convert_mask_f;
+    m = rend.block->convert_mask_f;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -223,7 +218,7 @@ void C2_HOOK_CDECL RenderConvert4(brp_block* block, brp_vertex* v0, brp_vertex* 
         }
     }
 
-    m = C2V(rend).block->convert_mask_x;
+    m = rend.block->convert_mask_x;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -235,7 +230,7 @@ void C2_HOOK_CDECL RenderConvert4(brp_block* block, brp_vertex* v0, brp_vertex* 
         }
     }
 
-    m = C2V(rend).block->convert_mask_i;
+    m = rend.block->convert_mask_i;
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if (m & 1) {
@@ -247,7 +242,7 @@ void C2_HOOK_CDECL RenderConvert4(brp_block* block, brp_vertex* v0, brp_vertex* 
         }
     }
 
-    m = 0x0000ffff ^ (C2V(rend).block->convert_mask_i | C2V(rend).block->convert_mask_x | C2V(rend).block->convert_mask_f);
+    m = 0x0000ffff ^ (rend.block->convert_mask_i | rend.block->convert_mask_x | rend.block->convert_mask_f);
     if (m != 0) {
         for (c = 0; m != 0; c++, m >>= 1) {
             if(m & 1) {
@@ -261,4 +256,3 @@ void C2_HOOK_CDECL RenderConvert4(brp_block* block, brp_vertex* v0, brp_vertex* 
 
     block->chain->render(block->chain, &outv[0], &outv[1], &outv[2], &outv[3]);
 }
-C2_HOOK_FUNCTION(0x005465e0, RenderConvert4)

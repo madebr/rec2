@@ -1,3 +1,5 @@
 #include "timestmp.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_timestamp, PrimD3DDriverTimestamp, 0x100150c0, TIMESTAMP_START);
+
+// GLOBAL: D3D 0x100150c0
+br_timestamp PrimD3DDriverTimestamp = TIMESTAMP_START;

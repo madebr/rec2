@@ -22,38 +22,53 @@
 
 #include "rec2_macros.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(tActionReplayCameraMode, gAction_replay_camera_mode, 0x0079efa8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gAction_replay_manual_camera_target_type, 0x00679278);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU8, gCamera_type_allowed_replay, 9, 0x0058f600, {
-    1, 1, 1, 1, 1, 0, 0, 1, 1,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tU8, gCamera_type_allowed_gameplay, 9, 0x0058f610, {
-    1, 0, 0, 0, 1, 0, 0, 1, 1,
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSingle_frame_mode, 0x006a23c4);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_synch_time, 0x006a23d4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gKey_down, 0x006a2374);
 
+// GLOBAL: CARMA2_HW 0x0079efa8
+tActionReplayCameraMode gAction_replay_camera_mode;
+
+// GLOBAL: CARMA2_HW 0x00679278
+int gAction_replay_manual_camera_target_type;
+
+// GLOBAL: CARMA2_HW 0x0058f600
+tU8 gCamera_type_allowed_replay[9] = {
+    1, 1, 1, 1, 1, 0, 0, 1, 1,
+};
+
+// GLOBAL: CARMA2_HW 0x0058f610
+tU8 gCamera_type_allowed_gameplay[9] = {
+    1, 0, 0, 0, 1, 0, 0, 1, 1,
+};
+
+// GLOBAL: CARMA2_HW 0x006a23c4
+int gSingle_frame_mode;
+
+// GLOBAL: CARMA2_HW 0x006a23d4
+tU32 gLast_synch_time;
+
+// GLOBAL: CARMA2_HW 0x006a2374
+int gKey_down;
+
+// FUNCTION: CARMA2_HW 0x004e1740
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 
-    if (C2V(gQuick_time_quality)[0] == '\0') {
-        c2_strcpy(C2V(gQuick_time_quality), "normal");
+    if (gQuick_time_quality[0] == '\0') {
+        c2_strcpy(gQuick_time_quality, "normal");
     }
-    if (C2V(gQuick_time_compressor)[0] == '\0') {
-        c2_strcpy(C2V(gQuick_time_compressor), "animation");
+    if (gQuick_time_compressor[0] == '\0') {
+        c2_strcpy(gQuick_time_compressor, "animation");
     }
-    if (C2V(gQuick_time_temp_path)[0] == '\0') {
-        PathCat(C2V(gQuick_time_temp_path), C2V(gApplication_path), "QTTMP");
+    if (gQuick_time_temp_path[0] == '\0') {
+        PathCat(gQuick_time_temp_path, gApplication_path, "QTTMP");
     }
-    if (C2V(gQuick_time_movie_path_stub)[0] == '\0') {
-        PathCat(C2V(gQuick_time_temp_path), C2V(gApplication_path), "MOVIE");
+    if (gQuick_time_movie_path_stub[0] == '\0') {
+        PathCat(gQuick_time_temp_path, gApplication_path, "MOVIE");
     }
-    if (C2V(gQuick_time_banner_texture_name)[0] == '\0') {
-        c2_strcpy(C2V(gQuick_time_banner_texture_name), "ARBANNER.PIX");
+    if (gQuick_time_banner_texture_name[0] == '\0') {
+        c2_strcpy(gQuick_time_banner_texture_name, "ARBANNER.PIX");
     }
 }
-C2_HOOK_FUNCTION(0x004e1740, SetQuickTimeDefaults)
 
+// FUNCTION: CARMA2_HW 0x0040e700
 void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_cam) {
     int i;
 
@@ -79,16 +94,11 @@ void C2_HOOK_FASTCALL MungeCarMaterials(tCar_spec* pCar, int pInternal_cam) {
         BrMaterialUpdate(cockpit_material->material, BR_MATU_RENDERING);
     }
 }
-C2_HOOK_FUNCTION(0x0040e700, MungeCarMaterials)
 
-void (C2_HOOK_FASTCALL * SetCameraType_original)(tActionReplayCameraMode pCamPos);
+// FUNCTION: CARMA2_HW 0x0040e790
 void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    SetCameraType_original(pCamPos);
-#else
-
-    C2V(gAction_replay_camera_mode) = pCamPos;
+    gAction_replay_camera_mode = pCamPos;
     switch (pCamPos) {
     case kActionReplayCameraMode_Standard:
     case kActionReplayCameraMode_Rigid:
@@ -96,22 +106,20 @@ void C2_HOOK_FASTCALL SetCameraType(tActionReplayCameraMode pCamPos) {
         InitialiseExternalCamera();
         break;
     case kActionReplayCameraMode_Manual:
-        C2V(gAction_replay_manual_camera_target_type) = 0;
+        gAction_replay_manual_camera_target_type = 0;
         break;
     default:
         break;
     }
-    MungeCarMaterials(&C2V(gProgram_state).current_car, C2V(gAction_replay_camera_mode) == kActionReplayCameraMode_Internal);
-#endif
+    MungeCarMaterials(&gProgram_state.current_car, gAction_replay_camera_mode == kActionReplayCameraMode_Internal);
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040e790, SetCameraType, SetCameraType_original)
 
 int C2_HOOK_FASTCALL IsCameraTypeAllowed(tActionReplayCameraMode pCamera_type) {
 
-    if (C2V(gAction_replay_mode) && !C2V(gCamera_type_allowed_replay)[pCamera_type]) {
+    if (gAction_replay_mode && !gCamera_type_allowed_replay[pCamera_type]) {
         return 0;
     }
-    if (!C2V(gAction_replay_mode) && !C2V(gCamera_type_allowed_gameplay)[pCamera_type]) {
+    if (!gAction_replay_mode && !gCamera_type_allowed_gameplay[pCamera_type]) {
         return 0;
     }
     if (pCamera_type > 8) {
@@ -120,41 +128,38 @@ int C2_HOOK_FASTCALL IsCameraTypeAllowed(tActionReplayCameraMode pCamera_type) {
     if (pCamera_type == kActionReplayCameraMode_Drone && !OKToViewDrones()) {
         return 0;
     }
-    if (pCamera_type == kActionReplayCameraMode_Peds && C2V(gPed_count) == 0) {
+    if (pCamera_type == kActionReplayCameraMode_Peds && gPed_count == 0) {
         return 0;
     }
     return 1;
 }
 
-void (C2_HOOK_FASTCALL * PositionExternalCamera_original)(tCar_spec* pCar_spec, tU32 pTime);
+// FUNCTION: CARMA2_HW 0x0040ea30
 void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    PositionExternalCamera_original(pCar_spec, pTime);
-#else
     br_camera* camera;
-    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(tActionReplayCameraMode, old_camera_mode, 0x0058f62c, kActionReplayCameraMode_Invalid);
+    // GLOBAL: CARMA2_HW 0x0058f62c
+    static tActionReplayCameraMode old_camera_mode = kActionReplayCameraMode_Invalid;
 
-    camera = C2V(gCamera)->type_data;
+    camera = gCamera->type_data;
     CheckCameraHither();
-    if (!IsCameraTypeAllowed(C2V(gAction_replay_camera_mode))) {
+    if (!IsCameraTypeAllowed(gAction_replay_camera_mode)) {
         ChangeCameraType();
     }
     AmIGettingBoredWatchingCameraSpin();
-    if (!C2V(gProgram_state).cockpit_on) {
+    if (!gProgram_state.cockpit_on) {
         tCar_spec* c;
 
-        if (C2V(gOpponent_viewing_mode) && C2V(gAction_replay_mode)) {
-            c = &C2V(gProgram_state).current_car;
+        if (gOpponent_viewing_mode && gAction_replay_mode) {
+            c = &gProgram_state.current_car;
         } else {
-            c = C2V(gCar_to_view);
+            c = gCar_to_view;
         }
         if (c->car_master_actor->t.t.translate.t.v[0] <= 500.f) {
-            if (C2V(old_camera_mode) != C2V(gAction_replay_camera_mode)) {
-                camera->field_of_view = BR_ANGLE_DEG(C2V(gCamera_angle));
+            if (old_camera_mode != gAction_replay_camera_mode) {
+                camera->field_of_view = BR_ANGLE_DEG(gCamera_angle);
             }
-            camera->hither_z = C2V(gCamera_hither);
-            switch (C2V(gAction_replay_camera_mode)) {
+            camera->hither_z = gCamera_hither;
+            switch (gAction_replay_camera_mode) {
             case kActionReplayCameraMode_Standard:
             case kActionReplayCameraMode_Rigid:
             case kActionReplayCameraMode_Reversing:
@@ -163,7 +168,7 @@ void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
             case kActionReplayCameraMode_Panning:
                 CheckDisablePlingMaterials(c);
                 SetPanningFieldOfView();
-                if (C2V(old_camera_mode) != kActionReplayCameraMode_Panning) {
+                if (old_camera_mode != kActionReplayCameraMode_Panning) {
                     SetUpPanningCamera(c);
                 }
                 PanningExternalCamera(c, pTime);
@@ -173,7 +178,7 @@ void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
                 CheckDisablePlingMaterials(c);
                 SetPanningFieldOfView();
                 if (!IncidentCam(c, pTime)) {
-                    if (C2V(old_camera_mode) != C2V(gAction_replay_camera_mode)) {
+                    if (old_camera_mode != gAction_replay_camera_mode) {
                         SetUpPanningCamera(c);
                     }
                     PanningExternalCamera(c, pTime);
@@ -190,7 +195,7 @@ void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
                 PositionDroneCam(pTime);
                 break;
             case kActionReplayCameraMode_Internal:
-                camera->hither_z = C2V(gCamera_cockpit_hither);
+                camera->hither_z = gCamera_cockpit_hither;
                 PositionCarMountedCamera(c, pTime);
                 break;
 #ifdef REC2_FIX_BUGS
@@ -198,92 +203,63 @@ void C2_HOOK_FASTCALL PositionExternalCamera(tCar_spec* pCar_spec, tU32 pTime) {
                 abort();
 #endif
             }
-            C2V(old_camera_mode) = C2V(gAction_replay_camera_mode);
+            old_camera_mode = gAction_replay_camera_mode;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040ea30, PositionExternalCamera, PositionExternalCamera_original)
 
+// FUNCTION: CARMA2_HW 0x00403d40
 void C2_HOOK_FASTCALL ARMainLoopStart(void) {
 
-    C2V(gAction_replay_mode) = 0;
-    C2V(gLast_replay_frame_time) = PDGetTotalTime();
+    gAction_replay_mode = 0;
+    gLast_replay_frame_time = PDGetTotalTime();
 }
-C2_HOOK_FUNCTION(0x00403d40, ARMainLoopStart)
 
+// FUNCTION: CARMA2_HW 0x00403d30
 void C2_HOOK_FASTCALL ARService(void) {
 
 }
-C2_HOOK_FUNCTION(0x00403d30, ARService)
 
-void (C2_HOOK_FASTCALL * TurnOnActionReplay_original)(void);
+// FUNCTION: CARMA2_HW 0x004e71c0
 void C2_HOOK_FASTCALL TurnOnActionReplay(void) {
-#if defined(C2_HOOKS_ENABLED)
-    TurnOnActionReplay_original();
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004e71c0, TurnOnActionReplay, TurnOnActionReplay_original)
 
-void (C2_HOOK_FASTCALL * TurnOffActionReplay_original)(void);
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004e7270
 void C2_HOOK_FASTCALL TurnOffActionReplay(void) {
-#if defined(C2_HOOKS_ENABLED)
-    TurnOffActionReplay_original();
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004e7270, TurnOffActionReplay, TurnOffActionReplay_original)
 
-void (C2_HOOK_FASTCALL * AfterActionReplay_original)(void);
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004e72d0
 void C2_HOOK_FASTCALL AfterActionReplay(void) {
-#if defined(C2_HOOKS_ENABLED)
-    AfterActionReplay_original();
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004e72d0, AfterActionReplay, AfterActionReplay_original)
 
-void (C2_HOOK_FASTCALL * DoZappyActionReplayHeadups_original)(void);
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004e6900
 void C2_HOOK_FASTCALL DoZappyActionReplayHeadups(void) {
-#if defined(C2_HOOKS_ENABLED)
-    DoZappyActionReplayHeadups_original();
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004e6900, DoZappyActionReplayHeadups, DoZappyActionReplayHeadups_original)
 
-void (C2_HOOK_FASTCALL * PreProcess_original)(int pFrame_period);
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004e6950
 void C2_HOOK_FASTCALL PreProcess(int pFrame_period) {
-#if defined(C2_HOOKS_ENABLED)
-    PreProcess_original(pFrame_period);
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004e6950, PreProcess, PreProcess_original)
 
-void (C2_HOOK_FASTCALL * PostProcess_original)(int pFrame_period);
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004e6980
 void C2_HOOK_FASTCALL PostProcess(int pFrame_period) {
-#if defined(C2_HOOKS_ENABLED)
-    PostProcess_original(pFrame_period);
-#else
-    NOT_IMPLEMENTED();
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004e6980, PostProcess, PostProcess_original)
 
-void (C2_HOOK_FASTCALL * ToggleReplay_original)(int* pArg1, int* pArg2);
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x004e72e0
 void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    ToggleReplay_original(pArg1, pArg2);
-#else
-    if (C2V(gAction_replay_mode)) {
+    if (gAction_replay_mode) {
         RenderAFrame(1);
         RenderAFrame(1);
     }
@@ -291,127 +267,95 @@ void C2_HOOK_FASTCALL ToggleReplay(int* pArg1, int* pArg2) {
             DoZappyActionReplayHeadups, PreProcess, PostProcess, pArg1, pArg2)) {
         NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_action_replay_unavailable));
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e72e0, ToggleReplay, ToggleReplay_original)
 
-void (C2_HOOK_FASTCALL * InitialiseActionReplay_original)(void);
+// FUNCTION: CARMA2_HW 0x004c6bf0
 void C2_HOOK_FASTCALL InitialiseActionReplay(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitialiseActionReplay_original();
-#else
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gReplay_callbacks)) != 70);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gReplay_callbacks) != 70);
 
-    ARInitialise(!C2V(gAusterity_mode) && C2V(gNet_mode) == eNet_mode_none, REC2_ASIZE(C2V(gReplay_callbacks)), C2V(gReplay_callbacks));
-    if (!C2V(gAusterity_mode) && C2V(gNet_mode) == eNet_mode_none) {
-        C2V(gCrush_space) = BrMemAllocate(0x4000, kMem_pipe_model_geometry);
+    ARInitialise(!gAusterity_mode && gNet_mode == eNet_mode_none, REC2_ASIZE(gReplay_callbacks), gReplay_callbacks);
+    if (!gAusterity_mode && gNet_mode == eNet_mode_none) {
+        gCrush_space = BrMemAllocate(0x4000, kMem_pipe_model_geometry);
     } else {
-        C2V(gCrush_space) = NULL;
+        gCrush_space = NULL;
     }
-    C2V(gSmudge_space) = (tPipe_smudge_data*)C2V(gCrush_space);
-#endif
+    gSmudge_space = (tPipe_smudge_data*)gCrush_space;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004c6bf0, InitialiseActionReplay, InitialiseActionReplay_original)
 
-void (C2_HOOK_FASTCALL * CheckReplayTurnOn_original)(void);
+// FUNCTION: CARMA2_HW 0x004e6ff0
 void C2_HOOK_FASTCALL CheckReplayTurnOn(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    CheckReplayTurnOn_original();
-#else
-    if (!C2V(gAction_replay_mode)) {
-        if (!KeyIsDown(58) || C2V(gEntering_message)) {
-            C2V(gKey_down) = -1;
-        } else if (C2V(gKey_down) == -1) {
+    if (!gAction_replay_mode) {
+        if (!KeyIsDown(58) || gEntering_message) {
+            gKey_down = -1;
+        } else if (gKey_down == -1) {
             ToggleReplay(NULL, NULL);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e6ff0, CheckReplayTurnOn, CheckReplayTurnOn_original)
 
-void (C2_HOOK_FASTCALL * DoActionReplay_original)(tU32 pFrame_period);
+// FUNCTION: CARMA2_HW 0x004e68e0
 void C2_HOOK_FASTCALL DoActionReplay(tU32 pFrame_period) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoActionReplay_original(pFrame_period);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e68e0, DoActionReplay, DoActionReplay_original)
 
-void (C2_HOOK_FASTCALL * PollActionReplayControls_original)(tU32 *pFrame_period, tU32* pAverage_frame_period);
+// FUNCTION: CARMA2_HW 0x004e69b0
 void C2_HOOK_FASTCALL PollActionReplayControls(tU32 *pFrame_period, tU32* pAverage_frame_period) {
 
-#if defined(C2_HOOKS_ENABLED)
-    PollActionReplayControls_original(pFrame_period, pAverage_frame_period);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e69b0, PollActionReplayControls, PollActionReplayControls_original)
 
+// FUNCTION: CARMA2_HW 0x00402360
 int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void) {
 
-    return C2V(gReplay_rate) == 0.f;
+    return gReplay_rate == 0.f;
 }
-C2_HOOK_FUNCTION(0x00402360, ARReplayIsReallyPaused)
 
+// FUNCTION: CARMA2_HW 0x00402390
 float C2_HOOK_FASTCALL ARGetReplayRate(void) {
-    return C2V(gReplay_rate);
+    return gReplay_rate;
 }
-C2_HOOK_FUNCTION(0x00402390, ARGetReplayRate)
 
-void (C2_HOOK_FASTCALL * PipeSingleGrooveStop_original)(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption);
+// FUNCTION: CARMA2_HW 0x004c80b0
 void C2_HOOK_FASTCALL PipeSingleGrooveStop(int pGroove_index, br_matrix34* pMatrix, int pPath_interrupt, int pObject_interrupt, float pPath_resumption, float pObject_resumption) {
 
-#if defined(C2_HOOKS_ENABLED)
-    PipeSingleGrooveStop_original(pGroove_index, pMatrix, pPath_interrupt, pObject_interrupt, pPath_resumption, pObject_resumption);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004c80b0, PipeSingleGrooveStop, PipeSingleGrooveStop_original)
 
-void (C2_HOOK_FASTCALL * ActualActionReplayHeadups_original)(int pSpecial_zappy_bastard);
+// FUNCTION: CARMA2_HW 0x004e6280
 void C2_HOOK_FASTCALL ActualActionReplayHeadups(int pSpecial_zappy_bastard) {
 
-#if defined(C2_HOOKS_ENABLED)
-    ActualActionReplayHeadups_original(pSpecial_zappy_bastard);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e6280, ActualActionReplayHeadups, ActualActionReplayHeadups_original)
 
+// FUNCTION: CARMA2_HW 0x004e6277
 void C2_HOOK_FASTCALL DoActionReplayHeadups(void) {
 
     ActualActionReplayHeadups(0);
 }
-C2_HOOK_FUNCTION(0x004e6277, DoActionReplayHeadups)
 
+// FUNCTION: CARMA2_HW 0x004023a0
 void C2_HOOK_FASTCALL ARSetReplayRate(float rate) {
-    C2V(gReplay_rate) = rate;
+    gReplay_rate = rate;
 }
-C2_HOOK_FUNCTION(0x004023a0, ARSetReplayRate)
 
+// FUNCTION: CARMA2_HW 0x004e7110
 void C2_HOOK_FASTCALL SynchronizeActionReplay(void) {
 
-    while (ARGetReplayRate() != 0.f && (float)(PDGetTotalTime() - C2V(gLast_synch_time)) < (float)C2V(gFrame_period) / fabsf(ARGetReplayRate())) {
+    while (ARGetReplayRate() != 0.f && (float)(PDGetTotalTime() - gLast_synch_time) < (float)gFrame_period / fabsf(ARGetReplayRate())) {
         ServiceGameInRace();
     }
-    C2V(gLast_synch_time) = PDGetTotalTime();
-    if (C2V(gSingle_frame_mode)) {
+    gLast_synch_time = PDGetTotalTime();
+    if (gSingle_frame_mode) {
         ARSetReplayRate(0.f);
-        C2V(gSingle_frame_mode) = 0;
+        gSingle_frame_mode = 0;
     }
 }
-C2_HOOK_FUNCTION(0x004e7110, SynchronizeActionReplay)
 
+// FUNCTION: CARMA2_HW 0x004e6260
 void C2_HOOK_FASTCALL DoActionReplayPostSwap(void) {
 
     RemoveTransientBitmaps(1);
 }
-C2_HOOK_FUNCTION(0x004e6260, DoActionReplayPostSwap)

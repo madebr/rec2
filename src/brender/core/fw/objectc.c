@@ -8,28 +8,18 @@
 #include "pattern.h"
 #include "tokenval.h"
 
-void* (C2_HOOK_CDECL * BrObjectListAllocate_original)(void* res);
+// FUNCTION: CARMA2_HW 0x0052d190
 void* C2_HOOK_CDECL BrObjectListAllocate(void* res) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrObjectListAllocate_original(res);
-#else
-
     object_list* hl;
 
     hl = BrResAllocate(res, sizeof(object_list), BR_MEMORY_OBJECT_LIST);
     BrSimpleNewList(&hl->l);
     return hl;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d190, BrObjectListAllocate, BrObjectListAllocate_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_addFront_original)(br_object_container* self, br_object* ph);
+// FUNCTION: CARMA2_HW 0x0052d1c0
 br_error C2_HOOK_CDECL _M_br_object_container_addFront(br_object_container* self, br_object* ph) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_object_container_addFront_original(self, ph);
-#else
     object_list* hl;
     object_list_entry* he;
 
@@ -47,16 +37,10 @@ br_error C2_HOOK_CDECL _M_br_object_container_addFront(br_object_container* self
     he->h = ph;
     BrSimpleAddHead(&hl->l, &he->n);
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d1c0, _M_br_object_container_addFront, _M_br_object_container_addFront_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_remove_original)(br_object_container* self, br_object* h);
+// FUNCTION: CARMA2_HW 0x0052d210
 br_error C2_HOOK_CDECL _M_br_object_container_remove(br_object_container* self, br_object* h) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_object_container_remove_original(self, h);
-#else
     object_list* hl;
     object_list_entry* he;
 
@@ -72,16 +56,10 @@ br_error C2_HOOK_CDECL _M_br_object_container_remove(br_object_container* self, 
         return 0;
     }
     return 0x1002;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d210, _M_br_object_container_remove, _M_br_object_container_remove_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_removeFront_original)(br_object_container* self, br_object** ph);
+// FUNCTION: CARMA2_HW 0x0052d260
 br_error C2_HOOK_CDECL _M_br_object_container_removeFront(br_object_container* self, br_object** ph) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_object_container_removeFront_original(self, ph);
-#else
     object_list* hl;
     object_list_entry* he;
 
@@ -97,16 +75,10 @@ br_error C2_HOOK_CDECL _M_br_object_container_removeFront(br_object_container* s
     *ph = he->h;
     BrResFree(he);
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d260, _M_br_object_container_removeFront, _M_br_object_container_removeFront_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_find_original)(br_object_container* self, br_object** ph, br_token type, const char* pattern, br_token_value* tv);
+// FUNCTION: CARMA2_HW 0x0052d2b0
 br_error C2_HOOK_CDECL _M_br_object_container_find(br_object_container* self, br_object** ph, br_token type, const char* pattern, br_token_value* tv) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_object_container_find_original(self, ph, type, pattern, tv);
-#else
     object_list* hl;
     object_list_entry* he;
     void* tvarg;
@@ -138,16 +110,10 @@ br_error C2_HOOK_CDECL _M_br_object_container_find(br_object_container* self, br
         self->dispatch->_tokensMatchEnd(self, tvarg);
     }
     return r;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d2b0, _M_br_object_container_find, _M_br_object_container_find_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_findMany_original)(br_object_container* self, br_object** objects, br_int_32 max_objects, br_int_32* num_objects, br_token type, const char* pattern, br_token_value* tv);
+// FUNCTION: CARMA2_HW 0x0052d390
 br_error C2_HOOK_CDECL _M_br_object_container_findMany(br_object_container* self, br_object** objects, br_int_32 max_objects, br_int_32* num_objects, br_token type, const char* pattern, br_token_value* tv) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_object_container_findMany_original(self, objects, max_objects, num_objects, type, pattern, tv);
-#else
     object_list* hl;
     object_list_entry* he;
     void* tvarg;
@@ -185,17 +151,10 @@ br_error C2_HOOK_CDECL _M_br_object_container_findMany(br_object_container* self
         return 0x1004;
     }
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d390, _M_br_object_container_findMany, _M_br_object_container_findMany_original)
 
-br_error (C2_HOOK_CDECL * _M_br_object_container_count_original)(br_object_container* self, br_uint_32* pcount, br_token type, const char* pattern, br_token_value* tv);
+// FUNCTION: CARMA2_HW 0x0052d490
 br_error C2_HOOK_CDECL _M_br_object_container_count(br_object_container* self, br_uint_32* pcount, br_token type, const char* pattern, br_token_value* tv) {
-
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_object_container_count_original(self, pcount, type, pattern, tv);
-#else
     object_list* hl;
     object_list_entry* he;
     void* tvarg;
@@ -227,16 +186,10 @@ br_error C2_HOOK_CDECL _M_br_object_container_count(br_object_container* self, b
     }
     *pcount = n;
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d490, _M_br_object_container_count, _M_br_object_container_count_original)
 
-void* (C2_HOOK_CDECL * _M_br_object_container_tokensMatchBegin_original)(br_object_container* self, br_token t, br_token_value* tv);
+// FUNCTION: CARMA2_HW 0x0052d560
 void* C2_HOOK_CDECL _M_br_object_container_tokensMatchBegin(br_object_container* self, br_token t, br_token_value* tv) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_object_container_tokensMatchBegin_original(self, t, tv);
-#else
     token_match* tm;
     br_int_32 i;
 
@@ -245,7 +198,7 @@ void* C2_HOOK_CDECL _M_br_object_container_tokensMatchBegin(br_object_container*
     if (tv == NULL) {
         return 0;
     }
-    tm = BrResAllocate(C2V(fw).res, sizeof(token_match), BR_MEMORY_APPLICATION);
+    tm = BrResAllocate(fw.res, sizeof(token_match), BR_MEMORY_APPLICATION);
     tm->original = tv;
     for (i = 0; tv[i].t != BR_NULL_TOKEN; i++) {
     }
@@ -253,16 +206,10 @@ void* C2_HOOK_CDECL _M_br_object_container_tokensMatchBegin(br_object_container*
     tm->query = BrResAllocate(tm, tm->n * sizeof(br_token_value), BR_MEMORY_APPLICATION);
     BrMemCpy(tm->query, tv, i * sizeof(br_token_value));
     return tm;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d560, _M_br_object_container_tokensMatchBegin, _M_br_object_container_tokensMatchBegin_original)
 
-br_boolean (C2_HOOK_CDECL * _M_br_object_container_tokensMatch_original)(br_object_container* self, br_object* h, void* arg);
+// FUNCTION: CARMA2_HW 0x0052d5e0
 br_boolean C2_HOOK_CDECL _M_br_object_container_tokensMatch(br_object_container* self, br_object* h, void* arg) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_object_container_tokensMatch_original(self, h, arg);
-#else
     token_match* tm;
     br_size_t s;
     br_int_32 n;
@@ -281,29 +228,18 @@ br_boolean C2_HOOK_CDECL _M_br_object_container_tokensMatch(br_object_container*
     }
     h->dispatch->_queryMany(h, tm->query, tm->extra, tm->extra_size, &n);
     return BrTokenValueCompare(tm->original, tm->query);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d5e0, _M_br_object_container_tokensMatch, _M_br_object_container_tokensMatch_original)
 
-void (C2_HOOK_CDECL * _M_br_object_container_tokensMatchEnd_original)(br_object_container* self, void* arg);
+// FUNCTION: CARMA2_HW 0x0052d670
 void C2_HOOK_CDECL _M_br_object_container_tokensMatchEnd(br_object_container* self, void* arg) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    _M_br_object_container_tokensMatchEnd_original(self, arg);
-#else
     if (arg != NULL) {
         BrResFree(arg);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d670, _M_br_object_container_tokensMatchEnd, _M_br_object_container_tokensMatchEnd_original)
 
-br_error (C2_HOOK_CDECL * BrObjectContainerFree_original)(br_object_container* self, br_token type, const char* pattern, br_token_value* tv);
+// FUNCTION: CARMA2_HW 0x0052d690
 br_error C2_HOOK_CDECL BrObjectContainerFree(br_object_container* self, br_token type, const char* pattern, br_token_value* tv) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrObjectContainerFree_original(self, type, pattern, tv);
-#else
     br_error r;
     br_object** handles;
     br_uint_32 count;
@@ -322,6 +258,4 @@ br_error C2_HOOK_CDECL BrObjectContainerFree(br_object_container* self, br_token
     }
     BrMemFree(handles);
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d690, BrObjectContainerFree, BrObjectContainerFree_original)

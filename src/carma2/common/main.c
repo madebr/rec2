@@ -31,61 +31,54 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
-C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * QuitGame_original)(void);
+// FUNCTION: CARMA2_HW 0x00491f70
 C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    QuitGame_original();
-#else
+
     SaveOptions();
-    if (C2V(gSave_game_out_of_sync)) {
+    if (gSave_game_out_of_sync) {
         DoSaveGame();
     }
     MovieStopRecordingIfNecessary();
     PHILDisable();
     dr_dprintf("QuitGame() - Point 1");
-    if (C2V(gProgram_state).racing && C2V(gAdditional_actors) != NULL && C2V(gAdditional_actors)->children != NULL) {
+    if (gProgram_state.racing && gAdditional_actors != NULL && gAdditional_actors->children != NULL) {
         dr_dprintf("QuitGame() - Point 2");
         AutoSaveAdditionalStuff();
         dr_dprintf("QuitGame() - Point 3");
     }
-    C2V(gProgram_state).racing = 0;
+    gProgram_state.racing = 0;
     SaveOptions();
-    if (C2V(gNet_mode) != eNet_mode_none) {
-        NetLeaveGame(C2V(gCurrent_net_game));
+    if (gNet_mode != eNet_mode_none) {
+        NetLeaveGame(gCurrent_net_game);
     }
     ShutdownNetIfRequired();
-    if (C2V(gSound_available)) {
+    if (gSound_available) {
         DRS3ShutDown();
     }
-    if (C2V(gBr_initialized)) {
+    if (gBr_initialized) {
         ClearEntireScreen();
     }
     PDRevertPalette();
     StopMusic();
-    if (C2V(gBr_initialized)) {
+    if (gBr_initialized) {
         DRBrEnd();
     }
     PDShutdownSystem();
     CloseDiagnostics();
     c2_exit(0);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00491f70, QuitGame, QuitGame_original)
 
-C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * GameMain_original)(int pArgc, const char** pArgv);
+// FUNCTION: CARMA2_HW 0x004924a0
 void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    GameMain_original(pArgc, pArgv);
-#else
     tPath_name location;
 
     PDSetFileVariables();
-    PDBuildAppPath(C2V(gApplication_path));
+    PDBuildAppPath(gApplication_path);
     OpenDiagnostics();
 
-    c2_strcat(C2V(gApplication_path), "DATA");
+    c2_strcat(gApplication_path, "DATA");
     UsePathFileToDetermineIfFullInstallation();
-    if (!C2V(gCD_fully_installed)) {
+    if (!gCD_fully_installed) {
         if (PDReadSourceLocation(location)) {
             if (!PDCheckDriveExists(location)) {
                 PDInitialiseSystem();
@@ -96,21 +89,15 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     InitialiseDeathRace(pArgc, pArgv);
     DoProgram();
     QuitGame();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004924a0, GameMain, GameMain_original)
 
-void (C2_HOOK_FASTCALL * ServiceGame_original)(void);
+// FUNCTION: CARMA2_HW 0x00492180
 void C2_HOOK_FASTCALL ServiceGame(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    ServiceGame_original();
-#else
     ServiceTheGame(0);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00492180, ServiceGame, ServiceGame_original)
 
+// FUNCTION: CARMA2_HW 0x00492050
 void C2_HOOK_FASTCALL ServiceTheGame(int pRacing) {
 
     CheckMemory();
@@ -119,19 +106,19 @@ void C2_HOOK_FASTCALL ServiceTheGame(int pRacing) {
     }
     PollKeys();
     c2_rand();
-    if (PDServiceSystem(C2V(gFrame_period))) {
+    if (PDServiceSystem(gFrame_period)) {
         QuitGame();
     }
     if (!pRacing) {
         CheckSystemKeys(0);
     }
-    if (!pRacing && C2V(gSound_enabled)) {
+    if (!pRacing && gSound_enabled) {
         SoundService();
     }
     NetService(pRacing);
 }
-C2_HOOK_FUNCTION(0x00492050, ServiceTheGame)
 
+// FUNCTION: CARMA2_HW 0x004922a0
 void C2_HOOK_FASTCALL ServiceGameInRace(void) {
 
     Timers_Push(TIMER_SER);
@@ -139,4 +126,3 @@ void C2_HOOK_FASTCALL ServiceGameInRace(void) {
     CheckKevKeys();
     Timers_Pop(TIMER_SER);
 }
-C2_HOOK_FUNCTION(0x004922a0, ServiceGameInRace)

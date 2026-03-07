@@ -3,13 +3,14 @@
 #include "plib.h"
 #include "renderfuncs.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_p15, 3, 0x10016ac8, {
+// GLOBAL: D3D 0x10016ac8
+local_block_d3d primInfo_d3d_p15[] = {
     {
         {
             (void*)PointRender_d3d_RGB_555,
             NULL,
             "RGB 555, Z Buffered, Textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_POINT,
             0,
             0,
@@ -34,7 +35,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_p15, 3, 0x10
             (void*)PointRender_d3d_RGB_555,
             NULL,
             "RGB 555, Z Buffered, Interpolated Colour",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_POINT,
             0,
             0,
@@ -59,7 +60,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_p15, 3, 0x10
             (void*)PointRender_d3d_RGB_555,
             NULL,
             "RGB 555, Z Buffered, Interpolated Colour",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_POINT,
             0,
             0x3800,
@@ -79,4 +80,4 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_p15, 3, 0x10
         NULL,
         0,
     },
-});
+};

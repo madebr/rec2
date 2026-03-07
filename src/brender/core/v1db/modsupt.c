@@ -10,6 +10,7 @@
 // FIXME: move this definition (+BR_MAC3+BR_MAC4) to br_defs.h (and remove from matrix34.c matrix4.c ...)
 #define BR_MAC2(A, B, C, D) ((A) * (B) + (C) * (D))
 
+// FUNCTION: CARMA2_HW 0x00521490
 void C2_HOOK_CDECL BrModelApplyMap(br_model* model, int map_type, br_matrix34* xform) {
     int v;
     br_vertex* vp;
@@ -49,8 +50,8 @@ void C2_HOOK_CDECL BrModelApplyMap(br_model* model, int map_type, br_matrix34* x
         }
     }
 }
-C2_HOOK_FUNCTION(0x00521490, BrModelApplyMap)
 
+// FUNCTION: CARMA2_HW 0x00521660
 br_matrix34* C2_HOOK_CDECL BrModelFitMap(br_model* model, int axis_0, int axis_1, br_matrix34* transform) {
     br_vector3 axis_3;
     br_vector3 tr;
@@ -89,14 +90,14 @@ br_matrix34* C2_HOOK_CDECL BrModelFitMap(br_model* model, int axis_0, int axis_1
     BrMatrix34PreTranslate(transform, tr.v[0], tr.v[1], tr.v[2]);
     return transform;
 }
-C2_HOOK_FUNCTION(0x00521660, BrModelFitMap)
 
+// FUNCTION: CARMA2_HW 0x005217e0
 void C2_HOOK_CDECL BrModelFree(br_model* m) {
 
     BrResFree(m);
 }
-C2_HOOK_FUNCTION(0x005217e0, BrModelFree)
 
+// FUNCTION: CARMA2_HW 0x005217f0
 br_model* C2_HOOK_CDECL BrModelAllocate(const char* name, int nvertices, int nfaces) {
     br_model* m;
 
@@ -104,7 +105,7 @@ br_model* C2_HOOK_CDECL BrModelAllocate(const char* name, int nvertices, int nfa
     C2_HOOK_BUG_ON(sizeof(br_vertex) != 40);
     C2_HOOK_BUG_ON(sizeof(br_face) != 40);
 
-    m = BrResAllocate(C2V(v1db).res, sizeof(br_model), BR_MEMORY_MODEL);
+    m = BrResAllocate(v1db.res, sizeof(br_model), BR_MEMORY_MODEL);
     m->nvertices = nvertices;
     m->nfaces = nfaces;
     if (name != NULL) {
@@ -118,16 +119,15 @@ br_model* C2_HOOK_CDECL BrModelAllocate(const char* name, int nvertices, int nfa
     }
     return m;
 }
-C2_HOOK_FUNCTION(0x005217f0, BrModelAllocate)
 
+// FUNCTION: CARMA2_HW 0x00521870
 br_primitive_list* C2_HOOK_CDECL BrPrimitiveListAllocate(br_uint_32 prim_type, br_uint_16 num_prims) {
 
     return NULL;
 }
-C2_HOOK_FUNCTION(0x00521870, BrPrimitiveListAllocate)
 
+// FUNCTION: CARMA2_HW 0x00521880
 br_uint_32 C2_HOOK_CDECL BrModelAddPrimitiveList(br_model* model, br_primitive_list* primitive_list) {
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x00521880, BrModelAddPrimitiveList)

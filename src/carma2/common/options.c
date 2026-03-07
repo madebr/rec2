@@ -10,23 +10,24 @@
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char*, gKey_names, 153, 0x00688458);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gOrig_key_map_index, 0x00688440);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_ADV(int, gBackup_key_mappings, [4][77], 0x006869e0);
+
+// GLOBAL: CARMA2_HW 0x00688458
+char* gKey_names[153];
+
+// GLOBAL: CARMA2_HW 0x00688440
+int gOrig_key_map_index;
+
+// GLOBAL: CARMA2_HW 0x006869e0
+int gBackup_key_mappings[4][77];
 
 
-void (C2_HOOK_FASTCALL * DoOptions_original)(void);
+// FUNCTION: CARMA2_HW 0x004b39f0
 void C2_HOOK_FASTCALL DoOptions(void) {
 
     // Relict from Carmageddon 1, unused here
-    C2_HOOK_ASSUME_UNUSED();
-#if defined(C2_HOOKS_ENABLED)
-    DoOptions_original();
-#else
+    UNUSED();
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b39f0, DoOptions, DoOptions_original)
 
 void C2_HOOK_FASTCALL StripControls(char* pStr) {
     int i;
@@ -51,16 +52,16 @@ void C2_HOOK_FASTCALL LoadKeyNames(void) {
     tPath_name the_path;
     char s[256];
 
-    PathCat(the_path, C2V(gApplication_path), "KEYNAMES.TXT");
+    PathCat(the_path, gApplication_path, "KEYNAMES.TXT");
     f = DRfopen(the_path, "rt");
     if (f == NULL) {
         FatalError(kFatalError_CantOpenKeyNamesFile);
     }
-    for (i = 0; i < REC2_ASIZE(C2V(gKey_names)); i++) {
+    for (i = 0; i < REC2_ASIZE(gKey_names); i++) {
         PFfgets(s, sizeof(s), f);
         StripControls(s);
-        C2V(gKey_names)[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_misc);
-        c2_strcpy(C2V(gKey_names)[i], s);
+        gKey_names[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_misc);
+        c2_strcpy(gKey_names[i], s);
     }
     PFfclose(f);
 }
@@ -68,29 +69,29 @@ void C2_HOOK_FASTCALL LoadKeyNames(void) {
 void C2_HOOK_FASTCALL DisposeKeyNames(void) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gKey_names)); i++) {
-        BrMemFree(C2V(gKey_names)[i]);
+    for (i = 0; i < REC2_ASIZE(gKey_names); i++) {
+        BrMemFree(gKey_names[i]);
     }
 }
 
 void C2_HOOK_FASTCALL BackupKeyMappings(void) {
     int i;
 
-    C2V(gOrig_key_map_index) = C2V(gKey_map_index);
+    gOrig_key_map_index = gKey_map_index;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gBackup_key_mappings)) != 4);
-    C2_HOOK_BUG_ON(sizeof(C2V(gKey_mapping)) != 4 * 77);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gBackup_key_mappings) != 4);
+    C2_HOOK_BUG_ON(sizeof(gKey_mapping) != 4 * 77);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gBackup_key_mappings)); i++) {
+    for (i = 0; i < REC2_ASIZE(gBackup_key_mappings); i++) {
 
-        C2V(gKey_map_index) = i;
+        gKey_map_index = i;
         LoadKeyMapping();
-        c2_memcpy(C2V(gBackup_key_mappings)[i],
-            C2V(gKey_mapping),
-            sizeof(C2V(gKey_mapping)));
+        c2_memcpy(gBackup_key_mappings[i],
+            gKey_mapping,
+            sizeof(gKey_mapping));
     }
-    C2V(gKey_map_index) = C2V(gOrig_key_map_index);
-    c2_memcpy(C2V(gKey_mapping),
-        C2V(gBackup_key_mappings)[C2V(gKey_map_index)],
-        sizeof(C2V(gKey_mapping)));
+    gKey_map_index = gOrig_key_map_index;
+    c2_memcpy(gKey_mapping,
+        gBackup_key_mappings[gKey_map_index],
+        sizeof(gKey_mapping));
 }

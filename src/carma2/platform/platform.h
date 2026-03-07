@@ -6,15 +6,15 @@
 #include "rec2_types.h"
 #include <s3/s3.h>
 
-C2_HOOK_VARIABLE_DECLARE(int, gGraf_spec_index);
-C2_HOOK_VARIABLE_DECLARE(int, gNbPixelBits);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tGraf_spec, gGraf_specs, 2);
-C2_HOOK_VARIABLE_DECLARE(int, gMsg_header_strlen);
-C2_HOOK_VARIABLE_DECLARE(tPD_S3_config, gPD_S3_config);
-C2_HOOK_VARIABLE_DECLARE(int, gJoystick_deadzone);
-C2_HOOK_VARIABLE_DECLARE(void*, gHWnd);
-C2_HOOK_VARIABLE_DECLARE(void*, gPDActionReplayBuffer);
-C2_HOOK_VARIABLE_DECLARE(int, gPDActionReplayBufferSize);
+extern int gGraf_spec_index;
+extern int gNbPixelBits;
+extern tGraf_spec gGraf_specs[2];
+extern int gMsg_header_strlen;
+extern tPD_S3_config gPD_S3_config;
+extern int gJoystick_deadzone;
+extern void* gHWnd;
+extern void* gPDActionReplayBuffer;
+extern int gPDActionReplayBufferSize;
 
 int GetRegisterSourceLocation(char* buffer, int* buffer_size);
 

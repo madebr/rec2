@@ -3,8 +3,8 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gKey_names, 153);
-C2_HOOK_VARIABLE_DECLARE(int, gOrig_key_map_index);
+extern char* gKey_names[153];
+extern int gOrig_key_map_index;
 
 
 void C2_HOOK_FASTCALL DoOptions(void);

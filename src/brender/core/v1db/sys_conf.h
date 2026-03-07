@@ -3,7 +3,7 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(br_token, valid_system_config_tokens, 5);
+extern br_token valid_system_config_tokens[5];
 
 br_boolean C2_HOOK_STDCALL Is_Valid_Sys_Config_Token(br_token t);
 

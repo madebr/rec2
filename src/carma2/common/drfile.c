@@ -6,7 +6,9 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gFile_system, 0x005933a8, {
+
+// GLOBAL: CARMA2_HW 0x005933a8
+br_filesystem gFile_system = {
     "Carmageddon",
     NULL,
     &DRStdioOpenRead,
@@ -20,67 +22,69 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gFile_system, 0x005933a8, {
     &DRStdioGetLine,
     NULL,
     DRStdioAdvance,
-});
-C2_HOOK_VARIABLE_IMPLEMENT(br_filesystem*, gOld_file_system, 0x006815c4);
+};
 
+// GLOBAL: CARMA2_HW 0x006815c4
+br_filesystem* gOld_file_system;
+
+// FUNCTION: CARMA2_HW 0x0044c700
 void* C2_HOOK_CDECL DRStdioOpenRead(const char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result) {
     if (mode_result != NULL) {
         *mode_result = 0;
     }
     return DRfopen(name, "rb");
 }
-C2_HOOK_FUNCTION(0x0044c700, DRStdioOpenRead)
 
+// FUNCTION: CARMA2_HW 0x0044c720
 void* C2_HOOK_CDECL DRStdioOpenWrite(const char* name, int mode) {
-    return C2V(gOld_file_system)->open_write(name, mode);
+    return gOld_file_system->open_write(name, mode);
 }
-C2_HOOK_FUNCTION(0x0044c720, DRStdioOpenWrite)
 
+// FUNCTION: CARMA2_HW 0x0044c740
 void C2_HOOK_CDECL DRStdioClose(void* f) {
     PFfclose(f);
 }
-C2_HOOK_FUNCTION(0x0044c740, DRStdioClose)
 
+// FUNCTION: CARMA2_HW 0x0044c6a0
 int C2_HOOK_CDECL DRStdioEOF(void* f) {
     return PFfeof(f);
 }
-C2_HOOK_FUNCTION(0x0044c6a0, DRStdioEOF)
 
+// FUNCTION: CARMA2_HW 0x0044c6b0
 int C2_HOOK_CDECL DRStdioGetChr(void* f) {
     return DRfgetc(f);
 }
-C2_HOOK_FUNCTION(0x0044c6b0, DRStdioGetChr)
 
+// FUNCTION: CARMA2_HW 0x0044c750
 br_size_t C2_HOOK_CDECL DRStdioRead(void* buf, br_size_t size, unsigned int n, void* f) {
     return PFfread(buf, size, n, f);
 }
-C2_HOOK_FUNCTION(0x0044c750, DRStdioRead)
 
+// FUNCTION: CARMA2_HW 0x0044c770
 br_size_t C2_HOOK_CDECL DRStdioWrite(const void* buf, br_size_t size, unsigned int n, void* f) {
     return DRfwrite(buf, size, n, f);
 }
-C2_HOOK_FUNCTION(0x0044c770, DRStdioWrite)
 
+// FUNCTION: CARMA2_HW 0x0044c6c0
 br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f) {
     PFfgets(buf, buf_len, f);
     return c2_strlen(buf);
 }
-C2_HOOK_FUNCTION(0x0044c6c0, DRStdioGetLine)
 
+// FUNCTION: CARMA2_HW 0x0044c6f0
 void C2_HOOK_CDECL DRStdioAdvance(br_size_t count, void *f) {
     PFfseek((FILE*)f, count, SEEK_CUR);
 }
-C2_HOOK_FUNCTION(0x0044c6f0, DRStdioAdvance)
 
+// FUNCTION: CARMA2_HW 0x0044c790
 void C2_HOOK_FASTCALL InstallDRFileCalls(void) {
     br_filesystem* temp_system;
 
     temp_system = BrMemAllocate(sizeof(br_filesystem), kMem_misc);
-    C2V(gOld_file_system) = BrFilesystemSet(temp_system);
-    C2V(gFile_system).attributes = C2V(gOld_file_system)->attributes;
-    C2V(gFile_system).putchr = C2V(gOld_file_system)->putchr;
-    C2V(gFile_system).putline = C2V(gOld_file_system)->putline;
-    BrFilesystemSet(&C2V(gFile_system));
+    gOld_file_system = BrFilesystemSet(temp_system);
+    gFile_system.attributes = gOld_file_system->attributes;
+    gFile_system.putchr = gOld_file_system->putchr;
+    gFile_system.putline = gOld_file_system->putline;
+    BrFilesystemSet(&gFile_system);
     BrMemFree(temp_system);
 }
-C2_HOOK_FUNCTION(0x0044c790, InstallDRFileCalls)

@@ -15,43 +15,71 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHud_tinted1, 0x00655e48, -1);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHud_tinted2, 0x00655e4c, -1);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHud_tinted3, 0x00655e50, -1);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gHud_tinted4, 0x0065fb54, -1);
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tTintedPoly, gTintedPolys, 10, 0x00705c80);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gTintedPolyCamera, 0x006a0430);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefaultOpacity_TintedPoly, 0x0065e874, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_uint_32, gTintedColourMap_red, 0x0065e870, 0x80);
-C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gTintedColourMap_grn, 0x006a0438);
-C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, gTintedColourMap_blu, 0x006a043c);
+// GLOBAL: CARMA2_HW 0x00655e48
+int gHud_tinted1 = -1;
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0440, 0x006a0440);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0444, 0x006a0444);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a0448, 0x006a0448);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_006a044c, 0x006a044c);
+// GLOBAL: CARMA2_HW 0x00655e4c
+int gHud_tinted2 = -1;
 
+// GLOBAL: CARMA2_HW 0x00655e50
+int gHud_tinted3 = -1;
+
+// GLOBAL: CARMA2_HW 0x0065fb54
+int gHud_tinted4 = -1;
+
+
+// GLOBAL: CARMA2_HW 0x00705c80
+tTintedPoly gTintedPolys[10];
+
+// GLOBAL: CARMA2_HW 0x006a0430
+br_actor* gTintedPolyCamera;
+
+// GLOBAL: CARMA2_HW 0x0065e874
+int gDefaultOpacity_TintedPoly = 0x80;
+
+// GLOBAL: CARMA2_HW 0x0065e870
+br_uint_32 gTintedColourMap_red = 0x80;
+
+// GLOBAL: CARMA2_HW 0x006a0438
+br_uint_32 gTintedColourMap_grn;
+
+// GLOBAL: CARMA2_HW 0x006a043c
+br_uint_32 gTintedColourMap_blu;
+
+
+// GLOBAL: CARMA2_HW 0x006a0440
+int gINT_006a0440;
+
+// GLOBAL: CARMA2_HW 0x006a0444
+int gINT_006a0444;
+
+// GLOBAL: CARMA2_HW 0x006a0448
+int gINT_006a0448;
+
+// GLOBAL: CARMA2_HW 0x006a044c
+int gINT_006a044c;
+
+// FUNCTION: CARMA2_HW 0x004d7040
 void C2_HOOK_FASTCALL InitTintedPolyStuff(void) {
     br_camera *camera;
 
     C2_HOOK_BUG_ON(sizeof(tTintedPoly) != 0x6450);
 
-    c2_memset(C2V(gTintedPolys), 0, sizeof(C2V(gTintedPolys)));
+    c2_memset(gTintedPolys, 0, sizeof(gTintedPolys));
 
-    if (C2V(gTintedPolyCamera) == NULL) {
-        C2V(gTintedPolyCamera) = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
-        C2V(gTintedPolyCamera)->identifier = "tinted_poly_camera";
+    if (gTintedPolyCamera == NULL) {
+        gTintedPolyCamera = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+        gTintedPolyCamera->identifier = "tinted_poly_camera";
 
-        camera = C2V(gTintedPolyCamera)->type_data;
+        camera = gTintedPolyCamera->type_data;
         camera->type = BR_CAMERA_PARALLEL;
         camera->hither_z = 1.0f;
         camera->yon_z = 3.0f;
-        camera->width = C2V(gScreen)->width;
-        camera->height = C2V(gScreen)->height;
+        camera->width = gScreen->width;
+        camera->height = gScreen->height;
     }
 }
-C2_HOOK_FUNCTION(0x004d7040, InitTintedPolyStuff);
 
 br_material* C2_HOOK_FASTCALL BuildTintedPolyMaterial(int pOpacity) {
     static br_token_value extra_prims[2] = {
@@ -103,6 +131,7 @@ void C2_HOOK_FASTCALL GetRangeOfValuesFromPixelmap(br_pixelmap* pMap, br_uint_32
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004d70c0
 int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3) {
     tPath_name the_path;
     int i;
@@ -116,8 +145,8 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
     br_uint_32 colour_range;
 
     tintedIndex = -1;
-    for (i = 0; i < REC2_ASIZE(C2V(gTintedPolys)); i++) {
-        if (C2V(gTintedPolys)[i].actor == NULL) {
+    for (i = 0; i < REC2_ASIZE(gTintedPolys); i++) {
+        if (gTintedPolys[i].actor == NULL) {
             tintedIndex = i;
             break;
         }
@@ -127,46 +156,46 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
     }
     switch (class) {
         case 2:
-            C2V(gTintedPolys)[tintedIndex].class = class;
-            C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
-            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
-            C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-            C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
-            for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
-                C2V(gTintedPolys)[tintedIndex].model->faces[i].material = C2V(gTintedPolys)[tintedIndex].material;
+            gTintedPolys[tintedIndex].class = class;
+            gTintedPolys[tintedIndex].material = BuildTintedPolyMaterial(gDefaultOpacity_TintedPoly);
+            gTintedPolys[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
+            gTintedPolys[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            gTintedPolys[tintedIndex].actor->material = gTintedPolys[tintedIndex].material;
+            for (i = 0; i < gTintedPolys[tintedIndex].model->nfaces; i++) {
+                gTintedPolys[tintedIndex].model->faces[i].material = gTintedPolys[tintedIndex].material;
             }
-            C2V(gTintedPolys)[tintedIndex].actor->model = C2V(gTintedPolys)[tintedIndex].model;
-            BrModelAdd(C2V(gTintedPolys)[tintedIndex].model);
+            gTintedPolys[tintedIndex].actor->model = gTintedPolys[tintedIndex].model;
+            BrModelAdd(gTintedPolys[tintedIndex].model);
             break;
         case 3:
-            C2V(gTintedPolys)[tintedIndex].class = class;
-            C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
-            C2V(gTintedPolys)[tintedIndex].material->flags |= BR_MATF_PRELIT | BR_MATF_SMOOTH;
-            BrMaterialUpdate(C2V(gTintedPolys)[tintedIndex].material, BR_MATU_ALL);
-            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 4, 4);
-            C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-            C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
-            for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
-                C2V(gTintedPolys)[tintedIndex].model->faces[i].material = C2V(gTintedPolys)[tintedIndex].material;
+            gTintedPolys[tintedIndex].class = class;
+            gTintedPolys[tintedIndex].material = BuildTintedPolyMaterial(gDefaultOpacity_TintedPoly);
+            gTintedPolys[tintedIndex].material->flags |= BR_MATF_PRELIT | BR_MATF_SMOOTH;
+            BrMaterialUpdate(gTintedPolys[tintedIndex].material, BR_MATU_ALL);
+            gTintedPolys[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 4, 4);
+            gTintedPolys[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            gTintedPolys[tintedIndex].actor->material = gTintedPolys[tintedIndex].material;
+            for (i = 0; i < gTintedPolys[tintedIndex].model->nfaces; i++) {
+                gTintedPolys[tintedIndex].model->faces[i].material = gTintedPolys[tintedIndex].material;
             }
-            C2V(gTintedPolys)[tintedIndex].actor->model = C2V(gTintedPolys)[tintedIndex].model;
-            C2V(gTintedPolys)[tintedIndex].colour = arg1;
-            BrModelAdd(C2V(gTintedPolys)[tintedIndex].model);
+            gTintedPolys[tintedIndex].actor->model = gTintedPolys[tintedIndex].model;
+            gTintedPolys[tintedIndex].colour = arg1;
+            BrModelAdd(gTintedPolys[tintedIndex].model);
             break;
         case 4:
-            C2V(gTintedPolys)[tintedIndex].class = class;
-            C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(0);
-            C2V(gTintedPolys)[tintedIndex].material->flags |= BR_MATF_QUAD_MAPPING;
-            PathCat(the_path, C2V(gApplication_path), "fire");
-            LoadAllImagesInDirectory(&C2V(gMisc_storage_space), the_path);
+            gTintedPolys[tintedIndex].class = class;
+            gTintedPolys[tintedIndex].material = BuildTintedPolyMaterial(0);
+            gTintedPolys[tintedIndex].material->flags |= BR_MATF_QUAD_MAPPING;
+            PathCat(the_path, gApplication_path, "fire");
+            LoadAllImagesInDirectory(&gMisc_storage_space, the_path);
             map = BrMapFind("testfire");
-            C2V(gTintedPolys)[tintedIndex].pixelmap = map;
-            C2V(gTintedPolys)[tintedIndex].material->colour_map = map;
-            BrMaterialUpdate(C2V(gTintedPolys)[tintedIndex].material, BR_MATU_ALL);
+            gTintedPolys[tintedIndex].pixelmap = map;
+            gTintedPolys[tintedIndex].material->colour_map = map;
+            BrMaterialUpdate(gTintedPolys[tintedIndex].material, BR_MATU_ALL);
 
             map = BrMapFind("firepall");
             for (i = 0; i < 256; i++) {
-                C2V(gTintedPolys)[tintedIndex].colours[i] = BrPixelmapPixelGet(map, 0, i);
+                gTintedPolys[tintedIndex].colours[i] = BrPixelmapPixelGet(map, 0, i);
             }
 
             map = BrMapFind("coolmapx");
@@ -179,25 +208,25 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
                     br_uint_32 v;
                     colour = BrPixelmapPixelGet(map, x, y);
                     v = (br_uint_32)((float)(REC2_RGB555_B(colour) - darkest_colour) * arg1 / colour_range);
-                    C2V(gTintedPolys)[tintedIndex].tints1[y + x * 64] = REC2_CLAMP(v, 0u, (br_uint_32)arg1);
+                    gTintedPolys[tintedIndex].tints1[y + x * 64] = REC2_CLAMP(v, 0u, (br_uint_32)arg1);
                 }
             }
-            c2_memset(C2V(gTintedPolys)[tintedIndex].tints2, 0, sizeof(C2V(gTintedPolys)[tintedIndex].tints2));
-            c2_memset(C2V(gTintedPolys)[tintedIndex].tints3, 0, sizeof(C2V(gTintedPolys)[tintedIndex].tints3));
+            c2_memset(gTintedPolys[tintedIndex].tints2, 0, sizeof(gTintedPolys[tintedIndex].tints2));
+            c2_memset(gTintedPolys[tintedIndex].tints3, 0, sizeof(gTintedPolys[tintedIndex].tints3));
 
-            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
-            C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-            C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
-            for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
-                C2V(gTintedPolys)[tintedIndex].model->faces[i].material = C2V(gTintedPolys)[tintedIndex].material;
+            gTintedPolys[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
+            gTintedPolys[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            gTintedPolys[tintedIndex].actor->material = gTintedPolys[tintedIndex].material;
+            for (i = 0; i < gTintedPolys[tintedIndex].model->nfaces; i++) {
+                gTintedPolys[tintedIndex].model->faces[i].material = gTintedPolys[tintedIndex].material;
             }
-            C2V(gTintedPolys)[tintedIndex].actor->model = C2V(gTintedPolys)[tintedIndex].model;
-            BrModelAdd(C2V(gTintedPolys)[tintedIndex].model);
+            gTintedPolys[tintedIndex].actor->model = gTintedPolys[tintedIndex].model;
+            BrModelAdd(gTintedPolys[tintedIndex].model);
             break;
         case 5:
-            C2V(gTintedPolys)[tintedIndex].class = class;
-            C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
-            C2V(gTintedPolys)[tintedIndex].material->flags |= BR_MATF_PRELIT | BR_MATF_SMOOTH;
+            gTintedPolys[tintedIndex].class = class;
+            gTintedPolys[tintedIndex].material = BuildTintedPolyMaterial(gDefaultOpacity_TintedPoly);
+            gTintedPolys[tintedIndex].material->flags |= BR_MATF_PRELIT | BR_MATF_SMOOTH;
             {
                 static br_token_value extra_prims[2] = {
                         {
@@ -208,63 +237,63 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
                                 { BR_FIXED_INT(80) },
                         },
                 };
-                C2V(gTintedPolys)[tintedIndex].material->extra_prim = extra_prims;
+                gTintedPolys[tintedIndex].material->extra_prim = extra_prims;
                 extra_prims[1].v.x = BR_FIXED_INT(0);
             }
-            BrMaterialUpdate(C2V(gTintedPolys)[tintedIndex].material, BR_MATU_ALL);
-            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
-            C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-            C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
-            for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
-                C2V(gTintedPolys)[tintedIndex].model->faces[i].material = C2V(gTintedPolys)[tintedIndex].material;
+            BrMaterialUpdate(gTintedPolys[tintedIndex].material, BR_MATU_ALL);
+            gTintedPolys[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
+            gTintedPolys[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            gTintedPolys[tintedIndex].actor->material = gTintedPolys[tintedIndex].material;
+            for (i = 0; i < gTintedPolys[tintedIndex].model->nfaces; i++) {
+                gTintedPolys[tintedIndex].model->faces[i].material = gTintedPolys[tintedIndex].material;
             }
-            C2V(gTintedPolys)[tintedIndex].actor->model = C2V(gTintedPolys)[tintedIndex].model;
-            C2V(gTintedPolys)[tintedIndex].unknown_1 = 0;
-            C2V(gTintedPolys)[tintedIndex].unknown_2 = arg1;
-            BrModelAdd(C2V(gTintedPolys)[tintedIndex].model);
+            gTintedPolys[tintedIndex].actor->model = gTintedPolys[tintedIndex].model;
+            gTintedPolys[tintedIndex].unknown_1 = 0;
+            gTintedPolys[tintedIndex].unknown_2 = arg1;
+            BrModelAdd(gTintedPolys[tintedIndex].model);
             SetTintedPolyColour(tintedIndex, 0, 0, 0);
             break;
         case 6:
-            C2V(gTintedPolys)[tintedIndex].class = class;
-            C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
-            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
-            C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-            C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
-            for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
-                C2V(gTintedPolys)[tintedIndex].model->faces[i].material = C2V(gTintedPolys)[tintedIndex].material;
+            gTintedPolys[tintedIndex].class = class;
+            gTintedPolys[tintedIndex].material = BuildTintedPolyMaterial(gDefaultOpacity_TintedPoly);
+            gTintedPolys[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
+            gTintedPolys[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            gTintedPolys[tintedIndex].actor->material = gTintedPolys[tintedIndex].material;
+            for (i = 0; i < gTintedPolys[tintedIndex].model->nfaces; i++) {
+                gTintedPolys[tintedIndex].model->faces[i].material = gTintedPolys[tintedIndex].material;
             }
-            C2V(gTintedPolys)[tintedIndex].actor->model = C2V(gTintedPolys)[tintedIndex].model;
-            BrModelAdd(C2V(gTintedPolys)[tintedIndex].model);
-            C2V(gTintedPolys)[tintedIndex].subClass = arg1;
+            gTintedPolys[tintedIndex].actor->model = gTintedPolys[tintedIndex].model;
+            BrModelAdd(gTintedPolys[tintedIndex].model);
+            gTintedPolys[tintedIndex].subClass = arg1;
             switch (arg1) {
                 case 0:
-                    C2V(gTintedPolys)[tintedIndex].color2_red = REC2_RGB888_R(arg2);
-                    C2V(gTintedPolys)[tintedIndex].color2_grn = REC2_RGB888_G(arg2);
-                    C2V(gTintedPolys)[tintedIndex].color2_blu = REC2_RGB888_B(arg2);
-                    C2V(gTintedPolys)[tintedIndex].colour = arg3;
-                    C2V(gTintedPolys)[tintedIndex].material->colour = BR_COLOUR_RGB(C2V(gTintedPolys)[tintedIndex].color2_red, C2V(gTintedPolys)[tintedIndex].color2_grn, C2V(gTintedPolys)[tintedIndex].color2_blu);
-                    BrMaterialUpdate(C2V(gTintedPolys)[tintedIndex].material, BR_MATU_ALL);
+                    gTintedPolys[tintedIndex].color2_red = REC2_RGB888_R(arg2);
+                    gTintedPolys[tintedIndex].color2_grn = REC2_RGB888_G(arg2);
+                    gTintedPolys[tintedIndex].color2_blu = REC2_RGB888_B(arg2);
+                    gTintedPolys[tintedIndex].colour = arg3;
+                    gTintedPolys[tintedIndex].material->colour = BR_COLOUR_RGB(gTintedPolys[tintedIndex].color2_red, gTintedPolys[tintedIndex].color2_grn, gTintedPolys[tintedIndex].color2_blu);
+                    BrMaterialUpdate(gTintedPolys[tintedIndex].material, BR_MATU_ALL);
                     break;
                 case 1:
-                    C2V(gTintedPolys)[tintedIndex].material->flags |= BR_MATF_PRELIT | BR_MATF_SMOOTH;
-                    BrMaterialUpdate(C2V(gTintedPolys)[tintedIndex].material, BR_MATU_ALL);
-                    C2V(gTintedPolys)[tintedIndex].colour = arg2;
+                    gTintedPolys[tintedIndex].material->flags |= BR_MATF_PRELIT | BR_MATF_SMOOTH;
+                    BrMaterialUpdate(gTintedPolys[tintedIndex].material, BR_MATU_ALL);
+                    gTintedPolys[tintedIndex].colour = arg2;
                     break;
                 default:
                     PDFatalError("Invalid Pulse Poly subclass");
             }
             break;
         default:
-            C2V(gTintedPolys)[tintedIndex].class = class;
-            C2V(gTintedPolys)[tintedIndex].material = BuildTintedPolyMaterial(C2V(gDefaultOpacity_TintedPoly));
-            C2V(gTintedPolys)[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
-            C2V(gTintedPolys)[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-            C2V(gTintedPolys)[tintedIndex].actor->material = C2V(gTintedPolys)[tintedIndex].material;
-            for (i = 0; i < C2V(gTintedPolys)[tintedIndex].model->nfaces; i++) {
-                C2V(gTintedPolys)[tintedIndex].model->faces[i].material = C2V(gTintedPolys)[tintedIndex].material;
+            gTintedPolys[tintedIndex].class = class;
+            gTintedPolys[tintedIndex].material = BuildTintedPolyMaterial(gDefaultOpacity_TintedPoly);
+            gTintedPolys[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
+            gTintedPolys[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+            gTintedPolys[tintedIndex].actor->material = gTintedPolys[tintedIndex].material;
+            for (i = 0; i < gTintedPolys[tintedIndex].model->nfaces; i++) {
+                gTintedPolys[tintedIndex].model->faces[i].material = gTintedPolys[tintedIndex].material;
             }
-            C2V(gTintedPolys)[tintedIndex].actor->model = C2V(gTintedPolys)[tintedIndex].model;
-            C2V(gTintedPolys)[tintedIndex].material->colour = arg1;
+            gTintedPolys[tintedIndex].actor->model = gTintedPolys[tintedIndex].model;
+            gTintedPolys[tintedIndex].material->colour = arg1;
             {
                 static br_token_value extra_prims[2] = {
                         {
@@ -275,27 +304,27 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
                                 { BR_FIXED_INT(80) },
                         },
                 };
-                C2V(gTintedPolys)[tintedIndex].material->extra_prim = extra_prims;
+                gTintedPolys[tintedIndex].material->extra_prim = extra_prims;
                 extra_prims[1].v.x = BR_FIXED_INT(arg2);
             }
-            BrMaterialUpdate(C2V(gTintedPolys)[tintedIndex].material, BR_MATU_ALL);
+            BrMaterialUpdate(gTintedPolys[tintedIndex].material, BR_MATU_ALL);
             break;
     }
-    if (C2V(gTintedPolys)[tintedIndex].actor != NULL) {
-        BrActorAdd(C2V(gTintedPolyCamera), C2V(gTintedPolys)[tintedIndex].actor);
+    if (gTintedPolys[tintedIndex].actor != NULL) {
+        BrActorAdd(gTintedPolyCamera, gTintedPolys[tintedIndex].actor);
     }
-    C2V(gTintedPolys)[tintedIndex].used = 1;
-    if (C2V(gTintedPolys)[tintedIndex].actor != NULL) {
-        (C2V(gTintedPolys)[tintedIndex].actor)->render_style = BR_RSTYLE_NONE;
+    gTintedPolys[tintedIndex].used = 1;
+    if (gTintedPolys[tintedIndex].actor != NULL) {
+        (gTintedPolys[tintedIndex].actor)->render_style = BR_RSTYLE_NONE;
     }
-    C2V(gTintedPolys)[tintedIndex].color_red = 0;
-    C2V(gTintedPolys)[tintedIndex].color_grn = 0;
-    C2V(gTintedPolys)[tintedIndex].color_blu = 0;
-    C2V(gTintedPolys)[tintedIndex].visible = 0;
+    gTintedPolys[tintedIndex].color_red = 0;
+    gTintedPolys[tintedIndex].color_grn = 0;
+    gTintedPolys[tintedIndex].color_blu = 0;
+    gTintedPolys[tintedIndex].visible = 0;
     return tintedIndex;
 }
-C2_HOOK_FUNCTION(0x004d70c0, CreateTintedPoly)
 
+// FUNCTION: CARMA2_HW 0x004d7ad0
 br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int height, int nbX, int nbY) {
     br_model* model;
     int dx;
@@ -343,39 +372,39 @@ br_model* C2_HOOK_FASTCALL BuildTintedPolyModel(int x0, int y0, int width, int h
     model->flags |= BR_MODF_DONT_WELD | BR_MODF_KEEP_ORIGINAL;
     return model;
 }
-C2_HOOK_FUNCTION(0x004d7ad0, BuildTintedPolyModel)
 
+// FUNCTION: CARMA2_HW 0x004d7c80
 void C2_HOOK_FASTCALL FreeTintedPolyActor(int pTintedIndex) {
-    if (!C2V(gTintedPolys)[pTintedIndex].used) {
+    if (!gTintedPolys[pTintedIndex].used) {
         return;
     }
-    if (C2V(gTintedPolys)[pTintedIndex].material != NULL) {
-        BrMaterialFree(C2V(gTintedPolys)[pTintedIndex].material);
+    if (gTintedPolys[pTintedIndex].material != NULL) {
+        BrMaterialFree(gTintedPolys[pTintedIndex].material);
     }
-    if (C2V(gTintedPolys)[pTintedIndex].model != NULL) {
-        BrModelFree(C2V(gTintedPolys)[pTintedIndex].model);
+    if (gTintedPolys[pTintedIndex].model != NULL) {
+        BrModelFree(gTintedPolys[pTintedIndex].model);
     }
-    if (C2V(gTintedPolys)[pTintedIndex].actor != NULL) {
-        BrActorRemove(C2V(gTintedPolys)[pTintedIndex].actor);
-        BrActorFree(C2V(gTintedPolys)[pTintedIndex].actor);
-        C2V(gTintedPolys)[pTintedIndex].actor = NULL;
+    if (gTintedPolys[pTintedIndex].actor != NULL) {
+        BrActorRemove(gTintedPolys[pTintedIndex].actor);
+        BrActorFree(gTintedPolys[pTintedIndex].actor);
+        gTintedPolys[pTintedIndex].actor = NULL;
     }
-    C2V(gTintedPolys)[pTintedIndex].class = 0;
-    C2V(gTintedPolys)[pTintedIndex].material2 =NULL;
-    C2V(gTintedPolys)[pTintedIndex].visible = 0;
-    C2V(gTintedPolys)[pTintedIndex].used = 0;
+    gTintedPolys[pTintedIndex].class = 0;
+    gTintedPolys[pTintedIndex].material2 =NULL;
+    gTintedPolys[pTintedIndex].visible = 0;
+    gTintedPolys[pTintedIndex].used = 0;
 }
-C2_HOOK_FUNCTION(0x004d7c80, FreeTintedPolyActor)
 
+// FUNCTION: CARMA2_HW 0x004d7d10
 void C2_HOOK_FASTCALL FreeAllTintedPolyActor(void) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gTintedPolys)); i++) {
+    for (i = 0; i < REC2_ASIZE(gTintedPolys); i++) {
         FreeTintedPolyActor(i);
     }
 }
-C2_HOOK_FUNCTION(0x004d7d10, FreeAllTintedPolyActor)
 
+// FUNCTION: CARMA2_HW 0x004d7d80
 void C2_HOOK_FASTCALL UpdateTintedPolyActor(int pTintedIndex) {
     br_uint_32 new_grn, new_blu, new_red;
     br_pixelmap* map;
@@ -383,14 +412,14 @@ void C2_HOOK_FASTCALL UpdateTintedPolyActor(int pTintedIndex) {
     int material_changed;
     tU32 time_since_last_update_s;
 
-    if (!C2V(gTintedPolys)[pTintedIndex].visible || C2V(gTintedPolys)[pTintedIndex].material2 == NULL) {
+    if (!gTintedPolys[pTintedIndex].visible || gTintedPolys[pTintedIndex].material2 == NULL) {
         return;
     }
 
-    map = C2V(gTintedPolys)[pTintedIndex].material->colour_map;
-    new_grn = C2V(gTintedColourMap_grn);
-    new_blu = C2V(gTintedColourMap_blu);
-    new_red = C2V(gTintedColourMap_red);
+    map = gTintedPolys[pTintedIndex].material->colour_map;
+    new_grn = gTintedColourMap_grn;
+    new_blu = gTintedColourMap_blu;
+    new_red = gTintedColourMap_red;
     if (map != NULL && map->pixels != NULL) {
         br_uint_32 v_tl, v_tr, v_bl, v_br;
 
@@ -404,71 +433,71 @@ void C2_HOOK_FASTCALL UpdateTintedPolyActor(int pTintedIndex) {
         new_grn = (REC2_RGB888_B(v_tl) + REC2_RGB888_B(v_tr) + REC2_RGB888_B(v_bl) + REC2_RGB888_B(v_br)) / 4;
     }
     time = GetTotalTime();
-    if (C2V(gTintedPolys)[pTintedIndex].color_red + C2V(gTintedPolys)[pTintedIndex].color_grn + C2V(gTintedPolys)[pTintedIndex].color_blu == 0) {
-        C2V(gTintedPolys)[pTintedIndex].color_red = new_red;
-        C2V(gTintedPolys)[pTintedIndex].color_grn = new_grn;
-        C2V(gTintedPolys)[pTintedIndex].color_blu = new_blu;
-        C2V(gTintedPolys)[pTintedIndex].lastTime = time;
-        C2V(gTintedPolys)[pTintedIndex].material->colour = BR_COLOUR_RGB(new_red, new_grn, new_blu);
-        BrMaterialUpdate(C2V(gTintedPolys)[pTintedIndex].material, BR_MATU_LIGHTING);
+    if (gTintedPolys[pTintedIndex].color_red + gTintedPolys[pTintedIndex].color_grn + gTintedPolys[pTintedIndex].color_blu == 0) {
+        gTintedPolys[pTintedIndex].color_red = new_red;
+        gTintedPolys[pTintedIndex].color_grn = new_grn;
+        gTintedPolys[pTintedIndex].color_blu = new_blu;
+        gTintedPolys[pTintedIndex].lastTime = time;
+        gTintedPolys[pTintedIndex].material->colour = BR_COLOUR_RGB(new_red, new_grn, new_blu);
+        BrMaterialUpdate(gTintedPolys[pTintedIndex].material, BR_MATU_LIGHTING);
         return;
     }
 
     material_changed = 0;
-    time_since_last_update_s = time - C2V(gTintedPolys)[pTintedIndex].lastTime;
+    time_since_last_update_s = time - gTintedPolys[pTintedIndex].lastTime;
     if (time <= 0) {
         time_since_last_update_s = 0;
     }
     if (time_since_last_update_s != 0) {
-        if (C2V(gTintedPolys)[pTintedIndex].color_red != new_red) {
-            if (C2V(gTintedPolys)[pTintedIndex].color_red < new_red) {
-                C2V(gTintedPolys)[pTintedIndex].color_red += time_since_last_update_s;
+        if (gTintedPolys[pTintedIndex].color_red != new_red) {
+            if (gTintedPolys[pTintedIndex].color_red < new_red) {
+                gTintedPolys[pTintedIndex].color_red += time_since_last_update_s;
             } else {
-                C2V(gTintedPolys)[pTintedIndex].color_red -= time_since_last_update_s;
+                gTintedPolys[pTintedIndex].color_red -= time_since_last_update_s;
             }
-            if (new_red - time_since_last_update_s < C2V(gTintedPolys)[pTintedIndex].color_red && C2V(gTintedPolys)[pTintedIndex].color_red < time_since_last_update_s + new_red) {
-                C2V(gTintedPolys)[pTintedIndex].color_red = new_red;
+            if (new_red - time_since_last_update_s < gTintedPolys[pTintedIndex].color_red && gTintedPolys[pTintedIndex].color_red < time_since_last_update_s + new_red) {
+                gTintedPolys[pTintedIndex].color_red = new_red;
             }
             material_changed = 1;
         }
-        if (C2V(gTintedPolys)[pTintedIndex].color_grn != new_grn) {
-            if (C2V(gTintedPolys)[pTintedIndex].color_grn < new_grn) {
-                C2V(gTintedPolys)[pTintedIndex].color_grn += time_since_last_update_s;
+        if (gTintedPolys[pTintedIndex].color_grn != new_grn) {
+            if (gTintedPolys[pTintedIndex].color_grn < new_grn) {
+                gTintedPolys[pTintedIndex].color_grn += time_since_last_update_s;
             } else {
-                C2V(gTintedPolys)[pTintedIndex].color_grn -= time_since_last_update_s;
+                gTintedPolys[pTintedIndex].color_grn -= time_since_last_update_s;
             }
-            if (new_grn - time_since_last_update_s < C2V(gTintedPolys)[pTintedIndex].color_grn && C2V(gTintedPolys)[pTintedIndex].color_grn < time_since_last_update_s + new_grn) {
-                C2V(gTintedPolys)[pTintedIndex].color_grn = new_grn;
+            if (new_grn - time_since_last_update_s < gTintedPolys[pTintedIndex].color_grn && gTintedPolys[pTintedIndex].color_grn < time_since_last_update_s + new_grn) {
+                gTintedPolys[pTintedIndex].color_grn = new_grn;
             }
             material_changed = 1;
         }
-        if (C2V(gTintedPolys)[pTintedIndex].color_blu != new_blu) {
-            if (C2V(gTintedPolys)[pTintedIndex].color_blu < new_blu) {
-                C2V(gTintedPolys)[pTintedIndex].color_blu += time_since_last_update_s;
+        if (gTintedPolys[pTintedIndex].color_blu != new_blu) {
+            if (gTintedPolys[pTintedIndex].color_blu < new_blu) {
+                gTintedPolys[pTintedIndex].color_blu += time_since_last_update_s;
             } else {
-                C2V(gTintedPolys)[pTintedIndex].color_blu -= time_since_last_update_s;
+                gTintedPolys[pTintedIndex].color_blu -= time_since_last_update_s;
             }
-            if (new_blu - time_since_last_update_s < C2V(gTintedPolys)[pTintedIndex].color_blu && C2V(gTintedPolys)[pTintedIndex].color_blu < time_since_last_update_s + new_blu) {
-                C2V(gTintedPolys)[pTintedIndex].color_blu = new_blu;
+            if (new_blu - time_since_last_update_s < gTintedPolys[pTintedIndex].color_blu && gTintedPolys[pTintedIndex].color_blu < time_since_last_update_s + new_blu) {
+                gTintedPolys[pTintedIndex].color_blu = new_blu;
             }
             material_changed = 1;
         }
         if (material_changed) {
-            C2V(gTintedPolys)[pTintedIndex].material->colour = BR_COLOUR_RGB(C2V(gTintedPolys)[pTintedIndex].color_red, C2V(gTintedPolys)[pTintedIndex].color_grn, C2V(gTintedPolys)[pTintedIndex].color_blu);
-            BrMaterialUpdate(C2V(gTintedPolys)[pTintedIndex].material, BR_MATU_LIGHTING);
+            gTintedPolys[pTintedIndex].material->colour = BR_COLOUR_RGB(gTintedPolys[pTintedIndex].color_red, gTintedPolys[pTintedIndex].color_grn, gTintedPolys[pTintedIndex].color_blu);
+            BrMaterialUpdate(gTintedPolys[pTintedIndex].material, BR_MATU_LIGHTING);
         }
     }
 }
-C2_HOOK_FUNCTION(0x004d7d80, UpdateTintedPolyActor)
 
+// FUNCTION: CARMA2_HW 0x004d8220
 void C2_HOOK_FASTCALL TurnTintedPolyOn(int pTintedIndex) {
-    if (C2V(gTintedPolys)[pTintedIndex].used) {
-        C2V(gTintedPolys)[pTintedIndex].actor->render_style = BR_RSTYLE_FACES;
-        C2V(gTintedPolys)[pTintedIndex].visible = 1;
+    if (gTintedPolys[pTintedIndex].used) {
+        gTintedPolys[pTintedIndex].actor->render_style = BR_RSTYLE_FACES;
+        gTintedPolys[pTintedIndex].visible = 1;
     }
 }
-C2_HOOK_FUNCTION(0x004d8220, TurnTintedPolyOn)
 
+// FUNCTION: CARMA2_HW 0x004d8250
 void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
 
 #ifdef REC2_FIX_BUGS
@@ -476,44 +505,43 @@ void C2_HOOK_FASTCALL TurnTintedPolyOff(int pTintedIndex) {
         return;
     }
 #endif
-    if (C2V(gTintedPolys)[pTintedIndex].used) {
-        (C2V(gTintedPolys)[pTintedIndex].actor)->render_style = BR_RSTYLE_NONE;
-        C2V(gTintedPolys)[pTintedIndex].color_red = 0;
-        C2V(gTintedPolys)[pTintedIndex].color_grn = 0;
-        C2V(gTintedPolys)[pTintedIndex].color_blu = 0;
-        C2V(gTintedPolys)[pTintedIndex].visible = 0;
+    if (gTintedPolys[pTintedIndex].used) {
+        (gTintedPolys[pTintedIndex].actor)->render_style = BR_RSTYLE_NONE;
+        gTintedPolys[pTintedIndex].color_red = 0;
+        gTintedPolys[pTintedIndex].color_grn = 0;
+        gTintedPolys[pTintedIndex].color_blu = 0;
+        gTintedPolys[pTintedIndex].visible = 0;
     }
 }
-C2_HOOK_FUNCTION(0x004d8250, TurnTintedPolyOff)
 
+// FUNCTION: CARMA2_HW 0x004d8290
 void C2_HOOK_FASTCALL RenderTintedPolys(void) {
-    BrZbsSceneRender(C2V(gTintedPolyCamera), C2V(gTintedPolyCamera), C2V(gBack_screen), C2V(gDepth_buffer));
+    BrZbsSceneRender(gTintedPolyCamera, gTintedPolyCamera, gBack_screen, gDepth_buffer);
 }
-C2_HOOK_FUNCTION(0x004d8290, RenderTintedPolys)
 
+// FUNCTION: CARMA2_HW 0x004d82b0
 void C2_HOOK_FASTCALL SetTintedPolyColour(int pTintedIndex, int pRed, int pGreen, int pBlue) {
     int red_differs;
     int grn_differs;
     int blu_differs;
 
-    red_differs = C2V(gTintedPolys)[pTintedIndex].color_red != pRed;
+    red_differs = gTintedPolys[pTintedIndex].color_red != pRed;
     if (red_differs) {
-        C2V(gTintedPolys)[pTintedIndex].color_red = pRed;
+        gTintedPolys[pTintedIndex].color_red = pRed;
     }
-    grn_differs = C2V(gTintedPolys)[pTintedIndex].color_grn != pGreen;
+    grn_differs = gTintedPolys[pTintedIndex].color_grn != pGreen;
     if (grn_differs) {
-        C2V(gTintedPolys)[pTintedIndex].color_grn = pGreen;
+        gTintedPolys[pTintedIndex].color_grn = pGreen;
     }
-    blu_differs = C2V(gTintedPolys)[pTintedIndex].color_blu != pBlue;
+    blu_differs = gTintedPolys[pTintedIndex].color_blu != pBlue;
     if (blu_differs) {
-        C2V(gTintedPolys)[pTintedIndex].color_blu = pBlue;
+        gTintedPolys[pTintedIndex].color_blu = pBlue;
     }
     if (red_differs || (grn_differs || blu_differs)) {
-        (C2V(gTintedPolys)[pTintedIndex].material)->colour = BR_COLOUR_RGB(C2V(gTintedPolys)[pTintedIndex].color_red, C2V(gTintedPolys)[pTintedIndex].color_grn, C2V(gTintedPolys)[pTintedIndex].color_blu);
-        BrMaterialUpdate(C2V(gTintedPolys)[pTintedIndex].material ,BR_MATU_LIGHTING);
+        (gTintedPolys[pTintedIndex].material)->colour = BR_COLOUR_RGB(gTintedPolys[pTintedIndex].color_red, gTintedPolys[pTintedIndex].color_grn, gTintedPolys[pTintedIndex].color_blu);
+        BrMaterialUpdate(gTintedPolys[pTintedIndex].material ,BR_MATU_LIGHTING);
     }
 }
-C2_HOOK_FUNCTION(0x004d82b0, SetTintedPolyColour)
 
 void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPosition) {
     tSpecial_volume* volume;
@@ -522,46 +550,47 @@ void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPo
     br_scalar t;
     br_material* mat;
 
-    volume = C2V(gCar_to_view)->collision_info->last_special_volume;
-    if ((volume != NULL && volume->gravity_multiplier < 1.f) || C2V(gAction_replay_mode)) {
+    volume = gCar_to_view->collision_info->last_special_volume;
+    if ((volume != NULL && volume->gravity_multiplier < 1.f) || gAction_replay_mode) {
         BrVector3Set(&dir, 0.f, 200.f, 0.f);
         DisablePlingMaterials();
         FindFace(pPosition, &dir, &nor, &t, &mat);
         EnablePlingMaterials();
         if (t >= 100.f || mat == NULL || mat->identifier == NULL || c2_strlen(mat->identifier) == 0) {
-            C2V(gTintedPolys)[pTintedIndex].field_0x28 = 0;
-            C2V(gTintedPolys)[pTintedIndex].material2 = NULL;
+            gTintedPolys[pTintedIndex].field_0x28 = 0;
+            gTintedPolys[pTintedIndex].material2 = NULL;
         } else if (mat->identifier[0] == '!' || mat->identifier[0] == '#') {
-            C2V(gTintedPolys)[pTintedIndex].field_0x28 = '#';
-            C2V(gTintedPolys)[pTintedIndex].material2 = mat;
+            gTintedPolys[pTintedIndex].field_0x28 = '#';
+            gTintedPolys[pTintedIndex].material2 = mat;
         } else if (mat->identifier[0] == '@') {
-            C2V(gTintedPolys)[pTintedIndex].field_0x28 = '@';
-            C2V(gTintedPolys)[pTintedIndex].material2 = mat;
+            gTintedPolys[pTintedIndex].field_0x28 = '@';
+            gTintedPolys[pTintedIndex].material2 = mat;
         }
     } else {
-        C2V(gTintedPolys)[pTintedIndex].field_0x28 = 0;
-        C2V(gTintedPolys)[pTintedIndex].material2 = NULL;
+        gTintedPolys[pTintedIndex].field_0x28 = 0;
+        gTintedPolys[pTintedIndex].material2 = NULL;
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004d8470
 br_material* C2_HOOK_FASTCALL InWater(int pTintedIndex) {
 
-    if (C2V(gTintedPolys)[pTintedIndex].field_0x28 != '#') {
+    if (gTintedPolys[pTintedIndex].field_0x28 != '#') {
         return NULL;
     }
-    return C2V(gTintedPolys)[pTintedIndex].material2;
+    return gTintedPolys[pTintedIndex].material2;
 }
-C2_HOOK_FUNCTION(0x004d8470, InWater)
 
+// FUNCTION: CARMA2_HW 0x004d8a20
 void C2_HOOK_FASTCALL UpdateTintedPolys(void) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gTintedPolys)); i++) {
+    for (i = 0; i < REC2_ASIZE(gTintedPolys); i++) {
         ProcessTintedPoly(i);
     }
 }
-C2_HOOK_FUNCTION(0x004d8a20, UpdateTintedPolys)
 
+// FUNCTION: CARMA2_HW 0x004d8bb0
 void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int width, int height) {
     tTintedPoly* tinted;
     int nb_x;
@@ -573,7 +602,7 @@ void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int wi
     if (pTintedIndex == -1) {
         return;
     }
-    tinted = &C2V(gTintedPolys)[pTintedIndex];
+    tinted = &gTintedPolys[pTintedIndex];
     if (tinted->class == 3) {
         nb_x = 4;
         nb_y = 4;
@@ -596,18 +625,13 @@ void C2_HOOK_FASTCALL SetTintedPolySize(int pTintedIndex, int x0, int y0, int wi
     }
     BrModelUpdate(tinted->model, BR_MODU_VERTICES);
 }
-C2_HOOK_FUNCTION(0x004d8bb0, SetTintedPolySize)
 
-void (C2_HOOK_FASTCALL * SetTintedFromSpecialVolume_original)(int pIndex, br_vector3* pPosition);
+// FUNCTION: CARMA2_HW 0x004d8350
 void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPosition) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    SetTintedFromSpecialVolume_original(pIndex, pPosition);
-#else
     tSpecial_volume* volume;
 
-    volume = C2V(gCar_to_view)->collision_info->last_special_volume;
-    if ((volume != NULL && volume->gravity_multiplier < 1.f) || C2V(gAction_replay_mode)) {
+    volume = gCar_to_view->collision_info->last_special_volume;
+    if ((volume != NULL && volume->gravity_multiplier < 1.f) || gAction_replay_mode) {
         br_vector3 dir, nor;
         br_scalar t;
         br_material *mat;
@@ -619,37 +643,31 @@ void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPositi
         if (t < 100.f && mat != NULL && mat->identifier != NULL) {
             if (c2_strlen(mat->identifier) >= 1) {
                 if (mat->identifier[0] == '!' || mat->identifier[0] == '#') {
-                    C2V(gTintedPolys)[pIndex].field_0x28 = 35;
-                    C2V(gTintedPolys)[pIndex].material2 = mat;
+                    gTintedPolys[pIndex].field_0x28 = 35;
+                    gTintedPolys[pIndex].material2 = mat;
                     return;
                 } else if (mat->identifier[0] == '@') {
-                    C2V(gTintedPolys)[pIndex].field_0x28 = 64;
-                    C2V(gTintedPolys)[pIndex].material2 = mat;
+                    gTintedPolys[pIndex].field_0x28 = 64;
+                    gTintedPolys[pIndex].material2 = mat;
                     return;
                 }
             }
         }
     }
-    C2V(gTintedPolys)[pIndex].field_0x28 = 0;
-    C2V(gTintedPolys)[pIndex].material2 = NULL;
-#endif
+    gTintedPolys[pIndex].field_0x28 = 0;
+    gTintedPolys[pIndex].material2 = NULL;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004d8350, SetTintedFromSpecialVolume, SetTintedFromSpecialVolume_original)
 
-void (C2_HOOK_FASTCALL * ProcessTintedPoly_original)(int pIndex);
+// FUNCTION: CARMA2_HW 0x004d84a0
 void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    ProcessTintedPoly_original(pIndex);
-#else
-
-    if (!C2V(gTintedPolys)[pIndex].used) {
+    if (!gTintedPolys[pIndex].used) {
         return;
     }
-    switch (C2V(gTintedPolys)[pIndex].class) {
+    switch (gTintedPolys[pIndex].class) {
     case 2: {
-        tSpecial_volume *volume = C2V(gCar_to_view)->collision_info->last_special_volume;
-        if ((volume != NULL && volume->gravity_multiplier < 1.0f) || C2V(gAction_replay_mode)) {
+        tSpecial_volume *volume = gCar_to_view->collision_info->last_special_volume;
+        if ((volume != NULL && volume->gravity_multiplier < 1.0f) || gAction_replay_mode) {
             UpdateTintedPolyActor(pIndex);
         }
         break;
@@ -658,125 +676,124 @@ void C2_HOOK_FASTCALL ProcessTintedPoly(int pIndex) {
         TintedAnimateSawToothColor(pIndex);
         return;
     case 4:
-        if (PDKeyDown(32) || (C2V(gINT_006a0444) > 0 && C2V(gINT_006a0444) <= 200)) {
+        if (PDKeyDown(32) || (gINT_006a0444 > 0 && gINT_006a0444 <= 200)) {
             FUN_004d86e0(pIndex);
         }
-        if (PDKeyDown(35) || (C2V(gINT_006a0444) > 0 && C2V(gINT_006a0444) <= 200)) {
-            C2V(gINT_006a0448) = 1;
+        if (PDKeyDown(35) || (gINT_006a0444 > 0 && gINT_006a0444 <= 200)) {
+            gINT_006a0448 = 1;
             FUN_004d86e0(pIndex);
         }
         break;
     case 6:
-        if (C2V(gTintedPolys)[pIndex].visible) {
+        if (gTintedPolys[pIndex].visible) {
             int red, grn, blu;
 
-            if (C2V(gTintedPolys)[pIndex].subClass == 0) {
+            if (gTintedPolys[pIndex].subClass == 0) {
                 unsigned int mask;
-                mask = GetTotalTime() >> C2V(gTintedPolys)[pIndex].colour;
+                mask = GetTotalTime() >> gTintedPolys[pIndex].colour;
                 if ((mask & 0x1ff) > 254) {
                     mask = -2 - (mask & 0x1ff);
                 }
                 mask &= 0xff;
-                red = C2V(gTintedPolys)[pIndex].color2_red & mask;
-                grn = C2V(gTintedPolys)[pIndex].color2_grn & mask;
-                blu = C2V(gTintedPolys)[pIndex].color2_blu & mask;
+                red = gTintedPolys[pIndex].color2_red & mask;
+                grn = gTintedPolys[pIndex].color2_grn & mask;
+                blu = gTintedPolys[pIndex].color2_blu & mask;
             } else {
                 red = grn = blu = pIndex;
-                if (C2V(gTintedPolys)[pIndex].subClass == 1) {
+                if (gTintedPolys[pIndex].subClass == 1) {
                     TintedAnimateSawToothColor(pIndex);
                 }
             }
-            C2V(gTintedPolys)[pIndex].material->colour = BR_COLOUR_RGB(red, grn, blu);
-            BrMaterialUpdate(C2V(gTintedPolys)[pIndex].material, BR_MATU_LIGHTING);
+            gTintedPolys[pIndex].material->colour = BR_COLOUR_RGB(red, grn, blu);
+            BrMaterialUpdate(gTintedPolys[pIndex].material, BR_MATU_LIGHTING);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004d84a0, ProcessTintedPoly, ProcessTintedPoly_original)
 
+// FUNCTION: CARMA2_HW 0x004d8630
 void C2_HOOK_FASTCALL TintedAnimateSawToothColor(int pIndex) {
 
-    if ((C2V(gTintedPolys)[pIndex].actor)->render_style == BR_RSTYLE_FACES) {
+    if ((gTintedPolys[pIndex].actor)->render_style == BR_RSTYLE_FACES) {
         tU32 time;
         int i;
         tU8 new_color;
 
         time = GetTotalTime();
 
-        new_color = (tU8)(time >> C2V(gTintedPolys)[pIndex].colour);
-        for (i = 0; i < C2V(gTintedPolys)[pIndex].model->nvertices; i++) {
-            C2V(gTintedPolys)[pIndex].model->vertices[i].red = new_color + 128;
-            C2V(gTintedPolys)[pIndex].model->vertices[i].grn = new_color + 30 * i;
-            C2V(gTintedPolys)[pIndex].model->vertices[i].blu = new_color;
+        new_color = (tU8)(time >> gTintedPolys[pIndex].colour);
+        for (i = 0; i < gTintedPolys[pIndex].model->nvertices; i++) {
+            gTintedPolys[pIndex].model->vertices[i].red = new_color + 128;
+            gTintedPolys[pIndex].model->vertices[i].grn = new_color + 30 * i;
+            gTintedPolys[pIndex].model->vertices[i].blu = new_color;
         }
-        BrModelUpdate(C2V(gTintedPolys)[pIndex].model, BR_MODU_VERTICES);
+        BrModelUpdate(gTintedPolys[pIndex].model, BR_MODU_VERTICES);
     }
 }
-C2_HOOK_FUNCTION(0x004d8630, TintedAnimateSawToothColor)
 
+// FUNCTION: CARMA2_HW 0x004d86e0
 void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex) {
     int i;
     int j;
 
-    if (!C2V(gINT_006a0444)) {
-        C2_HOOK_BUG_ON(sizeof(C2V(gTintedPolys)[pIndex].tints2) != 8192);
-        C2_HOOK_BUG_ON(sizeof(C2V(gTintedPolys)[pIndex].tints3) != 8192);
+    if (!gINT_006a0444) {
+        C2_HOOK_BUG_ON(sizeof(gTintedPolys[pIndex].tints2) != 8192);
+        C2_HOOK_BUG_ON(sizeof(gTintedPolys[pIndex].tints3) != 8192);
 
-        c2_memset(C2V(gTintedPolys)[pIndex].tints2, 0, sizeof(C2V(gTintedPolys)[pIndex].tints2));
-        c2_memset(C2V(gTintedPolys)[pIndex].tints3, 0, sizeof(C2V(gTintedPolys)[pIndex].tints2));
+        c2_memset(gTintedPolys[pIndex].tints2, 0, sizeof(gTintedPolys[pIndex].tints2));
+        c2_memset(gTintedPolys[pIndex].tints3, 0, sizeof(gTintedPolys[pIndex].tints2));
     }
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < 2; j++) {
-            C2V(gTintedPolys)[pIndex].tints2[64 * (IRandomBetween(i - 5, 5 - i) + IRandomBetween(13, 19)) + i + 64 - 5] = 255 - C2V(gINT_006a044c);
+            gTintedPolys[pIndex].tints2[64 * (IRandomBetween(i - 5, 5 - i) + IRandomBetween(13, 19)) + i + 64 - 5] = 255 - gINT_006a044c;
         }
     }
-    if (C2V(gINT_006a0444) > 150) {
-        C2V(gINT_006a044c) += 1;
+    if (gINT_006a0444 > 150) {
+        gINT_006a044c += 1;
     }
-    C2V(gINT_006a0440) += 1;
-    if (C2V(gINT_006a0440) >= 64) {
-        C2V(gINT_006a0440) = 0;
+    gINT_006a0440 += 1;
+    if (gINT_006a0440 >= 64) {
+        gINT_006a0440 = 0;
     }
 
     for (i = 0; i < 62; i++) {
         for (j = 0; j < 30; j++) {
             int avg =
-                ((C2V(gTintedPolys)[pIndex].tints2[i + (j + 2) * 64 + 1]
-                + C2V(gTintedPolys)[pIndex].tints2[i + (j + 0) * 64 + 1]
-                + C2V(gTintedPolys)[pIndex].tints2[i + (j + 1) * 64 + 2]
-                + C2V(gTintedPolys)[pIndex].tints2[i + (j + 1) * 64 + 0]) / 4
-                + C2V(gTintedPolys)[pIndex].tints2[i + (j + 1) * 64 + 1]) / 2
-            - C2V(gTintedPolys)[pIndex].tints1[i + (j + 1) * 64 + 1]
-            - C2V(gINT_006a044c);
-            C2V(gTintedPolys)[pIndex].tints3[i + (j + 1) * 64] = MAX(0, avg);
+                ((gTintedPolys[pIndex].tints2[i + (j + 2) * 64 + 1]
+                + gTintedPolys[pIndex].tints2[i + (j + 0) * 64 + 1]
+                + gTintedPolys[pIndex].tints2[i + (j + 1) * 64 + 2]
+                + gTintedPolys[pIndex].tints2[i + (j + 1) * 64 + 0]) / 4
+                + gTintedPolys[pIndex].tints2[i + (j + 1) * 64 + 1]) / 2
+            - gTintedPolys[pIndex].tints1[i + (j + 1) * 64 + 1]
+            - gINT_006a044c;
+            gTintedPolys[pIndex].tints3[i + (j + 1) * 64] = MAX(0, avg);
         }
     }
 
-    if (C2V(gINT_006a0444) < 150 && IRandomBetween(0, 6) > 3) {
+    if (gINT_006a0444 < 150 && IRandomBetween(0, 6) > 3) {
         int idx;
 
         idx = IRandomBetween(12, 20) * 64 + IRandomBetween(30,55);
-        C2V(gTintedPolys)[pIndex].tints2[idx] = 0xff;
-        C2V(gTintedPolys)[pIndex].tints3[idx] = 0xbf;
+        gTintedPolys[pIndex].tints2[idx] = 0xff;
+        gTintedPolys[pIndex].tints3[idx] = 0xbf;
     }
-    c2_memcpy(C2V(gTintedPolys)[pIndex].tints2, C2V(gTintedPolys)[pIndex].tints3, sizeof(C2V(gTintedPolys)[pIndex].tints2));
+    c2_memcpy(gTintedPolys[pIndex].tints2, gTintedPolys[pIndex].tints3, sizeof(gTintedPolys[pIndex].tints2));
 
     for (i = 0; i < 64; i++) {
         for (j = 0; j < 32; j++) {
-            int idx = C2V(gTintedPolys)[pIndex].tints3[j * 64 + i];
-            BrPixelmapPixelSet(C2V(gTintedPolys)[pIndex].pixelmap, i, j, C2V(gTintedPolys)[pIndex].colours[idx]);
+            int idx = gTintedPolys[pIndex].tints3[j * 64 + i];
+            BrPixelmapPixelSet(gTintedPolys[pIndex].pixelmap, i, j, gTintedPolys[pIndex].colours[idx]);
         }
     }
-    BrMapUpdate(C2V(gTintedPolys)[pIndex].pixelmap, BR_MAPU_ALL);
+    BrMapUpdate(gTintedPolys[pIndex].pixelmap, BR_MAPU_ALL);
 
-    if (C2V(gINT_006a0444) % 10 == 0 && C2V(gINT_006a0448) && C2V(gINT_006a0444) > 10) {
+    if (gINT_006a0444 % 10 == 0 && gINT_006a0448 && gINT_006a0444 > 10) {
         tPath_name save_path;
         for (i = 1; i < 10000; i++) {
             tPath_name path;
             FILE* f;
 
-            PathCat(path, C2V(gApplication_path), "FLM");
+            PathCat(path, gApplication_path, "FLM");
             c2_sprintf(&path[c2_strlen(path)], "%02d.%s", i, "PIX");
             f = DRfopen(path, "rt");
             if (f == NULL) {
@@ -784,19 +801,18 @@ void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex) {
                 break;
             }
         }
-        BrPixelmapSave(save_path, C2V(gTintedPolys)[pIndex].pixelmap);
+        BrPixelmapSave(save_path, gTintedPolys[pIndex].pixelmap);
     }
-    C2V(gINT_006a0444) += 1;
-    if (C2V(gINT_006a0444) >= 200) {
-        C2V(gINT_006a0444) = 0;
-        C2V(gINT_006a0448) = 0;
-        C2V(gINT_006a044c) = 0;
+    gINT_006a0444 += 1;
+    if (gINT_006a0444 >= 200) {
+        gINT_006a0444 = 0;
+        gINT_006a0448 = 0;
+        gINT_006a044c = 0;
     }
 }
-C2_HOOK_FUNCTION(0x004d86e0, FUN_004d86e0)
 
+// FUNCTION: CARMA2_HW 0x004d8cf0
 int C2_HOOK_FASTCALL TintedPolyIsOn(int pIndex) {
 
-    return C2V(gTintedPolys)[pIndex].visible;
+    return gTintedPolys[pIndex].visible;
 }
-C2_HOOK_FUNCTION(0x004d8cf0, TintedPolyIsOn)

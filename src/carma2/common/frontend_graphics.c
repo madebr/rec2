@@ -11,14 +11,15 @@
 #include "loading.h"
 #include "world.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_GRAPHICS, 0x0063e528, {
+// GLOBAL: CARMA2_HW 0x0063e528
+tFrontend_spec gFrontend_GRAPHICS = {
     "Graphics",
     0,
     53,
     Graphics_Infunc,
     Graphics_Outfunc,
     Generic_MenuHandler,
-    &C2V(gFrontend_OPTIONS),
+    &gFrontend_OPTIONS,
     1,
     0,
     0,
@@ -80,9 +81,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_GRAPHICS, 0x0063e528, 
         { 0x38, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
         { 0x39, temp, NULL,         0, 0, 0, 0, 0, 0, 0, 1, 1 },
     },
-});
+};
 
 
+// FUNCTION: CARMA2_HW 0x004b4090
 void C2_HOOK_FASTCALL GetGraphicsSettingsData(tFrontend_spec* pFrontend) {
     float yon_factor;
 
@@ -199,27 +201,27 @@ void C2_HOOK_FASTCALL GetGraphicsSettingsData(tFrontend_spec* pFrontend) {
         SelectThisItemIn(pFrontend, 12, 46);
     }
 
-    if (C2V(gAuto_load)) {
+    if (gAuto_load) {
         SelectThisItemIn(pFrontend, 13, 48);
     } else {
         SelectThisItemIn(pFrontend, 13, 49);
     }
-    if (C2V(gAmbient_sound)) {
+    if (gAmbient_sound) {
         SelectThisItemIn(pFrontend, 14, 51);
     } else {
         SelectThisItemIn(pFrontend, 14, 52);
     }
 }
-C2_HOOK_FUNCTION(0x004b4090, GetGraphicsSettingsData)
 
+// FUNCTION: CARMA2_HW 0x004747e0
 int C2_HOOK_FASTCALL Graphics_Infunc(tFrontend_spec* pFrontend) {
 
     Generic_Infunc(pFrontend);
     GetGraphicsSettingsData(pFrontend);
     return 1;
 }
-C2_HOOK_FUNCTION(0x004747e0, Graphics_Infunc)
 
+// FUNCTION: CARMA2_HW 0x004b42c0
 void C2_HOOK_FASTCALL SetGraphicsSettingsData(tFrontend_spec* pFrontend) {
 
     switch (WhichItemIsSelectedIn(pFrontend, 1)) {
@@ -359,30 +361,29 @@ void C2_HOOK_FASTCALL SetGraphicsSettingsData(tFrontend_spec* pFrontend) {
 
     switch (WhichItemIsSelectedIn(pFrontend, 13)) {
     case 48:
-        C2V(gAuto_load) = 1;
+        gAuto_load = 1;
         break;
     case 49:
-        C2V(gAuto_load) = 0;
+        gAuto_load = 0;
         break;
     }
 
     switch (WhichItemIsSelectedIn(pFrontend, 14)) {
     case 51:
-        C2V(gAmbient_sound) = 1;
+        gAmbient_sound = 1;
         break;
     case 52:
-        C2V(gAmbient_sound) = 0;
+        gAmbient_sound = 0;
         break;
     }
 
     SaveOptions();
 }
-C2_HOOK_FUNCTION(0x004b42c0, SetGraphicsSettingsData)
 
+// FUNCTION: CARMA2_HW 0x00474850
 int C2_HOOK_FASTCALL Graphics_Outfunc(tFrontend_spec* pFrontend) {
 
     Generic_Outfunc(pFrontend);
     SetGraphicsSettingsData(pFrontend);
     return 1;
 }
-C2_HOOK_FUNCTION(0x00474850, Graphics_Outfunc)

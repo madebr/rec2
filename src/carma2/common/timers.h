@@ -27,18 +27,18 @@
 #define TIMER_SER 17
 #define TIMER_OQQ 18
 
-C2_HOOK_VARIABLE_DECLARE(int, gTimers_stack_size);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tTimer, gTimers, 19);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gTimers_stack, 19);
-C2_HOOK_VARIABLE_DECLARE(int, gTimers_frame_count);
-C2_HOOK_VARIABLE_DECLARE(int, gTimers_enough_samples);
-C2_HOOK_VARIABLE_DECLARE(int, gTimers_max_index);
-C2_HOOK_VARIABLE_DECLARE(int, gTimers_draw_x);
-C2_HOOK_VARIABLE_DECLARE(int, gTimers_draw_y_stride);
-C2_HOOK_VARIABLE_DECLARE(int, gTimers_draw_y);
-C2_HOOK_VARIABLE_DECLARE(tU32, gTimers_frame_start_time);
-C2_HOOK_VARIABLE_DECLARE(tU32, gTimers_frame_end_time);
-C2_HOOK_VARIABLE_DECLARE(tU32, gTimers_tolerance);
+extern int gTimers_stack_size;
+extern tTimer gTimers[19];
+extern int gTimers_stack[19];
+extern int gTimers_frame_count;
+extern int gTimers_enough_samples;
+extern int gTimers_max_index;
+extern int gTimers_draw_x;
+extern int gTimers_draw_y_stride;
+extern int gTimers_draw_y;
+extern tU32 gTimers_frame_start_time;
+extern tU32 gTimers_frame_end_time;
+extern tU32 gTimers_tolerance;
 
 void C2_HOOK_FASTCALL Timers_Init(void);
 
@@ -51,35 +51,35 @@ void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen);
 static void inline Timers_Push(int pType) {
     int prev_type;
 
-    C2V(gTimers_stack)[C2V(gTimers_stack_size)] = pType;
-    if (C2V(gTimers_stack_size) == 0) {
-        prev_type = C2V(gTimers_max_index);
+    gTimers_stack[gTimers_stack_size] = pType;
+    if (gTimers_stack_size == 0) {
+        prev_type = gTimers_max_index;
     } else {
-        prev_type = C2V(gTimers_stack)[C2V(gTimers_stack_size) - 1];
+        prev_type = gTimers_stack[gTimers_stack_size - 1];
     }
-    C2V(gTimers)[prev_type].durations[C2V(gTimers)[prev_type].index] += PDGetMicroseconds() - C2V(gTimers)[prev_type].start_time;
-    C2V(gTimers)[pType].start_time = PDGetMicroseconds();
-    C2V(gTimers_stack_size) += 1;
+    gTimers[prev_type].durations[gTimers[prev_type].index] += PDGetMicroseconds() - gTimers[prev_type].start_time;
+    gTimers[pType].start_time = PDGetMicroseconds();
+    gTimers_stack_size += 1;
 }
 
 static void inline Timers_Pop(int pType) {
     int prev_type;
 
-    C2V(gTimers)[pType].durations[C2V(gTimers)[pType].index] +=PDGetMicroseconds() - C2V(gTimers)[pType].start_time;
-    if (C2V(gTimers_stack_size) > 1) {
-        prev_type = C2V(gTimers_stack_size) - 1;
+    gTimers[pType].durations[gTimers[pType].index] +=PDGetMicroseconds() - gTimers[pType].start_time;
+    if (gTimers_stack_size > 1) {
+        prev_type = gTimers_stack_size - 1;
     } else {
-        prev_type = C2V(gTimers_max_index);
+        prev_type = gTimers_max_index;
     }
-    C2V(gTimers)[prev_type].start_time = PDGetMicroseconds();
-    C2V(gTimers_stack_size) -= 1;
+    gTimers[prev_type].start_time = PDGetMicroseconds();
+    gTimers_stack_size -= 1;
 }
 
 static void inline Timers_Force(int pType) {
-    C2V(gTimers)[C2V(gTimers_max_index)].durations[C2V(gTimers)[C2V(gTimers_max_index)].index] +=
-        PDGetMicroseconds() - C2V(gTimers)[C2V(gTimers_max_index)].start_time;
-    C2V(gTimers_max_index) = pType;
-    C2V(gTimers)[C2V(gTimers_max_index)].start_time = PDGetMicroseconds();
+    gTimers[gTimers_max_index].durations[gTimers[gTimers_max_index].index] +=
+        PDGetMicroseconds() - gTimers[gTimers_max_index].start_time;
+    gTimers_max_index = pType;
+    gTimers[gTimers_max_index].start_time = PDGetMicroseconds();
 }
 
 #endif //REC2_TIMERS_H

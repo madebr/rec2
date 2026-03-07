@@ -7,9 +7,9 @@
 
 typedef br_uint_32 br_timestamp;
 
-C2_HOOK_VARIABLE_DECLARE(br_uint_32, PrimD3DDriverTimestamp);
+extern br_uint_32 PrimD3DDriverTimestamp;
 
-#define Timestamp()		(C2V(PrimD3DDriverTimestamp) += 2)
+#define Timestamp()		(PrimD3DDriverTimestamp += 2)
 
 #define TIMESTAMP_START		1
 

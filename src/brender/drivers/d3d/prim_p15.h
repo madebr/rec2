@@ -5,6 +5,6 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(local_block_d3d, primInfo_d3d_p15, 3);
+extern local_block_d3d primInfo_d3d_p15[3];
 
 #endif /* D3D_PRIM_P15_H */

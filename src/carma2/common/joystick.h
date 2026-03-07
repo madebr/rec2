@@ -5,18 +5,18 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(float, gForce_feedback_upper_limit);
-C2_HOOK_VARIABLE_DECLARE(float, Force_feedback_lower_limit);
-C2_HOOK_VARIABLE_DECLARE(int, gJoystick_index);
-C2_HOOK_VARIABLE_DECLARE(float, gOriginal_joystick_x);
-C2_HOOK_VARIABLE_DECLARE(float, gOriginal_joystick_y);
-C2_HOOK_VARIABLE_DECLARE(int, gOriginal_joystick_fbb);
-C2_HOOK_VARIABLE_DECLARE(int, gOriginal_joystick_dpad);
-C2_HOOK_VARIABLE_DECLARE(int, gOrig_joystick_index);
-C2_HOOK_VARIABLE_DECLARE(float, gJoystick_x_steering);
-C2_HOOK_VARIABLE_DECLARE(float, gJoystick_y_throttle);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_00596308);
-C2_HOOK_VARIABLE_DECLARE(tHeadup_text_buffer, gJoystick_headup_buffer_0079d8a0);
+extern float gForce_feedback_upper_limit;
+extern float Force_feedback_lower_limit;
+extern int gJoystick_index;
+extern float gOriginal_joystick_x;
+extern float gOriginal_joystick_y;
+extern int gOriginal_joystick_fbb;
+extern int gOriginal_joystick_dpad;
+extern int gOrig_joystick_index;
+extern float gJoystick_x_steering;
+extern float gJoystick_y_throttle;
+extern int gINT_00596308;
+extern tHeadup_text_buffer gJoystick_headup_buffer_0079d8a0;
 
 
 void C2_HOOK_FASTCALL SetupFFBValues(void);

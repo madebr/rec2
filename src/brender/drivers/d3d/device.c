@@ -7,11 +7,15 @@
 
 #include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_device_d3d, DriverDeviceD3D, 0x100150c8, {
+
+// GLOBAL: D3D 0x100150c8
+br_device_d3d DriverDeviceD3D = {
     NULL,
     "3dfx_win",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_device_dispatch, deviceD3DDispatch, 0x100151e8, {
+};
+
+// GLOBAL: D3D 0x100151e8
+const br_device_dispatch deviceD3DDispatch = {
     NULL,
     NULL,
     NULL,
@@ -39,8 +43,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_device_dispatch, deviceD3DDispatch, 0x1
     _M_br_object_container_find,
     _M_br_object_container_findMany,
     _M_br_object_container_count
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, deviceD3DTemplateEntries, 7, 0x10015120, {
+};
+
+// GLOBAL: D3D 0x10015120
+br_tv_template_entry deviceD3DTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,       0,  offsetof(br_device_d3d, identifier),       0x5,  0x0, },
     { BRT_VERSION_U32,           0,  offsetof(br_device_d3d, version),          0x5,  0x0, },
     { BRT_CREATOR_CSTR,          0,  offsetof(br_device_d3d, creator),          0x5,  0x0, },
@@ -48,11 +54,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, deviceD3DTemplateEnt
     { BRT_PRODUCT_CSTR,          0,  offsetof(br_device_d3d, product),          0x5,  0x0, },
     { BRT_PRODUCT_VERSION_CSTR,  0,  offsetof(br_device_d3d, product_version),  0x5,  0x0, },
     { BRT_CLUT_O,                0,  offsetof(br_device_d3d, clut),             0x5,  0x0, },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_tv_template, deviceD3DTemplate, 0x100151c8, {
-    BR_ASIZE(C2V(deviceD3DTemplateEntries)),
-    C2V(deviceD3DTemplateEntries),
-});
+};
+
+// GLOBAL: D3D 0x100151c8
+br_tv_template deviceD3DTemplate = {
+    BR_ASIZE(deviceD3DTemplateEntries),
+    deviceD3DTemplateEntries,
+};
 
 #if 0
 /*
@@ -91,13 +99,14 @@ struct token_match {
 };
 #endif
 
+// FUNCTION: D3D 0x10001200
 br_error C2_HOOK_CDECL DeviceD3DInitialise(br_device_d3d* self) {
 
-    memset(&C2V(deviceD3DTemplate), 0, sizeof(C2V(deviceD3DTemplate)));
-    C2V(deviceD3DTemplate).n_entries = BR_ASIZE(C2V(deviceD3DTemplateEntries));
-    C2V(deviceD3DTemplate).entries = C2V(deviceD3DTemplateEntries);
+    memset(&deviceD3DTemplate, 0, sizeof(deviceD3DTemplate));
+    deviceD3DTemplate.n_entries = BR_ASIZE(deviceD3DTemplateEntries);
+    deviceD3DTemplate.entries = deviceD3DTemplateEntries;
 
-    self->dispatch = &C2V(deviceD3DDispatch);
+    self->dispatch = &deviceD3DDispatch;
 
     self->res = BrResAllocate(NULL, 0, BR_MEMORY_DRIVER);
     self->object_list       = BrObjectListAllocate(self->res);
@@ -109,42 +118,41 @@ br_error C2_HOOK_CDECL DeviceD3DInitialise(br_device_d3d* self) {
     self->clut = DeviceClutD3DAllocate(self, "Pseudo-CLUT");
     return 0;
 }
-C2_HOOK_FUNCTION(0x10001200, DeviceD3DInitialise)
 
+// FUNCTION: D3D 0x10001280
 void C2_HOOK_CDECL _M_br_device_d3d_free(br_device* self) {
     br_device_d3d* dev = (br_device_d3d*)self;
     BrObjectContainerFree((br_object_container*)self, BR_NULL_TOKEN, NULL, NULL);
     BrResFree(dev->res);
     dev->res = NULL;
 }
-C2_HOOK_FUNCTION(0x10001280, _M_br_device_d3d_free)
 
+// FUNCTION: D3D 0x100012b0
 br_token C2_HOOK_CDECL _M_br_device_d3d_type(br_device* self) {
     return BRT_DEVICE;
 }
-C2_HOOK_FUNCTION(0x100012b0, _M_br_device_d3d_type)
 
+// FUNCTION: D3D 0x100012c0
 br_boolean C2_HOOK_CDECL _M_br_device_d3d_isType(br_device* self, br_token t) {
     return t == BRT_DEVICE || t == BRT_OBJECT_CONTAINER || t == BRT_OBJECT;
 }
-C2_HOOK_FUNCTION(0x100012c0, _M_br_device_d3d_isType)
 
+// FUNCTION: D3D 0x100012e0
 br_int_32 C2_HOOK_CDECL _M_br_device_d3d_space(br_device *self) {
     C2_HOOK_BUG_ON(sizeof(br_device_d3d) != 0x44);
 
     return sizeof(br_device_d3d);
 }
-C2_HOOK_FUNCTION(0x100012e0, _M_br_device_d3d_space)
 
+// FUNCTION: D3D 0x100012f0
 br_tv_template* C2_HOOK_CDECL _M_br_device_d3d_templateQuery(br_device* self) {
     br_device_d3d* dev = (br_device_d3d*)self;
-    C2V(deviceD3DTemplate).res = dev->res;
-    return &C2V(deviceD3DTemplate);
+    deviceD3DTemplate.res = dev->res;
+    return &deviceD3DTemplate;
 }
-C2_HOOK_FUNCTION(0x100012f0, _M_br_device_d3d_templateQuery)
 
+// FUNCTION: D3D 0x10001310
 void* C2_HOOK_CDECL _M_br_device_d3d_listQuery(br_device* self) {
     br_device_d3d* dev = (br_device_d3d*)self;
     return dev->object_list;
 }
-C2_HOOK_FUNCTION(0x10001310, _M_br_device_d3d_listQuery)

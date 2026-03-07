@@ -4,6 +4,7 @@
 
 #include "c2_stdlib.h"
 
+// FUNCTION: CARMA2_HW 0x00540240
 br_error C2_HOOK_CDECL HostInterruptHook(host_interrupt_hook *h, br_uint_8 vector, br_uint_32 off, br_uint_16 sel) {
     br_error r;
 
@@ -26,8 +27,8 @@ br_error C2_HOOK_CDECL HostInterruptHook(host_interrupt_hook *h, br_uint_8 vecto
     h->active = 1;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00540240, HostInterruptHook)
 
+// FUNCTION: CARMA2_HW 0x005402b0
 br_error C2_HOOK_CDECL HostInterruptUnhook(host_interrupt_hook *h) {
     br_error r;
 
@@ -43,8 +44,8 @@ br_error C2_HOOK_CDECL HostInterruptUnhook(host_interrupt_hook *h) {
     h->active = 0;
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x005402b0, HostInterruptUnhook)
 
+// FUNCTION: CARMA2_HW 0x005402f0
 br_error C2_HOOK_CDECL HostExceptionHook(host_exception_hook *h, br_uint_8 exception, br_uint_32 off, br_uint_16 sel) {
     br_error r;
 
@@ -67,8 +68,8 @@ br_error C2_HOOK_CDECL HostExceptionHook(host_exception_hook *h, br_uint_8 excep
     h->active = 1;
     return 0;
 }
-C2_HOOK_FUNCTION(0x005402f0, HostExceptionHook)
 
+// FUNCTION: CARMA2_HW 0x00540360
 br_error C2_HOOK_CDECL HostExceptionUnhook(host_exception_hook *h) {
     br_error r;
 
@@ -84,4 +85,3 @@ br_error C2_HOOK_CDECL HostExceptionUnhook(host_exception_hook *h) {
     h->active = 0;
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x00540360, HostExceptionUnhook)

@@ -29,46 +29,121 @@
 #define CAR_SPEC_IS_ROZZER(CAR_SPEC) (VEHICLE_TYPE_FROM_ID((CAR_SPEC)->car_ID) == eVehicle_rozzer)
 #define CAR_SPEC_IS_OPPONENT(CAR_SPEC) (VEHICLE_TYPE_FROM_ID((CAR_SPEC)->car_ID) == eVehicle_opponent)
 
-#define GET_CAR_SPEED_FACTOR(CAR) (CAR_SPEC_IS_ROZZER(CAR) ? C2V(gCop_speed_factor) : C2V(gOpponent_speed_factor))
+#define GET_CAR_SPEED_FACTOR(CAR) (CAR_SPEC_IS_ROZZER(CAR) ? gCop_speed_factor : gOpponent_speed_factor)
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gActive_car_list_rebuild_required, 0x0069173c);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gBIG_APC_index, 0x0065a3c4, -1);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_cops_before_faffage, 0x00691744);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNext_grudge_reduction, 0x00691754);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gFirst_frame, 0x00691738);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gGrudge_reduction_per_period, 0x00691724);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gAcknowledged_start, 0x00691750);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gStart_jumped, 0x00691720);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gMinimum_yness_before_knackerisation, 0x00691760);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gAcme_frame_count, 0x00691728);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gHead_on_cos_value, 0x00691768);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gBig_bang, 0x00691714);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(float, gOpponent_nastyness_frigger, 0x0065a3cc, 1.f);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gIn_view_distance, 0x00691764);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gChallenger_index__opponent, 0x0065a3c8, -1);
-C2_HOOK_VARIABLE_IMPLEMENT(tU8*, gBit_per_node, 0x0069175c);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_yel, 0x00676858, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_yel, 0x0067685c, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_yel, 0x00676860, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_red, 0x00676864, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_red, 0x00676868, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_red, 0x0067686c, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_grn, 0x00676870, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_grn, 0x00676874, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_grn, 0x00676878, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_blu, 0x0067687c, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_blu, 0x00676880, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_turq, 0x00676884, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_turq, 0x00676888, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_dk_gry, 0x0067688c, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_md_gry, 0x00676890, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_material*, gMat_lt_gry, 0x00676894, NULL);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_of_opponents_pursuing, 0x00691718);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_of_opponents_getting_near, 0x00691740);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNum_of_opponents_completing_race, 0x00691758);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gDefinite_no_cop_pursuit_speed, 0x00691734);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gCop_pursuit_speed_percentage_multiplier, 0x00691748);
 
+// GLOBAL: CARMA2_HW 0x0069173c
+int gActive_car_list_rebuild_required;
+
+// GLOBAL: CARMA2_HW 0x0065a3c4
+int gBIG_APC_index = -1;
+
+// GLOBAL: CARMA2_HW 0x00691744
+int gNumber_of_cops_before_faffage;
+
+// GLOBAL: CARMA2_HW 0x00691754
+tU32 gNext_grudge_reduction;
+
+// GLOBAL: CARMA2_HW 0x00691738
+int gFirst_frame;
+
+// GLOBAL: CARMA2_HW 0x00691724
+int gGrudge_reduction_per_period;
+
+// GLOBAL: CARMA2_HW 0x00691750
+int gAcknowledged_start;
+
+// GLOBAL: CARMA2_HW 0x00691720
+int gStart_jumped;
+
+// GLOBAL: CARMA2_HW 0x00691760
+br_scalar gMinimum_yness_before_knackerisation;
+
+// GLOBAL: CARMA2_HW 0x00691728
+tU32 gAcme_frame_count;
+
+// GLOBAL: CARMA2_HW 0x00691768
+br_scalar gHead_on_cos_value;
+
+// GLOBAL: CARMA2_HW 0x00691714
+int gBig_bang;
+
+// GLOBAL: CARMA2_HW 0x0065a3cc
+float gOpponent_nastyness_frigger = 1.f;
+
+// GLOBAL: CARMA2_HW 0x00691764
+br_scalar gIn_view_distance;
+
+// GLOBAL: CARMA2_HW 0x0065a3c8
+int gChallenger_index__opponent = -1;
+
+// GLOBAL: CARMA2_HW 0x0069175c
+tU8* gBit_per_node;
+
+// GLOBAL: CARMA2_HW 0x00676858
+br_material* gMat_dk_yel = NULL;
+
+// GLOBAL: CARMA2_HW 0x0067685c
+br_material* gMat_md_yel = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676860
+br_material* gMat_lt_yel = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676864
+br_material* gMat_dk_red = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676868
+br_material* gMat_md_red = NULL;
+
+// GLOBAL: CARMA2_HW 0x0067686c
+br_material* gMat_lt_red = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676870
+br_material* gMat_dk_grn = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676874
+br_material* gMat_md_grn = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676878
+br_material* gMat_lt_grn = NULL;
+
+// GLOBAL: CARMA2_HW 0x0067687c
+br_material* gMat_dk_blu = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676880
+br_material* gMat_lt_blu = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676884
+br_material* gMat_dk_turq = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676888
+br_material* gMat_lt_turq = NULL;
+
+// GLOBAL: CARMA2_HW 0x0067688c
+br_material* gMat_dk_gry = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676890
+br_material* gMat_md_gry = NULL;
+
+// GLOBAL: CARMA2_HW 0x00676894
+br_material* gMat_lt_gry = NULL;
+
+// GLOBAL: CARMA2_HW 0x00691718
+int gNum_of_opponents_pursuing;
+
+// GLOBAL: CARMA2_HW 0x00691740
+int gNum_of_opponents_getting_near;
+
+// GLOBAL: CARMA2_HW 0x00691758
+int gNum_of_opponents_completing_race;
+
+// GLOBAL: CARMA2_HW 0x00691734
+float gDefinite_no_cop_pursuit_speed;
+
+// GLOBAL: CARMA2_HW 0x00691748
+float gCop_pursuit_speed_percentage_multiplier;
+
+// FUNCTION: CARMA2_HW 0x004013d0
 void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_vector3* pThe_vector) {
     br_transform trans;
 
@@ -78,8 +153,8 @@ void C2_HOOK_FASTCALL PointActorAlongThisBloodyVector(br_actor* pThe_actor, br_v
     BrVector3Copy(&trans.t.look_up.t, &pThe_actor->t.t.translate.t);
     BrTransformToTransform(&pThe_actor->t, &trans);
 }
-C2_HOOK_FUNCTION(0x004013d0, PointActorAlongThisBloodyVector)
 
+// FUNCTION: CARMA2_HW 0x00401430
 void C2_HOOK_FASTCALL PointActorAlongVectorWithUp(br_actor* pThe_actor, br_vector3* pLook, br_vector3* pUp) {
     br_transform trans;
 
@@ -89,13 +164,12 @@ void C2_HOOK_FASTCALL PointActorAlongVectorWithUp(br_actor* pThe_actor, br_vecto
     BrVector3Copy(&trans.t.look_up.t, &pThe_actor->t.t.translate.t);
     BrTransformToTransform(&pThe_actor->t, &trans);
 }
-C2_HOOK_FUNCTION(0x00401430, PointActorAlongVectorWithUp)
 
+// FUNCTION: CARMA2_HW 0x004aee90
 void C2_HOOK_FASTCALL InitOpponentPsyche(int pOpponent_index) {
 
-    C2V(gOpponents)[pOpponent_index].psyche.grudge_against_player = 0;
+    gOpponents[pOpponent_index].psyche.grudge_against_player = 0;
 }
-C2_HOOK_FUNCTION(0x004aee90, InitOpponentPsyche)
 
 void C2_HOOK_FASTCALL ReallocExtraPathNodes(int pCount) {
     tPath_node* nodes;
@@ -104,16 +178,16 @@ void C2_HOOK_FASTCALL ReallocExtraPathNodes(int pCount) {
 
     if (pCount != 0) {
 
-        nodes = BrMemAllocate((C2V(gProgram_state).AI_vehicles.number_of_path_nodes + pCount) * sizeof(tPath_node), kMem_oppo_new_nodes);
-        c2_memcpy(nodes, C2V(gProgram_state).AI_vehicles.path_nodes, C2V(gProgram_state).AI_vehicles.number_of_path_nodes * sizeof(tPath_node));
+        nodes = BrMemAllocate((gProgram_state.AI_vehicles.number_of_path_nodes + pCount) * sizeof(tPath_node), kMem_oppo_new_nodes);
+        c2_memcpy(nodes, gProgram_state.AI_vehicles.path_nodes, gProgram_state.AI_vehicles.number_of_path_nodes * sizeof(tPath_node));
 
-        if (C2V(gProgram_state).AI_vehicles.path_nodes != NULL) {
-            BrMemFree(C2V(gProgram_state).AI_vehicles.path_nodes);
+        if (gProgram_state.AI_vehicles.path_nodes != NULL) {
+            BrMemFree(gProgram_state.AI_vehicles.path_nodes);
         }
-        C2V(gProgram_state).AI_vehicles.path_nodes = nodes;
-        C2V(gProgram_state).AI_vehicles.number_of_path_nodes += pCount;
+        gProgram_state.AI_vehicles.path_nodes = nodes;
+        gProgram_state.AI_vehicles.number_of_path_nodes += pCount;
     }
-    DoNotDprintf_opponent("ReallocExtraPathNodes(): Allocated %d bytes for %d path nodes", (pCount + C2V(gProgram_state).AI_vehicles.number_of_path_nodes) * sizeof(tPath_node), pCount);
+    DoNotDprintf_opponent("ReallocExtraPathNodes(): Allocated %d bytes for %d path nodes", (pCount + gProgram_state.AI_vehicles.number_of_path_nodes) * sizeof(tPath_node), pCount);
 }
 
 void C2_HOOK_FASTCALL ReallocExtraPathSections(int pCount) {
@@ -123,24 +197,20 @@ void C2_HOOK_FASTCALL ReallocExtraPathSections(int pCount) {
 
     if (pCount != 0) {
 
-        sections = BrMemAllocate((C2V(gProgram_state).AI_vehicles.number_of_path_sections + pCount) * sizeof(tPath_section), kMem_oppo_new_sections);
-        c2_memcpy(sections, C2V(gProgram_state).AI_vehicles.path_sections, C2V(gProgram_state).AI_vehicles.number_of_path_sections * sizeof(tPath_section));
+        sections = BrMemAllocate((gProgram_state.AI_vehicles.number_of_path_sections + pCount) * sizeof(tPath_section), kMem_oppo_new_sections);
+        c2_memcpy(sections, gProgram_state.AI_vehicles.path_sections, gProgram_state.AI_vehicles.number_of_path_sections * sizeof(tPath_section));
 
-        if (C2V(gProgram_state).AI_vehicles.path_sections != NULL) {
-            BrMemFree(C2V(gProgram_state).AI_vehicles.path_sections);
+        if (gProgram_state.AI_vehicles.path_sections != NULL) {
+            BrMemFree(gProgram_state.AI_vehicles.path_sections);
         }
-        C2V(gProgram_state).AI_vehicles.path_sections = sections;
-        C2V(gProgram_state).AI_vehicles.number_of_path_sections += pCount;
+        gProgram_state.AI_vehicles.path_sections = sections;
+        gProgram_state.AI_vehicles.number_of_path_sections += pCount;
     }
-    DoNotDprintf_opponent("ReallocExtraPathSections(): Allocated %d bytes for %d path sections", (pCount + C2V(gProgram_state).AI_vehicles.number_of_path_sections) * sizeof(tPath_section), pCount);
+    DoNotDprintf_opponent("ReallocExtraPathSections(): Allocated %d bytes for %d path sections", (pCount + gProgram_state.AI_vehicles.number_of_path_sections) * sizeof(tPath_section), pCount);
 }
 
-void (C2_HOOK_FASTCALL * LoadInOppoPaths_original)(FILE* pF);
+// FUNCTION: CARMA2_HW 0x004a9610
 void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    LoadInOppoPaths_original(pF);
-#else
     char s[256];
     int count_nodes;
     int count_sections;
@@ -172,12 +242,12 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tIntelligent_vehicles, path_sections, 0x42a4);
 
     DoNotDprintf_opponent("Start of LoadInOppoPaths()...");
-    C2V(gProgram_state).AI_vehicles.number_of_path_nodes = 0;
-    C2V(gProgram_state).AI_vehicles.number_of_path_sections = 0;
-    C2V(gProgram_state).AI_vehicles.path_nodes = NULL;
-    C2V(gProgram_state).AI_vehicles.path_sections = NULL;
-    C2V(gBit_per_node) = NULL;
-    C2V(gBIG_APC_index) = -1;
+    gProgram_state.AI_vehicles.number_of_path_nodes = 0;
+    gProgram_state.AI_vehicles.number_of_path_sections = 0;
+    gProgram_state.AI_vehicles.path_nodes = NULL;
+    gProgram_state.AI_vehicles.path_sections = NULL;
+    gBit_per_node = NULL;
+    gBIG_APC_index = -1;
 
     for (;;) {
         if (!GetALineAndDontArgue(pF, s)) {
@@ -192,20 +262,20 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
     count_nodes = GetAnInt(pF);
     ReallocExtraPathNodes(count_nodes);
 
-    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_path_nodes; i++) {
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_path_nodes; i++) {
         br_vector3 pos;
 
         /* Node #i */
         GetThreeFloats(pF, &pos.v[0], &pos.v[1], &pos.v[2]);
-        BrVector3Copy(&C2V(gProgram_state).AI_vehicles.path_nodes[i].pos, &pos);
-        C2V(gProgram_state).AI_vehicles.path_nodes[i].number_of_sections = 0;
+        BrVector3Copy(&gProgram_state.AI_vehicles.path_nodes[i].pos, &pos);
+        gProgram_state.AI_vehicles.path_nodes[i].number_of_sections = 0;
     }
 
     /* Number of path sections */
     count_sections = GetAnInt(pF);
     ReallocExtraPathSections(count_sections);
 
-    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_path_sections; i++) {
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_path_sections; i++) {
         br_scalar scalars[8];
         br_vector3 dp;
         int j;
@@ -216,33 +286,33 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
 
         /* Section #i: node[0], node[1], min_speed[0], max_speed[0], min_speed[1], max_speed[1], width, type*/
         GetNScalars(pF, BR_ASIZE(scalars), scalars);
-        C2V(gProgram_state).AI_vehicles.path_sections[i].node_indices[0] = (tU16)scalars[0];
-        C2V(gProgram_state).AI_vehicles.path_sections[i].node_indices[1] = (tU16)scalars[1];
-        C2V(gProgram_state).AI_vehicles.path_sections[i].min_speed[0] = (tU8)scalars[2];
-        C2V(gProgram_state).AI_vehicles.path_sections[i].max_speed[0] = (tU8)scalars[3];
-        C2V(gProgram_state).AI_vehicles.path_sections[i].min_speed[1] = (tU8)scalars[4];
-        C2V(gProgram_state).AI_vehicles.path_sections[i].max_speed[1] = (tU8)scalars[5];
-        C2V(gProgram_state).AI_vehicles.path_sections[i].width = scalars[6];
+        gProgram_state.AI_vehicles.path_sections[i].node_indices[0] = (tU16)scalars[0];
+        gProgram_state.AI_vehicles.path_sections[i].node_indices[1] = (tU16)scalars[1];
+        gProgram_state.AI_vehicles.path_sections[i].min_speed[0] = (tU8)scalars[2];
+        gProgram_state.AI_vehicles.path_sections[i].max_speed[0] = (tU8)scalars[3];
+        gProgram_state.AI_vehicles.path_sections[i].min_speed[1] = (tU8)scalars[4];
+        gProgram_state.AI_vehicles.path_sections[i].max_speed[1] = (tU8)scalars[5];
+        gProgram_state.AI_vehicles.path_sections[i].width = scalars[6];
 
         BrVector3Sub(&dp,
-            &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[i].node_indices[0]].pos,
-            &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[i].node_indices[1]].pos);
-        C2V(gProgram_state).AI_vehicles.path_sections[i].length = BrVector3Length(&dp);
+            &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[i].node_indices[0]].pos,
+            &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[i].node_indices[1]].pos);
+        gProgram_state.AI_vehicles.path_sections[i].length = BrVector3Length(&dp);
 
         if (scalars[7] < 1000.0f) {
-            C2V(gProgram_state).AI_vehicles.path_sections[i].type = (tU8)scalars[7];
-            C2V(gProgram_state).AI_vehicles.path_sections[i].one_way = 0;
+            gProgram_state.AI_vehicles.path_sections[i].type = (tU8)scalars[7];
+            gProgram_state.AI_vehicles.path_sections[i].one_way = 0;
         } else {
-            C2V(gProgram_state).AI_vehicles.path_sections[i].type = (tU8)(scalars[7] - 1000.0f);
-            C2V(gProgram_state).AI_vehicles.path_sections[i].one_way = 1;
+            gProgram_state.AI_vehicles.path_sections[i].type = (tU8)(scalars[7] - 1000.0f);
+            gProgram_state.AI_vehicles.path_sections[i].one_way = 1;
         }
         for (j = 0; j < 2; j++) {
             tPath_node* node_ptr;
 
-            node_ptr = &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[i].node_indices[j]];
+            node_ptr = &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[i].node_indices[j]];
             if (node_ptr->number_of_sections >= 8) {
                 DoNotDprintf_opponent("ERROR: Too many sections (including section #%d) attached to node #%d",
-                    i, C2V(gProgram_state).AI_vehicles.path_sections[i].node_indices[j]);
+                    i, gProgram_state.AI_vehicles.path_sections[i].node_indices[j]);
             } else {
                 node_ptr->sections[node_ptr->number_of_sections] = (tS16)i;
                 node_ptr->number_of_sections += 1;
@@ -250,17 +320,17 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
         }
     }
 
-    if (C2V(gAusterity_mode) || C2V(gNet_mode) != eNet_mode_none) {
+    if (gAusterity_mode || gNet_mode != eNet_mode_none) {
 
-        C2V(gProgram_state).AI_vehicles.number_of_cops = GetAnInt(pF);
-        for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_cops; i++) {
+        gProgram_state.AI_vehicles.number_of_cops = GetAnInt(pF);
+        for (i = 0; i < gProgram_state.AI_vehicles.number_of_cops; i++) {
             GetALineAndDontArgue(pF, s);
         }
-        C2V(gProgram_state).AI_vehicles.number_of_cops = 0;
+        gProgram_state.AI_vehicles.number_of_cops = 0;
     } else {
 
-        C2V(gProgram_state).AI_vehicles.number_of_cops = GetAnInt(pF);
-        for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_cops; i++) {
+        gProgram_state.AI_vehicles.number_of_cops = GetAnInt(pF);
+        for (i = 0; i < gProgram_state.AI_vehicles.number_of_cops; i++) {
             br_scalar scalars[6];
             br_vector3 cop_to_section;
             br_vector3 intersect;
@@ -273,19 +343,19 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
 
             /* x, y, z, type[0], type[1], type[2] */
             GetNScalars(pF, REC2_ASIZE(scalars), scalars);
-            BrVector3Set(&C2V(gProgram_state).AI_vehicles.cop_start_points[i],
+            BrVector3Set(&gProgram_state.AI_vehicles.cop_start_points[i],
                 scalars[0], scalars[1], scalars[2]);
 
             if (scalars[3] == 9.0f && scalars[4] == 9.0f && scalars[5] == 9.0f) {
-                C2V(gBIG_APC_index) = i;
+                gBIG_APC_index = i;
             }
 
-            FindNearestPathSection(&C2V(gProgram_state).AI_vehicles.cop_start_points[i], &cop_to_section, &intersect, &distance);
-            BrVector3Cross(&C2V(gProgram_state).AI_vehicles.cop_start_vectors[i],
-                &C2V(y_unit_vector), &cop_to_section);
-            BrVector3Sub(&section_v, &intersect, &C2V(gProgram_state).AI_vehicles.cop_start_points[i]);
-            if (BrVector3Dot(&C2V(gProgram_state).AI_vehicles.cop_start_vectors[i], &section_v) < 0.0f) {
-                BrVector3Negate(&C2V(gProgram_state).AI_vehicles.cop_start_vectors[i], &C2V(gProgram_state).AI_vehicles.cop_start_vectors[i]);
+            FindNearestPathSection(&gProgram_state.AI_vehicles.cop_start_points[i], &cop_to_section, &intersect, &distance);
+            BrVector3Cross(&gProgram_state.AI_vehicles.cop_start_vectors[i],
+                &y_unit_vector, &cop_to_section);
+            BrVector3Sub(&section_v, &intersect, &gProgram_state.AI_vehicles.cop_start_points[i]);
+            if (BrVector3Dot(&gProgram_state.AI_vehicles.cop_start_vectors[i], &section_v) < 0.0f) {
+                BrVector3Negate(&gProgram_state.AI_vehicles.cop_start_vectors[i], &gProgram_state.AI_vehicles.cop_start_vectors[i]);
             }
         }
     }
@@ -297,19 +367,17 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
         }
     }
 
-    if (C2V(gProgram_state).AI_vehicles.number_of_path_sections != 0) {
-        C2V(gBit_per_node) = BrMemAllocate((C2V(gProgram_state).AI_vehicles.number_of_path_nodes + 7) / 8, kMem_oppo_bit_per_node);
+    if (gProgram_state.AI_vehicles.number_of_path_sections != 0) {
+        gBit_per_node = BrMemAllocate((gProgram_state.AI_vehicles.number_of_path_nodes + 7) / 8, kMem_oppo_bit_per_node);
     } else {
-        C2V(gBit_per_node) = NULL;
+        gBit_per_node = NULL;
     }
     DoNotDprintf_opponent("End of LoadInOppoPaths(), totals:");
-    DoNotDprintf_opponent("Nodes: %d", C2V(gProgram_state).AI_vehicles.number_of_path_nodes);
-    DoNotDprintf_opponent("Sections: %d", C2V(gProgram_state).AI_vehicles.number_of_path_sections);
-#endif
+    DoNotDprintf_opponent("Nodes: %d", gProgram_state.AI_vehicles.number_of_path_nodes);
+    DoNotDprintf_opponent("Sections: %d", gProgram_state.AI_vehicles.number_of_path_sections);
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a9610, LoadInOppoPaths, LoadInOppoPaths_original)
 
-int (C2_HOOK_FASTCALL * PointVisibleFromHere_original)(br_vector3* pFrom, br_vector3* pTo);
+// FUNCTION: CARMA2_HW 0x004aa400
 int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo) {
     br_vector3 from;
     br_vector3 dir;
@@ -324,75 +392,64 @@ int C2_HOOK_FASTCALL PointVisibleFromHere(br_vector3* pFrom, br_vector3* pTo) {
     FindFace(&from, &dir, &norm, &t, &material);
     return t > 1.0;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004aa400, PointVisibleFromHere, PointVisibleFromHere_original)
 
-void (C2_HOOK_FASTCALL * CalcPlayerConspicuousness_original)(tOpponent_spec* pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004adae0
 void C2_HOOK_FASTCALL CalcPlayerConspicuousness(tOpponent_spec* pOpponent_spec)  {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    CalcPlayerConspicuousness_original(pOpponent_spec);
-#else
     br_vector3 pos_in_cop_space;
     br_matrix34 inverse_transform;
 
-    if (pOpponent_spec->next_player_visibility_check >= C2V(gTime_stamp_for_this_munging)) {
+    if (pOpponent_spec->next_player_visibility_check >= gTime_stamp_for_this_munging) {
         return;
     }
     pOpponent_spec->player_in_view_now = 0;
     if (CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec)) {
-        pOpponent_spec->next_player_visibility_check = C2V(gTime_stamp_for_this_munging) + IRandomBetween(0, 900) + 100;
+        pOpponent_spec->next_player_visibility_check = gTime_stamp_for_this_munging + IRandomBetween(0, 900) + 100;
         if (pOpponent_spec->player_to_oppo_d < 20.f) {
             BrMatrix34LPInverse(&inverse_transform, &pOpponent_spec->car_spec->car_master_actor->t.t.mat);
-            BrMatrix34ApplyP(&pos_in_cop_space, &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &inverse_transform);
-            if (pos_in_cop_space.v[2] < 0.f && PointVisibleFromHere(&C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t)) {
+            BrMatrix34ApplyP(&pos_in_cop_space, &gProgram_state.current_car.car_master_actor->t.t.translate.t, &inverse_transform);
+            if (pos_in_cop_space.v[2] < 0.f && PointVisibleFromHere(&gProgram_state.current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t)) {
                 pOpponent_spec->player_in_view_now = 1;
                 pOpponent_spec->acknowledged_piv = 0;
             }
         }
     } else {
-        pOpponent_spec->next_player_visibility_check = C2V(gTime_stamp_for_this_munging) + IRandomBetween(0, 900) + 4000;
-        DoNotDprintf_opponent("%s: Time now: %9.2f; next vis check at %9.2f", pOpponent_spec->car_spec->driver_name, C2V(gTime_stamp_for_this_munging) / 1000.f, pOpponent_spec->next_player_visibility_check / 1000.0f);
-        if (pOpponent_spec->player_to_oppo_d < 50.f && PointVisibleFromHere(&C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t)) {
+        pOpponent_spec->next_player_visibility_check = gTime_stamp_for_this_munging + IRandomBetween(0, 900) + 4000;
+        DoNotDprintf_opponent("%s: Time now: %9.2f; next vis check at %9.2f", pOpponent_spec->car_spec->driver_name, gTime_stamp_for_this_munging / 1000.f, pOpponent_spec->next_player_visibility_check / 1000.0f);
+        if (pOpponent_spec->player_to_oppo_d < 50.f && PointVisibleFromHere(&gProgram_state.current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t)) {
             pOpponent_spec->player_in_view_now = 1;
             pOpponent_spec->acknowledged_piv = 0;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004adae0, CalcPlayerConspicuousness, CalcPlayerConspicuousness_original)
 
-void (C2_HOOK_FASTCALL * ProcessPursueAndTwat_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
+// FUNCTION: CARMA2_HW 0x004ab190
 void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 
-#if defined(C2_HOOKS_ENABLED)
-    ProcessPursueAndTwat_original(pOpponent_spec, pCommand);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ab190, ProcessPursueAndTwat, ProcessPursueAndTwat_original)
 
+// FUNCTION: CARMA2_HW 0x004a9c50
 void C2_HOOK_FASTCALL DisposeOpponentPaths(void) {
 
-    if (C2V(gProgram_state).AI_vehicles.path_nodes != NULL) {
-        BrMemFree(C2V(gProgram_state).AI_vehicles.path_nodes);
+    if (gProgram_state.AI_vehicles.path_nodes != NULL) {
+        BrMemFree(gProgram_state.AI_vehicles.path_nodes);
     }
-    C2V(gProgram_state).AI_vehicles.number_of_path_nodes = 0;
-    C2V(gProgram_state).AI_vehicles.path_nodes = NULL;
+    gProgram_state.AI_vehicles.number_of_path_nodes = 0;
+    gProgram_state.AI_vehicles.path_nodes = NULL;
 
-    if (C2V(gProgram_state).AI_vehicles.path_sections != NULL) {
-        BrMemFree(C2V(gProgram_state).AI_vehicles.path_sections);
+    if (gProgram_state.AI_vehicles.path_sections != NULL) {
+        BrMemFree(gProgram_state.AI_vehicles.path_sections);
     }
-    C2V(gProgram_state).AI_vehicles.number_of_path_sections = 0;
-    C2V(gProgram_state).AI_vehicles.path_sections = NULL;
+    gProgram_state.AI_vehicles.number_of_path_sections = 0;
+    gProgram_state.AI_vehicles.path_sections = NULL;
 
-    if (C2V(gBit_per_node) != NULL) {
-        BrMemFree(C2V(gBit_per_node));
+    if (gBit_per_node != NULL) {
+        BrMemFree(gBit_per_node);
     }
-    C2V(gBit_per_node) = NULL;
+    gBit_per_node = NULL;
 }
-C2_HOOK_FUNCTION(0x004a9c50, DisposeOpponentPaths)
 
+// FUNCTION: CARMA2_HW 0x004a7ea0
 void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info** pList, int pCount) {
     int i;
 
@@ -404,8 +461,8 @@ void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info**
     }
     PHILAddActiveObject(pObject, NULL, NULL, NULL);
 }
-C2_HOOK_FUNCTION(0x004a7ea0, AddIfNotInList)
 
+// FUNCTION: CARMA2_HW 0x004a7ef0
 void C2_HOOK_FASTCALL RemoveAnythingStillInList(tCollision_info** pList, int pCount) {
     int i;
 
@@ -416,7 +473,6 @@ void C2_HOOK_FASTCALL RemoveAnythingStillInList(tCollision_info** pList, int pCo
         }
     }
 }
-C2_HOOK_FUNCTION(0x004a7ef0, RemoveAnythingStillInList)
 
 void C2_HOOK_FASTCALL NoteCarsCurrentlyUsed(tCollision_info** pCollision_infos, int* pCount) {
     tCollision_info* info;
@@ -435,31 +491,27 @@ void C2_HOOK_FASTCALL NoteCarsCurrentlyUsed(tCollision_info** pCollision_infos, 
 int C2_HOOK_FASTCALL IsNetCarActive(const br_vector3* pPoint) {
     br_vector3 tv;
 
-    BrVector3Sub(&tv, &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, pPoint);
+    BrVector3Sub(&tv, &gProgram_state.current_car.car_master_actor->t.t.translate.t, pPoint);
     if (BrVector3LengthSquared(&tv) < 100.f) {
         return 1;
     }
-    if (C2V(gCar_to_view) != &C2V(gProgram_state).current_car) {
-        BrVector3Sub(&tv, &C2V(gCar_to_view)->car_master_actor->t.t.translate.t, pPoint);
+    if (gCar_to_view != &gProgram_state.current_car) {
+        BrVector3Sub(&tv, &gCar_to_view->car_master_actor->t.t.translate.t, pPoint);
         return BrVector3LengthSquared(&tv) < 100.f;
     }
     return 0;
 }
 
-void (C2_HOOK_FASTCALL * RebuildActiveCarList_original)(void);
+// FUNCTION: CARMA2_HW 0x004a7a80
 void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
+    int new_count_active_cars = gNum_active_cars;
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    RebuildActiveCarList_original();
-#else
-    int new_count_active_cars = C2V(gNum_active_cars);
-
-    if (C2V(gActive_car_list_rebuild_required)) {
+    if (gActive_car_list_rebuild_required) {
         int count_used_cars;
         tCollision_info* used_cars[1000];
         int i;
 
-        C2V(gActive_car_list_rebuild_required) = 0;
+        gActive_car_list_rebuild_required = 0;
 
         count_used_cars = 0;
         NoteCarsCurrentlyUsed(used_cars, &count_used_cars);
@@ -472,21 +524,21 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
                 PDFatalError("mGet_car_count( eVehicle_self ) > 1 - I didn't know this could happen!");
             }
             car = GetCarSpec(eVehicle_self, i);
-            if (!car->disabled || C2V(gAction_replay_mode)) {
+            if (!car->disabled || gAction_replay_mode) {
                 car->active = 1;
-                C2V(gActive_car_list)[new_count_active_cars] = car;
+                gActive_car_list[new_count_active_cars] = car;
                 new_count_active_cars += 1;
                 AddIfNotInList(car->collision_info, used_cars, count_used_cars);
             }
         }
-        if (C2V(gNet_mode) == eNet_mode_host) {
+        if (gNet_mode == eNet_mode_host) {
             for (i = 0; i < GetCarCount(eVehicle_net_player); i++) {
                 tCar_spec* car;
 
                 car = GetCarSpec(eVehicle_net_player, i);
                 if (!car->disabled) {
                     car->active = 1;
-                    C2V(gActive_car_list)[new_count_active_cars] = car;
+                    gActive_car_list[new_count_active_cars] = car;
                     new_count_active_cars += 1;
 
                     AddIfNotInList(car->collision_info, used_cars, count_used_cars);
@@ -494,14 +546,14 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
                     car->active = 0;
                 }
             }
-        } else if (C2V(gNet_mode) == eNet_mode_client) {
+        } else if (gNet_mode == eNet_mode_client) {
             for (i = 0; i < GetCarCount(eVehicle_net_player); i++) {
                 tCar_spec* car;
 
                 car = GetCarSpec(eVehicle_net_player, i);
                 if (!car->disabled && IsNetCarActive(&car->car_master_actor->t.t.translate.t)) {
                     car->active = 1;
-                    C2V(gActive_car_list)[new_count_active_cars] = car;
+                    gActive_car_list[new_count_active_cars] = car;
                     new_count_active_cars += 1;
                     AddIfNotInList(car->collision_info, used_cars, count_used_cars);
                 } else {
@@ -510,13 +562,13 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
             }
         }
 
-        for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
+        for (i = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++) {
             tCar_spec* car;
 
             car = GetCarSpec(eVehicle_opponent, i);
-            if (C2V(gProgram_state).AI_vehicles.opponents[i].physics_me || C2V(gAction_replay_mode)) {
+            if (gProgram_state.AI_vehicles.opponents[i].physics_me || gAction_replay_mode) {
                 car->active = 1;
-                C2V(gActive_car_list)[new_count_active_cars] = car;
+                gActive_car_list[new_count_active_cars] = car;
                 new_count_active_cars += 1;
                 AddIfNotInList(car->collision_info,used_cars, count_used_cars);
             } else {
@@ -524,13 +576,13 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
             }
         }
 
-        for (i = 0; i < C2V(gNumber_of_cops_before_faffage); i++) {
+        for (i = 0; i < gNumber_of_cops_before_faffage; i++) {
             tCar_spec* car;
 
             car = GetCarSpec(eVehicle_rozzer, i);
-            if (C2V(gProgram_state).AI_vehicles.cops[i].physics_me || C2V(gAction_replay_mode)) {
+            if (gProgram_state.AI_vehicles.cops[i].physics_me || gAction_replay_mode) {
                 car->active = 1;
-                C2V(gActive_car_list)[new_count_active_cars] = car;
+                gActive_car_list[new_count_active_cars] = car;
                 new_count_active_cars += 1;
                 AddIfNotInList(car->collision_info, used_cars, count_used_cars);
             } else {
@@ -539,66 +591,65 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
         }
         RemoveAnythingStillInList(used_cars, count_used_cars);
     }
-    if (C2V(gNum_active_cars) != new_count_active_cars) {
-        C2V(gNum_active_cars) = new_count_active_cars;
+    if (gNum_active_cars != new_count_active_cars) {
+        gNum_active_cars = new_count_active_cars;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a7a80, RebuildActiveCarList, RebuildActiveCarList_original)
 
+// FUNCTION: CARMA2_HW 0x004a7a60
 void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
 
-    C2V(gActive_car_list_rebuild_required) = 1;
-    if (C2V(gProgram_state).racing) {
+    gActive_car_list_rebuild_required = 1;
+    if (gProgram_state.racing) {
         RebuildActiveCarList();
     }
 }
-C2_HOOK_FUNCTION(0x004a7a60, ForceRebuildActiveCarList)
 
+// FUNCTION: CARMA2_HW 0x004ae5d0
 void C2_HOOK_FASTCALL DisposeOpponents(void) {
     int i;
 
     C2_HOOK_BUG_ON(offsetof(tIntelligent_vehicles, cops) != 12856);
-    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_cops; i++) {
-        DisposeCar(C2V(gProgram_state).AI_vehicles.cops[i].car_spec, (i == C2V(gBIG_APC_index)) ? 99 : 98);
-        BrMemFree(C2V(gProgram_state).AI_vehicles.cops[i].car_spec);
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_cops; i++) {
+        DisposeCar(gProgram_state.AI_vehicles.cops[i].car_spec, (i == gBIG_APC_index) ? 99 : 98);
+        BrMemFree(gProgram_state.AI_vehicles.cops[i].car_spec);
     }
 }
-C2_HOOK_FUNCTION(0x004ae5d0, DisposeOpponents)
 
+// FUNCTION: CARMA2_HW 0x004ae7e0
 tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
 
     switch (pCategory) {
     case eVehicle_self:
-        return &C2V(gProgram_state).current_car;
+        return &gProgram_state.current_car;
     case eVehicle_net_player:
-        if (pIndex < C2V(gThis_net_player_index)) {
-            return C2V(gNet_players)[pIndex].car;
+        if (pIndex < gThis_net_player_index) {
+            return gNet_players[pIndex].car;
         } else {
-            return C2V(gNet_players)[pIndex + 1].car;
+            return gNet_players[pIndex + 1].car;
         }
     case eVehicle_opponent:
-        return C2V(gProgram_state).AI_vehicles.opponents[pIndex].car_spec;
+        return gProgram_state.AI_vehicles.opponents[pIndex].car_spec;
     case eVehicle_rozzer:
-        return C2V(gProgram_state).AI_vehicles.cops[pIndex].car_spec;
+        return gProgram_state.AI_vehicles.cops[pIndex].car_spec;
     case eVehicle_drone:
         PDEnterDebugger("OPPONENT.C: GetCarSpec() can't return drone car_specs");
         return NULL;
     case eVehicle_not_really:
-        return (tCar_spec*)C2V(gActive_non_car_list)[pIndex];
+        return (tCar_spec*)gActive_non_car_list[pIndex];
     default:
         return NULL;
     }
 }
-C2_HOOK_FUNCTION(0x004ae7e0, GetCarSpec)
 
+// FUNCTION: CARMA2_HW 0x004ae880
 const char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) {
     tCar_spec* c;
     switch (pCategory) {
     case eVehicle_self:
-        return C2V(gProgram_state).player_name;
+        return gProgram_state.player_name;
     case eVehicle_opponent:
-        c = C2V(gProgram_state).AI_vehicles.opponents[pIndex].car_spec;
+        c = gProgram_state.AI_vehicles.opponents[pIndex].car_spec;
         if (c != NULL) {
             return c->driver_name;
         }
@@ -612,79 +663,78 @@ const char* C2_HOOK_FASTCALL GetDriverName(tVehicle_type pCategory, int pIndex) 
         return NULL;
     }
 }
-C2_HOOK_FUNCTION(0x004ae880, GetDriverName)
 
+// FUNCTION: CARMA2_HW 0x004ae790
 int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
 
     switch (pCategory) {
     case eVehicle_self:
         return 1;
     case eVehicle_net_player:
-        if (C2V(gNet_mode) != eNet_mode_none) {
-            return C2V(gNumber_of_net_players) - 1;
+        if (gNet_mode != eNet_mode_none) {
+            return gNumber_of_net_players - 1;
         } else {
             return 0;
         }
         break;
     case eVehicle_opponent:
-        return C2V(gProgram_state).AI_vehicles.number_of_opponents;
+        return gProgram_state.AI_vehicles.number_of_opponents;
     case eVehicle_rozzer:
-        return C2V(gNumber_of_cops_before_faffage);
+        return gNumber_of_cops_before_faffage;
     case eVehicle_drone:
         return 0;
     case eVehicle_not_really:
-        return C2V(gNum_active_non_cars);
+        return gNum_active_non_cars;
     default:
         return 0;
     }
 }
-C2_HOOK_FUNCTION(0x004ae790, GetCarCount)
 
 void C2_HOOK_FASTCALL StunTheBugger(tOpponent_spec* pOpponent_spec, int pMilliseconds) {
 
     pOpponent_spec->car_spec->acc_force = 0.f;
     pOpponent_spec->car_spec->brake_force = 0.f;
     pOpponent_spec->car_spec->curvature = 0.f;
-    pOpponent_spec->stun_time_ends = MAX(C2V(gTime_stamp_for_this_munging) + pMilliseconds, pOpponent_spec->stun_time_ends);
+    pOpponent_spec->stun_time_ends = MAX(gTime_stamp_for_this_munging + pMilliseconds, pOpponent_spec->stun_time_ends);
 }
 
+// FUNCTION: CARMA2_HW 0x004ae970
 tCar_spec* C2_HOOK_FASTCALL GetCarSpecFromGlobalOppoIndex(int pIndex) {
     int i;
 
-    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
-        if (C2V(gProgram_state).AI_vehicles.opponents[i].index == pIndex) {
-            return C2V(gProgram_state).AI_vehicles.opponents[i].car_spec;
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++) {
+        if (gProgram_state.AI_vehicles.opponents[i].index == pIndex) {
+            return gProgram_state.AI_vehicles.opponents[i].car_spec;
         }
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x004ae970, GetCarSpecFromGlobalOppoIndex)
 
+// FUNCTION: CARMA2_HW 0x004ae8e0
 tOpponent_spec* C2_HOOK_FASTCALL GetOpponentSpecFromCarSpec(tCar_spec* pCar_spec) {
     int i;
 
     if ((pCar_spec->car_ID & 0xff00) == 0x200) {
         for (i = 0; i < GetCarCount(eVehicle_opponent); i++) {
-            if (C2V(gProgram_state).AI_vehicles.opponents[i].car_spec == pCar_spec) {
-                return &C2V(gProgram_state).AI_vehicles.opponents[i];
+            if (gProgram_state.AI_vehicles.opponents[i].car_spec == pCar_spec) {
+                return &gProgram_state.AI_vehicles.opponents[i];
             }
         }
     } else if ((pCar_spec->car_ID & 0xff00) == 0x300) {
         for (i = 0; i < GetCarCount(eVehicle_rozzer); i++) {
-            if (C2V(gProgram_state).AI_vehicles.cops[i].car_spec == pCar_spec) {
-                return &C2V(gProgram_state).AI_vehicles.cops[i];
+            if (gProgram_state.AI_vehicles.cops[i].car_spec == pCar_spec) {
+                return &gProgram_state.AI_vehicles.cops[i];
             }
         }
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x004ae8e0, GetOpponentSpecFromCarSpec)
 
+// FUNCTION: CARMA2_HW 0x004a8160
 void C2_HOOK_CDECL DoNotDprintf_opponent(const char* pMessage, ...) {
 }
-C2_HOOK_FUNCTION(0x004a8160, DoNotDprintf_opponent)
 
-void (C2_HOOK_FASTCALL * InitOpponents_original)(tRace_info* pRace_info);
+// FUNCTION: CARMA2_HW 0x004add50
 void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
     int i;
     int opponent_number;
@@ -694,114 +744,114 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
     tOpponent_spec* opponent_spec;
     int opponents_left;
 
-    C2V(gNext_grudge_reduction) = C2V(gTime_stamp_for_this_munging) + 10000;
-    C2V(gFirst_frame) = 1;
-    C2V(gNum_viewable_cars) = 1;
-    C2V(gGrudge_reduction_per_period) = 3 - C2V(gProgram_state).skill_level;
-    C2V(gAcknowledged_start) = 0;
-    C2V(gStart_jumped) = 0;
-    C2V(gViewable_car_list)[0] = &C2V(gProgram_state).current_car;
-    BrActorToBounds(&bounds, C2V(gProgram_state).track_spec.the_actor);
-    C2V(gMinimum_yness_before_knackerisation) = bounds.min.v[1] - 2.f;
-    C2V(gAcme_frame_count) = 0;
-    C2V(gProgram_state).current_car.no_of_processes_recording_my_trail = 0;
-    C2V(gProgram_state).current_car.field_0x1540 = 0;
-    C2V(gProgram_state).current_car.field_0x155c = -1;
-    C2V(gHead_on_cos_value) = cosf(.5235668420791626f); /* around 30 degrees */
-    rank_dependent_difficulty = (int)((101.f - 99.f * (1.f - (float)C2V(gCurrent_race).index / (float)C2V(gNumber_of_races))) / -10.f);
-    C2V(gBig_bang) = (int)(70.f - (10 * C2V(gProgram_state).skill_level - 3 * rank_dependent_difficulty) * C2V(gOpponent_nastyness_frigger));
-    C2V(gIn_view_distance) = C2V(gCamera_yon) + 10.f;
-    if (C2V(gIn_view_distance) < 45.f) {
-        C2V(gIn_view_distance) = 45.f;
+    gNext_grudge_reduction = gTime_stamp_for_this_munging + 10000;
+    gFirst_frame = 1;
+    gNum_viewable_cars = 1;
+    gGrudge_reduction_per_period = 3 - gProgram_state.skill_level;
+    gAcknowledged_start = 0;
+    gStart_jumped = 0;
+    gViewable_car_list[0] = &gProgram_state.current_car;
+    BrActorToBounds(&bounds, gProgram_state.track_spec.the_actor);
+    gMinimum_yness_before_knackerisation = bounds.min.v[1] - 2.f;
+    gAcme_frame_count = 0;
+    gProgram_state.current_car.no_of_processes_recording_my_trail = 0;
+    gProgram_state.current_car.field_0x1540 = 0;
+    gProgram_state.current_car.field_0x155c = -1;
+    gHead_on_cos_value = cosf(.5235668420791626f); /* around 30 degrees */
+    rank_dependent_difficulty = (int)((101.f - 99.f * (1.f - (float)gCurrent_race.index / (float)gNumber_of_races)) / -10.f);
+    gBig_bang = (int)(70.f - (10 * gProgram_state.skill_level - 3 * rank_dependent_difficulty) * gOpponent_nastyness_frigger);
+    gIn_view_distance = gCamera_yon + 10.f;
+    if (gIn_view_distance < 45.f) {
+        gIn_view_distance = 45.f;
     }
-    if (C2V(gNet_mode) == eNet_mode_none) {
-        C2V(gProgram_state).AI_vehicles.number_of_opponents = pRace_info->number_of_racers - 1;
+    if (gNet_mode == eNet_mode_none) {
+        gProgram_state.AI_vehicles.number_of_opponents = pRace_info->number_of_racers - 1;
     } else {
-        C2V(gProgram_state).AI_vehicles.number_of_opponents = 0;
+        gProgram_state.AI_vehicles.number_of_opponents = 0;
     }
-    for (i = 0, opponent_number = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++, opponent_number++) {
+    for (i = 0, opponent_number = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++, opponent_number++) {
         PossibleService();
         if (pRace_info->opponent_list[opponent_number].index < 0) {
             opponent_number++;
         }
-        C2V(gProgram_state).AI_vehicles.opponents[i].car_spec = pRace_info->opponent_list[opponent_number].car_spec;
-        C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->car_ID = i | 0x200;
+        gProgram_state.AI_vehicles.opponents[i].car_spec = pRace_info->opponent_list[opponent_number].car_spec;
+        gProgram_state.AI_vehicles.opponents[i].car_spec->car_ID = i | 0x200;
         DoNotDprintf_opponent("Car '%s', car_ID %x",
-            C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->driver_name,
-            C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->car_ID);
-        C2V(gProgram_state).AI_vehicles.opponents[i].index = pRace_info->opponent_list[opponent_number].index;
-        C2V(gProgram_state).AI_vehicles.opponents[i].time_last_processed = C2V(gTime_stamp_for_this_munging);
-        C2V(gProgram_state).AI_vehicles.opponents[i].next_repair_check = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].repair_interval = 60000 * IRandomBetween(C2V(gMinTimeOpponentRepair), C2V(gMaxTimeOpponentRepair));
-        C2V(gProgram_state).AI_vehicles.opponents[i].last_repair_time = C2V(gTime_stamp_for_this_munging);
+            gProgram_state.AI_vehicles.opponents[i].car_spec->driver_name,
+            gProgram_state.AI_vehicles.opponents[i].car_spec->car_ID);
+        gProgram_state.AI_vehicles.opponents[i].index = pRace_info->opponent_list[opponent_number].index;
+        gProgram_state.AI_vehicles.opponents[i].time_last_processed = gTime_stamp_for_this_munging;
+        gProgram_state.AI_vehicles.opponents[i].next_repair_check = 0;
+        gProgram_state.AI_vehicles.opponents[i].repair_interval = 60000 * IRandomBetween(gMinTimeOpponentRepair, gMaxTimeOpponentRepair);
+        gProgram_state.AI_vehicles.opponents[i].last_repair_time = gTime_stamp_for_this_munging;
         DoNotDprintf_opponent("*** Opponent %s, repair_interval is %d",
-            C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->driver_name,
-            C2V(gProgram_state).AI_vehicles.opponents[i].repair_interval);
-        C2V(gProgram_state).AI_vehicles.opponents[i].time_this_objective_started = C2V(gTime_stamp_for_this_munging);
-        C2V(gProgram_state).AI_vehicles.opponents[i].last_moved_ok = C2V(gTime_stamp_for_this_munging);
-        C2V(gProgram_state).AI_vehicles.opponents[i].last_in_view = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].stun_time_ends = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].next_player_visibility_check = C2V(gTime_stamp_for_this_munging) + IRandomBetween(0, 900) + 2000;
-        C2V(gProgram_state).AI_vehicles.opponents[i].next_out_of_world_check = C2V(gTime_stamp_for_this_munging) + 500;
+            gProgram_state.AI_vehicles.opponents[i].car_spec->driver_name,
+            gProgram_state.AI_vehicles.opponents[i].repair_interval);
+        gProgram_state.AI_vehicles.opponents[i].time_this_objective_started = gTime_stamp_for_this_munging;
+        gProgram_state.AI_vehicles.opponents[i].last_moved_ok = gTime_stamp_for_this_munging;
+        gProgram_state.AI_vehicles.opponents[i].last_in_view = 0;
+        gProgram_state.AI_vehicles.opponents[i].stun_time_ends = 0;
+        gProgram_state.AI_vehicles.opponents[i].next_player_visibility_check = gTime_stamp_for_this_munging + IRandomBetween(0, 900) + 2000;
+        gProgram_state.AI_vehicles.opponents[i].next_out_of_world_check = gTime_stamp_for_this_munging + 500;
 
         /*
-         * C2V(gProgram_state).AI_vehicles.opponents[i].flags &= ~0x36;
-         * C2V(gProgram_state).AI_vehicles.opponents[i].flags |= 0x8;
+         * gProgram_state.AI_vehicles.opponents[i].flags &= ~0x36;
+         * gProgram_state.AI_vehicles.opponents[i].flags |= 0x8;
          */
-        C2V(gProgram_state).AI_vehicles.opponents[i].finished_for_this_race = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].physics_me = 1;
-        C2V(gProgram_state).AI_vehicles.opponents[i].pursue_from_start = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].cheating = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].knackeredness_detected = 0;
+        gProgram_state.AI_vehicles.opponents[i].finished_for_this_race = 0;
+        gProgram_state.AI_vehicles.opponents[i].physics_me = 1;
+        gProgram_state.AI_vehicles.opponents[i].pursue_from_start = 0;
+        gProgram_state.AI_vehicles.opponents[i].cheating = 0;
+        gProgram_state.AI_vehicles.opponents[i].knackeredness_detected = 0;
 
-        C2V(gProgram_state).AI_vehicles.opponents[i].players_section_when_last_calced_full_path = -1;
-        C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->last_person_to_hit_us = NULL;
-        C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->last_person_we_hit = NULL;
-        C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->field_0x1544 = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->field_0x1548 = C2V(gTime_stamp_for_this_munging);
-        C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->grudge_raised_recently = 1;
-        C2V(gProgram_state).AI_vehicles.opponents[i].car_spec->no_of_processes_recording_my_trail = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].nnext_sections = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].new_objective_required = 1;
-        C2V(gProgram_state).AI_vehicles.opponents[i].current_objective = eOOT_none;
+        gProgram_state.AI_vehicles.opponents[i].players_section_when_last_calced_full_path = -1;
+        gProgram_state.AI_vehicles.opponents[i].car_spec->last_person_to_hit_us = NULL;
+        gProgram_state.AI_vehicles.opponents[i].car_spec->last_person_we_hit = NULL;
+        gProgram_state.AI_vehicles.opponents[i].car_spec->field_0x1544 = 0;
+        gProgram_state.AI_vehicles.opponents[i].car_spec->field_0x1548 = gTime_stamp_for_this_munging;
+        gProgram_state.AI_vehicles.opponents[i].car_spec->grudge_raised_recently = 1;
+        gProgram_state.AI_vehicles.opponents[i].car_spec->no_of_processes_recording_my_trail = 0;
+        gProgram_state.AI_vehicles.opponents[i].nnext_sections = 0;
+        gProgram_state.AI_vehicles.opponents[i].new_objective_required = 1;
+        gProgram_state.AI_vehicles.opponents[i].current_objective = eOOT_none;
 
-        /* C2V(gProgram_state).AI_vehicles.opponents[i].flags &= ~0x700; */
-        C2V(gProgram_state).AI_vehicles.opponents[i].has_moved_at_some_point = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].player_in_view_now = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].acknowledged_piv = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].field_0xb4 = 0;
-        C2V(gProgram_state).AI_vehicles.opponents[i].nastiness = (
-                  C2V(gCurrent_race).race_spec->opponent_nastiness_level
-                + C2V(gProgram_state).skill_level / 2.f
-                + (C2V(gOpponents)[C2V(gProgram_state).AI_vehicles.opponents[i].index].strength_rating - 1) / 4.f
-                ) / 3.f * C2V(gOpponent_nastyness_frigger);
+        /* gProgram_state.AI_vehicles.opponents[i].flags &= ~0x700; */
+        gProgram_state.AI_vehicles.opponents[i].has_moved_at_some_point = 0;
+        gProgram_state.AI_vehicles.opponents[i].player_in_view_now = 0;
+        gProgram_state.AI_vehicles.opponents[i].acknowledged_piv = 0;
+        gProgram_state.AI_vehicles.opponents[i].field_0xb4 = 0;
+        gProgram_state.AI_vehicles.opponents[i].nastiness = (
+                  gCurrent_race.race_spec->opponent_nastiness_level
+                + gProgram_state.skill_level / 2.f
+                + (gOpponents[gProgram_state.AI_vehicles.opponents[i].index].strength_rating - 1) / 4.f
+                ) / 3.f * gOpponent_nastyness_frigger;
 
-        BrVector3Set(&C2V(gProgram_state).AI_vehicles.opponents[i].pos_last_frame, 0.f, 0.f, 0.f);
-        C2V(gOpponents)[C2V(gProgram_state).AI_vehicles.opponents[i].index].psyche.grudge_against_player = 10;
-        C2V(gViewable_car_list)[C2V(gNum_viewable_cars)] = C2V(gProgram_state).AI_vehicles.opponents[i].car_spec;
-        C2V(gNum_viewable_cars)++;
-        StunTheBugger(&C2V(gProgram_state).AI_vehicles.opponents[i], 0xfffffff);
+        BrVector3Set(&gProgram_state.AI_vehicles.opponents[i].pos_last_frame, 0.f, 0.f, 0.f);
+        gOpponents[gProgram_state.AI_vehicles.opponents[i].index].psyche.grudge_against_player = 10;
+        gViewable_car_list[gNum_viewable_cars] = gProgram_state.AI_vehicles.opponents[i].car_spec;
+        gNum_viewable_cars++;
+        StunTheBugger(&gProgram_state.AI_vehicles.opponents[i], 0xfffffff);
     }
-    if (C2V(gChallenger_index__opponent) >= 0) {
-        car_spec = GetCarSpecFromGlobalOppoIndex(C2V(gChallenger_index__opponent));
+    if (gChallenger_index__opponent >= 0) {
+        car_spec = GetCarSpecFromGlobalOppoIndex(gChallenger_index__opponent);
         opponent_spec = GetOpponentSpecFromCarSpec(car_spec);
         if (opponent_spec == NULL) {
             DoNotDprintf_opponent("ERROR - can't record dare - no opponent_spec for car_spec");
         } else {
             opponent_spec->pursue_from_start = 1;
         }
-        C2V(gChallenger_index__opponent) = -1;
+        gChallenger_index__opponent = -1;
     }
     /* cops are not initialized in rec2 */
 
     opponents_left = NumberOfOpponentsStillRunning();
     if (opponents_left != 0) {
-        if (C2V(gCurrent_race).race_spec->opponent_nastiness_level < 10.f) {
+        if (gCurrent_race.race_spec->opponent_nastiness_level < 10.f) {
             int count_type_2;
             int count_type_1;
 
             for (i = 0; i < GetCarCount(eVehicle_opponent); i++) {
-                C2V(gProgram_state).AI_vehicles.opponents[i].field_0xb4 = 0;
+                gProgram_state.AI_vehicles.opponents[i].field_0xb4 = 0;
             }
 
             count_type_2 = (int)(0.6f * opponents_left);
@@ -811,8 +861,8 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
 
                 rstart = IRandomBetween(0, opponents_left - 1 - i);
                 for (r = rstart;;) {
-                    if (C2V(gProgram_state).AI_vehicles.opponents[r].field_0xb4 == 0) {
-                        C2V(gProgram_state).AI_vehicles.opponents[r].field_0xb4 = 2;
+                    if (gProgram_state.AI_vehicles.opponents[r].field_0xb4 == 0) {
+                        gProgram_state.AI_vehicles.opponents[r].field_0xb4 = 2;
                         break;
                     }
                     r++;
@@ -831,8 +881,8 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
 
                 rstart = IRandomBetween(0, opponents_left - count_type_2 - 1 - i);
                 for (r = rstart;;) {
-                    if (C2V(gProgram_state).AI_vehicles.opponents[r].field_0xb4 == 0) {
-                        C2V(gProgram_state).AI_vehicles.opponents[r].field_0xb4 = 1;
+                    if (gProgram_state.AI_vehicles.opponents[r].field_0xb4 == 0) {
+                        gProgram_state.AI_vehicles.opponents[r].field_0xb4 = 1;
                         break;
                     }
                     r++;
@@ -847,16 +897,16 @@ void C2_HOOK_FASTCALL InitOpponents(tRace_info* pRace_info) {
             }
         } else {
             for (i = 0; i < GetCarCount(eVehicle_opponent); i++) {
-                C2V(gProgram_state).AI_vehicles.opponents[i].field_0xb4 = 3;
+                gProgram_state.AI_vehicles.opponents[i].field_0xb4 = 3;
             }
         }
     }
 
-    C2V(gActive_car_list_rebuild_required) = 1;
+    gActive_car_list_rebuild_required = 1;
     RebuildActiveCarList();
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004add50, InitOpponents, InitOpponents_original)
 
+// FUNCTION: CARMA2_HW 0x00401fe0
 void C2_HOOK_FASTCALL CalcNegativeXVector(br_vector3* pNegative_x_vector, br_vector3* pStart, br_vector3* pFinish, br_scalar pLength) {
     br_vector3 positive_y_vector;
     br_vector3 path_vector;
@@ -867,28 +917,28 @@ void C2_HOOK_FASTCALL CalcNegativeXVector(br_vector3* pNegative_x_vector, br_vec
     BrVector3Normalise(pNegative_x_vector, pNegative_x_vector);
     BrVector3Scale(pNegative_x_vector, pNegative_x_vector, pLength);
 }
-C2_HOOK_FUNCTION(0x00401fe0, CalcNegativeXVector)
 
+// FUNCTION: CARMA2_HW 0x004a9550
 void C2_HOOK_FASTCALL CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck(tOpponent_spec* pOpponent_spec) {
 
-    BrVector3Sub(&pOpponent_spec->player_to_oppo_v, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t);
+    BrVector3Sub(&pOpponent_spec->player_to_oppo_v, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &gProgram_state.current_car.car_master_actor->t.t.translate.t);
     pOpponent_spec->player_to_oppo_d = BrVector3Length(&pOpponent_spec->player_to_oppo_v);
-    if (pOpponent_spec->player_to_oppo_d < C2V(gIn_view_distance)) {
-        pOpponent_spec->last_in_view = C2V(gTime_stamp_for_this_munging);
+    if (pOpponent_spec->player_to_oppo_d < gIn_view_distance) {
+        pOpponent_spec->last_in_view = gTime_stamp_for_this_munging;
     }
 }
-C2_HOOK_FUNCTION(0x004a9550, CalcOpponentConspicuousnessWithAViewToCheatingLikeFuck)
 
+// FUNCTION: CARMA2_HW 0x004a7960
 void C2_HOOK_FASTCALL TurnOpponentPhysicsOn(tOpponent_spec* pOpponent_spec) {
     pOpponent_spec->car_spec->car_master_actor->render_style = BR_RSTYLE_DEFAULT;
     PipeSingleOppoRenderage(pOpponent_spec, 1);
     if (!pOpponent_spec->physics_me) {
         pOpponent_spec->physics_me = 1;
-        C2V(gActive_car_list_rebuild_required) = 1;
+        gActive_car_list_rebuild_required = 1;
     }
 }
-C2_HOOK_FUNCTION(0x004a7960, TurnOpponentPhysicsOn)
 
+// FUNCTION: CARMA2_HW 0x004a79a0
 void C2_HOOK_FASTCALL TurnOpponentPhysicsOff(tOpponent_spec* pOpponent_spec) {
     tCar_spec* car = pOpponent_spec->car_spec;
 
@@ -903,19 +953,18 @@ void C2_HOOK_FASTCALL TurnOpponentPhysicsOff(tOpponent_spec* pOpponent_spec) {
         pOpponent_spec->physics_me = 0;
         pOpponent_spec->car_spec->car_master_actor->render_style = BR_RSTYLE_NONE;
         PipeSingleOppoRenderage(pOpponent_spec, 0);
-        C2V(gActive_car_list_rebuild_required) = 1;
+        gActive_car_list_rebuild_required = 1;
     }
 }
-C2_HOOK_FUNCTION(0x004a79a0, TurnOpponentPhysicsOff)
 
+// FUNCTION: CARMA2_HW 0x004af8d0
 int C2_HOOK_FASTCALL TimeToStopStruggling(tOpponent_spec* pOpponent_spec) {
 
-    return C2V(gTime_stamp_for_this_munging) >
+    return gTime_stamp_for_this_munging >
         (float)(750 * (pOpponent_spec->follow_path_data.number_of_struggles - 1))
             + 30.f * pOpponent_spec->car_spec->collision_info->M
             + (float)(pOpponent_spec->follow_path_data.struggle_time + 2750);
 }
-C2_HOOK_FUNCTION(0x004af8d0, TimeToStopStruggling)
 
 void C2_HOOK_FASTCALL DisplayOpponentRecoveringHeadup(tOpponent_spec* pOpponent_spec) {
 
@@ -1005,14 +1054,10 @@ void C2_HOOK_FASTCALL StartToCheat(tOpponent_spec* pOpponent_spec) {
     }
 }
 
-void (C2_HOOK_FASTCALL * ProcessThisOpponent_original)(tOpponent_spec* pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004aa570
 void C2_HOOK_FASTCALL ProcessThisOpponent(tOpponent_spec* pOpponent_spec) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    ProcessThisOpponent_original(pOpponent_spec);
-#else
-
-    if ((C2V(gMap_view) == 2 && C2V(gShow_opponents)) || C2V(gTime_stamp_for_this_munging) <= pOpponent_spec->last_in_view + 3000) {
+    if ((gMap_view == 2 && gShow_opponents) || gTime_stamp_for_this_munging <= pOpponent_spec->last_in_view + 3000) {
         if (pOpponent_spec->cheating) {
             OiStopCheating(pOpponent_spec);
         }
@@ -1023,19 +1068,18 @@ void C2_HOOK_FASTCALL ProcessThisOpponent(tOpponent_spec* pOpponent_spec) {
     }
     ChooseNewObjective(pOpponent_spec, pOpponent_spec->new_objective_required);
     pOpponent_spec->new_objective_required = 0;
-    if (C2V(gCountdown) != 0 || C2V(gRace_finished)) {
+    if (gCountdown != 0 || gRace_finished) {
         pOpponent_spec->car_spec->brake_force = 10.f * pOpponent_spec->car_spec->collision_info->M;
     }
-    if (!pOpponent_spec->finished_for_this_race && !C2V(gStop_opponents_moving) && !C2V(gRace_finished) && pOpponent_spec->stun_time_ends < C2V(gTime_stamp_for_this_munging)) {
+    if (!pOpponent_spec->finished_for_this_race && !gStop_opponents_moving && !gRace_finished && pOpponent_spec->stun_time_ends < gTime_stamp_for_this_munging) {
         ProcessCurrentObjective(pOpponent_spec, ePOC_run);
     }
     if (pOpponent_spec->cheating) {
         BrVector3Copy(&pOpponent_spec->car_spec->pos, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004aa570, ProcessThisOpponent, ProcessThisOpponent_original)
 
+// FUNCTION: CARMA2_HW 0x004aa490
 void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee) {
 
     if (pPursuee->no_of_processes_recording_my_trail == 0) {
@@ -1044,7 +1088,7 @@ void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee) {
         pPursuee->my_trail.nodes_shifted_this_frame = 0;
         pPursuee->my_trail.has_deviated_recently = 0;
         pPursuee->my_trail.number_of_nodes = 2;
-        pPursuee->my_trail.time_of_next_recording = C2V(gTime_stamp_for_this_munging) + 500;
+        pPursuee->my_trail.time_of_next_recording = gTime_stamp_for_this_munging + 500;
         BrVector3Copy(&pPursuee->my_trail.base_heading, &pPursuee->direction);
         BrVector3Copy(&pPursuee->my_trail.trail_nodes[0], &pPursuee->car_master_actor->t.t.translate.t);
         BrVector3Copy(&pPursuee->my_trail.trail_nodes[1], &pPursuee->car_master_actor->t.t.translate.t);
@@ -1054,7 +1098,6 @@ void C2_HOOK_FASTCALL StartRecordingTrail(tCar_spec* pPursuee) {
         pPursuee->no_of_processes_recording_my_trail += 1;
     }
 }
-C2_HOOK_FUNCTION(0x004aa490, StartRecordingTrail)
 
 void C2_HOOK_FASTCALL RecordNextTrailNode(tCar_spec* pPursuee) {
     tPursuee_trail* trail;
@@ -1069,10 +1112,10 @@ void C2_HOOK_FASTCALL RecordNextTrailNode(tCar_spec* pPursuee) {
 
     trail = &pPursuee->my_trail;
     trail->nodes_shifted_this_frame = 0;
-    if (trail->time_of_next_recording >= C2V(gTime_stamp_for_this_munging)) {
+    if (trail->time_of_next_recording >= gTime_stamp_for_this_munging) {
         return;
     }
-    trail->time_of_next_recording = C2V(gTime_stamp_for_this_munging) + 500;
+    trail->time_of_next_recording = gTime_stamp_for_this_munging + 500;
     if (BrVector3Dot(&pPursuee->direction, &trail->base_heading) < FastScalarCos(30)) {
         trail->has_deviated_recently = 1;
     }
@@ -1124,61 +1167,57 @@ void C2_HOOK_FASTCALL ClearTwattageOccurrenceVariables(tOpponent_spec* pOpponent
     pOpponent_spec->car_spec->last_person_we_hit = NULL;
 }
 
-void (C2_HOOK_FASTCALL * MungeOpponents_original)(void);
+// FUNCTION: CARMA2_HW 0x004a9e10
 void C2_HOOK_FASTCALL MungeOpponents(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    MungeOpponents_original();
-#else
     int i;
     int un_stun_flag;
 
     un_stun_flag = 0;
-    if (C2V(gProgram_state).AI_vehicles.number_of_opponents == 0 && C2V(gNumber_of_cops_before_faffage) == 0) {
+    if (gProgram_state.AI_vehicles.number_of_opponents == 0 && gNumber_of_cops_before_faffage == 0) {
         return;
     }
-    if (C2V(gProgram_state).AI_vehicles.number_of_path_nodes == 0) {
+    if (gProgram_state.AI_vehicles.number_of_path_nodes == 0) {
         return;
     }
-    if (C2V(gProgram_state).AI_vehicles.number_of_path_sections == 0) {
+    if (gProgram_state.AI_vehicles.number_of_path_sections == 0) {
         return;
     }
-    C2V(gAcme_frame_count) += 1;
-    if (!C2V(gAcknowledged_start) && C2V(gCountdown) == 0) {
-        C2V(gAcknowledged_start) = 1;
-        if (!C2V(gStart_jumped)) {
+    gAcme_frame_count += 1;
+    if (!gAcknowledged_start && gCountdown == 0) {
+        gAcknowledged_start = 1;
+        if (!gStart_jumped) {
             un_stun_flag = 1;
         }
     }
-    if (C2V(gProgram_state).current_car.no_of_processes_recording_my_trail == 0) {
-        StartRecordingTrail(&C2V(gProgram_state).current_car);
+    if (gProgram_state.current_car.no_of_processes_recording_my_trail == 0) {
+        StartRecordingTrail(&gProgram_state.current_car);
     } else {
-        RecordNextTrailNode(&C2V(gProgram_state).current_car);
+        RecordNextTrailNode(&gProgram_state.current_car);
     }
-    C2V(gNum_of_opponents_pursuing) = 0;
-    C2V(gNum_of_opponents_getting_near) = 0;
-    C2V(gNum_of_opponents_completing_race) = 0;
-    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
-        tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.opponents[i];
+    gNum_of_opponents_pursuing = 0;
+    gNum_of_opponents_getting_near = 0;
+    gNum_of_opponents_completing_race = 0;
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++) {
+        tOpponent_spec* oppo = &gProgram_state.AI_vehicles.opponents[i];
 
         if (!oppo->finished_for_this_race) {
             switch (oppo->current_objective) {
             case eOOT_pursue_and_twat:
-                C2V(gNum_of_opponents_pursuing) += 1;
+                gNum_of_opponents_pursuing += 1;
                 break;
             case eOOT_get_near_player:
-                C2V(gNum_of_opponents_getting_near) += 1;
+                gNum_of_opponents_getting_near += 1;
                 break;
             case eOOT_complete_race:
-                C2V(gNum_of_opponents_completing_race) += 1;
+                gNum_of_opponents_completing_race += 1;
                 break;
             default:
                 break;
             }
         }
     }
-    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
-        tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.opponents[i];
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++) {
+        tOpponent_spec* oppo = &gProgram_state.AI_vehicles.opponents[i];
 
         if (!oppo->finished_for_this_race) {
             if (un_stun_flag) {
@@ -1190,8 +1229,8 @@ void C2_HOOK_FASTCALL MungeOpponents(void) {
             ClearTwattageOccurrenceVariables(oppo);
         }
     }
-    for (i = 0; i < C2V(gNumber_of_cops_before_faffage); i++) {
-        tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.cops[i];
+    for (i = 0; i < gNumber_of_cops_before_faffage; i++) {
+        tOpponent_spec* oppo = &gProgram_state.AI_vehicles.cops[i];
 
         if (!oppo->finished_for_this_race) {
             if (un_stun_flag) {
@@ -1204,53 +1243,51 @@ void C2_HOOK_FASTCALL MungeOpponents(void) {
             oppo->murder_reported = 0;
         }
     }
-    if (C2V(gNext_grudge_reduction) < C2V(gTime_stamp_for_this_munging)) {
-        C2V(gNext_grudge_reduction) = C2V(gTime_stamp_for_this_munging) + 5000;
+    if (gNext_grudge_reduction < gTime_stamp_for_this_munging) {
+        gNext_grudge_reduction = gTime_stamp_for_this_munging + 5000;
 
-        for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
-            tOpponent_spec* oppo = &C2V(gProgram_state).AI_vehicles.opponents[i];
+        for (i = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++) {
+            tOpponent_spec* oppo = &gProgram_state.AI_vehicles.opponents[i];
 
             if (!oppo->finished_for_this_race) {
-                if (C2V(gOpponents)[i].psyche.grudge_against_player > C2V(gGrudge_reduction_per_period)) {
-                    C2V(gOpponents)[i].psyche.grudge_against_player -= C2V(gGrudge_reduction_per_period);
+                if (gOpponents[i].psyche.grudge_against_player > gGrudge_reduction_per_period) {
+                    gOpponents[i].psyche.grudge_against_player -= gGrudge_reduction_per_period;
                 }
             }
         }
     }
     RebuildActiveCarList();
-    C2V(gFirst_frame) = 0;
-#endif
+    gFirst_frame = 0;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a9e10, MungeOpponents, MungeOpponents_original)
 
 void C2_HOOK_FASTCALL UnStunTheBugger(tOpponent_spec* pOpponent_spec) {
 
     pOpponent_spec->stun_time_ends = 0;
 }
 
+// FUNCTION: CARMA2_HW 0x004ae620
 void C2_HOOK_FASTCALL WakeUpOpponentsToTheFactThatTheStartHasBeenJumped(int pWhat_the_countdown_was) {
     int i;
 
-    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_opponents; i++) {
-        UnStunTheBugger(&C2V(gProgram_state).AI_vehicles.opponents[i]);
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_opponents; i++) {
+        UnStunTheBugger(&gProgram_state.AI_vehicles.opponents[i]);
         if (IRandomBetween(1000, 2500) < 1000 * pWhat_the_countdown_was) {
-            StunTheBugger(&C2V(gProgram_state).AI_vehicles.opponents[i], IRandomBetween(1000, 2500));
+            StunTheBugger(&gProgram_state.AI_vehicles.opponents[i], IRandomBetween(1000, 2500));
         } else {
-            StunTheBugger(&C2V(gProgram_state).AI_vehicles.opponents[i], 1000 * pWhat_the_countdown_was);
+            StunTheBugger(&gProgram_state.AI_vehicles.opponents[i], 1000 * pWhat_the_countdown_was);
         }
     }
-    for (i = 0; i < C2V(gProgram_state).AI_vehicles.number_of_cops; i++) {
-        UnStunTheBugger(&C2V(gProgram_state).AI_vehicles.cops[i]);
+    for (i = 0; i < gProgram_state.AI_vehicles.number_of_cops; i++) {
+        UnStunTheBugger(&gProgram_state.AI_vehicles.cops[i]);
         if (IRandomBetween(1000, 2500) < 1000 * pWhat_the_countdown_was) {
-            StunTheBugger(&C2V(gProgram_state).AI_vehicles.cops[i], IRandomBetween(1000, 2500));
+            StunTheBugger(&gProgram_state.AI_vehicles.cops[i], IRandomBetween(1000, 2500));
         } else {
-            StunTheBugger(&C2V(gProgram_state).AI_vehicles.cops[i], 1000 * pWhat_the_countdown_was);
+            StunTheBugger(&gProgram_state.AI_vehicles.cops[i], 1000 * pWhat_the_countdown_was);
         }
     }
-    C2V(gAcknowledged_start) = 1;
-    C2V(gStart_jumped) = 1;
+    gAcknowledged_start = 1;
+    gStart_jumped = 1;
 }
-C2_HOOK_FUNCTION(0x004ae620, WakeUpOpponentsToTheFactThatTheStartHasBeenJumped)
 
 tS16 C2_HOOK_FASTCALL FindNearestPathSection(br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
 
@@ -1280,7 +1317,7 @@ void C2_HOOK_FASTCALL WeightedFindNearestNodeAndSection(tCar_spec* pCar, br_vect
     if (pCar != NULL) {
         no_sections = pCar->my_trail.number_of_nodes - 1;
     } else {
-        no_sections = C2V(gProgram_state).AI_vehicles.number_of_path_sections;
+        no_sections = gProgram_state.AI_vehicles.number_of_path_sections;
     }
     for (section_no = 0; section_no < no_sections; section_no++) {
         br_vector3* start;
@@ -1290,8 +1327,8 @@ void C2_HOOK_FASTCALL WeightedFindNearestNodeAndSection(tCar_spec* pCar, br_vect
             start = &pCar->my_trail.trail_nodes[section_no + 0];
             finish = &pCar->my_trail.trail_nodes[section_no + 1];
         } else {
-            start = &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[0]].pos;
-            finish = &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[1]].pos;
+            start = &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[section_no].node_indices[0]].pos;
+            finish = &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[section_no].node_indices[1]].pos;
         }
         BrVector3Sub(&a, finish, start);
         a.v[1] *= pWeight;
@@ -1302,7 +1339,7 @@ void C2_HOOK_FASTCALL WeightedFindNearestNodeAndSection(tCar_spec* pCar, br_vect
             if (pCar != NULL) {
                 *pNearest_node = section_no;
             } else {
-                *pNearest_node = C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[1];
+                *pNearest_node = gProgram_state.AI_vehicles.path_sections[section_no].node_indices[1];
             }
             nearest_section = section_no + 0;
             closest_distance_squared = the_distance_squared;
@@ -1312,7 +1349,7 @@ void C2_HOOK_FASTCALL WeightedFindNearestNodeAndSection(tCar_spec* pCar, br_vect
             if (pCar != NULL) {
                 *pNearest_node = section_no + 1;
             } else {
-                *pNearest_node = C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[0];
+                *pNearest_node = gProgram_state.AI_vehicles.path_sections[section_no].node_indices[0];
             }
             nearest_section = section_no;
             closest_distance_squared = the_distance_squared;
@@ -1334,12 +1371,8 @@ void C2_HOOK_FASTCALL WeightedFindNearestNodeAndSection(tCar_spec* pCar, br_vect
     }
 }
 
-tS16 (C2_HOOK_FASTCALL * FindNearestGeneralSection_original)(tCar_spec* pCar, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance);
+// FUNCTION: CARMA2_HW 0x004a82d0
 tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, br_vector3* pActor_coords, br_vector3* pPath_direction, br_vector3* pIntersect, br_scalar* pDistance) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return FindNearestGeneralSection_original(pCar, pActor_coords, pPath_direction, pIntersect, pDistance);
-#else
     tS16 nearest_node_section_no;
     tS16 nearest_node;
     float t;
@@ -1353,14 +1386,14 @@ tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, br_vector3* pAc
                 &pCar->my_trail.trail_nodes[nearest_node_section_no + 0]);
     } else {
         BrVector3Sub(&delta,
-            &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[nearest_node_section_no].node_indices[1]].pos,
-            &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[nearest_node_section_no].node_indices[0]].pos);
+            &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[nearest_node_section_no].node_indices[1]].pos,
+            &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[nearest_node_section_no].node_indices[0]].pos);
     }
     if (nearest_node >= 0) {
-        BrVector3Copy(pIntersect, pCar != NULL ? &pCar->my_trail.trail_nodes[nearest_node] : &C2V(gProgram_state).AI_vehicles.path_nodes[nearest_node_section_no].pos);
+        BrVector3Copy(pIntersect, pCar != NULL ? &pCar->my_trail.trail_nodes[nearest_node] : &gProgram_state.AI_vehicles.path_nodes[nearest_node_section_no].pos);
     } else {
         BrVector3Scale(pIntersect, &delta, t);
-        BrVector3Accumulate(pIntersect, &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[nearest_node_section_no].node_indices[0]].pos);
+        BrVector3Accumulate(pIntersect, &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[nearest_node_section_no].node_indices[0]].pos);
     }
     BrVector3InvScale(pPath_direction, &delta, BrVector3Length(&delta));
     *pDistance = Vector3Distance(pActor_coords, pIntersect);
@@ -1368,10 +1401,9 @@ tS16 C2_HOOK_FASTCALL FindNearestGeneralSection(tCar_spec* pCar, br_vector3* pAc
         nearest_node_section_no += 15000;
     }
     return nearest_node_section_no;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a82d0, FindNearestGeneralSection, FindNearestGeneralSection_original)
 
+// FUNCTION: CARMA2_HW 0x004ae9e0
 int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int pSection_no) {
 
     if (pSection_no >= 20000) {
@@ -1382,8 +1414,8 @@ int C2_HOOK_FASTCALL GetOpponentsRealSection(tOpponent_spec* pOpponent_spec, int
         return pSection_no;
     }
 }
-C2_HOOK_FUNCTION(0x004ae9e0, GetOpponentsRealSection)
 
+// FUNCTION: CARMA2_HW 0x004ab100
 int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, int pPlaces) {
     size_t i;
 
@@ -1397,7 +1429,6 @@ int C2_HOOK_FASTCALL ShiftOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
     pOpponent_spec->nnext_sections -= pPlaces;
     return 1;
 }
-C2_HOOK_FUNCTION(0x004ab100, ShiftOpponentsProjectedRoute)
 
 int C2_HOOK_FASTCALL AlreadyPursuingCar(tOpponent_spec* pOpponent_spec, tCar_spec* pPursuee) {
 
@@ -1418,30 +1449,26 @@ int C2_HOOK_FASTCALL HeadOnWithPlayerPossible(tOpponent_spec* pOpponent_spec) {
     br_vector3 oppo_to_player_norm;
 
     BrVector3Sub(&oppo_to_player_norm,
-        &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t,
+        &gProgram_state.current_car.car_master_actor->t.t.translate.t,
         &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t);
     BrVector3Normalise(&oppo_to_player_norm, &oppo_to_player_norm);
-    if (BrVector3Dot(&pOpponent_spec->car_spec->direction, &oppo_to_player_norm) > C2V(gHead_on_cos_value)
-            && BrVector3Dot(&C2V(gProgram_state).current_car.direction, &oppo_to_player_norm) < -C2V(gHead_on_cos_value)) {
+    if (BrVector3Dot(&pOpponent_spec->car_spec->direction, &oppo_to_player_norm) > gHead_on_cos_value
+            && BrVector3Dot(&gProgram_state.current_car.direction, &oppo_to_player_norm) < -gHead_on_cos_value) {
         DoNotDprintf_opponent("HOORAY! Head-on imminent");
         return 1;
     }
     return 0;
 }
 
-void (C2_HOOK_FASTCALL * ChooseNewObjective_original)(tOpponent_spec* pOpponent_spec, int pMust_choose_one);
+// FUNCTION: CARMA2_HW 0x004ace70
 void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMust_choose_one) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    ChooseNewObjective_original(pOpponent_spec, pMust_choose_one);
-#else
     char str[256];
 
     if (pOpponent_spec->current_objective == eOOT_knackered_and_freewheeling || pOpponent_spec->knackeredness_detected) {
         return;
     }
-    if (C2V(gTime_stamp_for_this_munging) > pOpponent_spec->next_out_of_world_check) {
-        pOpponent_spec->next_out_of_world_check = C2V(gTime_stamp_for_this_munging) + 500;
+    if (gTime_stamp_for_this_munging > pOpponent_spec->next_out_of_world_check) {
+        pOpponent_spec->next_out_of_world_check = gTime_stamp_for_this_munging + 500;
         if (HasCarFallenOffWorld(pOpponent_spec->car_spec)) {
             DisplayOpponentRecoveringHeadup(pOpponent_spec);
             TeleportOpponentToNearestSafeLocation(pOpponent_spec);
@@ -1466,7 +1493,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
         }
         DoNotDprintf_opponent("%s: Time to unfreeze", pOpponent_spec->car_spec->driver_name);
         if (pOpponent_spec->pursuing_player_before_freeze) {
-            NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &C2V(gProgram_state).current_car);
+            NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
         } else {
             NewObjective(pOpponent_spec, eOOT_get_near_player);
         }
@@ -1474,11 +1501,11 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
     }
     if (GET_CAR_SPEED_FACTOR(pOpponent_spec->car_spec) == 0.f) {
         DoNotDprintf_opponent("%s: Decided to freeze", pOpponent_spec->car_spec->driver_name);
-        pOpponent_spec->pursuing_player_before_freeze = pOpponent_spec->current_objective == eOOT_pursue_and_twat || pOpponent_spec->pursue_car_data.pursuee == &C2V(gProgram_state).current_car;
+        pOpponent_spec->pursuing_player_before_freeze = pOpponent_spec->current_objective == eOOT_pursue_and_twat || pOpponent_spec->pursue_car_data.pursuee == &gProgram_state.current_car;
         NewObjective(pOpponent_spec, eOOT_frozen);
         return;
     }
-    if (!C2V(gFirst_frame)) {
+    if (!gFirst_frame) {
         int general_grudge_increase;
 
         general_grudge_increase = (int)(pOpponent_spec->nastiness * 40.0f + 10.0f);
@@ -1489,7 +1516,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
                     NewObjective(pOpponent_spec, eOOT_run_away);
                     return;
                 }
-            } else if (C2V(gOpponents)[pOpponent_spec->index].strength_rating < 5) {
+            } else if (gOpponents[pOpponent_spec->index].strength_rating < 5) {
                 if (PercentageChance((int)((pOpponent_spec->current_objective == eOOT_pursue_and_twat ? 100 : 60) - 50.f * pOpponent_spec->nastiness))) {
                     DoNotDprintf_opponent("%s: Decided to run away", pOpponent_spec->car_spec->driver_name);
                     NewObjective(pOpponent_spec, eOOT_run_away);
@@ -1498,19 +1525,19 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
             }
         }
 
-        if (pOpponent_spec->current_objective != eOOT_run_away || C2V(gTime_stamp_for_this_munging) >= pOpponent_spec->time_this_objective_started + 20000) {
-            if (CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec) && pOpponent_spec->murder_reported && pOpponent_spec->player_to_oppo_d < 20.f && !AlreadyPursuingCar(pOpponent_spec, &C2V(gProgram_state).current_car)) {
-                C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
+        if (pOpponent_spec->current_objective != eOOT_run_away || gTime_stamp_for_this_munging >= pOpponent_spec->time_this_objective_started + 20000) {
+            if (CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec) && pOpponent_spec->murder_reported && pOpponent_spec->player_to_oppo_d < 20.f && !AlreadyPursuingCar(pOpponent_spec, &gProgram_state.current_car)) {
+                gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
                 c2_sprintf(str, "%s: Furderous melon!", pOpponent_spec->car_spec->driver_name);
                 DoNotDprintf_opponent("%s: Decided to pursue after MURDER", pOpponent_spec->car_spec->driver_name);
-                NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &C2V(gProgram_state).current_car);
+                NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
                 return;
             }
             if (pOpponent_spec->car_spec->big_bang
                     && LastTwatterAPlayer(pOpponent_spec)
                     && !AlreadyPursuingCar(pOpponent_spec, pOpponent_spec->car_spec->last_person_to_hit_us)) {
 
-                C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
+                gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
                 c2_sprintf(str, "%s: Christ! What was that?", pOpponent_spec->car_spec->driver_name);
                 DoNotDprintf_opponent("%s: Decided to pursue after big bang; last person to twat us was %s",
                     pOpponent_spec->car_spec->driver_name,
@@ -1520,25 +1547,25 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
             }
             if (LastTwatteeAPlayer(pOpponent_spec) && !AlreadyPursuingCar(pOpponent_spec, pOpponent_spec->car_spec->last_person_we_hit)) {
 
-                C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
+                gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
                 c2_sprintf(str, "%s: Ha! Bet you weren't expecting that!", pOpponent_spec->car_spec->driver_name);
                 DoNotDprintf_opponent("%s: Decided to pursue %s after accidentally hitting them",
                     pOpponent_spec->car_spec->driver_name,
                     pOpponent_spec->car_spec->last_person_we_hit->driver_name);
-                NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &C2V(gProgram_state).current_car);
+                NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
                 return;
             }
-            if (!AlreadyPursuingCar(pOpponent_spec, &C2V(gProgram_state).current_car)) {
+            if (!AlreadyPursuingCar(pOpponent_spec, &gProgram_state.current_car)) {
                 if (pOpponent_spec->car_spec->grudge_raised_recently
                         && (!CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec) || pOpponent_spec->player_to_oppo_d <= 20.f)
                         && LastTwatterAPlayer(pOpponent_spec)) {
-                    int grudge = C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player;
+                    int grudge = gOpponents[pOpponent_spec->index].psyche.grudge_against_player;
                     if (grudge > 20) {
-                        C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player = MIN(grudge + general_grudge_increase, 100);
-                        c2_sprintf(str, "%s: Right! That's enough, %s!", pOpponent_spec->car_spec->driver_name, C2V(gProgram_state).current_car.driver_name);
+                        gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(grudge + general_grudge_increase, 100);
+                        c2_sprintf(str, "%s: Right! That's enough, %s!", pOpponent_spec->car_spec->driver_name, gProgram_state.current_car.driver_name);
                         DoNotDprintf_opponent("%s: Decided to pursue after grudginess raised; last person to twat us was %s",
                             pOpponent_spec->car_spec->driver_name, pOpponent_spec->car_spec->last_person_to_hit_us->driver_name);
-                        NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &C2V(gProgram_state).current_car);
+                        NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
                         return;
                     }
                 }
@@ -1548,9 +1575,9 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
 
                     pOpponent_spec->acknowledged_piv = 1;
                     if (CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec)) {
-                        pursuit_percentage = (int)((BrVector3Length(&C2V(gProgram_state).current_car.collision_info->v) * WORLD_SCALE - C2V(gDefinite_no_cop_pursuit_speed)) * C2V(gCop_pursuit_speed_percentage_multiplier));
-                    } else if (C2V(gProgram_state).skill_level + 3 > C2V(gNum_of_opponents_pursuing)) {
-                        pursuit_percentage = (int)((float)(C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player - 20) + 30.f * pOpponent_spec->nastiness);
+                        pursuit_percentage = (int)((BrVector3Length(&gProgram_state.current_car.collision_info->v) * WORLD_SCALE - gDefinite_no_cop_pursuit_speed) * gCop_pursuit_speed_percentage_multiplier);
+                    } else if (gProgram_state.skill_level + 3 > gNum_of_opponents_pursuing) {
+                        pursuit_percentage = (int)((float)(gOpponents[pOpponent_spec->index].psyche.grudge_against_player - 20) + 30.f * pOpponent_spec->nastiness);
                     } else {
                         pursuit_percentage = 0;
                     }
@@ -1559,9 +1586,9 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
                     do_it = PercentageChance(pursuit_percentage);
                     DoNotDprintf_opponent("%s: Spotted player; chance of pursuing %d%%: %s", pOpponent_spec->car_spec->driver_name, pursuit_percentage, do_it ? "YES, Decided to pursue" : "NO, Decided NOT to pursue");
                     if (do_it) {
-                        C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
+                        gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
                         c2_sprintf(str, "%s: I've decided to kill you for the fun of it", pOpponent_spec->car_spec->driver_name);
-                        NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &C2V(gProgram_state).current_car);
+                        NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
                         return;
                     }
                 }
@@ -1585,7 +1612,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
                 NewObjective(pOpponent_spec, eOOT_get_near_player);
                 break;
             case 3:
-                NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &C2V(gProgram_state).current_car);
+                NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
                 break;
             default:
                 pursuit_percentage = (int)pOpponent_spec->player_to_oppo_d - 15;
@@ -1603,23 +1630,17 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
             return;
         } else if (pOpponent_spec->pursue_from_start) {
 
-            C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player = (int)MIN(100, MAX(20, C2V(gOpponents)[pOpponent_spec->index].psyche.grudge_against_player) + 20 + 40 * pOpponent_spec->nastiness);
-            NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &C2V(gProgram_state).current_car);
+            gOpponents[pOpponent_spec->index].psyche.grudge_against_player = (int)MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + 20 + 40 * pOpponent_spec->nastiness);
+            NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
             return;
         } else {
             NewObjective(pOpponent_spec, eOOT_complete_race);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ace70, ChooseNewObjective, ChooseNewObjective_original)
 
-void (C2_HOOK_FASTCALL * CalcRaceRoute_original)(tOpponent_spec *pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004aae20
 void C2_HOOK_FASTCALL CalcRaceRoute(tOpponent_spec *pOpponent_spec) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    CalcRaceRoute_original(pOpponent_spec);
-#else
     tS16 section_no;
     tS16 node_no;
     tS16 race_section_count;
@@ -1644,26 +1665,26 @@ void C2_HOOK_FASTCALL CalcRaceRoute(tOpponent_spec *pOpponent_spec) {
             return;
         }
         AddToOpponentsProjectedRoute(pOpponent_spec, section_no, 1);
-        if (C2V(gProgram_state).AI_vehicles.path_sections[section_no].type == ePST_race_path) {
+        if (gProgram_state.AI_vehicles.path_sections[section_no].type == ePST_race_path) {
             pOpponent_spec->complete_race_data.found_race_section = 1;
         }
     }
     while (pOpponent_spec->nnext_sections < REC2_ASIZE(pOpponent_spec->next_sections) && !pOpponent_spec->complete_race_data.finished_calcing_race_route) {
-        node_no = C2V(gProgram_state).AI_vehicles.path_sections[pOpponent_spec->next_sections[pOpponent_spec->nnext_sections - 1].section_no].node_indices[pOpponent_spec->next_sections[pOpponent_spec->nnext_sections - 1].direction];
+        node_no = gProgram_state.AI_vehicles.path_sections[pOpponent_spec->next_sections[pOpponent_spec->nnext_sections - 1].section_no].node_indices[pOpponent_spec->next_sections[pOpponent_spec->nnext_sections - 1].direction];
         race_section_count = 0;
         normal_section_ok_direction_count = 0;
         normal_section_wrong_direction_count = 0;
-        for (i = 0; i < C2V(gProgram_state).AI_vehicles.path_nodes[node_no].number_of_sections; i++) {
-            section_no = C2V(gProgram_state).AI_vehicles.path_nodes[node_no].sections[i];
+        for (i = 0; i < gProgram_state.AI_vehicles.path_nodes[node_no].number_of_sections; i++) {
+            section_no = gProgram_state.AI_vehicles.path_nodes[node_no].sections[i];
             if (pOpponent_spec->next_sections[pOpponent_spec->nnext_sections - 1].section_no != section_no) {
-                if (C2V(gProgram_state).AI_vehicles.path_sections[section_no].type == ePST_race_path && C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[0] == node_no) {
+                if (gProgram_state.AI_vehicles.path_sections[section_no].type == ePST_race_path && gProgram_state.AI_vehicles.path_sections[section_no].node_indices[0] == node_no) {
                     pOpponent_spec->complete_race_data.found_race_section = 1;
                     temp_section_array[race_section_count] = section_no;
                     race_section_count += 1;
-                } else if (race_section_count == 0 && C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[0] == node_no) {
+                } else if (race_section_count == 0 && gProgram_state.AI_vehicles.path_sections[section_no].node_indices[0] == node_no) {
                     temp_section_array[normal_section_ok_direction_count] = section_no;
                     normal_section_ok_direction_count++;
-                } else if (race_section_count == 0 && normal_section_ok_direction_count == 0 && (!C2V(gProgram_state).AI_vehicles.path_sections[section_no].one_way || C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[1] != node_no)) {
+                } else if (race_section_count == 0 && normal_section_ok_direction_count == 0 && (!gProgram_state.AI_vehicles.path_sections[section_no].one_way || gProgram_state.AI_vehicles.path_sections[section_no].node_indices[1] != node_no)) {
                     temp_section_array[normal_section_wrong_direction_count] = section_no;
                     normal_section_wrong_direction_count++;
                 }
@@ -1681,24 +1702,17 @@ void C2_HOOK_FASTCALL CalcRaceRoute(tOpponent_spec *pOpponent_spec) {
             pOpponent_spec->complete_race_data.finished_calcing_race_route = 1;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004aae20, CalcRaceRoute, CalcRaceRoute_original)
 
-void (C2_HOOK_FASTCALL * SetMaxSpeedFromSOCs_original)(tSOC* socs, int count_socs, float* pDesired_speed, float pSpeed, const br_vector2* pPos2d, tCorner* pCorner, tOpponent_spec* pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004b18b0
 void C2_HOOK_FASTCALL SetMaxSpeedFromSOCs(tSOC* socs, int count_socs, float* pDesired_speed, float pSpeed, const br_vector2* pPos2d, tCorner* pCorner, tOpponent_spec* pOpponent_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
-    SetMaxSpeedFromSOCs_original(socs, count_socs, pDesired_speed, pSpeed, pPos2d, pCorner, pOpponent_spec);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b18b0, SetMaxSpeedFromSOCs, SetMaxSpeedFromSOCs_original)
 
 int C2_HOOK_FASTCALL TimeToBeBrakingWhenStruggling(tOpponent_spec* pOpponent_spec) {
 
-    return C2V(gTime_stamp_for_this_munging) >
+    return gTime_stamp_for_this_munging >
         pOpponent_spec->follow_path_data.struggle_time + 2000
             + 15.f * pOpponent_spec->car_spec->collision_info->M
             + 750 * (pOpponent_spec->follow_path_data.number_of_struggles - 1);
@@ -1707,7 +1721,7 @@ int C2_HOOK_FASTCALL TimeToBeBrakingWhenStruggling(tOpponent_spec* pOpponent_spe
 void C2_HOOK_FASTCALL SetCurvature(tCar_spec* pCar_spec, float pCurvature) {
 
     float error = pCurvature - pCar_spec->curvature;
-    float max_error = C2V(gFrame_period_for_this_munging) * 5.f / 1000.f;
+    float max_error = gFrame_period_for_this_munging * 5.f / 1000.f;
     if (error > max_error) {
         pCar_spec->curvature += max_error;
     } else if (error < -max_error) {
@@ -1780,12 +1794,8 @@ float C2_HOOK_FASTCALL MaxCurvatureForCarSpeed(const tCar_spec* pCar, float pSpe
     return max_curve;
 }
 
-tFollow_path_result (C2_HOOK_FASTCALL * ProcessFollowPath_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle);
+// FUNCTION: CARMA2_HW 0x004af960
 tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand, int pPursuit_mode, int pIgnore_end, int pNever_struggle) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ProcessFollowPath_original(pOpponent_spec, pCommand, pPursuit_mode, pIgnore_end, pNever_struggle);
-#else
     tFollow_path_data* data;
     tCorner corners[4];
     tSOC socs[10];
@@ -1829,10 +1839,10 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
         DoNotDprintf_oppoproc("%s: ProcessFollowPath() - new task started, first real section #%d", pOpponent_spec->car_spec->driver_name, GetOpponentsRealSection(pOpponent_spec, data->first_section_no));
         data->has_moved_during_this_task = 0;
         data->struggle_time = 0;
-        data->last_finished_struggle_time = C2V(gTime_stamp_for_this_munging);
+        data->last_finished_struggle_time = gTime_stamp_for_this_munging;
         data->prev_acc = 0.f;
         data->prev_acc_error = 0.f;
-        data->borrowed_time_start = C2V(gTime_stamp_for_this_munging);
+        data->borrowed_time_start = gTime_stamp_for_this_munging;
         data->last_struggle_section = -1;
         data->made_it = 1;
         data->cheating = 0;
@@ -1847,7 +1857,7 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
         if (data->cheating || pOpponent_spec->cheating != data->cheating) {
             return FollowCheatyPath(pOpponent_spec);
         }
-        if (!pIgnore_end && !data->made_it && C2V(gTime_stamp_for_this_munging) > data->borrowed_time_start + 1000 && C2V(gTime_stamp_for_this_munging) < data->borrowed_time_start + 10000) {
+        if (!pIgnore_end && !data->made_it && gTime_stamp_for_this_munging > data->borrowed_time_start + 1000 && gTime_stamp_for_this_munging < data->borrowed_time_start + 10000) {
             BrVector3Sub(&section_dir, GetOpponentsSectionFinishNodePoint(pOpponent_spec, data->section_no), GetOpponentsSectionStartNodePoint(pOpponent_spec, data->section_no));
             BrVector3Sub(&goal_dir, &car_master_actor->t.t.translate.t, GetOpponentsSectionStartNodePoint(pOpponent_spec, data->section_no));
             dist_along = BrVector3Dot(&section_dir, &goal_dir) / BrVector3LengthSquared(&section_dir);
@@ -1857,7 +1867,7 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
                 data->made_it = 1;
             }
         }
-        if (C2V(gTime_stamp_for_this_munging) > data->borrowed_time_start + 10000 && !data->made_it) {
+        if (gTime_stamp_for_this_munging > data->borrowed_time_start + 10000 && !data->made_it) {
             DoNotDprintf_oppoproc("%s: ProcessFollowPath() giving up due to not making the corner", pOpponent_spec->car_spec->driver_name);
             return eFPR_given_up;
         }
@@ -1883,16 +1893,16 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
             }
             DoNotDprintf_oppoproc("%s: done struggling. speed = %.2f m/s", pOpponent_spec->car_spec->driver_name, speed);
             data->made_it = 0;
-            data->borrowed_time_start = C2V(gTime_stamp_for_this_munging);
+            data->borrowed_time_start = gTime_stamp_for_this_munging;
             data->struggle_time = 0;
-            data->last_finished_struggle_time = C2V(gTime_stamp_for_this_munging);
+            data->last_finished_struggle_time = gTime_stamp_for_this_munging;
             car_spec->brake_force = 0.0f;
             car_spec->acc_force = 0.0f;
         } else {
             stopped_speed = (pIgnore_end ? 2.f : 6.f) / 30.f;
-            if (!pNever_struggle && stopped_speed >= speed && C2V(gTime_stamp_for_this_munging) > data->last_finished_struggle_time + 2000 && (pPursuit_mode || data->has_moved_during_this_task)) {
+            if (!pNever_struggle && stopped_speed >= speed && gTime_stamp_for_this_munging > data->last_finished_struggle_time + 2000 && (pPursuit_mode || data->has_moved_during_this_task)) {
                 DoNotDprintf_oppoproc("%s: 'Stopped,' section #%d, speed = %.2f m/s, about to start a-strugglin'", pOpponent_spec->car_spec->driver_name, data->section_no, speed);
-                data->struggle_time = C2V(gTime_stamp_for_this_munging);
+                data->struggle_time = gTime_stamp_for_this_munging;
                 if (pIgnore_end || data->section_no != data->last_struggle_section) {
                     data->last_struggle_section = data->section_no;
                     data->number_of_struggles = 0;
@@ -1929,7 +1939,7 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
             count_corners = CalcCorners(corners, straight_section_no, width, &start2d, pOpponent_spec);
             nearest_straight_section = NearestSectionInStraight(&oppo_pos2d, &start2d, &finish2d, pOpponent_spec->follow_path_data.section_no, straight_section_no, pOpponent_spec);
             count_socs = CalcSOCs(nearest_straight_section, count_corners, corners, pOpponent_spec, socs, pOpponent_spec->car_spec);
-            if (count_corners != 0 && C2V(gFrame_period_for_this_munging) * speed * .0005f > WORLD_SCALE * (BrVector2Length(&oppo_pos_rel_next) - corners[0].field_0x0c)) {
+            if (count_corners != 0 && gFrame_period_for_this_munging * speed * .0005f > WORLD_SCALE * (BrVector2Length(&oppo_pos_rel_next) - corners[0].field_0x0c)) {
 
                 StuffDataFromCorner(data, &corners[0]);
                 pOpponent_spec->follow_path_data.corner_width = GetOpponentsSectionWidth(pOpponent_spec, corners[0].section);
@@ -2038,9 +2048,9 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
                 if (BrVector2Dot(&delta, &v2d) > 0.f) {
                     if (data->field_0x08 == 0) {
                         data->field_0x38 = 0;
-                        data->field_0x08 = C2V(gTime_stamp_for_this_munging);
-                    } else if (C2V(gTime_stamp_for_this_munging) - data->field_0x08 > 5000) {
-                        data->field_0x08 = C2V(gTime_stamp_for_this_munging);
+                        data->field_0x08 = gTime_stamp_for_this_munging;
+                    } else if (gTime_stamp_for_this_munging - data->field_0x08 > 5000) {
+                        data->field_0x08 = gTime_stamp_for_this_munging;
                         data->field_0x38 ^= 0x1;
                     }
                     if (data->field_0x38) {
@@ -2066,7 +2076,7 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
         }
         max_acc = acc_factor * 12.0f;
         error = data->desired_speed * effective_speed_factor - speed;
-        acc = (error - data->prev_acc_error) * 1000.0f / C2V(gFrame_period_for_this_munging) / 10.f + error + data->prev_acc;
+        acc = (error - data->prev_acc_error) * 1000.0f / gFrame_period_for_this_munging / 10.f + error + data->prev_acc;
         if (acc > max_acc) {
             acc = max_acc;
         }
@@ -2089,30 +2099,29 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
         BrFatal("C:\\Carma2\\Source\\Common\\Oppoproc.c", 1266, "C:\\Carma2\\Source\\Common\\Oppoproc.c line %d", 1266);
         return eFPR_OK;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004af960, ProcessFollowPath, ProcessFollowPath_original)
 
+// FUNCTION: CARMA2_HW 0x004ace20
 void C2_HOOK_FASTCALL ObjectiveComplete(tOpponent_spec* pOpponent_spec) {
 
     DoNotDprintf_opponent("%s: Objective Completed", pOpponent_spec->car_spec->driver_name);
     pOpponent_spec->new_objective_required = 1;
     switch (pOpponent_spec->current_objective) {
     case eOOT_complete_race:
-        C2V(gNum_of_opponents_completing_race) -= 1;
+        gNum_of_opponents_completing_race -= 1;
         break;
     case eOOT_pursue_and_twat:
-        C2V(gNum_of_opponents_pursuing) -= 1;
+        gNum_of_opponents_pursuing -= 1;
         break;
     case eOOT_get_near_player:
-        C2V(gNum_of_opponents_getting_near) -= 1;
+        gNum_of_opponents_getting_near -= 1;
         break;
     default:
         break;
     }
 }
-C2_HOOK_FUNCTION(0x004ace20, ObjectiveComplete)
 
+// FUNCTION: CARMA2_HW 0x004ab150
 int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec, tS16 pSection_no, int pDirection) {
 
     if (pOpponent_spec->nnext_sections >= REC2_ASIZE(pOpponent_spec->next_sections)) {
@@ -2123,52 +2132,32 @@ int C2_HOOK_FASTCALL AddToOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec
     pOpponent_spec->nnext_sections += 1;
     return 1;
 }
-C2_HOOK_FUNCTION(0x004ab150, AddToOpponentsProjectedRoute)
 
-void (C2_HOOK_FASTCALL * TopUpRandomRoute_original)(tOpponent_spec* pOpponent_spec, int pSections_to_add);
+// FUNCTION: CARMA2_HW 0x004a93c0
 void C2_HOOK_FASTCALL TopUpRandomRoute(tOpponent_spec* pOpponent_spec, int pSections_to_add) {
 
-#if defined(C2_HOOKS_ENABLED)
-    TopUpRandomRoute_original(pOpponent_spec, pSections_to_add);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a93c0, TopUpRandomRoute, TopUpRandomRoute_original)
 
-void (C2_HOOK_FASTCALL * ProcessGetNearPlayer_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
+// FUNCTION: CARMA2_HW 0x004ac890
 void C2_HOOK_FASTCALL ProcessGetNearPlayer(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 
-#if defined(C2_HOOKS_ENABLED)
-    ProcessGetNearPlayer_original(pOpponent_spec, pCommand);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ac890, ProcessGetNearPlayer, ProcessGetNearPlayer_original)
 
-void (C2_HOOK_FASTCALL * ProcessLevitate_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
+// FUNCTION: CARMA2_HW 0x004ac540
 void C2_HOOK_FASTCALL ProcessLevitate(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 
-#if defined(C2_HOOKS_ENABLED)
-    ProcessLevitate_original(pOpponent_spec, pCommand);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ac540, ProcessLevitate, ProcessLevitate_original)
 
-int (C2_HOOK_FASTCALL * RematerialiseOpponent_original)(tOpponent_spec* pOpponent_spec, br_scalar pSpeed);
+// FUNCTION: CARMA2_HW 0x004a87a0
 int C2_HOOK_FASTCALL RematerialiseOpponent(tOpponent_spec* pOpponent_spec, br_scalar pSpeed) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return RematerialiseOpponent_original(pOpponent_spec, pSpeed);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a87a0, RematerialiseOpponent, RematerialiseOpponent_original)
 
+// FUNCTION: CARMA2_HW 0x004a8170
 int C2_HOOK_FASTCALL RematerialiseOpponentOnNearestSection(tOpponent_spec* pOpponent_spec, br_scalar pSpeed) {
     br_vector3 intersect;
     br_vector3 direction_v;
@@ -2183,7 +2172,7 @@ int C2_HOOK_FASTCALL RematerialiseOpponentOnNearestSection(tOpponent_spec* pOppo
         return 1;
     }
     section_no = FindNearestPathSection(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &direction_v, &intersect, &distance);
-    finish = &C2V(gProgram_state).AI_vehicles.path_nodes[C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[1]].pos;
+    finish = &gProgram_state.AI_vehicles.path_nodes[gProgram_state.AI_vehicles.path_sections[section_no].node_indices[1]].pos;
     BrVector3Copy(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &intersect);
     PointActorAlongThisBloodyVector(pOpponent_spec->car_spec->car_master_actor, &direction_v);
     BrVector3Sub(&car_to_end, finish, &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t);
@@ -2200,8 +2189,8 @@ int C2_HOOK_FASTCALL RematerialiseOpponentOnNearestSection(tOpponent_spec* pOppo
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004a8170, RematerialiseOpponentOnNearestSection)
 
+// FUNCTION: CARMA2_HW 0x004abc00
 void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
 
     switch (pCommand) {
@@ -2215,18 +2204,12 @@ void C2_HOOK_FASTCALL ProcessWaitForSomeHaplessSod(tOpponent_spec* pOpponent_spe
         break;
     }
 }
-C2_HOOK_FUNCTION(0x004abc00, ProcessWaitForSomeHaplessSod)
 
-void (C2_HOOK_FASTCALL * CalcReturnToStartPointRoute_original)(tOpponent_spec* pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004abf60
 void C2_HOOK_FASTCALL CalcReturnToStartPointRoute(tOpponent_spec* pOpponent_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
-    CalcReturnToStartPointRoute_original(pOpponent_spec);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004abf60, CalcReturnToStartPointRoute, CalcReturnToStartPointRoute_original)
 
 int C2_HOOK_FASTCALL TeleportCopToStart(tOpponent_spec* pOpponent_spec) {
     br_vector3 wank;
@@ -2234,8 +2217,8 @@ int C2_HOOK_FASTCALL TeleportCopToStart(tOpponent_spec* pOpponent_spec) {
     if (!pOpponent_spec->cheating || !CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec)) {
         return 0;
     }
-    BrVector3Sub(&wank, &C2V(gProgram_state).current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->start_pos);
-    if (BrVector3Length(&wank) <= C2V(gIn_view_distance)) {
+    BrVector3Sub(&wank, &gProgram_state.current_car.car_master_actor->t.t.translate.t, &pOpponent_spec->start_pos);
+    if (BrVector3Length(&wank) <= gIn_view_distance) {
         return 0;
     }
     BrVector3Copy(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &pOpponent_spec->start_pos);
@@ -2248,6 +2231,7 @@ int C2_HOOK_FASTCALL TeleportCopToStart(tOpponent_spec* pOpponent_spec) {
     return 1;
 }
 
+// FUNCTION: CARMA2_HW 0x004abc40
 void C2_HOOK_FASTCALL ProcessReturnToStart(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
     br_vector3 section_v;
     br_vector3 our_pos_xz;
@@ -2303,7 +2287,6 @@ void C2_HOOK_FASTCALL ProcessReturnToStart(tOpponent_spec* pOpponent_spec, tProc
         break;
     }
 }
-C2_HOOK_FUNCTION(0x004abc40, ProcessReturnToStart)
 
 void C2_HOOK_FASTCALL ClearOpponentsProjectedRoute(tOpponent_spec* pOpponent_spec) {
 
@@ -2364,7 +2347,7 @@ void C2_HOOK_FASTCALL ProcessRunAway(tOpponent_spec* pOpponent_spec, tProcess_ob
     switch (pCommand) {
     case ePOC_start:
         DoNotDprintf_opponent("%s: ProcessRunAway() - new objective started", pOpponent_spec->car_spec->driver_name);
-        pOpponent_spec->run_away_data.time_to_stop = C2V(gTime_stamp_for_this_munging) + 1000 * IRandomBetween(30, 90);
+        pOpponent_spec->run_away_data.time_to_stop = gTime_stamp_for_this_munging + 1000 * IRandomBetween(30, 90);
         ClearOpponentsProjectedRoute(pOpponent_spec);
         section_no = FindNearestPathSection(&pOpponent_spec->car_spec->car_master_actor->t.t.translate.t, &direction_v, &intersect, &distance);
         if (BrVector3Dot(&pOpponent_spec->car_spec->direction, &direction_v) < 0.0f) {
@@ -2377,7 +2360,7 @@ void C2_HOOK_FASTCALL ProcessRunAway(tOpponent_spec* pOpponent_spec, tProcess_ob
         sprintf(str, "%s: Shit! I'm out of here...", pOpponent_spec->car_spec->driver_name);
         break;
     case ePOC_run:
-        if (C2V(gTime_stamp_for_this_munging) <= pOpponent_spec->run_away_data.time_to_stop) {
+        if (gTime_stamp_for_this_munging <= pOpponent_spec->run_away_data.time_to_stop) {
             if (pOpponent_spec->follow_path_data.section_no > 20000) {
                 ShiftOpponentsProjectedRoute(pOpponent_spec, pOpponent_spec->follow_path_data.section_no - 20000);
                 pOpponent_spec->follow_path_data.section_no = 20000;
@@ -2424,11 +2407,9 @@ void C2_HOOK_FASTCALL ProcessFrozen(tOpponent_spec* pOpponent_spec, tProcess_obj
     }
 }
 
-void (C2_HOOK_FASTCALL * ProcessCurrentObjective_original)(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand);
+// FUNCTION: CARMA2_HW 0x004aa900
 void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tProcess_objective_command pCommand) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    ProcessCurrentObjective_original(pOpponent_spec, pCommand);
-#else
+
     switch (pOpponent_spec->current_objective) {
     case eOOT_none:
         break;
@@ -2466,21 +2447,15 @@ void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tP
     default:
         break;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004aa900, ProcessCurrentObjective, ProcessCurrentObjective_original)
 
-void (C2_HOOK_FASTCALL * TeleportOpponentToNearestSafeLocation_original)(tOpponent_spec* pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004a9180
 void C2_HOOK_FASTCALL TeleportOpponentToNearestSafeLocation(tOpponent_spec* pOpponent_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
-    TeleportOpponentToNearestSafeLocation_original(pOpponent_spec);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a9180, TeleportOpponentToNearestSafeLocation, TeleportOpponentToNearestSafeLocation_original)
 
+// FUNCTION: CARMA2_HW 0x004aad70
 void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_objective_type pObjective_type, ...) {
     va_list ap;
 
@@ -2488,23 +2463,23 @@ void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_object
         ProcessCurrentObjective(pOpponent_spec, ePOC_die);
     }
     pOpponent_spec->current_objective = pObjective_type;
-    pOpponent_spec->time_this_objective_started = C2V(gTime_stamp_for_this_munging);
-    pOpponent_spec->time_for_this_objective_to_finish = C2V(gTime_stamp_for_this_munging) + IRandomBetween(20, 60) * 1000;
+    pOpponent_spec->time_this_objective_started = gTime_stamp_for_this_munging;
+    pOpponent_spec->time_for_this_objective_to_finish = gTime_stamp_for_this_munging + IRandomBetween(20, 60) * 1000;
     if (pObjective_type == eOOT_pursue_and_twat) {
         pOpponent_spec->time_for_this_objective_to_finish += 90000;
     }
     switch (pObjective_type) {
     case eOOT_complete_race:
-        C2V(gNum_of_opponents_completing_race) += 1;
+        gNum_of_opponents_completing_race += 1;
         break;
     case eOOT_pursue_and_twat:
         va_start(ap, pObjective_type);
         pOpponent_spec->pursue_car_data.pursuee = va_arg(ap, tCar_spec*);
         va_end(ap);
-        C2V(gNum_of_opponents_pursuing) += 1;
+        gNum_of_opponents_pursuing += 1;
         break;
     case eOOT_get_near_player:
-        C2V(gNum_of_opponents_getting_near) += 1;
+        gNum_of_opponents_getting_near += 1;
         break;
     default:
         break;
@@ -2512,7 +2487,6 @@ void C2_HOOK_CDECL NewObjective(tOpponent_spec* pOpponent_spec, tOpponent_object
     DoNotDprintf_opponent("%s: NewObjective() - type %d", pOpponent_spec->car_spec->driver_name, pObjective_type);
     ProcessCurrentObjective(pOpponent_spec, ePOC_start);
 }
-C2_HOOK_FUNCTION(0x004aad70, NewObjective)
 
 tS16 C2_HOOK_FASTCALL CalcNextTrailSection(const tOpponent_spec* pOpponent_spec, int pSection) {
     int section_no;
@@ -2527,6 +2501,7 @@ tS16 C2_HOOK_FASTCALL CalcNextTrailSection(const tOpponent_spec* pOpponent_spec,
     return -1;
 }
 
+// FUNCTION: CARMA2_HW 0x004aea30
 int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spec, tS16 pCurrent_section) {
 
     if (pCurrent_section < 20000) {
@@ -2535,14 +2510,14 @@ int C2_HOOK_FASTCALL GetOpponentsNextSection(const tOpponent_spec* pOpponent_spe
         } else {
             return CalcNextTrailSection(pOpponent_spec, pCurrent_section);
         }
-    } else if (pCurrent_section - 19999 >= pOpponent_spec->nnext_sections || (!pOpponent_spec->cheating && C2V(gProgram_state).AI_vehicles.path_sections[pCurrent_section - 19999].type == ePST_cheat_only)) {
+    } else if (pCurrent_section - 19999 >= pOpponent_spec->nnext_sections || (!pOpponent_spec->cheating && gProgram_state.AI_vehicles.path_sections[pCurrent_section - 19999].type == ePST_cheat_only)) {
         return -1;
     } else {
         return pCurrent_section + 1;
     }
 }
-C2_HOOK_FUNCTION(0x004aea30, GetOpponentsNextSection)
 
+// FUNCTION: CARMA2_HW 0x004aeb90
 const br_vector3* C2_HOOK_FASTCALL GetOpponentsSectionStartNodePoint(const tOpponent_spec* pOpponent_spec, tS16 pSection) {
     tS16 section_no;
     tS16 node_no;
@@ -2551,8 +2526,8 @@ const br_vector3* C2_HOOK_FASTCALL GetOpponentsSectionStartNodePoint(const tOppo
     if (pSection >= 20000 && pOpponent_spec->nnext_sections > pSection - 20000) {
         section_no = pOpponent_spec->next_sections[pSection - 20000].section_no;
         node_index_index = pOpponent_spec->next_sections[pSection - 20000].direction;
-        node_no = C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[node_index_index == 0];
-        return &C2V(gProgram_state).AI_vehicles.path_nodes[node_no].pos;
+        node_no = gProgram_state.AI_vehicles.path_sections[section_no].node_indices[node_index_index == 0];
+        return &gProgram_state.AI_vehicles.path_nodes[node_no].pos;
     }
 
     if (pSection >= 15000) {
@@ -2565,8 +2540,8 @@ const br_vector3* C2_HOOK_FASTCALL GetOpponentsSectionStartNodePoint(const tOppo
     PDEnterDebugger("BIG ERROR - GetOpponentsSectionStartNodePoint()");
     return NULL;
 }
-C2_HOOK_FUNCTION(0x004aeb90, GetOpponentsSectionStartNodePoint)
 
+// FUNCTION: CARMA2_HW 0x004aec40
 const br_vector3* C2_HOOK_FASTCALL GetOpponentsSectionFinishNodePoint(const tOpponent_spec* pOpponent_spec, tS16 pSection) {
     tS16 section_no;
     tS16 node_no;
@@ -2575,8 +2550,8 @@ const br_vector3* C2_HOOK_FASTCALL GetOpponentsSectionFinishNodePoint(const tOpp
     if (pSection >= 20000 && pOpponent_spec->nnext_sections > pSection - 20000) {
         section_no = pOpponent_spec->next_sections[pSection - 20000].section_no;
         node_index_index = pOpponent_spec->next_sections[pSection - 20000].direction;
-        node_no = C2V(gProgram_state).AI_vehicles.path_sections[section_no].node_indices[node_index_index];
-        return &C2V(gProgram_state).AI_vehicles.path_nodes[node_no].pos;
+        node_no = gProgram_state.AI_vehicles.path_sections[section_no].node_indices[node_index_index];
+        return &gProgram_state.AI_vehicles.path_nodes[node_no].pos;
     } else if (pSection >= 15000) {
         return &pOpponent_spec->pursue_car_data.pursuee->my_trail.trail_nodes[(pSection + 1) - 15000];
     } else if (pSection == 10000) {
@@ -2588,14 +2563,9 @@ const br_vector3* C2_HOOK_FASTCALL GetOpponentsSectionFinishNodePoint(const tOpp
         return NULL;
     }
 }
-C2_HOOK_FUNCTION(0x004aec40, GetOpponentsSectionFinishNodePoint)
 
-int (C2_HOOK_FASTCALL * GetOpponentsFirstSection_original)(const tOpponent_spec* pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004aea00
 int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_spec) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return GetOpponentsFirstSection_original(pOpponent_spec);
-#else
 
     if (pOpponent_spec->current_objective != eOOT_pursue_and_twat) {
         return 20000;
@@ -2607,50 +2577,28 @@ int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_sp
         return 10000;
     }
     return 20000;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004aea00, GetOpponentsFirstSection, GetOpponentsFirstSection_original)
 
-tS16 (C2_HOOK_FASTCALL * GetOpponentsSectionMaxSpeed_original)(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
+// FUNCTION: CARMA2_HW 0x004aedf0
 tS16 C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return GetOpponentsSectionMaxSpeed_original(pOpponent_spec, pSection, pTowards_finish);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004aedf0, GetOpponentsSectionMaxSpeed, GetOpponentsSectionMaxSpeed_original)
 
-tS16 (C2_HOOK_FASTCALL * GetOpponentsSectionMinSpeed_original)(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish);
+// FUNCTION: CARMA2_HW 0x004aed50
 tS16 C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return GetOpponentsSectionMinSpeed_original(pOpponent_spec, pSection, pTowards_finish);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004aed50, GetOpponentsSectionMinSpeed, GetOpponentsSectionMinSpeed_original)
 
-int (C2_HOOK_FASTCALL * RematerialiseOpponentOnThisSection_original)(tOpponent_spec* pOpponent_spec, tS16 pSection_no, float pSpeed);
+// FUNCTION: CARMA2_HW 0x004a7f20
 int C2_HOOK_FASTCALL RematerialiseOpponentOnThisSection(tOpponent_spec* pOpponent_spec, tS16 pSection_no, float pSpeed) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return RematerialiseOpponentOnThisSection_original(pOpponent_spec, pSection_no, pSpeed);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a7f20, RematerialiseOpponentOnThisSection, RematerialiseOpponentOnThisSection_original)
 
-float (C2_HOOK_FASTCALL * GetOpponentsSectionWidth_original)(const tOpponent_spec* pOpponent_spec, tS16 pSection);
+// FUNCTION: CARMA2_HW 0x004aece0
 float C2_HOOK_FASTCALL GetOpponentsSectionWidth(const tOpponent_spec* pOpponent_spec, tS16 pSection) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return GetOpponentsSectionWidth_original(pOpponent_spec, pSection);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004aece0, GetOpponentsSectionWidth, GetOpponentsSectionWidth_original)

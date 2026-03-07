@@ -9,6 +9,7 @@
 #include <stdlib.h>
 
 
+// FUNCTION: D3D 0x10006490
 void C2_HOOK_CDECL ResetComputedOffsetsAndScales(br_primitive_state_d3d* prim) {
     br_device_pixelmap_d3d *pm = prim->out.pixelmap;
 
@@ -37,7 +38,6 @@ void C2_HOOK_CDECL ResetComputedOffsetsAndScales(br_primitive_state_d3d* prim) {
     prim->cache.comp_scales[13] = BR_FIXED_UINT(0xff);
     prim->cache.comp_scales[10] = BR_FIXED_UINT(0xff);
 }
-C2_HOOK_FUNCTION(0x10006490, ResetComputedOffsetsAndScales)
 
 struct {
     local_block_d3d *blocks;
@@ -48,29 +48,30 @@ struct {
     { primInfo_d3d_t15, BR_ASIZE(primInfo_d3d_t15), },
 };
 
+// FUNCTION: D3D 0x10005e30
 void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_cmp) {
     int t;
 
-    C2V(gCount_queued_render_states) = 0;
-    C2V(gINT_1001bba4) = 0;
+    gCount_queued_render_states = 0;
+    gINT_1001bba4 = 0;
     if (flags_cmp & 0x400) {
         if (!(self->prim.flags & 2) && ((self->prim.flags & 0x80) || (self->prim.colour_map != NULL && self->prim.colour_map->buffer.blended))) {
             if (self->prim.flags & 0x200) {
-                C2V(gINT_1001bba4) = 1;
+                gINT_1001bba4 = 1;
             } else if (self->prim.colour_map != NULL && self->prim.colour_map->field_0x84 == -1) {
-                C2V(gINT_1001bba4) = 9;
+                gINT_1001bba4 = 9;
             } else {
-                C2V(gINT_1001bba4) = 2;
+                gINT_1001bba4 = 2;
             }
-            C2V(gDAT_1001dc50) = self->prim.colour_map->buffer.field_0x68;
-            C2V(gINT_1001dc4c) = self->prim.colour_map->buffer.width_p;
-            C2V(gINT_1001dc44) = self->prim.colour_map->buffer.height;
-            C2V(gINT_1001dc54) = self->prim.colour_map->buffer.width_b;
+            gDAT_1001dc50 = self->prim.colour_map->buffer.field_0x68;
+            gINT_1001dc4c = self->prim.colour_map->buffer.width_p;
+            gINT_1001dc44 = self->prim.colour_map->buffer.height;
+            gINT_1001dc54 = self->prim.colour_map->buffer.width_b;
         }
         if ((self->prim.flags & 0x80) && self->prim.alpha_val < 16.0f) {
-            C2V(gINT_1001bba4) = 9;
+            gINT_1001bba4 = 9;
         }
-        if (!C2V(gTexture_format_is_NOT_ARGB4444)) {
+        if (!gTexture_format_is_NOT_ARGB4444) {
             d3d_load(&self->prim.colour_map->buffer, -1);
         } else if ((self->prim.flags & 1) && !(self->prim.flags & 2)) {
             d3d_load(&self->prim.colour_map->buffer, -2);
@@ -79,7 +80,7 @@ void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_c
         } else {
             d3d_load(&self->prim.colour_map->buffer, (int)self->prim.alpha_val);
         }
-        if (self->prim.colour_map != NULL && !C2V(gTexture_format_is_NOT_ARGB4444) && (C2V(gRegister_flags) & 1)) {
+        if (self->prim.colour_map != NULL && !gTexture_format_is_NOT_ARGB4444 && (gRegister_flags & 1)) {
             if (self->prim.map_interpolation == 1 || self->prim.map_interpolation == 0x92) {
                 QUEUE_RENDER_STATE(0x11, 1);
                 QUEUE_RENDER_STATE(0x12, 1);
@@ -89,12 +90,12 @@ void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_c
             }
         }
     } else {
-        C2V(gDWORD_1001bbb0) = 0;
+        gDWORD_1001bbb0 = 0;
         if ((self->prim.flags & 0x200) && (self->prim.flags & 0x80)) {
-            C2V(gINT_1001bba4) = 3;
+            gINT_1001bba4 = 3;
         }
         if ((self->prim.flags & 0x80) && (self->prim.alpha_val < 16.f)) {
-            C2V(gINT_1001bba4) = 9;
+            gINT_1001bba4 = 9;
         }
     }
     if (flags_cmp & 0x8) {
@@ -112,7 +113,7 @@ void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_c
         break;
     case 1:
         QUEUE_RENDER_STATE(0x17, 7);
-        if (C2V(gTexture_format_is_NOT_ARGB4444)) {
+        if (gTexture_format_is_NOT_ARGB4444) {
             QUEUE_RENDER_STATE(0xe, 1);
         } else {
             if (self->prim.colour_map == NULL) {
@@ -135,7 +136,7 @@ void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_c
         break;
     case 3:
         QUEUE_RENDER_STATE(0x17, 8);
-        if (C2V(gTexture_format_is_NOT_ARGB4444)) {
+        if (gTexture_format_is_NOT_ARGB4444) {
             QUEUE_RENDER_STATE(0xe, 1);
         } else if (self->prim.colour_map != NULL && self->prim.colour_map->buffer.blended) {
             QUEUE_RENDER_STATE(0xe, 0);
@@ -149,50 +150,50 @@ void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_c
         break;
     }
 
-    if (C2V(gTexture_format_is_NOT_ARGB4444)) {
+    if (gTexture_format_is_NOT_ARGB4444) {
         if (self->prim.flags & 0x80) {
-            C2V(gINT_1001dc30) = (int)self->prim.alpha_val;
-            C2V(gDWORD_1001bbb4) = C2V(gStruct_100381c0)[C2V(gINT_1001dc30) % 16].texture_handle;
+            gINT_1001dc30 = (int)self->prim.alpha_val;
+            gDWORD_1001bbb4 = gStruct_100381c0[gINT_1001dc30 % 16].texture_handle;
         } else {
-            C2V(gDWORD_1001bbb4) = 0;
+            gDWORD_1001bbb4 = 0;
         }
         if ((self->prim.flags & 0x80) || (self->prim.colour_map != NULL && self->prim.colour_map->buffer.blended)) {
             QUEUE_RENDER_STATE(0x29, 1);
         } else {
             QUEUE_RENDER_STATE(0x29, 0);
         }
-        C2V(gINT_1001bbf0) = 2;
+        gINT_1001bbf0 = 2;
     } else {
         QUEUE_RENDER_STATE(0x29, 0);
         if (self->prim.flags & 0x80) {
-            C2V(gINT_1001dc30) = (int)self->prim.alpha_val;
-            C2V(gCOLOUR_100156e8) = C2V(gINT_1001dc30) << 24;
+            gINT_1001dc30 = (int)self->prim.alpha_val;
+            gCOLOUR_100156e8 = gINT_1001dc30 << 24;
             QUEUE_RENDER_STATE(0x13, 5);
             QUEUE_RENDER_STATE(0x14, 6);
             QUEUE_RENDER_STATE(0x1b, 1);
             QUEUE_RENDER_STATE(0xe, 0);
-            C2V(gINT_1001bbf0) = 4;
+            gINT_1001bbf0 = 4;
         } else if (self->prim.colour_map != NULL && self->prim.colour_map->buffer.blended) {
-            C2V(gCOLOUR_100156e8) = 0xff000000;
+            gCOLOUR_100156e8 = 0xff000000;
             QUEUE_RENDER_STATE(0x13, 5);
             QUEUE_RENDER_STATE(0x14, 6);
             QUEUE_RENDER_STATE(0x1b, 1);
             QUEUE_RENDER_STATE(0xe, 0);
-            C2V(gINT_1001bbf0) = 2;
+            gINT_1001bbf0 = 2;
         } else {
-            C2V(gCOLOUR_100156e8) = 0xff000000;
+            gCOLOUR_100156e8 = 0xff000000;
             QUEUE_RENDER_STATE(0x1b, 0);
             QUEUE_RENDER_STATE(0xe, 0);
-            C2V(gINT_1001bbf0) = 2;
+            gINT_1001bbf0 = 2;
         }
         return;
     }
 }
-C2_HOOK_FUNCTION(0x10005e30, FUN_10005e30)
 
+// FUNCTION: D3D 0x10006570
 void C2_HOOK_CDECL FUN_10006570(br_primitive_state_d3d* self, local_block_d3d* block) {
 
-    if (C2V(gNo_2d_during_3d_scene) || C2V(gTexture_format_is_NOT_ARGB4444)) {
+    if (gNo_2d_during_3d_scene || gTexture_format_is_NOT_ARGB4444) {
         return;
     }
     if ((self->prim.flags & PRIMF_BLEND) || (self->prim.colour_map != NULL && self->prim.colour_map->buffer.blended)) {
@@ -201,14 +202,14 @@ void C2_HOOK_CDECL FUN_10006570(br_primitive_state_d3d* self, local_block_d3d* b
         block->p.flags &= ~0x8;
     }
 }
-C2_HOOK_FUNCTION(0x10006570, FUN_10006570)
 
+// FUNCTION: D3D 0x10006310
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_renderBegin(br_primitive_state_d3d* self, brp_block_d3d* *rpb, br_boolean* block_changed, br_boolean* ranges_changed, br_boolean no_render, br_token prim_type) {
     int j, b;
     local_block_d3d* pb;
     br_uint_32 flags;
 
-    C2V(gINT_1001bbc4) = 0;
+    gINT_1001bbc4 = 0;
     ResetComputedOffsetsAndScales(self);
     *ranges_changed = 1;
 
@@ -259,7 +260,7 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_renderBegin(br_primitive_state_
         return 0xa005;
     }
 
-    pb = C2V(primInfoD3DTable)[j].blocks;
+    pb = primInfoD3DTable[j].blocks;
 
     for (b = 0; b < primInfoD3DTable[j].nblocks; b++,pb++) {
         if ((flags & pb->flags_mask) == pb->flags_cmp) {
@@ -291,8 +292,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_renderBegin(br_primitive_state_
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006310, _M_br_primitive_state_d3d_renderBegin)
 
+// FUNCTION: D3D 0x100065b0
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_renderEnd(br_primitive_state_d3d* self, brp_block_d3d* pb) {
     local_block_d3d *lb = (local_block_d3d *) pb;
 
@@ -303,14 +304,14 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_renderEnd(br_primitive_state_d3
         lb->end_fn(pb);
     }
     FUN_10007140();
-    if (C2V(gINT_1001bbc4) == 0) {
-        C2V(gINT_1001bbc0) += 1;
+    if (gINT_1001bbc4 == 0) {
+        gINT_1001bbc0 += 1;
     }
-    C2V(gINT_1001bbbc) += 1;
+    gINT_1001bbbc += 1;
     return 0;
 }
-C2_HOOK_FUNCTION(0x100065b0, _M_br_primitive_state_d3d_renderEnd)
 
+// FUNCTION: D3D 0x100065f0
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_rangesQueryF(br_primitive_state_d3d* self, br_float* offset, br_float* scale, br_int_32 max_comp) {
     int i;
 
@@ -325,12 +326,11 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_rangesQueryF(br_primitive_state
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x100065f0, _M_br_primitive_state_d3d_rangesQueryF)
 
+// FUNCTION: D3D 0x10006660
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_rangesQueryX(br_primitive_state_d3d* self, br_fixed_ls* offset, br_fixed_ls* scale, br_int_32 max_comp) {
     abort();
 }
-C2_HOOK_FUNCTION(0x10006660, _M_br_primitive_state_d3d_rangesQueryX)
 
 
 

@@ -5,8 +5,8 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_OPTIONS);
-C2_HOOK_VARIABLE_DECLARE(tFrontend_slider, gOptions_sound_slider);
+extern tFrontend_spec gFrontend_OPTIONS;
+extern tFrontend_slider gOptions_sound_slider;
 
 
 void C2_HOOK_FASTCALL Slider_EffectsProc(tFrontend_slider* pSlider);

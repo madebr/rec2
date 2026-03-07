@@ -8,11 +8,14 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gExplosion_rotate_names, 2, 0x0065fee8, {
+
+// GLOBAL: CARMA2_HW 0x0065fee8
+const char* gExplosion_rotate_names[2] = {
     "norotate",
     "randomrotate",
-});
+};
 
+// FUNCTION: CARMA2_HW 0x004ee780
 void C2_HOOK_FASTCALL ReadExplosion(FILE *pF, tExplosion_animation* pAnimation) {
     int i;
     int j;
@@ -57,7 +60,7 @@ void C2_HOOK_FASTCALL ReadExplosion(FILE *pF, tExplosion_animation* pAnimation) 
         /* min scaling factor, max scaling factor */
         GetPairOfFloats(pF, &group->min_scaling_factor, &group->max_scaling_factor);
         /* rotate mode */
-        group->rotate_modus = GetALineAndInterpretCommand(pF, C2V(gExplosion_rotate_names), REC2_ASIZE(C2V(gExplosion_rotate_names)));
+        group->rotate_modus = GetALineAndInterpretCommand(pF, gExplosion_rotate_names, REC2_ASIZE(gExplosion_rotate_names));
         /* number of frames */
         group->count_frames = GetAnInt(pF);
         group->frames = BrMemAllocate(group->count_frames * sizeof(tExplosion_animation_frame), kMem_explosion_data);
@@ -75,4 +78,3 @@ void C2_HOOK_FASTCALL ReadExplosion(FILE *pF, tExplosion_animation* pAnimation) 
         }
     }
 }
-C2_HOOK_FUNCTION(0x004ee780, ReadExplosion)

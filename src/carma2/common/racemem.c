@@ -4,19 +4,21 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gRace_memory, 1000, 0x006ba640);
 
+// GLOBAL: CARMA2_HW 0x006ba640
+tU8 gRace_memory[1000];
+
+// FUNCTION: CARMA2_HW 0x004e74b0
 void C2_HOOK_FASTCALL ClearAllRuntimeVariables(void) {
-    C2_HOOK_BUG_ON(sizeof(C2V(gRace_memory)) != 1000);
-    c2_memset(C2V(gRace_memory), 0, sizeof(C2V(gRace_memory)));
+    C2_HOOK_BUG_ON(sizeof(gRace_memory) != 1000);
+    c2_memset(gRace_memory, 0, sizeof(gRace_memory));
 }
-C2_HOOK_FUNCTION(0x004e74b0, ClearAllRuntimeVariables)
 
+// FUNCTION: CARMA2_HW 0x004e7440
 int C2_HOOK_FASTCALL GetRuntimeVariable(int pAddress) {
 
-    if (pAddress >= 0 && pAddress < REC2_ASIZE(C2V(gRace_memory))) {
-        return C2V(gRace_memory)[pAddress];
+    if (pAddress >= 0 && pAddress < REC2_ASIZE(gRace_memory)) {
+        return gRace_memory[pAddress];
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004e7440, GetRuntimeVariable)

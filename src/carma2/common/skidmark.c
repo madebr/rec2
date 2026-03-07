@@ -13,25 +13,30 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, gBoring_material_names, 2, 0x0065fe08, {
+
+// GLOBAL: CARMA2_HW 0x0065fe08
+char* gBoring_material_names[2] = {
     "OILSMEAR.MAT",
     "ROBSMEAR.MAT",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, gMaterial_names, 2, 0x0065fe10, {
+};
+
+// GLOBAL: CARMA2_HW 0x0065fe10
+char* gMaterial_names[2] = {
     "OILSMEAR.MAT",
     "GIBSMEAR.MAT",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gMaterial, 2, 0x0074cee8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSkid, gSkids, 100, 0x006a27f0);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_skid, 0x006a27e8);
+};
 
-void (C2_HOOK_FASTCALL * InitSkids_original)(void);
+// GLOBAL: CARMA2_HW 0x0074cee8
+br_material* gMaterial[2];
+
+// GLOBAL: CARMA2_HW 0x006a27f0
+tSkid gSkids[100];
+
+// GLOBAL: CARMA2_HW 0x006a27e8
+int gCurrent_skid;
+
+// FUNCTION: CARMA2_HW 0x004e9c40
 void C2_HOOK_FASTCALL InitSkids(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitSkids_original();
-#else
-
     int skid;
     int mat;
     int sl;
@@ -42,18 +47,18 @@ void C2_HOOK_FASTCALL InitSkids(void) {
 #endif
     char* str;
 
-    for (mat = 0; mat < REC2_ASIZE(C2V(gMaterial_names)); mat++) {
-        if (C2V(gProgram_state).sausage_eater_mode) {
-            str = C2V(gBoring_material_names)[mat];
+    for (mat = 0; mat < REC2_ASIZE(gMaterial_names); mat++) {
+        if (gProgram_state.sausage_eater_mode) {
+            str = gBoring_material_names[mat];
         } else {
-            str = C2V(gMaterial_names)[mat];
+            str = gMaterial_names[mat];
         }
-        C2V(gMaterial)[mat] = BrMaterialFind(str);
-        if (C2V(gMaterial)[mat] == NULL) {
-            if (C2V(gProgram_state).sausage_eater_mode) {
-                str = C2V(gBoring_material_names)[mat];
+        gMaterial[mat] = BrMaterialFind(str);
+        if (gMaterial[mat] == NULL) {
+            if (gProgram_state.sausage_eater_mode) {
+                str = gBoring_material_names[mat];
             } else {
-                str = C2V(gMaterial_names)[mat];
+                str = gMaterial_names[mat];
             }
 
 #if defined(REC2_FIX_BUGS)
@@ -69,21 +74,21 @@ void C2_HOOK_FASTCALL InitSkids(void) {
             }
             BrMapAdd(pm);
             c2_strcpy(str + sl, ".MAT");
-            C2V(gMaterial)[mat] = LoadMaterial(str);
-            if (C2V(gMaterial)[mat] == NULL) {
-                BrFatal("C:\\Carma2\\Source\\Common\\Skidmark.c", 215, "Couldn't find %s", C2V(gMaterial_names)[mat]);
+            gMaterial[mat] = LoadMaterial(str);
+            if (gMaterial[mat] == NULL) {
+                BrFatal("C:\\Carma2\\Source\\Common\\Skidmark.c", 215, "Couldn't find %s", gMaterial_names[mat]);
             }
-            GlorifyMaterial(&C2V(gMaterial)[mat], 1, kRendererShadingType_AmbientOnly);
-            BrMaterialAdd(C2V(gMaterial)[mat]);
+            GlorifyMaterial(&gMaterial[mat], 1, kRendererShadingType_AmbientOnly);
+            BrMaterialAdd(gMaterial[mat]);
         }
     }
 
     C2_HOOK_BUG_ON(sizeof(tSkid) != 28);
 
-    for (skid = 0; skid < REC2_ASIZE(C2V(gSkids)); skid++) {
-        C2V(gSkids)[skid].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        BrActorAdd(C2V(gOther_selfs)[3], C2V(gSkids)[skid].actor);
-        C2V(gSkids)[skid].actor->render_style = BR_RSTYLE_NONE;
+    for (skid = 0; skid < REC2_ASIZE(gSkids); skid++) {
+        gSkids[skid].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        BrActorAdd(gOther_selfs[3], gSkids[skid].actor);
+        gSkids[skid].actor->render_style = BR_RSTYLE_NONE;
         square = BrModelAllocate(NULL, 4, 2);
         BrVector3Set(&square->vertices[0].p, -0.5f, 0.0f, -0.5f);
         BrVector3Set(&square->vertices[1].p, -0.5f, 0.0f, 0.5f);
@@ -103,33 +108,27 @@ void C2_HOOK_FASTCALL InitSkids(void) {
         square->faces[1].smoothing = 1;
         square->flags |= BR_MODF_KEEP_ORIGINAL;
         BrModelAdd(square);
-        C2V(gSkids)[skid].actor->model = square;
+        gSkids[skid].actor->model = square;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e9c40, InitSkids, InitSkids_original)
 
+// FUNCTION: CARMA2_HW 0x004e9ee0
 void C2_HOOK_FASTCALL HideSkid(int pSkid_num) {
 
-    C2V(gSkids)[pSkid_num].actor->render_style = BR_RSTYLE_NONE;
+    gSkids[pSkid_num].actor->render_style = BR_RSTYLE_NONE;
 }
-C2_HOOK_FUNCTION(0x004e9ee0, HideSkid)
 
+// FUNCTION: CARMA2_HW 0x004e9f00
 void C2_HOOK_FASTCALL HideSkids(void) {
     int skid;
 
-    for (skid = 0; skid < REC2_ASIZE(C2V(gSkids)); skid++) {
+    for (skid = 0; skid < REC2_ASIZE(gSkids); skid++) {
         HideSkid(skid);
     }
 }
-C2_HOOK_FUNCTION(0x004e9f00, HideSkids)
 
-void (C2_HOOK_FASTCALL * ReadSlick_original)(FILE* pF,tSlick_spec* pSlick_spec);
+// FUNCTION: CARMA2_HW 0x004ee5e0
 void C2_HOOK_FASTCALL ReadSpillData(FILE* pF, tSlick_spec* pSlick_spec) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    ReadSlick_original(pF, pSlick_spec);
-#else
     float f1, f2, f3;
     char s[256];
 
@@ -159,19 +158,18 @@ void C2_HOOK_FASTCALL ReadSpillData(FILE* pF, tSlick_spec* pSlick_spec) {
         GetAString(pF, s);
         pSlick_spec->material2 = LoadTemporaryMaterial(s);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ee5e0, ReadSpillData, ReadSlick_original)
 
+// FUNCTION: CARMA2_HW 0x004e9be0
 void C2_HOOK_FASTCALL AdjustSkid(int pSkid_num, br_matrix34* pMatrix, br_material* pMaterial) {
 
-    BrMatrix34Copy(&C2V(gSkids)[pSkid_num].actor->t.t.mat, pMatrix);
-    BrVector3Copy(&C2V(gSkids)[pSkid_num].pos, (br_vector3*)pMatrix->m[3]);
-    C2V(gSkids)[pSkid_num].actor->material = pMaterial;
-    C2V(gSkids)[pSkid_num].actor->render_style = BR_RSTYLE_DEFAULT;
+    BrMatrix34Copy(&gSkids[pSkid_num].actor->t.t.mat, pMatrix);
+    BrVector3Copy(&gSkids[pSkid_num].pos, (br_vector3*)pMatrix->m[3]);
+    gSkids[pSkid_num].actor->material = pMaterial;
+    gSkids[pSkid_num].actor->render_style = BR_RSTYLE_DEFAULT;
 }
-C2_HOOK_FUNCTION(0x004e9be0, AdjustSkid)
 
+// FUNCTION: CARMA2_HW 0x004ea2c0
 void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* pTo, br_scalar pTexture_start, br_scalar pTexture_step) {
     br_vector3 temp;
     br_vector3* rows;
@@ -198,8 +196,8 @@ void C2_HOOK_FASTCALL StretchMark(tSkid* pMark, br_vector3* pFrom, br_vector3* p
     model->vertices[2].map.v[0] = model->vertices[3].map.v[0] = (pTexture_start + len) / pTexture_step;
     BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
 }
-C2_HOOK_FUNCTION(0x004ea2c0, StretchMark)
 
+// FUNCTION: CARMA2_HW 0x004ea490
 void C2_HOOK_FASTCALL SkidMark(tCar_spec* pCar_spec, int pWheel_num) {
     br_material* material;
     int skid_mask;
@@ -219,13 +217,13 @@ void C2_HOOK_FASTCALL SkidMark(tCar_spec* pCar_spec, int pWheel_num) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, prev_nor, 0x169c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, field_0x16fc, 0x16fc);
 
-    material = C2V(gCurrent_race).material_modifiers[pCar_spec->material_index[pWheel_num]].skid_mark_material;
+    material = gCurrent_race.material_modifiers[pCar_spec->material_index[pWheel_num]].skid_mark_material;
     if (pCar_spec->oil_remaining[pWheel_num] != 0.f && pCar_spec->oldd[pWheel_num] < pCar_spec->susp_height[pWheel_num / 2]) {
 
         pCar_spec->new_skidding |= 1 << pWheel_num;
         material = pCar_spec->field_0x16fc[pWheel_num];
         if (material == NULL) {
-            material = C2V(gMaterial)[0];
+            material = gMaterial[0];
         }
     }
     if (material == NULL) {
@@ -278,8 +276,8 @@ void C2_HOOK_FASTCALL SkidMark(tCar_spec* pCar_spec, int pWheel_num) {
     BrVector3Copy(&pCar_spec->prev_skid_pos[pWheel_num], &pCar_spec->special_start[pWheel_num]);
     BrVector3Copy(&pCar_spec->prev_nor[pWheel_num], &pCar_spec->nor[pWheel_num]);
 }
-C2_HOOK_FUNCTION(0x004ea490, SkidMark)
 
+// FUNCTION: CARMA2_HW 0x004e9f20
 int C2_HOOK_FASTCALL SkidSection(tS16* pSkid_id, br_vector3* pSkid_start, br_vector3* pSkid_end, br_material* pMaterial, br_vector3* pPos, br_vector3* pNorm, br_vector3* pPrev_pos, br_vector3* pPrev_norm, br_scalar pTexture_start, br_scalar pTexture_step) {
 
     if (BrVector3Dot(pNorm, pPrev_norm) < 0.997f || fabsf(BrVector3Dot(pNorm, pPos) - BrVector3Dot(pPrev_pos, pNorm)) > 0.01f) {
@@ -287,12 +285,12 @@ int C2_HOOK_FASTCALL SkidSection(tS16* pSkid_id, br_vector3* pSkid_start, br_vec
         return 1;
     }
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSkids)) != 100);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSkids) != 100);
 
-    if (*pSkid_id < REC2_ASIZE(C2V(gSkids)) && C2V(gSkids)[*pSkid_id].actor->material == pMaterial) {
-        br_scalar tmp = BrVector3LengthSquared((br_vector3*)C2V(gSkids)[*pSkid_id].actor->t.t.mat.m[2]);
+    if (*pSkid_id < REC2_ASIZE(gSkids) && gSkids[*pSkid_id].actor->material == pMaterial) {
+        br_scalar tmp = BrVector3LengthSquared((br_vector3*)gSkids[*pSkid_id].actor->t.t.mat.m[2]);
         if (tmp < 2 * (pTexture_step * pTexture_step) && pTexture_step * pTexture_step <= 2 * tmp) {
-            if (BrVector3LengthSquared((br_vector3*)C2V(gSkids)[*pSkid_id].actor->t.t.mat.m[0]) <= 0.5f) {
+            if (BrVector3LengthSquared((br_vector3*)gSkids[*pSkid_id].actor->t.t.mat.m[0]) <= 0.5f) {
                 br_vector3 t1, t2, t3;
                 br_vector3 t4, t5;
 
@@ -308,8 +306,8 @@ int C2_HOOK_FASTCALL SkidSection(tS16* pSkid_id, br_vector3* pSkid_start, br_vec
                 t5.v[1] = 0.f;
 
                 if (fabsf(t3.v[1]) <= 0.05f * BrVector3Length(&t1) && BrVector3Dot(&t4, &t5) >= 0.f) {
-                    StretchMark(&C2V(gSkids)[*pSkid_id], pSkid_start, pPos, pTexture_start, pTexture_step);
-                    PipeSingleSkidAdjustment(*pSkid_id, &C2V(gSkids)[*pSkid_id].actor->t.t.mat, pMaterial);
+                    StretchMark(&gSkids[*pSkid_id], pSkid_start, pPos, pTexture_start, pTexture_step);
+                    PipeSingleSkidAdjustment(*pSkid_id, &gSkids[*pSkid_id].actor->t.t.mat, pMaterial);
                     return 0;
                 }
             }
@@ -317,17 +315,17 @@ int C2_HOOK_FASTCALL SkidSection(tS16* pSkid_id, br_vector3* pSkid_start, br_vec
     }
     BrVector3Copy(pSkid_start, pPrev_pos);
     BrVector3Copy(pSkid_end, pPos);
-    C2V(gSkids)[C2V(gCurrent_skid)].actor->render_style = BR_RSTYLE_DEFAULT;
-    C2V(gSkids)[C2V(gCurrent_skid)].actor->material = pMaterial;
-    BrVector3Copy(&C2V(gSkids)[C2V(gCurrent_skid)].normal, pNorm);
-    StretchMark(&C2V(gSkids)[C2V(gCurrent_skid)], pPrev_pos, pPos, pTexture_start, pTexture_step);
-    PipeSingleSkidAdjustment(C2V(gCurrent_skid), &C2V(gSkids)[C2V(gCurrent_skid)].actor->t.t.mat, pMaterial);
-    *pSkid_id = C2V(gCurrent_skid);
-    C2V(gCurrent_skid) = (C2V(gCurrent_skid) + 1) % REC2_ASIZE(C2V(gSkids));
+    gSkids[gCurrent_skid].actor->render_style = BR_RSTYLE_DEFAULT;
+    gSkids[gCurrent_skid].actor->material = pMaterial;
+    BrVector3Copy(&gSkids[gCurrent_skid].normal, pNorm);
+    StretchMark(&gSkids[gCurrent_skid], pPrev_pos, pPos, pTexture_start, pTexture_step);
+    PipeSingleSkidAdjustment(gCurrent_skid, &gSkids[gCurrent_skid].actor->t.t.mat, pMaterial);
+    *pSkid_id = gCurrent_skid;
+    gCurrent_skid = (gCurrent_skid + 1) % REC2_ASIZE(gSkids);
     return 0;
 }
-C2_HOOK_FUNCTION(0x004e9f20, SkidSection)
 
+// FUNCTION: CARMA2_HW 0x004ea700
 void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar) {
 
     pCar->old_skidding = 0;
@@ -336,23 +334,16 @@ void C2_HOOK_FASTCALL InitCarSkidStuff(tCar_spec* pCar) {
     pCar->oil_remaining[2] = 0.f;
     pCar->oil_remaining[3] = 0.f;
 }
-C2_HOOK_FUNCTION(0x004ea700, InitCarSkidStuff)
 
-void (C2_HOOK_FASTCALL * SkidsPerFrame_original)(void);
+// FUNCTION: CARMA2_HW 0x004ea720
 void C2_HOOK_FASTCALL SkidsPerFrame(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    SkidsPerFrame_original();
-#else
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSkids)); i++) {
-        tSkid *skid = &C2V(gSkids)[i];
+    for (i = 0; i < REC2_ASIZE(gSkids); i++) {
+        tSkid *skid = &gSkids[i];
 
         if (skid->actor->render_style != BR_RSTYLE_NONE) {
             BrVector3Copy(&skid->actor->t.t.translate.t, &skid->pos);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ea720, SkidsPerFrame, SkidsPerFrame_original)

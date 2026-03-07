@@ -608,7 +608,7 @@ void PDAllocateScreenAndBack(void) {
 
     dr_dprintf("Setting up DirectSound stuff...");
 
-    SSDXStart(C2V(gHWnd), 0, 1, SSDX_InitDirectSound);
+    SSDXStart(gHWnd, 0, 1, SSDX_InitDirectSound);
 
     gNbPixelBits = 16;
     BrDevBeginVar(&gScreen, gRenderer,

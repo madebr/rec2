@@ -5,13 +5,13 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gMirror_on__structur);
-C2_HOOK_VARIABLE_DECLARE(int, gLoad_last_save_game);
-C2_HOOK_VARIABLE_DECLARE(int, gMoney_pre_race);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gAPO_pre_race, 3);
-C2_HOOK_VARIABLE_DECLARE(tRace_over_reason, gRace_over_reason);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_checkpoint_time);
-C2_HOOK_VARIABLE_DECLARE(int, gLast_wrong_checkpoint);
+extern int gMirror_on__structur;
+extern int gLoad_last_save_game;
+extern int gMoney_pre_race;
+extern int gAPO_pre_race[3];
+extern tRace_over_reason gRace_over_reason;
+extern tU32 gLast_checkpoint_time;
+extern int gLast_wrong_checkpoint;
 
 void C2_HOOK_FASTCALL RecordAPOAndCredits(void);
 

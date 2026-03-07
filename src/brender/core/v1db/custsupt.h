@@ -5,8 +5,8 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_scalar, gScreenZOffset);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const float, gScreenZOffsetPresetChoices, 7);
+extern br_scalar gScreenZOffset;
+extern const float gScreenZOffsetPresetChoices[7];
 
 void C2_HOOK_CDECL BrSetScreenZOffset(br_uint_32 pOffset);
 

@@ -6,11 +6,11 @@
 #include "c2_hooks.h"
 #include "c2_stdio.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gBoring_material_names, 2);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gMaterial_names, 2);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(br_material*, gMaterial, 2);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSkid, gSkids, 100);
-C2_HOOK_VARIABLE_DECLARE(int, gCurrent_skid);
+extern char* gBoring_material_names[2];
+extern char* gMaterial_names[2];
+extern br_material* gMaterial[2];
+extern tSkid gSkids[100];
+extern int gCurrent_skid;
 
 void C2_HOOK_FASTCALL InitSkids(void);
 

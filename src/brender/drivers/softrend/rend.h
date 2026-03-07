@@ -53,7 +53,7 @@
         if ((screen)->v[2] < -(screen)->v[3]) {                                     \
             (outcode) ^= (OUTCODE_YON | OUTCODE_N_YON);                             \
         }                                                                           \
-        if (C2V(scache).user_clip_active) {                                         \
+        if (scache.user_clip_active) {                                         \
             int c;                                                                  \
             for (c = 0; c < MAX_STATE_CLIP_PLANES; c++) {                           \
                 if (renderer->state.clip[c].type == BRT_PLANE &&                    \
@@ -71,14 +71,14 @@
         (tvp)->comp[C_SY] = renderer->state.cache.comp_offsets[C_SY] +                 \
             renderer->state.cache.comp_scales[C_SY] * (sy) * q;                        \
         (tvp)->comp[C_SZ] = renderer->state.cache.comp_offsets[C_SZ] +                 \
-            renderer->state.cache.comp_scales[C_SZ] * (sz) * q + C2V(gScreenZOffset);  \
+            renderer->state.cache.comp_scales[C_SZ] * (sz) * q + gScreenZOffset;  \
     } while (0)
 
 #define UPDATE_BOUNDS(tv) do {                                                                      \
-        if ((tv)->comp[C_SX] > C2V(scache).max.v[0]) { C2V(scache).max.v[0] = (tv)->comp[C_SX]; }   \
-        if ((tv)->comp[C_SX] < C2V(scache).min.v[0]) { C2V(scache).min.v[0] = (tv)->comp[C_SX]; }   \
-        if ((tv)->comp[C_SY] > C2V(scache).max.v[1]) { C2V(scache).max.v[1] = (tv)->comp[C_SY]; }   \
-        if ((tv)->comp[C_SY] < C2V(scache).min.v[1]) { C2V(scache).min.v[1] = (tv)->comp[C_SY]; }   \
+        if ((tv)->comp[C_SX] > scache.max.v[0]) { scache.max.v[0] = (tv)->comp[C_SX]; }   \
+        if ((tv)->comp[C_SX] < scache.min.v[0]) { scache.min.v[0] = (tv)->comp[C_SX]; }   \
+        if ((tv)->comp[C_SY] > scache.max.v[1]) { scache.max.v[1] = (tv)->comp[C_SY]; }   \
+        if ((tv)->comp[C_SY] < scache.min.v[1]) { scache.min.v[1] = (tv)->comp[C_SY]; }   \
     } while (0)
 
 #endif /* SOFTREND_REND_H */

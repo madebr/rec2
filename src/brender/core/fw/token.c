@@ -7,7 +7,8 @@
 
 #include "core/std/brstdlib.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_entry, predefinedTokens, 461, 0x00667f48, {
+// GLOBAL: CARMA2_HW 0x00667f48
+br_token_entry predefinedTokens[461] = {
     { { NULL, NULL }, "ABGR_1_5_5_5",                BRT_NONE,              BRT_ABGR_1_5_5_5,               12  },
     { { NULL, NULL }, "ABGR_4_4_4_4",                BRT_NONE,              BRT_ABGR_4_4_4_4,               12  },
     { { NULL, NULL }, "ABGR_8_8_8_8",                BRT_NONE,              BRT_ABGR_8_8_8_8,               12  },
@@ -469,8 +470,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_entry, predefinedTokens, 461, 0x0
     { { NULL, NULL }, "Z_WRITE_NEVER",               BRT_NONE,              BRT_Z_WRITE_NEVER,              13  },
     { { NULL, NULL }, "Z_WRITE_T",                   BRT_TOKEN,             BRT_Z_WRITE_T,                  7   },
     { { NULL, NULL }, "Z_WRITE_TL",                  BRT_TOKEN_LIST,        BRT_Z_WRITE_TL,                 7   },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(token_type, tokenTypes, 37, 0x0066aa80, {
+};
+
+// GLOBAL: CARMA2_HW 0x0066aa80
+token_type tokenTypes[37] = {
     { "_M34_X", BRT_MATRIX34_FIXED,   6, },
     { "_M23_F", BRT_MATRIX23_FLOAT,   6, },
     { "_M23_X", BRT_MATRIX23_FIXED,   6, },
@@ -508,26 +511,27 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(token_type, tokenTypes, 37, 0x0066aa80, {
     { "_F",     BRT_FLOAT,            2, },
     { "_B",     BRT_BOOLEAN,          2, },
     { NULL,     BRT_NONE,             0, },
-});
+};
 
+// FUNCTION: CARMA2_HW 0x0052f030
 void C2_HOOK_CDECL BrTokenBegin(void) {
     int i;
 
-    BrNewList(&C2V(fw).tokens);
-    for (i = 0; i < BR_ASIZE(C2V(predefinedTokens)); i++) {
-        BrAddHead(&C2V(fw).tokens, &C2V(predefinedTokens)[i].node);
+    BrNewList(&fw.tokens);
+    for (i = 0; i < BR_ASIZE(predefinedTokens); i++) {
+        BrAddHead(&fw.tokens, &predefinedTokens[i].node);
     }
-    C2V(fw).next_free_token = _BRT_LAST_BUILTIN_TOKEN + 1;
+    fw.next_free_token = _BRT_LAST_BUILTIN_TOKEN + 1;
 }
-C2_HOOK_FUNCTION(0x0052f030, BrTokenBegin)
 
+// FUNCTION: CARMA2_HW 0x0052f070
 br_token C2_HOOK_CDECL BrTokenCreate(const char* identifier, br_token type) {
     br_token_entry* te;
     int i;
     int l;
 
     l = BrStrLen(identifier);
-    te = (br_token_entry*)C2V(fw).tokens.head;
+    te = (br_token_entry*)fw.tokens.head;
     while (te->node.next != NULL) {
         if (BrStrCmp(identifier, te->identifier) == 0) {
             return te->token;
@@ -537,43 +541,43 @@ br_token C2_HOOK_CDECL BrTokenCreate(const char* identifier, br_token type) {
 
     if (type == 0) {
         type = BRT_NONE;
-        for (i = 0; i < BR_ASIZE(C2V(tokenTypes)); i++) {
-            if ((C2V(tokenTypes)[i].length < l) && (BrStrNCmp(identifier + l - C2V(tokenTypes)[i].length, C2V(tokenTypes)[i].identifier, C2V(tokenTypes)[i].length) == 0)) {
-                type = C2V(tokenTypes)[i].type;
+        for (i = 0; i < BR_ASIZE(tokenTypes); i++) {
+            if ((tokenTypes[i].length < l) && (BrStrNCmp(identifier + l - tokenTypes[i].length, tokenTypes[i].identifier, tokenTypes[i].length) == 0)) {
+                type = tokenTypes[i].type;
                 break;
             }
         }
     } else {
-        for (i = 0; i < BR_ASIZE(C2V(tokenTypes)); i++) {
-            if (C2V(tokenTypes)[i].type == type) {
+        for (i = 0; i < BR_ASIZE(tokenTypes); i++) {
+            if (tokenTypes[i].type == type) {
                 break;
             }
         }
-        if (i >= BR_ASIZE(C2V(tokenTypes))) {
+        if (i >= BR_ASIZE(tokenTypes)) {
             return 0;
         }
-        if (l <= C2V(tokenTypes)[i].length) {
+        if (l <= tokenTypes[i].length) {
             return 0;
         }
-        if (BrStrNCmp(identifier + (l - C2V(tokenTypes)[i].length), C2V(tokenTypes)[i].identifier, C2V(tokenTypes)[i].length) != 0) {
+        if (BrStrNCmp(identifier + (l - tokenTypes[i].length), tokenTypes[i].identifier, tokenTypes[i].length) != 0) {
             return 0;
         }
     }
-    te = BrResAllocate(C2V(fw).res, sizeof(br_token_entry), BR_MEMORY_TOKEN);
+    te = BrResAllocate(fw.res, sizeof(br_token_entry), BR_MEMORY_TOKEN);
     te->identifier = BrResStrDup(te, identifier);
     te->type = type;
-    te->base_length = l - C2V(tokenTypes)[i].length;
-    te->token = C2V(fw).next_free_token;
-    C2V(fw).next_free_token++;
-    BrAddHead(&C2V(fw).tokens, &te->node);
+    te->base_length = l - tokenTypes[i].length;
+    te->token = fw.next_free_token;
+    fw.next_free_token++;
+    BrAddHead(&fw.tokens, &te->node);
     return te->token;
 }
-C2_HOOK_FUNCTION(0x0052f070, BrTokenCreate)
 
+// FUNCTION: CARMA2_HW 0x0052f1c0
 char* C2_HOOK_CDECL BrTokenIdentifier(br_token t) {
     br_token_entry* te;
 
-    te = (br_token_entry*)C2V(fw).tokens.head;
+    te = (br_token_entry*)fw.tokens.head;
     while (te->node.next != NULL) {
         if (t == te->token) {
             return te->identifier;
@@ -582,12 +586,12 @@ char* C2_HOOK_CDECL BrTokenIdentifier(br_token t) {
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x0052f1c0, BrTokenIdentifier)
 
+// FUNCTION: CARMA2_HW 0x0052f1f0
 br_token C2_HOOK_CDECL BrTokenType(br_token t) {
     br_token_entry* te;
 
-    te = (br_token_entry*)C2V(fw).tokens.head;
+    te = (br_token_entry*)fw.tokens.head;
     while (te->node.next != NULL) {
         if (t == te->token) {
             return te->type;
@@ -596,21 +600,21 @@ br_token C2_HOOK_CDECL BrTokenType(br_token t) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052f1f0, BrTokenType)
 
+// FUNCTION: CARMA2_HW 0x0052f220
 br_int_32 C2_HOOK_CDECL BrTokenCount(const char* pattern) {
     br_token_entry* te;
     int n;
 
     n = 0;
     if (pattern == NULL) {
-        te = (br_token_entry*)C2V(fw).tokens.head;
+        te = (br_token_entry*)fw.tokens.head;
         while (te->node.next != NULL) {
             n++;
             te = (br_token_entry*)te->node.next;
         }
     } else {
-        te = (br_token_entry*)C2V(fw).tokens.head;
+        te = (br_token_entry*)fw.tokens.head;
         while (te->node.next != NULL) {
             if (BrNamePatternMatch(pattern, te->identifier) != 0) {
                 n++;
@@ -620,12 +624,12 @@ br_int_32 C2_HOOK_CDECL BrTokenCount(const char* pattern) {
     }
     return n;
 }
-C2_HOOK_FUNCTION(0x0052f220, BrTokenCount)
 
+// FUNCTION: CARMA2_HW 0x0052f270
 br_token C2_HOOK_CDECL BrTokenFind(const char* pattern) {
     br_token_entry* te;
 
-    te = (br_token_entry*)C2V(fw).tokens.head;
+    te = (br_token_entry*)fw.tokens.head;
     while (te->node.next != NULL) {
         if (BrNamePatternMatch(pattern, te->identifier) != 0) {
             return te->token;
@@ -634,14 +638,14 @@ br_token C2_HOOK_CDECL BrTokenFind(const char* pattern) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052f270, BrTokenFind)
 
+// FUNCTION: CARMA2_HW 0x0052f2b0
 br_int_32 C2_HOOK_CDECL BrTokenFindMany(const char* pattern, br_token* tokens, br_int_32 max_tokens) {
     br_token_entry* te;
     int n;
 
     n = 0;
-    te = (br_token_entry*)C2V(fw).tokens.head;
+    te = (br_token_entry*)fw.tokens.head;
     while (te->node.next != NULL) {
         if (BrNamePatternMatch(pattern, te->identifier) != 0) {
             *tokens = te->token;
@@ -652,15 +656,15 @@ br_int_32 C2_HOOK_CDECL BrTokenFindMany(const char* pattern, br_token* tokens, b
     }
     return n;
 }
-C2_HOOK_FUNCTION(0x0052f2b0, BrTokenFindMany)
 
+// FUNCTION: CARMA2_HW 0x0052f300
 br_token C2_HOOK_CDECL BrTokenFindType(br_token* ptype, const char* base, br_token* types, br_int_32 ntypes) {
     br_token_entry* te;
     int l;
     int t;
 
     l = BrStrLen(base);
-    te = (br_token_entry*)C2V(fw).tokens.head;
+    te = (br_token_entry*)fw.tokens.head;
     while (te->node.next != NULL) {
         if ((l == te->base_length) && BrStrNICmp(te->identifier, base, te->base_length) == 0) {
             for (t = 0; t < ntypes; t++) {
@@ -676,4 +680,3 @@ br_token C2_HOOK_CDECL BrTokenFindType(br_token* ptype, const char* base, br_tok
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052f300, BrTokenFindType)

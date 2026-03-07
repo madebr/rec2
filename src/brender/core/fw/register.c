@@ -7,7 +7,7 @@
 #include "pattern.h"
 #include "resource.h"
 
-void* (C2_HOOK_STDCALL * BrRegistryNew_original)(br_registry* reg);
+// FUNCTION: CARMA2_HW 0x00529af0
 void* C2_HOOK_STDCALL BrRegistryNew(br_registry* reg) {
 #if HOOK_REGISTER
     return BrRegistryNew_original(reg);
@@ -17,9 +17,8 @@ void* C2_HOOK_STDCALL BrRegistryNew(br_registry* reg) {
     return reg;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529af0, BrRegistryNew, BrRegistryNew_original)
 
-void* (C2_HOOK_STDCALL * BrRegistryClear_original)(br_registry* reg);
+// FUNCTION: CARMA2_HW 0x00529b10
 void* C2_HOOK_STDCALL BrRegistryClear(br_registry* reg) {
 #if HOOK_REGISTER
     return BrRegistryClear_original(reg);
@@ -36,25 +35,23 @@ void* C2_HOOK_STDCALL BrRegistryClear(br_registry* reg) {
     return reg;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529b10, BrRegistryClear, BrRegistryClear_original)
 
-void* (C2_HOOK_STDCALL * BrRegistryAdd_original)(br_registry* reg, void* item);
+// FUNCTION: CARMA2_HW 0x00529b50
 void* C2_HOOK_STDCALL BrRegistryAdd(br_registry* reg, void* item) {
 #if HOOK_REGISTER
     return BrRegistryAdd_original(reg, item);
 #else
     br_registry_entry* e;
 
-    e = (br_registry_entry*)BrResAllocate(C2V(fw).res, sizeof(br_registry_entry), BR_MEMORY_REGISTRY);
+    e = (br_registry_entry*)BrResAllocate(fw.res, sizeof(br_registry_entry), BR_MEMORY_REGISTRY);
     e->item = (char**)item;
     BrAddHead(&reg->list, (br_node*)e);
     reg->count++;
     return item;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529b50, BrRegistryAdd, BrRegistryAdd_original)
 
-int (C2_HOOK_STDCALL * BrRegistryAddMany_original)(br_registry* reg, void** items, int n);
+// FUNCTION: CARMA2_HW 0x00529b90
 int C2_HOOK_STDCALL BrRegistryAddMany(br_registry* reg, void** items, int n) {
 #if HOOK_REGISTER
     return BrRegistryAddMany_original(reg, items, n);
@@ -67,9 +64,8 @@ int C2_HOOK_STDCALL BrRegistryAddMany(br_registry* reg, void** items, int n) {
     return n;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529b90, BrRegistryAddMany, BrRegistryAddMany_original)
 
-void* (C2_HOOK_STDCALL * BrRegistryRemove_original)(br_registry* reg, void* item);
+// FUNCTION: CARMA2_HW 0x00529be0
 void* C2_HOOK_STDCALL BrRegistryRemove(br_registry* reg, void* item) {
 #if HOOK_REGISTER
     return BrRegistryRemove_original(reg, item);
@@ -91,9 +87,8 @@ void* C2_HOOK_STDCALL BrRegistryRemove(br_registry* reg, void* item) {
     return r;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529be0, BrRegistryRemove, BrRegistryRemove_original)
 
-int (C2_HOOK_STDCALL * BrRegistryRemoveMany_original)(br_registry* reg, void** items, int n);
+// FUNCTION: CARMA2_HW 0x00529c40
 int C2_HOOK_STDCALL BrRegistryRemoveMany(br_registry* reg, void** items, int n) {
 #if HOOK_REGISTER
     return BrRegistryRemoveMany_original(reg, items, n);
@@ -111,9 +106,8 @@ int C2_HOOK_STDCALL BrRegistryRemoveMany(br_registry* reg, void** items, int n) 
     return r;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529c40, BrRegistryRemoveMany, BrRegistryRemoveMany_original)
 
-void* (C2_HOOK_STDCALL * BrRegistryFind_original)(br_registry* reg, const char* pattern);
+// FUNCTION: CARMA2_HW 0x00529cc0
 void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, const char* pattern) {
 #if HOOK_REGISTER
     return BrRegistryFind_original(reg, pattern);
@@ -134,9 +128,8 @@ void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, const char* pattern) {
     return NULL;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529cc0, BrRegistryFind, BrRegistryFind_original)
 
-int (C2_HOOK_STDCALL * BrRegistryFindMany_original)(br_registry* reg, const char* pattern, void** items, int max);
+// FUNCTION: CARMA2_HW 0x00529d20
 int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, const char* pattern, void** items, int max) {
 #if HOOK_REGISTER
     return BrRegistryFindMany_original(reg, pattern, items, max);
@@ -156,9 +149,8 @@ int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, const char* pattern, vo
     return n;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529d20, BrRegistryFindMany, BrRegistryFindMany_original)
 
-int (C2_HOOK_STDCALL * BrRegistryCount_original)(br_registry* reg, const char* pattern);
+// FUNCTION: CARMA2_HW 0x00529d70
 int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, const char* pattern) {
 #if HOOK_REGISTER
     return BrRegistryCount_original(reg, pattern);
@@ -180,9 +172,8 @@ int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, const char* pattern) {
     return n;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529d70, BrRegistryCount, BrRegistryCount_original)
 
-int (C2_HOOK_STDCALL * BrRegistryEnum_original)(br_registry* reg, const char* pattern, br_enum_cbfn* callback, void* arg);
+// FUNCTION: CARMA2_HW 0x00529dc0
 int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, const char* pattern, br_enum_cbfn* callback, void* arg) {
 #if HOOK_REGISTER
     return BrRegistryEnum_original(reg, pattern, callback, arg);
@@ -216,9 +207,8 @@ int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, const char* pattern, br_enu
     return 0;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529dc0, BrRegistryEnum, BrRegistryEnum_original)
 
-void* (C2_HOOK_STDCALL * BrRegistryNewStatic_original)(br_registry* reg, br_registry_entry* base, int limit);
+// FUNCTION: CARMA2_HW 0x00529e50
 void* C2_HOOK_STDCALL BrRegistryNewStatic(br_registry* reg, br_registry_entry* base, int limit) {
 #if HOOK_REGISTER
     return BrRegistryNewStatic_original(reg, base, limit);
@@ -226,9 +216,8 @@ void* C2_HOOK_STDCALL BrRegistryNewStatic(br_registry* reg, br_registry_entry* b
     return NULL;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529e50, BrRegistryNewStatic, BrRegistryNewStatic_original)
 
-void* (C2_HOOK_STDCALL * BrRegistryAddStatic_original)(br_registry* reg, br_registry_entry* base, void* item);
+// FUNCTION: CARMA2_HW 0x00529e60
 void* C2_HOOK_STDCALL BrRegistryAddStatic(br_registry* reg, br_registry_entry* base, void* item) {
 #if HOOK_REGISTER
     return BrRegistryAddStatic_original(reg, base, item);
@@ -236,9 +225,8 @@ void* C2_HOOK_STDCALL BrRegistryAddStatic(br_registry* reg, br_registry_entry* b
     return NULL;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529e60, BrRegistryAddStatic, BrRegistryAddStatic_original)
 
-void* (C2_HOOK_STDCALL * BrRegistryRemoveStatic_original)(br_registry* reg, void* item);
+// FUNCTION: CARMA2_HW 0x00529e70
 void* C2_HOOK_STDCALL BrRegistryRemoveStatic(br_registry* reg, void* item) {
 #if HOOK_REGISTER
     return BrRegistryRemoveStatic_original(reg, item);
@@ -246,4 +234,3 @@ void* C2_HOOK_STDCALL BrRegistryRemoveStatic(br_registry* reg, void* item) {
     return NULL;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529e70, BrRegistryRemoveStatic, BrRegistryRemoveStatic_original)

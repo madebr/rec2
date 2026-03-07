@@ -15,20 +15,28 @@
 #include <string.h>
 
 
-C2_HOOK_VARIABLE_IMPLEMENT(HINSTANCE, gHInstance, 0x006acea4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNShowCmd, 0x006ace9c);
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(const char*, gCarma2WndClassName, 0x006621d0, "Carma2MainWndClass");;
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(const char*, gRegionDescriminator, 0x00662270, "AUDIQUATTRO");
+// GLOBAL: CARMA2_HW 0x006acea4
+HINSTANCE gHInstance;
 
-int (APIENTRY * WinMain_original)(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd);
+// GLOBAL: CARMA2_HW 0x006ace9c
+int gNShowCmd;
+
+
+// GLOBAL: CARMA2_HW 0x006621d0
+const char* gCarma2WndClassName = "Carma2MainWndClass";;
+
+// GLOBAL: CARMA2_HW 0x00662270
+const char* gRegionDescriminator = "AUDIQUATTRO";
+
+// FUNCTION: CARMA2_HW 0x0051aaa0
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return WinMain_original(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 #else
     char* currentArgument;
 
-    C2V(gAFE) = 0;
+    gAFE = 0;
     SetDefaultPedFolderNames();
     if (strlen(lpCmdLine) > 0) {
         _strupr(lpCmdLine);
@@ -38,11 +46,11 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
                 break;
             }
             if (strcmp(currentArgument, "-NOCUTSCENE") == 0 || strcmp(currentArgument, "-NOCUTSCENES") == 0) {
-                C2V(gNoCutscenes) = 1;
+                gNoCutscenes = 1;
             } else if (strcmp(currentArgument, "-D3D") == 0) {
-                C2V(gRenderer) = "D3D";
+                gRenderer = "D3D";
             } else if (strcmp(currentArgument, "-D3D_REC2") == 0) {
-                C2V(gRenderer) = "D3D_REC2";
+                gRenderer = "D3D_REC2";
             } else if (strcmp(currentArgument, "-ZOMBIE") == 0) {
                 ConfigureZombiePedTexturePath();
             } else if (strcmp(currentArgument, "-BLOOD") == 0) {
@@ -50,16 +58,16 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
             } else if (strcmp(currentArgument, "-ALIEN") == 0) {
                 ConfigurePedAlienPaths();
             } else if (strcmp(currentArgument, "-AFE") == 0) {
-                C2V(gAFE) = 1;
+                gAFE = 1;
             } else if (strcmp(currentArgument, "-SCALEMOUSE") == 0) {
-                C2V(gScaleMouse) = 1;
+                gScaleMouse = 1;
             } else {
                 dr_dprintf("Unknown argument: \"%s\"", currentArgument);
             }
             currentArgument = strtok(NULL, " \t\n");
         }
     }
-    if (FindWindowA(C2V(gCarma2WndClassName), NULL) != NULL) {
+    if (FindWindowA(gCarma2WndClassName, NULL) != NULL) {
         ExitProcess(703);
     }
     WNDCLASSA wndCls;
@@ -67,32 +75,32 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     wndCls.lpfnWndProc = Carma2MainWndProc;
     wndCls.cbClsExtra = 0;
     wndCls.cbWndExtra = 0;
-    wndCls.hInstance = hInstance; // C2V(gHInstance);
+    wndCls.hInstance = hInstance; // gHInstance;
     wndCls.hIcon = LoadIconA(NULL, IDI_APPLICATION);
     wndCls.hCursor = LoadCursorA(NULL, IDC_ARROW);
     wndCls.hbrBackground = GetStockObject(BLACK_BRUSH);
     wndCls.lpszMenuName = NULL;
-    wndCls.lpszClassName = C2V(gCarma2WndClassName);
+    wndCls.lpszClassName = gCarma2WndClassName;
     RegisterClassA(&wndCls);
-    C2V(gHWnd) = CreateWindowExA(0, C2V(gCarma2WndClassName), "Carmageddon II", WS_POPUP | WS_VISIBLE,
-                                 0, 0, 4, 4, NULL, NULL, C2V(gHInstance), NULL);
-    UpdateWindow(C2V(gHWnd));
-    SetFocus(C2V(gHWnd));
+    gHWnd = CreateWindowExA(0, gCarma2WndClassName, "Carmageddon II", WS_POPUP | WS_VISIBLE,
+                                 0, 0, 4, 4, NULL, NULL, gHInstance, NULL);
+    UpdateWindow(gHWnd);
+    SetFocus(gHWnd);
     LANGID langId = GetSystemDefaultLangID();
-    if (strcmp(C2V(gRegionDescriminator), "AUDIQUATTRO") == 0 && PRIMARYLANGID(langId) == LANG_JAPANESE) {
+    if (strcmp(gRegionDescriminator, "AUDIQUATTRO") == 0 && PRIMARYLANGID(langId) == LANG_JAPANESE) {
         MessageBoxA(NULL, "Sorry, this is the Western European version of Carmageddon II - Carpocalypse Now.\n\nThis version can not run on this machine.\n",
                     "Carmageddon II - Carpocalypse Now", MB_ICONERROR);
         ExitProcess(704);
     }
-    C2V(gScreenWidth) = GetSystemMetrics(SM_CXSCREEN);
-    C2V(gScreenHeight) = GetSystemMetrics(SM_CYSCREEN);
-    C2V(gHInstance) = hInstance;
-    C2V(gNShowCmd) = nShowCmd;
-    C2V(gPathNetworkIni)[0] = '\0';
-    DWORD lenCwd = GetCurrentDirectoryA(REC2_ASIZE(C2V(gPathNetworkIni)), C2V(gPathNetworkIni));
+    gScreenWidth = GetSystemMetrics(SM_CXSCREEN);
+    gScreenHeight = GetSystemMetrics(SM_CYSCREEN);
+    gHInstance = hInstance;
+    gNShowCmd = nShowCmd;
+    gPathNetworkIni[0] = '\0';
+    DWORD lenCwd = GetCurrentDirectoryA(REC2_ASIZE(gPathNetworkIni), gPathNetworkIni);
     if (lenCwd != 0) {
-        strcat(C2V(gPathNetworkIni), "\\");
-        strcat(C2V(gPathNetworkIni), "NETWORK.INI");
+        strcat(gPathNetworkIni, "\\");
+        strcat(gPathNetworkIni, "NETWORK.INI");
     }
 
     const char* args[] = { "Carmageddon" };
@@ -100,4 +108,4 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     GameMain(1, args);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051aaa0, WinMain, WinMain_original);
+;

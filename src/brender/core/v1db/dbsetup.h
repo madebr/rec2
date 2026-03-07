@@ -5,7 +5,7 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_v1db_state, v1db);
+extern br_v1db_state v1db;
 
 br_error C2_HOOK_CDECL BrV1dbBegin(void);
 

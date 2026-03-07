@@ -5,31 +5,31 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tJoy_array, gJoy_array);
-C2_HOOK_VARIABLE_DECLARE(tKey_array, gKey_array);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gGo_ahead_keys, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gKey_mapping, 77);
-C2_HOOK_VARIABLE_DECLARE(int, GEdge_trigger_mode);
-C2_HOOK_VARIABLE_DECLARE(tMouse_coord, gCurrent_mouse_position);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_roll);
-C2_HOOK_VARIABLE_DECLARE(int, gCurrent_cursor);
-C2_HOOK_VARIABLE_DECLARE(tRolling_letter*, gRolling_letters);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gLetter_x_coords, 15);
-C2_HOOK_VARIABLE_DECLARE(int, gVisible_length);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gLetter_y_coords, 15);
-C2_HOOK_VARIABLE_DECLARE(int, gThe_length);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_poll_keys);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006621e4);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006621e8);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006621ec);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006621f0);
-C2_HOOK_VARIABLE_DECLARE(int, gJoy1_x);
-C2_HOOK_VARIABLE_DECLARE(int, gJoy1_y);
-C2_HOOK_VARIABLE_DECLARE(int, gJoy2_x);
-C2_HOOK_VARIABLE_DECLARE(int, gJoy2_y);
-C2_HOOK_VARIABLE_DECLARE(int, gLast_key_down);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_key_down_time);
-C2_HOOK_VARIABLE_DECLARE(int, gModifiers_down);
+extern tJoy_array gJoy_array;
+extern tKey_array gKey_array;
+extern int gGo_ahead_keys[3];
+extern int gKey_mapping[77];
+extern int GEdge_trigger_mode;
+extern tMouse_coord gCurrent_mouse_position;
+extern tU32 gLast_roll;
+extern int gCurrent_cursor;
+extern tRolling_letter* gRolling_letters;
+extern int gLetter_x_coords[15];
+extern int gVisible_length;
+extern int gLetter_y_coords[15];
+extern int gThe_length;
+extern tU32 gLast_poll_keys;
+extern int gINT_006621e4;
+extern int gINT_006621e8;
+extern int gINT_006621ec;
+extern int gINT_006621f0;
+extern int gJoy1_x;
+extern int gJoy1_y;
+extern int gJoy2_x;
+extern int gJoy2_y;
+extern int gLast_key_down;
+extern tU32 gLast_key_down_time;
+extern int gModifiers_down;
 
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void);
 

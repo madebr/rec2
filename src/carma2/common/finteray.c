@@ -11,34 +11,55 @@
 
 #include <math.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPling_materials, 0x005964c0, 1);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTemp_group, 0x006861c8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNearest_face, 0x00686188);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gNearest_model, 0x0068618c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gNearest_actor, 0x006861cc);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gNearest_T, 0x00686190);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNearest_face_group, 0x00686194);
-C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__finteray, 0x00686198);
-C2_HOOK_VARIABLE_IMPLEMENT(tFace_ref*, gPling_face, 0x0079d858);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gActorBoxPick_StopGroovidelics, 0x005964c4, 1);
 
+// GLOBAL: CARMA2_HW 0x005964c0
+int gPling_materials = 1;
+
+// GLOBAL: CARMA2_HW 0x006861c8
+int gTemp_group;
+
+// GLOBAL: CARMA2_HW 0x00686188
+int gNearest_face;
+
+// GLOBAL: CARMA2_HW 0x0068618c
+br_model* gNearest_model;
+
+// GLOBAL: CARMA2_HW 0x006861cc
+br_actor* gNearest_actor;
+
+// GLOBAL: CARMA2_HW 0x00686190
+br_scalar gNearest_T;
+
+// GLOBAL: CARMA2_HW 0x00686194
+int gNearest_face_group;
+
+// GLOBAL: CARMA2_HW 0x00686198
+br_matrix34 gPick_model_to_view__finteray;
+
+// GLOBAL: CARMA2_HW 0x0079d858
+tFace_ref* gPling_face;
+
+// GLOBAL: CARMA2_HW 0x005964c4
+int gActorBoxPick_StopGroovidelics = 1;
+
+// FUNCTION: CARMA2_HW 0x0045d5c0
 void C2_HOOK_FASTCALL EnablePlingMaterials(void) {
 
-    C2V(gPling_materials) = 1;
+    gPling_materials = 1;
 }
-C2_HOOK_FUNCTION(0x0045d5c0, EnablePlingMaterials)
 
+// FUNCTION: CARMA2_HW 0x0045d5d0
 void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
-    C2V(gPling_materials) = 0;
+    gPling_materials = 0;
 }
-C2_HOOK_FUNCTION(0x0045d5d0, DisablePlingMaterials)
 
 int C2_HOOK_FASTCALL BadDiv__finteray(br_scalar a, br_scalar b) {
 
     return fabsf(b) < 1.0f && fabsf(b) * BR_SCALAR_MAX < fabsf(a);
 }
 
+// FUNCTION: CARMA2_HW 0x0045f0d0
 void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt) {
     int i;
     br_scalar t[4];
@@ -67,7 +88,7 @@ void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, b
         rt[i] = 100.f;
     }
     if (this_material == NULL || (((this_material->flags & (BR_MATF_ALWAYS_VISIBLE | BR_MATF_TWO_SIDED)) != 0 || d <= 0.f)
-        && (this_material == NULL || this_material->identifier == NULL || (this_material->identifier[0] != '!' && this_material->identifier[0] != '>' && this_material->identifier[0] != '?') || !C2V(gPling_materials))
+        && (this_material == NULL || this_material->identifier == NULL || (this_material->identifier[0] != '!' && this_material->identifier[0] != '>' && this_material->identifier[0] != '?') || !gPling_materials)
         && fabsf(d) >= 2.384186e-7f)) {
         for (i = 0; i < pNum_rays; i++) {
 
@@ -141,8 +162,8 @@ void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, b
         }
     }
 }
-C2_HOOK_FUNCTION(0x0045f0d0, MultiRayCheckSingleFace)
 
+// FUNCTION: CARMA2_HW 0x0045f5b0
 void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m) {
     br_vector3 a;
     br_vector3 c[3];
@@ -165,8 +186,8 @@ void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix3
                        + b2->max.v[j];
     }
 }
-C2_HOOK_FUNCTION(0x0045f5b0, GetNewBoundingBox)
 
+// FUNCTION: CARMA2_HW 0x0045cd90
 int C2_HOOK_FASTCALL PickBoundsTestRay__finteray(br_bounds* b, br_vector3* rp, br_vector3* rd, br_scalar t_near, br_scalar t_far, br_scalar* new_t_near, br_scalar* new_t_far) {
     int i;
     float s;
@@ -214,7 +235,6 @@ int C2_HOOK_FASTCALL PickBoundsTestRay__finteray(br_bounds* b, br_vector3* rp, b
     *new_t_far = t_far;
     return 1;
 }
-C2_HOOK_FUNCTION(0x0045cd90, PickBoundsTestRay__finteray)
 
 void C2_HOOK_FASTCALL DRVector2AccumulateScale__finteray(br_vector2* a, const br_vector2* b, br_scalar s) {
 
@@ -222,6 +242,7 @@ void C2_HOOK_FASTCALL DRVector2AccumulateScale__finteray(br_vector2* a, const br
     a->v[1] = b->v[1] * s + a->v[1];
 }
 
+// FUNCTION: CARMA2_HW 0x0045cf60
 int C2_HOOK_FASTCALL DRModelPick2D__finteray(br_model* model, br_material* material, br_actor* actor, br_vector3* ray_pos, br_vector3* ray_dir, br_scalar t_near, br_scalar t_far, dr_modelpick2d_cbfn* callback, void* arg) {
     DR_FACE* fp;
     int f;
@@ -267,7 +288,7 @@ int C2_HOOK_FASTCALL DRModelPick2D__finteray(br_model* model, br_material* mater
             if (fabsf(d) < 2.3841858e-7f) {
                 continue;
             }
-            if (this_material != NULL && this_material->identifier != NULL && (this_material->identifier[0] == '!' || this_material->identifier[0] == '>' || this_material->identifier[0] == '?') && C2V(gPling_materials)) {
+            if (this_material != NULL && this_material->identifier != NULL && (this_material->identifier[0] == '!' || this_material->identifier[0] == '>' || this_material->identifier[0] == '?') && gPling_materials) {
                 continue;
             }
             if (this_material != NULL && (this_material->flags & (BR_MATF_ALWAYS_VISIBLE | BR_MATF_TWO_SIDED)) == 0 && d > 0.f) {
@@ -351,7 +372,7 @@ int C2_HOOK_FASTCALL DRModelPick2D__finteray(br_model* model, br_material* mater
                 v = (alpha <= (1.f - s_beta) / 2.f) ? 0 : 2;
             }
 
-            C2V(gTemp_group) = group;
+            gTemp_group = group;
             r = callback(model, actor, this_material, ray_pos, ray_dir, t, f, e, v, &p, &map, arg);
             if (r != 0) {
                 return r;
@@ -360,8 +381,8 @@ int C2_HOOK_FASTCALL DRModelPick2D__finteray(br_model* model, br_material* mater
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0045cf60, DRModelPick2D__finteray)
 
+// FUNCTION: CARMA2_HW 0x0045cb70
 int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vector3* pDir, br_model* model, br_material* material, dr_pick2d_cbfn* callback) {
     br_actor* a;
     br_model* this_model;
@@ -404,7 +425,7 @@ int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vect
         if (this_model != NULL) {
             if (PickBoundsTestRay__finteray(&this_model->bounds, pPosition, pDir, t_near, t_far, &t_near, &t_far)) {
                 t_near = 0.f;
-                t_far = MIN(1.f, C2V(gNearest_T));
+                t_far = MIN(1.f, gNearest_T);
                 r = callback(ap, this_model, this_material, pPosition, pDir, t_near, t_far, arg);
                 if (r) {
                     return r;
@@ -434,57 +455,57 @@ int C2_HOOK_FASTCALL ActorRayPick2D(br_actor* ap, br_vector3* pPosition, br_vect
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0045cb70, ActorRayPick2D)
 
+// FUNCTION: CARMA2_HW 0x0045d570
 int C2_HOOK_CDECL FindHighestPolyCallBack__finteray(br_model* pModel, br_actor* pActor, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pData) {
 
-    if (pT < C2V(gNearest_T)) {
-        C2V(gNearest_T) = pT;
-        C2V(gNearest_model) = pModel;
-        C2V(gNearest_actor) = pActor;
-        C2V(gNearest_face) = pF;
-        C2V(gNearest_face_group) = C2V(gTemp_group);
+    if (pT < gNearest_T) {
+        gNearest_T = pT;
+        gNearest_model = pModel;
+        gNearest_actor = pActor;
+        gNearest_face = pF;
+        gNearest_face_group = gTemp_group;
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0045d570, FindHighestPolyCallBack__finteray)
 
+// FUNCTION: CARMA2_HW 0x0045cf20
 int C2_HOOK_CDECL FindHighestCallBack__finteray(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
 
     DRModelPick2D__finteray(pModel, pMaterial, pActor, pRay_pos, pRay_dir, pT_near, pT_far, FindHighestPolyCallBack__finteray, pArg);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0045cf20, FindHighestCallBack__finteray)
 
 int C2_HOOK_FASTCALL DRSceneRayPick2D(br_actor* pWorld, br_vector3* pPosition, br_vector3* pDir, dr_pick2d_cbfn* pCallback) {
 
-    BrMatrix34Inverse(&C2V(gPick_model_to_view__finteray), &pWorld->t.t.mat);
+    BrMatrix34Inverse(&gPick_model_to_view__finteray, &pWorld->t.t.mat);
     return ActorRayPick2D(pWorld, pPosition, pDir, NULL, NULL, pCallback);
 }
 
+// FUNCTION: CARMA2_HW 0x0045ca60
 void C2_HOOK_FASTCALL ActorFindFace(br_vector3* pPosition, br_vector3* pDir, br_actor* pWorld, br_vector3* nor, br_scalar* t, br_material** material, br_actor** actor) {
     int group;
 
-    C2V(gNearest_T) = 100.0f;
+    gNearest_T = 100.0f;
     DRSceneRayPick2D(pWorld, pPosition, pDir, FindHighestCallBack__finteray);
-    *t = C2V(gNearest_T);
-    if (C2V(gNearest_T) < 100.0f) {
-        group = C2V(gNearest_face_group);
-        BrVector3Copy(nor, &V11MODEL(C2V(gNearest_model))->groups[group].faces[C2V(gNearest_face)].eqn);
-        *material = *V11MODEL(C2V(gNearest_model))->groups[group].face_colours.materials;
+    *t = gNearest_T;
+    if (gNearest_T < 100.0f) {
+        group = gNearest_face_group;
+        BrVector3Copy(nor, &V11MODEL(gNearest_model)->groups[group].faces[gNearest_face].eqn);
+        *material = *V11MODEL(gNearest_model)->groups[group].face_colours.materials;
         if (actor != NULL) {
-            *actor = C2V(gNearest_actor);
+            *actor = gNearest_actor;
         }
     }
 }
-C2_HOOK_FUNCTION(0x0045ca60, ActorFindFace)
 
+// FUNCTION: CARMA2_HW 0x0041e340
 void C2_HOOK_FASTCALL FindFace(br_vector3* pPosition, br_vector3* pDir, br_vector3* nor, br_scalar* t, br_material** material) {
 
-    ActorFindFace(pPosition, pDir, C2V(gTrack_actor), nor, t, material, NULL);
+    ActorFindFace(pPosition, pDir, gTrack_actor, nor, t, material, NULL);
 }
-C2_HOOK_FUNCTION(0x0041e340, FindFace)
 
+// FUNCTION: CARMA2_HW 0x0045ecc0
 void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt, br_vector3* coll_pos) {
     br_scalar t;
     br_scalar numerator;
@@ -513,7 +534,7 @@ void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_
     if (this_material != NULL && (this_material->flags & (BR_MATF_TWO_SIDED | BR_MATF_ALWAYS_VISIBLE)) == 0 && d > 0.f) {
         return;
     }
-    if (this_material != NULL && this_material->identifier != NULL && (this_material->identifier[0] == '!' || this_material->identifier[0] == '>' || this_material->identifier[0] == '?') && C2V(gPling_materials)) {
+    if (this_material != NULL && this_material->identifier != NULL && (this_material->identifier[0] == '!' || this_material->identifier[0] == '>' || this_material->identifier[0] == '?') && gPling_materials) {
         return;
     }
     if (fabsf(d) < 2.384186e-7f) {
@@ -578,9 +599,8 @@ void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_
         BrVector3Negate(normal, normal);
     }
 }
-C2_HOOK_FUNCTION(0x0045ecc0, CheckSingleFace)
 
-void (C2_HOOK_FASTCALL * FillInBounds_original)(tBounds* bnds);
+// FUNCTION: CARMA2_HW 0x0045f690
 void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
     br_vector3 a;
     br_vector3 b;
@@ -608,8 +628,8 @@ void C2_HOOK_FASTCALL FillInBounds(tBounds* bnds) {
             + MAX(c[2].v[i], 0.f);
     }
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0045f690, FillInBounds, FillInBounds_original)
 
+// FUNCTION: CARMA2_HW 0x00425ba0
 int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2) {
     int i;
     if (b1->min.v[0] > b2->max.v[0]
@@ -638,7 +658,6 @@ int C2_HOOK_FASTCALL BoundsOverlapTest__finteray(br_bounds* b1, br_bounds* b2) {
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x00425ba0, BoundsOverlapTest__finteray)
 
 void C2_HOOK_FASTCALL ClipToPlaneGE(br_scalar limit, br_vector3* p, int* nv, int i) {
     int last_vertex;
@@ -706,6 +725,7 @@ void C2_HOOK_FASTCALL ClipToPlaneLE(br_scalar limit, br_vector3* p, int* nv, int
     }
 }
 
+// FUNCTION: CARMA2_HW 0x0045ff90
 int C2_HOOK_FASTCALL ModelPickBox(br_actor* actor, tBounds* bnds, br_model* model, br_material* model_material, tFace_ref* face_list, int max_face, br_matrix34* pMat) {
     int f;
     int i;
@@ -848,7 +868,7 @@ int C2_HOOK_FASTCALL ModelPickBox(br_actor* actor, tBounds* bnds, br_model* mode
                 if (face_list->material != NULL
                         && face_list->material->identifier != NULL
                         && face_list->material->identifier[0] == '!') {
-                    C2V(gPling_face) = face_list;
+                    gPling_face = face_list;
                 }
                 face_list++;
                 max_face--;
@@ -863,7 +883,6 @@ int C2_HOOK_FASTCALL ModelPickBox(br_actor* actor, tBounds* bnds, br_model* mode
     }
     return max_face;
 }
-C2_HOOK_FUNCTION(0x0045ff90, ModelPickBox)
 
 int C2_HOOK_FASTCALL BoundsTransformTest(br_bounds* b1, br_bounds* b2, br_matrix34* M) {
     br_scalar val;
@@ -922,6 +941,7 @@ int C2_HOOK_FASTCALL BoundsTransformTest(br_bounds* b1, br_bounds* b2, br_matrix
     return 1;
 }
 
+// FUNCTION: CARMA2_HW 0x0045f8c0
 int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, br_material* material, tFace_ref* face_list, int max_face, br_matrix34* pMat, tWorld_callbacks* pWorld_callbacks) {
     br_model* this_model;
     br_material* this_material;
@@ -1000,7 +1020,7 @@ int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, 
         if (this_model == NULL) {
             return max_face;
         }
-        if (C2V(gActorBoxPick_StopGroovidelics) && BoundsOverlapTest__finteray(&bnds->real_bounds, &this_model->bounds)) {
+        if (gActorBoxPick_StopGroovidelics && BoundsOverlapTest__finteray(&bnds->real_bounds, &this_model->bounds)) {
             n = ModelPickBox(ap, bnds, this_model, this_material, &face_list[i], max_face, pMat);
             if (pMat != NULL && max_face != n) {
                 if (pWorld_callbacks != NULL && pWorld_callbacks->stop_groovidelic != NULL) {
@@ -1023,8 +1043,8 @@ int C2_HOOK_FASTCALL ActorBoxPick(tBounds* bnds, br_actor* ap, br_model* model, 
     }
     return max_face;
 }
-C2_HOOK_FUNCTION(0x0045f8c0, ActorBoxPick)
 
+// FUNCTION: CARMA2_HW 0x004b57d0
 int C2_HOOK_FASTCALL FindFacesInBox(tBounds* bnds, tFace_ref* face_list, int max_face, tWorld_callbacks* pWorld_callbacks) {
     int j;
     int x;
@@ -1035,7 +1055,7 @@ int C2_HOOK_FASTCALL FindFacesInBox(tBounds* bnds, tFace_ref* face_list, int max
     tU8 cz_max;
     tTrack_spec* track_spec;
 
-    track_spec = &C2V(gProgram_state).track_spec;
+    track_spec = &gProgram_state.track_spec;
     FillInBounds(bnds);
     XZToColumnXZ(&cx_min, &cz_min, bnds->real_bounds.min.v[0], bnds->real_bounds.min.v[2], track_spec);
     XZToColumnXZ(&cx_max, &cz_max, bnds->real_bounds.max.v[0], bnds->real_bounds.max.v[2], track_spec);
@@ -1055,13 +1075,12 @@ int C2_HOOK_FASTCALL FindFacesInBox(tBounds* bnds, tFace_ref* face_list, int max
     for (x = cx_min; x <= cx_max; x++) {
         for (z = cz_min; z <= cz_max; z++) {
             if (track_spec->columns[z][x].actor_0x0 != NULL) {
-                j = max_face - ActorBoxPick(bnds, track_spec->columns[z][x].actor_0x0, NULL, C2V(gBlack_material), &face_list[j], max_face - j, NULL, pWorld_callbacks);
+                j = max_face - ActorBoxPick(bnds, track_spec->columns[z][x].actor_0x0, NULL, gBlack_material, &face_list[j], max_face - j, NULL, pWorld_callbacks);
             }
         }
     }
-    if (C2V(gAdditional_actors) != NULL) {
-        j = max_face - ActorBoxPick(bnds, C2V(gAdditional_actors), NULL, C2V(gBlack_material), &face_list[j], max_face - j, NULL, pWorld_callbacks);
+    if (gAdditional_actors != NULL) {
+        j = max_face - ActorBoxPick(bnds, gAdditional_actors, NULL, gBlack_material, &face_list[j], max_face - j, NULL, pWorld_callbacks);
     }
     return j;
 }
-C2_HOOK_FUNCTION(0x004b57d0, FindFacesInBox)

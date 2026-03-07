@@ -6,9 +6,9 @@
 #include "br_inline_funcs.h"
 #include "br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontFixed3x5);
-C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontProp4x6);
-C2_HOOK_VARIABLE_DECLARE(struct br_font*, BrFontProp7x9);
+extern struct br_font* BrFontFixed3x5;
+extern struct br_font* BrFontProp4x6;
+extern struct br_font* BrFontProp7x9;
 
 void C2_HOOK_CDECL BrV1dbBeginWrapper_Float(void);
 br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string, ...);

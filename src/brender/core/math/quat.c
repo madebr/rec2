@@ -9,6 +9,7 @@
 #define M_DIAG(x) (((br_scalar*)mat->m)[4*(x)])
 #define Q_EL(e) (((br_scalar*)&(q->x))[(e)])
 
+// FUNCTION: CARMA2_HW 0x005355e0
 br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, const br_quat* l, const br_quat* r) {
     br_scalar x1;
     br_scalar x2;
@@ -27,8 +28,8 @@ br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, const br_quat* l, const br_quat* r)
     q->w = x4 + (l->z - l->y) * (r->y - r->z) - x1;
     return q;
 }
-C2_HOOK_FUNCTION(0x005355e0, BrQuatMul)
 
+// FUNCTION: CARMA2_HW 0x00535710
 br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, const br_quat* qq) {
     br_scalar s;
 
@@ -39,8 +40,8 @@ br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, const br_quat* qq) {
     q->w = qq->w * s;
     return q;
 }
-C2_HOOK_FUNCTION(0x00535710, BrQuatNormalise)
 
+// FUNCTION: CARMA2_HW 0x00535790
 br_quat* C2_HOOK_CDECL BrQuatInvert(br_quat* q, const br_quat* qq) {
 
     q->x = -qq->x;
@@ -49,8 +50,8 @@ br_quat* C2_HOOK_CDECL BrQuatInvert(br_quat* q, const br_quat* qq) {
     q->w = qq->w;
     return q;
 }
-C2_HOOK_FUNCTION(0x00535790, BrQuatInvert)
 
+// FUNCTION: CARMA2_HW 0x005357c0
 br_quat* C2_HOOK_CDECL BrQuatSlerp(br_quat* q, const br_quat* l, const br_quat* r, br_scalar a, br_int_16 spins) {
     int omega;
     int omega_spin;
@@ -91,8 +92,8 @@ br_quat* C2_HOOK_CDECL BrQuatSlerp(br_quat* q, const br_quat* l, const br_quat* 
     q->w = scale_l * l->w + scale_r * t.w;
     return q;
 }
-C2_HOOK_FUNCTION(0x005357c0, BrQuatSlerp)
 
+// FUNCTION: CARMA2_HW 0x005359a0
 br_matrix34* C2_HOOK_CDECL BrQuatToMatrix34(br_matrix34* mat, const br_quat* q) {
     br_scalar xs;
     br_scalar ys;
@@ -135,8 +136,8 @@ br_matrix34* C2_HOOK_CDECL BrQuatToMatrix34(br_matrix34* mat, const br_quat* q) 
 
     return mat;
 }
-C2_HOOK_FUNCTION(0x005359a0, BrQuatToMatrix34)
 
+// FUNCTION: CARMA2_HW 0x00535ae0
 br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, const br_matrix34* mat) {
     br_scalar tr;
     br_scalar s;
@@ -166,8 +167,8 @@ br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, const br_matrix34* mat) {
     q->w = (M(k, j) - M(j, k)) * s;
     return q;
 }
-C2_HOOK_FUNCTION(0x00535ae0, BrMatrix34ToQuat)
 
+// FUNCTION: CARMA2_HW 0x00535c70
 br_matrix4* C2_HOOK_CDECL BrQuatToMatrix4(br_matrix4* mat, const br_quat* q) {
     br_matrix34 tmp;
 
@@ -175,12 +176,11 @@ br_matrix4* C2_HOOK_CDECL BrQuatToMatrix4(br_matrix4* mat, const br_quat* q) {
     BrMatrix4Copy34(mat, &tmp);
     return mat;
 }
-C2_HOOK_FUNCTION(0x00535c70, BrQuatToMatrix4)
 
+// FUNCTION: CARMA2_HW 0x00535ca0
 br_quat* C2_HOOK_CDECL BrMatrix4ToQuat(br_quat* q, const br_matrix4* mat) {
     br_matrix34 tmp;
 
     BrMatrix34Copy4(&tmp, mat);
     return BrMatrix34ToQuat(q, &tmp);
 }
-C2_HOOK_FUNCTION(0x00535ca0, BrMatrix4ToQuat)

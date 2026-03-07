@@ -7,15 +7,21 @@
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gMaterials_to_adapt_count, 0x006a6d38);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gMaterials_to_adapt, 200, 0x006a3340);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gAllow_material_adapt, 0x006a8298);
 
+// GLOBAL: CARMA2_HW 0x006a6d38
+int gMaterials_to_adapt_count;
+
+// GLOBAL: CARMA2_HW 0x006a3340
+br_material* gMaterials_to_adapt[200];
+
+// GLOBAL: CARMA2_HW 0x006a8298
+int gAllow_material_adapt;
+
+// FUNCTION: CARMA2_HW 0x004ea760
 void C2_HOOK_FASTCALL InitFogificateMaterials(void) {
 
-    C2V(gMaterials_to_adapt_count) = 0;
+    gMaterials_to_adapt_count = 0;
 }
-C2_HOOK_FUNCTION(0x004ea760, InitFogificateMaterials)
 
 br_material* C2_HOOK_FASTCALL LoadTemporaryMaterial(const char* pName) {
     br_material* material;
@@ -24,64 +30,64 @@ br_material* C2_HOOK_FASTCALL LoadTemporaryMaterial(const char* pName) {
     if (material == NULL) {
         FatalError(kFatalError_CannotFindSmashMaterial_S, pName);
     }
-    if (C2V(gMaterials_to_adapt_count) < REC2_ASIZE(C2V(gMaterials_to_adapt))) {
-        C2V(gMaterials_to_adapt)[C2V(gMaterials_to_adapt_count)] = material;
-        C2V(gMaterials_to_adapt_count)++;
+    if (gMaterials_to_adapt_count < REC2_ASIZE(gMaterials_to_adapt)) {
+        gMaterials_to_adapt[gMaterials_to_adapt_count] = material;
+        gMaterials_to_adapt_count++;
     }
     return material;
 }
 
+// FUNCTION: CARMA2_HW 0x004ea820
 void C2_HOOK_FASTCALL TemporaryMaterialStore(br_material* pMaterial) {
 
-    if (C2V(gMaterials_to_adapt_count) < REC2_ASIZE(C2V(gMaterials_to_adapt))) {
-        C2V(gMaterials_to_adapt)[C2V(gMaterials_to_adapt_count)] = pMaterial;
-        C2V(gMaterials_to_adapt_count) += 1;
+    if (gMaterials_to_adapt_count < REC2_ASIZE(gMaterials_to_adapt)) {
+        gMaterials_to_adapt[gMaterials_to_adapt_count] = pMaterial;
+        gMaterials_to_adapt_count += 1;
     }
 }
-C2_HOOK_FUNCTION(0x004ea820, TemporaryMaterialStore)
 
+// FUNCTION: CARMA2_HW 0x004ea840
 void C2_HOOK_FASTCALL EnableAutoFogification(void) {
-    C2V(gAllow_material_adapt) = 1;
+    gAllow_material_adapt = 1;
 }
-C2_HOOK_FUNCTION(0x004ea840, EnableAutoFogification)
 
+// FUNCTION: CARMA2_HW 0x004ea850
 void C2_HOOK_FASTCALL DisableAutoFogification(void) {
-    C2V(gAllow_material_adapt) = 0;
+    gAllow_material_adapt = 0;
 }
-C2_HOOK_FUNCTION(0x004ea850, DisableAutoFogification)
 
+// FUNCTION: CARMA2_HW 0x004ea7c0
 void C2_HOOK_FASTCALL AdaptCachedMaterials(tRendererShadingType pShading_type) {
     int i;
 
-    if (!C2V(gAllow_material_adapt)) {
+    if (!gAllow_material_adapt) {
         return;
     }
-    for (i = 0; i < C2V(gMaterials_to_adapt_count); i++) {
+    for (i = 0; i < gMaterials_to_adapt_count; i++) {
         br_material* material;
 
-        material = C2V(gMaterials_to_adapt)[i];
+        material = gMaterials_to_adapt[i];
         if (material == NULL) {
             continue;
         }
         GlorifyMaterial(&material, 1, pShading_type);
         FogAccordingToGPSCDE(material);
     }
-    C2V(gMaterials_to_adapt_count) = 0;
+    gMaterials_to_adapt_count = 0;
 }
-C2_HOOK_FUNCTION(0x004ea7c0, AdaptCachedMaterials)
 
+// FUNCTION: CARMA2_HW 0x004ea770
 void C2_HOOK_FASTCALL FogificateMaterials(tRendererShadingType pShading_type) {
     int i;
     br_material* mat;
 
-    for (i = 0; i < C2V(gMaterials_to_adapt_count); i++) {
+    for (i = 0; i < gMaterials_to_adapt_count; i++) {
 
-        mat = C2V(gMaterials_to_adapt)[i];
+        mat = gMaterials_to_adapt[i];
         if (mat != NULL) {
             GlorifyMaterial(&mat, 1, pShading_type);
             FogAccordingToGPSCDE(mat);
         }
     }
-    C2V(gMaterials_to_adapt_count) = 0;
+    gMaterials_to_adapt_count = 0;
 }
-C2_HOOK_FUNCTION(0x004ea770, FogificateMaterials)

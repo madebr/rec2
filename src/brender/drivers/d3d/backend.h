@@ -10,9 +10,9 @@
 #include <d3d.h>
 
 #define QUEUE_RENDER_STATE(TYPE, VALUE) do {                                            \
-        C2V(gQueued_render_states)[C2V(gCount_queued_render_states)].type = (TYPE);     \
-        C2V(gQueued_render_states)[C2V(gCount_queued_render_states)].value = (VALUE);   \
-        C2V(gCount_queued_render_states) += 1;                                          \
+        gQueued_render_states[gCount_queued_render_states].type = (TYPE);     \
+        gQueued_render_states[gCount_queued_render_states].value = (VALUE);   \
+        gCount_queued_render_states += 1;                                          \
     } while (0)
 
 typedef struct {
@@ -64,38 +64,38 @@ typedef struct {
     int count;
 } tStruct_10015898;
 
-C2_HOOK_VARIABLE_DECLARE(LPDIRECTDRAWSURFACE, gAttached_surface);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tStruct_1001dcc0, gBuffered_textures, 128);
-C2_HOOK_VARIABLE_DECLARE(DDPIXELFORMAT, gAttached_surface_pixel_format);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_queued_render_states);
-C2_HOOK_VARIABLE_DECLARE(DWORD, gRegister_flags);
-C2_HOOK_VARIABLE_DECLARE(int, gTexture_format_is_NOT_ARGB4444);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tDraw_d3d_10037ce0, gQueued_render_states, 100);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tStruct_100381c0, gStruct_100381c0, 16);
-C2_HOOK_VARIABLE_DECLARE(DWORD, gDWORD_1001bbb0);
-C2_HOOK_VARIABLE_DECLARE(DWORD, gDWORD_1001bbb4);
-C2_HOOK_VARIABLE_DECLARE(int, gNo_2d_during_3d_scene);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001bbf0);
-C2_HOOK_VARIABLE_DECLARE(int, fINT_1001bbc4);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(D3DTLVERTEX, gQueued_vertices, 100);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(WORD, gQueued_vertices_indices, 100);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_queued_vertices);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_queued_vertices_indices);
-C2_HOOK_VARIABLE_DECLARE(D3DPRIMITIVETYPE, gPrimitive_type);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001bbc4);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001bba4);
-C2_HOOK_VARIABLE_DECLARE(void*, gDAT_1001dc50);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001bbbc);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001bbc0);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001bbc4);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001bba4);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001dc44);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001dc4c);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001dc54);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001dc30);
-C2_HOOK_VARIABLE_DECLARE(br_colour, gCOLOUR_100156e8);
-C2_HOOK_VARIABLE_DECLARE(int, gLock_count);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_1001bb94);
+extern LPDIRECTDRAWSURFACE gAttached_surface;
+extern tStruct_1001dcc0 gBuffered_textures[128];
+extern DDPIXELFORMAT gAttached_surface_pixel_format;
+extern int gCount_queued_render_states;
+extern DWORD gRegister_flags;
+extern int gTexture_format_is_NOT_ARGB4444;
+extern tDraw_d3d_10037ce0 gQueued_render_states[100];
+extern tStruct_100381c0 gStruct_100381c0[16];
+extern DWORD gDWORD_1001bbb0;
+extern DWORD gDWORD_1001bbb4;
+extern int gNo_2d_during_3d_scene;
+extern int gINT_1001bbf0;
+extern int fINT_1001bbc4;
+extern D3DTLVERTEX gQueued_vertices[100];
+extern WORD gQueued_vertices_indices[100];
+extern int gCount_queued_vertices;
+extern int gCount_queued_vertices_indices;
+extern D3DPRIMITIVETYPE gPrimitive_type;
+extern int gINT_1001bbc4;
+extern int gINT_1001bba4;
+extern void* gDAT_1001dc50;
+extern int gINT_1001bbbc;
+extern int gINT_1001bbc0;
+extern int gINT_1001bbc4;
+extern int gINT_1001bba4;
+extern int gINT_1001dc44;
+extern int gINT_1001dc4c;
+extern int gINT_1001dc54;
+extern int gINT_1001dc30;
+extern br_colour gCOLOUR_100156e8;
+extern int gLock_count;
+extern int gINT_1001bb94;
 
 
 extern BOOL gD3D_windows;

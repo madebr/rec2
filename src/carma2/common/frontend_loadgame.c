@@ -21,14 +21,15 @@
 #include "c2_ctype.h"
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_LOAD_GAME, 0x005ed5a0, {
+// GLOBAL: CARMA2_HW 0x005ed5a0
+tFrontend_spec gFrontend_LOAD_GAME = {
     "LoadGame",
     0,
     19,
     LoadGameInFunc,
     LoadGameOutFunc,
     LoadGameUpdateFunc,
-    &C2V(gFrontend_MAIN),
+    &gFrontend_MAIN,
     0,
     0,
     0,
@@ -52,17 +53,26 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_LOAD_GAME, 0x005ed5a0,
         { 0x100,    temp,               NULL,                       0, 0, 0, 0, 0, 0, 0, 1, 1, },
         { 0xfe,     temp,               NULL,                       0, 0, 0, 0, 0, 0, 0, 1, 1, },
         { 0x401,    temp,               NULL,                       0, 0, 0, 0, 0, 0, 0, 1, 1, },
-        { 0x8,      temp,               &C2V(gFrontend_OPTIONS),    0, 0, 0, 0, 0, 0, 0, 1, 1, },
+        { 0x8,      temp,               &gFrontend_OPTIONS,    0, 0, 0, 0, 0, 0, 0, 1, 1, },
         { 0x401,    LoadGameScrollUp,   NULL,                       0, 0, 0, 0, 0, 0, 0, 1, 1, },
         { 0x401,    LoadGameScrollDown, NULL,                       0, 0, 0, 0, 0, 0, 0, 1, 1, },
     },
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_count_saved_games, 0x00764e9c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_load_game_index_top, 0x007638ac);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gFrontend_mouse_down, 0x00688b04);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gPrev_frontend_mouse_down, 0x00688b08);
+};
+
+// GLOBAL: CARMA2_HW 0x00764e9c
+int gFrontend_count_saved_games;
+
+// GLOBAL: CARMA2_HW 0x007638ac
+int gFrontend_load_game_index_top;
+
+// GLOBAL: CARMA2_HW 0x00688b04
+int gFrontend_mouse_down;
+
+// GLOBAL: CARMA2_HW 0x00688b08
+int gPrev_frontend_mouse_down;
 
 
+// FUNCTION: CARMA2_HW 0x0046f750
 int C2_HOOK_FASTCALL LoadGameInFunc(tFrontend_spec* pFrontend) {
     br_camera* camera;
     int i;
@@ -70,15 +80,15 @@ int C2_HOOK_FASTCALL LoadGameInFunc(tFrontend_spec* pFrontend) {
     DefaultInfunc(pFrontend);
     ResetInterfaceTimeout();
 
-    C2V(gFrontend_count_saved_games) = StartSavedGamesList();
-    C2V(gFrontend_load_game_index_top) = 0;
+    gFrontend_count_saved_games = StartSavedGamesList();
+    gFrontend_load_game_index_top = 0;
 
-    C2V(gFrontend_scroll_time_left) = 0;
-    C2V(gFrontend_scroll_time_increment) = 25;
-    C2V(gFrontend_scroll_last_update) = PDGetTotalTime();
+    gFrontend_scroll_time_left = 0;
+    gFrontend_scroll_time_increment = 25;
+    gFrontend_scroll_last_update = PDGetTotalTime();
 
-    C2V(gFrontend_menu_camera) = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
-    camera = C2V(gFrontend_menu_camera)->type_data;
+    gFrontend_menu_camera = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+    camera = gFrontend_menu_camera->type_data;
     camera->type = BR_CAMERA_PARALLEL;
     camera->field_of_view = BrDegreeToAngle(90);
     camera->hither_z = 1.f;
@@ -86,86 +96,86 @@ int C2_HOOK_FASTCALL LoadGameInFunc(tFrontend_spec* pFrontend) {
     camera->width = 640.f;
     camera->height = 480.f;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gFrontend_billboard_actors)); i++) {
-        C2V(gFrontend_billboard_actors)[i] = CreateAPOactor();
+    for (i = 0; i < REC2_ASIZE(gFrontend_billboard_actors); i++) {
+        gFrontend_billboard_actors[i] = CreateAPOactor();
     }
-    C2V(gFrontend_APO_Colour_1) = FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(
-        C2V(gFrontend_billboard_actors)[0]->material->colour_map,
+    gFrontend_APO_Colour_1 = FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(
+        gFrontend_billboard_actors[0]->material->colour_map,
         0xff, 0x80, 0x00, 0xff);
-    C2V(gFrontend_APO_Colour_2) = FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(
-        C2V(gFrontend_billboard_actors)[0]->material->colour_map,
+    gFrontend_APO_Colour_2 = FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(
+        gFrontend_billboard_actors[0]->material->colour_map,
         0x00, 0x00, 0x80, 0xff);
-    C2V(gFrontend_APO_Colour_3) = FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(
-        C2V(gFrontend_billboard_actors)[0]->material->colour_map,
+    gFrontend_APO_Colour_3 = FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(
+        gFrontend_billboard_actors[0]->material->colour_map,
         0x00, 0x00, 0xff, 0xff);
-    DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingin);
+    DRS3StartSound(gEffects_outlet, eSoundId_Swingin);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0046f750, LoadGameInFunc)
 
+// FUNCTION: CARMA2_HW 0x0046fa60
 int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gFrontend_billboard_actors)); i++) {
-        KillAPOactor(C2V(gFrontend_billboard_actors)[i]);
+    for (i = 0; i < REC2_ASIZE(gFrontend_billboard_actors); i++) {
+        KillAPOactor(gFrontend_billboard_actors[i]);
     }
-    BrActorFree(C2V(gFrontend_menu_camera));
-    C2V(gFrontend_menu_camera) = NULL;
+    BrActorFree(gFrontend_menu_camera);
+    gFrontend_menu_camera = NULL;
     EndSavedGamesList();
-    DRS3StartSound(C2V(gEffects_outlet), eSoundId_Swingout);
+    DRS3StartSound(gEffects_outlet, eSoundId_Swingout);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0046fa60, LoadGameOutFunc)
 
+// FUNCTION: CARMA2_HW 0x00470020
 int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
     int selected_item_index;
     tU32 now;
     int i;
 
     ServiceGame();
-    selected_item_index = C2V(gFrontend_selected_item_index);
+    selected_item_index = gFrontend_selected_item_index;
     now = PDGetTotalTime();
-    C2V(gFrontend_scroll_time_left) -= now - C2V(gFrontend_scroll_last_update);
-    if (C2V(gFrontend_scroll_time_left) < 0) {
-        C2V(gFrontend_scroll_time_left) = 0;
+    gFrontend_scroll_time_left -= now - gFrontend_scroll_last_update;
+    if (gFrontend_scroll_time_left < 0) {
+        gFrontend_scroll_time_left = 0;
     }
-    C2V(gFrontend_mouse_down) = 0;
-    C2V(gFrontend_scroll_time_increment) = 50;
-    C2V(gFrontend_scroll_last_update) = now;
-    if (C2V(gMouse_in_use)) {
+    gFrontend_mouse_down = 0;
+    gFrontend_scroll_time_increment = 50;
+    gFrontend_scroll_last_update = now;
+    if (gMouse_in_use) {
         int mouse_x;
         int mouse_y;
 
-        C2V(gFrontend_selected_item_index) = 0;
+        gFrontend_selected_item_index = 0;
         ResetInterfaceTimeout();
         GetMousePosition(&mouse_x, &mouse_y);
         /* FIXME: rename gNet_join_host_result */
-        C2V(gNet_join_host_result) = GetItemAtMousePos(pFrontend, mouse_x, mouse_y);
-        if (C2V(gNet_join_host_result) != -1) {
-            C2V(gFrontend_selected_item_index) = C2V(gNet_join_host_result);
+        gNet_join_host_result = GetItemAtMousePos(pFrontend, mouse_x, mouse_y);
+        if (gNet_join_host_result != -1) {
+            gFrontend_selected_item_index = gNet_join_host_result;
         }
-        C2V(gPrev_frontend_mouse_down) = C2V(gFrontend_mouse_down);
-        C2V(gFrontend_mouse_down) = EitherMouseButtonDown();
-        if (C2V(gFrontend_mouse_down) && !C2V(gPrev_frontend_mouse_down)) {
-            C2V(gFrontend_scroll_time_increment) = 175;
+        gPrev_frontend_mouse_down = gFrontend_mouse_down;
+        gFrontend_mouse_down = EitherMouseButtonDown();
+        if (gFrontend_mouse_down && !gPrev_frontend_mouse_down) {
+            gFrontend_scroll_time_increment = 175;
         } else {
-            C2V(gFrontend_scroll_time_increment) = 25;
+            gFrontend_scroll_time_increment = 25;
         }
     }
-    if (C2V(gFrontend_load_game_index_top) <= 0) {
+    if (gFrontend_load_game_index_top <= 0) {
         pFrontend->items[17].enabled = kFrontendItemEnabled_disabled;
     } else {
         pFrontend->items[17].enabled = kFrontendItemEnabled_enabled;
     }
-    if (C2V(gFrontend_load_game_index_top) + 8 >= C2V(gFrontend_count_saved_games)) {
+    if (gFrontend_load_game_index_top + 8 >= gFrontend_count_saved_games) {
         pFrontend->items[18].enabled = kFrontendItemEnabled_disabled;
     } else {
         pFrontend->items[18].enabled = kFrontendItemEnabled_enabled;
     }
     for (i = 0; i < 8; i++) {
         size_t j;
-        int font = (i == C2V(gFrontend_selected_item_index) - 1) ? kPolyfont_hand_green_15pt_lit : kPolyfont_hand_green_15pt_unlit;
-        tSave_game* save_game = GetNthSavedGame(C2V(gFrontend_load_game_index_top) + i);
+        int font = (i == gFrontend_selected_item_index - 1) ? kPolyfont_hand_green_15pt_lit : kPolyfont_hand_green_15pt_unlit;
+        tSave_game* save_game = GetNthSavedGame(gFrontend_load_game_index_top + i);
         char* text_ptr;
         char text[128];
         int y_text = 125 + i * 27;
@@ -202,8 +212,18 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         }
         SolidPolyFontText(text, 42, y_text, font, eJust_left, 1);
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+#endif
+
         c2_memset(text, 0, sizeof(text));
         c2_strncpy(text, time_str, 5);
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
         SolidPolyFontText(text, 120, y_text, font, eJust_left, 1);
 
         c2_memset(text, 0, sizeof(text));
@@ -212,11 +232,11 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         SolidPolyFontText(text, 190, y_text, font, 0, 1);
 
         if (save_game->game_completed) {
-            c2_sprintf(text, "! %i", 1 + (C2V(gRace_list)[save_game->current_race_index].group - C2V(gRaceGroups)));
+            c2_sprintf(text, "! %i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
         } else if (save_game->is_boundary_race) {
-            c2_sprintf(text, "%c %i", '\x1f', 1 + (C2V(gRace_list)[save_game->current_race_index].group - C2V(gRaceGroups)));
+            c2_sprintf(text, "%c %i", '\x1f', 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
         } else {
-            c2_sprintf(text, "%i", 1 + (C2V(gRace_list)[save_game->current_race_index].group - C2V(gRaceGroups)));
+            c2_sprintf(text, "%i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
         }
         SolidPolyFontText(text, 325, y_text, font, eJust_right, 1);
 
@@ -230,39 +250,39 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         PrintAPO(500, y_apo, i, 1);
         PrintAPO(550, y_apo, i, 2);
         c2_sprintf(pFrontend->items[15].text, "%i-%i (%i)",
-            C2V(gFrontend_load_game_index_top) + 1,
-            C2V(gFrontend_load_game_index_top) + 8,
-            C2V(gFrontend_count_saved_games));
+            gFrontend_load_game_index_top + 1,
+            gFrontend_load_game_index_top + 8,
+            gFrontend_count_saved_games);
     }
 
-    if (PDKeyDown(51) || PDKeyDown(52) || (C2V(gFrontend_mouse_down) && C2V(gNet_join_host_result) != -1)) {
+    if (PDKeyDown(51) || PDKeyDown(52) || (gFrontend_mouse_down && gNet_join_host_result != -1)) {
         int result;
         tFrontend_spec* next;
         int go_back;
 
         ToggleSelection(pFrontend);
-        switch (pFrontend->items[C2V(gFrontend_selected_item_index)].field_0xc) {
+        switch (pFrontend->items[gFrontend_selected_item_index].field_0xc) {
         case 2:
             return 2;
         case 1:
-            C2V(gFrontend_leave_current_menu) = 1;
+            gFrontend_leave_current_menu = 1;
             break;
         }
-        if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
-            result = pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
+        if (pFrontend->items[gFrontend_selected_item_index].action != NULL) {
+            result = pFrontend->items[gFrontend_selected_item_index].action(pFrontend);
         } else {
             result = pFrontend->items[selected_item_index].field_0xc;
         }
-        next = pFrontend->items[C2V(gFrontend_selected_item_index)].menuInfo;
+        next = pFrontend->items[gFrontend_selected_item_index].menuInfo;
         go_back = next == (tFrontend_spec*)(uintptr_t)0x1;
         if (go_back) {
             next = pFrontend->previous;
         }
-        if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
-            if (next == NULL && pFrontend->items[C2V(gFrontend_selected_item_index)].action != temp) {
-                DRS3StartSound(C2V(gEffects_outlet), eSoundId_Done);
+        if (pFrontend->items[gFrontend_selected_item_index].action != NULL) {
+            if (next == NULL && pFrontend->items[gFrontend_selected_item_index].action != temp) {
+                DRS3StartSound(gEffects_outlet, eSoundId_Done);
             }
-            pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
+            pFrontend->items[gFrontend_selected_item_index].action(pFrontend);
         }
         if (next == NULL) {
             return go_back ? 1 : result;
@@ -273,127 +293,126 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         } else {
             Generic_LinkInEffect();
         }
-        C2V(gCurrent_frontend_spec)->default_item = C2V(gFrontend_selected_item_index);
-        for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
-            C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop = C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem;
+        gCurrent_frontend_spec->default_item = gFrontend_selected_item_index;
+        for (i = 0; i < gCurrent_frontend_spec->count_scrollers; i++) {
+            gCurrent_frontend_spec->scrollers[i].indexOfItemAtTop = gCurrent_frontend_spec->scrollers[i].indexTopItem;
         }
         FRONTEND_DestroyMenu(pFrontend);
-        C2V(gCurrent_frontend_spec) = next;
+        gCurrent_frontend_spec = next;
         FRONTEND_CreateMenu(next);
-        if (C2V(gCurrent_frontend_spec) != pFrontend->previous) {
-            C2V(gCurrent_frontend_spec)->previous = pFrontend;
+        if (gCurrent_frontend_spec != pFrontend->previous) {
+            gCurrent_frontend_spec->previous = pFrontend;
         }
-        Morph_Initialise(pFrontend, C2V(gCurrent_frontend_spec));
-        if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_QUIT)) {
-            C2V(gFrontend_selected_item_index) = 0;
+        Morph_Initialise(pFrontend, gCurrent_frontend_spec);
+        if (gCurrent_frontend_spec == &gFrontend_QUIT) {
+            gFrontend_selected_item_index = 0;
         } else {
-            C2V(gFrontend_selected_item_index) = C2V(gCurrent_frontend_spec)->default_item;
+            gFrontend_selected_item_index = gCurrent_frontend_spec->default_item;
         }
-        for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
-            C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop = C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem;
+        for (i = 0; i < gCurrent_frontend_spec->count_scrollers; i++) {
+            gCurrent_frontend_spec->scrollers[i].indexOfItemAtTop = gCurrent_frontend_spec->scrollers[i].indexTopItem;
         }
-        UpdateScrollPositions(C2V(gCurrent_frontend_spec));
+        UpdateScrollPositions(gCurrent_frontend_spec);
         return result;
     } else {
-        return C2V(gFrontend_leave_current_menu) ? 1 : 0;
+        return gFrontend_leave_current_menu ? 1 : 0;
     }
 }
-C2_HOOK_FUNCTION(0x00470020, LoadGameUpdateFunc)
 
+// FUNCTION: CARMA2_HW 0x0046ffd0
 int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
 
-    if (DoLoadGame(C2V(gFrontend_load_game_index_top) + pN)) {
-        C2V(gAbandon_game) = 1;
-        C2V(gNo_credits_APO_restore) = 1;
-        DRS3StartSound(C2V(gEffects_outlet), eSoundId_Done);
+    if (DoLoadGame(gFrontend_load_game_index_top + pN)) {
+        gAbandon_game = 1;
+        gNo_credits_APO_restore = 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_Done);
         return 1;
     } else {
-        DRS3StartSound(C2V(gEffects_outlet), eSoundId_CantAffordPart);
+        DRS3StartSound(gEffects_outlet, eSoundId_CantAffordPart);
         return 0;
     }
 }
-C2_HOOK_FUNCTION(0x0046ffd0, TryToLoadGame)
 
 static int LoadSlotN(tFrontend_spec* pFrontend, int pN) {
 
-    if (C2V(gFrontend_load_game_index_top) + pN + 1 > C2V(gFrontend_count_saved_games)) {
+    if (gFrontend_load_game_index_top + pN + 1 > gFrontend_count_saved_games) {
         pFrontend->items[pN + 1].menuInfo = NULL;
         return 0;
     }
     TryToLoadGame(pN);
-    if (C2V(gProgram_state).racing) {
+    if (gProgram_state.racing) {
         return 1;
     }
-    C2V(gFrontend_next_menu) = kFrontend_menu_main;
+    gFrontend_next_menu = kFrontend_menu_main;
     return 3;
 }
 
+// FUNCTION: CARMA2_HW 0x0046fbd0
 int C2_HOOK_FASTCALL LoadSlot1(tFrontend_spec* pFrontend) {
 
     return LoadSlotN(pFrontend, 0);
 }
-C2_HOOK_FUNCTION(0x0046fbd0, LoadSlot1)
 
+// FUNCTION: CARMA2_HW 0x0046fc50
 int C2_HOOK_FASTCALL LoadSlot2(tFrontend_spec* pFrontend) {
 
     return LoadSlotN(pFrontend, 1);
 }
-C2_HOOK_FUNCTION(0x0046fc50, LoadSlot2)
 
+// FUNCTION: CARMA2_HW 0x0046fcd0
 int C2_HOOK_FASTCALL LoadSlot3(tFrontend_spec* pFrontend) {
 
     return LoadSlotN(pFrontend, 2);
 }
-C2_HOOK_FUNCTION(0x0046fcd0, LoadSlot3)
 
+// FUNCTION: CARMA2_HW 0x0046fd50
 int C2_HOOK_FASTCALL LoadSlot4(tFrontend_spec* pFrontend) {
 
     return LoadSlotN(pFrontend, 3);
 }
-C2_HOOK_FUNCTION(0x0046fd50, LoadSlot4)
 
+// FUNCTION: CARMA2_HW 0x0046fdd0
 int C2_HOOK_FASTCALL LoadSlot5(tFrontend_spec* pFrontend) {
 
     return LoadSlotN(pFrontend, 4);
 }
-C2_HOOK_FUNCTION(0x0046fdd0, LoadSlot5)
 
+// FUNCTION: CARMA2_HW 0x0046fe50
 int C2_HOOK_FASTCALL LoadSlot6(tFrontend_spec* pFrontend) {
 
     return LoadSlotN(pFrontend, 5);
 }
-C2_HOOK_FUNCTION(0x0046fe50, LoadSlot6)
 
+// FUNCTION: CARMA2_HW 0x0046fed0
 int C2_HOOK_FASTCALL LoadSlot7(tFrontend_spec* pFrontend) {
 
     return LoadSlotN(pFrontend, 6);
 }
-C2_HOOK_FUNCTION(0x0046fed0, LoadSlot7)
 
+// FUNCTION: CARMA2_HW 0x0046ff50
 int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend) {
 
     return LoadSlotN(pFrontend, 7);
 }
-C2_HOOK_FUNCTION(0x0046ff50, LoadSlot8)
 
+// FUNCTION: CARMA2_HW 0x0046fb30
 int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend) {
 
-    if (C2V(gFrontend_load_game_index_top) > 0 && C2V(gFrontend_scroll_time_left) == 0) {
-        C2V(gFrontend_load_game_index_top) -= 1;
-        DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
-        C2V(gFrontend_scroll_time_left) += C2V(gFrontend_scroll_time_increment);
+    if (gFrontend_load_game_index_top > 0 && gFrontend_scroll_time_left == 0) {
+        gFrontend_load_game_index_top -= 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
+        gFrontend_scroll_time_left += gFrontend_scroll_time_increment;
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0046fb30, LoadGameScrollUp)
 
+// FUNCTION: CARMA2_HW 0x0046fb80
 int C2_HOOK_FASTCALL LoadGameScrollDown(tFrontend_spec* pFrontend) {
 
-    if (C2V(gFrontend_load_game_index_top) + 8 < C2V(gFrontend_count_saved_games) && C2V(gFrontend_scroll_time_left) == 0) {
-        C2V(gFrontend_load_game_index_top) += 1;
-        DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
-        C2V(gFrontend_scroll_time_left) += C2V(gFrontend_scroll_time_increment);
+    if (gFrontend_load_game_index_top + 8 < gFrontend_count_saved_games && gFrontend_scroll_time_left == 0) {
+        gFrontend_load_game_index_top += 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
+        gFrontend_scroll_time_left += gFrontend_scroll_time_increment;
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0046fb80, LoadGameScrollDown)

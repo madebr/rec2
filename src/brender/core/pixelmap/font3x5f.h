@@ -5,6 +5,6 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_font, br_font3x5f);
+extern br_font br_font3x5f;
 
 #endif // REC2_FONT3X5F_H

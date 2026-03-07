@@ -5,33 +5,33 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gEntering_message);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gAbuse_text, 10);
-C2_HOOK_VARIABLE_DECLARE(int, gRecovery_voucher_count);
-C2_HOOK_VARIABLE_DECLARE(int, gAuto_repair);
-C2_HOOK_VARIABLE_DECLARE(int, gInstant_handbrake);
-C2_HOOK_VARIABLE_DECLARE(tU32, gToo_poor_for_recovery_timeout);
-C2_HOOK_VARIABLE_DECLARE(int, gCheckpoint_finder_enabled);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_toggled_doors);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e4);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_0068b8e8);
-C2_HOOK_VARIABLE_DECLARE(int, gHad_auto_recover);
-C2_HOOK_VARIABLE_DECLARE(tU32, gPalette_fade_time);
-C2_HOOK_VARIABLE_DECLARE(int, gRecover_timer);
-C2_HOOK_VARIABLE_DECLARE(int, gToo_late);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_0067c470);
-C2_HOOK_VARIABLE_DECLARE(int, gWhich_edit_mode);
-C2_HOOK_VARIABLE_DECLARE_ARRAY_ADV(tEdit_func*, gEdit_funcs, [2][18][8]);
-C2_HOOK_VARIABLE_DECLARE(int, gAllow_car_flying);
-C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gTarget_lock_car_1);
-C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gTarget_lock_car_2);
-C2_HOOK_VARIABLE_DECLARE(int, gInventory_cycling);
-C2_HOOK_VARIABLE_DECLARE(tU32, gInventory_timeout);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gString, 84);
-C2_HOOK_VARIABLE_DECLARE(int, gInvulnerability);
-C2_HOOK_VARIABLE_DECLARE(int, gCancel_recover);
-C2_HOOK_VARIABLE_DECLARE(int, gRepair_last_time);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_repair_time);
+extern int gEntering_message;
+extern char* gAbuse_text[10];
+extern int gRecovery_voucher_count;
+extern int gAuto_repair;
+extern int gInstant_handbrake;
+extern tU32 gToo_poor_for_recovery_timeout;
+extern int gCheckpoint_finder_enabled;
+extern int gCount_toggled_doors;
+extern int gINT_0068b8e4;
+extern int gINT_0068b8e8;
+extern int gHad_auto_recover;
+extern tU32 gPalette_fade_time;
+extern int gRecover_timer;
+extern int gToo_late;
+extern int gINT_0067c470;
+extern int gWhich_edit_mode;
+extern tEdit_func* gEdit_funcs[2][18][8];
+extern int gAllow_car_flying;
+extern tCar_spec* gTarget_lock_car_1;
+extern tCar_spec* gTarget_lock_car_2;
+extern int gInventory_cycling;
+extern tU32 gInventory_timeout;
+extern char gString[84];
+extern int gInvulnerability;
+extern int gCancel_recover;
+extern int gRepair_last_time;
+extern tU32 gLast_repair_time;
 
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 

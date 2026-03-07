@@ -4,13 +4,14 @@
 #include "renderfuncs.h"
 
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10016828, {
+// GLOBAL: D3D 0x10016828
+local_block_d3d primInfo_d3d_l15[] = {
     {
         {
             (void*)LineRender_d3d,
             NULL,
             "Textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_LINE,
             0,
             0,
@@ -35,7 +36,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10
             (void*)LineRender_d3d,
             NULL,
             "Non-textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_LINE,
             0,
             0,
@@ -60,7 +61,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10
             (void*)LineRender_d3d,
             NULL,
             "Textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_LINE,
             0,
             0x3800,
@@ -85,7 +86,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10
             (void*)LineRender_d3d,
             NULL,
             "Non-textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_LINE,
             0,
             0x3800,
@@ -110,7 +111,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10
             (void*)LineRender_d3d,
             NULL,
             "Textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_LINE,
             0,
             0,
@@ -135,7 +136,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10
             (void*)LineRender_d3d,
             NULL,
             "Non-textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_LINE,
             0,
             0,
@@ -160,7 +161,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10
             (void*)LineRender_d3d,
             NULL,
             "Textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_LINE,
             0,
             0x3800,
@@ -185,7 +186,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10
             (void*)LineRender_d3d,
             NULL,
             "Non-textured",
-            &C2V(PrimitiveLibraryD3D),
+            &PrimitiveLibraryD3D,
             BRT_LINE,
             0,
             0x3800,
@@ -205,4 +206,4 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(local_block_d3d, primInfo_d3d_l15, 8, 0x10
         NULL,
         0,
     },
-});
+};

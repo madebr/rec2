@@ -11,23 +11,50 @@
 #include <stddef.h>
 #include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c6c, 0x006b2c6c);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c4c, 0x006b2c4c);
-C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_006b2c68, 0x006b2c68);
-C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_position_now, 0x006b2c20);
-C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_vel_now, 0x006b2c58);
-C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_left_now, 0x006b2c30);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_listener_pos_is_brender, 0x006b2c50);
-C2_HOOK_VARIABLE_IMPLEMENT(br_vector3*, gS3_listener_pos_ptr, 0x006b2c70);
-C2_HOOK_VARIABLE_IMPLEMENT(br_vector3, gS3_listener_position_old, 0x006b2c40);
-C2_HOOK_VARIABLE_IMPLEMENT(br_vector3*, gS3_listener_vel_ptr, 0x006b2c74);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_listener_vel_is_brender, 0x006b2c64);
-C2_HOOK_VARIABLE_IMPLEMENT(br_vector3*, gS3_listener_left_ptr, 0x006b2c78);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_listener_left_is_brender, 0x006b2c54);
+
+// GLOBAL: CARMA2_HW 0x006b2c6c
+float gFLOAT_006b2c6c;
+
+// GLOBAL: CARMA2_HW 0x006b2c4c
+float gFLOAT_006b2c4c;
+
+// GLOBAL: CARMA2_HW 0x006b2c68
+float gFLOAT_006b2c68;
+
+// GLOBAL: CARMA2_HW 0x006b2c20
+br_vector3 gS3_listener_position_now;
+
+// GLOBAL: CARMA2_HW 0x006b2c58
+br_vector3 gS3_listener_vel_now;
+
+// GLOBAL: CARMA2_HW 0x006b2c30
+br_vector3 gS3_listener_left_now;
+
+// GLOBAL: CARMA2_HW 0x006b2c50
+int gS3_listener_pos_is_brender;
+
+// GLOBAL: CARMA2_HW 0x006b2c70
+br_vector3* gS3_listener_pos_ptr;
+
+// GLOBAL: CARMA2_HW 0x006b2c40
+br_vector3 gS3_listener_position_old;
+
+// GLOBAL: CARMA2_HW 0x006b2c74
+br_vector3* gS3_listener_vel_ptr;
+
+// GLOBAL: CARMA2_HW 0x006b2c64
+int gS3_listener_vel_is_brender;
+
+// GLOBAL: CARMA2_HW 0x006b2c78
+br_vector3* gS3_listener_left_ptr;
+
+// GLOBAL: CARMA2_HW 0x006b2c54
+int gS3_listener_left_is_brender;
 
 
+// FUNCTION: CARMA2_HW 0x00567ab8
 void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src) {
-    if (!C2V(gS3_enabled)) {
+    if (!gS3_enabled) {
         return;
     }
     if (src == NULL) {
@@ -41,9 +68,8 @@ void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src) {
     }
     src->ambient = 0;
 }
-C2_HOOK_FUNCTION(0x00567ab8, S3StopSoundSource)
 
-void (C2_HOOK_FASTCALL * S3UpdateSoundSource_original)(tS3_outlet* outlet, tS3_sound_tag tag, tS3_sound_source* src, float pMax_distance_squared, int pPeriod, tS3_repeats pAmbient_repeats, tS3_volume pVolume, int pPitch, tS3_speed pSpeed);
+// FUNCTION: CARMA2_HW 0x00567875
 void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag, tS3_sound_source* src, float pMax_distance_squared, int pPeriod, tS3_repeats pAmbient_repeats, tS3_volume pVolume, int pPitch, tS3_speed pSpeed) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -53,7 +79,7 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
     int is_sample;
 
     is_sample = 0;
-    if (!C2V(gS3_enabled)) {
+    if (!gS3_enabled) {
         return;
     }
     if (src == NULL) {
@@ -139,8 +165,8 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00567875, S3UpdateSoundSource, S3UpdateSoundSource_original)
 
+// FUNCTION: CARMA2_HW 0x00565e39
 int C2_HOOK_STDCALL FUN_00565e39(float a1, float a2, float a3) {
 
     if (a1 == -1.f) {
@@ -152,14 +178,13 @@ int C2_HOOK_STDCALL FUN_00565e39(float a1, float a2, float a3) {
     if (a3 == -1.f) {
         a3 = 130000.f;
     }
-    C2V(gFLOAT_006b2c6c) = a1;
-    C2V(gFLOAT_006b2c4c) = sqrtf(a3 / a2);
-    C2V(gFLOAT_006b2c68) = C2V(gFLOAT_006b2c4c) * C2V(gFLOAT_006b2c6c);
+    gFLOAT_006b2c6c = a1;
+    gFLOAT_006b2c4c = sqrtf(a3 / a2);
+    gFLOAT_006b2c68 = gFLOAT_006b2c4c * gFLOAT_006b2c6c;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00565e39, FUN_00565e39)
 
-int (C2_HOOK_STDCALL * S3Set3DSoundEnvironment_original)(float a1, float a2, float a3);
+// FUNCTION: CARMA2_HW 0x00565d70
 int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -167,54 +192,54 @@ int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
 #else
 
     FUN_00565e39(a1, a2, a3);
-    BrVector3Set(&C2V(gS3_listener_position_now), 0.f, 0.f, 0.f);
-    BrVector3Set(&C2V(gS3_listener_vel_now), 0.f, 0.f, 0.f);
-    BrVector3Set(&C2V(gS3_listener_left_now), 0.f, 0.f, 0.f);
+    BrVector3Set(&gS3_listener_position_now, 0.f, 0.f, 0.f);
+    BrVector3Set(&gS3_listener_vel_now, 0.f, 0.f, 0.f);
+    BrVector3Set(&gS3_listener_left_now, 0.f, 0.f, 0.f);
     return 0;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00565d70, S3Set3DSoundEnvironment, S3Set3DSoundEnvironment_original)
 
+// FUNCTION: CARMA2_HW 0x00565ec7
 void C2_HOOK_FASTCALL S3CopyBrVector3(br_vector3* pDest, br_vector3* pSrc) {
 
     BrVector3Copy(pDest, pSrc);
 }
-C2_HOOK_FUNCTION(0x00565ec7, S3CopyBrVector3)
 
+// FUNCTION: CARMA2_HW 0x0056770a
 void C2_HOOK_FASTCALL S3CopyS3Vector3(tS3_vector3* pDest, tS3_vector3* pSrc) {
 
     pDest->x = pSrc->x;
     pDest->y = pSrc->y;
     pDest->z = pSrc->z;
 }
-C2_HOOK_FUNCTION(0x0056770a, S3CopyS3Vector3)
 
+// FUNCTION: CARMA2_HW 0x00565faa
 void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos) {
 
-    C2V(gS3_listener_pos_is_brender) = 1;
-    C2V(gS3_listener_pos_ptr) = pos;
-    S3CopyBrVector3(&C2V(gS3_listener_position_old), pos);
+    gS3_listener_pos_is_brender = 1;
+    gS3_listener_pos_ptr = pos;
+    S3CopyBrVector3(&gS3_listener_position_old, pos);
 }
-C2_HOOK_FUNCTION(0x00565faa, S3BindListenerPositionBRender)
 
+// FUNCTION: CARMA2_HW 0x00565ff1
 void C2_HOOK_FASTCALL S3BindListenerVelocityBRender(br_vector3* vel) {
 
-    C2V(gS3_listener_vel_ptr) = vel;
-    C2V(gS3_listener_vel_is_brender) = 1;
+    gS3_listener_vel_ptr = vel;
+    gS3_listener_vel_is_brender = 1;
 }
-C2_HOOK_FUNCTION(0x00565ff1, S3BindListenerVelocityBRender)
 
+// FUNCTION: CARMA2_HW 0x0056602b
 void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left) {
 
-    C2V(gS3_listener_left_ptr) = left;
-    C2V(gS3_listener_left_is_brender) = 1;
+    gS3_listener_left_ptr = left;
+    gS3_listener_left_is_brender = 1;
 }
-C2_HOOK_FUNCTION(0x0056602b, S3BindListenerLeftBRender)
 
+// FUNCTION: CARMA2_HW 0x0056773c
 int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound, tS3_sound_source* source, float pMax_distance, int pPeriod, int pRepeats, int pVolume, int pPitch, int pSpeed) {
     tS3_descriptor* desc;
 
-    if (!C2V(gS3_enabled)) {
+    if (!gS3_enabled) {
         return eS3_error_none;
     }
     if (source == NULL) {
@@ -257,8 +282,8 @@ int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound,
     source->tag = 0;
     return eS3_error_none;
 }
-C2_HOOK_FUNCTION(0x0056773c, S3BindAmbientSoundToOutlet)
 
+// FUNCTION: CARMA2_HW 0x005676da
 void C2_HOOK_FASTCALL S3CopyVector3(void* pDest, void* pSrc, int pIs_BRender) {
 
     if (pIs_BRender) {
@@ -267,32 +292,31 @@ void C2_HOOK_FASTCALL S3CopyVector3(void* pDest, void* pSrc, int pIs_BRender) {
         S3CopyS3Vector3(pDest, pSrc);
     }
 }
-C2_HOOK_FUNCTION(0x005676da, S3CopyVector3)
 
+// FUNCTION: CARMA2_HW 0x005675ce
 void C2_HOOK_FASTCALL S3UpdateListenerVectors(void) {
 
-    if (C2V(gS3_listener_pos_ptr) != NULL) {
-        S3CopyVector3(&C2V(gS3_listener_position_now), C2V(gS3_listener_pos_ptr), C2V(gS3_listener_pos_is_brender));
+    if (gS3_listener_pos_ptr != NULL) {
+        S3CopyVector3(&gS3_listener_position_now, gS3_listener_pos_ptr, gS3_listener_pos_is_brender);
     }
-    if (C2V(gS3_listener_vel_ptr) != NULL) {
-        S3CopyVector3(&C2V(gS3_listener_vel_now), C2V(gS3_listener_vel_ptr), C2V(gS3_listener_vel_is_brender));
+    if (gS3_listener_vel_ptr != NULL) {
+        S3CopyVector3(&gS3_listener_vel_now, gS3_listener_vel_ptr, gS3_listener_vel_is_brender);
     } else {
-        C2V(gS3_listener_vel_now).v[0] = (C2V(gS3_listener_position_now).v[0] - C2V(gS3_listener_position_old).v[0]) * (float)C2V(gS3_delta_time) / 1000.f;
-        C2V(gS3_listener_vel_now).v[1] = (C2V(gS3_listener_position_now).v[1] - C2V(gS3_listener_position_old).v[1]) * (float)C2V(gS3_delta_time) / 1000.f;
-        C2V(gS3_listener_vel_now).v[2] = (C2V(gS3_listener_position_now).v[2] - C2V(gS3_listener_position_old).v[2]) * (float)C2V(gS3_delta_time) / 1000.f;
-        BrVector3Copy(&C2V(gS3_listener_position_old), &C2V(gS3_listener_position_now));
+        gS3_listener_vel_now.v[0] = (gS3_listener_position_now.v[0] - gS3_listener_position_old.v[0]) * (float)gS3_delta_time / 1000.f;
+        gS3_listener_vel_now.v[1] = (gS3_listener_position_now.v[1] - gS3_listener_position_old.v[1]) * (float)gS3_delta_time / 1000.f;
+        gS3_listener_vel_now.v[2] = (gS3_listener_position_now.v[2] - gS3_listener_position_old.v[2]) * (float)gS3_delta_time / 1000.f;
+        BrVector3Copy(&gS3_listener_position_old, &gS3_listener_position_now);
     }
-    if (C2V(gS3_listener_left_ptr) != NULL) {
-        S3CopyVector3(&C2V(gS3_listener_left_now), C2V(gS3_listener_left_ptr), C2V(gS3_listener_left_is_brender));
+    if (gS3_listener_left_ptr != NULL) {
+        S3CopyVector3(&gS3_listener_left_now, gS3_listener_left_ptr, gS3_listener_left_is_brender);
     } else {
-        C2V(gS3_listener_left_now).v[0] = C2V(gS3_listener_position_now).v[0] - 1.f;
-        C2V(gS3_listener_left_now).v[1] = C2V(gS3_listener_position_now).v[1];
-        C2V(gS3_listener_left_now).v[2] = C2V(gS3_listener_position_now).v[2];
+        gS3_listener_left_now.v[0] = gS3_listener_position_now.v[0] - 1.f;
+        gS3_listener_left_now.v[1] = gS3_listener_position_now.v[1];
+        gS3_listener_left_now.v[2] = gS3_listener_position_now.v[2];
     }
 }
-C2_HOOK_FUNCTION(0x005675ce, S3UpdateListenerVectors)
 
-int (C2_HOOK_FASTCALL * S3UpdateSourcePosition_original)(tS3_sound_source *pSource);
+// FUNCTION: CARMA2_HW 0x00567b2d
 int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -301,14 +325,14 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
     if (pSource == NULL) {
         return 0;
     }
-    if (C2V(gS3_enabled) && pSource->ambient) {
+    if (gS3_enabled && pSource->ambient) {
         tS3_outlet* outlet;
         tS3_descriptor* descriptor;
 
         outlet = pSource->bound_outlet;
         descriptor = S3GetDescriptorByID(pSource->sound_id);
         if (descriptor == NULL) {
-            C2V(gS3_last_error) = eS3_error_bad_id;
+            gS3_last_error = eS3_error_bad_id;
             return eS3_error_none;
         }
         if (descriptor->buffer_description == NULL) {
@@ -317,9 +341,9 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
         if (descriptor->type != 0) {
             return eS3_error_none;
         }
-        memset(&C2V(gS3_channel_template), 0, sizeof(tS3_channel));
-        C2V(gS3_channel_template).source_volume = pSource->volume;
-        C2V(gS3_channel_template).rate = S3IRandomBetweenLog(descriptor->min_pitch,
+        memset(&gS3_channel_template, 0, sizeof(tS3_channel));
+        gS3_channel_template.source_volume = pSource->volume;
+        gS3_channel_template.rate = S3IRandomBetweenLog(descriptor->min_pitch,
                 descriptor->max_pitch,
                 descriptor->buffer_description->sample_rate);
         if (pSource->pitch < 0) {
@@ -328,46 +352,46 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
         if (pSource->speed < 0) {
             pSource->speed = BR_FIXED_INT(1);
         }
-        C2V(gS3_channel_template).rate = (int)(ldexpf((float)pSource->pitch, -16) * (float)C2V(gS3_channel_template).rate);
+        gS3_channel_template.rate = (int)(ldexpf((float)pSource->pitch, -16) * (float)gS3_channel_template.rate);
         if (!outlet->independent_pitch) {
-            C2V(gS3_channel_template).rate = (int)(ldexpf((float)pSource->speed, -16) * (float)C2V(gS3_channel_template).rate);
+            gS3_channel_template.rate = (int)(ldexpf((float)pSource->speed, -16) * (float)gS3_channel_template.rate);
         }
-        C2V(gS3_channel_template).source_rate = C2V(gS3_channel_template).rate;
-        C2V(gS3_channel_template).sound_source_ptr = pSource;
+        gS3_channel_template.source_rate = gS3_channel_template.rate;
+        gS3_channel_template.sound_source_ptr = pSource;
         if (pSource->velocity_ptr == NULL) {
-            S3CopyVector3(&C2V(gS3_channel_template).prev_position, pSource->position_ptr, pSource->brender_vector);
+            S3CopyVector3(&gS3_channel_template.prev_position, pSource->position_ptr, pSource->brender_vector);
         }
-        C2V(gS3_channel_template).max_distance_squared = pSource->max_distance_sq;
-        if (S3Calculate3D(&C2V(gS3_channel_template), 1) != 0) {
+        gS3_channel_template.max_distance_squared = pSource->max_distance_sq;
+        if (S3Calculate3D(&gS3_channel_template, 1) != 0) {
             tS3_channel* channel;
 
-            channel = S3AllocateChannel(outlet, S3CalculatePriority(C2V(gS3_channel_template).volume_multiplier, descriptor->priority));
+            channel = S3AllocateChannel(outlet, S3CalculatePriority(gS3_channel_template.volume_multiplier, descriptor->priority));
             if (channel == NULL) {
-                C2V(gS3_last_error) = eS3_error_channel_alloc;
+                gS3_last_error = eS3_error_channel_alloc;
                 pSource->tag = 0;
                 pSource->channel = NULL;
                 return eS3_error_none;
             }
             if ((descriptor->buffer_description == NULL || (descriptor->flags & 0x2)) && S3LoadSample(pSource->sound_id) == 0) {
-                C2V(gS3_last_error) = eS3_error_load_sound;
+                gS3_last_error = eS3_error_load_sound;
                 channel->needs_service = 1;
                 return eS3_error_none;
             }
-            channel->volume_multiplier = C2V(gS3_channel_template).volume_multiplier;
-            channel->field_0x28 = C2V(gS3_channel_template).field_0x28;
-            channel->rate = C2V(gS3_channel_template).rate;
-            channel->position.x = C2V(gS3_channel_template).position.x;
-            channel->position.y = C2V(gS3_channel_template).position.y;
-            channel->position.z = C2V(gS3_channel_template).position.z;
-            channel->velocity.x = C2V(gS3_channel_template).velocity.x;
-            channel->velocity.y = C2V(gS3_channel_template).velocity.y;
-            channel->velocity.z = C2V(gS3_channel_template).velocity.z;
-            channel->prev_position.x = C2V(gS3_channel_template).prev_position.x;
-            channel->prev_position.y = C2V(gS3_channel_template).prev_position.y;
-            channel->prev_position.z = C2V(gS3_channel_template).prev_position.z;
-            channel->source_volume = C2V(gS3_channel_template).source_volume;
-            channel->source_rate = C2V(gS3_channel_template).source_rate;
-            channel->max_distance_squared = C2V(gS3_channel_template).max_distance_squared;
+            channel->volume_multiplier = gS3_channel_template.volume_multiplier;
+            channel->field_0x28 = gS3_channel_template.field_0x28;
+            channel->rate = gS3_channel_template.rate;
+            channel->position.x = gS3_channel_template.position.x;
+            channel->position.y = gS3_channel_template.position.y;
+            channel->position.z = gS3_channel_template.position.z;
+            channel->velocity.x = gS3_channel_template.velocity.x;
+            channel->velocity.y = gS3_channel_template.velocity.y;
+            channel->velocity.z = gS3_channel_template.velocity.z;
+            channel->prev_position.x = gS3_channel_template.prev_position.x;
+            channel->prev_position.y = gS3_channel_template.prev_position.y;
+            channel->prev_position.z = gS3_channel_template.prev_position.z;
+            channel->source_volume = gS3_channel_template.source_volume;
+            channel->source_rate = gS3_channel_template.source_rate;
+            channel->max_distance_squared = gS3_channel_template.max_distance_squared;
             channel->spatial_sound = 2;
             channel->sound_source_ptr = pSource;
             channel->descriptor = descriptor;
@@ -378,7 +402,7 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
             S3ExecuteSampleFilterFuncs(channel);
             if (S3PlaySample(channel) == 0) {
                 channel->needs_service = 1;
-                C2V(gS3_last_error) = eS3_error_start_sound;
+                gS3_last_error = eS3_error_start_sound;
                 return 0;
             }
             pSource->tag = channel->tag;
@@ -391,17 +415,17 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
     return eS3_error_none;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00567b2d, S3UpdateSourcePosition, S3UpdateSourcePosition_original)
 
+// FUNCTION: CARMA2_HW 0x00567ea5
 int C2_HOOK_FASTCALL S3UpdateSourceVectors(void) {
     tS3_sound_source* source;
 
-    for (source = C2V(gS3_sound_sources); source != NULL; source = source->next) {
+    for (source = gS3_sound_sources; source != NULL; source = source->next) {
         if (!source->ambient) {
             continue;
         }
         if (source->period > 0) {
-            source->time_since_last_played += C2V(gS3_delta_time);
+            source->time_since_last_played += gS3_delta_time;
         }
         if (source->channel != NULL && source->tag != source->channel->tag) {
             S3StopChannel(source->channel);
@@ -431,9 +455,8 @@ int C2_HOOK_FASTCALL S3UpdateSourceVectors(void) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00567ea5, S3UpdateSourceVectors)
 
-int (C2_HOOK_FASTCALL * S3Calculate3D_original)(tS3_channel* pChannel, int pAmbient);
+// FUNCTION: CARMA2_HW 0x0056711c
 int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return S3Calculate3D_original(pChannel, pAmbient);
@@ -453,18 +476,18 @@ int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
         if (sound_source->velocity_ptr != NULL) {
             S3CopyVector3(&pChannel->velocity, sound_source->velocity_ptr, sound_source->brender_vector);
         } else {
-            pChannel->velocity.x = (pChannel->position.x - pChannel->prev_position.x) * (float)C2V(gS3_delta_time) / 1000.f;
-            pChannel->velocity.y = (pChannel->position.y - pChannel->prev_position.y) * (float)C2V(gS3_delta_time) / 1000.f;
-            pChannel->velocity.z = (pChannel->position.z - pChannel->prev_position.z) * (float)C2V(gS3_delta_time) / 1000.f;
+            pChannel->velocity.x = (pChannel->position.x - pChannel->prev_position.x) * (float)gS3_delta_time / 1000.f;
+            pChannel->velocity.y = (pChannel->position.y - pChannel->prev_position.y) * (float)gS3_delta_time / 1000.f;
+            pChannel->velocity.z = (pChannel->position.z - pChannel->prev_position.z) * (float)gS3_delta_time / 1000.f;
             pChannel->prev_position.x = pChannel->position.x;
             pChannel->prev_position.y = pChannel->position.y;
             pChannel->prev_position.z = pChannel->position.z;
         }
     }
     dist_squared =
-              (pChannel->position.x - C2V(gS3_listener_position_now).v[0]) * (pChannel->position.x - C2V(gS3_listener_position_now).v[0])
-            + (pChannel->position.y - C2V(gS3_listener_position_now).v[1]) * (pChannel->position.y - C2V(gS3_listener_position_now).v[1])
-            + (pChannel->position.z - C2V(gS3_listener_position_now).v[2]) * (pChannel->position.z - C2V(gS3_listener_position_now).v[2]);
+              (pChannel->position.x - gS3_listener_position_now.v[0]) * (pChannel->position.x - gS3_listener_position_now.v[0])
+            + (pChannel->position.y - gS3_listener_position_now.v[1]) * (pChannel->position.y - gS3_listener_position_now.v[1])
+            + (pChannel->position.z - gS3_listener_position_now.v[2]) * (pChannel->position.z - gS3_listener_position_now.v[2]);
 
     if (dist_squared < 0.f) {
         dist_squared = -dist_squared;
@@ -477,9 +500,9 @@ int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
         float doppler;
 
         doppler = 1.f -
-                ( (pChannel->velocity.x - C2V(gS3_listener_vel_now).v[0]) * (pChannel->position.x - C2V(gS3_listener_position_now).v[0])
-                + (pChannel->velocity.y - C2V(gS3_listener_vel_now).v[1]) * (pChannel->position.y - C2V(gS3_listener_position_now).v[1])
-                + (pChannel->velocity.z - C2V(gS3_listener_vel_now).v[2]) * (pChannel->position.z - C2V(gS3_listener_position_now).v[2])) / dist / C2V(gFLOAT_006b2c68);
+                ( (pChannel->velocity.x - gS3_listener_vel_now.v[0]) * (pChannel->position.x - gS3_listener_position_now.v[0])
+                + (pChannel->velocity.y - gS3_listener_vel_now.v[1]) * (pChannel->position.y - gS3_listener_position_now.v[1])
+                + (pChannel->velocity.z - gS3_listener_vel_now.v[2]) * (pChannel->position.z - gS3_listener_position_now.v[2])) / dist / gFLOAT_006b2c68;
         if (doppler > 2.f) {
             doppler = 2.f;
         } else if (doppler < .5f) {
@@ -490,15 +513,15 @@ int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
         pChannel->rate = pChannel->source_rate;
     }
     sound_volume_factor = 1.f / (1.f + dist / 6.f);
-    if (!C2V(gS3_inside_cockpit)) {
+    if (!gS3_inside_cockpit) {
         sound_volume_factor *= 1.3f;
     }
-    dir_pos_listener.v[0] = pChannel->position.x - C2V(gS3_listener_position_now).v[0];
-    dir_pos_listener.v[1] = pChannel->position.y - C2V(gS3_listener_position_now).v[1];
-    dir_pos_listener.v[2] = pChannel->position.z - C2V(gS3_listener_position_now).v[2];
-    dir_left.v[0] = C2V(gS3_listener_left_now).v[0];
-    dir_left.v[1] = C2V(gS3_listener_left_now).v[1];
-    dir_left.v[2] = C2V(gS3_listener_left_now).v[2];
+    dir_pos_listener.v[0] = pChannel->position.x - gS3_listener_position_now.v[0];
+    dir_pos_listener.v[1] = pChannel->position.y - gS3_listener_position_now.v[1];
+    dir_pos_listener.v[2] = pChannel->position.z - gS3_listener_position_now.v[2];
+    dir_left.v[0] = gS3_listener_left_now.v[0];
+    dir_left.v[1] = gS3_listener_left_now.v[1];
+    dir_left.v[2] = gS3_listener_left_now.v[2];
     BrVector3Normalise(&dir_left, &dir_left);
     BrVector3Normalise(&dir_pos_listener, &dir_pos_listener);
     pChannel->field_0x28 = -BrVector3Dot(&dir_left, &dir_pos_listener);
@@ -512,8 +535,8 @@ int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
     return 1;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0056711c, S3Calculate3D, S3Calculate3D_original)
 
+// FUNCTION: CARMA2_HW 0x00567575
 int C2_HOOK_FASTCALL S3Service3D(tS3_channel* pChannel) {
     int updated;
 
@@ -524,4 +547,3 @@ int C2_HOOK_FASTCALL S3Service3D(tS3_channel* pChannel) {
     }
     return updated;
 }
-C2_HOOK_FUNCTION(0x00567575, S3Service3D)

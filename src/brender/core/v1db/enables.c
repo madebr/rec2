@@ -17,7 +17,7 @@ void C2_HOOK_STDCALL actorEnable(br_v1db_enable* e, br_actor* a) {
     int i;
 
     if (!e->enabled) {
-        e->enabled = BrResAllocate(C2V(v1db).res, e->max * sizeof(*e->enabled), BR_MEMORY_ENABLED_ACTORS);
+        e->enabled = BrResAllocate(v1db.res, e->max * sizeof(*e->enabled), BR_MEMORY_ENABLED_ACTORS);
     }
 
     for (i = 0; i < e->max; i++) {
@@ -53,50 +53,50 @@ void C2_HOOK_STDCALL actorDisable(br_v1db_enable* e, br_actor* a) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00524e30
 void C2_HOOK_CDECL BrLightEnable(br_actor* l) {
 
-    actorEnable(&C2V(v1db).enabled_lights, l);
+    actorEnable(&v1db.enabled_lights, l);
 }
-C2_HOOK_FUNCTION(0x00524e30, BrLightEnable);
 
+// FUNCTION: CARMA2_HW 0x00524ec0
 void C2_HOOK_CDECL BrLightDisable(br_actor* l) {
 
-    actorDisable(&C2V(v1db).enabled_lights, l);
+    actorDisable(&v1db.enabled_lights, l);
 }
-C2_HOOK_FUNCTION(0x00524ec0, BrLightDisable);
 
+// FUNCTION: CARMA2_HW 0x00524f10
 void C2_HOOK_CDECL BrClipPlaneEnable(br_actor* c) {
 
-    actorEnable(&C2V(v1db).enabled_clip_planes, c);
+    actorEnable(&v1db.enabled_clip_planes, c);
 }
-C2_HOOK_FUNCTION(0x00524f10, BrClipPlaneEnable);
 
+// FUNCTION: CARMA2_HW 0x00524fa0
 void C2_HOOK_CDECL BrClipPlaneDisable(br_actor* c) {
 
-    actorDisable(&C2V(v1db).enabled_clip_planes, c);
+    actorDisable(&v1db.enabled_clip_planes, c);
 }
-C2_HOOK_FUNCTION(0x00524fa0, BrClipPlaneDisable);
 
+// FUNCTION: CARMA2_HW 0x00524ff0
 void C2_HOOK_CDECL BrHorizonPlaneEnable(br_actor* h) {
 
-    actorEnable(&C2V(v1db).enabled_horizon_planes, h);
+    actorEnable(&v1db.enabled_horizon_planes, h);
 }
-C2_HOOK_FUNCTION(0x00524ff0, BrHorizonPlaneEnable);
 
+// FUNCTION: CARMA2_HW 0x00525080
 void C2_HOOK_CDECL BrHorizonPlaneDisable(br_actor* h) {
 
-    actorDisable(&C2V(v1db).enabled_horizon_planes, h);
+    actorDisable(&v1db.enabled_horizon_planes, h);
 }
-C2_HOOK_FUNCTION(0x00525080, BrHorizonPlaneDisable);
 
+// FUNCTION: CARMA2_HW 0x005250d0
 br_actor* C2_HOOK_CDECL BrEnvironmentSet(br_actor* a) {
     br_actor* old_a;
 
-    old_a = C2V(v1db).enabled_environment;
-    C2V(v1db).enabled_environment = a;
+    old_a = v1db.enabled_environment;
+    v1db.enabled_environment = a;
     return old_a;
 }
-C2_HOOK_FUNCTION(0x005250d0, BrEnvironmentSet)
 
 br_boolean C2_HOOK_STDCALL setupView(br_matrix34* view_to_this, br_matrix34* this_to_view, br_matrix34* world_to_view, br_int_32 w2vt, br_actor* world, br_actor* a) {
     br_matrix34 this_to_world;
@@ -115,11 +115,8 @@ br_boolean C2_HOOK_STDCALL setupView(br_matrix34* view_to_this, br_matrix34* thi
     return 1;
 }
 
-void (C2_HOOK_STDCALL * BrSetupLights_original)(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt);
+// FUNCTION: CARMA2_HW 0x005250e0
 void C2_HOOK_STDCALL BrSetupLights(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrSetupLights_original(world, world_to_view, w2vt);
-#else
     br_matrix34 this_to_view;
     br_matrix34 view_to_this;
     int light_part;
@@ -130,20 +127,20 @@ void C2_HOOK_STDCALL BrSetupLights(br_actor* world, br_matrix34* world_to_view, 
     br_vector3 view_direction;
     br_light* light;
 
-    if (C2V(v1db).enabled_lights.enabled == NULL) {
+    if (v1db.enabled_lights.enabled == NULL) {
         return;
     }
     light_part = 0;
-    for (i = 0; i < C2V(v1db).enabled_lights.max; i++) {
+    for (i = 0; i < v1db.enabled_lights.max; i++) {
         tvp = tv;
 
-        if (C2V(v1db).enabled_lights.enabled[i] == NULL) {
+        if (v1db.enabled_lights.enabled[i] == NULL) {
             continue;
         }
 
-        light = C2V(v1db).enabled_lights.enabled[i]->type_data;
+        light = v1db.enabled_lights.enabled[i]->type_data;
 
-        if (!setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, C2V(v1db).enabled_lights.enabled[i])) {
+        if (!setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, v1db.enabled_lights.enabled[i])) {
             continue;
         }
 
@@ -244,7 +241,7 @@ void C2_HOOK_STDCALL BrSetupLights(br_actor* world, br_matrix34* world_to_view, 
 
         tvp->t = BR_NULL_TOKEN;
 
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_LIGHT, light_part, tv, NULL);
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_LIGHT, light_part, tv, NULL);
         light_part++;
     }
 
@@ -252,20 +249,15 @@ void C2_HOOK_STDCALL BrSetupLights(br_actor* world, br_matrix34* world_to_view, 
     tv[0].v.t = BRT_NONE;
     tv[1].t = BR_NULL_TOKEN;
 
-    for( ; light_part < C2V(v1db).max_light; light_part++) {
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_LIGHT, light_part, tv, NULL);
+    for( ; light_part < v1db.max_light; light_part++) {
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_LIGHT, light_part, tv, NULL);
     }
 
-    C2V(v1db).max_light = light_part;
-#endif
+    v1db.max_light = light_part;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005250e0, BrSetupLights, BrSetupLights_original)
 
-void (C2_HOOK_STDCALL * BrSetupClipPlanes_original)(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt, br_matrix4* view_to_screen);
+// FUNCTION: CARMA2_HW 0x00525450
 void C2_HOOK_STDCALL BrSetupClipPlanes(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt, br_matrix4* view_to_screen) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrSetupClipPlanes_original(world, world_to_view, w2vt, view_to_screen);
-#else
     br_matrix34 this_to_view;
     br_matrix34 view_to_this;
     br_matrix4 screen_to_view;
@@ -284,27 +276,27 @@ void C2_HOOK_STDCALL BrSetupClipPlanes(br_actor* world, br_matrix34* world_to_vi
 
 	clip_part = 0;
 
-	if (C2V(v1db).enabled_clip_planes.enabled == NULL) {
+	if (v1db.enabled_clip_planes.enabled == NULL) {
         return;
     }
 
-	if (C2V(v1db).enabled_clip_planes.count != 0) {
+	if (v1db.enabled_clip_planes.count != 0) {
         BrMatrix4Inverse(&screen_to_view, view_to_screen);
     }
 
-	for (i = 0; i < C2V(v1db).enabled_clip_planes.max; i++) {
+	for (i = 0; i < v1db.enabled_clip_planes.max; i++) {
 
-		if (C2V(v1db).enabled_clip_planes.enabled[i] == NULL) {
+		if (v1db.enabled_clip_planes.enabled[i] == NULL) {
 			continue;
 		}
 
-		if (!setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, C2V(v1db).enabled_clip_planes.enabled[i])) {
+		if (!setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, v1db.enabled_clip_planes.enabled[i])) {
             continue;
         }
 		BrMatrix4Copy34(&tmp4, &view_to_this);
 		BrMatrix4Mul(&screen_to_this, &screen_to_view, &tmp4);
-		BrMatrix4TApply(&sp, C2V(v1db).enabled_clip_planes.enabled[i]->type_data, &screen_to_this);
-		C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_CLIP, clip_part, tv, NULL);
+		BrMatrix4TApply(&sp, v1db.enabled_clip_planes.enabled[i]->type_data, &screen_to_this);
+		v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_CLIP, clip_part, tv, NULL);
 		clip_part++;
 	}
 
@@ -312,26 +304,21 @@ void C2_HOOK_STDCALL BrSetupClipPlanes(br_actor* world, br_matrix34* world_to_vi
 	tv[0].v.t = BRT_NONE;
 	tv[1].t = BR_NULL_TOKEN;
 
-	for ( ; clip_part < C2V(v1db).max_clip; clip_part++)
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_CLIP, clip_part, tv, NULL);
+	for ( ; clip_part < v1db.max_clip; clip_part++)
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_CLIP, clip_part, tv, NULL);
 
-	C2V(v1db).max_clip = clip_part;
-#endif
+	v1db.max_clip = clip_part;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00525450, BrSetupClipPlanes, BrSetupClipPlanes_original)
 
-void (C2_HOOK_STDCALL * BrSetupEnvironment_original)(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt);
+// FUNCTION: CARMA2_HW 0x00525630
 void C2_HOOK_STDCALL BrSetupEnvironment(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrSetupEnvironment_original(world, world_to_view, w2vt);
-#else
     br_matrix34 view_to_this;
     br_matrix34 this_to_view;
     br_token h;
 
     h = BRT_DONT_CARE;
-    if (C2V(v1db).enabled_environment != NULL) {
-        if (C2V(v1db).enabled_environment == world) {
+    if (v1db.enabled_environment != NULL) {
+        if (v1db.enabled_environment == world) {
             if (BrTransformTypeIsLP(w2vt)) {
                 BrMatrix34LPInverse(&view_to_this, world_to_view);
             } else {
@@ -339,33 +326,31 @@ void C2_HOOK_STDCALL BrSetupEnvironment(br_actor* world, br_matrix34* world_to_v
             }
             h = BRT_NONE;
         } else {
-            if (setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, C2V(v1db).enabled_environment) != 0) {
+            if (setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, v1db.enabled_environment) != 0) {
                 h = BRT_NONE;
             }
         }
     }
     if (h != BRT_DONT_CARE) {
-        C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_VIEW_TO_ENVIRONMENT_M34_F, (uintptr_t)&view_to_this);
+        v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_MATRIX, 0, BRT_VIEW_TO_ENVIRONMENT_M34_F, (uintptr_t)&view_to_this);
     }
-    C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_MATRIX, 0, BRT_VIEW_TO_ENVIRONMENT_HINT_T, h);
-#endif
+    v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_MATRIX, 0, BRT_VIEW_TO_ENVIRONMENT_HINT_T, h);
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00525630, BrSetupEnvironment, BrSetupEnvironment_original)
 
+// FUNCTION: CARMA2_HW 0x00525750
 void C2_HOOK_STDCALL BrSetupHorizons(br_actor* world, br_matrix34* world_to_view, br_int_32 w2vt) {
 }
-C2_HOOK_FUNCTION(0x00525750, BrSetupHorizons)
 
+// FUNCTION: CARMA2_HW 0x00525760
 void C2_HOOK_STDCALL BrActorEnableCheck(br_actor* a) {
-    if (C2V(v1db).enabled_environment == a) {
-        C2V(v1db).enabled_environment = NULL;
+    if (v1db.enabled_environment == a) {
+        v1db.enabled_environment = NULL;
     }
     if (a->type == BR_ACTOR_LIGHT) {
-        actorDisable(&C2V(v1db).enabled_lights, a);
+        actorDisable(&v1db.enabled_lights, a);
     } else if (a->type == BR_ACTOR_HORIZONTAL_PLANE) {
-        actorDisable(&C2V(v1db).enabled_horizon_planes, a);
+        actorDisable(&v1db.enabled_horizon_planes, a);
     } else if (a->type <= BR_ACTOR_CLIP_PLANE) {
-        actorDisable(&C2V(v1db).enabled_clip_planes, a);
+        actorDisable(&v1db.enabled_clip_planes, a);
     }
 }
-C2_HOOK_FUNCTION(0x00525760, BrActorEnableCheck)

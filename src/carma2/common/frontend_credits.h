@@ -5,7 +5,7 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_CREDITS);
+extern tFrontend_spec gFrontend_CREDITS;
 
 
 int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend);

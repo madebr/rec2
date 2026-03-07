@@ -1,9 +1,13 @@
 #include "def_otab.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_primitive*, _default_table, 256, 0x006ad528);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_order_table, _BrDefaultOrderTable, 0x00665458, {
-    C2V(_default_table),
-    BR_ASIZE(C2V(_default_table)),
+
+// GLOBAL: CARMA2_HW 0x006ad528
+br_primitive* _default_table[256];
+
+// GLOBAL: CARMA2_HW 0x00665458
+br_order_table _BrDefaultOrderTable = {
+    _default_table,
+    BR_ASIZE(_default_table),
     NULL,
     1.f,
     10.f,
@@ -12,4 +16,4 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_order_table, _BrDefaultOrderTable, 0x00665458
     0,
     1,
     0,
-});
+};

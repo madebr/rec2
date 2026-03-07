@@ -5,12 +5,12 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_CONTROLS);
-C2_HOOK_VARIABLE_DECLARE(tFrontend_slider, gControls_slider_1);
-C2_HOOK_VARIABLE_DECLARE(tFrontend_slider, gControls_slider_2);
-C2_HOOK_VARIABLE_DECLARE(tFrontend_slider, gControls_slider_3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gFrontend_controls_indices, 15);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_00688748);
+extern tFrontend_spec gFrontend_CONTROLS;
+extern tFrontend_slider gControls_slider_1;
+extern tFrontend_slider gControls_slider_2;
+extern tFrontend_slider gControls_slider_3;
+extern int gFrontend_controls_indices[15];
+extern int gINT_00688748;
 
 
 void C2_HOOK_FASTCALL DisplayJoystickSettings(tFrontend_spec *pFrontend);

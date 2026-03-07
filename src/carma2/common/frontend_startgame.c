@@ -5,7 +5,9 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_START_GAME, 0x0059c828, {
+
+// GLOBAL: CARMA2_HW 0x0059c828
+tFrontend_spec gFrontend_START_GAME = {
     "StartGame",
     0,
     0,
@@ -20,9 +22,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_START_GAME, 0x0059c828
     0,
     0,
     { { 0 } },
-});
+};
 
 
+// FUNCTION: CARMA2_HW 0x0046bcb0
 int C2_HOOK_FASTCALL StartGameInfunc(tFrontend_spec* pFrontend) {
     char backdrop_name[256];
 
@@ -35,14 +38,13 @@ int C2_HOOK_FASTCALL StartGameInfunc(tFrontend_spec* pFrontend) {
             pFrontend->previous->isPreviousSomeOtherMenu = 1;
         }
     }
-    C2V(gFrontend_scrollbars_updated) = 0;
+    gFrontend_scrollbars_updated = 0;
     pFrontend->unknownLastInt = 0;
     return 1;
 }
-C2_HOOK_FUNCTION(0x0046bcb0, StartGameInfunc)
 
+// FUNCTION: CARMA2_HW 0x0046bd50
 int C2_HOOK_FASTCALL FRONTEND_StartGameMenuHandler(tFrontend_spec *pFrontend) {
 
     return 1;
 }
-C2_HOOK_FUNCTION(0x0046bd50, FRONTEND_StartGameMenuHandler)

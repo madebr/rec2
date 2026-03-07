@@ -10,39 +10,39 @@
 #include <windows.h>
 #include <dinput.h>
 
-C2_HOOK_VARIABLE_DECLARE(int, gExit_code);
+extern int gExit_code;
 
-C2_HOOK_VARIABLE_DECLARE(void*, gHWnd);
-C2_HOOK_VARIABLE_DECLARE(int, gWindowActiveState);  // FIXME: enum (0,1) => background(d3d or glide), 2=> active
+extern void* gHWnd;
+extern int gWindowActiveState;  // FIXME: enum (0,1) => background(d3d or glide), 2=> active
 
-C2_HOOK_VARIABLE_DECLARE(int, gWindowMovingResizing);
-C2_HOOK_VARIABLE_DECLARE(LPDIRECTINPUTDEVICEA, gDirectInputDevice);
-C2_HOOK_VARIABLE_DECLARE(char*, gRenderer);
-C2_HOOK_VARIABLE_DECLARE(int, gMouseLButtonDown);
-C2_HOOK_VARIABLE_DECLARE(int, gMouseRButtonDown);
-C2_HOOK_VARIABLE_DECLARE(int, gMouseCaptured);
-C2_HOOK_VARIABLE_DECLARE(POINT, gCursorPos_LastClick);
-C2_HOOK_VARIABLE_DECLARE(POINT, gPD_mouse_position);
-C2_HOOK_VARIABLE_DECLARE(int, gCursorPos_LastClick_Valid);
-C2_HOOK_VARIABLE_DECLARE(int, gScaleMouse);
-C2_HOOK_VARIABLE_DECLARE(int, gScreenWidth);
-C2_HOOK_VARIABLE_DECLARE(int, gScreenHeight);
+extern int gWindowMovingResizing;
+extern LPDIRECTINPUTDEVICEA gDirectInputDevice;
+extern char* gRenderer;
+extern int gMouseLButtonDown;
+extern int gMouseRButtonDown;
+extern int gMouseCaptured;
+extern POINT gCursorPos_LastClick;
+extern POINT gPD_mouse_position;
+extern int gCursorPos_LastClick_Valid;
+extern int gScaleMouse;
+extern int gScreenWidth;
+extern int gScreenHeight;
 
-C2_HOOK_VARIABLE_DECLARE(int, gKeyboardBufferLength);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gKeyboardBuffer, 20);
+extern int gKeyboardBufferLength;
+extern char gKeyboardBuffer[20];
 
-C2_HOOK_VARIABLE_DECLARE(int, gPerformanceCounterInitialized);
-C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterStart);
-C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_s);
-C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_ms);
-C2_HOOK_VARIABLE_DECLARE(LARGE_INTEGER, gPerformanceCounterFrequency_us);
+extern int gPerformanceCounterInitialized;
+extern LARGE_INTEGER gPerformanceCounterStart;
+extern LARGE_INTEGER gPerformanceCounterFrequency_s;
+extern LARGE_INTEGER gPerformanceCounterFrequency_ms;
+extern LARGE_INTEGER gPerformanceCounterFrequency_us;
 
-C2_HOOK_VARIABLE_DECLARE(tU32, gTime_app_activated);
+extern tU32 gTime_app_activated;
 
-C2_HOOK_VARIABLE_DECLARE(HINSTANCE, gHInstance);
+extern HINSTANCE gHInstance;
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gFatalErrorMessage, 512);
-C2_HOOK_VARIABLE_DECLARE(int, gIsFatalError);
+extern char gFatalErrorMessage[512];
+extern int gIsFatalError;
 
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

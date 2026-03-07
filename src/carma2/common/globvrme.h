@@ -6,7 +6,7 @@
 #include "rec2_types.h"
 #include <brender/br_types.h>
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gViewable_car_list, 50);
-C2_HOOK_VARIABLE_DECLARE(int, gNum_viewable_cars);
+extern tCar_spec* gViewable_car_list[50];
+extern int gNum_viewable_cars;
 
 #endif //REC2_GLOBVRME_H

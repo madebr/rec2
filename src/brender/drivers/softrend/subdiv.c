@@ -2,7 +2,8 @@
 
 #include "setup.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_32, rightLeftTable, 16, 0x00670810, {
+// GLOBAL: CARMA2_HW 0x00670810
+br_uint_32 rightLeftTable[16] = {
     OUTCODE_RIGHT | OUTCODE_N_RIGHT,
     OUTCODE_RIGHT | OUTCODE_N_RIGHT,
     0x0,
@@ -19,9 +20,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_32, rightLeftTable, 16, 0x00670810
     OUTCODE_LEFT | OUTCODE_N_LEFT,
     OUTCODE_RIGHT | OUTCODE_N_RIGHT | OUTCODE_LEFT | OUTCODE_N_LEFT,
     0x0,
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_32, topBottomTable, 16, 0x00670850, {
+// GLOBAL: CARMA2_HW 0x00670850
+br_uint_32 topBottomTable[16] = {
     OUTCODE_TOP | OUTCODE_N_TOP,
     OUTCODE_TOP | OUTCODE_N_TOP,
     0x0,
@@ -38,9 +40,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_32, topBottomTable, 16, 0x00670850
     OUTCODE_BOTTOM | OUTCODE_N_BOTTOM,
     OUTCODE_BOTTOM | OUTCODE_N_BOTTOM | OUTCODE_TOP | OUTCODE_N_TOP,
     0x0,
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_32, hitherYonTable, 16, 0x00670890, {
+// GLOBAL: CARMA2_HW 0x00670890
+br_uint_32 hitherYonTable[16] = {
     OUTCODE_HITHER | OUTCODE_N_HITHER,
     OUTCODE_HITHER | OUTCODE_N_HITHER,
     0x0,
@@ -57,7 +60,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_32, hitherYonTable, 16, 0x00670890
     OUTCODE_YON | OUTCODE_N_YON,
     OUTCODE_YON | OUTCODE_N_YON | OUTCODE_HITHER | OUTCODE_N_HITHER,
     0x0,
-});
+};
 
 #define COMPUTE_COMPONENT_MID_POINT_VALUES(COMP) \
     do {                                         \
@@ -86,6 +89,7 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_32, hitherYonTable, 16, 0x00670890
         }                                                                                                                                           \
     } while (0)
 
+// FUNCTION: CARMA2_HW 0x0054c400
 void C2_HOOK_CDECL averageVerticesOnScreen(br_soft_renderer* renderer, brp_vertex* dest1, brp_vertex* dest2, brp_vertex* dest3, brp_vertex* src1, brp_vertex* src2, brp_vertex* src3) {
 
     COMPUTE_COMPONENT_MID_POINT_VALUES(C_X);
@@ -98,7 +102,7 @@ void C2_HOOK_CDECL averageVerticesOnScreen(br_soft_renderer* renderer, brp_verte
     br_scalar one_div_w3 = dest1->comp[C_W] * dest2->comp[C_W]; /* = w1 * w2 */
     br_scalar w1w2w3 = 1.f / (dest1->comp[C_W] * one_div_w1); /* 1 / ( w1 * w2 * w3) */
 
-    if (C2V(rend).block->convert_mask_f & (CM_R | CM_G | CM_B)) {
+    if (rend.block->convert_mask_f & (CM_R | CM_G | CM_B)) {
         COMPUTE_COMPONENT_MID_POINT_VALUES(C_R);
         COMPUTE_COMPONENT_MID_POINT_VALUES(C_G);
         COMPUTE_COMPONENT_MID_POINT_VALUES(C_B);
@@ -115,7 +119,6 @@ void C2_HOOK_CDECL averageVerticesOnScreen(br_soft_renderer* renderer, brp_verte
     PROJECT_COMPONENT(C_Y, C_SY);
     PROJECT_COMPONENT(C_Z, C_SZ);
 }
-C2_HOOK_FUNCTION(0x0054c400, averageVerticesOnScreen)
 
 static inline br_uint_32 OUTCODE_ORDINATE(br_uint_32 lValue, br_uint_32 rValue, br_uint_32* tableName1) {
 #if 0
@@ -130,6 +133,7 @@ static inline br_uint_32 OUTCODE_ORDINATE(br_uint_32 lValue, br_uint_32 rValue, 
     return tableName1[idx >> 28];
 }
 
+// FUNCTION: CARMA2_HW 0x0054c7ef
 void C2_HOOK_CDECL averageVertices(br_soft_renderer* renderer, brp_vertex* dest1, brp_vertex* dest2, brp_vertex* dest3, brp_vertex* src1, brp_vertex* src2, brp_vertex* src3) {
 
     COMPUTE_COMPONENT_MID_POINT_VALUES(C_X);
@@ -146,21 +150,21 @@ void C2_HOOK_CDECL averageVertices(br_soft_renderer* renderer, brp_vertex* dest1
     COMPUTE_COMPONENT_MID_POINT_VALUES(C_V);
 
     dest1->flags = OUTCODES_NOT
-            | OUTCODE_ORDINATE(dest1->comp_i[C_X], dest1->comp_i[C_W], C2V(rightLeftTable))
-            | OUTCODE_ORDINATE(dest1->comp_i[C_Y], dest1->comp_i[C_W], C2V(topBottomTable))
-            | OUTCODE_ORDINATE(dest1->comp_i[C_Z], dest1->comp_i[C_W], C2V(hitherYonTable));
+            | OUTCODE_ORDINATE(dest1->comp_i[C_X], dest1->comp_i[C_W], rightLeftTable)
+            | OUTCODE_ORDINATE(dest1->comp_i[C_Y], dest1->comp_i[C_W], topBottomTable)
+            | OUTCODE_ORDINATE(dest1->comp_i[C_Z], dest1->comp_i[C_W], hitherYonTable);
 
     dest2->flags = OUTCODES_NOT
-            | OUTCODE_ORDINATE(dest2->comp_i[C_X], dest2->comp_i[C_W], C2V(rightLeftTable))
-            | OUTCODE_ORDINATE(dest2->comp_i[C_Y], dest2->comp_i[C_W], C2V(topBottomTable))
-            | OUTCODE_ORDINATE(dest2->comp_i[C_Z], dest2->comp_i[C_W], C2V(hitherYonTable));
+            | OUTCODE_ORDINATE(dest2->comp_i[C_X], dest2->comp_i[C_W], rightLeftTable)
+            | OUTCODE_ORDINATE(dest2->comp_i[C_Y], dest2->comp_i[C_W], topBottomTable)
+            | OUTCODE_ORDINATE(dest2->comp_i[C_Z], dest2->comp_i[C_W], hitherYonTable);
 
     dest3->flags = OUTCODES_NOT
-            | OUTCODE_ORDINATE(dest3->comp_i[C_X], dest3->comp_i[C_W], C2V(rightLeftTable))
-            | OUTCODE_ORDINATE(dest3->comp_i[C_Y], dest3->comp_i[C_W], C2V(topBottomTable))
-            | OUTCODE_ORDINATE(dest3->comp_i[C_Z], dest3->comp_i[C_W], C2V(hitherYonTable));
+            | OUTCODE_ORDINATE(dest3->comp_i[C_X], dest3->comp_i[C_W], rightLeftTable)
+            | OUTCODE_ORDINATE(dest3->comp_i[C_Y], dest3->comp_i[C_W], topBottomTable)
+            | OUTCODE_ORDINATE(dest3->comp_i[C_Z], dest3->comp_i[C_W], hitherYonTable);
 
-    if (C2V(scache).user_clip_active) {
+    if (scache.user_clip_active) {
         int i;
 
         /* VERIFYME: this is different from Carmageddon II and BRender sources  */
@@ -209,4 +213,3 @@ void C2_HOOK_CDECL averageVertices(br_soft_renderer* renderer, brp_vertex* dest1
     TEST_AND_PROJECT_VERTEX(dest2);
     TEST_AND_PROJECT_VERTEX(dest3);
 }
-C2_HOOK_FUNCTION(0x0054c7ef, averageVertices)

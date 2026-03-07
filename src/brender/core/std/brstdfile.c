@@ -6,7 +6,9 @@
 #include "c2_string.h"
 
 // Global variables
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, BrStdioFilesystem, 0x0066fdc0, {
+
+// GLOBAL: CARMA2_HW 0x0066fdc0
+br_filesystem BrStdioFilesystem = {
     "Standard IO",
     BrStdioAttributes,
     BrStdioOpenRead,
@@ -20,14 +22,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, BrStdioFilesystem, 0x0066fdc0, {
     BrStdioGetLine,
     BrStdioPutLine,
     BrStdioAdvance,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem*, _BrDefaultFilesystem, 0x0066fdf4, &C2V(BrStdioFilesystem));
+};
 
+// GLOBAL: CARMA2_HW 0x0066fdf4
+br_filesystem* _BrDefaultFilesystem = &BrStdioFilesystem;
+
+// FUNCTION: CARMA2_HW 0x0053f660
 br_uint_32 C2_HOOK_CDECL BrStdioAttributes(void) {
     return BR_FS_ATTR_READABLE | BR_FS_ATTR_WRITEABLE | BR_FS_ATTR_HAS_TEXT | BR_FS_ATTR_HAS_BINARY | BR_FS_ATTR_HAS_ADVANCE;
 }
-C2_HOOK_FUNCTION(0x0053f660, BrStdioAttributes)
 
+// FUNCTION: CARMA2_HW 0x0053f670
 void* C2_HOOK_CDECL BrStdioOpenRead(const char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result) {
     FILE* fh;
     br_uint_8 magics[16];
@@ -64,8 +69,8 @@ void* C2_HOOK_CDECL BrStdioOpenRead(const char* name, br_size_t n_magics, br_mod
     }
     return fh;
 }
-C2_HOOK_FUNCTION(0x0053f670, BrStdioOpenRead)
 
+// FUNCTION: CARMA2_HW 0x0053f8a0
 void* C2_HOOK_CDECL BrStdioOpenWrite(const char* name, int mode) {
     FILE* fh;
 
@@ -77,45 +82,45 @@ void* C2_HOOK_CDECL BrStdioOpenWrite(const char* name, int mode) {
 
     return fh;
 }
-C2_HOOK_FUNCTION(0x0053f8a0, BrStdioOpenWrite)
 
+// FUNCTION: CARMA2_HW 0x0053f8d0
 void C2_HOOK_CDECL BrStdioClose(void* f) {
 
     c2_fclose(f);
 }
-C2_HOOK_FUNCTION(0x0053f8d0, BrStdioClose)
 
+// FUNCTION: CARMA2_HW 0x0053f8e0
 int C2_HOOK_CDECL BrStdioEof(void* f) {
     return c2_feof(f);
 }
-C2_HOOK_FUNCTION(0x0053f8e0, BrStdioEof)
 
+// FUNCTION: CARMA2_HW 0x0053f8f0
 int C2_HOOK_CDECL BrStdioGetChar(void* f) {
     int c;
 
     c = c2_fgetc(f);
     return c;
 }
-C2_HOOK_FUNCTION(0x0053f8f0, BrStdioGetChar)
 
+// FUNCTION: CARMA2_HW 0x0053f920
 void C2_HOOK_CDECL BrStdioPutChar(int c, void* f) {
     c2_fputc(c, f);
 }
-C2_HOOK_FUNCTION(0x0053f920, BrStdioPutChar)
 
+// FUNCTION: CARMA2_HW 0x0053f940
 br_size_t C2_HOOK_CDECL BrStdioRead(void* buf, br_size_t size, unsigned int n, void* f) {
     int i;
 
     i = c2_fread(buf, size, n, f);
     return i;
 }
-C2_HOOK_FUNCTION(0x0053f940, BrStdioRead)
 
+// FUNCTION: CARMA2_HW 0x0053f960
 br_size_t C2_HOOK_CDECL BrStdioWrite(const void* buf, br_size_t size, unsigned int n, void* f) {
     return c2_fwrite(buf, size, n, f);
 }
-C2_HOOK_FUNCTION(0x0053f960, BrStdioWrite)
 
+// FUNCTION: CARMA2_HW 0x0053f980
 br_size_t C2_HOOK_CDECL BrStdioGetLine(char* buf, br_size_t buf_len, void* f) {
     br_size_t l;
 
@@ -131,15 +136,14 @@ br_size_t C2_HOOK_CDECL BrStdioGetLine(char* buf, br_size_t buf_len, void* f) {
 
     return l;
 }
-C2_HOOK_FUNCTION(0x0053f980, BrStdioGetLine)
 
+// FUNCTION: CARMA2_HW 0x0053f9c0
 void C2_HOOK_CDECL BrStdioPutLine(char* buf, void* f) {
     c2_fputs(buf, f);
     c2_fputc('\n', f);
 }
-C2_HOOK_FUNCTION(0x0053f9c0, BrStdioPutLine)
 
+// FUNCTION: CARMA2_HW 0x0053f9e0
 void C2_HOOK_CDECL BrStdioAdvance(br_size_t count, void* f) {
     c2_fseek(f, count, SEEK_CUR);
 }
-C2_HOOK_FUNCTION(0x0053f9e0, BrStdioAdvance)

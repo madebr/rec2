@@ -16,32 +16,37 @@
 
 #include "rec2_macros.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_scalar, gYon_factor, 0x00655e60, 0.25f);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gMax_count_non_cars, 0x0079efac);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_track_non_cars, 0x00679260);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRender_alternative_track_actors, 0x0058f490, 1);
 
+// GLOBAL: CARMA2_HW 0x00655e60
+br_scalar gYon_factor = 0.25f;
+
+// GLOBAL: CARMA2_HW 0x0079efac
+int gMax_count_non_cars;
+
+// GLOBAL: CARMA2_HW 0x00679260
+int gCount_track_non_cars;
+
+// GLOBAL: CARMA2_HW 0x0058f490
+int gRender_alternative_track_actors = 1;
+
+// FUNCTION: CARMA2_HW 0x0040dfe0
 br_scalar C2_HOOK_STDCALL GetYonFactor(void) {
 
-    return C2V(gYon_factor);
+    return gYon_factor;
 }
-C2_HOOK_FUNCTION(0x0040dfe0, GetYonFactor)
 
+// FUNCTION: CARMA2_HW 0x0040dff0
 void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew) {
 
-    C2V(gYon_factor) = pNew;
+    gYon_factor = pNew;
 }
-C2_HOOK_FUNCTION(0x0040dff0, SetYonFactor)
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gMr_blendy, 0x00679264);
 
-void (C2_HOOK_FASTCALL * MungeFaces_original)(br_actor* pActor, br_model* pModel);
+// GLOBAL: CARMA2_HW 0x00679264
+br_actor* gMr_blendy;
+
+// FUNCTION: CARMA2_HW 0x0040d530
 void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    MungeFaces_original(pActor, pModel);
-#else
-
     int i;
     int j;
     int k;
@@ -55,31 +60,31 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
 
         SpawnPedsOnFace(face, pModel);
         if (SmashFaceMustBeUpdateable(face->material)) {
-            if (C2V(gMr_blendy) == NULL) {
-                C2V(gMr_blendy) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-                C2V(gMr_blendy)->render_style = BR_RSTYLE_FACES;
-                C2V(gMr_blendy)->model = BrModelAllocate(NULL, 2000, 2000);
-                C2V(gMr_blendy)->model->nfaces = 0;
-                C2V(gMr_blendy)->model->nvertices = 0;
-                C2V(gMr_blendy)->model->flags |= BR_MODF_UPDATEABLE;
+            if (gMr_blendy == NULL) {
+                gMr_blendy = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+                gMr_blendy->render_style = BR_RSTYLE_FACES;
+                gMr_blendy->model = BrModelAllocate(NULL, 2000, 2000);
+                gMr_blendy->model->nfaces = 0;
+                gMr_blendy->model->nvertices = 0;
+                gMr_blendy->model->flags |= BR_MODF_UPDATEABLE;
             }
-            br_face *blendy_face = &C2V(gMr_blendy)->model->faces[C2V(gMr_blendy)->model->nfaces];
-            C2V(gMr_blendy)->model->nfaces += 1;
+            br_face *blendy_face = &gMr_blendy->model->faces[gMr_blendy->model->nfaces];
+            gMr_blendy->model->nfaces += 1;
             c2_memcpy(blendy_face, face, sizeof(br_face));
             for (j = 0; j < 3; j++) {
                 br_vertex *vertex_j = &pModel->vertices[face->vertices[j]];
-                for (k = 0; k < C2V(gMr_blendy)->model->nvertices; k++) {
-                    if (Vector3Equals(&C2V(gMr_blendy)->model->vertices[k].p, &vertex_j->p)
-                            && Vector2Equals(&C2V(gMr_blendy)->model->vertices[k].map, &vertex_j->map)) {
+                for (k = 0; k < gMr_blendy->model->nvertices; k++) {
+                    if (Vector3Equals(&gMr_blendy->model->vertices[k].p, &vertex_j->p)
+                            && Vector2Equals(&gMr_blendy->model->vertices[k].map, &vertex_j->map)) {
                         blendy_face->vertices[j] = k;
                         vertex_j = NULL;
                         break;
                     }
                 }
                 if (vertex_j != NULL) {
-                    blendy_face->vertices[j] = C2V(gMr_blendy)->model->nvertices;
-                    c2_memcpy(&C2V(gMr_blendy)->model->vertices[C2V(gMr_blendy)->model->nvertices], vertex_j, sizeof(br_vertex));
-                    C2V(gMr_blendy)->model->nvertices += 1;
+                    blendy_face->vertices[j] = gMr_blendy->model->nvertices;
+                    c2_memcpy(&gMr_blendy->model->vertices[gMr_blendy->model->nvertices], vertex_j, sizeof(br_vertex));
+                    gMr_blendy->model->nvertices += 1;
                 }
             }
             if (i < pModel->nfaces - 1) {
@@ -98,16 +103,10 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
             pActor->render_style = BR_RSTYLE_NONE;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040d530, MungeFaces, MungeFaces_original)
 
-intptr_t (C2_HOOK_CDECL * FindNonCarsCB_original)(br_actor* pActor, void* pData);
+// FUNCTION: CARMA2_HW 0x0040d1f0
 intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, void* pData) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return FindNonCarsCB_original(pActor, pData);
-#else
     char s[256];
     tTrack_spec* pTrack_spec = pData;
 
@@ -161,11 +160,9 @@ intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, void* pData) {
         }
     }
     return BrActorEnum(pActor, FindNonCarsCB, pTrack_spec);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040d1f0, FindNonCarsCB, FindNonCarsCB_original)
 
-void (C2_HOOK_FASTCALL * GetModelTextureArea_original)(br_model* pModel, int* pArea_1, int* pArea_2);
+// FUNCTION: CARMA2_HW 0x004f5ae0
 void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* pArea_2) {
     int i;
 
@@ -216,29 +213,19 @@ void C2_HOOK_FASTCALL GetModelTextureArea(br_model* pModel, int* pArea_1, int* p
     if (*pArea_2 > 250) {
         *pArea_2 = 250;
     }
-
-#if C2_HOOKS_ENABLED
-    {
-        int a1, a2;
-
-        GetModelTextureArea_original(pModel, &a1, &a2);
-        C2_HOOK_ASSERT(a1 == *pArea_1);
-        C2_HOOK_ASSERT(a2 == *pArea_2);
-    }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f5ae0, GetModelTextureArea, GetModelTextureArea_original)
 
+// FUNCTION: CARMA2_HW 0x004f5cb0
 void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
     int i;
 
     if (pActor->model == NULL || pActor->model->identifier == NULL) {
         return;
     }
-    for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
+    for (i = 0; i < gCount_track_smashable_environment_specs; i++) {
         tSmashable_item_spec* spec;
 
-        spec = &C2V(gTrack_smashable_environment_specs)[i];
+        spec = &gTrack_smashable_environment_specs[i];
         if (spec->trigger_type == kSmashableTrigger_Model && spec->trigger_object.model == pActor->model) {
             char s[64];
             char s2[64];
@@ -263,29 +250,29 @@ void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
                 c2_strcpy(pActor->identifier, s);
             }
 
-            if ((C2V(gCurrent_race).race_spec->race_type > 3 && spec->mode_data.field_0x14 == C2V(gCurrent_race).race_spec->options.cars.count_opponents)
-                    || (C2V(gNet_mode) != eNet_mode_none && C2V(gCurrent_net_game)->type == eNet_game_type_2 && spec->mode_data.field_0x14 == 1)) {
+            if ((gCurrent_race.race_spec->race_type > 3 && spec->mode_data.field_0x14 == gCurrent_race.race_spec->options.cars.count_opponents)
+                    || (gNet_mode != eNet_mode_none && gCurrent_net_game->type == eNet_game_type_2 && spec->mode_data.field_0x14 == 1)) {
                 AddSmashableRaceTarget(pActor->model, pActor, -1);
             }
         }
     }
 }
-C2_HOOK_FUNCTION(0x004f5cb0, SetSmashableModel)
 
+// FUNCTION: CARMA2_HW 0x0040cf10
 intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
     unsigned int x;
     unsigned int z;
     tTrack_spec* pTrack_spec = data;
 
     if (c2_sscanf(pActor->identifier, "%u%u", &x, &z) == 2 && x < pTrack_spec->ncolumns_x && z < pTrack_spec->ncolumns_z) {
-        pActor->material = C2V(gDefault_track_material);
+        pActor->material = gDefault_track_material;
         pTrack_spec->columns[z][x].actor_0x0 = BrActorAllocate(BR_ACTOR_NONE, NULL);
         BrActorAdd(pActor->parent, pTrack_spec->columns[z][x].actor_0x0);
         pTrack_spec->columns[z][x].actor_0x4 = pActor;
         pTrack_spec->columns[z][x].actor_0x8 = NULL;
         BrActorRelink(pTrack_spec->columns[z][x].actor_0x0, pActor);
-        C2V(gMr_blendy) = NULL;
-        if (pActor->model != NULL && !C2V(gAusterity_mode)) {
+        gMr_blendy = NULL;
+        if (pActor->model != NULL && !gAusterity_mode) {
             MungeFaces(pActor, pActor->model);
         } else {
             br_actor *child;
@@ -298,31 +285,31 @@ intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
             }
         }
         BrActorEnum(pActor, (br_actor_enum_cbfn*)FindNonCarsCB, pTrack_spec);
-        if (C2V(gMr_blendy) != NULL) {
+        if (gMr_blendy != NULL) {
             int area1, area2;
             br_vertex* new_vertices;
             br_face* new_faces;
 
-            BrActorAdd(pTrack_spec->columns[z][x].actor_0x0, C2V(gMr_blendy));
-            C2V(gMr_blendy)->model->flags |= BR_MODU_FACES;
-            BrModelAdd(C2V(gMr_blendy)->model);
-            GetModelTextureArea(C2V(gMr_blendy)->model, &area1, &area2);
+            BrActorAdd(pTrack_spec->columns[z][x].actor_0x0, gMr_blendy);
+            gMr_blendy->model->flags |= BR_MODU_FACES;
+            BrModelAdd(gMr_blendy->model);
+            GetModelTextureArea(gMr_blendy->model, &area1, &area2);
 
-            new_vertices = BrResAllocate(C2V(gMr_blendy)->model,
-                (C2V(gMr_blendy)->model->nvertices + area2) * sizeof(br_vertex), BR_MEMORY_VERTICES);
-            c2_memcpy(new_vertices, C2V(gMr_blendy)->model->vertices,
-                C2V(gMr_blendy)->model->nvertices * sizeof(br_vertex));
-            BrResFree(C2V(gMr_blendy)->model->vertices);
-            C2V(gMr_blendy)->model->vertices = new_vertices;
+            new_vertices = BrResAllocate(gMr_blendy->model,
+                (gMr_blendy->model->nvertices + area2) * sizeof(br_vertex), BR_MEMORY_VERTICES);
+            c2_memcpy(new_vertices, gMr_blendy->model->vertices,
+                gMr_blendy->model->nvertices * sizeof(br_vertex));
+            BrResFree(gMr_blendy->model->vertices);
+            gMr_blendy->model->vertices = new_vertices;
 
-            new_faces = BrResAllocate(C2V(gMr_blendy)->model,
-                (C2V(gMr_blendy)->model->nfaces + area1) * sizeof(br_face), BR_MEMORY_FACES);
-            c2_memcpy(new_faces, C2V(gMr_blendy)->model->faces, C2V(gMr_blendy)->model->nfaces * sizeof(br_face));
-            BrResFree(C2V(gMr_blendy)->model->faces);
-            C2V(gMr_blendy)->model->faces = new_faces;
+            new_faces = BrResAllocate(gMr_blendy->model,
+                (gMr_blendy->model->nfaces + area1) * sizeof(br_face), BR_MEMORY_FACES);
+            c2_memcpy(new_faces, gMr_blendy->model->faces, gMr_blendy->model->nfaces * sizeof(br_face));
+            BrResFree(gMr_blendy->model->faces);
+            gMr_blendy->model->faces = new_faces;
 
-            DRModelUpdateAndKevificateMaterials(C2V(gMr_blendy)->model, BR_MODU_ALL);
-            pTrack_spec->columns[z][x].actor_0x8 = C2V(gMr_blendy);
+            DRModelUpdateAndKevificateMaterials(gMr_blendy->model, BR_MODU_ALL);
+            pTrack_spec->columns[z][x].actor_0x8 = gMr_blendy;
         }
     } else {
         BrActorEnum(pActor, ProcessModelsCB, pTrack_spec);
@@ -330,7 +317,6 @@ intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
     SetSmashableModel(pActor);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0040cf10, ProcessModelsCB)
 
 void C2_HOOK_FASTCALL ProcessModels(tTrack_spec* pTrack_spec) {
 
@@ -369,6 +355,7 @@ void AssertNonCars(br_actor** pNon_cars, int* pCount_non_cars, int* pTrack_count
     *pCount_non_cars -= count_nulls;
 }
 
+// FUNCTION: CARMA2_HW 0x0040cc50
 void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
     const char* identifier;
     char s[256];
@@ -419,18 +406,17 @@ void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
 
     AllocateActorMatrix(pTrack_spec, &pTrack_spec->columns);
 
-    C2V(gMax_count_non_cars) = pTrack_spec->count_non_cars + 250;
-    C2V(gCount_track_non_cars) = pTrack_spec->count_non_cars;
-    pTrack_spec->non_car_list = BrMemAllocate(C2V(gMax_count_non_cars) * sizeof(br_actor*), kMem_non_car_list);
+    gMax_count_non_cars = pTrack_spec->count_non_cars + 250;
+    gCount_track_non_cars = pTrack_spec->count_non_cars;
+    pTrack_spec->non_car_list = BrMemAllocate(gMax_count_non_cars * sizeof(br_actor*), kMem_non_car_list);
     if (count == 4) {
         ProcessModels(pTrack_spec);
     } else {
         pTrack_spec->columns[0][0].actor_0x0 = pTrack_spec->the_actor;
     }
 
-    AssertNonCars(pTrack_spec->non_car_list, &pTrack_spec->count_non_cars, &C2V(gCount_track_non_cars), &C2V(gMax_count_non_cars));
+    AssertNonCars(pTrack_spec->non_car_list, &pTrack_spec->count_non_cars, &gCount_track_non_cars, &gMax_count_non_cars);
 }
-C2_HOOK_FUNCTION(0x0040cc50, ExtractColumns)
 
 void C2_HOOK_FASTCALL DisposeRuntimeBuiltModels(tTrack_spec* pTrack_spec) {
     int z;
@@ -462,31 +448,27 @@ void C2_HOOK_FASTCALL DisposeActorMatrix(tTrack_spec* pTrack_spec, tTrack_square
     }
 }
 
-void (C2_HOOK_FASTCALL * DisposeColumns_original)(tTrack_spec* pTrack_spec);
+// FUNCTION: CARMA2_HW 0x0040ca90
 void C2_HOOK_FASTCALL DisposeColumns(tTrack_spec* pTrack_spec) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    DisposeColumns_original(pTrack_spec);
-#else
     DisposeRuntimeBuiltModels(pTrack_spec);
     DisposeActorMatrix(pTrack_spec, pTrack_spec->columns);
     if (pTrack_spec->non_car_list != NULL) {
         int i;
 
-        for (i = C2V(gCount_track_non_cars); i < pTrack_spec->count_non_cars; i++) {
+        for (i = gCount_track_non_cars; i < pTrack_spec->count_non_cars; i++) {
 
-            if (pTrack_spec->non_car_list[i] != NULL && pTrack_spec->non_car_list[i]->parent != C2V(gNon_track_actor)) {
+            if (pTrack_spec->non_car_list[i] != NULL && pTrack_spec->non_car_list[i]->parent != gNon_track_actor) {
                 BrActorRemove(pTrack_spec->non_car_list[i]);
                 BrActorFree(pTrack_spec->non_car_list[i]);
             }
         }
         BrMemFree(pTrack_spec->non_car_list);
     }
-#endif
 }
 
-C2_HOOK_FUNCTION_ORIGINAL(0x0040ca90, DisposeColumns, DisposeColumns_original)
 
+// FUNCTION: CARMA2_HW 0x0040cb90
 void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX, br_scalar pZ, tTrack_spec* pTrack_spec) {
     br_scalar x;
     br_scalar z;
@@ -509,14 +491,10 @@ void C2_HOOK_FASTCALL XZToColumnXZ(tU8* pColumn_x, tU8* pColumn_z, br_scalar pX,
     *pColumn_z = (tU8)z;
 }
 
-C2_HOOK_FUNCTION(0x0040cb90, XZToColumnXZ)
 
-void (C2_HOOK_FASTCALL * ProcessNearbyActors_original)(tTrack_spec* pTrack, br_vector3* pPos, float pMax_dist, int pMatch_type, int pIdentifier_value, int pIdentifier_index, int pMatch_flags, tNearbyActors_cbfn* pCallback, void* pContext);
+// FUNCTION: CARMA2_HW 0x0040e000
 void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos, float pMax_dist, int pMatch_type, int pIdentifier_value, int pIdentifier_index, int pMatch_flags, tNearbyActors_cbfn* pCallback, void* pContext) {
 
-#if defined(C2_HOOKS_ENABLED)
-    ProcessNearbyActors_original(pTrack, pPos, pMax_dist, pMatch_type, pIdentifier_value, pIdentifier_index, pMatch_flags, pCallback, pContext);
-#else
     tFoundAnActor_context found_an_actor_context;
     float p;
     int x, xmin, xmax;
@@ -600,21 +578,15 @@ void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos,
             }
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040e000, ProcessNearbyActors, ProcessNearbyActors_original)
 
-intptr_t (C2_HOOK_CDECL * FoundAnActor_original)(br_actor* pActor, void* pContext);
+// FUNCTION: CARMA2_HW 0x0040e290
 intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return FoundAnActor_original(pActor, pContext);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0040e290, FoundAnActor, FoundAnActor_original)
 
+// FUNCTION: CARMA2_HW 0x0040d7c0
 void C2_HOOK_FASTCALL RenderTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world) {
     tU8 column_x;
     tU8 column_z;
@@ -644,7 +616,7 @@ void C2_HOOK_FASTCALL RenderTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br
         edge_after.v[0] = tan_fov_ish * camera->aspect;
         edge_after.v[1] = tan_fov_ish;
         edge_after.v[2] = -1.0;
-        BrVector3Scale(&edge_before, &edge_after, camera->yon_z * C2V(gYon_factor));
+        BrVector3Scale(&edge_before, &edge_after, camera->yon_z * gYon_factor);
         BrMatrix34ApplyV(&edge_after, &edge_before, pCamera_to_world);
         XZToColumnXZ(&column_x, &column_z, pCamera_to_world->m[3][0] + edge_after.v[0], pCamera_to_world->m[3][2] + edge_after.v[2], pTrack_spec);
         if (column_x < min_x) {
@@ -717,7 +689,7 @@ void C2_HOOK_FASTCALL RenderTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br
                     tU8 idx_z = pCamera_to_world->m[2][2] > 0.f ? z : (max_z + min_z - z);
                     br_actor* a = pTrack_spec->columns[idx_z][idx_x].actor_0x0;
                     if (a != NULL) {
-                        if (C2V(gRender_alternative_track_actors)) {
+                        if (gRender_alternative_track_actors) {
                             BrZbsSceneRenderAdd(a);
                         } else {
                             BrZbsSceneRenderAdd(pTrack_spec->columns[idx_z][idx_x].actor_0x4);
@@ -732,7 +704,7 @@ void C2_HOOK_FASTCALL RenderTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br
                     tU8 idx_z = pCamera_to_world->m[2][2] > 0.f ? z : (max_z + min_z - z);
                     br_actor* a = pTrack_spec->columns[idx_z][idx_x].actor_0x0;
                     if (a != NULL) {
-                        if (C2V(gRender_alternative_track_actors)) {
+                        if (gRender_alternative_track_actors) {
                             BrZbsSceneRenderAdd(a);
                         } else {
                             BrZbsSceneRenderAdd(pTrack_spec->columns[idx_z][idx_x].actor_0x4);
@@ -743,4 +715,3 @@ void C2_HOOK_FASTCALL RenderTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br
         }
     }
 }
-C2_HOOK_FUNCTION(0x0040d7c0, RenderTrack)

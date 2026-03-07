@@ -5,15 +5,15 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gY_picking_camera);
-C2_HOOK_VARIABLE_DECLARE(br_scalar, gLowest_y_above);
-C2_HOOK_VARIABLE_DECLARE(br_scalar, gHighest_y_below);
-C2_HOOK_VARIABLE_DECLARE(br_scalar, gCurrent_y);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gAbove_model);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gBelow_model);
-C2_HOOK_VARIABLE_DECLARE(int, gAbove_face_index);
-C2_HOOK_VARIABLE_DECLARE(int, gBelow_face_index);
-C2_HOOK_VARIABLE_DECLARE(br_material*, gMaterial_below);
+extern br_actor* gY_picking_camera;
+extern br_scalar gLowest_y_above;
+extern br_scalar gHighest_y_below;
+extern br_scalar gCurrent_y;
+extern br_model* gAbove_model;
+extern br_model* gBelow_model;
+extern int gAbove_face_index;
+extern int gBelow_face_index;
+extern br_material* gMaterial_below;
 
 void C2_HOOK_FASTCALL InitRayCasting(void);
 

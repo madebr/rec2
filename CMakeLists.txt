@@ -7,6 +7,11 @@ project(rec2 C)
 
 include(CMakeDependentOption)
 
+cmake_dependent_option(REC2_MATCHING "Matching build" TRUE "MSVC;WIN32;CMAKE_SIZEOF_VOID_P EQUAL 4" FALSE)
+if(REC2_MATCHING)
+    add_compile_definitions(-DREC2_MATCHING)
+endif()
+
 set(REC2_ALL_PLATFORM_CHOICES "SDL3" "WIN32")
 if(WIN32 AND CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(REC2_PLATFORM_DEFAULT "WIN32")
@@ -139,17 +144,8 @@ add_subdirectory(src/launcher)
 
 set(CARM2_LOCATION "" CACHE FILEPATH "Path of Carmageddon II")
 if(CARM2_LOCATION)
-    if(REC2_STANDALONE)
-        add_custom_target(copy_rec2
-            COMMEND "Copying rec2 to \"${CARM2_LOCATION}\""
-            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE_NAME:rec2>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2>"
-        )
-    else()
-        add_custom_target(copy_hooks
-            COMMENT "Copying rec2 hooks to \"${CARM2_LOCATION}\""
-            COMMAND "${CMAKE_COMMAND}" -E make_directory "${CARM2_LOCATION}/plugins"
-            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:rec2>" "${CARM2_LOCATION}/plugins/$<TARGET_FILE_NAME:rec2>"
-            COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE:rec2-injector>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2-injector>"
-        )
-    endif()
+    add_custom_target(copy_rec2
+        COMMEND "Copying rec2 to \"${CARM2_LOCATION}\""
+        COMMAND "${CMAKE_COMMAND}" -E copy "$<TARGET_FILE_NAME:rec2>" "${CARM2_LOCATION}/$<TARGET_FILE_NAME:rec2>"
+    )
 endif()

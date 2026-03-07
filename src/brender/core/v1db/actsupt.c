@@ -13,6 +13,7 @@
 #include "core/math/matrix4.h"
 #include "core/math/transfrm.h"
 
+// FUNCTION: CARMA2_HW 0x0051ded0
 br_uint_32 C2_HOOK_CDECL BrActorEnum(br_actor* parent, br_actor_enum_cbfn* callback, void* arg) {
     br_actor* a;
     br_actor* next;
@@ -31,8 +32,8 @@ br_uint_32 C2_HOOK_CDECL BrActorEnum(br_actor* parent, br_actor_enum_cbfn* callb
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x0051ded0, BrActorEnum)
 
+// FUNCTION: CARMA2_HW 0x0051df00
 br_uint_32 C2_HOOK_CDECL BrActorSearchMany(br_actor* root, char* pattern, br_actor** actors, int max) {
     br_actor* a;
     char* sub;
@@ -70,8 +71,8 @@ br_uint_32 C2_HOOK_CDECL BrActorSearchMany(br_actor* root, char* pattern, br_act
     }
     return max - remaining;
 }
-C2_HOOK_FUNCTION(0x0051df00, BrActorSearchMany)
 
+// FUNCTION: CARMA2_HW 0x0051dfb0
 br_actor* C2_HOOK_CDECL BrActorSearch(br_actor* root, char* pattern) {
     br_actor* a;
 
@@ -80,8 +81,8 @@ br_actor* C2_HOOK_CDECL BrActorSearch(br_actor* root, char* pattern) {
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x0051dfb0, BrActorSearch)
 
+// FUNCTION: CARMA2_HW 0x0051e040
 void C2_HOOK_STDCALL RenumberActor(br_actor* a, int d) {
     br_actor* ac;
 
@@ -92,8 +93,8 @@ void C2_HOOK_STDCALL RenumberActor(br_actor* a, int d) {
         ac = ac->next;
     }
 }
-C2_HOOK_FUNCTION(0x0051e040, RenumberActor)
 
+// FUNCTION: CARMA2_HW 0x0051dfe0
 br_actor* C2_HOOK_CDECL BrActorAdd(br_actor* parent, br_actor* a) {
     br_actor* ac;
 
@@ -106,8 +107,8 @@ br_actor* C2_HOOK_CDECL BrActorAdd(br_actor* parent, br_actor* a) {
     }
     return a;
 }
-C2_HOOK_FUNCTION(0x0051dfe0, BrActorAdd)
 
+// FUNCTION: CARMA2_HW 0x0051e070
 br_actor* C2_HOOK_CDECL BrActorRemove(br_actor* a) {
     br_actor* ac;
 
@@ -120,8 +121,8 @@ br_actor* C2_HOOK_CDECL BrActorRemove(br_actor* a) {
     }
     return a;
 }
-C2_HOOK_FUNCTION(0x0051e070, BrActorRemove)
 
+// FUNCTION: CARMA2_HW 0x0051e0d0
 void C2_HOOK_CDECL BrActorRelink(br_actor* parent, br_actor* a) {
     br_matrix34 mat;
 
@@ -133,8 +134,8 @@ void C2_HOOK_CDECL BrActorRelink(br_actor* parent, br_actor* a) {
     BrMatrix34ToTransform(&a->t, &mat);
     BrActorAdd(parent, BrActorRemove(a));
 }
-C2_HOOK_FUNCTION(0x0051e0d0, BrActorRelink)
 
+// FUNCTION: CARMA2_HW 0x0051e1a0
 br_actor* C2_HOOK_CDECL BrActorAllocate(br_uint_8 type, void* type_data) {
     br_actor* a;
     br_light* light;
@@ -143,7 +144,7 @@ br_actor* C2_HOOK_CDECL BrActorAllocate(br_uint_8 type, void* type_data) {
     br_vector4* clip_plane;
 
     C2_HOOK_BUG_ON(sizeof(br_actor) != 100);
-    a = BrResAllocate(C2V(v1db).res, sizeof(br_actor), BR_MEMORY_ACTOR);
+    a = BrResAllocate(v1db.res, sizeof(br_actor), BR_MEMORY_ACTOR);
     BrSimpleNewList((br_simple_list*)&a->children);
     a->type = type;
     a->depth = 0;
@@ -201,8 +202,8 @@ br_actor* C2_HOOK_CDECL BrActorAllocate(br_uint_8 type, void* type_data) {
     }
     return a;
 }
-C2_HOOK_FUNCTION(0x0051e1a0, BrActorAllocate)
 
+// FUNCTION: CARMA2_HW 0x0051e300
 void C2_HOOK_STDCALL InternalActorFree(br_actor* a) {
 
     while (a->children != NULL) {
@@ -211,14 +212,14 @@ void C2_HOOK_STDCALL InternalActorFree(br_actor* a) {
     BrActorEnableCheck(a);
     BrResFree(a);
 }
-C2_HOOK_FUNCTION(0x0051e300, InternalActorFree)
 
+// FUNCTION: CARMA2_HW 0x0051e2c0
 void C2_HOOK_CDECL BrActorFree(br_actor* a) {
 
     InternalActorFree(a);
 }
-C2_HOOK_FUNCTION(0x0051e2c0, BrActorFree)
 
+// FUNCTION: CARMA2_HW 0x0051e340
 br_boolean C2_HOOK_STDCALL ActorToRoot(br_actor* a, br_actor* world, br_matrix34* m) {
     if (a == world) {
         BrMatrix34Identity(m);
@@ -233,13 +234,9 @@ br_boolean C2_HOOK_STDCALL ActorToRoot(br_actor* a, br_actor* world, br_matrix34
         return a == world;
     }
 }
-C2_HOOK_FUNCTION(0x0051e340, ActorToRoot)
 
-br_boolean (C2_HOOK_STDCALL * ActorToRootTyped_original)(br_actor* a, br_actor* world, br_matrix34* m, br_int_32* type);
+// FUNCTION: CARMA2_HW 0x0051e3b0
 br_boolean C2_HOOK_STDCALL ActorToRootTyped(br_actor* a, br_actor* world, br_matrix34* m, br_int_32* type) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ActorToRootTyped_original(a, world, m, type);
-#else
     br_int_32 t;
 
 	if (a == world) {
@@ -257,15 +254,10 @@ br_boolean C2_HOOK_STDCALL ActorToRootTyped(br_actor* a, br_actor* world, br_mat
 	}
 	*type = t;
 	return a == world;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051e3b0, ActorToRootTyped, ActorToRootTyped_original)
 
-void (C2_HOOK_STDCALL * Matrix4PerspectiveNew_original)(br_matrix4* mat, br_angle field_of_view, br_scalar aspect, br_scalar hither, br_scalar yon, br_scalar origin_x, br_scalar origin_y);
+// FUNCTION: CARMA2_HW 0x0051e450
 void C2_HOOK_STDCALL Matrix4PerspectiveNew(br_matrix4* mat, br_angle field_of_view, br_scalar aspect, br_scalar hither, br_scalar yon, br_scalar origin_x, br_scalar origin_y) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    Matrix4PerspectiveNew_original(mat, field_of_view, aspect, hither, yon, origin_x, origin_y);
-#else
     br_scalar scale;
 
     scale = BR_COS(field_of_view / 2) / BR_SIN(field_of_view / 2);
@@ -286,15 +278,10 @@ void C2_HOOK_STDCALL Matrix4PerspectiveNew(br_matrix4* mat, br_angle field_of_vi
     mat->m[3][1] = 0.f;
     mat->m[3][2] = -2.f * (yon * hither) / (yon - hither);
     mat->m[3][3] = 0.f;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051e450, Matrix4PerspectiveNew, Matrix4PerspectiveNew_original)
 
-br_token (C2_HOOK_STDCALL * CameraToScreenMatrix4_original)(br_matrix4* mat, br_actor* camera);
+// FUNCTION: CARMA2_HW 0x0051e520
 br_token C2_HOOK_STDCALL CameraToScreenMatrix4(br_matrix4* mat, br_actor* camera) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return CameraToScreenMatrix4_original(mat, camera);
-#else
     br_camera* camera_type;
     br_matrix34 mat34;
 
@@ -320,8 +307,8 @@ br_token C2_HOOK_STDCALL CameraToScreenMatrix4(br_matrix4* mat, br_actor* camera
             0.f,
             (camera_type->hither_z + camera_type->yon_z) / 2.f);
 		BrMatrix34PostTranslate(&mat34,
-            C2V(v1db).origin.v[0],
-            C2V(v1db).origin.v[1],
+            v1db.origin.v[0],
+            v1db.origin.v[1],
             0.f);
 		BrMatrix4Copy34(mat, &mat34);
 		return BRT_PARALLEL;
@@ -331,8 +318,8 @@ br_token C2_HOOK_STDCALL CameraToScreenMatrix4(br_matrix4* mat, br_actor* camera
             camera_type->aspect,
 			-camera_type->hither_z,
             -camera_type->yon_z,
-			C2V(v1db).origin.v[0],
-            C2V(v1db).origin.v[1]);
+			v1db.origin.v[0],
+            v1db.origin.v[1]);
 		return BRT_PERSPECTIVE;
     case BR_CAMERA_PERSPECTIVE_WHD:
         return BRT_PERSPECTIVE;
@@ -358,10 +345,9 @@ br_token C2_HOOK_STDCALL CameraToScreenMatrix4(br_matrix4* mat, br_actor* camera
 		return BRT_PARALLEL;
 	}
 	return BR_NULL_TOKEN;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051e520, CameraToScreenMatrix4, CameraToScreenMatrix4_original)
 
+// FUNCTION: CARMA2_HW 0x0051e7d0
 br_uint_16 C2_HOOK_CDECL BrActorToActorMatrix34(br_matrix34* m, br_actor* a, br_actor* b) {
     br_matrix34 mata;
     br_matrix34 matb;
@@ -452,13 +438,9 @@ br_uint_16 C2_HOOK_CDECL BrActorToActorMatrix34(br_matrix34* m, br_actor* a, br_
 
     return BrTransformCombineTypes(at, bt);
 }
-C2_HOOK_FUNCTION(0x0051e7d0, BrActorToActorMatrix34)
 
-void (C2_HOOK_CDECL * BrActorToScreenMatrix4_original)(br_matrix4* m, br_actor* a, br_actor* camera);
+// FUNCTION: CARMA2_HW 0x0051eae0
 void C2_HOOK_CDECL BrActorToScreenMatrix4(br_matrix4* m, br_actor* a, br_actor* camera) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrActorToScreenMatrix4_original(m, a, camera);
-#else
     br_matrix34 a2c;
 
     CameraToScreenMatrix4(m, camera);
@@ -466,9 +448,7 @@ void C2_HOOK_CDECL BrActorToScreenMatrix4(br_matrix4* m, br_actor* a, br_actor* 
         BrActorToActorMatrix34(&a2c, a, camera);
         BrMatrix4Pre34(m, &a2c);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051eae0, BrActorToScreenMatrix4, BrActorToScreenMatrix4_original)
 
 void BrMatrix34ApplyBounds(br_bounds* A, br_bounds* B, br_matrix34* C) {
     int i;
@@ -495,6 +475,7 @@ void BrMatrix34ApplyBounds(br_bounds* A, br_bounds* B, br_matrix34* C) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x0051ebc0
 void C2_HOOK_STDCALL ActorToBounds(br_bounds* dest, br_actor* ap, br_model* model) {
     br_actor* a;
     br_bounds new;
@@ -505,11 +486,11 @@ void C2_HOOK_STDCALL ActorToBounds(br_bounds* dest, br_actor* ap, br_model* mode
         model = ap->model;
     }
 
-    m2v = C2V(v1db).model_to_view;
-    BrMatrix34PreTransform(&C2V(v1db).model_to_view, &ap->t);
+    m2v = v1db.model_to_view;
+    BrMatrix34PreTransform(&v1db.model_to_view, &ap->t);
 
     if (ap->type == BR_ACTOR_MODEL) {
-        BrMatrix34ApplyBounds(&new, &model->bounds, &C2V(v1db).model_to_view);
+        BrMatrix34ApplyBounds(&new, &model->bounds, &v1db.model_to_view);
 
         for (i = 0; i < 3; i++) {
             if (new.min.v[i] < dest->min.v[i]) {
@@ -526,24 +507,24 @@ void C2_HOOK_STDCALL ActorToBounds(br_bounds* dest, br_actor* ap, br_model* mode
         ActorToBounds(dest, a, model);
     }
 
-    C2V(v1db).model_to_view = m2v;
+    v1db.model_to_view = m2v;
 }
-C2_HOOK_FUNCTION(0x0051ebc0, ActorToBounds)
 
+// FUNCTION: CARMA2_HW 0x0051eb20
 br_bounds* C2_HOOK_CDECL BrActorToBounds(br_bounds* b, br_actor* ap) {
     br_matrix34 m2v;
     br_model* model;
     br_actor* a;
 
-    m2v = C2V(v1db).model_to_view;
+    m2v = v1db.model_to_view;
 
     if (ap->model == NULL) {
-        model = C2V(v1db).default_model;
+        model = v1db.default_model;
     } else {
         model = ap->model;
     }
 
-    BrMatrix34Identity(&C2V(v1db).model_to_view);
+    BrMatrix34Identity(&v1db.model_to_view);
 
     if (ap->type == BR_ACTOR_MODEL) {
         *b = model->bounds;
@@ -556,7 +537,6 @@ br_bounds* C2_HOOK_CDECL BrActorToBounds(br_bounds* b, br_actor* ap) {
         ActorToBounds(b, a, model);
     }
 
-    C2V(v1db).model_to_view = m2v;
+    v1db.model_to_view = m2v;
     return b;
 }
-C2_HOOK_FUNCTION(0x0051eb20, BrActorToBounds)

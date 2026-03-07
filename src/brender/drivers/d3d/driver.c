@@ -9,12 +9,13 @@
 #include "c2_hooks.h"
 
 
+// FUNCTION: D3D 0x10001320
 br_device* C2_HOOK_CDECL BrDrv1Begin(const char* arguments) {
     int type_count;
-    br_device_d3d* device = &C2V(DriverDeviceD3D);
+    br_device_d3d* device = &DriverDeviceD3D;
     br_error r;
 
-    C2V(PrimD3DDriverTimestamp) = TIMESTAMP_START;
+    PrimD3DDriverTimestamp = TIMESTAMP_START;
 
     DetectD3DDevices();
 
@@ -22,16 +23,15 @@ br_device* C2_HOOK_CDECL BrDrv1Begin(const char* arguments) {
         return NULL;
     }
 
-    r = PrimitiveLibraryD3DInitialise(&C2V(PrimitiveLibraryD3D), device);
+    r = PrimitiveLibraryD3DInitialise(&PrimitiveLibraryD3D, device);
     if (r != 0) {
         return NULL;
     }
 
-    type_count = OutputFacilityD3DInitialise(device, &C2V(PrimitiveLibraryD3D));
+    type_count = OutputFacilityD3DInitialise(device, &PrimitiveLibraryD3D);
 
     if (type_count == 0) {
         return NULL;
     }
-    return (br_device*)C2V(device);
+    return (br_device*)device;
 }
-C2_HOOK_FUNCTION(0x10001320, BrDrv1Begin)

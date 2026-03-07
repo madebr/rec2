@@ -6,7 +6,7 @@
 #include "c2_hooks.h"
 #include "c2_stdio.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSmash_explosion, gSmash_explosions, 20);
+extern tSmash_explosion gSmash_explosions[20];
 
 void C2_HOOK_FASTCALL InitExplosions(void);
 

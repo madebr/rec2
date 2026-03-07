@@ -5,14 +5,15 @@
 
 #include "core/fw/scratch.h"
 
+// FUNCTION: CARMA2_HW 0x00547810
 void C2_HOOK_CDECL Vertex_TransformProjectOutcodeBounds(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     brp_vertex* tvp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
@@ -24,7 +25,7 @@ void C2_HOOK_CDECL Vertex_TransformProjectOutcodeBounds(br_geometry* self, br_so
         C2_HOOK_BUG_ON((OUTCODE_YON | OUTCODE_N_YON) != 0x200020);
         C2_HOOK_BUG_ON((OUTCODE_USER | OUTCODE_N_USER) != 0x400040);
 
-        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &C2V(rend).vertices[v].p, &C2V(scache).model_to_screen);
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &rend.vertices[v].p, &scache.model_to_screen);
         OUTCODE_POINT(tvp->flags, (br_vector4 *)(tvp->comp + C_X));
 
         if (!(tvp->flags & OUTCODES_ALL)) {
@@ -33,20 +34,20 @@ void C2_HOOK_CDECL Vertex_TransformProjectOutcodeBounds(br_geometry* self, br_so
         }
     }
 }
-C2_HOOK_FUNCTION(0x00547810, Vertex_TransformProjectOutcodeBounds)
 
+// FUNCTION: CARMA2_HW 0x00547ae0
 void C2_HOOK_CDECL Vertex_TransformProjectOutcode(br_geometry *self, br_soft_renderer* renderer) {
     int v;
     brp_vertex* tvp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
-        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &C2V(rend).vertices[v].p, &C2V(scache).model_to_screen);
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &rend.vertices[v].p, &scache.model_to_screen);
         OUTCODE_POINT(tvp->flags, (br_vector4*)(tvp->comp + C_X));
 
         if (!(tvp->flags & OUTCODES_ALL)) {
@@ -54,162 +55,162 @@ void C2_HOOK_CDECL Vertex_TransformProjectOutcode(br_geometry *self, br_soft_ren
         }
     }
 }
-C2_HOOK_FUNCTION(0x00547ae0, Vertex_TransformProjectOutcode)
 
+// FUNCTION: CARMA2_HW 0x00547d40
 void C2_HOOK_CDECL Vertex_OS_TransformProjectBounds(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     brp_vertex* tvp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
-        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &C2V(rend).vertices[v].p, &C2V(scache).model_to_screen);
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &rend.vertices[v].p, &scache.model_to_screen);
         PROJECT_VERTEX(tvp,tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
         UPDATE_BOUNDS(tvp);
     }
 }
-C2_HOOK_FUNCTION(0x00547d40, Vertex_OS_TransformProjectBounds)
 
+// FUNCTION: CARMA2_HW 0x00547f20
 void C2_HOOK_CDECL Vertex_OS_TransformProject(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     brp_vertex* tvp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
-        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &C2V(rend).vertices[v].p, &C2V(scache).model_to_screen);
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &rend.vertices[v].p, &scache.model_to_screen);
         PROJECT_VERTEX(tvp, tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
     }
 }
-C2_HOOK_FUNCTION(0x00547f20, Vertex_OS_TransformProject)
 
+// FUNCTION: CARMA2_HW 0x005480a0
 void C2_HOOK_CDECL Vertex_OS_TransformProjectBoundsSurf(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     int i;
     brp_vertex* tvp;
     fmt_vertex* vp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
-        vp = &C2V(rend).vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
+        vp = &rend.vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
-        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &C2V(scache).model_to_screen);
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &scache.model_to_screen);
         PROJECT_VERTEX(tvp,tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
         UPDATE_BOUNDS(tvp);
 
         for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(scache).colour, tvp->comp);
+            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, scache.colour, tvp->comp);
         }
     }
 }
-C2_HOOK_FUNCTION(0x005480a0, Vertex_OS_TransformProjectBoundsSurf)
 
+// FUNCTION: CARMA2_HW 0x005482c0
 void C2_HOOK_CDECL Vertex_OS_TransformProjectSurf(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     int i;
     brp_vertex* tvp;
     fmt_vertex* vp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
-        vp = &C2V(rend).vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
+        vp = &rend.vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
-        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &C2V(scache).model_to_screen);
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &scache.model_to_screen);
         PROJECT_VERTEX(tvp, tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
 
         for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(scache).colour, tvp->comp);
+            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, scache.colour, tvp->comp);
         }
     }
 }
-C2_HOOK_FUNCTION(0x005482c0, Vertex_OS_TransformProjectSurf)
 
+// FUNCTION: CARMA2_HW 0x00548470
 void C2_HOOK_CDECL Vertex_OS_TransformProjectBoundsGeom(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     int i;
     brp_vertex* tvp;
     fmt_vertex* vp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
-        vp = &C2V(rend).vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
+        vp = &rend.vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
-        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &C2V(scache).model_to_screen);
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &scache.model_to_screen);
         PROJECT_VERTEX(tvp, tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
         UPDATE_BOUNDS(tvp);
 
         for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(rend).vertex_colours[v], tvp->comp);
+            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, rend.vertex_colours[v], tvp->comp);
         }
     }
 }
-C2_HOOK_FUNCTION(0x00548470, Vertex_OS_TransformProjectBoundsGeom)
 
+// FUNCTION: CARMA2_HW 0x00548690
 void C2_HOOK_CDECL Vertex_OS_TransformProjectGeom(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     int i;
     brp_vertex* tvp;
     fmt_vertex* vp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
-        vp = &C2V(rend).vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
+        vp = &rend.vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
-        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &C2V(scache).model_to_screen);
+        TRANSFORM_VERTEX((br_vector4*)(tvp->comp + C_X), &vp->p, &scache.model_to_screen);
         PROJECT_VERTEX(tvp, tvp->comp[C_X], tvp->comp[C_Y], tvp->comp[C_Z], tvp->comp[C_W]);
 
         for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(rend).vertex_colours[v], tvp->comp);
+            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, rend.vertex_colours[v], tvp->comp);
         }
     }
 }
-C2_HOOK_FUNCTION(0x00548690, Vertex_OS_TransformProjectGeom)
 
+// FUNCTION: CARMA2_HW 0x00548850
 void C2_HOOK_CDECL Vertex_SurfaceComponentsSurf(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     int i;
     brp_vertex* tvp;
     fmt_vertex* vp;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
-        vp = &C2V(rend).vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
+        vp = &rend.vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
         for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(scache).colour, tvp->comp);
+            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, scache.colour, tvp->comp);
         }
     }
 }
-C2_HOOK_FUNCTION(0x00548850, Vertex_SurfaceComponentsSurf)
 
+// FUNCTION: CARMA2_HW 0x005488f0
 void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedSurf(br_geometry* self, br_soft_renderer* renderer) {
     int v;
     int i;
@@ -217,11 +218,11 @@ void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedSurf(br_geometry* self, br_so
     fmt_vertex* vp;
     br_vector3 rev_normal;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
-        vp = &C2V(rend).vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
+        vp = &rend.vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
@@ -229,40 +230,40 @@ void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedSurf(br_geometry* self, br_so
 
         if (tvp->flags & TVDIR_FRONT) {
             for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(scache).colour, tvp->comp);
+                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, scache.colour, tvp->comp);
             }
         } else {
             BrVector3Negate(&rev_normal, &vp->n);
 
             for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &rev_normal, C2V(scache).colour, tvp->comp);
+                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &rev_normal, scache.colour, tvp->comp);
             }
         }
     }
 }
-C2_HOOK_FUNCTION(0x005488f0, Vertex_SurfaceComponentsTwoSidedSurf)
 
+// FUNCTION: CARMA2_HW 0x00548a00
 void C2_HOOK_CDECL Vertex_SurfaceComponentsGeom(br_geometry* self, br_soft_renderer* renderer) {
     brp_vertex* tvp;
     fmt_vertex* vp;
     int v;
     int i;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
-        vp = &C2V(rend).vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
+        vp = &rend.vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
         for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(rend).vertex_colours[v], tvp->comp);
+            renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, rend.vertex_colours[v], tvp->comp);
         }
     }
 }
-C2_HOOK_FUNCTION(0x00548a00, Vertex_SurfaceComponentsGeom)
 
+// FUNCTION: CARMA2_HW 0x00548aa0
 void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedGeom(br_geometry* self, br_soft_renderer* renderer) {
     brp_vertex* tvp;
     fmt_vertex* vp;
@@ -270,37 +271,37 @@ void C2_HOOK_CDECL Vertex_SurfaceComponentsTwoSidedGeom(br_geometry* self, br_so
     int i;
     br_vector3 rev_normal;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
-        vp = &C2V(rend).vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
+        vp = &rend.vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
         if (tvp->flags & TVDIR_FRONT) {
             for (i = 0; i < renderer->state.cache.nvertex_fns; i++) {
-                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, C2V(rend).vertex_colours[v], tvp->comp);
+                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &vp->n, rend.vertex_colours[v], tvp->comp);
             }
         } else {
             BrVector3Negate(&rev_normal, &vp->n);
 
             for (i= 0; i < renderer->state.cache.nvertex_fns; i++) {
-                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &rev_normal, C2V(rend).vertex_colours[v], tvp->comp);
+                renderer->state.cache.vertex_fns[i]((br_renderer*)renderer, &vp->p, &vp->map, &rev_normal, rend.vertex_colours[v], tvp->comp);
             }
         }
     }
 }
-C2_HOOK_FUNCTION(0x00548aa0, Vertex_SurfaceComponentsTwoSidedGeom)
 
+// FUNCTION: CARMA2_HW 0x00548bd0
 void C2_HOOK_CDECL Vertex_ForceFront(br_geometry* self, br_soft_renderer* renderer) {
     brp_vertex* tvp;
     int v;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        tvp = &C2V(rend).temp_vertices[v];
+    for (v = 0; v < rend.nvertices; v++) {
+        tvp = &rend.temp_vertices[v];
 
-        if (C2V(rend).vertex_counts[v] == 0) {
+        if (rend.vertex_counts[v] == 0) {
             continue;
         }
 
@@ -308,24 +309,24 @@ void C2_HOOK_CDECL Vertex_ForceFront(br_geometry* self, br_soft_renderer* render
         tvp->comp[C_Z] = tvp->comp[C_W] - BR_SCALAR_EPSILON;
     }
 }
-C2_HOOK_FUNCTION(0x00548bd0, Vertex_ForceFront)
 
+// FUNCTION: CARMA2_HW 0x005476a0
 void C2_HOOK_CDECL ScratchFree(br_geometry* self, br_soft_renderer* renderer) {
 
-    BrScratchFree(C2V(rend).scratch);
-    C2V(rend).scratch = NULL;
+    BrScratchFree(rend.scratch);
+    rend.scratch = NULL;
 }
-C2_HOOK_FUNCTION(0x005476a0, ScratchFree)
 
+// FUNCTION: CARMA2_HW 0x005476c0
 void C2_HOOK_CDECL Vertex_ClearFlags(br_geometry* self, br_soft_renderer* renderer) {
     int v;
 
-    for (v = 0; v < C2V(rend).nvertices; v++) {
-        C2V(rend).temp_vertices[v].flags = OUTCODES_NOT;
+    for (v = 0; v < rend.nvertices; v++) {
+        rend.temp_vertices[v].flags = OUTCODES_NOT;
     }
 }
-C2_HOOK_FUNCTION(0x005476c0, Vertex_ClearFlags)
 
+// FUNCTION: CARMA2_HW 0x005476f0
 void C2_HOOK_STDCALL VertexGeometryFns(br_soft_renderer* renderer, geometry_fn* prim_outcode) {
 
     C2_HOOK_BUG_ON(ENBL_BOUNDS != 0x10);
@@ -395,4 +396,3 @@ void C2_HOOK_STDCALL VertexGeometryFns(br_soft_renderer* renderer, geometry_fn* 
         GeometryFunctionBothAdd(renderer, (geometry_fn*)Vertex_ForceFront);
     }
 }
-C2_HOOK_FUNCTION(0x005476f0, VertexGeometryFns)

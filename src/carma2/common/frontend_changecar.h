@@ -5,8 +5,8 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_CHANGE_CAR);
-C2_HOOK_VARIABLE_DECLARE(int, gFrontend_change_car_selected_car);
+extern tFrontend_spec gFrontend_CHANGE_CAR;
+extern int gFrontend_change_car_selected_car;
 
 
 int C2_HOOK_FASTCALL ChangeCarMenuInfunc(tFrontend_spec* pFrontend);

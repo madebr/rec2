@@ -11,25 +11,32 @@
 
 #include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, primitiveD3DStateTemplateEntries, 2, 0x10017250, {
+// GLOBAL: D3D 0x10017250
+br_tv_template_entry primitiveD3DStateTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,  0, offsetof(br_primitive_state_d3d, identifier), 0x5, 0x3,  },
-    { BRT_PARTS_TL,         0, (uintptr_t)&C2V(PrimPartsD3DTokens),          0xd, 0x1d, },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_tv_template, primitiveD3DStateTemplate, 0x10017280, {
-    BR_ASIZE(C2V(primitiveD3DStateTemplateEntries)),
-    C2V(primitiveD3DStateTemplateEntries),
-});
+    { BRT_PARTS_TL,         0, (uintptr_t)&PrimPartsD3DTokens,          0xd, 0x1d, },
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, outputD3DTemplateEntries, 2, 0x100174d0, {
+// GLOBAL: D3D 0x10017280
+br_tv_template primitiveD3DStateTemplate = {
+    BR_ASIZE(primitiveD3DStateTemplateEntries),
+    primitiveD3DStateTemplateEntries,
+};
+
+// GLOBAL: D3D 0x100174d0
+br_tv_template_entry outputD3DTemplateEntries[] = {
     { BRT_COLOUR_BUFFER_O,  0,  offsetof(br_primitive_state_d3d, out.pixelmap), 0x7, 0x3, },
     { BRT_DEPTH_BUFFER_O,   0,  offsetof(br_primitive_state_d3d, out.depth),    0x7, 0x3, },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_tv_template, outputD3DTemplate, 0x10017500, {
-    BR_ASIZE(C2V(outputD3DTemplateEntries)),
-    C2V(outputD3DTemplateEntries),
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, primitiveD3DTemplateEntries, 22, 0x100172a0, {
+// GLOBAL: D3D 0x10017500
+br_tv_template outputD3DTemplate = {
+    BR_ASIZE(outputD3DTemplateEntries),
+    outputD3DTemplateEntries,
+};
+
+// GLOBAL: D3D 0x100172a0
+br_tv_template_entry primitiveD3DTemplateEntries[] = {
     { BRT_SMOOTH_B,             0, offsetof(br_primitive_state_d3d, prim.flags),              0x7,    0x1f,    PRIMF_SMOOTH,            1, },
     { BRT_PERSPECTIVE_B,        0, offsetof(br_primitive_state_d3d, prim.flags),              0x7,    0x1f,    PRIMF_PERSPECTIVE,       1, },
     { BRT_DECAL_B,              0, offsetof(br_primitive_state_d3d, prim.flags),              0x7,    0x1f,    PRIMF_DECAL,             1, },
@@ -52,13 +59,16 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, primitiveD3DTemplate
     { BRT_MAP_ANTIALIASING_T,   0, offsetof(br_primitive_state_d3d, prim.map_antialiasing),   0x7,    0x3, },
     { BRT_MAP_INTERPOLATION_T,  0, offsetof(br_primitive_state_d3d, prim.map_interpolation),  0x7,    0x3, },
     { BRT_MIP_INTERPOLATION_T,  0, offsetof(br_primitive_state_d3d, prim.mip_interpolation),  0x7,    0x3, },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_tv_template, primitiveD3DTemplate, 0x100174b0, {
-    BR_ASIZE(C2V(primitiveD3DTemplateEntries)),
-    C2V(primitiveD3DTemplateEntries),
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_primitive_state_dispatch, primitiveD3DStateDispatch, 0x10017520, {
+// GLOBAL: D3D 0x100174b0
+br_tv_template primitiveD3DTemplate = {
+    BR_ASIZE(primitiveD3DTemplateEntries),
+    primitiveD3DTemplateEntries,
+};
+
+// GLOBAL: D3D 0x10017520
+br_primitive_state_dispatch primitiveD3DStateDispatch = {
     NULL,
     NULL,
     NULL,
@@ -93,30 +103,31 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_primitive_state_dispatch, primitiveD3DStateDi
     (void*)_M_br_primitive_state_d3d_rangesQueryX,
     (void*)_M_br_primitive_state_d3d_partQueryCapability,
     (void*)_M_br_primitive_state_d3d_stateQueryPerformance,
-});
+};
 
+// FUNCTION: D3D 0x10006c10
 br_tv_template* C2_HOOK_CDECL findTemplate(br_token part) {
     switch(part) {
     case BRT_PRIMITIVE:
-        return &C2V(primitiveD3DTemplate);
+        return &primitiveD3DTemplate;
     case BRT_OUTPUT:
-        return &C2V(outputD3DTemplate);
+        return &outputD3DTemplate;
     default:
         break;
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x10006c10, findTemplate)
 
+// FUNCTION: D3D 0x10006a90
 br_primitive_state_d3d* C2_HOOK_CDECL PrimitiveStateD3DAllocate(br_primitive_library_d3d* plib) {
     br_primitive_state_d3d* self;
 
-    self = BrResAllocate(C2V(DriverDeviceD3D).res, sizeof(*self), BR_MEMORY_OBJECT);
+    self = BrResAllocate(DriverDeviceD3D.res, sizeof(*self), BR_MEMORY_OBJECT);
     if (self == NULL) {
         return NULL;
     }
     self->plib = plib;
-    self->dispatch = &C2V(primitiveD3DStateDispatch);
+    self->dispatch = &primitiveD3DStateDispatch;
     self->prim.map_antialiasing = BRT_NONE;
     self->prim.map_interpolation = BRT_NONE;
     self->prim.mip_interpolation = BRT_NONE;
@@ -127,58 +138,58 @@ br_primitive_state_d3d* C2_HOOK_CDECL PrimitiveStateD3DAllocate(br_primitive_lib
     plib->dispatch->_addFront((br_object_container*)plib, (br_object*)self);
     return self;
 }
-C2_HOOK_FUNCTION(0x10006a90, PrimitiveStateD3DAllocate)
 
+// FUNCTION: D3D 0x10006fc0
 void C2_HOOK_CDECL PrimitiveStateD3DClearTemplates(void) {
-    memset(&C2V(primitiveD3DStateTemplate), 0, sizeof(C2V(primitiveD3DStateTemplate)));
-    C2V(primitiveD3DStateTemplate).n_entries = BR_ASIZE(C2V(primitiveD3DStateTemplateEntries));
-    C2V(primitiveD3DStateTemplate).entries = C2V(primitiveD3DStateTemplateEntries);
+    memset(&primitiveD3DStateTemplate, 0, sizeof(primitiveD3DStateTemplate));
+    primitiveD3DStateTemplate.n_entries = BR_ASIZE(primitiveD3DStateTemplateEntries);
+    primitiveD3DStateTemplate.entries = primitiveD3DStateTemplateEntries;
 
-    memset(&C2V(outputD3DTemplate), 0, sizeof(C2V(outputD3DTemplate)));
-    C2V(outputD3DTemplate).n_entries = BR_ASIZE(C2V(outputD3DTemplateEntries));
-    C2V(outputD3DTemplate).entries = C2V(outputD3DTemplateEntries);
+    memset(&outputD3DTemplate, 0, sizeof(outputD3DTemplate));
+    outputD3DTemplate.n_entries = BR_ASIZE(outputD3DTemplateEntries);
+    outputD3DTemplate.entries = outputD3DTemplateEntries;
 
     C2_HOOK_BUG_ON(offsetof(primitive_d3d_state, out.colour.pixelmap) != 0x48);
     C2_HOOK_BUG_ON(offsetof(primitive_d3d_state, out.depth) != 0x4c);
 
-    memset(&C2V(primitiveD3DTemplate), 0, sizeof(C2V(primitiveD3DTemplate)));
-    C2V(primitiveD3DTemplate).n_entries = BR_ASIZE(C2V(primitiveD3DTemplateEntries));
-    C2V(primitiveD3DTemplate).entries = C2V(primitiveD3DTemplateEntries);
+    memset(&primitiveD3DTemplate, 0, sizeof(primitiveD3DTemplate));
+    primitiveD3DTemplate.n_entries = BR_ASIZE(primitiveD3DTemplateEntries);
+    primitiveD3DTemplate.entries = primitiveD3DTemplateEntries;
 #if 0
     CLEAR_TEMPLATE(primitiveState);
     CLEAR_TEMPLATE(output);
     CLEAR_TEMPLATE(primitive);
 #endif
 }
-C2_HOOK_FUNCTION(0x10006fc0, PrimitiveStateD3DClearTemplates)
 
+// FUNCTION: D3D 0x10006af0
 void C2_HOOK_CDECL _M_br_primitive_state_d3d_free(br_primitive_state_d3d* self) {
     self->plib->dispatch->_remove((br_object_container*)self->plib, (br_object*)self);
     BrResFreeNoCallback(self);
 }
-C2_HOOK_FUNCTION(0x10006af0, _M_br_primitive_state_d3d_free)
 
+// FUNCTION: D3D 0x10006b10
 br_token C2_HOOK_CDECL _M_br_primitive_state_d3d_type(br_primitive_state_d3d* self) {
     return BRT_PRIMITIVE_STATE;
 }
-C2_HOOK_FUNCTION(0x10006b10, _M_br_primitive_state_d3d_type)
 
+// FUNCTION: D3D 0x10006b20
 br_boolean C2_HOOK_CDECL _M_br_primitive_state_d3d_isType(br_primitive_state_d3d* self, br_token t) {
     return t == BRT_PRIMITIVE_STATE || t == BRT_OBJECT_CONTAINER || t == BRT_OBJECT;
 }
-C2_HOOK_FUNCTION(0x10006b20,  _M_br_primitive_state_d3d_isType)
 
+// FUNCTION: D3D 0x10006b40
 br_int_32 C2_HOOK_CDECL  C2_HOOK_CDECL _M_br_primitive_state_d3d_space(br_primitive_state_d3d *self) {
     return sizeof(br_primitive_state_d3d);
 }
-C2_HOOK_FUNCTION(0x10006b40,  _M_br_primitive_state_d3d_space)
 
+// FUNCTION: D3D 0x10006b50
 br_tv_template * C2_HOOK_CDECL  C2_HOOK_CDECL _M_br_primitive_state_d3d_templateQuery(br_primitive_state_d3d* self) {
-    C2V(primitiveD3DStateTemplate).res = C2V(DriverDeviceD3D).res;
-    return &C2V(primitiveD3DStateTemplate);
+    primitiveD3DStateTemplate.res = DriverDeviceD3D.res;
+    return &primitiveD3DStateTemplate;
 }
-C2_HOOK_FUNCTION(0x10006b50,  _M_br_primitive_state_d3d_templateQuery)
 
+// FUNCTION: D3D 0x10006b60
 br_error C2_HOOK_CDECL  C2_HOOK_CDECL _M_br_primitive_state_d3d_partSet(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_token t, br_uint_32 value) {
     br_error r;
     br_tv_template* tp = findTemplate(part);
@@ -212,8 +223,8 @@ br_error C2_HOOK_CDECL  C2_HOOK_CDECL _M_br_primitive_state_d3d_partSet(br_primi
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006b60, _M_br_primitive_state_d3d_partSet)
 
+// FUNCTION: D3D 0x10006c30
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partSetMany(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_token_value* tv, br_int_32* pcount) {
     br_error r;
     br_tv_template* tp = findTemplate(part);
@@ -251,8 +262,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partSetMany(br_primitive_state_
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006c30, _M_br_primitive_state_d3d_partSetMany)
 
+// FUNCTION: D3D 0x10006cf0
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQuery(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_uint_32* pvalue, br_token t) {
     br_tv_template* tp = findTemplate(part);
 
@@ -261,8 +272,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQuery(br_primitive_state_d3
     }
     return BrTokenValueQuery(pvalue, NULL, 0, t, self, tp);
 }
-C2_HOOK_FUNCTION(0x10006cf0, _M_br_primitive_state_d3d_partQuery)
 
+// FUNCTION: D3D 0x10006d30
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryBuffer(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_uint_32* pvalue, br_uint_32 *buffer, br_size_t buffer_size, br_token t) {
     br_tv_template* tp = findTemplate(part);
 
@@ -271,8 +282,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryBuffer(br_primitive_st
     }
     return BrTokenValueQuery(pvalue, buffer, buffer_size, t, self, tp);
 }
-C2_HOOK_FUNCTION(0x10006d30, _M_br_primitive_state_d3d_partQueryBuffer)
 
+// FUNCTION: D3D 0x10006d70
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryMany(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_token_value* tv, void* extra, br_size_t extra_size, br_int_32* pcount) {
     br_tv_template* tp = findTemplate(part);
 
@@ -281,8 +292,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryMany(br_primitive_stat
     }
     return BrTokenValueQueryMany(tv, extra, extra_size, pcount, self, tp);
 }
-C2_HOOK_FUNCTION(0x10006d70, _M_br_primitive_state_d3d_partQueryMany)
 
+// FUNCTION: D3D 0x10006db0
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryManySize(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_size_t* pextra_size, br_token_value* tv) {
     br_tv_template* tp = findTemplate(part);
 
@@ -291,8 +302,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryManySize(br_primitive_
     }
     return BrTokenValueQueryManySize(pextra_size, tv, self, tp);
 }
-C2_HOOK_FUNCTION(0x10006db0, _M_br_primitive_state_d3d_partQueryManySize)
 
+// FUNCTION: D3D 0x10006de0
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryAll(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_token_value* buffer, br_size_t buffer_size) {
     br_tv_template* tp = findTemplate(part);
 
@@ -301,8 +312,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryAll(br_primitive_state
     }
     return BrTokenValueQueryAll(buffer, buffer_size, self, tp);
 }
-C2_HOOK_FUNCTION(0x10006de0, _M_br_primitive_state_d3d_partQueryAll)
 
+// FUNCTION: D3D 0x10006e10
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryAllSize(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_size_t* psize) {
     br_tv_template* tp = findTemplate(part);
 
@@ -311,8 +322,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryAllSize(br_primitive_s
     }
     return BrTokenValueQueryAllSize(psize, self, tp);
 }
-C2_HOOK_FUNCTION(0x10006e10, _M_br_primitive_state_d3d_partQueryAllSize)
 
+// FUNCTION: D3D 0x10006e50
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partIndexQuery(br_primitive_state_d3d* self, br_token part, br_int_32* pnindex) {
     int n;
 
@@ -330,8 +341,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partIndexQuery(br_primitive_sta
     *pnindex = n;
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006e50, _M_br_primitive_state_d3d_partIndexQuery)
 
+// FUNCTION: D3D 0x10006e80
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_stateDefault(br_primitive_state_d3d* self, br_uint_32 mask) {
 
     if (mask & BR_STATE_PRIMITIVE) {
@@ -351,8 +362,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_stateDefault(br_primitive_state
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006e80, _M_br_primitive_state_d3d_stateDefault)
 
+// FUNCTION: D3D 0x10006f00
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_stateCopy(br_primitive_state_d3d *self, br_primitive_state_d3d *source, br_uint_32 mask) {
 
     if ((mask & BR_STATE_PRIMITIVE) && self->prim.timestamp != source->prim.timestamp) {
@@ -375,13 +386,12 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_stateCopy(br_primitive_state_d3
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006f00, _M_br_primitive_state_d3d_stateCopy)
 
+// FUNCTION: D3D 0x10006e40
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partQueryCapability(br_primitive_state_d3d* self, br_token part, br_int_32 index, br_token_value* buffer, br_size_t buffer_size) {
 
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x, _M_br_primitive_state_d3d_partQueryCapability)
 
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_stateQueryPerformance(br_primitive_state_d3d* self, br_fixed_lu* speed) {
     return 0x1002;

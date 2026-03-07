@@ -11,70 +11,71 @@
 
 #include "c2_string.h"
 
+// FUNCTION: CARMA2_HW 0x00542f90
 void C2_HOOK_CDECL V1Faces_ScratchAllocate(br_geometry* self, br_soft_renderer* renderer) {
     char *sp;
     br_size_t scratch_size;
 
-    C2_HOOK_BUG_ON(sizeof(*C2V(rend).vertex_counts) != 1);
-    C2_HOOK_BUG_ON(sizeof(*C2V(rend).temp_faces) != 4);
-    C2_HOOK_BUG_ON(sizeof(*C2V(rend).temp_vertices) != 0x40);
+    C2_HOOK_BUG_ON(sizeof(*rend.vertex_counts) != 1);
+    C2_HOOK_BUG_ON(sizeof(*rend.temp_faces) != 4);
+    C2_HOOK_BUG_ON(sizeof(*rend.temp_vertices) != 0x40);
 
-    scratch_size  = SCRATCH_ALIGN(C2V(rend).nvertices * sizeof(*C2V(rend).vertex_counts));
-    scratch_size += SCRATCH_ALIGN(C2V(rend).nfaces    * sizeof(*C2V(rend).temp_faces));
-    scratch_size += SCRATCH_ALIGN(C2V(rend).nvertices * sizeof(*C2V(rend).temp_vertices));
+    scratch_size  = SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.vertex_counts));
+    scratch_size += SCRATCH_ALIGN(rend.nfaces    * sizeof(*rend.temp_faces));
+    scratch_size += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.temp_vertices));
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(brp_block, type, 0x10);
-    C2_HOOK_BUG_ON(sizeof(*C2V(rend).edge_flags) != 1);
-    if (C2V(rend).block->type == BRT_LINE) {
-        scratch_size += SCRATCH_ALIGN(C2V(rend).nedges * sizeof(*C2V(rend).edge_flags));
+    C2_HOOK_BUG_ON(sizeof(*rend.edge_flags) != 1);
+    if (rend.block->type == BRT_LINE) {
+        scratch_size += SCRATCH_ALIGN(rend.nedges * sizeof(*rend.edge_flags));
     }
 
-    C2_HOOK_BUG_ON(sizeof(*C2V(rend).vertex_flags) != 1);
-    if (C2V(rend).block->type == BRT_POINT) {
-        scratch_size += SCRATCH_ALIGN(C2V(rend).nvertices * sizeof(*C2V(rend).vertex_flags));
+    C2_HOOK_BUG_ON(sizeof(*rend.vertex_flags) != 1);
+    if (rend.block->type == BRT_POINT) {
+        scratch_size += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.vertex_flags));
     }
 
-    C2_HOOK_BUG_ON(sizeof(*C2V(rend).vertex_heap_pointers) != 4);
+    C2_HOOK_BUG_ON(sizeof(*rend.vertex_heap_pointers) != 4);
     if (renderer->state.hidden.type == BRT_BUCKET_SORT || renderer->state.hidden.type == BRT_BUCKET_AND_BUFFER) {
-        scratch_size += SCRATCH_ALIGN(C2V(rend).nvertices * sizeof(*C2V(rend).vertex_heap_pointers));
+        scratch_size += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.vertex_heap_pointers));
     }
 
-    C2V(rend).scratch = BrScratchAllocate(scratch_size + SCRATCH_BOUNDARY);
+    rend.scratch = BrScratchAllocate(scratch_size + SCRATCH_BOUNDARY);
 
-    sp = C2V(rend).scratch;
+    sp = rend.scratch;
 
-    C2V(rend).vertex_counts = (void*)sp;
-    sp += SCRATCH_ALIGN(C2V(rend).nvertices * sizeof(*C2V(rend).vertex_counts));
+    rend.vertex_counts = (void*)sp;
+    sp += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.vertex_counts));
 
-    C2V(rend).temp_faces = (void*)sp;
-    sp += SCRATCH_ALIGN(C2V(rend).nfaces * sizeof(*C2V(rend).temp_faces));
+    rend.temp_faces = (void*)sp;
+    sp += SCRATCH_ALIGN(rend.nfaces * sizeof(*rend.temp_faces));
 
-    C2V(rend).temp_vertices = (void*)sp;
-    sp += SCRATCH_ALIGN(C2V(rend).nvertices * sizeof(*C2V(rend).temp_vertices));
+    rend.temp_vertices = (void*)sp;
+    sp += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.temp_vertices));
 
-    if (C2V(rend).block->type == BRT_LINE) {
-        C2V(rend).edge_flags = (void*)sp;
-        sp += SCRATCH_ALIGN(C2V(rend).nedges * sizeof(*C2V(rend).edge_flags));
-        c2_memset(C2V(rend).edge_flags, 0, C2V(rend).nedges * sizeof(*C2V(rend).edge_flags));
-        C2V(rend).edge_flags[0] = 1;
+    if (rend.block->type == BRT_LINE) {
+        rend.edge_flags = (void*)sp;
+        sp += SCRATCH_ALIGN(rend.nedges * sizeof(*rend.edge_flags));
+        c2_memset(rend.edge_flags, 0, rend.nedges * sizeof(*rend.edge_flags));
+        rend.edge_flags[0] = 1;
     }
 
-    if(C2V(rend).block->type == BRT_POINT) {
-        C2V(rend).vertex_flags = (void*)sp;
-        sp += SCRATCH_ALIGN(C2V(rend).nvertices * sizeof(*C2V(rend).vertex_flags));
-        c2_memset(C2V(rend).vertex_flags, 0, C2V(rend).nvertices * sizeof(*C2V(rend).vertex_flags));
+    if(rend.block->type == BRT_POINT) {
+        rend.vertex_flags = (void*)sp;
+        sp += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.vertex_flags));
+        c2_memset(rend.vertex_flags, 0, rend.nvertices * sizeof(*rend.vertex_flags));
     }
 
     if (renderer->state.hidden.type == BRT_BUCKET_SORT || renderer->state.hidden.type == BRT_BUCKET_AND_BUFFER) {
-        C2V(rend).vertex_heap_pointers = (void*)sp;
-        sp += SCRATCH_ALIGN(C2V(rend).nvertices * sizeof(*C2V(rend).vertex_heap_pointers));
-        c2_memset(C2V(rend).vertex_heap_pointers, 0, C2V(rend).nvertices * sizeof(*C2V(rend).vertex_heap_pointers));
+        rend.vertex_heap_pointers = (void*)sp;
+        sp += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.vertex_heap_pointers));
+        c2_memset(rend.vertex_heap_pointers, 0, rend.nvertices * sizeof(*rend.vertex_heap_pointers));
     }
 
-    c2_memset(C2V(rend).vertex_counts, 0, C2V(rend).nvertices * sizeof(*C2V(rend).vertex_counts));
+    c2_memset(rend.vertex_counts, 0, rend.nvertices * sizeof(*rend.vertex_counts));
 }
-C2_HOOK_FUNCTION(0x00542f90, V1Faces_ScratchAllocate)
 
+// FUNCTION: CARMA2_HW 0x00543110
 void C2_HOOK_CDECL V1Face_CullNone(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
@@ -85,36 +86,36 @@ void C2_HOOK_CDECL V1Face_CullNone(br_geometry* self, br_soft_renderer* renderer
     C2_HOOK_BUG_ON(TFF_VISIBLE != 0x4);
     C2_HOOK_BUG_ON(sizeof(v11face) != 0x1c);
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
 
         tfp->flag = TFF_VISIBLE;
 
-        C2V(rend).vertex_counts[fp->vertices[0]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[1]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[2]] += 1;
+        rend.vertex_counts[fp->vertices[0]] += 1;
+        rend.vertex_counts[fp->vertices[1]] += 1;
+        rend.vertex_counts[fp->vertices[2]] += 1;
     }
-    C2V(rend).nvisible_faces = C2V(rend).nfaces;
+    rend.nvisible_faces = rend.nfaces;
 }
-C2_HOOK_FUNCTION(0x00543110, V1Face_CullNone)
 
+// FUNCTION: CARMA2_HW 0x00543190
 void C2_HOOK_CDECL V1Face_OS_CullNone(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
+    for (f = 0; f < rend.nfaces; f++) {
 
-        tfp = &C2V(rend).temp_faces[f];
+        tfp = &rend.temp_faces[f];
         tfp->flag = TFF_VISIBLE;
     }
 
-    c2_memset(C2V(rend).vertex_counts, 1, C2V(rend).nvertices);
+    c2_memset(rend.vertex_counts, 1, rend.nvertices);
 
-    C2V(rend).nvisible_faces = C2V(rend).nfaces;
+    rend.nvisible_faces = rend.nfaces;
 }
-C2_HOOK_FUNCTION(0x00543190, V1Face_OS_CullNone)
 
+// FUNCTION: CARMA2_HW 0x005431f0
 void C2_HOOK_CDECL V1Face_CullOneSided(br_geometry* self, br_soft_renderer* renderer) {
 
     switch (renderer->state.matrix.view_to_screen_hint) {
@@ -129,62 +130,62 @@ void C2_HOOK_CDECL V1Face_CullOneSided(br_geometry* self, br_soft_renderer* rend
         break;
     }
 }
-C2_HOOK_FUNCTION(0x005431f0, V1Face_CullOneSided)
 
+// FUNCTION: CARMA2_HW 0x005432b0
 void C2_HOOK_CDECL V1Face_CullOneSidedPerspective(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
     v11face* fp;
 
-    C2V(rend).nvisible_faces = 0;
+    rend.nvisible_faces = 0;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
 
-        if (BrVector3Dot(&fp->eqn, &C2V(scache).eye_m) < fp->eqn.v[3]) {
+        if (BrVector3Dot(&fp->eqn, &scache.eye_m) < fp->eqn.v[3]) {
             tfp->flag = 0;
             continue;
         }
 
         tfp->flag = TFF_VISIBLE;
 
-        C2V(rend).vertex_counts[fp->vertices[0]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[1]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[2]] += 1;
+        rend.vertex_counts[fp->vertices[0]] += 1;
+        rend.vertex_counts[fp->vertices[1]] += 1;
+        rend.vertex_counts[fp->vertices[2]] += 1;
 
-        C2V(rend).nvisible_faces++;
+        rend.nvisible_faces++;
     }
 }
-C2_HOOK_FUNCTION(0x005432b0, V1Face_CullOneSidedPerspective)
 
+// FUNCTION: CARMA2_HW 0x00543380
 void C2_HOOK_CDECL V1Face_CullOneSidedParallel(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
     v11face* fp;
 
-    C2V(rend).nvisible_faces = 0;
+    rend.nvisible_faces = 0;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
 
-        if (BrVector3Dot(&fp->eqn, &C2V(scache).eye_m) < 0.f) {
+        if (BrVector3Dot(&fp->eqn, &scache.eye_m) < 0.f) {
             tfp->flag = 0;
             continue;
         }
 
         tfp->flag = TFF_VISIBLE;
 
-        C2V(rend).vertex_counts[fp->vertices[0]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[1]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[2]] += 1;
+        rend.vertex_counts[fp->vertices[0]] += 1;
+        rend.vertex_counts[fp->vertices[1]] += 1;
+        rend.vertex_counts[fp->vertices[2]] += 1;
 
-        C2V(rend).nvisible_faces++;
+        rend.nvisible_faces++;
     }
 }
-C2_HOOK_FUNCTION(0x00543380, V1Face_CullOneSidedParallel)
 
+// FUNCTION: CARMA2_HW 0x00543450
 void C2_HOOK_CDECL V1Face_OS_CullOneSided(br_geometry* self, br_soft_renderer* renderer) {
 
     switch (renderer->state.matrix.view_to_screen_hint) {
@@ -199,8 +200,8 @@ void C2_HOOK_CDECL V1Face_OS_CullOneSided(br_geometry* self, br_soft_renderer* r
         break;
     }
 }
-C2_HOOK_FUNCTION(0x00543450, V1Face_OS_CullOneSided)
 
+// FUNCTION: CARMA2_HW 0x005434e0
 void C2_HOOK_CDECL V1Face_CullTwoSided(br_geometry* self, br_soft_renderer* renderer) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.matrix.view_to_screen_hint, 0x550);
@@ -218,68 +219,68 @@ void C2_HOOK_CDECL V1Face_CullTwoSided(br_geometry* self, br_soft_renderer* rend
             break;
     }
 }
-C2_HOOK_FUNCTION(0x005434e0, V1Face_CullTwoSided)
 
+// FUNCTION: CARMA2_HW 0x005435a0
 void C2_HOOK_CDECL V1Face_CullTwoSidedPerspective(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     int df;
     temp_face_soft* tfp;
     v11face* fp;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
 
         tfp->flag = TFF_VISIBLE;
         df = TVDIR_FRONT;
 
-        if (BrVector3Dot(&fp->eqn, &C2V(scache).eye_m) < fp->eqn.v[3]) {
+        if (BrVector3Dot(&fp->eqn, &scache.eye_m) < fp->eqn.v[3]) {
             tfp->flag |= TFF_REVERSED;
             df = TVDIR_BACK;
         }
 
-        C2V(rend).vertex_counts[fp->vertices[0]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[1]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[2]] += 1;
+        rend.vertex_counts[fp->vertices[0]] += 1;
+        rend.vertex_counts[fp->vertices[1]] += 1;
+        rend.vertex_counts[fp->vertices[2]] += 1;
 
-        C2V(rend).temp_vertices[fp->vertices[0]].flags |= df;
-        C2V(rend).temp_vertices[fp->vertices[1]].flags |= df;
-        C2V(rend).temp_vertices[fp->vertices[2]].flags |= df;
+        rend.temp_vertices[fp->vertices[0]].flags |= df;
+        rend.temp_vertices[fp->vertices[1]].flags |= df;
+        rend.temp_vertices[fp->vertices[2]].flags |= df;
     }
-    C2V(rend).nvisible_faces = C2V(rend).nfaces;
+    rend.nvisible_faces = rend.nfaces;
 }
-C2_HOOK_FUNCTION(0x005435a0, V1Face_CullTwoSidedPerspective)
 
+// FUNCTION: CARMA2_HW 0x005436b0
 void C2_HOOK_CDECL V1Face_CullTwoSidedParallel(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     int df;
     temp_face_soft* tfp;
     v11face* fp;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
 
         tfp->flag = TFF_VISIBLE;
         df = TVDIR_FRONT;
 
-        if (BrVector3Dot(&fp->eqn, &C2V(scache).eye_m) < 0.f) {
+        if (BrVector3Dot(&fp->eqn, &scache.eye_m) < 0.f) {
             tfp->flag |= TFF_REVERSED;
             df = TVDIR_BACK;
         }
 
-        C2V(rend).vertex_counts[fp->vertices[0]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[1]] += 1;
-        C2V(rend).vertex_counts[fp->vertices[2]] += 1;
+        rend.vertex_counts[fp->vertices[0]] += 1;
+        rend.vertex_counts[fp->vertices[1]] += 1;
+        rend.vertex_counts[fp->vertices[2]] += 1;
 
-        C2V(rend).temp_vertices[fp->vertices[0]].flags |= df;
-        C2V(rend).temp_vertices[fp->vertices[1]].flags |= df;
-        C2V(rend).temp_vertices[fp->vertices[2]].flags |= df;
+        rend.temp_vertices[fp->vertices[0]].flags |= df;
+        rend.temp_vertices[fp->vertices[1]].flags |= df;
+        rend.temp_vertices[fp->vertices[2]].flags |= df;
     }
-    C2V(rend).nvisible_faces = C2V(rend).nfaces;
+    rend.nvisible_faces = rend.nfaces;
 }
-C2_HOOK_FUNCTION(0x005436b0, V1Face_CullTwoSidedParallel)
 
+// FUNCTION: CARMA2_HW 0x005437c0
 void C2_HOOK_CDECL V1Face_OS_CullTwoSided(br_geometry* self, br_soft_renderer* renderer) {
 
     switch (renderer->state.matrix.view_to_screen_hint) {
@@ -294,8 +295,8 @@ void C2_HOOK_CDECL V1Face_OS_CullTwoSided(br_geometry* self, br_soft_renderer* r
         break;
     }
 }
-C2_HOOK_FUNCTION(0x005437c0, V1Face_OS_CullTwoSided)
 
+// FUNCTION: CARMA2_HW 0x00543850
 void C2_HOOK_CDECL V1Face_Outcode(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
@@ -305,35 +306,35 @@ void C2_HOOK_CDECL V1Face_Outcode(br_geometry* self, br_soft_renderer* renderer)
     C2_HOOK_BUG_ON(OUTCODES_NOT != 0xfff0000);
     C2_HOOK_BUG_ON(OUTCODES_ALL != 0xfff);
 
-    C2V(rend).faces_clipped = 0;
+    rend.faces_clipped = 0;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
 
         if (!tfp->flag) {
             continue;
         }
 
-        combined_codes = C2V(rend).temp_vertices[fp->vertices[0]].flags |
-            C2V(rend).temp_vertices[fp->vertices[1]].flags |
-            C2V(rend).temp_vertices[fp->vertices[2]].flags;
+        combined_codes = rend.temp_vertices[fp->vertices[0]].flags |
+            rend.temp_vertices[fp->vertices[1]].flags |
+            rend.temp_vertices[fp->vertices[2]].flags;
 
         if ((combined_codes & OUTCODES_NOT) != OUTCODES_NOT) {
-            C2V(rend).nvisible_faces -= 1;
+            rend.nvisible_faces -= 1;
             tfp->flag = 0;
-            C2V(rend).vertex_counts[fp->vertices[0]] -= 1;
-            C2V(rend).vertex_counts[fp->vertices[1]] -= 1;
-            C2V(rend).vertex_counts[fp->vertices[2]] -= 1;
+            rend.vertex_counts[fp->vertices[0]] -= 1;
+            rend.vertex_counts[fp->vertices[1]] -= 1;
+            rend.vertex_counts[fp->vertices[2]] -= 1;
         } else if (combined_codes & OUTCODES_ALL) {
             tfp->flag |= TFF_CLIPPED;
             tfp->codes = (br_uint_16)(combined_codes & OUTCODES_ALL);
-            C2V(rend).faces_clipped = 1;
+            rend.faces_clipped = 1;
         }
     }
 }
-C2_HOOK_FUNCTION(0x00543850, V1Face_Outcode)
 
+// FUNCTION: CARMA2_HW 0x00543940
 void C2_HOOK_CDECL V1Face_Render(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
@@ -341,9 +342,9 @@ void C2_HOOK_CDECL V1Face_Render(br_geometry* self, br_soft_renderer* renderer) 
     brp_block* unclipped = renderer->state.cache.face_blocks_onscreen[renderer->state.cache.nface_blocks_onscreen].chain;
     brp_block* clipped = renderer->state.cache.face_blocks[renderer->state.cache.nface_blocks].chain;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
 
         if (!(tfp->flag & TFF_VISIBLE)) {
             continue;
@@ -351,72 +352,71 @@ void C2_HOOK_CDECL V1Face_Render(br_geometry* self, br_soft_renderer* renderer) 
 
         if (tfp->flag & TFF_CLIPPED) {
             clipped->render(clipped,
-                &C2V(rend).temp_vertices[fp->vertices[0]],
-                &C2V(rend).temp_vertices[fp->vertices[1]],
-                &C2V(rend).temp_vertices[fp->vertices[2]],
+                &rend.temp_vertices[fp->vertices[0]],
+                &rend.temp_vertices[fp->vertices[1]],
+                &rend.temp_vertices[fp->vertices[2]],
                 fp,
                 tfp);
         } else {
             unclipped->render(unclipped,
-                &C2V(rend).temp_vertices[fp->vertices[0]],
-                &C2V(rend).temp_vertices[fp->vertices[1]],
-                &C2V(rend).temp_vertices[fp->vertices[2]],
+                &rend.temp_vertices[fp->vertices[0]],
+                &rend.temp_vertices[fp->vertices[1]],
+                &rend.temp_vertices[fp->vertices[2]],
                 fp,
                 tfp);
         }
     }
 }
-C2_HOOK_FUNCTION(0x00543940, V1Face_Render)
 
+// FUNCTION: CARMA2_HW 0x00542830
 void C2_HOOK_CDECL V1Face_OS_Render(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
     v11face* fp;
     brp_block* unclipped = renderer->state.cache.face_blocks_onscreen[renderer->state.cache.nface_blocks_onscreen].chain;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
         if (tfp->flag & TFF_VISIBLE) {
             unclipped->render(unclipped,
-                &C2V(rend).temp_vertices[fp->vertices[0]],
-                &C2V(rend).temp_vertices[fp->vertices[1]],
-                &C2V(rend).temp_vertices[fp->vertices[2]],
+                &rend.temp_vertices[fp->vertices[0]],
+                &rend.temp_vertices[fp->vertices[1]],
+                &rend.temp_vertices[fp->vertices[2]],
                 fp,
                 tfp);
         }
     }
 }
-C2_HOOK_FUNCTION(0x00542830, V1Face_OS_Render)
 
+// FUNCTION: CARMA2_HW 0x005428b0
 void C2_HOOK_CDECL V1Face_OSV_Render(br_geometry* self, br_soft_renderer* renderer) {
     int f;
     temp_face_soft* tfp;
     v11face* fp;
     brp_block* unclipped = renderer->state.cache.face_blocks_onscreen[renderer->state.cache.nface_blocks_onscreen].chain;
 
-    for (f = 0; f < C2V(rend).nfaces; f++) {
-        tfp = &C2V(rend).temp_faces[f];
-        fp = &C2V(rend).faces[f];
+    for (f = 0; f < rend.nfaces; f++) {
+        tfp = &rend.temp_faces[f];
+        fp = &rend.faces[f];
         unclipped->render(unclipped,
-            &C2V(rend).temp_vertices[fp->vertices[0]],
-            &C2V(rend).temp_vertices[fp->vertices[1]],
-            &C2V(rend).temp_vertices[fp->vertices[2]],
+            &rend.temp_vertices[fp->vertices[0]],
+            &rend.temp_vertices[fp->vertices[1]],
+            &rend.temp_vertices[fp->vertices[2]],
             fp,
             tfp);
     }
 }
-C2_HOOK_FUNCTION(0x005428b0, V1Face_OSV_Render)
 
 static void C2_HOOK_STDCALL AddReplicateConstant(br_geometry_v1_model_soft* self, br_soft_renderer* renderer) {
 
-    if (C2V(rend).block->constant_mask == (1 << C_I)) {
+    if (rend.block->constant_mask == (1 << C_I)) {
         PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleReplicateConstantI);
 #if 1
     /* VERIFYME: this is different from Carmageddon II and BRender sources */
-    } else if (C2V(rend).block->constant_mask == ((1 << C_R) | (1 << C_G) | (1 << C_B))) {
+    } else if (rend.block->constant_mask == ((1 << C_R) | (1 << C_G) | (1 << C_B))) {
 #else
-    } else if (C2V(rend).block->constant_mask == (1 << C_R) | (1 << C_G) | (1 << C_B)) {
+    } else if (rend.block->constant_mask == (1 << C_R) | (1 << C_G) | (1 << C_B)) {
 #endif
         PrimBlockAddBoth(renderer, (brp_render_fn*)OpTriangleReplicateConstantRGB);
     } else {
@@ -462,8 +462,8 @@ static void C2_HOOK_STDCALL V1Faces_GeometryFnsUpdate(br_geometry_v1_model_soft*
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(brp_block, convert_mask_i, 0x28);
 
     if (divert) {
-        if (C2V(rend).block->convert_mask_i != 0 || C2V(rend).block->convert_mask_x != 0) {
-            switch (C2V(rend).block->type) {
+        if (rend.block->convert_mask_i != 0 || rend.block->convert_mask_x != 0) {
+            switch (rend.block->type) {
             case BRT_POINT:
                 PrimBlockAddBoth(renderer, (brp_render_fn*)OpHeapAddPointConvert);
                 break;
@@ -477,7 +477,7 @@ static void C2_HOOK_STDCALL V1Faces_GeometryFnsUpdate(br_geometry_v1_model_soft*
                 break;
             }
         } else {
-            switch (C2V(rend).block->type) {
+            switch (rend.block->type) {
             case BRT_POINT:
                 PrimBlockAddBoth(renderer, (brp_render_fn*)OpHeapAddPoint);
                 break;
@@ -492,8 +492,8 @@ static void C2_HOOK_STDCALL V1Faces_GeometryFnsUpdate(br_geometry_v1_model_soft*
             }
         }
     } else {
-        if (C2V(rend).block->convert_mask_i != 0 || C2V(rend).block->convert_mask_x != 0) {
-            switch (C2V(rend).block->type) {
+        if (rend.block->convert_mask_i != 0 || rend.block->convert_mask_x != 0) {
+            switch (rend.block->type) {
             case BRT_POINT:
                 PrimBlockAddBoth(renderer, (brp_render_fn*)RenderConvert1);
                 break;
@@ -509,7 +509,7 @@ static void C2_HOOK_STDCALL V1Faces_GeometryFnsUpdate(br_geometry_v1_model_soft*
         }
     }
 
-    switch (C2V(rend).block->type) {
+    switch (rend.block->type) {
     case BRT_POINT:
         PrimBlockAdd(renderer, (brp_render_fn*)OpTriangleToPoints);
         PrimBlockOnScreenAdd(renderer, (brp_render_fn*)OpTriangleToPoints_OS);
@@ -541,7 +541,7 @@ static void C2_HOOK_STDCALL V1Faces_GeometryFnsUpdate(br_geometry_v1_model_soft*
     case BRT_TRIANGLE:
         if (renderer->state.cache.nconstant_fns != 0) {
             C2_HOOK_BUG_ON(BR_PRIMF_CONST_DUPLICATE != 0x2);
-            if (C2V(rend).block->flags & BR_PRIMF_CONST_DUPLICATE) {
+            if (rend.block->flags & BR_PRIMF_CONST_DUPLICATE) {
                 AddReplicateConstant(self, renderer);
             }
             PrimBlockAdd(renderer, (brp_render_fn*)OpTriangleClipConstantSurf);
@@ -557,10 +557,10 @@ static void C2_HOOK_STDCALL V1Faces_GeometryFnsUpdate(br_geometry_v1_model_soft*
 
         C2_HOOK_BUG_ON(BR_PRIMF_SUBDIVIDE != 0x4);
 
-        if (C2V(rend).block->flags & BR_PRIMF_SUBDIVIDE) {
+        if (rend.block->flags & BR_PRIMF_SUBDIVIDE) {
             PrimBlockAdd(renderer, (brp_render_fn*)OpTriangleSubdivide);
             PrimBlockOnScreenAdd(renderer, (brp_render_fn*)OpTriangleSubdivideOnScreen);
-            SubdivideSetThreshold(C2V(rend).block->subdivide_tolerance);
+            SubdivideSetThreshold(rend.block->subdivide_tolerance);
         }
         break;
     default:
@@ -579,12 +579,8 @@ static void C2_HOOK_STDCALL V1Faces_GeometryFnsUpdate(br_geometry_v1_model_soft*
     renderer->state.cache.format = self;
 }
 
-br_error (C2_HOOK_STDCALL * V1Model_Render_original)(br_geometry_v1_model_soft* self, br_soft_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen);
+// FUNCTION: CARMA2_HW 0x00542960
 br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_soft_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type, br_boolean on_screen) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return V1Model_Render_original(self, renderer, model, default_state, type, on_screen);
-#else
     int i, g;
     br_renderer_state_stored_soft* state;
     br_error r;
@@ -592,31 +588,31 @@ br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_soft
 
     CheckPrimitiveState(renderer);
 
-    C2V(rend).geometry = self;
-    C2V(rend).renderer = renderer;
+    rend.geometry = self;
+    rend.renderer = renderer;
 
-    C2V(scache).min = renderer->state.bounds.min;
-    C2V(scache).max = renderer->state.bounds.max;
+    scache.min = renderer->state.bounds.min;
+    scache.max = renderer->state.bounds.max;
 
-    if (!C2V(scache).valid_per_scene) {
+    if (!scache.valid_per_scene) {
         StaticCacheUpdate_PerScene(renderer);
-        C2V(scache).valid_per_scene = 1;
+        scache.valid_per_scene = 1;
     }
 
-    if (!C2V(scache).valid_per_model) {
+    if (!scache.valid_per_model) {
         StaticCacheUpdate_PerModel(renderer);
-        C2V(scache).valid_per_model = 1;
+        scache.valid_per_model = 1;
     }
 
     for (g = 0; g < model->ngroups; g++) {
 
-        C2V(rend).faces = model->groups[g].faces;
-        C2V(rend).vertices = model->groups[g].vertices;
-        C2V(rend).face_colours = model->groups[g].face_colours.colours;
-        C2V(rend).vertex_colours = model->groups[g].vertex_colours;
-        C2V(rend).nfaces = model->groups[g].nfaces;
-        C2V(rend).nvertices = model->groups[g].nvertices;
-        C2V(rend).nedges = model->groups[g].nedges;
+        rend.faces = model->groups[g].faces;
+        rend.vertices = model->groups[g].vertices;
+        rend.face_colours = model->groups[g].face_colours.colours;
+        rend.vertex_colours = model->groups[g].vertex_colours;
+        rend.nfaces = model->groups[g].nfaces;
+        rend.nvertices = model->groups[g].nvertices;
+        rend.nedges = model->groups[g].nedges;
 
         state = model->groups[g].stored ? model->groups[g].stored : default_state;
 
@@ -629,26 +625,26 @@ br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_soft
                  renderer->state.hidden.heap != NULL;
 
         r = renderer->state.pstate->dispatch->_renderBegin(renderer->state.pstate,
-            &C2V(rend).block, &C2V(rend).block_changed, &C2V(rend).range_changed, z_sort, type);
+            &rend.block, &rend.block_changed, &rend.range_changed, z_sort, type);
 
         if (r != 0) {
             return r;
         }
 
-        z_sort_blended = (C2V(rend).block->flags & BR_PRIMF_BLENDED) &&
+        z_sort_blended = (rend.block->flags & BR_PRIMF_BLENDED) &&
             renderer->state.hidden.type == BRT_BUCKET_AND_BUFFER &&
             renderer->state.hidden.order_table != NULL &&
             renderer->state.hidden.heap != NULL;
 
         divert = z_sort || z_sort_blended;
 
-        C2V(scache).colour = renderer->state.surface.colour & 0xffffff;
-        C2V(scache).colour |= ((int)(renderer->state.surface.opacity * 256.f)) << 24;
+        scache.colour = renderer->state.surface.colour & 0xffffff;
+        scache.colour |= ((int)(renderer->state.surface.opacity * 256.f)) << 24;
 
-        renderer->state.cache.face_blocks[0].chain = C2V(rend).block;
-        renderer->state.cache.face_blocks_onscreen[0].chain = C2V(rend).block;
+        renderer->state.cache.face_blocks[0].chain = rend.block;
+        renderer->state.cache.face_blocks_onscreen[0].chain = rend.block;
 
-        if (C2V(rend).block_changed || C2V(rend).range_changed || !renderer->state.cache.valid) {
+        if (rend.block_changed || rend.range_changed || !renderer->state.cache.valid) {
             CacheUpdate(renderer);
 
             V1Faces_GeometryFnsUpdate(self, renderer, divert);
@@ -671,17 +667,16 @@ br_error C2_HOOK_STDCALL V1Model_Render(br_geometry_v1_model_soft* self, br_soft
             state->cache.valid = 1;
         }
 
-        renderer->state.pstate->dispatch->_renderEnd(renderer->state.pstate, C2V(rend).block);
+        renderer->state.pstate->dispatch->_renderEnd(renderer->state.pstate, rend.block);
     }
 
-    renderer->state.bounds.min = C2V(scache).min;
-    renderer->state.bounds.max = C2V(scache).max;
+    renderer->state.bounds.min = scache.min;
+    renderer->state.bounds.max = scache.max;
 
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00542960, V1Model_Render, V1Model_Render_original)
 
+// FUNCTION: CARMA2_HW 0x00542930
 br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_render(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type) {
     br_error r;
 
@@ -689,8 +684,8 @@ br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_render(br_geometry_v1_model_
 
     return r;
 }
-C2_HOOK_FUNCTION(0x00542930, _M_br_geometry_v1_model_soft_render)
 
+// FUNCTION: CARMA2_HW 0x00543a10
 br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_renderOnScreen(br_geometry_v1_model_soft* self, br_renderer* renderer, v11model* model, br_renderer_state_stored* default_state, br_token type) {
     br_error r;
 
@@ -698,4 +693,3 @@ br_error C2_HOOK_CDECL _M_br_geometry_v1_model_soft_renderOnScreen(br_geometry_v
 
     return r;
 }
-C2_HOOK_FUNCTION(0x00543a10, _M_br_geometry_v1_model_soft_renderOnScreen)

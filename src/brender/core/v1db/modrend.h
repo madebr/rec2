@@ -5,7 +5,7 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(render_style_cbfn, RenderStyleCalls, 8);
+extern render_style_cbfn RenderStyleCalls[8];
 
 void C2_HOOK_STDCALL renderFaces(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen);
 

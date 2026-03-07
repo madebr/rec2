@@ -13,20 +13,23 @@
 #include "c2_stdio.h"
 #include "c2_stdlib.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, last_begin_screen, 0x006ad9ac);
 
+// GLOBAL: CARMA2_HW 0x006ad9ac
+br_pixelmap* last_begin_screen;
+
+// FUNCTION: CARMA2_HW 0x00528d50
 br_pixelmap* C2_HOOK_CDECL BrDevLastBeginQuery(void) {
 
-    return C2V(last_begin_screen);
+    return last_begin_screen;
 }
-C2_HOOK_FUNCTION(0x00528d50, BrDevLastBeginQuery)
 
+// FUNCTION: CARMA2_HW 0x00528d60
 void C2_HOOK_CDECL BrDevLastBeginSet(br_pixelmap* pm) {
 
-    C2V(last_begin_screen) = pm;
+    last_begin_screen = pm;
 }
-C2_HOOK_FUNCTION(0x00528d60, BrDevLastBeginSet)
 
+// FUNCTION: CARMA2_HW 0x00528d70
 br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string, ...) {
     va_list vl;
     br_uint_32 i;
@@ -49,19 +52,15 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string
     br_error res = BrDevBeginTV(ppm, setup_string, tv);
     return res;
 }
-C2_HOOK_FUNCTION(0x00528d70, BrDevBeginVar)
 
+// FUNCTION: CARMA2_HW 0x00528df0
 br_error C2_HOOK_CDECL BrDevBegin(br_pixelmap** ppm, const char* setup_string) {
 
     return BrDevBeginTV(ppm, setup_string, NULL);
 }
-C2_HOOK_FUNCTION(0x00528df0, BrDevBegin)
 
-br_error (C2_HOOK_CDECL * BrDevBeginTV_original)(br_pixelmap** ppm, const char* setup_string, br_token_value* setup_tv);
+// FUNCTION: CARMA2_HW 0x00528e10
 br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, const char* setup_string, br_token_value* setup_tv) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrDevBeginTV_original(ppm, setup_string, setup_tv);
-#else
     char str[512];
     char* args;
     char* devname;
@@ -205,15 +204,10 @@ br_error C2_HOOK_CDECL BrDevBeginTV(br_pixelmap** ppm, const char* setup_string,
     BrDevLastBeginSet(screen);
     *ppm = screen;
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00528e10, BrDevBeginTV, BrDevBeginTV_original)
 
-br_pixelmap* (C2_HOOK_CDECL * BrDevBeginOld_original)(const char* setup_string);
+// FUNCTION: CARMA2_HW 0x00529270
 br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(const char* setup_string) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrDevBeginOld_original(setup_string);
-#else
     br_pixelmap* s;
 
     if (BrDevLastBeginQuery() != NULL) {
@@ -223,54 +217,35 @@ br_pixelmap* C2_HOOK_CDECL BrDevBeginOld(const char* setup_string) {
         BrFailure("Could not start driver");
     }
     return s;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529270, BrDevBeginOld, BrDevBeginOld_original)
 
-void (C2_HOOK_CDECL * BrDevEndOld_original)(void);
+// FUNCTION: CARMA2_HW 0x005292c0
 void C2_HOOK_CDECL BrDevEndOld(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrDevEndOld_original();
-#else
 
     if (BrDevLastBeginQuery() != NULL) {
         BrPixelmapFree(BrDevLastBeginQuery());
     }
     BrDevLastBeginSet(NULL);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005292c0, BrDevEndOld, BrDevEndOld_original)
 
-void (C2_HOOK_CDECL * BrDevPaletteSetOld_original)(br_pixelmap* pm);
+// FUNCTION: CARMA2_HW 0x005292e0
 void C2_HOOK_CDECL BrDevPaletteSetOld(br_pixelmap* pm) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrDevPaletteSetOld_original(pm);
-#else
 
     if (BrDevLastBeginQuery() != NULL) {
         BrPixelmapPaletteSet(BrDevLastBeginQuery(), pm);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005292e0, BrDevPaletteSetOld, BrDevPaletteSetOld_original)
 
-void (C2_HOOK_CDECL * BrDevPaletteSetEntryOld_original)(int i, br_colour colour);
+// FUNCTION: CARMA2_HW 0x00529300
 void C2_HOOK_CDECL BrDevPaletteSetEntryOld(int i, br_colour colour) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrDevPaletteSetEntryOld_original(i, colour);
-#else
+
     if (BrDevLastBeginQuery() != NULL) {
         BrPixelmapPaletteEntrySet(BrDevLastBeginQuery(), i, colour);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529300, BrDevPaletteSetEntryOld, BrDevPaletteSetEntryOld_original)
 
-br_error (C2_HOOK_CDECL * BrRendererFacilityFind_original)(br_renderer_facility** prf, br_device_pixelmap* destination, br_token scalar_type);
+// FUNCTION: CARMA2_HW 0x00529320
 br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_device_pixelmap* destination, br_token scalar_type) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrRendererFacilityFind_original(prf, destination, scalar_type);
-#else
     br_renderer_facility* renderer_facility;
     br_error r;
     br_output_facility* ot;
@@ -323,15 +298,10 @@ br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_dev
     }
     *prf = renderer_facility;
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529320, BrRendererFacilityFind, BrRendererFacilityFind_original)
 
-br_error (C2_HOOK_CDECL * BrPrimitiveLibraryFind_original)(br_primitive_library** ppl, br_device_pixelmap* destination, br_token scalar_type);
+// FUNCTION: CARMA2_HW 0x005294d0
 br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_device_pixelmap* destination, br_token scalar_type) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrPrimitiveLibraryFind_original(ppl, destination, scalar_type);
-#else
     br_primitive_library* primitive_library;
     br_error r;
     br_output_facility* ot;
@@ -384,15 +354,10 @@ br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_dev
     }
     *ppl = primitive_library;
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005294d0, BrPrimitiveLibraryFind, BrPrimitiveLibraryFind_original)
 
-br_error (C2_HOOK_CDECL * BrGeometryFormatFind_original)(br_geometry** pgf, br_renderer* renderer, br_renderer_facility* renderer_facility, br_token scalar_type, br_token format_type);
+// FUNCTION: CARMA2_HW 0x00529680
 br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* renderer, br_renderer_facility* renderer_facility, br_token scalar_type, br_token format_type) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrGeometryFormatFind_original(pgf, renderer, renderer_facility, scalar_type, format_type);
-#else
     br_error r;
     br_geometry* gf;
     char object_name[21] = "Default-Format-00000";
@@ -460,6 +425,4 @@ br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* rend
         return 0;
     }
     return 0x1002;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529680, BrGeometryFormatFind, BrGeometryFormatFind_original)

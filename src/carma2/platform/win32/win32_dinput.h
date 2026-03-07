@@ -6,10 +6,10 @@
 #include "platform.h"
 #include "win32_types.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gASCII_table, 151);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gASCII_shift_table, 151);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gScan_code, 256);
-C2_HOOK_VARIABLE_DECLARE(int, gJoystick_deadzone);
+extern int gASCII_table[151];
+extern int gASCII_shift_table[151];
+extern int gScan_code[256];
+extern int gJoystick_deadzone;
 
 void C2_HOOK_FASTCALL KeyBegin(void);
 

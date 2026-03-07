@@ -4,6 +4,7 @@
 
 #include <math.h>
 
+// FUNCTION: CARMA2_HW 0x00536fb0
 br_int_32 C2_HOOK_CDECL BrPlaneEquation(br_vector4* eqn, const br_vector3* v0, const br_vector3* v1, const br_vector3* v2) {
     float ax;
     float ay;
@@ -44,4 +45,3 @@ br_int_32 C2_HOOK_CDECL BrPlaneEquation(br_vector4* eqn, const br_vector3* v0, c
     eqn->v[3] = d;
     return !isnan(l);
 }
-C2_HOOK_FUNCTION(0x00536fb0, BrPlaneEquation)

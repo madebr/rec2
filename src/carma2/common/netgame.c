@@ -10,31 +10,48 @@
 
 #include <brender/brender.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gInitialised_grid, 0x0074a738);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gIt_or_fox, 0x0074a734);
-C2_HOOK_VARIABLE_IMPLEMENT(tNet_game_player_info*, gLast_lepper, 0x0068d924);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLast_it_change, 0x0068d928);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNot_shown_race_type_headup, 0x0068d934);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gWinner_declared, 0x0068d938);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_for_punishment, 0x0068d92c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gINT_0068d920, 0x0068d920);
 
+// GLOBAL: CARMA2_HW 0x0074a738
+int gInitialised_grid;
+
+// GLOBAL: CARMA2_HW 0x0074a734
+int gIt_or_fox;
+
+// GLOBAL: CARMA2_HW 0x0068d924
+tNet_game_player_info* gLast_lepper;
+
+// GLOBAL: CARMA2_HW 0x0068d928
+tU32 gLast_it_change;
+
+// GLOBAL: CARMA2_HW 0x0068d934
+int gNot_shown_race_type_headup;
+
+// GLOBAL: CARMA2_HW 0x0068d938
+int gWinner_declared;
+
+// GLOBAL: CARMA2_HW 0x0068d92c
+tU32 gTime_for_punishment;
+
+// GLOBAL: CARMA2_HW 0x0068d920
+int gINT_0068d920;
+
+// FUNCTION: CARMA2_HW 0x0049bd10
 void C2_HOOK_FASTCALL DefaultNetName(void) {
 
     /* FIXME: 32 overflows the player_name field */
-    C2_HOOK_ASSERT((uintptr_t)&C2V(gProgram_state).player_name == 0x0075d590);
-    NetObtainSystemUserName(C2V(gProgram_state).player_name, 32);
+    C2_HOOK_ASSERT((uintptr_t)&gProgram_state.player_name == 0x0075d590);
+    NetObtainSystemUserName(gProgram_state.player_name, 32);
 }
-C2_HOOK_FUNCTION(0x0049bd10, DefaultNetName)
 
+// FUNCTION: CARMA2_HW 0x0049ee20
 void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_length) {
 
     PDNetObtainSystemUserName(pName, pMax_length);
     pName[9] = '\0';
 }
 
-C2_HOOK_FUNCTION(0x0049ee20, NetObtainSystemUserName)
 
+// FUNCTION: CARMA2_HW 0x00499260
 void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
 
     if (pCar->driver_name[0] != '\0') {
@@ -43,13 +60,13 @@ void C2_HOOK_FASTCALL DisableCar(tCar_spec* pCar) {
             ForceRebuildActiveCarList();
         }
         if (pCar->car_master_actor->t.t.mat.m[3][0] < 500.0f) {
-            BrVector3Accumulate(&pCar->car_master_actor->t.t.translate.t, &C2V(gInitial_position));
+            BrVector3Accumulate(&pCar->car_master_actor->t.t.translate.t, &gInitial_position);
             BrVector3Copy((br_vector3*)pCar->old_frame_mat.m[3], &pCar->car_master_actor->t.t.translate.t);
         }
     }
 }
-C2_HOOK_FUNCTION(0x00499260, DisableCar)
 
+// FUNCTION: CARMA2_HW 0x004992e0
 void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
 
     if (pCar->driver_name[0] != '\0') {
@@ -58,13 +75,13 @@ void C2_HOOK_FASTCALL EnableCar(tCar_spec* pCar) {
             ForceRebuildActiveCarList();
         }
         if (pCar->car_master_actor->t.t.mat.m[3][0] > 500.0f) {
-            BrVector3Sub(&pCar->car_master_actor->t.t.translate.t, &pCar->car_master_actor->t.t.translate.t, &C2V(gInitial_position));
+            BrVector3Sub(&pCar->car_master_actor->t.t.translate.t, &pCar->car_master_actor->t.t.translate.t, &gInitial_position);
             BrVector3Copy((br_vector3*)pCar->old_frame_mat.m[3], &pCar->car_master_actor->t.t.translate.t);
         }
     }
 }
-C2_HOOK_FUNCTION(0x004992e0, EnableCar)
 
+// FUNCTION: CARMA2_HW 0x0049b690
 void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
 
     C2_HOOK_BUG_ON(sizeof(tNet_game_details) != 0x78);
@@ -81,7 +98,7 @@ void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_game_player_info, wasted, 0x6c);
 
     PossibleService();
-    switch (C2V(gCurrent_net_game)->type) {
+    switch (gCurrent_net_game->type) {
     case eNet_game_type_fight_to_death:
         pPlayer->score2 = 100;
         break;
@@ -101,83 +118,56 @@ void C2_HOOK_FASTCALL InitialisePlayerScore(tNet_game_player_info* pPlayer) {
     default:
         abort();
     }
-    pPlayer->credits = C2V(gCurrent_net_game)->options.starting_credits;
+    pPlayer->credits = gCurrent_net_game->options.starting_credits;
     pPlayer->wasted = 0;
     pPlayer->reposition_time = 0;
 }
-C2_HOOK_FUNCTION(0x0049b690, InitialisePlayerScore)
 
-void (C2_HOOK_FASTCALL * InitPlayers_original)(void);
+// FUNCTION: CARMA2_HW 0x0049b720
 void C2_HOOK_FASTCALL InitPlayers(void) {
-
-#if defined(C2_HOOKS_ENABLED)
-    InitPlayers_original();
-#else
     int i;
 
-    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
-        InitialisePlayerScore(&C2V(gNet_players)[i]);
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        InitialisePlayerScore(&gNet_players[i]);
     }
-    if (C2V(gNet_mode) == eNet_mode_host) {
-        C2V(gLast_it_change) = 0;
-        C2V(gLast_lepper) = NULL;
+    if (gNet_mode == eNet_mode_host) {
+        gLast_it_change = 0;
+        gLast_lepper = NULL;
     }
-    C2V(gTime_for_punishment) = 0;
-    C2V(gNot_shown_race_type_headup) = 1;
-    C2V(gIt_or_fox) = -1;
-    C2V(gWinner_declared) = 0;
-#endif
+    gTime_for_punishment = 0;
+    gNot_shown_race_type_headup = 1;
+    gIt_or_fox = -1;
+    gWinner_declared = 0;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0049b720, InitPlayers, InitPlayers_original)
 
+// FUNCTION: CARMA2_HW 0x0049bd00
 void C2_HOOK_FASTCALL InitNetGameplayStuff(void) {
 
 }
-C2_HOOK_FUNCTION(0x0049bd00, InitNetGameplayStuff)
 
-void (C2_HOOK_FASTCALL * DeclareWinner_original)(int pWinner_index);
+// FUNCTION: CARMA2_HW 0x0049a760
 void C2_HOOK_FASTCALL DeclareWinner(int pWinner_index) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DeclareWinner_original(pWinner_index);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0049a760, DeclareWinner, DeclareWinner_original)
 
-void (C2_HOOK_FASTCALL * SendGameplay_original)(tPlayer_ID pPlayer, tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
+// FUNCTION: CARMA2_HW 0x0049bc20
 void C2_HOOK_FASTCALL SendGameplay(tPlayer_ID pPlayer, tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
 
-#if defined(C2_HOOKS_ENABLED)
-    SendGameplay_original(pPlayer, pMess, pParam_1, pParam_2, pParam_3, pParam_4);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0049bc20, SendGameplay, SendGameplay_original)
 
-void (C2_HOOK_FASTCALL * SendGameplayToAllPlayers_original)(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4);
+// FUNCTION: CARMA2_HW 0x0049bc70
 void C2_HOOK_FASTCALL SendGameplayToAllPlayers(tNet_gameplay_mess pMess, int pParam_1, int pParam_2, int pParam_3, int pParam_4) {
 
-#if defined(C2_HOOKS_ENABLED)
-    SendGameplayToAllPlayers_original(pMess, pParam_1, pParam_2, pParam_3, pParam_4);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0049bc70, SendGameplayToAllPlayers, SendGameplayToAllPlayers_original)
 
-void (C2_HOOK_FASTCALL * CalcPlayerScores_original)(void);
+// FUNCTION: CARMA2_HW 0x0049abf0
 void C2_HOOK_FASTCALL CalcPlayerScores(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    CalcPlayerScores_original();
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0049abf0, CalcPlayerScores, CalcPlayerScores_original)
 
 void C2_HOOK_FASTCALL SendPlayerScores(void) {
     tNet_message_chunk* the_contents;
@@ -187,109 +177,79 @@ void C2_HOOK_FASTCALL SendPlayerScores(void) {
     if (the_contents == NULL) {
         return;
     }
-    switch (C2V(gCurrent_net_game)->type) {
+    switch (gCurrent_net_game->type) {
     case eNet_game_type_2:
-        the_contents->scores.general_score = C2V(gINT_0068d920);
+        the_contents->scores.general_score = gINT_0068d920;
         break;
     case eNet_game_type_6:
         the_contents->scores.general_score = 0;
-        for (i = 0; i < C2V(gNumber_of_net_players); i++) {
-            if (C2V(gNet_players)[i].field_0x80) {
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            if (gNet_players[i].field_0x80) {
                 the_contents->scores.general_score |= 1 << i;
             }
         }
         break;
     case eNet_game_type_foxy:
-        the_contents->scores.general_score = C2V(gNet_players)[C2V(gIt_or_fox)].ID;
+        the_contents->scores.general_score = gNet_players[gIt_or_fox].ID;
         break;
     default:
         break;
     }
-    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
-        the_contents->scores.scores[i] = C2V(gNet_players)[i].score2;
+    for (i = 0; i < gNumber_of_net_players; i++) {
+        the_contents->scores.scores[i] = gNet_players[i].score2;
     }
     NetBroadcastContents(the_contents);
 }
 
-void (C2_HOOK_FASTCALL * DoNetGameManagement_original)(void);
+// FUNCTION: CARMA2_HW 0x0049ab00
 void C2_HOOK_FASTCALL DoNetGameManagement(void) {
+    // GLOBAL: CARMA2_HW 0x00659c34
+    static tU32 last_playerscores_sent = -1;
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    DoNetGameManagement_original();
-#else
-    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(tU32, last_playerscores_sent, 0x00659c34, -1);
-
-    if (C2V(gNet_mode) == eNet_mode_host) {
+    if (gNet_mode == eNet_mode_host) {
         CalcPlayerScores();
-        if (C2V(gPHIL_last_physics_tick) <= C2V(last_playerscores_sent) || C2V(gPHIL_last_physics_tick) >= C2V(last_playerscores_sent) + 80) {
-            C2V(last_playerscores_sent) = C2V(gPHIL_last_physics_tick);
+        if (gPHIL_last_physics_tick <= last_playerscores_sent || gPHIL_last_physics_tick >= last_playerscores_sent + 80) {
+            last_playerscores_sent = gPHIL_last_physics_tick;
             SendPlayerScores();
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0049ab00, DoNetGameManagement, DoNetGameManagement_original)
 
-void (C2_HOOK_FASTCALL * SetUpNetCarPositions_original)(void);
+// FUNCTION: CARMA2_HW 0x00499000
 void C2_HOOK_FASTCALL SetUpNetCarPositions(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    SetUpNetCarPositions_original();
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00499000, SetUpNetCarPositions, SetUpNetCarPositions_original)
 
-void (C2_HOOK_FASTCALL * SignalToStartRace_original)(void);
+// FUNCTION: CARMA2_HW 0x00498e70
 void C2_HOOK_FASTCALL SignalToStartRace(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    SignalToStartRace_original();
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00498e70, SignalToStartRace, SignalToStartRace_original)
 
-void (C2_HOOK_FASTCALL * DoNetworkHeadups_original)(int pCredits);
+// FUNCTION: CARMA2_HW 0x00499360
 void C2_HOOK_FASTCALL DoNetworkHeadups(int pCredits) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoNetworkHeadups_original(pCredits);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00499360, DoNetworkHeadups, DoNetworkHeadups_original)
 
-void (C2_HOOK_FASTCALL * SendCarData_original)(tU32 pNext_frame_time);
+// FUNCTION: CARMA2_HW 0x00497900
 void C2_HOOK_FASTCALL SendCarData(tU32 pNext_frame_time) {
 
-#if defined(C2_HOOKS_ENABLED)
-    SendCarData_original(pNext_frame_time);
-#else
-    if (C2V(gNet_mode) == eNet_mode_none) {
+    if (gNet_mode == eNet_mode_none) {
         return;
     }
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00497900, SendCarData, SendCarData_original)
 
-void (C2_HOOK_FASTCALL * DoNetScores2_original)(int pOnly_sort_scores);
+// FUNCTION: CARMA2_HW 0x00499a00
 void C2_HOOK_FASTCALL DoNetScores2(int pOnly_sort_scores) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoNetScores2_original(pOnly_sort_scores);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00499a00, DoNetScores2, DoNetScores2_original)
 
+// FUNCTION: CARMA2_HW 0x004999f0
 void C2_HOOK_FASTCALL DoNetScores(void) {
 
     DoNetScores2(0);
 }
-C2_HOOK_FUNCTION(0x004999f0, DoNetScores)

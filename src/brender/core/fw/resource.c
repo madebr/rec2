@@ -17,7 +17,7 @@
 void* ResToUserWithClass(resource_header* r, br_uint_8 class) {
     br_int_32 align;
 
-    align = C2V(fw).resource_class_index[class]->alignment;
+    align = fw.resource_class_index[class]->alignment;
     if (align <= 0) {
         align = RES_ALIGN;
     }
@@ -44,11 +44,8 @@ resource_header* UserToRes(void* r) {
     return (resource_header*)(p - (sizeof(resource_header) - 1));
 }
 
-void* (C2_HOOK_CDECL * BrResAllocate_original)(void* vparent, br_size_t size, br_uint_8 res_class);
+// FUNCTION: CARMA2_HW 0x005276c0
 void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_class) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResAllocate_original(vparent, size, res_class);
-#else
     resource_header* res;
     resource_header* parent;
     br_int_32 malign;
@@ -60,7 +57,7 @@ void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_c
 
     malign = BrMemAlign(res_class);
 
-    calign = C2V(fw).resource_class_index[res_class]->alignment;
+    calign = fw.resource_class_index[res_class]->alignment;
     if (calign <= 0) {
         calign = RES_ALIGN;
     }
@@ -92,15 +89,10 @@ void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_c
 #endif
 
     return ResToUser(res);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005276c0, BrResAllocate, BrResAllocate_original)
 
-void (C2_HOOK_STDCALL * BrResInternalFree_original)(resource_header* res, br_boolean callback);
+// FUNCTION: CARMA2_HW 0x005277f0
 void C2_HOOK_STDCALL BrResInternalFree(resource_header* res, br_boolean callback) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrResInternalFree_original(res, callback);
-#else
     void* r;
     br_uint_8 original_class;
 
@@ -111,8 +103,8 @@ void C2_HOOK_STDCALL BrResInternalFree(resource_header* res, br_boolean callback
     original_class = res->class;
     res->class = BR_MEMORY_FREE;
     if (callback != 0) {
-        if (C2V(fw).resource_class_index[original_class]->free_cb != NULL) {
-            C2V(fw).resource_class_index[original_class]->free_cb(ResToUserWithClass(res, original_class), res->class, RESOURCE_SIZE(res));
+        if (fw.resource_class_index[original_class]->free_cb != NULL) {
+            fw.resource_class_index[original_class]->free_cb(ResToUserWithClass(res, original_class), res->class, RESOURCE_SIZE(res));
         }
     }
 
@@ -126,38 +118,22 @@ void C2_HOOK_STDCALL BrResInternalFree(resource_header* res, br_boolean callback
     res->magic_num = 1;
     res->magic_ptr = NULL;
     BrMemFree(res);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005277f0, BrResInternalFree, BrResInternalFree_original)
 
-void (C2_HOOK_CDECL * BrResFree_original)(void* vres);
+// FUNCTION: CARMA2_HW 0x005277c0
 void C2_HOOK_CDECL BrResFree(void* vres) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrResFree_original(vres);
-#else
     BrResInternalFree(UserToRes(vres), 1);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005277c0, BrResFree, BrResFree_original)
 
-void (C2_HOOK_CDECL * BrResFreeNoCallback_original)(void* vres);
+// FUNCTION: CARMA2_HW 0x005278b0
 void C2_HOOK_CDECL BrResFreeNoCallback(void* vres) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrResFreeNoCallback_original(vres);
-#else
     BrResInternalFree(UserToRes(vres), 0);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005278b0, BrResFreeNoCallback, BrResFreeNoCallback_original)
 
-void* (C2_HOOK_CDECL * BrResAdd_original)(void* vparent, void* vres);
+// FUNCTION: CARMA2_HW 0x005278e0
 void* C2_HOOK_CDECL BrResAdd(void* vparent, void* vres) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResAdd_original(vparent, vres);
-#else
     resource_header* res;
     resource_header* parent;
 
@@ -169,44 +145,27 @@ void* C2_HOOK_CDECL BrResAdd(void* vparent, void* vres) {
     }
     BrSimpleAddHead(&parent->children, &res->node);
     return vres;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005278e0, BrResAdd, BrResAdd_original)
 
-void* (C2_HOOK_CDECL * BrResRemove_original)(void* vres);
+// FUNCTION: CARMA2_HW 0x00527940
 void* C2_HOOK_CDECL BrResRemove(void* vres) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResRemove_original(vres);
-#else
     resource_header* res;
 
     res = UserToRes(vres);
     BrSimpleRemove(&res->node);
     return vres;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527940, BrResRemove, BrResRemove_original)
 
-br_uint_8 (C2_HOOK_CDECL * BrResClass_original)(void* vres);
+// FUNCTION: CARMA2_HW 0x00527970
 br_uint_8 C2_HOOK_CDECL BrResClass(void* vres) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResClass_original(vres);
-#else
     resource_header* res;
 
     res = UserToRes(vres);
     return res->class;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527970, BrResClass, BrResClass_original)
 
-br_boolean (C2_HOOK_CDECL * BrResIsChild_original)(void* vparent, void* vchild);
+// FUNCTION: CARMA2_HW 0x00527990
 br_boolean C2_HOOK_CDECL BrResIsChild(void* vparent, void* vchild) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResIsChild_original(vparent, vchild);
-#else
     resource_header* parent;
     resource_header* child;
     resource_header* cp;
@@ -220,23 +179,15 @@ br_boolean C2_HOOK_CDECL BrResIsChild(void* vparent, void* vchild) {
         }
     }
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527990, BrResIsChild, BrResIsChild_original)
 
-br_uint_32 (C2_HOOK_CDECL * BrResSize_original)(void* vres);
+// FUNCTION: CARMA2_HW 0x005279f0
 br_uint_32 C2_HOOK_CDECL BrResSize(void* vres) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResSize_original(vres);
-#else
     resource_header* res;
 
     res = UserToRes(vres);
     return RESOURCE_SIZE(res);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005279f0, BrResSize, BrResSize_original)
 
 br_uint_32 C2_HOOK_CDECL ResSizeTotal(void* vres, br_uint_32* ptotal) {
     *ptotal += BrResSize(vres);
@@ -244,25 +195,17 @@ br_uint_32 C2_HOOK_CDECL ResSizeTotal(void* vres, br_uint_32* ptotal) {
     return 0;
 }
 
-br_uint_32 (C2_HOOK_CDECL * BrResSizeTotal_original)(void* vres);
+// FUNCTION: CARMA2_HW 0x00527a30
 br_uint_32 C2_HOOK_CDECL BrResSizeTotal(void* vres) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResSizeTotal_original(vres);
-#else
     br_uint_32 total;
 
     total = BrResSize(vres);
     BrResChildEnum(vres, (br_resenum_cbfn*)ResSizeTotal, &total);
     return total;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527a30, BrResSizeTotal, BrResSizeTotal_original)
 
-br_uint_32 (C2_HOOK_CDECL * BrResChildEnum_original)(void* vres, br_resenum_cbfn* callback, void* arg);
+// FUNCTION: CARMA2_HW 0x00527b60
 br_uint_32 C2_HOOK_CDECL BrResChildEnum(void* vres, br_resenum_cbfn* callback, void* arg) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResChildEnum_original(vres, callback, arg);
-#else
     resource_header* res;
     resource_header* rp;
     br_uint_32 r;
@@ -276,15 +219,10 @@ br_uint_32 C2_HOOK_CDECL BrResChildEnum(void* vres, br_resenum_cbfn* callback, v
         }
     }
     return r;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527b60, BrResChildEnum, BrResChildEnum_original)
 
-br_uint_32 (C2_HOOK_CDECL * BrResCheck_original)(void* vres, int no_tag);
+// FUNCTION: CARMA2_HW 0x00527bd0
 br_uint_32 C2_HOOK_CDECL BrResCheck(void* vres, int no_tag) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResCheck_original(vres, no_tag);
-#else
     resource_header* res;
 
     res = UserToRes(vres);
@@ -292,15 +230,10 @@ br_uint_32 C2_HOOK_CDECL BrResCheck(void* vres, int no_tag) {
         return 1;
     }
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527bd0, BrResCheck, BrResCheck_original)
 
-char* (C2_HOOK_CDECL * BrResStrDup_original)(void* vparent, const char* str);
+// FUNCTION: CARMA2_HW 0x00527c10
 char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResStrDup_original(vparent, str);
-#else
     int l;
     char* nstr;
 
@@ -308,9 +241,7 @@ char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str) {
     nstr = (char*)BrResAllocate(vparent, l + 1, BR_MEMORY_STRING);
     BrStrCpy(nstr, str);
     return nstr;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527c10, BrResStrDup, BrResStrDup_original)
 
 void InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* arg, int level) {
     int i;
@@ -318,7 +249,7 @@ void InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* 
     resource_header* child;
     br_resource_class* rclass;
 
-    rclass = C2V(fw).resource_class_index[res->class];
+    rclass = fw.resource_class_index[res->class];
     cp = BrScratchString();
     for (i = 0; i < level; i++) {
         *cp = ' ';
@@ -331,31 +262,21 @@ void InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* 
     }
 }
 
-void (C2_HOOK_CDECL * BrResDump_original)(void* vres, br_putline_cbfn* putline, void* arg);
+// FUNCTION: CARMA2_HW 0x00527c50
 void C2_HOOK_CDECL BrResDump(void* vres, br_putline_cbfn* putline, void* arg) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrResDump_original(vres, putline, arg);
-#else
     resource_header* res;
 
     res = UserToRes(vres);
     InternalResourceDump(res, putline, arg, 0);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527c50, BrResDump, BrResDump_original)
 
-char* (C2_HOOK_CDECL * BrResClassIdentifier_original)(br_uint_8 res_class);
+// FUNCTION: CARMA2_HW 0x00527c60
 char* C2_HOOK_CDECL BrResClassIdentifier(br_uint_8 res_class) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrResClassIdentifier_original(res_class);
-#else
     br_resource_class* rclass;
 
-    rclass = C2V(fw).resource_class_index[res_class];
+    rclass = fw.resource_class_index[res_class];
     if (rclass == NULL) {
         return "<NULL>";
     }
     return rclass->identifier;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527c60, BrResClassIdentifier, BrResClassIdentifier_original)

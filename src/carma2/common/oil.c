@@ -13,47 +13,53 @@
 
 #include "rec2_macros.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gOil_pixie_names, 1, 0x0065a398, {
+
+// GLOBAL: CARMA2_HW 0x0065a398
+const char* gOil_pixie_names[1] = {
     "OIL.PIX",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gOil_pixies, 1, 0x00690c88);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tOil_spill_info, gOily_spills, 32, 0x00690c90);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, oily_material, 0x0074a68c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNext_oil_pixie, 0x00691710);
+};
 
-void (C2_HOOK_FASTCALL * InitOilSpills_original)(void);
+// GLOBAL: CARMA2_HW 0x00690c88
+br_pixelmap* gOil_pixies[1];
+
+// GLOBAL: CARMA2_HW 0x00690c90
+tOil_spill_info gOily_spills[32];
+
+// GLOBAL: CARMA2_HW 0x0074a68c
+br_material* oily_material;
+
+// GLOBAL: CARMA2_HW 0x00691710
+int gNext_oil_pixie;
+
+// FUNCTION: CARMA2_HW 0x004a6a10
 void C2_HOOK_FASTCALL InitOilSpills(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitOilSpills_original();
-#else
     int i;
     br_model* the_model;
 
     C2_HOOK_BUG_ON(sizeof(tOil_spill_info) != 0x54);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gOil_pixie_names)); i++) {
-        C2V(gOil_pixies)[i] = LoadPixelmap(C2V(gOil_pixie_names)[i]);
-        BrMapAdd(C2V(gOil_pixies)[i]);
+    for (i = 0; i < REC2_ASIZE(gOil_pixie_names); i++) {
+        gOil_pixies[i] = LoadPixelmap(gOil_pixie_names[i]);
+        BrMapAdd(gOil_pixies[i]);
     }
 
-    for (i = 0; i < REC2_ASIZE(C2V(gOily_spills)); i++) {
-        C2V(oily_material) = BrMaterialAllocate(NULL);
-        BrMaterialAdd(C2V(oily_material));
-        C2V(oily_material)->flags |= BR_MATF_LIGHT;
-        C2V(oily_material)->flags |= BR_MATF_PERSPECTIVE;
-        C2V(oily_material)->flags |= BR_MATF_SMOOTH;
-        C2V(oily_material)->ka = 0.99f;
-        C2V(oily_material)->kd = 0.0f;
-        C2V(oily_material)->ks = 0.0f;
-        C2V(oily_material)->power = 0.0f;
-        C2V(oily_material)->index_base = 0;
-        C2V(oily_material)->index_range = 0;
-        C2V(oily_material)->colour_map = C2V(gOil_pixies)[0];
-        BrMatrix23Identity(&C2V(oily_material)->map_transform);
-        C2V(oily_material)->index_shade = BrTableFind("IDENTITY.TAB");
-        GlorifyMaterial(&C2V(oily_material), 1, kRendererShadingType_Specular);
-        BrMaterialUpdate(C2V(oily_material), BR_MATU_ALL);
+    for (i = 0; i < REC2_ASIZE(gOily_spills); i++) {
+        oily_material = BrMaterialAllocate(NULL);
+        BrMaterialAdd(oily_material);
+        oily_material->flags |= BR_MATF_LIGHT;
+        oily_material->flags |= BR_MATF_PERSPECTIVE;
+        oily_material->flags |= BR_MATF_SMOOTH;
+        oily_material->ka = 0.99f;
+        oily_material->kd = 0.0f;
+        oily_material->ks = 0.0f;
+        oily_material->power = 0.0f;
+        oily_material->index_base = 0;
+        oily_material->index_range = 0;
+        oily_material->colour_map = gOil_pixies[0];
+        BrMatrix23Identity(&oily_material->map_transform);
+        oily_material->index_shade = BrTableFind("IDENTITY.TAB");
+        GlorifyMaterial(&oily_material, 1, kRendererShadingType_Specular);
+        BrMaterialUpdate(oily_material, BR_MATU_ALL);
         the_model = BrModelAllocate(NULL, 4, 2);
         the_model->flags |= BR_MODF_KEEP_ORIGINAL;
 
@@ -77,28 +83,27 @@ void C2_HOOK_FASTCALL InitOilSpills(void) {
         BrVector2Set(&the_model->vertices[2].map, 1.f, 0.f);
         BrVector3Set(&the_model->vertices[3].p, -1.f, 0.f, 1.f);
         BrVector2Set(&the_model->vertices[3].map, 1.f, 1.f);
-        C2V(gOily_spills)[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        C2V(gOily_spills)[i].actor->model = the_model;
-        C2V(gOily_spills)[i].actor->render_style = BR_RSTYLE_NONE;
-        C2V(gOily_spills)[i].actor->material = C2V(oily_material);
-        BrActorAdd(C2V(gOther_selfs)[2], C2V(gOily_spills)[i].actor);
+        gOily_spills[i].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        gOily_spills[i].actor->model = the_model;
+        gOily_spills[i].actor->render_style = BR_RSTYLE_NONE;
+        gOily_spills[i].actor->material = oily_material;
+        BrActorAdd(gOther_selfs[2], gOily_spills[i].actor);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a6a10, InitOilSpills, InitOilSpills_original)
 
+// FUNCTION: CARMA2_HW 0x004a6c50
 void C2_HOOK_FASTCALL ResetOilSpills(void) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gOily_spills)); i++) {
-        C2V(gOily_spills)[i].actor->render_style = BR_RSTYLE_NONE;
-        C2V(gOily_spills)[i].car = NULL;
-        C2V(gOily_spills)[i].car_actor = NULL;
-        C2V(gOily_spills)[i].stop_time = 0;
+    for (i = 0; i < REC2_ASIZE(gOily_spills); i++) {
+        gOily_spills[i].actor->render_style = BR_RSTYLE_NONE;
+        gOily_spills[i].car = NULL;
+        gOily_spills[i].car_actor = NULL;
+        gOily_spills[i].stop_time = 0;
     }
 }
-C2_HOOK_FUNCTION(0x004a6c50, ResetOilSpills)
 
+// FUNCTION: CARMA2_HW 0x004a7460
 void C2_HOOK_FASTCALL  SetInitialOilStuff(tOil_spill_info* pOil, br_model* pModel) {
 
     BrVector2Set(&pModel->vertices[0].p, -pOil->field_0x20, -pOil->field_0x20);
@@ -109,7 +114,6 @@ void C2_HOOK_FASTCALL  SetInitialOilStuff(tOil_spill_info* pOil, br_model* pMode
     BrMaterialUpdate(pOil->actor->material, BR_MATU_ALL);
     BrModelUpdate(pModel, BR_MODU_ALL);
 }
-C2_HOOK_FUNCTION(0x004a7460, SetInitialOilStuff)
 
 void C2_HOOK_FASTCALL MungeOilsHeightAeGround(tOil_spill_info* pThe_spill) {
 
@@ -197,12 +201,8 @@ void C2_HOOK_FASTCALL MungeOilsHeightAboveGround(tOil_spill_info* pOil) {
     BrVector3Copy(&pOil->actor->t.t.translate.t, &pOil->position);
 }
 
-void (C2_HOOK_FASTCALL * ProcessOilSpills_original)(tU32 pFrame_period);
+// FUNCTION: CARMA2_HW 0x004a6e50
 void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    ProcessOilSpills_original(pFrame_period);
-#else
     int i;
     tU32 time;
     br_scalar grow_amount;
@@ -218,9 +218,9 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents.oil_spill.current_size, 0x28);
 
     time = GetTotalTime();
-    for (i = 0; i < REC2_ASIZE(C2V(gOily_spills)); i++) {
+    for (i = 0; i < REC2_ASIZE(gOily_spills); i++) {
         br_model* the_model;
-        tOil_spill_info* oil = &C2V(gOily_spills)[i];
+        tOil_spill_info* oil = &gOily_spills[i];
 
         if (oil->car_actor == NULL) {
             oil->actor->render_style = BR_RSTYLE_NONE;
@@ -231,7 +231,7 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
                     && (oil->car == NULL || (fabsf(oil->car->collision_info->v.v[0]) < 1 / WORLD_SCALE / 100.f
                                           && fabsf(oil->car->collision_info->v.v[1]) < 1 / WORLD_SCALE / 100.f
                                           && fabsf(oil->car->collision_info->v.v[2]) < 1 / WORLD_SCALE / 100.f))) {
-                if (C2V(gAction_replay_mode)) {
+                if (gAction_replay_mode) {
                     SetInitialOilStuff(oil, the_model);
                 } else {
                     if (!OKToSpillOil(oil)) {
@@ -239,8 +239,8 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
                         oil->car_actor = NULL;
                     } else {
                         oil->spill_time = time;
-                        if (C2V(gNext_oil_pixie) > 0) { /* REC2_ASIZE(C2V(gOil_pixies)) */
-                            C2V(gNext_oil_pixie) = 0;
+                        if (gNext_oil_pixie > 0) { /* REC2_ASIZE(gOil_pixies) */
+                            gNext_oil_pixie = 0;
                         }
                         if (oil->car == NULL) {
                             BrVector3Copy(&oil->original_pos, &oil->car_actor->t.t.translate.t);
@@ -258,13 +258,13 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
                             oil->actor->material->colour_map);
                         oil->stop_time = 0;
                         SetInitialOilStuff(oil, the_model);
-                        if (C2V(gNet_mode) == eNet_mode_host && oil->car != NULL) {
+                        if (gNet_mode == eNet_mode_host && oil->car != NULL) {
                             message = NetBuildGuaranteedMessage(31, 0);
                             message->contents.oil_spill.player = NetPlayerFromCar(oil->car)->ID;
                             message->contents.oil_spill.full_size = oil->full_size;
                             message->contents.oil_spill.grow_rate = oil->grow_rate;
                             message->contents.oil_spill.current_size = oil->current_size;
-                            NetGuaranteedSendMessageToAllPlayers(C2V(gCurrent_net_game), message, NULL);
+                            NetGuaranteedSendMessageToAllPlayers(gCurrent_net_game, message, NULL);
                         }
                     }
                 }
@@ -318,29 +318,27 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
             MungeOilsHeightAboveGround(oil);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004a6e50, ProcessOilSpills, ProcessOilSpills_original)
 
+// FUNCTION: CARMA2_HW 0x004a74e0
 int C2_HOOK_FASTCALL GetOilSpillCount(void) {
 
-    return REC2_ASIZE(C2V(gOily_spills));
+    return REC2_ASIZE(gOily_spills);
 }
-C2_HOOK_FUNCTION(0x004a74e0, GetOilSpillCount)
 
+// FUNCTION: CARMA2_HW 0x004a74f0
 void C2_HOOK_FASTCALL GetOilSpillDetails(int pIndex, br_actor** pActor, br_scalar* pSize) {
 
-    if (C2V(gOily_spills)[pIndex].car != NULL) {
-        *pActor = C2V(gOily_spills)[pIndex].actor;
-        *pSize = C2V(gOily_spills)[pIndex].full_size;
+    if (gOily_spills[pIndex].car != NULL) {
+        *pActor = gOily_spills[pIndex].actor;
+        *pSize = gOily_spills[pIndex].full_size;
     } else {
         *pActor = NULL;
     }
 }
-C2_HOOK_FUNCTION(0x004a74f0, GetOilSpillDetails)
 
+// FUNCTION: CARMA2_HW 0x004a6e20
 void C2_HOOK_FASTCALL MungeIndexedOilsHeightAboveGround(int pIndex) {
 
-    MungeOilsHeightAboveGround(&C2V(gOily_spills)[pIndex]);
+    MungeOilsHeightAboveGround(&gOily_spills[pIndex]);
 }
-C2_HOOK_FUNCTION(0x004a6e20, MungeIndexedOilsHeightAboveGround)

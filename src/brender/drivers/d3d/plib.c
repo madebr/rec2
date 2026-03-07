@@ -9,24 +9,34 @@
 
 #include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_primitive_library_d3d, PrimitiveLibraryD3D, 0x10015110, {
+
+// GLOBAL: D3D 0x10015110
+br_primitive_library_d3d PrimitiveLibraryD3D = {
     NULL, "3Dfx-Primitives",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token, PrimPartsD3DTokens, 3, 0x10017150, {
+};
+
+// GLOBAL: D3D 0x10017150
+br_token PrimPartsD3DTokens[] = {
     BRT_PRIMITIVE,
     BRT_OUTPUT,
     0
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, primitiveD3DLibraryTemplateEntries, 3, 0x10017160, {
+};
+
+// GLOBAL: D3D 0x10017160
+br_tv_template_entry primitiveD3DLibraryTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,  0, offsetof(br_primitive_library_d3d, identifier),  0x5,    0x3, },
-    { BRT_PARTS_TL,         0, (uintptr_t)C2V(PrimPartsD3DTokens),              0xd,    0x1d, },
+    { BRT_PARTS_TL,         0, (uintptr_t)PrimPartsD3DTokens,              0xd,    0x1d, },
     { BRT_PARTS_U32,        0, 0xc0000100,                                      0x9,    0x3, },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_tv_template, primitiveD3DLibraryTemplate, 0x100171a8,  {
+};
+
+// GLOBAL: D3D 0x100171a8
+br_tv_template primitiveD3DLibraryTemplate = {
     BR_ASIZE(primitiveD3DLibraryTemplateEntries),
     primitiveD3DLibraryTemplateEntries
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_primitive_library_dispatch, primitiveLibraryD3DDispatch, 0x100171c8, {
+};
+
+// GLOBAL: D3D 0x100171c8
+br_primitive_library_dispatch primitiveLibraryD3DDispatch = {
     NULL,
     NULL,
     NULL,
@@ -63,63 +73,66 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_primitive_library_dispatch, primitiveLibraryD
     (void*)_M_br_primitive_d3d_library_flush,
     (void*)_M_br_primitive_d3d_library_synchronise,
     (void*)_M_br_primitive_d3d_library_mask,
-});
-C2_HOOK_VARIABLE_IMPLEMENT(float, gFLOAT_1001dc34, 0x1001dc34);
+};
 
+// GLOBAL: D3D 0x1001dc34
+float gFLOAT_1001dc34;
+
+// FUNCTION: D3D 0x100068f0
 br_error C2_HOOK_CDECL PrimitiveLibraryD3DInitialise(br_primitive_library_d3d* self, br_device_d3d* dev) {
 
-    memset(&C2V(primitiveD3DLibraryTemplate), 0, sizeof(C2V(primitiveD3DLibraryTemplate)));
-    C2V(primitiveD3DLibraryTemplate).n_entries = BR_ASIZE(C2V(primitiveD3DLibraryTemplateEntries));
-    C2V(primitiveD3DLibraryTemplate).entries = C2V(primitiveD3DLibraryTemplateEntries);
+    memset(&primitiveD3DLibraryTemplate, 0, sizeof(primitiveD3DLibraryTemplate));
+    primitiveD3DLibraryTemplate.n_entries = BR_ASIZE(primitiveD3DLibraryTemplateEntries);
+    primitiveD3DLibraryTemplate.entries = primitiveD3DLibraryTemplateEntries;
     PrimitiveStateD3DClearTemplates();
     BufferStoredD3DClearTemplate();
 
-    C2V(gFLOAT_1001dc34) = 2.88539f; /* fog_max_q? */
+    gFLOAT_1001dc34 = 2.88539f; /* fog_max_q? */
 
-    self->dispatch = &C2V(primitiveLibraryD3DDispatch);
+    self->dispatch = &primitiveLibraryD3DDispatch;
 
-    self->object_list = BrObjectListAllocate(C2V(DriverDeviceD3D).res);
+    self->object_list = BrObjectListAllocate(DriverDeviceD3D.res);
 
     dev->dispatch->_addFront((br_object_container*)dev, (br_object*)self);
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x100068f0, PrimitiveLibraryD3DInitialise)
 
+// FUNCTION: D3D 0x10006970
 void C2_HOOK_CDECL _M_br_primitive_d3d_library_free(br_primitive_library_d3d* self) {
     br_device* dev = self->dispatch->_device((br_object*)self);
     dev->dispatch->_remove((br_object_container*)dev, (br_object*)self);
 
     BrObjectContainerFree((br_object_container*)self, BR_NULL_TOKEN, NULL, NULL);
 }
-C2_HOOK_FUNCTION(0x10006970, _M_br_primitive_d3d_library_free)
 
+// FUNCTION: D3D 0x100069b0
 br_token C2_HOOK_CDECL _M_br_primitive_d3d_library_type(br_primitive_library_d3d* self) {
     return BRT_PRIMITIVE_LIBRARY;
 }
-C2_HOOK_FUNCTION(0x100069b0, _M_br_primitive_d3d_library_type)
 
+// FUNCTION: D3D 0x100069c0
 br_boolean C2_HOOK_CDECL _M_br_primitive_d3d_library_isType(br_primitive_library_d3d* self, br_token t) {
     return t == BRT_PRIMITIVE_LIBRARY || t == BRT_OBJECT_CONTAINER || t == BRT_OBJECT;
 }
-C2_HOOK_FUNCTION(0x100069c0, _M_br_primitive_d3d_library_isType)
 
+// FUNCTION: D3D 0x100069e0
 br_int_32 C2_HOOK_CDECL _M_br_primitive_d3d_library_space(br_primitive_library_d3d* self) {
     return sizeof(br_primitive_library_d3d);
 }
-C2_HOOK_FUNCTION(0x100069e0, _M_br_primitive_d3d_library_space)
 
+// FUNCTION: D3D 0x100069f0
 br_tv_template* C2_HOOK_CDECL _M_br_primitive_d3d_library_templateQuery(br_primitive_library_d3d* self) {
-    C2V(primitiveD3DLibraryTemplate).res = C2V(DriverDeviceD3D).res;
-    return &C2V(primitiveD3DLibraryTemplate);
+    primitiveD3DLibraryTemplate.res = DriverDeviceD3D.res;
+    return &primitiveD3DLibraryTemplate;
 }
-C2_HOOK_FUNCTION(0x100069f0, _M_br_primitive_d3d_library_templateQuery)
 
+// FUNCTION: D3D 0x100068e0
 void * C2_HOOK_CDECL _M_br_primitive_d3d_library_listQuery(br_primitive_library_d3d* self) {
     return self->object_list;
 }
-C2_HOOK_FUNCTION(0x100068e0, _M_br_primitive_d3d_library_listQuery)
 
+// FUNCTION: D3D 0x10006a00
 br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_stateNew(br_primitive_library_d3d* self, br_primitive_state_d3d** rps) {
     br_primitive_state_d3d* ps;
 
@@ -130,8 +143,8 @@ br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_stateNew(br_primitive_library
     *rps = ps;
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006a00, _M_br_primitive_d3d_library_stateNew)
 
+// FUNCTION: D3D 0x10006a20
 br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_bufferStoredNew(br_primitive_library_d3d* self, br_buffer_stored_d3d** psm, br_token use, br_device_pixelmap_d3d* pm, br_token_value* tv) {
     br_buffer_stored_d3d *sm;
 
@@ -142,22 +155,22 @@ br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_bufferStoredNew(br_primitive_
     *psm = sm;
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006a20, _M_br_primitive_d3d_library_bufferStoredNew)
 
+// FUNCTION: D3D 0x10001d60
 br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_bufferStoredAvail(br_primitive_library_d3d* self, br_int_32* space, br_token use, br_token_value* tv) {
     return 0xa005;
 }
-C2_HOOK_FUNCTION(0x10001d60, _M_br_primitive_d3d_library_bufferStoredAvail)
 
 br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_flush(br_primitive_library_d3d* self, br_boolean wait) {
     return 0;
 }
 
+// FUNCTION: D3D 0x100018c0
 br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_synchronise(br_primitive_library_d3d* self, br_token sync_type, br_boolean block) {
     return 0;
 }
-C2_HOOK_FUNCTION(0x100018c0, _M_br_primitive_d3d_library_synchronise)
 
+// FUNCTION: D3D 0x10006a50
 br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_mask(br_primitive_library_d3d* self, br_uint_32* mask, br_token* parts, int n_parts) {
     int i;
     br_uint_32 m = 0;
@@ -177,4 +190,3 @@ br_error C2_HOOK_CDECL _M_br_primitive_d3d_library_mask(br_primitive_library_d3d
     *mask = m;
     return 0;
 }
-C2_HOOK_FUNCTION(0x10006a50, _M_br_primitive_d3d_library_mask)

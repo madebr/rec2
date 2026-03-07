@@ -5,34 +5,34 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDigits_pix);
-C2_HOOK_VARIABLE_DECLARE(tMin_message*, gMin_messages);
-C2_HOOK_VARIABLE_DECLARE(tMid_message*, gMid_messages);
-C2_HOOK_VARIABLE_DECLARE(tMax_message*, gMax_messages);
-C2_HOOK_VARIABLE_DECLARE(int, gNet_service_disable);
-C2_HOOK_VARIABLE_DECLARE(int, gNet_storage_space_initialized);
-C2_HOOK_VARIABLE_DECLARE(int, gScore_winner);
-C2_HOOK_VARIABLE_DECLARE(int, gReceived_game_scores);
-C2_HOOK_VARIABLE_DECLARE(int, gMessage_header_size);
-C2_HOOK_VARIABLE_DECLARE(int, gIn_net_service);
-C2_HOOK_VARIABLE_DECLARE(int, gOnly_receive_guarantee_replies);
-C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074a690);
-C2_HOOK_VARIABLE_DECLARE(tU32, gUINT_0074a718);
-C2_HOOK_VARIABLE_DECLARE(tU16, gGuarantee_number);
-C2_HOOK_VARIABLE_DECLARE(int, gNext_guarantee);
-C2_HOOK_VARIABLE_DECLARE(int, gDont_allow_joiners);
-C2_HOOK_VARIABLE_DECLARE(tNet_message_memory*, gMessage_to_free);
-C2_HOOK_VARIABLE_DECLARE(int, gJoin_list_mode);
-C2_HOOK_VARIABLE_DECLARE(int, gBastard_has_answered);
-C2_HOOK_VARIABLE_DECLARE(int, gTime_for_next_one);
-C2_HOOK_VARIABLE_DECLARE(int, gJoin_poll_index);
-C2_HOOK_VARIABLE_DECLARE(tNet_game_details*, gCurrent_join_poll_game);
-C2_HOOK_VARIABLE_DECLARE(tAddToJoinListProc*, gAdd_proc);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_status_broadcast);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_flush_message);
-C2_HOOK_VARIABLE_DECLARE(tU32, gAsk_time);
-C2_HOOK_VARIABLE_DECLARE(tPlayer_ID, gLocal_net_ID);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tGuaranteed_message, gGuarantee_list, 200);
+extern br_pixelmap* gDigits_pix;
+extern tMin_message* gMin_messages;
+extern tMid_message* gMid_messages;
+extern tMax_message* gMax_messages;
+extern int gNet_service_disable;
+extern int gNet_storage_space_initialized;
+extern int gScore_winner;
+extern int gReceived_game_scores;
+extern int gMessage_header_size;
+extern int gIn_net_service;
+extern int gOnly_receive_guarantee_replies;
+extern tU32 gUINT_0074a690;
+extern tU32 gUINT_0074a718;
+extern tU16 gGuarantee_number;
+extern int gNext_guarantee;
+extern int gDont_allow_joiners;
+extern tNet_message_memory* gMessage_to_free;
+extern int gJoin_list_mode;
+extern int gBastard_has_answered;
+extern int gTime_for_next_one;
+extern int gJoin_poll_index;
+extern tNet_game_details* gCurrent_join_poll_game;
+extern tAddToJoinListProc* gAdd_proc;
+extern tU32 gLast_status_broadcast;
+extern tU32 gLast_flush_message;
+extern tU32 gAsk_time;
+extern tPlayer_ID gLocal_net_ID;
+extern tGuaranteed_message gGuarantee_list[200];
 
 void C2_HOOK_FASTCALL BroadcastStatus(void);
 

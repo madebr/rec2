@@ -5,8 +5,8 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_diaghandler, BrStdioDiagHandler);
-C2_HOOK_VARIABLE_DECLARE(br_diaghandler*, _BrDefaultDiagHandler);
+extern br_diaghandler BrStdioDiagHandler;
+extern br_diaghandler* _BrDefaultDiagHandler;
 
 void C2_HOOK_CDECL BrStdioWarning(char* message);
 

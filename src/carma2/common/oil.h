@@ -5,7 +5,7 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gNext_oil_pixie);
+extern int gNext_oil_pixie;
 
 void C2_HOOK_FASTCALL InitOilSpills(void);
 

@@ -12,33 +12,20 @@
 
 #include "br_platform.h"
 
-br_boolean (C2_HOOK_CDECL * BrImageAdd_original)(br_image* img);
+// FUNCTION: CARMA2_HW 0x0052fed0
 br_boolean C2_HOOK_CDECL BrImageAdd(br_image* img) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrImageAdd_original(img);
-#else
-    BrAddHead(&C2V(fw).images, &img->node);
+    BrAddHead(&fw.images, &img->node);
     return 1;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052fed0, BrImageAdd, BrImageAdd_original)
 
-br_boolean (C2_HOOK_CDECL * BrImageRemove_original)(br_image* img);
+// FUNCTION: CARMA2_HW 0x0052fef0
 br_boolean C2_HOOK_CDECL BrImageRemove(br_image* img) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrImageRemove_original(img);
-#else
     BrRemove(&img->node);
     return 1;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052fef0, BrImageRemove, BrImageRemove_original)
 
-br_image* (C2_HOOK_CDECL * BrImageFind_original)(const char* pattern);
+// FUNCTION: CARMA2_HW 0x0052ff10
 br_image* C2_HOOK_CDECL BrImageFind(const char* pattern) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrImageFind_original(pattern);
-#else
     char* c;
     br_image* img;
 
@@ -46,15 +33,13 @@ br_image* C2_HOOK_CDECL BrImageFind(const char* pattern) {
     if (c != NULL && (BrStrCmp(c, ".dll") == 0 || BrStrCmp(c, ".bdd") == 0|| BrStrCmp(c, "bed"))) {
         *c = '\0';
     }
-    for (img = (br_image*)C2V(fw).images.head; img->node.next != NULL; img = (br_image*)img->node.next) {
+    for (img = (br_image*)fw.images.head; img->node.next != NULL; img = (br_image*)img->node.next) {
         if (BrNamePatternMatch(pattern, img->identifier) != 0) {
             return img;
         }
     }
     return NULL;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052ff10, BrImageFind, BrImageFind_original)
 
 br_image* C2_HOOK_STDCALL imageLoadHost(const char* name) {
     br_image* img;
@@ -72,11 +57,8 @@ br_image* C2_HOOK_STDCALL imageLoadHost(const char* name) {
     return img;
 }
 
-br_image* (C2_HOOK_CDECL * BrImageReference_original)(const char* name);
+// FUNCTION: CARMA2_HW 0x0052ffa0
 br_image* C2_HOOK_CDECL BrImageReference(const char* name) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrImageReference_original(name);
-#else
     const char* suffix;
     char* suffix2;
     char* scratch;
@@ -126,19 +108,14 @@ br_image* C2_HOOK_CDECL BrImageReference(const char* name) {
         if (suffix2 != NULL) {
             *suffix2 = '\0';
         }
-        BrResAdd(C2V(fw).res, img);
-        BrAddHead(&C2V(fw).images, &img->node);
+        BrResAdd(fw.res, img);
+        BrAddHead(&fw.images, &img->node);
     }
     return img;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052ffa0, BrImageReference, BrImageReference_original)
 
-void* (C2_HOOK_STDCALL * imageLookupName_original)(br_image* img, const char* name, br_uint_32 hint);
+// FUNCTION: CARMA2_HW 0x00530260
 void* C2_HOOK_STDCALL imageLookupName(br_image* img, const char* name, br_uint_32 hint) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return imageLookupName_original(img, name, hint);
-#else
     int c;
     int limit;
     int base;
@@ -162,15 +139,10 @@ void* C2_HOOK_STDCALL imageLookupName(br_image* img, const char* name, br_uint_3
             limit = limit - (limit / 2 + 1);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00530260, imageLookupName, imageLookupName_original)
 
-void* (C2_HOOK_CDECL * BrImageLookupName_original)(br_image* img, const char* name, br_uint_32 hint);
+// FUNCTION: CARMA2_HW 0x005301e0
 void* C2_HOOK_CDECL BrImageLookupName(br_image* img, const char* name, br_uint_32 hint) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrImageLookupName_original(img, name, hint);
-#else
     char* scratch;
     void* p;
 
@@ -191,15 +163,11 @@ void* C2_HOOK_CDECL BrImageLookupName(br_image* img, const char* name, br_uint_3
     scratch[0] = '_';
     BrStrCpy(&scratch[1], name);
     return imageLookupName(img, scratch, hint);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005301e0, BrImageLookupName, BrImageLookupName_original)
 
-void* (C2_HOOK_CDECL * BrImageLookupOrdinal_original)(br_image* img, br_uint_32 ordinal);
+// FUNCTION: CARMA2_HW 0x00530320
 void* C2_HOOK_CDECL BrImageLookupOrdinal(br_image* img, br_uint_32 ordinal) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrImageLookupOrdinal_original(img, ordinal);
-#else
+
     if (img->type == 3) {
         return HostImageLookupOrdinal(img->type_pointer, ordinal);
     }
@@ -207,18 +175,11 @@ void* C2_HOOK_CDECL BrImageLookupOrdinal(br_image* img, br_uint_32 ordinal) {
         return NULL;
     }
     return img->functions[ordinal - img->ordinal_base];
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00530320, BrImageLookupOrdinal, BrImageLookupOrdinal_original)
 
-void (C2_HOOK_CDECL * BrImageDereference_original)(br_image* image);
+// FUNCTION: CARMA2_HW 0x00530360
 void C2_HOOK_CDECL BrImageDereference(br_image* image) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrImageDereference_original(image);
-#else
-#ifdef REC2_STANDALONE
     int i;
-#endif
     image->ref_count--;
 
     if (image->ref_count <= 0) {
@@ -229,7 +190,7 @@ void C2_HOOK_CDECL BrImageDereference(br_image* image) {
             HostImageUnload(image->type_pointer);
             // fall through
         default:
-#ifdef REC2_STANDALONE
+#ifdef BRENDER_FIX_BUGS
             /* Added by rec2: fixes DEP */
             for (i = 0; i < image->n_sections; i++) {
                 PDMapImageSection(image->sections[i].base, image->sections[i].mem_size, kMemory_section_read | kMemory_section_write);
@@ -240,30 +201,19 @@ void C2_HOOK_CDECL BrImageDereference(br_image* image) {
         }
 
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00530360, BrImageDereference, BrImageDereference_original)
 
-void (C2_HOOK_CDECL * BrImageFree_original)(br_image* image);
+// FUNCTION: CARMA2_HW 0x005303a0
 void C2_HOOK_CDECL BrImageFree(br_image* image) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrImageFree_original(image);
-#else
     int i;
 
     for (i = 0; i < image->n_imports; i++) {
         BrImageDereference(image->imports[i]);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005303a0, BrImageFree, BrImageFree_original)
 
-void (C2_HOOK_CDECL * _BrImageFree_original)(void* res, br_uint_8 res_class, br_size_t size);
+// FUNCTION: CARMA2_HW 0x00530400
 void C2_HOOK_CDECL _BrImageFree(void* res, br_uint_8 res_class, br_size_t size) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    _BrImageFree_original(res, res_class, size);
-#else
+
     BrImageFree(res);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00530400, _BrImageFree, _BrImageFree_original)

@@ -5,10 +5,10 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_NETWORK_OPTIONS);
-C2_HOOK_VARIABLE_DECLARE(tNet_game_options, gFrontend_backup_net_options);
-C2_HOOK_VARIABLE_DECLARE(tStruct_00686508, gUNK_006886e8);
-C2_HOOK_VARIABLE_DECLARE(tStruct_00686508, gUNK_006883b0);
+extern tFrontend_spec gFrontend_NETWORK_OPTIONS;
+extern tNet_game_options gFrontend_backup_net_options;
+extern tStruct_00686508 gUNK_006886e8;
+extern tStruct_00686508 gUNK_006883b0;
 
 
 void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend);

@@ -11,7 +11,8 @@
 
 #include "c2_stdlib.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsNull, 0x006673c8, {
+// GLOBAL: CARMA2_HW 0x006673c8
+br_file_primitives _BrFilePrimsNull = {
     "NULL",
     (int (C2_HOOK_STDCALL*)(br_datafile*, br_uint_32)) & BrNullOther,
     (int (C2_HOOK_STDCALL*)(br_datafile*, br_uint_32, br_uint_32)) & BrNullOther,
@@ -28,9 +29,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsNull, 0x006673c8
     (int (C2_HOOK_STDCALL*)(br_datafile*, const char*)) & BrNullOther,
     (char* (C2_HOOK_STDCALL*)(br_datafile*, char*)) & BrNullOther,
     (int (C2_HOOK_STDCALL*)(br_datafile*, char*)) & BrNullOther,
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsReadBinary, 0x00667408, {
+// GLOBAL: CARMA2_HW 0x00667408
+br_file_primitives _BrFilePrimsReadBinary = {
     "Read Binary",
     &DfSkipBinary,
     (int (C2_HOOK_STDCALL*)(br_datafile*, br_uint_32, br_uint_32)) & BrNullOther,
@@ -47,9 +49,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsReadBinary, 0x00
     (int (C2_HOOK_STDCALL*)(br_datafile*, const char*)) & BrNullOther,
     &DfNameReadBinary,
     &DfNameSizeBinary,
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsWriteBinary, 0x00667448, {
+// GLOBAL: CARMA2_HW 0x00667448
+br_file_primitives _BrFilePrimsWriteBinary = {
     "Write Binary",
     &DfSkipBinary,
     &DfChunkWriteBinary,
@@ -66,9 +69,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsWriteBinary, 0x0
     &DfNameWriteBinary,
     (char* (C2_HOOK_STDCALL*)(br_datafile*, char*)) & BrNullOther,
     &DfNameSizeBinary,
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsReadText, 0x00667488, {
+// GLOBAL: CARMA2_HW 0x00667488
+br_file_primitives _BrFilePrimsReadText = {
     "Read Text",
     &DfSkipText,
     (int (C2_HOOK_STDCALL*)(br_datafile*, br_uint_32, br_uint_32)) & BrNullOther,
@@ -85,9 +89,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsReadText, 0x0066
     (int (C2_HOOK_STDCALL*)(br_datafile*, const char*)) & BrNullOther,
     &DfNameReadText,
     &DfNameSizeText,
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsWriteText, 0x006674c8, {
+// GLOBAL: CARMA2_HW 0x006674c8
+br_file_primitives _BrFilePrimsWriteText = {
     "Write Text",
     &DfSkipText,
     &DfChunkWriteText,
@@ -104,9 +109,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_primitives, _BrFilePrimsWriteText, 0x006
     &DfNameWriteText,
     (char* (C2_HOOK_STDCALL*)(br_datafile*, char*)) & BrNullOther,
     &DfNameSizeText,
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, member_type_names, 32, 0x00667250, {
+// GLOBAL: CARMA2_HW 0x00667250
+const char* member_type_names[32] = {
     "int_8",
     "uint_8",
     "int_16",
@@ -139,14 +145,16 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, member_type_names, 32, 0x0066
     "float_vector2",
     "float_vector3",
     "float_vector4",
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(datafile_stack_t, DatafileStack, 1024, 0x006ad9b0);
 
-#if defined(C2_HOOKS_ENABLED) || !defined(BRENDER_FIX_BUGS)
-#define CHUNKNAMES_NB 61
-#else
+// GLOBAL: CARMA2_HW 0x006ad9b0
+datafile_stack_t DatafileStack[1024];
+
+#if defined(BRENDER_FIX_BUGS)
 #define CHUNKNAMES_NB 62
+#else
+#define CHUNKNAMES_NB 61
 #endif
 
 #ifdef BRENDER_FIX_BUGS
@@ -159,7 +167,8 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(datafile_stack_t, DatafileStack, 1024, 0x006ad9
 #define PIXELMAP_NEW_STR
 #endif
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, ChunkNames, CHUNKNAMES_NB, 0x006672d0, {
+// GLOBAL: CARMA2_HW 0x006672d0
+const char* ChunkNames[CHUNKNAMES_NB] = {
     "END",
     "IMAGE_PLANE",
     "RLE_IMAGE_PLANE",
@@ -222,58 +231,61 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char*, ChunkNames, CHUNKNAMES_NB, 0x006672
     "INDEX_FOG_REF",
     MATERIAL_NEW_STR,
     PIXELMAP_NEW_STR
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, DatafileStackTop, 0x006b09b0);
 
+// GLOBAL: CARMA2_HW 0x006b09b0
+int DatafileStackTop;
+
+// FUNCTION: CARMA2_HW 0x00529ff0
 void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count) {
 
-    if (C2V(DatafileStackTop) >= BR_ASIZE(C2V(DatafileStack))) {
+    if (DatafileStackTop >= BR_ASIZE(DatafileStack)) {
         BrFailure("DatafileStack Overflow");
     }
-    C2V(DatafileStack)[C2V(DatafileStackTop)].type = type;
-    C2V(DatafileStack)[C2V(DatafileStackTop)].count = count;
-    C2V(DatafileStack)[C2V(DatafileStackTop)].value = value;
-    C2V(DatafileStackTop)++;
+    DatafileStack[DatafileStackTop].type = type;
+    DatafileStack[DatafileStackTop].count = count;
+    DatafileStack[DatafileStackTop].value = value;
+    DatafileStackTop++;
 }
-C2_HOOK_FUNCTION(0x00529ff0, DfPush)
 
+// FUNCTION: CARMA2_HW 0x0052a040
 void* C2_HOOK_STDCALL DfPop(int type, unsigned int* countp) {
 
-    if (C2V(DatafileStackTop) <= 0) {
+    if (DatafileStackTop <= 0) {
         BrFailure("DatafileStack Underflow");
     }
-    C2V(DatafileStackTop)--;
-    if (type != C2V(DatafileStack)[C2V(DatafileStackTop)].type) {
-        BrFailure("DatafileStack type mismatch, wanted %d, got %d", type, C2V(DatafileStack)[C2V(DatafileStackTop)].type);
+    DatafileStackTop--;
+    if (type != DatafileStack[DatafileStackTop].type) {
+        BrFailure("DatafileStack type mismatch, wanted %d, got %d", type, DatafileStack[DatafileStackTop].type);
     }
     if (countp != NULL) {
-        *countp = C2V(DatafileStack)[C2V(DatafileStackTop)].count;
+        *countp = DatafileStack[DatafileStackTop].count;
     }
-    return C2V(DatafileStack)[C2V(DatafileStackTop)].value;
+    return DatafileStack[DatafileStackTop].value;
 }
-C2_HOOK_FUNCTION(0x0052a040, DfPop)
 
+// FUNCTION: CARMA2_HW 0x0052a0b0
 void* C2_HOOK_STDCALL DfTop(int type, unsigned int* countp) {
-    if (C2V(DatafileStackTop) <= 0)
+    if (DatafileStackTop <= 0)
         BrFailure("DatafileStack Underflow");
-    if (type != C2V(DatafileStack)[C2V(DatafileStackTop) - 1].type)
-        BrFailure("DatafileStack type mismatch, wanted %d, got %d", type, C2V(DatafileStack)[C2V(DatafileStackTop)].type);
+    if (type != DatafileStack[DatafileStackTop - 1].type)
+        BrFailure("DatafileStack type mismatch, wanted %d, got %d", type, DatafileStack[DatafileStackTop].type);
     if (countp != NULL)
-        *countp = C2V(DatafileStack)[C2V(DatafileStackTop) - 1].count;
-    return C2V(DatafileStack)[C2V(DatafileStackTop) - 1].value;
+        *countp = DatafileStack[DatafileStackTop - 1].count;
+    return DatafileStack[DatafileStackTop - 1].value;
 }
-C2_HOOK_FUNCTION(0x0052a0b0, DfTop)
 
+// FUNCTION: CARMA2_HW 0x0052a120
 int C2_HOOK_STDCALL DfTopType(void) {
-    if (C2V(DatafileStackTop) > 0) {
-        return C2V(DatafileStack)[C2V(DatafileStackTop) - 1].type;
+    if (DatafileStackTop > 0) {
+        return DatafileStack[DatafileStackTop - 1].type;
     } else {
         return 0;
     }
 }
-C2_HOOK_FUNCTION(0x0052a120, DfTopType)
 
+// FUNCTION: CARMA2_HW 0x0052b630
 int C2_HOOK_STDCALL TextReadLine(br_datafile* df, char** ident, char** data) {
     char* cp;
 
@@ -311,7 +323,6 @@ int C2_HOOK_STDCALL TextReadLine(br_datafile* df, char** ident, char** data) {
     *cp = '\0';
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052b630, TextReadLine)
 
 br_uint_16 C2_HOOK_STDCALL scalarTypeConvert(br_datafile* df, br_uint_16 t) {
 
@@ -351,6 +362,7 @@ br_uint_16 C2_HOOK_STDCALL scalarTypeConvert(br_datafile* df, br_uint_16 t) {
     return t;
 }
 
+// FUNCTION: CARMA2_HW 0x0052a140
 br_uint_32 C2_HOOK_STDCALL DfStructWriteBinary(br_datafile* df, br_file_struct* str, void* base) {
     unsigned int m;
     int i;
@@ -483,8 +495,8 @@ br_uint_32 C2_HOOK_STDCALL DfStructWriteBinary(br_datafile* df, br_file_struct* 
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052a140, DfStructWriteBinary)
 
+// FUNCTION: CARMA2_HW 0x0052a610
 br_uint_32 C2_HOOK_STDCALL DfStructReadBinary(br_datafile* df, br_file_struct* str, void* base) {
     char tmp_string[256];
     unsigned int m;
@@ -559,7 +571,7 @@ br_uint_32 C2_HOOK_STDCALL DfStructReadBinary(br_datafile* df, br_file_struct* s
                 tmp_string[n] = c;
             }
             tmp_string[n] = 0;
-            *(char**)mp = (char*)BrResStrDup(df->res ? df->res : C2V(fw).res, tmp_string);
+            *(char**)mp = (char*)BrResStrDup(df->res ? df->res : fw.res, tmp_string);
             break;
         case DF_TYPE_BR_COLOUR:
             mp[2] = BrFileGetChar(df->h);
@@ -623,8 +635,8 @@ br_uint_32 C2_HOOK_STDCALL DfStructReadBinary(br_datafile* df, br_file_struct* s
 
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052a610, DfStructReadBinary)
 
+// FUNCTION: CARMA2_HW 0x0052ab30
 int C2_HOOK_STDCALL DfStructSizeBinary(br_datafile* df, br_file_struct* str, void* base) {
     unsigned char* mp;
     unsigned int m;
@@ -691,7 +703,6 @@ int C2_HOOK_STDCALL DfStructSizeBinary(br_datafile* df, br_file_struct* str, voi
 
     return bytes;
 }
-C2_HOOK_FUNCTION(0x0052ab30, DfStructSizeBinary)
 
 int C2_HOOK_STDCALL EnumFromString(br_file_enum* e, char* str) {
     unsigned int m;
@@ -724,14 +735,15 @@ fail:
     return NULL;
 }
 
+// FUNCTION: CARMA2_HW 0x0052ada0
 br_uint_32 C2_HOOK_STDCALL DfStructWriteText(br_datafile* df, br_file_struct* str, void* base) {
 
     BrFilePrintf(df->h, "  struct    %s\n", str->name);
     StructWriteTextSub(df, str, base, 4);
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052ada0, DfStructWriteText)
 
+// FUNCTION: CARMA2_HW 0x0052ade0
 br_uint_32 C2_HOOK_STDCALL StructWriteTextSub(br_datafile* df, br_file_struct* str, void* base, int indent) {
     unsigned int m;
     int i;
@@ -751,7 +763,7 @@ br_uint_32 C2_HOOK_STDCALL StructWriteTextSub(br_datafile* df, br_file_struct* s
         }
 
         // Modified from "%-10s", to ensure space after long type names
-        BrFilePrintf(df->h, "%-9s ", C2V(member_type_names)[sm->type]);
+        BrFilePrintf(df->h, "%-9s ", member_type_names[sm->type]);
 
         switch (scalarTypeConvert(df, sm->type)) {
         case DF_TYPE_BR_INT_8:
@@ -855,8 +867,8 @@ br_uint_32 C2_HOOK_STDCALL StructWriteTextSub(br_datafile* df, br_file_struct* s
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052ade0, StructWriteTextSub)
 
+// FUNCTION: CARMA2_HW 0x0052b5b0
 br_uint_32 C2_HOOK_STDCALL DfStructReadText(br_datafile* df, br_file_struct* str, void* base) {
     char* id;
     char* data;
@@ -871,8 +883,8 @@ br_uint_32 C2_HOOK_STDCALL DfStructReadText(br_datafile* df, br_file_struct* str
     StructReadTextSub(df, str, base);
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052b5b0, DfStructReadText)
 
+// FUNCTION: CARMA2_HW 0x0052b720
 br_uint_32 C2_HOOK_STDCALL StructReadTextSub(br_datafile* df, br_file_struct* str, void* base) {
     unsigned int m;
     unsigned int r;
@@ -893,7 +905,7 @@ br_uint_32 C2_HOOK_STDCALL StructReadTextSub(br_datafile* df, br_file_struct* st
         if (TextReadLine(df, &id, &data) == 0) {
             BrFailure("Unexpected EOF in strructure");
         }
-        if (BrStrCmp(id, C2V(member_type_names)[sm->type]) != 0) {
+        if (BrStrCmp(id, member_type_names[sm->type]) != 0) {
             BrFailure("Unknown member identifer \"%s\"", id);
         }
 
@@ -949,7 +961,7 @@ br_uint_32 C2_HOOK_STDCALL StructReadTextSub(br_datafile* df, br_file_struct* st
             if (BrStrCmp(data, "NULL") == 0) {
                 *(char**)mp = NULL;
             } else {
-                *(char**)mp = BrResStrDup(df->res == NULL ? C2V(fw).res : df->res, data + 1);
+                *(char**)mp = BrResStrDup(df->res == NULL ? fw.res : df->res, data + 1);
             }
             break;
         case DF_TYPE_BR_COLOUR:
@@ -1027,8 +1039,8 @@ br_uint_32 C2_HOOK_STDCALL StructReadTextSub(br_datafile* df, br_file_struct* st
 
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052b720, StructReadTextSub)
 
+// FUNCTION: CARMA2_HW 0x0052be60
 int C2_HOOK_STDCALL DfStructSizeText(br_datafile* df, br_file_struct* str, void* base) {
     unsigned int m;
     br_file_struct_member* sm;
@@ -1045,8 +1057,8 @@ int C2_HOOK_STDCALL DfStructSizeText(br_datafile* df, br_file_struct* str, void*
     }
     return lines;
 }
-C2_HOOK_FUNCTION(0x0052be60, DfStructSizeText)
 
+// FUNCTION: CARMA2_HW 0x0052beb0
 br_uint_32 C2_HOOK_STDCALL DfStructWriteArray(br_datafile* df, br_file_struct* str, void* base, int n) {
     char* cp;
     int i;
@@ -1058,8 +1070,8 @@ br_uint_32 C2_HOOK_STDCALL DfStructWriteArray(br_datafile* df, br_file_struct* s
     }
     return i;
 }
-C2_HOOK_FUNCTION(0x0052beb0, DfStructWriteArray)
 
+// FUNCTION: CARMA2_HW 0x0052bef0
 br_uint_32 C2_HOOK_STDCALL DfStructReadArray(br_datafile* df, br_file_struct* str, void* base, int n) {
     char* cp;
     int i;
@@ -1074,19 +1086,19 @@ br_uint_32 C2_HOOK_STDCALL DfStructReadArray(br_datafile* df, br_file_struct* st
     }
     return i;
 }
-C2_HOOK_FUNCTION(0x0052bef0, DfStructReadArray)
 
+// FUNCTION: CARMA2_HW 0x0052bf40
 int C2_HOOK_STDCALL DfChunkWriteText(br_datafile* df, br_uint_32 id, br_uint_32 length) {
 
-    if (id < BR_ASIZE(C2V(ChunkNames))) {
-        BrFilePrintf(df->h, "*%-16s %d\n", C2V(ChunkNames)[id], length);
+    if (id < BR_ASIZE(ChunkNames)) {
+        BrFilePrintf(df->h, "*%-16s %d\n", ChunkNames[id], length);
     } else {
         BrFilePrintf(df->h, "*0x%08x %d\n", id, length);
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052bf40, DfChunkWriteText)
 
+// FUNCTION: CARMA2_HW 0x0052bf90
 int C2_HOOK_STDCALL DfChunkReadText(br_datafile* df, br_uint_32* plength) {
     int i;
     char* id;
@@ -1102,12 +1114,12 @@ int C2_HOOK_STDCALL DfChunkReadText(br_datafile* df, br_uint_32* plength) {
     if (*id == '0') {
         i = BrStrToUL(id, NULL, 0);
     } else {
-        for (i = 0; i < BR_ASIZE(C2V(ChunkNames)); i++) {
-            if (BrStrCmp(C2V(ChunkNames)[i], id) == 0) {
+        for (i = 0; i < BR_ASIZE(ChunkNames); i++) {
+            if (BrStrCmp(ChunkNames[i], id) == 0) {
                 break;
             }
         }
-        if (i >= BR_ASIZE(C2V(ChunkNames))) {
+        if (i >= BR_ASIZE(ChunkNames)) {
             BrFailure("Chunk ID not known: %s", id);
         }
     }
@@ -1116,8 +1128,8 @@ int C2_HOOK_STDCALL DfChunkReadText(br_datafile* df, br_uint_32* plength) {
     }
     return i;
 }
-C2_HOOK_FUNCTION(0x0052bf90, DfChunkReadText)
 
+// FUNCTION: CARMA2_HW 0x0052c050
 int C2_HOOK_STDCALL DfChunkWriteBinary(br_datafile* df, br_uint_32 id, br_uint_32 length) {
     br_uint_32 l;
 
@@ -1127,8 +1139,8 @@ int C2_HOOK_STDCALL DfChunkWriteBinary(br_datafile* df, br_uint_32 id, br_uint_3
     BrFileWrite(&l, sizeof(br_uint_32), 1, df->h);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052c050, DfChunkWriteBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c0b0
 int C2_HOOK_STDCALL DfChunkReadBinary(br_datafile* df, br_uint_32* plength) {
     br_uint_32 id;
     br_uint_32 l;
@@ -1150,14 +1162,14 @@ int C2_HOOK_STDCALL DfChunkReadBinary(br_datafile* df, br_uint_32* plength) {
     }
     return id;
 }
-C2_HOOK_FUNCTION(0x0052c0b0, DfChunkReadBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c160
 void C2_HOOK_STDCALL DfCountWriteText(br_datafile* df, br_uint_32 count) {
 
     BrFilePrintf(df->h, " count %d\n", count);
 }
-C2_HOOK_FUNCTION(0x0052c160, DfCountWriteText)
 
+// FUNCTION: CARMA2_HW 0x0052c180
 br_uint_32 C2_HOOK_STDCALL DfCountReadText(br_datafile* df) {
     char* id;
     char* data;
@@ -1168,41 +1180,41 @@ br_uint_32 C2_HOOK_STDCALL DfCountReadText(br_datafile* df) {
     }
     return BrStrToUL(data, NULL, 0);
 }
-C2_HOOK_FUNCTION(0x0052c180, DfCountReadText)
 
+// FUNCTION: CARMA2_HW 0x0052c1d0
 void C2_HOOK_STDCALL DfCountWriteBinary(br_datafile* df, br_uint_32 count) {
     br_uint_32 l;
 
     l = BrSwap32(count);
     BrFileWrite(&l, sizeof(l), 1, df->h);
 }
-C2_HOOK_FUNCTION(0x0052c1d0, DfCountWriteBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c200
 br_uint_32 C2_HOOK_STDCALL DfCountReadBinary(br_datafile* df) {
     br_uint_32 l;
 
     BrFileRead(&l, sizeof(br_uint_32), 1, df->h);
     return BrSwap32(l);
 }
-C2_HOOK_FUNCTION(0x0052c200, DfCountReadBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c230
 int C2_HOOK_STDCALL DfCountSizeText(br_datafile* df) {
 
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052c230, DfCountSizeText)
 
+// FUNCTION: CARMA2_HW 0x0052c240
 int C2_HOOK_STDCALL DfCountSizeBinary(br_datafile* df) {
 
     return sizeof(br_uint_32);
 }
-C2_HOOK_FUNCTION(0x0052c240, DfCountSizeBinary)
 
 br_uint_8* C2_HOOK_STDCALL BlockWriteSetup(void* base, int block_size, int block_stride, int block_count, int size) {
     c2_abort();
     return NULL;
 }
 
+// FUNCTION: CARMA2_HW 0x0052c250
 int C2_HOOK_STDCALL DfBlockWriteText(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
     int i;
     br_uint_8* block;
@@ -1240,8 +1252,8 @@ int C2_HOOK_STDCALL DfBlockWriteText(br_datafile* df, void* base, int block_size
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052c250, DfBlockWriteText)
 
+// FUNCTION: CARMA2_HW 0x0052c3d0
 void* C2_HOOK_STDCALL DfBlockReadText(br_datafile* df, void* base, int* count, int size, int mtype) {
     char* id;
     char* data;
@@ -1264,7 +1276,7 @@ void* C2_HOOK_STDCALL DfBlockReadText(br_datafile* df, void* base, int* count, i
         BrFailure("block size mismatch");
     }
     if (base == NULL) {
-        base = BrResAllocate(df->res ? df->res : C2V(fw).res, l * size, mtype);
+        base = BrResAllocate(df->res ? df->res : fw.res, l * size, mtype);
     } else {
         if (*count < l) {
             BrFailure("DfBlockReadText: block too long: %d", l);
@@ -1288,8 +1300,8 @@ void* C2_HOOK_STDCALL DfBlockReadText(br_datafile* df, void* base, int* count, i
     BrSwapBlock(base, l, size);
     return base;
 }
-C2_HOOK_FUNCTION(0x0052c3d0, DfBlockReadText)
 
+// FUNCTION: CARMA2_HW 0x0052c570
 int C2_HOOK_STDCALL DfBlockWriteBinary(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
     int count;
     br_uint_32 l;
@@ -1318,8 +1330,8 @@ int C2_HOOK_STDCALL DfBlockWriteBinary(br_datafile* df, void* base, int block_si
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052c570, DfBlockWriteBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c690
 void* C2_HOOK_STDCALL DfBlockReadBinary(br_datafile* df, void* base, int* count, int size, int mtype) {
     int l;
     int s;
@@ -1336,27 +1348,27 @@ void* C2_HOOK_STDCALL DfBlockReadBinary(br_datafile* df, void* base, int* count,
             BrFailure("DfBlockReadBinary: block too long: %d", l);
         }
     } else {
-        base = BrResAllocate(df->res != NULL ? df->res : C2V(fw).res, size * l, mtype);
+        base = BrResAllocate(df->res != NULL ? df->res : fw.res, size * l, mtype);
     }
     *count = l;
     BrFileRead(base, l, size, df->h);
     BrSwapBlock(base, l, size);
     return base;
 }
-C2_HOOK_FUNCTION(0x0052c690, DfBlockReadBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c780
 int C2_HOOK_STDCALL DfBlockSizeText(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
 
     return ((size * block_count * block_size + (32 - 1)) >> 5) + 2;
 }
-C2_HOOK_FUNCTION(0x0052c780, DfBlockSizeText)
 
+// FUNCTION: CARMA2_HW 0x0052c7a0
 int C2_HOOK_STDCALL DfBlockSizeBinary(br_datafile* df, void* base, int block_size, int block_stride, int block_count, int size) {
 
     return size * block_count * block_size + 8;
 }
-C2_HOOK_FUNCTION(0x0052c7a0, DfBlockSizeBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c7c0
 char* C2_HOOK_STDCALL DfNameReadText(br_datafile* df, char* name) {
     char* id;
     char* data;
@@ -1373,8 +1385,8 @@ char* C2_HOOK_STDCALL DfNameReadText(br_datafile* df, char* name) {
     BrFailure("no name string");
     return NULL;
 }
-C2_HOOK_FUNCTION(0x0052c7c0, DfNameReadText)
 
+// FUNCTION: CARMA2_HW 0x0052c840
 int C2_HOOK_STDCALL DfNameWriteText(br_datafile* df, const char* name) {
 
     if (name == NULL) {
@@ -1383,14 +1395,14 @@ int C2_HOOK_STDCALL DfNameWriteText(br_datafile* df, const char* name) {
     BrFilePrintf(df->h, "  name \"%s\"\n", name);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052c840, DfNameWriteText)
 
+// FUNCTION: CARMA2_HW 0x0052c870
 int C2_HOOK_STDCALL DfNameSizeText(br_datafile* df, char* name) {
 
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052c870, DfNameSizeText)
 
+// FUNCTION: CARMA2_HW 0x0052c880
 char* C2_HOOK_STDCALL DfNameReadBinary(br_datafile* df, char* name) {
     int c;
     int i;
@@ -1405,8 +1417,8 @@ char* C2_HOOK_STDCALL DfNameReadBinary(br_datafile* df, char* name) {
     name[i] = '\0';
     return name;
 }
-C2_HOOK_FUNCTION(0x0052c880, DfNameReadBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c8c0
 int C2_HOOK_STDCALL DfNameWriteBinary(br_datafile* df, const char* name) {
 
     if (name != NULL) {
@@ -1415,8 +1427,8 @@ int C2_HOOK_STDCALL DfNameWriteBinary(br_datafile* df, const char* name) {
     BrFilePutChar('\0', df->h);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052c8c0, DfNameWriteBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c900
 int C2_HOOK_STDCALL DfNameSizeBinary(br_datafile* df, char* name) {
 
     if (name != NULL) {
@@ -1424,8 +1436,8 @@ int C2_HOOK_STDCALL DfNameSizeBinary(br_datafile* df, char* name) {
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x0052c900, DfNameSizeBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c920
 int C2_HOOK_STDCALL DfSkipText(br_datafile* df, br_uint_32 length) {
     char* id;
     char* data;
@@ -1436,14 +1448,14 @@ int C2_HOOK_STDCALL DfSkipText(br_datafile* df, br_uint_32 length) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052c920, DfSkipText)
 
+// FUNCTION: CARMA2_HW 0x0052c970
 int C2_HOOK_STDCALL DfSkipBinary(br_datafile* df, br_uint_32 length) {
     BrFileAdvance(length, df->h);
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052c970, DfSkipBinary)
 
+// FUNCTION: CARMA2_HW 0x0052c990
 int C2_HOOK_STDCALL DfChunksInterpret(br_datafile* df, br_chunks_table* table) {
     br_uint_32 length;
     br_uint_32 count;
@@ -1478,15 +1490,15 @@ int C2_HOOK_STDCALL DfChunksInterpret(br_datafile* df, br_chunks_table* table) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052c990, DfChunksInterpret)
 
+// FUNCTION: CARMA2_HW 0x0052ca30
 void C2_HOOK_STDCALL BrNullOther(void) {
 
     // Yes, "invalid" is misspelled.
     BrFatal("datafile.c", 1825, "Invald file primitive call");
 }
-C2_HOOK_FUNCTION(0x0052ca30, BrNullOther)
 
+// FUNCTION: CARMA2_HW 0x0052cb40
 int C2_HOOK_STDCALL DfFileIdentify(br_uint_8* magics, br_size_t n_magics) {
     static char text_magics[8] = { '*', 'F', 'I', 'L', 'E', '_', 'I', 'N' };
     static char binary_magics[8] = { '\0', '\0', '\0', '\x12', '\0', '\0', '\0', '\b' };
@@ -1500,66 +1512,65 @@ int C2_HOOK_STDCALL DfFileIdentify(br_uint_8* magics, br_size_t n_magics) {
     // file does not match magics
     return BR_FS_MODE_UNKNOWN;
 }
-C2_HOOK_FUNCTION(0x0052cb40, DfFileIdentify)
 
+// FUNCTION: CARMA2_HW 0x0052ca50
 br_datafile* C2_HOOK_STDCALL DfOpen(char* name, int write, br_token scalar_type) {
     int mode;
     br_datafile* df;
     void* h;
 
-    mode = C2V(fw).open_mode;
+    mode = fw.open_mode;
     if (write != 0) {
-        h = BrFileOpenWrite(name, C2V(fw).open_mode);
+        h = BrFileOpenWrite(name, fw.open_mode);
     } else {
         h = BrFileOpenRead(name, 8u, DfFileIdentify, &mode);
     }
     if (h == NULL) {
         return NULL;
     }
-    df = BrResAllocate(C2V(fw).res, sizeof(br_datafile), BR_MEMORY_DATAFILE);
-    df->prims = &C2V(_BrFilePrimsNull);
+    df = BrResAllocate(fw.res, sizeof(br_datafile), BR_MEMORY_DATAFILE);
+    df->prims = &_BrFilePrimsNull;
     df->h = h;
     df->scalar_type = scalar_type;
 
     if (mode == BR_FS_MODE_BINARY) {
         if (write != 0) {
-            df->prims = &C2V(_BrFilePrimsWriteBinary);
+            df->prims = &_BrFilePrimsWriteBinary;
         } else {
-            df->prims = &C2V(_BrFilePrimsReadBinary);
+            df->prims = &_BrFilePrimsReadBinary;
         }
     } else {
         if (write != 0)
-            df->prims = &C2V(_BrFilePrimsWriteText);
+            df->prims = &_BrFilePrimsWriteText;
         else
-            df->prims = &C2V(_BrFilePrimsReadText);
+            df->prims = &_BrFilePrimsReadText;
     }
     DfPush(BR_MEMORY_FILE, df, 1); // Wrong enum -> should be DF_STACK_FILE (see comment in src/BRSRC13/CORE/V1DB/v1dbfile.c)
     return df;
 }
-C2_HOOK_FUNCTION(0x0052ca50, DfOpen)
 
+// FUNCTION: CARMA2_HW 0x0052cb80
 void C2_HOOK_STDCALL DfClose(br_datafile* df) {
     br_datafile* dfp;
 
     while (1) {
-        if (C2V(DatafileStackTop) > 0) {
-            if (C2V(DatafileStack)[C2V(DatafileStackTop) - 1].type == BR_MEMORY_FILE) {
+        if (DatafileStackTop > 0) {
+            if (DatafileStack[DatafileStackTop - 1].type == BR_MEMORY_FILE) {
                 break;
             }
-            DfPop(C2V(DatafileStack)[C2V(DatafileStackTop) - 1].type, NULL);
+            DfPop(DatafileStack[DatafileStackTop - 1].type, NULL);
         }
     }
     dfp = DfPop(BR_MEMORY_FILE, NULL);
     BrFileClose(dfp->h);
     BrResFree(dfp);
 }
-C2_HOOK_FUNCTION(0x0052cb80, DfClose)
 
+// FUNCTION: CARMA2_HW 0x0052cc50
 int C2_HOOK_STDCALL BrWriteModeSet(int mode) {
     int old;
 
-    old = C2V(fw).open_mode;
-    C2V(fw).open_mode = mode;
+    old = fw.open_mode;
+    fw.open_mode = mode;
     return old;
 }
-C2_HOOK_FUNCTION(0x0052cc50, BrWriteModeSet)

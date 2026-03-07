@@ -2,21 +2,22 @@
 
 #include "core/host/real.h"
 
+// FUNCTION: CARMA2_HW 0x0053fcc0
 br_error C2_HOOK_CDECL HostLock(br_uint_32 offset, br_uint_16 sel, br_size_t size) {
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x0053fcc0, HostLock)
 
+// FUNCTION: CARMA2_HW 0x0053fcd0
 br_error C2_HOOK_CDECL HostUnlock(br_uint_32 offset, br_uint_16 sel, br_size_t size) {
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x0053fcd0, HostUnlock)
 
+// FUNCTION: CARMA2_HW 0x0053fce0
 br_error C2_HOOK_CDECL HostSelectorAllocate(br_uint_16 *selp) {
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x0053fce0, HostSelectorAllocate)
 
+// FUNCTION: CARMA2_HW 0x0053fcf0
 br_error C2_HOOK_CDECL HostSelectorAllocateLinear(br_uint_16 *selp, br_uint_32 base, br_size_t size) {
     br_uint_16 sel;
     br_error r;
@@ -39,8 +40,8 @@ br_error C2_HOOK_CDECL HostSelectorAllocateLinear(br_uint_16 *selp, br_uint_32 b
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x0053fcf0, HostSelectorAllocateLinear)
 
+// FUNCTION: CARMA2_HW 0x0053fd00
 br_error C2_HOOK_CDECL HostSelectorAllocateAlias(br_uint_16 *aliasp, br_uint_16 sel) {
     br_uint_16 alias;
     br_uint_32 base,limit;
@@ -65,13 +66,13 @@ br_error C2_HOOK_CDECL HostSelectorAllocateAlias(br_uint_16 *aliasp, br_uint_16 
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x0053fd00, HostSelectorAllocateAlias)
 
+// FUNCTION: CARMA2_HW 0x0053fd10
 br_error C2_HOOK_CDECL HostSelectorAllocatePhysical(br_uint_16 *selp, br_uint_32 phys_addr, br_size_t size) {
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x0053fd10, HostSelectorAllocatePhysical)
 
+// FUNCTION: CARMA2_HW 0x0053fd20
 br_error C2_HOOK_CDECL HostSelectorFree(br_uint_16 sel) {
     br_uint_16 rsel;
 
@@ -82,24 +83,23 @@ br_error C2_HOOK_CDECL HostSelectorFree(br_uint_16 sel) {
     }
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x0053fd20, HostSelectorFree)
 
+// FUNCTION: CARMA2_HW 0x0053fd50
 br_error C2_HOOK_CDECL HostSelectorBaseSet(br_uint_16 sel, br_uint_32 base) {
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x0053fd50, HostSelectorBaseSet)
 
+// FUNCTION: CARMA2_HW 0x0053fd60
 br_error C2_HOOK_CDECL HostSelectorLimitSet(br_uint_16 sel, br_size_t limit) {
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x0053fd60, HostSelectorLimitSet)
 
+// FUNCTION: CARMA2_HW 0x0053fd70
 br_error C2_HOOK_CDECL HostSelectorBaseQuery(br_uint_32 *basep, br_uint_16 sel) {
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x0053fd70, HostSelectorBaseQuery)
 
+// FUNCTION: CARMA2_HW 0x00053fd80
 br_error C2_HOOK_CDECL HostSelectorLimitQuery(br_uint_32 *limitp, br_uint_16 sel) {
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x00053fd80, HostSelectorLimitQuery)

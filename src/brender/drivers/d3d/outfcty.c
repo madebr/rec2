@@ -10,7 +10,8 @@
 
 #include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, outputFacilityD3DTemplateEntries, 14, 0x10016f28, {
+// GLOBAL: D3D 0x10016f28
+br_tv_template_entry outputFacilityD3DTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,      0,  offsetof(br_output_facility_d3d, identifier),   0x5,    0x3, },
     { BRT_WIDTH_I32,            0,  offsetof(br_output_facility_d3d, width),        0x5,    0x3, },
     { BRT_WIDTH_MIN_I32,        0,  offsetof(br_output_facility_d3d, width),        0x5,    0x3, },
@@ -25,15 +26,16 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, outputFacilityD3DTem
     { BRT_PIXELMAP_MAX_I32,     0,  0,                                              0x5,    0x1, 1, },
     { BRT_CLUT_MAX_I32,         0,  0,                                              0x5,    0x1, 0, },
     { BRT_PRIMITIVE_LIBRARY_O,  0,  offsetof(br_output_facility_d3d, prim_lib),     0x5,    0x3, },
-});
+};
 
-//{ BRT(WINDOW_HANDLE_H),    NULL,                BRTV_QUERY | BRTV_ALL,    BRTV_CONV_DIRECT, },
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_tv_template, outputFacilityD3DTemplate, 0x1001707c, {
-    BR_ASIZE(C2V(outputFacilityD3DTemplateEntries)),
+// GLOBAL: D3D 0x1001707c
+br_tv_template outputFacilityD3DTemplate = {
+    BR_ASIZE(outputFacilityD3DTemplateEntries),
     outputFacilityD3DTemplateEntries
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_output_facility_dispatch, outputFacilityD3DDispatch, 0x100170c8, {
+// GLOBAL: D3D 0x100170c8
+br_output_facility_dispatch outputFacilityD3DDispatch = {
     NULL,
     NULL,
     NULL,
@@ -67,32 +69,35 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_output_facility_dispatch, outputFacilityD3DDi
     (void*)_M_br_output_facility_d3d_validSource,
     (void*)_M_br_output_facility_d3d_pixelmapNew,
     (void*)_M_br_output_facility_d3d_clutNew,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_32, d3d_mode_list, 12, 0x, {
+};
+
+// GLOBAL: D3D 0x10017098
+br_uint_32 d3d_mode_list[4 * 3] = {
     3, 512, 384, /* GR_RESOLUTION_512x384 */
     6, 640, 400, /* GR_RESOLUTION_640x400 */
     7, 640, 480, /* GR_RESOLUTION_640x480 */
     8, 800, 600, /* GR_RESOLUTION_800x600 */
-});
+};
 
+// FUNCTION: D3D 0x100066c0
 br_uint_32 C2_HOOK_CDECL OutputFacilityD3DInitialise(br_device_d3d* dev, br_primitive_library_d3d* prim_lib) {
     int i;
     br_output_facility_d3d* self;
     void* res;
     char buf[256];
 
-    memset(&C2V(outputFacilityD3DTemplate), 0, sizeof(C2V(outputFacilityD3DTemplate)));
-    C2V(outputFacilityD3DTemplate).n_entries = BR_ASIZE(C2V(outputFacilityD3DTemplateEntries));
-    C2V(outputFacilityD3DTemplate).entries = C2V(outputFacilityD3DTemplateEntries);
+    memset(&outputFacilityD3DTemplate, 0, sizeof(outputFacilityD3DTemplate));
+    outputFacilityD3DTemplate.n_entries = BR_ASIZE(outputFacilityD3DTemplateEntries);
+    outputFacilityD3DTemplate.entries = outputFacilityD3DTemplateEntries;
 
     /* Build an output facility for each possible D3D mode */
     res = dev->res;
 
-    for (i = 0; i < BR_ASIZE(C2V(d3d_mode_list)) / 3 * 2; i++) {
+    for (i = 0; i < BR_ASIZE(d3d_mode_list) / 3 * 2; i++) {
         self = BrResAllocate(res, sizeof(*self), BR_MEMORY_OBJECT);
 
         self->num_instances = 0;
-        self->dispatch = &C2V(outputFacilityD3DDispatch);
+        self->dispatch = &outputFacilityD3DDispatch;
         self->object_list = BrObjectListAllocate(dev->res);
         self->prim_lib = prim_lib;
 
@@ -121,42 +126,42 @@ br_uint_32 C2_HOOK_CDECL OutputFacilityD3DInitialise(br_device_d3d* dev, br_prim
 
     return 2 * BR_ASIZE(d3d_mode_list) / 3;
 }
-C2_HOOK_FUNCTION(0x100066c0, OutputFacilityD3DInitialise)
 
+// FUNCTION: D3D 0x10006800
 void C2_HOOK_CDECL _M_br_output_facility_d3d_free(br_output_facility_d3d* self) {
     br_device* dev = self->dispatch->_device((br_object*)self);
     dev->dispatch->_remove((br_object_container*)dev, (br_object*)self);
     BrObjectContainerFree((br_object_container*)self, BR_NULL_TOKEN, NULL, NULL);
     BrResFreeNoCallback(self);
 }
-C2_HOOK_FUNCTION(0x10006800, _M_br_output_facility_d3d_free)
 
+// FUNCTION: D3D 0x10006840
 br_token C2_HOOK_CDECL _M_br_output_facility_d3d_type(br_output_facility_d3d* self) {
     return BRT_OUTPUT_FACILITY;
 }
-C2_HOOK_FUNCTION(0x10006840, _M_br_output_facility_d3d_type)
 
+// FUNCTION: D3D 0x10006850
 br_boolean C2_HOOK_CDECL _M_br_output_facility_d3d_isType(br_output_facility_d3d* self, br_token t) {
     return t == BRT_OUTPUT_FACILITY || t == BRT_OBJECT_CONTAINER || t == BRT_OBJECT;
 }
-C2_HOOK_FUNCTION(0x10006850, _M_br_output_facility_d3d_isType)
 
+// FUNCTION: D3D 0x10006870
 br_int_32 C2_HOOK_CDECL _M_br_output_facility_d3d_space(br_output_facility_d3d* self) {
     return sizeof(br_output_facility_d3d);
 }
-C2_HOOK_FUNCTION(0x10006870, _M_br_output_facility_d3d_space)
 
+// FUNCTION: D3D 0x10006880
 struct br_tv_template * C2_HOOK_CDECL _M_br_output_facility_d3d_queryTemplate(br_output_facility_d3d* self) {
-    C2V(outputFacilityD3DTemplate).res = C2V(DriverDeviceD3D).res;
-    return &C2V(outputFacilityD3DTemplate);
+    outputFacilityD3DTemplate.res = DriverDeviceD3D.res;
+    return &outputFacilityD3DTemplate;
 }
-C2_HOOK_FUNCTION(0x10006880, _M_br_output_facility_d3d_queryTemplate)
 
 // FIXME: folded at 0x100170c8
 br_error C2_HOOK_CDECL _M_br_output_facility_d3d_validSource(br_output_facility_d3d* self, br_boolean *bp, br_object *h) {
     return 0;
 }
 
+// FUNCTION: D3D 0x10006890
 br_error C2_HOOK_CDECL _M_br_output_facility_d3d_pixelmapNew(br_output_facility_d3d* self, br_device_pixelmap_d3d** ppmap, br_token_value* tv) {
     br_device_pixelmap_d3d* pm;
     br_error result;
@@ -169,12 +174,11 @@ br_error C2_HOOK_CDECL _M_br_output_facility_d3d_pixelmapNew(br_output_facility_
     }
     return result;
 }
-C2_HOOK_FUNCTION(0x10006890, _M_br_output_facility_d3d_pixelmapNew)
 
+// FUNCTION: D3D 0x100068d0
 br_error C2_HOOK_CDECL _M_br_output_facility_d3d_clutNew(br_output_facility_d3d* self, br_device_clut** pclut, br_token_value* tv) {
     return 0xa001;
 }
-C2_HOOK_FUNCTION(0x100068d0, _M_br_output_facility_d3d_clutNew)
 
 // FIXME: folded at 0x100068e0
 void * C2_HOOK_CDECL _M_br_output_facility_d3d_listQuery(br_output_facility_d3d* self) {

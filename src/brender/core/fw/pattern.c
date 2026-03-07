@@ -2,6 +2,7 @@
 
 #include "c2_ctype.h"
 
+// FUNCTION: CARMA2_HW 0x00529860
 br_boolean C2_HOOK_CDECL BrNamePatternMatch(const char* p, const char* s) {
     const char* cp;
 
@@ -44,4 +45,3 @@ br_boolean C2_HOOK_CDECL BrNamePatternMatch(const char* p, const char* s) {
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x00529860, BrNamePatternMatch)

@@ -5,8 +5,8 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gOur_starting_position);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_host_query);
+extern int gOur_starting_position;
+extern tU32 gLast_host_query;
 
 
 int C2_HOOK_CDECL SortGridFunction(const void* pFirst_one, const void* pSecond_one);

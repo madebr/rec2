@@ -5,23 +5,23 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(tPhysicsError_cbfn*, gPhysics_error_cb);
-C2_HOOK_VARIABLE_DECLARE(void*, gPhysics_buffer1_ptr);
-C2_HOOK_VARIABLE_DECLARE(void*, gPhysics_buffer2_ptr);
-C2_HOOK_VARIABLE_DECLARE(void*, gPhysics_buffer3_ptr);
-C2_HOOK_VARIABLE_DECLARE(int, gPhysics_other_buffer_capacity);
-C2_HOOK_VARIABLE_DECLARE(void*, gPhysics_other_buffer);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tU8, gPhysics_buffer, 299792);
-C2_HOOK_VARIABLE_DECLARE(int, gCollision_info_uid_counter);
-C2_HOOK_VARIABLE_DECLARE(int, gPHIL_enabled);
-C2_HOOK_VARIABLE_DECLARE(int, gFace_num__car);
-C2_HOOK_VARIABLE_DECLARE(int, gPHIL_doing_physics);
-C2_HOOK_VARIABLE_DECLARE(int, gPHIL_object_added);
-C2_HOOK_VARIABLE_DECLARE(tU32, gPHIL_last_physics_tick);
-C2_HOOK_VARIABLE_DECLARE(int, gPHIL_mechanics_time_sync);
-C2_HOOK_VARIABLE_DECLARE(tWorld_callback_active_passive_cbfn*, gPHIL_original_activate_passive);
-C2_HOOK_VARIABLE_DECLARE(tPhysics_callbacks*, gPHIL_callbacks);
-C2_HOOK_VARIABLE_DECLARE(tU32, gPHIL_last_physics_tick);
+extern tPhysicsError_cbfn* gPhysics_error_cb;
+extern void* gPhysics_buffer1_ptr;
+extern void* gPhysics_buffer2_ptr;
+extern void* gPhysics_buffer3_ptr;
+extern int gPhysics_other_buffer_capacity;
+extern void* gPhysics_other_buffer;
+extern tU8 gPhysics_buffer[299792];
+extern int gCollision_info_uid_counter;
+extern int gPHIL_enabled;
+extern int gFace_num__car;
+extern int gPHIL_doing_physics;
+extern int gPHIL_object_added;
+extern tU32 gPHIL_last_physics_tick;
+extern int gPHIL_mechanics_time_sync;
+extern tWorld_callback_active_passive_cbfn* gPHIL_original_activate_passive;
+extern tPhysics_callbacks* gPHIL_callbacks;
+extern tU32 gPHIL_last_physics_tick;
 
 #define NET_OBJECT_HIERARCHY_DEFAULT_SIZE 72
 

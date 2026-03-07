@@ -7,7 +7,8 @@
 #include "core/fw/resource.h"
 #include "core/fw/tokenval.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_geometry_lighting_dispatch, geometryLightingDispatch, 0x0058bf40, {
+// GLOBAL: CARMA2_HW 0x0058bf40
+const br_geometry_lighting_dispatch geometryLightingDispatch = {
     NULL,
     NULL,
     NULL,
@@ -27,19 +28,17 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(const br_geometry_lighting_dispatch, geometryLig
     _M_br_object_queryAllSize,
     (void*)_M_br_geometry_lighting_soft_render,
     (void*)_M_br_geometry_lighting_soft_render,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, geometryLightingTemplateEntries, 3, 0x0058bef8, {
+};
+
+// GLOBAL: CARMA2_HW 0x0058bef8
+br_tv_template_entry geometryLightingTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR,      NULL,   offsetof(br_geometry_lighting_soft, identifier),        4,  3,  0,  0, },
     { BRT_RENDERER_FACILITY_O,  NULL,   offsetof(br_geometry_lighting_soft, renderer_facility), 5,  3,  0,  0, },
     { BRT_FACILITY_O,           NULL,   offsetof(br_geometry_lighting_soft, renderer_facility), 1,  3,  0,  0, },
-});
+};
 
-br_geometry_lighting* (C2_HOOK_STDCALL * GeometryLightingAllocate_original)(br_soft_renderer_facility* type, const char* id);
+// FUNCTION: CARMA2_HW 0x00540e30
 br_geometry_lighting* C2_HOOK_STDCALL GeometryLightingAllocate(br_soft_renderer_facility* type, const char* id) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return GeometryLightingAllocate_original(type, id);
-#else
     br_geometry_lighting_soft* self;
 
     C2_HOOK_BUG_ON(sizeof(br_geometry_lighting_soft) != 0x10);
@@ -48,65 +47,59 @@ br_geometry_lighting* C2_HOOK_STDCALL GeometryLightingAllocate(br_soft_renderer_
     if (self == NULL) {
         return NULL;
     }
-    self->dispatch = &C2V(geometryLightingDispatch);
+    self->dispatch = &geometryLightingDispatch;
     self->identifier = id;
     self->device = type->device;
     self->renderer_facility = type;
 
     type->dispatch->_addFront((br_object_container*)type, (br_object*)self);
     return (br_geometry_lighting*)self;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00540e30, GeometryLightingAllocate, GeometryLightingAllocate_original)
 
+// FUNCTION: CARMA2_HW 0x00540e80
 void C2_HOOK_CDECL _M_br_geometry_lighting_soft_free(br_geometry_lighting_soft* self) {
 
     self->renderer_facility->dispatch->_remove((br_object_container*)self->renderer_facility, (br_object*)self);
 
     BrResFreeNoCallback(self);
 }
-C2_HOOK_FUNCTION(0x00540e80, _M_br_geometry_lighting_soft_free)
 
+// FUNCTION: CARMA2_HW 0x00540ea0
 br_token C2_HOOK_CDECL _M_br_geometry_lighting_soft_type(br_geometry_lighting_soft* self) {
 
     return BRT_GEOMETRY_LIGHTING;
 }
-C2_HOOK_FUNCTION(0x00540ea0, _M_br_geometry_lighting_soft_type)
 
+// FUNCTION: CARMA2_HW 0x00540eb0
 br_boolean C2_HOOK_CDECL _M_br_geometry_lighting_soft_isType(br_geometry_lighting_soft* self, br_token t) {
 
     return t == BRT_GEOMETRY_LIGHTING || t == BRT_GEOMETRY || t == BRT_OBJECT;
 }
-C2_HOOK_FUNCTION(0x00540eb0, _M_br_geometry_lighting_soft_isType)
 
+// FUNCTION: CARMA2_HW 0x00540ed0
 br_int_32 C2_HOOK_CDECL _M_br_geometry_lighting_soft_space(br_geometry_lighting_soft* self) {
 
     C2_HOOK_BUG_ON(sizeof(br_geometry_lighting_soft) != 0x10);
     return sizeof(br_geometry_lighting_soft);
 }
-C2_HOOK_FUNCTION(0x00540ed0, _M_br_geometry_lighting_soft_space)
 
+// FUNCTION: CARMA2_HW 0x00540ee0
 br_tv_template* C2_HOOK_CDECL _M_br_geometry_lighting_soft_templateQuery(br_geometry_lighting_soft* self) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_device, templates.geometryLightingTemplate, 0x30);
-    C2_HOOK_BUG_ON(BR_ASIZE(C2V(geometryLightingTemplateEntries)) != 3);
+    C2_HOOK_BUG_ON(BR_ASIZE(geometryLightingTemplateEntries) != 3);
 
     if (self->device->templates.geometryLightingTemplate == NULL) {
         self->device->templates.geometryLightingTemplate = BrTVTemplateAllocate(self->device,
-            C2V(geometryLightingTemplateEntries),
-            BR_ASIZE(C2V(geometryLightingTemplateEntries)));
+            geometryLightingTemplateEntries,
+            BR_ASIZE(geometryLightingTemplateEntries));
     }
 
     return self->device->templates.geometryLightingTemplate;
 }
-C2_HOOK_FUNCTION(0x00540ee0, _M_br_geometry_lighting_soft_templateQuery)
 
-br_error (C2_HOOK_CDECL * _M_br_geometry_lighting_soft_render_original)(br_geometry_lighting_soft* self, br_soft_renderer* renderer, br_vector3* points, br_vector3* normals, br_colour* colour_in, br_colour* colour_out, br_uint_16* redirect, int pstride, int nstride, int cinstride, int coutstride, int nvertices);
+// FUNCTION: CARMA2_HW 0x00540f10
 br_error C2_HOOK_CDECL _M_br_geometry_lighting_soft_render(br_geometry_lighting_soft* self, br_soft_renderer* renderer, br_vector3* points, br_vector3* normals, br_colour* colour_in, br_colour* colour_out, br_uint_16* redirect, int pstride, int nstride, int cinstride, int coutstride, int nvertices) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_geometry_lighting_soft_render_original(self, renderer, points, normals, colour_in, colour_out, redirect, pstride, nstride, cinstride, coutstride, nvertices);
-#else
     int i, j;
     br_vector2 map = { { BR_SCALAR(0.0), BR_SCALAR(0.0) } };
     br_scalar comp[NUM_COMPONENTS];
@@ -122,23 +115,18 @@ br_error C2_HOOK_CDECL _M_br_geometry_lighting_soft_render(br_geometry_lighting_
         }
     }
 
-    C2_HOOK_ASSERT_ADDRESS(C2V(scache).valid_per_scene, 0x0079feac);
-    if (!C2V(scache).valid_per_scene){
+    if (!scache.valid_per_scene){
         StaticCacheUpdate_PerScene(renderer);
-        C2V(scache).valid_per_scene = 1;
+        scache.valid_per_scene = 1;
     }
 
-    C2_HOOK_ASSERT_ADDRESS(C2V(scache).valid_per_model, 0x0079fea8);
-    if (!C2V(scache).valid_per_model){
+    if (!scache.valid_per_model){
         StaticCacheUpdate_PerModel(renderer);
-        C2V(scache).valid_per_model = 1;
+        scache.valid_per_model = 1;
     }
 
-    C2_HOOK_ASSERT_ADDRESS(C2V(rend).block, 0x0079f9cc);
-    C2_HOOK_ASSERT_ADDRESS(C2V(rend).block_changed, 0x0079f9d0);
-    C2_HOOK_ASSERT_ADDRESS(C2V(rend).range_changed, 0x0079f9d4);
     r = renderer->state.pstate->dispatch->_renderBegin(renderer->state.pstate,
-        &C2V(rend).block, &C2V(rend).block_changed, &C2V(rend).range_changed, 0,
+        &rend.block, &rend.block_changed, &rend.range_changed, 0,
         BRT_TRIANGLE);
 
     if (r != 0) {
@@ -187,9 +175,7 @@ br_error C2_HOOK_CDECL _M_br_geometry_lighting_soft_render(br_geometry_lighting_
         }
     }
 
-    renderer->state.pstate->dispatch->_renderEnd(renderer->state.pstate, C2V(rend).block);
+    renderer->state.pstate->dispatch->_renderEnd(renderer->state.pstate, rend.block);
 
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00540f10, _M_br_geometry_lighting_soft_render, _M_br_geometry_lighting_soft_render_original)

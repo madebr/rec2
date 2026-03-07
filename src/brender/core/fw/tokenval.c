@@ -10,6 +10,7 @@
 
 #include "c2_stdlib.h"
 
+// FUNCTION: CARMA2_HW 0x0052d740
 br_tv_template* C2_HOOK_CDECL BrTVTemplateAllocate(void* res, br_tv_template_entry* entries, int n_entries) {
     br_tv_template* t;
 
@@ -19,13 +20,12 @@ br_tv_template* C2_HOOK_CDECL BrTVTemplateAllocate(void* res, br_tv_template_ent
     t->n_entries = n_entries;
     return t;
 }
-C2_HOOK_FUNCTION(0x0052d740, BrTVTemplateAllocate)
 
+// FUNCTION: CARMA2_HW 0x0052d770
 void C2_HOOK_CDECL BrTVTemplateFree(br_tv_template* t) {
 
     BrResFree(t);
 }
-C2_HOOK_FUNCTION(0x0052d770, BrTVTemplateFree)
 
 void C2_HOOK_STDCALL templateResolveNames(br_tv_template* template) {
     br_tv_template_entry* tp;
@@ -39,11 +39,8 @@ void C2_HOOK_STDCALL templateResolveNames(br_tv_template* template) {
     }
 }
 
-void (C2_HOOK_STDCALL * templateMakeMap_original)(br_tv_template* template);
+// FUNCTION: CARMA2_HW 0x0052d7f0
 void C2_HOOK_STDCALL templateMakeMap(br_tv_template* template) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    templateMakeMap_original(template);
-#else
     br_tv_template_entry* tp;
     br_int_32 min;
     br_int_32 max;
@@ -85,9 +82,7 @@ void C2_HOOK_STDCALL templateMakeMap(br_tv_template* template) {
             template->map_set_entry[e] = tp;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d7f0, templateMakeMap, templateMakeMap_original)
 
 br_fixed_ls* C2_HOOK_STDCALL ConvertFloatToFixed(br_fixed_ls** pextra, br_float* src, br_int_32 count, br_size_t* pextra_space) {
     br_fixed_ls* ret;
@@ -146,11 +141,8 @@ br_uint_32* C2_HOOK_STDCALL ConvertLongCopy(br_uint_32** pextra, br_uint_32* src
     return ret;
 }
 
-br_error (C2_HOOK_STDCALL * ValueQuery_original)(br_token_value* tv, void** pextra, br_size_t* pextra_size, void* block, br_tv_template_entry* tep);
+// FUNCTION: CARMA2_HW 0x0052d8e0
 br_error C2_HOOK_STDCALL ValueQuery(br_token_value* tv, void** pextra, br_size_t* pextra_size, void* block, br_tv_template_entry* tep) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ValueQuery_original(tv, pextra, pextra_size, block, tep);
-#else
     void* mem;
     br_uint_32* lp;
     int t;
@@ -372,15 +364,10 @@ br_error C2_HOOK_STDCALL ValueQuery(br_token_value* tv, void** pextra, br_size_t
         return 0x1001;
     }
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052d8e0, ValueQuery, ValueQuery_original)
 
-br_error (C2_HOOK_STDCALL * ValueSet_original)(void* block, br_token_value* tv, br_tv_template_entry* tep);
+// FUNCTION: CARMA2_HW 0x0052e630
 br_error C2_HOOK_STDCALL ValueSet(void* block, br_token_value* tv, br_tv_template_entry* tep) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ValueSet_original(block, tv, tep);
-#else
     void* mem;
     int i;
     int t;
@@ -516,15 +503,10 @@ store_floats_as_fixed:
         return 0x1001;
     }
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052e630, ValueSet, ValueSet_original)
 
-br_size_t (C2_HOOK_STDCALL * ValueExtraSize_original)(void* block, br_tv_template_entry* tep);
+// FUNCTION: CARMA2_HW 0x0052e300
 br_size_t C2_HOOK_STDCALL ValueExtraSize(void* block, br_tv_template_entry* tep) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ValueExtraSize_original(block, tep);
-#else
     void* mem;
     br_uint_32* lp;
     int t;
@@ -592,11 +574,9 @@ br_size_t C2_HOOK_STDCALL ValueExtraSize(void* block, br_tv_template_entry* tep)
     default:
         return 0;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052e300, ValueExtraSize, ValueExtraSize_original)
 
-// IDA: br_error __cdecl BrTokenValueQuery(br_uint_32 *pvalue, br_uint_32 *extra, br_size_t extra_size, br_token t, void *block, br_tv_template *template)
+// FUNCTION: CARMA2_HW 0x0052d780
 br_error C2_HOOK_CDECL BrTokenValueQuery(br_uint_32* pvalue, br_uint_32* extra, br_size_t extra_size, br_token t, void* block, br_tv_template* template) {
     br_int_32 o;
     br_tv_template_entry* tep;
@@ -618,8 +598,8 @@ br_error C2_HOOK_CDECL BrTokenValueQuery(br_uint_32* pvalue, br_uint_32* extra, 
     }
     return 0x1001;
 }
-C2_HOOK_FUNCTION(0x0052d780, BrTokenValueQuery)
 
+// FUNCTION: CARMA2_HW 0x0052e230
 br_error C2_HOOK_CDECL BrTokenValueQueryMany(br_token_value* tv, void* extra, br_size_t extra_size, br_int_32* pcount, void* block, br_tv_template* template) {
     br_int_32 o;
     br_tv_template_entry* tep;
@@ -646,8 +626,8 @@ br_error C2_HOOK_CDECL BrTokenValueQueryMany(br_token_value* tv, void* extra, br
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052e230, BrTokenValueQueryMany)
 
+// FUNCTION: CARMA2_HW 0x0052e2a0
 br_error C2_HOOK_CDECL BrTokenValueQueryManySize(br_size_t* psize, br_token_value* tv, void* block, br_tv_template* template) {
     br_int_32 o;
     br_size_t extra_size;
@@ -670,13 +650,9 @@ br_error C2_HOOK_CDECL BrTokenValueQueryManySize(br_size_t* psize, br_token_valu
     *psize = extra_size;
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052e2a0, BrTokenValueQueryManySize)
 
-br_error (C2_HOOK_CDECL * BrTokenValueQueryAll_original)(br_token_value* buffer, br_size_t buffer_size, void* block, br_tv_template* template);
+// FUNCTION: CARMA2_HW 0x0052e430
 br_error C2_HOOK_CDECL BrTokenValueQueryAll(br_token_value* buffer, br_size_t buffer_size, void* block, br_tv_template* template) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrTokenValueQueryAll_original(buffer, buffer_size, block, template);
-#else
     br_tv_template_entry* tp;
     int n;
     int e;
@@ -719,15 +695,10 @@ br_error C2_HOOK_CDECL BrTokenValueQueryAll(br_token_value* buffer, br_size_t bu
     }
     tv->t = BR_NULL_TOKEN;
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052e430, BrTokenValueQueryAll, BrTokenValueQueryAll_original)
 
-br_error (C2_HOOK_CDECL * BrTokenValueQueryAllSize_original)(br_size_t* psize, void* block, br_tv_template* template);
+// FUNCTION: CARMA2_HW 0x0052e510
 br_error C2_HOOK_CDECL BrTokenValueQueryAllSize(br_size_t* psize, void* block, br_tv_template* template) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrTokenValueQueryAllSize_original(psize, block, template);
-#else
     br_tv_template_entry* tp;
     int e;
     int n;
@@ -751,10 +722,9 @@ br_error C2_HOOK_CDECL BrTokenValueQueryAllSize(br_size_t* psize, void* block, b
     }
     *psize = extra_size + sizeof(br_token_value) * n;
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052e510, BrTokenValueQueryAllSize, BrTokenValueQueryAllSize_original)
 
+// FUNCTION: CARMA2_HW 0x0052e5b0
 br_error C2_HOOK_CDECL BrTokenValueSet(void* mem, br_uint_32* pcombined_mask, br_token t, br_uint_32 value, br_tv_template* template) {
     br_int_32 o;
     br_error r;
@@ -779,8 +749,8 @@ br_error C2_HOOK_CDECL BrTokenValueSet(void* mem, br_uint_32* pcombined_mask, br
     *pcombined_mask |= template->map_set_entry[o]->mask;
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052e5b0, BrTokenValueSet)
 
+// FUNCTION: CARMA2_HW 0x0052e940
 br_error C2_HOOK_CDECL BrTokenValueSetMany(void* mem, br_int_32* pcount, br_uint_32* pcombined_mask, br_token_value* tv, br_tv_template* template) {
     br_int_32 o;
     br_int_32 n;
@@ -814,7 +784,6 @@ br_error C2_HOOK_CDECL BrTokenValueSetMany(void* mem, br_int_32* pcount, br_uint
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0052e940, BrTokenValueSetMany)
 
 void C2_HOOK_STDCALL DumpMatrixInteger(br_int_32* ip, int rows, int cols, char* prefix, char* info_0, char* info_n, br_putline_cbfn* putline, void* arg) {
     int i;
@@ -895,6 +864,7 @@ void C2_HOOK_STDCALL DumpObject(br_object* h, char* prefix, char* info, br_putli
     putline(value, arg);
 }
 
+// FUNCTION: CARMA2_HW 0x0052e9e0
 void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline_cbfn* putline, void* arg) {
     char* id;
     char value[128];
@@ -1160,16 +1130,12 @@ void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline
         putline(tmp, arg);
     }
 }
-C2_HOOK_FUNCTION(0x0052e9e0, BrTokenValueDump)
 
 #define T_FALSE (T_KEYWORD + 0)
 #define T_TRUE  (T_KEYWORD + 1)
 
-br_error (C2_HOOK_CDECL * BrStringToTokenValue_original)(br_token_value* buffer, br_size_t buffer_size, char* str);
+// FUNCTION: CARMA2_HW 0x0052e9f0
 br_error C2_HOOK_CDECL BrStringToTokenValue(br_token_value* buffer, br_size_t buffer_size, char* str) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrStringToTokenValue_original(buffer, buffer_size, str);
-#else
     br_lexer* l;
     br_error r;
     static br_lexer_keyword keywords[4] = {
@@ -1192,9 +1158,7 @@ br_error C2_HOOK_CDECL BrStringToTokenValue(br_token_value* buffer, br_size_t bu
     parseTokenValue(l, buffer, buffer_size);
     BrLexerFree(l);
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052e9f0, BrStringToTokenValue, BrStringToTokenValue_original)
 
 br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_size_t size) {
     int len;
@@ -1376,11 +1340,8 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
     return r;
 }
 
-br_boolean (C2_HOOK_CDECL * BrTokenValueCompare_original)(br_token_value* tv1, br_token_value* tv2);
+// FUNCTION: CARMA2_HW 0x0052ee40
 br_boolean C2_HOOK_CDECL BrTokenValueCompare(br_token_value* tv1, br_token_value* tv2) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrTokenValueCompare_original(tv1, tv2);
-#else
     int i;
 
     if (tv1 == NULL && tv2 == NULL) {
@@ -1552,9 +1513,7 @@ br_boolean C2_HOOK_CDECL BrTokenValueCompare(br_token_value* tv1, br_token_value
         }
     }
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052ee40, BrTokenValueCompare, BrTokenValueCompare_original)
 
 br_error C2_HOOK_CDECL BrTokenValueDup(br_token_value** dstp, br_token_value* src) {
     br_token_value* tv;

@@ -6,31 +6,31 @@
 #include "rec2_types.h"
 #include <brender/brender.h>
 
-C2_HOOK_VARIABLE_DECLARE(int, gSky_on);
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gFog_shade_table);
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gAcid_shade_table);
-C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDAT_0079ec44);
-C2_HOOK_VARIABLE_DECLARE(tDepth_effect_type, gSwap_depth_effect_type);
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gSky_texture_0079ec1c);
-C2_HOOK_VARIABLE_DECLARE(int, gSwap_depth_effect_start);
-C2_HOOK_VARIABLE_DECLARE(int, gSwap_depth_effect_end);
-C2_HOOK_VARIABLE_DECLARE(tDepth_effect_type, gSwap_depth_effect_type);
-C2_HOOK_VARIABLE_DECLARE(int, gSwap_depth_effect_colour_blue);
-C2_HOOK_VARIABLE_DECLARE(int, gSwap_depth_effect_colour_red);
-C2_HOOK_VARIABLE_DECLARE(int, gSwap_depth_effect_colour_green);
-C2_HOOK_VARIABLE_DECLARE(float, gSky_width);
-C2_HOOK_VARIABLE_DECLARE(float, gSky_height);
-C2_HOOK_VARIABLE_DECLARE(float, gSky_x_multiplier);
-C2_HOOK_VARIABLE_DECLARE(float, gSky_y_multiplier);
-C2_HOOK_VARIABLE_DECLARE(int, gHas_sky_texture);
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gDepth_shade_table);
-C2_HOOK_VARIABLE_DECLARE(br_material*, gHorizon_material);
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gForward_sky_actor);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gForward_sky_model);
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gRearview_sky_actor);
-C2_HOOK_VARIABLE_DECLARE(br_angle, gOld_fov);
-C2_HOOK_VARIABLE_DECLARE(br_scalar, gOld_yon);
-C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gLast_camera_special_volume);
+extern int gSky_on;
+extern br_pixelmap* gFog_shade_table;
+extern br_pixelmap* gAcid_shade_table;
+extern tSpecial_volume* gDAT_0079ec44;
+extern tDepth_effect_type gSwap_depth_effect_type;
+extern br_pixelmap* gSky_texture_0079ec1c;
+extern int gSwap_depth_effect_start;
+extern int gSwap_depth_effect_end;
+extern tDepth_effect_type gSwap_depth_effect_type;
+extern int gSwap_depth_effect_colour_blue;
+extern int gSwap_depth_effect_colour_red;
+extern int gSwap_depth_effect_colour_green;
+extern float gSky_width;
+extern float gSky_height;
+extern float gSky_x_multiplier;
+extern float gSky_y_multiplier;
+extern int gHas_sky_texture;
+extern br_pixelmap* gDepth_shade_table;
+extern br_material* gHorizon_material;
+extern br_actor* gForward_sky_actor;
+extern br_model* gForward_sky_model;
+extern br_actor* gRearview_sky_actor;
+extern br_angle gOld_fov;
+extern br_scalar gOld_yon;
+extern tSpecial_volume* gLast_camera_special_volume;
 
 
 intptr_t C2_HOOK_CDECL SwitchCarModel(br_actor* pActor, void* pData);

@@ -5,9 +5,9 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gRecording_paused);
-C2_HOOK_VARIABLE_DECLARE(tU32, gRecording_time);
-C2_HOOK_VARIABLE_DECLARE(int, gRecording_mouse_disabled);
+extern int gRecording_paused;
+extern tU32 gRecording_time;
+extern int gRecording_mouse_disabled;
 
 void C2_HOOK_CDECL InitQuickTimeStuff(void);
 

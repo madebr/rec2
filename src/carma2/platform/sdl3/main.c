@@ -13,11 +13,11 @@ int main(int argc, char *argv[]) {
     int i;
     char *path;
 
-    C2V(gAFE) = 0;
+    gAFE = 0;
     SetDefaultPedFolderNames();
     for (i = 1; i < argc; i++) {
         if (SDL_strcmp(argv[i], "-NOCUTSCENE") == 0 || SDL_strcmp(argv[i], "-NOCUTSCENES") == 0) {
-            C2V(gNoCutscenes) = 1;
+            gNoCutscenes = 1;
         } else if (SDL_strcmp(argv[i], "-ZOMBIE") == 0) {
             ConfigureZombiePedTexturePath();
         } else if (SDL_strcmp(argv[i], "-BLOOD") == 0) {
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
         } else if (SDL_strcmp(argv[i], "-ALIEN") == 0) {
             ConfigurePedAlienPaths();
         } else if (SDL_strcmp(argv[i], "-AFE") == 0) {
-            C2V(gAFE) = 1;
+            gAFE = 1;
 //        } else if (SDL_strcmp(argv[i], "-SCALEMOUSE") == 0) {
 //            gScaleMouse = 1;
         } else {

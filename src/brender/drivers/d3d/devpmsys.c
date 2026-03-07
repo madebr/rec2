@@ -3,8 +3,9 @@
 #include <stdlib.h>
 
 
+// FUNCTION: D3D 0x10001ec0
 br_error C2_HOOK_CDECL AllocateD3DSysMemPixelmap(br_device_pixelmap_d3d* self, br_device_pixelmap_d3d** newpm, int w, int h) {
-    abort();
+    NOT_IMPLEMENTED();
 #if 0
     br_uint_16 qual;
     br_device *dev;
@@ -37,4 +38,3 @@ br_error C2_HOOK_CDECL AllocateD3DSysMemPixelmap(br_device_pixelmap_d3d* self, b
     return BRE_OK;
 #endif
 }
-C2_HOOK_FUNCTION(0x10001ec0, AllocateD3DSysMemPixelmap)

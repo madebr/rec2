@@ -10,12 +10,20 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(tS3_descriptor*, gS3_descriptors, 0x007a0594);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gS3_low_memory_mode, 0x006b2c88);
-C2_HOOK_VARIABLE_IMPLEMENT(tS3_error_codes, gS3_last_error, 0x007a05a0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gS3_sound_dirname, 256, 0x007a05c0);
 
-tS3_buffer_desc* (C2_HOOK_FASTCALL * S3GetBufferDescription_original)(int pSample_id);
+// GLOBAL: CARMA2_HW 0x007a0594
+tS3_descriptor* gS3_descriptors;
+
+// GLOBAL: CARMA2_HW 0x006b2c88
+int gS3_low_memory_mode;
+
+// GLOBAL: CARMA2_HW 0x007a05a0
+tS3_error_codes gS3_last_error;
+
+// GLOBAL: CARMA2_HW 0x007a05c0
+char gS3_sound_dirname[256];
+
+// FUNCTION: CARMA2_HW 0x005687ff
 tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -25,7 +33,7 @@ tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, buffer_description, 0x40);
 
-    if (!C2V(gS3_enabled)) {
+    if (!gS3_enabled) {
         return NULL;
     }
     descriptor = S3GetDescriptorByID(pSample_id);
@@ -35,9 +43,8 @@ tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
     return descriptor->buffer_description;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005687ff, S3GetBufferDescription, S3GetBufferDescription_original)
 
-tS3_error_codes (C2_HOOK_FASTCALL * S3LoadSample_original)(int pSample_id);
+// FUNCTION: CARMA2_HW 0x00568830
 tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -47,7 +54,7 @@ tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
     tS3_buffer_desc* buffer_description;
     char path[512];
 
-    if (!C2V(gS3_enabled)) {
+    if (!gS3_enabled) {
         return eS3_error_none;
     }
     descriptor = S3GetDescriptorByID(pSample_id);
@@ -79,8 +86,8 @@ tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
     return eS3_error_none;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00568830, S3LoadSample, S3LoadSample_original)
 
+// FUNCTION: CARMA2_HW 0x00565a3d
 tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
     tS3_descriptor *desc;
 
@@ -88,7 +95,7 @@ tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, next, 0x2c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, low_memory_alternative, 0x3c);
 
-    for (desc = C2V(gS3_descriptors); desc != NULL; desc = desc->next) {
+    for (desc = gS3_descriptors; desc != NULL; desc = desc->next) {
         if (desc->sample_id == pSample_id) {
             if (desc->low_memory_alternative >= 0) {
                 return S3GetDescriptorByID(desc->low_memory_alternative);
@@ -98,14 +105,13 @@ tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x00565a3d, S3GetDescriptorByID)
 
+// FUNCTION: CARMA2_HW 0x00565b46
 void C2_HOOK_CDECL s3_dprintf(const char* pFormat, ...) {
 
 }
-C2_HOOK_FUNCTION(0x00565b46, s3_dprintf);
 
-int (C2_HOOK_FASTCALL * S3CheckWavHeader_original)(tS3_wav_file* pWav_buffer, tS3_wav_chunk_info_header** pWav_format_info_header, void** pSamples, int* pSample_size);
+// FUNCTION: CARMA2_HW 0x00568ee0
 int C2_HOOK_FASTCALL S3CheckWavHeader(tS3_wav_file* pWav_buffer, tS3_wav_chunk_info_header** pWav_format_info_header, void** pSamples, int* pSample_size) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -161,8 +167,8 @@ int C2_HOOK_FASTCALL S3CheckWavHeader(tS3_wav_file* pWav_buffer, tS3_wav_chunk_i
     return 0;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00568ee0, S3CheckWavHeader, S3CheckWavHeader_original)
 
+// FUNCTION: CARMA2_HW 0x0056907c
 void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_desc) {
     char wav_path[512];
     FILE* f;
@@ -170,34 +176,34 @@ void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_d
     tS3_wav_info wav_info;
     void* pd_handle;
 
-    if (C2V(gS3_low_memory_mode)) {
-        c2_sprintf(wav_path, "DATA%sSOUND%s%s", C2V(gS3_path_separator), C2V(gS3_path_separator), pPath);
+    if (gS3_low_memory_mode) {
+        c2_sprintf(wav_path, "DATA%sSOUND%s%s", gS3_path_separator, gS3_path_separator, pPath);
         f = S3_low_memory_fopen(wav_path, "rb");
     } else {
-        if (C2V(gS3_sound_dirname)[0] != '\0') {
+        if (gS3_sound_dirname[0] != '\0') {
             char filename[512];
 
             PDExtractFilename(filename, pPath);
-            c2_sprintf(wav_path, "%s\\%s", C2V(gS3_sound_dirname), filename);
+            c2_sprintf(wav_path, "%s\\%s", gS3_sound_dirname, filename);
             f = c2_fopen(wav_path, "rb");
         } else {
             f = c2_fopen(pPath, "rb");
         }
     }
     if (f == NULL) {
-        C2V(gS3_last_error) = eS3_error_readfile;
+        gS3_last_error = eS3_error_readfile;
         return NULL;
     }
     file_size = S3GetFileSize(f);
     if (file_size == 0) {
         c2_fclose(f);
-        C2V(gS3_last_error) = eS3_error_readfile;
+        gS3_last_error = eS3_error_readfile;
         return NULL;
     }
     tS3_wav_file* wav_buffer = S3MemAllocate(file_size, kMem_S3_Windows_95_load_WAV_file);
     if (wav_buffer == NULL) {
         c2_fclose(f);
-        C2V(gS3_last_error) = eS3_error_memory;
+        gS3_last_error = eS3_error_memory;
         return NULL;
     }
     c2_fread(wav_buffer, 1, file_size, f);
@@ -207,7 +213,7 @@ void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_d
 
     c2_memset(&wav_info, 0, sizeof(tS3_wav_info));
     if (!S3CheckWavHeader(wav_buffer, &wav_info.wav_info_header, &wav_info.samples, &wav_info.sample_size)) {
-        C2V(gS3_last_error) = eS3_error_readfile;
+        gS3_last_error = eS3_error_readfile;
         s3_dprintf("ERROR: .WAV file '%s'is crap", wav_path);
         return NULL;
     }
@@ -224,10 +230,9 @@ void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_d
     }
     return pd_handle;
 }
-C2_HOOK_FUNCTION(0x0056907c, S3BufferWav)
 
+// FUNCTION: CARMA2_HW 0x00569865
 int C2_HOOK_FASTCALL S3PlaySample(tS3_channel* pChannel) {
 
     return PDS3PlaySample(pChannel);
 }
-C2_HOOK_FUNCTION(0x00569865, S3PlaySample)

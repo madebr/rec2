@@ -10,88 +10,88 @@
 
 #define TWT_MOUNT_SUCCEEDED(TWTVFS) ((TWTVFS) >= 0)
 
-C2_HOOK_VARIABLE_DECLARE(float, gCamera_cockpit_hither);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char*, gMisc_strings, 300);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tTwatVfsMountPoint, gTwatVfsMountPoints, 5);
-C2_HOOK_VARIABLE_DECLARE(int, gKey_map_index);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gKey_mapping, 77);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCunning_stunt_bonus, 3);
-C2_HOOK_VARIABLE_DECLARE(int, gPickup_respawn_min_time_ms);
-C2_HOOK_VARIABLE_DECLARE(int, gPickup_respawn_max_extra_time_ms);
+extern float gCamera_cockpit_hither;
+extern char* gMisc_strings[300];
+extern tTwatVfsMountPoint gTwatVfsMountPoints[5];
+extern int gKey_map_index;
+extern int gKey_mapping[77];
+extern int gCunning_stunt_bonus[3];
+extern int gPickup_respawn_min_time_ms;
+extern int gPickup_respawn_max_extra_time_ms;
 
-C2_HOOK_VARIABLE_DECLARE(int, gDisableTiffConversion);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gCurrent_load_directory, 256);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gCurrent_load_name, 256);
+extern int gDisableTiffConversion;
+extern char gCurrent_load_directory[256];
+extern char gCurrent_load_name[256];
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gDefaultCar, 32);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gBasic_car_name, 32);
-C2_HOOK_VARIABLE_DECLARE(int, gGoreLevel);
-C2_HOOK_VARIABLE_DECLARE(int, gAnimalsOn);
-C2_HOOK_VARIABLE_DECLARE(int, gFlameThrowerOn);
-C2_HOOK_VARIABLE_DECLARE(int, gMinesOn);
-C2_HOOK_VARIABLE_DECLARE(int, gDronesOff);
+extern char gDefaultCar[32];
+extern char gBasic_car_name[32];
+extern int gGoreLevel;
+extern int gAnimalsOn;
+extern int gFlameThrowerOn;
+extern int gMinesOn;
+extern int gDronesOff;
 
-C2_HOOK_VARIABLE_DECLARE(tSpecial_volume, gDefault_water_spec_vol);
+extern tSpecial_volume gDefault_water_spec_vol;
 
-C2_HOOK_VARIABLE_DECLARE(char*, gPedsFolder);
-C2_HOOK_VARIABLE_DECLARE(char*, gPedSoundPath);
-C2_HOOK_VARIABLE_DECLARE(char*, gPowerup_txt_path);
-C2_HOOK_VARIABLE_DECLARE(char*, gPedTextTxtPath);
-C2_HOOK_VARIABLE_DECLARE(char*, gPedTexturePath);
+extern char* gPedsFolder;
+extern char* gPedSoundPath;
+extern char* gPowerup_txt_path;
+extern char* gPedTextTxtPath;
+extern char* gPedTexturePath;
 
-C2_HOOK_VARIABLE_DECLARE(int, gCurrent_race_file_index);
-C2_HOOK_VARIABLE_DECLARE(int, gCountRaceGroups);
-C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gRaceGroups);
-C2_HOOK_VARIABLE_DECLARE(tRace_group_spec*, gRaceGroups2);
+extern int gCurrent_race_file_index;
+extern int gCountRaceGroups;
+extern tRace_group_spec* gRaceGroups;
+extern tRace_group_spec* gRaceGroups2;
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO_potential, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_per_rank, 3);
-C2_HOOK_VARIABLE_DECLARE(int, gInitial_rank);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gStarting_money, 3);
-C2_HOOK_VARIABLE_DECLARE(float, gCamera_angle);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gWheel_actor_names, 6);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gPivot_actor_names, 6);
-C2_HOOK_VARIABLE_DECLARE(float, gMass_mine);
-C2_HOOK_VARIABLE_DECLARE(tSpecial_volume, gDefault_water_spec_vol);/* FIXME: rename to gDefault_default_water_spec_vol*/
-C2_HOOK_VARIABLE_DECLARE(tSpecial_volume*, gDefault_water_spec_vol_real);
-C2_HOOK_VARIABLE_DECLARE(int, gFirst_drone_processing);
-C2_HOOK_VARIABLE_DECLARE(tU32, gTime_stamp_for_this_munging);
-C2_HOOK_VARIABLE_DECLARE(tU32, gFrame_period_for_this_munging);
-C2_HOOK_VARIABLE_DECLARE(float, gDrone_delta_time);
-C2_HOOK_VARIABLE_DECLARE(float, gTrack_drone_min_y);
-C2_HOOK_VARIABLE_DECLARE(tFloat_bunch_info, gRecovery_cost);
+extern tSlot_info gInitial_APO[3];
+extern tSlot_info gInitial_APO_potential[3];
+extern int gCredits_per_rank[3];
+extern int gInitial_rank;
+extern int gStarting_money[3];
+extern float gCamera_angle;
+extern const char* gWheel_actor_names[6];
+extern const char* gPivot_actor_names[6];
+extern float gMass_mine;
+extern tSpecial_volume gDefault_water_spec_vol;/* FIXME: rename to gDefault_default_water_spec_vol*/
+extern tSpecial_volume* gDefault_water_spec_vol_real;
+extern int gFirst_drone_processing;
+extern tU32 gTime_stamp_for_this_munging;
+extern tU32 gFrame_period_for_this_munging;
+extern float gDrone_delta_time;
+extern float gTrack_drone_min_y;
+extern tFloat_bunch_info gRecovery_cost;
 
-C2_HOOK_VARIABLE_DECLARE(int, gMinTimeOpponentRepair);
-C2_HOOK_VARIABLE_DECLARE(int, gMaxTimeOpponentRepair);
+extern int gMinTimeOpponentRepair;
+extern int gMaxTimeOpponentRepair;
 
 void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gInitial_APO_potential, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tSlot_info, gMax_APO, 3);
+extern tSlot_info gInitial_APO[3];
+extern tSlot_info gInitial_APO_potential[3];
+extern tSlot_info gMax_APO[3];
 
-C2_HOOK_VARIABLE_DECLARE(int, gCount_mutant_tail_parts);
-C2_HOOK_VARIABLE_DECLARE(float, gMass_mutant_tail_link);
-C2_HOOK_VARIABLE_DECLARE(float, gMass_mutant_tail_ball);
-C2_HOOK_VARIABLE_DECLARE(float, gMass_mine);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gUnderwater_screen_name, 32);
-C2_HOOK_VARIABLE_DECLARE(int, gWasted_explosion_chance);
-C2_HOOK_VARIABLE_DECLARE(int, gExplosion_sound_id);
-C2_HOOK_VARIABLE_DECLARE(tExplosion_animation, gExplosion_pix_animation_groups);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_checkpoint, 3);
-C2_HOOK_VARIABLE_DECLARE(tSlot_info, gTrade_in_value_APO);
-C2_HOOK_VARIABLE_DECLARE(tSlot_info, gSubstitution_value_APO);
-C2_HOOK_VARIABLE_DECLARE(tSlot_info, gPotential_substitution_value_APO);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gGroove_funk_type_names, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gAxis_names, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gReverseness_type_names, 2);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gFunk_speed_control_names, 2);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gCredits_per_second_time_bonus, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gAuto_increase_credits_dt, 3);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tU32, gNet_auto_increase_credits_dt, 8);
-C2_HOOK_VARIABLE_DECLARE(tCar_spec*, gCurrent_car_spec);
-C2_HOOK_VARIABLE_DECLARE(tFloat_bunch_info, gRepair_cost);
-C2_HOOK_VARIABLE_DECLARE(int, gDim_amount);
+extern int gCount_mutant_tail_parts;
+extern float gMass_mutant_tail_link;
+extern float gMass_mutant_tail_ball;
+extern float gMass_mine;
+extern char gUnderwater_screen_name[32];
+extern int gWasted_explosion_chance;
+extern int gExplosion_sound_id;
+extern tExplosion_animation gExplosion_pix_animation_groups;
+extern int gCredits_checkpoint[3];
+extern tSlot_info gTrade_in_value_APO;
+extern tSlot_info gSubstitution_value_APO;
+extern tSlot_info gPotential_substitution_value_APO;
+extern const char* gGroove_funk_type_names[3];
+extern const char* gAxis_names[3];
+extern const char* gReverseness_type_names[2];
+extern const char* gFunk_speed_control_names[2];
+extern int gCredits_per_second_time_bonus[3];
+extern int gAuto_increase_credits_dt[3];
+extern tU32 gNet_auto_increase_credits_dt[8];
+extern tCar_spec* gCurrent_car_spec;
+extern tFloat_bunch_info gRepair_cost;
+extern int gDim_amount;
 
 void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 

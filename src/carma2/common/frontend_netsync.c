@@ -19,14 +19,16 @@
 #include "c2_stdio.h"
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_NETSYNC, 0x0061bad0, {
+
+// GLOBAL: CARMA2_HW 0x0061bad0
+tFrontend_spec gFrontend_NETSYNC = {
     "NetSync",
     0,
     28,
     NetSync_Infunc,
     NULL,
     NetSync_MenuHandler,
-    &C2V(gFrontend_MAIN),
+    &gFrontend_MAIN,
     0,
     0,
     0,
@@ -63,29 +65,32 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_spec, gFrontend_NETSYNC, 0x0061bad0, {
         { 0xe,      NetSync_Start,  NULL, 1, 17, 18, 0, 0, 0, 0, 1, 1, },
         { 0x15,     NetSync_Abort,  NULL, 1, 17, 18, 0, 0, 0, 0, 1, 1, },
     },
-});
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gNet_synch_start, 0x006864d0);
+};
+
+// GLOBAL: CARMA2_HW 0x006864d0
+tU32 gNet_synch_start;
 
 
 int C2_HOOK_FASTCALL NetSynchRaceStart2(tNet_synch_mode pMode) {
 
     if (pMode != eNet_synch_client) {
-        if (C2V(gCurrent_net_game)->status.stage == 0) {
-            C2V(gCurrent_net_game)->status.stage = 1;
+        if (gCurrent_net_game->status.stage == 0) {
+            gCurrent_net_game->status.stage = 1;
         }
         SetUpNetCarPositions();
-        C2V(gNet_synch_start) = PDGetTotalTime();
+        gNet_synch_start = PDGetTotalTime();
     }
     return 3;
 }
 
+// FUNCTION: CARMA2_HW 0x00473610
 int C2_HOOK_FASTCALL NetSync_Infunc(tFrontend_spec* pFrontend) {
     int i;
 
     Generic_Infunc(pFrontend);
     CheckPlayersAreResponding();
-    if (C2V(gFrontend_net_mode) == eNet_mode_host) {
-        if (C2V(gNo_races_yet)) {
+    if (gFrontend_net_mode == eNet_mode_host) {
+        if (gNo_races_yet) {
             NetSynchRaceStart2(eNet_synch_host_first);
         } else {
             NetSynchRaceStart2(eNet_synch_host_subsequent);
@@ -97,19 +102,19 @@ int C2_HOOK_FASTCALL NetSync_Infunc(tFrontend_spec* pFrontend) {
 
         pFrontend->items[2 + i].x = 160;
     }
-    if (C2V(gCurrent_net_game)->options.open_game) {
+    if (gCurrent_net_game->options.open_game) {
         c2_sprintf(pFrontend->items[1].text, "%s: %s (%s)",
             GetMiscString(eMiscString_game_type),
-            GetMiscString(eMiscString_network_type_start + C2V(gCurrent_net_game)->type),
+            GetMiscString(eMiscString_network_type_start + gCurrent_net_game->type),
             GetMiscString(eMiscString_open));
     } else {
         c2_sprintf(pFrontend->items[1].text, "%s: %s (%s)",
             GetMiscString(eMiscString_game_type),
-            GetMiscString(eMiscString_network_type_start + C2V(gCurrent_net_game)->type),
+            GetMiscString(eMiscString_network_type_start + gCurrent_net_game->type),
             GetMiscString(eMiscString_closed));
     }
-    if (C2V(gNet_mode) == eNet_mode_host) {
-        if (C2V(gNo_races_yet)) {
+    if (gNet_mode == eNet_mode_host) {
+        if (gNo_races_yet) {
             pFrontend->items[26].enabled = kFrontendItemEnabled_enabled;
             pFrontend->items[26].visible = 1;
             pFrontend->items[26].stringId = 14;
@@ -133,7 +138,6 @@ int C2_HOOK_FASTCALL NetSync_Infunc(tFrontend_spec* pFrontend) {
     FuckWithWidths(pFrontend);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00473610, NetSync_Infunc)
 
 void C2_HOOK_FASTCALL MungePlayers(tFrontend_spec* pFrontend) {
     int count_ready = 0;
@@ -141,36 +145,36 @@ void C2_HOOK_FASTCALL MungePlayers(tFrontend_spec* pFrontend) {
 
     CheckPlayersAreResponding();
     NetPlayerStatusChanged(ePlayer_status_ready);
-    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+    for (i = 0; i < gNumber_of_net_players; i++) {
 
         pFrontend->items[ 2 + i].visible = 1;
         pFrontend->items[ 2 + i].enabled = kFrontendItemEnabled_default;
         pFrontend->items[14 + i].visible = 1;
         pFrontend->items[14 + i].enabled = kFrontendItemEnabled_default;
-        if (C2V(gNet_players)[i].host) {
+        if (gNet_players[i].host) {
             c2_sprintf(pFrontend->items[ 2 + i].text, "%s (%s)",
-                C2V(gNet_players)[i].player_name, IString_Get(154));
+                gNet_players[i].player_name, IString_Get(154));
         } else {
-            c2_strcpy(pFrontend->items[ 2 + i].text, C2V(gNet_players)[i].player_name);
+            c2_strcpy(pFrontend->items[ 2 + i].text, gNet_players[i].player_name);
         }
-        if (C2V(gNet_players)[i].player_status == ePlayer_status_ready) {
+        if (gNet_players[i].player_status == ePlayer_status_ready) {
             count_ready += 1;
         }
     }
-    for (i = C2V(gNumber_of_net_players); i < kMax_netplayers; i++) {
+    for (i = gNumber_of_net_players; i < kMax_netplayers; i++) {
 
         pFrontend->items[ 2 + i].visible = 0;
         pFrontend->items[ 2 + i].enabled = kFrontendItemEnabled_default;
         pFrontend->items[14 + i].visible = 0;
         pFrontend->items[14 + i].enabled = kFrontendItemEnabled_default;
     }
-    if (C2V(gNet_mode) == eNet_mode_host
-            && count_ready == C2V(gNumber_of_net_players)
-            && C2V(gNumber_of_net_players) > 1
-            && (!C2V(gNo_races_yet) || C2V(gNumber_of_net_players) == kMax_netplayers)) {
+    if (gNet_mode == eNet_mode_host
+            && count_ready == gNumber_of_net_players
+            && gNumber_of_net_players > 1
+            && (!gNo_races_yet || gNumber_of_net_players == kMax_netplayers)) {
 
         SignalToStartRace();
-        C2V(gStart_race_sent) = 1;
+        gStart_race_sent = 1;
     }
 }
 
@@ -178,78 +182,79 @@ void C2_HOOK_FASTCALL NetSync_Draw(tFrontend_spec* pFrontend) {
     int i;
     char s[128];
 
-    for (i = 0; i < C2V(gNumber_of_net_players); i++) {
+    for (i = 0; i < gNumber_of_net_players; i++) {
 
-        DrawThisCarIconNow(C2V(gNet_players)[i].car_index, 115, 99 + 26 * i);
-        SolidPolyFontText(GetMiscString(eMiscString_player_status_start + C2V(gNet_players)[i].player_status),
+        DrawThisCarIconNow(gNet_players[i].car_index, 115, 99 + 26 * i);
+        SolidPolyFontText(GetMiscString(eMiscString_player_status_start + gNet_players[i].player_status),
             520, 96 + 26 * i, pFrontend->items[2 + i].unlitFont, eJust_right, 1);
     }
-    if (C2V(gNet_mode) != eNet_mode_host) {
+    if (gNet_mode != eNet_mode_host) {
         c2_sprintf(s, "...%s...", IString_Get(250));
-        SolidPolyFontText(s, 320, 96 + 26 * C2V(gNumber_of_net_players),
+        SolidPolyFontText(s, 320, 96 + 26 * gNumber_of_net_players,
             pFrontend->items[2].unlitFont, eJust_centre, 1);
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00473870
 int C2_HOOK_FASTCALL NetSync_MenuHandler(tFrontend_spec* pFrontend) {
     int key;
     int mouse_down;
     int mouse_item;
     int original;
 
-    if (C2V(gProgram_state).prog_status == eProg_idling) {
+    if (gProgram_state.prog_status == eProg_idling) {
         return 1;
     }
-    original = C2V(gFrontend_selected_item_index);
-    C2V(gTyping_slot) = -1;
+    original = gFrontend_selected_item_index;
+    gTyping_slot = -1;
     EdgeTriggerModeOn();
     KillSplashScreen();
     PollKeys();
     EdgeTriggerModeOff();
     key = PDAnyKeyDown();
     if (key != -1 && key != 4) {
-        C2V(gMouse_in_use) = 0;
+        gMouse_in_use = 0;
         ResetInterfaceTimeout();
     }
     EdgeTriggerModeOn();
     mouse_down = 0;
     mouse_item = -1;
-    if (C2V(gMouse_in_use)) {
+    if (gMouse_in_use) {
         int mouse_x;
         int mouse_y;
 
         ResetInterfaceTimeout();
         GetMousePosition(&mouse_x, &mouse_y);
         mouse_down = EitherMouseButtonDown();
-        mouse_item = GetItemAtMousePos(C2V(gCurrent_frontend_spec), mouse_x, mouse_y);
-        C2V(gFrontend_selected_item_index) = mouse_item;
+        mouse_item = GetItemAtMousePos(gCurrent_frontend_spec, mouse_x, mouse_y);
+        gFrontend_selected_item_index = mouse_item;
         if (mouse_item == -1) {
-            C2V(gFrontend_selected_item_index) = 99;
+            gFrontend_selected_item_index = 99;
         }
     }
     if (PDKeyDown(72) || PDKeyDown(89))  {
-        C2V(gFrontend_selected_item_index) = FindPrevActiveItem(C2V(gCurrent_frontend_spec), C2V(gFrontend_selected_item_index));
-        if (!C2V(gMouse_in_use)
-                && C2V(gFrontend_selected_item_index) >= C2V(gCurrent_frontend_spec)->scrollers[0].indexFirstScrollableItem
-                && C2V(gFrontend_selected_item_index) <= C2V(gCurrent_frontend_spec)->scrollers[0].indexLastScrollableItem) {
+        gFrontend_selected_item_index = FindPrevActiveItem(gCurrent_frontend_spec, gFrontend_selected_item_index);
+        if (!gMouse_in_use
+                && gFrontend_selected_item_index >= gCurrent_frontend_spec->scrollers[0].indexFirstScrollableItem
+                && gFrontend_selected_item_index <= gCurrent_frontend_spec->scrollers[0].indexLastScrollableItem) {
             ToggleSelection(pFrontend);
-            if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
-                pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
+            if (pFrontend->items[gFrontend_selected_item_index].action != NULL) {
+                pFrontend->items[gFrontend_selected_item_index].action(pFrontend);
             }
         }
     }
     if (PDKeyDown(73) || PDKeyDown(83)) {
-        if (C2V(gFrontend_selected_item_index) < pFrontend->count_items - 1) {
-            C2V(gFrontend_selected_item_index) = FindNextActiveItem(C2V(gCurrent_frontend_spec), C2V(gFrontend_selected_item_index));
+        if (gFrontend_selected_item_index < pFrontend->count_items - 1) {
+            gFrontend_selected_item_index = FindNextActiveItem(gCurrent_frontend_spec, gFrontend_selected_item_index);
         } else {
-            C2V(gFrontend_selected_item_index) = FindNextActiveItem(C2V(gCurrent_frontend_spec), -1);
+            gFrontend_selected_item_index = FindNextActiveItem(gCurrent_frontend_spec, -1);
         }
-        if (!C2V(gMouse_in_use)
-                && C2V(gFrontend_selected_item_index) >= C2V(gCurrent_frontend_spec)->scrollers[0].indexFirstScrollableItem
-                && C2V(gFrontend_selected_item_index) <= C2V(gCurrent_frontend_spec)->scrollers[0].indexLastScrollableItem) {
+        if (!gMouse_in_use
+                && gFrontend_selected_item_index >= gCurrent_frontend_spec->scrollers[0].indexFirstScrollableItem
+                && gFrontend_selected_item_index <= gCurrent_frontend_spec->scrollers[0].indexLastScrollableItem) {
             ToggleSelection(pFrontend);
-            if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
-                pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
+            if (pFrontend->items[gFrontend_selected_item_index].action != NULL) {
+                pFrontend->items[gFrontend_selected_item_index].action(pFrontend);
             }
         }
     }
@@ -258,34 +263,34 @@ int C2_HOOK_FASTCALL NetSync_MenuHandler(tFrontend_spec* pFrontend) {
 
         result = pFrontend->items[original].field_0xc;
         ToggleSelection(pFrontend);
-        if (pFrontend->items[C2V(gFrontend_selected_item_index)].field_0xc == 2) {
+        if (pFrontend->items[gFrontend_selected_item_index].field_0xc == 2) {
             return 2;
         }
-        if (pFrontend->items[C2V(gFrontend_selected_item_index)].action != NULL) {
-            result = pFrontend->items[C2V(gFrontend_selected_item_index)].action(pFrontend);
+        if (pFrontend->items[gFrontend_selected_item_index].action != NULL) {
+            result = pFrontend->items[gFrontend_selected_item_index].action(pFrontend);
         }
-        if (pFrontend->items[C2V(gFrontend_selected_item_index)].menuInfo != NULL) {
+        if (pFrontend->items[gFrontend_selected_item_index].menuInfo != NULL) {
             int i;
 
-            for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
-                C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop = C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem;
+            for (i = 0; i < gCurrent_frontend_spec->count_scrollers; i++) {
+                gCurrent_frontend_spec->scrollers[i].indexOfItemAtTop = gCurrent_frontend_spec->scrollers[i].indexTopItem;
             }
             FRONTEND_DestroyMenu(pFrontend);
-            C2V(gCurrent_frontend_spec) = pFrontend->items[C2V(gFrontend_selected_item_index)].menuInfo;
-            FRONTEND_CreateMenu(C2V(gCurrent_frontend_spec));
-            if (C2V(gCurrent_frontend_spec) != pFrontend->previous) {
-                C2V(gCurrent_frontend_spec)->previous = pFrontend;
+            gCurrent_frontend_spec = pFrontend->items[gFrontend_selected_item_index].menuInfo;
+            FRONTEND_CreateMenu(gCurrent_frontend_spec);
+            if (gCurrent_frontend_spec != pFrontend->previous) {
+                gCurrent_frontend_spec->previous = pFrontend;
             }
-            Morph_Initialise(pFrontend, C2V(gCurrent_frontend_spec));
-            if (C2V(gCurrent_frontend_spec) == &C2V(gFrontend_QUIT)) {
-                C2V(gFrontend_selected_item_index) = 0;
+            Morph_Initialise(pFrontend, gCurrent_frontend_spec);
+            if (gCurrent_frontend_spec == &gFrontend_QUIT) {
+                gFrontend_selected_item_index = 0;
             } else {
-                C2V(gFrontend_selected_item_index) = C2V(gCurrent_frontend_spec)->default_item;
+                gFrontend_selected_item_index = gCurrent_frontend_spec->default_item;
             }
-            for (i = 0; i < C2V(gCurrent_frontend_spec)->count_scrollers; i++) {
-                C2V(gCurrent_frontend_spec)->scrollers[i].indexOfItemAtTop = C2V(gCurrent_frontend_spec)->scrollers[i].indexTopItem;
+            for (i = 0; i < gCurrent_frontend_spec->count_scrollers; i++) {
+                gCurrent_frontend_spec->scrollers[i].indexOfItemAtTop = gCurrent_frontend_spec->scrollers[i].indexTopItem;
             }
-            UpdateScrollPositions(C2V(gCurrent_frontend_spec));
+            UpdateScrollPositions(gCurrent_frontend_spec);
         }
         return result;
     }
@@ -294,36 +299,35 @@ int C2_HOOK_FASTCALL NetSync_MenuHandler(tFrontend_spec* pFrontend) {
     MungePlayers(pFrontend);
     NetSync_Draw(pFrontend);
     FuckWithWidths(pFrontend);
-    if (C2V(gFrontend_leave_current_menu) || C2V(gStart_race_sent) || C2V(gProgram_state).prog_status == eProg_game_starting) {
+    if (gFrontend_leave_current_menu || gStart_race_sent || gProgram_state.prog_status == eProg_game_starting) {
         return 1;
     } else {
         return 0;
     }
 }
-C2_HOOK_FUNCTION(0x00473870, NetSync_MenuHandler)
 
+// FUNCTION: CARMA2_HW 0x004735a0
 int C2_HOOK_FASTCALL NetSync_Start(tFrontend_spec* pFrontend) {
 
-    if (C2V(gNumber_of_net_players) <= 1) {
+    if (gNumber_of_net_players <= 1) {
         return 0;
     }
     SignalToStartRace();
-    C2V(gStart_race_sent) = 1;
-    C2V(gNo_races_yet) = 0;
+    gStart_race_sent = 1;
+    gNo_races_yet = 0;
     return 1;
 }
-C2_HOOK_FUNCTION(0x004735a0, NetSync_Start)
 
+// FUNCTION: CARMA2_HW 0x004735d0
 int C2_HOOK_FASTCALL NetSync_Abort(tFrontend_spec* pFrontend) {
 
-    if (C2V(gProgram_state).racing || C2V(gNet_mode) != eNet_mode_none) {
+    if (gProgram_state.racing || gNet_mode != eNet_mode_none) {
 
-        if (C2V(gProgram_state).racing) {
-            C2V(gAbandon_game) = 1;
+        if (gProgram_state.racing) {
+            gAbandon_game = 1;
         }
-        C2V(gProgram_state).prog_status = eProg_idling;
-        C2V(gNo_current_game) = 1;
+        gProgram_state.prog_status = eProg_idling;
+        gNo_current_game = 1;
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x004735d0, NetSync_Abort)

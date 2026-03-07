@@ -8,46 +8,61 @@
 
 #include "rec2_macros.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gY_picking_camera, 0x006a20d0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_matrix34, gPick_model_to_view__raycast, 0x006a20f0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gHighest_y_below, 0x006a2120);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gMaterial_below, 0x0070518c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gLowest_y_above, 0x006a20dc);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gCurrent_y, 0x006a20e0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gAbove_model, 0x006a20e4);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gBelow_model, 0x006a20d4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gAbove_face_index, 0x006a20e8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gBelow_face_index, 0x006a20d8);
+
+// GLOBAL: CARMA2_HW 0x006a20d0
+br_actor* gY_picking_camera;
+
+// GLOBAL: CARMA2_HW 0x006a20f0
+br_matrix34 gPick_model_to_view__raycast;
+
+// GLOBAL: CARMA2_HW 0x006a2120
+br_scalar gHighest_y_below;
+
+// GLOBAL: CARMA2_HW 0x0070518c
+br_material* gMaterial_below;
+
+// GLOBAL: CARMA2_HW 0x006a20dc
+br_scalar gLowest_y_above;
+
+// GLOBAL: CARMA2_HW 0x006a20e0
+br_scalar gCurrent_y;
+
+// GLOBAL: CARMA2_HW 0x006a20e4
+br_model* gAbove_model;
+
+// GLOBAL: CARMA2_HW 0x006a20d4
+br_model* gBelow_model;
+
+// GLOBAL: CARMA2_HW 0x006a20e8
+int gAbove_face_index;
+
+// GLOBAL: CARMA2_HW 0x006a20d8
+int gBelow_face_index;
 
 
-void (C2_HOOK_FASTCALL * InitRayCasting_original)(void);
+// FUNCTION: CARMA2_HW 0x004e3660
 void C2_HOOK_FASTCALL InitRayCasting(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitRayCasting_original();
-#else
     br_camera* camera_ptr;
 
-    C2V(gY_picking_camera) = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
-    camera_ptr = C2V(gY_picking_camera)->type_data;
+    gY_picking_camera = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
+    camera_ptr = gY_picking_camera->type_data;
     camera_ptr->type = BR_CAMERA_PERSPECTIVE_FOV;
     camera_ptr->field_of_view = BrDegreeToAngle(70.0f);
     camera_ptr->hither_z = 0.001f;
     camera_ptr->yon_z = 1000.0f;
     camera_ptr->aspect = 1.0f;
-    C2V(gY_picking_camera)->t.t.mat.m[0][0] =  1.f;
-    C2V(gY_picking_camera)->t.t.mat.m[0][1] =  0.f;
-    C2V(gY_picking_camera)->t.t.mat.m[0][2] =  0.f;
-    C2V(gY_picking_camera)->t.t.mat.m[1][0] =  0.f;
-    C2V(gY_picking_camera)->t.t.mat.m[1][1] =  0.f;
-    C2V(gY_picking_camera)->t.t.mat.m[1][2] = -1.f;
-    C2V(gY_picking_camera)->t.t.mat.m[2][0] =  0.f;
-    C2V(gY_picking_camera)->t.t.mat.m[2][1] =  1.f;
-    C2V(gY_picking_camera)->t.t.mat.m[2][2] =  0.f;
-#endif
+    gY_picking_camera->t.t.mat.m[0][0] =  1.f;
+    gY_picking_camera->t.t.mat.m[0][1] =  0.f;
+    gY_picking_camera->t.t.mat.m[0][2] =  0.f;
+    gY_picking_camera->t.t.mat.m[1][0] =  0.f;
+    gY_picking_camera->t.t.mat.m[1][1] =  0.f;
+    gY_picking_camera->t.t.mat.m[1][2] = -1.f;
+    gY_picking_camera->t.t.mat.m[2][0] =  0.f;
+    gY_picking_camera->t.t.mat.m[2][1] =  1.f;
+    gY_picking_camera->t.t.mat.m[2][2] =  0.f;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e3660, InitRayCasting, InitRayCasting_original)
 
+// FUNCTION: CARMA2_HW 0x004e3a30
 int C2_HOOK_FASTCALL PickBoundsTestRay__raycast(br_bounds* b, br_vector3* rp, br_vector3* rd, br_scalar t_near, br_scalar t_far, br_scalar* new_t_near, br_scalar* new_t_far) {
     int i;
     float s;
@@ -91,8 +106,8 @@ int C2_HOOK_FASTCALL PickBoundsTestRay__raycast(br_bounds* b, br_vector3* rp, br
     *new_t_far = t_far;
     return 1;
 }
-C2_HOOK_FUNCTION(0x004e3a30, PickBoundsTestRay__raycast)
 
+// FUNCTION: CARMA2_HW 0x004e3840
 int C2_HOOK_FASTCALL ActorPick2D(br_actor* ap, br_model* model, br_material* material, dr_pick2d_cbfn* callback, void* arg) {
     br_actor* a;
     br_model* this_model;
@@ -118,13 +133,13 @@ int C2_HOOK_FASTCALL ActorPick2D(br_actor* ap, br_model* model, br_material* mat
     if (ap->render_style == BR_RSTYLE_NONE) {
         return 0;
     }
-    m_to_v = C2V(gPick_model_to_view__raycast);
+    m_to_v = gPick_model_to_view__raycast;
 
-    BrMatrix34PreTransform(&C2V(gPick_model_to_view__raycast), &ap->t);
+    BrMatrix34PreTransform(&gPick_model_to_view__raycast, &ap->t);
     switch (ap->type) {
     case BR_ACTOR_MODEL:
         if (this_model != NULL) {
-            BrMatrix34Inverse(&v_to_m, &C2V(gPick_model_to_view__raycast));
+            BrMatrix34Inverse(&v_to_m, &gPick_model_to_view__raycast);
             r = PickBoundsTestRay__raycast(&this_model->bounds,
                     (br_vector3 *) v_to_m.m[3], (br_vector3 *) v_to_m.m[2],
                     0.f, BR_SCALAR_MAX, &t_near, &t_far);
@@ -135,14 +150,14 @@ int C2_HOOK_FASTCALL ActorPick2D(br_actor* ap, br_model* model, br_material* mat
                         &dir, t_near, t_far, arg);
             }
             if (r != 0) {
-                C2V(gPick_model_to_view__raycast) = m_to_v;
+                gPick_model_to_view__raycast = m_to_v;
                 return r;
             }
         }
         break;
     case BR_ACTOR_BOUNDS:
     case BR_ACTOR_BOUNDS_CORRECT:
-        BrMatrix34Inverse(&v_to_m, &C2V(gPick_model_to_view__raycast));
+        BrMatrix34Inverse(&v_to_m, &gPick_model_to_view__raycast);
         r = PickBoundsTestRay__raycast((br_bounds*)ap->type_data,
                 (br_vector3*)v_to_m.m[3], (br_vector3*)v_to_m.m[2],
                 0.0f, BR_SCALAR_MAX, &t_near, &t_far);
@@ -154,7 +169,7 @@ int C2_HOOK_FASTCALL ActorPick2D(br_actor* ap, br_model* model, br_material* mat
                 }
             }
         }
-        C2V(gPick_model_to_view__raycast) = m_to_v;
+        gPick_model_to_view__raycast = m_to_v;
         return r;
     }
     for (a = ap->children; a != NULL; a = a->next) {
@@ -163,10 +178,9 @@ int C2_HOOK_FASTCALL ActorPick2D(br_actor* ap, br_model* model, br_material* mat
             break;
         }
     }
-    C2V(gPick_model_to_view__raycast) = m_to_v;
+    gPick_model_to_view__raycast = m_to_v;
     return r;
 }
-C2_HOOK_FUNCTION(0x004e3840, ActorPick2D)
 
 int C2_HOOK_FASTCALL DRActorToRoot(br_actor* a, br_actor* world, br_matrix34* m) {
 
@@ -184,6 +198,7 @@ int C2_HOOK_FASTCALL DRActorToRoot(br_actor* a, br_actor* world, br_matrix34* m)
     }
 }
 
+// FUNCTION: CARMA2_HW 0x004e36f0
 int C2_HOOK_FASTCALL DRScenePick2DXY(br_actor* world, br_actor* camera, br_pixelmap* viewport, int pick_x, int pick_y, dr_pick2d_cbfn* callback, void* arg) {
     br_matrix34 camera_tfm;
     br_scalar scale;
@@ -194,32 +209,31 @@ int C2_HOOK_FASTCALL DRScenePick2DXY(br_actor* world, br_actor* camera, br_pixel
 
     camera_data = camera->type_data;
     DRActorToRoot(camera, world, &camera_tfm);
-    BrMatrix34Inverse(&C2V(gPick_model_to_view__raycast), &camera_tfm);
+    BrMatrix34Inverse(&gPick_model_to_view__raycast, &camera_tfm);
     view_over_2 = camera_data->field_of_view / 2;
     cos_angle = BR_COS(view_over_2);
     sin_angle = BR_SIN(view_over_2);
     scale = cos_angle / sin_angle;
-    BrMatrix34PostScale(&C2V(gPick_model_to_view__raycast), scale / camera_data->aspect, scale, 1.f);
-    BrMatrix34PostShearZ(&C2V(gPick_model_to_view__raycast),
+    BrMatrix34PostScale(&gPick_model_to_view__raycast, scale / camera_data->aspect, scale, 1.f);
+    BrMatrix34PostShearZ(&gPick_model_to_view__raycast,
                          (float)(2 * pick_x) / (float)viewport->width,
                          (float)(-2 * pick_y) / (float)viewport->height);
-    return ActorPick2D(world, NULL, C2V(gBlack_material), callback, arg);
+    return ActorPick2D(world, NULL, gBlack_material, callback, arg);
 }
-C2_HOOK_FUNCTION(0x004e36f0, DRScenePick2DXY)
 
+// FUNCTION: CARMA2_HW 0x004e45b0
 int C2_HOOK_CDECL FindYVerticallyBelowPolyCallBack(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pContext) {
 
     if (pMaterial != NULL && pMaterial->identifier != NULL
             && pMaterial->identifier[0] != '!'
             && pMaterial->identifier[0] != '>') {
-        if (C2V(gHighest_y_below) < pPoint->v[1]) {
-            C2V(gHighest_y_below) = pPoint->v[1];
-            C2V(gMaterial_below) = pMaterial;
+        if (gHighest_y_below < pPoint->v[1]) {
+            gHighest_y_below = pPoint->v[1];
+            gMaterial_below = pMaterial;
         }
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004e45b0, FindYVerticallyBelowPolyCallBack)
 
 int C2_HOOK_FASTCALL BadDiv_raycast(br_scalar a, br_scalar b) {
 
@@ -232,6 +246,7 @@ void C2_HOOK_FASTCALL DRVector2AccumulateScale_raycast(br_vector2* a, br_vector2
     a->v[1] = b->v[1] * s + a->v[1];
 }
 
+// FUNCTION: CARMA2_HW 0x004e3d90
 int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* model, br_material* material, br_vector3* ray_pos, br_vector3* ray_dir, br_scalar t_near, br_scalar t_far, dr_modelpick2d_raycast_cbfn* callback, void* arg) {
     int f;
     int axis_m;
@@ -364,16 +379,15 @@ int C2_HOOK_FASTCALL DRModelPick2D_raycast(br_model* model, br_material* materia
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004e3d90, DRModelPick2D_raycast)
 
+// FUNCTION: CARMA2_HW 0x004e4570
 int C2_HOOK_CDECL FindYVerticallyBelowCallBack(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, float pT_near, float pT_far, void* pArg) {
 
-    if (C2V(gProgram_state).current_car.car_actor != pActor) {
+    if (gProgram_state.current_car.car_actor != pActor) {
         DRModelPick2D_raycast(pModel, pMaterial, pRay_pos, pRay_dir, pT_near, pT_far, FindYVerticallyBelowPolyCallBack, pArg);
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004e4570, FindYVerticallyBelowCallBack)
 
 int C2_HOOK_FASTCALL DRScenePick2D(br_actor* world, br_actor* camera, dr_pick2d_cbfn* callback, void* arg) {
     br_matrix34 camera_tfm;
@@ -382,13 +396,14 @@ int C2_HOOK_FASTCALL DRScenePick2D(br_actor* world, br_actor* camera, dr_pick2d_
 
     camera_data = (br_camera*)camera->type_data;
     DRActorToRoot(camera, world, &camera_tfm);
-    BrMatrix34Inverse(&C2V(gPick_model_to_view__raycast), &camera_tfm);
+    BrMatrix34Inverse(&gPick_model_to_view__raycast, &camera_tfm);
     scale = cosf(BrAngleToRadian(camera_data->field_of_view / 2)) / sinf(BrAngleToRadian(camera_data->field_of_view / 2));
 
-    BrMatrix34PostScale(&C2V(gPick_model_to_view__raycast), scale / camera_data->aspect, scale, 1.0f);
-    return ActorPick2D(world, NULL, C2V(gBlack_material), callback, arg);
+    BrMatrix34PostScale(&gPick_model_to_view__raycast, scale / camera_data->aspect, scale, 1.0f);
+    return ActorPick2D(world, NULL, gBlack_material, callback, arg);
 }
 
+// FUNCTION: CARMA2_HW 0x004e4370
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow(br_vector3* pPosition) {
     tU8 cx;
     tU8 cz;
@@ -396,27 +411,22 @@ br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow(br_vector3* pPosition) {
     tU8 z;
     tTrack_spec* track_spec;
 
-    track_spec = &C2V(gProgram_state).track_spec;
+    track_spec = &gProgram_state.track_spec;
     XZToColumnXZ(&cx, &cz, pPosition->v[0], pPosition->v[2], track_spec);
-    C2V(gHighest_y_below) = BR_SCALAR_MIN;
-    BrVector3Copy(&C2V(gY_picking_camera)->t.t.translate.t, pPosition);
+    gHighest_y_below = BR_SCALAR_MIN;
+    BrVector3Copy(&gY_picking_camera->t.t.translate.t, pPosition);
     for (x = MAX(cx - 1, 0); x < MIN(cx + 2, track_spec->ncolumns_x); x++) {
         for (z = MAX(cz - 1, 0); z < MIN(cz + 2, track_spec->ncolumns_z); z++) {
             if (track_spec->columns[z][x].actor_0x0 != NULL) {
-                DRScenePick2D(track_spec->columns[z][x].actor_0x0, C2V(gY_picking_camera), FindYVerticallyBelowCallBack, NULL);
+                DRScenePick2D(track_spec->columns[z][x].actor_0x0, gY_picking_camera, FindYVerticallyBelowCallBack, NULL);
             }
         }
     }
-    return C2V(gHighest_y_below);
+    return gHighest_y_below;
 }
-C2_HOOK_FUNCTION(0x004e4370, FindYVerticallyBelow)
 
-br_scalar (C2_HOOK_FASTCALL * FindYVerticallyBelow2_original)(br_vector3* pCast_point);
+// FUNCTION: CARMA2_HW 0x004e4600
 br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return FindYVerticallyBelow2_original(pCast_point);
-#else
     br_scalar result;
     int number_of_attempts;
     br_vector3 cast_point;
@@ -430,61 +440,59 @@ br_scalar C2_HOOK_FASTCALL FindYVerticallyBelow2(br_vector3* pCast_point) {
         }
     }
     return result;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e4600, FindYVerticallyBelow2, FindYVerticallyBelow2_original)
 
+// FUNCTION: CARMA2_HW 0x004e4300
 int C2_HOOK_CDECL FindHighestPolyCallBack__raycast(br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT, int pF, int pE, int pV, br_vector3* pPoint, br_vector2* pMap, void* pArg) {
     br_scalar the_y;
 
     the_y = pPoint->v[1];
-    if (the_y > C2V(gCurrent_y)) {
-        if (the_y < C2V(gLowest_y_above)) {
-            C2V(gLowest_y_above) = the_y;
-            C2V(gAbove_face_index) = pF;
-            C2V(gAbove_model) = pModel;
+    if (the_y > gCurrent_y) {
+        if (the_y < gLowest_y_above) {
+            gLowest_y_above = the_y;
+            gAbove_face_index = pF;
+            gAbove_model = pModel;
         }
     } else {
-        if (the_y > C2V(gHighest_y_below)) {
-            C2V(gHighest_y_below) = the_y;
-            C2V(gBelow_face_index) = pF;
-            C2V(gBelow_model) = pModel;
+        if (the_y > gHighest_y_below) {
+            gHighest_y_below = the_y;
+            gBelow_face_index = pF;
+            gBelow_model = pModel;
         }
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004e4300, FindHighestPolyCallBack__raycast)
 
+// FUNCTION: CARMA2_HW 0x004e3d50
 int C2_HOOK_CDECL FindHighestCallBack__raycast(br_actor* pActor, br_model* pModel, br_material* pMaterial, br_vector3* pRay_pos, br_vector3* pRay_dir, br_scalar pT_near, br_scalar pT_far, void* pArg) {
 
-    if (C2V(gProgram_state).current_car.car_actor != pActor) {
+    if (gProgram_state.current_car.car_actor != pActor) {
         DRModelPick2D_raycast(pModel, pMaterial, pRay_pos, pRay_dir, pT_near, pT_far, FindHighestPolyCallBack__raycast, pArg);
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004e3d50, FindHighestCallBack__raycast)
 
+// FUNCTION: CARMA2_HW 0x004e3bc0
 void C2_HOOK_FASTCALL FindBestY(br_vector3* pPosition, br_actor* pWorld, br_scalar pStarting_height, br_scalar* pNearest_y_above, br_scalar* pNearest_y_below, br_model** pNearest_above_model, br_model** pNearest_below_model, int* pNearest_above_face_index, int* pNearest_below_face_index) {
 
-    C2V(gLowest_y_above) = 30000.0;
-    C2V(gHighest_y_below) = -30000.0;
-    C2V(gCurrent_y) = pPosition->v[1] + 1.192093e-5f;
-    BrVector3Copy(&C2V(gY_picking_camera)->t.t.translate.t, pPosition);
-    C2V(gY_picking_camera)->t.t.mat.m[3][1] += pStarting_height;
-    DRScenePick2D(pWorld, C2V(gY_picking_camera), FindHighestCallBack__raycast, 0);
-    *pNearest_y_above = C2V(gLowest_y_above);
-    *pNearest_y_below = C2V(gHighest_y_below);
-    *pNearest_above_model = C2V(gAbove_model);
-    *pNearest_below_model = C2V(gBelow_model);
-    *pNearest_above_face_index = C2V(gAbove_face_index);
-    *pNearest_below_face_index = C2V(gBelow_face_index);
+    gLowest_y_above = 30000.0;
+    gHighest_y_below = -30000.0;
+    gCurrent_y = pPosition->v[1] + 1.192093e-5f;
+    BrVector3Copy(&gY_picking_camera->t.t.translate.t, pPosition);
+    gY_picking_camera->t.t.mat.m[3][1] += pStarting_height;
+    DRScenePick2D(pWorld, gY_picking_camera, FindHighestCallBack__raycast, 0);
+    *pNearest_y_above = gLowest_y_above;
+    *pNearest_y_below = gHighest_y_below;
+    *pNearest_above_model = gAbove_model;
+    *pNearest_below_model = gBelow_model;
+    *pNearest_above_face_index = gAbove_face_index;
+    *pNearest_below_face_index = gBelow_face_index;
 }
-C2_HOOK_FUNCTION(0x004e3bc0, FindBestY)
 
+// FUNCTION: CARMA2_HW 0x004225b0
 void C2_HOOK_FASTCALL DrMatrix34ApplyLPInverse(br_vector3* pDest, const br_vector3* pOrigin, const br_matrix34* pMatrix) {
     br_vector3 tv;
 
     BrVector3Sub(&tv, pOrigin, (br_vector3*)pMatrix->m[3]);
     BrMatrix34TApplyV(pDest, &tv, pMatrix);
 }
-C2_HOOK_FUNCTION(0x004225b0, DrMatrix34ApplyLPInverse)

@@ -5,13 +5,13 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gAlways_typing);
-C2_HOOK_VARIABLE_DECLARE(int, gDisabled_count);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gDisabled_choices, 10);
-C2_HOOK_VARIABLE_DECLARE(tU32, gStart_time);
-C2_HOOK_VARIABLE_DECLARE(const tInterface_spec*, gSpec);
-C2_HOOK_VARIABLE_DECLARE(int, gCurrent_mode);
-C2_HOOK_VARIABLE_DECLARE(int, gCurrent_choice);
+extern int gAlways_typing;
+extern int gDisabled_count;
+extern int gDisabled_choices[10];
+extern tU32 gStart_time;
+extern const tInterface_spec* gSpec;
+extern int gCurrent_mode;
+extern int gCurrent_choice;
 
 void C2_HOOK_FASTCALL OriginalResetInterfaceTimeout(void);
 

@@ -5,7 +5,7 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_device_d3d, DriverDeviceD3D);
+extern br_device_d3d DriverDeviceD3D;
 
 br_error C2_HOOK_CDECL DeviceD3DInitialise(br_device_d3d* self);
 

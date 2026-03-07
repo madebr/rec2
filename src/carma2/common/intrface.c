@@ -16,28 +16,40 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tFrontend_item_spec, gDefaultLastInterfaceItem, 0x00604730, {
+
+// GLOBAL: CARMA2_HW 0x00604730
+tFrontend_item_spec gDefaultLastInterfaceItem = {
     0x401, temp, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gAlways_typing, 0x0068c1f0);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDisabled_count, 0x0068c1ec);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gDisabled_choices, 10, 0x0068c1f8);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gStart_time, 0x0068c228);
-C2_HOOK_VARIABLE_IMPLEMENT(const tInterface_spec*, gSpec, 0x0068c1e8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_mode, 0x0068c220);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCurrent_choice, 0x0068c224);
+};
 
+// GLOBAL: CARMA2_HW 0x0068c1f0
+int gAlways_typing;
+
+// GLOBAL: CARMA2_HW 0x0068c1ec
+int gDisabled_count;
+
+// GLOBAL: CARMA2_HW 0x0068c1f8
+int gDisabled_choices[10];
+
+// GLOBAL: CARMA2_HW 0x0068c228
+tU32 gStart_time;
+
+// GLOBAL: CARMA2_HW 0x0068c1e8
+const tInterface_spec* gSpec;
+
+// GLOBAL: CARMA2_HW 0x0068c220
+int gCurrent_mode;
+
+// GLOBAL: CARMA2_HW 0x0068c224
+int gCurrent_choice;
+
+// FUNCTION: CARMA2_HW 0x00484640
 void C2_HOOK_FASTCALL OriginalResetInterfaceTimeout(void) {
-    C2V(gStart_time) = PDGetTotalTime();
+    gStart_time = PDGetTotalTime();
 }
-C2_HOOK_FUNCTION(0x00484640, OriginalResetInterfaceTimeout)
 
-int (C2_HOOK_FASTCALL * DoInterfaceScreen_original)(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
+// FUNCTION: CARMA2_HW 0x004846e0
 int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return DoInterfaceScreen_original(pSpec, pOptions, pCurrent_choice);
-#else
     tProg_status entry_status;
     int i;
     int last_choice;
@@ -53,15 +65,15 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
     C2_HOOK_BUG_ON(sizeof(tInterface_spec) != 0x12c);
 
     // Relict from Carmageddon 1, unused here
-    C2_HOOK_ASSUME_UNUSED();
+    UNUSED();
 
-    entry_status = C2V(gProgram_state).prog_status;
-    C2V(gTyping_slot) = -1;
+    entry_status = gProgram_state.prog_status;
+    gTyping_slot = -1;
     EdgeTriggerModeOn();
-    C2V(gSpec) = pSpec;
-    C2V(gDisabled_count) = 0;
-    LoadInterfaceStuff(C2V(gProgram_state).racing);
-    C2V(gProgram_state).dont_save_or_load = pSpec->dont_save_or_load;
+    gSpec = pSpec;
+    gDisabled_count = 0;
+    LoadInterfaceStuff(gProgram_state.racing);
+    gProgram_state.dont_save_or_load = pSpec->dont_save_or_load;
     for (i = 0; i < pSpec->number_of_button_flics; i++) {
         LoadFlic(pSpec->flicker_on_flics[i].flic_index);
         LoadFlic(pSpec->flicker_off_flics[i].flic_index);
@@ -70,8 +82,8 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
 
     InitFlicQueue();
     OriginalResetInterfaceTimeout();
-    C2V(gCurrent_choice) = pCurrent_choice;
-    C2V(gCurrent_mode) = pSpec->initial_imode;
+    gCurrent_choice = pCurrent_choice;
+    gCurrent_mode = pSpec->initial_imode;
     if (pSpec->font_needed) {
         InitRollingLetters();
         LoadFont(0);
@@ -84,139 +96,139 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
         pSpec->start_proc2();
     }
     last_choice = -1;
-    ChangeSelection(pSpec, &last_choice, &C2V(gCurrent_choice), C2V(gCurrent_mode), 0);
+    ChangeSelection(pSpec, &last_choice, &gCurrent_choice, gCurrent_mode, 0);
     WaitForNoKeys();
-    C2V(gMouse_in_use) = 0;
-    last_choice = C2V(gCurrent_choice);
+    gMouse_in_use = 0;
+    last_choice = gCurrent_choice;
     for (;;) {
-        if (last_choice != C2V(gCurrent_choice)) {
-            ChangeSelection(pSpec, &last_choice, &C2V(gCurrent_choice), C2V(gCurrent_mode), 1);
+        if (last_choice != gCurrent_choice) {
+            ChangeSelection(pSpec, &last_choice, &gCurrent_choice, gCurrent_mode, 1);
         }
-        last_choice = C2V(gCurrent_choice);
+        last_choice = gCurrent_choice;
         PollKeys();
         EdgeTriggerModeOff();
         the_key = PDAnyKeyDown();
         if (the_key != -1 && the_key != 4) {
-            C2V(gMouse_in_use) = 0;
+            gMouse_in_use = 0;
             OriginalResetInterfaceTimeout();
         }
         EdgeTriggerModeOn();
-        if ((C2V(gTyping_slot) < 0 || C2V(gAlways_typing)) && (PDKeyDown(70) || PDKeyDown(85))) {
-            if (pSpec->move_left_delta[C2V(gCurrent_mode)] != 0) {
-                C2V(gCurrent_choice) += pSpec->move_left_delta[C2V(gCurrent_mode)];
-                if (C2V(gCurrent_choice) < pSpec->move_left_min[C2V(gCurrent_mode)]) {
-                    C2V(gCurrent_choice) = pSpec->move_left_max[C2V(gCurrent_mode)];
+        if ((gTyping_slot < 0 || gAlways_typing) && (PDKeyDown(70) || PDKeyDown(85))) {
+            if (pSpec->move_left_delta[gCurrent_mode] != 0) {
+                gCurrent_choice += pSpec->move_left_delta[gCurrent_mode];
+                if (gCurrent_choice < pSpec->move_left_min[gCurrent_mode]) {
+                    gCurrent_choice = pSpec->move_left_max[gCurrent_mode];
                 }
-                if (C2V(gCurrent_choice) > pSpec->move_left_max[C2V(gCurrent_mode)]) {
-                    C2V(gCurrent_choice) = pSpec->move_left_min[C2V(gCurrent_mode)];
+                if (gCurrent_choice > pSpec->move_left_max[gCurrent_mode]) {
+                    gCurrent_choice = pSpec->move_left_min[gCurrent_mode];
                 }
-                DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+                DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
             }
-            if (pSpec->move_left_proc[C2V(gCurrent_mode)] != NULL) {
-                defeat_mode_change = pSpec->move_left_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            if (pSpec->move_left_proc[gCurrent_mode] != NULL) {
+                defeat_mode_change = pSpec->move_left_proc[gCurrent_mode](&gCurrent_choice, &gCurrent_mode);
             } else {
                 defeat_mode_change = 0;
             }
-            if (pSpec->move_left_new_mode[C2V(gCurrent_mode)] >= 0 && !defeat_mode_change) {
-                C2V(gCurrent_mode) = pSpec->move_left_new_mode[C2V(gCurrent_mode)];
+            if (pSpec->move_left_new_mode[gCurrent_mode] >= 0 && !defeat_mode_change) {
+                gCurrent_mode = pSpec->move_left_new_mode[gCurrent_mode];
             }
         }
-        if ((C2V(gTyping_slot) < 0 || C2V(gAlways_typing)) && (PDKeyDown(71) || PDKeyDown(87))) {
-            if (pSpec->move_right_delta[C2V(gCurrent_mode)] != 0) {
-                C2V(gCurrent_choice) += pSpec->move_right_delta[C2V(gCurrent_mode)];
-                if (C2V(gCurrent_choice) < pSpec->move_right_min[C2V(gCurrent_mode)]) {
-                    C2V(gCurrent_choice) = pSpec->move_right_max[C2V(gCurrent_mode)];
+        if ((gTyping_slot < 0 || gAlways_typing) && (PDKeyDown(71) || PDKeyDown(87))) {
+            if (pSpec->move_right_delta[gCurrent_mode] != 0) {
+                gCurrent_choice += pSpec->move_right_delta[gCurrent_mode];
+                if (gCurrent_choice < pSpec->move_right_min[gCurrent_mode]) {
+                    gCurrent_choice = pSpec->move_right_max[gCurrent_mode];
                 }
-                if (C2V(gCurrent_choice) > pSpec->move_right_max[C2V(gCurrent_mode)]) {
-                    C2V(gCurrent_choice) = pSpec->move_right_min[C2V(gCurrent_mode)];
+                if (gCurrent_choice > pSpec->move_right_max[gCurrent_mode]) {
+                    gCurrent_choice = pSpec->move_right_min[gCurrent_mode];
                 }
-                DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+                DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
             }
-            if (pSpec->move_right_proc[C2V(gCurrent_mode)] != NULL) {
-                defeat_mode_change = pSpec->move_right_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            if (pSpec->move_right_proc[gCurrent_mode] != NULL) {
+                defeat_mode_change = pSpec->move_right_proc[gCurrent_mode](&gCurrent_choice, &gCurrent_mode);
             } else {
                 defeat_mode_change = 0;
             }
-            if (pSpec->move_right_new_mode[C2V(gCurrent_mode)] >= 0 && !defeat_mode_change) {
-                C2V(gCurrent_mode) = pSpec->move_right_new_mode[C2V(gCurrent_mode)];
+            if (pSpec->move_right_new_mode[gCurrent_mode] >= 0 && !defeat_mode_change) {
+                gCurrent_mode = pSpec->move_right_new_mode[gCurrent_mode];
             }
         }
         if (PDKeyDown(72) || PDKeyDown(89)) {
-            if (pSpec->move_up_delta[C2V(gCurrent_mode)] != 0) {
-                C2V(gCurrent_choice) += pSpec->move_up_delta[C2V(gCurrent_mode)];
-                if (C2V(gCurrent_choice) < pSpec->move_up_min[C2V(gCurrent_mode)]) {
-                    C2V(gCurrent_choice) = pSpec->move_up_max[C2V(gCurrent_mode)];
+            if (pSpec->move_up_delta[gCurrent_mode] != 0) {
+                gCurrent_choice += pSpec->move_up_delta[gCurrent_mode];
+                if (gCurrent_choice < pSpec->move_up_min[gCurrent_mode]) {
+                    gCurrent_choice = pSpec->move_up_max[gCurrent_mode];
                 }
-                if (C2V(gCurrent_choice) > pSpec->move_up_max[C2V(gCurrent_mode)]) {
-                    C2V(gCurrent_choice) = pSpec->move_up_min[C2V(gCurrent_mode)];
+                if (gCurrent_choice > pSpec->move_up_max[gCurrent_mode]) {
+                    gCurrent_choice = pSpec->move_up_min[gCurrent_mode];
                 }
-                DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+                DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
             }
-            if (pSpec->move_up_proc[C2V(gCurrent_mode)] != NULL) {
-                defeat_mode_change = pSpec->move_up_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            if (pSpec->move_up_proc[gCurrent_mode] != NULL) {
+                defeat_mode_change = pSpec->move_up_proc[gCurrent_mode](&gCurrent_choice, &gCurrent_mode);
             } else {
                 defeat_mode_change = 0;
             }
-            if (pSpec->move_up_new_mode[C2V(gCurrent_mode)] >= 0 && !defeat_mode_change) {
-                C2V(gCurrent_mode) = pSpec->move_up_new_mode[C2V(gCurrent_mode)];
+            if (pSpec->move_up_new_mode[gCurrent_mode] >= 0 && !defeat_mode_change) {
+                gCurrent_mode = pSpec->move_up_new_mode[gCurrent_mode];
             }
         }
         if (PDKeyDown(73) || PDKeyDown(83)) {
-            if (pSpec->move_down_delta[C2V(gCurrent_mode)] != 0) {
-                C2V(gCurrent_choice) += pSpec->move_down_delta[C2V(gCurrent_mode)];
-                if (C2V(gCurrent_choice) < pSpec->move_down_min[C2V(gCurrent_mode)]) {
-                    C2V(gCurrent_choice) = pSpec->move_down_max[C2V(gCurrent_mode)];
+            if (pSpec->move_down_delta[gCurrent_mode] != 0) {
+                gCurrent_choice += pSpec->move_down_delta[gCurrent_mode];
+                if (gCurrent_choice < pSpec->move_down_min[gCurrent_mode]) {
+                    gCurrent_choice = pSpec->move_down_max[gCurrent_mode];
                 }
-                if (C2V(gCurrent_choice) > pSpec->move_down_max[C2V(gCurrent_mode)]) {
-                    C2V(gCurrent_choice) = pSpec->move_down_min[C2V(gCurrent_mode)];
+                if (gCurrent_choice > pSpec->move_down_max[gCurrent_mode]) {
+                    gCurrent_choice = pSpec->move_down_min[gCurrent_mode];
                 }
-                DRS3StartSound(C2V(gEffects_outlet), eSoundId_LeftButton);
+                DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
             }
-            if (pSpec->move_down_proc[C2V(gCurrent_mode)] != NULL) {
-                defeat_mode_change = pSpec->move_down_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            if (pSpec->move_down_proc[gCurrent_mode] != NULL) {
+                defeat_mode_change = pSpec->move_down_proc[gCurrent_mode](&gCurrent_choice, &gCurrent_mode);
             } else {
                 defeat_mode_change = 0;
             }
-            if (pSpec->move_down_new_mode[C2V(gCurrent_mode)] >= 0 && !defeat_mode_change) {
-                C2V(gCurrent_mode) = pSpec->move_down_new_mode[C2V(gCurrent_mode)];
+            if (pSpec->move_down_new_mode[gCurrent_mode] >= 0 && !defeat_mode_change) {
+                gCurrent_mode = pSpec->move_down_new_mode[gCurrent_mode];
             }
         }
-        if (C2V(gTyping_slot) >= 0 && pSpec->typeable[C2V(gCurrent_mode)] && C2V(gTyping_slot) != C2V(gCurrent_choice) && !C2V(gAlways_typing)) {
-            C2V(gCurrent_choice) = C2V(gTyping_slot);
+        if (gTyping_slot >= 0 && pSpec->typeable[gCurrent_mode] && gTyping_slot != gCurrent_choice && !gAlways_typing) {
+            gCurrent_choice = gTyping_slot;
         }
-        if (last_choice != C2V(gCurrent_choice)) {
-            ChangeSelection(pSpec, &last_choice, &C2V(gCurrent_choice), C2V(gCurrent_mode), 1);
+        if (last_choice != gCurrent_choice) {
+            ChangeSelection(pSpec, &last_choice, &gCurrent_choice, gCurrent_mode, 1);
         }
-        timed_out = pSpec->time_out && (PDGetTotalTime() >= C2V(gStart_time) + pSpec->time_out);
+        timed_out = pSpec->time_out && (PDGetTotalTime() >= gStart_time + pSpec->time_out);
         RemoveTransientBitmaps(1);
         go_ahead = 1;
-        if (pSpec->go_ahead_proc[C2V(gCurrent_mode)]) {
-            go_ahead = pSpec->go_ahead_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+        if (pSpec->go_ahead_proc[gCurrent_mode]) {
+            go_ahead = pSpec->go_ahead_proc[gCurrent_mode](&gCurrent_choice, &gCurrent_mode);
         }
         if (PDKeyDown(63)) {
-            DRS3StartSound(C2V(gEffects_outlet), eSoundId_EscEsc);
-            escaped = pSpec->escape_allowed[C2V(gCurrent_mode)];
-            if (pSpec->escape_proc[C2V(gCurrent_mode)] != NULL) {
-                escaped = pSpec->escape_proc[C2V(gCurrent_mode)](&C2V(gCurrent_choice), &C2V(gCurrent_mode));
+            DRS3StartSound(gEffects_outlet, eSoundId_EscEsc);
+            escaped = pSpec->escape_allowed[gCurrent_mode];
+            if (pSpec->escape_proc[gCurrent_mode] != NULL) {
+                escaped = pSpec->escape_proc[gCurrent_mode](&gCurrent_choice, &gCurrent_mode);
             }
         } else {
             escaped = 0;
         }
-        if (escaped && C2V(gTyping_slot) >= 0 && !C2V(gAlways_typing)) {
-            pSpec->get_original_string(0, C2V(gTyping_slot), the_str, &the_max);
+        if (escaped && gTyping_slot >= 0 && !gAlways_typing) {
+            pSpec->get_original_string(0, gTyping_slot, the_str, &the_max);
             escaped = 0;
-            RevertTyping(C2V(gTyping_slot), the_str);
-            C2V(gTyping) = 0;
-            C2V(gTyping_slot) = -1;
+            RevertTyping(gTyping_slot, the_str);
+            gTyping = 0;
+            gTyping_slot = -1;
         }
-        if (last_choice != C2V(gCurrent_choice)) {
-            ChangeSelection(pSpec, &last_choice, &C2V(gCurrent_choice), C2V(gCurrent_mode), 1);
+        if (last_choice != gCurrent_choice) {
+            ChangeSelection(pSpec, &last_choice, &gCurrent_choice, gCurrent_mode, 1);
         }
-        if (entry_status != eProg_idling && C2V(gProgram_state).prog_status == eProg_idling) {
+        if (entry_status != eProg_idling && gProgram_state.prog_status == eProg_idling) {
             escaped = 1;
         }
         if (pSpec->exit_proc != NULL) {
-            if (pSpec->exit_proc(&C2V(gCurrent_choice), &C2V(gCurrent_mode))) {
+            if (pSpec->exit_proc(&gCurrent_choice, &gCurrent_mode)) {
                 break;
             }
         }
@@ -225,7 +237,7 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
         }
     }
 
-    C2V(gTyping) = 0;
+    gTyping = 0;
     if (pSpec->font_needed) {
         EndRollingLetters();
         DisposeFont(0);
@@ -238,27 +250,26 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
         UnlockFlic(pSpec->pushed_flics[i].flic_index);
     }
 
-    if (C2V(gCurrent_choice) == pSpec->escape_code) {
+    if (gCurrent_choice == pSpec->escape_code) {
         escaped = 1;
         go_ahead = 0;
     }
     if (escaped) {
-        C2V(gCurrent_choice) = pSpec->escape_code;
+        gCurrent_choice = pSpec->escape_code;
     }
     if (pSpec->done_proc != NULL) {
-        result = (pSpec->done_proc)(C2V(gCurrent_choice), C2V(gCurrent_mode), go_ahead, escaped, timed_out);
+        result = (pSpec->done_proc)(gCurrent_choice, gCurrent_mode, go_ahead, escaped, timed_out);
     } else {
-        result = C2V(gCurrent_choice);
+        result = gCurrent_choice;
     }
-    C2V(gProgram_state).dont_save_or_load = 0;
+    gProgram_state.dont_save_or_load = 0;
     EndMouseCursor();
     UnlockInterfaceStuff();
     EdgeTriggerModeOff();
     return result;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004846e0, DoInterfaceScreen, DoInterfaceScreen_original)
 
+// FUNCTION: CARMA2_HW 0x00466760
 void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     tPath_name path;
     char buffer[256];
@@ -279,7 +290,7 @@ void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     C2_HOOK_BUG_ON(offsetof(tFrontend_spec, radios) != 0x9be8);
     C2_HOOK_BUG_ON(offsetof(tFrontend_spec, levels) != 0xaf24);
 
-    PathCat(path, C2V(gApplication_path), "INTRFACE");
+    PathCat(path, gApplication_path, "INTRFACE");
     PathCat(path, path, pFrontend->name);
     c2_strcat(path, ".TXT");
 
@@ -334,7 +345,7 @@ void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     }
     // Copy item 99 (=last index)
     // FIXME: stringid = 0x401 (==> find out function of this item)
-    c2_memcpy(&pFrontend->items[REC2_ASIZE(pFrontend->items) - 1], &C2V(gDefaultLastInterfaceItem), sizeof(tFrontend_item_spec));
+    c2_memcpy(&pFrontend->items[REC2_ASIZE(pFrontend->items) - 1], &gDefaultLastInterfaceItem, sizeof(tFrontend_item_spec));
 
     pFrontend->count_scrollers = GetAnInt(f);
     for (i = 0; i < pFrontend->count_scrollers; i++) {
@@ -369,25 +380,25 @@ void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
 
     PFfclose(f);
 }
-C2_HOOK_FUNCTION(0x00466760, LoadMenuSettings)
 
+// FUNCTION: CARMA2_HW 0x00484630
 void C2_HOOK_FASTCALL ClearAlwaysTyping(void) {
 
-    C2V(gAlways_typing) = 0;
+    gAlways_typing = 0;
 }
-C2_HOOK_FUNCTION(0x00484630, ClearAlwaysTyping)
 
 int C2_HOOK_FASTCALL ChoiceDisabled(int pChoice) {
     int i;
 
-    for (i = 0; i < C2V(gDisabled_count); ++i) {
-        if (C2V(gDisabled_choices)[i] == pChoice) {
+    for (i = 0; i < gDisabled_count; ++i) {
+        if (gDisabled_choices[i] == pChoice) {
             return 1;
         }
     }
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00484dd0
 void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_selection, int* pNew_selection, int pMode, int pSkip_disabled) {
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tInterface_spec, move_up_min, 0x7c);
@@ -423,20 +434,19 @@ void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_se
         *pOld_selection = *pNew_selection;
     }
 }
-C2_HOOK_FUNCTION(0x00484dd0, ChangeSelection)
 
+// FUNCTION: CARMA2_HW 0x00484f10
 void C2_HOOK_FASTCALL ChangeSelectionTo(int pNew_choice, int pNew_mode) {
     int last_choice;
 
-    last_choice = C2V(gCurrent_choice);
-    C2V(gCurrent_choice) = pNew_choice;
-    C2V(gCurrent_mode) = pNew_mode;
-    ChangeSelection(C2V(gSpec), &last_choice, &C2V(gCurrent_choice), pNew_mode, 1);
+    last_choice = gCurrent_choice;
+    gCurrent_choice = pNew_choice;
+    gCurrent_mode = pNew_mode;
+    ChangeSelection(gSpec, &last_choice, &gCurrent_choice, pNew_mode, 1);
 }
-C2_HOOK_FUNCTION(0x00484f10, ChangeSelectionTo)
 
+// FUNCTION: CARMA2_HW 0x00484620
 void C2_HOOK_FASTCALL SetAlwaysTyping(void) {
 
-    C2V(gAlways_typing) = 1;
+    gAlways_typing = 1;
 }
-C2_HOOK_FUNCTION(0x00484620, SetAlwaysTyping)

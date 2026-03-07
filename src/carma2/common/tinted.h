@@ -6,16 +6,16 @@
 #include <brender/brender.h>
 #include <rec2_types.h>
 
-C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted1);
-C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted2);
-C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted3);
-C2_HOOK_VARIABLE_DECLARE(int, gHud_tinted4);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tTintedPoly, gTintedPolys, 10);
+extern int gHud_tinted1;
+extern int gHud_tinted2;
+extern int gHud_tinted3;
+extern int gHud_tinted4;
+extern tTintedPoly gTintedPolys[10];
 
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0440);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0444);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0448);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006a044c);
+extern int gINT_006a0440;
+extern int gINT_006a0444;
+extern int gINT_006a0448;
+extern int gINT_006a044c;
 
 void C2_HOOK_FASTCALL InitTintedPolyStuff(void);
 

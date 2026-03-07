@@ -5,7 +5,7 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap_state, _pixelmap);
+extern br_pixelmap_state _pixelmap;
 
 void C2_HOOK_CDECL BrPixelmapBegin(void);
 

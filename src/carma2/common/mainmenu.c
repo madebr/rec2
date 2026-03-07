@@ -7,59 +7,42 @@
 #include "sound.h"
 
 
-int (C2_HOOK_FASTCALL * DoVerifyQuit_original)(int pReplace_background);
+// FUNCTION: CARMA2_HW 0x00494450
 int C2_HOOK_FASTCALL DoVerifyQuit(int pReplace_background) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return DoVerifyQuit_original(pReplace_background);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00494450, DoVerifyQuit, DoVerifyQuit_original)
 
-void (C2_HOOK_FASTCALL * DoMainMenu_original)(void);
+// FUNCTION: CARMA2_HW 0x00494540
 void C2_HOOK_FASTCALL DoMainScreen(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    DoMainMenu_original();
-#else
 
     StartMusicTrack(9998);
     switch (FRONTEND_Main(kFrontend_menu_main)) {
     case 0:
-        C2V(gProgram_state).prog_status = eProg_quit;
+        gProgram_state.prog_status = eProg_quit;
         break;
     case 1:
-        C2V(gProgram_state).prog_status = eProg_game_starting;
+        gProgram_state.prog_status = eProg_game_starting;
         break;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00494540, DoMainScreen, DoMainMenu_original)
 
-void (C2_HOOK_FASTCALL * DoOptionsMenu_original)(void);
+// FUNCTION: CARMA2_HW 0x00494570
 void C2_HOOK_FASTCALL DoOptionsMenu(void) {
-
-#if 0// defined(C2_HOOKS_ENABLED)
-    DoOptionsMenu_original();
-#else
     tPlayer_status player_status;
 
 #ifdef REC2_FIX_BUGS
     player_status = ePlayer_status_unknown;
 #endif
 
-    if (C2V(gNet_mode) != eNet_mode_none) {
-        player_status = C2V(gNet_players)[C2V(gThis_net_player_index)].player_status;
+    if (gNet_mode != eNet_mode_none) {
+        player_status = gNet_players[gThis_net_player_index].player_status;
         NetPlayerStatusChanged(ePlayer_status_main_menu);
     }
     if (FRONTEND_Main(kFrontend_menu_options) == 0) {
-        C2V(gProgram_state).prog_status = eProg_quit;
+        gProgram_state.prog_status = eProg_quit;
     }
-    if (C2V(gNet_mode) != eNet_mode_none && C2V(gNet_players)[C2V(gThis_net_player_index)].player_status == ePlayer_status_main_menu) {
+    if (gNet_mode != eNet_mode_none && gNet_players[gThis_net_player_index].player_status == ePlayer_status_main_menu) {
         NetPlayerStatusChanged(player_status);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00494570, DoOptionsMenu, DoOptionsMenu_original)

@@ -5,22 +5,27 @@
 #include "c2_stdio.h"
 #include "c2_stdlib.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_diaghandler, BrStdioDiagHandler, 0x0066fe48, {
+
+// GLOBAL: CARMA2_HW 0x0066fe48
+br_diaghandler BrStdioDiagHandler = {
     "Stdio DiagHandler",
     BrStdioWarning,
     BrStdioFailure,
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_diaghandler*, _BrDefaultDiagHandler, 0x0066fe54, &C2V(BrStdioDiagHandler));
 
+// GLOBAL: CARMA2_HW 0x0066fe54
+br_diaghandler* _BrDefaultDiagHandler = &BrStdioDiagHandler;
+
+// FUNCTION: CARMA2_HW 0x0053fa00
 void C2_HOOK_CDECL BrStdioWarning(char* message) {
     fflush(stdout);
     fputs(message, stderr);
     fputc('\n', stderr);
     fflush(stderr);
 }
-C2_HOOK_FUNCTION(0x0053fa00, BrStdioWarning)
 
+// FUNCTION: CARMA2_HW 0x0053fa40
 void C2_HOOK_CDECL BrStdioFailure(char* message) {
 
 #if 0
@@ -38,4 +43,3 @@ void C2_HOOK_CDECL BrStdioFailure(char* message) {
     c2_abort();
 #endif
 }
-C2_HOOK_FUNCTION(0x0053fa40, BrStdioFailure)

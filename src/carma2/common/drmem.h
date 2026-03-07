@@ -5,11 +5,11 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_allocator, gAllocator);
+extern br_allocator gAllocator;
 
-C2_HOOK_VARIABLE_DECLARE(int, gNon_fatal_allocation_errors);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gMem_names, 256);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(br_resource_class, gStainless_classes, 126);
+extern int gNon_fatal_allocation_errors;
+extern const char* gMem_names[256];
+extern br_resource_class gStainless_classes[126];
 
 void C2_HOOK_FASTCALL SetNonFatalAllocationErrors(void);
 

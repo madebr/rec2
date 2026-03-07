@@ -6,7 +6,7 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gRender_alternative_track_actors);
+extern int gRender_alternative_track_actors;
 
 br_scalar C2_HOOK_STDCALL GetYonFactor(void);
 

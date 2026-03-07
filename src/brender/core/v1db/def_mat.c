@@ -4,13 +4,14 @@
 #include "core/math/matrix23.h"
 #include "core/v1db/dbsetup.h"
 
+// FUNCTION: CARMA2_HW 0x00526940
 br_material* C2_HOOK_CDECL SetupDefaultMaterial(void) {
     static br_material* default_mat;
 
     C2_HOOK_BUG_ON(sizeof(br_material) != 156);
-    C2_HOOK_ASSERT((uintptr_t)&C2V(v1db).res == (uintptr_t)0x0079f494);
+    C2_HOOK_ASSERT((uintptr_t)&v1db.res == (uintptr_t)0x0079f494);
 
-    default_mat = BrResAllocate(C2V(v1db).res, sizeof(br_material), BR_MEMORY_MATERIAL);
+    default_mat = BrResAllocate(v1db.res, sizeof(br_material), BR_MEMORY_MATERIAL);
     if (default_mat == NULL) {
         return NULL;
     }
@@ -27,4 +28,3 @@ br_material* C2_HOOK_CDECL SetupDefaultMaterial(void) {
     default_mat->index_range = 31;
     return default_mat;
 }
-C2_HOOK_FUNCTION(0x00526940, SetupDefaultMaterial)

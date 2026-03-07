@@ -5,16 +5,16 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gPling_materials);
-C2_HOOK_VARIABLE_DECLARE(int, gTemp_group);
-C2_HOOK_VARIABLE_DECLARE(int, gNearest_face);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gNearest_model);
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gNearest_actor);
-C2_HOOK_VARIABLE_DECLARE(br_scalar, gNearest_T);
-C2_HOOK_VARIABLE_DECLARE(int, gNearest_face_group);
-C2_HOOK_VARIABLE_DECLARE(br_matrix34, gPick_model_to_view__finteray);
-C2_HOOK_VARIABLE_DECLARE(tFace_ref*, gPling_face);
-C2_HOOK_VARIABLE_DECLARE(int, gActorBoxPick_StopGroovidelics);
+extern int gPling_materials;
+extern int gTemp_group;
+extern int gNearest_face;
+extern br_model* gNearest_model;
+extern br_actor* gNearest_actor;
+extern br_scalar gNearest_T;
+extern int gNearest_face_group;
+extern br_matrix34 gPick_model_to_view__finteray;
+extern tFace_ref* gPling_face;
+extern int gActorBoxPick_StopGroovidelics;
 
 void C2_HOOK_FASTCALL EnablePlingMaterials(void);
 

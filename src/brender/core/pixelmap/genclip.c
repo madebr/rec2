@@ -1,5 +1,6 @@
 #include "genclip.h"
 
+// FUNCTION: CARMA2_HW 0x0053d9b0
 br_clip_result C2_HOOK_CDECL PixelmapPointClip(br_point* out, br_point* in, br_pixelmap* pm) {
 
     out->x = in->x + pm->origin_x;
@@ -19,8 +20,8 @@ br_clip_result C2_HOOK_CDECL PixelmapPointClip(br_point* out, br_point* in, br_p
     }
     return BR_CLIP_ACCEPT;
 }
-C2_HOOK_FUNCTION(0x0053d9b0, PixelmapPointClip)
 
+// FUNCTION: CARMA2_HW 0x0053da00
 br_clip_result C2_HOOK_CDECL PixelmapLineClip(br_point* s_out, br_point* e_out, br_point* s_in, br_point* e_in, br_pixelmap* pm) {
     int temp;
     br_int_32 w;
@@ -113,8 +114,8 @@ decr_p1:
     }
     return BR_CLIP_REJECT;
 }
-C2_HOOK_FUNCTION(0x0053da00, PixelmapLineClip)
 
+// FUNCTION: CARMA2_HW 0x0053dbb0
 br_clip_result C2_HOOK_CDECL PixelmapRectangleClip(br_rectangle* out, br_rectangle* in, br_pixelmap* pm) {
 
     out->x = pm->origin_x + in->x;
@@ -143,8 +144,8 @@ br_clip_result C2_HOOK_CDECL PixelmapRectangleClip(br_rectangle* out, br_rectang
     }
     return BR_CLIP_REJECT;
 }
-C2_HOOK_FUNCTION(0x0053dbb0, PixelmapRectangleClip)
 
+// FUNCTION: CARMA2_HW 0x0053dc80
 br_clip_result C2_HOOK_CDECL PixelmapRectangleClipTwo(br_rectangle* r_out, br_point* p_out, br_rectangle* r_in, br_point* p_in, br_pixelmap* pm_dst, br_pixelmap* pm_src) {
 
     r_out->x = pm_src->origin_x + r_in->x;
@@ -215,8 +216,8 @@ br_clip_result C2_HOOK_CDECL PixelmapRectangleClipTwo(br_rectangle* r_out, br_po
     }
     return BR_CLIP_PARTIAL;
 }
-C2_HOOK_FUNCTION(0x0053dc80, PixelmapRectangleClipTwo)
 
+// FUNCTION: CARMA2_HW 0x0053de30
 br_clip_result C2_HOOK_CDECL PixelmapCopyBitsClip(br_rectangle* r_out, br_point* p_out, br_rectangle* r_in, br_point* p_in, br_pixelmap* pm) {
 
     r_out->x = r_in->x;
@@ -259,4 +260,3 @@ br_clip_result C2_HOOK_CDECL PixelmapCopyBitsClip(br_rectangle* r_out, br_point*
     }
     return BR_CLIP_PARTIAL;
 }
-C2_HOOK_FUNCTION(0x0053de30, PixelmapCopyBitsClip)

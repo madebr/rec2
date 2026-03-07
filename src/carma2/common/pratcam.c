@@ -1,22 +1,22 @@
 #include "pratcam.h"
 
+// FUNCTION: CARMA2_HW 0x004e0e50
 void C2_HOOK_FASTCALL InitPratcam(void) {
 
 }
-C2_HOOK_FUNCTION(0x004e0e50, InitPratcam)
 
+// FUNCTION: CARMA2_HW 0x004e0e60
 void C2_HOOK_FASTCALL DisposePratcam(void) {
 
 }
-C2_HOOK_FUNCTION(0x004e0e60, DisposePratcam)
 
 
+// FUNCTION: CARMA2_HW 0x004e0e30
 void C2_HOOK_FASTCALL ChangeAmbientPratcam(int pIndex) {
 
 }
-C2_HOOK_FUNCTION(0x004e0e30, ChangeAmbientPratcam)
 
+// FUNCTION: CARMA2_HW 0x004e0e40
 void C2_HOOK_FASTCALL PratcamEvent(int pIndex) {
 
 }
-C2_HOOK_FUNCTION(0x004e0e40, PratcamEvent)

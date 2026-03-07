@@ -89,17 +89,15 @@ target_link_libraries(c2_platform_brender
         c2_hooks
 )
 
-if(REC2_STANDALONE)
-    add_executable(rec2 WIN32
-        $<TARGET_OBJECTS:c2_common>
-        $<TARGET_OBJECTS:c2_platform>
-    )
-    target_link_libraries(rec2 PRIVATE
-        BRender::BRender
-        c2_common
-        c2_platform
-    )
-    if(REC2_PLATFORM_WIN32)
-        add_dependencies(rec2 brender_driver_d3d)
-    endif()
+add_executable(rec2 WIN32
+    $<TARGET_OBJECTS:c2_common>
+    $<TARGET_OBJECTS:c2_platform>
+)
+target_link_libraries(rec2 PRIVATE
+    BRender::BRender
+    c2_common
+    c2_platform
+)
+if(REC2_MATCHING)
+    add_dependencies(rec2 brender_driver_d3d)
 endif()

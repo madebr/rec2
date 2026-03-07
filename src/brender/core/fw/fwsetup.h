@@ -5,7 +5,7 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_framework_state, fw);
+extern br_framework_state fw;
 
 br_error C2_HOOK_CDECL BrFwBegin(void);
 

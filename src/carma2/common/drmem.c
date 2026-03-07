@@ -11,9 +11,15 @@
 #include "c2_stdio.h"
 #include "c2_stdlib.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_allocator, gAllocator, 0x005937e8, { "Death Race", C2V(DRStdlibAllocate), C2V(DRStdlibFree), C2V(DRStdlibInquire), C2V(Claim4ByteAlignment) });
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNon_fatal_allocation_errors, 0x00681fa4);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gMem_names, 256, 0x005933e8, {
+
+// GLOBAL: CARMA2_HW 0x005937e8
+br_allocator gAllocator = { "Death Race", DRStdlibAllocate, DRStdlibFree, DRStdlibInquire, Claim4ByteAlignment };
+
+// GLOBAL: CARMA2_HW 0x00681fa4
+int gNon_fatal_allocation_errors;
+
+// GLOBAL: CARMA2_HW 0x005933e8
+const char* gMem_names[256] = {
     "",
     "BR_MEMORY_SCRATCH",
     "BR_MEMORY_PIXELMAP",
@@ -270,53 +276,51 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gMem_names, 256, 0x005933e8, 
     "kMem_misc",
     "kMem_exception",
     NULL,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_resource_class, gStainless_classes, 126, 0x006815c8);
-C2_HOOK_VARIABLE_IMPLEMENT(FILE*, gGlobalPackedFile, 0x00681fa0);
+};
 
+// GLOBAL: CARMA2_HW 0x006815c8
+br_resource_class gStainless_classes[126];
+
+// GLOBAL: CARMA2_HW 0x00681fa0
+FILE* gGlobalPackedFile;
+
+// FUNCTION: CARMA2_HW 0x0044c7f0
 void C2_HOOK_FASTCALL SetNonFatalAllocationErrors(void) {
 
-    C2V(gNon_fatal_allocation_errors) = 1;
+    gNon_fatal_allocation_errors = 1;
 }
-C2_HOOK_FUNCTION(0x0044c7f0, SetNonFatalAllocationErrors)
 
+// FUNCTION: CARMA2_HW 0x0044c800
 void C2_HOOK_FASTCALL ResetNonFatalAllocationErrors(void) {
 
-    C2V(gNon_fatal_allocation_errors) = 0;
+    gNon_fatal_allocation_errors = 0;
 }
-C2_HOOK_FUNCTION(0x0044c800, ResetNonFatalAllocationErrors)
 
+// FUNCTION: CARMA2_HW 0x0044c810
 int C2_HOOK_FASTCALL AllocationErrorsAreFatal(void) {
 
-    return !C2V(gNon_fatal_allocation_errors);
+    return !gNon_fatal_allocation_errors;
 }
-C2_HOOK_FUNCTION(0x0044c810, AllocationErrorsAreFatal)
 
+// FUNCTION: CARMA2_HW 0x0044c820
 void C2_HOOK_FASTCALL MAMSInitMem(void) {
 }
-C2_HOOK_FUNCTION(0x0044c820, MAMSInitMem)
 
-void (C2_HOOK_FASTCALL * CloseGlobalPackedFile_original)(void);
+// FUNCTION: CARMA2_HW 0x0044c830
 void C2_HOOK_FASTCALL CloseGlobalPackedFile(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    CloseGlobalPackedFile_original();
-#else
-
-    if (C2V(gGlobalPackedFile) != NULL) {
-        PFfclose(C2V(gGlobalPackedFile));
-        C2V(gGlobalPackedFile) = NULL;
+    if (gGlobalPackedFile != NULL) {
+        PFfclose(gGlobalPackedFile);
+        gGlobalPackedFile = NULL;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0044c830, CloseGlobalPackedFile, CloseGlobalPackedFile_original)
 
+// FUNCTION: CARMA2_HW 0x0044c850
 void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
     dr_dprintf("%s: pTitle=\"%s\" pFlags=%d", __FUNCTION__, pTitle, pFlags);
 }
-C2_HOOK_FUNCTION(0x0044c850, PrintMemoryDump);
 
-void* (C2_HOOK_CDECL * DRStdlibAllocate_original)(br_size_t size, br_uint_8 type);
+// FUNCTION: CARMA2_HW 0x0044c8c0
 void* C2_HOOK_CDECL DRStdlibAllocate(br_size_t size, br_uint_8 type) {
 
     void* p;
@@ -324,59 +328,48 @@ void* C2_HOOK_CDECL DRStdlibAllocate(br_size_t size, br_uint_8 type) {
 
     if (size != 0) {
         p = malloc(size);
-        if (p == NULL && !C2V(gNon_fatal_allocation_errors)) {
-            c2_sprintf(s, "%s/%d", C2V(gMem_names)[type], size);
+        if (p == NULL && !gNon_fatal_allocation_errors) {
+            c2_sprintf(s, "%s/%d", gMem_names[type], size);
             FatalError(kFatalError_OOM_S, s);
         }
         return p;
     }
     return NULL;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0044c8c0, DRStdlibAllocate, DRStdlibAllocate_original)
 
-void (C2_HOOK_CDECL * DRStdlibFree_original)(void* mem);
+// FUNCTION: CARMA2_HW 0x0044c990
 void C2_HOOK_CDECL DRStdlibFree(void* mem) {
     free(mem);
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0044c990, DRStdlibFree, DRStdlibFree_original)
 
+// FUNCTION: CARMA2_HW 0x0044c9c0
 br_size_t C2_HOOK_CDECL DRStdlibInquire(br_uint_8 type) {
     return 0;
 }
-C2_HOOK_FUNCTION(0x0044c9c0, DRStdlibInquire)
 
+// FUNCTION: CARMA2_HW 0x0044c9d0
 br_uint_32 C2_HOOK_CDECL Claim4ByteAlignment(br_uint_8 type) {
     return 4;
 }
-C2_HOOK_FUNCTION(0x0044c9d0, Claim4ByteAlignment)
 
-void (C2_HOOK_FASTCALL * InstallDRMemCalls_original)(void);
+// FUNCTION: CARMA2_HW 0x0044c9e0
 void C2_HOOK_FASTCALL InstallDRMemCalls(void) {
-#if 0 //defined(C2_HOOKS_ENABLED)
-    InstallDRMemCalls_original();
-#else
-    BrAllocatorSet(&C2V(gAllocator));
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0044c9e0, InstallDRMemCalls, InstallDRMemCalls_original)
 
-void (C2_HOOK_FASTCALL * CreateStainlessClasses_original)(void);
+    BrAllocatorSet(&gAllocator);
+}
+
+// FUNCTION: CARMA2_HW 0x0044ca40
 void C2_HOOK_FASTCALL CreateStainlessClasses(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    CreateStainlessClasses_original();
-#else
     int i;
 
-    for (i = 129; i < 129 + REC2_ASIZE(C2V(gStainless_classes)); i++) {
-        C2V(gStainless_classes)[i - 129].res_class = i;
-        if (!BrResClassAdd(&C2V(gStainless_classes)[i - 129])) {
+    for (i = 129; i < 129 + REC2_ASIZE(gStainless_classes); i++) {
+        gStainless_classes[i - 129].res_class = i;
+        if (!BrResClassAdd(&gStainless_classes[i - 129])) {
             FatalError(kFatalError_OOM_S);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0044ca40, CreateStainlessClasses, CreateStainlessClasses_original)
 
+// FUNCTION: CARMA2_HW 0x0044ca80
 void C2_HOOK_FASTCALL CheckMemory(void) {
 }
-C2_HOOK_FUNCTION(0x0044ca80, CheckMemory)

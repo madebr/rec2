@@ -5,7 +5,7 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_GRAPHICS);
+extern tFrontend_spec gFrontend_GRAPHICS;
 
 
 void C2_HOOK_FASTCALL GetGraphicsSettingsData(tFrontend_spec* pFrontend);

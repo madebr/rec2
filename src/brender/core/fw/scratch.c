@@ -4,85 +4,62 @@
 #include "core/fw/fwsetup.h"
 #include "core/fw/resource.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, scratchString, 512, 0x00666ea8, "SCRATCH");
+// GLOBAL: CARMA2_HW 0x00666ea8
+char scratchString[512] = "SCRATCH";
 
-void* (C2_HOOK_CDECL * BrScratchAllocate_original)(br_size_t size);
+// FUNCTION: CARMA2_HW 0x00529e80
 void* C2_HOOK_CDECL BrScratchAllocate(br_size_t size) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrScratchAllocate_original(size);
-#else
-    if (C2V(fw).scratch_inuse != 0) {
+
+    if (fw.scratch_inuse != 0) {
         BrFailure("Scratchpad not available");
     }
 
-    C2V(fw).scratch_last = size;
+    fw.scratch_last = size;
 
-    if (size > C2V(fw).scratch_size) {
-        if (C2V(fw).scratch_ptr != NULL) {
-            BrResFree(C2V(fw).scratch_ptr);
+    if (size > fw.scratch_size) {
+        if (fw.scratch_ptr != NULL) {
+            BrResFree(fw.scratch_ptr);
         }
-        C2V(fw).scratch_ptr = BrResAllocate(C2V(fw).res, size, BR_MEMORY_SCRATCH);
-        C2V(fw).scratch_size = size;
+        fw.scratch_ptr = BrResAllocate(fw.res, size, BR_MEMORY_SCRATCH);
+        fw.scratch_size = size;
     }
-    C2V(fw).scratch_inuse = 1;
-    return C2V(fw).scratch_ptr;
-#endif
+    fw.scratch_inuse = 1;
+    return fw.scratch_ptr;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529e80, BrScratchAllocate, BrScratchAllocate_original)
 
-void (C2_HOOK_CDECL * BrScratchFree_original)(void* scratch);
+// FUNCTION: CARMA2_HW 0x00529ef0
 void C2_HOOK_CDECL BrScratchFree(void* scratch) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrScratchFree_original(scratch);
-#else
-    C2V(fw).scratch_inuse = 0;
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00529ef0, BrScratchFree, BrScratchFree_original)
 
-void (C2_HOOK_CDECL * BrScratchFlush_original)(void);
+    fw.scratch_inuse = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00529f00
 void C2_HOOK_CDECL BrScratchFlush(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrScratchFlush_original();
-#else
-    if (C2V(fw).scratch_inuse != 0) {
+
+    if (fw.scratch_inuse != 0) {
         BrFailure("Scratchpad cannot be flushed while in use");
     }
-    if (C2V(fw).scratch_ptr != NULL) {
-        BrResFree(C2V(fw).scratch_ptr);
+    if (fw.scratch_ptr != NULL) {
+        BrResFree(fw.scratch_ptr);
     }
-    C2V(fw).scratch_ptr = NULL;
-    C2V(fw).scratch_size = 0;
-#endif
+    fw.scratch_ptr = NULL;
+    fw.scratch_size = 0;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529f00, BrScratchFlush, BrScratchFlush_original)
 
-br_size_t (C2_HOOK_CDECL * BrScratchInquire_original)(void);
+// FUNCTION: CARMA2_HW 0x00529f40
 br_size_t C2_HOOK_CDECL BrScratchInquire(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrScratchInquire_original();
-#else
-    return C2V(fw).scratch_size;
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00529f40, BrScratchInquire, BrScratchInquire_original)
 
-char* (C2_HOOK_CDECL * BrScratchString_original)(void);
+    return fw.scratch_size;
+}
+
+// FUNCTION: CARMA2_HW 0x00529f50
 char* C2_HOOK_CDECL BrScratchString(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrScratchString_original();
-#else
-    return C2V(scratchString);
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x00529f50, BrScratchString, BrScratchString_original)
 
-br_size_t (C2_HOOK_CDECL * BrScratchStringSize_original)(void);
-br_size_t C2_HOOK_CDECL BrScratchStringSize(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrScratchStringSize_original();
-#else
-    return sizeof(C2V(scratchString));
-#endif
+    return scratchString;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00529f60, BrScratchStringSize, BrScratchStringSize_original)
+
+// FUNCTION: CARMA2_HW 0x00529f60
+br_size_t C2_HOOK_CDECL BrScratchStringSize(void) {
+
+    return sizeof(scratchString);
+}

@@ -10,13 +10,13 @@
 
 #include <stdint.h>
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const tU8, gLong_key, 16);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const tU8, gOther_long_key, 16);
-C2_HOOK_VARIABLE_DECLARE(int, gDecode_thing);
-C2_HOOK_VARIABLE_DECLARE(tU32, last_service);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, y_unit_vector);
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, g16bit_palette);
-C2_HOOK_VARIABLE_DECLARE(br_pixelmap*, gPalette_source);
+extern const tU8 gLong_key[16];
+extern const tU8 gOther_long_key[16];
+extern int gDecode_thing;
+extern tU32 last_service;
+extern br_vector3 y_unit_vector;
+extern br_pixelmap* g16bit_palette;
+extern br_pixelmap* gPalette_source;
 
 br_error C2_HOOK_FASTCALL DRBrEnd(void);
 

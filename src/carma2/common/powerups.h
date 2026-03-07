@@ -6,29 +6,29 @@
 #include "c2_hooks.h"
 #include "c2_stdio.h"
 
-C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec, gPowerup_pickup_smashable);
-C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec, gPowerup_respawn_smashable);
-C2_HOOK_VARIABLE_DECLARE(tSmashable_item_spec, gUnknown_smashable_006a3660);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tHeadup_icon, gPickedup_powerups, 5);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const char*, gRepeatability_names, 4);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tShit_mine, gShit_mines, 20);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tRepulse_link, gRepulse_links, 6);
-C2_HOOK_VARIABLE_DECLARE(tPhysics_joint*, gMutant_tail_first_joint);
-C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gMutant_tail_first_collision_info);
-C2_HOOK_VARIABLE_DECLARE(int, gMutant_tail_state);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_armor);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_power);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gModel_powerup_offence);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gInventory, 20);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0a6c);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006a0a5c);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tRespawn_powerup, gRespawn_powerups, 100);
-C2_HOOK_VARIABLE_DECLARE(int, gInventory_selected);
-C2_HOOK_VARIABLE_DECLARE(int, gNumber_of_icons);
-C2_HOOK_VARIABLE_DECLARE(tU32, gNext_goody_time);
-C2_HOOK_VARIABLE_DECLARE(undefined4, gDAT_006a0958);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_cloaked_cars);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gCloaked_cars, 12);
+extern tSmashable_item_spec gPowerup_pickup_smashable;
+extern tSmashable_item_spec gPowerup_respawn_smashable;
+extern tSmashable_item_spec gUnknown_smashable_006a3660;
+extern tHeadup_icon gPickedup_powerups[5];
+extern const char* gRepeatability_names[4];
+extern tShit_mine gShit_mines[20];
+extern tRepulse_link gRepulse_links[6];
+extern tPhysics_joint* gMutant_tail_first_joint;
+extern tCollision_info* gMutant_tail_first_collision_info;
+extern int gMutant_tail_state;
+extern br_model* gModel_powerup_armor;
+extern br_model* gModel_powerup_power;
+extern br_model* gModel_powerup_offence;
+extern int gInventory[20];
+extern int gINT_006a0a6c;
+extern int gINT_006a0a5c;
+extern tRespawn_powerup gRespawn_powerups[100];
+extern int gInventory_selected;
+extern int gNumber_of_icons;
+extern tU32 gNext_goody_time;
+extern undefined4 gDAT_006a0958;
+extern int gCount_cloaked_cars;
+extern tCar_spec* gCloaked_cars[12];
 
 int C2_HOOK_FASTCALL GetPowerupCount(void);
 

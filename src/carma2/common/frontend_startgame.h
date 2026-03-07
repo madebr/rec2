@@ -5,7 +5,7 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_START_GAME);
+extern tFrontend_spec gFrontend_START_GAME;
 
 
 int C2_HOOK_FASTCALL StartGameInfunc(tFrontend_spec* pFrontend);

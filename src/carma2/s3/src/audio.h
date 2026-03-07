@@ -3,33 +3,33 @@
 
 #include <s3/s3.h>
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(char, gS3_path_separator, 2);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_enabled);
-C2_HOOK_VARIABLE_DECLARE(tS3_sound_source*, gS3_sound_sources);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_nsound_sources);
-C2_HOOK_VARIABLE_DECLARE(tS3_outlet*, gS3_outlets);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_CDA_enabled);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_next_outlet_id);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_noutlets);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_soundbank_buffer_len);
-C2_HOOK_VARIABLE_DECLARE(char*, gS3_soundbank_buffer);
-C2_HOOK_VARIABLE_DECLARE(tS3_descriptor*, gS3_root_descriptor);
-C2_HOOK_VARIABLE_DECLARE(tS3_callbacks, gS3_callbacks);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_effects_enabled);
-C2_HOOK_VARIABLE_DECLARE(tS3SetEffect_cbfn*, gS3_enable_effect_cbfn);
-C2_HOOK_VARIABLE_DECLARE(tS3SetEffect_cbfn*, gS3_disable_effect_cbfn);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_opened_output_devices);
-C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_last_service_time);
-C2_HOOK_VARIABLE_DECLARE(tS3_channel*, gS3_unbound_channels);
-C2_HOOK_VARIABLE_DECLARE(tS3_channel*, gS3_last_unbound_channel);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_enable_midi);
-C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_tag_seed);
-C2_HOOK_VARIABLE_DECLARE(tS3_sample_filter, gS3_sample_filter_func);
-C2_HOOK_VARIABLE_DECLARE(tS3_sample_filter, gS3_sample_filter_disable_func);
-C2_HOOK_VARIABLE_DECLARE(tS3_channel, gS3_channel_template);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_delta_time);
-C2_HOOK_VARIABLE_DECLARE(int, gS3_inside_cockpit);
-C2_HOOK_VARIABLE_DECLARE(br_uint_32, gS3_last_service_time_spatial);
+extern char gS3_path_separator[2];
+extern int gS3_enabled;
+extern tS3_sound_source* gS3_sound_sources;
+extern int gS3_nsound_sources;
+extern tS3_outlet* gS3_outlets;
+extern int gS3_CDA_enabled;
+extern int gS3_next_outlet_id;
+extern int gS3_noutlets;
+extern int gS3_soundbank_buffer_len;
+extern char* gS3_soundbank_buffer;
+extern tS3_descriptor* gS3_root_descriptor;
+extern tS3_callbacks gS3_callbacks;
+extern int gS3_effects_enabled;
+extern tS3SetEffect_cbfn* gS3_enable_effect_cbfn;
+extern tS3SetEffect_cbfn* gS3_disable_effect_cbfn;
+extern int gS3_opened_output_devices;
+extern br_uint_32 gS3_last_service_time;
+extern tS3_channel* gS3_unbound_channels;
+extern tS3_channel* gS3_last_unbound_channel;
+extern int gS3_enable_midi;
+extern br_uint_32 gS3_tag_seed;
+extern tS3_sample_filter gS3_sample_filter_func;
+extern tS3_sample_filter gS3_sample_filter_disable_func;
+extern tS3_channel gS3_channel_template;
+extern int gS3_delta_time;
+extern int gS3_inside_cockpit;
+extern br_uint_32 gS3_last_service_time_spatial;
 
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_path);
 

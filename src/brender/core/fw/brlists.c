@@ -4,14 +4,15 @@
 
 #include <assert.h>
 
+// FUNCTION: CARMA2_HW 0x00529960
 void C2_HOOK_CDECL BrNewList(br_list* list) {
 
     list->head = (br_node*)&list->_null;
     list->_null = NULL;
     list->tail = (br_node*)list;
 }
-C2_HOOK_FUNCTION(0x00529960, BrNewList)
 
+// FUNCTION: CARMA2_HW 0x00529980
 void C2_HOOK_CDECL BrAddHead(br_list* list, br_node* node) {
 
     assert(node != NULL);
@@ -24,8 +25,8 @@ void C2_HOOK_CDECL BrAddHead(br_list* list, br_node* node) {
     list->head->prev = node;
     list->head = node;
 }
-C2_HOOK_FUNCTION(0x00529980, BrAddHead)
 
+// FUNCTION: CARMA2_HW 0x005299a0
 void C2_HOOK_CDECL BrAddTail(br_list* list, br_node* node) {
 
     node->next = (br_node*)&list->_null;
@@ -33,8 +34,8 @@ void C2_HOOK_CDECL BrAddTail(br_list* list, br_node* node) {
     list->tail->next = node;
     list->tail = node;
 }
-C2_HOOK_FUNCTION(0x005299a0, BrAddTail)
 
+// FUNCTION: CARMA2_HW 0x005299c0
 br_node* C2_HOOK_CDECL BrRemHead(br_list* list) {
     br_node* n;
 
@@ -46,8 +47,8 @@ br_node* C2_HOOK_CDECL BrRemHead(br_list* list) {
     n->next->prev = (br_node*)&list->head;
     return n;
 }
-C2_HOOK_FUNCTION(0x005299c0, BrRemHead)
 
+// FUNCTION: CARMA2_HW 0x005299e0
 br_node* C2_HOOK_CDECL BrRemTail(br_list* list) {
     br_node* n;
 
@@ -59,8 +60,8 @@ br_node* C2_HOOK_CDECL BrRemTail(br_list* list) {
     n->prev->next = (br_node*)&list->_null;
     return n;
 }
-C2_HOOK_FUNCTION(0x005299e0, BrRemTail)
 
+// FUNCTION: CARMA2_HW 0x00529a00
 void C2_HOOK_CDECL BrInsert(br_list* list, br_node* here, br_node* node) {
 
     node->prev = here;
@@ -68,22 +69,22 @@ void C2_HOOK_CDECL BrInsert(br_list* list, br_node* here, br_node* node) {
     here->next->prev = node;
     here->next = node;
 }
-C2_HOOK_FUNCTION(0x00529a00, BrInsert)
 
+// FUNCTION: CARMA2_HW 0x00529a20
 br_node* C2_HOOK_CDECL BrRemove(br_node* node) {
 
     node->next->prev = node->prev;
     node->prev->next = node->next;
     return node;
 }
-C2_HOOK_FUNCTION(0x00529a20, BrRemove)
 
+// FUNCTION: CARMA2_HW 0x00529a40
 void C2_HOOK_CDECL BrSimpleNewList(br_simple_list* list) {
 
     list->head = NULL;
 }
-C2_HOOK_FUNCTION(0x00529a40, BrSimpleNewList)
 
+// FUNCTION: CARMA2_HW 0x00529a50
 void C2_HOOK_CDECL BrSimpleAddHead(br_simple_list* list, br_simple_node* node) {
 
     node->next = list->head;
@@ -93,8 +94,8 @@ void C2_HOOK_CDECL BrSimpleAddHead(br_simple_list* list, br_simple_node* node) {
     }
     list->head = node;
 }
-C2_HOOK_FUNCTION(0x00529a50, BrSimpleAddHead)
 
+// FUNCTION: CARMA2_HW 0x00529a70
 br_simple_node* C2_HOOK_CDECL BrSimpleRemHead(br_simple_list* list) {
     br_simple_node* node;
 
@@ -104,8 +105,8 @@ br_simple_node* C2_HOOK_CDECL BrSimpleRemHead(br_simple_list* list) {
     }
     return node;
 }
-C2_HOOK_FUNCTION(0x00529a70, BrSimpleRemHead)
 
+// FUNCTION: CARMA2_HW 0x00529aa0
 void C2_HOOK_CDECL BrSimpleInsert(br_simple_list* list, br_simple_node* here, br_simple_node* node) {
 
     node->prev = &here->next;
@@ -115,8 +116,8 @@ void C2_HOOK_CDECL BrSimpleInsert(br_simple_list* list, br_simple_node* here, br
     }
     here->next = node;
 }
-C2_HOOK_FUNCTION(0x00529aa0, BrSimpleInsert)
 
+// FUNCTION: CARMA2_HW 0x00529ac0
 br_simple_node* C2_HOOK_CDECL BrSimpleRemove(br_simple_node* node) {
 
     *node->prev = node->next;
@@ -127,4 +128,3 @@ br_simple_node* C2_HOOK_CDECL BrSimpleRemove(br_simple_node* node) {
     node->prev = NULL;
     return node;
 }
-C2_HOOK_FUNCTION(0x00529ac0, BrSimpleRemove)

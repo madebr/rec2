@@ -5,8 +5,8 @@
 
 #include "types.h"
 
-C2_HOOK_VARIABLE_DECLARE(rend_block_soft, rend);
-C2_HOOK_VARIABLE_DECLARE(static_cache_soft, scache);
+extern rend_block_soft rend;
+extern static_cache_soft scache;
 
 
 void C2_HOOK_STDCALL ViewToModelUpdate(br_soft_renderer* self);

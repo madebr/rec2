@@ -76,6 +76,7 @@ int ClipFaceToPlane(brp_vertex* vp, brp_vertex* verts_out, int num_in, br_vector
     return num_out;
 }
 
+// FUNCTION: CARMA2_HW 0x0054bb70
 int C2_HOOK_STDCALL ClipFaceToPlus1(brp_vertex* vp, brp_vertex* verts_out, int num_in, int axis, int cmask) {
     brp_vertex* wp = verts_out;
     int num_out = 0;
@@ -145,8 +146,8 @@ int C2_HOOK_STDCALL ClipFaceToPlus1(brp_vertex* vp, brp_vertex* verts_out, int n
 
     return num_out;
 }
-C2_HOOK_FUNCTION(0x0054bb70, ClipFaceToPlus1)
 
+// FUNCTION: CARMA2_HW 0x0054bd00
 int C2_HOOK_STDCALL ClipFaceToMinus1(brp_vertex* vp, brp_vertex* verts_out, int num_in, int axis, int cmask) {
     brp_vertex* wp = verts_out;
     int num_out = 0;
@@ -212,24 +213,26 @@ int C2_HOOK_STDCALL ClipFaceToMinus1(brp_vertex* vp, brp_vertex* verts_out, int 
 
     return num_out;
 }
-C2_HOOK_FUNCTION(0x0054bd00, ClipFaceToMinus1)
 
 #define CLIP_TOGGLE do {                \
         toggle = !toggle;               \
         if (toggle) {                   \
-            cp_in = C2V(clip_poly_2);   \
-            cp_out = C2V(clip_poly_1);  \
+            cp_in = clip_poly_2;   \
+            cp_out = clip_poly_1;  \
         } else {                        \
-            cp_in = C2V(clip_poly_1);   \
-            cp_out = C2V(clip_poly_2);  \
+            cp_in = clip_poly_1;   \
+            cp_out = clip_poly_2;  \
         }                               \
     } while (0)
 
+// FUNCTION: CARMA2_HW 0x0054b730
 brp_vertex* C2_HOOK_STDCALL FaceClip(br_soft_renderer* self, brp_vertex* clip_in, br_uint_32 mask, br_uint_32 codes, int n, int* n_out) {
-    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(brp_vertex, clip_poly_1, 16, 0x006b0a60);
-    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(brp_vertex, clip_poly_2, 16, 0x006b0e60);
+    // GLOBAL: CARMA2_HW 0x006b0a60
+    static  brp_vertex clip_poly_1[16];
+    // GLOBAL: CARMA2_HW 0x006b0e60
+    static  brp_vertex clip_poly_2[16];
     brp_vertex* cp_in = clip_in;
-    brp_vertex* cp_out = C2V(clip_poly_1);
+    brp_vertex* cp_out = clip_poly_1;
     int c;
     br_boolean toggle = 1;
 
@@ -281,7 +284,7 @@ brp_vertex* C2_HOOK_STDCALL FaceClip(br_soft_renderer* self, brp_vertex* clip_in
         CLIP_TOGGLE;
     }
 
-    if (C2V(scache).user_clip_active) {
+    if (scache.user_clip_active) {
         for (c = 0; c < MAX_STATE_CLIP_PLANES; c++) {
 
             if (self->state.clip[c].type != BRT_PLANE) {
@@ -303,8 +306,8 @@ brp_vertex* C2_HOOK_STDCALL FaceClip(br_soft_renderer* self, brp_vertex* clip_in
     *n_out = n;
     return cp_in;
 }
-C2_HOOK_FUNCTION(0x0054b730, FaceClip)
 
+// FUNCTION: CARMA2_HW 0x0054bea0
 void C2_HOOK_STDCALL ClippedRenderTriangles(br_soft_renderer* renderer, brp_block* block, brp_vertex* cp_in, int n, br_uint_16 *fp_vertices, br_uint_16 *fp_edges) {
     int i;
     brp_vertex* tvp;
@@ -322,8 +325,8 @@ void C2_HOOK_STDCALL ClippedRenderTriangles(br_soft_renderer* renderer, brp_bloc
         block->render(block, &cp_in[0], &cp_in[i - 1], &cp_in[i], fp_vertices, fp_edges);
     }
 }
-C2_HOOK_FUNCTION(0x0054bea0, ClippedRenderTriangles)
 
+// FUNCTION: CARMA2_HW 0x0054bfc0
 br_boolean C2_HOOK_STDCALL ClipLineToPlane(brp_vertex* in, brp_vertex* out, br_vector4* plane, int cmask) {
     br_scalar t, tu, tv;
     int m;
@@ -377,15 +380,21 @@ br_boolean C2_HOOK_STDCALL ClipLineToPlane(brp_vertex* in, brp_vertex* out, br_v
 
     return 1;
 }
-C2_HOOK_FUNCTION(0x0054bfc0, ClipLineToPlane)
 
+// FUNCTION: CARMA2_HW 0x0054c120
 br_boolean C2_HOOK_STDCALL ClipLine(br_soft_renderer* self, brp_vertex* out, brp_vertex* v0, brp_vertex* v1, br_uint_32 mask, br_uint_32 codes) {
-    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_px, 0x00670758, { { -1.f,  0.f,  0.f, 1.f } });
-    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_nx, 0x00670768, { {  1.f,  0.f,  0.f, 1.f } });
-    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_py, 0x00670778, { {  0.f, -1.f,  0.f, 1.f } });
-    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_ny, 0x00670788, { {  0.f,  1.f,  0.f, 1.f } });
-    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_pz, 0x00670798, { {  0.f,  0.f, -1.f, 1.f } });
-    static C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector4, plane_nz, 0x006707a8, { {  0.f,  0.f,  1.f, 1.f } });
+    // GLOBAL: CARMA2_HW 0x00670758
+    static br_vector4 plane_px = { { -1.f,  0.f,  0.f, 1.f } };
+    // GLOBAL: CARMA2_HW 0x00670768
+    static br_vector4 plane_nx = { {  1.f,  0.f,  0.f, 1.f } };
+    // GLOBAL: CARMA2_HW 0x00670778
+    static br_vector4 plane_py = { {  0.f, -1.f,  0.f, 1.f } };
+    // GLOBAL: CARMA2_HW 0x00670788
+    static br_vector4 plane_ny = { {  0.f,  1.f,  0.f, 1.f } };
+    // GLOBAL: CARMA2_HW 0x00670798
+    static br_vector4 plane_pz = { {  0.f,  0.f, -1.f, 1.f } };
+    // GLOBAL: CARMA2_HW 0x006707a8
+    static br_vector4 plane_nz = { {  0.f,  0.f,  1.f, 1.f } };
 
     brp_vertex cv0[2];
     brp_vertex cv1[2];
@@ -398,47 +407,47 @@ br_boolean C2_HOOK_STDCALL ClipLine(br_soft_renderer* self, brp_vertex* out, brp
     cp_in[1] = *v1;
 
     if (codes & OUTCODE_LEFT) {
-        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_nx), mask)) {
+        if (!ClipLineToPlane(cp_in, cp_out, &plane_nx, mask)) {
             return 0;
         }
         cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
     }
 
     if(codes & OUTCODE_RIGHT) {
-        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_px), mask)) {
+        if (!ClipLineToPlane(cp_in, cp_out, &plane_px, mask)) {
             return 0;
         }
         cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
     }
 
     if (codes & OUTCODE_TOP) {
-        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_py), mask)) {
+        if (!ClipLineToPlane(cp_in, cp_out, &plane_py, mask)) {
             return 0;
         }
         cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
     }
 
     if (codes & OUTCODE_BOTTOM) {
-        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_ny), mask)) {
+        if (!ClipLineToPlane(cp_in, cp_out, &plane_ny, mask)) {
             return 0;
         }
         cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
     }
 
     if(codes & OUTCODE_HITHER) {
-        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_pz), mask)) {
+        if (!ClipLineToPlane(cp_in, cp_out, &plane_pz, mask)) {
             return 0;
         }
         cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
     }
 
     if (codes & OUTCODE_YON) {
-        if (!ClipLineToPlane(cp_in, cp_out, &C2V(plane_nz), mask)) {
+        if (!ClipLineToPlane(cp_in, cp_out, &plane_nz, mask)) {
             return 0;
         }
         cp_tmp = cp_in; cp_in = cp_out; cp_out = cp_tmp;
     }
-    if (C2V(scache).user_clip_active) {
+    if (scache.user_clip_active) {
         for (c = 0; c < MAX_STATE_CLIP_PLANES; c++) {
             if (self->state.clip[c].type != BRT_PLANE) {
                 continue;
@@ -456,8 +465,8 @@ br_boolean C2_HOOK_STDCALL ClipLine(br_soft_renderer* self, brp_vertex* out, brp
     out[1] = cp_in[1];
     return 1;
 }
-C2_HOOK_FUNCTION(0x0054c120, ClipLine)
 
+// FUNCTION: CARMA2_HW 0x0054c320
 void C2_HOOK_STDCALL ClippedRenderLine(br_soft_renderer* renderer, brp_block* block, brp_vertex* cp_in) {
     int i;
     brp_vertex* tvp;
@@ -469,4 +478,3 @@ void C2_HOOK_STDCALL ClippedRenderLine(br_soft_renderer* renderer, brp_block* bl
 
     block->render(block, &cp_in[0], &cp_in[1]);
 }
-C2_HOOK_FUNCTION(0x0054c320, ClippedRenderLine)

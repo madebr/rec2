@@ -32,52 +32,118 @@
 #define DR_DPRINTF(...)
 #endif
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_spec_index, 0x00662200, 1);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDefault_data_index, 0x00662204, 1);
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tGraf_spec, gGraf_specs, 2, 0x00662208, {
+// GLOBAL: CARMA2_HW 0x00662200
+int gDefault_spec_index = 1;
+
+// GLOBAL: CARMA2_HW 0x00662204
+int gDefault_data_index = 1;
+
+// GLOBAL: CARMA2_HW 0x00662208
+tGraf_spec gGraf_specs[2] = {
     { 8, 1, 0, 320, 200, 0, 0, "32X20X8", "320x200 init string", 320, 320, 200, 0 },
     { 8, 1, 0, 640, 480, 0, 0, "64X48X8", "640x480 init string", 640, 640, 480, 0 },
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gGraf_spec_index, 0x00762324);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNbPixelBits, 0x0074ca60);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gUnknown_int_0074ca94, 0x0074ca94);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gUnknown_int_0074cf48, 0x0074cf48);
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gFatalErrorMessage, 512, 0x006acc88);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gIsFatalError, 0x006ad498);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gExit_code, 0x006ad494);
+// GLOBAL: CARMA2_HW 0x00762324
+int gGraf_spec_index;
 
-C2_HOOK_VARIABLE_IMPLEMENT(void*, gHWnd, 0x006ad4c8);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gWindowActiveState, 0x006621e0, 2); // FIXME: enum: 0, 1 or 2
+// GLOBAL: CARMA2_HW 0x0074ca60
+int gNbPixelBits;
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gWindowMovingResizing, 0x006ad4d0);
-C2_HOOK_VARIABLE_IMPLEMENT(LPDIRECTINPUTDEVICEA, gDirectInputDevice, 0x006acea0);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(char*, gRenderer, 0x006621dc, "3DFX_WIN");
-C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseLButtonDown, 0x006ad488);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseRButtonDown, 0x006ad48c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gMouseCaptured, 0x006ad490);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(POINT, gCursorPos_LastClick, 0x006621d4, {-1,-1});
-C2_HOOK_VARIABLE_IMPLEMENT(POINT, gPD_mouse_position, 0x006ad458);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCursorPos_LastClick_Valid, 0x006ad454);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gScaleMouse, 0x006ad468);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gScreenWidth, 0x006ad460);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gScreenHeight, 0x006ad464);
+// GLOBAL: CARMA2_HW 0x0074ca94
+int gUnknown_int_0074ca94;
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gKeyboardBufferLength, 0x006ad4b0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gKeyboardBuffer, 20, 0x006ace88);
+// GLOBAL: CARMA2_HW 0x0074cf48
+int gUnknown_int_0074cf48;
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gPerformanceCounterInitialized, 0x006acc70);
-C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterStart, 0x006acc80);
-C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_s, 0x006acc68);
-C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_ms, 0x006ad1f0);
-C2_HOOK_VARIABLE_IMPLEMENT(LARGE_INTEGER, gPerformanceCounterFrequency_us, 0x006ac858);
 
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTime_app_activated, 0x006ad49c);
+// GLOBAL: CARMA2_HW 0x006acc88
+char gFatalErrorMessage[512];
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_diaghandler, gPD_error_handler, 0x006aceb0);
+// GLOBAL: CARMA2_HW 0x006ad498
+int gIsFatalError;
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gExtendedAsciiToNormalAscii, 128, 0x00662150, {
+// GLOBAL: CARMA2_HW 0x006ad494
+int gExit_code;
+
+
+// GLOBAL: CARMA2_HW 0x006ad4c8
+void* gHWnd;
+
+// GLOBAL: CARMA2_HW 0x006621e0
+int gWindowActiveState = 2; // FIXME: enum: 0, 1 or 2
+
+
+// GLOBAL: CARMA2_HW 0x006ad4d0
+int gWindowMovingResizing;
+
+// GLOBAL: CARMA2_HW 0x006acea0
+LPDIRECTINPUTDEVICEA gDirectInputDevice;
+
+// GLOBAL: CARMA2_HW 0x006621dc
+char* gRenderer = "3DFX_WIN";
+
+// GLOBAL: CARMA2_HW 0x006ad488
+int gMouseLButtonDown;
+
+// GLOBAL: CARMA2_HW 0x006ad48c
+int gMouseRButtonDown;
+
+// GLOBAL: CARMA2_HW 0x006ad490
+int gMouseCaptured;
+
+// GLOBAL: CARMA2_HW 0x006621d4
+POINT gCursorPos_LastClick = {-1,-1};
+
+// GLOBAL: CARMA2_HW 0x006ad458
+POINT gPD_mouse_position;
+
+// GLOBAL: CARMA2_HW 0x006ad454
+int gCursorPos_LastClick_Valid;
+
+// GLOBAL: CARMA2_HW 0x006ad468
+int gScaleMouse;
+
+// GLOBAL: CARMA2_HW 0x006ad460
+int gScreenWidth;
+
+// GLOBAL: CARMA2_HW 0x006ad464
+int gScreenHeight;
+
+
+// GLOBAL: CARMA2_HW 0x006ad4b0
+int gKeyboardBufferLength;
+
+// GLOBAL: CARMA2_HW 0x006ace88
+char gKeyboardBuffer[20];
+
+
+// GLOBAL: CARMA2_HW 0x006acc70
+int gPerformanceCounterInitialized;
+
+// GLOBAL: CARMA2_HW 0x006acc80
+LARGE_INTEGER gPerformanceCounterStart;
+
+// GLOBAL: CARMA2_HW 0x006acc68
+LARGE_INTEGER gPerformanceCounterFrequency_s;
+
+// GLOBAL: CARMA2_HW 0x006ad1f0
+LARGE_INTEGER gPerformanceCounterFrequency_ms;
+
+// GLOBAL: CARMA2_HW 0x006ac858
+LARGE_INTEGER gPerformanceCounterFrequency_us;
+
+
+// GLOBAL: CARMA2_HW 0x006ad49c
+tU32 gTime_app_activated;
+
+
+// GLOBAL: CARMA2_HW 0x006aceb0
+br_diaghandler gPD_error_handler;
+
+// GLOBAL: CARMA2_HW 0x00662150
+char gExtendedAsciiToNormalAscii[128] = {
     ' ', ' ',  ' ',  ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
     ' ', '\'', '\'', ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
     ' ', '~',  'c',  '$', '*',  'Y', '|', ' ', '"', 'c', 'a', '<', '-', '-', 'R', '-',
@@ -86,27 +152,40 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(char, gExtendedAsciiToNormalAscii, 128, 0x
     'D', '}',  'O',  'O', 'O',  'O', 'O', 'x', '0', 'U', 'U', 'U', 'U', 'Y', 'b', 'B',
     'a', 'a',  'a',  'a', 'a',  'a', 'a', 'C', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
     'd', '}',  'o',  'o', 'o',  'o', 'o', '/', '0', 'u', 'u', 'u', 'u', 'y', 'b', 'y',
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gWin32ActionReplayBufferAllocated, 0x006ad4d4);
-C2_HOOK_VARIABLE_IMPLEMENT(void*, gPDActionReplayBuffer, 0x006ad470);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gPDActionReplayBufferSize, 0x006ad474);
-C2_HOOK_VARIABLE_IMPLEMENT(HPALETTE, gPDPalette, 0x006ad46c);
 
-C2_HOOK_VARIABLE_IMPLEMENT(SYSTEM_INFO, gSystem_info, 0x0079ea84);
-C2_HOOK_VARIABLE_IMPLEMENT(DWORD, gPage_size, 0x0068c830);
+// GLOBAL: CARMA2_HW 0x006ad4d4
+int gWin32ActionReplayBufferAllocated;
+
+// GLOBAL: CARMA2_HW 0x006ad470
+void* gPDActionReplayBuffer;
+
+// GLOBAL: CARMA2_HW 0x006ad474
+int gPDActionReplayBufferSize;
+
+// GLOBAL: CARMA2_HW 0x006ad46c
+HPALETTE gPDPalette;
+
+
+// GLOBAL: CARMA2_HW 0x0079ea84
+SYSTEM_INFO gSystem_info;
+
+// GLOBAL: CARMA2_HW 0x0068c830
+DWORD gPage_size;
 
 #define Win32AllocateActionReplayBuffer PDReallyAllocateActionReplayBuffer
 
+// FUNCTION: CARMA2_HW 0x0051b810
 void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
     MEMORYSTATUS memory_status;
     unsigned int bufferSize;
     void *buffer;
 
-    if (C2V(gWin32ActionReplayBufferAllocated)) {
+    if (gWin32ActionReplayBufferAllocated) {
         return;
     }
-    C2V(gWin32ActionReplayBufferAllocated) = 1;
+    gWin32ActionReplayBufferAllocated = 1;
     memory_status.dwLength = sizeof(memory_status);
     GlobalMemoryStatus(&memory_status);
     dr_dprintf("Win32AllocateActionReplayBuffer(): Memory Status BEFORE Action Replay Allocation:\n"
@@ -150,11 +229,11 @@ void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
         }
         bufferSize -= 0x10000;
     }
-    C2V(gPDActionReplayBuffer) = buffer;
+    gPDActionReplayBuffer = buffer;
     if (buffer == NULL) {
-        C2V(gPDActionReplayBufferSize) = 0;
+        gPDActionReplayBufferSize = 0;
     } else {
-        C2V(gPDActionReplayBufferSize) = bufferSize;
+        gPDActionReplayBufferSize = bufferSize;
         Sleep(1000);
     }
     dr_dprintf("Win32AllocateActionReplayBuffer(): Actually allocated %d bytes.", bufferSize);
@@ -177,31 +256,30 @@ void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
                memory_status.dwTotalVirtual,
                memory_status.dwAvailVirtual);
 }
-C2_HOOK_FUNCTION(0x0051b810, Win32AllocateActionReplayBuffer)
 
+// FUNCTION: CARMA2_HW 0x0051b9f0
 void C2_HOOK_FASTCALL PDInitialiseSystem(void) {
-    C2V(gBack_screen) = NULL;
-    C2V(gScreen) = NULL;
+    gBack_screen = NULL;
+    gScreen = NULL;
     ShowCursor(FALSE);
     KeyBegin();
     Win32InitInputDevice();
 }
-C2_HOOK_FUNCTION(0x0051b9f0, PDInitialiseSystem)
 
+// FUNCTION: CARMA2_HW 0x0051c6f0
 void C2_HOOK_FASTCALL PDSetFileVariables(void) {
-    C2V(gDir_separator) = "\\";
+    gDir_separator = "\\";
 }
-C2_HOOK_FUNCTION(0x0051c6f0, PDSetFileVariables)
 
+// FUNCTION: CARMA2_HW 0x0051c700
 void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path) {
     GetCurrentDirectoryA(253, pThe_path);
     GetShortPathNameA(pThe_path, pThe_path, 253);
     strcat(pThe_path, "\\");
     dr_dprintf("Application path '%s'", pThe_path);
 }
-C2_HOOK_FUNCTION(0x0051c700, PDBuildAppPath)
 
-void (C2_HOOK_FASTCALL * PDFatalError_original)(const char* pThe_str);
+// FUNCTION: CARMA2_HW 0x0051af20
 void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
 #if 0 //defined(C2_HOOKS_ENABLED)
     PDFatalError_original(pThe_str);
@@ -210,47 +288,46 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
     if (pThe_str == NULL) {
         pThe_str = "NULL str1";
     }
-    C2V(gIsFatalError) = 1;
-    sprintf(C2V(gFatalErrorMessage), "%s\n%s", pThe_str, "");
+    gIsFatalError = 1;
+    sprintf(gFatalErrorMessage, "%s\n%s", pThe_str, "");
 
-    C2V(gExit_code) = 700;
-    if (C2V(gBack_screen) != NULL) {
-        if (C2V(gBack_screen)->pixels != NULL) {
-            C2V(gExit_code) = 700;
+    gExit_code = 700;
+    if (gBack_screen != NULL) {
+        if (gBack_screen->pixels != NULL) {
+            gExit_code = 700;
             PDUnlockRealBackScreen();
         }
     }
-    if (C2V(gBr_initialized)) {
+    if (gBr_initialized) {
         DRBrEnd();
     }
     PDShutdownSystem();
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051af20, PDFatalError, PDFatalError_original)
 
+// FUNCTION: CARMA2_HW 0x0051afb0
 void C2_HOOK_FASTCALL PDNonFatalError(const char* pThe_str) {
     dr_dprintf("*** ERROR...");
     dr_dprintf(pThe_str);
 }
-C2_HOOK_FUNCTION(0x0051afb0, PDNonFatalError)
 
+// FUNCTION: CARMA2_HW 0x0051afd0
 int C2_HOOK_FASTCALL PDIsWindowInactive(void) {
-    return C2V(gWindowActiveState) == 1;
+    return gWindowActiveState == 1;
 }
-C2_HOOK_FUNCTION(0x0051afd0, PDIsWindowInactive)
 
+// FUNCTION: CARMA2_HW 0x0051afe0
 char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
     if ((unsigned char)pChar > 0x7f) {
-        char c = C2V(gExtendedAsciiToNormalAscii)[(unsigned char)pChar - 128];
+        char c = gExtendedAsciiToNormalAscii[(unsigned char)pChar - 128];
         dr_dprintf("PDConvertToASCIILessThan128() Returning %d", c);
         return c;
     }
     dr_dprintf("PDConvertToASCIILessThan128() Returning %d", pChar);
     return pChar;
 }
-C2_HOOK_FUNCTION(0x0051afe0, PDConvertToASCIILessThan128)
 
-int (C2_HOOK_FASTCALL * PDGetKeyboardCharacter_original)(void);
+// FUNCTION: CARMA2_HW 0x0051b040
 int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -258,21 +335,20 @@ int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
 #else
     int key;
     Win32ServiceMessages();
-    if (C2V(gKeyboardBufferLength) == 0) {
+    if (gKeyboardBufferLength == 0) {
         return 0;
     }
-    key = C2V(gKeyboardBuffer)[0];
-    if (C2V(gKeyboardBufferLength) > 1) {
-        c2_memmove(&C2V(gKeyboardBuffer)[1], &C2V(gKeyboardBuffer)[0], C2V(gKeyboardBufferLength) - 1);
+    key = gKeyboardBuffer[0];
+    if (gKeyboardBufferLength > 1) {
+        c2_memmove(&gKeyboardBuffer[1], &gKeyboardBuffer[0], gKeyboardBufferLength - 1);
     }
-    C2V(gKeyboardBufferLength) -= 1;
+    gKeyboardBufferLength -= 1;
     dr_dprintf("KEY RETURNED %d", key);
     return key;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051b040, PDGetKeyboardCharacter, PDGetKeyboardCharacter_original)
 
-void (C2_HOOK_FASTCALL * PDClearKeyboardBuffer_original)(void);
+// FUNCTION: CARMA2_HW 0x0051b0a0
 void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -280,80 +356,80 @@ void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void) {
 #else
 
     dr_dprintf("KEYBOARD BUFFER CLEARED");
-    C2V(gKeyboardBufferLength) = 0;
+    gKeyboardBufferLength = 0;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051b0a0, PDClearKeyboardBuffer, PDClearKeyboardBuffer_original)
 
-C2_NORETURN_FUNCPTR void (C2_HOOK_FASTCALL * PDShutdownSystem_original)(void);
+// FUNCTION: CARMA2_HW 0x0051c110
 C2_NORETURN void C2_HOOK_FASTCALL PDShutdownSystem(void) {
 #if 0//defined(C2_HOOKS_ENABLED)
     PDShutdownSystem_original();
 #else
-    static C2_HOOK_VARIABLE_IMPLEMENT(int, been_here, 0x006ad4d8);
+    // GLOBAL: CARMA2_HW 0x006ad4d8
+    static int been_here;
 
-    C2V(gBack_screen) = NULL;
-    if (C2V(been_here)) {
+    gBack_screen = NULL;
+    if (been_here) {
         CloseGlobalPackedFile();
         ExitProcess(702);
     } else {
-        C2V(been_here) = 1;
+        been_here = 1;
         dr_dprintf("PDShutdownSystem()");
         SSDXStop();
         SSDXRelease();
         CloseDirectInput();
         ShowCursor(TRUE);
-        if (C2V(gHWnd) != NULL) {
+        if (gHWnd != NULL) {
             dr_dprintf("Resizing main window...");
-            SetWindowPos(C2V(gHWnd), NULL, -100, -100, 64, 64, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
+            SetWindowPos(gHWnd, NULL, -100, -100, 64, 64, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
         }
         dr_dprintf("Servicing messages...");
         Win32ServiceMessages();
         dr_dprintf("Sending WM_SHOWWINDOW broadcast message...");
         SendMessageA(HWND_BROADCAST, WM_SHOWWINDOW, TRUE, 0);
-        if (C2V(gIsFatalError)) {
+        if (gIsFatalError) {
             dr_dprintf("Displaying fatal error...");
-            MessageBoxA(NULL, C2V(gFatalErrorMessage), "Carmageddon Fatal error", MB_ICONERROR);
+            MessageBoxA(NULL, gFatalErrorMessage, "Carmageddon Fatal error", MB_ICONERROR);
         }
-        if (C2V(gHWnd) != NULL) {
+        if (gHWnd != NULL) {
             dr_dprintf("Destroying window...");
-            DestroyWindow(C2V(gHWnd));
-            C2V(gHWnd) = NULL;
+            DestroyWindow(gHWnd);
+            gHWnd = NULL;
         }
         dr_dprintf("End of PDShutdownSystem()");
         CloseDiagnostics();
         CloseGlobalPackedFile();
-        ExitProcess(C2V(gExit_code));
+        ExitProcess(gExit_code);
     }
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051c110, PDShutdownSystem, PDShutdownSystem_original)
 
+// FUNCTION: CARMA2_HW 0x0051c2e0
 void C2_HOOK_FASTCALL PDLockRealBackScreen(void) {
 }
-C2_HOOK_FUNCTION(0x0051c2e0, PDLockRealBackScreen)
 
+// FUNCTION: CARMA2_HW 0x0051c2f0
 void C2_HOOK_FASTCALL PDUnlockRealBackScreen(void) {
 }
-C2_HOOK_FUNCTION(0x0051c2f0, PDUnlockRealBackScreen)
 
 void DeActivateApp(void) {
     DR_DPRINTF("DeActivateApp() - START");
-    if (!C2V(gWindowMovingResizing) && C2V(gWindowActiveState) == 2) {
+    if (!gWindowMovingResizing && gWindowActiveState == 2) {
         DR_DPRINTF("DeActivateApp() - deactivating app");
-        C2V(gWindowMovingResizing) = 1;
-        if (C2V(gDirectInputDevice) != NULL) {
-            IDirectInputDevice_Unacquire(C2V(gDirectInputDevice));
+        gWindowMovingResizing = 1;
+        if (gDirectInputDevice != NULL) {
+            IDirectInputDevice_Unacquire(gDirectInputDevice);
         }
-        if (C2V(gHWnd) != NULL) {
-            SetWindowPos(C2V(gHWnd), NULL, 0, 0, 0, 0, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
+        if (gHWnd != NULL) {
+            SetWindowPos(gHWnd, NULL, 0, 0, 0, 0, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
         }
-        C2V(gWindowActiveState) = (strcmp(C2V(gRenderer), "D3D") == 0) ? 0 : 1;
-        C2V(gWindowMovingResizing) = 0;
+        gWindowActiveState = (strcmp(gRenderer, "D3D") == 0) ? 0 : 1;
+        gWindowMovingResizing = 0;
     }
-    DR_DPRINTF("DeActivateApp() - END; active state now %d", C2V(gWindowActiveState));
+    DR_DPRINTF("DeActivateApp() - END; active state now %d", gWindowActiveState);
 }
 
+// FUNCTION: CARMA2_HW 0x0051b0c0
 LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     PAINTSTRUCT paint;
     POINT point;
@@ -378,87 +454,87 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 #endif
     case WM_SYSCOMMAND:
         if (GET_SC_WPARAM(wParam) == SC_CLOSE) {
-            DestroyWindow(C2V(gHWnd));
-            C2V(gHWnd) = NULL;
+            DestroyWindow(gHWnd);
+            gHWnd = NULL;
             PDShutdownSystem();
             return 0;
         }
         break;
     case WM_LBUTTONDOWN:
-        C2V(gMouseLButtonDown) = C2V(gWindowActiveState) == 2 ? 1 : 0;
-        if (!C2V(gMouseCaptured) && C2V(gWindowActiveState) == 2) {
-            SetCapture(C2V(gHWnd));
-            C2V(gMouseCaptured) = 1;
+        gMouseLButtonDown = gWindowActiveState == 2 ? 1 : 0;
+        if (!gMouseCaptured && gWindowActiveState == 2) {
+            SetCapture(gHWnd);
+            gMouseCaptured = 1;
         }
         break;
     case WM_LBUTTONUP:
-        C2V(gMouseLButtonDown) = 0;
-        if (C2V(gMouseCaptured)) {
+        gMouseLButtonDown = 0;
+        if (gMouseCaptured) {
             ReleaseCapture();
-            C2V(gMouseCaptured) = 0;
+            gMouseCaptured = 0;
         }
         break;
     case WM_LBUTTONDBLCLK:
     case WM_RBUTTONDBLCLK:
-        if (C2V(gWindowActiveState) != 2) {
-            C2V(gCursorPos_LastClick) = C2V(gPD_mouse_position);
-            C2V(gCursorPos_LastClick_Valid) = 1;
+        if (gWindowActiveState != 2) {
+            gCursorPos_LastClick = gPD_mouse_position;
+            gCursorPos_LastClick_Valid = 1;
             break;
         }
         GetCursorPos(&point);
-        if (!C2V(gScaleMouse) || strcmp(C2V(gRenderer), "D3D") == 0) {
-            ScreenToClient(C2V(gHWnd), &point);
-            C2V(gPD_mouse_position) = C2V(gCursorPos_LastClick) = point;
+        if (!gScaleMouse || strcmp(gRenderer, "D3D") == 0) {
+            ScreenToClient(gHWnd, &point);
+            gPD_mouse_position = gCursorPos_LastClick = point;
         } else {
-            C2V(gPD_mouse_position).x = C2V(gCursorPos_LastClick).x = (int)((double)point.x / (C2V(gScreenWidth) / 640.));
-            C2V(gPD_mouse_position).y = C2V(gCursorPos_LastClick).y = (int)((double)point.y / (C2V(gScreenHeight) / 480.));
+            gPD_mouse_position.x = gCursorPos_LastClick.x = (int)((double)point.x / (gScreenWidth / 640.));
+            gPD_mouse_position.y = gCursorPos_LastClick.y = (int)((double)point.y / (gScreenHeight / 480.));
         }
-        C2V(gCursorPos_LastClick_Valid) = 1;
+        gCursorPos_LastClick_Valid = 1;
         break;
     case WM_RBUTTONDOWN:
-        C2V(gMouseRButtonDown) = C2V(gWindowActiveState) == 2 ? 1 : 0;
-        if (!C2V(gMouseCaptured) && C2V(gWindowActiveState) == 2) {
-            SetCapture(C2V(gHWnd));
-            C2V(gMouseCaptured) = 1;
+        gMouseRButtonDown = gWindowActiveState == 2 ? 1 : 0;
+        if (!gMouseCaptured && gWindowActiveState == 2) {
+            SetCapture(gHWnd);
+            gMouseCaptured = 1;
         }
         break;
     case WM_RBUTTONUP:
-        C2V(gMouseRButtonDown) = 0;
-        if (C2V(gMouseCaptured)) {
+        gMouseRButtonDown = 0;
+        if (gMouseCaptured) {
             ReleaseCapture();
-            C2V(gMouseCaptured) = 0;
+            gMouseCaptured = 0;
         }
         break;
     case WM_CHAR:
         if (0x1f < (char)wParam  && (char)wParam != 0x7f) {
-            if (C2V(gKeyboardBufferLength) >= REC2_ASIZE(C2V(gKeyboardBuffer))) {
-                memmove(C2V(gKeyboardBuffer), &C2V(gKeyboardBuffer)[1], REC2_ASIZE(C2V(gKeyboardBuffer)) - 1);
-                C2V(gKeyboardBufferLength) = REC2_ASIZE(C2V(gKeyboardBuffer)) - 1;
+            if (gKeyboardBufferLength >= REC2_ASIZE(gKeyboardBuffer)) {
+                memmove(gKeyboardBuffer, &gKeyboardBuffer[1], REC2_ASIZE(gKeyboardBuffer) - 1);
+                gKeyboardBufferLength = REC2_ASIZE(gKeyboardBuffer) - 1;
             }
-            C2V(gKeyboardBuffer)[C2V(gKeyboardBufferLength)] = (char)wParam;
-            C2V(gKeyboardBufferLength)++;
-            strncpy(buffer, C2V(gKeyboardBuffer), C2V(gKeyboardBufferLength));
-            buffer[C2V(gKeyboardBufferLength)] = '\0';
+            gKeyboardBuffer[gKeyboardBufferLength] = (char)wParam;
+            gKeyboardBufferLength++;
+            strncpy(buffer, gKeyboardBuffer, gKeyboardBufferLength);
+            buffer[gKeyboardBufferLength] = '\0';
             DR_DPRINTF("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
         }
         break;
 #if !defined(KEEP_ACTIVE_IN_BACKGROUND)
     case WM_ACTIVATEAPP:
         DR_DPRINTF("WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
-                   wParam, lParam, GetForegroundWindow(), C2V(gHWnd), hWnd, IsIconic(C2V(gHWnd)));
-        if (C2V(gHWnd) != NULL) {
-            if (GetForegroundWindow() == C2V(gHWnd) && !IsIconic(C2V(gHWnd))) {
+                   wParam, lParam, GetForegroundWindow(), gHWnd, hWnd, IsIconic(gHWnd));
+        if (gHWnd != NULL) {
+            if (GetForegroundWindow() == gHWnd && !IsIconic(gHWnd)) {
                 DR_DPRINTF("Activating app");
-                if (C2V(gDirectInputDevice) != NULL) {
-                    IDirectInputDevice_Acquire(C2V(gDirectInputDevice));
+                if (gDirectInputDevice != NULL) {
+                    IDirectInputDevice_Acquire(gDirectInputDevice);
                 }
-                if (C2V(gHWnd) != NULL && C2V(gScreenWidth) != 0) {
-                    SetWindowPos(C2V(gHWnd), NULL, 0, 0, C2V(gScreenWidth), C2V(gScreenHeight), SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
+                if (gHWnd != NULL && gScreenWidth != 0) {
+                    SetWindowPos(gHWnd, NULL, 0, 0, gScreenWidth, gScreenHeight, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
                 }
-                C2V(gWindowActiveState) = 2;
-                C2V(gTime_app_activated) = PDGetTotalTime();
+                gWindowActiveState = 2;
+                gTime_app_activated = PDGetTotalTime();
             } else {
-                if (C2V(gBack_screen) != NULL && C2V(gBack_screen)->pixels != NULL) {
+                if (gBack_screen != NULL && gBack_screen->pixels != NULL) {
                     return 1;
                 }
                 DeActivateApp();
@@ -472,27 +548,27 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
     LRESULT res = DefWindowProcA(hWnd, uMsg, wParam, lParam);
     return res;
 }
-C2_HOOK_FUNCTION(0x0051b0c0, Carma2MainWndProc)
 
+// FUNCTION: CARMA2_HW 0x0051cab0
 int C2_HOOK_FASTCALL PDGetASCIIFromKey(int pKey) {
 
     if (PDKeyDown(0)) {
-        return C2V(gASCII_shift_table)[pKey];
+        return gASCII_shift_table[pKey];
     } else {
-        return C2V(gASCII_table)[pKey];
+        return gASCII_table[pKey];
     }
 }
-C2_HOOK_FUNCTION(0x0051cab0, PDGetASCIIFromKey)
 
+// FUNCTION: CARMA2_HW 0x0051cad0
 void C2_HOOK_CDECL Win32ServiceMessages(void) {
     MSG msg;
     DR_DPRINTF("Win32ServiceMessages() - START");
     while (1) {
-        if (C2V(gWindowActiveState) == 1) {
-            SetForegroundWindow(C2V(gHWnd));
+        if (gWindowActiveState == 1) {
+            SetForegroundWindow(gHWnd);
         }
 
-        if (C2V(gWindowActiveState) == 0) {
+        if (gWindowActiveState == 0) {
             if (GetMessageA(&msg, NULL, 0, 0) == -1) {
                 DR_DPRINTF("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
                 break;
@@ -502,7 +578,7 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
                 DR_DPRINTF("Win32ServiceMessages() - breaking cos PeekMessage() returned 0");
                 break;
             }
-            if (C2V(gWindowActiveState) == 0) {
+            if (gWindowActiveState == 0) {
                 if (GetMessageA(&msg, NULL, 0, 0) == -1) {
                     DR_DPRINTF("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
                     break;
@@ -511,7 +587,7 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
         }
         if (msg.message == WM_QUIT) {
             DR_DPRINTF("WM_QUIT received.");
-            if (C2V(gWindowActiveState) == 2) {
+            if (gWindowActiveState == 2) {
                 DR_DPRINTF("Active, so lock the surface");
                 DR_DPRINTF("QuitGame being called...");
                 QuitGame();
@@ -524,9 +600,8 @@ void C2_HOOK_CDECL Win32ServiceMessages(void) {
     }
     DR_DPRINTF("Win32ServiceMessages() - END");
 }
-C2_HOOK_FUNCTION(0x0051cad0, Win32ServiceMessages)
 
-int (C2_HOOK_FASTCALL * PDCheckDriveExists2_original)(const char* pThe_path, const char* pFile_name, tU32 pMin_size);
+// FUNCTION: CARMA2_HW 0x0051d500
 int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFile_name, tU32 pMin_size) {
 #if 0 // defined(C2_HOOKS_ENABLED)
     fprintf(stderr, "PDCheckDriveExists2_original=%p\n", PDCheckDriveExists2_original);
@@ -544,7 +619,7 @@ int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFil
         strcpy(the_path, pThe_path);
     }
     if (the_path[0] && the_path[1] == ':' && the_path[2] == '\0') {
-        strcat(the_path, C2V(gDir_separator));
+        strcat(the_path, gDir_separator);
     }
     if (GetFileAttributesA(pThe_path) == INVALID_FILE_ATTRIBUTES) {
         return 0;
@@ -557,8 +632,8 @@ int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFil
     return file_size >= pMin_size;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051d500, PDCheckDriveExists2, PDCheckDriveExists2_original)
 
+// FUNCTION: CARMA2_HW 0x004910d0
 int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
     HKEY hKey;
     LSTATUS status;
@@ -578,15 +653,14 @@ int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004910d0, PDReadSourceLocation)
 
 
+// FUNCTION: CARMA2_HW 0x0051d600
 int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void) {
     return 0;
 }
-C2_HOOK_FUNCTION(0x0051d600, PDDoWeLeadAnAustereExistance)
 
-void (C2_HOOK_FASTCALL * PDSetPaletteEntries_original)(br_pixelmap* pPalette, int pFirst_colour, int pCount);
+// FUNCTION: CARMA2_HW 0x0051c850
 void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount) {
 
 #if 0//defined(C2_HOOKS_ENABLED)
@@ -605,75 +679,73 @@ void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colo
         colours[i].peGreen = c >> 8;
         colours[i].peBlue = c >> 0;
     }
-    SetPaletteEntries(C2V(gPDPalette), pFirst_colour, pCount, colours);
-    BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gBack_screen));
+    SetPaletteEntries(gPDPalette, pFirst_colour, pCount, colours);
+    BrPixelmapDoubleBuffer(gScreen, gBack_screen);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051c850, PDSetPaletteEntries, PDSetPaletteEntries_original)
 
+// FUNCTION: CARMA2_HW 0x0051c840
 void C2_HOOK_FASTCALL PDSetPalette(br_pixelmap *pixelmap) {
-    BrPixelmapPaletteSet(C2V(gScreen), pixelmap);
+    BrPixelmapPaletteSet(gScreen, pixelmap);
 }
-C2_HOOK_FUNCTION(0x0051c840, PDSetPalette)
 
+// FUNCTION: CARMA2_HW 0x0051cbe0
 int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call) {
 
     Win32ServiceMessages();
     return 0;
 }
-C2_HOOK_FUNCTION(0x0051cbe0, PDServiceSystem)
 
+// FUNCTION: CARMA2_HW 0x0051c520
 void C2_HOOK_FASTCALL PDScreenBufferSwap(int pRendering_area_only) {
-    BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gBack_screen));
+    BrPixelmapDoubleBuffer(gScreen, gBack_screen);
 }
-C2_HOOK_FUNCTION(0x0051c520, PDScreenBufferSwap)
 
+// FUNCTION: CARMA2_HW 0x0051d7c0
 void C2_HOOK_FASTCALL PDInitTimer(void) {
     LARGE_INTEGER freq;
     LARGE_INTEGER current_count;
 
 
-    C2V(gPerformanceCounterInitialized) = 0;
+    gPerformanceCounterInitialized = 0;
     if (QueryPerformanceFrequency(&freq) != 0) {
-        C2V(gPerformanceCounterInitialized) = 1;
-        C2V(gPerformanceCounterFrequency_s) = freq;
+        gPerformanceCounterInitialized = 1;
+        gPerformanceCounterFrequency_s = freq;
         QueryPerformanceCounter(&current_count);
-        C2V(gPerformanceCounterStart) = current_count;
-        C2V(gPerformanceCounterFrequency_ms).QuadPart = C2V(gPerformanceCounterFrequency_s).QuadPart / 1000;
-        C2V(gPerformanceCounterFrequency_us).QuadPart = C2V(gPerformanceCounterFrequency_s).QuadPart / 1000000;
+        gPerformanceCounterStart = current_count;
+        gPerformanceCounterFrequency_ms.QuadPart = gPerformanceCounterFrequency_s.QuadPart / 1000;
+        gPerformanceCounterFrequency_us.QuadPart = gPerformanceCounterFrequency_s.QuadPart / 1000000;
     }
 }
-C2_HOOK_FUNCTION(0x0051d7c0, PDInitTimer)
 
-tU32 (C2_HOOK_FASTCALL * PDGetTotalTime_original)(void);
+// FUNCTION: CARMA2_HW 0x0051d410
 tU32 C2_HOOK_FASTCALL PDGetTotalTime(void) {
 #if 0 //defined(C2_HOOKS_ENABLED)
     return PDGetTotalTime_original();
 #else
-    if (C2V(gPerformanceCounterInitialized)) {
+    if (gPerformanceCounterInitialized) {
         LARGE_INTEGER perfCountValue;
         QueryPerformanceCounter(&perfCountValue);
-        return (tU32)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_ms).QuadPart);
+        return (tU32)((perfCountValue.QuadPart - gPerformanceCounterStart.QuadPart) / gPerformanceCounterFrequency_ms.QuadPart);
     }
     return 0;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051d410, PDGetTotalTime, PDGetTotalTime_original)
 
+// FUNCTION: CARMA2_HW 0x0051d990
 int C2_HOOK_FASTCALL PDGetMicroseconds(void) {
 #if 0 //defined(C2_HOOKS_ENABLED)
     return PDGetTotalTime_original();
 #else
-    if (C2V(gPerformanceCounterInitialized)) {
+    if (gPerformanceCounterInitialized) {
         LARGE_INTEGER perfCountValue;
         QueryPerformanceCounter(&perfCountValue);
         // Is it okay to convert unsigned to int here?
-        return (int)((perfCountValue.QuadPart - C2V(gPerformanceCounterStart).QuadPart) / C2V(gPerformanceCounterFrequency_us).QuadPart);
+        return (int)((perfCountValue.QuadPart - gPerformanceCounterStart.QuadPart) / gPerformanceCounterFrequency_us.QuadPart);
     }
     return 0;
 #endif
 }
-C2_HOOK_FUNCTION(0x0051d990, PDGetMicroseconds)
 
 void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
 
@@ -683,6 +755,7 @@ void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
     ShowCursor(0);
 }
 
+// FUNCTION: CARMA2_HW 0x0051d4b0
 int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path) {
     DWORD dwAttributes;
 
@@ -692,8 +765,8 @@ int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x0051d4b0, PDFileUnlock)
 
+// FUNCTION: CARMA2_HW 0x00486c30
 void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
     char originalCurrentDirectory[MAX_PATH];
     tPath_name filePath;
@@ -735,8 +808,8 @@ void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, 
     }
     SetCurrentDirectoryA(originalCurrentDirectory);
 }
-C2_HOOK_FUNCTION(0x00486c30, PDEnumPath)
 
+// FUNCTION: CARMA2_HW 0x00578380
 int C2_HOOK_CDECL IsNetworkShare(const char* path) {
     size_t lenPath;
     const char* pathPtr;
@@ -754,8 +827,8 @@ int C2_HOOK_CDECL IsNetworkShare(const char* path) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00578380, IsNetworkShare)
 
+// FUNCTION: CARMA2_HW 0x00585ee0
 int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
     char drivePath[4];
     UINT driveType;
@@ -770,14 +843,14 @@ int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
     driveType = GetDriveTypeA(drivePath);
     return driveType != DRIVE_UNKNOWN && driveType != DRIVE_NO_ROOT_DIR;
 }
-C2_HOOK_FUNCTION(0x00585ee0, IsValidDriveIndex)
 
+// FUNCTION: CARMA2_HW 0x00486c20
 int C2_HOOK_FASTCALL PDmkdir(const char* path) {
 
     return c2_mkdir(path);
 }
-C2_HOOK_FUNCTION(0x00486c20, PDmkdir)
 
+// FUNCTION: CARMA2_HW 0x0044c9f0
 void C2_HOOK_FASTCALL MAMSUnlock(void** pPtr) {
 
     void* mem = *pPtr;
@@ -787,12 +860,12 @@ void C2_HOOK_FASTCALL MAMSUnlock(void** pPtr) {
     HeapFree(GetProcessHeap(), 0, mem);
     *pPtr = NULL;
 }
-C2_HOOK_FUNCTION(0x0044c9f0, MAMSUnlock)
 
+// FUNCTION: CARMA2_HW 0x0044ca30
 void C2_HOOK_FASTCALL MAMSLock(void** pPtr) {
 }
-C2_HOOK_FUNCTION(0x0044ca30, MAMSLock)
 
+// FUNCTION: CARMA2_HW 0x0051d640
 void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     char found_path[256];
     WIN32_FIND_DATAA find_data;
@@ -824,8 +897,8 @@ void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFi
         SetCurrentDirectoryA(current_dir);
     }
 }
-C2_HOOK_FUNCTION(0x0051d640, PDForEveryFileRecurse)
 
+// FUNCTION: CARMA2_HW 0x0051c760
 void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn pAction_routine) {
     char found_path[256];
     WIN32_FIND_DATAA find_data;
@@ -847,8 +920,8 @@ void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn
         SetCurrentDirectoryA(current_dir);
     }
 }
-C2_HOOK_FUNCTION(0x0051c760, PDForEveryFile)
 
+// FUNCTION: CARMA2_HW 0x0051da20
 void C2_HOOK_FASTCALL PDGetCurrentDate(char* pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
@@ -857,8 +930,8 @@ void C2_HOOK_FASTCALL PDGetCurrentDate(char* pTimeStr) {
     GetDateFormatA(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &time, NULL, buffer, sizeof(buffer));
     strcpy(pTimeStr, buffer);
 }
-C2_HOOK_FUNCTION(0x0051da20, PDGetCurrentDate)
 
+// FUNCTION: CARMA2_HW 0x0051da90
 void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
@@ -870,28 +943,28 @@ void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr) {
     GetTimeFormatA(LOCALE_SYSTEM_DEFAULT, LOCALE_NOUSEROVERRIDE, &time, NULL, buffer, sizeof(buffer));
     strcpy(pTimeStr, buffer);
 }
-C2_HOOK_FUNCTION(0x0051da90, PDGetCurrentTime)
 
+// FUNCTION: CARMA2_HW 0x0051db00
 int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord) {
-    if (!C2V(gCursorPos_LastClick_Valid)) {
-        C2V(gCursorPos_LastClick_Valid) = 0;
+    if (!gCursorPos_LastClick_Valid) {
+        gCursorPos_LastClick_Valid = 0;
         return 0;
     }
-    *pX_coord = C2V(gCursorPos_LastClick).x;
-    *pY_coord = C2V(gCursorPos_LastClick).y;
-    C2V(gCursorPos_LastClick_Valid) = 0;
+    *pX_coord = gCursorPos_LastClick.x;
+    *pY_coord = gCursorPos_LastClick.y;
+    gCursorPos_LastClick_Valid = 0;
     return 1;
 }
-C2_HOOK_FUNCTION(0x0051db00, PDGetMouseClickPosition)
 
+// FUNCTION: CARMA2_HW 0x0051c5f0
 static void C2_HOOK_CDECL OnWarnCallback(char* text) {
 
     dr_dprintf("*******************************************************************************");
     dr_dprintf("BRender WARNING: '%s'", text);
     dr_dprintf("*******************************************************************************");
 }
-C2_HOOK_FUNCTION(0x0051c5f0, OnWarnCallback)
 
+// FUNCTION: CARMA2_HW 0x0051c620
 static void C2_HOOK_CDECL OnErrorCallback(char* text) {
     const char *msg;
 
@@ -905,113 +978,110 @@ static void C2_HOOK_CDECL OnErrorCallback(char* text) {
     if (text == NULL) {
         msg = "NULL str2";
     }
-    C2V(gIsFatalError) = 1;
-    sprintf(C2V(gFatalErrorMessage), "%s\n%s", msg, text);
-    C2V(gExit_code) = 700;
-    if (C2V(gBack_screen) != NULL && C2V(gBack_screen)->pixels != NULL) {
+    gIsFatalError = 1;
+    sprintf(gFatalErrorMessage, "%s\n%s", msg, text);
+    gExit_code = 700;
+    if (gBack_screen != NULL && gBack_screen->pixels != NULL) {
         PossibleUnlock(1);
     }
-    if (C2V(gBr_initialized)) {
+    if (gBr_initialized) {
         DRBrEnd();
     }
     PDShutdownSystem();
 }
-C2_HOOK_FUNCTION(0x0051c620, OnErrorCallback)
 
+// FUNCTION: CARMA2_HW 0x0051c6c0
 void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
 
-    C2V(gPD_error_handler).identifier = "LlantisilioBlahBlahBlahOgOgOch";
-    C2V(gPD_error_handler).warning = OnWarnCallback;
-    C2V(gPD_error_handler).failure = OnErrorCallback;
-    BrDiagHandlerSet(&C2V(gPD_error_handler));
+    gPD_error_handler.identifier = "LlantisilioBlahBlahBlahOgOgOch";
+    gPD_error_handler.warning = OnWarnCallback;
+    gPD_error_handler.failure = OnErrorCallback;
+    BrDiagHandlerSet(&gPD_error_handler);
 }
-C2_HOOK_FUNCTION(0x0051c6c0, PDInstallErrorHandlers)
 
-int (C2_HOOK_FASTCALL* PDInitScreenVars_original)(int pArgc, const char** pArgv);
+// FUNCTION: CARMA2_HW 0x0051c290
 int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char** pArgv) {
 #if 0//defined(C2_HOOKS_ENABLED)
     return PDInitScreenVars_original(pArgc, pArgv);
 #else
-    C2V(gGraf_spec_index) = C2V(gDefault_spec_index);
-    C2V(gGraf_data_index) = C2V(gDefault_data_index);
+    gGraf_spec_index = gDefault_spec_index;
+    gGraf_data_index = gDefault_data_index;
     return 1;
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051c290, PDInitScreenVars, PDInitScreenVars_original)
 
+// FUNCTION: CARMA2_HW 0x0051c270
 void C2_HOOK_FASTCALL PDSaveOriginalPalette(void) {
 
 }
-C2_HOOK_FUNCTION(0x0051c270, PDSaveOriginalPalette)
 
+// FUNCTION: CARMA2_HW 0x0051c2b0
 void C2_HOOK_FASTCALL PDInitScreen(void) {
 
 }
-C2_HOOK_FUNCTION(0x0051c2b0, PDInitScreen)
 
-void (C2_HOOK_FASTCALL * PDAllocateScreenAndBack_original)(void);
+// FUNCTION: CARMA2_HW 0x0051c300
 void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
 
     dr_dprintf("PDAllocateScreenAndBack() - START...");
 
     dr_dprintf("Setting up DirectSound stuff...");
 
-    SSDXStart(C2V(gHWnd), 0, 1, SSDX_InitDirectSound);
+    SSDXStart(gHWnd, 0, 1, SSDX_InitDirectSound);
 
-    C2V(gNbPixelBits) = 16;
-    BrDevBeginVar(&C2V(gScreen), C2V(gRenderer),
+    gNbPixelBits = 16;
+    BrDevBeginVar(&gScreen, gRenderer,
         BRT_WINDOW_FULLSCREEN_B, 1,
-        BRT_WINDOW_HANDLE_H, C2V(gHWnd),
+        BRT_WINDOW_HANDLE_H, gHWnd,
         BRT_WIDTH_I32, 640,
         BRT_HEIGHT_I32, 480,
         BRT_PIXEL_BITS_I32, 16,
         BRT_PIXEL_TYPE_U8, BR_PMT_RGB_565,
         0);
-    if (C2V(gScreen) == NULL) {
+    if (gScreen == NULL) {
         BrFailure("Unable to allocate Main Front Screen");
     }
 
-    if (c2_strcmp(C2V(gScreen)->identifier, "Voodoo Graphics") == 0) {
-        dr_dprintf("%s: lock seldom", C2V(gScreen)->identifier);
+    if (c2_strcmp(gScreen->identifier, "Voodoo Graphics") == 0) {
+        dr_dprintf("%s: lock seldom", gScreen->identifier);
     } else {
-        dr_dprintf("%s: lock often", C2V(gScreen)->identifier);
-        C2V(gScreen_lock_often) = 1;
+        dr_dprintf("%s: lock often", gScreen->identifier);
+        gScreen_lock_often = 1;
     }
-    C2V(gShadow_workaround) = 1; /* Not 100% sure this is shadow related */
-    C2V(gEnable_texture_interpolation) = 1;
-    C2V(gEnable_texture_antialiasing) = 1;
-    C2V(gTexture_power_of_2) = 1;
-    C2V(gUnknown_int_0074ca94) = 8;
-    C2V(gUnknown_int_0074cf48) = 256;
-    C2V(gAdapt_sky_model_for_cockpit) = 1;
-    C2V(gNo_fog) = 1; /* Enables lut for horizon material */
-    C2V(gRenderer_fixup_basename) = "VOODOO";
-    C2V(gRenderer_fixup_extension) = ".TXT";
-    C2V(gNo_render_indent) = 1;
-    C2V(gNo_2d_effects) = 1; /* maybe? */
-    C2V(gEnable_perspective_maps) = 1;
-    C2V(gNoTransients) = 1;
-    C2V(gDevious_2d) = 1;
+    gShadow_workaround = 1; /* Not 100% sure this is shadow related */
+    gEnable_texture_interpolation = 1;
+    gEnable_texture_antialiasing = 1;
+    gTexture_power_of_2 = 1;
+    gUnknown_int_0074ca94 = 8;
+    gUnknown_int_0074cf48 = 256;
+    gAdapt_sky_model_for_cockpit = 1;
+    gNo_fog = 1; /* Enables lut for horizon material */
+    gRenderer_fixup_basename = "VOODOO";
+    gRenderer_fixup_extension = ".TXT";
+    gNo_render_indent = 1;
+    gNo_2d_effects = 1; /* maybe? */
+    gEnable_perspective_maps = 1;
+    gNoTransients = 1;
+    gDevious_2d = 1;
 
-    C2V(gScreen)->origin_x = 0;
-    C2V(gScreen)->origin_y = 0;
-    C2V(gBack_screen) = BrPixelmapMatch(C2V(gScreen), BR_PMMATCH_OFFSCREEN);
-    if (C2V(gBack_screen) == NULL) {
+    gScreen->origin_x = 0;
+    gScreen->origin_y = 0;
+    gBack_screen = BrPixelmapMatch(gScreen, BR_PMMATCH_OFFSCREEN);
+    if (gBack_screen == NULL) {
         BrFailure("Unable to allocate Back Screen");
     }
 
-    C2V(gPixelFlags) = kPixelFlags_unknown_0x4 | (C2V(gNbPixelBits) == 16 ? kPixelFlags_16bbp : 0);
+    gPixelFlags = kPixelFlags_unknown_0x4 | (gNbPixelBits == 16 ? kPixelFlags_16bbp : 0);
 
-    C2V(gDouble_back_screen) = BrPixelmapMatch(C2V(gBack_screen), BR_PMMATCH_OFFSCREEN);
-    C2V(gHas_double_back_screen) = 1;
+    gDouble_back_screen = BrPixelmapMatch(gBack_screen, BR_PMMATCH_OFFSCREEN);
+    gHas_double_back_screen = 1;
 
-    c2_memset(C2V(gBack_screen)->pixels, 0, C2V(gBack_screen)->height * C2V(gBack_screen)->row_bytes);
+    c2_memset(gBack_screen->pixels, 0, gBack_screen->height * gBack_screen->row_bytes);
 
-    BrPixelmapDoubleBuffer(C2V(gScreen), C2V(gBack_screen));
+    BrPixelmapDoubleBuffer(gScreen, gBack_screen);
 
     dr_dprintf("PDAllocateScreenAndBack() - END.");
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051c300, PDAllocateScreenAndBack, PDAllocateScreenAndBack_original)
 
 int GetRegisterSourceLocation(char* buffer, int* buffer_size) {
     HKEY hKey;
@@ -1032,35 +1102,36 @@ int GetRegisterSourceLocation(char* buffer, int* buffer_size) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x0051c900
 void C2_HOOK_FASTCALL PDGetMousePosition(int *pX, int *pY) {
-    if (C2V(gWindowActiveState) != 2) {
-        *pX = C2V(gPD_mouse_position).x;
-        *pY = C2V(gPD_mouse_position).y;
+    if (gWindowActiveState != 2) {
+        *pX = gPD_mouse_position.x;
+        *pY = gPD_mouse_position.y;
         return;
     }
     POINT pnt;
     GetCursorPos(&pnt);
-    ScreenToClient(C2V(gHWnd), &pnt);
+    ScreenToClient(gHWnd, &pnt);
     *pX = pnt.x;
     *pY = pnt.y;
-    C2V(gPD_mouse_position).x = *pX;
-    C2V(gPD_mouse_position).y = *pY;
+    gPD_mouse_position.x = *pX;
+    gPD_mouse_position.y = *pY;
 }
-C2_HOOK_FUNCTION(0x0051c900, PDGetMousePosition)
 
+// FUNCTION: CARMA2_HW 0x0051c280
 void C2_HOOK_FASTCALL PDRevertPalette(void) {
 }
-C2_HOOK_FUNCTION(0x0051c280, PDRevertPalette)
 
+// FUNCTION: CARMA2_HW 0x0051c8e0
 void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown) {
 
-    *pLeftButtonDown = C2V(gMouseLButtonDown);
+    *pLeftButtonDown = gMouseLButtonDown;
     if (pRightButtonDown != NULL) {
-        *pRightButtonDown = C2V(gMouseRButtonDown);
+        *pRightButtonDown = gMouseRButtonDown;
     }
 }
-C2_HOOK_FUNCTION(0x0051c8e0, PDMouseButtons)
 
+// FUNCTION: CARMA2_HW 0x0056a3a9
 void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath) {
     char dirname [256];
     char drive[4];
@@ -1070,8 +1141,8 @@ void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath) {
     _splitpath(pPath, drive, dirname, filename, extension);
     c2_sprintf(pDest, "%s%s", filename, extension);
 }
-C2_HOOK_FUNCTION(0x0056a3a9, PDExtractFilename)
 
+// FUNCTION: CARMA2_HW 0x0056a349
 void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath) {
     char dirname [256];
     char drive[4];
@@ -1081,8 +1152,8 @@ void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath) {
     _splitpath(pPath, drive, dirname, filename, extension);
     c2_sprintf(pDest, "%s%s", drive, dirname);
 }
-C2_HOOK_FUNCTION(0x0056a349, PDExtractDirectory)
 
+// FUNCTION: CARMA2_HW 0x004928a0
 void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory) {
     tHeap_block_information* heap_block;
 
@@ -1104,12 +1175,12 @@ void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory) {
                     break;
                 }
                 if (!(block->flags & 0x1)) {
-                    if (C2V(gPage_size) == 0) {
-                        GetSystemInfo(&C2V(gSystem_info));
-                        C2V(gPage_size) = C2V(gSystem_info).dwPageSize;
+                    if (gPage_size == 0) {
+                        GetSystemInfo(&gSystem_info);
+                        gPage_size = gSystem_info.dwPageSize;
                     }
-                    for (current = 16 * C2V(gPage_size); current < size - 4; current += C2V(gPage_size)) {
-                        block->data[current + 16 - 16 * C2V(gPage_size)] = block->data[current + 16 - 16 * C2V(gPage_size)];
+                    for (current = 16 * gPage_size; current < size - 4; current += gPage_size) {
+                        block->data[current + 16 - 16 * gPage_size] = block->data[current + 16 - 16 * gPage_size];
                         block->data[current + 16]                        = block->data[current + 16];
                     }
                 }
@@ -1118,7 +1189,6 @@ void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory) {
         }
     }
 }
-C2_HOOK_FUNCTION(0x004928a0, PDPageInMemory)
 
 void C2_HOOK_FASTCALL PDPageInProcessMemory(void) {
 
@@ -1126,6 +1196,7 @@ void C2_HOOK_FASTCALL PDPageInProcessMemory(void) {
     Sleep(1500);
 }
 
+// FUNCTION: CARMA2_HW 0x0051d4d0
 void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only) {
 
     if (pIgnore_read_only) {
@@ -1136,4 +1207,3 @@ void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only) {
     }
     DeleteFileA(pPath);
 }
-C2_HOOK_FUNCTION(0x0051d4d0, PDFileDelete)

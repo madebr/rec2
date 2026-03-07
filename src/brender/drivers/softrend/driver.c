@@ -16,17 +16,16 @@
 #define LONG_SUFFIX "-Float"
 #endif
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_uint_32, DriverTimestamp, 0x0079feb0);
 
-br_device* (C2_HOOK_CDECL * BrDrv1Begin_original)(const char* arguments);
+// GLOBAL: CARMA2_HW 0x0079feb0
+br_uint_32 DriverTimestamp;
+
+// FUNCTION: CARMA2_HW 0x00540590
 br_device* C2_HOOK_CDECL BrDrv1Begin(const char* arguments) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrDrv1Begin_original(arguments);
-#else
     br_device *device;
 
-    if (C2V(DriverTimestamp) == 0) {
-        C2V(DriverTimestamp) = TIMESTAMP_START;
+    if (DriverTimestamp == 0) {
+        DriverTimestamp = TIMESTAMP_START;
     }
 
     device = DeviceSoftAllocate("SOFT" SHORT_SUFFIX);
@@ -41,6 +40,4 @@ br_device* C2_HOOK_CDECL BrDrv1Begin(const char* arguments) {
     }
 
     return device;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00540590, BrDrv1Begin, BrDrv1Begin_original)

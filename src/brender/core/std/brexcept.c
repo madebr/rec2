@@ -5,58 +5,62 @@
 
 #include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(void*, exceptionValue, 0x006b0a50);
-C2_HOOK_VARIABLE_IMPLEMENT(br_exception_handler*, _BrExceptionHandler, 0x006b0a54);
 
+// GLOBAL: CARMA2_HW 0x006b0a50
+void* exceptionValue;
+
+// GLOBAL: CARMA2_HW 0x006b0a54
+br_exception_handler* _BrExceptionHandler;
+
+// FUNCTION: CARMA2_HW 0x0053f510
 br_exception_handler* C2_HOOK_CDECL _BrExceptionBegin(void) {
     br_exception_handler* h;
 
     h = BrResAllocate(NULL, sizeof(br_exception_handler), BR_MEMORY_EXCEPTION_HANDLER);
-    h->prev = C2V(_BrExceptionHandler);
-    C2V(_BrExceptionHandler) = h;
+    h->prev = _BrExceptionHandler;
+    _BrExceptionHandler = h;
     return h;
 }
-C2_HOOK_FUNCTION(0x0053f510, _BrExceptionBegin)
 
+// FUNCTION: CARMA2_HW 0x0053f530
 void C2_HOOK_CDECL _BrExceptionEnd(void) {
     br_exception_handler* old;
 
-    if (C2V(_BrExceptionHandler) == NULL) {
+    if (_BrExceptionHandler == NULL) {
         BrFailure("Unhandled exception: %d");
     }
-    old = C2V(_BrExceptionHandler);
-    C2V(_BrExceptionHandler) = C2V(_BrExceptionHandler)->prev;
+    old = _BrExceptionHandler;
+    _BrExceptionHandler = _BrExceptionHandler->prev;
     BrResFree(old);
 }
-C2_HOOK_FUNCTION(0x0053f530, _BrExceptionEnd)
 
+// FUNCTION: CARMA2_HW 0x0053f560
 void C2_HOOK_CDECL _BrExceptionThrow(br_int_32 type, void* value) {
     br_exception_handler h;
     br_exception_handler* old;
 
-    if (C2V(_BrExceptionHandler) == NULL) {
+    if (_BrExceptionHandler == NULL) {
         BrFailure("Unhandled exception: %d");
     }
-    memcpy(&h, C2V(_BrExceptionHandler), sizeof(br_exception_handler));
-    old = C2V(_BrExceptionHandler);
-    C2V(_BrExceptionHandler) = C2V(_BrExceptionHandler)->prev;
+    memcpy(&h, _BrExceptionHandler, sizeof(br_exception_handler));
+    old = _BrExceptionHandler;
+    _BrExceptionHandler = _BrExceptionHandler->prev;
     BrResFree(old);
-    C2V(exceptionValue) = value;
+    exceptionValue = value;
     longjmp(h.context, type);
 }
-C2_HOOK_FUNCTION(0x0053f560, _BrExceptionThrow)
 
+// FUNCTION: CARMA2_HW 0x0053f5c0
 br_exception C2_HOOK_CDECL _BrExceptionValueFetch(br_exception type, void** evp) {
 
     if (type != 0 && evp != NULL) {
-        *evp = C2V(exceptionValue);
+        *evp = exceptionValue;
     }
     return type;
 }
-C2_HOOK_FUNCTION(0x0053f5c0, _BrExceptionValueFetch)
 
+// FUNCTION: CARMA2_HW 0x0053f5e0
 void* C2_HOOK_CDECL _BrExceptionResource(void) {
 
-    return C2V(_BrExceptionHandler);
+    return _BrExceptionHandler;
 }
-C2_HOOK_FUNCTION(0x0053f5e0, _BrExceptionResource)

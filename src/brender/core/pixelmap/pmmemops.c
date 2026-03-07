@@ -5,16 +5,20 @@
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, g_startMasks, 9, 0x0066fd0c, {
+
+// GLOBAL: CARMA2_HW 0x0066fd0c
+br_uint_8 g_startMasks[9] = {
     0xff, 0x7f, 0x3f, 0x1f,
     0x0f, 0x07, 0x03, 0x01,
     0x00,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, g_endMasks, 9, 0x0066fd15, {
+};
+
+// GLOBAL: CARMA2_HW 0x0066fd15
+br_uint_8 g_endMasks[9] = {
     0x00,
     0x80, 0xc0, 0xe0, 0xf0,
     0xf8, 0xfc, 0xfe, 0xff,
-});
+};
 
 #define WRITE_COLOUR_U8(DEST, COLOUR)               \
     do {                                            \
@@ -83,17 +87,14 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_8, g_endMasks, 9, 0x0066fd15, {
         }                                                                                                   \
     } while (0)
 
-void (C2_HOOK_CDECL * pm_mem_copy_bits_original)(void* dest, br_uint_32 qual, br_uint_32 dest_stride, void* src, br_uint_32 s_stride, br_uint_32 start_bit, br_uint_32 end_bit, br_uint_32 height, br_uint_32 bpp, br_uint_32 colour);
+// FUNCTION: CARMA2_HW 0x0053df30
 void C2_HOOK_CDECL pm_mem_copy_bits(void* dest, br_uint_32 qual, br_uint_32 dest_stride, void* src, br_uint_32 s_stride, br_uint_32 start_bit, br_uint_32 end_bit, br_uint_32 height, br_uint_32 bpp, br_uint_32 colour) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    pm_mem_copy_bits_original(dest, qual, dest_stride, src, s_stride, start_bit, end_bit, height, bpp, colour);
-#else
     br_uint_8 start_mask;
     br_uint_8 end_mask;
     br_uint_32 row_bytes;
 
-    start_mask = C2V(g_startMasks)[start_bit];
-    end_mask = C2V(g_endMasks)[end_bit & 0x7];
+    start_mask = g_startMasks[start_bit];
+    end_mask = g_endMasks[end_bit & 0x7];
     row_bytes = end_bit >> 3;
 
     if (row_bytes == 0) {
@@ -154,15 +155,11 @@ void C2_HOOK_CDECL pm_mem_copy_bits(void* dest, br_uint_32 qual, br_uint_32 dest
             break;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0053df30, pm_mem_copy_bits, pm_mem_copy_bits_original)
 
-void (C2_HOOK_CDECL * pm_mem_fill_colour_original)(br_uint_8 *dest, br_uint_32 qual, br_uint_32 nbpixels, br_uint_32 bpp, br_uint_32 colour);
+// FUNCTION: CARMA2_HW 0x0053e686
 void C2_HOOK_CDECL pm_mem_fill_colour(br_uint_8 *dest, br_uint_32 qual, br_uint_32 nbpixels, br_uint_32 bpp, br_uint_32 colour) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    pm_mem_fill_colour_original(dest, qual, nbpixels, bpp, colour);
-#else
+
     switch (bpp) {
     case 1:
         c2_memset(dest, colour, nbpixels);
@@ -201,15 +198,10 @@ void C2_HOOK_CDECL pm_mem_fill_colour(br_uint_8 *dest, br_uint_32 qual, br_uint_
         c2_abort();
         return;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0053e686, pm_mem_fill_colour, pm_mem_fill_colour_original)
 
-void (C2_HOOK_CDECL * pm_mem_fill_colour_rect_original)(br_uint_8* dest, br_uint_32 qual, br_uint_32 width, br_uint_32 height, br_uint_32 stride, br_uint_32 bpp, br_uint_32 colour);
+// FUNCTION: CARMA2_HW 0x0053e9f3
 void C2_HOOK_CDECL pm_mem_fill_colour_rect(br_uint_8* dest, br_uint_32 qual, br_uint_32 width, br_uint_32 height, br_uint_32 stride, br_uint_32 bpp, br_uint_32 colour) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    pm_mem_fill_colour_rect_original(dest, qual, width, height, stride, bpp, colour);
-#else
     br_uint_32 x;
     br_uint_32 y;
 
@@ -253,37 +245,26 @@ void C2_HOOK_CDECL pm_mem_fill_colour_rect(br_uint_8* dest, br_uint_32 qual, br_
         c2_abort();
         return;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0053e9f3, pm_mem_fill_colour_rect, pm_mem_fill_colour_rect_original)
 
-void (C2_HOOK_CDECL * pm_mem_copy_colour_original)(br_uint_8* dst, br_uint_32 dst_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 nbpixels, br_uint_32 bpp);
+// FUNCTION: CARMA2_HW 0x0053ee16
 void C2_HOOK_CDECL pm_mem_copy_colour(br_uint_8* dst, br_uint_32 dst_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 nbpixels, br_uint_32 bpp) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    pm_mem_copy_colour_original(dst, dst_qual, src, src_qual, nbpixels, bpp);
-#else
-    c2_memcpy(dst, src, nbpixels * bpp);
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0053ee16, pm_mem_copy_colour, pm_mem_copy_colour_original)
 
-void (C2_HOOK_CDECL * pm_mem_copy_colour_rowbyrow_original)(br_uint_8* dest, br_uint_32 dest_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 width, br_uint_32 height, br_uint_32 dest_stride, br_uint_32 src_stride, br_uint_32 bpp);
+    c2_memcpy(dst, src, nbpixels * bpp);
+}
+
+// FUNCTION: CARMA2_HW 0x0053ef0d
 void C2_HOOK_CDECL pm_mem_copy_colour_rowbyrow(br_uint_8* dest, br_uint_32 dest_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 width, br_uint_32 height, br_uint_32 dest_stride, br_uint_32 src_stride, br_uint_32 bpp) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    pm_mem_copy_colour_rowbyrow_original(dest, dest_qual, src, src_qual, width, height, dest_stride, src_stride, bpp);
-#else
+
     for (; height != 0; height--, dest += dest_stride, src += src_stride) {
         c2_memcpy(dest, src, width * bpp);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0053ef0d, pm_mem_copy_colour_rowbyrow, pm_mem_copy_colour_rowbyrow_original)
 
-void (C2_HOOK_CDECL * pm_mem_set_colour_original)(br_uint_8* dest, br_uint_32 dest_qual, br_uint_32 bpp, br_uint_32 colour);
+// FUNCTION: CARMA2_HW 0x0053e5c9
 void C2_HOOK_CDECL pm_mem_set_colour(br_uint_8* dest, br_uint_32 dest_qual, br_uint_32 bpp, br_uint_32 colour) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    pm_mem_set_colour_original(dest, dest_qual, bpp, colour);
-#else
+
+
     switch (bpp) {
     case 1:
         *(br_uint_8*)dest = colour;
@@ -302,15 +283,11 @@ void C2_HOOK_CDECL pm_mem_set_colour(br_uint_8* dest, br_uint_32 dest_qual, br_u
     default:
         c2_abort();
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0053e5c9, pm_mem_set_colour, pm_mem_set_colour_original)
 
-br_uint_32 (C2_HOOK_CDECL * pm_mem_read_colour_original)(void* src, br_uint_32 src_qual, br_uint_32 bpp);
+// FUNCTION: CARMA2_HW 0x0053e626
 br_uint_32 C2_HOOK_CDECL pm_mem_read_colour(void* src, br_uint_32 src_qual, br_uint_32 bpp) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return pm_mem_read_colour_original(src, src_qual, bpp);
-#else
+
     switch (bpp) {
     case 1:
         return (br_uint_32)*(br_uint_8*)src;
@@ -325,6 +302,4 @@ br_uint_32 C2_HOOK_CDECL pm_mem_read_colour(void* src, br_uint_32 src_qual, br_u
         c2_abort();
         return 0;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0053e626, pm_mem_read_colour, pm_mem_read_colour_original)

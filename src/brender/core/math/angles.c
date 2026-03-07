@@ -39,11 +39,8 @@ order_info OrderAxes[32] = {
     { 0, 0, 0, },
 };
 
-br_matrix34* (C2_HOOK_CDECL * BrEulerToMatrix34_original)(br_matrix34* mat, const br_euler* euler);
+// FUNCTION: CARMA2_HW 0x00531de0
 br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* euler) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrEulerToMatrix34_original(mat, euler);
-#else
     br_uint_8 o;
     br_angle ti;
     br_angle tj;
@@ -121,16 +118,10 @@ br_matrix34* C2_HOOK_CDECL BrEulerToMatrix34(br_matrix34* mat, const br_euler* e
     mat->m[3][2] = 0.f;
 
     return mat;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00531de0, BrEulerToMatrix34, BrEulerToMatrix34_original)
 
-br_euler* (C2_HOOK_CDECL * BrMatrix34ToEuler_original)(br_euler* euler, const br_matrix34* mat);
+// FUNCTION: CARMA2_HW 0x005320d0
 br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* mat) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrMatrix34ToEuler_original(euler, mat);
-#else
     br_uint_8 o;
     int a0;
     int a1;
@@ -187,10 +178,9 @@ br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* ma
     }
 
     return euler;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005320d0, BrMatrix34ToEuler, BrMatrix34ToEuler_original)
 
+// FUNCTION: CARMA2_HW 0x00532320
 br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, const br_euler* euler) {
     br_matrix34 tmp;
 
@@ -198,21 +188,17 @@ br_matrix4* C2_HOOK_CDECL BrEulerToMatrix4(br_matrix4* mat, const br_euler* eule
     BrMatrix4Copy34(mat, &tmp);
     return mat;
 }
-C2_HOOK_FUNCTION(0x00532320, BrEulerToMatrix4)
 
+// FUNCTION: CARMA2_HW 0x00532350
 br_euler* C2_HOOK_CDECL BrMatrix4ToEuler(br_euler* dest, const br_matrix4* mat) {
     br_matrix34 tmp;
 
     BrMatrix34Copy4(&tmp, mat);
     return BrMatrix34ToEuler(dest, &tmp);
 }
-C2_HOOK_FUNCTION(0x00532350, BrMatrix4ToEuler)
 
-br_quat* (C2_HOOK_CDECL * BrEulerToQuat_original)(br_quat* q, const br_euler* euler);
+// FUNCTION: CARMA2_HW 0x00532380
 br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, const br_euler* euler) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrEulerToQuat_original(q, euler);
-#else
     br_uint_8 o;
     br_angle ti;
     br_angle tj;
@@ -277,14 +263,12 @@ br_quat* C2_HOOK_CDECL BrEulerToQuat(br_quat* q, const br_euler* euler) {
         ((br_scalar*)q)[a1] = -((br_scalar*)q)[a1];
     }
     return q;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00532380, BrEulerToQuat, BrEulerToQuat_original)
 
+// FUNCTION: CARMA2_HW 0x005325a0
 br_euler* C2_HOOK_CDECL BrQuatToEuler(br_euler* euler, const br_quat* q) {
     br_matrix34 mat;
 
     BrQuatToMatrix34(&mat, q);
     return BrMatrix34ToEuler(euler, &mat);
 }
-C2_HOOK_FUNCTION(0x005325a0, BrQuatToEuler)

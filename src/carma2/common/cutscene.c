@@ -18,25 +18,40 @@
 #include "c2_string.h"
 #include "smack.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gSmackerActor, 0x0079eca4);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gSmackerModel, 0x0079ecac);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmackerCurrentPalette, 0x0079eca8);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmackerBackPalette, 0x0079ec9c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gSmackerPrevBackPalette, 0x0079eca0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_material*, gSmackMaterials, 15, 0x0079ec60);
 
-C2_HOOK_VARIABLE_IMPLEMENT(void*, gSmackerBuffer, 0x0067c3b0);
+// GLOBAL: CARMA2_HW 0x0079eca4
+br_actor* gSmackerActor;
+
+// GLOBAL: CARMA2_HW 0x0079ecac
+br_model* gSmackerModel;
+
+// GLOBAL: CARMA2_HW 0x0079eca8
+br_pixelmap* gSmackerCurrentPalette;
+
+// GLOBAL: CARMA2_HW 0x0079ec9c
+br_pixelmap* gSmackerBackPalette;
+
+// GLOBAL: CARMA2_HW 0x0079eca0
+br_pixelmap* gSmackerPrevBackPalette;
+
+// GLOBAL: CARMA2_HW 0x0079ec60
+br_material* gSmackMaterials[15];
+
+
+// GLOBAL: CARMA2_HW 0x0067c3b0
+void* gSmackerBuffer;
 #define SMACKER_INTERPOLATE
 #define SMACKER_ANTIALIASING
 
+// FUNCTION: CARMA2_HW 0x0043e750
 void C2_HOOK_FASTCALL DoSCILogo(void) {
 }
-C2_HOOK_FUNCTION(0x0043e750, DoSCILogo)
 
+// FUNCTION: CARMA2_HW 0x0043e760
 void C2_HOOK_FASTCALL DoStainlessLogo(void) {
 }
-C2_HOOK_FUNCTION(0x0043e760, DoStainlessLogo)
 
+// FUNCTION: CARMA2_HW 0x0043e770
 void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     int mati;
     int i;
@@ -69,21 +84,21 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     smackBlitHandle = NULL;
     paletteChangeCount = 0;
     frameCount = 0;
-    if (C2V(gSound_override)) {
+    if (gSound_override) {
         return;
     }
-    if (C2V(gNoCutscenes)) {
+    if (gNoCutscenes) {
         return;
     }
     palette_pixels = NULL; /* Added by rec2 */
-    if (C2V(gBack_screen)->type == BR_PMT_INDEX_8) {
+    if (gBack_screen->type == BR_PMT_INDEX_8) {
         smackBufferFlags = 0;
-        palette_pixels = C2V(gCurrent_palette)->pixels;
+        palette_pixels = gCurrent_palette->pixels;
         smackBlitFlags = 0; /** Added by rec2 */
-    } else if (C2V(gBack_screen)->type == BR_PMT_RGB_555) {
+    } else if (gBack_screen->type == BR_PMT_RGB_555) {
         smackBufferFlags = SMACKBUFFER555;
         smackBlitFlags = SMACKBUFFER555 | SMACKBLIT2X;
-    } else if (C2V(gBack_screen)->type == BR_PMT_RGB_565) {
+    } else if (gBack_screen->type == BR_PMT_RGB_565) {
         smackBufferFlags = SMACKBUFFER565;
         smackBlitFlags = SMACKBUFFER565 | SMACKBLIT2X;
     } else {
@@ -94,8 +109,8 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
 #define SMACK_WIDTH     320
 #define SMACK_HEIGHT    200
 
-    if (C2V(gSmackerBuffer) == NULL) {
-        C2V(gSmackerBuffer) = BrMemAllocate(SMACK_WIDTH * SMACK_HEIGHT, kMem_misc);
+    if (gSmackerBuffer == NULL) {
+        gSmackerBuffer = BrMemAllocate(SMACK_WIDTH * SMACK_HEIGHT, kMem_misc);
     }
 
     StopMusic();
@@ -105,7 +120,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     SmackUseMMX(1);
     SmackSoundUseDirectSound(NULL);
 
-    PathCat(the_path, C2V(gApplication_path), "CUTSCENE");
+    PathCat(the_path, gApplication_path, "CUTSCENE");
     PathCat(the_path, the_path, pSmack_name);
     dr_dprintf("Trying to open smack file '%s'", the_path);
 
@@ -118,8 +133,8 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
         if (!PDReadSourceLocation(the_path)) {
             dr_dprintf("Can't get CD directory name");
         } else {
-            if (the_path[c2_strlen(the_path) - 1] != C2V(gDir_separator)[0]) {
-                c2_strcat(the_path, C2V(gDir_separator));
+            if (the_path[c2_strlen(the_path) - 1] != gDir_separator[0]) {
+                c2_strcat(the_path, gDir_separator);
             }
             c2_strcat(the_path, "DATA");
             PathCat(the_path, the_path, "CUTSCENE");
@@ -140,144 +155,144 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
     }
     dr_dprintf("Smack file opened OK");
     timeStart = PDGetTotalTime();
-    if (C2V(gNbPixelBits) == 16) {
-        C2V(gSmackerActor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        C2V(gSmackerActor)->render_style = BR_RSTYLE_FACES;
-        C2V(gSmackerCurrentPalette) = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, NULL, 0);
-        C2V(gSmackerBackPalette) = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, NULL, 0);
-        BrMapAdd(C2V(gSmackerCurrentPalette));
+    if (gNbPixelBits == 16) {
+        gSmackerActor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        gSmackerActor->render_style = BR_RSTYLE_FACES;
+        gSmackerCurrentPalette = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, NULL, 0);
+        gSmackerBackPalette = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, NULL, 0);
+        BrMapAdd(gSmackerCurrentPalette);
 
 #define SMACKER_NMATERIALS 15
 #define SMACKER_NVERTICES (4 * SMACKER_NMATERIALS)  // 60
 #define SMACKER_NFACES (2 * SMACKER_NMATERIALS)  // 30
 
-        C2V(gSmackerModel) = BrModelAllocate("Smack Model", SMACKER_NVERTICES, SMACKER_NFACES);
-        if (C2V(gSmackerModel) == NULL) {
+        gSmackerModel = BrModelAllocate("Smack Model", SMACKER_NVERTICES, SMACKER_NFACES);
+        if (gSmackerModel == NULL) {
             PDEnterDebugger("No Smack model");
-            BrActorFree(C2V(gSmackerActor));
-            C2V(gSmackerActor) = NULL;
-            BrMapRemove(C2V(gSmackerCurrentPalette));
-            BrPixelmapFree(C2V(gSmackerCurrentPalette));
+            BrActorFree(gSmackerActor);
+            gSmackerActor = NULL;
+            BrMapRemove(gSmackerCurrentPalette);
+            BrPixelmapFree(gSmackerCurrentPalette);
             goto load_failed;
         }
-        for (i = 0; i < REC2_ASIZE(C2V(gSmackMaterials)); i++) {
-            C2V(gSmackMaterials)[i] = BrMaterialAllocate("Devious Smack Material");
-            if (C2V(gSmackMaterials)[i] == NULL) {
+        for (i = 0; i < REC2_ASIZE(gSmackMaterials); i++) {
+            gSmackMaterials[i] = BrMaterialAllocate("Devious Smack Material");
+            if (gSmackMaterials[i] == NULL) {
                 PDEnterDebugger("No Smack material");
-                BrActorFree(C2V(gSmackerActor));
-                C2V(gSmackerActor) = NULL;
-                BrMapRemove(C2V(gSmackerCurrentPalette));
-                BrPixelmapFree(C2V(gSmackerCurrentPalette));
+                BrActorFree(gSmackerActor);
+                gSmackerActor = NULL;
+                BrMapRemove(gSmackerCurrentPalette);
+                BrPixelmapFree(gSmackerCurrentPalette);
                 goto load_failed;
             }
-            C2V(gSmackMaterials)[i]->colour_map = BrPixelmapAllocate(BR_PMT_INDEX_8, 64, 64, NULL, 0);
-            C2V(gSmackMaterials)[i]->colour_map->map = C2V(gSmackerCurrentPalette);
-            C2V(gSmackMaterials)[i]->flags = BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
+            gSmackMaterials[i]->colour_map = BrPixelmapAllocate(BR_PMT_INDEX_8, 64, 64, NULL, 0);
+            gSmackMaterials[i]->colour_map->map = gSmackerCurrentPalette;
+            gSmackMaterials[i]->flags = BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
 #if defined(SMACKER_INTERPOLATE)
-            C2V(gSmackMaterials)[i]->flags |= BR_MATF_MAP_INTERPOLATION;
+            gSmackMaterials[i]->flags |= BR_MATF_MAP_INTERPOLATION;
 #endif
 #if defined(SMACKER_ANTIALIASING)
-            C2V(gSmackMaterials)[i]->flags |= BR_MATF_MAP_ANTIALIASING;
+            gSmackMaterials[i]->flags |= BR_MATF_MAP_ANTIALIASING;
 #endif
-            BrMapAdd(C2V(gSmackMaterials)[i]->colour_map->map);
-            BrMapAdd(C2V(gSmackMaterials)[i]->colour_map);
-            BrMaterialAdd(C2V(gSmackMaterials)[i]);
+            BrMapAdd(gSmackMaterials[i]->colour_map->map);
+            BrMapAdd(gSmackMaterials[i]->colour_map);
+            BrMaterialAdd(gSmackMaterials[i]);
         }
-        for (mati = 0, i = 0, vertex_start = 0, face_start = 0; mati < REC2_ASIZE(C2V(gSmackMaterials)); i++) {
+        for (mati = 0, i = 0, vertex_start = 0, face_start = 0; mati < REC2_ASIZE(gSmackMaterials); i++) {
             b = (float) (-128 * i - 48);
             u = (float) (-128 * (i + 1) - 48);
             for (j = 0; j < 5; mati++, j++, vertex_start += 4, face_start += 2) {  // 5 == SMACK_WIDTH / 64
                 l = (float) (128 * j);
                 r = (float) (128 * (j + 1));
-                C2V(gSmackerModel)->vertices[vertex_start + 0].p.v[0] = l;
-                C2V(gSmackerModel)->vertices[vertex_start + 0].p.v[1] = u;
-                C2V(gSmackerModel)->vertices[vertex_start + 0].p.v[2] = -2.f;
-                C2V(gSmackerModel)->vertices[vertex_start + 0].map.v[0] = 0.0078125f;
-                C2V(gSmackerModel)->vertices[vertex_start + 0].map.v[1] = 0.9921875f;
+                gSmackerModel->vertices[vertex_start + 0].p.v[0] = l;
+                gSmackerModel->vertices[vertex_start + 0].p.v[1] = u;
+                gSmackerModel->vertices[vertex_start + 0].p.v[2] = -2.f;
+                gSmackerModel->vertices[vertex_start + 0].map.v[0] = 0.0078125f;
+                gSmackerModel->vertices[vertex_start + 0].map.v[1] = 0.9921875f;
 
-                C2V(gSmackerModel)->vertices[vertex_start + 1].p.v[0] = r;
-                C2V(gSmackerModel)->vertices[vertex_start + 1].p.v[1] = u;
-                C2V(gSmackerModel)->vertices[vertex_start + 1].p.v[2] = -2.f;
-                C2V(gSmackerModel)->vertices[vertex_start + 1].map.v[0] = 0.9921875f;
-                C2V(gSmackerModel)->vertices[vertex_start + 1].map.v[1] = 0.9921875f;
+                gSmackerModel->vertices[vertex_start + 1].p.v[0] = r;
+                gSmackerModel->vertices[vertex_start + 1].p.v[1] = u;
+                gSmackerModel->vertices[vertex_start + 1].p.v[2] = -2.f;
+                gSmackerModel->vertices[vertex_start + 1].map.v[0] = 0.9921875f;
+                gSmackerModel->vertices[vertex_start + 1].map.v[1] = 0.9921875f;
 
-                C2V(gSmackerModel)->vertices[vertex_start + 2].p.v[0] = r;
-                C2V(gSmackerModel)->vertices[vertex_start + 2].p.v[1] = b;
-                C2V(gSmackerModel)->vertices[vertex_start + 2].p.v[2] = -2.f;
-                C2V(gSmackerModel)->vertices[vertex_start + 2].map.v[0] = 0.9921875f;
-                C2V(gSmackerModel)->vertices[vertex_start + 2].map.v[1] = 0.0078125f;
+                gSmackerModel->vertices[vertex_start + 2].p.v[0] = r;
+                gSmackerModel->vertices[vertex_start + 2].p.v[1] = b;
+                gSmackerModel->vertices[vertex_start + 2].p.v[2] = -2.f;
+                gSmackerModel->vertices[vertex_start + 2].map.v[0] = 0.9921875f;
+                gSmackerModel->vertices[vertex_start + 2].map.v[1] = 0.0078125f;
 
-                C2V(gSmackerModel)->vertices[vertex_start + 3].p.v[0] = l;
-                C2V(gSmackerModel)->vertices[vertex_start + 3].p.v[1] = b;
-                C2V(gSmackerModel)->vertices[vertex_start + 3].p.v[2] = -2.f;
-                C2V(gSmackerModel)->vertices[vertex_start + 3].map.v[0] = 0.0078125f;
-                C2V(gSmackerModel)->vertices[vertex_start + 3].map.v[1] = 0.0078125f;
+                gSmackerModel->vertices[vertex_start + 3].p.v[0] = l;
+                gSmackerModel->vertices[vertex_start + 3].p.v[1] = b;
+                gSmackerModel->vertices[vertex_start + 3].p.v[2] = -2.f;
+                gSmackerModel->vertices[vertex_start + 3].map.v[0] = 0.0078125f;
+                gSmackerModel->vertices[vertex_start + 3].map.v[1] = 0.0078125f;
 
-                C2V(gSmackerModel)->faces[face_start + 0].vertices[0] = vertex_start + 0;
-                C2V(gSmackerModel)->faces[face_start + 0].vertices[1] = vertex_start + 3;
-                C2V(gSmackerModel)->faces[face_start + 0].vertices[2] = vertex_start + 1;
-                C2V(gSmackerModel)->faces[face_start + 0].smoothing = 0;
-                C2V(gSmackerModel)->faces[face_start + 0].material = C2V(gSmackMaterials)[mati];
-                C2V(gSmackerModel)->faces[face_start + 0].flags = 0;
+                gSmackerModel->faces[face_start + 0].vertices[0] = vertex_start + 0;
+                gSmackerModel->faces[face_start + 0].vertices[1] = vertex_start + 3;
+                gSmackerModel->faces[face_start + 0].vertices[2] = vertex_start + 1;
+                gSmackerModel->faces[face_start + 0].smoothing = 0;
+                gSmackerModel->faces[face_start + 0].material = gSmackMaterials[mati];
+                gSmackerModel->faces[face_start + 0].flags = 0;
 
-                C2V(gSmackerModel)->faces[face_start + 1].vertices[0] = vertex_start + 1;
-                C2V(gSmackerModel)->faces[face_start + 1].vertices[1] = vertex_start + 3;
-                C2V(gSmackerModel)->faces[face_start + 1].vertices[2] = vertex_start + 2;
-                C2V(gSmackerModel)->faces[face_start + 1].smoothing = 0;
-                C2V(gSmackerModel)->faces[face_start + 1].material = C2V(gSmackMaterials)[mati];
-                C2V(gSmackerModel)->faces[face_start + 1].flags = 0;
+                gSmackerModel->faces[face_start + 1].vertices[0] = vertex_start + 1;
+                gSmackerModel->faces[face_start + 1].vertices[1] = vertex_start + 3;
+                gSmackerModel->faces[face_start + 1].vertices[2] = vertex_start + 2;
+                gSmackerModel->faces[face_start + 1].smoothing = 0;
+                gSmackerModel->faces[face_start + 1].material = gSmackMaterials[mati];
+                gSmackerModel->faces[face_start + 1].flags = 0;
             }
         }
-        BrModelAdd(C2V(gSmackerModel));
-        C2V(gSmackerActor)->model = C2V(gSmackerModel);
-        BrActorAdd(C2V(g2d_camera), C2V(gSmackerActor));
+        BrModelAdd(gSmackerModel);
+        gSmackerActor->model = gSmackerModel;
+        BrActorAdd(g2d_camera, gSmackerActor);
         load_failed:
-        if (C2V(gSmackerActor) != NULL) {
-            if (SmackBufferOpen(C2V(gHWnd), SMACKFRAMERATE, SMACK_WIDTH, SMACK_HEIGHT, SMACK_WIDTH, SMACK_WIDTH) == 0) {
+        if (gSmackerActor != NULL) {
+            if (SmackBufferOpen(gHWnd, SMACKFRAMERATE, SMACK_WIDTH, SMACK_HEIGHT, SMACK_WIDTH, SMACK_WIDTH) == 0) {
                 PDEnterDebugger("sbuf");
             }
-            SmackToBuffer(smackHandle, 0, 0, SMACK_WIDTH, SMACK_WIDTH, C2V(gSmackerBuffer), 0);
+            SmackToBuffer(smackHandle, 0, 0, SMACK_WIDTH, SMACK_WIDTH, gSmackerBuffer, 0);
             if (smackHandle->Frames != 0) {
                 for (currentFrame = 1; currentFrame != smackHandle->Frames; currentFrame++) {
                     frameStart = PDGetTotalTime();
                     if (smackHandle->NewPalette) {
-                        BrMapRemove(C2V(gSmackerCurrentPalette));
-                        C2V(gSmackerPrevBackPalette) = C2V(gSmackerBackPalette);
-                        tmpPalette = C2V(gSmackerCurrentPalette);
-                        C2V(gSmackerCurrentPalette) = C2V(gSmackerBackPalette);
-                        C2V(gSmackerBackPalette) = tmpPalette;
+                        BrMapRemove(gSmackerCurrentPalette);
+                        gSmackerPrevBackPalette = gSmackerBackPalette;
+                        tmpPalette = gSmackerCurrentPalette;
+                        gSmackerCurrentPalette = gSmackerBackPalette;
+                        gSmackerBackPalette = tmpPalette;
                         for (i = 0; i < 256; i++) {
                             paletteColour = BR_COLOUR_RGB(smackHandle->Palette[3 * i], smackHandle->Palette[3 * i + 1],
                                                           smackHandle->Palette[3 * i + 2]);
                             if (paletteColour == 0) {
                                 paletteColour = BR_COLOUR_RGB(4, 4, 4);
                             }
-                            ((br_uint_32 *) C2V(gSmackerCurrentPalette)->pixels)[i] = paletteColour;
+                            ((br_uint_32 *) gSmackerCurrentPalette->pixels)[i] = paletteColour;
                         }
-                        BrMapAdd(C2V(gSmackerCurrentPalette));
-                        for (i = 0; i < REC2_ASIZE(C2V(gSmackMaterials)); i++) {
-                            C2V(gSmackMaterials)[i]->colour_map->map = C2V(gSmackerCurrentPalette);
-                            BrMapUpdate(C2V(gSmackMaterials)[i]->colour_map->map, BR_MAPU_ALL);
-                            BrMapUpdate(C2V(gSmackMaterials)[i]->colour_map, BR_MAPU_ALL);
-                            BrMaterialUpdate(C2V(gSmackMaterials)[i], BR_MATU_ALL);
+                        BrMapAdd(gSmackerCurrentPalette);
+                        for (i = 0; i < REC2_ASIZE(gSmackMaterials); i++) {
+                            gSmackMaterials[i]->colour_map->map = gSmackerCurrentPalette;
+                            BrMapUpdate(gSmackMaterials[i]->colour_map->map, BR_MAPU_ALL);
+                            BrMapUpdate(gSmackMaterials[i]->colour_map, BR_MAPU_ALL);
+                            BrMaterialUpdate(gSmackMaterials[i], BR_MATU_ALL);
                         }
                     }
                     SmackDoFrame(smackHandle);
-                    BrPixelmapFill(C2V(gDepth_buffer), -1);
+                    BrPixelmapFill(gDepth_buffer, -1);
                     for (i = 0, buffer_start = 0;
-                         i < REC2_ASIZE(C2V(gSmackMaterials)); buffer_start += 64 * SMACK_WIDTH) {
+                         i < REC2_ASIZE(gSmackMaterials); buffer_start += 64 * SMACK_WIDTH) {
                         current_buffer_start = buffer_start;
                         for (j = 0; j < 5; j++, current_buffer_start += 64, i++) {
-                            material_pixels = C2V(gSmackMaterials)[i]->colour_map->pixels;
-                            current_buffer = (br_uint_8 *) C2V(gSmackerBuffer) + current_buffer_start;
+                            material_pixels = gSmackMaterials[i]->colour_map->pixels;
+                            current_buffer = (br_uint_8 *) gSmackerBuffer + current_buffer_start;
                             for (k = 0; k < 64; k++) {
                                 c2_memcpy(material_pixels + 64 * k, current_buffer + 320 * k, 64);
                             }
-                            BrMapUpdate(C2V(gSmackMaterials)[i]->colour_map, BR_MAPU_ALL);
-                            BrMaterialUpdate(C2V(gSmackMaterials)[i], BR_MATU_ALL);
+                            BrMapUpdate(gSmackMaterials[i]->colour_map, BR_MAPU_ALL);
+                            BrMaterialUpdate(gSmackMaterials[i], BR_MATU_ALL);
                         }
                     }
-                    BrZbSceneRender(C2V(g2d_camera), C2V(g2d_camera), C2V(gBack_screen), C2V(gDepth_buffer));
+                    BrZbSceneRender(g2d_camera, g2d_camera, gBack_screen, gDepth_buffer);
                     PDScreenBufferSwap(0);
                     PDServiceSystem(0);
                     if (currentFrame != smackHandle->Frames) {
@@ -295,42 +310,42 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                     }
                 }
             }
-            if (C2V(gSmackerActor) != NULL) {
-                for (i = 0; i < REC2_ASIZE(C2V(gSmackMaterials)); i++) {
-                    BrMapRemove(C2V(gSmackMaterials)[i]->colour_map);
-                    BrPixelmapFree(C2V(gSmackMaterials)[i]->colour_map);
-                    C2V(gSmackMaterials)[i]->colour_map = NULL;
-                    BrMaterialRemove(C2V(gSmackMaterials)[i]);
-                    C2V(gSmackMaterials)[i] = NULL;
+            if (gSmackerActor != NULL) {
+                for (i = 0; i < REC2_ASIZE(gSmackMaterials); i++) {
+                    BrMapRemove(gSmackMaterials[i]->colour_map);
+                    BrPixelmapFree(gSmackMaterials[i]->colour_map);
+                    gSmackMaterials[i]->colour_map = NULL;
+                    BrMaterialRemove(gSmackMaterials[i]);
+                    gSmackMaterials[i] = NULL;
                 }
-                BrModelRemove(C2V(gSmackerModel));
-                BrActorRemove(C2V(gSmackerActor));
-                BrModelFree(C2V(gSmackerModel));
-                BrActorFree(C2V(gSmackerActor));
+                BrModelRemove(gSmackerModel);
+                BrActorRemove(gSmackerActor);
+                BrModelFree(gSmackerModel);
+                BrActorFree(gSmackerActor);
             }
         }
         FadePaletteDown();
         ClearEntireScreen();
-    } else if (C2V(gBack_screen)->type == BR_PMT_RGB_565 || C2V(gBack_screen)->type == BR_PMT_RGB_555) {
+    } else if (gBack_screen->type == BR_PMT_RGB_565 || gBack_screen->type == BR_PMT_RGB_555) {
         smackBlitHandle = SmackBlitOpen(smackBlitFlags);
         if (smackBlitHandle != NULL) {
             if (smackHandle->Frames != 0) {
                 for (currentFrame = 1; currentFrame != smackHandle->Frames; currentFrame++) {
                     frameStart = PDGetTotalTime();
                     frameCount++;
-                    if (C2V(gBack_screen)->type == BR_PMT_RGB_565 ||
-                        C2V(gBack_screen)->type == BR_PMT_RGB_555) {
-                        SmackToBuffer(smackHandle, 0, 0, 320, 200, C2V(gSmackerBuffer), 0);
+                    if (gBack_screen->type == BR_PMT_RGB_565 ||
+                        gBack_screen->type == BR_PMT_RGB_555) {
+                        SmackToBuffer(smackHandle, 0, 0, 320, 200, gSmackerBuffer, 0);
                     } else {
-                        SmackToBuffer(smackHandle, 0, 0, C2V(gBack_screen)->row_bytes,
-                                      C2V(gBack_screen)->height, C2V(gBack_screen)->pixels, smackBufferFlags);
+                        SmackToBuffer(smackHandle, 0, 0, gBack_screen->row_bytes,
+                                      gBack_screen->height, gBack_screen->pixels, smackBufferFlags);
                     }
                     paletteChanged = 0;
                     if (smackHandle->NewPalette) {
                         paletteChanged = 1;
                         paletteChangeCount += 1;
-                        if (C2V(gBack_screen)->type == BR_PMT_RGB_565 ||
-                            C2V(gBack_screen)->type == BR_PMT_RGB_555) {
+                        if (gBack_screen->type == BR_PMT_RGB_565 ||
+                            gBack_screen->type == BR_PMT_RGB_555) {
                             SmackBlitSetPalette(smackBlitHandle, smackHandle->Palette, smackHandle->PalType);
                         } else {
                             /* Check added by rec2 */
@@ -345,16 +360,16 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                         }
                     }
                     SmackDoFrame(smackHandle);
-                    if (C2V(gBack_screen)->type == BR_PMT_RGB_565 ||
-                        C2V(gBack_screen)->type == BR_PMT_RGB_555) {
-                        SmackBlit(smackBlitHandle, C2V(gBack_screen)->pixels, C2V(gBack_screen)->row_bytes, 0,
-                                  40, C2V(gSmackerBuffer), 320, 0, 0, 320, 200);
+                    if (gBack_screen->type == BR_PMT_RGB_565 ||
+                        gBack_screen->type == BR_PMT_RGB_555) {
+                        SmackBlit(smackBlitHandle, gBack_screen->pixels, gBack_screen->row_bytes, 0,
+                                  40, gSmackerBuffer, 320, 0, 0, 320, 200);
                     }
                     if (currentFrame != smackHandle->Frames) {
                         SmackNextFrame(smackHandle);
                     }
                     if (paletteChanged) {
-                        DRSetPalette(C2V(gCurrent_palette));
+                        DRSetPalette(gCurrent_palette);
                     }
                     PDScreenBufferSwap(0);
                     PDServiceSystem(0);
@@ -384,49 +399,48 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                (float) paletteChangeCount / (timeEnd - timeStart), (float) frameCount / (timeEnd - timeStart));
     PDServiceSystem(0);
 }
-C2_HOOK_FUNCTION(0x0043e770, PlaySmackerFile)
 
+// FUNCTION: CARMA2_HW 0x0043f330
 void C2_HOOK_FASTCALL DoOpeningAnimation(void) {
     PlaySmackerFile("INTERPLAYGO.SMK");
     PlaySmackerFile("MIX_INTR.SMK");
     WaitForNoKeys();
 }
-C2_HOOK_FUNCTION(0x0043f330, DoOpeningAnimation)
 
+// FUNCTION: CARMA2_HW 0x0043f350
 void C2_HOOK_FASTCALL DoNewGameAnimation(void) {
 }
-C2_HOOK_FUNCTION(0x0043f350, DoNewGameAnimation)
 
+// FUNCTION: CARMA2_HW 0x0043f360
 void C2_HOOK_FASTCALL DoGoToRaceAnimation(void) {
 }
-C2_HOOK_FUNCTION(0x0043f360, DoGoToRaceAnimation)
 
+// FUNCTION: CARMA2_HW 0x0043f370
 void C2_HOOK_FASTCALL DoEndRaceAnimation(void) {
 
     FadePaletteDown();
 }
-C2_HOOK_FUNCTION(0x0043f370, DoEndRaceAnimation)
 
+// FUNCTION: CARMA2_HW 0x0043f380
 void C2_HOOK_FASTCALL DoGameOverAnimation(void) {
 }
-C2_HOOK_FUNCTION(0x0043f380, DoGameOverAnimation)
 
+// FUNCTION: CARMA2_HW 0x0043f390
 void C2_HOOK_FASTCALL DoGameCompletedAnimation(void) {
 
     PlaySmackerFile("TOPRANK.SMK");
     WaitForNoKeys();
 }
-C2_HOOK_FUNCTION(0x0043f390, DoGameCompletedAnimation)
 
+// FUNCTION: CARMA2_HW 0x0043f5c0
 void C2_HOOK_FASTCALL StartLoadingScreen(void) {
 
     SwitchToLoresMode();
     StartMusicTrack(9998);
     PossibleService();
-    if (C2V(gProgram_state).sausage_eater_mode) {
+    if (gProgram_state.sausage_eater_mode) {
         SplashScreenWith("LOADSCRN.PIX");
     } else {
         SplashScreenWith("LOADSCRN.PIX");
     }
 }
-C2_HOOK_FUNCTION(0x0043f5c0, StartLoadingScreen)

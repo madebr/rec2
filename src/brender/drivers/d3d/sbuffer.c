@@ -9,15 +9,19 @@
 #include <stdlib.h>
 #include <string.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_tv_template_entry, bufferStoredD3DTemplateEntries, 1, 0x100175b0, {
+// GLOBAL: D3D 0x100175b0
+br_tv_template_entry bufferStoredD3DTemplateEntries[] = {
     { BRT_IDENTIFIER_CSTR, 0, offsetof(br_buffer_stored_d3d, identifier), 0x5,  0x3, },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_tv_template, bufferStoredD3DTemplate, 0x100175c8, {
+};
+
+// GLOBAL: D3D 0x100175c8
+br_tv_template bufferStoredD3DTemplate = {
     BR_ASIZE(bufferStoredD3DTemplateEntries),
     bufferStoredD3DTemplateEntries
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_buffer_stored_dispatch, bufferStoredD3DDispatch, 0x100175e8, {
+// GLOBAL: D3D 0x100175e8
+br_buffer_stored_dispatch bufferStoredD3DDispatch = {
     NULL,
     NULL,
     NULL,
@@ -36,17 +40,20 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_buffer_stored_dispatch, bufferStoredD3DDispat
     _M_br_object_queryAll,
     _M_br_object_queryAllSize,
     (void*)_M_br_buffer_stored_d3d_update,
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gStored_buffer_counter, 0x1001d784);
+};
 
+// GLOBAL: D3D 0x1001d784
+int gStored_buffer_counter;
+
+// FUNCTION: D3D 0x100081b0
 void C2_HOOK_CDECL BufferStoredD3DClearTemplate(void) {
 
-    memset(&C2V(bufferStoredD3DTemplate), 0, sizeof(C2V(bufferStoredD3DTemplate)));
-    C2V(bufferStoredD3DTemplate).entries = C2V(bufferStoredD3DTemplateEntries);
-    C2V(bufferStoredD3DTemplate).n_entries = BR_ASIZE(C2V(bufferStoredD3DTemplateEntries));
+    memset(&bufferStoredD3DTemplate, 0, sizeof(bufferStoredD3DTemplate));
+    bufferStoredD3DTemplate.entries = bufferStoredD3DTemplateEntries;
+    bufferStoredD3DTemplate.n_entries = BR_ASIZE(bufferStoredD3DTemplateEntries);
 }
-C2_HOOK_FUNCTION(0x100081b0, BufferStoredD3DClearTemplate)
 
+// FUNCTION: D3D 0x10008370
 int C2_HOOK_CDECL pixelmapD3DBPP(br_device_pixelmap_d3d* pm) {
     switch (pm->pm_type) {
     case BR_PMT_RGB_555:
@@ -62,8 +69,8 @@ int C2_HOOK_CDECL pixelmapD3DBPP(br_device_pixelmap_d3d* pm) {
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x10008370, pixelmapD3DBPP)
 
+// FUNCTION: D3D 0x100081e0
 br_error C2_HOOK_CDECL SetupD3DBuffer(br_buffer_stored_d3d* buffer, br_device_pixelmap_d3d* pm) {
     br_colour* map;
 
@@ -125,8 +132,8 @@ br_error C2_HOOK_CDECL SetupD3DBuffer(br_buffer_stored_d3d* buffer, br_device_pi
     buffer->buffer.uncacheable = 0;
     return 0;
 }
-C2_HOOK_FUNCTION(0x100081e0, SetupD3DBuffer)
 
+// FUNCTION: D3D 0x100083d0
 br_buffer_stored_d3d* C2_HOOK_CDECL BufferStoredD3DAllocate(br_primitive_library_d3d* plib, br_token use, br_device_pixelmap_d3d* pm, br_token_value* tv) {
     br_buffer_stored_d3d* self;
     const char* ident;
@@ -141,12 +148,12 @@ br_buffer_stored_d3d* C2_HOOK_CDECL BufferStoredD3DAllocate(br_primitive_library
         return NULL;
     }
 
-    self = BrResAllocate(C2V(DriverDeviceD3D).res, sizeof(*self), BR_MEMORY_OBJECT);
+    self = BrResAllocate(DriverDeviceD3D.res, sizeof(*self), BR_MEMORY_OBJECT);
 
     if(self == NULL)
         return NULL;
 
-    self->dispatch = &C2V(bufferStoredD3DDispatch);
+    self->dispatch = &bufferStoredD3DDispatch;
     self->identifier = ident;
     self->plib = plib;
     self->flags |= SBUFF_SHARED;
@@ -157,14 +164,14 @@ br_buffer_stored_d3d* C2_HOOK_CDECL BufferStoredD3DAllocate(br_primitive_library
     plib->dispatch->_addFront((br_object_container*)plib, (br_object*)self);
     self->buffer.field_0x4c = -1;
     self->buffer.field_0x5c = -1;
-    self->buffer.uid = C2V(gStored_buffer_counter);
-    C2V(gStored_buffer_counter) += 1;
+    self->buffer.uid = gStored_buffer_counter;
+    gStored_buffer_counter += 1;
     self->buffer.field_0x58 = 0;
     self->buffer.field_0x60 = 0;
     return self;
 }
-C2_HOOK_FUNCTION(0x100083d0, BufferStoredD3DAllocate)
 
+// FUNCTION: D3D 0x100084e0
 void C2_HOOK_CDECL _M_br_buffer_stored_d3d_free(br_buffer_stored_d3d* self) {
 
     TextureCacheD3DClearEntry(self->buffer.field_0x4c, self->buffer.uid);
@@ -173,29 +180,29 @@ void C2_HOOK_CDECL _M_br_buffer_stored_d3d_free(br_buffer_stored_d3d* self) {
     self->plib->dispatch->_remove((br_object_container*)self->plib, (br_object*)self);
     BrResFreeNoCallback(self);
 }
-C2_HOOK_FUNCTION(0x100084e0, _M_br_buffer_stored_d3d_free)
 
+// FUNCTION: D3D 0x10008520
 br_token C2_HOOK_CDECL _M_br_buffer_stored_d3d_type(br_buffer_stored_d3d* self) {
     return BRT_BUFFER_STORED;
 }
-C2_HOOK_FUNCTION(0x10008520, _M_br_buffer_stored_d3d_free)
 
+// FUNCTION: D3D 0x10008530
 br_boolean C2_HOOK_CDECL _M_br_buffer_stored_d3d_isType(br_buffer_stored_d3d* self, br_token t) {
     return t == BRT_BUFFER_STORED || t == BRT_OBJECT;
 }
-C2_HOOK_FUNCTION(0x10008530, _M_br_buffer_stored_d3d_isType)
 
+// FUNCTION: D3D 0x10008550
 br_int_32 C2_HOOK_CDECL _M_br_buffer_stored_d3d_space(br_buffer_stored_d3d* self) {
     return BrResSizeTotal(self);
 }
-C2_HOOK_FUNCTION(0x10008550, _M_br_buffer_stored_d3d_space)
 
+// FUNCTION: D3D 0x10008560
 br_tv_template* C2_HOOK_CDECL _M_br_buffer_stored_d3d_templateQuery(br_buffer_stored_d3d* self) {
-    C2V(bufferStoredD3DTemplate).res = C2V(DriverDeviceD3D).res;
-    return &C2V(bufferStoredD3DTemplate);
+    bufferStoredD3DTemplate.res = DriverDeviceD3D.res;
+    return &bufferStoredD3DTemplate;
 }
-C2_HOOK_FUNCTION(0x10008560, _M_br_buffer_stored_d3d_templateQuery)
 
+// FUNCTION: D3D 0x10008480
 br_error C2_HOOK_CDECL _M_br_buffer_stored_d3d_update(br_buffer_stored_d3d* self, br_device_pixelmap_d3d* pm, br_token_value* tv) {
     self->buffer.force_reload = 1;
     self->buffer.field_0x58 = 1;
@@ -218,4 +225,3 @@ br_error C2_HOOK_CDECL _M_br_buffer_stored_d3d_update(br_buffer_stored_d3d* self
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x10008480, _M_br_buffer_stored_d3d_update)

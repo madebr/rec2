@@ -17,47 +17,64 @@
 
 #include "rec2_macros.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gInitial_count_font_texture_pages, 0x00765ea0);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSize_font_texture_pages, 0x0068648c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gString_root_actor, 0x0074cf10);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gCar_icons_model_actor, 0x0074ab84);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tCar_icon, gCar_icons, 128, 0x0074a780);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRender_poly_text, 0x0059ad28, 1);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_fonts_loaded, 0x00686488);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gInterface_polyfont_texture_pages, 0x00686494);
 
+// GLOBAL: CARMA2_HW 0x00765ea0
+int gInitial_count_font_texture_pages;
+
+// GLOBAL: CARMA2_HW 0x0068648c
+int gSize_font_texture_pages;
+
+// GLOBAL: CARMA2_HW 0x0074cf10
+br_actor* gString_root_actor;
+
+// GLOBAL: CARMA2_HW 0x0074ab84
+br_actor* gCar_icons_model_actor;
+
+// GLOBAL: CARMA2_HW 0x0074a780
+tCar_icon gCar_icons[128];
+
+// GLOBAL: CARMA2_HW 0x0059ad28
+int gRender_poly_text = 1;
+
+// GLOBAL: CARMA2_HW 0x00686488
+int gInterface_fonts_loaded;
+
+// GLOBAL: CARMA2_HW 0x00686494
+int gInterface_polyfont_texture_pages;
+
+// FUNCTION: CARMA2_HW 0x00463730
 int C2_HOOK_FASTCALL PolyFontHeight(int pIndex) {
 
     CheckAvailabilityOfThisFont(pIndex);
-    return C2V(gPolyFonts)[pIndex].fontCharacterHeight;
+    return gPolyFonts[pIndex].fontCharacterHeight;
 }
-C2_HOOK_FUNCTION(0x00463730, PolyFontHeight)
 
+// FUNCTION: CARMA2_HW 0x004637d0
 int C2_HOOK_FASTCALL CharacterWidth(int pIndex, tU8 pCharacter) {
 
     if ('a' <= pCharacter && pCharacter <= 'z') {
         pCharacter = pCharacter - ('a' - 'A');
     }
-    if (C2V(gPolyFonts)[pIndex].glyphs[pCharacter].used) {
-         return C2V(gPolyFonts)[pIndex].glyphs[pCharacter].glyph_width;
+    if (gPolyFonts[pIndex].glyphs[pCharacter].used) {
+         return gPolyFonts[pIndex].glyphs[pCharacter].glyph_width;
     }
-    return C2V(gPolyFonts)[pIndex].widthOfBlank;
+    return gPolyFonts[pIndex].widthOfBlank;
 }
-C2_HOOK_FUNCTION(0x004637d0, CharacterWidth)
 
+// FUNCTION: CARMA2_HW 0x00463830
 int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex) {
 
-    return C2V(gPolyFonts)[pIndex].interCharacterSpacing;
+    return gPolyFonts[pIndex].interCharacterSpacing;
 }
-C2_HOOK_FUNCTION(0x00463830, GetPolyFontInterCharacterSpacing)
 
+// FUNCTION: CARMA2_HW 0x00463850
 void C2_HOOK_FASTCALL RenderInterfaceBlendedPolyText(int pFont, const char* pText, int pX, int pY, int pWidth, int pHeight, tJustification pJustification, undefined4 pParam_8) {
 
     CheckAvailabilityOfThisFont(pFont);
     TransparentPolyFontTextInABox(pFont, pText, pX, pY, pWidth, pHeight, pJustification, pParam_8, 1.0);
 }
-C2_HOOK_FUNCTION(0x00463850, RenderInterfaceBlendedPolyText)
 
+// FUNCTION: CARMA2_HW 0x004638b0
 void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, int pRender) {
     char s[256];
     int s_len;
@@ -116,7 +133,7 @@ void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, in
             } else {
                 x = pLeft;
             }
-            RenderPolyTextLine(s, x, y, pFont, pJust, C2V(gRender_poly_text));
+            RenderPolyTextLine(s, x, y, pFont, pJust, gRender_poly_text);
             while (pText[in_end_put] == '\r' || pText[in_end_put] == ' ') {
                 in_end_put++;
             }
@@ -141,11 +158,11 @@ void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, in
             x = pLeft;
             justif = pJust;
         }
-        RenderPolyTextLine(s, x, y, pFont, justif, C2V(gRender_poly_text));
+        RenderPolyTextLine(s, x, y, pFont, justif, gRender_poly_text);
     }
 }
-C2_HOOK_FUNCTION(0x004638b0, RenderPolyText)
 
+// FUNCTION: CARMA2_HW 0x00463ad0
 void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend) {
     char s[256];
     int s_len;
@@ -206,7 +223,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText
             } else {
                 x = pLeft;
             }
-            TransparentPolyFontText(s, x, y, pFont, pJust, C2V(gRender_poly_text), pBlend);
+            TransparentPolyFontText(s, x, y, pFont, pJust, gRender_poly_text, pBlend);
             while (pText[in_end_put] == '\r' || pText[in_end_put] == ' ') {
                 in_end_put++;
             }
@@ -231,11 +248,11 @@ void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText
             x = pLeft;
             justif = pJust;
         }
-        TransparentPolyFontText(s, x, y, pFont, justif, C2V(gRender_poly_text), pBlend);
+        TransparentPolyFontText(s, x, y, pFont, justif, gRender_poly_text, pBlend);
     }
 }
-C2_HOOK_FUNCTION(0x00463ad0, TransparentPolyFontTextInABox)
 
+// FUNCTION: CARMA2_HW 0x00463760
 int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
     int y;
     int x;
@@ -254,14 +271,9 @@ int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x00463760, CalculatePolyFontMapWidth)
 
-void (C2_HOOK_FASTCALL * LoadPolyFont_original)(const char* pName, int pSize, int pIndex);
+// FUNCTION: CARMA2_HW 0x004643f0
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    LoadPolyFont_original(pName, pSize, pIndex);
-#else
     tPath_name the_path;
     tTWTVFS twt;
     char s[256];
@@ -273,7 +285,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
     int tex_x;
     int tex_y;
 
-    PathCat(the_path, C2V(gApplication_path), C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
+    PathCat(the_path, gApplication_path, gGraf_specs[gGraf_spec_index].data_dir_name);
     PathCat(the_path, the_path, "FONTS");
     PathCat(the_path, the_path, pName);
 
@@ -286,22 +298,22 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         FatalError(kFatalError_CannotLoadFontWidthTable_S, pName);
     }
 
-    c2_strcpy(C2V(gPolyFonts)[pIndex].name, pName);
+    c2_strcpy(gPolyFonts[pIndex].name, pName);
     /* number of characters */
-    C2V(gPolyFonts)[pIndex].numberOfCharacters = GetAnInt(f);
+    gPolyFonts[pIndex].numberOfCharacters = GetAnInt(f);
     /* inter-character spacing */
-    C2V(gPolyFonts)[pIndex].interCharacterSpacing = GetAnInt(f);
+    gPolyFonts[pIndex].interCharacterSpacing = GetAnInt(f);
     /* ASCII offset (value of first character) */
-    C2V(gPolyFonts)[pIndex].asciiOffset = GetAnInt(f);
+    gPolyFonts[pIndex].asciiOffset = GetAnInt(f);
     /* font character height */
-    C2V(gPolyFonts)[pIndex].fontCharacterHeight = GetAnInt(f);
+    gPolyFonts[pIndex].fontCharacterHeight = GetAnInt(f);
     /* Blank width */
-    C2V(gPolyFonts)[pIndex].widthOfBlank = GetAnInt(f);
-    C2V(gPolyFonts)[pIndex].fontSize = pSize;
-    C2V(gPolyFonts)[pIndex].available = 1;
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPolyFonts)[pIndex].glyphs) != 256);
-    for (i = 0; i < REC2_ASIZE(C2V(gPolyFonts)[pIndex].glyphs); i++) {
-        tPolyFontGlyph* glyph = &C2V(gPolyFonts)[pIndex].glyphs[i];
+    gPolyFonts[pIndex].widthOfBlank = GetAnInt(f);
+    gPolyFonts[pIndex].fontSize = pSize;
+    gPolyFonts[pIndex].available = 1;
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPolyFonts[pIndex].glyphs) != 256);
+    for (i = 0; i < REC2_ASIZE(gPolyFonts[pIndex].glyphs); i++) {
+        tPolyFontGlyph* glyph = &gPolyFonts[pIndex].glyphs[i];
 
         glyph->model = NULL;
         glyph->material = NULL;
@@ -319,43 +331,43 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
 
     tex_x = 0;
     tex_y = 0;
-    for (i = 0; i < (int)C2V(gPolyFonts)[pIndex].numberOfCharacters; i++) {
+    for (i = 0; i < (int)gPolyFonts[pIndex].numberOfCharacters; i++) {
         int ascii;
         br_pixelmap* map;
 
         c2_strcpy(s, the_path);
-        ascii = C2V(gPolyFonts)[pIndex].asciiOffset + i;
+        ascii = gPolyFonts[pIndex].asciiOffset + i;
         sprintf(s2, "%d.PIX", ascii);
         PathCat(s, s, s2);
         map = LoadPolyFontPixiesP16(the_path, s2, 0);
         if (map == NULL) {
             continue;
         }
-        if (C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] == NULL) {
-            C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] = BrPixelmapAllocate(blank_map->type, 64, 64, NULL, 0);
-            if (C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] == NULL) {
+        if (gTextureMaps[gSize_font_texture_pages] == NULL) {
+            gTextureMaps[gSize_font_texture_pages] = BrPixelmapAllocate(blank_map->type, 64, 64, NULL, 0);
+            if (gTextureMaps[gSize_font_texture_pages] == NULL) {
                 FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
             }
-            BrMapAdd(C2V(gTextureMaps)[C2V(gSize_font_texture_pages)]);
+            BrMapAdd(gTextureMaps[gSize_font_texture_pages]);
         }
-        if (map->type != C2V(gTextureMaps)[C2V(gSize_font_texture_pages)]->type) {
+        if (map->type != gTextureMaps[gSize_font_texture_pages]->type) {
             c2_printf("FONT:%s  CHAR:%c (%i)\n", pName, ascii, ascii);
             c2_fflush(c2_stdout);
             BrFailure("BLOODY FONTS :(");
         }
         DRPixelmapRectangleCopy(
-                C2V(gTextureMaps)[C2V(gSize_font_texture_pages)],
+                gTextureMaps[gSize_font_texture_pages],
                 tex_x, tex_y,
                 map,
                 0, 0,
                 pSize, pSize);
-        BrMapUpdate(C2V(gTextureMaps)[C2V(gSize_font_texture_pages)], BR_MAPU_ALL);
-        C2V(gPolyFonts)[pIndex].glyphs[ascii].index = C2V(gSize_font_texture_pages);
-        C2V(gPolyFonts)[pIndex].glyphs[ascii].used = 1;
-        BrVector2Set(&C2V(gPolyFonts)[pIndex].glyphs[ascii].texCoord, (float) tex_x / 64.f, (float)tex_y  / 64.f);
-        C2V(gPolyFonts)[pIndex].glyphs[ascii].glyph_width = CalculatePolyFontMapWidth(map);
-        C2V(gPolyFonts)[pIndex].glyphs[ascii].material = NULL;
-        model = C2V(gPolyFonts)[pIndex].model;
+        BrMapUpdate(gTextureMaps[gSize_font_texture_pages], BR_MAPU_ALL);
+        gPolyFonts[pIndex].glyphs[ascii].index = gSize_font_texture_pages;
+        gPolyFonts[pIndex].glyphs[ascii].used = 1;
+        BrVector2Set(&gPolyFonts[pIndex].glyphs[ascii].texCoord, (float) tex_x / 64.f, (float)tex_y  / 64.f);
+        gPolyFonts[pIndex].glyphs[ascii].glyph_width = CalculatePolyFontMapWidth(map);
+        gPolyFonts[pIndex].glyphs[ascii].material = NULL;
+        model = gPolyFonts[pIndex].model;
         /* Find model for font size */
         while (model != NULL) {
             if (model->bounds.max.v[0] == pSize && model->bounds.min.v[1] == -pSize) {
@@ -365,8 +377,8 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         }
         if (model == NULL) {
             model = BrModelAllocate("String Model", 4, 2);
-            model->user = C2V(gPolyFonts)[pIndex].glyphs[pIndex].model;
-            C2V(gPolyFonts)[pIndex].glyphs[pIndex].model = model;
+            model->user = gPolyFonts[pIndex].glyphs[pIndex].model;
+            gPolyFonts[pIndex].glyphs[pIndex].model = model;
             if (model == NULL) {
                 FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
             }
@@ -388,14 +400,14 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
             model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
             BrModelAdd(model);
         }
-        C2V(gPolyFonts)[pIndex].glyphs[ascii].model = model;
+        gPolyFonts[pIndex].glyphs[ascii].model = model;
         tex_x += pSize;
         if (tex_x >= 64) {
             tex_y += pSize;
             tex_x = 0;
             if (tex_y >= 64) {
-                C2V(gSize_font_texture_pages)++;
-                if (C2V(gSize_font_texture_pages) >= REC2_ASIZE(C2V(gTextureMaps))) {
+                gSize_font_texture_pages++;
+                if (gSize_font_texture_pages >= REC2_ASIZE(gTextureMaps)) {
                     FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
                 }
                 tex_x = 0;
@@ -406,19 +418,17 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
             BrPixelmapFree(map);
         }
     }
-    for (i = 0; i < C2V(gPixelmapBufferSize); i++) {
+    for (i = 0; i < gPixelmapBufferSize; i++) {
 
-        if (C2V(gPixelmapBuffer)[i] != NULL) {
-            BrPixelmapFree(C2V(gPixelmapBuffer)[i]);
-            C2V(gPixelmapBuffer)[i] = NULL;
+        if (gPixelmapBuffer[i] != NULL) {
+            BrPixelmapFree(gPixelmapBuffer[i]);
+            gPixelmapBuffer[i] = NULL;
         }
     }
-    C2V(gPixelmapBufferSize) = 0;
+    gPixelmapBufferSize = 0;
     ClosePackFileAndSetTiffLoading(twt);
-    C2V(gSize_font_texture_pages)++;
-#endif
+    gSize_font_texture_pages++;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004643f0, LoadPolyFont, LoadPolyFont_original)
 
 static tU32 FindSmallestPowerOf2BiggerThen(tU32 pValue) {
     tU32 power;
@@ -431,12 +441,8 @@ static tU32 FindSmallestPowerOf2BiggerThen(tU32 pValue) {
     return 1 << 31;
 }
 
-void (C2_HOOK_FASTCALL * InitCarIcons_original)(br_pixelmap* pMap);
+// FUNCTION: CARMA2_HW 0x004973b0
 void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitCarIcons_original(pMap);
-#else
     int i;
     int count_car_icons;
     int icon_width;
@@ -444,37 +450,37 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
     int texture_x;
     int texture_y;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gCar_icons)) != 128);
-    c2_memset(C2V(gCar_icons), 0, sizeof(C2V(gCar_icons)));
-    count_car_icons = C2V(gIcons_pix)->height / C2V(gCurrent_graf_data)->car_icon_height;
+    C2_HOOK_BUG_ON(REC2_ASIZE(gCar_icons) != 128);
+    c2_memset(gCar_icons, 0, sizeof(gCar_icons));
+    count_car_icons = gIcons_pix->height / gCurrent_graf_data->car_icon_height;
 
     icon_width = FindSmallestPowerOf2BiggerThen(pMap->width);
-    icon_height = FindSmallestPowerOf2BiggerThen(C2V(gCurrent_graf_data)->car_icon_height);
+    icon_height = FindSmallestPowerOf2BiggerThen(gCurrent_graf_data->car_icon_height);
 
     texture_x = 0;
     texture_y = 0;
     for (i = 0; i < count_car_icons; i++) {
         int j;
-        tCar_icon* icon = &C2V(gCar_icons)[i];
+        tCar_icon* icon = &gCar_icons[i];
 
-        if (C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] == NULL) {
-            C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] = BrPixelmapAllocate(pMap->type, 64, 64, NULL, 0);
-            if (C2V(gTextureMaps)[C2V(gSize_font_texture_pages)] == NULL) {
+        if (gTextureMaps[gSize_font_texture_pages] == NULL) {
+            gTextureMaps[gSize_font_texture_pages] = BrPixelmapAllocate(pMap->type, 64, 64, NULL, 0);
+            if (gTextureMaps[gSize_font_texture_pages] == NULL) {
                 FatalError(kFatalError_CouldNotCreateTexturesPages_S, "Car Icons");
             }
-            BrMapAdd(C2V(gTextureMaps)[C2V(gSize_font_texture_pages)]);
+            BrMapAdd(gTextureMaps[gSize_font_texture_pages]);
         }
         DRPixelmapRectangleCopy(
-            C2V(gTextureMaps)[C2V(gSize_font_texture_pages)],
+            gTextureMaps[gSize_font_texture_pages],
             texture_x,
             texture_y,
             pMap,
             0,
-            C2V(gCurrent_graf_data)->car_icon_height * i,
+            gCurrent_graf_data->car_icon_height * i,
             icon_width,
-            C2V(gCurrent_graf_data)->car_icon_height);
-        BrMapUpdate(C2V(gTextureMaps)[C2V(gSize_font_texture_pages)], BR_MAPU_ALL);
-        icon->index = C2V(gSize_font_texture_pages);
+            gCurrent_graf_data->car_icon_height);
+        BrMapUpdate(gTextureMaps[gSize_font_texture_pages], BR_MAPU_ALL);
+        icon->index = gSize_font_texture_pages;
         icon->model = CreateStringModel(icon_width, icon_height, texture_x, texture_y, "CAR ICONS");
         for (j = 0; j < 4; j++) {
             icon->model->vertices[j].red = 0xff;
@@ -488,8 +494,8 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
             texture_x = 0;
             texture_y += icon_height;
             if (texture_y >= 64) {
-                C2V(gSize_font_texture_pages)++;
-                if (C2V(gSize_font_texture_pages) >= REC2_ASIZE(C2V(gTextureMaps))) {
+                gSize_font_texture_pages++;
+                if (gSize_font_texture_pages >= REC2_ASIZE(gTextureMaps)) {
                     FatalError(kFatalError_CouldNotCreateTexturesPages_S, "CAR ICONS");
                 }
                 texture_x = 0;
@@ -497,54 +503,49 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
             }
         }
     }
-    C2V(gSize_font_texture_pages)++;
-    C2V(gCar_icons_model_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-    C2V(gCar_icons_model_actor)->material = BrMaterialAllocate("Car Icon Material");
-    C2V(gCar_icons_model_actor)->material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE;
-    BrMaterialAdd(C2V(gCar_icons_model_actor)->material);
-#endif
+    gSize_font_texture_pages++;
+    gCar_icons_model_actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    gCar_icons_model_actor->material = BrMaterialAllocate("Car Icon Material");
+    gCar_icons_model_actor->material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE;
+    BrMaterialAdd(gCar_icons_model_actor->material);
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004973b0, InitCarIcons, InitCarIcons_original)
 
+// FUNCTION: CARMA2_HW 0x00497610
 void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void) {
     InitMap();
     SaveOptions();
 }
-C2_HOOK_FUNCTION(0x00497610, UpdateMapAndSaveOptions)
 
-void (C2_HOOK_FASTCALL * InitPolyFonts_original)(void);
+// FUNCTION: CARMA2_HW 0x00463d40
 void C2_HOOK_FASTCALL InitPolyFonts(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitPolyFonts_original();
-#else
     int i;
     tPath_name the_path;
     FILE* f;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPolyFontMaterials)) != 80);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPolyFontMaterials) != 80);
 
     PrintMemoryDump(0, "START OF InitPolyFonts()");
 
-    for (i = 0; i < REC2_ASIZE(C2V(gPolyFontMaterials)); i++) {
+    for (i = 0; i < REC2_ASIZE(gPolyFontMaterials); i++) {
 
-        C2V(gPolyFontMaterials)[i] = CreateFontCharacterMaterial(0);
+        gPolyFontMaterials[i] = CreateFontCharacterMaterial(0);
     }
-    C2_HOOK_BUG_ON(sizeof(C2V(gPolyFonts)) != 196344);
-    c2_memset(&C2V(gPolyFonts), 0, sizeof(C2V(gPolyFonts)));
-    C2V(gString_root_actor) = BrActorAllocate(BR_ACTOR_NONE, NULL);
-    if (C2V(gString_root_actor) == NULL) {
+    C2_HOOK_BUG_ON(sizeof(gPolyFonts) != 196344);
+    c2_memset(&gPolyFonts, 0, sizeof(gPolyFonts));
+    gString_root_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    if (gString_root_actor == NULL) {
         FatalError(kFatalError_OOM_S, "");
     }
-    C2V(gString_root_actor)->identifier = "gString_root_actor";
-    C2V(gString_root_actor)->t.type = BR_TRANSFORM_TRANSLATION;
-    BrVector3Set(&C2V(gString_root_actor)->t.t.translate.t, 0.f, 0.f, 0.f);
+    gString_root_actor->identifier = "gString_root_actor";
+    gString_root_actor->t.type = BR_TRANSFORM_TRANSLATION;
+    BrVector3Set(&gString_root_actor->t.t.translate.t, 0.f, 0.f, 0.f);
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPolyfont_glyph_actors)) != 256);
-    for (i = 0; i < REC2_ASIZE(C2V(gPolyfont_glyph_actors)); i++) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPolyfont_glyph_actors) != 256);
+    for (i = 0; i < REC2_ASIZE(gPolyfont_glyph_actors); i++) {
         br_actor* actor;
 
         actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-        C2V(gPolyfont_glyph_actors)[i] = actor;
+        gPolyfont_glyph_actors[i] = actor;
         if (actor == NULL) {
             FatalError(kFatalError_OOM_S, "");
         }
@@ -553,7 +554,7 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
         actor->identifier = "character_actor";
     }
 
-    PathCat(the_path, C2V(gApplication_path), "FontCol.TXT");
+    PathCat(the_path, gApplication_path, "FontCol.TXT");
     f = DRfopen(the_path, "rb");
     if (f == NULL) {
         BrFailure("Missing FONTCOL.TXT file");
@@ -565,11 +566,11 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
      * the colour for each corner of every character in that font.
      */
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gPolyFontBorderColours)) != 27);
-    for (i = 0; i < REC2_ASIZE(C2V(gPolyFontBorderColours)); i++) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPolyFontBorderColours) != 27);
+    for (i = 0; i < REC2_ASIZE(gPolyFontBorderColours); i++) {
         tPolyFontBorderColours *border;
 
-        border = &C2V(gPolyFontBorderColours)[i];
+        border = &gPolyFontBorderColours[i];
 
         /* Top/Left */
         GetThreeInts(f, &border->tl.r, &border->tl.g, &border->tl.b);
@@ -585,7 +586,7 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
 #else
     fclose(f);
 #endif
-    InitCarIcons(C2V(gIcons_pix));
+    InitCarIcons(gIcons_pix);
 
     LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_yellow);
     LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_blue);
@@ -593,10 +594,10 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
     LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_green);
 
     LoadPolyFont("BIGYELLOWTIMER", 32, kPolyfont_ingame_big_timer);
-    for (i = 0; i < REC2_ASIZE(C2V(gPolyFonts)->glyphs); i++) {
-        C2V(gPolyFonts)[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
+    for (i = 0; i < REC2_ASIZE(gPolyFonts->glyphs); i++) {
+        gPolyFonts[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
     }
-    C2V(gPolyFonts)[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11;
+    gPolyFonts[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11;
 
     LoadPolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_red);
     LoadPolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_blue);
@@ -609,29 +610,28 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
     LoadPolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_red);
 
     LoadPolyFont("NETPOSFONT", 16, kPolyfont_netpos);
-    C2V(gInitial_count_font_texture_pages) = C2V(gSize_font_texture_pages);
+    gInitial_count_font_texture_pages = gSize_font_texture_pages;
     PrintMemoryDump(0, "END OF InitPolyFonts()");
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00463d40, InitPolyFonts, InitPolyFonts_original)
 
+// FUNCTION: CARMA2_HW 0x00464090
 void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, float pFactor, int pSize) {
     int i;
 
     LoadPolyFont(pName, pSize, pFont);
     if (pFont == kPolyfont_ingame_big_timer) {
         /* 0x10 -> kPolyfont_ingame_big_timer */
-        for (i = 0; i < REC2_ASIZE(C2V(gPolyFonts)[kPolyfont_ingame_big_timer].glyphs); i++) {
-            C2V(gPolyFonts)[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
+        for (i = 0; i < REC2_ASIZE(gPolyFonts[kPolyfont_ingame_big_timer].glyphs); i++) {
+            gPolyFonts[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
         }
-        C2V(gPolyFonts)[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11; /* FIXME: What is gyph 58? */
+        gPolyFonts[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11; /* FIXME: What is gyph 58? */
     }
 }
-C2_HOOK_FUNCTION(0x00464090, LoadPolyFontWithTimerFix)
 
+// FUNCTION: CARMA2_HW 0x004642d0
 void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void) {
-    if (!C2V(gInterface_fonts_loaded)) {
-        C2V(gSize_font_texture_pages) = C2V(gInitial_count_font_texture_pages);
+    if (!gInterface_fonts_loaded) {
+        gSize_font_texture_pages = gInitial_count_font_texture_pages;
         LoadPolyFont("HAND15U", 16, kPolyfont_hand_green_15pt_unlit);
         LoadPolyFont("HAND15", 16, kPolyfont_hand_green_15pt_lit);
         LoadPolyFont("HAND15U", 16, kPolyfont_hand_red_15pt_unlit);
@@ -645,23 +645,23 @@ void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void) {
         LoadPolyFont("SERP38U", 64, kPolyfont_serp_green_38pt_unlit);
         LoadPolyFontWithTimerFix(kPolyfont_serp_green_38pt_lit, "SERP38", 1.0f, 64);
         LoadPolyFontWithTimerFix(kPolyfont_highlighter, "HAND15lo", 1.0f, 16);
-        C2V(gInterface_polyfont_texture_pages) = C2V(gSize_font_texture_pages) - C2V(gInitial_count_font_texture_pages);
-        C2V(gInterface_fonts_loaded) = 1;
+        gInterface_polyfont_texture_pages = gSize_font_texture_pages - gInitial_count_font_texture_pages;
+        gInterface_fonts_loaded = 1;
     }
 }
-C2_HOOK_FUNCTION(0x004642d0, LoadInterfacePolyFonts)
 
+// FUNCTION: CARMA2_HW 0x004640d0
 void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
 
-    if (!C2V(gPolyFonts)[pFont].available) {
+    if (!gPolyFonts[pFont].available) {
         LoadInterfacePolyFonts();
     }
 }
-C2_HOOK_FUNCTION(0x004640d0, CheckAvailabilityOfThisFont)
 
+// FUNCTION: CARMA2_HW 0x004640f0
 void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
 
-    if (C2V(gInterface_fonts_loaded)) {
+    if (gInterface_fonts_loaded) {
         int i;
 
         ClearPolyFontGlyphs(kPolyfont_hand_green_15pt_unlit);
@@ -678,26 +678,26 @@ void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
         ClearPolyFontGlyphs(kPolyfont_serp_green_38pt_lit);
         ClearPolyFontGlyphs(kPolyfont_highlighter);
 
-        for (i = 0; i < C2V(gInterface_polyfont_texture_pages); i++) {
-            int map_i = C2V(gInterface_polyfont_texture_pages) + i;
+        for (i = 0; i < gInterface_polyfont_texture_pages; i++) {
+            int map_i = gInterface_polyfont_texture_pages + i;
 
-            if (C2V(gTextureMaps)[map_i] != NULL) {
+            if (gTextureMaps[map_i] != NULL) {
 
-                BrMapRemove(C2V(gTextureMaps)[map_i]);
-                BrPixelmapFree(C2V(gTextureMaps)[map_i]);
-                C2V(gTextureMaps)[map_i] = NULL;
+                BrMapRemove(gTextureMaps[map_i]);
+                BrPixelmapFree(gTextureMaps[map_i]);
+                gTextureMaps[map_i] = NULL;
             }
         }
-        C2V(gInterface_fonts_loaded) = 0;
+        gInterface_fonts_loaded = 0;
     }
 }
-C2_HOOK_FUNCTION(0x004640f0, DisposeInterfaceFonts)
 
+// FUNCTION: CARMA2_HW 0x00464290
 void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gPolyFonts)[pFont].glyphs); i++) {
-        tPolyFontGlyph* glyph = &C2V(gPolyFonts)[pFont].glyphs[i];
+    for (i = 0; i < REC2_ASIZE(gPolyFonts[pFont].glyphs); i++) {
+        tPolyFontGlyph* glyph = &gPolyFonts[pFont].glyphs[i];
 
         if (glyph->used) {
 
@@ -706,10 +706,10 @@ void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
             glyph->used = 0;
         }
     }
-    C2V(gPolyFonts)[pFont].available = 0;
+    gPolyFonts[pFont].available = 0;
 }
-C2_HOOK_FUNCTION(0x00464290, ClearPolyFontGlyphs)
 
+// FUNCTION: CARMA2_HW 0x00465ca0
 int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
     int len;
     int i;
@@ -721,12 +721,12 @@ int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
         result += CharacterWidth(pFont, pText[i]);
     }
     if (len > 1) {
-        result += (len - 1) * C2V(gPolyFonts)[pFont].interCharacterSpacing;
+        result += (len - 1) * gPolyFonts[pFont].interCharacterSpacing;
     }
     return result;
 }
-C2_HOOK_FUNCTION(0x00465ca0, PolyFontTextWidth)
 
+// FUNCTION: CARMA2_HW 0x00464e40
 void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
     int text_len;
     int i;
@@ -749,7 +749,7 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
     }
 
     text_len = c2_strlen(pText);
-    if (C2V(gCount_polyfont_glyph_actors) + text_len >= REC2_ASIZE(C2V(gPolyfont_glyph_actors))) {
+    if (gCount_polyfont_glyph_actors + text_len >= REC2_ASIZE(gPolyfont_glyph_actors)) {
         /* line is not drawn */
         /* FIXME: log debug message */
         return;
@@ -763,23 +763,23 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
 
         if (c == '\r') {
             draw_x = pX;
-            draw_y += C2V(gPolyFonts)[pFont].fontCharacterHeight;
+            draw_y += gPolyFonts[pFont].fontCharacterHeight;
             continue;
         }
         if (c >= 'a' && c <= 'z') {
             c -= 'a' - 'A';
         }
-        if (!C2V(gPolyFonts)[pFont].glyphs[c].used) {
-            draw_x += C2V(gPolyFonts)[pFont].widthOfBlank;
+        if (!gPolyFonts[pFont].glyphs[c].used) {
+            draw_x += gPolyFonts[pFont].widthOfBlank;
             continue;
         }
-        actor = C2V(gPolyfont_glyph_actors)[C2V(gCount_polyfont_glyph_actors)];
-        actor->model = C2V(gPolyFonts)[pFont].glyphs[c].model;
+        actor = gPolyfont_glyph_actors[gCount_polyfont_glyph_actors];
+        actor->model = gPolyFonts[pFont].glyphs[c].model;
         actor->material = GetPolyFontMaterial(pFont, c);
-        BrActorAdd(C2V(gString_root_actor), actor);
+        BrActorAdd(gString_root_actor, actor);
         BrVector3Set(&actor->t.t.translate.t, (float)draw_x, (float)-draw_y, -1.1f);
-        C2V(gCount_polyfont_glyph_actors)++;
-        draw_x += C2V(gPolyFonts)[pFont].glyphs[c].glyph_width + C2V(gPolyFonts)[pFont].interCharacterSpacing;
+        gCount_polyfont_glyph_actors++;
+        draw_x += gPolyFonts[pFont].glyphs[c].glyph_width + gPolyFonts[pFont].interCharacterSpacing;
     }
     if (pRender) {
         int original_origin_x;
@@ -789,32 +789,32 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
         int original_base_x;
         int original_base_y;
 
-        BrActorAdd(C2V(gHUD_root), C2V(gString_root_actor));
-        original_origin_x = C2V(gBack_screen)->origin_x;
-        original_origin_y = C2V(gBack_screen)->origin_y;
-        original_width = C2V(gBack_screen)->width;
-        original_height = C2V(gBack_screen)->height;
-        original_base_x = C2V(gBack_screen)->base_x;
-        original_base_y = C2V(gBack_screen)->base_y;
-        C2V(gBack_screen)->origin_x = 0;
-        C2V(gBack_screen)->origin_y = 0;
-        C2V(gBack_screen)->base_x = 0;
-        C2V(gBack_screen)->base_y = 0;
-        C2V(gBack_screen)->width = 640;
-        C2V(gBack_screen)->height = 480;
-        BrZbSceneRender(C2V(gHUD_root), C2V(gHUD_camera), C2V(gBack_screen), C2V(gDepth_buffer));
-        C2V(gBack_screen)->origin_x = original_origin_x;
-        C2V(gBack_screen)->origin_y = original_origin_y;
-        C2V(gBack_screen)->width = original_width;
-        C2V(gBack_screen)->height = original_height;
-        C2V(gBack_screen)->base_x = original_base_x;
-        C2V(gBack_screen)->base_y = original_base_y;
-        BrActorRemove(C2V(gString_root_actor));
+        BrActorAdd(gHUD_root, gString_root_actor);
+        original_origin_x = gBack_screen->origin_x;
+        original_origin_y = gBack_screen->origin_y;
+        original_width = gBack_screen->width;
+        original_height = gBack_screen->height;
+        original_base_x = gBack_screen->base_x;
+        original_base_y = gBack_screen->base_y;
+        gBack_screen->origin_x = 0;
+        gBack_screen->origin_y = 0;
+        gBack_screen->base_x = 0;
+        gBack_screen->base_y = 0;
+        gBack_screen->width = 640;
+        gBack_screen->height = 480;
+        BrZbSceneRender(gHUD_root, gHUD_camera, gBack_screen, gDepth_buffer);
+        gBack_screen->origin_x = original_origin_x;
+        gBack_screen->origin_y = original_origin_y;
+        gBack_screen->width = original_width;
+        gBack_screen->height = original_height;
+        gBack_screen->base_x = original_base_x;
+        gBack_screen->base_y = original_base_y;
+        BrActorRemove(gString_root_actor);
         RemovePolyFontActors();
     }
 }
-C2_HOOK_FUNCTION(0x00464e40, RenderPolyTextLine)
 
+// FUNCTION: CARMA2_HW 0x00465380
 void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pBlend_factor) {
     int text_len;
     int i;
@@ -838,7 +838,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
     }
 
     text_len = c2_strlen(pText);
-    if (C2V(gCount_polyfont_glyph_actors) + text_len >= REC2_ASIZE(C2V(gPolyfont_glyph_actors))) {
+    if (gCount_polyfont_glyph_actors + text_len >= REC2_ASIZE(gPolyfont_glyph_actors)) {
         /* line is not drawn */
         /* FIXME: log debug message */
         return;
@@ -858,25 +858,25 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
 
         if (c == '\r') {
             draw_x = pX;
-            draw_y += C2V(gPolyFonts)[pFont].fontCharacterHeight;
+            draw_y += gPolyFonts[pFont].fontCharacterHeight;
             continue;
         }
         if (c >= 'a' && c <= 'z') {
             c -= 'a' - 'A';
         }
-        if (!C2V(gPolyFonts)[pFont].glyphs[c].used) {
-            draw_x += C2V(gPolyFonts)[pFont].widthOfBlank;
+        if (!gPolyFonts[pFont].glyphs[c].used) {
+            draw_x += gPolyFonts[pFont].widthOfBlank;
             continue;
         }
-        actor = C2V(gPolyfont_glyph_actors)[C2V(gCount_polyfont_glyph_actors)];
-        actor->model = C2V(gPolyFonts)[pFont].glyphs[c].model;
+        actor = gPolyfont_glyph_actors[gCount_polyfont_glyph_actors];
+        actor->model = gPolyFonts[pFont].glyphs[c].model;
         actor->material = GetPolyFontMaterial(pFont, c);
         actor->material->extra_prim = tvs;
         BrMaterialUpdate(actor->material, BR_MATU_ALL);
-        BrActorAdd(C2V(gString_root_actor), actor);
+        BrActorAdd(gString_root_actor, actor);
         BrVector3Set(&actor->t.t.translate.t, (float)draw_x, (float)-draw_y, -1.1f);
-        C2V(gCount_polyfont_glyph_actors)++;
-        draw_x += C2V(gPolyFonts)[pFont].glyphs[c].glyph_width + C2V(gPolyFonts)[pFont].interCharacterSpacing;
+        gCount_polyfont_glyph_actors++;
+        draw_x += gPolyFonts[pFont].glyphs[c].glyph_width + gPolyFonts[pFont].interCharacterSpacing;
     }
     if (pRender) {
         int original_origin_x;
@@ -884,30 +884,29 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
         int original_base_x;
         int original_base_y;
 
-        BrActorAdd(C2V(gHUD_root), C2V(gString_root_actor));
-        original_origin_x = C2V(gBack_screen)->origin_x;
-        original_origin_y = C2V(gBack_screen)->origin_y;
-        original_base_x = C2V(gBack_screen)->base_x;
-        original_base_y = C2V(gBack_screen)->base_y;
-        C2V(gBack_screen)->origin_x = 0;
-        C2V(gBack_screen)->origin_y = 0;
-        C2V(gBack_screen)->base_x = 0;
-        C2V(gBack_screen)->base_y = 0;
-        BrZbSceneRender(C2V(gHUD_root), C2V(gHUD_camera), C2V(gBack_screen), C2V(gDepth_buffer));
-        C2V(gBack_screen)->origin_x = original_origin_x;
-        C2V(gBack_screen)->origin_y = original_origin_y;
-        C2V(gBack_screen)->base_x = original_base_x;
-        C2V(gBack_screen)->base_y = original_base_y;
-        BrActorRemove(C2V(gString_root_actor));
+        BrActorAdd(gHUD_root, gString_root_actor);
+        original_origin_x = gBack_screen->origin_x;
+        original_origin_y = gBack_screen->origin_y;
+        original_base_x = gBack_screen->base_x;
+        original_base_y = gBack_screen->base_y;
+        gBack_screen->origin_x = 0;
+        gBack_screen->origin_y = 0;
+        gBack_screen->base_x = 0;
+        gBack_screen->base_y = 0;
+        BrZbSceneRender(gHUD_root, gHUD_camera, gBack_screen, gDepth_buffer);
+        gBack_screen->origin_x = original_origin_x;
+        gBack_screen->origin_y = original_origin_y;
+        gBack_screen->base_x = original_base_x;
+        gBack_screen->base_y = original_base_y;
+        BrActorRemove(gString_root_actor);
         RemovePolyFontActors();
     }
 }
-C2_HOOK_FUNCTION(0x00465380, TransparentPolyFontText)
 
+// FUNCTION: CARMA2_HW 0x00470a50
 void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
 
     while (PolyFontTextWidth(pFont, pText) > pWidth) {
         pText[c2_strlen(pText) + -1] = '\0';
     }
 }
-C2_HOOK_FUNCTION(0x00470a50, PolyClipName)

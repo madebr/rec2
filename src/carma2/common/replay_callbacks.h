@@ -3,7 +3,7 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(const tReplay_callback, gReplay_callbacks, 70);
+extern const tReplay_callback gReplay_callbacks[70];
 
 void C2_HOOK_FASTCALL ApplyFrameBoundary(tPipe_chunk** pChunk);
 

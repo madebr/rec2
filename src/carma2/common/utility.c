@@ -26,46 +26,59 @@
 #include <float.h>
 #include <math.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gLost_time, 0x006abef4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gIn_check_quit, 0x006abee0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const tU8, gLong_key, 16, 0x006585f0, {
+
+// GLOBAL: CARMA2_HW 0x006abef4
+tU32 gLost_time;
+
+// GLOBAL: CARMA2_HW 0x006abee0
+int gIn_check_quit;
+
+// GLOBAL: CARMA2_HW 0x006585f0
+const tU8 gLong_key[16] = {
     0x6c, 0x1b, 0x99, 0x5f, 0xb9, 0xcd, 0x5f, 0x13,
     0xcb, 0x04, 0x20, 0x0e, 0x5e, 0x1c, 0xa1, 0x0e,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const tU8, gOther_long_key, 16, 0x00658600, {
+};
+
+// GLOBAL: CARMA2_HW 0x00658600
+const tU8 gOther_long_key[16] = {
     0x67, 0xa8, 0xd6, 0x26, 0xb6, 0xdd, 0x45, 0x1b,
     0x32, 0x7e, 0x22, 0x13, 0x15, 0xc2, 0x94, 0x37,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gDecode_thing, 0x00655e30, '@');
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, last_service, 0x006abef8);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_vector3, y_unit_vector, 0x00655df0, { { 0.f, 1.f, 0.f } });
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, g16bit_palette, 0x006b63f4);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette_source, 0x006b63f0);
+};
 
-br_error (C2_HOOK_FASTCALL * DRBrEnd_original)(void);
+// GLOBAL: CARMA2_HW 0x00655e30
+int gDecode_thing = '@';
+
+// GLOBAL: CARMA2_HW 0x006abef8
+tU32 last_service;
+
+// GLOBAL: CARMA2_HW 0x00655df0
+br_vector3 y_unit_vector = { { 0.f, 1.f, 0.f } };
+
+// GLOBAL: CARMA2_HW 0x006b63f4
+br_pixelmap* g16bit_palette;
+
+// GLOBAL: CARMA2_HW 0x006b63f0
+br_pixelmap* gPalette_source;
+
+// FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return DRBrEnd_original();
-#else
     br_device *dev;
 
-    if (!C2V(gBr_initialized)) {
+    if (!gBr_initialized) {
         return 0x1006;
     }
 
     _BrEndHook();
-    C2V(gBr_initialized) = 0;
+    gBr_initialized = 0;
     while (BrDevFind(&dev, NULL) == 0) {
         if (dev != NULL) {
             BrDevRemove(dev);
         }
     }
     return 0;
-
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00513400, DRBrEnd, DRBrEnd_original);
 
+// FUNCTION: CARMA2_HW 0x00515910
 void C2_HOOK_FASTCALL StringTransformToLower(char* pStr) {
     int i;
     int len;
@@ -75,8 +88,8 @@ void C2_HOOK_FASTCALL StringTransformToLower(char* pStr) {
         pStr[i] = c2_tolower(pStr[i]);
     }
 }
-C2_HOOK_FUNCTION(0x00515910, StringTransformToLower)
 
+// FUNCTION: CARMA2_HW 0x00513460
 void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src) {
     size_t lenSrc;
     size_t nbLeft;
@@ -91,13 +104,13 @@ void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src) {
     }
     dest[0] = '\0';
 }
-C2_HOOK_FUNCTION(0x00513460, Uppercaseificate)
 
+// FUNCTION: CARMA2_HW 0x00515950
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
     return PDCheckDriveExists2(pThe_path, NULL, 0);
 }
-C2_HOOK_FUNCTION(0x00515950, PDCheckDriveExists)
 
+// FUNCTION: CARMA2_HW 0x00490f30
 char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
     char* result;
     char s[256];
@@ -146,26 +159,25 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
     c2_strncpy(pS, result, len + 1);
     return pS;
 }
-C2_HOOK_FUNCTION(0x00490f30, GetALineWithNoPossibleService)
 
+// FUNCTION: CARMA2_HW 0x00491090
 char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS) {
 
     PossibleService();
     return GetALineWithNoPossibleService(pF, pS);
 }
-C2_HOOK_FUNCTION(0x00491090, GetALineAndDontArgue)
 
+// FUNCTION: CARMA2_HW 0x00513690
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2) {
 
     if (pDestn_str != pStr_1) { // Added to avoid strcpy overlap checks
         c2_strcpy(pDestn_str, pStr_1);
     }
     if (c2_strlen(pStr_2) != 0) {
-        c2_strcat(pDestn_str, C2V(gDir_separator));
+        c2_strcat(pDestn_str, gDir_separator);
         c2_strcat(pDestn_str, pStr_2);
     }
 }
-C2_HOOK_FUNCTION(0x00513690, PathCat)
 
 void C2_HOOK_FASTCALL DecodeLine2(char* pS) {
     int len;
@@ -175,7 +187,7 @@ void C2_HOOK_FASTCALL DecodeLine2(char* pS) {
     const tU8* key;
 
     len = c2_strlen(pS);
-    key = C2V(gLong_key);
+    key = gLong_key;
     while (len > 0 && (pS[len - 1] == '\r' || pS[len - 1] == '\n')) {
         len--;
         pS[len] = '\0';
@@ -185,7 +197,7 @@ void C2_HOOK_FASTCALL DecodeLine2(char* pS) {
         c = pS[i];
         if (i >= 2) {
             if (pS[i - 1] == '/' && pS[i - 2] == '/') {
-                key = C2V(gOther_long_key);
+                key = gOther_long_key;
             }
         }
         if (c == '\t') {
@@ -217,7 +229,7 @@ void C2_HOOK_FASTCALL EncodeLine2(char* pS) {
 
     len = c2_strlen(pS);
     count = 0;
-    key = C2V(gLong_key);
+    key = gLong_key;
     while (len > 0 && (pS[len - 1] == '\r' || pS[len - 1] == '\n')) {
         len--;
         pS[len] = '\0';
@@ -227,7 +239,7 @@ void C2_HOOK_FASTCALL EncodeLine2(char* pS) {
 
     for (i = 0; i < len; i++) {
         if (count == 2) {
-            key = C2V(gOther_long_key);
+            key = gOther_long_key;
         }
         if (pS[i] == '/') {
             count++;
@@ -253,12 +265,8 @@ void C2_HOOK_FASTCALL EncodeLine2(char* pS) {
     }
 }
 
-void (C2_HOOK_FASTCALL * EncodeFile_original)(char* pThe_path);
+// FUNCTION: CARMA2_HW 0x00490840
 void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    EncodeFile_original(pThe_path);
-#else
     FILE* f;
     FILE* d;
     char line[257];
@@ -281,7 +289,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     ch = DRfgetc(f);
     DRungetc(ch, f);
 
-    if (C2V(gDecode_thing) == '@' && ch == '@') {
+    if (gDecode_thing == '@' && ch == '@') {
         PFfclose(f);
         return;
     }
@@ -338,10 +346,9 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     PDFileUnlock(pThe_path);
     c2_unlink(pThe_path);
     c2_rename(new_file, pThe_path);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00490840, EncodeFile, EncodeFile_original)
 
+// FUNCTION: CARMA2_HW 0x00515870
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
     int val;
 
@@ -354,43 +361,32 @@ int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
         p2++;
     }
 }
-C2_HOOK_FUNCTION(0x00515870, DRStricmp)
 
-tU32 (C2_HOOK_FASTCALL * GetTotalTime_original)(void);
+// FUNCTION: CARMA2_HW 0x00514c30
 tU32 C2_HOOK_FASTCALL GetTotalTime(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    return GetTotalTime_original();
-#else
-
-    if (C2V(gAction_replay_mode)) {
-        return C2V(gLast_replay_frame_time);
+    if (gAction_replay_mode) {
+        return gLast_replay_frame_time;
     }
-    if (C2V(gNet_mode) != eNet_mode_none) {
-        return C2V(gLast_tick_count) + C2V(gFrame_period);
+    if (gNet_mode != eNet_mode_none) {
+        return gLast_tick_count + gFrame_period;
     }
-    return C2V(gFrame_period) + C2V(gLast_tick_count) - C2V(gLost_time);
-#endif
+    return gFrame_period + gLast_tick_count - gLost_time;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00514c30, GetTotalTime, GetTotalTime_original)
 
-void (C2_HOOK_FASTCALL * PossibleService_original)(void);
+// FUNCTION: CARMA2_HW 0x005155d0
 void C2_HOOK_FASTCALL PossibleService(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    PossibleService_original();
-#else
     tU32 time;
 
     time = PDGetTotalTime();
-    if (time - C2V(last_service) > 200 && !C2V(gProgram_state).racing) {
+    if (time - last_service > 200 && !gProgram_state.racing) {
         SoundService();
-        NetService(C2V(gProgram_state).racing);
-        C2V(last_service) = time;
+        NetService(gProgram_state.racing);
+        last_service = time;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x005155d0, PossibleService, PossibleService_original)
 
+// FUNCTION: CARMA2_HW 0x005137d0
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW, br_uint_16 pH, void* pPixels, int pFlags) {
     br_pixelmap* pm;
 
@@ -401,8 +397,8 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW,
     }
     return pm;
 }
-C2_HOOK_FUNCTION(0x005137d0, DRPixelmapAllocate)
 
+// FUNCTION: CARMA2_HW 0x00513820
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16 pX, br_uint_16 pY, br_uint_16 pW, br_uint_16 pH) {
     br_pixelmap* the_map;
 
@@ -413,8 +409,8 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
     }
     return the_map;
 }
-C2_HOOK_FUNCTION(0x00513820, DRPixelmapAllocateSub)
 
+// FUNCTION: CARMA2_HW 0x00513870
 br_pixelmap* C2_HOOK_FASTCALL DRLoadUpdatePixelmapFromTif(const char* path) {
     int errorFlags;
     tPath_name pathBuffer;
@@ -427,11 +423,11 @@ br_pixelmap* C2_HOOK_FASTCALL DRLoadUpdatePixelmapFromTif(const char* path) {
     c2_strcpy(pathBuffer, path);
     pathLen = c2_strlen(pathBuffer);
     for (fileStart = pathLen - 1; fileStart != 0; fileStart--) {
-        if (pathBuffer[fileStart] == *C2V(gDir_separator)) {
+        if (pathBuffer[fileStart] == *gDir_separator) {
             break;
         }
     }
-    c2_strncpy(pathDir, pathBuffer, fileStart);
+    c2_memcpy(pathDir, pathBuffer, fileStart);
     pathDir[fileStart] = '\0';
     if (pathDir[0] != '\0') {
         fileStart += 1;
@@ -440,15 +436,15 @@ br_pixelmap* C2_HOOK_FASTCALL DRLoadUpdatePixelmapFromTif(const char* path) {
         textureName[i] = pathBuffer[fileStart + i];
     }
     textureName[pathLen - fileStart] = '\0';
-    return DRLdImg(pathDir, textureName, C2V(gRender_palette), C2V(gPixelFlags), &errorFlags);
+    return DRLdImg(pathDir, textureName, gRender_palette, gPixelFlags, &errorFlags);
 }
-C2_HOOK_FUNCTION(0x00513870, DRLoadUpdatePixelmapFromTif)
 
+// FUNCTION: CARMA2_HW 0x005191b0
 void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_uint_16 w, br_uint_16 h) {
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
 }
-C2_HOOK_FUNCTION(0x005191b0, DRPixelmapRectangleCopy)
 
+// FUNCTION: CARMA2_HW 0x005146f0
 intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg) {
     intptr_t result;
 
@@ -464,8 +460,8 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbf
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x005146f0, DRActorEnumRecurse)
 
+// FUNCTION: CARMA2_HW 0x005139a0
 void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath) {
     size_t pathLen;
     size_t dirLen;
@@ -473,7 +469,7 @@ void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* s
 
     pathLen = c2_strlen(path);
     for (dirLen = pathLen - 1; dirLen != 0; dirLen--) {
-        if (path[dirLen] == C2V(gDir_separator)[0]) {
+        if (path[dirLen] == gDir_separator[0]) {
             break;
         }
     }
@@ -489,8 +485,8 @@ void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* s
     }
     stemPath[stemIndex] = '\0';
 }
-C2_HOOK_FUNCTION(0x005139a0, SepDirAndFilename)
 
+// FUNCTION: CARMA2_HW 0x00513790
 tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
     tU32 the_size;
 
@@ -499,13 +495,12 @@ tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
     PFrewind(pF);
     return the_size;
 }
-C2_HOOK_FUNCTION(0x00513790, GetFileLength)
 
+// FUNCTION: CARMA2_HW 0x00513510
 double C2_HOOK_FASTCALL sqr(double pN) {
 
     return pN * pN;
 }
-C2_HOOK_FUNCTION(0x00513510, sqr)
 
 void C2_HOOK_FASTCALL BuildShadeTablePath(char* pThe_path, int pR, int pG, int pB) {
     char s[32];
@@ -520,7 +515,7 @@ void C2_HOOK_FASTCALL BuildShadeTablePath(char* pThe_path, int pR, int pG, int p
     s[7] = 'A' + ((pB & 0x0f) >> 0);
     s[8] = '\0';
     c2_strcat(s, ".TAB");
-    PathCat(pThe_path, C2V(gApplication_path), "SHADETAB");
+    PathCat(pThe_path, gApplication_path, "SHADETAB");
     PathCat(pThe_path, pThe_path, s);
 }
 
@@ -569,6 +564,7 @@ int C2_HOOK_FASTCALL FindBestMatch(tRGB_colour* pRGB_colour, br_pixelmap* pPalet
     return near_c;
 }
 
+// FUNCTION: CARMA2_HW 0x00514eb0
 br_pixelmap* C2_HOOK_FASTCALL GenerateDarkenedShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter, br_scalar pDarken) {
     br_pixelmap* the_table;
     tRGB_colour the_RGB;
@@ -638,8 +634,8 @@ br_pixelmap* C2_HOOK_FASTCALL GenerateDarkenedShadeTable(int pHeight, br_pixelma
     BrTableAdd(the_table);
     return the_table;
 }
-C2_HOOK_FUNCTION(0x00514eb0, GenerateDarkenedShadeTable)
 
+// FUNCTION: CARMA2_HW 0x00514e40
 br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter) {
 
     PossibleService();
@@ -654,8 +650,8 @@ br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPale
             pThree_quarter,
             1.0f);
 }
-C2_HOOK_FUNCTION(0x00514e40, GenerateShadeTable)
 
+// FUNCTION: CARMA2_HW 0x00513520
 int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
     int num;
 
@@ -668,57 +664,57 @@ int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
     return pA + (int)((pB + 1 - pA) * (num / ((float)RAND_MAX + 1)));
 #endif
 }
-C2_HOOK_FUNCTION(0x00513520, IRandomBetween)
 
+// FUNCTION: CARMA2_HW 0x005135b0
 float C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
 
     return (float)rand() * (pB - pA) / (float)RAND_MAX + pA;
 }
-C2_HOOK_FUNCTION(0x005135b0, FRandomBetween)
 
+// FUNCTION: CARMA2_HW 0x00513620
 br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
 
     return FRandomBetween(pA, pB);
 }
-C2_HOOK_FUNCTION(0x00513620, SRandomBetween)
 
+// FUNCTION: CARMA2_HW 0x00514d70
 const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
 
-    return C2V(gMisc_strings)[pIndex];
+    return gMisc_strings[pIndex];
 }
-C2_HOOK_FUNCTION(0x00514d70, GetMiscString)
 
+// FUNCTION: CARMA2_HW 0x00514c80
 void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time) {
 
-    C2V(gLost_time) += pLost_time;
+    gLost_time += pLost_time;
 }
-C2_HOOK_FUNCTION(0x00514c80, AddLostTime)
 
+// FUNCTION: CARMA2_HW 0x005134b0
 int C2_HOOK_FASTCALL CheckQuit(void) {
 
-    if (C2V(gIn_check_quit)) {
+    if (gIn_check_quit) {
         return 0;
     }
     if (KeyIsDown(1) && KeyIsDown(7)) {
-        C2V(gIn_check_quit) = 1;
+        gIn_check_quit = 1;
         while (AnyKeyDown()) {
         }
         if (DoVerifyQuit(1)) {
             QuitGame();
         }
-        C2V(gIn_check_quit) = 0;
+        gIn_check_quit = 0;
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x005134b0, CheckQuit)
 
+// FUNCTION: CARMA2_HW 0x00513770
 float C2_HOOK_STDCALL tandeg(float pAngle) {
 
     pAngle = (float)DEG_TO_RAD(pAngle);
     return sinf(pAngle) / cosf(pAngle);
 }
-C2_HOOK_FUNCTION(0x00513770, tandeg)
 
+// FUNCTION: CARMA2_HW 0x005147b0
 intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg) {
 
     if (pActor->identifier != NULL && c2_strcmp(pActor->identifier, (const char*)pArg) == 0) {
@@ -727,26 +723,21 @@ intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg) {
         return 0;
     }
 }
-C2_HOOK_FUNCTION(0x005147b0, CompareActorID)
 
-br_actor* (C2_HOOK_FASTCALL * DRActorFindRecurse_original)(br_actor* pSearch_root, const char* pName);
+// FUNCTION: CARMA2_HW 0x00514730
 br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char* pName) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    return DRActorFindRecurse_original(pSearch_root, pName);
-#else
     return (br_actor*)DRActorEnumRecurse(pSearch_root, CompareActorID, (void*)pName);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00514730, DRActorFindRecurse, DRActorFindRecurse_original)
 
+// FUNCTION: CARMA2_HW 0x005149a0
 FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
     int index;
     FILE* f;
     tPath_name the_path;
 
     for (index = 0; index < 10000; index++) {
-        PathCat(the_path, C2V(gApplication_path), pPrefix);
+        PathCat(the_path, gApplication_path, pPrefix);
         c2_sprintf(the_path + c2_strlen(the_path), "%04d.%s", index, pExtension);
         f = DRfopen(the_path, "rt");
         if (f == NULL) {
@@ -756,15 +747,15 @@ FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x005149a0, OpenUniqueFileB)
 
+// FUNCTION: CARMA2_HW 0x00514ab0
 void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF) {
     int i;
     int j;
     int bit_map_size;
     int offset;
 
-    bit_map_size = C2V(gBack_screen)->height * C2V(gBack_screen)->row_bytes;
+    bit_map_size = gBack_screen->height * gBack_screen->row_bytes;
 
     // 1. BMP Header
     //    1. 'BM' Signature
@@ -783,9 +774,9 @@ void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF) {
     //    1. InfoHeader Size
     WriteU32L(pF, 0x28);
     //    2. Width of bitmap in pixels
-    WriteU32L(pF, C2V(gBack_screen)->row_bytes);
+    WriteU32L(pF, gBack_screen->row_bytes);
     //    3. Height of bitmap in pixels
-    WriteU32L(pF, C2V(gBack_screen)->height);
+    WriteU32L(pF, gBack_screen->height);
     //    4. Number of planes
     WriteU16L(pF, 1);
     //    5. Bits per pixels / palletization (8 -> 8bit palletized ==> #colors = 256)
@@ -806,24 +797,23 @@ void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF) {
     // 3. Color table (=palette)
     for (i = 0; i < 256; i++) {
         // red, green, blue, unused
-        WriteU8L(pF, ((tU8*)C2V(gCurrent_palette)->pixels)[4 * i + 0]);
-        WriteU8L(pF, ((tU8*)C2V(gCurrent_palette)->pixels)[4 * i + 1]);
-        WriteU8L(pF, ((tU8*)C2V(gCurrent_palette)->pixels)[4 * i + 2]);
+        WriteU8L(pF, ((tU8*)gCurrent_palette->pixels)[4 * i + 0]);
+        WriteU8L(pF, ((tU8*)gCurrent_palette->pixels)[4 * i + 1]);
+        WriteU8L(pF, ((tU8*)gCurrent_palette->pixels)[4 * i + 2]);
         WriteU8L(pF, 0);
     }
 
     // 4. Pixel Data (=LUT)
-    offset = bit_map_size - C2V(gBack_screen)->row_bytes;
-    for (i = 0; i < C2V(gBack_screen)->height; i++) {
-        for (j = 0; j < C2V(gBack_screen)->row_bytes; j++) {
-            WriteU8L(pF, ((tU8*)C2V(gBack_screen)->pixels)[offset]);
+    offset = bit_map_size - gBack_screen->row_bytes;
+    for (i = 0; i < gBack_screen->height; i++) {
+        for (j = 0; j < gBack_screen->row_bytes; j++) {
+            WriteU8L(pF, ((tU8*)gBack_screen->pixels)[offset]);
             offset++;
         }
-        offset -= 2 * C2V(gBack_screen)->row_bytes;
+        offset -= 2 * gBack_screen->row_bytes;
     }
     WriteU16L(pF, 0);
 }
-C2_HOOK_FUNCTION(0x00514ab0, PrintScreenFile)
 
 void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
     int i;
@@ -831,11 +821,11 @@ void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
     int bit_map_size;
     int offset;
 
-    if (C2V(gBack_screen)->pixels == NULL) {
-        BrPixelmapDirectLock(C2V(gBack_screen), 1);
+    if (gBack_screen->pixels == NULL) {
+        BrPixelmapDirectLock(gBack_screen, 1);
     }
 
-    bit_map_size = C2V(gBack_screen)->height * 3 * C2V(gBack_screen)->width;
+    bit_map_size = gBack_screen->height * 3 * gBack_screen->width;
 
     // 1. BMP Header
     //    1. 'BM' Signature
@@ -854,9 +844,9 @@ void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
     //    1. InfoHeader Size
     WriteU32L(pF, 0x28);
     //    2. Width of bitmap in pixels
-    WriteU32L(pF, C2V(gBack_screen)->width);
+    WriteU32L(pF, gBack_screen->width);
     //    3. Height of bitmap in pixels
-    WriteU32L(pF, C2V(gBack_screen)->height);
+    WriteU32L(pF, gBack_screen->height);
     //    4. Number of planes
     WriteU16L(pF, 1);
     //    5. Bits per pixels / palletization (0x18 -> 24bit colours ==> #colors = 2^24)
@@ -875,16 +865,16 @@ void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
     WriteU32L(pF, 256);
 
     // 4. Pixel Data (=LUT)
-    offset = C2V(gBack_screen)->row_bytes * (C2V(gBack_screen)->height - 1);
-    for (i = 0; i < C2V(gBack_screen)->height; i++) {
-        for (j = 0; j < C2V(gBack_screen)->width; j++) {
+    offset = gBack_screen->row_bytes * (gBack_screen->height - 1);
+    for (i = 0; i < gBack_screen->height; i++) {
+        for (j = 0; j < gBack_screen->width; j++) {
             tU8 r, g, b;
-            tU16 pixel = *(tU16*)&((tU8*)C2V(gBack_screen)->pixels)[offset];
-            if (C2V(gBack_screen)->type == BR_PMT_RGB_565) {
+            tU16 pixel = *(tU16*)&((tU8*)gBack_screen->pixels)[offset];
+            if (gBack_screen->type == BR_PMT_RGB_565) {
                 b = pixel << 3;
                 g = (pixel >> 3) & 0xf8;
                 r = (pixel >> 8) & 0xf8;
-            } else if (C2V(gBack_screen)->type == BR_PMT_RGB_555) {
+            } else if (gBack_screen->type == BR_PMT_RGB_555) {
                 b = pixel << 3;
                 g = (pixel >> 2) & 0xf8;
                 r = (pixel >> 7) & 0xf8;
@@ -898,21 +888,22 @@ void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
             WriteU8L(pF, r);
             offset += 2;
         }
-        offset -= 2 * C2V(gBack_screen)->width + C2V(gBack_screen)->row_bytes;
+        offset -= 2 * gBack_screen->width + gBack_screen->row_bytes;
     }
     WriteU16L(pF, 0);
 
-    if (C2V(gBack_screen)->pixels != NULL) {
-        BrPixelmapDirectUnlock(C2V(gBack_screen));
+    if (gBack_screen->pixels != NULL) {
+        BrPixelmapDirectUnlock(gBack_screen);
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00518780
 void C2_HOOK_FASTCALL PrintScreen(void) {
     FILE* f;
 
     f = OpenUniqueFileB("DUMP", "BMP");
     if (f != NULL) {
-        if (C2V(gBack_screen)->type == BR_PMT_INDEX_8) {
+        if (gBack_screen->type == BR_PMT_INDEX_8) {
             PrintScreenFile(f);
         } else {
             PrintScreenFile16(f);
@@ -920,8 +911,8 @@ void C2_HOOK_FASTCALL PrintScreen(void) {
         PFfclose(f);
     }
 }
-C2_HOOK_FUNCTION(0x00518780, PrintScreen)
 
+// FUNCTION: CARMA2_HW 0x00518b00
 int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
 
     if (pActor->render_style != BR_RSTYLE_NONE) {
@@ -1016,8 +1007,8 @@ int C2_HOOK_CDECL DumpVisibleActorsCB(br_actor* pActor, void* pData) {
     }
     return BrActorEnum(pActor, DumpVisibleActorsCB, pData);
 }
-C2_HOOK_FUNCTION(0x00518b00, DumpVisibleActorsCB)
 
+// FUNCTION: CARMA2_HW 0x00518ac0
 void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg) {
 
     c2_printf("MSG:\"%s\"\n", pMsg);
@@ -1025,8 +1016,8 @@ void C2_HOOK_FASTCALL DumpVisibleActors(br_actor* pActor, const char* pMsg) {
     c2_printf("----------------------------------\n\n");
     c2_fflush(c2_stdout);
 }
-C2_HOOK_FUNCTION(0x00518ac0, DumpVisibleActors)
 
+// FUNCTION: CARMA2_HW 0x00518d60
 tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport(br_pixelmap* pm, tU32 red, tU32 grn, tU32 blu, tU32 alp) {
 
     switch (pm->type) {
@@ -1046,14 +1037,9 @@ tU32 C2_HOOK_FASTCALL FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupp
         return (red << 16) | (red << 8) | (blu << 0);
     }
 }
-C2_HOOK_FUNCTION(0x00518d60, FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport)
 
-int (C2_HOOK_FASTCALL * LoadTextureTryAllLocations_original)(char* pName, br_pixelmap** pMaps, int pCapacity);
+// FUNCTION: CARMA2_HW 0x00513a30
 int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps, int pCapacity) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return LoadTextureTryAllLocations_original(pName, pMaps, pCapacity);
-#else
     char path1[256];
     char path2[256];
     char path3[256];
@@ -1066,16 +1052,16 @@ int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps
     C2_HOOK_ASSERT(pName[c2_strlen(pName) - 4] == '.');
     pName[c2_strlen(pName) - 4] = '\0';
 
-    PathCat(path1, C2V(gApplication_path), C2V(gCurrent_load_directory));
-    if (c2_strcmp(C2V(gCurrent_load_directory), "COMMON") != 0 && c2_strcmp(C2V(gCurrent_load_directory), "INTRFACE") != 0) {
-        PathCat(path1, path1, C2V(gCurrent_load_name));
+    PathCat(path1, gApplication_path, gCurrent_load_directory);
+    if (c2_strcmp(gCurrent_load_directory, "COMMON") != 0 && c2_strcmp(gCurrent_load_directory, "INTRFACE") != 0) {
+        PathCat(path1, path1, gCurrent_load_name);
     }
-    PathCat(path1, path1, C2V(gGraf_specs)[C2V(gGraf_spec_index)].data_dir_name);
+    PathCat(path1, path1, gGraf_specs[gGraf_spec_index].data_dir_name);
     PathCat(path1, path1, pName);
 
-    PathCat(path3, C2V(gApplication_path), C2V(gCurrent_load_directory));
-    if (c2_strcmp(C2V(gCurrent_load_directory), "COMMON") != 0 && c2_strcmp(C2V(gCurrent_load_directory), "INTRFACE") != 0) {
-        PathCat(path3, path3, C2V(gCurrent_load_name));
+    PathCat(path3, gApplication_path, gCurrent_load_directory);
+    if (c2_strcmp(gCurrent_load_directory, "COMMON") != 0 && c2_strcmp(gCurrent_load_directory, "INTRFACE") != 0) {
+        PathCat(path3, path3, gCurrent_load_name);
     }
     PathCat(path3, path3, pName);
 
@@ -1105,30 +1091,29 @@ int C2_HOOK_FASTCALL LoadTextureTryAllLocations(char* pName, br_pixelmap** pMaps
         PFForEveryFile2(path4, (tEnumPathCallback)AddTextureFileStemToList, &list);
 
         for (i = 0; i < list.size; i++) {
-            pMaps[i] = DRLdImg(path3, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
+            pMaps[i] = DRLdImg(path3, list.items[i], gRender_palette, gPixelFlags, &error);
         }
     } else {
         for (i = 0; i < list.size; i++) {
-            pMaps[i] = DRLdImg(path1, list.items[i], C2V(gRender_palette), C2V(gPixelFlags), &error);
+            pMaps[i] = DRLdImg(path1, list.items[i], gRender_palette, gPixelFlags, &error);
         }
     }
     return list.size;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00513a30, LoadTextureTryAllLocations, LoadTextureTryAllLocations_original)
 
+// FUNCTION: CARMA2_HW 0x00513550
 int C2_HOOK_FASTCALL PercentageChance(int pC) {
 
     return IRandomBetween(0, 100) < pC;
 }
-C2_HOOK_FUNCTION(0x00513550, PercentageChance)
 
+// FUNCTION: CARMA2_HW 0x00514c70
 tU32 C2_HOOK_FASTCALL GetRaceTime(void) {
 
-    return PDGetTotalTime() - C2V(gRace_start);
+    return PDGetTotalTime() - gRace_start;
 }
-C2_HOOK_FUNCTION(0x00514c70, GetRaceTime)
 
+// FUNCTION: CARMA2_HW 0x00515d90
 intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data) {
     const char* name = data;
     br_model* model = pActor->model;
@@ -1147,8 +1132,8 @@ intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data) {
     }
     return (intptr_t)NULL;
 }
-C2_HOOK_FUNCTION(0x00515d90, FindMaterialCB)
 
+// FUNCTION: CARMA2_HW 0x00515c40
 br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive) {
 
     if (pRecursive) {
@@ -1157,7 +1142,6 @@ br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, 
         return (br_material*)FindMaterialCB(pActor, (void*)pName);
     }
 }
-C2_HOOK_FUNCTION(0x00515c40, FindMaterial)
 
 void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent) {
     char* s = NULL;
@@ -1181,37 +1165,40 @@ void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPer
     }
     pMaterial->index_blend = BrTableFind(s);
     if (pMaterial->index_blend == NULL) {
-        pMaterial->index_blend = LoadSingleShadeTable(&C2V(gTrack_storage_space), s);
+        pMaterial->index_blend = LoadSingleShadeTable(&gTrack_storage_space, s);
     }
 }
 
 void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent) {
 
-    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, alpha25, 3, 0x00661688, {
+    // GLOBAL: CARMA2_HW 0x00661688
+    static br_token_value alpha25[] = {
         { BRT_BLEND_B, { .b = 1 } },
         { BRT_OPACITY_X, { .x = 0x400000 } },
         { 0 },
-    });
-    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, alpha50, 3, 0x006616a0, {
+    };
+    // GLOBAL: CARMA2_HW 0x006616a0
+    static br_token_value alpha50[] = {
         { BRT_BLEND_B, { .b = 1 } },
         { BRT_OPACITY_X, { .x = 0x800000 } },
         { 0 },
-    });
-    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_token_value, alpha75, 3, 0x006616b8, {
+    };
+    // GLOBAL: CARMA2_HW 0x006616b8
+    static br_token_value alpha75[] = {
         { BRT_BLEND_B, { .b = 1 } },
         { BRT_OPACITY_X, { .x = 0xc00000 } },
         { 0 },
-    });
+    };
 
     switch (pPercent) {
     case 25:
-        pMaterial->extra_prim = C2V(alpha25);
+        pMaterial->extra_prim = alpha25;
         break;
     case 50:
-        pMaterial->extra_prim = C2V(alpha50);
+        pMaterial->extra_prim = alpha50;
         break;
     case 75:
-        pMaterial->extra_prim = C2V(alpha75);
+        pMaterial->extra_prim = alpha75;
         break;
     case 0:
     case 1000:
@@ -1220,16 +1207,17 @@ void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pP
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00515e70
 void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent) {
 
-    if (C2V(gScreen)->type == BR_PMT_INDEX_8) {
+    if (gScreen->type == BR_PMT_INDEX_8) {
         BlendifyMaterialTablishly(pMaterial, pPercent);
     } else {
         BlendifyMaterialPrimitively(pMaterial, pPercent);
     }
 }
-C2_HOOK_FUNCTION(0x00515e70, BlendifyMaterial)
 
+// FUNCTION: CARMA2_HW 0x00515fa0
 void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags) {
 
     C2_HOOK_BUG_ON(sizeof(v11group) != 0x24);
@@ -1246,25 +1234,25 @@ void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_u
         }
     }
 }
-C2_HOOK_FUNCTION(0x00515fa0, DRModelUpdateAndKevificateMaterials)
 
+// FUNCTION: CARMA2_HW 0x005135e0
 float C2_HOOK_STDCALL FRandomPosNeg(float pN) {
 
     return FRandomBetween(-pN, pN);
 }
-C2_HOOK_FUNCTION(0x005135e0, FRandomPosNeg)
 
+// FUNCTION: CARMA2_HW 0x00513650
 br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
 
     return SRandomBetween(-pN, pN);
 }
-C2_HOOK_FUNCTION(0x00513650, SRandomPosNeg)
 
+// FUNCTION: CARMA2_HW 0x005191f0
 void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap) {
 
 }
-C2_HOOK_FUNCTION(0x005191f0, PixelmapSwapByteOrder)
 
+// FUNCTION: CARMA2_HW 0x00514cb0
 void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat) {
     int seconds;
 
@@ -1277,8 +1265,8 @@ void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int 
         c2_sprintf(pStr, "%d", seconds);
     }
 }
-C2_HOOK_FUNCTION(0x00514cb0, TimerString)
 
+// FUNCTION: CARMA2_HW 0x00514db0
 int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state) {
     tU32 the_time;
 
@@ -1289,8 +1277,8 @@ int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state
     }
     return *pCurrent_state;
 }
-C2_HOOK_FUNCTION(0x00514db0, Flash)
 
+// FUNCTION: CARMA2_HW 0x00514800
 br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_material* pMat, recurse_with_mat_cbfn* pCall_back, void* pArg) {
     br_uint_32 result;
 
@@ -1309,8 +1297,8 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_mater
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00514800, DRActorEnumRecurseWithMat)
 
+// FUNCTION: CARMA2_HW 0x00514850
 br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_matrix34* pMatrix, recurse_with_trans_cbfn* pCall_back, void* pArg) {
     br_uint_32 result;
     br_matrix34 combined_transform;
@@ -1332,18 +1320,19 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_mat
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00514850, DRActorEnumRecurseWithTrans)
 
+// FUNCTION: CARMA2_HW 0x00515700
 int C2_HOOK_FASTCALL NormalSideOfPlane(br_vector3* pPoint, br_vector3* pNormal, br_scalar pD) {
 
     return BrVector3Dot(pNormal, pNormal) * (BrVector3Dot(pNormal, pPoint) - pD) >= 0.f;
 }
-C2_HOOK_FUNCTION(0x00515700, NormalSideOfPlane)
 
+// FUNCTION: CARMA2_HW 0x00515780
 br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier) {
     br_material* the_material;
     char s[256];
-    static C2_HOOK_VARIABLE_IMPLEMENT(int, name_suffix, 0x006abefc);
+// GLOBAL: CARMA2_HW 0x006abefc
+    static int name_suffix;
 
     the_material = BrMaterialAllocate(NULL);
     the_material->flags = pMaterial->flags;
@@ -1359,14 +1348,13 @@ br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_i
     the_material->colour_map = pMaterial->colour_map;
     c2_memcpy(&the_material->map_transform, &pMaterial->map_transform, sizeof(the_material->map_transform));
     if (pSet_identifier) {
-        c2_sprintf(s, "%s(%d)", pMaterial->identifier, C2V(name_suffix));
-        C2V(name_suffix) += 1;
+        c2_sprintf(s, "%s(%d)", pMaterial->identifier, name_suffix);
+        name_suffix += 1;
         the_material->identifier = BrResStrDup(the_material, s);
     }
     BrMaterialAdd(the_material);
     return the_material;
 }
-C2_HOOK_FUNCTION(0x00515780, DRMaterialClone)
 
 int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialTablishly(br_material *pMaterial) {
 
@@ -1391,17 +1379,18 @@ int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterialPrimitively(br_material *pM
     return 100;
 }
 
+// FUNCTION: CARMA2_HW 0x00518e70
 int C2_HOOK_FASTCALL GetBlendificatiousnessOfMaterial(br_material *pMaterial) {
 
-    if (C2V(gScreen)->type == BR_PMT_INDEX_8) {
+    if (gScreen->type == BR_PMT_INDEX_8) {
         return GetBlendificatiousnessOfMaterialTablishly(pMaterial);
     }
     else {
         return GetBlendificatiousnessOfMaterialPrimitively(pMaterial);
     }
 }
-C2_HOOK_FUNCTION(0x00518e70, GetBlendificatiousnessOfMaterial)
 
+// FUNCTION: CARMA2_HW 0x00516fd0
 tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
     tU32* src_entry;
     int red;
@@ -1409,7 +1398,7 @@ tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
     int blue;
 
     src_entry = pPal->pixels;
-    switch (C2V(gBack_screen)->type) {
+    switch (gBack_screen->type) {
     case BR_PMT_RGB_555:
         red = (src_entry[pEntry] >> 9) & 0x7c00;
         green = (src_entry[pEntry] >> 6) & 0x03e0;
@@ -1425,14 +1414,14 @@ tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
     }
     return red | green | blue;
 }
-C2_HOOK_FUNCTION(0x00516fd0, PaletteEntry16Bit)
 
+// FUNCTION: CARMA2_HW 0x00517050
 tU16 C2_HOOK_FASTCALL Colour24BitTo16Bit(br_colour pColour) {
     int red;
     int green;
     int blue;
 
-    switch (C2V(gBack_screen)->type) {
+    switch (gBack_screen->type) {
     case BR_PMT_RGB_555:
         red = (pColour >> 9) & 0xf800;
         green = (pColour >> 6) & 0x03e0;
@@ -1448,31 +1437,30 @@ tU16 C2_HOOK_FASTCALL Colour24BitTo16Bit(br_colour pColour) {
     }
     return red | green | blue;
 }
-C2_HOOK_FUNCTION(0x00517050, Colour24BitTo16Bit)
 
+// FUNCTION: CARMA2_HW 0x005170c0
 br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
     tU16* dst_entry;
     int value;
 
-    if (C2V(g16bit_palette) == NULL) {
-        C2V(g16bit_palette) = BrPixelmapAllocate(BR_PMT_RGB_565, 1, 256, NULL, 0);
-        if (C2V(g16bit_palette) == NULL) {
+    if (g16bit_palette == NULL) {
+        g16bit_palette = BrPixelmapAllocate(BR_PMT_RGB_565, 1, 256, NULL, 0);
+        if (g16bit_palette == NULL) {
             FatalError(kFatalError_OOM_S, "16-bit palette");
         }
     }
-    if (!C2V(gPalette_changed) || pSrc != C2V(gPalette_source)) {
+    if (!gPalette_changed || pSrc != gPalette_source) {
         value = 0;
-        dst_entry = C2V(g16bit_palette)->pixels;
+        dst_entry = g16bit_palette->pixels;
         for (value = 0; value < 256; value++) {
             *dst_entry = PaletteEntry16Bit(pSrc, value);
             dst_entry++;
         }
-        C2V(gPalette_changed) = 1;
-        C2V(gPalette_source) = pSrc;
+        gPalette_changed = 1;
+        gPalette_source = pSrc;
     }
-    return C2V(g16bit_palette);
+    return g16bit_palette;
 }
-C2_HOOK_FUNCTION(0x005170c0, PaletteOf16Bits)
 
 void C2_HOOK_FASTCALL Copy8BitTo16Bit(br_pixelmap* pDst, br_pixelmap* pSrc, br_pixelmap* pPalette) {
     int x;
@@ -1493,16 +1481,17 @@ void C2_HOOK_FASTCALL Copy8BitTo16Bit(br_pixelmap* pDst, br_pixelmap* pSrc, br_p
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00517d90
 void C2_HOOK_FASTCALL DRPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
 
     if (dst->type == src->type) {
         BrPixelmapCopy(dst, src);
     } else if (dst->type != BR_PMT_INDEX_8 && src->type == BR_PMT_INDEX_8) {
-        Copy8BitTo16Bit(dst, src, C2V(gCurrent_palette));
+        Copy8BitTo16Bit(dst, src, gCurrent_palette);
     }
 }
-C2_HOOK_FUNCTION(0x00517d90, DRPixelmapCopy)
 
+// FUNCTION: CARMA2_HW 0x00514930
 int C2_HOOK_FASTCALL sign(int pNumber) {
 
     if (pNumber > 0) {
@@ -1513,8 +1502,8 @@ int C2_HOOK_FASTCALL sign(int pNumber) {
         return 0;
     }
 }
-C2_HOOK_FUNCTION(0x00514930, sign)
 
+// FUNCTION: CARMA2_HW 0x005146c0
 void C2_HOOK_FASTCALL WaitFor(tU32 pDelay) {
     tU32 start_time;
 
@@ -1523,8 +1512,8 @@ void C2_HOOK_FASTCALL WaitFor(tU32 pDelay) {
         SoundService();
     }
 }
-C2_HOOK_FUNCTION(0x005146c0, WaitFor)
 
+// FUNCTION: CARMA2_HW 0x00515610
 void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, br_vector3* pB, br_matrix34* pC) {
     br_scalar t1;
     br_scalar t2;
@@ -1538,4 +1527,3 @@ void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, br_vector3* pB, br_matri
     pA->v[1] = pC->m[1][0] * t1 + pC->m[1][2] * t3 + pC->m[1][1] * t2;
     pA->v[2] = pC->m[2][0] * t1 + pC->m[2][1] * t2 + pC->m[2][2] * t3;
 }
-C2_HOOK_FUNCTION(0x00515610, DRMatrix34TApplyP)

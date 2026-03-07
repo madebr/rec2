@@ -5,14 +5,14 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gInitialised_grid);
-C2_HOOK_VARIABLE_DECLARE(int, gIt_or_fox);
-C2_HOOK_VARIABLE_DECLARE(tNet_game_player_info*, gLast_lepper);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_it_change);
-C2_HOOK_VARIABLE_DECLARE(int, gNot_shown_race_type_headup);
-C2_HOOK_VARIABLE_DECLARE(int, gWinner_declared);
-C2_HOOK_VARIABLE_DECLARE(tU32, gTime_for_punishment);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_0068d920);
+extern int gInitialised_grid;
+extern int gIt_or_fox;
+extern tNet_game_player_info* gLast_lepper;
+extern tU32 gLast_it_change;
+extern int gNot_shown_race_type_headup;
+extern int gWinner_declared;
+extern tU32 gTime_for_punishment;
+extern int gINT_0068d920;
 
 void C2_HOOK_FASTCALL DefaultNetName(void);
 

@@ -3,26 +3,27 @@
 #include "lightmac.h"
 #include "setup.h"
 
+// FUNCTION: CARMA2_HW 0x0054a230
 void C2_HOOK_CDECL SurfaceIndexZero(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
 
     comp[C_I] = self->state.cache.comp_offsets[C_I];
 }
-C2_HOOK_FUNCTION(0x0054a230, SurfaceIndexZero)
 
+// FUNCTION: CARMA2_HW 0x0054a250
 void C2_HOOK_CDECL SurfaceIndexUnlit(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
 
     comp[C_I] = self->state.cache.comp_scales[C_I] * (((float)BR_ALPHA(colour)) / 256.f) + self->state.cache.comp_offsets[C_I];
 }
-C2_HOOK_FUNCTION(0x0054a250, SurfaceIndexUnlit)
 
+// FUNCTION: CARMA2_HW 0x0054a290
 void C2_HOOK_CDECL SurfaceIndexLit(br_soft_renderer* self, br_vector3* p, br_vector2* map, br_vector3* n, br_colour colour, br_scalar* comp) {
     int i;
-    active_light* alp = C2V(scache).lights;
+    active_light* alp = scache.lights;
     br_vector3 vp;
     br_vector3 vn;
     br_vector3 fvn;
 
-    if (C2V(scache).light_1md) {
+    if (scache.light_1md) {
         br_scalar l, dot;
 
         dot = BrVector3Dot(n, &alp->direction);
@@ -51,39 +52,34 @@ void C2_HOOK_CDECL SurfaceIndexLit(br_soft_renderer* self, br_vector3* p, br_vec
 
     comp[C_I] = self->state.surface.ka;
 
-    C2V(rend).eye_l = C2V(scache).eye_m_normalised;
+    rend.eye_l = scache.eye_m_normalised;
 
-    for (i = 0; i < C2V(scache).nlights_model; i++, alp++) {
+    for (i = 0; i < scache.nlights_model; i++, alp++) {
         alp->accumulate_index(self, p, n, alp, comp);
     }
 
-    if (C2V(scache).nlights_view != 0) {
+    if (scache.nlights_view != 0) {
         BrMatrix34ApplyP(&vp, p, &self->state.matrix.model_to_view);
-        BrMatrix34TApplyV(&vn, n, &C2V(scache).view_to_model);
+        BrMatrix34TApplyV(&vn, n, &scache.view_to_model);
         BrVector3Normalise(&fvn, &vn);
 
-        BrVector3Set(&C2V(rend).eye_l, 0.f, 0.f, 1.f);
+        BrVector3Set(&rend.eye_l, 0.f, 0.f, 1.f);
 
-        for (i = 0; i < C2V(scache).nlights_view; i++, alp++) {
+        for (i = 0; i < scache.nlights_view; i++, alp++) {
             alp->accumulate_index(self, &vp, &fvn, alp, comp);
         }
     }
 
     CLAMP_SCALE(C_I);
 }
-C2_HOOK_FUNCTION(0x0054a290, SurfaceIndexLit)
 
+// FUNCTION: CARMA2_HW 0x0054a7b0
 void C2_HOOK_STDCALL lightingIndexNull(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
 
 }
-C2_HOOK_FUNCTION(0x0054a7b0, lightingIndexNull)
 
-void (C2_HOOK_STDCALL * lightingIndexDirect_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+// FUNCTION: CARMA2_HW 0x0054a7c0
 void C2_HOOK_STDCALL lightingIndexDirect(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    lightingIndexDirect_original(self, p, n, alp, comp);
-#else
     br_scalar dot;
     br_scalar l;
 
@@ -100,16 +96,10 @@ void C2_HOOK_STDCALL lightingIndexDirect(br_soft_renderer* self, br_vector3* p, 
     }
 
     comp[C_I] += l;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0054a7c0, lightingIndexDirect, lightingIndexDirect_original)
 
-void (C2_HOOK_STDCALL * lightingIndexPoint_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+// FUNCTION: CARMA2_HW 0x0054a870
 void C2_HOOK_STDCALL lightingIndexPoint(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    lightingIndexPoint_original(self, p, n, alp, comp);
-#else
     br_vector3 dirn;
     br_scalar l;
     br_scalar dot;
@@ -126,23 +116,17 @@ void C2_HOOK_STDCALL lightingIndexPoint(br_soft_renderer* self, br_vector3* p, b
 
         BrVector3Scale(&tmp, n, 2 * dot);
         BrVector3Sub(&tmp, &tmp, &dirn);
-        dot = BrVector3Dot(&tmp, &C2V(rend).eye_l);
+        dot = BrVector3Dot(&tmp, &rend.eye_l);
         if (dot > SPECULARPOW_CUTOFF) {
             l += SPECULAR_POWER(self->state.surface.ks);
         }
     }
 
     comp[C_I] += alp->intensity * l;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0054a870, lightingIndexPoint, lightingIndexPoint_original)
 
-void (C2_HOOK_STDCALL * lightingIndexLocal1_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+// FUNCTION: CARMA2_HW 0x0054a9f0
 void C2_HOOK_STDCALL lightingIndexLocal1(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    lightingIndexLocal1_original(self, p, n, alp, comp);
-#else
     br_vector3 pos_l;
     br_scalar len2;
 
@@ -151,16 +135,10 @@ void C2_HOOK_STDCALL lightingIndexLocal1(br_soft_renderer* self, br_vector3* p, 
     if (len2 <= alp->s->attenuation_q && len2 >= BR_SCALAR_EPSILON) {
         comp[C_I] += self->state.surface.kd * (alp->s->attenuation_q - len2) / alp->s->attenuation_q * alp->s->attenuation_c;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0054a9f0, lightingIndexLocal1, lightingIndexLocal1_original)
 
-void (C2_HOOK_STDCALL * lightingIndexLocal2_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+// FUNCTION: CARMA2_HW 0x0054aa80
 void C2_HOOK_STDCALL lightingIndexLocal2(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    lightingIndexLocal2_original(self, p, n, alp, comp);
-#else
     br_vector3 pos_l;
     br_scalar len2;
 
@@ -174,16 +152,10 @@ void C2_HOOK_STDCALL lightingIndexLocal2(br_soft_renderer* self, br_vector3* p, 
             comp[C_I] += self->state.surface.kd * dot * (alp->s->attenuation_q - len2) / (alp->s->attenuation_q * sqrtf(len2)) * alp->s->attenuation_c;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0054aa80, lightingIndexLocal2, lightingIndexLocal2_original)
 
-void (C2_HOOK_STDCALL * lightingIndexPointAttn_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+// FUNCTION: CARMA2_HW 0x0054ab70
 void C2_HOOK_STDCALL lightingIndexPointAttn(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    lightingIndexPointAttn_original(self, p, n, alp, comp);
-#else
     br_scalar attn, dot, l, dist, dist2;
 	br_vector3 dirn, dirn_norm;
 
@@ -204,23 +176,17 @@ void C2_HOOK_STDCALL lightingIndexPointAttn(br_soft_renderer* self, br_vector3* 
 
         BrVector3Scale(&tmp, n, 2 * dot);
         BrVector3Sub(&tmp, &tmp, &dirn_norm);
-        dot = BrVector3Dot(&tmp, &C2V(rend).eye_l);
+        dot = BrVector3Dot(&tmp, &rend.eye_l);
         if (dot > SPECULARPOW_CUTOFF) {
             l += SPECULAR_POWER(self->state.surface.ks);
         }
     }
     attn = 1.f / (alp->s->attenuation_q * dist2 + alp->s->attenuation_l * dist + alp->s->attenuation_c);
     comp[C_I] += l * attn;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0054ab70, lightingIndexPointAttn, lightingIndexPointAttn_original)
 
-void (C2_HOOK_STDCALL * lightingIndexSpot_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+// FUNCTION: CARMA2_HW 0x0054ad20
 void C2_HOOK_STDCALL lightingIndexSpot(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    lightingIndexSpot_original(self, p, n, alp, comp);
-#else
     br_scalar dot_spot, dot, l, attn;
     br_vector3 dirn, dirn_norm;
 
@@ -242,22 +208,16 @@ void C2_HOOK_STDCALL lightingIndexSpot(br_soft_renderer* self, br_vector3* p, br
 
         BrVector3Scale(&tmp, n, 2 * dot);
         BrVector3Sub(&tmp, &tmp, &dirn_norm);
-        dot = BrVector3Dot(&tmp, &C2V(rend).eye_l);
+        dot = BrVector3Dot(&tmp, &rend.eye_l);
         if (dot > SPECULARPOW_CUTOFF) {
             l += SPECULAR_POWER(self->state.surface.ks);
         }
     }
     comp[C_I] += attn * l;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0054ad20, lightingIndexSpot, lightingIndexSpot_original)
 
-void (C2_HOOK_STDCALL * lightingIndexSpotAttn_original)(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp);
+// FUNCTION: CARMA2_HW 0x0054af00
 void C2_HOOK_STDCALL lightingIndexSpotAttn(br_soft_renderer* self, br_vector3* p, br_vector3* n, active_light* alp, br_scalar* comp) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    lightingIndexSpotAttn_original(self, p, n, alp, comp);
-#else
     br_scalar dist, dist2, dot_spot, dot, l, attn;
     br_vector3 dirn, dirn_norm;
 
@@ -286,22 +246,16 @@ void C2_HOOK_STDCALL lightingIndexSpotAttn(br_soft_renderer* self, br_vector3* p
 
         BrVector3Scale(&tmp, n, 2 * dot);
         BrVector3Sub(&tmp, &tmp, &dirn_norm);
-        dot = BrVector3Dot(&tmp, &C2V(rend).eye_l);
+        dot = BrVector3Dot(&tmp, &rend.eye_l);
         if (dot > SPECULARPOW_CUTOFF) {
             l += SPECULAR_POWER(self->state.surface.ks);
         }
     }
     comp[C_I] += attn * l;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0054af00, lightingIndexSpotAttn, lightingIndexSpotAttn_original)
 
-void (C2_HOOK_STDCALL * ActiveLightAccumulateIndexSet_original)(active_light* alp);
+// FUNCTION: CARMA2_HW 0x0054a5f0
 void C2_HOOK_STDCALL ActiveLightAccumulateIndexSet(active_light* alp) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    ActiveLightAccumulateIndexSet_original(alp);
-#else
     switch (alp->type) {
     case BRT_DIRECT:
         alp->accumulate_index = lightingIndexDirect;
@@ -330,6 +284,4 @@ void C2_HOOK_STDCALL ActiveLightAccumulateIndexSet(active_light* alp) {
         alp->accumulate_index = lightingIndexNull;
         break;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0054a5f0, ActiveLightAccumulateIndexSet, ActiveLightAccumulateIndexSet_original)

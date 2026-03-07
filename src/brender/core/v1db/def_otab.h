@@ -5,6 +5,6 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_order_table, _BrDefaultOrderTable);
+extern br_order_table _BrDefaultOrderTable;
 
 #endif // REC2_DEF_OTAB_H

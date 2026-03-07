@@ -14,36 +14,41 @@
 
 #include "rec2_macros.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gShrapnel_type_names, 4, 0x0065fec0, {
+
+// GLOBAL: CARMA2_HW 0x0065fec0
+const char* gShrapnel_type_names[4] = {
     "abstract",
     "shards",
     "ghostparts",
     "noncars",
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gShrapnel_ghost_actor_count, 0x006a3338);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gSmashable_noncar_shrapnel_actors, 100, 0x006a5140);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSmash_side_effect_direction_names, 3, 0x0065fef0, {
+
+// GLOBAL: CARMA2_HW 0x006a3338
+int gShrapnel_ghost_actor_count;
+
+// GLOBAL: CARMA2_HW 0x006a5140
+br_actor* gSmashable_noncar_shrapnel_actors[100];
+
+// GLOBAL: CARMA2_HW 0x0065fef0
+const char* gSmash_side_effect_direction_names[3] = {
     "parallel",
     "towards",
     "away",
-});
+};
 
 
+// FUNCTION: CARMA2_HW 0x004ef440
 intptr_t C2_HOOK_CDECL AddGhostActorToBuffer(br_actor* pActor, void* data) {
     br_actor** pActorBuffer = data;
 
-    pActorBuffer[C2V(gShrapnel_ghost_actor_count)] = pActor;
-    C2V(gShrapnel_ghost_actor_count) += 1;
+    pActorBuffer[gShrapnel_ghost_actor_count] = pActor;
+    gShrapnel_ghost_actor_count += 1;
     return 0;
 }
-C2_HOOK_FUNCTION(0x004ef440, AddGhostActorToBuffer)
 
-void (C2_HOOK_FASTCALL * ReadShrapnel_original)(FILE* pF, tShrapnel_spec* pShrapnel_spec, int* pShrapnel_count);
+// FUNCTION: CARMA2_HW 0x004eed70
 void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs, int* pShrapnel_count) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    ReadShrapnel_original(pF, pShrapnel_specs, pShrapnel_count);
-#else
     char s[256];
     char s2[256];
     int i;
@@ -57,7 +62,7 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
     for (i = 0; i < *pShrapnel_count; i++) {
         tShrapnel_spec *spec = &pShrapnel_specs[i];
 
-        spec->type = GetALineAndInterpretCommand(pF, C2V(gShrapnel_type_names), REC2_ASIZE(C2V(gShrapnel_type_names)));
+        spec->type = GetALineAndInterpretCommand(pF, gShrapnel_type_names, REC2_ASIZE(gShrapnel_type_names));
         if (spec->type == kShrapnelType_Abstract) {
             spec->type_info.abstract.count_materials = GetAnInt(pF);
             for (j = 0; j < spec->type_info.abstract.count_materials; j++) {
@@ -114,7 +119,7 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                 for (j = 0; j < spec->type_info.ghost.count_actors; j++) {
 
                     GetAString(pF, s);
-                    PathCat(s2, C2V(gSmashable_track_environment_path), s);
+                    PathCat(s2, gSmashable_track_environment_path, s);
                     spec->type_info.ghost.actors[j] = BrActorLoad(s2);
                     if (spec->type_info.ghost.actors[j] == NULL) {
                         FatalError(kFatalError_CannotFindSmashActorModel_S, s);
@@ -127,7 +132,7 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                 br_bounds bounds;
 
                 GetAString(pF, s);
-                PathCat(s2, C2V(gSmashable_track_environment_path), s);
+                PathCat(s2, gSmashable_track_environment_path, s);
                 actor = BrActorLoad(s2);
                 if (actor == NULL) {
                     FatalError(kFatalError_CannotFindSmashActorModel_S, s);
@@ -138,10 +143,10 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                 spec->type_info.ghost.bounds_dx = bounds.max.v[0] - bounds.min.v[0];
                 spec->type_info.ghost.bounds_dy = bounds.max.v[1] - bounds.min.v[1];
 
-                C2V(gShrapnel_ghost_actor_count) = 0;
+                gShrapnel_ghost_actor_count = 0;
                 BrActorEnum(actor, AddGhostActorToBuffer, actor_buffer);
-                spec->type_info.ghost.count_actors = C2V(gShrapnel_ghost_actor_count);
-                spec->type_info.ghost.actors = BrMemAllocate(C2V(gShrapnel_ghost_actor_count) * sizeof(br_actor*), kMem_smashable_env_info);
+                spec->type_info.ghost.count_actors = gShrapnel_ghost_actor_count;
+                spec->type_info.ghost.actors = BrMemAllocate(gShrapnel_ghost_actor_count * sizeof(br_actor*), kMem_smashable_env_info);
                 for (k = 0; k < spec->type_info.ghost.count_actors; k++) {
                     BrActorRemove(actor_buffer[k]);
                     spec->type_info.ghost.actors[k] = actor_buffer[k];
@@ -165,7 +170,7 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
             }
             /* Name of actor file */
             GetAString(pF, s);
-            PathCat(s2, C2V(gSmashable_track_environment_path), s);
+            PathCat(s2, gSmashable_track_environment_path, s);
             actor = BrActorLoad(s2);
             if (actor == NULL) {
                 FatalError(kFatalError_CannotFindSmashActorModel_S, s);
@@ -186,25 +191,25 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                     FatalError(kFatalError_CannotFindSmashActorModel_S, s);
                 }
                 match_sep_actor = sep_actor;
-                for (k = 0; k < C2V(gCount_smashable_noncar_shrapnel_actors); k++) {
+                for (k = 0; k < gCount_smashable_noncar_shrapnel_actors; k++) {
 
 #if 1
                     /* FIXME: is this the correct version? */
-                    if (c2_strcmp(C2V(gSmashable_noncar_shrapnel_actors)[k]->identifier, sep_actor->identifier) == 0) {
-                        match_sep_actor = C2V(gSmashable_noncar_shrapnel_actors)[k];
+                    if (c2_strcmp(gSmashable_noncar_shrapnel_actors[k]->identifier, sep_actor->identifier) == 0) {
+                        match_sep_actor = gSmashable_noncar_shrapnel_actors[k];
                         break;
                     }
 #else
-                    if (c2_strcmp(C2V(gSmashable_noncar_shrapnel_actors)[j]->identifier, sep_actor->identifier) == 0) {
-                        match_sep_actor = C2V(gSmashable_noncar_shrapnel_actors)[j];
+                    if (c2_strcmp(gSmashable_noncar_shrapnel_actors[j]->identifier, sep_actor->identifier) == 0) {
+                        match_sep_actor = gSmashable_noncar_shrapnel_actors[j];
                         break;
                     }
 #endif
                 }
-                if (k == C2V(gCount_smashable_noncar_shrapnel_actors)) {
-                    if (C2V(gCount_smashable_noncar_shrapnel_actors) < REC2_ASIZE(C2V(gSmashable_noncar_shrapnel_actors))) {
-                        C2V(gSmashable_noncar_shrapnel_actors)[C2V(gCount_smashable_noncar_shrapnel_actors)] = match_sep_actor;
-                        C2V(gCount_smashable_noncar_shrapnel_actors) += 1;
+                if (k == gCount_smashable_noncar_shrapnel_actors) {
+                    if (gCount_smashable_noncar_shrapnel_actors < REC2_ASIZE(gSmashable_noncar_shrapnel_actors)) {
+                        gSmashable_noncar_shrapnel_actors[gCount_smashable_noncar_shrapnel_actors] = match_sep_actor;
+                        gCount_smashable_noncar_shrapnel_actors += 1;
                     }
                     if (match_sep_actor != actor) {
                         BrActorRemove(match_sep_actor);
@@ -212,14 +217,14 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                 }
                 spec->type_info.noncar.actors[j] = match_sep_actor;
                 GetAString(pF, s);
-                for (k = 0; k < C2V(gCount_smashable_noncars); k++) {
-                    if (c2_strcmp(C2V(gSmashable_noncars)[k], s) == 0) {
+                for (k = 0; k < gCount_smashable_noncars; k++) {
+                    if (c2_strcmp(gSmashable_noncars[k], s) == 0) {
                         break;
                     }
                 }
-                if (k == C2V(gCount_smashable_noncars)) {
-                    c2_strcpy(C2V(gSmashable_noncars)[C2V(gCount_smashable_noncars)], s);
-                    C2V(gCount_smashable_noncars) += 1;
+                if (k == gCount_smashable_noncars) {
+                    c2_strcpy(gSmashable_noncars[gCount_smashable_noncars], s);
+                    gCount_smashable_noncars += 1;
                 }
                 BrResFree(match_sep_actor->identifier);
                 c2_sprintf(s2, "&%c%c!bbbb.ACT", s[0], s[1]);
@@ -237,15 +242,10 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
             break;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004eed70, ReadShrapnelSpec, ReadShrapnel_original)
 
-void (C2_HOOK_FASTCALL * ReadShrapnelSideEffects_original)(FILE* pF, tShrapnel_side_effects* pShrapnel_side_effects);
+// FUNCTION: CARMA2_HW 0x004ef550
 void C2_HOOK_FASTCALL ReadShrapnelSideEffects(FILE* pF, tShrapnel_side_effects* pShrapnel_side_effects) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    ReadShrapnelSideEffects_original(pF, pShrapnel_side_effects);
-#else
 
     /* Count smash activation cuboids */
     pShrapnel_side_effects->count_side_effects = GetAnInt(pF);
@@ -285,21 +285,16 @@ void C2_HOOK_FASTCALL ReadShrapnelSideEffects(FILE* pF, tShrapnel_side_effects* 
             } else {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 0;
             }
-            pShrapnel_side_effects->side_effects[i].field_0x4 = GetALineAndInterpretCommand(pF, C2V(gPosition_type_names), REC2_ASIZE(C2V(gPosition_type_names)));
+            pShrapnel_side_effects->side_effects[i].field_0x4 = GetALineAndInterpretCommand(pF, gPosition_type_names, REC2_ASIZE(gPosition_type_names));
             LoadMinMax(pF, &pShrapnel_side_effects->side_effects[i].bounds);
-            pShrapnel_side_effects->side_effects[i].field_0x44 = GetALineAndInterpretCommand(pF, C2V(gSmash_side_effect_direction_names), REC2_ASIZE(C2V(gSmash_side_effect_direction_names)));
+            pShrapnel_side_effects->side_effects[i].field_0x44 = GetALineAndInterpretCommand(pF, gSmash_side_effect_direction_names, REC2_ASIZE(gSmash_side_effect_direction_names));
             pShrapnel_side_effects->side_effects[i].field_0x48 = GetAScalar(pF);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ef550, ReadShrapnelSideEffects, ReadShrapnelSideEffects_original)
 
-void (C2_HOOK_FASTCALL * ReadNonCarCuboidActivation_original)(FILE* pF, tNon_car_cuboid_activations* pNon_car_cuboid_activations);
+// FUNCTION: CARMA2_HW 0x004efce0
 void C2_HOOK_FASTCALL ReadNonCarCuboidActivation(FILE* pF, tNon_car_cuboid_activations* pNon_car_cuboid_activations) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    ReadNonCarCuboidActivation_original(pF, pNon_car_cuboid_activations);
-#else
 
     /* no. of non car cuboids activated */
     pNon_car_cuboid_activations->count_activations = GetAnInt(pF);
@@ -319,7 +314,7 @@ void C2_HOOK_FASTCALL ReadNonCarCuboidActivation(FILE* pF, tNon_car_cuboid_activ
             GetPairOfInts(pF, &i1, &i2);
             pNon_car_cuboid_activations->activations[i].field_0x0 = (tS16)(i1 * 1000);
             pNon_car_cuboid_activations->activations[i].field_0x2 = (tS16)(i2 * 1000);
-            pNon_car_cuboid_activations->activations[i].field_0x4 = GetALineAndInterpretCommand(pF, C2V(gPosition_type_names), REC2_ASIZE(C2V(gPosition_type_names)));
+            pNon_car_cuboid_activations->activations[i].field_0x4 = GetALineAndInterpretCommand(pF, gPosition_type_names, REC2_ASIZE(gPosition_type_names));
             pNon_car_cuboid_activations->activations[i].field_0x8 = (tS8)GetAnInt(pF);
             LoadMinMax(pF, &pNon_car_cuboid_activations->activations[i].bounds);
             GetPairOfFloats(pF,
@@ -332,6 +327,4 @@ void C2_HOOK_FASTCALL ReadNonCarCuboidActivation(FILE* pF, tNon_car_cuboid_activ
             pNon_car_cuboid_activations->activations[i].field_0x3c = GetAScalar(pF) / 10.f;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004efce0, ReadNonCarCuboidActivation, ReadNonCarCuboidActivation_original)

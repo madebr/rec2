@@ -5,8 +5,8 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_allocator, BrStdlibAllocator);
-C2_HOOK_VARIABLE_DECLARE(br_allocator*, _BrDefaultAllocator);
+extern br_allocator BrStdlibAllocator;
+extern br_allocator* _BrDefaultAllocator;
 
 void* C2_HOOK_CDECL BrStdlibAllocate(br_size_t size, br_uint_8 type);
 

@@ -1,0 +1,165 @@
+#if 0
+
+// LIBRARY: CARMA2_HW 0x00576860
+// _tolower
+
+// LIBRARY: CARMA2_HW 0x005771a0
+// _toupper
+
+// LIBRARY: CARMA2_HW 0x005843e0
+// _isalpha
+
+// LIBRARY: CARMA2_HW 0x00584240
+// _isdigit
+
+// LIBRARY: CARMA2_HW 0x005842a0
+// _isspace
+
+// LIBRARY: CARMA2_HW 0x00584330
+// _isprint
+
+// LIBRARY: CARMA2_HW 0x00578400
+// _mkdir
+
+// LIBRARY: CARMA2_HW 0x00584a00
+// _open
+
+// LIBRARY: CARMA2_HW 0x005805e0
+// _close
+
+// LIBRARY: CARMA2_HW 0x0057fa30
+// _read
+
+// LIBRARY: CARMA2_HW 0x00575bb0
+// __alloca_probee
+
+// LIBRARY: CARMA2_HW 0x006737d0
+// _iob
+
+// LIBRARY: CARMA2_HW 0x00577170
+// fopen
+
+// LIBRARY: CARMA2_HW 0x00577640
+// fclose
+
+// LIBRARY: CARMA2_HW 0x00578690
+// clearerr
+
+// LIBRARY: CARMA2_HW 0x00577700
+// fflush
+
+// LIBRARY: CARMA2_HW 0x005772f0
+// ftell
+
+// LIBRARY: CARMA2_HW 0x00576ec0
+// fseek
+
+// LIBRARY: CARMA2_HW 0x005770e0
+// rewind
+
+// LIBRARY: CARMA2_HW 0x00576e80
+// fgetc
+
+// LIBRARY: CARMA2_HW 0x00576df0
+// ungetc
+
+// LIBRARY: CARMA2_HW 0x00578610
+// fgets
+
+// LIBRARY: CARMA2_HW 0x00577c40
+// fputc
+
+// LIBRARY: CARMA2_HW 0x00577ef0
+// fputs
+
+// LIBRARY: CARMA2_HW 0x005772c0
+// fgetpos
+
+// LIBRARY: CARMA2_HW 0x005772a0
+// fsetpos
+
+// LIBRARY: CARMA2_HW 0x00577930
+// printf
+
+// LIBRARY: CARMA2_HW 0x00576d00
+// fprintf
+
+// LIBRARY: CARMA2_HW 0x00575de0
+// sprintf
+
+// LIBRARY: CARMA2_HW 0x00578ee0
+// vsprintf
+
+// LIBRARY: CARMA2_HW 0x0057b800
+// vfprintf
+
+// LIBRARY: CARMA2_HW 0x005774a0
+// fwrite
+
+// LIBRARY: CARMA2_HW 0x00576fa0
+// fread
+
+// LIBRARY: CARMA2_HW 0x00577c20
+// fscanf
+
+// LIBRARY: CARMA2_HW 0x0057a8b0
+// vfscanf
+
+// LIBRARY: CARMA2_HW 0x00575cb0
+// sscanf
+
+// LIBRARY: CARMA2_HW 0x005776c0
+// unlink
+
+// LIBRARY: CARMA2_HW 0x00578470
+// rename
+
+// LIBRARY: CARMA2_HW 0x00576960
+// srand
+
+// LIBRARY: CARMA2_HW 0x00576970
+// rand
+
+// LIBRARY: CARMA2_HW 0x00578aa0
+// abort
+
+// LIBRARY: CARMA2_HW 0x00576d40
+// malloc
+
+// LIBRARY: CARMA2_HW 0x00579b20
+// calloc
+
+// LIBRARY: CARMA2_HW 0x005775f0
+// free
+
+// LIBRARY: CARMA2_HW 0x005784e0
+// exit
+
+// LIBRARY: CARMA2_HW 0x00578ac0
+// getenv
+
+// LIBRARY: CARMA2_HW 0x00578b50
+// strtof
+
+// LIBRARY: CARMA2_HW 0x00578c10
+// strtol
+
+// LIBRARY: CARMA2_HW 0x00578ec0
+// strtoul
+
+// LIBRARY: CARMA2_HW 0x00577aa0
+// atoi
+
+// LIBRARY: CARMA2_HW 0x005779a0
+// atof
+
+// LIBRARY: CARMA2_HW 0x00581110
+// strpbrk
+
+// LIBRARY: CARMA2_HW 0x00587d00
+// _fstat32
+
+// LIBRARY: CARMA2_HW 0x00577dc0
+// time
+
+#endif

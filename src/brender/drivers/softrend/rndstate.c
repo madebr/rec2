@@ -9,6 +9,7 @@
 
 #include "c2_string.h"
 
+// FUNCTION: CARMA2_HW 0x005417f0
 br_error C2_HOOK_STDCALL CheckPrimitiveState(br_soft_renderer* self) {
     br_error r;
 
@@ -23,8 +24,8 @@ br_error C2_HOOK_STDCALL CheckPrimitiveState(br_soft_renderer* self) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x005417f0, CheckPrimitiveState)
 
+// FUNCTION: CARMA2_HW 0x00541830
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partSet(br_soft_renderer* self, br_token part, br_int_32 index, br_token t, br_uint_32 value) {
     br_error r;
     soft_state_all *sp = &self->state;
@@ -49,8 +50,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partSet(br_soft_renderer* self, br_to
 
     return r;
 }
-C2_HOOK_FUNCTION(0x00541830, _M_br_soft_renderer_partSet)
 
+// FUNCTION: CARMA2_HW 0x005418f0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partSetMany(br_soft_renderer* self, br_token part, br_int_32 index, br_token_value* tv, br_int_32* pcount) {
     br_error r;
     soft_state_all* sp = &self->state;
@@ -81,8 +82,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partSetMany(br_soft_renderer* self, b
 
     return r;
 }
-C2_HOOK_FUNCTION(0x005418f0, _M_br_soft_renderer_partSetMany)
 
+// FUNCTION: CARMA2_HW 0x005419c0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partQuery(br_soft_renderer* self, br_token part, br_int_32 index, br_uint_32* pvalue, br_token t) {
     br_error r;
     soft_state_all* sp = &self->state;
@@ -100,8 +101,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQuery(br_soft_renderer* self, br_
         return self->state.pstate->dispatch->_partQuery(self->state.pstate, part, index, pvalue, t);
     }
 }
-C2_HOOK_FUNCTION(0x005419c0, _M_br_soft_renderer_partQuery)
 
+// FUNCTION: CARMA2_HW 0x00541a60
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryBuffer(br_soft_renderer* self, br_token part, br_int_32 index, br_uint_32* pvalue, br_uint_32 *buffer, br_size_t buffer_size, br_token t) {
     br_error r;
     soft_state_all* sp = &self->state;
@@ -120,8 +121,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryBuffer(br_soft_renderer* sel
         return self->state.pstate->dispatch->_partQueryBuffer(self->state.pstate, part, index, pvalue, buffer, buffer_size, t);
     }
 }
-C2_HOOK_FUNCTION(0x00541a60, _M_br_soft_renderer_partQueryBuffer)
 
+// FUNCTION: CARMA2_HW 0x00541b10
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryMany(br_soft_renderer* self, br_token part, br_int_32 index, br_token_value* tv, void* extra, br_size_t extra_size, br_int_32* pcount) {
     br_error r;
     soft_state_all* sp = &self->state;
@@ -140,8 +141,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryMany(br_soft_renderer* self,
         return self->state.pstate->dispatch->_partQueryMany(self->state.pstate, part, index, tv, extra, extra_size, pcount);
     }
 }
-C2_HOOK_FUNCTION(0x00541b10, _M_br_soft_renderer_partQueryMany)
 
+// FUNCTION: CARMA2_HW 0x00541bc0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryManySize(br_soft_renderer* self, br_token part, br_int_32 index, br_size_t* pextra_size, br_token_value* tv) {
     br_error r;
     soft_state_all* sp = &self->state;
@@ -159,8 +160,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryManySize(br_soft_renderer* s
         return self->state.pstate->dispatch->_partQueryManySize(self->state.pstate, part, index, pextra_size, tv);
     }
 }
-C2_HOOK_FUNCTION(0x00541bc0, _M_br_soft_renderer_partQueryManySize)
 
+// FUNCTION: CARMA2_HW 0x00541c60
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryAll(br_soft_renderer* self, br_token part, br_int_32 index, br_token_value* buffer, br_size_t buffer_size) {
     br_error r;
     soft_state_all* sp = &self->state;
@@ -179,8 +180,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryAll(br_soft_renderer* self, 
         return self->state.pstate->dispatch->_partQueryAll(self->state.pstate, part, index, buffer, buffer_size);
     }
 }
-C2_HOOK_FUNCTION(0x00541c60, _M_br_soft_renderer_partQueryAll)
 
+// FUNCTION: CARMA2_HW 0x00541d00
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryAllSize(br_soft_renderer* self, br_token part, br_int_32 index, br_size_t* psize) {
     br_error r;
     soft_state_all* sp = &self->state;
@@ -198,8 +199,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partQueryAllSize(br_soft_renderer* se
         return self->state.pstate->dispatch->_partQueryAllSize(self->state.pstate, part, index, psize);
     }
 }
-C2_HOOK_FUNCTION(0x00541d00, _M_br_soft_renderer_partQueryAllSize)
 
+// FUNCTION: CARMA2_HW 0x00541da0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_partIndexQuery(br_soft_renderer* self, br_token part, br_int_32* pnindex) {
     br_int_32 n;
     br_error r;
@@ -242,8 +243,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_partIndexQuery(br_soft_renderer* self
     *pnindex = n;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00541da0, _M_br_soft_renderer_partIndexQuery)
 
+// FUNCTION: CARMA2_HW 0x00542060
 br_error C2_HOOK_CDECL _M_br_soft_renderer_modelMulF(br_soft_renderer* self, br_matrix34_f* m) {
     br_matrix34 om;
 
@@ -253,7 +254,6 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelMulF(br_soft_renderer* self, br_
     TouchModelToView(self);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00542060, _M_br_soft_renderer_modelMulF)
 
 static void convertM34FixedToFloat(br_matrix34_f* dest, const br_matrix34_x* src)
 {
@@ -266,6 +266,7 @@ static void convertM34FixedToFloat(br_matrix34_f* dest, const br_matrix34_x* src
     }
 }
 
+// FUNCTION: CARMA2_HW 0x005420b0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_modelMulX(br_soft_renderer* self, br_matrix34_x* m) {
     br_matrix34 om;
     br_matrix34 cm;
@@ -277,8 +278,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelMulX(br_soft_renderer* self, br_
     TouchModelToView(self);
     return 0;
 }
-C2_HOOK_FUNCTION(0x005420b0, _M_br_soft_renderer_modelMulX)
 
+// FUNCTION: CARMA2_HW 0x005421c0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulF(br_soft_renderer* self, br_matrix34_f* m) {
 
     if (self->stack_top == 0) {
@@ -291,8 +292,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulF(br_soft_renderer* se
     TouchModelToView(self);
     return 0;
 }
-C2_HOOK_FUNCTION(0x005421c0, _M_br_soft_renderer_modelPopPushMulF)
 
+// FUNCTION: CARMA2_HW 0x00542130
 br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulX(br_soft_renderer* self, br_matrix34_x* m) {
     br_matrix34 cm;
 
@@ -308,8 +309,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelPopPushMulX(br_soft_renderer* se
     TouchModelToView(self);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00542130, _M_br_soft_renderer_modelPopPushMulX)
 
+// FUNCTION: CARMA2_HW 0x00542210
 br_error C2_HOOK_CDECL _M_br_soft_renderer_modelInvert(br_soft_renderer* self) {
     br_matrix34 old;
 
@@ -322,8 +323,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_modelInvert(br_soft_renderer* self) {
     TouchModelToView(self);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00542210, _M_br_soft_renderer_modelInvert)
 
+// FUNCTION: CARMA2_HW 0x00541e70
 br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br_uint_32 copy_mask, void* res) {
     int i;
 
@@ -406,8 +407,8 @@ br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x00541e70, StateCopy)
 
+// FUNCTION: CARMA2_HW 0x00542280
 br_error C2_HOOK_CDECL _M_br_soft_renderer_statePush(br_soft_renderer* self, br_uint_32 mask) {
     soft_state_all* sp;
 
@@ -418,8 +419,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_statePush(br_soft_renderer* self, br_
     self->stack_top += 1;
     return StateCopy(sp, &self->state, mask, self);
 }
-C2_HOOK_FUNCTION(0x00542280, _M_br_soft_renderer_statePush)
 
+// FUNCTION: CARMA2_HW 0x005422c0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_statePop(br_soft_renderer* self, br_uint_32 mask) {
     soft_state_all* sp;
     br_error r;
@@ -433,21 +434,21 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_statePop(br_soft_renderer* self, br_u
     sp->valid = 0;
     return r;
 }
-C2_HOOK_FUNCTION(0x005422c0, _M_br_soft_renderer_statePop)
 
+// FUNCTION: CARMA2_HW 0x00542410
 br_error C2_HOOK_CDECL _M_br_soft_renderer_stateSave(br_soft_renderer* self, br_renderer_state_stored_soft* save, br_uint_32 mask) {
 
     return StateCopyToStored(save, &self->state, mask, save);
 }
-C2_HOOK_FUNCTION(0x00542410, _M_br_soft_renderer_stateSave)
 
+// FUNCTION: CARMA2_HW 0x00542430
 br_error C2_HOOK_CDECL _M_br_soft_renderer_stateRestore(br_soft_renderer* self, br_renderer_state_stored_soft* save, br_uint_32 mask) {
 
     self->last_restored = save;
     return StateCopyFromStored(&self->state, save, mask, self);
 }
-C2_HOOK_FUNCTION(0x00542430, _M_br_soft_renderer_stateRestore)
 
+// FUNCTION: CARMA2_HW 0x00542490
 br_error C2_HOOK_CDECL _M_br_soft_renderer_stateMask(br_soft_renderer* self, br_uint_32* mask, br_token* parts, int n_parts) {
     int i;
     br_uint_32 m;
@@ -481,8 +482,8 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateMask(br_soft_renderer* self, br_
     *mask = m;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00542490, _M_br_soft_renderer_stateMask)
 
+// FUNCTION: CARMA2_HW 0x00542450
 br_error C2_HOOK_CDECL _M_br_soft_renderer_stateDefault(br_soft_renderer* self, br_uint_32 mask) {
 
     if(self->state.pstate != NULL) {
@@ -490,26 +491,19 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateDefault(br_soft_renderer* self, 
     }
     return StateCopy(&self->state, self->default_state, mask & 0x7f, self);
 }
-C2_HOOK_FUNCTION(0x00542450, _M_br_soft_renderer_stateDefault)
 
-br_error (C2_HOOK_CDECL * _M_br_soft_renderer_boundsTestF_original)(br_soft_renderer* self, br_token* r, br_bounds3_f* bounds);
+// FUNCTION: CARMA2_HW 0x00542390
 br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestF(br_soft_renderer* self, br_token* r, br_bounds3_f* bounds) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_soft_renderer_boundsTestF_original(self, r, bounds);
-#else
-
-    if (!C2V(scache).valid_m2s) {
+    if (!scache.valid_m2s) {
         ModelToScreenUpdate(self);
-        C2V(scache).valid_m2s = 1;
+        scache.valid_m2s = 1;
     }
 
-    *r = OnScreenCheck(self, &C2V(scache).model_to_screen, (br_bounds3 *)bounds);
+    *r = OnScreenCheck(self, &scache.model_to_screen, (br_bounds3 *)bounds);
 
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00542390, _M_br_soft_renderer_boundsTestF, _M_br_soft_renderer_boundsTestF_original)
 
 static void C2_HOOK_STDCALL convertBounds3FixedToFloat(br_bounds3_f* dest, br_bounds3_x* src) {
     int i;
@@ -520,44 +514,38 @@ static void C2_HOOK_STDCALL convertBounds3FixedToFloat(br_bounds3_f* dest, br_bo
     }
 }
 
-br_error (C2_HOOK_CDECL * _M_br_soft_renderer_boundsTestX_original)(br_soft_renderer* self, br_token* r, br_bounds3_x* bounds_in);
+// FUNCTION: CARMA2_HW 0x00542320
 br_error C2_HOOK_CDECL _M_br_soft_renderer_boundsTestX(br_soft_renderer* self, br_token* r, br_bounds3_x* bounds_in) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return _M_br_soft_renderer_boundsTestX_original(self, r, bounds_in);
-#else
     br_bounds3 bounds;
 
     convertBounds3FixedToFloat((br_bounds3_f*)&bounds, (br_bounds3_x*)bounds_in);
     ModelToScreenUpdate(self);
 
-    *r = OnScreenCheck(self, &C2V(scache).model_to_screen, &bounds);
+    *r = OnScreenCheck(self, &scache.model_to_screen, &bounds);
 
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00542320, _M_br_soft_renderer_boundsTestX, _M_br_soft_renderer_boundsTestX_original)
 
+// FUNCTION: CARMA2_HW 0x005423d0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_coverageTestF(br_soft_renderer* self, br_float* r, br_bounds3_f* bounds) {
 
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x005423d0, _M_br_soft_renderer_coverageTestF)
 
+// FUNCTION: CARMA2_HW 0x005423e0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_coverageTestX(br_soft_renderer* self, br_fixed_ls* r, br_bounds3_x* bounds) {
 
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x005423e0, _M_br_soft_renderer_coverageTestX)
 
+// FUNCTION: CARMA2_HW 0x005423f0
 br_error C2_HOOK_CDECL _M_br_soft_renderer_viewDistanceF(br_soft_renderer* self, br_float* r) {
 
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x005423f0, _M_br_soft_renderer_viewDistanceF)
 
+// FUNCTION: CARMA2_HW 0x00542400
 br_error C2_HOOK_CDECL _M_br_soft_renderer_viewDistanceX(br_soft_renderer* self, br_fixed_ls* r) {
 
     return 0x1002;
 }
-C2_HOOK_FUNCTION(0x00542400, _M_br_soft_renderer_viewDistanceX)

@@ -15,204 +15,219 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gQuickTime_initialized, 0x006a0c24);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gShow_status_message, 0x006a23b8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gStatus_message_1, 0x006a23bc);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gStatus_message_2, 0x006a23c0);
-C2_HOOK_VARIABLE_IMPLEMENT(undefined4, gNext_replay_record_state, 0x006a0c50);
-C2_HOOK_VARIABLE_IMPLEMENT(short, gQuicktime_movie_file, 0x006a0af0);
-C2_HOOK_VARIABLE_IMPLEMENT(Movie, gQuicktime_movie, 0x006a0c30);
-C2_HOOK_VARIABLE_IMPLEMENT(Handle, gQuicktime_frame_pixmap_handle, 0x006a0c34);
-C2_HOOK_VARIABLE_IMPLEMENT(Handle, gQuicktime_image_description_handle, 0x006a0c40);
-C2_HOOK_VARIABLE_IMPLEMENT(Handle, gQuicktime_compressed_frame_handle, 0x006a0c3c);
-C2_HOOK_VARIABLE_IMPLEMENT(ImageSequence, gQuicktime_image_sequence, 0x006a0af4);
-C2_HOOK_VARIABLE_IMPLEMENT(Media, gQuicktime_media, 0x006a0afc);
-C2_HOOK_VARIABLE_IMPLEMENT(Track, gQuicktime_track, 0x006a0c10);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gQuicktime_movie_counter, 0x006a0c2c);
-C2_HOOK_VARIABLE_IMPLEMENT(struct FSSpec, gQt_file_spec, 0x006a0b08);
-C2_HOOK_VARIABLE_IMPLEMENT(struct Rect, gQuicktime_rect, 0x006a0c18);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gRecording_paused, 0x006a0c28);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gRecording_time, 0x006a0c54);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gRecording_mouse_disabled, 0x006baa28);
+
+// GLOBAL: CARMA2_HW 0x006a0c24
+int gQuickTime_initialized;
+
+// GLOBAL: CARMA2_HW 0x006a23b8
+int gShow_status_message;
+
+// GLOBAL: CARMA2_HW 0x006a23bc
+int gStatus_message_1;
+
+// GLOBAL: CARMA2_HW 0x006a23c0
+int gStatus_message_2;
+
+// GLOBAL: CARMA2_HW 0x006a0c50
+undefined4 gNext_replay_record_state;
+
+// GLOBAL: CARMA2_HW 0x006a0af0
+short gQuicktime_movie_file;
+
+// GLOBAL: CARMA2_HW 0x006a0c30
+Movie gQuicktime_movie;
+
+// GLOBAL: CARMA2_HW 0x006a0c34
+Handle gQuicktime_frame_pixmap_handle;
+
+// GLOBAL: CARMA2_HW 0x006a0c40
+Handle gQuicktime_image_description_handle;
+
+// GLOBAL: CARMA2_HW 0x006a0c3c
+Handle gQuicktime_compressed_frame_handle;
+
+// GLOBAL: CARMA2_HW 0x006a0af4
+ImageSequence gQuicktime_image_sequence;
+
+// GLOBAL: CARMA2_HW 0x006a0afc
+Media gQuicktime_media;
+
+// GLOBAL: CARMA2_HW 0x006a0c10
+Track gQuicktime_track;
+
+// GLOBAL: CARMA2_HW 0x006a0c2c
+int gQuicktime_movie_counter;
+
+// GLOBAL: CARMA2_HW 0x006a0b08
+struct FSSpec gQt_file_spec;
+
+// GLOBAL: CARMA2_HW 0x006a0c18
+struct Rect gQuicktime_rect;
+
+// GLOBAL: CARMA2_HW 0x006a0c28
+int gRecording_paused;
+
+// GLOBAL: CARMA2_HW 0x006a0c54
+tU32 gRecording_time;
+
+// GLOBAL: CARMA2_HW 0x006baa28
+int gRecording_mouse_disabled;
 
 
-void (C2_HOOK_CDECL * InitQuickTimeStuff_original)(void);
+// FUNCTION: CARMA2_HW 0x004e1700
 void C2_HOOK_CDECL InitQuickTimeStuff(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitQuickTimeStuff_original();
-#else
-    C2V(gQuickTime_initialized) = 0;
-    if (InitializeQTML(0) == noErr && EnterMovies() == noErr) {
-        C2V(gQuickTime_initialized) = 1;
-    }
-    C2V(gQuick_time_temp_path)[0] = '\0';
-    C2V(gQuick_time_movie_path_stub)[0] = '\0';
-    C2V(gQuick_time_banner_texture_name)[0] = '\0';
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004e1700, InitQuickTimeStuff, InitQuickTimeStuff_original)
 
+    gQuickTime_initialized = 0;
+    if (InitializeQTML(0) == noErr && EnterMovies() == noErr) {
+        gQuickTime_initialized = 1;
+    }
+    gQuick_time_temp_path[0] = '\0';
+    gQuick_time_movie_path_stub[0] = '\0';
+    gQuick_time_banner_texture_name[0] = '\0';
+}
+
+// FUNCTION: CARMA2_HW 0x004e2110
 void C2_HOOK_FASTCALL KillStatusMessage(void) {
 
-    C2V(gShow_status_message) = 0;
+    gShow_status_message = 0;
 }
-C2_HOOK_FUNCTION(0x004e2110, KillStatusMessage)
 
-void (C2_HOOK_FASTCALL * WriteBannerFrame_original)(void);
+// FUNCTION: CARMA2_HW 0x004e1250
 void C2_HOOK_FASTCALL WriteBannerFrame(void) {
-#if defined(C2_HOOKS_ENABLED)
-    WriteBannerFrame_original();
-#else
+
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e1250, WriteBannerFrame, WriteBannerFrame_original)
 
 void C2_HOOK_FASTCALL ShowStatusMessage(int msg1, int msg2) {
 
-    C2V(gShow_status_message) = 1;
-    C2V(gStatus_message_1) = msg1;
-    C2V(gStatus_message_2) = msg2;
+    gShow_status_message = 1;
+    gStatus_message_1 = msg1;
+    gStatus_message_2 = msg2;
 }
 
 void C2_HOOK_FASTCALL TidyMovieARDisplay(void) {
     undefined4 state;
 
-    state = C2V(gNext_replay_record_state);
-    C2V(gNext_replay_record_state) = 20;
+    state = gNext_replay_record_state;
+    gNext_replay_record_state = 20;
     RenderAFrame(1);
     RenderAFrame(1);
-    C2V(gNext_replay_record_state) = state;
+    gNext_replay_record_state = state;
 }
 
 void C2_HOOK_FASTCALL FreeOffQTshite(void) {
     tPath_name path;
 
-    if (C2V(gQuicktime_movie_file) != 0) {
-        CloseMovieFile(C2V(gQuicktime_movie_file));
+    if (gQuicktime_movie_file != 0) {
+        CloseMovieFile(gQuicktime_movie_file);
     }
-    DisposeMovie(C2V(gQuicktime_movie));
-    PDFileDelete(C2V(gQuick_time_temp_path), 1);
-    c2_sprintf(path, "%s.#Res", C2V(gQuick_time_temp_path));
+    DisposeMovie(gQuicktime_movie);
+    PDFileDelete(gQuick_time_temp_path, 1);
+    c2_sprintf(path, "%s.#Res", gQuick_time_temp_path);
     PDFileDelete(path, 1);
-    if (C2V(gQuicktime_frame_pixmap_handle) != NULL) {
-        DisposeHandle(C2V(gQuicktime_frame_pixmap_handle));
-        C2V(gQuicktime_frame_pixmap_handle) = NULL;
+    if (gQuicktime_frame_pixmap_handle != NULL) {
+        DisposeHandle(gQuicktime_frame_pixmap_handle);
+        gQuicktime_frame_pixmap_handle = NULL;
     }
-    if (C2V(gQuicktime_image_description_handle) != NULL) {
-        DisposeHandle(C2V(gQuicktime_image_description_handle));
-        C2V(gQuicktime_image_description_handle) = NULL;
+    if (gQuicktime_image_description_handle != NULL) {
+        DisposeHandle(gQuicktime_image_description_handle);
+        gQuicktime_image_description_handle = NULL;
     }
-    if (C2V(gQuicktime_compressed_frame_handle) != NULL) {
-        DisposeHandle(C2V(gQuicktime_compressed_frame_handle));
-        C2V(gQuicktime_compressed_frame_handle) = NULL;
+    if (gQuicktime_compressed_frame_handle != NULL) {
+        DisposeHandle(gQuicktime_compressed_frame_handle);
+        gQuicktime_compressed_frame_handle = NULL;
     }
 }
 
 int C2_HOOK_FASTCALL MovieStopRecordingAndSave(void) {
 
-    if (C2V(gNext_replay_record_state) == 4) {
+    if (gNext_replay_record_state == 4) {
         struct FSSpec fs_spec;
         TimeValue duration;
         tPath_name path;
 
-        C2V(gNext_replay_record_state) = 5;
+        gNext_replay_record_state = 5;
         ShowStatusMessage(eMiscString_post_processing, eMiscString_please_wait);
         TidyMovieARDisplay();
         WriteBannerFrame();
-        C2V(gNext_replay_record_state) = 0;
-        CDSequenceEnd(C2V(gQuicktime_image_sequence));
-        EndMediaEdits(C2V(gQuicktime_media));
-        duration = GetMediaDuration(C2V(gQuicktime_media));
+        gNext_replay_record_state = 0;
+        CDSequenceEnd(gQuicktime_image_sequence);
+        EndMediaEdits(gQuicktime_media);
+        duration = GetMediaDuration(gQuicktime_media);
         if (duration != 0) {
-            InsertMediaIntoTrack(C2V(gQuicktime_track), 0, 0, duration, IntToFixed(1));
+            InsertMediaIntoTrack(gQuicktime_track, 0, 0, duration, IntToFixed(1));
         }
-        if (C2V(gQuicktime_movie_file) != 0) {
-            CloseMovieFile(C2V(gQuicktime_movie_file));
+        if (gQuicktime_movie_file != 0) {
+            CloseMovieFile(gQuicktime_movie_file);
         }
-        c2_sprintf(path, "%s%3.3d.MOV", C2V(gQuick_time_movie_path_stub), C2V(gQuicktime_movie_counter));
-        C2V(gQuicktime_movie_counter) += 1;
+        c2_sprintf(path, "%s%3.3d.MOV", gQuick_time_movie_path_stub, gQuicktime_movie_counter);
+        gQuicktime_movie_counter += 1;
         fs_spec.vRefNum = 0;
         fs_spec.parID = 0;
         c2_strcpy(fs_spec.name, path);
         c2pstr(fs_spec.name);
-        FlattenMovieData(C2V(gQuicktime_movie), flattenAddMovieToDataFork, &fs_spec, sigMoviePlayer, smSystemScript, createMovieFileDeleteCurFile);
+        FlattenMovieData(gQuicktime_movie, flattenAddMovieToDataFork, &fs_spec, sigMoviePlayer, smSystemScript, createMovieFileDeleteCurFile);
         FreeOffQTshite();
     }
     return 1;
 }
 
-void (C2_HOOK_FASTCALL * MovieStopRecordingIfNecessary_original)(void);
+// FUNCTION: CARMA2_HW 0x004e1a20
 void C2_HOOK_FASTCALL MovieStopRecordingIfNecessary(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    ActionReplayFinishRecording_original();
-#else
     MovieStopRecordingAndSave();
     KillStatusMessage();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e1a20, MovieStopRecordingIfNecessary, MovieStopRecordingIfNecessary_original)
 
+// FUNCTION: CARMA2_HW 0x004e2140
 int C2_HOOK_FASTCALL GetMovieWidth(void) {
 
-    if (C2V(gNbPixelBits) == 16) {
-        return C2V(gCurrent_graf_data)->width / 2;
+    if (gNbPixelBits == 16) {
+        return gCurrent_graf_data->width / 2;
     } else {
-        return C2V(gCurrent_graf_data)->width;
+        return gCurrent_graf_data->width;
     }
 }
-C2_HOOK_FUNCTION(0x004e2140, GetMovieWidth)
 
+// FUNCTION: CARMA2_HW 0x004e2160
 int C2_HOOK_FASTCALL GetMovieHeight(void) {
 
-    if (C2V(gNbPixelBits) == 16) {
-        return C2V(gCurrent_graf_data)->height / 2;
+    if (gNbPixelBits == 16) {
+        return gCurrent_graf_data->height / 2;
     } else {
-        return C2V(gCurrent_graf_data)->height;
+        return gCurrent_graf_data->height;
     }
 }
-C2_HOOK_FUNCTION(0x004e2160, GetMovieHeight)
 
+// FUNCTION: CARMA2_HW 0x004e0f20
 int C2_HOOK_FASTCALL InitMovie(void) {
 
-    C2V(gQuicktime_rect).top = 0;
-    C2V(gQuicktime_rect).left = 0;
-    C2V(gQuicktime_rect).right = GetMovieWidth();
-    C2V(gQuicktime_rect).bottom = GetMovieHeight();
-    if (CreateMovieFile(&C2V(gQt_file_spec), sigMoviePlayer, smCurrentScript, createMovieFileDeleteCurFile, &C2V(gQuicktime_movie_file), &C2V(gQuicktime_movie)) == noErr) {
+    gQuicktime_rect.top = 0;
+    gQuicktime_rect.left = 0;
+    gQuicktime_rect.right = GetMovieWidth();
+    gQuicktime_rect.bottom = GetMovieHeight();
+    if (CreateMovieFile(&gQt_file_spec, sigMoviePlayer, smCurrentScript, createMovieFileDeleteCurFile, &gQuicktime_movie_file, &gQuicktime_movie) == noErr) {
         return 0;
     }
-    PathCat(C2V(gQuick_time_temp_path), C2V(gApplication_path), "QTTMP");
-    PathCat(C2V(gQuick_time_movie_path_stub), C2V(gApplication_path), "MOVIE");
-    if (!CreateMovieFile(&C2V(gQt_file_spec), sigMoviePlayer, smCurrentScript, createMovieFileDeleteCurFile, &C2V(gQuicktime_movie_file), &C2V(gQuicktime_movie)) == noErr) {
+    PathCat(gQuick_time_temp_path, gApplication_path, "QTTMP");
+    PathCat(gQuick_time_movie_path_stub, gApplication_path, "MOVIE");
+    if (!CreateMovieFile(&gQt_file_spec, sigMoviePlayer, smCurrentScript, createMovieFileDeleteCurFile, &gQuicktime_movie_file, &gQuicktime_movie) == noErr) {
         return 0;
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x004e0f20, InitMovie)
 
-int (C2_HOOK_FASTCALL * CreateMovie_original)(void);
+// FUNCTION: CARMA2_HW 0x004e0fe0
 int C2_HOOK_FASTCALL CreateMovie(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return CreateMovie_original();
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e0fe0, CreateMovie, CreateMovie_original)
 
-int (C2_HOOK_FASTCALL * GenerateOneMovieFrame_original)(void);
+// FUNCTION: CARMA2_HW 0x004e1c70
 int C2_HOOK_FASTCALL GenerateOneMovieFrame(void) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return GenerateOneMovieFrame_original();
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e1c70, GenerateOneMovieFrame, GenerateOneMovieFrame_original)
 
 void C2_HOOK_FASTCALL TrapS3SoundOutput(void) {
 }
@@ -220,50 +235,51 @@ void C2_HOOK_FASTCALL TrapS3SoundOutput(void) {
 void C2_HOOK_FASTCALL FreeS3SoundOutput(void) {
 }
 
+// FUNCTION: CARMA2_HW 0x004e1da0
 int C2_HOOK_FASTCALL MovieRecordFrame(br_pixelmap *pScreen, int pFrame_period) {
     tU32 remaining;
 
-    switch (C2V(gNext_replay_record_state)) {
+    switch (gNext_replay_record_state) {
     case 1:
-        C2V(gNext_replay_record_state) = 2;
+        gNext_replay_record_state = 2;
         return 0;
     case 2:
         WaitFor(2000);
         if (InitMovie()) {
-            C2V(gNext_replay_record_state) = 10;
+            gNext_replay_record_state = 10;
             ShowStatusMessage(eMiscString_movie_error, eMiscString_aborting);
             return 0;
         }
-        C2V(gNext_replay_record_state) = 3;
+        gNext_replay_record_state = 3;
         ShowStatusMessage(eMiscString_initialising_movie, eMiscString_please_wait);
         return 0;
     case 3:
         if (CreateMovie()) {
-            C2V(gNext_replay_record_state) = 10;
+            gNext_replay_record_state = 10;
             ShowStatusMessage(eMiscString_movie_error, eMiscString_aborting);
             return 0;
         }
-        C2V(gNext_replay_record_state) = 4;
+        gNext_replay_record_state = 4;
         ShowStatusMessage(eMiscString_recording_movie, 0);
         TrapS3SoundOutput();
         return 0;
     case 4:
-        if (!C2V(gRecording_paused)) {
-            remaining = C2V(gRecording_time) + pFrame_period;
-            C2V(gRecording_paused) = 0;
+        if (!gRecording_paused) {
+            remaining = gRecording_time + pFrame_period;
+            gRecording_paused = 0;
             for (; remaining > 1000 / 18; remaining -= 1000 / 18) {
                 if (GenerateOneMovieFrame() != 0) {
-                    C2V(gNext_replay_record_state) = 10;
+                    gNext_replay_record_state = 10;
                     ShowStatusMessage(eMiscString_movie_error, eMiscString_aborting);
                     return 0;
                 }
             }
-            C2V(gRecording_time) = remaining;
+            gRecording_time = remaining;
             return 0;
         }
         break;
     case 5:
-        C2V(gRecording_mouse_disabled) = 0;
+        gRecording_mouse_disabled = 0;
         return 0;
     case 10:
         WaitFor(2000);
@@ -273,4 +289,3 @@ int C2_HOOK_FASTCALL MovieRecordFrame(br_pixelmap *pScreen, int pFrame_period) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004e1da0, MovieRecordFrame)

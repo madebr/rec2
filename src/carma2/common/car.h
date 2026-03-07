@@ -5,38 +5,38 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gOver_shoot);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gActive_car_list, 139);
-C2_HOOK_VARIABLE_DECLARE(int, gNum_cars_and_non_cars);
-C2_HOOK_VARIABLE_DECLARE(int, gNum_active_cars);
-C2_HOOK_VARIABLE_DECLARE(int, gNum_active_non_cars);
-C2_HOOK_VARIABLE_DECLARE(int, gFreeze_mechanics);
-C2_HOOK_VARIABLE_DECLARE(int, gCar_simplification_level);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tNon_car_spec*, gActive_non_car_list, 99);
-C2_HOOK_VARIABLE_DECLARE(int, gNum_active_non_cars);
-C2_HOOK_VARIABLE_DECLARE(br_scalar, gMin_world_y);
-C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gUnknown_car_collision_info);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gAverage_grid_position);
+extern int gOver_shoot;
+extern tCar_spec* gActive_car_list[139];
+extern int gNum_cars_and_non_cars;
+extern int gNum_active_cars;
+extern int gNum_active_non_cars;
+extern int gFreeze_mechanics;
+extern int gCar_simplification_level;
+extern tNon_car_spec* gActive_non_car_list[99];
+extern int gNum_active_non_cars;
+extern br_scalar gMin_world_y;
+extern tCollision_info* gUnknown_car_collision_info;
+extern br_vector3 gAverage_grid_position;
 
-C2_HOOK_VARIABLE_DECLARE(int, gTesting_car_for_sensible_place);
-C2_HOOK_VARIABLE_DECLARE(tWorld_callbacks, gWorld_callbacks);
-C2_HOOK_VARIABLE_DECLARE(tPhysics_callbacks, gCar_physics_callbacks);
-C2_HOOK_VARIABLE_DECLARE(int, gFace_count);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tFace_ref, gFace_list__car, 300);
-C2_HOOK_VARIABLE_DECLARE(int, gCamera_mode);
-C2_HOOK_VARIABLE_DECLARE(int, gCamera_frozen);
-C2_HOOK_VARIABLE_DECLARE(int, gOpponent_viewing_mode);
-C2_HOOK_VARIABLE_DECLARE(int, gNet_player_to_view_index);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gZero_v__car);
-C2_HOOK_VARIABLE_DECLARE(int, gInTheSea);
-C2_HOOK_VARIABLE_DECLARE(int, gStop_opponents_moving);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(int, gSkid_tag, 2);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_spec*, gLast_car_to_skid, 2);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gCar_to_view_original_v);
-C2_HOOK_VARIABLE_DECLARE(tCamera_key_flags, gCamera_key_flags);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_cunning_stunt);
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gPed_actor);
-C2_HOOK_VARIABLE_DECLARE_ARRAY_ADV(const float, gCar_simplification_factor, [2][5]);
+extern int gTesting_car_for_sensible_place;
+extern tWorld_callbacks gWorld_callbacks;
+extern tPhysics_callbacks gCar_physics_callbacks;
+extern int gFace_count;
+extern tFace_ref gFace_list__car[300];
+extern int gCamera_mode;
+extern int gCamera_frozen;
+extern int gOpponent_viewing_mode;
+extern int gNet_player_to_view_index;
+extern br_vector3 gZero_v__car;
+extern int gInTheSea;
+extern int gStop_opponents_moving;
+extern int gSkid_tag[2];
+extern tCar_spec* gLast_car_to_skid[2];
+extern br_vector3 gCar_to_view_original_v;
+extern tCamera_key_flags gCamera_key_flags;
+extern tU32 gLast_cunning_stunt;
+extern br_actor* gPed_actor;
+extern const float gCar_simplification_factor[2][5];
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 

@@ -6,8 +6,12 @@
 #include "core/math/matrix4.h"
 
 // Carmageddon 2 adaptation
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gScreenZOffset, 0x0079feb4);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const float, gScreenZOffsetPresetChoices, 7, 0x00670530, {
+
+// GLOBAL: CARMA2_HW 0x0079feb4
+br_scalar gScreenZOffset;
+
+// GLOBAL: CARMA2_HW 0x00670530
+const float gScreenZOffsetPresetChoices[7] = {
      0.0f,
     -1.5f,
     -3.0f,
@@ -15,19 +19,19 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const float, gScreenZOffsetPresetChoices, 
     -6.0f,
     -7.5f,
     -9.0f,
-});
+};
 
+// FUNCTION: CARMA2_HW 0x00540560
 void C2_HOOK_CDECL BrSetScreenZOffset(br_uint_32 pOffset) {
 
-    C2_HOOK_BUG_ON(BR_ASIZE(C2V(gScreenZOffsetPresetChoices)) != 7);
+    C2_HOOK_BUG_ON(BR_ASIZE(gScreenZOffsetPresetChoices) != 7);
 
-    if (pOffset < BR_ASIZE(C2V(gScreenZOffsetPresetChoices))) {
-        C2V(gScreenZOffset) = C2V(gScreenZOffsetPresetChoices)[pOffset];
+    if (pOffset < BR_ASIZE(gScreenZOffsetPresetChoices)) {
+        gScreenZOffset = gScreenZOffsetPresetChoices[pOffset];
     } else {
-        C2V(gScreenZOffset) = 0.f;
+        gScreenZOffset = 0.f;
     }
 }
-C2_HOOK_FUNCTION(0x00540560, BrSetScreenZOffset)
 
 static br_uint_32 calculate_outcode(const br_vector4* v) {
     br_uint_32 outcode;
@@ -54,139 +58,140 @@ static br_uint_32 calculate_outcode(const br_vector4* v) {
     return outcode;
 }
 
+// FUNCTION: CARMA2_HW 0x005269f0
 void C2_HOOK_CDECL BrModelToScreenQuery(br_matrix4* dest) {
     br_uint_32 dummy;
     br_matrix4 v2s;
     br_matrix34 m2v;
 
-    C2V(v1db).renderer->dispatch->_partQueryBuffer(C2V(v1db).renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)&v2s, sizeof(v2s), BRT_VIEW_TO_SCREEN_M4_F);
-    C2V(v1db).renderer->dispatch->_partQueryBuffer(C2V(v1db).renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)&m2v, sizeof(m2v), BRT_MODEL_TO_VIEW_M34_F);
+    v1db.renderer->dispatch->_partQueryBuffer(v1db.renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)&v2s, sizeof(v2s), BRT_VIEW_TO_SCREEN_M4_F);
+    v1db.renderer->dispatch->_partQueryBuffer(v1db.renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)&m2v, sizeof(m2v), BRT_MODEL_TO_VIEW_M34_F);
     BrMatrix4Mul34(dest, &m2v, &v2s);
 }
-C2_HOOK_FUNCTION(0x005269f0, BrModelToScreenQuery)
 
+// FUNCTION: CARMA2_HW 0x00526a60
 void C2_HOOK_CDECL BrModelToViewQuery(br_matrix34* dest) {
     br_uint_32 dummy;
 
-    C2V(v1db).renderer->dispatch->_partQueryBuffer(C2V(v1db).renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)dest, sizeof(dest), BRT_MODEL_TO_VIEW_M34_F);
+    v1db.renderer->dispatch->_partQueryBuffer(v1db.renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)dest, sizeof(dest), BRT_MODEL_TO_VIEW_M34_F);
 }
-C2_HOOK_FUNCTION(0x00526a60, BrModelToViewQuery)
 
+// FUNCTION: CARMA2_HW 0x00526a90
 br_uint_8 C2_HOOK_CDECL BrOriginToScreenXY(br_vector2* screen) {
 
-    if (!C2V(v1db).model_to_screen_valid) {
-        BrModelToScreenQuery(&C2V(v1db).model_to_screen);
-        C2V(v1db).model_to_screen_valid = 1;
+    if (!v1db.model_to_screen_valid) {
+        BrModelToScreenQuery(&v1db.model_to_screen);
+        v1db.model_to_screen_valid = 1;
     }
 
-    screen->v[0] = C2V(v1db).vp_ox + C2V(v1db).vp_width * C2V(v1db).model_to_screen.m[3][0] / C2V(v1db).model_to_screen.m[3][3];
-    screen->v[1] = C2V(v1db).vp_oy + C2V(v1db).vp_height * C2V(v1db).model_to_screen.m[3][1] / C2V(v1db).model_to_screen.m[3][3];
+    screen->v[0] = v1db.vp_ox + v1db.vp_width * v1db.model_to_screen.m[3][0] / v1db.model_to_screen.m[3][3];
+    screen->v[1] = v1db.vp_oy + v1db.vp_height * v1db.model_to_screen.m[3][1] / v1db.model_to_screen.m[3][3];
 
-    return C2V(v1db).model_to_screen.m[3][2] > 0.0f;
+    return v1db.model_to_screen.m[3][2] > 0.0f;
 }
-C2_HOOK_FUNCTION(0x00526a90, BrOriginToScreenXY)
 
+// FUNCTION: CARMA2_HW 0x00526b70
 br_uint_32 C2_HOOK_CDECL BrOriginToScreenXYZO(br_vector3* screen) {
     br_uint_32 outcode;
 
-    if (!C2V(v1db).model_to_screen_valid) {
-        BrModelToScreenQuery(&C2V(v1db).model_to_screen);
-        C2V(v1db).model_to_screen_valid = 1;
+    if (!v1db.model_to_screen_valid) {
+        BrModelToScreenQuery(&v1db.model_to_screen);
+        v1db.model_to_screen_valid = 1;
     }
 
-    outcode = calculate_outcode((br_vector4*)C2V(v1db).model_to_screen.m[3]);
+    outcode = calculate_outcode((br_vector4*)v1db.model_to_screen.m[3]);
 
     if ((outcode & 0x00000fff) == 0) {
-        screen->v[0] = C2V(v1db).vp_ox + C2V(v1db).vp_width * C2V(v1db).model_to_screen.m[3][0] / C2V(v1db).model_to_screen.m[3][3];
-        screen->v[1] = C2V(v1db).vp_oy + C2V(v1db).vp_height * C2V(v1db).model_to_screen.m[3][1] / C2V(v1db).model_to_screen.m[3][3];
-        screen->v[2] = C2V(gScreenZOffset) + C2V(v1db).model_to_screen.m[3][3] / C2V(v1db).model_to_screen.m[3][2] * 32767.f;
+        screen->v[0] = v1db.vp_ox + v1db.vp_width * v1db.model_to_screen.m[3][0] / v1db.model_to_screen.m[3][3];
+        screen->v[1] = v1db.vp_oy + v1db.vp_height * v1db.model_to_screen.m[3][1] / v1db.model_to_screen.m[3][3];
+        screen->v[2] = gScreenZOffset + v1db.model_to_screen.m[3][3] / v1db.model_to_screen.m[3][2] * 32767.f;
     }
     return outcode;
 }
-C2_HOOK_FUNCTION(0x00526b70, BrOriginToScreenXYZO)
 
+// FUNCTION: CARMA2_HW 0x00526cf0
 br_uint_8 C2_HOOK_CDECL BrPointToScreenXY(br_vector2* screen, const br_vector3* point) {
     br_vector4 sp;
 
-    if (!C2V(v1db).model_to_screen_valid) {
-        BrModelToScreenQuery(&C2V(v1db).model_to_screen);
-        C2V(v1db).model_to_screen_valid = 1;
+    if (!v1db.model_to_screen_valid) {
+        BrModelToScreenQuery(&v1db.model_to_screen);
+        v1db.model_to_screen_valid = 1;
     }
-    BrMatrix4ApplyP(&sp, point, &C2V(v1db).model_to_screen);
-    screen->v[0] = C2V(v1db).vp_ox + sp.v[0] * C2V(v1db).vp_width / sp.v[3];
-    screen->v[1] = C2V(v1db).vp_oy + sp.v[1] * C2V(v1db).vp_height / sp.v[3];
+    BrMatrix4ApplyP(&sp, point, &v1db.model_to_screen);
+    screen->v[0] = v1db.vp_ox + sp.v[0] * v1db.vp_width / sp.v[3];
+    screen->v[1] = v1db.vp_oy + sp.v[1] * v1db.vp_height / sp.v[3];
 
     return sp.v[2] > 0.f;
 }
-C2_HOOK_FUNCTION(0x00526cf0, BrPointToScreenXY)
 
+// FUNCTION: CARMA2_HW 0x00526df0
 br_uint_32 C2_HOOK_CDECL BrPointToScreenXYZO(br_vector3* screen, const br_vector3* point) {
     br_vector4 sp;
     br_uint_32 outcode;
 
-    if (!C2V(v1db).model_to_screen_valid) {
-        BrModelToScreenQuery(&C2V(v1db).model_to_screen);
-        C2V(v1db).model_to_screen_valid = 1;
+    if (!v1db.model_to_screen_valid) {
+        BrModelToScreenQuery(&v1db.model_to_screen);
+        v1db.model_to_screen_valid = 1;
     }
-    BrMatrix4ApplyP(&sp, point, &C2V(v1db).model_to_screen);
+    BrMatrix4ApplyP(&sp, point, &v1db.model_to_screen);
     outcode = calculate_outcode(&sp);
 
     if ((outcode & 0x00000fff) == 0) {
-        screen->v[0] = C2V(v1db).vp_ox + C2V(v1db).vp_width * C2V(v1db).model_to_screen.m[3][0] / C2V(v1db).model_to_screen.m[3][3];
-        screen->v[1] = C2V(v1db).vp_oy + C2V(v1db).vp_height * C2V(v1db).model_to_screen.m[3][1] / C2V(v1db).model_to_screen.m[3][3];
-        screen->v[2] = C2V(gScreenZOffset) + C2V(v1db).model_to_screen.m[3][3] / C2V(v1db).model_to_screen.m[3][2] * 32767.f;
+        screen->v[0] = v1db.vp_ox + v1db.vp_width * v1db.model_to_screen.m[3][0] / v1db.model_to_screen.m[3][3];
+        screen->v[1] = v1db.vp_oy + v1db.vp_height * v1db.model_to_screen.m[3][1] / v1db.model_to_screen.m[3][3];
+        screen->v[2] = gScreenZOffset + v1db.model_to_screen.m[3][3] / v1db.model_to_screen.m[3][2] * 32767.f;
     }
     return outcode;
 }
-C2_HOOK_FUNCTION(0x00526df0, BrPointToScreenXYZO)
 
+// FUNCTION: CARMA2_HW 0x00526f80
 void C2_HOOK_CDECL BrPointToScreenXYMany(br_vector2* screens, const br_vector3* points, br_uint_32 npoints) {
     br_vector4 sp;
     br_uint_32 i;
 
-    if (!C2V(v1db).model_to_screen_valid) {
-        BrModelToScreenQuery(&C2V(v1db).model_to_screen);
-        C2V(v1db).model_to_screen_valid = 1;
+    if (!v1db.model_to_screen_valid) {
+        BrModelToScreenQuery(&v1db.model_to_screen);
+        v1db.model_to_screen_valid = 1;
     }
 
     for (i = 0; i < npoints; i++) {
-        BrMatrix4ApplyP(&sp, &points[i], &C2V(v1db).model_to_screen);
+        BrMatrix4ApplyP(&sp, &points[i], &v1db.model_to_screen);
 
-        screens[i].v[0] = C2V(v1db).vp_ox + sp.v[0] * C2V(v1db).vp_width / sp.v[3];
-        screens[i].v[1] = C2V(v1db).vp_oy + sp.v[1] * C2V(v1db).vp_height / sp.v[3];
+        screens[i].v[0] = v1db.vp_ox + sp.v[0] * v1db.vp_width / sp.v[3];
+        screens[i].v[1] = v1db.vp_oy + sp.v[1] * v1db.vp_height / sp.v[3];
     }
 }
-C2_HOOK_FUNCTION(0x00526f80, BrPointToScreenXYMany)
 
+// FUNCTION: CARMA2_HW 0x00527070
 void C2_HOOK_CDECL BrPointToScreenXYZOMany(br_vector3* screens, br_uint_32* outcodes, br_vector3* points, br_uint_32 npoints) {
     br_uint_32 outcode;
     br_vector4 sp;
     br_uint_32 i;
 
-    if (!C2V(v1db).model_to_screen_valid) {
-        BrModelToScreenQuery(&C2V(v1db).model_to_screen);
-        C2V(v1db).model_to_screen_valid = 1;
+    if (!v1db.model_to_screen_valid) {
+        BrModelToScreenQuery(&v1db.model_to_screen);
+        v1db.model_to_screen_valid = 1;
     }
 
     for (i = 0; i < npoints; i++) {
-        BrMatrix4ApplyP(&sp, &points[i], &C2V(v1db).model_to_screen);
+        BrMatrix4ApplyP(&sp, &points[i], &v1db.model_to_screen);
         outcode = calculate_outcode(&sp);
 
         if ((outcode & 0x00000fff) == 0) {
-            screens[i].v[0] = C2V(v1db).vp_ox + C2V(v1db).vp_width * C2V(v1db).model_to_screen.m[3][0] / C2V(v1db).model_to_screen.m[3][3];
-            screens[i].v[1] = C2V(v1db).vp_oy + C2V(v1db).vp_height * C2V(v1db).model_to_screen.m[3][1] / C2V(v1db).model_to_screen.m[3][3];
-            screens[i].v[2] = C2V(gScreenZOffset) + C2V(v1db).model_to_screen.m[3][3] / C2V(v1db).model_to_screen.m[3][2] * 32767.f;
+            screens[i].v[0] = v1db.vp_ox + v1db.vp_width * v1db.model_to_screen.m[3][0] / v1db.model_to_screen.m[3][3];
+            screens[i].v[1] = v1db.vp_oy + v1db.vp_height * v1db.model_to_screen.m[3][1] / v1db.model_to_screen.m[3][3];
+            screens[i].v[2] = gScreenZOffset + v1db.model_to_screen.m[3][3] / v1db.model_to_screen.m[3][2] * 32767.f;
         }
     }
 }
-C2_HOOK_FUNCTION(0x00527070, BrPointToScreenXYZOMany)
 
+// FUNCTION: CARMA2_HW 0x00527240
 br_scalar C2_HOOK_CDECL BrZbDepthToScreenZ(br_uint_32 depth_z, br_camera* camera) {
 
     return BrFixedToScalar(BrFixedNeg(depth_z));
 }
-C2_HOOK_FUNCTION(0x00527240, BrZbDepthToScreenZ)
 
+// FUNCTION: CARMA2_HW 0x00527260
 br_uint_32 C2_HOOK_CDECL BrZbScreenZToDepth(br_scalar sz, br_camera* camera) {
     br_uint_32 depth;
 
@@ -199,8 +204,8 @@ br_uint_32 C2_HOOK_CDECL BrZbScreenZToDepth(br_scalar sz, br_camera* camera) {
         return depth;
     }
 }
-C2_HOOK_FUNCTION(0x00527260, BrZbScreenZToDepth)
 
+// FUNCTION: CARMA2_HW 0x005272b0
 br_scalar C2_HOOK_CDECL BrZsDepthToScreenZ(br_scalar depth_z, br_camera* camera) {
     br_scalar hither;
     br_scalar yon;
@@ -216,8 +221,8 @@ br_scalar C2_HOOK_CDECL BrZsDepthToScreenZ(br_scalar depth_z, br_camera* camera)
     }
     return 2 * (2 * depth_z - yon - hither) * 16384.f / (yon - hither);
 }
-C2_HOOK_FUNCTION(0x005272b0, BrZsDepthToScreenZ)
 
+// FUNCTION: CARMA2_HW 0x00527320
 br_scalar C2_HOOK_CDECL BrZsScreenZToDepth(br_scalar sz, br_camera* camera) {
     br_scalar hither;
     br_scalar yon;
@@ -234,8 +239,8 @@ br_scalar C2_HOOK_CDECL BrZsScreenZToDepth(br_scalar sz, br_camera* camera) {
     }
     return depth;
 }
-C2_HOOK_FUNCTION(0x00527320, BrZsScreenZToDepth)
 
+// FUNCTION: CARMA2_HW 0x005273a0
 br_scalar C2_HOOK_CDECL BrScreenZToCamera(br_actor* camera, br_scalar sz) {
     br_camera* data;
     br_scalar hither;
@@ -259,8 +264,8 @@ br_scalar C2_HOOK_CDECL BrScreenZToCamera(br_actor* camera, br_scalar sz) {
         return 0.f;
     }
 }
-C2_HOOK_FUNCTION(0x005273a0, BrScreenZToCamera)
 
+// FUNCTION: CARMA2_HW 0x00527480
 void C2_HOOK_CDECL BrScreenXYZToCamera(br_vector3* point, br_actor* camera, br_pixelmap* screen_buffer, br_int_16 x, br_int_16 y, br_scalar sz) {
     br_scalar hx;
     br_scalar hy;
@@ -294,4 +299,3 @@ void C2_HOOK_CDECL BrScreenXYZToCamera(br_vector3* point, br_actor* camera, br_p
         break;
     }
 }
-C2_HOOK_FUNCTION(0x00527480, BrScreenXYZToCamera)

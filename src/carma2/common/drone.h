@@ -5,33 +5,33 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gCount_drones);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tDrone_form, gDrone_forms, 64);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_drone_forms);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tDrone_state_function*, gDrone_state_functions, 6);
-C2_HOOK_VARIABLE_DECLARE(tCollision_info*, gList_collision_infos);
-C2_HOOK_VARIABLE_DECLARE(int, gDrones_unmodified);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_rendered_drones);
-C2_HOOK_VARIABLE_DECLARE(int, gCurrent_selected_drone);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006820d4);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_006844fc);
-C2_HOOK_VARIABLE_DECLARE(int, gINT_00681fb0);
-C2_HOOK_VARIABLE_DECLARE(tDrone_spec*, gDrone_specs);
-C2_HOOK_VARIABLE_DECLARE(int, gShow_drone_paths);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_active_drones);
-C2_HOOK_VARIABLE_DECLARE(int, gFrame);
-C2_HOOK_VARIABLE_DECLARE(tDrone_path_node*, gDrone_path_nodes);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_drone_path_nodes);
-C2_HOOK_VARIABLE_DECLARE(br_vector3, gRender_bounds_centre);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tDrone_form_within_rendering_distance_cbfn*, gDrone_form_within_rendering_distance_functions, 4);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tDrone_form_within_processing_distance_cbfn*, gDrone_form_within_processing_distance_functions, 4);
-C2_HOOK_VARIABLE_DECLARE(br_model*, gElasticatey_drone_path_model);
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gDrone_path_model_actor);
-C2_HOOK_VARIABLE_DECLARE(int, gDrone_paths_elasticating);
-C2_HOOK_VARIABLE_DECLARE(int, gSelected_drone_path_node_index);
-C2_HOOK_VARIABLE_DECLARE(int, gSelected_edit_drone_path);
-C2_HOOK_VARIABLE_DECLARE(tU32, gNext_drone_edit_path_munge);
-C2_HOOK_VARIABLE_DECLARE(int, gSelected_drone_path_index);
+extern int gCount_drones;
+extern tDrone_form gDrone_forms[64];
+extern int gCount_drone_forms;
+extern tDrone_state_function* gDrone_state_functions[6];
+extern tCollision_info* gList_collision_infos;
+extern int gDrones_unmodified;
+extern int gCount_rendered_drones;
+extern int gCurrent_selected_drone;
+extern int gINT_006820d4;
+extern int gINT_006844fc;
+extern int gINT_00681fb0;
+extern tDrone_spec* gDrone_specs;
+extern int gShow_drone_paths;
+extern int gCount_active_drones;
+extern int gFrame;
+extern tDrone_path_node* gDrone_path_nodes;
+extern int gCount_drone_path_nodes;
+extern br_vector3 gRender_bounds_centre;
+extern tDrone_form_within_rendering_distance_cbfn* gDrone_form_within_rendering_distance_functions[4];
+extern tDrone_form_within_processing_distance_cbfn* gDrone_form_within_processing_distance_functions[4];
+extern br_model* gElasticatey_drone_path_model;
+extern br_actor* gDrone_path_model_actor;
+extern int gDrone_paths_elasticating;
+extern int gSelected_drone_path_node_index;
+extern int gSelected_edit_drone_path;
+extern tU32 gNext_drone_edit_path_munge;
+extern int gSelected_drone_path_index;
 
 void C2_HOOK_CDECL DoNotDprintf(const char* message, ...);
 

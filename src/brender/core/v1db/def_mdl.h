@@ -5,6 +5,6 @@
 
 #include "brender/br_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(br_model, _BrDefaultModel);
+extern br_model _BrDefaultModel;
 
 #endif // REC2_DEF_MDL_H

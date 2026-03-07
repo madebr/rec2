@@ -6,9 +6,9 @@
 
 #include "rec2_macros.h"
 
+// FUNCTION: CARMA2_HW 0x004b13c0
 void C2_HOOK_CDECL DoNotDprintf_oppoproc(const char* pMessage, ...) {
 }
-C2_HOOK_FUNCTION(0x004b13c0, DoNotDprintf_oppoproc)
 
 br_scalar C2_HOOK_FASTCALL Vector2Cross(const br_vector2* pV1, const br_vector2* pV2) {
 
@@ -51,7 +51,7 @@ tFollow_path_result FollowCheatyPath(tOpponent_spec* pOpponent_spec) {
             BrVector3Sub(&car_to_intersect, &data->cheaty_intersect,
                 &pOpponent_spec->car_spec->car_master_actor->t.t.translate.t);
             distance_to_intersect = BrVector3Length(&car_to_intersect);
-            frame_period_in_secs = C2V(gFrame_period_for_this_munging) / 1000.0f * 6.0f;
+            frame_period_in_secs = gFrame_period_for_this_munging / 1000.0f * 6.0f;
             TurnOpponentPhysicsOff(pOpponent_spec);
             if (distance_to_intersect >= frame_period_in_secs) {
                 data->moving_to_intersect = 1;
@@ -86,7 +86,7 @@ tFollow_path_result FollowCheatyPath(tOpponent_spec* pOpponent_spec) {
         }
         data->made_it = 1;
     }
-    frame_period_in_secs = C2V(gFrame_period_for_this_munging) / 1000.0f * 6.0f;
+    frame_period_in_secs = gFrame_period_for_this_munging / 1000.0f * 6.0f;
     BrVector3Set(&pOpponent_spec->car_spec->collision_info->v, 0.f, 41.4f, 0.f);
 
     if (data->moving_to_intersect) {
@@ -132,35 +132,20 @@ tFollow_path_result FollowCheatyPath(tOpponent_spec* pOpponent_spec) {
     return eFPR_OK;
 }
 
-int (C2_HOOK_FASTCALL * GetStraight_original)(br_vector2* pStart, br_vector2* pFinish, float* pWidth, tS16 pSection, tOpponent_spec* pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004b13d0
 int C2_HOOK_FASTCALL GetStraight(br_vector2* pStart, br_vector2* pFinish, float* pWidth, tS16 pSection, tOpponent_spec* pOpponent_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return GetStraight_original(pStart, pFinish, pWidth, pSection, pOpponent_spec);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b13d0, GetStraight, GetStraight_original)
 
-int (C2_HOOK_FASTCALL * CalcCorners_original)(tCorner* pCorners, int pSection, float pWidth, br_vector2* pStart, tOpponent_spec* pOpponent_spec);
+// FUNCTION: CARMA2_HW 0x004b1560
 int C2_HOOK_FASTCALL CalcCorners(tCorner* pCorners, int pSection, float pWidth, br_vector2* pStart, tOpponent_spec* pOpponent_spec) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return CalcCorners_original(pCorners, pSection, pWidth, pStart, pOpponent_spec);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b1560, CalcCorners, CalcCorners_original)
 
-int (C2_HOOK_FASTCALL * CalcSOCs_original)(int pNext_section, int pCount_corners, tCorner *pCorners, tOpponent_spec *pOpponent_spec, tSOC* pSocs, tCar_spec* pCar);
+// FUNCTION: CARMA2_HW 0x004b1ab0
 int C2_HOOK_FASTCALL CalcSOCs(int pNext_section, int pCount_corners, tCorner *pCorners, tOpponent_spec *pOpponent_spec, tSOC* pSocs, tCar_spec* pCar) {
 
-#if defined(C2_HOOKS_ENABLED)
-    return CalcSOCs_original(pNext_section, pCount_corners, pCorners, pOpponent_spec, pSocs, pCar);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004b1ab0, CalcSOCs, CalcSOCs_original)

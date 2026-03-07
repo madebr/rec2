@@ -37,12 +37,8 @@
 #define ENTRY_TYPE(e) ((e) >> 12)
 #define ENTRY_OFFSET(e) ((e) & 0xfff)
 
-br_image* (C2_HOOK_STDCALL * ImageLoad_original)(const char* name);
+// FUNCTION: CARMA2_HW 0x00530e70
 br_image* C2_HOOK_STDCALL ImageLoad(const char* name) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ImageLoad_original(name);
-#else
     void* fh;
 	int mode = BR_FS_MODE_BINARY;
 	struct msdos_header dos_header;
@@ -278,7 +274,7 @@ br_image* C2_HOOK_STDCALL ImageLoad(const char* name) {
 		}
 	}
 
-#ifdef REC2_STANDALONE
+#ifdef BRENDER_FIX_BUGS
     /* Added by rec2: fixes DEP */
     for (i = 0; i < coff_header.n_sections; i++) {
         br_uint_32 map_flags = 0;
@@ -296,6 +292,4 @@ br_image* C2_HOOK_STDCALL ImageLoad(const char* name) {
 #endif /* REC2_STANDALONE */
 
 	return img;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00530e70, ImageLoad, ImageLoad_original)

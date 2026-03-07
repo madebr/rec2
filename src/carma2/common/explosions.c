@@ -14,20 +14,20 @@
 
 #include "rec2_macros.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tExplosion, gExplosions, 50, 0x006a55c8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmash_explosion, gSmash_explosions, 20, 0x006a6d40);
 
-void (C2_HOOK_FASTCALL * InitExplosions_original)(void);
+// GLOBAL: CARMA2_HW 0x006a55c8
+tExplosion gExplosions[50];
+
+// GLOBAL: CARMA2_HW 0x006a6d40
+tSmash_explosion gSmash_explosions[20];
+
+// FUNCTION: CARMA2_HW 0x004ea880
 void C2_HOOK_FASTCALL InitExplosions(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    InitExplosions_original();
-#else
     int i;
     tExplosion* explosion;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gExplosions)); i++) {
-        explosion = &C2V(gExplosions)[i];
+    for (i = 0; i < REC2_ASIZE(gExplosions); i++) {
+        explosion = &gExplosions[i];
 
         explosion->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
 
@@ -55,41 +55,34 @@ void C2_HOOK_FASTCALL InitExplosions(void) {
         explosion->actor->material = BrMaterialAllocate("BANG!");
         explosion->actor->material->flags &= ~BR_MATF_LIGHT;
         explosion->actor->material->flags |= BR_MATF_ALWAYS_VISIBLE;
-        explosion->actor->material->colour_map = C2V(gBack_screen);
+        explosion->actor->material->colour_map = gBack_screen;
         GlorifyMaterial(&explosion->actor->material, 1, kRendererShadingType_AmbientOnly);
         BrMaterialAdd(explosion->actor->material);
         explosion->actor->render_style = BR_RSTYLE_FACES;
 
         explosion->start = 0;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ea880, InitExplosions, InitExplosions_original)
 
-void (C2_HOOK_FASTCALL * ResetExplosions_original)(void);
+// FUNCTION: CARMA2_HW 0x004eaac0
 void C2_HOOK_FASTCALL ResetExplosions(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    ResetExplosions_original();
-#else
     int i;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gExplosions)) != 50);
-    C2_HOOK_BUG_ON(sizeof(C2V(gExplosions)[0]) != 0x78);
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_explosions)) != 20);
-    C2_HOOK_BUG_ON(sizeof(C2V(gSmash_explosions)[0]) != 0xc8);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gExplosions) != 50);
+    C2_HOOK_BUG_ON(sizeof(gExplosions[0]) != 0x78);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmash_explosions) != 20);
+    C2_HOOK_BUG_ON(sizeof(gSmash_explosions[0]) != 0xc8);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gExplosions)); i++) {
-        C2V(gExplosions)[i].start = 0;
-        C2V(gExplosions)[i].finished = 0;
+    for (i = 0; i < REC2_ASIZE(gExplosions); i++) {
+        gExplosions[i].start = 0;
+        gExplosions[i].finished = 0;
     }
-    for (i = 0; i < REC2_ASIZE(C2V(gSmash_explosions)); i++) {
-        C2V(gSmash_explosions)[i].active = 0;
+    for (i = 0; i < REC2_ASIZE(gSmash_explosions); i++) {
+        gSmash_explosions[i].active = 0;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004eaac0, ResetExplosions, ResetExplosions_original)
 
+// FUNCTION: CARMA2_HW 0x004f5ec0
 void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* pExplosion_sound_id, tExplosion_animation* pExplosion_groups) {
     tPath_name the_path;
     char* name;
@@ -102,37 +95,32 @@ void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* p
     /* Sound ID */
     *pExplosion_sound_id = GetAnInt(pF);
 
-    PathCat(the_path, C2V(gApplication_path), "COMMON");
+    PathCat(the_path, gApplication_path, "COMMON");
     /* Name of pixelmap file */
     GetALineAndDontArgue(pF, s);
     name = c2_strtok(s, "\t ,/");
     name[c2_strlen(name) - 4] = '\0';
     PathCat(the_path, the_path, name);
-    LoadAllImagesInDirectory(&C2V(gMisc_storage_space), the_path);
+    LoadAllImagesInDirectory(&gMisc_storage_space, the_path);
     ReadExplosion(pF, pExplosion_groups);
 }
-C2_HOOK_FUNCTION(0x004f5ec0, ReadExplosionInfo)
 
 int C2_HOOK_FAKE_THISCALL PointOutOfSightNotAR(const br_vector3* pPoint, undefined4 pArg2, float pMax_distance) {
 
-    if (C2V(gAction_replay_mode)) {
+    if (gAction_replay_mode) {
         return 1;
     }
     return PointOutOfSight(pPoint, pArg2, pMax_distance);
 }
 
-void (C2_HOOK_FASTCALL * MungeExplosions_original)(void);
+// FUNCTION: CARMA2_HW 0x004eaaf0
 void C2_HOOK_FASTCALL MungeExplosions(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    MungeExplosions_original();
-#else
     int i;
     tU32 now;
 
     now = GetTotalTime();
-    for (i = 0; i < REC2_ASIZE(C2V(gExplosions)); i++) {
-        tExplosion* explosion = &C2V(gExplosions)[i];
+    for (i = 0; i < REC2_ASIZE(gExplosions); i++) {
+        tExplosion* explosion = &gExplosions[i];
         int frame;
         undefined prev_frame;
         br_vector3 tv;
@@ -163,7 +151,7 @@ void C2_HOOK_FASTCALL MungeExplosions(void) {
         }
         explosion->field_0x8 = frame;
         if (explosion->actor->parent == NULL) {
-            BrActorAdd(C2V(gNon_track_actor), explosion->actor);
+            BrActorAdd(gNon_track_actor, explosion->actor);
         }
         if (frame != prev_frame) {
             explosion->actor->material->colour_map = explosion->frames[frame].map;
@@ -175,7 +163,7 @@ void C2_HOOK_FASTCALL MungeExplosions(void) {
             }
             continue;
         }
-        explosion->actor->t.t.mat = C2V(gCamera)->t.t.mat;
+        explosion->actor->t.t.mat = gCamera->t.t.mat;
         BrMatrix34ApplyV(&tv, &explosion->field_0x1c, &explosion->collision_actor->t.t.mat);
         BrVector3Accumulate(&explosion->actor->t.t.translate.t, &tv);
         BrMatrix34PreScale(&explosion->actor->t.t.mat,
@@ -183,19 +171,11 @@ void C2_HOOK_FASTCALL MungeExplosions(void) {
             (float)explosion->actor->material->colour_map->height * explosion->field_0x14 / 128.f,
             1.f);
         BrMatrix34PreRotateZ(&explosion->actor->t.t.mat, explosion->angle);
+    }
 }
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x004eaaf0, MungeExplosions, MungeExplosions_original)
 
-void (C2_HOOK_FASTCALL * Explode_original)(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos);
+// FUNCTION: CARMA2_HW 0x004ead00
 void C2_HOOK_FASTCALL Explode(tExplosion_animation* pExplosion_animation, br_actor* pActor, br_bounds3* pBounds, br_vector3* pPos) {
 
-#if defined(C2_HOOKS_ENABLED)
-    Explode_original(pExplosion_animation, pActor, pBounds, pPos);
-#else
     NOT_IMPLEMENTED();
-#endif
-
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ead00, Explode, Explode_original)

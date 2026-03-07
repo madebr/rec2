@@ -18,20 +18,48 @@
 
 #include "c2_string.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tFlic_descriptor, gPanel_flic, 2, 0x00686218);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPanel_flic_left, 2, 0x006861f0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(int, gPanel_flic_top, 2, 0x00686200);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_pixelmap*, gPanel_buffer, 2, 0x00686320);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gPalette, 0x00686208);
-C2_HOOK_VARIABLE_IMPLEMENT(void*, gPalette_pixels, 0x006861d8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gPlay_from_disk, 0x00686318);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gLast_flic_name, 14, 0x00686330);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gPalette_fuck_prevention, 0x00686308);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTransparency_on, 0x00686310);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTranslation_count, 0x006861dc);
-C2_HOOK_VARIABLE_IMPLEMENT(tTranslation_record*, gTranslations, 0x00686210);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDR_font*, gTrans_fonts, 2, 0x006861e0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tFlic_spec, gMain_flic_list, 372, 0x005964d0, {
+
+// GLOBAL: CARMA2_HW 0x00686218
+tFlic_descriptor gPanel_flic[2];
+
+// GLOBAL: CARMA2_HW 0x006861f0
+int gPanel_flic_left[2];
+
+// GLOBAL: CARMA2_HW 0x00686200
+int gPanel_flic_top[2];
+
+// GLOBAL: CARMA2_HW 0x00686320
+br_pixelmap* gPanel_buffer[2];
+
+// GLOBAL: CARMA2_HW 0x00686208
+br_pixelmap* gPalette;
+
+// GLOBAL: CARMA2_HW 0x006861d8
+void* gPalette_pixels;
+
+// GLOBAL: CARMA2_HW 0x00686318
+int gPlay_from_disk;
+
+// GLOBAL: CARMA2_HW 0x00686330
+char gLast_flic_name[14];
+
+// GLOBAL: CARMA2_HW 0x00686308
+int gPalette_fuck_prevention;
+
+// GLOBAL: CARMA2_HW 0x00686310
+int gTransparency_on;
+
+// GLOBAL: CARMA2_HW 0x006861dc
+int gTranslation_count;
+
+// GLOBAL: CARMA2_HW 0x00686210
+tTranslation_record* gTranslations;
+
+// GLOBAL: CARMA2_HW 0x006861e0
+tDR_font* gTrans_fonts[2];
+
+// GLOBAL: CARMA2_HW 0x005964d0
+tFlic_spec gMain_flic_list[372] = {
     { "MAINSTIL.FLI", 1, 0, 0, 0, 0, 25, },
     { "DEMSTRT2.FLI", 1, 0, 0, 0, 0, 0, },
     { "DEMSTRT1.FLI", 1, 0, 0, 0, 0, 0, },
@@ -372,61 +400,101 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tFlic_spec, gMain_flic_list, 372, 0x005964
     { "MAI2NNGL.FLI", 0, 0, 0, 0, 0, 0, },
     { "MAI2OPFL.FLI", 0, 0, 0, 0, 0, 0, },
     { "MAI2OPGL.FLI", 0, 0, 0, 0, 0, 0, },
-});
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gSound_time, 0x00686328);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSound_ID, 0x00686300);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDark_mode, 0x0068630c);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch0, 29, 0x00599920, {
+};
+
+// GLOBAL: CARMA2_HW 0x00686328
+tU32 gSound_time;
+
+// GLOBAL: CARMA2_HW 0x00686300
+int gSound_ID;
+
+// GLOBAL: CARMA2_HW 0x0068630c
+int gDark_mode;
+
+// GLOBAL: CARMA2_HW 0x00599920
+int gFlic_bunch0[29] = {
     0, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 35, 26,
     27, 36, 28, 29, 130, 131, 132, 42, 43, 135, 45
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch1, 31, 0x00599998, {
+};
+
+// GLOBAL: CARMA2_HW 0x00599998
+int gFlic_bunch1[31] = {
     140, 141, 42, 43, 144, 145, 146, 147, 45, 150, 151, 42, 43, 154, 155,
     156, 160, 161, 42, 43, 154, 170, 171, 176, 177, 172, 180, 181, 42, 43, 154
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch2, 8, 0x00599a18, {
+};
+
+// GLOBAL: CARMA2_HW 0x00599a18
+int gFlic_bunch2[8] = {
     70, 71, 72, 73, 74, 56, 57, 59
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch3, 13, 0x00599a38, {
+};
+
+// GLOBAL: CARMA2_HW 0x00599a38
+int gFlic_bunch3[13] = {
     40, 41, 42, 43, 44, 45, 50, 51, 73, 74, 56, 57, 59
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch4, 22, 0x00599a70, {
+};
+
+// GLOBAL: CARMA2_HW 0x00599a70
+int gFlic_bunch4[22] = {
     80, 81, 82, 83, 84, 85, 42, 43, 88, 45, 110, 111, 42, 43, 45, 115,
     116, 117, 118, 119, 120, 121
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch5, 5, 0x00599ac8, {
+};
+
+// GLOBAL: CARMA2_HW 0x00599ac8
+int gFlic_bunch5[5] = {
     100, 101, 42, 43, 45
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch6, 51, 0x00599ae0, {
+};
+
+// GLOBAL: CARMA2_HW 0x00599ae0
+int gFlic_bunch6[51] = {
     190, 191, 192, 42, 43, 195, 200, 201, 210, 212, 213, 220, 221, 222,
     220, 221, 225, 230, 231, 42, 43, 154, 45, 220, 221, 222, 220, 221,
     225, 250, 251, 42, 43, 254, 255, 256, 154, 42, 43, 260, 220, 221,
     222, 220, 221, 225, 280, 281, 42, 43, 284
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch7, 7, 0x00599bb0, {
+};
+
+// GLOBAL: CARMA2_HW 0x00599bb0
+int gFlic_bunch7[7] = {
     130, 131, 132, 42, 43, 135, 45
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(int, gFlic_bunch8, 16, 0x00599bd0, {
+};
+
+// GLOBAL: CARMA2_HW 0x00599bd0
+int gFlic_bunch8[16] = {
     290, 291, 292, 293, 294, 295, 296, 297, 42, 43, 154, 301, 42, 43, 304, 305
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(tFlic_bunch, gFlic_bunch, 9, 0x00599c10, {
-    { REC2_ASIZE(C2V(gFlic_bunch0)), C2V(gFlic_bunch0) },
-    { REC2_ASIZE(C2V(gFlic_bunch1)), C2V(gFlic_bunch1) },
-    { REC2_ASIZE(C2V(gFlic_bunch2)), C2V(gFlic_bunch2) },
-    { REC2_ASIZE(C2V(gFlic_bunch3)), C2V(gFlic_bunch3) },
-    { REC2_ASIZE(C2V(gFlic_bunch4)), C2V(gFlic_bunch4) },
-    { REC2_ASIZE(C2V(gFlic_bunch5)), C2V(gFlic_bunch5) },
-    { REC2_ASIZE(C2V(gFlic_bunch6)), C2V(gFlic_bunch6) },
-    { REC2_ASIZE(C2V(gFlic_bunch7)), C2V(gFlic_bunch7) },
-    { REC2_ASIZE(C2V(gFlic_bunch8)), C2V(gFlic_bunch8) },
-});
-C2_HOOK_VARIABLE_IMPLEMENT(tFlic_descriptor*, gFirst_flic, 0x006861e8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gLast_panel_frame_time, 2, 0x006862f8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gPanel_flic_data_length, 2, 0x006861f8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8*, gPanel_flic_data, 2, 0x006861d0);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gPanel_flic_disable, 0x00686314);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gPending_pending_flic, 0x0068620c);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gPending_flic, 0x005964c8, -1);
+};
+
+// GLOBAL: CARMA2_HW 0x00599c10
+tFlic_bunch gFlic_bunch[9] = {
+    { REC2_ASIZE(gFlic_bunch0), gFlic_bunch0 },
+    { REC2_ASIZE(gFlic_bunch1), gFlic_bunch1 },
+    { REC2_ASIZE(gFlic_bunch2), gFlic_bunch2 },
+    { REC2_ASIZE(gFlic_bunch3), gFlic_bunch3 },
+    { REC2_ASIZE(gFlic_bunch4), gFlic_bunch4 },
+    { REC2_ASIZE(gFlic_bunch5), gFlic_bunch5 },
+    { REC2_ASIZE(gFlic_bunch6), gFlic_bunch6 },
+    { REC2_ASIZE(gFlic_bunch7), gFlic_bunch7 },
+    { REC2_ASIZE(gFlic_bunch8), gFlic_bunch8 },
+};
+
+// GLOBAL: CARMA2_HW 0x006861e8
+tFlic_descriptor* gFirst_flic;
+
+// GLOBAL: CARMA2_HW 0x006862f8
+tU32 gLast_panel_frame_time[2];
+
+// GLOBAL: CARMA2_HW 0x006861f8
+tU32 gPanel_flic_data_length[2];
+
+// GLOBAL: CARMA2_HW 0x006861d0
+tU8* gPanel_flic_data[2];
+
+// GLOBAL: CARMA2_HW 0x00686314
+int gPanel_flic_disable;
+
+// GLOBAL: CARMA2_HW 0x0068620c
+int gPending_pending_flic;
+
+// GLOBAL: CARMA2_HW 0x005964c8
+int gPending_flic = -1;
 
 // Use this function to avoid unaligned memory access.
 // Added by DethRace
@@ -435,39 +503,40 @@ static void mem_write_u16(void* memory, tU16 u16) {
     c2_memcpy(memory, &u16, sizeof(tU16));
 }
 
+// FUNCTION: CARMA2_HW 0x00461a40
 int C2_HOOK_FASTCALL GetPanelFlicFrameIndex(int pIndex) {
 
-    return C2V(gPanel_flic)[pIndex].current_frame;
+    return gPanel_flic[pIndex].current_frame;
 }
-C2_HOOK_FUNCTION(0x00461a40, GetPanelFlicFrameIndex)
 
 void C2_HOOK_FASTCALL DontLetFlicFuckWithPalettes(void) {
 
-    C2V(gPalette_fuck_prevention) = 1;
+    gPalette_fuck_prevention = 1;
 }
 
 void C2_HOOK_FASTCALL LetFlicFuckWithPalettes(void) {
 
-    C2V(gPalette_fuck_prevention) = 0;
+    gPalette_fuck_prevention = 0;
 }
 
 void C2_HOOK_FASTCALL TurnFlicTransparencyOff(void) {
 
-    C2V(gTransparency_on) = 0;
+    gTransparency_on = 0;
 }
 
 void C2_HOOK_FASTCALL TurnFlicTransparencyOn(void) {
 
-    C2V(gTransparency_on) = 1;
+    gTransparency_on = 1;
 }
 
+// FUNCTION: CARMA2_HW 0x00461a60
 void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
 
-    C2V(gPalette_pixels) = BrMemAllocate(0x400, kMem_misc);
-    C2V(gPalette) = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, C2V(gPalette_pixels), 0);
+    gPalette_pixels = BrMemAllocate(0x400, kMem_misc);
+    gPalette = DRPixelmapAllocate(BR_PMT_RGBX_888, 1, 256, gPalette_pixels, 0);
 }
-C2_HOOK_FUNCTION(0x00461a60, FlicPaletteAllocate)
 
+// FUNCTION: CARMA2_HW 0x00461aa0
 void C2_HOOK_FASTCALL AssertFlicPixelmap(tFlic_descriptor_ptr pFlic_info, br_pixelmap* pDest_pixelmap) {
 
     if (pDest_pixelmap != NULL) {
@@ -477,16 +546,16 @@ void C2_HOOK_FASTCALL AssertFlicPixelmap(tFlic_descriptor_ptr pFlic_info, br_pix
     }
     pFlic_info->the_pixelmap = pDest_pixelmap;
 }
-C2_HOOK_FUNCTION(0x00461aa0, AssertFlicPixelmap)
 
+// FUNCTION: CARMA2_HW 0x00461ad0
 int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_ptr pFlic_info, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, int pFrame_rate) {
     tU16 claimed_speed;
     tU16 magic_number;
     tPath_name the_path;
     int total_size;
 
-    if (C2V(gPlay_from_disk)) {
-        PathCat(the_path, C2V(gApplication_path), "ANIM");
+    if (gPlay_from_disk) {
+        PathCat(the_path, gApplication_path, "ANIM");
         PathCat(the_path, the_path, pFile_name);
         pFlic_info->f = DRfopen(the_path, "rb");
 
@@ -504,7 +573,7 @@ int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_pt
         }
 
         pFlic_info->data = pFlic_info->data_start;
-        c2_strcpy(C2V(gLast_flic_name), pFile_name);
+        c2_strcpy(gLast_flic_name, pFile_name);
         fread(pFlic_info->data_start, 1, pFlic_info->bytes_in_buffer, pFlic_info->f);
         pFlic_info->bytes_still_to_be_read = total_size - pFlic_info->bytes_in_buffer;
     } else {
@@ -526,7 +595,7 @@ int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_pt
     pFlic_info->width = MemReadU16(&pFlic_info->data);
     pFlic_info->height = MemReadU16(&pFlic_info->data);
     if (MemReadU16(&pFlic_info->data) != 8) {
-        FatalError(kFatalError_FlicFileWasNot8BitsDeep_S, C2V(gLast_flic_name));
+        FatalError(kFatalError_FlicFileWasNot8BitsDeep_S, gLast_flic_name);
     }
     MemSkipBytes(&pFlic_info->data, 2);
     claimed_speed = MemReadU16(&pFlic_info->data);
@@ -552,7 +621,7 @@ int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_pt
         pFlic_info->frame_period = 1000 / pFrame_rate;
     } else {
         if (claimed_speed == 0) {
-            FatalError(kFatalError_CouldNotAscertainFrameRateForFlicFile, C2V(gLast_flic_name));
+            FatalError(kFatalError_CouldNotAscertainFrameRateForFlicFile, gLast_flic_name);
         }
         if (pFlic_info->new_format != 0) {
             pFlic_info->frame_period = claimed_speed;
@@ -564,8 +633,8 @@ int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_pt
     AssertFlicPixelmap(pFlic_info, pDest_pixelmap);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00461ad0, StartFlic)
 
+// FUNCTION: CARMA2_HW 0x00461d60
 int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
 
     if (pFlic_info->f != NULL) {
@@ -579,7 +648,6 @@ int C2_HOOK_FASTCALL EndFlic(tFlic_descriptor_ptr pFlic_info) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00461d60, EndFlic)
 
 void C2_HOOK_FASTCALL DoColour256(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
     int i;
@@ -594,7 +662,7 @@ void C2_HOOK_FASTCALL DoColour256(tFlic_descriptor* pFlic_info, tU32 chunk_lengt
     tU8 blue;
 
     current_colour = 0;
-    palette_pixels = C2V(gPalette_pixels);
+    palette_pixels = gPalette_pixels;
 
     packet_count = MemReadU16(&pFlic_info->data);
     for (i = 0; i < packet_count; i++) {
@@ -617,8 +685,8 @@ void C2_HOOK_FASTCALL DoColour256(tFlic_descriptor* pFlic_info, tU32 chunk_lengt
             palette_pixels += 4;
             // LOG_DEBUG("color %d", current_colour);
         }
-        if (!C2V(gPalette_fuck_prevention)) {
-            DRSetPaletteEntries(C2V(gPalette), current_colour, change_count);
+        if (!gPalette_fuck_prevention) {
+            DRSetPaletteEntries(gPalette, current_colour, change_count);
         }
     }
 }
@@ -754,7 +822,7 @@ void C2_HOOK_FASTCALL DoColourMap(tFlic_descriptor_ptr pFlic_info, tU32 chunk_le
     tU8 green;
     tU8 blue;
 
-    palette_pixels = C2V(gPalette_pixels);
+    palette_pixels = gPalette_pixels;
 
     packet_count = MemReadU16(&pFlic_info->data);
     for (i = 0; i < packet_count; i++) {
@@ -776,51 +844,32 @@ void C2_HOOK_FASTCALL DoColourMap(tFlic_descriptor_ptr pFlic_info, tU32 chunk_le
             palette_pixels[3] = 0;
             palette_pixels += 4;
         }
-        if (!C2V(gPalette_fuck_prevention)) {
-            DRSetPaletteEntries(C2V(gPalette), current_colour, change_count);
+        if (!gPalette_fuck_prevention) {
+            DRSetPaletteEntries(gPalette, current_colour, change_count);
         }
     }
 }
 
-void (C2_HOOK_FASTCALL * DoDifferenceX_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+// FUNCTION: CARMA2_HW 0x00462390
 void C2_HOOK_FASTCALL DoDifferenceX(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoDifferenceX_original(pFlic_info, chunk_length);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00462390, DoDifferenceX, DoDifferenceX_original)
 
-void (C2_HOOK_FASTCALL * DoDifferenceTrans_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+// FUNCTION: CARMA2_HW 0x00462480
 void C2_HOOK_FASTCALL DoDifferenceTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoDifferenceTrans_original(pFlic_info, chunk_length);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00462480, DoDifferenceTrans, DoDifferenceTrans_original)
 
-void (C2_HOOK_FASTCALL * DoBlack_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+// FUNCTION: CARMA2_HW 0x00462580
 void C2_HOOK_FASTCALL DoBlack(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoBlack_original(pFlic_info, chunk_length);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00462580, DoBlack, DoBlack_original)
 
-void (C2_HOOK_FASTCALL * DoRunLengthX_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+// FUNCTION: CARMA2_HW 0x004625d0
 void C2_HOOK_FASTCALL DoRunLengthX(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
-
-#if 0 //defined(C2_HOOKS_ENABLED)
-    DoRunLengthX(pFlic_info, chunk_length);
-#else
     int i;
     int j;
     int k;
@@ -855,16 +904,10 @@ void C2_HOOK_FASTCALL DoRunLengthX(tFlic_descriptor* pFlic_info, tU32 chunk_leng
         }
         pixel_ptr += the_row_bytes;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004625d0, DoRunLengthX, DoRunLengthX_original)
 
-void (C2_HOOK_FASTCALL * DoRunLengthTrans_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+// FUNCTION: CARMA2_HW 0x004626a0
 void C2_HOOK_FASTCALL DoRunLengthTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
-
-#if 0 //defined(C2_HOOKS_ENABLED)
-    DoRunLengthTrans_original(pFlic_info, chunk_length);
-#else
     int i;
     int j;
     int k;
@@ -904,39 +947,23 @@ void C2_HOOK_FASTCALL DoRunLengthTrans(tFlic_descriptor* pFlic_info, tU32 chunk_
         }
         pixel_ptr += the_row_bytes;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004626a0, DoRunLengthTrans, DoRunLengthTrans_original)
 
 
-void (C2_HOOK_FASTCALL * DoUncompressed_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+// FUNCTION: CARMA2_HW 0x00462780
 void C2_HOOK_FASTCALL DoUncompressed(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoUncompressed_original(pFlic_info, chunk_length);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00462780, DoUncompressed, DoUncompressed_original)
 
-void (C2_HOOK_FASTCALL * DoUncompressedTrans_original)(tFlic_descriptor* pFlic_info, tU32 chunk_length);
+// FUNCTION: CARMA2_HW 0x004627f0
 void C2_HOOK_FASTCALL DoUncompressedTrans(tFlic_descriptor* pFlic_info, tU32 chunk_length) {
 
-#if defined(C2_HOOKS_ENABLED)
-    DoUncompressedTrans_original(pFlic_info, chunk_length);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004627f0, DoUncompressedTrans, DoUncompressedTrans_original)
 
-void (C2_HOOK_FASTCALL * DrawTranslations_original)(tFlic_descriptor* pFlic_info);
+// FUNCTION: CARMA2_HW 0x00462860
 void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
-
-#if 0 //defined(C2_HOOKS_ENABLED)
-    DrawTranslations_orginal(pFlic_info, pLast_frame);
-#else
     tTranslation_record* trans;
     int i;
     int x;
@@ -945,10 +972,10 @@ void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
 
     x = 0;
     right_edge = 0;
-    for (i = 0; i < C2V(gTranslation_count); i++) {
-        trans = &C2V(gTranslations)[i];
+    for (i = 0; i < gTranslation_count; i++) {
+        trans = &gTranslations[i];
         if (trans->flic_index == pFlic_info->the_index) {
-            width = DRTextWidth(C2V(gTrans_fonts)[trans->font_index], trans->text);
+            width = DRTextWidth(gTrans_fonts[trans->font_index], trans->text);
             switch (trans->justification) {
                 case eJust_left:
                     x = pFlic_info->x_offset + trans->x;
@@ -967,14 +994,12 @@ void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
                     pFlic_info->the_pixelmap,
                     x,
                     pFlic_info->y_offset + trans->y,
-                    C2V(gTrans_fonts)[trans->font_index],
+                    gTrans_fonts[trans->font_index],
                     trans->text,
                     right_edge);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00462860, DrawTranslations, DrawTranslations_original)
 
 int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel_flic) {
     tU32 frame_length;
@@ -1001,7 +1026,7 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel
                     DoColour256(pFlic_info, chunk_length);
                     break;
                 case 7:
-                    if (C2V(gTransparency_on)) {
+                    if (gTransparency_on) {
                         DoDeltaTrans(pFlic_info, chunk_length);
                     } else {
                         DoDeltaX(pFlic_info, chunk_length);
@@ -1011,7 +1036,7 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel
                     DoColourMap(pFlic_info, chunk_length);
                     break;
                 case 12:
-                    if (C2V(gTransparency_on)) {
+                    if (gTransparency_on) {
                         DoDifferenceTrans(pFlic_info, chunk_length);
                     } else {
                         DoDifferenceX(pFlic_info, chunk_length);
@@ -1021,14 +1046,14 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel
                     DoBlack(pFlic_info, chunk_length);
                     break;
                 case 15:
-                    if (C2V(gTransparency_on)) {
+                    if (gTransparency_on) {
                         DoRunLengthTrans(pFlic_info, chunk_length);
                     } else {
                         DoRunLengthX(pFlic_info, chunk_length);
                     }
                     break;
                 case 16:
-                    if (C2V(gTransparency_on)) {
+                    if (gTransparency_on) {
                         DoUncompressedTrans(pFlic_info, chunk_length);
                     } else {
                         DoUncompressed(pFlic_info, chunk_length);
@@ -1050,7 +1075,7 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel
     }
     pFlic_info->current_frame++;
     pFlic_info->frames_left--;
-    if (pFlic_info->frames_left != 0 && C2V(gTranslation_count) != 0) {
+    if (pFlic_info->frames_left != 0 && gTranslation_count != 0) {
         DrawTranslations(pFlic_info);
     }
     if (pFlic_info->f != NULL && pFlic_info->bytes_still_to_be_read) {
@@ -1073,12 +1098,13 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel
     return pFlic_info->frames_left == 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00461da0
 int C2_HOOK_FASTCALL PlayNextFlicFrame(tFlic_descriptor* pFlic_info) {
 
     return PlayNextFlicFrame2(pFlic_info, 0);
 }
-C2_HOOK_FUNCTION(0x00461da0, PlayNextFlicFrame)
 
+// FUNCTION: CARMA2_HW 0x00462930
 int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelmap* pDest_pixelmap, int pX_offset, int pY_offset, tPlayFlic_DoPerFrame DoPerFrame, int pInterruptable, int pFrame_rate) {
     int finished_playing;
     tFlic_descriptor the_flic;
@@ -1088,7 +1114,7 @@ int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelma
 
     finished_playing = 0;
     the_flic.data_start = NULL;
-    if (StartFlic(C2V(gMain_flic_list)[pIndex].file_name, pIndex, &the_flic, pSize, pData_ptr, pDest_pixelmap, pX_offset, pY_offset, pFrame_rate)) {
+    if (StartFlic(gMain_flic_list[pIndex].file_name, pIndex, &the_flic, pSize, pData_ptr, pDest_pixelmap, pX_offset, pY_offset, pFrame_rate)) {
         // LOG_WARN("startflic returned error");
         return -1;
     }
@@ -1098,14 +1124,14 @@ int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelma
         new_time = PDGetTotalTime();
         frame_period = new_time - last_frame;
 
-        if (C2V(gSound_time) != 0 && new_time >= C2V(gSound_time)) {
-            DRS3StartSound(C2V(gEffects_outlet), C2V(gSound_ID));
-            C2V(gSound_time) = finished_playing;
+        if (gSound_time != 0 && new_time >= gSound_time) {
+            DRS3StartSound(gEffects_outlet, gSound_ID);
+            gSound_time = finished_playing;
         }
         if (frame_period >= the_flic.frame_period) {
             finished_playing = PlayNextFlicFrame(&the_flic);
             DoPerFrame();
-            if (!C2V(gDark_mode)) {
+            if (!gDark_mode) {
                 EnsurePaletteUp();
             }
             ServiceGame();
@@ -1116,37 +1142,37 @@ int C2_HOOK_FASTCALL PlayFlic(int pIndex, tU32 pSize, tS8* pData_ptr, br_pixelma
     EndFlic(&the_flic);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00462930, PlayFlic)
 
+// FUNCTION: CARMA2_HW 0x00462c10
 void C2_HOOK_FASTCALL SwapScreen(void) {
 
     PDScreenBufferSwap(0);
 }
-C2_HOOK_FUNCTION(0x00462c10, SwapScreen)
 
+// FUNCTION: CARMA2_HW 0x00462a40
 void C2_HOOK_FASTCALL InitFlics(void) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gMain_flic_list)); i++) {
-        C2V(gMain_flic_list)[i].data_ptr = NULL;
+    for (i = 0; i < REC2_ASIZE(gMain_flic_list); i++) {
+        gMain_flic_list[i].data_ptr = NULL;
     }
 }
-C2_HOOK_FUNCTION(0x00462a40, InitFlics)
 
+// FUNCTION: CARMA2_HW 0x00462a60
 int C2_HOOK_FASTCALL LoadFlic(int pIndex) {
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x00462a60, LoadFlic)
 
+// FUNCTION: CARMA2_HW 0x00462a70
 void C2_HOOK_FASTCALL UnlockFlic(int pIndex) {
 
-    if (pIndex >= 0 && C2V(gMain_flic_list)[pIndex].data_ptr != NULL) {
-        MAMSUnlock((void **) &C2V(gMain_flic_list)[pIndex].data_ptr);
+    if (pIndex >= 0 && gMain_flic_list[pIndex].data_ptr != NULL) {
+        MAMSUnlock((void **) &gMain_flic_list[pIndex].data_ptr);
     }
 }
-C2_HOOK_FUNCTION(0x00462a70, UnlockFlic)
 
+// FUNCTION: CARMA2_HW 0x00462a90
 int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) {
     FILE* f;
     tPath_name the_path;
@@ -1155,11 +1181,11 @@ int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) 
         MAMSLock((void**)pData);
         return 1;
     }
-    if (C2V(gPlay_from_disk)) {
+    if (gPlay_from_disk) {
         return 1;
     }
     PossibleService();
-    PathCat(the_path, C2V(gApplication_path), "ANIM");
+    PathCat(the_path, gApplication_path, "ANIM");
     PathCat(the_path, the_path, pName);
     f = DRfopen(the_path, "rb");
     if (f == NULL) {
@@ -1175,26 +1201,26 @@ int C2_HOOK_FASTCALL LoadFlicData(char* pName, tU8** pData, tU32* pData_length) 
     PFfclose(f);
     return 1;
 }
-C2_HOOK_FUNCTION(0x00462a90, LoadFlicData)
 
+// FUNCTION: CARMA2_HW 0x00462b80
 void C2_HOOK_FASTCALL FreeFlic(int pIndex) {
 
     PossibleService();
-    if (C2V(gMain_flic_list)[pIndex].data_ptr != NULL) {
-        BrMemFree(C2V(gMain_flic_list)[pIndex].data_ptr);
-        C2V(gMain_flic_list)[pIndex].data_ptr = NULL;
+    if (gMain_flic_list[pIndex].data_ptr != NULL) {
+        BrMemFree(gMain_flic_list[pIndex].data_ptr);
+        gMain_flic_list[pIndex].data_ptr = NULL;
     }
 }
-C2_HOOK_FUNCTION(0x00462b80, FreeFlic)
 
+// FUNCTION: CARMA2_HW 0x00462bb0
 void C2_HOOK_FASTCALL RunFlicAt(int pIndex, int pX, int pY) {
 
     LoadFlic(pIndex);
     PlayFlic(
             pIndex,
-            C2V(gMain_flic_list)[pIndex].the_size,
-            C2V(gMain_flic_list)[pIndex].data_ptr,
-            C2V(gBack_screen),
+            gMain_flic_list[pIndex].the_size,
+            gMain_flic_list[pIndex].data_ptr,
+            gBack_screen,
             pX,
             pY,
             SwapScreen,
@@ -1202,46 +1228,46 @@ void C2_HOOK_FASTCALL RunFlicAt(int pIndex, int pX, int pY) {
             0);
     UnlockFlic(pIndex);
 }
-C2_HOOK_FUNCTION(0x00462bb0, RunFlicAt)
 
+// FUNCTION: CARMA2_HW 0x00462c20
 void C2_HOOK_FASTCALL RunFlic(int pIndex) {
 
 }
-C2_HOOK_FUNCTION(0x00462c20, RunFlic)
 
+// FUNCTION: CARMA2_HW 0x00462c30
 void C2_HOOK_FASTCALL PreloadBunchOfFlics(int pBunch_index) {
 
 }
-C2_HOOK_FUNCTION(0x00462c30, PreloadBunchOfFlics)
 
+// FUNCTION: CARMA2_HW 0x00462c40
 void C2_HOOK_FASTCALL UnlockBunchOfFlics(int pBunch_index) {
     int i;
 
-    for (i = 0; i < C2V(gFlic_bunch)[pBunch_index].count; i++) {
-        UnlockFlic(C2V(gFlic_bunch)[pBunch_index].indexes[i]);
+    for (i = 0; i < gFlic_bunch[pBunch_index].count; i++) {
+        UnlockFlic(gFlic_bunch[pBunch_index].indexes[i]);
     }
 }
-C2_HOOK_FUNCTION(0x00462c40, UnlockBunchOfFlics)
 
+// FUNCTION: CARMA2_HW 0x00462c90
 void C2_HOOK_FASTCALL FlushAllFlics(int pBunch_index) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(C2V(gFlic_bunch)); i++) {
+    for (i = 0; i < REC2_ASIZE(gFlic_bunch); i++) {
         FreeFlic(i);
     }
 }
-C2_HOOK_FUNCTION(0x00462c90, FlushAllFlics)
 
+// FUNCTION: CARMA2_HW 0x00462cc0
 void C2_HOOK_FASTCALL InitFlicQueue(void) {
 
-    C2V(gFirst_flic) = NULL;
+    gFirst_flic = NULL;
 }
-C2_HOOK_FUNCTION(0x00462cc0, InitFlicQueue)
 
+// FUNCTION: CARMA2_HW 0x00462cd0
 int C2_HOOK_FASTCALL FlicQueueFinished(void) {
     tFlic_descriptor* the_flic;
 
-    the_flic = C2V(gFirst_flic);
+    the_flic = gFirst_flic;
     while (the_flic != NULL) {
         if (the_flic->must_finish) {
             return 0;
@@ -1250,8 +1276,8 @@ int C2_HOOK_FASTCALL FlicQueueFinished(void) {
     }
     return 1;
 }
-C2_HOOK_FUNCTION(0x00462cd0, FlicQueueFinished)
 
+// FUNCTION: CARMA2_HW 0x00462d00
 void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
     tFlic_descriptor* the_flic;
     tFlic_descriptor* last_flic;
@@ -1261,7 +1287,7 @@ void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
 
     DontLetFlicFuckWithPalettes();
     TurnFlicTransparencyOn();
-    the_flic = C2V(gFirst_flic);
+    the_flic = gFirst_flic;
     last_flic = NULL;
     new_time = PDGetTotalTime();
     while (the_flic != NULL) {
@@ -1276,7 +1302,7 @@ void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
             if (last_flic != NULL) {
                 last_flic->next = the_flic->next;
             } else {
-                C2V(gFirst_flic) = the_flic->next;
+                gFirst_flic = the_flic->next;
             }
             doomed_flic = the_flic;
             the_flic = the_flic->next;
@@ -1289,26 +1315,26 @@ void C2_HOOK_FASTCALL ProcessFlicQueue(tU32 pInterval) {
     TurnFlicTransparencyOff();
     LetFlicFuckWithPalettes();
 }
-C2_HOOK_FUNCTION(0x00462d00, ProcessFlicQueue)
 
+// FUNCTION: CARMA2_HW 0x00462dc0
 void C2_HOOK_FASTCALL FlushFlicQueue(void) {
 
     while (!FlicQueueFinished()) {
         RemoveTransientBitmaps(1);
-        ProcessFlicQueue(C2V(gFrame_period));
+        ProcessFlicQueue(gFrame_period);
         DoMouseCursor();
         PDScreenBufferSwap(0);
     }
 }
-C2_HOOK_FUNCTION(0x00462dc0, FlushFlicQueue)
 
+// FUNCTION: CARMA2_HW 0x00462f00
 void C2_HOOK_FASTCALL AddToFlicQueue(int pIndex, int pX, int pY, int pMust_finish) {
     tFlic_descriptor* the_flic = NULL;
     tFlic_descriptor* new_flic = NULL;
     tFlic_descriptor* last_flic = NULL;
     tFlic_descriptor* doomed_flic = NULL;
 
-    the_flic = C2V(gFirst_flic);
+    the_flic = gFirst_flic;
     while (the_flic != NULL) {
         if (pX == the_flic->x_offset && pY == the_flic->y_offset) {
             doomed_flic = the_flic;
@@ -1323,7 +1349,7 @@ void C2_HOOK_FASTCALL AddToFlicQueue(int pIndex, int pX, int pY, int pMust_finis
         if (last_flic != NULL) {
             last_flic->next = doomed_flic->next;
         } else {
-            C2V(gFirst_flic) = doomed_flic->next;
+            gFirst_flic = doomed_flic->next;
         }
         BrMemFree(doomed_flic);
     }
@@ -1333,14 +1359,14 @@ void C2_HOOK_FASTCALL AddToFlicQueue(int pIndex, int pX, int pY, int pMust_finis
     LoadFlic(pIndex);
     new_flic = BrMemAllocate(sizeof(tFlic_descriptor), kMem_misc);
     new_flic->next = NULL;
-    the_flic = C2V(gFirst_flic);
-    if (C2V(gFirst_flic) != NULL) {
+    the_flic = gFirst_flic;
+    if (gFirst_flic != NULL) {
         while (the_flic->next != NULL) {
             the_flic = the_flic->next;
         }
         the_flic->next = new_flic;
     } else {
-        C2V(gFirst_flic) = new_flic;
+        gFirst_flic = new_flic;
     }
     new_flic->last_frame = 0;
     new_flic->data_start = NULL;
@@ -1348,45 +1374,45 @@ void C2_HOOK_FASTCALL AddToFlicQueue(int pIndex, int pX, int pY, int pMust_finis
     new_flic->must_finish = pMust_finish;
 
     StartFlic(
-            C2V(gMain_flic_list)[pIndex].file_name,
+            gMain_flic_list[pIndex].file_name,
             pIndex,
             new_flic,
-            C2V(gMain_flic_list)[pIndex].the_size,
-            C2V(gMain_flic_list)[pIndex].data_ptr,
-            C2V(gBack_screen),
-            pX >= 0 ? pX : C2V(gMain_flic_list)[pIndex].x_offset,
-            pY >= 0 ? pY : C2V(gMain_flic_list)[pIndex].y_offset,
+            gMain_flic_list[pIndex].the_size,
+            gMain_flic_list[pIndex].data_ptr,
+            gBack_screen,
+            pX >= 0 ? pX : gMain_flic_list[pIndex].x_offset,
+            pY >= 0 ? pY : gMain_flic_list[pIndex].y_offset,
             20);
 }
-C2_HOOK_FUNCTION(0x00462f00, AddToFlicQueue)
 
+// FUNCTION: CARMA2_HW 0x00463020
 void C2_HOOK_FASTCALL InitialiseFlicPanel(int pIndex, int pLeft, int pTop, int pWidth, int pHeight) {
     void* the_pixels;
 
-    C2V(gPanel_flic)[pIndex].data = NULL;
-    C2V(gPanel_flic_left)[pIndex] = pLeft;
-    C2V(gPanel_flic_top)[pIndex] = pTop;
+    gPanel_flic[pIndex].data = NULL;
+    gPanel_flic_left[pIndex] = pLeft;
+    gPanel_flic_top[pIndex] = pTop;
     the_pixels = BrMemAllocate(pHeight * ((pWidth + 3) & ~3), kMem_misc);
-    if (C2V(gScreen)->row_bytes < 0) {
+    if (gScreen->row_bytes < 0) {
         BrFatal(
                 "C:\\Carma2\\Source\\Common\\Flicplay.c",
                 2082,
                 "Bruce bug at line %d, file C:\\Carma2\\Source\\Common\\Flicplay.c",
                 2082);
     }
-    C2V(gPanel_buffer)[pIndex] = DRPixelmapAllocate(C2V(gScreen)->type, pWidth, pHeight, the_pixels, 0);
+    gPanel_buffer[pIndex] = DRPixelmapAllocate(gScreen->type, pWidth, pHeight, the_pixels, 0);
 }
-C2_HOOK_FUNCTION(0x00463020, InitialiseFlicPanel)
 
+// FUNCTION: CARMA2_HW 0x004630b0
 void C2_HOOK_FASTCALL DisposeFlicPanel(int pIndex) {
 
-    EndFlic(&C2V(gPanel_flic)[pIndex]);
-    BrMemFree(C2V(gPanel_buffer)[pIndex]->pixels);
-    BrPixelmapFree(C2V(gPanel_buffer)[pIndex]);
-    C2V(gPanel_buffer)[pIndex] = NULL;
+    EndFlic(&gPanel_flic[pIndex]);
+    BrMemFree(gPanel_buffer[pIndex]->pixels);
+    BrPixelmapFree(gPanel_buffer[pIndex]);
+    gPanel_buffer[pIndex] = NULL;
 }
-C2_HOOK_FUNCTION(0x004630b0, DisposeFlicPanel)
 
+// FUNCTION: CARMA2_HW 0x00463130
 void C2_HOOK_FASTCALL ServicePanelFlics(int pCopy_to_buffer) {
     tU32 time_diff;
     tU32 the_time;
@@ -1396,90 +1422,85 @@ void C2_HOOK_FASTCALL ServicePanelFlics(int pCopy_to_buffer) {
     int iteration_count;
     int finished;
 
-    if (C2V(gPanel_flic_disable)) {
+    if (gPanel_flic_disable) {
         return;
     }
     the_time = PDGetTotalTime();
     DontLetFlicFuckWithPalettes();
     TurnFlicTransparencyOn();
 
-    for (i = 0; i < REC2_ASIZE(C2V(gPanel_flic)); i++) {
-        old_last_time[i] = C2V(gLast_panel_frame_time)[i];
-        if (C2V(gPanel_buffer)[i] != NULL && C2V(gPanel_flic)[i].data != NULL) {
+    for (i = 0; i < REC2_ASIZE(gPanel_flic); i++) {
+        old_last_time[i] = gLast_panel_frame_time[i];
+        if (gPanel_buffer[i] != NULL && gPanel_flic[i].data != NULL) {
             if (old_last_time[i] != 0) {
                 time_diff = the_time - old_last_time[i];
-                iteration_count = time_diff / C2V(gPanel_flic)[i].frame_period;
+                iteration_count = time_diff / gPanel_flic[i].frame_period;
             } else {
                 iteration_count = 1;
             }
             for (j = 0; j < iteration_count; j++) {
-                finished = PlayNextFlicFrame(&C2V(gPanel_flic)[i]);
+                finished = PlayNextFlicFrame(&gPanel_flic[i]);
                 if (finished) {
-                    EndFlic(&C2V(gPanel_flic)[i]);
+                    EndFlic(&gPanel_flic[i]);
                     StartFlic(
-                            C2V(gPanel_flic)[i].file_name,
-                            C2V(gPanel_flic)[i].the_index,
-                            &C2V(gPanel_flic)[i],
-                            C2V(gPanel_flic_data_length)[i],
-                            (tS8*)C2V(gPanel_flic_data)[i],
-                            C2V(gPanel_buffer)[i],
+                            gPanel_flic[i].file_name,
+                            gPanel_flic[i].the_index,
+                            &gPanel_flic[i],
+                            gPanel_flic_data_length[i],
+                            (tS8*)gPanel_flic_data[i],
+                            gPanel_buffer[i],
                             0,
                             0,
                             0);
                 }
-                C2V(gLast_panel_frame_time)[i] = the_time;
+                gLast_panel_frame_time[i] = the_time;
             }
             if (pCopy_to_buffer) {
                 BrPixelmapRectangleCopy(
-                        C2V(gBack_screen),
-                        C2V(gPanel_flic_left)[i],
-                        C2V(gPanel_flic_top)[i],
-                        C2V(gPanel_buffer)[i],
+                        gBack_screen,
+                        gPanel_flic_left[i],
+                        gPanel_flic_top[i],
+                        gPanel_buffer[i],
                         0,
                         0,
-                        C2V(gPanel_buffer)[i]->width,
-                        C2V(gPanel_buffer)[i]->height);
+                        gPanel_buffer[i]->width,
+                        gPanel_buffer[i]->height);
             }
         }
     }
     TurnFlicTransparencyOff();
     LetFlicFuckWithPalettes();
 }
-C2_HOOK_FUNCTION(0x00463130, ServicePanelFlics)
 
+// FUNCTION: CARMA2_HW 0x00463270
 void C2_HOOK_FASTCALL ChangePanelFlic(int pIndex, tU8* pData, tU32 pData_length) {
 
-    EndFlic(&C2V(gPanel_flic)[pIndex]);
-    C2V(gPanel_flic_data)[pIndex] = pData;
-    C2V(gPanel_flic_data_length)[pIndex] = pData_length;
-    BrPixelmapFill(C2V(gPanel_buffer)[pIndex], 0);
+    EndFlic(&gPanel_flic[pIndex]);
+    gPanel_flic_data[pIndex] = pData;
+    gPanel_flic_data_length[pIndex] = pData_length;
+    BrPixelmapFill(gPanel_buffer[pIndex], 0);
     StartFlic(
-            C2V(gPanel_flic)[pIndex].file_name,
+            gPanel_flic[pIndex].file_name,
             pIndex,
-            &C2V(gPanel_flic)[pIndex],
-            C2V(gPanel_flic_data_length)[pIndex],
-            (tS8*)C2V(gPanel_flic_data)[pIndex],
-            C2V(gPanel_buffer)[pIndex],
+            &gPanel_flic[pIndex],
+            gPanel_flic_data_length[pIndex],
+            (tS8*)gPanel_flic_data[pIndex],
+            gPanel_buffer[pIndex],
             0,
             0,
             0);
-    C2V(gLast_panel_frame_time)[pIndex] = 0;
+    gLast_panel_frame_time[pIndex] = 0;
     ServicePanelFlics(0);
 }
-C2_HOOK_FUNCTION(0x00463270, ChangePanelFlic)
 
+// FUNCTION: CARMA2_HW 0x00463330
 br_pixelmap* C2_HOOK_FASTCALL GetPanelPixelmap(int pIndex) {
 
-    return C2V(gPanel_buffer)[pIndex];
+    return gPanel_buffer[pIndex];
 }
-C2_HOOK_FUNCTION(0x00463330, GetPanelPixelmap)
 
-void (C2_HOOK_FASTCALL * LoadInterfaceStrings_original)(void);
+// FUNCTION: CARMA2_HW 0x00463340
 void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
-
-#if 0 //defined(C2_HOOKS_ENABLED)
-    LoadInterfaceStrings_original();
-#else
     FILE* f;
     char s[256];
     char s2[256];
@@ -1489,111 +1510,109 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
     int i;
     int j;
 
-    C2V(gTranslation_count) = 0;
-    PathCat(the_path, C2V(gApplication_path), "TRNSLATE.TXT");
+    gTranslation_count = 0;
+    PathCat(the_path, gApplication_path, "TRNSLATE.TXT");
     f = PFfopen(the_path, "rt");
     if (f == NULL) {
         return;
     }
     while (!PFfeof(f)) {
         GetALineAndDontArgue(f, s);
-        C2V(gTranslation_count)++;
+        gTranslation_count++;
     }
     PFrewind(f);
-    C2V(gTranslations) = BrMemAllocate(C2V(gTranslation_count) * sizeof(tTranslation_record), kMem_misc);
-    for (i = 0; i < C2V(gTranslation_count); i++) {
+    gTranslations = BrMemAllocate(gTranslation_count * sizeof(tTranslation_record), kMem_misc);
+    for (i = 0; i < gTranslation_count; i++) {
         GetALineAndDontArgue(f, s);
         str = c2_strtok(s, "\t ,/");
         c2_strcpy(s2, str);
         c2_strtok(s2, ".");
         c2_strcat(s2, ".FLI");
-        C2V(gTranslations)[i].flic_index = -1;
-        for (j = 0; j < REC2_ASIZE(C2V(gMain_flic_list)); j++) {
-            if (c2_strcmp(C2V(gMain_flic_list)[j].file_name, s2) == 0) {
-                C2V(gTranslations)[i].flic_index = j;
+        gTranslations[i].flic_index = -1;
+        for (j = 0; j < REC2_ASIZE(gMain_flic_list); j++) {
+            if (c2_strcmp(gMain_flic_list[j].file_name, s2) == 0) {
+                gTranslations[i].flic_index = j;
                 break;
             }
         }
-        if (C2V(gTranslations)[i].flic_index < 0) {
+        if (gTranslations[i].flic_index < 0) {
             FatalError(kFatalError_CannotFindFlicReferencedTranslation_S, s2);
         }
         str[c2_strlen(str)] = ',';
         c2_strtok(s, "\t ,/");
         str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &C2V(gTranslations)[i].x);
+        c2_sscanf(str, "%d", &gTranslations[i].x);
         str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &C2V(gTranslations)[i].y);
+        c2_sscanf(str, "%d", &gTranslations[i].y);
         str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &C2V(gTranslations)[i].font_index);
+        c2_sscanf(str, "%d", &gTranslations[i].font_index);
         str = c2_strtok(NULL, "\t ,/");
         c2_sscanf(str, "%c", &ch);
         switch (ch) {
             case 'C':
             case 'c':
-                C2V(gTranslations[i]).justification = eJust_centre;
+                gTranslations[i].justification = eJust_centre;
                 break;
             case 'L':
             case 'l':
-                C2V(gTranslations[i]).justification = eJust_left;
+                gTranslations[i].justification = eJust_left;
                 break;
             case 'R':
             case 'r':
-                C2V(gTranslations[i]).justification = eJust_right;
+                gTranslations[i].justification = eJust_right;
                 break;
         }
         str += c2_strlen(str) + 1;
-        C2V(gTranslations)[i].text = BrMemAllocate(c2_strlen(str) + 1, kMem_misc);
-        c2_strcpy(C2V(gTranslations)[i].text, str);
+        gTranslations[i].text = BrMemAllocate(c2_strlen(str) + 1, kMem_misc);
+        c2_strcpy(gTranslations[i].text, str);
     }
     LoadFont(1);
     LoadFont(2);
-    C2V(gTrans_fonts)[0] = &C2V(gFonts)[1];
-    C2V(gTrans_fonts)[1] = &C2V(gFonts)[2];
+    gTrans_fonts[0] = &gFonts[1];
+    gTrans_fonts[1] = &gFonts[2];
 
     PFfclose(f);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00463340, LoadInterfaceStrings, LoadInterfaceStrings_original)
 
+// FUNCTION: CARMA2_HW 0x00463700
 void C2_HOOK_FASTCALL SuspendPendingFlic(void) {
 
-    C2V(gPending_pending_flic) = C2V(gPending_flic);
-    C2V(gPending_flic) = -1;
+    gPending_pending_flic = gPending_flic;
+    gPending_flic = -1;
 }
-C2_HOOK_FUNCTION(0x00463700, SuspendPendingFlic)
 
+// FUNCTION: CARMA2_HW 0x00463720
 void C2_HOOK_FASTCALL ResumePendingFlic(void) {
 
-    C2V(gPending_flic) = C2V(gPending_pending_flic);
+    gPending_flic = gPending_pending_flic;
 }
-C2_HOOK_FUNCTION(0x00463720, ResumePendingFlic)
 
+// FUNCTION: CARMA2_HW 0x00461990
 int C2_HOOK_FASTCALL TranslationMode(void) {
 
-    return C2V(gTranslation_count);
+    return gTranslation_count;
 }
-C2_HOOK_FUNCTION(0x00461990, TranslationMode)
 
+// FUNCTION: CARMA2_HW 0x00461a00
 void C2_HOOK_FASTCALL PlayFlicsFromDisk(void) {
 
-    C2V(gPlay_from_disk) = 1;
+    gPlay_from_disk = 1;
 }
-C2_HOOK_FUNCTION(0x00461a00, PlayFlicsFromDisk)
 
+// FUNCTION: CARMA2_HW 0x00461a10
 void C2_HOOK_FASTCALL PlayFlicsFromMemory(void) {
 
-    C2V(gPlay_from_disk) = 0;
+    gPlay_from_disk = 0;
 }
-C2_HOOK_FUNCTION(0x00461a10, PlayFlicsFromMemory)
 
+// FUNCTION: CARMA2_HW 0x00461a20
 void C2_HOOK_FASTCALL TurnOffPanelFlics(void) {
 
-    C2V(gPanel_flic_disable) = 1;
+    gPanel_flic_disable = 1;
 }
-C2_HOOK_FUNCTION(0x00461a20, TurnOffPanelFlics)
 
+// FUNCTION: CARMA2_HW 0x00461a30
 void C2_HOOK_FASTCALL TurnOnPanelFlics(void) {
 
-    C2V(gPanel_flic_disable) = 0;
+    gPanel_flic_disable = 0;
 }
-C2_HOOK_FUNCTION(0x00461a30, TurnOnPanelFlics)

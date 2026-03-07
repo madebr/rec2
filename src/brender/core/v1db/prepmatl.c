@@ -7,11 +7,8 @@
  */
 #define PARTS_MASK ((unsigned)(BR_STATE_SURFACE | BR_STATE_PRIMITIVE | BR_STATE_CULL))
 
-void (C2_HOOK_CDECL * BrMaterialUpdate_original)(br_material* mat, br_uint_16 flags);
+// FUNCTION: CARMA2_HW 0x00520e70
 void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrMaterialUpdate_original(mat, flags);
-#else
     br_token_value tva[32];
     br_token_value* tvp;
     br_token t;
@@ -29,18 +26,18 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_dispatch, _stateRestore, 0xc4);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_dispatch, _stateDefault, 0xcc);
 
-    if (C2V(v1db).renderer == NULL) {
+    if (v1db.renderer == NULL) {
         return;
     }
 
-    C2V(v1db).renderer->dispatch->_statePush(C2V(v1db).renderer, PARTS_MASK);
-    C2V(v1db).renderer->dispatch->_stateDefault(C2V(v1db).renderer, PARTS_MASK);
+    v1db.renderer->dispatch->_statePush(v1db.renderer, PARTS_MASK);
+    v1db.renderer->dispatch->_stateDefault(v1db.renderer, PARTS_MASK);
     if (mat->stored != NULL) {
-        C2V(v1db).renderer->dispatch->_stateRestore(C2V(v1db).renderer, mat->stored, PARTS_MASK);
+        v1db.renderer->dispatch->_stateRestore(v1db.renderer, mat->stored, PARTS_MASK);
     }
 
     if (flags & BR_MATU_MAP_TRANSFORM) {
-        C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_SURFACE, 0, BRT_MAP_MATRIX_M23_F, (uintptr_t)&mat->map_transform);
+        v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_SURFACE, 0, BRT_MAP_MATRIX_M23_F, (uintptr_t)&mat->map_transform);
     }
 
     if (flags & BR_MATU_RENDERING) {
@@ -164,7 +161,7 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
 
         tvp->t = BR_NULL_TOKEN;
 
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_PRIMITIVE, 0, tva, &c);
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_PRIMITIVE, 0, tva, &c);
 
         t = BRT_ONE_SIDED;
         if (mat->flags & BR_MATF_ALWAYS_VISIBLE) {
@@ -173,7 +170,7 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
         if (mat->flags & BR_MATF_TWO_SIDED) {
             t = BRT_TWO_SIDED;
         }
-        C2V(v1db).renderer->dispatch->_partSet(C2V(v1db).renderer, BRT_CULL, 0, BRT_TYPE_T, t);
+        v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_CULL, 0, BRT_TYPE_T, t);
     }
 
     if (flags & BR_MATU_LIGHTING) {
@@ -231,7 +228,7 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
 
         tvp->t = BR_NULL_TOKEN;
 
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_SURFACE, 0, tva, &c);
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_SURFACE, 0, tva, &c);
     }
 
     if (flags & BR_MATU_COLOURMAP) {
@@ -255,7 +252,7 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
 
         tvp->t = BR_NULL_TOKEN;
 
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_PRIMITIVE, 0, tva, &c);
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_PRIMITIVE, 0, tva, &c);
     }
 
     if (flags & BR_MATU_SCREENDOOR) {
@@ -267,40 +264,34 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
 
         tvp->t = BR_NULL_TOKEN;
 
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_PRIMITIVE, 0, tva, &c);
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_PRIMITIVE, 0, tva, &c);
     }
 
     if ((flags & BR_MATU_EXTRA_SURF) && mat->extra_surf != NULL) {
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_SURFACE, 0, mat->extra_surf, &c);
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_SURFACE, 0, mat->extra_surf, &c);
     }
 
     if ((flags & BR_MATU_EXTRA_PRIM) && mat->extra_prim != NULL) {
-        C2V(v1db).renderer->dispatch->_partSetMany(C2V(v1db).renderer, BRT_PRIMITIVE, 0, mat->extra_prim, &c);
+        v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_PRIMITIVE, 0, mat->extra_prim, &c);
     }
 
     if (mat->stored == NULL) {
-        C2V(v1db).renderer->dispatch->_stateStoredNew(C2V(v1db).renderer, &mat->stored, PARTS_MASK, 0);
+        v1db.renderer->dispatch->_stateStoredNew(v1db.renderer, &mat->stored, PARTS_MASK, 0);
     }
     else {
-        C2V(v1db).renderer->dispatch->_stateSave(C2V(v1db).renderer, mat->stored, PARTS_MASK);
+        v1db.renderer->dispatch->_stateSave(v1db.renderer, mat->stored, PARTS_MASK);
     }
-    C2V(v1db).renderer->dispatch->_statePop(C2V(v1db).renderer, PARTS_MASK);
-#endif
+    v1db.renderer->dispatch->_statePop(v1db.renderer, PARTS_MASK);
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00520e70, BrMaterialUpdate, BrMaterialUpdate_original)
 
-void (C2_HOOK_STDCALL * BrMaterialClear_original)(br_material* mat);
+// FUNCTION: CARMA2_HW 0x00521460
 void C2_HOOK_STDCALL BrMaterialClear(br_material* mat) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrMaterialClear_original(mat);
-#else
+    br_object* stored = (br_object*)mat->stored;
+
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_state_stored_dispatch, _free, 0x10);
 
-    br_object* stored = (br_object*)mat->stored;
     if (stored != NULL) {
         stored->dispatch->_free(stored);
         mat->stored = NULL;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00521460, BrMaterialClear, BrMaterialClear_original)

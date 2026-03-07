@@ -5,8 +5,8 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tFrontend_spec, gFrontend_NETSYNC);
-C2_HOOK_VARIABLE_DECLARE(tU32, gNet_synch_start);
+extern tFrontend_spec gFrontend_NETSYNC;
+extern tU32 gNet_synch_start;
 
 
 int C2_HOOK_FASTCALL NetSynchRaceStart2(tNet_synch_mode pMode);

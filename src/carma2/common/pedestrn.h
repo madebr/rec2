@@ -8,21 +8,21 @@
 #include <brender/brender.h>
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(tPedestrian*, gPedestrian_array);
-C2_HOOK_VARIABLE_DECLARE(int, gPed_count);
-C2_HOOK_VARIABLE_DECLARE(int, gPed_nearness);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_killed_peds);
-C2_HOOK_VARIABLE_DECLARE(int, gTotal_count_smash_peds);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_active_peds);
-C2_HOOK_VARIABLE_DECLARE(int, gPeds_already_munged);
-C2_HOOK_VARIABLE_DECLARE(tPedestrian*, gPedestrians_in_sight);
-C2_HOOK_VARIABLE_DECLARE(tU32, gPed_last_munging);
-C2_HOOK_VARIABLE_DECLARE(tU32, gLast_scare_time);
-C2_HOOK_VARIABLE_DECLARE(tPed_cache_006944c0, gPed_cache_00694328);
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gLimbs_actor);
-C2_HOOK_VARIABLE_DECLARE(int, gPed_count_limbed_actors);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(br_actor*, gPed_limbed_actors, 30);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tProximity_ray, gProximity_rays, 20);
+extern tPedestrian* gPedestrian_array;
+extern int gPed_count;
+extern int gPed_nearness;
+extern int gCount_killed_peds;
+extern int gTotal_count_smash_peds;
+extern int gCount_active_peds;
+extern int gPeds_already_munged;
+extern tPedestrian* gPedestrians_in_sight;
+extern tU32 gPed_last_munging;
+extern tU32 gLast_scare_time;
+extern tPed_cache_006944c0 gPed_cache_00694328;
+extern br_actor* gLimbs_actor;
+extern int gPed_count_limbed_actors;
+extern br_actor* gPed_limbed_actors[30];
+extern tProximity_ray gProximity_rays[20];
 
 int C2_HOOK_FASTCALL GetPedCount(void);
 

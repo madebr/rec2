@@ -5,11 +5,11 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gValid_stashed_save_game);
-C2_HOOK_VARIABLE_DECLARE(int, gSave_game_out_of_sync);
-C2_HOOK_VARIABLE_DECLARE(tSave_game, gStashed_save_game);
-C2_HOOK_VARIABLE_DECLARE(int, gCount_saved_games);
-C2_HOOK_VARIABLE_DECLARE(tSave_game*, gSaved_games);
+extern int gValid_stashed_save_game;
+extern int gSave_game_out_of_sync;
+extern tSave_game gStashed_save_game;
+extern int gCount_saved_games;
+extern tSave_game* gSaved_games;
 
 void C2_HOOK_FASTCALL RestoreSinglePlayerState(void);
 

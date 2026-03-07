@@ -6,14 +6,14 @@
 
 #include "c2_hooks.h"
 
-C2_HOOK_VARIABLE_DECLARE(int, gInitial_count_font_texture_pages);
-C2_HOOK_VARIABLE_DECLARE(int, gSize_font_texture_pages);
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gString_root_actor);
-C2_HOOK_VARIABLE_DECLARE(br_actor*, gCar_icons_model_actor);
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tCar_icon, gCar_icons, 128);
-C2_HOOK_VARIABLE_DECLARE(int, gRender_poly_text);
-C2_HOOK_VARIABLE_DECLARE(int, gInterface_polyfont_texture_pages);
-C2_HOOK_VARIABLE_DECLARE(int, gInterface_fonts_loaded);
+extern int gInitial_count_font_texture_pages;
+extern int gSize_font_texture_pages;
+extern br_actor* gString_root_actor;
+extern br_actor* gCar_icons_model_actor;
+extern tCar_icon gCar_icons[128];
+extern int gRender_poly_text;
+extern int gInterface_polyfont_texture_pages;
+extern int gInterface_fonts_loaded;
 
 void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pIndex);
 

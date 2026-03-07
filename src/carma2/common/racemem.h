@@ -5,7 +5,7 @@
 
 #include "rec2_types.h"
 
-C2_HOOK_VARIABLE_DECLARE_ARRAY(tU8, gRace_memory, 1000);
+extern tU8 gRace_memory[1000];
 
 void C2_HOOK_FASTCALL ClearAllRuntimeVariables(void);
 

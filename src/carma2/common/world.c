@@ -48,24 +48,58 @@
 #define RGB888_G(V) (((V) >> 8) & 0xff)
 #define RGB888_B(V) (((V) >> 0) & 0xff)
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundType_Choices, 2, 0x00660268, {"SATURATED", "SCATTERED"});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tCar_texturing_level, gCar_texturing_level, 0x00591374, eCTL_full);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tRoad_texturing_level, gRoad_texturing_level, 0x0059136c, eRTL_full);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tWall_texturing_level, gWall_texturing_level, 0x00591370, eWTL_full);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(int, gRendering_accessories, 0x00591368, 1);
-C2_HOOK_VARIABLE_IMPLEMENT(tBrender_storage*, gStorageForCallbacks, 0x006b7820);
-C2_HOOK_VARIABLE_IMPLEMENT(br_pixelmap*, gAddedPixelmap, 0x006aaa20);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDisallowDuplicates, 0x006aaa2c);
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(tRendererShadingType, gMaterial_shading_for_callback, 0x00660cb8, kRendererShadingType_Undefined);
-C2_HOOK_VARIABLE_IMPLEMENT(br_model*, gDuplicate_model, 0x006aaa24);
-C2_HOOK_VARIABLE_IMPLEMENT(br_material*, gDuplicate_material, 0x006aaa28);
-C2_HOOK_VARIABLE_IMPLEMENT(br_scalar, gSight_distance_squared, 0x0068b840);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tDecal, gDecals, 50, 0x006a80f8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tQueued_net_smash, gQueued_net_smashes, 50, 0x006a3940);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSize_powerup_queue, 0x006a55bc);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_host_smashes, 0x006a6d3c);
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gZlibBrFileSystem, 0x006631c0, {
+// GLOBAL: CARMA2_HW 0x00660268
+const char* gSoundType_Choices[2] = {"SATURATED", "SCATTERED"};
+
+// GLOBAL: CARMA2_HW 0x00591374
+tCar_texturing_level gCar_texturing_level = eCTL_full;
+
+// GLOBAL: CARMA2_HW 0x0059136c
+tRoad_texturing_level gRoad_texturing_level = eRTL_full;
+
+// GLOBAL: CARMA2_HW 0x00591370
+tWall_texturing_level gWall_texturing_level = eWTL_full;
+
+// GLOBAL: CARMA2_HW 0x00591368
+int gRendering_accessories = 1;
+
+// GLOBAL: CARMA2_HW 0x006b7820
+tBrender_storage* gStorageForCallbacks;
+
+// GLOBAL: CARMA2_HW 0x006aaa20
+br_pixelmap* gAddedPixelmap;
+
+// GLOBAL: CARMA2_HW 0x006aaa2c
+int gDisallowDuplicates;
+
+// GLOBAL: CARMA2_HW 0x00660cb8
+tRendererShadingType gMaterial_shading_for_callback = kRendererShadingType_Undefined;
+
+// GLOBAL: CARMA2_HW 0x006aaa24
+br_model* gDuplicate_model;
+
+// GLOBAL: CARMA2_HW 0x006aaa28
+br_material* gDuplicate_material;
+
+// GLOBAL: CARMA2_HW 0x0068b840
+br_scalar gSight_distance_squared;
+
+// GLOBAL: CARMA2_HW 0x006a80f8
+tDecal gDecals[50];
+
+// GLOBAL: CARMA2_HW 0x006a3940
+tQueued_net_smash gQueued_net_smashes[50];
+
+// GLOBAL: CARMA2_HW 0x006a55bc
+int gSize_powerup_queue;
+
+// GLOBAL: CARMA2_HW 0x006a6d3c
+int gCount_host_smashes;
+
+
+// GLOBAL: CARMA2_HW 0x006631c0
+br_filesystem gZlibBrFileSystem = {
     "Zlib filesystem",
     ZlibFsGetAttributes,
     ZlibFsOpenRead,
@@ -79,89 +113,179 @@ C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_filesystem, gZlibBrFileSystem, 0x006631c0, {
     ZlibFsGetLine,
     ZlibFsPutLine,
     ZlibFsAdvance,
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gGroovidelics_array_size, 0x0068b848);
-C2_HOOK_VARIABLE_IMPLEMENT(tGroovidelic_spec*, gGroovidelics_array, 0x0068b850);
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gRace_path, 256, 0x0074d0a0);
+// GLOBAL: CARMA2_HW 0x0068b848
+int gGroovidelics_array_size;
 
-C2_HOOK_VARIABLE_IMPLEMENT(tMaterial_exception*, gMaterial_exceptions, 0x0074ca04);
+// GLOBAL: CARMA2_HW 0x0068b850
+tGroovidelic_spec* gGroovidelics_array;
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSmashable_item_mode_names, 6, 0x0065fe88, {
+
+// GLOBAL: CARMA2_HW 0x0074d0a0
+char gRace_path[256];
+
+
+// GLOBAL: CARMA2_HW 0x0074ca04
+tMaterial_exception* gMaterial_exceptions;
+
+
+// GLOBAL: CARMA2_HW 0x0065fe88
+const char* gSmashable_item_mode_names[6] = {
     "nochange",
     "decal",
     "texturechange",
     "remove",
     "replacemodel",
     "crush",
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_noncars, 0x006b788c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_smashable_noncar_shrapnel_actors, 0x006a55b0);
-C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_environment_name*, gSmashable_noncars, 0x006b7888);
-C2_HOOK_VARIABLE_IMPLEMENT(const char*, gSmashable_track_environment_path, 0x006a55b8);
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_track_smashable_environment_specs, 0x006a55b4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_track_smashable_environment_specs_2, 0x006a8288);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCapacity_track_smashables, 0x006a3330);
-C2_HOOK_VARIABLE_IMPLEMENT(tSmashable_item_spec*, gTrack_smashable_environment_specs, 0x006a5138);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tSmashable_item_spec*, gSmashable_track_indexable_triggers, 100, 0x006ba4a0);
+// GLOBAL: CARMA2_HW 0x006b788c
+int gCount_smashable_noncars;
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gDepth_effect_names, 3, 0x00660e90, {
+// GLOBAL: CARMA2_HW 0x006a55b0
+int gCount_smashable_noncar_shrapnel_actors;
+
+// GLOBAL: CARMA2_HW 0x006b7888
+tSmashable_environment_name* gSmashable_noncars;
+
+// GLOBAL: CARMA2_HW 0x006a55b8
+const char* gSmashable_track_environment_path;
+
+
+// GLOBAL: CARMA2_HW 0x006a55b4
+int gCount_track_smashable_environment_specs;
+
+// GLOBAL: CARMA2_HW 0x006a8288
+int gCount_track_smashable_environment_specs_2;
+
+// GLOBAL: CARMA2_HW 0x006a3330
+int gCapacity_track_smashables;
+
+// GLOBAL: CARMA2_HW 0x006a5138
+tSmashable_item_spec* gTrack_smashable_environment_specs;
+
+// GLOBAL: CARMA2_HW 0x006ba4a0
+tSmashable_item_spec* gSmashable_track_indexable_triggers[100];
+
+
+// GLOBAL: CARMA2_HW 0x00660e90
+const char* gDepth_effect_names[3] = {
     "dark",
     "fog",
     "colour",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gAdditional_model_path, 256, 0x006b6400);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(char, gAdditional_actor_path, 256, 0x006b6500);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_model*, gAdditional_models, 1000, 0x006b6620);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_version, 0x007634b4);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gNumber_of_additional_models, 0x006ab948);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gAdditional_actors, 0x006b75c0);
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gLast_actor, 0x006b6600);
-C2_HOOK_VARIABLE_IMPLEMENT(tU8*, gTrack_flic_buffer, 0x006aaf40);
-C2_HOOK_VARIABLE_IMPLEMENT(tU32, gTrack_flic_buffer_size, 0x006aaf48);
-C2_HOOK_VARIABLE_IMPLEMENT(tFlic_descriptor, gTrack_flic_descriptor, 0x006aaf50);
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gSky_image_width, 0x0079ec2e);
-C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gSky_image_height, 0x0079ec2c);
-C2_HOOK_VARIABLE_IMPLEMENT(br_angle, gSky_image_underground, 0x0079ec30);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_red, 0x0074caa8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_green, 0x0074cf2c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gTrack_depth_colour_blue, 0x0074cad0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gNon_car_spec_indices, 100, 0x0079ef40);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU8, gNon_car_indices, 88, 0x0079ed30);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tRepair_animation, gRepair_animations, 25, 0x006a7fc8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSpecial_effects_boundary_choices, 4, 0x00660258, {
+// GLOBAL: CARMA2_HW 0x006b6400
+char gAdditional_model_path[256];
+
+// GLOBAL: CARMA2_HW 0x006b6500
+char gAdditional_actor_path[256];
+
+// GLOBAL: CARMA2_HW 0x006b6620
+br_model* gAdditional_models[1000];
+
+// GLOBAL: CARMA2_HW 0x007634b4
+int gTrack_version;
+
+// GLOBAL: CARMA2_HW 0x006ab948
+int gNumber_of_additional_models;
+
+// GLOBAL: CARMA2_HW 0x006b75c0
+br_actor* gAdditional_actors;
+
+// GLOBAL: CARMA2_HW 0x006b6600
+br_actor* gLast_actor;
+
+// GLOBAL: CARMA2_HW 0x006aaf40
+tU8* gTrack_flic_buffer;
+
+// GLOBAL: CARMA2_HW 0x006aaf48
+tU32 gTrack_flic_buffer_size;
+
+// GLOBAL: CARMA2_HW 0x006aaf50
+tFlic_descriptor gTrack_flic_descriptor;
+
+
+// GLOBAL: CARMA2_HW 0x0079ec2e
+br_angle gSky_image_width;
+
+// GLOBAL: CARMA2_HW 0x0079ec2c
+br_angle gSky_image_height;
+
+// GLOBAL: CARMA2_HW 0x0079ec30
+br_angle gSky_image_underground;
+
+// GLOBAL: CARMA2_HW 0x0074caa8
+int gTrack_depth_colour_red;
+
+// GLOBAL: CARMA2_HW 0x0074cf2c
+int gTrack_depth_colour_green;
+
+// GLOBAL: CARMA2_HW 0x0074cad0
+int gTrack_depth_colour_blue;
+
+// GLOBAL: CARMA2_HW 0x0079ef40
+tU8 gNon_car_spec_indices[100];
+
+// GLOBAL: CARMA2_HW 0x0079ed30
+tU8 gNon_car_indices[88];
+
+// GLOBAL: CARMA2_HW 0x006a7fc8
+tRepair_animation gRepair_animations[25];
+
+// GLOBAL: CARMA2_HW 0x00660258
+const char* gSpecial_effects_boundary_choices[4] = {
     "BOX",
     "PLANE",
     "DEFAULT",
     "NEW",
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDefault_engine_noise_index, 0x0068b878);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gSoundGeneratorTypeNames, 3, 0x00595c38, {
+};
+
+// GLOBAL: CARMA2_HW 0x0068b878
+int gDefault_engine_noise_index;
+
+// GLOBAL: CARMA2_HW 0x00595c38
+const char* gSoundGeneratorTypeNames[3] = {
     "NONCAR",
     "ACTOR",
     "POINT",
-});
-C2_HOOK_VARIABLE_IMPLEMENT(int, gCount_extra_renders, 0x006a22c0);
-C2_HOOK_VARIABLE_IMPLEMENT(tFunk_temp_buffer*, gFunk_temp_vertices, 0x0068b830);
-C2_HOOK_VARIABLE_IMPLEMENT(tFunkotronic_spec*, gFunkotronics_array, 0x0068b84c);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gFunkotronics_array_size, 0x0068b844);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tGroove_funk_binding, gGroove_funk_bindings, 1440, 0x00688b30);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFunk_nature_names, 4, 0x00655ba0, {
+};
+
+// GLOBAL: CARMA2_HW 0x006a22c0
+int gCount_extra_renders;
+
+// GLOBAL: CARMA2_HW 0x0068b830
+tFunk_temp_buffer* gFunk_temp_vertices;
+
+// GLOBAL: CARMA2_HW 0x0068b84c
+tFunkotronic_spec* gFunkotronics_array;
+
+// GLOBAL: CARMA2_HW 0x0068b844
+int gFunkotronics_array_size;
+
+// GLOBAL: CARMA2_HW 0x00688b30
+tGroove_funk_binding gGroove_funk_bindings[1440];
+
+// GLOBAL: CARMA2_HW 0x00655ba0
+const char* gFunk_nature_names[4] = {
     "constant",
     "distance",
     "lastlap",
     "otherlaps",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFunk_type_names, 5, 0x00655b50, {
+};
+
+// GLOBAL: CARMA2_HW 0x00655b50
+const char* gFunk_type_names[5] = {
     "spin",
     "rock",
     "throb",
     "slither",
     "roll",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFunk_move_names, 7, 0x00655b80, {
+};
+
+// GLOBAL: CARMA2_HW 0x00655b80
+const char* gFunk_move_names[7] = {
     "linear",
     "harmonic",
     "flash",
@@ -169,49 +293,81 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFunk_move_names, 7, 0x00655b
     "absolute",
     "continuous",
     "texturebits",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gFunk_anim_names, 4, 0x00655b68, {
+};
+
+// GLOBAL: CARMA2_HW 0x00655b68
+const char* gFunk_anim_names[4] = {
     "frames",
     "flic",
     "camera",
     "mirror",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gTime_mode_names, 2, 0x00655b78, {
+};
+
+// GLOBAL: CARMA2_HW 0x00655b78
+const char* gTime_mode_names[2] = {
     "approximate",
     "accurate",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gCamera_animation_names, 2, 0x00655bf0, {
+};
+
+// GLOBAL: CARMA2_HW 0x00655bf0
+const char* gCamera_animation_names[2] = {
     "static",
     "tracking",
-});
-C2_HOOK_VARIABLE_IMPLEMENT(br_actor*, gGroove_by_proxy_actor, 0x0068b854);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gLollipop_names, 3, 0x00655bc8, {
+};
+
+// GLOBAL: CARMA2_HW 0x0068b854
+br_actor* gGroove_by_proxy_actor;
+
+// GLOBAL: CARMA2_HW 0x00655bc8
+const char* gLollipop_names[3] = {
     "xlollipop",
     "ylollipop",
     "zlollipop",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_nature_names, 2, 0x00655bb0, {
+};
+
+// GLOBAL: CARMA2_HW 0x00655bb0
+const char* gGroove_nature_names[2] = {
     "constant",
     "distance",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_path_names, 2, 0x00655bd8, {
+};
+
+// GLOBAL: CARMA2_HW 0x00655bd8
+const char* gGroove_path_names[2] = {
     "straight",
     "circular",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, gGroove_object_names, 4, 0x00655be0, {
+};
+
+// GLOBAL: CARMA2_HW 0x00655be0
+const char* gGroove_object_names[4] = {
     "spin",
     "rock",
     "throb",
     "shear",
-});
-C2_HOOK_VARIABLE_IMPLEMENT(tNet_stored_smash*, gNet_host_smashes, 0x006a55c0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tExtra_render, gExtra_renders, 6, 0x006a22c8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gDelete_count, 0x006ab7a8);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gDelete_list, 500, 0x006aafc8);
-C2_HOOK_VARIABLE_IMPLEMENT(int, gSpec_vol_mode, 0x006ab940);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gSpec_vol_actors, 100, 0x006ab7b0);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(tU32, gPrevious_groove_times, 2, 0x0068b838);
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gHud_actor_storage, 128, 0x00704e60);
+};
+
+// GLOBAL: CARMA2_HW 0x006a55c0
+tNet_stored_smash* gNet_host_smashes;
+
+// GLOBAL: CARMA2_HW 0x006a22c8
+tExtra_render gExtra_renders[6];
+
+// GLOBAL: CARMA2_HW 0x006ab7a8
+int gDelete_count;
+
+// GLOBAL: CARMA2_HW 0x006aafc8
+br_actor* gDelete_list[500];
+
+// GLOBAL: CARMA2_HW 0x006ab940
+int gSpec_vol_mode;
+
+// GLOBAL: CARMA2_HW 0x006ab7b0
+br_actor* gSpec_vol_actors[100];
+
+// GLOBAL: CARMA2_HW 0x0068b838
+tU32 gPrevious_groove_times[2];
+
+// GLOBAL: CARMA2_HW 0x00704e60
+br_actor* gHud_actor_storage[128];
 
 #define SAW(T, PERIOD) (fmodf((T), (PERIOD)) / (PERIOD))
 
@@ -268,70 +424,66 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY(br_actor*, gHud_actor_storage, 128, 0x00704e60)
         }                                                                                       \
     } while (0)
 
+// FUNCTION: CARMA2_HW 0x00447640
 tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
-    return C2V(gCar_texturing_level);
+    return gCar_texturing_level;
 }
-C2_HOOK_FUNCTION(0x00447640, GetCarTexturingLevel)
 
-void (C2_HOOK_FASTCALL * SetCarTexturingLevel_original)(tCar_texturing_level pLevel);
+// FUNCTION: CARMA2_HW 0x00447650
 void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    SetCarTexturingLevel_original(pLevel);
-#else
 
-    if (C2V(gCar_texturing_level) != pLevel) {
-        if (C2V(gOur_car_storage_space).models_count != 0) {
-            SetCarStorageTexturingLevel(&C2V(gOur_car_storage_space), pLevel, C2V(gCar_texturing_level));
+    if (gCar_texturing_level != pLevel) {
+        if (gOur_car_storage_space.models_count != 0) {
+            SetCarStorageTexturingLevel(&gOur_car_storage_space, pLevel, gCar_texturing_level);
         }
-        if (C2V(gTheir_cars_storage_space).models_count != 0) {
-            SetCarStorageTexturingLevel(&C2V(gTheir_cars_storage_space), pLevel, C2V(gCar_texturing_level));
+        if (gTheir_cars_storage_space.models_count != 0) {
+            SetCarStorageTexturingLevel(&gTheir_cars_storage_space, pLevel, gCar_texturing_level);
         }
-        if (C2V(gNet_cars_storage_space).models_count != 0) {
-            SetCarStorageTexturingLevel(&C2V(gNet_cars_storage_space), pLevel, C2V(gCar_texturing_level));
+        if (gNet_cars_storage_space.models_count != 0) {
+            SetCarStorageTexturingLevel(&gNet_cars_storage_space, pLevel, gCar_texturing_level);
         }
     }
-    C2V(gCar_texturing_level) = pLevel;
-#endif
+    gCar_texturing_level = pLevel;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00447650, SetCarTexturingLevel, SetCarTexturingLevel_original)
 
+// FUNCTION: CARMA2_HW 0x00448770
 tRoad_texturing_level C2_HOOK_FASTCALL GetRoadTexturingLevel(void) {
 
-    return C2V(gRoad_texturing_level);
+    return gRoad_texturing_level;
 }
-C2_HOOK_FUNCTION(0x00448770, GetRoadTexturingLevel)
 
+// FUNCTION: CARMA2_HW 0x00448780
 void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel) {
 
-    C2V(gRoad_texturing_level) = pLevel;
+    gRoad_texturing_level = pLevel;
 }
-C2_HOOK_FUNCTION(0x00448780, SetRoadTexturingLevel)
 
+// FUNCTION: CARMA2_HW 0x004488f0
 tWall_texturing_level C2_HOOK_FASTCALL GetWallTexturingLevel(void) {
 
-    return C2V(gWall_texturing_level);
+    return gWall_texturing_level;
 }
-C2_HOOK_FUNCTION(0x004488f0, GetWallTexturingLevel)
 
+// FUNCTION: CARMA2_HW 0x00448900
 void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel) {
 
-    C2V(gWall_texturing_level) = pLevel;
+    gWall_texturing_level = pLevel;
 }
-C2_HOOK_FUNCTION(0x00448900, SetWallTexturingLevel)
 
+// FUNCTION: CARMA2_HW 0x00448f10
 void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {
 
-    C2V(gCar_simplification_level) = pLevel;
+    gCar_simplification_level = pLevel;
 }
-C2_HOOK_FUNCTION(0x00448f10, SetCarSimplificationLevel)
 
+// FUNCTION: CARMA2_HW 0x00448f20
 int C2_HOOK_FASTCALL GetCarSimplificationLevel(void) {
 
-    return C2V(gCar_simplification_level);
+    return gCar_simplification_level;
 }
-C2_HOOK_FUNCTION(0x00448f20, GetCarSimplificationLevel)
 
+// FUNCTION: CARMA2_HW 0x00448f90
 intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallback) {
 
     if (pActor->material != NULL) {
@@ -342,46 +494,46 @@ intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallba
     }
     return BrActorEnum(pActor, (br_actor_enum_cbfn*)ProcessMaterials, pCallback);
 }
-C2_HOOK_FUNCTION(0x00448f90, ProcessMaterials)
 
+// FUNCTION: CARMA2_HW 0x00448ea0
 intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
     if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
         pActor->render_style = *(br_uint_8*)pFlag;
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00448ea0, SetAccessoryRenderingCB)
 
+// FUNCTION: CARMA2_HW 0x00448ec0
 void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn) {
     int style;
 
-    if (C2V(gTrack_actor) != NULL)  {
+    if (gTrack_actor != NULL)  {
         if (pOn) {
             style = BR_RSTYLE_FACES;
         } else {
             style = BR_RSTYLE_NONE;
         }
-        DRActorEnumRecurse(C2V(gTrack_actor), (br_actor_enum_cbfn*)SetAccessoryRenderingCB, &style);
+        DRActorEnumRecurse(gTrack_actor, (br_actor_enum_cbfn*)SetAccessoryRenderingCB, &style);
     }
-    C2V(gRendering_accessories) = pOn;
+    gRendering_accessories = pOn;
 }
-C2_HOOK_FUNCTION(0x00448ec0, SetAccessoryRendering)
 
+// FUNCTION: CARMA2_HW 0x00448f00
 int C2_HOOK_FASTCALL GetAccessoryRendering(void) {
 
-    return C2V(gRendering_accessories);
+    return gRendering_accessories;
 }
-C2_HOOK_FUNCTION(0x00448f00, GetAccessoryRendering)
 
+// FUNCTION: CARMA2_HW 0x0048ea40
 int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
     tPath_name tempPath;
     br_uint_32 nb;
 
     PathCat(tempPath, pathRoot, textureName);
-    c2_strcat(tempPath, (C2V(gPixelFlags) & kPixelFlags_16bbp) ? ".P16" : ".P08");
+    c2_strcat(tempPath, (gPixelFlags & kPixelFlags_16bbp) ? ".P16" : ".P08");
     nb = BrPixelmapLoadMany(tempPath, textureBuffer, (br_uint_16)bufferCapacity);
     if (nb == 0) {
-        PathCat(tempPath, pathRoot, (C2V(gPixelFlags) & kPixelFlags_16bbp) ? "PIX16" : "PIX8");
+        PathCat(tempPath, pathRoot, (gPixelFlags & kPixelFlags_16bbp) ? "PIX16" : "PIX8");
         PathCat(tempPath, tempPath, textureName);
         c2_strcat(tempPath, ".PIX");
         nb = BrPixelmapLoadMany(tempPath, textureBuffer, (br_uint_16)bufferCapacity);
@@ -389,7 +541,7 @@ int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* texture
     if (nb == 0) {
         return 0;
     }
-    if (nb == 1 && !C2V(gDisableTiffConversion)) {
+    if (nb == 1 && !gDisableTiffConversion) {
         if (textureBuffer[0]->identifier != NULL) {
             BrResFree(textureBuffer[0]->identifier);
         }
@@ -397,8 +549,8 @@ int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* texture
     }
     return nb;
 }
-C2_HOOK_FUNCTION(0x0048ea40, LoadBunchOfPixies)
 
+// FUNCTION: CARMA2_HW 0x004ff8d0
 void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx) {
     char s[256];
 
@@ -408,7 +560,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
 
     /* gravity multiplier */
     pSpec->gravity_multiplier = GetAFloat(pF);
-    if (pSpec->gravity_multiplier < 0 && !C2V(gRussels_fannies)) {
+    if (pSpec->gravity_multiplier < 0 && !gRussels_fannies) {
         pSpec->gravity_multiplier = 1.f;
     }
     /* viscosity multiplier */
@@ -439,7 +591,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
     /* material index */
     pSpec->material_modifier_index = GetAnInt(pF);
     if (soundfx) {
-        pSpec->soundfx_type = GetALineAndInterpretCommand(pF, C2V(gSoundType_Choices), REC2_ASIZE(C2V(gSoundType_Choices)));
+        pSpec->soundfx_type = GetALineAndInterpretCommand(pF, gSoundType_Choices, REC2_ASIZE(gSoundType_Choices));
         if (pSpec->soundfx_type != kSoundFx_None) {
             ReadSoundSpec(pF, &pSpec->soundfx_data);
         }
@@ -447,8 +599,8 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
         pSpec->soundfx_type = kSoundFx_None;
     }
 }
-C2_HOOK_FUNCTION(0x004ff8d0, ParseSpecialVolume)
 
+// FUNCTION: CARMA2_HW 0x005026b0
 int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list *pList) {
     tPath_name pathCopy;
     tPath_name pathUpper;
@@ -468,8 +620,8 @@ int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x005026b0, AddTexturePixTifFileStemToList)
 
+// FUNCTION: CARMA2_HW 0x00502780
 int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pList) {
     tPath_name pathCopy;
     tPath_name upperPath;
@@ -504,8 +656,8 @@ int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pLis
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00502780, AddTextureFileStemToList);
 
+// FUNCTION: CARMA2_HW 0x00500d50
 void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pStorage_space, int pMax_pixelmaps, int pMax_shade_tables, int pMax_materials, int pMax_models, int pMax_sounds) {
 
     pStorage_space->pixelmaps_count = 0;
@@ -526,8 +678,8 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
     pStorage_space->sounds = BrMemCalloc(pMax_sounds, sizeof(int), kMem_stor_space_table);
     pStorage_space->materialProps = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
 }
-C2_HOOK_FUNCTION(0x00500d50, InitialiseStorageSpace)
 
+// FUNCTION: CARMA2_HW 0x00500e10
 void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage) {
     BrMemFree(pStorage->pixelmaps);
     BrMemFree(pStorage->shade_tables);
@@ -536,15 +688,15 @@ void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage) {
     BrMemFree(pStorage->sounds);
     BrMemFree(pStorage->materialProps);
 }
-C2_HOOK_FUNCTION(0x00500e10, DisposeStorageSpace)
 
 
+// FUNCTION: CARMA2_HW 0x00501020
 tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {
     int i;
 
-    C2V(gAddedPixelmap) = NULL;
+    gAddedPixelmap = NULL;
     if (pStorage_space->pixelmaps_count >= pStorage_space->max_pixelmaps) {
-        C2V(gAddedPixelmap) = NULL;
+        gAddedPixelmap = NULL;
         return eStorage_not_enough_room;
     }
 
@@ -552,7 +704,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
         if (pStorage_space->pixelmaps[i]->identifier != NULL
             && pThe_pm->identifier != NULL
             && c2_strcmp(pStorage_space->pixelmaps[i]->identifier, pThe_pm->identifier) == 0) {
-            C2V(gAddedPixelmap) = pStorage_space->pixelmaps[i];
+            gAddedPixelmap = pStorage_space->pixelmaps[i];
             return eStorage_duplicate;
         }
     }
@@ -560,7 +712,6 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
     pStorage_space->pixelmaps_count++;
     return eStorage_allocated;
 }
-C2_HOOK_FUNCTION(0x00501020, AddPixelmapToStorage)
 
 tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pStorage_space, int pSound_id) {
     int i;
@@ -580,12 +731,8 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pSto
     return eStorage_allocated;
 }
 
-tAdd_to_storage_result (C2_HOOK_FASTCALL * LoadSingleSound_original)(tBrender_storage* pStorage_space, int pSound_id);
+// FUNCTION: CARMA2_HW 0x00501930
 tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return LoadSingleSound_original(pStorage_space, pSound_id);
-#else
 
     if (S3GetBufferDescription(pSound_id) != NULL) {
         return pSound_id;
@@ -604,17 +751,16 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStora
         return pSound_id;
     }
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00501930, LoadSingleSound, LoadSingleSound_original)
 
+// FUNCTION: CARMA2_HW 0x00486c00
 int C2_HOOK_FASTCALL IsValidFile(const char* path) {
     struct c2_stat s;
 
     return c2_stat32(path, &s) == 0;
 }
-C2_HOOK_FUNCTION(0x00486c00, IsValidFile)
 
+// FUNCTION: CARMA2_HW 0x00486be0
 int C2_HOOK_FASTCALL GetLastModificationTime(const char* path) {
     struct c2_stat s;
     int res;
@@ -625,7 +771,6 @@ int C2_HOOK_FASTCALL GetLastModificationTime(const char* path) {
     }
     return (int)s.st_mtime;
 }
-C2_HOOK_FUNCTION(0x00486be0, GetLastModificationTime)
 
 br_pixelmap* C2_HOOK_FASTCALL Read_DEFAULT_ACT(const char* textureDir, int flags, int *errorCode) {
     int i;
@@ -636,7 +781,7 @@ br_pixelmap* C2_HOOK_FASTCALL Read_DEFAULT_ACT(const char* textureDir, int flags
     br_uint_8* src;
     br_uint_8* dst;
 
-    c2_sprintf(path, "%s%s%s%s%s", textureDir, C2V(gDir_separator), "PALETTE", C2V(gDir_separator), "DEFAULT.ACT");
+    c2_sprintf(path, "%s%s%s%s%s", textureDir, gDir_separator, "PALETTE", gDir_separator, "DEFAULT.ACT");
     f = DRfopen(path, "rb");
     if (f == NULL) {
         *errorCode = 5;
@@ -695,6 +840,7 @@ br_pixelmap* C2_HOOK_FASTCALL Read_DEFAULT_ACT(const char* textureDir, int flags
     return pm;
 }
 
+// FUNCTION: CARMA2_HW 0x004862b0
 br_uint_8 C2_HOOK_FASTCALL FindBestMatch_ShadeTable(br_colour rgb, br_pixelmap *shadeTable) {
     int i;
     int ref_r, ref_g, ref_b;
@@ -746,8 +892,8 @@ br_uint_8 C2_HOOK_FASTCALL FindBestMatch_ShadeTable(br_colour rgb, br_pixelmap *
     }
     return min_index;
 }
-C2_HOOK_FUNCTION(0x004862b0, FindBestMatch_ShadeTable)
 
+// FUNCTION: CARMA2_HW 0x00485590
 br_pixelmap* C2_HOOK_FASTCALL CreatePalettePixelmapFromRGBChannels(br_uint_16* redChannel, br_uint_16* greenChannel, br_uint_16* blueChannel, int isRGB555) {
     br_pixelmap* pm;
     int i;
@@ -778,7 +924,6 @@ br_pixelmap* C2_HOOK_FASTCALL CreatePalettePixelmapFromRGBChannels(br_uint_16* r
     }
     return pm;
 }
-C2_HOOK_FUNCTION(0x00485590, CreatePalettePixelmapFromRGBChannels)
 
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_MappedToShadeTable(const char* path, br_pixelmap* shadeTable, int* errorCode) {
     TIFF* tif;
@@ -843,6 +988,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_MappedToShadeTable(const char* pat
     return pm;
 }
 
+// FUNCTION: CARMA2_HW 0x00485fe0
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_WithShadeTable(const char *path, int flags, int *errorCode) {
     TIFF* tif;
     br_pixelmap* pm;
@@ -919,8 +1065,8 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_WithShadeTable(const char *path, i
     TIFFClose(tif);
     return pm;
 }
-C2_HOOK_FUNCTION(0x00485fe0, LoadTiffTexture_WithShadeTable)
 
+// FUNCTION: CARMA2_HW 0x004864a0
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_16BitRGB(const char *path, int flags, int *errorCode) {
     TIFF* tif;
     br_pixelmap* pm;
@@ -989,8 +1135,8 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_16BitRGB(const char *path, int fla
     }
     return pm;
 }
-C2_HOOK_FUNCTION(0x004864a0, LoadTiffTexture_16BitRGB)
 
+// FUNCTION: CARMA2_HW 0x00485750
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode, int useTiffx) {
     int usePix16;
     tPath_name tifPath;
@@ -1010,16 +1156,16 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
     int indexLastSeparator;
     size_t posDir;
 
-    c2_sprintf(tifPath, "%s%s%s%s%s%s", texturePathDir, C2V(gDir_separator), useTiffx ? "TIFFX" : "TIFFRGB", C2V(gDir_separator), textureName, ".TIF");
+    c2_sprintf(tifPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, useTiffx ? "TIFFX" : "TIFFRGB", gDir_separator, textureName, ".TIF");
     usePix16 = flags & kLoadTextureFlags_16bbp;
-    c2_sprintf(pixPath, "%s%s%s%s%s%s", texturePathDir, C2V(gDir_separator), usePix16 ? "PIX16" : "PIX8", C2V(gDir_separator), textureName, ".PIX");
+    c2_sprintf(pixPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, usePix16 ? "PIX16" : "PIX8", gDir_separator, textureName, ".PIX");
     tifPathIsLink = ResolveTexturePathLink(tifPath, tifPath);
     pixPathIsLink = ResolveTexturePathLink(pixPathTarget, pixPath);
     pixExists = IsValidFile(pixPathIsLink ? pixPathTarget : pixPath);
     tifExists = IsValidFile(tifPath);
 
     if (useTiffx && pixExists) {
-        c2_sprintf(trgbPath, "%s%s%s%s%s%s", texturePathDir, C2V(gDir_separator), "TIFFRGB", C2V(gDir_separator), textureName, ".TIF");
+        c2_sprintf(trgbPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, "TIFFRGB", gDir_separator, textureName, ".TIF");
         ResolveTexturePathLink(trgbPath, trgbPath);
         if (IsValidFile(trgbPath)) {
             if (GetLastModificationTime(pixPathIsLink ? pixPathTarget : pixPath) < GetLastModificationTime(trgbPath)) {
@@ -1029,7 +1175,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
     }
     if (!tifExists) {
         if (pixExists && (usePix16 || useTiffx)) {
-            prevFilesystem = BrFilesystemSet(&C2V(gZlibBrFileSystem));
+            prevFilesystem = BrFilesystemSet(&gZlibBrFileSystem);
             texture = BrPixelmapLoad(pixPathIsLink ? pixPathTarget : pixPath);
             BrFilesystemSet(prevFilesystem);
             *errorCode = (texture != NULL) ? 0 : 3;
@@ -1041,7 +1187,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
 
     if ((usePix16 || useTiffx) && ((flags & kLoadTextureFlags_ForceTiff) == 0) && pixExists) {
         if (GetLastModificationTime(tifPath) <= GetLastModificationTime(pixPathIsLink ? pixPathTarget : pixPath)) {
-            prevFilesystem = BrFilesystemSet(&C2V(gZlibBrFileSystem));
+            prevFilesystem = BrFilesystemSet(&gZlibBrFileSystem);
             texture = BrPixelmapLoad(pixPathIsLink ? pixPathTarget : pixPath);
             BrFilesystemSet(prevFilesystem);
             *errorCode = (texture != NULL) ? 0 : 3;
@@ -1080,16 +1226,16 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
     }
     if ((flags & kLoadTextureFlags_SaveBrenderTexture) != 0) {
         if (!pixPathIsLink) {
-            c2_sprintf(path, "%s%s%s", texturePathDir, C2V(gDir_separator), usePix16 ? "PIX16" : "PIX8");
+            c2_sprintf(path, "%s%s%s", texturePathDir, gDir_separator, usePix16 ? "PIX16" : "PIX8");
             PDmkdir(path);
             if (tifPathIsLink && !pixExists) {
                 if (FindLastOccurrenceOfString_CaseInsensitive(&indexSuffix, tifPath, c2_strlen(tifPath), ".TIF")) {
-                    if (FindLastOccurrenceOfString_CaseInsensitive(&indexLastSeparator, tifPath, indexSuffix, C2V(gDir_separator))) {
+                    if (FindLastOccurrenceOfString_CaseInsensitive(&indexLastSeparator, tifPath, indexSuffix, gDir_separator)) {
                         int texRootIndex;
-                        if (FindLastOccurrenceOfString_CaseInsensitive(&texRootIndex, tifPath, indexLastSeparator, C2V(gDir_separator))) {
-                            posDir = c2_strlen(C2V(gDir_separator)) + indexLastSeparator;
-                            c2_sprintf(buf1, "%.*s%s%s", texRootIndex, tifPath, C2V(gDir_separator), usePix16 ? "PIX16" : "PIX8");
-                            c2_sprintf(pixPathTarget, "%s%s%.*s%s", buf1, C2V(gDir_separator), indexSuffix - posDir, tifPath + posDir, ".PIX");
+                        if (FindLastOccurrenceOfString_CaseInsensitive(&texRootIndex, tifPath, indexLastSeparator, gDir_separator)) {
+                            posDir = c2_strlen(gDir_separator) + indexLastSeparator;
+                            c2_sprintf(buf1, "%.*s%s%s", texRootIndex, tifPath, gDir_separator, usePix16 ? "PIX16" : "PIX8");
+                            c2_sprintf(pixPathTarget, "%s%s%.*s%s", buf1, gDir_separator, indexSuffix - posDir, tifPath + posDir, ".PIX");
                         }
                     }
                 }
@@ -1099,7 +1245,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
             }
         }
         if ((flags & kLoadTextureFlags_SaveTextureCompressed) == 0) {
-            prevFilesystem = BrFilesystemSet(&C2V(gZlibBrFileSystem));
+            prevFilesystem = BrFilesystemSet(&gZlibBrFileSystem);
         }
         BrPixelmapSave(pixPathIsLink ? pixPathTarget : pixPath, texture);
         if ((flags & kLoadTextureFlags_SaveTextureCompressed) == 0) {
@@ -1111,8 +1257,8 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
     }
     return texture;
 }
-C2_HOOK_FUNCTION(0x00485750, LoadTiffTexture_Ex2)
 
+// FUNCTION: CARMA2_HW 0x004856c0
 br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode) {
     br_pixelmap* texture;
 
@@ -1134,13 +1280,13 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex(const char* texturePathDir, con
     }
     return texture;
 }
-C2_HOOK_FUNCTION(0x004856c0, LoadTiffTexture_Ex)
 
+// FUNCTION: CARMA2_HW 0x0048eb80
 br_pixelmap* C2_HOOK_FASTCALL DRLdImg(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode) {
     br_pixelmap* textures[1000];
     int nb;
 
-    if (C2V(gDisableTiffConversion)) {
+    if (gDisableTiffConversion) {
         nb = LoadBunchOfPixies(texturePathDir, textureName, textures, REC2_ASIZE(textures));
         if (nb == 0) {
             *errorCode = 1;
@@ -1153,8 +1299,8 @@ br_pixelmap* C2_HOOK_FASTCALL DRLdImg(const char* texturePathDir, const char* te
         return LoadTiffTexture_Ex(texturePathDir, textureName, pPalette, flags | kLoadTextureFlags_SaveTextureCompressed, errorCode);
     }
 }
-C2_HOOK_FUNCTION(0x0048eb80, DRLdImg)
 
+// FUNCTION: CARMA2_HW 0x00514570
 int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity) {
     tPath_name texturePath;
     tPath_name texturePathDir;
@@ -1164,11 +1310,11 @@ int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelma
     c2_strcpy(texturePath, texturePathNoExt);
     c2_strcat(texturePath, ".TIF");
     SepDirAndFilename(texturePath, texturePathDir, texturePathStem);
-    pixelmaps[0] = DRLdImg(texturePathDir, texturePathStem, C2V(gRender_palette), C2V(gPixelFlags), &errorCode);
+    pixelmaps[0] = DRLdImg(texturePathDir, texturePathStem, gRender_palette, gPixelFlags, &errorCode);
     return (pixelmaps[0] != NULL && errorCode == 0) ? 1 : 0;
 }
-C2_HOOK_FUNCTION(0x00514570, DRPixelmapLoadMany)
 
+// FUNCTION: CARMA2_HW 0x005024f0
 int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* path) {
     int i;
     int nbLoaded;
@@ -1179,7 +1325,7 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
     br_pixelmap* pixelmaps[500];
 
     result = 0;
-    if (C2V(gDisableTiffConversion)) {
+    if (gDisableTiffConversion) {
         SepDirAndFilename(path, path_dirname, path_stem);
         nbLoaded = LoadBunchOfPixies(path_dirname, path_stem, pixelmaps, REC2_ASIZE(pixelmaps));
     } else {
@@ -1195,7 +1341,7 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
             FatalError(kFatalError_InsufficientPixelmapSlots);
             break;
         case eStorage_duplicate:
-            if (C2V(gDisallowDuplicates)) {
+            if (gDisallowDuplicates) {
                 FatalError(kFatalError_DuplicatePixelmap_S, pixelmaps[i]->identifier);
             }
             BrPixelmapFree(pixelmaps[i]);
@@ -1208,12 +1354,12 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
     }
     return result;
 }
-C2_HOOK_FUNCTION(0x005024f0, AddPixelmaps)
 
 void C2_HOOK_FASTCALL TwatPIX16(const char* pPath) {
 
 }
 
+// FUNCTION: CARMA2_HW 0x005028f0
 void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path) {
     tPath_name pathCopy;
     tPath_name tempPath;
@@ -1225,17 +1371,17 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     TwatPIX16(path);
     list.size = 0;
     c2_strcpy(pathCopy, path);
-    C2V(gStorageForCallbacks) = pStorage_space;
-    if (C2V(gDisableTiffConversion)) {
+    gStorageForCallbacks = pStorage_space;
+    if (gDisableTiffConversion) {
         PFForEveryFile2(pathCopy, (tEnumPathCallback)AddTextureFileStemToList, &list);
     }
-    if (!C2V(gDisableTiffConversion)) {
+    if (!gDisableTiffConversion) {
         PathCat(tempPath, pathCopy, "TIFFX");
         PFForEveryFile2(tempPath, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
     }
     PathCat(tempPath, pathCopy, "PIX8");
     PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
-    if (!C2V(gDisableTiffConversion)) {
+    if (!gDisableTiffConversion) {
         PathCat(tempPath, pathCopy, "TIFFRGB");
         PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
     }
@@ -1243,11 +1389,11 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
     for (i = 0; i < list.size; i++) {
         PathCat(tempPath, path, list.items[i]);
-        AddPixelmaps(C2V(gStorageForCallbacks), tempPath);
+        AddPixelmaps(gStorageForCallbacks, tempPath);
     }
 }
-C2_HOOK_FUNCTION(0x005028f0, LoadAllImagesInDirectory)
 
+// FUNCTION: CARMA2_HW 0x00486860
 int C2_HOOK_FASTCALL LoadTiffTextureCB(const char* filePath, tLoadDirectoryStructureCBData* data) {
     size_t filePathLength;
     tPath_name textureName;
@@ -1303,8 +1449,8 @@ int C2_HOOK_FASTCALL LoadTiffTextureCB(const char* filePath, tLoadDirectoryStruc
     data->results = itemResult;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00486860, LoadTiffTextureCB)
 
+// FUNCTION: CARMA2_HW 0x00486760
 void C2_HOOK_FASTCALL LoadAllTiffTexturesInDirectory(const char* directory, br_pixelmap* pPalette, int loadFlags, int* errorCode) {
     tLoadDirectoryStructureCBData data;
     tLoadDirectoryStructureCBResult* nextItem;
@@ -1316,14 +1462,14 @@ void C2_HOOK_FASTCALL LoadAllTiffTexturesInDirectory(const char* directory, br_p
     data.directory = directory;
     data.pPalette = pPalette;
     if (!(loadFlags & kLoadTextureFlags_16bbp)) {
-        c2_sprintf(pathBuffer, "%s%s%s", directory, C2V(gDir_separator), "TIFFX");
+        c2_sprintf(pathBuffer, "%s%s%s", directory, gDir_separator, "TIFFX");
         data.isTiffx = 0x1;
         PDEnumPath(pathBuffer, (tEnumPathCallback)LoadTiffTextureCB, &data);
     }
     if (*errorCode != 0) {
         return;
     }
-    c2_sprintf(pathBuffer, "%s%s%s", directory, C2V(gDir_separator), "TIFFRGB");
+    c2_sprintf(pathBuffer, "%s%s%s", directory, gDir_separator, "TIFFRGB");
     data.isTiffx = 0x0;
     PDEnumPath(pathBuffer, (tEnumPathCallback)LoadTiffTextureCB, &data);
 
@@ -1336,7 +1482,6 @@ void C2_HOOK_FASTCALL LoadAllTiffTexturesInDirectory(const char* directory, br_p
         data.results = nextItem;
     }
 }
-C2_HOOK_FUNCTION(0x00486760, LoadAllTiffTexturesInDirectory)
 
 void UseNativeDirSeparator(char* nativePath, const char* path) {
     size_t i;
@@ -1347,13 +1492,14 @@ void UseNativeDirSeparator(char* nativePath, const char* path) {
     for (i = 0; i < len; i++) {
         c = path[i];
         if (c == '\\') {
-            c = *C2V(gDir_separator);
+            c = *gDir_separator;
         }
         nativePath[i] = c;
     }
     nativePath[len] = '\0';
 }
 
+// FUNCTION: CARMA2_HW 0x004869e0
 int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path) {
     FILE* f;
     tPath_name linkPath;
@@ -1372,12 +1518,12 @@ int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path) {
     } else {
         return 0;
     }
-    PathCat(linkPath, C2V(gApplication_path), nativeLinkPath);
+    PathCat(linkPath, gApplication_path, nativeLinkPath);
     c2_strcpy(realPath, linkPath);
     return 1;
 }
-C2_HOOK_FUNCTION(0x004869e0, ResolveTexturePathLink)
 
+// FUNCTION: CARMA2_HW 0x00486b20
 int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath) {
     tPath_name buffer;
     tPath_name cleanedTargetRelPath;
@@ -1407,18 +1553,18 @@ int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath
     return 1;
 
 }
-C2_HOOK_FUNCTION(0x00486b20, CreatePathLink)
 
+// FUNCTION: CARMA2_HW 0x0047d850
 int C2_HOOK_FASTCALL DRstrcmpi(const char* str1, const char* str2) {
     return c2_strcasecmp(str1, str2);
 }
-C2_HOOK_FUNCTION(0x0047d850, DRstrcmpi)
 
+// FUNCTION: CARMA2_HW 0x0047d860
 int C2_HOOK_FASTCALL DRmemicmp(const char* str1, const char* str2, size_t count) {
     return c2_memicmp(str1, str2, count);
 }
-C2_HOOK_FUNCTION(0x0047d860, DRmemicmp)
 
+// FUNCTION: CARMA2_HW 0x00486240
 int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, const char* haystack, size_t haystackLen, const char* needle) {
     size_t needleLen;
     size_t haystackPos;
@@ -1439,7 +1585,6 @@ int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, con
         haystackPos--;
     }
 }
-C2_HOOK_FUNCTION(0x00486240, FindLastOccurrenceOfString_CaseInsensitive)
 
 tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st) {
     int i;
@@ -1460,6 +1605,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage*
     return eStorage_allocated;
 }
 
+// FUNCTION: CARMA2_HW 0x00502b80
 void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
     br_pixelmap* temp_array[50];
     int total;
@@ -1471,7 +1617,7 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
     if (c2_strstr(s, ".TAB") == NULL) {
         return;
     }
-    storage_space = C2V(gStorageForCallbacks);
+    storage_space = gStorageForCallbacks;
     total = BrPixelmapLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
     if (total == 0) {
         FatalError(kFatalError_CannotLoadShadeTableFileOrItIsEmpty_S, pPath);
@@ -1486,7 +1632,7 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
             break;
 
         case eStorage_duplicate:
-            if (C2V(gDisallowDuplicates)) {
+            if (gDisallowDuplicates) {
                 FatalError(kFatalError_DuplicatePixelmap_S, temp_array[i]->identifier);
             }
             BrPixelmapFree(temp_array[i]);
@@ -1497,32 +1643,32 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
         }
     }
 }
-C2_HOOK_FUNCTION(0x00502b80, LoadIfItsAShadeTable)
 
+// FUNCTION: CARMA2_HW 0x00502b60
 void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
-    C2V(gStorageForCallbacks) = pStorage;
+    gStorageForCallbacks = pStorage;
     PFForEveryFile(pPath, LoadIfItsAShadeTable);
 }
-C2_HOOK_FUNCTION(0x00502b60, LoadAllShadeTablesInDirectory)
 
+// FUNCTION: CARMA2_HW 0x005024b0
 void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".PIX") != NULL) {
-        AddPixelmaps(C2V(gStorageForCallbacks), pPath);
+        AddPixelmaps(gStorageForCallbacks, pPath);
     }
 }
-C2_HOOK_FUNCTION(0x005024b0, LoadIfItsAPixelmap)
 
+// FUNCTION: CARMA2_HW 0x00502490
 void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
-    C2V(gStorageForCallbacks) = pStorage;
+    gStorageForCallbacks = pStorage;
     PFForEveryFile(pPath, LoadIfItsAPixelmap);
 }
-C2_HOOK_FUNCTION(0x00502490, LoadAllPixelmapsInDirectory)
 
+// FUNCTION: CARMA2_HW 0x00501560
 br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, const char* pName) {
     br_pixelmap* map;
     tAdd_to_storage_result addResult;
@@ -1538,11 +1684,11 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, con
             FatalError(kFatalError_InsufficientPixelmapSlots);
             break;
         case eStorage_duplicate:
-            if (C2V(gDisallowDuplicates)) {
+            if (gDisallowDuplicates) {
                 FatalError(kFatalError_DuplicatePixelmap_S, map->identifier);
             }
             BrPixelmapFree(map);
-            return C2V(gAddedPixelmap);
+            return gAddedPixelmap;
         case eStorage_allocated:
             BrMapAdd(map);
             return map;
@@ -1551,36 +1697,36 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, con
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x00501560, LoadSinglePixelmap)
 
+// FUNCTION: CARMA2_HW 0x00502a70
 void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
     tRendererShadingType shading;
     char s[256];
 
-    shading = C2V(gMaterial_shading_for_callback);
-    if (C2V(gMaterial_shading_for_callback) == kRendererShadingType_Undefined) {
+    shading = gMaterial_shading_for_callback;
+    if (gMaterial_shading_for_callback == kRendererShadingType_Undefined) {
         shading = kRendererShadingType_Default;
     }
     Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".MAT") != NULL) {
-        AddMaterials(C2V(gStorageForCallbacks), pPath, shading);
+        AddMaterials(gStorageForCallbacks, pPath, shading);
     }
 }
-C2_HOOK_FUNCTION(0x00502a70, LoadIfItsAMaterial)
 
+// FUNCTION: CARMA2_HW 0x00502ad0
 void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
-    C2V(gMaterial_shading_for_callback) = pShading;
-    C2V(gStorageForCallbacks) = pStorage;
+    gMaterial_shading_for_callback = pShading;
+    gStorageForCallbacks = pStorage;
     PFForEveryFile(pPath, LoadIfItsAMaterial);
-    C2V(gMaterial_shading_for_callback) = kRendererShadingType_Undefined;
+    gMaterial_shading_for_callback = kRendererShadingType_Undefined;
 }
-C2_HOOK_FUNCTION(0x00502ad0, LoadAllMaterialsInDirectory)
 
+// FUNCTION: CARMA2_HW 0x00501190
 tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat) {
     int i;
 
-    C2V(gDuplicate_material) = NULL;
+    gDuplicate_material = NULL;
     if (pStorage_space->materials_count >= pStorage_space->max_materials) {
         return eStorage_not_enough_room;
     }
@@ -1588,7 +1734,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
         if (pStorage_space->materials[i]->identifier
             && pThe_mat->identifier
             && !c2_strcmp(pStorage_space->materials[i]->identifier, pThe_mat->identifier)) {
-            C2V(gDuplicate_material) = pStorage_space->materials[i];
+            gDuplicate_material = pStorage_space->materials[i];
             return eStorage_duplicate;
         }
     }
@@ -1597,8 +1743,8 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
     pStorage_space->materials_count++;
     return eStorage_allocated;
 }
-C2_HOOK_FUNCTION(0x00501190, AddMaterialToStorage)
 
+// FUNCTION: CARMA2_HW 0x00502060
 int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading) {
     int i;
     int new_ones;
@@ -1620,7 +1766,7 @@ int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* 
             FatalError(kFatalError_InsufficientMaterialSlots);
             break;
         case eStorage_duplicate:
-            if (C2V(gDisallowDuplicates)) {
+            if (gDisallowDuplicates) {
                 FatalError(kFatalError_DuplicateMaterial_S, temp_array[i]->identifier);
             }
             BrMaterialFree(temp_array[i]);
@@ -1633,8 +1779,8 @@ int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* 
     }
     return new_ones;
 }
-C2_HOOK_FUNCTION(0x00502060, AddMaterials)
 
+// FUNCTION: CARMA2_HW 0x005017e0
 br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_space, const char* pName) {
     br_material* temp;
 
@@ -1649,11 +1795,11 @@ br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_spac
             break;
 
         case eStorage_duplicate:
-            if (C2V(gDisallowDuplicates)) {
+            if (gDisallowDuplicates) {
                 FatalError(kFatalError_DuplicateMaterial_S, temp->identifier);
             }
             BrMaterialFree(temp);
-            return C2V(gDuplicate_material);
+            return gDuplicate_material;
 
         case eStorage_allocated:
             BrMaterialAdd(temp);
@@ -1662,29 +1808,29 @@ br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_spac
 
     return NULL;
 }
-C2_HOOK_FUNCTION(0x005017e0, LoadSingleMaterial)
 
+// FUNCTION: CARMA2_HW 0x00501fe0
 void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile, tRendererShadingType pShading) {
     char s1[256];
     char s2[256];
 
     PossibleService();
     GetALineAndDontArgue(pFile, s1);
-    PathCat(s2, C2V(gApplication_path), "MATERIAL");
+    PathCat(s2, gApplication_path, "MATERIAL");
     PathCat(s2, s2, c2_strtok(s1, "\t ,/"));
     AddMaterials(pStorage, s2, pShading);
 }
-C2_HOOK_FUNCTION(0x00501fe0, LoadSomeMaterials)
 
+// FUNCTION: CARMA2_HW 0x0048ef40
 br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName) {
     tPath_name the_path;
 
-    PathCat(the_path, C2V(gApplication_path), "SHADETAB");
+    PathCat(the_path, gApplication_path, "SHADETAB");
     PathCat(the_path, the_path, pName);
     return BrPixelmapLoad(the_path);
 }
-C2_HOOK_FUNCTION(0x0048ef40, LoadShadeTable)
 
+// FUNCTION: CARMA2_HW 0x005016a0
 br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_space, const char* pName) {
     br_pixelmap* temp;
 
@@ -1699,7 +1845,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_sp
         break;
 
     case eStorage_duplicate:
-        if (C2V(gDisallowDuplicates)) {
+        if (gDisallowDuplicates) {
             FatalError(kFatalError_DuplicatePixelmap_S, temp->identifier);
         }
         BrPixelmapFree(temp);
@@ -1712,12 +1858,12 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_sp
 
     return NULL;
 }
-C2_HOOK_FUNCTION(0x005016a0, LoadSingleShadeTable)
 
+// FUNCTION: CARMA2_HW 0x00501260
 tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod) {
     int i;
 
-    C2V(gDuplicate_model) = NULL;
+    gDuplicate_model = NULL;
     if (pStorage_space->materials_count >= pStorage_space->max_models) {
         return eStorage_not_enough_room;
     }
@@ -1727,7 +1873,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pSto
                 && pStorage_space->models[i]->identifier != NULL
                 && pThe_mod->identifier != NULL
                 && c2_strcmp(pStorage_space->models[i]->identifier, pThe_mod->identifier) == 0) {
-                C2V(gDuplicate_model) = pStorage_space->models[i];
+                gDuplicate_model = pStorage_space->models[i];
                 return eStorage_duplicate;
             }
         }
@@ -1736,8 +1882,8 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pSto
     pStorage_space->models_count++;
     return eStorage_allocated;
 }
-C2_HOOK_FUNCTION(0x00501260, AddModelToStorage)
 
+// FUNCTION: CARMA2_HW 0x00501e40
 int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath) {
     int i;
     int new_ones;
@@ -1759,7 +1905,7 @@ int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPa
             FatalError(kFatalError_InsufficientModelSlots);
             break;
         case eStorage_duplicate:
-            if (C2V(gDisallowDuplicates)) {
+            if (gDisallowDuplicates) {
                 FatalError(kFatalError_DuplicateModel_S, temp_array[i]->identifier);
             }
             BrModelFree(temp_array[i]);
@@ -1774,25 +1920,25 @@ int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPa
 
     return new_ones;
 }
-C2_HOOK_FUNCTION(0x00501e40, AddModels)
 
+// FUNCTION: CARMA2_HW 0x00502b20
 void C2_HOOK_FASTCALL LoadIfItsAMode(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
     if (c2_strstr(s, ".DAT") != NULL) {
-        AddModels(C2V(gStorageForCallbacks), pPath);
+        AddModels(gStorageForCallbacks, pPath);
     }
 }
-C2_HOOK_FUNCTION(0x00502b20, LoadIfItsAMode)
 
+// FUNCTION: CARMA2_HW 0x00502b00
 void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath) {
 
-    C2V(gStorageForCallbacks) = pStorage;
+    gStorageForCallbacks = pStorage;
     PFForEveryFile(pPath, LoadIfItsAMode);
 }
-C2_HOOK_FUNCTION(0x00502b00, LoadAllModelsInDirectory)
 
+// FUNCTION: CARMA2_HW 0x00502cf0
 void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
     LoadAllShadeTablesInDirectory(pStorage, pPath);
@@ -1801,18 +1947,18 @@ void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const 
     LoadAllMaterialsInDirectory(pStorage, pPath, pShading);
     LoadAllModelsInDirectory(pStorage, pPath);
 }
-C2_HOOK_FUNCTION(0x00502cf0, LoadAllStuffInDirectory)
 
+// FUNCTION: CARMA2_HW 0x00502d60
 void C2_HOOK_FASTCALL DisallowDuplicates(void) {
 }
-C2_HOOK_FUNCTION(0x00502d60, DisallowDuplicates)
 
+// FUNCTION: CARMA2_HW 0x00502d70
 void C2_HOOK_FASTCALL AllowDuplicates(void) {
 
-    C2V(gDisallowDuplicates) = 0;
+    gDisallowDuplicates = 0;
 }
-C2_HOOK_FUNCTION(0x00502d70, AllowDuplicates);
 
+// FUNCTION: CARMA2_HW 0x00502d80
 br_pixelmap* C2_HOOK_FASTCALL SwapPixelmapInStorage(br_pixelmap* pNew, br_pixelmap* pOriginal, tBrender_storage* pStorage) {
     int i;
 
@@ -1827,8 +1973,8 @@ br_pixelmap* C2_HOOK_FASTCALL SwapPixelmapInStorage(br_pixelmap* pNew, br_pixelm
     }
     PDFatalError("Can't swap in pixelmap");
 }
-C2_HOOK_FUNCTION(0x00502d80, SwapPixelmapInStorage)
 
+// FUNCTION: CARMA2_HW 0x004475c0
 int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
     int x;
     int y;
@@ -1851,8 +1997,8 @@ int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004475c0, DRPixelmapHasZeros)
 
+// FUNCTION: CARMA2_HW 0x004479c0
 int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixelmap* pMap) {
     int i;
 
@@ -1864,7 +2010,6 @@ int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixe
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004479c0, StorageContainsPixelmap)
 
 void C2_HOOK_FASTCALL HideStoredTextures(tBrender_storage* pStorage) {
     int i;
@@ -1934,12 +2079,8 @@ void C2_HOOK_FASTCALL RevealStoredTextures(tBrender_storage* pStorage) {
     }
 }
 
-void (C2_HOOK_FASTCALL * SetCarStorageTexturingLevel_original)(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
+// FUNCTION: CARMA2_HW 0x00447350
 void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    SetCarStorageTexturingLevel_original(pStorage, pNew, pOld);
-#else
     switch (pNew) {
     case eCTL_none:
         HideStoredTextures(pStorage);
@@ -1962,15 +2103,14 @@ void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tC
     default:
         break;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00447350, SetCarStorageTexturingLevel, SetCarStorageTexturingLevel_original)
 
+// FUNCTION: CARMA2_HW 0x00474880
 void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
-    C2V(gSight_distance_squared) = pYon * 1.02f * pYon * 1.02f;
+    gSight_distance_squared = pYon * 1.02f * pYon * 1.02f;
 }
-C2_HOOK_FUNCTION(0x00474880, SetSightDistance)
 
+// FUNCTION: CARMA2_HW 0x004761e0
 br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat, void* pData) {
     int i;
     tFunkotronic_spec* the_funk = pData;
@@ -1990,8 +2130,8 @@ br_uint_32 C2_HOOK_FASTCALL CalcProximities(br_actor* pActor, br_material* pMat,
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x004761e0, CalcProximities)
 
+// FUNCTION: CARMA2_HW 0x00476230
 br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, void* pData) {
     tFunkotronic_spec* the_funk = pData;
 
@@ -2006,7 +2146,7 @@ br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, 
                     BrVector3Copy(
                         &the_funk->proximity_array[the_funk->proximity_count].v[j],
                         &pActor->model->vertices[the_face->vertices[j]].p);
-                    C2V(gFunk_temp_vertices)[the_funk->proximity_count].vertices[j] = &pActor->model->vertices[the_face->vertices[j]];
+                    gFunk_temp_vertices[the_funk->proximity_count].vertices[j] = &pActor->model->vertices[the_face->vertices[j]];
                 }
                 BrVector3Normalise(&the_funk->proximity_array[the_funk->proximity_count].n, &the_face->n);
                 the_funk->proximity_array[the_funk->proximity_count].d = -the_face->d;
@@ -2016,17 +2156,16 @@ br_uint_32 C2_HOOK_FASTCALL AddProximities(br_actor* pActor, br_material* pMat, 
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00476230, AddProximities)
 
 void C2_HOOK_FASTCALL ShiftBoundGrooveFunks(char* pStart, char* pEnd, ptrdiff_t pDelta) {
     int i;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gGroove_funk_bindings)) != 1440);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gGroove_funk_bindings) != 1440);
     C2_HOOK_BUG_ON(sizeof(tGroove_funk_binding) != 0x8);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gGroove_funk_bindings)); i++) {
-        if (pStart <= (char*)C2V(gGroove_funk_bindings)[i].v && (char*)C2V(gGroove_funk_bindings)[i].v < pEnd) {
-            C2V(gGroove_funk_bindings)[i].v = (float*)((char*)C2V(gGroove_funk_bindings)[i].v + (pDelta & ~(sizeof(void*) - 1)));
+    for (i = 0; i < REC2_ASIZE(gGroove_funk_bindings); i++) {
+        if (pStart <= (char*)gGroove_funk_bindings[i].v && (char*)gGroove_funk_bindings[i].v < pEnd) {
+            gGroove_funk_bindings[i].v = (float*)((char*)gGroove_funk_bindings[i].v + (pDelta & ~(sizeof(void*) - 1)));
         }
     }
 }
@@ -2039,27 +2178,27 @@ tFunkotronic_spec* C2_HOOK_FASTCALL AddNewFunkotronic(void) {
     C2_HOOK_BUG_ON(sizeof(tFunk_proximity) != 0x34);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, owner, 0x0);
 
-    for (i = 0; i < C2V(gFunkotronics_array_size); i++) {
-        if (C2V(gFunkotronics_array)[i].owner == -999) {
-            c2_memset(&C2V(gFunkotronics_array)[i], 0, sizeof(tFunkotronic_spec));
-            return &C2V(gFunkotronics_array)[i];
+    for (i = 0; i < gFunkotronics_array_size; i++) {
+        if (gFunkotronics_array[i].owner == -999) {
+            c2_memset(&gFunkotronics_array[i], 0, sizeof(tFunkotronic_spec));
+            return &gFunkotronics_array[i];
         }
     }
-    C2V(gFunkotronics_array_size) += 16;
-    new_array = BrMemCalloc(C2V(gFunkotronics_array_size), sizeof(tFunkotronic_spec), kMem_funk_spec);
-    if (C2V(gFunkotronics_array) != NULL) {
-        c2_memcpy(new_array, C2V(gFunkotronics_array), (C2V(gFunkotronics_array_size) - 16) * sizeof(tFunkotronic_spec));
+    gFunkotronics_array_size += 16;
+    new_array = BrMemCalloc(gFunkotronics_array_size, sizeof(tFunkotronic_spec), kMem_funk_spec);
+    if (gFunkotronics_array != NULL) {
+        c2_memcpy(new_array, gFunkotronics_array, (gFunkotronics_array_size - 16) * sizeof(tFunkotronic_spec));
         ShiftBoundGrooveFunks(
-                (char*)C2V(gFunkotronics_array),
-                (char*)&C2V(gFunkotronics_array)[C2V(gFunkotronics_array_size) - 16],
-                (char*)new_array - (char*)C2V(gFunkotronics_array));
-        BrMemFree(C2V(gFunkotronics_array));
+                (char*)gFunkotronics_array,
+                (char*)&gFunkotronics_array[gFunkotronics_array_size - 16],
+                (char*)new_array - (char*)gFunkotronics_array);
+        BrMemFree(gFunkotronics_array);
     }
-    C2V(gFunkotronics_array) = new_array;
+    gFunkotronics_array = new_array;
     for (i = 0; i < 16; i++) {
-        C2V(gFunkotronics_array)[C2V(gFunkotronics_array_size) - 16 + i].owner = -999;
+        gFunkotronics_array[gFunkotronics_array_size - 16 + i].owner = -999;
     }
-    return &C2V(gFunkotronics_array)[C2V(gFunkotronics_array_size) - 16];
+    return &gFunkotronics_array[gFunkotronics_array_size - 16];
 }
 
 br_material* C2_HOOK_FASTCALL TryThisFunkLink(tCar_crush_buffer_entry* pFunk_link, const char* pStr, tFunkotronic_spec* pFunk) {
@@ -2075,7 +2214,7 @@ br_material* C2_HOOK_FASTCALL TryThisFunkLink(tCar_crush_buffer_entry* pFunk_lin
     }
     for (i = 0; i < pFunk_link->count_smashables; i++) {
         if (c2_strcmp(pFunk_link->smashables[i].material_name, pStr) == 0) {
-            pFunk_link->smashables[i].funk = pFunk - C2V(gFunkotronics_array);
+            pFunk_link->smashables[i].funk = pFunk - gFunkotronics_array;
             return pFunk_link->smashables[i].funk_material;
         }
     }
@@ -2098,12 +2237,12 @@ br_material* C2_HOOK_FASTCALL FindSmashableMaterial(const char* pStr, tFunkotron
 
 void C2_HOOK_FASTCALL AddFunkGrooveBinding(int pSlot_number, float* pPeriod_address) {
 
-    if (pSlot_number < 0 || pSlot_number >= REC2_ASIZE(C2V(gGroove_funk_bindings))) {
+    if (pSlot_number < 0 || pSlot_number >= REC2_ASIZE(gGroove_funk_bindings)) {
         FatalError(kFatalError_DefinedRefNumOfControlledGoorvFunkOutOfRange);
     }
 
-    C2V(gGroove_funk_bindings)[pSlot_number].v = pPeriod_address;
-    C2V(gGroove_funk_bindings)[pSlot_number].field_0x4 = 0;
+    gGroove_funk_bindings[pSlot_number].v = pPeriod_address;
+    gGroove_funk_bindings[pSlot_number].field_0x4 = 0;
     *pPeriod_address = 0.f;
 }
 
@@ -2121,12 +2260,8 @@ static void texture_string_to_bits(tU8 *bits, const char *s) {
     }
 }
 
-void (C2_HOOK_FASTCALL * AddFunkotronics_original)(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas);
+// FUNCTION: CARMA2_HW 0x00474ac0
 void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCar_crush_buffer* pCar_crush_datas) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    AddFunkotronics_original(pF, pOwner, pRef_offset, pCar_crush_datas);
-#else
     int first_time;
     char s[256];
     tFunkotronic_spec* the_funk;
@@ -2211,7 +2346,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
     C2_HOOK_BUG_ON(sizeof(tFunk_texturebits) != 0x28);
     C2_HOOK_BUG_ON(500 * sizeof(tFunk_temp_buffer) != 24000);
 
-    C2V(gFunk_temp_vertices) = BrMemAllocate(500 * sizeof(tFunk_temp_buffer), BR_MEMORY_APPLICATION);
+    gFunk_temp_vertices = BrMemAllocate(500 * sizeof(tFunk_temp_buffer), BR_MEMORY_APPLICATION);
     first_time = 1;
     while (!PFfeof(pF)) {
         PossibleService();
@@ -2245,19 +2380,19 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             BrResFree(the_funk->material->identifier);
             the_funk->material->identifier = NULL;
         }
-        the_funk->mode = GetALineAndInterpretCommand(pF, C2V(gFunk_nature_names), REC2_ASIZE(C2V(gFunk_nature_names)));
+        the_funk->mode = GetALineAndInterpretCommand(pF, gFunk_nature_names, REC2_ASIZE(gFunk_nature_names));
         the_funk->proximity_count = 0;
         the_funk->proximity_array = NULL;
         if (the_funk->mode == eFunk_mode_distance) {
-            DRActorEnumRecurseWithMat(C2V(gUniverse_actor), NULL, CalcProximities, the_funk);
+            DRActorEnumRecurseWithMat(gUniverse_actor, NULL, CalcProximities, the_funk);
             the_funk->proximity_array = BrMemAllocate(the_funk->proximity_count * sizeof(tFunk_proximity), kMem_funk_prox_array);
             the_funk->proximity_count = 0;
-            DRActorEnumRecurseWithMat(C2V(gUniverse_actor), NULL, AddProximities, the_funk);
+            DRActorEnumRecurseWithMat(gUniverse_actor, NULL, AddProximities, the_funk);
         }
-        the_funk->matrix_mod_type = GetALineAndInterpretCommand(pF, C2V(gFunk_type_names), REC2_ASIZE(C2V(gFunk_type_names)));
+        the_funk->matrix_mod_type = GetALineAndInterpretCommand(pF, gFunk_type_names, REC2_ASIZE(gFunk_type_names));
         the_funk->flags &= ~0x1;
         if (the_funk->matrix_mod_type != eMatrix_mod_none) {
-            the_funk->matrix_mode = GetALineAndInterpretCommand(pF, C2V(gFunk_move_names), REC2_ASIZE(C2V(gFunk_move_names)));
+            the_funk->matrix_mode = GetALineAndInterpretCommand(pF, gFunk_move_names, REC2_ASIZE(gFunk_move_names));
         }
         switch (the_funk->matrix_mod_type) {
         case eMatrix_mod_spin:
@@ -2272,7 +2407,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                 GetAString(pF, s);
                 the_funk->matrix_mod_data.texture_info.data->count = (tU8)c2_strlen(s);
                 texture_string_to_bits(the_funk->matrix_mod_data.texture_info.data->bits, s);
-                the_funk->matrix_mod_data.texture_info.data->car = C2V(gCurrent_car_spec);
+                the_funk->matrix_mod_data.texture_info.data->car = gCurrent_car_spec;
                 break;
             default:
                 x_0 = GetAScalar(pF);
@@ -2292,7 +2427,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                 GetAString(pF, s);
                 the_funk->matrix_mod_data.texture_info.data->count = (tU8)c2_strlen(s);
                 texture_string_to_bits(the_funk->matrix_mod_data.texture_info.data->bits, s);
-                the_funk->matrix_mod_data.texture_info.data->car = C2V(gCurrent_car_spec);
+                the_funk->matrix_mod_data.texture_info.data->car = gCurrent_car_spec;
                 break;
             default:
                 x_0 = GetAScalar(pF);
@@ -2393,7 +2528,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
         default:
             break;
         }
-        the_funk->lighting_animation_type = GetALineAndInterpretCommand(pF, C2V(gFunk_move_names), REC2_ASIZE(C2V(gFunk_move_names)));
+        the_funk->lighting_animation_type = GetALineAndInterpretCommand(pF, gFunk_move_names, REC2_ASIZE(gFunk_move_names));
         if (the_funk->lighting_animation_type != eMove_none) {
             switch (the_funk->lighting_animation_type) {
             case eMove_controlled:
@@ -2406,7 +2541,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                 GetAString(pF, s);
                 the_funk->lighting_animation_data.texture_info.data->count = (tU8)c2_strlen(s);
                 texture_string_to_bits(the_funk->lighting_animation_data.texture_info.data->bits, s);
-                the_funk->lighting_animation_data.texture_info.data->car = C2V(gCurrent_car_spec);
+                the_funk->lighting_animation_data.texture_info.data->car = gCurrent_car_spec;
                 break;
             default:
                 x_0 = GetAFloat(pF);
@@ -2422,20 +2557,20 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             the_funk->direct_delta = (d_max - d_min) / 2.0f;
             the_funk->specular_delta = (s_max - s_min) / 2.0f;
         }
-        the_funk->texture_animation_type = GetALineAndInterpretCommand(pF, C2V(gFunk_anim_names), REC2_ASIZE(C2V(gFunk_anim_names)));
+        the_funk->texture_animation_type = GetALineAndInterpretCommand(pF, gFunk_anim_names, REC2_ASIZE(gFunk_anim_names));
         if (the_funk->texture_animation_type != eTexture_animation_none
                 && the_funk->texture_animation_type != eTexture_animation_mirror
                 && the_funk->texture_animation_type != eTexture_animation_camera) {
-            the_funk->time_mode = GetALineAndInterpretCommand(pF, C2V(gTime_mode_names), REC2_ASIZE(C2V(gTime_mode_names)));
+            the_funk->time_mode = GetALineAndInterpretCommand(pF, gTime_mode_names, REC2_ASIZE(gTime_mode_names));
         }
-        if (the_funk->texture_animation_type == eTexture_animation_flic && C2V(gAusterity_mode)) {
+        if (the_funk->texture_animation_type == eTexture_animation_flic && gAusterity_mode) {
             the_funk->texture_animation_type = eTexture_animation_none;
             GetALineAndDontArgue(pF, s);
         }
         the_funk->last_frame = 0.0f;
         switch (the_funk->texture_animation_type) {
         case eTexture_animation_frames:
-            the_funk->texture_animation_data.frames_info.mode = GetALineAndInterpretCommand(pF, C2V(gFunk_move_names), REC2_ASIZE(C2V(gFunk_move_names)));
+            the_funk->texture_animation_data.frames_info.mode = GetALineAndInterpretCommand(pF, gFunk_move_names, REC2_ASIZE(gFunk_move_names));
             switch (the_funk->texture_animation_data.frames_info.mode) {
             case eMove_controlled:
             case eMove_absolute:
@@ -2447,7 +2582,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                 GetAString(pF, s);
                 the_funk->texture_animation_data.frames_info.texture_info.data->count = (tU8)c2_strlen(s);
                 texture_string_to_bits(the_funk->texture_animation_data.frames_info.texture_info.data->bits, s);
-                the_funk->texture_animation_data.frames_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                the_funk->texture_animation_data.frames_info.texture_info.data->car = gCurrent_car_spec;
                 break;
             default:
                 x_0 = GetAFloat(pF);
@@ -2501,11 +2636,11 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                     the_funk->texture_animation_data.flic_info.flic_descriptor.height
                         * ((the_funk->texture_animation_data.flic_info.flic_descriptor.width + 3) & ~3),
                         kMem_video_pixels);
-                if (C2V(gScreen)->row_bytes < 0) {
+                if (gScreen->row_bytes < 0) {
                     BrFatal("C:\\Carma2\\Source\\Common\\Funkgroo.c", 732,
                             "Bruce bug at line %d, file C:\\Carma2\\Source\\Common\\Funkgroo.c", 732);
                 }
-                the_pixelmap = DRPixelmapAllocate(C2V(gScreen)->type,
+                the_pixelmap = DRPixelmapAllocate(gScreen->type,
                     the_funk->texture_animation_data.flic_info.flic_descriptor.width,
                     the_funk->texture_animation_data.flic_info.flic_descriptor.height,
                     the_pixels,
@@ -2519,7 +2654,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             }
             break;
         case eTexture_animation_camera:
-            the_funk->texture_animation_data.camera_info.mode = GetALineAndInterpretCommand(pF, C2V(gCamera_animation_names), REC2_ASIZE(C2V(gCamera_animation_names)));
+            the_funk->texture_animation_data.camera_info.mode = GetALineAndInterpretCommand(pF, gCamera_animation_names, REC2_ASIZE(gCamera_animation_names));
             GetPairOfFloats(pF, &yon_factor, &fov_factor);
             the_funk->texture_animation_data.camera_info.field_0x60 = GetAnInt(pF);
             the_funk->texture_animation_data.camera_info.count = GetAnInt(pF);
@@ -2535,12 +2670,12 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                 }
                 the_funk->texture_animation_data.camera_info.actors[i] = actor;
                 camera = actor->type_data;
-                global_camera = C2V(gCamera)->type_data;
+                global_camera = gCamera->type_data;
                 camera->type = BR_CAMERA_PERSPECTIVE_FOV;
                 camera->field_of_view = (br_angle)(fov_factor * global_camera->field_of_view);
                 camera->hither_z = global_camera->hither_z;
                 camera->yon_z = yon_factor * global_camera->yon_z;
-                actor = BrActorAdd(C2V(gUniverse_actor), actor);
+                actor = BrActorAdd(gUniverse_actor, actor);
                 if (actor == NULL) {
                     FatalError(kFatalError_CannotAllocateCamera);
                 }
@@ -2572,7 +2707,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                 br_vector3 n;
                 br_matrix34 mat;
 
-                global_camera = C2V(gCamera)->type_data;
+                global_camera = gCamera->type_data;
                 yon_factor = GetAScalar(pF);
                 the_funk->texture_animation_data.mirror_info.yon = yon_factor * global_camera->yon_z;
                 the_funk->texture_animation_data.mirror_info.field_0x5c = GetAnInt(pF);
@@ -2586,7 +2721,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                 camera->field_of_view = global_camera->field_of_view;
                 camera->hither_z = global_camera->hither_z;
                 camera->yon_z = global_camera->yon_z + global_camera->hither_z;
-                actor = BrActorAdd(C2V(gUniverse_actor), actor);
+                actor = BrActorAdd(gUniverse_actor, actor);
                 if (actor == NULL) {
                     FatalError(kFatalError_CannotAllocateCamera);
                 }
@@ -2615,15 +2750,15 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                     for (j = 0; j < 3; j++) {
                         int k;
 
-                        BrMatrix34ApplyP(&C2V(gFunk_temp_vertices)[i].points[j],
+                        BrMatrix34ApplyP(&gFunk_temp_vertices[i].points[j],
                             &the_funk->proximity_array[i].v[j], /* FIXME: original has &the_funk->proximity_array->v[j] */
                             &mat);
                         for (k = 0; k < 3; k++) {
-                            if (the_funk->texture_animation_data.mirror_info.bounds.min.v[k] > C2V(gFunk_temp_vertices)[i].points[j].v[k]) {
-                                the_funk->texture_animation_data.mirror_info.bounds.min.v[k] = C2V(gFunk_temp_vertices)[i].points[j].v[k];
+                            if (the_funk->texture_animation_data.mirror_info.bounds.min.v[k] > gFunk_temp_vertices[i].points[j].v[k]) {
+                                the_funk->texture_animation_data.mirror_info.bounds.min.v[k] = gFunk_temp_vertices[i].points[j].v[k];
                             }
-                            if (the_funk->texture_animation_data.mirror_info.bounds.max.v[k] < C2V(gFunk_temp_vertices)[i].points[j].v[k]) {
-                                the_funk->texture_animation_data.mirror_info.bounds.max.v[k] = C2V(gFunk_temp_vertices)[i].points[j].v[k];
+                            if (the_funk->texture_animation_data.mirror_info.bounds.max.v[k] < gFunk_temp_vertices[i].points[j].v[k]) {
+                                the_funk->texture_animation_data.mirror_info.bounds.max.v[k] = gFunk_temp_vertices[i].points[j].v[k];
                             }
                         }
                     }
@@ -2634,18 +2769,18 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
                     for (j = 0; j < 3; j++) {
                         int k;
 
-                        C2V(gFunk_temp_vertices)[i].points[j].v[0] =
-                            (C2V(gFunk_temp_vertices)[i].points[j].v[0] - the_funk->texture_animation_data.mirror_info.bounds.min.v[0])
+                        gFunk_temp_vertices[i].points[j].v[0] =
+                            (gFunk_temp_vertices[i].points[j].v[0] - the_funk->texture_animation_data.mirror_info.bounds.min.v[0])
                                 / (the_funk->texture_animation_data.mirror_info.bounds.max.v[0] - the_funk->texture_animation_data.mirror_info.bounds.min.v[0]);
-                        C2V(gFunk_temp_vertices)[i].points[j].v[1] =
-                            (C2V(gFunk_temp_vertices)[i].points[j].v[2] - the_funk->texture_animation_data.mirror_info.bounds.min.v[2])
+                        gFunk_temp_vertices[i].points[j].v[1] =
+                            (gFunk_temp_vertices[i].points[j].v[2] - the_funk->texture_animation_data.mirror_info.bounds.min.v[2])
                                 / (the_funk->texture_animation_data.mirror_info.bounds.max.v[2] - the_funk->texture_animation_data.mirror_info.bounds.min.v[2]);
                         for (k = 0; k < 3; k++) {
-                            if (the_funk->texture_animation_data.mirror_info.bounds.min.v[k] > C2V(gFunk_temp_vertices)[i].points[j].v[k]) {
-                                the_funk->texture_animation_data.mirror_info.bounds.min.v[k] = C2V(gFunk_temp_vertices)[i].points[j].v[k];
+                            if (the_funk->texture_animation_data.mirror_info.bounds.min.v[k] > gFunk_temp_vertices[i].points[j].v[k]) {
+                                the_funk->texture_animation_data.mirror_info.bounds.min.v[k] = gFunk_temp_vertices[i].points[j].v[k];
                             }
-                            if (the_funk->texture_animation_data.mirror_info.bounds.max.v[k] < C2V(gFunk_temp_vertices)[i].points[j].v[k]) {
-                                the_funk->texture_animation_data.mirror_info.bounds.max.v[k] = C2V(gFunk_temp_vertices)[i].points[j].v[k];
+                            if (the_funk->texture_animation_data.mirror_info.bounds.max.v[k] < gFunk_temp_vertices[i].points[j].v[k]) {
+                                the_funk->texture_animation_data.mirror_info.bounds.max.v[k] = gFunk_temp_vertices[i].points[j].v[k];
                             }
                         }
                     }
@@ -2656,24 +2791,18 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             break;
         }
     }
-    BrMemFree(C2V(gFunk_temp_vertices));
-#endif
+    BrMemFree(gFunk_temp_vertices);
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00474ac0, AddFunkotronics, AddFunkotronics_original)
 
-void (C2_HOOK_FASTCALL * DisposeFunkotronics_original)(int pOwner);
+// FUNCTION: CARMA2_HW 0x00474950
 void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    DisposeFunkotronics_original(pOwner);
-#else
     int i;
 
-    if (C2V(gFunkotronics_array) == NULL) {
+    if (gFunkotronics_array == NULL) {
         return;
     }
-    for (i = 0; i < C2V(gFunkotronics_array_size); i++) {
-        tFunkotronic_spec* the_funk = &C2V(gFunkotronics_array)[i];
+    for (i = 0; i < gFunkotronics_array_size; i++) {
+        tFunkotronic_spec* the_funk = &gFunkotronics_array[i];
 
         PossibleService();
         if (the_funk->owner == pOwner) {
@@ -2711,9 +2840,7 @@ void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
             }
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00474950, DisposeFunkotronics, DisposeFunkotronics_original)
 
 tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void) {
     void* new_array;
@@ -2721,35 +2848,31 @@ tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void) {
 
     C2_HOOK_BUG_ON(sizeof(tGroovidelic_spec) != 0x84);
 
-    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
-        if (C2V(gGroovidelics_array)[i].owner == -999) {
-            c2_memset(&C2V(gGroovidelics_array)[i], 0, sizeof(tGroovidelic_spec));
-            return &C2V(gGroovidelics_array)[i];
+    for (i = 0; i < gGroovidelics_array_size; i++) {
+        if (gGroovidelics_array[i].owner == -999) {
+            c2_memset(&gGroovidelics_array[i], 0, sizeof(tGroovidelic_spec));
+            return &gGroovidelics_array[i];
         }
     }
-    C2V(gGroovidelics_array_size) += 16;
-    new_array = BrMemCalloc(C2V(gGroovidelics_array_size), sizeof(tGroovidelic_spec), kMem_groove_spec);
-    if (C2V(gGroovidelics_array) != NULL) {
-        c2_memcpy(new_array, C2V(gGroovidelics_array), (C2V(gGroovidelics_array_size) - 16) * sizeof(tGroovidelic_spec));
+    gGroovidelics_array_size += 16;
+    new_array = BrMemCalloc(gGroovidelics_array_size, sizeof(tGroovidelic_spec), kMem_groove_spec);
+    if (gGroovidelics_array != NULL) {
+        c2_memcpy(new_array, gGroovidelics_array, (gGroovidelics_array_size - 16) * sizeof(tGroovidelic_spec));
         ShiftBoundGrooveFunks(
-                (char*)C2V(gGroovidelics_array),
-                (char*)&C2V(gGroovidelics_array)[C2V(gGroovidelics_array_size) - 16],
-                (char*)new_array - (char*)C2V(gGroovidelics_array));
-        BrMemFree(C2V(gGroovidelics_array));
+                (char*)gGroovidelics_array,
+                (char*)&gGroovidelics_array[gGroovidelics_array_size - 16],
+                (char*)new_array - (char*)gGroovidelics_array);
+        BrMemFree(gGroovidelics_array);
     }
-    C2V(gGroovidelics_array) = new_array;
+    gGroovidelics_array = new_array;
     for (i = 0; i < 16; i++) {
-        C2V(gGroovidelics_array)[i + C2V(gGroovidelics_array_size) - 16].owner = -999;
+        gGroovidelics_array[i + gGroovidelics_array_size - 16].owner = -999;
     }
-    return &C2V(gGroovidelics_array)[C2V(gGroovidelics_array_size) - 16];
+    return &gGroovidelics_array[gGroovidelics_array_size - 16];
 }
 
-void (C2_HOOK_FASTCALL * AddGroovidelics_original)(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent);
+// FUNCTION: CARMA2_HW 0x00476470
 void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_actor, int pRef_offset, int pAllowed_to_be_absent) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    AddGroovidelics_original(pF, pOwner, pParent_actor, pRef_offset, pAllowed_to_be_absent);
-#else
     int first_time;
     char s[256];
     char* str;
@@ -2830,24 +2953,24 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
         the_groove->actor = DRActorFindRecurse(pParent_actor, str);
 
         if (the_groove->actor == NULL) {
-            if (!pAllowed_to_be_absent && !C2V(gAusterity_mode)) {
+            if (!pAllowed_to_be_absent && !gAusterity_mode) {
                 FatalError(kFatalError_CannotFindActorReferencedInGroovidelicFile_S, str);
             }
-            if (C2V(gGroove_by_proxy_actor) == NULL) {
-                C2V(gGroove_by_proxy_actor) = BrActorAllocate(BR_ACTOR_MODEL, NULL);
-                C2V(gGroove_by_proxy_actor)->model = LoadModel("PROXY.DAT");
-                BrModelAdd(C2V(gGroove_by_proxy_actor)->model);
-                BrActorAdd(C2V(gDont_render_actor), C2V(gGroove_by_proxy_actor));
+            if (gGroove_by_proxy_actor == NULL) {
+                gGroove_by_proxy_actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+                gGroove_by_proxy_actor->model = LoadModel("PROXY.DAT");
+                BrModelAdd(gGroove_by_proxy_actor->model);
+                BrActorAdd(gDont_render_actor, gGroove_by_proxy_actor);
             }
-            the_groove->actor = C2V(gGroove_by_proxy_actor);
+            the_groove->actor = gGroove_by_proxy_actor;
         }
-        the_groove->lollipop_mode = GetALineAndInterpretCommand(pF, C2V(gLollipop_names), REC2_ASIZE(C2V(gLollipop_names)));
-        the_groove->mode = GetALineAndInterpretCommand(pF, C2V(gGroove_nature_names), REC2_ASIZE(C2V(gGroove_nature_names)));
-        the_groove->path_type = GetALineAndInterpretCommand(pF, C2V(gGroove_path_names), REC2_ASIZE(C2V(gGroove_path_names)));
+        the_groove->lollipop_mode = GetALineAndInterpretCommand(pF, gLollipop_names, REC2_ASIZE(gLollipop_names));
+        the_groove->mode = GetALineAndInterpretCommand(pF, gGroove_nature_names, REC2_ASIZE(gGroove_nature_names));
+        the_groove->path_type = GetALineAndInterpretCommand(pF, gGroove_path_names, REC2_ASIZE(gGroove_path_names));
         the_groove->path_interrupt_status = eInterrupt_none;
         the_groove->object_interrupt_status = eInterrupt_none;
         if (the_groove->path_type != eGroove_path_none) {
-            the_groove->path_mode = GetALineAndInterpretCommand(pF, C2V(gFunk_move_names), REC2_ASIZE(C2V(gFunk_move_names)));
+            the_groove->path_mode = GetALineAndInterpretCommand(pF, gFunk_move_names, REC2_ASIZE(gFunk_move_names));
         }
         switch (the_groove->path_type) {
         case eGroove_path_straight:
@@ -2870,7 +2993,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 GetAString(pF, s);
                 the_groove->path_data.straight_info.texture_info.data->count = (tU8)c2_strlen(s);
                 texture_string_to_bits(the_groove->path_data.straight_info.texture_info.data->bits, s);
-                the_groove->path_data.straight_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                the_groove->path_data.straight_info.texture_info.data->car = gCurrent_car_spec;
                 break;
             default:
                 x_0 = GetAFloat(pF);
@@ -2899,7 +3022,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 GetAString(pF, s);
                 the_groove->path_data.circular_info.texture_info.data->count = (tU8)c2_strlen(s);
                 texture_string_to_bits(the_groove->path_data.circular_info.texture_info.data->bits, s);
-                the_groove->path_data.circular_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                the_groove->path_data.circular_info.texture_info.data->car = gCurrent_car_spec;
                 break;
             default:
                 x_0 = GetAFloat(pF);
@@ -2907,16 +3030,16 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 break;
             }
             the_groove->path_data.circular_info.radius = GetAFloat(pF);
-            the_groove->path_data.circular_info.axis =  GetALineAndInterpretCommand(pF, C2V(gAxis_names), REC2_ASIZE(C2V(gAxis_names)));
+            the_groove->path_data.circular_info.axis =  GetALineAndInterpretCommand(pF, gAxis_names, REC2_ASIZE(gAxis_names));
             break;
         default:
             break;
         }
 
-        the_groove->object_type = GetALineAndInterpretCommand(pF, C2V(gGroove_object_names), REC2_ASIZE(C2V(gGroove_object_names)));
+        the_groove->object_type = GetALineAndInterpretCommand(pF, gGroove_object_names, REC2_ASIZE(gGroove_object_names));
         BrVector3Copy(&the_groove->object_position, &the_groove->actor->t.t.translate.t);
         if (the_groove->object_type != eGroove_object_none) {
-            the_groove->object_mode = GetALineAndInterpretCommand(pF, C2V(gFunk_move_names), REC2_ASIZE(C2V(gFunk_move_names)));
+            the_groove->object_mode = GetALineAndInterpretCommand(pF, gFunk_move_names, REC2_ASIZE(gFunk_move_names));
         }
         switch (the_groove->object_type) {
         case eGroove_object_spin:
@@ -2930,7 +3053,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 GetAString(pF, s);
                 the_groove->object_data.spin_info.texture_info.data->count = (tU8)c2_strlen(s);
                 texture_string_to_bits(the_groove->object_data.spin_info.texture_info.data->bits, s);
-                the_groove->object_data.spin_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                the_groove->object_data.spin_info.texture_info.data->car = gCurrent_car_spec;
                 break;
             default:
                 x_0 = GetAFloat(pF);
@@ -2940,7 +3063,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 &the_groove->object_centre.v[0],
                 &the_groove->object_centre.v[1],
                 &the_groove->object_centre.v[2]);
-            the_groove->object_data.spin_info.axis = GetALineAndInterpretCommand(pF, C2V(gAxis_names), REC2_ASIZE(C2V(gAxis_names)));
+            the_groove->object_data.spin_info.axis = GetALineAndInterpretCommand(pF, gAxis_names, REC2_ASIZE(gAxis_names));
             break;
         case eGroove_object_rock:
             switch (the_groove->object_mode) {
@@ -2953,7 +3076,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 GetAString(pF, s);
                 the_groove->object_data.rock_info.texture_info.data->count = (tU8)c2_strlen(s);
                 texture_string_to_bits(the_groove->object_data.rock_info.texture_info.data->bits, s);
-                the_groove->object_data.rock_info.texture_info.data->car = C2V(gCurrent_car_spec);
+                the_groove->object_data.rock_info.texture_info.data->car = gCurrent_car_spec;
                 break;
             default:
                 x_0 = GetAFloat(pF);
@@ -2963,7 +3086,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
                 &the_groove->object_centre.v[0],
                 &the_groove->object_centre.v[1],
                 &the_groove->object_centre.v[2]);
-            the_groove->object_data.rock_info.axis = GetALineAndInterpretCommand(pF, C2V(gAxis_names), REC2_ASIZE(C2V(gAxis_names)));
+            the_groove->object_data.rock_info.axis = GetALineAndInterpretCommand(pF, gAxis_names, REC2_ASIZE(gAxis_names));
             the_groove->object_data.rock_info.max_angle = GetAFloat(pF);
             break;
         case eGroove_object_throb:
@@ -3031,62 +3154,54 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
             break;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00476470, AddGroovidelics, AddGroovidelics_original);
 
-void (C2_HOOK_FASTCALL * DisposeGroovidelics_original)(int pOwner);
+// FUNCTION: CARMA2_HW 0x00476430
 void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    DisposeGroovidelics_original(pOwner);
-#else
     int i;
 
-    if (C2V(gGroovidelics_array) == NULL) {
+    if (gGroovidelics_array == NULL) {
         return;
     }
-    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
-        tGroovidelic_spec* the_groove = &C2V(gGroovidelics_array)[i];
+    for (i = 0; i < gGroovidelics_array_size; i++) {
+        tGroovidelic_spec* the_groove = &gGroovidelics_array[i];
 
         PossibleService();
         if (the_groove->owner == pOwner) {
             the_groove->owner = -999;
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00476430, DisposeGroovidelics, DisposeGroovidelics_original)
 
+// FUNCTION: CARMA2_HW 0x004ff110
 tSpecial_volume* C2_HOOK_FASTCALL GetDefaultSpecialVolumeForWater(void) {
 
-    return C2V(gDefault_water_spec_vol_real);
+    return gDefault_water_spec_vol_real;
 }
-C2_HOOK_FUNCTION(0x004ff110, GetDefaultSpecialVolumeForWater)
 
+// FUNCTION: CARMA2_HW 0x00486dc0
 void C2_HOOK_FASTCALL ReadGlobalLightingInfo(FILE* pF) {
 
     /* //////////// GLOBAL LIGHTING DATA /////////// */
 
     /* RGB for main directional light-source */
-    GetThreeInts(pF, &C2V(gLighting_data).directional.red, &C2V(gLighting_data).directional.green, &C2V(gLighting_data).directional.blue);
+    GetThreeInts(pF, &gLighting_data.directional.red, &gLighting_data.directional.green, &gLighting_data.directional.blue);
     /* Ambient/Diffuse light to be used when plaything ambient says 0 */
-    GetPairOfScalars(pF, &C2V(gLighting_data).ambient_0, &C2V(gLighting_data).diffuse_0);
+    GetPairOfScalars(pF, &gLighting_data.ambient_0, &gLighting_data.diffuse_0);
     /* Ambient/Diffuse light to be used when plaything ambient says 1 */
-    GetPairOfScalars(pF, &C2V(gLighting_data).ambient_1, &C2V(gLighting_data).diffuse_1);
+    GetPairOfScalars(pF, &gLighting_data.ambient_1, &gLighting_data.diffuse_1);
     /* Ambient/Diffuse light to be used when plaything ambient says anything else */
-    GetPairOfScalars(pF, &C2V(gLighting_data).ambient_else, &C2V(gLighting_data).diffuse_else);
+    GetPairOfScalars(pF, &gLighting_data.ambient_else, &gLighting_data.diffuse_else);
 }
-C2_HOOK_FUNCTION(0x00486dc0, ReadGlobalLightingInfo)
 
 void C2_HOOK_FASTCALL InitRepairAnimations(void) {
     int i;
 
     C2_HOOK_BUG_ON(sizeof(tRepair_animation) != 0xc);
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gRepair_animations)) != 25);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gRepair_animations) != 25);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gRepair_animations)); i++) {
-        C2V(gRepair_animations)[i].field_0x0 = 0;
+    for (i = 0; i < REC2_ASIZE(gRepair_animations); i++) {
+        gRepair_animations[i].field_0x0 = 0;
     }
 }
 
@@ -3141,7 +3256,7 @@ void C2_HOOK_FASTCALL ReadSmashTexture(tSmashable_item_spec* pSmash_item, tSmash
         &pTexture_change->levels,
         &pTexture_change->count_levels,
         pSmash_item->mode == kSmashableMode_TextureChange,
-        &C2V(gTrack_storage_space));
+        &gTrack_storage_space);
 }
 
 void C2_HOOK_FASTCALL ReadSmashSounds(FILE* pF, tConnotations* pConnotations, tBrender_storage* pStorage) {
@@ -3209,35 +3324,31 @@ void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, t
     ReadVariableChanges(pF, &pConnotations->variable_changes);
 }
 
-void (C2_HOOK_FASTCALL * LoadSmashableTrackEnvironment_original)(FILE* pF, const char* pPath);
+// FUNCTION: CARMA2_HW 0x004f0450
 void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    LoadSmashableTrackEnvironment_original(pF, pPath);
-#else
     int i;
     char s[256];
 
-    C2V(gCount_smashable_noncars) = 0;
-    C2V(gCount_smashable_noncar_shrapnel_actors) = 0;
-    C2V(gSmashable_noncars) = BrMemAllocate(100 * sizeof(tSmashable_environment_name), kMem_smashable_env_info);
+    gCount_smashable_noncars = 0;
+    gCount_smashable_noncar_shrapnel_actors = 0;
+    gSmashable_noncars = BrMemAllocate(100 * sizeof(tSmashable_environment_name), kMem_smashable_env_info);
     C2_HOOK_BUG_ON(100 * sizeof(tSmashable_environment_name) != 3200);
 
     /* Number of smash specs */
-    C2V(gCount_track_smashable_environment_specs) = GetAnInt(pF);
+    gCount_track_smashable_environment_specs = GetAnInt(pF);
 
-    C2V(gCapacity_track_smashables) = 5 * (C2V(gCount_track_smashable_environment_specs) + 30);
-    C2V(gCount_track_smashable_environment_specs_2) = C2V(gCount_track_smashable_environment_specs);
-    C2V(gTrack_smashable_environment_specs) = BrMemAllocate(C2V(gCapacity_track_smashables) * sizeof(tSmashable_item_spec), kMem_smashable_env_info);
+    gCapacity_track_smashables = 5 * (gCount_track_smashable_environment_specs + 30);
+    gCount_track_smashable_environment_specs_2 = gCount_track_smashable_environment_specs;
+    gTrack_smashable_environment_specs = BrMemAllocate(gCapacity_track_smashables * sizeof(tSmashable_item_spec), kMem_smashable_env_info);
     C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 736);
 
-    C2V(gSmashable_track_environment_path) = pPath;
+    gSmashable_track_environment_path = pPath;
 
-    c2_memset(C2V(gSmashable_track_indexable_triggers), 0, sizeof(C2V(gSmashable_track_indexable_triggers)));
-    C2_HOOK_BUG_ON(sizeof(C2V(gSmashable_track_indexable_triggers)) != 400);
+    c2_memset(gSmashable_track_indexable_triggers, 0, sizeof(gSmashable_track_indexable_triggers));
+    C2_HOOK_BUG_ON(sizeof(gSmashable_track_indexable_triggers) != 400);
 
-    for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
-        tSmashable_item_spec* spec = &C2V(gTrack_smashable_environment_specs)[i];
+    for (i = 0; i < gCount_track_smashable_environment_specs; i++) {
+        tSmashable_item_spec* spec = &gTrack_smashable_environment_specs[i];
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, flags, 0x0);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, field_0x10, 0x10);
@@ -3278,12 +3389,12 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
         case kSmashableTrigger_Number:
             spec->trigger_object.number.field_0x0 = (s[1] + 24) * 10 + s[2]; /* FIXME: why 24? (-'0' == -48) */
             spec->trigger_object.number.field_0x1 = GetAnInt(pF);
-            C2V(gSmashable_track_indexable_triggers)[spec->trigger_object.number.field_0x0] = spec;
+            gSmashable_track_indexable_triggers[spec->trigger_object.number.field_0x0] = spec;
             break;
         }
 
         /* Mode */
-        spec->mode = GetALineAndInterpretCommand(pF, C2V(gSmashable_item_mode_names), REC2_ASIZE(C2V(gSmashable_item_mode_names)));
+        spec->mode = GetALineAndInterpretCommand(pF, gSmashable_item_mode_names, REC2_ASIZE(gSmashable_item_mode_names));
         switch (spec->mode) {
         case kSmashableMode_Decal:
         case kSmashableMode_TextureChange:
@@ -3293,7 +3404,7 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
         default:
             /* Removal threshold */
             spec->mode_data.shrapnel.removal_threshold = GetAScalar(pF);
-            ReadConnotations(pF, &spec->mode_data.shrapnel.connotations, &C2V(gTrack_storage_space));
+            ReadConnotations(pF, &spec->mode_data.shrapnel.connotations, &gTrack_storage_space);
             break;
         }
         if (spec->mode == kSmashableMode_ReplaceModel) {
@@ -3311,140 +3422,112 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
         spec->field_0x2d8 = 0;
         spec->field_0x2dc = 0;
     }
-    for (i = C2V(gCount_track_smashable_environment_specs); i < C2V(gCapacity_track_smashables); i++) {
-        tSmashable_item_spec* spec = &C2V(gTrack_smashable_environment_specs)[i];
+    for (i = gCount_track_smashable_environment_specs; i < gCapacity_track_smashables; i++) {
+        tSmashable_item_spec* spec = &gTrack_smashable_environment_specs[i];
 
         spec->trigger_type = -1;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f0450, ReadSmashableEnvironment, LoadSmashableTrackEnvironment_original)
 
-int (C2_HOOK_FASTCALL * SmashFaceMustBeUpdateable_original)(br_material *pMaterial);
+// FUNCTION: CARMA2_HW 0x004f5470
 int C2_HOOK_FASTCALL SmashFaceMustBeUpdateable(br_material *pMaterial) {
     int i;
 
-    for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
-        tSmashable_item_spec *spec = &C2V(gTrack_smashable_environment_specs)[i];
+    for (i = 0; i < gCount_track_smashable_environment_specs; i++) {
+        tSmashable_item_spec *spec = &gTrack_smashable_environment_specs[i];
 
         if ((spec->trigger_type == kSmashableTrigger_Material && spec->trigger_object.material == pMaterial)
                 && ((spec->mode == kSmashableMode_TextureChange && spec->mode_data.texture_change.count_levels > 0)
                 || spec->mode == kSmashableMode_Remove
                 || spec->mode == kSmashableMode_ReplaceModel)) {
-#if defined(C2_HOOKS_ENABLED)
             C2_HOOK_ASSERT(SmashFaceMustBeUpdateable_original(pMaterial) == 1);
-#endif
             return 1;
         }
     }
-#if defined(C2_HOOKS_ENABLED)
     C2_HOOK_ASSERT(SmashFaceMustBeUpdateable_original(pMaterial) == 0);
-#endif
     return 0;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f5470, SmashFaceMustBeUpdateable, SmashFaceMustBeUpdateable_original)
 
-void (C2_HOOK_FASTCALL * FreeEnvSmash_original)(tSmashable_item_spec* pSmash);
+// FUNCTION: CARMA2_HW 0x004f09c0
 void C2_HOOK_FASTCALL FreeEnvSmash(tSmashable_item_spec* pSmash) {
 
-#if defined(C2_HOOKS_ENABLED)
-    FreeEnvSmash_original(pSmash);
-#else
     NOT_IMPLEMENTED();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f09c0, FreeEnvSmash, FreeEnvSmash_original)
 
-void (C2_HOOK_FASTCALL * DisposeSmashableEnvironment_original)(void);
+// FUNCTION: CARMA2_HW 0x004f0960
 void C2_HOOK_FASTCALL DisposeSmashableEnvironment(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    DisposeSmashableEnvironment_original();
-#else
     int i;
 
-    for (i = 0; i < C2V(gCount_track_smashable_environment_specs); i++) {
-        tSmashable_item_spec* smash = &C2V(gTrack_smashable_environment_specs)[i];
+    for (i = 0; i < gCount_track_smashable_environment_specs; i++) {
+        tSmashable_item_spec* smash = &gTrack_smashable_environment_specs[i];
 
         FreeEnvSmash(smash);
     }
-    if (C2V(gCount_track_smashable_environment_specs) != 0) {
-        BrMemFree(C2V(gTrack_smashable_environment_specs));
+    if (gCount_track_smashable_environment_specs != 0) {
+        BrMemFree(gTrack_smashable_environment_specs);
     }
-    if (C2V(gNet_mode) == eNet_mode_host) {
-        BrMemFree(C2V(gNet_host_smashes));
+    if (gNet_mode == eNet_mode_host) {
+        BrMemFree(gNet_host_smashes);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f0960, DisposeSmashableEnvironment, DisposeSmashableEnvironment_original)
 
-void (C2_HOOK_FASTCALL * ReinitSmashing_original)(void);
+// FUNCTION: CARMA2_HW 0x004f5750
 void C2_HOOK_FASTCALL ReinitSmashing(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    ReinitSmashing_original();
-#else
     int i;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSmash_glass_fragments)) != 200);
-    C2_HOOK_BUG_ON(sizeof(C2V(gSmash_glass_fragments)[0]) != 0x38);
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gDecals)) != 50);
-    C2_HOOK_BUG_ON(sizeof(C2V(gDecals)[0]) != 0x8);
-    C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gQueued_net_smashes)) != 50);
-    C2_HOOK_BUG_ON(sizeof(C2V(gQueued_net_smashes)[0]) != 0x38);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gSmash_glass_fragments) != 200);
+    C2_HOOK_BUG_ON(sizeof(gSmash_glass_fragments[0]) != 0x38);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gDecals) != 50);
+    C2_HOOK_BUG_ON(sizeof(gDecals[0]) != 0x8);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gQueued_net_smashes) != 50);
+    C2_HOOK_BUG_ON(sizeof(gQueued_net_smashes[0]) != 0x38);
     C2_HOOK_BUG_ON(sizeof(tStored_smash) != 0x38);
 
-    for (i = 0; i < REC2_ASIZE(C2V(gSmash_glass_fragments)); i++) {
-        C2V(gSmash_glass_fragments)[i].end_time = 0;
+    for (i = 0; i < REC2_ASIZE(gSmash_glass_fragments); i++) {
+        gSmash_glass_fragments[i].end_time = 0;
     }
-    for (i = 0; i < REC2_ASIZE(C2V(gDecals)); i++) {
-        C2V(gDecals)[i].time = 0;
+    for (i = 0; i < REC2_ASIZE(gDecals); i++) {
+        gDecals[i].time = 0;
     }
-    for (i = 0; i < REC2_ASIZE(C2V(gQueued_net_smashes)); i++) {
-        C2V(gQueued_net_smashes)[i].field_0x4 = 0;
+    for (i = 0; i < REC2_ASIZE(gQueued_net_smashes); i++) {
+        gQueued_net_smashes[i].field_0x4 = 0;
     }
-    C2V(gSize_powerup_queue) = 0;
-    C2V(gCount_host_smashes) = 0;
-    if (C2V(gNet_mode) == eNet_mode_host) {
-        C2V(gNet_host_smashes) = BrMemAllocate(1000 * sizeof(tStored_smash), kMem_stored_smash);
+    gSize_powerup_queue = 0;
+    gCount_host_smashes = 0;
+    if (gNet_mode == eNet_mode_host) {
+        gNet_host_smashes = BrMemAllocate(1000 * sizeof(tStored_smash), kMem_stored_smash);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004f5750, ReinitSmashing, ReinitSmashing_original)
 
+// FUNCTION: CARMA2_HW 0x004f0940
 void C2_HOOK_FASTCALL DisposeSmashEnvNonCars(void) {
 
-    BrMemFree(C2V(gSmashable_noncars));
+    BrMemFree(gSmashable_noncars);
 }
-C2_HOOK_FUNCTION(0x004f0940, DisposeSmashEnvNonCars)
 
-void (C2_HOOK_FASTCALL * LoadTrackSpecialVolumes_original)(FILE* pF);
+// FUNCTION: CARMA2_HW 0x004ffd80
 void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    LoadTrackSpecialVolumes_original(pF);
-#else
-
     /* DEFAULT ENGINE NOISE */
-    C2V(gDefault_engine_noise_index) = GetAnInt(pF);
+    gDefault_engine_noise_index = GetAnInt(pF);
 
-    C2V(gDefault_water_spec_vol_real) = &C2V(gDefault_water_spec_vol);
+    gDefault_water_spec_vol_real = &gDefault_water_spec_vol;
 
     /* # special effects volumes */
-    C2V(gProgram_state).special_volume_count = GetAnInt(pF);
-    if (C2V(gProgram_state).special_volume_count != 0) {
+    gProgram_state.special_volume_count = GetAnInt(pF);
+    if (gProgram_state.special_volume_count != 0) {
         int i;
 
         C2_HOOK_BUG_ON(sizeof(tSpecial_volume) != 0xdc);
-        C2V(gProgram_state).special_volumes = BrMemAllocate(C2V(gProgram_state).special_volume_count * sizeof(tSpecial_volume), kMem_special_volume);
-        for (i = 0; i < C2V(gProgram_state).special_volume_count; i++) {
+        gProgram_state.special_volumes = BrMemAllocate(gProgram_state.special_volume_count * sizeof(tSpecial_volume), kMem_special_volume);
+        for (i = 0; i < gProgram_state.special_volume_count; i++) {
             br_bounds unit_bounds;
-            tSpecial_volume* spec = &C2V(gProgram_state).special_volumes[i];
+            tSpecial_volume* spec = &gProgram_state.special_volumes[i];
 
             PossibleService();
 
-            C2_HOOK_BUG_ON(REC2_ASIZE(C2V(gSpecial_effects_boundary_choices)) != 4);
-            spec->boundary_type = GetALineAndInterpretCommand(pF, C2V(gSpecial_effects_boundary_choices), REC2_ASIZE(C2V(gSpecial_effects_boundary_choices)));
+            C2_HOOK_BUG_ON(REC2_ASIZE(gSpecial_effects_boundary_choices) != 4);
+            spec->boundary_type = GetALineAndInterpretCommand(pF, gSpecial_effects_boundary_choices, REC2_ASIZE(gSpecial_effects_boundary_choices));
             if (spec->boundary_type == eFx_boundary_new) {
                 spec->boundary_type = eFx_boundary_box;
             }
@@ -3481,7 +3564,7 @@ void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
                 break;
             case eFx_boundary_default:
                 ParseSpecialVolume(pF, spec, NULL, 0);
-                C2V(gDefault_water_spec_vol_real) = spec;
+                gDefault_water_spec_vol_real = spec;
                 break;
             default:
                 FatalError(kFatalError_ProblemWithSpecialVolumeNumber_I, i);
@@ -3489,29 +3572,23 @@ void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
             }
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ffd80, ReadSpecialVolumes, LoadTrackSpecialVolumes_original)
 
-void (C2_HOOK_FASTCALL * LoadTrackSoundGenerators_original)(tTrack_spec* pTrack_spec, FILE* pF);
+// FUNCTION: CARMA2_HW 0x004572f0
 void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    LoadTrackSoundGenerators_original(pTrack_spec, pF);
-#else
     int i;
 
-    C2V(gProgram_state).count_track_sound_generators = GetAnInt(pF);
-    if (C2V(gProgram_state).count_track_sound_generators != 0) {
+    gProgram_state.count_track_sound_generators = GetAnInt(pF);
+    if (gProgram_state.count_track_sound_generators != 0) {
         C2_HOOK_BUG_ON(sizeof(tTrackSoundGenerator) != 0x7c);
-        C2V(gProgram_state).track_sound_generators = BrMemAllocate(C2V(gProgram_state).count_track_sound_generators * sizeof(tTrackSoundGenerator), kMem_sound_generator);
+        gProgram_state.track_sound_generators = BrMemAllocate(gProgram_state.count_track_sound_generators * sizeof(tTrackSoundGenerator), kMem_sound_generator);
     }
-    for (i = 0; i < C2V(gProgram_state).count_track_sound_generators; i++) {
+    for (i = 0; i < gProgram_state.count_track_sound_generators; i++) {
         tTrackSoundGenerator* generator;
         char name[32];
 
-        generator = &C2V(gProgram_state).track_sound_generators[i];
-        generator->type = GetALineAndInterpretCommand(pF, C2V(gSoundGeneratorTypeNames), REC2_ASIZE(C2V(gSoundGeneratorTypeNames)));
+        generator = &gProgram_state.track_sound_generators[i];
+        generator->type = GetALineAndInterpretCommand(pF, gSoundGeneratorTypeNames, REC2_ASIZE(gSoundGeneratorTypeNames));
         if (generator->type == kSoundGeneratorType_noncar) {
             char identifier[4];
             br_model* model;
@@ -3546,10 +3623,9 @@ void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
             ReadSoundSpec(pF, &generator->fx2_noncar);
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004572f0, ReadSoundGenerators, LoadTrackSoundGenerators_original)
 
+// FUNCTION: CARMA2_HW 0x00502210
 void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
 
     BrResFree(pM->faces);
@@ -3559,7 +3635,6 @@ void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
     pM->faces = NULL;
     pM->vertices = NULL;
 }
-C2_HOOK_FUNCTION(0x00502210, DodgyModelUpdate)
 
 void C2_HOOK_FASTCALL AddExceptionToList(tMaterial_exception** pList, tMaterial_exception* pItem) {
 
@@ -3617,7 +3692,7 @@ void C2_HOOK_FASTCALL LoadExceptionsFile(const char* pPath) {
                 FatalError(kFatalError_Mysterious_SS, str, pPath);
             }
         }
-        AddExceptionToList(&C2V(gMaterial_exceptions), matexc);
+        AddExceptionToList(&gMaterial_exceptions, matexc);
     }
     PFfclose(f);
 }
@@ -3626,8 +3701,8 @@ void C2_HOOK_FASTCALL LoadExceptionsFileForTrack(const char* pTrack_name) {
     tPath_name path;
 
     c2_sprintf(path, "%s%s%s%s",
-               pTrack_name, C2V(gDir_separator),
-               C2V(gRenderer_fixup_basename), C2V(gRenderer_fixup_extension));
+               pTrack_name, gDir_separator,
+               gRenderer_fixup_basename, gRenderer_fixup_extension);
     LoadExceptionsFile(path);
 }
 
@@ -3712,17 +3787,17 @@ void C2_HOOK_FASTCALL MungeTrackModel(br_model* pModel) {
 int C2_HOOK_FASTCALL ModelIsATree(br_model* pModel, char* pName_replacement) {
     int i;
 
-    for (i = 0; i < C2V(gTree_surgery_pass1_count); i++) {
-        if (c2_strstr(pModel->identifier, C2V(gTree_surgery_pass1)->name) == pModel->identifier) {
+    for (i = 0; i < gTree_surgery_pass1_count; i++) {
+        if (c2_strstr(pModel->identifier, gTree_surgery_pass1->name) == pModel->identifier) {
             break;
         }
     }
-    if (i == C2V(gTree_surgery_pass1_count)) {
+    if (i == gTree_surgery_pass1_count) {
         return 0;
     }
-    for (i = 0; i < C2V(gTree_surgery_pass2_count); i++) {
-        if (c2_strcmp(pModel->identifier, C2V(gTree_surgery_pass2)->original) == 0) {
-            c2_strcpy(pName_replacement, C2V(gTree_surgery_pass2)->replacement);
+    for (i = 0; i < gTree_surgery_pass2_count; i++) {
+        if (c2_strcmp(pModel->identifier, gTree_surgery_pass2->original) == 0) {
+            c2_strcpy(pName_replacement, gTree_surgery_pass2->replacement);
             return 1;
         }
     }
@@ -3756,15 +3831,15 @@ void C2_HOOK_FASTCALL PossibleTreeSurgery(br_model* pModel) {
         return;
     }
     if (ModelIsATree(pModel, name_replacement)) {
-        PerformTreeSurgery(&C2V(gTrack_storage_space), pModel, name_replacement);
+        PerformTreeSurgery(&gTrack_storage_space, pModel, name_replacement);
     }
 }
 
 void C2_HOOK_FASTCALL CheckNonCarModelBounds(void) {
     int i;
 
-    for (i = 0; i < C2V(gProgram_state).track_spec.count_non_cars; i++) {
-        br_actor* actor = C2V(gProgram_state).track_spec.non_car_list[i];
+    for (i = 0; i < gProgram_state.track_spec.count_non_cars; i++) {
+        br_actor* actor = gProgram_state.track_spec.non_car_list[i];
         int idx;
         tNon_car_spec* non_car;
         int j;
@@ -3772,8 +3847,8 @@ void C2_HOOK_FASTCALL CheckNonCarModelBounds(void) {
         if (actor == NULL) {
             continue;
         }
-        idx = C2V(gNon_car_spec_indices)[10 * (actor->identifier[1] - '0') + (actor->identifier[2] - '0')] + 40 - 1;
-        non_car = &C2V(gProgram_state).non_cars[idx];
+        idx = gNon_car_spec_indices[10 * (actor->identifier[1] - '0') + (actor->identifier[2] - '0')] + 40 - 1;
+        non_car = &gProgram_state.non_cars[idx];
         if (non_car == NULL || non_car->collision_info->actor != NULL) {
             continue;
         }
@@ -3788,25 +3863,21 @@ void C2_HOOK_FASTCALL CheckNonCarModelBounds(void) {
 void C2_HOOK_FASTCALL FreeExceptions(void) {
     tMaterial_exception* material_exception;
 
-    for (material_exception = C2V(gMaterial_exceptions); material_exception != NULL; ) {
+    for (material_exception = gMaterial_exceptions; material_exception != NULL; ) {
         tMaterial_exception* next_material_exception = material_exception->next;
         BrMemFree(material_exception->texture_name);
         BrMemFree(material_exception);
         material_exception = next_material_exception;
     }
-    C2V(gMaterial_exceptions) = NULL;
+    gMaterial_exceptions = NULL;
 }
 
 void C2_HOOK_FASTCALL LoadStaticLightingForRace(const char* race_lighting_path) {
 
 }
 
-void (C2_HOOK_FASTCALL * LoadTrack_original)(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info);
+// FUNCTION: CARMA2_HW 0x00504bf0
 void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec, tRace_info* pRace_info) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    LoadTrack_original(pFile_name, pTrack_spec, pRace_info);
-#else
     int i;
     int j;
     char short_track_name[32];
@@ -3827,22 +3898,22 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     int count_noncar_objects;
 
     PrintMemoryDump(0, "AT THE START OF LOAD TRACK");
-    c2_strcpy(C2V(gCurrent_load_directory), "RACES");
-    c2_strcpy(C2V(gCurrent_load_name), pFile_name);
-    C2V(gCurrent_load_name)[c2_strlen(C2V(gCurrent_load_name)) - 4] = '\0';
+    c2_strcpy(gCurrent_load_directory, "RACES");
+    c2_strcpy(gCurrent_load_name, pFile_name);
+    gCurrent_load_name[c2_strlen(gCurrent_load_name) - 4] = '\0';
 
-    c2_strcpy(local_directory, C2V(gCurrent_load_directory));
-    c2_strcpy(local_name, C2V(gCurrent_load_name));
+    c2_strcpy(local_directory, gCurrent_load_directory);
+    c2_strcpy(local_name, gCurrent_load_name);
 
-    PathCat(C2V(gRace_path), C2V(gApplication_path), local_directory);
-    c2_strcpy(local_race_path, C2V(gRace_path));
+    PathCat(gRace_path, gApplication_path, local_directory);
+    c2_strcpy(local_race_path, gRace_path);
 
     LoadExceptionsFileForTrack(local_race_path);
 
-    PathCat(C2V(gRace_path), C2V(gRace_path), local_name);
-    twt = OpenPackFileAndSetTiffLoading(C2V(gRace_path));
-    PathCat(race_lighting_path, C2V(gRace_path), "LIGHTING.TXT");
-    PathCat(race_desc_path, C2V(gRace_path), pFile_name);
+    PathCat(gRace_path, gRace_path, local_name);
+    twt = OpenPackFileAndSetTiffLoading(gRace_path);
+    PathCat(race_lighting_path, gRace_path, "LIGHTING.TXT");
+    PathCat(race_desc_path, gRace_path, pFile_name);
     f = DRfopen(race_desc_path, "rt");
     if (f == NULL) {
         FatalError(kFatalError_CannotOpenRacesFile);
@@ -3852,15 +3923,15 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     str = c2_strtok(s, "\t ,/");
     if (c2_strcmp(str, "VERSION") == 0) {
         str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &C2V(gTrack_version));
-        if (C2V(gTrack_version) == 8) {
-            C2V(gTrack_version) = 0;
+        c2_sscanf(str, "%d", &gTrack_version);
+        if (gTrack_version == 8) {
+            gTrack_version = 0;
         }
     } else {
-        C2V(gTrack_version) = 0;
+        gTrack_version = 0;
     }
 
-    if (C2V(gTrack_version) > 0) {
+    if (gTrack_version > 0) {
         ReadGlobalLightingInfo(f);
     }
 
@@ -3921,39 +3992,39 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PossibleService();
     c2_strcpy(short_track_name, pFile_name);
     short_track_name[4] = '\0';
-    PathCat(race_desc_path, C2V(gApplication_path), "RACES");
+    PathCat(race_desc_path, gApplication_path, "RACES");
     PathCat(race_desc_path, race_desc_path, short_track_name);
     twt2 = OpenPackFile(race_desc_path);
-    LoadAllImagesInDirectory(&C2V(gTrack_storage_space), race_desc_path);
+    LoadAllImagesInDirectory(&gTrack_storage_space, race_desc_path);
     TWT_Unmount(twt2);
 
     PossibleService();
-    LoadAllImagesInDirectory(&C2V(gTrack_storage_space), C2V(gRace_path));
+    LoadAllImagesInDirectory(&gTrack_storage_space, gRace_path);
 
     PossibleService();
-    LoadAllShadeTablesInDirectory(&C2V(gTrack_storage_space), C2V(gRace_path));
+    LoadAllShadeTablesInDirectory(&gTrack_storage_space, gRace_path);
 
     PossibleService();
-    LoadTrackMaterials(&C2V(gTrack_storage_space), C2V(gRace_path));
+    LoadTrackMaterials(&gTrack_storage_space, gRace_path);
 
     PossibleService();
-    LoadTrackModels(&C2V(gTrack_storage_space), C2V(gRace_path));
+    LoadTrackModels(&gTrack_storage_space, gRace_path);
 
-    for (i = 0; i < C2V(gTrack_storage_space).models_count; i++) {
+    for (i = 0; i < gTrack_storage_space.models_count; i++) {
 
         PossibleService();
-        MungeTrackModel(C2V(gTrack_storage_space).models[i]);
+        MungeTrackModel(gTrack_storage_space.models[i]);
     }
     PrintMemoryDump(0, "JUST LOADED IN TEXTURES/MATS/MODELS FOR TRACK");
 
-    PathCat(actor_path, C2V(gRace_path), local_name);
+    PathCat(actor_path, gRace_path, local_name);
     c2_strcat(actor_path, ".ACT");
     pTrack_spec->the_actor = BrActorLoad(actor_path);
     PrintMemoryDump(0, "AFTER LOADING TRACK ACTORS");
     PossibleService();
 
     /* Smashable environment specs */
-    ReadSmashableEnvironment(f, C2V(gRace_path));
+    ReadSmashableEnvironment(f, gRace_path);
     PrintMemoryDump(0, "AFTER LOADING SMASHABLE ENVIRONMENT");
 
     /* Ped specs */
@@ -3967,119 +4038,119 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     FinishUpLoadingPeds();
     PrintMemoryDump(0, "JUST EXTRACTED COLUMNS AND LOADED IN PEDS");
 
-    C2V(gTrack_actor) = pTrack_spec->the_actor;
-    if (!C2V(gRendering_accessories) && C2V(gNet_mode) == eNet_mode_none) {
+    gTrack_actor = pTrack_spec->the_actor;
+    if (!gRendering_accessories && gNet_mode == eNet_mode_none) {
         int rstyle;
 
         rstyle = BR_RSTYLE_NONE;
         PossibleService();
-        DRActorEnumRecurse(C2V(gTrack_actor), SetAccessoryRenderingCB, &rstyle);
+        DRActorEnumRecurse(gTrack_actor, SetAccessoryRenderingCB, &rstyle);
     }
-    BrActorAdd(C2V(gUniverse_actor), pTrack_spec->the_actor);
+    BrActorAdd(gUniverse_actor, pTrack_spec->the_actor);
 
     /* Additional actor */
     GetALineAndDontArgue(f, s);
     str = c2_strtok(c2_strtok(s, "\t ,/"), ".");
     c2_strcat(str, ".DAT");
-    PathCat(C2V(gAdditional_model_path), C2V(gApplication_path), "MODELS");
-    PathCat(C2V(gAdditional_model_path), C2V(gAdditional_model_path), str);
+    PathCat(gAdditional_model_path, gApplication_path, "MODELS");
+    PathCat(gAdditional_model_path, gAdditional_model_path, str);
     PossibleService();
-    C2V(gNumber_of_additional_models) = BrModelLoadMany(C2V(gAdditional_model_path), C2V(gAdditional_models), REC2_ASIZE(C2V(gAdditional_models)));
-    for (i = 0; i < C2V(gNumber_of_additional_models); i++) {
-        C2V(gAdditional_models)[i]->flags = BR_MODF_UPDATEABLE;
+    gNumber_of_additional_models = BrModelLoadMany(gAdditional_model_path, gAdditional_models, REC2_ASIZE(gAdditional_models));
+    for (i = 0; i < gNumber_of_additional_models; i++) {
+        gAdditional_models[i]->flags = BR_MODF_UPDATEABLE;
     }
-    BrModelAddMany(C2V(gAdditional_models), C2V(gNumber_of_additional_models));
+    BrModelAddMany(gAdditional_models, gNumber_of_additional_models);
     PossibleService();
 
     str = c2_strtok(c2_strtok(s, "\t ,/"), ".");
     c2_strcat(str, ".ACT");
-    PathCat(C2V(gAdditional_actor_path), C2V(gApplication_path), "ACTORS");
-    PathCat(C2V(gAdditional_actor_path), C2V(gAdditional_actor_path), str);
-    C2V(gAdditional_actors) = BrActorLoad(C2V(gAdditional_actor_path));
-    if (C2V(gAdditional_actors) == NULL) {
-        C2V(gAdditional_actors) = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    PathCat(gAdditional_actor_path, gApplication_path, "ACTORS");
+    PathCat(gAdditional_actor_path, gAdditional_actor_path, str);
+    gAdditional_actors = BrActorLoad(gAdditional_actor_path);
+    if (gAdditional_actors == NULL) {
+        gAdditional_actors = BrActorAllocate(BR_ACTOR_NONE, NULL);
     }
-    BrActorAdd(C2V(gUniverse_actor), C2V(gAdditional_actors));
-    C2V(gLast_actor) = NULL;
+    BrActorAdd(gUniverse_actor, gAdditional_actors);
+    gLast_actor = NULL;
 
     /* Name of sky texture pixelmap (or "none") */
     GetAString(f, s);
-    if (!C2V(gAusterity_mode) && c2_strcmp(&s[c2_strlen(s) - 4], ".FLI") == 0) {
+    if (!gAusterity_mode && c2_strcmp(&s[c2_strlen(s) - 4], ".FLI") == 0) {
         void* flic_pixels;
 
-        C2V(gTrack_flic_buffer) = NULL;
-        if (!LoadFlicData(s, &C2V(gTrack_flic_buffer), &C2V(gTrack_flic_buffer_size))) {
+        gTrack_flic_buffer = NULL;
+        if (!LoadFlicData(s, &gTrack_flic_buffer, &gTrack_flic_buffer_size)) {
             FatalError(kFatalError_CantFindFile_S, s);
         }
-        StartFlic(s, -1, &C2V(gTrack_flic_descriptor), C2V(gTrack_flic_buffer_size), (tS8*)C2V(gTrack_flic_buffer), NULL, 0, 0, 0);
-        flic_pixels = BrMemAllocate((C2V(gTrack_flic_descriptor).width + 3) & (~3) * C2V(gTrack_flic_descriptor).height, kMem_video_pixels);
-        sky = DRPixelmapAllocate(C2V(gScreen)->type, C2V(gTrack_flic_descriptor).width, C2V(gTrack_flic_descriptor).height, flic_pixels, 0);
+        StartFlic(s, -1, &gTrack_flic_descriptor, gTrack_flic_buffer_size, (tS8*)gTrack_flic_buffer, NULL, 0, 0, 0);
+        flic_pixels = BrMemAllocate((gTrack_flic_descriptor.width + 3) & (~3) * gTrack_flic_descriptor.height, kMem_video_pixels);
+        sky = DRPixelmapAllocate(gScreen->type, gTrack_flic_descriptor.width, gTrack_flic_descriptor.height, flic_pixels, 0);
         BrMapAdd(sky);
-        AssertFlicPixelmap(&C2V(gTrack_flic_descriptor), sky);
+        AssertFlicPixelmap(&gTrack_flic_descriptor, sky);
     } else {
-        C2V(gTrack_flic_buffer) = NULL;
+        gTrack_flic_buffer = NULL;
         sky = BrMapFind(s);
     }
     killed_sky = 0;
-    if (C2V(gAusterity_mode) && sky != NULL) {
-        for (i = 0; i < C2V(gTrack_storage_space).pixelmaps_count; i++) {
-            if (C2V(gTrack_storage_space).pixelmaps[i] == sky) {
-                BrMapRemove(C2V(gTrack_storage_space).pixelmaps[i]);
-                BrPixelmapFree(C2V(gTrack_storage_space).pixelmaps[i]);
-                C2V(gTrack_storage_space).pixelmaps[i] = C2V(gTrack_storage_space).pixelmaps[C2V(gTrack_storage_space).pixelmaps_count - 1];
-                C2V(gTrack_storage_space).pixelmaps_count--;
+    if (gAusterity_mode && sky != NULL) {
+        for (i = 0; i < gTrack_storage_space.pixelmaps_count; i++) {
+            if (gTrack_storage_space.pixelmaps[i] == sky) {
+                BrMapRemove(gTrack_storage_space.pixelmaps[i]);
+                BrPixelmapFree(gTrack_storage_space.pixelmaps[i]);
+                gTrack_storage_space.pixelmaps[i] = gTrack_storage_space.pixelmaps[gTrack_storage_space.pixelmaps_count - 1];
+                gTrack_storage_space.pixelmaps_count--;
                 break;
             }
         }
         sky = NULL;
         killed_sky = 1;
     }
-    C2V(gProgram_state).default_depth_effect.sky_texture = sky;
+    gProgram_state.default_depth_effect.sky_texture = sky;
     if (sky != NULL) {
-        sky_pixels_high = C2V(gProgram_state).default_depth_effect.sky_texture->height;
+        sky_pixels_high = gProgram_state.default_depth_effect.sky_texture->height;
     } else {
         sky_pixels_high = 100;
     }
     PossibleService();
 
     /* Horizontal repetitions of sky texture */
-    C2V(gSky_image_width) = BrDegreeToAngle(360.0 / GetAnInt(f));
+    gSky_image_width = BrDegreeToAngle(360.0 / GetAnInt(f));
 
     /* Vertical size of sky texture (degrees) */
-    C2V(gSky_image_height) = BrDegreeToAngle(GetAScalar(f));
+    gSky_image_height = BrDegreeToAngle(GetAScalar(f));
 
     /* Position of horizon (pixels below top) */
-    C2V(gSky_image_underground) = C2V(gSky_image_height) * (sky_pixels_high - GetAnInt(f)) / sky_pixels_high;
+    gSky_image_underground = gSky_image_height * (sky_pixels_high - GetAnInt(f)) / sky_pixels_high;
 
     MungeForwardSky();
     MungeRearviewSky();
     PossibleService();
 
     /* Depth cue mode ("none", "dark" or "fog") */
-    C2V(gProgram_state).default_depth_effect.type = GetALineAndInterpretCommand(f, C2V(gDepth_effect_names), REC2_ASIZE(C2V(gDepth_effect_names)));
+    gProgram_state.default_depth_effect.type = GetALineAndInterpretCommand(f, gDepth_effect_names, REC2_ASIZE(gDepth_effect_names));
 
     /* Degree of fog/darkness */
     GetPairOfInts(f,
-        &C2V(gProgram_state).default_depth_effect.start,
-        &C2V(gProgram_state).default_depth_effect.end);
+        &gProgram_state.default_depth_effect.start,
+        &gProgram_state.default_depth_effect.end);
 
     /* Depth cue colour (red, green, blue ) */
     GetThreeInts(f,
-        &C2V(gProgram_state).default_depth_effect.colour.red,
-        &C2V(gProgram_state).default_depth_effect.colour.green,
-        &C2V(gProgram_state).default_depth_effect.colour.blue);
-    C2V(gTrack_depth_colour_red) = C2V(gProgram_state).default_depth_effect.colour.red;
-    C2V(gTrack_depth_colour_green) = C2V(gProgram_state).default_depth_effect.colour.green;
-    C2V(gTrack_depth_colour_blue) = C2V(gProgram_state).default_depth_effect.colour.blue;
+        &gProgram_state.default_depth_effect.colour.red,
+        &gProgram_state.default_depth_effect.colour.green,
+        &gProgram_state.default_depth_effect.colour.blue);
+    gTrack_depth_colour_red = gProgram_state.default_depth_effect.colour.red;
+    gTrack_depth_colour_green = gProgram_state.default_depth_effect.colour.green;
+    gTrack_depth_colour_blue = gProgram_state.default_depth_effect.colour.blue;
     ChangeDepthEffect();
 
-    if (killed_sky && C2V(gProgram_state).default_depth_effect.type != eDepth_effect_fog) {
-        C2V(gProgram_state).default_depth_effect.type = eDepth_effect_fog;
-        C2V(gProgram_state).default_depth_effect.start = 7;
-        C2V(gProgram_state).default_depth_effect.end = 0;
-        C2V(gProgram_state).default_depth_effect.colour.red = 0xf8;
-        C2V(gProgram_state).default_depth_effect.colour.green = 0xf8;
-        C2V(gProgram_state).default_depth_effect.colour.blue = 0xf8;
+    if (killed_sky && gProgram_state.default_depth_effect.type != eDepth_effect_fog) {
+        gProgram_state.default_depth_effect.type = eDepth_effect_fog;
+        gProgram_state.default_depth_effect.start = 7;
+        gProgram_state.default_depth_effect.end = 0;
+        gProgram_state.default_depth_effect.colour.red = 0xf8;
+        gProgram_state.default_depth_effect.colour.green = 0xf8;
+        gProgram_state.default_depth_effect.colour.blue = 0xf8;
     }
     PossibleService();
     ReadSpecialVolumes(f);
@@ -4089,29 +4160,29 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
     /* Material to use for default screens */
     GetAString(f, s);
-    C2V(gProgram_state).standard_screen = BrMapFind(s);
+    gProgram_state.standard_screen = BrMapFind(s);
 
     /* Material to use for default screens during darkness */
     GetAString(f, s);
-    C2V(gProgram_state).standard_screen_dark = BrMapFind(s);
+    gProgram_state.standard_screen_dark = BrMapFind(s);
 
     /* Material to use for default screens during fog */
     GetAString(f, s);
-    C2V(gProgram_state).standard_screen_fog = BrMapFind(s);
+    gProgram_state.standard_screen_fog = BrMapFind(s);
 
     /* (ignore) # areas with different screens */
-    C2V(gProgram_state).special_screens_count = GetAnInt(f);
-    if (C2V(gProgram_state).special_screens_count != 0) {
-        C2V(gProgram_state).special_screens = BrMemAllocate(sizeof(tSpecial_screen) * C2V(gProgram_state).special_screens_count, kMem_special_screen);
+    gProgram_state.special_screens_count = GetAnInt(f);
+    if (gProgram_state.special_screens_count != 0) {
+        gProgram_state.special_screens = BrMemAllocate(sizeof(tSpecial_screen) * gProgram_state.special_screens_count, kMem_special_screen);
         C2_HOOK_BUG_ON(sizeof(tSpecial_screen) != 20);
-        for (i = 0; i < C2V(gProgram_state).special_screens_count; i++) {
+        for (i = 0; i < gProgram_state.special_screens_count; i++) {
             GetFourScalars(f,
-                &C2V(gProgram_state).special_screens[i].min_x,
-                &C2V(gProgram_state).special_screens[i].min_z,
-                &C2V(gProgram_state).special_screens[i].max_x,
-                &C2V(gProgram_state).special_screens[i].max_z);
+                &gProgram_state.special_screens[i].min_x,
+                &gProgram_state.special_screens[i].min_z,
+                &gProgram_state.special_screens[i].max_x,
+                &gProgram_state.special_screens[i].max_z);
             GetAString(f, s);
-            C2V(gProgram_state).special_screens[i].material = BrMaterialFind(s);
+            gProgram_state.special_screens[i].material = BrMaterialFind(s);
         }
     }
 
@@ -4130,7 +4201,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
             pRace_info->map_image = BrMapFind(s);
         }
     }
-    BRPM_convert(pRace_info->map_image, C2V(gBack_screen)->type);
+    BRPM_convert(pRace_info->map_image, gBack_screen->type);
     PrintMemoryDump(0, "JUST LOADING SKY/SPEC VOLS/SCREENS/MAP");
     /* World->map transformation matrix */
     for (i = 0; i < 4; ++i) {
@@ -4139,17 +4210,17 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
             &pRace_info->map_transformation.m[i][1],
             &pRace_info->map_transformation.m[i][2]);
     }
-    if (C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width != 640 || C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height != 480) {
+    if (gGraf_specs[gGraf_spec_index].total_width != 640 || gGraf_specs[gGraf_spec_index].total_height != 480) {
         pRace_info->map_transformation.m[3][0] -= 320.f;
         pRace_info->map_transformation.m[3][1] -= 240.f;
         BrMatrix34PostRotateX(&pRace_info->map_transformation, BrDegreeToAngle(90));
         BrMatrix34PostScale(&pRace_info->map_transformation,
-            (float)C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width / (float)640,
+            (float)gGraf_specs[gGraf_spec_index].total_width / (float)640,
             0.f,
-            (float)C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height / (float)480);
+            (float)gGraf_specs[gGraf_spec_index].total_height / (float)480);
         BrMatrix34PostRotateX(&pRace_info->map_transformation, BrDegreeToAngle(270));
-        pRace_info->map_transformation.m[3][0] += (float)C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_width / 2;
-        pRace_info->map_transformation.m[3][1] += (float)C2V(gGraf_specs)[C2V(gGraf_spec_index)].total_height / 2;
+        pRace_info->map_transformation.m[3][0] += (float)gGraf_specs[gGraf_spec_index].total_width / 2;
+        pRace_info->map_transformation.m[3][1] += (float)gGraf_specs[gGraf_spec_index].total_height / 2;
     }
 
     /* ****** START OF FUNK AND GROOVE STUFF ****** */
@@ -4165,16 +4236,16 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     GetALineAndDontArgue(f, s);
     C2_HOOK_ASSERT(c2_strcmp(s, "START OF GROOVE") == 0);
 
-    AddGroovidelics(f, -2, C2V(gUniverse_actor), 30 * GROOVE_FUNK_MAX_PER_CAR, 0);
+    AddGroovidelics(f, -2, gUniverse_actor, 30 * GROOVE_FUNK_MAX_PER_CAR, 0);
 
     PossibleService();
     PrintMemoryDump(0, "JUST LOADING IN FUNKS AND GROOVES");
 
-    for (i = 0; i < C2V(gTrack_storage_space).models_count; i++) {
+    for (i = 0; i < gTrack_storage_space.models_count; i++) {
         br_model* model;
 
         PossibleService();
-        model = C2V(gTrack_storage_space).models[i];
+        model = gTrack_storage_space.models[i];
         PossibleTreeSurgery(model);
         if (model != NULL && (model->flags & (BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE))) {
             if (model->identifier != NULL && model->identifier[0] != '-') {
@@ -4250,10 +4321,10 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
             modifier->skid_mark_material = NULL;
         } else {
             c2_strcat(str, ".PIX");
-            LoadSinglePixelmap(&C2V(gTrack_storage_space), str);
+            LoadSinglePixelmap(&gTrack_storage_space, str);
             str[c2_strlen(str) - 4] = '\0';
             c2_strcat(str, ".MAT");
-            modifier->skid_mark_material = LoadSingleMaterial(&C2V(gTrack_storage_space), str);
+            modifier->skid_mark_material = LoadSingleMaterial(&gTrack_storage_space, str);
         }
     }
     PackFileRerevertTiffLoading();
@@ -4282,26 +4353,26 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].smoke_type = 1;
     pRace_info->material_modifiers[REC2_ASIZE(pRace_info->material_modifiers) - 1].skid_mark_material = NULL;
 
-    C2V(gDefault_water_spec_vol_real)->material_modifier_index = 10;
+    gDefault_water_spec_vol_real->material_modifier_index = 10;
 
     /* Non CarObjects */
     count_noncar_objects = GetAnInt(f);
     if (count_noncar_objects > 40) { /* FIXME: magic number */
         PDFatalError("Too many non-car types");
     }
-    C2V(gProgram_state).num_non_car_spaces = count_noncar_objects + C2V(gCount_smashable_noncars) + 40;
-    C2V(gProgram_state).non_cars = BrMemCalloc(C2V(gProgram_state).num_non_car_spaces, sizeof(tNon_car_spec), kMem_non_car_spec);
+    gProgram_state.num_non_car_spaces = count_noncar_objects + gCount_smashable_noncars + 40;
+    gProgram_state.non_cars = BrMemCalloc(gProgram_state.num_non_car_spaces, sizeof(tNon_car_spec), kMem_non_car_spec);
     C2_HOOK_BUG_ON(sizeof(tNon_car_spec) != 260);
-    if (C2V(gProgram_state).non_cars == NULL && count_noncar_objects != 0) {
+    if (gProgram_state.non_cars == NULL && count_noncar_objects != 0) {
         FatalError(kFatalError_CannotOpenRacesFile);
     }
-    c2_memset(C2V(gNon_car_spec_indices), 0, sizeof(C2V(gNon_car_spec_indices)));
-    C2_HOOK_BUG_ON(sizeof(C2V(gNon_car_spec_indices)) != 100);
+    c2_memset(gNon_car_spec_indices, 0, sizeof(gNon_car_spec_indices));
+    C2_HOOK_BUG_ON(sizeof(gNon_car_spec_indices) != 100);
     for (i = 0; i < 40; i++) { /* FIXME: magic */
         tCollision_info *collision_info;
         tNon_car_spec* non_car;
 
-        non_car = &C2V(gProgram_state).non_cars[i];
+        non_car = &gProgram_state.non_cars[i];
         non_car->driver = eDriver_non_car_unused_slot;
         collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
         C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
@@ -4311,14 +4382,14 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         collision_info->field_0x1a0 = 0xffff;
         collision_info->field_0x1a4 = 0;
     }
-    for (i = 0; i < count_noncar_objects + C2V(gCount_smashable_noncars); i++) {
+    for (i = 0; i < count_noncar_objects + gCount_smashable_noncars; i++) {
         tCollision_info* collision_info;
         tNon_car_spec* non_car;
         char non_cars_path[256];
         FILE* g;
 
         PossibleService();
-        non_car = &C2V(gProgram_state).non_cars[40 + i]; /* FIXME: magic number */
+        non_car = &gProgram_state.non_cars[40 + i]; /* FIXME: magic number */
         collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
         C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
         non_car->collision_info = collision_info;
@@ -4330,9 +4401,9 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         if (i < count_noncar_objects) {
             GetAString(f, s);
         } else {
-            c2_strcpy(s, C2V(gSmashable_noncars)[i - count_noncar_objects]);
+            c2_strcpy(s, gSmashable_noncars[i - count_noncar_objects]);
         }
-        PathCat(non_cars_path, C2V(gApplication_path), "NONCARS");
+        PathCat(non_cars_path, gApplication_path, "NONCARS");
         PathCat(non_cars_path, non_cars_path, s);
         g = DRfopen(non_cars_path, "rt");
         if (g == NULL) {
@@ -4340,7 +4411,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         }
         ReadNonCarMechanicsData(g, non_car);
         PossibleService();
-        C2V(gNon_car_spec_indices)[non_car->index] = i + 1;
+        gNon_car_spec_indices[non_car->index] = i + 1;
         PFfclose(g);
     }
     DisposeSmashEnvNonCars();
@@ -4355,7 +4426,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         pRace_info->net_starts[i].yaw = GetAFloat(f);
     }
     LoadInKevStuff(f);
-    C2V(gYon_multiplier) = GetAFloat(f);
+    gYon_multiplier = GetAFloat(f);
     GetAString(f, s);
     if (DRStricmp(s, pFile_name) != 0) {
         FatalError(kFatalError_FileIsCorrupted_S, pFile_name);
@@ -4365,10 +4436,9 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PrintMemoryDump(0, "FINISHED LOADING TRACK");
     LoadStaticLightingForRace(race_lighting_path);
     ClosePackFileAndSetTiffLoading(twt);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00504bf0, LoadTrack, LoadTrack_original)
 
+// FUNCTION: CARMA2_HW 0x00500f30
 void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space) {
     int i;
 
@@ -4402,7 +4472,6 @@ void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space) {
     }
     pStorage_space->models_count = 0;
 }
-C2_HOOK_FUNCTION(0x00500f30, ClearOutStorageSpace)
 
 void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCallback) {
     tU16 f;
@@ -4427,6 +4496,7 @@ void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCall
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00448850
 intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData) {
     tPMFMCB* callback = pData;
 
@@ -4438,8 +4508,8 @@ intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData) {
     }
     return BrActorEnum(pActor, ProcessFaceMaterials, pData);
 }
-C2_HOOK_FUNCTION(0x00448850, ProcessFaceMaterials)
 
+// FUNCTION: CARMA2_HW 0x00448ce0
 int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix) {
     size_t len_ident;
     size_t len_suffix;
@@ -4454,8 +4524,8 @@ int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix) {
     }
     return c2_strcmp(pIdent + len_ident - len_suffix, pSuffix) == 0;
 }
-C2_HOOK_FUNCTION(0x00448ce0, HasThisSuffix)
 
+// FUNCTION: CARMA2_HW 0x00448d70
 br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(char* pOld_ident, char* pSuffix) {
     br_material* result;
     int unsuffixed_len;
@@ -4468,8 +4538,8 @@ br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(char* pOld_ident, char* pSuffix
     BrMemFree(new_id);
     return result;
 }
-C2_HOOK_FUNCTION(0x00448d70, UnsuffixedMaterial)
 
+// FUNCTION: CARMA2_HW 0x00448390
 br_material* C2_HOOK_FASTCALL WallLinearToPersp(br_model* pModel, tU16 pFace) {
     br_material* old_mat;
     br_material* new_mat;
@@ -4482,8 +4552,8 @@ br_material* C2_HOOK_FASTCALL WallLinearToPersp(br_model* pModel, tU16 pFace) {
     }
     return new_mat;
 }
-C2_HOOK_FUNCTION(0x00448390, WallLinearToPersp)
 
+// FUNCTION: CARMA2_HW 0x004481d0
 br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFace) {
     br_material* old_mat;
     br_material* new_mat;
@@ -4498,8 +4568,8 @@ br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFace) {
     }
     return new_mat;
 }
-C2_HOOK_FUNCTION(0x004481d0, WallUntexToPersp)
 
+// FUNCTION: CARMA2_HW 0x00447c60
 br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace) {
     br_material* old_mat;
     br_material* new_mat;
@@ -4512,17 +4582,18 @@ br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace) {
     }
     return new_mat;
 }
-C2_HOOK_FUNCTION(0x00447c60, RoadUntexToPersp)
 
+// FUNCTION: CARMA2_HW 0x00448dd0
 br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pFace) {
     size_t max_suffix_len;
     br_material* mat;
     br_material* victim;
-    static C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, suffixes, 3, 0x005913a0, {
+// GLOBAL: CARMA2_HW 0x005913a0
+    static const char* suffixes[3] = {
         ".road",
         ".pwall",
         ".lwall",
-    });
+    };
     int s;
     char* id;
 
@@ -4531,14 +4602,14 @@ br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pF
         return NULL;
     }
     max_suffix_len = 0;
-    for (s = 0; s < REC2_ASIZE(C2V(suffixes)); s++) {
-        if (max_suffix_len < c2_strlen(C2V(suffixes)[s])) {
-            max_suffix_len = c2_strlen(C2V(suffixes)[s]);
+    for (s = 0; s < REC2_ASIZE(suffixes); s++) {
+        if (max_suffix_len < c2_strlen(suffixes[s])) {
+            max_suffix_len = c2_strlen(suffixes[s]);
         }
     }
     id = BrMemAllocate(c2_strlen(mat->identifier) + max_suffix_len + 1, kMem_new_mat_id);
-    for (s = 0; s < REC2_ASIZE(C2V(suffixes)); s++) {
-        c2_sprintf(id, "%s%s", mat->identifier, C2V(suffixes)[s]);
+    for (s = 0; s < REC2_ASIZE(suffixes); s++) {
+        c2_sprintf(id, "%s%s", mat->identifier, suffixes[s]);
         victim = BrMaterialFind(id);
         if (victim != NULL) {
             BrMaterialRemove(victim);
@@ -4547,38 +4618,33 @@ br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pF
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x00448dd0, DisposeSuffixedMaterials)
 
-void (C2_HOOK_FASTCALL * DisposeTexturingMaterials_original)(void);
+// FUNCTION: CARMA2_HW 0x004489d0
 void C2_HOOK_FASTCALL DisposeTexturingMaterials(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    DisposeTexturingMaterials_original();
-#else
-    switch (C2V(gWall_texturing_level)) {
+    switch (gWall_texturing_level) {
     case eWTL_linear:
-        ProcessFaceMaterials(C2V(gProgram_state).track_spec.the_actor, WallLinearToPersp);
+        ProcessFaceMaterials(gProgram_state.track_spec.the_actor, WallLinearToPersp);
         break;
     case eWTL_none:
-        ProcessFaceMaterials(C2V(gProgram_state).track_spec.the_actor, WallUntexToPersp);
+        ProcessFaceMaterials(gProgram_state.track_spec.the_actor, WallUntexToPersp);
         break;
     default:
         break;
     }
-    switch (C2V(gRoad_texturing_level)) {
+    switch (gRoad_texturing_level) {
     case eRTL_none:
-        ProcessFaceMaterials(C2V(gProgram_state).track_spec.the_actor, RoadUntexToPersp);
+        ProcessFaceMaterials(gProgram_state.track_spec.the_actor, RoadUntexToPersp);
         break;
     default:
         break;
     }
-    if (C2V(gWall_texturing_level) != eWTL_full || C2V(gRoad_texturing_level) != eRTL_full) {
-        ProcessFaceMaterials(C2V(gProgram_state).track_spec.the_actor, DisposeSuffixedMaterials);
+    if (gWall_texturing_level != eWTL_full || gRoad_texturing_level != eRTL_full) {
+        ProcessFaceMaterials(gProgram_state.track_spec.the_actor, DisposeSuffixedMaterials);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004489d0, DisposeTexturingMaterials, DisposeTexturingMaterials_original)
 
+// FUNCTION: CARMA2_HW 0x00506e20
 intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg) {
 
     if (pActor->type == BR_ACTOR_BOUNDS || pActor->type == BR_ACTOR_BOUNDS_CORRECT) {
@@ -4587,21 +4653,20 @@ intptr_t C2_HOOK_CDECL RemoveBounds(br_actor* pActor, void* pArg) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00506e20, RemoveBounds)
 
 void C2_HOOK_FASTCALL RemoveBoundsStructures(br_actor* pActor) {
 
     DRActorEnumRecurse(pActor, RemoveBounds, NULL);
 }
 
-void (C2_HOOK_FASTCALL * FreeTrack_original)(tTrack_spec* pTrack_spec);
+// FUNCTION: CARMA2_HW 0x00506c20
 void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
     int i;
 
     DisposeSmashableEnvironment();
-    if (C2V(gAdditional_actors) != NULL) {
-        BrActorRemove(C2V(gAdditional_actors));
-        BrActorFree(C2V(gAdditional_actors));
+    if (gAdditional_actors != NULL) {
+        BrActorRemove(gAdditional_actors);
+        BrActorFree(gAdditional_actors);
     }
     PossibleService();
     DisposeTexturingMaterials();
@@ -4612,8 +4677,8 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
     PossibleService();
     DisposeFunkotronics(-2);
     PossibleService();
-    ClearOutStorageSpace(&C2V(gTrack_storage_space));
-    C2V(gProgram_state).current_depth_effect.sky_texture = NULL;
+    ClearOutStorageSpace(&gTrack_storage_space);
+    gProgram_state.current_depth_effect.sky_texture = NULL;
     PossibleService();
     DisposeGroovidelics(-2);
     PossibleService();
@@ -4624,26 +4689,26 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
     BrActorRemove(pTrack_spec->the_actor);
     BrActorFree(pTrack_spec->the_actor);
     pTrack_spec->the_actor = NULL;
-    C2V(gTrack_actor) = NULL;
-    if (C2V(gProgram_state).special_volume_count != 0) {
-        BrMemFree(C2V(gProgram_state).special_volumes);
+    gTrack_actor = NULL;
+    if (gProgram_state.special_volume_count != 0) {
+        BrMemFree(gProgram_state.special_volumes);
     }
-    if (C2V(gProgram_state).special_screens_count != 0) {
-        BrMemFree(C2V(gProgram_state).special_screens);
+    if (gProgram_state.special_screens_count != 0) {
+        BrMemFree(gProgram_state.special_screens);
     }
     PossibleService();
     for (i = 0; i < 40; i++) { /* FIXME: magic number 40 */
         tNon_car_spec *non_car;
 
-        non_car = &C2V(gProgram_state).non_cars[i];
+        non_car = &gProgram_state.non_cars[i];
         non_car->collision_info->shape = NULL;
         non_car->collision_info->physics_joint1 = NULL;
         non_car->collision_info->physics_joint2 = NULL;
     }
-    for (i = 0; i < C2V(gProgram_state).num_non_car_spaces; i++) {
+    for (i = 0; i < gProgram_state.num_non_car_spaces; i++) {
         tNon_car_spec* non_car;
 
-        non_car = &C2V(gProgram_state).non_cars[i];
+        non_car = &gProgram_state.non_cars[i];
         PossibleService();
         /* FIXME: comparison with eDriver_non_car in dethrace */
         if (non_car->driver == eDriver_4 && non_car->actor != NULL) {
@@ -4654,23 +4719,23 @@ void C2_HOOK_FASTCALL FreeTrack(tTrack_spec* pTrack_spec) {
         }
         DisposePhysicsObject(non_car->collision_info);
     }
-    if (C2V(gProgram_state).non_cars != NULL) {
-        BrMemFree(C2V(gProgram_state).non_cars);
-        /* C2V(gProgram_state).non_cars = NULL; */
+    if (gProgram_state.non_cars != NULL) {
+        BrMemFree(gProgram_state.non_cars);
+        /* gProgram_state.non_cars = NULL; */
     }
     FreeSmokeShadeTables();
-    if (C2V(gTrack_flic_buffer) != NULL) {
-        BrMapRemove(C2V(gProgram_state).default_depth_effect.sky_texture);
-        BrMemFree(C2V(gTrack_flic_buffer));
-        EndFlic(&C2V(gTrack_flic_descriptor));
-        BrMemFree(C2V(gProgram_state).default_depth_effect.sky_texture->pixels);
-        C2V(gProgram_state).default_depth_effect.sky_texture->pixels = NULL;
-        BrPixelmapFree(C2V(gProgram_state).default_depth_effect.sky_texture);
-        C2V(gTrack_flic_buffer) = NULL;
+    if (gTrack_flic_buffer != NULL) {
+        BrMapRemove(gProgram_state.default_depth_effect.sky_texture);
+        BrMemFree(gTrack_flic_buffer);
+        EndFlic(&gTrack_flic_descriptor);
+        BrMemFree(gProgram_state.default_depth_effect.sky_texture->pixels);
+        gProgram_state.default_depth_effect.sky_texture->pixels = NULL;
+        BrPixelmapFree(gProgram_state.default_depth_effect.sky_texture);
+        gTrack_flic_buffer = NULL;
     }
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00506c20, FreeTrack, FreeTrack_original)
 
+// FUNCTION: CARMA2_HW 0x004ffd20
 void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
     br_bounds bnds;
 
@@ -4679,16 +4744,16 @@ void C2_HOOK_FASTCALL FindInverseAndWorldBox(tSpecial_volume* pSpec) {
     GetNewBoundingBox(&pSpec->boundary.box.bounds, &bnds, &pSpec->boundary.box.mat);
     BrMatrix34Inverse(&pSpec->boundary.box.inv_mat, &pSpec->boundary.box.mat);
 }
-C2_HOOK_FUNCTION(0x004ffd20, FindInverseAndWorldBox)
 
+// FUNCTION: CARMA2_HW 0x005074d0
 void C2_HOOK_FASTCALL MungeMaterialSV(br_matrix34* pMat, br_material* pMat_1, br_material* pMat_2, int pAxis_0, int pAxis_1) {
 
     pMat_1->map_transform.m[0][0] = 6.f * BrVector3Length((br_vector3*)pMat->m[pAxis_0]);
     pMat_1->map_transform.m[1][1] = 6.f * BrVector3Length((br_vector3*)pMat->m[pAxis_1]);
     BrMatrix23Copy(&pMat_2->map_transform, &pMat_1->map_transform);
 }
-C2_HOOK_FUNCTION(0x005074d0, MungeMaterialSV)
 
+// FUNCTION: CARMA2_HW 0x005072b0
 br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pMat, void* pData) {
     int i;
 
@@ -4710,35 +4775,34 @@ br_uint_32 C2_HOOK_FASTCALL ApplyTransToModels(br_actor* pActor, br_matrix34* pM
     BrMatrix34Identity(&pActor->t.t.mat);
     return 0;
 }
-C2_HOOK_FUNCTION(0x005072b0, ApplyTransToModels)
 
+// FUNCTION: CARMA2_HW 0x00507210
 br_uint_32 C2_HOOK_FASTCALL DeleteBastards(br_actor* pActor, br_matrix34* pMat, void* pData) {
 
-    if ((pActor != C2V(gAdditional_actors) && (pActor->identifier == NULL || pActor->identifier[0] == '&') && Vector3IsZero((br_vector3*)pMat->m[3]))
+    if ((pActor != gAdditional_actors && (pActor->identifier == NULL || pActor->identifier[0] == '&') && Vector3IsZero((br_vector3*)pMat->m[3]))
             || (pActor->model == NULL && pActor->type == BR_ACTOR_MODEL)) {
         int i;
 
-        for (i = 0; i < C2V(gDelete_count); i++) {
-            if (C2V(gDelete_list)[i] == pActor) {
+        for (i = 0; i < gDelete_count; i++) {
+            if (gDelete_list[i] == pActor) {
                 return 0;
             }
         }
-        C2V(gDelete_list)[C2V(gDelete_count)] = pActor;
-        C2V(gDelete_count) += 1;
+        gDelete_list[gDelete_count] = pActor;
+        gDelete_count += 1;
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00507210, DeleteBastards)
 
 void C2_HOOK_FASTCALL PutAdditionalNonCarsOnToAdditionalActors(void) {
     int i;
 
-    for (i = 0; i < C2V(gNum_active_non_cars); i++) {
-        tNon_car_spec *non_car = C2V(gActive_non_car_list)[i];
+    for (i = 0; i < gNum_active_non_cars; i++) {
+        tNon_car_spec *non_car = gActive_non_car_list[i];
 
-        if (non_car->car_ID == -1 && non_car->actor->parent == C2V(gNon_track_actor)) {
+        if (non_car->car_ID == -1 && non_car->actor->parent == gNon_track_actor) {
             BrActorRemove(non_car->actor);
-            BrActorAdd(C2V(gAdditional_actors), non_car->actor);
+            BrActorAdd(gAdditional_actors, non_car->actor);
         }
     }
 }
@@ -4746,12 +4810,12 @@ void C2_HOOK_FASTCALL PutAdditionalNonCarsOnToAdditionalActors(void) {
 void C2_HOOK_FASTCALL PutAdditionalNonCarsOnToNonTrackActor(void) {
     int i;
 
-    for (i = 0; i < C2V(gNum_active_non_cars); i++) {
-        tNon_car_spec *non_car = C2V(gActive_non_car_list)[i];
+    for (i = 0; i < gNum_active_non_cars; i++) {
+        tNon_car_spec *non_car = gActive_non_car_list[i];
 
-        if (non_car->car_ID == -1 && non_car->actor->parent == C2V(gAdditional_actors)) {
+        if (non_car->car_ID == -1 && non_car->actor->parent == gAdditional_actors) {
             BrActorRemove(non_car->actor);
-            BrActorAdd(C2V(gNon_track_actor), non_car->actor);
+            BrActorAdd(gNon_track_actor, non_car->actor);
         }
     }
 }
@@ -4759,30 +4823,31 @@ void C2_HOOK_FASTCALL PutAdditionalNonCarsOnToNonTrackActor(void) {
 void C2_HOOK_FASTCALL DeleteAnyZeroBastards(void) {
     int i;
 
-    C2V(gDelete_count) = 0;
-    DRActorEnumRecurseWithTrans(C2V(gAdditional_actors), NULL, DeleteBastards, NULL);
-    for (i = C2V(gDelete_count) - 1; i >= 0; i--) {
-        BrActorRemove(C2V(gDelete_list)[i]);
+    gDelete_count = 0;
+    DRActorEnumRecurseWithTrans(gAdditional_actors, NULL, DeleteBastards, NULL);
+    for (i = gDelete_count - 1; i >= 0; i--) {
+        BrActorRemove(gDelete_list[i]);
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00506f40
 void C2_HOOK_FASTCALL SaveAdditionalActors(void) {
 
     PutAdditionalNonCarsOnToAdditionalActors();
     DeleteAnyZeroBastards();
-    if (C2V(gLast_actor) != NULL) {
-        DRActorEnumRecurseWithTrans(C2V(gLast_actor), NULL, ApplyTransToModels, NULL);
+    if (gLast_actor != NULL) {
+        DRActorEnumRecurseWithTrans(gLast_actor, NULL, ApplyTransToModels, NULL);
     }
-    if (c2_strstr(C2V(gAdditional_actor_path), "autosave") != NULL) {
-        BrActorSave(C2V(gAdditional_actor_path), C2V(gAdditional_actors));
-        BrModelSaveMany(C2V(gAdditional_model_path), C2V(gAdditional_models), C2V(gNumber_of_additional_models));
+    if (c2_strstr(gAdditional_actor_path, "autosave") != NULL) {
+        BrActorSave(gAdditional_actor_path, gAdditional_actors);
+        BrModelSaveMany(gAdditional_model_path, gAdditional_models, gNumber_of_additional_models);
     } else {
         tPath_name path1;
         tPath_name path2;
         char* str;
         int i;
 
-        c2_sprintf(path1, "%s", C2V(gAdditional_actor_path));
+        c2_sprintf(path1, "%s", gAdditional_actor_path);
         str = c2_strstr(path1, ".");
         if (str != NULL) {
             *str = '\0';
@@ -4799,37 +4864,37 @@ void C2_HOOK_FASTCALL SaveAdditionalActors(void) {
         }
         c2_strcpy(path2, path1);
         c2_sprintf(path1, "%s%04d.ACT", path2, i);
-        BrActorSave(path1, C2V(gAdditional_actors));
-        BrActorSave(C2V(gAdditional_actor_path), C2V(gAdditional_actors));
-        c2_sprintf(path2, "%s", C2V(gAdditional_model_path));
+        BrActorSave(path1, gAdditional_actors);
+        BrActorSave(gAdditional_actor_path, gAdditional_actors);
+        c2_sprintf(path2, "%s", gAdditional_model_path);
         str = c2_strstr(path2, ".");
         if (str != NULL) {
             *str = '\0';
         }
         c2_sprintf(path1, "%s%04d.DAT", path2, i);
-        BrModelSaveMany(path1, C2V(gAdditional_models), C2V(gNumber_of_additional_models));
-        BrModelSaveMany(C2V(gAdditional_model_path), C2V(gAdditional_models), C2V(gNumber_of_additional_models));
+        BrModelSaveMany(path1, gAdditional_models, gNumber_of_additional_models);
+        BrModelSaveMany(gAdditional_model_path, gAdditional_models, gNumber_of_additional_models);
     }
     PutAdditionalNonCarsOnToNonTrackActor();
 }
-C2_HOOK_FUNCTION(0x00506f40, SaveAdditionalActors)
 
+// FUNCTION: CARMA2_HW 0x004ffa20
 void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
     tPath_name the_path;
     FILE* f;
     int i;
 
-    PathCat(the_path, C2V(gApplication_path), "SPECSAVE.TXT");
+    PathCat(the_path, gApplication_path, "SPECSAVE.TXT");
     f = DRfopen(the_path, "wt");
     if (f == NULL) {
         return;
     }
     c2_fprintf(f, "// SPECIAL EFFECTS VOLUMES\n\n");
-    c2_fprintf(f, "%d\t\t\t\t// # special effects volumes\n\n", C2V(gProgram_state).special_volume_count);
-    for (i = 0; i < C2V(gProgram_state).special_volume_count; i++) {
+    c2_fprintf(f, "%d\t\t\t\t// # special effects volumes\n\n", gProgram_state.special_volume_count);
+    for (i = 0; i < gProgram_state.special_volume_count; i++) {
         tSpecial_volume* v;
 
-        v = &C2V(gProgram_state).special_volumes[i];
+        v = &gProgram_state.special_volumes[i];
         switch (v->boundary_type) {
         case eFx_boundary_box:
             c2_fprintf(f, "BOX\n");
@@ -4862,7 +4927,7 @@ void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
             if (v->soundfx_type == kSoundFx_None) {
                 fprintf(f,"NONE\t\t\t\t\t// sound type\n");
             } else {
-                fprintf(f,"%s\t\t\t\t\t// sound type\n", C2V(gSoundType_Choices)[v->soundfx_type]);
+                fprintf(f,"%s\t\t\t\t\t// sound type\n", gSoundType_Choices[v->soundfx_type]);
                 WriteOutSoundSpec(f, &v->soundfx_data);
             }
         }
@@ -4870,7 +4935,6 @@ void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
     }
     PFfclose(f);
 }
-C2_HOOK_FUNCTION(0x004ffa20, SaveSpecialVolumes)
 
 int C2_HOOK_FASTCALL FindSpecVolIndex(br_actor* pActor) {
     int i;
@@ -4878,9 +4942,9 @@ int C2_HOOK_FASTCALL FindSpecVolIndex(br_actor* pActor) {
     if (pActor == NULL) {
         return -1;
     }
-    for (i = 0; i < C2V(gProgram_state).special_volume_count; i++) {
+    for (i = 0; i < gProgram_state.special_volume_count; i++) {
 
-        if (C2V(gSpec_vol_actors)[i] == pActor) {
+        if (gSpec_vol_actors[i] == pActor) {
             return i;
         }
     }
@@ -4899,20 +4963,20 @@ void C2_HOOK_FASTCALL SetSpecVolMatSize(br_actor* pActor) {
 void C2_HOOK_FASTCALL UpdateSpecVol(void) {
     int index;
 
-    index = FindSpecVolIndex(C2V(gLast_actor));
+    index = FindSpecVolIndex(gLast_actor);
     if (index >= 0) {
         tSpecial_volume* v;
 
-        v = &C2V(gProgram_state).special_volumes[index];
-        BrMatrix34Copy(&v->boundary.box.mat, &C2V(gLast_actor)->t.t.mat);
+        v = &gProgram_state.special_volumes[index];
+        BrMatrix34Copy(&v->boundary.box.mat, &gLast_actor->t.t.mat);
         FindInverseAndWorldBox(v);
-        SetSpecVolMatSize(C2V(gLast_actor));
+        SetSpecVolMatSize(gLast_actor);
     }
 }
 
 void C2_HOOK_FASTCALL DoSaveAdditionalStuff(void) {
 
-    if (C2V(gSpec_vol_mode) == 0) {
+    if (gSpec_vol_mode == 0) {
         SaveAdditionalActors();
     } else {
         UpdateSpecVol();
@@ -4920,71 +4984,61 @@ void C2_HOOK_FASTCALL DoSaveAdditionalStuff(void) {
     }
 }
 
-void (C2_HOOK_FASTCALL * AutoSaveAdditionalStuff_original)(void);
+// FUNCTION: CARMA2_HW 0x00507360
 void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    AutoSaveAdditionalStuff_original();
-#else
     size_t len_additional_actor_path;
     size_t len_additional_model_path;
 
-    len_additional_actor_path = c2_strlen(C2V(gAdditional_actor_path));
-    len_additional_model_path = c2_strlen(C2V(gAdditional_model_path));
-    c2_strcat(C2V(gAdditional_actor_path), " autosave");
-    c2_strcat(C2V(gAdditional_model_path), " autosave");
+    len_additional_actor_path = c2_strlen(gAdditional_actor_path);
+    len_additional_model_path = c2_strlen(gAdditional_model_path);
+    c2_strcat(gAdditional_actor_path, " autosave");
+    c2_strcat(gAdditional_model_path, " autosave");
     DoSaveAdditionalStuff();
-    C2V(gAdditional_actor_path)[len_additional_actor_path] = '\0';
-    C2V(gAdditional_model_path)[len_additional_model_path] = '\0';
+    gAdditional_actor_path[len_additional_actor_path] = '\0';
+    gAdditional_model_path[len_additional_model_path] = '\0';
     FlushAllPedCaches();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00507360, AutoSaveAdditionalStuff, AutoSaveAdditionalStuff_original)
 
-void (C2_HOOK_FASTCALL * AnimateSky_original)(void);
+// FUNCTION: CARMA2_HW 0x00506e80
 void C2_HOOK_FASTCALL AnimateSky(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    AnimateSky_original();
-#else
-    static C2_HOOK_VARIABLE_IMPLEMENT(tU32, prev_sky_animation, 0x006aafc0);
+    // GLOBAL: CARMA2_HW 0x006aafc0
+    static tU32 prev_sky_animation;
     tU32 now;
     tU32 now2;
     int frame_increment;
 
     now = GetTotalTime();
 
-    if (C2V(gTrack_flic_buffer) == NULL) {
+    if (gTrack_flic_buffer == NULL) {
         return;
     }
     now2 = now;
-    if (now < C2V(prev_sky_animation)) {
-        now2 = 2 * C2V(prev_sky_animation) - now;
+    if (now < prev_sky_animation) {
+        now2 = 2 * prev_sky_animation - now;
     }
-    if (C2V(prev_sky_animation) == 0) {
+    if (prev_sky_animation == 0) {
         frame_increment = 1;
     } else {
-        frame_increment = ((now2 - C2V(prev_sky_animation)) / (C2V(gTrack_flic_descriptor).frame_period)) % (C2V(gTrack_flic_descriptor).current_frame + C2V(gTrack_flic_descriptor).frames_left);
+        frame_increment = ((now2 - prev_sky_animation) / (gTrack_flic_descriptor.frame_period)) % (gTrack_flic_descriptor.current_frame + gTrack_flic_descriptor.frames_left);
     }
 
     for (; frame_increment != 0; frame_increment -= 1) {
-        if (PlayNextFlicFrame(&C2V(gTrack_flic_descriptor))) {
-            EndFlic(&C2V(gTrack_flic_descriptor));
-            StartFlic(C2V(gTrack_flic_descriptor).file_name, -1, &C2V(gTrack_flic_descriptor),
-                C2V(gTrack_flic_buffer_size), (tS8*)C2V(gTrack_flic_buffer), NULL, 0, 0, 0);
-            AssertFlicPixelmap(&C2V(gTrack_flic_descriptor), C2V(gProgram_state).default_depth_effect.sky_texture);
+        if (PlayNextFlicFrame(&gTrack_flic_descriptor)) {
+            EndFlic(&gTrack_flic_descriptor);
+            StartFlic(gTrack_flic_descriptor.file_name, -1, &gTrack_flic_descriptor,
+                gTrack_flic_buffer_size, (tS8*)gTrack_flic_buffer, NULL, 0, 0, 0);
+            AssertFlicPixelmap(&gTrack_flic_descriptor, gProgram_state.default_depth_effect.sky_texture);
         }
-        C2V(prev_sky_animation) = now;
+        prev_sky_animation = now;
         SkyTextureChanged();
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00506e80, AnimateSky, AnimateSky_original)
 
+// FUNCTION: CARMA2_HW 0x00515b80
 void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) {
 
     BrVector3Set(pResult, 0.f, 0.f, 0.f);
-    for (;pActor != NULL && pActor != C2V(gNon_track_actor); pActor = pActor->parent) {
+    for (;pActor != NULL && pActor != gNon_track_actor; pActor = pActor->parent) {
         if (pActor->t.t.mat.m[0][0] == 1.f) {
             BrVector3Accumulate(pResult, &pActor->t.t.translate.t);
         } else {
@@ -4994,26 +5048,25 @@ void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) 
         }
     }
 }
-C2_HOOK_FUNCTION(0x00515b80, CalcActorGlobalPos)
 
-int (C2_HOOK_FASTCALL * PointOutOfSight_original)(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
+// FUNCTION: CARMA2_HW 0x004e5ce0
 int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance) {
     br_vector3 distance_vector;
     int i;
 
 #define CAMERA_MAX_DISTANCE(A) ((pMax_distance != 0.f) ? pMax_distance : REC2_SQR(((br_camera*)(A)->type_data)->yon_z))
 
-    if (C2V(gMirror_on__graphics)) {
-        BrVector3Sub(&distance_vector, pPoint, (br_vector3*)C2V(gRearview_camera_to_world).m[3]);
-        if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(C2V(gRearview_camera))
-                && BrVector3Dot(&distance_vector, (br_vector3*)C2V(gRearview_camera_to_world).m[2]) < 0.f) {
+    if (gMirror_on__graphics) {
+        BrVector3Sub(&distance_vector, pPoint, (br_vector3*)gRearview_camera_to_world.m[3]);
+        if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(gRearview_camera)
+                && BrVector3Dot(&distance_vector, (br_vector3*)gRearview_camera_to_world.m[2]) < 0.f) {
 
             return 0;
         }
     }
 
-    for (i = 0; i < C2V(gCount_extra_renders); i++) {
-        br_actor* a = C2V(gExtra_renders)[i].actor;
+    for (i = 0; i < gCount_extra_renders; i++) {
+        br_actor* a = gExtra_renders[i].actor;
 
         BrVector3Sub(&distance_vector, pPoint, &a->t.t.translate.t);
         if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(a)) {
@@ -5022,17 +5075,17 @@ int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2,
         }
     }
 
-    BrVector3Sub(&distance_vector, pPoint, (br_vector3*)C2V(gCamera_to_world).m[3]);
-    if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(C2V(gCamera))
-            && BrVector3Dot(&distance_vector, (br_vector3*)C2V(gCamera_to_world).m[2]) < 0.f) {
+    BrVector3Sub(&distance_vector, pPoint, (br_vector3*)gCamera_to_world.m[3]);
+    if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(gCamera)
+            && BrVector3Dot(&distance_vector, (br_vector3*)gCamera_to_world.m[2]) < 0.f) {
 
         return 0;
     }
 #undef CAMERA_MAX_DISTANCE
     return 1;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004e5ce0, PointOutOfSight, PointOutOfSight_original)
 
+// FUNCTION: CARMA2_HW 0x00478e30
 void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it) {
     br_scalar pos;
     float f_the_time = (float)pTime;
@@ -5199,8 +5252,8 @@ void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, 
         break;
     }
 }
-C2_HOOK_FUNCTION(0x00478e30, PathGrooveBastard)
 
+// FUNCTION: CARMA2_HW 0x00479890
 void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, br_matrix34* pMat, int pInterrupt_it) {
     int rock_it;
     br_scalar x_size;
@@ -5259,13 +5312,13 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
             }
         } else {
             if (pGroove->object_interrupt_status == eInterrupt_less_than) {
-                if (pos >= pGroove->object_resumption_value || C2V(gAction_replay_mode)) {
+                if (pos >= pGroove->object_resumption_value || gAction_replay_mode) {
                     rock_it = 0;
                 } else {
                     pGroove->object_interrupt_status = eInterrupt_none;
                 }
             } else if (pGroove->object_interrupt_status == eInterrupt_greater_than) {
-                if (pos <= pGroove->object_resumption_value || C2V(gAction_replay_mode)) {
+                if (pos <= pGroove->object_resumption_value || gAction_replay_mode) {
                     rock_it = 0;
                 } else {
                     pGroove->object_interrupt_status = eInterrupt_none;
@@ -5315,8 +5368,8 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
         return;
     }
 }
-C2_HOOK_FUNCTION(0x00479890, ObjectGrooveBastard)
 
+// FUNCTION: CARMA2_HW 0x004e4650
 void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* ref_to_world, tLollipop_mode pWhich_axis) {
     br_vector3 ref_to_subject;
     br_vector3 fixed_axis;
@@ -5325,7 +5378,7 @@ void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* re
     br_matrix34 subject_to_world;
     br_matrix34 mat;
 
-    BrActorToActorMatrix34(&subject_to_world, pSubject_actor, C2V(gNon_track_actor));
+    BrActorToActorMatrix34(&subject_to_world, pSubject_actor, gNon_track_actor);
     BrVector3Sub(&ref_to_subject, (br_vector3*)ref_to_world->m[3], (br_vector3*)subject_to_world.m[3]);
     switch (pWhich_axis) {
     case eLollipop_x_match:
@@ -5394,8 +5447,8 @@ void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* re
     }
     BrMatrix34Pre(&pSubject_actor->t.t.mat, &mat);
 }
-C2_HOOK_FUNCTION(0x004e4650, LollipopizeActor)
 
+// FUNCTION: CARMA2_HW 0x00478c80
 void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, int pInterrupt_it) {
     br_actor* the_actor;
     br_vector3 actor_pos;
@@ -5408,19 +5461,19 @@ void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, in
     the_actor = pGroove->actor;
     pGroove->done_this_frame = 1;
     CalcActorGlobalPos(&actor_pos, the_actor);
-    if (PointOutOfSight(&actor_pos, 0, pGroove->mode == eGroove_mode_distance ? C2V(gYon_squared) : 36.f)) {
+    if (PointOutOfSight(&actor_pos, 0, pGroove->mode == eGroove_mode_distance ? gYon_squared : 36.f)) {
         return;
     }
 
     the_mat = &the_actor->t.t.mat;
-    if ((!C2V(gAction_replay_mode)
+    if ((!gAction_replay_mode
         || !ARReplayIsReallyPaused()
         || pGroove->path_mode == eMove_controlled
         || pGroove->path_mode == eMove_absolute) && !(pGroove->block_flags & 0x1)) {
         PathGrooveBastard(pGroove, pTime, the_mat, pInterrupt_it);
     }
     if (((pGroove->object_type != eGroove_object_none || pGroove->lollipop_mode != eLollipop_none)
-            && (!C2V(gAction_replay_mode)
+            && (!gAction_replay_mode
                     || !ARReplayIsReallyPaused()
                     || pGroove->object_mode == eMove_controlled
                     || pGroove->object_mode == eMove_absolute)) & !(pGroove->block_flags & 0x2)) {
@@ -5441,12 +5494,12 @@ void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, in
         the_actor->t.t.mat.m[3][1] += pGroove->object_position.v[1] + pGroove->object_centre.v[1];
         the_actor->t.t.mat.m[3][2] += pGroove->object_position.v[2] + pGroove->object_centre.v[2];
         if (pGroove->lollipop_mode != eLollipop_none) {
-            LollipopizeActor(pGroove->actor, &C2V(gCamera_to_world), pGroove->lollipop_mode);
+            LollipopizeActor(pGroove->actor, &gCamera_to_world, pGroove->lollipop_mode);
         }
     }
     if (pGroove->path_interrupt_status != old_path_interrupt || pGroove->object_interrupt_status != old_object_interrupt) {
         PipeSingleGrooveStop(
-            pGroove - C2V(gGroovidelics_array),
+            pGroove - gGroovidelics_array,
             the_mat,
             pGroove->path_interrupt_status,
             pGroove->object_interrupt_status,
@@ -5454,34 +5507,27 @@ void C2_HOOK_FASTCALL GrooveThisDelic(tGroovidelic_spec* pGroove, tU32 pTime, in
             pGroove->object_resumption_value);
     }
 }
-C2_HOOK_FUNCTION(0x00478c80, GrooveThisDelic)
 
-void (C2_HOOK_FASTCALL * GrooveThoseDelics_original)(void);
+// FUNCTION: CARMA2_HW 0x00478c00
 void C2_HOOK_FASTCALL GrooveThoseDelics(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    GrooveThoseDelics_original();
-#else
     int i;
     float f_the_time;
 
-    if (C2V(gGroovidelics_array) != NULL) {
+    if (gGroovidelics_array != NULL) {
         f_the_time = (float)GetTotalTime();
-        C2V(gPrevious_groove_times)[1] = C2V(gPrevious_groove_times)[0];
-        C2V(gPrevious_groove_times)[0] = (tU32)f_the_time;
+        gPrevious_groove_times[1] = gPrevious_groove_times[0];
+        gPrevious_groove_times[0] = (tU32)f_the_time;
 
-        for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+        for (i = 0; i < gGroovidelics_array_size; i++) {
             tGroovidelic_spec* the_groove;
 
-            the_groove = &C2V(gGroovidelics_array)[i];
+            the_groove = &gGroovidelics_array[i];
             if (the_groove->owner != -999 && !the_groove->done_this_frame) {
                 GrooveThisDelic(the_groove, (tU32)f_the_time, 0);
             }
         }
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00478c00, GrooveThoseDelics, GrooveThoseDelics_original)
 
 float C2_HOOK_FASTCALL MapSawToTriangle(float pNumber) {
 
@@ -5500,12 +5546,8 @@ br_scalar C2_HOOK_FASTCALL NormaliseDegreeAngle(br_scalar pAngle) {
     return pAngle;
 }
 
-void (C2_HOOK_FASTCALL * FunkThoseTronics_original)(void);
+// FUNCTION: CARMA2_HW 0x00477230
 void C2_HOOK_FASTCALL FunkThoseTronics(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    FunkThoseTronics_original();
-#else
     int i;
     int j;
     int iteration_count;
@@ -5520,14 +5562,14 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
     float f_time_diff;
     br_vector2 tmp_v2;
 
-    if (C2V(gFunkotronics_array) == NULL) {
+    if (gFunkotronics_array == NULL) {
         return;
     }
     DontLetFlicFuckWithPalettes();
     the_time = GetTotalTime();
     f_the_time = (float)the_time;
-    for (i = 0; i < C2V(gFunkotronics_array_size); i++) {
-        the_funk = &C2V(gFunkotronics_array)[i];
+    for (i = 0; i < gFunkotronics_array_size; i++) {
+        the_funk = &gFunkotronics_array[i];
         if (the_funk->owner == -999) {
             continue;
         }
@@ -5540,11 +5582,11 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
                 int k;
                 for (k = 0; k < 3; k++) {
                     the_proximity = &the_funk->proximity_array[j].v[k];
-                    if (Vector3DistanceSquared(the_proximity, C2V(gOur_pos)) <= C2V(gSight_distance_squared)) {
+                    if (Vector3DistanceSquared(the_proximity, gOur_pos) <= gSight_distance_squared) {
                         br_vector3 tmp;
 
-                        BrVector3Sub(&tmp, the_proximity, (br_vector3*)C2V(gCamera_to_world).m[3]);
-                        if (BrVector3Dot(&tmp, &the_funk->proximity_array[j].n) < 0.f && BrVector3Dot(&tmp, (br_vector3*)C2V(gCamera_to_world).m[2]) < 0.f) {
+                        BrVector3Sub(&tmp, the_proximity, (br_vector3*)gCamera_to_world.m[3]);
+                        if (BrVector3Dot(&tmp, &the_funk->proximity_array[j].n) < 0.f && BrVector3Dot(&tmp, (br_vector3*)gCamera_to_world.m[2]) < 0.f) {
                             j = -999;
                             break;
                         }
@@ -5557,15 +5599,15 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
             if (j >= 0) {
                 continue;
             }
-        } else if (the_funk->mode == eFunk_mode_last_lap_only && C2V(gLap) < C2V(gTotal_laps)) {
+        } else if (the_funk->mode == eFunk_mode_last_lap_only && gLap < gTotal_laps) {
             continue;
-        } else if (the_funk->mode == eFunk_mode_all_laps_but_last && C2V(gLap) >= C2V(gTotal_laps)) {
+        } else if (the_funk->mode == eFunk_mode_all_laps_but_last && gLap >= gTotal_laps) {
             continue;
         }
 
         the_material = the_funk->material;
         mat_matrix = &the_material->map_transform;
-        if (!C2V(gAction_replay_mode) || !ARReplayIsReallyPaused() || the_funk->matrix_mode == eMove_controlled || the_funk->matrix_mode == eMove_absolute) {
+        if (!gAction_replay_mode || !ARReplayIsReallyPaused() || the_funk->matrix_mode == eMove_controlled || the_funk->matrix_mode == eMove_absolute) {
             switch (the_funk->matrix_mod_type) {
             case eMatrix_mod_spin:
                 BrMatrix23Identity(mat_matrix);
@@ -5683,7 +5725,7 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
         case eTexture_animation_none:
             break;
         case eTexture_animation_frames:
-            if (!C2V(gAction_replay_mode) || !ARReplayIsReallyPaused() ||
+            if (!gAction_replay_mode || !ARReplayIsReallyPaused() ||
                 the_funk->mode == eFunk_mode_all_laps_but_last || the_funk->mode == 4) {
                 br_uint_16 update_flags;
                 br_pixelmap* new_colour_map;
@@ -5733,7 +5775,7 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
             }
             break;
         case eTexture_animation_flic:
-            if (!C2V(gAction_replay_mode) || !ARReplayIsReallyPaused()) {
+            if (!gAction_replay_mode || !ARReplayIsReallyPaused()) {
                 tS32 i_last_frame = (tS32)the_funk->last_frame;
                 tS32 i_time_diff;
                 if (the_time < i_last_frame) {
@@ -5774,13 +5816,13 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
             }
             break;
         case eTexture_animation_camera:
-            if (!C2V(gAction_replay_mode) || !ARReplayIsReallyPaused()) {
+            if (!gAction_replay_mode || !ARReplayIsReallyPaused()) {
                 br_vector3 camera_look;
                 br_actor *camera_actor;
                 if (the_funk->texture_animation_data.camera_info.count == 1) {
                     camera_actor = the_funk->texture_animation_data.camera_info.actors[0];
 #ifdef REC2_FIX_BUGS
-                    BrVector3Sub(&camera_look, &C2V(gProgram_state).current_car.pos,
+                    BrVector3Sub(&camera_look, &gProgram_state.current_car.pos,
                                  &camera_actor->t.t.translate.t);
 #endif
                 } else {
@@ -5790,7 +5832,7 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
                         br_vector3 delta;
                         br_actor *act = the_funk->texture_animation_data.camera_info.actors[i];
                         float dist;
-                        BrVector3Sub(&delta, &C2V(gProgram_state).current_car.pos, &act->t.t.translate.t);
+                        BrVector3Sub(&delta, &gProgram_state.current_car.pos, &act->t.t.translate.t);
                         dist = BrVector3LengthSquared(&delta);
                         if (dist < closest_distance) {
                             closest_distance = dist;
@@ -5810,10 +5852,10 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
             }
             break;
         case eTexture_animation_mirror:
-            if (!C2V(gAction_replay_mode) || !ARReplayIsReallyPaused()) {
+            if (!gAction_replay_mode || !ARReplayIsReallyPaused()) {
                 if (the_funk->texture_animation_data.mirror_info.actor != NULL) {
                     BrMatrix34Mul(&the_funk->texture_animation_data.mirror_info.actor->t.t.mat,
-                                  &C2V(gCamera_to_world),
+                                  &gCamera_to_world,
                                   &the_funk->texture_animation_data.mirror_info.mat);
                     AddExtraRender(the_funk->texture_animation_data.mirror_info.actor, the_material);
                 }
@@ -5822,78 +5864,77 @@ void C2_HOOK_FASTCALL FunkThoseTronics(void) {
         }
     }
     LetFlicFuckWithPalettes();
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00477230, FunkThoseTronics, FunkThoseTronics_original)
 
+// FUNCTION: CARMA2_HW 0x004e5ad0
 void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor) {
 
-    if (C2V(gHud_actor_storage_size) >= REC2_ASIZE(C2V(gHud_actor_storage))) {
+    if (gHud_actor_storage_size >= REC2_ASIZE(gHud_actor_storage)) {
         BrFailure("Not enough HUD actor storage");
     }
-    C2V(gHud_actor_storage)[C2V(gHud_actor_storage_size)] = pActor;
-    C2V(gHud_actor_storage_size) += 1;
+    gHud_actor_storage[gHud_actor_storage_size] = pActor;
+    gHud_actor_storage_size += 1;
 }
-C2_HOOK_FUNCTION(0x004e5ad0, RenderThisHeadup)
 
+// FUNCTION: CARMA2_HW 0x004e5cb0
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
 
-    C2V(gCount_extra_renders) = 0;
+    gCount_extra_renders = 0;
 }
-C2_HOOK_FUNCTION(0x004e5cb0, InitialiseExtraRenders)
 
+// FUNCTION: CARMA2_HW 0x004e5cc0
 void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial) {
 
-    C2V(gExtra_renders)[C2V(gCount_extra_renders)].actor = pActor;
-    C2V(gExtra_renders)[C2V(gCount_extra_renders)].material = pMaterial;
-    C2V(gCount_extra_renders) += 1;
+    gExtra_renders[gCount_extra_renders].actor = pActor;
+    gExtra_renders[gCount_extra_renders].material = pMaterial;
+    gCount_extra_renders += 1;
 }
-C2_HOOK_FUNCTION(0x004e5cc0, AddExtraRender)
 
+// FUNCTION: CARMA2_HW 0x0047b1e0
 void C2_HOOK_FASTCALL ResetGrooveFlags(void) {
     int i;
 
-    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
+    for (i = 0; i < gGroovidelics_array_size; i++) {
         tGroovidelic_spec* the_groove;
 
-        the_groove = &C2V(gGroovidelics_array)[i];
+        the_groove = &gGroovidelics_array[i];
         the_groove->done_this_frame = 0;
     }
 }
-C2_HOOK_FUNCTION(0x0047b1e0, ResetGrooveFlags)
 
+// FUNCTION: CARMA2_HW 0x0047b250
 void C2_HOOK_FASTCALL DisableFunkotronic(int pIndex) {
 
-    C2V(gFunkotronics_array)[pIndex].flags |= 0x1;
+    gFunkotronics_array[pIndex].flags |= 0x1;
     PipeSingleFunkEnable(pIndex, 0);
 }
-C2_HOOK_FUNCTION(0x0047b250, DisableFunkotronic)
 
+// FUNCTION: CARMA2_HW 0x0047b280
 void C2_HOOK_FASTCALL EnableFunkotronic(int pIndex) {
 
-    C2V(gFunkotronics_array)[pIndex].flags &= ~0x1;
+    gFunkotronics_array[pIndex].flags &= ~0x1;
     PipeSingleFunkEnable(pIndex, 1);
 }
-C2_HOOK_FUNCTION(0x0047b280, EnableFunkotronic)
 
+// FUNCTION: CARMA2_HW 0x0047b0e0
 void C2_HOOK_FASTCALL StopGroovidelic(br_actor* actor) {
     int i;
 
-    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
-        tGroovidelic_spec* groove = &C2V(gGroovidelics_array)[i];
+    for (i = 0; i < gGroovidelics_array_size; i++) {
+        tGroovidelic_spec* groove = &gGroovidelics_array[i];
         if (groove->path_interrupt_status == eInterrupt_none &&
                 groove->object_interrupt_status == eInterrupt_none) {
-            GrooveThisDelic(groove, C2V(gPrevious_groove_times)[i], 1);
+            GrooveThisDelic(groove, gPrevious_groove_times[i], 1);
         }
     }
 }
-C2_HOOK_FUNCTION(0x0047b0e0, StopGroovidelic)
 
+// FUNCTION: CARMA2_HW 0x0047b360
 tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor) {
     int i;
 
-    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
-        tGroovidelic_spec* groove = &C2V(gGroovidelics_array)[i];
+    for (i = 0; i < gGroovidelics_array_size; i++) {
+        tGroovidelic_spec* groove = &gGroovidelics_array[i];
 
         if (groove->actor == pActor) {
             return groove;
@@ -5901,125 +5942,86 @@ tGroovidelic_spec* C2_HOOK_FASTCALL ActorsGroove(br_actor* pActor) {
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x0047b360, ActorsGroove)
 
+// FUNCTION: CARMA2_HW 0x0047b160
 void C2_HOOK_FASTCALL EnableGroovidelic(br_actor *pActor, tU32 pBlock_flags) {
     int i;
 
-    for (i = 0; i < C2V(gGroovidelics_array_size); i++) {
-        tGroovidelic_spec* groove = &C2V(gGroovidelics_array)[i];
+    for (i = 0; i < gGroovidelics_array_size; i++) {
+        tGroovidelic_spec* groove = &gGroovidelics_array[i];
 
         if (groove->actor == pActor) {
             groove->block_flags &= ~pBlock_flags;
         }
     }
 }
-C2_HOOK_FUNCTION(0x0047b160, EnableGroovidelic)
 
-br_uint_32 (C2_HOOK_CDECL * ZlibFsGetAttributes_original)(void);
+// FUNCTION: CARMA2_HW 0x0051db90
 br_uint_32 C2_HOOK_CDECL ZlibFsGetAttributes(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ZlibFsGetAttributes_original();
-#else
+
     return BR_FS_ATTR_READABLE | BR_FS_ATTR_WRITEABLE | BR_FS_ATTR_HAS_BINARY;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051db90, ZlibFsGetAttributes, ZlibFsGetAttributes_original);
 
-void* (C2_HOOK_CDECL * ZlibFsOpenRead_original)(const char* buffer, br_size_t capacity, br_mode_test_cbfn* cbfn, int* type);
+// FUNCTION: CARMA2_HW 0x0051dc10
 void* C2_HOOK_CDECL ZlibFsOpenRead(const char* buffer, br_size_t capacity, br_mode_test_cbfn* cbfn, int* type) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ZlibFsOpenRead_original(buffer, capacity, cbfn, type);
-#else
-    return gzopen(buffer, "rb");
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dc10, ZlibFsOpenRead, ZlibFsOpenRead_original)
 
-void* (C2_HOOK_CDECL * ZlibFsOpenWrite_original)(const char* path, int type);
+    return gzopen(buffer, "rb");
+}
+
+// FUNCTION: CARMA2_HW 0x0051dc20
 void* C2_HOOK_CDECL ZlibFsOpenWrite(const char* path, int type) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ZlibFsOpenWrite_original(path, type);
-#else
+
     if (type != BR_FS_MODE_BINARY) {
         return NULL;
     }
     return gzopen(path, "wb");
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dc20, ZlibFsOpenWrite, ZlibFsOpenWrite_original)
 
-void (C2_HOOK_CDECL * ZlibFsClose_original)(void* context);
+// FUNCTION: CARMA2_HW 0x0051dba0
 void C2_HOOK_CDECL ZlibFsClose(void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    ZlibFsClose_original(context);
-#else
+
     gzclose(context);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dba0, ZlibFsClose, ZlibFsClose_original)
 
-int (C2_HOOK_CDECL * ZlibFsEof_original)(void* context);
+// FUNCTION: CARMA2_HW 0x0051dbb0
 int C2_HOOK_CDECL ZlibFsEof(void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ZlibFsEof(context);
-#else
+
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dbb0, ZlibFsEof, ZlibFsEof_original)
 
-int (C2_HOOK_CDECL * ZlibFsGetChr_original)(void* context);
+// FUNCTION: CARMA2_HW 0x0051db40
 int C2_HOOK_CDECL ZlibFsGetChr(void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ZlibFsGetChr_original(context);
-#else
+
     return gzgetc((gzFile)context);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051db40, ZlibFsGetChr, ZlibFsGetChr_original)
 
-void (C2_HOOK_CDECL * ZlibFsPutChr_original)(int, void*);
+// FUNCTION: CARMA2_HW 0x0051dc40
 void C2_HOOK_CDECL ZlibFsPutChr(int chr, void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    ZlibFsPutChr_original(chr, context);
-#else
-    gzputc(context, chr);
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dc40, ZlibFsPutChr, ZlibFsPutChr_original)
 
-br_size_t (C2_HOOK_CDECL * ZlibFsRead_original)(void* buffer, br_size_t elem_size, unsigned int count, void* context);
+    gzputc(context, chr);
+}
+
+// FUNCTION: CARMA2_HW 0x0051dca0
 br_size_t C2_HOOK_CDECL ZlibFsRead(void* buffer, br_size_t elem_size, unsigned int count, void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ZlibFsRead_original(buffer, elem_size, count, context);
-#else
+
     int bytes_read = gzread(context, buffer, elem_size * count);
     if (bytes_read < 0) {
         return 0;
     }
     return bytes_read / elem_size;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dca0, ZlibFsRead, ZlibFsRead_original)
 
-br_size_t (C2_HOOK_CDECL * ZlibFsWrite_original)(const void* buffer, br_size_t elem_size, unsigned int count, void* context);
+// FUNCTION: CARMA2_HW 0x0051dcd0
 br_size_t C2_HOOK_CDECL ZlibFsWrite(const void* buffer, br_size_t elem_size, unsigned int count, void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ZlibFsWrite_original(buffer, elem_size, count, context);
-#else
     int bytes_written = gzwrite(context, buffer, elem_size * count);
-    return bytes_written / elem_size;
-#endif
-}
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dcd0, ZlibFsWrite, ZlibFsWrite_original)
 
-br_size_t (C2_HOOK_CDECL * ZlibFsGetLine_original)(char* buffer, br_size_t capacity, void* context);
+    return bytes_written / elem_size;
+}
+
+// FUNCTION: CARMA2_HW 0x0051dbc0
 br_size_t C2_HOOK_CDECL ZlibFsGetLine(char* buffer, br_size_t capacity, void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return ZlibFsGetLine_original(buffer, capacity, context);
-#else
     br_size_t i;
+
     for (i = 0; i < capacity - 1; i++) {
         int c = gzgetc((gzFile)context);
         if (c == EOF) {
@@ -6031,48 +6033,34 @@ br_size_t C2_HOOK_CDECL ZlibFsGetLine(char* buffer, br_size_t capacity, void* co
         buffer[i] = c;
     }
     return i;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dbc0, ZlibFsGetLine, ZlibFsGetLine_original)
 
-void (C2_HOOK_CDECL * ZlibFsPutLine_original)(char* line, void* context);
+// FUNCTION: CARMA2_HW 0x0051dc60
 void C2_HOOK_CDECL ZlibFsPutLine(char* line, void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    ZlibFsPutLine_original(line, context);
-#else
     char newline = '\n';
     size_t len = c2_strlen(line);
+
     gzwrite(context, line, len);
     gzwrite(context, &newline, 1);
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051dc60, ZlibFsPutLine, ZlibFsPutLine_original)
 
-void (C2_HOOK_CDECL * ZlibFsAdvance_original)(br_size_t advance, void* context);
+// FUNCTION: CARMA2_HW 0x0051db60
 void C2_HOOK_CDECL ZlibFsAdvance(br_size_t advance, void* context) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    ZlibFsAdvance_original(advance, context);
-#else
+
     while (advance != 0) {
         gzgetc((gzFile)context);
         advance -= 1;
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0051db60, ZlibFsAdvance, ZlibFsAdvance_original)
 
-tSpecial_volume* (C2_HOOK_FASTCALL * FindSpecialVolume_original)(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3);
+// FUNCTION: CARMA2_HW 0x004ff120
 tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_volume* pLast_vol, int pArg3) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return FindSpecialVolume_original(pP, pLast_vol, pArg3);
-#else
     int i;
     tSpecial_volume* result;
 
     result = NULL;
-    for (i = 0; i < C2V(gProgram_state).special_volume_count && (result == NULL || pArg3); i++) {
-        tSpecial_volume* v = &C2V(gProgram_state).special_volumes[i];
+    for (i = 0; i < gProgram_state.special_volume_count && (result == NULL || pArg3); i++) {
+        tSpecial_volume* v = &gProgram_state.special_volumes[i];
         tSpecial_volume* sound_volume = NULL;
         tSpecial_volume* containing_volume = sound_volume;
         float sound_dist = 1e7f;
@@ -6153,44 +6141,42 @@ tSpecial_volume* C2_HOOK_FASTCALL FindSpecialVolume(br_vector3* pP, tSpecial_vol
         }
     }
     return result;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x004ff120, FindSpecialVolume, FindSpecialVolume_original)
 
+// FUNCTION: CARMA2_HW 0x004748a0
 void C2_HOOK_FAKE_THISCALL ControlBoundFunkGroove(int pSlot_number, undefined4 pArg2, float pValue) {
 
     if (pSlot_number < 0) {
         return;
     }
-    if (pSlot_number >= REC2_ASIZE(C2V(gGroove_funk_bindings))) {
+    if (pSlot_number >= REC2_ASIZE(gGroove_funk_bindings)) {
         FatalError(kFatalError_UsedRefNumOfControlledGroovidelicFunkotronicIsOutOfRange);
     }
-    if (!C2V(gGroove_funk_bindings)[pSlot_number].field_0x4) {
-        *C2V(gGroove_funk_bindings)[pSlot_number].v = pValue;
+    if (!gGroove_funk_bindings[pSlot_number].field_0x4) {
+        *gGroove_funk_bindings[pSlot_number].v = pValue;
     }
 }
-C2_HOOK_FUNCTION(0x004748a0, ControlBoundFunkGroove)
 
+// FUNCTION: CARMA2_HW 0x004748e0
 float C2_HOOK_FAKE_THISCALL ControlBoundFunkGroovePlus(int pSlot_number, undefined4 pArg2, float pValue) {
 
     if (pSlot_number < 0) {
         return 0.f;
     }
-    if (pSlot_number >= REC2_ASIZE(C2V(gGroove_funk_bindings))) {
+    if (pSlot_number >= REC2_ASIZE(gGroove_funk_bindings)) {
         FatalError(kFatalError_UsedRefNumOfControlledGroovidelicFunkotronicIsOutOfRange);
     }
-    if (!C2V(gGroove_funk_bindings)[pSlot_number].field_0x4) {
-        *C2V(gGroove_funk_bindings)[pSlot_number].v = fmodf(*C2V(gGroove_funk_bindings)[pSlot_number].v + pValue, 1.f);
+    if (!gGroove_funk_bindings[pSlot_number].field_0x4) {
+        *gGroove_funk_bindings[pSlot_number].v = fmodf(*gGroove_funk_bindings[pSlot_number].v + pValue, 1.f);
     }
-    return *C2V(gGroove_funk_bindings)[pSlot_number].v;
+    return *gGroove_funk_bindings[pSlot_number].v;
 }
-C2_HOOK_FUNCTION(0x004748e0, ControlBoundFunkGroovePlus)
 
+// FUNCTION: CARMA2_HW 0x00506e50
 void C2_HOOK_FASTCALL ProcessTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br_actor* pCamera, br_matrix34* pCamera_to_world_transform) {
 
     RenderTrack(pWorld, pTrack_spec, pCamera, pCamera_to_world_transform);
-    if (C2V(gAdditional_actors)) {
-        BrZbSceneRenderAdd(C2V(gAdditional_actors));
+    if (gAdditional_actors) {
+        BrZbSceneRenderAdd(gAdditional_actors);
     }
 }
-C2_HOOK_FUNCTION(0x00506e50, ProcessTrack)

@@ -21,74 +21,103 @@
 
 #include <stddef.h>
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_vertex_FM, 3, 0x00663490, {
+// GLOBAL: CARMA2_HW 0x00663490
+br_file_struct_member br_vertex_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[0]), "p.v[x]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[1]), "p.v[y]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[2]), "p.v[z]", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_vertex_F, 0x006634c0, { "br_vertex", BR_ASIZE(C2V(br_vertex_FM)), C2V(br_vertex_FM), sizeof(br_vertex) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_vertex_uv_FM, 2, 0x006634d0, {
+// GLOBAL: CARMA2_HW 0x006634c0
+br_file_struct br_vertex_F = { "br_vertex", BR_ASIZE(br_vertex_FM), br_vertex_FM, sizeof(br_vertex) };
+
+// GLOBAL: CARMA2_HW 0x006634d0
+br_file_struct_member br_vertex_uv_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, map.v[0]), "map.v[0]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, map.v[1]), "map.v[1]", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_vertex_uv_F, 0x006634f0, { "br_vertex_uv", BR_ASIZE(C2V(br_vertex_uv_FM)), C2V(br_vertex_uv_FM), sizeof(br_vertex) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_old_vertex_uv_FM, 5, 0x00663500, {
+// GLOBAL: CARMA2_HW 0x006634f0
+br_file_struct br_vertex_uv_F = { "br_vertex_uv", BR_ASIZE(br_vertex_uv_FM), br_vertex_uv_FM, sizeof(br_vertex) };
+
+// GLOBAL: CARMA2_HW 0x00663500
+br_file_struct_member br_old_vertex_uv_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[0]), "p.v[X]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[1]), "p.v[Y]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, p.v[2]), "p.v[Z]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, map.v[0]), "map.v[0]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_vertex, map.v[1]), "map.v[1]", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_old_vertex_uv_F, 0x00663550, { "br_old_vertex_uv", BR_ASIZE(C2V(br_old_vertex_uv_FM)), C2V(br_old_vertex_uv_FM), sizeof(br_vertex) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_face_FM, 5, 0x00663560, {
+// GLOBAL: CARMA2_HW 0x00663550
+br_file_struct br_old_vertex_uv_F = { "br_old_vertex_uv", BR_ASIZE(br_old_vertex_uv_FM), br_old_vertex_uv_FM, sizeof(br_vertex) };
+
+// GLOBAL: CARMA2_HW 0x00663560
+br_file_struct_member br_face_FM[] = {
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices), "vertices[0]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[1]), "vertices[1]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[2]), "vertices[2]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, smoothing), "smoothing", NULL },
     { DF_TYPE_BR_UINT_8, offsetof(br_face, flags), "flags", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_face_F, 0x006635b0, { "br_face", BR_ASIZE(C2V(br_face_FM)), C2V(br_face_FM), sizeof(br_face) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_old_face_1_FM, 5, 0x006635c0, {
+// GLOBAL: CARMA2_HW 0x006635b0
+br_file_struct br_face_F = { "br_face", BR_ASIZE(br_face_FM), br_face_FM, sizeof(br_face) };
+
+// GLOBAL: CARMA2_HW 0x006635c0
+br_file_struct_member br_old_face_1_FM[] = {
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[0]), "vertices[0]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[1]), "vertices[1]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[2]), "vertices[2]", NULL },
     { DF_TYPE_BR_UINT_8, offsetof(br_face, smoothing), "smoothing", NULL },
     { DF_TYPE_BR_UINT_8, offsetof(br_face, flags), "flags", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_old_face_1_F, 0x00663610, { "br_old_face_1", BR_ASIZE(C2V(br_old_face_1_FM)), C2V(br_old_face_1_FM), sizeof(br_face) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_old_face_FM, 5, 0x00663620, {
+// GLOBAL: CARMA2_HW 0x00663610
+br_file_struct br_old_face_1_F = { "br_old_face_1", BR_ASIZE(br_old_face_1_FM), br_old_face_1_FM, sizeof(br_face) };
+
+// GLOBAL: CARMA2_HW 0x00663620
+br_file_struct_member br_old_face_FM[] = {
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[0]), "vertices[0]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[1]), "vertices[1]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, vertices[2]), "vertices[2]", NULL },
     { DF_TYPE_BR_UINT_16, offsetof(br_face, material), "material", NULL },
     { DF_TYPE_BR_UINT_32, offsetof(br_face, smoothing), "smoothing", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_old_face_F, 0x00663670, { "br_old_face", BR_ASIZE(C2V(br_old_face_FM)), C2V(br_old_face_FM), sizeof(br_face) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_model_FM, 2, 0x00663680, {
+// GLOBAL: CARMA2_HW 0x00663670
+br_file_struct br_old_face_F ={ "br_old_face", BR_ASIZE(br_old_face_FM), br_old_face_FM, sizeof(br_face) };
+
+// GLOBAL: CARMA2_HW 0x00663680
+br_file_struct_member br_model_FM[] = {
     { DF_TYPE_BR_UINT_16, offsetof(br_model, flags), "flags", NULL },
     { DF_TYPE_ASCIZ, offsetof(br_model, identifier), "identifier", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_model_F, 0x006636a0, { "br_model", BR_ASIZE(C2V(br_model_FM)), C2V(br_model_FM), sizeof(br_model) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_old_model_1_FM, 1, 0x006636b0, {
+// GLOBAL: CARMA2_HW 0x006636a0
+br_file_struct br_model_F ={ "br_model", BR_ASIZE(br_model_FM), br_model_FM, sizeof(br_model) };
+
+
+// GLOBAL: CARMA2_HW 0x006636b0
+br_file_struct_member br_old_model_1_FM[] = {
     { DF_TYPE_ASCIZ, offsetof(br_model, identifier), "identifier", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_old_model_1_F, 0x006636c0, { "br_old_model_1", 1, br_old_model_1_FM, sizeof(br_model) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_pivot_FM, 3, 0x006636d0, {
+// GLOBAL: CARMA2_HW 0x006636c0
+br_file_struct br_old_model_1_F = { "br_old_model_1", 1, br_old_model_1_FM, sizeof(br_model) };
+
+// GLOBAL: CARMA2_HW 0x006636d0
+br_file_struct_member br_pivot_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_model, pivot.v[0]), "pivot.v[X]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_model, pivot.v[1]), "pivot.v[Y]", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_model, pivot.v[2]), "pivot.v[Z]", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_pivot_F, 0x00663700, { "br_pivot", 3, C2V(br_pivot_FM), sizeof(br_model) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_material_old_FM, 13, 0x00663710, {
+// GLOBAL: CARMA2_HW 0x00663700
+br_file_struct br_pivot_F = { "br_pivot", 3, br_pivot_FM, sizeof(br_model) };
+
+// GLOBAL: CARMA2_HW 0x00663710
+br_file_struct_member br_material_old_FM[] = {
     { DF_TYPE_BR_COLOUR, offsetof(br_material, colour), "colour", NULL },
     { DF_TYPE_BR_UINT_8, offsetof(br_material, opacity), "opacity", NULL },
     { DF_TYPE_BR_UFRACTION, offsetof(br_material, ka), "ka", NULL },
@@ -102,10 +131,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_material_old_FM,
     { DF_TYPE_BR_UINT_8, offsetof(br_material, index_base), "index_base", NULL },
     { DF_TYPE_BR_UINT_8, offsetof(br_material, index_range), "index_range", NULL },
     { DF_TYPE_ASCIZ, offsetof(br_material, identifier), "identifier", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_material_old_F, 0x006637e0, { "br_material_old", BR_ASIZE(C2V(br_material_old_FM)), C2V(br_material_old_FM), sizeof(br_material) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_material_FM, 17, 0x006637f0, {
+/// GLOBAL: CARMA2_HW 0x006637e0
+br_file_struct br_material_old_F = { "br_material_old", BR_ASIZE(br_material_old_FM), br_material_old_FM, sizeof(br_material) };
+
+/// GLOBAL: CARMA2_HW 0x006637f0
+br_file_struct_member br_material_FM[] = {
     { DF_TYPE_BR_COLOUR, offsetof(br_material, colour), "colour", NULL },
     { DF_TYPE_BR_UINT_8, offsetof(br_material, opacity), "opacity", NULL },
     { DF_TYPE_BR_UFRACTION, offsetof(br_material, ka), "ka", NULL },
@@ -123,18 +155,22 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_material_FM, 17,
     { DF_TYPE_BR_COLOUR, offsetof(br_material, fog_colour), "fog_colour", NULL },
     { DF_TYPE_BR_INT_32, offsetof(br_material, subdivide_tolerance), "subdivide_tolerance", NULL },
     { DF_TYPE_ASCIZ, offsetof(br_material, identifier), "identifier", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_material_F, 0x00663900, { "br_material", BR_ASIZE(C2V(br_material_FM)), C2V(br_material_FM), sizeof(br_material) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_df_material_map_item, MaterialMaps, 5, 0x00663910, {
+/// GLOBAL: CARMA2_HW 0x00663900
+br_file_struct br_material_F = { "br_material", BR_ASIZE(br_material_FM), br_material_FM, sizeof(br_material) };
+
+/// GLOBAL: CARMA2_HW 0x00663910
+br_df_material_map_item MaterialMaps[] = {
     { CHUNKID_MATERIAL_COLOUR_MAP, offsetof(br_material, colour_map), 0 },
     { CHUNKID_MATERIAL_INDEX_BLEND, offsetof(br_material, index_blend), 1 },
     { CHUNKID_MATERIAL_INDEX_SHADE, offsetof(br_material, index_shade), 1 },
     { CHUNKID_MATERIAL_SCREENDOOR, offsetof(br_material, screendoor), 1 },
     { CHUNKID_MATERIAL_INDEX_FOG, offsetof(br_material, index_fog), 1 },
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_enum_member, actor_type_FM, 8, 0x00663950, {
+/// GLOBAL: CARMA2_HW 0x00663950
+br_file_enum_member actor_type_FM[] = {
     { 0, "BR_ACTOR_NONE" },
     { 1, "BR_ACTOR_MODEL" },
     { 2, "BR_ACTOR_LIGHT" },
@@ -143,10 +179,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_enum_member, actor_type_FM, 8, 0x0
     { 5, "BR_ACTOR_BOUNDS" },
     { 6, "BR_ACTOR_BOUNDS_CORRECT" },
     { 7, "BR_ACTOR_CLIP_PLANE" },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_enum, actor_type_F, 0x00663990, { BR_ASIZE(C2V(actor_type_FM)), actor_type_FM });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_enum_member, render_style_FM, 8, 0x00663998, {
+/// GLOBAL: CARMA2_HW 0x00663990
+br_file_enum actor_type_F ={ BR_ASIZE(actor_type_FM), actor_type_FM };
+
+/// GLOBAL: CARMA2_HW 0x00663998
+br_file_enum_member render_style_FM[] = {
     { 0, "BR_RSTYLE_DEFAULT"},
     { 1, "BR_RSTYLE_NONE"},
     { 2, "BR_RSTYLE_POINTS"},
@@ -155,34 +194,46 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_enum_member, render_style_FM, 8, 0
     { 5, "BR_RSTYLE_BOUNDING_POINTS"},
     { 6, "BR_RSTYLE_BOUNDING_EDGES"},
     { 7, "BR_RSTYLE_BOUNDING_FACES"},
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_enum, render_style_F, 0x006639d8, { 8, render_style_FM });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_actor_FM, 3, 0x006639e0, {
+// GLOBAL: CARMA2_HW 0x006639d8
+br_file_enum render_style_F = { 8, render_style_FM };
+
+/// GLOBAL: CARMA2_HW 0x006639e0
+br_file_struct_member br_actor_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_actor, type), "type", &actor_type_F },
     { DF_TYPE_ENUM_8, offsetof(br_actor, render_style), "render_style", &render_style_F },
     { DF_TYPE_ASCIZ, offsetof(br_actor, identifier), "identifier", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_actor_F, 0x00663a10, { "br_actor", BR_ASIZE(C2V(br_actor_FM)), C2V(br_actor_FM), sizeof(br_actor) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_transform_matrix34_FM, 4, 0x00663a20, {
+/// GLOBAL: CARMA2_HW 0x00663a10
+br_file_struct br_actor_F = { "br_actor", BR_ASIZE(br_actor_FM), br_actor_FM, sizeof(br_actor) };
+
+/// GLOBAL: CARMA2_HW 0x00663a20
+br_file_struct_member br_transform_matrix34_FM[] ={
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.mat.m[0]), "t.mat.m[0]", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.mat.m[1]), "t.mat.m[1]", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.mat.m[2]), "t.mat.m[2]", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.mat.m[3]), "t.mat.m[3]", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_transform_matrix34_F, 0x00663a60,{ "br_transform_matrix34", BR_ASIZE(br_transform_matrix34_FM), br_transform_matrix34_FM, sizeof(br_transform) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_transform_quat_FM, 5, 0x00663a70, {
+/// GLOBAL: CARMA2_HW 0x00663a60
+br_file_struct br_transform_matrix34_F ={ "br_transform_matrix34", BR_ASIZE(br_transform_matrix34_FM), br_transform_matrix34_FM, sizeof(br_transform) };
+
+/// GLOBAL: CARMA2_HW 0x00663a70
+br_file_struct_member br_transform_quat_FM[] = {
     { DF_TYPE_BR_SCALAR, offsetof(br_transform, t.quat.q.x), "t.quat.q.x", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_transform, t.quat.q.y), "t.quat.q.y", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_transform, t.quat.q.z), "t.quat.q.z", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_transform, t.quat.q.w), "t.quat.q.w", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.quat.t), "t.quat.t", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_transform_quat_F, 0x00663ac0, { "br_transform_quat", BR_ASIZE(C2V(br_transform_quat_FM)), C2V(br_transform_quat_FM), sizeof(br_transform) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_enum_member, angle_order_FM, 24, 0x00663ad0, {
+/// GLOBAL: CARMA2_HW 0x00663ac0
+br_file_struct br_transform_quat_F = { "br_transform_quat", BR_ASIZE(br_transform_quat_FM), br_transform_quat_FM, sizeof(br_transform) };
+
+/// GLOBAL: CARMA2_HW 0x00663ad0
+br_file_enum_member angle_order_FM[] = {
     { 0, "BR_EULER_XYZ_S" },
     { 8, "BR_EULER_XYX_S" },
     { 4, "BR_EULER_XZY_S" },
@@ -207,62 +258,84 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_enum_member, angle_order_FM, 24, 0
     { 26, "BR_EULER_ZXZ_R" },
     { 22, "BR_EULER_XYZ_R" },
     { 30, "BR_EULER_ZYZ_R" },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_enum, angle_order_F, 0x00663b90, { BR_ASIZE(C2V(angle_order_FM)), angle_order_FM });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_transform_euler_FM, 5, 0x00663b98, {
+/// GLOBAL: CARMA2_HW 0x00663b90
+br_file_enum angle_order_F = { BR_ASIZE(angle_order_FM), angle_order_FM };
+
+/// GLOBAL: CARMA2_HW 0x00663b98
+br_file_struct_member br_transform_euler_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_transform, t.euler.e.order), "t.euler.e.order", &angle_order_F },
     { DF_TYPE_BR_ANGLE, offsetof(br_transform, t.euler.e.a), "t.euler.e.a", NULL },
     { DF_TYPE_BR_ANGLE, offsetof(br_transform, t.euler.e.b), "t.euler.e.b", NULL },
     { DF_TYPE_BR_ANGLE, offsetof(br_transform, t.euler.e.c), "t.euler.e.c", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.euler.t), "t.euler.t", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_transform_euler_F, 0x00663be8, { "br_transform_euler", BR_ASIZE(C2V(br_transform_euler_FM)), C2V(br_transform_euler_FM), sizeof(br_transform) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_transform_look_up_FM, 3, 0x00663bf8, {
+/// GLOBAL: CARMA2_HW 0x00663be8
+br_file_struct br_transform_euler_F = { "br_transform_euler", BR_ASIZE(br_transform_euler_FM), br_transform_euler_FM, sizeof(br_transform) };
+
+/// GLOBAL: CARMA2_HW 0x00663bf8
+br_file_struct_member br_transform_look_up_FM[] = {
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.look_up.look), "t.look_up.look", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.look_up.up), "t.look_up.up", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.look_up.t), "t.look_up.t", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_transform_look_up_F, 0x00663c28, { "br_transform_look_up", BR_ASIZE(C2V(br_transform_look_up_FM)), C2V(br_transform_look_up_FM), sizeof(br_transform) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_transform_translation_FM, 1, 0x00663c38, {
+/// GLOBAL: CARMA2_HW 0x00663c28
+br_file_struct br_transform_look_up_F = { "br_transform_look_up", BR_ASIZE(br_transform_look_up_FM), br_transform_look_up_FM, sizeof(br_transform) };
+
+/// GLOBAL: CARMA2_HW 0x00663c38
+br_file_struct_member br_transform_translation_FM[] ={
     { DF_TYPE_BR_VECTOR3, offsetof(br_transform, t.translate.t), "t.translate.t", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_transform_translation_F, 0x00663c48, { "br_transform_translation", BR_ASIZE(C2V(br_transform_translation_FM)), C2V(br_transform_translation_FM), sizeof(br_transform) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(transform_type, TransformTypes, 7, 0x00663c58, {
-    { CHUNKID_TRANSFORM_MAT34, &C2V(br_transform_matrix34_F) },
-    { CHUNKID_TRANSFORM_MAT34_LP, &C2V(br_transform_matrix34_F) },
-    { CHUNKID_TRANSFORM_QUAT, &C2V(br_transform_quat_F) },
-    { CHUNKID_TRANSFORM_EULER, &C2V(br_transform_euler_F) },
-    { CHUNKID_TRANSFORM_LOOK_UP, &C2V(br_transform_look_up_F) },
-    { CHUNKID_TRANSFORM_TRANSLATION, &C2V(br_transform_translation_F) },
+/// GLOBAL: CARMA2_HW 0x00663c48
+br_file_struct br_transform_translation_F = { "br_transform_translation", BR_ASIZE(br_transform_translation_FM), br_transform_translation_FM, sizeof(br_transform) };
+
+/// GLOBAL: CARMA2_HW 0x00663c58
+transform_type TransformTypes[] = {
+    { CHUNKID_TRANSFORM_MAT34, &br_transform_matrix34_F },
+    { CHUNKID_TRANSFORM_MAT34_LP, &br_transform_matrix34_F },
+    { CHUNKID_TRANSFORM_QUAT, &br_transform_quat_F },
+    { CHUNKID_TRANSFORM_EULER, &br_transform_euler_F },
+    { CHUNKID_TRANSFORM_LOOK_UP, &br_transform_look_up_F },
+    { CHUNKID_TRANSFORM_TRANSLATION, &br_transform_translation_F },
     { CHUNKID_TRANSFORM_IDENTITY, NULL },
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_bounds3_FM, 2, 0x00663c90, {
+// GLOBAL: CARMA2_HW 0x00663c90
+br_file_struct_member br_bounds3_FM[] = {
     { DF_TYPE_BR_VECTOR3, offsetof(br_bounds3, min), "min", NULL },
     { DF_TYPE_BR_VECTOR3, offsetof(br_bounds3, max), "max", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_bounds3_F, 0x00663cb0, { "br_bounds3", BR_ASIZE(br_bounds3_FM), br_bounds3_FM, sizeof(br_bounds3) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_plane_FM, 1, 0x00663cc0, {
+// GLOBAL: CARMA2_HW 0x00663cb0
+br_file_struct br_bounds3_F = { "br_bounds3", BR_ASIZE(br_bounds3_FM), br_bounds3_FM, sizeof(br_bounds3) };
+
+// GLOBAL: CARMA2_HW 0x00663cc0
+br_file_struct_member br_plane_FM[] ={
     { DF_TYPE_BR_VECTOR4, offsetof(br_vector4, v), "eqn", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_plane_F, 0x00663cd0, { "br_plane", BR_ASIZE(C2V(br_plane_FM)), C2V(br_plane_FM), sizeof(br_vector4) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_enum_member, light_type_FM, 6, 0x00663ce0, {
+// GLOBAL: CARMA2_HW 0x00663cd0
+br_file_struct br_plane_F = { "br_plane", BR_ASIZE(br_plane_FM), br_plane_FM, sizeof(br_vector4) };
+
+// GLOBAL: CARMA2_HW 0x00663ce0
+br_file_enum_member light_type_FM[] = {
     { 0, "BR_LIGHT_POINT"},
     { 1, "BR_LIGHT_DIRECT"},
     { 2, "BR_LIGHT_SPOT"},
     { 4, "BR_LIGHT_VIEW|BR_LIGHT_POINT"},
     { 5, "BR_LIGHT_VIEW|BR_LIGHT_DIRECT"},
     { 6, "BR_LIGHT_VIEW|BR_LIGHT_SPOT"},
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_enum, light_type_F, 0x00663d30, { BR_ASIZE(C2V(light_type_FM)), light_type_FM });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_light_FM, 8, 0x00663d38, {
+// GLOBAL: CARMA2_HW 0x00663d30
+br_file_enum light_type_F = { BR_ASIZE(light_type_FM), light_type_FM };
+
+// GLOBAL: CARMA2_HW 0x00663d38
+br_file_struct_member br_light_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_light, type), "type", &light_type_F },
     { DF_TYPE_BR_COLOUR, offsetof(br_light, colour), "colour", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_light, attenuation_c), "attenuation_c", NULL },
@@ -271,26 +344,35 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_light_FM, 8, 0x0
     { DF_TYPE_BR_ANGLE, offsetof(br_light, cone_inner), "cone_inner", NULL },
     { DF_TYPE_BR_ANGLE, offsetof(br_light, cone_outer), "cone_outer", NULL },
     { DF_TYPE_ASCIZ, offsetof(br_light, identifier), "identifier", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_light_F, 0x00663db8, { "br_light", BR_ASIZE(C2V(br_light_FM)), C2V(br_light_FM), sizeof(br_light) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_enum_member, camera_type_FM, 2, 0x00663dc8, {
+// GLOBAL: CARMA2_HW 0x00663db8
+br_file_struct br_light_F = { "br_light", BR_ASIZE(br_light_FM), br_light_FM, sizeof(br_light) };
+
+// GLOBAL: CARMA2_HW 0x00663dc8
+br_file_enum_member camera_type_FM[] = {
     { 0, "BR_CAMERA_PARALLEL"},
     { 1, "BR_CAMERA_PERSPECTIVE"},
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_enum, camera_type_F, 0x00663dd8,{ BR_ASIZE(C2V(camera_type_FM)), camera_type_FM });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_file_struct_member, br_camera_FM, 6, 0x00663de0, {
+// GLOBAL: CARMA2_HW 0x00663dd8
+br_file_enum camera_type_F = { BR_ASIZE(camera_type_FM), camera_type_FM };
+
+// GLOBAL: CARMA2_HW 0x00663de0
+br_file_struct_member br_camera_FM[] = {
     { DF_TYPE_ENUM_8, offsetof(br_camera, type), "type", &camera_type_F },
     { DF_TYPE_BR_ANGLE, offsetof(br_camera, field_of_view), "field_of_view", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_camera, hither_z), "hither_z", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_camera, yon_z), "yon_z", NULL },
     { DF_TYPE_BR_SCALAR, offsetof(br_camera, aspect), "aspect", NULL },
     { DF_TYPE_ASCIZ, offsetof(br_camera, identifier), "identifier", NULL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_file_struct, br_camera_F, 0x00663e40, { "br_camera", BR_ASIZE(C2V(br_camera_FM)), C2V(br_camera_FM), sizeof(br_camera) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_chunks_table_entry, ModelLoadEntries, 15, 0x00663e50, {
+// GLOBAL: CARMA2_HW 0x00663e40
+br_file_struct br_camera_F = { "br_camera", BR_ASIZE(br_camera_FM), br_camera_FM, sizeof(br_camera) };
+
+// GLOBAL: CARMA2_HW 0x00663e50
+br_chunks_table_entry ModelLoadEntries[] = {
     { CHUNKID_END, 0u, FopRead_END },
     { CHUNKID_OLD_MATERIAL_INDEX, 0u, FopRead_OLD_MATERIAL_INDEX },
     { CHUNKID_OLD_VERTICES, 0u, FopRead_OLD_VERTICES },
@@ -306,10 +388,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_chunks_table_entry, ModelLoadEntries, 1
     { CHUNKID_MODEL_FACES, 1u, FopRead_FACES },
     { CHUNKID_MODEL_FACE_MATERIAL, 0u, FopRead_FACE_MATERIAL },
     { CHUNKID_MODEL_PIVOT, 0u, FopRead_PIVOT },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_chunks_table, ModelLoadTable, 0x00663f08, { BR_ASIZE(ModelLoadEntries), C2V(ModelLoadEntries) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_chunks_table_entry, ActorLoadEntries, 21, 0x00663f10, {
+// GLOBAL: CARMA2_HW 0x00663f08
+br_chunks_table ModelLoadTable = { BR_ASIZE(ModelLoadEntries), ModelLoadEntries };
+
+// GLOBAL: CARMA2_HW 0x00663f10
+br_chunks_table_entry ActorLoadEntries[] = {
     { CHUNKID_END, 0u, FopRead_END },
     { CHUNKID_ACTOR, 0u, FopRead_ACTOR },
     { CHUNKID_ACTOR_MODEL, 0u, FopRead_ACTOR_MODEL },
@@ -331,10 +416,13 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_chunks_table_entry, ActorLoadEntries, 2
     { CHUNKID_LIGHT, 0u, FopRead_LIGHT },
     { CHUNKID_CAMERA, 0u, FopRead_CAMERA },
     { CHUNKID_PLANE, 0u, FopRead_PLANE },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_chunks_table, ActorLoadTable, 0x00664010, { BR_ASIZE(ActorLoadEntries), C2V(ActorLoadEntries) });
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_chunks_table_entry, MaterialLoadEntries, 8, 0x00664018, {
+// GLOBAL: CARMA2_HW 0x00664010
+br_chunks_table ActorLoadTable = { BR_ASIZE(ActorLoadEntries), ActorLoadEntries };
+
+// GLOBAL: CARMA2_HW 0x00664018
+br_chunks_table_entry MaterialLoadEntries[] = {
     { CHUNKID_END, 0u, FopRead_END },
     { CHUNKID_MATERIAL_OLD, 0u, FopRead_MATERIAL_OLD },
     { CHUNKID_MATERIAL_COLOUR_MAP, 0u, FopRead_PIXELMAP_REF },
@@ -343,47 +431,50 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_chunks_table_entry, MaterialLoadEntries
     { CHUNKID_MATERIAL_SCREENDOOR, 0u, FopRead_PIXELMAP_REF },
     { CHUNKID_MATERIAL_INDEX_FOG, 0u, FopRead_PIXELMAP_REF },
     { CHUNKID_MATERIAL, 0u, FopRead_MATERIAL },
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_chunks_table, MaterialLoadTable, 0x00664078, { BR_ASIZE(MaterialLoadEntries), C2V(MaterialLoadEntries) });
+};
+
+// GLOBAL: CARMA2_HW 0x00664078
+br_chunks_table MaterialLoadTable = { BR_ASIZE(MaterialLoadEntries), MaterialLoadEntries };
 
 int C2_HOOK_STDCALL FopWrite_VERTICES(br_datafile* df, br_vertex* vertices, int nvertices) {
 
-    df->prims->chunk_write(df, CHUNKID_MODEL_VERTICES, df->prims->struct_size(df, &C2V(br_vertex_F), NULL) * nvertices + df->prims->count_size(df));
+    df->prims->chunk_write(df, CHUNKID_MODEL_VERTICES, df->prims->struct_size(df, &br_vertex_F, NULL) * nvertices + df->prims->count_size(df));
     df->prims->count_write(df, nvertices);
-    DfStructWriteArray(df, &C2V(br_vertex_F), vertices, nvertices);
+    DfStructWriteArray(df, &br_vertex_F, vertices, nvertices);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x005232a0
 int C2_HOOK_STDCALL FopRead_VERTICES(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
     mp = DfTop(DF_MODEL, NULL);
     mp->vertices = BrResAllocate(mp, sizeof(br_vertex) * count, BR_MEMORY_VERTICES);
-    DfStructReadArray(df, &C2V(br_vertex_F), mp->vertices, count);
+    DfStructReadArray(df, &br_vertex_F, mp->vertices, count);
     mp->nvertices = count;
     return 0;
 }
-C2_HOOK_FUNCTION(0x005232a0, FopRead_VERTICES)
 
+// FUNCTION: CARMA2_HW 0x005232f0
 int C2_HOOK_STDCALL FopRead_OLD_VERTICES(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     void *ptr;
 
-    count = length / df->prims->struct_size(df, &C2V(br_vertex_F), NULL);
-    ptr = BrResAllocate(C2V(v1db).res, count* sizeof(br_vertex), BR_MEMORY_VERTICES);
-    DfStructReadArray(df, &C2V(br_vertex_F), ptr, count);
+    count = length / df->prims->struct_size(df, &br_vertex_F, NULL);
+    ptr = BrResAllocate(v1db.res, count* sizeof(br_vertex), BR_MEMORY_VERTICES);
+    DfStructReadArray(df, &br_vertex_F, ptr, count);
     DfPush(DF_VERTEX, ptr, count);
     return 0;
 }
-C2_HOOK_FUNCTION(0x005232f0, FopRead_OLD_VERTICES)
 
 int C2_HOOK_STDCALL FopWrite_VERTEX_UV(br_datafile* df, br_vertex* vertices, int nvertices) {
 
-    df->prims->chunk_write(df, CHUNKID_MODEL_VERTEX_UV, df->prims->struct_size(df, &C2V(br_vertex_uv_F), NULL) * nvertices + df->prims->count_size(df));
+    df->prims->chunk_write(df, CHUNKID_MODEL_VERTEX_UV, df->prims->struct_size(df, &br_vertex_uv_F, NULL) * nvertices + df->prims->count_size(df));
     df->prims->count_write(df, nvertices);
-    DfStructWriteArray(df, &C2V(br_vertex_uv_F), vertices, nvertices);
+    DfStructWriteArray(df, &br_vertex_uv_F, vertices, nvertices);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523350
 int C2_HOOK_STDCALL FopRead_VERTEX_UV(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
@@ -391,28 +482,28 @@ int C2_HOOK_STDCALL FopRead_VERTEX_UV(br_datafile* df, br_uint_32 id, br_uint_32
     if (count > mp->nvertices) {
         BrFailure("Vertex UV: too many entries");
     }
-    DfStructReadArray(df, &C2V(br_vertex_uv_F), mp->vertices, count);
+    DfStructReadArray(df, &br_vertex_uv_F, mp->vertices, count);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523350, FopRead_VERTEX_UV)
 
+// FUNCTION: CARMA2_HW 0x005233a0
 int C2_HOOK_STDCALL FopRead_OLD_VERTICES_UV(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     void* ptr;
 
-    count = length / df->prims->struct_size(df, &C2V(br_old_vertex_uv_F), NULL);
-    ptr = BrResAllocate(C2V(v1db).res, count * sizeof(br_vertex), BR_MEMORY_VERTICES);
-    DfStructReadArray(df, &C2V(br_old_vertex_uv_F), ptr, count);
+    count = length / df->prims->struct_size(df, &br_old_vertex_uv_F, NULL);
+    ptr = BrResAllocate(v1db.res, count * sizeof(br_vertex), BR_MEMORY_VERTICES);
+    DfStructReadArray(df, &br_old_vertex_uv_F, ptr, count);
     DfPush(DF_VERTEX, ptr, count);
     return 0;
 }
-C2_HOOK_FUNCTION(0x005233a0, FopRead_OLD_VERTICES_UV)
 
+// FUNCTION: CARMA2_HW 0x00523400
 int C2_HOOK_STDCALL FopRead_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char name[256];
     br_material** mip;
     br_uint_32 i;
 
-    mip = (br_material**)BrResAllocate(C2V(v1db).res, sizeof(intptr_t) * (count + 1), BR_MEMORY_MATERIAL_INDEX);
+    mip = (br_material**)BrResAllocate(v1db.res, sizeof(intptr_t) * (count + 1), BR_MEMORY_MATERIAL_INDEX);
     mip[0] = NULL;
     for (i = 1; i < count + 1; i++) {
         df->prims->name_read(df, name);
@@ -421,7 +512,6 @@ int C2_HOOK_STDCALL FopRead_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, br_ui
     DfPush(DF_MATERIAL_INDEX, mip, count + 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523400, FopRead_MATERIAL_INDEX)
 
 int C2_HOOK_STDCALL FopWrite_MATERIAL_INDEX(br_datafile* df, br_material** materials, int nmaterials) {
     int i;
@@ -439,6 +529,7 @@ int C2_HOOK_STDCALL FopWrite_MATERIAL_INDEX(br_datafile* df, br_material** mater
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523490
 int C2_HOOK_STDCALL FopRead_OLD_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char* mblock;
     char* cp;
@@ -458,7 +549,7 @@ int C2_HOOK_STDCALL FopRead_OLD_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, b
         }
         cp++;
     }
-    mip = BrResAllocate(C2V(v1db).res, num_materials * sizeof(br_material*), BR_MEMORY_MATERIAL_INDEX);
+    mip = BrResAllocate(v1db.res, num_materials * sizeof(br_material*), BR_MEMORY_MATERIAL_INDEX);
     cp = mblock;
     for (i = 0; i < length; i++) {
         *mip = BrMaterialFind(cp);
@@ -470,8 +561,8 @@ int C2_HOOK_STDCALL FopRead_OLD_MATERIAL_INDEX(br_datafile* df, br_uint_32 id, b
     DfPush(DF_MATERIAL_INDEX, mip, count);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523490, FopRead_OLD_MATERIAL_INDEX)
 
+// FUNCTION: CARMA2_HW 0x00523550
 int C2_HOOK_STDCALL FopRead_FACES(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
     int i;
@@ -482,7 +573,7 @@ int C2_HOOK_STDCALL FopRead_FACES(br_datafile* df, br_uint_32 id, br_uint_32 len
     mp = DfTop(DF_MODEL, NULL);
     mp->faces = (br_face*)BrResAllocate(mp, sizeof(br_face) * count, BR_MEMORY_FACES);
     mp->nfaces = count;
-    DfStructReadArray(df, &C2V(br_face_F), mp->faces, count);
+    DfStructReadArray(df, &br_face_F, mp->faces, count);
     for (i = 0; i < mp->nfaces; i++) {
         if (mp->faces[i].smoothing == 0) {
             mp->faces[i].smoothing = -1;
@@ -491,16 +582,16 @@ int C2_HOOK_STDCALL FopRead_FACES(br_datafile* df, br_uint_32 id, br_uint_32 len
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523550, FopRead_FACES)
 
 int C2_HOOK_STDCALL FopWrite_FACES(br_datafile* df, br_face* faces, int nfaces) {
 
-    df->prims->chunk_write(df, CHUNKID_MODEL_FACES, df->prims->struct_size(df, &C2V(br_face_F), NULL) * nfaces + df->prims->count_size(df));
+    df->prims->chunk_write(df, CHUNKID_MODEL_FACES, df->prims->struct_size(df, &br_face_F, NULL) * nfaces + df->prims->count_size(df));
     df->prims->count_write(df, nfaces);
-    DfStructWriteArray(df, &C2V(br_face_F), faces, nfaces);
+    DfStructWriteArray(df, &br_face_F, faces, nfaces);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x005235d0
 int C2_HOOK_STDCALL FopRead_OLD_FACES_1(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
     int i;
@@ -508,7 +599,7 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES_1(br_datafile* df, br_uint_32 id, br_uint_
     mp = DfTop(DF_MODEL, NULL);
     mp->faces = BrResAllocate(mp, count * sizeof(br_face), BR_MEMORY_FACES);
     mp->nfaces = count;
-    DfStructReadArray(df, &C2V(br_old_face_1_F), mp->faces, (br_uint_16)count);
+    DfStructReadArray(df, &br_old_face_1_F, mp->faces, (br_uint_16)count);
     for (i = 0; i < mp->nfaces; i++) {
         if (mp->faces[i].smoothing == 0) {
             mp->faces[i].smoothing = -1;
@@ -518,8 +609,8 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES_1(br_datafile* df, br_uint_32 id, br_uint_
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x005235d0, FopRead_OLD_FACES_1)
 
+// FUNCTION: CARMA2_HW 0x00523670
 int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_face* fp;
     br_material** mip;
@@ -530,9 +621,9 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32
     ptr = DfPop(DF_VERTEX, &i);
     mip = DfPop(DF_MATERIAL_INDEX, &mi_count);
     DfPush(DF_VERTEX, ptr, i);
-    mi_count = length / df->prims->struct_size(df, &C2V(br_old_face_F), NULL);
-    fp = BrResAllocate(C2V(v1db).res, sizeof(br_face) * mi_count, BR_MEMORY_FACES);
-    DfStructReadArray(df, &C2V(br_old_face_F), fp, mi_count);
+    mi_count = length / df->prims->struct_size(df, &br_old_face_F, NULL);
+    fp = BrResAllocate(v1db.res, sizeof(br_face) * mi_count, BR_MEMORY_FACES);
+    DfStructReadArray(df, &br_old_face_F, fp, mi_count);
     for (i = 0; i < mi_count; i++) {
         union u_mat_u16 {
             br_material mat;
@@ -547,7 +638,6 @@ int C2_HOOK_STDCALL FopRead_OLD_FACES(br_datafile* df, br_uint_32 id, br_uint_32
     DfPush(DF_FACE, fp, mi_count);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523670, FopRead_OLD_FACES)
 
 int C2_HOOK_STDCALL FopWrite_FACE_MATERIAL(br_datafile* df, br_face* faces, int nfaces, br_material** mindex, int nmaterials) {
     br_uint_16* block;
@@ -555,7 +645,7 @@ int C2_HOOK_STDCALL FopWrite_FACE_MATERIAL(br_datafile* df, br_face* faces, int 
     int j;
 
     FopWrite_MATERIAL_INDEX(df, mindex, nmaterials);
-    block = BrResAllocate(C2V(v1db).res, nfaces * sizeof(br_uint_16), BR_MEMORY_MATERIAL_INDEX);
+    block = BrResAllocate(v1db.res, nfaces * sizeof(br_uint_16), BR_MEMORY_MATERIAL_INDEX);
     for (i = 0; i < nfaces; i++) {
         block[i] = 0;
         if (faces[i].material != NULL) {
@@ -573,6 +663,7 @@ int C2_HOOK_STDCALL FopWrite_FACE_MATERIAL(br_datafile* df, br_face* faces, int 
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523750
 int C2_HOOK_STDCALL FopRead_FACE_MATERIAL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_material** mindex;
     unsigned int nmaterials;
@@ -605,49 +696,49 @@ int C2_HOOK_STDCALL FopRead_FACE_MATERIAL(br_datafile* df, br_uint_32 id, br_uin
     BrResFree(mindex);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523750, FopRead_FACE_MATERIAL)
 
+// FUNCTION: CARMA2_HW 0x00523810
 int C2_HOOK_STDCALL FopRead_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
     mp = BrModelAllocate(NULL, 0, 0);
     mp->identifier = NULL;
     df->res = mp;
-    df->prims->struct_read(df, &C2V(br_model_F), mp);
+    df->prims->struct_read(df, &br_model_F, mp);
     df->res = NULL;
     mp->flags &= (BR_MODF_DONT_WELD | BR_MODF_KEEP_ORIGINAL | BR_MODF_GENERATE_TAGS | BR_MODF_QUICK_UPDATE);
     DfPush(DF_MODEL, mp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523810, FopRead_MODEL)
 
 int C2_HOOK_STDCALL FopWrite_MODEL(br_datafile* df, br_model* mp) {
     br_model temp_model;
 
     c2_memcpy(&temp_model, mp, sizeof(br_model));
-    df->prims->chunk_write(df, CHUNKID_MODEL, df->prims->struct_size(df, &C2V(br_model_F), mp));
-    df->prims->struct_write(df, &C2V(br_model_F), mp);
+    df->prims->chunk_write(df, CHUNKID_MODEL, df->prims->struct_size(df, &br_model_F, mp));
+    df->prims->struct_write(df, &br_model_F, mp);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523860
 int C2_HOOK_STDCALL FopRead_OLD_MODEL_1(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
     mp = BrModelAllocate(NULL, 0, 0);
     df->res = mp;
-    df->prims->struct_read(df, &C2V(br_old_model_1_F), mp);
+    df->prims->struct_read(df, &br_old_model_1_F, mp);
     DfPush(DF_MODEL, df->res, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523860, FopRead_OLD_MODEL_1)
 
+// FUNCTION: CARMA2_HW 0x005238a0
 int C2_HOOK_STDCALL FopRead_OLD_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
     unsigned int i;
 
     mp = BrModelAllocate(NULL, 0, 0);
     df->res = mp;
-    df->prims->struct_read(df, &C2V(br_model_F), mp);
+    df->prims->struct_read(df, &br_model_F, mp);
     df->res = NULL;
     mp->faces = DfPop(DF_FACE, &i);
     mp->nfaces = i;
@@ -659,78 +750,77 @@ int C2_HOOK_STDCALL FopRead_OLD_MODEL(br_datafile* df, br_uint_32 id, br_uint_32
     DfPush(DF_MODEL, mp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x005238a0, FopRead_OLD_MODEL)
 
+// FUNCTION: CARMA2_HW 0x00523930
 int C2_HOOK_STDCALL FopRead_PIVOT(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_model* mp;
 
     mp = DfPop(DF_MODEL, NULL);
     df->res = mp;
-    df->prims->struct_read(df, &C2V(br_pivot_F), mp);
+    df->prims->struct_read(df, &br_pivot_F, mp);
     df->res = NULL;
     DfPush(DF_MODEL, mp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523930, FopRead_PIVOT)
 
+// FUNCTION: CARMA2_HW 0x00523970
 int C2_HOOK_STDCALL FopRead_MATERIAL_OLD(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_material* mp;
     mp = BrMaterialAllocate(NULL);
     df->res = mp;
-    df->prims->struct_read(df, &C2V(br_material_old_F), mp);
+    df->prims->struct_read(df, &br_material_old_F, mp);
     df->res = NULL;
     DfPush(DF_MATERIAL, mp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523970, FopRead_MATERIAL_OLD)
 
+// FUNCTION: CARMA2_HW 0x005239b0
 int C2_HOOK_STDCALL FopRead_MATERIAL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_material* mp;
 
     mp = BrMaterialAllocate(NULL);
     df->res = mp;
-    df->prims->struct_read(df, &C2V(br_material_F), mp);
+    df->prims->struct_read(df, &br_material_F, mp);
     df->res = NULL;
     DfPush(DF_MATERIAL, mp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x005239b0, FopRead_MATERIAL)
 
 int C2_HOOK_STDCALL FopWrite_MATERIAL(br_datafile* df, br_material* mp) {
 
-    df->prims->chunk_write(df, CHUNKID_MATERIAL, df->prims->struct_size(df, &C2V(br_material_F), mp));
-    df->prims->struct_write(df,&C2V(br_material_F), mp);
+    df->prims->chunk_write(df, CHUNKID_MATERIAL, df->prims->struct_size(df, &br_material_F, mp));
+    df->prims->struct_write(df,&br_material_F, mp);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x005239f0
 int C2_HOOK_STDCALL FopRead_PIXELMAP_REF(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_pixelmap* pm;
     char name[256];
     char* mp;
     int i;
 
-    for (i = 0; i < BR_ASIZE(C2V(MaterialMaps)); i++) {
-        if (id == C2V(MaterialMaps)[i].id) {
+    for (i = 0; i < BR_ASIZE(MaterialMaps); i++) {
+        if (id == MaterialMaps[i].id) {
             break;
         }
     }
 
-    if (i >= BR_ASIZE(C2V(MaterialMaps))) {
+    if (i >= BR_ASIZE(MaterialMaps)) {
         // FIXME: error message
         c2_abort();
     }
 
     mp = DfTop(DF_MATERIAL, NULL);
     df->prims->name_read(df, name);
-    if (C2V(MaterialMaps)[i].table != 0) {
+    if (MaterialMaps[i].table != 0) {
         pm = BrTableFind(name);
     } else {
         pm = BrMapFind(name);
     }
-    *(intptr_t*)(mp + C2V(MaterialMaps)[i].offset) = (intptr_t)pm;
+    *(intptr_t*)(mp + MaterialMaps[i].offset) = (intptr_t)pm;
     return 0;
 }
-C2_HOOK_FUNCTION(0x005239f0, FopRead_PIXELMAP_REF)
 
 int C2_HOOK_STDCALL FopWrite_PIXELMAP_REF(br_datafile* df, int id, br_pixelmap* pixelmap) {
 
@@ -741,23 +831,23 @@ int C2_HOOK_STDCALL FopWrite_PIXELMAP_REF(br_datafile* df, int id, br_pixelmap* 
 
 int C2_HOOK_STDCALL FopWrite_ACTOR(br_datafile* df, br_actor* ap) {
 
-    df->prims->chunk_write(df, CHUNKID_ACTOR, df->prims->struct_size(df, &C2V(br_actor_F), ap));
-    df->prims->struct_write(df, &C2V(br_actor_F), ap);
+    df->prims->chunk_write(df, CHUNKID_ACTOR, df->prims->struct_size(df, &br_actor_F, ap));
+    df->prims->struct_write(df, &br_actor_F, ap);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523a70
 int C2_HOOK_STDCALL FopRead_ACTOR(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* ap;
 
     ap = BrActorAllocate(BR_ACTOR_NONE, NULL);
     df->res = ap;
-    df->prims->struct_read(df, &C2V(br_actor_F), ap);
+    df->prims->struct_read(df, &br_actor_F, ap);
     df->res = NULL;
     ap->t.type = BR_TRANSFORM_IDENTITY;
     DfPush(DF_ACTOR, ap, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523a70, FopRead_ACTOR)
 
 int C2_HOOK_STDCALL FopWrite_ACTOR_MODEL(br_datafile* df, br_model* model) {
 
@@ -766,6 +856,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_MODEL(br_datafile* df, br_model* model) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523ac0
 int C2_HOOK_STDCALL FopRead_ACTOR_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char name[256];
     br_actor* a;
@@ -775,7 +866,6 @@ int C2_HOOK_STDCALL FopRead_ACTOR_MODEL(br_datafile* df, br_uint_32 id, br_uint_
     a->model = BrModelFind(name);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523ac0, FopRead_ACTOR_MODEL)
 
 int C2_HOOK_STDCALL FopWrite_ACTOR_MATERIAL(br_datafile* df, br_material* material) {
 
@@ -784,6 +874,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_MATERIAL(br_datafile* df, br_material* materi
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523b00
 int C2_HOOK_STDCALL FopRead_ACTOR_MATERIAL(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     char name[256];
     br_actor* a;
@@ -793,7 +884,6 @@ int C2_HOOK_STDCALL FopRead_ACTOR_MATERIAL(br_datafile* df, br_uint_32 id, br_ui
     a->material = BrMaterialFind(name);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523b00, FopRead_ACTOR_MATERIAL)
 
 int C2_HOOK_STDCALL FopWrite_ACTOR_TRANSFORM(br_datafile* df) {
 
@@ -801,6 +891,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_TRANSFORM(br_datafile* df) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523b40
 int C2_HOOK_STDCALL FopRead_ACTOR_TRANSFORM(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_transform* tp;
@@ -811,7 +902,6 @@ int C2_HOOK_STDCALL FopRead_ACTOR_TRANSFORM(br_datafile* df, br_uint_32 id, br_u
     BrResFree(tp);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523b40, FopRead_ACTOR_TRANSFORM)
 
 int C2_HOOK_STDCALL FopWrite_ACTOR_LIGHT(br_datafile* df) {
 
@@ -819,6 +909,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_LIGHT(br_datafile* df) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523b80
 int C2_HOOK_STDCALL FopRead_ACTOR_LIGHT(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_light* lp;
@@ -828,7 +919,6 @@ int C2_HOOK_STDCALL FopRead_ACTOR_LIGHT(br_datafile* df, br_uint_32 id, br_uint_
     a->type_data = lp;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523b80, FopRead_ACTOR_LIGHT)
 
 int C2_HOOK_STDCALL FopWrite_ACTOR_CAMERA(br_datafile* df) {
 
@@ -836,6 +926,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_CAMERA(br_datafile* df) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523ba0
 int C2_HOOK_STDCALL FopRead_ACTOR_CAMERA(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_light* cp;
@@ -845,7 +936,6 @@ int C2_HOOK_STDCALL FopRead_ACTOR_CAMERA(br_datafile* df, br_uint_32 id, br_uint
     a->type_data = cp;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523ba0, FopRead_ACTOR_CAMERA)
 
 int C2_HOOK_STDCALL FopWrite_ACTOR_BOUNDS(br_datafile* df) {
 
@@ -853,6 +943,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_BOUNDS(br_datafile* df) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523bc0
 int C2_HOOK_STDCALL FopRead_ACTOR_BOUNDS(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_bounds* bp;
@@ -862,7 +953,6 @@ int C2_HOOK_STDCALL FopRead_ACTOR_BOUNDS(br_datafile* df, br_uint_32 id, br_uint
     a->type_data = bp;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523bc0, FopRead_ACTOR_BOUNDS)
 
 int C2_HOOK_STDCALL FopWrite_ACTOR_CLIP_PLANE(br_datafile* df) {
 
@@ -870,6 +960,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_CLIP_PLANE(br_datafile* df) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523be0
 int C2_HOOK_STDCALL FopRead_ACTOR_CLIP_PLANE(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_vector4* vp;
@@ -879,7 +970,6 @@ int C2_HOOK_STDCALL FopRead_ACTOR_CLIP_PLANE(br_datafile* df, br_uint_32 id, br_
     a->type_data = vp;
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523be0, FopRead_ACTOR_CLIP_PLANE)
 
 int C2_HOOK_STDCALL FopWrite_ACTOR_ADD_CHILD(br_datafile* df) {
 
@@ -887,6 +977,7 @@ int C2_HOOK_STDCALL FopWrite_ACTOR_ADD_CHILD(br_datafile* df) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523c00
 int C2_HOOK_STDCALL FopRead_ACTOR_ADD_CHILD(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_actor* a;
     br_actor* p;
@@ -897,12 +988,11 @@ int C2_HOOK_STDCALL FopRead_ACTOR_ADD_CHILD(br_datafile* df, br_uint_32 id, br_u
 
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523c00, FopRead_ACTOR_ADD_CHILD)
 
 int C2_HOOK_STDCALL FopWrite_TRANSFORM(br_datafile* df, br_transform* t) {
     transform_type* tt;
 
-    tt = &C2V(TransformTypes)[t->type];
+    tt = &TransformTypes[t->type];
     if (tt->fs == NULL) {
         df->prims->chunk_write(df, tt->id, 0);
     } else {
@@ -913,106 +1003,107 @@ int C2_HOOK_STDCALL FopWrite_TRANSFORM(br_datafile* df, br_transform* t) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523c30
 int C2_HOOK_STDCALL FopRead_TRANSFORM(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     int t;
     br_transform* tp;
 
-    for (t = 0; t < BR_ASIZE(C2V(TransformTypes)); t++) {
-        if (id == C2V(TransformTypes)[t].id) {
+    for (t = 0; t < BR_ASIZE(TransformTypes); t++) {
+        if (id == TransformTypes[t].id) {
             break;
         }
     }
-    if (t >= BR_ASIZE(C2V(TransformTypes))) {
+    if (t >= BR_ASIZE(TransformTypes)) {
         c2_abort(); // FIXME: LOG_PANIC("transform type not found!");
     }
-    tp = (br_transform*)BrResAllocate(C2V(v1db).res, sizeof(br_transform), BR_MEMORY_TRANSFORM);
+    tp = (br_transform*)BrResAllocate(v1db.res, sizeof(br_transform), BR_MEMORY_TRANSFORM);
     tp->type = t;
     df->res = tp;
-    if (C2V(TransformTypes)[t].fs) {
-        df->prims->struct_read(df, C2V(TransformTypes)[t].fs, tp);
+    if (TransformTypes[t].fs) {
+        df->prims->struct_read(df, TransformTypes[t].fs, tp);
     }
     df->res = NULL;
     DfPush(DF_TRANSFORM, tp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523c30, FopRead_TRANSFORM)
 
 int C2_HOOK_STDCALL FopWrite_BOUNDS(br_datafile* df, br_bounds* bp) {
 
-    df->prims->chunk_write(df, CHUNKID_BOUNDS, df->prims->struct_size(df, &C2V(br_bounds3_F), bp));
-    df->prims->struct_write(df, &C2V(br_bounds3_F), bp);
+    df->prims->chunk_write(df, CHUNKID_BOUNDS, df->prims->struct_size(df, &br_bounds3_F, bp));
+    df->prims->struct_write(df, &br_bounds3_F, bp);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523ca0
 int C2_HOOK_STDCALL FopRead_BOUNDS(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_bounds3* bp;
 
-    bp = BrResAllocate(C2V(v1db).res, sizeof(br_bounds3), BR_MEMORY_BOUNDS);
+    bp = BrResAllocate(v1db.res, sizeof(br_bounds3), BR_MEMORY_BOUNDS);
     df->res = bp;
-    df->prims->struct_read(df, &C2V(br_bounds3_F), bp);
+    df->prims->struct_read(df, &br_bounds3_F, bp);
     df->res = NULL;
     DfPush(DF_BOUNDS, bp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523ca0, FopRead_BOUNDS)
 
 int C2_HOOK_STDCALL FopWrite_PLANE(br_datafile* df, br_vector4* pp) {
 
-    df->prims->chunk_write(df, CHUNKID_PLANE, df->prims->struct_size(df, &C2V(br_plane_F), pp));
-    df->prims->struct_write(df, &C2V(br_plane_F), pp);
+    df->prims->chunk_write(df, CHUNKID_PLANE, df->prims->struct_size(df, &br_plane_F, pp));
+    df->prims->struct_write(df, &br_plane_F, pp);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523cf0
 int C2_HOOK_STDCALL FopRead_PLANE(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_vector4* pp;
 
-    pp = BrResAllocate(C2V(v1db).res, sizeof(br_vector4), BR_MEMORY_CLIP_PLANE);
+    pp = BrResAllocate(v1db.res, sizeof(br_vector4), BR_MEMORY_CLIP_PLANE);
     df->res = pp;
-    df->prims->struct_read(df, &C2V(br_plane_F), pp);
+    df->prims->struct_read(df, &br_plane_F, pp);
     df->res = NULL;
     DfPush(DF_CLIP_PLANE, pp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523cf0, FopRead_PLANE)
 
 int C2_HOOK_STDCALL FopWrite_LIGHT(br_datafile* df, br_light* lp) {
 
-    df->prims->chunk_write(df, CHUNKID_LIGHT, df->prims->struct_size(df, &C2V(br_light_F), lp));
-    df->prims->struct_write(df, &C2V(br_light_F), lp);
+    df->prims->chunk_write(df, CHUNKID_LIGHT, df->prims->struct_size(df, &br_light_F, lp));
+    df->prims->struct_write(df, &br_light_F, lp);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523d40
 int C2_HOOK_STDCALL FopRead_LIGHT(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_light* lp;
 
-    lp = BrResAllocate(C2V(v1db).res, sizeof(br_light), BR_MEMORY_LIGHT);
+    lp = BrResAllocate(v1db.res, sizeof(br_light), BR_MEMORY_LIGHT);
     df->res = lp;
-    df->prims->struct_read(df, &C2V(br_light_F), lp);
+    df->prims->struct_read(df, &br_light_F, lp);
     df->res = NULL;
     DfPush(DF_LIGHT, lp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523d40, FopRead_LIGHT)
 
 int C2_HOOK_STDCALL FopWrite_CAMERA(br_datafile* df, br_camera* cp) {
 
-    df->prims->chunk_write(df, CHUNKID_CAMERA, df->prims->struct_size(df, &C2V(br_camera_F), cp));
-    df->prims->struct_write(df, &C2V(br_camera_F), cp);
+    df->prims->chunk_write(df, CHUNKID_CAMERA, df->prims->struct_size(df, &br_camera_F, cp));
+    df->prims->struct_write(df, &br_camera_F, cp);
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00523d90
 int C2_HOOK_STDCALL FopRead_CAMERA(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
     br_camera* cp;
 
-    cp = BrResAllocate(C2V(v1db).res, sizeof(br_camera), BR_MEMORY_CAMERA);
+    cp = BrResAllocate(v1db.res, sizeof(br_camera), BR_MEMORY_CAMERA);
     df->res = cp;
-    df->prims->struct_read(df, &C2V(br_camera_F), cp);
+    df->prims->struct_read(df, &br_camera_F, cp);
     df->res = NULL;
     DfPush(DF_CAMERA, cp, 1);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523d90, FopRead_CAMERA)
 
+// FUNCTION: CARMA2_HW 0x00523de0
 br_uint_32 C2_HOOK_CDECL BrModelLoadMany(char* filename, br_model** models, br_uint_16 num) {
     int count;
     int r;
@@ -1027,7 +1118,7 @@ br_uint_32 C2_HOOK_CDECL BrModelLoadMany(char* filename, br_model** models, br_u
         if (count >= num) {
             break;
         }
-        r = DfChunksInterpret(df, &C2V(ModelLoadTable));
+        r = DfChunksInterpret(df, &ModelLoadTable);
         if (DfTopType() == DF_MODEL) {
             models[count] = DfPop(DF_MODEL, NULL);
             count++;
@@ -1036,8 +1127,8 @@ br_uint_32 C2_HOOK_CDECL BrModelLoadMany(char* filename, br_model** models, br_u
     DfClose(df);
     return count;
 }
-C2_HOOK_FUNCTION(0x00523de0, BrModelLoadMany)
 
+// FUNCTION: CARMA2_HW 0x00524310
 int C2_HOOK_CDECL PtrCompare(void* a, void* b) {
 
     if (*(uintptr_t*)a > *(uintptr_t*)b) {
@@ -1045,8 +1136,8 @@ int C2_HOOK_CDECL PtrCompare(void* a, void* b) {
     }
     return *(uintptr_t*)a < *(uintptr_t*)b;
 }
-C2_HOOK_FUNCTION(0x00524310, PtrCompare)
 
+// FUNCTION: CARMA2_HW 0x00523ee0
 br_uint_32 C2_HOOK_CDECL WriteModel(br_model* mp, br_datafile* df) {
     br_material** mindex;
     int nmaterials;
@@ -1063,7 +1154,7 @@ br_uint_32 C2_HOOK_CDECL WriteModel(br_model* mp, br_datafile* df) {
         BrWarning("the registry. To prevent this, set the BR_MODF_UPDATEABLE");
         BrFailure("flag before adding the model to the registry.");
     }
-    mindex = BrResAllocate(C2V(v1db).res, mp->nfaces * sizeof(br_material*), BR_MEMORY_MATERIAL_INDEX);
+    mindex = BrResAllocate(v1db.res, mp->nfaces * sizeof(br_material*), BR_MEMORY_MATERIAL_INDEX);
     for (i = 0; i < mp->nfaces; i++) {
         mindex[i] = mp->faces[i].material;
     }
@@ -1103,8 +1194,8 @@ br_uint_32 C2_HOOK_CDECL WriteModel(br_model* mp, br_datafile* df) {
     BrResFree(mindex);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00523ee0, WriteModel)
 
+// FUNCTION: CARMA2_HW 0x00523e50
 br_uint_32 C2_HOOK_CDECL BrModelSaveMany(char* filename, br_model** models, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1127,8 +1218,8 @@ br_uint_32 C2_HOOK_CDECL BrModelSaveMany(char* filename, br_model** models, br_u
     DfClose(df);
     return m;
 }
-C2_HOOK_FUNCTION(0x00523e50, BrModelSaveMany)
 
+// FUNCTION: CARMA2_HW 0x00524330
 br_uint_32 C2_HOOK_CDECL BrActorLoadMany(char* filename, br_actor** actors, br_uint_16 num) {
     br_datafile* df;
     int count;
@@ -1144,7 +1235,7 @@ br_uint_32 C2_HOOK_CDECL BrActorLoadMany(char* filename, br_actor** actors, br_u
         if (count >= num) {
             break;
         }
-        r = DfChunksInterpret(df, &C2V(ActorLoadTable));
+        r = DfChunksInterpret(df, &ActorLoadTable);
         if (DfTopType() == DF_ACTOR) {
             actors[count] = DfPop(DF_ACTOR, NULL);
             count++;
@@ -1153,8 +1244,8 @@ br_uint_32 C2_HOOK_CDECL BrActorLoadMany(char* filename, br_actor** actors, br_u
     DfClose(df);
     return count;
 }
-C2_HOOK_FUNCTION(0x00524330, BrActorLoadMany)
 
+// FUNCTION: CARMA2_HW 0x00524400
 int C2_HOOK_STDCALL WriteActor(br_actor* a, br_datafile* df) {
     br_actor* ap;
     br_actor* last_ap;
@@ -1207,8 +1298,8 @@ int C2_HOOK_STDCALL WriteActor(br_actor* a, br_datafile* df) {
     }
     return 0;
 }
-C2_HOOK_FUNCTION(0x00524400, WriteActor)
 
+// FUNCTION: CARMA2_HW 0x005243a0
 br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1225,8 +1316,8 @@ br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_u
     DfClose(df);
     return num;
 }
-C2_HOOK_FUNCTION(0x005243a0, BrActorSaveMany)
 
+// FUNCTION: CARMA2_HW 0x00524600
 br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materials, br_uint_16 num) {
     br_datafile* df;
     int count;
@@ -1241,7 +1332,7 @@ br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materi
         if (count >= num) {
             break;
         }
-        r = DfChunksInterpret(df, &C2V(MaterialLoadTable));
+        r = DfChunksInterpret(df, &MaterialLoadTable);
         if (DfTopType() == DF_MATERIAL) {
             materials[count] = DfPop(DF_MATERIAL, NULL);
             ++count;
@@ -1250,8 +1341,8 @@ br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materi
     DfClose(df);
     return count;
 }
-C2_HOOK_FUNCTION(0x00524600, BrMaterialLoadMany)
 
+// FUNCTION: CARMA2_HW 0x005247f0
 br_uint_32 C2_HOOK_STDCALL WriteMaterial(br_material* mp, br_datafile* df) {
 
     FopWrite_MATERIAL(df, mp);
@@ -1273,8 +1364,8 @@ br_uint_32 C2_HOOK_STDCALL WriteMaterial(br_material* mp, br_datafile* df) {
     FopWrite_END(df);
     return 0;
 }
-C2_HOOK_FUNCTION(0x005247f0, WriteMaterial)
 
+// FUNCTION: CARMA2_HW 0x00524670
 br_uint_32 C2_HOOK_CDECL BrMaterialSaveMany(char* filename, br_material** materials, br_uint_16 num) {
     br_datafile* df;
     int i;
@@ -1301,8 +1392,8 @@ br_uint_32 C2_HOOK_CDECL BrMaterialSaveMany(char* filename, br_material** materi
     DfClose(df);
     return count;
 }
-C2_HOOK_FUNCTION(0x00524670, BrMaterialSaveMany)
 
+// FUNCTION: CARMA2_HW 0x005248e0
 br_model* C2_HOOK_CDECL BrModelLoad(char* filename) {
     br_model* ptr;
 
@@ -1311,14 +1402,14 @@ br_model* C2_HOOK_CDECL BrModelLoad(char* filename) {
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x005248e0, BrModelLoad)
 
+// FUNCTION: CARMA2_HW 0x00524960
 br_uint_32 C2_HOOK_CDECL BrModelSave(char* filename, br_model* ptr) {
 
     return BrModelSaveMany(filename, &ptr, 1);
 }
-C2_HOOK_FUNCTION(0x00524960, BrModelSave)
 
+// FUNCTION: CARMA2_HW 0x005249e0
 br_material* C2_HOOK_CDECL BrMaterialLoad(char* filename) {
     br_material* ptr;
 
@@ -1327,14 +1418,14 @@ br_material* C2_HOOK_CDECL BrMaterialLoad(char* filename) {
     }
     return NULL;
 }
-C2_HOOK_FUNCTION(0x005249e0, BrMaterialLoad)
 
+// FUNCTION: CARMA2_HW 0x00524a60
 br_uint_32 C2_HOOK_CDECL BrMaterialSave(char* filename, br_material* ptr) {
 
     return BrMaterialSaveMany(filename, &ptr, 1);
 }
-C2_HOOK_FUNCTION(0x00524a60, BrMaterialSave)
 
+// FUNCTION: CARMA2_HW 0x00524be0
 br_actor* C2_HOOK_CDECL BrActorLoad(char* filename) {
     br_actor* ptr;
 
@@ -1344,14 +1435,14 @@ br_actor* C2_HOOK_CDECL BrActorLoad(char* filename) {
     // FIXME: LOG_DEBUG("loadmany fail");
     return NULL;
 }
-C2_HOOK_FUNCTION(0x00524be0, BrActorLoad)
 
+// FUNCTION: CARMA2_HW 0x00524c60
 br_uint_32 C2_HOOK_CDECL BrActorSave(char* filename, br_actor* ptr) {
 
     return BrActorSaveMany(filename, &ptr, 1);
 }
-C2_HOOK_FUNCTION(0x00524c60, BrActorSave)
 
+// FUNCTION: CARMA2_HW 0x00524cb0
 br_error C2_HOOK_CDECL BrModelFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
@@ -1366,7 +1457,7 @@ br_error C2_HOOK_CDECL BrModelFileCount(char* filename, br_uint_16* num) {
         return 0;
     }
     *num = 0;
-    while (DfChunksInterpret(df, &C2V(ModelLoadTable)) != 0) {
+    while (DfChunksInterpret(df, &ModelLoadTable) != 0) {
         if (DfTopType() == DF_MODEL) {
             *num = *num + 1;
             DfPop(DF_MODEL, NULL);
@@ -1375,8 +1466,8 @@ br_error C2_HOOK_CDECL BrModelFileCount(char* filename, br_uint_16* num) {
     DfClose(df);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00524cb0, BrModelFileCount)
 
+// FUNCTION: CARMA2_HW 0x00524d30
 br_error C2_HOOK_CDECL BrActorFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
@@ -1391,7 +1482,7 @@ br_error C2_HOOK_CDECL BrActorFileCount(char* filename, br_uint_16* num) {
         return 0;
     }
     *num = 0;
-    while (DfChunksInterpret(df, &C2V(ActorLoadTable)) != 0) {
+    while (DfChunksInterpret(df, &ActorLoadTable) != 0) {
         if (DfTopType() == DF_ACTOR) {
             *num = *num + 1;
             DfPop(DF_ACTOR, NULL);
@@ -1400,8 +1491,8 @@ br_error C2_HOOK_CDECL BrActorFileCount(char* filename, br_uint_16* num) {
     DfClose(df);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00524d30, BrActorFileCount)
 
+// FUNCTION: CARMA2_HW 0x00524db0
 br_error C2_HOOK_CDECL BrMaterialFileCount(char* filename, br_uint_16* num) {
     br_datafile* df;
 
@@ -1416,7 +1507,7 @@ br_error C2_HOOK_CDECL BrMaterialFileCount(char* filename, br_uint_16* num) {
         return 0;
     }
     *num = 0;
-    while (DfChunksInterpret(df, &C2V(MaterialLoadTable)) != 0) {
+    while (DfChunksInterpret(df, &MaterialLoadTable) != 0) {
         if (DfTopType() == DF_MATERIAL) {
             *num = *num + 1;
             DfPop(DF_MATERIAL, NULL);
@@ -1425,4 +1516,3 @@ br_error C2_HOOK_CDECL BrMaterialFileCount(char* filename, br_uint_16* num) {
     DfClose(df);
     return 0;
 }
-C2_HOOK_FUNCTION(0x00524db0, BrMaterialFileCount)

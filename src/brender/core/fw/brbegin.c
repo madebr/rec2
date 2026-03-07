@@ -8,40 +8,34 @@
 #include "core/host/hstsetup.h"
 #include "core/pixelmap/pmsetup.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_boolean, active, 0x006b09b4);
 
-br_error (C2_HOOK_CDECL * BrBegin_original)(void);
+// GLOBAL: CARMA2_HW 0x006b09b4
+br_boolean active;
+
+// FUNCTION: CARMA2_HW 0x0052cf20
 br_error C2_HOOK_CDECL BrBegin(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrBegin_original();
-#else
-    if (C2V(active)) {
+    if (active) {
         return 4103;
     }
     BrFwBegin();
     HostBegin();
     BrPixelmapBegin();
-    C2V(active) = 1;
+    active = 1;
 
     _BrBeginHook();
 
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052cf20, BrBegin, BrBegin_original)
 
-br_error (C2_HOOK_CDECL * BrEnd_original)(void);
+// FUNCTION: CARMA2_HW 0x0052cf50
 br_error C2_HOOK_CDECL BrEnd(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return BrEnd_original();
-#else
     br_device* dev;
 
-    if (!C2V(active)) {
+    if (!active) {
         return 4102;
     }
     _BrEndHook();
-    C2V(active) = 0;
+    active = 0;
     while (BrDevFind(&dev, NULL) == 0) {
         if (dev != NULL) {
             BrDevRemove(dev);
@@ -51,6 +45,4 @@ br_error C2_HOOK_CDECL BrEnd(void) {
     HostEnd();
     BrFwEnd();
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0052cf50, BrEnd, BrEnd_original)

@@ -29,11 +29,12 @@
 #include "core/std/brstdmem.h"
 #include "core/v1db/sys_conf.h"
 
-#define HOOK_FW 1
 
-C2_HOOK_VARIABLE_IMPLEMENT(br_framework_state, fw, 0x0079f4e0);
+// GLOBAL: CARMA2_HW 0x0079f4e0
+br_framework_state fw;
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_resource_class, fw_resourceClasses, 25, 0x00665518, {
+// GLOBAL: CARMA2_HW 0x00665518
+br_resource_class fw_resourceClasses[25] = {
     { 0u, "REGISTRY", BR_MEMORY_REGISTRY, NULL, 0u },
     { 0u, "ANCHOR", BR_MEMORY_ANCHOR, NULL, 0u },
     { 0u, "RESOURCE_CLASS", BR_MEMORY_RESOURCE_CLASS, NULL, 0u },
@@ -59,9 +60,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_resource_class, fw_resourceClasses, 25,
     { 0u, "FMT_RESULTS", BR_MEMORY_FMT_RESULTS, NULL, 0u },
     { 0u, "TOKEN_VALUE", BR_MEMORY_TOKEN_VALUE, NULL, 0u },
     { 0u, "TOKEN_TEMPLATE", BR_MEMORY_TOKEN_TEMPLATE, NULL, 0u },
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(void*, functionPointers_BRCORE1, 185, 0x00665b70, {
+// GLOBAL: CARMA2_HW 0x00665b70
+void* functionPointers_BRCORE1[185] = {
     BrAbort,
     BrAddHead,
     BrAddTail,
@@ -247,9 +249,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(void*, functionPointers_BRCORE1, 185, 0x00
     _M_br_object_queryMany,
     _M_br_object_queryManySize,
     _PRO
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, namePointers_BRCORE1, 185, 0x00665710, {
+// GLOBAL: CARMA2_HW 0x00665710
+const char* namePointers_BRCORE1[185] = {
     "_BrAbort",
     "_BrAddHead",
     "_BrAddTail",
@@ -435,9 +438,11 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, namePointers_BRCORE1, 185, 0x
     "__M_br_object_queryMany",
     "__M_br_object_queryManySize",
     "__PRO"
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, nameOrdinals_BRCORE1, 185, 0x006659f8, {
+
+// GLOBAL: CARMA2_HW 0x006659f8
+br_uint_16 nameOrdinals_BRCORE1[185] = {
     0,
     1,
     2,
@@ -623,127 +628,116 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, nameOrdinals_BRCORE1, 185, 0x0
     182,
     183,
     184
-});
+};
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_image, Image_BRCORE1, 0x00665e58, {
+// GLOBAL: CARMA2_HW 0x00665e58
+br_image Image_BRCORE1 = {
     { 0 },
     "BRCORE1",
     2,
     0,
     1,
-    BR_ASIZE(C2V(functionPointers_BRCORE1)),
-    C2V(functionPointers_BRCORE1),
-    BR_ASIZE(C2V(namePointers_BRCORE1)),
-    C2V(namePointers_BRCORE1),
-    C2V(nameOrdinals_BRCORE1),
+    BR_ASIZE(functionPointers_BRCORE1),
+    functionPointers_BRCORE1,
+    BR_ASIZE(namePointers_BRCORE1),
+    namePointers_BRCORE1,
+    nameOrdinals_BRCORE1,
     0,
     NULL,
     0,
     NULL,
     NULL
-});
+};
 
 #define NBR_DEV_SLOTS 16
 
-br_error (C2_HOOK_CDECL * BrFwBegin_original)(void);
+// FUNCTION: CARMA2_HW 0x00527e20
 br_error C2_HOOK_CDECL BrFwBegin(void) {
-#if 0//HOOK_FW
-    return BrFwBegin_original();
-#else
     int i;
 
-    if (C2V(fw).active) {
+    if (fw.active) {
         return 0x1007;
     }
 
-    if (C2V(fw).diag == NULL) {
-        C2V(fw).diag = C2V(_BrDefaultDiagHandler);
+    if (fw.diag == NULL) {
+        fw.diag = _BrDefaultDiagHandler;
     }
-    if (C2V(fw).fsys == NULL) {
-        C2V(fw).fsys = C2V(_BrDefaultFilesystem);
+    if (fw.fsys == NULL) {
+        fw.fsys = _BrDefaultFilesystem;
     }
-    if (C2V(fw).mem == NULL) {
-        C2V(fw).mem = C2V(_BrDefaultAllocator);
+    if (fw.mem == NULL) {
+        fw.mem = _BrDefaultAllocator;
     }
-    C2V(fw).open_mode = BR_FS_MODE_BINARY;
-    BrRegistryNew(&C2V(fw).reg_resource_classes);
+    fw.open_mode = BR_FS_MODE_BINARY;
+    BrRegistryNew(&fw.reg_resource_classes);
 
-    C2V(fw).resource_class_index[BR_MEMORY_REGISTRY] = &C2V(fw_resourceClasses)[0];
-    C2V(fw).resource_class_index[BR_MEMORY_ANCHOR] = &C2V(fw_resourceClasses)[1];
-    C2V(fw).res = BrResAllocate(NULL, 0, BR_MEMORY_ANCHOR);
-    for (i = 0; i < BR_ASIZE(C2V(fw_resourceClasses)); i++) {
-        BrResClassAdd(&C2V(fw_resourceClasses)[i]);
+    fw.resource_class_index[BR_MEMORY_REGISTRY] = &fw_resourceClasses[0];
+    fw.resource_class_index[BR_MEMORY_ANCHOR] = &fw_resourceClasses[1];
+    fw.res = BrResAllocate(NULL, 0, BR_MEMORY_ANCHOR);
+    for (i = 0; i < BR_ASIZE(fw_resourceClasses); i++) {
+        BrResClassAdd(&fw_resourceClasses[i]);
     }
-    BrNewList(&C2V(fw).images);
-    C2V(fw).dev_slots = (br_open_device*)BrResAllocate(C2V(fw).res, sizeof(br_open_device) * NBR_DEV_SLOTS, BR_MEMORY_OBJECT_DATA);
-    C2V(fw).ndev_slots = NBR_DEV_SLOTS;
-    C2V(fw).active = 1;
+    BrNewList(&fw.images);
+    fw.dev_slots = (br_open_device*)BrResAllocate(fw.res, sizeof(br_open_device) * NBR_DEV_SLOTS, BR_MEMORY_OBJECT_DATA);
+    fw.ndev_slots = NBR_DEV_SLOTS;
+    fw.active = 1;
     BrTokenBegin();
     BrSystemConfigBegin();
-    C2V(fw).bAlreadyLoadedDrivers = 0;
+    fw.bAlreadyLoadedDrivers = 0;
 #if !defined(REC2_STANDALONE)
-    BrImageAdd(&C2V(Image_BRCORE1));
+    BrImageAdd(&Image_BRCORE1);
 #endif
 
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527e20, BrFwBegin, BrFwBegin_original)
 
-br_error (C2_HOOK_CDECL * BrFwEnd_original)(void);
+// FUNCTION: CARMA2_HW 0x00527f20
 br_error C2_HOOK_CDECL BrFwEnd(void) {
-#if 0//HOOK_FW
-    return BrFwEnd_original();
-#else
 
-    if (!C2V(fw).active) {
+    if (!fw.active) {
         return 0x1006;
     }
 #if !defined(REC2_STANDALONE)
-    BrImageRemove(&C2V(Image_BRCORE1));
+    BrImageRemove(&Image_BRCORE1);
 #endif
-    BrResFree(C2V(fw).res);
-    BrMemSet(&C2V(fw), 0, sizeof(C2V(fw)));
+    BrResFree(fw.res);
+    BrMemSet(&fw, 0, sizeof(fw));
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527f20, BrFwEnd, BrFwEnd_original)
 
+// FUNCTION: CARMA2_HW 0x00527f70
 br_diaghandler* C2_HOOK_CDECL BrDiagHandlerSet(br_diaghandler* newdh) {
     br_diaghandler* old;
 
-    old = C2V(fw).diag;
+    old = fw.diag;
     if (newdh == NULL) {
-        newdh = C2V(_BrDefaultDiagHandler);
+        newdh = _BrDefaultDiagHandler;
     }
-    C2V(fw).diag = newdh;
+    fw.diag = newdh;
     return old;
 }
-C2_HOOK_FUNCTION(0x00527f70, BrDiagHandlerSet)
 
-br_filesystem* (C2_HOOK_CDECL * BrFilesystemSet_original)(br_filesystem* newfs);
+// FUNCTION: CARMA2_HW 0x00527f90
 br_filesystem* C2_HOOK_CDECL BrFilesystemSet(br_filesystem* newfs) {
     br_filesystem* old;
 
-    old = C2V(fw).fsys;
+    old = fw.fsys;
     if (newfs == NULL) {
-        newfs = C2V(_BrDefaultFilesystem);
+        newfs = _BrDefaultFilesystem;
     }
-    C2V(fw).fsys = newfs;
+    fw.fsys = newfs;
     return old;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527f90, BrFilesystemSet, BrFilesystemSet_original)
 
-br_allocator* (C2_HOOK_CDECL * BrAllocatorSet_original)(br_allocator* newal);
+// FUNCTION: CARMA2_HW 0x00527fb0
 br_allocator* C2_HOOK_CDECL BrAllocatorSet(br_allocator* newal) {
     br_allocator* old;
 
-    old = C2V(fw).mem;
+    old = fw.mem;
     if (newal == NULL) {
-        newal = C2V(_BrDefaultAllocator);
+        newal = _BrDefaultAllocator;
     }
-    C2V(fw).mem = newal;
+    fw.mem = newal;
 
     return old;
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00527fb0, BrAllocatorSet, BrAllocatorSet_original)

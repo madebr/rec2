@@ -2,27 +2,27 @@
 
 #include <math.h>
 
+// FUNCTION: CARMA2_HW 0x0053f4a0
 float C2_HOOK_CDECL BrFloatFloor(float f) {
     return floorf(f);
 }
-C2_HOOK_FUNCTION(0x0053f4a0, BrFloatFloor)
 
+// FUNCTION: CARMA2_HW 0x0053f4c0
 float C2_HOOK_CDECL BrFloatCeil(float f) {
     return ceilf(f);
 }
-C2_HOOK_FUNCTION(0x0053f4c0, BrFloatCeil)
 
+// FUNCTION: CARMA2_HW 0x0053f4e0
 float C2_HOOK_CDECL BrFloatSqrt(float f) {
     return sqrtf(f);
 }
-C2_HOOK_FUNCTION(0x0053f4e0, BrFloatSqrt)
 
+// FUNCTION: CARMA2_HW 0x0053f4f0
 float C2_HOOK_CDECL BrFloatPow(float a, float b) {
     return powf(a, b);
 }
-C2_HOOK_FUNCTION(0x0053f4f0, BrFloatPow)
 
+// FUNCTION: CARMA2_HW 0x0053f500
 float C2_HOOK_CDECL BrFloatAtan2(float x, float y) {
     return atan2f(x, y);
 }
-C2_HOOK_FUNCTION(0x0053f500, BrFloatAtan2)

@@ -84,6 +84,7 @@ br_uint_8 _CombineTransforms[7][7] = {
     },
 };
 
+// FUNCTION: CARMA2_HW 0x00531870
 void C2_HOOK_CDECL BrTransformToMatrix34(br_matrix34* mat, const br_transform* xform) {
 
     switch (xform->type) {
@@ -153,8 +154,8 @@ void C2_HOOK_CDECL BrTransformToMatrix34(br_matrix34* mat, const br_transform* x
         break;
     }
 }
-C2_HOOK_FUNCTION(0x00531870, BrTransformToMatrix34)
 
+// FUNCTION: CARMA2_HW 0x00531b60
 void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, const br_transform* xform) {
     br_matrix34 tmp;
 
@@ -165,8 +166,8 @@ void C2_HOOK_CDECL BrMatrix34PreTransform(br_matrix34* mat, const br_transform* 
     BrTransformToMatrix34(&tmp, xform);
     BrMatrix34Pre(mat, &tmp);
 }
-C2_HOOK_FUNCTION(0x00531b60, BrMatrix34PreTransform)
 
+// FUNCTION: CARMA2_HW 0x00531ba0
 void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, const br_transform* xform) {
     br_matrix34 tmp;
 
@@ -177,23 +178,18 @@ void C2_HOOK_CDECL BrMatrix34PostTransform(br_matrix34* mat, const br_transform*
     BrTransformToMatrix34(&tmp, xform);
     BrMatrix34Post(mat, &tmp);
 }
-C2_HOOK_FUNCTION(0x00531ba0, BrMatrix34PostTransform)
 
-void (C2_HOOK_CDECL * BrMatrix4PreTransform_original)(br_matrix4* mat, const br_transform* xform);
+// FUNCTION: CARMA2_HW 0x00531be0
 void C2_HOOK_CDECL BrMatrix4PreTransform(br_matrix4* mat, const br_transform* xform) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    BrMatrix4PreTransform_original(mat, xform);
-#else
     br_matrix34 tmp;
 
     if (xform->type != BR_TRANSFORM_IDENTITY) {
         BrTransformToMatrix34(&tmp, xform);
         BrMatrix4Pre34(mat, &tmp);
     }
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x00531be0, BrMatrix4PreTransform, BrMatrix4PreTransform_original)
 
+// FUNCTION: CARMA2_HW 0x00531c20
 void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, const br_matrix34* mat) {
 
     switch (xform->type) {
@@ -226,8 +222,8 @@ void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, const br_matrix34*
         c2_abort();
     }
 }
-C2_HOOK_FUNCTION(0x00531c20, BrMatrix34ToTransform)
 
+// FUNCTION: CARMA2_HW 0x00531d70
 void C2_HOOK_CDECL BrTransformToTransform(br_transform* dest, const br_transform* src) {
     br_matrix34 temp;
 
@@ -248,4 +244,3 @@ void C2_HOOK_CDECL BrTransformToTransform(br_transform* dest, const br_transform
         BrMatrix34ToTransform(dest, &temp);
     }
 }
-C2_HOOK_FUNCTION(0x00531d70, BrTransformToTransform)

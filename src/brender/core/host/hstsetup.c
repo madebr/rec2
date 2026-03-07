@@ -10,14 +10,17 @@
 #include "core/std/brstdlib.h"
 #include "core/fw/image.h"
 
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(host_info, hostInfo, 0x005d7268, {
+// GLOBAL: CARMA2_HW 0x005d7268
+host_info hostInfo = {
     sizeof(host_info),
     "Microsoft WIN32",
     0,
     BRT_INTEL,
     BRT_INTEL_386,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(void*, functionPointers_BRHOST1, 50, 0x0066ffa0, {
+};
+
+// GLOBAL: CARMA2_HW 0x0066ffa0
+void* functionPointers_BRHOST1[50] = {
     HostExceptionHook,
     HostExceptionUnhook,
     HostFarBlockFill,
@@ -68,8 +71,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(void*, functionPointers_BRHOST1, 50, 0x006
     HostSelectorReal,
     HostSelectorSS,
     HostUnlock,
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, namePointers_BRHOST1, 50, 0x0066fe70, {
+};
+
+// GLOBAL: CARMA2_HW 0x0066fe70
+const char* namePointers_BRHOST1[50] = {
     "_HostExceptionHook",
     "_HostExceptionUnhook",
     "_HostFarBlockFill",
@@ -120,8 +125,10 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(const char*, namePointers_BRHOST1, 50, 0x0
     "_HostSelectorReal",
     "_HostSelectorSS",
     "_HostUnlock",
-});
-C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, nameOrdinals_BRHOST1, 50, 0x0066ff38, {
+};
+
+// GLOBAL: CARMA2_HW 0x0066ff38
+br_uint_16 nameOrdinals_BRHOST1[50] = {
     0,
     1,
     2,
@@ -172,68 +179,60 @@ C2_HOOK_VARIABLE_IMPLEMENT_ARRAY_INIT(br_uint_16, nameOrdinals_BRHOST1, 50, 0x00
     47,
     48,
     49
-});
-C2_HOOK_VARIABLE_IMPLEMENT_INIT(br_image, Image_BRHOST1, 0x00670068, {
+};
+
+// GLOBAL: CARMA2_HW 0x00670068
+br_image Image_BRHOST1 = {
     { 0 },
     "BRHOST1",
     2,
     0,
     1,
-    BR_ASIZE(C2V(functionPointers_BRHOST1)),
-    C2V(functionPointers_BRHOST1),
-    BR_ASIZE(C2V(namePointers_BRHOST1)),
-    C2V(namePointers_BRHOST1),
-    C2V(nameOrdinals_BRHOST1),
+    BR_ASIZE(functionPointers_BRHOST1),
+    functionPointers_BRHOST1,
+    BR_ASIZE(namePointers_BRHOST1),
+    namePointers_BRHOST1,
+    nameOrdinals_BRHOST1,
     0,
     NULL,
     0,
     NULL,
     NULL
-});
+};
 
-void (C2_HOOK_CDECL * HostBegin_original)(void);
+// FUNCTION: CARMA2_HW 0x0053fab0
 void C2_HOOK_CDECL HostBegin(void) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    HostBegin_original();
-#else
 #if defined(__I86__)
     RealSelectorBegin();
 #endif
 
 #if !defined(REC2_STANDALONE)
-    BrImageAdd(&C2V(Image_BRHOST1));
-#endif
+    BrImageAdd(&Image_BRHOST1);
 #endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0053fab0, HostBegin, HostBegin_original)
 
+// FUNCTION: CARMA2_HW 0x0053fad0
 void C2_HOOK_CDECL HostEnd(void) {
 #if !defined(REC2_STANDALONE)
-    BrImageRemove(&C2V(Image_BRHOST1));
+    BrImageRemove(&Image_BRHOST1);
 #endif
 
 #if defined(__I86__)
     RealSelectorEnd();
 #endif
 }
-C2_HOOK_FUNCTION(0x0053fad0, HostEnd)
 
 // IDA: br_error __cdecl HostInfo(host_info *buffer, br_size_t buffersize)
-br_error (C2_HOOK_CDECL * HostInfo_original)(host_info* buffer, br_size_t buffersize);
+// FUNCTION: CARMA2_HW 0x0053faf0
 br_error C2_HOOK_CDECL HostInfo(host_info* buffer, br_size_t buffersize) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return HostInfo_original(buffer, buffersize);
-#else
     br_uint_32 features;
 
     if (buffersize < sizeof(host_info)) {
-        BrMemCpy(buffer, &C2V(hostInfo), buffersize);
+        BrMemCpy(buffer, &hostInfo, buffersize);
         return 0x1004;
     }
-    BrMemCpy(buffer, &C2V(hostInfo), sizeof(host_info));
+    BrMemCpy(buffer, &hostInfo, sizeof(host_info));
     CPUInfo(&buffer->processor_type, &features);
     buffer->capabilities |= features;
     return 0;
-#endif
 }
-C2_HOOK_FUNCTION_ORIGINAL(0x0053faf0, HostInfo, HostInfo_original)
