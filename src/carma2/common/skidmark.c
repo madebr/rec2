@@ -1,6 +1,6 @@
 #include "skidmark.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
@@ -63,17 +63,17 @@ void C2_HOOK_FASTCALL InitSkids(void) {
 
 #if defined(REC2_FIX_BUGS)
             // Avoid modification of read-only data by strtok.
-            c2_strcpy(mat_name, str);
+            strcpy(mat_name, str);
             str = mat_name;
 #endif
-            sl = c2_strlen(c2_strtok(str, "."));
-            c2_strcpy(str + sl, ".PIX");
+            sl = strlen(strtok(str, "."));
+            strcpy(str + sl, ".PIX");
             pm = LoadPixelmap(str);
             if (pm == NULL) {
                 FatalError(kFatalError_CantLoadPixelmapFile_S, str);
             }
             BrMapAdd(pm);
-            c2_strcpy(str + sl, ".MAT");
+            strcpy(str + sl, ".MAT");
             gMaterial[mat] = LoadMaterial(str);
             if (gMaterial[mat] == NULL) {
                 BrFatal("C:\\Carma2\\Source\\Common\\Skidmark.c", 215, "Couldn't find %s", gMaterial_names[mat]);
@@ -133,7 +133,7 @@ void C2_HOOK_FASTCALL ReadSpillData(FILE* pF, tSlick_spec* pSlick_spec) {
     char s[256];
 
     GetAString(pF, s);
-    if (c2_strcmp(s, "none") == 0) {
+    if (strcmp(s, "none") == 0) {
         pSlick_spec->material = NULL;
         return;
     }

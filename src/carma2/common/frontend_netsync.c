@@ -16,7 +16,7 @@
 #include "racestrt.h"
 #include "utility.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_string.h"
 
 
@@ -103,12 +103,12 @@ int C2_HOOK_FASTCALL NetSync_Infunc(tFrontend_spec* pFrontend) {
         pFrontend->items[2 + i].x = 160;
     }
     if (gCurrent_net_game->options.open_game) {
-        c2_sprintf(pFrontend->items[1].text, "%s: %s (%s)",
+        sprintf(pFrontend->items[1].text, "%s: %s (%s)",
             GetMiscString(eMiscString_game_type),
             GetMiscString(eMiscString_network_type_start + gCurrent_net_game->type),
             GetMiscString(eMiscString_open));
     } else {
-        c2_sprintf(pFrontend->items[1].text, "%s: %s (%s)",
+        sprintf(pFrontend->items[1].text, "%s: %s (%s)",
             GetMiscString(eMiscString_game_type),
             GetMiscString(eMiscString_network_type_start + gCurrent_net_game->type),
             GetMiscString(eMiscString_closed));
@@ -152,10 +152,10 @@ void C2_HOOK_FASTCALL MungePlayers(tFrontend_spec* pFrontend) {
         pFrontend->items[14 + i].visible = 1;
         pFrontend->items[14 + i].enabled = kFrontendItemEnabled_default;
         if (gNet_players[i].host) {
-            c2_sprintf(pFrontend->items[ 2 + i].text, "%s (%s)",
+            sprintf(pFrontend->items[ 2 + i].text, "%s (%s)",
                 gNet_players[i].player_name, IString_Get(154));
         } else {
-            c2_strcpy(pFrontend->items[ 2 + i].text, gNet_players[i].player_name);
+            strcpy(pFrontend->items[ 2 + i].text, gNet_players[i].player_name);
         }
         if (gNet_players[i].player_status == ePlayer_status_ready) {
             count_ready += 1;
@@ -189,7 +189,7 @@ void C2_HOOK_FASTCALL NetSync_Draw(tFrontend_spec* pFrontend) {
             520, 96 + 26 * i, pFrontend->items[2 + i].unlitFont, eJust_right, 1);
     }
     if (gNet_mode != eNet_mode_host) {
-        c2_sprintf(s, "...%s...", IString_Get(250));
+        sprintf(s, "...%s...", IString_Get(250));
         SolidPolyFontText(s, 320, 96 + 26 * gNumber_of_net_players,
             pFrontend->items[2].unlitFont, eJust_centre, 1);
     }

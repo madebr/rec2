@@ -7,7 +7,7 @@
 #include "pstate.h"
 #include "sbuffer.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 
 // GLOBAL: D3D 0x10015110

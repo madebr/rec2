@@ -14,9 +14,9 @@ void C2_HOOK_CDECL OpTriangleClip(brp_block* block, brp_vertex* v0, brp_vertex* 
 
     C2_HOOK_BUG_ON(sizeof(brp_vertex) != 0x40);
 
-    c2_memcpy(&clip_in[0], v0, sizeof(brp_vertex));
-    c2_memcpy(&clip_in[1], v1, sizeof(brp_vertex));//
-    c2_memcpy(&clip_in[2], v2, sizeof(brp_vertex));
+    memcpy(&clip_in[0], v0, sizeof(brp_vertex));
+    memcpy(&clip_in[1], v1, sizeof(brp_vertex));//
+    memcpy(&clip_in[2], v2, sizeof(brp_vertex));
 
     clipped = FaceClip(rend.renderer, clip_in, rend.renderer->state.cache.clip_slots, *fp_edges, 3, &nclipped);
     if (clipped != NULL) {

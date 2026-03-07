@@ -74,7 +74,7 @@ void C2_HOOK_FASTCALL Timers_Init(void) {
 #define TIMER_COLOUR_NAME(I, NAME, R5, G6, B5)                                                      \
     do {                                                                                            \
         gTimers[(I)].colour = RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5);                         \
-        c2_strncpy(gTimers[(I)].identifier, (NAME), REC2_ASIZE(gTimers[(I)].identifier)); \
+        strncpy(gTimers[(I)].identifier, (NAME), REC2_ASIZE(gTimers[(I)].identifier)); \
     } while (0)
 
     TIMER_COLOUR_NAME(TIMER_MNG, "MNG", 0x1f, 0x00, 0x00);
@@ -178,7 +178,7 @@ void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen) {
                 gTimers_draw_y + i * gTimers_draw_y_stride + j,
                 timer->colour);
         }
-        c2_sprintf(duration_str, "%i", timer->total_duration);
+        sprintf(duration_str, "%i", timer->total_duration);
         TransDRPixelmapText(pScreen,
             (int)(gTimers_draw_x + timer->total_duration * draw_factor),
             gTimers_draw_y + i * gTimers_draw_y_stride - 3,
@@ -204,7 +204,7 @@ void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen) {
         (int)(gTimers_draw_x + 10000.f * draw_factor),
         gTimers_draw_y + (REC2_ASIZE(gTimers) - 1) * gTimers_draw_y_stride + 3,
         RGB565_TO_BACKSCREEN_COLOUR(0x1f, 0x00, 0x00));
-    c2_sprintf(tolerance_str, "8.38ms, tollerance = %i", gTimers_tolerance);
+    sprintf(tolerance_str, "8.38ms, tollerance = %i", gTimers_tolerance);
     TransDRPixelmapText(pScreen,
         (int)(gTimers_draw_x + draw_factor * 10000.f - 13.f),
         gTimers_draw_y + gTimers_draw_y_stride * (REC2_ASIZE(gTimers) - 1) + 7,

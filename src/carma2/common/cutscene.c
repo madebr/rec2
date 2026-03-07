@@ -1,6 +1,6 @@
 #include "cutscene.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "globvrbm.h"
 #include "graphics.h"
@@ -133,10 +133,10 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
         if (!PDReadSourceLocation(the_path)) {
             dr_dprintf("Can't get CD directory name");
         } else {
-            if (the_path[c2_strlen(the_path) - 1] != gDir_separator[0]) {
-                c2_strcat(the_path, gDir_separator);
+            if (the_path[strlen(the_path) - 1] != gDir_separator[0]) {
+                strcat(the_path, gDir_separator);
             }
-            c2_strcat(the_path, "DATA");
+            strcat(the_path, "DATA");
             PathCat(the_path, the_path, "CUTSCENE");
             PathCat(the_path, the_path, pSmack_name);
             dr_dprintf("Got CD path: '%s'", the_path);
@@ -286,7 +286,7 @@ void C2_HOOK_FASTCALL PlaySmackerFile(const char* pSmack_name) {
                             material_pixels = gSmackMaterials[i]->colour_map->pixels;
                             current_buffer = (br_uint_8 *) gSmackerBuffer + current_buffer_start;
                             for (k = 0; k < 64; k++) {
-                                c2_memcpy(material_pixels + 64 * k, current_buffer + 320 * k, 64);
+                                memcpy(material_pixels + 64 * k, current_buffer + 320 * k, 64);
                             }
                             BrMapUpdate(gSmackMaterials[i]->colour_map, BR_MAPU_ALL);
                             BrMaterialUpdate(gSmackMaterials[i], BR_MATU_ALL);

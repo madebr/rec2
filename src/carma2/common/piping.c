@@ -1,7 +1,7 @@
 #include "piping.h"
 
 #include "compress.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "opponent.h"
 #include "physics.h"
@@ -235,7 +235,7 @@ void C2_HOOK_FASTCALL EndPipingSession2(int pMunge_reentrancy) {
         if (gPipe_buffer_oldest == NULL) {
             gPipe_buffer_oldest = gPipe_record_ptr;
         }
-        c2_memcpy(gPipe_record_ptr, gLocal_buffer, gLocal_buffer_size);
+        memcpy(gPipe_record_ptr, gLocal_buffer, gLocal_buffer_size);
         gPipe_record_ptr += gLocal_buffer_size;
         if (gPipe_buffer_working_end < gPipe_record_ptr) {
             gPipe_buffer_working_end = gPipe_record_ptr;
@@ -266,7 +266,7 @@ void C2_HOOK_FASTCALL ARAddDataToSession(int pType, uintptr_t pOwner, void *pDat
     *((uintptr_t*)gMr_chunky) = pOwner;
     gMr_chunky += sizeof(uintptr_t);
     if (pSize != 0) {
-        c2_memcpy(gMr_chunky, pData, pSize);
+        memcpy(gMr_chunky, pData, pSize);
     }
     gMr_chunky += pSize;
     gLocal_buffer_size = new_size;
@@ -300,25 +300,25 @@ void C2_HOOK_CDECL ARDoSingleVariedSession(int pType, uintptr_t pOwner, int pCou
             offset = va_arg(ap, int);
             if (size < 0) {
                 uintptr_t pv = va_arg(ap, uintptr_t);
-                c2_memcpy(buffer + sizeof(uintptr_t) + offset, &pv, sizeof(pv));
+                memcpy(buffer + sizeof(uintptr_t) + offset, &pv, sizeof(pv));
             } else {
                 uintptr_t pv = va_arg(ap, uintptr_t);
                 if (size == 1) {
                     tU8 b = (tU8)pv;
-                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, &b, sizeof(b));
+                    memcpy(buffer + sizeof(uintptr_t) + offset, &b, sizeof(b));
                 } else if (size == 2) {
                     tU16 s = (tU16)pv;
-                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, &s, sizeof(s));
+                    memcpy(buffer + sizeof(uintptr_t) + offset, &s, sizeof(s));
                 } else if (size == 4) {
                     tU32 i = (tU32)pv;
-                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, &i, sizeof(i));
+                    memcpy(buffer + sizeof(uintptr_t) + offset, &i, sizeof(i));
                 } else if (pv != 0) {
-                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, (void*)pv, size);
+                    memcpy(buffer + sizeof(uintptr_t) + offset, (void*)pv, size);
                 }
             }
         }
         va_end(ap);
-        c2_memcpy(buffer, &pOwner, sizeof(uintptr_t));
+        memcpy(buffer, &pOwner, sizeof(uintptr_t));
 
         ARAddDataToSession(pType, pOwner, buffer, LengthOfChunk(buffer, pType) - sizeof(void*));
     }
@@ -342,25 +342,25 @@ void C2_HOOK_CDECL ARAddVariedDataToSession(int pType, uintptr_t pOwner, int pCo
             offset = va_arg(ap, int);
             if (size < 0) {
                 uintptr_t pv = va_arg(ap, uintptr_t);
-                c2_memcpy(buffer + sizeof(uintptr_t) + offset, &pv, sizeof(pv));
+                memcpy(buffer + sizeof(uintptr_t) + offset, &pv, sizeof(pv));
             } else {
                 uintptr_t pv = va_arg(ap, uintptr_t);
                 if (size == 1) {
                     tU8 b = (tU8)pv;
-                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, &b, sizeof(b));
+                    memcpy(buffer + sizeof(uintptr_t) + offset, &b, sizeof(b));
                 } else if (size == 2) {
                     tU16 s = (tU16)pv;
-                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, &s, sizeof(s));
+                    memcpy(buffer + sizeof(uintptr_t) + offset, &s, sizeof(s));
                 } else if (size == 4) {
                     tU32 i = (tU32)pv;
-                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, &i, sizeof(i));
+                    memcpy(buffer + sizeof(uintptr_t) + offset, &i, sizeof(i));
                 } else if (pv != 0) {
-                    c2_memcpy(buffer + sizeof(uintptr_t) + offset, (void*)pv, size);
+                    memcpy(buffer + sizeof(uintptr_t) + offset, (void*)pv, size);
                 }
             }
         }
         va_end(ap);
-        c2_memcpy(buffer, &pOwner, sizeof(uintptr_t));
+        memcpy(buffer, &pOwner, sizeof(uintptr_t));
 
         ARAddDataToSession(pType, pOwner, buffer, LengthOfChunk(buffer, pType) - sizeof(void*));
     }
@@ -444,7 +444,7 @@ void C2_HOOK_FASTCALL AddDamageToPipingSession(int pCar_id, tU8 *pDamage_deltas)
 
     C2_HOOK_BUG_ON(sizeof(damage_deltas) != 12);
 
-    c2_memcpy(damage_deltas, pDamage_deltas, sizeof(damage_deltas));
+    memcpy(damage_deltas, pDamage_deltas, sizeof(damage_deltas));
     ARAddDataToSession(ePipe_chunk_damage, (uintptr_t)pCar_id, damage_deltas, sizeof(damage_deltas));
 }
 
@@ -788,7 +788,7 @@ void C2_HOOK_FASTCALL AddSmudgeToPipingSession(tU16 pCar_ID, int pModel_index, i
         }
         gSmudge_space->vertex_count = pVertex_count;
         gSmudge_space->model_index = pModel_index;
-        c2_memcpy(gSmudge_space->vertex_changes, pCoordinates, pVertex_count * sizeof(tSmudged_vertex));
+        memcpy(gSmudge_space->vertex_changes, pCoordinates, pVertex_count * sizeof(tSmudged_vertex));
         data_size = offsetof(tPipe_smudge_data, vertex_changes) + pVertex_count * sizeof(tSmudged_vertex);
         ARAddDataToSession(ePipe_chunk_smudge, pCar_ID, gSmudge_space, data_size);
     }

@@ -1,8 +1,9 @@
 #include "brstdfile.h"
 
 #include "core/fw/diag.h"
+#include "core/v1db/sys_conf.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_string.h"
 
 // Global variables
@@ -36,19 +37,50 @@ br_uint_32 C2_HOOK_CDECL BrStdioAttributes(void) {
 void* C2_HOOK_CDECL BrStdioOpenRead(const char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result) {
     FILE* fh;
     br_uint_8 magics[16];
+    char brender_path[512];
+    char path[512];
+    const char *brender_path_ptr;
     int open_mode;
 
     open_mode = BR_FS_MODE_BINARY;
-    fh = c2_fopen(name, "rb");
+    strncpy(path, name, sizeof(path) - 1);
+    fh = fopen(path, "rb");
     if (fh == NULL) {
-        // skip logic around getting BRENDER_PATH from ini files etc
-        return NULL;
+        if (strchr(name, ':') != NULL || strchr(name, '/') != NULL || strchr(name, '\\') != NULL) {
+            return NULL;
+        }
+        if (BrSystemConfigQueryString(BRT_BRENDER_PATH_STR, brender_path, sizeof(brender_path)) != 0) {
+            return NULL;
+        }
+        brender_path_ptr = brender_path;
+        while (*brender_path_ptr != '\0') {
+            char *path_ptr = path;
+            while (*brender_path_ptr != ';' && *brender_path_ptr != '\0') {
+                *path_ptr++ = *brender_path_ptr++;
+            }
+            if (*brender_path_ptr == ';') {
+                brender_path_ptr++;
+            }
+            if (path != path_ptr && path_ptr[-1] != ':'&& path_ptr[-1] != '/'&& path_ptr[-1] != '\\') {
+                *path_ptr++ = '/';
+            }
+            strcpy(path_ptr, name);
+            fh = fopen(path, "rb");
+            if (fh != NULL) {
+                break;
+            }
+        }
+        if (fh == NULL) {
+            return NULL;
+        }
     }
-
+    if (mode_result != NULL) {
+        open_mode = *mode_result;
+    }
     if (n_magics != 0) {
-        if (c2_fread(magics, 1u, n_magics, fh) != n_magics) {
-            c2_fclose(fh);
-            return 0;
+        if (fread(magics, 1u, n_magics, fh) != n_magics) {
+            fclose(fh);
+            return NULL;
         }
         if (identify != NULL) {
             open_mode = identify(magics, n_magics);
@@ -58,14 +90,19 @@ void* C2_HOOK_CDECL BrStdioOpenRead(const char* name, br_size_t n_magics, br_mod
         }
     }
 
-    c2_fclose(fh);
-    if (open_mode == BR_FS_MODE_BINARY) {
-        fh = c2_fopen(name, "rb");
-    } else if (open_mode == BR_FS_MODE_TEXT) {
-        fh = c2_fopen(name, "rt");
-    } else {
+    fclose(fh);
+    switch (open_mode) {
+    case BR_FS_MODE_TEXT:
+        fh = fopen(path, "r");
+        break;
+    case BR_FS_MODE_BINARY:
+        fh = fopen(path, "rb");
+        break;
+    case BR_FS_MODE_UNKNOWN:
+        fh = NULL;
+        break;
+    default:
         BrFailure("BrStdFileOpenRead: invalid open_mode %d", open_mode);
-        return NULL;
     }
     return fh;
 }
@@ -74,11 +111,7 @@ void* C2_HOOK_CDECL BrStdioOpenRead(const char* name, br_size_t n_magics, br_mod
 void* C2_HOOK_CDECL BrStdioOpenWrite(const char* name, int mode) {
     FILE* fh;
 
-    if (mode == BR_FS_MODE_TEXT) {
-        fh = c2_fopen(name, "w");
-    } else {
-        fh = c2_fopen(name, "wb");
-    }
+    fh = fopen(name, mode == BR_FS_MODE_TEXT ? "w" : "wb");
 
     return fh;
 }
@@ -86,49 +119,47 @@ void* C2_HOOK_CDECL BrStdioOpenWrite(const char* name, int mode) {
 // FUNCTION: CARMA2_HW 0x0053f8d0
 void C2_HOOK_CDECL BrStdioClose(void* f) {
 
-    c2_fclose(f);
+    fclose(f);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f8e0
 int C2_HOOK_CDECL BrStdioEof(void* f) {
-    return c2_feof(f);
+    return feof((FILE*)f);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f8f0
 int C2_HOOK_CDECL BrStdioGetChar(void* f) {
-    int c;
 
-    c = c2_fgetc(f);
-    return c;
+    return getc((FILE *)f);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f920
 void C2_HOOK_CDECL BrStdioPutChar(int c, void* f) {
-    c2_fputc(c, f);
+    fputc(c, f);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f940
 br_size_t C2_HOOK_CDECL BrStdioRead(void* buf, br_size_t size, unsigned int n, void* f) {
     int i;
 
-    i = c2_fread(buf, size, n, f);
+    i = fread(buf, size, n, f);
     return i;
 }
 
 // FUNCTION: CARMA2_HW 0x0053f960
 br_size_t C2_HOOK_CDECL BrStdioWrite(const void* buf, br_size_t size, unsigned int n, void* f) {
-    return c2_fwrite(buf, size, n, f);
+    return fwrite(buf, size, n, f);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f980
 br_size_t C2_HOOK_CDECL BrStdioGetLine(char* buf, br_size_t buf_len, void* f) {
     br_size_t l;
 
-    if (c2_fgets(buf, buf_len, f) == NULL) {
+    if (fgets(buf, buf_len, f) == NULL) {
         return 0;
     }
 
-    l = c2_strlen(buf);
+    l = strlen(buf);
 
     if (l != 0 && buf[l - 1] == '\n') {
         buf[--l] = '\0';
@@ -139,11 +170,11 @@ br_size_t C2_HOOK_CDECL BrStdioGetLine(char* buf, br_size_t buf_len, void* f) {
 
 // FUNCTION: CARMA2_HW 0x0053f9c0
 void C2_HOOK_CDECL BrStdioPutLine(char* buf, void* f) {
-    c2_fputs(buf, f);
-    c2_fputc('\n', f);
+    fputs(buf, f);
+    fputc('\n', f);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f9e0
 void C2_HOOK_CDECL BrStdioAdvance(br_size_t count, void* f) {
-    c2_fseek(f, count, SEEK_CUR);
+    fseek(f, count, SEEK_CUR);
 }

@@ -37,7 +37,7 @@ static brp_vertex *heapVertexAdd(br_primitive_heap* heap, brp_vertex* src, br_bo
             if (n < rend.nvertices) {
                 if (rend.vertex_heap_pointers[n] == NULL) {
                     rend.vertex_heap_pointers[n] = (brp_vertex*)heap->current;
-                    c2_memcpy(rend.vertex_heap_pointers[n], src, sizeof(brp_vertex));
+                    memcpy(rend.vertex_heap_pointers[n], src, sizeof(brp_vertex));
                     heap->current += sizeof(brp_vertex);
                 }
                 return rend.vertex_heap_pointers[n];
@@ -46,7 +46,7 @@ static brp_vertex *heapVertexAdd(br_primitive_heap* heap, brp_vertex* src, br_bo
     }
 
     v = (brp_vertex*)heap->current;
-    c2_memcpy(v, src, sizeof(brp_vertex));
+    memcpy(v, src, sizeof(brp_vertex));
     *v = *src;
     heap->current += sizeof(brp_vertex);
 

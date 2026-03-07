@@ -13,7 +13,9 @@
 br_error C2_HOOK_STDCALL CheckPrimitiveState(br_soft_renderer* self) {
     br_error r;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.pstate, 0x794);
+#endif
 
     if (self->state.pstate == NULL) {
         r = self->plib->dispatch->_stateNew(self->plib, &self->state.pstate);
@@ -355,33 +357,33 @@ br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br
 
     if (copy_mask & 0x40) {
         C2_HOOK_BUG_ON(sizeof(soft_state_cull) != 0xc);
-        c2_memcpy(&dest->cull, &src->cull, sizeof(soft_state_cull));
+        memcpy(&dest->cull, &src->cull, sizeof(soft_state_cull));
     }
 
     if (copy_mask & 0x1) {
         C2_HOOK_BUG_ON(sizeof(soft_state_surface) != 0x48);
-        c2_memcpy(&dest->surface, &src->surface, sizeof(soft_state_surface));
+        memcpy(&dest->surface, &src->surface, sizeof(soft_state_surface));
     }
 
     if (copy_mask & 0x2) {
         C2_HOOK_BUG_ON(sizeof(soft_state_matrix) != 0xbc);
-        c2_memcpy(&dest->matrix, &src->matrix, sizeof(soft_state_matrix));
+        memcpy(&dest->matrix, &src->matrix, sizeof(soft_state_matrix));
     }
 
     if (copy_mask & 0x4) {
         C2_HOOK_BUG_ON(sizeof(soft_state_enable) != 0x8);
-        c2_memcpy(&dest->enable, &src->enable, sizeof(soft_state_enable));
+        memcpy(&dest->enable, &src->enable, sizeof(soft_state_enable));
     }
 
     if (copy_mask & 0x20) {
         C2_HOOK_BUG_ON(sizeof(soft_state_bounds) != 0x10);
-        c2_memcpy(&dest->bounds, &src->bounds, sizeof(soft_state_bounds));
+        memcpy(&dest->bounds, &src->bounds, sizeof(soft_state_bounds));
     }
 
     if (copy_mask & 0x8) {
         C2_HOOK_BUG_ON(sizeof(soft_state_light) != 0x3c);
         for (i = 0; i < BR_ASIZE(src->light); i++) {
-            c2_memcpy(&dest->light[i], &src->light[i], sizeof(soft_state_light));
+            memcpy(&dest->light[i], &src->light[i], sizeof(soft_state_light));
         }
         dest->timestamp_lights = src->timestamp_lights;
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, timestamp_lights, 0x41c);
@@ -390,7 +392,7 @@ br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br
     if (copy_mask & 0x10) {
         C2_HOOK_BUG_ON(sizeof(soft_state_clip) != 0x14);
         for (i = 0; i < BR_ASIZE(src->clip); i++) {
-            c2_memcpy(&dest->clip[i], &src->clip[i], sizeof(soft_state_clip));
+            memcpy(&dest->clip[i], &src->clip[i], sizeof(soft_state_clip));
         }
         dest->timestamp_clips = src->timestamp_clips;
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, timestamp_clips, 0x498);
@@ -398,7 +400,7 @@ br_error C2_HOOK_STDCALL StateCopy(soft_state_all* dest, soft_state_all* src, br
 
     if (copy_mask & 0x100) {
         C2_HOOK_BUG_ON(sizeof(soft_state_cache) != 0x1ec);
-        c2_memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
+        memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
     }
 
     if ((copy_mask & 0x41) != 0x41) {
@@ -425,12 +427,15 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_statePop(br_soft_renderer* self, br_u
     soft_state_all* sp;
     br_error r;
 
-    if (self->stack_top == 0) {
+    if (self->stack_top <= 0) {
         return 0x1005;
     }
     self->stack_top -= 1;
     sp = &self->state_stack[self->stack_top];
     r = StateCopy(&self->state, sp, mask, self);
+    if (mask & 0x2) {
+        TouchModelToView(self);
+    }
     sp->valid = 0;
     return r;
 }

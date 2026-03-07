@@ -7,9 +7,9 @@
 
 #include "rec2_macros.h"
 
-#include <math.h>
+#include "c2_math.h"
 #include <stddef.h>
-#include <string.h>
+#include "c2_string.h"
 
 
 // GLOBAL: CARMA2_HW 0x006b2c6c
@@ -71,10 +71,6 @@ void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src) {
 
 // FUNCTION: CARMA2_HW 0x00567875
 void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag, tS3_sound_source* src, float pMax_distance_squared, int pPeriod, tS3_repeats pAmbient_repeats, tS3_volume pVolume, int pPitch, tS3_speed pSpeed) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    S3UpdateSoundSource_original(outlet, tag, src, pMax_distance_squared, pPeriod, pAmbient_repeats, pVolume, pPitch, pSpeed);
-#else
     tS3_channel* channel;
     int is_sample;
 
@@ -163,7 +159,6 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
             src->tag = 0;
         }
     }
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00565e39
@@ -187,16 +182,11 @@ int C2_HOOK_STDCALL FUN_00565e39(float a1, float a2, float a3) {
 // FUNCTION: CARMA2_HW 0x00565d70
 int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3Set3DSoundEnvironment_original(a1, a2, a3);
-#else
-
     FUN_00565e39(a1, a2, a3);
     BrVector3Set(&gS3_listener_position_now, 0.f, 0.f, 0.f);
     BrVector3Set(&gS3_listener_vel_now, 0.f, 0.f, 0.f);
     BrVector3Set(&gS3_listener_left_now, 0.f, 0.f, 0.f);
     return 0;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00565ec7
@@ -318,10 +308,6 @@ void C2_HOOK_FASTCALL S3UpdateListenerVectors(void) {
 
 // FUNCTION: CARMA2_HW 0x00567b2d
 int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3UpdateSourcePosition_original(pSource);
-#else
     if (pSource == NULL) {
         return 0;
     }
@@ -413,7 +399,6 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
     pSource->tag = 0;
     pSource->channel = NULL;
     return eS3_error_none;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00567ea5
@@ -458,9 +443,6 @@ int C2_HOOK_FASTCALL S3UpdateSourceVectors(void) {
 
 // FUNCTION: CARMA2_HW 0x0056711c
 int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3Calculate3D_original(pChannel, pAmbient);
-#else
     float dist_squared;
     float dist;
     float sound_volume_factor;
@@ -533,7 +515,6 @@ int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
         pChannel->volume_multiplier = 255;
     }
     return 1;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00567575

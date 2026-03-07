@@ -98,13 +98,13 @@ int C2_HOOK_FASTCALL MainMenuInfunc(tFrontend_spec* pFrontend) {
     DefaultInfunc(pFrontend);
     ResetInterfaceTimeout();
     group = (gCurrent_race_group - gRaceGroups) % 10;
-    c2_sprintf(group_name, "%s %d", IString_Get(78), group + 1);
-    c2_strcpy(pFrontend->items[2].text, group_name);
+    sprintf(group_name, "%s %d", IString_Get(78), group + 1);
+    strcpy(pFrontend->items[2].text, group_name);
     race_index = 4 * group;
     for (i = pFrontend->scrollers[0].indexFirstScrollableItem; i <= pFrontend->scrollers[0].indexLastScrollableItem; i++, race_index += 1) {
         tFrontend_item_spec* item = &pFrontend->items[i];
 
-        c2_strcpy(item->text, gRace_list[race_index].name);
+        strcpy(item->text, gRace_list[race_index].name);
         item->radioButton_selected = race_index == gProgram_state.current_race_index;
         if (gRace_list[race_index].is_boundary) {
             item->unlitFont = 2;
@@ -116,9 +116,9 @@ int C2_HOOK_FASTCALL MainMenuInfunc(tFrontend_spec* pFrontend) {
     }
     FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(pFrontend);
     FillInRaceDescription(pFrontend->items[22].text, gProgram_state.current_race_index);
-    c2_strcpy(pFrontend->items[18].text, gProgram_state.player_name);
-    c2_strcpy(pFrontend->items[20].text, gOpponents[gProgram_state.current_car_index].car_name);
-    c2_strcpy(pFrontend->items[23].text, MungeCommas(gProgram_state.credits));
+    strcpy(pFrontend->items[18].text, gProgram_state.player_name);
+    strcpy(pFrontend->items[20].text, gOpponents[gProgram_state.current_car_index].car_name);
+    strcpy(pFrontend->items[23].text, MungeCommas(gProgram_state.credits));
 
     gFrontend_car_image_outdated = 1;
     pFrontend->isPreviousSomeOtherMenu = 1;
@@ -154,9 +154,9 @@ int C2_HOOK_FASTCALL MainMenuOutfunc(tFrontend_spec* pFrontend) {
 int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend) {
 
     ToggleTyping(pFrontend);
-    if (!gTyping && c2_strlen(pFrontend->items[gFrontend_selected_item_index].text) != 0) {
+    if (!gTyping && strlen(pFrontend->items[gFrontend_selected_item_index].text) != 0) {
 
-        c2_strcpy(gProgram_state.player_name, pFrontend->items[gFrontend_selected_item_index].text);
+        strcpy(gProgram_state.player_name, pFrontend->items[gFrontend_selected_item_index].text);
         SaveOptions();
     }
     return 0;
@@ -206,7 +206,7 @@ int C2_HOOK_FASTCALL FRONTEND_MainMenuHandler(tFrontend_spec* pFrontend) {
         if (gRace_list[race_index].count_opponents != 0) {
             char buf[2];
 
-            c2_sprintf(buf, "%c", '\x1f');
+            sprintf(buf, "%c", '\x1f');
             SolidPolyFontText(buf, item->x - 10, item->y, kPolyfont_hand_green_15pt_lit, eJust_centre, 1);
         }
     }
@@ -407,10 +407,10 @@ void C2_HOOK_FASTCALL UpdateCarInfo(tFrontend_spec *pFrontend) {
     opponent_index = gProgram_state.cars_available[gFrontend_change_car_selected_car];
     opponent = &gOpponents[opponent_index];
 
-    c2_strcpy(pFrontend->items[2].text, opponent->car_name);
-    c2_strcpy(pFrontend->items[3].text, opponent->name);
-    c2_strcpy(pFrontend->items[5].text, opponent->line4_description);
-    c2_sprintf(pFrontend->items[4].text, "%s @R%s @R%s",
+    strcpy(pFrontend->items[2].text, opponent->car_name);
+    strcpy(pFrontend->items[3].text, opponent->name);
+    strcpy(pFrontend->items[5].text, opponent->line4_description);
+    sprintf(pFrontend->items[4].text, "%s @R%s @R%s",
         opponent->line1_topspeed,
         opponent->line2_weight,
         opponent->line3_acceleration);
@@ -484,8 +484,8 @@ int C2_HOOK_FASTCALL MainMenuSelectRace(tFrontend_spec* pFrontend) {
         FillInRaceDescription(pFrontend->items[22].text, gProgram_state.current_race_index);
     }
     gCurrent_race_group = gRace_list[gProgram_state.current_race_index].group;
-    c2_sprintf(group_name, "%s %d", IString_Get(78), (gCurrent_race_group - gRaceGroups) % 10 + 1);
-    c2_strcpy(pFrontend->items[2].text, group_name);
+    sprintf(group_name, "%s %d", IString_Get(78), (gCurrent_race_group - gRaceGroups) % 10 + 1);
+    strcpy(pFrontend->items[2].text, group_name);
     FuckWithWidths(pFrontend);
     return 0;
 }

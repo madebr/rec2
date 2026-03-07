@@ -210,34 +210,34 @@ int C2_HOOK_STDCALL StateInitialise(soft_state_all* state) {
     int i;
 
     C2_HOOK_BUG_ON(sizeof(soft_state_surface) != 0x48);
-	c2_memcpy(&state->surface, &partSurfaceDefault, sizeof(soft_state_surface));
+	memcpy(&state->surface, &partSurfaceDefault, sizeof(soft_state_surface));
 
 	for (i = 0; i < MAX_STATE_LIGHTS; i++) {
         C2_HOOK_BUG_ON(sizeof(soft_state_light) != 0x3c);
-        c2_memcpy(&state->light[i], &partLightDefault, sizeof(soft_state_light));
+        memcpy(&state->light[i], &partLightDefault, sizeof(soft_state_light));
 	}
 
 	for (i = 0; i < MAX_STATE_CLIP_PLANES; i++) {
         C2_HOOK_BUG_ON(sizeof(soft_state_clip) != 0x14);
-        c2_memcpy(&state->clip[i], &partClipDefault, sizeof(soft_state_clip));
+        memcpy(&state->clip[i], &partClipDefault, sizeof(soft_state_clip));
     }
 
     C2_HOOK_BUG_ON(sizeof(soft_state_matrix) != 0xbc);
-    c2_memcpy(&state->matrix, &partMatrixDefault, sizeof(soft_state_matrix));
+    memcpy(&state->matrix, &partMatrixDefault, sizeof(soft_state_matrix));
 
     C2_HOOK_BUG_ON(sizeof(soft_state_enable) != 0x8);
-    c2_memcpy(&state->enable, &partEnableDefault, sizeof(soft_state_enable));
+    memcpy(&state->enable, &partEnableDefault, sizeof(soft_state_enable));
 
     C2_HOOK_BUG_ON(sizeof(soft_state_hidden) != 0x20);
-    c2_memcpy(&state->hidden, &partHiddenSurfaceDefault, sizeof(soft_state_hidden));
+    memcpy(&state->hidden, &partHiddenSurfaceDefault, sizeof(soft_state_hidden));
 
 	state->valid = 0x17f;
 
     C2_HOOK_BUG_ON(sizeof(soft_state_bounds) != 0x10);
-    c2_memcpy(&state->bounds, &partBoundsDefault, sizeof(soft_state_bounds));
+    memcpy(&state->bounds, &partBoundsDefault, sizeof(soft_state_bounds));
 
     C2_HOOK_BUG_ON(sizeof(soft_state_cull) != 0xc);
-    c2_memcpy(&state->cull, &partCullDefault, sizeof(soft_state_cull));
+    memcpy(&state->cull, &partCullDefault, sizeof(soft_state_cull));
 
 	return 0;
 }
@@ -254,8 +254,10 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
             return self->device->templates.partCullTemplate;
         }
 
+#ifndef REC2_MATCHING
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, cull.type, 0x8);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, cull.space, 0xc);
+#endif
 
         entries = partCullTemplateEntries;
         n_entries = BR_ASIZE(partCullTemplateEntries);
@@ -268,6 +270,7 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
             return self->device->templates.partSurfaceTemplate;
         }
 
+#ifndef REC2_MATCHING
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, surface.colour, 0x14);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, surface.opacity, 0x18);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, surface.ka, 0x1c);
@@ -279,6 +282,7 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, surface.colour_source, 0x34);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, surface.mapping_source, 0x38);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, surface.map_transform, 0x3c);
+#endif
 
         entries = partSurfaceTemplateEntries;
         n_entries = BR_ASIZE(partSurfaceTemplateEntries);
@@ -291,12 +295,14 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
             return self->device->templates.partMatrixTemplate;
         }
 
+#ifndef REC2_MATCHING
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, matrix.model_to_view, 0x49c);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, matrix.view_to_screen, 0x4cc);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, matrix.view_to_environment, 0x50c);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, matrix.model_to_view_hint, 0x53c);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, matrix.view_to_screen_hint, 0x540);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, matrix.view_to_environment_hint, 0x544);
+#endif
 
         entries = partMatrixTemplateEntries;
         n_entries = BR_ASIZE(partMatrixTemplateEntries);
@@ -309,11 +315,15 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
             return self->device->templates.partEnableTemplate;
         }
 
+#ifndef REC2_MATCHING
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, enable.flags, 0x568);
+#endif
 
         entries = partEnableTemplateEntries;
         n_entries = BR_ASIZE(partEnableTemplateEntries);
+#ifndef REC2_MATCHING
         C2_HOOK_BUG_ON(BR_ASIZE(partEnableTemplateEntries) != 6);
+#endif
         tpp = &self->device->templates.partEnableTemplate;
         break;
 
@@ -322,6 +332,7 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
             return self->device->templates.partHiddenSurfaceTemplate;
         }
 
+#ifndef REC2_MATCHING
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, hidden.type, 0x570);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, hidden.order_table, 0x574);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, hidden.heap, 0x578);
@@ -329,10 +340,13 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, hidden.insert_arg1, 0x580);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, hidden.insert_arg2, 0x584);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, hidden.insert_arg3, 0x588);
+#endif
 
         entries = partHiddenSurfaceTemplateEntries;
         n_entries = BR_ASIZE(partHiddenSurfaceTemplateEntries);
+#ifndef REC2_MATCHING
         C2_HOOK_BUG_ON(BR_ASIZE(partHiddenSurfaceTemplateEntries) != 7);
+#endif
         tpp = &self->device->templates.partHiddenSurfaceTemplate;
         break;
 
@@ -341,8 +355,10 @@ br_tv_template* C2_HOOK_STDCALL FindStateTemplate(br_soft_renderer* self, soft_s
             return self->device->templates.partBoundsTemplate;
         }
 
+#ifndef REC2_MATCHING
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, bounds.min, 0x558);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(soft_state_all, bounds.max, 0x560);
+#endif
 
         entries = partBoundsTemplateEntries;
         n_entries = BR_ASIZE(partBoundsTemplateEntries);

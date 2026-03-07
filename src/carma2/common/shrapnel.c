@@ -1,7 +1,7 @@
 #include "shrapnel.h"
 
 #include "crush.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "loading.h"
 #include "smashing.h"
 #include "temp.h"
@@ -195,12 +195,12 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
 
 #if 1
                     /* FIXME: is this the correct version? */
-                    if (c2_strcmp(gSmashable_noncar_shrapnel_actors[k]->identifier, sep_actor->identifier) == 0) {
+                    if (strcmp(gSmashable_noncar_shrapnel_actors[k]->identifier, sep_actor->identifier) == 0) {
                         match_sep_actor = gSmashable_noncar_shrapnel_actors[k];
                         break;
                     }
 #else
-                    if (c2_strcmp(gSmashable_noncar_shrapnel_actors[j]->identifier, sep_actor->identifier) == 0) {
+                    if (strcmp(gSmashable_noncar_shrapnel_actors[j]->identifier, sep_actor->identifier) == 0) {
                         match_sep_actor = gSmashable_noncar_shrapnel_actors[j];
                         break;
                     }
@@ -218,16 +218,16 @@ void C2_HOOK_FASTCALL ReadShrapnelSpec(FILE* pF, tShrapnel_spec* pShrapnel_specs
                 spec->type_info.noncar.actors[j] = match_sep_actor;
                 GetAString(pF, s);
                 for (k = 0; k < gCount_smashable_noncars; k++) {
-                    if (c2_strcmp(gSmashable_noncars[k], s) == 0) {
+                    if (strcmp(gSmashable_noncars[k], s) == 0) {
                         break;
                     }
                 }
                 if (k == gCount_smashable_noncars) {
-                    c2_strcpy(gSmashable_noncars[gCount_smashable_noncars], s);
+                    strcpy(gSmashable_noncars[gCount_smashable_noncars], s);
                     gCount_smashable_noncars += 1;
                 }
                 BrResFree(match_sep_actor->identifier);
-                c2_sprintf(s2, "&%c%c!bbbb.ACT", s[0], s[1]);
+                sprintf(s2, "&%c%c!bbbb.ACT", s[0], s[1]);
                 match_sep_actor->identifier = BrResStrDup(match_sep_actor, s2);
             }
             if (spec->type_info.noncar.count_actors != 1) {
@@ -267,20 +267,20 @@ void C2_HOOK_FASTCALL ReadShrapnelSideEffects(FILE* pF, tShrapnel_side_effects* 
             pShrapnel_side_effects->side_effects[i].field_0x2 = 1000 * i2;
 
             GetAString(pF, s);
-            c2_strcpy(pShrapnel_side_effects->side_effects[i].field_0x8, s);
-            if (c2_strcmp(s, "*") == 0) {
+            strcpy(pShrapnel_side_effects->side_effects[i].field_0x8, s);
+            if (strcmp(s, "*") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 0;
-            } else if (s[0] == '*' && DRStricmp(s + c2_strlen(s) - 4, ".MAT") == 0) {
+            } else if (s[0] == '*' && DRStricmp(s + strlen(s) - 4, ".MAT") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 1;
-            } else if (DRStricmp(s + c2_strlen(s) - 4, ".DAT") == 0 || DRStricmp(s + c2_strlen(s) - 4, ".ACT") == 0) {
+            } else if (DRStricmp(s + strlen(s) - 4, ".DAT") == 0 || DRStricmp(s + strlen(s) - 4, ".ACT") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 2;
             } else if (DRStricmp(s, "&*") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 3;
             } else if (s[0] == '&' && '0' <= s[1] && s[1] <= '9') {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 6;
-            } else if (DRStricmp(s + c2_strlen(s) - 4, ".MAT") == 0) {
+            } else if (DRStricmp(s + strlen(s) - 4, ".MAT") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 4;
-            } else if (DRStricmp(s + c2_strlen(s) - 4, ".DAT") == 0 || DRStricmp(s + c2_strlen(s) - 4, ".ACT") == 0) {
+            } else if (DRStricmp(s + strlen(s) - 4, ".DAT") == 0 || DRStricmp(s + strlen(s) - 4, ".ACT") == 0) {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 5;
             } else {
                 pShrapnel_side_effects->side_effects[i].field_0x28 = 0;

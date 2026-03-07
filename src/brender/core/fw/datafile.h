@@ -196,7 +196,7 @@ int C2_HOOK_STDCALL DfChunksInterpret(br_datafile* df, br_chunks_table* table);
 
 void C2_HOOK_STDCALL BrNullOther(void);
 
-int C2_HOOK_STDCALL DfFileIdentify(br_uint_8* magics, br_size_t n_magics);
+int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics);
 
 br_datafile* C2_HOOK_STDCALL DfOpen(char* name, int write, br_token scalar_type);
 

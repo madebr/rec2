@@ -5,14 +5,15 @@
 #include "sdl3_input.h"
 #include "sdl3_ssdx.h"
 
-#include "drmem.h"
-#include "errors.h"
+#include "25-grafdata.h"
+#include "05-drmem.h"
+#include "52-errors.h"
 #include "globvars.h"
-#include "graphics.h"
-#include "init.h"
-#include "input.h"
+#include "18-graphics2.h"
+#include "02-init.h"
+#include "42-input.h"
 #include "platform.h"
-#include "utility.h"
+#include "41-utility.h"
 
 #include <stdlib.h>
 
@@ -278,7 +279,7 @@ C2_NORETURN void PDShutdownSystem(void) {
 
     gBack_screen = NULL;
     if (been_here) {
-        CloseGlobalPackedFile();
+        PDDisposeActionReplayBuffer();
         exit(127);
     } else {
         been_here = 1;
@@ -307,7 +308,7 @@ C2_NORETURN void PDShutdownSystem(void) {
         }
         dr_dprintf("End of PDShutdownSystem()");
         CloseDiagnostics();
-        CloseGlobalPackedFile();
+        PDDisposeActionReplayBuffer();
         SDL_Quit();
         exit(gExit_code);
     }
@@ -691,7 +692,7 @@ void PDExtractFilename(char *pDest, const char *pPath) {
     char extension[256];
 
     _splitpath(pPath, NULL, NULL, filename, extension);
-    c2_sprintf(pDest, "%s%s", filename, extension);
+    sprintf(pDest, "%s%s", filename, extension);
 #else
     tPath_name buffer;
 
@@ -707,7 +708,7 @@ void C2_HOOK_FASTCALL PDExtractDirectory(char *pDest, const char *pPath) {
     char drive[4];
 
     _splitpath(pPath, drive, dirname, NULL, NULL);
-    c2_sprintf(pDest, "%s%s", drive, dirname);
+    sprintf(pDest, "%s%s", drive, dirname);
 #else
     tPath_name buffer;
 
@@ -738,4 +739,7 @@ void PDFileDelete(const char *pPath, int pIgnore_read_only) {
 #endif
     }
     SDL_RemovePath(pPath);
+}
+
+void PDDisposeActionReplayBuffer(void) {
 }

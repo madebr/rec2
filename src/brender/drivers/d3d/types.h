@@ -76,8 +76,6 @@ typedef struct br_device_d3d {
     void *res;
     br_device_clut_d3d* clut;
     br_device_pixelmap_d3d* active_buffers[BT_MAX];
-    undefined4 field_0x2c;
-    undefined4 field_0x30;
     undefined4 field_0x34;
     undefined4 field_0x38;
     undefined4 field_0x3c;

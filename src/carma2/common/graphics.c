@@ -4,7 +4,7 @@
 #include "controls.h"
 #include "depth.h"
 #include "displays.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrbm.h"
@@ -44,7 +44,7 @@
 #include "c2_string.h"
 
 #include <float.h>
-#include <math.h>
+#include "c2_math.h"
 
 
 // GLOBAL: CARMA2_HW 0x006a22f8
@@ -592,7 +592,7 @@ void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colo
     if (!pFirst_colour) {
         ((br_int_32*)pPalette->pixels)[0] = 0;
     }
-    c2_memcpy(gCurrent_palette_pixels + 4 * pFirst_colour, (char*)pPalette->pixels + 4 * pFirst_colour, 4 * pCount);
+    memcpy(gCurrent_palette_pixels + 4 * pFirst_colour, (char*)pPalette->pixels + 4 * pFirst_colour, 4 * pCount);
     gPalette_changed = 0;
     if (!gFaded_palette) {
         PDSetPaletteEntries(pPalette, pFirst_colour, pCount);
@@ -603,7 +603,7 @@ void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colo
 void C2_HOOK_FASTCALL DRSetPalette3(br_pixelmap* pThe_palette, int pSet_current_palette) {
 
     if (pSet_current_palette) {
-        c2_memcpy(gCurrent_palette_pixels, pThe_palette->pixels, 256 * sizeof(br_colour));
+        memcpy(gCurrent_palette_pixels, pThe_palette->pixels, 256 * sizeof(br_colour));
     }
     gPalette_changed = 0;
     if (!gFaded_palette) {
@@ -617,7 +617,7 @@ void C2_HOOK_FASTCALL DRSetPalette3(br_pixelmap* pThe_palette, int pSet_current_
 void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_current_palette) {
     ((br_int_32*)pThe_palette->pixels)[0] = 0;
     if (pSet_current_palette) {
-        c2_memcpy(gCurrent_palette_pixels, pThe_palette->pixels, 256 * sizeof(br_colour));
+        memcpy(gCurrent_palette_pixels, pThe_palette->pixels, 256 * sizeof(br_colour));
     }
     gPalette_changed = 0;
     if (!gFaded_palette) {
@@ -861,7 +861,7 @@ void C2_HOOK_FASTCALL Darken(tU8* pPtr, unsigned int pDarken_amount) {
 void C2_HOOK_FASTCALL SetFadedPalette(int pDegree) {
     int j;
 
-    c2_memcpy(gScratch_pixels, gCurrent_palette->pixels, 4 * 256);
+    memcpy(gScratch_pixels, gCurrent_palette->pixels, 4 * 256);
     for (j = 0; j < 256; j++) {
         Darken((tU8*)&gScratch_pixels[4 * j + 0], pDegree);
         Darken((tU8*)&gScratch_pixels[4 * j + 1], pDegree);
@@ -1034,12 +1034,12 @@ void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
     PathCat(the_path, gApplication_path, gGraf_specs[gGraf_spec_index].data_dir_name);
     PathCat(the_path, the_path, "FONTS");
     PathCat(the_path, the_path, gFont_names[pFont_ID]);
-    c2_strcat(the_path, ".PIX");
+    strcat(the_path, ".PIX");
     if (gFonts[pFont_ID].file_read_once) {
         return;
     }
-    the_path[c2_strlen(the_path) - 4] = '\0';
-    c2_strcat(the_path, ".TXT");
+    the_path[strlen(the_path) - 4] = '\0';
+    strcat(the_path, ".TXT");
     file = DRfopen(the_path, "rt");
     if (file == NULL) {
         FatalError(kFatalError_CannotLoadFontWidthTable_S, gFont_names[pFont_ID]);
@@ -1101,8 +1101,8 @@ void C2_HOOK_FASTCALL ReadMoodMessages(void) {
             char s[256];
 
             GetALineAndDontArgue(f, s);
-            gOppo_status_messages[mood].messages[i] = (char *) BrMemAllocate(c2_strlen(s) + 1, kMem_misc_string);
-            c2_strcpy(gOppo_status_messages[mood].messages[i], s);
+            gOppo_status_messages[mood].messages[i] = (char *) BrMemAllocate(strlen(s) + 1, kMem_misc_string);
+            strcpy(gOppo_status_messages[mood].messages[i], s);
         }
     }
     PFfclose(f);
@@ -1263,7 +1263,7 @@ br_uint_32 C2_HOOK_CDECL SaveShadeTable(br_pixelmap* pTable, void* pArg) {
     copy = BrMemAllocate(sizeof(br_pixelmap), kMem_misc);
     gSaved_shade_tables[gSaved_table_count].copy = copy;
     gSaved_table_count += 1;
-    c2_memcpy(copy, pTable, sizeof(br_pixelmap));
+    memcpy(copy, pTable, sizeof(br_pixelmap));
     return 0;
 }
 
@@ -1892,7 +1892,7 @@ void C2_HOOK_FASTCALL ResetLollipopQueue(void) {
 // FUNCTION: CARMA2_HW 0x004b52b0
 void C2_HOOK_FASTCALL RevertPalette(void) {
 
-    c2_memcpy(gRender_palette->pixels, gOrig_render_palette->pixels, 256 * sizeof(br_colour));
+    memcpy(gRender_palette->pixels, gOrig_render_palette->pixels, 256 * sizeof(br_colour));
     DRSetPalette3(gRender_palette, 1);
 }
 

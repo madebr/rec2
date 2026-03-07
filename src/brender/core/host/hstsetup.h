@@ -9,6 +9,6 @@ void C2_HOOK_CDECL HostBegin(void);
 
 void C2_HOOK_CDECL HostEnd(void);
 
-br_error HostInfo(host_info* buffer, br_size_t buffersize);
+br_error C2_HOOK_CDECL HostInfo(host_info* buffer, br_size_t buffersize);
 
 #endif // REC2_HSTSETUP_H

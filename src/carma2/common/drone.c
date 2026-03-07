@@ -1,7 +1,7 @@
 #include "drone.h"
 
 #include "compress.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -15,7 +15,7 @@
 
 #include <brender/brender.h>
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_string.h"
 
 #include "rec2_macros.h"
@@ -131,8 +131,8 @@ void C2_HOOK_CDECL DoNotDprintf(const char* format, ...) {
     va_list ap;
 
     va_start(ap, format);
-    c2_vfprintf(c2_stderr, format, ap);
-    c2_fputc('\n', c2_stderr);
+    vfprintf(stderr, format, ap);
+    fputc('\n', stderr);
     va_end(ap);
 #endif
 }
@@ -143,7 +143,7 @@ void C2_HOOK_FASTCALL InitDroneSpec(tDrone_spec* pDrone_spec, int pNode) {
     C2_HOOK_BUG_ON(sizeof(*pDrone_spec) != 0x5d8);
 
     DoNotDprintf("InitDroneSpec() - INITIALISING DRONE SPEC");
-    c2_memset(pDrone_spec, 0, sizeof(*pDrone_spec));
+    memset(pDrone_spec, 0, sizeof(*pDrone_spec));
     pDrone_spec->field_0xa_pathnode_id = pNode;
     pDrone_spec->field_0x8_pathnode_id = pNode;
     pDrone_spec->field_0xe = -1;
@@ -207,7 +207,7 @@ void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
             PDFatalError("Corrupt race text file - No drone path info");
             break;
         }
-        if (c2_strcmp(s, "START OF DRONE PATHS") == 0) {
+        if (strcmp(s, "START OF DRONE PATHS") == 0) {
             break;
         }
     }
@@ -247,14 +247,14 @@ void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
                 GetAString(pF, s);
                 Uppercaseificate(s, s);
                 node->type = -1;
-                if (c2_strlen(s) == 0) {
-                    c2_sprintf(s, "Corrupt race text file - drone type corrupt in drone node %d", i);
+                if (strlen(s) == 0) {
+                    sprintf(s, "Corrupt race text file - drone type corrupt in drone node %d", i);
                     PDFatalError(s);
                 }
 
-                if (c2_strcmp(s, "NONE") != 0) {
+                if (strcmp(s, "NONE") != 0) {
                     for (j = 0; j < gCount_drone_forms; j++) {
-                        if (c2_strcmp(gDrone_forms[j].name, s) == 0) {
+                        if (strcmp(gDrone_forms[j].name, s) == 0) {
                             node->type = j;
                         }
                     }
@@ -293,7 +293,7 @@ void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
                 if (node->type >= 0) {
                     /* FIXME: use constant for drone limit */
                     if (gCount_drones >= 200) {
-                        c2_sprintf(s, "Too many drones in race (limit %d)", 200);
+                        sprintf(s, "Too many drones in race (limit %d)", 200);
                         PDFatalError(s);
                     }
                     gCount_drones += 1;
@@ -306,7 +306,7 @@ void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
         if (str == NULL) {
             break;
         }
-        if (c2_strcmp(s, "END OF DRONE PATHS") == 0) {
+        if (strcmp(s, "END OF DRONE PATHS") == 0) {
             break;
         }
     }
@@ -372,7 +372,7 @@ void C2_HOOK_FASTCALL InitDroneCollisionObject(tDrone_spec *pDrone_spec) {
     if (pDrone_spec->field_0x46) {
         original_shape = pDrone_spec->collision_info.shape;
     }
-    c2_memset(&pDrone_spec->collision_info, 0, sizeof(pDrone_spec->collision_info));
+    memset(&pDrone_spec->collision_info, 0, sizeof(pDrone_spec->collision_info));
     if (pDrone_spec->field_0x46) {
         pDrone_spec->collision_info.shape = original_shape;
     } else {

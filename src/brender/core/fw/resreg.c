@@ -3,7 +3,7 @@
 #include "fwsetup.h"
 #include "register.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_stdlib.h"
 
 // FUNCTION: CARMA2_HW 0x00527fd0
@@ -48,9 +48,7 @@ br_uint_32 C2_HOOK_CDECL BrResClassAddMany(br_resource_class** items, int n) {
     int i;
 
     for (i = 0; i < n; i++) {
-        if (BrRegistryAdd(&fw.reg_resource_classes, items[i]) != NULL) {
-            fw.resource_class_index[items[i]->res_class] = items[i];
-        }
+        BrResClassAdd(*items++);
     }
     return n;
 }
@@ -62,8 +60,7 @@ br_uint_32 C2_HOOK_CDECL BrResClassRemoveMany(br_resource_class** items, int n) 
 
     r = 0;
     for (i = 0; i < n; i++) {
-        if (BrRegistryRemove(&fw.reg_resource_classes, items[i]) != NULL) {
-            fw.resource_class_index[items[i]->res_class] = NULL;
+        if (BrResClassRemove(*items++) != 0) {
             r++;
         }
     }

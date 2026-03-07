@@ -1,7 +1,7 @@
 #include "depth.h"
 
 #include "displays.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "globvrpb.h"

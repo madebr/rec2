@@ -6,7 +6,7 @@
 #include "crush.h"
 #include "depth.h"
 #include "drmem.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "finteray.h"
 #include "flicplay.h"
 #include "globvars.h"
@@ -33,13 +33,14 @@
 #include <tiffio.h>
 #include <zlib.h>
 
-#include "c2_ctype.h"
+#include <ctype.h>
 #include "c2_stdlib.h"
 #include "c2_string.h"
-#include "c2_sys/c2_stat.h"
+#include "c2_sys_stat.h"
 #include "rec2_types.h"
 
 #include <assert.h>
+#include <c2_sys_stat.h>
 
 #define RGB565_R(V) (((V) & 0xf800) >> 11)
 #define RGB565_G(V) (((V) & 0x07e0) >> 5)
@@ -530,12 +531,12 @@ int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* texture
     br_uint_32 nb;
 
     PathCat(tempPath, pathRoot, textureName);
-    c2_strcat(tempPath, (gPixelFlags & kPixelFlags_16bbp) ? ".P16" : ".P08");
+    strcat(tempPath, (gPixelFlags & kPixelFlags_16bbp) ? ".P16" : ".P08");
     nb = BrPixelmapLoadMany(tempPath, textureBuffer, (br_uint_16)bufferCapacity);
     if (nb == 0) {
         PathCat(tempPath, pathRoot, (gPixelFlags & kPixelFlags_16bbp) ? "PIX16" : "PIX8");
         PathCat(tempPath, tempPath, textureName);
-        c2_strcat(tempPath, ".PIX");
+        strcat(tempPath, ".PIX");
         nb = BrPixelmapLoadMany(tempPath, textureBuffer, (br_uint_16)bufferCapacity);
     }
     if (nb == 0) {
@@ -577,7 +578,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
     /* Windscreen material to use */
     GetAString(pF, s);
     if (pScreen_name_str != NULL) {
-        c2_strcpy(pScreen_name_str, s);
+        strcpy(pScreen_name_str, s);
     } else {
         pSpec->screen_pixelmap = BrMapFind(s);
     }
@@ -607,14 +608,14 @@ int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list
     tPath_name dir_path;
     tPath_name stem_path;
 
-    c2_strcpy(pathCopy, path);
+    strcpy(pathCopy, path);
     Uppercaseificate(pathUpper, pathCopy);
-    if (c2_strstr(pathUpper, ".PIX") == NULL
-            && c2_strstr(pathUpper, ".TIF") == NULL) {
+    if (strstr(pathUpper, ".PIX") == NULL
+            && strstr(pathUpper, ".TIF") == NULL) {
         return 0;
     }
     SepDirAndFilename(pathUpper, dir_path, stem_path);
-    c2_strcpy(pList->items[pList->size], stem_path);
+    strcpy(pList->items[pList->size], stem_path);
     if (pList->size < REC2_ASIZE(pList->items)) {
         pList->size += 1;
     }
@@ -630,26 +631,26 @@ int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pLis
     int alreadyInList;
     size_t i;
 
-    c2_strcpy(pathCopy, path);
+    strcpy(pathCopy, path);
     Uppercaseificate(upperPath, pathCopy);
 
-    if (c2_strstr(upperPath, ".PIX") == NULL
-            && c2_strstr(upperPath, ".P16") == NULL
-            && c2_strstr(upperPath, ".P08") == NULL
-            && c2_strstr(upperPath, ".TIF") == NULL) {
+    if (strstr(upperPath, ".PIX") == NULL
+            && strstr(upperPath, ".P16") == NULL
+            && strstr(upperPath, ".P08") == NULL
+            && strstr(upperPath, ".TIF") == NULL) {
         return 0;
     }
     SepDirAndFilename(upperPath, dir_path, stem_path);
 
     alreadyInList = 0;
     for (i = 0; i < pList->size; i++) {
-        if (c2_strcmp(pList->items[i], stem_path) == 0) {
+        if (strcmp(pList->items[i], stem_path) == 0) {
             alreadyInList = 1;
             break;
         }
     }
     if (!alreadyInList) {
-        c2_strcpy(pList->items[pList->size], stem_path);
+        strcpy(pList->items[pList->size], stem_path);
         if (pList->size < REC2_ASIZE(pList->items)) {
             pList->size += 1;
         }
@@ -703,7 +704,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
     for (i = 0; i < pStorage_space->pixelmaps_count; i++) {
         if (pStorage_space->pixelmaps[i]->identifier != NULL
             && pThe_pm->identifier != NULL
-            && c2_strcmp(pStorage_space->pixelmaps[i]->identifier, pThe_pm->identifier) == 0) {
+            && strcmp(pStorage_space->pixelmaps[i]->identifier, pThe_pm->identifier) == 0) {
             gAddedPixelmap = pStorage_space->pixelmaps[i];
             return eStorage_duplicate;
         }
@@ -755,14 +756,14 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStora
 
 // FUNCTION: CARMA2_HW 0x00486c00
 int C2_HOOK_FASTCALL IsValidFile(const char* path) {
-    struct c2_stat s;
+    struct_c2_stat32 s;
 
     return c2_stat32(path, &s) == 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00486be0
 int C2_HOOK_FASTCALL GetLastModificationTime(const char* path) {
-    struct c2_stat s;
+    struct_c2_stat32 s;
     int res;
 
     res = c2_stat32(path, &s);
@@ -781,7 +782,7 @@ br_pixelmap* C2_HOOK_FASTCALL Read_DEFAULT_ACT(const char* textureDir, int flags
     br_uint_8* src;
     br_uint_8* dst;
 
-    c2_sprintf(path, "%s%s%s%s%s", textureDir, gDir_separator, "PALETTE", gDir_separator, "DEFAULT.ACT");
+    sprintf(path, "%s%s%s%s%s", textureDir, gDir_separator, "PALETTE", gDir_separator, "DEFAULT.ACT");
     f = DRfopen(path, "rb");
     if (f == NULL) {
         *errorCode = 5;
@@ -950,7 +951,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_MappedToShadeTable(const char* pat
         *errorCode = 2;
         return NULL;
     }
-    scanlineBuffer = c2_malloc(TIFFScanlineSize(tif));
+    scanlineBuffer = malloc(TIFFScanlineSize(tif));
     if (scanlineBuffer == NULL) {
         TIFFClose(tif);
         BrPixelmapFree(pm);
@@ -978,7 +979,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_MappedToShadeTable(const char* pat
             }
         }
     }
-    c2_free(scanlineBuffer);
+    free(scanlineBuffer);
     TIFFClose(tif);
     if (y < height) {
         BrPixelmapFree(pm);
@@ -1022,7 +1023,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_WithShadeTable(const char *path, i
             TIFFReadScanline(tif, (br_uint_8*)pm->pixels + y * pm->row_bytes, y, 0);
         }
     } else {
-        scanlineBuffer = c2_malloc(TIFFScanlineSize(tif));
+        scanlineBuffer = malloc(TIFFScanlineSize(tif));
         if (scanlineBuffer == NULL) {
             TIFFClose(tif);
             BrPixelmapFree(pm);
@@ -1043,7 +1044,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_WithShadeTable(const char *path, i
                 curSrcPos += samples_per_pixel;
             }
         }
-        c2_free(scanlineBuffer);
+        free(scanlineBuffer);
     }
     if (y < height) {
         TIFFClose(tif);
@@ -1092,7 +1093,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_16BitRGB(const char *path, int fla
         *errorCode = 2;
         return NULL;
     }
-    scanlineBuffer = c2_malloc(TIFFScanlineSize(tif));
+    scanlineBuffer = malloc(TIFFScanlineSize(tif));
     if (scanlineBuffer == NULL) {
         TIFFClose(tif);
         BrPixelmapFree(pm);
@@ -1126,7 +1127,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_16BitRGB(const char *path, int fla
             }
         }
     }
-    c2_free(scanlineBuffer);
+    free(scanlineBuffer);
     TIFFClose(tif);
     if (y < height) {
         BrPixelmapFree(pm);
@@ -1156,16 +1157,16 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
     int indexLastSeparator;
     size_t posDir;
 
-    c2_sprintf(tifPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, useTiffx ? "TIFFX" : "TIFFRGB", gDir_separator, textureName, ".TIF");
+    sprintf(tifPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, useTiffx ? "TIFFX" : "TIFFRGB", gDir_separator, textureName, ".TIF");
     usePix16 = flags & kLoadTextureFlags_16bbp;
-    c2_sprintf(pixPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, usePix16 ? "PIX16" : "PIX8", gDir_separator, textureName, ".PIX");
+    sprintf(pixPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, usePix16 ? "PIX16" : "PIX8", gDir_separator, textureName, ".PIX");
     tifPathIsLink = ResolveTexturePathLink(tifPath, tifPath);
     pixPathIsLink = ResolveTexturePathLink(pixPathTarget, pixPath);
     pixExists = IsValidFile(pixPathIsLink ? pixPathTarget : pixPath);
     tifExists = IsValidFile(tifPath);
 
     if (useTiffx && pixExists) {
-        c2_sprintf(trgbPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, "TIFFRGB", gDir_separator, textureName, ".TIF");
+        sprintf(trgbPath, "%s%s%s%s%s%s", texturePathDir, gDir_separator, "TIFFRGB", gDir_separator, textureName, ".TIF");
         ResolveTexturePathLink(trgbPath, trgbPath);
         if (IsValidFile(trgbPath)) {
             if (GetLastModificationTime(pixPathIsLink ? pixPathTarget : pixPath) < GetLastModificationTime(trgbPath)) {
@@ -1226,16 +1227,16 @@ br_pixelmap* C2_HOOK_FASTCALL LoadTiffTexture_Ex2(const char* texturePathDir, co
     }
     if ((flags & kLoadTextureFlags_SaveBrenderTexture) != 0) {
         if (!pixPathIsLink) {
-            c2_sprintf(path, "%s%s%s", texturePathDir, gDir_separator, usePix16 ? "PIX16" : "PIX8");
+            sprintf(path, "%s%s%s", texturePathDir, gDir_separator, usePix16 ? "PIX16" : "PIX8");
             PDmkdir(path);
             if (tifPathIsLink && !pixExists) {
-                if (FindLastOccurrenceOfString_CaseInsensitive(&indexSuffix, tifPath, c2_strlen(tifPath), ".TIF")) {
+                if (FindLastOccurrenceOfString_CaseInsensitive(&indexSuffix, tifPath, strlen(tifPath), ".TIF")) {
                     if (FindLastOccurrenceOfString_CaseInsensitive(&indexLastSeparator, tifPath, indexSuffix, gDir_separator)) {
                         int texRootIndex;
                         if (FindLastOccurrenceOfString_CaseInsensitive(&texRootIndex, tifPath, indexLastSeparator, gDir_separator)) {
-                            posDir = c2_strlen(gDir_separator) + indexLastSeparator;
-                            c2_sprintf(buf1, "%.*s%s%s", texRootIndex, tifPath, gDir_separator, usePix16 ? "PIX16" : "PIX8");
-                            c2_sprintf(pixPathTarget, "%s%s%.*s%s", buf1, gDir_separator, indexSuffix - posDir, tifPath + posDir, ".PIX");
+                            posDir = strlen(gDir_separator) + indexLastSeparator;
+                            sprintf(buf1, "%.*s%s%s", texRootIndex, tifPath, gDir_separator, usePix16 ? "PIX16" : "PIX8");
+                            sprintf(pixPathTarget, "%s%s%.*s%s", buf1, gDir_separator, indexSuffix - posDir, tifPath + posDir, ".PIX");
                         }
                     }
                 }
@@ -1307,8 +1308,8 @@ int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelma
     tPath_name texturePathStem;
     int errorCode;
 
-    c2_strcpy(texturePath, texturePathNoExt);
-    c2_strcat(texturePath, ".TIF");
+    strcpy(texturePath, texturePathNoExt);
+    strcat(texturePath, ".TIF");
     SepDirAndFilename(texturePath, texturePathDir, texturePathStem);
     pixelmaps[0] = DRLdImg(texturePathDir, texturePathStem, gRender_palette, gPixelFlags, &errorCode);
     return (pixelmaps[0] != NULL && errorCode == 0) ? 1 : 0;
@@ -1370,7 +1371,7 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
 
     TwatPIX16(path);
     list.size = 0;
-    c2_strcpy(pathCopy, path);
+    strcpy(pathCopy, path);
     gStorageForCallbacks = pStorage_space;
     if (gDisableTiffConversion) {
         PFForEveryFile2(pathCopy, (tEnumPathCallback)AddTextureFileStemToList, &list);
@@ -1400,11 +1401,11 @@ int C2_HOOK_FASTCALL LoadTiffTextureCB(const char* filePath, tLoadDirectoryStruc
     tLoadDirectoryStructureCBResult* itemResult;
     br_pixelmap* texture;
 
-    filePathLength = c2_strlen(filePath);
+    filePathLength = strlen(filePath);
     if (DRstrcmpi(filePath + filePathLength - 4, ".TIF") != 0) {
         return 0;
     }
-    c2_sprintf(textureName, "%.*s", filePathLength - 4, filePath);
+    sprintf(textureName, "%.*s", filePathLength - 4, filePath);
     if (!data->isTiffx && data->results != NULL) {
         for (itemResult = data->results; itemResult != NULL; itemResult = itemResult->next) {
             if (DRstrcmpi(textureName, itemResult->name) == 0) {
@@ -1462,14 +1463,14 @@ void C2_HOOK_FASTCALL LoadAllTiffTexturesInDirectory(const char* directory, br_p
     data.directory = directory;
     data.pPalette = pPalette;
     if (!(loadFlags & kLoadTextureFlags_16bbp)) {
-        c2_sprintf(pathBuffer, "%s%s%s", directory, gDir_separator, "TIFFX");
+        sprintf(pathBuffer, "%s%s%s", directory, gDir_separator, "TIFFX");
         data.isTiffx = 0x1;
         PDEnumPath(pathBuffer, (tEnumPathCallback)LoadTiffTextureCB, &data);
     }
     if (*errorCode != 0) {
         return;
     }
-    c2_sprintf(pathBuffer, "%s%s%s", directory, gDir_separator, "TIFFRGB");
+    sprintf(pathBuffer, "%s%s%s", directory, gDir_separator, "TIFFRGB");
     data.isTiffx = 0x0;
     PDEnumPath(pathBuffer, (tEnumPathCallback)LoadTiffTextureCB, &data);
 
@@ -1488,7 +1489,7 @@ void UseNativeDirSeparator(char* nativePath, const char* path) {
     size_t len;
     char c;
 
-    len = c2_strlen(path);
+    len = strlen(path);
     for (i = 0; i < len; i++) {
         c = path[i];
         if (c == '\\') {
@@ -1511,15 +1512,15 @@ int C2_HOOK_FASTCALL ResolveTexturePathLink(char* realPath, const char* path) {
     }
     PFfclose(f);
     GetALineAndDontArgue(f, linkPath);
-    if (c2_strstr(linkPath, ".TIF") != NULL) {
+    if (strstr(linkPath, ".TIF") != NULL) {
         UseNativeDirSeparator(nativeLinkPath, linkPath);
-    } else if (c2_strstr(linkPath, ".PIX") != NULL) {
+    } else if (strstr(linkPath, ".PIX") != NULL) {
         UseNativeDirSeparator(nativeLinkPath, linkPath);
     } else {
         return 0;
     }
     PathCat(linkPath, gApplication_path, nativeLinkPath);
-    c2_strcpy(realPath, linkPath);
+    strcpy(realPath, linkPath);
     return 1;
 }
 
@@ -1532,8 +1533,8 @@ int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath
     int pos;
     FILE *f;
 
-    c2_strcpy(buffer, targetPath);
-    targetRelPath = c2_strstr(buffer, "DATA") + c2_strlen("DATA") + 1;
+    strcpy(buffer, targetPath);
+    targetRelPath = strstr(buffer, "DATA") + strlen("DATA") + 1;
     pos = 0;
     while ((c = *targetRelPath) != '\0') {
         if (c == ':' || c == '\\') {
@@ -1548,7 +1549,7 @@ int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath
     if (f == NULL) {
         return 0;
     }
-    c2_fputs(cleanedTargetRelPath, f);
+    fputs(cleanedTargetRelPath, f);
     fclose(f);
     return 1;
 
@@ -1556,7 +1557,7 @@ int C2_HOOK_FASTCALL CreatePathLink(const char* targetPath, const char* linkPath
 
 // FUNCTION: CARMA2_HW 0x0047d850
 int C2_HOOK_FASTCALL DRstrcmpi(const char* str1, const char* str2) {
-    return c2_strcasecmp(str1, str2);
+    return strcasecmp(str1, str2);
 }
 
 // FUNCTION: CARMA2_HW 0x0047d860
@@ -1569,7 +1570,7 @@ int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, con
     size_t needleLen;
     size_t haystackPos;
 
-    needleLen = c2_strlen(needle);
+    needleLen = strlen(needle);
     if (haystackLen < needleLen) {
         return 0;
     }
@@ -1596,7 +1597,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage*
     for (i = 0; i < pStorage_space->shade_tables_count; i++) {
         if (pStorage_space->shade_tables[i]->identifier
             && pThe_st->identifier
-            && c2_strcmp(pStorage_space->shade_tables[i]->identifier, pThe_st->identifier) == 0) {
+            && strcmp(pStorage_space->shade_tables[i]->identifier, pThe_st->identifier) == 0) {
             return eStorage_duplicate;
         }
     }
@@ -1614,7 +1615,7 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
-    if (c2_strstr(s, ".TAB") == NULL) {
+    if (strstr(s, ".TAB") == NULL) {
         return;
     }
     storage_space = gStorageForCallbacks;
@@ -1656,7 +1657,7 @@ void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
-    if (c2_strstr(s, ".PIX") != NULL) {
+    if (strstr(s, ".PIX") != NULL) {
         AddPixelmaps(gStorageForCallbacks, pPath);
     }
 }
@@ -1708,7 +1709,7 @@ void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
         shading = kRendererShadingType_Default;
     }
     Uppercaseificate(s, pPath);
-    if (c2_strstr(s, ".MAT") != NULL) {
+    if (strstr(s, ".MAT") != NULL) {
         AddMaterials(gStorageForCallbacks, pPath, shading);
     }
 }
@@ -1733,7 +1734,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
     for (i = 0; i < pStorage_space->materials_count; i++) {
         if (pStorage_space->materials[i]->identifier
             && pThe_mat->identifier
-            && !c2_strcmp(pStorage_space->materials[i]->identifier, pThe_mat->identifier)) {
+            && !strcmp(pStorage_space->materials[i]->identifier, pThe_mat->identifier)) {
             gDuplicate_material = pStorage_space->materials[i];
             return eStorage_duplicate;
         }
@@ -1817,7 +1818,7 @@ void C2_HOOK_FASTCALL LoadSomeMaterials(tBrender_storage *pStorage, FILE* pFile,
     PossibleService();
     GetALineAndDontArgue(pFile, s1);
     PathCat(s2, gApplication_path, "MATERIAL");
-    PathCat(s2, s2, c2_strtok(s1, "\t ,/"));
+    PathCat(s2, s2, strtok(s1, "\t ,/"));
     AddMaterials(pStorage, s2, pShading);
 }
 
@@ -1872,7 +1873,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pSto
             if (pStorage_space->models[i] != NULL
                 && pStorage_space->models[i]->identifier != NULL
                 && pThe_mod->identifier != NULL
-                && c2_strcmp(pStorage_space->models[i]->identifier, pThe_mod->identifier) == 0) {
+                && strcmp(pStorage_space->models[i]->identifier, pThe_mod->identifier) == 0) {
                 gDuplicate_model = pStorage_space->models[i];
                 return eStorage_duplicate;
             }
@@ -1926,7 +1927,7 @@ void C2_HOOK_FASTCALL LoadIfItsAMode(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
-    if (c2_strstr(s, ".DAT") != NULL) {
+    if (strstr(s, ".DAT") != NULL) {
         AddModels(gStorageForCallbacks, pPath);
     }
 }
@@ -2180,14 +2181,14 @@ tFunkotronic_spec* C2_HOOK_FASTCALL AddNewFunkotronic(void) {
 
     for (i = 0; i < gFunkotronics_array_size; i++) {
         if (gFunkotronics_array[i].owner == -999) {
-            c2_memset(&gFunkotronics_array[i], 0, sizeof(tFunkotronic_spec));
+            memset(&gFunkotronics_array[i], 0, sizeof(tFunkotronic_spec));
             return &gFunkotronics_array[i];
         }
     }
     gFunkotronics_array_size += 16;
     new_array = BrMemCalloc(gFunkotronics_array_size, sizeof(tFunkotronic_spec), kMem_funk_spec);
     if (gFunkotronics_array != NULL) {
-        c2_memcpy(new_array, gFunkotronics_array, (gFunkotronics_array_size - 16) * sizeof(tFunkotronic_spec));
+        memcpy(new_array, gFunkotronics_array, (gFunkotronics_array_size - 16) * sizeof(tFunkotronic_spec));
         ShiftBoundGrooveFunks(
                 (char*)gFunkotronics_array,
                 (char*)&gFunkotronics_array[gFunkotronics_array_size - 16],
@@ -2213,7 +2214,7 @@ br_material* C2_HOOK_FASTCALL TryThisFunkLink(tCar_crush_buffer_entry* pFunk_lin
         return NULL;
     }
     for (i = 0; i < pFunk_link->count_smashables; i++) {
-        if (c2_strcmp(pFunk_link->smashables[i].material_name, pStr) == 0) {
+        if (strcmp(pFunk_link->smashables[i].material_name, pStr) == 0) {
             pFunk_link->smashables[i].funk = pFunk - gFunkotronics_array;
             return pFunk_link->smashables[i].funk_material;
         }
@@ -2249,9 +2250,9 @@ void C2_HOOK_FASTCALL AddFunkGrooveBinding(int pSlot_number, float* pPeriod_addr
 static void texture_string_to_bits(tU8 *bits, const char *s) {
     const char CHAR_BITS[] = "THBVLRF";
     unsigned int i;
-    for (i = 0; i < c2_strlen(s); i++) {
+    for (i = 0; i < strlen(s); i++) {
         unsigned int j;
-        for (j = 0; j < c2_strlen(CHAR_BITS); j++) {
+        for (j = 0; j < strlen(CHAR_BITS); j++) {
             if (CHAR_BITS[j] == s[i]) {
                 bits[i] = j;
                 break;
@@ -2282,6 +2283,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
     float yon_factor;
     float fov_factor;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, flags, 0x4);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, material, 0x8);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFunkotronic_spec, mode, 0xc);
@@ -2345,23 +2347,24 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
     C2_HOOK_BUG_ON(sizeof(tFunk_temp_buffer) != 0x30);
     C2_HOOK_BUG_ON(sizeof(tFunk_texturebits) != 0x28);
     C2_HOOK_BUG_ON(500 * sizeof(tFunk_temp_buffer) != 24000);
+#endif
 
     gFunk_temp_vertices = BrMemAllocate(500 * sizeof(tFunk_temp_buffer), BR_MEMORY_APPLICATION);
     first_time = 1;
     while (!PFfeof(pF)) {
         PossibleService();
         GetALineAndDontArgue(pF, s);
-        if (c2_strcmp(s, "END OF FUNK") == 0) {
+        if (strcmp(s, "END OF FUNK") == 0) {
             break;
         }
         if (!first_time) {
-            if (c2_strcmp(s, "NEXT FUNK") != 0) {
+            if (strcmp(s, "NEXT FUNK") != 0) {
                 FatalError(kFatalError_FunkotronicFile);
             }
             GetALineAndDontArgue(pF, s);
         }
         first_time = 0;
-        str = c2_strtok(s, "\t ,/");
+        str = strtok(s, "\t ,/");
 
         the_funk = AddNewFunkotronic();
         the_funk->owner = pOwner;
@@ -2375,8 +2378,8 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
         if (the_funk->material == NULL) {
             FatalError(kFatalError_CannotFindMainMaterialInFunkotronicFile_S, str);
         }
-        str = c2_strtok(NULL, "\t ,/");
-        if (str != NULL && c2_strcmp(str, "multiple") == 0 && the_funk->material->identifier != NULL) {
+        str = strtok(NULL, "\t ,/");
+        if (str != NULL && strcmp(str, "multiple") == 0 && the_funk->material->identifier != NULL) {
             BrResFree(the_funk->material->identifier);
             the_funk->material->identifier = NULL;
         }
@@ -2405,7 +2408,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             case eMove_texturebits:
                 the_funk->matrix_mod_data.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
-                the_funk->matrix_mod_data.texture_info.data->count = (tU8)c2_strlen(s);
+                the_funk->matrix_mod_data.texture_info.data->count = (tU8)strlen(s);
                 texture_string_to_bits(the_funk->matrix_mod_data.texture_info.data->bits, s);
                 the_funk->matrix_mod_data.texture_info.data->car = gCurrent_car_spec;
                 break;
@@ -2425,7 +2428,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             case eMove_texturebits:
                 the_funk->matrix_mod_data.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
-                the_funk->matrix_mod_data.texture_info.data->count = (tU8)c2_strlen(s);
+                the_funk->matrix_mod_data.texture_info.data->count = (tU8)strlen(s);
                 texture_string_to_bits(the_funk->matrix_mod_data.texture_info.data->bits, s);
                 the_funk->matrix_mod_data.texture_info.data->car = gCurrent_car_spec;
                 break;
@@ -2539,7 +2542,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             case eMove_texturebits:
                 the_funk->lighting_animation_data.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
-                the_funk->lighting_animation_data.texture_info.data->count = (tU8)c2_strlen(s);
+                the_funk->lighting_animation_data.texture_info.data->count = (tU8)strlen(s);
                 texture_string_to_bits(the_funk->lighting_animation_data.texture_info.data->bits, s);
                 the_funk->lighting_animation_data.texture_info.data->car = gCurrent_car_spec;
                 break;
@@ -2580,7 +2583,7 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             case eMove_texturebits:
                 the_funk->texture_animation_data.frames_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
-                the_funk->texture_animation_data.frames_info.texture_info.data->count = (tU8)c2_strlen(s);
+                the_funk->texture_animation_data.frames_info.texture_info.data->count = (tU8)strlen(s);
                 texture_string_to_bits(the_funk->texture_animation_data.frames_info.texture_info.data->bits, s);
                 the_funk->texture_animation_data.frames_info.texture_info.data->car = gCurrent_car_spec;
                 break;
@@ -2594,27 +2597,27 @@ void C2_HOOK_FASTCALL AddFunkotronics(FILE* pF, int pOwner, int pRef_offset, tCa
             the_funk->texture_animation_data.frames_info.has_matrix = 0;
             for (i = 0; i < the_funk->texture_animation_data.frames_info.texture_count; i++) {
                 GetALineAndDontArgue(pF, s);
-                str = c2_strtok(s, "\t ,/");
+                str = strtok(s, "\t ,/");
                 the_funk->texture_animation_data.frames_info.textures[i] = BrMapFind(str);
                 if (the_funk->texture_animation_data.frames_info.textures[i] == NULL) {
                     FatalError(kFatalError_CannotFindAnimationFramePixelmapReferencedInFunkotronicFile);
                 }
                 BrMatrix23Identity(&the_funk->texture_animation_data.frames_info.mat[i]);
-                str = c2_strtok(NULL, "\t ,/");
-                if (str != NULL && c2_strlen(str) != 0) {
+                str = strtok(NULL, "\t ,/");
+                if (str != NULL && strlen(str) != 0) {
                     int size_x;
                     int pos_x;
                     int size_y;
                     int pos_y;
 
                     the_funk->texture_animation_data.frames_info.has_matrix = 1;
-                    c2_sscanf(str, "%d", &size_x);
-                    str = c2_strtok(NULL, "\t ,/");
-                    c2_sscanf(str, "%d", &pos_x);
-                    str = c2_strtok(NULL, "\t ,/");
-                    c2_sscanf(str, "%d", &size_y);
-                    str = c2_strtok(NULL, "\t ,/");
-                    c2_sscanf(str, "%d", &pos_y);
+                    sscanf(str, "%d", &size_x);
+                    str = strtok(NULL, "\t ,/");
+                    sscanf(str, "%d", &pos_x);
+                    str = strtok(NULL, "\t ,/");
+                    sscanf(str, "%d", &size_y);
+                    str = strtok(NULL, "\t ,/");
+                    sscanf(str, "%d", &pos_y);
                     the_funk->texture_animation_data.frames_info.mat[i].m[0][0] = 1.f / (float)size_x;
                     the_funk->texture_animation_data.frames_info.mat[i].m[1][1] = 1.f / (float)size_y;
                     the_funk->texture_animation_data.frames_info.mat[i].m[2][0] = (float)pos_x / (float)size_x;
@@ -2850,14 +2853,14 @@ tGroovidelic_spec* C2_HOOK_FASTCALL AddNewGroovidelic(void) {
 
     for (i = 0; i < gGroovidelics_array_size; i++) {
         if (gGroovidelics_array[i].owner == -999) {
-            c2_memset(&gGroovidelics_array[i], 0, sizeof(tGroovidelic_spec));
+            memset(&gGroovidelics_array[i], 0, sizeof(tGroovidelic_spec));
             return &gGroovidelics_array[i];
         }
     }
     gGroovidelics_array_size += 16;
     new_array = BrMemCalloc(gGroovidelics_array_size, sizeof(tGroovidelic_spec), kMem_groove_spec);
     if (gGroovidelics_array != NULL) {
-        c2_memcpy(new_array, gGroovidelics_array, (gGroovidelics_array_size - 16) * sizeof(tGroovidelic_spec));
+        memcpy(new_array, gGroovidelics_array, (gGroovidelics_array_size - 16) * sizeof(tGroovidelic_spec));
         ShiftBoundGrooveFunks(
                 (char*)gGroovidelics_array,
                 (char*)&gGroovidelics_array[gGroovidelics_array_size - 16],
@@ -2884,6 +2887,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
     int d_2;
     br_vector3 p;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, owner, 0x0);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, block_flags, 0x8);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, actor, 0xc);
@@ -2927,6 +2931,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.x_magnitude, 0x78);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.y_magnitude, 0x7c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.z_magnitude, 0x80);
+#endif
 
     first_time = 1;
     while (!PFfeof(pF)) {
@@ -2934,19 +2939,19 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
 
         PossibleService();
         GetALineAndDontArgue(pF, s);
-        if (c2_strcmp(s, "END OF GROOVE") == 0) {
+        if (strcmp(s, "END OF GROOVE") == 0) {
             break;
         }
 
         if (!first_time) {
-            if (c2_strcmp(s, "NEXT GROOVE") != 0) {
+            if (strcmp(s, "NEXT GROOVE") != 0) {
                 FatalError(kFatalError_ErrorWithinGroovidelicFile);
             }
             GetALineAndDontArgue(pF, s);
         }
         first_time = 0;
 
-        str = c2_strtok(s, "\t ,/");
+        str = strtok(s, "\t ,/");
         the_groove = AddNewGroovidelic();
         the_groove->owner = pOwner;
         the_groove->block_flags = 0;
@@ -2991,7 +2996,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
             case eMove_texturebits:
                 the_groove->path_data.straight_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
-                the_groove->path_data.straight_info.texture_info.data->count = (tU8)c2_strlen(s);
+                the_groove->path_data.straight_info.texture_info.data->count = (tU8)strlen(s);
                 texture_string_to_bits(the_groove->path_data.straight_info.texture_info.data->bits, s);
                 the_groove->path_data.straight_info.texture_info.data->car = gCurrent_car_spec;
                 break;
@@ -3020,7 +3025,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
             case eMove_texturebits:
                 the_groove->path_data.circular_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
-                the_groove->path_data.circular_info.texture_info.data->count = (tU8)c2_strlen(s);
+                the_groove->path_data.circular_info.texture_info.data->count = (tU8)strlen(s);
                 texture_string_to_bits(the_groove->path_data.circular_info.texture_info.data->bits, s);
                 the_groove->path_data.circular_info.texture_info.data->car = gCurrent_car_spec;
                 break;
@@ -3051,7 +3056,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
             case eMove_texturebits:
                 the_groove->object_data.spin_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
-                the_groove->object_data.spin_info.texture_info.data->count = (tU8)c2_strlen(s);
+                the_groove->object_data.spin_info.texture_info.data->count = (tU8)strlen(s);
                 texture_string_to_bits(the_groove->object_data.spin_info.texture_info.data->bits, s);
                 the_groove->object_data.spin_info.texture_info.data->car = gCurrent_car_spec;
                 break;
@@ -3074,7 +3079,7 @@ void C2_HOOK_FASTCALL AddGroovidelics(FILE* pF, int pOwner, br_actor* pParent_ac
             case eMove_texturebits:
                 the_groove->object_data.rock_info.texture_info.data = BrMemAllocate(sizeof(tFunk_texturebits), kMem_funk_spec);
                 GetAString(pF, s);
-                the_groove->object_data.rock_info.texture_info.data->count = (tU8)c2_strlen(s);
+                the_groove->object_data.rock_info.texture_info.data->count = (tU8)strlen(s);
                 texture_string_to_bits(the_groove->object_data.rock_info.texture_info.data->bits, s);
                 the_groove->object_data.rock_info.texture_info.data->car = gCurrent_car_spec;
                 break;
@@ -3234,7 +3239,7 @@ void C2_HOOK_FASTCALL ReadSmashTexture(tSmashable_item_spec* pSmash_item, tSmash
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, trigger, 0x44);
 
     pTexture_change->levels = NULL;
-    c2_strcpy(pTexture_change->undefined_0x0, s);
+    strcpy(pTexture_change->undefined_0x0, s);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_texture_change, field_0x40, 0x40);
 
@@ -3313,9 +3318,11 @@ void C2_HOOK_FASTCALL ReadConnotations(FILE* pF, tConnotations* pConnotations, t
 
     ReadSmashSounds(pF, pConnotations, pStorage);
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec, mode_data, 0x14);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.count_shrapnel, 0x14);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmashable_item_spec_shrapnel, connotations.shrapnel, 0x18);
+#endif
 
     ReadShrapnelSpec(pF, pConnotations->shrapnel, &pConnotations->count_shrapnel);
     ReadSpecialEffectsSpec(pF, &pConnotations->special_effects);
@@ -3344,7 +3351,7 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
 
     gSmashable_track_environment_path = pPath;
 
-    c2_memset(gSmashable_track_indexable_triggers, 0, sizeof(gSmashable_track_indexable_triggers));
+    memset(gSmashable_track_indexable_triggers, 0, sizeof(gSmashable_track_indexable_triggers));
     C2_HOOK_BUG_ON(sizeof(gSmashable_track_indexable_triggers) != 400);
 
     for (i = 0; i < gCount_track_smashable_environment_specs; i++) {
@@ -3366,7 +3373,7 @@ void C2_HOOK_FASTCALL ReadSmashableEnvironment(FILE* pF, const char* pPath) {
                 spec->trigger_type = kSmashableTrigger_Model;
             }
         } else {
-            if (c2_strstr(s, ".DAT") != NULL || c2_strstr(s, ".dat") != NULL || c2_strstr(s, ".ACT") != NULL || c2_strstr(s, ".act") != NULL) {
+            if (strstr(s, ".DAT") != NULL || strstr(s, ".dat") != NULL || strstr(s, ".ACT") != NULL || strstr(s, ".act") != NULL) {
                 spec->trigger_type = kSmashableTrigger_Model;
             } else {
                 spec->trigger_type = kSmashableTrigger_Material;
@@ -3594,23 +3601,23 @@ void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
             br_model* model;
 
             GetAString(pF, name);
-            c2_sprintf(identifier, "%c%02d", 'L', i);
+            sprintf(identifier, "%c%02d", 'L', i);
             model = BrModelFind(name);
             if (model == NULL || model->identifier == NULL) {
                 FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S, name);
             }
-            c2_memcpy(model->identifier, identifier, sizeof(identifier));
+            memcpy(model->identifier, identifier, sizeof(identifier));
         } else if (generator->type == kSoundGeneratorType_actor) {
             char identifier[4];
             br_model* model;
 
             GetAString(pF, name);
-            c2_sprintf(identifier, "%c%02d", ')', i);
+            sprintf(identifier, "%c%02d", ')', i);
             model = BrModelFind(name);
             if (model == NULL || model->identifier == NULL) {
                 FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S, name);
             }
-            c2_memcpy(model->identifier, identifier, sizeof(identifier));
+            memcpy(model->identifier, identifier, sizeof(identifier));
         } else if (generator->type == kSoundGeneratorType_noncar) {
             GetThreeFloats(pF,
                 &generator->point.v[0],
@@ -3654,12 +3661,12 @@ void C2_HOOK_FASTCALL LoadExceptionsFile(const char* pPath) {
         return;
     }
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,");
+    str = strtok(s, "\t ,");
     if (DRStricmp(str, "VERSION") != 0) {
         FatalError(kFatalError_FileMustStartWith_SS, pPath, "VERSION");
     }
-    str = c2_strtok(NULL, "\t ,");
-    count = c2_sscanf(str, "%d", &version);
+    str = strtok(NULL, "\t ,");
+    count = sscanf(str, "%d", &version);
     if (count == 0 || version != 1) {
         FatalError(kFatalError_CantCopeWithVersionFor_SS, str, pPath);
     }
@@ -3667,21 +3674,21 @@ void C2_HOOK_FASTCALL LoadExceptionsFile(const char* pPath) {
         tMaterial_exception* matexc;
 
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,");
+        str = strtok(s, "\t ,");
         if (DRStricmp(str, "end") == 0) {
             break;
         }
         C2_HOOK_BUG_ON(sizeof(tMaterial_exception) != 12);
         matexc = BrMemAllocate(sizeof(tMaterial_exception), kMem_exception);
-        matexc->texture_name = BrMemAllocate(c2_strlen(str) + 1, kMem_misc_string);
-        c2_strcpy(matexc->texture_name, str);
+        matexc->texture_name = BrMemAllocate(strlen(str) + 1, kMem_misc_string);
+        strcpy(matexc->texture_name, str);
         matexc->flags = 0;
         while (1) {
-            str = c2_strtok(NULL, "\t ,");
+            str = strtok(NULL, "\t ,");
             if (str == NULL) {
                 break;
             }
-            if (!c2_isalnum(str[0])) {
+            if (!isalnum(str[0])) {
                 break;
             }
             if (DRStricmp(str, "nobilinear") == 0) {
@@ -3700,7 +3707,7 @@ void C2_HOOK_FASTCALL LoadExceptionsFile(const char* pPath) {
 void C2_HOOK_FASTCALL LoadExceptionsFileForTrack(const char* pTrack_name) {
     tPath_name path;
 
-    c2_sprintf(path, "%s%s%s%s",
+    sprintf(path, "%s%s%s%s",
                pTrack_name, gDir_separator,
                gRenderer_fixup_basename, gRenderer_fixup_extension);
     LoadExceptionsFile(path);
@@ -3788,7 +3795,7 @@ int C2_HOOK_FASTCALL ModelIsATree(br_model* pModel, char* pName_replacement) {
     int i;
 
     for (i = 0; i < gTree_surgery_pass1_count; i++) {
-        if (c2_strstr(pModel->identifier, gTree_surgery_pass1->name) == pModel->identifier) {
+        if (strstr(pModel->identifier, gTree_surgery_pass1->name) == pModel->identifier) {
             break;
         }
     }
@@ -3796,8 +3803,8 @@ int C2_HOOK_FASTCALL ModelIsATree(br_model* pModel, char* pName_replacement) {
         return 0;
     }
     for (i = 0; i < gTree_surgery_pass2_count; i++) {
-        if (c2_strcmp(pModel->identifier, gTree_surgery_pass2->original) == 0) {
-            c2_strcpy(pName_replacement, gTree_surgery_pass2->replacement);
+        if (strcmp(pModel->identifier, gTree_surgery_pass2->original) == 0) {
+            strcpy(pName_replacement, gTree_surgery_pass2->replacement);
             return 1;
         }
     }
@@ -3815,11 +3822,11 @@ void C2_HOOK_FASTCALL PerformTreeSurgery(tBrender_storage* pStorage, br_model* p
     BrResFree(pModel->vertices);
     pModel->faces = BrResAllocate(pModel, BrResSize(replacement->faces),
                                   BrResClass(replacement->faces));
-    c2_memmove(pModel->faces, replacement->faces, BrResSize(replacement->faces));
+    memmove(pModel->faces, replacement->faces, BrResSize(replacement->faces));
     pModel->nfaces = replacement->nfaces;
     pModel->vertices = BrResAllocate(pModel, BrResSize(replacement->vertices),
                                      BrResClass(replacement->vertices));
-    c2_memmove(pModel->vertices, replacement->vertices, BrResSize(replacement->vertices));
+    memmove(pModel->vertices, replacement->vertices, BrResSize(replacement->vertices));
     pModel->nvertices = replacement->nvertices;
     BrModelUpdate(pModel, BR_MODU_ALL);
 }
@@ -3898,15 +3905,15 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     int count_noncar_objects;
 
     PrintMemoryDump(0, "AT THE START OF LOAD TRACK");
-    c2_strcpy(gCurrent_load_directory, "RACES");
-    c2_strcpy(gCurrent_load_name, pFile_name);
-    gCurrent_load_name[c2_strlen(gCurrent_load_name) - 4] = '\0';
+    strcpy(gCurrent_load_directory, "RACES");
+    strcpy(gCurrent_load_name, pFile_name);
+    gCurrent_load_name[strlen(gCurrent_load_name) - 4] = '\0';
 
-    c2_strcpy(local_directory, gCurrent_load_directory);
-    c2_strcpy(local_name, gCurrent_load_name);
+    strcpy(local_directory, gCurrent_load_directory);
+    strcpy(local_name, gCurrent_load_name);
 
     PathCat(gRace_path, gApplication_path, local_directory);
-    c2_strcpy(local_race_path, gRace_path);
+    strcpy(local_race_path, gRace_path);
 
     LoadExceptionsFileForTrack(local_race_path);
 
@@ -3920,10 +3927,10 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     }
 
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
-    if (c2_strcmp(str, "VERSION") == 0) {
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &gTrack_version);
+    str = strtok(s, "\t ,/");
+    if (strcmp(str, "VERSION") == 0) {
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &gTrack_version);
         if (gTrack_version == 8) {
             gTrack_version = 0;
         }
@@ -3990,7 +3997,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     }
 
     PossibleService();
-    c2_strcpy(short_track_name, pFile_name);
+    strcpy(short_track_name, pFile_name);
     short_track_name[4] = '\0';
     PathCat(race_desc_path, gApplication_path, "RACES");
     PathCat(race_desc_path, race_desc_path, short_track_name);
@@ -4018,7 +4025,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     PrintMemoryDump(0, "JUST LOADED IN TEXTURES/MATS/MODELS FOR TRACK");
 
     PathCat(actor_path, gRace_path, local_name);
-    c2_strcat(actor_path, ".ACT");
+    strcat(actor_path, ".ACT");
     pTrack_spec->the_actor = BrActorLoad(actor_path);
     PrintMemoryDump(0, "AFTER LOADING TRACK ACTORS");
     PossibleService();
@@ -4050,8 +4057,8 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
     /* Additional actor */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(c2_strtok(s, "\t ,/"), ".");
-    c2_strcat(str, ".DAT");
+    str = strtok(strtok(s, "\t ,/"), ".");
+    strcat(str, ".DAT");
     PathCat(gAdditional_model_path, gApplication_path, "MODELS");
     PathCat(gAdditional_model_path, gAdditional_model_path, str);
     PossibleService();
@@ -4062,8 +4069,8 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     BrModelAddMany(gAdditional_models, gNumber_of_additional_models);
     PossibleService();
 
-    str = c2_strtok(c2_strtok(s, "\t ,/"), ".");
-    c2_strcat(str, ".ACT");
+    str = strtok(strtok(s, "\t ,/"), ".");
+    strcat(str, ".ACT");
     PathCat(gAdditional_actor_path, gApplication_path, "ACTORS");
     PathCat(gAdditional_actor_path, gAdditional_actor_path, str);
     gAdditional_actors = BrActorLoad(gAdditional_actor_path);
@@ -4075,7 +4082,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
     /* Name of sky texture pixelmap (or "none") */
     GetAString(f, s);
-    if (!gAusterity_mode && c2_strcmp(&s[c2_strlen(s) - 4], ".FLI") == 0) {
+    if (!gAusterity_mode && strcmp(&s[strlen(s) - 4], ".FLI") == 0) {
         void* flic_pixels;
 
         gTrack_flic_buffer = NULL;
@@ -4194,7 +4201,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     GetAString(f, s);
     pRace_info->map_image = BrMapFind(s);
     if (pRace_info->map_image == NULL) {
-        c2_strtok(s, ".");
+        strtok(s, ".");
         pRace_info->map_image = BrMapFind(s);
         if (pRace_info->map_image == NULL) {
             Uppercaseificate(s, s);
@@ -4234,7 +4241,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
     /* START OF GROOVE */
     GetALineAndDontArgue(f, s);
-    C2_HOOK_ASSERT(c2_strcmp(s, "START OF GROOVE") == 0);
+    C2_HOOK_ASSERT(strcmp(s, "START OF GROOVE") == 0);
 
     AddGroovidelics(f, -2, gUniverse_actor, 30 * GROOVE_FUNK_MAX_PER_CAR, 0);
 
@@ -4312,18 +4319,18 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
 
         /* skid mark material */
         GetAString(f, s);
-        str = c2_strtok(s, ".");
-        if (c2_strcmp(str, "NONE") == 0) {
+        str = strtok(s, ".");
+        if (strcmp(str, "NONE") == 0) {
             modifier->skid_mark_material = NULL;
-        } else if (c2_strcmp(str, "0") == 0) {
+        } else if (strcmp(str, "0") == 0) {
             modifier->skid_mark_material = NULL;
-        } else if (c2_strcmp(str, "1") == 0) {
+        } else if (strcmp(str, "1") == 0) {
             modifier->skid_mark_material = NULL;
         } else {
-            c2_strcat(str, ".PIX");
+            strcat(str, ".PIX");
             LoadSinglePixelmap(&gTrack_storage_space, str);
-            str[c2_strlen(str) - 4] = '\0';
-            c2_strcat(str, ".MAT");
+            str[strlen(str) - 4] = '\0';
+            strcat(str, ".MAT");
             modifier->skid_mark_material = LoadSingleMaterial(&gTrack_storage_space, str);
         }
     }
@@ -4366,7 +4373,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     if (gProgram_state.non_cars == NULL && count_noncar_objects != 0) {
         FatalError(kFatalError_CannotOpenRacesFile);
     }
-    c2_memset(gNon_car_spec_indices, 0, sizeof(gNon_car_spec_indices));
+    memset(gNon_car_spec_indices, 0, sizeof(gNon_car_spec_indices));
     C2_HOOK_BUG_ON(sizeof(gNon_car_spec_indices) != 100);
     for (i = 0; i < 40; i++) { /* FIXME: magic */
         tCollision_info *collision_info;
@@ -4401,7 +4408,7 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         if (i < count_noncar_objects) {
             GetAString(f, s);
         } else {
-            c2_strcpy(s, gSmashable_noncars[i - count_noncar_objects]);
+            strcpy(s, gSmashable_noncars[i - count_noncar_objects]);
         }
         PathCat(non_cars_path, gApplication_path, "NONCARS");
         PathCat(non_cars_path, non_cars_path, s);
@@ -4514,15 +4521,15 @@ int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix) {
     size_t len_ident;
     size_t len_suffix;
 
-    len_ident = c2_strlen(pIdent);
-    len_suffix = c2_strlen(pSuffix);
+    len_ident = strlen(pIdent);
+    len_suffix = strlen(pSuffix);
     if (pIdent == NULL) {
         return 0;
     }
     if (len_ident < len_suffix) {
         return 0;
     }
-    return c2_strcmp(pIdent + len_ident - len_suffix, pSuffix) == 0;
+    return strcmp(pIdent + len_ident - len_suffix, pSuffix) == 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00448d70
@@ -4531,9 +4538,9 @@ br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(char* pOld_ident, char* pSuffix
     int unsuffixed_len;
     char* new_id;
 
-    unsuffixed_len = c2_strlen(pOld_ident) - c2_strlen(pSuffix);
+    unsuffixed_len = strlen(pOld_ident) - strlen(pSuffix);
     new_id = BrMemAllocate(unsuffixed_len + 1, kMem_new_mat_id);
-    c2_sprintf(new_id, "%.*s", unsuffixed_len, pOld_ident);
+    sprintf(new_id, "%.*s", unsuffixed_len, pOld_ident);
     result = BrMaterialFind(new_id);
     BrMemFree(new_id);
     return result;
@@ -4603,13 +4610,13 @@ br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pF
     }
     max_suffix_len = 0;
     for (s = 0; s < REC2_ASIZE(suffixes); s++) {
-        if (max_suffix_len < c2_strlen(suffixes[s])) {
-            max_suffix_len = c2_strlen(suffixes[s]);
+        if (max_suffix_len < strlen(suffixes[s])) {
+            max_suffix_len = strlen(suffixes[s]);
         }
     }
-    id = BrMemAllocate(c2_strlen(mat->identifier) + max_suffix_len + 1, kMem_new_mat_id);
+    id = BrMemAllocate(strlen(mat->identifier) + max_suffix_len + 1, kMem_new_mat_id);
     for (s = 0; s < REC2_ASIZE(suffixes); s++) {
-        c2_sprintf(id, "%s%s", mat->identifier, suffixes[s]);
+        sprintf(id, "%s%s", mat->identifier, suffixes[s]);
         victim = BrMaterialFind(id);
         if (victim != NULL) {
             BrMaterialRemove(victim);
@@ -4838,7 +4845,7 @@ void C2_HOOK_FASTCALL SaveAdditionalActors(void) {
     if (gLast_actor != NULL) {
         DRActorEnumRecurseWithTrans(gLast_actor, NULL, ApplyTransToModels, NULL);
     }
-    if (c2_strstr(gAdditional_actor_path, "autosave") != NULL) {
+    if (strstr(gAdditional_actor_path, "autosave") != NULL) {
         BrActorSave(gAdditional_actor_path, gAdditional_actors);
         BrModelSaveMany(gAdditional_model_path, gAdditional_models, gNumber_of_additional_models);
     } else {
@@ -4847,31 +4854,31 @@ void C2_HOOK_FASTCALL SaveAdditionalActors(void) {
         char* str;
         int i;
 
-        c2_sprintf(path1, "%s", gAdditional_actor_path);
-        str = c2_strstr(path1, ".");
+        sprintf(path1, "%s", gAdditional_actor_path);
+        str = strstr(path1, ".");
         if (str != NULL) {
             *str = '\0';
         }
         for (i = 0;; i++) {
             FILE* f;
 
-            c2_sprintf(path2, "%s%04d", path1, i);
+            sprintf(path2, "%s%04d", path1, i);
             f = DRfopen(path2, "rb");
             if (f == NULL) {
                 break;
             }
             PFfclose(f);
         }
-        c2_strcpy(path2, path1);
-        c2_sprintf(path1, "%s%04d.ACT", path2, i);
+        strcpy(path2, path1);
+        sprintf(path1, "%s%04d.ACT", path2, i);
         BrActorSave(path1, gAdditional_actors);
         BrActorSave(gAdditional_actor_path, gAdditional_actors);
-        c2_sprintf(path2, "%s", gAdditional_model_path);
-        str = c2_strstr(path2, ".");
+        sprintf(path2, "%s", gAdditional_model_path);
+        str = strstr(path2, ".");
         if (str != NULL) {
             *str = '\0';
         }
-        c2_sprintf(path1, "%s%04d.DAT", path2, i);
+        sprintf(path1, "%s%04d.DAT", path2, i);
         BrModelSaveMany(path1, gAdditional_models, gNumber_of_additional_models);
         BrModelSaveMany(gAdditional_model_path, gAdditional_models, gNumber_of_additional_models);
     }
@@ -4889,40 +4896,40 @@ void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
     if (f == NULL) {
         return;
     }
-    c2_fprintf(f, "// SPECIAL EFFECTS VOLUMES\n\n");
-    c2_fprintf(f, "%d\t\t\t\t// # special effects volumes\n\n", gProgram_state.special_volume_count);
+    fprintf(f, "// SPECIAL EFFECTS VOLUMES\n\n");
+    fprintf(f, "%d\t\t\t\t// # special effects volumes\n\n", gProgram_state.special_volume_count);
     for (i = 0; i < gProgram_state.special_volume_count; i++) {
         tSpecial_volume* v;
 
         v = &gProgram_state.special_volumes[i];
         switch (v->boundary_type) {
         case eFx_boundary_box:
-            c2_fprintf(f, "BOX\n");
-            c2_fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[0][0], v->boundary.box.mat.m[0][1], v->boundary.box.mat.m[0][2]);
-            c2_fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[1][0], v->boundary.box.mat.m[1][1], v->boundary.box.mat.m[1][2]);
-            c2_fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[2][0], v->boundary.box.mat.m[2][1], v->boundary.box.mat.m[2][2]);
-            c2_fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[3][0], v->boundary.box.mat.m[3][1], v->boundary.box.mat.m[3][2]);
+            fprintf(f, "BOX\n");
+            fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[0][0], v->boundary.box.mat.m[0][1], v->boundary.box.mat.m[0][2]);
+            fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[1][0], v->boundary.box.mat.m[1][1], v->boundary.box.mat.m[1][2]);
+            fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[2][0], v->boundary.box.mat.m[2][1], v->boundary.box.mat.m[2][2]);
+            fprintf(f, "%.3f, %.3f, %.3f\n", v->boundary.box.mat.m[3][0], v->boundary.box.mat.m[3][1], v->boundary.box.mat.m[3][2]);
             break;
         case eFx_boundary_plane:
-            c2_fprintf(f, "%.3f, %.3f, %.3f, %.3f\n", v->boundary.plane.v[0], v->boundary.plane.v[1], v->boundary.plane.v[2], v->boundary.plane.v[3]);
+            fprintf(f, "%.3f, %.3f, %.3f, %.3f\n", v->boundary.plane.v[0], v->boundary.plane.v[1], v->boundary.plane.v[2], v->boundary.plane.v[3]);
             break;
         case eFx_boundary_default:
-            c2_fprintf(f, "DEFAULT\n");
+            fprintf(f, "DEFAULT\n");
             break;
         default:
             break;
         }
-        c2_fprintf(f, "%.2f\t\t\t\t// gravity multiplier\n", v->gravity_multiplier);
-        c2_fprintf(f, "%.2f\t\t\t\t// viscosity multiplier\n", v->viscosity_multiplier);
-        c2_fprintf(f, "%.2f\t\t\t\t// Car damage per millisecond\n", v->car_damage_per_ms);
-        c2_fprintf(f, "%.2f\t\t\t\t// Pedestrian damage per millisecond\n", v->ped_damage_per_ms);
-        c2_fprintf(f, "%d\t\t\t\t\t// camera effect index\n", v->camera_special_effect_index);
-        c2_fprintf(f, "%d\t\t\t\t\t// sky colour\n", v->sky_col);
-        c2_fprintf(f, "%s\t\t\t\t// Windscreen texture to use\n", (v->screen_pixelmap != NULL) ? v->screen_pixelmap->identifier : "NONE");
-        c2_fprintf(f, "%d\t\t\t\t\t// Sound ID of entry noise\n", v->entry_noise);
-        c2_fprintf(f, "%d\t\t\t\t\t// Sound ID of exit noise\n", v->exit_noise);
-        c2_fprintf(f, "%d\t\t\t\t\t// Engine noise index\n", v->engine_noise_index);
-        c2_fprintf(f, "%d\t\t\t\t\t// material index\n", v->material_modifier_index);
+        fprintf(f, "%.2f\t\t\t\t// gravity multiplier\n", v->gravity_multiplier);
+        fprintf(f, "%.2f\t\t\t\t// viscosity multiplier\n", v->viscosity_multiplier);
+        fprintf(f, "%.2f\t\t\t\t// Car damage per millisecond\n", v->car_damage_per_ms);
+        fprintf(f, "%.2f\t\t\t\t// Pedestrian damage per millisecond\n", v->ped_damage_per_ms);
+        fprintf(f, "%d\t\t\t\t\t// camera effect index\n", v->camera_special_effect_index);
+        fprintf(f, "%d\t\t\t\t\t// sky colour\n", v->sky_col);
+        fprintf(f, "%s\t\t\t\t// Windscreen texture to use\n", (v->screen_pixelmap != NULL) ? v->screen_pixelmap->identifier : "NONE");
+        fprintf(f, "%d\t\t\t\t\t// Sound ID of entry noise\n", v->entry_noise);
+        fprintf(f, "%d\t\t\t\t\t// Sound ID of exit noise\n", v->exit_noise);
+        fprintf(f, "%d\t\t\t\t\t// Engine noise index\n", v->engine_noise_index);
+        fprintf(f, "%d\t\t\t\t\t// material index\n", v->material_modifier_index);
         if (v->boundary_type == eFx_boundary_box || v->boundary_type == eFx_boundary_plane) {
             if (v->soundfx_type == kSoundFx_None) {
                 fprintf(f,"NONE\t\t\t\t\t// sound type\n");
@@ -4931,7 +4938,7 @@ void C2_HOOK_FASTCALL SaveSpecialVolumes(void) {
                 WriteOutSoundSpec(f, &v->soundfx_data);
             }
         }
-        c2_fprintf(f, "\n");
+        fprintf(f, "\n");
     }
     PFfclose(f);
 }
@@ -4989,10 +4996,10 @@ void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
     size_t len_additional_actor_path;
     size_t len_additional_model_path;
 
-    len_additional_actor_path = c2_strlen(gAdditional_actor_path);
-    len_additional_model_path = c2_strlen(gAdditional_model_path);
-    c2_strcat(gAdditional_actor_path, " autosave");
-    c2_strcat(gAdditional_model_path, " autosave");
+    len_additional_actor_path = strlen(gAdditional_actor_path);
+    len_additional_model_path = strlen(gAdditional_model_path);
+    strcat(gAdditional_actor_path, " autosave");
+    strcat(gAdditional_model_path, " autosave");
     DoSaveAdditionalStuff();
     gAdditional_actor_path[len_additional_actor_path] = '\0';
     gAdditional_model_path[len_additional_model_path] = '\0';
@@ -5090,6 +5097,7 @@ void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, 
     br_scalar pos;
     float f_the_time = (float)pTime;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_interrupt_status, 0x20);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_resumption_value, 0x24);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.straight_info.period.value, 0x28);
@@ -5100,6 +5108,7 @@ void C2_HOOK_FASTCALL PathGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime, 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.period.value, 0x28);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, path_data.circular_info.centre, 0x30);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_position, 0x50);
+#endif
 
     switch (pGroove->path_type) {
     case eGroove_path_straight:
@@ -5263,6 +5272,7 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
     br_bounds* bounds;
     float f_the_time = (float)pTime;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_type, 0x5c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_interrupt_status, 0x64);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_resumption_value, 0x68);
@@ -5282,6 +5292,7 @@ void C2_HOOK_FASTCALL ObjectGrooveBastard(tGroovidelic_spec* pGroove, tU32 pTime
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.x_magnitude, 0x78);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.y_magnitude, 0x7c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tGroovidelic_spec, object_data.shear_info.z_magnitude, 0x80);
+#endif
 
     switch (pGroove->object_type) {
     case eGroove_object_spin:
@@ -5391,7 +5402,7 @@ void C2_HOOK_FASTCALL LollipopizeActor(br_actor* pSubject_actor, br_matrix34* re
         BrVector3SetFloat(&vector_a, 0.f, 0.f, 1.f);
         break;
     case eLollipop_none:
-        c2_abort();
+        abort();
         break;
     }
     BrVector3Cross(&vector_b, &ref_to_subject, &vector_a);
@@ -6038,7 +6049,7 @@ br_size_t C2_HOOK_CDECL ZlibFsGetLine(char* buffer, br_size_t capacity, void* co
 // FUNCTION: CARMA2_HW 0x0051dc60
 void C2_HOOK_CDECL ZlibFsPutLine(char* line, void* context) {
     char newline = '\n';
-    size_t len = c2_strlen(line);
+    size_t len = strlen(line);
 
     gzwrite(context, line, len);
     gzwrite(context, &newline, 1);

@@ -10,7 +10,7 @@
 #include "core/std/brstdlib.h"
 
 //#include "c2_stddef.h"
-#include "c2_stdio.h"
+#include <stdio.h>
 
 
 // GLOBAL: CARMA2_HW 0x0079f950
@@ -295,7 +295,7 @@ void C2_HOOK_CDECL BrPixelmapBegin(void) {
     for (i = 0; i < BR_ASIZE(pm_resourceClasses); i++) {
         BrResClassAdd(&pm_resourceClasses[i]);
     }
-#if !defined(REC2_MATCHING)
+#if defined(REC2_MATCHING)
     BrImageAdd(&Image_BRMAP1);
 #endif
 }
@@ -303,7 +303,7 @@ void C2_HOOK_CDECL BrPixelmapBegin(void) {
 // FUNCTION: CARMA2_HW 0x005395f0
 void C2_HOOK_CDECL BrPixelmapEnd(void) {
 
-#if !defined(REC2_MATCHING)
+#if defined(REC2_MATCHING)
     BrImageRemove(&Image_BRMAP1);
 #endif
     BrResFree(_pixelmap.res);

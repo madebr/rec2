@@ -1278,7 +1278,7 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
                     tv->v.f = (float)l->current.v.integer;
                     break;
                 default:
-                    c2_abort();
+                    abort();
                     break;
                 }
                 break;
@@ -1298,7 +1298,7 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
                     tv->v.f = l->current.v.real;
                     break;
                 default:
-                    c2_abort();
+                    abort();
                     break;
                 }
                 break;

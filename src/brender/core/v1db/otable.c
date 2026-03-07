@@ -94,7 +94,7 @@ br_uint_16 C2_HOOK_CDECL BrZsPrimitiveBucketSelect(br_scalar* z, br_uint_16 type
             }
             break;
         default:
-            c2_abort();
+            abort();
         }
     case BRT_TRIANGLE:
         switch (sort_type) {
@@ -120,10 +120,10 @@ br_uint_16 C2_HOOK_CDECL BrZsPrimitiveBucketSelect(br_scalar* z, br_uint_16 type
             }
             break;
         default:
-            c2_abort();
+            abort();
         }
     default:
-        c2_abort();
+        abort();
     }
     range = max_z - min_z;
     if (range < 0.001f) {

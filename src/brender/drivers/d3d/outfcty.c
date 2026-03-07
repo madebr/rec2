@@ -8,7 +8,7 @@
 #include "devpixmp.h"
 #include "object.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 // GLOBAL: D3D 0x10016f28
 br_tv_template_entry outputFacilityD3DTemplateEntries[] = {

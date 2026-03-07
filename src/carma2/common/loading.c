@@ -6,7 +6,7 @@
 #include "depth.h"
 #include "drmem.h"
 #include "drone.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "explosions.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -31,7 +31,8 @@
 #include "rec2_logging.h"
 #include "rec2_macros.h"
 
-#include "c2_stdio.h"
+#include "c2_math.h"
+#include <stdio.h>
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
@@ -202,8 +203,8 @@ br_pixelmap* gHeadup_images[45];
 
 // GLOBAL: CARMA2_HW 0x00655e38
 char gDecode_string[14] = {
-    0x9b, 0x52, 0x93, 0x9f, 0x52, 0x98, 0x9b,
-    0x96, 0x96, 0x9e, 0x9b, 0xa0, 0x99, 0x00,
+    (char)0x9b, (char)0x52, (char)0x93, (char)0x9f, (char)0x52, (char)0x98, (char)0x9b,
+    (char)0x96, (char)0x96, (char)0x9e, (char)0x9b, (char)0xa0, (char)0x99, (char)0x00,
 };
 
 // GLOBAL: CARMA2_HW 0x00761b80
@@ -674,12 +675,12 @@ void C2_HOOK_FASTCALL SetDronesOn(int pNewDronesOn) {
 void C2_HOOK_FASTCALL StripCRNL(char* line) {
     char* loc;
 
-    loc = c2_strchr(line, '\n');
+    loc = strchr(line, '\n');
     if (loc != NULL) {
         *loc = '\0';
     }
 
-    loc = c2_strchr(line, '\r');
+    loc = strchr(line, '\r');
     if (loc != NULL) {
         *loc = '\0';
     }
@@ -799,7 +800,7 @@ void C2_HOOK_FASTCALL SkipBytes(FILE* pF, int pBytes_to_skip) {
 tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr) {
     tU32 raw_long;
 
-    c2_memcpy(&raw_long, *pPtr, sizeof(raw_long));
+    memcpy(&raw_long, *pPtr, sizeof(raw_long));
     *pPtr += sizeof(raw_long);
     return raw_long;
 }
@@ -808,7 +809,7 @@ tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr) {
 tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr) {
     tU16 raw_short;
 
-    c2_memcpy(&raw_short, *pPtr, sizeof(raw_short));
+    memcpy(&raw_short, *pPtr, sizeof(raw_short));
     *pPtr += sizeof(raw_short);
     return raw_short;
 }
@@ -817,7 +818,7 @@ tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr) {
 tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
     tU8 raw_byte;
 
-    c2_memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
+    memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
     *pPtr += sizeof(raw_byte);
     return raw_byte;
 }
@@ -826,7 +827,7 @@ tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
 tS32 C2_HOOK_FASTCALL MemReadS32(char** pPtr) {
     tS32 raw_long;
 
-    c2_memcpy(&raw_long, *pPtr, sizeof(raw_long));
+    memcpy(&raw_long, *pPtr, sizeof(raw_long));
     *pPtr += sizeof(raw_long);
     return raw_long;
 }
@@ -835,7 +836,7 @@ tS32 C2_HOOK_FASTCALL MemReadS32(char** pPtr) {
 tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr) {
     tS16 raw_short;
 
-    c2_memcpy(&raw_short, *pPtr, sizeof(raw_short));
+    memcpy(&raw_short, *pPtr, sizeof(raw_short));
     *pPtr += sizeof(raw_short);
     return raw_short;
 }
@@ -844,7 +845,7 @@ tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr) {
 tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr) {
     tS8 raw_byte;
 
-    c2_memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
+    memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
     *pPtr += sizeof(raw_byte);
     return raw_byte;
 }
@@ -863,7 +864,7 @@ int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_
 
     GetALineAndDontArgue(pF, s);
 
-    str = c2_strtok(s, "\t ,/");
+    str = strtok(s, "\t ,/");
     if (pCount <= 0) {
         return -1;
     }
@@ -882,8 +883,8 @@ int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%d", &value);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", &value);
     return value;
 }
 
@@ -893,10 +894,10 @@ void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2) {
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%d", pF1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%d", pF2);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
 }
 
 // FUNCTION: CARMA2_HW 0x0048fe30
@@ -905,12 +906,12 @@ void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%d", pF1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%d", pF2);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%d", pF3);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF3);
 }
 
 // FUNCTION: CARMA2_HW 0x00490020
@@ -919,14 +920,14 @@ void C2_HOOK_FASTCALL GetFourInts(FILE* pF, int* pF1, int* pF2, int* pF3, int* p
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%d", pF1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%d", pF2);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%d", pF3);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%d", pF4);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF3);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF4);
 }
 
 // FUNCTION: CARMA2_HW 0x004900e0
@@ -937,8 +938,8 @@ float C2_HOOK_FASTCALL GetAFloat(FILE* pF) {
 
     PossibleService();
     GetALineWithNoPossibleService(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", &f);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", &f);
     return f;
 }
 
@@ -971,16 +972,16 @@ void C2_HOOK_FASTCALL GetFiveScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, b
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", pS1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pS2);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pS3);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pS4);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pS5);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pS1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pS2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pS3);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pS4);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pS5);
 }
 
 // FUNCTION: CARMA2_HW 0x00490460
@@ -990,12 +991,12 @@ void C2_HOOK_FASTCALL GetNScalars(FILE* pF, int n, br_scalar* pS) {
     int i;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
+    str = strtok(s, "\t ,/");
     for (i = 0; i < n; i++) {
         float f;
-        c2_sscanf(str, "%f", &f);
+        sscanf(str, "%f", &f);
         pS[i] = f;
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
     }
 }
 
@@ -1005,10 +1006,10 @@ void C2_HOOK_FASTCALL GetPairOfFloats(FILE* pF, float* pF1, float* pF2) {
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", pF1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF2);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
 }
 
 // FUNCTION: CARMA2_HW 0x0048fc90
@@ -1017,12 +1018,12 @@ void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* p
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", pF1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF2);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF3);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF3);
 }
 
 void C2_HOOK_FASTCALL GetFourFloats(FILE * pF, float* pF1, float* pF2, float* pF3, float* pF4) {
@@ -1030,14 +1031,14 @@ void C2_HOOK_FASTCALL GetFourFloats(FILE * pF, float* pF1, float* pF2, float* pF
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", pF1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF2);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF3);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF4);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF3);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF4);
 }
 
 // FUNCTION: CARMA2_HW 0x00490630
@@ -1047,8 +1048,8 @@ void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
 
     PossibleService();
     GetALineWithNoPossibleService(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_strcpy(pString, str);
+    str = strtok(s, "\t ,/");
+    strcpy(pString, str);
 }
 
 // FUNCTION: CARMA2_HW 0x004910b0
@@ -1077,12 +1078,12 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
             char paths_file[256];
             char source_check[256];
 
-            c2_strcpy(general_file, "DATA");
-            c2_strcat(general_file, gDir_separator);
-            c2_strcat(general_file, "GENERAL.TXT");
-            c2_strcpy(paths_file, gApplication_path);
-            c2_strcat(paths_file, gDir_separator);
-            c2_strcat(paths_file, "PATHS.TXT");
+            strcpy(general_file, "DATA");
+            strcat(general_file, gDir_separator);
+            strcat(general_file, "GENERAL.TXT");
+            strcpy(paths_file, gApplication_path);
+            strcat(paths_file, gDir_separator);
+            strcat(paths_file, "PATHS.TXT");
             if (!PDCheckDriveExists(paths_file)) {
                 g_source_exists = 0;
                 return NULL;
@@ -1095,10 +1096,10 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
             source_check[0] = '\0';
             PossibleService();
             GetALineWithNoPossibleService(fp, source_check);
-            if (c2_strchr(gDir_separator, source_check[c2_strlen(source_check)-1]) == NULL) {
-                c2_strcat(source_check, gDir_separator);
+            if (strchr(gDir_separator, source_check[strlen(source_check)-1]) == NULL) {
+                strcat(source_check, gDir_separator);
             }
-            c2_strcat(source_check, general_file);
+            strcat(source_check, general_file);
             PFfclose(fp);
             if (!PDCheckDriveExists(source_check)) {
                 PDFatalError("Carmageddon CD not in drive.");
@@ -1108,17 +1109,17 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
         if (g_source_exists == 0) {
             return NULL;
         }
-        data_pos = c2_strstr(pFilename, "DATA");
+        data_pos = strstr(pFilename, "DATA");
         if (data_pos == NULL) {
             return NULL;
         }
 
         source_len = sizeof(source_check) - 1;
         if (GetRegisterSourceLocation(source_check, &source_len)) {
-            if (c2_strchr(gDir_separator, source_check[c2_strlen(source_check)-1]) == NULL) {
-                c2_strcat(source_check, gDir_separator);
+            if (strchr(gDir_separator, source_check[strlen(source_check)-1]) == NULL) {
+                strcat(source_check, gDir_separator);
             }
-            c2_strcat(source_check, data_pos);
+            strcat(source_check, data_pos);
             if (!PDCheckDriveExists(source_check)) {
                 return NULL;
             }
@@ -1132,21 +1133,21 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
         if (!gDecode_thing) {
             return fp;
         }
-        len = c2_strlen(pFilename);
-        if (c2_strcmp(&pFilename[len - 4], ".TXT") != 0
-                || c2_strcmp(&pFilename[len - 12], "DKEYMAP0.TXT") == 0
-                || c2_strcmp(&pFilename[len - 12], "DKEYMAP1.TXT") == 0
-                || c2_strcmp(&pFilename[len - 12], "DKEYMAP2.TXT") == 0
-                || c2_strcmp(&pFilename[len - 12], "DKEYMAP3.TXT") == 0
-                || c2_strcmp(&pFilename[len - 12], "KEYMAP_0.TXT") == 0
-                || c2_strcmp(&pFilename[len - 12], "KEYMAP_1.TXT") == 0
-                || c2_strcmp(&pFilename[len - 12], "KEYMAP_2.TXT") == 0
-                || c2_strcmp(&pFilename[len - 12], "KEYMAP_3.TXT") == 0
-                || c2_strcmp(&pFilename[len - 11], "OPTIONS.TXT") == 0
-                || c2_strcmp(&pFilename[len - 12], "KEYNAMES.TXT") == 0
-                || c2_strcmp(&pFilename[len - 10], "KEYMAP.TXT") == 0
-                || c2_strcmp(&pFilename[len - 9], "PATHS.TXT") == 0
-                || c2_strcmp(&pFilename[len - 11], "PRATCAM.TXT") == 0) {
+        len = strlen(pFilename);
+        if (strcmp(&pFilename[len - 4], ".TXT") != 0
+                || strcmp(&pFilename[len - 12], "DKEYMAP0.TXT") == 0
+                || strcmp(&pFilename[len - 12], "DKEYMAP1.TXT") == 0
+                || strcmp(&pFilename[len - 12], "DKEYMAP2.TXT") == 0
+                || strcmp(&pFilename[len - 12], "DKEYMAP3.TXT") == 0
+                || strcmp(&pFilename[len - 12], "KEYMAP_0.TXT") == 0
+                || strcmp(&pFilename[len - 12], "KEYMAP_1.TXT") == 0
+                || strcmp(&pFilename[len - 12], "KEYMAP_2.TXT") == 0
+                || strcmp(&pFilename[len - 12], "KEYMAP_3.TXT") == 0
+                || strcmp(&pFilename[len - 11], "OPTIONS.TXT") == 0
+                || strcmp(&pFilename[len - 12], "KEYNAMES.TXT") == 0
+                || strcmp(&pFilename[len - 10], "KEYMAP.TXT") == 0
+                || strcmp(&pFilename[len - 9], "PATHS.TXT") == 0
+                || strcmp(&pFilename[len - 11], "PRATCAM.TXT") == 0) {
             return fp;
         }
         ch = DRfgetc(fp);
@@ -1188,7 +1189,7 @@ FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
 void C2_HOOK_FASTCALL PFfclose(FILE* pFile) {
 
     if ((uintptr_t)pFile > REC2_ASIZE(gTwatVfsFiles)) {
-        c2_fclose(pFile);
+        fclose(pFile);
     } else {
         gTwatVfsFiles[(uintptr_t)pFile].start = NULL;
     }
@@ -1206,12 +1207,12 @@ br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, vo
             n = ((twtFile->end - twtFile->pos) / size) * size;
             totalSize = size * n;
         }
-        c2_memcpy(buf, twtFile->pos, totalSize);
+        memcpy(buf, twtFile->pos, totalSize);
         twtFile->pos += totalSize;
         twtFile->error = 0;
         return n;
     }
-    return c2_fread(buf, size, n, f);
+    return fread(buf, size, n, f);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4a80
@@ -1220,11 +1221,11 @@ br_size_t C2_HOOK_FASTCALL DRfwrite(const void* buf, br_size_t size, unsigned in
     if ((int)f < REC2_ASIZE(gTwatVfsFiles)) {
         FatalError(kFatalError_WriteAttemptToPackedFile_S, "unknown");
     }
-    return c2_fwrite(buf, size, n, f);
+    return fwrite(buf, size, n, f);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4ac0
-int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, c2_fpos_t* pos) {
+int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, fpos_t* pos) {
     tTwatVfsFile* twtFile;
 
     if ((int)pFile < REC2_ASIZE(gTwatVfsFiles)) {
@@ -1233,7 +1234,7 @@ int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, c2_fpos_t* pos) {
         twtFile->error = 0;
         return 0;
     }
-    return c2_fgetpos(pFile, pos);
+    return fgetpos(pFile, pos);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4c10
@@ -1244,7 +1245,7 @@ int C2_HOOK_FASTCALL PFfeof(FILE* pFile) {
         twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
         return twtFile->pos >= twtFile->end;
     }
-    return c2_feof(pFile);
+    return feof(pFile);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4c40
@@ -1255,7 +1256,7 @@ int C2_HOOK_FASTCALL DRferror(FILE* pFile) {
         twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
         return twtFile->error;
     }
-    return c2_ferror(pFile);
+    return ferror(pFile);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4c60
@@ -1267,7 +1268,7 @@ void C2_HOOK_FASTCALL DRclearerr(FILE* pFile) {
         twtFile->error = 0;
         return;
     }
-    c2_clearerr(pFile);
+    clearerr(pFile);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4880
@@ -1286,7 +1287,7 @@ int C2_HOOK_FASTCALL DRfgetc(FILE* pFile) {
         twtFile->pos++;
         return result;
     }
-    return c2_fgetc(pFile);
+    return fgetc(pFile);
 }
 
 // FUNCTION: CARMA2_HW 0x004b48c0
@@ -1305,7 +1306,7 @@ int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile) {
         twtFile->pos++;
         return result;
     }
-    return c2_fgetc(pFile);
+    return fgetc(pFile);
 }
 
 // FUNCTION: CARMA2_HW 0x004b49a0
@@ -1319,7 +1320,7 @@ int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file) {
         twtFile->error = 0;
         return ch;
     }
-    return c2_ungetc(ch, file);
+    return ungetc(ch, file);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4900
@@ -1351,7 +1352,7 @@ char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
         twtFile->error = 0;
         return buffer;
     }
-    return c2_fgets(buffer, size, pFile);
+    return fgets(buffer, size, pFile);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4b70
@@ -1383,7 +1384,7 @@ int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
             twtFile->error = -1;
         }
     }
-    return c2_fseek(pF, offset, whence);
+    return fseek(pF, offset, whence);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4b00
@@ -1394,11 +1395,11 @@ int C2_HOOK_FASTCALL PFftell(FILE* pF) {
         twtFile = &gTwatVfsFiles[(uintptr_t)pF];
         return twtFile->pos - twtFile->start;
     }
-    return c2_ftell(pF);
+    return ftell(pF);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4b30
-int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos) {
+int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, fpos_t* pos) {
     tTwatVfsFile* twtFile;
 
     if ((int)pF < REC2_ASIZE(gTwatVfsFiles)) {
@@ -1411,7 +1412,7 @@ int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos) {
         twtFile->error = -1;
         return -1;
     }
-    return c2_fsetpos(pF, pos);
+    return fsetpos(pF, pos);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4be0
@@ -1424,7 +1425,7 @@ void C2_HOOK_FASTCALL PFrewind(FILE* pF) {
         twtFile->error = 0;
         return;
     }
-    c2_rewind(pF);
+    rewind(pF);
 }
 
 // FUNCTION: CARMA2_HW 0x004b4570
@@ -1449,38 +1450,39 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
     FILE* f;
     tTWTVFS twt;
     tU32 fileSize;
+    tU8* fileData;
     tU32 i;
 
     // file header must be 56 bytes for compatibility with .TWT files
     REC2_BUG_ON(sizeof(tTwatFileHeader) != 56);
 
-    c2_strcpy(twatFilePath, path);
-    c2_strcat(twatFilePath, ".TWT");
+    strcpy(twatFilePath, path);
+    strcat(twatFilePath, ".TWT");
 
-    f = c2_fopen(twatFilePath, "rb");
+    f = fopen(twatFilePath, "rb");
     if (f == NULL) {
         return -1;
     }
     for (twt = 0; ; twt++) {
         if (twt >= REC2_ASIZE(gTwatVfsMountPoints)) {
-            c2_fclose(f);
+            fclose(f);
             return -1;
         }
         if (gTwatVfsMountPoints[twt].header == NULL) {
             break;
         }
     }
-    c2_strcpy(gTwatVfsMountPoints[twt].path, path);
+    strcpy(gTwatVfsMountPoints[twt].path, path);
     fileSize = ReadU32(f);
-    c2_rewind(f);
+    rewind(f);
 
     gTwatVfsMountPoints[twt].header = BrMemAllocate(fileSize, kMem_packed_file);
     gTwatVfsMountPoints[twt].data = (tU8*)gTwatVfsMountPoints[twt].header;
-    c2_fread(gTwatVfsMountPoints[twt].header, fileSize, 1, f);
+    fread(gTwatVfsMountPoints[twt].header, fileSize, 1, f);
     SplungeSomeData(gTwatVfsMountPoints[twt].header, fileSize);
-    c2_fclose(f);
+    fclose(f);
 
-    tU8* fileData = (tU8*)&gTwatVfsMountPoints[twt].header->fileHeaders[gTwatVfsMountPoints[twt].header->nbFiles];
+    fileData = (tU8*)&gTwatVfsMountPoints[twt].header->fileHeaders[gTwatVfsMountPoints[twt].header->nbFiles];
     for (i = 0; i < gTwatVfsMountPoints[twt].header->nbFiles; i++) {
         gTwatVfsMountPoints[twt].header->fileHeaders[i].data = fileData;
         fileData += (gTwatVfsMountPoints[twt].header->fileHeaders[i].fileSize + 3u) & ~3u;
@@ -1510,10 +1512,10 @@ FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
         if (gTwatVfsMountPoints[twt].header == NULL) {
             continue;
         }
-        if (c2_strstr(pPath, gTwatVfsMountPoints[twt].path) != pPath) {
+        if (strstr(pPath, gTwatVfsMountPoints[twt].path) != pPath) {
             continue;
         }
-        twt_path_len = c2_strlen(gTwatVfsMountPoints[twt].path);
+        twt_path_len = strlen(gTwatVfsMountPoints[twt].path);
         for (i = 0; i < gTwatVfsMountPoints[twt].header->nbFiles; i++) {
             if (DRStricmp(gTwatVfsMountPoints[twt].header->fileHeaders[i].filename, &pPath[twt_path_len + 1]) == 0) {
                 for (file_index = 1; file_index < REC2_ASIZE(gTwatVfsFiles); file_index++) {
@@ -1530,7 +1532,7 @@ FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
             }
         }
     }
-    return c2_fopen(pPath, mode);
+    return fopen(pPath, mode);
 }
 
 // FUNCTION: CARMA2_HW 0x0048f360
@@ -1648,20 +1650,20 @@ br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name) {
     br_pixelmap* pixelmaps[1000];
     br_pixelmap* pm;
 
-    ext = c2_strrchr(pPath_name, '.');
+    ext = strrchr(pPath_name, '.');
     if (ext == NULL) {
-        ext = pPath_name + c2_strlen(pPath_name);
+        ext = pPath_name + strlen(pPath_name);
     }
     if (ext - pPath_name == 4) {
-        if (c2_strncmp(pPath_name, "none", 4) == 0) {
+        if (strncmp(pPath_name, "none", 4) == 0) {
             return NULL;
         }
     }
     PossibleService();
     PathCat(path, gApplication_path, gGraf_specs[gGraf_spec_index].data_dir_name);
     PathCat(path, path, "PIXELMAP");
-    c2_strcpy(texture_name, pPath_name);
-    texture_name[c2_strlen(texture_name) - 4] = '\0';
+    strcpy(texture_name, pPath_name);
+    texture_name[strlen(texture_name) - 4] = '\0';
     AllowOpenToFail();
     if (!gDisableTiffConversion) {
         pm = LoadTiffTexture_Ex(path, texture_name, gRender_palette, gPixelFlags | 0x40, &error);
@@ -1697,11 +1699,11 @@ void C2_HOOK_FASTCALL GetHithers(void) {
 
     /* Hithers, general then cockpit mode */
     GetALineAndDontArgue(gTempFile, s);
-    result = c2_sscanf(&s[c2_strspn(s, "\t ,")], "%f%n", &gCamera_hither, &position);
+    result = sscanf(&s[strspn(s, "\t ,")], "%f%n", &gCamera_hither, &position);
     if (result == 0) {
         FatalError(kFatalError_MysteriousX_SS, s, "GENERAL.TXT");
     }
-    c2_sscanf(&s[position + c2_strspn(&s[position], "\t ,")], "%f", &gCamera_cockpit_hither);
+    sscanf(&s[position + strspn(&s[position], "\t ,")], "%f", &gCamera_cockpit_hither);
     gCamera_hither *= 2;
     gCamera_cockpit_hither *= 2;
 }
@@ -1718,10 +1720,10 @@ void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info) {
     GetThreeInts(gTempFile, &pSlot_info->initial[0], &pSlot_info->initial[1], &pSlot_info->initial[2]);
     /* (armour|power|offensive), each network game type */
     GetALineAndDontArgue(gTempFile, s);
-    str = c2_strtok(s, "\t ,/");
+    str = strtok(s, "\t ,/");
     for (i = 0; i < REC2_ASIZE(pSlot_info->initial_network); i++) {
-        c2_sscanf(str, "%d", &pSlot_info->initial_network[i]);
-        str = c2_strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pSlot_info->initial_network[i]);
+        str = strtok(NULL, "\t ,/");
     }
 }
 
@@ -1735,10 +1737,10 @@ void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch) {
 
     GetThreeFloats(gTempFile, &pBunch->initial[0], &pBunch->initial[1], &pBunch->initial[2]);
     GetALineAndDontArgue(gTempFile, s);
-    str = c2_strtok(s, "\t ,/");
+    str = strtok(s, "\t ,/");
     for (i = 0; i < REC2_ASIZE(pBunch->initial_network); i++) {
-        c2_sscanf(str, "%f", &pBunch->initial_network[i]);
-        str = c2_strtok(NULL, "\t ,/");
+        sscanf(str, "%f", &pBunch->initial_network[i]);
+        str = strtok(NULL, "\t ,/");
     }
 }
 
@@ -1760,20 +1762,20 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
         PFfgets(s, REC2_ASIZE(s)-1, gTempFile);
         PFfclose(gTempFile);
 
-        for (i = 0; i < c2_strlen(gDecode_string); i++) {
+        for (i = 0; i < strlen(gDecode_string); i++) {
             gDecode_string[i] -= 50;
         }
 
         // trim trailing CRLF etc
-        while (s[0] != '\0' && s[c2_strlen(s) - 1] < 0x20) {
-            s[c2_strlen(s) - 1] = 0;
+        while (s[0] != '\0' && s[strlen(s) - 1] < 0x20) {
+            s[strlen(s) - 1] = 0;
         }
 
-        if (c2_strcmp(s, gDecode_string) == 0) {
+        if (strcmp(s, gDecode_string) == 0) {
             gDecode_thing = 0;
         }
 
-        for (i = 0; i < c2_strlen(gDecode_string); i++) {
+        for (i = 0; i < strlen(gDecode_string); i++) {
             gDecode_string[i] += 50;
         }
     }
@@ -1915,14 +1917,14 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     GetThreeInts(gTempFile, &gStarting_money[0], &gStarting_money[1], &gStarting_money[2]);
     /* Starting money in network mode */
     GetALineAndDontArgue(gTempFile, s2);
-    str = c2_strtok(s2, "\t ,/");
+    str = strtok(s2, "\t ,/");
 #if defined(REC2_FIX_BUGS)
     for (i = 0; i < REC2_ASIZE(gNet_starting_money); i++) {
 #else
     for (i = 0; i < 5; i++) {
 #endif
-        c2_sscanf(str, "%d", &gNet_starting_money[i]);
-        str = c2_strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &gNet_starting_money[i]);
+        str = strtok(NULL, "\t ,/");
     }
 
     /* Repair cost for each skill level (cred per % damage) */
@@ -1943,10 +1945,10 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 
     /* Score targets for each net game type */
     GetALineAndDontArgue(gTempFile, s2);
-    str = c2_strtok(s2, "\t ,/");
+    str = strtok(s2, "\t ,/");
     for (i = 0; i < REC2_ASIZE(gNet_score_targets); i++) {
-        c2_sscanf(str, "%d", &gNet_score_targets[i]);
-        str = c2_strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &gNet_score_targets[i]);
+        str = strtok(NULL, "\t ,/");
     }
 
     /* Pickup respawn min time (seconds) */
@@ -1988,12 +1990,12 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
         gAuto_increase_credits_dt[i] = (int)((float)(1000 * time) / (.02f * (float)gRecovery_cost.initial[i]));
     }
     GetALineAndDontArgue(gTempFile, s2);
-    str = c2_strtok(s2, "\t ,/");
+    str = strtok(s2, "\t ,/");
     for (i = 0; (int)i < REC2_ASIZE(gNet_score_targets); i++) {
         int t;
-        c2_sscanf(str, "%d", &t);
+        sscanf(str, "%d", &t);
         gNet_auto_increase_credits_dt[i] = (int)((float)(1000 * t) / (.02f * (float)gRecovery_cost.initial_network[i]));
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
     }
 
     /* Mutant tail thing settings */
@@ -2024,14 +2026,14 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     int i;
 
     PathCat(the_path, gApplication_path, "KEYMAP_X.TXT");
-    the_path[c2_strlen(the_path) - 5] = '0' + gKey_map_index;
+    the_path[strlen(the_path) - 5] = '0' + gKey_map_index;
     f = DRfopen(the_path, "rt");
     if (f == NULL) {
         FatalError(kFatalError_CouldNotOpenKeyMapFile);
     }
 
     for (i = 0; i < REC2_ASIZE(gKey_mapping); i++) {
-        c2_fscanf((FILE*)f, "%d", &gKey_mapping[i]);
+        fscanf((FILE*)f, "%d", &gKey_mapping[i]);
     }
     PFfclose(f);
 }
@@ -2042,16 +2044,16 @@ void C2_HOOK_FASTCALL SaveKeyMapping(void) {
     int i;
 
     PathCat(the_path, gApplication_path, "KEYMAP_X.TXT");
-    the_path[c2_strlen(the_path) - 5] = '0' + gKey_map_index;
+    the_path[strlen(the_path) - 5] = '0' + gKey_map_index;
     PDFileUnlock(the_path);
     f = DRfopen(the_path, "wb");
     if (f == NULL) {
         FatalError(kFatalError_CouldNotOpenKeyMapFile);
     }
     for (i = 0; i < REC2_ASIZE(gKey_mapping); i++) {
-        c2_fprintf(f, "%d", gKey_mapping[i]);
-        c2_fputc('\r', f);
-        c2_fputc('\n', f);
+        fprintf(f, "%d", gKey_mapping[i]);
+        fputc('\r', f);
+        fputc('\n', f);
     }
     PFfclose(f);
 }
@@ -2102,8 +2104,8 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
             break;
         }
         GetALineAndDontArgue(f, s);
-        gMisc_strings[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_misc_string);
-        c2_strcpy(gMisc_strings[i], s);
+        gMisc_strings[i] = BrMemAllocate(strlen(s) + 1, kMem_misc_string);
+        strcpy(gMisc_strings[i], s);
     }
     // Thousands delimiter
     gMisc_strings[294][1] = '\0';
@@ -2143,19 +2145,19 @@ void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions)
 // FUNCTION: CARMA2_HW 0x0048d7d0
 int C2_HOOK_FASTCALL PrintNetOptions(FILE* pF, int pIndex) {
 
-    c2_fprintf(pF, "NETSETTINGS %d\n", pIndex);
-    c2_fprintf(pF, "%d // Allow the sending of Abuse-o-Matic(tm) text messages\n", gNet_settings[pIndex].enable_text_messages);
-    c2_fprintf(pF, "%d // Show cars on map\n", gNet_settings[pIndex].show_players_on_map);
-    c2_fprintf(pF, "%d // Show pickups on map\n", gNet_settings[pIndex].show_powerups_on_map);
-    c2_fprintf(pF, "%d // Pickup respawn\n", gNet_settings[pIndex].powerup_respawn);
-    c2_fprintf(pF, "%d // Waste to transfer\n", gNet_settings[pIndex].waste_to_transfer);
-    c2_fprintf(pF, "%d // Open game\n", gNet_settings[pIndex].open_game);
-    c2_fprintf(pF, "%d // Grid start\n", gNet_settings[pIndex].grid_start);
-    c2_fprintf(pF, "%d // Race order\n", gNet_settings[pIndex].race_sequence_type);
-    c2_fprintf(pF, "%d // Auto-goody\n", gNet_settings[pIndex].random_car_choice);
-    c2_fprintf(pF, "%d // Car choice mode\n", gNet_settings[pIndex].car_choice);
-    c2_fprintf(pF, "%d // Starting credits\n\n", gNet_settings[pIndex].starting_credits);
-    c2_fprintf(pF, "%d // Target\n\n", gNet_settings[pIndex].starting_target);
+    fprintf(pF, "NETSETTINGS %d\n", pIndex);
+    fprintf(pF, "%d // Allow the sending of Abuse-o-Matic(tm) text messages\n", gNet_settings[pIndex].enable_text_messages);
+    fprintf(pF, "%d // Show cars on map\n", gNet_settings[pIndex].show_players_on_map);
+    fprintf(pF, "%d // Show pickups on map\n", gNet_settings[pIndex].show_powerups_on_map);
+    fprintf(pF, "%d // Pickup respawn\n", gNet_settings[pIndex].powerup_respawn);
+    fprintf(pF, "%d // Waste to transfer\n", gNet_settings[pIndex].waste_to_transfer);
+    fprintf(pF, "%d // Open game\n", gNet_settings[pIndex].open_game);
+    fprintf(pF, "%d // Grid start\n", gNet_settings[pIndex].grid_start);
+    fprintf(pF, "%d // Race order\n", gNet_settings[pIndex].race_sequence_type);
+    fprintf(pF, "%d // Auto-goody\n", gNet_settings[pIndex].random_car_choice);
+    fprintf(pF, "%d // Car choice mode\n", gNet_settings[pIndex].car_choice);
+    fprintf(pF, "%d // Starting credits\n\n", gNet_settings[pIndex].starting_credits);
+    fprintf(pF, "%d // Target\n\n", gNet_settings[pIndex].starting_target);
     return 0;
 }
 
@@ -2177,7 +2179,7 @@ br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
     the_font = BrMemAllocate(sizeof(br_font), kMem_br_font);
 
     // we read 0x18 bytes as that is the size of the struct in 32 bit code.
-    c2_fread(the_font, 0x18, 1, f);
+    fread(the_font, 0x18, 1, f);
 #if !defined(C2_BIG_ENDIAN)
     the_font->flags = BrSwap32(the_font->flags);
 
@@ -2282,7 +2284,7 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
     for (i = 0; 1;) {
         GetALineAndDontArgue(f, pRace_list[i].name);
-        if (c2_strcmp(pRace_list[i].name, "END") == 0) {
+        if (strcmp(pRace_list[i].name, "END") == 0) {
             last_race = 1;
             count_races = i;
         } else {
@@ -2307,15 +2309,15 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
         pRace_list[i].opponent_nastiness_level = GetAScalar(f);
         /* Powerup exclusions */
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,/");
+        str = strtok(s, "\t ,/");
         for (j = 0; str != NULL; j++) {
-            c2_sscanf(str, "%d", &powerup_exclusions[j]);
-            str = c2_strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &powerup_exclusions[j]);
+            str = strtok(NULL, "\t ,/");
         }
         pRace_list[i].count_powerup_exclusions = j;
         if (pRace_list[i].count_powerup_exclusions != 0) {
             pRace_list[i].powerup_exclusions = BrMemAllocate(pRace_list[i].count_powerup_exclusions * sizeof(int), kMem_misc);
-            c2_memcpy(pRace_list[i].powerup_exclusions, powerup_exclusions, pRace_list[i].count_powerup_exclusions * sizeof(int));
+            memcpy(pRace_list[i].powerup_exclusions, powerup_exclusions, pRace_list[i].count_powerup_exclusions * sizeof(int));
         }
         /* Disable time awards */
         pRace_list[i].no_time_awards = GetAnInt(f);
@@ -2473,16 +2475,16 @@ void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
          * [14]: Cash in network mode
          * */
         GetALineAndDontArgue(pF, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].field_0x28);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].x);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].y);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].colour);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_strcpy(s, str);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].field_0x28);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].x);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].y);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].colour);
+        str = strtok(NULL, "\t ,/");
+        strcpy(s, str);
         switch (s[0]) {
         case 'c':
             pCar_spec->headup_slots[pIndex][j].justification = eJust_centre;
@@ -2497,18 +2499,18 @@ void C2_HOOK_FASTCALL LoadHeadups(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
         if (s[1] == 'c') {
             pCar_spec->headup_slots[pIndex][j].cockpit_anchored = 1;
         }
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_left);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_left);
         if (pCar_spec->headup_slots[pIndex][j].dim_left < 0) {
             pCar_spec->headup_slots[pIndex][j].dimmed_background = 0;
         } else {
             pCar_spec->headup_slots[pIndex][j].dimmed_background = 1;
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_top);
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_right);
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_bottom);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_top);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_right);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->headup_slots[pIndex][j].dim_bottom);
         }
     }
 }
@@ -2531,52 +2533,52 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
         return 0;                        \
     }
 
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "YonFactor %f\n", GetYonFactor()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "SkyTextureOn %d\n", GetSkyTextureOn()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "CarTexturingLevel %d\n", GetCarTexturingLevel()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "RoadTexturingLevel %d\n", GetRoadTexturingLevel()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "WallTexturingLevel %d\n", GetWallTexturingLevel()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "ShadowLevel %d\n", GetShadowLevel()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "DepthCueingOn %d\n", GetDepthCueingOn()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "Yon %f\n", GetYon()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "CarSimplificationLevel %d\n", GetCarSimplificationLevel()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "AccessoryRendering %d\n", GetAccessoryRendering()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "SmokeOn %d\n", GetSmokeOn()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "SoundDetailLevel %d\n", GetSoundDetailLevel()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "ScreenSize %d\n", GetScreenSize()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapRenderX %f\n", gMap_render_x));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapRenderY %f\n", gMap_render_y));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapRenderWidth %f\n", gMap_render_width));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapRenderHeight %f\n", gMap_render_height));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapMode %d\n", 1));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "PlayerName 0\n%s\n", gProgram_state.player_name[0] == '\0' ? "MAX DAMAGE" : gProgram_state.player_name));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "EVolume %d\n", gProgram_state.effects_volume));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MVolume %d\n", gProgram_state.music_volume));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "KeyMapIndex %d\n", gKey_map_index));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MapTrans %d\n", gMap_trans));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapX %d\n", gHeadup_map_x));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapY %d\n", gHeadup_map_y));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapW %d\n", gHeadup_map_w));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupMapH %d\n", gHeadup_map_h));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "CameraType %d\n", gCamera_type));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "ARCameraType %d\n", gAR_camera_type));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "GoreLevel %d\n", GetHowMuchBloodAndSnotToSmearAbout()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "AnimalsOn %d\n", GetAnimalsOn()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "FlameThrowerOn %d\n", IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MinesOn %d\n", IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "DronesOn %d\n", GetDronesOn()));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "MiniMapVisible %i\n", gMini_map_visible));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "SkillLevel %d\n", gProgram_state.skill_level));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "AmbientSound %i\n", gAmbient_sound));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "AutoLoad %d\n", gAuto_load));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "RusselsFannies %d\n", gRussels_fannies));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeQuality 0\n%s\n", gQuick_time_quality));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeCompressor 0\n%s\n", gQuick_time_compressor));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeBanner %d\n%s\n", gQuick_time_banner_number, gQuick_time_banner_texture_name));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeTempPath 0\n%s\n", gQuick_time_temp_path));
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "QuickTimeMoviePathStub 0\n%s\n", gQuick_time_movie_path_stub));
+    BAIL_IF_NEGATIVE(fprintf(f, "YonFactor %f\n", GetYonFactor()));
+    BAIL_IF_NEGATIVE(fprintf(f, "SkyTextureOn %d\n", GetSkyTextureOn()));
+    BAIL_IF_NEGATIVE(fprintf(f, "CarTexturingLevel %d\n", GetCarTexturingLevel()));
+    BAIL_IF_NEGATIVE(fprintf(f, "RoadTexturingLevel %d\n", GetRoadTexturingLevel()));
+    BAIL_IF_NEGATIVE(fprintf(f, "WallTexturingLevel %d\n", GetWallTexturingLevel()));
+    BAIL_IF_NEGATIVE(fprintf(f, "ShadowLevel %d\n", GetShadowLevel()));
+    BAIL_IF_NEGATIVE(fprintf(f, "DepthCueingOn %d\n", GetDepthCueingOn()));
+    BAIL_IF_NEGATIVE(fprintf(f, "Yon %f\n", GetYon()));
+    BAIL_IF_NEGATIVE(fprintf(f, "CarSimplificationLevel %d\n", GetCarSimplificationLevel()));
+    BAIL_IF_NEGATIVE(fprintf(f, "AccessoryRendering %d\n", GetAccessoryRendering()));
+    BAIL_IF_NEGATIVE(fprintf(f, "SmokeOn %d\n", GetSmokeOn()));
+    BAIL_IF_NEGATIVE(fprintf(f, "SoundDetailLevel %d\n", GetSoundDetailLevel()));
+    BAIL_IF_NEGATIVE(fprintf(f, "ScreenSize %d\n", GetScreenSize()));
+    BAIL_IF_NEGATIVE(fprintf(f, "MapRenderX %f\n", gMap_render_x));
+    BAIL_IF_NEGATIVE(fprintf(f, "MapRenderY %f\n", gMap_render_y));
+    BAIL_IF_NEGATIVE(fprintf(f, "MapRenderWidth %f\n", gMap_render_width));
+    BAIL_IF_NEGATIVE(fprintf(f, "MapRenderHeight %f\n", gMap_render_height));
+    BAIL_IF_NEGATIVE(fprintf(f, "MapMode %d\n", 1));
+    BAIL_IF_NEGATIVE(fprintf(f, "PlayerName 0\n%s\n", gProgram_state.player_name[0] == '\0' ? "MAX DAMAGE" : gProgram_state.player_name));
+    BAIL_IF_NEGATIVE(fprintf(f, "EVolume %d\n", gProgram_state.effects_volume));
+    BAIL_IF_NEGATIVE(fprintf(f, "MVolume %d\n", gProgram_state.music_volume));
+    BAIL_IF_NEGATIVE(fprintf(f, "KeyMapIndex %d\n", gKey_map_index));
+    BAIL_IF_NEGATIVE(fprintf(f, "MapTrans %d\n", gMap_trans));
+    BAIL_IF_NEGATIVE(fprintf(f, "HeadupMapX %d\n", gHeadup_map_x));
+    BAIL_IF_NEGATIVE(fprintf(f, "HeadupMapY %d\n", gHeadup_map_y));
+    BAIL_IF_NEGATIVE(fprintf(f, "HeadupMapW %d\n", gHeadup_map_w));
+    BAIL_IF_NEGATIVE(fprintf(f, "HeadupMapH %d\n", gHeadup_map_h));
+    BAIL_IF_NEGATIVE(fprintf(f, "CameraType %d\n", gCamera_type));
+    BAIL_IF_NEGATIVE(fprintf(f, "ARCameraType %d\n", gAR_camera_type));
+    BAIL_IF_NEGATIVE(fprintf(f, "GoreLevel %d\n", GetHowMuchBloodAndSnotToSmearAbout()));
+    BAIL_IF_NEGATIVE(fprintf(f, "AnimalsOn %d\n", GetAnimalsOn()));
+    BAIL_IF_NEGATIVE(fprintf(f, "FlameThrowerOn %d\n", IsItOkayToFireHorribleBallsOfNastyNapalmDeathAtPerfectlyInnocentPassersByAndByInnocentIDoMeanInTheBiblicalSense()));
+    BAIL_IF_NEGATIVE(fprintf(f, "MinesOn %d\n", IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells()));
+    BAIL_IF_NEGATIVE(fprintf(f, "DronesOn %d\n", GetDronesOn()));
+    BAIL_IF_NEGATIVE(fprintf(f, "MiniMapVisible %i\n", gMini_map_visible));
+    BAIL_IF_NEGATIVE(fprintf(f, "SkillLevel %d\n", gProgram_state.skill_level));
+    BAIL_IF_NEGATIVE(fprintf(f, "AmbientSound %i\n", gAmbient_sound));
+    BAIL_IF_NEGATIVE(fprintf(f, "AutoLoad %d\n", gAuto_load));
+    BAIL_IF_NEGATIVE(fprintf(f, "RusselsFannies %d\n", gRussels_fannies));
+    BAIL_IF_NEGATIVE(fprintf(f, "QuickTimeQuality 0\n%s\n", gQuick_time_quality));
+    BAIL_IF_NEGATIVE(fprintf(f, "QuickTimeCompressor 0\n%s\n", gQuick_time_compressor));
+    BAIL_IF_NEGATIVE(fprintf(f, "QuickTimeBanner %d\n%s\n", gQuick_time_banner_number, gQuick_time_banner_texture_name));
+    BAIL_IF_NEGATIVE(fprintf(f, "QuickTimeTempPath 0\n%s\n", gQuick_time_temp_path));
+    BAIL_IF_NEGATIVE(fprintf(f, "QuickTimeMoviePathStub 0\n%s\n", gQuick_time_movie_path_stub));
 
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "NETGAMETYPE %d\n", gNet_last_game_type));
+    BAIL_IF_NEGATIVE(fprintf(f, "NETGAMETYPE %d\n", gNet_last_game_type));
     BAIL_IF_NEGATIVE(PrintNetOptions(f, 0));
     BAIL_IF_NEGATIVE(PrintNetOptions(f, 1));
     BAIL_IF_NEGATIVE(PrintNetOptions(f, 2));
@@ -2587,7 +2589,7 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
     BAIL_IF_NEGATIVE(PrintNetOptions(f, 7));
     BAIL_IF_NEGATIVE(PrintNetOptions(f, 8));
 
-    BAIL_IF_NEGATIVE(c2_fprintf(f, "HeadupDetailLevel %d\n", gHeadup_detail_level));
+    BAIL_IF_NEGATIVE(fprintf(f, "HeadupDetailLevel %d\n", gHeadup_detail_level));
 
 #undef BAIL_IF_NEGATIVE
 
@@ -2631,115 +2633,115 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
     }
 
     while (PFfgets(line, sizeof(line), f)) {
-        if (c2_sscanf(line, "%79s%f", token, &arg) == 2) {
-            if (c2_strcmp(token, "YonFactor") == 0) {
+        if (sscanf(line, "%79s%f", token, &arg) == 2) {
+            if (strcmp(token, "YonFactor") == 0) {
                 SetYonFactor(arg);
-            } else if (c2_strcmp(token, "SkyTextureOn") == 0) {
+            } else if (strcmp(token, "SkyTextureOn") == 0) {
                 SetSkyTextureOn((int)arg);
-            } else if (c2_strcmp(token, "CarTexturingLevel") == 0) {
+            } else if (strcmp(token, "CarTexturingLevel") == 0) {
                 SetCarTexturingLevel((tCar_texturing_level)arg);
-            } else if (c2_strcmp(token, "RoadTexturingLevel") == 0) {
+            } else if (strcmp(token, "RoadTexturingLevel") == 0) {
                 SetRoadTexturingLevel((tRoad_texturing_level)arg);
-            } else if (c2_strcmp(token, "WallTexturingLevel") == 0) {
+            } else if (strcmp(token, "WallTexturingLevel") == 0) {
                 SetWallTexturingLevel((tWall_texturing_level)arg);
-            } else if (c2_strcmp(token, "ShadowLevel") == 0) {
+            } else if (strcmp(token, "ShadowLevel") == 0) {
                 SetShadowLevel((tShadow_level)arg);
-            } else if (c2_strcmp(token, "DepthCueingOn") == 0) {
+            } else if (strcmp(token, "DepthCueingOn") == 0) {
                 SetDepthCueingOn((int)arg);
-            } else if (c2_strcmp(token, "Yon") == 0) {
+            } else if (strcmp(token, "Yon") == 0) {
                 SetYon(arg);
-            } else if (c2_strcmp(token, "CarSimplificationLevel") == 0) {
+            } else if (strcmp(token, "CarSimplificationLevel") == 0) {
                 SetCarSimplificationLevel((int)arg);
-            } else if (c2_strcmp(token, "AccessoryRendering") == 0) {
+            } else if (strcmp(token, "AccessoryRendering") == 0) {
                 SetAccessoryRendering((int)arg);
-            } else if (c2_strcmp(token, "SmokeOn") == 0) {
+            } else if (strcmp(token, "SmokeOn") == 0) {
                 SetSmokeOn((int)arg);
-            } else if (c2_strcmp(token, "SoundDetailLevel") == 0) {
+            } else if (strcmp(token, "SoundDetailLevel") == 0) {
                 SetSoundDetailLevel((int)arg);
-            } else if (c2_strcmp(token, "ScreenSize") == 0) {
+            } else if (strcmp(token, "ScreenSize") == 0) {
                 SetScreenSize((int)arg);
-            } else if (c2_strcmp(token, "MapRenderX") == 0) {
+            } else if (strcmp(token, "MapRenderX") == 0) {
                 gMap_render_x = arg;
-            } else if (c2_strcmp(token, "MapRenderY") == 0) {
+            } else if (strcmp(token, "MapRenderY") == 0) {
                 gMap_render_y = arg;
-            } else if (c2_strcmp(token, "MapRenderWidth") == 0) {
+            } else if (strcmp(token, "MapRenderWidth") == 0) {
                 gMap_render_width = arg;
-            } else if (c2_strcmp(token, "MapRenderHeight") == 0) {
+            } else if (strcmp(token, "MapRenderHeight") == 0) {
                 gMap_render_height = arg;
-            } else if (c2_strcmp(token, "MapMode") == 0) {
-            } else if (c2_strcmp(token, "MapTrans") == 0) {
+            } else if (strcmp(token, "MapMode") == 0) {
+            } else if (strcmp(token, "MapTrans") == 0) {
                 gMap_trans = (int)arg;
-            } else if (c2_strcmp(token, "HeadupMapX") == 0) {
+            } else if (strcmp(token, "HeadupMapX") == 0) {
                 gHeadup_map_x = (int)arg;
-            } else if (c2_strcmp(token, "HeadupMapY") == 0) {
+            } else if (strcmp(token, "HeadupMapY") == 0) {
                 gHeadup_map_y = (int)arg;
-            } else if (c2_strcmp(token, "HeadupMapW") == 0) {
+            } else if (strcmp(token, "HeadupMapW") == 0) {
                 gHeadup_map_w = (int)arg;
-            } else if (c2_strcmp(token, "HeadupMapH") == 0) {
+            } else if (strcmp(token, "HeadupMapH") == 0) {
                 gHeadup_map_h = (int)arg;
-            } else if (c2_strcmp(token, "PlayerName") == 0) {
+            } else if (strcmp(token, "PlayerName") == 0) {
                 PFfgets(line, sizeof(line), f);
-                s = c2_strtok(line, "\n\r");
-                c2_strcpy(gProgram_state.player_name, s);
-            } else if (c2_strcmp(token, "EVolume") == 0) {
+                s = strtok(line, "\n\r");
+                strcpy(gProgram_state.player_name, s);
+            } else if (strcmp(token, "EVolume") == 0) {
                 gProgram_state.effects_volume = (int)arg;
-            } else if (c2_strcmp(token, "MVolume") == 0) {
+            } else if (strcmp(token, "MVolume") == 0) {
                 gProgram_state.music_volume = (int)arg;
-            } else if (c2_strcmp(token, "KeyMapIndex") == 0) {
+            } else if (strcmp(token, "KeyMapIndex") == 0) {
                 gKey_map_index = (int)arg;
-            } else if (c2_strcmp(token, "CameraType") == 0) {
+            } else if (strcmp(token, "CameraType") == 0) {
                 gAction_replay_camera_mode = gCamera_type = (int)arg;
-            } else if (c2_strcmp(token, "ARCameraType") == 0) {
+            } else if (strcmp(token, "ARCameraType") == 0) {
                 gAR_camera_type = (int)arg;
-            } else if (c2_strcmp(token, "GoreLevel") == 0) {
+            } else if (strcmp(token, "GoreLevel") == 0) {
                 SetGoreLevel((int)arg);
-            } else if (c2_strcmp(token, "AnimalsOn") == 0) {
+            } else if (strcmp(token, "AnimalsOn") == 0) {
                 SetAnimalsOn((int)arg);
-            } else if (c2_strcmp(token, "FlameThrowerOn") == 0) {
+            } else if (strcmp(token, "FlameThrowerOn") == 0) {
                 SetFlameThrowerOn((int)arg);
-            } else if (c2_strcmp(token, "MinesOn") == 0) {
+            } else if (strcmp(token, "MinesOn") == 0) {
                 SetMinesOn((int)arg);
-            } else if (c2_strcmp(token, "DronesOn") == 0) {
+            } else if (strcmp(token, "DronesOn") == 0) {
                 SetDronesOn((int)arg);
-            } else if (c2_strcmp(token, "MiniMapVisible") == 0) {
+            } else if (strcmp(token, "MiniMapVisible") == 0) {
                 gMini_map_visible = (int)arg;
-            } else if (c2_strcmp(token, "SkillLevel") == 0) {
+            } else if (strcmp(token, "SkillLevel") == 0) {
                 gProgram_state.skill_level = (int)arg;
-            } else if (c2_strcmp(token, "AmbientSound") == 0) {
+            } else if (strcmp(token, "AmbientSound") == 0) {
                 gAmbient_sound = (int)arg;
-            } else if (c2_strcmp(token, "AutoLoad") == 0) {
+            } else if (strcmp(token, "AutoLoad") == 0) {
                 gAuto_load = (int)arg;
-            } else if (c2_strcmp(token, "RusselsFannies") == 0) {
+            } else if (strcmp(token, "RusselsFannies") == 0) {
                 gRussels_fannies = (int)arg;
-            } else if (c2_strcmp(token, "QuickTimeQuality") == 0) {
-                c2_fgets(line, sizeof(line), f);
-                s = c2_strtok(line, "\n\r");
-                c2_strcpy(gQuick_time_quality, s);
-            } else if (c2_strcmp(token, "QuickTimeCompressor") == 0) {
+            } else if (strcmp(token, "QuickTimeQuality") == 0) {
+                fgets(line, sizeof(line), f);
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_quality, s);
+            } else if (strcmp(token, "QuickTimeCompressor") == 0) {
                 PFfgets(line, sizeof(line), f);
-                s = c2_strtok(line, "\n\r");
-                c2_strcpy(gQuick_time_compressor, s);
-            } else if (c2_strcmp(token, "QuickTimeBanner") == 0) {
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_compressor, s);
+            } else if (strcmp(token, "QuickTimeBanner") == 0) {
                 gQuick_time_banner_number = (int)arg;
                 PFfgets(line, sizeof(line), f);
-                s = c2_strtok(line, "\n\r");
-                c2_strcpy(gQuick_time_banner_texture_name, s);
-            } else if (c2_strcmp(token, "QuickTimeTempPath") == 0) {
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_banner_texture_name, s);
+            } else if (strcmp(token, "QuickTimeTempPath") == 0) {
                 PFfgets(line, sizeof(line), f);
-                s = c2_strtok(line, "\n\r");
-                c2_strcpy(gQuick_time_temp_path, s);
-            } else if (c2_strcmp(token, "QuickTimeMoviePathStub") == 0) {
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_temp_path, s);
+            } else if (strcmp(token, "QuickTimeMoviePathStub") == 0) {
                 PFfgets(line, sizeof(line), f);
-                s = c2_strtok(line, "\n\r");
-                c2_strcpy(gQuick_time_movie_path_stub, s);
-            } else if (c2_strcmp(token, "NetName") == 0) {
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_movie_path_stub, s);
+            } else if (strcmp(token, "NetName") == 0) {
                 PFfgets(line, sizeof(line), f);
-                s = c2_strtok(line, "\n\r");
-            } else if (c2_strcmp(token, "NETGAMETYPE") == 0) {
+                s = strtok(line, "\n\r");
+            } else if (strcmp(token, "NETGAMETYPE") == 0) {
                 gNet_last_game_type = (int)arg;
-            } else if (c2_strcmp(token, "NETSETTINGS") == 0) {
+            } else if (strcmp(token, "NETSETTINGS") == 0) {
                 ReadNetworkSettings(f, &gNet_settings[(int)arg]);
-            } else if (c2_strcmp(token, "HeadupDetailLevel") == 0) {
+            } else if (strcmp(token, "HeadupDetailLevel") == 0) {
                 gHeadup_detail_level = (int)arg;
             }
         }
@@ -3016,14 +3018,14 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     VerifyPaletteBlackness(gRender_palette);
     gOrig_render_palette = BrPixelmapAllocateSub(gRender_palette, 0, 0, gRender_palette->width, gRender_palette->height);
     gOrig_render_palette->pixels = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
-    c2_memcpy(gOrig_render_palette->pixels, gRender_palette->pixels, 256 * sizeof(br_uint_32));
+    memcpy(gOrig_render_palette->pixels, gRender_palette->pixels, 256 * sizeof(br_uint_32));
     gFlic_palette = BrTableFind("DRACEFLC.PAL");
     render_palette = gRender_palette;
     if (gFlic_palette == NULL) {
         FatalError(kFatalError_unableToFindRequiredPalette);
     }
     ((br_uint_32*)gRender_palette->pixels)[0] = 0;
-    c2_memcpy(gCurrent_palette_pixels, gRender_palette->pixels, 256 * sizeof(br_uint_32));
+    memcpy(gCurrent_palette_pixels, gRender_palette->pixels, 256 * sizeof(br_uint_32));
     gPalette_changed = 0;
     if (!gFaded_palette) {
         PDSetPalette(gRender_palette);
@@ -3078,7 +3080,7 @@ void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_info, race_spec, 0x98);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tRace_list_spec, file_name, 0x60);
 
-    c2_strcpy(gProgram_state.track_file_name, pThe_race->race_spec->file_name);
+    strcpy(gProgram_state.track_file_name, pThe_race->race_spec->file_name);
 }
 
 // FUNCTION: CARMA2_HW 0x0044bb90
@@ -3120,18 +3122,18 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
         FatalError(kFatalError_CannotOpenOpponentsFile);
     }
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%d", &gNumber_of_racers);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", &gNumber_of_racers);
     gOpponents = BrMemAllocate(sizeof(tOpponent) * gNumber_of_racers, kMem_oppo_array);
 
     for (i = 0; i < gNumber_of_racers; i++) {
         PossibleService();
         GetALineAndDontArgue(f, gOpponents[i].name);
-        if (c2_strcmp(gOpponents[i].name, "END") == 0) {
+        if (strcmp(gOpponents[i].name, "END") == 0) {
             FatalError(kFatalError_OpponentCountMismatchesActualNumberOfOpponents);
         }
         GetALineAndDontArgue(f, s);
-        c2_strcpy(gOpponents[i].abbrev_name, c2_strtok(s, "\t ,/"));
+        strcpy(gOpponents[i].abbrev_name, strtok(s, "\t ,/"));
         GetALineAndDontArgue(f, gOpponents[i].car_name);
         /* Strength rating (1-5) */
         gOpponents[i].strength_rating = GetAnInt(f);
@@ -3146,7 +3148,7 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
 
         /* vehicle filename */
         GetALineAndDontArgue(f, s);
-        c2_strcpy(gOpponents[i].car_file_name, c2_strtok(s, "\t ,/"));
+        strcpy(gOpponents[i].car_file_name, strtok(s, "\t ,/"));
 
         /* vehicle description */
         GetALineAndDontArgue(f, gOpponents[i].line1_topspeed);
@@ -3171,15 +3173,15 @@ void C2_HOOK_FASTCALL LoadOpponents(void) {
 
             for (k = 0; k < the_chunk->line_count; k++) {
                 GetALineAndDontArgue(f, s);
-                the_chunk->text[k] = BrMemAllocate(c2_strlen(s) + 1, kMem_oppo_text_str);
-                c2_strcpy(the_chunk->text[k], s);
+                the_chunk->text[k] = BrMemAllocate(strlen(s) + 1, kMem_oppo_text_str);
+                strcpy(the_chunk->text[k], s);
             }
         }
         gOpponents[i].dead = 0;
         InitOpponentPsyche(i);
     }
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "END") != 0) {
+    if (strcmp(s, "END") != 0) {
         FatalError(kFatalError_OpponentCountMismatchesActualNumberOfOpponents);
     }
     PFfclose(f);
@@ -3190,11 +3192,11 @@ FILE* C2_HOOK_FASTCALL OpenDroneFile(const char* pDrone_name) {
     tPath_name the_path;
     FILE* f;
 
-    c2_strcpy(the_path, gApplication_path);
+    strcpy(the_path, gApplication_path);
     PathCat(the_path, the_path, "DRONES");
     PathCat(the_path, the_path, pDrone_name);
     PathCat(the_path, the_path, pDrone_name);
-    c2_strcat(the_path, ".TXT");
+    strcat(the_path, ".TXT");
     f = DRfopen(the_path, "rt");
     if (f == NULL) {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, the_path);
@@ -3215,7 +3217,7 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
     C2_HOOK_BUG_ON(sizeof(tDrone_form) != 136);
 
     drone = &gDrone_forms[gCount_drone_forms];
-    c2_strcpy(the_path, gApplication_path);
+    strcpy(the_path, gApplication_path);
     PathCat(the_path, the_path, "DRONES");
     PathCat(the_path, the_path, pDrone_name);
     twt = OpenPackFileAndSetTiffLoading(the_path);
@@ -3223,23 +3225,23 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
 
     /* Version of this text file's format */
     GetALineAndDontArgue(f, s);
-    c2_strtok(s, "\t ,/");
-    if (c2_strcmp(s, "VERSION") != 0) {
+    strtok(s, "\t ,/");
+    if (strcmp(s, "VERSION") != 0) {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
     }
-    str = c2_strtok(NULL, "\t ,/");
-    count = c2_sscanf(str, "%d", &version);
+    str = strtok(NULL, "\t ,/");
+    count = sscanf(str, "%d", &version);
     if (count != 1 || version < 2) {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
     }
 
     /* Name of this drone, for cross-referencing porpoises */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s," \t ,/");
-    if (c2_strcmp(pDrone_name, str) != 0) {
+    str = strtok(s," \t ,/");
+    if (strcmp(pDrone_name, str) != 0) {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
     }
-    c2_strncpy(drone->name, pDrone_name, REC2_ASIZE(drone->name) - 1);
+    strncpy(drone->name, pDrone_name, REC2_ASIZE(drone->name) - 1);
 
     drone->type = GetALineAndInterpretCommand(f, gDrone_type_names, REC2_ASIZE(gDrone_type_names));
     if (drone->type < 0) {
@@ -3254,10 +3256,10 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
 
     /* Cornering (smooth/sharp) */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s," \t ,/");
-    if (c2_strcmp(str, "smooth") == 0) {
+    str = strtok(s," \t ,/");
+    if (strcmp(str, "smooth") == 0) {
         drone->flags |= 0x1;
-    } else if (c2_strcmp(str, "sharp") == 0) {
+    } else if (strcmp(str, "sharp") == 0) {
         drone->flags &= ~0x1;
     } else {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -3265,13 +3267,13 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
 
     /* Speed (constant/variable) */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s," \t ,/");
-    if (c2_strcmp(str, "constant") == 0) {
+    str = strtok(s," \t ,/");
+    if (strcmp(str, "constant") == 0) {
         /* if constant, must be followed by ONE number (the speed), */
 
         /* (BRU/s) */
         drone->speed = GetAScalar(f);
-    } else if (c2_strcmp(str, "variable") == 0) {
+    } else if (strcmp(str, "variable") == 0) {
         /* if variable, must be followed by THREE numbers on separate lines (accel, max speed, min speed) */
 
         drone->speed = -1.f;
@@ -3305,10 +3307,10 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
 
     /* Ability to be resurrected after twattage (respawn / norespawn) */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s," \t ,/");
-    if (c2_strcmp(str, "respawn") == 0) {
+    str = strtok(s," \t ,/");
+    if (strcmp(str, "respawn") == 0) {
         drone->flags |= 0x2;
-    } else if (c2_strcmp(str, "norespawn") == 0) {
+    } else if (strcmp(str, "norespawn") == 0) {
         drone->flags &= ~0x2;
     } else {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -3316,10 +3318,10 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
 
     /* orientation relative to path incline: inline (car, plane), vertical (cable car) */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s," \t ,/");
-    if (c2_strcmp(str, "vertical") == 0) {
+    str = strtok(s," \t ,/");
+    if (strcmp(str, "vertical") == 0) {
         drone->flags |= 0x10;
-    } else if (c2_strcmp(str, "inline") == 0) {
+    } else if (strcmp(str, "inline") == 0) {
         drone->flags &= ~0x10;
     } else {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -3327,10 +3329,10 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
 
     /* Processing - 'always' or 'distance' */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s," \t ,/");
-    if (c2_strcmp(str, "always") == 0) {
+    str = strtok(s," \t ,/");
+    if (strcmp(str, "always") == 0) {
         drone->flags |= 0x4;
-    } else if (c2_strcmp(str, "distance") == 0) {
+    } else if (strcmp(str, "distance") == 0) {
         drone->flags &= ~0x4;
     } else {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -3340,10 +3342,10 @@ void C2_HOOK_FASTCALL LoadDroneTypeInfo(const char* pDrone_name) {
 
     if (version > 2) {
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,/");
-        if (c2_strcmp(str, "drivable_on") == 0) {
+        str = strtok(s, "\t ,/");
+        if (strcmp(str, "drivable_on") == 0) {
             drone->flags |= 0x8;
-        } else if (c2_strcmp(str, "not_drivable_on") == 0) {
+        } else if (strcmp(str, "not_drivable_on") == 0) {
             drone->flags &= ~0x8;
         } else {
             FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, pDrone_name);
@@ -3361,7 +3363,7 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
     char s[256];
     char* str;
 
-    c2_strcpy(the_path, gApplication_path);
+    strcpy(the_path, gApplication_path);
     PathCat(the_path, the_path, "DRONES");
     PathCat(the_path, the_path, "DRONE.TXT");
 
@@ -3370,17 +3372,17 @@ void C2_HOOK_FASTCALL LoadPanGameDroneInfo(void) {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, the_path);
     }
     GetALineAndDontArgue(f, s);
-    c2_strtok(s, "\t ,/");
-    if (c2_strcmp(s, "VERSION") != 0) {
+    strtok(s, "\t ,/");
+    if (strcmp(s, "VERSION") != 0) {
         FatalError(kFatalError_UnableToOpenDroneFileOrFileCorrupted_S, the_path);
     }
-    str = c2_strtok(NULL, "\t ,/");
+    str = strtok(NULL, "\t ,/");
     sscanf(str, "%d", &version);
     if (version == 1) {
-        c2_memset(gDrone_forms, 0, sizeof(gDrone_forms));
+        memset(gDrone_forms, 0, sizeof(gDrone_forms));
         for (gCount_drone_forms = 0; gCount_drone_forms < REC2_ASIZE(gDrone_forms); gCount_drone_forms++) {
             GetALineAndDontArgue(f, s);
-            if (c2_strcmp(s, "END OF DRONES") == 0 || PFfeof(f)) {
+            if (strcmp(s, "END OF DRONES") == 0 || PFfeof(f)) {
                 break;
             }
             LoadDroneTypeInfo(s);
@@ -3452,11 +3454,11 @@ void C2_HOOK_FASTCALL LoadGear(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 
     /* Gear display x,y,image */
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%d", &pCar_spec->gear_x[pIndex]);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%d", &pCar_spec->gear_y[pIndex]);
-    str = c2_strtok(NULL, "\t ,/");
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", &pCar_spec->gear_x[pIndex]);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", &pCar_spec->gear_y[pIndex]);
+    str = strtok(NULL, "\t ,/");
     if (pIndex == 0) {
         pCar_spec->gears_image = LoadPixelmap(str);
     }
@@ -3503,37 +3505,37 @@ void C2_HOOK_FASTCALL LoadTacho(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
 
     /* tacho type, x, y, filename, x-pitch */
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%c", &the_char1);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%c", &the_char1);
     if (the_char1 == 'd') {
         pCar_spec->tacho_radius_2[pIndex] = -1;
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
         pCar_spec->tacho_image[pIndex] = LoadPixelmap(str);
     } else {
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
         pCar_spec->tacho_image[pIndex] = LoadPixelmap(str);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_centre_x[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_centre_y[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_radius_1[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_radius_2[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_start_angle[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_end_angle[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->tacho_needle_colour[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_centre_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_centre_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_radius_1[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_radius_2[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_start_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_end_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->tacho_needle_colour[pIndex]);
     }
 }
 
@@ -3544,46 +3546,46 @@ void C2_HOOK_FASTCALL LoadSpeedo(FILE* pF, int pIndex, tCar_spec* pCar_spec) {
     char the_char1;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%c", &the_char1);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%c", &the_char1);
     if (the_char1 == 'd') {
         /* Speedo type, x, y, filename, x-pitch */
         pCar_spec->speedo_radius_2[pIndex] = -1;
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
         pCar_spec->speedo_image[pIndex] = LoadPixelmap(str);
         if (pCar_spec->speedo_image[pIndex] == NULL) {
             FatalError(kFatalError_CannotLoadSpeedoImage);
         }
         pCar_spec->speedo_y_pitch[pIndex] = pCar_spec->speedo_image[pIndex]->height / 10;
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_x_pitch[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x_pitch[pIndex]);
     } else {
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
         pCar_spec->speedo_image[pIndex] = LoadPixelmap(str);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_centre_x[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_centre_y[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_radius_1[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_radius_2[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_start_angle[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_end_angle[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->speedo_needle_colour[pIndex]);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->max_speed);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_centre_x[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_centre_y[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_radius_1[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_radius_2[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_start_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_end_angle[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->speedo_needle_colour[pIndex]);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->max_speed);
     }
 }
 
@@ -3603,14 +3605,14 @@ void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_l
     count = GetAnInt(pF);
     pCar_spec->damage_programs[pImpact_location].clause_count = count;
     pCar_spec->damage_programs[pImpact_location].clauses = BrMemAllocate(count * sizeof(tDamage_clause), kMem_damage_clauses);
-    c2_strcpy(delim, "\t ,/");
-    c2_strcat(delim, "&");
+    strcpy(delim, "\t ,/");
+    strcat(delim, "&");
 
     for (i = 0; i < count; i++) {
         the_clause = &pCar_spec->damage_programs[pImpact_location].clauses[i];
         the_clause->condition_count = 0;
         GetALineAndDontArgue(pF, s);
-        str = c2_strtok(s, delim);
+        str = strtok(s, delim);
         do {
             if (str[0] == 'x') {
                 the_clause->conditions[the_clause->condition_count].axis_comp = eAxis_x;
@@ -3635,9 +3637,9 @@ void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_l
             } else {
                 FatalError(kFatalError_ConfusedByFormatOfConditionalDamageInCarFile);
             }
-            c2_sscanf(&str[2], "%f", &the_clause->conditions[the_clause->condition_count].comparitor);
+            sscanf(&str[2], "%f", &the_clause->conditions[the_clause->condition_count].comparitor);
             the_clause->condition_count++;
-            str = c2_strtok(NULL, delim);
+            str = strtok(NULL, delim);
         } while (the_clause->condition_count < 2);
         /* Systems count */
         the_clause->effect_count = GetAnInt(pF);
@@ -3645,9 +3647,9 @@ void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_l
             the_clause->effects[j].type = -1;
             /* Damage */
             GetALineAndDontArgue(pF, s);
-            str = c2_strtok(s, "\t ,/");
+            str = strtok(s, "\t ,/");
             for (k = 0; k < REC2_ASIZE(gDamage_names); k++) {
-                if (c2_strcmp(str, gDamage_names[k]) == 0) {
+                if (strcmp(str, gDamage_names[k]) == 0) {
                     the_clause->effects[j].type = k;
                     break;
                 }
@@ -3655,8 +3657,8 @@ void C2_HOOK_FASTCALL GetDamageProgram(FILE* pF, tCar_spec* pCar_spec, tImpact_l
             if (the_clause->effects[j].type < 0) {
                 FatalError(kFatalError_UnknownDamageType_S, str);
             }
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%f", &the_clause->effects[j].weakness_factor);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%f", &the_clause->effects[j].weakness_factor);
         }
     }
 }
@@ -3730,21 +3732,23 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     int count_vertices;
     br_material* car_material;
     tCrush_model_pool model_pool;
+    v11model* v11;
+    int all_fire_zero;
 
     C2_HOOK_BUG_ON(sizeof(*pCar_spec) != 6500);
-    c2_memset(pCar_spec, 0, sizeof(*pCar_spec));
+    memset(pCar_spec, 0, sizeof(*pCar_spec));
 
     prev_storage = gStorageForCallbacks;
     gCurrent_car_spec = pCar_spec;
 
     if (pDriver == eDriver_local_human) {
-        c2_strcpy(gProgram_state.car_name, pCar_name);
+        strcpy(gProgram_state.car_name, pCar_name);
     }
-    c2_strcpy(gCurrent_load_directory, "CARS");
-    c2_strcpy(gCurrent_load_name, pCar_name);
-    gCurrent_load_name[c2_strlen(gCurrent_load_name) - 4] = '\0';
-    c2_strcpy(load_directory, gCurrent_load_directory);
-    c2_strcpy(load_name, gCurrent_load_name);
+    strcpy(gCurrent_load_directory, "CARS");
+    strcpy(gCurrent_load_name, pCar_name);
+    gCurrent_load_name[strlen(gCurrent_load_name) - 4] = '\0';
+    strcpy(load_directory, gCurrent_load_directory);
+    strcpy(load_name, gCurrent_load_name);
     PathCat(car_path, gApplication_path, load_directory);
     PathCat(car_path, car_path, load_name);
     twt = OpenPackFileAndSetTiffLoading(car_path);
@@ -3773,7 +3777,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, proxy_ray_distance, 0x170c);
 
-    if (c2_strcmp(pCar_name, "STELLA.TXT") == 0) {
+    if (strcmp(pCar_name, "STELLA.TXT") == 0) {
         pCar_spec->proxy_ray_distance = 6.0f;
     } else {
         pCar_spec->proxy_ray_distance = 0.0f;
@@ -3785,7 +3789,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         FatalError(kFatalError_CannotLoadCarResolutionIndependentFile);
     }
 
-    c2_strcpy(the_path, car_path);
+    strcpy(the_path, car_path);
     PathCat(the_path, the_path, gGraf_specs[gGraf_spec_index].data_dir_name);
     PathCat(the_path, the_path, pCar_name);
     AllowOpenToFail();
@@ -3806,31 +3810,31 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
      *              2 :             New windscreen spec
      **/
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
-    if (c2_strcmp(str, "VERSION") == 0) {
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &version);
+    str = strtok(s, "\t ,/");
+    if (strcmp(str, "VERSION") == 0) {
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &version);
         GetAString(f, s);
     } else {
         version = 0;
     }
-    if (c2_strcmp(s, "BOY") == 0) {
+    if (strcmp(s, "BOY") == 0) {
         pCar_spec->is_girl = 0;
         GetAString(f, s);
-    } else if (c2_strcmp(s, "GIRL") == 0) {
+    } else if (strcmp(s, "GIRL") == 0) {
         pCar_spec->is_girl = 1;
         GetAString(f, s);
     }
     /* Name of car */
-    c2_strcpy(pCar_spec->name, s);
+    strcpy(pCar_spec->name, s);
     if (DRStricmp(s, pCar_name) != 0) {
         FatalError(kFatalError_FileIsCorrupted_S, pCar_name);
     }
     if (pDriver_name[0] != '\0') {
-        c2_memcpy(pCar_spec->driver_name, pDriver_name, REC2_ASIZE(pCar_spec->driver_name));
+        memcpy(pCar_spec->driver_name, pDriver_name, REC2_ASIZE(pCar_spec->driver_name));
         pCar_spec->driver_name[REC2_ASIZE(pCar_spec->driver_name) - 1] = '\0';
     } else {
-        c2_strcpy(pCar_spec->driver_name, "X");
+        strcpy(pCar_spec->driver_name, "X");
     }
     pCar_spec->can_be_stolen = 0;
     pCar_spec->has_been_stolen = 0;
@@ -3847,7 +3851,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     pCar_spec->softness_factor = GetAFloat(f);
     /* START OF DRIVABLE STUFF */
     GetALineAndDontArgue(f, s);
-    C2_HOOK_ASSERT(c2_strcmp(s, "START OF DRIVABLE STUFF") == 0);
+    C2_HOOK_ASSERT(strcmp(s, "START OF DRIVABLE STUFF") == 0);
     if (pDriver == eDriver_local_human) {
         if (twt >= 0) {
             PackFileRevertTiffLoading();
@@ -3857,7 +3861,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
              * [1] Cockpit left image file names
              * [2] Cockpit right image file names */
             GetALineAndDontArgue(g, s);
-            c2_strtok(s, "\t ,/");
+            strtok(s, "\t ,/");
             pCar_spec->cockpit_images[i] = NULL;
 
             C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, cockpit_images, 0x138);
@@ -3865,14 +3869,14 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
             /* Left, top, right, bottom rendering coordinates */
             GetALineAndDontArgue(g, s);
-            str = c2_strtok(s, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->render_left[i]);
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->render_top[i]);
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->render_right[i]);
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->render_bottom[i]);
+            str = strtok(s, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->render_left[i]);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->render_top[i]);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->render_right[i]);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->render_bottom[i]);
 
             PossibleService();
         }
@@ -3896,8 +3900,8 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
         /* Number of hands frames */
         GetALineAndDontArgue(g, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->number_of_hands_images);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->number_of_hands_images);
         for (i = 0; i < pCar_spec->number_of_hands_images; i++) {
             C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, lhands_y, 0x30c);
             C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, lhands_images, 0x16c);
@@ -3910,17 +3914,17 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
              * [5] Rightish hands frame
              * [6] Right-most hands frame */
             GetALineAndDontArgue(g, s);
-            str = c2_strtok(s, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->lhands_x[i]);
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->lhands_y[i]);
-            str = c2_strtok(NULL, "\t ,/");
+            str = strtok(s, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->lhands_x[i]);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->lhands_y[i]);
+            str = strtok(NULL, "\t ,/");
             pCar_spec->lhands_images[i] = LoadPixelmap(str);
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->rhands_x[i]);
-            str = c2_strtok(NULL, "\t ,/");
-            c2_sscanf(str, "%d", &pCar_spec->rhands_y[i]);
-            str = c2_strtok(NULL, "\t ,/");
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->rhands_x[i]);
+            str = strtok(NULL, "\t ,/");
+            sscanf(str, "%d", &pCar_spec->rhands_y[i]);
+            str = strtok(NULL, "\t ,/");
             PossibleService();
         }
         pCar_spec->red_line = 8000;
@@ -3929,73 +3933,73 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
         /* Offset of driver's head in 3D space */
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->driver_x_offset);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->driver_y_offset);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->driver_z_offset);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->driver_x_offset);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->driver_y_offset);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->driver_z_offset);
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, head_left_angle, 0x498);
 
         /* Angles to turn to make head go left and right */
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->head_left_angle);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->head_right_angle);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->head_left_angle);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->head_right_angle);
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, mirror_x_offset, 0x488);
 
         /* Offset of 'mirror camera' in 3D space, viewing angle of mirror */
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->mirror_x_offset);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->mirror_y_offset);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->mirror_z_offset);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%f", &pCar_spec->rearview_camera_angle);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->mirror_x_offset);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->mirror_y_offset);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->mirror_z_offset);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%f", &pCar_spec->rearview_camera_angle);
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, mirror_left, 0x20c);
 
         /* Left, top, right, bottom of mirror */
         GetALineAndDontArgue(g, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->mirror_left);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->mirror_top);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->mirror_right);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->mirror_bottom);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->mirror_left);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->mirror_top);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->mirror_right);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->mirror_bottom);
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, prat_left, 0x21c);
 
         /* Left, top, right, bottom of pratcam (*** relative to screen, not cockpit) */
         GetALineAndDontArgue(g, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->prat_left);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->prat_top);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->prat_right);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->prat_bottom);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->prat_left);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->prat_top);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->prat_right);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->prat_bottom);
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, prat_cam_left, 0x144);
 
         /* Pratcam border names (left, top, right, bottom) */
         GetALineAndDontArgue(f, s);
         PossibleService();
-        str = c2_strtok(s, "\t ,/");
+        str = strtok(s, "\t ,/");
         pCar_spec->prat_cam_left = LoadPixelmap(str);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
         pCar_spec->prat_cam_top = LoadPixelmap(str);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
         pCar_spec->prat_cam_right = LoadPixelmap(str);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
         pCar_spec->prat_cam_bottom = LoadPixelmap(str);
         PossibleService();
 
@@ -4016,16 +4020,16 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
                  * [10] lr wheel damage x,y,flash1..5
                  * [11] rr wheel damage x,y,flash1..5 */
                 GetALineAndDontArgue(g, s);
-                str = c2_strtok(s, "\t ,/");
-                c2_sscanf(str, "%d", &pCar_spec->damage_units[i].x_coord);
-                str = c2_strtok(NULL, "\t ,/");
-                c2_sscanf(str, "%d", &pCar_spec->damage_units[i].y_coord);
+                str = strtok(s, "\t ,/");
+                sscanf(str, "%d", &pCar_spec->damage_units[i].x_coord);
+                str = strtok(NULL, "\t ,/");
+                sscanf(str, "%d", &pCar_spec->damage_units[i].y_coord);
                 for (k = 0; k < REC2_ASIZE(pCar_spec->damage_units[i].periods); k++) {
-                    str = c2_strtok(NULL, "\t ,/");
-                    c2_sscanf(str, "%f", &temp_float);
+                    str = strtok(NULL, "\t ,/");
+                    sscanf(str, "%f", &temp_float);
                     pCar_spec->damage_units[i].periods[k] = (int)(1000.0f / temp_float / 2.0f);
                 }
-                str = c2_strtok(NULL, "\t ,/");
+                str = strtok(NULL, "\t ,/");
                 pCar_spec->damage_units[i].images = LoadPixelmap(str);
                 if (pCar_spec->damage_units[i].images == NULL) {
                     FatalError(kFatalError_CannotLoadDamageImage);
@@ -4037,15 +4041,15 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, damage_x_offset, 0x368);
 
         GetALineAndDontArgue(g, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->damage_x_offset);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->damage_y_offset);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->damage_background_x);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->damage_background_y);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->damage_x_offset);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->damage_y_offset);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->damage_background_x);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->damage_background_y);
+        str = strtok(NULL, "\t ,/");
         pCar_spec->damage_background = LoadPixelmap(str);
 
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, dim_count, 0x378);
@@ -4088,11 +4092,11 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
         if (twt >= 0) {
             PackFileRerevertTiffLoading();
         }
-        C2_HOOK_ASSERT(c2_strcmp(s, "END OF DRIVABLE STUFF") == 0);
+        C2_HOOK_ASSERT(strcmp(s, "END OF DRIVABLE STUFF") == 0);
     } else {
         while (!PFfeof(f)) {
             GetALineAndDontArgue(f, s);
-            if (c2_strcmp(s, "END OF DRIVABLE STUFF") == 0) {
+            if (strcmp(s, "END OF DRIVABLE STUFF") == 0) {
                 break;
             }
         }
@@ -4110,7 +4114,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     /* Can be stolen */
     GetAString(f, s);
-    pCar_spec->can_be_stolen = c2_strcmp(s, "stealworthy") == 0;
+    pCar_spec->can_be_stolen = strcmp(s, "stealworthy") == 0;
 
     /* Damage info for top impacts */
     GetDamageProgram(f, pCar_spec, eImpact_top);
@@ -4130,12 +4134,12 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     /* Grid image (opponent, frank, annie */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_strcpy(pCar_spec->grid_icon_names[0], str);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_strcpy(pCar_spec->grid_icon_names[1], str);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_strcpy(pCar_spec->grid_icon_names[2], str);
+    str = strtok(s, "\t ,/");
+    strcpy(pCar_spec->grid_icon_names[0], str);
+    str = strtok(NULL, "\t ,/");
+    strcpy(pCar_spec->grid_icon_names[1], str);
+    str = strtok(NULL, "\t ,/");
+    strcpy(pCar_spec->grid_icon_names[2], str);
     pCar_spec->grid_icon_image = NULL;
 
     LoadAllImagesInDirectory(pStorage_space, car_path);
@@ -4148,8 +4152,8 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     /* Number of extra levels of detail */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%d", &pCar_spec->count_detail_levels);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", &pCar_spec->count_detail_levels);
     pCar_spec->count_detail_levels++;
     if (pCar_spec->count_detail_levels > REC2_ASIZE(((tUser_crush_data*)0)->models)) {
         PDFatalError("Too many levels of detail");
@@ -4165,11 +4169,11 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
         /* crush data file (will be incorporated into this file) (.WAM filename) */
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,/");
+        str = strtok(s, "\t ,/");
         PathCat(the_path, car_path, str);
         if (LoadCarCrush(&car_crush_buffer, the_path, pStorage_space, &pCar_spec->car_crush_spec)) {
             PathCat(the_path, car_path, pCar_name);
-            c2_strcpy(&the_path[c2_strlen(the_path) - 3], "WAM");
+            strcpy(&the_path[strlen(the_path) - 3], "WAM");
             LoadCarCrush(&car_crush_buffer, the_path, pStorage_space, &pCar_spec->car_crush_spec);
         }
     }
@@ -4185,7 +4189,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, car_model_actor, 0xe0c);
 
     PathCat(actor_path, car_path, load_name);
-    c2_strcat(actor_path, ".ACT");
+    strcat(actor_path, ".ACT");
     pCar_spec->car_model_actor = BrActorLoad(actor_path);
     if (pCar_spec->car_model_actor == NULL) {
         FatalError(kFatalError_CannotLoadCarActor);
@@ -4204,7 +4208,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     model = NULL;
     for (i = old_model_count; i < pStorage_space->models_count; i++) {
-        if (c2_strcmp(pStorage_space->models[i]->identifier, "SHELL") == 0) {
+        if (strcmp(pStorage_space->models[i]->identifier, "SHELL") == 0) {
             model = pStorage_space->models[i];
             break;
         }
@@ -4238,13 +4242,13 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     /* Number of steerable wheels */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%d", &pCar_spec->number_of_steerable_wheels);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", &pCar_spec->number_of_steerable_wheels);
     for (i = 0; i < pCar_spec->number_of_steerable_wheels; i++) {
         /* GroovyFunkRef of x'th steerable wheel */
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &pCar_spec->steering_ref[i]);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &pCar_spec->steering_ref[i]);
         AddRefOffset(&pCar_spec->steering_ref[i]);
     }
 
@@ -4252,11 +4256,11 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     /* Left-front suspension parts GroovyFunkRef */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
+    str = strtok(s, "\t ,/");
     for (i = 0; i < REC2_ASIZE(pCar_spec->lf_sus_ref); i++) {
-        c2_sscanf(str, "%d", &pCar_spec->lf_sus_ref[i]);
+        sscanf(str, "%d", &pCar_spec->lf_sus_ref[i]);
         AddRefOffset(&pCar_spec->lf_sus_ref[i]);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
     }
     PossibleService();
 
@@ -4264,33 +4268,33 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     /* Right-front suspension parts GroovyFunkRef */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
+    str = strtok(s, "\t ,/");
     for (i = 0; i < REC2_ASIZE(pCar_spec->rf_sus_ref); i++) {
-        c2_sscanf(str, "%d", &pCar_spec->rf_sus_ref[i]);
+        sscanf(str, "%d", &pCar_spec->rf_sus_ref[i]);
         AddRefOffset(&pCar_spec->rf_sus_ref[i]);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
     }
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, lr_sus_ref, 0x440);
 
     /* Left-rear suspension parts GroovyFunkRef */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
+    str = strtok(s, "\t ,/");
     for (i = 0; i < REC2_ASIZE(pCar_spec->lr_sus_ref); i++) {
-        c2_sscanf(str, "%d", &pCar_spec->lr_sus_ref[i]);
+        sscanf(str, "%d", &pCar_spec->lr_sus_ref[i]);
         AddRefOffset(&pCar_spec->lr_sus_ref[i]);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
     }
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, rr_sus_ref, 0x448);
 
     /* Right-rear suspension parts GroovyFunkRef */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
+    str = strtok(s, "\t ,/");
     for (i = 0; i < REC2_ASIZE(pCar_spec->rr_sus_ref); i++) {
-        c2_sscanf(str, "%d", &pCar_spec->rr_sus_ref[i]);
+        sscanf(str, "%d", &pCar_spec->rr_sus_ref[i]);
         AddRefOffset(&pCar_spec->rr_sus_ref[i]);
-        str = c2_strtok(NULL, "\t ,/");
+        str = strtok(NULL, "\t ,/");
     }
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, driven_wheels_spin_ref_1, 0x450);
@@ -4330,16 +4334,16 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
 
     /* Driven wheels diameter */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", &temp_float);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", &temp_float);
     pCar_spec->driven_wheels_circum = (float)(2.f * temp_float * REC2_PI);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, non_driven_wheels_circum, 0x4bc);
 
     /* Non-driven wheels diameter */
     GetALineAndDontArgue(f, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", &temp_float);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", &temp_float);
     pCar_spec->non_driven_wheels_circum = (float)(temp_float * 2.f * REC2_PI);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, car_model_variable, 0x400);
@@ -4410,12 +4414,12 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     LoadCarShrapnelMaterials(f, pCar_spec);
 
     count_vertices = 0;
-    v11model* v11 = pCar_spec->car_actor->model->prepared;
+    v11 = pCar_spec->car_actor->model->prepared;
     for (i = 0; i < v11->ngroups; i++) {
         count_vertices += v11->groups[i].nvertices;
     }
 
-    int all_fire_zero = 1;
+    all_fire_zero = 1;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, fire_vertex, 0xac);
     C2_HOOK_BUG_ON(REC2_ASIZE(pCar_spec->fire_vertex) != 12);
@@ -4548,7 +4552,7 @@ void C2_HOOK_FASTCALL LoadOpponentsCars(tRace_info* pRace_info) {
                 opponent->car_spec = BrMemAllocate(sizeof(tCar_spec), kMem_oppo_car_spec);
                 if (DRStricmp("MAX DAMAGE", gOpponents[opponent->index].name) == 0) {
                     sod_counter++;
-                    c2_sprintf(buffer, "POOR SOD %d", sod_counter);
+                    sprintf(buffer, "POOR SOD %d", sod_counter);
                     driver_name = buffer;
                 } else {
                     driver_name = gOpponents[opponent->index].name;
@@ -4632,7 +4636,7 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
 
     if (pSpec_version == 0) {
         str = GetALineAndDontArgue(pF, s);
-        if (str == NULL || c2_strcmp(str, "START OF MECHANICS STUFF") != 0) {
+        if (str == NULL || strcmp(str, "START OF MECHANICS STUFF") != 0) {
             PDFatalError("Can't find old end of crush data comment");
         }
     } else {
@@ -4640,7 +4644,7 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
         GetALineAndDontArgue(pF, s);
     }
     PossibleService();
-    for (i = c2_strlen(s) - 1; s[i] == ' '; i--) {
+    for (i = strlen(s) - 1; s[i] == ' '; i--) {
     }
     version_str = &s[i + 1];
     (void)version_str;
@@ -4867,11 +4871,11 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, bb1, 0x24);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, bb2, 0x3c);
 
-    c2_memcpy(&c->collision_info->bb2, &c->collision_info->bb1, sizeof(br_bounds3));
+    memcpy(&c->collision_info->bb2, &c->collision_info->bb1, sizeof(br_bounds3));
 
     /* END OF MECHANICS STUFF */
     GetAString(pF, s);
-    C2_HOOK_ASSERT(c2_strcmp(s, "END OF MECHANICS STUFF") != 0);
+    C2_HOOK_ASSERT(strcmp(s, "END OF MECHANICS STUFF") != 0);
 }
 
 // FUNCTION: CARMA2_HW 0x00488dd0
@@ -4881,7 +4885,7 @@ br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingTyp
     br_colour colour;
 
     if (pName[0] == 'M') {
-        c2_strtok(pName, "\t ,/");
+        strtok(pName, "\t ,/");
         for (i = 0; gSimple_material_colours[i] != 0; i++) {
             if (10 * (pName[1] - '0') + pName[2] - '0' == (gSimple_material_colours[i] >> 24)) {
                 break;
@@ -4893,7 +4897,7 @@ br_material* C2_HOOK_FASTCALL GetSimpleMaterial(char* pName, tRendererShadingTyp
         colour = gSimple_material_colours[i] & 0xffffff;
     } else {
         int r, g, b;
-        c2_sscanf(pName, "%d,%d,%d", &r, &g, &b);
+        sscanf(pName, "%d,%d,%d", &r, &g, &b);
         colour = (r << 16) | (g << 8) | (b << 0);
     }
 
@@ -4924,12 +4928,12 @@ void C2_HOOK_FASTCALL GetAVector(FILE* pF, br_vector3* pV) {
 
     PossibleService();
     GetALineWithNoPossibleService(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", &pV->v[0]);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", &pV->v[1]);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", &pV->v[2]);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", &pV->v[0]);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &pV->v[1]);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &pV->v[2]);
 }
 
 // FUNCTION: CARMA2_HW 0x0048c130
@@ -4958,7 +4962,7 @@ int C2_HOOK_CDECL ActorModelAttachCrushData(br_actor* pActor, void* pData) {
         return 0;
     }
     user_crush->crush_data = BrMemAllocate(sizeof(tCar_crush_buffer_entry), kMem_crush_data);
-    c2_strncpy(user_crush->crush_data->actor_name, pActor->identifier, sizeof(user_crush->crush_data->actor_name) - 1);
+    strncpy(user_crush->crush_data->actor_name, pActor->identifier, sizeof(user_crush->crush_data->actor_name) - 1);
     user_crush->crush_data->id = 0xe9;
     user_crush->crush_data->softness_factor = 1.f;
     user_crush->crush_data->field_0x2c = 0;
@@ -5109,7 +5113,7 @@ void C2_HOOK_FASTCALL SmoothlyLoadIfItsAModel(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
-    if (c2_strstr(s, ".DAT") != NULL) {
+    if (strstr(s, ".DAT") != NULL) {
         AddSmoothModels(gStorageForCallbacks, pPath);
     }
 }
@@ -5194,7 +5198,7 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
 
         C2_HOOK_BUG_ON(sizeof(tCollision_shape_polyhedron) != 0x50);
         pNon_car_spec->collision_info->shape = BrMemAllocate(sizeof(tCollision_shape_polyhedron), kMem_collision_shape);
-        c2_memcpy(&pNon_car_spec->collision_info->shape->polyhedron.common.bb, &bounds, sizeof(br_bounds3));
+        memcpy(&pNon_car_spec->collision_info->shape->polyhedron.common.bb, &bounds, sizeof(br_bounds3));
         if (snap_angle != 0.f) {
             pNon_car_spec->field_0xf0 = pNon_car_spec->collision_info->physics_joint2 = AllocatePhysicsJoint(1, kMem_physics_joint);
             pNon_car_spec->collision_info->physics_joint2->type = eJoint_ball_n_socket;
@@ -5374,8 +5378,8 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
                     /* pause at the top */
                     pNon_car_spec->translation_parameters->pause_at_top = GetAnInt(pF);
 
-                    pNon_car_spec->translation_parameters->forward_resistance = exp2f(pNon_car_spec->translation_parameters->forward_resistance);
-                    pNon_car_spec->translation_parameters->reverse_resistance = exp2f(pNon_car_spec->translation_parameters->reverse_resistance);
+                    pNon_car_spec->translation_parameters->forward_resistance = (float)exp(0.43 * (double)pNon_car_spec->translation_parameters->forward_resistance);
+                    pNon_car_spec->translation_parameters->reverse_resistance = (float)exp(0.43 * (double)pNon_car_spec->translation_parameters->reverse_resistance);
                 } else if (DRStricmp(s, "RISE_WHEN_HIT") == 0) {
                     pNon_car_spec->flags |= 0x20000;
                 } else if (DRStricmp(s, "RISE_WHEN_DRIVEN_ON") == 0) {
@@ -5453,9 +5457,9 @@ void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone) {
         BrActorFree(pDrone->actor);
         pDrone->actor = NULL;
     }
-    c2_strcpy(gCurrent_load_directory, "DRONES");
-    c2_strcpy(gCurrent_load_name, pDrone->form->name);
-    c2_strcpy(dir_path, gApplication_path);
+    strcpy(gCurrent_load_directory, "DRONES");
+    strcpy(gCurrent_load_name, pDrone->form->name);
+    strcpy(dir_path, gApplication_path);
     PathCat(dir_path, dir_path, gCurrent_load_directory);
     PathCat(dir_path, dir_path, gCurrent_load_name);
 
@@ -5492,7 +5496,7 @@ void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone) {
                 }
             }
             if (pDrone->form->model_index < 0) {
-                c2_sprintf(s, "Can't find model called '%s' for drone '%s'",
+                sprintf(s, "Can't find model called '%s' for drone '%s'",
                     pDrone->form->name, pDrone->form->name);
                 PDFatalError(s);
             }
@@ -5501,14 +5505,14 @@ void C2_HOOK_FASTCALL LoadDroneActorsModels(tDrone_spec* pDrone) {
     }
     pDrone->actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
     BrMatrix34Copy(&pDrone->actor->t.t.mat, &mat);
-    c2_sprintf(s, "Drone%d", pDrone->id);
+    sprintf(s, "Drone%d", pDrone->id);
     pDrone->actor->identifier = BrResStrDup(pDrone->actor, s);
     BrActorAdd(gNon_track_actor, pDrone->actor);
     PathCat(actor_path, dir_path, pDrone->form->name);
-    c2_strcat(actor_path,".ACT");
+    strcat(actor_path,".ACT");
     pDrone->model_actor = BrActorLoad(actor_path);
     if (pDrone->model_actor == NULL) {
-        c2_sprintf(s, "Can't load drone car actor file for %s", pDrone->form->name);
+        sprintf(s, "Can't load drone car actor file for %s", pDrone->form->name);
         PDFatalError(s);
     }
     LinkDroneActorsToModelsAndSetRenderStyle(pDrone, pDrone->form->model_start, pDrone->form->model_end);
@@ -5549,7 +5553,7 @@ int C2_HOOK_FASTCALL ReadPastThisLine(FILE* pF, const char* pLine) {
             return 0;
         }
         GetALineAndDontArgue(pF, s);
-        if (c2_strcmp(pLine, s) == 0) {
+        if (strcmp(pLine, s) == 0) {
             return 1;
         }
     }
@@ -5562,7 +5566,7 @@ int C2_HOOK_FASTCALL MatchFGType(const char* pS) {
 
     for (i = 0; i < REC2_ASIZE(gGroove_funk_type_names); i++) {
 
-        if (c2_strcmp(pS, gGroove_funk_type_names[i]) == 0) {
+        if (strcmp(pS, gGroove_funk_type_names[i]) == 0) {
             return i;
         }
     }
@@ -5576,7 +5580,7 @@ tFunk_groove_axis GetAxisFromString(const char* pS) {
 
     for (i = 0; i < REC2_ASIZE(gAxis_names); i++) {
 
-        if (c2_strcmp(pS, gAxis_names[i]) == 0) {
+        if (strcmp(pS, gAxis_names[i]) == 0) {
             return i;
         }
     }
@@ -5590,7 +5594,7 @@ tFunk_groove_reverseness GetReversenessFromString(const char* pS) {
 
     for (i = 0; i < REC2_ASIZE(gReverseness_type_names); i++) {
 
-        if (c2_strcmp(pS, gReverseness_type_names[i]) == 0) {
+        if (strcmp(pS, gReverseness_type_names[i]) == 0) {
             return i;
         }
     }
@@ -5604,7 +5608,7 @@ tFunk_groove_speed_control GetSpeedControlFromString(const char* pS) {
 
     for (i = 0; i < REC2_ASIZE(gFunk_speed_control_names); i++) {
 
-        if (c2_strcmp(pS, gFunk_speed_control_names[i]) == 0) {
+        if (strcmp(pS, gFunk_speed_control_names[i]) == 0) {
             return i;
         }
     }
@@ -5634,7 +5638,7 @@ void C2_HOOK_FASTCALL LoadFunksAndGrooves(tDrone_spec* pDrone, FILE* pF) {
         int speed_control;
 
         GetALineAndDontArgue(pF, s);
-        if (c2_strcmp(s, "END OF FUNKYGROOVY STUFF") == 0 || PFfeof(pF)) {
+        if (strcmp(s, "END OF FUNKYGROOVY STUFF") == 0 || PFfeof(pF)) {
             break;
         }
         if (pDrone->funk_grooves->count >= REC2_ASIZE(pDrone->funk_grooves->items)) {
@@ -5707,7 +5711,7 @@ int C2_HOOK_FASTCALL ReadPastBoundsShapesHeader(FILE* pF) {
             return 0;
         }
         GetALineAndDontArgue(pF, s);
-    } while (c2_strcmp(s, "START OF BOUNDING SHAPES") != 0);
+    } while (strcmp(s, "START OF BOUNDING SHAPES") != 0);
     DoNotDprintf("ReadPastBoundsShapesHeader() returning TRUE");
     return 1;
 }
@@ -5718,13 +5722,15 @@ void C2_HOOK_FASTCALL LoadDrone(int pIndex) {
     tTWTVFS twt;
     FILE* f;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, collision_info.shape, 0x118);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tDrone_spec, field_0x46, 0x46);
 
     C2_HOOK_BUG_ON(sizeof(tDrone_spec) != 0x5d8);
+#endif
 
     drone = &gDrone_specs[pIndex];
-    c2_strcpy(path, gApplication_path);
+    strcpy(path, gApplication_path);
     PathCat(path, path, "DRONES");
     PathCat(path, path, drone->form->name);
     twt = OpenPackFileAndSetTiffLoading(path);
@@ -5748,7 +5754,7 @@ void C2_HOOK_FASTCALL ResetDroneCrushyModel(const br_model* pSrc, br_model* pDes
 
     pDest->faces = pSrc->faces;
     pDest->nfaces = pSrc->nfaces;
-    c2_memcpy(pDest->vertices, pSrc->vertices, pDest->nvertices * sizeof(br_vertex));
+    memcpy(pDest->vertices, pSrc->vertices, pDest->nvertices * sizeof(br_vertex));
 }
 
 // FUNCTION: CARMA2_HW 0x0044fda0
@@ -5907,10 +5913,10 @@ void C2_HOOK_FASTCALL GetPairOfFloatPercents(FILE* pF, float* pF1, float* pF2) {
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", pF1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF2);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
     *pF1 = *pF1 / 100.0f;
     *pF2 = *pF2 / 100.0f;
 }
@@ -5921,12 +5927,12 @@ void C2_HOOK_FASTCALL GetThreeFloatPercents(FILE* pF, float* pF1, float* pF2, fl
     char* str;
 
     GetALineAndDontArgue(pF, s);
-    str = c2_strtok(s, "\t ,/");
-    c2_sscanf(str, "%f", pF1);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF2);
-    str = c2_strtok(NULL, "\t ,/");
-    c2_sscanf(str, "%f", pF3);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF3);
     *pF1 = *pF1 / 100.0f;
     *pF2 = *pF2 / 100.0f;
     *pF3 = *pF3 / 100.0f;

@@ -52,10 +52,10 @@ int gKey_down;
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
 
     if (gQuick_time_quality[0] == '\0') {
-        c2_strcpy(gQuick_time_quality, "normal");
+        strcpy(gQuick_time_quality, "normal");
     }
     if (gQuick_time_compressor[0] == '\0') {
-        c2_strcpy(gQuick_time_compressor, "animation");
+        strcpy(gQuick_time_compressor, "animation");
     }
     if (gQuick_time_temp_path[0] == '\0') {
         PathCat(gQuick_time_temp_path, gApplication_path, "QTTMP");
@@ -64,7 +64,7 @@ void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
         PathCat(gQuick_time_temp_path, gApplication_path, "MOVIE");
     }
     if (gQuick_time_banner_texture_name[0] == '\0') {
-        c2_strcpy(gQuick_time_banner_texture_name, "ARBANNER.PIX");
+        strcpy(gQuick_time_banner_texture_name, "ARBANNER.PIX");
     }
 }
 

@@ -129,7 +129,7 @@ void C2_HOOK_CDECL pm_mem_copy_bits(void* dest, br_uint_32 qual, br_uint_32 dest
             break;
         }
         default:
-            c2_abort();
+            abort();
             break;
         }
     } else {
@@ -151,7 +151,7 @@ void C2_HOOK_CDECL pm_mem_copy_bits(void* dest, br_uint_32 qual, br_uint_32 dest
             COLOR_BITS_BLOCK(4, WRITE_COLOUR_U32, src, dest, colour);
             break;
         default:
-            c2_abort();
+            abort();
             break;
         }
     }
@@ -162,7 +162,7 @@ void C2_HOOK_CDECL pm_mem_fill_colour(br_uint_8 *dest, br_uint_32 qual, br_uint_
 
     switch (bpp) {
     case 1:
-        c2_memset(dest, colour, nbpixels);
+        memset(dest, colour, nbpixels);
         break;
     case 2: {
         br_uint_16 p = colour;
@@ -195,7 +195,7 @@ void C2_HOOK_CDECL pm_mem_fill_colour(br_uint_8 *dest, br_uint_32 qual, br_uint_
         break;
     }
     default:
-        c2_abort();
+        abort();
         return;
     }
 }
@@ -208,7 +208,7 @@ void C2_HOOK_CDECL pm_mem_fill_colour_rect(br_uint_8* dest, br_uint_32 qual, br_
     switch (bpp) {
     case 1:
         for (y = 0; y < height; y++, dest += stride) {
-            c2_memset(dest, colour, width);
+            memset(dest, colour, width);
         }
         break;
     case 2:
@@ -242,7 +242,7 @@ void C2_HOOK_CDECL pm_mem_fill_colour_rect(br_uint_8* dest, br_uint_32 qual, br_
         }
         break;
     default:
-        c2_abort();
+        abort();
         return;
     }
 }
@@ -250,14 +250,14 @@ void C2_HOOK_CDECL pm_mem_fill_colour_rect(br_uint_8* dest, br_uint_32 qual, br_
 // FUNCTION: CARMA2_HW 0x0053ee16
 void C2_HOOK_CDECL pm_mem_copy_colour(br_uint_8* dst, br_uint_32 dst_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 nbpixels, br_uint_32 bpp) {
 
-    c2_memcpy(dst, src, nbpixels * bpp);
+    memcpy(dst, src, nbpixels * bpp);
 }
 
 // FUNCTION: CARMA2_HW 0x0053ef0d
 void C2_HOOK_CDECL pm_mem_copy_colour_rowbyrow(br_uint_8* dest, br_uint_32 dest_qual, br_uint_8* src, br_uint_32 src_qual, br_uint_32 width, br_uint_32 height, br_uint_32 dest_stride, br_uint_32 src_stride, br_uint_32 bpp) {
 
     for (; height != 0; height--, dest += dest_stride, src += src_stride) {
-        c2_memcpy(dest, src, width * bpp);
+        memcpy(dest, src, width * bpp);
     }
 }
 
@@ -281,7 +281,7 @@ void C2_HOOK_CDECL pm_mem_set_colour(br_uint_8* dest, br_uint_32 dest_qual, br_u
         *(br_uint_32*)dest = colour;
         break;
     default:
-        c2_abort();
+        abort();
     }
 }
 
@@ -299,7 +299,7 @@ br_uint_32 C2_HOOK_CDECL pm_mem_read_colour(void* src, br_uint_32 src_qual, br_u
     case 4:
         return (br_uint_32)*(br_uint_32*)src;
     default:
-        c2_abort();
+        abort();
         return 0;
     }
 }

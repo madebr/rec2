@@ -78,7 +78,7 @@ br_chunks_table PixelmapLoadTable = { BR_ASIZE(PixelmapLoadEntries), PixelmapLoa
 int C2_HOOK_STDCALL FopWrite_PIXELMAP(br_datafile* df, br_pixelmap* pixelmap) {
     br_pixelmap pmap;
 
-    c2_memcpy(&pmap, pixelmap, sizeof(br_pixelmap));
+    memcpy(&pmap, pixelmap, sizeof(br_pixelmap));
     pmap.row_bytes = (pmTypeInfo[pmap.type].bits >> 3) * pmap.width;
     df->prims->chunk_write(df, CHUNKID_PIXELMAP, df->prims->struct_size(df, &br_pixelmap_F, &pmap));
     df->prims->struct_write(df, &br_pixelmap_F, &pmap);

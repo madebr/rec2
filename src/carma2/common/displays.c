@@ -83,13 +83,13 @@ int gRender_acc_poly_actor;
 br_token_value gAccent_poly_prims[] = {
     {
         BRT_BLEND_B,
-        { .b = 1 },
+        { 1 },
     }, {
         BRT_OPACITY_X,
-        { .x = 0x4b0000 },
+        { 0x4b0000 },
     }, {
         BR_NULL_TOKEN,
-        { .u32 = 0 },
+        { 0 },
     },
 };
 
@@ -283,7 +283,7 @@ int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText)
 
     polyfont = gDRFont_to_polyfont_mapping[pFont->id];
     result = 0;
-    len = c2_strlen(pText);
+    len = strlen(pText);
 
     for (i = 0; i < len; i++) {
 
@@ -363,16 +363,16 @@ void C2_HOOK_FASTCALL LoadHeadupMessageFile(void) {
         hud_message = &gHud_messages[i];
         GetALineAndDontArgue(f, s);
 
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &hud_message->font1);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &hud_message->font1);
 
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &hud_message->font2);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &hud_message->font2);
 
-        str = c2_strtok(NULL, "\t ,/");
-        c2_strcpy(hud_message->message, str);
+        str = strtok(NULL, "\t ,/");
+        strcpy(hud_message->message, str);
 
-        len = c2_strlen(hud_message->message);
+        len = strlen(hud_message->message);
         for (j = 0; j < len; j++) {
             if (hud_message->message[j] == '_') {
                 hud_message->message[j] = ' ';
@@ -546,8 +546,10 @@ int C2_HOOK_FASTCALL MungeHeadupWidth(tHeadup* pHeadup) {
 
     C2_HOOK_BUG_ON(sizeof(tHeadup) != 356);
 
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON((int)&((tHeadup*)0)->data.text_info.text != 0x4c);
     C2_HOOK_BUG_ON((int)&((tHeadup*)0)->data.coloured_text_info.coloured_font != 0x148);
+#endif
 
     width = 0;
     if (pHeadup->type == eHeadup_box_text) {
@@ -621,7 +623,7 @@ void C2_HOOK_FASTCALL KillOldestQueuedHeadup(void) {
     C2_HOOK_BUG_ON(sizeof(tQueued_headup) != 0x10c);
 
     gQueued_headup_count -= 1;
-    c2_memmove(&gQueued_headups[0], &gQueued_headups[1], gQueued_headup_count * sizeof(tQueued_headup));
+    memmove(&gQueued_headups[0], &gQueued_headups[1], gQueued_headup_count * sizeof(tQueued_headup));
 }
 
 // FUNCTION: CARMA2_HW 0x004497b0
@@ -766,7 +768,7 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pL
         gQueued_headups[gQueued_headup_count].flash_rate = pFlash_rate;
         gQueued_headups[gQueued_headup_count].lifetime = pLifetime;
         gQueued_headups[gQueued_headup_count].font_index = pFont_index;
-        c2_strcpy(gQueued_headups[gQueued_headup_count].text, pText);
+        strcpy(gQueued_headups[gQueued_headup_count].text, pText);
         gQueued_headup_count++;
         return -1;
     }
@@ -785,7 +787,7 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot2(int pSlot_index, int pFlash_rate, int pL
     } else {
         the_headup->type = eHeadup_coloured_text;
     }
-    c2_strcpy(the_headup->data.coloured_text_info.text, pText);
+    strcpy(the_headup->data.coloured_text_info.text, pText);
 
     the_headup->slot_index = pSlot_index;
     the_headup->justification = headup_slot->justification;
@@ -833,7 +835,7 @@ void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, 
     int next_x;
     int len;
 
-    len = c2_strlen(pText);
+    len = strlen(pText);
     s_end = -1;
     x = pX;
     next_x = pX;
@@ -924,13 +926,13 @@ void C2_HOOK_FASTCALL EarnCredits2(int pAmount, const char* pPrefix_text) {
     }
     gLast_credit_amount = pAmount;
     if (pAmount >= 2) {
-        c2_sprintf(s, "%s%d %s", pPrefix_text, pAmount, GetMiscString(eMiscString_credits));
+        sprintf(s, "%s%d %s", pPrefix_text, pAmount, GetMiscString(eMiscString_credits));
     } else if (pAmount == 1) {
-        c2_sprintf(s, "%s1 %s", pPrefix_text, GetMiscString(eMiscString_credit));
+        sprintf(s, "%s1 %s", pPrefix_text, GetMiscString(eMiscString_credit));
     } else if (pAmount == -1) {
-        c2_sprintf(s, "%s%s 1 %s", pPrefix_text, GetMiscString(eMiscString_lost_credits_prefix), GetMiscString(eMiscString_credit));
+        sprintf(s, "%s%s 1 %s", pPrefix_text, GetMiscString(eMiscString_lost_credits_prefix), GetMiscString(eMiscString_credit));
     } else {
-        c2_sprintf(s, "%s%s %d %s", GetMiscString(eMiscString_lost_credits_prefix), pPrefix_text, -pAmount, GetMiscString(eMiscString_credits));
+        sprintf(s, "%s%s %d %s", GetMiscString(eMiscString_lost_credits_prefix), pPrefix_text, -pAmount, GetMiscString(eMiscString_credits));
     }
     gProgram_state.credits += original_amount;
     gLast_credit_headup__displays = NewTextHeadupSlot(4, 0, 2000, -4, s);
@@ -993,7 +995,7 @@ int C2_HOOK_FASTCALL NewImageHeadupSlot(int pSlot_index, int pFlash_rate, int pL
         } else {
             the_headup->end_time = 0;
         }
-        c2_strcpy(the_headup->data.image_info.text , gHud_messages[pImage_index].message);
+        strcpy(the_headup->data.image_info.text , gHud_messages[pImage_index].message);
         the_headup->data.image_info.font_index = gHud_messages[pImage_index].font2;
         the_headup->data.image_info.font = &gFonts[gHud_messages[pImage_index].font1];
         switch (the_headup->justification) {
@@ -1146,7 +1148,7 @@ void C2_HOOK_FASTCALL ChangeHeadupText(int pHeadup_index, char* pNew_text) {
 
     if (pHeadup_index >= 0) {
         the_headup = &gHeadups[pHeadup_index];
-        c2_strcpy(the_headup->data.text_info.text, pNew_text);
+        strcpy(the_headup->data.text_info.text, pNew_text);
         MungeHeadupWidth(the_headup);
     }
 }
@@ -1518,7 +1520,7 @@ void C2_HOOK_FASTCALL DoInstruments(tU32 pThe_time) {
         }
         if (gHeadup_detail_level == 0 || gHeadup_detail_level == 3) {
             if (!gAction_replay_mode) {
-                c2_sprintf(buffer, "%03i", (int)speed_mph);
+                sprintf(buffer, "%03i", (int)speed_mph);
                 RenderPolyTextLine(buffer, 1, 1, kPolyfont_ingame_medium_green, eJust_left, 0);
             }
         } else {

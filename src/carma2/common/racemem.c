@@ -11,7 +11,7 @@ tU8 gRace_memory[1000];
 // FUNCTION: CARMA2_HW 0x004e74b0
 void C2_HOOK_FASTCALL ClearAllRuntimeVariables(void) {
     C2_HOOK_BUG_ON(sizeof(gRace_memory) != 1000);
-    c2_memset(gRace_memory, 0, sizeof(gRace_memory));
+    memset(gRace_memory, 0, sizeof(gRace_memory));
 }
 
 // FUNCTION: CARMA2_HW 0x004e7440

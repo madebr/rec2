@@ -1,6 +1,6 @@
 #include "pattern.h"
 
-#include "c2_ctype.h"
+#include <ctype.h>
 
 // FUNCTION: CARMA2_HW 0x00529860
 br_boolean C2_HOOK_CDECL BrNamePatternMatch(const char* p, const char* s) {
@@ -39,7 +39,7 @@ br_boolean C2_HOOK_CDECL BrNamePatternMatch(const char* p, const char* s) {
             continue;
         }
 
-        if (c2_toupper(*p) != c2_toupper(*s)) {
+        if (toupper(*p) != toupper(*s)) {
             return 0;
         }
     }

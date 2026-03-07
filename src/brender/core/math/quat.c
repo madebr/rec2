@@ -3,7 +3,7 @@
 #include "matrix34.h"
 #include "matrix4.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 #define M(x, y) mat->m[x][y]
 #define M_DIAG(x) (((br_scalar*)mat->m)[4*(x)])

@@ -7,7 +7,7 @@
 #include "depth.h"
 #include "displays.h"
 #include "drmem.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "explosions.h"
 #include "flicplay.h"
 #include "font.h"
@@ -49,7 +49,7 @@
 
 #include "c2_stdlib.h"
 #include "c2_string.h"
-#include "c2_time.h"
+#include <time.h>
 
 
 // GLOBAL: CARMA2_HW 0x0068be24
@@ -99,6 +99,9 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
 }
 
 void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
+    tTWTVFS twt;
+
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON(sizeof(int) != 4);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, complete_race_data) != 184);
     C2_HOOK_BUG_ON(offsetof(tOpponent_spec, time_for_this_objective_to_finish) != 0x74);
@@ -125,21 +128,22 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2_HOOK_ASSERT((uintptr_t) &gProgram_state.sausage_eater_mode == 0x0075bb90);
     C2_HOOK_BUG_ON(sizeof(tProgram_state) != 24272);
     C2_HOOK_BUG_ON(sizeof(gTextureMaps) != 0x1000);
+#endif
 
     gProgram_state.sausage_eater_mode = gSausage_override;
     InitQuickTimeStuff();
-    c2_memset(gTextureMaps, 0, sizeof(gTextureMaps));
+    memset(gTextureMaps, 0, sizeof(gTextureMaps));
     InitPackFiles();
     MAMSInitMem();
     gAusterity_mode = gAustere_override || PDDoWeLeadAnAustereExistance();
-    c2_srand((unsigned int)c2_time(NULL));
+    srand((unsigned int)time(NULL));
     BrV1dbBeginWrapper_Float();
     CreateStainlessClasses();
     PDInstallErrorHandlers();
     InstallFindFailedHooks();
     InstallDRMemCalls();
     InstallDRFileCalls();
-    tTWTVFS twt = OpenPackFileAndSetTiffLoading(gApplication_path);
+    twt = OpenPackFileAndSetTiffLoading(gApplication_path);
     gApplicationDataTwtMounted = 1;
     InitFogificateMaterials();
     PDInitTimer();
@@ -147,7 +151,7 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     LoadGeneralParameters();
     PrintMemoryDump(0, "AFTER LOADING GENERAL PARAMETERS");
     DefaultNetName();
-    c2_strcpy(gProgram_state.player_name, "MAX DAMAGE");
+    strcpy(gProgram_state.player_name, "MAX DAMAGE");
     RestoreOptions();
     LoadKeyMapping();
     if (!PDInitScreenVars(pArgc, pArgv)) {
@@ -248,8 +252,8 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     BrMatrix34Identity(&gCamera_to_world);
     BrMatrix34Identity(&gRearview_camera_to_world);
     PrintMemoryDump(0, "AFTER APPLICATION INITIALISATION (JUST INITED PED SYSTEM)");
-    c2_memset(gPickedup_powerups, 0, sizeof(gPickedup_powerups));
-    c2_memset(gUnknown_00705b80, 0, sizeof(gUnknown_00705b80));
+    memset(gPickedup_powerups, 0, sizeof(gPickedup_powerups));
+    memset(gUnknown_00705b80, 0, sizeof(gUnknown_00705b80));
     ClosePackFileAndSetTiffLoading(twt);
     gApplicationDataTwtMounted = 0;
 }
@@ -369,7 +373,7 @@ void C2_HOOK_FASTCALL AllocateCamera(void) {
     SetSightDistance(camera_ptr->yon_z);
 }
 
-static void inline Prepare2DModelAndMaterial(br_model* pModel, br_material* pMaterial, int pConfigure_vertices, br_colour pColour, int pFadeAlpha) {
+static void Prepare2DModelAndMaterial(br_model* pModel, br_material* pMaterial, int pConfigure_vertices, br_colour pColour, int pFadeAlpha) {
     static br_token_value fadealpha[3] = {
             { BRT_BLEND_B , {1}},
             { BRT_OPACITY_X, {0x800000} }, /* 50%*/
@@ -396,7 +400,7 @@ static void inline Prepare2DModelAndMaterial(br_model* pModel, br_material* pMat
     pModel->flags |= BR_MODF_KEEP_ORIGINAL;
 }
 
-static void inline Prepare2DModelToDim(br_model* pModel, int pX, int pY, int pW, int pH) {
+static void Prepare2DModelToDim(br_model* pModel, int pX, int pY, int pW, int pH) {
 
     pModel->vertices[0].p.v[0] = pModel->vertices[1].p.v[0] = (float)pX;
     pModel->vertices[0].p.v[1] = pModel->vertices[3].p.v[1] = (float)-pY;
@@ -546,7 +550,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
 
     PathCat(the_path, gApplication_path, "INTRFACE");
     PathCat(the_path, the_path, "BOTHUP");
-    c2_strcat(the_path, ".DAT");
+    strcat(the_path, ".DAT");
 
     gHeadup_model = BrModelLoad(the_path);
     gHeadup_material = BrMaterialAllocate("gHeadup_material");

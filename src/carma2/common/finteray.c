@@ -9,7 +9,7 @@
 
 #include "rec2_macros.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 
 // GLOBAL: CARMA2_HW 0x005964c0

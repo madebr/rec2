@@ -1,6 +1,6 @@
 #include "drmem.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "loading.h"
 
 #include "rec2_macros.h"
@@ -8,7 +8,7 @@
 
 #include "brender/brender.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_stdlib.h"
 
 
@@ -317,7 +317,7 @@ void C2_HOOK_FASTCALL CloseGlobalPackedFile(void) {
 
 // FUNCTION: CARMA2_HW 0x0044c850
 void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
-    dr_dprintf("%s: pTitle=\"%s\" pFlags=%d", __FUNCTION__, pTitle, pFlags);
+
 }
 
 // FUNCTION: CARMA2_HW 0x0044c8c0
@@ -329,7 +329,7 @@ void* C2_HOOK_CDECL DRStdlibAllocate(br_size_t size, br_uint_8 type) {
     if (size != 0) {
         p = malloc(size);
         if (p == NULL && !gNon_fatal_allocation_errors) {
-            c2_sprintf(s, "%s/%d", gMem_names[type], size);
+            sprintf(s, "%s/%d", gMem_names[type], size);
             FatalError(kFatalError_OOM_S, s);
         }
         return p;

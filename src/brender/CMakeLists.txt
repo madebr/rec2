@@ -346,13 +346,21 @@ if(WIN32)
             brender-brpmap1-imp
             brender-brhost1-imp
             c2_hooks
+            DirectX::d3dim
     )
     target_compile_definitions(brender_driver_d3d
             PRIVATE
             BASED_FLOAT
     )
     set_property(TARGET brender_driver_d3d PROPERTY PREFIX "")
-    set_property(TARGET brender_driver_d3d PROPERTY OUTPUT_NAME "d3d_rec2")
 endif()
 
 add_library(BRender::BRender ALIAS brender-static)
+
+if(REC2_MATCHING)
+    set(CMAKE_CXX_FLAGS "/W3 /GX /DWIN32 /D_WINDOWS")
+    set(CMAKE_CXX_FLAGS_DEBUG "/Gm /Od /D_DEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "/O2 /D \"NDEBUG\"")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/O2 /DNDEBUG")
+    set(CMAKE_CXX_FLAGS_MINSIZEREL "/Os /DNDEBUG")
+endif()

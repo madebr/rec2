@@ -76,7 +76,7 @@ target_include_directories(c2_platform
 target_link_libraries(c2_platform
     PUBLIC
         BRender::Headers
-        c2_common
+        c2_newcommon
         c2_hooks
 )
 target_include_directories(c2_platform_brender
@@ -90,12 +90,12 @@ target_link_libraries(c2_platform_brender
 )
 
 add_executable(rec2 WIN32
-    $<TARGET_OBJECTS:c2_common>
+    $<TARGET_OBJECTS:c2_newcommon>
     $<TARGET_OBJECTS:c2_platform>
 )
 target_link_libraries(rec2 PRIVATE
     BRender::BRender
-    c2_common
+    c2_newcommon
     c2_platform
 )
 if(REC2_MATCHING)

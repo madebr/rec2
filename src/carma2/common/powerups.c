@@ -5,7 +5,7 @@
 #include "controls.h"
 #include "crush.h"
 #include "displays.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "explosions.h"
 #include "funk.h"
 #include "globvars.h"
@@ -625,14 +625,14 @@ static br_pixelmap* DRMapFindMeAPixie(const char* name) {
     if (map != NULL) {
         return map;
     }
-    c2_strcpy(s, name);
-    c2_strcat(s, ".PIX");
+    strcpy(s, name);
+    strcat(s, ".PIX");
     map = BrMapFind(s);
     if (map != NULL) {
         return map;
     }
-    c2_strcpy(s, name);
-    c2_strcat(s, ".pix");
+    strcpy(s, name);
+    strcat(s, ".pix");
     map = BrMapFind(s);
     if (map != NULL) {
         return map;
@@ -682,10 +682,10 @@ void C2_HOOK_FASTCALL LoadPowerups(void) {
         the_powerup = &gPowerup_array[i];
 
         GetALineAndDontArgue(f, the_powerup->message);
-        if (c2_strcmp(the_powerup->message, "dummy") == 0) {
+        if (strcmp(the_powerup->message, "dummy") == 0) {
             the_powerup->type = ePowerup_dummy;
         } else {
-            if (c2_strcmp(the_powerup->message, "n/a") == 0) {
+            if (strcmp(the_powerup->message, "n/a") == 0) {
                 the_powerup->message[0] = '\0';
             }
             GetAString(f, s);
@@ -796,14 +796,16 @@ static void C2_HOOK_FASTCALL ReadPowerupSmashable(FILE* pF, tSmashable_item_spec
     int i;
     int d1, d2;
 
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, initial_pos) != 40);
     C2_HOOK_BUG_ON(offsetof(tShrapnel_spec, type_info) != 56);
     C2_HOOK_BUG_ON(sizeof(tShrapnel_spec) != 88);
     C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, connotations.shrapnel) != 44);
     C2_HOOK_BUG_ON(offsetof(tSmashable_item_spec, mode_data) + offsetof(tSmashable_item_spec_shrapnel, connotations.special_effects.explosion_animation) != 572);
     C2_HOOK_BUG_ON(sizeof(tSmashable_item_spec) != 736);
+#endif
 
-    c2_memset(pSmashable_spec, 0, sizeof(tSmashable_item_spec));
+    memset(pSmashable_spec, 0, sizeof(tSmashable_item_spec));
     /* Number of sounds */
     pSmashable_spec->mode_data.shrapnel.connotations.count_sounds = GetAnInt(pF);
     for (i = 0; i < pSmashable_spec->mode_data.shrapnel.connotations.count_sounds; i++) {
@@ -844,7 +846,7 @@ void C2_HOOK_FASTCALL ReadPowerupSmashables(FILE* pF) {
     ReadPowerupSmashable(pF, &gPowerup_pickup_smashable);
     ReadPowerupSmashable(pF, &gPowerup_respawn_smashable);
 
-    c2_memset(&gUnknown_smashable_006a3660, 0, sizeof(gUnknown_smashable_006a3660));
+    memset(&gUnknown_smashable_006a3660, 0, sizeof(gUnknown_smashable_006a3660));
     gUnknown_smashable_006a3660.trigger_type = kSmashableTrigger_Model | kSmashableTrigger_Number;
     gUnknown_smashable_006a3660.mode = kSmashableMode_Remove;
 }
@@ -876,11 +878,13 @@ void C2_HOOK_FASTCALL InitMineShit(void) {
 
 void C2_HOOK_FASTCALL FillInMine(tNet_message_chunk* pChunk, tShit_mine* pMine, int pArg3) {
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.mine_index, 0x2);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.field_0x3, 0x3);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.field_0x4, 0x4);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.field_0x5, 0x5);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message_chunk, mine_explode.field_0x8, 0x8);
+#endif
 
     pChunk->mine_explode.mine_index = pMine - gShit_mines;
     pChunk->mine_explode.field_0x3 = pMine->field_0x35;
@@ -1259,8 +1263,8 @@ br_model* C2_HOOK_FASTCALL DuplicateModel(br_model* pModel, const char* pName) {
     copy->crease_angle = pModel->crease_angle;
     copy->radius = pModel->radius;
     copy->bounds = pModel->bounds;
-    c2_memcpy(copy->vertices, pModel->vertices, pModel->nvertices * sizeof(br_vertex));
-    c2_memcpy(copy->faces, pModel->faces, pModel->nfaces * sizeof(br_face));
+    memcpy(copy->vertices, pModel->vertices, pModel->nvertices * sizeof(br_vertex));
+    memcpy(copy->faces, pModel->faces, pModel->nfaces * sizeof(br_face));
     return copy;
 }
 
@@ -1298,7 +1302,7 @@ void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor) {
         PathCat(path, gApplication_path, "POWRSHIT.TXT");
         f = DRfopen(path, "rt");
         if (f == NULL) {
-            c2_sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            sprintf(s, "Cant open %s", "POWRSHIT.TXT");
             PDFatalError(s);
         }
         for (i = 0; i < 67; i++) {
@@ -1325,7 +1329,7 @@ void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor) {
         PathCat(path, gApplication_path, "POWRSHIT.TXT");
         f = DRfopen(path, "rt");
         if (f == NULL) {
-            c2_sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            sprintf(s, "Cant open %s", "POWRSHIT.TXT");
             PDFatalError(s);
         }
         for (i = 0; i < 68; i++) {
@@ -1352,7 +1356,7 @@ void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor) {
         PathCat(path, gApplication_path, "POWRSHIT.TXT");
         f = DRfopen(path, "rt");
         if (f == NULL) {
-            c2_sprintf(s, "Cant open %s", "POWRSHIT.TXT");
+            sprintf(s, "Cant open %s", "POWRSHIT.TXT");
             PDFatalError(s);
         }
         for (i = 0; i < 69; i++) {
@@ -1378,306 +1382,357 @@ void C2_HOOK_FASTCALL SetChangingPowerup(br_actor* pActor) {
 int C2_HOOK_FASTCALL GotPowerup(tCar_spec* pCar, int pIndex) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc170
 int C2_HOOK_FASTCALL GotCredits(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc720
 int C2_HOOK_FASTCALL SetPedSpeed(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc750
 int C2_HOOK_FASTCALL SetPedSize(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc7d0
 int C2_HOOK_FASTCALL SetPedExplode(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de7a0
 int C2_HOOK_FASTCALL PickAtRandom(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc830
 int C2_HOOK_FASTCALL SetInvulnerability(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc8a0
 int C2_HOOK_FASTCALL SetFreeRepairs(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc990
 int C2_HOOK_FASTCALL DoInstantRepair(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc930
 int C2_HOOK_FASTCALL FreezeTimer(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dca30
 int C2_HOOK_FASTCALL SetEngineFactor(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcab0
 int C2_HOOK_FASTCALL SetUnderwater(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc470
 int C2_HOOK_FASTCALL GotTimeOrPower(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcae0
 int C2_HOOK_FASTCALL TrashBodywork(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcb90
 int C2_HOOK_FASTCALL TakeDrugs(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcca0
 int C2_HOOK_FASTCALL SetOpponentsSpeed(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcd70
 int C2_HOOK_FASTCALL SetCopsSpeed(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcda0
 int C2_HOOK_FASTCALL SetGravity(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcdd0
 int C2_HOOK_FASTCALL SetPinball(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dce00
 int C2_HOOK_FASTCALL SetWallclimb(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dce30
 int C2_HOOK_FASTCALL SetBouncey(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dce80
 int C2_HOOK_FASTCALL SetSuspension(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dced0
 int C2_HOOK_FASTCALL SetTyreGrip(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcf80
 int C2_HOOK_FASTCALL SetDamageMultiplier(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcf00
 int C2_HOOK_FASTCALL SetImmortalPeds(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc8f0
 int C2_HOOK_FASTCALL SetStupidPedestrians(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dcf40
 int C2_HOOK_FASTCALL SetSuicidalPedestrians(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de7d0
 int C2_HOOK_FASTCALL GotVouchers(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004debb0
 int C2_HOOK_FASTCALL SetMassMultiplier(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de820
 int C2_HOOK_FASTCALL SetInstantHandbrake(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dec10
 int C2_HOOK_FASTCALL ShowPedestrians(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dea40
 int C2_HOOK_FASTCALL HitMine(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dec60
 int C2_HOOK_FASTCALL SetElectroBastard(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc7a0
 int C2_HOOK_FASTCALL SetPedHeadSize(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004deca0
 int C2_HOOK_FASTCALL SetMutantCorpses(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dd700
 int C2_HOOK_FASTCALL ShitMine(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de040
 int C2_HOOK_FASTCALL PissOutOil(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de0c0
 int C2_HOOK_FASTCALL KangerooJump(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de140
 int C2_HOOK_FASTCALL AnnihilatePeds(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de1e0
 int C2_HOOK_FASTCALL RepulseOpponents(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc800
 int C2_HOOK_FASTCALL SetPedBrittle(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de930
 int C2_HOOK_FASTCALL SetGhostPeds(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de870
 int C2_HOOK_FASTCALL SetDancingPeds(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de8a0
 int C2_HOOK_FASTCALL SetPanickingPeds(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de8d0
 int C2_HOOK_FASTCALL SetLowGravityPeds(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de900
 int C2_HOOK_FASTCALL SetPissedPeds(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de540
 int C2_HOOK_FASTCALL RepulsePedestrians(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc240
 int C2_HOOK_FASTCALL GainAPO(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dc4d0
 int C2_HOOK_FASTCALL GainAPOPotential(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004df220
 int C2_HOOK_FASTCALL SetPissed(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004de190
 int C2_HOOK_FASTCALL NapalmPeds(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004dfec0
@@ -1696,24 +1751,28 @@ int C2_HOOK_FASTCALL PedValium(tPowerup* powerup, tCar_spec* car) {
 int C2_HOOK_FASTCALL PowerupCancel(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004e02b0
 int C2_HOOK_FASTCALL GrowATail(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004e04c0
 int C2_HOOK_FASTCALL CutOffTail(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c40
 int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* powerup, tCar_spec* car) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004e0cb0
@@ -1724,7 +1783,7 @@ void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar_spec) {
 
         for (i = 0; i < gCount_cloaked_cars; i++) {
             if (gCloaked_cars[i] == pCar_spec) {
-                c2_memmove(&gCloaked_cars[i], &gCloaked_cars[i + 1],
+                memmove(&gCloaked_cars[i], &gCloaked_cars[i + 1],
                     (REC2_ASIZE(gCloaked_cars) - i - 1) * sizeof(tCar_spec *));
                 gCount_cloaked_cars -= 1;
                 break;
@@ -2018,6 +2077,7 @@ void C2_HOOK_FASTCALL KeyboardPowerupFinished(tPowerup* pPowerup, int pSelect_ne
 int C2_HOOK_FASTCALL GotPowerupX(tCar_spec* pCar, int pIndex, int pArg3, int pMessage, tU32 pTime) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004daff0
@@ -2043,7 +2103,7 @@ int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowe
         PrintPowerupIconIn3D(pX, pY, pIcon, pPowerup, 0, pTime);
     }
     if (pPowerup->initial_value < 0) {
-        c2_sprintf(s, "%d", -pPowerup->value);
+        sprintf(s, "%d", -pPowerup->value);
         if (pDraw) {
             TransDRPixelmapText(gBack_screen,
                 pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
@@ -2088,7 +2148,7 @@ int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowe
         }
     } else if (pPowerup->current_value > 0) {
 
-        c2_sprintf(s, "%d", pPowerup->current_value);
+        sprintf(s, "%d", pPowerup->current_value);
         if (pDraw) {
             TransDRPixelmapText(gBack_screen,
                 pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
@@ -2129,7 +2189,7 @@ void C2_HOOK_FASTCALL DrawPowerupIcons2(tU32 pTime, tHeadup_icon* pHeadup_icons,
             if (the_icon->fizzle_stage > 4) {
                 the_icon->fizzle_stage = 4;
             } else if (the_icon->fizzle_stage < 0) {
-                c2_memmove(the_icon, &the_icon[1], sizeof(tHeadup_icon) * (*pCount_icons - i - 1));
+                memmove(the_icon, &the_icon[1], sizeof(tHeadup_icon) * (*pCount_icons - i - 1));
                 *pCount_icons -= 1;
                 continue;
             }

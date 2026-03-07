@@ -103,17 +103,17 @@ br_error C2_HOOK_STDCALL StateCopyToStored(br_renderer_state_stored_soft* dest, 
 
     if (copy_mask & MASK_STATE_CULL) {
         C2_HOOK_BUG_ON(sizeof(soft_state_cull) != 0xc);
-        c2_memcpy(&dest->cull, &src->cull, sizeof(soft_state_cull));
+        memcpy(&dest->cull, &src->cull, sizeof(soft_state_cull));
     }
 
     if(copy_mask & MASK_STATE_SURFACE) {
         C2_HOOK_BUG_ON(sizeof(soft_state_surface) != 0x48);
-        c2_memcpy(&dest->surface, &src->surface, sizeof(soft_state_surface));
+        memcpy(&dest->surface, &src->surface, sizeof(soft_state_surface));
     }
 
     if (copy_mask & MASK_STATE_CACHE) {
         C2_HOOK_BUG_ON(sizeof(soft_state_cache) != 0x1ec);
-        c2_memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
+        memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
     }
 
     if (copy_mask != MASK_CACHED_STATES) {
@@ -159,17 +159,17 @@ br_error C2_HOOK_STDCALL StateCopyFromStored(soft_state_all* dest, br_renderer_s
 
     if (copy_mask & MASK_STATE_CULL) {
         C2_HOOK_BUG_ON(sizeof(soft_state_cull) != 0xc);
-        c2_memcpy(&dest->cull, &src->cull, sizeof(soft_state_cull));
+        memcpy(&dest->cull, &src->cull, sizeof(soft_state_cull));
     }
 
     if (copy_mask & MASK_STATE_SURFACE) {
         C2_HOOK_BUG_ON(sizeof(soft_state_surface) != 0x48);
-        c2_memcpy(&dest->surface, &src->surface, sizeof(soft_state_surface));
+        memcpy(&dest->surface, &src->surface, sizeof(soft_state_surface));
     }
 
     if (copy_mask & MASK_STATE_CACHE) {
         C2_HOOK_BUG_ON(sizeof(soft_state_cache) != 0x1ec);
-        c2_memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
+        memcpy(&dest->cache, &src->cache, sizeof(soft_state_cache));
     }
 
     if (copy_mask != MASK_CACHED_STATES) {
@@ -208,8 +208,11 @@ br_size_t C2_HOOK_CDECL _M_br_renderer_state_stored_soft_space(br_renderer_state
 br_tv_template* C2_HOOK_CDECL _M_br_renderer_state_stored_soft_templateQuery(br_renderer_state_stored_soft* self) {
 
     if (self->device->templates.rendererStateStoredTemplate == NULL) {
+
+#ifndef REC2_MATCHING
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_device, templates.rendererStateStoredTemplate, 0x20);
         C2_HOOK_BUG_ON(BR_ASIZE(rendererStateStoredTemplateEntries) != 4);
+#endif
 
         self->device->templates.rendererStateStoredTemplate = BrTVTemplateAllocate(self->device,
             rendererStateStoredTemplateEntries,

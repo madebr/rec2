@@ -14,7 +14,7 @@ br_allocator* _BrDefaultAllocator = &BrStdlibAllocator;
 
 // FUNCTION: CARMA2_HW 0x0053f5f0
 void* C2_HOOK_CDECL BrStdlibAllocate(br_size_t size, br_uint_8 type) {
-    void* m = c2_malloc(size);
+    void* m = malloc(size);
 
     if (m == NULL) {
         BrFailure("BrStdlibAllocate: failed with size=%d, type=%d", size, type);
@@ -25,7 +25,7 @@ void* C2_HOOK_CDECL BrStdlibAllocate(br_size_t size, br_uint_8 type) {
 
 // FUNCTION: CARMA2_HW 0x0053f630
 void C2_HOOK_CDECL BrStdlibFree(void* mem) {
-    c2_free(mem);
+    free(mem);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f640

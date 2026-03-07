@@ -1,6 +1,6 @@
 #include "font.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "loading.h"
 #include "utility.h"
 
@@ -55,9 +55,9 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char
     if (loadFromDisk) {
         gPixelmapBufferSize = BrPixelmapLoadMany(pathBuffer, gPixelmapBuffer, REC2_ASIZE(gPixelmapBuffer));
     }
-    c2_strcpy(pathBuffer, glyphName);
+    strcpy(pathBuffer, glyphName);
 
-    str = c2_strchr(pathBuffer, '.');
+    str = strchr(pathBuffer, '.');
     *str = '\0';
 
     for (i = 0; i < gPixelmapBufferSize; i++) {

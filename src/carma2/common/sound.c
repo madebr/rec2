@@ -2,7 +2,7 @@
 
 #include "brucetrk.h"
 #include "car.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "loading.h"
@@ -148,9 +148,9 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     char path_file[80];
     FILE* fp;
 
-    c2_strcpy(path_file, gApplication_path);
-    c2_strcat(path_file, (char*)gDir_separator);
-    c2_strcat(path_file, "PATHS.TXT");
+    strcpy(path_file, gApplication_path);
+    strcat(path_file, (char*)gDir_separator);
+    strcat(path_file, "PATHS.TXT");
 
     if (PDCheckDriveExists(path_file)) {
         fp = PFfopen(path_file, "rt");
@@ -164,7 +164,7 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
         GetALineWithNoPossibleService(fp, line2);
         GetALineWithNoPossibleService(fp, line3);
         PFfclose(fp);
-        if (c2_strcmp(line3, "Full") != 0) {
+        if (strcmp(line3, "Full") != 0) {
             return;
         }
     }
@@ -207,29 +207,29 @@ void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* 
     int i;
 
     if (pSpec->periodicity == kSoundFxPeriodicity_None) {
-        c2_fprintf(pF, "NONE\t\t\t\t\t// sound time type\n");
+        fprintf(pF, "NONE\t\t\t\t\t// sound time type\n");
         return;
     }
 
-    c2_fprintf(pF, "%s\t\t\t\t\t// sound time type\n", gSound_periodicity_choices[pSpec->periodicity]);
+    fprintf(pF, "%s\t\t\t\t\t// sound time type\n", gSound_periodicity_choices[pSpec->periodicity]);
     switch (pSpec->periodicity) {
     case kSoundFxPeriodicity_Random:
-        c2_fprintf(pF, "%.2f,%.2f\t\t\t\t\t// min,max gap\n",
+        fprintf(pF, "%.2f,%.2f\t\t\t\t\t// min,max gap\n",
            (float)pSpec->periodic1 / 1000.f,
            (float)pSpec->periodic2 / 1000.f);
         break;
     case kSoundFxPeriodicity_Periodic:
-        c2_fprintf(pF,"%.2f\t\t\t\t\t// period\n",
+        fprintf(pF,"%.2f\t\t\t\t\t// period\n",
             (float)pSpec->periodic1 / 1000.f);
         break;
     default:
         break;
     }
-    c2_fprintf(pF, "%d\t\t\t\t\t// max deviation\n", (int)BrFixedToFloat(100.f * pSpec->field_0x14));
-    c2_fprintf(pF, "%d\t\t\t\t\t// num sounds\n", pSpec->count_sound_alternatives);
+    fprintf(pF, "%d\t\t\t\t\t// max deviation\n", (int)BrFixedToFloat(100.f * pSpec->field_0x14));
+    fprintf(pF, "%d\t\t\t\t\t// num sounds\n", pSpec->count_sound_alternatives);
     for (i = 0; i < pSpec->count_sound_alternatives; i++) {
 
-        c2_fprintf(pF, "%d\t\t\t\t\t// sound ID\n", pSpec->sound_alternatives[i]);
+        fprintf(pF, "%d\t\t\t\t\t// sound ID\n", pSpec->sound_alternatives[i]);
     }
 }
 

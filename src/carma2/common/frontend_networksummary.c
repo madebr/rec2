@@ -130,17 +130,17 @@ static int C2_HOOK_CDECL SortScores(const void* pArg1, const void* pArg2) {
 
 static void C2_HOOK_FASTCALL SortGameScores(void) {
 
-    c2_qsort(gPlayer_lookup_netsummary, gNumber_of_net_players, sizeof(int), SortScores);
+    qsort(gPlayer_lookup_netsummary, gNumber_of_net_players, sizeof(int), SortScores);
 }
 
 void C2_HOOK_FASTCALL NetworkSummarySetup(tFrontend_spec* pFrontend) {
     int i;
 
-    c2_strcpy(pFrontend->items[60].text, GetMiscString(eMiscString_player));
-    c2_strcpy(pFrontend->items[61].text, GetMiscString(eMiscString_played));
-    c2_strcpy(pFrontend->items[62].text, GetMiscString(eMiscString_won));
-    c2_strcpy(pFrontend->items[63].text, GetMiscString(eMiscString_score));
-    c2_strcpy(pFrontend->items[64].text, IString_Get(182));
+    strcpy(pFrontend->items[60].text, GetMiscString(eMiscString_player));
+    strcpy(pFrontend->items[61].text, GetMiscString(eMiscString_played));
+    strcpy(pFrontend->items[62].text, GetMiscString(eMiscString_won));
+    strcpy(pFrontend->items[63].text, GetMiscString(eMiscString_score));
+    strcpy(pFrontend->items[64].text, IString_Get(182));
 
     for (i = 0; i < gNumber_of_net_players; i++) {
         gPlayer_lookup_netsummary[i] = i;
@@ -154,16 +154,16 @@ void C2_HOOK_FASTCALL NetworkSummarySetup(tFrontend_spec* pFrontend) {
         pFrontend->items[36 + i].visible = 1;
         pFrontend->items[48 + i].visible = 1;
         pFrontend->items[65 + i].visible = 1;
-        c2_strcpy(pFrontend->items[0 + i].text, gNet_players[i].player_name);
+        strcpy(pFrontend->items[0 + i].text, gNet_players[i].player_name);
         if (gNet_players[i].host) {
-            c2_strcat(pFrontend->items[0 + i].text, " (");
-            c2_strcat(pFrontend->items[0 + i].text, GetMiscString(eMiscString_host));
-            c2_strcat(pFrontend->items[0 + i].text, ")");
+            strcat(pFrontend->items[0 + i].text, " (");
+            strcat(pFrontend->items[0 + i].text, GetMiscString(eMiscString_host));
+            strcat(pFrontend->items[0 + i].text, ")");
         }
-        c2_sprintf(pFrontend->items[12 + i].text, "%d", gNet_players[i].field_0x7c);
-        c2_sprintf(pFrontend->items[24 + i].text, "%d", gNet_players[i].field_0x88);
-        c2_sprintf(pFrontend->items[36 + i].text, "%d", gNet_players[i].score);
-        c2_sprintf(pFrontend->items[48 + i].text, "%d%%",
+        sprintf(pFrontend->items[12 + i].text, "%d", gNet_players[i].field_0x7c);
+        sprintf(pFrontend->items[24 + i].text, "%d", gNet_players[i].field_0x88);
+        sprintf(pFrontend->items[36 + i].text, "%d", gNet_players[i].score);
+        sprintf(pFrontend->items[48 + i].text, "%d%%",
                    (int)((float)gNet_players[i].score / (float)(gNet_players[i].field_0x7c) / gScore_winner * 100.f));
     }
     for (i = gNumber_of_net_players; i < kMax_netplayers; i++) {
@@ -182,12 +182,12 @@ void C2_HOOK_FASTCALL NetworkSummarySetup(tFrontend_spec* pFrontend) {
     }
 
     if (gCurrent_net_game->options.open_game) {
-        c2_sprintf(pFrontend->items[78].text, "%s: %s (%s)",
+        sprintf(pFrontend->items[78].text, "%s: %s (%s)",
             GetMiscString(eMiscString_open),
             GetMiscString(eMiscString_network_type_start + gCurrent_net_game->type),
             GetMiscString(eMiscString_game_type));
     } else {
-        c2_sprintf(pFrontend->items[78].text, "%s: %s (%s)",
+        sprintf(pFrontend->items[78].text, "%s: %s (%s)",
             GetMiscString(eMiscString_closed),
             GetMiscString(eMiscString_network_type_start + gCurrent_net_game->type),
             GetMiscString(eMiscString_game_type));

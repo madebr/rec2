@@ -5,7 +5,7 @@
 #include "core/std/brstdlib.h"
 #include "core/std/logwrite.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 
 #include <stdarg.h>
 
@@ -25,9 +25,15 @@ br_int_32 C2_HOOK_CDECL BrSprintfN(char* buf, br_size_t buf_size, char* fmt, ...
     int n;
     va_list args;
 
+#ifdef REC2_MATCHING
+    va_start(args, fmt);
+    n = BrVSprintf(buf, fmt, args);
+    va_end(args);
+#else
     va_start(args, fmt);
     n = vsnprintf(buf, buf_size, fmt, args);
     va_end(args);
+#endif
     return n;
 }
 
@@ -49,8 +55,14 @@ br_int_32 C2_HOOK_CDECL BrSScanf(char* str, char* fmt, ...) {
     int n;
     va_list args;
 
+#ifdef REC2_MATCHING
+    va_start(args, fmt);
+    n = BrVSScanf(str, fmt, args);
+    va_end(args);
+#else
     va_start(args, fmt);
     n = vsscanf(str, fmt, args);
     va_end(args);
+#endif
     return n;
 }

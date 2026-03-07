@@ -56,8 +56,8 @@ int C2_HOOK_FASTCALL DoLoadGame2(tSave_game* pSave_game) {
     gCurrent_race_group = gRace_list[gProgram_state.current_race_index].group;
     gIs_boundary_race = pSave_game->is_boundary_race;
     gProgram_state.credits = pSave_game->credits;
-    c2_strcpy(gProgram_state.car_name, pSave_game->car_name);
-    c2_strcpy(gProgram_state.player_name, pSave_game->player_name);
+    strcpy(gProgram_state.car_name, pSave_game->car_name);
+    strcpy(gProgram_state.player_name, pSave_game->player_name);
     for (i = 0; i < gNumber_of_races; i++) {
         gRace_list[i].count_opponents = pSave_game->races_finished[i];
     }
@@ -189,8 +189,8 @@ void C2_HOOK_FASTCALL MakeSavedGame(tSave_game* pSave_game) {
     pSave_game->current_race_index = gProgram_state.current_race_index;
     pSave_game->is_boundary_race = gIs_boundary_race;
     pSave_game->credits = gProgram_state.credits;
-    c2_strcpy(pSave_game->car_name, gProgram_state.car_name);
-    c2_strcpy(pSave_game->player_name, gProgram_state.player_name);
+    strcpy(pSave_game->car_name, gProgram_state.car_name);
+    strcpy(pSave_game->player_name, gProgram_state.player_name);
     PDGetCurrentTime(pSave_game->time);
     PDGetCurrentDate(pSave_game->date);
     for (i = 0; i < gNumber_of_races; i++) {

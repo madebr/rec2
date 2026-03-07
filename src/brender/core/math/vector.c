@@ -1,5 +1,5 @@
 #include "vector.h"
-#include <math.h>
+#include "c2_math.h"
 
 
 // FUNCTION: CARMA2_HW 0x00534390

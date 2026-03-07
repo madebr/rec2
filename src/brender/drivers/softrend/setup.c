@@ -366,8 +366,10 @@ br_uint_32 C2_HOOK_STDCALL ComponentMaskToSlots(br_uint_32 cm) {
 // FUNCTION: CARMA2_HW 0x00544670
 void C2_HOOK_STDCALL GeometryFunctionReset(br_soft_renderer* renderer) {
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.cache.ngeometry_fns, 0x624);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.cache.ngeometry_fns_onscreen, 0x668);
+#endif
 
     renderer->state.cache.ngeometry_fns = 0;
     renderer->state.cache.ngeometry_fns_onscreen = 0;
@@ -397,8 +399,10 @@ void C2_HOOK_STDCALL GeometryFunctionBothAdd(br_soft_renderer* renderer, geometr
 // FUNCTION: CARMA2_HW 0x00544730
 void C2_HOOK_STDCALL PrimBlockReset(br_soft_renderer* renderer) {
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.cache.nface_blocks, 0x71c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.cache.nface_blocks_onscreen, 0x71d);
+#endif
 
     renderer->state.cache.nface_blocks = 0;
     renderer->state.cache.nface_blocks_onscreen = 0;

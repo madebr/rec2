@@ -9,7 +9,7 @@
 #include "plib.h"
 #include "timestmp.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 // GLOBAL: D3D 0x10017250
 br_tv_template_entry primitiveD3DStateTemplateEntries[] = {
@@ -148,9 +148,6 @@ void C2_HOOK_CDECL PrimitiveStateD3DClearTemplates(void) {
     memset(&outputD3DTemplate, 0, sizeof(outputD3DTemplate));
     outputD3DTemplate.n_entries = BR_ASIZE(outputD3DTemplateEntries);
     outputD3DTemplate.entries = outputD3DTemplateEntries;
-
-    C2_HOOK_BUG_ON(offsetof(primitive_d3d_state, out.colour.pixelmap) != 0x48);
-    C2_HOOK_BUG_ON(offsetof(primitive_d3d_state, out.depth) != 0x4c);
 
     memset(&primitiveD3DTemplate, 0, sizeof(primitiveD3DTemplate));
     primitiveD3DTemplate.n_entries = BR_ASIZE(primitiveD3DTemplateEntries);

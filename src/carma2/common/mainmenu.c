@@ -11,6 +11,7 @@
 int C2_HOOK_FASTCALL DoVerifyQuit(int pReplace_background) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00494540

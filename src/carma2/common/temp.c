@@ -1,7 +1,7 @@
 #include "temp.h"
 
 #include "depth.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "graphics.h"
 
 #include "rec2_macros.h"

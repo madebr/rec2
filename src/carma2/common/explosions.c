@@ -98,8 +98,8 @@ void C2_HOOK_FASTCALL ReadExplosionInfo(FILE* pF, int* pChance_explosion, int* p
     PathCat(the_path, gApplication_path, "COMMON");
     /* Name of pixelmap file */
     GetALineAndDontArgue(pF, s);
-    name = c2_strtok(s, "\t ,/");
-    name[c2_strlen(name) - 4] = '\0';
+    name = strtok(s, "\t ,/");
+    name[strlen(name) - 4] = '\0';
     PathCat(the_path, the_path, name);
     LoadAllImagesInDirectory(&gMisc_storage_space, the_path);
     ReadExplosion(pF, pExplosion_groups);

@@ -1,7 +1,7 @@
 #include "frontend.h"
 
 #include "drmem.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "font.h"
 #include "frontend_controls.h"
 #include "frontend_credits.h"
@@ -271,8 +271,8 @@ void C2_HOOK_FASTCALL IString_Load(void) {
     gCount_interface_strings = 0;
     for (i = 0; !PFfeof(f) && i < REC2_ASIZE(gInterface_strings); i++) {
         GetALineAndDontArgue(f, s);
-        gInterface_strings[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_misc_string);
-        c2_strcpy(gInterface_strings[i], s);
+        gInterface_strings[i] = BrMemAllocate(strlen(s) + 1, kMem_misc_string);
+        strcpy(gInterface_strings[i], s);
         gCount_interface_strings++;
     }
     PFfclose(f);
@@ -319,8 +319,8 @@ void C2_HOOK_FASTCALL LoadMenuImages(void) {
     count = GetAnInt(f);
     for (i = 0; i < count; i++) {
         GetAString(f, s2);
-        c2_strcpy(s, s2);
-        c2_strcat(s, ".TIF");
+        strcpy(s, s2);
+        strcat(s, ".TIF");
         gFrontend_images[i + 8] = LoadPixelmap(s); /* FIXME: magic number */
     }
 
@@ -415,7 +415,7 @@ static void C2_HOOK_FASTCALL LoadMenuModels(void) {
     for (i = 0; i < count; i++) {
         GetAString(f, s3);
         PathCat(s2, s, s3);
-        c2_strcat(s2, ".DAT");
+        strcat(s2, ".DAT");
         gFrontend_A_models[i].model = BrModelLoad(s2);
         gFrontend_A_models[i].model->flags |= BR_MODF_KEEP_ORIGINAL;
         BrModelAdd(gFrontend_A_models[i].model);
@@ -433,7 +433,7 @@ static void C2_HOOK_FASTCALL LoadMenuModels(void) {
     for (i = 0; i < count; i++) {
         GetAString(f, s3);
         PathCat(s2, s, s3);
-        c2_strcat(s2, ".DAT");
+        strcat(s2, ".DAT");
         gFrontend_B_models[i].model = BrModelLoad(s2);
         gFrontend_B_models[i].model->flags |= BR_MODF_KEEP_ORIGINAL;
         BrModelAdd(gFrontend_B_models[i].model);
@@ -451,7 +451,7 @@ static void C2_HOOK_FASTCALL LoadMenuModels(void) {
     for (i = 0; i < count; i++) {
         GetAString(f, s3);
         PathCat(s2, s, s3);
-        c2_strcat(s2, ".DAT");
+        strcat(s2, ".DAT");
         gFrontend_C_models[i].model = BrModelLoad(s2);
         gFrontend_C_models[i].model->flags |= BR_MODF_KEEP_ORIGINAL;
         BrModelAdd(gFrontend_C_models[i].model);
@@ -491,8 +491,8 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* 
     }
     PFfclose(f);
     count = BrPixelmapLoadMany(the_path, pixelmaps, REC2_ASIZE(pixelmaps));
-    c2_strcpy(the_path, pName);
-    str = c2_strchr(the_path, '.');
+    strcpy(the_path, pName);
+    str = strchr(the_path, '.');
     *str = '\0';
     for (i = 0; i < count; i++) {
         if (pixelmaps[i] != NULL) {
@@ -596,22 +596,22 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
     const char* name;
     int i;
 
-    c2_sprintf(s, "START OF FRONTEND_CreateMenu for menu \'%s\'", pFrontend_spec->name);
+    sprintf(s, "START OF FRONTEND_CreateMenu for menu \'%s\'", pFrontend_spec->name);
     PrintMemoryDump(0, s);
     if (pFrontend_spec->create != NULL) {
         pFrontend_spec->create(pFrontend_spec);
     }
     gFrontend_count_brender_items = 0;
     name = pFrontend_spec->backdrop_name;
-    if (name != NULL && c2_strlen(name) != 0) {
+    if (name != NULL && strlen(name) != 0) {
         if (!gFrontend_remove_current_backdrop) {
             tTWTVFS twt;
 
             PathCat(s2, gApplication_path, "INTRFACE");
             PathCat(s2, s2, "BACKDROP");
-            c2_strcpy(s, name);
-            C2_HOOK_ASSERT(s[c2_strlen(s) - 4] == '.');
-            s[c2_strlen(s) - 4] = '\0';
+            strcpy(s, name);
+            C2_HOOK_ASSERT(s[strlen(s) - 4] == '.');
+            s[strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
             gFrontend_backdrop = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
@@ -630,9 +630,9 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
 
             PathCat(s2, gApplication_path, "INTRFACE");
             PathCat(s2, s2, "BACKDROP");
-            c2_strcpy(s, name);
-            C2_HOOK_ASSERT(s[c2_strlen(s) - 4] == '.');
-            s[c2_strlen(s) - 4] = '\0';
+            strcpy(s, name);
+            C2_HOOK_ASSERT(s[strlen(s) - 4] == '.');
+            s[strlen(s) - 4] = '\0';
             PathCat(s2, s2, s);
             twt = OpenPackFileAndSetTiffLoading(s2);
             gFrontend_backdrop = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
@@ -664,7 +664,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
         }
         FRONTEND_CreateMenuButton(
             &gFrontend_brender_items[gFrontend_count_brender_items],
-            item->x,
+            (tS16)item->x,
             y,
             width,
             height,
@@ -683,7 +683,7 @@ int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
         NULL,
         "");
     gFrontend_selected_item_index = gMouse_in_use ? 99 : 0;
-    c2_sprintf(s, "END OF FRONTEND_CreateMenu for menu \'%s\'", pFrontend_spec->name);
+    sprintf(s, "END OF FRONTEND_CreateMenu for menu \'%s\'", pFrontend_spec->name);
     PrintMemoryDump(0, s);
     return 1;
 }
@@ -971,7 +971,7 @@ int C2_HOOK_FASTCALL FRONTEND_Main(tFrontendMenuType pFrontendType) {
         PDScreenBufferSwap(0);
         if (gCurrent_frontend_spec->unknownLastInt == 1 && gCurrent_frontend_spec != &gFrontend_START_GAME) {
             FRONTEND_DestroyMenu(gCurrent_frontend_spec);
-            c2_strcpy(gFrontend_START_GAME.backdrop_name, gCurrent_frontend_spec->backdrop_name);
+            strcpy(gFrontend_START_GAME.backdrop_name, gCurrent_frontend_spec->backdrop_name);
             Morph_Initialise(gCurrent_frontend_spec, &gFrontend_START_GAME);
             gCurrent_frontend_spec = &gFrontend_START_GAME;
             FRONTEND_CreateMenu(&gFrontend_START_GAME);
@@ -1099,8 +1099,8 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     int race_i;
 
     group = 1 + (gCurrent_race_group - gRaceGroups) % 10;
-    c2_sprintf(group_text, "%s %d", IString_Get(78), group);
-    c2_strcpy(pFrontend->items[2].text, group_text);
+    sprintf(group_text, "%s %d", IString_Get(78), group);
+    strcpy(pFrontend->items[2].text, group_text);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_scroller_spec, indexFirstScrollableItem, 0x10);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tFrontend_scroller_spec, indexLastScrollableItem, 0x14);
@@ -1109,7 +1109,7 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     for (i = pFrontend->scrollers[0].indexFirstScrollableItem; i < pFrontend->scrollers[0].indexLastScrollableItem; i++, race_i++) {
         tFrontend_item_spec* item = &pFrontend->items[i];
 
-        c2_strcpy(item->text, gRace_list[4 * (group - 1) + race_i].name);
+        strcpy(item->text, gRace_list[4 * (group - 1) + race_i].name);
         item->radioButton_selected = race_i == gProgram_state.current_race_index;
         if (gRace_list[race_i].is_boundary) {
             item->unlitFont = 2;
@@ -1220,13 +1220,13 @@ int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     br_actor* actor;
     int i;
 
-    c2_sprintf(buffer, "START OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
+    sprintf(buffer, "START OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
     PrintMemoryDump(0, buffer);
     if (pFrontend->destroy != NULL) {
         pFrontend->destroy(pFrontend);
     }
     for (actor = gFrontend_actor->children; actor != NULL; actor = gFrontend_actor->children) {
-        if (c2_strcmp(actor->identifier, "Backdrop") == 0) {
+        if (strcmp(actor->identifier, "Backdrop") == 0) {
             break;
         }
         BrActorRemove(actor);
@@ -1263,7 +1263,7 @@ int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
     BrActorFree(gFrontend_brender_items[99].actor);
     gFrontend_brender_items[99].actor = NULL;
     EndMouseCursor();
-    c2_sprintf(buffer, "END OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
+    sprintf(buffer, "END OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
     PrintMemoryDump(0, buffer);
     return 1;
 }
@@ -1557,8 +1557,8 @@ void C2_HOOK_FASTCALL RefreshScrollSet(tFrontend_spec* pFrontend) {
 
     for (i = 0; i < gControls_scroller.range_length; i++) {
 
-        c2_strcpy(pFrontend->items[43 + i].text, GetMiscString(140 + gControls_scroller.field_0x8 + i));
-        c2_strcpy(pFrontend->items[53 + i].text, gKey_names[gKey_mapping[gControls_frontend_to_key_mapping_lut[i + gControls_scroller.field_0x8]] + 2]);
+        strcpy(pFrontend->items[43 + i].text, GetMiscString(140 + gControls_scroller.field_0x8 + i));
+        strcpy(pFrontend->items[53 + i].text, gKey_names[gKey_mapping[gControls_frontend_to_key_mapping_lut[i + gControls_scroller.field_0x8]] + 2]);
     }
     pFrontend->items[63].visible = gControls_scroller.field_0x8 != 0;
     pFrontend->items[64].visible = gControls_scroller.field_0x8 != gControls_scroller.field_0x0 - gControls_scroller.range_length;
@@ -2335,8 +2335,8 @@ char* C2_HOOK_FASTCALL MungeCommas(int pValue) {
     size_t put_pos;
     size_t remaining;
 
-    c2_sprintf(buffer, "%i", pValue);
-    len = c2_strlen(buffer);
+    sprintf(buffer, "%i", pValue);
+    len = strlen(buffer);
     for (remaining = len, get_pos = 0, put_pos = 0; get_pos < len; remaining--, get_pos++, put_pos++) {
 
         if (remaining % 3 == 0 && get_pos != 0) {
@@ -2415,13 +2415,13 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
     size_t len_repl;
     size_t i;
 
-    len_text = c2_strlen(pText);
-    len_repl = c2_strlen(pRepl);
+    len_text = strlen(pText);
+    len_repl = strlen(pRepl);
 
     for (i = 0; i < len_text; i++) {
         if (pText[i] == '@' && pText[i + 1] == pKey) {
-            c2_memmove(&pText[i + len_repl], &pText[i + 2], len_text - i - 1);
-            c2_memcpy(&pText[i], pRepl, len_repl);
+            memmove(&pText[i + len_repl], &pText[i + 2], len_text - i - 1);
+            memcpy(&pText[i], pRepl, len_repl);
             i += len_repl;
             len_text += len_repl - 2;
         }
@@ -2438,7 +2438,7 @@ void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar
 void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pKey, int pNum) {
     char text[16];
 
-    c2_sprintf(text, "%d", pNum);
+    sprintf(text, "%d", pNum);
     MungeMetaCharacters(pText, pKey, text);
 }
 
@@ -2476,7 +2476,7 @@ void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend) {
 
 void C2_HOOK_FASTCALL FillInRaceDescription(char *pDest, int pRace_index) {
 
-    c2_strcpy(pDest, gRace_list[pRace_index].description);
+    strcpy(pDest, gRace_list[pRace_index].description);
     MungeMetaCharactersChar(pDest, 'R', '\r');
     MungeMetaCharactersNum(pDest, 'O', gRace_list[pRace_index].count_explicit_opponents);
     MungeMetaCharactersNum(pDest, 'L', gRace_list[pRace_index].count_laps);
@@ -2490,19 +2490,19 @@ void C2_HOOK_FASTCALL MenuSetCarImage(int pCar_index, int pBrender_index) {
     tTWTVFS twt;
     int i;
 
-    pos_dot = c2_strrchr(gOpponents[pCar_index].car_file_name, '.');
+    pos_dot = strrchr(gOpponents[pCar_index].car_file_name, '.');
     PathCat(pack_path, gApplication_path, "INTRFACE");
     PathCat(pack_path, pack_path, "CARIMAGE");
 
-    c2_strcpy(pack_filename, gOpponents[pCar_index].car_file_name);
-    pack_filename[c2_strlen(pack_filename) - 4] = '\0';
-    c2_strcat(pack_filename, "CI");
+    strcpy(pack_filename, gOpponents[pCar_index].car_file_name);
+    pack_filename[strlen(pack_filename) - 4] = '\0';
+    strcat(pack_filename, "CI");
     PathCat(pack_path, pack_path, pack_filename);
     twt = OpenPackFileAndSetTiffLoading(pack_path);
     for (i = 0; i < 6; i++) {
         char pm_name[20];
 
-        c2_sprintf(pm_name, "%.*s%c.TIF", pos_dot - gOpponents[pCar_index].car_file_name, gOpponents[pCar_index].car_file_name, 'A' + i);
+        sprintf(pm_name, "%.*s%c.TIF", pos_dot - gOpponents[pCar_index].car_file_name, gOpponents[pCar_index].car_file_name, 'A' + i);
         BrMapRemove(gFrontend_images[i + 1]);
         BrPixelmapFree(gFrontend_images[i + 1]);
         gFrontend_images[i + 1] = GetThisFuckingPixelmapPleaseMrTwatter(pack_path, pm_name);
@@ -2525,16 +2525,16 @@ void C2_HOOK_FASTCALL MenuSetDriverImage(int pOpponent_index, int pFrontend_inde
     char pm_name[20];
     tTWTVFS twt;
 
-    pos_dot = c2_strrchr(gOpponents[pOpponent_index].abbrev_name, '.');
+    pos_dot = strrchr(gOpponents[pOpponent_index].abbrev_name, '.');
     PathCat(pack_path, gApplication_path, "INTRFACE");
     PathCat(pack_path, pack_path, "CARIMAGE");
-    c2_strcpy(pack_filename, gOpponents[pOpponent_index].car_file_name);
-    pack_filename[c2_strlen(pack_filename) - 4] = '\0';
-    c2_strcat(pack_filename, "CI");
+    strcpy(pack_filename, gOpponents[pOpponent_index].car_file_name);
+    pack_filename[strlen(pack_filename) - 4] = '\0';
+    strcat(pack_filename, "CI");
     PathCat(pack_path, pack_path, pack_filename);
     twt = OpenPackFileAndSetTiffLoading(pack_path);
 
-    c2_sprintf(pm_name, "%.*s%c%c.TIF", pos_dot - gOpponents[pOpponent_index].abbrev_name, gOpponents[pOpponent_index].abbrev_name, '6', '4');
+    sprintf(pm_name, "%.*s%c%c.TIF", pos_dot - gOpponents[pOpponent_index].abbrev_name, gOpponents[pOpponent_index].abbrev_name, '6', '4');
     BrMapRemove(gFrontend_images[7]);
     BrPixelmapFree(gFrontend_images[7]);
     gFrontend_images[7] = GetThisFuckingPixelmapPleaseMrTwatter(pack_path, pm_name);
@@ -2564,7 +2564,7 @@ int C2_HOOK_FASTCALL ProcessInputString(void) {
         return 0;
     }
 
-    len = c2_strlen(gFrontend_current_input);
+    len = strlen(gFrontend_current_input);
     if (len > gFrontend_maximum_input_length) {
         gFrontend_current_input[len - 1] = '\0';
         return -1;
@@ -2578,12 +2578,12 @@ int C2_HOOK_FASTCALL ProcessInputString(void) {
         return 1;
     }
     if (key == 63) {
-        c2_strcpy(gFrontend_current_input, gFrontend_original_player_name);
+        strcpy(gFrontend_current_input, gFrontend_original_player_name);
         return -2;
     }
     if (key == 51) {
         if (len == 0) {
-            c2_strcpy(gFrontend_current_input, gFrontend_original_player_name);
+            strcpy(gFrontend_current_input, gFrontend_original_player_name);
         }
         return -1;
     }
@@ -2592,7 +2592,7 @@ int C2_HOOK_FASTCALL ProcessInputString(void) {
         char ch;
 
         dr_dprintf("FRONTEND: Got char %d", int_ch);
-        ch = PDConvertToASCIILessThan128(int_ch);
+        ch = PDConvertToASCIILessThan128((char)int_ch);
         dr_dprintf("FRONTEND: Char converted to %d", ch);
         if (ch >= 0x20 && ch != 0x7f) {
             gFrontend_current_input[len + 0] = ch;
@@ -2658,8 +2658,8 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
         gFrontend_text_input_item_index = gFrontend_selected_item_index;
         pFrontend->items[gFrontend_text_input_item_index].unlitFont = 2;
         pFrontend->items[gFrontend_text_input_item_index].highFont = 3;
-        c2_strcpy(pFrontend->items[gFrontend_text_input_item_index].text, gProgram_state.player_name);
-        c2_strcpy(gFrontend_original_player_name, gProgram_state.player_name);
+        strcpy(pFrontend->items[gFrontend_text_input_item_index].text, gProgram_state.player_name);
+        strcpy(gFrontend_original_player_name, gProgram_state.player_name);
         PDClearKeyboardBuffer();
         StartGettingInputString(pFrontend->items[gFrontend_text_input_item_index].text, 8);
         return 0;

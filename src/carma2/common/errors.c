@@ -1,16 +1,16 @@
-#include "errors.h"
+#include "52-errors.h"
 
 #include "loading.h"
 #include "utility.h"
 
 #include "platform.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_string.h"
 
 #include <stdarg.h>
 #include <stdint.h>
-//#include <string.h>
+//#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x00591708
 const char* gError_messages[186] = {
@@ -215,37 +215,37 @@ void C2_NORETURN C2_HOOK_CDECL FatalError(int pStr_index, ...) {
     va_list ap;
 
     if (pStr_index < 1000) {
-        c2_strcpy(the_str, gError_messages[pStr_index]);
+        strcpy(the_str, gError_messages[pStr_index]);
     } else {
-        c2_strcpy(the_str, "Physics Error: %");
+        strcpy(the_str, "Physics Error: %");
     }
 
     sub_pt = temp_str;
     va_start(ap, pStr_index);
     while (1) {
-        sub_pt = c2_strchr(the_str, '%');
+        sub_pt = strchr(the_str, '%');
         if (sub_pt == NULL) {
             break;
         }
         sub_str = va_arg(ap, char*);
         StripCRNL(sub_str);
-        c2_strcpy(temp_str, sub_pt + 1);
-        c2_strcpy(sub_pt, sub_str);
-        c2_strcat(the_str, temp_str);
+        strcpy(temp_str, sub_pt + 1);
+        strcpy(sub_pt, sub_str);
+        strcat(the_str, temp_str);
     }
 
     dr_dprintf("FatalError After strings %s\n", the_str);
     sub_pt = the_str;
     while (1) {
-        sub_str = c2_strchr(the_str, '@');
+        sub_str = strchr(the_str, '@');
         if (sub_str == NULL) {
             break;
         }
         sub_int = va_arg(ap, int);
-        c2_strcpy(temp_str, sub_str + 1);
-        c2_sprintf(sub_str, "%d", sub_int);
+        strcpy(temp_str, sub_str + 1);
+        sprintf(sub_str, "%d", sub_int);
         StripCRNL(sub_str);
-        c2_strcat(the_str, temp_str);
+        strcat(the_str, temp_str);
     }
     va_end(ap);
     dr_dprintf("FatalError Finish %s\n", the_str);
@@ -294,14 +294,14 @@ void C2_HOOK_FASTCALL CloseDiagnostics(void) {
 // FUNCTION: CARMA2_HW 0x0044c580
 void C2_HOOK_FASTCALL OpenDiagnostics(void) {
     // FIXME: use c2_stdio functions
-//    gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
-    gDiagnostic_file = c2_fopen("DIAGNOST.TXT", "w");
+//    gDiagnostic_file = fopen("DIAGNOST.TXT", "w");
+    gDiagnostic_file = fopen("DIAGNOST.TXT", "w");
     if (gDiagnostic_file == NULL) {
         return;
     }
-    c2_fputs("DIAGNOSTIC OUTPUT\n", gDiagnostic_file);
+    fputs("DIAGNOSTIC OUTPUT\n", gDiagnostic_file);
     // todo: generate a real date
-    c2_fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", __DATE__ " : " __TIME__);
+    fprintf(gDiagnostic_file, "Date / time : %s\n\n\n", __DATE__ " : " __TIME__);
 }
 
 // Renamed from dprintf to avoid collisions to stdio
@@ -315,13 +315,13 @@ void C2_HOOK_CDECL dr_dprintf(const char* fmt_string, ...) {
         OpenDiagnostics();
     }
     the_time = PDGetTotalTime();
-    c2_fprintf(gDiagnostic_file, "%7d.%03d: ", the_time / 1000, the_time % 1000);
+    fprintf(gDiagnostic_file, "%7d.%03d: ", the_time / 1000, the_time % 1000);
 
     va_start(args, fmt_string);
-    c2_vfprintf(gDiagnostic_file, fmt_string, args);
+    vfprintf(gDiagnostic_file, fmt_string, args);
     va_end(args);
 
-    c2_fputs("\n", gDiagnostic_file);
+    fputs("\n", gDiagnostic_file);
 
-    c2_fflush(gDiagnostic_file);
+    fflush(gDiagnostic_file);
 }

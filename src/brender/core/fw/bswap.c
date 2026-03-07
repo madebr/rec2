@@ -46,30 +46,38 @@ void* C2_HOOK_CDECL BrSwapBlock(void* block, int count, int size) {
     int i;
     int k;
 
-    cp = (br_uint_8*)block;
     switch (size) {
     case 1:
         break;
     case 2:
-        for (i = 0; i < count; i++) {
+        for (i = 0, cp = block; i < count; i++, cp += 2) {
             SWAP(cp[0], cp[1]);
-            cp += 2;
+        }
+        break;
+    case 3:
+        for (i = 0, cp = block; i < count; i++, cp += 3) {
+            SWAP(cp[0], cp[2]);
         }
         break;
     case 4:
-        for (i = 0; i < count; i++) {
+        for (i = 0, cp = block; i < count; i++, cp += 4) {
             SWAP(cp[0], cp[3]);
             SWAP(cp[1], cp[2]);
-            cp += 4;
         }
         break;
-
+    case 8:
+        for (i = 0, cp = block; i < count; i++, cp += 8) {
+            SWAP(cp[0], cp[7]);
+            SWAP(cp[1], cp[6]);
+            SWAP(cp[2], cp[5]);
+            SWAP(cp[3], cp[4]);
+        }
+        break;
     default:
-        for (i = 0; i < count; i++) {
+        for (i = 0, cp = block; i < count; i++, cp += size) {
             for (k = 0; k < size / 2; k++) {
                 SWAP(cp[k], cp[size - k - 1]);
             }
-            cp += size;
         }
         break;
     }

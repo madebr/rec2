@@ -206,16 +206,12 @@ void C2_HOOK_CDECL HostBegin(void) {
     RealSelectorBegin();
 #endif
 
-#if !defined(REC2_STANDALONE)
     BrImageAdd(&Image_BRHOST1);
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0053fad0
 void C2_HOOK_CDECL HostEnd(void) {
-#if !defined(REC2_STANDALONE)
     BrImageRemove(&Image_BRHOST1);
-#endif
 
 #if defined(__I86__)
     RealSelectorEnd();

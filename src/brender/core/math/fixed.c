@@ -230,151 +230,151 @@ br_fixed_ls C2_HOOK_CDECL BrFixedAbs(br_fixed_ls a) {
 // FUNCTION: CARMA2_HW 0x00537120
 br_fixed_ls C2_HOOK_FASTCALL BrFixedMul(br_fixed_ls a, br_fixed_ls b) {
 
-    return ((long long)a * (long long)b) >> 16;
+    return ((br_int_64)a * (br_int_64)b) >> 16;
 }
 
 // FUNCTION: CARMA2_HW 0x00537131
 br_fixed_ls C2_HOOK_CDECL BrFixedMac2(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d) >> 16;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d) >> 16;
 }
 
 // FUNCTION: CARMA2_HW 0x00537154
 br_fixed_ls C2_HOOK_CDECL BrFixedMac3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f) >> 16;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d + (br_int_64)e * (br_int_64)f) >> 16;
 }
 
 // FUNCTION: CARMA2_HW 0x00537181
 br_fixed_ls C2_HOOK_CDECL BrFixedMac4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f, br_fixed_ls g, br_fixed_ls h) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f + (long long)g * (long long)h) >> 16;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d + (br_int_64)e * (br_int_64)f + (br_int_64)g * (br_int_64)h) >> 16;
 }
 
 // FUNCTION: CARMA2_HW 0x005371b8
 br_fixed_ls C2_HOOK_CDECL BrFixedLength2(br_fixed_ls a, br_fixed_ls b) {
 
-    return _BrISqrt64((long long)a * (long long)a + (long long)b * (long long)b);
+    return _BrISqrt64((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b);
 }
 
 // FUNCTION: CARMA2_HW 0x005371dc
 br_fixed_ls C2_HOOK_CDECL BrFixedLength3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
 
-    return _BrISqrt64((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c);
+    return _BrISqrt64((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b + (br_int_64)c * (br_int_64)c);
 }
 
 // FUNCTION: CARMA2_HW 0x00537209
 br_fixed_ls C2_HOOK_CDECL BrFixedLength4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
 
-    return _BrISqrt64((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c + (long long)d * (long long)d);
+    return _BrISqrt64((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b + (br_int_64)c * (br_int_64)c + (br_int_64)d * (br_int_64)d);
 }
 
 // FUNCTION: CARMA2_HW 0x0053723f
 br_fixed_ls C2_HOOK_CDECL BrFixedRLength2(br_fixed_ls a, br_fixed_ls b) {
 
-    return _BrFastRSqrt64((long long)a * (long long)a + (long long)b * (long long)b);
+    return _BrFastRSqrt64((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b);
 }
 
 // FUNCTION: CARMA2_HW 0x00537263
 br_fixed_ls C2_HOOK_CDECL BrFixedRLength3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
 
-    return _BrFastRSqrt64((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c);
+    return _BrFastRSqrt64((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b + (br_int_64)c * (br_int_64)c);
 }
 
 // FUNCTION: CARMA2_HW 0x00537290
 br_fixed_ls C2_HOOK_CDECL BrFixedRLength4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
 
-    return _BrFastRSqrt64((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c + (long long)d * (long long)d);
+    return _BrFastRSqrt64((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b + (br_int_64)c * (br_int_64)c + (br_int_64)d * (br_int_64)d);
 }
 
 // FUNCTION: CARMA2_HW 0x005372c6
 br_fixed_ls C2_HOOK_CDECL BrFixedDiv(br_fixed_ls a, br_fixed_ls b) {
 
-    return (((long long)a) << 16) / (long long)b;
+    return (((br_int_64)a) << 16) / (br_int_64)b;
 }
 
 // FUNCTION: CARMA2_HW 0x005372db
 br_fixed_ls C2_HOOK_CDECL BrFixedDivR(br_fixed_ls a, br_fixed_ls b) {
 
-    return (((long long)a) << 16 | ((((uint32_t)(a)) & 0x80000000) ? 0xffff : 0x0)) / b;
+    return (((br_int_64)a) << 16 | ((((uint32_t)(a)) & 0x80000000) ? 0xffff : 0x0)) / b;
 }
 
 // FUNCTION: CARMA2_HW 0x005372f1
 br_fixed_ls C2_HOOK_CDECL BrFixedDivF(br_fixed_ls a, br_fixed_ls b) {
 
-    return (((long long)a) << 31) / b;
+    return (((br_int_64)a) << 31) / b;
 }
 
 // FUNCTION: CARMA2_HW 0x00537322
 br_fixed_ls C2_HOOK_CDECL BrFixedMulDiv(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
 
-    return ((long long)a * (long long)b) / (long long)c;
+    return ((br_int_64)a * (br_int_64)b) / (br_int_64)c;
 }
 
 // FUNCTION: CARMA2_HW 0x00537332
 br_fixed_ls C2_HOOK_CDECL BrFixedMac2Div(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d) / (long long)e;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d) / (br_int_64)e;
 }
 
 // FUNCTION: CARMA2_HW 0x00537354
 br_fixed_ls C2_HOOK_CDECL BrFixedMac3Div(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f, br_fixed_ls g) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f) / (long long)g;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d + (br_int_64)e * (br_int_64)f) / (br_int_64)g;
 }
 
 // FUNCTION: CARMA2_HW 0x00537380
 br_fixed_ls C2_HOOK_CDECL BrFixedMac4Div(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d, br_fixed_ls e, br_fixed_ls f, br_fixed_ls g, br_fixed_ls h, br_fixed_ls i) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f + (long long)g * (long long)h) / (long long)i;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d + (br_int_64)e * (br_int_64)f + (br_int_64)g * (br_int_64)h) / (br_int_64)i;
 }
 
 // FUNCTION: CARMA2_HW 0x005373b6
 br_fixed_ls C2_HOOK_CDECL BrFixedFMac2(br_fixed_lsf a, br_fixed_ls b, br_fixed_lsf c, br_fixed_ls d) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d) >> 15;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d) >> 15;
 }
 
 // FUNCTION: CARMA2_HW 0x005373db
 br_fixed_ls C2_HOOK_CDECL BrFixedFMac3(br_fixed_lsf a, br_fixed_ls b, br_fixed_lsf c, br_fixed_ls d, br_fixed_lsf e, br_fixed_ls f) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f) >> 15;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d + (br_int_64)e * (br_int_64)f) >> 15;
 }
 
 // FUNCTION: CARMA2_HW 0x0053740b
 br_fixed_ls C2_HOOK_CDECL BrFixedFMac4(br_fixed_lsf a, br_fixed_ls b, br_fixed_lsf c, br_fixed_ls d, br_fixed_lsf e, br_fixed_ls f, br_fixed_lsf g, br_fixed_ls h) {
 
-    return ((long long)a * (long long)b + (long long)c * (long long)d + (long long)e * (long long)f + (long long)g * (long long)h) >> 15;
+    return ((br_int_64)a * (br_int_64)b + (br_int_64)c * (br_int_64)d + (br_int_64)e * (br_int_64)f + (br_int_64)g * (br_int_64)h) >> 15;
 }
 
 // FUNCTION: CARMA2_HW 0x00537446
 br_fixed_ls C2_HOOK_CDECL BrFixedRcp(br_fixed_ls a) {
 
-    return (br_fixed_ls)(((long long)0x100000000) / a);
+    return (br_fixed_ls)(((br_int_64)0x100000000) / a);
 }
 
 // FUNCTION: CARMA2_HW 0x00537457
 br_fixed_ls C2_HOOK_CDECL BrFixedSqr(br_fixed_ls a) {
 
-    return ((long long)a * (long long)a) >> 16;
+    return ((br_int_64)a * (br_int_64)a) >> 16;
 }
 
 // FUNCTION: CARMA2_HW 0x00537467
 br_fixed_ls C2_HOOK_CDECL BrFixedSqr2(br_fixed_ls a, br_fixed_ls b) {
 
-    return ((long long)a * (long long)a + (long long)b * (long long)b) >> 16;
+    return ((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b) >> 16;
 }
 
 // FUNCTION: CARMA2_HW 0x00537488
 br_fixed_ls C2_HOOK_CDECL BrFixedSqr3(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c) {
 
-    return ((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c) >> 16;
+    return ((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b + (br_int_64)c * (br_int_64)c) >> 16;
 }
 
 // FUNCTION: CARMA2_HW 0x005374b2
 br_fixed_ls C2_HOOK_CDECL BrFixedSqr4(br_fixed_ls a, br_fixed_ls b, br_fixed_ls c, br_fixed_ls d) {
 
-    return ((long long)a * (long long)a + (long long)b * (long long)b + (long long)c * (long long)c + (long long)d * (long long)d) >> 16;
+    return ((br_int_64)a * (br_int_64)a + (br_int_64)b * (br_int_64)b + (br_int_64)c * (br_int_64)c + (br_int_64)d * (br_int_64)d) >> 16;
 }
 
 static int16_t fixed_lut_interpolate(uint16_t *table, uint32_t value) {
@@ -421,20 +421,20 @@ br_angle C2_HOOK_CDECL BrFixedATan2(br_fixed_ls x, br_fixed_ls y) {
     if (y > 0) {
         if (x >= 0) {
             if (x > y) {
-                return fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)y)<<32) / x) >> 16);              // atan(y / x)
+                return fixed_lut_interpolate(fixed_atan_table, ((((br_uint_64)y)<<32) / x) >> 16);              // atan(y / x)
             } else if (x == y) {
                 return 0x2000;                                                              // PI / 4
             } else {
-                return 0x4000 - fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)x)<<32) / y) >> 16);     // PI/2 - atan(x / y)
+                return 0x4000 - fixed_lut_interpolate(fixed_atan_table, ((((br_uint_64)x)<<32) / y) >> 16);     // PI/2 - atan(x / y)
             }
         } else {
             x = -x;
             if (x < y) {
-                return 0x4000 + fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)x)<<32) / y) >> 16);     // PI/2 + atan(x / y)
+                return 0x4000 + fixed_lut_interpolate(fixed_atan_table, ((((br_uint_64)x)<<32) / y) >> 16);     // PI/2 + atan(x / y)
             } else if (x == y) {
                 return 0x6000;                                                              // 3 * PI / 4
             } else {
-                return 0x8000 - fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)y)<<32) / x) >> 16);     // PI - atan(y / x)
+                return 0x8000 - fixed_lut_interpolate(fixed_atan_table, ((((br_uint_64)y)<<32) / x) >> 16);     // PI - atan(y / x)
             }
         }
     } else if (y < 0) {
@@ -442,19 +442,19 @@ br_angle C2_HOOK_CDECL BrFixedATan2(br_fixed_ls x, br_fixed_ls y) {
         if (x < 0) {
             x = -x;
             if (x > y) {
-                return 0x8000 + fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)y)<<32) / x) >> 16);     // PI + atan(y / x)
+                return 0x8000 + fixed_lut_interpolate(fixed_atan_table, ((((br_uint_64)y)<<32) / x) >> 16);     // PI + atan(y / x)
             } else if (x == y) {
                 return 0xa000;                                                              // 5 * PI / 4
             } else {
-                return 0xc000 - fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)x)<<32) / y) >> 16);     // 3 * PI / 2 - atan(x / y)
+                return 0xc000 - fixed_lut_interpolate(fixed_atan_table, ((((br_uint_64)x)<<32) / y) >> 16);     // 3 * PI / 2 - atan(x / y)
             }
         } else {
             if (x < y) {
-                return 0xc000 + fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)x)<<32) / y) >> 16);     // 3 * PI / 2 + atan(x / y)
+                return 0xc000 + fixed_lut_interpolate(fixed_atan_table, ((((br_uint_64)x)<<32) / y) >> 16);     // 3 * PI / 2 + atan(x / y)
             } else if (x == y) {
                 return 0xe000;                                                              // 7 * PI / 4
             } else {
-                return -fixed_lut_interpolate(fixed_atan_table, ((((unsigned long long)y)<<32) / x) >> 16);             // 2 * pi - atan(y / x)
+                return -fixed_lut_interpolate(fixed_atan_table, ((((br_uint_64)y)<<32) / x) >> 16);             // 2 * pi - atan(y / x)
             }
         }
     } else {
@@ -471,20 +471,20 @@ br_angle C2_HOOK_CDECL BrFixedATan2Fast(br_fixed_ls x, br_fixed_ls y) {
     if (y > 0) {
         if (x >= 0) {
             if (x > y) {
-                return ((((unsigned long long)y)<<32) / x) >> 19;                                                       // atan(y / x)
+                return ((((br_uint_64)y)<<32) / x) >> 19;                                                       // atan(y / x)
             } else if (x == y) {
                 return 0x2000;                                                              // PI / 4
             } else {
-                return 0x4000 - (((((unsigned long long)x)<<32) / y) >> 19);                                            // PI/2 - atan(x / y)
+                return 0x4000 - (((((br_uint_64)x)<<32) / y) >> 19);                                            // PI/2 - atan(x / y)
             }
         } else {
             x = -x;
             if (x < y) {
-                return 0x4000 + (((((unsigned long long)x)<<32) / y) >> 19);                                            // PI/2 + atan(x / y)
+                return 0x4000 + (((((br_uint_64)x)<<32) / y) >> 19);                                            // PI/2 + atan(x / y)
             } else if (x == y) {
                 return 0x6000;                                                              // 3 * PI / 4
             } else {
-                return 0x8000 - (((((unsigned long long)y)<<32) / x) >> 19);                                            // PI - atan(y / x)
+                return 0x8000 - (((((br_uint_64)y)<<32) / x) >> 19);                                            // PI - atan(y / x)
             }
         }
     } else if (y < 0) {
@@ -492,19 +492,19 @@ br_angle C2_HOOK_CDECL BrFixedATan2Fast(br_fixed_ls x, br_fixed_ls y) {
         if (x < 0) {
             x = -x;
             if (x > y) {
-                return 0x8000 + (((((unsigned long long)y)<<32) / x) >> 19);                                            // PI + atan(y / x)
+                return 0x8000 + (((((br_uint_64)y)<<32) / x) >> 19);                                            // PI + atan(y / x)
             } else if (x == y) {
                 return 0xa000;                                                              // 5 * PI / 4
             } else {
-                return 0xc000 - (((((unsigned long long)x)<<32) / y) >> 19);                                            // 3 * PI / 2 - atan(x / y)
+                return 0xc000 - (((((br_uint_64)x)<<32) / y) >> 19);                                            // 3 * PI / 2 - atan(x / y)
             }
         } else {
             if (x < y) {
-                return 0xc000 + (((((unsigned long long)x)<<32) / y) >> 19);                                            // 3 * PI / 2 + atan(x / y)
+                return 0xc000 + (((((br_uint_64)x)<<32) / y) >> 19);                                            // 3 * PI / 2 + atan(x / y)
             } else if (x == y) {
                 return 0xe000;                                                              // 7 * PI / 4
             } else {
-                return (br_angle)(0x10000 - (((((unsigned long long)y)<<32) / x) >> 19));                               // 2 * pi - atan(y / x)
+                return (br_angle)(0x10000 - (((((br_uint_64)y)<<32) / x) >> 19));                               // 2 * pi - atan(y / x)
             }
         }
     } else {

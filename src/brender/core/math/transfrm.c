@@ -194,10 +194,10 @@ void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, const br_matrix34*
 
     switch (xform->type) {
     case BR_TRANSFORM_MATRIX34:
-        c2_memcpy(&xform->t.mat, mat, sizeof(br_matrix34));
+        memcpy(&xform->t.mat, mat, sizeof(br_matrix34));
         break;
     case BR_TRANSFORM_MATRIX34_LP:
-        c2_memcpy(&xform->t.mat, mat, sizeof(br_matrix34));
+        memcpy(&xform->t.mat, mat, sizeof(br_matrix34));
         BrMatrix34LPNormalise(&xform->t.mat, &xform->t.mat);
         break;
     case BR_TRANSFORM_QUAT:
@@ -219,7 +219,7 @@ void C2_HOOK_CDECL BrMatrix34ToTransform(br_transform* xform, const br_matrix34*
         BrVector3Copy(&xform->t.quat.t, (br_vector3*)mat->m[3]);
         break;
     default:
-        c2_abort();
+        abort();
     }
 }
 
@@ -228,7 +228,7 @@ void C2_HOOK_CDECL BrTransformToTransform(br_transform* dest, const br_transform
     br_matrix34 temp;
 
     if (src->type == dest->type) {
-        c2_memcpy(dest, src, sizeof(br_transform));
+        memcpy(dest, src, sizeof(br_transform));
         return;
     }
     switch (dest->type) {

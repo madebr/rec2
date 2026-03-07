@@ -114,4 +114,6 @@ extern void PDExtractDirectory(char *pDest, const char *pPath);
 
 extern void PDPageInProcessMemory(void);
 
+extern void PDDisposeActionReplayBuffer(void);
+
 #endif /* REC2_SDL3_H */

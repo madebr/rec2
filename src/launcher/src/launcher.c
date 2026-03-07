@@ -5,6 +5,7 @@
 #include "util.h"
 
 #include <d3d.h>
+#include <ddraw.h>
 #include <windows.h>
 
 void Direct3DRefreshDeviceCombobox(void) {
@@ -256,6 +257,8 @@ int CALLBACK D3DOptionsDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam
 int CALLBACK MainWindowDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
     int d3d_hw_detected;
     int i;
+    STARTUPINFOA startup_info;
+    PROCESS_INFORMATION process_information;
 
     switch (Msg) {
     default:
@@ -338,7 +341,6 @@ int CALLBACK MainWindowDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam
         PostMessageA(hWnd, 0x46f, 0, 0);
         return 0;
     case 0x46f:
-        HRESULT WINAPI EnumerateCallback(LPDDENUMCALLBACKA, void *);
         if (g_DirectDrawEnumerateA(DDrawDisplayCallback, NULL) != 0) {
             PostMessageA(hWnd, 0x473, 0, 0);
         } else {
@@ -459,8 +461,6 @@ int CALLBACK MainWindowDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam
             EnableD3DOptions(1);
             return 0;
         case IDC_README:
-            STARTUPINFOA startup_info;
-            PROCESS_INFORMATION process_information;
             memset(&startup_info, 0, sizeof(startup_info));
             startup_info.cb = sizeof(startup_info);
             CreateProcessA(NULL, "notepad readme.txt", NULL, NULL, 0, 0, &g_environment, NULL, &startup_info, &process_information);

@@ -22,9 +22,9 @@ int C2_HOOK_FASTCALL S3GetFileSize(FILE *pF) {
     int cur_pos;
     int pos_end;
 
-    cur_pos = c2_ftell(pF);
-    c2_fseek(pF, 0, SEEK_END);
-    pos_end = c2_ftell(pF);
-    c2_fseek(pF, cur_pos, SEEK_SET);
+    cur_pos = ftell(pF);
+    fseek(pF, 0, SEEK_END);
+    pos_end = ftell(pF);
+    fseek(pF, cur_pos, SEEK_SET);
     return pos_end;
 }

@@ -5,7 +5,7 @@
 #include "utility.h"
 
 #include "c2_hooks.h"
-#include "c2_stdio.h"
+#include <stdio.h>
 
 
 // GLOBAL: CARMA2_HW 0x00762284

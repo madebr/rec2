@@ -2,7 +2,7 @@
 
 #include "animation.h"
 #include "car.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "explosions.h"
 #include "globvars.h"
 #include "globvrpb.h"
@@ -649,10 +649,10 @@ void C2_HOOK_FASTCALL InitBoner(tPedForms_vtable* pTable) {
     C2_HOOK_BUG_ON(REC2_ASIZE(gPed_remaps) != 10);
 
     gPed_vtable = pTable;
-    c2_memset(gPed_forms, 0, sizeof(gPed_forms));
-    c2_memset(gPed_personalities, 0, sizeof(gPed_personalities));
-    c2_memset(gPed_moves, 0, sizeof(gPed_moves));
-    c2_memset(gPed_remaps, 0, sizeof(gPed_remaps));
+    memset(gPed_forms, 0, sizeof(gPed_forms));
+    memset(gPed_personalities, 0, sizeof(gPed_personalities));
+    memset(gPed_moves, 0, sizeof(gPed_moves));
+    memset(gPed_remaps, 0, sizeof(gPed_remaps));
 
     ClearOutMorphs();
 
@@ -1150,13 +1150,13 @@ void C2_HOOK_FASTCALL ReadPedSpecs(FILE* pF) {
         tRace_ped_spec* spec = &gRace_pedestrian_specs[i];
         size_t len;
 
-        len = c2_strlen(spec->spawn_material->identifier);
+        len = strlen(spec->spawn_material->identifier);
         if (len < 4) {
             len = 4;
         }
         if (len - 4 < 8) {
-            c2_strcpy(s2, spec->spawn_material->identifier);
-            c2_strcpy(&s2[len], "xxxxxxxx.MAT");
+            strcpy(s2, spec->spawn_material->identifier);
+            strcpy(&s2[len], "xxxxxxxx.MAT");
             BrResFree(spec->spawn_material->identifier);
             spec->spawn_material->identifier = BrResStrDup(spec->spawn_material, s2);
         }
@@ -1174,7 +1174,7 @@ tPed_personality* FindOrOpenPersonality(const char* pName) {
         if (gPed_personalities[i] == NULL) {
             continue;
         }
-        if (c2_strcmp(gPed_personalities[i]->name, pName) == 0) {
+        if (strcmp(gPed_personalities[i]->name, pName) == 0) {
             return gPed_personalities[i];
         }
     }
@@ -1567,7 +1567,7 @@ void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pMove_action, int pWalk_
             if (pMove_action < -1) {
                 char buffer[256];
 
-                c2_sprintf(buffer, "%d", pMove_action);
+                sprintf(buffer, "%d", pMove_action);
                 if (pMove_action == -2) {
                     FatalError(kFatalError_CoreMoveMissingFor_SS, buffer, pPed->character->personality->name);
                 } else {
@@ -1582,7 +1582,7 @@ void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pMove_action, int pWalk_
     if (i >= 10) {
         char buffer[256];
 
-        c2_sprintf(buffer, "%d", pMove_action);
+        sprintf(buffer, "%d", pMove_action);
         FatalError(kFatalError_CyclicMoveDefinitionFor_SS, buffer, pPed->character->personality->name);
     }
     PipeSinglePedMove(pPed, original_field_0x1c, original_move_id,
@@ -1809,12 +1809,12 @@ void C2_HOOK_FASTCALL BuildPedestrian(tPedestrian* pPed, const char* pGroup_name
     BrVector3Copy((br_vector3*)mat.m[3], pPos);
     pPed->character = BuildCharacterInstance(pGroup_name, &mat);
     SetModelCallbacks(pPed->character);
-    c2_sprintf(texture_name, "%sB", pGroup_name);
+    sprintf(texture_name, "%sB", pGroup_name);
     texture = BrMapFind(texture_name);
     if (texture == NULL) {
         FatalError(kFatalError_CantFindPedTexture_S, texture_name);
     }
-    c2_sprintf(material_name, "%s%d.MAT", pGroup_name, 1);
+    sprintf(material_name, "%s%d.MAT", pGroup_name, 1);
     material = BrMaterialFind(material_name);
     if (material != NULL) {
         material->colour_map = texture;
@@ -1864,7 +1864,7 @@ void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel) {
     if (material == NULL) {
         return;
     }
-    if (material->identifier == NULL || c2_strlen(material->identifier) - 4 <= 7) {
+    if (material->identifier == NULL || strlen(material->identifier) - 4 <= 7) {
         return;
     }
     if (material->identifier[7] != '?') {
@@ -1912,7 +1912,7 @@ void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel) {
         if (gPed_count >= PEDESTRIAN_MAX_COUNT) {
             return;
         }
-        c2_strcpy(group_name, ped_spec->group->members[IRandomBetween(0, ped_spec->group->count - 1)].name);
+        strcpy(group_name, ped_spec->group->members[IRandomBetween(0, ped_spec->group->count - 1)].name);
         if (!gAnimalsOn) {
             int j;
 
@@ -1969,7 +1969,7 @@ void C2_HOOK_FASTCALL FinishUpLoadingPeds(void) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPedestrian, character, 0x0);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_character_instance, ped, 0xe4);
 
-    c2_memcpy(new_pedestrians, gPedestrian_array, gPed_count * sizeof(tPedestrian));
+    memcpy(new_pedestrians, gPedestrian_array, gPed_count * sizeof(tPedestrian));
 
     BrMemFree(gPedestrian_array);
     gPedestrian_array = new_pedestrians;
@@ -2056,7 +2056,7 @@ void C2_HOOK_FASTCALL InitPedsForRace(void) {
     gCount_killed_peds = 0;
     gPed_valium_left = 0;
     ResetNapalmBolts();
-    c2_memset(gPed_cache_006944c0, 0, sizeof(gPed_cache_006944c0));
+    memset(gPed_cache_006944c0, 0, sizeof(gPed_cache_006944c0));
 }
 
 // FUNCTION: CARMA2_HW 0x004d5d60
@@ -2227,7 +2227,7 @@ void C2_HOOK_FASTCALL MungeNapalm(void) {
 
                     C2_HOOK_BUG_ON((REC2_ASIZE(bolt->field_0x2c) - 1) * sizeof(br_vector3) != 0x30);
 
-                    c2_memmove(&bolt->field_0x2c[1], &bolt->field_0x2c[0], (REC2_ASIZE(bolt->field_0x2c) - 1) * sizeof(br_vector3));
+                    memmove(&bolt->field_0x2c[1], &bolt->field_0x2c[0], (REC2_ASIZE(bolt->field_0x2c) - 1) * sizeof(br_vector3));
                     BrVector3Sub(&bolt->field_0x2c[0], &bolt->ped->pos, &bolt->actors[0]->t.t.translate.t);
                     BrVector3Normalise(&bolt->field_0x2c[0], &bolt->field_0x2c[0]);
                     BrVector3Scale(&bolt->field_0x2c[0], &bolt->field_0x2c[0], FRandomBetween(.8f, 1.25f));
@@ -2293,7 +2293,7 @@ void C2_HOOK_FASTCALL MungeNapalm(void) {
             tU32 time = the_time;
 
             C2_HOOK_BUG_ON(REC2_ASIZE(flame_positions) != REC2_ASIZE(gFlamed_ped_flame_scales));
-            c2_memset(flame_positions, 0, sizeof(flame_positions));
+            memset(flame_positions, 0, sizeof(flame_positions));
             for (j = 0; i < REC2_ASIZE(flame_positions); i++) {
                 br_actor* actor = bolt->actors[j];
                 if (!gAction_replay_mode) {
@@ -2668,7 +2668,7 @@ void C2_HOOK_FASTCALL SetRandomOmega(tCollision_info* pObject, float pMax) {
     BrVector3Scale(&pObject->omega, &pObject->omega, pMax);
 #else
     BrVector3Set(&pObject->omega, SRandomPosNeg(1.f), SRandomPosNeg(1.f), SRandomPosNeg(1.f));
-    BrVector3Scale(&pObject->omega, &pObject->omega, &pMax / BrVector3Length(&tv));
+    BrVector3Scale(&pObject->omega, &pObject->omega, pMax / BrVector3Length(&pObject->omega));
 #endif
 }
 
@@ -3240,10 +3240,12 @@ void C2_HOOK_FASTCALL CBLoadPersonality(tPed_personality* pPersonality, FILE* pF
     FILE* sound_f;
     int i;
 
+#ifndef REC2_MATCHING
     C2_HOOK_BUG_ON(sizeof(tPed_personality_sounds) != 0x84);
     C2_HOOK_BUG_ON(REC2_ASIZE(((tPed_personality_sounds*)NULL)->sounds) != 11);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, sounds, 0x64)
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPed_personality, jump_height, 0x50)
+#endif
 
     /* Name of sound definition file */
     GetAString(pF, s);
@@ -3301,7 +3303,7 @@ tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char *pFile_name) {
     char s[256];
     int i;
 
-    if (c2_strcmp(pFile_name, "NONE") == 0) {
+    if (strcmp(pFile_name, "NONE") == 0) {
         return NULL;
     }
     f = BonerOpenRemaps(pFile_name);
@@ -3319,13 +3321,13 @@ tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char *pFile_name) {
     }
     remap->count_bones = 0;
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "START OF BONES") != 0) {
+    if (strcmp(s, "START OF BONES") != 0) {
         FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
     }
     while (!PFfeof(f)) {
         GetALineAndDontArgue(f, s);
-        /* FIXME: should be 'c2_strcmp(s, "END OF BONES") == 0'? */
-        if ((remap->count_bones == 0 && c2_strcmp(s, "END OF BONES") != 0) || c2_strcmp(s, "NEXT BONE") == 0) {
+        /* FIXME: should be 'strcmp(s, "END OF BONES") == 0'? */
+        if ((remap->count_bones == 0 && strcmp(s, "END OF BONES") != 0) || strcmp(s, "NEXT BONE") == 0) {
             remap->count_bones += 1;
         }
     }
@@ -3344,7 +3346,7 @@ tPed_remap* C2_HOOK_FASTCALL ReadRemap(const char *pFile_name) {
         }
         GetALineAndDontArgue(f, s);
     }
-    c2_strcpy(remap->name, pFile_name);
+    strcpy(remap->name, pFile_name);
     for (i = 0; ; i++) {
         if (i >= REC2_ASIZE(gPed_remaps)) {
             FatalError(kFatalError_BonerError_TooManyRemapsLoaded);
@@ -3366,7 +3368,7 @@ FILE* C2_HOOK_FASTCALL BonerOpenPersonality(const char* pName) {
     PathCat(path, path, pName);
     gTwtPeds = OpenPackFileAndSetTiffLoading(path);
     PathCat(path, path, pName);
-    c2_strcat(path, ".TXT");
+    strcat(path, ".TXT");
     return DRfopen(path, "rt");
 }
 
@@ -3377,7 +3379,7 @@ FILE* C2_HOOK_FASTCALL BonerOpenCharacterForm(const char* pName) {
     PathCat(path, gApplication_path, gPedsFolder);
     PathCat(path, path, "FORMS");
     PathCat(path, path, pName);
-    c2_strcat(path, ".TXT");
+    strcat(path, ".TXT");
     return DRfopen(path, "rt");
 }
 
@@ -3428,7 +3430,7 @@ tPed_remap* C2_HOOK_FASTCALL FindOrOpenRemap(const char* pName) {
     int i;
 
     for (i = 0; i < REC2_ASIZE(gPed_remaps); i++) {
-        if (gPed_remaps[i] != NULL && c2_strcmp(gPed_remaps[i]->name, pName) == 0) {
+        if (gPed_remaps[i] != NULL && strcmp(gPed_remaps[i]->name, pName) == 0) {
             return gPed_remaps[i];
         }
     }
@@ -3511,14 +3513,14 @@ tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const 
                 }
             }
             for (k = 0; k < pForm->count_bones; k++) {
-                if (c2_strcmp(pForm->bones[k].name, bone_name_anim_file) == 0) {
+                if (strcmp(pForm->bones[k].name, bone_name_anim_file) == 0) {
                     br_euler e;
                     br_matrix34 mat_lp;
 
                     Flip3DStoBRaxes(&mat);
                     BrMatrix34LPNormalise(&mat_lp, &mat);
                     if (pForm->bones[k].indices[0] == -1) {
-                        c2_memmove(&move->frames[i].mat, &mat_lp, 9 * sizeof(float));
+                        memmove(&move->frames[i].mat, &mat_lp, 9 * sizeof(float));
                         if (i != 0) {
                             BrVector3Sub((br_vector3*)move->frames[i].mat.m[3], (br_vector3*)mat_lp.m[3], &rot_pos);
                             BrVector3Accumulate(&move_pos, (br_vector3*)move->frames[i].mat.m[3]);
@@ -3535,7 +3537,7 @@ tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const 
             }
         }
     }
-    if (c2_strchr(pLooping_reset_flags, 'X') != NULL) {
+    if (strchr(pLooping_reset_flags, 'X') != NULL) {
         move->frames[0].mat.m[3][0] = -move_pos.v[0];
         move_pos.v[0] = 0.f;
         move->looping_reset_flags |= 0x1;
@@ -3547,7 +3549,7 @@ tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const 
             move->frames[0].mat.m[3][0] = 0.f;
         }
     }
-    if (c2_strchr(pLooping_reset_flags, 'Y') != NULL) {
+    if (strchr(pLooping_reset_flags, 'Y') != NULL) {
         move->frames[0].mat.m[3][1] = -move_pos.v[1];
         move_pos.v[1] = 0.f;
         move->looping_reset_flags |= 0x2;
@@ -3559,7 +3561,7 @@ tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const 
             move->frames[0].mat.m[3][1] = 0.f;
         }
     }
-    if (c2_strchr(pLooping_reset_flags, 'Z') != NULL) {
+    if (strchr(pLooping_reset_flags, 'Z') != NULL) {
         move->frames[0].mat.m[3][2] = -move_pos.v[2];
         move_pos.v[2] = 0.f;
         move->looping_reset_flags |= 0x4;
@@ -3591,7 +3593,7 @@ tPed_move* C2_HOOK_FASTCALL ReadMove(const char* pName, tPed_form* pForm, const 
     }
     move->move_flags = pFlags;
     PFfclose(f);
-    c2_strcpy(move->name, pName);
+    strcpy(move->name, pName);
 
     for (i = 0; ; i++) {
         if (i >= REC2_ASIZE(gPed_moves)) {
@@ -3610,7 +3612,7 @@ tPed_move* C2_HOOK_FASTCALL FindOrOpenMove(const char* pName, tPed_form* pForm, 
 
     for (i = 0; i < REC2_ASIZE(gPed_moves); i++) {
         if (gPed_moves[i] != NULL) {
-            if (c2_strcmp(gPed_moves[i]->name, pName) == 0) {
+            if (strcmp(gPed_moves[i]->name, pName) == 0) {
                 return gPed_moves[i];
             }
         }
@@ -3659,9 +3661,9 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
 
     while (!PFfeof(f)) {
         GetALineAndDontArgue(f, s);
-        if (c2_strcmp(s, "NEXT BONE") == 0) {
+        if (strcmp(s, "NEXT BONE") == 0) {
             form->count_bones += 1;
-        } else if (c2_strcmp(s, "END OF BONES") == 0) {
+        } else if (strcmp(s, "END OF BONES") == 0) {
             form->count_bones += 1;
             break;
         }
@@ -3687,7 +3689,7 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
         GetALineAndDontArgue(f, s);
     }
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "START OF BONES") != 0) {
+    if (strcmp(s, "START OF BONES") != 0) {
         FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
     }
     for (i = 0; i < max_boned_physicing_at_once; i++) {
@@ -3711,7 +3713,7 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
             int j;
 
             for (j = 0; j < form->remap->count_bones; j++) {
-                if (c2_strcmp(bone->name, form->remap->bones[j].name) == 0) {
+                if (strcmp(bone->name, form->remap->bones[j].name) == 0) {
                     bone->remapped_bone = &form->remap->bones[j];
                     break;
                 }
@@ -3838,7 +3840,7 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
             }
         }
         GetALineAndDontArgue(f, s);
-        if (c2_strcmp(s, "NEXT BONE") != 0 && c2_strcmp(s, "END OF BONES") != 0) {
+        if (strcmp(s, "NEXT BONE") != 0 && strcmp(s, "END OF BONES") != 0) {
             FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "NEXT BONE");
         }
     }
@@ -3861,7 +3863,7 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
         }
     }
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "START OF MOVES") != 0) {
+    if (strcmp(s, "START OF MOVES") != 0) {
         FatalError(kFatalError_BonerError_UnableToOpenFile_S, "START OF MOVES");
     }
     form->count_moves = 0;
@@ -3869,14 +3871,14 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
         const char* str;
 
         GetALineAndDontArgue(f, s);
-        if (c2_strcmp(s, "END OF MOVES") == 0) {
+        if (strcmp(s, "END OF MOVES") == 0) {
             break;
         } else if (PFfeof(f)) {
             FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "END OF MOVES");
         }
         /* ID */
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &form_moves[i].id);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &form_moves[i].id);
 
         /* Default frame rate */
         form_moves[i].frametime = 1000 / GetAnInt(f);
@@ -3924,7 +3926,7 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
         form->stored_dismembered_characters[i] = BrMemAllocate(form->count_bones * sizeof(tPed_form_dismembered_character), kBoner_mem_type_stored);
     }
 
-    c2_strcpy(form->name, pName);
+    strcpy(form->name, pName);
     for (i = 0; ; i++) {
         if (i >= REC2_ASIZE(gPed_forms)) {
             FatalError(kFatalError_BonerError_TooManyFormsLoaded);
@@ -3944,7 +3946,7 @@ FILE* C2_HOOK_FASTCALL BonerOpenDefaultMoves(const char* pName) {
     PathCat(path, gApplication_path, gPedsFolder);
     PathCat(path, path, "MOVES");
     PathCat(path, path, pName);
-    c2_strcat(path, ".TXT");
+    strcat(path, ".TXT");
     return DRfopen(path, "rt");
 }
 
@@ -3953,7 +3955,7 @@ tPed_form* C2_HOOK_FASTCALL FindOrOpenForm(const char* pName) {
 
     for (i = 0; i < REC2_ASIZE(gPed_forms); i++) {
         if (gPed_forms[i] != NULL) {
-            if (c2_strcmp(gPed_forms[i]->name, pName) == 0) {
+            if (strcmp(gPed_forms[i]->name, pName) == 0) {
                 return gPed_forms[i];
             }
         }
@@ -3980,15 +3982,15 @@ br_model* C2_HOOK_FASTCALL BonerCloneModel(br_model *pModel, int pIndex, int pUp
     br_material* cloned_material;
     int i;
 
-    c2_strcpy(identifier, pModel->identifier);
-    str = c2_strtok(identifier, ".");
-    c2_sprintf(str + c2_strlen(str), "%d.DAT", pIndex);
+    strcpy(identifier, pModel->identifier);
+    str = strtok(identifier, ".");
+    sprintf(str + strlen(str), "%d.DAT", pIndex);
     clone = BrModelAllocate(str, pModel->nvertices ,pModel->nfaces);
-    c2_memmove(clone->vertices, pModel->vertices, pModel->nvertices * sizeof(br_vertex));
-    c2_memmove(clone->faces, pModel->faces, pModel->nfaces * sizeof(br_face));
-    c2_strcpy(identifier, pModel->faces->material->identifier);
-    str = c2_strtok(identifier, ".");
-    c2_sprintf(str + c2_strlen(str), "%d.MAT", pIndex);
+    memmove(clone->vertices, pModel->vertices, pModel->nvertices * sizeof(br_vertex));
+    memmove(clone->faces, pModel->faces, pModel->nfaces * sizeof(br_face));
+    strcpy(identifier, pModel->faces->material->identifier);
+    str = strtok(identifier, ".");
+    sprintf(str + strlen(str), "%d.MAT", pIndex);
     original_material = pModel->faces[0].material;
     cloned_material = BrMaterialFind(str);
     if (cloned_material == NULL && gCount_pedestrian_personality_cloned_materials < REC2_ASIZE(gPedestrian_character_cloned_materials)) {
@@ -4079,7 +4081,7 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
     BonerReadPersonalityModels(pName);
 
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "START OF BONES") != 0) {
+    if (strcmp(s, "START OF BONES") != 0) {
         FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
     }
 
@@ -4097,7 +4099,7 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
 
         GetALineAndDontArgue(f, s);
         for (bone_index = 0; bone_index < personality->form->count_bones; bone_index++) {
-            if (c2_strcmp(personality->form->bones[bone_index].name, s) == 0) {
+            if (strcmp(personality->form->bones[bone_index].name, s) == 0) {
                 break;
             }
         }
@@ -4108,7 +4110,7 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
         str = s2;
         model_i = 0;
         for (;;) {
-            char* comma_str = c2_strchr(str, ',');
+            char* comma_str = strchr(str, ',');
             char* next_str;
             if (comma_str != NULL) {
                 *comma_str = '\0';
@@ -4157,11 +4159,11 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
     }
     personality->M = personality->form->simple_physicing[0].collision_info->M;
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "END OF BONES") != 0) {
+    if (strcmp(s, "END OF BONES") != 0) {
         FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "END OF BONES");
     }
     GetALineAndDontArgue(f, s);
-    if (c2_strcmp(s, "START OF MOVES") != 0) {
+    if (strcmp(s, "START OF MOVES") != 0) {
         FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF MOVES");
     }
 
@@ -4178,7 +4180,7 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
         FatalError(kFatalError_BonerError_UnableToOpenFile_S, default_moves_file);
     }
     GetALineAndDontArgue(g, s);
-    if (c2_strcmp(s, "START OF MOVES") != 0) {
+    if (strcmp(s, "START OF MOVES") != 0) {
         FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
     }
     move_f = g;
@@ -4188,7 +4190,7 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
 
         /* ID or "END OF MOVES" */
         GetALineAndDontArgue(move_f, s);
-        if (c2_strcmp(s, "END OF MOVES") == 0 || PFfeof(move_f)) {
+        if (strcmp(s, "END OF MOVES") == 0 || PFfeof(move_f)) {
             if (move_f == g) {
                 PFfclose(g);
                 move_f = f;
@@ -4198,8 +4200,8 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
                 break;
             }
         }
-        str = c2_strtok(s, "\t ,/");
-        c2_sscanf(str, "%d", &move_id);
+        str = strtok(s, "\t ,/");
+        sscanf(str, "%d", &move_id);
         for (i = 0; i < personality->form->count_moves; i++) {
             if (move_id == personality->form->moves[i].id) {
                 /* Scaling factor */
@@ -4212,7 +4214,7 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
             }
         }
         if (i == personality->form->count_moves) {
-            c2_sprintf(s, "%s/%d", personality->name, move_id);
+            sprintf(s, "%s/%d", personality->name, move_id);
             FatalError(kFatalError_BonerError_IllegalMoveID_S, s);
         }
     }
@@ -4256,7 +4258,7 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
     }
 
     PFfclose(f);
-    c2_strcpy(personality->name, pName);
+    strcpy(personality->name, pName);
     for (i = 0; ; i++) {
         if (i >= REC2_ASIZE(gPed_personalities)) {
             FatalError(eFatalError_BonerError_TooManyPersonalitiesLoaded);

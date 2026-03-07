@@ -1,6 +1,6 @@
 #include "matrix23.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 #define A(x, y) A->m[x][y]
 #define B(x, y) B->m[x][y]
@@ -203,7 +203,12 @@ void C2_HOOK_CDECL BrMatrix23TApplyV(br_vector2* A, const br_vector2* B, const b
 void C2_HOOK_CDECL BrMatrix23Pre(br_matrix23* mat, const br_matrix23* A) {
 
     BrMatrix23Mul(&mattmp1_23, A, mat);
-    BrMatrix23Copy(mat, &mattmp1_23);
+    mat->m[0][0] = mattmp1_23.m[0][0];
+    mat->m[0][1] = mattmp1_23.m[0][1];
+    mat->m[1][0] = mattmp1_23.m[1][0];
+    mat->m[1][1] = mattmp1_23.m[1][1];
+    mat->m[2][0] = mattmp1_23.m[2][0];
+    mat->m[2][1] = mattmp1_23.m[2][1];
 }
 
 // FUNCTION: CARMA2_HW 0x00535000

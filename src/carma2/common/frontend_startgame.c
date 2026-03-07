@@ -30,9 +30,9 @@ int C2_HOOK_FASTCALL StartGameInfunc(tFrontend_spec* pFrontend) {
     char backdrop_name[256];
 
     if (!pFrontend->loaded) {
-        c2_strcpy(backdrop_name, pFrontend->backdrop_name);
+        strcpy(backdrop_name, pFrontend->backdrop_name);
         LoadMenuSettings(pFrontend);
-        c2_strcpy(pFrontend->backdrop_name, backdrop_name);
+        strcpy(pFrontend->backdrop_name, backdrop_name);
         FuckWithWidths(pFrontend);
         if (pFrontend->previous != NULL) {
             pFrontend->previous->isPreviousSomeOtherMenu = 1;

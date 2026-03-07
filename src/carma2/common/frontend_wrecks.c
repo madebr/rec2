@@ -152,7 +152,7 @@ int C2_HOOK_FASTCALL WrecksInFunc(tFrontend_spec* pFrontend) {
         gFrontend_wrecks_car_count += 1;
     }
     gFrontend_wreck_bought_car_dz = 0.f;
-    c2_memset(gWreck_gallery_sell_infos, 0, sizeof(gWreck_gallery_sell_infos));
+    memset(gWreck_gallery_sell_infos, 0, sizeof(gWreck_gallery_sell_infos));
 
     gFrontend_selected_item_index = 0;
     gFrontend_wrecks_current = 0;
@@ -208,7 +208,7 @@ int C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
 }
 
 // FUNCTION: CARMA2_HW 0x0046f4f0
-int C2_HOOK_CDECL WreckPick(br_actor* world, br_model* model, br_material* material, br_vector3* pos, br_vector3* dir, br_scalar near, br_scalar far, void* arg) {
+int C2_HOOK_CDECL WreckPick(br_actor* world, br_model* model, br_material* material, br_vector3* pos, br_vector3* dir, br_scalar pNear, br_scalar pFar, void* arg) {
     int i;
 
     for (i = 0; i < gFrontend_wrecks_car_count; i++) {
@@ -314,7 +314,7 @@ int C2_HOOK_FASTCALL WrecksUpdateFunc(tFrontend_spec* pFrontend) {
 
     gFrontend_wrecks_previous_update = now;
 
-    c2_strcpy(pFrontend->items[6].text, MungeCommas(gProgram_state.credits));
+    strcpy(pFrontend->items[6].text, MungeCommas(gProgram_state.credits));
 
     if (gFrontend_wrecks_hscroll % 30 == 0 && gFrontend_wreck_bought_car_dz == 0.f) {
         tCar_spec* car;
@@ -331,7 +331,7 @@ int C2_HOOK_FASTCALL WrecksUpdateFunc(tFrontend_spec* pFrontend) {
         if (!gWreck_gallery_sell_infos[gFrontend_wrecks_current].sold) {
             int got_it_already;
 
-            c2_sprintf(pFrontend->items[2].text, "%s @R%s",
+            sprintf(pFrontend->items[2].text, "%s @R%s",
                 gOpponents[opponent->index].car_name,
                 gOpponents[opponent->index].line4_description);
             MungeMetaCharactersChar(pFrontend->items[2].text, 'R', '\r');
@@ -339,19 +339,19 @@ int C2_HOOK_FASTCALL WrecksUpdateFunc(tFrontend_spec* pFrontend) {
             pFrontend->items[9].enabled = kFrontendItemEnabled_disabled;
             pFrontend->items[2].visible = 1;
             if (!car->knackered) {
-                c2_sprintf(pFrontend->items[8].text, "%s", GetMiscString(eMiscString_not_wasted));
+                sprintf(pFrontend->items[8].text, "%s", GetMiscString(eMiscString_not_wasted));
             } else {
                 int price = gOpponents[opponent->index].price;
 
                 if (price > gProgram_state.credits) {
-                    c2_sprintf(pFrontend->items[8].text, "%s - %s",
+                    sprintf(pFrontend->items[8].text, "%s - %s",
                         MungeCommas(price),
                         GetMiscString(eMiscString_dream_on));
                 } else if (got_it_already) {
-                    c2_sprintf(pFrontend->items[8].text, "%s",
+                    sprintf(pFrontend->items[8].text, "%s",
                         GetMiscString(eMiscString_already_have_it));
                 } else {
-                    c2_strcpy(pFrontend->items[8].text, MungeCommas(price));
+                    strcpy(pFrontend->items[8].text, MungeCommas(price));
                     pFrontend->items[9].enabled = kFrontendItemEnabled_enabled;
                 }
             }

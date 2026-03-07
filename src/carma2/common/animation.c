@@ -1,6 +1,6 @@
 #include "animation.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "loading.h"
 
 #include "brender/brender.h"

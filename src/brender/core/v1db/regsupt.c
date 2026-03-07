@@ -100,6 +100,7 @@ br_material* C2_HOOK_CDECL BrMaterialAdd(br_material* material) {
 // FUNCTION: CARMA2_HW 0x0051ee80
 br_material* C2_HOOK_CDECL BrMaterialRemove(br_material* material) {
 
+    BrMaterialClear(material);
     return (br_material*)BrRegistryRemove(&v1db.reg_materials, material);
 }
 
@@ -127,9 +128,7 @@ br_uint_32 C2_HOOK_CDECL BrMaterialAddMany(br_material** items, int n) {
 
     r = 0;
     for (i = 0; i < n; i++) {
-        BrRegistryAdd(&v1db.reg_materials, items[i]);
-        BrMaterialUpdate(items[i], BR_MATU_ALL);
-        if (items[i]) {
+        if (BrMaterialAdd(*items++) != NULL) {
             r++;
         }
     }

@@ -7,7 +7,7 @@
 #include "texture.h"
 
 #include <stdlib.h>
-#include <string.h>
+#include "c2_string.h"
 
 // GLOBAL: D3D 0x100175b0
 br_tv_template_entry bufferStoredD3DTemplateEntries[] = {

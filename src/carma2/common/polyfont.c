@@ -1,7 +1,7 @@
 #include "polyfont.h"
 
 #include "drmem.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "font.h"
 #include "globvars.h"
 #include "grafdata.h"
@@ -291,14 +291,14 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
 
     twt = OpenPackFileAndSetTiffLoading(the_path);
 
-    c2_strcpy(s, the_path);
+    strcpy(s, the_path);
     PathCat(s, s, "FONT.TXT");
     f = PFfopen(s, "rt");
     if (f == NULL) {
         FatalError(kFatalError_CannotLoadFontWidthTable_S, pName);
     }
 
-    c2_strcpy(gPolyFonts[pIndex].name, pName);
+    strcpy(gPolyFonts[pIndex].name, pName);
     /* number of characters */
     gPolyFonts[pIndex].numberOfCharacters = GetAnInt(f);
     /* inter-character spacing */
@@ -322,7 +322,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         glyph->glyph_width = pSize;
     }
     PFfclose(f);
-    c2_strcpy(s, the_path);
+    strcpy(s, the_path);
     PathCat(s, s, "BLANK.PIX");
     blank_map = LoadPolyFontPixiesP16(the_path, "BLANK.PIX", 1);
     if (blank_map == NULL) {
@@ -335,7 +335,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         int ascii;
         br_pixelmap* map;
 
-        c2_strcpy(s, the_path);
+        strcpy(s, the_path);
         ascii = gPolyFonts[pIndex].asciiOffset + i;
         sprintf(s2, "%d.PIX", ascii);
         PathCat(s, s, s2);
@@ -351,8 +351,8 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
             BrMapAdd(gTextureMaps[gSize_font_texture_pages]);
         }
         if (map->type != gTextureMaps[gSize_font_texture_pages]->type) {
-            c2_printf("FONT:%s  CHAR:%c (%i)\n", pName, ascii, ascii);
-            c2_fflush(c2_stdout);
+            printf("FONT:%s  CHAR:%c (%i)\n", pName, ascii, ascii);
+            fflush(stdout);
             BrFailure("BLOODY FONTS :(");
         }
         DRPixelmapRectangleCopy(
@@ -451,7 +451,7 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
     int texture_y;
 
     C2_HOOK_BUG_ON(REC2_ASIZE(gCar_icons) != 128);
-    c2_memset(gCar_icons, 0, sizeof(gCar_icons));
+    memset(gCar_icons, 0, sizeof(gCar_icons));
     count_car_icons = gIcons_pix->height / gCurrent_graf_data->car_icon_height;
 
     icon_width = FindSmallestPowerOf2BiggerThen(pMap->width);
@@ -531,7 +531,7 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
         gPolyFontMaterials[i] = CreateFontCharacterMaterial(0);
     }
     C2_HOOK_BUG_ON(sizeof(gPolyFonts) != 196344);
-    c2_memset(&gPolyFonts, 0, sizeof(gPolyFonts));
+    memset(&gPolyFonts, 0, sizeof(gPolyFonts));
     gString_root_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
     if (gString_root_actor == NULL) {
         FatalError(kFatalError_OOM_S, "");
@@ -713,10 +713,11 @@ void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
 int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
     int len;
     int i;
+    int result;
 
     CheckAvailabilityOfThisFont(pFont);
-    len = c2_strlen(pText);
-    int result = 0;
+    len = strlen(pText);
+    result = 0;
     for (i = 0; i < len; i++) {
         result += CharacterWidth(pFont, pText[i]);
     }
@@ -748,7 +749,7 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
         break;
     }
 
-    text_len = c2_strlen(pText);
+    text_len = strlen(pText);
     if (gCount_polyfont_glyph_actors + text_len >= REC2_ASIZE(gPolyfont_glyph_actors)) {
         /* line is not drawn */
         /* FIXME: log debug message */
@@ -837,7 +838,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
         break;
     }
 
-    text_len = c2_strlen(pText);
+    text_len = strlen(pText);
     if (gCount_polyfont_glyph_actors + text_len >= REC2_ASIZE(gPolyfont_glyph_actors)) {
         /* line is not drawn */
         /* FIXME: log debug message */
@@ -907,6 +908,6 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
 void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
 
     while (PolyFontTextWidth(pFont, pText) > pWidth) {
-        pText[c2_strlen(pText) + -1] = '\0';
+        pText[strlen(pText) + -1] = '\0';
     }
 }

@@ -119,7 +119,7 @@ void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend) {
         SelectThisItemIn(pFrontend, 7, 22);
         break;
     }
-    c2_sprintf(pFrontend->items[24].text, "%i", gFrontend_net_options.starting_credits);
+    sprintf(pFrontend->items[24].text, "%i", gFrontend_net_options.starting_credits);
     switch (gFrontend_game_type) {
     case eNet_game_type_fight_to_death:
     case eNet_game_type_2:
@@ -152,11 +152,11 @@ void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend) {
         pFrontend->items[26].enabled = kFrontendItemEnabled_disabled;
         pFrontend->items[30].enabled = kFrontendItemEnabled_disabled;
         pFrontend->items[29].enabled = kFrontendItemEnabled_disabled;
-        c2_strcpy(pFrontend->items[26].text, "----");
+        strcpy(pFrontend->items[26].text, "----");
         break;
     case eNet_game_type_1:
     case eNet_game_type_5:
-        c2_sprintf(pFrontend->items[26].text, "%i", gFrontend_net_options.starting_target);
+        sprintf(pFrontend->items[26].text, "%i", gFrontend_net_options.starting_target);
         break;
     case eNet_game_type_foxy:
         {
@@ -164,9 +164,9 @@ void C2_HOOK_FASTCALL DisplayNetworkOptions(tFrontend_spec* pFrontend) {
             int minutes = (seconds / 60) % 60;
             int hours = seconds / 3600;
             if (hours == 0) {
-                c2_sprintf(pFrontend->items[26].text, "%02i:%02i", minutes, seconds % 60);
+                sprintf(pFrontend->items[26].text, "%02i:%02i", minutes, seconds % 60);
             } else {
-                c2_sprintf(pFrontend->items[26].text, "%02i:%02i:%02i", hours, minutes, seconds % 60);
+                sprintf(pFrontend->items[26].text, "%02i:%02i:%02i", hours, minutes, seconds % 60);
             }
         }
         break;
@@ -178,7 +178,7 @@ void C2_HOOK_FASTCALL BackupNetworkOptions(void) {
 
     C2_HOOK_BUG_ON(sizeof(gFrontend_net_options) != 0x30);
     C2_HOOK_BUG_ON(sizeof(gFrontend_backup_net_options) != 0x30);
-    c2_memcpy(&gFrontend_backup_net_options, &gFrontend_net_options, sizeof(gFrontend_net_options));
+    memcpy(&gFrontend_backup_net_options, &gFrontend_net_options, sizeof(gFrontend_net_options));
 }
 
 // FUNCTION: CARMA2_HW 0x00472ed0
@@ -223,7 +223,7 @@ int C2_HOOK_FASTCALL NetOptions_CreditsRoller(tFrontend_spec* pFrontend) {
         gFrontend_net_options.starting_credits = 500000;
     }
     gFrontend_net_last_roll = gFrontend_net_current_roll;
-    c2_sprintf(pFrontend->items[24].text, "%i", gFrontend_net_options.starting_credits);
+    sprintf(pFrontend->items[24].text, "%i", gFrontend_net_options.starting_credits);
     FuckWithWidths(pFrontend);
     return 0;
 }
@@ -275,11 +275,11 @@ int C2_HOOK_FASTCALL NetOptions_TargetRoller(tFrontend_spec* pFrontend) {
     case eNet_game_type_checkpoint:
     case eNet_game_type_4:
     case eNet_game_type_6:
-        c2_strcpy(pFrontend->items[26].text, "----");
+        strcpy(pFrontend->items[26].text, "----");
         break;
     case eNet_game_type_1:
     case eNet_game_type_5:
-        c2_sprintf(pFrontend->items[26].text, "%i", gFrontend_net_options.starting_target);
+        sprintf(pFrontend->items[26].text, "%i", gFrontend_net_options.starting_target);
         break;
     case eNet_game_type_foxy:
         {
@@ -287,9 +287,9 @@ int C2_HOOK_FASTCALL NetOptions_TargetRoller(tFrontend_spec* pFrontend) {
             int minutes = (seconds / 60) % 60;
             int hours = seconds / 3600;
             if (hours == 0) {
-                c2_sprintf(pFrontend->items[26].text, "%02i:%02i", minutes, seconds % 60);
+                sprintf(pFrontend->items[26].text, "%02i:%02i", minutes, seconds % 60);
             } else {
-                c2_sprintf(pFrontend->items[26].text, "%02i:%02i:%02i", hours, minutes, seconds % 60);
+                sprintf(pFrontend->items[26].text, "%02i:%02i:%02i", hours, minutes, seconds % 60);
             }
         }
         break;
@@ -333,8 +333,8 @@ int C2_HOOK_FASTCALL NetOptions_Ok(tFrontend_spec* pFrontend) {
 
     C2_HOOK_BUG_ON(sizeof(gNet_settings[0]) != 0x30);
     C2_HOOK_BUG_ON(sizeof(gFrontend_net_options) != 0x30);
-    c2_memcpy(&gNet_settings[0], &gFrontend_net_options, sizeof(gFrontend_net_options));
-    c2_memcpy(&gNet_settings[gNet_last_game_type], &gFrontend_net_options, sizeof(gFrontend_net_options));
+    memcpy(&gNet_settings[0], &gFrontend_net_options, sizeof(gFrontend_net_options));
+    memcpy(&gNet_settings[gNet_last_game_type], &gFrontend_net_options, sizeof(gFrontend_net_options));
     SaveOptions();
     return 0;
 }
@@ -342,7 +342,7 @@ int C2_HOOK_FASTCALL NetOptions_Ok(tFrontend_spec* pFrontend) {
 void C2_HOOK_FASTCALL RestoreNetworkOptions(void) {
 
     C2_HOOK_BUG_ON(sizeof(gFrontend_backup_net_options) != 0x30);
-    c2_memmove(&gFrontend_net_options, &gFrontend_backup_net_options, sizeof(gFrontend_backup_net_options));
+    memmove(&gFrontend_net_options, &gFrontend_backup_net_options, sizeof(gFrontend_backup_net_options));
 }
 
 // FUNCTION: CARMA2_HW 0x00473550

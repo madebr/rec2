@@ -10,7 +10,7 @@
 #include "rec2_types.h"
 
 #include "rec2_macros.h"
-#include "c2_stdio.h"
+#include <stdio.h>
 
 
 // GLOBAL: CARMA2_HW 0x00763960

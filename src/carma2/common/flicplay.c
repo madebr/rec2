@@ -1,7 +1,7 @@
 #include "flicplay.h"
 
 #include "displays.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "graphics.h"
 #include "input.h"
@@ -500,7 +500,7 @@ int gPending_flic = -1;
 // Added by DethRace
 static void mem_write_u16(void* memory, tU16 u16) {
 
-    c2_memcpy(memory, &u16, sizeof(tU16));
+    memcpy(memory, &u16, sizeof(tU16));
 }
 
 // FUNCTION: CARMA2_HW 0x00461a40
@@ -573,7 +573,7 @@ int C2_HOOK_FASTCALL StartFlic(char* pFile_name, int pIndex, tFlic_descriptor_pt
         }
 
         pFlic_info->data = pFlic_info->data_start;
-        c2_strcpy(gLast_flic_name, pFile_name);
+        strcpy(gLast_flic_name, pFile_name);
         fread(pFlic_info->data_start, 1, pFlic_info->bytes_in_buffer, pFlic_info->f);
         pFlic_info->bytes_still_to_be_read = total_size - pFlic_info->bytes_in_buffer;
     } else {
@@ -1080,7 +1080,7 @@ int C2_HOOK_FASTCALL PlayNextFlicFrame2(tFlic_descriptor* pFlic_info, int pPanel
     }
     if (pFlic_info->f != NULL && pFlic_info->bytes_still_to_be_read) {
         data_knocked_off = pFlic_info->data - pFlic_info->data_start;
-        c2_memmove(pFlic_info->data_start, pFlic_info->data, pFlic_info->bytes_in_buffer - data_knocked_off);
+        memmove(pFlic_info->data_start, pFlic_info->data, pFlic_info->bytes_in_buffer - data_knocked_off);
         pFlic_info->data = pFlic_info->data_start;
         pFlic_info->bytes_in_buffer -= data_knocked_off;
 
@@ -1524,13 +1524,13 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
     gTranslations = BrMemAllocate(gTranslation_count * sizeof(tTranslation_record), kMem_misc);
     for (i = 0; i < gTranslation_count; i++) {
         GetALineAndDontArgue(f, s);
-        str = c2_strtok(s, "\t ,/");
-        c2_strcpy(s2, str);
-        c2_strtok(s2, ".");
-        c2_strcat(s2, ".FLI");
+        str = strtok(s, "\t ,/");
+        strcpy(s2, str);
+        strtok(s2, ".");
+        strcat(s2, ".FLI");
         gTranslations[i].flic_index = -1;
         for (j = 0; j < REC2_ASIZE(gMain_flic_list); j++) {
-            if (c2_strcmp(gMain_flic_list[j].file_name, s2) == 0) {
+            if (strcmp(gMain_flic_list[j].file_name, s2) == 0) {
                 gTranslations[i].flic_index = j;
                 break;
             }
@@ -1538,16 +1538,16 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
         if (gTranslations[i].flic_index < 0) {
             FatalError(kFatalError_CannotFindFlicReferencedTranslation_S, s2);
         }
-        str[c2_strlen(str)] = ',';
-        c2_strtok(s, "\t ,/");
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &gTranslations[i].x);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &gTranslations[i].y);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%d", &gTranslations[i].font_index);
-        str = c2_strtok(NULL, "\t ,/");
-        c2_sscanf(str, "%c", &ch);
+        str[strlen(str)] = ',';
+        strtok(s, "\t ,/");
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &gTranslations[i].x);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &gTranslations[i].y);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%d", &gTranslations[i].font_index);
+        str = strtok(NULL, "\t ,/");
+        sscanf(str, "%c", &ch);
         switch (ch) {
             case 'C':
             case 'c':
@@ -1562,9 +1562,9 @@ void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
                 gTranslations[i].justification = eJust_right;
                 break;
         }
-        str += c2_strlen(str) + 1;
-        gTranslations[i].text = BrMemAllocate(c2_strlen(str) + 1, kMem_misc);
-        c2_strcpy(gTranslations[i].text, str);
+        str += strlen(str) + 1;
+        gTranslations[i].text = BrMemAllocate(strlen(str) + 1, kMem_misc);
+        strcpy(gTranslations[i].text, str);
     }
     LoadFont(1);
     LoadFont(2);

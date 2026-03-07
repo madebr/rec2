@@ -56,23 +56,23 @@ void C2_HOOK_CDECL V1Faces_ScratchAllocate(br_geometry* self, br_soft_renderer* 
     if (rend.block->type == BRT_LINE) {
         rend.edge_flags = (void*)sp;
         sp += SCRATCH_ALIGN(rend.nedges * sizeof(*rend.edge_flags));
-        c2_memset(rend.edge_flags, 0, rend.nedges * sizeof(*rend.edge_flags));
+        memset(rend.edge_flags, 0, rend.nedges * sizeof(*rend.edge_flags));
         rend.edge_flags[0] = 1;
     }
 
     if(rend.block->type == BRT_POINT) {
         rend.vertex_flags = (void*)sp;
         sp += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.vertex_flags));
-        c2_memset(rend.vertex_flags, 0, rend.nvertices * sizeof(*rend.vertex_flags));
+        memset(rend.vertex_flags, 0, rend.nvertices * sizeof(*rend.vertex_flags));
     }
 
     if (renderer->state.hidden.type == BRT_BUCKET_SORT || renderer->state.hidden.type == BRT_BUCKET_AND_BUFFER) {
         rend.vertex_heap_pointers = (void*)sp;
         sp += SCRATCH_ALIGN(rend.nvertices * sizeof(*rend.vertex_heap_pointers));
-        c2_memset(rend.vertex_heap_pointers, 0, rend.nvertices * sizeof(*rend.vertex_heap_pointers));
+        memset(rend.vertex_heap_pointers, 0, rend.nvertices * sizeof(*rend.vertex_heap_pointers));
     }
 
-    c2_memset(rend.vertex_counts, 0, rend.nvertices * sizeof(*rend.vertex_counts));
+    memset(rend.vertex_counts, 0, rend.nvertices * sizeof(*rend.vertex_counts));
 }
 
 // FUNCTION: CARMA2_HW 0x00543110
@@ -110,7 +110,7 @@ void C2_HOOK_CDECL V1Face_OS_CullNone(br_geometry* self, br_soft_renderer* rende
         tfp->flag = TFF_VISIBLE;
     }
 
-    c2_memset(rend.vertex_counts, 1, rend.nvertices);
+    memset(rend.vertex_counts, 1, rend.nvertices);
 
     rend.nvisible_faces = rend.nfaces;
 }
@@ -204,7 +204,9 @@ void C2_HOOK_CDECL V1Face_OS_CullOneSided(br_geometry* self, br_soft_renderer* r
 // FUNCTION: CARMA2_HW 0x005434e0
 void C2_HOOK_CDECL V1Face_CullTwoSided(br_geometry* self, br_soft_renderer* renderer) {
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_soft_renderer, state.matrix.view_to_screen_hint, 0x550);
+#endif
     switch (renderer->state.matrix.view_to_screen_hint) {
         case BRT_PERSPECTIVE:
             V1Face_CullTwoSidedPerspective(self, renderer);

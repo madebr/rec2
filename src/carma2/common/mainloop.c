@@ -663,17 +663,17 @@ void C2_HOOK_FASTCALL MungeHeadups(void) {
 
     if (gNet_mode == eNet_mode_none) {
         if (net_credits < 0) {
-            c2_sprintf(the_text, "\xf8%d\xfa %s", -net_credits, GetMiscString(eMiscString_credits_lost));
+            sprintf(the_text, "\xf8%d\xfa %s", -net_credits, GetMiscString(eMiscString_credits_lost));
             ChangeHeadupText(gCredits_won_headup, the_text);
         } else {
-            c2_sprintf(the_text, "\xf8%d\xfa %s", net_credits, GetMiscString(net_credits >= 100000 ? eMiscString_credits_abbrev : eMiscString_credits_gained));
+            sprintf(the_text, "\xf8%d\xfa %s", net_credits, GetMiscString(net_credits >= 100000 ? eMiscString_credits_abbrev : eMiscString_credits_gained));
             ChangeHeadupText(gCredits_won_headup, the_text);
         }
         if (gCurrent_race.race_spec->race_type == kRaceType_Carma1) {
-            c2_sprintf(the_text, "\xf8%d\xfa/\xf8%d\xfa %s", gCount_killed_peds, gPed_count, GetMiscString(eMiscString_kills));
+            sprintf(the_text, "\xf8%d\xfa/\xf8%d\xfa %s", gCount_killed_peds, gPed_count, GetMiscString(eMiscString_kills));
             ChangeHeadupText(gPed_kill_count_headup, the_text);
         } else if (gCurrent_race.race_spec->race_type == kRaceType_Peds) {
-            c2_sprintf(the_text, "\xf8%d\xfa/\xf8%d\xfa %s", gCount_killed_peds, gTotal_count_smash_peds, GetMiscString(eMiscString_kills));
+            sprintf(the_text, "\xf8%d\xfa/\xf8%d\xfa %s", gCount_killed_peds, gTotal_count_smash_peds, GetMiscString(eMiscString_kills));
             ChangeHeadupText(gPed_kill_count_headup, the_text);
         }
         if (gCurrent_race.race_spec->race_type == kRaceType_Carma1
@@ -691,17 +691,17 @@ void C2_HOOK_FASTCALL MungeHeadups(void) {
                 } else {
                     count_oppos = gCount_opponents;
                 }
-                c2_sprintf(the_text, "%s \xf8%d\xfa/\xf8%d",
+                sprintf(the_text, "%s \xf8%d\xfa/\xf8%d",
                     GetMiscString(eMiscString_wasted),
                     count_oppos - NumberOfOpponentsLeft(),
                     count_oppos);
             } else {
                 if (Flash(150, &gWasted_last_flash, &gWasted_flash_state)) {
-                    c2_sprintf(the_text, "\xf9%s %s",
+                    sprintf(the_text, "\xf9%s %s",
                         gOpponents[gQueued_wasted_messages[0]].abbrev_name,
                         GetMiscString(eMiscString_wasted));
                 } else {
-                    c2_sprintf(the_text, " ");
+                    sprintf(the_text, " ");
                 }
             }
             ChangeHeadupText(gCar_kill_count_headup, the_text);
@@ -711,7 +711,7 @@ void C2_HOOK_FASTCALL MungeHeadups(void) {
         ChangeHeadupText(gTimer_headup, the_text);
 
         if (gHeadup_detail_level == 1 || gHeadup_detail_level == 4) {
-            c2_sprintf(gHeadup_oppo_ped_text, "%i  %i  %i",
+            sprintf(gHeadup_oppo_ped_text, "%i  %i  %i",
                 GetCarCount(eVehicle_opponent) - NumberOfOpponentsLeft(),
                 net_credits,
                 gCount_killed_peds);
@@ -719,13 +719,13 @@ void C2_HOOK_FASTCALL MungeHeadups(void) {
         if (gCurrent_race.race_spec->race_type == kRaceType_Carma1
                 || gCurrent_race.race_spec->race_type == kRaceType_Checkpoints) {
 
-            c2_sprintf(the_text, "%s \xf8%d\xfa/\xf8%d \xfa%s \xf8%d\xfa/\xf8%d",
+            sprintf(the_text, "%s \xf8%d\xfa/\xf8%d \xfa%s \xf8%d\xfa/\xf8%d",
                 GetMiscString(eMiscString_cp), gCheckpoint, gCheckpoint_count,
                 GetMiscString(eMiscString_lap), gLap,gTotal_laps);
             ChangeHeadupText(gLaps_headup, the_text);
         }
         if (gCurrent_race.race_spec->race_type > 3) { /* kRaceType_Smash or kRaceType_SmashNPed */
-            c2_sprintf(the_text, "%s \xf8%d\xfa/\xf8%d",
+            sprintf(the_text, "%s \xf8%d\xfa/\xf8%d",
                 GetMiscString(eMiscString_targets),
                 GetRuntimeVariable(gCurrent_race.race_spec->options.smash.var_smash_number),
                 gCurrent_race.race_spec->options.smash.var_smash_target);
@@ -738,7 +738,7 @@ void C2_HOOK_FASTCALL MungeHeadups(void) {
         case eTime_bonus_initial_pause:
             if (the_time >= 500) {
                 bonus = gCompletion_bonus_post_race;
-                c2_sprintf(the_text, "%s %d", GetMiscString(eMiscString_completion_bonus_colon), bonus);
+                sprintf(the_text, "%s %d", GetMiscString(eMiscString_completion_bonus_colon), bonus);
                 DRS3StartSound(gPedestrians_outlet, eSoundId_Clap);
                 ChangeHeadupText(gRace_bonus_headup, the_text);
                 gProgram_state.credits += bonus;
@@ -768,7 +768,7 @@ void C2_HOOK_FASTCALL MungeHeadups(void) {
                     gTime_bonus += (previous_gtimer - gTimer) / 1000 * gCredits_per_second_time_bonus[gProgram_state.skill_level];
                     last_rattle_time += 15 * ((the_time - last_rattle_time) / 15);
                 }
-                c2_sprintf(the_text, "%s %d", GetMiscString(eMiscString_time_bonus_colon), gTime_bonus);
+                sprintf(the_text, "%s %d", GetMiscString(eMiscString_time_bonus_colon), gTime_bonus);
                 ChangeHeadupText(gTime_bonus_headup, the_text);
             } else {
                 gTime_bonus_state = eTime_bonus_tb_pause;
@@ -796,7 +796,7 @@ void C2_HOOK_FASTCALL MungeHeadups(void) {
                     gProgram_state.credits += bonus - gTime_bonus;
                     last_rattle_time += 15 * ((the_time - last_rattle_time) / 15);
                 }
-                c2_sprintf(the_text, "%s %d", GetMiscString(eMiscString_time_bonus_colon), gTime_bonus);
+                sprintf(the_text, "%s %d", GetMiscString(eMiscString_time_bonus_colon), gTime_bonus);
                 ChangeHeadupText(gTime_bonus_headup, the_text);
             } else {
                 gTime_bonus_state = eTime_bonus_end_pause;

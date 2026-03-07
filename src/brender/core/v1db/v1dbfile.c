@@ -714,7 +714,7 @@ int C2_HOOK_STDCALL FopRead_MODEL(br_datafile* df, br_uint_32 id, br_uint_32 len
 int C2_HOOK_STDCALL FopWrite_MODEL(br_datafile* df, br_model* mp) {
     br_model temp_model;
 
-    c2_memcpy(&temp_model, mp, sizeof(br_model));
+    memcpy(&temp_model, mp, sizeof(br_model));
     df->prims->chunk_write(df, CHUNKID_MODEL, df->prims->struct_size(df, &br_model_F, mp));
     df->prims->struct_write(df, &br_model_F, mp);
     return 0;
@@ -808,7 +808,7 @@ int C2_HOOK_STDCALL FopRead_PIXELMAP_REF(br_datafile* df, br_uint_32 id, br_uint
 
     if (i >= BR_ASIZE(MaterialMaps)) {
         // FIXME: error message
-        c2_abort();
+        abort();
     }
 
     mp = DfTop(DF_MATERIAL, NULL);
@@ -898,7 +898,7 @@ int C2_HOOK_STDCALL FopRead_ACTOR_TRANSFORM(br_datafile* df, br_uint_32 id, br_u
 
     tp = DfPop(DF_TRANSFORM, NULL);
     a = DfTop(DF_ACTOR, NULL);
-    c2_memcpy(&a->t, tp, sizeof(br_transform));
+    memcpy(&a->t, tp, sizeof(br_transform));
     BrResFree(tp);
     return 0;
 }
@@ -1014,7 +1014,7 @@ int C2_HOOK_STDCALL FopRead_TRANSFORM(br_datafile* df, br_uint_32 id, br_uint_32
         }
     }
     if (t >= BR_ASIZE(TransformTypes)) {
-        c2_abort(); // FIXME: LOG_PANIC("transform type not found!");
+        abort(); // FIXME: LOG_PANIC("transform type not found!");
     }
     tp = (br_transform*)BrResAllocate(v1db.res, sizeof(br_transform), BR_MEMORY_TRANSFORM);
     tp->type = t;

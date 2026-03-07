@@ -1,6 +1,6 @@
 #include "frontend_credits.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "frontend.h"
 #include "frontend_main.h"
 #include "globvars.h"
@@ -57,10 +57,10 @@ int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend) {
     /* Number of lines */
     gAuthor_credits_line_count = GetAnInt(f);
 
-    gAuthor_credits_texts = c2_malloc(sizeof(char*) * gAuthor_credits_line_count);
-    gAuthor_credits_fonts = c2_malloc(sizeof(int) * gAuthor_credits_line_count);
-    gAuthor_credits_heights = c2_malloc(sizeof(int) * gAuthor_credits_line_count);
-    gAuthor_credits_throbs = c2_malloc(sizeof(int) * gAuthor_credits_line_count);
+    gAuthor_credits_texts = malloc(sizeof(char*) * gAuthor_credits_line_count);
+    gAuthor_credits_fonts = malloc(sizeof(int) * gAuthor_credits_line_count);
+    gAuthor_credits_heights = malloc(sizeof(int) * gAuthor_credits_line_count);
+    gAuthor_credits_throbs = malloc(sizeof(int) * gAuthor_credits_line_count);
 
     gAuthor_credits_throbs[0] = 0;
     gAuthor_credits_fonts[0] = kPolyfont_hand_red_15pt_lit;
@@ -71,33 +71,33 @@ int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend) {
         char small_buf[11];
 
         GetALineAndDontArgue(f, s);
-        if (c2_strncmp(s, "FONT", 4) == 0) {
-            c2_strncpy(small_buf, &s[5], sizeof(small_buf) - 1);
+        if (strncmp(s, "FONT", 4) == 0) {
+            strncpy(small_buf, &s[5], sizeof(small_buf) - 1);
 #ifdef REC2_FIX_BUGS
             small_buf[sizeof(small_buf) - 1] = '\0';
 #endif
-            gAuthor_credits_fonts[i] = c2_atoi(small_buf);
-        } else if (c2_strncmp(s, "SPACE", 5) == 0) {
+            gAuthor_credits_fonts[i] = atoi(small_buf);
+        } else if (strncmp(s, "SPACE", 5) == 0) {
             double space_height;
-            c2_strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
+            strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
 #ifdef REC2_FIX_BUGS
             small_buf[sizeof(small_buf) - 1] = '\0';
 #endif
-            space_height = (double)PolyFontHeight(gAuthor_credits_fonts[i]) * c2_atof(small_buf);
+            space_height = (double)PolyFontHeight(gAuthor_credits_fonts[i]) * atof(small_buf);
             gAuthor_credits_heights[i] += (int)space_height;
-        } else if (c2_strncmp(s, "THROB", 5) == 0) {
-            c2_strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
+        } else if (strncmp(s, "THROB", 5) == 0) {
+            strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
 #ifdef REC2_FIX_BUGS
             small_buf[sizeof(small_buf) - 1] = '\0';
 #endif
-            if (c2_strncmp(small_buf, "ON", 2) == 0) {
+            if (strncmp(small_buf, "ON", 2) == 0) {
                 gAuthor_credits_throbs[i] = 1;
             } else {
                 gAuthor_credits_throbs[i] = 0;
             }
         } else {
-            gAuthor_credits_texts[i] = c2_malloc(c2_strlen(s) + 1);
-            c2_strcpy(gAuthor_credits_texts[i], s);
+            gAuthor_credits_texts[i] = malloc(strlen(s) + 1);
+            strcpy(gAuthor_credits_texts[i], s);
             gAuthor_credits_heights[i] += PolyFontHeight(gAuthor_credits_fonts[i]);
             gAuthor_credits_total_height += gAuthor_credits_heights[i];
         }
@@ -122,8 +122,8 @@ int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend) {
     int i;
 
     for (i = 0; i < gAuthor_credits_line_count; i++) {
-        c2_free(gAuthor_credits_texts[i]);
+        free(gAuthor_credits_texts[i]);
     }
-    c2_free(gAuthor_credits_texts);
+    free(gAuthor_credits_texts);
     return 1;
 }

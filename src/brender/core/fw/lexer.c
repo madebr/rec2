@@ -241,7 +241,7 @@ void C2_HOOK_STDCALL lexerAdvance(br_lexer* l) {
 }
 
 void C2_HOOK_STDCALL lexerAdvanceDump(br_lexer* l) {
-    c2_abort();
+    abort();
 }
 
 // FUNCTION: CARMA2_HW 0x0052f950

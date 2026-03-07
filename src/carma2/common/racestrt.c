@@ -40,7 +40,7 @@ int C2_HOOK_FASTCALL SortOpponents(void) {
     }
 
     C2_HOOK_BUG_ON(sizeof(tOpp_spec) != 16);
-    c2_qsort(gCurrent_race.opponent_list, gCurrent_race.number_of_racers, sizeof(tOpp_spec), SortGridFunction);
+    qsort(gCurrent_race.opponent_list, gCurrent_race.number_of_racers, sizeof(tOpp_spec), SortGridFunction);
     gOur_starting_position = IRandomBetween(0, gCurrent_race.number_of_racers - 1);
 
 

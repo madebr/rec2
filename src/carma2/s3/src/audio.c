@@ -9,7 +9,7 @@
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
-#include "c2_ctype.h"
+#include <ctype.h>
 #include "c2_io.h"
 #include "c2_sys_stat.h"
 #include "c2_stdlib.h"
@@ -61,12 +61,6 @@ tS3_callbacks gS3_callbacks;
 // GLOBAL: CARMA2_HW 0x007a0758
 int gS3_effects_enabled;
 
-// GLOBAL: CARMA2_HW 0x007a0760
-tS3SetEffect_cbfn* gS3_enable_effect_cbfn;
-
-// GLOBAL: CARMA2_HW 0x007a0764
-tS3SetEffect_cbfn* gS3_disable_effect_cbfn;
-
 // GLOBAL: CARMA2_HW 0x006b2c18
 int gS3_opened_output_devices;
 
@@ -105,10 +99,6 @@ br_uint_32 gS3_last_service_time_spatial;
 
 // FUNCTION: CARMA2_HW 0x005651d0
 int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char* pSound_dirname) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3Init_original(pPath, pLow_memory_mode, pSound_path);
-#else
     tS3_descriptor* descriptor;
 
     /* nop_FUN_00565b39(); */
@@ -123,14 +113,14 @@ int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char*
     gS3_root_descriptor = NULL;
 
     C2_HOOK_BUG_ON(sizeof(gS3_callbacks) != 0x10);
-    c2_memset(&gS3_callbacks, 0, sizeof(gS3_callbacks));
+    memset(&gS3_callbacks, 0, sizeof(gS3_callbacks));
 
     S3Disable();
     S3StopMidi();
     S3StopCDA();
     gS3_effects_enabled = 0;
-    gS3_enable_effect_cbfn = NULL;
-    gS3_disable_effect_cbfn = NULL;
+    gS3_sample_filter_func = NULL;
+    gS3_sample_filter_disable_func = NULL;
     if (!PDS3Init()) {
         return eS3_error_digi_init;
     }
@@ -142,7 +132,7 @@ int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char*
     if (descriptor == NULL) {
         return eS3_error_memory;
     }
-    c2_memset(descriptor, 0, sizeof(tS3_descriptor));
+    memset(descriptor, 0, sizeof(tS3_descriptor));
     descriptor->sample_id = 0x261269;
     gS3_sound_dirname[0] = '\0';
     gS3_descriptors = descriptor;
@@ -151,7 +141,7 @@ int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char*
         char dirpath[256];
 
         PDExtractDirectory(dirpath, pPath);
-        c2_sprintf(gS3_sound_dirname, "%s%s", dirpath, pSound_dirname);
+        sprintf(gS3_sound_dirname, "%s%s", dirpath, pSound_dirname);
     }
     if (S3LoadSoundbank(pPath, pLow_memory_mode) != 0) {
         return eS3_error_soundbank;
@@ -160,7 +150,6 @@ int C2_HOOK_FASTCALL S3Init(const char* pPath, int pLow_memory_mode, const char*
     gS3_unbound_channels = NULL;
     gS3_last_unbound_channel = NULL;
     return eS3_error_none;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00564ce7
@@ -181,9 +170,6 @@ int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* pChannel) {
 
     C2_HOOK_BUG_ON(sizeof(tS3_channel) != 120);
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3StopChannel_original(pChannel);
-#else
     if (pChannel->tag == 0) {
         return eS3_error_bad_stag;
     }
@@ -215,7 +201,6 @@ int C2_HOOK_FASTCALL S3StopChannel(tS3_channel* pChannel) {
     }
     pChannel->repetitions = 1;
     return eS3_error_none;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005698fc
@@ -226,10 +211,6 @@ int C2_HOOK_FASTCALL S3GetCountChannels(int pCount_channels_1, int pCount_channe
 
 // FUNCTION: CARMA2_HW 0x005653c7
 tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_channels_2) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3CreateOutlet_original(pCount_channels_1, pCount_channels_2);
-#else
     tS3_outlet* o;
     int nchannels;
     tS3_outlet* outlet;
@@ -249,7 +230,7 @@ tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_ch
         gS3_last_error = eS3_error_memory;
         return NULL;
     }
-    c2_memset(outlet, 0, sizeof(tS3_outlet));
+    memset(outlet, 0, sizeof(tS3_outlet));
     channels_remaining = S3CreateOutletChannels(outlet, nchannels);
     if (channels_remaining == nchannels) {
         S3MemFree(outlet);
@@ -279,15 +260,10 @@ tS3_outlet* C2_HOOK_FASTCALL S3CreateOutlet(int pCount_channels_1, int pCount_ch
     outlet->independent_pitch = gPD_S3_config.independent_pitch;
     gS3_noutlets += 1;
     return outlet;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005654e2
 tS3_error_codes C2_HOOK_FASTCALL S3ReleaseOutlet(tS3_outlet* pOutlet) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3ReleaseOutlet_original(pOutlet);
-#else
 
     if (pOutlet == NULL) {
         return eS3_error_bad_id;
@@ -309,15 +285,10 @@ tS3_error_codes C2_HOOK_FASTCALL S3ReleaseOutlet(tS3_outlet* pOutlet) {
     }
     S3MemFree(pOutlet);
     return eS3_error_none;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0056494f
 int C2_HOOK_FASTCALL S3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3SetOutletVolume_original(pOutlet, pVolume);
-#else
     int volume;
 
     if (!gS3_enabled) {
@@ -338,7 +309,6 @@ int C2_HOOK_FASTCALL S3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
         }
     }
     return 0;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0056575b
@@ -409,10 +379,6 @@ void C2_HOOK_FASTCALL S3StopAllOutletSounds(void) {
 
 // FUNCTION: CARMA2_HW 0x00564ae2
 tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3StopSound_original(pTag);
-#else
     tS3_channel* channel;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_channel, source_volume, 0x50);
@@ -455,15 +421,10 @@ tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag) {
     }
     channel->repetitions = 1;
     return eS3_error_none;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00564358
 void C2_HOOK_FASTCALL S3Service(int pInside_cockpit, int pThings_moved) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    S3Service_original(pInside_cockpit, pThings_moved);
-#else
     tU32 now;
     int spatial_serviced = 0;
     tS3_outlet* o;
@@ -520,7 +481,6 @@ void C2_HOOK_FASTCALL S3Service(int pInside_cockpit, int pThings_moved) {
     if (spatial_serviced) {
         gS3_last_service_time_spatial = gS3_last_service_time;
     }
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0056532d
@@ -578,7 +538,7 @@ int C2_HOOK_FASTCALL S3CreateOutletChannels(tS3_outlet* outlet, int pChannel_cou
         if (chan == NULL) {
             return pChannel_count;
         }
-        c2_memset(chan, 0, sizeof(tS3_channel));
+        memset(chan, 0, sizeof(tS3_channel));
         chan->owner_outlet = outlet;
 
         if (!S3CreateTypeStructs(chan)) {
@@ -602,10 +562,6 @@ int C2_HOOK_FASTCALL S3CreateOutletChannels(tS3_outlet* outlet, int pChannel_cou
 
 // FUNCTION: CARMA2_HW 0x00568c2c
 void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3LoadSoundBankFile_original(pPath);
-#else
     size_t bytes_read;
     char* buffer;
     char path[512];
@@ -616,7 +572,7 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
         FILE* f;
 
         gS3_last_error = eS3_error_readfile;
-        c2_sprintf(path, "DATA%sSOUNDS%s%s", gS3_path_separator, gS3_path_separator, pPath);
+        sprintf(path, "DATA%sSOUNDS%s%s", gS3_path_separator, gS3_path_separator, pPath);
         f = S3_low_memory_fopen(path, "rb");
         if (f == NULL) {
             return NULL;
@@ -624,21 +580,21 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
         file_size = S3GetFileSize(f);
         buffer = S3MemAllocate(file_size + 1, kMem_S3_sample);
         if (buffer == NULL) {
-            c2_fclose(f);
+            fclose(f);
             gS3_last_error = eS3_error_memory;
             return NULL;
         }
         buffer[file_size] = '\0';
-        bytes_read = c2_fread(buffer, 1, file_size, f);
+        bytes_read = fread(buffer, 1, file_size, f);
         if (bytes_read != file_size) {
-            c2_fclose(f);
+            fclose(f);
             gS3_last_error = eS3_error_readfile;
             return NULL;
         }
         gS3_soundbank_buffer = buffer;
         gS3_soundbank_buffer_len = file_size;
     } else {
-        struct _stat32 stat;
+        struct_c2_stat32 stat;
         int fd;
 
         C2_HOOK_BUG_ON(_O_BINARY != 0x8000);
@@ -648,7 +604,7 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
             char filename[512];
 
             PDExtractFilename(filename, pPath);
-            c2_sprintf(path, "%s%s%s", gS3_sound_dirname, gS3_path_separator, filename);
+            sprintf(path, "%s%s%s", gS3_sound_dirname, gS3_path_separator, filename);
             fd = c2_open(path, _O_BINARY);
         }
         if (fd == -1) {
@@ -677,7 +633,6 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
         c2_close(fd);
     }
     return buffer;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00567fe0
@@ -693,7 +648,7 @@ int C2_HOOK_FASTCALL S3LoadSoundbank(const char* pPath, int pLow_memory_mode) {
     }
     if (pLow_memory_mode == 0x123456) {
         gS3_low_memory_mode = 1;
-        c2_strcpy(soundbank_filename, pPath);
+        strcpy(soundbank_filename, pPath);
         dir_name[0] = '\0';
         buffer = S3LoadSoundBankFile(soundbank_filename);
         pLow_memory_mode = 0;
@@ -701,13 +656,13 @@ int C2_HOOK_FASTCALL S3LoadSoundbank(const char* pPath, int pLow_memory_mode) {
         dir_name[0] = '\0';
         soundbank_filename[0] = '\0';
         cur_dir = PDS3GetWorkingDirectory();
-        c2_strcpy(dir_name, cur_dir);
-        c2_strcat(dir_name, gS3_path_separator);
-        c2_strcat(dir_name, "DATA");
-        c2_strcat(dir_name, gS3_path_separator);
-        c2_strcat(dir_name, gS3_sound_folder_name);
-        c2_strcat(dir_name, gS3_path_separator);
-        c2_strcpy(soundbank_filename, pPath);
+        strcpy(dir_name, cur_dir);
+        strcat(dir_name, gS3_path_separator);
+        strcat(dir_name, "DATA");
+        strcat(dir_name, gS3_path_separator);
+        strcat(dir_name, gS3_sound_folder_name);
+        strcat(dir_name, gS3_path_separator);
+        strcpy(soundbank_filename, pPath);
         buffer = S3LoadSoundBankFile(soundbank_filename);
     }
     if (buffer == NULL) {
@@ -726,34 +681,25 @@ int C2_HOOK_FASTCALL S3LoadSoundbank(const char* pPath, int pLow_memory_mode) {
 // FUNCTION: CARMA2_HW 0x0056818f
 void C2_HOOK_FASTCALL S3SoundBankReaderSkipWhitespace(tS3_soundbank_read_ctx* pContext) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    S3SoundBankReaderSkipWhitespace_original(pContext);
-#else
-
     while (pContext->data_len != 0) {
-        if (c2_isalnum(*pContext->data) || *pContext->data == '-') {
+        if (isalnum(*pContext->data) || *pContext->data == '-') {
             break;
         }
         S3SoundBankReaderSkipToNewline(pContext);
     }
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0056828c
 int C2_HOOK_FASTCALL S3SoundBankReadEntry(tS3_soundbank_read_ctx *pContext, const char* pDir_name, int pLow_memory_mode) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3SoundBankReadEntry_original(pContext, pDir_name, pLow_memory_mode);
-#else
     tS3_descriptor* descriptor;
     int i;
     int n;
     const char* dir_name;
     double f1, f2;
     int count;
-    
-// GLOBAL: CARMA2_HW 0x006b2c8c
-char cda_dir_name[4];
+
+    // GLOBAL: CARMA2_HW 0x006b2c8c
+    char cda_dir_name[4];
 
     descriptor = S3CreateDescriptor();
     if (descriptor == NULL) {
@@ -761,14 +707,14 @@ char cda_dir_name[4];
     }
 
     /* Sound ID */
-    if (c2_sscanf(pContext->data, "%i%n", &descriptor->sample_id, &n) != 1) {
+    if (sscanf(pContext->data, "%i%n", &descriptor->sample_id, &n) != 1) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
     S3SoundBankReaderNextLine(pContext);
 
     /* Type, Flags */
-    if (c2_sscanf(pContext->data, "%i,%i%n", &descriptor->type, &descriptor->flags, &n) != 2) {
+    if (sscanf(pContext->data, "%i,%i%n", &descriptor->type, &descriptor->flags, &n) != 2) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
@@ -786,28 +732,28 @@ char cda_dir_name[4];
     S3SoundBankReaderNextLine(pContext);
 
     /* Priority */
-    if (c2_sscanf(pContext->data, "%i%n", &descriptor->priority, &n) != 1) {
+    if (sscanf(pContext->data, "%i%n", &descriptor->priority, &n) != 1) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
     S3SoundBankReaderNextLine(pContext);
 
     /* Repeat rate */
-    if (c2_sscanf(pContext->data, "%i%n", &descriptor->repeat_rate, &n) != 1) {
+    if (sscanf(pContext->data, "%i%n", &descriptor->repeat_rate, &n) != 1) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
     S3SoundBankReaderNextLine(pContext);
 
     /* MinVol, MaxVol */
-    if (c2_sscanf(pContext->data, "%i,%i%n", &descriptor->min_volume, &descriptor->max_volume, &n) != 2) {
+    if (sscanf(pContext->data, "%i,%i%n", &descriptor->min_volume, &descriptor->max_volume, &n) != 2) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
     S3SoundBankReaderNextLine(pContext);
 
     /* MinPitch, MaxPitch */
-    if (c2_sscanf(pContext->data, "%lf,%lf%n", &f1, &f2, &n) != 2) {
+    if (sscanf(pContext->data, "%lf,%lf%n", &f1, &f2, &n) != 2) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
@@ -822,7 +768,7 @@ char cda_dir_name[4];
     descriptor->max_pitch = (int)ldexp(f2, 16);
 
     /* MinSpeed, MaxSpeed */
-    if (c2_sscanf(pContext->data, "%lf,%lf%n", &f1, &f2, &n) != 2) {
+    if (sscanf(pContext->data, "%lf,%lf%n", &f1, &f2, &n) != 2) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
@@ -837,14 +783,14 @@ char cda_dir_name[4];
     descriptor->max_speed = (int)ldexp(f2, 16);
 
     /* Special FX index */
-    if (c2_sscanf(pContext->data, "%i%n", &descriptor->effects_enabled, &n) != 1) {
+    if (sscanf(pContext->data, "%i%n", &descriptor->effects_enabled, &n) != 1) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
     S3SoundBankReaderNextLine(pContext);
 
     /* Number of low memory alternatives */
-    if (c2_sscanf(pContext->data, "%d%n", &count, &n) != 1) {
+    if (sscanf(pContext->data, "%d%n", &count, &n) != 1) {
         return 0;
     }
     S3SoundBankReaderAdvance(pContext, n);
@@ -853,7 +799,7 @@ char cda_dir_name[4];
     for (i = 0; i < count; i++) {
         int alternative;
 
-        if (c2_sscanf(pContext->data, "%d%n", &alternative, &n) != 1) {
+        if (sscanf(pContext->data, "%d%n", &alternative, &n) != 1) {
             return 0;
         }
         if (i + 1 == pLow_memory_mode) {
@@ -868,14 +814,13 @@ char cda_dir_name[4];
             descriptor->buffer_description = NULL;
         } else {
             if (S3LoadSample(descriptor->sample_id) != eS3_error_none) {
-                c2_printf("\nSound bank file: couldn't load '%s'\n", descriptor->path);
+                printf("\nSound bank file: couldn't load '%s'\n", descriptor->path);
                 pContext->data_len = 1;
                 return 0;
             }
         }
     }
     return 1;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005686e9
@@ -889,7 +834,7 @@ void C2_HOOK_FASTCALL S3SoundBankReaderNextLine(tS3_soundbank_read_ctx* pContext
 void C2_HOOK_FASTCALL S3SoundBankReaderSkipToNewline(tS3_soundbank_read_ctx* pContext) {
     char* newline_ptr;
 
-    newline_ptr = c2_memchr(pContext->data, '\n', pContext->data_len);
+    newline_ptr = memchr(pContext->data, '\n', pContext->data_len);
     if (newline_ptr != NULL) {
         S3SoundBankReaderAdvance(pContext, newline_ptr + 1 - pContext->data);
         pContext->nlines += 1;
@@ -920,7 +865,7 @@ tS3_descriptor* C2_HOOK_FASTCALL S3CreateDescriptor(void) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, prev, 0x28);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, next, 0x2c);
 
-    c2_memset(descriptor, 0, sizeof(tS3_descriptor));
+    memset(descriptor, 0, sizeof(tS3_descriptor));
     gS3_root_descriptor->next = descriptor;
     descriptor->prev = gS3_root_descriptor;
     gS3_root_descriptor = descriptor;
@@ -934,9 +879,9 @@ int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soundbank_r
     unsigned int dir_name_len;
 
     data_start = pContext->data;
-    dir_name_len = c2_strlen(pDir_name);
+    dir_name_len = strlen(pDir_name);
     while (pContext->data_len != 0) {
-        if (c2_isspace(*pContext->data)) {
+        if (isspace(*pContext->data)) {
             break;
         }
         S3SoundBankReaderAdvance(pContext, 1);
@@ -949,8 +894,8 @@ int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soundbank_r
     if (*pPath == NULL) {
         return 0;
     }
-    c2_strcpy(*pPath, pDir_name);
-    c2_memcpy(&(*pPath)[dir_name_len], data_start, bytes_read);
+    strcpy(*pPath, pDir_name);
+    memcpy(&(*pPath)[dir_name_len], data_start, bytes_read);
     (*pPath)[bytes_read + dir_name_len] = '\0';
     return 1;
 }
@@ -958,25 +903,16 @@ int C2_HOOK_FASTCALL S3SoundBankReaderReadFilename(char** pPath, tS3_soundbank_r
 // FUNCTION: CARMA2_HW 0x0056a41f
 void C2_HOOK_FASTCALL S3StopMidi(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    S3StopMidi_original();
-#else
-
     S3StopMidiInternal();
     gS3_enable_midi = 0;
-#endif
 }
 
 
 // FUNCTION: CARMA2_HW 0x00565b7f
 void C2_HOOK_FASTCALL S3StopCDA(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    S3StopCDA_original();
-#else
     S3StopCDAInternal();
     gS3_CDA_enabled = 0;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0056a7bd
@@ -1035,10 +971,6 @@ int C2_HOOK_FASTCALL S3StopCDAChannel(tS3_channel* pChannel) {
 
 // FUNCTION: CARMA2_HW 0x00565607
 int C2_HOOK_FASTCALL S3UnbindChannels(tS3_outlet* pOutlet) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3UnbindChannels_original(pOutlet);
-#else
     tS3_channel* chan;
     tS3_channel* next;
 
@@ -1058,11 +990,10 @@ int C2_HOOK_FASTCALL S3UnbindChannels(tS3_outlet* pOutlet) {
         gS3_last_unbound_channel = chan;
 
         C2_HOOK_BUG_ON(sizeof(tS3_channel) != 0x78);
-        c2_memset(chan, 0, sizeof(tS3_channel));
+        memset(chan, 0, sizeof(tS3_channel));
     }
     pOutlet->channel_list = NULL;
     return 1;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00565888
@@ -1151,7 +1082,7 @@ int C2_HOOK_FASTCALL S3ReleaseSound(int pSound_id) {
 // FUNCTION: CARMA2_HW 0x00566454
 double C2_HOOK_STDCALL S3FRandomBetween(double pMin, double pMax) {
 
-    return (double)c2_rand() * (pMax - pMin) / 32767. + pMin;
+    return (double)rand() * (pMax - pMin) / 32767. + pMin;
 }
 
 // FUNCTION: CARMA2_HW 0x00564278
@@ -1159,7 +1090,7 @@ int C2_HOOK_STDCALL S3IRandomBetween(int pMin, int pMax, int pDefault) {
     if (pMin == -1 || pMin >= pMax) {
         return pDefault;
     }
-    return pMin + c2_rand() % (pMax - pMin);
+    return pMin + rand() % (pMax - pMin);
 }
 
 // FUNCTION: CARMA2_HW 0x005663dd
@@ -1274,7 +1205,7 @@ tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pV
         gS3_last_error = eS3_error_memory;
         return NULL;
     }
-    c2_memset(src, 0, sizeof(tS3_sound_source));
+    memset(src, 0, sizeof(tS3_sound_source));
     src->bound_outlet = pBound_outlet;
     src->position_ptr = pPosition;
     src->velocity_ptr = pVelocity;
@@ -1471,7 +1402,7 @@ int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
 
     C2_HOOK_BUG_ON(sizeof(gS3_channel_template) != 0x78);
 
-    c2_memset(&gS3_channel_template, 0, sizeof(gS3_channel_template));
+    memset(&gS3_channel_template, 0, sizeof(gS3_channel_template));
     S3CalculateRandomizedFields(&gS3_channel_template, desc);
     channel = S3AllocateChannel(pOutlet, S3CalculatePriority(gS3_channel_template.volume_multiplier, desc->priority));
     if (channel == NULL) {

@@ -15,10 +15,10 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapAllocateSub(br_pixelmap* src, br_int_32 x, 
     br_pixelmap* new;
     br_rectangle r;
 
-    r.h = h;
-    r.w = w;
     r.x = x;
     r.y = y;
+    r.w = w;
+    r.h = h;
     CheckDispatch((br_device_pixelmap*)src);
     if (((br_device_pixelmap*)src)->dispatch->_allocateSub((br_device_pixelmap*)src, (br_device_pixelmap**)&new, &r) != 0) {
         return NULL;
@@ -63,19 +63,6 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapMatch(br_pixelmap* src, br_uint_8 match_typ
         tv[0].v.t = BRT_OFFSCREEN;
         break;
 
-    case BR_PMMATCH_DEPTH_16:
-    case BR_PMMATCH_DEPTH_15:
-    case BR_PMMATCH_DEPTH_FP15:
-    case BR_PMMATCH_DEPTH_FP16:
-        tv[0].v.t = BRT_DEPTH;
-        tv[1].t = BRT_PIXEL_BITS_I32;
-        tv[1].v.i32 = 16;
-        break;
-
-    case BR_PMMATCH_DEPTH:
-        tv[0].v.t = BRT_DEPTH;
-        break;
-
     case BR_PMMATCH_HIDDEN:
         tv[0].v.t = BRT_HIDDEN;
         break;
@@ -92,13 +79,26 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapMatch(br_pixelmap* src, br_uint_8 match_typ
         tv[0].v.t = BRT_DEPTH;
         tv[1].t = BRT_PIXEL_BITS_I32;
         tv[1].v.i32 = 8;
-        break;
+            break;
 
     case BR_PMMATCH_DEPTH_32:
     case BR_PMMATCH_DEPTH_31:
         tv[0].v.t = BRT_DEPTH;
         tv[1].t = BRT_PIXEL_BITS_I32;
         tv[1].v.i32 = 32;
+        break;
+
+    case BR_PMMATCH_DEPTH_16:
+    case BR_PMMATCH_DEPTH_15:
+    case BR_PMMATCH_DEPTH_FP15:
+    case BR_PMMATCH_DEPTH_FP16:
+        tv[0].v.t = BRT_DEPTH;
+        tv[1].t = BRT_PIXEL_BITS_I32;
+        tv[1].v.i32 = 16;
+        break;
+
+    case BR_PMMATCH_DEPTH:
+        tv[0].v.t = BRT_DEPTH;
         break;
     }
 
@@ -437,7 +437,7 @@ void C2_HOOK_CDECL BrPixelmapRectangleFill(br_pixelmap* dst, br_int_32 x, br_int
     r.y = y;
     r.w = w;
     r.h = h;
-    (*(br_device_pixelmap_dispatch**)dst)->_fillDirty((br_device_pixelmap*)dst, colour, &r, 1);
+    (*(br_device_pixelmap_dispatch**)dst)->_rectangleFill((br_device_pixelmap*)dst, &r, colour);
 }
 
 // FUNCTION: CARMA2_HW 0x00538690
@@ -587,8 +587,8 @@ void C2_HOOK_CDECL BrPixelmapTextF(br_pixelmap* dst, br_int_32 x, br_int_32 y, b
     br_point p;
     va_list args;
 
-    CheckDispatch((br_device_pixelmap*)dst);
     ss = BrScratchString();
+    CheckDispatch((br_device_pixelmap*)dst);
     if (font == NULL) {
         font = BrFontProp7x9;
     }
@@ -614,9 +614,11 @@ br_uint_16 C2_HOOK_CDECL BrPixelmapTextWidth(br_pixelmap* dst, br_font* font, ch
         return 0;
     }
     if (font->flags & BR_FONTF_PROPORTIONAL) {
-        for (i = 0, w = 0, j = BrStrLen(text); i < j; i++, text++)
+        for (i = 0, w = 0, j = BrStrLen(text); i < j; i++, text++) {
             w += font->width[(int)*text] + 1;
-        return w - 1;
+        }
+        w -= 1;
+        return w;
     } else {
         return (br_uint_16)((font->glyph_x + 1) * BrStrLen(text) - 1);
     }

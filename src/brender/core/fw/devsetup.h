@@ -7,7 +7,7 @@
 
 br_pixelmap* C2_HOOK_CDECL BrDevLastBeginQuery(void);
 
-void C2_HOOK_CDECL BrDevLastBeginSet(br_pixelmap* pm);
+void C2_HOOK_STDCALL BrDevLastBeginSet(br_pixelmap* pm);
 
 br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string, ...);
 

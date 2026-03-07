@@ -5,7 +5,7 @@
 #include "crush.h"
 #include "depth.h"
 #include "displays.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -1003,7 +1003,7 @@ void C2_HOOK_FASTCALL F4Key(void) {
                 gWhich_edit_mode = 0;
             }
         }
-        c2_sprintf(s, "Edit mode: %s", gEdit_mode_names[gWhich_edit_mode]);
+        sprintf(s, "Edit mode: %s", gEdit_mode_names[gWhich_edit_mode]);
         NewTextHeadupSlot2(4, 0, 2000, -4, s, 0);
     } else {
         gWhich_edit_mode = 0;
@@ -1271,7 +1271,7 @@ void C2_HOOK_FASTCALL ToggleTargetLock(void) {
             } else {
                 driver_name = NetPlayerFromCar(gTarget_lock_car_2)->player_name;
             }
-            c2_sprintf(s, "%s %s", driver_name, GetMiscString(eMiscString_locked_onto));
+            sprintf(s, "%s %s", driver_name, GetMiscString(eMiscString_locked_onto));
             NewTextHeadupSlot2(4, 0, 1500, -4, s, 0);
         } else {
             NewTextHeadupSlot2(4, 0, 1500, -4, GetMiscString(eMiscString_target_lock_off), 0);
@@ -1452,15 +1452,15 @@ void C2_HOOK_FASTCALL CheckKevKeys(void) {
         if (gNet_mode == eNet_mode_none) {
             gKev_keys[i].action_proc(gKev_keys[i].num);
         } else if (gKev_keys[i].num == 0xa11ee75d) {
-            c2_strcpy(s, gNet_players[gThis_net_player_index].player_name);
-            c2_strcat(s, " ");
-            c2_strcat(s, GetMiscString(225));
+            strcpy(s, gNet_players[gThis_net_player_index].player_name);
+            strcat(s, " ");
+            strcat(s, GetMiscString(225));
             NetSendHeadupToEverybody(s);
             gKev_keys[i].action_proc(gKev_keys[i].num);
         } else {
-            c2_strcpy(s, gNet_players[gThis_net_player_index].player_name);
-            c2_strcat(s, " ");
-            c2_strcat(s, GetMiscString(224));
+            strcpy(s, gNet_players[gThis_net_player_index].player_name);
+            strcat(s, " ");
+            strcat(s, GetMiscString(224));
             NetSendHeadupToAllPlayers(s);
         }
     }
@@ -1891,7 +1891,7 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void) {
                 if (gFree_repairs) {
                     NewTextHeadupSlot(4, 0, 1000, -4, GetMiscString(eMiscString_repairing_for_free));
                 } else {
-                    c2_sprintf(s, "%s %d", GetMiscString(eMiscString_repair_cost_colon), total_repair_cost);
+                    sprintf(s, "%s %d", GetMiscString(eMiscString_repair_cost_colon), total_repair_cost);
                     NewTextHeadupSlot(4, 0, 1000, -4, s);
                 }
             }
@@ -2148,17 +2148,17 @@ void C2_HOOK_FASTCALL EnterUserMessage(void) {
     case 50:
     case 65:
     case 70:
-        len = c2_strlen(&gString[20]);
+        len = strlen(&gString[20]);
         if (len > 0) {
             gString[20 + len - 1] = '\0';
         }
         break;
     case 51:
     case 52:
-        len = c2_strlen(gNet_players[gThis_net_player_index].player_name);
+        len = strlen(gNet_players[gThis_net_player_index].player_name);
         if (len <= 18) {
             the_message = gString + 18 - len;
-            c2_strcpy(the_message, gNet_players[gThis_net_player_index].player_name);
+            strcpy(the_message, gNet_players[gThis_net_player_index].player_name);
             the_message[len + 0] = ':';
             the_message[len + 1] = ' ';
             gString[REC2_ASIZE(gString) - 1] = '\0';
@@ -2179,7 +2179,7 @@ void C2_HOOK_FASTCALL EnterUserMessage(void) {
                     break;
                 }
                 ch = PDConvertToASCIILessThan128(raw_ch);
-                len = c2_strlen(&gString[20]);
+                len = strlen(&gString[20]);
                 if (len < 64 - 1) {
                     gString[20 + len] = ch;
                     if (ch < gFonts[4].offset || ch >= gFonts[4].offset + gFonts[4].num_entries) {
@@ -2196,7 +2196,7 @@ void C2_HOOK_FASTCALL EnterUserMessage(void) {
                 abuse_num = the_key - 82;
             }
             if (gAbuse_text[abuse_num] != NULL) {
-                c2_strcpy(&gString[20], gAbuse_text[abuse_num]);
+                strcpy(&gString[20], gAbuse_text[abuse_num]);
             }
         } else {
             gEntering_message = 0;
@@ -2295,7 +2295,7 @@ void C2_HOOK_FASTCALL CheckRecoveryOfCars(tU32 pEndFrameTime) {
             char str[256];
 
             time = (gProgram_state.current_car.time_to_recover - pEndFrameTime + 1000) / 1000;
-            c2_sprintf(str, "%s %d %s",
+            sprintf(str, "%s %d %s",
                 GetMiscString(eMiscString_recovery_in),
                 time,
                 GetMiscString(time > 1 ? eMiscString_seconds : eMiscString_second));
@@ -2348,7 +2348,7 @@ void C2_HOOK_FASTCALL PollCarControls(tU32 pTime_difference) {
 
     c = &gProgram_state.current_car;
     CheckKeysForMouldiness();
-    c2_memset(&keys, 0, sizeof(tCar_controls));
+    memset(&keys, 0, sizeof(tCar_controls));
     joystick.left = -1;
     joystick.right = -1;
     joystick.acc = -1;
@@ -2516,7 +2516,7 @@ void C2_HOOK_FASTCALL CycleCarSimplificationLevel(void) {
     char *buffer;
     gCar_simplification_level = (gCar_simplification_level + 1) % 5;
     format = GetMiscString(eMiscString_car_simplification_level_D);
-    buffer = BrMemAllocate(c2_strlen(format) + 20, kMem_simp_level);
+    buffer = BrMemAllocate(strlen(format) + 20, kMem_simp_level);
     sprintf(buffer, format, gCar_simplification_level);
     NewTextHeadupSlot(4, 0, 2000, -4, buffer);
     BrMemFree(buffer);
@@ -2695,16 +2695,16 @@ void C2_HOOK_FASTCALL CycleInvulnerability(void) {
     gCar_to_view->invulnerable_no_wastage = gInvulnerability & 4;
     message[0] = '\0';
     if (gInvulnerability == 0) {
-        c2_strcpy(message, "FULLY VULNERABLE");
+        strcpy(message, "FULLY VULNERABLE");
     }
     if (gCar_to_view->invulnerable_no_damage) {
-        c2_strcat(message, " NO DAMAGE");
+        strcat(message, " NO DAMAGE");
     }
     if (gCar_to_view->invulnerable_no_crushage != 0) {
-        c2_strcat(message, " NO CRUSHAGE");
+        strcat(message, " NO CRUSHAGE");
     }
     if (gCar_to_view->invulnerable_no_wastage != 0) {
-        c2_strcat(message, " NO WASTAGE");
+        strcat(message, " NO WASTAGE");
     }
     NewTextHeadupSlot(4, 0, 1000, -4, message);
 }
@@ -2934,7 +2934,7 @@ void C2_HOOK_FASTCALL InitAbuseomatic(void) {
 
     gString[20] = '\0';
     PDBuildAppPath(path);
-    c2_strcat(path, "ABUSE.TXT");
+    strcat(path, "ABUSE.TXT");
     for (i = 0; i < REC2_ASIZE(gAbuse_text); i++) {
         gAbuse_text[i] = NULL;
     }
@@ -2946,17 +2946,17 @@ void C2_HOOK_FASTCALL InitAbuseomatic(void) {
         if (PFfgets(s, REC2_ASIZE(s) - 1, f) == NULL) {
             break;
         }
-        len = c2_strlen(s);
+        len = strlen(s);
         if (len > 63) {
             s[63] = '\0';
         }
-        len = c2_strlen(s);
+        len = strlen(s);
         while (len != 0 && s[len - 1] < ' ') {
             s[len - 1] = '\0';
             len--;
         }
-        gAbuse_text[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_abuse_text);
-        c2_strcpy(gAbuse_text[i], s);
+        gAbuse_text[i] = BrMemAllocate(strlen(s) + 1, kMem_abuse_text);
+        strcpy(gAbuse_text[i], s);
     }
     PFfclose(f);
 }
@@ -3028,7 +3028,7 @@ void C2_HOOK_FASTCALL DisplayUserMessage(void) {
         return;
     }
 
-    len = c2_strlen(the_message);
+    len = strlen(the_message);
     if (len < 63 && (PDGetTotalTime() & 0x200)) {
         the_message[len] = '_';
         the_message[len + 1] = '\0';

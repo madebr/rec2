@@ -66,7 +66,7 @@ void C2_HOOK_FASTCALL InitTintedPolyStuff(void) {
 
     C2_HOOK_BUG_ON(sizeof(tTintedPoly) != 0x6450);
 
-    c2_memset(gTintedPolys, 0, sizeof(gTintedPolys));
+    memset(gTintedPolys, 0, sizeof(gTintedPolys));
 
     if (gTintedPolyCamera == NULL) {
         gTintedPolyCamera = BrActorAllocate(BR_ACTOR_CAMERA, NULL);
@@ -211,8 +211,8 @@ int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int
                     gTintedPolys[tintedIndex].tints1[y + x * 64] = REC2_CLAMP(v, 0u, (br_uint_32)arg1);
                 }
             }
-            c2_memset(gTintedPolys[tintedIndex].tints2, 0, sizeof(gTintedPolys[tintedIndex].tints2));
-            c2_memset(gTintedPolys[tintedIndex].tints3, 0, sizeof(gTintedPolys[tintedIndex].tints3));
+            memset(gTintedPolys[tintedIndex].tints2, 0, sizeof(gTintedPolys[tintedIndex].tints2));
+            memset(gTintedPolys[tintedIndex].tints3, 0, sizeof(gTintedPolys[tintedIndex].tints3));
 
             gTintedPolys[tintedIndex].model = BuildTintedPolyModel(x0, y0, width, height, 1, 1);
             gTintedPolys[tintedIndex].actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
@@ -556,7 +556,7 @@ void C2_HOOK_FASTCALL SetTintedPolyRefMaterial(int pTintedIndex, br_vector3* pPo
         DisablePlingMaterials();
         FindFace(pPosition, &dir, &nor, &t, &mat);
         EnablePlingMaterials();
-        if (t >= 100.f || mat == NULL || mat->identifier == NULL || c2_strlen(mat->identifier) == 0) {
+        if (t >= 100.f || mat == NULL || mat->identifier == NULL || strlen(mat->identifier) == 0) {
             gTintedPolys[pTintedIndex].field_0x28 = 0;
             gTintedPolys[pTintedIndex].material2 = NULL;
         } else if (mat->identifier[0] == '!' || mat->identifier[0] == '#') {
@@ -641,7 +641,7 @@ void C2_HOOK_FASTCALL SetTintedFromSpecialVolume(int pIndex, br_vector3* pPositi
         FindFace(pPosition, &dir, &nor, &t, &mat);
         EnablePlingMaterials();
         if (t < 100.f && mat != NULL && mat->identifier != NULL) {
-            if (c2_strlen(mat->identifier) >= 1) {
+            if (strlen(mat->identifier) >= 1) {
                 if (mat->identifier[0] == '!' || mat->identifier[0] == '#') {
                     gTintedPolys[pIndex].field_0x28 = 35;
                     gTintedPolys[pIndex].material2 = mat;
@@ -739,8 +739,8 @@ void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex) {
         C2_HOOK_BUG_ON(sizeof(gTintedPolys[pIndex].tints2) != 8192);
         C2_HOOK_BUG_ON(sizeof(gTintedPolys[pIndex].tints3) != 8192);
 
-        c2_memset(gTintedPolys[pIndex].tints2, 0, sizeof(gTintedPolys[pIndex].tints2));
-        c2_memset(gTintedPolys[pIndex].tints3, 0, sizeof(gTintedPolys[pIndex].tints2));
+        memset(gTintedPolys[pIndex].tints2, 0, sizeof(gTintedPolys[pIndex].tints2));
+        memset(gTintedPolys[pIndex].tints3, 0, sizeof(gTintedPolys[pIndex].tints2));
     }
 
     for (i = 0; i < 4; i++) {
@@ -777,7 +777,7 @@ void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex) {
         gTintedPolys[pIndex].tints2[idx] = 0xff;
         gTintedPolys[pIndex].tints3[idx] = 0xbf;
     }
-    c2_memcpy(gTintedPolys[pIndex].tints2, gTintedPolys[pIndex].tints3, sizeof(gTintedPolys[pIndex].tints2));
+    memcpy(gTintedPolys[pIndex].tints2, gTintedPolys[pIndex].tints3, sizeof(gTintedPolys[pIndex].tints2));
 
     for (i = 0; i < 64; i++) {
         for (j = 0; j < 32; j++) {
@@ -794,10 +794,10 @@ void C2_HOOK_FASTCALL FUN_004d86e0(int pIndex) {
             FILE* f;
 
             PathCat(path, gApplication_path, "FLM");
-            c2_sprintf(&path[c2_strlen(path)], "%02d.%s", i, "PIX");
+            sprintf(&path[strlen(path)], "%02d.%s", i, "PIX");
             f = DRfopen(path, "rt");
             if (f == NULL) {
-                c2_sprintf(save_path, "%s", path);
+                sprintf(save_path, "%s", path);
                 break;
             }
         }

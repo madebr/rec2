@@ -2,9 +2,9 @@
 
 #include "win32.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "globvrpb.h"
-#include "network.h"
+#include "01-network.h"
 #include "platform.h"
 
 #include "c2_string.h"
@@ -91,9 +91,9 @@ void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
     dr_dprintf("PDNetObtainSystemUserName()");
 
     if (GetComputerNameA(buffer, &size) && size != 0) {
-        c2_strncpy(pName, buffer, pMax_length - 1);
+        strncpy(pName, buffer, pMax_length - 1);
         pName[pMax_length - 1] = '\0';
-        while ((p = c2_strpbrk(pName, "_=(){}[]<>!$%^&*/:@~;'#,?\\|`\"")) != NULL) {
+        while ((p = strpbrk(pName, "_=(){}[]<>!$%^&*/:@~;'#,?\\|`\"")) != NULL) {
             *p = '-';
         }
     }
@@ -102,7 +102,7 @@ void C2_HOOK_FASTCALL PDNetObtainSystemUserName(char* pName, int pMax_length) {
 // FUNCTION: CARMA2_HW 0x0051a010
 void C2_HOOK_FASTCALL NetNowIPXLocalTarget2String(char* pString, struct sockaddr* pSock_addr) {
 
-    c2_sprintf(pString,
+    sprintf(pString,
         "%2.2x%2.2x%2.2x%2.2x:%2.2x%2.2x%2.2x%2.2x%2.2x%2.2x,%2.2x%2.2x",
         pSock_addr->sa_data[0],
         pSock_addr->sa_data[1],
@@ -133,7 +133,7 @@ int C2_HOOK_FASTCALL PDNetInitialise(void) {
         int ipx_address;
         int count;
 
-        count = c2_sscanf(s, "%x", &ipx_address);
+        count = sscanf(s, "%x", &ipx_address);
         if (count != 0 && count != -1) {
             dr_dprintf("New IPX socket %4.4x", socket);
             /* byte swap */
@@ -141,26 +141,26 @@ int C2_HOOK_FASTCALL PDNetInitialise(void) {
         }
     }
 
-    c2_memset(gLocal_address.sa_data, 0, sizeof(gLocal_address.sa_data));
+    memset(gLocal_address.sa_data, 0, sizeof(gLocal_address.sa_data));
     gLocal_address.sa_family = AF_IPX;
     gLocal_address.sa_data[10] = gIpx_sock_addr & 0xff;
     gLocal_address.sa_data[11] = gIpx_sock_addr >> 8;
     gPtr_local_address = &gLocal_address;
 
-    c2_memset(gListen_address.sa_data, 0, sizeof(gListen_address.sa_data));
+    memset(gListen_address.sa_data, 0, sizeof(gListen_address.sa_data));
     gListen_address.sa_family = AF_IPX;
     gListen_address.sa_data[10] = gIpx_sock_addr & 0xff;
     gListen_address.sa_data[11] = gIpx_sock_addr >> 8;
     gPtr_listen_address = &gListen_address;
 
-    c2_memset(gBroadcast_address.sa_data, 0, sizeof(gListen_address.sa_data));
+    memset(gBroadcast_address.sa_data, 0, sizeof(gListen_address.sa_data));
     gBroadcast_address.sa_family = AF_IPX;
-    gBroadcast_address.sa_data[4] = 0xff;
-    gBroadcast_address.sa_data[5] = 0xff;
-    gBroadcast_address.sa_data[6] = 0xff;
-    gBroadcast_address.sa_data[7] = 0xff;
-    gBroadcast_address.sa_data[8] = 0xff;
-    gBroadcast_address.sa_data[9] = 0xff;
+    gBroadcast_address.sa_data[4] = 0xffu;
+    gBroadcast_address.sa_data[5] = 0xffu;
+    gBroadcast_address.sa_data[6] = 0xffu;
+    gBroadcast_address.sa_data[7] = 0xffu;
+    gBroadcast_address.sa_data[8] = 0xffu;
+    gBroadcast_address.sa_data[9] = 0xffu;
     gBroadcast_address.sa_data[10] = gIpx_sock_addr & 0xff;
     gBroadcast_address.sa_data[11] = gIpx_sock_addr >> 8;
     gPtr_broadcast_address = &gBroadcast_address;
@@ -203,19 +203,19 @@ int C2_HOOK_FASTCALL PDNetInitialise(void) {
     getsockname(gSocket, &gLocal_address, &namelen);
     NetNowIPXLocalTarget2String(gLocal_address_text, gPtr_local_address);
 
-    c2_memcpy(gIpx_network_numbers[0], gPtr_local_address->sa_data, 4);
+    memcpy(gIpx_network_numbers[0], gPtr_local_address->sa_data, 4);
     gNumber_of_networks = 1;
     if (gPathNetworkIniValid) {
         char key[32];
         int i;
 
         for (i = 0; i < 16; i++) {
-            c2_sprintf(key, "%s%d", "Network", i);
+            sprintf(key, "%s%d", "Network", i);
             if (GetPrivateProfileStringA("Network", key, &default_null, s, sizeof(s), gPathNetworkIni) != 0) {
                 int count;
                 tU32 netnum;
 
-                count = c2_sscanf(s, "%x", &netnum);
+                count = sscanf(s, "%x", &netnum);
                 if (count != 0 && count != -1) {
                     dr_dprintf("Found network number '%x' in INI file", netnum);
                     gIpx_network_numbers[gNumber_of_networks][0] = netnum >> 24;
@@ -233,11 +233,11 @@ int C2_HOOK_FASTCALL PDNetInitialise(void) {
         }
         dr_dprintf("Total networks = %d", gNumber_of_networks);
     }
-    c2_memcpy(&gLocal_address_2, gPtr_local_address, sizeof(SOCKADDR_IPX));
+    memcpy(&gLocal_address_2, gPtr_local_address, sizeof(SOCKADDR_IPX));
     dr_dprintf("Socket bound OK; local address is '%s'", gLocal_address_text);
 
-    gMsg_header_strlen = c2_strlen(BROADCAST_HEADER);
-    if (c2_strstr(gLocal_address_text, "00a0240f9fac") != NULL) {
+    gMsg_header_strlen = strlen(BROADCAST_HEADER);
+    if (strstr(gLocal_address_text, "00a0240f9fac") != NULL) {
         gSpecial_server = 1;
     }
     return 0;
@@ -246,17 +246,12 @@ int C2_HOOK_FASTCALL PDNetInitialise(void) {
 // FUNCTION: CARMA2_HW 0x00519a10
 int C2_HOOK_FASTCALL PDNetShutdown(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    return PDNetShutdown_original();
-#else
-
     dr_dprintf("PDNetShutdown()");
     if (gSocket != SOCKET_ERROR) {
         closesocket(gSocket);
     }
     gSocket = SOCKET_ERROR;
     return 0;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00519a40
@@ -289,10 +284,10 @@ int C2_HOOK_FASTCALL BroadcastMessage(void) {
 
     errors = 0;
     for (i = 0; i < gNumber_of_networks; i++) {
-        c2_memcpy(gPtr_broadcast_address->sa_data, gIpx_network_numbers[0], 4);
+        memcpy(gPtr_broadcast_address->sa_data, gIpx_network_numbers[0], 4);
         NetNowIPXLocalTarget2String(broadcast_addr_string, gPtr_broadcast_address);
         dr_dprintf("Broadcasting on address '%s'", broadcast_addr_string);
-        if (sendto(gSocket, gSend_buffer, c2_strlen(gSend_buffer) + 1, 0, &gBroadcast_address, sizeof(gBroadcast_address)) == SOCKET_ERROR) {
+        if (sendto(gSocket, gSend_buffer, strlen(gSend_buffer) + 1, 0, &gBroadcast_address, sizeof(gBroadcast_address)) == SOCKET_ERROR) {
             dr_dprintf("BroadcastMessage(): Error on sendto() - WSAGetLastError=%d", WSAGetLastError());
             errors = 1;
         }
@@ -303,7 +298,7 @@ int C2_HOOK_FASTCALL BroadcastMessage(void) {
 void C2_HOOK_FASTCALL MakeMessageToSend(int pMessage_type) {
 
 #if defined(REC2_FIX_BUGS)
-    c2_sprintf(gSend_buffer, "XXXX%s%1d", BROADCAST_HEADER, pMessage_type);
+    sprintf(gSend_buffer, "XXXX%s%1d", BROADCAST_HEADER, pMessage_type);
 #else
     sprintf(gSend_buffer, "XXXX%s%0.1d", BROADCAST_HEADER, pMessage_type);
 #endif
@@ -311,7 +306,7 @@ void C2_HOOK_FASTCALL MakeMessageToSend(int pMessage_type) {
 
 int C2_HOOK_FASTCALL SameEthernetAddress(struct sockaddr* pAddr_ipx1, struct sockaddr* pAddr_ipx2) {
 
-    return c2_memcmp(&pAddr_ipx1->sa_data[4], &pAddr_ipx2->sa_data[4], 6) == 0;
+    return memcmp(&pAddr_ipx1->sa_data[4], &pAddr_ipx2->sa_data[4], 6) == 0;
 }
 
 int C2_HOOK_FASTCALL GetMessageTypeFromMessage(char* pMessage_str) {
@@ -322,7 +317,7 @@ int C2_HOOK_FASTCALL GetMessageTypeFromMessage(char* pMessage_str) {
     msg_type_int = 0;
 
     // FIXME: "CW95MSG" value is used in and depends on platform
-    if (c2_strncmp(real_msg, BROADCAST_HEADER, gMsg_header_strlen) == 0) {
+    if (strncmp(real_msg, BROADCAST_HEADER, gMsg_header_strlen) == 0) {
         if (isdigit(real_msg[gMsg_header_strlen])) {
             msg_type_int = real_msg[gMsg_header_strlen] - '0';
         }
@@ -374,7 +369,7 @@ int C2_HOOK_FASTCALL ReceiveHostResponses(void) {
             gJoinable_games[i].last_response = PDGetTotalTime();
         } else {
             dr_dprintf("Adding joinable game to slot #%d", gNumber_of_hosts);
-            c2_memcpy(gJoinable_games[gNumber_of_hosts].addr, gPtr_listen_address, sizeof(struct sockaddr));
+            memcpy(gJoinable_games[gNumber_of_hosts].addr, gPtr_listen_address, sizeof(struct sockaddr));
             gJoinable_games[gNumber_of_hosts].last_response = PDGetTotalTime();
             gNumber_of_hosts++;
             dr_dprintf("Number of games found so far: %d", gNumber_of_hosts);
@@ -410,7 +405,7 @@ int C2_HOOK_FASTCALL PDNetGetNextJoinGame(tNet_game_details* pGame, int pIndex) 
                 if (gJoinable_games[i].last_response + 10000 < (tU32)PDGetTotalTime()) {
                     number_of_hosts_has_changed = 1;
                     for (j = i; j < gNumber_of_hosts - 1; j++) {
-                        c2_memmove(&gJoinable_games[j], &gJoinable_games[j + 1], sizeof(tPD_net_game_info));
+                        memmove(&gJoinable_games[j], &gJoinable_games[j + 1], sizeof(tPD_net_game_info));
                     }
                 }
             }
@@ -431,7 +426,7 @@ int C2_HOOK_FASTCALL PDNetGetNextJoinGame(tNet_game_details* pGame, int pIndex) 
         return 0;
     }
     dr_dprintf("PDNetGetNextJoinGame(): Adding game.");
-    c2_memcpy(&pGame->pd_net_info.addr, &gJoinable_games[pIndex].addr, sizeof(pGame->pd_net_info.addr));
+    memcpy(&pGame->pd_net_info.addr, &gJoinable_games[pIndex].addr, sizeof(pGame->pd_net_info.addr));
     return 1;
 }
 
@@ -484,7 +479,7 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
                 if (gNet_mode == eNet_mode_host) {
                     dr_dprintf("PDNetGetNextMessage(): Received '%s' from '%s', replying to joiner", receive_buffer, addr_str);
                     MakeMessageToSend(2);
-                    if (sendto(gSocket, gSend_buffer, c2_strlen(gSend_buffer) + 1, 0, &gListen_address, sizeof(gListen_address)) == SOCKET_ERROR) {
+                    if (sendto(gSocket, gSend_buffer, strlen(gSend_buffer) + 1, 0, &gListen_address, sizeof(gListen_address)) == SOCKET_ERROR) {
                         dr_dprintf("PDNetGetNextMessage(): Error on sendto() - WSAGetLastError=%d", WSAGetLastError());
                     }
                 }
@@ -494,7 +489,7 @@ tNet_message* C2_HOOK_FASTCALL PDNetGetNextMessage(tNet_game_details* pDetails, 
                 break;
             default:
                 dr_dprintf("PDNetGetNextMessage(): res is %d, received message type %d from '%s', passing up", res, msg->contents.raw.header.type, addr_str);
-                c2_memcpy(&gLast_received_addr, gPtr_listen_address, sizeof(gLast_received_addr));
+                memcpy(&gLast_received_addr, gPtr_listen_address, sizeof(gLast_received_addr));
                 *pSender_address = &gLast_received_addr;
                 return msg;
             }

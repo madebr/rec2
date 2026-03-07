@@ -91,16 +91,20 @@ br_uint_32 hitherYonTable[16] = {
 
 // FUNCTION: CARMA2_HW 0x0054c400
 void C2_HOOK_CDECL averageVerticesOnScreen(br_soft_renderer* renderer, brp_vertex* dest1, brp_vertex* dest2, brp_vertex* dest3, brp_vertex* src1, brp_vertex* src2, brp_vertex* src3) {
+    br_scalar one_div_w1;
+    br_scalar one_div_w2;
+    br_scalar one_div_w3;
+    br_scalar w1w2w3;
 
     COMPUTE_COMPONENT_MID_POINT_VALUES(C_X);
     COMPUTE_COMPONENT_MID_POINT_VALUES(C_Y);
     COMPUTE_COMPONENT_MID_POINT_VALUES(C_Z);
     COMPUTE_COMPONENT_MID_POINT_VALUES(C_W);
 
-    br_scalar one_div_w1 = dest2->comp[C_W] * dest3->comp[C_W]; /* = w2 * w3 */
-    br_scalar one_div_w2 = dest1->comp[C_W] * dest3->comp[C_W]; /* = w1 * w3 */
-    br_scalar one_div_w3 = dest1->comp[C_W] * dest2->comp[C_W]; /* = w1 * w2 */
-    br_scalar w1w2w3 = 1.f / (dest1->comp[C_W] * one_div_w1); /* 1 / ( w1 * w2 * w3) */
+    one_div_w1 = dest2->comp[C_W] * dest3->comp[C_W]; /* = w2 * w3 */
+    one_div_w2 = dest1->comp[C_W] * dest3->comp[C_W]; /* = w1 * w3 */
+    one_div_w3 = dest1->comp[C_W] * dest2->comp[C_W]; /* = w1 * w2 */
+    w1w2w3 = 1.f / (dest1->comp[C_W] * one_div_w1); /* 1 / ( w1 * w2 * w3) */
 
     if (rend.block->convert_mask_f & (CM_R | CM_G | CM_B)) {
         COMPUTE_COMPONENT_MID_POINT_VALUES(C_R);
@@ -120,7 +124,7 @@ void C2_HOOK_CDECL averageVerticesOnScreen(br_soft_renderer* renderer, brp_verte
     PROJECT_COMPONENT(C_Z, C_SZ);
 }
 
-static inline br_uint_32 OUTCODE_ORDINATE(br_uint_32 lValue, br_uint_32 rValue, br_uint_32* tableName1) {
+static br_uint_32 OUTCODE_ORDINATE(br_uint_32 lValue, br_uint_32 rValue, br_uint_32* tableName1) {
 #if 0
     br_uint_32 ldown = lValue & 0x7fffffff;
     br_uint_32 rdown = rValue & 0x7fffffff;

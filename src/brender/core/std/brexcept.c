@@ -3,7 +3,7 @@
 #include "core/fw/resource.h"
 #include "core/fw/diag.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 
 // GLOBAL: CARMA2_HW 0x006b0a50

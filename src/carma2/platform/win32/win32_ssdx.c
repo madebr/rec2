@@ -2,13 +2,15 @@
 
 #include "win32.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
-#include "graphics.h"
+#include "16-graphics1.h"
 
 #include "platform.h"
 
+#include <windows.h>
 #include <ddraw.h>
+#include <mmsystem.h>
 
 #include "c2_stdlib.h"
 #include "c2_string.h"
@@ -127,23 +129,14 @@ tU32 gPDS3_last_cda_status_update;
 
 // FUNCTION: CARMA2_HW 0x00500070
 HRESULT CALLBACK LocalEnumAttachedSurfacesCallback(LPDIRECTDRAWSURFACE lpSurface, LPDDSURFACEDESC lpSurfaceDesc, LPVOID lpContext) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return LocalEnumAttachedSurfacesCallback_original(lpSurface, lpSurfaceDesc, lpContext);
-#else
     int* counter = lpContext;
     dr_dprintf("LocalEnumAttachedSurfacesCallback(): Enum-ing attached surface #%d, address 0x%p", *counter, lpSurface);
     gAttached_surface = lpSurface;
     return DDENUMRET_OK;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005000a0
 void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return LocalWindowedDDSetup_original(pWidth, pHeight, pArg3);
-#else
     DDSURFACEDESC desc;
     HRESULT res;
     HDC hdc;
@@ -151,7 +144,7 @@ void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch)
 
     SetRect(&gSSDXRect, 0, 0, pWidth, pHeight);
 
-    c2_memset(&desc, 0, sizeof(desc));
+    memset(&desc, 0, sizeof(desc));
     C2_HOOK_BUG_ON(sizeof(desc) != 0x6c);
     desc.dwSize = sizeof(desc);
     desc.dwFlags = DDSD_CAPS;
@@ -163,7 +156,7 @@ void C2_HOOK_FASTCALL LocalWindowedDDSetup(int pWidth, int pHeight, int* pPitch)
         goto post_creation;
     }
 
-    c2_memset(&desc, 0, sizeof(desc));
+    memset(&desc, 0, sizeof(desc));
     desc.dwSize = sizeof(desc);
     desc.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS;
     desc.dwHeight = pHeight;
@@ -223,7 +216,6 @@ post_creation:
         }
     }
     *pPitch = gSSDXPitch;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005002d0
@@ -285,10 +277,6 @@ void C2_HOOK_FASTCALL SSDXStart(void *p_hWnd, int p_DirectDraw, int p_EnumerateD
 // FUNCTION: CARMA2_HW 0x00500590
 void C2_HOOK_FASTCALL SSDXStop(void) {
 
-#if 0//defined(C2_HOOKS_ENABLED)
-    SSDXStop_original();
-#else
-
     SSDXUnlockAttachedSurface();
 
     if (gDirectDrawPalette != NULL) {
@@ -330,15 +318,10 @@ void C2_HOOK_FASTCALL SSDXStop(void) {
             gPrimary_surface = NULL;
         }
     }
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005006d0
 void C2_HOOK_FASTCALL SSDXRelease(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    SSDXRelease_original();
-#else
 
     if (gDirectDraw2 != NULL) {
         dr_dprintf("SSDXStop(): Releasing DDraw2 interface...");
@@ -355,15 +338,10 @@ void C2_HOOK_FASTCALL SSDXRelease(void) {
         IDirectSound_Release(gDirectSound);
         gDirectSound = NULL;
     }
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00500760
 void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, int* pPitch) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    SSDXDirectDrawSetup_original(pWidth, pHeight, pBits, pPitch);
-#else
     HRESULT result;
 
     if (gUse_DirectDraw) {
@@ -376,7 +354,7 @@ void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, in
         DDSURFACEDESC surfaceDesc;
 
         C2_HOOK_BUG_ON(sizeof(surfaceDesc) != 0x6c);
-        c2_memset(&surfaceDesc, 0, sizeof(surfaceDesc));
+        memset(&surfaceDesc, 0, sizeof(surfaceDesc));
         surfaceDesc.dwSize = sizeof(surfaceDesc);
         surfaceDesc.dwFlags = DDSD_CAPS | (gEnumerate_DirectX_surfaces ? DDSD_BACKBUFFERCOUNT : 0);
         surfaceDesc.dwBackBufferCount = gEnumerate_DirectX_surfaces ? 1 : 0;
@@ -395,7 +373,7 @@ void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, in
 
                 C2_HOOK_BUG_ON(sizeof(surfaceDesc) != 0x6c);
                 SetRect(&gSSDXRect, 0, 0, pWidth, pHeight);
-                c2_memset(&surfaceDesc, 0, sizeof(surfaceDesc));
+                memset(&surfaceDesc, 0, sizeof(surfaceDesc));
                 surfaceDesc.dwSize = sizeof(surfaceDesc);
                 surfaceDesc.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
                 surfaceDesc.ddsCaps.dwCaps = DDSCAPS_SYSTEMMEMORY | DDSCAPS_OFFSCREENPLAIN;
@@ -408,7 +386,7 @@ void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, in
             if (result == DD_OK) {
                 PALETTEENTRY palette[256];
 
-                c2_memset(palette, 0, sizeof(palette));
+                memset(palette, 0, sizeof(palette));
                 result = IDirectDraw_CreatePalette(gDirectDraw, DDPCAPS_ALLOW256 | DDPCAPS_8BIT, palette, &gDirectDrawPalette, NULL);
                 if (result == DD_OK) {
                     dr_dprintf("SSDXDirectDrawSetup(): Calling SetPalette");
@@ -426,15 +404,10 @@ void C2_HOOK_FASTCALL SSDXDirectDrawSetup(int pWidth, int pHeight, int pBits, in
         dr_dprintf("WARNING: Problems during SSDXDirectDrawSetup()");
         SSDXLogError(result);
     }
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00500a30
 void C2_HOOK_FASTCALL SSDXLockAttachedSurface(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    SSDXLockAttachedSurface_original();
-#else
     HRESULT result;
     DDSURFACEDESC surfaceDesc;
 
@@ -464,7 +437,7 @@ void C2_HOOK_FASTCALL SSDXLockAttachedSurface(void) {
         goto error;
     }
     C2_HOOK_BUG_ON(sizeof(surfaceDesc) != 0x6c);
-    c2_memset(&surfaceDesc, 0, sizeof(surfaceDesc));
+    memset(&surfaceDesc, 0, sizeof(surfaceDesc));
     surfaceDesc.dwSize = sizeof(surfaceDesc);
     result = IDirectDrawSurface_Lock(gAttached_surface, NULL, &surfaceDesc, DDLOCK_WAIT, NULL);
     if (result != DD_OK) {
@@ -479,7 +452,6 @@ error:
     if (gAttached_surface == NULL) {
         dr_dprintf("WARNING: SSDXLockAttachedSurface() called but no attached surface available");
     }
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00500b40
@@ -567,9 +539,9 @@ int C2_HOOK_FASTCALL PDS3Init(void) {
 
     C2_HOOK_BUG_ON(sizeof(gPD_S3_config) != 0x20);
 
-    c2_strcpy(gS3_path_separator, "\\");
-    c2_strcpy(gS3_sound_folder_name, "SOUND");
-    c2_memset(&gPD_S3_config, 0, sizeof(gPD_S3_config));
+    strcpy(gS3_path_separator, "\\");
+    strcpy(gS3_sound_folder_name, "SOUND");
+    memset(&gPD_S3_config, 0, sizeof(gPD_S3_config));
     if (!PDS3DDXInit()) {
         return 0;
     }
@@ -606,10 +578,6 @@ int C2_HOOK_FASTCALL PDS3DDXInit(void) {
 
 // FUNCTION: CARMA2_HW 0x005699aa
 int C2_HOOK_FASTCALL PDS3InitCDA(void) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return PDS3InitCDA_original();
-#else
     MCIERROR err;
     err = mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_TYPE_ID | MCI_OPEN_SHAREABLE, (DWORD_PTR)&gPDS3_mci_open_parms);
     if (err != 0) {
@@ -623,7 +591,6 @@ int C2_HOOK_FASTCALL PDS3InitCDA(void) {
     S3EnableCDA();
     gPDS3_cda_initialized = 1;
     return 1;
-#endif
 }
 
 void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav_buffer) {
@@ -633,7 +600,7 @@ void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav
     DWORD buffer_data_size;
 
     C2_HOOK_BUG_ON(sizeof(DSBUFFERDESC) != 0x14);
-    c2_memset(&buffer_desc, 0, sizeof(buffer_desc));
+    memset(&buffer_desc, 0, sizeof(buffer_desc));
     buffer_desc.dwSize = sizeof(DSBUFFERDESC);
     buffer_desc.dwFlags = DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLVOLUME | DSBCAPS_CTRLPAN | DSBCAPS_CTRLFREQUENCY | DSBCAPS_STATIC;
     buffer_desc.dwBufferBytes = pWav_info->sample_size;
@@ -645,7 +612,7 @@ void* C2_HOOK_FASTCALL PDS3CreateSoundBuffer(tS3_wav_info* pWav_info, void* pWav
         IDirectSoundBuffer_Release(buffer);
         return NULL;
     }
-    c2_memmove(buffer_data, pWav_info->samples, buffer_data_size);
+    memmove(buffer_data, pWav_info->samples, buffer_data_size);
     IDirectSoundBuffer_Unlock(buffer, buffer_data, buffer_data_size, NULL, 0);
     return buffer;
 }
@@ -683,7 +650,7 @@ int C2_HOOK_FASTCALL PDReverseAudio(tS3_channel* pChannel) {
         IDirectSoundBuffer_Unlock(buffer, buffer_data, buffer_data_size, NULL, 0);
         return 1;
     }
-    c2_memmove(tmp_buffer, buffer_data, buffer_data_size);
+    memmove(tmp_buffer, buffer_data, buffer_data_size);
     for (i = 0; i < buffer_data_size; i++) {
         buffer_data[i] = tmp_buffer[sample_size - 1 - i];
     }
@@ -703,7 +670,7 @@ const char* C2_HOOK_FASTCALL PDS3GetWorkingDirectory(void) {
 
         gS3_working_directory[0] = '\0';
         len_res = GetCurrentDirectoryA(sizeof(gS3_working_directory), gS3_working_directory);
-        len = c2_strlen(gS3_working_directory);
+        len = strlen(gS3_working_directory);
         if (len_res != len) {
             gS3_working_directory[0] = '\0';
         }
@@ -727,10 +694,6 @@ int C2_HOOK_FASTCALL PDS3StopMidiChannel(tS3_channel* pChannel) {
 
 // FUNCTION: CARMA2_HW 0x0056a0e1
 void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    PDS3CheckCDAMedia_original(pChannel);
-#else
     gPDS3_cda_status_parms.dwItem = MCI_STATUS_MEDIA_PRESENT;
     mciSendCommandA(gPDS3_mci_open_parms.wDeviceID, MCI_STATUS, MCI_STATUS_ITEM | MCI_WAIT, (DWORD_PTR)&gPDS3_cda_status_parms);
     if (!gPDS3_cda_media_present && gPDS3_cda_status_parms.dwReturn) {
@@ -744,11 +707,12 @@ void C2_HOOK_FASTCALL PDS3CheckCDAMedia(tS3_channel* pChannel) {
         gPDS3_cda_media_present = 0;
         gPDS3_cda_paused = 0;
     }
-#endif
+
 }
 
 // FUNCTION: CARMA2_HW 0x0056a093
 int C2_HOOK_FASTCALL PDS3StopCDAChannel(tS3_channel* pChannel) {
+
     PDS3CheckCDAMedia(pChannel);
     if (gPDS3_cda_media_present) {
         gPDS3_cda_paused = 0;
@@ -896,14 +860,15 @@ int C2_HOOK_FASTCALL PDS3PlaySample(tS3_channel* pChannel) {
 tS3_error_codes C2_HOOK_FASTCALL PDS3StartMidiChannel(tS3_channel* pChannel) {
     char path[256];
     MCIERROR err;
+    MCIDEVICEID device;
 
     path[0] = '\0';
-    c2_strcpy(path, pChannel->descriptor->path);
-    c2_strcat(path, ".MID");
+    strcpy(path, pChannel->descriptor->path);
+    strcat(path, ".MID");
     mci_open_params.lpstrElementName = path;
     mci_open_params.lpstrDeviceType = "sequencer";
     err = mciSendCommandA(0, MCI_OPEN, MCI_OPEN_TYPE | MCI_OPEN_ELEMENT, (DWORD_PTR)&mci_open_params);
-    MCIDEVICEID device = mci_open_params.wDeviceID;
+    device = mci_open_params.wDeviceID;
     if (err != 0) {
         return eS3_error_start_song;
     }
@@ -932,7 +897,7 @@ tS3_error_codes C2_HOOK_FASTCALL PDS3PlayCDAChannel(tS3_channel* pChannel) {
         return eS3_error_start_cda;
     }
     gPDS3_cda_paused = 0;
-    gPDS3_cda_track = c2_strtoul(pChannel->descriptor->path, &endptr, 10);
+    gPDS3_cda_track = strtoul(pChannel->descriptor->path, &endptr, 10);
     gPDS3_cda_status_parms.dwItem = MCI_STATUS_MODE;
     mciSendCommandA(gPDS3_mci_open_parms.wDeviceID, MCI_STATUS, MCI_WAIT | MCI_STATUS_ITEM, (DWORD_PTR)&gPDS3_cda_status_parms);
     if (gPDS3_cda_status_parms.dwReturn == MCI_MODE_NOT_READY

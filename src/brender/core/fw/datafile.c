@@ -1210,7 +1210,7 @@ int C2_HOOK_STDCALL DfCountSizeBinary(br_datafile* df) {
 }
 
 br_uint_8* C2_HOOK_STDCALL BlockWriteSetup(void* base, int block_size, int block_stride, int block_count, int size) {
-    c2_abort();
+    abort();
     return NULL;
 }
 
@@ -1499,7 +1499,7 @@ void C2_HOOK_STDCALL BrNullOther(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cb40
-int C2_HOOK_STDCALL DfFileIdentify(br_uint_8* magics, br_size_t n_magics) {
+int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics) {
     static char text_magics[8] = { '*', 'F', 'I', 'L', 'E', '_', 'I', 'N' };
     static char binary_magics[8] = { '\0', '\0', '\0', '\x12', '\0', '\0', '\0', '\b' };
 

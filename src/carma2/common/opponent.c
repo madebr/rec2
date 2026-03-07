@@ -2,7 +2,7 @@
 
 #include "car.h"
 #include "controls.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "finteray.h"
 #include "globvars.h"
 #include "globvrkm.h"
@@ -179,7 +179,7 @@ void C2_HOOK_FASTCALL ReallocExtraPathNodes(int pCount) {
     if (pCount != 0) {
 
         nodes = BrMemAllocate((gProgram_state.AI_vehicles.number_of_path_nodes + pCount) * sizeof(tPath_node), kMem_oppo_new_nodes);
-        c2_memcpy(nodes, gProgram_state.AI_vehicles.path_nodes, gProgram_state.AI_vehicles.number_of_path_nodes * sizeof(tPath_node));
+        memcpy(nodes, gProgram_state.AI_vehicles.path_nodes, gProgram_state.AI_vehicles.number_of_path_nodes * sizeof(tPath_node));
 
         if (gProgram_state.AI_vehicles.path_nodes != NULL) {
             BrMemFree(gProgram_state.AI_vehicles.path_nodes);
@@ -198,7 +198,7 @@ void C2_HOOK_FASTCALL ReallocExtraPathSections(int pCount) {
     if (pCount != 0) {
 
         sections = BrMemAllocate((gProgram_state.AI_vehicles.number_of_path_sections + pCount) * sizeof(tPath_section), kMem_oppo_new_sections);
-        c2_memcpy(sections, gProgram_state.AI_vehicles.path_sections, gProgram_state.AI_vehicles.number_of_path_sections * sizeof(tPath_section));
+        memcpy(sections, gProgram_state.AI_vehicles.path_sections, gProgram_state.AI_vehicles.number_of_path_sections * sizeof(tPath_section));
 
         if (gProgram_state.AI_vehicles.path_sections != NULL) {
             BrMemFree(gProgram_state.AI_vehicles.path_sections);
@@ -253,7 +253,7 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
         if (!GetALineAndDontArgue(pF, s)) {
             return;
         }
-        if (c2_strcmp(s, "START OF OPPONENT PATHS") == 0) {
+        if (strcmp(s, "START OF OPPONENT PATHS") == 0) {
             break;
         }
     }
@@ -362,7 +362,7 @@ void C2_HOOK_FASTCALL LoadInOppoPaths(FILE* pF) {
 
     for (;;) {
         GetALineAndDontArgue(pF, s);
-        if (c2_strcmp(s, "END OF OPPONENT PATHS") == 0) {
+        if (strcmp(s, "END OF OPPONENT PATHS") == 0) {
             break;
         }
     }
@@ -1148,7 +1148,7 @@ void C2_HOOK_FASTCALL RecordNextTrailNode(tCar_spec* pPursuee) {
             if (pPursuee->my_trail.number_of_nodes < REC2_ASIZE(pPursuee->my_trail.trail_nodes)) {
                 pPursuee->my_trail.number_of_nodes += 1;
             } else {
-                c2_memmove(&pPursuee->my_trail.trail_nodes[0], &pPursuee->my_trail.trail_nodes[1], sizeof(pPursuee->my_trail.trail_nodes[0]));
+                memmove(&pPursuee->my_trail.trail_nodes[0], &pPursuee->my_trail.trail_nodes[1], sizeof(pPursuee->my_trail.trail_nodes[0]));
                 pPursuee->my_trail.nodes_shifted_this_frame = 1;
             }
             pPursuee->my_trail.has_deviated_recently = 0;
@@ -1528,7 +1528,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
         if (pOpponent_spec->current_objective != eOOT_run_away || gTime_stamp_for_this_munging >= pOpponent_spec->time_this_objective_started + 20000) {
             if (CAR_SPEC_IS_ROZZER(pOpponent_spec->car_spec) && pOpponent_spec->murder_reported && pOpponent_spec->player_to_oppo_d < 20.f && !AlreadyPursuingCar(pOpponent_spec, &gProgram_state.current_car)) {
                 gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
-                c2_sprintf(str, "%s: Furderous melon!", pOpponent_spec->car_spec->driver_name);
+                sprintf(str, "%s: Furderous melon!", pOpponent_spec->car_spec->driver_name);
                 DoNotDprintf_opponent("%s: Decided to pursue after MURDER", pOpponent_spec->car_spec->driver_name);
                 NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
                 return;
@@ -1538,7 +1538,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
                     && !AlreadyPursuingCar(pOpponent_spec, pOpponent_spec->car_spec->last_person_to_hit_us)) {
 
                 gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
-                c2_sprintf(str, "%s: Christ! What was that?", pOpponent_spec->car_spec->driver_name);
+                sprintf(str, "%s: Christ! What was that?", pOpponent_spec->car_spec->driver_name);
                 DoNotDprintf_opponent("%s: Decided to pursue after big bang; last person to twat us was %s",
                     pOpponent_spec->car_spec->driver_name,
                     pOpponent_spec->car_spec->last_person_to_hit_us->driver_name);
@@ -1548,7 +1548,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
             if (LastTwatteeAPlayer(pOpponent_spec) && !AlreadyPursuingCar(pOpponent_spec, pOpponent_spec->car_spec->last_person_we_hit)) {
 
                 gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
-                c2_sprintf(str, "%s: Ha! Bet you weren't expecting that!", pOpponent_spec->car_spec->driver_name);
+                sprintf(str, "%s: Ha! Bet you weren't expecting that!", pOpponent_spec->car_spec->driver_name);
                 DoNotDprintf_opponent("%s: Decided to pursue %s after accidentally hitting them",
                     pOpponent_spec->car_spec->driver_name,
                     pOpponent_spec->car_spec->last_person_we_hit->driver_name);
@@ -1562,7 +1562,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
                     int grudge = gOpponents[pOpponent_spec->index].psyche.grudge_against_player;
                     if (grudge > 20) {
                         gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(grudge + general_grudge_increase, 100);
-                        c2_sprintf(str, "%s: Right! That's enough, %s!", pOpponent_spec->car_spec->driver_name, gProgram_state.current_car.driver_name);
+                        sprintf(str, "%s: Right! That's enough, %s!", pOpponent_spec->car_spec->driver_name, gProgram_state.current_car.driver_name);
                         DoNotDprintf_opponent("%s: Decided to pursue after grudginess raised; last person to twat us was %s",
                             pOpponent_spec->car_spec->driver_name, pOpponent_spec->car_spec->last_person_to_hit_us->driver_name);
                         NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
@@ -1587,7 +1587,7 @@ void C2_HOOK_FASTCALL ChooseNewObjective(tOpponent_spec* pOpponent_spec, int pMu
                     DoNotDprintf_opponent("%s: Spotted player; chance of pursuing %d%%: %s", pOpponent_spec->car_spec->driver_name, pursuit_percentage, do_it ? "YES, Decided to pursue" : "NO, Decided NOT to pursue");
                     if (do_it) {
                         gOpponents[pOpponent_spec->index].psyche.grudge_against_player = MIN(100, MAX(20, gOpponents[pOpponent_spec->index].psyche.grudge_against_player) + general_grudge_increase);
-                        c2_sprintf(str, "%s: I've decided to kill you for the fun of it", pOpponent_spec->car_spec->driver_name);
+                        sprintf(str, "%s: I've decided to kill you for the fun of it", pOpponent_spec->car_spec->driver_name);
                         NewObjective(pOpponent_spec, eOOT_pursue_and_twat, &gProgram_state.current_car);
                         return;
                     }
@@ -1825,6 +1825,11 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
     br_scalar effective_speed_factor;
     int count_corners;
     int count_socs;
+    int straight_section_no;
+    br_scalar unk1;
+    br_scalar unk2;
+    br_scalar unk3;
+    br_scalar curv;
 
     car_spec = pOpponent_spec->car_spec;
     engine_damage = car_spec->damage_units[eDamage_engine].damage_level;
@@ -1917,11 +1922,6 @@ tFollow_path_result C2_HOOK_FASTCALL ProcessFollowPath(tOpponent_spec* pOpponent
                 }
             }
         }
-        int straight_section_no;
-        br_scalar unk1;
-        br_scalar unk2;
-        br_scalar unk3;
-        br_scalar curv;
 
         straight_section_no = GetStraight(&start2d, &finish2d, &width, pOpponent_spec->follow_path_data.section_no, pOpponent_spec);
         BrVector2Set(&oppo_pos2d,
@@ -2155,6 +2155,7 @@ void C2_HOOK_FASTCALL ProcessLevitate(tOpponent_spec* pOpponent_spec, tProcess_o
 int C2_HOOK_FASTCALL RematerialiseOpponent(tOpponent_spec* pOpponent_spec, br_scalar pSpeed) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004a8170
@@ -2430,7 +2431,7 @@ void C2_HOOK_FASTCALL ProcessCurrentObjective(tOpponent_spec* pOpponent_spec, tP
         break;
     case eOOT_knackered_and_freewheeling:
         // FIXME: is keys correct?
-        c2_memset(&pOpponent_spec->car_spec->keys, 0, sizeof(pOpponent_spec->car_spec->keys));
+        memset(&pOpponent_spec->car_spec->keys, 0, sizeof(pOpponent_spec->car_spec->keys));
         pOpponent_spec->car_spec->acc_force = 0.f;
         pOpponent_spec->car_spec->brake_force = 0.f;
         pOpponent_spec->car_spec->curvature = 0.f;
@@ -2583,12 +2584,14 @@ int C2_HOOK_FASTCALL GetOpponentsFirstSection(const tOpponent_spec* pOpponent_sp
 tS16 C2_HOOK_FASTCALL GetOpponentsSectionMaxSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004aed50
 tS16 C2_HOOK_FASTCALL GetOpponentsSectionMinSpeed(tOpponent_spec* pOpponent_spec, tS16 pSection, int pTowards_finish) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004a7f20

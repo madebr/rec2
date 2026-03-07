@@ -1,7 +1,7 @@
 #include "physics.h"
 
 #include "car.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "globvrpb.h"
 #include "loading.h"
 #include "netgame.h"
@@ -113,16 +113,16 @@ void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage)
 
     switch(pError) {
     case ePhysicsError_UnknownShapeType:
-        c2_strcpy(s, "Unknown shape type");
+        strcpy(s, "Unknown shape type");
         break;
     case ePhysicsError_WireFrameHasNoPoints:
-        c2_strcpy(s, "Wire frame shape has no points");
+        strcpy(s, "Wire frame shape has no points");
         break;
     case ePhysicsError_PolyhedronHasNoPoints:
-        c2_strcpy(s, "Polyhedron shape has no points");
+        strcpy(s, "Polyhedron shape has no points");
         break;
     case ePhysicsError_UnknownHingeType:
-        c2_strcpy(s, "Unknown hinge type");
+        strcpy(s, "Unknown hinge type");
         break;
     default:
         sprintf(s, "%d", pError);
@@ -148,7 +148,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char*
         gPhysics_error_cb(pError, pMessage);
     }
 
-    c2_exit(pError);
+    exit(pError);
 }
 
 // FUNCTION: CARMA2_HW 0x004c6510
@@ -304,7 +304,7 @@ void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
             /* number of points */
             count_points = GetAnInt(pF);
             if (count_points > 32) { /* FIXME: magic number */
-                c2_sprintf(s, "Ow! Physics shape is mad (having %d points is silly)", count_points);
+                sprintf(s, "Ow! Physics shape is mad (having %d points is silly)", count_points);
                 PDFatalError(s);
             }
             shape = (tCollision_shape*)AllocateShapePolyhedron(count_points, kMem_collision_shape);
@@ -413,7 +413,7 @@ int C2_HOOK_FASTCALL ArePointsColinear(const br_vector3* pV1, const br_vector3* 
     return 1;
 }
 
-static br_scalar inline C2_HOOK_FASTCALL PlaneValue(const br_vector4* pPlane, const br_vector3* pP) {
+static br_scalar C2_HOOK_FASTCALL PlaneValue(const br_vector4* pPlane, const br_vector3* pP) {
 
     return BrVector3Dot(pPlane, pP) + pPlane->v[3];
 }
@@ -513,7 +513,6 @@ typedef enum {
 
 static tPlane_side calculate_plane_side(br_vector4* pPlane, br_vector3* pPoint) {
     br_scalar s;
-
 
     s = PlaneValue(pPlane, pPoint);
     if (s < -1e-6f) {
@@ -776,7 +775,7 @@ tPhysicsError C2_HOOK_FASTCALL AddPolyhedronCollisionShapePlanes(tCollision_shap
         indices_buffer[i + 1] = i;
     }
     gPolyhedron_to_sort = pPolyhedron;
-    c2_qsort(&indices_buffer[2], pPolyhedron->count_points - 1, sizeof(indices_buffer[1]), (int(C2_HOOK_CDECL*)(const void*, const void*))ComparePolyhedronPointIndicesToNormal);
+    qsort(&indices_buffer[2], pPolyhedron->count_points - 1, sizeof(indices_buffer[1]), (int(C2_HOOK_CDECL*)(const void*, const void*))ComparePolyhedronPointIndicesToNormal);
     indices_buffer[0] = indices_buffer[pPolyhedron->count_points];
     indices_buffer[1] = 0;
 
@@ -845,7 +844,7 @@ tPhysicsError C2_HOOK_FASTCALL ConvexHull3D(tCollision_shape_polyhedron_data* pP
     }
 
     original_count_points = pPolyhedron->count_points;
-    c2_memcpy(original_points, pPolyhedron->points, sizeof(original_points));
+    memcpy(original_points, pPolyhedron->points, sizeof(original_points));
     switch (ProcessTetrahedronPolyhedronCollisionShape(pPolyhedron, indices)) {
     case ePhysicsError_Ok: {
         int new_count_points;
@@ -894,7 +893,7 @@ tPhysicsError C2_HOOK_FASTCALL ConvexHull3D(tCollision_shape_polyhedron_data* pP
         tPhysicsError err;
 
         pPolyhedron->count_points = original_count_points;
-        c2_memcpy(pPolyhedron->points, original_points, sizeof(original_points));
+        memcpy(pPolyhedron->points, original_points, sizeof(original_points));
         err = AddPolyhedronCollisionShapePlanes(pPolyhedron);
         if (err == ePhysicsError_Ok) {
             return ePhysicsError_WireFrameHasNoPoints;
@@ -995,10 +994,12 @@ void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info) {
 
 // FUNCTION: CARMA2_HW 0x004c2b20
 void C2_HOOK_FASTCALL InternalPositionChildren(tCollision_info *pParent, tCollision_info *pRoot) {
+    tCollision_info *child;
+
     if (!(pParent->flags & 0x400)) {
         pRoot = pParent;
     }
-    for (tCollision_info *child = pParent->child; child != NULL; child = child->next) {
+    for (child = pParent->child; child != NULL; child = child->next) {
         if (pParent->flags & 0x400) {
             BrMatrix34Mul(&pParent->transform_matrix, &pParent->field_0x1e8, &pRoot->transform_matrix);
         } else {
@@ -1169,6 +1170,7 @@ void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tCollision_info *pCollisio
 int C2_HOOK_FASTCALL PHILRemoveObject(tCollision_info* pCollision_info) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c63d0
@@ -1210,6 +1212,7 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurse(tCollision_info* pCollision_info, tEnu
 int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004da290
@@ -1257,7 +1260,7 @@ tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint,
 
     size = offsetof(tPhysics_joint, limits) + pJoint->count_limits * sizeof(tPhysics_joint_limit);
     clone = BrMemAllocate(size, pType);
-    c2_memcpy(clone, pJoint, size);
+    memcpy(clone, pJoint, size);
     return clone;
 }
 
@@ -1350,6 +1353,7 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject) {
 int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004b6090
@@ -1533,7 +1537,7 @@ int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject) {
     if (object_info == NULL) {
         return 1;
     }
-    c2_memset(object_info, 0, sizeof(*object_info));
+    memset(object_info, 0, sizeof(*object_info));
     object_info->collision_info = pObject;
     object_info->field_0x8 = 1;
     pObject->field_0x240 = object_info;
@@ -1804,6 +1808,7 @@ void C2_HOOK_FASTCALL DoCollisions(tCollision_info** pObject_list, tWorld_callba
 int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_matrix34* pMatrix) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c2830
@@ -1845,6 +1850,7 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tCollision_info* pObject, tEnu
 int C2_HOOK_FASTCALL GetObjectNetworkStuff(tCollision_info* pObject, tU8* pBuffer, int pSize) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0049cd00

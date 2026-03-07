@@ -1,6 +1,6 @@
 #include "intrface.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "flicplay.h"
 #include "frontend.h"
 #include "globvars.h"
@@ -292,7 +292,7 @@ void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
 
     PathCat(path, gApplication_path, "INTRFACE");
     PathCat(path, path, pFrontend->name);
-    c2_strcat(path, ".TXT");
+    strcat(path, ".TXT");
 
     f = DRfopen(path, "rt");
     if (f == NULL) {
@@ -302,12 +302,12 @@ void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     }
     pFrontend->loaded = 1;
     GetALineAndDontArgue(f, buffer);
-    str = c2_strtok(buffer, "\t ,/");
+    str = strtok(buffer, "\t ,/");
     if (DRStricmp(str, "VERSION") != 0) {
         FatalError(kFatalError_FileMustStartWith_SS, pFrontend->name, "VERSION");
     }
-    str = c2_strtok(NULL, "\t ,/");
-    count = c2_sscanf(str, "%d", &version);
+    str = strtok(NULL, "\t ,/");
+    count = sscanf(str, "%d", &version);
     if (count == 0 || version != 3) {
         FatalError(kFatalError_CantCopeWithVersionFor_SS, str, pFrontend->name);
     }
@@ -345,7 +345,7 @@ void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     }
     // Copy item 99 (=last index)
     // FIXME: stringid = 0x401 (==> find out function of this item)
-    c2_memcpy(&pFrontend->items[REC2_ASIZE(pFrontend->items) - 1], &gDefaultLastInterfaceItem, sizeof(tFrontend_item_spec));
+    memcpy(&pFrontend->items[REC2_ASIZE(pFrontend->items) - 1], &gDefaultLastInterfaceItem, sizeof(tFrontend_item_spec));
 
     pFrontend->count_scrollers = GetAnInt(f);
     for (i = 0; i < pFrontend->count_scrollers; i++) {

@@ -72,4 +72,6 @@ void C2_HOOK_FASTCALL PDGetCurrentDate(char* pStr);
 
 void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only);
 
+void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void);
+
 #endif // C2_WIN32_WIN32_H

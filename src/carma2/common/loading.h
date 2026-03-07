@@ -241,7 +241,7 @@ br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, vo
 
 br_size_t C2_HOOK_FASTCALL DRfwrite(const void* buf, br_size_t size, unsigned int n, void* f);
 
-int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, c2_fpos_t* pos);
+int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, fpos_t* pos);
 
 int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
 
@@ -261,7 +261,7 @@ int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence);
 
 int C2_HOOK_FASTCALL PFftell(FILE* pF);
 
-int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, c2_fpos_t* pos);
+int C2_HOOK_FASTCALL DRfsetpos(FILE* pF, fpos_t* pos);
 
 void C2_HOOK_FASTCALL PFrewind(FILE* pF);
 

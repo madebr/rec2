@@ -5,7 +5,7 @@
 #include "devclut.h"
 #include "object.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 
 // GLOBAL: D3D 0x100150c8

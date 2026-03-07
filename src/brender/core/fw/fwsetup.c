@@ -678,15 +678,13 @@ br_error C2_HOOK_CDECL BrFwBegin(void) {
         BrResClassAdd(&fw_resourceClasses[i]);
     }
     BrNewList(&fw.images);
-    fw.dev_slots = (br_open_device*)BrResAllocate(fw.res, sizeof(br_open_device) * NBR_DEV_SLOTS, BR_MEMORY_OBJECT_DATA);
+    fw.dev_slots = (br_open_device*)BrResAllocate(fw.res, sizeof(br_open_device) * NBR_DEV_SLOTS, BR_MEMORY_DRIVER);
     fw.ndev_slots = NBR_DEV_SLOTS;
     fw.active = 1;
     BrTokenBegin();
     BrSystemConfigBegin();
     fw.bAlreadyLoadedDrivers = 0;
-#if !defined(REC2_STANDALONE)
     BrImageAdd(&Image_BRCORE1);
-#endif
 
     return 0;
 }
@@ -697,9 +695,7 @@ br_error C2_HOOK_CDECL BrFwEnd(void) {
     if (!fw.active) {
         return 0x1006;
     }
-#if !defined(REC2_STANDALONE)
     BrImageRemove(&Image_BRCORE1);
-#endif
     BrResFree(fw.res);
     BrMemSet(&fw, 0, sizeof(fw));
     return 0;

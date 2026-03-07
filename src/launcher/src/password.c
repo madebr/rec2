@@ -19,7 +19,7 @@ static void StringNibbleSwap(char* pStr) {
     }
 }
 
-INT_PTR CALLBACK Password1stUseDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
+BOOL CALLBACK Password1stUseDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
 
     switch (Msg) {
     case WM_INITDIALOG:
@@ -52,7 +52,7 @@ INT_PTR CALLBACK Password1stUseDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARA
 }
 
 
-INT_PTR CALLBACK PasswordSetupDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
+BOOL CALLBACK PasswordSetupDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
 
     switch (Msg) {
     case WM_CREATE:
@@ -84,7 +84,7 @@ INT_PTR CALLBACK PasswordSetupDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM
 }
 
 
-INT_PTR CALLBACK ParentalLockDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
+BOOL CALLBACK ParentalLockDlgProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam) {
 
     switch (Msg) {
     case WM_CLOSE:

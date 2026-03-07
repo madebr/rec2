@@ -5,7 +5,7 @@
 #include "core/fw/resource.h"
 #include "core/math/matrix34.h"
 
-#include <math.h>
+#include "c2_math.h"
 
 // FIXME: move this definition (+BR_MAC3+BR_MAC4) to br_defs.h (and remove from matrix34.c matrix4.c ...)
 #define BR_MAC2(A, B, C, D) ((A) * (B) + (C) * (D))

@@ -337,18 +337,22 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_text(br_device_pixelmap* self, 
     br_int_32 y;
     br_int_32 s_stride;
 
-    x = self->pm_origin_x + point->x;
-    y = self->pm_origin_y + point->y;
-    r.h = font->glyph_y;
-    if (y <= -r.h || y >= self->pm_height || x >= self->pm_width) {
+    x = point->x + self->pm_origin_x;
+    y = point->y + self->pm_origin_y;
+
+    if (y <= -font->glyph_y || y >= self->pm_height || x >= self->pm_width) {
         return 0;
     }
+
     p.x = point->x;
     p.y = point->y;
+
     r.x = 0;
     r.y = 0;
+    r.h = font->glyph_y;
+
     if (font->flags & BR_FONTF_VARIABLE_WIDTH) {
-        while (*text != '\0') {
+        for (;*text != '\0'; text++) {
             r.w = font->width[*(br_uint_8*)text];
             s_stride = (r.w + 7) / 8;
             if (x + r.w > 0) {
@@ -356,15 +360,14 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_text(br_device_pixelmap* self, 
             }
             x += r.w + 1;
             p.x += r.w + 1;
-            if (p.x > self->pm_width) {
+            if (x > self->pm_width) {
                 break;
             }
-            text++;
         }
     } else {
         r.w = font->glyph_x;
         s_stride = (r.w + 7) / 8;
-        while (*text != '\0') {
+        for (; *text != '\0'; text++) {
             if (x + r.w > 0) {
                 self->dispatch->_copyBits(self, &p, &font->glyphs[font->encoding[*(br_uint_8*)text]], s_stride, &r, colour);
             }
@@ -373,7 +376,6 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_text(br_device_pixelmap* self, 
             if (x > self->pm_width) {
                 break;
             }
-            text++;
         }
     }
     return 0;

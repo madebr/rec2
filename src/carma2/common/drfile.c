@@ -68,7 +68,7 @@ br_size_t C2_HOOK_CDECL DRStdioWrite(const void* buf, br_size_t size, unsigned i
 // FUNCTION: CARMA2_HW 0x0044c6c0
 br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f) {
     PFfgets(buf, buf_len, f);
-    return c2_strlen(buf);
+    return strlen(buf);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c6f0

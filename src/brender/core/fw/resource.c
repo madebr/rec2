@@ -8,7 +8,7 @@
 #include "core/fw/scratch.h"
 #include "core/std/brstdlib.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_stdlib.h"
 
 #define RES_ALIGN 4
@@ -24,24 +24,26 @@ void* ResToUserWithClass(resource_header* r, br_uint_8 class) {
     return (void*)(((br_size_t)r + sizeof(resource_header) + align - 1) & ~(align - 1));
 }
 
-void* ResToUser(resource_header* r) {
+void* C2_HOOK_CDECL ResToUser(resource_header* r) {
 
     return ResToUserWithClass(r, r->class);
 }
 
-resource_header* UserToRes(void* r) {
-    br_uint_8* p;
+resource_header* C2_HOOK_CDECL UserToRes(void* r) {
+    br_uint_8* p = r;
 
-    p = (br_uint_8*)r - 1;
-    while (*p == 0) {
+    while (p[-1] == 0) {
         p--;
     }
+#ifdef BRENDER_FIX_BUGS
     if (((resource_header*)(p - (sizeof(resource_header) - 1)))->magic_num != 0xdeadbeef) {
-        c2_abort();
+        abort();
         // FIXME: add panic macro
         // LOG_PANIC("Bad resource header from user at %p. Was 0x%x", r, ((resource_header*)p)->magic_num);
     }
-    return (resource_header*)(p - (sizeof(resource_header) - 1));
+#endif
+    p -= offsetof(struct resource_header, magic_num) + sizeof(((struct resource_header *)NULL)->magic_num);
+    return (resource_header*)p;
 }
 
 // FUNCTION: CARMA2_HW 0x005276c0
@@ -63,8 +65,8 @@ void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_c
     }
 
     pad = (~(malign - 1)) & (calign - 1);
-    res = (resource_header*)BrMemAllocate(pad + size, res_class);
-    actual_pad = ((((br_size_t)res + calign - 1) & (~(calign - 1))) - (br_size_t)res);
+    res = BrMemAllocate(pad + size, res_class);
+    actual_pad = (((br_size_t)res + calign - 1) & (~(calign - 1))) - (br_size_t)res;
     if (actual_pad > pad) {
         BrFailure("Memory allocator broke alignment");
     }
@@ -84,7 +86,7 @@ void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_c
 
 #if 0
     if ((uintptr_t)UserToRes(ResToUser(res)) != (uintptr_t)res) {
-        c2_abort();
+        abort();
     }
 #endif
 
@@ -94,17 +96,18 @@ void* C2_HOOK_CDECL BrResAllocate(void* vparent, br_size_t size, br_uint_8 res_c
 // FUNCTION: CARMA2_HW 0x005277f0
 void C2_HOOK_STDCALL BrResInternalFree(resource_header* res, br_boolean callback) {
     void* r;
-    br_uint_8 original_class;
+    int original_class;
 
     if (res->class == BR_MEMORY_FREE) {
         return;
     }
 
     original_class = res->class;
+    r = ResToUser(res);
     res->class = BR_MEMORY_FREE;
-    if (callback != 0) {
+    if (callback) {
         if (fw.resource_class_index[original_class]->free_cb != NULL) {
-            fw.resource_class_index[original_class]->free_cb(ResToUserWithClass(res, original_class), res->class, RESOURCE_SIZE(res));
+            fw.resource_class_index[original_class]->free_cb(r, original_class, RESOURCE_SIZE(res));
         }
     }
 
@@ -243,7 +246,7 @@ char* C2_HOOK_CDECL BrResStrDup(void* vparent, const char* str) {
     return nstr;
 }
 
-void InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* arg, int level) {
+void C2_HOOK_CDECL InternalResourceDump(resource_header* res, br_putline_cbfn* putline, void* arg, int level) {
     int i;
     char* cp;
     resource_header* child;

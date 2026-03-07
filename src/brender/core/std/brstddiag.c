@@ -2,7 +2,7 @@
 
 #include "core/fw/brbegin.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_stdlib.h"
 
 
@@ -38,8 +38,8 @@ void C2_HOOK_CDECL BrStdioFailure(char* message) {
     fflush(stderr);
 #if 0
     // FIXME: 'real' implementation unconditionally exits.
-    c2_exit(10);
+    exit(10);
 #else
-    c2_abort();
+    abort();
 #endif
 }

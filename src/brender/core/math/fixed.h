@@ -14,15 +14,15 @@
 #define BR_ONE_SSF ((br_fixed_ss)0x0080)
 #define BR_ONE_SUF ((br_fixed_ss)0x0100)
 #define BrIntToFixed(i) ((i)<<16)
-#define BrFloatToFixed(f) ((br_fixed_ls)((f)*65536.f))
+#define BrFloatToFixed(F) ((br_fixed_ls)((F)*65536.f))
 #define BrFixedToInt(i) ((i)>>16)
 #define BrFixedToFloat(i) ((float)((i)*(1.f/65536.f)))
 
-#define BrFloatToFixedFraction(f) ((br_fixed_lsf)((f)*32768.f))
-#define BrFixedFractionToFloat(f) ((float)(((br_fixed_lsf)(f))*(1.f/32768.f)))
+#define BrFloatToFixedFraction(F) ((br_fixed_lsf)((F)*32768.f))
+#define BrFixedFractionToFloat(F) (((float)((br_fixed_lsf)(F))*(1.0f / 32768.0f)))
 
-#define BrFloatToFixedUFraction(f) ((br_fixed_luf)((f)*65536.f))
-#define BrFixedUFractionToFloat(f) ((float)(((br_fixed_luf)(f))*(1.f/65536.f)))
+#define BrFloatToFixedUFraction(F) ((br_fixed_luf)((F)*65536.f))
+#define BrFixedUFractionToFloat(F) (((float)((br_fixed_luf)(F))*(1.0f / 65536.0f)))
 
 #define BrFixedNeg(f) ((f) ^ 0x80000000)
 

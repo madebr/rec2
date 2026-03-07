@@ -5,7 +5,7 @@
 #include "device.h"
 #include "object.h"
 
-#include <string.h>
+#include "c2_string.h"
 
 // GLOBAL: D3D 0x10015068
 br_device_clut_dispatch deviceD3DClutDispatch = {

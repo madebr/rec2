@@ -16,8 +16,6 @@ extern char* gS3_soundbank_buffer;
 extern tS3_descriptor* gS3_root_descriptor;
 extern tS3_callbacks gS3_callbacks;
 extern int gS3_effects_enabled;
-extern tS3SetEffect_cbfn* gS3_enable_effect_cbfn;
-extern tS3SetEffect_cbfn* gS3_disable_effect_cbfn;
 extern int gS3_opened_output_devices;
 extern br_uint_32 gS3_last_service_time;
 extern tS3_channel* gS3_unbound_channels;

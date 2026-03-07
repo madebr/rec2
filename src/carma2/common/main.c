@@ -6,7 +6,7 @@
 
 #include "controls.h"
 #include "drmem.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
@@ -65,7 +65,7 @@ C2_NORETURN void C2_HOOK_FASTCALL QuitGame(void) {
     }
     PDShutdownSystem();
     CloseDiagnostics();
-    c2_exit(0);
+    exit(0);
 }
 
 // FUNCTION: CARMA2_HW 0x004924a0
@@ -76,7 +76,7 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     PDBuildAppPath(gApplication_path);
     OpenDiagnostics();
 
-    c2_strcat(gApplication_path, "DATA");
+    strcat(gApplication_path, "DATA");
     UsePathFileToDetermineIfFullInstallation();
     if (!gCD_fully_installed) {
         if (PDReadSourceLocation(location)) {
@@ -105,7 +105,7 @@ void C2_HOOK_FASTCALL ServiceTheGame(int pRacing) {
         CyclePollKeys();
     }
     PollKeys();
-    c2_rand();
+    rand();
     if (PDServiceSystem(gFrame_period)) {
         QuitGame();
     }

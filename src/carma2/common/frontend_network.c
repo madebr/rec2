@@ -133,7 +133,7 @@ int C2_HOOK_FASTCALL NetworkJoinMenuInfunc(tFrontend_spec* pFrontend) {
     pFrontend->items[30].text[0] = '\0';
     ReadNetGameChoices(&gFrontend_game_type, &gFrontend_net_options, &gRace_index);
     LoadRaces(gRace_list, &gNumber_of_races, gFrontend_game_type);
-    c2_strcpy(pFrontend->items[26].text, gProgram_state.player_name);
+    strcpy(pFrontend->items[26].text, gProgram_state.player_name);
     FuckWithWidths(pFrontend);
     ResetInterfaceTimeout();
 
@@ -178,19 +178,19 @@ void C2_HOOK_FASTCALL NetworkJoinUpdateScroller(tFrontend_spec* pFrontend) {
         for (i = pFrontend->scrollers[2].indexFirstScrollableItem, game_i = 0; i <= pFrontend->scrollers[2].indexLastScrollableItem; i++, game_i++) {
             if (gGames_to_join[game_i].time != 0 && gGames_to_join[game_i].game != NULL) {
                 /* FIXME: game name type is wrong!!! */
-                c2_sprintf(pFrontend->items[i].text, "%s", &gGames_to_join[game_i].game->pd_net_info.addr[0xe]);
+                sprintf(pFrontend->items[i].text, "%s", &gGames_to_join[game_i].game->pd_net_info.addr[0xe]);
                 pFrontend->items[i].enabled = kFrontendItemEnabled_enabled;
             } else {
-                c2_sprintf(pFrontend->items[i].text, "%s", " ");
+                sprintf(pFrontend->items[i].text, "%s", " ");
                 pFrontend->items[i].enabled = kFrontendItemEnabled_disabled;
             }
         }
         pFrontend->items[29].enabled = kFrontendItemEnabled_enabled;
     } else {
-        c2_sprintf(pFrontend->items[20].text, "%s", IString_Get(253));
-        c2_strcpy(pFrontend->items[21].text, " ");
-        c2_strcpy(pFrontend->items[22].text, " ");
-        c2_strcpy(pFrontend->items[23].text, " ");
+        sprintf(pFrontend->items[20].text, "%s", IString_Get(253));
+        strcpy(pFrontend->items[21].text, " ");
+        strcpy(pFrontend->items[22].text, " ");
+        strcpy(pFrontend->items[23].text, " ");
         pFrontend->items[20].enabled = kFrontendItemEnabled_disabled;
         pFrontend->items[21].enabled = kFrontendItemEnabled_disabled;
         pFrontend->items[22].enabled = kFrontendItemEnabled_disabled;
@@ -351,7 +351,7 @@ void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend) {
 
     for (i = pFrontend->scrollers[1].indexFirstScrollableItem; i <= pFrontend->scrollers[1].indexLastScrollableItem; i++) {
 
-        c2_strcpy(pFrontend->items[i].text, gRace_list[i - pFrontend->scrollers[1].indexFirstScrollableItem + pFrontend->scrollers[1].indexTopItem - pFrontend->scrollers[1].indexFirstScrollableItem].name);
+        strcpy(pFrontend->items[i].text, gRace_list[i - pFrontend->scrollers[1].indexFirstScrollableItem + pFrontend->scrollers[1].indexTopItem - pFrontend->scrollers[1].indexFirstScrollableItem].name);
     }
     FuckWithWidths(pFrontend);
     MungeButtonModels(pFrontend, 0);
@@ -363,7 +363,7 @@ void C2_HOOK_FASTCALL UpdateNetTrackScroller(tFrontend_spec* pFrontend) {
 
     for (i = scroller->indexFirstScrollableItem; i < scroller->indexFirstScrollableItem + scroller->nbDisplayedAtOnce; i++) {
 
-        c2_strcpy(pFrontend->items[i].text, gRace_list[i - scroller->indexFirstScrollableItem].name);
+        strcpy(pFrontend->items[i].text, gRace_list[i - scroller->indexFirstScrollableItem].name);
     }
 }
 
@@ -380,7 +380,7 @@ void C2_HOOK_FASTCALL UpdateNetGameTypeScroller(tFrontend_spec* pFrontend) {
             /* Skip "smashy things" network type */
             text_idx += 1;
         }
-        c2_strcpy(pFrontend->items[i].text, GetMiscString(eMiscString_network_type_start + text_idx));
+        strcpy(pFrontend->items[i].text, GetMiscString(eMiscString_network_type_start + text_idx));
     }
     FuckWithWidths(pFrontend);
 }
@@ -421,7 +421,7 @@ int C2_HOOK_FASTCALL NetSetRaceType(tFrontend_spec* pFrontend) {
     SaveOptions();
     ReadNetGameChoices(&gFrontend_game_type, &gFrontend_net_options, &gRace_index);
     LoadRaces(gRace_list, &gNumber_of_races, gFrontend_game_type);
-    c2_sprintf(pFrontend->items[30].text, "%s", GetMiscString(eMiscString_network_type_description_start + gFrontend_game_type));
+    sprintf(pFrontend->items[30].text, "%s", GetMiscString(eMiscString_network_type_description_start + gFrontend_game_type));
     MungeMetaCharactersChar(pFrontend->items[30].text, 'R', '\r');
     pFrontend->scrollers[1].indexTopItem = pFrontend->scrollers[1].indexFirstScrollableItem;
     pFrontend->scrollers[1].count = gNumber_of_races;
@@ -511,9 +511,9 @@ int C2_HOOK_FASTCALL DoMultiplayerStartStuff(tNet_mode pNet_mode) {
                     LoadRaces(gRace_list, &gNumber_of_races, gCurrent_net_game->type);
                     SetUpOtherNetThings(gGame_to_join);
                     ReenableNetService();
-                    c2_strcpy(gFrontend_host_join_buffer, gProgram_state.player_name);
-                    c2_strcat(gFrontend_host_join_buffer, " ");
-                    c2_strcat(gFrontend_host_join_buffer, GetMiscString(eMiscString_has_joined_the_game));
+                    strcpy(gFrontend_host_join_buffer, gProgram_state.player_name);
+                    strcat(gFrontend_host_join_buffer, " ");
+                    strcat(gFrontend_host_join_buffer, GetMiscString(eMiscString_has_joined_the_game));
                     NetSendHeadupToAllPlayers(gFrontend_host_join_buffer);
                     gNet_join_host_result = 1;
                 }
@@ -589,13 +589,13 @@ void C2_HOOK_FASTCALL NetworkUpdateSelectedGameInfo(tFrontend_spec* pFrontend) {
             DisposeJoinableGame(netgame_idx);
             return;
         }
-        len1 = c2_sprintf(s, "Game: %s @R", gGames_to_join[netgame_idx].game->pd_net_info.addr + 14);
-        len2 = c2_sprintf(s + len1, "Type: %s @R", GetMiscString(eMiscString_network_type_start + gGames_to_join[netgame_idx].game->type));
-        len3 = c2_sprintf(s + len1 + len2, "Players: %d @R", gGames_to_join[netgame_idx].game->num_players);
-        c2_sprintf(s + len1 + len2 + len3, "Status: %s, %s ",
+        len1 = sprintf(s, "Game: %s @R", gGames_to_join[netgame_idx].game->pd_net_info.addr + 14);
+        len2 = sprintf(s + len1, "Type: %s @R", GetMiscString(eMiscString_network_type_start + gGames_to_join[netgame_idx].game->type));
+        len3 = sprintf(s + len1 + len2, "Players: %d @R", gGames_to_join[netgame_idx].game->num_players);
+        sprintf(s + len1 + len2 + len3, "Status: %s, %s ",
                 GetMiscString(eMiscString_netgame_stage_start + gGames_to_join[netgame_idx].game->status.stage),
                 GetMiscString(gGames_to_join[netgame_idx].game->options.open_game ? eMiscString_open : eMiscString_closed));
-        c2_sprintf(pFrontend->items[30].text, "%s", s);
+        sprintf(pFrontend->items[30].text, "%s", s);
         MungeMetaCharactersChar(pFrontend->items[30].text, 'R', '\r');
     }
 }
@@ -618,9 +618,9 @@ int C2_HOOK_FASTCALL NetJoinChooseThisGame(tFrontend_spec* pFrontend) {
 int C2_HOOK_FASTCALL NetGameToggleTyping(tFrontend_spec* pFrontend) {
 
     ToggleTyping(pFrontend);
-    if (!gTyping && c2_strlen(pFrontend->items[gFrontend_selected_item_index].text) != 0) {
+    if (!gTyping && strlen(pFrontend->items[gFrontend_selected_item_index].text) != 0) {
 
-        c2_strcpy(gProgram_state.player_name, pFrontend->items[gFrontend_selected_item_index].text);
+        strcpy(gProgram_state.player_name, pFrontend->items[gFrontend_selected_item_index].text);
         SaveOptions();
     }
     return 0;

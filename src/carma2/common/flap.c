@@ -19,18 +19,21 @@
 tCollision_info* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x00436d60
 tCollision_info* C2_HOOK_FASTCALL SemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, int* pArg4, br_vector3* pArg5, br_bounds3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
 
     NOT_IMPLEMENTED();
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x0042dbd0
 int C2_HOOK_FASTCALL GetSDBJointPosAndBounds(br_vector3* pP1, br_vector3* pP2, br_vector3* pP33, br_bounds3* pBounds, br_actor* pActor) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0042dab0
@@ -70,11 +73,13 @@ void C2_HOOK_FASTCALL SendDetachBit(tCar_spec* pCar, br_actor* pActor) {
 
     NOT_IMPLEMENTED(); /* FIXME: what type is pActor->user? */
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.ID, 0x1c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.field_0x4, 0x20);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.field_0x8, 0x24);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.bounds_min, 0x28);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, guaranteed.contents.detach_bit.bounds_max, 0x2e);
+#endif
 
     message = NetBuildGuaranteedMessage(51, 0);
     message->guaranteed.contents.detach_bit.ID = NetPlayerFromCar(pCar)->ID;
@@ -188,6 +193,7 @@ void C2_HOOK_FASTCALL MakeModelMaterialsDoubleSided(br_model* pModel) {
 intptr_t C2_HOOK_FASTCALL FlapBit(br_actor* pActor, br_matrix34* pMat, void* pContext) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 void C2_HOOK_FASTCALL StartFlapping(br_actor* pActor, tCar_spec* pCar, tU8 pBits, float pArg4) {
@@ -447,7 +453,7 @@ int C2_HOOK_FASTCALL BendCarOneForce(tCar_spec* pCar, tCar_crush* pCar_crush) {
     if (fabsf(pCar_crush->field_0x44.v[2]) > sqrtf(.5f)) {
         float f = fabsf(pCar_crush->field_0x44.v[2]) * pCar_crush->field_0x40;
 
-        c2_srand(pCar_crush->field_0x50);
+        srand(pCar_crush->field_0x50);
         if (PercentageChance(50)) {
             bend_v.v[1] = object->bb1.max.v[1];
             if (bend_max) {

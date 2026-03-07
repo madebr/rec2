@@ -60,8 +60,8 @@ br_renderer_facility* C2_HOOK_STDCALL RendererFacilitySoftAllocate(br_device* de
 // FUNCTION: CARMA2_HW 0x00540670
 void C2_HOOK_CDECL _M_br_renderer_facility_soft_free(br_soft_renderer_facility* self) {
 
-    br_device* dev = self->dispatch->_device((br_object*)self);
-    dev->dispatch->_remove((br_object_container*)dev, (br_object*)self);
+
+    ((br_device*)(self->dispatch->_device((br_object*)self)))->dispatch->_remove((br_object_container*)(self->dispatch->_device((br_object*)self)), (br_object*)self);
 
     BrObjectContainerFree((br_object_container*)self, BR_NULL_TOKEN, NULL, NULL);
 

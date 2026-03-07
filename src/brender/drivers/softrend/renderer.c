@@ -246,11 +246,11 @@ br_error C2_HOOK_CDECL _M_br_soft_renderer_stateStoredNew(br_soft_renderer* self
 
     ss = RendererStateStoredSoftAllocate(self, &self->state, mask, tv);
 
-    if (ss == NULL) {
-        return 0x1002;
+    if (ss != NULL) {
+        *pss = ss;
+        return 0;
     }
-    *pss = ss;
-    return 0;
+    return 0x1002;
 }
 
 // FUNCTION: CARMA2_HW 0x00540c00

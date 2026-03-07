@@ -10,7 +10,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_stdlib.h"
 
 
@@ -24,7 +24,7 @@ br_pixelmap* C2_HOOK_CDECL BrDevLastBeginQuery(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00528d60
-void C2_HOOK_CDECL BrDevLastBeginSet(br_pixelmap* pm) {
+void C2_HOOK_STDCALL BrDevLastBeginSet(br_pixelmap* pm) {
 
     last_begin_screen = pm;
 }
@@ -49,8 +49,7 @@ br_error C2_HOOK_CDECL BrDevBeginVar(br_pixelmap** ppm, const char* setup_string
     va_end(vl);
     tv[i].t = BR_NULL_TOKEN;
     tv[i].v.p = NULL;
-    br_error res = BrDevBeginTV(ppm, setup_string, tv);
-    return res;
+    return BrDevBeginTV(ppm, setup_string, tv);
 }
 
 // FUNCTION: CARMA2_HW 0x00528df0
@@ -267,7 +266,7 @@ br_error C2_HOOK_CDECL BrRendererFacilityFind(br_renderer_facility** prf, br_dev
         scalar_is_valid = 1;
         break;
     default:
-        c2_abort();
+        abort();
     }
     if (renderer_facility == NULL && destination != NULL) {
         destination->dispatch->_query((br_object*)destination, &renderer_facility, BRT_RENDERER_FACILITY_O);
@@ -323,7 +322,7 @@ br_error C2_HOOK_CDECL BrPrimitiveLibraryFind(br_primitive_library** ppl, br_dev
         scalar_is_valid = 1;
         break;
     default:
-        c2_abort();
+        abort();
     }
     if (primitive_library == NULL && destination != NULL) {
         destination->dispatch->_query((br_object*)destination, &primitive_library, BRT_PRIMITIVE_LIBRARY_O);
@@ -377,7 +376,7 @@ br_error C2_HOOK_CDECL BrGeometryFormatFind(br_geometry** pgf, br_renderer* rend
         scalar_is_valid = 1;
         break;
     default:
-        c2_abort();
+        abort();
     }
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_renderer_dispatch, _query, 0x2c);

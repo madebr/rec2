@@ -123,7 +123,7 @@ void C2_HOOK_FASTCALL FreeOffQTshite(void) {
     }
     DisposeMovie(gQuicktime_movie);
     PDFileDelete(gQuick_time_temp_path, 1);
-    c2_sprintf(path, "%s.#Res", gQuick_time_temp_path);
+    sprintf(path, "%s.#Res", gQuick_time_temp_path);
     PDFileDelete(path, 1);
     if (gQuicktime_frame_pixmap_handle != NULL) {
         DisposeHandle(gQuicktime_frame_pixmap_handle);
@@ -160,11 +160,11 @@ int C2_HOOK_FASTCALL MovieStopRecordingAndSave(void) {
         if (gQuicktime_movie_file != 0) {
             CloseMovieFile(gQuicktime_movie_file);
         }
-        c2_sprintf(path, "%s%3.3d.MOV", gQuick_time_movie_path_stub, gQuicktime_movie_counter);
+        sprintf(path, "%s%3.3d.MOV", gQuick_time_movie_path_stub, gQuicktime_movie_counter);
         gQuicktime_movie_counter += 1;
         fs_spec.vRefNum = 0;
         fs_spec.parID = 0;
-        c2_strcpy(fs_spec.name, path);
+        strcpy(fs_spec.name, path);
         c2pstr(fs_spec.name);
         FlattenMovieData(gQuicktime_movie, flattenAddMovieToDataFork, &fs_spec, sigMoviePlayer, smSystemScript, createMovieFileDeleteCurFile);
         FreeOffQTshite();
@@ -221,12 +221,14 @@ int C2_HOOK_FASTCALL InitMovie(void) {
 int C2_HOOK_FASTCALL CreateMovie(void) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004e1c70
 int C2_HOOK_FASTCALL GenerateOneMovieFrame(void) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 void C2_HOOK_FASTCALL TrapS3SoundOutput(void) {

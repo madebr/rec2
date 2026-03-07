@@ -1,6 +1,6 @@
 #include "brlists.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 
 #include <assert.h>
 

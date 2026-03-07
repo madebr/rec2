@@ -1,0 +1,215 @@
+#ifndef GUARD_41_UTILITY_H
+#define GUARD_41_UTILITY_H
+
+#include "brender/br_types.h"
+#include "c2_hooks.h"
+
+extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
+
+// Uppercaseificate
+
+// CheckQuit
+
+// sqr
+
+// IRandomBetween
+
+// PercentageChance
+
+// IRandomPosNeg
+
+// FRandomBetween
+
+// FRandomPosNeg
+
+// SRandomBetween
+
+// SRandomPosNeg
+
+extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
+
+// tandeg
+
+// GetFileLength
+
+// DRPixelmapAllocate
+
+// DRPixelmapAllocateSub
+
+// DRImageLoad
+
+// DRPixelmapLoad
+
+// SepDirAndFilename
+
+// DRLoadMultiplePix
+
+// DRPixelmapLoadMany
+
+// WaitFor
+
+// DRActorEnumRecurse
+
+// CompareActorID
+
+// DRActorFindRecurse
+
+// DRActorEnumRecurseWithMat
+
+// DRActorEnumRecurseWithTrans
+
+// DRActorEnumRecurseWithSnart
+
+// sign
+
+// OpenUniqueFileB
+
+// PrintScreenFile
+
+// PrintScreenFile16
+
+// GetTotalTime
+
+// GetRaceTime
+
+// AddLostTime
+
+// AssertThisTimeAsCurrentTime
+
+// TimerString
+
+// GetMiscString
+
+// Flash
+
+// RGBDifferenceSqr
+
+// FindBestMatch
+
+// BuildShadeTablePath
+
+// LoadGeneratedShadeTable
+
+// SaveGeneratedShadeTable
+
+// GenerateShadeTable
+
+// GenerateDarkenedShadeTable
+
+// PossibleService
+
+// DRMatrix34TApplyP
+
+// DRPixelmapRectangleCopy
+
+// NormalSideOfPlane
+
+// DRMaterialClone
+
+// DRStricmp
+
+// DRstrlwr
+
+// PDCheckDriveExists
+
+// CloneActor
+
+// CalcActorGlobalPos
+
+// frac
+
+// FindMaterialCB
+
+// FindMaterial
+
+// BlendifyMaterialTablishly
+
+// BlendifyMaterialPrimitively
+
+// BlendifyMaterial
+
+// DRModelUpdateAndKevificateMaterials
+
+// DRModelUpdateDeluxTurbo
+
+// DistanceFromFace
+
+// DRBoundsCopy
+
+// TestForNan
+
+// DRVector3TestForNan
+
+// DRScaleModel
+
+// DistanceFromFaceND
+
+// DRVector3NonZero
+
+// DRVector3Diminish
+
+// DRScalarToU16
+
+// DRU16ToScalar
+
+// CompressVector3
+
+// ExpandVector3
+
+// CompressMatrix34
+
+// ExpandMatrix34
+
+// PossibleLock
+
+extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
+
+// PaletteEntry16Bit
+
+// Colour24BitTo16Bit
+
+// PaletteOf16Bits
+
+// Copy8BitTo16Bit
+
+// DRPixelmapCopy
+
+// FindExceptionInList
+
+// NobbleNonzeroBlacks
+
+// GlorifyMaterial
+
+// FindBestColourMatch
+
+// WhitenVertexRGB
+
+// ArenaOpenFile
+
+// BRPM_convert
+
+// PrintScreen
+
+// FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
+
+// GetBlenficatiousnessOfMaterialTablishly
+
+// GetBlenficatiousnessOfMaterialPrimitively
+
+// GetBlenficatiousnessOfMaterial
+
+// MungeCommas
+
+// MungeMetaCharacters
+
+// MungeMetaCharactersChar
+
+// MungeMetaCharactersNum
+
+// DrPixelmapRectangleCopyPossibleLock
+
+// PixelmapSwapByteOrder
+
+// EnsurePixelmapAllowed
+
+#endif // GUARD_41_UTILITY_H

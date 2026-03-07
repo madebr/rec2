@@ -1,6 +1,6 @@
 #include "grafdata.h"
 
-#include "errors.h"
+#include "52-errors.h"
 
 #include "platform.h"
 

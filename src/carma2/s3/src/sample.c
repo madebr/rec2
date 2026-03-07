@@ -25,10 +25,6 @@ char gS3_sound_dirname[256];
 
 // FUNCTION: CARMA2_HW 0x005687ff
 tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3GetBufferDescription_original(pSample_id);
-#else
     tS3_descriptor* descriptor;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, buffer_description, 0x40);
@@ -41,15 +37,10 @@ tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
         return NULL;
     }
     return descriptor->buffer_description;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00568830
 tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3LoadSample_original(pSample_id);
-#else
     tS3_descriptor* descriptor;
     tS3_buffer_desc* buffer_description;
     char path[512];
@@ -68,7 +59,7 @@ tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
         return eS3_error_none;
     }
     path[0] = '\0';
-    c2_strcpy(path, descriptor->path);
+    strcpy(path, descriptor->path);
 
     C2_HOOK_BUG_ON(sizeof(tS3_buffer_desc) != 0x18);
 
@@ -76,7 +67,7 @@ tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
     if (buffer_description == NULL) {
         return eS3_error_memory;
     }
-    c2_memset(buffer_description, 0, sizeof(tS3_buffer_desc));
+    memset(buffer_description, 0, sizeof(tS3_buffer_desc));
     descriptor->pd_handle = S3BufferWav(path, buffer_description);
     if (descriptor->pd_handle == NULL) {
         BrFailure("Cound not load sample:%s", path);
@@ -84,7 +75,6 @@ tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
     descriptor->effects_enabled = 0;
     descriptor->buffer_description = buffer_description;
     return eS3_error_none;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00565a3d
@@ -113,10 +103,6 @@ void C2_HOOK_CDECL s3_dprintf(const char* pFormat, ...) {
 
 // FUNCTION: CARMA2_HW 0x00568ee0
 int C2_HOOK_FASTCALL S3CheckWavHeader(tS3_wav_file* pWav_buffer, tS3_wav_chunk_info_header** pWav_format_info_header, void** pSamples, int* pSample_size) {
-
-#if 0//defined(C2_HOOKS_ENABLED)
-    return S3CheckWavHeader_original(pWav_buffer, pWav_format_info_header, pSamples, pSample_size);
-#else
     void* chunk_start;
     void* file_end;
 
@@ -129,14 +115,14 @@ int C2_HOOK_FASTCALL S3CheckWavHeader(tS3_wav_file* pWav_buffer, tS3_wav_chunk_i
     if (pSample_size != NULL) {
         *pSample_size = 0;
     }
-    if (c2_strncmp(pWav_buffer->riff_header.magic, "RIFF", 4) != 0 || c2_strncmp(pWav_buffer->wave_magic, "WAVE", 4) != 0) {
+    if (strncmp(pWav_buffer->riff_header.magic, "RIFF", 4) != 0 || strncmp(pWav_buffer->wave_magic, "WAVE", 4) != 0) {
         return 0;
     }
     file_end = (br_uint_8*)pWav_buffer->wave_magic + pWav_buffer->riff_header.chunk_size;
     chunk_start = &pWav_buffer->fmt_chunk;
     while (chunk_start < file_end) {
         tS3_riff_chunk_header* chunk_header = chunk_start;
-        if (c2_strncmp(chunk_header->magic, "fmt ", 4) == 0) {
+        if (strncmp(chunk_header->magic, "fmt ", 4) == 0) {
             tS3_riff_fmt_chunk* fmt_chunk = chunk_start;
             if (pWav_format_info_header != NULL && *pWav_format_info_header == NULL) {
                 C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_wav_chunk_info_header, bits_per_sample, 0xe);
@@ -148,7 +134,7 @@ int C2_HOOK_FASTCALL S3CheckWavHeader(tS3_wav_file* pWav_buffer, tS3_wav_chunk_i
                     return 1;
                 }
             }
-        } else if (c2_strncmp(chunk_header->magic, "data", 4) == 0) {
+        } else if (strncmp(chunk_header->magic, "data", 4) == 0) {
             tS3_riff_data_chunk* data_chunk = chunk_start;
             if ((pSamples != NULL && *pSamples == NULL) || (pSample_size != NULL && *pSample_size == 0)) {
                 if (pSamples != NULL) {
@@ -165,7 +151,6 @@ int C2_HOOK_FASTCALL S3CheckWavHeader(tS3_wav_file* pWav_buffer, tS3_wav_chunk_i
         chunk_start = (br_uint_8*)&chunk_header[1] + chunk_header->chunk_size;
     }
     return 0;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x0056907c
@@ -174,20 +159,21 @@ void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_d
     FILE* f;
     int file_size;
     tS3_wav_info wav_info;
+    tS3_wav_file* wav_buffer;
     void* pd_handle;
 
     if (gS3_low_memory_mode) {
-        c2_sprintf(wav_path, "DATA%sSOUND%s%s", gS3_path_separator, gS3_path_separator, pPath);
+        sprintf(wav_path, "DATA%sSOUND%s%s", gS3_path_separator, gS3_path_separator, pPath);
         f = S3_low_memory_fopen(wav_path, "rb");
     } else {
         if (gS3_sound_dirname[0] != '\0') {
             char filename[512];
 
             PDExtractFilename(filename, pPath);
-            c2_sprintf(wav_path, "%s\\%s", gS3_sound_dirname, filename);
-            f = c2_fopen(wav_path, "rb");
+            sprintf(wav_path, "%s\\%s", gS3_sound_dirname, filename);
+            f = fopen(wav_path, "rb");
         } else {
-            f = c2_fopen(pPath, "rb");
+            f = fopen(pPath, "rb");
         }
     }
     if (f == NULL) {
@@ -196,22 +182,22 @@ void* C2_HOOK_FASTCALL S3BufferWav(const char* pPath, tS3_buffer_desc* pBuffer_d
     }
     file_size = S3GetFileSize(f);
     if (file_size == 0) {
-        c2_fclose(f);
+        fclose(f);
         gS3_last_error = eS3_error_readfile;
         return NULL;
     }
-    tS3_wav_file* wav_buffer = S3MemAllocate(file_size, kMem_S3_Windows_95_load_WAV_file);
+    wav_buffer = S3MemAllocate(file_size, kMem_S3_Windows_95_load_WAV_file);
     if (wav_buffer == NULL) {
-        c2_fclose(f);
+        fclose(f);
         gS3_last_error = eS3_error_memory;
         return NULL;
     }
-    c2_fread(wav_buffer, 1, file_size, f);
-    c2_fclose(f);
+    fread(wav_buffer, 1, file_size, f);
+    fclose(f);
 
     C2_HOOK_BUG_ON(sizeof(tS3_wav_info) != 0xc);
 
-    c2_memset(&wav_info, 0, sizeof(tS3_wav_info));
+    memset(&wav_info, 0, sizeof(tS3_wav_info));
     if (!S3CheckWavHeader(wav_buffer, &wav_info.wav_info_header, &wav_info.samples, &wav_info.sample_size)) {
         gS3_last_error = eS3_error_readfile;
         s3_dprintf("ERROR: .WAV file '%s'is crap", wav_path);

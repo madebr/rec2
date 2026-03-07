@@ -48,6 +48,10 @@ void C2_HOOK_FASTCALL Timers_EndFrame(void);
 
 void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen);
 
+#ifdef _MSC_VER
+#define inline __inline
+#endif
+
 static void inline Timers_Push(int pType) {
     int prev_type;
 

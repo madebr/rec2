@@ -2,10 +2,10 @@
 
 #include "c2_hooks.h"
 
-#if defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__)
+#if (defined(_M_IX86) || defined(_M_X64) || defined(__i386__) || defined(__x86_64__)) && !(defined(_MSC_VER) && _MSC_VER < 1300)
 #include <mmintrin.h>
 #endif
-#include <string.h>
+#include "c2_string.h"
 
 br_token cpu_types[] = {
     BRT_INTEL_386,
@@ -22,7 +22,9 @@ static void cpuid_wrapper(int(*values)[4], int function) {
     memset(*values, 0, sizeof(*values));
 
 #ifdef _MSC_VER
-#if  defined(_M_IX86) || defined(_M_X64)
+#if _MSC_VER < 1300
+    return;
+#elif  defined(_M_IX86) || defined(_M_X64)
     __cpuid(values, 0);
 #endif
 #elif defined(__i386__)

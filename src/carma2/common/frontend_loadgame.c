@@ -18,7 +18,7 @@
 
 #include "rec2_macros.h"
 
-#include "c2_ctype.h"
+#include <ctype.h>
 #include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x005ed5a0
@@ -195,16 +195,16 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         if (save_game == NULL) {
             continue;
         }
-        c2_memset(text, 0, sizeof(text));
-        c2_strcpy(date_str, save_game->date);
-        c2_strcpy(time_str, save_game->time);
+        memset(text, 0, sizeof(text));
+        strcpy(date_str, save_game->date);
+        strcpy(time_str, save_game->time);
 
-        len_date = c2_strlen(date_str);
+        len_date = strlen(date_str);
         text_ptr = text;
         for (j = 0; j < len_date; j++) {
             char c = date_str[j];
 
-            if (c2_isalnum(c)) {
+            if (isalnum(c)) {
                 *text_ptr++ = c;
             } else if (date_str[j] == '/') {
                 *text_ptr++ = '-';
@@ -217,8 +217,8 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
 #pragma GCC diagnostic ignored "-Wstringop-truncation"
 #endif
 
-        c2_memset(text, 0, sizeof(text));
-        c2_strncpy(text, time_str, 5);
+        memset(text, 0, sizeof(text));
+        strncpy(text, time_str, 5);
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -226,17 +226,17 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
 
         SolidPolyFontText(text, 120, y_text, font, eJust_left, 1);
 
-        c2_memset(text, 0, sizeof(text));
-        c2_strcpy(text, save_game->player_name);
+        memset(text, 0, sizeof(text));
+        strcpy(text, save_game->player_name);
         PolyClipName(text, font, 127);
         SolidPolyFontText(text, 190, y_text, font, 0, 1);
 
         if (save_game->game_completed) {
-            c2_sprintf(text, "! %i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
+            sprintf(text, "! %i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
         } else if (save_game->is_boundary_race) {
-            c2_sprintf(text, "%c %i", '\x1f', 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
+            sprintf(text, "%c %i", '\x1f', 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
         } else {
-            c2_sprintf(text, "%i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
+            sprintf(text, "%i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
         }
         SolidPolyFontText(text, 325, y_text, font, eJust_right, 1);
 
@@ -249,7 +249,7 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         PrintAPO(450, y_apo, i, 0);
         PrintAPO(500, y_apo, i, 1);
         PrintAPO(550, y_apo, i, 2);
-        c2_sprintf(pFrontend->items[15].text, "%i-%i (%i)",
+        sprintf(pFrontend->items[15].text, "%i-%i (%i)",
             gFrontend_load_game_index_top + 1,
             gFrontend_load_game_index_top + 8,
             gFrontend_count_saved_games);

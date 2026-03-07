@@ -197,23 +197,23 @@ void C2_HOOK_FASTCALL SplondificatalizeIdentifier(br_material* pMaterial, char**
     char new_identifier[64];
     char* suffix_ptr;
 
-    c2_strcpy(new_identifier, *ppIdentifier);
-    len = c2_strlen(new_identifier);
+    strcpy(new_identifier, *ppIdentifier);
+    len = strlen(new_identifier);
     if (len < 4) {
-        c2_sprintf(new_identifier, "Smash material %s has a name that is less than 4 characters long", *ppIdentifier);
+        sprintf(new_identifier, "Smash material %s has a name that is less than 4 characters long", *ppIdentifier);
         PDFatalError(new_identifier);
     }
     suffix_ptr = new_identifier + len - 4;
-    c2_strcpy(original_suffix, suffix_ptr);
-    c2_sprintf(suffix_ptr, "        ");
-    c2_sprintf(&new_identifier[5], "%cx", '|');
+    strcpy(original_suffix, suffix_ptr);
+    sprintf(suffix_ptr, "        ");
+    sprintf(&new_identifier[5], "%cx", '|');
     new_identifier[6] = (char)(pIndex + 1);
-    c2_strcat(new_identifier, original_suffix);
-    if (c2_strlen(*ppIdentifier) < 12) {
+    strcat(new_identifier, original_suffix);
+    if (strlen(*ppIdentifier) < 12) {
         BrResFree(*ppIdentifier);
         *ppIdentifier = BrResStrDup(pMaterial, new_identifier);
     } else {
-        c2_strcpy(*ppIdentifier, new_identifier);
+        strcpy(*ppIdentifier, new_identifier);
     }
 }
 
@@ -431,6 +431,11 @@ void C2_HOOK_FASTCALL DoDelayedNonCar(tU32 pTime, tDelayed_non_car* pDelayed_non
                     br_vector3 speed;
                     br_vector3 omega;
 
+#ifdef REC2_FIX_BUGS
+                    BrVector3Set(&speed, 0.f, 0.f, 0.f);
+                    BrVector3Set(&omega, 0.f, 0.f, 0.f);
+#endif
+
                     ApplyInitialMovement(pDelayed_non_car->field_0x18, &pDelayed_non_car->field_0x0, &speed, &omega, 1.f, &gZero_vector__smash,
                              &pDelayed_non_car->field_0xc, &read_action->actor->t.t.translate.t);
                     BrVector3InvScale(&non_car->collision_info->v, &speed, WORLD_SCALE);
@@ -477,8 +482,10 @@ void C2_HOOK_FASTCALL MungeDelayedSideEffects(void) {
     int i;
     tU32 the_time;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmash_explosion, what.non_car, 0x8);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tSmash_explosion, what.non_car.count_actions, 0x24);
+#endif
 
     the_time = PDGetTotalTime();
     for (i = 0; i < REC2_ASIZE(gSmash_explosions); i++) {

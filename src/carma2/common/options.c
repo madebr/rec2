@@ -1,6 +1,6 @@
 #include "options.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "loading.h"
 #include "utility.h"
@@ -33,10 +33,10 @@ void C2_HOOK_FASTCALL StripControls(char* pStr) {
     int i;
     int len;
 
-    len = c2_strlen(pStr);
+    len = strlen(pStr);
     for (i = 0; i < len; i++) {
         if ((tU8)pStr[i] < ' ') {
-            c2_memmove(&pStr[i], &pStr[i + 1], (len - i) * sizeof(char));
+            memmove(&pStr[i], &pStr[i + 1], (len - i) * sizeof(char));
             len--;
 #ifdef REC2_FIX_BUGS
             /* correctly handle stripping multiple control characters */
@@ -60,8 +60,8 @@ void C2_HOOK_FASTCALL LoadKeyNames(void) {
     for (i = 0; i < REC2_ASIZE(gKey_names); i++) {
         PFfgets(s, sizeof(s), f);
         StripControls(s);
-        gKey_names[i] = BrMemAllocate(c2_strlen(s) + 1, kMem_misc);
-        c2_strcpy(gKey_names[i], s);
+        gKey_names[i] = BrMemAllocate(strlen(s) + 1, kMem_misc);
+        strcpy(gKey_names[i], s);
     }
     PFfclose(f);
 }
@@ -86,12 +86,12 @@ void C2_HOOK_FASTCALL BackupKeyMappings(void) {
 
         gKey_map_index = i;
         LoadKeyMapping();
-        c2_memcpy(gBackup_key_mappings[i],
+        memcpy(gBackup_key_mappings[i],
             gKey_mapping,
             sizeof(gKey_mapping));
     }
     gKey_map_index = gOrig_key_map_index;
-    c2_memcpy(gKey_mapping,
+    memcpy(gKey_mapping,
         gBackup_key_mappings[gKey_map_index],
         sizeof(gKey_mapping));
 }

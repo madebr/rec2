@@ -29,13 +29,14 @@
  * in Frank Cringle's viewfax program;
  *      Copyright (C) 1990, 1995  Frank D. Cringle.
  */
-#if defined(unix) || defined(__unix)
-#include "port.h"
-#else
+//#if defined(unix) || defined(__unix)
+//#include "port.h"
+//#else
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#endif
+#include <unistd.h>
+//#endif
 
 #include "tif_fax3.h"
 

@@ -187,7 +187,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_allocateSub(br_device_pixelmap*
     }
 
     pm = (br_device_pixelmap*)BrResAllocate(_pixelmap.res, sizeof(br_pixelmap), BR_MEMORY_PIXELMAP);
-    c2_memcpy(pm, self, sizeof(br_pixelmap));
+    memcpy(pm, self, sizeof(br_pixelmap));
     pm->pm_base_x += out.x;
     pm->pm_base_y += out.y;
     pm->pm_width = out.w;
@@ -259,6 +259,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_resize(br_device_pixelmap* self
     pm_type_info* tip;
     br_int_16 old_row_bytes;
 
+    tip = &pmTypeInfo[self->pm_type];
     pixels = self->pm_pixels;
     if (self->pm_row_bytes < 0) {
         pixels += (self->pm_height - 1) * self->pm_row_bytes;
@@ -269,17 +270,15 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_resize(br_device_pixelmap* self
     self->pm_width = width;
     self->pm_height = height;
     old_row_bytes = self->pm_row_bytes;
-    tip = &pmTypeInfo[self->pm_type];
-    self->pm_row_bytes = (width + tip->align - 1) / tip->align * tip->bits * tip->align / 8;
+    self->pm_row_bytes = tip->bits * tip->align * ((width + tip->align - 1) / tip->align) / 8;
 
     if (((8 * self->pm_row_bytes) % tip->bits) == 0) {
         self->pm_flags |= BR_PMF_ROW_WHOLEPIXELS;
     }
-    self->pm_pixels = pixels = BrResAllocate(self, height * self->pm_row_bytes, BR_MEMORY_PIXELS);
-// FIXME: _GetSysQual()
-//    self->pm_pixels_qualifier = _GetSysQual();
+    self->pm_pixels = BrResAllocate(self, self->pm_row_bytes * self->pm_height, BR_MEMORY_PIXELS);
+    self->pm_pixels_qualifier = GetSysQual();
     if (old_row_bytes < 0) {
-        self->pm_pixels = pixels + (self->pm_height - 1) * self->pm_row_bytes;
+        self->pm_pixels = (char *)self->pm_pixels + (self->pm_height - 1) * self->pm_row_bytes;
         self->pm_row_bytes = -self->pm_row_bytes;
     }
     return 0;
@@ -294,7 +293,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_match(br_device_pixelmap* self,
     br_int_32 bytes;
     br_int_32 r;
 
-    c2_memset(&mt, 0, sizeof(mt));
+    memset(&mt, 0, sizeof(mt));
     if (_pixelmap.pixelmap_match_template == NULL) {
         _pixelmap.pixelmap_match_template = BrTVTemplateAllocate(_pixelmap.res, matchTemplateEntries, BR_ASIZE(matchTemplateEntries));
         return 0x1002;

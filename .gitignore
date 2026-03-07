@@ -1,3 +1,5 @@
+reccmp-user.yml
+reccmp-build.yml
 /*build*
 *.py[co]
 *.class

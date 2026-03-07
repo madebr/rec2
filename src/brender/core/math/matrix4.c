@@ -1,6 +1,6 @@
 #include "matrix4.h"
 
-#include <math.h>
+#include "c2_math.h"
 #include "c2_string.h"
 
 #define A(x, y) A->m[x][y]
@@ -356,7 +356,7 @@ void C2_HOOK_CDECL BrMatrix4Mul34(br_matrix4* A, const br_matrix34* B, const br_
 void C2_HOOK_CDECL BrMatrix4Pre34(br_matrix4* A, const br_matrix34* B) {
     br_matrix4 C;
 
-    c2_memcpy(&C, A, sizeof(*A));
+    memcpy(&C, A, sizeof(*A));
     BrMatrix4Mul34(A, B, &C);
 }
 

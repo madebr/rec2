@@ -1,7 +1,7 @@
 #include "spark.h"
 
 #include "depth.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "graphics.h"
@@ -252,8 +252,8 @@ void C2_HOOK_FASTCALL InitFlame(void) {
 
     gColumn_flags = 0;
     gLollipop_model = BrModelAllocate("Lollipop", 4, 2);
-    c2_strcpy(name, "FLAMES.PIX");
-    c2_strcpy(gCurrent_load_directory, "COMMON");
+    strcpy(name, "FLAMES.PIX");
+    strcpy(gCurrent_load_directory, "COMMON");
     if (LoadTextureTryAllLocations(name, gFlame_map, REC2_ASIZE(gFlame_map)) != REC2_ASIZE(gFlame_map)) {
         FatalError(kFatalError_CantLoadPixelmapFile_S, name);
     }
@@ -313,7 +313,7 @@ void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
 
     gSplash_flags = 0;
     gSplash_model = BrModelAllocate("Splash", 4, 2);
-    c2_strcpy(gCurrent_load_directory, "COMMON");
+    strcpy(gCurrent_load_directory, "COMMON");
     if (pF != NULL) {
         num = GetAnInt(pF);
         gNum_splash_types = 0;
@@ -322,7 +322,7 @@ void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
 #if 0
             PathCat(the_path, the_path, s);
 #else
-            c2_strcpy(the_path, s);
+            strcpy(the_path, s);
 #endif
             num_files = LoadTextureTryAllLocations(the_path, &splash_maps[gNum_splash_types], REC2_ASIZE(splash_maps));
             if (num_files == 0) {
@@ -331,7 +331,7 @@ void C2_HOOK_FASTCALL InitSplash(FILE* pF) {
             gNum_splash_types += num_files;
         }
     } else {
-        c2_strcpy(the_path, "SPLSHBLU.PIX");
+        strcpy(the_path, "SPLSHBLU.PIX");
         gNum_splash_types = LoadTextureTryAllLocations(the_path, splash_maps, REC2_ASIZE(splash_maps));
     }
     BrMapAddMany(splash_maps, gNum_splash_types);

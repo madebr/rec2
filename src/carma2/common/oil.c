@@ -210,12 +210,14 @@ void C2_HOOK_FASTCALL ProcessOilSpills(tU32 pFrame_period) {
     br_vector3 v;
     tNet_message* message;
 
+#ifndef REC2_MATCHING
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tOil_spill_info, position, 0x34);
     /* FIXME: unconditional assert */
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents.oil_spill.player, 0x1c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents.oil_spill.full_size, 0x20);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents.oil_spill.grow_rate, 0x24);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNet_message, contents.oil_spill.current_size, 0x28);
+#endif
 
     time = GetTotalTime();
     for (i = 0; i < REC2_ASIZE(gOily_spills); i++) {

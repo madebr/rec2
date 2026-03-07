@@ -1,6 +1,6 @@
 #include "brucetrk.h"
 
-#include "errors.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "globvrpb.h"
 #include "init.h"
@@ -51,6 +51,7 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
     int j;
     int k;
     br_face* face;
+    br_face* blendy_face;
     int changed_one;
 
     changed_one = 0;
@@ -68,9 +69,9 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
                 gMr_blendy->model->nvertices = 0;
                 gMr_blendy->model->flags |= BR_MODF_UPDATEABLE;
             }
-            br_face *blendy_face = &gMr_blendy->model->faces[gMr_blendy->model->nfaces];
+            blendy_face = &gMr_blendy->model->faces[gMr_blendy->model->nfaces];
             gMr_blendy->model->nfaces += 1;
-            c2_memcpy(blendy_face, face, sizeof(br_face));
+            memcpy(blendy_face, face, sizeof(br_face));
             for (j = 0; j < 3; j++) {
                 br_vertex *vertex_j = &pModel->vertices[face->vertices[j]];
                 for (k = 0; k < gMr_blendy->model->nvertices; k++) {
@@ -83,12 +84,12 @@ void C2_HOOK_FASTCALL MungeFaces(br_actor* pActor, br_model* pModel) {
                 }
                 if (vertex_j != NULL) {
                     blendy_face->vertices[j] = gMr_blendy->model->nvertices;
-                    c2_memcpy(&gMr_blendy->model->vertices[gMr_blendy->model->nvertices], vertex_j, sizeof(br_vertex));
+                    memcpy(&gMr_blendy->model->vertices[gMr_blendy->model->nvertices], vertex_j, sizeof(br_vertex));
                     gMr_blendy->model->nvertices += 1;
                 }
             }
             if (i < pModel->nfaces - 1) {
-                c2_memmove(&pModel->faces[i], &pModel->faces[i + 1], (pModel->nfaces - (i + 1)) * sizeof(br_vertex));
+                memmove(&pModel->faces[i], &pModel->faces[i + 1], (pModel->nfaces - (i + 1)) * sizeof(br_vertex));
             }
             pModel->nfaces -= 1;
             i -= 1;
@@ -112,7 +113,7 @@ intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, void* pData) {
 
     SetSmashableModel(pActor);
     if (pActor->identifier[0] == '&' && pActor->model == NULL) {
-        c2_sprintf(s, "Accessory %s has no model. Well how does it pose? Awful!", pActor->identifier);
+        sprintf(s, "Accessory %s has no model. Well how does it pose? Awful!", pActor->identifier);
         PDFatalError(s);
     }
     if (pActor->identifier[0] == '&' && '0' <= pActor->identifier[1] && pActor->identifier[1] <= '9') {
@@ -231,23 +232,23 @@ void C2_HOOK_FASTCALL SetSmashableModel(br_actor* pActor) {
             char s2[64];
             size_t len;
 
-            c2_strcpy(s, pActor->identifier);
-            len = c2_strlen(s);
+            strcpy(s, pActor->identifier);
+            len = strlen(s);
             if (len < 4) {
                 sprintf(s, "Smash material %s has a name that is less than 4 characters long", pActor->identifier);
                 PDFatalError(s);
             }
-            c2_strcpy(s2, &s[len - 4]);
-            c2_sprintf(&s[len - 4], "        ");
-            c2_sprintf(&s[5], "%cx", '|');
+            strcpy(s2, &s[len - 4]);
+            sprintf(&s[len - 4], "        ");
+            sprintf(&s[5], "%cx", '|');
             s[6] = i + 1;
-            c2_strcat(s, s2);
+            strcat(s, s2);
             s[11] = '\0';
-            if (c2_strlen(pActor->identifier) < 12) {
+            if (strlen(pActor->identifier) < 12) {
                 BrResFree(pActor->identifier);
                 pActor->identifier = BrResStrDup(pActor, s);
             } else {
-                c2_strcpy(pActor->identifier, s);
+                strcpy(pActor->identifier, s);
             }
 
             if ((gCurrent_race.race_spec->race_type > 3 && spec->mode_data.field_0x14 == gCurrent_race.race_spec->options.cars.count_opponents)
@@ -264,7 +265,7 @@ intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
     unsigned int z;
     tTrack_spec* pTrack_spec = data;
 
-    if (c2_sscanf(pActor->identifier, "%u%u", &x, &z) == 2 && x < pTrack_spec->ncolumns_x && z < pTrack_spec->ncolumns_z) {
+    if (sscanf(pActor->identifier, "%u%u", &x, &z) == 2 && x < pTrack_spec->ncolumns_x && z < pTrack_spec->ncolumns_z) {
         pActor->material = gDefault_track_material;
         pTrack_spec->columns[z][x].actor_0x0 = BrActorAllocate(BR_ACTOR_NONE, NULL);
         BrActorAdd(pActor->parent, pTrack_spec->columns[z][x].actor_0x0);
@@ -297,14 +298,14 @@ intptr_t C2_HOOK_CDECL ProcessModelsCB(br_actor* pActor, void* data) {
 
             new_vertices = BrResAllocate(gMr_blendy->model,
                 (gMr_blendy->model->nvertices + area2) * sizeof(br_vertex), BR_MEMORY_VERTICES);
-            c2_memcpy(new_vertices, gMr_blendy->model->vertices,
+            memcpy(new_vertices, gMr_blendy->model->vertices,
                 gMr_blendy->model->nvertices * sizeof(br_vertex));
             BrResFree(gMr_blendy->model->vertices);
             gMr_blendy->model->vertices = new_vertices;
 
             new_faces = BrResAllocate(gMr_blendy->model,
                 (gMr_blendy->model->nfaces + area1) * sizeof(br_face), BR_MEMORY_FACES);
-            c2_memcpy(new_faces, gMr_blendy->model->faces, gMr_blendy->model->nfaces * sizeof(br_face));
+            memcpy(new_faces, gMr_blendy->model->faces, gMr_blendy->model->nfaces * sizeof(br_face));
             BrResFree(gMr_blendy->model->faces);
             gMr_blendy->model->faces = new_faces;
 
@@ -331,7 +332,7 @@ void C2_HOOK_FASTCALL AllocateActorMatrix(tTrack_spec* pTrack_spec, tTrack_squar
         (*pDst)[z] = BrMemAllocate(pTrack_spec->ncolumns_x * sizeof(tTrack_square), kMem_columns_x);
         C2_HOOK_BUG_ON(sizeof(tTrack_square) != 12);
 
-        c2_memset((*pDst)[z], 0, sizeof(br_actor**) * pTrack_spec->ncolumns_x);
+        memset((*pDst)[z], 0, sizeof(br_actor**) * pTrack_spec->ncolumns_x);
     }
 }
 
@@ -346,7 +347,7 @@ void AssertNonCars(br_actor** pNon_cars, int* pCount_non_cars, int* pTrack_count
             count_nulls += 1;
         } else {
             pNon_cars[count_non_nulls] = pNon_cars[i];
-            c2_sprintf(&pNon_cars[count_non_nulls]->identifier[4], "%04d", count_non_nulls);
+            sprintf(&pNon_cars[count_non_nulls]->identifier[4], "%04d", count_non_nulls);
             count_non_nulls += 1;
         }
     }
@@ -370,15 +371,15 @@ void C2_HOOK_FASTCALL ExtractColumns(tTrack_spec* pTrack_spec) {
     identifier = pTrack_spec->the_actor->identifier;
     if (identifier[0] == 'P' && identifier[1] == 'P') {
         if (identifier[3] != '1') {
-            c2_sprintf(s, "The World has officially ended: Wrong format of track!!! '");
-            c2_strncat(s, pTrack_spec->the_actor->identifier, 4);
-            c2_strcat(s, "'");
+            sprintf(s, "The World has officially ended: Wrong format of track!!! '");
+            strncat(s, pTrack_spec->the_actor->identifier, 4);
+            strcat(s, "'");
             PDFatalError(s);
         }
         identifier = &identifier[5];
     }
 
-    count = c2_sscanf(identifier, "%u%u%f%d", &x, &z, &extra_room, &ad);
+    count = sscanf(identifier, "%u%u%f%d", &x, &z, &extra_room, &ad);
 
     if (count == 3) {
         BrFailure(
@@ -584,6 +585,7 @@ void C2_HOOK_FASTCALL ProcessNearbyActors(tTrack_spec* pTrack, br_vector3* pPos,
 intptr_t C2_HOOK_CDECL FoundAnActor(br_actor* pActor, void* pContext) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0040d7c0

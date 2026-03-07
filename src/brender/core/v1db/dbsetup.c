@@ -16,7 +16,7 @@
 #include "core/fw/resreg.h"
 #include "core/std/brstdlib.h"
 
-#include "c2_stdio.h"
+#include <stdio.h>
 #include "c2_stdlib.h"
 #include "c2_string.h"
 
@@ -72,7 +72,7 @@ br_error C2_HOOK_CDECL BrV1dbBegin(void) {
     }
 
     v1db.default_model = BrResAllocate(v1db.res, sizeof(br_model), BR_MEMORY_MODEL);
-    c2_memcpy(v1db.default_model, &_BrDefaultModel, sizeof(br_model));
+    memcpy(v1db.default_model, &_BrDefaultModel, sizeof(br_model));
     v1db.default_material = SetupDefaultMaterial();
     v1db.enabled_lights.max = 16;
     v1db.enabled_lights.type = BR_ACTOR_LIGHT;

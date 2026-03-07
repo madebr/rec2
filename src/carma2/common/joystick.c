@@ -59,9 +59,9 @@ void C2_HOOK_FASTCALL SetupFFBValues(void) {
     PathCat(path, gApplication_path, "FFB.TXT");
     f = DRfopen(path, "rt");
     GetALineAndDontArgue(f, s);
-    c2_sscanf(c2_strtok(s, "\t ,/"), "%f", &gForce_feedback_upper_limit);
+    sscanf(strtok(s, "\t ,/"), "%f", &gForce_feedback_upper_limit);
     GetALineAndDontArgue(f, s);
-    c2_sscanf(c2_strtok(s, "\t ,/"), "%f", &Force_feedback_lower_limit);
+    sscanf(strtok(s, "\t ,/"), "%f", &Force_feedback_lower_limit);
     PFfclose(f);
 }
 
@@ -313,16 +313,16 @@ void C2_HOOK_FASTCALL MungeJoystickHeadups(void) {
             }
             ChangeHeadupFont(gRace_head_ups[i], font);
             if (i == gINT_00596308) {
-                c2_sprintf(s, "%s      ???", headup_text->text);
+                sprintf(s, "%s      ???", headup_text->text);
             } else if (joystick_info == NULL) {
-                c2_sprintf(s, "%s", headup_text->text);
+                sprintf(s, "%s", headup_text->text);
             } else {
                 size_t j;
 
-                c2_sprintf(s, "%s", headup_text->text);
+                sprintf(s, "%s", headup_text->text);
                 for (j = 0; j < joystick_info->count_buttons; j++) {
                     if (i == joystick_info->buttons[j]) {
-                        c2_sprintf(s, "%s      #%02d", headup_text->text, (int)j);
+                        sprintf(s, "%s      #%02d", headup_text->text, (int)j);
                     }
                 }
             }

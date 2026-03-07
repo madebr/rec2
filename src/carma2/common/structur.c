@@ -6,7 +6,7 @@
 #include "cutscene.h"
 #include "displays.h"
 #include "drmem.h"
-#include "errors.h"
+#include "52-errors.h"
 #include "finteray.h"
 #include "flicplay.h"
 #include "frontend.h"
@@ -77,6 +77,7 @@ void C2_HOOK_FASTCALL RecordAPOAndCredits(void) {
 int C2_HOOK_FASTCALL DoPostRace(tRace_result pRace_result) {
 
     NOT_IMPLEMENTED();
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00503c50
@@ -719,7 +720,7 @@ void C2_HOOK_FASTCALL JumpTheStart(void) {
         DRS3StopOutletSound(gPedestrians_outlet);
         DRS3StartSound(gPedestrians_outlet, eSoundId_HeyYou);
         SpendCredits(gJump_start_fine[gProgram_state.skill_level]);
-        c2_sprintf(s, "%s %d %s",
+        sprintf(s, "%s %d %s",
             GetMiscString(eMiscString_bad_boy),
             gJump_start_fine[gProgram_state.skill_level],
             GetMiscString(eMiscString_credit_fine));
