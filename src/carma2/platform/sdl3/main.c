@@ -62,7 +62,6 @@ int main(int argc, char *argv[]) {
     const char* args[] = { "rec2", NULL };
 
     GameMain(1, args);
-    C2_HOOK_FINISH();
 
     SDL_Quit();
     return 0;
