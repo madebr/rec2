@@ -102,12 +102,11 @@ static int ioctlsocket(int handle, long cmd, void* argp) {
 }
 #endif
 
-void NetNowIPXLocalTarget2String(char *pString, struct sockaddr_in *pSock_addr_ipx) {
-    char portbuf[10];
+void NetNowIPXLocalTarget2String(char *pString, int pSize, struct sockaddr_in *pSock_addr_ipx) {
+    char ipbuf[INET_ADDRSTRLEN];
 
-    inet_ntop(AF_INET, &pSock_addr_ipx->sin_addr, pString, 32);
-    sprintf(portbuf, ":%d", ntohs(pSock_addr_ipx->sin_port));
-    strcat(pString, portbuf);
+    inet_ntop(AF_INET, &pSock_addr_ipx->sin_addr, ipbuf, sizeof(ipbuf));
+    snprintf(pString, pSize, "%s:%d", ipbuf, ntohs(pSock_addr_ipx->sin_port));
 }
 
 int PDNetInitialise(void) {
@@ -161,7 +160,7 @@ int PDNetInitialise(void) {
 
     namelen = sizeof(gLocal_address);
     getsockname(gSocket, (struct sockaddr* )&gLocal_address, &namelen);
-    NetNowIPXLocalTarget2String(gLocal_address_text, gPtr_local_address);
+    NetNowIPXLocalTarget2String(gLocal_address_text, sizeof(gLocal_address_text), gPtr_local_address);
 
     SDL_memcpy(&gLocal_address_2, gPtr_local_address, sizeof(struct sockaddr_in));
     dr_dprintf("Socket bound OK; local address is '%s'", gLocal_address_text);
@@ -195,7 +194,7 @@ void PDNetLeaveGame(void) {
 }
 
 void MakeMessageToSend(int pMessage_type) {
-    sprintf(gSend_buffer, "XXXX%s%.1d", BROADCAST_HEADER, pMessage_type);
+    snprintf(gSend_buffer, sizeof(gSend_buffer), "XXXX%s%.1d", BROADCAST_HEADER, pMessage_type);
 }
 
 int GetMessageTypeFromMessage(const char *pMessage_str) {
@@ -234,7 +233,7 @@ int ReceiveHostResponses(void) {
         if (recvfrom(gSocket, gReceive_buffer, sizeof(gReceive_buffer), 0, (struct sockaddr *)&gListen_address, &sa_len) == SOCKET_ERROR) {
             break;
         }
-        NetNowIPXLocalTarget2String(addr_string, gPtr_listen_address);
+        NetNowIPXLocalTarget2String(addr_string, sizeof(addr_string), gPtr_listen_address);
         dr_dprintf("ReceiveHostResponses(): Received string '%s' from %s", gReceive_buffer, addr_string);
 
         if (SameEthernetAddress(gPtr_local_address, gPtr_listen_address)) {
@@ -267,7 +266,7 @@ int ReceiveHostResponses(void) {
         if (gNumber_of_hosts != 0) {
             dr_dprintf("Currently registered net games:");
             for (i = 0; i < gNumber_of_hosts; i++) {
-                NetNowIPXLocalTarget2String(str, (struct sockaddr_in *)&gJoinable_games[i].addr);
+                NetNowIPXLocalTarget2String(str, sizeof(str), (struct sockaddr_in *)&gJoinable_games[i].addr);
                 dr_dprintf("%d: Host addr %s", i, str);
             }
         }
@@ -287,7 +286,7 @@ int BroadcastMessage(void) {
 
     errors = 0;
     for (i = 0; i < gNumber_of_networks; i++) {
-        NetNowIPXLocalTarget2String(broadcast_addr_string, gPtr_broadcast_address);
+        NetNowIPXLocalTarget2String(broadcast_addr_string, sizeof(broadcast_addr_string), gPtr_broadcast_address);
         dr_dprintf("Broadcasting on address '%s'", broadcast_addr_string);
         if (sendto(gSocket, gSend_buffer, SDL_strlen(gSend_buffer) + 1, 0, (struct sockaddr*)&gBroadcast_address, sizeof(gBroadcast_address)) == SOCKET_ERROR) {
             dr_dprintf("BroadcastMessage(): Error on sendto() - WSAGetLastError=%d", WSAGetLastError());
@@ -354,7 +353,7 @@ tNet_message *PDNetGetNextMessage(tNet_game_details *pDetails, void **pSender_ad
     if (res == SOCKET_ERROR) {
         WSAGetLastError();
     } else {
-        NetNowIPXLocalTarget2String(addr_str, gPtr_listen_address);
+        NetNowIPXLocalTarget2String(addr_str, sizeof(addr_str), gPtr_listen_address);
         if (!SameEthernetAddress(gPtr_local_address, gPtr_listen_address)) {
             int msg_type;
 
