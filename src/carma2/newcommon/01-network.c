@@ -6,7 +6,10 @@
 
 // NetShutdown
 
-// ShutdownNetIfRequired
+// STUB: CARMA2_HW 0x0049d370
+void C2_HOOK_FASTCALL ShutdownNetIfRequired(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DisableNetService
 
@@ -42,7 +45,10 @@
 
 // NetLeaveGameLowLevel
 
-// NetLeaveGame
+// STUB: CARMA2_HW 0x0049dc90
+void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game) {
+    NOT_IMPLEMENTED();
+}
 
 // NetSetPlayerSystemInfo
 

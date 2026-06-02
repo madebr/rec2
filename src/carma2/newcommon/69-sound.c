@@ -5,9 +5,15 @@
 // GLOBAL: CARMA2_HW 0x00684550
 const char* gPedSoundPath;
 
+// GLOBAL: CARMA2_HW 0x0068b898
+int gCD_fully_installed;
+
 // SplungeSomeData
 
-// UsePathFileToDetermineIfFullInstallation
+// STUB: CARMA2_HW 0x00454f40
+void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
+    NOT_IMPLEMENTED();
+}
 
 // InitSound
 
@@ -25,7 +31,10 @@ const char* gPedSoundPath;
 
 // DRS3SoundStillPlaying
 
-// DRS3ShutDown
+// STUB: CARMA2_HW 0x00455910
+int C2_HOOK_FASTCALL DRS3ShutDown(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DRS3SetOutletVolume
 
@@ -59,7 +68,10 @@ const char* gPedSoundPath;
 
 // StartMusic
 
-// StopMusic
+// STUB: CARMA2_HW 0x00456910
+void C2_HOOK_FASTCALL StopMusic(void) {
+    NOT_IMPLEMENTED();
+}
 
 // SetSoundDetailLevel
 

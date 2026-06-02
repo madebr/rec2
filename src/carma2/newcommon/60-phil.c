@@ -38,7 +38,10 @@
 
 // PHILInit
 
-// PHILDisable
+// STUB: CARMA2_HW 0x004b5d20
+void C2_HOOK_FASTCALL PHILDisable(void) {
+    NOT_IMPLEMENTED();
+}
 
 // PHILAddObject
 

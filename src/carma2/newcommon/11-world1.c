@@ -22,5 +22,8 @@
 
 // DoSaveAdditionalStuff
 
-// AutoSaveAdditionalStuff
+// STUB: CARMA2_HW 0x00507360
+void C2_HOOK_FASTCALL AutoSaveAdditionalStuff(void) {
+    NOT_IMPLEMENTED();
+}
 

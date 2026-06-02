@@ -40,7 +40,10 @@ int gBr_initialized;
 
 // DoDevelopmentThings
 
-// InitialiseDeathRace
+// STUB: CARMA2_HW 0x0047dd20
+void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
+    NOT_IMPLEMENTED();
+}
 
 // InitGameAccordingToSkillLevel
 

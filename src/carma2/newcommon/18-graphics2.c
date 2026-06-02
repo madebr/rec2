@@ -55,7 +55,10 @@ int gNoTransients;
 
 // DRDrawLine
 
-// ClearEntireScreen
+// STUB: CARMA2_HW 0x0047b880
+void C2_HOOK_FASTCALL ClearEntireScreen(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DistanceFromPlane
 

@@ -1,6 +1,10 @@
 #ifndef GUARD_28_WORLD3_H
 #define GUARD_28_WORLD3_H
 
+#include "brender/brender.h"
+
+extern br_actor* gAdditional_actors;
+
 // TurnOnCloaking
 
 // RemoveFromCloakingList

@@ -1,5 +1,8 @@
 #include "28-world3.h"
 
+// GLOBAL: CARMA2_HW 0x006b75c0
+br_actor* gAdditional_actors;
+
 // TurnOnCloaking
 
 // RemoveFromCloakingList

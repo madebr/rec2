@@ -105,7 +105,10 @@ const char* gPedTextTxtPath;
 
 // PrintNetOptions
 
-// SaveOptions
+// STUB: CARMA2_HW 0x0048d190
+int C2_HOOK_FASTCALL SaveOptions(void) {
+    NOT_IMPLEMENTED();
+}
 
 // RestoreOptions
 

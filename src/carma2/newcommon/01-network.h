@@ -8,7 +8,7 @@
 
 // NetShutdown
 
-// ShutdownNetIfRequired
+extern void C2_HOOK_FASTCALL ShutdownNetIfRequired(void);
 
 // DisableNetService
 
@@ -44,7 +44,7 @@
 
 // NetLeaveGameLowLevel
 
-// NetLeaveGame
+extern void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
 
 // NetSetPlayerSystemInfo
 

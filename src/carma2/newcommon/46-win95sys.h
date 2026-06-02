@@ -1,6 +1,8 @@
 #ifndef GUARD_46_WIN95SYS_H
 #define GUARD_46_WIN95SYS_H
 
+#include "c2_hooks.h"
+
 // FUN_100bf5a4
 
 // AsmDoDeltaX
@@ -75,7 +77,7 @@
 
 // HCalcPathName
 
-// PDSetFileVariables
+void C2_HOOK_FASTCALL PDSetFileVariables(void);
 
 // PDBuildAppPath
 

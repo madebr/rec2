@@ -38,7 +38,10 @@
 
 // InitialiseProgramState
 
-// DoProgram
+// STUB: CARMA2_HW 0x00503c50
+void C2_HOOK_FASTCALL DoProgram(void) {
+    NOT_IMPLEMENTED();
+}
 
 // JumpTheStart
 

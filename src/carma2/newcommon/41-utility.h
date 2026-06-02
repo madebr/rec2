@@ -110,7 +110,7 @@ extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const
 
 // DRstrlwr
 
-// PDCheckDriveExists
+int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
 
 // CloneActor
 

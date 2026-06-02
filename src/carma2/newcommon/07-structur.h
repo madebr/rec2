@@ -1,6 +1,8 @@
 #ifndef GUARD_07_STRUCTUR_H
 #define GUARD_07_STRUCTUR_H
 
+#include "c2_hooks.h"
+
 // NumberOfOpponentsLeft
 
 // RaceCompleted
@@ -39,7 +41,7 @@
 
 // InitialiseProgramState
 
-// DoProgram
+extern void C2_HOOK_FASTCALL DoProgram(void);
 
 // JumpTheStart
 

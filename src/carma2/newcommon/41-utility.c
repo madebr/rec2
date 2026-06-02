@@ -2,6 +2,7 @@
 
 #include "02-init.h"
 #include "globvars.h"
+#include "platform.h"
 
 #include "c2_string.h"
 
@@ -138,7 +139,10 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 // DRstrlwr
 
-// PDCheckDriveExists
+// FUNCTION: CARMA2_HW 0x00515950
+int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
+    return PDCheckDriveExists2(pThe_path, NULL, 0);
+}
 
 // CloneActor
 

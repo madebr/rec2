@@ -105,7 +105,7 @@
 
 // PrintNetOptions
 
-// SaveOptions
+extern int C2_HOOK_FASTCALL SaveOptions(void);
 
 // RestoreOptions
 

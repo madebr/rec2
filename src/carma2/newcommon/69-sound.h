@@ -3,9 +3,11 @@
 
 #include "c2_hooks.h"
 
+extern int gCD_fully_installed;
+
 // SplungeSomeData
 
-// UsePathFileToDetermineIfFullInstallation
+void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
 // InitSound
 
@@ -23,7 +25,7 @@
 
 // DRS3SoundStillPlaying
 
-// DRS3ShutDown
+extern int C2_HOOK_FASTCALL DRS3ShutDown(void);
 
 // DRS3SetOutletVolume
 
@@ -57,7 +59,7 @@
 
 // StartMusic
 
-// StopMusic
+extern void C2_HOOK_FASTCALL StopMusic(void);
 
 // SetSoundDetailLevel
 

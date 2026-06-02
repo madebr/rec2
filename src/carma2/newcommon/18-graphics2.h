@@ -1,6 +1,8 @@
 #ifndef GUARD_18_GRAPHICS2_H
 #define GUARD_18_GRAPHICS2_H
 
+#include "c2_hooks.h"
+
 extern int gNoTransients;
 
 // DRSetPaletteEntries
@@ -55,7 +57,7 @@ extern int gNoTransients;
 
 // DRDrawLine
 
-// ClearEntireScreen
+extern void C2_HOOK_FASTCALL ClearEntireScreen(void);
 
 // DistanceFromPlane
 

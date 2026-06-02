@@ -1,6 +1,8 @@
 #ifndef GUARD_60_PHIL_H
 #define GUARD_60_PHIL_H
 
+#include "c2_hooks.h"
+
 // ScalarToFraction
 
 // FractionToScalar
@@ -39,7 +41,7 @@
 
 // PHILInit
 
-// PHILDisable
+extern void C2_HOOK_FASTCALL PHILDisable(void);
 
 // PHILAddObject
 
