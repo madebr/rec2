@@ -13,7 +13,7 @@
 
 extern void C2_HOOK_FASTCALL PFfclose(FILE* pFile);
 
-// PFfopen
+extern FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode);
 
 // PFfgetc
 

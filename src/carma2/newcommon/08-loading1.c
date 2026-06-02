@@ -62,7 +62,10 @@
 
 // SubsStringJob
 
-// GetALineWithNoPossibleService
+// STUB: CARMA2_HW 0x00490f30
+char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
+    NOT_IMPLEMENTED();
+}
 
 // GetALineAndDontArgue
 

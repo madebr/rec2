@@ -1,6 +1,14 @@
 #include "69-sound.h"
 
+#include "08-loading1.h"
+#include "41-utility.h"
+#include "70-packfile.h"
+#include "globvars.h"
+#include "platform.h"
+
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00684550
 const char* gPedSoundPath;
@@ -10,9 +18,36 @@ int gCD_fully_installed;
 
 // SplungeSomeData
 
-// STUB: CARMA2_HW 0x00454f40
+// FUNCTION: CARMA2_HW 0x00454f40
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
-    NOT_IMPLEMENTED();
+
+    char line1[80];
+    char line2[80];
+    char line3[80];
+    char path_file[80];
+    FILE* fp;
+
+    strcpy(path_file, gApplication_path);
+    strcat(path_file, (char*)gDir_separator);
+    strcat(path_file, "PATHS.TXT");
+
+    if (PDCheckDriveExists(path_file)) {
+        fp = PFfopen(path_file, "rt");
+        if (fp == NULL) {
+            return;
+        }
+        line1[0] = '\0';
+        line2[0] = '\0';
+        line3[0] = '\0';
+        GetALineWithNoPossibleService(fp, line1);
+        GetALineWithNoPossibleService(fp, line2);
+        GetALineWithNoPossibleService(fp, line3);
+        PFfclose(fp);
+        if (strcmp(line3, "Full") != 0) {
+            return;
+        }
+    }
+    gCD_fully_installed = 1;
 }
 
 // InitSound

@@ -1,6 +1,10 @@
 #ifndef GUARD_08_LOADING1_H
 #define GUARD_08_LOADING1_H
 
+#include "c2_hooks.h"
+
+#include <stdio.h>
+
 // ReadU32
 
 // ReadF32
@@ -63,7 +67,7 @@
 
 // SubsStringJob
 
-// GetALineWithNoPossibleService
+extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
 // GetALineAndDontArgue
 

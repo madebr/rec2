@@ -11,7 +11,10 @@ void C2_HOOK_FASTCALL PFfclose(FILE* pFile) {
     NOT_IMPLEMENTED();
 }
 
-// PFfopen
+// STUB: CARMA2_HW 0x004b4780
+FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
+    NOT_IMPLEMENTED();
+}
 
 // PFfgetc
 
