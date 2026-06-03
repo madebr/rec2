@@ -1,8 +1,12 @@
 #include "50-fog.h"
 
-// STUB: CARMA2_HW 0x004ea760
+// GLOBAL: CARMA2_HW 0x006a6d38
+int gMaterials_to_adapt_count;
+
+// FUNCTION: CARMA2_HW 0x004ea760
 void C2_HOOK_FASTCALL InitFogificateMaterials(void) {
-    NOT_IMPLEMENTED();
+
+    gMaterials_to_adapt_count = 0;
 }
 
 // FogificateMaterials
