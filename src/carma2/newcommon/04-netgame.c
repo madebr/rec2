@@ -104,7 +104,10 @@
 
 // NetSendEnvironmentChanges
 
-// CheckForNeedyEnvironmentRecipients
+// STUB: CARMA2_HW 0x0049b9a0
+void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ReceivedGameplay
 

@@ -26,11 +26,11 @@ extern void C2_HOOK_FASTCALL ShutdownNetIfRequired(void);
 
 // InitialisePlayerStati
 
-// LeaveTempGame
+extern void C2_HOOK_FASTCALL LeaveTempGame(void);
 
-// DisposeCurrentJoinPollGame
+extern void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void);
 
-// DoNextJoinPoll
+extern void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
 // NetStartProducingJoinList
 
@@ -40,9 +40,9 @@ extern void C2_HOOK_FASTCALL ShutdownNetIfRequired(void);
 
 // NetDisposeGameDetails
 
-// NetAllocatePIDGameDetails
+extern tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void);
 
-// NetLeaveGameLowLevel
+extern void C2_HOOK_FASTCALL NetLeaveGameLowLevel(void);
 
 extern void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
 
@@ -62,7 +62,7 @@ extern void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
 
 // NetHostGame
 
-// NetJoinGameLowLevel
+extern int C2_HOOK_FASTCALL NetJoinGameLowLevel(tNet_game_details* pGame_details, const char* pName);
 
 // NetJoinGame
 
@@ -72,7 +72,7 @@ extern void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
 
 // NetExtractPlayerID
 
-// NetSendMessageToAddress
+extern int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
 
 // NetReallySendMessageToPlayer
 
@@ -86,7 +86,7 @@ extern void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
 
 // NetGetMessageSize
 
-// NetBuildMessage
+extern tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2);
 
 // NetBuildGuaranteedMessage
 
@@ -100,11 +100,11 @@ extern void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
 
 // NetBroadcastContents
 
-// NetSendMessageStacks
+extern void C2_HOOK_FASTCALL NetSendMessageStacks(void);
 
 extern tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize);
 
-// NetFreeExcessMemory
+extern void C2_HOOK_FASTCALL NetFreeExcessMemory(void);
 
 // DisposeExcessMemory
 
@@ -180,13 +180,13 @@ extern int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_
 
 // ReceivedMessage
 
-// NetReceiveAndProcessMessages
+extern void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void);
 
-// BroadcastStatus
+extern void C2_HOOK_FASTCALL BroadcastStatus(void);
 
-// CheckForDisappearees
+extern void C2_HOOK_FASTCALL CheckForDisappearees(void);
 
-// CheckForPendingStartRace
+extern void C2_HOOK_FASTCALL CheckForPendingStartRace(void);
 
 extern void C2_HOOK_FASTCALL NetService(int pIn_race);
 
@@ -208,7 +208,7 @@ extern void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
 
 // NetGuaranteedSendMessageToAddress
 
-// ResendGuaranteedMessages
+extern void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
 // NetWaitForGuaranteeReplies
 

@@ -107,7 +107,7 @@
 
 // NetSendEnvironmentChanges
 
-// CheckForNeedyEnvironmentRecipients
+extern void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
 
 // ReceivedGameplay
 
