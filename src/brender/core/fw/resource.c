@@ -35,14 +35,18 @@ resource_header* C2_HOOK_CDECL UserToRes(void* r) {
     while (p[-1] == 0) {
         p--;
     }
+#ifdef REC2_MATCHING
+    p -= offsetof(struct resource_header, magic_num) + sizeof(((struct resource_header *)NULL)->magic_num);
+#else
+    p -= sizeof(resource_header);
+#endif
 #ifdef BRENDER_FIX_BUGS
-    if (((resource_header*)(p - (sizeof(resource_header) - 1)))->magic_num != 0xdeadbeef) {
+    if (((resource_header*)p)->magic_num != 0xdeadbeef) {
         abort();
         // FIXME: add panic macro
         // LOG_PANIC("Bad resource header from user at %p. Was 0x%x", r, ((resource_header*)p)->magic_num);
     }
 #endif
-    p -= offsetof(struct resource_header, magic_num) + sizeof(((struct resource_header *)NULL)->magic_num);
     return (resource_header*)p;
 }
 
