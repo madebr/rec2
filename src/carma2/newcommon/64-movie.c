@@ -1,5 +1,20 @@
 #include "64-movie.h"
 
+#include <QTML.h>
+#include <Movies.h>
+
+// GLOBAL: CARMA2_HW 0x006a0c24
+int gQuickTime_initialized;
+
+// GLOBAL: CARMA2_HW 0x00705440
+char gQuick_time_temp_path[256];
+
+// GLOBAL: CARMA2_HW 0x00705240
+char gQuick_time_movie_path_stub[256];
+
+// GLOBAL: CARMA2_HW 0x00705340
+char gQuick_time_banner_texture_name[256];
+
 // Create555BELookupTable
 
 // Convert565BrPixelmapTo555BigEndianPixmap
@@ -24,9 +39,16 @@
 
 // FreeOffQTshite
 
-// STUB: CARMA2_HW 0x004e1700
+// FUNCTION: CARMA2_HW 0x004e1700
 void C2_HOOK_CDECL InitQuickTimeStuff(void) {
-    NOT_IMPLEMENTED();
+
+    gQuickTime_initialized = 0;
+    if (InitializeQTML(0) == noErr && EnterMovies() == noErr) {//
+        gQuickTime_initialized = 1;
+    }
+    gQuick_time_temp_path[0] = '\0';
+    gQuick_time_movie_path_stub[0] = '\0';
+    gQuick_time_banner_texture_name[0] = '\0';
 }
 
 // SetQuickTimeDefaults

@@ -139,15 +139,6 @@ char gQuick_time_compressor[32];
 // GLOBAL: CARMA2_HW 0x0065ef30
 int gQuick_time_banner_number = 1;
 
-// GLOBAL: CARMA2_HW 0x00705340
-char gQuick_time_banner_texture_name[256];
-
-// GLOBAL: CARMA2_HW 0x00705440
-char gQuick_time_temp_path[256];
-
-// GLOBAL: CARMA2_HW 0x00705240
-char gQuick_time_movie_path_stub[256];
-
 
 // GLOBAL: CARMA2_HW 0x007638a0
 int gNet_last_game_type;
@@ -550,7 +541,6 @@ tPixelFlags gPixelFlags;
 
 // GLOBAL: CARMA2_HW 0x0074d358
 int gNo_credits_APO_restore;
-
 
 // GLOBAL: CARMA2_HW 0x0074d3dc
 int gAFE;

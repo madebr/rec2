@@ -4,9 +4,10 @@
 
 #include <stdlib.h>
 
-OSErr InitializeQTML(long flag) {
+// STUB: CARMA2_HW 0x00575950
+OSErr C2_HOOK_CDECL InitializeQTML(long flag) {
     (void)flag;
-    return 0xf7d3;
+    return (OSErr)0xf7d3;
 }
 
 StringPtr c2pstr(char *aStr) {
@@ -18,6 +19,7 @@ void DisposeHandle(Handle h) {
     (void)h;
 }
 
+// STUB: CARMA2_HW 0x0056a8e0
 OSErr EnterMovies(void) {
     return 0x1;
 }

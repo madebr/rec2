@@ -47,9 +47,6 @@ extern int gRussels_fannies;
 extern char gQuick_time_quality[32];
 extern char gQuick_time_compressor[32];
 extern int gQuick_time_banner_number;
-extern char gQuick_time_banner_texture_name[256];
-extern char gQuick_time_temp_path[256];
-extern char gQuick_time_movie_path_stub[256];
 
 extern int gNet_last_game_type;
 extern int gMap_view;
