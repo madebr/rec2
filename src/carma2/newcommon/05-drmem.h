@@ -2,6 +2,7 @@
 #define GUARD_05_DRMEM_H
 
 #include "c2_hooks.h"
+#include "brender/brender.h"
 
 // SetNonFatalAllocationErrors
 
@@ -11,13 +12,13 @@ extern void C2_HOOK_FASTCALL MAMSInitMem(void);
 
 extern void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle);
 
-// DRStdlibAllocate
+extern void* C2_HOOK_CDECL DRStdlibAllocate(br_size_t size, br_uint_8 type);
 
-// DRStdlibFree
+extern void C2_HOOK_CDECL DRStdlibFree(void* mem);
 
-// DRStdlibInquire
+extern br_size_t C2_HOOK_CDECL DRStdlibInquire(br_uint_8 type);
 
-// Claim4ByteAlignment
+extern br_uint_32 C2_HOOK_CDECL Claim4ByteAlignment(br_uint_8 type);
 
 extern void C2_HOOK_FASTCALL InstallDRMemCalls(void);
 
