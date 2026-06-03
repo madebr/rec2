@@ -12,7 +12,7 @@ extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
 // sqr
 
-// IRandomBetween
+extern int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 
 // PercentageChance
 

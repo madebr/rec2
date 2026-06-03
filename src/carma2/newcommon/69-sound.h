@@ -2,6 +2,7 @@
 #define GUARD_69_SOUND_H
 
 #include "brender/brender.h"
+#include "s3/s3.h"
 
 #include "c2_hooks.h"
 
@@ -15,7 +16,7 @@ extern void C2_HOOK_FASTCALL InitSound(void);
 
 // DRS3StartSound
 
-// DRS3StartSoundNoPiping
+extern int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
 // DRS3StartSound2
 
@@ -23,7 +24,7 @@ extern void C2_HOOK_FASTCALL InitSound(void);
 
 // DRS3StopSound
 
-// DRS3Service
+extern void C2_HOOK_FASTCALL DRS3Service(void);
 
 // DRS3SoundStillPlaying
 
@@ -53,13 +54,13 @@ extern void C2_HOOK_FASTCALL SoundService(void);
 
 // GetIndexFromOutlet
 
-// DRS3StartCDA
+extern int C2_HOOK_FASTCALL DRS3StartCDA(int pSound);
 
 // DRS3StopCDA
 
 // StartMusicTrack
 
-// StartMusic
+extern void C2_HOOK_FASTCALL StartMusic(void);
 
 extern void C2_HOOK_FASTCALL StopMusic(void);
 

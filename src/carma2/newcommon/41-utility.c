@@ -37,7 +37,10 @@ br_error C2_HOOK_FASTCALL DRBrEnd(void) {
 
 // sqr
 
-// IRandomBetween
+// STUB: CARMA2_HW 0x00513520
+int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
+    NOT_IMPLEMENTED();
+}
 
 // PercentageChance
 

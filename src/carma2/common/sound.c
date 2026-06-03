@@ -249,7 +249,7 @@ void C2_HOOK_FASTCALL DoAnEnvironmentalSound(void* pSrc_object, tEnvironment_sou
 void C2_HOOK_FASTCALL StartMusic(void) {
 
     if (!gINT_00595c44 || gProgram_state.music_volume >= 128) {
-        if (!IsCDAPlaying()) {
+        if (!S3IsCDAPlaying()) {
             gNext_track_finished_check = PDGetTotalTime() + 10000;
             dr_dprintf("CDINFO: StartMusic(): New gNext_track_finished_check %d", gNext_track_finished_check);
             gINT_00684568 = DRS3StartCDA(gINT_00595c20);
@@ -523,7 +523,7 @@ void C2_HOOK_FASTCALL SoundService(void) {
     gLast_sound_service = PDGetTotalTime();
     if (gCDA_started_playing) {
         tU32 now = PDGetTotalTime();
-        if (now > gNext_track_finished_check && !IsCDAPlaying()) {
+        if (now > gNext_track_finished_check && !S3IsCDAPlaying()) {
             dr_dprintf("CDINFO: SoundService(): Stopping & starting CD, time %d, gNext_track_finished_check %d",
                     now, gNext_track_finished_check);
             StopMusic();
@@ -546,7 +546,7 @@ void C2_HOOK_FASTCALL DRS3Service(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00565d1a
-int C2_HOOK_FASTCALL IsCDAPlaying(void) {
+int C2_HOOK_FASTCALL S3IsCDAPlaying(void) {
     return PDS3IsCDAPlaying();
 }
 

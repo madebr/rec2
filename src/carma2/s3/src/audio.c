@@ -1575,3 +1575,8 @@ int C2_HOOK_FASTCALL S3ServiceMIDIChannel(tS3_channel* pChannel) {
     }
     return 0;
 }
+
+// FUNCTION: CARMA2_HW 0x00565d1a
+int C2_HOOK_FASTCALL S3IsCDAPlaying(void) {
+    return PDS3IsCDAPlaying();
+}

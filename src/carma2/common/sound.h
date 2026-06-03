@@ -69,7 +69,7 @@ void C2_HOOK_FASTCALL SoundService(void);
 
 void C2_HOOK_FASTCALL DRS3Service(void);
 
-int C2_HOOK_FASTCALL IsCDAPlaying(void);
+int C2_HOOK_FASTCALL S3IsCDAPlaying(void);
 
 int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void);
 

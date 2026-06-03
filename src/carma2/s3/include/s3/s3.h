@@ -279,4 +279,6 @@ int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound,
 
 int C2_HOOK_FASTCALL S3IsCDAEnabled(void);
 
+int C2_HOOK_FASTCALL S3IsCDAPlaying(void);
+
 #endif
