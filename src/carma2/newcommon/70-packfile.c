@@ -109,9 +109,28 @@ char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
 
 // PFungetc
 
-// STUB: CARMA2_HW 0x004b49f0
+// FUNCTION: CARMA2_HW 0x004b49f0
 br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, void* f) {
-    NOT_IMPLEMENTED();
+    int read_size;
+    tU8 *pos;
+    tU8 *end;
+
+    if ((uintptr_t)f >= REC2_ASIZE(gTwatVfsFiles) + 1) {
+        return fread(buf, size, n, f);
+    }
+    read_size = size * n;
+    end = gTwatVfsFiles[(uintptr_t)f].end;
+    pos = gTwatVfsFiles[(uintptr_t)f].pos;
+    if (end - pos >= read_size) {
+        end = pos + read_size;
+    } else {
+        n = ((end - pos) / size) * size;
+        read_size = size * n;//
+    }
+    memcpy(buf, gTwatVfsFiles[(uintptr_t)f].pos, read_size);
+    gTwatVfsFiles[(uintptr_t)f].pos = end;
+    gTwatVfsFiles[(uintptr_t)f].error = 0;
+    return n;
 }
 
 // STUB: CARMA2_HW 0x004b4a80
