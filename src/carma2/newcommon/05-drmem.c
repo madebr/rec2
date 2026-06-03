@@ -1,5 +1,14 @@
 #include "05-drmem.h"
 
+#include "brender/brender.h"
+#include "52-errors.h"
+
+#include "rec2_macros.h"
+#include "rec2_types.h"
+
+// GLOBAL: CARMA2_HW 0x006815c8
+br_resource_class gStainless_classes[126];
+
 // SetNonFatalAllocationErrors
 
 // ResetNonFatalAllocationErrors
@@ -31,9 +40,16 @@ void C2_HOOK_FASTCALL InstallDRMemCalls(void) {
 
 // MAMSLock
 
-// STUB: CARMA2_HW 0x0044ca40
+// FUNCTION: CARMA2_HW 0x0044ca40
 void C2_HOOK_FASTCALL CreateStainlessClasses(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    for (i = 129; i < 129 + (int)REC2_ASIZE(gStainless_classes); i++) {
+        gStainless_classes[i - 129].res_class = i;
+        if (!BrResClassAdd(&gStainless_classes[i - 129])) {
+            FatalError(kFatalError_OOM_S);
+        }
+    }
 }
 
 // CheckMemory
