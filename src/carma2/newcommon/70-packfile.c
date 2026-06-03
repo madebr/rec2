@@ -1,8 +1,30 @@
 #include "70-packfile.h"
 
-// STUB: CARMA2_HW 0x004b4570
+#include "rec2_macros.h"
+
+// GLOBAL: CARMA2_HW 0x00691b40
+tTwatVfsMountPoint gTwatVfsMountPoints[5];
+
+// GLOBAL: CARMA2_HW 0x00692070
+tTwatVfsFile gTwatVfsFiles[50];
+
+// GLOBAL: CARMA2_HW 0x006923a0
+int gDisableTiffConversionStackPos;
+
+// FUNCTION: CARMA2_HW 0x004b4570
 void C2_HOOK_FASTCALL InitPackFiles(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tTwatVfsMountPoint) != 264);
+
+    for (i = 1; i < (int)REC2_ASIZE(gTwatVfsFiles); i++) {
+        gTwatVfsFiles[i].start = NULL;
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gTwatVfsMountPoints); i++) {
+        gTwatVfsMountPoints[i].header = NULL;
+    }
+
+    gDisableTiffConversionStackPos = 0;
 }
 
 // OpenPackFile
