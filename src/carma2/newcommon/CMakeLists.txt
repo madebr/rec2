@@ -74,6 +74,7 @@ add_library(c2_newcommon STATIC
     71-newgame.c
     72-interface.c
 
+    loadtif.c
     globvars.c
     globvrbm.c
     globvrkm.c

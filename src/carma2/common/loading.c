@@ -1057,7 +1057,7 @@ void C2_HOOK_FASTCALL AllowOpenToFail(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004910c0
-void C2_HOOK_FASTCALL DisallowOpenToFail(void) {
+void C2_HOOK_FASTCALL DoNotAllowOpenToFail(void) {
 }
 
 FILE* OldDRfopen(const char* pFilename, const char* pMode) {
@@ -1675,7 +1675,7 @@ br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name) {
             pm = NULL;
         }
     }
-    DisallowOpenToFail();
+    DoNotAllowOpenToFail();
     if (pm == NULL) {
         PathCat(path, gApplication_path, gPedTexturePath);
         if (!gDisableTiffConversion) {
@@ -3793,7 +3793,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     PathCat(the_path, the_path, pCar_name);
     AllowOpenToFail();
     g = DRfopen(the_path, "rt");
-    DisallowOpenToFail();
+    DoNotAllowOpenToFail();
     if (g == NULL) {
         PathCat(the_path, gApplication_path, "CARS");
         PathCat(the_path, the_path, gGraf_specs[gGraf_spec_index].data_dir_name);

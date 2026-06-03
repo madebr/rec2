@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 
+extern int gDisableTiffConversion;
+
 extern void C2_HOOK_FASTCALL InitPackFiles(void);
 
 extern tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path);

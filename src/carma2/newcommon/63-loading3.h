@@ -6,11 +6,11 @@
 
 // NearestPowerOfTwo
 
-// LoadBunchOfPixies
+extern int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity);
 
-// DRLdImg
+extern br_pixelmap* C2_HOOK_FASTCALL DRLdImg(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode);
 
-// RealLoadPixelmap
+extern br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name);
 
 extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
 

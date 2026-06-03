@@ -229,7 +229,7 @@ void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 
 void C2_HOOK_FASTCALL AllowOpenToFail(void);
 
-void C2_HOOK_FASTCALL DisallowOpenToFail(void);
+void C2_HOOK_FASTCALL DoNotAllowOpenToFail(void);
 
 FILE* OldDRfopen(const char* pFilename, const char* pMode);
 

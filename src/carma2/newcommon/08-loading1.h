@@ -74,9 +74,9 @@ extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
 // OldDRfopen
 
-// AllowOpenToFail
+extern void C2_HOOK_FASTCALL AllowOpenToFail(void);
 
-// DoNotAllowOpenToFail
+extern void C2_HOOK_FASTCALL DoNotAllowOpenToFail(void);
 
 // GetCDPathFromPathsTxtFile
 

@@ -125,7 +125,10 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 // GenerateDarkenedShadeTable
 
-// PossibleService
+// STUB: CARMA2_HW 0x005155d0
+void C2_HOOK_FASTCALL PossibleService(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DRMatrix34TApplyP
 
@@ -246,5 +249,8 @@ int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
 
 // PixelmapSwapByteOrder
 
-// EnsurePixelmapAllowed
+// FUNCTION: CARMA2_HW 0x005193f0
+void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2) {
+
+}
 

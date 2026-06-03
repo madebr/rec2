@@ -96,7 +96,7 @@ extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const
 
 // GenerateDarkenedShadeTable
 
-// PossibleService
+extern void C2_HOOK_FASTCALL PossibleService(void);
 
 // DRMatrix34TApplyP
 
@@ -210,6 +210,6 @@ extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
 // PixelmapSwapByteOrder
 
-// EnsurePixelmapAllowed
+extern void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2);
 
 #endif // GUARD_41_UTILITY_H

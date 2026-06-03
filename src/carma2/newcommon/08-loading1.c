@@ -2,6 +2,9 @@
 
 #include "70-packfile.h"
 
+// GLOBAL: CARMA2_HW 0x00658610
+int gAllow_open_to_fail = 1;
+
 // FUNCTION: CARMA2_HW 0x0048f830
 tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
     tU32 raw_long;
@@ -79,9 +82,16 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
 
 // OldDRfopen
 
-// AllowOpenToFail
+// FUNCTION: CARMA2_HW 0x004910b0
+void C2_HOOK_FASTCALL AllowOpenToFail(void) {
 
-// DoNotAllowOpenToFail
+    gAllow_open_to_fail = 1;
+}
+
+// FUNCTION: CARMA2_HW 0x004910c0
+void C2_HOOK_FASTCALL DoNotAllowOpenToFail(void) {
+
+}
 
 // GetCDPathFromPathsTxtFile
 
