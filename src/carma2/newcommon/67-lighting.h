@@ -1,6 +1,8 @@
 #ifndef GUARD_67_LIGHTING_H
 #define GUARD_67_LIGHTING_H
 
+#include "c2_hooks.h"
+
 // LoadTrackModels
 
 // SmoothlyLoadIfItsAModel
@@ -27,7 +29,7 @@
 
 // KillLightingEffects
 
-// InitLightingEffects
+extern void C2_HOOK_FASTCALL InitLightingEffects(void);
 
 // LoadStaticLightingForRace
 

@@ -192,7 +192,7 @@ extern int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_
 
 // NetFinishRace
 
-// NetPlayerStatusChanged
+extern void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
 
 // NetGetPlayerStatus
 

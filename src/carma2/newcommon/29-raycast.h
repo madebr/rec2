@@ -1,9 +1,11 @@
 #ifndef GUARD_29_RAYCAST_H
 #define GUARD_29_RAYCAST_H
 
+#include "rec2_types.h"
+
 // DRActorToRoot
 
-// InitRayCasting
+extern void C2_HOOK_FASTCALL InitRayCasting(void);
 
 // BadDiv
 

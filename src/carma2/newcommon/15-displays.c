@@ -2,7 +2,10 @@
 
 // LoadHeadupMessageFile
 
-// InitHeadups
+// STUB: CARMA2_HW 0x00449090
+void C2_HOOK_FASTCALL InitHeadups(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ClearHeadup
 
@@ -58,9 +61,15 @@
 
 // DoTestHeadup
 
-// HighResHeadupWidth
+// STUB: CARMA2_HW 0x0044ba60
+int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth) {
+    NOT_IMPLEMENTED();
+}
 
-// HighResHeadupHeight
+// STUB: CARMA2_HW 0x0044ba90
+int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight) {
+    NOT_IMPLEMENTED();
+}
 
 // DrawThisCarIconNow
 

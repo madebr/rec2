@@ -2,7 +2,10 @@
 
 // DRActorToRoot
 
-// InitRayCasting
+// STUB: CARMA2_HW 0x004e3660
+void C2_HOOK_FASTCALL InitRayCasting(void) {
+    NOT_IMPLEMENTED();
+}
 
 // BadDiv
 

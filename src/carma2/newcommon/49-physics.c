@@ -388,7 +388,10 @@
 
 // ResetMan
 
-// InitPhysics
+// STUB: CARMA2_HW 0x004b5ca0
+void C2_HOOK_FASTCALL InitPhysics(void) {
+    NOT_IMPLEMENTED();
+}
 
 // PointOutOfSightNotAR
 

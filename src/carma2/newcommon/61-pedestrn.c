@@ -74,7 +74,10 @@ const char* gPedsFolder;
 
 // InitNapalmNolts
 
-// InitPolyPedSystem
+// STUB: CARMA2_HW 0x004cadc0
+void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DisposePedSpawnSpec
 

@@ -206,7 +206,10 @@ int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message
 
 // NetFinishRace
 
-// NetPlayerStatusChanged
+// STUB: CARMA2_HW 0x004a57e0
+void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status) {
+    NOT_IMPLEMENTED();
+}
 
 // NetGetPlayerStatus
 

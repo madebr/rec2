@@ -1,9 +1,11 @@
 #ifndef GUARD_15_DISPLAYS_H
 #define GUARD_15_DISPLAYS_H
 
+#include "c2_hooks.h"
+
 // LoadHeadupMessageFile
 
-// InitHeadups
+extern void C2_HOOK_FASTCALL InitHeadups(void);
 
 // ClearHeadup
 
@@ -59,9 +61,9 @@
 
 // DoTestHeadup
 
-// HighResHeadupWidth
+extern int C2_HOOK_FASTCALL HighResHeadupWidth(int pWidth);
 
-// HighResHeadupHeight
+extern int C2_HOOK_FASTCALL HighResHeadupHeight(int pHeight);
 
 // DrawThisCarIconNow
 

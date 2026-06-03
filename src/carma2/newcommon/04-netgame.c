@@ -116,7 +116,10 @@
 
 // InitNetGameplayStuff
 
-// DefaultNetName
+// STUB: CARMA2_HW 0x0049bd10
+void C2_HOOK_FASTCALL DefaultNetName(void) {
+    NOT_IMPLEMENTED();
+}
 
 // AddPlayerToShapeStatusLists
 

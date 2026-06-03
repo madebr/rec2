@@ -5,7 +5,10 @@ const char* gPedTextTxtPath;
 
 // LoadInRegisteeDir
 
-// LoadInRegistees
+// STUB: CARMA2_HW 0x00486e10
+void C2_HOOK_FASTCALL LoadInRegistees(void) {
+    NOT_IMPLEMENTED();
+}
 
 // LoadBunchOParameters
 
@@ -13,15 +16,27 @@ const char* gPedTextTxtPath;
 
 // GetHithers
 
-// LoadGeneralParameters
+// STUB: CARMA2_HW 0x00486ef0
+void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
+    NOT_IMPLEMENTED();
+}
 
-// FinishLoadingGeneral
+// STUB: CARMA2_HW 0x00487dc0
+void C2_HOOK_FASTCALL FinishLoadingGeneral(void) {
+    NOT_IMPLEMENTED();
+}
 
-// LoadKeyMapping
+// STUB: CARMA2_HW 0x00487e10
+void C2_HOOK_FASTCALL LoadKeyMapping(void) {
+    NOT_IMPLEMENTED();
+}
 
 // LoadInterfaceStuff
 
-// InitInterfaceLoadState
+// FUNCTION: CARMA2_HW 0x00487eb0
+void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
+
+}
 
 // AdjustCarCoordinates
 
@@ -83,11 +98,17 @@ const char* gPedTextTxtPath;
 
 // LoadCar
 
-// LoadHeadupImages
+// STUB: CARMA2_HW 0x0048c150
+void C2_HOOK_FASTCALL LoadHeadupImages(void) {
+    NOT_IMPLEMENTED();
+}
 
 // OpenRaceFile
 
-// LoadRaces
+// STUB: CARMA2_HW 0x0048c1c0
+void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index) {
+    NOT_IMPLEMENTED();
+}
 
 // LoadRaceInfo
 
@@ -97,7 +118,10 @@ const char* gPedTextTxtPath;
 
 // LoadOpponentsCars
 
-// LoadMiscStrings
+// STUB: CARMA2_HW 0x0048cfc0
+void C2_HOOK_FASTCALL LoadMiscStrings(void) {
+    NOT_IMPLEMENTED();
+}
 
 // FillInRaceInfo
 
@@ -110,7 +134,10 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
     NOT_IMPLEMENTED();
 }
 
-// RestoreOptions
+// STUB: CARMA2_HW 0x0048d8f0
+int C2_HOOK_FASTCALL RestoreOptions(void) {
+    NOT_IMPLEMENTED();
+}
 
 // InitFunkGrooveFlags
 

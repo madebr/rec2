@@ -50,7 +50,10 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     gCD_fully_installed = 1;
 }
 
-// InitSound
+// STUB: CARMA2_HW 0x00455080
+void C2_HOOK_FASTCALL InitSound(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DRS3StartSound
 

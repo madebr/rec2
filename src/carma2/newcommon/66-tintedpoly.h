@@ -1,7 +1,9 @@
 #ifndef GUARD_66_TINTEDPOLY_H
 #define GUARD_66_TINTEDPOLY_H
 
-// InitTintedPolyStuff
+#include "c2_hooks.h"
+
+extern void C2_HOOK_FASTCALL InitTintedPolyStuff(void);
 
 // BuildTintedPolyModel
 
@@ -9,7 +11,7 @@
 
 // GetRangeOfValuesFromPixelmap
 
-// CreateTintedPoly
+extern int C2_HOOK_FASTCALL CreateTintedPoly(int x0, int y0, int width, int height, int class, int arg1, int arg2, int arg3);
 
 // UpdateTintedPolyByMaterial
 

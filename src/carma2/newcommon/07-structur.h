@@ -3,6 +3,10 @@
 
 #include "c2_hooks.h"
 
+extern int gHud_tinted1;
+extern int gHud_tinted2;
+extern int gHud_tinted3;
+
 // NumberOfOpponentsLeft
 
 // RaceCompleted

@@ -1,6 +1,8 @@
 #ifndef GUARD_49_PHYSICS_H
 #define GUARD_49_PHYSICS_H
 
+#include "c2_hooks.h"
+
 // count
 
 // DrMatrix34ApplyLPInverse
@@ -389,7 +391,7 @@
 
 // ResetMan
 
-// InitPhysics
+extern void C2_HOOK_FASTCALL InitPhysics(void);
 
 // PointOutOfSightNotAR
 

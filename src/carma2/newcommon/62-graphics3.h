@@ -1,6 +1,8 @@
 #ifndef GUARD_62_GRAPHICS3_H
 #define GUARD_62_GRAPHICS3_H
 
+#include "c2_hooks.h"
+
 // CarArrowColour
 
 // ToggleTargetLock
@@ -67,7 +69,7 @@
 
 // ReadMoodMessages
 
-// InitMap
+extern void C2_HOOK_FASTCALL InitMap(void);
 
 // ConvertCarIcons
 

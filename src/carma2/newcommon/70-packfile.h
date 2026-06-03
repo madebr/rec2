@@ -1,11 +1,12 @@
 #ifndef GUARD_70_PACKFILE_H
 #define GUARD_70_PACKFILE_H
 
+#include "rec2_types.h"
 #include "c2_hooks.h"
 
 #include <stdio.h>
 
-// InitPackFiles
+extern void C2_HOOK_FASTCALL InitPackFiles(void);
 
 // OpenPackFile
 
@@ -39,9 +40,9 @@ extern FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode);
 
 // PFForEveryFile2
 
-// OpenPackFileAndSetTiffLoading
+extern tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path);
 
-// ClosePackFileAndSetTiffLoading
+extern void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt);
 
 // PackFileRevertTiffLoading
 

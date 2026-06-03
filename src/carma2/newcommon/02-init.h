@@ -3,15 +3,19 @@
 
 #include "c2_hooks.h"
 
+#include "brender/brender.h"
+
 extern int gBr_initialized;
+
+extern br_material* gDefault_track_material;
 
 // Modify2DCopyPixelmaps
 
 // SetupFFBValues
 
-// AllocateActors
+extern void C2_HOOK_FASTCALL AllocateActors(void);
 
-// AllocateCamera
+extern void C2_HOOK_FASTCALL AllocateCamera(void);
 
 // ReinitialiseForwardCamera
 
@@ -21,31 +25,32 @@ extern int gBr_initialized;
 
 // ReinitialiseRenderStuff
 
-// InstallFindFailedHooks
+extern void C2_HOOK_FASTCALL InstallFindFailedHooks(void);
 
-// AllocateStandardLamp
+extern void C2_HOOK_FASTCALL AllocateStandardLamp(void);
 
-// InitializeBRenderEnvironment
+// extern void C2_HOOK_FASTCALL InitializeBRenderEnvironment(void);
 
 // InitBRFonts
 
-// Init2DStuffForPolyFonts
+extern void C2_HOOK_FASTCALL Init2DStuffForPolyFonts(void);
 
-// InitLineStuff
+extern void C2_HOOK_FASTCALL InitLineStuff(void);
 
-// Init2DStuff
+extern void C2_HOOK_FASTCALL Init2DStuff(void);
 
-// CheckTimedDemo
+extern void C2_HOOK_FASTCALL CheckTimedDemo(void);
 
-// InitialiseApplication
+// extern void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv);
 
-// DoDevelopmentThings
+extern void C2_HOOK_FASTCALL DoDevelopmentThings(void);
 
 extern void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv);
 
-// InitGameAccordingToSkillLevel
 
-// InitGame
+extern void C2_HOOK_FASTCALL InitGameAccordingToSkillLevel(void);
+
+extern void C2_HOOK_FASTCALL InitGame(int pStart_race);
 
 // LoadInTrack
 

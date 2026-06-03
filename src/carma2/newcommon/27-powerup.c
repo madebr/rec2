@@ -3,6 +3,9 @@
 // GLOBAL: CARMA2_HW 0x006a0ad4
 const char* gPowerup_txt_path;
 
+// GLOBAL: CARMA2_HW 0x007059e0
+tHeadup_icon gPickedup_powerups[5];
+
 // GetNextGoodyTime
 
 // DoPowerupTextHeadup
@@ -35,7 +38,11 @@ const char* gPowerup_txt_path;
 
 // DRMapFindMeAPixie
 
-// LoadPowerups
+
+// STUB: CARMA2_HW 0x004d96c0
+void C2_HOOK_FASTCALL LoadPowerups(void) {
+    NOT_IMPLEMENTED();
+}
 
 // InitRepulseEffects
 
@@ -49,7 +56,10 @@ const char* gPowerup_txt_path;
 
 // InitMineShit
 
-// InitPowerups
+// STUB: CARMA2_HW 0x004d9ea0
+void C2_HOOK_FASTCALL InitPowerups(void) {
+    NOT_IMPLEMENTED();
+}
 
 // RemoveRepulseEffect
 

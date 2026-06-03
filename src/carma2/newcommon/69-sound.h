@@ -7,9 +7,9 @@ extern int gCD_fully_installed;
 
 // SplungeSomeData
 
-void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
+extern void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
-// InitSound
+extern void C2_HOOK_FASTCALL InitSound(void);
 
 // DRS3StartSound
 

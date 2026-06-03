@@ -35,9 +35,12 @@ char* gPedTexturePath = "PIXELMAP";
 
 // LoadInFiles
 
-// TestForOriginalCarmaCDinDrive
+// STUB: CARMA2_HW 0x0048f3b0
+int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
+    NOT_IMPLEMENTED();
+}
 
-// FUNCTION: CARMA2_HW 0x0048f7f0
+// STUB: CARMA2_HW 0x0048f7f0
 void C2_HOOK_FASTCALL SetDefaultPixelmapFolderName(void) {
     gPedTexturePath = "PIXELMAP";
 }

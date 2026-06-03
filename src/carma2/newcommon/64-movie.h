@@ -27,7 +27,7 @@
 
 // FreeOffQTshite
 
-// InitQuickTimeStuff
+extern void C2_HOOK_CDECL InitQuickTimeStuff(void);
 
 // SetQuickTimeDefaults
 

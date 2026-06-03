@@ -2,10 +2,11 @@
 #define GUARD_10_LOADING2_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // LoadInRegisteeDir
 
-// LoadInRegistees
+extern void C2_HOOK_FASTCALL LoadInRegistees(void);
 
 // LoadBunchOParameters
 
@@ -13,15 +14,15 @@
 
 // GetHithers
 
-// LoadGeneralParameters
+extern void C2_HOOK_FASTCALL LoadGeneralParameters(void);
 
-// FinishLoadingGeneral
+extern void C2_HOOK_FASTCALL FinishLoadingGeneral(void);
 
-// LoadKeyMapping
+extern void C2_HOOK_FASTCALL LoadKeyMapping(void);
 
 // LoadInterfaceStuff
 
-// InitInterfaceLoadState
+extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
 // AdjustCarCoordinates
 
@@ -83,11 +84,11 @@
 
 // LoadCar
 
-// LoadHeadupImages
+extern void C2_HOOK_FASTCALL LoadHeadupImages(void);
 
 // OpenRaceFile
 
-// LoadRaces
+extern void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pRace_type_index);
 
 // LoadRaceInfo
 
@@ -97,7 +98,7 @@
 
 // LoadOpponentsCars
 
-// LoadMiscStrings
+extern void C2_HOOK_FASTCALL LoadMiscStrings(void);
 
 // FillInRaceInfo
 
@@ -107,7 +108,7 @@
 
 extern int C2_HOOK_FASTCALL SaveOptions(void);
 
-// RestoreOptions
+extern int C2_HOOK_FASTCALL RestoreOptions(void);
 
 // InitFunkGrooveFlags
 

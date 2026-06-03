@@ -1,5 +1,14 @@
 #include "07-structur.h"
 
+// GLOBAL: CARMA2_HW 0x00655e48
+int gHud_tinted1 = -1;
+
+// GLOBAL: CARMA2_HW 0x00655e4c
+int gHud_tinted2 = -1;
+
+// GLOBAL: CARMA2_HW 0x00655e50
+int gHud_tinted3 = -1;
+
 // NumberOfOpponentsLeft
 
 // RaceCompleted

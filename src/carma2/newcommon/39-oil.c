@@ -1,6 +1,9 @@
 #include "39-oil.h"
 
-// InitOilSpills
+// STUB: CARMA2_HW 0x004a6a10
+void C2_HOOK_FASTCALL InitOilSpills(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ResetOilSpills
 

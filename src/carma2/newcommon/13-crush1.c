@@ -6,7 +6,10 @@
 
 // RemoveCarFromCrushLists
 
-// InitCrushSystems
+// STUB: CARMA2_HW 0x00429fa0
+void C2_HOOK_FASTCALL InitCrushSystems(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ResetCrushSystems
 

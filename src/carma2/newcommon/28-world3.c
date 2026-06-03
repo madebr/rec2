@@ -13,7 +13,10 @@ br_actor* gAdditional_actors;
 
 // PeriodicCloaking
 
-// InitTreeSurgery
+// STUB: CARMA2_HW 0x00504b30
+void C2_HOOK_FASTCALL InitTreeSurgery(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ModelIsATree
 
@@ -49,7 +52,10 @@ br_actor* gAdditional_actors;
 
 // CheckNonCarModelBounds
 
-// InitialiseStorageSpace
+// STUB: CARMA2_HW 0x00500d50
+void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pStorage_space, int pMax_pixelmaps, int pMax_shade_tables, int pMax_materials, int pMax_models, int pMax_sounds) {
+    NOT_IMPLEMENTED();
+}
 
 // DisposeStorageSpace
 

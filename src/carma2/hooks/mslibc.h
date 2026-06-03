@@ -235,10 +235,10 @@
 // rename
 
 // LIBRARY: CARMA2_HW 0x00576960
-// srand
+// _srand
 
 // LIBRARY: CARMA2_HW 0x00576970
-// rand
+// _rand
 
 // LIBRARY: CARMA2_HW 0x00578aa0
 // _abort
@@ -280,7 +280,7 @@
 // _fstat32
 
 // LIBRARY: CARMA2_HW 0x00577dc0
-// time
+// _time
 
 // LIBRARY: CARMA2_HW 0x00587ac0
 // __strupr

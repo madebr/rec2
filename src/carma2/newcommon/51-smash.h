@@ -1,7 +1,9 @@
 #ifndef GUARD_51_SMASH_H
 #define GUARD_51_SMASH_H
 
-// InitExplosions
+#include "c2_hooks.h"
+
+extern void C2_HOOK_FASTCALL InitExplosions(void);
 
 // ResetExplosions
 
@@ -153,7 +155,7 @@
 
 // ReadPowerupSmash
 
-// InitSmashing
+extern void C2_HOOK_FASTCALL InitSmashing(void);
 
 // VerySimpleRotate
 

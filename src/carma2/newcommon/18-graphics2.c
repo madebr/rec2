@@ -3,6 +3,9 @@
 // GLOBAL: CARMA2_HW 0x0074ca28
 int gNoTransients;
 
+// GLOBAL: CARMA2_HW 0x0074a674
+br_pixelmap* gRender_palette;
+
 // DRSetPaletteEntries
 
 // DRSetPalette3
@@ -13,7 +16,10 @@ int gNoTransients;
 
 // InitializePalettes
 
-// InitPaletteAnimate
+// STUB: CARMA2_HW 0x004b52a0
+void C2_HOOK_FASTCALL InitPaletteAnimate(void) {
+    NOT_IMPLEMENTED();
+}
 
 // RevertPalette
 
@@ -33,7 +39,10 @@ int gNoTransients;
 
 // EnsureRenderPalette
 
-// InitTransientBitmaps
+// STUB: CARMA2_HW 0x0043dff0
+void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DeallocateTransientBitmap
 

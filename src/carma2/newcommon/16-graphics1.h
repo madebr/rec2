@@ -1,6 +1,8 @@
 #ifndef GUARD_16_GRAPHICS1_H
 #define GUARD_16_GRAPHICS1_H
 
+#include "c2_hooks.h"
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -15,7 +17,7 @@
 
 // ToggleShadow
 
-// InitShadow
+extern void C2_HOOK_FASTCALL InitShadow(void);
 
 // SaveShadeTable
 
@@ -33,7 +35,7 @@
 
 // SetupDepthBuffer
 
-// SetBRenderScreenAndBuffers
+extern void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight);
 
 // AdjustRenderScreenSize
 
@@ -43,7 +45,7 @@
 
 // ClearWobbles
 
-// InitWobbleStuff
+extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 // NewScreenWobble
 

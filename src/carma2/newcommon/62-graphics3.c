@@ -66,7 +66,10 @@
 
 // ReadMoodMessages
 
-// InitMap
+// STUB: CARMA2_HW 0x00496e30
+void C2_HOOK_FASTCALL InitMap(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ConvertCarIcons
 

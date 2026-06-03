@@ -1,6 +1,8 @@
 #ifndef GUARD_32_SPARK_H
 #define GUARD_32_SPARK_H
 
+#include "c2_hooks.h"
+
 // DrawDot
 
 // SetWorldToScreen
@@ -85,7 +87,7 @@
 
 // CmpSmokeZ
 
-// InitSmokeStuff
+extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
 // RenderRecordedSmokeCircles
 

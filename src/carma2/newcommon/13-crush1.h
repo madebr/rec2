@@ -1,13 +1,15 @@
 #ifndef GUARD_13_CRUSH1_H
 #define GUARD_13_CRUSH1_H
 
+#include "c2_hooks.h"
+
 // ReadCrushSettings
 
 // ClearCrushLists
 
 // RemoveCarFromCrushLists
 
-// InitCrushSystems
+extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 // ResetCrushSystems
 

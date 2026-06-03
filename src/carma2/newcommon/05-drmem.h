@@ -1,13 +1,15 @@
 #ifndef GUARD_05_DRMEM_H
 #define GUARD_05_DRMEM_H
 
+#include "c2_hooks.h"
+
 // SetNonFatalAllocationErrors
 
 // ResetNonFatalAllocationErrors
 
-// MAMSInitMem
+extern void C2_HOOK_FASTCALL MAMSInitMem(void);
 
-// PrintMemoryDump
+extern void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle);
 
 // DRStdlibAllocate
 
@@ -17,13 +19,13 @@
 
 // Claim4ByteAlignment
 
-// InstallDRMemCalls
+extern void C2_HOOK_FASTCALL InstallDRMemCalls(void);
 
 // MAMSUnlock
 
 // MAMSLock
 
-// CreateStainlessClasses
+extern void C2_HOOK_FASTCALL CreateStainlessClasses(void);
 
 // CheckMemory
 

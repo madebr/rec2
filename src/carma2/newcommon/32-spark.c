@@ -84,7 +84,10 @@
 
 // CmpSmokeZ
 
-// InitSmokeStuff
+// STUB: CARMA2_HW 0x004f9fc0
+void C2_HOOK_FASTCALL InitSmokeStuff(void) {
+    NOT_IMPLEMENTED();
+}
 
 // RenderRecordedSmokeCircles
 

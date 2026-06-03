@@ -1,11 +1,13 @@
 #ifndef GUARD_56_AIWORLD_H
 #define GUARD_56_AIWORLD_H
 
+#include "c2_hooks.h"
+
 // MakeVertexAndOffsetIt
 
 // MakeFaceAndTextureIt
 
-// InitPanGameAIWorld
+extern void C2_HOOK_FASTCALL InitPanGameAIWorld(void);
 
 // LoadAIWorldTrackInfo
 

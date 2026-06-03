@@ -4,9 +4,15 @@
 
 // ResetNonFatalAllocationErrors
 
-// MAMSInitMem
+// FUNCTION: CARMA2_HW 0x0044c820
+void C2_HOOK_FASTCALL MAMSInitMem(void) {
 
-// PrintMemoryDump
+}
+
+// FUNCTION: CARMA2_HW 0x0044c850
+void C2_HOOK_FASTCALL PrintMemoryDump(int pFlags, char* pTitle) {
+
+}
 
 // DRStdlibAllocate
 
@@ -16,13 +22,19 @@
 
 // Claim4ByteAlignment
 
-// InstallDRMemCalls
+// STUB: CARMA2_HW 0x0044c9e0
+void C2_HOOK_FASTCALL InstallDRMemCalls(void) {
+    NOT_IMPLEMENTED();
+}
 
 // MAMSUnlock
 
 // MAMSLock
 
-// CreateStainlessClasses
+// STUB: CARMA2_HW 0x0044ca40
+void C2_HOOK_FASTCALL CreateStainlessClasses(void) {
+    NOT_IMPLEMENTED();
+}
 
 // CheckMemory
 

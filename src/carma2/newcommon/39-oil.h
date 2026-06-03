@@ -1,7 +1,9 @@
 #ifndef GUARD_39_OIL_H
 #define GUARD_39_OIL_H
 
-// InitOilSpills
+#include "c2_hooks.h"
+
+extern void C2_HOOK_FASTCALL InitOilSpills(void);
 
 // ResetOilSpills
 

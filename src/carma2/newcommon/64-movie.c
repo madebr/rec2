@@ -24,7 +24,10 @@
 
 // FreeOffQTshite
 
-// InitQuickTimeStuff
+// STUB: CARMA2_HW 0x004e1700
+void C2_HOOK_CDECL InitQuickTimeStuff(void) {
+    NOT_IMPLEMENTED();
+}
 
 // SetQuickTimeDefaults
 

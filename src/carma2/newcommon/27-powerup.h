@@ -2,6 +2,9 @@
 #define GUARD_27_POWERUP_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern tHeadup_icon gPickedup_powerups[5];
 
 // GetNextGoodyTime
 
@@ -35,7 +38,7 @@
 
 // DRMapFindMeAPixie
 
-// LoadPowerups
+extern void C2_HOOK_FASTCALL LoadPowerups(void);
 
 // InitRepulseEffects
 
@@ -49,7 +52,7 @@
 
 // InitMineShit
 
-// InitPowerups
+extern void C2_HOOK_FASTCALL InitPowerups(void);
 
 // RemoveRepulseEffect
 

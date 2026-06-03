@@ -1,6 +1,9 @@
 #include "70-packfile.h"
 
-// InitPackFiles
+// STUB: CARMA2_HW 0x004b4570
+void C2_HOOK_FASTCALL InitPackFiles(void) {
+    NOT_IMPLEMENTED();
+}
 
 // OpenPackFile
 
@@ -40,9 +43,15 @@ FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
 
 // PFForEveryFile2
 
-// OpenPackFileAndSetTiffLoading
+// STUB: CARMA2_HW 0x004b4df0
+tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
+    NOT_IMPLEMENTED();
+}
 
-// ClosePackFileAndSetTiffLoading
+// STUB: CARMA2_HW 0x004b4e20
+void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
+    NOT_IMPLEMENTED();
+}
 
 // PackFileRevertTiffLoading
 

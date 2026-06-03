@@ -1,6 +1,9 @@
 #include "50-fog.h"
 
-// InitFogificateMaterials
+// STUB: CARMA2_HW 0x004ea760
+void C2_HOOK_FASTCALL InitFogificateMaterials(void) {
+    NOT_IMPLEMENTED();
+}
 
 // FogificateMaterials
 
@@ -10,7 +13,10 @@
 
 // EnableAutoFogification
 
-// DisableAutoFogification
+// STUB: CARMA2_HW 0x004ea850
+void C2_HOOK_FASTCALL DisableAutoFogification(void) {
+    NOT_IMPLEMENTED();
+}
 
 // RemoveMaterialFromFogification
 

@@ -1,6 +1,9 @@
 #include "51-smash.h"
 
-// InitExplosions
+// STUB: CARMA2_HW 0x004ea880
+void C2_HOOK_FASTCALL InitExplosions(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ResetExplosions
 
@@ -152,7 +155,10 @@
 
 // ReadPowerupSmash
 
-// InitSmashing
+// STUB: CARMA2_HW 0x004efe00
+void C2_HOOK_FASTCALL InitSmashing(void) {
+    NOT_IMPLEMENTED();
+}
 
 // VerySimpleRotate
 

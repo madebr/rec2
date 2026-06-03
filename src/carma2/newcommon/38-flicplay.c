@@ -16,7 +16,10 @@
 
 // TurnOnPanelFlics
 
-// FlicPaletteAllocate
+// STUB: CARMA2_HW 0x00461a60
+void C2_HOOK_FASTCALL FlicPaletteAllocate(void) {
+    NOT_IMPLEMENTED();
+}
 
 // AssertFlicPixelmap
 
@@ -48,7 +51,10 @@
 
 // PlayNextFlicFrame
 
-// InitFlics
+// STUB: CARMA2_HW 0x00462a40
+void C2_HOOK_FASTCALL InitFlics(void) {
+    NOT_IMPLEMENTED();
+}
 
 // LoadFlic
 
@@ -64,7 +70,10 @@
 
 // FlushFlicQueue
 
-// LoadInterfaceStrings
+// STUB: CARMA2_HW 0x00463340
+void C2_HOOK_FASTCALL LoadInterfaceStrings(void) {
+    NOT_IMPLEMENTED();
+}
 
 // SuspendPendingFlic
 

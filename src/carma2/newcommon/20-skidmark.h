@@ -1,6 +1,8 @@
 #ifndef GUARD_20_SKIDMARK_H
 #define GUARD_20_SKIDMARK_H
 
+#include "c2_hooks.h"
+
 // StretchMark
 
 // MaterialFromIndex
@@ -11,7 +13,7 @@
 
 // Reflex2D
 
-// InitSkids
+extern void C2_HOOK_FASTCALL InitSkids(void);
 
 // HideSkid
 

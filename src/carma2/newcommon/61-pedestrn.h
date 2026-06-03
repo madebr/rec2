@@ -69,7 +69,7 @@
 
 // InitNapalmNolts
 
-// InitPolyPedSystem
+extern void C2_HOOK_FASTCALL InitPolyPedSystem(void);
 
 // DisposePedSpawnSpec
 

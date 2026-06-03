@@ -1,7 +1,9 @@
 #ifndef GUARD_50_FOG_H
 #define GUARD_50_FOG_H
 
-// InitFogificateMaterials
+#include "c2_hooks.h"
+
+extern void C2_HOOK_FASTCALL InitFogificateMaterials(void);
 
 // FogificateMaterials
 
@@ -11,7 +13,7 @@
 
 // EnableAutoFogification
 
-// DisableAutoFogification
+extern void C2_HOOK_FASTCALL DisableAutoFogification(void);
 
 // RemoveMaterialFromFogification
 

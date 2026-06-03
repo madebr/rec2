@@ -1,6 +1,8 @@
 #ifndef GUARD_04_NETGAME_H
 #define GUARD_04_NETGAME_H
 
+#include "c2_hooks.h"
+
 // SendShapeNumbers
 
 // ClearShapeStatusFlag
@@ -117,7 +119,7 @@
 
 // InitNetGameplayStuff
 
-// DefaultNetName
+extern void C2_HOOK_FASTCALL DefaultNetName(void);
 
 // AddPlayerToShapeStatusLists
 

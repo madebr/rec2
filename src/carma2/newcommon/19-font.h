@@ -1,6 +1,10 @@
 #ifndef GUARD_19_FONT_H
 #define GUARD_19_FONT_H
 
+#include "brender/brender.h"
+
+extern br_pixelmap* gTextureMaps[1024];
+
 // PolyFontHeight
 
 // FindCharacterWidth
@@ -59,7 +63,7 @@
 
 // DisposeFont
 
-// InitDRFonts
+extern void C2_HOOK_FASTCALL InitDRFonts(void);
 
 // DRPixelmapText
 
@@ -75,7 +79,7 @@
 
 // OoerrIveGotTextInMeBoxMissus
 
-// LoadBRFont
+extern br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName);
 
 // GetPolyFontIndexToReplaceDRfontWith
 

@@ -2,8 +2,10 @@
 #define GUARD_18_GRAPHICS2_H
 
 #include "c2_hooks.h"
+#include "brender/brender.h"
 
 extern int gNoTransients;
+extern br_pixelmap* gRender_palette;
 
 // DRSetPaletteEntries
 
@@ -15,7 +17,7 @@ extern int gNoTransients;
 
 // InitializePalettes
 
-// InitPaletteAnimate
+extern void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
 // RevertPalette
 
@@ -35,7 +37,7 @@ extern int gNoTransients;
 
 // EnsureRenderPalette
 
-// InitTransientBitmaps
+extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 
 // DeallocateTransientBitmap
 

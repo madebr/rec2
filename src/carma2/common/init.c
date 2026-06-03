@@ -65,7 +65,7 @@ int gBrZb_initialized;
 int gRender_indent;
 
 // GLOBAL: CARMA2_HW 0x0068be34
-int gApp_initialized;
+int gInitialisation_finished;
 
 // GLOBAL: CARMA2_HW 0x0074b74c
 br_material* gDefault_track_material;
@@ -95,7 +95,7 @@ void C2_HOOK_FASTCALL InitialiseDeathRace(int pArgc, const char** pArgv) {
     PDInitialiseSystem();
     DoDevelopmentThings();
     InitialiseApplication(pArgc, pArgv);
-    gApp_initialized = 1;
+    gInitialisation_finished = 1;
 }
 
 void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {

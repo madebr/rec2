@@ -26,7 +26,10 @@
 
 // LoadDepthTable
 
-// InitDepthEffects
+// STUB: CARMA2_HW 0x00445620
+void C2_HOOK_FASTCALL InitDepthEffects(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DoHorizon
 

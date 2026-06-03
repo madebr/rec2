@@ -1,6 +1,8 @@
 #ifndef GUARD_38_FLICPLAY_H
 #define GUARD_38_FLICPLAY_H
 
+#include "c2_hooks.h"
+
 // TranslationMode
 
 // DontLetFlicFuckWithPalettes
@@ -17,7 +19,7 @@
 
 // TurnOnPanelFlics
 
-// FlicPaletteAllocate
+extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 // AssertFlicPixelmap
 
@@ -49,7 +51,7 @@
 
 // PlayNextFlicFrame
 
-// InitFlics
+extern void C2_HOOK_FASTCALL InitFlics(void);
 
 // LoadFlic
 
@@ -65,7 +67,7 @@
 
 // FlushFlicQueue
 
-// LoadInterfaceStrings
+extern void C2_HOOK_FASTCALL LoadInterfaceStrings(void);
 
 // SuspendPendingFlic
 

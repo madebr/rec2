@@ -1,11 +1,14 @@
 #ifndef GUARD_09_FUNKS_H
 #define GUARD_09_FUNKS_H
 
+#include "c2_hooks.h"
+#include "brender/brender.h"
+
 // CalculateTextureBitsValue
 
 // MapSawToTriangle
 
-// SetSightDistance
+extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 // AddFunkGrooveBinding
 

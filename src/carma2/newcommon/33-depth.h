@@ -1,6 +1,8 @@
 #ifndef GUARD_33_DEPTH_H
 #define GUARD_33_DEPTH_H
 
+#include "c2_hooks.h"
+
 // Log2
 
 // CalculateWrappingMultiplier
@@ -27,7 +29,7 @@
 
 // LoadDepthTable
 
-// InitDepthEffects
+extern void C2_HOOK_FASTCALL InitDepthEffects(void);
 
 // DoHorizon
 

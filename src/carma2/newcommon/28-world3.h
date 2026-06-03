@@ -2,6 +2,7 @@
 #define GUARD_28_WORLD3_H
 
 #include "brender/brender.h"
+#include "rec2_types.h"
 
 extern br_actor* gAdditional_actors;
 
@@ -15,7 +16,7 @@ extern br_actor* gAdditional_actors;
 
 // PeriodicCloaking
 
-// InitTreeSurgery
+extern void C2_HOOK_FASTCALL InitTreeSurgery(void);
 
 // ModelIsATree
 
@@ -51,7 +52,7 @@ extern br_actor* gAdditional_actors;
 
 // CheckNonCarModelBounds
 
-// InitialiseStorageSpace
+extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pStorage_space, int pMax_pixelmaps, int pMax_shade_tables, int pMax_materials, int pMax_models, int pMax_sounds);
 
 // DisposeStorageSpace
 

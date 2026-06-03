@@ -10,7 +10,10 @@
 
 // Reflex2D
 
-// InitSkids
+// STUB: CARMA2_HW 0x004e9c40
+void C2_HOOK_FASTCALL InitSkids(void) {
+    NOT_IMPLEMENTED();
+}
 
 // HideSkid
 

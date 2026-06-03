@@ -14,7 +14,10 @@
 
 // ToggleShadow
 
-// InitShadow
+// STUB: CARMA2_HW 0x004e99d0
+void C2_HOOK_FASTCALL InitShadow(void) {
+    NOT_IMPLEMENTED();
+}
 
 // SaveShadeTable
 
@@ -32,7 +35,10 @@
 
 // SetupDepthBuffer
 
-// SetBRenderScreenAndBuffers
+// STUB: CARMA2_HW 0x004e4980
+void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight) {
+    NOT_IMPLEMENTED();
+}
 
 // AdjustRenderScreenSize
 
@@ -42,7 +48,10 @@
 
 // ClearWobbles
 
-// InitWobbleStuff
+// STUB: CARMA2_HW 0x004e4d50
+void C2_HOOK_FASTCALL InitWobbleStuff(void) {
+    NOT_IMPLEMENTED();
+}
 
 // NewScreenWobble
 

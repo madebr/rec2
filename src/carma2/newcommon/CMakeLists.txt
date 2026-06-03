@@ -2,6 +2,7 @@ add_library(c2_newcommon STATIC
     00-car.c
     01-network.c
     02-init.c
+    02b-init.c
     03-racestrt.c
     04-netgame.c
     05-drmem.c
