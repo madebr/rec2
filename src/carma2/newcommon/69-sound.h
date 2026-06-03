@@ -37,7 +37,7 @@ extern int C2_HOOK_FASTCALL DRS3ShutDown(void);
 
 // ToggleSoundEnable
 
-// SoundService
+extern void C2_HOOK_FASTCALL SoundService(void);
 
 // InitSoundSources
 

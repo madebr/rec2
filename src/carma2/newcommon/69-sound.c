@@ -85,7 +85,10 @@ int C2_HOOK_FASTCALL DRS3ShutDown(void) {
 
 // ToggleSoundEnable
 
-// SoundService
+// STUB: CARMA2_HW 0x00455a80
+void C2_HOOK_FASTCALL SoundService(void) {
+    NOT_IMPLEMENTED();
+}
 
 // InitSoundSources
 

@@ -188,7 +188,7 @@ extern int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_
 
 // CheckForPendingStartRace
 
-// NetService
+extern void C2_HOOK_FASTCALL NetService(int pIn_race);
 
 // NetFinishRace
 

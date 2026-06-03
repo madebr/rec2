@@ -202,7 +202,10 @@ int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message
 
 // CheckForPendingStartRace
 
-// NetService
+// STUB: CARMA2_HW 0x004a5280
+void C2_HOOK_FASTCALL NetService(int pIn_race) {
+    NOT_IMPLEMENTED();
+}
 
 // NetFinishRace
 

@@ -1,10 +1,16 @@
 #include "41-utility.h"
 
+#include "01-network.h"
 #include "02-init.h"
+#include "69-sound.h"
 #include "globvars.h"
 #include "platform.h"
 
 #include "c2_string.h"
+
+
+// GLOBAL: CARMA2_HW 0x006abef8
+tU32 last_service;
 
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
@@ -125,9 +131,16 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 // GenerateDarkenedShadeTable
 
-// STUB: CARMA2_HW 0x005155d0
+// FUNCTION: CARMA2_HW 0x005155d0
 void C2_HOOK_FASTCALL PossibleService(void) {
-    NOT_IMPLEMENTED();
+    tU32 time;
+
+    time = PDGetTotalTime();
+    if (time - last_service > 200 && !gProgram_state.racing) {
+        SoundService();
+        NetService(gProgram_state.racing);
+        last_service = time;
+    }
 }
 
 // DRMatrix34TApplyP
