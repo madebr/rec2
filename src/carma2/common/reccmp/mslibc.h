@@ -175,7 +175,7 @@
 // fseek
 
 // LIBRARY: CARMA2_HW 0x005770e0
-// rewind
+// _rewind
 
 // LIBRARY: CARMA2_HW 0x00576e80
 // _fgetc

@@ -1,6 +1,14 @@
 #include "08-loading1.h"
 
-// ReadU32
+#include "70-packfile.h"
+
+// FUNCTION: CARMA2_HW 0x0048f830
+tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
+    tU32 raw_long;
+
+    PFfread(&raw_long, sizeof(raw_long), 1, pF);
+    return raw_long;
+}
 
 // ReadF32
 

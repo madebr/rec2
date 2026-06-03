@@ -2,10 +2,11 @@
 #define GUARD_08_LOADING1_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 #include <stdio.h>
 
-// ReadU32
+extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 // ReadF32
 

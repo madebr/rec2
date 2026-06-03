@@ -1493,7 +1493,7 @@ typedef struct {
 
 typedef struct {
     tU32 twatFileSize;
-    tU32 nbFiles;
+    tS32 nbFiles;
     tTwatFileHeader fileHeaders[];
 } tTwatHeader;
 

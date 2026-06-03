@@ -1,11 +1,13 @@
 #ifndef GUARD_69_SOUND_H
 #define GUARD_69_SOUND_H
 
+#include "brender/brender.h"
+
 #include "c2_hooks.h"
 
 extern int gCD_fully_installed;
 
-// SplungeSomeData
+extern void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size);
 
 extern void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 

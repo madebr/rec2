@@ -8,7 +8,7 @@
 
 extern void C2_HOOK_FASTCALL InitPackFiles(void);
 
-// OpenPackFile
+extern tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path);
 
 // ClosePackFile
 

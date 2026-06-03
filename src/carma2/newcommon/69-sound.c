@@ -16,7 +16,10 @@ const char* gPedSoundPath;
 // GLOBAL: CARMA2_HW 0x0068b898
 int gCD_fully_installed;
 
-// SplungeSomeData
+// FUNCTION: CARMA2_HW 0x00500060
+void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size) {
+
+}
 
 // FUNCTION: CARMA2_HW 0x00454f40
 void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
