@@ -2,6 +2,7 @@
 #define GUARD_63_LOADING3_H
 
 #include "c2_hooks.h"
+#include "brender/brender.h"
 
 // NearestPowerOfTwo
 
@@ -11,7 +12,7 @@
 
 // RealLoadPixelmap
 
-// LoadPixelmap
+extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
 
 // LoadShadeTable
 

@@ -11,7 +11,10 @@ char* gPedTexturePath = "PIXELMAP";
 
 // RealLoadPixelmap
 
-// LoadPixelmap
+// STUB: CARMA2_HW 0x0048ec00
+br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
+    NOT_IMPLEMENTED();
+}
 
 // LoadShadeTable
 

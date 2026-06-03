@@ -1,5 +1,19 @@
 #include "16-graphics1.h"
 
+#include "63-loading3.h"
+#include "brender/brender.h"
+#include "rec2_types.h"
+#include "rec2_macros.h"
+
+// GLOBAL: CARMA2_HW 0x006a22b8
+br_pixelmap* gEvalu;
+
+// GLOBAL: CARMA2_HW 0x006a22f8
+tWobble_spec gWobble_array[5];
+
+// GLOBAL: CARMA2_HW 0x00705080
+float gCosine_array[64];
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -46,11 +60,25 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
 
 // ScreenLarger
 
-// ClearWobbles
+// FUNCTION: CARMA2_HW 0x004e4d30
+void C2_HOOK_FASTCALL ClearWobbles(void) {
+    int i;
 
-// STUB: CARMA2_HW 0x004e4d50
+    for (i = 0; i < (int)REC2_ASIZE(gWobble_array); ++i) {
+        gWobble_array[i].time_started = 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004e4d50
 void C2_HOOK_FASTCALL InitWobbleStuff(void) {
-    NOT_IMPLEMENTED();
+    int i;
+
+    ClearWobbles();
+    for (i = 0; i < (int)REC2_ASIZE(gCosine_array); i++) {
+        gCosine_array[i] = (float)cos((double)i / 64.0 * 3.141592653589793 / 2.0);
+    }
+
+    gEvalu = LoadPixelmap("Evalu01.PIX");
 }
 
 // NewScreenWobble
