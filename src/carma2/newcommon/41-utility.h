@@ -108,9 +108,9 @@ extern void C2_HOOK_FASTCALL PossibleService(void);
 
 // DRMaterialClone
 
-// DRStricmp
+extern int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
-// DRstrlwr
+extern void C2_HOOK_FASTCALL DRstrlwr(char* s);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
 

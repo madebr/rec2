@@ -7,6 +7,7 @@
 #include "platform.h"
 
 #include "c2_string.h"
+#include <ctype.h>
 
 
 // GLOBAL: CARMA2_HW 0x006abef8
@@ -161,9 +162,34 @@ void C2_HOOK_FASTCALL PossibleService(void) {
 
 // DRMaterialClone
 
-// DRStricmp
+// FUNCTION: CARMA2_HW 0x00515870
+int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
+    int val;
 
-// DRstrlwr
+    val = tolower(*p1);
+    val -= tolower(*p2);
+    while (val == 0) {
+        if (*p1++ == '\0') {
+            break;
+        }
+        if (*p2++ == '\0') {
+            break;
+        }
+        val = tolower(*p1);
+        val -= tolower(*p2);
+    }
+    return val;
+}
+
+// FUNCTION: CARMA2_HW 0x005158d0
+void C2_HOOK_FASTCALL DRstrlwr(char* s) {
+    int l = (int)strlen(s);
+    int i;
+
+    for (i = 0; i < l; i++) {
+        s[i] = toupper(s[i]);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00515950
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
