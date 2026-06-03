@@ -666,7 +666,7 @@ void PDAllocateScreenAndBack(void) {
     dr_dprintf("PDAllocateScreenAndBack() - END.");
 }
 
-int GetRegisterSourceLocation(char *buffer, int *buffer_size) {
+int PDGetRegisterSourceLocation(char *buffer, int *buffer_size) {
     return 0;
 }
 

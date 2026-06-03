@@ -12,6 +12,9 @@
 // GLOBAL: CARMA2_HW 0x006abef8
 tU32 last_service;
 
+// GLOBAL: CARMA2_HW 0x006b5f40
+char* gMisc_strings[300];
+
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     br_device *dev;
@@ -116,7 +119,11 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 // TimerString
 
-// GetMiscString
+// FUNCTION: CARMA2_HW 0x00514d70
+const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
+
+    return gMisc_strings[pIndex];
+}
 
 // Flash
 

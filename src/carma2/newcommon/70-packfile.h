@@ -24,7 +24,7 @@ extern int C2_HOOK_FASTCALL PFfgetc(FILE* pFile);
 
 extern char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile);
 
-// PFungetc
+extern int C2_HOOK_FASTCALL PFungetc(int ch, FILE* file);
 
 extern br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, void* f);
 

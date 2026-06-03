@@ -253,7 +253,7 @@ int C2_HOOK_FASTCALL PFfgetc(FILE* pFile);
 
 int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile);
 
-int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file);
+int C2_HOOK_FASTCALL PFungetc(int ch, FILE* file);
 
 char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile);
 

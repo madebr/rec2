@@ -107,7 +107,10 @@ char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
     NOT_IMPLEMENTED();
 }
 
-// PFungetc
+// STUB: CARMA2_HW 0x004b49a0
+int C2_HOOK_FASTCALL PFungetc(int ch, FILE* file) {
+    NOT_IMPLEMENTED();
+}
 
 // FUNCTION: CARMA2_HW 0x004b49f0
 br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, void* f) {

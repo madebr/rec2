@@ -1114,7 +1114,7 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
         }
 
         source_len = sizeof(source_check) - 1;
-        if (GetRegisterSourceLocation(source_check, &source_len)) {
+        if (PDGetRegisterSourceLocation(source_check, &source_len)) {
             if (strchr(gDir_separator, source_check[strlen(source_check)-1]) == NULL) {
                 strcat(source_check, gDir_separator);
             }
@@ -1151,7 +1151,7 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
         }
         ch = PFfgetc(fp);
         if (ch == gDecode_thing) {
-            DRungetc(ch, fp);
+            PFungetc(ch, fp);
             return fp;
         }
         PFfclose(fp);
@@ -1169,7 +1169,7 @@ FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
         char buffer[256];
         int buffer_size = sizeof(buffer) - 1;
 
-        if (GetRegisterSourceLocation(buffer, &buffer_size)) {
+        if (PDGetRegisterSourceLocation(buffer, &buffer_size)) {
             if (!PDCheckDriveExists(buffer)) {
                 if (gMisc_strings[0] != NULL) {
                     PDFatalError(GetMiscString(243));
@@ -1309,7 +1309,7 @@ int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b49a0
-int C2_HOOK_FASTCALL DRungetc(int ch, FILE* file) {
+int C2_HOOK_FASTCALL PFungetc(int ch, FILE* file) {
     tTwatVfsFile* twtFile;
 
     if ((int)file < REC2_ASIZE(gTwatVfsFiles)) {
@@ -2830,7 +2830,7 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
         return 0;
     }
     paths_txt_first_char = PFfgetc(paths_txt_fp);
-    DRungetc(paths_txt_first_char, paths_txt_fp);
+    PFungetc(paths_txt_first_char, paths_txt_fp);
     cd_pathname[0] = '\0';
     GetALineAndDontArgue(paths_txt_fp, cd_pathname);
     PFfclose(paths_txt_fp);

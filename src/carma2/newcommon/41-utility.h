@@ -4,6 +4,8 @@
 #include "brender/br_types.h"
 #include "c2_hooks.h"
 
+extern char* gMisc_strings[300];
+
 extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
 // Uppercaseificate
@@ -78,7 +80,7 @@ extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const
 
 // TimerString
 
-// GetMiscString
+extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
 // Flash
 

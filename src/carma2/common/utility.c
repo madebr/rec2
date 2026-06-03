@@ -134,7 +134,7 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
             }
         }
         if (ch != -1) {
-            DRungetc(ch, pF);
+            PFungetc(ch, pF);
         }
     } while (!isalnum(*result)
              && *result != '*'
@@ -287,7 +287,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     }
 
     ch = PFfgetc(f);
-    DRungetc(ch, f);
+    PFungetc(ch, f);
 
     if (gDecode_thing == '@' && ch == '@') {
         PFfclose(f);
@@ -337,7 +337,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
         fputc('\n', d);
 
         if (ch != -1) {
-            DRungetc(ch, f);
+            PFungetc(ch, f);
         }
     }
     PFfclose(f);

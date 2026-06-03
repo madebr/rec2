@@ -72,7 +72,7 @@ extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
 // GetALineAndDontArgue
 
-// OldDRfopen
+extern FILE* OldDRfopen(const char* pFilename, const char* pMode);
 
 extern void C2_HOOK_FASTCALL AllowOpenToFail(void);
 
@@ -99,5 +99,7 @@ extern FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 // DisposeGameIfNecessary
 
 // DisposeTrack
+
+extern int GetRegisterSourceLocation(char* pSource_location);
 
 #endif // GUARD_08_LOADING1_H

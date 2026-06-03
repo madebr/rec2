@@ -16,7 +16,7 @@ extern void* gHWnd;
 extern void* gPDActionReplayBuffer;
 extern int gPDActionReplayBufferSize;
 
-int GetRegisterSourceLocation(char* buffer, int* buffer_size);
+int PDGetRegisterSourceLocation(char* buffer, int* buffer_size);
 
 int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call);
 

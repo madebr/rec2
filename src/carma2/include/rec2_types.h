@@ -5384,6 +5384,7 @@ enum {
     eMiscString_message_sent = 226,
     eMiscString_enter_message = 226,
     eMiscString_too_late_to_cancel = 242,
+    eMiscString_could_not_find_carmageddon_cd = 243,
     eMiscString_no_target_to_lock_onto = 250,
     eMiscString_locked_onto = 251,
     eMiscString_target_lock_off = 252,

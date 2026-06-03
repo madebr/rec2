@@ -1059,7 +1059,7 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     dr_dprintf("PDAllocateScreenAndBack() - END.");
 }
 
-int GetRegisterSourceLocation(char* buffer, int* buffer_size) {
+int PDGetRegisterSourceLocation(char* buffer, int* buffer_size) {
     HKEY hKey;
     LONG status;
 

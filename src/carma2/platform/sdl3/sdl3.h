@@ -100,7 +100,7 @@ extern void PDInitScreen(void);
 
 extern void PDAllocateScreenAndBack(void);
 
-extern int GetRegisterSourceLocation(char *buffer, int *buffer_size);
+extern int PDGetRegisterSourceLocation(char *buffer, int *buffer_size);
 
 extern void PDGetMousePosition(int *pX, int *pY);
 
