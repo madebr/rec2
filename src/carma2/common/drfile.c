@@ -52,7 +52,7 @@ int C2_HOOK_CDECL DRStdioEOF(void* f) {
 
 // FUNCTION: CARMA2_HW 0x0044c6b0
 int C2_HOOK_CDECL DRStdioGetChr(void* f) {
-    return DRfgetc(f);
+    return PFfgetc(f);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c750
@@ -62,7 +62,7 @@ br_size_t C2_HOOK_CDECL DRStdioRead(void* buf, br_size_t size, unsigned int n, v
 
 // FUNCTION: CARMA2_HW 0x0044c770
 br_size_t C2_HOOK_CDECL DRStdioWrite(const void* buf, br_size_t size, unsigned int n, void* f) {
-    return DRfwrite(buf, size, n, f);
+    return PFfwrite(buf, size, n, f);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c6c0

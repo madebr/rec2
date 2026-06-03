@@ -18,6 +18,7 @@ extern C2_NORETURN void rec2_error(const char *reason, const char *function, con
     fprintf(stderr, "%s\n", buffer);
 
 #ifdef _WIN32
+    ShowCursor(TRUE);
     MessageBoxA(NULL, buffer, "Hook Fatal Error", MB_ICONERROR | MB_OK);
 #endif
 

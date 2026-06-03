@@ -105,7 +105,7 @@ void C2_HOOK_FASTCALL DoSaveGame(void) {
             gCurrent_APO_levels[2] = gProgram_state.current_car.power_up_levels[2];
             MakeSavedGame(&save_game);
             Encryptificate(&save_game, 1);
-            DRfwrite(&save_game, 1, sizeof(save_game), f);
+            PFfwrite(&save_game, 1, sizeof(save_game), f);
             PFfclose(f);
             gSave_game_out_of_sync = 0;
         }

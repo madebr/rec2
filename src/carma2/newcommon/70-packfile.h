@@ -16,25 +16,25 @@ extern void C2_HOOK_FASTCALL PFfclose(FILE* pFile);
 
 extern FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode);
 
-// PFfgetc
+extern int C2_HOOK_FASTCALL PFfgetc(FILE* pFile);
 
 // PFgetc
 
-// PFfgets
+extern char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile);
 
 // PFungetc
 
-// PFfread
+extern br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, void* f);
 
-// PFfwrite
+extern br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, void* f);
 
 // PFftell
 
-// PFfseek
+extern int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence);
 
 // PFrewind
 
-// PFfeof
+extern int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
 
 // PFForEveryFile
 

@@ -128,7 +128,7 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
         }
 
         while (1) {
-            ch = DRfgetc(pF);
+            ch = PFfgetc(pF);
             if (ch != '\r' && ch != '\n') {
                 break;
             }
@@ -286,7 +286,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
         FatalError(kFatalError_CantOpen_S, pThe_path);
     }
 
-    ch = DRfgetc(f);
+    ch = PFfgetc(f);
     DRungetc(ch, f);
 
     if (gDecode_thing == '@' && ch == '@') {
@@ -324,7 +324,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
         count = -1;
         while (1) {
             count++;
-            ch = DRfgetc(f);
+            ch = PFfgetc(f);
             if (ch == '\r' || ch == '\n') {
                 continue;
             }

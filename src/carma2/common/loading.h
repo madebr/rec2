@@ -239,7 +239,7 @@ void C2_HOOK_FASTCALL PFfclose(FILE* pFile);
 
 br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, void* f);
 
-br_size_t C2_HOOK_FASTCALL DRfwrite(const void* buf, br_size_t size, unsigned int n, void* f);
+br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, void* f);
 
 int C2_HOOK_FASTCALL DRfgetpos(FILE* pFile, fpos_t* pos);
 
@@ -249,7 +249,7 @@ int C2_HOOK_FASTCALL DRferror(FILE* pFile);
 
 void C2_HOOK_FASTCALL DRclearerr(FILE* pFile);
 
-int C2_HOOK_FASTCALL DRfgetc(FILE* pFile);
+int C2_HOOK_FASTCALL PFfgetc(FILE* pFile);
 
 int C2_HOOK_FASTCALL DRfgetc2(FILE* pFile);
 

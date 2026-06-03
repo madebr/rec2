@@ -79,7 +79,7 @@ extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
 // GetCDPathFromPathsTxtFile
 
-// DRfopen
+extern FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
 // UnlockInterfaceStuff
 

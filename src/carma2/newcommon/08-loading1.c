@@ -77,7 +77,10 @@ char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
 
 // GetCDPathFromPathsTxtFile
 
-// DRfopen
+// STUB: CARMA2_HW 0x00491170
+FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
+    NOT_IMPLEMENTED();
+}
 
 // UnlockInterfaceStuff
 

@@ -41,25 +41,43 @@ FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
     NOT_IMPLEMENTED();
 }
 
-// PFfgetc
+// STUB: CARMA2_HW 0x004b4880
+int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
+    NOT_IMPLEMENTED();
+}
 
 // PFgetc
 
-// PFfgets
+// STUB: CARMA2_HW 0x004b4900
+char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
+    NOT_IMPLEMENTED();
+}
 
 // PFungetc
 
-// PFfread
+// STUB: CARMA2_HW 0x004b49f0
+br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, void* f) {
+    NOT_IMPLEMENTED();
+}
 
-// PFfwrite
+// STUB: CARMA2_HW 0x004b4a80
+br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, void* f) {
+    NOT_IMPLEMENTED();
+}
 
 // PFftell
 
-// PFfseek
+// STUB: CARMA2_HW 0x004b4b70
+int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
+    NOT_IMPLEMENTED();
+}
 
 // PFrewind
 
-// PFfeof
+// STUB: CARMA2_HW 0x004b4c10
+int C2_HOOK_FASTCALL PFfeof(FILE* pFile) {
+    NOT_IMPLEMENTED();
+}
 
 // PFForEveryFile
 

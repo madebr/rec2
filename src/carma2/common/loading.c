@@ -747,7 +747,7 @@ void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
     tU32 raw_long;
 
     raw_long = pNumber;
-    DRfwrite(&raw_long, sizeof(raw_long), 1, pF);
+    PFfwrite(&raw_long, sizeof(raw_long), 1, pF);
 }
 
 // FUNCTION: CARMA2_HW 0x0048f930
@@ -755,7 +755,7 @@ void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber) {
     tU16 raw_short;
 
     raw_short = pNumber;
-    DRfwrite(&raw_short, sizeof(raw_short), 1, pF);
+    PFfwrite(&raw_short, sizeof(raw_short), 1, pF);
 }
 
 // FUNCTION: CARMA2_HW 0x0048f960
@@ -763,7 +763,7 @@ void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
     tU8 raw_byte;
 
     raw_byte = pNumber;
-    DRfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
+    PFfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
 }
 
 // FUNCTION: CARMA2_HW 0x0048f980
@@ -771,7 +771,7 @@ void C2_HOOK_FASTCALL WriteS32L(FILE* pF, tS32 pNumber) {
     tS32 raw_long;
 
     raw_long = pNumber;
-    DRfwrite(&raw_long, sizeof(raw_long), 1, pF);
+    PFfwrite(&raw_long, sizeof(raw_long), 1, pF);
 }
 
 // FUNCTION: CARMA2_HW 0x0048f9a0
@@ -779,7 +779,7 @@ void C2_HOOK_FASTCALL WriteS16L(FILE* pF, tS16 pNumber) {
     tS16 raw_short;
 
     raw_short = pNumber;
-    DRfwrite(&raw_short, sizeof(raw_short), 1, pF);
+    PFfwrite(&raw_short, sizeof(raw_short), 1, pF);
 }
 
 // FUNCTION: CARMA2_HW 0x0048f9d0
@@ -787,7 +787,7 @@ void C2_HOOK_FASTCALL WriteS8L(FILE* pF, tS8 pNumber) {
     tS8 raw_byte;
 
     raw_byte = pNumber;
-    DRfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
+    PFfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
 }
 
 // FUNCTION: CARMA2_HW 0x0048f9f0
@@ -1150,7 +1150,7 @@ FILE* OldDRfopen(const char* pFilename, const char* pMode) {
                 || strcmp(&pFilename[len - 11], "PRATCAM.TXT") == 0) {
             return fp;
         }
-        ch = DRfgetc(fp);
+        ch = PFfgetc(fp);
         if (ch == gDecode_thing) {
             DRungetc(ch, fp);
             return fp;
@@ -1216,7 +1216,7 @@ br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, vo
 }
 
 // FUNCTION: CARMA2_HW 0x004b4a80
-br_size_t C2_HOOK_FASTCALL DRfwrite(const void* buf, br_size_t size, unsigned int n, void* f) {
+br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, void* f) {
 
     if ((int)f < REC2_ASIZE(gTwatVfsFiles)) {
         FatalError(kFatalError_WriteAttemptToPackedFile_S, "unknown");
@@ -1272,7 +1272,7 @@ void C2_HOOK_FASTCALL DRclearerr(FILE* pFile) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b4880
-int C2_HOOK_FASTCALL DRfgetc(FILE* pFile) {
+int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
     tTwatVfsFile* twtFile;
     int result;
 
@@ -2830,7 +2830,7 @@ int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
     if (paths_txt_fp == NULL) {
         return 0;
     }
-    paths_txt_first_char = DRfgetc(paths_txt_fp);
+    paths_txt_first_char = PFfgetc(paths_txt_fp);
     DRungetc(paths_txt_first_char, paths_txt_fp);
     cd_pathname[0] = '\0';
     GetALineAndDontArgue(paths_txt_fp, cd_pathname);

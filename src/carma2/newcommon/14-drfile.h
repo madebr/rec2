@@ -3,23 +3,25 @@
 
 #include "c2_hooks.h"
 
-// DRStdioEOF
+#include "brender/brender.h"
 
-// DRStdioGetChr
+extern int C2_HOOK_CDECL DRStdioEOF(void* f);
 
-// DRStdioGetLine
+extern int C2_HOOK_CDECL DRStdioGetChr(void* f);
 
-// DRStdioAdvance
+extern br_size_t C2_HOOK_CDECL DRStdioGetLine(char* buf, br_size_t buf_len, void* f);
 
-// DRStdioOpenRead
+extern void C2_HOOK_CDECL DRStdioAdvance(br_size_t count, void *f);
 
-// DRStdioOpenWrite
+extern void* C2_HOOK_CDECL DRStdioOpenRead(const char* name, br_size_t n_magics, br_mode_test_cbfn* identify, int* mode_result);
 
-// DRStdioClose
+extern void* C2_HOOK_CDECL DRStdioOpenWrite(const char* name, int mode);
 
-// DRStdioRead
+extern void C2_HOOK_CDECL DRStdioClose(void* f) ;
 
-// DRStdioWrite
+extern br_size_t C2_HOOK_CDECL DRStdioRead(void* buf, br_size_t size, unsigned int n, void* f);
+
+extern br_size_t C2_HOOK_CDECL DRStdioWrite(const void* buf, br_size_t size, unsigned int n, void* f);
 
 extern void C2_HOOK_FASTCALL InstallDRFileCalls(void);
 
