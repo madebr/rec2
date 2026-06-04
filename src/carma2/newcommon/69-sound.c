@@ -257,7 +257,10 @@ void C2_HOOK_FASTCALL StopMusic(void) {
     }
 }
 
-// SetSoundDetailLevel
+// STUB: CARMA2_HW 0x00456950
+void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
+    NOT_IMPLEMENTED();
+}
 
 // ReallySetSoundDetailLevel
 

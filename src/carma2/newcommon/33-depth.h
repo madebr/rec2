@@ -2,6 +2,7 @@
 #define GUARD_33_DEPTH_H
 
 #include "c2_hooks.h"
+#include "brender/brender.h"
 
 // Log2
 
@@ -15,7 +16,7 @@
 
 // FrobFog
 
-// MungeSkyVs
+extern void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial);
 
 // InstantDepthChange
 
@@ -55,21 +56,21 @@ extern void C2_HOOK_FASTCALL InitDepthEffects(void);
 
 // DecreaseYon
 
-// SetYon
+extern void C2_HOOK_STDCALL SetYon(br_scalar pYon);
 
 // GetYon
 
 // GetSkyTextureOn
 
-// SetSkyTextureOn
+extern void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn);
 
-// ToggleSkyQuietly
+extern void C2_HOOK_FASTCALL ToggleSkyQuietly(void);
 
 // ToggleSky
 
 // GetDepthCueingOn
 
-// SetDepthCueingOn
+extern void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn);
 
 // ToggleDepthCueingQuietly
 

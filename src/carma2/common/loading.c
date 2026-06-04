@@ -653,7 +653,7 @@ int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOu
 }
 
 // FUNCTION: CARMA2_HW 0x004d7020
-void C2_HOOK_FASTCALL SetMinesOn(int pNewMinesOn) {
+void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn) {
 
     gMinesOn = pNewMinesOn;
 }
@@ -665,7 +665,7 @@ int C2_HOOK_FASTCALL GetDronesOn(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044ecf0
-void C2_HOOK_FASTCALL SetDronesOn(int pNewDronesOn) {
+void C2_HOOK_FASTCALL SetTrafficOn(int pNewDronesOn) {
 
     gDronesOff = !pNewDronesOn;
 }
@@ -2699,9 +2699,9 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
             } else if (strcmp(token, "FlameThrowerOn") == 0) {
                 SetFlameThrowerOn((int)arg);
             } else if (strcmp(token, "MinesOn") == 0) {
-                SetMinesOn((int)arg);
+                SetExplosivesOn((int)arg);
             } else if (strcmp(token, "DronesOn") == 0) {
-                SetDronesOn((int)arg);
+                SetTrafficOn((int)arg);
             } else if (strcmp(token, "MiniMapVisible") == 0) {
                 gMini_map_visible = (int)arg;
             } else if (strcmp(token, "SkillLevel") == 0) {
@@ -2710,7 +2710,7 @@ int C2_HOOK_FASTCALL RestoreOptions(void) {
                 gAmbient_sound = (int)arg;
             } else if (strcmp(token, "AutoLoad") == 0) {
                 gAuto_load = (int)arg;
-            } else if (strcmp(token, "RusselsFannies") == 0) {
+            } else if (strcmp(token, "RussellsFannies") == 0) {
                 gRussels_fannies = (int)arg;
             } else if (strcmp(token, "QuickTimeQuality") == 0) {
                 fgets(line, sizeof(line), f);

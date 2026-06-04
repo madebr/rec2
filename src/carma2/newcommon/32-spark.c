@@ -145,7 +145,10 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
 
 // SmudgeCar
 
-// SetSmokeOn
+// STUB: CARMA2_HW 0x004fc9d0
+void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
+    NOT_IMPLEMENTED();
+}
 
 // GetSmokeOn
 

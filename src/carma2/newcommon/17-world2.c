@@ -32,7 +32,10 @@
 
 // GetCarTexturingLevel
 
-// SetCarTexturingLevel
+// STUB: CARMA2_HW 0x00447650
+void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel) {
+    NOT_IMPLEMENTED();
+}
 
 // HasThisSuffix
 
@@ -46,11 +49,17 @@
 
 // GetRoadTexturingLevel
 
-// SetRoadTexturingLevel
+// STUB: CARMA2_HW 0x00448780
+void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel) {
+    NOT_IMPLEMENTED();
+}
 
 // GetWallTexturingLevel
 
-// SetWallTexturingLevel
+// STUB: CARMA2_HW 0x00448900
+void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel) {
+    NOT_IMPLEMENTED();
+}
 
 // DisposeSuffixedMaterials
 
@@ -58,11 +67,17 @@
 
 // SetAccessoryRenderingCB
 
-// SetAccessoryRendering
+// STUB: CARMA2_HW 0x00448ec0
+void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn) {
+    NOT_IMPLEMENTED();
+}
 
 // GetAccessoryRendering
 
-// SetCarSimplificationLevel
+// STUB: CARMA2_HW 0x00448f10
+void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {
+    NOT_IMPLEMENTED();
+}
 
 // GetCarSimplificationLevel
 

@@ -11,7 +11,7 @@ extern br_pixelmap* gFog_shade_table;
 extern br_pixelmap* gAcid_shade_table;
 extern tSpecial_volume* gDAT_0079ec44;
 extern tDepth_effect_type gSwap_depth_effect_type;
-extern br_pixelmap* gSky_texture_0079ec1c;
+extern br_pixelmap* gSwap_sky_texture;
 extern int gSwap_depth_effect_start;
 extern int gSwap_depth_effect_end;
 extern tDepth_effect_type gSwap_depth_effect_type;

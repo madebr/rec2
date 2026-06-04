@@ -347,13 +347,13 @@ extern void C2_HOOK_FASTCALL SetAlienPedFolderNames(void);
 
 // IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
 
-// SetAnimalsOn
+extern void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn);
 
-// SetFlameThrowerOn
+extern void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn);
 
-// SetExplosivesOn
+extern void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn);
 
-// SetGoreLevel
+extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // ClearOutMorphs
 

@@ -805,5 +805,7 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 
 // GetScreenSize
 
-// SetScreenSize
-
+// STUB: CARMA2_HW 0x00481ea0
+void C2_HOOK_FASTCALL SetScreenSize(int pNew_size) {
+    NOT_IMPLEMENTED();
+}

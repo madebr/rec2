@@ -325,10 +325,10 @@ void C2_HOOK_FASTCALL SetGraphicsSettingsData(tFrontend_spec* pFrontend) {
 
     switch (WhichItemIsSelectedIn(pFrontend, 9)) {
     case 36:
-        SetDronesOn(1);
+        SetTrafficOn(1);
         break;
     case 37:
-        SetDronesOn(0);
+        SetTrafficOn(0);
         break;
     }
 
@@ -352,10 +352,10 @@ void C2_HOOK_FASTCALL SetGraphicsSettingsData(tFrontend_spec* pFrontend) {
 
     switch (WhichItemIsSelectedIn(pFrontend, 12)) {
     case 45:
-        SetMinesOn(1);
+        SetExplosivesOn(1);
         break;
     case 46:
-        SetMinesOn(0);
+        SetExplosivesOn(0);
         break;
     }
 

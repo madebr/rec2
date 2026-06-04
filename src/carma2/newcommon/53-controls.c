@@ -1,5 +1,32 @@
 #include "53-controls.h"
 
+// GLOBAL: CARMA2_HW 0x00659b2c
+float gMap_render_x = 80.f;
+
+// GLOBAL: CARMA2_HW 0x00659b30
+float gMap_render_y = 6.f;
+
+// GLOBAL: CARMA2_HW 0x00659b34
+float gMap_render_width = 128.f;
+
+// GLOBAL: CARMA2_HW 0x00659b38
+float gMap_render_height = 80.f;
+
+// GLOBAL: CARMA2_HW 0x0068d8d4
+int gMap_trans;
+
+// GLOBAL: CARMA2_HW 0x0074abac
+int gHeadup_map_x;
+
+// GLOBAL: CARMA2_HW 0x0074abb0
+int gHeadup_map_y;
+
+// GLOBAL: CARMA2_HW 0x0074aba8
+int gHeadup_map_w;
+
+// GLOBAL: CARMA2_HW 0x0074abb4
+int gHeadup_map_h;
+
 // CompleteRace
 
 // AbortRace

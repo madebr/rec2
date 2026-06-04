@@ -22,7 +22,10 @@ float gCosine_array[64];
 
 // RenderShadows
 
-// SetShadowLevel
+// STUB: CARMA2_HW 0x004e9940
+void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel) {
+    NOT_IMPLEMENTED();
+}
 
 // GetShadowLevel
 

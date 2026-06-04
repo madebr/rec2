@@ -1,7 +1,11 @@
 #ifndef GUARD_59_CAMERA_H
 #define GUARD_59_CAMERA_H
 
+#include "c2_hooks.h"
+#include "rec2_types.h"
+
 extern float gCamera_cockpit_hither;
+extern tActionReplayCameraMode gAction_replay_camera_mode;
 
 // DoCameraControls
 

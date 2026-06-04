@@ -124,7 +124,11 @@
 
 // GetNewCrushyModelForDrone
 
-// SetTrafficOn
+
+// STUB: CARMA2_HW 0x0044ecf0
+void C2_HOOK_FASTCALL SetTrafficOn(int pNewDronesOn) {
+    NOT_IMPLEMENTED();
+}
 
 // OtherPerambulatoryInstasificationIsEnablificated
 

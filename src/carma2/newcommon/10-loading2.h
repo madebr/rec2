@@ -102,7 +102,7 @@ extern void C2_HOOK_FASTCALL LoadMiscStrings(void);
 
 // FillInRaceInfo
 
-// ReadNetworkSettings
+extern void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions);
 
 // PrintNetOptions
 

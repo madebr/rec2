@@ -1,6 +1,9 @@
 #ifndef GUARD_17_WORLD2_H
 #define GUARD_17_WORLD2_H
 
+#include "c2_hooks.h"
+#include "rec2_types.h"
+
 // InitialiseExtraRenders
 
 // AddExtraRender
@@ -33,7 +36,7 @@
 
 // GetCarTexturingLevel
 
-// SetCarTexturingLevel
+extern void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel);
 
 // HasThisSuffix
 
@@ -47,11 +50,11 @@
 
 // GetRoadTexturingLevel
 
-// SetRoadTexturingLevel
+extern void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel);
 
 // GetWallTexturingLevel
 
-// SetWallTexturingLevel
+extern void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel);
 
 // DisposeSuffixedMaterials
 
@@ -59,11 +62,11 @@
 
 // SetAccessoryRenderingCB
 
-// SetAccessoryRendering
+extern void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn);
 
 // GetAccessoryRendering
 
-// SetCarSimplificationLevel
+extern void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
 // GetCarSimplificationLevel
 

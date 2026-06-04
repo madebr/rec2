@@ -2528,8 +2528,8 @@ void C2_HOOK_FASTCALL ToggleSky(void) {
 
     new_sky_on = !gSky_on;
     if (gSky_on != new_sky_on) {
-        br_pixelmap* sky_texture = gSky_texture_0079ec1c;
-        gSky_texture_0079ec1c = gProgram_state.current_depth_effect.sky_texture;
+        br_pixelmap* sky_texture = gSwap_sky_texture;
+        gSwap_sky_texture = gProgram_state.current_depth_effect.sky_texture;
         gProgram_state.current_depth_effect.sky_texture = sky_texture;
         gProgram_state.default_depth_effect.sky_texture = sky_texture;
         if (gHorizon_material != NULL && sky_texture != NULL) {
@@ -2540,7 +2540,7 @@ void C2_HOOK_FASTCALL ToggleSky(void) {
     }
     if (gProgram_state.current_depth_effect.sky_texture != NULL) {
         NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_on));
-    } else if (gSky_texture_0079ec1c != NULL) {
+    } else if (gSwap_sky_texture != NULL) {
         NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_sky_texture_off));
     } else {
         NewTextHeadupSlot(4, 0, 2000, -4, GetMiscString(eMiscString_no_sky_texture_for_this_race));

@@ -1,6 +1,8 @@
 #ifndef GUARD_22_REPLAY_H
 #define GUARD_22_REPLAY_H
 
+extern int gAR_camera_type;
+
 // ActualActionReplayHeadups
 
 // DoActionReplayPostSwap

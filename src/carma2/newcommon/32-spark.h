@@ -145,7 +145,7 @@ extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
 // SmudgeCar
 
-// SetSmokeOn
+void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on);
 
 // GetSmokeOn
 

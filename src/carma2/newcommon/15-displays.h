@@ -3,6 +3,8 @@
 
 #include "c2_hooks.h"
 
+extern int gHeadup_detail_level;
+
 // LoadHeadupMessageFile
 
 extern void C2_HOOK_FASTCALL InitHeadups(void);

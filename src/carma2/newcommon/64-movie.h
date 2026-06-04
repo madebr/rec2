@@ -3,6 +3,10 @@
 
 #include "c2_hooks.h"
 
+extern char gQuick_time_temp_path[256];
+extern char gQuick_time_movie_path_stub[256];
+extern char gQuick_time_banner_texture_name[256];
+
 // Create555BELookupTable
 
 // Convert565BrPixelmapTo555BigEndianPixmap
@@ -29,7 +33,7 @@
 
 extern void C2_HOOK_CDECL InitQuickTimeStuff(void);
 
-// SetQuickTimeDefaults
+extern void C2_HOOK_FASTCALL SetQuickTimeDefaults(void);
 
 // MovieRecordButtonPressed
 

@@ -5,17 +5,31 @@
 #include "07-structur.h"
 #include "08-loading1.h"
 #include "13-crush1.h"
+#include "15-displays.h"
+#include "16-graphics1.h"
+#include "17-world2.h"
 #include "18-graphics2.h"
 #include "21-mainloop.h"
+#include "22-replay.h"
 #include "27-powerup.h"
 #include "30-opponent.h"
+#include "32-spark.h"
+#include "33-depth.h"
+#include "37-brucetrk.h"
 #include "38-flicplay.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "53-controls.h"
 #include "55-volume.h"
+#include "57-drone.h"
 #include "58-crush2.h"
 #include "59-camera.h"
+#include "61-pedestrn.h"
+#include "62-graphics3.h"
+#include "64-movie.h"
+#include "69-sound.h"
 #include "70-packfile.h"
+#include "71-newgame.h"
 #include "globvars.h"
 #include "rec2_macros.h"
 
@@ -26,6 +40,9 @@ FILE* gTempFile;
 
 // GLOBAL: CARMA2_HW 0x0068c718
 const char* gPedTextTxtPath;
+
+// GLOBAL: CARMA2_HW 0x0068b88c
+int gKey_map_index;
 
 #define DECODE_OFFSET 50
 // GLOBAL: CARMA2_HW 0x00655e38
@@ -66,6 +83,9 @@ int gCount_demo_opponents;
 
 // GLOBAL: CARMA2_HW 0x0074b4c0
 int gDemo_opponents[15];
+
+// GLOBAL: CARMA2_HW 0x00679308
+int gCamera_type;
 
 // LoadInRegisteeDir
 
@@ -489,7 +509,22 @@ void C2_HOOK_FASTCALL LoadMiscStrings(void) {
 
 // FillInRaceInfo
 
-// ReadNetworkSettings
+// FUNCTION: CARMA2_HW 0x0048d110
+void C2_HOOK_FASTCALL ReadNetworkSettings(FILE* pF, tNet_game_options* pOptions) {
+
+    pOptions->enable_text_messages = GetAnInt(pF);
+    pOptions->show_players_on_map = GetAnInt(pF);
+    pOptions->show_powerups_on_map = GetAnInt(pF);
+    pOptions->powerup_respawn = GetAnInt(pF);
+    pOptions->waste_to_transfer = GetAnInt(pF);
+    pOptions->open_game = GetAnInt(pF);
+    pOptions->grid_start = GetAnInt(pF);
+    pOptions->race_sequence_type = GetAnInt(pF);
+    pOptions->random_car_choice = GetAnInt(pF);
+    pOptions->car_choice = GetAnInt(pF);
+    pOptions->starting_credits = GetAnInt(pF);
+    pOptions->starting_target = GetAnInt(pF);
+}
 
 // PrintNetOptions
 
@@ -498,9 +533,161 @@ int C2_HOOK_FASTCALL SaveOptions(void) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x0048d8f0
+// FUNCTION: CARMA2_HW 0x0048d8f0
 int C2_HOOK_FASTCALL RestoreOptions(void) {
-    NOT_IMPLEMENTED();
+    tPath_name the_path;
+    FILE* f;
+    float arg;
+    char line[80];
+    char token[80];
+    char* s;
+
+    gProgram_state.music_volume = 200;
+    gProgram_state.effects_volume = 200;
+    gProgram_state.skill_level = 1;
+    gMap_render_x = 6.0;
+    gMap_render_y = 6.0;
+    gMap_render_width = 64.0;
+    gMap_render_height = 40.0;
+    gMap_trans = 0;
+    gHeadup_map_x = 228;
+    gHeadup_map_y = 150;
+    gHeadup_map_w = 48;
+    gHeadup_map_h = 48;
+    gHeadup_detail_level = kMax_headup_detail_level;
+    gMap_view = 1;
+    gMini_map_visible = 1;
+
+    DefaultNetSettings();
+    SetQuickTimeDefaults();
+
+    PathCat(the_path, gApplication_path, "OPTIONS.TXT");
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        return 0;
+    }
+
+    while (PFfgets(line, sizeof(line), f)) {
+        if (sscanf(line, "%79s%f", token, &arg) == 2) {
+            if (strcmp(token, "YonFactor") == 0) {
+                SetYonFactor(arg);
+            } else if (strcmp(token, "SkyTextureOn") == 0) {
+                SetSkyTextureOn((int)arg);
+            } else if (strcmp(token, "CarTexturingLevel") == 0) {
+                SetCarTexturingLevel((tCar_texturing_level)arg);
+            } else if (strcmp(token, "RoadTexturingLevel") == 0) {
+                SetRoadTexturingLevel((tRoad_texturing_level)arg);
+            } else if (strcmp(token, "WallTexturingLevel") == 0) {
+                SetWallTexturingLevel((tWall_texturing_level)arg);
+            } else if (strcmp(token, "ShadowLevel") == 0) {
+                SetShadowLevel((tShadow_level)arg);
+            } else if (strcmp(token, "DepthCueingOn") == 0) {
+                SetDepthCueingOn((int)arg);
+            } else if (strcmp(token, "Yon") == 0) {
+                SetYon(arg);
+            } else if (strcmp(token, "CarSimplificationLevel") == 0) {
+                SetCarSimplificationLevel((int)arg);
+            } else if (strcmp(token, "AccessoryRendering") == 0) {
+                SetAccessoryRendering((int)arg);
+            } else if (strcmp(token, "SmokeOn") == 0) {
+                SetSmokeOn((int)arg);
+            } else if (strcmp(token, "SoundDetailLevel") == 0) {
+                SetSoundDetailLevel((int)arg);
+            } else if (strcmp(token, "ScreenSize") == 0) {
+                SetScreenSize((int)arg);
+            } else if (strcmp(token, "MapRenderX") == 0) {
+                gMap_render_x = arg;
+            } else if (strcmp(token, "MapRenderY") == 0) {
+                gMap_render_y = arg;
+            } else if (strcmp(token, "MapRenderWidth") == 0) {
+                gMap_render_width = arg;
+            } else if (strcmp(token, "MapRenderHeight") == 0) {
+                gMap_render_height = arg;
+            } else if (strcmp(token, "MapMode") == 0) {
+            } else if (strcmp(token, "MapTrans") == 0) {
+                gMap_trans = (int)arg;
+            } else if (strcmp(token, "HeadupMapX") == 0) {
+                gHeadup_map_x = (int)arg;
+            } else if (strcmp(token, "HeadupMapY") == 0) {
+                gHeadup_map_y = (int)arg;
+            } else if (strcmp(token, "HeadupMapW") == 0) {
+                gHeadup_map_w = (int)arg;
+            } else if (strcmp(token, "HeadupMapH") == 0) {
+                gHeadup_map_h = (int)arg;
+            } else if (strcmp(token, "PlayerName") == 0) {
+                PFfgets(line, sizeof(line), f);
+                s = strtok(line, "\n\r");
+                strcpy(gProgram_state.player_name, s);
+            } else if (strcmp(token, "EVolume") == 0) {
+                gProgram_state.effects_volume = (int)arg;
+            } else if (strcmp(token, "MVolume") == 0) {
+                gProgram_state.music_volume = (int)arg;
+            } else if (strcmp(token, "KeyMapIndex") == 0) {
+                gKey_map_index = (int)arg;
+            } else if (strcmp(token, "CameraType") == 0) {
+                gAction_replay_camera_mode = gCamera_type = (int)arg;
+            } else if (strcmp(token, "ARCameraType") == 0) {
+                gAR_camera_type = (int)arg;
+            } else if (strcmp(token, "GoreLevel") == 0) {
+                SetGoreLevel((int)arg);
+            } else if (strcmp(token, "AnimalsOn") == 0) {
+                SetAnimalsOn((int)arg);
+            } else if (strcmp(token, "FlameThrowerOn") == 0) {
+                SetFlameThrowerOn((int)arg);
+            } else if (strcmp(token, "MinesOn") == 0) {
+                SetExplosivesOn((int)arg);
+            } else if (strcmp(token, "DronesOn") == 0) {
+                SetTrafficOn((int)arg);
+            } else if (strcmp(token, "MiniMapVisible") == 0) {
+                gMini_map_visible = (int)arg;
+            } else if (strcmp(token, "SkillLevel") == 0) {
+                gProgram_state.skill_level = (int)arg;
+            } else if (strcmp(token, "AmbientSound") == 0) {
+                gAmbient_sound = (int)arg;
+            } else if (strcmp(token, "AutoLoad") == 0) {
+                gAuto_load = (int)arg;
+            } else if (strcmp(token, "RussellsFannies") == 0) {
+                gRussels_fannies = (int)arg;
+            } else if (strcmp(token, "QuickTimeQuality") == 0) {
+                PFfgets(line, sizeof(line), f);
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_quality, s);
+            } else if (strcmp(token, "QuickTimeCompressor") == 0) {
+                PFfgets(line, sizeof(line), f);
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_compressor, s);
+            } else if (strcmp(token, "QuickTimeBanner") == 0) {
+                gQuick_time_banner_number = (int)arg;
+                PFfgets(line, sizeof(line), f);
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_banner_texture_name, s);
+            } else if (strcmp(token, "QuickTimeTempPath") == 0) {
+                PFfgets(line, sizeof(line), f);
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_temp_path, s);
+            } else if (strcmp(token, "QuickTimeMoviePathStub") == 0) {
+                PFfgets(line, sizeof(line), f);
+                s = strtok(line, "\n\r");
+                strcpy(gQuick_time_movie_path_stub, s);
+            } else if (strcmp(token, "NetName") == 0) {
+                PFfgets(line, sizeof(line), f);
+                s = strtok(line, "\n\r");
+            } else if (strcmp(token, "NETGAMETYPE") == 0) {
+                gNet_last_game_type = (int)arg;
+            } else if (strcmp(token, "NETSETTINGS") == 0) {
+                ReadNetworkSettings(f, &gNet_settings[(int)arg]);
+            } else if (strcmp(token, "HeadupDetailLevel") == 0) {
+                gHeadup_detail_level = (int)arg;
+            }
+        }
+    }
+    PFfclose(f);
+    gMap_view = 1;
+    gMap_render_x = 80.f;
+    gMap_render_y = 400.f;
+    gMap_render_width = 128.f;
+    gMap_render_height = 80.f;
+    return 1;
 }
 
 // InitFunkGrooveFlags

@@ -1,5 +1,8 @@
 #include "62-graphics3.h"
 
+// GLOBAL: CARMA2_HW 0x00655dfc
+int gMini_map_visible = 2;
+
 // CarArrowColour
 
 // ToggleTargetLock

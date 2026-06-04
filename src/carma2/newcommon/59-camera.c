@@ -3,6 +3,9 @@
 // GLOBAL: CARMA2_HW 0x007634ac
 float gCamera_cockpit_hither;
 
+// GLOBAL: CARMA2_HW 0x0079efa8
+tActionReplayCameraMode gAction_replay_camera_mode;
+
 // DoCameraControls
 
 // FrozenCamera

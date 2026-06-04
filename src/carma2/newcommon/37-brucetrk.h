@@ -1,6 +1,9 @@
 #ifndef GUARD_37_BRUCETRK_H
 #define GUARD_37_BRUCETRK_H
 
+#include "c2_hooks.h"
+#include "brender/brender.h"
+
 // AssertNoncars
 
 // AllocateActorMatrix
@@ -27,7 +30,7 @@
 
 // GetYonFactor
 
-// SetYonFactor
+extern void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew);
 
 // FoundAnActor
 

@@ -1428,7 +1428,7 @@ void C2_HOOK_FASTCALL InitRace(void) {
         gProgram_state.default_depth_effect.colour.green,
         gProgram_state.default_depth_effect.colour.blue,
         1);
-    gSky_texture_0079ec1c = NULL;
+    gSwap_sky_texture = NULL;
     if (!GetSkyTextureOn()) {
         ToggleSkyQuietly();
     }

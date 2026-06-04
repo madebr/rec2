@@ -68,7 +68,7 @@ br_model* gForward_sky_model;
 tDepth_effect_type gSwap_depth_effect_type = eDepth_effect_none;
 
 // GLOBAL: CARMA2_HW 0x0079ec1c
-br_pixelmap* gSky_texture_0079ec1c;
+br_pixelmap* gSwap_sky_texture;
 
 // GLOBAL: CARMA2_HW 0x0079ec4c
 int gSwap_depth_effect_start;
@@ -302,8 +302,8 @@ void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial) {
 
 // FUNCTION: CARMA2_HW 0x00446e80
 void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
-    gProgram_state.default_depth_effect.sky_texture = gSky_texture_0079ec1c;
-    gSky_texture_0079ec1c = gProgram_state.current_depth_effect.sky_texture;
+    gProgram_state.default_depth_effect.sky_texture = gSwap_sky_texture;
+    gSwap_sky_texture = gProgram_state.current_depth_effect.sky_texture;
     gProgram_state.current_depth_effect.sky_texture = gProgram_state.default_depth_effect.sky_texture;
     if (gHorizon_material != NULL && gProgram_state.default_depth_effect.sky_texture != NULL) {
         gHorizon_material->colour_map = gProgram_state.current_depth_effect.sky_texture;

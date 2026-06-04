@@ -371,13 +371,25 @@ void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
 
 // IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
 
-// SetAnimalsOn
+// STUB: CARMA2_HW 0x004d7000
+void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {
+    NOT_IMPLEMENTED();
+}
 
-// SetFlameThrowerOn
+// STUB: CARMA2_HW 0x004d7010
+void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn) {
+    NOT_IMPLEMENTED();
+}
 
-// SetExplosivesOn
+// STUB: CARMA2_HW 0x004d7020
+void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn) {
+    NOT_IMPLEMENTED();
+}
 
-// SetGoreLevel
+// STUB: CARMA2_HW 0x004d7030
+void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
+    NOT_IMPLEMENTED();
+}
 
 // ClearOutMorphs
 

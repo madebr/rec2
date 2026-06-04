@@ -3,6 +3,8 @@
 
 #include "c2_hooks.h"
 
+extern int gMini_map_visible;
+
 // CarArrowColour
 
 // ToggleTargetLock

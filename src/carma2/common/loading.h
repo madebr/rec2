@@ -145,11 +145,11 @@ void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn);
 
 int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void);
 
-void C2_HOOK_FASTCALL SetMinesOn(int pNewMinesOn);
+void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn);
 
 int C2_HOOK_FASTCALL GetDronesOn(void);
 
-void C2_HOOK_FASTCALL SetDronesOn(int pNewDronesOn);
+void C2_HOOK_FASTCALL SetTrafficOn(int pNewDronesOn);
 
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 

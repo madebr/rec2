@@ -51,7 +51,10 @@ void C2_HOOK_CDECL InitQuickTimeStuff(void) {
     gQuick_time_banner_texture_name[0] = '\0';
 }
 
-// SetQuickTimeDefaults
+// STUB: CARMA2_HW 0x004e1740
+void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
+    NOT_IMPLEMENTED();
+}
 
 // MovieRecordButtonPressed
 

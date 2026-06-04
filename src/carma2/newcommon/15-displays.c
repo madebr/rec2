@@ -1,5 +1,8 @@
 #include "15-displays.h"
 
+// GLOBAL: CARMA2_HW 0x00655e54
+int gHeadup_detail_level = 5;
+
 // LoadHeadupMessageFile
 
 // STUB: CARMA2_HW 0x00449090

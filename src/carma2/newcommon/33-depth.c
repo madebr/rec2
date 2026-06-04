@@ -1,5 +1,19 @@
 #include "33-depth.h"
 
+#include "globvars.h"
+
+// GLOBAL: CARMA2_HW 0x00591188
+int gSky_on = 1;
+
+// GLOBAL: CARMA2_HW 0x0079ec1c
+br_pixelmap* gSwap_sky_texture;
+
+// GLOBAL: CARMA2_HW 0x0067c4e0
+br_material* gHorizon_material;
+
+// GLOBAL: CARMA2_HW 0x0067c4a0
+br_model* gForward_sky_model;
+
 // Log2
 
 // CalculateWrappingMultiplier
@@ -12,7 +26,42 @@
 
 // FrobFog
 
-// MungeSkyVs
+
+// FUNCTION: CARMA2_HW 0x00445500
+void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial) {
+    int i;
+    float tex_y;
+    float f_height;
+    int height;
+    int vertex_idx;
+
+    if (pMaterial->colour_map == NULL) {
+        return;
+    }
+    if (pMaterial->flags & BR_MATF_MAP_INTERPOLATION) {
+        height = pMaterial->colour_map->height - 2;
+        tex_y = 1.0f / (float)pMaterial->colour_map->height;
+    } else {
+        height = pMaterial->colour_map->height;
+        tex_y = 0.0f;
+    }
+    for (i = 0; i < 12; i++) {
+        pModel->vertices[i].map.v[1] = 1.0f - tex_y;
+    }
+    for (i = 80; i < 88; i++) {
+        pModel->vertices[i].map.v[1] = tex_y;
+    }
+    f_height = (float)height;
+    vertex_idx = 12;
+    for (i = 0; i < 17; vertex_idx+=4, i++) {
+        int j;
+
+        pModel->vertices[vertex_idx].map.v[1] = tex_y + (float)(17 - i) * f_height / 18.0f / pMaterial->colour_map->height;
+        for (j = 1; j < 4; j++) {
+            pModel->vertices[vertex_idx + j].map.v[1] = pModel->vertices[vertex_idx].map.v[1];
+        }
+    }
+}
 
 // InstantDepthChange
 
@@ -55,21 +104,47 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
 
 // DecreaseYon
 
-// SetYon
+// STUB: CARMA2_HW 0x00446b70
+void C2_HOOK_STDCALL SetYon(br_scalar pYon) {
+    NOT_IMPLEMENTED();
+}
 
 // GetYon
 
 // GetSkyTextureOn
 
-// SetSkyTextureOn
+// FUNCTION: CARMA2_HW 0x00446e10
+void C2_HOOK_FASTCALL SetSkyTextureOn(int skyTextureOn) {
 
-// ToggleSkyQuietly
+    if (gSky_on != skyTextureOn) {
+        ToggleSkyQuietly();
+    }
+    gSky_on = skyTextureOn;
+}
+
+// FUNCTION: CARMA2_HW 0x00446e80
+void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
+    br_pixelmap* temp;
+
+    temp = gProgram_state.current_depth_effect.sky_texture;
+    gProgram_state.default_depth_effect.sky_texture = gSwap_sky_texture;
+    gSwap_sky_texture = temp;
+    gProgram_state.current_depth_effect.sky_texture = gProgram_state.default_depth_effect.sky_texture;
+    if (gHorizon_material != NULL && gProgram_state.default_depth_effect.sky_texture != NULL) {
+        gHorizon_material->colour_map = gProgram_state.current_depth_effect.sky_texture;
+        BrMaterialUpdate(gHorizon_material, BR_MATU_ALL);
+        MungeSkyVs(gForward_sky_model, gHorizon_material);
+    }
+}
 
 // ToggleSky
 
 // GetDepthCueingOn
 
-// SetDepthCueingOn
+// STUB: CARMA2_HW 0x00446fa0
+void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn) {
+    NOT_IMPLEMENTED();
+}
 
 // ToggleDepthCueingQuietly
 

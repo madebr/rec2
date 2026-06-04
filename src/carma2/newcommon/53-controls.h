@@ -1,6 +1,16 @@
 #ifndef GUARD_53_CONTROLS_H
 #define GUARD_53_CONTROLS_H
 
+extern float gMap_render_x;
+extern float gMap_render_y;
+extern float gMap_render_width;
+extern float gMap_render_height;
+extern int gMap_trans;
+extern int gHeadup_map_x;
+extern int gHeadup_map_y;
+extern int gHeadup_map_w;
+extern int gHeadup_map_h;
+
 // CompleteRace
 
 // AbortRace

@@ -1,6 +1,8 @@
 #ifndef GUARD_57_DRONE_H
 #define GUARD_57_DRONE_H
 
+#include "c2_hooks.h"
+
 // DoNotDprintf
 
 // CrappyLittleVector3DPrintf
@@ -125,7 +127,7 @@
 
 // GetNewCrushyModelForDrone
 
-// SetTrafficOn
+extern void C2_HOOK_FASTCALL SetTrafficOn(int pNewDronesOn);
 
 // OtherPerambulatoryInstasificationIsEnablificated
 

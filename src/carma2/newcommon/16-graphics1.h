@@ -2,6 +2,7 @@
 #define GUARD_16_GRAPHICS1_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // MungeClipPlane
 
@@ -11,7 +12,7 @@
 
 // RenderShadows
 
-// SetShadowLevel
+extern void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel);
 
 // GetShadowLevel
 
