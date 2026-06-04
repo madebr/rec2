@@ -1,5 +1,8 @@
 #include "04-netgame.h"
 
+#include "01-network.h"
+#include "globvars.h"
+
 // SendShapeNumbers
 
 // ClearShapeStatusFlag
@@ -119,9 +122,10 @@ void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void) {
 
 // InitNetGameplayStuff
 
-// STUB: CARMA2_HW 0x0049bd10
+// FUNCTION: CARMA2_HW 0x0049bd10
 void C2_HOOK_FASTCALL DefaultNetName(void) {
-    NOT_IMPLEMENTED();
+
+    NetObtainSystemUserName(gProgram_state.player_name, 32);
 }
 
 // AddPlayerToShapeStatusLists

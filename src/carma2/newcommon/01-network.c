@@ -184,7 +184,12 @@ int C2_HOOK_FASTCALL NetJoinGameLowLevel(tNet_game_details* pGame_details, const
 
 // NetJoinGame
 
-// NetObtainSystemUserName
+// FUNCTION: CARMA2_HW 0x0049ee20
+void C2_HOOK_FASTCALL NetObtainSystemUserName(char* pName, int pMax_length) {
+
+    PDNetObtainSystemUserName(pName, pMax_length);
+    pName[9] = '\0';
+}
 
 // NetExtractGameID
 
