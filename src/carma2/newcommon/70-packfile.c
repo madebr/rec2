@@ -128,9 +128,36 @@ int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
 
 // PFgetc
 
-// STUB: CARMA2_HW 0x004b4900
+// FUNCTION: CARMA2_HW 0x004b4900
 char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
-    NOT_IMPLEMENTED();
+    tTwatVfsFile* twtFile;
+    int c;
+    char* writePtr;
+    size_t i;
+
+    if ((intptr_t)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
+        return fgets(buffer, size, pFile);
+    }
+    twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
+    writePtr = buffer;
+    for (i = 0; i < (int)size - 1; i++) {
+        c = (int)*twtFile->pos++;
+        if (c == -1) {
+            *writePtr = '\0';
+            twtFile->error = -1;
+            return NULL;
+        }
+        *writePtr++ = c;
+        if (c == '\n') {
+            break;
+        }
+        if (twtFile->pos >= twtFile->end) {
+            break;
+        }
+    }
+    *writePtr = '\0';
+    twtFile->error = 0;
+    return buffer;
 }
 
 // STUB: CARMA2_HW 0x004b49a0

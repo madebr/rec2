@@ -184,7 +184,7 @@
 // ungetc
 
 // LIBRARY: CARMA2_HW 0x00578610
-// fgets
+// _fgets
 
 // LIBRARY: CARMA2_HW 0x00577c40
 // _fputc
