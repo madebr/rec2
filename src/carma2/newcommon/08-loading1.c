@@ -70,7 +70,19 @@ int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
 
 // GetPairOfFloats
 
-// GetThreeFloats
+// FUNCTION: CARMA2_HW 0x0048fc90
+void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* pF3) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF3);
+}
 
 // GetAVector3
 

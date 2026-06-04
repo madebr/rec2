@@ -40,7 +40,7 @@ extern int C2_HOOK_FASTCALL GetAnInt(FILE* pF);
 
 // GetPairOfFloats
 
-// GetThreeFloats
+extern void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* pF3);
 
 // GetAVector3
 
