@@ -66,7 +66,18 @@ int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
     return value;
 }
 
-// GetAFloat
+// FUNCTION: CARMA2_HW 0x004900e0
+float C2_HOOK_FASTCALL GetAFloat(FILE* pF) {
+    char s[256];
+    char *str;
+    float f;
+
+    PossibleService();
+    GetALineWithNoPossibleService(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", &f);
+    return f;
+}
 
 // GetPairOfFloats
 

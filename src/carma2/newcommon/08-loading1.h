@@ -36,7 +36,7 @@ extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 extern int C2_HOOK_FASTCALL GetAnInt(FILE* pF);
 
-// GetAFloat
+extern float C2_HOOK_FASTCALL GetAFloat(FILE* pF);
 
 // GetPairOfFloats
 
