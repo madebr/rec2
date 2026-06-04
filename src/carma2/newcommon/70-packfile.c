@@ -179,9 +179,23 @@ char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
     return buffer;
 }
 
-// STUB: CARMA2_HW 0x004b49a0
-int C2_HOOK_FASTCALL PFungetc(int ch, FILE* file) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x004b49a0
+int C2_HOOK_FASTCALL PFungetc(int ch, FILE* pFile) {
+    tTwatVfsFile* twtFile;
+
+    if ((uintptr_t)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
+        return ungetc(ch, pFile);
+    }
+    twtFile = &gTwatVfsFiles[(intptr_t)pFile];
+    if (twtFile->pos > twtFile->start && ch != -1) {
+        twtFile->pos--;
+        *twtFile->pos = ch;
+        twtFile->error = 0;
+        return ch;
+    } else {
+        twtFile->error = -1;
+        return -1;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004b49f0
