@@ -126,9 +126,23 @@ FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
     return fopen(pPath, mode);
 }
 
-// STUB: CARMA2_HW 0x004b4880
+// FUNCTION: CARMA2_HW 0x004b4880
 int C2_HOOK_FASTCALL PFfgetc(FILE* pFile) {
-    NOT_IMPLEMENTED();
+    tTwatVfsFile* twtFile;
+    int result;
+
+    if ((intptr_t)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
+        return fgetc(pFile);
+    }
+    twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
+    if (twtFile->pos >= twtFile->end) {
+        twtFile->error = -1;
+        return EOF;
+    }
+    twtFile->error = 0;
+    result = *twtFile->pos;
+    twtFile->pos++;
+    return result;
 }
 
 // PFgetc
