@@ -1,6 +1,134 @@
 #include "13-crush1.h"
 
-// ReadCrushSettings
+#include "08-loading1.h"
+#include "platform.h"
+
+#include "c2_string.h"
+
+// GLOBAL: CARMA2_HW 0x00679698
+br_scalar gDistortion_factor;
+
+// GLOBAL: CARMA2_HW 0x006796b0
+br_scalar gForce_to_movement_factor;
+
+// GLOBAL: CARMA2_HW 0x00679550
+br_scalar gMax_detach_time_ms;
+
+// GLOBAL: CARMA2_HW 0x006796b8
+br_scalar gMin_crush_force;
+
+// GLOBAL: CARMA2_HW 0x0067944c
+br_scalar gNormal_force_to_detach;
+
+// GLOBAL: CARMA2_HW 0x0067a18c
+br_scalar gMin_bend_angle;
+
+// GLOBAL: CARMA2_HW 0x0067b7b0
+int gMin_bend_damage;
+
+// GLOBAL: CARMA2_HW 0x0067b7b4
+br_scalar gFlap_inertia_fudge_biscuit;
+
+// GLOBAL: CARMA2_HW 0x0067b7d0
+int gMax_split_damage;
+
+// GLOBAL: CARMA2_HW 0x0067bac8
+br_scalar gMin_force_to_split_XZ_per_tonne;
+
+// GLOBAL: CARMA2_HW 0x0067bacc
+br_scalar gMax_crush_dist_sq;
+
+// GLOBAL: CARMA2_HW 0x0067bd5c
+br_scalar gMin_force_to_split_Y_per_tonne;
+
+// GLOBAL: CARMA2_HW 0x0067bd64
+int gMin_split_damage;
+
+// GLOBAL: CARMA2_HW 0x0067bde8
+br_scalar gMin_bend_force;
+
+// GLOBAL: CARMA2_HW 0x0067bdec
+br_scalar gMax_crush_force;
+
+// GLOBAL: CARMA2_HW 0x0067bdf4
+int gMax_bend_damage;
+
+// GLOBAL: CARMA2_HW 0x0067bdf8
+br_scalar gTorque_to_snap_per_tonne;
+
+// GLOBAL: CARMA2_HW 0x0067be00
+br_scalar gChance_of_bending;
+
+// GLOBAL: CARMA2_HW 0x0067be04
+br_scalar gChance_of_inverse_buckle;
+
+// GLOBAL: CARMA2_HW 0x0067be78
+br_vector3 gBatty_gravity;
+
+// FUNCTION: CARMA2_HW 0x00429bb0
+void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF) {
+    char s[256];
+    char *result;
+
+    while (1) {
+        result = GetALineAndDontArgue(pF, s);
+        if (result == NULL) {
+            break;
+        }
+        if (strcmp("START OF CRUSH SETTINGS", s) == 0) {
+            break;
+        }
+    }
+    if (result == NULL) {
+        PDFatalError("Can't find start of CRUSH SETTINGS in .TXT file");
+    }
+    if (GetAnInt(pF) != 4) {
+        PDFatalError("Wrong version of CRUSH SETTINGS");
+    }
+    /* CRUSHING */
+    gDistortion_factor = GetAScalar(pF);
+    gMin_crush_force = GetAScalar(pF);
+    gMax_crush_force = GetAScalar(pF);
+    gForce_to_movement_factor = GetAScalar(pF);
+    gMax_crush_dist_sq = GetAScalar(pF);
+
+    /* SPLITTING */
+    gMin_force_to_split_XZ_per_tonne = GetAScalar(pF);
+    gMin_force_to_split_Y_per_tonne = GetAScalar(pF);
+    gMin_split_damage = GetAnInt(pF);
+    gMax_split_damage = GetAnInt(pF);
+
+    /* BUCKLING */
+    gChance_of_inverse_buckle = GetAScalar(pF);
+
+    /* FLAPPING AND JOINT SNAPPING */
+    gFlap_inertia_fudge_biscuit = GetAScalar(pF);
+    gBatty_gravity.v[1] = GetAScalar(pF);
+    gTorque_to_snap_per_tonne = GetAScalar(pF);
+
+    /* DETACHING */
+    gMax_detach_time_ms = GetAScalar(pF);
+    gNormal_force_to_detach = GetAScalar(pF);
+
+    /* BENDING */
+    gMin_bend_force = GetAScalar(pF);
+    gChance_of_bending = GetAScalar(pF);
+    gMin_bend_angle = GetAScalar(pF);
+    gMin_bend_damage = GetAnInt(pF);
+    gMax_bend_damage = GetAnInt(pF);
+    while (1) {
+        result = GetALineAndDontArgue(pF, s);
+        if (result == NULL) {
+            break;
+        }
+        if (strcmp("END OF CRUSH SETTINGS", s) == 0) {
+            break;
+        }
+    }
+    if (result == NULL) {
+        PDFatalError("Can't find end of CRUSH SETTINGS in .TXT file");
+    }
+}
 
 // ClearCrushLists
 

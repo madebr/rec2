@@ -3,7 +3,9 @@
 
 #include "c2_hooks.h"
 
-// ReadCrushSettings
+#include <stdio.h>
+
+extern void C2_HOOK_FASTCALL ReadCrushSettings(FILE* pF);
 
 // ClearCrushLists
 
