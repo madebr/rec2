@@ -8,11 +8,11 @@
 
 extern void C2_HOOK_FASTCALL LoadInRegistees(void);
 
-// LoadBunchOParameters
+extern void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info);
 
-// LoadBunchOFloatParameters
+extern void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch);
 
-// GetHithers
+extern void C2_HOOK_FASTCALL GetHithers(void);
 
 extern void C2_HOOK_FASTCALL LoadGeneralParameters(void);
 

@@ -8,6 +8,9 @@
 
 #include "rec2_macros.h"
 
+// GLOBAL: CARMA2_HW 0x00761b80
+tSpecial_volume gDefault_default_water_spec_vol;
+
 // GLOBAL: CARMA2_HW 0x00660268
 const char* gSoundType_choices[2] = {
     "SATURATED",

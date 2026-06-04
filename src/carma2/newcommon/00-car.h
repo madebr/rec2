@@ -1,6 +1,15 @@
 #ifndef GUARD_00_CAR_H
 #define GUARD_00_CAR_H
 
+#include "rec2_types.h"
+
+extern int gCunning_stunt_bonus[3];
+extern float gArmour_starting_value[100];
+extern float gPower_starting_value[100];
+extern float gOffensive_starting_value[100];
+extern tFloat_bunch_info gCar_softness;
+extern tFloat_bunch_info gCar_car_damage_multiplier;
+
 // DamageUnit
 
 // SwitchCarModel

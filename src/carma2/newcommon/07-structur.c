@@ -9,6 +9,9 @@ int gHud_tinted2 = -1;
 // GLOBAL: CARMA2_HW 0x00655e50
 int gHud_tinted3 = -1;
 
+// GLOBAL: CARMA2_HW 0x00762140
+int gCredits_checkpoint[3];
+
 // NumberOfOpponentsLeft
 
 // RaceCompleted

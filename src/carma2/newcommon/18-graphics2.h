@@ -6,6 +6,7 @@
 
 extern int gNoTransients;
 extern br_pixelmap* gRender_palette;
+extern int gDim_amount;
 
 // DRSetPaletteEntries
 

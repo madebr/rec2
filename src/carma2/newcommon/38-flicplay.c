@@ -1,5 +1,17 @@
 #include "38-flicplay.h"
 
+// GLOBAL: CARMA2_HW 0x0068b8b4
+float gFlic_sound_delay_pre_smack;
+
+// GLOBAL: CARMA2_HW 0x0068b8b8
+float gFlic_sound_delay_post_smack;
+
+// GLOBAL: CARMA2_HW 0x0068b8bc
+float gFlic_sound_delay_not_in_demo;
+
+// GLOBAL: CARMA2_HW 0x0068b8c0
+float gFlic_sound_delay_post_demo;
+
 // TranslationMode
 
 // DontLetFlicFuckWithPalettes

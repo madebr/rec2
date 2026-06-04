@@ -5,6 +5,17 @@
 #include "rec2_types.h"
 
 extern tHeadup_icon gPickedup_powerups[5];
+extern tSlot_info gCost_APO;
+extern tSlot_info gTrade_in_value_APO;
+extern tSlot_info gSubstitution_value_APO;
+extern tSlot_info gPotential_substitution_value_APO;
+extern int gNet_powerup_time_replacement;
+extern int gPickup_respawn_min_time_ms;
+extern int gPickup_respawn_max_extra_time_ms;
+extern int gCount_mutant_tail_parts;
+extern float gMass_mutant_tail_link;
+extern float gMass_mutant_tail_ball;
+extern float gMass_mine;
 
 // GetNextGoodyTime
 

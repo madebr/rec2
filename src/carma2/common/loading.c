@@ -207,7 +207,7 @@ char gDecode_string[14] = {
 };
 
 // GLOBAL: CARMA2_HW 0x00761b80
-tSpecial_volume gDefault_water_spec_vol; /* FIXME: rename to gDefault_default_water_spec_vol */
+tSpecial_volume gDefault_default_water_spec_vol; /* FIXME: rename to gDefault_default_water_spec_vol */
 
 // GLOBAL: CARMA2_HW 0x00761f44
 tSpecial_volume* gDefault_water_spec_vol_real;
@@ -1837,7 +1837,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     gMaxTimeOpponentRepair = (int)GetAScalar(gTempFile);
 
     /* Default underwater special volume parameters */
-    ParseSpecialVolume(gTempFile, &gDefault_water_spec_vol, gUnderwater_screen_name, 0);
+    ParseSpecialVolume(gTempFile, &gDefault_default_water_spec_vol, gUnderwater_screen_name, 0);
 
     /* Initial armour, single player, each skill level */
     /* Initial armour, each network game type */
@@ -2011,7 +2011,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
 
 // FUNCTION: CARMA2_HW 0x00487dc0
 void C2_HOOK_FASTCALL FinishLoadGeneralParameters(void) {
-    gDefault_water_spec_vol.screen_pixelmap = BrMapFind(gUnderwater_screen_name);
+    gDefault_default_water_spec_vol.screen_pixelmap = BrMapFind(gUnderwater_screen_name);
     ReadExplosionInfo(gTempFile, &gWasted_explosion_chance, &gExplosion_sound_id, &gExplosion_pix_animation_groups);
     ReadPowerupSmashables(gTempFile);
     PFfclose(gTempFile);

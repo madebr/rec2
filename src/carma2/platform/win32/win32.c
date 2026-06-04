@@ -618,7 +618,6 @@ int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFil
     return file_size >= pMin_size;
 }
 
-// FUNCTION: CARMA2_HW 0x004910d0
 int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
     HKEY hKey;
     LSTATUS status;

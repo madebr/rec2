@@ -1,5 +1,14 @@
 #include "30-opponent.h"
 
+// GLOBAL: CARMA2_HW 0x0065a3cc
+float gOpponent_nastyness_frigger = 1.0f;
+
+// GLOBAL: CARMA2_HW 0x0074a684
+int gMinTimeOpponentRepair;
+
+// GLOBAL: CARMA2_HW 0x0074a688
+int gMaxTimeOpponentRepair;
+
 // DoNotDprintf
 
 // ProcessCurrentObjective

@@ -2,12 +2,20 @@
 #define GUARD_02_INIT_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 #include "brender/brender.h"
 
 extern int gBr_initialized;
-
 extern br_material* gDefault_track_material;
+extern float gCamera_angle;
+extern int gInitial_rank;
+extern int gStarting_money[3];
+extern int gNet_starting_money[8];
+extern int gCredits_per_rank[3];
+extern tSlot_info gInitial_APO[3];
+extern tSlot_info gInitial_APO_potential[3];
+extern tSlot_info gMax_APO[3];
 
 // Modify2DCopyPixelmaps
 

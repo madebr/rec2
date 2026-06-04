@@ -1,5 +1,23 @@
 #include "00-car.h"
 
+// GLOBAL: CARMA2_HW 0x00763500
+int gCunning_stunt_bonus[3];
+
+// GLOBAL: CARMA2_HW 0x0074d1c0
+float gArmour_starting_value[100];
+
+// GLOBAL: CARMA2_HW 0x00761f60
+float gPower_starting_value[100];
+
+// GLOBAL: CARMA2_HW 0x00761d40
+float gOffensive_starting_value[100];
+
+// GLOBAL: CARMA2_HW 0x0075ba20
+tFloat_bunch_info gCar_softness;
+
+// GLOBAL: CARMA2_HW 0x0074d600
+tFloat_bunch_info gCar_car_damage_multiplier;
+
 // DamageUnit
 
 // SwitchCarModel

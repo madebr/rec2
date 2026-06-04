@@ -1,7 +1,71 @@
 #include "10-loading2.h"
 
+#include "00-car.h"
+#include "02-init.h"
+#include "07-structur.h"
+#include "08-loading1.h"
+#include "13-crush1.h"
+#include "18-graphics2.h"
+#include "21-mainloop.h"
+#include "27-powerup.h"
+#include "30-opponent.h"
+#include "38-flicplay.h"
+#include "41-utility.h"
+#include "52-errors.h"
+#include "55-volume.h"
+#include "58-crush2.h"
+#include "59-camera.h"
+#include "70-packfile.h"
+#include "globvars.h"
+#include "rec2_macros.h"
+
+#include "c2_string.h"
+
+// GLOBAL: CARMA2_HW 0x0068c6ec
+FILE* gTempFile;
+
 // GLOBAL: CARMA2_HW 0x0068c718
 const char* gPedTextTxtPath;
+
+#define DECODE_OFFSET 50
+// GLOBAL: CARMA2_HW 0x00655e38
+char gDecode_string[14] = {
+    (char)('i' + DECODE_OFFSET),
+    (char)(' ' + DECODE_OFFSET),
+    (char)('a' + DECODE_OFFSET),
+    (char)('m' + DECODE_OFFSET),
+    (char)(' ' + DECODE_OFFSET),
+    (char)('f' + DECODE_OFFSET),
+    (char)('i' + DECODE_OFFSET),
+    (char)('d' + DECODE_OFFSET),
+    (char)('d' + DECODE_OFFSET),
+    (char)('l' + DECODE_OFFSET),
+    (char)('i' + DECODE_OFFSET),
+    (char)('n' + DECODE_OFFSET),
+    (char)('g' + DECODE_OFFSET),
+    '\0'
+};
+
+// GLOBAL: CARMA2_HW 0x0068c6f8
+char gUnderwater_screen_name[32];
+
+// GLOBAL: CARMA2_HW 0x00764ea0
+char gDefault_car[32];
+
+// GLOBAL: CARMA2_HW 0x00764ec0
+char gBasic_car_name[32];
+
+// GLOBAL: CARMA2_HW 0x007638c0
+int gNet_score_targets[8];
+
+// GLOBAL: CARMA2_HW 0x0074b58c
+int gDemo_race_rank_equivalent;
+
+// GLOBAL: CARMA2_HW 0x0074b4fc
+int gCount_demo_opponents;
+
+// GLOBAL: CARMA2_HW 0x0074b4c0
+int gDemo_opponents[15];
 
 // LoadInRegisteeDir
 
@@ -10,15 +74,315 @@ void C2_HOOK_FASTCALL LoadInRegistees(void) {
     NOT_IMPLEMENTED();
 }
 
-// LoadBunchOParameters
+void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info) {
+    char s[256];
+    const char *str;
+    int i;
 
-// LoadBunchOFloatParameters
+    /* (armour|power|offensive), single player, each skill level */
+    GetThreeInts(gTempFile, &pSlot_info->initial[0], &pSlot_info->initial[1], &pSlot_info->initial[2]);
+    /* (armour|power|offensive), each network game type */
+    GetALineAndDontArgue(gTempFile, s);
+    str = strtok(s, "\t ,/");
+    for (i = 0; i < (int)REC2_ASIZE(pSlot_info->initial_network); i++) {
+        sscanf(str, "%d", &pSlot_info->initial_network[i]);
+        str = strtok(NULL, "\t ,/");
+    }
+}
 
-// GetHithers
+void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch) {
+    char s[256];
+    const char *str;
+    int i;
 
-// STUB: CARMA2_HW 0x00486ef0
+    GetThreeFloats(gTempFile, &pBunch->initial[0], &pBunch->initial[1], &pBunch->initial[2]);
+    GetALineAndDontArgue(gTempFile, s);
+    str = strtok(s, "\t ,/");
+    for (i = 0; i < REC2_ASIZE(pBunch->initial_network); i++) {
+        sscanf(str, "%f", &pBunch->initial_network[i]);
+        str = strtok(NULL, "\t ,/");
+    }
+}
+
+void C2_HOOK_FASTCALL GetHithers(void) {
+    char s[256];
+    int result;
+    int position;
+
+    /* Hithers, general then cockpit mode */
+    GetALineAndDontArgue(gTempFile, s);
+    result = sscanf(&s[strspn(s, "\t ,")], "%f%n", &gCamera_hither, &position);
+    if (result == 0) {
+        FatalError(kFatalError_MysteriousX_SS, s, "GENERAL.TXT");
+    }
+    sscanf(&s[position + strspn(&s[position], "\t ,")], "%f", &gCamera_cockpit_hither);
+    gCamera_hither *= 2;
+    gCamera_cockpit_hither *= 2;
+}
+
+// FUNCTION: CARMA2_HW 0x00486ef0
 void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
-    NOT_IMPLEMENTED();
+    tPath_name the_path;
+    int i;
+    char* str;
+    char s[256];
+    br_scalar armour_mult, power_mult, offensive_mult;
+    int time;
+
+    PathCat(the_path, gApplication_path, "ACTORS");
+    PathCat(the_path, the_path, "PROG.ACT");
+
+    gTempFile = PFfopen(the_path, "rb");
+    if (gTempFile != NULL) {
+        PFfgets(s, REC2_ASIZE(s) - 1, gTempFile);
+        PFfclose(gTempFile);
+
+        for (i = 0; i < strlen(gDecode_string); i++) {
+            gDecode_string[i] -= DECODE_OFFSET;
+        }
+
+        // trim trailing CRLF etc
+        while (s[0] != '\0' && s[strlen(s) - 1] < 0x20) {
+            s[strlen(s) - 1] = 0;
+        }
+
+        if (strcmp(s, gDecode_string) == 0) {
+            gDecode_thing = 0;
+        }
+
+        for (i = 0; i < strlen(gDecode_string); i++) {
+            gDecode_string[i] += DECODE_OFFSET;
+        }
+    }
+    PathCat(the_path, gApplication_path, "GENERAL.TXT");
+    gTempFile = DRfopen(the_path, "rt");
+    if (gTempFile == NULL) {
+        FatalError(kFatalError_FailToOpenGeneralSettings);
+    }
+
+    /* Disable TIFF conversion */
+    gDisableTiffConversion = GetAnInt(gTempFile);
+
+    GetHithers();
+
+    /* Yon */
+    gCamera_yon = GetAFloat(gTempFile);
+    /* Camera angle */
+    gCamera_angle = GetAFloat(gTempFile);
+    /* Headup background brightness amount */
+    gDim_amount = GetAnInt(gTempFile);
+    /* Initial rank */
+    gInitial_rank = GetAnInt(gTempFile);
+    /* Credits per rank for each skill level */
+    GetThreeInts(gTempFile, &gCredits_per_rank[0], &gCredits_per_rank[1], &gCredits_per_rank[2]);
+
+    ReadCrushSettings(gTempFile);
+
+    /* Time per ped kill for each skill level */
+    GetThreeInts(gTempFile, &gTime_per_ped_kill[0], &gTime_per_ped_kill[1], &gTime_per_ped_kill[2]);
+    /* Seconds per unit car damage for each skill level (with peds */
+    GetThreeFloats(gTempFile, &gSeconds_per_unit_car_damage[0], &gSeconds_per_unit_car_damage[1], &gSeconds_per_unit_car_damage[2]);
+    /* Credits per unit car damage for each skill level (with peds) */
+    GetThreeFloats(gTempFile, &gCredits_per_unit_car_damage[0], &gCredits_per_unit_car_damage[1], &gCredits_per_unit_car_damage[2]);
+    /* Time awarded for wasting car for each skill level (with peds) */
+    GetThreeInts(gTempFile, &gTime_wasting_car[0], &gTime_wasting_car[1], &gTime_wasting_car[2]);
+    /* Credits awarded for wasting car for each skill level (with peds) */
+    GetThreeInts(gTempFile, &gCredits_wasting_car[0], &gCredits_wasting_car[1], &gCredits_wasting_car[2]);
+    /* Time awarded for rolling car for each skill level (with peds) */
+    GetThreeInts(gTempFile, &gTime_rolling_car[0], &gTime_rolling_car[1], &gTime_rolling_car[2]);
+    /* Credits awarded for rolling car for each skill level (with peds) */
+    GetThreeInts(gTempFile, &gCredits_rolling_car[0], &gCredits_rolling_car[1], &gCredits_rolling_car[2]);
+    /* Credits awarded for checkpoints for each skill level (with peds) */
+    GetThreeInts(gTempFile, &gCredits_checkpoint[0], &gCredits_checkpoint[1], &gCredits_checkpoint[2]);
+    /* Jump start fine for each level */
+    GetThreeInts(gTempFile, &gJump_start_fine[0], &gJump_start_fine[1], &gJump_start_fine[2]);
+    /* Credits per second of time bonus */
+    GetThreeInts(gTempFile, &gCredits_per_second_time_bonus[0], &gCredits_per_second_time_bonus[1], &gCredits_per_second_time_bonus[2]);
+    /* Cunning stunt bonus for each skill level */
+    GetThreeInts(gTempFile, &gCunning_stunt_bonus[0], &gCunning_stunt_bonus[1], &gCunning_stunt_bonus[2]);
+
+    /* Cars to use as defaults: */
+    GetAString(gTempFile, gDefault_car);
+    GetAString(gTempFile, gBasic_car_name);
+
+    gOpponent_nastyness_frigger = 1.0f;
+    gKnobbled_frame_period = 0;
+    /* Min time in secs after last contact with play before opponent considers repairing */
+    gMinTimeOpponentRepair = (int)GetAScalar(gTempFile);
+    /* Max time in secs after last contact with play before opponent considers repairing */
+    gMaxTimeOpponentRepair = (int)GetAScalar(gTempFile);
+
+    /* Default underwater special volume parameters */
+    ParseSpecialVolume(gTempFile, &gDefault_default_water_spec_vol, gUnderwater_screen_name, 0);
+
+    /* Initial armour, single player, each skill level */
+    /* Initial armour, each network game type */
+    LoadBunchOParameters(&gInitial_APO[0]);
+
+    /* Initial power, single player, each skill level */
+    /* Initial power, each network game type */
+    LoadBunchOParameters(&gInitial_APO[1]);
+
+    /* Initial offensive, single player, each skill level */
+    /* Initial offensive, each network game type */
+    LoadBunchOParameters(&gInitial_APO[2]);
+
+    /* Initial potential armour, single player, each skill level */
+    /* Initial potential armour, each network game type */
+    LoadBunchOParameters(&gInitial_APO_potential[0]);
+
+    /* Initial potential power, single player, each skill level */
+    /* Initial potential power, each network game type */
+    LoadBunchOParameters(&gInitial_APO_potential[1]);
+
+    /* Initial potential offensive, single player, each skill level */
+    /* Initial potential offensive, each network game type */
+    LoadBunchOParameters(&gInitial_APO_potential[2]);
+
+    /* Max armour, single player, each skill level */
+    /* Max armour, each network game type */
+    LoadBunchOParameters(&gMax_APO[0]);
+
+    /* Max power, single player, each skill level */
+    /* Max power, each network game type */
+    LoadBunchOParameters(&gMax_APO[1]);
+
+    /* Max offensive, single player, each skill level */
+    /* Max offensive, each network game type */
+    LoadBunchOParameters(&gMax_APO[2]);
+
+    /* APO cost, single player */
+    /* APO cost, each network game type */
+    LoadBunchOParameters(&gCost_APO);
+
+    /* Trade-in APO value, single player */
+    /* Trade-in APO value, each network game type */
+    LoadBunchOParameters(&gTrade_in_value_APO);
+
+    /* APO substitution value, single player */
+    /* APO substitution, each network game type */
+    LoadBunchOParameters(&gSubstitution_value_APO);
+
+    /* APO potential substitution value, single player */
+    /* APO potential substitution, each network game type */
+    LoadBunchOParameters(&gPotential_substitution_value_APO);
+
+    /* Armour starting value */
+    gArmour_starting_value[0] = GetAScalar(gTempFile);
+    /* Power starting value */
+    gPower_starting_value[0] = GetAScalar(gTempFile);
+    /* Offensive starting value */
+    gOffensive_starting_value[0] = GetAScalar(gTempFile);
+    /* Armour per-level multiplier */
+    armour_mult = GetAScalar(gTempFile);
+    /* Power per-level multiplier */
+    power_mult = GetAScalar(gTempFile);
+    /* Offensive per-level multiplier */
+    offensive_mult = GetAScalar(gTempFile);
+    for (i = 1; i < (int)REC2_ASIZE(gArmour_starting_value); i++) {
+        gArmour_starting_value[i] = gArmour_starting_value[i - 1] * armour_mult;
+        gPower_starting_value[i] = gPower_starting_value[i - 1] * power_mult;
+        gOffensive_starting_value[i] = gOffensive_starting_value[i - 1] * offensive_mult;
+    }
+
+    /* Powerup number to use when time powerup got during network game */
+    gNet_powerup_time_replacement = GetAnInt(gTempFile);
+
+    /* Starting money for each skill level */
+    GetThreeInts(gTempFile, &gStarting_money[0], &gStarting_money[1], &gStarting_money[2]);
+    /* Starting money in network mode */
+    GetALineAndDontArgue(gTempFile, s);
+    str = strtok(s, "\t ,/");
+#if defined(REC2_FIX_BUGS)
+    for (i = 0; i < (int)REC2_ASIZE(gNet_starting_money); i++) {
+#else
+    for (i = 0; i < 5; i++) {
+#endif
+        sscanf(str, "%d", &gNet_starting_money[i]);
+        str = strtok(NULL, "\t ,/");
+    }
+
+    /* Repair cost for each skill level (cred per % damage) */
+    /* Repair cost for each net game (cred per % damage) */
+    LoadBunchOFloatParameters(&gRepair_cost);
+
+    /* Recovery cost for each skill level */
+    /* Recovery cost for each net game type */
+    LoadBunchOFloatParameters(&gRecovery_cost);
+
+    /* Car softness factor for each net skill level */
+    /* Car softness factor for each net game type */
+    LoadBunchOFloatParameters(&gCar_softness);
+
+    /* Car-to-car damage multiplier for each net skill level */
+    /* Car-to-car damage multiplier for each net game type */
+    LoadBunchOFloatParameters(&gCar_car_damage_multiplier);
+
+    /* Score targets for each net game type */
+    GetALineAndDontArgue(gTempFile, s);
+    str = strtok(s, "\t ,/");
+    for (i = 0; i < (int)REC2_ASIZE(gNet_score_targets); i++) {
+        sscanf(str, "%d", &gNet_score_targets[i]);
+        str = strtok(NULL, "\t ,/");
+    }
+
+    /* Pickup respawn min time (seconds) */
+    gPickup_respawn_min_time_ms = 1000 * GetAnInt(gTempFile);
+    /* Pickup respawn max extra time (seconds) */
+    gPickup_respawn_max_extra_time_ms = 1000 * GetAnInt(gTempFile);
+
+    /* Demo race rank equivalent */
+    gDemo_race_rank_equivalent = GetAnInt(gTempFile);
+
+    /* Number of demo opponents */
+    gCount_demo_opponents = GetAnInt(gTempFile);
+    /* Demo opponents */
+    for (i = 0; (int)i < gCount_demo_opponents; i++) {
+        gDemo_opponents[i] = GetAnInt(gTempFile);
+    }
+
+    /* default Gravity Multiplier */
+    gDefault_gravity = GetAScalar(gTempFile);
+
+    /* Flic sound delays */
+    /* Delay (in seconds) before sound during pre-smack flic */
+    gFlic_sound_delay_pre_smack = GetAFloat(gTempFile);
+    /* Delay (in seconds) before sound during post-smack flic */
+    gFlic_sound_delay_post_smack = GetAFloat(gTempFile);
+    /* Delay (in seconds) before sound during 'not in demo' flic */
+    gFlic_sound_delay_not_in_demo = GetAFloat(gTempFile);
+    /* Delay (in seconds) before sound during post-demo slideshow flic */
+    gFlic_sound_delay_post_demo = GetAFloat(gTempFile);
+
+    /* Time (in seconds) that credits take before they reach the recovery
+     * amount when self-increasing (if starting at zero)
+     *
+     * First line is for single-player games, second is for each type of
+     * network game. Zero means don't tick up.
+     */
+    time = 1000 * GetAnInt(gTempFile);
+    for (i = 0; i < (int)REC2_ASIZE(gAuto_increase_credits_dt); i++) {
+        gAuto_increase_credits_dt[i] = (int)((float)time / (0.02f * (float)gRecovery_cost.initial[i]));
+    }
+    GetALineAndDontArgue(gTempFile, s);
+    str = strtok(s, "\t ,/");
+    for (i = 0; i < (int)REC2_ASIZE(gNet_score_targets); i++) {
+        int t;
+        sscanf(str, "%d", &t);
+        gNet_auto_increase_credits_dt[i] = (int)((float)(1000 * t) / (.02f * (float)gRecovery_cost.initial_network[i]));
+        str = strtok(NULL, "\t ,/");
+    }
+
+    /* Mutant tail thing settings */
+    /* Number of links including ball */
+    gCount_mutant_tail_parts = GetAnInt(gTempFile);
+    /* Mass of each link */
+    gMass_mutant_tail_link = GetAFloat(gTempFile);
+    /* Mass of ball */
+    gMass_mutant_tail_ball = GetAFloat(gTempFile);
+
+    /*  Mine / Mortar weight */
+    gMass_mine = GetAFloat(gTempFile);
 }
 
 // STUB: CARMA2_HW 0x00487dc0

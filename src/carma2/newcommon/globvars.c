@@ -129,7 +129,6 @@ int gAuto_load;
 // GLOBAL: CARMA2_HW 0x006aa5c4
 int gRussels_fannies;
 
-
 // GLOBAL: CARMA2_HW 0x00705220
 char gQuick_time_quality[32];
 
@@ -145,7 +144,6 @@ int gNet_last_game_type;
 
 // GLOBAL: CARMA2_HW 0x0075b9a4
 int gMap_view;
-
 
 // GLOBAL: CARMA2_HW 0x0074cadc
 int gScreen_lock_often;
@@ -396,7 +394,12 @@ tBrender_storage gNet_cars_storage_space;
 // GLOBAL: CARMA2_HW 0x0074d1a8
 float gGravity_multiplier;
 //float gCar_crush_wibble;
-//float gRepair_cost[3];
+
+// GLOBAL: CARMA2_HW 0x00761d00
+tFloat_bunch_info gRepair_cost;
+
+// GLOBAL: CARMA2_HW 0x007634c0
+tFloat_bunch_info gRecovery_cost;
 
 // GLOBAL: CARMA2_HW 0x0074d634
 float gCop_speed_factor;
@@ -406,7 +409,7 @@ float gDefault_gravity;
 
 // GLOBAL: CARMA2_HW 0x0074d350
 tU32 gKeys_pressed;
-//tSpecial_volume* gDefault_water_spec_vol;
+//tSpecial_volume* gDefault_default_water_spec_vol;
 //float gNet_repair_cost[7];
 
 // GLOBAL: CARMA2_HW 0x0079efb4

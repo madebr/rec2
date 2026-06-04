@@ -30,7 +30,6 @@ v11face bounds_faces[] = {
     { { 0, 2, 6 }, { 1, 6, 0 }, { { 0.0f, 0.0f, -1.0f, 1.0f } } },
 };
 
-
 // GLOBAL: CARMA2_HW 0x006ad4f0
 br_colour bounds_colours[12] = { 0 };
 
@@ -179,7 +178,6 @@ void C2_HOOK_STDCALL boundingBoxRenderPoints(br_actor* actor, br_model* model, b
 
 // FUNCTION: CARMA2_HW 0x00526270
 void C2_HOOK_STDCALL boundingBoxRenderEdges(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen) {
-
 
     renderEdges(actor, makeMeshFromBounds(&model->bounds), material, render_data, style, on_screen);
 }

@@ -6,6 +6,9 @@ int gNoTransients;
 // GLOBAL: CARMA2_HW 0x0074a674
 br_pixelmap* gRender_palette;
 
+// GLOBAL: CARMA2_HW 0x0079ec14
+int gDim_amount;
+
 // DRSetPaletteEntries
 
 // DRSetPalette3

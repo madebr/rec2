@@ -3,6 +3,11 @@
 
 #include "c2_hooks.h"
 
+extern float gFlic_sound_delay_pre_smack;
+extern float gFlic_sound_delay_post_smack;
+extern float gFlic_sound_delay_not_in_demo;
+extern float gFlic_sound_delay_post_demo;
+
 // TranslationMode
 
 // DontLetFlicFuckWithPalettes

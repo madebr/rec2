@@ -67,11 +67,17 @@ int gInitial_rank;
 // GLOBAL: CARMA2_HW 0x00762110
 int gStarting_money[3];
 
+// GLOBAL: CARMA2_HW 0x00762160
+int gNet_starting_money[8];
+
 // GLOBAL: CARMA2_HW 0x0074d4c0
 tSlot_info gInitial_APO[3];
 
 // GLOBAL: CARMA2_HW 0x007622a0
 tSlot_info gInitial_APO_potential[3];
+
+// GLOBAL: CARMA2_HW 0x0074cfa0
+tSlot_info gMax_APO[3];
 
 
 // Modify2DCopyPixelmaps

@@ -1,5 +1,8 @@
 #include "59-camera.h"
 
+// GLOBAL: CARMA2_HW 0x007634ac
+float gCamera_cockpit_hither;
+
 // DoCameraControls
 
 // FrozenCamera

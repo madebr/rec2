@@ -1,6 +1,8 @@
 #ifndef GUARD_59_CAMERA_H
 #define GUARD_59_CAMERA_H
 
+extern float gCamera_cockpit_hither;
+
 // DoCameraControls
 
 // FrozenCamera

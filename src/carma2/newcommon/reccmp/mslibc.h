@@ -507,4 +507,7 @@
 // LIBRARY: CARMA2_HW 0x005767d0
 // _strstr
 
+// LIBRARY: CARMA2_HW 0x00578430
+// _strspn
+
 #endif

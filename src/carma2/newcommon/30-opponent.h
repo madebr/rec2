@@ -1,6 +1,10 @@
 #ifndef GUARD_30_OPPONENT_H
 #define GUARD_30_OPPONENT_H
 
+extern float gOpponent_nastyness_frigger;
+extern int gMinTimeOpponentRepair;
+extern int gMaxTimeOpponentRepair;
+
 // DoNotDprintf
 
 // ProcessCurrentObjective

@@ -31,7 +31,7 @@ extern int gFlameThrowerOn;
 extern int gMinesOn;
 extern int gDronesOff;
 
-extern tSpecial_volume gDefault_water_spec_vol;
+extern tSpecial_volume gDefault_default_water_spec_vol;
 
 extern char* gPedsFolder;
 extern char* gPedSoundPath;
@@ -53,7 +53,7 @@ extern float gCamera_angle;
 extern const char* gWheel_actor_names[6];
 extern const char* gPivot_actor_names[6];
 extern float gMass_mine;
-extern tSpecial_volume gDefault_water_spec_vol;/* FIXME: rename to gDefault_default_water_spec_vol*/
+extern tSpecial_volume gDefault_default_water_spec_vol;/* FIXME: rename to gDefault_default_water_spec_vol*/
 extern tSpecial_volume* gDefault_water_spec_vol_real;
 extern int gFirst_drone_processing;
 extern tU32 gTime_stamp_for_this_munging;

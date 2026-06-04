@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 
+extern tSpecial_volume gDefault_default_water_spec_vol;
+
 // GetDefaultSpecialVolumeForWater
 
 // FindSpecialVolume

@@ -6,6 +6,39 @@ const char* gPowerup_txt_path;
 // GLOBAL: CARMA2_HW 0x007059e0
 tHeadup_icon gPickedup_powerups[5];
 
+// GLOBAL: CARMA2_HW 0x00763480
+tSlot_info gCost_APO;
+
+// GLOBAL: CARMA2_HW 0x0075b900
+tSlot_info gTrade_in_value_APO;
+
+// GLOBAL: CARMA2_HW 0x0074d380
+tSlot_info gSubstitution_value_APO;
+
+// GLOBAL: CARMA2_HW 0x00761c60
+tSlot_info gPotential_substitution_value_APO;
+
+// GLOBAL: CARMA2_HW 0x0074d1a4
+int gNet_powerup_time_replacement;
+
+// GLOBAL: CARMA2_HW 0x007447d8
+int gPickup_respawn_min_time_ms;
+
+// GLOBAL: CARMA2_HW 0x007447e8
+int gPickup_respawn_max_extra_time_ms;
+
+// GLOBAL: CARMA2_HW 0x007059c0
+int gCount_mutant_tail_parts;
+
+// GLOBAL: CARMA2_HW 0x00705b78
+float gMass_mutant_tail_link;
+
+// GLOBAL: CARMA2_HW 0x00705b74
+float gMass_mutant_tail_ball;
+
+// GLOBAL: CARMA2_HW 0x0065ebbc
+float gMass_mine = 1.0f;
+
 // GetNextGoodyTime
 
 // DoPowerupTextHeadup

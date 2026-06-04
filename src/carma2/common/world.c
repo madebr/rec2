@@ -3518,7 +3518,7 @@ void C2_HOOK_FASTCALL ReadSpecialVolumes(FILE* pF) {
     /* DEFAULT ENGINE NOISE */
     gDefault_engine_noise_index = GetAnInt(pF);
 
-    gDefault_water_spec_vol_real = &gDefault_water_spec_vol;
+    gDefault_water_spec_vol_real = &gDefault_default_water_spec_vol;
 
     /* # special effects volumes */
     gProgram_state.special_volume_count = GetAnInt(pF);
