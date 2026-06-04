@@ -68,7 +68,7 @@ extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_stora
 
 // AddModelToStorage
 
-// AddSoundToStorage
+tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pStorage_space, int pSound_id);
 
 // AddPixelmaps
 
@@ -78,7 +78,7 @@ extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_stora
 
 // LoadSingleMaterial
 
-// LoadSingleSound
+extern tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id);
 
 // AddShadeTables
 
