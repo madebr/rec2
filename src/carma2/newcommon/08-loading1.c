@@ -6,7 +6,8 @@
 #include "platform.h"
 #include "globvars.h"
 
-#include <string.h>
+#include <ctype.h>
+#include "c2_string.h"
 
 #ifdef REC2_MATCHING
 #include <windows.h>
@@ -65,7 +66,19 @@ tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
 
 // GetPairOfInts
 
-// GetThreeInts
+// FUNCTION: CARMA2_HW 0x0048fe30
+void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF3);
+}
 
 // GetFourInts
 
@@ -89,12 +102,74 @@ tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
 
 // SubsStringJob
 
-// STUB: CARMA2_HW 0x00490f30
-char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x00490f30
+char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
+    char* result;
+    size_t len;
+    char s[256];
+    int ch;
+
+    do {
+        result = PFfgets(s, sizeof(s), pF);
+        if (result == NULL) {
+            break;
+        }
+        while (*result == ' ' || *result == '\t') {
+            result++;
+        }
+
+        while (1) {
+            ch = PFfgetc(pF);
+            if (ch != '\r' && ch != '\n') {
+                break;
+            }
+        }
+        if (ch != -1) {
+            PFungetc(ch, pF);
+        }
+    } while (!isalnum(*result)
+             && *result != '*'
+             && *result != '-'
+             && *result != '+'
+             && *result != '.'
+             && *result != '!'
+             && *result != '&'
+             && *result != '}'
+             && *result != '{'
+             && *result != '~'
+             && *result != '('
+             && *result != '\''
+             && *result != '\"'
+             && (unsigned char)*result < 0x80);
+
+    if (result != NULL) {
+        len = strlen(result);
+        if (len > 0 && (result[len - 1] == '\n' || result[len - 1] == '\r')) {
+            result[len - 1] = '\0';
+            len--;
+        }
+        if (len > 0 && (result[len - 1] == '\n' || result[len - 1] == '\r')) {
+            result[len - 1] = '\0';
+            len--;
+        }
+        memcpy(pS, result, len + 1);
+#ifdef REC2_FIX_BUGS
+        return pS;
+#else
+        return result;
+#endif
+    }
+    pS[0] = '\0';
+    return result;
+
 }
 
-// GetALineAndDontArgue
+// FUNCTION: CARMA2_HW 0x00491090
+char * C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS) {
+
+    PossibleService();
+    return GetALineWithNoPossibleService(pF, pS);
+}
 
 FILE* OldDRfopen(const char* pFilename, const char* pMode) {
     FILE* fp;

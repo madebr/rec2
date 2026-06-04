@@ -6,6 +6,8 @@
 
 #include <stdio.h>
 
+extern int gDecode_thing;
+
 extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 // ReadF32
@@ -44,7 +46,7 @@ extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 // GetPairOfInts
 
-// GetThreeInts
+extern void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3);
 
 // GetFourInts
 
@@ -68,9 +70,9 @@ extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 // SubsStringJob
 
-extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
+char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
 
-// GetALineAndDontArgue
+char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS);
 
 extern FILE* OldDRfopen(const char* pFilename, const char* pMode);
 
