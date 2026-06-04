@@ -93,7 +93,17 @@ float C2_HOOK_FASTCALL GetAFloat(FILE* pF) {
     return f;
 }
 
-// GetPairOfFloats
+// FUNCTION: CARMA2_HW 0x0048fc20
+void C2_HOOK_FASTCALL GetPairOfFloats(FILE* pF, float* pF1, float* pF2) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+}
 
 // FUNCTION: CARMA2_HW 0x0048fc90
 void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* pF3) {
