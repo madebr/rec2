@@ -32,7 +32,7 @@ extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 // MemSkipBytes
 
-// GetALineAndInterpretCommand
+extern int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_list, int pCount);
 
 extern int C2_HOOK_FASTCALL GetAnInt(FILE* pF);
 

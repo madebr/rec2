@@ -52,7 +52,21 @@ tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
 
 // MemSkipBytes
 
-// GetALineAndInterpretCommand
+// FUNCTION: CARMA2_HW 0x0048fa70
+int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_list, int pCount) {
+    int i;
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    for (i = 0; i < pCount; i++) {
+        if (DRStricmp(str, pString_list[i]) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 // FUNCTION: CARMA2_HW 0x0048fb00
 int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
