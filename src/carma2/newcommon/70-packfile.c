@@ -234,8 +234,18 @@ int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
     NOT_IMPLEMENTED();
 }
 
-// PFrewind
+// FUNCTION: CARMA2_HW 0x004b4be0
+void C2_HOOK_FASTCALL PFrewind(FILE* pF) {
+    tTwatVfsFile* twtFile;
 
+    if ((int)pF >= REC2_ASIZE(gTwatVfsFiles)) {
+        rewind(pF);
+    } else {
+        twtFile = &gTwatVfsFiles[(uintptr_t)pF];
+        twtFile->pos = twtFile->start;
+        twtFile->error = 0;
+    }
+}
 // STUB: CARMA2_HW 0x004b4c10
 int C2_HOOK_FASTCALL PFfeof(FILE* pFile) {
     NOT_IMPLEMENTED();

@@ -34,7 +34,7 @@ extern br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsi
 
 extern int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence);
 
-// PFrewind
+extern void C2_HOOK_FASTCALL PFrewind(FILE* pF);
 
 extern int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
 
