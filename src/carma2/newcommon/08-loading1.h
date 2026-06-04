@@ -64,7 +64,7 @@ extern br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF);
 
 // GetThreeFloatPercents
 
-// GetAString
+extern void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 
 // StripCR
 

@@ -133,7 +133,16 @@ br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF) {
 
 // GetThreeFloatPercents
 
-// GetAString
+// FUNCTION: CARMA2_HW 0x00490630
+void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
+    char s[256];
+    char* str;
+
+    PossibleService();
+    GetALineWithNoPossibleService(pF, s);
+    str = strtok(s, "\t ,/");
+    strcpy(pString, str);
+}
 
 // StripCR
 
