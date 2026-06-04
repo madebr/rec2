@@ -1,8 +1,9 @@
 #include "69-sound.h"
 
-#include "52-errors.h"
 #include "08-loading1.h"
+#include "28-world3.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
@@ -65,6 +66,13 @@ int gRandom_CDA_tunes_2[4] = { 9604, 9605, 9606, 9607 };
 
 // GLOBAL: CARMA2_HW 0x00595c50
 int gLast_tune = -1;
+
+// GLOBAL: CARMA2_HW 0x00595c28
+const char* gSound_periodicity_choices[3] = {
+    "RANDOM",
+    "PERIODIC",
+    "CONTINUOUS",
+};
 
 // FUNCTION: CARMA2_HW 0x00500060
 void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size) {
@@ -255,7 +263,41 @@ void C2_HOOK_FASTCALL StopMusic(void) {
 
 // GetSoundDetailLevel
 
-// ReadSoundSpec
+// FUNCTION: CARMA2_HW 0x004569f0
+void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
+    int i;
+    float f1, f2;
+
+    pSpec->periodicity = GetALineAndInterpretCommand(pF, gSound_periodicity_choices, REC2_ASIZE(gSound_periodicity_choices));
+    if (pSpec->periodicity != kSoundFxPeriodicity_None) {
+        switch (pSpec->periodicity) {
+        case kSoundFxPeriodicity_Periodic:
+            f1 = GetAScalar(pF);
+            pSpec->periodic1 = (int)(1000.0f * f1);
+            break;
+        case kSoundFxPeriodicity_Random:
+            GetPairOfFloats(pF, &f1, &f2);
+            pSpec->periodic1 = (int)(1000.0f * f1);
+            pSpec->periodic2 = (int)(1000.0f * f2);
+            break;
+#ifdef REC2_FIX_BUGS
+        default:
+#endif
+        }
+        pSpec->field_0x14 = BR_FIXED_INT(GetAnInt(pF)) / 100;
+        pSpec->count_sound_alternatives = GetAnInt(pF);
+
+        C2_HOOK_BUG_ON(REC2_ASIZE(pSpec->sound_alternatives) != 5);
+        if (pSpec->count_sound_alternatives > (int)REC2_ASIZE(pSpec->sound_alternatives)) {
+            FatalError(kFatalError_TooManyEnvironmentalSoundAlternatives);
+        }
+        for (i = 0; i < pSpec->count_sound_alternatives; i++) {
+
+            pSpec->sound_alternatives[i] = LoadSingleSound(&gTrack_storage_space, GetAnInt(pF));
+        }
+        pSpec->field_0xc = 0;
+    }
+}
 
 // TryToSetEnvironmentalSound
 

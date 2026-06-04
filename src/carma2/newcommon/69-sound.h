@@ -1,10 +1,13 @@
 #ifndef GUARD_69_SOUND_H
 #define GUARD_69_SOUND_H
 
+#include "rec2_types.h"
 #include "brender/brender.h"
 #include "s3/s3.h"
 
 #include "c2_hooks.h"
+
+#include <stdio.h>
 
 extern int gCD_fully_installed;
 
@@ -70,7 +73,7 @@ extern void C2_HOOK_FASTCALL StopMusic(void);
 
 // GetSoundDetailLevel
 
-// ReadSoundSpec
+extern void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
 // TryToSetEnvironmentalSound
 
