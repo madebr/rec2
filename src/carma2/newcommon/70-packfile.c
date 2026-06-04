@@ -86,9 +86,14 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
 
 // ClosePackFile
 
-// STUB: CARMA2_HW 0x004b4760
+// FUNCTION: CARMA2_HW 0x004b4760
 void C2_HOOK_FASTCALL PFfclose(FILE* pFile) {
-    NOT_IMPLEMENTED();
+
+    if ((uintptr_t)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
+        fclose(pFile);
+    } else {
+        gTwatVfsFiles[(uintptr_t)pFile].start = NULL;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004b4780
