@@ -54,7 +54,17 @@ tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
 
 // GetALineAndInterpretCommand
 
-// GetAnInt
+// FUNCTION: CARMA2_HW 0x0048fb00
+int C2_HOOK_FASTCALL GetAnInt(FILE* pF) {
+    char s[256];
+    int value;
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", &value);
+    return value;
+}
 
 // GetAFloat
 

@@ -34,7 +34,7 @@ extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 // GetALineAndInterpretCommand
 
-// GetAnInt
+extern int C2_HOOK_FASTCALL GetAnInt(FILE* pF);
 
 // GetAFloat
 
