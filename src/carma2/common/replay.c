@@ -61,7 +61,7 @@ void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
         PathCat(gQuick_time_temp_path, gApplication_path, "QTTMP");
     }
     if (gQuick_time_movie_path_stub[0] == '\0') {
-        PathCat(gQuick_time_temp_path, gApplication_path, "MOVIE");
+        PathCat(gQuick_time_movie_path_stub, gApplication_path, "MOVIE");
     }
     if (gQuick_time_banner_texture_name[0] == '\0') {
         strcpy(gQuick_time_banner_texture_name, "ARBANNER.PIX");

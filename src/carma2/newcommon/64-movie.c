@@ -1,7 +1,12 @@
 #include "64-movie.h"
 
+#include "41-utility.h"
+#include "globvars.h"
+
 #include <QTML.h>
 #include <Movies.h>
+
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a0c24
 int gQuickTime_initialized;
@@ -14,6 +19,12 @@ char gQuick_time_movie_path_stub[256];
 
 // GLOBAL: CARMA2_HW 0x00705340
 char gQuick_time_banner_texture_name[256];
+
+// GLOBAL: CARMA2_HW 0x0065ee50
+char gDefault_quick_time_quality[] = "normal";
+
+// GLOBAL: CARMA2_HW 0x0065ed30
+char gDefault_quick_time_compressor[] = "animation";
 
 // Create555BELookupTable
 
@@ -51,9 +62,24 @@ void C2_HOOK_CDECL InitQuickTimeStuff(void) {
     gQuick_time_banner_texture_name[0] = '\0';
 }
 
-// STUB: CARMA2_HW 0x004e1740
+// FUNCTION: CARMA2_HW 0x004e1740
 void C2_HOOK_FASTCALL SetQuickTimeDefaults(void) {
-    NOT_IMPLEMENTED();
+
+    if (gQuick_time_quality[0] == '\0') {
+        strcpy(gQuick_time_quality, gDefault_quick_time_quality);
+    }
+    if (gQuick_time_compressor[0] == '\0') {
+        strcpy(gQuick_time_compressor, gDefault_quick_time_compressor);
+    }
+    if (gQuick_time_temp_path[0] == '\0') {
+        PathCat(gQuick_time_temp_path, gApplication_path, "QTTMP");
+    }
+    if (gQuick_time_movie_path_stub[0] == '\0') {
+        PathCat(gQuick_time_movie_path_stub, gApplication_path, "MOVIE");
+    }
+    if (gQuick_time_banner_texture_name[0] == '\0') {
+        strcpy(gQuick_time_banner_texture_name, "ARBANNER.PIX");
+    }
 }
 
 // MovieRecordButtonPressed
