@@ -14,6 +14,9 @@ tWobble_spec gWobble_array[5];
 // GLOBAL: CARMA2_HW 0x00705080
 float gCosine_array[64];
 
+// GLOBAL: CARMA2_HW 0x0065fdc8
+tShadow_level gShadow_level = eShadow_us_only;
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -22,9 +25,10 @@ float gCosine_array[64];
 
 // RenderShadows
 
-// STUB: CARMA2_HW 0x004e9940
+// FUNCTION: CARMA2_HW 0x004e9940
 void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel) {
-    NOT_IMPLEMENTED();
+
+    gShadow_level = pLevel;
 }
 
 // GetShadowLevel
