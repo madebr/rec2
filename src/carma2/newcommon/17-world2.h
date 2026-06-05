@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel)
 
 // DisposeTexturingMaterials
 
-// SetAccessoryRenderingCB
+extern intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag);
 
 extern void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn);
 

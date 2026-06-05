@@ -216,7 +216,14 @@ void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel) {
 
 // DisposeTexturingMaterials
 
-// SetAccessoryRenderingCB
+// FUNCTION: CARMA2_HW 0x00448ea0
+intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
+
+    if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
+        pActor->render_style = *(br_uint_8*)pFlag;
+    }
+    return 0;
+}
 
 // STUB: CARMA2_HW 0x00448ec0
 void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn) {
