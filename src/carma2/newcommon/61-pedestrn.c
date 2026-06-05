@@ -11,6 +11,9 @@ const char* gPedsFolder;
 // GLOBAL: CARMA2_HW 0x0065d7d4
 int gGoreLevel = 1;
 
+// GLOBAL: CARMA2_HW 0x0065d7c8
+int gAnimalsOn = 1;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix
@@ -374,9 +377,10 @@ void C2_HOOK_FASTCALL SetAlienPedFolderNames(void) {
 
 // IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells
 
-// STUB: CARMA2_HW 0x004d7000
+// FUNCTION: CARMA2_HW 0x004d7000
 void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {
-    NOT_IMPLEMENTED();
+
+    gAnimalsOn = pNewAnimalsOn;
 }
 
 // STUB: CARMA2_HW 0x004d7010
