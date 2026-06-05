@@ -14,6 +14,9 @@ int gGoreLevel = 1;
 // GLOBAL: CARMA2_HW 0x0065d7c8
 int gAnimalsOn = 1;
 
+// GLOBAL: CARMA2_HW 0x0065d7cc
+int gFlameThrowerOn = 1;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix
@@ -383,9 +386,10 @@ void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn) {
     gAnimalsOn = pNewAnimalsOn;
 }
 
-// STUB: CARMA2_HW 0x004d7010
+// FUNCTION: CARMA2_HW 0x004d7010
 void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn) {
-    NOT_IMPLEMENTED();
+
+    gFlameThrowerOn = pNewFlameThrowerOn;
 }
 
 // STUB: CARMA2_HW 0x004d7020
