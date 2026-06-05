@@ -74,7 +74,17 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 // GetFileLength
 
-// DRPixelmapAllocate
+// FUNCTION: CARMA2_HW 0x005137d0
+br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW, br_uint_16 pH, void* pPixels, int pFlags) {
+    br_pixelmap* pm;
+
+    pm = BrPixelmapAllocate(pType, pW, pH, pPixels, pFlags);
+    if (pm != NULL) {
+        pm->origin_x = 0;
+        pm->origin_y = 0;
+    }
+    return pm;
+}
 
 // DRPixelmapAllocateSub
 
