@@ -34,7 +34,7 @@ extern void C2_HOOK_FASTCALL RevealStoredTextures(tBrender_storage* pStorage);
 
 extern void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld);
 
-// GetCarTexturingLevel
+extern tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
 extern void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel);
 

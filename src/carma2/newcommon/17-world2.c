@@ -1,5 +1,10 @@
 #include "17-world2.h"
 
+#include "globvars.h"
+
+// GLOBAL: CARMA2_HW 0x00591374
+tCar_texturing_level gCar_texturing_level = eCTL_full;
+
 // InitialiseExtraRenders
 
 // AddExtraRender
@@ -150,9 +155,22 @@ void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tC
 
 // GetCarTexturingLevel
 
-// STUB: CARMA2_HW 0x00447650
+// FUNCTION: CARMA2_HW 0x00447650
 void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel) {
-    NOT_IMPLEMENTED();
+
+    if (gCar_texturing_level != pLevel) {
+        if (gOur_car_storage_space.models_count != 0) {
+            SetCarStorageTexturingLevel(&gOur_car_storage_space, pLevel, gCar_texturing_level);
+        }
+        if (gTheir_cars_storage_space.models_count != 0) {
+            SetCarStorageTexturingLevel(&gTheir_cars_storage_space, pLevel, gCar_texturing_level);
+        }
+        if (gNet_cars_storage_space.models_count != 0) {
+            // FIXME: wrong BRender storage?
+            SetCarStorageTexturingLevel(&gTheir_cars_storage_space, pLevel, gCar_texturing_level);
+        }
+    }
+    gCar_texturing_level = pLevel;
 }
 
 // HasThisSuffix
