@@ -41,7 +41,7 @@ int gPhysics_other_buffer_capacity;
 void* gPhysics_other_buffer;
 
 // GLOBAL: CARMA2_HW 0x006baa40
-tU8 gPhysics_buffer[299792];
+tU8 gTemporary_physics_render_buffer[300000];
 
 // GLOBAL: CARMA2_HW 0x006a0adc
 int gCollision_info_uid_counter;
@@ -171,9 +171,9 @@ void C2_HOOK_FASTCALL InitPhysics(void) {
     UNUSED();
 
     PhysicsSetErrorHandler(DoPhysicsError);
-    InitPhysicsWorkspace(gPhysics_buffer, sizeof(gPhysics_buffer));
+    InitPhysicsWorkspace(gTemporary_physics_render_buffer, sizeof(gTemporary_physics_render_buffer));
 
-    C2_HOOK_BUG_ON(sizeof(gPhysics_buffer) != 299792);
+    C2_HOOK_BUG_ON(sizeof(gTemporary_physics_render_buffer) != 300000);
 }
 
 // FUNCTION: CARMA2_HW 0x004b5cc0

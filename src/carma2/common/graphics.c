@@ -1324,7 +1324,7 @@ void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, i
         FatalError(kFatalError_AllocateZBuffer);
     }
 
-    BrZbsBegin(gRender_screen->type, gDepth_buffer->type, gPhysics_buffer, 300000); /* FIXME: use sizeof */
+    BrZbsBegin(gRender_screen->type, gDepth_buffer->type, gTemporary_physics_render_buffer, 300000); /* FIXME: use sizeof */
     gBrZb_initialized = 1;
     gRear_pixelmap = DRPixelmapAllocate(gScreen->type, 64, 64, NULL, 0);
     BrMapAdd(gRear_pixelmap);

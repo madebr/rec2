@@ -1,6 +1,7 @@
 #include "02-init.h"
 
 #include "09-funks.h"
+#include "16-graphics1.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "70-packfile.h"
@@ -16,12 +17,6 @@ int gDemo;
 
 // GLOBAL: CARMA2_HW 0x0074d354
 float gCamera_angle;
-
-// GLOBAL: CARMA2_HW 0x00703e24
-int gWidth;
-
-// GLOBAL: CARMA2_HW 0x00703e20
-int gHeight;
 
 // FUNCTION: CARMA2_HW 0x004815d0
 void C2_HOOK_FASTCALL CheckTimedDemo(void) {

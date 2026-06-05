@@ -5,6 +5,8 @@
 #include "rec2_types.h"
 
 extern int gRender_indent;
+extern int gWidth;
+extern int gHeight;
 
 // MungeClipPlane
 

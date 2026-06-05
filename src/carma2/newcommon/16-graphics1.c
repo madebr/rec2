@@ -1,9 +1,32 @@
 #include "16-graphics1.h"
 
+#include "02-init.h"
+#include "52-errors.h"
+#include "41-utility.h"
 #include "63-loading3.h"
 #include "brender/brender.h"
+#include "globvars.h"
+#include "platform.h"
 #include "rec2_types.h"
 #include "rec2_macros.h"
+
+// GLOBAL: CARMA2_HW 0x00703e24
+int gWidth;
+
+// GLOBAL: CARMA2_HW 0x00703e20
+int gHeight;
+
+// GLOBAL: CARMA2_HW 0x00705060
+int gX_offset;
+
+// GLOBAL: CARMA2_HW 0x006baa2c
+int gY_offset;
+
+// GLOBAL: CARMA2_HW 0x0068be30
+int gBrZb_initialized;
+
+// GLOBAL: CARMA2_HW 0x006a22bc
+br_pixelmap* gRear_pixelmap;
 
 // GLOBAL: CARMA2_HW 0x006a22b8
 br_pixelmap* gEvalu;
@@ -19,6 +42,9 @@ tShadow_level gShadow_level = eShadow_us_only;
 
 // GLOBAL: CARMA2_HW 0x0068be38
 int gRender_indent;
+
+// GLOBAL: CARMA2_HW 0x006baa40
+tU8 gTemporary_physics_render_buffer[300000];
 
 // MungeClipPlane
 
@@ -59,9 +85,48 @@ void C2_HOOK_FASTCALL InitShadow(void) {
 
 // SetupDepthBuffer
 
-// STUB: CARMA2_HW 0x004e4980
+// FUNCTION: CARMA2_HW 0x004e4980
 void C2_HOOK_FASTCALL SetBRenderScreenAndBuffers(int pX_offset, int pY_offset, int pWidth, int pHeight) {
-    NOT_IMPLEMENTED();
+
+    PDAllocateScreenAndBack();
+    if (pWidth == 0) {
+        pWidth = gBack_screen->width;
+    }
+    if (pHeight == 0) {
+        pHeight = gBack_screen->height;
+    }
+    gRender_screen = DRPixelmapAllocateSub(gBack_screen, pX_offset, pY_offset, pWidth, pHeight);
+    gWidth = pWidth;
+    gHeight = pHeight;
+    gX_offset = pX_offset;
+    gY_offset = pY_offset;
+    if (gGraf_specs[gGraf_spec_index].doubled) {
+        gScreen->base_x = (gGraf_specs[gGraf_spec_index].phys_width - 2 * gGraf_specs[gGraf_spec_index].total_width) / 2;
+        gScreen->base_y = (gGraf_specs[gGraf_spec_index].phys_height - 2 * gGraf_specs[gGraf_spec_index].total_height) / 2;
+    } else {
+        gScreen->base_x = (gGraf_specs[gGraf_spec_index].phys_width - gGraf_specs[gGraf_spec_index].total_width) / 2;
+        gScreen->base_y = (gGraf_specs[gGraf_spec_index].phys_height - gGraf_specs[gGraf_spec_index].total_height) / 2;
+    }
+
+    gScreen->origin_x = 0;
+    gScreen->origin_y = 0;
+    if (gBack_screen == NULL) {
+        FatalError(kFatalError_AllocateOffScreenBuffer);
+    }
+
+    if (gDepth_buffer != NULL) {
+        BrPixelmapFree(gDepth_buffer);
+        gDepth_buffer = NULL;
+    }
+    gDepth_buffer = BrPixelmapMatch(gBack_screen, BR_PMMATCH_DEPTH_16);
+    if (gDepth_buffer == NULL) {
+        FatalError(kFatalError_AllocateZBuffer);
+    }
+
+    BrZbsBegin(gRender_screen->type, gDepth_buffer->type, gTemporary_physics_render_buffer, sizeof(gTemporary_physics_render_buffer));
+    gBrZb_initialized = 1;
+    gRear_pixelmap = DRPixelmapAllocate(gScreen->type, 64, 64, NULL, 0);
+    BrMapAdd(gRear_pixelmap);
 }
 
 // AdjustRenderScreenSize

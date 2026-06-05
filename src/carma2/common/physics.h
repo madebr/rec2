@@ -11,7 +11,7 @@ extern void* gPhysics_buffer2_ptr;
 extern void* gPhysics_buffer3_ptr;
 extern int gPhysics_other_buffer_capacity;
 extern void* gPhysics_other_buffer;
-extern tU8 gPhysics_buffer[299792];
+extern tU8 gTemporary_physics_render_buffer[300000];
 extern int gCollision_info_uid_counter;
 extern int gPHIL_enabled;
 extern int gFace_num__car;
