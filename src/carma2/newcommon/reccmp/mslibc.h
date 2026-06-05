@@ -172,7 +172,7 @@
 // ftell
 
 // LIBRARY: CARMA2_HW 0x00576ec0
-// fseek
+// _fseek
 
 // LIBRARY: CARMA2_HW 0x005770e0
 // _rewind
