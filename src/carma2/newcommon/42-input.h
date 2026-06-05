@@ -3,6 +3,8 @@
 
 #include "c2_hooks.h"
 
+extern int gKey_mapping[77];
+
 // SetJoystickArrays
 
 // PollKeys

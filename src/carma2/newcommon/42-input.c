@@ -1,5 +1,8 @@
 #include "42-input.h"
 
+// GLOBAL: CARMA2_HW 0x0074b5e0
+int gKey_mapping[77];
+
 // SetJoystickArrays
 
 // PollKeys

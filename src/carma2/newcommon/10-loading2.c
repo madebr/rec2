@@ -18,6 +18,7 @@
 #include "37-brucetrk.h"
 #include "38-flicplay.h"
 #include "41-utility.h"
+#include "42-input.h"
 #include "52-errors.h"
 #include "53-controls.h"
 #include "55-volume.h"
@@ -410,9 +411,23 @@ void C2_HOOK_FASTCALL FinishLoadingGeneral(void) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x00487e10
+// FUNCTION: CARMA2_HW 0x00487e10
 void C2_HOOK_FASTCALL LoadKeyMapping(void) {
-    NOT_IMPLEMENTED();
+    FILE* f;
+    tPath_name the_path;
+    int i;
+
+    PathCat(the_path, gApplication_path, "KEYMAP_X.TXT");
+    the_path[strlen(the_path) - 5] = '0' + gKey_map_index;
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CouldNotOpenKeyMapFile);
+    }
+
+    for (i = 0; i < (int)REC2_ASIZE(gKey_mapping); i++) {
+        fscanf((FILE*)f, "%d", &gKey_mapping[i]);
+    }
+    PFfclose(f);
 }
 
 // LoadInterfaceStuff
