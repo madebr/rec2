@@ -8,9 +8,9 @@
 
 // CalculateWrappingMultiplier
 
-// DepthCueingShiftToDistance
+extern br_scalar C2_HOOK_FASTCALL DepthCueingShiftToDistance(int pDistance);
 
-// FogAccordingToGPSCDE
+extern void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial);
 
 // FogCars
 

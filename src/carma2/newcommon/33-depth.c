@@ -18,9 +18,50 @@ br_model* gForward_sky_model;
 
 // CalculateWrappingMultiplier
 
-// DepthCueingShiftToDistance
+br_scalar C2_HOOK_FASTCALL DepthCueingShiftToDistance(int pDistance) {
 
-// FogAccordingToGPSCDE
+    return (br_scalar)gCamera_yon * pow(10.0, 0.1 * (double)pDistance);
+}
+
+// FUNCTION: CARMA2_HW 0x004451a0
+void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial) {
+    int start;
+    int end;
+    int red;
+    int green;
+    int blue;
+
+    red = gProgram_state.current_depth_effect.colour.red;
+    green = gProgram_state.current_depth_effect.colour.green;
+    blue = gProgram_state.current_depth_effect.colour.blue;
+    start = gProgram_state.current_depth_effect.start;
+    end = gProgram_state.current_depth_effect.end;
+
+    switch (gProgram_state.current_depth_effect.type) {
+    case eDepth_effect_none:
+        pMaterial->flags &= ~BR_MATF_FOG_LOCAL;
+        break;
+    case eDepth_effect_darkness:
+        pMaterial->fog_min = DepthCueingShiftToDistance(-start);
+        pMaterial->fog_max = DepthCueingShiftToDistance(end);
+        pMaterial->fog_colour = 0;
+        pMaterial->flags |= BR_MATF_FOG_LOCAL;
+        break;
+    case eDepth_effect_fog:
+        pMaterial->fog_min = DepthCueingShiftToDistance(-start);
+        pMaterial->fog_max = DepthCueingShiftToDistance(end);
+        pMaterial->fog_colour = BR_COLOUR_RGB(0xf8, 0xf8, 0xf8);
+        pMaterial->flags |= BR_MATF_FOG_LOCAL;
+        break;
+    case eDepth_effect_colour:
+        pMaterial->fog_min = DepthCueingShiftToDistance(-start);
+        pMaterial->fog_max = DepthCueingShiftToDistance(end);
+        pMaterial->fog_colour = BR_COLOUR_RGB(red, green, blue);
+        pMaterial->flags |= BR_MATF_FOG_LOCAL;
+        break;
+    }
+    BrMaterialUpdate(pMaterial, BR_MATU_ALL);
+}
 
 // FogCars
 
