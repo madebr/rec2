@@ -3,6 +3,9 @@
 // GLOBAL: CARMA2_HW 0x00655e60
 br_scalar gYon_factor = 0.25f;
 
+// GLOBAL: CARMA2_HW 0x0074b74c
+br_material* gDefault_track_material;
+
 // AssertNoncars
 
 // AllocateActorMatrix

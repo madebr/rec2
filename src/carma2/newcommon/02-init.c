@@ -19,6 +19,7 @@
 #include "29-raycast.h"
 #include "32-spark.h"
 #include "33-depth.h"
+#include "37-brucetrk.h"
 #include "38-flicplay.h"
 #include "39-oil.h"
 #include "41-utility.h"
@@ -51,9 +52,6 @@ int gBr_initialized;
 
 // GLOBAL: CARMA2_HW 0x0068be34
 int gInitialisation_finished;
-
-// GLOBAL: CARMA2_HW 0x0074b74c
-br_material* gDefault_track_material;
 
 // GLOBAL: CARMA2_HW 0x0068be24
 tU32 gAustere_time;

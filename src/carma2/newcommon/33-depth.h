@@ -3,6 +3,7 @@
 
 #include "c2_hooks.h"
 #include "brender/brender.h"
+#include "rec2_types.h"
 
 // Log2
 
@@ -12,13 +13,13 @@ extern br_scalar C2_HOOK_FASTCALL DepthCueingShiftToDistance(int pDistance);
 
 extern void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial);
 
-// FogCars
+extern void C2_HOOK_FASTCALL FogCars(void);
 
-// FrobFog
+// extern void C2_HOOK_FASTCALL FrobFog(void);
 
 extern void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial);
 
-// InstantDepthChange
+extern void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8);
 
 // Tan
 

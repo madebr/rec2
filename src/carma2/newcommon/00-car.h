@@ -14,7 +14,7 @@ extern tFloat_bunch_info gCar_car_damage_multiplier;
 
 // SwitchCarModel
 
-// SwitchCarModels
+extern void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex);
 
 // InitialiseCar2
 

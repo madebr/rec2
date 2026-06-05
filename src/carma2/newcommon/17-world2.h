@@ -70,7 +70,7 @@ extern void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
 // GetCarSimplificationLevel
 
-// ProcessMaterials
+extern intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallback);
 
 // BuildColourTable
 

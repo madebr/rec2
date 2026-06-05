@@ -229,7 +229,10 @@ void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {
 
 // GetCarSimplificationLevel
 
-// ProcessMaterials
+// STUB: CARMA2_HW 0x00448f90
+intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallback) {
+    NOT_IMPLEMENTED();
+}
 
 // BuildColourTable
 

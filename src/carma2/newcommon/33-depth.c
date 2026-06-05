@@ -1,6 +1,10 @@
 #include "33-depth.h"
 
+#include "00-car.h"
+#include "17-world2.h"
+#include "37-brucetrk.h"
 #include "globvars.h"
+#include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x00591188
 int gSky_on = 1;
@@ -13,6 +17,11 @@ br_material* gHorizon_material;
 
 // GLOBAL: CARMA2_HW 0x0067c4a0
 br_model* gForward_sky_model;
+
+// GLOBAL: CARMA2_HW 0x0074cee8
+br_material* gMaterial[2];
+
+static void C2_HOOK_FASTCALL FrobFog(void);
 
 // Log2
 
@@ -63,10 +72,51 @@ void C2_HOOK_FASTCALL FogAccordingToGPSCDE(br_material* pMaterial) {
     BrMaterialUpdate(pMaterial, BR_MATU_ALL);
 }
 
-// FogCars
+void C2_HOOK_FASTCALL FogCars(void) {
+    int i;
 
-// FrobFog
+    for (i = 0; i < gCurrent_race.number_of_racers; i++) {
+        int j;
+        tCar_spec* car = gCurrent_race.opponent_list[i].car_spec;
 
+        for (j = 0; j < car->count_detail_levels; j++) {
+            SwitchCarModels(car, j);
+            ProcessMaterials(car->car_model_actor, FogAccordingToGPSCDE);
+        }
+        SwitchCarModels(car, 0);
+    }
+}
+
+void C2_HOOK_FASTCALL FrobFog(void) {
+    int i;
+    br_material* material;
+
+    if (gTrack_actor != NULL) {
+        ProcessMaterials(gTrack_actor, FogAccordingToGPSCDE);
+    }
+    if (gNon_track_actor != NULL) {
+        ProcessMaterials(gNon_track_actor, FogAccordingToGPSCDE);
+    }
+    FogCars();
+
+    material = BrMaterialFind("GIBSLICK");
+    if (material != NULL) {
+        FogAccordingToGPSCDE(material);
+    }
+    material = BrMaterialFind("PEDSMEAR");
+    if (material != NULL) {
+        FogAccordingToGPSCDE(material);
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gMaterial); i++) {
+        FogAccordingToGPSCDE(gMaterial[i]);
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gCurrent_race.material_modifiers); i++) {
+        if (gCurrent_race.material_modifiers[i].skid_mark_material != NULL) {
+            FogAccordingToGPSCDE(gCurrent_race.material_modifiers[i].skid_mark_material);
+        }
+    }
+    FogAccordingToGPSCDE(gDefault_track_material);
+}
 
 // FUNCTION: CARMA2_HW 0x00445500
 void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial) {
@@ -104,7 +154,38 @@ void C2_HOOK_FASTCALL MungeSkyVs(br_model* pModel, br_material* pMaterial) {
     }
 }
 
-// InstantDepthChange
+// FUNCTION: CARMA2_HW 0x00445340
+void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* pSky_texture, int pStart, int pEnd, int pRed, int pGreen, int pBlue, int pParam_8) {
+
+    if (pType == eDepth_effect_none) {
+        pStart = 3;
+        pEnd = 3;
+    }
+    gProgram_state.current_depth_effect.sky_texture = pSky_texture;
+
+    gHorizon_material->colour_map = pSky_texture;
+    BrMaterialUpdate(gHorizon_material, BR_MATU_ALL);
+    MungeSkyVs(gForward_sky_model, gHorizon_material);
+
+    gProgram_state.current_depth_effect.colour.red = pRed;
+    gProgram_state.current_depth_effect.colour.green = pGreen;
+    gProgram_state.current_depth_effect.colour.blue = pBlue;
+
+    gProgram_state.default_depth_effect.colour.red = pRed;
+    gProgram_state.default_depth_effect.colour.green = pGreen;
+    gProgram_state.default_depth_effect.colour.blue = pBlue;
+
+    gProgram_state.current_depth_effect.type = pType;
+    gProgram_state.current_depth_effect.start = pStart;
+    gProgram_state.current_depth_effect.end = pEnd;
+
+    gProgram_state.default_depth_effect.type = pType;
+    gProgram_state.default_depth_effect.start = pStart;
+    gProgram_state.default_depth_effect.end = pEnd;
+    if (gNo_fog && pParam_8) {
+        FrobFog();
+    }
+}
 
 // Tan
 

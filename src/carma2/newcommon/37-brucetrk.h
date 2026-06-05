@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "brender/brender.h"
 
+extern br_material* gDefault_track_material;
+
 // AssertNoncars
 
 // AllocateActorMatrix

@@ -7,7 +7,6 @@
 #include "brender/brender.h"
 
 extern int gBr_initialized;
-extern br_material* gDefault_track_material;
 extern float gCamera_angle;
 extern int gInitial_rank;
 extern int gStarting_money[3];

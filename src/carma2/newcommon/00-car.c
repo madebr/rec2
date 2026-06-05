@@ -22,7 +22,10 @@ tFloat_bunch_info gCar_car_damage_multiplier;
 
 // SwitchCarModel
 
-// SwitchCarModels
+// STUB: CARMA2_HW 0x00413f40
+void C2_HOOK_FASTCALL SwitchCarModels(tCar_spec* pCar, int pIndex) {
+    NOT_IMPLEMENTED();
+}
 
 // InitialiseCar2
 
