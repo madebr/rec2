@@ -127,7 +127,7 @@
 
 // GetNewCrushyModelForDrone
 
-extern void C2_HOOK_FASTCALL SetTrafficOn(int pNewDronesOn);
+extern void C2_HOOK_FASTCALL SetTrafficOn(int pTraffic_on);
 
 // OtherPerambulatoryInstasificationIsEnablificated
 

@@ -1,5 +1,8 @@
 #include "57-drone.h"
 
+// GLOBAL: CARMA2_HW 0x00684518
+int gTraffic_disabled;
+
 // DoNotDprintf
 
 // CrappyLittleVector3DPrintf
@@ -124,10 +127,10 @@
 
 // GetNewCrushyModelForDrone
 
+// FUNCTION: CARMA2_HW 0x0044ecf0
+void C2_HOOK_FASTCALL SetTrafficOn(int pTraffic_on) {
 
-// STUB: CARMA2_HW 0x0044ecf0
-void C2_HOOK_FASTCALL SetTrafficOn(int pNewDronesOn) {
-    NOT_IMPLEMENTED();
+    gTraffic_disabled = !pTraffic_on;
 }
 
 // OtherPerambulatoryInstasificationIsEnablificated

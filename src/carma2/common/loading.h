@@ -29,7 +29,7 @@ extern int gGoreLevel;
 extern int gAnimalsOn;
 extern int gFlameThrowerOn;
 extern int gExplosives_on;
-extern int gDronesOff;
+extern int gTraffic_disabled;
 
 extern tSpecial_volume gDefault_default_water_spec_vol;
 
@@ -149,7 +149,7 @@ void C2_HOOK_FASTCALL SetExplosivesOn(int pExplosives_on);
 
 int C2_HOOK_FASTCALL GetDronesOn(void);
 
-void C2_HOOK_FASTCALL SetTrafficOn(int pNewDronesOn);
+void C2_HOOK_FASTCALL SetTrafficOn(int pTraffic_on);
 
 void C2_HOOK_FASTCALL StripCRNL(char* line);
 

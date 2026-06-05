@@ -128,7 +128,7 @@ int gFlameThrowerOn = 1;
 int gExplosives_on = 1;
 
 // GLOBAL: CARMA2_HW 0x00684518
-int gDronesOff;
+int gTraffic_disabled;
 
 
 // GLOBAL: CARMA2_HW 0x0074a684
@@ -661,13 +661,13 @@ void C2_HOOK_FASTCALL SetExplosivesOn(int pExplosives_on) {
 // FUNCTION: CARMA2_HW 0x0044ed00
 int C2_HOOK_FASTCALL GetDronesOn(void) {
 
-    return !gDronesOff;
+    return !gTraffic_disabled;
 }
 
 // FUNCTION: CARMA2_HW 0x0044ecf0
-void C2_HOOK_FASTCALL SetTrafficOn(int pNewDronesOn) {
+void C2_HOOK_FASTCALL SetTrafficOn(int pTraffic_on) {
 
-    gDronesOff = !pNewDronesOn;
+    gTraffic_disabled = !pTraffic_on;
 }
 
 // FUNCTION: CARMA2_HW 0x00490690

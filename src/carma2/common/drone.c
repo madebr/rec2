@@ -213,7 +213,7 @@ void C2_HOOK_FASTCALL LoadInDronePaths(FILE* pF) {
     }
     gCount_drones = 0;
     gCount_drone_path_nodes = 0;
-    if (gNet_mode == eNet_mode_none && !gDronesOff) {
+    if (gNet_mode == eNet_mode_none && !gTraffic_disabled) {
         int version;
 
         /* version */
