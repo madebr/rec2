@@ -339,7 +339,7 @@ void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
     temp_start = gProgram_state.current_depth_effect.start;
     temp_end = gProgram_state.current_depth_effect.end;
     temp_type = gProgram_state.current_depth_effect.type;
-    temp_red = gProgram_state.current_depth_effect.colour.blue;
+    temp_red = gProgram_state.current_depth_effect.colour.red;
     temp_green = gProgram_state.current_depth_effect.colour.green;
     temp_blue = gProgram_state.current_depth_effect.colour.blue;
     InstantDepthChange(

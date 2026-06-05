@@ -73,7 +73,7 @@ extern void C2_HOOK_FASTCALL ToggleSkyQuietly(void);
 
 extern void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn);
 
-// ToggleDepthCueingQuietly
+extern void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void);
 
 // ToggleDepthCueing
 

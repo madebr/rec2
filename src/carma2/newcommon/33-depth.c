@@ -21,6 +21,24 @@ br_model* gForward_sky_model;
 // GLOBAL: CARMA2_HW 0x0074cee8
 br_material* gMaterial[2];
 
+// GLOBAL: CARMA2_HW 0x00591190
+tDepth_effect_type gSwap_depth_effect_type = eDepth_effect_none;
+
+// GLOBAL: CARMA2_HW 0x0079ec4c
+int gSwap_depth_effect_start;
+
+// GLOBAL: CARMA2_HW 0x0079ec48
+int gSwap_depth_effect_end;
+
+// GLOBAL: CARMA2_HW 0x0079ec34
+int gSwap_depth_effect_colour_blue;
+
+// GLOBAL: CARMA2_HW 0x0079ec3c
+int gSwap_depth_effect_colour_red;
+
+// GLOBAL: CARMA2_HW 0x0079ec40
+int gSwap_depth_effect_colour_green;
+
 static void C2_HOOK_FASTCALL FrobFog(void);
 
 // Log2
@@ -268,7 +286,37 @@ void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn) {
     NOT_IMPLEMENTED();
 }
 
-// ToggleDepthCueingQuietly
+// FUNCTION: CARMA2_HW 0x00447070
+void C2_HOOK_FASTCALL ToggleDepthCueingQuietly(void) {
+    int temp_red;
+    int temp_green;
+    int temp_blue;
+    int temp_end;
+    int temp_start;
+    tDepth_effect_type temp_type;
+
+    temp_start = gProgram_state.current_depth_effect.start;
+    temp_end = gProgram_state.current_depth_effect.end;
+    temp_type = gProgram_state.current_depth_effect.type;
+    temp_red = gProgram_state.current_depth_effect.colour.red;
+    temp_green = gProgram_state.current_depth_effect.colour.green;
+    temp_blue = gProgram_state.current_depth_effect.colour.blue;
+    InstantDepthChange(
+        gSwap_depth_effect_type,
+        gProgram_state.current_depth_effect.sky_texture,
+        gSwap_depth_effect_start,
+        gSwap_depth_effect_end,
+        gSwap_depth_effect_colour_red,
+        gSwap_depth_effect_colour_green,
+        gSwap_depth_effect_colour_blue,
+        gProgram_state.racing);
+    gSwap_depth_effect_start = temp_start;
+    gSwap_depth_effect_end = temp_end;
+    gSwap_depth_effect_type = temp_type;
+    gSwap_depth_effect_colour_red = temp_red;
+    gSwap_depth_effect_colour_green = temp_green;
+    gSwap_depth_effect_colour_blue = temp_blue;
+}
 
 // ToggleDepthCueing
 
