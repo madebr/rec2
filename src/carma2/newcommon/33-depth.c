@@ -4,6 +4,7 @@
 #include "17-world2.h"
 #include "37-brucetrk.h"
 #include "globvars.h"
+#include "globvrkm.h"
 #include "rec2_macros.h"
 
 // GLOBAL: CARMA2_HW 0x00591188
@@ -247,9 +248,22 @@ void C2_HOOK_FASTCALL InitDepthEffects(void) {
 
 // DecreaseYon
 
-// STUB: CARMA2_HW 0x00446b70
+// FUNCTION: CARMA2_HW 0x00446b70
 void C2_HOOK_STDCALL SetYon(br_scalar pYon) {
-    NOT_IMPLEMENTED();
+    int i;
+    br_camera* camera_ptr;
+
+    if (pYon < 5.0f) {
+        pYon = 5.0f;
+    }
+
+    for (i = 0; i < REC2_ASIZE(gCamera_list); i++) {
+        if (gCamera_list[i] != NULL) {
+            camera_ptr = gCamera_list[i]->type_data;
+            camera_ptr->yon_z = pYon;
+        }
+    }
+    gCamera_yon = pYon;
 }
 
 // GetYon
