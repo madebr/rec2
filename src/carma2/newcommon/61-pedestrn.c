@@ -17,6 +17,9 @@ int gAnimalsOn = 1;
 // GLOBAL: CARMA2_HW 0x0065d7cc
 int gFlameThrowerOn = 1;
 
+// GLOBAL: CARMA2_HW 0x0065d7d0
+int gExplosives_on = 1;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix
@@ -392,9 +395,10 @@ void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn) {
     gFlameThrowerOn = pNewFlameThrowerOn;
 }
 
-// STUB: CARMA2_HW 0x004d7020
-void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x004d7020
+void C2_HOOK_FASTCALL SetExplosivesOn(int pExplosives_on) {
+
+    gExplosives_on = pExplosives_on;
 }
 
 // FUNCTION: CARMA2_HW 0x004d7030

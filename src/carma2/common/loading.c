@@ -125,7 +125,7 @@ int gAnimalsOn = 1;
 int gFlameThrowerOn = 1;
 
 // GLOBAL: CARMA2_HW 0x0065d7d0
-int gMinesOn = 1;
+int gExplosives_on = 1;
 
 // GLOBAL: CARMA2_HW 0x00684518
 int gDronesOff;
@@ -649,13 +649,13 @@ void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn) {
 // FUNCTION: CARMA2_HW 0x004d6ff0
 int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void) {
 
-    return gMinesOn;
+    return gExplosives_on;
 }
 
 // FUNCTION: CARMA2_HW 0x004d7020
-void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn) {
+void C2_HOOK_FASTCALL SetExplosivesOn(int pExplosives_on) {
 
-    gMinesOn = pNewMinesOn;
+    gExplosives_on = pExplosives_on;
 }
 
 // FUNCTION: CARMA2_HW 0x0044ed00

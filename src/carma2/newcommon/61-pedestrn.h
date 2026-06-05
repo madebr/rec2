@@ -351,7 +351,7 @@ extern void C2_HOOK_FASTCALL SetAnimalsOn(int pNewAnimalsOn);
 
 extern void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn);
 
-extern void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn);
+extern void C2_HOOK_FASTCALL SetExplosivesOn(int pExplosives_on);
 
 extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 

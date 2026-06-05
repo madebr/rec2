@@ -28,7 +28,7 @@ extern char gBasic_car_name[32];
 extern int gGoreLevel;
 extern int gAnimalsOn;
 extern int gFlameThrowerOn;
-extern int gMinesOn;
+extern int gExplosives_on;
 extern int gDronesOff;
 
 extern tSpecial_volume gDefault_default_water_spec_vol;
@@ -145,7 +145,7 @@ void C2_HOOK_FASTCALL SetFlameThrowerOn(int pNewFlameThrowerOn);
 
 int C2_HOOK_FASTCALL IsItReallyOKThatWeDontMakeAnyEffortToProtectAnySadFuckersOutThereThatDontWishToSeeInnocentPeopleBlownToBitsByHighExplosiveMinesAndShells(void);
 
-void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn);
+void C2_HOOK_FASTCALL SetExplosivesOn(int pExplosives_on);
 
 int C2_HOOK_FASTCALL GetDronesOn(void);
 
