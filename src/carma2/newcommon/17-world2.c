@@ -153,10 +153,14 @@ void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tC
     }
 }
 
-// GetCarTexturingLevel
+// FUNCTION: CARMA2_HW 0x00447640
+tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
+
+    return gCar_texturing_level;
+}
 
 // FUNCTION: CARMA2_HW 0x00447650
-void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel) {
+    void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel) {
 
     if (gCar_texturing_level != pLevel) {
         if (gOur_car_storage_space.models_count != 0) {
