@@ -5,6 +5,9 @@
 // GLOBAL: CARMA2_HW 0x00591374
 tCar_texturing_level gCar_texturing_level = eCTL_full;
 
+// GLOBAL: CARMA2_HW 0x0059136c
+tRoad_texturing_level gRoad_texturing_level = eRTL_full;
+
 // InitialiseExtraRenders
 
 // AddExtraRender
@@ -189,9 +192,10 @@ tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 
 // GetRoadTexturingLevel
 
-// STUB: CARMA2_HW 0x00448780
+// FUNCTION: CARMA2_HW 0x00448780
 void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel) {
-    NOT_IMPLEMENTED();
+
+    gRoad_texturing_level = pLevel;
 }
 
 // GetWallTexturingLevel
