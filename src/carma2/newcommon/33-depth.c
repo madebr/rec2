@@ -21,6 +21,9 @@ br_model* gForward_sky_model;
 // GLOBAL: CARMA2_HW 0x0074cee8
 br_material* gMaterial[2];
 
+// GLOBAL: CARMA2_HW 0x0059118c
+int gDepth_cueing_on = 1;
+
 // GLOBAL: CARMA2_HW 0x00591190
 tDepth_effect_type gSwap_depth_effect_type = eDepth_effect_none;
 
@@ -281,9 +284,13 @@ void C2_HOOK_FASTCALL ToggleSkyQuietly(void) {
 
 // GetDepthCueingOn
 
-// STUB: CARMA2_HW 0x00446fa0
+// FUNCTION: CARMA2_HW 0x00446fa0
 void C2_HOOK_FASTCALL SetDepthCueingOn(int pOn) {
-    NOT_IMPLEMENTED();
+
+    if (gDepth_cueing_on != pOn && gHorizon_material != NULL) {
+        ToggleDepthCueingQuietly();
+    }
+    gDepth_cueing_on = pOn;
 }
 
 // FUNCTION: CARMA2_HW 0x00447070
