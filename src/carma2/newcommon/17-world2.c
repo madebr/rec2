@@ -16,7 +16,28 @@
 
 // ProcessFaceMaterials
 
-// DRPixelmapHasZeros
+// FUNCTION: CARMA2_HW 0x004475c0
+int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
+    int x;
+    int y;
+    tU8* row_ptr;
+    tU8* pp;
+
+    if (pm->flags & BR_PMF_NO_ACCESS) {
+        return 1;
+    }
+    row_ptr = (tU8*)pm->pixels + pm->base_x + pm->base_y * pm->row_bytes;
+    for (y = 0; y < pm->height; y++) {
+        pp = row_ptr;
+        for (x = 0; x < pm->width; x++, pp++) {
+            if (*pp == '\0') {
+                return 1;
+            }
+        }
+        row_ptr += pm->row_bytes;
+    }
+    return 0;
+}
 
 // StorageContainsPixelmap
 

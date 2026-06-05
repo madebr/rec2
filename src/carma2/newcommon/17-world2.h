@@ -20,7 +20,7 @@
 
 // ProcessFaceMaterials
 
-// DRPixelmapHasZeros
+extern int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm);
 
 // StorageContainsPixelmap
 
