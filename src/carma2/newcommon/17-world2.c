@@ -1,5 +1,6 @@
 #include "17-world2.h"
 
+#include "41-utility.h"
 #include "globvars.h"
 
 // GLOBAL: CARMA2_HW 0x00591374
@@ -13,6 +14,9 @@ tWall_texturing_level gWall_texturing_level = eWTL_full;
 
 // GLOBAL: CARMA2_HW 0x006793d8
 int gCar_simplification_level;
+
+// GLOBAL: CARMA2_HW 0x00591368
+int gRendering_accessories = 1;
 
 // InitialiseExtraRenders
 
@@ -225,9 +229,19 @@ intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pFlag) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x00448ec0
+// FUNCTION: CARMA2_HW 0x00448ec0
 void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn) {
-    NOT_IMPLEMENTED();
+    int style;
+
+    if (gTrack_actor != NULL)  {
+        if (pOn) {
+            style = BR_RSTYLE_FACES;
+        } else {
+            style = BR_RSTYLE_NONE;
+        }
+        DRActorEnumRecurse(gTrack_actor, SetAccessoryRenderingCB, &style);
+    }
+    gRendering_accessories = pOn;
 }
 
 // GetAccessoryRendering
