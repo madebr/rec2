@@ -90,7 +90,22 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 // WaitFor
 
-// DRActorEnumRecurse
+// FUNCTION: CARMA2_HW 0x005146f0
+intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg) {
+    intptr_t result;
+
+    result = callback(pActor, arg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurse(pActor, callback, arg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
 
 // CompareActorID
 

@@ -50,7 +50,7 @@ extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const
 
 // WaitFor
 
-// DRActorEnumRecurse
+extern intptr_t DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
 
 // CompareActorID
 
