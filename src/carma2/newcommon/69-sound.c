@@ -74,6 +74,9 @@ const char* gSound_periodicity_choices[3] = {
     "CONTINUOUS",
 };
 
+// GLOBAL: CARMA2_HW 0x00595c48
+int gSound_detail_level = 1;
+
 // FUNCTION: CARMA2_HW 0x00500060
 void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size) {
 
@@ -257,9 +260,10 @@ void C2_HOOK_FASTCALL StopMusic(void) {
     }
 }
 
-// STUB: CARMA2_HW 0x00456950
+// FUNCTION: CARMA2_HW 0x00456950
 void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel) {
-    NOT_IMPLEMENTED();
+
+    gSound_detail_level = pLevel;
 }
 
 // ReallySetSoundDetailLevel
