@@ -86,7 +86,17 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW,
     return pm;
 }
 
-// DRPixelmapAllocateSub
+// FUNCTION: CARMA2_HW 0x00513820
+br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16 pX, br_uint_16 pY, br_uint_16 pW, br_uint_16 pH) {
+    br_pixelmap* the_map;
+
+    the_map = BrPixelmapAllocateSub(pPm, pX, pY, pW, pH);
+    if (the_map != NULL) {
+        the_map->origin_x = 0;
+        the_map->origin_y = 0;
+    }
+    return the_map;
+}
 
 // DRImageLoad
 
