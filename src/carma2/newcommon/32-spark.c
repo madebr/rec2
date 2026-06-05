@@ -1,5 +1,8 @@
 #include "32-spark.h"
 
+// GLOBAL: CARMA2_HW 0x00660110
+int gSmoke_on = 1;
+
 // DrawDot
 
 // SetWorldToScreen
@@ -145,9 +148,10 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
 
 // SmudgeCar
 
-// STUB: CARMA2_HW 0x004fc9d0
+// FUNCTION: CARMA2_HW 0x004fc9d0
 void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
-    NOT_IMPLEMENTED();
+
+    gSmoke_on = pSmoke_on;
 }
 
 // GetSmokeOn
