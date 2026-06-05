@@ -22,7 +22,7 @@
 
 extern int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm);
 
-// StorageContainsPixelmap
+extern int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixelmap* pMap);
 
 // HideStoredOpaqueTextures
 

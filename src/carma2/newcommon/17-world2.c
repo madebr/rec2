@@ -39,7 +39,18 @@ int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
     return 0;
 }
 
-// StorageContainsPixelmap
+// FUNCTION: CARMA2_HW 0x004479c0
+int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixelmap* pMap) {
+    int i;
+
+    for (i = 0; i < pStorage->pixelmaps_count; i++) {
+
+        if (pStorage->pixelmaps[i] == pMap) {
+            break;
+        }
+    }
+    return i != pStorage->pixelmaps_count;
+}
 
 // HideStoredOpaqueTextures
 
