@@ -8,6 +8,9 @@
 // GLOBAL: CARMA2_HW 0x006a0414
 const char* gPedsFolder;
 
+// GLOBAL: CARMA2_HW 0x0065d7d4
+int gGoreLevel = 1;
+
 // OrientationChanged
 
 // AssertRootObjectsMatrix
@@ -386,9 +389,10 @@ void C2_HOOK_FASTCALL SetExplosivesOn(int pNewMinesOn) {
     NOT_IMPLEMENTED();
 }
 
-// STUB: CARMA2_HW 0x004d7030
+// FUNCTION: CARMA2_HW 0x004d7030
 void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel) {
-    NOT_IMPLEMENTED();
+
+    gGoreLevel = 2 - pNewLevel;
 }
 
 // ClearOutMorphs
