@@ -52,7 +52,22 @@ int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, br_pixe
     return i != pStorage->pixelmaps_count;
 }
 
-// HideStoredOpaqueTextures
+void C2_HOOK_FASTCALL HideStoredOpaqueTextures(tBrender_storage* pStorage) {
+    int i;
+
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_pixelmap* colour_map;
+
+        colour_map = pStorage->materials[i]->colour_map;
+
+        if (colour_map != NULL && StorageContainsPixelmap(pStorage, colour_map) && !DRPixelmapHasZeros(colour_map)) {
+            pStorage->materialProps[i] = colour_map;
+            pStorage->materials[i]->colour_map = NULL;
+            pStorage->materials[i]->flags &= ~BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00447b00
 void C2_HOOK_FASTCALL RevealStoredTransparentTextures(tBrender_storage* pStorage) {
@@ -72,11 +87,66 @@ void C2_HOOK_FASTCALL RevealStoredTransparentTextures(tBrender_storage* pStorage
     }
 }
 
-// HideStoredTextures
+void C2_HOOK_FASTCALL HideStoredTextures(tBrender_storage* pStorage) {
+    int i;
 
-// RevealStoredTextures
+    for (i = 0; i < pStorage->materials_count; i++) {
+        br_pixelmap* colour_map;
 
-// SetCarStorageTexturingLevel
+        colour_map = pStorage->materials[i]->colour_map;
+
+        if (colour_map != NULL && StorageContainsPixelmap(pStorage, colour_map)) {
+            pStorage->materialProps[i] = colour_map;
+            pStorage->materials[i]->colour_map = NULL;
+            pStorage->materials[i]->flags &= ~BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
+
+void C2_HOOK_FASTCALL RevealStoredTextures(tBrender_storage* pStorage) {
+    int i;
+    br_pixelmap* colour_map;
+
+    for (i = 0; i < pStorage->materials_count; i++) {
+
+        colour_map = pStorage->materialProps[i];
+
+        if (colour_map != NULL) {
+            pStorage->materials[i]->colour_map = colour_map;
+            pStorage->materialProps[i] = NULL;
+            pStorage->materials[i]->flags |= BR_MATF_PRELIT;
+            BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00447350
+void C2_HOOK_FASTCALL SetCarStorageTexturingLevel(tBrender_storage* pStorage, tCar_texturing_level pNew, tCar_texturing_level pOld) {
+
+    switch (pNew) {
+    case eCTL_full:
+        RevealStoredTextures(pStorage);
+        break;
+    case eCTL_transparent:
+        switch (pOld) {
+        case eCTL_full:
+            HideStoredOpaqueTextures(pStorage);
+            break;
+        case eCTL_none:
+            RevealStoredTransparentTextures(pStorage);
+            break;
+        default:
+            break;
+        }
+        break;
+    case eCTL_none:
+        HideStoredTextures(pStorage);
+        break;
+    default:
+        break;
+    }
+}
 
 // GetCarTexturingLevel
 
