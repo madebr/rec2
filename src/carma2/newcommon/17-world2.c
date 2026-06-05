@@ -11,6 +11,9 @@ tRoad_texturing_level gRoad_texturing_level = eRTL_full;
 // GLOBAL: CARMA2_HW 0x00591370
 tWall_texturing_level gWall_texturing_level = eWTL_full;
 
+// GLOBAL: CARMA2_HW 0x006793d8
+int gCar_simplification_level;
+
 // InitialiseExtraRenders
 
 // AddExtraRender
@@ -222,9 +225,10 @@ void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn) {
 
 // GetAccessoryRendering
 
-// STUB: CARMA2_HW 0x00448f10
+// FUNCTION: CARMA2_HW 0x00448f10
 void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {
-    NOT_IMPLEMENTED();
+
+    gCar_simplification_level = pLevel;
 }
 
 // GetCarSimplificationLevel
