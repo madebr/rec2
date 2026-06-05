@@ -154,7 +154,11 @@ void C2_HOOK_FASTCALL SetSmokeOn(int pSmoke_on) {
     gSmoke_on = pSmoke_on;
 }
 
-// GetSmokeOn
+// FUNCTION: CARMA2_HW 0x004fca30
+int C2_HOOK_FASTCALL GetSmokeOn(void) {
+
+    return gSmoke_on;
+}
 
 // StopCarSmoking
 
