@@ -26,7 +26,7 @@ extern int C2_HOOK_FASTCALL StorageContainsPixelmap(tBrender_storage* pStorage, 
 
 // HideStoredOpaqueTextures
 
-// RevealStoredTransparentTextures
+extern void C2_HOOK_FASTCALL RevealStoredTransparentTextures(tBrender_storage* pStorage);
 
 // HideStoredTextures
 
