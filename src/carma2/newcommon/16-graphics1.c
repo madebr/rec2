@@ -17,6 +17,9 @@ float gCosine_array[64];
 // GLOBAL: CARMA2_HW 0x0065fdc8
 tShadow_level gShadow_level = eShadow_us_only;
 
+// GLOBAL: CARMA2_HW 0x0068be38
+int gRender_indent;
+
 // MungeClipPlane
 
 // TryThisEdge

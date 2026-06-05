@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gRender_indent;
+
 // MungeClipPlane
 
 // TryThisEdge
