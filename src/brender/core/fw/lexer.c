@@ -61,7 +61,7 @@ void C2_HOOK_CDECL BrLexerFree(br_lexer* l) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052f4f0
-void C2_HOOK_STDCALL fileGetchar(br_lexer_source* source) {
+void C2_HOOK_CDECL fileGetchar(br_lexer_source* source) {
 
     source->next = BrFileGetChar(source->ptr);
 }
@@ -93,7 +93,7 @@ br_error C2_HOOK_CDECL BrLexerPushFile(br_lexer* l, char* file) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052f570
-void C2_HOOK_STDCALL stringGetchar(br_lexer_source* source) {
+void C2_HOOK_CDECL stringGetchar(br_lexer_source* source) {
     char* cp;
 
     cp = source->ptr;

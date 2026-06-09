@@ -51,7 +51,7 @@ static void C2_HOOK_FASTCALL FrobFog(void);
 
 br_scalar C2_HOOK_FASTCALL DepthCueingShiftToDistance(int pDistance) {
 
-    return (br_scalar)gCamera_yon * pow(10.0, 0.1 * (double)pDistance);
+    return gCamera_yon * (br_scalar)pow(10.0, 0.1 * (double)pDistance);
 }
 
 // FUNCTION: CARMA2_HW 0x004451a0

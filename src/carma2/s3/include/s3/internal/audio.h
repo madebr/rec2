@@ -5,15 +5,10 @@
 
 extern char gS3_path_separator[2];
 extern int gS3_enabled;
-extern tS3_sound_source* gS3_sound_sources;
-extern int gS3_nsound_sources;
-extern tS3_outlet* gS3_outlets;
 extern int gS3_CDA_enabled;
-extern int gS3_next_outlet_id;
-extern int gS3_noutlets;
 extern int gS3_soundbank_buffer_len;
+extern tS3_state gS3_state;
 extern char* gS3_soundbank_buffer;
-extern tS3_descriptor* gS3_root_descriptor;
 extern tS3_callbacks gS3_callbacks;
 extern int gS3_effects_enabled;
 extern int gS3_opened_output_devices;
@@ -103,7 +98,7 @@ int C2_HOOK_FASTCALL S3ReleaseSound(int pSound_id);
 
 double C2_HOOK_STDCALL S3FRandomBetween(double pMin, double pMax);
 
-int C2_HOOK_STDCALL S3IRandomBetween(int pMin, int pMax, int pDefault);
+int C2_HOOK_FASTCALL S3IRandomBetween(int pMin, int pMax, int pDefault);
 
 int C2_HOOK_FASTCALL S3IRandomBetweenLog(int pMin, int pMax, int pDefault);
 
@@ -115,7 +110,7 @@ int C2_HOOK_FASTCALL S3SetVolume(int pVolume);
 
 int C2_HOOK_FASTCALL S3ServiceChannel(tS3_channel *pChannel);
 
-void C2_HOOK_FASTCALL S3ServiceChannels(int pDelta_time);
+int C2_HOOK_FASTCALL S3ServiceSpatialSound(tS3_channel* pChannel);
 
 tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pVelocity, tS3_outlet* pBound_outlet);
 

@@ -189,7 +189,7 @@ int C2_HOOK_FASTCALL PDS3IsMIDIStopped(tS3_channel* pChannel);
 
 int C2_HOOK_FASTCALL PDS3IsCDAPlaying(void);
 
-void C2_HOOK_FASTCALL PDS3ServiceCDA(void);
+void C2_HOOK_FASTCALL PDS3ServiceCDA(tS32 pDelta_time);
 
 int C2_HOOK_FASTCALL PDS3IsSamplePlaying(tS3_channel* pChannel);
 

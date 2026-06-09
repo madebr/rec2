@@ -41,7 +41,7 @@ void C2_HOOK_CDECL BrModelApplyMap(br_model* model, int map_type, br_matrix34* x
             break;
         case BR_APPLYMAP_DISC:
             vp->map.v[0] = BrAngleToDegrees(BR_ATAN2(-mv.v[1], mv.v[0])) / 360.f;
-            vp->map.v[1] = sqrtf(BR_MAC2(mv.v[0], mv.v[0], mv.v[1], mv.v[1]));
+            vp->map.v[1] = (br_scalar)sqrt(BR_MAC2(mv.v[0], mv.v[0], mv.v[1], mv.v[1]));
             break;
         case BR_APPLYMAP_NONE:
             vp->map.v[0] = 0.f;

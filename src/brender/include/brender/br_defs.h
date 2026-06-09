@@ -60,8 +60,8 @@
 #define BR_COLOUR_GRN(c) ((c >>  8) & 0xff)
 #define BR_COLOUR_BLU(c) ((c >>  0) & 0xff)
 
-#define BR_LENGTH2(a, b) ((br_scalar)sqrtf((a) * (a) + (b) * (b)))
-#define BR_LENGTH3(a, b, c) ((br_scalar)sqrtf((a) * (a) + (b) * (b) + (c) * (c)))
+#define BR_LENGTH2(a, b) ((br_scalar)sqrt((a) * (a) + (b) * (b)))
+#define BR_LENGTH3(a, b, c) ((br_scalar)sqrt((a) * (a) + (b) * (b) + (c) * (c)))
 #define BR_SCALAR_EPSILON 1.192092896e-7f
 #define BR_SCALAR_MAX 3.402823466e+38f
 #define BR_SCALAR_MIN (-3.402823466e+38f)

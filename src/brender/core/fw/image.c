@@ -30,7 +30,7 @@ br_image* C2_HOOK_CDECL BrImageFind(const char* pattern) {
     br_image* img;
 
     c = BrStrRChr(pattern, '.');
-    if (c != NULL && (BrStrCmp(c, ".dll") == 0 || BrStrCmp(c, ".bdd") == 0|| BrStrCmp(c, "bed"))) {
+    if (c != NULL && (BrStrICmp(c, ".dll") == 0 || BrStrICmp(c, ".bdd") == 0 || BrStrICmp(c, ".bed") == 0)) {
         *c = '\0';
     }
     for (img = (br_image*)fw.images.head; img->node.next != NULL; img = (br_image*)img->node.next) {
@@ -86,7 +86,7 @@ br_image* C2_HOOK_CDECL BrImageReference(const char* name) {
             BrStrCat(scratch, ".DLL");
             img = ImageLoad(scratch);
         }
-    } else if (BrStrCmp(suffix, ".bdd") == 0 || BrStrCmp(suffix, ".bed") == 0) {
+    } else if (BrStrICmp(suffix, ".bdd") == 0 || BrStrICmp(suffix, ".bed") == 0) {
         if (img == NULL) {
             img = ImageLoad(name);
         }
@@ -123,22 +123,20 @@ void* C2_HOOK_STDCALL imageLookupName(br_image* img, const char* name, br_uint_3
     if (hint < img->n_names && BrStrCmp(name, img->names[hint]) == 0) {
         return img->functions[img->name_ordinals[hint]];
     }
-    base = 0;
     limit = img->n_names;
-    while (1) {
-        if (limit == 0) {
-            return NULL;
-        }
+    base = 0;
+    while (limit != 0) {
         c = BrStrCmp(name, img->names[base + limit / 2]);
-        if (c == 0) {
-            return img->functions[img->name_ordinals[base + limit / 2]];
-        } else if (c < 0) {
+        if (c < 0) {
             limit = limit / 2;
-        } else {
+        } else if (c > 0) {
             base += limit / 2 + 1;
             limit = limit - (limit / 2 + 1);
+        } else {
+            return img->functions[img->name_ordinals[base + limit / 2]];
         }
     }
+    return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x005301e0
@@ -182,25 +180,27 @@ void C2_HOOK_CDECL BrImageDereference(br_image* image) {
     int i;
     image->ref_count--;
 
-    if (image->ref_count <= 0) {
-        switch (image->type) {
+    if (image->ref_count > 0) {
+        return;
+    }
+    switch (image->type) {
         case 2:
-            break;
+            return;
         case 3:
             HostImageUnload(image->type_pointer);
-            // fall through
-        default:
-#ifdef BRENDER_FIX_BUGS
-            /* Added by rec2: fixes DEP */
-            for (i = 0; i < image->n_sections; i++) {
-                PDMapImageSection(image->sections[i].base, image->sections[i].mem_size, kMemory_section_read | kMemory_section_write);
-            }
-#endif
-            BrRemove(&image->node);
-            BrResFree(image);
-        }
-
+            break;
+        case 1:
+            break;
     }
+#ifdef BRENDER_FIX_BUGS
+    /* Added by rec2: fixes DEP */
+    for (i = 0; i < image->n_sections; i++) {
+        PDMapImageSection(image->sections[i].base, image->sections[i].mem_size,
+                          kMemory_section_read | kMemory_section_write);
+    }
+#endif
+    BrRemove(&image->node);
+    BrResFree(image);
 }
 
 // FUNCTION: CARMA2_HW 0x005303a0

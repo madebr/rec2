@@ -5,6 +5,7 @@
 #include "platform.h"
 #include "rec2_types.h"
 #include "01-network.h"
+#include "08-loading1.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "69-sound.h"
@@ -73,7 +74,7 @@ void C2_HOOK_FASTCALL GameMain(int pArgc, const char** pArgv) {
     strcat(gApplication_path, "DATA");
     UsePathFileToDetermineIfFullInstallation();
     if (!gCD_fully_installed) {
-        if (PDReadSourceLocation(location)) {
+        if (GetRegisterSourceLocation(location)) {
             if (!PDCheckDriveExists(location)) {
                 PDInitialiseSystem();
                 PDFatalError("Can't find the Carmageddon CD\n");

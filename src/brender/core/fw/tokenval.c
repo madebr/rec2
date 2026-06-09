@@ -10,6 +10,8 @@
 
 #include "c2_stdlib.h"
 
+static br_error parseTokenValue(br_lexer* l, br_token_value* tv, br_size_t size);
+
 // FUNCTION: CARMA2_HW 0x0052d740
 br_tv_template* C2_HOOK_CDECL BrTVTemplateAllocate(void* res, br_tv_template_entry* entries, int n_entries) {
     br_tv_template* t;
@@ -379,37 +381,9 @@ br_error C2_HOOK_STDCALL ValueSet(void* block, br_token_value* tv, br_tv_templat
     mem = (br_uint_8*)block + tep->offset;
 
     switch (tep->conv) {
-    case 2:
-        custp = (br_tv_custom*)tep->conv_arg;
-        if (custp == NULL ||custp->set == NULL) {
-            return 0x1001;
-        }
-        return custp->set(block, &tv->v.u32, tep);
     case 3:
         /* void* */
         *(br_uint_32*)mem = tv->v.u32;
-        break;
-    case 4:
-        t = 2;
-        goto copy_integers;
-    case 5:
-        t = 3;
-        goto copy_integers;
-    case 6:
-        t = 4;
-        goto copy_integers;
-    case 7:
-        t = 6;
-        goto copy_integers;
-    case 8:
-        t = 12;
-        goto copy_integers;
-    case 9:
-        t = 16;
-copy_integers:
-        for (i = 0; i < t; i++) {
-            ((br_uint_32*)mem)[i] = ((br_uint_32*)tv->v.p)[i];
-        }
         break;
     case 10:
         *(br_int_8*)mem = tv->v.i8;
@@ -423,11 +397,25 @@ copy_integers:
     case 13:
         *(br_uint_16*)mem = tv->v.u16;
         break;
+    case 31:
+        if (tv->v.b) {
+            *(br_uint_32*) mem |= tep->conv_arg;
+        } else {
+            *(br_uint_32*) mem &= ~tep->conv_arg;
+        }
+        break;
+    case 32:
+        if (!tv->v.b) {
+            *(br_uint_32*) mem |= tep->conv_arg;
+        } else {
+            *(br_uint_32*) mem &= ~tep->conv_arg;
+        }
+        break;
     case 14:
-        *(float*)mem = (float)tv->v.x / 65536.f;
+        *(float*)mem = (float)((double)tv->v.x / 65536.0);
         break;
     case 15:
-        *(br_fixed_ls*)mem = (br_fixed_ls)(tv->v.f * 65536.f);
+        *(br_fixed_ls*)mem = (br_fixed_ls)(tv->v.f * 65536.0f);
         break;
     case 16:
         t = 2;
@@ -453,31 +441,51 @@ copy_integers:
     case 23:
         t = 6;
         goto store_floats_as_fixed;
-    case 24:
-        t = 12;
-        goto store_fixed_as_floats;
-    case 25:
-        t = 12;
-        goto store_floats_as_fixed;
     case 26:
         t = 16;
 store_fixed_as_floats:
         for (i = 0; i < t; i++) {
-            ((float*)mem)[i] = (float)((br_fixed_ls*)tv->v.p)[i] / 65536.f;
+            ((float*)mem)[i] = (float)((br_fixed_ls*)tv->v.p)[i] / 65536.0f;
         }
         break;
     case 27:
         t = 16;
 store_floats_as_fixed:
         for (i = 0; i < t; i++) {
-            ((br_fixed_ls*)mem)[i] = (br_fixed_ls)(((float*)tv->v.p)[i] * 65536.f);
+            ((br_fixed_ls*)mem)[i] = (br_fixed_ls)(((float*)tv->v.p)[i] * 65536.0f);
         }
         break;
+    case 24:
+        t = 12;
+        goto store_fixed_as_floats;
+    case 25:
+        t = 12;
+        goto store_floats_as_fixed;
+    case 4:
+        t = 2;
+        goto copy_integers;
+    case 5:
+        t = 3;
+        goto copy_integers;
+    case 6:
+        t = 4;
+        goto copy_integers;
+    case 7:
+        t = 6;
+        goto copy_integers;
+    case 9:
+        t = 16;
+copy_integers:
+        for (i = 0; i < t; i++) {
+            ((br_uint_32*)mem)[i] = ((br_uint_32*)tv->v.p)[i];
+        }
+        break;
+    case 8:
+        t = 12;
+        goto copy_integers;
     case 28:
         BrStrNCpy(mem, tv->v.cstr, 64);
-        break;
-    case 29:
-        return 0x1001;
+        return 0;
     case 30:
         if (tv->v.b) {
             *(br_uint_32*) mem = tep->conv_arg;
@@ -485,20 +493,12 @@ store_floats_as_fixed:
             *(br_uint_32*) mem = 1;
         }
         break;
-    case 31:
-        if (tv->v.b) {
-            *(br_uint_32*) mem |= tep->conv_arg;
-        } else {
-            *(br_uint_32*) mem &= ~tep->conv_arg;
+    case 2:
+        custp = (br_tv_custom*)tep->conv_arg;
+        if (custp == NULL ||custp->set == NULL) {
+            return 0x1001;
         }
-        break;
-    case 32:
-        if (tv->v.b) {
-            *(br_uint_32*) mem &= ~tep->conv_arg;
-        } else {
-            *(br_uint_32*) mem |= tep->conv_arg;
-        }
-        break;
+        return custp->set(block, &tv->v.u32, tep);
     default:
         return 0x1001;
     }
@@ -866,6 +866,13 @@ void C2_HOOK_STDCALL DumpObject(br_object* h, char* prefix, char* info, br_putli
 
 // FUNCTION: CARMA2_HW 0x0052e9e0
 void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline_cbfn* putline, void* arg) {
+#ifdef REC2_MATCHING
+    (void) tv;
+    (void) prefix;
+    (void) putline;
+    (void) arg;
+
+#else
     char* id;
     char value[128];
     char tmp[128];
@@ -1129,6 +1136,7 @@ void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline
         BrSprintf(tmp, "%s%s%s", prefix, info_0, pvalue);
         putline(tmp, arg);
     }
+#endif
 }
 
 #define T_FALSE (T_KEYWORD + 0)
@@ -1138,6 +1146,7 @@ void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline
 br_error C2_HOOK_CDECL BrStringToTokenValue(br_token_value* buffer, br_size_t buffer_size, char* str) {
     br_lexer* l;
     br_error r;
+    // GLOBAL: CARMA2_HW 0x00667e60
     static br_lexer_keyword keywords[4] = {
         { "true",   T_TRUE  },
         { "t",      T_TRUE  },
@@ -1160,7 +1169,7 @@ br_error C2_HOOK_CDECL BrStringToTokenValue(br_token_value* buffer, br_size_t bu
     return 0;
 }
 
-br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_size_t size) {
+static br_error parseTokenValue(br_lexer* l, br_token_value* tv, br_size_t size) {
     int len;
     char name[40];
     br_token type;
@@ -1204,6 +1213,7 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
 
             switch ((int)l->current.id) {
             case T_IDENT: {
+                // GLOBAL: CARMA2_HW 0x00667ed0
                 static br_token ident_types[] = { BRT_TOKEN };
                 tv->t = BrTokenFindType(&type, name, ident_types, BR_ASIZE(ident_types));
                 if (tv->t == BR_NULL_TOKEN) {
@@ -1216,6 +1226,7 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
                 break;
             }
             case T_STRING: {
+                // GLOBAL: CARMA2_HW 0x00667ed8
                 static br_token string_types[] = { BRT_STRING, BRT_CONSTANT_STRING };
                 tv->t = BrTokenFindType(&type, name, string_types, BR_ASIZE(string_types));
                 if (tv->t == BR_NULL_TOKEN) {
@@ -1233,10 +1244,12 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
                 break;
             }
             case T_INTEGER: {
+                // GLOBAL: CARMA2_HW 0x00667e90
                 static br_token pos_int_types[] = {
                     BRT_INT_32, BRT_UINT_32, BRT_INT_16,
                     BRT_UINT_16, BRT_INT_8, BRT_UINT_8,
                     BRT_FLOAT, BRT_FIXED, BRT_BOOLEAN };
+                // GLOBAL: CARMA2_HW 0x00667eb8
                 static br_token neg_int_types[] = {
                     BRT_INT_32, BRT_INT_16, BRT_INT_8,
                     BRT_FLOAT, BRT_FIXED, BRT_BOOLEAN };
@@ -1284,6 +1297,7 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
                 break;
             }
             case T_REAL: {
+                // GLOBAL: CARMA2_HW 0x00667e88
                 static br_token real_types[] = { BRT_FLOAT, BRT_FIXED };
 
                 tv->t = BrTokenFindType(&type, name, real_types, BR_ASIZE(real_types));
@@ -1305,6 +1319,7 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
             }
             case T_FALSE:
             case T_TRUE: {
+                // GLOBAL: CARMA2_HW 0x00667ed4
                 static br_token bool_types[] = { BRT_BOOLEAN };
 
                 tv->t = BrTokenFindType(&type, name, bool_types, BR_ASIZE(bool_types));
@@ -1320,6 +1335,7 @@ br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_siz
             }
             l->advance(l);
         } else {
+            // GLOBAL: CARMA2_HW 0x00667ee0
             static br_token none_types[] = { BRT_NONE, BRT_BOOLEAN };
 
             tv->t = BrTokenFindType(&type, name, none_types, BR_ASIZE(none_types));

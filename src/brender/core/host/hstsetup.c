@@ -10,7 +10,7 @@
 #include "core/std/brstdlib.h"
 #include "core/fw/image.h"
 
-// GLOBAL: CARMA2_HW 0x005d7268
+// GLOBAL: CARMA2_HW 0x006700a8
 host_info hostInfo = {
     sizeof(host_info),
     "Microsoft WIN32",
@@ -202,20 +202,16 @@ br_image Image_BRHOST1 = {
 
 // FUNCTION: CARMA2_HW 0x0053fab0
 void C2_HOOK_CDECL HostBegin(void) {
-#if defined(__I86__)
-    RealSelectorBegin();
-#endif
 
+    RealSelectorBegin();
     BrImageAdd(&Image_BRHOST1);
 }
 
 // FUNCTION: CARMA2_HW 0x0053fad0
 void C2_HOOK_CDECL HostEnd(void) {
-    BrImageRemove(&Image_BRHOST1);
 
-#if defined(__I86__)
+    BrImageRemove(&Image_BRHOST1);
     RealSelectorEnd();
-#endif
 }
 
 // IDA: br_error __cdecl HostInfo(host_info *buffer, br_size_t buffersize)

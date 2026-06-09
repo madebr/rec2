@@ -127,7 +127,7 @@ br_uint_32 C2_HOOK_CDECL BrActorSaveMany(char* filename, br_actor** actors, br_u
 
 br_uint_32 C2_HOOK_CDECL BrMaterialLoadMany(char* filename, br_material** materials, br_uint_16 num);
 
-br_uint_32 C2_HOOK_STDCALL WriteMaterial(br_material* mp, br_datafile* df);
+br_uint_32 C2_HOOK_CDECL WriteMaterial(br_material* mp, void* df);
 
 br_uint_32 C2_HOOK_CDECL BrMaterialSaveMany(char* filename, br_material** materials, br_uint_16 num);
 

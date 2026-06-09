@@ -8,6 +8,7 @@
 
 // GLOBAL: CARMA2_HW 0x0066fe48
 br_diaghandler BrStdioDiagHandler = {
+
     "Stdio DiagHandler",
     BrStdioWarning,
     BrStdioFailure,
@@ -19,6 +20,7 @@ br_diaghandler* _BrDefaultDiagHandler = &BrStdioDiagHandler;
 
 // FUNCTION: CARMA2_HW 0x0053fa00
 void C2_HOOK_CDECL BrStdioWarning(char* message) {
+
     fflush(stdout);
     fputs(message, stderr);
     fputc('\n', stderr);
@@ -28,16 +30,11 @@ void C2_HOOK_CDECL BrStdioWarning(char* message) {
 // FUNCTION: CARMA2_HW 0x0053fa40
 void C2_HOOK_CDECL BrStdioFailure(char* message) {
 
-#if 0
-    // FIXME: 'real' implementation ends BRender
-    BrEnd();
-#endif
     fflush(stdout);
     fputs(message, stderr);
     fputc('\n', stderr);
     fflush(stderr);
-#if 0
-    // FIXME: 'real' implementation unconditionally exits.
+#ifdef REC2_MATCHING
     exit(10);
 #else
     abort();

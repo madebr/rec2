@@ -334,7 +334,7 @@ int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br
         BrVector3Scale(&delta, &delta, ts);
         l = BrVector3LengthSquared(&delta);
         BrVector3Add(cam_pos, car_pos, &delta);
-        if (sqrtf(l) < gMin_camera_car_distance && !loop_done) {
+        if ((float)sqrt(l) < gMin_camera_car_distance && !loop_done) {
             br_scalar a;
             br_scalar b;
             br_scalar discr;
@@ -2250,7 +2250,7 @@ void C2_HOOK_FASTCALL SwingCamera(br_matrix34* pM1, br_matrix34* pM2, br_vector3
     v18 = pOmega->v[0] * pM1->m[0][1] + pOmega->v[1] * pM1->m[1][1] + pOmega->v[2] * pM1->m[2][1];
     abs_v18 = fabsf(v18);
     v8 = BrRadianToAngle((float)pTime_difference * (abs_v18 + REC2_PI_F / 36.f) / 1000.f);
-    v9 = BrRadianToAngle(sqrtf(fabsf(v17)));
+    v9 = BrRadianToAngle((float)sqrt(fabsf(v17)));
 
     if (!(gUNK_006792f4 == 0 && v16 > 0.f && v9 < v8) && !gCar_flying && !manual_swing) {
         br_angle omega;

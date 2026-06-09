@@ -12,7 +12,7 @@
 #include "c2_stdlib.h"
 
 #define RES_ALIGN 4
-#define RESOURCE_SIZE(RES) ((RES)->size_h << 18)  | ((RES)->size_m << 10) | ((RES)->size_l << 2)
+#define RESOURCE_SIZE(RES) (((RES)->size_l << 2) | ((RES)->size_m << 10) | ((RES)->size_h << 18))
 
 void* ResToUserWithClass(resource_header* r, br_uint_8 class) {
     br_int_32 align;
@@ -192,11 +192,15 @@ br_boolean C2_HOOK_CDECL BrResIsChild(void* vparent, void* vchild) {
 br_uint_32 C2_HOOK_CDECL BrResSize(void* vres) {
     resource_header* res;
 
+    C2_HOOK_BUG_ON(sizeof(resource_header) != 0x18);
+
     res = UserToRes(vres);
-    return RESOURCE_SIZE(res);
+    return RESOURCE_SIZE(res) - sizeof(resource_header);
 }
 
+// FUNCTION: CARMA2_HW 0x00527ad0
 br_uint_32 C2_HOOK_CDECL ResSizeTotal(void* vres, br_uint_32* ptotal) {
+
     *ptotal += BrResSize(vres);
     BrResChildEnum(vres, (br_resenum_cbfn*)ResSizeTotal, ptotal);
     return 0;
@@ -206,8 +210,8 @@ br_uint_32 C2_HOOK_CDECL ResSizeTotal(void* vres, br_uint_32* ptotal) {
 br_uint_32 C2_HOOK_CDECL BrResSizeTotal(void* vres) {
     br_uint_32 total;
 
-    total = BrResSize(vres);
-    BrResChildEnum(vres, (br_resenum_cbfn*)ResSizeTotal, &total);
+    total = 0;
+    ResSizeTotal(vres, &total);
     return total;
 }
 
@@ -273,8 +277,11 @@ void C2_HOOK_CDECL InternalResourceDump(resource_header* res, br_putline_cbfn* p
 void C2_HOOK_CDECL BrResDump(void* vres, br_putline_cbfn* putline, void* arg) {
     resource_header* res;
 
+    (void) res;
+#ifdef BR_FIX_BUGS
     res = UserToRes(vres);
     InternalResourceDump(res, putline, arg, 0);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00527c60

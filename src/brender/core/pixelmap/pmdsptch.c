@@ -547,13 +547,14 @@ void C2_HOOK_CDECL BrPixelmapCopy(br_pixelmap* dst, br_pixelmap* src) {
 
 // FUNCTION: CARMA2_HW 0x00538990
 void C2_HOOK_CDECL BrPixelmapLine(br_pixelmap* dst, br_int_32 x1, br_int_32 y1, br_int_32 x2, br_int_32 y2, br_uint_32 colour) {
-     br_point s;
-     br_point e;
+    br_point s;
+    br_point e;
 
-     s.x = x1;
-     s.y = y1;
-     e.x = x2;
-     e.y = y2;
+    CheckDispatch((br_device_pixelmap*)dst);
+    s.x = x1;
+    s.y = y1;
+    e.x = x2;
+    e.y = y2;
     ((br_device_pixelmap*)dst)->dispatch->_line((br_device_pixelmap*)dst, &s, &e, colour);
 }
 
@@ -635,6 +636,7 @@ void C2_HOOK_CDECL BrPixelmapCopyBits(br_pixelmap* dst, br_int_32 x, br_int_32 y
     br_point p;
     br_rectangle r;
 
+    CheckDispatch((br_device_pixelmap*)dst);
     p.x = x;
     p.y = y;
     r.x = start_bit;

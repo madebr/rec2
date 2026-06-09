@@ -1,7 +1,5 @@
 #include "register.h"
 
-#define HOOK_REGISTER 0
-
 #include "brlists.h"
 #include "fwsetup.h"
 #include "pattern.h"
@@ -9,20 +7,14 @@
 
 // FUNCTION: CARMA2_HW 0x00529af0
 void* C2_HOOK_STDCALL BrRegistryNew(br_registry* reg) {
-#if HOOK_REGISTER
-    return BrRegistryNew_original(reg);
-#else
+
     BrNewList(&reg->list);
     reg->count = 0;
     return reg;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529b10
 void* C2_HOOK_STDCALL BrRegistryClear(br_registry* reg) {
-#if HOOK_REGISTER
-    return BrRegistryClear_original(reg);
-#else
     br_registry_entry* e;
 
     e = (br_registry_entry*)reg->list.head;
@@ -33,14 +25,10 @@ void* C2_HOOK_STDCALL BrRegistryClear(br_registry* reg) {
     }
     reg->count = 0;
     return reg;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529b50
 void* C2_HOOK_STDCALL BrRegistryAdd(br_registry* reg, void* item) {
-#if HOOK_REGISTER
-    return BrRegistryAdd_original(reg, item);
-#else
     br_registry_entry* e;
 
     e = (br_registry_entry*)BrResAllocate(fw.res, sizeof(br_registry_entry), BR_MEMORY_REGISTRY);
@@ -48,28 +36,20 @@ void* C2_HOOK_STDCALL BrRegistryAdd(br_registry* reg, void* item) {
     BrAddHead(&reg->list, (br_node*)e);
     reg->count++;
     return item;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529b90
 int C2_HOOK_STDCALL BrRegistryAddMany(br_registry* reg, void** items, int n) {
-#if HOOK_REGISTER
-    return BrRegistryAddMany_original(reg, items, n);
-#else
     int i;
 
     for(i = 0; i < n; i++) {
         BrRegistryAdd(reg, items[i]);
     }
     return n;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529be0
 void* C2_HOOK_STDCALL BrRegistryRemove(br_registry* reg, void* item) {
-#if HOOK_REGISTER
-    return BrRegistryRemove_original(reg, item);
-#else
     br_registry_entry* e;
     void* r;
 
@@ -85,33 +65,24 @@ void* C2_HOOK_STDCALL BrRegistryRemove(br_registry* reg, void* item) {
     BrResFree(e);
     reg->count--;
     return r;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529c40
 int C2_HOOK_STDCALL BrRegistryRemoveMany(br_registry* reg, void** items, int n) {
-#if HOOK_REGISTER
-    return BrRegistryRemoveMany_original(reg, items, n);
-#else
     int i;
     int r;
 
     r = 0;
     for (i = 0; i < n; i++) {
-        if (BrRegistryRemove(reg, *items) != NULL) {
+        if (BrRegistryRemove(reg, *items++) != NULL) {
             r++;
         }
-        items++;
     }
     return r;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529cc0
 void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, const char* pattern) {
-#if HOOK_REGISTER
-    return BrRegistryFind_original(reg, pattern);
-#else
     br_registry_entry* e;
 
     e = (br_registry_entry*)reg->list.head;
@@ -126,14 +97,10 @@ void* C2_HOOK_STDCALL BrRegistryFind(br_registry* reg, const char* pattern) {
         return reg->find_failed_hook(pattern);
     }
     return NULL;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529d20
 int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, const char* pattern, void** items, int max) {
-#if HOOK_REGISTER
-    return BrRegistryFindMany_original(reg, pattern, items, max);
-#else
     br_registry_entry* e;
     int n;
 
@@ -147,14 +114,10 @@ int C2_HOOK_STDCALL BrRegistryFindMany(br_registry* reg, const char* pattern, vo
         e = (br_registry_entry*)e->node.next;
     }
     return n;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529d70
 int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, const char* pattern) {
-#if HOOK_REGISTER
-    return BrRegistryCount_original(reg, pattern);
-#else
     br_registry_entry* e;
     int n;
 
@@ -170,14 +133,10 @@ int C2_HOOK_STDCALL BrRegistryCount(br_registry* reg, const char* pattern) {
         e = (br_registry_entry*)e->node.next;
     }
     return n;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529dc0
 int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, const char* pattern, br_enum_cbfn* callback, void* arg) {
-#if HOOK_REGISTER
-    return BrRegistryEnum_original(reg, pattern, callback, arg);
-#else
     br_registry_entry* e;
     int r;
 
@@ -205,32 +164,22 @@ int C2_HOOK_STDCALL BrRegistryEnum(br_registry* reg, const char* pattern, br_enu
         }
     }
     return 0;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529e50
 void* C2_HOOK_STDCALL BrRegistryNewStatic(br_registry* reg, br_registry_entry* base, int limit) {
-#if HOOK_REGISTER
-    return BrRegistryNewStatic_original(reg, base, limit);
-#else
+
     return NULL;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529e60
 void* C2_HOOK_STDCALL BrRegistryAddStatic(br_registry* reg, br_registry_entry* base, void* item) {
-#if HOOK_REGISTER
-    return BrRegistryAddStatic_original(reg, base, item);
-#else
+
     return NULL;
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00529e70
 void* C2_HOOK_STDCALL BrRegistryRemoveStatic(br_registry* reg, void* item) {
-#if HOOK_REGISTER
-    return BrRegistryRemoveStatic_original(reg, item);
-#else
+
     return NULL;
-#endif
 }

@@ -49,14 +49,13 @@ br_error C2_HOOK_STDCALL devAdd(br_device** pdev, br_device_begin_fn* dev_begin,
         return 0x1003;
     }
     for (i = 0; i < fw.ndev_slots; i++) {
-        new_slots[i].dev = fw.dev_slots[i].dev = dev;
-        new_slots[i].image = fw.dev_slots[i].image = image;
+        new_slots[i] = fw.dev_slots[i];
     }
     BrResFree(fw.dev_slots);
     fw.dev_slots = new_slots;
     fw.dev_slots[fw.ndev_slots].dev = dev;
     fw.dev_slots[fw.ndev_slots].image = image;
-    fw.ndev_slots++;
+    fw.ndev_slots += 16;
     if (pdev != NULL) {
         *pdev = dev;
     }
@@ -109,12 +108,12 @@ br_error C2_HOOK_CDECL BrDevAddConfig(const char* config) {
         if (n != 0) {
             BrMemCpy(tmp, config, n);
             tmp[n] = '\0';
+            dev = tmp;
             for (arg = tmp; *arg != '\0' && *arg != ',' && *arg != ':'; arg++) {
             }
             if (*arg != '\0') {
-                *arg = '\0';
+                *arg++ = '\0';
             }
-            dev = tmp;
             while (BrIsSpace(*dev)) {
                 dev++;
             }
@@ -242,18 +241,19 @@ br_error C2_HOOK_CDECL BrDevContainedFindMany(br_object** objects, br_int_32 max
     br_int_32 total;
     br_error r;
 
+    total = 0;
+
     AddRequestedDrivers();
 
-    total = 0;
     for (i = 0; i < fw.ndev_slots; i++) {
         if (fw.dev_slots[i].dev != NULL) {
             r = fw.dev_slots[i].dev->dispatch->_findMany((br_object_container*)fw.dev_slots[i].dev, objects, max_objects, &n, type, pattern, tv);
             if (r != 0) {
                 return r;
             }
+            objects += n;
             max_objects -= n;
             total += n;
-            objects += n;
         }
     }
     if (pnum_objects != NULL) {

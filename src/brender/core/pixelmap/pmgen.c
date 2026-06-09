@@ -18,10 +18,10 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_copy(br_device_pixelmap* self, 
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(br_device_pixelmap_dispatch, _rectangleCopy, 0x84);
 
-    p.x = self->pm_origin_x;
-    p.y = self->pm_origin_y;
-    r.x = src->pm_origin_x;
-    r.y = src->pm_origin_y;
+    p.x = -self->pm_origin_x;
+    p.y = -self->pm_origin_y;
+    r.x = -src->pm_origin_x;
+    r.y = -src->pm_origin_y;
     r.w = src->pm_width;
     r.h = src->pm_height;
     return self->dispatch->_rectangleCopy(self, &p, src, &r);
@@ -76,15 +76,15 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_doubleBuffer(br_device_pixelmap
     if (self->pm_width == src->pm_width && self->pm_height == src->pm_height) {
         return DispatchCopy(self,src);
     } else {
-        s.x = -self->pm_origin_x;
-        s.y = -self->pm_origin_y;
-        s.w = self->pm_width;
-        s.h = self->pm_height;
-        d.x = -src->pm_origin_x;
-        d.y = -src->pm_origin_y;
-        d.w = src->pm_width;
-        d.h = src->pm_height;
-        return DispatchRectangleStretchCopy(self, &s, src, &d);
+        s.x = -src->pm_origin_x;
+        s.y = -src->pm_origin_y;
+        s.w = src->pm_width;
+        s.h = src->pm_height;
+        d.x = -self->pm_origin_x;
+        d.y = -self->pm_origin_y;
+        d.w = self->pm_width;
+        d.h = self->pm_height;
+        return DispatchRectangleStretchCopy(self, &d, src, &s);
     }
 }
 
@@ -99,8 +99,8 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_copyDirty(br_device_pixelmap* s
 
     if (self->pm_width == src->pm_width && self->pm_height == src->pm_height) {
         for (i = 0; i < num_rects; i++) {
-            p.x = dirty->x;
-            p.y = dirty->y;
+            p.x = dirty[i].x;
+            p.y = dirty[i].y;
             e = self->dispatch->_rectangleCopy(self, &p, src, &dirty[i]);
             if (e != 0) {
                 return e;
@@ -123,8 +123,8 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_copyToDirty(br_device_pixelmap*
 
     if (self->pm_width == src->pm_width && self->pm_height == src->pm_height) {
         for (i = 0; i < num_rects; i++) {
-            p.x = dirty->x;
-            p.y = dirty->y;
+            p.x = dirty[i].x;
+            p.y = dirty[i].y;
             e = self->dispatch->_rectangleCopyTo(self, &p, src, &dirty[i]);
             if (e != 0) {
                 return e;
@@ -147,8 +147,8 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_gen_copyFromDirty(br_device_pixelma
 
     if (self->pm_width == src->pm_width && self->pm_height == src->pm_height) {
         for (i = 0; i < num_rects; i++) {
-            p.x = dirty->x;
-            p.y = dirty->y;
+            p.x = dirty[i].x;
+            p.y = dirty[i].y;
             e = self->dispatch->_rectangleCopyFrom(self, &p, src, &dirty[i]);
             if (e != 0) {
                 return e;

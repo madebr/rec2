@@ -289,6 +289,7 @@ void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpe
             break;
 #ifdef REC2_FIX_BUGS
         default:
+            break;
 #endif
         }
         pSpec->field_0x14 = BR_FIXED_INT(GetAnInt(pF)) / 100;

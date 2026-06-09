@@ -250,7 +250,7 @@ void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a040
-void* C2_HOOK_STDCALL DfPop(int type, unsigned int* countp) {
+void* C2_HOOK_STDCALL DfPop(int type, int* countp) {
 
     if (DatafileStackTop <= 0) {
         BrFailure("DatafileStack Underflow");
@@ -266,7 +266,7 @@ void* C2_HOOK_STDCALL DfPop(int type, unsigned int* countp) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052a0b0
-void* C2_HOOK_STDCALL DfTop(int type, unsigned int* countp) {
+void* C2_HOOK_STDCALL DfTop(int type, int* countp) {
     if (DatafileStackTop <= 0)
         BrFailure("DatafileStack Underflow");
     if (type != DatafileStack[DatafileStackTop - 1].type)
@@ -278,11 +278,10 @@ void* C2_HOOK_STDCALL DfTop(int type, unsigned int* countp) {
 
 // FUNCTION: CARMA2_HW 0x0052a120
 int C2_HOOK_STDCALL DfTopType(void) {
-    if (DatafileStackTop > 0) {
-        return DatafileStack[DatafileStackTop - 1].type;
-    } else {
+    if (DatafileStackTop <= 0) {
         return 0;
     }
+    return DatafileStack[DatafileStackTop - 1].type;
 }
 
 // FUNCTION: CARMA2_HW 0x0052b630
@@ -1567,7 +1566,7 @@ void C2_HOOK_STDCALL DfClose(br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052cc50
-int C2_HOOK_STDCALL BrWriteModeSet(int mode) {
+int C2_HOOK_CDECL BrWriteModeSet(int mode) {
     int old;
 
     old = fw.open_mode;

@@ -119,7 +119,7 @@ void C2_HOOK_FASTCALL LoadBunchOFloatParameters(tFloat_bunch_info *pBunch) {
     GetThreeFloats(gTempFile, &pBunch->initial[0], &pBunch->initial[1], &pBunch->initial[2]);
     GetALineAndDontArgue(gTempFile, s);
     str = strtok(s, "\t ,/");
-    for (i = 0; i < REC2_ASIZE(pBunch->initial_network); i++) {
+    for (i = 0; i < (int)REC2_ASIZE(pBunch->initial_network); i++) {
         sscanf(str, "%f", &pBunch->initial_network[i]);
         str = strtok(NULL, "\t ,/");
     }
@@ -158,7 +158,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
         PFfgets(s, REC2_ASIZE(s) - 1, gTempFile);
         PFfclose(gTempFile);
 
-        for (i = 0; i < strlen(gDecode_string); i++) {
+        for (i = 0; (unsigned)i < strlen(gDecode_string); i++) {
             gDecode_string[i] -= DECODE_OFFSET;
         }
 
@@ -171,7 +171,7 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
             gDecode_thing = 0;
         }
 
-        for (i = 0; i < strlen(gDecode_string); i++) {
+        for (i = 0; (unsigned)i < strlen(gDecode_string); i++) {
             gDecode_string[i] += DECODE_OFFSET;
         }
     }
@@ -226,8 +226,8 @@ void C2_HOOK_FASTCALL LoadGeneralParameters(void) {
     GetAString(gTempFile, gDefault_car);
     GetAString(gTempFile, gBasic_car_name);
 
-    gOpponent_nastyness_frigger = 1.0f;
     gKnobbled_frame_period = 0;
+    gOpponent_nastyness_frigger = 1.0f;
     /* Min time in secs after last contact with play before opponent considers repairing */
     gMinTimeOpponentRepair = (int)GetAScalar(gTempFile);
     /* Max time in secs after last contact with play before opponent considers repairing */

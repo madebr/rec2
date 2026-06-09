@@ -119,8 +119,8 @@ br_renderer* C2_HOOK_STDCALL RendererSoftAllocate(br_device *dev, br_soft_render
     }
 
     self->dispatch = (br_renderer_dispatch*)&softRendererDispatch;
-    self->device = (br_soft_device*)dev;
     self->identifier = type->identifier;
+    self->device = (br_soft_device*)dev;
     self->renderer_facility = type;
     self->object_list = BrObjectListAllocate(self);
     self->plib = prims;

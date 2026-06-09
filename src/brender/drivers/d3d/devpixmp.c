@@ -162,38 +162,18 @@ br_device_pixelmap_dispatch devicePixelmapD3DDispatch = {
 br_error C2_HOOK_CDECL DevicePixelmapD3DAllocateMode(br_device_d3d* dev, br_output_facility_d3d* facility, br_device_pixelmap_d3d** newpm, br_token_value* tv) {
     br_int_32 c;
     br_device_pixelmap_d3d* self;
+    HWND hWnd;
     int window_width;
     int window_height;
-    struct devicePixelmapD3DAllocateTokens pt;
 
     if (dev->active_buffers[BT_FRONTSCREEN] != NULL) {
         return 0xa00c;
     }
 
-    memset(&devicePixelmapD3DAllocateTemplate, 0, sizeof(devicePixelmapD3DAllocateTemplate));
-    devicePixelmapD3DAllocateTemplate.entries = devicePixelmapD3DAllocateTemplateEntries;
-    devicePixelmapD3DAllocateTemplate.n_entries = BR_ASIZE(devicePixelmapD3DAllocateTemplateEntries);
-
-    pt.hwnd = NULL;
-    BrTokenValueSetMany(&pt, &c, NULL, tv, &devicePixelmapD3DAllocateTemplate);
-    if (pt.hwnd == NULL) {
-        return 0xa001;
-    }
-
-    dev->identifier = "D3D driver";
-    if (gD3D_windows) {
-        window_width = 640;
-        window_height = 480;
-    } else {
-        window_width = GetSystemMetrics(SM_CXSCREEN);
-        window_height = GetSystemMetrics(SM_CYSCREEN);
-    }
-    SetForegroundWindow(pt.hwnd);
-    MoveWindow(pt.hwnd, 0, 0, window_width, window_height, TRUE);
-
-    if (InitD3D(pt.hwnd) != 0) {
+    if (InitD3D() != 0) {
         return 0xa002;
     }
+
     if (facility->colour_type == BR_PMT_RGB_565) {
         lfb_write_mode = GR_LFBWRITEMODE_565;
     } else if (facility->colour_type == BR_PMT_RGB_555) {
@@ -201,20 +181,36 @@ br_error C2_HOOK_CDECL DevicePixelmapD3DAllocateMode(br_device_d3d* dev, br_outp
     } else {
         return 0xa005;
     }
-
     memset(&devicePixelmapD3DTemplate, 0, sizeof(devicePixelmapD3DTemplate));
-    devicePixelmapD3DTemplate.entries = devicePixelmapD3DTemplateEntries;
-    devicePixelmapD3DTemplate.n_entries = BR_ASIZE(devicePixelmapD3DTemplateEntries);
-
     memset(&matchD3DTemplate, 0, sizeof(matchD3DTemplate));
-    matchD3DTemplate.entries = matchD3DTemplateEntries;
+
+    devicePixelmapD3DTemplate.n_entries = BR_ASIZE(devicePixelmapD3DTemplateEntries);
+    devicePixelmapD3DTemplate.entries = devicePixelmapD3DTemplateEntries;
+
     matchD3DTemplate.n_entries = BR_ASIZE(matchD3DTemplateEntries);
+    matchD3DTemplate.entries = matchD3DTemplateEntries;
+
+    dev->product = "D3D driver";
+
+    memset(&devicePixelmapD3DAllocateTemplate, 0, sizeof(devicePixelmapD3DAllocateTemplate));
+    devicePixelmapD3DAllocateTemplate.n_entries = BR_ASIZE(devicePixelmapD3DAllocateTemplateEntries);
+    devicePixelmapD3DAllocateTemplate.entries = devicePixelmapD3DAllocateTemplateEntries;
+    devicePixelmapD3DAllocateTemplate.res = dev->res;
+
+    BrTokenValueSetMany(&hWnd, &c, 0, tv, &devicePixelmapD3DAllocateTemplate);
+    if (hWnd == NULL) {
+        return 0xa001;
+    }
+    window_width = GetSystemMetrics(SM_CXSCREEN);
+    window_height = GetSystemMetrics(SM_CYSCREEN);
+    SetForegroundWindow(hWnd);
+    MoveWindow(hWnd, 0, 0, window_width, window_height, TRUE);
 
     C2_HOOK_BUG_ON(sizeof(br_device_pixelmap_d3d) != 0x5c);
 
     self = BrResAllocate(dev->res, sizeof(br_device_pixelmap_d3d), BR_MEMORY_OBJECT);
     self->dispatch = &devicePixelmapD3DDispatch;
-    self->pm_identifier = dev->identifier;
+    self->pm_identifier = dev->product;
     self->restore_mode = 1;
     self->pm_pixels = NULL;
     self->pm_width = facility->width;
@@ -235,9 +231,12 @@ br_error C2_HOOK_CDECL DevicePixelmapD3DAllocateMode(br_device_d3d* dev, br_outp
     current_height = facility->height;
     passthru_vga = 0;
     if (gAttached_surface_pixel_format.dwRGBAlphaBitMask == 0x0000
-            && gAttached_surface_pixel_format.dwRBitMask == 0xf800
-            && gAttached_surface_pixel_format.dwGBitMask == 0x07e0
-            && gAttached_surface_pixel_format.dwBBitMask == 0x001f) {
+            && !(gAttached_surface_pixel_format.dwRBitMask == 0x7c00
+                && gAttached_surface_pixel_format.dwGBitMask == 0x03e0
+                && gAttached_surface_pixel_format.dwBBitMask == 0x001f)
+            && (gAttached_surface_pixel_format.dwRBitMask == 0xf800
+                && gAttached_surface_pixel_format.dwGBitMask == 0x07e0
+                && gAttached_surface_pixel_format.dwBBitMask == 0x001f)) {
         self->pm_type = BR_PMT_RGB_565;
     } else {
         self->pm_type = BR_PMT_RGB_555;
@@ -315,9 +314,12 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_match(br_device_pixelmap_d3d* s
         pm->output_facility = self->output_facility;
         pm->pm_type = self->pm_type;
         if (gAttached_surface_pixel_format.dwRGBAlphaBitMask == 0
+                && !(gAttached_surface_pixel_format.dwRBitMask == 0x7c00
+                    && gAttached_surface_pixel_format.dwGBitMask == 0x03e0
+                    && gAttached_surface_pixel_format.dwBBitMask == 0x001f)
                 && (gAttached_surface_pixel_format.dwRBitMask == 0xf800
-                && gAttached_surface_pixel_format.dwGBitMask == 0x07e0)
-                && gAttached_surface_pixel_format.dwBBitMask == 0x001f) {
+                    && gAttached_surface_pixel_format.dwGBitMask == 0x07e0
+                    && gAttached_surface_pixel_format.dwBBitMask == 0x001f)) {
             pm->pm_type = BR_PMT_RGB_565;
         } else {
             pm->pm_type = BR_PMT_RGB_555;
@@ -327,6 +329,8 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_match(br_device_pixelmap_d3d* s
         pm->buffer_type = BT_BACKSCREEN;
         dev->active_buffers[BT_BACKSCREEN] = pm;
         self->field_0x50 = pm;
+        *newpm = pm;
+        return 0;
     } else if (mt.use == BRT_DEPTH) {
         if (self->buffer_type != BT_FRONTSCREEN && self->buffer_type != BT_BACKSCREEN) {
             return 0xa005;
@@ -349,13 +353,13 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_match(br_device_pixelmap_d3d* s
         pm->buffer_type = BT_DEPTH;
         dev->active_buffers[BT_DEPTH] = pm;
         self->field_0x54 = pm;
+        *newpm = pm;
+        return 0;
     } else if (mt.use == BRT_NO_RENDER) {
         return AllocateD3DSysMemPixelmap(self, newpm, mt.width, mt.height);
     } else {
         return 0xa005;
     }
-    *newpm = pm;
-    return 0;
 }
 
 // FUNCTION: D3D 0x10001c90
@@ -410,12 +414,12 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_rectangleCopyTo(br_device_pixel
     br_uint_8* dst_ptr;
     DDSURFACEDESC surface_desc;
 
-    if(PixelmapRectangleClipTwo(&ar, &ap, r, p, (br_pixelmap*)self, (br_pixelmap*)src) == BR_CLIP_REJECT) {
+    if (PixelmapRectangleClipTwo(&ar, &ap, r, p, (br_pixelmap*)self, (br_pixelmap*)src) == BR_CLIP_REJECT) {
         return 0;
     }
     gINT_1001bb94 = 1;
     if (gNo_2d_during_3d_scene == 1) {
-        FUN_10004780((br_uint_8*)src->pm_pixels + ar.y * src->pm_row_bytes + 2 * ar.x, src->pm_row_bytes);
+        FUN_10004780((br_uint_8*)src->pm_pixels + 2 * ar.x + ar.y * src->pm_row_bytes, src->pm_row_bytes);
         return 0;
     }
     gLock_count += 1;
@@ -427,8 +431,8 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_rectangleCopyTo(br_device_pixel
             return 0;
         }
     }
-    src_ptr = (br_uint_8*)src->pm_pixels + ar.y * src->pm_row_bytes + 2 * ar.x;
-    dst_ptr = (br_uint_8*)surface_desc.lpSurface + (self->pm_base_y + ap.y) * surface_desc.lPitch + 2 * (self->pm_base_x + ap.x);
+    src_ptr = (br_uint_8*)src->pm_pixels + 2 * ar.x + ar.y * src->pm_row_bytes;
+    dst_ptr = (br_uint_8*)surface_desc.lpSurface + 2 * (self->pm_base_x + ap.x) + (self->pm_base_y + ap.y) * surface_desc.lPitch;
 
     for (y = 0; y < ar.h; y++) {
         memcpy(dst_ptr, src_ptr, 2 * ar.w);
@@ -474,13 +478,13 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_rectangleStretchCopyFrom(br_dev
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_rectangleFill(br_device_pixelmap_d3d* self, br_rectangle* rect, br_uint_32 colour) {
     br_rectangle r;
 
-    PixelmapRectangleClip(&r, rect, 0);
+    PixelmapRectangleClip(&r, rect, (br_pixelmap*)self);
     return 0;
 }
 
-// FUNCTION: D3D 0x10001910
+// STUB: D3D 0x10001910
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_pixelSet(br_device_pixelmap_d3d* self, br_point* p, br_uint_32 colour) {
-    abort();
+    NOT_IMPLEMENTED();
     return 0xa005;
 }
 
@@ -492,14 +496,14 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_synchronise(br_device_pixelmap_
     return 0;
 }
 
-// FUNCTION: D3D 0x10001d70
+// STUB: D3D 0x10001d70
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_directLock(br_device_pixelmap_d3d* self, br_boolean block) {
-    abort();
+    NOT_IMPLEMENTED();
     return 0xa005;
 }
 
-// FUNCTION: D3D 0x10001e40
+// STUB: D3D 0x10001e40
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_d3d_directUnlock(br_device_pixelmap_d3d* self) {
-    abort();
+    NOT_IMPLEMENTED();
     return 0xa005;
 }

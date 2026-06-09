@@ -16,9 +16,12 @@ const char* C2_HOOK_CDECL HostDefaultDevice(void) {
 // FUNCTION: CARMA2_HW 0x0053fbb0
 br_boolean C2_HOOK_CDECL HostIniSectionExists(char* ini_file, char* section_name) {
 #ifdef _WIN32
+	DWORD Size;
     char buffer[5];
 
-    return GetPrivateProfileSectionA(section_name, buffer, sizeof(buffer), ini_file) ? 1 : 0;//!= 0;
+    Size = GetPrivateProfileSectionA(section_name, buffer, sizeof(buffer), ini_file);
+
+    return Size != 0;
 #else
     return 0;
 #endif
@@ -44,7 +47,7 @@ br_error C2_HOOK_CDECL HostIniQuery(char* ini_file, char* section_name, char* en
 br_error C2_HOOK_CDECL HostRegistryQuery(void* hKey, char* Path, char* entry, char* Buffer, br_uint_16 max, br_uint_16* size) {
 #ifdef _WIN32
     HKEY key, key2;
-    DWORD cbData;
+    DWORD cbData = 0;
     DWORD type;
 
     if (hKey != NULL) {
@@ -56,7 +59,6 @@ br_error C2_HOOK_CDECL HostRegistryQuery(void* hKey, char* Path, char* entry, ch
     if (RegOpenKeyExA(key, Path, 0, KEY_READ, &key2) != ERROR_SUCCESS) {
         return 0x1002;
     }
-    type = REG_NONE;
     cbData = max;
     if (RegQueryValueExA(key2, entry, NULL, &type, (LPBYTE)Buffer, &cbData) != ERROR_SUCCESS) {
         return 0x1002;

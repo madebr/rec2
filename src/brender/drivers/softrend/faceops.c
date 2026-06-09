@@ -118,7 +118,7 @@ void C2_HOOK_CDECL OpTriangleMappingWrapFix(brp_block* block, brp_vertex* v0, br
     br_scalar d0, d1, d2;
     brp_vertex fixed[3];
 
-    scale = fabsf(rend.renderer->state.cache.comp_scales[C_U]);
+    scale = (br_scalar)fabs(rend.renderer->state.cache.comp_scales[C_U]);
     half = scale / 2.f;
     d0 = v1->comp[C_U] - v0->comp[C_U];
     d1 = v2->comp[C_U] - v1->comp[C_U];
@@ -289,9 +289,9 @@ void C2_HOOK_STDCALL SubdivideSetThreshold(br_int_32 subdivide_tolerance) {
 br_boolean C2_HOOK_CDECL subdivideCheck(brp_vertex* v0, brp_vertex* v1, brp_vertex* v2) {
     br_scalar z0,z1,z2,zt;
 
-    z0 = fabsf(v0->comp[C_Z]);
-    z1 = fabsf(v1->comp[C_Z]);
-    z2 = fabsf(v2->comp[C_Z]);
+    z0 = (br_scalar)fabs(v0->comp[C_Z]);
+    z1 = (br_scalar)fabs(v1->comp[C_Z]);
+    z2 = (br_scalar)fabs(v2->comp[C_Z]);
 
     if (z0 > z1) {
         zt = z0;
@@ -311,7 +311,7 @@ br_boolean C2_HOOK_CDECL subdivideCheck(brp_vertex* v0, brp_vertex* v1, brp_vert
         z2 = zt;
     }
 
-    if (z0 > fabsf(rend.subdivide_threshold * z2)) {
+    if (z0 > (br_scalar)fabs(rend.subdivide_threshold * z2)) {
         return 0;
     }
 

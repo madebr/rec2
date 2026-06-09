@@ -18,8 +18,6 @@ extern int gScaleMouse;
 extern tJoystick_info g_Joystick_infos[16];
 extern int g_Count_Joystick_infos;
 
-extern void Win32ServiceMessages(void);
-
 extern void PDInitialiseSystem(void);
 
 extern void PDSetFileVariables(void);

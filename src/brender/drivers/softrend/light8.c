@@ -149,7 +149,7 @@ void C2_HOOK_STDCALL lightingIndexLocal2(br_soft_renderer* self, br_vector3* p, 
 
         dot = BrVector3Dot(&pos_l, n);
         if (dot >= 0.f) {
-            comp[C_I] += self->state.surface.kd * dot * (alp->s->attenuation_q - len2) / (alp->s->attenuation_q * sqrtf(len2)) * alp->s->attenuation_c;
+            comp[C_I] += self->state.surface.kd * dot * (alp->s->attenuation_q - len2) / (alp->s->attenuation_q * (br_scalar)sqrt(len2)) * alp->s->attenuation_c;
         }
     }
 }

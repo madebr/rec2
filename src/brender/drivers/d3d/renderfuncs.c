@@ -3,19 +3,19 @@
 #include "backend.h"
 #include "match.h"
 
-// FUNCTION: D3D 0x100080e0
+// STUB: D3D 0x100080e0
 void C2_HOOK_CDECL PointRender_d3d_RGB_555(brp_block* block, brp_vertex* vertex) {
-    abort();
+    NOT_IMPLEMENTED();
 }
 
-// FUNCTION: D3D 0x10007f80
+// STUB: D3D 0x10007f80
 void C2_HOOK_CDECL LineRender_d3d(brp_block* block, brp_vertex* vertex) {
-    abort();
+    NOT_IMPLEMENTED();
 }
 
-// FUNCTION: D3D 0x10007030
+// STUB: D3D 0x10007030
 void C2_HOOK_CDECL FUN_10007030(brp_block_d3d* block) {
-    abort();
+    NOT_IMPLEMENTED();
 }
 
 // FUNCTION: D3D 0x10007080
@@ -35,14 +35,14 @@ void C2_HOOK_CDECL FUN_100070e0(brp_block_d3d* block) {
     }
 }
 
-// FUNCTION: D3D 0x10007690
+// STUB: D3D 0x10007690
 void C2_HOOK_CDECL FUN_10007690(brp_block* block, brp_vertex* vertex) {
-    abort();
+    NOT_IMPLEMENTED();
 }
 
-// FUNCTION: D3D 0x10007850
+// STUB: D3D 0x10007850
 void C2_HOOK_CDECL FUN_10007850(brp_block* block, brp_vertex* vertex) {
-    abort();
+    NOT_IMPLEMENTED();
 }
 
 // FUNCTION: D3D 0x10007a00
@@ -89,12 +89,12 @@ void C2_HOOK_CDECL FUN_10007a00(brp_block* block, brp_vertex* v0, brp_vertex* v1
     }
 }
 
-// FUNCTION: D3D 0x10007ba0
+// STUB: D3D 0x10007ba0
 void C2_HOOK_CDECL FUN_10007ba0(brp_block* block, brp_vertex* vertex) {
-    abort();
+    NOT_IMPLEMENTED();
 }
 
-// FUNCTION: D3D 0x10007da0
+// STUB: D3D 0x10007da0
 void C2_HOOK_CDECL FUN_10007da0(brp_block* block, brp_vertex* vertex) {
-    abort();
+    NOT_IMPLEMENTED();
 }

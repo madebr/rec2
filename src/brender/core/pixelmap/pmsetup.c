@@ -295,17 +295,14 @@ void C2_HOOK_CDECL BrPixelmapBegin(void) {
     for (i = 0; i < BR_ASIZE(pm_resourceClasses); i++) {
         BrResClassAdd(&pm_resourceClasses[i]);
     }
-#if defined(REC2_MATCHING)
+
     BrImageAdd(&Image_BRMAP1);
-#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005395f0
 void C2_HOOK_CDECL BrPixelmapEnd(void) {
 
-#if defined(REC2_MATCHING)
     BrImageRemove(&Image_BRMAP1);
-#endif
     BrResFree(_pixelmap.res);
     BrMemSet(&_pixelmap, 0, sizeof(br_pixelmap_state));
 }

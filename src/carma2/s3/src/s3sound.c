@@ -1,4 +1,4 @@
-#include "s3sound.h"
+#include "../include/s3/internal/s3sound.h"
 
 // this function was only called in Carmageddon I DOS build
 // FUNCTION: CARMA2_HW 0x0056990f

@@ -6,6 +6,8 @@ project(rec2 C)
 
 include(CMakeDependentOption)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}" CACHE PATH "Runtime directory")
+
 message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION}")
 # Carmageddon 2 was built with Visual Studio 5 (MSVC 11.0)
 if(WIN32 AND CMAKE_C_COMPILER_ID STREQUAL "MSVC" AND CMAKE_C_COMPILER_VERSION VERSION_EQUAL "11.0")
@@ -21,6 +23,7 @@ if(REC2_MATCHING)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "")
     # Embed debug information (/Z7) for Debug and RelWithDebInfo configuration type
     set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:Embedded>")
+#    set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>")
 
     set(CMAKE_C_FLAGS "/W3 /GX /DWIN32 /D_WINDOWS")
     set(CMAKE_C_FLAGS_DEBUG "/Gm /Od /D_DEBUG /MLd")

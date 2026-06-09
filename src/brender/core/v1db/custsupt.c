@@ -73,7 +73,7 @@ void C2_HOOK_CDECL BrModelToScreenQuery(br_matrix4* dest) {
 void C2_HOOK_CDECL BrModelToViewQuery(br_matrix34* dest) {
     br_uint_32 dummy;
 
-    v1db.renderer->dispatch->_partQueryBuffer(v1db.renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)dest, sizeof(dest), BRT_MODEL_TO_VIEW_M34_F);
+    v1db.renderer->dispatch->_partQueryBuffer(v1db.renderer, BRT_MATRIX, 0, &dummy, (br_uint_32*)dest, sizeof(*dest), BRT_MODEL_TO_VIEW_M34_F);
 }
 
 // FUNCTION: CARMA2_HW 0x00526a90
@@ -195,10 +195,10 @@ br_scalar C2_HOOK_CDECL BrZbDepthToScreenZ(br_uint_32 depth_z, br_camera* camera
 br_uint_32 C2_HOOK_CDECL BrZbScreenZToDepth(br_scalar sz, br_camera* camera) {
     br_uint_32 depth;
 
-    depth = (br_uint_32)(-sz * 65536.f);
-    if (sz <= -32768.f) {
+    depth = BrScalarToFixed(sz) ^ 0x80000000;
+    if (sz <= -32768.0f) {
         return 0;
-    } else if (sz >= 32768.f) {
+    } else if (sz >= 32768.0f) {
         return -1;
     } else {
         return depth;
@@ -213,13 +213,13 @@ br_scalar C2_HOOK_CDECL BrZsDepthToScreenZ(br_scalar depth_z, br_camera* camera)
     hither = camera->hither_z;
     yon = camera->yon_z;
 
-    if (depth_z < hither) {
-        return -32768.f;
+    if (depth_z <= hither) {
+        return -32768.0f;
     }
     if (depth_z >= yon) {
-        return 32768.f;
+        return 32768.0f;
     }
-    return 2 * (2 * depth_z - yon - hither) * 16384.f / (yon - hither);
+    return 2 * ((2 * depth_z - yon - hither) * 16384.0f / (yon - hither));
 }
 
 // FUNCTION: CARMA2_HW 0x00527320
@@ -228,13 +228,12 @@ br_scalar C2_HOOK_CDECL BrZsScreenZToDepth(br_scalar sz, br_camera* camera) {
     br_scalar yon;
     br_scalar depth;
 
-    yon = camera->yon_z;
     hither = camera->hither_z;
-    depth = 0.5f * (yon + hither + .5f * sz * (yon - hither) / 16384.f);
-    if (sz <= -32768.f) {
+    yon = camera->yon_z;
+    depth = ((yon + hither) + (sz / 2.0f) * (yon - hither) / 16384.0f) / 2.0f;
+    if (sz <= -32768.0f) {
         return hither;
-    }
-    if (sz >= 32768.f) {
+    } else if (sz >= 32768.0f) {
         return yon;
     }
     return depth;
@@ -249,17 +248,17 @@ br_scalar C2_HOOK_CDECL BrScreenZToCamera(br_actor* camera, br_scalar sz) {
     data = camera->type_data;
     yon = data->yon_z;
     hither = data->hither_z;
-    if (sz <= -32768.f) {
+    if (sz <= -32768.0f) {
         return -hither;
     }
-    if (sz >= 32768.f) {
+    if (sz >= 32768.0f) {
         return -yon;
     }
     switch (data->type) {
     case BR_CAMERA_PARALLEL:
-        return .5f * sz * (hither - yon) * .5f / 16384.f - (yon + hither) * .5f;
+        return 0.5f * sz * (hither - yon) * 0.5f / 16384.0f - (yon + hither) * 0.5f;
     case BR_CAMERA_PERSPECTIVE_FOV:
-        return 2 * ((yon * hither) / (.5f * sz * (yon - hither) / 16384.f - (yon + hither)));
+        return 2.0f * ((yon * hither) / (0.5f * sz * (yon - hither) / 16384.0f - (yon + hither)));
     default:
         return 0.f;
     }

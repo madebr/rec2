@@ -27,9 +27,10 @@ extern int gCursorPos_LastClick_Valid;
 extern int gScaleMouse;
 extern int gScreenWidth;
 extern int gScreenHeight;
+extern FILE *gActionReplayBufferFile;
 
 extern int gKeyboardBufferLength;
-extern char gKeyboardBuffer[20];
+extern unsigned char gKeyboardBuffer[20];
 
 extern int gPerformanceCounterInitialized;
 extern LARGE_INTEGER gPerformanceCounterStart;
@@ -59,8 +60,6 @@ void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown
 void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
 
 void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath);
-
-void C2_HOOK_CDECL Win32ServiceMessages(void);
 
 void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory);
 

@@ -80,7 +80,7 @@ void C2_HOOK_FASTCALL AllocateActors(void) {
         FatalError(kFatalError_CannotAllocateSelf);
     }
 
-    for (i = 0; i < (int)REC2_ASIZE(gOther_selfs); i++) {
+    for (i = 0; i <= (int)REC2_ASIZE(gOther_selfs) - 1; i++) {
         gOther_selfs[i] = BrActorAllocate(BR_ACTOR_NONE, NULL);
         if (gOther_selfs[i] == NULL) {
             FatalError(kFatalError_CannotAllocateSelf);

@@ -48,14 +48,17 @@ br_error C2_HOOK_CDECL _M_br_object_container_remove(br_object_container* self, 
     if (hl == NULL) {
         return 0x1002;
     }
-    for (he = (object_list_entry*)hl->l.head; he != NULL && he->h != h; he = (object_list_entry*)he->n.next) {
+    for (he = (object_list_entry*)hl->l.head; he != NULL; he = (object_list_entry*)he->n.next) {
+        if (he->h == h) {
+            break;
+        }
     }
-    if (he != NULL && he->h == h) {
-        BrSimpleRemove(&he->n);
-        BrResFree(he);
-        return 0;
+    if (he == NULL || he->h != h) {
+        return 0x1002;
     }
-    return 0x1002;
+    BrSimpleRemove(&he->n);
+    BrResFree(he);
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0052d260
@@ -82,29 +85,29 @@ br_error C2_HOOK_CDECL _M_br_object_container_find(br_object_container* self, br
     object_list* hl;
     object_list_entry* he;
     void* tvarg;
-    br_error r;
+    br_error r = 0x1002;
 
     hl = self->dispatch->_listQuery(self);
     if (hl == NULL) {
         return 0x1002;
     }
+#ifdef BRENDER_FIX_BUGS
     tvarg = NULL;
+#endif
     if (tv != NULL) {
         tvarg = self->dispatch->_tokensMatchBegin(self, type, tv);
     }
-    r = 0x1002;
     for (he = (object_list_entry*)hl->l.head; he != NULL; he = (object_list_entry*)he->n.next) {
-        if (type != BR_NULL_TOKEN && he->h->dispatch->_type(he->h) != type) {
-            continue;
+
+
+        if ((type == BR_NULL_TOKEN || type == he->h->dispatch->_type(he->h))
+                    && BrNamePatternMatch(pattern, he->h->dispatch->_identifier(he->h))) {
+            if (tv != NULL && !self->dispatch->_tokensMatch(self, he->h, tvarg)) {
+                continue;
+            }
+            *ph = he->h;
+            r = 0;
         }
-        if (!BrNamePatternMatch(pattern, he->h->dispatch->_identifier(he->h))) {
-            continue;
-        }
-        if (tv != NULL && !self->dispatch->_tokensMatch(self, he->h, tvarg)) {
-            continue;
-        }
-        r = 0;
-        *ph = he->h;
     }
     if (tv != NULL) {
         self->dispatch->_tokensMatchEnd(self, tvarg);

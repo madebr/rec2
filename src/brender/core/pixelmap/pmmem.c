@@ -196,7 +196,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_allocateSub(br_device_pixelmap*
     pm->pm_origin_y = 0;
     pm->pm_stored = 0;
     pm->dispatch = &devicePixelmapDispatch;
-    if (pm->pm_width != self->pm_width) {
+    if (self->pm_width != pm->pm_width) {
         pm->pm_flags &= ~BR_PMF_LINEAR;
     }
     *newpm = pm;
@@ -287,47 +287,48 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_resize(br_device_pixelmap* self
 // IDA: br_error __cdecl _M_br_device_pixelmap_mem_match(br_device_pixelmap *self, br_device_pixelmap **newpm, br_token_value *tv)
 // FUNCTION: CARMA2_HW 0x00539990
 br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_match(br_device_pixelmap* self, br_device_pixelmap** newpm, br_token_value* tv) {
-    match_tokens mt;
+    match_tokens mt = { BRT_NONE, 0 };
     br_int_32 count;
     br_device_pixelmap* pm;
     br_int_32 bytes;
     br_int_32 r;
 
-    memset(&mt, 0, sizeof(mt));
     if (_pixelmap.pixelmap_match_template == NULL) {
         _pixelmap.pixelmap_match_template = BrTVTemplateAllocate(_pixelmap.res, matchTemplateEntries, BR_ASIZE(matchTemplateEntries));
-        return 0x1002;
+        if (_pixelmap.pixelmap_match_template == NULL) {
+            return 0x1002;
+        }
     }
+    mt.pixel_type = self->pm_type;
     mt.width = self->pm_width;
     mt.height = self->pm_height;
-    mt.pixel_type = self->pm_type;
     BrTokenValueSetMany(&mt, &count, NULL, tv, _pixelmap.pixelmap_match_template);
 
     switch(mt.use) {
-        case BRT_DEPTH:
-            switch (mt.pixel_bits) {
-            case 0:
-            case 8:
-                mt.pixel_type = BR_PMT_DEPTH_8;
-                break;
-            case 16:
-                mt.pixel_type = BR_PMT_DEPTH_16;
-                break;
-            case 32:
-                mt.pixel_type = BR_PMT_DEPTH_32;
-                break;
-            default:
-                return 0x1002;
-            }
+    case BRT_DEPTH:
+        switch (mt.pixel_bits) {
+        case 0:
+        case 8:
+            mt.pixel_type = BR_PMT_DEPTH_8;
             break;
-        case BRT_CLONE:
-        case BRT_OFFSCREEN:
-        case BRT_HIDDEN:
-        case BRT_HIDDEN_BUFFER:
-        case BRT_NO_RENDER:
+        case 16:
+            mt.pixel_type = BR_PMT_DEPTH_16;
+            break;
+        case 32:
+            mt.pixel_type = BR_PMT_DEPTH_32;
             break;
         default:
             return 0x1002;
+        }
+        break;
+    case BRT_CLONE:
+    case BRT_OFFSCREEN:
+    case BRT_HIDDEN:
+    case BRT_HIDDEN_BUFFER:
+    case BRT_NO_RENDER:
+        break;
+    default:
+        return 0x1002;
     }
     if (mt.use == BRT_DEPTH) {
         pm = DevicePixelmapMemAllocate(mt.pixel_type, mt.width, mt.height, NULL, ((self->pm_row_bytes < 0) ? BR_PMAF_INVERTED : 0) | BR_PMAF_NO_PIXELS);
@@ -337,18 +338,18 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_match(br_device_pixelmap* self,
             r = -r;
         }
         r = (r + bytes - 1) / bytes;
-        pm->pm_row_bytes = r * bytes;
+        pm->pm_row_bytes = r * (pmTypeInfo[pm->pm_type].bits >> 3);
 
         pm->pm_pixels = BrResAllocate(pm, pm->pm_row_bytes * pm->pm_height, BR_MEMORY_PIXELS);
 
-        if (pm->pm_width * bytes == pm->pm_row_bytes) {
+        if (pm->pm_width * (pmTypeInfo[pm->pm_type].bits >> 3) == pm->pm_row_bytes) {
             pm->pm_flags |= BR_PMF_LINEAR;
         } else {
             pm->pm_flags &= ~BR_PMF_LINEAR;
         }
 
         if (self->pm_row_bytes < 0) {
-            pm->pm_pixels = (char *)pm->pm_pixels + pm->pm_row_bytes * (pm->pm_height-1);
+            pm->pm_pixels = (char *)pm->pm_pixels + pm->pm_row_bytes * (pm->pm_height - 1);
             pm->pm_row_bytes = -pm->pm_row_bytes;
         }
     } else {
@@ -369,8 +370,8 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_copyTo(br_device_pixelmap* self
 
     bytes = pmTypeInfo[self->pm_type].bits / 8;
     if (self->pm_row_bytes == src->pm_row_bytes
-        && (self->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == ((BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS))
-        && (src->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == ((BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS))) {
+        && (self->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)
+        && (src->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) {
         if (self->pm_row_bytes > 0) {
             pm_mem_copy_colour(
                 (br_uint_8*)self->pm_pixels + self->pm_base_y * self->pm_row_bytes + self->pm_base_x * bytes,
@@ -379,16 +380,14 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_copyTo(br_device_pixelmap* self
                 src->pm_pixels_qualifier,
                 self->pm_width * self->pm_height,
                 bytes);
-            return 0;
         } else {
             pm_mem_copy_colour(
-                (br_uint_8*)self->pm_pixels + (self->pm_base_y - 1 + self->pm_height) * self->pm_row_bytes + self->pm_base_x * bytes,
+                (br_uint_8*)self->pm_pixels + (self->pm_base_y + (self->pm_height - 1)) * self->pm_row_bytes + self->pm_base_x * bytes,
                 self->pm_pixels_qualifier,
-                (br_uint_8*)src->pm_pixels + (src->pm_base_y - 1 + src->pm_height) * src->pm_row_bytes + src->pm_base_x * bytes,
+                (br_uint_8*)src->pm_pixels + (src->pm_base_y + (src->pm_height - 1)) * src->pm_row_bytes + src->pm_base_x * bytes,
                 src->pm_pixels_qualifier,
                 self->pm_width * self->pm_height,
                 bytes);
-            return 0;
         }
     } else {
         if ((self->pm_row_bytes & 0x7) == 0) {
@@ -397,22 +396,26 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_copyTo(br_device_pixelmap* self
                 (br_uint_8*)src->pm_pixels, src->pm_pixels_qualifier,
                 self->pm_width, self->pm_height,
                 self->pm_row_bytes, src->pm_row_bytes, bytes);
-            return 0;
         } else {
-            int i;
+            br_uint_8 *s, *d;
+            br_uint_32 y;
 
-            for (i = 0; i < self->pm_height; i++) {
+            s = src->pm_pixels;
+            d = self->pm_pixels;
+            for (y = 0; y < self->pm_height; y++) {
                 pm_mem_copy_colour(
-                    (br_uint_8*)self->pm_pixels + i * self->pm_row_bytes,
+                    d,
                     self->pm_pixels_qualifier,
-                    (br_uint_8*)src->pm_pixels + i * src->pm_row_bytes,
+                    s,
                     src->pm_pixels_qualifier,
                     self->pm_width,
                     bytes);
+                s += src->pm_row_bytes;
+                d += self->pm_row_bytes;
             }
-            return 0;
         }
     }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00539dc0
@@ -431,16 +434,14 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_copyFrom(br_device_pixelmap* se
                     self->pm_pixels_qualifier,
                     self->pm_width * self->pm_height,
                     bytes);
-            return 0;
         } else {
             pm_mem_copy_colour(
-                    (br_uint_8*)dest->pm_pixels + (dest->pm_base_y - 1 + dest->pm_height) * dest->pm_row_bytes + dest->pm_base_x * bytes,
+                    (br_uint_8*)dest->pm_pixels + (dest->pm_base_y + (dest->pm_height - 1)) * dest->pm_row_bytes + dest->pm_base_x * bytes,
                     dest->pm_pixels_qualifier,
-                    (br_uint_8*)self->pm_pixels + (self->pm_base_y - 1 + self->pm_height) * self->pm_row_bytes + self->pm_base_x * bytes,
+                    (br_uint_8*)self->pm_pixels + (self->pm_base_y + (self->pm_height - 1)) * self->pm_row_bytes + self->pm_base_x * bytes,
                     self->pm_pixels_qualifier,
                     self->pm_width * self->pm_height,
                     bytes);
-            return 0;
         }
     } else {
         if ((self->pm_row_bytes & 0x7) == 0) {
@@ -449,22 +450,27 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_copyFrom(br_device_pixelmap* se
                     (br_uint_8*)self->pm_pixels, self->pm_pixels_qualifier,
                     self->pm_width, self->pm_height,
                     dest->pm_row_bytes, self->pm_row_bytes, bytes);
-            return 0;
         } else {
-            int i;
+            br_uint_8 *s, *d;
+            br_uint_32 y;
 
-            for (i = 0; i < self->pm_height; i++) {
+            s = self->pm_pixels;
+            d = dest->pm_pixels;
+
+            for (y = 0; y < self->pm_height; y++) {
                 pm_mem_copy_colour(
-                        (br_uint_8*)dest->pm_pixels + i * dest->pm_row_bytes,
+                        d,
                         dest->pm_pixels_qualifier,
-                        (br_uint_8*)self->pm_pixels + i * self->pm_row_bytes,
+                        s,
                         self->pm_pixels_qualifier,
                         self->pm_width,
                         bytes);
+                s += self->pm_row_bytes;
+                d += dest->pm_row_bytes;
             }
-            return 0;
         }
     }
+            return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00539f90
@@ -477,17 +483,27 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_fill(br_device_pixelmap* self, 
             pm_mem_fill_colour((br_uint_8*)self->pm_pixels + self->pm_base_y * self->pm_row_bytes + self->pm_base_x * bytes, self->pm_pixels_qualifier,
                                self->pm_width * self->pm_height, bytes, colour);
         } else {
-            pm_mem_fill_colour((br_uint_8*)self->pm_pixels + (self->pm_base_y + self->pm_height - 1) * self->pm_row_bytes + self->pm_base_x * bytes,
+            pm_mem_fill_colour((br_uint_8*)self->pm_pixels + (self->pm_base_y + (self->pm_height - 1)) * self->pm_row_bytes + self->pm_base_x * bytes,
                                self->pm_pixels_qualifier, self->pm_width * self->pm_height, bytes, colour);
         }
     } else if ((self->pm_row_bytes & 7) == 0) {
         pm_mem_fill_colour_rect((br_uint_8*)self->pm_pixels + self->pm_base_y * self->pm_row_bytes + self->pm_base_x * bytes, self->pm_pixels_qualifier,
                                 self->pm_width, self->pm_height, self->pm_row_bytes, bytes, colour);
     } else {
-        int i;
-        for (i = 0; i < self->pm_height; i++) {
-            pm_mem_fill_colour((br_uint_8*)self->pm_pixels + (i + self->pm_base_y) * self->pm_row_bytes + self->pm_base_x * bytes, self->pm_pixels_qualifier,
-                               self->pm_width, bytes, colour);
+        br_uint_8 *d;
+        br_uint_32 y;
+
+        d = self->pm_pixels;
+
+        for (y = 0; y < self->pm_height; y++) {
+            pm_mem_fill_colour(
+                d,
+                self->pm_pixels_qualifier,
+                self->pm_width,
+                bytes,
+                colour);
+
+			d += self->pm_row_bytes;
         }
     }
     return 0;
@@ -673,7 +689,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_rectangleFill(br_device_pixelma
         return 0;
     }
 
-    bytes = pmTypeInfo[self->pm_type].bits / 8;
+    bytes = pmTypeInfo[self->pm_type].bits >> 3;
     if (arect.w == self->pm_width
         && (self->pm_flags & (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) == (BR_PMF_LINEAR | BR_PMF_ROW_WHOLEPIXELS)) {
         if (self->pm_row_bytes > 0) {
@@ -686,7 +702,7 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_rectangleFill(br_device_pixelma
             return 0;
         } else {
             pm_mem_fill_colour(
-                (br_uint_8*)self->pm_pixels + (self->pm_base_y + arect.y + -1 + arect.h) * self->pm_row_bytes + (self->pm_base_x + arect.x) * bytes,
+                (br_uint_8*)self->pm_pixels + (self->pm_base_y + (arect.y +  arect.h - 1)) * self->pm_row_bytes + (self->pm_base_x + arect.x) * bytes,
                 self->pm_pixels_qualifier,
                 arect.w * arect.h,
                 bytes,
@@ -702,22 +718,20 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_rectangleFill(br_device_pixelma
             self->pm_row_bytes,
             bytes,
             colour);
-        return 0;
+            return 0;
     } else {
-        if (arect.y < arect.h + arect.y) {
-            int i;
+        br_uint_32 y;
 
-            for (i = arect.y; i < arect.y + arect.h; i++) {
-                pm_mem_fill_colour(
-                    (br_uint_8*)self->pm_pixels + (self->pm_base_y + i) * self->pm_row_bytes + (self->pm_base_x + arect.x) * bytes,
-                    self->pm_pixels_qualifier,
-                    arect.w,
-                    bytes,
-                    colour);
-            }
+        for (y = arect.y; y < (br_uint_32)(arect.y + arect.h); y++) {
+            pm_mem_fill_colour(
+                (br_uint_8*)self->pm_pixels + (self->pm_base_y + y) * self->pm_row_bytes + (self->pm_base_x + arect.x) * bytes,
+                self->pm_pixels_qualifier,
+                arect.w,
+                bytes,
+                colour);
         }
-        return 0;
     }
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0053a870
@@ -866,10 +880,10 @@ br_error C2_HOOK_CDECL _M_br_device_pixelmap_mem_pixelAddressQuery(br_device_pix
     if (PixelmapPointClip(&ap, p, (br_pixelmap*)self) == BR_CLIP_REJECT) {
         return 0x1002;
     }
+    bytes = pmTypeInfo[self->pm_type].bits >> 3;
     if (pptr != NULL) {
-        bytes = pmTypeInfo[self->pm_type].bits >> 3;
-        *pptr = (br_uint_8*)self->pm_pixels \
-            + (self->pm_base_y + ap.y) * self->pm_row_bytes \
+        *pptr = (br_uint_8*)self->pm_pixels
+            + (self->pm_base_y + ap.y) * self->pm_row_bytes
             + (self->pm_base_x + ap.x) * bytes;
     }
     if (pqual != NULL) {

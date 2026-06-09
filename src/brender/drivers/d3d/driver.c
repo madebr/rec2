@@ -19,19 +19,18 @@ br_device* C2_HOOK_CDECL BrDrv1Begin(const char* arguments) {
 
     DetectD3DDevices();
 
-    if (DeviceD3DInitialise(device) != 0) {
-        return NULL;
-    }
+    if (DeviceD3DInitialise(device) == 0) {
+        r = PrimitiveLibraryD3DInitialise(&PrimitiveLibraryD3D, device);
+        if (r != 0) {
+            return NULL;
+        }
 
-    r = PrimitiveLibraryD3DInitialise(&PrimitiveLibraryD3D, device);
-    if (r != 0) {
-        return NULL;
-    }
+        type_count = OutputFacilityD3DInitialise(device, &PrimitiveLibraryD3D);
 
-    type_count = OutputFacilityD3DInitialise(device, &PrimitiveLibraryD3D);
-
-    if (type_count == 0) {
-        return NULL;
+        if (type_count == 0) {
+            return NULL;
+        }
+        return (br_device*)device;
     }
-    return (br_device*)device;
+    return NULL;
 }

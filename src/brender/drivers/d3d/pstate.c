@@ -331,12 +331,13 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_partIndexQuery(br_primitive_sta
         break;
     default:
         n = 0;
+        break;
     }
-    if (pnindex == NULL) {
-        return 0xa001;
+    if (pnindex != NULL) {
+        *pnindex = n;
+        return 0;
     }
-    *pnindex = n;
-    return 0;
+    return 0xa001;
 }
 
 // FUNCTION: D3D 0x10006e80

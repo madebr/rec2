@@ -27,7 +27,7 @@ void C2_HOOK_CDECL ResetComputedOffsetsAndScales(br_primitive_state_d3d* prim) {
     prim->cache.comp_scales[14] = BR_FIXED_UINT(1);
     prim->cache.comp_offsets[5] = BR_FIXED_UINT(pm->pm_base_x + pm->pm_width / 2);
     prim->cache.comp_scales[5] = BR_FIXED_UINT(pm->pm_width / 2);
-    prim->cache.comp_offsets[6] = BR_FIXED_UINT(pm->pm_height / 2 + pm->pm_base_y);
+    prim->cache.comp_offsets[6] = BR_FIXED_UINT(pm->pm_base_y + pm->pm_height / 2);
     prim->cache.comp_scales[6] = BR_FIXED_UINT(-pm->pm_height / 2);
     prim->cache.comp_offsets[7] = BR_FIXED_UINT(0x7fff);
     prim->cache.comp_scales[7] = BR_FIXED_UINT(0xa628);
@@ -39,6 +39,9 @@ void C2_HOOK_CDECL ResetComputedOffsetsAndScales(br_primitive_state_d3d* prim) {
     prim->cache.comp_scales[10] = BR_FIXED_UINT(0xff);
 }
 
+// GLOBAL: D3D 0x10016bc8
+// primInfoD3DTable
+
 struct {
     local_block_d3d *blocks;
     int nblocks;
@@ -49,7 +52,7 @@ struct {
 };
 
 // FUNCTION: D3D 0x10005e30
-void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_cmp) {
+void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_cmp, local_block_d3d* block) {
     int t;
 
     gCount_queued_render_states = 0;
@@ -58,7 +61,7 @@ void C2_HOOK_CDECL FUN_10005e30(br_primitive_state_d3d* self, br_uint_32 flags_c
         if (!(self->prim.flags & 2) && ((self->prim.flags & 0x80) || (self->prim.colour_map != NULL && self->prim.colour_map->buffer.blended))) {
             if (self->prim.flags & 0x200) {
                 gINT_1001bba4 = 1;
-            } else if (self->prim.colour_map != NULL && self->prim.colour_map->field_0x84 == -1) {
+            } else if (self->prim.colour_map != NULL && self->prim.colour_map->buffer.field_0x74 != -1) {
                 gINT_1001bba4 = 9;
             } else {
                 gINT_1001bba4 = 2;
@@ -223,7 +226,7 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_renderBegin(br_primitive_state_
         if (no_render) {
             return 0;
         }
-        FUN_10005e30(self, pb->flags_cmp);
+        FUN_10005e30(self, pb->flags_cmp, pb);
         FUN_10006570(self, pb);
         if (pb->begin_fn != NULL) {
             pb->begin_fn(&pb->p);
@@ -285,7 +288,7 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_renderBegin(br_primitive_state_
         return 0;
     }
 
-    FUN_10005e30(self, pb->flags_cmp);
+    FUN_10005e30(self, pb->flags_cmp, pb);
     FUN_10006570(self, pb);
     if (pb->begin_fn != NULL) {
         pb->begin_fn(&pb->p);
@@ -320,16 +323,16 @@ br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_rangesQueryF(br_primitive_state
         return 0xa001;
     }
     for (i = 0; i < max_comp; i++) {
-        offset[i] = (float)self->cache.comp_offsets[i] / 65536.f;
-        scale[i] = (float)self->cache.comp_scales[i] / 65536.f;
+        offset[i] = BrFixedToFloat(self->cache.comp_offsets[i]);
+        scale[i] = BrFixedToFloat(self->cache.comp_scales[i]);
     }
 
     return 0;
 }
 
-// FUNCTION: D3D 0x10006660
+// STUB: D3D 0x10006660
 br_error C2_HOOK_CDECL _M_br_primitive_state_d3d_rangesQueryX(br_primitive_state_d3d* self, br_fixed_ls* offset, br_fixed_ls* scale, br_int_32 max_comp) {
-    abort();
+    NOT_IMPLEMENTED();
 }
 
 

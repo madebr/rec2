@@ -3,7 +3,7 @@
 
 #include "brender/br_types.h"
 
-extern br_token valid_system_config_tokens[5];
+extern const br_token valid_system_config_tokens[5];
 
 br_boolean C2_HOOK_STDCALL Is_Valid_Sys_Config_Token(br_token t);
 
@@ -15,13 +15,13 @@ br_boolean C2_HOOK_STDCALL LoadRegistryEntry(char* Reg_Path, void* hKey, br_toke
 
 br_error C2_HOOK_STDCALL LoadRegistryConfig(char* Reg_Path, void* hKey);
 
-br_error C2_HOOK_CDECL BrSetDefaultConfig(br_token t, char* Entry);
+br_error C2_HOOK_STDCALL BrSetDefaultConfig(br_token t, char* Entry);
 
 br_error C2_HOOK_CDECL BrSystemConfigBegin(void);
 
 br_error C2_HOOK_CDECL BrSystemConfigLoad(br_token t, char* Param1, void* Param2);
 
-br_error C2_HOOK_CDECL BrSystemConfigSetString(br_token t, char* string);
+br_error C2_HOOK_CDECL BrSystemConfigSetString(br_token t, const char* string);
 
 br_error C2_HOOK_CDECL BrSystemConfigQueryString(br_token t, char* string, int max_size);
 

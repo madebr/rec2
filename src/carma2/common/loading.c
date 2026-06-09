@@ -1450,7 +1450,7 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
     tTWTVFS twt;
     tU32 fileSize;
     tU8* fileData;
-    tU32 i;
+    int i;
 
     // file header must be 56 bytes for compatibility with .TWT files
     REC2_BUG_ON(sizeof(tTwatFileHeader) != 56);
@@ -1500,7 +1500,7 @@ void C2_HOOK_FASTCALL TWT_Unmount(tTWTVFS twt) {
 // FUNCTION: CARMA2_HW 0x004b4780
 FILE* C2_HOOK_FASTCALL PFfopen(const char* pPath, const char* mode) {
     int twt;
-    unsigned int i;
+    int i;
     int file_index;
     size_t twt_path_len;
 
@@ -1548,7 +1548,7 @@ void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_na
 // FUNCTION: CARMA2_HW 0x004b4c80
 void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     int twt;
-    unsigned int i;
+    int i;
     char buffer[256];
 
     for (twt = 0; twt < REC2_ASIZE(gTwatVfsMountPoints); twt++) {
@@ -1570,7 +1570,7 @@ void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecur
 // FUNCTION: CARMA2_HW 0x004b4d30
 void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallback, void* data) {
     int twt;
-    size_t i;
+    int i;
     tPath_name twt_filePath;
 
     for (twt = 0; twt < REC2_ASIZE(gTwatVfsMountPoints); twt++) {

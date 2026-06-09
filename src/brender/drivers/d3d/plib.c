@@ -76,7 +76,7 @@ br_primitive_library_dispatch primitiveLibraryD3DDispatch = {
 };
 
 // GLOBAL: D3D 0x1001dc34
-float gFLOAT_1001dc34;
+float fog_constant;
 
 // FUNCTION: D3D 0x100068f0
 br_error C2_HOOK_CDECL PrimitiveLibraryD3DInitialise(br_primitive_library_d3d* self, br_device_d3d* dev) {
@@ -84,10 +84,11 @@ br_error C2_HOOK_CDECL PrimitiveLibraryD3DInitialise(br_primitive_library_d3d* s
     memset(&primitiveD3DLibraryTemplate, 0, sizeof(primitiveD3DLibraryTemplate));
     primitiveD3DLibraryTemplate.n_entries = BR_ASIZE(primitiveD3DLibraryTemplateEntries);
     primitiveD3DLibraryTemplate.entries = primitiveD3DLibraryTemplateEntries;
+
     PrimitiveStateD3DClearTemplates();
     BufferStoredD3DClearTemplate();
 
-    gFLOAT_1001dc34 = 2.88539f; /* fog_max_q? */
+    fog_constant = (float)(4.0 / log(2.0f));
 
     self->dispatch = &primitiveLibraryD3DDispatch;
 
@@ -101,7 +102,7 @@ br_error C2_HOOK_CDECL PrimitiveLibraryD3DInitialise(br_primitive_library_d3d* s
 // FUNCTION: D3D 0x10006970
 void C2_HOOK_CDECL _M_br_primitive_d3d_library_free(br_primitive_library_d3d* self) {
     br_device* dev = self->dispatch->_device((br_object*)self);
-    dev->dispatch->_remove((br_object_container*)dev, (br_object*)self);
+    dev->dispatch->_remove((br_object_container*)self->dispatch->_device((br_object*)self), (br_object*)self);
 
     BrObjectContainerFree((br_object_container*)self, BR_NULL_TOKEN, NULL, NULL);
 }

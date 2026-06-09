@@ -108,9 +108,9 @@ enum {
 
 void C2_HOOK_STDCALL DfPush(int type, void* value, unsigned int count);
 
-void* C2_HOOK_STDCALL DfPop(int type, unsigned int* countp);
+void* C2_HOOK_STDCALL DfPop(int type, int* countp);
 
-void* C2_HOOK_STDCALL DfTop(int type, unsigned int* countp);
+void* C2_HOOK_STDCALL DfTop(int type, int* countp);
 
 int C2_HOOK_STDCALL DfTopType(void);
 
@@ -202,6 +202,6 @@ br_datafile* C2_HOOK_STDCALL DfOpen(char* name, int write, br_token scalar_type)
 
 void C2_HOOK_STDCALL DfClose(br_datafile* df);
 
-int C2_HOOK_STDCALL BrWriteModeSet(int mode);
+int C2_HOOK_CDECL BrWriteModeSet(int mode);
 
 #endif // REC2_DATAFILE_H

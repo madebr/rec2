@@ -11,7 +11,7 @@ float gJoystick_x_steering = 1.f;
 float gJoystick_y_throttle = 1.f;
 
 
-// FUNCTION: CARMA2_HW 0x0045c0b0
+// STUB: CARMA2_HW 0x0045c0b0
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
 
     NOT_IMPLEMENTED();

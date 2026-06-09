@@ -150,8 +150,9 @@ br_buffer_stored_d3d* C2_HOOK_CDECL BufferStoredD3DAllocate(br_primitive_library
 
     self = BrResAllocate(DriverDeviceD3D.res, sizeof(*self), BR_MEMORY_OBJECT);
 
-    if(self == NULL)
+    if(self == NULL) {
         return NULL;
+    }
 
     self->dispatch = &bufferStoredD3DDispatch;
     self->identifier = ident;
@@ -215,7 +216,7 @@ br_error C2_HOOK_CDECL _M_br_buffer_stored_d3d_update(br_buffer_stored_d3d* self
             self->buffer.palette_pointer = pal->pixels;
             return 0;
         } else {
-            abort();
+            NOT_IMPLEMENTED();
             /* Not implemented */
 #if 0
             br_device_d3d* dev = (br_device_d3d*)self->buffer.base->dispatch->_device(self->buffer.base);

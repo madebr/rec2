@@ -136,13 +136,13 @@ intptr_t C2_HOOK_CDECL FindNonCarsCB(br_actor* pActor, void* pData) {
         if (n0 > 1.001f || n1 > 1.001f || n2 > 1.001f) {
             BrVector3InvScale((br_vector3*)pActor->t.t.mat.m[0],
                 (br_vector3*)pActor->t.t.mat.m[0],
-                sqrtf(n0));
+                (float)sqrt((double)n0));
             BrVector3InvScale((br_vector3*)pActor->t.t.mat.m[1],
                 (br_vector3*)pActor->t.t.mat.m[1],
-                sqrtf(n1));
+                (float)sqrt((double)n1));
             BrVector3InvScale((br_vector3*)pActor->t.t.mat.m[2],
                 (br_vector3*)pActor->t.t.mat.m[2],
-                sqrtf(n2));
+                (float)sqrt((double)n2));
             dr_dprintf("non car was scaled up %s", pActor->identifier);
         }
         pTrack_spec->non_car_list[id] = pActor;
@@ -684,7 +684,7 @@ void C2_HOOK_FASTCALL RenderTrack(br_actor* pWorld, tTrack_spec* pTrack_spec, br
         if (pTrack_spec->ncolumns_z - 1 > max_z) {
             max_z++;
         }
-        if (fabsf(pCamera_to_world->m[2][0]) <= fabsf(pCamera_to_world->m[2][2])) {
+        if ((float)fabs(pCamera_to_world->m[2][0]) <= (float)fabs(pCamera_to_world->m[2][2])) {
             for (z = min_z; z <= max_z; z++) {
                 for (x = min_x; x <= max_x; x++) {
                     tU8 idx_x = pCamera_to_world->m[2][0] > 0.f ? x : (max_x + min_x - x);

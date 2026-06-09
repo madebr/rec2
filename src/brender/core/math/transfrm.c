@@ -17,6 +17,7 @@
 #define TRA BR_TRANSFORM_TRANSLATION
 #define IDT BR_TRANSFORM_IDENTITY
 
+// GLOBAL: CARMA2_HW 0x0066cb68
 br_uint_8 _CombineTransforms[7][7] = {
 
     /* M34 */ {

@@ -149,9 +149,6 @@ typedef struct br_buffer_stored_d3d {
     br_primitive_library_d3d* plib;
     br_uint_32 flags;
     render_buffer_d3d buffer;
-    undefined4 field_0x80;
-    undefined4 field_0x84;
-    undefined4 field_0x88;
     void* pixels_pointer;
     undefined4 field_0x90;
 } br_buffer_stored_d3d;

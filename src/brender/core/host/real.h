@@ -17,4 +17,8 @@ br_error C2_HOOK_CDECL HostRealInterruptSet(br_uint_32 vector, br_uint_32 voff, 
 
 br_error C2_HOOK_CDECL HostRealInterruptCall(br_uint_32 vector, union host_regs *regs);
 
+br_error C2_HOOK_CDECL RealSelectorBegin(void);
+
+void C2_HOOK_CDECL RealSelectorEnd(void);
+
 #endif //C2_REAL_H

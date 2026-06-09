@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 
-// FUNCTION: D3D 0x10001ec0
+// STUB: D3D 0x10001ec0
 br_error C2_HOOK_CDECL AllocateD3DSysMemPixelmap(br_device_pixelmap_d3d* self, br_device_pixelmap_d3d** newpm, int w, int h) {
     NOT_IMPLEMENTED();
 #if 0

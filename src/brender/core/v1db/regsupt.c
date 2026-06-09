@@ -142,9 +142,8 @@ br_uint_32 C2_HOOK_CDECL BrMaterialRemoveMany(br_material** items, int n) {
 
     r = 0;
     for (i = 0; i < n; i++) {
-        BrMaterialClear(items[i]);
-        BrRegistryRemove(&v1db.reg_materials, items[i]);
-        if (items[i]) {
+
+        if (BrMaterialRemove(*items++)) {
             r++;
         }
     }
@@ -173,7 +172,7 @@ br_uint_32 C2_HOOK_CDECL BrMaterialEnum(const char* pattern, br_material_enum_cb
 br_pixelmap* C2_HOOK_CDECL BrMapAdd(br_pixelmap* pixelmap) {
 
     BrRegistryAdd(&v1db.reg_textures, pixelmap);
-    BrMapUpdate(pixelmap, 0xFFFu);
+    BrMapUpdate(pixelmap, BR_MAPU_ALL);
     return pixelmap;
 }
 
@@ -208,13 +207,12 @@ br_uint_32 C2_HOOK_CDECL BrMapAddMany(br_pixelmap** items, int n) {
 
     r = 0;
     for (i = 0; i < n; i++) {
-        BrRegistryAdd(&v1db.reg_textures, items[i]);
-        BrMapUpdate(items[i], 0xFFF);
-        if (items[i]) {
-            r++;
+
+        if (BrMapAdd(*items++) != NULL) {
+            r += 1;
         }
     }
-    return r++;
+    return r;
 }
 
 // FUNCTION: CARMA2_HW 0x0051f060
@@ -224,8 +222,8 @@ br_uint_32 C2_HOOK_CDECL BrMapRemoveMany(br_pixelmap** items, int n) {
 
     r = 0;
     for (i = 0; i < n; i++) {
-        BrBufferClear(items[i]);
-        if (BrRegistryRemove(&v1db.reg_textures, items[i]) != NULL) {
+
+        if (BrMapRemove(*items++)) {
             r++;
         }
     }
@@ -289,10 +287,9 @@ br_uint_32 C2_HOOK_CDECL BrTableAddMany(br_pixelmap** items, int n) {
 
     r = 0;
     for (i = 0; i < n; i++) {
-        BrRegistryAdd(&v1db.reg_tables, items[i]);
-        BrTableUpdate(items[i], BR_TABU_ALL);
-        if (items[i]) {
-            ++r;
+
+        if (BrTableAdd(*items++) != NULL) {
+            r += 1;
         }
     }
     return r;
@@ -305,8 +302,8 @@ br_uint_32 C2_HOOK_CDECL BrTableRemoveMany(br_pixelmap** items, int n) {
 
     r = 0;
     for (i = 0; i < n; i++) {
-        BrBufferClear(items[i]);
-        if (BrRegistryRemove(&v1db.reg_tables, items[i]) != NULL) {
+
+        if (BrTableRemove(*items++) != NULL) {
             r++;
         }
     }

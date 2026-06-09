@@ -33,7 +33,7 @@ br_quat* C2_HOOK_CDECL BrQuatMul(br_quat* q, const br_quat* l, const br_quat* r)
 br_quat* C2_HOOK_CDECL BrQuatNormalise(br_quat* q, const br_quat* qq) {
     br_scalar s;
 
-    s = 1.f / sqrtf(qq->x * qq->x + qq->y * qq->y + qq->z * qq->z + qq->w * qq->w);
+    s = 1.0f / (float)sqrt(qq->x * qq->x + qq->y * qq->y + qq->z * qq->z + qq->w * qq->w);
     q->x = qq->x * s;
     q->y = qq->y * s;
     q->z = qq->z * s;
@@ -147,7 +147,7 @@ br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, const br_matrix34* mat) {
 
     tr = M(0, 0) + M(1, 1) + M(2, 2);
     if (tr >= 0.f) {
-        tr = sqrtf(tr + 1.f);
+        tr = (br_scalar)sqrt(tr + 1.0f);
         s = 0.5f / tr;
         q->w = tr * 0.5f;
         q->x = (M(1, 2) - M(2, 1)) * s;
@@ -159,7 +159,7 @@ br_quat* C2_HOOK_CDECL BrMatrix34ToQuat(br_quat* q, const br_matrix34* mat) {
     i = M_DIAG(2) >= M_DIAG(i) ? 2 : i;
     j = (i + 1) % 3;
     k = (j + 1) % 3;
-    tr = sqrtf(M_DIAG(i) - (M_DIAG(j) + M_DIAG(k)) + 1.f);
+    tr = (br_scalar)sqrt(M_DIAG(i) - (M_DIAG(j) + M_DIAG(k)) + 1.f);
     s = 0.5f / tr;
     Q_EL(i) = 0.5f * tr;
     Q_EL(j) = (M(i, j) + M(j, i)) * s;

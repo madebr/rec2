@@ -37,11 +37,10 @@ br_error C2_HOOK_CDECL HostInterruptUnhook(host_interrupt_hook *h) {
     }
 
     r = HostInterruptSet(h->vector, h->old_offset, h->old_sel);
-    if (r != 0) {
-        return 0x1002;
+    if (r == 0) {
+    h->active = 0;
     }
 
-    h->active = 0;
     return 0x1002;
 }
 

@@ -49,7 +49,7 @@ SDL_Palette *g_SDL_Palette;
 void *gPDActionReplayBuffer;
 int gPDActionReplayBufferSize;
 int gKeyboardBufferLength;
-char gKeyboardBuffer[20];
+unsigned char gKeyboardBuffer[20];
 Uint64 last_left_button_down;
 Uint64 last_right_button_down;
 void *gHWnd;

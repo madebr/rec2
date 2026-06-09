@@ -75,14 +75,14 @@ br_error C2_HOOK_CDECL BrV1dbBegin(void) {
     memcpy(v1db.default_model, &_BrDefaultModel, sizeof(br_model));
     v1db.default_material = SetupDefaultMaterial();
     v1db.enabled_lights.max = 16;
-    v1db.enabled_lights.type = BR_ACTOR_LIGHT;
-    v1db.enabled_lights.name = "light";
     v1db.enabled_clip_planes.max = 6;
-    v1db.enabled_clip_planes.type = BR_ACTOR_CLIP_PLANE;
-    v1db.enabled_clip_planes.name = "clip plane";
     v1db.enabled_horizon_planes.max = 6;
-    v1db.enabled_horizon_planes.type = BR_ACTOR_HORIZONTAL_PLANE;
+    v1db.enabled_lights.name = "light";
+    v1db.enabled_lights.type = BR_ACTOR_LIGHT;
+    v1db.enabled_clip_planes.name = "clip plane";
+    v1db.enabled_clip_planes.type = BR_ACTOR_CLIP_PLANE;
     v1db.enabled_horizon_planes.name = "horizon plane";
+    v1db.enabled_horizon_planes.type = BR_ACTOR_HORIZONTAL_PLANE;
     return 0;
 }
 
@@ -183,7 +183,7 @@ br_error C2_HOOK_CDECL BrV1dbRendererBegin(br_device_pixelmap* destination, br_r
     }
     r = BrGeometryFormatFind(&v1db.format_buckets, renderer, renderer_facility, BRT_FLOAT, BRT_GEOMETRY_V1_BUCKETS);
     if (r != 0) {
-        return r;
+        v1db.format_buckets = NULL;
     }
     r = BrGeometryFormatFind((br_geometry**)&v1db.format_lighting, renderer, renderer_facility, BRT_FLOAT, BRT_GEOMETRY_LIGHTING);
     if (r != 0) {

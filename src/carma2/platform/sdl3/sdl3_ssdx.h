@@ -7,7 +7,7 @@ enum tSSDXFlags {
     SSDX_InitDirectSound = 0x2,
 };
 
-extern void SSDXStart(void *phWnd, int pDirectDraw, int pEnumerateDDX, int pflags);
+extern int SSDXStart(void *phWnd, int pDirectDraw, int pEnumerateDDX, int pflags);
 
 extern void SSDXStop(void);
 

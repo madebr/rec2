@@ -149,24 +149,21 @@ br_actor* C2_HOOK_CDECL BrActorAllocate(br_uint_8 type, void* type_data) {
     a->type = type;
     a->depth = 0;
     a->t.type = BR_TRANSFORM_MATRIX34;
-    a->type_data = NULL;
     BrMatrix34Identity(&a->t.t.mat);
 
     if (type_data != NULL) {
         a->type_data = type_data;
     } else {
         switch (type) {
-        case BR_ACTOR_NONE:
-            break;
         case BR_ACTOR_LIGHT:
             C2_HOOK_BUG_ON(sizeof(br_light) != 32);
             light = BrResAllocate(a, sizeof(br_light), BR_MEMORY_LIGHT);
             a->type_data = light;
             light->type = BR_LIGHT_DIRECT;
-            light->colour = BR_COLOUR_RGB(255, 255, 255);
+            light->colour = BR_COLOUR_RGB(0xff, 0xff, 0xff);
             light->attenuation_c = 1.0f;
-            light->cone_outer = BR_ANGLE_DEG(15);
-            light->cone_inner = BR_ANGLE_DEG(10);
+            light->cone_outer = BR_ANGLE_DEG(15.0f);
+            light->cone_inner = BR_ANGLE_DEG(10.0f);
             break;
         case BR_ACTOR_CAMERA:
             C2_HOOK_BUG_ON(sizeof(br_camera) != 36);
@@ -181,22 +178,16 @@ br_actor* C2_HOOK_CDECL BrActorAllocate(br_uint_8 type, void* type_data) {
         case BR_ACTOR_BOUNDS:
         case BR_ACTOR_BOUNDS_CORRECT:
             C2_HOOK_BUG_ON(sizeof(br_bounds) != 24);
-            bounds = BrResAllocate(a, sizeof(br_bounds), BR_MEMORY_CLIP_PLANE);
+            bounds = BrResAllocate(a, sizeof(br_bounds), BR_MEMORY_BOUNDS);
             a->type_data = bounds;
             break;
         case BR_ACTOR_CLIP_PLANE:
-            clip_plane = BrResAllocate(a, sizeof(br_vector4), BR_MEMORY_CLIP_PLANE);
-            clip_plane->v[0] = 0.f;
-            clip_plane->v[1] = 0.f;
-            clip_plane->v[2] = 1.f;
-            clip_plane->v[3] = 0.f;
+            clip_plane = BrResAllocate(a, sizeof(br_vector4), BR_MEMORY_BOUNDS);
+            clip_plane->v[0] = 0.0f;
+            clip_plane->v[1] = 0.0f;
+            clip_plane->v[2] = 1.0f;
+            clip_plane->v[3] = 0.0f;
             a->type_data = clip_plane;
-            break;
-        case BR_ACTOR_MODEL:
-            // nothing to do
-            break;
-        default:
-            // FIXME: LOG_WARN("Warning: Unknown type %d for BrActorAllocate", type);
             break;
         }
     }
@@ -248,7 +239,7 @@ br_boolean C2_HOOK_STDCALL ActorToRootTyped(br_actor* a, br_actor* world, br_mat
 	t = a->t.type;
 	for (a = a->parent; a != NULL && a != world; a = a->parent) {
 		if (a->t.type != BR_TRANSFORM_IDENTITY) {
-            BrTransformToMatrix34(m, &a->t);
+            BrMatrix34PostTransform(m, &a->t);
 			t = BrTransformCombineTypes(t, a->t.type);
 		}
 	}

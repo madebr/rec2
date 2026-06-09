@@ -28,7 +28,7 @@ br_tv_template_entry outputFacilityD3DTemplateEntries[] = {
     { BRT_PRIMITIVE_LIBRARY_O,  0,  offsetof(br_output_facility_d3d, prim_lib),     0x5,    0x3, },
 };
 
-// GLOBAL: D3D 0x1001707c
+// GLOBAL: D3D 0x10017078
 br_tv_template outputFacilityD3DTemplate = {
     BR_ASIZE(outputFacilityD3DTemplateEntries),
     outputFacilityD3DTemplateEntries
@@ -93,7 +93,7 @@ br_uint_32 C2_HOOK_CDECL OutputFacilityD3DInitialise(br_device_d3d* dev, br_prim
     /* Build an output facility for each possible D3D mode */
     res = dev->res;
 
-    for (i = 0; i < BR_ASIZE(d3d_mode_list) / 3 * 2; i++) {
+    for (i = 0; i < (int)BR_ASIZE(d3d_mode_list) / 3 * 2; i++) {
         self = BrResAllocate(res, sizeof(*self), BR_MEMORY_OBJECT);
 
         self->num_instances = 0;
@@ -124,13 +124,13 @@ br_uint_32 C2_HOOK_CDECL OutputFacilityD3DInitialise(br_device_d3d* dev, br_prim
         dev->dispatch->_addFront((br_object_container*)dev, (br_object*)self);
     }
 
-    return 2 * BR_ASIZE(d3d_mode_list) / 3;
+    return BR_ASIZE(d3d_mode_list) / 3;
 }
 
 // FUNCTION: D3D 0x10006800
 void C2_HOOK_CDECL _M_br_output_facility_d3d_free(br_output_facility_d3d* self) {
     br_device* dev = self->dispatch->_device((br_object*)self);
-    dev->dispatch->_remove((br_object_container*)dev, (br_object*)self);
+    dev->dispatch->_remove((br_object_container*)self->dispatch->_device((br_object*)self), (br_object*)self);
     BrObjectContainerFree((br_object_container*)self, BR_NULL_TOKEN, NULL, NULL);
     BrResFreeNoCallback(self);
 }
@@ -163,11 +163,10 @@ br_error C2_HOOK_CDECL _M_br_output_facility_d3d_validSource(br_output_facility_
 
 // FUNCTION: D3D 0x10006890
 br_error C2_HOOK_CDECL _M_br_output_facility_d3d_pixelmapNew(br_output_facility_d3d* self, br_device_pixelmap_d3d** ppmap, br_token_value* tv) {
-    br_device_pixelmap_d3d* pm;
     br_error result;
-    br_device_d3d* dev = (br_device_d3d*)self->dispatch->_device((br_object*)self);
-
-    result = DevicePixelmapD3DAllocateMode(dev, self, &pm, tv);
+    br_device_pixelmap_d3d* pm;
+    // dev = ;
+    result = DevicePixelmapD3DAllocateMode((br_device_d3d*)self->dispatch->_device((br_object*)self), self, &pm, tv);
     if (result == 0) {
         *ppmap = pm;
         self->num_instances += 1;

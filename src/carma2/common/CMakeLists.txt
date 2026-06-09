@@ -3,7 +3,7 @@ target_include_directories(rec2_headers INTERFACE
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
 )
 
-add_library(c2_common STATIC
+add_library(c2_common STATIC EXCLUDE_FROM_ALL
     ../include/rec2_macros.h
     ../include/rec2_types.h
 

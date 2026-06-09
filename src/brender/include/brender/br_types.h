@@ -1507,7 +1507,7 @@ typedef struct br_3ds_options {
 } br_3ds_options;
 
 typedef struct br_registery br_registry;
-typedef void* br_find_failed_cbfn(const char*);
+typedef void* C2_HOOK_CDECL br_find_failed_cbfn(const char*);
 typedef br_uint_32 C2_HOOK_CDECL br_enum_cbfn(void*, void*);
 typedef void br_surface_fn(br_vertex*, br_fvector3*, br_scalar*);
 typedef br_uint_32 br_face_surface_fn(br_vertex*, br_face*, int);
@@ -1797,23 +1797,23 @@ typedef struct br_device {
 } br_device;
 
 typedef struct br_object_dispatch {
-    void (*__reserved0)(br_object*);
-    void (*__reserved1)(br_object*);
-    void (*__reserved2)(br_object*);
-    void (*__reserved3)(br_object*);
-    void (*_free)(br_object*);
-    char* (*_identifier)(br_object*);
-    br_token (*_type)(br_object*);
-    br_boolean (*_isType)(br_object*, br_token);
-    br_device* (*_device)(br_object*);
-    br_int_32 (*_space)(br_object*);
-    br_tv_template* (*_templateQuery)(br_object*);
-    br_error (*_query)(br_object*, br_uint_32*, br_token);
-    br_error (*_queryBuffer)(br_object*, br_uint_32*, void*, br_size_t, br_token);
-    br_error (*_queryMany)(br_object*, br_token_value*, void*, br_size_t, br_int_32*);
-    br_error (*_queryManySize)(br_object*, br_size_t*, br_token_value*);
-    br_error (*_queryAll)(br_object*, br_token_value*, br_size_t);
-    br_error (*_queryAllSize)(br_object*, br_size_t*);
+    void (C2_HOOK_CDECL*__reserved0)(br_object*);
+    void (C2_HOOK_CDECL*__reserved1)(br_object*);
+    void (C2_HOOK_CDECL*__reserved2)(br_object*);
+    void (C2_HOOK_CDECL*__reserved3)(br_object*);
+    void (C2_HOOK_CDECL*_free)(br_object*);
+    char* (C2_HOOK_CDECL*_identifier)(br_object*);
+    br_token (C2_HOOK_CDECL*_type)(br_object*);
+    br_boolean (C2_HOOK_CDECL*_isType)(br_object*, br_token);
+    br_device* (C2_HOOK_CDECL*_device)(br_object*);
+    br_int_32 (C2_HOOK_CDECL*_space)(br_object*);
+    br_tv_template* (C2_HOOK_CDECL*_templateQuery)(br_object*);
+    br_error (C2_HOOK_CDECL*_query)(br_object*, br_uint_32*, br_token);
+    br_error (C2_HOOK_CDECL*_queryBuffer)(br_object*, br_uint_32*, void*, br_size_t, br_token);
+    br_error (C2_HOOK_CDECL*_queryMany)(br_object*, br_token_value*, void*, br_size_t, br_int_32*);
+    br_error (C2_HOOK_CDECL*_queryManySize)(br_object*, br_size_t*, br_token_value*);
+    br_error (C2_HOOK_CDECL*_queryAll)(br_object*, br_token_value*, br_size_t);
+    br_error (C2_HOOK_CDECL*_queryAllSize)(br_object*, br_size_t*);
 } br_object_dispatch;
 
 typedef struct br_geometry_stored_dispatch br_geometry_stored_dispatch;
@@ -2532,7 +2532,7 @@ typedef enum br_lexer_token_id {
     T_KEYWORD = 128
 } br_lexer_token_id;
 typedef struct br_lexer_source br_lexer_source;
-typedef void C2_HOOK_STDCALL br_lexer_getchar_cbfn(br_lexer_source*);
+typedef void C2_HOOK_CDECL br_lexer_getchar_cbfn(br_lexer_source*);
 typedef struct br_lexer br_lexer;
 typedef void C2_HOOK_CDECL br_lexer_error_cbfn(br_lexer*, const char*);
 typedef struct br_lexer_source {

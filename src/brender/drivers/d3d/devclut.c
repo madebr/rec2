@@ -76,7 +76,7 @@ br_device_clut_d3d* C2_HOOK_CDECL DeviceClutD3DAllocate(br_device_d3d* dev, cons
 void C2_HOOK_CDECL _M_br_device_clut_d3d_free(br_device_clut* self) {
     br_device_clut_d3d* clut = (br_device_clut_d3d*)self;
     br_device_d3d* dev = (br_device_d3d*)clut->dispatch->_device((br_object*)clut);
-    dev->dispatch->_remove((br_object_container*)dev, (br_object*)self);
+    dev->dispatch->_remove((br_object_container*)clut->dispatch->_device((br_object*)clut), (br_object*)self);
     BrResFreeNoCallback(self);
 }
 

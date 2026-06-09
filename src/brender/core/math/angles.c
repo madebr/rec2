@@ -136,7 +136,7 @@ br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* ma
     if (o & 0x8) {
         br_scalar sy;
 
-        sy = sqrtf(mat->m[a1][a0] * mat->m[a1][a0] + mat->m[a2][a0] * mat->m[a2][a0]);
+        sy = (br_scalar)sqrt(mat->m[a1][a0] * mat->m[a1][a0] + mat->m[a2][a0] * mat->m[a2][a0]);
 
         if (sy > 16 * BR_SCALAR_EPSILON) {
             euler->a = BR_ATAN2( mat->m[a1][a0],  mat->m[a2][a0]);
@@ -150,7 +150,7 @@ br_euler* C2_HOOK_CDECL BrMatrix34ToEuler(br_euler* euler, const br_matrix34* ma
     } else {
         br_scalar cy;
 
-        cy = sqrtf(mat->m[a0][a0] * mat->m[a0][a0] + mat->m[a0][a1] * mat->m[a0][a1]);
+        cy = (br_scalar)sqrt(mat->m[a0][a0] * mat->m[a0][a0] + mat->m[a0][a1] * mat->m[a0][a1]);
 
         if (cy > 16 * BR_SCALAR_EPSILON) {
             euler->a = BR_ATAN2( mat->m[a1][a2], mat->m[a2][a2]);

@@ -6,6 +6,7 @@
 #include "demo.h"
 #include "depth.h"
 #include "displays.h"
+#include "drfile.h"
 #include "drmem.h"
 #include "52-errors.h"
 #include "explosions.h"

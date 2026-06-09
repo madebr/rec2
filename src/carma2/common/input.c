@@ -89,7 +89,7 @@ tU32 gLast_key_down_time;
 // GLOBAL: CARMA2_HW 0x0068bed8
 int gModifiers_down;
 
-// FUNCTION: CARMA2_HW 0x0045c0b0
+// STUB: CARMA2_HW 0x0045c0b0
 int C2_HOOK_FASTCALL LoadJoystickPreferences(void) {
 
     NOT_IMPLEMENTED();

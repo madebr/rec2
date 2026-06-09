@@ -14,8 +14,12 @@ if(REC2_PLATFORM_WIN32)
     target_sources(c2_platform PRIVATE
         win32/win32_ssdx.c
         win32/win32_ssdx.h
+        win32/win32_sound.c
+        win32/win32_sound.h
         win32/win32_dinput.c
         win32/win32_dinput.h
+        win32/win32_windows.c
+        win32/win32_windows.h
         win32/win32.c
         win32/win32.h
         win32/win32net.c
@@ -100,4 +104,19 @@ target_link_libraries(rec2 PRIVATE
 )
 if(REC2_MATCHING)
     add_dependencies(rec2 brender_driver_d3d)
+
+    set(CMAKE_C_FLAGS "/W3 /GX /DWIN32 /D_WINDOWS")
+    set(CMAKE_C_FLAGS_DEBUG "/Gm /Od /D_DEBUG /MLd")
+    set(CMAKE_C_FLAGS_RELEASE "/O0 /DNDEBUG /ML")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "/DNDEBUG /ML")
+    set(CMAKE_C_FLAGS_MINSIZEREL "/DNDEBUG /ML")
+
+    # No optimizations for win32/win32_sound.c
+    set_property(SOURCE
+        "${CMAKE_CURRENT_SOURCE_DIR}/win32/win32_dinput.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/win32/win32_ssdx.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/win32/win32.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/win32/win32net.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/win32/winmain.c"
+        APPEND PROPERTY COMPILE_OPTIONS "-O2;-Ob2")
 endif()

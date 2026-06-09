@@ -61,9 +61,14 @@ int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
 // FUNCTION: CARMA2_HW 0x00513690
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2) {
 
+#ifdef REC2_FIX_BUGS
     if (pDestn_str != pStr_1) { // Added to avoid strcpy overlap checks
         strcpy(pDestn_str, pStr_1);
     }
+#else
+    strcpy(pDestn_str, pStr_1);
+#endif
+
     if (strlen(pStr_2) != 0) {
         strcat(pDestn_str, gDir_separator);
         strcat(pDestn_str, pStr_2);

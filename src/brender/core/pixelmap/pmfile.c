@@ -66,6 +66,7 @@ br_file_struct br_pixelmap_F = { "br_pixelmap", BR_ASIZE(br_pixelmap_FM), br_pix
 // GLOBAL: CARMA2_HW 0x0066d948
 br_file_struct br_old_pixelmap_F = { "br_old_pixelmap", BR_ASIZE(br_old_pixelmap_FM), br_old_pixelmap_FM, sizeof(br_pixelmap) };
 
+// GLOBAL: CARMA2_HW 0x0066d958
 br_chunks_table_entry PixelmapLoadEntries[5] = {
     { CHUNKID_END, 0u, FopRead_END },
     { CHUNKID_PIXELMAP, 0u, FopRead_PIXELMAP },
@@ -73,6 +74,7 @@ br_chunks_table_entry PixelmapLoadEntries[5] = {
     { CHUNKID_PIXELMAP_ADD_MAP, 0u, FopRead_ADD_MAP },
     { CHUNKID_OLD_PIXELMAP, 0u, FopRead_OLD_PIXELMAP },
 };
+// GLOBAL: CARMA2_HW 0x0066d998
 br_chunks_table PixelmapLoadTable = { BR_ASIZE(PixelmapLoadEntries), PixelmapLoadEntries };
 
 int C2_HOOK_STDCALL FopWrite_PIXELMAP(br_datafile* df, br_pixelmap* pixelmap) {
@@ -111,35 +113,32 @@ int C2_HOOK_STDCALL FopRead_PIXELMAP(br_datafile* df, br_uint_32 id, br_uint_32 
     return 0;
 }
 
-int C2_HOOK_STDCALL FopWrite_PIXELS(br_datafile* df, br_pixelmap* pixelmap) {
-    int size;
-    int bytes;
-    int block_count;
+static int FopWrite_PIXELS(br_datafile* df, br_pixelmap* pixelmap) {
+    int size = pmTypeInfo[pixelmap->type].file_size;
+    int bytes = pmTypeInfo[pixelmap->type].bits >> 3;
+    int block_count = (pixelmap->width * bytes) / size;
     char* pixels;
 
-    pixels = (char*)pixelmap->pixels + pixelmap->base_x * pixelmap->width + pixelmap->base_y;
-    if (pixelmap->mip_offset == 0) {
-        bytes = df->prims->block_size(df, pixels, (pmTypeInfo[pixelmap->type].bits >> 3) * pixelmap->width / pmTypeInfo[pixelmap->type].file_size, pixelmap->row_bytes, pixelmap->height, pmTypeInfo[pixelmap->type].file_size);
-        df->prims->chunk_write(df, CHUNKID_PIXELMAP_PIXELS, bytes);
-        bytes = (pmTypeInfo[pixelmap->type].bits >> 3) * pixelmap->width / pmTypeInfo[pixelmap->type].file_size;
-        size = pixelmap->row_bytes / pmTypeInfo[pixelmap->type].file_size;
-        block_count = pixelmap->height;
-    } else {
-        size = 0;
-        for (bytes = pixelmap->width; bytes != 0; bytes = bytes >> 1) {
-            size += bytes * bytes * (pmTypeInfo[pixelmap->type].bits >> 3);
+    pixels = (char*)pixelmap->pixels + pixelmap->base_y * pixelmap->row_bytes + pixelmap->base_x * pixelmap->width;
+    if (pixelmap->mip_offset != 0) {
+        int mipSize = 0;
+        int currentMipSize;
+
+        for (currentMipSize = pixelmap->width; currentMipSize != 0; currentMipSize >>= 1) {
+            mipSize += currentMipSize * currentMipSize * bytes;
         }
-        df->prims->chunk_write(df, CHUNKID_PIXELMAP_PIXELS, df-> prims->block_size(df, pixels, size / pmTypeInfo[pixelmap->type].file_size, size, 1, pmTypeInfo[pixelmap->type].file_size));
-        bytes = size;
-        block_count = 1;
+        df->prims->chunk_write(df, CHUNKID_PIXELMAP_PIXELS, df->prims->block_size(df, pixels, mipSize / size, mipSize, 1, size));
+        df->prims->block_write(df, pixels, mipSize, mipSize, 1, size);
+    } else {
+        df->prims->chunk_write(df, CHUNKID_PIXELMAP_PIXELS, df->prims->block_size(df, pixels, block_count, pixelmap->row_bytes, pixelmap->height, size));
+        df->prims->block_write(df, pixels, block_count, pixelmap->row_bytes, pixelmap->height, size);
     }
-    df->prims->block_write(df, pixels, bytes, size, block_count, pmTypeInfo[pixelmap->type].file_size);
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00538e60
 int C2_HOOK_STDCALL FopRead_PIXELS(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count) {
-    int icount = 0;
+    int icount;
     br_pixelmap* pp;
     int size;
 
@@ -180,17 +179,15 @@ br_uint_32 C2_HOOK_CDECL BrPixelmapLoadMany(char* filename, br_pixelmap** pixelm
     if (df == NULL) {
         return 0;
     }
-    count = 0;
-    do {
-        if (count >= num) {
-            break;
-        }
+    for (count = 0; count < num; ) {
         r = DfChunksInterpret(df, &PixelmapLoadTable);
         if (DfTopType() == DF_PIXELMAP) {
-            pixelmaps[count] = DfPop(DF_PIXELMAP, 0);
-            count++;
+            pixelmaps[count++] = DfPop(DF_PIXELMAP, 0);
         }
-    } while (r != 0);
+        if (r == 0) {
+            break;
+        }
+    }
     DfClose(df);
     return count;
 }
@@ -199,9 +196,11 @@ br_uint_32 C2_HOOK_CDECL BrPixelmapLoadMany(char* filename, br_pixelmap** pixelm
 int C2_HOOK_STDCALL WritePixelmap(br_pixelmap* pp, br_datafile* df) {
 
     BrPixelmapDirectLock(pp, 1);
+#ifdef BR_FIX_BUGS
     if (pp->pixels == NULL) {
         _BrAssert("pp->pixels", "pmfile.c", 291);
     }
+#endif
     FopWrite_PIXELMAP(df, pp);
     if (pp->map != NULL) {
         WritePixelmap(pp->map, df);

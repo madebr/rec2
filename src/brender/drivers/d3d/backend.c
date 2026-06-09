@@ -351,6 +351,9 @@ int gINT_1001bbd0;
 // GLOBAL: D3D 0x100381c0
 tStruct_100381c0 gStruct_100381c0[16];
 
+// GLOBAL: D3D 0x10038110
+const char *gD3D_error_10038110;
+
 // GLOBAL: D3D 0x10011030
 br_uint_16 gTextures_alpha_init[16][16][16] = {
     {
@@ -798,14 +801,16 @@ void C2_HOOK_CDECL d3d_read_registry(void) {
         RegCloseKey(key);
         return;
     }
-    if (type == REG_BINARY) {
+    switch (type) {
+    case REG_BINARY:
         gRegister_driver_guid_binary = 1;
-    } else {
-        if (type != REG_DWORD) {
-            RegCloseKey(key);
-            return;
-        }
+        break;
+    case REG_DWORD:
         gRegister_driver_guid_binary = 0;
+        break;
+    default:
+        RegCloseKey(key);
+        return;
     }
     size = sizeof(gRegister_device_guid);
     if (RegQueryValueExA(key, "DevGuid", NULL, &type, (LPBYTE)&gRegister_device_guid, &size) != ERROR_SUCCESS) {
@@ -986,7 +991,7 @@ HRESULT CALLBACK D3DEnumDevices(GUID FAR *lpGuid, LPSTR lpDeviceDescription, LPS
                 gFound_d3d_device = 1;
             }
         }
-        if (!gFound_d3d_device && lpD3DHWDeviceDesc->dcmColorModel != 0) {
+        if (lpD3DHWDeviceDesc->dcmColorModel != 0 && !gFound_d3d_device) {
             gSelected_d3d_device = gCount_d3d_devices;
         }
         gCount_d3d_devices += 1;
@@ -1260,7 +1265,7 @@ int C2_HOOK_CDECL FUN_10004280(int count, int width, int height) {
         surface_desc.ddsCaps.dwCaps = DDSCAPS_SYSTEMMEMORY | DDSCAPS_TEXTURE;
         surface_desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
         if (IDirectDraw_CreateSurface(gDirectDraw, &surface_desc, &temp_surface, NULL) != DD_OK) {
-            abort(); /* This should succeed */
+            NOT_IMPLEMENTED(); /* This should succeed */
             return -1;
         }
         if (IDirectDraw_QueryInterface(temp_surface, &IID_IDirect3DTexture2, (LPVOID)&temp_texture) != DD_OK) {
@@ -1402,7 +1407,7 @@ int C2_HOOK_CDECL StartTextureCache(void) {
 }
 
 // FUNCTION: D3D 0x10005200
-int C2_HOOK_CDECL InitD3D(HWND hWnd) {
+int C2_HOOK_CDECL InitD3D(void) {
     DDSURFACEDESC surface_desc;
     DDSCAPS surface_caps;
     int phase;
@@ -1441,18 +1446,12 @@ int C2_HOOK_CDECL InitD3D(HWND hWnd) {
     }
     d3d_debug_printf("finished enum devices");
 
-    if (gD3D_windows) {
-        memset(&surface_desc, 0, sizeof(surface_desc));
-        surface_desc.dwSize = sizeof(surface_desc);
-        surface_desc.dwFlags = DDSD_CAPS;
-        surface_desc.ddsCaps.dwCaps = DDSCAPS_PRIMARYSURFACE;
-    } else {
-        memset(&surface_desc, 0, sizeof(surface_desc));
-        surface_desc.dwSize = sizeof(surface_desc);
-        surface_desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
-        surface_desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
-        surface_desc.dwBackBufferCount = 1;
-    }
+    memset(&surface_desc, 0, sizeof(surface_desc));
+    surface_desc.dwSize = sizeof(surface_desc);
+    surface_desc.dwFlags = DDSD_CAPS | DDSD_BACKBUFFERCOUNT;
+    surface_desc.ddsCaps.dwCaps = DDSCAPS_COMPLEX | DDSCAPS_FLIP | DDSCAPS_PRIMARYSURFACE | DDSCAPS_3DDEVICE;
+    surface_desc.dwBackBufferCount = 1;
+
     if (IDirectDraw_CreateSurface(gDirectDraw, &surface_desc, &gPrimary_surface, NULL) != DD_OK) {
         d3d_debug_printf("Create Direct draw surface");
         gError_code = 1;
@@ -1460,38 +1459,11 @@ int C2_HOOK_CDECL InitD3D(HWND hWnd) {
     }
     d3d_debug_printf("Create primary surface");
 
-    if (gD3D_windows) {
-        LPDIRECTDRAWCLIPPER clipper;
-
-        d3d_debug_printf("Create d3d clipper");
-        if (IDirectDraw2_CreateClipper(gDirectDraw2, 0, &clipper, NULL) != DD_OK) {
-            return 7;
-        }
-        IDirectDrawClipper_SetHWnd(clipper, 0, hWnd);
-        IDirectDrawSurface_SetClipper(gPrimary_surface, clipper);
-        IDirectDrawSurface_Release(clipper);
-    }
-
-    if (gD3D_windows) {
-        memset(&surface_desc, 0, sizeof(surface_desc));
-        surface_desc.dwSize = sizeof(surface_desc);
-        surface_desc.dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_CAPS;
-        surface_desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_3DDEVICE;
-        surface_desc.dwWidth = 640;
-        surface_desc.dwHeight = 480;
-
-        if (IDirectDraw2_CreateSurface(gDirectDraw2, &surface_desc, &gAttached_surface, NULL ) != DD_OK) {
-            d3d_debug_printf("Create back surface");
-            gError_code = 1;
-            return 9;
-        }
-    } else {
-        surface_caps.dwCaps = DDSCAPS_BACKBUFFER;
-        if (IDirectDrawSurface_GetAttachedSurface(gPrimary_surface, &surface_caps, &gAttached_surface) != DD_OK) {
-            d3d_debug_printf("Get back surface");
-            gError_code = 1;
-            return 9;
-        }
+    surface_caps.dwCaps = DDSCAPS_BACKBUFFER;
+    if (IDirectDrawSurface_GetAttachedSurface(gPrimary_surface, &surface_caps, &gAttached_surface) != DD_OK) {
+        d3d_debug_printf("Get back surface");
+        gError_code = 1;
+        return 9;
     }
 
     if (IDirectDrawSurface_GetPixelFormat(gAttached_surface, &gAttached_surface_pixel_format) != DD_OK) {
@@ -1518,9 +1490,9 @@ int C2_HOOK_CDECL InitD3D(HWND hWnd) {
 
     memset(&surface_desc, 0, sizeof(surface_desc));
     surface_desc.dwSize = sizeof(surface_desc);
-    surface_desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_ZBUFFERBITDEPTH;
     surface_desc.dwWidth = gDisplay_width_10015888;
     surface_desc.dwHeight = gDisplay_height_1001588c;
+    surface_desc.dwFlags = DDSD_CAPS | DDSD_HEIGHT | DDSD_WIDTH | DDSD_ZBUFFERBITDEPTH;
     surface_desc.ddsCaps.dwCaps = DDSCAPS_ZBUFFER | (gDevice_has_color_model == 1 ? DDSCAPS_VIDEOMEMORY : DDSCAPS_SYSTEMMEMORY);
     if (gDevice_description.dwDeviceZBufferBitDepth & DDBD_32) {
         surface_desc.dwZBufferBitDepth = 32;
@@ -1550,7 +1522,7 @@ int C2_HOOK_CDECL InitD3D(HWND hWnd) {
     }
     d3d_debug_printf("Attached Z buffer");
     if (IDirect3D2_CreateDevice(gDirect3D2, &gDevice_guid, gAttached_surface, &gD3DDevice2) != D3D_OK) {
-        d3d_debug_printf("Create Device");
+        gD3D_error_10038110 = "Create Device";
         gError_code = 1;
         return 7;
     }
@@ -1822,9 +1794,9 @@ void C2_HOOK_CDECL DoD3DOperation(int operation) {
     }
 }
 
-// FUNCTION: D3D 0x10008570
+// STUB: D3D 0x10008570
 void C2_HOOK_CDECL FUN_10008570(void* dst, br_uint_32 dst_width, br_uint_32 dst_height, br_uint_32 dst_stride, void* src, br_uint_32 src_width, br_uint_32 src_height, br_uint_32 src_stride) {
-    abort();
+    NOT_IMPLEMENTED();
 }
 
 // FUNCTION: D3D 0x10002ba0
@@ -1944,7 +1916,7 @@ int C2_HOOK_CDECL d3d_update_texture(int index, render_buffer_d3d* buffer, int a
         read_row_ptr = buffer->field_0x68;
         for (y = 0; y < 64; y++) {
             int x;
-            br_uint_16* write_ptr = (br_uint_16*)read_row_ptr;
+            br_uint_16* write_ptr = (br_uint_16*)write_row_ptr;
             br_uint_8* read_ptr = read_row_ptr;
             for (x = 0; x < 64; x++, read_ptr++, write_ptr++) {
                 *write_ptr = gD3D_16bit_palette_buffer[*read_ptr];
@@ -2485,8 +2457,8 @@ void C2_HOOK_CDECL FUN_10007140(void) {
                             && gQueued_vertices[i].sy >= gQueued_vertices[fan[3]].sy) {
                         fan[3] = i;
                     }
-                    if (gQueued_vertices[i].sx < 1.f) {
-                        gQueued_vertices[i].sx = 1.f;
+                    if (gQueued_vertices[i].sx < 1.0f) {
+                        gQueued_vertices[i].sx = 1.0f;
                     }
                     gQueued_vertices[i].color = gQueued_vertices[0].color;
                     gQueued_vertices[i].sz = gQueued_vertices[0].sz;
@@ -2505,8 +2477,8 @@ void C2_HOOK_CDECL FUN_10007140(void) {
             float factor_x, factor_y;
             br_uint_8* map_ptr;
 
-            gQueued_vertices_indices[0] = 3;
             gQueued_vertices_indices[1] = 0;
+            gQueued_vertices_indices[0] = 3;
             gQueued_vertices_indices[2] = 1;
             gQueued_vertices_indices[3] = 2;
             gQueued_vertices_indices[4] = 3;
@@ -2571,12 +2543,14 @@ void C2_HOOK_CDECL FUN_10007140(void) {
             gCount_queued_vertices = 0;
             return;
         } else if (gINT_1001bba4 == 3) {
-            QUEUE_RENDER_STATE(1, 0);
-            QUEUE_RENDER_STATE(9, 1);
-            QUEUE_RENDER_STATE(0x1b, 0);
+            QUEUE_RENDER_STATE(D3DRENDERSTATE_TEXTUREHANDLE, (uintptr_t)NULL);
+            QUEUE_RENDER_STATE(D3DRENDERSTATE_SHADEMODE, D3DSHADE_FLAT);
+            QUEUE_RENDER_STATE(D3DRENDERSTATE_ALPHABLENDENABLE, FALSE);
             if (gCount_queued_render_states != 0) {
                 ApplyD3DRenderStateQueue();
             }
+            gINT_100389ec += gCount_queued_vertices;
+            gINT_100381a4 += gCount_queued_vertices_indices;
         } else {
             gINT_100389ec += gCount_queued_vertices;
             gINT_100381a4 += gCount_queued_vertices_indices;
@@ -2593,7 +2567,7 @@ void C2_HOOK_CDECL FUN_10007140(void) {
     gCount_queued_vertices = 0;
 }
 
-// FUNCTION: D3D 0x10004780
+// STUB: D3D 0x10004780
 void C2_HOOK_CDECL FUN_10004780(void* arg1, int stride) {
-    abort();
+    NOT_IMPLEMENTED();
 }

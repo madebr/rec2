@@ -6,6 +6,7 @@
 
 // FUNCTION: CARMA2_HW 0x00526940
 br_material* C2_HOOK_CDECL SetupDefaultMaterial(void) {
+    // GLOBAL: CARMA2_HW 0x006ad520
     static br_material* default_mat;
 
     C2_HOOK_BUG_ON(sizeof(br_material) != 156);

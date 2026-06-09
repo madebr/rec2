@@ -7,6 +7,10 @@
 #endif
 #include "c2_string.h"
 
+
+#ifdef REC2_MATCHING
+
+// GLOBAL: CARMA2_HW 0x0054053f
 br_token cpu_types[] = {
     BRT_INTEL_386,
     BRT_INTEL_386,
@@ -17,133 +21,91 @@ br_token cpu_types[] = {
     BRT_INTEL_PENTIUM_PRO,
 };
 
-static void cpuid_wrapper(int(*values)[4], int function) {
-    C2_HOOK_BUG_ON(sizeof(*values) != 16);
-    memset(*values, 0, sizeof(*values));
-
-#ifdef _MSC_VER
-#if _MSC_VER < 1300
-    return;
-#elif  defined(_M_IX86) || defined(_M_X64)
-    __cpuid(values, 0);
-#endif
-#elif defined(__i386__)
-    __asm__ __volatile__(
-            "        pushl %%ebx        \n"
-            "        xorl %%ecx,%%ecx   \n"
-            "        cpuid              \n"
-            "        movl %%ebx, %%esi  \n"
-            "        popl %%ebx         \n"
-            : "=a"((*values)[0]), "=b"((*values)[1]), "=c"((*values)[2]), "=d"((*values)[3])
-            : "a"(0));
-#elif defined(__x86_64__)
-    __asm__ __volatile__(
-        "        pushq %%rbx        \n"
-        "        xorq %%rcx,%%rcx   \n"
-        "        cpuid              \n"
-        "        movq %%rbx, %%rsi  \n"
-        "        popq %%rbx         \n"
-        : "=a"((*cpuid_res)[0]), "=b"((*cpuid_res)[1]), "=c"((*cpuid_res)[2]), "=d"((*cpuid_res)[3])
-        : "a"(0));
-#endif
-}
-
-void C2_HOOK_CDECL CPUInfo(br_token* processor_type, br_uint_32* features) {
-    int is_486_or_newer = 0;
-    int has_cpuid = 0;
-    int cpuid_res[4];
-    br_uint_32 cpu_family;
-
-    *features = 0;
-    *processor_type = BRT_INTEL_386;
-#ifdef _MSC_VER
+// FUNCTION: CARMA2_HW 0x005404b0
+C2_NAKED void C2_HOOK_CDECL CPUInfo(br_token* cpu_type, br_uint_32* features) {
     __asm {
-        ; Cannot set 0x40000 on 386
-        pushfd
-        pop     eax
-        mov     ecx, eax
-        xor     eax, 40000h
-        push    eax
-        popfd
-        pushfd
-        pop     eax
-        sub     eax, ecx
-        mov     dword ptr[is_486_or_newer], eax
-        popfd
-    }
-#else
-    asm (
-        "pushf\n\t"
-        "pop        %%eax\n\t"
-        "mov        %%eax, %%ecx\n\t"
-        "xor        $0x40000, %%eax\n\t"
-        "pushl      %%eax\n\t"
-        "popf\n\t"
-        "pushf\n\t"
-        "popl       %%eax\n\t"
-        "subl       %%ecx, %%eax\n\t"
-        "popf\n\t"
-        : "=a"(is_486_or_newer)
-        :
-        : "memory"
-    );
-#endif
-    if (!is_486_or_newer) {
-        return;
-    }
-    *processor_type = BRT_INTEL_486;
+        push              ebp
+        mov               ebp,esp
+        push              ebx
+        push              esi
+        push              edi
+        mov               esi, dword ptr [features]
+        mov               dword ptr [esi], 0x0
 
-#ifdef _MSC_VER
-    __asm {
-        ; bit 21 (0x200000) of EFLAGS indicates cpuid support
+        mov               esi,dword ptr [cpu_type]
+        mov               dword ptr [esi], BRT_INTEL_386
+
         pushfd
-        pop        ecx
-        mov        eax, ecx
-        xor        eax, 200000h
-        push       eax
+        pop               eax
+        mov               ecx, eax
+        xor               eax, 0x40000
+        push              eax
         popfd
         pushfd
-        pop        eax
-        sub        eax, ecx
-        mov        dword ptr[has_cpuid], eax
+        pop               eax
+        xor               eax, ecx
+        jz                quit
+        push              ecx
         popfd
-    }
-#else
-    asm (
-        "pushf\n\t"
-        "pop        %%ecx\n\t"
-        "mov        %%ecx, %%eax\n\t"
-        "xor        $0x200000, %%eax\n\t"
-        "push       %%eax\n\t"
-        "popf\n\t"
-        "pushf\n\t"
-        "pop        %%eax\n\t"
-        "sub        %%ecx, %%eax\n\t"
-        "popf\n\t"
-        : "=a"(has_cpuid)
-        :
-        : "memory"
-    );
-#endif
-    if (!has_cpuid) {
-        return;
-    }
-    cpuid_wrapper(&cpuid_res, 0);
-    if (cpuid_res[0] < 1) {
-        return;
-    }
-    cpuid_wrapper(&cpuid_res, 1);
-    cpu_family = (cpuid_res[0] >> 8) & 0xf;
-    if (cpu_family >= BR_ASIZE(cpu_types)) {
-        *processor_type = BRT_INTEL_PENTIUM_PRO;
-        return;
-    }
-    *processor_type = cpu_types[cpu_family];
-    *features = 0;
-    if (cpuid_res[2] & 0x1) {
-        *features |= 0x800;
-    }
-    if (cpuid_res[2] & 0x80000) {
-        *features |= 0x400;
+        mov               esi, dword ptr [cpu_type]
+        mov               dword ptr [esi], BRT_INTEL_486
+        mov               eax, ecx
+        xor               eax, 0x200000
+        push              eax
+        popfd
+        pushfd
+        pop               eax
+        xor               eax, ecx
+        jz                quit
+        mov               eax, 0x0
+
+        // cpuid
+        _emit 0x0f
+        _emit 0xa2
+
+        cmp               eax, 0x1
+        jl                quit
+        mov               eax, 0x1
+
+        // cpuid
+        _emit 0x0f
+        _emit 0xa2
+
+        shr               eax, 0x8
+        and               eax, 0xf
+
+        mov               eax, dword ptr cs:[eax * 0x4 + cpu_types]
+
+
+        mov               esi,dword ptr [cpu_type]
+        mov               dword ptr [esi], eax
+        xor               eax, eax
+        test              edx, 0x1
+
+        jz                no_fpu
+
+        or                eax,0x800
+no_fpu:
+        test              edx,0x800000
+
+        jz                no_cmov
+
+        or                eax, 0x400
+no_cmov:
+        mov               esi,dword ptr [features]
+        mov               dword ptr [esi], eax
+quit:
+        pop               edi
+        pop               esi
+        pop               ebx
+        leave
+        ret
     }
 }
+#else
+void C2_HOOK_CDECL CPUInfo(br_token* cpu_type, br_uint_32* features) {
+
+    *cpu_type = BRT_INTEL_PENTIUM;
+    *features = 0;
+}
+#endif

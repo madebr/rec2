@@ -11,11 +11,13 @@
 
 // FUNCTION: CARMA2_HW 0x0053f030
 int C2_HOOK_CDECL BrMemCmp(const void* s1, const void* s2, size_t n) {
+
     return memcmp(s1, s2, n);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f050
 void* C2_HOOK_CDECL BrMemCpy(void* s1, const void* s2, size_t n) {
+
     return memcpy(s1, s2, n);
 }
 
@@ -33,96 +35,115 @@ void* C2_HOOK_CDECL BrMemSet(void* s, int c, size_t n) {
 
 // FUNCTION: CARMA2_HW 0x0053f0c0
 char* C2_HOOK_CDECL BrStrCat(char* s1, const char* s2) {
+
     return strcat(s1, s2);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f100
 int C2_HOOK_CDECL BrStrCmp(const char* s1, const char* s2) {
+
     return strcmp(s1, s2);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f140
 int C2_HOOK_CDECL BrStrICmp(const char* s1, const char* s2) {
+
     return strcasecmp(s1, s2);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f160
 char* C2_HOOK_CDECL BrStrCpy(char* s1, const char* s2) {
+
     return strcpy(s1, s2);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f190
 br_size_t C2_HOOK_CDECL BrStrLen(const char* s) {
+
     return strlen(s);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f1b0
 int C2_HOOK_CDECL BrStrNCmp(const char* s1, const char* s2, size_t n) {
+
     return strncmp(s1, s2, n);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f1d0
 int C2_HOOK_CDECL BrStrNICmp(const char* s1, const char* s2, size_t n) {
+
     return strncasecmp(s1, s2, n);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f1f0
 char* C2_HOOK_CDECL BrStrNCpy(char* s1, const char* s2, size_t n) {
+
     return strncpy(s1, s2, n);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f210
 char* C2_HOOK_CDECL BrStrRChr(const char* s1, char c) {
+
     return (char*)strrchr(s1, c);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f230
 void C2_HOOK_CDECL BrAbort(void) {
+
     abort();
 }
 
 // FUNCTION: CARMA2_HW 0x0053f240
 char* C2_HOOK_CDECL BrGetEnv(const char* name) {
+
     return getenv(name);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f250
 float C2_HOOK_CDECL BrStrToF(const char* nptr, char** endptr) {
+
     return c2_strtof(nptr, endptr);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f270
 double C2_HOOK_CDECL BrStrToD(const char* nptr, char** endptr) {
+
     return strtod(nptr, endptr);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f290
 long C2_HOOK_CDECL BrStrToL(const char* nptr, char** endptr, int base) {
+
     return strtol(nptr, endptr, base);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f2b0
 unsigned long C2_HOOK_CDECL BrStrToUL(const char* nptr, char** endptr, int base) {
+
     return strtoul(nptr, endptr, base);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f2d0
 br_boolean C2_HOOK_CDECL BrIsAlpha(int c) {
+
     return isalpha(c);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f300
 br_boolean C2_HOOK_CDECL BrIsDigit(int c) {
+
     return isdigit(c);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f330
 br_boolean C2_HOOK_CDECL BrIsSpace(int c) {
+
     return isspace(c);
 }
 
 // FUNCTION: CARMA2_HW 0x0053f360
 br_boolean C2_HOOK_CDECL BrIsPrint(int c) {
+
     return isprint(c);
 }
 

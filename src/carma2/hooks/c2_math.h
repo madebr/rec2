@@ -8,8 +8,8 @@
 #include <float.h>
 
 #define exp2f(V) ((float)exp2((double)(V)))
-#define fabsf(V) ((float)fabs((double)(V)))
-#define sqrtf(V) ((float)sqrt((double)(V)))
+// #define fabsf(V) ((float)fabs((double)(V)))
+// #define sqrtf(V) ((float)sqrt((double)(V)))
 #define cosf(V) ((float)cos((double)(V)))
 #define sinf(V) ((float)sin((double)(V)))
 #define tanf(V) ((float)tan((double)(V)))

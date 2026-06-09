@@ -157,7 +157,7 @@ void C2_HOOK_CDECL BrMatrix23LPInverse(br_matrix23* B, const br_matrix23* A) {
 // FUNCTION: CARMA2_HW 0x00534e30
 void C2_HOOK_CDECL BrMatrix23LPNormalise(br_matrix23* A, const br_matrix23* B) {
 
-    br_scalar norm = sqrtf(BR_MAC2(B(1, 0), B(1, 0), B(1, 1), B(1,1)));
+    br_scalar norm = (br_scalar)sqrt(BR_MAC2(B(1, 0), B(1, 0), B(1, 1), B(1,1)));
     if (norm < 2.384186e-07f) {
         A(1, 0) = BR_SCALAR(1.f);
         A(1, 1) = BR_SCALAR(0.f);

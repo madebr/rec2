@@ -148,6 +148,7 @@ br_size_t C2_HOOK_CDECL BrStdioRead(void* buf, br_size_t size, unsigned int n, v
 
 // FUNCTION: CARMA2_HW 0x0053f960
 br_size_t C2_HOOK_CDECL BrStdioWrite(const void* buf, br_size_t size, unsigned int n, void* f) {
+
     return fwrite(buf, size, n, f);
 }
 
@@ -170,6 +171,7 @@ br_size_t C2_HOOK_CDECL BrStdioGetLine(char* buf, br_size_t buf_len, void* f) {
 
 // FUNCTION: CARMA2_HW 0x0053f9c0
 void C2_HOOK_CDECL BrStdioPutLine(char* buf, void* f) {
+
     fputs(buf, f);
     fputc('\n', f);
 }

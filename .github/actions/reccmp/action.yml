@@ -1,0 +1,111 @@
+name: 'Run reccmp'
+description: 'Run reccmp'
+inputs:
+  root-repo:
+    description: 'Repository of the reference project (e.g. project-organization/project-name)'
+    required: true
+  root-branch:
+    description: 'Main branch of the reference project (e.g. master)'
+    required: true
+  gist-repo:
+    description: 'Gist repository where progress is stored (e.g. project-organization/1234567890abcdef1234567890abcdef)'
+    required: true
+  target:
+    description: 'Reccmp target'
+    required: true
+  reccmp-version:
+    description: 'Reccmp version (empty for latest, skip for disabling installation'
+    default: ''
+  original-search-path:
+    descriptoin: 'Location of original binaries'
+    default: ''
+  working-directory:
+    description: 'Directory of reccmp-build.yml'
+    default: '${{ github.workspace }}'
+  token:
+    description: 'GitHub API token'
+    default: ${{ github.token }}
+  gist-token:
+    description: 'GitHub gist token (used for pushing updates)'
+    default: ${{ github.token }}
+runs:
+  using: 'composite'
+  steps:
+    - name: 'Setup python'
+      uses: actions/setup-python@main
+      if: ${{ inputs.reccmp-version != 'skip' }}
+      with:
+        python-version: '3.x'
+    - name: 'Install reccmp'
+      if: ${{ inputs.reccmp-version != 'skip' }}
+      shell: sh
+      run: |
+        python -m pip -q install "reccmp${{ (inputs.reccmp-version != '' && format('=={0}', inputs.reccmp-version)) || '' }}"
+    - name: 'Calculate variables'
+      id: calc
+      shell: sh
+      run: |
+        case "${{ runner.os }}" in
+          "Windows")
+            unix_temp_path="$(cygpath -u '${{ runner.temp }}')"
+            ;;
+          *)
+            unix_temp_path="${{ runner.temp }}"
+            ;;
+        esac
+        echo "unix-temp-path=${unix_temp_path}" >> ${GITHUB_OUTPUT}
+        echo "safe-temp-path=$(echo '${{ runner.temp }}' | sed -e 's#[\]#/#g')" >> ${GITHUB_OUTPUT}
+        echo "gist-hash=$(echo '${{ inputs.gist-repo }}' | sed -nEe 's#[^/]+/##p')" >> ${GITHUB_OUTPUT}
+    - name: 'Fetch previous ${{ inputs.target }} json'
+      shell: sh
+      run: |
+        curl -fLSs -o "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}-old.json" https://gist.githubusercontent.com/${{ inputs.gist-repo }}/raw/${{ inputs.target }}.json
+    - name: 'Detect originals'
+      if: ${{ inputs.original-search-path != '' }}
+      shell: sh
+      run : |
+        reccmp-project detect --what original --search-path '${{ inputs.original-search-path }}'
+    - name: 'Compare progress with previous'
+      shell: sh
+      run: |
+        ${{ (inputs.working-directory && format('cd "{0}"', inputs.working-directory)) || '' }}
+        reccmp-reccmp --no-color --target ${{ inputs.target }} \
+          --diff "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}-old.json" \
+        --json  "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.json" \
+        -H "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.html" \
+        -S "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.svg" \
+        >${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt
+    - name: 'Update gist'
+      if: ${{ inputs.gist-token != '' && github.event_name == 'push' && github.repository == inputs.root-repo && github.event.ref == format('refs/heads/{0}', inputs.root-branch) }}
+      uses: actions/github-script@main
+      with:
+        github-token: ${{ inputs.gist-token }}
+        script: |
+          fs = require('fs');
+          await github.rest.gists.update({
+            gist_id: '${{ steps.calc.outputs.gist-hash }}',
+            files: {
+              '${{ inputs.target }}.json': { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.json', 'utf8'),  },
+              '${{ inputs.target }}.svg':  { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.svg',  'utf8'),  },
+              '${{ inputs.target }}.html': { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.html', 'utf8'),  },
+              '${{ inputs.target }}.txt':  { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.txt',  'utf8'),  },
+            },
+          });
+    - name: 'Create comment on PR'
+      if: ${{ github.event_name == 'pull_request' }}
+      shell: sh
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+      run: |
+        gh pr comment ${{ steps.pr.outputs.number }} \
+          --repo "${{ github.repository }}" \
+          --body "## reccmp ${{ inputs.target }} report
+
+        \`\`\`
+        $(cat ${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt)
+        \`\`\`"
+    - name: 'Show progress'
+      shell: sh
+      run:
+        cat "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt"
+

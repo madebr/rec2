@@ -63,10 +63,10 @@ void C2_HOOK_CDECL OpHeapAddTriangle(brp_block* block, brp_vertex* v0, brp_verte
         return;
     }
 
-    if (rend.renderer->state.surface.force_front) {
-        zprim = 0.f;
-    } else {
+    if (!rend.renderer->state.surface.force_front) {
         SORT_VALUE_TRIANGLE(rend.renderer->state.hidden.order_table->type, v0, v1, v2);
+    } else {
+        zprim = 0.f;
     }
 
     p = heapPrimitiveAdd(rend.renderer->state.hidden.heap, BRT_TRIANGLE);

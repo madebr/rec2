@@ -2,6 +2,11 @@ add_library(brender_headers INTERFACE)
 add_library(BRender::Headers ALIAS brender_headers)
 target_include_directories(brender_headers INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
+add_library(brender_ddi INTERFACE)
+add_library(BRender::ddi ALIAS brender_ddi)
+target_include_directories(brender_ddi INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_link_libraries(brender_ddi INTERFACE BRender::Headers)
+
 
 add_library(brender-static STATIC
     $<TARGET_OBJECTS:c2_platform_brender>
@@ -295,64 +300,7 @@ set_property(TARGET brender-brpmap1-imp PROPERTY IMPORTED_IMPLIB "${CMAKE_CURREN
 set_property(TARGET brender-brhost1-imp PROPERTY IMPORTED_IMPLIB "${CMAKE_CURRENT_SOURCE_DIR}/dll/${arch_dir}/brhost1.lib")
 
 if(WIN32)
-    add_library(brender_driver_d3d SHARED
-        drivers/d3d/d3d.def
-        drivers/d3d/backend.c
-        drivers/d3d/backend.h
-        drivers/d3d/devclut.c
-        drivers/d3d/devclut.h
-        drivers/d3d/device.c
-        drivers/d3d/device.h
-        drivers/d3d/devpixmp.c
-        drivers/d3d/devpixmp.h
-        drivers/d3d/devpmsys.c
-        drivers/d3d/devpmsys.h
-        drivers/d3d/driver.c
-        drivers/d3d/match.c
-        drivers/d3d/match.h
-        drivers/d3d/object.c
-        drivers/d3d/object.h
-        drivers/d3d/outfcty.c
-        drivers/d3d/outfcty.h
-        drivers/d3d/plib.c
-        drivers/d3d/plib.h
-        drivers/d3d/prim_l15.c
-        drivers/d3d/prim_l15.h
-        drivers/d3d/prim_p15.h
-        drivers/d3d/prim_p15.c
-        drivers/d3d/prim_t15.c
-        drivers/d3d/prim_t15.h
-        drivers/d3d/pstate.c
-        drivers/d3d/pstate.h
-        drivers/d3d/renderfuncs.c
-        drivers/d3d/renderfuncs.h
-        drivers/d3d/sbuffer.c
-        drivers/d3d/sbuffer.h
-        drivers/d3d/texture.c
-        drivers/d3d/texture.h
-        drivers/d3d/timestmp.c
-        drivers/d3d/timestmp.h
-        drivers/d3d/types.h
-    )
-    target_compile_definitions(brender_driver_d3d PRIVATE DIRECTDRAW_VERSION=0x500)
-    target_include_directories(brender_driver_d3d
-            PRIVATE
-            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    )
-    target_link_libraries(brender_driver_d3d
-            PRIVATE
-            brender-brcore1-imp
-            brender-brpmap1-imp
-            brender-brhost1-imp
-            c2_hooks
-            DirectX::d3dim
-    )
-    target_compile_definitions(brender_driver_d3d
-            PRIVATE
-            BASED_FLOAT
-    )
-    set_property(TARGET brender_driver_d3d PROPERTY PREFIX "")
+    add_subdirectory(drivers/d3d)
 endif()
 
 add_library(BRender::BRender ALIAS brender-static)

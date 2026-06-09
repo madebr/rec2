@@ -1,6 +1,7 @@
 #include "win32_dinput.h"
 
 #include "win32.h"
+#include "win32_windows.h"
 
 #include "52-errors.h"
 #include "globvars.h"
@@ -1354,7 +1355,7 @@ int C2_HOOK_FASTCALL PDFindJoystickEffect(const char* effectName) {
 
     for (i = 0; i < gCount_joystick_effects; i++) {
 
-        if (strcmp(effectName, gJoystick_effects[i].name) == 0) {
+        if (strcmp(gJoystick_effects[i].name, effectName) == 0) {
             return i;
         }
     }

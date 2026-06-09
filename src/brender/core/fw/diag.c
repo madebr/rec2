@@ -16,12 +16,11 @@ char _diag_scratch[128];
 // FUNCTION: CARMA2_HW 0x00527c80
 void C2_HOOK_CDECL BrFailure(const char* s, ...) {
     va_list args;
-    const char failure_header[10] = "Failure: ";
 
-    BrStrCpy(_diag_scratch, failure_header);
+    BrStrCpy(_diag_scratch, "Failure: ");
 
     va_start(args, s);
-    BrVSprintf(&_diag_scratch[sizeof(failure_header) - 1], s, args);
+    BrVSprintf(&_diag_scratch[sizeof("Failure: ") - 1], s, args);
     va_end(args);
 
     if (fw.diag->failure == NULL) {
@@ -37,11 +36,10 @@ void C2_HOOK_CDECL BrFailure(const char* s, ...) {
 // FUNCTION: CARMA2_HW 0x00527cd0
 void C2_HOOK_CDECL BrWarning(const char* s, ...) {
     va_list args;
-    const char warning_header[10] = "Warning: ";
 
     va_start(args, s);
-    BrStrCpy(_diag_scratch, warning_header);
-    BrVSprintf(&_diag_scratch[sizeof(warning_header) - 1], s, args);
+    BrStrCpy(_diag_scratch, "Warning: ");
+    BrVSprintf(&_diag_scratch[sizeof("Warning: ") - 1], s, args);
 
     if (fw.diag->warning == NULL) {
         BrAbort();

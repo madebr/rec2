@@ -11,7 +11,7 @@ int C2_HOOK_STDCALL FopRead_OLD_PIXELMAP(br_datafile* df, br_uint_32 id, br_uint
 
 int C2_HOOK_STDCALL FopRead_PIXELMAP(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count);
 
-int C2_HOOK_STDCALL FopWrite_PIXELS(br_datafile* df, br_pixelmap* pixelmap);
+// int C2_HOOK_STDCALL FopWrite_PIXELS(br_datafile* df, br_pixelmap* pixelmap);
 
 int C2_HOOK_STDCALL FopRead_PIXELS(br_datafile* df, br_uint_32 id, br_uint_32 length, br_uint_32 count);
 

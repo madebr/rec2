@@ -212,6 +212,16 @@ typedef struct {
     int (C2_HOOK_FASTCALL * on_sample_channel_set_pan)(tS3_channel* pChannel, float pPan);
 } tS3_callbacks;
 
+typedef struct {
+    int count_outlets;
+    int count_sources;
+    int next_outlet_id;
+    tS3_outlet* outlets;
+    tS3_sound_source* sources;
+    tS3_descriptor* descriptors;
+    tS3_descriptor* root_descriptor;
+} tS3_state;
+
 typedef void C2_HOOK_FASTCALL tS3SetEffect_cbfn(int pEffect_index, int pSound_tag);
 
 extern char gS3_path_separator[2];

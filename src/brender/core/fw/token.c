@@ -556,7 +556,7 @@ br_token C2_HOOK_CDECL BrTokenCreate(const char* identifier, br_token type) {
         if (i >= BR_ASIZE(tokenTypes)) {
             return 0;
         }
-        if (l <= tokenTypes[i].length) {
+        if (tokenTypes[i].length >= l) {
             return 0;
         }
         if (BrStrNCmp(identifier + (l - tokenTypes[i].length), tokenTypes[i].identifier, tokenTypes[i].length) != 0) {
@@ -568,7 +568,7 @@ br_token C2_HOOK_CDECL BrTokenCreate(const char* identifier, br_token type) {
     te->type = type;
     te->base_length = l - tokenTypes[i].length;
     te->token = fw.next_free_token;
-    fw.next_free_token++;
+    fw.next_free_token += 1;
     BrAddHead(&fw.tokens, &te->node);
     return te->token;
 }

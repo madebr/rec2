@@ -85,17 +85,17 @@ br_error C2_HOOK_STDCALL BrAssociativeArrayRemoveEntry(br_associative_array* pAr
             break;
         }
     }
-    if (bFound) {
-        if ((BrTokenType(t) == BRT_STRING) && (pArray->tv[i].v.str != NULL)) {
-            BrResFree(pArray->tv[i].v.str);
-        }
-        for (; i < pArray->num_elements - 1; i++) {
-            BrMemCpy(&pArray->tv[i], &pArray->tv[i+1], sizeof(br_token_value));
-        }
-        pArray->num_elements--;
-        return 0; // BRE_OK
+    if (!bFound) {
+        return 0x1002;
     }
-    return 0x1002; // BRE_NOTFOUND
+    if (BrTokenType(t) == BRT_STRING && pArray->tv[i].v.str != NULL) {
+        BrResFree(pArray->tv[i].v.str);
+    }
+    for (; i < pArray->num_elements - 1; i++) {
+        BrMemCpy(&pArray->tv[i], &pArray->tv[i + 1], sizeof(br_token_value));
+    }
+    pArray->num_elements -= 1;
+    return 0; // BRE_OK
 }
 
 // FUNCTION: CARMA2_HW 0x00531810

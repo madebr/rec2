@@ -1,6 +1,8 @@
 #include "win32.h"
 
 #include "win32_dinput.h"
+#include "win32_sound.h"
+#include "win32_windows.h"
 #include "win32_ssdx.h"
 
 #include "05-drmem.h"
@@ -47,8 +49,8 @@ int gDefault_data_index = 1;
 
 // GLOBAL: CARMA2_HW 0x00662208
 tGraf_spec gGraf_specs[2] = {
-    { 8, 1, 0, 320, 200, 0, 0, "32X20X8", "320x200 init string", 320, 320, 200, 0 },
-    { 8, 1, 0, 640, 480, 0, 0, "64X48X8", "640x480 init string", 640, 640, 480, 0 },
+    {8, 1, 0, 320, 200, 0, 0, "32X20X8", "320x200 init string", 320, 320, 200, 0},
+    {8, 1, 0, 640, 480, 0, 0, "64X48X8", "640x480 init string", 640, 640, 480, 0},
 };
 
 // GLOBAL: CARMA2_HW 0x00762324
@@ -75,7 +77,7 @@ int gExit_code;
 
 
 // GLOBAL: CARMA2_HW 0x006ad4c8
-void* gHWnd;
+void *gHWnd;
 
 // GLOBAL: CARMA2_HW 0x006621e0
 int gWindowActiveState = 2; // FIXME: enum: 0, 1 or 2
@@ -88,7 +90,7 @@ int gWindowMovingResizing;
 LPDIRECTINPUTDEVICEA gDirectInputDevice;
 
 // GLOBAL: CARMA2_HW 0x006621dc
-char* gRenderer = "3DFX_WIN";
+char *gRenderer = "3DFX_WIN";
 
 // GLOBAL: CARMA2_HW 0x006ad488
 int gMouseLButtonDown;
@@ -100,7 +102,7 @@ int gMouseRButtonDown;
 int gMouseCaptured;
 
 // GLOBAL: CARMA2_HW 0x006621d4
-POINT gCursorPos_LastClick = {-1,-1};
+POINT gCursorPos_LastClick = {-1, -1};
 
 // GLOBAL: CARMA2_HW 0x006ad458
 POINT gPD_mouse_position;
@@ -122,8 +124,7 @@ int gScreenHeight;
 int gKeyboardBufferLength;
 
 // GLOBAL: CARMA2_HW 0x006ace88
-char gKeyboardBuffer[20];
-
+unsigned char gKeyboardBuffer[20];
 
 // GLOBAL: CARMA2_HW 0x006acc70
 int gPerformanceCounterInitialized;
@@ -150,14 +151,14 @@ br_diaghandler gPD_error_handler;
 
 // GLOBAL: CARMA2_HW 0x00662150
 char gExtendedAsciiToNormalAscii[128] = {
-    ' ', ' ',  ' ',  ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    ' ', '\'', '\'', ' ', ' ',  ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-    ' ', '~',  'c',  '$', '*',  'Y', '|', ' ', '"', 'c', 'a', '<', '-', '-', 'R', '-',
-    'o', ' ',  '2',  '3', '\'', 'u', ' ', '.', ',', '1', 'o', '>', ' ', ' ', ' ', '{',
-    'A', 'A',  'A',  'A', 'A',  'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
-    'D', '}',  'O',  'O', 'O',  'O', 'O', 'x', '0', 'U', 'U', 'U', 'U', 'Y', 'b', 'B',
-    'a', 'a',  'a',  'a', 'a',  'a', 'a', 'C', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
-    'd', '}',  'o',  'o', 'o',  'o', 'o', '/', '0', 'u', 'u', 'u', 'u', 'y', 'b', 'y',
+    ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    ' ', '\'', '\'', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+    ' ', '~', 'c', '$', '*', 'Y', '|', ' ', '"', 'c', 'a', '<', '-', '-', 'R', '-',
+    'o', ' ', '2', '3', '\'', 'u', ' ', '.', ',', '1', 'o', '>', ' ', ' ', ' ', '{',
+    'A', 'A', 'A', 'A', 'A', 'A', 'A', 'C', 'E', 'E', 'E', 'E', 'I', 'I', 'I', 'I',
+    'D', '}', 'O', 'O', 'O', 'O', 'O', 'x', '0', 'U', 'U', 'U', 'U', 'Y', 'b', 'B',
+    'a', 'a', 'a', 'a', 'a', 'a', 'a', 'C', 'e', 'e', 'e', 'e', 'i', 'i', 'i', 'i',
+    'd', '}', 'o', 'o', 'o', 'o', 'o', '/', '0', 'u', 'u', 'u', 'u', 'y', 'b', 'y',
 };
 
 
@@ -165,7 +166,7 @@ char gExtendedAsciiToNormalAscii[128] = {
 int gWin32ActionReplayBufferAllocated;
 
 // GLOBAL: CARMA2_HW 0x006ad470
-void* gPDActionReplayBuffer;
+void *gPDActionReplayBuffer;
 
 // GLOBAL: CARMA2_HW 0x006ad474
 int gPDActionReplayBufferSize;
@@ -181,7 +182,7 @@ SYSTEM_INFO gSystem_info;
 DWORD gPage_size;
 
 // GLOBAL: CARMA2_HW 0x00681fa0
-FILE* gActionReplayBufferFile;
+FILE *gActionReplayBufferFile;
 
 #define Win32AllocateActionReplayBuffer PDReallyAllocateActionReplayBuffer
 
@@ -229,7 +230,8 @@ void C2_HOOK_FASTCALL Win32AllocateActionReplayBuffer(void) {
     }
     if (bufferSize < 0x10000) {
         bufferSize = 0x10000;
-        dr_dprintf("Win32AllocateActionReplayBuffer(): ...but we have to have a minimum size of %d bytes...", bufferSize);
+        dr_dprintf("Win32AllocateActionReplayBuffer(): ...but we have to have a minimum size of %d bytes...",
+                   bufferSize);
     }
     while (1) {
         buffer = BrMemAllocate(bufferSize, kMem_action_replay_buffer);
@@ -281,7 +283,7 @@ void C2_HOOK_FASTCALL PDSetFileVariables(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c700
-void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path) {
+void C2_HOOK_FASTCALL PDBuildAppPath(char *pThe_path) {
     GetCurrentDirectoryA(253, pThe_path);
     GetShortPathNameA(pThe_path, pThe_path, 253);
     strcat(pThe_path, "\\");
@@ -289,19 +291,26 @@ void C2_HOOK_FASTCALL PDBuildAppPath(char* pThe_path) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051af20
-void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
+void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char *pThe_str) {
+    const char *str1;
+    const char *str2;
+
     dr_dprintf("FATAL ERROR: %s", pThe_str);
-    if (pThe_str == NULL) {
-        pThe_str = "NULL str1";
+    str1 = pThe_str;
+    str2 = "";
+    if (str1 == NULL) {
+        str1 = "NULL str1";
+    }
+    if (str2 == NULL) {
+        str2 = "NULL str2";
     }
     gIsFatalError = 1;
-    sprintf(gFatalErrorMessage, "%s\n%s", pThe_str, "");
+    sprintf(gFatalErrorMessage, "%s\n%s", str1, str2);
 
     gExit_code = 700;
     if (gBack_screen != NULL) {
         if (gBack_screen->pixels != NULL) {
-            gExit_code = 700;
-            PDUnlockRealBackScreen();
+            PossibleUnlock(1);
         }
     }
     if (gBr_initialized) {
@@ -311,7 +320,7 @@ void C2_NORETURN C2_HOOK_FASTCALL PDFatalError(const char* pThe_str) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051afb0
-void C2_HOOK_FASTCALL PDNonFatalError(const char* pThe_str) {
+void C2_HOOK_FASTCALL PDNonFatalError(const char *pThe_str) {
     dr_dprintf("*** ERROR...");
     dr_dprintf(pThe_str);
 }
@@ -323,8 +332,8 @@ int C2_HOOK_FASTCALL PDIsWindowInactive(void) {
 
 // FUNCTION: CARMA2_HW 0x0051afe0
 char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
-    if ((unsigned char)pChar > 0x7f) {
-        char c = gExtendedAsciiToNormalAscii[(unsigned char)pChar - 128];
+    if ((unsigned char) pChar >= 0x80) {
+        char c = gExtendedAsciiToNormalAscii[(unsigned char) pChar - 128];
         dr_dprintf("PDConvertToASCIILessThan128() Returning %d", c);
         return c;
     }
@@ -334,26 +343,25 @@ char C2_HOOK_FASTCALL PDConvertToASCIILessThan128(char pChar) {
 
 // FUNCTION: CARMA2_HW 0x0051b040
 int C2_HOOK_FASTCALL PDGetKeyboardCharacter(void) {
-    int key;
+    unsigned int key;
+
     Win32ServiceMessages();
-    if (gKeyboardBufferLength == 0) {
-        return 0;
+    if (gKeyboardBufferLength != 0) {
+        key = gKeyboardBuffer[0];
+        if (gKeyboardBufferLength > 1) {
+            memmove(&gKeyboardBuffer[0], &gKeyboardBuffer[1], gKeyboardBufferLength - 1);
+        }
+        gKeyboardBufferLength -= 1;
+        dr_dprintf("KEY RETURNED %d", key);
+        return key;
     }
-    key = gKeyboardBuffer[0];
-    if (gKeyboardBufferLength > 1) {
-        memmove(&gKeyboardBuffer[1], &gKeyboardBuffer[0], gKeyboardBufferLength - 1);
-    }
-    gKeyboardBufferLength -= 1;
-    dr_dprintf("KEY RETURNED %d", key);
-    return key;
+    return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0051b0a0
 void C2_HOOK_FASTCALL PDClearKeyboardBuffer(void) {
-
     dr_dprintf("KEYBOARD BUFFER CLEARED");
     gKeyboardBufferLength = 0;
-
 }
 
 // FUNCTION: CARMA2_HW 0x0051c110
@@ -428,121 +436,122 @@ LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
     char buffer[256];
 
     switch (uMsg) {
-    case WM_PAINT:
-        BeginPaint(hWnd, &paint);
-        EndPaint(hWnd, &paint);
-        return 0;
-    case WM_DESTROY:
-        dr_dprintf("WM_DESTROY received - doing nothing.");
-        break;
-#if !defined(KEEP_ACTIVE_IN_BACKGROUND)
-    case WM_MOVE:
-    case WM_SIZE:
-        if (IsIconic(hWnd)) {
-            dr_dprintf("WM_SIZE/WM_MOVE: Window is iconic");
-            DeActivateApp();
-        }
-        break;
-#endif
-    case WM_SYSCOMMAND:
-        if (GET_SC_WPARAM(wParam) == SC_CLOSE) {
-            DestroyWindow(gHWnd);
-            gHWnd = NULL;
-            PDShutdownSystem();
+        case WM_PAINT:
+            BeginPaint(hWnd, &paint);
+            EndPaint(hWnd, &paint);
             return 0;
-        }
-        break;
-    case WM_LBUTTONDOWN:
-        gMouseLButtonDown = gWindowActiveState == 2 ? 1 : 0;
-        if (!gMouseCaptured && gWindowActiveState == 2) {
-            SetCapture(gHWnd);
-            gMouseCaptured = 1;
-        }
-        break;
-    case WM_LBUTTONUP:
-        gMouseLButtonDown = 0;
-        if (gMouseCaptured) {
-            ReleaseCapture();
-            gMouseCaptured = 0;
-        }
-        break;
-    case WM_LBUTTONDBLCLK:
-    case WM_RBUTTONDBLCLK:
-        if (gWindowActiveState != 2) {
-            gCursorPos_LastClick = gPD_mouse_position;
-            gCursorPos_LastClick_Valid = 1;
+        case WM_DESTROY:
+            dr_dprintf("WM_DESTROY received - doing nothing.");
             break;
-        }
-        GetCursorPos(&point);
-        if (!gScaleMouse || strcmp(gRenderer, "D3D") == 0) {
-            ScreenToClient(gHWnd, &point);
-            gPD_mouse_position = gCursorPos_LastClick = point;
-        } else {
-            gPD_mouse_position.x = gCursorPos_LastClick.x = (int)((double)point.x / (gScreenWidth / 640.));
-            gPD_mouse_position.y = gCursorPos_LastClick.y = (int)((double)point.y / (gScreenHeight / 480.));
-        }
-        gCursorPos_LastClick_Valid = 1;
-        break;
-    case WM_RBUTTONDOWN:
-        gMouseRButtonDown = gWindowActiveState == 2 ? 1 : 0;
-        if (!gMouseCaptured && gWindowActiveState == 2) {
-            SetCapture(gHWnd);
-            gMouseCaptured = 1;
-        }
-        break;
-    case WM_RBUTTONUP:
-        gMouseRButtonDown = 0;
-        if (gMouseCaptured) {
-            ReleaseCapture();
-            gMouseCaptured = 0;
-        }
-        break;
-    case WM_CHAR:
-        if (0x1f < (char)wParam  && (char)wParam != 0x7f) {
-            if (gKeyboardBufferLength >= REC2_ASIZE(gKeyboardBuffer)) {
-                memmove(gKeyboardBuffer, &gKeyboardBuffer[1], REC2_ASIZE(gKeyboardBuffer) - 1);
-                gKeyboardBufferLength = REC2_ASIZE(gKeyboardBuffer) - 1;
-            }
-            gKeyboardBuffer[gKeyboardBufferLength] = (char)wParam;
-            gKeyboardBufferLength++;
-            strncpy(buffer, gKeyboardBuffer, gKeyboardBufferLength);
-            buffer[gKeyboardBufferLength] = '\0';
-            dr_dprintf("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
-        }
-        break;
 #if !defined(KEEP_ACTIVE_IN_BACKGROUND)
-    case WM_ACTIVATEAPP:
-        dr_dprintf("WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
-                   wParam, lParam, GetForegroundWindow(), gHWnd, hWnd, IsIconic(gHWnd));
-        if (gHWnd != NULL) {
-            if (GetForegroundWindow() == gHWnd && !IsIconic(gHWnd)) {
-                dr_dprintf("Activating app");
-                if (gDirectInputDevice != NULL) {
-                    IDirectInputDevice_Acquire(gDirectInputDevice);
-                }
-                if (gHWnd != NULL && gScreenWidth != 0) {
-                    SetWindowPos(gHWnd, NULL, 0, 0, gScreenWidth, gScreenHeight, SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
-                }
-                gWindowActiveState = 2;
-                gTime_app_activated = PDGetTotalTime();
-            } else {
-                if (gBack_screen != NULL && gBack_screen->pixels != NULL) {
-                    return 1;
-                }
+        case WM_MOVE:
+        case WM_SIZE:
+            if (IsIconic(hWnd)) {
+                dr_dprintf("WM_SIZE/WM_MOVE: Window is iconic");
                 DeActivateApp();
             }
-        }
-        break;
+            break;
 #endif
-    default:
-        break;
+        case WM_SYSCOMMAND:
+            if (GET_SC_WPARAM(wParam) == SC_CLOSE) {
+                DestroyWindow(gHWnd);
+                gHWnd = NULL;
+                PDShutdownSystem();
+                return 0;
+            }
+            break;
+        case WM_LBUTTONDOWN:
+            gMouseLButtonDown = gWindowActiveState == 2 ? 1 : 0;
+            if (!gMouseCaptured && gWindowActiveState == 2) {
+                SetCapture(gHWnd);
+                gMouseCaptured = 1;
+            }
+            break;
+        case WM_LBUTTONUP:
+            gMouseLButtonDown = 0;
+            if (gMouseCaptured) {
+                ReleaseCapture();
+                gMouseCaptured = 0;
+            }
+            break;
+        case WM_LBUTTONDBLCLK:
+        case WM_RBUTTONDBLCLK:
+            if (gWindowActiveState != 2) {
+                gCursorPos_LastClick = gPD_mouse_position;
+                gCursorPos_LastClick_Valid = 1;
+                break;
+            }
+            GetCursorPos(&point);
+            if (!gScaleMouse || strcmp(gRenderer, "D3D") == 0) {
+                ScreenToClient(gHWnd, &point);
+                gPD_mouse_position = gCursorPos_LastClick = point;
+            } else {
+                gPD_mouse_position.x = gCursorPos_LastClick.x = (int) ((double) point.x / (gScreenWidth / 640.));
+                gPD_mouse_position.y = gCursorPos_LastClick.y = (int) ((double) point.y / (gScreenHeight / 480.));
+            }
+            gCursorPos_LastClick_Valid = 1;
+            break;
+        case WM_RBUTTONDOWN:
+            gMouseRButtonDown = gWindowActiveState == 2 ? 1 : 0;
+            if (!gMouseCaptured && gWindowActiveState == 2) {
+                SetCapture(gHWnd);
+                gMouseCaptured = 1;
+            }
+            break;
+        case WM_RBUTTONUP:
+            gMouseRButtonDown = 0;
+            if (gMouseCaptured) {
+                ReleaseCapture();
+                gMouseCaptured = 0;
+            }
+            break;
+        case WM_CHAR:
+            if (0x1f < (char) wParam && (char) wParam != 0x7f) {
+                if (gKeyboardBufferLength >= REC2_ASIZE(gKeyboardBuffer)) {
+                    memmove(gKeyboardBuffer, &gKeyboardBuffer[1], REC2_ASIZE(gKeyboardBuffer) - 1);
+                    gKeyboardBufferLength = REC2_ASIZE(gKeyboardBuffer) - 1;
+                }
+                gKeyboardBuffer[gKeyboardBufferLength] = (unsigned char) wParam;
+                gKeyboardBufferLength++;
+                strncpy(buffer, (char *) gKeyboardBuffer, gKeyboardBufferLength);
+                buffer[gKeyboardBufferLength] = '\0';
+                dr_dprintf("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
+            }
+            break;
+#if !defined(KEEP_ACTIVE_IN_BACKGROUND)
+        case WM_ACTIVATEAPP:
+            dr_dprintf(
+                "WM_ACTIVATEAPP: wparam is %d, lparam is %d, fg window is %p, main win is %p, hWnd is %p, isiconic is %d",
+                wParam, lParam, GetForegroundWindow(), gHWnd, hWnd, IsIconic(gHWnd));
+            if (gHWnd != NULL) {
+                if (GetForegroundWindow() == gHWnd && !IsIconic(gHWnd)) {
+                    dr_dprintf("Activating app");
+                    if (gDirectInputDevice != NULL) {
+                        IDirectInputDevice_Acquire(gDirectInputDevice);
+                    }
+                    if (gHWnd != NULL && gScreenWidth != 0) {
+                        SetWindowPos(gHWnd, NULL, 0, 0, gScreenWidth, gScreenHeight,
+                                     SWP_NOSENDCHANGING | SWP_NOACTIVATE | SWP_NOZORDER);
+                    }
+                    gWindowActiveState = 2;
+                    gTime_app_activated = PDGetTotalTime();
+                } else {
+                    if (gBack_screen != NULL && gBack_screen->pixels != NULL) {
+                        return 1;
+                    }
+                    DeActivateApp();
+                }
+            }
+            break;
+#endif
+        default:
+            break;
     }
     return DefWindowProcA(hWnd, uMsg, wParam, lParam);
 }
 
 // FUNCTION: CARMA2_HW 0x0051cab0
 int C2_HOOK_FASTCALL PDGetASCIIFromKey(int pKey) {
-
     if (PDKeyDown(0)) {
         return gASCII_shift_table[pKey];
     } else {
@@ -550,50 +559,8 @@ int C2_HOOK_FASTCALL PDGetASCIIFromKey(int pKey) {
     }
 }
 
-// FUNCTION: CARMA2_HW 0x0051cad0
-void C2_HOOK_CDECL Win32ServiceMessages(void) {
-    MSG msg;
-    dr_dprintf("Win32ServiceMessages() - START");
-    while (1) {
-        if (gWindowActiveState == 1) {
-            SetForegroundWindow(gHWnd);
-        }
-
-        if (gWindowActiveState == 0) {
-            if (GetMessageA(&msg, NULL, 0, 0) == -1) {
-                dr_dprintf("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
-                break;
-            }
-        } else {
-            if (PeekMessageA(&msg, NULL, 0, 0, 1) == 0) {
-                dr_dprintf("Win32ServiceMessages() - breaking cos PeekMessage() returned 0");
-                break;
-            }
-            if (gWindowActiveState == 0) {
-                if (GetMessageA(&msg, NULL, 0, 0) == -1) {
-                    dr_dprintf("Win32ServiceMessages() - breaking cos GetMessage() returned -1");
-                    break;
-                }
-            }
-        }
-        if (msg.message == WM_QUIT) {
-            dr_dprintf("WM_QUIT received.");
-            if (gWindowActiveState == 2) {
-                dr_dprintf("Active, so lock the surface");
-                dr_dprintf("QuitGame being called...");
-                QuitGame();
-            }
-            PDShutdownSystem();
-        }
-        TranslateMessage(&msg);
-        dr_dprintf("Win32ServiceMessages() - dispatching message...");
-        DispatchMessageA(&msg);
-    }
-    dr_dprintf("Win32ServiceMessages() - END");
-}
-
 // FUNCTION: CARMA2_HW 0x0051d500
-int C2_HOOK_FASTCALL PDCheckDriveExists2(const char* pThe_path, const char* pFile_name, tU32 pMin_size) {
+int C2_HOOK_FASTCALL PDCheckDriveExists2(const char *pThe_path, const char *pFile_name, tU32 pMin_size) {
     char the_path[256];
     tU32 file_size;
     HANDLE hFile;
@@ -626,8 +593,8 @@ int C2_HOOK_FASTCALL PDReadSourceLocation(tPath_name pPath) {
 
     status = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\SCI\\CARMAGEDDON2", 0, KEY_ALL_ACCESS, &hKey);
     if (status == ERROR_SUCCESS) {
-        lenBuffer = sizeof(tPath_name) - 1;  // FIXME: use array_sizeof
-        status = RegQueryValueExA(hKey, "SourceLocation", NULL, NULL, (LPBYTE)pPath, &lenBuffer);
+        lenBuffer = sizeof(tPath_name) - 1; // FIXME: use array_sizeof
+        status = RegQueryValueExA(hKey, "SourceLocation", NULL, NULL, (LPBYTE) pPath, &lenBuffer);
         if (status == ERROR_SUCCESS) {
             RegCloseKey(hKey);
             return 1;
@@ -645,10 +612,10 @@ int C2_HOOK_FASTCALL PDDoWeLeadAnAustereExistance(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c850
-void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount) {
+void C2_HOOK_FASTCALL PDSetPaletteEntries(br_pixelmap *pPalette, int pFirst_colour, int pCount) {
     int i;
     PALETTEENTRY colours[256];
-    tU32* pixels = pPalette->pixels;
+    tU32 *pixels = pPalette->pixels;
 
     for (i = 0; i < pCount; i++) {
         tU32 c;
@@ -670,7 +637,6 @@ void C2_HOOK_FASTCALL PDSetPalette(br_pixelmap *pixelmap) {
 
 // FUNCTION: CARMA2_HW 0x0051cbe0
 int C2_HOOK_FASTCALL PDServiceSystem(tU32 pTime_since_last_call) {
-
     Win32ServiceMessages();
     return 0;
 }
@@ -705,25 +671,24 @@ tU32 C2_HOOK_FASTCALL PDGetTotalTime(void) {
     if (gPerformanceCounterInitialized) {
         QueryPerformanceCounter(&perfCountValue);
         delta.QuadPart = perfCountValue.QuadPart - gPerformanceCounterStart.QuadPart;
-        return (tU32)(delta.QuadPart / gPerformanceCounterFrequency_ms.QuadPart);
+        return (tU32) (delta.QuadPart / gPerformanceCounterFrequency_ms.QuadPart);
     }
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0051d990
 int C2_HOOK_FASTCALL PDGetMicroseconds(void) {
-
     if (gPerformanceCounterInitialized) {
         LARGE_INTEGER perfCountValue;
         QueryPerformanceCounter(&perfCountValue);
         // Is it okay to convert unsigned to int here?
-        return (int)((perfCountValue.QuadPart - gPerformanceCounterStart.QuadPart) / gPerformanceCounterFrequency_us.QuadPart);
+        return (int) ((perfCountValue.QuadPart - gPerformanceCounterStart.QuadPart) / gPerformanceCounterFrequency_us.
+                      QuadPart);
     }
     return 0;
 }
 
-void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
-
+void C2_HOOK_FASTCALL PDEnterDebugger(const char *pStr) {
     dr_dprintf("PDEnterDebugger(): %s", pStr);
     ShowCursor(1);
     __debugbreak();
@@ -731,7 +696,7 @@ void C2_HOOK_FASTCALL PDEnterDebugger(const char* pStr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051d4b0
-int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path) {
+int C2_HOOK_FASTCALL PDFileUnlock(const char *pThe_path) {
     DWORD dwAttributes;
 
     dwAttributes = GetFileAttributesA(pThe_path);
@@ -742,7 +707,7 @@ int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path) {
 }
 
 // FUNCTION: CARMA2_HW 0x00486c30
-void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, void* data) {
+void C2_HOOK_FASTCALL PDEnumPath(const char *path, tEnumPathCallback pCallback, void *data) {
     char originalCurrentDirectory[MAX_PATH];
     tPath_name filePath;
     BOOL bSucceeded;
@@ -760,7 +725,8 @@ void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, 
     hFindFile = FindFirstFileA("*.???", &findFileData);
     if (hFindFile != NULL) {
         while (1) {
-            if ((findFileData.dwFileAttributes & (FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_HIDDEN)) == 0) {
+            if ((findFileData.dwFileAttributes & (
+                     FILE_ATTRIBUTE_DIRECTORY | FILE_ATTRIBUTE_SYSTEM | FILE_ATTRIBUTE_HIDDEN)) == 0) {
                 lenFilename = strlen(findFileData.cFileName);
                 lenLnk = strlen(".lnk");
                 if (lenFilename > lenLnk && strcasecmp(&findFileData.cFileName[lenFilename - lenLnk], ".lnk") == 0) {
@@ -785,26 +751,33 @@ void C2_HOOK_FASTCALL PDEnumPath(const char* path, tEnumPathCallback pCallback, 
 }
 
 // FUNCTION: CARMA2_HW 0x00578380
-int C2_HOOK_CDECL IsNetworkShare(const char* path) {
-    size_t lenPath;
-    const char *pathPtr;
+int C2_HOOK_CDECL IsNetworkShare(const char *path) {
+    const char *ptr;
 
-    lenPath = strlen(path);
-    if (lenPath >= 5 && (path[0] == '\\' || path[0] == '/') && (path[1] == '\\' || path[1] == '/')) {
-        pathPtr = &path[3];
-        while (*pathPtr != '\0' && *pathPtr != '\\' && *pathPtr != '/') {
-            pathPtr++;
-        }
-        if (pathPtr[0] != '\0' && *++pathPtr != '\0') {
-            while (*pathPtr != '\0' && *pathPtr != '\\' && *pathPtr != '/') {
-                pathPtr++;
-            }
-            if (pathPtr[0] == '\0' || pathPtr[1] == '\0') {
-                return 1;
-            }
-        }
+    if (strlen(path) < 5) {
+        return 0;
     }
-    return 0;
+    if (path[0] != '\\' && path[0] != '/') {
+        return 0;
+    }
+    if (path[1] != '\\' && path[1] != '/') {
+        return 0;
+    }
+    ptr = &path[3];
+    while (*ptr != '\0' && *ptr != '\\' && *ptr != '/') {
+        ptr++;
+    }
+    if (*ptr == '\0' || ptr[1] == '\0') {
+        return 0;
+    }
+    ptr++;
+    while (*ptr != '\0' && *ptr != '\\' && *ptr != '/') {
+        ptr++;
+    }
+    if (*ptr != '\0' && ptr[1] != '\0') {
+        return 0;
+    }
+    return 1;
 }
 
 // FUNCTION: CARMA2_HW 0x00585ee0
@@ -824,15 +797,13 @@ int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x00486c20
-int C2_HOOK_FASTCALL PDmkdir(const char* path) {
-
+int C2_HOOK_FASTCALL PDmkdir(const char *path) {
     return c2_mkdir(path);
 }
 
 // FUNCTION: CARMA2_HW 0x0044c9f0
-void C2_HOOK_FASTCALL MAMSUnlock(void** pPtr) {
-
-    void* mem = *pPtr;
+void C2_HOOK_FASTCALL MAMSUnlock(void **pPtr) {
+    void *mem = *pPtr;
     if (mem == NULL) {
         FatalError(kFatalError_OOM_S, "NULL POINTER BEING FREED");
     }
@@ -841,11 +812,11 @@ void C2_HOOK_FASTCALL MAMSUnlock(void** pPtr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044ca30
-void C2_HOOK_FASTCALL MAMSLock(void** pPtr) {
+void C2_HOOK_FASTCALL MAMSLock(void **pPtr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051d640
-void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
+void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char *pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
     char found_path[256];
     WIN32_FIND_DATAA find_data;
     HANDLE hFindFile;
@@ -863,10 +834,11 @@ void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFi
                     PathCat(found_path, pThe_path, find_data.cFileName);
                     SetCurrentDirectoryA(current_dir);
                     if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
-                        dr_dprintf("PDForEveryFileRecurse() - Calling action proc with file '%s' in dir '%s'", found_path, current_dir);
-                        pAction_routine(found_path);
-                    } else {
                         PDForEveryFileRecurse(found_path, pAction_routine);
+                    } else {
+                        dr_dprintf("PDForEveryFileRecurse() - Calling action proc with file '%s' in dir '%s'",
+                                   found_path, current_dir);
+                        pAction_routine(found_path);
                     }
                     SetCurrentDirectoryA(pThe_path);
                 }
@@ -878,7 +850,7 @@ void C2_HOOK_FASTCALL PDForEveryFileRecurse(const char* pThe_path, tPDForEveryFi
 }
 
 // FUNCTION: CARMA2_HW 0x0051c760
-void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn pAction_routine) {
+void C2_HOOK_FASTCALL PDForEveryFile(const char *pThe_path, tPDForEveryFile_cbfn pAction_routine) {
     char found_path[256];
     WIN32_FIND_DATAA find_data;
     HANDLE hFindFile;
@@ -901,7 +873,7 @@ void C2_HOOK_FASTCALL PDForEveryFile(const char* pThe_path, tPDForEveryFile_cbfn
 }
 
 // FUNCTION: CARMA2_HW 0x0051da20
-void C2_HOOK_FASTCALL PDGetCurrentDate(char* pTimeStr) {
+void C2_HOOK_FASTCALL PDGetCurrentDate(char *pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
 
@@ -911,7 +883,7 @@ void C2_HOOK_FASTCALL PDGetCurrentDate(char* pTimeStr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051da90
-void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr) {
+void C2_HOOK_FASTCALL PDGetCurrentTime(char *pTimeStr) {
     SYSTEMTIME time;
     char buffer[256];
 
@@ -924,7 +896,7 @@ void C2_HOOK_FASTCALL PDGetCurrentTime(char* pTimeStr) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051db00
-int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord) {
+int C2_HOOK_FASTCALL PDGetMouseClickPosition(int *pX_coord, int *pY_coord) {
     if (!gCursorPos_LastClick_Valid) {
         gCursorPos_LastClick_Valid = 0;
         return 0;
@@ -936,15 +908,14 @@ int C2_HOOK_FASTCALL PDGetMouseClickPosition(int* pX_coord, int* pY_coord) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c5f0
-static void C2_HOOK_CDECL OnWarnCallback(char* text) {
-
+static void C2_HOOK_CDECL OnWarnCallback(char *text) {
     dr_dprintf("*******************************************************************************");
     dr_dprintf("BRender WARNING: '%s'", text);
     dr_dprintf("*******************************************************************************");
 }
 
 // FUNCTION: CARMA2_HW 0x0051c620
-static void C2_HOOK_CDECL OnErrorCallback(char* text) {
+static void C2_HOOK_CDECL OnErrorCallback(char *text) {
     const char *msg;
 
     dr_dprintf("*******************************************************************************");
@@ -971,7 +942,6 @@ static void C2_HOOK_CDECL OnErrorCallback(char* text) {
 
 // FUNCTION: CARMA2_HW 0x0051c6c0
 void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
-
     gPD_error_handler.identifier = "LlantisilioBlahBlahBlahOgOgOch";
     gPD_error_handler.warning = OnWarnCallback;
     gPD_error_handler.failure = OnErrorCallback;
@@ -979,25 +949,26 @@ void C2_HOOK_FASTCALL PDInstallErrorHandlers(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c290
-int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char** pArgv) {
+int C2_HOOK_FASTCALL PDInitScreenVars(int pArgc, const char **pArgv) {
     gGraf_spec_index = gDefault_spec_index;
+#ifdef REC2_MATCHING
+    gGraf_spec_index = gDefault_spec_index;
+#else
     gGraf_data_index = gDefault_data_index;
+#endif
     return 1;
 }
 
 // FUNCTION: CARMA2_HW 0x0051c270
 void C2_HOOK_FASTCALL PDSaveOriginalPalette(void) {
-
 }
 
 // FUNCTION: CARMA2_HW 0x0051c2b0
 void C2_HOOK_FASTCALL PDInitScreen(void) {
-
 }
 
 // FUNCTION: CARMA2_HW 0x0051c300
 void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
-
     dr_dprintf("PDAllocateScreenAndBack() - START...");
 
     dr_dprintf("Setting up DirectSound stuff...");
@@ -1006,13 +977,13 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
 
     gNbPixelBits = 16;
     BrDevBeginVar(&gScreen, gRenderer,
-        BRT_WINDOW_FULLSCREEN_B, 1,
-        BRT_WINDOW_HANDLE_H, gHWnd,
-        BRT_WIDTH_I32, 640,
-        BRT_HEIGHT_I32, 480,
-        BRT_PIXEL_BITS_I32, 16,
-        BRT_PIXEL_TYPE_U8, BR_PMT_RGB_565,
-        0);
+                  BRT_WINDOW_FULLSCREEN_B, 1,
+                  BRT_WINDOW_HANDLE_H, gHWnd,
+                  BRT_WIDTH_I32, 640,
+                  BRT_HEIGHT_I32, 480,
+                  BRT_PIXEL_BITS_I32, 16,
+                  BRT_PIXEL_TYPE_U8, BR_PMT_RGB_565,
+                  0);
     if (gScreen == NULL) {
         BrFailure("Unable to allocate Main Front Screen");
     }
@@ -1046,7 +1017,7 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
         BrFailure("Unable to allocate Back Screen");
     }
 
-    gPixelFlags = kPixelFlags_unknown_0x4 | (gNbPixelBits == 16 ? kPixelFlags_16bbp : 0);
+    gPixelFlags = kPixelFlags_unknown_0x4 + (gNbPixelBits == 16 ? kPixelFlags_16bbp : 0);
 
     gDouble_back_screen = BrPixelmapMatch(gBack_screen, BR_PMMATCH_OFFSCREEN);
     gHas_double_back_screen = 1;
@@ -1058,13 +1029,13 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
     dr_dprintf("PDAllocateScreenAndBack() - END.");
 }
 
-int PDGetRegisterSourceLocation(char* buffer, int* buffer_size) {
+int PDGetRegisterSourceLocation(char *buffer, int *buffer_size) {
     HKEY hKey;
     LONG status;
 
     status = RegOpenKeyExA(HKEY_LOCAL_MACHINE, "SOFTWARE\\SCI\\CARMAGEDDON2", 0, KEY_ALL_ACCESS, &hKey);
     if (status == ERROR_SUCCESS) {
-        status = RegQueryValueExA(hKey, "SourceLocation", NULL, NULL, (LPBYTE)buffer, (LPDWORD)buffer_size);
+        status = RegQueryValueExA(hKey, "SourceLocation", NULL, NULL, (LPBYTE) buffer, (LPDWORD) buffer_size);
         if (status == ERROR_SUCCESS) {
             RegCloseKey(hKey);
             return 1;
@@ -1099,8 +1070,7 @@ void C2_HOOK_FASTCALL PDRevertPalette(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0051c8e0
-void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown) {
-
+void C2_HOOK_FASTCALL PDMouseButtons(int *pLeftButtonDown, int *pRightButtonDown) {
     *pLeftButtonDown = gMouseLButtonDown;
     if (pRightButtonDown != NULL) {
         *pRightButtonDown = gMouseRButtonDown;
@@ -1108,8 +1078,8 @@ void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown
 }
 
 // FUNCTION: CARMA2_HW 0x0056a3a9
-void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath) {
-    char dirname [256];
+void C2_HOOK_FASTCALL PDExtractFilename(char *pDest, const char *pPath) {
+    char dirname[256];
     char drive[4];
     char filename[256];
     char extension[256];
@@ -1119,8 +1089,8 @@ void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath) {
 }
 
 // FUNCTION: CARMA2_HW 0x0056a349
-void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath) {
-    char dirname [256];
+void C2_HOOK_FASTCALL PDExtractDirectory(char *pDest, const char *pPath) {
+    char dirname[256];
     char drive[4];
     char filename[256];
     char extension[256];
@@ -1130,8 +1100,8 @@ void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath) {
 }
 
 // FUNCTION: CARMA2_HW 0x004928a0
-void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory) {
-    tHeap_block_information* heap_block;
+void C2_HOOK_FASTCALL PDPageInMemory(void *pMemory) {
+    tHeap_block_information *heap_block;
 
     C2_HOOK_BUG_ON(offsetof(tHeap_block_information, next) != 0x48);
     C2_HOOK_BUG_ON(offsetof(tHeap_block_information, field_0x72) != 0x72);
@@ -1143,7 +1113,7 @@ void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory) {
         for (; heap_block != NULL; heap_block = heap_block->next) {
             tHeap_memory *block;
 
-            block = (tHeap_memory*)(heap_block + 1);
+            block = (tHeap_memory *) (heap_block + 1);
             for (;;) {
                 DWORD size = block->flags & 0x5ffffffc;
                 DWORD current;
@@ -1157,24 +1127,22 @@ void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory) {
                     }
                     for (current = 16 * gPage_size; current < size - 4; current += gPage_size) {
                         block->data[current + 16 - 16 * gPage_size] = block->data[current + 16 - 16 * gPage_size];
-                        block->data[current + 16]                        = block->data[current + 16];
+                        block->data[current + 16] = block->data[current + 16];
                     }
                 }
-                block = (tHeap_memory*)((BYTE*)block + size);
+                block = (tHeap_memory *) ((BYTE *) block + size);
             }
         }
     }
 }
 
 void C2_HOOK_FASTCALL PDPageInProcessMemory(void) {
-
     PDPageInMemory(GetProcessHeap());
     Sleep(1500);
 }
 
 // FUNCTION: CARMA2_HW 0x0051d4d0
-void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only) {
-
+void C2_HOOK_FASTCALL PDFileDelete(const char *pPath, int pIgnore_read_only) {
     if (pIgnore_read_only) {
         DWORD flags = GetFileAttributesA(pPath);
         if (flags != INVALID_FILE_ATTRIBUTES) {
@@ -1182,13 +1150,4 @@ void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only) {
         }
     }
     DeleteFileA(pPath);
-}
-
-// FUNCTION: CARMA2_HW 0x0044c830
-void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void) {
-
-    if (gActionReplayBufferFile != NULL) {
-        PFfclose(gActionReplayBufferFile);
-        gActionReplayBufferFile = NULL;
-    }
 }

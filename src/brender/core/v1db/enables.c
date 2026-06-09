@@ -127,10 +127,10 @@ void C2_HOOK_STDCALL BrSetupLights(br_actor* world, br_matrix34* world_to_view, 
     br_vector3 view_direction;
     br_light* light;
 
+    light_part = 0;
     if (v1db.enabled_lights.enabled == NULL) {
         return;
     }
-    light_part = 0;
     for (i = 0; i < v1db.enabled_lights.max; i++) {
         tvp = tv;
 
@@ -143,8 +143,6 @@ void C2_HOOK_STDCALL BrSetupLights(br_actor* world, br_matrix34* world_to_view, 
         if (!setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, v1db.enabled_lights.enabled[i])) {
             continue;
         }
-
-        tvp = tv;
 
         tvp->t = BRT_COLOUR_RGB;
         tvp->v.rgb = light->colour;
@@ -166,77 +164,79 @@ void C2_HOOK_STDCALL BrSetupLights(br_actor* world, br_matrix34* world_to_view, 
         tvp->v.t = (light->type & BR_LIGHT_VIEW) ? BRT_VIEW : BRT_MODEL;
         tvp++;
 
+        tvp->t = BRT_TYPE_T;
+
         switch (light->type & BR_LIGHT_TYPE) {
-            case BR_LIGHT_POINT:
-                tvp->t = BRT_TYPE_T;
-                tvp->v.t = BRT_POINT;
-                tvp++;
-                break;
-            case BR_LIGHT_POINT_LOCAL_1:
-                tvp->t = BRT_TYPE_T;
-                tvp->v.t = BRT_POINT_LOCAL_1;
-                tvp++;
-                break;
-            case BR_LIGHT_POINT_LOCAL_2:
-                tvp->t = BRT_TYPE_T;
-                tvp->v.t = BRT_POINT_LOCAL_2;
-                tvp++;
-                break;
-            case BR_LIGHT_DIRECT:
-                tvp->t = BRT_TYPE_T;
-                tvp->v.t = BRT_DIRECT;
-                tvp++;
-                break;
-            case BR_LIGHT_SPOT:
-                tvp->t = BRT_TYPE_T;
-                tvp->v.t = BRT_SPOT;
-                tvp++;
-                break;
+        case BR_LIGHT_POINT:
+            tvp->v.t = BRT_POINT;
+            tvp++;
+            break;
+        case BR_LIGHT_POINT_LOCAL_1:
+            tvp->v.t = BRT_POINT_LOCAL_1;
+            tvp++;
+            break;
+        case BR_LIGHT_POINT_LOCAL_2:
+            tvp->v.t = BRT_POINT_LOCAL_2;
+            tvp++;
+            break;
+        // case BR_LIGHT_DIRECT:
+        //     tvp->v.t = BRT_DIRECT;
+        //     tvp++;
+        //     break;
+        // case BR_LIGHT_SPOT:
+        //     tvp->v.t = BRT_SPOT;
+        //     tvp++;
+        //     break;
         }
+
         switch (light->type & BR_LIGHT_TYPE) {
-            case BR_LIGHT_POINT:
-            case BR_LIGHT_POINT_LOCAL_1:
-            case BR_LIGHT_POINT_LOCAL_2:
-                view_position.v[0] = this_to_view.m[3][0];
-                view_position.v[1] = this_to_view.m[3][1];
-                view_position.v[2] = this_to_view.m[3][2];
-                tvp->t = BRT_POSITION_V3_F;
-                tvp->v.v3_f = (br_vector3_f*)&view_position;
-                tvp++;
-                break;
-            case BR_LIGHT_DIRECT:
-                view_direction.v[0] = view_to_this.m[0][2];
-                view_direction.v[1] = view_to_this.m[1][2];
-                view_direction.v[2] = view_to_this.m[2][2];
-                tvp->t = BRT_DIRECTION_V3_F;
-                tvp->v.v3_f = (br_vector3_f*)&view_direction;
-                tvp++;
-                break;
-            case BR_LIGHT_SPOT:
-                view_position.v[0] = this_to_view.m[3][0];
-                view_position.v[1] = this_to_view.m[3][1];
-                view_position.v[2] = this_to_view.m[3][2];
-                tvp->t = BRT_POSITION_V3_F;
-                tvp->v.v3_f = (br_vector3_f*)&view_position;
-                tvp++;
+        case BR_LIGHT_POINT:
+        case BR_LIGHT_POINT_LOCAL_1:
+        case BR_LIGHT_POINT_LOCAL_2:
+            view_position.v[0] = this_to_view.m[3][0];
+            view_position.v[1] = this_to_view.m[3][1];
+            view_position.v[2] = this_to_view.m[3][2];
+            tvp->t = BRT_POSITION_V3_F;
+            tvp->v.v3_f = (br_vector3_f*)&view_position;
+            tvp++;
+            break;
+        case BR_LIGHT_DIRECT:
+            tvp->v.t = BRT_DIRECT;
+            tvp++;
+            view_direction.v[0] = view_to_this.m[0][2];
+            view_direction.v[1] = view_to_this.m[1][2];
+            view_direction.v[2] = view_to_this.m[2][2];
+            tvp->t = BRT_DIRECTION_V3_F;
+            tvp->v.v3_f = (br_vector3_f*)&view_direction;
+            tvp++;
+            break;
+        case BR_LIGHT_SPOT:
+            tvp->v.t = BRT_SPOT;
+            tvp++;
+            view_position.v[0] = this_to_view.m[3][0];
+            view_position.v[1] = this_to_view.m[3][1];
+            view_position.v[2] = this_to_view.m[3][2];
+            tvp->t = BRT_POSITION_V3_F;
+            tvp->v.v3_f = (br_vector3_f*)&view_position;
+            tvp++;
 
-                view_direction.v[0] = view_to_this.m[0][2];
-                view_direction.v[1] = view_to_this.m[1][2];
-                view_direction.v[2] = view_to_this.m[2][2];
-                tvp->t = BRT_DIRECTION_V3_F;
-                tvp->v.v3_f = (br_vector3_f*)&view_direction;
-                tvp++;
+            view_direction.v[0] = view_to_this.m[0][2];
+            view_direction.v[1] = view_to_this.m[1][2];
+            view_direction.v[2] = view_to_this.m[2][2];
+            tvp->t = BRT_DIRECTION_V3_F;
+            tvp->v.v3_f = (br_vector3_f*)&view_direction;
+            tvp++;
 
-                tvp->t = BRT_SPOT_OUTER_F;
-                tvp->v.f = BR_COS(light->cone_outer);
-                tvp++;
+            tvp->t = BRT_SPOT_OUTER_F;
+            tvp->v.f = BR_COS(light->cone_outer);
+            tvp++;
 
-                tvp->t = BRT_SPOT_INNER_F;
-                tvp->v.f = BR_COS(light->cone_inner);
-                tvp++;
-                break;
-            default:
-                continue;
+            tvp->t = BRT_SPOT_INNER_F;
+            tvp->v.f = BR_COS(light->cone_inner);
+            tvp++;
+            break;
+        default:
+            continue;
         }
 
         tvp->t = BR_NULL_TOKEN;
@@ -318,17 +318,17 @@ void C2_HOOK_STDCALL BrSetupEnvironment(br_actor* world, br_matrix34* world_to_v
 
     h = BRT_DONT_CARE;
     if (v1db.enabled_environment != NULL) {
-        if (v1db.enabled_environment == world) {
+        if (v1db.enabled_environment != world) {
+            if (setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, v1db.enabled_environment) != 0) {
+                h = BRT_NONE;
+            }
+        } else {
             if (BrTransformTypeIsLP(w2vt)) {
                 BrMatrix34LPInverse(&view_to_this, world_to_view);
             } else {
                 BrMatrix34Inverse(&view_to_this, world_to_view);
             }
             h = BRT_NONE;
-        } else {
-            if (setupView(&view_to_this, &this_to_view, world_to_view, w2vt, world, v1db.enabled_environment) != 0) {
-                h = BRT_NONE;
-            }
         }
     }
     if (h != BRT_DONT_CARE) {
@@ -343,14 +343,19 @@ void C2_HOOK_STDCALL BrSetupHorizons(br_actor* world, br_matrix34* world_to_view
 
 // FUNCTION: CARMA2_HW 0x00525760
 void C2_HOOK_STDCALL BrActorEnableCheck(br_actor* a) {
-    if (v1db.enabled_environment == a) {
+
+    if (a == v1db.enabled_environment) {
         v1db.enabled_environment = NULL;
     }
-    if (a->type == BR_ACTOR_LIGHT) {
+    switch (a->type) {
+    case BR_ACTOR_LIGHT:
         actorDisable(&v1db.enabled_lights, a);
-    } else if (a->type == BR_ACTOR_HORIZONTAL_PLANE) {
+        break;
+    case BR_ACTOR_HORIZONTAL_PLANE:
         actorDisable(&v1db.enabled_horizon_planes, a);
-    } else if (a->type <= BR_ACTOR_CLIP_PLANE) {
+        break;
+    case BR_ACTOR_CLIP_PLANE:
         actorDisable(&v1db.enabled_clip_planes, a);
+        break;
     }
 }

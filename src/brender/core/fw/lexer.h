@@ -15,11 +15,11 @@ br_lexer_error_cbfn* C2_HOOK_CDECL BrLexerErrorSet(br_lexer* l, br_lexer_error_c
 
 void C2_HOOK_CDECL BrLexerFree(br_lexer* l);
 
-void C2_HOOK_STDCALL fileGetchar(br_lexer_source* source);
+void C2_HOOK_CDECL fileGetchar(br_lexer_source* source);
 
 br_error C2_HOOK_CDECL BrLexerPushFile(br_lexer* l, char* file);
 
-void C2_HOOK_STDCALL stringGetchar(br_lexer_source* source);
+void C2_HOOK_CDECL stringGetchar(br_lexer_source* source);
 
 br_error C2_HOOK_CDECL BrLexerPushString(br_lexer* l, char* string, char* name);
 

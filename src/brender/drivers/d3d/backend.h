@@ -32,7 +32,7 @@ typedef struct {
 } tStruct_1001dcc0;
 typedef struct {
     int type;
-    DWORD value;
+    uintptr_t value;
 } tDraw_d3d_10037ce0;
 typedef struct {
     LPDIRECTDRAWSURFACE surface;
@@ -102,7 +102,7 @@ extern BOOL gD3D_windows;
 
 int C2_HOOK_CDECL DetectD3DDevices(void);
 
-int C2_HOOK_CDECL InitD3D(HWND hWnd);
+int C2_HOOK_CDECL InitD3D(void);
 
 void C2_HOOK_CDECL CloseD3D(void);
 

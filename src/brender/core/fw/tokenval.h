@@ -51,8 +51,6 @@ void C2_HOOK_CDECL BrTokenValueDump(br_token_value* tv, char* prefix, br_putline
 
 br_error C2_HOOK_CDECL BrStringToTokenValue(br_token_value* buffer, br_size_t buffer_size, char* str);
 
-br_error C2_HOOK_STDCALL parseTokenValue(br_lexer* l, br_token_value* tv, br_size_t size);
-
 br_boolean C2_HOOK_CDECL BrTokenValueCompare(br_token_value* tv1, br_token_value* tv2);
 
 br_error C2_HOOK_CDECL BrTokenValueDup(br_token_value** dstp, br_token_value* src);

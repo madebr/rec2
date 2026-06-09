@@ -1,6 +1,6 @@
-#include "sample.h"
+#include "../include/s3/internal/sample.h"
 
-#include "audio.h"
+#include "../include/s3/internal/audio.h"
 #include "resource.h"
 
 #include "platform.h"
@@ -10,9 +10,6 @@
 
 #include "c2_string.h"
 
-
-// GLOBAL: CARMA2_HW 0x007a0594
-tS3_descriptor* gS3_descriptors;
 
 // GLOBAL: CARMA2_HW 0x006b2c88
 int gS3_low_memory_mode;
@@ -42,38 +39,38 @@ tS3_buffer_desc* C2_HOOK_FASTCALL S3GetBufferDescription(int pSample_id) {
 // FUNCTION: CARMA2_HW 0x00568830
 tS3_error_codes C2_HOOK_FASTCALL S3LoadSample(int pSample_id) {
     tS3_descriptor* descriptor;
-    tS3_buffer_desc* buffer_description;
     char path[512];
+    tS3_buffer_desc* buffer_description;
 
-    if (!gS3_enabled) {
-        return eS3_error_none;
-    }
-    descriptor = S3GetDescriptorByID(pSample_id);
-    if (descriptor == NULL) {
-        return eS3_error_bad_id;
-    }
-    if (descriptor->type != 0) {
-        return eS3_error_none;
-    }
-    if (descriptor->buffer_description != NULL) {
-        return eS3_error_none;
-    }
-    path[0] = '\0';
-    strcpy(path, descriptor->path);
+    if (gS3_enabled) {
+        descriptor = S3GetDescriptorByID(pSample_id);
+        if (descriptor == NULL) {
+            return eS3_error_bad_id;
+        }
+        if (descriptor->type == 0) {
+            if (descriptor->buffer_description != NULL) {
+                return eS3_error_none;
+            }
+            path[0] = '\0';
+            strcpy(path, descriptor->path);
 
-    C2_HOOK_BUG_ON(sizeof(tS3_buffer_desc) != 0x18);
+            C2_HOOK_BUG_ON(sizeof(tS3_buffer_desc) != 0x18);
 
-    buffer_description = S3MemAllocate(sizeof(tS3_buffer_desc), kMem_S3_sound_header);
-    if (buffer_description == NULL) {
-        return eS3_error_memory;
+            buffer_description = S3MemAllocate(sizeof(tS3_buffer_desc), kMem_S3_sound_header);
+            if (buffer_description == NULL) {
+                return eS3_error_memory;
+            }
+            memset(buffer_description, 0, sizeof(*buffer_description));
+            descriptor->pd_handle = S3BufferWav(path, buffer_description);
+            if (descriptor->pd_handle == NULL) {
+                BrFailure("Cound not load sample:%s", path);
+                S3MemFree(buffer_description);
+                return gS3_last_error;
+            }
+            descriptor->effects_enabled = 0;
+            descriptor->buffer_description = buffer_description;
+        }
     }
-    memset(buffer_description, 0, sizeof(tS3_buffer_desc));
-    descriptor->pd_handle = S3BufferWav(path, buffer_description);
-    if (descriptor->pd_handle == NULL) {
-        BrFailure("Cound not load sample:%s", path);
-    }
-    descriptor->effects_enabled = 0;
-    descriptor->buffer_description = buffer_description;
     return eS3_error_none;
 }
 
@@ -85,7 +82,7 @@ tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, next, 0x2c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tS3_descriptor, low_memory_alternative, 0x3c);
 
-    for (desc = gS3_descriptors; desc != NULL; desc = desc->next) {
+    for (desc = gS3_state.descriptors; desc != NULL; desc = desc->next) {
         if (desc->sample_id == pSample_id) {
             if (desc->low_memory_alternative >= 0) {
                 return S3GetDescriptorByID(desc->low_memory_alternative);
@@ -94,6 +91,21 @@ tS3_descriptor* C2_HOOK_FASTCALL S3GetDescriptorByID(int pSample_id) {
         }
     }
     return NULL;
+}
+
+// FUNCTION: CARMA2_HW 0x00565b34
+void C2_HOOK_CDECL s3_debug_disable_sound(void) {
+
+}
+
+// FUNCTION: CARMA2_HW 0x00565b39
+void C2_HOOK_CDECL s3_debug_init(void) {
+    tPath_name path;
+    int result;
+
+    (void) path;
+    (void) result;
+
 }
 
 // FUNCTION: CARMA2_HW 0x00565b46

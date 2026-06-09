@@ -1,7 +1,7 @@
-#include "3d.h"
+#include "../include/s3/internal/3d.h"
 
 #include "audio.h"
-#include "sample.h"
+#include "../include/s3/internal/sample.h"
 
 #include "platform.h"
 
@@ -54,19 +54,19 @@ int gS3_listener_left_is_brender;
 
 // FUNCTION: CARMA2_HW 0x00567ab8
 void C2_HOOK_FASTCALL S3StopSoundSource(tS3_sound_source* src) {
-    if (!gS3_enabled) {
-        return;
+
+    if (gS3_enabled) {
+        if (src == NULL) {
+            return;
+        }
+        if (src->channel != NULL && src->tag != 0 && src->channel->tag == src->tag) {
+            src->channel->termination_reason = eS3_tr_stopped;
+            src->channel->spatial_sound = 0;
+            S3StopChannel(src->channel);
+            src->channel->sound_source_ptr = NULL;
+        }
+        src->ambient = 0;
     }
-    if (src == NULL) {
-        return;
-    }
-    if (src->channel != NULL && src->tag != 0 && src->channel->tag == src->tag) {
-        src->channel->termination_reason = eS3_tr_stopped;
-        src->channel->spatial_sound = 0;
-        S3StopChannel(src->channel);
-        src->channel->sound_source_ptr = NULL;
-    }
-    src->ambient = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00567875
@@ -161,38 +161,43 @@ void C2_HOOK_FASTCALL S3UpdateSoundSource(tS3_outlet* outlet, tS3_sound_tag tag,
     }
 }
 
+#define S3_FUN_00565e39_MACRO(A1, A2, A3) \
+    if (A1 == -1.f) { \
+        A1 = .25f; \
+    } \
+    if (A2 == -1.f) { \
+        A2 = 1.2f; \
+    } \
+    if (A3 == -1.f) { \
+        A3 = 130000.f; \
+    } \
+    gFLOAT_006b2c6c = A1; \
+    gFLOAT_006b2c4c = (float)sqrt(A3 / A2); \
+    gFLOAT_006b2c68 = gFLOAT_006b2c4c * gFLOAT_006b2c6c;
+
 // FUNCTION: CARMA2_HW 0x00565e39
 int C2_HOOK_STDCALL FUN_00565e39(float a1, float a2, float a3) {
 
-    if (a1 == -1.f) {
-        a1 = .25f;
-    }
-    if (a2 == -1.f) {
-        a2 = 1.2f;
-    }
-    if (a3 == -1.f) {
-        a3 = 130000.f;
-    }
-    gFLOAT_006b2c6c = a1;
-    gFLOAT_006b2c4c = sqrtf(a3 / a2);
-    gFLOAT_006b2c68 = gFLOAT_006b2c4c * gFLOAT_006b2c6c;
+    S3_FUN_00565e39_MACRO(a1, a2, a3);
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00565d70
 int C2_HOOK_STDCALL S3Set3DSoundEnvironment(float a1, float a2, float a3) {
 
-    FUN_00565e39(a1, a2, a3);
-    BrVector3Set(&gS3_listener_position_now, 0.f, 0.f, 0.f);
-    BrVector3Set(&gS3_listener_vel_now, 0.f, 0.f, 0.f);
-    BrVector3Set(&gS3_listener_left_now, 0.f, 0.f, 0.f);
+    S3_FUN_00565e39_MACRO(a1, a2, a3);
+    gS3_listener_position_now.v[0] = gS3_listener_position_now.v[1] = gS3_listener_position_now.v[2] = 0.0f;
+    gS3_listener_vel_now.v[0] =  gS3_listener_vel_now.v[1] = gS3_listener_vel_now.v[2] = 0.0f;
+    gS3_listener_left_now.v[0] = gS3_listener_left_now.v[1] = gS3_listener_left_now.v[2] = 0.0f;
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00565ec7
 void C2_HOOK_FASTCALL S3CopyBrVector3(br_vector3* pDest, br_vector3* pSrc) {
 
-    BrVector3Copy(pDest, pSrc);
+    pDest->v[0] = pSrc->v[0];
+    pDest->v[1] = pSrc->v[1];
+    pDest->v[2] = pSrc->v[2];
 }
 
 // FUNCTION: CARMA2_HW 0x0056770a
@@ -229,47 +234,45 @@ void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left) {
 int C2_HOOK_FASTCALL S3BindAmbientSoundToOutlet(tS3_outlet* pOutlet, int pSound, tS3_sound_source* source, float pMax_distance, int pPeriod, int pRepeats, int pVolume, int pPitch, int pSpeed) {
     tS3_descriptor* desc;
 
-    if (!gS3_enabled) {
-        return eS3_error_none;
-    }
-    if (source == NULL) {
-        return eS3_error_nonexistant_source;
-    }
-    desc = S3GetDescriptorByID(pSound);
-    if (desc == NULL) {
-        return eS3_error_bad_id;
-    }
-    if (desc->type != 0) {
-        return eS3_error_none;
-    }
-    if ((desc->buffer_description == NULL || (desc->flags & 2) != 0) && S3LoadSample(pSound) == eS3_error_none) {
-        return eS3_error_load_sound;
-    }
-    if (pVolume > 255) {
-        pVolume = 255;
-    }
-    if (pVolume < 0) {
-        pVolume = 128;
-    }
-    if (pPitch < 0) {
-        pPitch = BR_FIXED_INT(1);
-    }
-    if (pSpeed < 0) {
-        pSpeed = BR_FIXED_INT(1);
-    }
-    source->bound_outlet = pOutlet;
-    source->sound_id = pSound;
-    source->volume = pVolume;
-    source->max_distance_sq = pMax_distance;
-    source->period = pPeriod;
-    source->pitch = pPitch;
-    source->speed = pSpeed;
-    source->ambient = 1;
+    if (gS3_enabled) {
+        if (source == NULL) {
+            return eS3_error_nonexistant_source;
+        }
+        desc = S3GetDescriptorByID(pSound);
+        if (desc == NULL) {
+            return eS3_error_bad_id;
+        }
+        if (desc->type == 0) {
+            if ((desc->buffer_description == NULL || (desc->flags & 2) != 0) && S3LoadSample(pSound) == eS3_error_none) {
+                return eS3_error_load_sound;
+            }
+            if (pVolume > 255) {
+                pVolume = 255;
+            }
+            if (pVolume < 0) {
+                pVolume = 128;
+            }
+            if (pPitch < 0) {
+                pPitch = BR_FIXED_INT(1);
+            }
+            if (pSpeed < 0) {
+                pSpeed = BR_FIXED_INT(1);
+            }
+            source->bound_outlet = pOutlet;
+            source->sound_id = pSound;
+            source->volume = pVolume;
+            source->max_distance_sq = pMax_distance;
+            source->period = pPeriod;
+            source->pitch = pPitch;
+            source->speed = pSpeed;
+            source->ambient = 1;
 
-    source->ambient_repeats = MAX(0, pRepeats);
-    source->time_since_last_played = pPeriod;
-    source->channel = NULL;
-    source->tag = 0;
+            source->ambient_repeats = pRepeats <= 0 ? 0 : pRepeats;
+            source->time_since_last_played = pPeriod;
+            source->channel = NULL;
+            source->tag = 0;
+        }
+    }
     return eS3_error_none;
 }
 
@@ -405,7 +408,7 @@ int C2_HOOK_FASTCALL S3UpdateSourcePosition(tS3_sound_source *pSource) {
 int C2_HOOK_FASTCALL S3UpdateSourceVectors(void) {
     tS3_sound_source* source;
 
-    for (source = gS3_sound_sources; source != NULL; source = source->next) {
+    for (source = gS3_state.sources; source != NULL; source = source->next) {
         if (!source->ambient) {
             continue;
         }
@@ -477,7 +480,7 @@ int C2_HOOK_FASTCALL S3Calculate3D(tS3_channel* pChannel, int pAmbient) {
     if (dist_squared > pChannel->max_distance_squared) {
         return 0;
     }
-    dist = dist_squared != 0.f ? sqrtf(dist_squared) : 0.f;
+    dist = dist_squared != 0.f ? (float)sqrt(dist_squared) : 0.f;
     if (pAmbient && dist != 0.f) {
         float doppler;
 

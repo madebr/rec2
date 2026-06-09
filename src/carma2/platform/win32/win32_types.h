@@ -84,7 +84,7 @@ typedef struct {
 
 typedef struct {
     DIEFFECT di_effect;
-    undefined type_specific_params[44];
+    undefined type_specific_params[24];
     undefined field_0x4c[20];
     LONG field_0x60;
     undefined4 field_0x64;

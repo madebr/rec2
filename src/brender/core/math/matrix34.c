@@ -386,12 +386,12 @@ void C2_HOOK_CDECL BrMatrix34RollingBall(br_matrix34* mat, int dx, int dy, int r
 
     // The rolling ball, Graphics Gems III (1993), pages 51-60, Academic Press
 
-    dr = sqrtf((float)(dx * dx + dy * dy));
+    dr = (br_scalar)sqrt((float)(dx * dx + dy * dy));
     if (dr == BR_SCALAR(.0f)) {
         BrMatrix34Identity(mat);
         return;
     }
-    h = sqrtf(dr * dr + radius * radius);
+    h = (br_scalar)sqrt(dr * dr + radius * radius);
     ca = radius / h;
     sa = dr / h;
     nx = -dy / dr;

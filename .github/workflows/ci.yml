@@ -6,6 +6,7 @@ jobs:
   Build:
     name: ${{ matrix.platform.name }}
     runs-on: ${{ matrix.platform.os }}
+    environment: gist-environment
     strategy:
       fail-fast: false
       matrix:
@@ -18,13 +19,13 @@ jobs:
       uses: actions/checkout@v6
       with:
         submodules: true
-    - name: Fetch MSVC11 (Visual Studio 97)
+    - name: Fetch MSVC11 (Visual C++ 97 SP3)
       uses: actions/checkout@v6
       if: ${{ matrix.platform.msvc5 }}
       with:
         repository: archaic-msvc/msvc500sp3
         path: msvc500
-    - name: Setup MSVC11 (Visual Studio 97)
+    - name: Setup MSVC11 (Visual C++ 97 SP3)
       if: ${{ matrix.platform.msvc5 }}
       shell: cmd
       run: |
@@ -50,3 +51,32 @@ jobs:
     - name: CMake (build)
       run: |
         cmake --build build ${{ matrix.platform.build-args }}
+    - name: Download binaries for reccmp
+      uses: actions/setup-python@main
+      with:
+        python-version: 3.x
+    - name: Download binaries for reccmp
+      if: ${{ matrix.platform.msvc5 }}
+      shell: sh
+      run: |
+        mkdir originals
+
+        curl -fLSs -o d3d.bdd.txt https://gist.githubusercontent.com/madebr/92b121cfd427c51b771fb614b4c893f4/raw/d3d.bdd.txt
+        python .github/binendec.py -D -i d3d.bdd.txt -o originals/d3d.bdd
+
+        curl -fLSs -o CARMA2_HW.EXE.txt https://gist.githubusercontent.com/madebr/92b121cfd427c51b771fb614b4c893f4/raw/CARMA2_HW.EXE.txt
+        python .github/binendec.py -D -i CARMA2_HW.EXE.txt -o originals/CARMA2_HW.EXE
+
+        curl -fLSs -o carma2.exe.txt https://gist.githubusercontent.com/madebr/92b121cfd427c51b771fb614b4c893f4/raw/carma2.exe.txt
+        python .github/binendec.py -D -i carma2.exe.txt -o originals/carma2.exe
+    - name: Run reccmp
+      uses: ./.github/actions/reccmp
+      if: ${{ matrix.platform.msvc5 }}
+      with:
+        root-repo: madebr/rec2
+        root-branch: master
+        gist-repo: madebr/92b121cfd427c51b771fb614b4c893f4
+        target: CARMA2_HW
+        original-search-path: '${{ github.workspace }}/originals'
+        working-directory: '${{ github.workspace }}/build'
+        gist-token: ${{ secrets.GIST_TOKEN }}

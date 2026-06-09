@@ -45,7 +45,7 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
     tTWTVFS twt;
     tU32 fileSize;
     tU8* fileData;
-    tU32 i;
+    int i;
 
     // file header must be 56 bytes for compatibility with .TWT files
     REC2_BUG_ON(sizeof(tTwatFileHeader) != 56);
@@ -152,7 +152,7 @@ char* C2_HOOK_FASTCALL PFfgets(char* buffer, br_size_t size, FILE* pFile) {
     tTwatVfsFile* twtFile;
     int c;
     char* writePtr;
-    size_t i;
+    int i;
 
     if ((intptr_t)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
         return fgets(buffer, size, pFile);

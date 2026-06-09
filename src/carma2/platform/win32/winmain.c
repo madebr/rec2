@@ -117,7 +117,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
     gNShowCmd = nShowCmd;
     gPathNetworkIni[0] = '\0';
     lencwd = GetCurrentDirectoryA(REC2_ASIZE(gPathNetworkIni), gPathNetworkIni);
-    if (lencwd != 0 && lencwd == strlen(gPathNetworkIni)) {
+    if (lencwd != 0 && strlen(gPathNetworkIni) == lencwd) {
         gPathNetworkIniValid = 1;
         strcat(gPathNetworkIni, "\\");
         strcat(gPathNetworkIni, "NETWORK.INI");

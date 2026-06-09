@@ -8,7 +8,7 @@
 #include "core/std/brstdlib.h"
 
 // GLOBAL: CARMA2_HW 0x0066c870
-br_token valid_system_config_tokens[] = {
+const br_token valid_system_config_tokens[] = {
     BRT_BRENDER_PATH_STR,
     BRT_BRENDER_DRIVERS_STR,
     BRT_DEFAULT_DEVICE_STR,
@@ -17,29 +17,32 @@ br_token valid_system_config_tokens[] = {
 };
 
 br_boolean C2_HOOK_STDCALL Is_Valid_Sys_Config_Token(br_token t) {
-    int i;
+    const br_token *tokens;
+    br_boolean found;
 
-    for (i = 0; valid_system_config_tokens[i] != BR_NULL_TOKEN; i++) {
-        if (valid_system_config_tokens[i] == t) {
-            return 1;
+    tokens = valid_system_config_tokens;
+    found = 0;
+    for (; *tokens != BR_NULL_TOKEN; ) {
+        if (t == *tokens++) {
+            found = 1;
+            break;
         }
     }
-    return 0;
+    return found;
 }
 
 // FUNCTION: CARMA2_HW 0x005308b0
 br_boolean C2_HOOK_STDCALL LoadIniEntry(char* ini_file, char* section_name, br_token t, char* Entry) {
-    char Temp[255];
     br_uint_16 size;
+    char temp[255];
     br_value v;
-    br_error r;
 
-    r = HostIniQuery(ini_file, section_name, Entry, Temp, sizeof(Temp), &size);
-    if (r != 0) {
-        return r;
+    HostIniQuery(ini_file, section_name, Entry, temp, sizeof(temp), &size);
+    if (size != 0) {
+        v.cstr = temp;
+        BrAssociativeArraySetEntry(fw.sys_config, t, v);
+        return 1;
     }
-    v.cstr = Temp;
-    BrAssociativeArraySetEntry(fw.sys_config, t, v);
     return 0;
 }
 
@@ -65,11 +68,11 @@ br_boolean C2_HOOK_STDCALL LoadRegistryEntry(char* Reg_Path, void* hKey, br_toke
 
     r = HostRegistryQuery(hKey, Reg_Path, Entry, Temp, sizeof(Temp), &size);
     if (r != 0) {
-        return r;
+        return 0;
     }
     v.cstr = Temp;
     BrAssociativeArraySetEntry(fw.sys_config, t, v);
-    return 0;
+    return 1;
 }
 
 br_error C2_HOOK_STDCALL LoadRegistryConfig(char* Reg_Path, void* hKey) {
@@ -93,7 +96,7 @@ br_error C2_HOOK_STDCALL LoadRegistryConfig(char* Reg_Path, void* hKey) {
 }
 
 // FUNCTION: CARMA2_HW 0x00530990
-br_error C2_HOOK_CDECL BrSetDefaultConfig(br_token t, char* Entry) {
+br_error C2_HOOK_STDCALL BrSetDefaultConfig(br_token t, char* Entry) {
     char Reg_Path[255];
     int v0;
     int v1;
@@ -103,12 +106,12 @@ br_error C2_HOOK_CDECL BrSetDefaultConfig(br_token t, char* Entry) {
     v0 = 1;
     v1 = 3;
     v2 = 0;
-    BrSprintf(Reg_Path, "%s\\%d.%d.%d","SOFTWARE\\Argonaut\\BRender", v0, v1, v2);
+    BrSprintf(Reg_Path, "%s\\%d.%d.%d", "SOFTWARE\\Argonaut\\BRender", v0, v1, v2);
     if (LoadRegistryEntry(Reg_Path, NULL, t, Entry)) {
         return 0;
     }
 
-    if (LoadIniEntry("BRender.ini", "BRender", t, Entry)) {
+    if (LoadIniEntry("BRender.ini", "BRender", t, Entry) != 0) {
         return 0;
     }
 
@@ -150,38 +153,33 @@ br_error C2_HOOK_CDECL BrSystemConfigBegin(void) {
     return 0;
 }
 
-
 // FUNCTION: CARMA2_HW 0x00530a90
 br_error C2_HOOK_CDECL BrSystemConfigLoad(br_token t, char* Param1, void* Param2) {
-    br_error r;
 
     switch (t) {
     case BRT_REGISTRY_STR:
-        r = LoadRegistryConfig(Param1, Param2);
+        return LoadRegistryConfig(Param1, Param2);
         break;
     case BRT_INI_STR:
-        r = LoadIniConfig(Param1, Param2);
+        return LoadIniConfig(Param1, Param2);
         break;
     default:
         BrFailure("Invalid system config load token. Must be REGISTRY or INI");
-        r = 0x1002;
-        break;
+        return 0x1002;
     }
-    return r;
 }
 
 // FUNCTION: CARMA2_HW 0x00530d80
-br_error C2_HOOK_CDECL BrSystemConfigSetString(br_token t, char* string) {
+br_error C2_HOOK_CDECL BrSystemConfigSetString(br_token t, const char* string) {
     br_value v;
 
     if (!Is_Valid_Sys_Config_Token(t)) {
-        BrFailure("Not a valid System configuration token.\n");
+        BrFailure("Not a valid system configuration token.\n");
         return 0x1002;
     }
     v.cstr = string;
     return BrAssociativeArraySetEntry(fw.sys_config, t, v);
 }
-
 
 // FUNCTION: CARMA2_HW 0x00530de0
 br_error C2_HOOK_CDECL BrSystemConfigQueryString(br_token t, char* string, int max_size) {
@@ -193,14 +191,16 @@ br_error C2_HOOK_CDECL BrSystemConfigQueryString(br_token t, char* string, int m
         return 0x1002;
     }
     r = BrAssociativeArrayQuery(fw.sys_config, t, &v);
-    if (r != 0) {
+    if (r == 0) {
+        if (v.cstr != NULL) {
+            BrStrNCpy(string, v.cstr, max_size);
+            return 0;
+        } else {
+            string[0] = '\0';
+            return 0;
+        }
+    } else {
         string[0] = '\0';
         return r;
     }
-    if (v.cstr == NULL) {
-        string[0] = '\0';
-        return 0;
-    }
-    BrStrNCpy(string, v.cstr, max_size);
-    return 0;
 }

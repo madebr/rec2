@@ -6,19 +6,10 @@ br_clip_result C2_HOOK_CDECL PixelmapPointClip(br_point* out, br_point* in, br_p
     out->x = in->x + pm->origin_x;
     out->y = in->y + pm->origin_y;
 
-    if (out->x < 0) {
-        return BR_CLIP_REJECT;
+    if (out->x >= 0 && out->y >= 0 && out->x < pm->width && out->y < pm->height) {
+        return BR_CLIP_ACCEPT;
     }
-    if (out->y < 0) {
-        return BR_CLIP_REJECT;
-    }
-    if (out->x >= pm->width) {
-        return BR_CLIP_REJECT;
-    }
-    if (out->y >= pm->height) {
-        return BR_CLIP_REJECT;
-    }
-    return BR_CLIP_ACCEPT;
+    return BR_CLIP_REJECT;
 }
 
 // FUNCTION: CARMA2_HW 0x0053da00
@@ -31,88 +22,99 @@ br_clip_result C2_HOOK_CDECL PixelmapLineClip(br_point* s_out, br_point* e_out, 
     br_int_32 y1;
     br_int_32 y2;
 
+#define USCALE(arg,num,den) (((br_uint_32)(arg) * (br_uint_32)(num)) / (br_uint_32)(den))
+
     x1 = s_in->x + pm->origin_x;
-    x2 = e_in->x + pm->origin_x;
     y1 = s_in->y + pm->origin_y;
+
+    x2 = e_in->x + pm->origin_x;
     y2 = e_in->y + pm->origin_y;
+
     w = pm->width - 1;
     h = pm->height - 1;
-    if (x2 < x1) {
-        temp = x2;
-        x2 = x1;
-        x1 = temp;
-        temp = y2;
-        y2 = y1;
-        y1 = temp;
+
+    if (x1 > x2) {
+        temp = x1;
+        x1 = x2;
+        x2 = temp;
+
+        temp = y1;
+        y1 = y2;
+        y2 = temp;
     }
-    if (x2 >= 0 && x1 <= w) {
-        if (y1 < y2) {
-            if (y2 >= 0 && y1 <= h) {
-                if (y1 < 0) {
-                    x1 -= (x2 - x1) * y1 / (y2 - y1);
-                    if (w < x1) {
-                        return BR_CLIP_REJECT;
-                    }
-                    y1 = 0;
-                }
-                if (y2 <= h) {
-incr_p2:
-                    if (x1 < 0) {
-                        y1 -= (y2 - y1) * x1 / (x2 - x1);
-                        x1 = 0;
-                    }
-                    if (w < x2) {
-                        y2 -= (x2 - w) * (y2 - y1) / (x2 - x1);
-                        x2 = w;
-                    }
-                    s_out->x = x1;
-                    s_out->y = y1;
-                    e_out->x = x2;
-                    e_out->y = y2;
-                    return BR_CLIP_PARTIAL;
-                } else {
-                    x2 -= (y2 - h) * (x2 - x1) / (y2 - y1);
-                    y2 = h;
-                    if (0 <= x2) {
-                        goto incr_p2;
-                    }
-                }
+
+    if (x2 < 0 || x1 > w) {
+        return BR_CLIP_REJECT;
+    }
+    if (y1 < y2) {
+        if (y2 < 0 || y1 > h) {
+            return BR_CLIP_REJECT;
+        }
+        if (y1 < 0) {
+            temp = USCALE(x2 - x1, 0 - y1, y2 - y1);
+            x1 += temp;
+            if (x1 > w) {
+                return BR_CLIP_REJECT;
             }
-        } else {
-            if (0 <= y1 && y2 <= h) {
-                if (y1 <= h) {
-decr_p1:
-                    if (y2 < 0) {
-                        x2 -= (x2 - x1) * y2 / (y2 - y1);
-                        if (x2 < 0) {
-                            return BR_CLIP_REJECT;
-                        }
-                        y2 = 0;
-                    }
-                    if (x1 < 0) {
-                        y1 -= (y2 - y1) * x1 / (x2 - x1);
-                        x1 = 0;
-                    }
-                    if (w < x2) {
-                        y2 -= (x2 - w) * (y2 - y1) / (x2 - x1);
-                        x2 = w;
-                    }
-                    s_out->x = x1;
-                    s_out->y = y1;
-                    e_out->x = x2;
-                    e_out->y = y2;
-                    return BR_CLIP_PARTIAL;
-                } else {
-                    x1 += (h - y1) * (x2 - x1) / (y2 - y1);
-                    y1 = h;
-                    if (x1 <= w) {
-                        goto decr_p1;
-                    }
-                }
+            y1 = 0;
+        }
+        if (y2 > h) {
+            temp = USCALE(x2 - x1, y2 - h, y2 - y1);
+            x2 -= temp;
+            if (x2 < 0) {
+                return BR_CLIP_REJECT;
             }
+            y2 = h;
+        }
+        if (x1 < 0) {
+            temp = USCALE(y2 - y1, 0 - x1, x2 - x1);
+            y1 += temp;
+            x1 = 0;
+        }
+        if (x2 > w) {
+            temp = USCALE(y2 - y1, x2 - w, x2 - x1);
+            y2 -= temp;
+            x2 = w;
+        }
+    } else {
+        if (y1 < 0 || y2 > h) {
+            return BR_CLIP_REJECT;
+        }
+        if (y1 > h) {
+            temp = USCALE(x2 - x1, y1 - h, y1 - y2);
+            x1 += temp;
+            if (x1 > w) {
+                return BR_CLIP_REJECT;
+            }
+            y1 = h;
+        }
+        if (y2 < 0) {
+            temp = USCALE(x2 - x1, 0 - y2, y1 - y2);
+            x2 -= temp;
+            if (x2 < 0) {
+                return BR_CLIP_REJECT;
+            }
+            y2 = 0;
+        }
+        if (x1 < 0) {
+            temp = USCALE(y1 - y2, 0 - x1, x2 - x1);
+            y1 -= temp;
+            x1 = 0;
+        }
+        if (x2 > w) {
+            temp = USCALE(y1 - y2, x2 - w, x2 - x1);
+            y2 += temp;
+            x2 = w;
         }
     }
-    return BR_CLIP_REJECT;
+
+    s_out->x = x1;
+    s_out->y = y1;
+
+    e_out->x = x2;
+    e_out->y = y2;
+
+    return BR_CLIP_PARTIAL;
 }
 
 // FUNCTION: CARMA2_HW 0x0053dbb0
@@ -122,27 +124,31 @@ br_clip_result C2_HOOK_CDECL PixelmapRectangleClip(br_rectangle* out, br_rectang
     out->y = pm->origin_y + in->y;
     out->w = in->w;
     out->h = in->h;
-    if (pm->width > out->x && pm->height > out->y) {
-        if ((out->x + out->w) > 0 && (out->y + out->h) > 0) {
-            if (out->x < 0) {
-                out->x = 0;
-                out->w += out->x;
-            }
-            if (out->y < 0) {
-                out->y = 0;
-                out->h += out->y;
-            }
-            if ((out->x + out->w) > pm->width)
-                out->w = pm->width - out->x;
-            if ((out->y + out->h) > pm->height) {
-                out->h = pm->height - out->y;
-            }
-            if (out->w != 0 && out->h != 0) {
-                return BR_CLIP_PARTIAL;
-            }
-        }
+
+    if (out->x >= pm->width || out->y >= pm->height) {
+        return BR_CLIP_REJECT;
     }
-    return BR_CLIP_REJECT;
+    if (out->x + out->w <= 0 || out->y + out->h <= 0) {
+        return BR_CLIP_REJECT;
+    }
+
+    if (out->x < 0) {
+        out->w += out->x;
+    }
+    if (out->y < 0) {
+        out->h += out->y;
+        out->y = 0;
+    }
+    if (out->x + out->w > pm->width) {
+        out->w = pm->width - out->x;
+    }
+    if (out->y + out->h > pm->height) {
+        out->h = pm->height - out->y;
+    }
+    if (out->w == 0 || out->h == 0) {
+        return BR_CLIP_REJECT;
+    }
+    return BR_CLIP_PARTIAL;
 }
 
 // FUNCTION: CARMA2_HW 0x0053dc80
