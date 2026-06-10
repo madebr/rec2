@@ -24,7 +24,7 @@ extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
 
 extern void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name);
 
-// DRLoadShadeTable
+extern void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name);
 
 // DRLoadMaterials
 
