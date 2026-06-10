@@ -98,13 +98,10 @@ runs:
         GH_TOKEN: ${{ inputs.token }}
       run: |
         cat <<EOF >${{ steps.calc.outputs.unix-temp-path }}/reccmp-pr-message.txt
+        ## reccmp report
         \`\`\`
         $(cat ${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt)
         \`\`\`
-        EOF
-
-        cat <<EOF >debug.txt
-        ${{ toJSON(github.event) }}
         EOF
 
         gh pr comment ${{ github.event.number }} \
