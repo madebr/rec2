@@ -306,7 +306,10 @@ int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
 
 // NobbleNonzeroBlacks
 
-// GlorifyMaterial
+// STUB: CARMA2_HW 0x005182f0
+void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
+    NOT_IMPLEMENTED();
+}
 
 // FindBestColourMatch
 

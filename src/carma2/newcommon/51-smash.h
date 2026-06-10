@@ -2,6 +2,9 @@
 #define GUARD_51_SMASH_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
+
+extern tExplosion gExplosions[50];
 
 extern void C2_HOOK_FASTCALL InitExplosions(void);
 

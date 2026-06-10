@@ -3,6 +3,7 @@
 
 #include "brender/br_types.h"
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 extern char* gMisc_strings[300];
 
@@ -180,7 +181,7 @@ extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
 // NobbleNonzeroBlacks
 
-// GlorifyMaterial
+extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading);
 
 // FindBestColourMatch
 
