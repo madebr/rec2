@@ -103,7 +103,7 @@ runs:
         \`\`\`
         EOF
 
-        gh pr comment ${{ steps.pr.outputs.number }} \
+        gh pr comment ${{ github.event.pull_number }} \
           --repo "${{ github.repository }}" \
           --create-if-none \
           --edit-last \
