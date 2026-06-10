@@ -157,7 +157,16 @@ void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name) {
 
 // DRLoadLights
 
-// LoadInFiles
+// FUNCTION: CARMA2_HW 0x0048f360
+void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine) {
+    tPath_name the_path;
+    tTWTVFS twt;
+
+    PathCat(the_path, pThe_path, pArchive_name);
+    twt = OpenPackFileAndSetTiffLoading(the_path);
+    PFForEveryFile(the_path, pAction_routine);
+    ClosePackFileAndSetTiffLoading(twt);
+}
 
 // STUB: CARMA2_HW 0x0048f3b0
 int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
