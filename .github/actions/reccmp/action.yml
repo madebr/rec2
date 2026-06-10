@@ -103,6 +103,10 @@ runs:
         \`\`\`
         EOF
 
+        cat <<EOF >debug.txt
+        ${{ toJSON(github.event) }}
+        EOF
+
         gh pr comment ${{ github.event.pull_number }} \
           --repo "${{ github.repository }}" \
           --create-if-none \
