@@ -82,9 +82,15 @@ runs:
         github-token: ${{ inputs.gist-token }}
         script: |
           fs = require('fs');
+          const commit_info = {
+            repo: '${{ github.repository }}',
+            branch: '${{ github.ref }}',
+            sha: '${{ github.sha }}',
+          };
           await github.rest.gists.update({
             gist_id: '${{ steps.calc.outputs.gist-hash }}',
             files: {
+              'commit.json': { content: JSON.stringify(commit_info), },
               '${{ inputs.target }}.json': { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.json', 'utf8'),  },
               '${{ inputs.target }}.svg':  { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.svg',  'utf8'),  },
               '${{ inputs.target }}.html': { content: fs.readFileSync('${{ steps.calc.outputs.safe-temp-path }}/${{ inputs.target }}.html', 'utf8'),  },
