@@ -1,5 +1,10 @@
 #include "19-font.h"
 
+#include "08-loading1.h"
+#include "41-utility.h"
+#include "70-packfile.h"
+#include "globvars.h"
+#include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
@@ -92,9 +97,56 @@ void C2_HOOK_FASTCALL InitDRFonts(void) {
 
 // OoerrIveGotTextInMeBoxMissus
 
-// STUB: CARMA2_HW 0x00466050
+// FUNCTION: CARMA2_HW 0x00466050
 br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
-    NOT_IMPLEMENTED();
+    FILE* f;
+    tPath_name the_path;
+    br_font* the_font;
+    tU32 data_size;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(br_font) != 24);
+
+    PathCat(the_path, gApplication_path, gGraf_specs[gGraf_spec_index].data_dir_name);
+    PathCat(the_path, the_path, "FONTS");
+    PathCat(the_path, the_path, pName);
+    f = DRfopen(the_path, "rb");
+    PossibleService();
+    the_font = BrMemAllocate(sizeof(br_font), kMem_br_font);
+
+    // we read 0x18 bytes as that is the size of the struct in 32 bit code.
+    PFfread(the_font, 0x18, 1, f);
+#if !defined(C2_BIG_ENDIAN)
+    the_font->flags = BrSwap32(the_font->flags);
+
+    // swap endianness
+    the_font->glyph_x = the_font->glyph_x >> 8 | the_font->glyph_x << 8;
+    the_font->glyph_y = the_font->glyph_y >> 8 | the_font->glyph_y << 8;
+    the_font->spacing_x = the_font->spacing_x >> 8 | the_font->spacing_x << 8;
+    the_font->spacing_y = the_font->spacing_y >> 8 | the_font->spacing_y << 8;
+#endif
+
+    // data_size = 256 * sizeof(br_int_8);
+    the_font->width = BrMemAllocate(256 * sizeof(br_int_8), kMem_br_font_wid);
+    PFfread(the_font->width, 256 * sizeof(br_int_8), 1, f);
+    // data_size = 256 * sizeof(br_uint_16);
+    the_font->encoding = BrMemAllocate(256 * sizeof(br_uint_16), kMem_br_font_enc);
+    PFfread(the_font->encoding, 256 * sizeof(br_uint_16), 1, f);
+#if !defined(C2_BIG_ENDIAN)
+    for (i = 0; i < 256; i++) {
+        the_font->encoding[i] = the_font->encoding[i] >> 8 | the_font->encoding[i] << 8;
+    }
+#endif
+    PossibleService();
+    PFfread(&data_size, sizeof(tU32), 1, f);
+#if !defined(C2_BIG_ENDIAN)
+    data_size = BrSwap32(data_size);
+#endif
+    PossibleService();
+    the_font->glyphs = BrMemAllocate(data_size, kMem_br_font_glyphs);
+    PFfread(the_font->glyphs, data_size, 1u, f);
+    PFfclose(f);
+    return the_font;
 }
 
 // GetPolyFontIndexToReplaceDRfontWith
