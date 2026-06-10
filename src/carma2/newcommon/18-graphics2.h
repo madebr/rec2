@@ -16,7 +16,7 @@ extern int gDim_amount;
 
 // DRSetPalette
 
-// InitializePalettes
+extern void C2_HOOK_FASTCALL InitializePalettes(void);
 
 extern void C2_HOOK_FASTCALL InitPaletteAnimate(void);
 
