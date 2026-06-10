@@ -177,7 +177,7 @@ extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
 // DRPixelmapCopy
 
-// FindExceptionInList
+// tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList)
 
 // NobbleNonzeroBlacks
 
