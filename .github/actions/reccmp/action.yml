@@ -97,13 +97,18 @@ runs:
       env:
         GH_TOKEN: ${{ inputs.token }}
       run: |
-        gh pr comment ${{ steps.pr.outputs.number }} \
-          --repo "${{ github.repository }}" \
-          --body "## reccmp ${{ inputs.target }} report
-
+        cat <<EOF >${{ steps.calc.outputs.unix-temp-path }}/reccmp-pr-message.txt
+        ## reccmp report
         \`\`\`
         $(cat ${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt)
-        \`\`\`"
+        \`\`\`
+        EOF
+
+        gh pr comment ${{ github.event.number }} \
+          --repo "${{ github.repository }}" \
+          --create-if-none \
+          --edit-last \
+          --body-file "${{ steps.calc.outputs.unix-temp-path }}/reccmp-pr-message.txt"
     - name: 'Show progress'
       shell: sh
       run:
