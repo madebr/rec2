@@ -107,7 +107,7 @@ runs:
         ${{ toJSON(github.event) }}
         EOF
 
-        gh pr comment ${{ github.event.pull_number }} \
+        gh pr comment ${{ github.event.number }} \
           --repo "${{ github.repository }}" \
           --create-if-none \
           --edit-last \
