@@ -38,7 +38,7 @@ extern void C2_HOOK_FASTCALL PFrewind(FILE* pF);
 
 extern int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
 
-// PFForEveryFile
+extern void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 
 // PFForEveryFile2
 

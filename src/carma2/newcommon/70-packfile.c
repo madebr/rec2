@@ -3,6 +3,7 @@
 #include "08-loading1.h"
 #include "41-utility.h"
 #include "69-sound.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include <string.h>
@@ -276,7 +277,27 @@ int C2_HOOK_FASTCALL PFfeof(FILE* pFile) {
     NOT_IMPLEMENTED();
 }
 
-// PFForEveryFile
+// FUNCTION: CARMA2_HW 0x004b4c80
+void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
+    int twt;
+    int i;
+    char buffer[256];
+
+    for (twt = 0; twt < (int)REC2_ASIZE(gTwatVfsMountPoints); twt++) {
+        if (gTwatVfsMountPoints[twt].header == NULL) {
+            continue;
+        }
+        if (DRStricmp(pThe_path, gTwatVfsMountPoints[twt].path) != 0) {
+            continue;
+        }
+        for (i = 0; i < gTwatVfsMountPoints[twt].header->nbFiles; i++) {
+            PathCat(buffer, pThe_path, gTwatVfsMountPoints[twt].header->fileHeaders[i].filename);
+            pAction_routine(buffer);
+        }
+        return;
+    }
+    PDForEveryFile(pThe_path, pAction_routine);
+}
 
 // PFForEveryFile2
 
