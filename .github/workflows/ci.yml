@@ -6,7 +6,9 @@ jobs:
   Build:
     name: ${{ matrix.platform.name }}
     runs-on: ${{ matrix.platform.os }}
-    environment: ${{ (github.event.event_name == 'push' && 'gist-environment') || '' }}
+    environment:
+      name: gist-environment
+      deployment: false
     strategy:
       fail-fast: false
       matrix:

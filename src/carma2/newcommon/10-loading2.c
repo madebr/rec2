@@ -517,9 +517,39 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
 
 // LoadOpponentsCars
 
-// STUB: CARMA2_HW 0x0048cfc0
+// FUNCTION: CARMA2_HW 0x0048cfc0
 void C2_HOOK_FASTCALL LoadMiscStrings(void) {
-    NOT_IMPLEMENTED();
+    int i;
+    FILE *f;
+    char s[256];
+    tPath_name the_path;
+
+    if (gPedTextTxtPath == NULL) {
+        SetDefaultTextFileName();
+    }
+    PathCat(the_path, gApplication_path, gPedTextTxtPath);
+    f = DRfopen(the_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotOpenTEXT_TXT);
+    }
+    for (i = 0; i < (int)REC2_ASIZE(gMisc_strings); i++) {
+        if (PFfeof(f)) {
+            break;
+        }
+        GetALineAndDontArgue(f, s);
+        gMisc_strings[i] = BrMemAllocate(strlen(s) + 1, kMem_misc_string);
+        strcpy(gMisc_strings[i], s);
+    }
+    // Thousands delimiter
+    gMisc_strings[294][1] = '\0';
+    if (gMisc_strings[294][0] == 'C') {
+        gMisc_strings[294][0] = ',';
+    } else if (gMisc_strings[294][0] == 'P') {
+        gMisc_strings[294][0] = '.';
+    } else if (gMisc_strings[294][0] == 'S') {
+        gMisc_strings[294][0] = ' ';
+    }
+    PFfclose(f);
 }
 
 // FillInRaceInfo
