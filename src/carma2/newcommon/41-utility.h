@@ -179,7 +179,7 @@ extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
 // tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList)
 
-// NobbleNonzeroBlacks
+extern void C2_HOOK_FASTCALL NobbleNonzeroBlacks(br_pixelmap* pPalette);
 
 extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading);
 

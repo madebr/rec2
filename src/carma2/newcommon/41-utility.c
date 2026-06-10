@@ -315,7 +315,38 @@ static tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pId
     return pList;
 }
 
-// NobbleNonzeroBlacks
+// FUNCTION: CARMA2_HW 0x00517fa0
+void C2_HOOK_FASTCALL NobbleNonzeroBlacks(br_pixelmap* pPalette) {
+    int modified;
+    int i;
+    br_colour *pixels;
+    br_colour c;
+    int r;
+    int g;
+    int b;
+
+    pixels= pPalette->pixels;
+    modified = 0;
+    if (*pixels != BR_COLOUR_RGBA(0, 0, 0, 0)) {
+        *pixels = BR_COLOUR_RGBA(0, 0, 0, 0);
+        modified = 1;
+    }
+    pixels++;
+    for (i = 0; i < 255; i++ ) {
+        c = *pixels;
+        r = BR_COLOUR_RED(c);
+        g = BR_COLOUR_GRN(c);
+        b = BR_COLOUR_BLU(c);
+        if (r == 0 && g == 0 && b == 0) {
+            *pixels = BR_COLOUR_RGB(1, 1, 1);
+            modified = 1;
+        }
+        pixels++;
+    }
+    if (modified) {
+        BrMapUpdate(pPalette, BR_MAPU_ALL);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005182f0
 void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
