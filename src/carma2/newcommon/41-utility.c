@@ -16,6 +16,9 @@ tU32 last_service;
 // GLOBAL: CARMA2_HW 0x006b5f40
 char* gMisc_strings[300];
 
+// GLOBAL: CARMA2_HW 0x0074ca04
+tMaterial_exception* gMaterial_exceptions;
+
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     br_device *dev;
@@ -302,11 +305,82 @@ int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
 
 // DRPixelmapCopy
 
-// FindExceptionInList
+static tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList) {
+
+    for (; pList != NULL; pList = pList->next) {
+        if (DRStricmp(pIdentifier, pList->texture_name) == 0) {
+            break;
+        }
+    }
+    return pList;
+}
 
 // NobbleNonzeroBlacks
 
-// GlorifyMaterial
+// FUNCTION: CARMA2_HW 0x005182f0
+void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
+    int i;
+    tMaterial_exception *material_exception;
+
+    for (i = 0; i < pCount; i++) {
+
+        if (pMaterials[i]->colour_map != NULL) {
+            material_exception = FindExceptionInList(pMaterials[i]->colour_map->identifier, gMaterial_exceptions);
+            if (gEnable_texture_interpolation && (material_exception == NULL || !(material_exception->flags & 0x1))) {
+                pMaterials[i]->flags |= BR_MATF_MAP_INTERPOLATION;
+            }
+            if (gEnable_texture_interpolation && material_exception != NULL && material_exception->flags & 0x8) {
+                pMaterials[i]->map_transform.m[2][0] = 0.02f;
+                pMaterials[i]->map_transform.m[2][1] = 0.02f;
+            }
+            if (gEnable_texture_antialiasing) {
+                pMaterials[i]->flags |= BR_MATF_MAP_ANTIALIASING;
+            }
+            if (gEnable_perspective_maps) {
+                pMaterials[i]->flags |= BR_MATF_PERSPECTIVE;
+            }
+        }
+        switch (pShading) {
+        case kRendererShadingType_AmbientOnly:
+            pMaterials[i]->ka = 1.0f;
+            pMaterials[i]->kd = 0.0f;
+            pMaterials[i]->ks = 0.0f;
+            pMaterials[i]->flags &= ~BR_MATF_PRELIT;
+            pMaterials[i]->flags |= BR_MATF_LIGHT;
+            pMaterials[i]->flags |= BR_MATF_SMOOTH;
+            break;
+        case kRendererShadingType_Diffuse1:
+            pMaterials[i]->ka = 0.4f;
+            pMaterials[i]->kd = 0.8f;
+            pMaterials[i]->ks = 0.0f;
+            pMaterials[i]->flags &= ~BR_MATF_PRELIT;
+            pMaterials[i]->flags |= BR_MATF_LIGHT;
+            pMaterials[i]->flags |= BR_MATF_SMOOTH;
+            break;
+        case kRendererShadingType_Specular:
+            pMaterials[i]->ka = 0.6f;
+            pMaterials[i]->kd = 0.2f;
+            pMaterials[i]->ks = 0.8f;
+            pMaterials[i]->flags &= ~BR_MATF_PRELIT;
+            pMaterials[i]->flags |= BR_MATF_LIGHT;
+            pMaterials[i]->flags |= BR_MATF_SMOOTH;
+            break;
+        case kRendererShadingType_Default:
+            pMaterials[i]->ka = 0.2f;
+            pMaterials[i]->kd = 0.8f;
+            pMaterials[i]->ks = 0.0f;
+            pMaterials[i]->flags &= ~BR_MATF_PRELIT;
+            pMaterials[i]->flags |= BR_MATF_LIGHT;
+            pMaterials[i]->flags |= BR_MATF_SMOOTH;
+            break;
+        default:
+            pMaterials[i]->ka = 1.0f;
+            pMaterials[i]->kd = 0.0f;
+            pMaterials[i]->ks = 0.0f;
+            break;
+        }
+    }
+}
 
 // FindBestColourMatch
 

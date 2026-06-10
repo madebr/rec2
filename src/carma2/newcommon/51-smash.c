@@ -1,8 +1,55 @@
 #include "51-smash.h"
 
-// STUB: CARMA2_HW 0x004ea880
+#include "41-utility.h"
+#include "globvars.h"
+#include "rec2_types.h"
+#include "rec2_macros.h"
+
+// GLOBAL: CARMA2_HW 0x006a55c8
+tExplosion gExplosions[50];
+
+// FUNCTION: CARMA2_HW 0x004ea880
 void C2_HOOK_FASTCALL InitExplosions(void) {
-    NOT_IMPLEMENTED();
+    int i;
+    int capacity;
+    tExplosion* explosion;
+
+    capacity = (int)REC2_ASIZE(gExplosions);
+    for (i = 0, explosion = gExplosions; i < capacity; explosion++, i++) {
+
+        explosion->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+
+        explosion->actor->model = BrModelAllocate(NULL, 4, 2);
+        explosion->actor->model->faces[0].vertices[0] = 0;
+        explosion->actor->model->faces[0].vertices[1] = 2;
+        explosion->actor->model->faces[0].vertices[2] = 1;
+        explosion->actor->model->faces[0].material = NULL;
+        explosion->actor->model->faces[0].smoothing = 1;
+        explosion->actor->model->faces[1].vertices[0] = 0;
+        explosion->actor->model->faces[1].vertices[1] = 3;
+        explosion->actor->model->faces[1].vertices[2] = 2;
+        explosion->actor->model->faces[1].material = NULL;
+        explosion->actor->model->faces[1].smoothing = 1;
+        BrVector3Set(&explosion->actor->model->vertices[0].p, -.5f, -.5f, 0.f);
+        BrVector2Set(&explosion->actor->model->vertices[0].map, 0.f, 1.f);
+        BrVector3Set(&explosion->actor->model->vertices[1].p, -.5f, .5f, 0.f);
+        BrVector2Set(&explosion->actor->model->vertices[1].map, 0.f, 0.f);
+        BrVector3Set(&explosion->actor->model->vertices[2].p, .5f, .5f, 0.f);
+        BrVector2Set(&explosion->actor->model->vertices[2].map, 1.f, 0.f);
+        BrVector3Set(&explosion->actor->model->vertices[3].p, .5f, -.5f, 0.f);
+        BrVector2Set(&explosion->actor->model->vertices[3].map, 1.f, 1.f);
+        BrModelAdd(explosion->actor->model);
+
+        explosion->actor->material = BrMaterialAllocate("BANG!");
+        explosion->actor->material->flags &= ~BR_MATF_LIGHT;
+        explosion->actor->material->flags |= BR_MATF_ALWAYS_VISIBLE;
+        explosion->actor->material->colour_map = gBack_screen;
+        GlorifyMaterial(&explosion->actor->material, 1, kRendererShadingType_AmbientOnly);
+        BrMaterialAdd(explosion->actor->material);
+        explosion->actor->render_style = BR_RSTYLE_FACES;
+
+        explosion->start = 0;
+    }
 }
 
 // ResetExplosions
