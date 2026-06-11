@@ -25,7 +25,7 @@ extern float C2_HOOK_STDCALL FRandomBetween(float pA, float pB);
 
 extern float C2_HOOK_STDCALL FRandomPosNeg(float pN);
 
-// SRandomBetween
+extern br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB);
 
 // SRandomPosNeg
 
