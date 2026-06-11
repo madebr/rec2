@@ -86,7 +86,7 @@ extern tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage*
 
 extern int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading);
 
-// DodgyModelUpdate
+extern void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM);
 
 // LoadIfItsAPixelmap
 

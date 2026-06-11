@@ -322,7 +322,16 @@ int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* 
     return new_ones;
 }
 
-// DodgyModelUpdate
+// FUNCTION: CARMA2_HW 0x00502210
+void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
+
+    BrResFree(pM->faces);
+    BrResFree(pM->vertices);
+    pM->nfaces = 0;
+    pM->nvertices = 0;
+    pM->faces = NULL;
+    pM->vertices = NULL;
+}
 
 // LoadIfItsAPixelmap
 
