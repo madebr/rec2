@@ -62,7 +62,7 @@ extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_stora
 
 extern tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm);
 
-// AddShadeTableToStorage
+extern tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st);
 
 // AddMaterialToStorage
 

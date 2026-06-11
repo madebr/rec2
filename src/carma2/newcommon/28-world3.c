@@ -111,7 +111,25 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
     }
 }
 
-// AddShadeTableToStorage
+// FUNCTION: CARMA2_HW 0x005010e0
+tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st) {
+    int i;
+
+    if (pStorage_space->shade_tables_count < pStorage_space->max_shade_tables) {
+        for (i = 0; i < pStorage_space->shade_tables_count; i++) {
+            if (pStorage_space->shade_tables[i]->identifier
+                && pThe_st->identifier
+                && strcmp(pStorage_space->shade_tables[i]->identifier, pThe_st->identifier) == 0) {
+                return eStorage_duplicate;
+            }
+        }
+        pStorage_space->shade_tables[pStorage_space->shade_tables_count] = pThe_st;
+        pStorage_space->shade_tables_count++;
+        return eStorage_allocated;
+    } else {
+        return eStorage_not_enough_room;
+    }
+}
 
 // AddMaterialToStorage
 
