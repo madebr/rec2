@@ -273,7 +273,11 @@ intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg) {
     }
 }
 
-// DRActorFindRecurse
+// FUNCTION: CARMA2_HW 0x00514730
+br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char* pName) {
+
+    return (br_actor*)DRActorEnumRecurse(pSearch_root, CompareActorID, (void*)pName);
+}
 
 // DRActorEnumRecurseWithMat
 
