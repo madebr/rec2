@@ -104,7 +104,7 @@ extern void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStor
 
 extern void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath);
 
-// LoadAllModelsInDirectory
+extern void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath);
 
 // LoadIfItsAShadeTable
 

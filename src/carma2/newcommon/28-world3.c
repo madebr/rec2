@@ -515,7 +515,12 @@ void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath) {
     }
 }
 
-// LoadAllModelsInDirectory
+// FUNCTION: CARMA2_HW 0x00502b00
+void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath) {
+
+    gStorage_for_callbacks = pStorage;
+    PFForEveryFile(pPath, LoadIfItsAModel);
+}
 
 // LoadIfItsAShadeTable
 
