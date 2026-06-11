@@ -562,7 +562,12 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
     }
 }
 
-// LoadAllShadeTablesInDirectory
+// FUNCTION: CARMA2_HW 0x00502b60
+void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath) {
+
+    gStorage_for_callbacks = pStorage;
+    PFForEveryFile(pPath, LoadIfItsAShadeTable);
+}
 
 // LoadAllStuffInDirectory
 

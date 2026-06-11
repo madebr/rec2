@@ -108,7 +108,7 @@ extern void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage
 
 // LoadIfItsAShadeTable
 
-// LoadAllShadeTablesInDirectory
+extern void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath);
 
 extern void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath);
 
