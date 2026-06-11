@@ -63,7 +63,7 @@ int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
     num = (pB + 1 - pA) * rand() / (RAND_MAX + 1) + pA;
     return num;
 #else
-    num = (pB + 1 - pA) * (rand() % 0x7fff) / (0x7fff + 1) + pA;
+    num = (pB + 1 - pA) * (rand() % 0x8000) / (0x7fff + 1) + pA;
     return num;
 #endif
 }
@@ -83,7 +83,15 @@ int C2_HOOK_FASTCALL IRandomPosNeg(int pN) {
     return IRandomBetween(-pN, pN);
 }
 
-// FRandomBetween
+// FUNCTION: CARMA2_HW 0x005135b0
+float C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
+
+#if RAND_MAX == 0x7fff
+    return (float)rand() * (pB - pA) / (float)RAND_MAX + pA;
+#else
+    return (float)(rand() % 0x10000) * (pB - pA) / (float)(0x7fff + 1) + pA;
+#endif
+}
 
 // FRandomPosNeg
 
