@@ -33,7 +33,7 @@ extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const
 
 // tandeg
 
-// GetFileLength
+extern tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF);
 
 extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW, br_uint_16 pH, void* pPixels, int pFlags);
 

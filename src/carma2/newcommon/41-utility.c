@@ -5,6 +5,7 @@
 #include "18-graphics2.h"
 #include "63-loading3.h"
 #include "69-sound.h"
+#include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
 
@@ -130,7 +131,15 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 // tandeg
 
-// GetFileLength
+// FUNCTION: CARMA2_HW 0x00513790
+tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
+    tU32 the_size;
+
+    PFfseek(pF, 0, SEEK_END);
+    the_size = PFftell(pF);
+    PFrewind(pF);
+    return the_size;
+}
 
 // FUNCTION: CARMA2_HW 0x005137d0
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW, br_uint_16 pH, void* pPixels, int pFlags) {
