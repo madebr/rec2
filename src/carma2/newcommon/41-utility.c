@@ -93,7 +93,11 @@ float C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
 #endif
 }
 
-// FRandomPosNeg
+// FUNCTION: CARMA2_HW 0x005135e0
+float C2_HOOK_STDCALL FRandomPosNeg(float pN) {
+
+    return FRandomBetween(-pN, pN);
+}
 
 // SRandomBetween
 

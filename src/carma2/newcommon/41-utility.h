@@ -23,7 +23,7 @@ extern int C2_HOOK_FASTCALL IRandomPosNeg(int pN);
 
 extern float C2_HOOK_STDCALL FRandomBetween(float pA, float pB);
 
-// FRandomPosNeg
+extern float C2_HOOK_STDCALL FRandomPosNeg(float pN);
 
 // SRandomBetween
 
