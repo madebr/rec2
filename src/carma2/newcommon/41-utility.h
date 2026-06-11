@@ -9,7 +9,7 @@ extern char* gMisc_strings[300];
 
 extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
-// Uppercaseificate
+extern void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src);
 
 // CheckQuit
 

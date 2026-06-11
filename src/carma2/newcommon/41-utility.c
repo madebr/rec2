@@ -37,8 +37,17 @@ br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00513460
+void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src) {
+    int len;
+    int i;
 
-// Uppercaseificate
+    len = (int)strlen(src);
+    for (i = 0; i < (int)len; i++) {
+        dest[i] = toupper(src[i]);
+    }
+    dest[len] = '\0';
+}
 
 // CheckQuit
 
