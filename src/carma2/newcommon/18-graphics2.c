@@ -2,6 +2,7 @@
 
 #include "41-utility.h"
 #include "52-errors.h"
+#include "globvars.h"
 #include "platform.h"
 #include "rec2_types.h"
 
@@ -198,5 +199,11 @@ void C2_HOOK_FASTCALL ClearEntireScreen(void) {
 
 // DisableLights
 
-// EnableLights
+// FUNCTION: CARMA2_HW 0x0047d6d0
+void C2_HOOK_FASTCALL EnableLights(void) {
+    int i;
 
+    for (i = 0; i < gNumber_of_lights; i++) {
+        BrLightEnable(gLight_array[i]);
+    }
+}

@@ -102,6 +102,6 @@ extern void C2_HOOK_FASTCALL ClearEntireScreen(void);
 
 // DisableLights
 
-// EnableLights
+extern void C2_HOOK_FASTCALL EnableLights(void);
 
 #endif // GUARD_18_GRAPHICS2_H
