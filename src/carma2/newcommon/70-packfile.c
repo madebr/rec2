@@ -345,7 +345,16 @@ void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
     NOT_IMPLEMENTED();
 }
 
-// PackFileRevertTiffLoading
+// FUNCTION: CARMA2_HW 0x004b4e60
+void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void) {
+    int count;
+
+    count = gDisableTiffConversionStackPos;
+    if (count != 0) { // or > 0 if it is unsigned
+        gDisableTiffConversionStack[count] = gDisableTiffConversion;
+        gDisableTiffConversion = gDisableTiffConversionStack[count - 1];
+    }
+}
 
 // PackFileRerevertTiffLoading
 

@@ -46,7 +46,7 @@ extern tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path);
 
 extern void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt);
 
-// PackFileRevertTiffLoading
+extern void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void);
 
 // PackFileRerevertTiffLoading
 
