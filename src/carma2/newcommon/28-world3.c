@@ -286,7 +286,41 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStora
 
 // AddModels
 
-// AddMaterials
+// FUNCTION: CARMA2_HW 0x00502060
+int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading) {
+    int i;
+    int new_ones;
+    int total;
+    br_material* temp_array[500];
+
+    new_ones = 0;
+    total = BrMaterialLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
+    if (total == 0) {
+        FatalError(kFatalError_CannotLoadMaterialFileOrItIsEmpty_S, pPath);
+    }
+    GlorifyMaterial(temp_array, total, pShading);
+    for (i = 0; i < total; ++i) {
+        if (temp_array[i] != NULL) {
+            switch (AddMaterialToStorage(pStorage_space, temp_array[i])) {
+            case eStorage_allocated:
+                BrMaterialAdd(temp_array[i]);
+                new_ones += 1;
+                break;
+            case eStorage_duplicate:
+                if (gDisallow_duplicates) {
+                    FatalError(kFatalError_DuplicateMaterial_S, temp_array[i]->identifier);
+                } else {
+                    BrMaterialFree(temp_array[i]);
+                }
+                break;
+            case eStorage_not_enough_room:
+                FatalError(kFatalError_InsufficientMaterialSlots);
+                break;
+            }
+        }
+    }
+    return new_ones;
+}
 
 // DodgyModelUpdate
 
