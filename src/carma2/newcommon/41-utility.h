@@ -101,7 +101,7 @@ extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
 extern void C2_HOOK_FASTCALL PossibleService(void);
 
-// DRMatrix34TApplyP
+extern void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, const br_matrix34* pC);
 
 // DRPixelmapRectangleCopy
 
