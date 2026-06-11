@@ -178,7 +178,19 @@ void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
     BrModelAddMany(model_array, number_of_models);
 }
 
-// DRLoadActors
+// FUNCTION: CARMA2_HW 0x0048f290
+void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
+    int i;
+    br_actor* actor_array[100];
+    int number_of_actors;
+
+    PossibleService();
+    number_of_actors = BrActorLoadMany(pPath_name, actor_array, REC2_ASIZE(actor_array));
+    for (i = 0; i < number_of_actors; i++) {
+        gActor_array[gNumber_of_actors] = actor_array[i];
+        gNumber_of_actors++;
+    }
+}
 
 // DRLoadLights
 
