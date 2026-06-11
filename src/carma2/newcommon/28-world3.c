@@ -15,6 +15,9 @@ br_pixelmap* gDuplicate_pixelmap;
 // GLOBAL: CARMA2_HW 0x006aaa28
 br_material* gDuplicate_material;
 
+// GLOBAL: CARMA2_HW 0x006aaa24
+br_model* gDuplicate_model;
+
 // TurnOnCloaking
 
 // RemoveFromCloakingList
@@ -120,14 +123,14 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage*
 
     if (pStorage_space->shade_tables_count < pStorage_space->max_shade_tables) {
         for (i = 0; i < pStorage_space->shade_tables_count; i++) {
-            if (pStorage_space->shade_tables[i]->identifier
-                && pThe_st->identifier
+            if (pStorage_space->shade_tables[i]->identifier != NULL
+                && pThe_st->identifier != NULL
                 && strcmp(pStorage_space->shade_tables[i]->identifier, pThe_st->identifier) == 0) {
                 return eStorage_duplicate;
             }
         }
         pStorage_space->shade_tables[pStorage_space->shade_tables_count] = pThe_st;
-        pStorage_space->shade_tables_count++;
+        pStorage_space->shade_tables_count += 1;
         return eStorage_allocated;
     } else {
         return eStorage_not_enough_room;
@@ -141,8 +144,8 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
     gDuplicate_material = NULL;
     if (pStorage_space->materials_count < pStorage_space->max_materials) {
         for (i = 0; i < pStorage_space->materials_count; i++) {
-            if (pStorage_space->materials[i]->identifier
-                    && pThe_mat->identifier
+            if (pStorage_space->materials[i]->identifier != NULL
+                    && pThe_mat->identifier != NULL
                     && strcmp(pStorage_space->materials[i]->identifier, pThe_mat->identifier) == 0) {
                 gDuplicate_material = pStorage_space->materials[i];
                 return eStorage_duplicate;
@@ -150,15 +153,39 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* p
         }
         pStorage_space->materialProps[pStorage_space->materials_count] = 0; /* FIXME */
         pStorage_space->materials[pStorage_space->materials_count] = pThe_mat;
-        pStorage_space->materials_count++;
+        pStorage_space->materials_count += 1;
         return eStorage_allocated;
     } else {
         return eStorage_not_enough_room;
     }
 }
 
-// AddModelToStorage
+// FUNCTION: CARMA2_HW 0x00501260
+tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod) {
+    int i;
 
+    gDuplicate_model = NULL;
+    if (pStorage_space->materials_count < pStorage_space->max_models) {
+        if (pStorage_space->flags & 0x1) { /* FIXME: add enum (0x1 -> eStorage_space_flags_No_duplicates*/
+            for (i = 0; i < pStorage_space->models_count; i++) {
+                if (pStorage_space->models[i] != NULL
+                    && pStorage_space->models[i]->identifier != NULL
+                        && pThe_mod->identifier != NULL
+                        && strcmp(pStorage_space->models[i]->identifier, pThe_mod->identifier) == 0) {
+                    gDuplicate_model = pStorage_space->models[i];
+                    return eStorage_duplicate;
+                }
+            }
+        }
+        pStorage_space->models[pStorage_space->models_count] = pThe_mod;
+        pStorage_space->models_count += 1;
+        return eStorage_allocated;
+    } else {
+        return eStorage_not_enough_room;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00501330
 tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pStorage_space, int pSound_id) {
     int i;
 
