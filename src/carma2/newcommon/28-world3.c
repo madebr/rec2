@@ -153,7 +153,26 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStora
 
 // LoadAllPixelmapsInDirectory
 
-// GetFileName
+// FUNCTION: CARMA2_HW 0x005026b0
+int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList) {
+    tPath_name pathCopy;
+    tPath_name pathUpper;
+    tPath_name dir_path;
+    tPath_name stem_path;
+
+    strcpy(pathCopy, path);
+    Uppercaseificate(pathUpper, pathCopy);
+    if (strstr(pathUpper, ".PIX") == NULL
+            && strstr(pathUpper, ".TIF") == NULL) {
+        return 0;
+    }
+    SepDirAndFilename(pathUpper, dir_path, stem_path);
+    strcpy(pList->items[pList->size], stem_path);
+    if (pList->size < (int)REC2_ASIZE(pList->items)) {
+        pList->size += 1;
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00502780
 int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) {

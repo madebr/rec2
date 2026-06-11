@@ -92,7 +92,7 @@ extern tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage*
 
 // LoadAllPixelmapsInDirectory
 
-// GetFileName
+extern int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList);
 
 extern int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList);
 
