@@ -114,6 +114,6 @@ extern void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage
 
 // DisallowDuplicates
 
-// AllowDuplicates
+extern void C2_HOOK_FASTCALL AllowDuplicates(void);
 
 #endif // GUARD_28_WORLD3_H
