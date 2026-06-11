@@ -287,7 +287,43 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStora
 
 // AddShadeTables
 
-// AddModels
+// FUNCTION: CARMA2_HW 0x00501e40
+int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath) {
+    int i;
+    int new_ones;
+    int total;
+    br_model* temp_array[2000];
+
+    new_ones = 0;
+    total = BrModelLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
+    WhitenVertexRGB(temp_array, total);
+    if (total == 0) {
+        FatalError(kFatalError_CannotLoadModelFileOrItIsEmpty_S, pPath);
+    }
+    for (i = 0; i < total; i++) {
+        if (temp_array[i] == NULL) {
+            continue;
+        }
+        switch (AddModelToStorage(pStorage_space, temp_array[i])) {
+        case eStorage_allocated:
+            temp_array[i]->flags |= BR_MODF_UPDATEABLE;
+            BrModelAdd(temp_array[i]);
+            new_ones++;
+            break;
+        case eStorage_duplicate:
+            if (gDisallow_duplicates) {
+                FatalError(kFatalError_DuplicateModel_S, temp_array[i]->identifier);
+            } else {
+                BrModelFree(temp_array[i]);
+            }
+            break;
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientModelSlots);
+            break;
+        }
+    }
+    return new_ones;
+}
 
 // FUNCTION: CARMA2_HW 0x00502060
 int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading) {
