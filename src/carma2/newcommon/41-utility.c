@@ -55,9 +55,17 @@ void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src) {
 
 // sqr
 
-// STUB: CARMA2_HW 0x00513520
+// FUNCTION: CARMA2_HW 0x00513520
 int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
-    NOT_IMPLEMENTED();
+    int num;
+
+#if RAND_MAX == 0x7fff
+    num = (pB + 1 - pA) * rand() / (RAND_MAX + 1) + pA;
+    return num;
+#else
+    num = (pB + 1 - pA) * (rand() % 0x7fff) / (0x7fff + 1) + pA;
+    return num;
+#endif
 }
 
 // PercentageChance
