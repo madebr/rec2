@@ -3,6 +3,9 @@
 #include "01-network.h"
 #include "02-init.h"
 #include "18-graphics2.h"
+#include "40-main.h"
+#include "42-input.h"
+#include "44-mainmenu.h"
 #include "63-loading3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
@@ -52,7 +55,28 @@ void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src) {
     dest[len] = '\0';
 }
 
-// CheckQuit
+// FUNCTION: CARMA2_HW 0x005134b0
+int C2_HOOK_FASTCALL CheckQuit(void) {
+    int result;
+
+    // GLOBAL: CARMA2_HW 0x006abee0
+    static int active;
+
+    result = 0;
+    if (!active) {
+        if (KeyIsDown(1) && KeyIsDown(7)) {
+            active = 1;
+            do {
+            } while (AnyKeyDown());
+            result = 1;
+            if (DoVerifyQuit(1)) {
+                QuitGame();
+            }
+            active = 0;
+        }
+    }
+    return result;
+}
 
 // sqr
 
@@ -627,7 +651,7 @@ void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_i
 // FUNCTION: CARMA2_HW 0x005191f0
 void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap) {
 
-#if 0 // FIXME: introduce endian.h-like rec2_endian.h heder
+#if 0 // FIXME: introduce endian.h-like rec2_endian.h header
     br_uint_16 y;
     br_uint_8* row_ptr;
     br_colour* ptr;

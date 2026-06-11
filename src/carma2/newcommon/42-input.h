@@ -27,11 +27,11 @@ extern int C2_HOOK_FASTCALL PDKeyDown(int pKey_index);
 
 // PDAnyKeyDown
 
-// AnyKeyDown
+extern int C2_HOOK_FASTCALL AnyKeyDown(void);
 
 // KevKeyService
 
-// KeyIsDown
+extern int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
 
 // KeyIsDownNoMouldiness
 

@@ -29,11 +29,17 @@ int C2_HOOK_FASTCALL PDKeyDown(int pKey_index) {
 
 // PDAnyKeyDown
 
-// AnyKeyDown
+// STUB: CARMA2_HW 0x00482d70
+int C2_HOOK_FASTCALL AnyKeyDown(void) {
+    NOT_IMPLEMENTED();
+}
 
 // KevKeyService
 
-// KeyIsDown
+// STUB: CARMA2_HW 0x00483040
+int C2_HOOK_FASTCALL KeyIsDown(int pKey_index) {
+    NOT_IMPLEMENTED();
+}
 
 // KeyIsDownNoMouldiness
 
