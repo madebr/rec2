@@ -192,7 +192,22 @@ void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
     }
 }
 
-// DRLoadLights
+// FUNCTION: CARMA2_HW 0x0048f2e0
+void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
+    br_actor* actor;
+    br_light* light;
+
+    actor = BrActorAllocate(BR_ACTOR_LIGHT, NULL);
+    light = actor->type_data;
+    light->type = BR_LIGHT_DIRECT;
+    light->colour = BR_COLOUR_RGB(gLighting_data.directional.red, gLighting_data.directional.green, gLighting_data.directional.blue);
+    light->attenuation_c = 1.0f;
+    BrMatrix34RotateX(&actor->t.t.mat, BR_ANGLE_DEG(-60));
+    BrMatrix34PostRotateY(&actor->t.t.mat, BR_ANGLE_DEG(30));
+    gLight_array[gNumber_of_lights] = actor;
+    gNumber_of_lights++;
+    EnableLights();
+}
 
 // FUNCTION: CARMA2_HW 0x0048f360
 void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine) {
