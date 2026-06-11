@@ -110,7 +110,33 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
 
 // DRPixelmapLoad
 
-// SepDirAndFilename
+// FUNCTION: CARMA2_HW 0x005139a0
+void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath) {
+    size_t pathLen;
+    size_t dirLen;
+    size_t i;
+
+    pathLen = strlen(path);
+    dirLen = 0;
+    for (i = pathLen - 1; ; i--) {
+        if (i == 0) {
+            break;
+        }
+        if (path[i] == gDir_separator[0]) {
+            dirLen = i;
+            break;
+        }
+    }
+    memcpy(dirPath, path, dirLen);
+    dirPath[dirLen] = '\0';
+    if (*dirPath != '\0') {
+        dirLen += 1;
+    }
+    for (i = 0; path[dirLen + i] != '.' && dirLen + i != pathLen; i++) {
+        stemPath[i] = path[dirLen + i];
+    }
+    stemPath[i] = '\0';
+}
 
 // DRLoadMultiplePix
 
