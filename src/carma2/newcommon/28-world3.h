@@ -80,7 +80,7 @@ extern int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const
 
 extern tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id);
 
-// AddShadeTables
+extern int C2_HOOK_FASTCALL AddShadeTables(tBrender_storage* pStorage_space, const char* pPath);
 
 extern int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath);
 
@@ -110,7 +110,7 @@ extern void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage
 
 // LoadAllShadeTablesInDirectory
 
-// LoadAllStuffInDirectory
+extern void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath);
 
 extern void C2_HOOK_FASTCALL DisallowDuplicates(void);
 

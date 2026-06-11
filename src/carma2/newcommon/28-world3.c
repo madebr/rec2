@@ -285,7 +285,37 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStora
     return 0;
 }
 
-// AddShadeTables
+int C2_HOOK_FASTCALL AddShadeTables(tBrender_storage* pStorage_space, const char* pPath) {
+    br_pixelmap* temp_array[50];
+    int total;
+    int i;
+
+    total = BrPixelmapLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
+    if (total == 0) {
+        FatalError(kFatalError_CannotLoadShadeTableFileOrItIsEmpty_S, pPath);
+    }
+    for (i = 0; i < total; i++) {
+        if (temp_array[i] == NULL) {
+            continue;
+        }
+        switch (AddShadeTableToStorage(pStorage_space, temp_array[i])) {
+        case eStorage_allocated:
+            BrTableAdd(temp_array[i]);
+            break;
+        case eStorage_duplicate:
+            if (gDisallow_duplicates) {
+                FatalError(kFatalError_DuplicatePixelmap_S, temp_array[i]->identifier);
+            } else {
+                BrPixelmapFree(temp_array[i]);
+            }
+            break;
+        case eStorage_not_enough_room:
+            FatalError(kFatalError_InsufficientShadeTableSlots);
+            break;
+        }
+    }
+    return total;
+}
 
 // FUNCTION: CARMA2_HW 0x00501e40
 int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath) {
@@ -522,7 +552,15 @@ void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const
     PFForEveryFile(pPath, LoadIfItsAModel);
 }
 
-// LoadIfItsAShadeTable
+// FUNCTION: CARMA2_HW 0x00502b80
+void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
+    char path[256];
+
+    Uppercaseificate(path, pPath);
+    if (strstr(path, ".TAB") != NULL) {
+        AddShadeTables(gStorage_for_callbacks, pPath);
+    }
+}
 
 // LoadAllShadeTablesInDirectory
 
