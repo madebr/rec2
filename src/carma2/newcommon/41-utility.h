@@ -17,7 +17,7 @@ extern void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src);
 
 extern int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 
-// PercentageChance
+extern int C2_HOOK_FASTCALL PercentageChance(int pC);
 
 // IRandomPosNeg
 
