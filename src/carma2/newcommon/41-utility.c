@@ -105,7 +105,11 @@ br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
     return FRandomBetween(pA, pB);
 }
 
-// SRandomPosNeg
+// FUNCTION: CARMA2_HW 0x00513650
+br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
+
+    return SRandomBetween(-pN, pN);
+}
 
 // FUNCTION: CARMA2_HW 0x00513690
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2) {
