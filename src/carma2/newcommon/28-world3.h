@@ -90,7 +90,7 @@ extern void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM);
 
 extern void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath);
 
-// LoadAllPixelmapsInDirectory
+extern void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath);
 
 extern int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList);
 

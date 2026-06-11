@@ -12,7 +12,7 @@
 br_actor* gAdditional_actors;
 
 // GLOBAL: CARMA2_HW 0x006b7820
-tBrender_storage* gStorageForCallbacks;
+tBrender_storage* gStorage_for_callbacks;
 
 // GLOBAL: CARMA2_HW 0x006aaa2c
 int gDisallow_duplicates;
@@ -339,11 +339,16 @@ void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath) {
 
     Uppercaseificate(s, pPath);
     if (strstr(s, ".PIX") != NULL) {
-        AddPixelmaps(gStorageForCallbacks, pPath);
+        AddPixelmaps(gStorage_for_callbacks, pPath);
     }
 }
 
-// LoadAllPixelmapsInDirectory
+// FUNCTION: CARMA2_HW 0x00502490
+void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath) {
+
+    gStorage_for_callbacks = pStorage;
+    PFForEveryFile(pPath, LoadIfItsAPixelmap);
+}
 
 // FUNCTION: CARMA2_HW 0x005026b0
 int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList) {
@@ -411,7 +416,7 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
 
     C2_HOOK_BUG_ON(sizeof(tBrender_storage) != 68);
 
-    gStorageForCallbacks = pStorage_space;
+    gStorage_for_callbacks = pStorage_space;
     // TwatPIX16(path);
     list.size = 0;
     strcpy(pathCopy, path);
@@ -432,7 +437,7 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     PFForEveryFile2(pixPath, (tEnumPathCallback)GetAdditionalFileName, &list);
     for (i = 0; i < list.size; i++) {
         PathCat(pathCopy, path, list.items[i]);
-        AddPixelmaps(gStorageForCallbacks, pathCopy);
+        AddPixelmaps(gStorage_for_callbacks, pathCopy);
     }
 }
 
