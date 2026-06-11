@@ -34,7 +34,7 @@
 #ifndef GET_SC_WPARAM
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1200
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #define GET_SC_WPARAM(wParam) ((int)wParam &0xfff0)
 #define INVALID_FILE_ATTRIBUTES ((DWORD)-1)
 typedef LONG LSTATUS;

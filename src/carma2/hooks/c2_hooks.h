@@ -15,7 +15,7 @@
 #define C2_NAKED __attribute__((__naked__))
 #endif
 
-#if defined(_MSC_VER) && _MSC_VER < 1200
+#if defined(_MSC_VER) && _MSC_VER < 1300
 #define C2_FUNCTION "<unknown>"
 #else
 #define C2_FUNCTION __FUNCTION__

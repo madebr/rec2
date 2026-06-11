@@ -3,7 +3,7 @@
 
 #include <math.h>
 
-#if defined(_MSC_VER) && _MSC_VER < 1200
+#if defined(_MSC_VER) && _MSC_VER < 1300
 
 #include <float.h>
 
