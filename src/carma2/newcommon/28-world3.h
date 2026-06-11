@@ -112,7 +112,7 @@ extern void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage
 
 // LoadAllStuffInDirectory
 
-// DisallowDuplicates
+extern void C2_HOOK_FASTCALL DisallowDuplicates(void);
 
 extern void C2_HOOK_FASTCALL AllowDuplicates(void);
 

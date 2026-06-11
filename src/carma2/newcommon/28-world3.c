@@ -455,7 +455,10 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
 
 // LoadAllStuffInDirectory
 
-// DisallowDuplicates
+// FUNCTION: CARMA2_HW 0x00502d60
+void C2_HOOK_FASTCALL DisallowDuplicates(void) {
+
+}
 
 // FUNCTION: CARMA2_HW 0x00502d70
 void C2_HOOK_FASTCALL AllowDuplicates(void) {
