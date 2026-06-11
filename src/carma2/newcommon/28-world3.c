@@ -1,13 +1,17 @@
 #include "28-world3.h"
 
-#include "52-errors.h"
 #include "41-utility.h"
+#include "52-errors.h"
+#include "63-loading3.h"
 #include "rec2_macros.h"
 
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x006b75c0
 br_actor* gAdditional_actors;
+
+// GLOBAL: CARMA2_HW 0x006aaa2c
+int gDisallow_duplicates;
 
 // GLOBAL: CARMA2_HW 0x006aaa20
 br_pixelmap* gDuplicate_pixelmap;
@@ -203,7 +207,48 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pSto
     }
 }
 
-// AddPixelmaps
+// FUNCTION: CARMA2_HW 0x005024f0
+int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* path) {
+    int i;
+    int new_ones;
+    int total;
+    tPath_name path_dirname;
+    char path_stem[32];
+    br_pixelmap* temp_array[500];
+
+    total = 0;
+    if (gDisableTiffConversion) {
+        SepDirAndFilename(path, path_dirname, path_stem);
+        new_ones = LoadBunchOfPixies(path_dirname, path_stem, temp_array, REC2_ASIZE(temp_array));
+    } else {
+        new_ones = DRPixelmapLoadMany(path, temp_array, REC2_ASIZE(temp_array));
+    }
+    if (new_ones == 0) {
+        FatalError(kFatalError_CantLoadPixelmapFile_S, path);
+    }
+    for (i = 0; i < new_ones; i++) {
+        if (temp_array[i] != NULL) {
+            EnsurePixelmapAllowed(temp_array[i], 1);
+            switch (AddPixelmapToStorage(pStorage_space, temp_array[i])) {
+            case eStorage_allocated:
+                BrMapAdd(temp_array[i]);
+                total += 1;
+                break;
+            case eStorage_duplicate:
+                if (gDisallow_duplicates) {
+                    FatalError(kFatalError_DuplicatePixelmap_S, temp_array[i]->identifier);
+                } else {
+                    BrPixelmapFree(temp_array[i]);
+                }
+                break;
+            case eStorage_not_enough_room:
+                FatalError(kFatalError_InsufficientPixelmapSlots);
+                break;
+            }
+        }
+    }
+    return total;
+}
 
 // LoadSinglePixelmap
 
