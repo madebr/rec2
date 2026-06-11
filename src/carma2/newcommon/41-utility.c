@@ -279,7 +279,25 @@ br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char
     return (br_actor*)DRActorEnumRecurse(pSearch_root, CompareActorID, (void*)pName);
 }
 
-// DRActorEnumRecurseWithMat
+// FUNCTION: CARMA2_HW 0x00514800
+br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_material* pMat, recurse_with_mat_cbfn* pCall_back, void* pArg) {
+    br_uint_32 result;
+
+    if (pActor->material != NULL) {
+        pMat = pActor->material;
+    }
+    result = pCall_back(pActor, pMat, pArg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurseWithMat(pActor, pMat, pCall_back, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
 
 // DRActorEnumRecurseWithTrans
 

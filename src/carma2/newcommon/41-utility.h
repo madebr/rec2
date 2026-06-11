@@ -57,7 +57,7 @@ extern intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg);
 
 extern br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char* pName);
 
-// DRActorEnumRecurseWithMat
+extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_material* pMat, recurse_with_mat_cbfn* pCall_back, void* pArg);
 
 // DRActorEnumRecurseWithTrans
 
