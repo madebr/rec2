@@ -94,8 +94,9 @@ static int find_gamepad_index(SDL_JoystickID which) {
     return -1;
 }
 
-void Win32ServiceMessages() {
+void SDL3ServiceMessages(void) {
     SDL_Event event;
+
     while (SDL_PollEvent(&event)) {
         if (event.type == SDL_EVENT_MOUSE_MOTION) {
             gPD_mouse_position_x = event.motion.x;
@@ -146,7 +147,7 @@ void Win32ServiceMessages() {
                 }
                 gKeyboardBuffer[gKeyboardBufferLength] = event.key.key;
                 gKeyboardBufferLength++;
-                strncpy(buffer, gKeyboardBuffer, gKeyboardBufferLength);
+                strncpy(buffer, (char*)gKeyboardBuffer, gKeyboardBufferLength);
                 buffer[gKeyboardBufferLength] = '\0';
                 DR_DPRINTF("KEY PRESSED, BUFFER NOW IS: '%s'", buffer);
             }
@@ -256,7 +257,7 @@ char PDConvertToASCIILessThan128(char pChar) {
 
 int PDGetKeyboardCharacter(void) {
     int key;
-    Win32ServiceMessages();
+    SDL3ServiceMessages();
     if (gKeyboardBufferLength == 0) {
         return 0;
     }
@@ -293,7 +294,7 @@ C2_NORETURN void PDShutdownSystem(void) {
             SDL_SetWindowFullscreen(g_SDL_Window, false);
         }
         dr_dprintf("Servicing messages...");
-        Win32ServiceMessages();
+        SDL3ServiceMessages();
         dr_dprintf("Sending WM_SHOWWINDOW broadcast message...");
         SDL_ShowWindow(g_SDL_Window);
         if (gIsFatalError) {
@@ -378,7 +379,7 @@ void PDSetPalette(br_pixelmap *pixelmap) {
 }
 
 int PDServiceSystem(tU32 pTime_since_last_call) {
-    Win32ServiceMessages();
+    SDL3ServiceMessages();
     return 0;
 }
 
