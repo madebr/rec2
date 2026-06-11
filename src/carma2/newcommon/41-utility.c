@@ -467,7 +467,29 @@ void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRen
 
 // FindBestColourMatch
 
-// WhitenVertexRGB
+// FUNCTION: CARMA2_HW 0x00518690
+void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount) {
+    int i;
+    br_vertex* vertex;
+
+    if (gScreen == NULL) {
+        return;
+    }
+    if (gScreen->type == BR_PMT_INDEX_8) {
+        return;
+    }
+    for (i = 0; i < pCount; i++) {
+        int j;
+
+        for (j = 0; j < pModels[i]->nvertices; j++) {
+            vertex = &pModels[i]->vertices[j];
+
+            vertex->red = 0xff;
+            vertex->grn = 0xff;
+            vertex->blu = 0xff;
+        }
+    }
+}
 
 // ArenaOpenFile
 

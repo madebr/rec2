@@ -185,7 +185,7 @@ extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCoun
 
 // FindBestColourMatch
 
-// WhitenVertexRGB
+extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
 // ArenaOpenFile
 
