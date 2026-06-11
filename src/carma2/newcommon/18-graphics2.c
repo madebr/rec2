@@ -62,7 +62,31 @@ br_pixelmap* gPalette_0074a5fc;
 // GLOBAL: CARMA2_HW 0x0074a670
 br_pixelmap* gPalette_0074a670;
 
-// DRSetPaletteEntries
+// GLOBAL: CARMA2_HW 0x0074cf04
+int gPalette_changed;
+
+// GLOBAL: CARMA2_HW 0x006923c0
+int gPalette_munged;
+
+// GLOBAL: CARMA2_HW 0x0074a680
+char* gCurrent_palette_pixels;
+
+// GLOBAL: CARMA2_HW 0x006923c8
+int gFaded_palette;
+
+// FUNCTION: CARMA2_HW 0x004b4fd0
+void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount) {
+
+    if (!pFirst_colour) {
+        ((br_int_32*)pPalette->pixels)[0] = 0;
+    }
+    memcpy(gCurrent_palette_pixels + 4 * pFirst_colour, (char*)pPalette->pixels + 4 * pFirst_colour, 4 * pCount);
+    gPalette_changed = 0;
+    if (!gFaded_palette) {
+        PDSetPaletteEntries(pPalette, pFirst_colour, pCount);
+    }
+    gPalette_munged = 1;
+}
 
 // DRSetPalette3
 

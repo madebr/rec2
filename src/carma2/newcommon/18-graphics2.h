@@ -8,7 +8,7 @@ extern int gNoTransients;
 extern br_pixelmap* gRender_palette;
 extern int gDim_amount;
 
-// DRSetPaletteEntries
+extern void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount);
 
 // DRSetPalette3
 
