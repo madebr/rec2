@@ -114,4 +114,6 @@ extern void PDPageInProcessMemory(void);
 
 extern void PDDisposeActionReplayBuffer(void);
 
+extern void SDL3ServiceMessages(void);
+
 #endif /* REC2_SDL3_H */

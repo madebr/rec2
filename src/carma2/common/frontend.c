@@ -2410,7 +2410,7 @@ void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
 }
 
 // FUNCTION: CARMA2_HW 0x00518fa0
-void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
+void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl) {
     size_t len_text;
     size_t len_repl;
     size_t i;
@@ -2419,7 +2419,7 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
     len_repl = strlen(pRepl);
 
     for (i = 0; i < len_text; i++) {
-        if (pText[i] == '@' && pText[i + 1] == pKey) {
+        if (pText[i] == '@' && pText[i + 1] == pMeta) {
             memmove(&pText[i + len_repl], &pText[i + 2], len_text - i - 1);
             memcpy(&pText[i], pRepl, len_repl);
             i += len_repl;
@@ -2429,17 +2429,17 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
 }
 
 // FUNCTION: CARMA2_HW 0x00519040
-void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar) {
+void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pMeta, char pChar) {
 
-    MungeMetaCharacters(pText, pKey, &pChar);
+    MungeMetaCharacters(pText, pMeta, &pChar);
 }
 
 // FUNCTION: CARMA2_HW 0x005190f0
-void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pKey, int pNum) {
+void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) {
     char text[16];
 
     sprintf(text, "%d", pNum);
-    MungeMetaCharacters(pText, pKey, text);
+    MungeMetaCharacters(pText, pMeta, text);
 }
 
 void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {

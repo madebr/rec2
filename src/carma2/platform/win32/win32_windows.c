@@ -10,7 +10,7 @@
 #include <windows.h>
 
 // FUNCTION: CARMA2_HW 0x0051cad0
-void C2_HOOK_CDECL Win32ServiceMessages(void) {
+void C2_HOOK_CDECL SDL3ServiceMessages(void) {
     MSG msg;
 
     dr_dprintf("Win32ServiceMessages() - START");

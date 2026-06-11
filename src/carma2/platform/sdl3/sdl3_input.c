@@ -216,7 +216,7 @@ void C2_HOOK_FASTCALL PDSetKeyArray(int *pKeys, int pMark) {
     int i;
 
     gKeys_pressed = 0;
-    Win32ServiceMessages();
+    SDL3ServiceMessages();
     keyboard_state = SDL_GetKeyboardState(&num_keys);
     for (i = 0; i < 151; i++) {
         int scan_code;

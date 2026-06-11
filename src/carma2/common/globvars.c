@@ -157,7 +157,7 @@ int gMap_view;
 
 
 // GLOBAL: CARMA2_HW 0x0074cadc
-int gScreen_lock_often;
+int gLock_often;
 
 // GLOBAL: CARMA2_HW 0x0074ca0c
 int gShadow_workaround;

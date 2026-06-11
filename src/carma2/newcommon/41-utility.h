@@ -11,9 +11,9 @@ extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
 extern void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src);
 
-// CheckQuit
+extern int C2_HOOK_FASTCALL CheckQuit(void);
 
-// sqr
+extern double C2_HOOK_FASTCALL sqr(double pN);
 
 extern int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 
@@ -53,13 +53,13 @@ extern int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_
 
 extern intptr_t DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbfn* callback, void* arg);
 
-// CompareActorID
+extern intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg);
 
-// DRActorFindRecurse
+extern br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char* pName);
 
-// DRActorEnumRecurseWithMat
+extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_material* pMat, recurse_with_mat_cbfn* pCall_back, void* pArg);
 
-// DRActorEnumRecurseWithTrans
+extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_matrix34* pMatrix, recurse_with_trans_cbfn* pCall_back, void* pArg);
 
 // DRActorEnumRecurseWithSnart
 
@@ -101,13 +101,13 @@ extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
 extern void C2_HOOK_FASTCALL PossibleService(void);
 
-// DRMatrix34TApplyP
+extern void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, const br_matrix34* pC);
 
 // DRPixelmapRectangleCopy
 
 // NormalSideOfPlane
 
-// DRMaterialClone
+extern br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier);
 
 extern int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 
@@ -201,17 +201,17 @@ extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
 // GetBlenficatiousnessOfMaterial
 
-// MungeCommas
+extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
-// MungeMetaCharacters
+extern void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl);
 
-// MungeMetaCharactersChar
+extern void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pMeta, char pChar);
 
-// MungeMetaCharactersNum
+extern void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum);
 
-// DrPixelmapRectangleCopyPossibleLock
+extern void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h);
 
-// PixelmapSwapByteOrder
+extern void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap);
 
 extern void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2);
 

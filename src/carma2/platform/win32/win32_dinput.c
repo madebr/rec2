@@ -1015,7 +1015,7 @@ void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark) {
     int i;
 
     gKeys_pressed = 0;
-    Win32ServiceMessages();
+    SDL3ServiceMessages();
     if (gWindowActiveState != 2) {
         *pKeys = 0;
         return;

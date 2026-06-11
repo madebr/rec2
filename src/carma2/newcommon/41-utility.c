@@ -3,13 +3,16 @@
 #include "01-network.h"
 #include "02-init.h"
 #include "18-graphics2.h"
+#include "40-main.h"
+#include "42-input.h"
+#include "44-mainmenu.h"
 #include "63-loading3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
-
 #include "c2_string.h"
+
 #include <ctype.h>
 
 
@@ -52,9 +55,34 @@ void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src) {
     dest[len] = '\0';
 }
 
-// CheckQuit
+// FUNCTION: CARMA2_HW 0x005134b0
+int C2_HOOK_FASTCALL CheckQuit(void) {
+    int result;
 
-// sqr
+    // GLOBAL: CARMA2_HW 0x006abee0
+    static int active;
+
+    result = 0;
+    if (!active) {
+        if (KeyIsDown(1) && KeyIsDown(7)) {
+            active = 1;
+            do {
+            } while (AnyKeyDown());
+            result = 1;
+            if (DoVerifyQuit(1)) {
+                QuitGame();
+            }
+            active = 0;
+        }
+    }
+    return result;
+}
+
+// FUNCTION: CARMA2_HW 0x00513510
+double C2_HOOK_FASTCALL sqr(double pN) {
+
+    return pN * pN;
+}
 
 // FUNCTION: CARMA2_HW 0x00513520
 int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
@@ -235,13 +263,64 @@ intptr_t C2_HOOK_FASTCALL DRActorEnumRecurse(br_actor* pActor, br_actor_enum_cbf
     return 0;
 }
 
-// CompareActorID
+// FUNCTION: CARMA2_HW 0x005147b0
+intptr_t C2_HOOK_CDECL CompareActorID(br_actor* pActor, void* pArg) {
 
-// DRActorFindRecurse
+    if (pActor->identifier != NULL && strcmp(pActor->identifier, (const char*)pArg) == 0) {
+        return (intptr_t)pActor;
+    } else {
+        return 0;
+    }
+}
 
-// DRActorEnumRecurseWithMat
+// FUNCTION: CARMA2_HW 0x00514730
+br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, const char* pName) {
 
-// DRActorEnumRecurseWithTrans
+    return (br_actor*)DRActorEnumRecurse(pSearch_root, CompareActorID, (void*)pName);
+}
+
+// FUNCTION: CARMA2_HW 0x00514800
+br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_material* pMat, recurse_with_mat_cbfn* pCall_back, void* pArg) {
+    br_uint_32 result;
+
+    if (pActor->material != NULL) {
+        pMat = pActor->material;
+    }
+    result = pCall_back(pActor, pMat, pArg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurseWithMat(pActor, pMat, pCall_back, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00514850
+br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_matrix34* pMatrix, recurse_with_trans_cbfn* pCall_back, void* pArg) {
+    br_uint_32 result;
+    br_matrix34 combined_transform;
+
+    if (pMatrix == NULL) {
+        BrMatrix34Copy(&combined_transform, &pActor->t.t.mat);
+    } else {
+        BrMatrix34Mul(&combined_transform, pMatrix, &pActor->t.t.mat);
+    }
+    result = pCall_back(pActor, &combined_transform, pArg);
+    if (result != 0) {
+        return result;
+    }
+    for (pActor = pActor->children; pActor != NULL; pActor = pActor->next) {
+        result = DRActorEnumRecurseWithTrans(pActor, &combined_transform, pCall_back, pArg);
+        if (result != 0) {
+            return result;
+        }
+    }
+    return 0;
+}
 
 // DRActorEnumRecurseWithSnart
 
@@ -297,13 +376,56 @@ void C2_HOOK_FASTCALL PossibleService(void) {
     }
 }
 
-// DRMatrix34TApplyP
+// FUNCTION: CARMA2_HW 0x00515610
+void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, const br_matrix34* pC) {
+    br_scalar t1;
+    br_scalar t2;
+    br_scalar t3;
+
+    t1 = pB->v[0] - pC->m[3][0];
+    t2 = pB->v[1] - pC->m[3][1];
+    t3 = pB->v[2] - pC->m[3][2];
+
+    pA->v[0] = pC->m[0][2] * t3 + pC->m[0][0] * t1 + pC->m[0][1] * t2;
+    pA->v[1] = pC->m[1][2] * t3 + pC->m[1][0] * t1 + pC->m[1][1] * t2;
+    pA->v[2] = pC->m[2][2] * t3 + pC->m[2][0] * t1 + pC->m[2][1] * t2;
+}
 
 // DRPixelmapRectangleCopy
 
 // NormalSideOfPlane
 
-// DRMaterialClone
+// FUNCTION: CARMA2_HW 0x00515780
+br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier) {
+    br_material* the_material;
+    char s[256];
+    int version;
+
+    // GLOBAL: CARMA2_HW 0x006abefc
+    static int gVersion_suffix;
+
+    the_material = BrMaterialAllocate(NULL);
+    the_material->flags = pMaterial->flags;
+    the_material->ka = pMaterial->ka;
+    the_material->kd = pMaterial->kd;
+    the_material->ks = pMaterial->ks;
+    the_material->power = pMaterial->power;
+    the_material->colour = pMaterial->colour;
+    the_material->index_base = pMaterial->index_base;
+    the_material->index_range = pMaterial->index_range;
+    the_material->index_shade = pMaterial->index_shade;
+    the_material->index_blend = pMaterial->index_blend;
+    the_material->colour_map = pMaterial->colour_map;
+    memcpy(&the_material->map_transform, &pMaterial->map_transform, sizeof(the_material->map_transform));
+    if (pSet_identifier) {
+        version = gVersion_suffix++;
+        sprintf(s, "%s(%d)", pMaterial->identifier, version);
+        the_material->identifier = BrResAllocate(the_material, strlen(s) + 1, BR_MEMORY_STRING);
+        strcpy(the_material->identifier, s);
+    }
+    BrMaterialAdd(the_material);
+    return the_material;
+}
 
 // FUNCTION: CARMA2_HW 0x00515870
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
@@ -553,17 +675,98 @@ void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount) {
 
 // GetBlenficatiousnessOfMaterial
 
-// MungeCommas
+// FUNCTION: CARMA2_HW 0x00518f20
+char* C2_HOOK_FASTCALL MungeCommas(int pValue) {
+    // GLOBAL: CARMA2_HW 0x006b5f20
+    static char result_buffer[32];
+    char buffer[32];
+    int len;
+    int get_pos;
+    int put_pos;
+    int remaining;
 
-// MungeMetaCharacters
+    sprintf(buffer, "%i", pValue);
+    len = (int)strlen(buffer);
+    for (get_pos = 0, put_pos = 0, remaining = len; get_pos < len; get_pos++, put_pos++, remaining--) {
 
-// MungeMetaCharactersChar
+        if (remaining % 3 == 0 && get_pos != 0) {
+            result_buffer[put_pos] = gMisc_strings[294][0];
+            put_pos++;
+        }
+        result_buffer[put_pos] = buffer[get_pos];
+    }
+    result_buffer[put_pos] = '\0';
+    return result_buffer;
+}
 
-// MungeMetaCharactersNum
+// FUNCTION: CARMA2_HW 0x00518fa0
+void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl) {
+    int len_text;
+    int len_repl;
+    int i;
 
-// DrPixelmapRectangleCopyPossibleLock
+    len_text = strlen(pText);
+    len_repl = strlen(pRepl);
 
-// PixelmapSwapByteOrder
+    for (i = 0; i < len_text; i++) {
+        if (pText[i] == '@' && pText[i + 1] == pMeta) {
+            memmove(&pText[i + len_repl], &pText[i + 2], len_text - i - 1);
+            memcpy(&pText[i], pRepl, len_repl);
+            i += len_repl;
+            len_text += len_repl - 2;
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00519040
+void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pMeta, char pChar) {
+    char repl[2];
+
+    repl[1] = '\0';
+    repl[0] = pChar;
+    MungeMetaCharacters(pText, pMeta, repl);
+}
+
+// FUNCTION: CARMA2_HW 0x005190f0
+void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) {
+    char text[16];
+
+    sprintf(text, "%d", pNum);
+    MungeMetaCharacters(pText, pMeta, text);
+}
+
+void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {
+
+    if (gLock_often) {
+        PossibleUnlock(0);
+    }
+    BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
+    if (gLock_often) {
+        PossibleUnlock(0);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x005191f0
+void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap) {
+
+#if 0 // FIXME: introduce endian.h-like rec2_endian.h header
+    br_uint_16 y;
+    br_uint_8* row_ptr;
+    br_colour* ptr;
+    int w;
+
+    row_ptr = pMap->pixels;
+    for (y = 0; y < pMap->height; y++) {
+        w = (pMap->width * 2) / sizeof(br_colour);
+        ptr = (br_colour*) row_ptr;
+        while (w) {
+            *ptr = (*ptr >> 0x18) + (*ptr << 0x18) + ((*ptr >> 0x8) & 0xff00) + ((*ptr & 0xff00) <<0x8);
+            ptr++;
+        }
+        row_ptr += pMap->row_bytes;
+    }
+#endif
+}
 
 // FUNCTION: CARMA2_HW 0x005193f0
 void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2) {

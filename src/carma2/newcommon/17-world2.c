@@ -92,12 +92,9 @@ void C2_HOOK_FASTCALL RevealStoredTransparentTextures(tBrender_storage* pStorage
     int i;
 
     for (i = 0; i < pStorage->materials_count; i++) {
-        br_pixelmap* colour_map;
 
-        colour_map = pStorage->materialProps[i];
-
-        if (colour_map != NULL && DRPixelmapHasZeros(colour_map)) {
-            pStorage->materials[i]->colour_map = colour_map;
+        if (pStorage->materialProps[i] != NULL && DRPixelmapHasZeros(pStorage->materialProps[i])) {
+            pStorage->materials[i]->colour_map = pStorage->materialProps[i];
             pStorage->materialProps[i] = NULL;
             pStorage->materials[i]->flags |= BR_MATF_PRELIT;
             BrMaterialUpdate(pStorage->materials[i], BR_MATU_ALL);

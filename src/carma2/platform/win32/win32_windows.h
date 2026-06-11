@@ -3,6 +3,6 @@
 
 #include "c2_hooks.h"
 
-extern void C2_HOOK_CDECL Win32ServiceMessages(void);
+extern void C2_HOOK_CDECL SDL3ServiceMessages(void);
 
 #endif
