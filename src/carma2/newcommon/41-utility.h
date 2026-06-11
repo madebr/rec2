@@ -59,7 +59,7 @@ extern br_actor* C2_HOOK_FASTCALL DRActorFindRecurse(br_actor* pSearch_root, con
 
 extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithMat(br_actor* pActor, br_material* pMat, recurse_with_mat_cbfn* pCall_back, void* pArg);
 
-// DRActorEnumRecurseWithTrans
+extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_matrix34* pMatrix, recurse_with_trans_cbfn* pCall_back, void* pArg);
 
 // DRActorEnumRecurseWithSnart
 
