@@ -74,6 +74,39 @@ char* gCurrent_palette_pixels;
 // GLOBAL: CARMA2_HW 0x006923c8
 int gFaded_palette;
 
+// GLOBAL: CARMA2_HW 0x0074a678
+br_pixelmap* gCurrent_palette;
+
+// GLOBAL: CARMA2_HW 0x006923ac
+br_pixelmap* gOrig_render_palette;
+
+// GLOBAL: CARMA2_HW 0x0074a67c
+br_pixelmap* gFlic_palette;
+
+// GLOBAL: CARMA2_HW 0x006923b8
+br_colour* gScratch_pixels;
+
+// GLOBAL: CARMA2_HW 0x006923a8
+br_pixelmap* gScratch_palette;
+
+// GLOBAL: CARMA2_HW 0x0074a660
+br_pixelmap* gMini_map_glowing_line_palettes[3];
+
+// GLOBAL: CARMA2_HW 0x0074a5fc
+br_pixelmap* gPalette_0074a5fc;
+
+// GLOBAL: CARMA2_HW 0x0074a600
+br_pixelmap* gPalette_0074a600;
+
+// GLOBAL: CARMA2_HW 0x0074a604
+br_pixelmap* gPalette_0074a604;
+
+// GLOBAL: CARMA2_HW 0x0074a66c
+br_pixelmap* gPalette_0074a66c;
+
+// GLOBAL: CARMA2_HW 0x0074a670
+br_pixelmap* gPalette_0074a670;
+
 // FUNCTION: CARMA2_HW 0x004b4fd0
 void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount) {
 
