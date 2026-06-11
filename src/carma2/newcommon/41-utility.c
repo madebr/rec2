@@ -2,6 +2,8 @@
 
 #include "01-network.h"
 #include "02-init.h"
+#include "18-graphics2.h"
+#include "63-loading3.h"
 #include "69-sound.h"
 #include "globvars.h"
 #include "platform.h"
@@ -149,7 +151,22 @@ void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* s
 
 // DRLoadMultiplePix
 
-// DRPixelmapLoadMany
+// FUNCTION: CARMA2_HW 0x00514570
+int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity) {
+    tPath_name texturePath;
+    tPath_name texturePathDir;
+    tPath_name texturePathStem;
+    int errorCode;
+
+    strcpy(texturePath, texturePathNoExt);
+    strcat(texturePath, ".TIF");
+    SepDirAndFilename(texturePath, texturePathDir, texturePathStem);
+    pixelmaps[0] = DRLdImg(texturePathDir, texturePathStem, gRender_palette, gPixelFlags, &errorCode);
+    if (pixelmaps[0] == NULL || errorCode != 0) {
+        return 0;
+    }
+    return 1;
+}
 
 // WaitFor
 

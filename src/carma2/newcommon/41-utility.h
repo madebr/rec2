@@ -47,7 +47,7 @@ extern void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, 
 
 // DRLoadMultiplePix
 
-// DRPixelmapLoadMany
+extern int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity);
 
 // WaitFor
 
