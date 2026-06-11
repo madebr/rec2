@@ -3,12 +3,16 @@
 #include "41-utility.h"
 #include "52-errors.h"
 #include "63-loading3.h"
+#include "70-packfile.h"
 #include "rec2_macros.h"
 
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x006b75c0
 br_actor* gAdditional_actors;
+
+// GLOBAL: CARMA2_HW 0x006b7820
+tBrender_storage* gStorageForCallbacks;
 
 // GLOBAL: CARMA2_HW 0x006aaa2c
 int gDisallow_duplicates;
@@ -346,7 +350,40 @@ int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) 
     return 0;
 }
 
-// LoadAllImagesInDirectory
+// FUNCTION: CARMA2_HW 0x005028f0
+void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path) {
+    tPath_name pathCopy;
+    tPath_name pixPath;
+    tPath_name tifPath;
+    tName_list list;
+    int i;
+
+    C2_HOOK_BUG_ON(sizeof(tBrender_storage) != 68);
+
+    gStorageForCallbacks = pStorage_space;
+    // TwatPIX16(path);
+    list.size = 0;
+    strcpy(pathCopy, path);
+    if (gDisableTiffConversion) {
+        PFForEveryFile2(pathCopy, (tEnumPathCallback)GetAdditionalFileName, &list);
+    }
+    if (!gDisableTiffConversion) {
+        PathCat(tifPath, pathCopy, "TIFFX");
+        PFForEveryFile2(tifPath, (tEnumPathCallback)GetFileName, &list);
+    }
+    PathCat(pixPath, pathCopy, "PIX8");
+    PFForEveryFile2(pixPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+    if (!gDisableTiffConversion) {
+        PathCat(tifPath, pathCopy, "TIFFRGB");
+        PFForEveryFile2(tifPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+    }
+    PathCat(pixPath, pathCopy, "PIX16");
+    PFForEveryFile2(pixPath, (tEnumPathCallback)GetAdditionalFileName, &list);
+    for (i = 0; i < list.size; i++) {
+        PathCat(pathCopy, path, list.items[i]);
+        AddPixelmaps(gStorageForCallbacks, pathCopy);
+    }
+}
 
 // LoadIfItsAMaterial
 
