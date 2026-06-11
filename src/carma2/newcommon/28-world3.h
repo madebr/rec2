@@ -88,7 +88,7 @@ extern int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const
 
 extern void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM);
 
-// LoadIfItsAPixelmap
+extern void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath);
 
 // LoadAllPixelmapsInDirectory
 

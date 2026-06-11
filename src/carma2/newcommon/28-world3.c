@@ -333,7 +333,15 @@ void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM) {
     pM->vertices = NULL;
 }
 
-// LoadIfItsAPixelmap
+// FUNCTION: CARMA2_HW 0x005024b0
+void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath) {
+    char s[256];
+
+    Uppercaseificate(s, pPath);
+    if (strstr(s, ".PIX") != NULL) {
+        AddPixelmaps(gStorageForCallbacks, pPath);
+    }
+}
 
 // LoadAllPixelmapsInDirectory
 
