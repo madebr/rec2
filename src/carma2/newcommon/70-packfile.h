@@ -48,6 +48,6 @@ extern void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt);
 
 extern void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void);
 
-// PackFileRerevertTiffLoading
+extern void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void);
 
 #endif // GUARD_70_PACKFILE_H
