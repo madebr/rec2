@@ -1,6 +1,10 @@
 #include "28-world3.h"
 
 #include "52-errors.h"
+#include "41-utility.h"
+#include "rec2_macros.h"
+
+#include <string.h>
 
 // GLOBAL: CARMA2_HW 0x006b75c0
 br_actor* gAdditional_actors;
@@ -151,7 +155,40 @@ tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStora
 
 // GetFileName
 
-// GetAdditionalFileName
+// FUNCTION: CARMA2_HW 0x00502780
+int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) {
+    tPath_name pathCopy;
+    tPath_name upperPath;
+    tPath_name dir_path;
+    tPath_name stem_path;
+    int alreadyInList;
+    int i;
+
+    strcpy(pathCopy, path);
+    Uppercaseificate(upperPath, pathCopy);
+
+    if (strstr(upperPath, ".PIX") == NULL
+            && strstr(upperPath, ".P16") == NULL
+            && strstr(upperPath, ".P08") == NULL
+            && strstr(upperPath, ".TIF") == NULL) {
+        return 0;
+    }
+    SepDirAndFilename(upperPath, dir_path, stem_path);
+
+    for (i = 0, alreadyInList = 0; i < pList->size; i++) {
+        if (strcmp(pList->items[i], stem_path) == 0) {
+            alreadyInList = 1;
+            break;
+        }
+    }
+    if (!alreadyInList) {
+        strcpy(pList->items[pList->size], stem_path);
+        if (pList->size < (int)REC2_ASIZE(pList->items)) {
+            pList->size += 1;
+        }
+    }
+    return 0;
+}
 
 // LoadAllImagesInDirectory
 

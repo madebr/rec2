@@ -94,7 +94,7 @@ extern tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage*
 
 // GetFileName
 
-// GetAdditionalFileName
+extern int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList);
 
 // LoadAllImagesInDirectory
 
