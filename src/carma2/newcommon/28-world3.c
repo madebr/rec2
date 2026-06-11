@@ -460,7 +460,14 @@ void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
     }
 }
 
-// LoadAllMaterialsInDirectory
+// FUNCTION: CARMA2_HW 0x00502ad0
+void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
+
+    gMaterial_shading_for_callback = pShading;
+    gStorage_for_callbacks = pStorage;
+    PFForEveryFile(pPath, LoadIfItsAMaterial);
+    gMaterial_shading_for_callback = kRendererShadingType_Undefined;
+}
 
 // LoadIfItsAModel
 
