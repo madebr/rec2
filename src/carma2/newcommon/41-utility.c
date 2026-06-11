@@ -596,7 +596,14 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* p
     }
 }
 
-// MungeMetaCharactersChar
+// FUNCTION: CARMA2_HW 0x00519040
+void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar) {
+    char repl[2];
+
+    repl[1] = '\0';
+    repl[0] = pChar;
+    MungeMetaCharacters(pText, pKey, &pChar);
+}
 
 // MungeMetaCharactersNum
 

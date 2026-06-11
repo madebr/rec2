@@ -205,7 +205,7 @@ extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
 extern void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl);
 
-// MungeMetaCharactersChar
+extern void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar);
 
 // MungeMetaCharactersNum
 
