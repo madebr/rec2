@@ -228,7 +228,17 @@ br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned in
     NOT_IMPLEMENTED();
 }
 
-// PFftell
+// FUNCTION: CARMA2_HW 0x004b4b00
+int C2_HOOK_FASTCALL PFftell(FILE* pF) {
+    int pos;
+
+    if ((uintptr_t)pF >= REC2_ASIZE(gTwatVfsFiles)) {
+        return ftell(pF);
+    }
+    pos = gTwatVfsFiles[(uintptr_t)pF].pos - gTwatVfsFiles[(uintptr_t)pF].start;
+    gTwatVfsFiles[(uintptr_t)pF].error = 0;
+    return pos;
+}
 
 // FUNCTION: CARMA2_HW 0x004b4b70
 int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {

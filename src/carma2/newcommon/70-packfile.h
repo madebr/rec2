@@ -30,7 +30,7 @@ extern br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned in
 
 extern br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, void* f);
 
-// PFftell
+extern int C2_HOOK_FASTCALL PFftell(FILE* pF);
 
 extern int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence);
 
