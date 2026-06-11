@@ -1,6 +1,5 @@
 targets:
   CARMA2_HW:
-    icon: reccmp/icons/unknown.png
     filename: CARMA2_HW.EXE
     source_root:
       - src/brender
@@ -19,7 +18,6 @@ targets:
     hash:
       sha256: 5722433d8b66f9b613a399618e48ff27256eb396cce8b9fa2a3032b91c32b55c
   LAUNCHER:
-    icon: reccmp/icons/carma2.png
     filename: carma2.exe
     source_root: src/launcher
     hash:
