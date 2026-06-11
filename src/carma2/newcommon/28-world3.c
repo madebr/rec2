@@ -505,7 +505,15 @@ void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, co
     gMaterial_shading_for_callback = kRendererShadingType_Undefined;
 }
 
-// LoadIfItsAModel
+// FUNCTION: CARMA2_HW 0x00502b20
+void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath) {
+    char s[256];
+
+    Uppercaseificate(s, pPath);
+    if (strstr(s, ".DAT") != NULL) {
+        AddModels(gStorage_for_callbacks, pPath);
+    }
+}
 
 // LoadAllModelsInDirectory
 

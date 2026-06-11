@@ -102,7 +102,7 @@ extern void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath);
 
 extern void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 
-// LoadIfItsAModel
+extern void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath);
 
 // LoadAllModelsInDirectory
 
