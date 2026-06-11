@@ -205,9 +205,9 @@ extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
 extern void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl);
 
-extern void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar);
+extern void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pMeta, char pChar);
 
-// MungeMetaCharactersNum
+extern void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum);
 
 // DrPixelmapRectangleCopyPossibleLock
 

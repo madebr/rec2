@@ -597,15 +597,21 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* p
 }
 
 // FUNCTION: CARMA2_HW 0x00519040
-void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar) {
+void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pMeta, char pChar) {
     char repl[2];
 
     repl[1] = '\0';
     repl[0] = pChar;
-    MungeMetaCharacters(pText, pKey, &pChar);
+    MungeMetaCharacters(pText, pMeta, &pChar);
 }
 
-// MungeMetaCharactersNum
+// FUNCTION: CARMA2_HW 0x005190f0
+void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) {
+    char text[16];
+
+    sprintf(text, "%d", pNum);
+    MungeMetaCharacters(pText, pMeta, text);
+}
 
 // DrPixelmapRectangleCopyPossibleLock
 
