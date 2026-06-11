@@ -107,7 +107,7 @@ extern void C2_HOOK_FASTCALL PossibleService(void);
 
 // NormalSideOfPlane
 
-// DRMaterialClone
+extern br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier);
 
 extern int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2);
 

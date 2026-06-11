@@ -382,7 +382,37 @@ void C2_HOOK_FASTCALL PossibleService(void) {
 
 // NormalSideOfPlane
 
-// DRMaterialClone
+// FUNCTION: CARMA2_HW 0x00515780
+br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier) {
+    br_material* the_material;
+    char s[256];
+    int version;
+
+    // GLOBAL: CARMA2_HW 0x006abefc
+    static int gVersion_suffix;
+
+    the_material = BrMaterialAllocate(NULL);
+    the_material->flags = pMaterial->flags;
+    the_material->ka = pMaterial->ka;
+    the_material->kd = pMaterial->kd;
+    the_material->ks = pMaterial->ks;
+    the_material->power = pMaterial->power;
+    the_material->colour = pMaterial->colour;
+    the_material->index_base = pMaterial->index_base;
+    the_material->index_range = pMaterial->index_range;
+    the_material->index_shade = pMaterial->index_shade;
+    the_material->index_blend = pMaterial->index_blend;
+    the_material->colour_map = pMaterial->colour_map;
+    memcpy(&the_material->map_transform, &pMaterial->map_transform, sizeof(the_material->map_transform));
+    if (pSet_identifier) {
+        version = gVersion_suffix++;
+        sprintf(s, "%s(%d)", pMaterial->identifier, version);
+        the_material->identifier = BrResAllocate(the_material, strlen(s) + 1, BR_MEMORY_STRING);
+        strcpy(the_material->identifier, s);
+    }
+    BrMaterialAdd(the_material);
+    return the_material;
+}
 
 // FUNCTION: CARMA2_HW 0x00515870
 int C2_HOOK_FASTCALL DRStricmp(const char* p1, const char* p2) {
