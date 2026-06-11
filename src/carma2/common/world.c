@@ -66,13 +66,13 @@ tWall_texturing_level gWall_texturing_level = eWTL_full;
 int gRendering_accessories = 1;
 
 // GLOBAL: CARMA2_HW 0x006b7820
-tBrender_storage* gStorageForCallbacks;
+tBrender_storage* gStorage_for_callbacks;
 
 // GLOBAL: CARMA2_HW 0x006aaa20
-br_pixelmap* gAddedPixelmap;
+br_pixelmap* gDuplicate_pixelmap;
 
 // GLOBAL: CARMA2_HW 0x006aaa2c
-int gDisallowDuplicates;
+int gDisallow_duplicates;
 
 // GLOBAL: CARMA2_HW 0x00660cb8
 tRendererShadingType gMaterial_shading_for_callback = kRendererShadingType_Undefined;
@@ -602,7 +602,7 @@ void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char*
 }
 
 // FUNCTION: CARMA2_HW 0x005026b0
-int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list *pList) {
+int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList) {
     tPath_name pathCopy;
     tPath_name pathUpper;
     tPath_name dir_path;
@@ -623,7 +623,7 @@ int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list
 }
 
 // FUNCTION: CARMA2_HW 0x00502780
-int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pList) {
+int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList) {
     tPath_name pathCopy;
     tPath_name upperPath;
     tPath_name dir_path;
@@ -695,9 +695,9 @@ void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage) {
 tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {
     int i;
 
-    gAddedPixelmap = NULL;
+    gDuplicate_pixelmap = NULL;
     if (pStorage_space->pixelmaps_count >= pStorage_space->max_pixelmaps) {
-        gAddedPixelmap = NULL;
+        gDuplicate_pixelmap = NULL;
         return eStorage_not_enough_room;
     }
 
@@ -705,7 +705,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* p
         if (pStorage_space->pixelmaps[i]->identifier != NULL
             && pThe_pm->identifier != NULL
             && strcmp(pStorage_space->pixelmaps[i]->identifier, pThe_pm->identifier) == 0) {
-            gAddedPixelmap = pStorage_space->pixelmaps[i];
+            gDuplicate_pixelmap = pStorage_space->pixelmaps[i];
             return eStorage_duplicate;
         }
     }
@@ -1342,7 +1342,7 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
             FatalError(kFatalError_InsufficientPixelmapSlots);
             break;
         case eStorage_duplicate:
-            if (gDisallowDuplicates) {
+            if (gDisallow_duplicates) {
                 FatalError(kFatalError_DuplicatePixelmap_S, pixelmaps[i]->identifier);
             }
             BrPixelmapFree(pixelmaps[i]);
@@ -1372,25 +1372,25 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     TwatPIX16(path);
     list.size = 0;
     strcpy(pathCopy, path);
-    gStorageForCallbacks = pStorage_space;
+    gStorage_for_callbacks = pStorage_space;
     if (gDisableTiffConversion) {
-        PFForEveryFile2(pathCopy, (tEnumPathCallback)AddTextureFileStemToList, &list);
+        PFForEveryFile2(pathCopy, (tEnumPathCallback)GetAdditionalFileName, &list);
     }
     if (!gDisableTiffConversion) {
         PathCat(tempPath, pathCopy, "TIFFX");
-        PFForEveryFile2(tempPath, (tEnumPathCallback)AddTexturePixTifFileStemToList, &list);
+        PFForEveryFile2(tempPath, (tEnumPathCallback)GetFileName, &list);
     }
     PathCat(tempPath, pathCopy, "PIX8");
-    PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    PFForEveryFile2(tempPath, (tEnumPathCallback)GetAdditionalFileName, &list);
     if (!gDisableTiffConversion) {
         PathCat(tempPath, pathCopy, "TIFFRGB");
-        PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+        PFForEveryFile2(tempPath, (tEnumPathCallback)GetAdditionalFileName, &list);
     }
     PathCat(tempPath, pathCopy, "PIX16");
-    PFForEveryFile2(tempPath, (tEnumPathCallback)AddTextureFileStemToList, &list);
+    PFForEveryFile2(tempPath, (tEnumPathCallback)GetAdditionalFileName, &list);
     for (i = 0; i < list.size; i++) {
         PathCat(tempPath, path, list.items[i]);
-        AddPixelmaps(gStorageForCallbacks, tempPath);
+        AddPixelmaps(gStorage_for_callbacks, tempPath);
     }
 }
 
@@ -1587,6 +1587,7 @@ int C2_HOOK_FASTCALL FindLastOccurrenceOfString_CaseInsensitive(int* offset, con
     }
 }
 
+// FUNCTION: CARMA2_HW 0x005010e0
 tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st) {
     int i;
 
@@ -1618,7 +1619,7 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
     if (strstr(s, ".TAB") == NULL) {
         return;
     }
-    storage_space = gStorageForCallbacks;
+    storage_space = gStorage_for_callbacks;
     total = BrPixelmapLoadMany(pPath, temp_array, REC2_ASIZE(temp_array));
     if (total == 0) {
         FatalError(kFatalError_CannotLoadShadeTableFileOrItIsEmpty_S, pPath);
@@ -1633,7 +1634,7 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
             break;
 
         case eStorage_duplicate:
-            if (gDisallowDuplicates) {
+            if (gDisallow_duplicates) {
                 FatalError(kFatalError_DuplicatePixelmap_S, temp_array[i]->identifier);
             }
             BrPixelmapFree(temp_array[i]);
@@ -1648,7 +1649,7 @@ void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath) {
 // FUNCTION: CARMA2_HW 0x00502b60
 void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
-    gStorageForCallbacks = pStorage;
+    gStorage_for_callbacks = pStorage;
     PFForEveryFile(pPath, LoadIfItsAShadeTable);
 }
 
@@ -1658,14 +1659,14 @@ void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath) {
 
     Uppercaseificate(s, pPath);
     if (strstr(s, ".PIX") != NULL) {
-        AddPixelmaps(gStorageForCallbacks, pPath);
+        AddPixelmaps(gStorage_for_callbacks, pPath);
     }
 }
 
 // FUNCTION: CARMA2_HW 0x00502490
 void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath) {
 
-    gStorageForCallbacks = pStorage;
+    gStorage_for_callbacks = pStorage;
     PFForEveryFile(pPath, LoadIfItsAPixelmap);
 }
 
@@ -1685,11 +1686,11 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, con
             FatalError(kFatalError_InsufficientPixelmapSlots);
             break;
         case eStorage_duplicate:
-            if (gDisallowDuplicates) {
+            if (gDisallow_duplicates) {
                 FatalError(kFatalError_DuplicatePixelmap_S, map->identifier);
             }
             BrPixelmapFree(map);
-            return gAddedPixelmap;
+            return gDuplicate_pixelmap;
         case eStorage_allocated:
             BrMapAdd(map);
             return map;
@@ -1710,7 +1711,7 @@ void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
     }
     Uppercaseificate(s, pPath);
     if (strstr(s, ".MAT") != NULL) {
-        AddMaterials(gStorageForCallbacks, pPath, shading);
+        AddMaterials(gStorage_for_callbacks, pPath, shading);
     }
 }
 
@@ -1718,7 +1719,7 @@ void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
 void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
 
     gMaterial_shading_for_callback = pShading;
-    gStorageForCallbacks = pStorage;
+    gStorage_for_callbacks = pStorage;
     PFForEveryFile(pPath, LoadIfItsAMaterial);
     gMaterial_shading_for_callback = kRendererShadingType_Undefined;
 }
@@ -1767,7 +1768,7 @@ int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* 
             FatalError(kFatalError_InsufficientMaterialSlots);
             break;
         case eStorage_duplicate:
-            if (gDisallowDuplicates) {
+            if (gDisallow_duplicates) {
                 FatalError(kFatalError_DuplicateMaterial_S, temp_array[i]->identifier);
             }
             BrMaterialFree(temp_array[i]);
@@ -1796,7 +1797,7 @@ br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_spac
             break;
 
         case eStorage_duplicate:
-            if (gDisallowDuplicates) {
+            if (gDisallow_duplicates) {
                 FatalError(kFatalError_DuplicateMaterial_S, temp->identifier);
             }
             BrMaterialFree(temp);
@@ -1846,7 +1847,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_sp
         break;
 
     case eStorage_duplicate:
-        if (gDisallowDuplicates) {
+        if (gDisallow_duplicates) {
             FatalError(kFatalError_DuplicatePixelmap_S, temp->identifier);
         }
         BrPixelmapFree(temp);
@@ -1906,7 +1907,7 @@ int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPa
             FatalError(kFatalError_InsufficientModelSlots);
             break;
         case eStorage_duplicate:
-            if (gDisallowDuplicates) {
+            if (gDisallow_duplicates) {
                 FatalError(kFatalError_DuplicateModel_S, temp_array[i]->identifier);
             }
             BrModelFree(temp_array[i]);
@@ -1923,20 +1924,20 @@ int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPa
 }
 
 // FUNCTION: CARMA2_HW 0x00502b20
-void C2_HOOK_FASTCALL LoadIfItsAMode(const char* pPath) {
+void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath) {
     char s[256];
 
     Uppercaseificate(s, pPath);
     if (strstr(s, ".DAT") != NULL) {
-        AddModels(gStorageForCallbacks, pPath);
+        AddModels(gStorage_for_callbacks, pPath);
     }
 }
 
 // FUNCTION: CARMA2_HW 0x00502b00
 void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath) {
 
-    gStorageForCallbacks = pStorage;
-    PFForEveryFile(pPath, LoadIfItsAMode);
+    gStorage_for_callbacks = pStorage;
+    PFForEveryFile(pPath, LoadIfItsAModel);
 }
 
 // FUNCTION: CARMA2_HW 0x00502cf0
@@ -1956,7 +1957,7 @@ void C2_HOOK_FASTCALL DisallowDuplicates(void) {
 // FUNCTION: CARMA2_HW 0x00502d70
 void C2_HOOK_FASTCALL AllowDuplicates(void) {
 
-    gDisallowDuplicates = 0;
+    gDisallow_duplicates = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00502d80

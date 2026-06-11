@@ -3014,7 +3014,7 @@ void C2_HOOK_FASTCALL InitializePalettes(void) {
     if (gRender_palette == NULL) {
         FatalError(kFatalError_unableToFindRequiredPalette);
     }
-    VerifyPaletteBlackness(gRender_palette);
+    NobbleNonzeroBlacks(gRender_palette);
     gOrig_render_palette = BrPixelmapAllocateSub(gRender_palette, 0, 0, gRender_palette->width, gRender_palette->height);
     gOrig_render_palette->pixels = BrMemAllocate(256 * sizeof(br_uint_32), kMem_misc);
     memcpy(gOrig_render_palette->pixels, gRender_palette->pixels, 256 * sizeof(br_uint_32));
@@ -3737,7 +3737,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
     C2_HOOK_BUG_ON(sizeof(*pCar_spec) != 6500);
     memset(pCar_spec, 0, sizeof(*pCar_spec));
 
-    prev_storage = gStorageForCallbacks;
+    prev_storage = gStorage_for_callbacks;
     gCurrent_car_spec = pCar_spec;
 
     if (pDriver == eDriver_local_human) {
@@ -4514,7 +4514,7 @@ void C2_HOOK_FASTCALL LoadCar(const char* pCar_name, tDriver pDriver, tCar_spec*
             BrMaterialUpdate(material, BR_MATU_ALL);
         }
     }
-    gStorageForCallbacks = prev_storage;
+    gStorage_for_callbacks = prev_storage;
 }
 
 // FUNCTION: CARMA2_HW 0x0048cda0
@@ -5113,13 +5113,13 @@ void C2_HOOK_FASTCALL SmoothlyLoadIfItsAModel(const char* pPath) {
 
     Uppercaseificate(s, pPath);
     if (strstr(s, ".DAT") != NULL) {
-        AddSmoothModels(gStorageForCallbacks, pPath);
+        AddSmoothModels(gStorage_for_callbacks, pPath);
     }
 }
 
 // FUNCTION: CARMA2_HW 0x004f6520
 void C2_HOOK_FASTCALL LoadTrackModels(tBrender_storage *pStorage, const char *pPath) {
-    gStorageForCallbacks = pStorage;
+    gStorage_for_callbacks = pStorage;
     PFForEveryFile(pPath, SmoothlyLoadIfItsAModel);
 }
 
