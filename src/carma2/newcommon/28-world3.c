@@ -12,6 +12,9 @@ br_actor* gAdditional_actors;
 // GLOBAL: CARMA2_HW 0x006aaa20
 br_pixelmap* gDuplicate_pixelmap;
 
+// GLOBAL: CARMA2_HW 0x006aaa28
+br_material* gDuplicate_material;
+
 // TurnOnCloaking
 
 // RemoveFromCloakingList
@@ -131,7 +134,28 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage*
     }
 }
 
-// AddMaterialToStorage
+// FUNCTION: CARMA2_HW 0x00501190
+tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat) {
+    int i;
+
+    gDuplicate_material = NULL;
+    if (pStorage_space->materials_count < pStorage_space->max_materials) {
+        for (i = 0; i < pStorage_space->materials_count; i++) {
+            if (pStorage_space->materials[i]->identifier
+                    && pThe_mat->identifier
+                    && strcmp(pStorage_space->materials[i]->identifier, pThe_mat->identifier) == 0) {
+                gDuplicate_material = pStorage_space->materials[i];
+                return eStorage_duplicate;
+            }
+        }
+        pStorage_space->materialProps[pStorage_space->materials_count] = 0; /* FIXME */
+        pStorage_space->materials[pStorage_space->materials_count] = pThe_mat;
+        pStorage_space->materials_count++;
+        return eStorage_allocated;
+    } else {
+        return eStorage_not_enough_room;
+    }
+}
 
 // AddModelToStorage
 

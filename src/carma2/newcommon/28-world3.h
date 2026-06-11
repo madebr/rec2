@@ -64,7 +64,7 @@ extern tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_sto
 
 extern tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st);
 
-// AddMaterialToStorage
+extern tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat);
 
 // AddModelToStorage
 
