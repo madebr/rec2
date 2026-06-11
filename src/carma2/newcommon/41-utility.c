@@ -8,8 +8,8 @@
 #include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
-
 #include "c2_string.h"
+
 #include <ctype.h>
 
 
@@ -615,7 +615,27 @@ void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) 
 
 // DrPixelmapRectangleCopyPossibleLock
 
-// PixelmapSwapByteOrder
+// FUNCTION: CARMA2_HW 0x005191f0
+void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap) {
+
+#if 0 // FIXME: introduce endian.h-like rec2_endian.h heder
+    br_uint_16 y;
+    br_uint_8* row_ptr;
+    br_colour* ptr;
+    int w;
+
+    row_ptr = pMap->pixels;
+    for (y = 0; y < pMap->height; y++) {
+        w = (pMap->width * 2) / sizeof(br_colour);
+        ptr = (br_colour*) row_ptr;
+        while (w) {
+            *ptr = (*ptr >> 0x18) + (*ptr << 0x18) + ((*ptr >> 0x8) & 0xff00) + ((*ptr & 0xff00) <<0x8);
+            ptr++;
+        }
+        row_ptr += pMap->row_bytes;
+    }
+#endif
+}
 
 // FUNCTION: CARMA2_HW 0x005193f0
 void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2) {

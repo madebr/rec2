@@ -211,7 +211,7 @@ extern void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int
 
 // DrPixelmapRectangleCopyPossibleLock
 
-// PixelmapSwapByteOrder
+extern void C2_HOOK_FASTCALL PixelmapSwapByteOrder(br_pixelmap* pMap);
 
 extern void C2_HOOK_FASTCALL EnsurePixelmapAllowed(br_pixelmap* pMap, undefined4 pArg2);
 
