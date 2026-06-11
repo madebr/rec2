@@ -11,9 +11,9 @@ extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
 extern void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src);
 
-// CheckQuit
+extern int C2_HOOK_FASTCALL CheckQuit(void);
 
-// sqr
+extern double C2_HOOK_FASTCALL sqr(double pN);
 
 extern int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 

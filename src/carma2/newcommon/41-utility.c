@@ -78,7 +78,11 @@ int C2_HOOK_FASTCALL CheckQuit(void) {
     return result;
 }
 
-// sqr
+// FUNCTION: CARMA2_HW 0x00513510
+double C2_HOOK_FASTCALL sqr(double pN) {
+
+    return pN * pN;
+}
 
 // FUNCTION: CARMA2_HW 0x00513520
 int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
