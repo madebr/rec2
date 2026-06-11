@@ -26,6 +26,9 @@ br_material* gDuplicate_material;
 // GLOBAL: CARMA2_HW 0x006aaa24
 br_model* gDuplicate_model;
 
+// GLOBAL: CARMA2_HW 0x00660cb8
+tRendererShadingType gMaterial_shading_for_callback = kRendererShadingType_Undefined;
+
 // TurnOnCloaking
 
 // RemoveFromCloakingList
@@ -441,7 +444,21 @@ void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space,
     }
 }
 
-// LoadIfItsAMaterial
+// FUNCTION: CARMA2_HW 0x00502a70
+void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath) {
+    char path[256];
+    tRendererShadingType shading;
+
+    if (gMaterial_shading_for_callback == kRendererShadingType_Undefined) {
+        shading = kRendererShadingType_Default;
+    } else {
+        shading = gMaterial_shading_for_callback;
+    }
+    Uppercaseificate(path, pPath);
+    if (strstr(path, ".MAT") != NULL) {
+        AddMaterials(gStorage_for_callbacks, pPath, shading);
+    }
+}
 
 // LoadAllMaterialsInDirectory
 

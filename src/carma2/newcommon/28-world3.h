@@ -98,7 +98,7 @@ extern int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* 
 
 extern void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path);
 
-// LoadIfItsAMaterial
+extern void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath);
 
 // LoadAllMaterialsInDirectory
 
