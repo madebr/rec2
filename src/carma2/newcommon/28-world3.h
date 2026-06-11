@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_stora
 
 // ClearOutStorageSpace
 
-// AddPixelmapToStorage
+extern tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm);
 
 // AddShadeTableToStorage
 
@@ -70,7 +70,7 @@ extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_stora
 
 tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pStorage_space, int pSound_id);
 
-// AddPixelmaps
+extern int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* path);
 
 // LoadSinglePixelmap
 

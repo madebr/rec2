@@ -9,6 +9,9 @@
 // GLOBAL: CARMA2_HW 0x006b75c0
 br_actor* gAdditional_actors;
 
+// GLOBAL: CARMA2_HW 0x006aaa20
+br_pixelmap* gOriginal_pixelmap;
+
 // TurnOnCloaking
 
 // RemoveFromCloakingList
@@ -86,7 +89,27 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
 
 // ClearOutStorageSpace
 
-// AddPixelmapToStorage
+// FUNCTION: CARMA2_HW 0x00501020
+tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {
+    int i;
+
+    gOriginal_pixelmap = NULL;
+    if (pStorage_space->pixelmaps_count < pStorage_space->max_pixelmaps) {
+        for (i = 0; i < pStorage_space->pixelmaps_count; i++) {
+            if (pStorage_space->pixelmaps[i]->identifier != NULL
+                    && pThe_pm->identifier != NULL
+                    && strcmp(pStorage_space->pixelmaps[i]->identifier, pThe_pm->identifier) == 0) {
+                gOriginal_pixelmap = pStorage_space->pixelmaps[i];
+                return eStorage_duplicate;
+            }
+        }
+        pStorage_space->pixelmaps[pStorage_space->pixelmaps_count] = pThe_pm;
+        pStorage_space->pixelmaps_count += 1;
+        return eStorage_allocated;
+    } else {
+        return eStorage_not_enough_room;
+    }
+}
 
 // AddShadeTableToStorage
 
