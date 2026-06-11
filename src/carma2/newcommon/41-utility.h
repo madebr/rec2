@@ -203,7 +203,7 @@ extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
 extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
-// MungeMetaCharacters
+extern void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl);
 
 // MungeMetaCharactersChar
 

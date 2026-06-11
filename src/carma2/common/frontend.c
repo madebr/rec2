@@ -2410,7 +2410,7 @@ void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
 }
 
 // FUNCTION: CARMA2_HW 0x00518fa0
-void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
+void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl) {
     size_t len_text;
     size_t len_repl;
     size_t i;
@@ -2419,7 +2419,7 @@ void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl) {
     len_repl = strlen(pRepl);
 
     for (i = 0; i < len_text; i++) {
-        if (pText[i] == '@' && pText[i + 1] == pKey) {
+        if (pText[i] == '@' && pText[i + 1] == pMeta) {
             memmove(&pText[i + len_repl], &pText[i + 2], len_text - i - 1);
             memcpy(&pText[i], pRepl, len_repl);
             i += len_repl;

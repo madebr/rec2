@@ -164,7 +164,7 @@ br_actor* C2_HOOK_FASTCALL CreateAPOactor(void);
 
 void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor);
 
-void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pKey, char* pRepl);
+void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl);
 
 void C2_HOOK_FASTCALL MungeMetaCharactersChar(char* pText, char pKey, char pChar);
 

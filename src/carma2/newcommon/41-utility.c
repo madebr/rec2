@@ -577,7 +577,24 @@ char* C2_HOOK_FASTCALL MungeCommas(int pValue) {
     return result_buffer;
 }
 
-// MungeMetaCharacters
+// FUNCTION: CARMA2_HW 0x00518fa0
+void C2_HOOK_FASTCALL MungeMetaCharacters(char* pText, char pMeta, const char* pRepl) {
+    int len_text;
+    int len_repl;
+    int i;
+
+    len_text = strlen(pText);
+    len_repl = strlen(pRepl);
+
+    for (i = 0; i < len_text; i++) {
+        if (pText[i] == '@' && pText[i + 1] == pMeta) {
+            memmove(&pText[i + len_repl], &pText[i + 2], len_text - i - 1);
+            memcpy(&pText[i], pRepl, len_repl);
+            i += len_repl;
+            len_text += len_repl - 2;
+        }
+    }
+}
 
 // MungeMetaCharactersChar
 
