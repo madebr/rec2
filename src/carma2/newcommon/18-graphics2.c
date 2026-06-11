@@ -75,24 +75,51 @@ char* gCurrent_palette_pixels;
 int gFaded_palette;
 
 // FUNCTION: CARMA2_HW 0x004b4fd0
-void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pPalette, int pFirst_colour, int pCount) {
+void C2_HOOK_FASTCALL DRSetPaletteEntries(br_pixelmap* pThe_palette, int pFirst_colour, int pCount) {
 
     if (!pFirst_colour) {
-        ((br_int_32*)pPalette->pixels)[0] = 0;
+        ((br_int_32*)pThe_palette->pixels)[0] = 0;
     }
-    memcpy(gCurrent_palette_pixels + 4 * pFirst_colour, (char*)pPalette->pixels + 4 * pFirst_colour, 4 * pCount);
+    memcpy(gCurrent_palette_pixels + 4 * pFirst_colour, (char*)pThe_palette->pixels + 4 * pFirst_colour, 4 * pCount);
     gPalette_changed = 0;
     if (!gFaded_palette) {
-        PDSetPaletteEntries(pPalette, pFirst_colour, pCount);
+        PDSetPaletteEntries(pThe_palette, pFirst_colour, pCount);
     }
     gPalette_munged = 1;
 }
 
-// DRSetPalette3
+void C2_HOOK_FASTCALL DRSetPalette3(br_pixelmap* pThe_palette, int pSet_current_palette) {
 
-// DRSetPalette2
+    if (pSet_current_palette) {
+        memcpy(gCurrent_palette_pixels, pThe_palette->pixels, 256 * sizeof(br_colour));
+    }
+    gPalette_changed = 0;
+    if (!gFaded_palette) {
+        PDSetPalette(pThe_palette);
+    }
+    if (pThe_palette != gRender_palette) {
+        gPalette_munged |= 0x1;
+    }
+}
 
-// DRSetPalette
+void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_current_palette) {
+
+    ((br_int_32*)pThe_palette->pixels)[0] = 0;
+    if (pSet_current_palette) {
+        memcpy(gCurrent_palette_pixels, pThe_palette->pixels, 256 * sizeof(br_colour));
+    }
+    gPalette_changed = 0;
+    if (!gFaded_palette) {
+        PDSetPalette(pThe_palette);
+    }
+    gPalette_munged |= pThe_palette != gRender_palette;
+}
+
+// FUNCTION: CARMA2_HW 0x004b5030
+void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette) {
+
+    DRSetPalette2(pThe_palette, 1);
+}
 
 // FUNCTION: CARMA2_HW 0x004b5090
 void C2_HOOK_FASTCALL InitializePalettes(void) {
