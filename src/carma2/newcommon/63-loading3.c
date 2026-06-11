@@ -163,7 +163,20 @@ void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name) {
     BrMaterialAddMany(material_array, number_of_materials);
 }
 
-// DRLoadModels
+// FUNCTION: CARMA2_HW 0x0048f230
+void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
+    int i;
+    br_model* model_array[100];
+    int number_of_models;
+
+    PossibleService();
+    number_of_models = BrModelLoadMany(pPath_name, model_array, REC2_ASIZE(model_array));
+    WhitenVertexRGB(model_array, number_of_models);
+    for (i = 0; i < number_of_models; i++) {
+        model_array[i]->flags = BR_MODF_UPDATEABLE;
+    }
+    BrModelAddMany(model_array, number_of_models);
+}
 
 // DRLoadActors
 
