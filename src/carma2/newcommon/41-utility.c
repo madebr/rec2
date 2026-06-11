@@ -77,7 +77,11 @@ int C2_HOOK_FASTCALL PercentageChance(int pC) {
     return IRandomBetween(0, 99) < pC;
 }
 
-// IRandomPosNeg
+// FUNCTION: CARMA2_HW 0x00513580
+int C2_HOOK_FASTCALL IRandomPosNeg(int pN) {
+
+    return IRandomBetween(-pN, pN);
+}
 
 // FRandomBetween
 

@@ -19,7 +19,7 @@ extern int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 
 extern int C2_HOOK_FASTCALL PercentageChance(int pC);
 
-// IRandomPosNeg
+extern int C2_HOOK_FASTCALL IRandomPosNeg(int pN);
 
 // FRandomBetween
 
