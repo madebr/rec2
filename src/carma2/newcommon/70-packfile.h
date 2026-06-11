@@ -40,7 +40,7 @@ extern int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
 
 extern void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 
-// PFForEveryFile2
+extern void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallback, void* data);
 
 extern tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path);
 

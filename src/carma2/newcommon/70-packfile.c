@@ -309,7 +309,23 @@ void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecur
     PDForEveryFile(pThe_path, pAction_routine);
 }
 
-// PFForEveryFile2
+// FUNCTION: CARMA2_HW 0x004b4d30
+void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallback, void* data) {
+    int twt;
+    int i;
+    tPath_name twt_filePath;
+
+    for (twt = 0; twt < (int)REC2_ASIZE(gTwatVfsMountPoints); twt++) {
+        if (gTwatVfsMountPoints[twt].header != NULL && DRStricmp(gTwatVfsMountPoints[twt].path, path) == 0) {
+            for (i = 0; i < gTwatVfsMountPoints[twt].header->nbFiles; i++) {
+                PathCat(twt_filePath, path, gTwatVfsMountPoints[twt].header->fileHeaders[i].filename);
+                pCallback(twt_filePath, data);
+            }
+            return;
+        }
+    }
+    PDEnumPath(path, pCallback, data);
+}
 
 // FUNCTION: CARMA2_HW 0x004b4df0
 tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
