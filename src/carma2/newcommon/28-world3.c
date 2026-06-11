@@ -10,7 +10,7 @@
 br_actor* gAdditional_actors;
 
 // GLOBAL: CARMA2_HW 0x006aaa20
-br_pixelmap* gOriginal_pixelmap;
+br_pixelmap* gDuplicate_pixelmap;
 
 // TurnOnCloaking
 
@@ -93,13 +93,13 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
 tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {
     int i;
 
-    gOriginal_pixelmap = NULL;
+    gDuplicate_pixelmap = NULL;
     if (pStorage_space->pixelmaps_count < pStorage_space->max_pixelmaps) {
         for (i = 0; i < pStorage_space->pixelmaps_count; i++) {
             if (pStorage_space->pixelmaps[i]->identifier != NULL
                     && pThe_pm->identifier != NULL
                     && strcmp(pStorage_space->pixelmaps[i]->identifier, pThe_pm->identifier) == 0) {
-                gOriginal_pixelmap = pStorage_space->pixelmaps[i];
+                gDuplicate_pixelmap = pStorage_space->pixelmaps[i];
                 return eStorage_duplicate;
             }
         }
