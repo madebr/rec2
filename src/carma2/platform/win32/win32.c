@@ -992,7 +992,7 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
         dr_dprintf("%s: lock seldom", gScreen->identifier);
     } else {
         dr_dprintf("%s: lock often", gScreen->identifier);
-        gScreen_lock_often = 1;
+        gLock_often = 1;
     }
     gShadow_workaround = 1; /* Not 100% sure this is shadow related */
     gEnable_texture_interpolation = 1;

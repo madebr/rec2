@@ -54,7 +54,7 @@ extern char gQuick_time_movie_path_stub[256];
 extern int gNet_last_game_type;
 extern int gMap_view;
 
-extern int gScreen_lock_often;
+extern int gLock_often;
 extern int gShadow_workaround;
 extern int gEnable_texture_interpolation;
 extern int gEnable_texture_antialiasing;
