@@ -553,7 +553,29 @@ void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount) {
 
 // GetBlenficatiousnessOfMaterial
 
-// MungeCommas
+// FUNCTION: CARMA2_HW 0x00518f20
+char* C2_HOOK_FASTCALL MungeCommas(int pValue) {
+    // GLOBAL: CARMA2_HW 0x006b5f20
+    static char result_buffer[32];
+    char buffer[32];
+    int len;
+    int get_pos;
+    int put_pos;
+    int remaining;
+
+    sprintf(buffer, "%i", pValue);
+    len = (int)strlen(buffer);
+    for (get_pos = 0, put_pos = 0, remaining = len; get_pos < len; get_pos++, put_pos++, remaining--) {
+
+        if (remaining % 3 == 0 && get_pos != 0) {
+            result_buffer[put_pos] = gMisc_strings[294][0];
+            put_pos++;
+        }
+        result_buffer[put_pos] = buffer[get_pos];
+    }
+    result_buffer[put_pos] = '\0';
+    return result_buffer;
+}
 
 // MungeMetaCharacters
 

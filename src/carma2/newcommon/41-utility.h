@@ -201,7 +201,7 @@ extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
 // GetBlenficatiousnessOfMaterial
 
-// MungeCommas
+extern char* C2_HOOK_FASTCALL MungeCommas(int pValue);
 
 // MungeMetaCharacters
 
