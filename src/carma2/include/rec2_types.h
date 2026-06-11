@@ -1481,7 +1481,7 @@ typedef struct {
 } tBrender_storage;
 
 typedef struct {
-    size_t size;
+    int size;
     char items[1000][16];
 } tName_list;
 

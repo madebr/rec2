@@ -4,7 +4,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-// LoadInRegisteeDir
+extern void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes);
 
 extern void C2_HOOK_FASTCALL LoadInRegistees(void);
 

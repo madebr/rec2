@@ -9,7 +9,7 @@ extern char* gMisc_strings[300];
 
 extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
-// Uppercaseificate
+extern void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src);
 
 // CheckQuit
 
@@ -17,23 +17,23 @@ extern br_error C2_HOOK_FASTCALL DRBrEnd(void);
 
 extern int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB);
 
-// PercentageChance
+extern int C2_HOOK_FASTCALL PercentageChance(int pC);
 
-// IRandomPosNeg
+extern int C2_HOOK_FASTCALL IRandomPosNeg(int pN);
 
-// FRandomBetween
+extern float C2_HOOK_STDCALL FRandomBetween(float pA, float pB);
 
-// FRandomPosNeg
+extern float C2_HOOK_STDCALL FRandomPosNeg(float pN);
 
-// SRandomBetween
+extern br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB);
 
-// SRandomPosNeg
+extern br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN);
 
 extern void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2);
 
 // tandeg
 
-// GetFileLength
+extern tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF);
 
 extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW, br_uint_16 pH, void* pPixels, int pFlags);
 
@@ -43,11 +43,11 @@ extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_
 
 // DRPixelmapLoad
 
-// SepDirAndFilename
+extern void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath);
 
 // DRLoadMultiplePix
 
-// DRPixelmapLoadMany
+extern int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity);
 
 // WaitFor
 
@@ -179,13 +179,13 @@ extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
 // tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList)
 
-// NobbleNonzeroBlacks
+extern void C2_HOOK_FASTCALL NobbleNonzeroBlacks(br_pixelmap* pPalette);
 
 extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading);
 
 // FindBestColourMatch
 
-// WhitenVertexRGB
+extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
 // ArenaOpenFile
 

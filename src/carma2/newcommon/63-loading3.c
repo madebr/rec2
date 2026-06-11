@@ -119,19 +119,106 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
 
 // LoadActor
 
-// DRLoadPalette
+// FUNCTION: CARMA2_HW 0x0048f090
+void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name) {
+    br_pixelmap* palette_array[100];
+    int number_of_palettes;
+    int i;
 
-// DRLoadShadeTable
+    number_of_palettes = BrPixelmapLoadMany(pPath_name, palette_array, REC2_ASIZE(palette_array));
+    for (i = 0; i < number_of_palettes; i++) {
+        palette_array[i]->row_bytes = (palette_array[i]->row_bytes + 3) & ~0x3;
+        palette_array[i]->base_x = 0;
+        palette_array[i]->base_y = 0;
+    }
+    BrTableAddMany(palette_array, number_of_palettes);
+}
 
-// DRLoadMaterials
+// FUNCTION: CARMA2_HW 0x0048f100
+void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name) {
+    br_pixelmap* table_array[100];
+    int number_of_tables;
+    int i;
 
-// DRLoadModels
+    number_of_tables = BrPixelmapLoadMany(pPath_name, table_array, REC2_ASIZE(table_array));
+    for (i = 0; i < number_of_tables; i++) {
+        table_array[i]->row_bytes = (table_array[i]->row_bytes + 3) & ~0x3;
+        table_array[i]->base_x = 0;
+        table_array[i]->base_y = 0;
+    }
+    BrTableAddMany(table_array, number_of_tables);
+}
 
-// DRLoadActors
+// FUNCTION: CARMA2_HW 0x0048f1d0
+void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name) {
+    br_material* material_array[100];
+    int i;
+    int number_of_materials;
 
-// DRLoadLights
+    PossibleService();
+    number_of_materials = BrMaterialLoadMany(pPath_name, material_array, REC2_ASIZE(material_array));
+    for (i = 0; i < number_of_materials; i++) {
+        material_array[i]->flags &= ~BR_MATF_LIGHT;
+    }
+    BrMaterialAddMany(material_array, number_of_materials);
+}
 
-// LoadInFiles
+// FUNCTION: CARMA2_HW 0x0048f230
+void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name) {
+    int i;
+    br_model* model_array[100];
+    int number_of_models;
+
+    PossibleService();
+    number_of_models = BrModelLoadMany(pPath_name, model_array, REC2_ASIZE(model_array));
+    WhitenVertexRGB(model_array, number_of_models);
+    for (i = 0; i < number_of_models; i++) {
+        model_array[i]->flags = BR_MODF_UPDATEABLE;
+    }
+    BrModelAddMany(model_array, number_of_models);
+}
+
+// FUNCTION: CARMA2_HW 0x0048f290
+void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name) {
+    int i;
+    br_actor* actor_array[100];
+    int number_of_actors;
+
+    PossibleService();
+    number_of_actors = BrActorLoadMany(pPath_name, actor_array, REC2_ASIZE(actor_array));
+    for (i = 0; i < number_of_actors; i++) {
+        gActor_array[gNumber_of_actors] = actor_array[i];
+        gNumber_of_actors++;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0048f2e0
+void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name) {
+    br_actor* actor;
+    br_light* light;
+
+    actor = BrActorAllocate(BR_ACTOR_LIGHT, NULL);
+    light = actor->type_data;
+    light->type = BR_LIGHT_DIRECT;
+    light->colour = BR_COLOUR_RGB(gLighting_data.directional.red, gLighting_data.directional.green, gLighting_data.directional.blue);
+    light->attenuation_c = 1.0f;
+    BrMatrix34RotateX(&actor->t.t.mat, BR_ANGLE_DEG(-60));
+    BrMatrix34PostRotateY(&actor->t.t.mat, BR_ANGLE_DEG(30));
+    gLight_array[gNumber_of_lights] = actor;
+    gNumber_of_lights++;
+    EnableLights();
+}
+
+// FUNCTION: CARMA2_HW 0x0048f360
+void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine) {
+    tPath_name the_path;
+    tTWTVFS twt;
+
+    PathCat(the_path, pThe_path, pArchive_name);
+    twt = OpenPackFileAndSetTiffLoading(the_path);
+    PFForEveryFile(the_path, pAction_routine);
+    ClosePackFileAndSetTiffLoading(twt);
+}
 
 // STUB: CARMA2_HW 0x0048f3b0
 int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {

@@ -1645,7 +1645,7 @@ void C2_HOOK_FASTCALL SetIntegerMapRenders(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00517fa0
-void C2_HOOK_FASTCALL VerifyPaletteBlackness(br_pixelmap* pPalette) {
+void C2_HOOK_FASTCALL NobbleNonzeroBlacks(br_pixelmap* pPalette) {
     int modified;
     int i;
     br_colour *pixels;

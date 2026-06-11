@@ -3,6 +3,7 @@
 
 #include "c2_hooks.h"
 #include "brender/brender.h"
+#include "rec2_types.h"
 
 // NearestPowerOfTwo
 
@@ -22,19 +23,19 @@ extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
 
 // LoadActor
 
-// DRLoadPalette
+extern void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name);
 
-// DRLoadShadeTable
+extern void C2_HOOK_FASTCALL DRLoadShadeTable(const char* pPath_name);
 
-// DRLoadMaterials
+extern void C2_HOOK_FASTCALL DRLoadMaterials(const char* pPath_name);
 
-// DRLoadModels
+extern void C2_HOOK_FASTCALL DRLoadModels(const char* pPath_name);
 
-// DRLoadActors
+extern void C2_HOOK_FASTCALL DRLoadActors(const char* pPath_name);
 
-// DRLoadLights
+extern void C2_HOOK_FASTCALL DRLoadLights(const char* pPath_name);
 
-// LoadInFiles
+extern void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_name, tPDForEveryFileRecurse_cbfn pAction_routine);
 
 extern int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void);
 

@@ -60,17 +60,17 @@ extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_stora
 
 // ClearOutStorageSpace
 
-// AddPixelmapToStorage
+extern tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm);
 
-// AddShadeTableToStorage
+extern tAdd_to_storage_result C2_HOOK_FASTCALL AddShadeTableToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_st);
 
-// AddMaterialToStorage
+extern tAdd_to_storage_result C2_HOOK_FASTCALL AddMaterialToStorage(tBrender_storage* pStorage_space, br_material* pThe_mat);
 
-// AddModelToStorage
+extern tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pStorage_space, br_model* pThe_mod);
 
-tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pStorage_space, int pSound_id);
+extern tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pStorage_space, int pSound_id);
 
-// AddPixelmaps
+extern int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* path);
 
 // LoadSinglePixelmap
 
@@ -80,40 +80,40 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storage* pSto
 
 extern tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id);
 
-// AddShadeTables
+extern int C2_HOOK_FASTCALL AddShadeTables(tBrender_storage* pStorage_space, const char* pPath);
 
-// AddModels
+extern int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath);
 
-// AddMaterials
+extern int C2_HOOK_FASTCALL AddMaterials(tBrender_storage* pStorage_space, const char* pPath, tRendererShadingType pShading);
 
-// DodgyModelUpdate
+extern void C2_HOOK_FASTCALL DodgyModelUpdate(br_model* pM);
 
-// LoadIfItsAPixelmap
+extern void C2_HOOK_FASTCALL LoadIfItsAPixelmap(const char* pPath);
 
-// LoadAllPixelmapsInDirectory
+extern void C2_HOOK_FASTCALL LoadAllPixelmapsInDirectory(tBrender_storage* pStorage, const char* pPath);
 
-// GetFileName
+extern int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList);
 
-// GetAdditionalFileName
+extern int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList);
 
-// LoadAllImagesInDirectory
+extern void C2_HOOK_FASTCALL LoadAllImagesInDirectory(tBrender_storage* pStorage_space, const char* path);
 
-// LoadIfItsAMaterial
+extern void C2_HOOK_FASTCALL LoadIfItsAMaterial(const char* pPath);
 
-// LoadAllMaterialsInDirectory
+extern void C2_HOOK_FASTCALL LoadAllMaterialsInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 
-// LoadIfItsAModel
+extern void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath);
 
-// LoadAllModelsInDirectory
+extern void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath);
 
 // LoadIfItsAShadeTable
 
-// LoadAllShadeTablesInDirectory
+extern void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath);
 
-// LoadAllStuffInDirectory
+extern void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath);
 
-// DisallowDuplicates
+extern void C2_HOOK_FASTCALL DisallowDuplicates(void);
 
-// AllowDuplicates
+extern void C2_HOOK_FASTCALL AllowDuplicates(void);
 
 #endif // GUARD_28_WORLD3_H

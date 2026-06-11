@@ -30,7 +30,7 @@ extern br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned in
 
 extern br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, void* f);
 
-// PFftell
+extern int C2_HOOK_FASTCALL PFftell(FILE* pF);
 
 extern int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence);
 
@@ -38,16 +38,16 @@ extern void C2_HOOK_FASTCALL PFrewind(FILE* pF);
 
 extern int C2_HOOK_FASTCALL PFfeof(FILE* pFile);
 
-// PFForEveryFile
+extern void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine);
 
-// PFForEveryFile2
+extern void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallback, void* data);
 
 extern tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path);
 
 extern void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt);
 
-// PackFileRevertTiffLoading
+extern void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void);
 
-// PackFileRerevertTiffLoading
+extern void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void);
 
 #endif // GUARD_70_PACKFILE_H

@@ -12,6 +12,7 @@
 #include "21-mainloop.h"
 #include "22-replay.h"
 #include "27-powerup.h"
+#include "28-world3.h"
 #include "30-opponent.h"
 #include "32-spark.h"
 #include "33-depth.h"
@@ -27,6 +28,7 @@
 #include "59-camera.h"
 #include "61-pedestrn.h"
 #include "62-graphics3.h"
+#include "63-loading3.h"
 #include "64-movie.h"
 #include "69-sound.h"
 #include "70-packfile.h"
@@ -88,11 +90,34 @@ int gDemo_opponents[15];
 // GLOBAL: CARMA2_HW 0x00679308
 int gCamera_type;
 
-// LoadInRegisteeDir
+void C2_HOOK_FASTCALL LoadInRegisteeDir(const char *pRoot, const char *pSubDir, int pInitialize_palettes) {
+    tPath_name the_path;
+    tPath_name the_path2;
+    tTWTVFS twt;
 
-// STUB: CARMA2_HW 0x00486e10
+    PathCat(the_path, pRoot, pSubDir);
+    LoadInFiles(the_path, "PALETTES", DRLoadPalette);
+    LoadInFiles(the_path, "SHADETAB", DRLoadShadeTable);
+
+    if (pInitialize_palettes) {
+        InitializePalettes();
+    }
+
+    PathCat(the_path2, the_path, "PIXELMAP");
+    twt = OpenPackFileAndSetTiffLoading(the_path2);
+    LoadAllImagesInDirectory(&gMisc_storage_space, the_path2);
+    ClosePackFileAndSetTiffLoading(twt);
+
+    LoadInFiles(the_path, "MATERIAL", DRLoadMaterials);
+    LoadInFiles(the_path, "MODELS", DRLoadModels);
+    LoadInFiles(the_path, "ACTORS", DRLoadActors);
+    LoadInFiles(the_path, "LIGHTS", DRLoadLights);
+}
+
+// FUNCTION: CARMA2_HW 0x00486e10
 void C2_HOOK_FASTCALL LoadInRegistees(void) {
-    NOT_IMPLEMENTED();
+
+    LoadInRegisteeDir(gApplication_path, "REG", 1);
 }
 
 void C2_HOOK_FASTCALL LoadBunchOParameters(tSlot_info* pSlot_info) {

@@ -3,6 +3,7 @@
 #include "08-loading1.h"
 #include "41-utility.h"
 #include "69-sound.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include <string.h>
@@ -227,7 +228,17 @@ br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned in
     NOT_IMPLEMENTED();
 }
 
-// PFftell
+// FUNCTION: CARMA2_HW 0x004b4b00
+int C2_HOOK_FASTCALL PFftell(FILE* pF) {
+    int pos;
+
+    if ((uintptr_t)pF >= REC2_ASIZE(gTwatVfsFiles)) {
+        return ftell(pF);
+    }
+    pos = gTwatVfsFiles[(uintptr_t)pF].pos - gTwatVfsFiles[(uintptr_t)pF].start;
+    gTwatVfsFiles[(uintptr_t)pF].error = 0;
+    return pos;
+}
 
 // FUNCTION: CARMA2_HW 0x004b4b70
 int C2_HOOK_FASTCALL PFfseek(FILE* pF, int offset, int whence) {
@@ -276,9 +287,45 @@ int C2_HOOK_FASTCALL PFfeof(FILE* pFile) {
     NOT_IMPLEMENTED();
 }
 
-// PFForEveryFile
+// FUNCTION: CARMA2_HW 0x004b4c80
+void C2_HOOK_FASTCALL PFForEveryFile(const char* pThe_path, tPDForEveryFileRecurse_cbfn pAction_routine) {
+    int twt;
+    int i;
+    char buffer[256];
 
-// PFForEveryFile2
+    for (twt = 0; twt < (int)REC2_ASIZE(gTwatVfsMountPoints); twt++) {
+        if (gTwatVfsMountPoints[twt].header == NULL) {
+            continue;
+        }
+        if (DRStricmp(pThe_path, gTwatVfsMountPoints[twt].path) != 0) {
+            continue;
+        }
+        for (i = 0; i < gTwatVfsMountPoints[twt].header->nbFiles; i++) {
+            PathCat(buffer, pThe_path, gTwatVfsMountPoints[twt].header->fileHeaders[i].filename);
+            pAction_routine(buffer);
+        }
+        return;
+    }
+    PDForEveryFile(pThe_path, pAction_routine);
+}
+
+// FUNCTION: CARMA2_HW 0x004b4d30
+void C2_HOOK_FASTCALL PFForEveryFile2(const char* path, tEnumPathCallback pCallback, void* data) {
+    int twt;
+    int i;
+    tPath_name twt_filePath;
+
+    for (twt = 0; twt < (int)REC2_ASIZE(gTwatVfsMountPoints); twt++) {
+        if (gTwatVfsMountPoints[twt].header != NULL && DRStricmp(gTwatVfsMountPoints[twt].path, path) == 0) {
+            for (i = 0; i < gTwatVfsMountPoints[twt].header->nbFiles; i++) {
+                PathCat(twt_filePath, path, gTwatVfsMountPoints[twt].header->fileHeaders[i].filename);
+                pCallback(twt_filePath, data);
+            }
+            return;
+        }
+    }
+    PDEnumPath(path, pCallback, data);
+}
 
 // FUNCTION: CARMA2_HW 0x004b4df0
 tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
@@ -298,7 +345,21 @@ void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
     NOT_IMPLEMENTED();
 }
 
-// PackFileRevertTiffLoading
+// FUNCTION: CARMA2_HW 0x004b4e60
+void C2_HOOK_FASTCALL PackFileRevertTiffLoading(void) {
+    int count;
 
-// PackFileRerevertTiffLoading
+    count = gDisableTiffConversionStackPos;
+    if (count != 0) { // or > 0 if it is unsigned
+        gDisableTiffConversionStack[count] = gDisableTiffConversion;
+        gDisableTiffConversion = gDisableTiffConversionStack[count - 1];
+    }
+}
 
+// FUNCTION: CARMA2_HW 0x004b4e90
+void C2_HOOK_FASTCALL PackFileRerevertTiffLoading(void) {
+
+    if (gDisableTiffConversionStackPos != 0) {
+        gDisableTiffConversion = gDisableTiffConversionStack[gDisableTiffConversionStackPos];
+    }
+}

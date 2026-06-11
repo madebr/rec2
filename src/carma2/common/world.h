@@ -9,7 +9,7 @@
 
 extern int gSize_powerup_queue;
 extern br_scalar gSight_distance_squared;
-extern tBrender_storage* gStorageForCallbacks;
+extern tBrender_storage* gStorage_for_callbacks;
 extern int gGroovidelics_array_size;
 extern tGroovidelic_spec* gGroovidelics_array;
 extern const char* gSmashable_track_environment_path;
@@ -84,9 +84,9 @@ int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* texture
 
 void C2_HOOK_FASTCALL ParseSpecialVolume(FILE* pF, tSpecial_volume* pSpec, char* pScreen_name_str, int soundfx);
 
-int C2_HOOK_FASTCALL AddTexturePixTifFileStemToList(const char *path, tName_list *pList);
+int C2_HOOK_FASTCALL GetFileName(const char *path, tName_list *pList);
 
-int C2_HOOK_FASTCALL AddTextureFileStemToList(const char* path, tName_list* pList);
+int C2_HOOK_FASTCALL GetAdditionalFileName(const char* path, tName_list* pList);
 
 void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pStorage_space, int pMax_pixelmaps, int pMax_shade_tables, int pMax_materials, int pMax_models, int pMax_sounds);
 
@@ -154,7 +154,7 @@ tAdd_to_storage_result C2_HOOK_FASTCALL AddModelToStorage(tBrender_storage* pSto
 
 int C2_HOOK_FASTCALL AddModels(tBrender_storage* pStorage_space, const char* pPath);
 
-void C2_HOOK_FASTCALL LoadIfItsAMode(const char* pPath);
+void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath);
 
 void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath);
 

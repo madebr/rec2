@@ -2,7 +2,10 @@
 
 #include "01-network.h"
 #include "02-init.h"
+#include "18-graphics2.h"
+#include "63-loading3.h"
 #include "69-sound.h"
+#include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
 
@@ -37,29 +40,77 @@ br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00513460
+void C2_HOOK_FASTCALL Uppercaseificate(char* dest, const char* src) {
+    int len;
+    int i;
 
-// Uppercaseificate
+    len = (int)strlen(src);
+    for (i = 0; i < (int)len; i++) {
+        dest[i] = toupper(src[i]);
+    }
+    dest[len] = '\0';
+}
 
 // CheckQuit
 
 // sqr
 
-// STUB: CARMA2_HW 0x00513520
+// FUNCTION: CARMA2_HW 0x00513520
 int C2_HOOK_FASTCALL IRandomBetween(int pA, int pB) {
-    NOT_IMPLEMENTED();
+    int num;
+
+#if RAND_MAX == 0x7fff
+    num = (pB + 1 - pA) * rand() / (RAND_MAX + 1) + pA;
+    return num;
+#else
+    num = (pB + 1 - pA) * (rand() % 0x8000) / (0x7fff + 1) + pA;
+    return num;
+#endif
 }
 
-// PercentageChance
+// FUNCTION: CARMA2_HW 0x00513550
+int C2_HOOK_FASTCALL PercentageChance(int pC) {
 
-// IRandomPosNeg
+    if (pC == 0) {
+        return 0;
+    }
+    return IRandomBetween(0, 99) < pC;
+}
 
-// FRandomBetween
+// FUNCTION: CARMA2_HW 0x00513580
+int C2_HOOK_FASTCALL IRandomPosNeg(int pN) {
 
-// FRandomPosNeg
+    return IRandomBetween(-pN, pN);
+}
 
-// SRandomBetween
+// FUNCTION: CARMA2_HW 0x005135b0
+float C2_HOOK_STDCALL FRandomBetween(float pA, float pB) {
 
-// SRandomPosNeg
+#if RAND_MAX == 0x7fff
+    return (float)rand() * (pB - pA) / (float)RAND_MAX + pA;
+#else
+    return (float)(rand() % 0x10000) * (pB - pA) / (float)(0x7fff + 1) + pA;
+#endif
+}
+
+// FUNCTION: CARMA2_HW 0x005135e0
+float C2_HOOK_STDCALL FRandomPosNeg(float pN) {
+
+    return FRandomBetween(-pN, pN);
+}
+
+// FUNCTION: CARMA2_HW 0x00513620
+br_scalar C2_HOOK_STDCALL SRandomBetween(br_scalar pA, br_scalar pB) {
+
+    return FRandomBetween(pA, pB);
+}
+
+// FUNCTION: CARMA2_HW 0x00513650
+br_scalar C2_HOOK_STDCALL SRandomPosNeg(br_scalar pN) {
+
+    return SRandomBetween(-pN, pN);
+}
 
 // FUNCTION: CARMA2_HW 0x00513690
 void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* pStr_2) {
@@ -80,7 +131,15 @@ void C2_HOOK_FASTCALL PathCat(char* pDestn_str, const char* pStr_1, const char* 
 
 // tandeg
 
-// GetFileLength
+// FUNCTION: CARMA2_HW 0x00513790
+tU32 C2_HOOK_FASTCALL GetFileLength(FILE* pF) {
+    tU32 the_size;
+
+    PFfseek(pF, 0, SEEK_END);
+    the_size = PFftell(pF);
+    PFrewind(pF);
+    return the_size;
+}
 
 // FUNCTION: CARMA2_HW 0x005137d0
 br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint_16 pW, br_uint_16 pH, void* pPixels, int pFlags) {
@@ -110,11 +169,52 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
 
 // DRPixelmapLoad
 
-// SepDirAndFilename
+// FUNCTION: CARMA2_HW 0x005139a0
+void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath) {
+    size_t pathLen;
+    size_t dirLen;
+    size_t i;
+
+    pathLen = strlen(path);
+    dirLen = 0;
+    for (i = pathLen - 1; ; i--) {
+        if (i == 0) {
+            break;
+        }
+        if (path[i] == gDir_separator[0]) {
+            dirLen = i;
+            break;
+        }
+    }
+    memcpy(dirPath, path, dirLen);
+    dirPath[dirLen] = '\0';
+    if (*dirPath != '\0') {
+        dirLen += 1;
+    }
+    for (i = 0; path[dirLen + i] != '.' && dirLen + i != pathLen; i++) {
+        stemPath[i] = path[dirLen + i];
+    }
+    stemPath[i] = '\0';
+}
 
 // DRLoadMultiplePix
 
-// DRPixelmapLoadMany
+// FUNCTION: CARMA2_HW 0x00514570
+int C2_HOOK_FASTCALL DRPixelmapLoadMany(const char* texturePathNoExt, br_pixelmap** pixelmaps, size_t capacity) {
+    tPath_name texturePath;
+    tPath_name texturePathDir;
+    tPath_name texturePathStem;
+    int errorCode;
+
+    strcpy(texturePath, texturePathNoExt);
+    strcat(texturePath, ".TIF");
+    SepDirAndFilename(texturePath, texturePathDir, texturePathStem);
+    pixelmaps[0] = DRLdImg(texturePathDir, texturePathStem, gRender_palette, gPixelFlags, &errorCode);
+    if (pixelmaps[0] == NULL || errorCode != 0) {
+        return 0;
+    }
+    return 1;
+}
 
 // WaitFor
 
@@ -315,7 +415,38 @@ static tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pId
     return pList;
 }
 
-// NobbleNonzeroBlacks
+// FUNCTION: CARMA2_HW 0x00517fa0
+void C2_HOOK_FASTCALL NobbleNonzeroBlacks(br_pixelmap* pPalette) {
+    int modified;
+    int i;
+    br_colour *pixels;
+    br_colour c;
+    int r;
+    int g;
+    int b;
+
+    pixels= pPalette->pixels;
+    modified = 0;
+    if (*pixels != BR_COLOUR_RGBA(0, 0, 0, 0)) {
+        *pixels = BR_COLOUR_RGBA(0, 0, 0, 0);
+        modified = 1;
+    }
+    pixels++;
+    for (i = 0; i < 255; i++ ) {
+        c = *pixels;
+        r = BR_COLOUR_RED(c);
+        g = BR_COLOUR_GRN(c);
+        b = BR_COLOUR_BLU(c);
+        if (r == 0 && g == 0 && b == 0) {
+            *pixels = BR_COLOUR_RGB(1, 1, 1);
+            modified = 1;
+        }
+        pixels++;
+    }
+    if (modified) {
+        BrMapUpdate(pPalette, BR_MAPU_ALL);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x005182f0
 void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRendererShadingType pShading) {
@@ -384,7 +515,29 @@ void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCount, tRen
 
 // FindBestColourMatch
 
-// WhitenVertexRGB
+// FUNCTION: CARMA2_HW 0x00518690
+void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount) {
+    int i;
+    br_vertex* vertex;
+
+    if (gScreen == NULL) {
+        return;
+    }
+    if (gScreen->type == BR_PMT_INDEX_8) {
+        return;
+    }
+    for (i = 0; i < pCount; i++) {
+        int j;
+
+        for (j = 0; j < pModels[i]->nvertices; j++) {
+            vertex = &pModels[i]->vertices[j];
+
+            vertex->red = 0xff;
+            vertex->grn = 0xff;
+            vertex->blu = 0xff;
+        }
+    }
+}
 
 // ArenaOpenFile
 
