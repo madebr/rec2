@@ -497,7 +497,11 @@ void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) 
     }
 }
 
-// frac
+// FUNCTION: CARMA2_HW 0x00515c20
+float C2_HOOK_STDCALL frac(float pN) {
+
+    return pN - (float)(int)pN;
+}
 
 // FindMaterialCB
 

@@ -119,7 +119,7 @@ extern br_actor* C2_HOOK_FASTCALL CloneActor(br_actor* pActor);
 
 extern void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor);
 
-// frac
+extern float C2_HOOK_STDCALL frac(float pN);
 
 // FindMaterialCB
 
