@@ -458,10 +458,29 @@ void C2_HOOK_FASTCALL DRstrlwr(char* s) {
 
 // FUNCTION: CARMA2_HW 0x00515950
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path) {
+
     return PDCheckDriveExists2(pThe_path, NULL, 0);
 }
 
-// CloneActor
+br_actor* C2_HOOK_FASTCALL CloneActor(br_actor* pActor) {
+    br_actor *clone;
+    br_actor *child;
+
+    clone = BrActorAllocate(pActor->type, pActor->type_data);
+    clone->model = pActor->model;
+    clone->material = pActor->material;
+    if (pActor->identifier != NULL) {
+        if (clone->identifier != NULL) {
+            BrResFree(clone->identifier);
+        }
+        clone->identifier = BrResStrDup(clone, pActor->identifier);;
+    }
+    clone->t = pActor->t;
+    for (child = pActor->children; child != NULL; child = child->next) {
+        BrActorAdd(clone, CloneActor(child));
+    }
+    return clone;
+}
 
 // CalcActorGlobalPos
 

@@ -115,7 +115,7 @@ extern void C2_HOOK_FASTCALL DRstrlwr(char* s);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
 
-// CloneActor
+br_actor* C2_HOOK_FASTCALL CloneActor(br_actor* pActor);
 
 // CalcActorGlobalPos
 
