@@ -29,6 +29,12 @@ char* gMisc_strings[300];
 // GLOBAL: CARMA2_HW 0x0074ca04
 tMaterial_exception* gMaterial_exceptions;
 
+// GLOBAL: CARMA2_HW 0x006b63f4
+br_pixelmap* g16bit_palette;
+
+// GLOBAL: CARMA2_HW 0x006b63f0
+br_pixelmap* gPalette_source;
+
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     br_device *dev;
@@ -697,7 +703,27 @@ tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
 
 // Colour24BitTo16Bit
 
-// PaletteOf16Bits
+// FUNCTION: CARMA2_HW 0x005170c0
+br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc) {
+    tU16* dst_entry;
+    int i;
+
+    if (g16bit_palette == NULL) {
+        g16bit_palette = BrPixelmapAllocate(BR_PMT_RGB_565, 1, 256, NULL, 0);
+        if (g16bit_palette == NULL) {
+            FatalError(kFatalError_OOM_S, "16-bit palette");
+        }
+    }
+    if (!gPalette_changed || gPalette_source != pSrc) {
+        dst_entry = g16bit_palette->pixels;
+        for (i = 0; i < 256; i++) {
+            *dst_entry++ = PaletteEntry16Bit(pSrc, i);
+        }
+        gPalette_changed = 1;
+        gPalette_source = pSrc;
+    }
+    return g16bit_palette;
+}
 
 // Copy8BitTo16Bit
 
