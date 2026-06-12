@@ -147,7 +147,7 @@ extern int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
 extern float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF);
 
-// DRVector3NonZero
+extern int C2_HOOK_FASTCALL DRVector3NonZero(br_vector3* pV);
 
 // DRVector3Diminish
 
