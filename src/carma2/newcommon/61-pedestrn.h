@@ -365,7 +365,7 @@ extern void C2_HOOK_FASTCALL SetGoreLevel(int pNewLevel);
 
 // ScaleModelXYZ
 
-// ScaleModel
+// DRScaleModel
 
 // DisposeMove
 

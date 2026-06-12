@@ -677,7 +677,20 @@ int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV) {
     }
 }
 
-// DRScaleModel
+// FUNCTION: CARMA2_HW 0x00516240
+void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale) {
+    int i;
+    br_vertex *vertex;
+
+    if (pModel->nvertices != 0) {
+        vertex = pModel->vertices;
+        for (i = 0; i < pModel->nvertices; i++, vertex++) {
+
+            BrVector3Scale(&vertex->p, &vertex->p, pScale);
+        }
+        BrModelUpdate(pModel, BR_MODU_ALL);
+    }
+}
 
 // DistanceFromFaceND
 
