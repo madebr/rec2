@@ -121,7 +121,7 @@ extern void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* p
 
 extern float C2_HOOK_STDCALL frac(float pN);
 
-// FindMaterialCB
+extern intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data);
 
 // FindMaterial
 

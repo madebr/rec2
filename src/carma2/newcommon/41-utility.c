@@ -503,7 +503,27 @@ float C2_HOOK_STDCALL frac(float pN) {
     return pN - (float)(int)pN;
 }
 
-// FindMaterialCB
+// FUNCTION: CARMA2_HW 0x00515d90
+intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data) {
+    const char* name = data;
+    br_model* model = pActor->model;
+    br_face *face;
+    int face_i;
+
+    if (model != NULL) {
+
+        face = model->faces;
+        for (face_i = 0; face_i < model->nfaces; face_i++, face++) {
+
+            if (face->material != NULL
+                    && face->material->identifier != NULL
+                    && strcmp(face->material->identifier, name) == 0) {
+                return (intptr_t)face->material;
+            }
+        }
+    }
+    return (intptr_t)NULL;
+}
 
 // FindMaterial
 
