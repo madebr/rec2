@@ -699,7 +699,7 @@ float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3
 }
 
 // FUNCTION: CARMA2_HW 0x00516350
-int C2_HOOK_FASTCALL DRVector3NonZero(br_vector3* pV) {
+int C2_HOOK_FASTCALL DRVector3NonZero(const br_vector3* pV) {
     if (pV->v[0] == 0.f && pV->v[1] == 0.f && pV->v[2] == 0.f) {
         return 0;
     } else {
@@ -707,7 +707,21 @@ int C2_HOOK_FASTCALL DRVector3NonZero(br_vector3* pV) {
     }
 }
 
-// DRVector3Diminish
+// FUNCTION: CARMA2_HW 0x00516390
+void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3* pV2) {
+    br_vector3 v1 = *pV1;
+
+    BrVector3Sub(pV1, pV1, pV2);
+    if (v1.v[0] * pV1->v[0] <= 0.0f) {
+        pV1->v[0] = 0.0f;
+    }
+    if (v1.v[1] * pV1->v[1] <= 0.0f) {
+        pV1->v[1] = 0.0f;
+    }
+    if (v1.v[2] * pV1->v[2] <= 0.0f) {
+        pV1->v[2] = 0.0f;
+    }
+}
 
 // DRScalarToU16
 
