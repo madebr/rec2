@@ -2,6 +2,7 @@
 
 #include "01-network.h"
 #include "02-init.h"
+#include "28-world3.h"
 #include "18-graphics2.h"
 #include "40-main.h"
 #include "42-input.h"
@@ -535,11 +536,80 @@ br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, 
     }
 }
 
-// BlendifyMaterialTablishly
+void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent) {
+    char* s;
 
-// BlendifyMaterialPrimitively
+    if (pPercent != 0 && pPercent != 100) {
+        switch (pPercent) {
+        case 25:
+            s = "BLEND25.TAB";
+            break;
+        case 50:
+            s = "BLEND50.TAB";
+            break;
+        case 75:
+            s = "BLEND75.TAB";
+            break;
+        default:
+            return;
+        }
+        pMaterial->index_blend = BrTableFind(s);
+        if (pMaterial->index_blend == NULL) {
+            pMaterial->index_blend = LoadSingleShadeTable(&gTrack_storage_space, s);
+        }
+    } else {
+        pMaterial->index_blend = NULL;
+    }
+}
 
-// BlendifyMaterial
+void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent) {
+
+    // GLOBAL: CARMA2_HW 0x00661688
+    static br_token_value alpha25[] = {
+        { BRT_BLEND_B, { /*.b = */ 1 } },
+        { BRT_OPACITY_X, { /*.x = */ BR_FIXED_INT(0x40) } },
+        { 0 },
+    };
+    // GLOBAL: CARMA2_HW 0x006616a0
+    static br_token_value alpha50[] = {
+        { BRT_BLEND_B, { /*.b = */ 1 } },
+        { BRT_OPACITY_X, { /*.x = */ BR_FIXED_INT(0x80) } },
+        { 0 },
+    };
+    // GLOBAL: CARMA2_HW 0x006616b8
+    static br_token_value alpha75[] = {
+        { BRT_BLEND_B, { /*.b = */ 1 } },
+        { BRT_OPACITY_X, { /*.x = */ BR_FIXED_INT(0xc0) } },
+        { 0 },
+    };
+
+    switch (pPercent) {
+    case 25:
+        pMaterial->extra_prim = alpha25;
+        break;
+    case 50:
+        pMaterial->extra_prim = alpha50;
+        break;
+    case 75:
+        pMaterial->extra_prim = alpha75;
+        break;
+    case 0:
+    case 100:
+        pMaterial->extra_prim = NULL;
+        break;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00515e70
+void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent) {
+    br_uint_8 pixel_format = gScreen->type;
+
+    if (pixel_format == BR_PMT_INDEX_8) {
+        BlendifyMaterialTablishly(pMaterial, pPercent);
+    } else {
+        BlendifyMaterialPrimitively(pMaterial, pPercent);
+    }
+}
 
 // DRModelUpdateAndKevificateMaterials
 
