@@ -778,7 +778,23 @@ void C2_HOOK_FASTCALL CompressMatrix34(tCompressed_matrix3* pCompressed_matrix3,
     CompressVector3(&pCompressed_matrix3->p, &pos, -300.0f, 300.0f);
 }
 
-// ExpandMatrix34
+// FUNCTION: CARMA2_HW 0x00516910
+void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_matrix3* pCompressed, int pInactive) {
+
+    ExpandVector3((br_vector3*)pMatrix->m[0], &pCompressed->m0, -1.1f, 1.1f);
+    BrVector3Normalise((br_vector3*)pMatrix->m[0], (br_vector3*)pMatrix->m[0]);
+    ExpandVector3((br_vector3*)pMatrix->m[1], &pCompressed->m1, -1.1f, 1.1f);
+    BrVector3Normalise((br_vector3*)pMatrix->m[1], (br_vector3*)pMatrix->m[1]);
+    BrVector3Cross((br_vector3*)pMatrix->m[2], (br_vector3*)pMatrix->m[0], (br_vector3*)pMatrix->m[1]);
+    BrVector3Normalise((br_vector3*)pMatrix->m[2], (br_vector3*)pMatrix->m[2]);
+    ExpandVector3((br_vector3*)pMatrix->m[3], &pCompressed->p, 300.0f, 300.0f);
+    if (pInactive) {
+        BrVector3Set((br_vector3*)pMatrix->m[3],
+            pMatrix->m[3][0] + 1000.0f,
+            pMatrix->m[3][1] + 1000.0f,
+            pMatrix->m[3][2] + 1000.0f);
+    }
+}
 
 // PossibleLock
 
