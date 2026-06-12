@@ -743,7 +743,13 @@ br_scalar C2_HOOK_FASTCALL DRU16ToScalar(tU16 pValue, float pMin, float pMax) {
     return (float)pValue * (pMax - pMin) / 65535.0f + pMin;
 }
 
-// CompressVector3
+// FUNCTION: CARMA2_HW 0x00516490
+void C2_HOOK_FASTCALL CompressVector3(tCompressed_vector3* pDest, const br_vector3* pSrc, float pMin, float pMax) {
+
+    pDest->v[0] = DRScalarToU16(pSrc->v[0], pMin, pMax);
+    pDest->v[1] = DRScalarToU16(pSrc->v[1], pMin, pMax);
+    pDest->v[2] = DRScalarToU16(pSrc->v[2], pMin, pMax);
+}
 
 // ExpandVector3
 
