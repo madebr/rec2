@@ -133,7 +133,7 @@ extern void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPerce
 
 extern void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags);
 
-// DRModelUpdateDeluxTurbo
+extern int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel, br_uint_16 pFlags);
 
 // DistanceFromFace
 

@@ -638,7 +638,20 @@ void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_u
     }
 }
 
-// DRModelUpdateDeluxTurbo
+// FUNCTION: CARMA2_HW 0x00516010
+int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel, br_uint_16 pFlags) {
+
+    if (pModel->nfaces == 0 || pModel->nvertices == 0) {
+
+        pActor->type = BR_ACTOR_NONE;
+        pActor->model = NULL;
+        return 0;
+    } else {
+
+        DRModelUpdateAndKevificateMaterials(pModel,pFlags);
+        return 1;
+    }
+}
 
 // DistanceFromFace
 
