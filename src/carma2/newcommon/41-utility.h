@@ -69,7 +69,7 @@ extern FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension);
 
 extern void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF);
 
-// PrintScreenFile16
+extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
 // GetTotalTime
 
@@ -187,10 +187,9 @@ extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCoun
 
 extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
-
 extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
 
-// PrintScreen
+extern void C2_HOOK_FASTCALL PrintScreen(void);
 
 // FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
 
