@@ -482,7 +482,20 @@ br_actor* C2_HOOK_FASTCALL CloneActor(br_actor* pActor) {
     return clone;
 }
 
-// CalcActorGlobalPos
+// FUNCTION: CARMA2_HW 0x00515b80
+void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor) {
+    br_vector3 tv;
+
+    BrVector3Set(pResult, 0.0f, 0.0f, 0.0f);
+    for (;pActor != NULL && pActor != gNon_track_actor; pActor = pActor->parent) {
+        if (pActor->t.t.mat.m[0][0] == 1.0f) {
+            BrVector3Accumulate(pResult, &pActor->t.t.translate.t);
+        } else {
+            BrMatrix34ApplyP(&tv, pResult, &pActor->t.t.mat);
+            BrVector3Accumulate(pResult, &tv);
+        }
+    }
+}
 
 // frac
 
