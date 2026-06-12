@@ -18,7 +18,7 @@ extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 // WriteU16L
 
-// WriteU8L
+extern void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber);
 
 // MemReadU32
 
