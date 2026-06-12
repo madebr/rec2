@@ -99,3 +99,7 @@ target_link_libraries(c2_newcommon
         QuickTime::Dummy
         Smackw32::Smackw32
 )
+
+if(NOT MSVC)
+    add_compile_options(-Wredundant-decls)
+endif()

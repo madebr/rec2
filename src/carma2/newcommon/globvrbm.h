@@ -5,7 +5,6 @@
 
 #include <brender/br_types.h>
 
-extern int gCar_flying;
 extern br_actor* gPrat_actor;
 extern br_actor* g2d_camera;
 extern br_actor* gPowerupHUD_actor;
