@@ -723,7 +723,16 @@ void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3* pV2) 
     }
 }
 
-// DRScalarToU16
+// FUNCTION: CARMA2_HW 0x00516410
+tU16 C2_HOOK_FASTCALL DRScalarToU16(float pValue, float pMin, float pMax) {
+
+    if (pValue < pMin) {
+        pValue = pMin;
+    } else if (pValue > pMax) {
+        pValue = pMax;
+    }
+    return (tU16)(((pValue - pMin) * 65535.0f) / (pMax - pMin) + 0.5f);
+}
 
 // DRU16ToScalar
 

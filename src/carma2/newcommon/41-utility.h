@@ -151,7 +151,7 @@ extern int C2_HOOK_FASTCALL DRVector3NonZero(const br_vector3* pV);
 
 extern void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3* pV2);
 
-// DRScalarToU16
+extern tU16 C2_HOOK_FASTCALL DRScalarToU16(float pValue, float pMin, float pMax);
 
 // DRU16ToScalar
 
