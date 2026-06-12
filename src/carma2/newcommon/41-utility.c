@@ -804,9 +804,13 @@ void C2_HOOK_FASTCALL PossibleLock(int pValue) {
     }
 }
 
-// STUB: CARMA2_HW 0x00516c30
+// FUNCTION: CARMA2_HW 0x00516c30
 int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
-    NOT_IMPLEMENTED();
+
+    if (gBack_screen->pixels != NULL) {
+        BrPixelmapDirectUnlock(gBack_screen);
+        return 1;
+    }
     return 0;
 }
 
