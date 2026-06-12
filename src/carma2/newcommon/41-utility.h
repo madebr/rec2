@@ -67,7 +67,7 @@ extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor,
 
 extern FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension);
 
-// PrintScreenFile
+extern void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF);
 
 // PrintScreenFile16
 

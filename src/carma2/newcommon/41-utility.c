@@ -355,7 +355,71 @@ FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
     return NULL;
 }
 
-// PrintScreenFile
+// FUNCTION: CARMA2_HW 0x00514ab0
+void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF) {
+    int i;
+    int j;
+    int bit_map_size;
+    tU8* pixel_ptr;
+
+    bit_map_size = gBack_screen->height * gBack_screen->row_bytes;
+
+    // 1. BMP Header
+    //    1. 'BM' Signature
+    WriteU8L(pF, 'B');
+    WriteU8L(pF, 'M');
+    //    2. File size in bytes (header = 0xe bytes; infoHeader = 0x28 bytes; colorTable = 0x400 bytes; pixelData = xxx)
+    WriteU32L(pF, bit_map_size + 0x436);
+    //    3. unused
+    WriteU16L(pF, 0);
+    //    4. unused
+    WriteU16L(pF, 0);
+    //    5. pixelData offset (from beginning of file)
+    WriteU32L(pF, 0x436);
+
+    // 2. Info Header
+    //    1. InfoHeader Size
+    WriteU32L(pF, 0x28);
+    //    2. Width of bitmap in pixels
+    WriteU32L(pF, gBack_screen->row_bytes);
+    //    3. Height of bitmap in pixels
+    WriteU32L(pF, gBack_screen->height);
+    //    4. Number of planes
+    WriteU16L(pF, 1);
+    //    5. Bits per pixels / palletization (8 -> 8bit palletized ==> #colors = 256)
+    WriteU16L(pF, 8);
+    //    6. Compression (0 = BI_RGB -> no compression)
+    WriteU32L(pF, 0);
+    //    7. Image Size (0 --> no compression)
+    WriteU32L(pF, 0);
+    //    8. Horizontal Pixels Per Meter
+    WriteU32L(pF, 0);
+    //    9. Vertical Pixels Per Meter
+    WriteU32L(pF, 0);
+    //    10. # Actually used colors
+    WriteU32L(pF, 0);
+    //    11. Number of important colors
+    WriteU32L(pF, 256);
+
+    // 3. Color table (=palette)
+    for (i = 0; i < 256; i++) {
+        // red, green, blue, unused
+        WriteU8L(pF, ((tU8*)gCurrent_palette->pixels)[4 * i + 0]);
+        WriteU8L(pF, ((tU8*)gCurrent_palette->pixels)[4 * i + 1]);
+        WriteU8L(pF, ((tU8*)gCurrent_palette->pixels)[4 * i + 2]);
+        WriteU8L(pF, 0);
+    }
+
+    // 4. Pixel Data (=LUT)
+    pixel_ptr = (tU8*)gBack_screen->pixels + bit_map_size - gBack_screen->row_bytes;
+    for (i = 0; i < gBack_screen->height; i++) {
+        for (j = 0; j < gBack_screen->row_bytes; j++) {
+            WriteU8L(pF, *pixel_ptr++);
+        }
+        pixel_ptr -= 2 * gBack_screen->row_bytes;
+    }
+    WriteU16L(pF, 0);
+}
 
 // PrintScreenFile16
 
