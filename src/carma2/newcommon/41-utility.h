@@ -123,7 +123,7 @@ extern float C2_HOOK_STDCALL frac(float pN);
 
 extern intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data);
 
-// FindMaterial
+extern br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive);
 
 // BlendifyMaterialTablishly
 

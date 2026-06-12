@@ -525,7 +525,15 @@ intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data) {
     return (intptr_t)NULL;
 }
 
-// FindMaterial
+// FUNCTION: CARMA2_HW 0x00515c40
+br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive) {
+
+    if (pRecursive) {
+        return (br_material*)DRActorEnumRecurse(pActor, FindMaterialCB, (void*)pName);
+    } else {
+        return (br_material*)FindMaterialCB(pActor, (void*)pName);
+    }
+}
 
 // BlendifyMaterialTablishly
 
