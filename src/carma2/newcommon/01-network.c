@@ -7,8 +7,6 @@
 
 #include <stdlib.h>
 
-#include "../common/network.h"
-
 // GLOBAL: CARMA2_HW 0x0068d95c
 int gJoin_poll_index;
 

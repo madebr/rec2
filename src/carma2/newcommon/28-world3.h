@@ -74,7 +74,7 @@ extern int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const
 
 // LoadSinglePixelmap
 
-// LoadSingleShadeTable
+extern br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_space, const char* pName);
 
 // LoadSingleMaterial
 

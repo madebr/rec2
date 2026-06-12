@@ -7,14 +7,14 @@
 
 extern br_framework_state fw;
 
-br_error C2_HOOK_CDECL BrFwBegin(void);
+extern br_error C2_HOOK_CDECL BrFwBegin(void);
 
-br_error C2_HOOK_CDECL BrFwEnd(void);
+extern br_error C2_HOOK_CDECL BrFwEnd(void);
 
-br_diaghandler* C2_HOOK_CDECL BrDiagHandlerSet(br_diaghandler* newdh);
+extern br_diaghandler* C2_HOOK_CDECL BrDiagHandlerSet(br_diaghandler* newdh);
 
-br_filesystem* C2_HOOK_CDECL BrFilesystemSet(br_filesystem* newfs);
+extern br_filesystem* C2_HOOK_CDECL BrFilesystemSet(br_filesystem* newfs);
 
-br_allocator* C2_HOOK_CDECL BrAllocatorSet(br_allocator* newal);
+extern br_allocator* C2_HOOK_CDECL BrAllocatorSet(br_allocator* newal);
 
 #endif // REC2_FWSETUP_H

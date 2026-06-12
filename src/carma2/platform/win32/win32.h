@@ -45,32 +45,32 @@ extern HINSTANCE gHInstance;
 extern char gFatalErrorMessage[512];
 extern int gIsFatalError;
 
-LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+extern LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path);
+extern int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path);
 
-int C2_HOOK_CDECL IsNetworkShare(const char* path);
+extern int C2_HOOK_CDECL IsNetworkShare(const char* path);
 
-int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex);
+extern int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex);
 
-void C2_HOOK_FASTCALL PDRevertPalette(void);
+extern void C2_HOOK_FASTCALL PDRevertPalette(void);
 
-void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
+extern void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
 
-void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
+extern void C2_HOOK_FASTCALL PDExtractFilename(char* pDest, const char* pPath);
 
-void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath);
+extern void C2_HOOK_FASTCALL PDExtractDirectory(char* pDest, const char* pPath);
 
-void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory);
+extern void C2_HOOK_FASTCALL PDPageInMemory(void* pMemory);
 
-void C2_HOOK_FASTCALL PDPageInProcessMemory(void);
+extern void C2_HOOK_FASTCALL PDPageInProcessMemory(void);
 
-void C2_HOOK_FASTCALL PDGetCurrentTime(char* pStr);
+extern void C2_HOOK_FASTCALL PDGetCurrentTime(char* pStr);
 
-void C2_HOOK_FASTCALL PDGetCurrentDate(char* pStr);
+extern void C2_HOOK_FASTCALL PDGetCurrentDate(char* pStr);
 
-void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only);
+extern void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only);
 
-void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void);
+extern void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void);
 
 #endif // C2_WIN32_WIN32_H

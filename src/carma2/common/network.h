@@ -34,116 +34,116 @@ extern tU32 gAsk_time;
 extern tPlayer_ID gLocal_net_ID;
 extern tGuaranteed_message gGuarantee_list[200];
 
-void C2_HOOK_FASTCALL BroadcastStatus(void);
+extern void C2_HOOK_FASTCALL BroadcastStatus(void);
 
-void C2_HOOK_FASTCALL InitNetHeadups(void);
+extern void C2_HOOK_FASTCALL InitNetHeadups(void);
 
-void C2_HOOK_FASTCALL DisposeNetHeadups(void);
+extern void C2_HOOK_FASTCALL DisposeNetHeadups(void);
 
-void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
+extern void C2_HOOK_FASTCALL NetPlayerStatusChanged(tPlayer_status pNew_status);
 
-void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
+extern void C2_HOOK_FASTCALL NetLeaveGame(tNet_game_details* pNet_game);
 
-void C2_HOOK_FASTCALL ShutdownNetIfRequired(void);
+extern void C2_HOOK_FASTCALL ShutdownNetIfRequired(void);
 
-void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage);
+extern void C2_HOOK_FASTCALL NetSendHeadupToEverybody(const char* pMessage);
 
-void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
+extern void C2_HOOK_FASTCALL NetSendHeadupToAllPlayers(char* pMessage);
 
-tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2);
+extern tNet_message* C2_HOOK_FASTCALL NetBuildMessage(undefined pArg1, undefined4 pArg2);
 
-int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
+extern int C2_HOOK_FASTCALL NetSendMessageToAddress(tNet_game_details* pDetails, tNet_message* pMessage, void* pAddress);
 
-tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void);
+extern tNet_game_details* C2_HOOK_FASTCALL NetAllocatePIDGameDetails(void);
 
-void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void);
+extern void C2_HOOK_FASTCALL DisposeCurrentJoinPollGame(void);
 
-int C2_HOOK_FASTCALL NetJoinGameLowLevel(tNet_game_details* pGame_details, const char* pName);
+extern int C2_HOOK_FASTCALL NetJoinGameLowLevel(tNet_game_details* pGame_details, const char* pName);
 
-void C2_HOOK_FASTCALL LeaveTempGame(void);
+extern void C2_HOOK_FASTCALL LeaveTempGame(void);
 
-void C2_HOOK_FASTCALL NetLeaveGameLowLevel(void);
+extern void C2_HOOK_FASTCALL NetLeaveGameLowLevel(void);
 
-void C2_HOOK_FASTCALL DoNextJoinPoll(void);
+extern void C2_HOOK_FASTCALL DoNextJoinPoll(void);
 
-void C2_HOOK_FASTCALL CheckForDisappearees(void);
+extern void C2_HOOK_FASTCALL CheckForDisappearees(void);
 
-void C2_HOOK_FASTCALL CheckForPendingStartRace(void);
+extern void C2_HOOK_FASTCALL CheckForPendingStartRace(void);
 
-void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
+extern void C2_HOOK_FASTCALL CheckForNeedyEnvironmentRecipients(void);
 
-void C2_HOOK_FASTCALL GetCheckSum(tNet_message* pMessage);
+extern void C2_HOOK_FASTCALL GetCheckSum(tNet_message* pMessage);
 
-void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
+extern void C2_HOOK_FASTCALL ResendGuaranteedMessages(void);
 
-void C2_HOOK_FASTCALL NetFreeExcessMemory(void);
+extern void C2_HOOK_FASTCALL NetFreeExcessMemory(void);
 
-void C2_HOOK_FASTCALL NetService(int pIn_race);
+extern void C2_HOOK_FASTCALL NetService(int pIn_race);
 
-void C2_HOOK_FASTCALL DisableNetService(void);
+extern void C2_HOOK_FASTCALL DisableNetService(void);
 
-void C2_HOOK_FASTCALL ReenableNetService(void);
+extern void C2_HOOK_FASTCALL ReenableNetService(void);
 
-tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize);
+extern tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize);
 
-tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(int pType, int pOption);
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetAllocateMessageChunk(int pType, int pOption);
 
-tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec *pCar);
+extern tNet_game_player_info* C2_HOOK_FASTCALL NetPlayerFromCar(tCar_spec *pCar);
 
-void C2_HOOK_FASTCALL NetFinishRace(tNet_game_details* pDetails, tRace_over_reason pReason);
+extern void C2_HOOK_FASTCALL NetFinishRace(tNet_game_details* pDetails, tRace_over_reason pReason);
 
-void C2_HOOK_FASTCALL NetFullScreenMessage(int pStr_index, int pLeave_it_up_there);
+extern void C2_HOOK_FASTCALL NetFullScreenMessage(int pStr_index, int pLeave_it_up_there);
 
-void C2_HOOK_FASTCALL NetSendMessageStacks(void);
+extern void C2_HOOK_FASTCALL NetSendMessageStacks(void);
 
-int C2_HOOK_FASTCALL NetInitialise(void);
+extern int C2_HOOK_FASTCALL NetInitialise(void);
 
-void C2_HOOK_FASTCALL NetEndJoinList(void);
+extern void C2_HOOK_FASTCALL NetEndJoinList(void);
 
-void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails);
+extern void C2_HOOK_FASTCALL NetDisposeGameDetails(tNet_game_details* pDetails);
 
-void C2_HOOK_FASTCALL StopAllThatJoinyStuffThisInstant(void);
+extern void C2_HOOK_FASTCALL StopAllThatJoinyStuffThisInstant(void);
 
-tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_game_options* pOptions, int pRace_index, const char* pHost_name, int pCar_index);
+extern tNet_game_details* C2_HOOK_FASTCALL NetHostGame(tNet_game_type pNet_type, tNet_game_options* pOptions, int pRace_index, const char* pHost_name, int pCar_index);
 
-int C2_HOOK_FASTCALL NetJoinGame(tNet_game_details *pGame_details,char *pPlayer_name,int pCar_index);
+extern int C2_HOOK_FASTCALL NetJoinGame(tNet_game_details *pGame_details,char *pPlayer_name,int pCar_index);
 
-void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc *pAdd_proc);
+extern void C2_HOOK_FASTCALL NetStartProducingJoinList(tAddToJoinListProc *pAdd_proc);
 
-void C2_HOOK_FASTCALL InitNetStorageSpace(void);
+extern void C2_HOOK_FASTCALL InitNetStorageSpace(void);
 
-void C2_HOOK_FASTCALL DisposeNetStorageSpace(void);
+extern void C2_HOOK_FASTCALL DisposeNetStorageSpace(void);
 
-tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
+extern tNet_message* C2_HOOK_FASTCALL NetBuildGuaranteedMessage(tU8 pNet_message_type, int pOption);
 
-void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
+extern void C2_HOOK_FASTCALL NetGuaranteedSendMessageToHost(tNet_game_details* pDetails, tNet_message* pMessage, void* pNotifyFail);
 
 tNet_message* C2_HOOK_FASTCALL NetGetNextMessage(tNet_game_details* pDetails, void** pSender_address);
 
-void C2_HOOK_FASTCALL ReceivedMessage(tNet_message* pMessage, void* pSender_address, tU32 pReceive_time);
+extern void C2_HOOK_FASTCALL ReceivedMessage(tNet_message* pMessage, void* pSender_address, tU32 pReceive_time);
 
-void C2_HOOK_FASTCALL CheckCheckSum(tNet_message* pMessage);
+extern void C2_HOOK_FASTCALL CheckCheckSum(tNet_message* pMessage);
 
-void C2_HOOK_FASTCALL StatReceivePacket(void);
+extern void C2_HOOK_FASTCALL StatReceivePacket(void);
 
-void C2_HOOK_FASTCALL NetReallyDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage);
+extern void C2_HOOK_FASTCALL NetReallyDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage);
 
-void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void);
+extern void C2_HOOK_FASTCALL NetReceiveAndProcessMessages(void);
 
-int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, undefined4 *pArg3);
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToAllPlayers(tNet_game_details* pDetails, tNet_message* pMessage, undefined4 *pArg3);
 
-int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage);
+extern int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage);
 
-int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id);
+extern int C2_HOOK_FASTCALL NetReallySendMessageToPlayer(tNet_game_details* pNet_game, tNet_message* pMessage, tPlayer_ID pPlayer_id);
 
-void* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pNet_player, int pSize);
+extern void* C2_HOOK_FASTCALL NetGetToPlayerContentsSize(tNet_game_player_info* pNet_player, int pSize);
 
-tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
+extern tPlayer_status C2_HOOK_FASTCALL NetGetPlayerStatus(void);
 
-tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tS32 pSize_decider);
+extern tNet_message_chunk* C2_HOOK_FASTCALL NetStartBroadcastContents(tNet_message_type pType, tS32 pSize_decider);
 
-void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage);
+extern void C2_HOOK_FASTCALL NetBroadcastContents(tNet_message_chunk* pMessage);
 
-int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_details* pNet_game, tNet_message* pMessage, undefined4 pArg3);
+extern int C2_HOOK_FASTCALL NetGuaranteedSendMessageToEverybody(tNet_game_details* pNet_game, tNet_message* pMessage, undefined4 pArg3);
 
 #endif // REC2_NETWORK_H

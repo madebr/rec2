@@ -11,70 +11,70 @@ extern int gASCII_shift_table[151];
 extern int gScan_code[256];
 extern int gJoystick_deadzone;
 
-void C2_HOOK_FASTCALL KeyBegin(void);
+extern void C2_HOOK_FASTCALL KeyBegin(void);
 
-void C2_HOOK_FASTCALL Win32InitInputDevice(void);
+extern void C2_HOOK_FASTCALL Win32InitInputDevice(void);
 
-void C2_HOOK_FASTCALL CloseDirectInput(void);
+extern void C2_HOOK_FASTCALL CloseDirectInput(void);
 
-int C2_HOOK_FASTCALL InitForceFeedback(void);
+extern int C2_HOOK_FASTCALL InitForceFeedback(void);
 
-void C2_HOOK_FASTCALL KeyBegin(void);
+extern void C2_HOOK_FASTCALL KeyBegin(void);
 
-int C2_HOOK_FASTCALL JoystickDInputBegin(void);
+extern int C2_HOOK_FASTCALL JoystickDInputBegin(void);
 
-int C2_HOOK_FASTCALL InitForceFeedback(void);
+extern int C2_HOOK_FASTCALL InitForceFeedback(void);
 
-void C2_HOOK_FASTCALL ResetDInputJoystickFFB(int pIndex);
+extern void C2_HOOK_FASTCALL ResetDInputJoystickFFB(int pIndex);
 
-void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void);
+extern void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void);
 
-void C2_HOOK_FASTCALL Win32InitInputDevice(void);
+extern void C2_HOOK_FASTCALL Win32InitInputDevice(void);
 
-int C2_HOOK_FASTCALL JoystickDInputBegin(void);
+extern int C2_HOOK_FASTCALL JoystickDInputBegin(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoystickButtonStates(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoystickButtonStates(void);
 
-void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark);
+extern void C2_HOOK_FASTCALL PDSetKeyArray(int* pKeys, int pMark);
 
-void C2_HOOK_FASTCALL PDReadJoysticks(void);
+extern void C2_HOOK_FASTCALL PDReadJoysticks(void);
 
-int C2_HOOK_FASTCALL GetDirectInputJoy1X(void);
+extern int C2_HOOK_FASTCALL GetDirectInputJoy1X(void);
 
-int C2_HOOK_FASTCALL GetDirectInputJoy1Y(void);
+extern int C2_HOOK_FASTCALL GetDirectInputJoy1Y(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoy1Button1(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoy1Button1(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoy1Button2(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoy1Button2(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoy1Button3(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoy1Button3(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoy1Button4(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoy1Button4(void);
 
-int C2_HOOK_FASTCALL PDGetJoy1X(void);
+extern int C2_HOOK_FASTCALL PDGetJoy1X(void);
 
-int C2_HOOK_FASTCALL PDGetJoy1Y(void);
+extern int C2_HOOK_FASTCALL PDGetJoy1Y(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoy2Button1(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoy2Button1(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoy2Button2(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoy2Button2(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoy2Button3(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoy2Button3(void);
 
-tU32 C2_HOOK_FASTCALL PDGetJoy2Button4(void);
+extern tU32 C2_HOOK_FASTCALL PDGetJoy2Button4(void);
 
-int C2_HOOK_FASTCALL PDGetJoy2X(void);
+extern int C2_HOOK_FASTCALL PDGetJoy2X(void);
 
-int C2_HOOK_FASTCALL PDGetJoy2Y(void);
+extern int C2_HOOK_FASTCALL PDGetJoy2Y(void);
 
-void C2_HOOK_FASTCALL PDInitJoysticks(void);
+extern void C2_HOOK_FASTCALL PDInitJoysticks(void);
 
-void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index);
+extern void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index);
 
-int C2_HOOK_FASTCALL PDFindJoystickEffect(const char* effectName);
+extern int C2_HOOK_FASTCALL PDFindJoystickEffect(const char* effectName);
 
-void C2_HOOK_FASTCALL PDPlayFFBEffect(const char* effectName);
+extern void C2_HOOK_FASTCALL PDPlayFFBEffect(const char* effectName);
 
-int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void);
+extern int C2_HOOK_FASTCALL PDIsJoystickDPadEnabled(void);
 
 #endif // C2_WIN32_INPUT_H

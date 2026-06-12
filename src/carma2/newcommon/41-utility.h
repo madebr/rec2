@@ -65,11 +65,11 @@ extern br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor,
 
 // sign
 
-// OpenUniqueFileB
+extern FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension);
 
-// PrintScreenFile
+extern void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF);
 
-// PrintScreenFile16
+extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
 // GetTotalTime
 
@@ -115,67 +115,67 @@ extern void C2_HOOK_FASTCALL DRstrlwr(char* s);
 
 int C2_HOOK_FASTCALL PDCheckDriveExists(const char* pThe_path);
 
-// CloneActor
+extern br_actor* C2_HOOK_FASTCALL CloneActor(br_actor* pActor);
 
-// CalcActorGlobalPos
+extern void C2_HOOK_FASTCALL CalcActorGlobalPos(br_vector3* pResult, br_actor* pActor);
 
-// frac
+extern float C2_HOOK_STDCALL frac(float pN);
 
-// FindMaterialCB
+extern intptr_t C2_HOOK_CDECL FindMaterialCB(br_actor* pActor, void* data);
 
-// FindMaterial
+extern br_material* C2_HOOK_FASTCALL FindMaterial(const char* pName, br_actor* pActor, int pRecursive);
 
-// BlendifyMaterialTablishly
+extern void C2_HOOK_FASTCALL BlendifyMaterialTablishly(br_material* pMaterial, int pPercent);
 
-// BlendifyMaterialPrimitively
+extern void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial, int pPercent);
 
-// BlendifyMaterial
+extern void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent);
 
-// DRModelUpdateAndKevificateMaterials
+extern void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags);
 
-// DRModelUpdateDeluxTurbo
+extern int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel, br_uint_16 pFlags);
 
 // DistanceFromFace
 
 // DRBoundsCopy
 
-// TestForNan
+extern int C2_HOOK_FASTCALL TestForNan(const float* f);
 
-// DRVector3TestForNan
+extern int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
 // DRScaleModel
 
-// DistanceFromFaceND
+extern float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF);
 
-// DRVector3NonZero
+extern int C2_HOOK_FASTCALL DRVector3NonZero(const br_vector3* pV);
 
-// DRVector3Diminish
+extern void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3* pV2);
 
-// DRScalarToU16
+extern tU16 C2_HOOK_FASTCALL DRScalarToU16(float pValue, float pMin, float pMax);
 
-// DRU16ToScalar
+extern br_scalar C2_HOOK_FASTCALL DRU16ToScalar(tU16 pValue, float pMin, float pMax);
 
-// CompressVector3
+extern void C2_HOOK_FASTCALL CompressVector3(tCompressed_vector3* pDest, const br_vector3* pSrc, float pMin, float pMax);
 
-// ExpandVector3
+extern void C2_HOOK_FASTCALL ExpandVector3(br_vector3* pDest, const tCompressed_vector3 *pSrc, float pMin, float pMax);
 
-// CompressMatrix34
+extern void C2_HOOK_FASTCALL CompressMatrix34(tCompressed_matrix3* pCompressed_matrix3, int* pInactive, const br_matrix34* pMatrix);
 
-// ExpandMatrix34
+extern void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_matrix3* pCompressed, int pInactive);
 
-// PossibleLock
+extern void C2_HOOK_FASTCALL PossibleLock(int pValue);
 
 extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
-// PaletteEntry16Bit
+extern tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry);
 
 // Colour24BitTo16Bit
 
-// PaletteOf16Bits
+extern br_pixelmap* C2_HOOK_FASTCALL PaletteOf16Bits(br_pixelmap* pSrc);
 
-// Copy8BitTo16Bit
+extern void C2_HOOK_FASTCALL Copy8BitTo16Bit(br_pixelmap* pDst, br_pixelmap* pSrc, br_pixelmap* pPalette);
 
-// DRPixelmapCopy
+extern void C2_HOOK_FASTCALL DRPixelmapCopy(br_pixelmap* dst, br_pixelmap* src);
 
 // tMaterial_exception* C2_HOOK_FASTCALL FindExceptionInList(const char* pIdentifier, tMaterial_exception* pList)
 
@@ -187,11 +187,9 @@ extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCoun
 
 extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
-// ArenaOpenFile
+extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
 
-// BRPM_convert
-
-// PrintScreen
+extern void C2_HOOK_FASTCALL PrintScreen(void);
 
 // FudgeBRenderIntoTheNinetiesWithSomeProperFuckingColourSupport
 
