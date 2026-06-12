@@ -796,7 +796,13 @@ void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_mat
     }
 }
 
-// PossibleLock
+// FUNCTION: CARMA2_HW 0x00516c10
+void C2_HOOK_FASTCALL PossibleLock(int pValue) {
+
+    if (gBack_screen->pixels == NULL) {
+        BrPixelmapDirectLock(gBack_screen, 1);
+    }
+}
 
 // STUB: CARMA2_HW 0x00516c30
 int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {

@@ -163,7 +163,7 @@ extern void C2_HOOK_FASTCALL CompressMatrix34(tCompressed_matrix3* pCompressed_m
 
 extern void C2_HOOK_FASTCALL ExpandMatrix34(br_matrix34* pMatrix, const tCompressed_matrix3* pCompressed, int pInactive);
 
-// PossibleLock
+extern void C2_HOOK_FASTCALL PossibleLock(int pValue);
 
 extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
