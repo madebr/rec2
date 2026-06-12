@@ -153,7 +153,7 @@ extern void C2_HOOK_FASTCALL DRVector3Diminish(br_vector3* pV1, const br_vector3
 
 extern tU16 C2_HOOK_FASTCALL DRScalarToU16(float pValue, float pMin, float pMax);
 
-// DRU16ToScalar
+extern br_scalar C2_HOOK_FASTCALL DRU16ToScalar(tU16 pValue, float pMin, float pMax);
 
 // CompressVector3
 
