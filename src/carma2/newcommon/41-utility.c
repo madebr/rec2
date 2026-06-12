@@ -692,7 +692,11 @@ void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale) {
     }
 }
 
-// DistanceFromFaceND
+// FUNCTION: CARMA2_HW 0x005162a0
+float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF) {
+
+    return BrVector3Dot(pP, pN) - pF;
+}
 
 // DRVector3NonZero
 
