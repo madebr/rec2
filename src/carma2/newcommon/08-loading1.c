@@ -36,7 +36,13 @@ tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
 
 // WriteU32L
 
-// WriteU16L
+// FUNCTION: CARMA2_HW 0x0048f930
+void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber) {
+    tU16 raw_short;
+
+    raw_short = pNumber;
+    PFfwrite(&raw_short, sizeof(raw_short), 1, pF);
+}
 
 // FUNCTION: CARMA2_HW 0x0048f960
 void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
