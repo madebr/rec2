@@ -131,7 +131,7 @@ extern void C2_HOOK_FASTCALL BlendifyMaterialPrimitively(br_material* pMaterial,
 
 extern void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent);
 
-// DRModelUpdateAndKevificateMaterials
+extern void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags);
 
 // DRModelUpdateDeluxTurbo
 

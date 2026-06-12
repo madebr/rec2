@@ -12,6 +12,8 @@
 #include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
+#include "rec2_macros.h"
+
 #include "c2_string.h"
 
 #include <ctype.h>
@@ -611,7 +613,23 @@ void C2_HOOK_FASTCALL BlendifyMaterial(br_material* pMaterial, int pPercent) {
     }
 }
 
-// DRModelUpdateAndKevificateMaterials
+// FUNCTION: CARMA2_HW 0x00515fa0
+void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pModel, br_uint_16 pFlags) {
+    int i;
+    v11group* v11g;
+
+    C2_HOOK_BUG_ON(sizeof(v11group) != 0x24);
+
+    if (pModel->nvertices != 0 && pModel->nfaces != 0) {
+
+        BrModelUpdate(pModel, pFlags);
+        for (i = 0; i < V11MODEL(pModel)->ngroups; i++) {
+
+            v11g = &V11MODEL(pModel)->groups[i];
+            *v11g->face_colours.materials = pModel->faces[*v11g->face_user].material;
+        }
+    }
+}
 
 // DRModelUpdateDeluxTurbo
 
