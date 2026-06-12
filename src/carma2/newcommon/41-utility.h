@@ -167,7 +167,7 @@ extern void C2_HOOK_FASTCALL DRModelUpdateAndKevificateMaterials(br_model* pMode
 
 extern int C2_HOOK_FASTCALL PossibleUnlock(int pValue);
 
-// PaletteEntry16Bit
+extern tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry);
 
 // Colour24BitTo16Bit
 

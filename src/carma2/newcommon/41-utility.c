@@ -7,6 +7,7 @@
 #include "40-main.h"
 #include "42-input.h"
 #include "44-mainmenu.h"
+#include "52-errors.h"
 #include "63-loading3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
@@ -669,7 +670,30 @@ int C2_HOOK_FASTCALL PossibleUnlock(int pValue) {
     return 0;
 }
 
-// PaletteEntry16Bit
+// FUNCTION: CARMA2_HW 0x00516fd0
+tU16 C2_HOOK_FASTCALL PaletteEntry16Bit(br_pixelmap* pPal, int pEntry) {
+    tU32* src_entry;
+    int red;
+    int green;
+    int blue;
+
+    src_entry = pPal->pixels;
+    switch (gBack_screen->type) {
+    default:
+        BrFailure("Unsupported back buffer type.");
+        return 0;
+    case BR_PMT_RGB_565:
+        red = (src_entry[pEntry] >> 8) & 0xf800;
+        green = (src_entry[pEntry] >> 5) & 0x07e0;
+        blue = (src_entry[pEntry] >> 3) & 0x001f;
+        return red | green | blue;
+    case BR_PMT_RGB_555:
+        red = (src_entry[pEntry] >> 9) & 0x7c00;
+        green = (src_entry[pEntry] >> 6) & 0x03e0;
+        blue = (src_entry[pEntry] >> 3) & 0x001f;
+        return red | green | blue;
+    }
+}
 
 // Colour24BitTo16Bit
 
