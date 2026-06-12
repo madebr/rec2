@@ -111,7 +111,14 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name) {
     return pm;
 }
 
-// LoadShadeTable
+// FUNCTION: CARMA2_HW 0x0048ef40
+br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName) {
+    tPath_name the_path;
+
+    PathCat(the_path, gApplication_path, "SHADETAB");
+    PathCat(the_path, the_path, pName);
+    return BrPixelmapLoad(the_path);
+}
 
 // LoadMaterial
 

@@ -15,7 +15,7 @@ extern br_pixelmap* C2_HOOK_FASTCALL RealLoadPixelmap(const char* pPath_name);
 
 extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
 
-// LoadShadeTable
+extern br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName);
 
 // LoadMaterial
 
