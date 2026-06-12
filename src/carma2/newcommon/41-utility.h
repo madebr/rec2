@@ -139,7 +139,7 @@ extern int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* 
 
 // DRBoundsCopy
 
-// TestForNan
+extern int C2_HOOK_FASTCALL TestForNan(float* f);
 
 // DRVector3TestForNan
 

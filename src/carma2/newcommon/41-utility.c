@@ -657,7 +657,15 @@ int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel,
 
 // DRBoundsCopy
 
-// TestForNan
+// FUNCTION: CARMA2_HW 0x005160f0
+int C2_HOOK_FASTCALL TestForNan(float* f) {
+
+    if (f != NULL) {
+        return ((~*(tU32*)f) & 0x7f800000) == 0;
+    } else {
+        return 0;
+    }
+}
 
 // DRVector3TestForNan
 
