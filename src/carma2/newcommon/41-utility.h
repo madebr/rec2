@@ -187,9 +187,8 @@ extern void C2_HOOK_FASTCALL GlorifyMaterial(br_material** pMaterials, int pCoun
 
 extern void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount);
 
-// ArenaOpenFile
 
-// BRPM_convert
+extern void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type);
 
 // PrintScreen
 

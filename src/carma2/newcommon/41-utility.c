@@ -1026,9 +1026,78 @@ void C2_HOOK_FASTCALL WhitenVertexRGB(br_model** pModels, int pCount) {
     }
 }
 
-// ArenaOpenFile
+#ifdef REC2_MATCHING
+// FUNCTION: CARMA2_HW 0x00518700
+void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type) {
+    void* pixel;
+    int row_bytes;
+    int width;
+    int height;
 
-// BRPM_convert
+    if (pMap != NULL && pPixel_type == BR_PMT_RGB_555 && pMap->type == BR_PMT_RGB_565 && pMap->pixels != NULL) {
+        pixel = pMap->pixels;
+        row_bytes = pMap->row_bytes;
+        width = pMap->width;
+        height = pMap->height;
+
+        __asm {
+            mov        ecx, dword ptr [height]
+            mov        esi, dword ptr [pixel]
+            mov        edx, dword ptr [row_bytes]
+            mov        edi, dword ptr [width]
+        next_row:
+            push       ecx
+            mov        ecx, edi
+            push       esi
+        next_pixel:
+            mov        eax, dword ptr [esi]
+            mov        ebx, eax
+            and        eax, 0xffc0
+            and        ebx, 0x1f
+            shr        eax, 0x1
+            or         eax, ebx
+            mov        word ptr [esi], ax
+            add        esi, 0x2
+            loop       next_pixel
+            pop        esi
+            add        esi, edx
+            pop        ecx
+            loop       next_row
+        }
+        pMap->type = BR_PMT_RGB_555;
+    }
+}
+#else
+void C2_HOOK_FASTCALL BRPM_convert(br_pixelmap* pMap, int pPixel_type) {
+    br_uint_8* row_pointer;
+    br_uint_16* pixel;
+    br_uint_16 row_stride;
+    br_uint_32 original_w;
+    br_uint_32 w;
+    br_uint_32 h;
+
+    if (pMap != NULL && pPixel_type == BR_PMT_RGB_555 && pMap->type == BR_PMT_RGB_565 && pMap->pixels != NULL) {
+        row_pointer = pMap->pixels;
+        pixel = pMap->pixels;
+        row_stride = pMap->row_bytes;
+        original_w = pMap->width;
+        h = pMap->height;
+        w = pMap->width;
+
+        while (h-- != 0) {
+            w = original_w;
+            pixel = (br_uint_16*)row_pointer;
+            while (w-- != 0) {
+                // RGB565 -> XRGB1555: remove least significant bit of green (6 bits -> 5 bits)
+                *pixel = ((*pixel & 0xffc0)>>1) | (*pixel & 0x001f);
+                pixel++;
+            }
+            row_pointer += row_stride;
+        }
+        pMap->type = BR_PMT_RGB_555;
+    }
+}
+#endif
 
 // PrintScreen
 
