@@ -2,6 +2,7 @@
 
 #include "01-network.h"
 #include "02-init.h"
+#include "08-loading1.h"
 #include "28-world3.h"
 #include "18-graphics2.h"
 #include "40-main.h"
@@ -336,7 +337,23 @@ br_uint_32 C2_HOOK_FASTCALL DRActorEnumRecurseWithTrans(br_actor* pActor, br_mat
 
 // sign
 
-// OpenUniqueFileB
+// FUNCTION: CARMA2_HW 0x005149a0
+FILE* C2_HOOK_FASTCALL OpenUniqueFileB(char* pPrefix, char* pExtension) {
+    int index;
+    FILE* f;
+    tPath_name the_path;
+
+    for (index = 0; index < 10000; index++) {
+        PathCat(the_path, gApplication_path, pPrefix);
+        sprintf(the_path + strlen(the_path), "%04d.%s", index, pExtension);
+        f = DRfopen(the_path, "rt");
+        if (f == NULL) {
+            return DRfopen(the_path, "wb");
+        }
+        PFfclose(f);
+    }
+    return NULL;
+}
 
 // PrintScreenFile
 
