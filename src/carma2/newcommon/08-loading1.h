@@ -14,7 +14,7 @@ extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
 // ReadS32
 
-// WriteU32L
+extern void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber);
 
 extern void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber);
 
