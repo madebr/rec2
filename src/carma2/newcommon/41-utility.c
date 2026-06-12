@@ -731,7 +731,7 @@ tU16 C2_HOOK_FASTCALL DRScalarToU16(float pValue, float pMin, float pMax) {
     } else if (pValue > pMax) {
         pValue = pMax;
     }
-    return (tU16)(((pValue - pMin) * 65535.0f) / (pMax - pMin) + 0.5f);
+    return (tU16)((pValue - pMin) * 65535.0f / (pMax - pMin) + 0.5f);
 }
 
 // FUNCTION: CARMA2_HW 0x00516460
@@ -759,7 +759,24 @@ void C2_HOOK_FASTCALL ExpandVector3(br_vector3* pDest, const tCompressed_vector3
     pDest->v[2] = DRU16ToScalar(pSrc->v[2], pMin, pMax);
 }
 
-// CompressMatrix34
+// FUNCTION: CARMA2_HW 0x005165e0
+void C2_HOOK_FASTCALL CompressMatrix34(tCompressed_matrix3* pCompressed_matrix3, int* pInactive, const br_matrix34* pMatrix) {
+    br_vector3 pos;
+
+    if (pMatrix->m[3][0] >= 500.0f) {
+        *pInactive = 1;
+        BrVector3Set(&pos,
+            pMatrix->m[3][0] - 1000.0f,
+            pMatrix->m[3][1] - 1000.0f,
+            pMatrix->m[3][2] - 1000.0f);
+    } else {
+        *pInactive = 0;
+        BrVector3Copy(&pos, (const br_vector3*)pMatrix->m[3]);
+    }
+    CompressVector3(&pCompressed_matrix3->m0, (const br_vector3*)pMatrix->m[0], -1.1f, 1.1f);
+    CompressVector3(&pCompressed_matrix3->m1, (const br_vector3*)pMatrix->m[1], -1.1f, 1.1f);
+    CompressVector3(&pCompressed_matrix3->p, &pos, -300.0f, 300.0f);
+}
 
 // ExpandMatrix34
 
