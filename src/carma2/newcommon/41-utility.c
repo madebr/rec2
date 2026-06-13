@@ -713,7 +713,11 @@ void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br
     BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
 }
 
-// NormalSideOfPlane
+// FUNCTION: CARMA2_HW 0x00515700
+int C2_HOOK_FASTCALL NormalSideOfPlane(br_vector3* pPoint, br_vector3* pNormal, br_scalar pD) {
+
+    return (BrVector3Dot(pNormal, pPoint) - pD) * BrVector3Dot(pNormal, pNormal) >= 0.0f;
+}
 
 // FUNCTION: CARMA2_HW 0x00515780
 br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier) {
