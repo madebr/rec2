@@ -59,7 +59,7 @@ extern br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, in
 
 // DrawNumberAt
 
-// LoadFont
+extern void C2_HOOK_FASTCALL LoadFont(int pFont_ID);
 
 // DisposeFont
 

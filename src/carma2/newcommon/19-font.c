@@ -9,11 +9,42 @@
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
+#include <string.h>
+
 // GLOBAL: CARMA2_HW 0x0076c960
 br_pixelmap* gTexture_maps[1024];
 
 // GLOBAL: CARMA2_HW 0x007663e0
 tDR_font gFonts[24];
+
+// GLOBAL: CARMA2_HW 0x0059ad30
+const char* gFont_names[24] = {
+    "TYPEABLE",
+    "ORANGHED",
+    "BLUEHEAD",
+    "GREENHED",
+    "MEDIUMHD",
+    "TIMER",
+    "NEWHITE",
+    "NEWRED",
+    "NEWBIGGR",
+    "GRNDK",
+    "GRNLIT",
+    "GRYDK",
+    "GRYLIT",
+    "BUTTIN",
+    "BUTTOUT",
+    "LITPLAQ",
+    "DRKPLAQ",
+    "RED1",
+    "RED1GLOW",
+    "GRN1",
+    "GRN1GLOW",
+    "RED2",
+    "RED2GLOW",
+    "OPPOSTAT",
+};
+
 
 // PolyFontHeight
 
@@ -104,7 +135,42 @@ br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textu
 
 // DrawNumberAt
 
-// LoadFont
+// FUNCTION: CARMA2_HW 0x00465850
+void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
+    int i;
+    FILE* file;
+    tPath_name the_path;
+
+    if (gFonts[pFont_ID].images != NULL) {
+        return;
+    }
+    PathCat(the_path, gApplication_path, gGraf_specs[gGraf_spec_index].data_dir_name);
+    PathCat(the_path, the_path, "FONTS");
+    PathCat(the_path, the_path, gFont_names[pFont_ID]);
+    strcat(the_path, ".PIX");
+    if (gFonts[pFont_ID].file_read_once) {
+        return;
+    }
+    the_path[strlen(the_path) - 3] = '\0';
+    strcat(the_path, "TXT");
+    file = DRfopen(the_path, "rt");
+    if (file == NULL) {
+        FatalError(kFatalError_CannotLoadFontWidthTable_S, gFont_names[pFont_ID]);
+    }
+    gFonts[pFont_ID].height = GetAnInt(file);
+    gFonts[pFont_ID].width = GetAnInt(file);
+    gFonts[pFont_ID].spacing = GetAnInt(file);
+    gFonts[pFont_ID].offset = GetAnInt(file);
+    gFonts[pFont_ID].num_entries = GetAnInt(file);
+    gFonts[pFont_ID].id = pFont_ID;
+    if (gFonts[pFont_ID].width <= 0) {
+        for (i = 0; i < gFonts[pFont_ID].num_entries; i++) {
+            gFonts[pFont_ID].width_table[i] = GetAnInt(file);
+        }
+    }
+    PFfclose(file);
+    gFonts[pFont_ID].file_read_once = 1;
+}
 
 // DisposeFont
 
