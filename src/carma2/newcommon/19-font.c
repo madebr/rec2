@@ -2,6 +2,7 @@
 
 #include "08-loading1.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
@@ -48,9 +49,41 @@ tDR_font gFonts[24];
 
 // CreateFontCharacterModel
 
-// STUB: CARMA2_HW 0x00464b80
-br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textureIdX, int textureIdY, const char* pageName) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x00464b80
+br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int texture_id_x, int texture_id_y, const char* pageName) {
+    br_model* pModel;
+    br_scalar f_width;
+    br_scalar f_map_x1;
+    br_scalar f_map_y1;
+    br_scalar f_map_x2;
+    br_scalar f_map_y2;
+
+    pModel = BrModelAllocate("String Model", 4, 2);
+    if (pModel == NULL) {
+        FatalError(kFatalError_CouldNotCreateTexturesPages_S, pageName);
+    }
+    f_width = (br_scalar)width;
+    pModel->faces[0].vertices[0] = 0;
+    pModel->faces[0].vertices[1] = 1;
+    pModel->faces[0].vertices[2] = 2;
+    pModel->faces[1].vertices[0] = 1;
+    pModel->faces[1].vertices[1] = 3;
+    pModel->faces[1].vertices[2] = 2;
+    BrVector3Set(&pModel->vertices[0].p, 0.0f, 0.0f, -1.2f);
+    BrVector3Set(&pModel->vertices[1].p, f_width, 0.0f, -1.2f);
+    BrVector3Set(&pModel->vertices[2].p, 0.0f, (float)-height, -1.2f);
+    BrVector3Set(&pModel->vertices[3].p, f_width, (float)-height, -1.2f);
+    f_map_x1 = (br_scalar)texture_id_x / 64.0f;
+    f_map_y1 = (br_scalar)texture_id_y / 64.0f;
+    f_map_x2 = f_map_x1 + f_width / 64.0f;
+    f_map_y2 = f_map_y1 + (br_scalar)height / 64.0f;
+    BrVector2Set(&pModel->vertices[0].map, f_map_x1, f_map_y1);
+    BrVector2Set(&pModel->vertices[1].map, f_map_x2, f_map_y1);
+    BrVector2Set(&pModel->vertices[2].map, f_map_x1, f_map_y2);
+    BrVector2Set(&pModel->vertices[3].map, f_map_x2, f_map_y2);
+    pModel->flags |= BR_MODF_UPDATEABLE;
+    BrModelAdd(pModel);
+    return pModel;
 }
 
 // CreatePolyMaterial

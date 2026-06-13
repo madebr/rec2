@@ -39,7 +39,7 @@ extern br_pixelmap* gTexture_maps[1024];
 
 // CreateFontCharacterModel
 
-extern br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textureIdX, int textureIdY, const char* pageName);
+extern br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int texture_id_x, int texture_id_y, const char* pageName);
 
 // CreatePolyMaterial
 
