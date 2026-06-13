@@ -21,7 +21,7 @@ extern br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path);
 
 extern br_model* C2_HOOK_FASTCALL LoadModel(const char* pName);
 
-// LoadActor
+extern br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName);
 
 extern void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name);
 

@@ -140,7 +140,21 @@ br_model* C2_HOOK_FASTCALL LoadModel(const char* pName) {
     return BrModelLoad(the_path);
 }
 
-// LoadActor
+// FUNCTION: CARMA2_HW 0x0048f020
+br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName) {
+    tPath_name the_path;
+    br_actor* actor;
+
+    PossibleService();
+    PathCat(the_path, gApplication_path, "ACTORS");
+    PathCat(the_path, the_path, pName);
+    actor = BrActorLoad(the_path);
+    if (actor == NULL) {
+        PathCat(the_path, gRace_path, pName);
+        actor = BrActorLoad(the_path);
+    }
+    return actor;
+}
 
 // FUNCTION: CARMA2_HW 0x0048f090
 void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name) {

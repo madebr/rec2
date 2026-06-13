@@ -7,6 +7,9 @@ int gApplicationDataTwtMounted;
 // GLOBAL: CARMA2_HW 0x0075ba60
 tPath_name gApplication_path;
 
+// GLOBAL: CARMA2_HW 0x0074d0a0
+char gRace_path[256];
+
 // GLOBAL: CARMA2_HW 0x00761a5c
 const char* gDir_separator;
 
