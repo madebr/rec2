@@ -7,11 +7,11 @@
 #include "rec2_types.h"
 
 extern br_pixelmap* gTexture_maps[1024];
-extern tPolyFontBorderColours gPolyFontBorderColours[27];
+extern tPolyFontBorderColours gPoly_font_border_colours[27];
 extern br_material* gPolyFontMaterials[80];
 extern int polyFontMaterialCounter;
 extern int currentPolyFontMaterialIdx;
-extern tPolyFont gPolyFonts[27];
+extern tPolyFont gPoly_fonts[27];
 extern br_pixelmap* gPixelmapBuffer[1000];
 extern int gPixelmapBufferSize;
 
@@ -21,7 +21,7 @@ br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx);
 
 br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textureIdX, int textureIdY, const char* pageName);
 
-void C2_HOOK_FASTCALL SetPolyFontBorderColours(br_model* pModel, int fontIdx);
+void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int fontIdx);
 
 br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int fontIdx, char character);
 

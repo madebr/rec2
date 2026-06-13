@@ -51,10 +51,40 @@ br_pixelmap* gPixelmap_buffer[1000];
 // GLOBAL: CARMA2_HW 0x007663d0
 size_t gPixelmap_buffer_size;
 
+// GLOBAL: CARMA2_HW 0x0076d960
+tPolyFont gPoly_fonts[27];
+
+// GLOBAL: CARMA2_HW 0x0068648c
+int gSize_font_texture_pages;
+
+// GLOBAL: CARMA2_HW 0x00765ec0
+tPolyFontBorderColours gPoly_font_border_colours[27];
+
 
 // PolyFontHeight
 
-// FindCharacterWidth
+// FUNCTION: CARMA2_HW 0x00463760
+int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
+    int y;
+    int x;
+    // void* column_pointer;
+    tU16* pixel;
+    int height;
+
+    height = pMap->height;
+    x = pMap->width - 1;
+    for (; x >= 0; x--) {
+        // column_pointer =
+        pixel = (tU16*)pMap->pixels + x;
+        for (y = 0; y < height; y++) {
+            if (*(tU16*)pixel != 0) {
+                return x + 1;
+            }
+            pixel =pixel + pMap->row_bytes / 2;
+        }
+    }
+    return 1;
+}
 
 // CharacterWidth
 
@@ -101,7 +131,18 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const cha
     }
 }
 
-// KillThePixies
+void C2_HOOK_FASTCALL KillThePixies(void) {
+    int i;
+
+    for (i = 0; i < gPixelmap_buffer_size; i++) {
+
+        if (gPixelmap_buffer[i] != NULL) {
+            BrPixelmapFree(gPixelmap_buffer[i]);
+            gPixelmap_buffer[i] = NULL;
+        }
+    }
+    gPixelmap_buffer_size = 0;
+}
 
 // CheckAvailabilityOfThisFont
 
@@ -111,9 +152,160 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const cha
 
 // LoadInterfaceFonts
 
-// LoadPolyFont
+// FUNCTION: CARMA2_HW 0x004643f0
+void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
+    int tex_x;
+    int tex_y;
+    tPath_name the_path;
+    char s[256];
+    char s2[256];
+    int i;
+    tTWTVFS twt;
+    FILE* f;
+    br_pixelmap *blank_map;
+    int count_characters;
+    tPolyFontGlyph* glyph;
+    int ascii;
+    br_pixelmap* map;
 
-// CreateFontCharacterModel
+    PathCat(the_path, gApplication_path, gGraf_specs[gGraf_spec_index].data_dir_name);
+    PathCat(the_path, the_path, "FONTS");
+    PathCat(the_path, the_path, pName);
+
+    twt = OpenPackFileAndSetTiffLoading(the_path);
+
+    strcpy(s, the_path);
+    PathCat(s, s, "FONT.TXT");
+    tex_x = 0;
+    tex_y = 0;
+    f = PFfopen(s, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CannotLoadFontWidthTable_S, pName);
+    }
+
+    strcpy(gPoly_fonts[pIndex].name, pName);
+    /* number of characters */
+    gPoly_fonts[pIndex].numberOfCharacters = count_characters = GetAnInt(f);
+    /* inter-character spacing */
+    gPoly_fonts[pIndex].interCharacterSpacing = GetAnInt(f);
+    /* ASCII offset (value of first character) */
+    gPoly_fonts[pIndex].asciiOffset = GetAnInt(f);
+    /* font character height */
+    gPoly_fonts[pIndex].fontCharacterHeight = GetAnInt(f);
+    /* Blank width */
+    gPoly_fonts[pIndex].widthOfBlank = GetAnInt(f);
+    gPoly_fonts[pIndex].fontSize = pSize;
+    gPoly_fonts[pIndex].available = 1;
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPoly_fonts[pIndex].glyphs) != 256);
+    for (i = 0; i < REC2_ASIZE(gPoly_fonts[pIndex].glyphs); i++) {
+        glyph = &gPoly_fonts[pIndex].glyphs[i];
+
+        glyph->model = NULL;
+        glyph->material = NULL;
+        glyph->used = 0;
+        glyph->index = 0;
+        glyph->glyph_width = pSize;
+    }
+    PFfclose(f);
+    strcpy(s, the_path);
+    PathCat(s, s, "BLANK.PIX");
+    blank_map = GetThisFuckingPixelmap(the_path, "BLANK.PIX", 1);
+    if (blank_map == NULL) {
+        FatalError(kFatalError_CannotLoadFontImage_S, "BLANK.PIX");
+    }
+
+    for (i = 0; i < count_characters; i++) {
+
+        strcpy(s, the_path);
+        ascii = gPoly_fonts[pIndex].asciiOffset + i;
+        sprintf(s2, "%d.PIX", ascii);
+        PathCat(s, s, s2);
+        map = GetThisFuckingPixelmap(the_path, s2, 0);
+        if (map != NULL) {
+            if (gTexture_maps[gSize_font_texture_pages] == NULL) {
+                gTexture_maps[gSize_font_texture_pages] = BrPixelmapAllocate(blank_map->type, 64, 64, NULL, 0);
+                if (gTexture_maps[gSize_font_texture_pages] == NULL) {
+                    FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
+                }
+                BrMapAdd(gTexture_maps[gSize_font_texture_pages]);
+            }
+            if (map->type != gTexture_maps[gSize_font_texture_pages]->type) {
+                printf("FONT:%s  CHAR:%c (%i)\n", pName, ascii, ascii);
+                fflush(stdout);
+                BrFailure("BLOODY FONTS :(");
+            } else {
+                DRPixelmapRectangleCopy(
+                        gTexture_maps[gSize_font_texture_pages],
+                        tex_x, tex_y,
+                        map,
+                        0, 0,
+                        pSize, pSize);
+                BrMapUpdate(gTexture_maps[gSize_font_texture_pages], BR_MAPU_ALL);
+                gPoly_fonts[pIndex].glyphs[ascii].index = gSize_font_texture_pages;
+                gPoly_fonts[pIndex].glyphs[ascii].used = 1;
+                BrVector2Set(&gPoly_fonts[pIndex].glyphs[ascii].texCoord, (float) tex_x / 64.0f, (float)tex_y  / 64.0f);
+                gPoly_fonts[pIndex].glyphs[ascii].glyph_width = FindCharacterWidth(map);
+                gPoly_fonts[pIndex].glyphs[ascii].material = NULL;
+                gPoly_fonts[pIndex].glyphs[ascii].model = CreateFontCharacterModel(pIndex, ascii, pSize, pSize, pName);
+                tex_x += pSize;
+                if (tex_x >= 64) {
+                    tex_y += pSize;
+                    tex_x = 0;
+                    if (tex_y >= 64) {
+                        gSize_font_texture_pages += 1;
+                        if (gSize_font_texture_pages >= (int)REC2_ASIZE(gTexture_maps)) {
+                            FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
+                        }
+                        tex_x = 0;
+                        tex_y = 0;
+                    }
+                }
+            }
+            if (twt < 0) {
+                BrPixelmapFree(map);
+            }
+        }
+    }
+    KillThePixies();
+    ClosePackFileAndSetTiffLoading(twt);
+    gSize_font_texture_pages += 1;
+}
+
+br_model* C2_HOOK_FASTCALL CreateFontCharacterModel(int pIndex, int pAscii, int pWidth, int pHeight, const char* pName) {
+    br_model* model;
+
+    model = gPoly_fonts[pIndex].model;
+    while (model != NULL) {
+        if (model->bounds.max.v[0] == pWidth && model->bounds.min.v[1] == -pHeight) {
+            return model;
+        }
+        model = model->user;
+    }
+    model = BrModelAllocate("String Model", 4, 2);
+    model->user = gPoly_fonts[pIndex].glyphs[pIndex].model;
+    gPoly_fonts[pIndex].glyphs[pIndex].model = model;
+    if (model == NULL) {
+        FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
+    }
+    model->faces[0].vertices[0] = 0;
+    model->faces[0].vertices[1] = 1;
+    model->faces[0].vertices[2] = 2;
+    model->faces[1].vertices[0] = 1;
+    model->faces[1].vertices[1] = 3;
+    model->faces[1].vertices[2] = 2;
+    BrVector3Set(&model->vertices[0].p, 0.0f, 0.0f, -1.2f);
+    BrVector3Set(&model->vertices[1].p, (float) pWidth, 0.0f, -1.2f);
+    BrVector3Set(&model->vertices[2].p, 0.f, (float) -pHeight, -1.2f);
+    BrVector3Set(&model->vertices[3].p, (float) pWidth, (float) -pHeight, -1.2f);
+    BrVector2Set(&model->vertices[0].map, 0.0f, 0.0f);
+    BrVector2Set(&model->vertices[1].map, 1.0f, 0.0f);
+    BrVector2Set(&model->vertices[2].map, 0.0f, 1.0f);
+    BrVector2Set(&model->vertices[3].map, 1.0f, 1.0f);
+    ColourVertices(model, pIndex);
+    model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
+    BrModelAdd(model);
+    return model;
+}
 
 // FUNCTION: CARMA2_HW 0x00464b80
 br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int texture_id_x, int texture_id_y, const char* pageName) {
@@ -154,7 +346,25 @@ br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textu
 
 // CreatePolyMaterial
 
-// ColourVertices
+// FUNCTION: CARMA2_HW 0x00464d40
+void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index) {
+
+    if (pModel == NULL) {
+        return;
+    }
+    pModel->vertices[0].red = gPoly_font_border_colours[pFont_index].tl.r;
+    pModel->vertices[0].grn = gPoly_font_border_colours[pFont_index].tl.g;
+    pModel->vertices[0].blu = gPoly_font_border_colours[pFont_index].tl.b;
+    pModel->vertices[1].red = gPoly_font_border_colours[pFont_index].tr.r;
+    pModel->vertices[1].grn = gPoly_font_border_colours[pFont_index].tr.g;
+    pModel->vertices[1].blu = gPoly_font_border_colours[pFont_index].tr.b;
+    pModel->vertices[2].red = gPoly_font_border_colours[pFont_index].bl.r;
+    pModel->vertices[2].grn = gPoly_font_border_colours[pFont_index].bl.g;
+    pModel->vertices[2].blu = gPoly_font_border_colours[pFont_index].bl.b;
+    pModel->vertices[3].red = gPoly_font_border_colours[pFont_index].br.r;
+    pModel->vertices[3].grn = gPoly_font_border_colours[pFont_index].br.g;
+    pModel->vertices[3].blu = gPoly_font_border_colours[pFont_index].br.b;
+}
 
 // SolidPolyFontText
 

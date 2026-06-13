@@ -292,7 +292,7 @@ int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText)
         } else {
             int inter = 0;
             if (i < len - 1) {
-                inter = gPolyFonts[polyfont].interCharacterSpacing;
+                inter = gPoly_fonts[polyfont].interCharacterSpacing;
             }
 
             result += CharacterWidth(pText[i], polyfont) + inter;

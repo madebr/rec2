@@ -289,7 +289,7 @@
 // fsetpos
 
 // LIBRARY: CARMA2_HW 0x00577930
-// printf
+// _printf
 
 // LIBRARY: CARMA2_HW 0x00576d00
 // fprintf

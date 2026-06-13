@@ -4,10 +4,11 @@
 #include "brender/brender.h"
 
 extern br_pixelmap* gTexture_maps[1024];
+extern int gSize_font_texture_pages;
 
 // PolyFontHeight
 
-// FindCharacterWidth
+extern int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap);
 
 // CharacterWidth
 
@@ -25,7 +26,7 @@ extern br_pixelmap* gTexture_maps[1024];
 
 extern br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const char* glyph_name, int loadFromDisk);
 
-// KillThePixies
+extern void C2_HOOK_FASTCALL KillThePixies(void);
 
 // CheckAvailabilityOfThisFont
 
@@ -35,15 +36,15 @@ extern br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, co
 
 // LoadInterfaceFonts
 
-// LoadPolyFont
+extern void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex);
 
-// CreateFontCharacterModel
+extern br_model* C2_HOOK_FASTCALL CreateFontCharacterModel(int pIndex, int pAscii, int pWidth, int pHeight, const char* pName);
 
 extern br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int texture_id_x, int texture_id_y, const char* pageName);
 
 // CreatePolyMaterial
 
-// ColourVertices
+extern void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index);
 
 // SolidPolyFontText
 

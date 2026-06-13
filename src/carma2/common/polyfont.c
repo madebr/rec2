@@ -46,7 +46,7 @@ int gInterface_polyfont_texture_pages;
 int C2_HOOK_FASTCALL PolyFontHeight(int pIndex) {
 
     CheckAvailabilityOfThisFont(pIndex);
-    return gPolyFonts[pIndex].fontCharacterHeight;
+    return gPoly_fonts[pIndex].fontCharacterHeight;
 }
 
 // FUNCTION: CARMA2_HW 0x004637d0
@@ -55,16 +55,16 @@ int C2_HOOK_FASTCALL CharacterWidth(int pIndex, tU8 pCharacter) {
     if ('a' <= pCharacter && pCharacter <= 'z') {
         pCharacter = pCharacter - ('a' - 'A');
     }
-    if (gPolyFonts[pIndex].glyphs[pCharacter].used) {
-         return gPolyFonts[pIndex].glyphs[pCharacter].glyph_width;
+    if (gPoly_fonts[pIndex].glyphs[pCharacter].used) {
+         return gPoly_fonts[pIndex].glyphs[pCharacter].glyph_width;
     }
-    return gPolyFonts[pIndex].widthOfBlank;
+    return gPoly_fonts[pIndex].widthOfBlank;
 }
 
 // FUNCTION: CARMA2_HW 0x00463830
 int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex) {
 
-    return gPolyFonts[pIndex].interCharacterSpacing;
+    return gPoly_fonts[pIndex].interCharacterSpacing;
 }
 
 // FUNCTION: CARMA2_HW 0x00463850
@@ -253,7 +253,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText
 }
 
 // FUNCTION: CARMA2_HW 0x00463760
-int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap) {
+int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
     int y;
     int x;
 
@@ -298,22 +298,22 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         FatalError(kFatalError_CannotLoadFontWidthTable_S, pName);
     }
 
-    strcpy(gPolyFonts[pIndex].name, pName);
+    strcpy(gPoly_fonts[pIndex].name, pName);
     /* number of characters */
-    gPolyFonts[pIndex].numberOfCharacters = GetAnInt(f);
+    gPoly_fonts[pIndex].numberOfCharacters = GetAnInt(f);
     /* inter-character spacing */
-    gPolyFonts[pIndex].interCharacterSpacing = GetAnInt(f);
+    gPoly_fonts[pIndex].interCharacterSpacing = GetAnInt(f);
     /* ASCII offset (value of first character) */
-    gPolyFonts[pIndex].asciiOffset = GetAnInt(f);
+    gPoly_fonts[pIndex].asciiOffset = GetAnInt(f);
     /* font character height */
-    gPolyFonts[pIndex].fontCharacterHeight = GetAnInt(f);
+    gPoly_fonts[pIndex].fontCharacterHeight = GetAnInt(f);
     /* Blank width */
-    gPolyFonts[pIndex].widthOfBlank = GetAnInt(f);
-    gPolyFonts[pIndex].fontSize = pSize;
-    gPolyFonts[pIndex].available = 1;
-    C2_HOOK_BUG_ON(REC2_ASIZE(gPolyFonts[pIndex].glyphs) != 256);
-    for (i = 0; i < REC2_ASIZE(gPolyFonts[pIndex].glyphs); i++) {
-        tPolyFontGlyph* glyph = &gPolyFonts[pIndex].glyphs[i];
+    gPoly_fonts[pIndex].widthOfBlank = GetAnInt(f);
+    gPoly_fonts[pIndex].fontSize = pSize;
+    gPoly_fonts[pIndex].available = 1;
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPoly_fonts[pIndex].glyphs) != 256);
+    for (i = 0; i < REC2_ASIZE(gPoly_fonts[pIndex].glyphs); i++) {
+        tPolyFontGlyph* glyph = &gPoly_fonts[pIndex].glyphs[i];
 
         glyph->model = NULL;
         glyph->material = NULL;
@@ -331,12 +331,12 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
 
     tex_x = 0;
     tex_y = 0;
-    for (i = 0; i < (int)gPolyFonts[pIndex].numberOfCharacters; i++) {
+    for (i = 0; i < (int)gPoly_fonts[pIndex].numberOfCharacters; i++) {
         int ascii;
         br_pixelmap* map;
 
         strcpy(s, the_path);
-        ascii = gPolyFonts[pIndex].asciiOffset + i;
+        ascii = gPoly_fonts[pIndex].asciiOffset + i;
         sprintf(s2, "%d.PIX", ascii);
         PathCat(s, s, s2);
         map = GetThisFuckingPixelmap(the_path, s2, 0);
@@ -362,12 +362,12 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
                 0, 0,
                 pSize, pSize);
         BrMapUpdate(gTexture_maps[gSize_font_texture_pages], BR_MAPU_ALL);
-        gPolyFonts[pIndex].glyphs[ascii].index = gSize_font_texture_pages;
-        gPolyFonts[pIndex].glyphs[ascii].used = 1;
-        BrVector2Set(&gPolyFonts[pIndex].glyphs[ascii].texCoord, (float) tex_x / 64.f, (float)tex_y  / 64.f);
-        gPolyFonts[pIndex].glyphs[ascii].glyph_width = CalculatePolyFontMapWidth(map);
-        gPolyFonts[pIndex].glyphs[ascii].material = NULL;
-        model = gPolyFonts[pIndex].model;
+        gPoly_fonts[pIndex].glyphs[ascii].index = gSize_font_texture_pages;
+        gPoly_fonts[pIndex].glyphs[ascii].used = 1;
+        BrVector2Set(&gPoly_fonts[pIndex].glyphs[ascii].texCoord, (float) tex_x / 64.f, (float)tex_y  / 64.f);
+        gPoly_fonts[pIndex].glyphs[ascii].glyph_width = FindCharacterWidth(map);
+        gPoly_fonts[pIndex].glyphs[ascii].material = NULL;
+        model = gPoly_fonts[pIndex].model;
         /* Find model for font size */
         while (model != NULL) {
             if (model->bounds.max.v[0] == pSize && model->bounds.min.v[1] == -pSize) {
@@ -377,8 +377,8 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         }
         if (model == NULL) {
             model = BrModelAllocate("String Model", 4, 2);
-            model->user = gPolyFonts[pIndex].glyphs[pIndex].model;
-            gPolyFonts[pIndex].glyphs[pIndex].model = model;
+            model->user = gPoly_fonts[pIndex].glyphs[pIndex].model;
+            gPoly_fonts[pIndex].glyphs[pIndex].model = model;
             if (model == NULL) {
                 FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
             }
@@ -396,11 +396,11 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
             BrVector2Set(&model->vertices[1].map, 1.f, 0.f);
             BrVector2Set(&model->vertices[2].map, 0.f, 1.f);
             BrVector2Set(&model->vertices[3].map, 1.f, 1.f);
-            SetPolyFontBorderColours(model, pIndex);
+            ColourVertices(model, pIndex);
             model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
             BrModelAdd(model);
         }
-        gPolyFonts[pIndex].glyphs[ascii].model = model;
+        gPoly_fonts[pIndex].glyphs[ascii].model = model;
         tex_x += pSize;
         if (tex_x >= 64) {
             tex_y += pSize;
@@ -530,8 +530,8 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
 
         gPolyFontMaterials[i] = CreateFontCharacterMaterial(0);
     }
-    C2_HOOK_BUG_ON(sizeof(gPolyFonts) != 196344);
-    memset(&gPolyFonts, 0, sizeof(gPolyFonts));
+    C2_HOOK_BUG_ON(sizeof(gPoly_fonts) != 196344);
+    memset(&gPoly_fonts, 0, sizeof(gPoly_fonts));
     gString_root_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
     if (gString_root_actor == NULL) {
         FatalError(kFatalError_OOM_S, "");
@@ -566,11 +566,11 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
      * the colour for each corner of every character in that font.
      */
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(gPolyFontBorderColours) != 27);
-    for (i = 0; i < REC2_ASIZE(gPolyFontBorderColours); i++) {
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPoly_font_border_colours) != 27);
+    for (i = 0; i < REC2_ASIZE(gPoly_font_border_colours); i++) {
         tPolyFontBorderColours *border;
 
-        border = &gPolyFontBorderColours[i];
+        border = &gPoly_font_border_colours[i];
 
         /* Top/Left */
         GetThreeInts(f, &border->tl.r, &border->tl.g, &border->tl.b);
@@ -594,10 +594,10 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
     LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_green);
 
     LoadPolyFont("BIGYELLOWTIMER", 32, kPolyfont_ingame_big_timer);
-    for (i = 0; i < REC2_ASIZE(gPolyFonts->glyphs); i++) {
-        gPolyFonts[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
+    for (i = 0; i < REC2_ASIZE(gPoly_fonts->glyphs); i++) {
+        gPoly_fonts[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
     }
-    gPolyFonts[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11;
+    gPoly_fonts[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11;
 
     LoadPolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_red);
     LoadPolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_blue);
@@ -621,10 +621,10 @@ void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, flo
     LoadPolyFont(pName, pSize, pFont);
     if (pFont == kPolyfont_ingame_big_timer) {
         /* 0x10 -> kPolyfont_ingame_big_timer */
-        for (i = 0; i < REC2_ASIZE(gPolyFonts[kPolyfont_ingame_big_timer].glyphs); i++) {
-            gPolyFonts[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
+        for (i = 0; i < REC2_ASIZE(gPoly_fonts[kPolyfont_ingame_big_timer].glyphs); i++) {
+            gPoly_fonts[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
         }
-        gPolyFonts[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11; /* FIXME: What is gyph 58? */
+        gPoly_fonts[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11; /* FIXME: What is gyph 58? */
     }
 }
 
@@ -653,7 +653,7 @@ void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void) {
 // FUNCTION: CARMA2_HW 0x004640d0
 void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
 
-    if (!gPolyFonts[pFont].available) {
+    if (!gPoly_fonts[pFont].available) {
         LoadInterfacePolyFonts();
     }
 }
@@ -696,8 +696,8 @@ void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
 void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(gPolyFonts[pFont].glyphs); i++) {
-        tPolyFontGlyph* glyph = &gPolyFonts[pFont].glyphs[i];
+    for (i = 0; i < REC2_ASIZE(gPoly_fonts[pFont].glyphs); i++) {
+        tPolyFontGlyph* glyph = &gPoly_fonts[pFont].glyphs[i];
 
         if (glyph->used) {
 
@@ -706,7 +706,7 @@ void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
             glyph->used = 0;
         }
     }
-    gPolyFonts[pFont].available = 0;
+    gPoly_fonts[pFont].available = 0;
 }
 
 // FUNCTION: CARMA2_HW 0x00465ca0
@@ -722,7 +722,7 @@ int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
         result += CharacterWidth(pFont, pText[i]);
     }
     if (len > 1) {
-        result += (len - 1) * gPolyFonts[pFont].interCharacterSpacing;
+        result += (len - 1) * gPoly_fonts[pFont].interCharacterSpacing;
     }
     return result;
 }
@@ -764,23 +764,23 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
 
         if (c == '\r') {
             draw_x = pX;
-            draw_y += gPolyFonts[pFont].fontCharacterHeight;
+            draw_y += gPoly_fonts[pFont].fontCharacterHeight;
             continue;
         }
         if (c >= 'a' && c <= 'z') {
             c -= 'a' - 'A';
         }
-        if (!gPolyFonts[pFont].glyphs[c].used) {
-            draw_x += gPolyFonts[pFont].widthOfBlank;
+        if (!gPoly_fonts[pFont].glyphs[c].used) {
+            draw_x += gPoly_fonts[pFont].widthOfBlank;
             continue;
         }
         actor = gPolyfont_glyph_actors[gCount_polyfont_glyph_actors];
-        actor->model = gPolyFonts[pFont].glyphs[c].model;
+        actor->model = gPoly_fonts[pFont].glyphs[c].model;
         actor->material = GetPolyFontMaterial(pFont, c);
         BrActorAdd(gString_root_actor, actor);
         BrVector3Set(&actor->t.t.translate.t, (float)draw_x, (float)-draw_y, -1.1f);
         gCount_polyfont_glyph_actors++;
-        draw_x += gPolyFonts[pFont].glyphs[c].glyph_width + gPolyFonts[pFont].interCharacterSpacing;
+        draw_x += gPoly_fonts[pFont].glyphs[c].glyph_width + gPoly_fonts[pFont].interCharacterSpacing;
     }
     if (pRender) {
         int original_origin_x;
@@ -859,25 +859,25 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
 
         if (c == '\r') {
             draw_x = pX;
-            draw_y += gPolyFonts[pFont].fontCharacterHeight;
+            draw_y += gPoly_fonts[pFont].fontCharacterHeight;
             continue;
         }
         if (c >= 'a' && c <= 'z') {
             c -= 'a' - 'A';
         }
-        if (!gPolyFonts[pFont].glyphs[c].used) {
-            draw_x += gPolyFonts[pFont].widthOfBlank;
+        if (!gPoly_fonts[pFont].glyphs[c].used) {
+            draw_x += gPoly_fonts[pFont].widthOfBlank;
             continue;
         }
         actor = gPolyfont_glyph_actors[gCount_polyfont_glyph_actors];
-        actor->model = gPolyFonts[pFont].glyphs[c].model;
+        actor->model = gPoly_fonts[pFont].glyphs[c].model;
         actor->material = GetPolyFontMaterial(pFont, c);
         actor->material->extra_prim = tvs;
         BrMaterialUpdate(actor->material, BR_MATU_ALL);
         BrActorAdd(gString_root_actor, actor);
         BrVector3Set(&actor->t.t.translate.t, (float)draw_x, (float)-draw_y, -1.1f);
         gCount_polyfont_glyph_actors++;
-        draw_x += gPolyFonts[pFont].glyphs[c].glyph_width + gPolyFonts[pFont].interCharacterSpacing;
+        draw_x += gPoly_fonts[pFont].glyphs[c].glyph_width + gPoly_fonts[pFont].interCharacterSpacing;
     }
     if (pRender) {
         int original_origin_x;

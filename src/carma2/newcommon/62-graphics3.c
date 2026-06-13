@@ -16,9 +16,6 @@ int gMini_map_visible = 2;
 // GLOBAL: CARMA2_HW 0x0074a780
 tCar_icon gCar_icons[128];
 
-// GLOBAL: CARMA2_HW 0x0068648c
-int gSize_font_texture_pages;
-
 // GLOBAL: CARMA2_HW 0x0074ab84
 br_actor* gCar_icons_model_actor;
 

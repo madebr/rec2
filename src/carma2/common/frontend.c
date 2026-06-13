@@ -2319,7 +2319,7 @@ void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
 // FUNCTION: CARMA2_HW 0x00464df0
 void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
 
-    if (gPolyFonts[pFont].available == 0) {
+    if (gPoly_fonts[pFont].available == 0) {
         LoadInterfacePolyFonts();
     }
     TransparentPolyFontText(pText, pX, pY, pFont, pJust, pRender, 1.0);

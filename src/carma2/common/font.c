@@ -13,7 +13,7 @@
 br_pixelmap* gTexture_maps[1024];
 
 // GLOBAL: CARMA2_HW 0x00765ec0
-tPolyFontBorderColours gPolyFontBorderColours[27];
+tPolyFontBorderColours gPoly_font_border_colours[27];
 
 // GLOBAL: CARMA2_HW 0x00686340
 br_material* gPolyFontMaterials[80];
@@ -25,7 +25,7 @@ int polyFontMaterialCounter; // FIXME: unknown purpose
 int currentPolyFontMaterialIdx;
 
 // GLOBAL: CARMA2_HW 0x0076d960
-tPolyFont gPolyFonts[27];
+tPolyFont gPoly_fonts[27];
 
 // GLOBAL: CARMA2_HW 0x00764f00
 br_pixelmap* gPixelmapBuffer[1000];
@@ -110,22 +110,22 @@ br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx) {
 }
 
 // FUNCTION: CARMA2_HW 0x00464d40
-void C2_HOOK_FASTCALL SetPolyFontBorderColours(br_model* pModel, int fontIdx) {
+void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int fontIdx) {
     if (pModel == NULL) {
         return;
     }
-    pModel->vertices[0].red = gPolyFontBorderColours[fontIdx].tl.r;
-    pModel->vertices[0].grn = gPolyFontBorderColours[fontIdx].tl.g;
-    pModel->vertices[0].blu = gPolyFontBorderColours[fontIdx].tl.b;
-    pModel->vertices[1].red = gPolyFontBorderColours[fontIdx].tr.r;
-    pModel->vertices[1].grn = gPolyFontBorderColours[fontIdx].tr.g;
-    pModel->vertices[1].blu = gPolyFontBorderColours[fontIdx].tr.b;
-    pModel->vertices[2].red = gPolyFontBorderColours[fontIdx].bl.r;
-    pModel->vertices[2].grn = gPolyFontBorderColours[fontIdx].bl.g;
-    pModel->vertices[2].blu = gPolyFontBorderColours[fontIdx].bl.b;
-    pModel->vertices[3].red = gPolyFontBorderColours[fontIdx].br.r;
-    pModel->vertices[3].grn = gPolyFontBorderColours[fontIdx].br.g;
-    pModel->vertices[3].blu = gPolyFontBorderColours[fontIdx].br.b;
+    pModel->vertices[0].red = gPoly_font_border_colours[fontIdx].tl.r;
+    pModel->vertices[0].grn = gPoly_font_border_colours[fontIdx].tl.g;
+    pModel->vertices[0].blu = gPoly_font_border_colours[fontIdx].tl.b;
+    pModel->vertices[1].red = gPoly_font_border_colours[fontIdx].tr.r;
+    pModel->vertices[1].grn = gPoly_font_border_colours[fontIdx].tr.g;
+    pModel->vertices[1].blu = gPoly_font_border_colours[fontIdx].tr.b;
+    pModel->vertices[2].red = gPoly_font_border_colours[fontIdx].bl.r;
+    pModel->vertices[2].grn = gPoly_font_border_colours[fontIdx].bl.g;
+    pModel->vertices[2].blu = gPoly_font_border_colours[fontIdx].bl.b;
+    pModel->vertices[3].red = gPoly_font_border_colours[fontIdx].br.r;
+    pModel->vertices[3].grn = gPoly_font_border_colours[fontIdx].br.g;
+    pModel->vertices[3].blu = gPoly_font_border_colours[fontIdx].br.b;
 }
 
 // FUNCTION: CARMA2_HW 0x00465250
@@ -138,7 +138,7 @@ br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int fontIdx, char character) {
     C2_HOOK_BUG_ON(sizeof(tPolyFontGlyph) != 0x1c);
 
     uchar = character;
-    pMaterial = gPolyFonts[fontIdx].glyphs[uchar].material;
+    pMaterial = gPoly_fonts[fontIdx].glyphs[uchar].material;
     if (pMaterial != NULL && POLYFONT_MATERIAL_GET_CHARACTER(pMaterial) == uchar && POLYFONT_MATERIAL_GET_FONTIDX(pMaterial) == fontIdx) {
         POLYFONT_MATERIAL_STORE_PROPS(pMaterial, uchar, fontIdx, polyFontMaterialCounter);
         return pMaterial;
@@ -155,13 +155,13 @@ br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int fontIdx, char character) {
             break;
         }
     }
-    gPolyFonts[fontIdx].glyphs[uchar].material = pMaterial;
-    pMaterial->colour_map = gTexture_maps[gPolyFonts[fontIdx].glyphs[uchar].index];
+    gPoly_fonts[fontIdx].glyphs[uchar].material = pMaterial;
+    pMaterial->colour_map = gTexture_maps[gPoly_fonts[fontIdx].glyphs[uchar].index];
     POLYFONT_MATERIAL_STORE_PROPS(pMaterial, uchar, fontIdx, polyFontMaterialCounter);
-    factor = gPolyFonts[fontIdx].fontSize / 64.f;
+    factor = gPoly_fonts[fontIdx].fontSize / 64.f;
     BrMatrix23Scale(&pMaterial->map_transform, factor, factor);
-    pMaterial->map_transform.m[2][0] = gPolyFonts[fontIdx].glyphs[uchar].texCoord.v[0];
-    pMaterial->map_transform.m[2][1] = gPolyFonts[fontIdx].glyphs[uchar].texCoord.v[1];
+    pMaterial->map_transform.m[2][0] = gPoly_fonts[fontIdx].glyphs[uchar].texCoord.v[0];
+    pMaterial->map_transform.m[2][1] = gPoly_fonts[fontIdx].glyphs[uchar].texCoord.v[1];
     pMaterial->extra_prim = NULL;
     BrMaterialUpdate(pMaterial, BR_MATU_ALL);
     return pMaterial;

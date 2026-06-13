@@ -29,7 +29,7 @@ void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, in
 
 void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend);
 
-int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap);
+int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex);
 
