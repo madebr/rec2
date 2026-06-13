@@ -9,7 +9,7 @@
 #include "rec2_types.h"
 
 // GLOBAL: CARMA2_HW 0x0076c960
-br_pixelmap* gTextureMaps[1024];
+br_pixelmap* gTexture_maps[1024];
 
 // GLOBAL: CARMA2_HW 0x007663e0
 tDR_font gFonts[24];
@@ -48,7 +48,10 @@ tDR_font gFonts[24];
 
 // CreateFontCharacterModel
 
-// CreateCharacterModel
+// STUB: CARMA2_HW 0x00464b80
+br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textureIdX, int textureIdY, const char* pageName) {
+    NOT_IMPLEMENTED();
+}
 
 // CreatePolyMaterial
 

@@ -128,12 +128,12 @@ void C2_HOOK_FASTCALL InitialiseApplication(int pArgc, const char **pArgv) {
     C2_HOOK_BUG_ON(offsetof(tProgram_state, special_screens_count) != 7192);
     C2_HOOK_ASSERT((uintptr_t) &gProgram_state.sausage_eater_mode == 0x0075bb90);
     C2_HOOK_BUG_ON(sizeof(tProgram_state) != 24272);
-    C2_HOOK_BUG_ON(sizeof(gTextureMaps) != 0x1000);
+    C2_HOOK_BUG_ON(sizeof(gTexture_maps) != 0x1000);
 #endif
 
     gProgram_state.sausage_eater_mode = gSausage_override;
     InitQuickTimeStuff();
-    memset(gTextureMaps, 0, sizeof(gTextureMaps));
+    memset(gTexture_maps, 0, sizeof(gTexture_maps));
     InitPackFiles();
     MAMSInitMem();
     gAusterity_mode = gAustere_override || PDDoWeLeadAnAustereExistance();

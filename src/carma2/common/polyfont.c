@@ -343,25 +343,25 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         if (map == NULL) {
             continue;
         }
-        if (gTextureMaps[gSize_font_texture_pages] == NULL) {
-            gTextureMaps[gSize_font_texture_pages] = BrPixelmapAllocate(blank_map->type, 64, 64, NULL, 0);
-            if (gTextureMaps[gSize_font_texture_pages] == NULL) {
+        if (gTexture_maps[gSize_font_texture_pages] == NULL) {
+            gTexture_maps[gSize_font_texture_pages] = BrPixelmapAllocate(blank_map->type, 64, 64, NULL, 0);
+            if (gTexture_maps[gSize_font_texture_pages] == NULL) {
                 FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
             }
-            BrMapAdd(gTextureMaps[gSize_font_texture_pages]);
+            BrMapAdd(gTexture_maps[gSize_font_texture_pages]);
         }
-        if (map->type != gTextureMaps[gSize_font_texture_pages]->type) {
+        if (map->type != gTexture_maps[gSize_font_texture_pages]->type) {
             printf("FONT:%s  CHAR:%c (%i)\n", pName, ascii, ascii);
             fflush(stdout);
             BrFailure("BLOODY FONTS :(");
         }
         DRPixelmapRectangleCopy(
-                gTextureMaps[gSize_font_texture_pages],
+                gTexture_maps[gSize_font_texture_pages],
                 tex_x, tex_y,
                 map,
                 0, 0,
                 pSize, pSize);
-        BrMapUpdate(gTextureMaps[gSize_font_texture_pages], BR_MAPU_ALL);
+        BrMapUpdate(gTexture_maps[gSize_font_texture_pages], BR_MAPU_ALL);
         gPolyFonts[pIndex].glyphs[ascii].index = gSize_font_texture_pages;
         gPolyFonts[pIndex].glyphs[ascii].used = 1;
         BrVector2Set(&gPolyFonts[pIndex].glyphs[ascii].texCoord, (float) tex_x / 64.f, (float)tex_y  / 64.f);
@@ -407,7 +407,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
             tex_x = 0;
             if (tex_y >= 64) {
                 gSize_font_texture_pages++;
-                if (gSize_font_texture_pages >= REC2_ASIZE(gTextureMaps)) {
+                if (gSize_font_texture_pages >= REC2_ASIZE(gTexture_maps)) {
                     FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
                 }
                 tex_x = 0;
@@ -430,7 +430,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
     gSize_font_texture_pages++;
 }
 
-static tU32 FindSmallestPowerOf2BiggerThen(tU32 pValue) {
+static tU32 NearestPowerOfTwo(tU32 pValue) {
     tU32 power;
 
     for (power = 1; power < 32; power++) {
@@ -442,7 +442,7 @@ static tU32 FindSmallestPowerOf2BiggerThen(tU32 pValue) {
 }
 
 // FUNCTION: CARMA2_HW 0x004973b0
-void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
+void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
     int i;
     int count_car_icons;
     int icon_width;
@@ -454,8 +454,8 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
     memset(gCar_icons, 0, sizeof(gCar_icons));
     count_car_icons = gIcons_pix->height / gCurrent_graf_data->car_icon_height;
 
-    icon_width = FindSmallestPowerOf2BiggerThen(pMap->width);
-    icon_height = FindSmallestPowerOf2BiggerThen(gCurrent_graf_data->car_icon_height);
+    icon_width = NearestPowerOfTwo(pMap->width);
+    icon_height = NearestPowerOfTwo(gCurrent_graf_data->car_icon_height);
 
     texture_x = 0;
     texture_y = 0;
@@ -463,15 +463,15 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
         int j;
         tCar_icon* icon = &gCar_icons[i];
 
-        if (gTextureMaps[gSize_font_texture_pages] == NULL) {
-            gTextureMaps[gSize_font_texture_pages] = BrPixelmapAllocate(pMap->type, 64, 64, NULL, 0);
-            if (gTextureMaps[gSize_font_texture_pages] == NULL) {
+        if (gTexture_maps[gSize_font_texture_pages] == NULL) {
+            gTexture_maps[gSize_font_texture_pages] = BrPixelmapAllocate(pMap->type, 64, 64, NULL, 0);
+            if (gTexture_maps[gSize_font_texture_pages] == NULL) {
                 FatalError(kFatalError_CouldNotCreateTexturesPages_S, "Car Icons");
             }
-            BrMapAdd(gTextureMaps[gSize_font_texture_pages]);
+            BrMapAdd(gTexture_maps[gSize_font_texture_pages]);
         }
         DRPixelmapRectangleCopy(
-            gTextureMaps[gSize_font_texture_pages],
+            gTexture_maps[gSize_font_texture_pages],
             texture_x,
             texture_y,
             pMap,
@@ -479,9 +479,9 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
             gCurrent_graf_data->car_icon_height * i,
             icon_width,
             gCurrent_graf_data->car_icon_height);
-        BrMapUpdate(gTextureMaps[gSize_font_texture_pages], BR_MAPU_ALL);
+        BrMapUpdate(gTexture_maps[gSize_font_texture_pages], BR_MAPU_ALL);
         icon->index = gSize_font_texture_pages;
-        icon->model = CreateStringModel(icon_width, icon_height, texture_x, texture_y, "CAR ICONS");
+        icon->model = CreateCharacterModel(icon_width, icon_height, texture_x, texture_y, "CAR ICONS");
         for (j = 0; j < 4; j++) {
             icon->model->vertices[j].red = 0xff;
             icon->model->vertices[j].grn = 0xff;
@@ -495,7 +495,7 @@ void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap) {
             texture_y += icon_height;
             if (texture_y >= 64) {
                 gSize_font_texture_pages++;
-                if (gSize_font_texture_pages >= REC2_ASIZE(gTextureMaps)) {
+                if (gSize_font_texture_pages >= REC2_ASIZE(gTexture_maps)) {
                     FatalError(kFatalError_CouldNotCreateTexturesPages_S, "CAR ICONS");
                 }
                 texture_x = 0;
@@ -586,7 +586,7 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
 #else
     fclose(f);
 #endif
-    InitCarIcons(gIcons_pix);
+    ConvertCarIcons(gIcons_pix);
 
     LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_yellow);
     LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_blue);
@@ -681,11 +681,11 @@ void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
         for (i = 0; i < gInterface_polyfont_texture_pages; i++) {
             int map_i = gInterface_polyfont_texture_pages + i;
 
-            if (gTextureMaps[map_i] != NULL) {
+            if (gTexture_maps[map_i] != NULL) {
 
-                BrMapRemove(gTextureMaps[map_i]);
-                BrPixelmapFree(gTextureMaps[map_i]);
-                gTextureMaps[map_i] = NULL;
+                BrMapRemove(gTexture_maps[map_i]);
+                BrPixelmapFree(gTexture_maps[map_i]);
+                gTexture_maps[map_i] = NULL;
             }
         }
         gInterface_fonts_loaded = 0;

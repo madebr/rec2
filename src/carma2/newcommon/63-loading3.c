@@ -15,8 +15,6 @@
 // GLOBAL: CARMA2_HW 0x0065852c
 char* gPedTexturePath = "PIXELMAP";
 
-// NearestPowerOfTwo
-
 // FUNCTION: CARMA2_HW 0x0048ea40
 int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
     tPath_name tempPath;

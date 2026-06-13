@@ -10,7 +10,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x0076c960
-br_pixelmap* gTextureMaps[1024];
+br_pixelmap* gTexture_maps[1024];
 
 // GLOBAL: CARMA2_HW 0x00765ec0
 tPolyFontBorderColours gPolyFontBorderColours[27];
@@ -69,7 +69,7 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char
 }
 
 // FUNCTION: CARMA2_HW 0x00464b80
-br_model* C2_HOOK_FASTCALL CreateStringModel(int width, int height, int textureIdX, int textureIdY, const char* pageName) {
+br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textureIdX, int textureIdY, const char* pageName) {
     br_model* pModel;
 
     pModel = BrModelAllocate("String model", 4, 2);
@@ -104,7 +104,7 @@ br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx) {
         BrFailure("Could not create font material");
     }
     material->flags = BR_MATF_PRELIT | BR_MATF_SMOOTH | BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
-    material->colour_map = gTextureMaps[textureIdx];
+    material->colour_map = gTexture_maps[textureIdx];
     BrMaterialAdd(material);
     return material;
 }
@@ -156,7 +156,7 @@ br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int fontIdx, char character) {
         }
     }
     gPolyFonts[fontIdx].glyphs[uchar].material = pMaterial;
-    pMaterial->colour_map = gTextureMaps[gPolyFonts[fontIdx].glyphs[uchar].index];
+    pMaterial->colour_map = gTexture_maps[gPolyFonts[fontIdx].glyphs[uchar].index];
     POLYFONT_MATERIAL_STORE_PROPS(pMaterial, uchar, fontIdx, polyFontMaterialCounter);
     factor = gPolyFonts[fontIdx].fontSize / 64.f;
     BrMatrix23Scale(&pMaterial->map_transform, factor, factor);

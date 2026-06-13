@@ -3,7 +3,7 @@
 
 #include "brender/brender.h"
 
-extern br_pixelmap* gTextureMaps[1024];
+extern br_pixelmap* gTexture_maps[1024];
 
 // PolyFontHeight
 
@@ -39,7 +39,7 @@ extern br_pixelmap* gTextureMaps[1024];
 
 // CreateFontCharacterModel
 
-// CreateCharacterModel
+extern br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textureIdX, int textureIdY, const char* pageName);
 
 // CreatePolyMaterial
 

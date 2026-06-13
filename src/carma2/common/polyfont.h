@@ -33,7 +33,7 @@ int C2_HOOK_FASTCALL CalculatePolyFontMapWidth(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex);
 
-void C2_HOOK_FASTCALL InitCarIcons(br_pixelmap* pMap);
+void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 
 void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void);
 
