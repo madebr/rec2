@@ -15,7 +15,7 @@ extern tPolyFont gPolyFonts[27];
 extern br_pixelmap* gPixelmapBuffer[1000];
 extern int gPixelmapBufferSize;
 
-br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char* glyphName, int loadFromDisk);
+br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const char* glyph_name, int loadFromDisk);
 
 br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx);
 

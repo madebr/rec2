@@ -45,6 +45,12 @@ const char* gFont_names[24] = {
     "OPPOSTAT",
 };
 
+// GLOBAL: CARMA2_HW 0x00764f00
+br_pixelmap* gPixelmap_buffer[1000];
+
+// GLOBAL: CARMA2_HW 0x007663d0
+size_t gPixelmap_buffer_size;
+
 
 // PolyFontHeight
 
@@ -64,7 +70,36 @@ const char* gFont_names[24] = {
 
 // CreatePolyFont
 
-// GetThisFuckingPixelmap
+// FUNCTION: CARMA2_HW 0x00464a70
+br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const char* glyph_name, int loadFromDisk) {
+    tPath_name pathBuffer;
+    FILE* f;
+    char* str;
+    int i;
+
+    PathCat(pathBuffer, path, "PIXIES.P16");
+    f = PFfopen(pathBuffer, "rb");
+    if (f != NULL) {
+        PFfclose(f);
+        if (loadFromDisk) {
+            gPixelmap_buffer_size = BrPixelmapLoadMany(pathBuffer, gPixelmap_buffer, REC2_ASIZE(gPixelmap_buffer));
+        }
+        strcpy(pathBuffer, glyph_name);
+
+        str = strchr(pathBuffer, '.');
+        *str = '\0';
+
+        for (i = 0; i < gPixelmap_buffer_size; i++) {
+            if (gPixelmap_buffer[i] != NULL && DRStricmp(gPixelmap_buffer[i]->identifier, pathBuffer) == 0) {
+                return gPixelmap_buffer[i];
+            }
+        }
+        return NULL;
+    } else {
+        PathCat(pathBuffer, path, glyph_name);
+        return DRImageLoad(pathBuffer);
+    }
+}
 
 // KillThePixies
 

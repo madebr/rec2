@@ -324,7 +324,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
     PFfclose(f);
     strcpy(s, the_path);
     PathCat(s, s, "BLANK.PIX");
-    blank_map = LoadPolyFontPixiesP16(the_path, "BLANK.PIX", 1);
+    blank_map = GetThisFuckingPixelmap(the_path, "BLANK.PIX", 1);
     if (blank_map == NULL) {
         FatalError(kFatalError_CannotLoadFontImage_S, "BLANK.PIX");
     }
@@ -339,7 +339,7 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
         ascii = gPolyFonts[pIndex].asciiOffset + i;
         sprintf(s2, "%d.PIX", ascii);
         PathCat(s, s, s2);
-        map = LoadPolyFontPixiesP16(the_path, s2, 0);
+        map = GetThisFuckingPixelmap(the_path, s2, 0);
         if (map == NULL) {
             continue;
         }

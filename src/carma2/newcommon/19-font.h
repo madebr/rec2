@@ -23,7 +23,7 @@ extern br_pixelmap* gTexture_maps[1024];
 
 // CreatePolyFont
 
-// GetThisFuckingPixelmap
+extern br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const char* glyph_name, int loadFromDisk);
 
 // KillThePixies
 

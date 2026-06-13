@@ -485,7 +485,7 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* 
     f = PFfopen(the_path, "rb");
     if (f == NULL) {
         PathCat(the_path, pFolder, pName);
-        result = DRLoadUpdatePixelmapFromTif(the_path);
+        result = DRImageLoad(the_path);
         /* FUN_005193f0(result, 0); */
         return result;
     }

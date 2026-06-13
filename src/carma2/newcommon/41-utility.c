@@ -205,7 +205,10 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
     return the_map;
 }
 
-// DRImageLoad
+// STUB: CARMA2_HW 0x00513870
+br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* path) {
+    NOT_IMPLEMENTED();
+}
 
 // DRPixelmapLoad
 

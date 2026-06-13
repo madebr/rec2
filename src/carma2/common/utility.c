@@ -411,7 +411,7 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
 }
 
 // FUNCTION: CARMA2_HW 0x00513870
-br_pixelmap* C2_HOOK_FASTCALL DRLoadUpdatePixelmapFromTif(const char* path) {
+br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* path) {
     int errorFlags;
     tPath_name pathBuffer;
     tPath_name pathDir;

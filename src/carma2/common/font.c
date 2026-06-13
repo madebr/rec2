@@ -39,7 +39,7 @@ int gPixelmapBufferSize;
 #define POLYFONT_MATERIAL_GET_COUNTER(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 16) & 0xffff)
 
 // FUNCTION: CARMA2_HW 0x00464a70
-br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char* glyphName, int loadFromDisk) {
+br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const char* glyph_name, int loadFromDisk) {
     tPath_name pathBuffer;
     FILE* f;
     char* str;
@@ -48,14 +48,14 @@ br_pixelmap* C2_HOOK_FASTCALL LoadPolyFontPixiesP16(const char* path, const char
     PathCat(pathBuffer, path, "PIXIES.P16");
     f = PFfopen(pathBuffer, "rb");
     if (f == NULL) {
-        PathCat(pathBuffer, path, glyphName);
-        return DRLoadUpdatePixelmapFromTif(pathBuffer);
+        PathCat(pathBuffer, path, glyph_name);
+        return DRImageLoad(pathBuffer);
     }
     PFfclose(f);
     if (loadFromDisk) {
         gPixelmapBufferSize = BrPixelmapLoadMany(pathBuffer, gPixelmapBuffer, REC2_ASIZE(gPixelmapBuffer));
     }
-    strcpy(pathBuffer, glyphName);
+    strcpy(pathBuffer, glyph_name);
 
     str = strchr(pathBuffer, '.');
     *str = '\0';
