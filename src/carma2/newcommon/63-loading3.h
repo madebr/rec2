@@ -19,7 +19,7 @@ extern br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName);
 
 extern br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path);
 
-// LoadModel
+extern br_model* C2_HOOK_FASTCALL LoadModel(const char* pName);
 
 // LoadActor
 

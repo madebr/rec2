@@ -130,7 +130,15 @@ br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path) {
     return BrMaterialLoad(the_path);
 }
 
-// LoadModel
+// FUNCTION: CARMA2_HW 0x0048efd0
+br_model* C2_HOOK_FASTCALL LoadModel(const char* pName) {
+    tPath_name the_path;
+
+    PossibleService();
+    PathCat(the_path, gApplication_path, "MODELS");
+    PathCat(the_path, the_path, pName);
+    return BrModelLoad(the_path);
+}
 
 // LoadActor
 
