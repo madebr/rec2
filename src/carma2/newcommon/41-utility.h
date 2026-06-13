@@ -85,19 +85,19 @@ extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
 extern int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state);
 
-// RGBDifferenceSqr
+extern double C2_HOOK_FASTCALL RGBDifferenceSqr(tRGB_colour* pColour_1, tRGB_colour* pColour_2);
 
-// FindBestMatch
+extern int C2_HOOK_FASTCALL FindBestMatch(tRGB_colour* pRGB_colour, br_pixelmap* pPalette);
 
-// BuildShadeTablePath
+extern void C2_HOOK_FASTCALL BuildShadeTablePath(char* pThe_path, int pR, int pG, int pB);
 
-// LoadGeneratedShadeTable
+extern br_pixelmap* C2_HOOK_FASTCALL LoadGeneratedShadeTable(int pR, int pG, int pB);
 
-// SaveGeneratedShadeTable
+extern void C2_HOOK_FASTCALL SaveGeneratedShadeTable(br_pixelmap* pThe_table, int pR, int pG, int pB);
 
 // GenerateShadeTable
 
-// GenerateDarkenedShadeTable
+extern br_pixelmap* C2_HOOK_FASTCALL GenerateDarkenedShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter, br_scalar pDarken);
 
 extern void C2_HOOK_FASTCALL PossibleService(void);
 
