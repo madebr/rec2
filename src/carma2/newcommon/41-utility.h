@@ -137,13 +137,13 @@ extern int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* 
 
 // DistanceFromFace
 
-// DRBoundsCopy
+extern void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* pSrc);
 
 extern int C2_HOOK_FASTCALL TestForNan(const float* f);
 
 extern int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
-// DRScaleModel
+extern void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale);
 
 extern float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF);
 

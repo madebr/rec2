@@ -969,7 +969,16 @@ int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel,
 
 // DistanceFromFace
 
-// DRBoundsCopy
+// FUNCTION: CARMA2_HW 0x005160c0
+void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* pSrc) {
+
+    pDest->min.v[0] = pSrc->min.v[0];
+    pDest->min.v[1] = pSrc->min.v[1];
+    pDest->min.v[2] = pSrc->min.v[2];
+    pDest->max.v[0] = pSrc->max.v[0];
+    pDest->max.v[1] = pSrc->max.v[1];
+    pDest->max.v[2] = pSrc->max.v[2];
+}
 
 // FUNCTION: CARMA2_HW 0x005160f0
 int C2_HOOK_FASTCALL TestForNan(const float* f) {
