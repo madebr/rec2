@@ -593,7 +593,21 @@ void C2_HOOK_FASTCALL SaveGeneratedShadeTable(br_pixelmap* pThe_table, int pR, i
     BrPixelmapSave(the_path, pThe_table);
 }
 
-// GenerateShadeTable
+// FUNCTION: CARMA2_HW 0x00514e40
+br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter) {
+
+    PossibleService();
+    return GenerateDarkenedShadeTable(
+        pHeight,
+        pPalette,
+        pRed_mix,
+        pGreen_mix,
+        pBlue_mix,
+        pQuarter,
+        pHalf,
+        pThree_quarter,
+        1.0f);
+}
 
 // FUNCTION: CARMA2_HW 0x00514eb0
 br_pixelmap* C2_HOOK_FASTCALL GenerateDarkenedShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter, br_scalar pDarken) {
