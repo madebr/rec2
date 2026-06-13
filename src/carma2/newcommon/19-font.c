@@ -172,7 +172,15 @@ void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
     gFonts[pFont_ID].file_read_once = 1;
 }
 
-// DisposeFont
+// FUNCTION: CARMA2_HW 0x00465a00
+void C2_HOOK_FASTCALL DisposeFont(int pFont_ID) {
+
+    if (gFonts[pFont_ID].images != NULL) {
+        BrPixelmapFree(gFonts[pFont_ID].images);
+        gFonts[pFont_ID].images = NULL;
+        gFonts[pFont_ID].file_read_once = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00465a40
 void C2_HOOK_FASTCALL InitDRFonts(void) {
