@@ -518,7 +518,17 @@ const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
     return gMisc_strings[pIndex];
 }
 
-// Flash
+// FUNCTION: CARMA2_HW 0x00514db0
+int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state) {
+    tU32 the_time;
+
+    the_time = PDGetTotalTime();
+    if (the_time - *pLast_change > pPeriod) {
+        *pCurrent_state = !*pCurrent_state;
+        *pLast_change = the_time;
+    }
+    return *pCurrent_state;
+}
 
 // RGBDifferenceSqr
 

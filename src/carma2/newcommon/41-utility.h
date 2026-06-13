@@ -83,7 +83,7 @@ extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
 extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
-// Flash
+extern int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state);
 
 // RGBDifferenceSqr
 
