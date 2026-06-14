@@ -649,7 +649,12 @@ void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index) {
     pModel->vertices[3].blu = gPoly_font_border_colours[pFont_index].br.b;
 }
 
-// SolidPolyFontText
+// FUNCTION: CARMA2_HW 0x00464df0
+void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
+
+    CheckAvailabilityOfThisFont(pFont);
+    TransparentPolyFontText(pText, pX, pY, pFont, pJust, pRender, 1.0);
+}
 
 void C2_HOOK_FASTCALL InitPolyFontMaterials(void) {
     int i;

@@ -50,7 +50,7 @@ extern br_material* C2_HOOK_FASTCALL CreatePolyMaterial(int pTexture_id);
 
 extern void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index);
 
-// SolidPolyFontText
+extern void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
 
 extern void C2_HOOK_FASTCALL InitPolyFontMaterials(void);
 
