@@ -78,6 +78,6 @@ extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 // StopRenderingHeadups
 
-// CleanPolyFontDanglers
+extern void C2_HOOK_FASTCALL CleanPolyFontDanglers(void);
 
 #endif // GUARD_16_GRAPHICS1_H

@@ -1520,7 +1520,7 @@ void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e5c70
-void C2_HOOK_FASTCALL RemovePolyFontActors(void) {
+void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {
     int i;
 
     for (i = 0; i < gCount_polyfont_glyph_actors; i++) {

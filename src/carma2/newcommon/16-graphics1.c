@@ -46,6 +46,12 @@ int gRender_indent;
 // GLOBAL: CARMA2_HW 0x006baa40
 tU8 gTemporary_physics_render_buffer[300000];
 
+// GLOBAL: CARMA2_HW 0x00686490
+int gCount_polyfont_glyph_actors;
+
+// GLOBAL: CARMA2_HW 0x0074cae0
+br_actor* gPolyfont_glyph_actors[256];
+
 // MungeClipPlane
 
 // TryThisEdge
@@ -182,5 +188,15 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
 
 // StopRenderingHeadups
 
-// CleanPolyFontDanglers
+// FUNCTION: CARMA2_HW 0x004e5c70
+void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {
+    int i;
 
+    for (i = 0; i < gCount_polyfont_glyph_actors; i++) {
+        br_actor* actor = gPolyfont_glyph_actors[i];
+        if (actor->parent != NULL) {
+            BrActorRemove(actor);
+        }
+    }
+    gCount_polyfont_glyph_actors = 0;
+}

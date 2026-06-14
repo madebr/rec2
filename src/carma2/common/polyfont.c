@@ -736,7 +736,7 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
 
     CheckAvailabilityOfThisFont(pFont);
     if (pRender) {
-        RemovePolyFontActors();
+        CleanPolyFontDanglers();
     }
     switch (pJust) {
     case eJust_right:
@@ -811,7 +811,7 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
         gBack_screen->base_x = original_base_x;
         gBack_screen->base_y = original_base_y;
         BrActorRemove(gString_root_actor);
-        RemovePolyFontActors();
+        CleanPolyFontDanglers();
     }
 }
 
@@ -825,7 +825,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
 
     CheckAvailabilityOfThisFont(pFont);
     if (pRender) {
-        RemovePolyFontActors();
+        CleanPolyFontDanglers();
     }
     switch (pJust) {
     case eJust_right:
@@ -900,7 +900,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
         gBack_screen->base_x = original_base_x;
         gBack_screen->base_y = original_base_y;
         BrActorRemove(gString_root_actor);
-        RemovePolyFontActors();
+        CleanPolyFontDanglers();
     }
 }
 
