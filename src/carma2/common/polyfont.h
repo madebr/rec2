@@ -47,7 +47,7 @@ void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont);
 
 void C2_HOOK_FASTCALL DisposeInterfaceFonts(void);
 
-void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont);
+void C2_HOOK_FASTCALL RemovePolyFont(int pFont);
 
 int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText);
 

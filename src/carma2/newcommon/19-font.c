@@ -382,7 +382,22 @@ void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
 
 // DisposeInterfaceFonts
 
-// RemovePolyFont
+// FUNCTION: CARMA2_HW 0x00464290
+void C2_HOOK_FASTCALL RemovePolyFont(int pFont) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(gPoly_fonts[pFont].glyphs); i++) {
+        tPolyFontGlyph* glyph = &gPoly_fonts[pFont].glyphs[i];
+
+        if (glyph->used) {
+
+            glyph->material = NULL;
+            glyph->model = NULL;
+            glyph->used = 0;
+        }
+    }
+    gPoly_fonts[pFont].available = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004642d0
 void C2_HOOK_FASTCALL LoadInterfaceFonts(void) {

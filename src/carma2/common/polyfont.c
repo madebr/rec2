@@ -664,19 +664,19 @@ void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
     if (gInterface_fonts_loaded) {
         int i;
 
-        ClearPolyFontGlyphs(kPolyfont_hand_green_15pt_unlit);
-        ClearPolyFontGlyphs(kPolyfont_hand_green_15pt_lit);
-        ClearPolyFontGlyphs(kPolyfont_hand_red_15pt_unlit);
-        ClearPolyFontGlyphs(kPolyfont_hand_red_15pt_lit);
-        ClearPolyFontGlyphs(kPolyfont_hand_green_10pt_unlit);
-        ClearPolyFontGlyphs(kPolyfont_hand_green_10pt_lit);
-        ClearPolyFontGlyphs(kPolyfont_serp_red_15pt_lit);
-        ClearPolyFontGlyphs(kPolyfont_serp_red_30pt_lit);
-        ClearPolyFontGlyphs(kPolyfont_serp_green_30pt_unlit);
-        ClearPolyFontGlyphs(kPolyfont_serp_green_30pt_lit);
-        ClearPolyFontGlyphs(kPolyfont_serp_green_38pt_unlit);
-        ClearPolyFontGlyphs(kPolyfont_serp_green_38pt_lit);
-        ClearPolyFontGlyphs(kPolyfont_highlighter);
+        RemovePolyFont(kPolyfont_hand_green_15pt_unlit);
+        RemovePolyFont(kPolyfont_hand_green_15pt_lit);
+        RemovePolyFont(kPolyfont_hand_red_15pt_unlit);
+        RemovePolyFont(kPolyfont_hand_red_15pt_lit);
+        RemovePolyFont(kPolyfont_hand_green_10pt_unlit);
+        RemovePolyFont(kPolyfont_hand_green_10pt_lit);
+        RemovePolyFont(kPolyfont_serp_red_15pt_lit);
+        RemovePolyFont(kPolyfont_serp_red_30pt_lit);
+        RemovePolyFont(kPolyfont_serp_green_30pt_unlit);
+        RemovePolyFont(kPolyfont_serp_green_30pt_lit);
+        RemovePolyFont(kPolyfont_serp_green_38pt_unlit);
+        RemovePolyFont(kPolyfont_serp_green_38pt_lit);
+        RemovePolyFont(kPolyfont_highlighter);
 
         for (i = 0; i < gInterface_polyfont_texture_pages; i++) {
             int map_i = gInterface_polyfont_texture_pages + i;
@@ -693,7 +693,7 @@ void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00464290
-void C2_HOOK_FASTCALL ClearPolyFontGlyphs(int pFont) {
+void C2_HOOK_FASTCALL RemovePolyFont(int pFont) {
     int i;
 
     for (i = 0; i < REC2_ASIZE(gPoly_fonts[pFont].glyphs); i++) {

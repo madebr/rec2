@@ -34,7 +34,7 @@ extern void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont);
 
 // DisposeInterfaceFonts
 
-// RemovePolyFont
+extern void C2_HOOK_FASTCALL RemovePolyFont(int pFont);
 
 extern void C2_HOOK_FASTCALL LoadInterfaceFonts(void);
 
