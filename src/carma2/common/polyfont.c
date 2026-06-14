@@ -522,13 +522,13 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
     tPath_name the_path;
     FILE* f;
 
-    C2_HOOK_BUG_ON(REC2_ASIZE(gPolyFontMaterials) != 80);
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPoly_font_materials) != 80);
 
     PrintMemoryDump(0, "START OF InitPolyFonts()");
 
-    for (i = 0; i < REC2_ASIZE(gPolyFontMaterials); i++) {
+    for (i = 0; i < REC2_ASIZE(gPoly_font_materials); i++) {
 
-        gPolyFontMaterials[i] = CreateFontCharacterMaterial(0);
+        gPoly_font_materials[i] = CreatePolyMaterial(0);
     }
     C2_HOOK_BUG_ON(sizeof(gPoly_fonts) != 196344);
     memset(&gPoly_fonts, 0, sizeof(gPoly_fonts));

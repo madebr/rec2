@@ -22,7 +22,7 @@ extern int C2_HOOK_FASTCALL GetSpacing(int pFont_index);
 
 // TransparentPolyFontTextInABox
 
-// InitPolyFonts
+extern void C2_HOOK_FASTCALL InitPolyFonts(void);
 
 extern void C2_HOOK_FASTCALL CreatePolyFont(int pFont, const char* pName, float pFactor, int pSize);
 
@@ -50,7 +50,7 @@ extern void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index);
 
 // SolidPolyFontText
 
-// InitPolyFontMaterials
+extern void C2_HOOK_FASTCALL InitPolyFontMaterials(void);
 
 // GetPolyFontMaterial
 

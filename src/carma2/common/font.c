@@ -16,7 +16,7 @@ br_pixelmap* gTexture_maps[1024];
 tPolyFontBorderColours gPoly_font_border_colours[27];
 
 // GLOBAL: CARMA2_HW 0x00686340
-br_material* gPolyFontMaterials[80];
+br_material* gPoly_font_materials[80];
 
 // GLOBAL: CARMA2_HW 0x00686498
 int polyFontMaterialCounter; // FIXME: unknown purpose
@@ -96,7 +96,7 @@ br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textu
 }
 
 // FUNCTION: CARMA2_HW 0x00464cf0
-br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx) {
+br_material* C2_HOOK_FASTCALL CreatePolyMaterial(int textureIdx) {
     br_material* material;
 
     material = BrMaterialAllocate("Character Material");
@@ -146,12 +146,12 @@ br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int fontIdx, char character) {
     // Find "oldest" material, and re-use
     while (1) {
         currentPolyFontMaterialIdx += 1;
-        if (currentPolyFontMaterialIdx >= REC2_ASIZE(gPolyFontMaterials)) {
+        if (currentPolyFontMaterialIdx >= REC2_ASIZE(gPoly_font_materials)) {
             currentPolyFontMaterialIdx = 0;
         }
         polyFontMaterialCounter = (polyFontMaterialCounter + 1) & 0xffff;
-        pMaterial = gPolyFontMaterials[currentPolyFontMaterialIdx];
-        if ((polyFontMaterialCounter - POLYFONT_MATERIAL_GET_COUNTER(pMaterial)) >= REC2_ASIZE(gPolyFontMaterials)) {
+        pMaterial = gPoly_font_materials[currentPolyFontMaterialIdx];
+        if ((polyFontMaterialCounter - POLYFONT_MATERIAL_GET_COUNTER(pMaterial)) >= REC2_ASIZE(gPoly_font_materials)) {
             break;
         }
     }

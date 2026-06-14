@@ -8,7 +8,7 @@
 
 extern br_pixelmap* gTexture_maps[1024];
 extern tPolyFontBorderColours gPoly_font_border_colours[27];
-extern br_material* gPolyFontMaterials[80];
+extern br_material* gPoly_font_materials[80];
 extern int polyFontMaterialCounter;
 extern int currentPolyFontMaterialIdx;
 extern tPolyFont gPoly_fonts[27];
@@ -17,7 +17,7 @@ extern int gPixelmapBufferSize;
 
 br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const char* glyph_name, int loadFromDisk);
 
-br_material* C2_HOOK_FASTCALL CreateFontCharacterMaterial(int textureIdx);
+br_material* C2_HOOK_FASTCALL CreatePolyMaterial(int textureIdx);
 
 br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textureIdX, int textureIdY, const char* pageName);
 

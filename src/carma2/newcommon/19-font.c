@@ -1,8 +1,10 @@
 #include "19-font.h"
 
+#include "05-drmem.h"
 #include "08-loading1.h"
 #include "41-utility.h"
 #include "52-errors.h"
+#include "62-graphics3.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "platform.h"
@@ -69,6 +71,14 @@ int gInitial_count_font_texture_pages;
 // GLOBAL: CARMA2_HW 0x00686494
 int gInterface_polyfont_texture_pages;
 
+// GLOBAL: CARMA2_HW 0x00686340
+br_material* gPoly_font_materials[80];
+
+// GLOBAL: CARMA2_HW 0x0074cf10
+br_actor* gString_root_actor;
+
+// GLOBAL: CARMA2_HW 0x0074cae0
+br_actor* gPolyfont_glyph_actors[256];
 
 // PolyFontHeight
 
@@ -124,7 +134,111 @@ int C2_HOOK_FASTCALL GetSpacing(int pFont_index) {
 
 // TransparentPolyFontTextInABox
 
-// InitPolyFonts
+// FUNCTION: CARMA2_HW 0x00463d40
+void C2_HOOK_FASTCALL InitPolyFonts(void) {
+    int i;
+    tPath_name the_path;
+    FILE* f;
+    br_actor* actor;
+    int red, green, blue;
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPoly_font_materials) != 80);
+
+    PrintMemoryDump(0, "START OF InitPolyFonts()");
+
+    InitPolyFontMaterials();
+    C2_HOOK_BUG_ON(sizeof(gPoly_fonts) != 196344);
+    memset(&gPoly_fonts, 0, sizeof(gPoly_fonts));
+    gString_root_actor = BrActorAllocate(BR_ACTOR_NONE, NULL);
+    if (gString_root_actor == NULL) {
+#ifdef REC2_FIX_BUGS
+        FatalError(kFatalError_OOM_S, "");
+#else
+        FatalError(kFatalError_OOM_S);
+#endif
+    }
+    gString_root_actor->identifier = "gString_root_actor";
+    gString_root_actor->t.type = BR_TRANSFORM_TRANSLATION;
+    BrVector3Set(&gString_root_actor->t.t.translate.t, 0.0f, 0.0f, 0.0f);
+
+    C2_HOOK_BUG_ON(REC2_ASIZE(gPolyfont_glyph_actors) != 256);
+    for (i = 0; i < (int)REC2_ASIZE(gPolyfont_glyph_actors); i++) {
+
+        actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+        gPolyfont_glyph_actors[i] = actor;
+        if (actor == NULL) {
+#ifdef REC2_FIX_BUGS
+            FatalError(kFatalError_OOM_S, "");
+#else
+            FatalError(kFatalError_OOM_S);
+#endif
+        }
+        actor->t.type = BR_TRANSFORM_TRANSLATION;
+        actor->identifier = "character_actor";
+        BrVector3Set(&actor->t.t.translate.t, 0.0f, 0.0f, 0.0f);
+    }
+
+    PathCat(the_path, gApplication_path, "FontCol.TXT");
+    f = DRfopen(the_path, "rb");
+    if (f != NULL) {
+        /**
+         * COLOURS FOR POLYGONAL FONTS
+         *
+         * Each font has four sets of RGB values in the range 0-255. These specify
+         * the colour for each corner of every character in that font.
+         */
+
+        C2_HOOK_BUG_ON(REC2_ASIZE(gPoly_font_border_colours) != 27);
+        for (i = 0; i < (int)REC2_ASIZE(gPoly_font_border_colours); i++) {
+
+            /* Top/Left */
+            GetThreeInts(f, &red, &green, &blue);
+            gPoly_font_border_colours[i].tl.r = red;
+            gPoly_font_border_colours[i].tl.g = green;
+            gPoly_font_border_colours[i].tl.b = blue;
+
+            /* Top/Right */
+            GetThreeInts(f, &red, &green, &blue);
+            gPoly_font_border_colours[i].tr.r = red;
+            gPoly_font_border_colours[i].tr.g = green;
+            gPoly_font_border_colours[i].tr.b = blue;
+
+            /* Bottom/Left */
+            GetThreeInts(f, &red, &green, &blue);
+            gPoly_font_border_colours[i].bl.r = red;
+            gPoly_font_border_colours[i].bl.g = green;
+            gPoly_font_border_colours[i].bl.b = blue;
+
+            /* Bottom/Right */
+            GetThreeInts(f, &red, &green, &blue);
+            gPoly_font_border_colours[i].br.r = red;
+            gPoly_font_border_colours[i].br.g = green;
+            gPoly_font_border_colours[i].br.b = blue;
+        }
+        fclose(f);
+    } else {
+        BrFailure("Missing FONTCOL.TXT file");
+    }
+    ConvertCarIcons(gIcons_pix);
+
+    CreatePolyFont(kPolyfont_ingame_tiny_yellow, "TINYFONT", 1.0f, 8);
+    CreatePolyFont(kPolyfont_ingame_tiny_blue, "TINYFONT", 1.0f, 8);
+    CreatePolyFont(kPolyfont_ingame_tiny_red, "TINYFONT", 1.0f, 8);
+    CreatePolyFont(kPolyfont_ingame_tiny_green, "TINYFONT", 1.0f, 8);
+    CreatePolyFont(kPolyfont_ingame_big_timer, "BIGYELLOWTIMER", 1.0f, 32);
+    CreatePolyFont(kPolyfont_ingame_medium_red, "MEDIUM_HEADUP", 1.0f, 16);
+    CreatePolyFont(kPolyfont_ingame_medium_blue, "MEDIUM_HEADUP", 1.0f, 16);
+    CreatePolyFont(kPolyfont_ingame_medium_orange, "MEDIUM_HEADUP", 1.0f, 16);
+    CreatePolyFont(kPolyfont_ingame_medium_green, "MEDIUM_HEADUP", 1.0f, 16);
+    CreatePolyFont(kPolyfont_ingame_italic_yellow, "BIG_ITALIC", 1.0f, 32);
+    CreatePolyFont(kPolyfont_ingame_italic_green, "BIG_ITALIC", 1.0f, 32);
+    CreatePolyFont(kPolyfont_ingame_italic_blue, "BIG_ITALIC", 1.0f, 32);
+    CreatePolyFont(kPolyfont_ingame_italic_red, "BIG_ITALIC", 1.0f, 32);
+    CreatePolyFont(kPolyfont_netpos, "NETPOSFONT", 1.0f, 16);
+
+    gInitial_count_font_texture_pages = gSize_font_texture_pages;
+    PrintMemoryDump(0, "END OF InitPolyFonts()");
+}
 
 // FUNCTION: CARMA2_HW 0x00464090
 void C2_HOOK_FASTCALL CreatePolyFont(int pFont, const char* pName, float pFactor, int pSize) {
@@ -447,7 +561,14 @@ void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index) {
 
 // SolidPolyFontText
 
-// InitPolyFontMaterials
+void C2_HOOK_FASTCALL InitPolyFontMaterials(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gPoly_font_materials); i++) {
+
+        gPoly_font_materials[i] = CreatePolyMaterial(0);
+    }
+}
 
 // GetPolyFontMaterial
 
