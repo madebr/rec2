@@ -32,7 +32,7 @@ extern void C2_HOOK_FASTCALL KillThePixies(void);
 
 extern void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont);
 
-// DisposeInterfaceFonts
+extern void C2_HOOK_FASTCALL DisposeInterfaceFonts(void);
 
 extern void C2_HOOK_FASTCALL RemovePolyFont(int pFont);
 

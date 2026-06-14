@@ -380,13 +380,46 @@ void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
     }
 }
 
-// DisposeInterfaceFonts
+// FUNCTION: CARMA2_HW 0x004640f0
+void C2_HOOK_FASTCALL DisposeInterfaceFonts(void) {
+    int i;
+    br_pixelmap* map;
+
+    if (gInterface_fonts_loaded) {
+
+        RemovePolyFont(kPolyfont_hand_green_15pt_unlit);
+        RemovePolyFont(kPolyfont_hand_green_15pt_lit);
+        RemovePolyFont(kPolyfont_hand_red_15pt_unlit);
+        RemovePolyFont(kPolyfont_hand_red_15pt_lit);
+        RemovePolyFont(kPolyfont_hand_green_10pt_unlit);
+        RemovePolyFont(kPolyfont_hand_green_10pt_lit);
+        RemovePolyFont(kPolyfont_serp_red_15pt_lit);
+        RemovePolyFont(kPolyfont_serp_red_30pt_lit);
+        RemovePolyFont(kPolyfont_serp_green_30pt_unlit);
+        RemovePolyFont(kPolyfont_serp_green_30pt_lit);
+        RemovePolyFont(kPolyfont_serp_green_38pt_unlit);
+        RemovePolyFont(kPolyfont_serp_green_38pt_lit);
+        RemovePolyFont(kPolyfont_highlighter);
+
+        for (i = 0; i < gInterface_polyfont_texture_pages; i++) {
+            map = gTexture_maps[gInterface_polyfont_texture_pages + i];
+
+            if (map != NULL) {
+
+                BrMapRemove(map);
+                BrPixelmapFree(map);
+                gTexture_maps[gInterface_polyfont_texture_pages + i] = NULL;
+            }
+        }
+        gInterface_fonts_loaded = 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00464290
 void C2_HOOK_FASTCALL RemovePolyFont(int pFont) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(gPoly_fonts[pFont].glyphs); i++) {
+    for (i = 0; i < (int)REC2_ASIZE(gPoly_fonts[pFont].glyphs); i++) {
         tPolyFontGlyph* glyph = &gPoly_fonts[pFont].glyphs[i];
 
         if (glyph->used) {
