@@ -56,7 +56,7 @@ extern void C2_HOOK_FASTCALL InitPolyFontMaterials(void);
 
 extern br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pCharacter);
 
-// PolyFontText
+extern void C2_HOOK_FASTCALL PolyFontText(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
 
 extern void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor);
 

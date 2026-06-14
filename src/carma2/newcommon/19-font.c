@@ -338,7 +338,7 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const cha
     tPath_name pathBuffer;
     FILE* f;
     char* str;
-    int i;
+    size_t i;
 
     PathCat(pathBuffer, path, "PIXIES.P16");
     f = PFfopen(pathBuffer, "rb");
@@ -710,7 +710,89 @@ br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pChar) {
     return material;
 }
 
-// PolyFontText
+// FUNCTION: CARMA2_HW 0x00464e40
+void C2_HOOK_FASTCALL PolyFontText(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
+    int text_len;
+    int i;
+    float draw_x;
+    int draw_y;
+
+    CheckAvailabilityOfThisFont(pFont);
+    if (pRender) {
+        CleanPolyFontDanglers();
+    }
+    switch (pJust) {
+#ifdef REC2_FIX_BUGS
+    case eJust_left:
+        break;
+#endif
+    case eJust_centre:
+        pX -= PolyFontTextWidth(pFont, pText) / 2;
+        break;
+    case eJust_right:
+        pX -= PolyFontTextWidth(pFont, pText);
+        break;
+    }
+
+    text_len = strlen(pText);
+    if (gCount_polyfont_glyph_actors + text_len < (int)REC2_ASIZE(gPolyfont_glyph_actors)) {
+        draw_x = (float)pX;
+        draw_y = pY;
+        for (i = 0; i < text_len; i++) {
+            tU8 c = pText[i];
+
+            if (c == '\r') {
+                draw_x = (float)pX;;
+                draw_y += gPoly_fonts[pFont].fontCharacterHeight;
+                continue;
+            }
+            if (c >= 'a' && c <= 'z') {
+                c = c - 'a' + 'A';
+            }
+            if (!gPoly_fonts[pFont].glyphs[c].used) {
+                draw_x += (float)gPoly_fonts[pFont].widthOfBlank;
+                continue;
+            }
+            gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]->model = gPoly_fonts[pFont].glyphs[c].model;
+            gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]->material = GetPolyFontMaterial(pFont, c);
+            BrActorAdd(gString_root_actor, gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]);
+            BrVector3Set(&gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]->t.t.translate.t, (float)draw_x, (float)-draw_y, -1.1f);
+            gCount_polyfont_glyph_actors += 1;
+            draw_x += gPoly_fonts[pFont].glyphs[c].glyph_width + gPoly_fonts[pFont].interCharacterSpacing;
+        }
+        if (pRender) {
+            int original_origin_x;
+            int original_origin_y;
+            int original_width;
+            int original_height;
+            int original_base_x;
+            int original_base_y;
+
+            BrActorAdd(gHUD_root, gString_root_actor);
+            original_origin_x = gBack_screen->origin_x;
+            original_origin_y = gBack_screen->origin_y;
+            original_width = gBack_screen->width;
+            original_height = gBack_screen->height;
+            original_base_x = gBack_screen->base_x;
+            original_base_y = gBack_screen->base_y;
+            gBack_screen->origin_x = 0;
+            gBack_screen->origin_y = 0;
+            gBack_screen->base_x = 0;
+            gBack_screen->base_y = 0;
+            gBack_screen->width = 640;
+            gBack_screen->height = 480;
+            BrZbSceneRender(gHUD_root, gHUD_camera, gBack_screen, gDepth_buffer);
+            gBack_screen->origin_x = original_origin_x;
+            gBack_screen->origin_y = original_origin_y;
+            gBack_screen->width = original_width;
+            gBack_screen->height = original_height;
+            gBack_screen->base_x = original_base_x;
+            gBack_screen->base_y = original_base_y;
+            BrActorRemove(gString_root_actor);
+            CleanPolyFontDanglers();
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00465380
 void C2_HOOK_FASTCALL TransparentPolyFontText(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor) {
@@ -725,16 +807,16 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char *pText, int pX, int pY,
         CleanPolyFontDanglers();
     }
     switch (pJust) {
+#ifdef REC2_FIX_BUGS
+    case eJust_left:
+        break;
+#endif
     case eJust_centre:
         pX -= PolyFontTextWidth(pFont, pText) / 2;
         break;
     case eJust_right:
         pX -= PolyFontTextWidth(pFont, pText);
         break;
-#ifdef REC2_FIX_BUGS
-    default:
-        break;
-#endif
     }
 
     text_len = strlen(pText);
