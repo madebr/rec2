@@ -742,7 +742,11 @@ int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
     return text_width + spacing;
 }
 
-// DRTextWidth
+// FUNCTION: CARMA2_HW 0x00465d50
+int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
+
+    return PolyFontTextWidth(GetPolyFontIndexToReplaceDRfontWith(pFont), pText);
+}
 
 // DRTextCleverWidth
 
