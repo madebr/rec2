@@ -816,7 +816,7 @@ void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int 
 }
 
 // FUNCTION: CARMA2_HW 0x00465380
-void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pBlend_factor) {
+void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor) {
     int text_len;
     int i;
     int draw_x;
@@ -847,7 +847,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY,
     tvs[0].t = BRT_BLEND_B;
     tvs[0].v.b = 1;
     tvs[1].t = BRT_OPACITY_X;
-    tvs[1].v.x = BR_FIXED_INT(pBlend_factor * 255.);
+    tvs[1].v.x = BR_FIXED_INT(pOpacity_factor * 255.);
     tvs[2].t = BR_NULL_TOKEN;
     tvs[2].v.u32 = 0;
 

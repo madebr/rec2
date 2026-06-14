@@ -53,7 +53,7 @@ int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText);
 
 void C2_HOOK_FASTCALL RenderPolyTextLine(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender);
 
-void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pBlend_factor);
+void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor);
 
 void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth);
 

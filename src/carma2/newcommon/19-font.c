@@ -2,6 +2,7 @@
 
 #include "05-drmem.h"
 #include "08-loading1.h"
+#include "16-graphics1.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "62-graphics3.h"
@@ -79,6 +80,9 @@ br_actor* gString_root_actor;
 
 // GLOBAL: CARMA2_HW 0x0074cae0
 br_actor* gPolyfont_glyph_actors[256];
+
+// GLOBAL: CARMA2_HW 0x00686490
+int gCount_polyfont_glyph_actors;
 
 // GLOBAL: CARMA2_HW 0x0059ada0
 int gDRFont_to_polyfont_mapping[24] = {
@@ -702,7 +706,91 @@ br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pChar) {
 
 // PolyFontText
 
-// TransparentPolyFontText
+// FUNCTION: CARMA2_HW 0x00465380
+void C2_HOOK_FASTCALL TransparentPolyFontText(const char *pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor) {
+    int text_len;
+    int i;
+    float draw_x;
+    int draw_y;
+    br_token_value tvs[3];
+
+    CheckAvailabilityOfThisFont(pFont);
+    if (pRender) {
+        CleanPolyFontDanglers();
+    }
+    switch (pJust) {
+    case eJust_centre:
+        pX -= PolyFontTextWidth(pFont, pText) / 2;
+        break;
+    case eJust_right:
+        pX -= PolyFontTextWidth(pFont, pText);
+        break;
+#ifdef REC2_FIX_BUGS
+    default:
+        break;
+#endif
+    }
+
+    text_len = strlen(pText);
+    if (gCount_polyfont_glyph_actors + text_len < (int)REC2_ASIZE(gPolyfont_glyph_actors)) {
+        tvs[0].t = BRT_BLEND_B;
+        tvs[0].v.b = 1;
+        tvs[1].t = BRT_OPACITY_X;
+        tvs[1].v.x = BR_FIXED_INT(255.0 * pOpacity_factor);
+        tvs[2].t = BR_NULL_TOKEN;
+        tvs[2].v.u32 = 0;
+
+        draw_x = (float)pX;
+        draw_y = pY;
+        for (i = 0; i < text_len; i++) {
+            tU8 c = pText[i];
+
+            if (c == '\r') {
+                draw_x = (float)pX;
+                draw_y += gPoly_fonts[pFont].fontCharacterHeight;
+                continue;
+            }
+            if (c >= 'a' && c <= 'z') {
+                c = c - 'a' + 'A';
+            }
+            if (!gPoly_fonts[pFont].glyphs[c].used) {
+                draw_x += (float)gPoly_fonts[pFont].widthOfBlank;
+                continue;
+            }
+            gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]->model = gPoly_fonts[pFont].glyphs[c].model;
+            gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]->material = GetPolyFontMaterial(pFont, c);
+            gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]->material->extra_prim = tvs;
+            BrMaterialUpdate(gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]->material, BR_MATU_ALL);
+            BrActorAdd(gString_root_actor, gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]);
+            BrVector3Set(&gPolyfont_glyph_actors[gCount_polyfont_glyph_actors]->t.t.translate.t, draw_x, (float)-draw_y, -1.1f);
+            gCount_polyfont_glyph_actors += 1;
+            draw_x += gPoly_fonts[pFont].glyphs[c].glyph_width + gPoly_fonts[pFont].interCharacterSpacing;
+        }
+        if (pRender) {
+            int original_origin_x;
+            int original_origin_y;
+            int original_base_x;
+            int original_base_y;
+
+            BrActorAdd(gHUD_root, gString_root_actor);
+            original_origin_x = gBack_screen->origin_x;
+            original_origin_y = gBack_screen->origin_y;
+            original_base_x = gBack_screen->base_x;
+            original_base_y = gBack_screen->base_y;
+            gBack_screen->origin_x = 0;
+            gBack_screen->origin_y = 0;
+            gBack_screen->base_x = 0;
+            gBack_screen->base_y = 0;
+            BrZbSceneRender(gHUD_root, gHUD_camera, gBack_screen, gDepth_buffer);
+            gBack_screen->origin_x = original_origin_x;
+            gBack_screen->origin_y = original_origin_y;
+            gBack_screen->base_x = original_base_x;
+            gBack_screen->base_y = original_base_y;
+            BrActorRemove(gString_root_actor);
+            CleanPolyFontDanglers();
+        }
+    }
+}
 
 // DrawDigitAt
 

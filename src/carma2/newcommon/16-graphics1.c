@@ -1,8 +1,9 @@
 #include "16-graphics1.h"
 
 #include "02-init.h"
-#include "52-errors.h"
+#include "19-font.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "63-loading3.h"
 #include "brender/brender.h"
 #include "globvars.h"
@@ -45,12 +46,6 @@ int gRender_indent;
 
 // GLOBAL: CARMA2_HW 0x006baa40
 tU8 gTemporary_physics_render_buffer[300000];
-
-// GLOBAL: CARMA2_HW 0x00686490
-int gCount_polyfont_glyph_actors;
-
-// GLOBAL: CARMA2_HW 0x0074cae0
-br_actor* gPolyfont_glyph_actors[256];
 
 // MungeClipPlane
 

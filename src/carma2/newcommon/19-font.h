@@ -7,6 +7,8 @@
 
 extern br_pixelmap* gTexture_maps[1024];
 extern int gSize_font_texture_pages;
+extern br_actor* gPolyfont_glyph_actors[256];
+extern int gCount_polyfont_glyph_actors;
 
 extern int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index);
 
@@ -56,7 +58,7 @@ extern br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char p
 
 // PolyFontText
 
-// TransparentPolyFontText
+extern void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor);
 
 // DrawDigitAt
 
