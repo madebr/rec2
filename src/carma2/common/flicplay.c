@@ -990,7 +990,7 @@ void C2_HOOK_FASTCALL DrawTranslations(tFlic_descriptor* pFlic_info) {
                     right_edge = x + width / 2;
                     break;
             }
-            TransDRPixelmapText(
+            DRPixelmapText(
                     pFlic_info->the_pixelmap,
                     x,
                     pFlic_info->y_offset + trans->y,

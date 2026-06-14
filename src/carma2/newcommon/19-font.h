@@ -70,7 +70,7 @@ extern void C2_HOOK_FASTCALL DisposeFont(int pFont_ID);
 
 extern void C2_HOOK_FASTCALL InitDRFonts(void);
 
-// DRPixelmapText
+extern void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge);
 
 // DRPixelmapCleverText
 

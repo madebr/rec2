@@ -113,6 +113,9 @@ int gDRFont_to_polyfont_mapping[24] = {
     kPolyfont_ingame_medium_blue,
 };
 
+// GLOBAL: CARMA2_HW 0x0059ad28
+int gRender_poly_text = 1;
+
 #define POLYFONT_FONT_CHARACTER(FONT, CHARACTER) ((CHARACTER) + ((FONT) << 8))
 #define POLYFONT_PACK_USER(FONT_CHARACTER, GENERATION) ((void*)(uintptr_t)((FONT_CHARACTER) + ((GENERATION) << 16)))
 #define POLYFONT_MATERIAL_GET_FONT_CHARACTER(MATERIAL) (((uintptr_t)(MATERIAL)->user) & 0xffff)
@@ -957,7 +960,11 @@ void C2_HOOK_FASTCALL InitDRFonts(void) {
     }
 }
 
-// DRPixelmapText
+// FUNCTION: CARMA2_HW 0x00465a70
+void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
+
+    PolyFontText(pText, pX, pY, GetPolyFontIndexToReplaceDRfontWith(pFont), eJust_left, gRender_poly_text);
+}
 
 // DRPixelmapCleverText
 

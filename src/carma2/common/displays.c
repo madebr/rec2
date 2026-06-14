@@ -306,7 +306,7 @@ void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int 
     int width_over_2;
 
     width_over_2 = DRTextWidth(pFont, pText) / 2;
-    TransDRPixelmapText(pPixelmap, pX - width_over_2, pY, pFont, pText, width_over_2 + pX);
+    DRPixelmapText(pPixelmap, pX - width_over_2, pY, pFont, pText, width_over_2 + pX);
 }
 
 // FUNCTION: CARMA2_HW 0x00466000
@@ -324,7 +324,7 @@ int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont) 
 }
 
 // FUNCTION: CARMA2_HW 0x00465a70
-void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
+void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
 
     RenderPolyTextLine(pText, pX, pY, gDRFont_to_polyfont_mapping[pFont->id], eJust_left, gRender_poly_text);
 }
@@ -1404,7 +1404,7 @@ void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time) {
                                 } else {
                                     x_offset = 0;
                                 }
-                                TransDRPixelmapText(
+                                DRPixelmapText(
                                         gBack_screen,
                                         x_offset + the_headup->x,
                                         y_offset + the_headup->y,
