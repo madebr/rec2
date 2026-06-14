@@ -62,7 +62,7 @@ int C2_HOOK_FASTCALL CharacterWidth(int pIndex, tU8 pCharacter) {
 }
 
 // FUNCTION: CARMA2_HW 0x00463830
-int C2_HOOK_FASTCALL GetPolyFontInterCharacterSpacing(int pIndex) {
+int C2_HOOK_FASTCALL GetSpacing(int pIndex) {
 
     return gPoly_fonts[pIndex].interCharacterSpacing;
 }

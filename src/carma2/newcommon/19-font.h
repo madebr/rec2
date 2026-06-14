@@ -14,7 +14,7 @@ extern int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap);
 
 extern int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter);
 
-// GetSpacing
+extern int C2_HOOK_FASTCALL GetSpacing(int pFont_index);
 
 // SolidPolyFontTextInABox
 

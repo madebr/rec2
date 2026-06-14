@@ -110,7 +110,13 @@ int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
     return font->widthOfBlank;
 }
 
-// GetSpacing
+// FUNCTION: CARMA2_HW 0x00463830
+int C2_HOOK_FASTCALL GetSpacing(int pFont_index) {
+    tPolyFont* font;
+
+    font = &gPoly_fonts[pFont_index];
+    return font->interCharacterSpacing;
+}
 
 // SolidPolyFontTextInABox
 
