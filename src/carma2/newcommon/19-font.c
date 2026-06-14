@@ -798,13 +798,13 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char *pText, int pX, int pY,
     }
 }
 
-void C2_HOOK_FASTCALL DrawDigitAt(br_pixelmap* pSource, br_pixelmap* pDest, br_uint_16 pX, br_uint_16 pY, br_uint_16 pDigit_height, int pDigit) {
+void C2_HOOK_FASTCALL DrawDigitAt(const br_pixelmap* pSource, br_pixelmap* pDest, br_uint_16 pX, br_uint_16 pY, br_uint_16 pDigit_height, int pDigit) {
 
     DRPixelmapRectangleMaskedCopy(pDest, pX, pY, pSource, 0, pDigit * pDigit_height ,pSource->width, pDigit_height);
 }
 
 // FUNCTION: CARMA2_HW 0x004657c0
-void C2_HOOK_FASTCALL DrawNumberAt(br_pixelmap* pSrc, br_pixelmap* pDest, int pX, int pY, int pX_pitch, int pY_pitch, int pValue ,int pDigit_count, int pLeading_zeroes) {
+void C2_HOOK_FASTCALL DrawNumberAt(const br_pixelmap* pSrc, br_pixelmap* pDest, int pX, int pY, int pX_pitch, int pY_pitch, int pValue, int pDigit_count, int pLeading_zeroes) {
     int i;
     int digit;
 
