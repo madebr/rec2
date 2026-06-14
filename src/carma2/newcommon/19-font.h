@@ -1,7 +1,9 @@
 #ifndef GUARD_19_FONT_H
 #define GUARD_19_FONT_H
 
+#include "c2_hooks.h"
 #include "brender/brender.h"
+#include "rec2_types.h"
 
 extern br_pixelmap* gTexture_maps[1024];
 extern int gSize_font_texture_pages;
@@ -10,7 +12,7 @@ extern int gSize_font_texture_pages;
 
 extern int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap);
 
-// CharacterWidth
+extern int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter);
 
 // GetSpacing
 

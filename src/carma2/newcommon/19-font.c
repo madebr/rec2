@@ -95,7 +95,20 @@ int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
     return 1;
 }
 
-// CharacterWidth
+// FUNCTION: CARMA2_HW 0x004637d0
+int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
+    tPolyFont* font;
+
+    if ('a' <= pCharacter && pCharacter <= 'z') {
+        pCharacter = pCharacter - 'a' + 'A';
+    }
+
+    font = &gPoly_fonts[pFont_index];
+    if (font->glyphs[pCharacter].used) {
+        return font->glyphs[pCharacter].glyph_width;
+    }
+    return font->widthOfBlank;
+}
 
 // GetSpacing
 
