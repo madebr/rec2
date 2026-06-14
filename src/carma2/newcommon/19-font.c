@@ -392,7 +392,19 @@ br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int textu
     return pModel;
 }
 
-// CreatePolyMaterial
+// FUNCTION: CARMA2_HW 0x00464cf0
+br_material* C2_HOOK_FASTCALL CreatePolyMaterial(int pTexture_id) {
+    br_material *material;
+
+    material = BrMaterialAllocate("Character Material");
+    if (material == NULL) {
+        BrFailure("Could not create font material");
+    }
+    material->flags = BR_MATF_FORCE_FRONT | BR_MATF_ALWAYS_VISIBLE | BR_MATF_SMOOTH | BR_MATF_PRELIT;
+    material->colour_map = gTexture_maps[pTexture_id];
+    BrMaterialAdd(material);
+    return material;
+}
 
 // FUNCTION: CARMA2_HW 0x00464d40
 void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index) {

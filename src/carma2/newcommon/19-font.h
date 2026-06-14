@@ -42,7 +42,7 @@ extern br_model* C2_HOOK_FASTCALL CreateFontCharacterModel(int pIndex, int pAsci
 
 extern br_model* C2_HOOK_FASTCALL CreateCharacterModel(int width, int height, int texture_id_x, int texture_id_y, const char* pageName);
 
-// CreatePolyMaterial
+extern br_material* C2_HOOK_FASTCALL CreatePolyMaterial(int pTexture_id);
 
 extern void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index);
 
