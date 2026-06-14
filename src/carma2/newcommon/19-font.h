@@ -52,7 +52,7 @@ extern void C2_HOOK_FASTCALL ColourVertices(br_model* pModel, int pFont_index);
 
 extern void C2_HOOK_FASTCALL InitPolyFontMaterials(void);
 
-// GetPolyFontMaterial
+extern br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pCharacter);
 
 // PolyFontText
 

@@ -80,6 +80,11 @@ br_actor* gString_root_actor;
 // GLOBAL: CARMA2_HW 0x0074cae0
 br_actor* gPolyfont_glyph_actors[256];
 
+#define POLYFONT_FONT_CHARACTER(FONT, CHARACTER) ((CHARACTER) + ((FONT) << 8))
+#define POLYFONT_PACK_USER(FONT_CHARACTER, GENERATION) ((void*)(uintptr_t)((FONT_CHARACTER) + ((GENERATION) << 16)))
+#define POLYFONT_MATERIAL_GET_FONT_CHARACTER(MATERIAL) (((uintptr_t)(MATERIAL)->user) & 0xffff)
+#define POLYFONT_MATERIAL_GET_GENERATION(MATERIAL) ((((uintptr_t)(MATERIAL)->user) >> 16) & 0xffff)
+
 // FUNCTION: CARMA2_HW 0x00463730
 int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index) {
 
@@ -575,7 +580,49 @@ void C2_HOOK_FASTCALL InitPolyFontMaterials(void) {
     }
 }
 
-// GetPolyFontMaterial
+// FUNCTION: CARMA2_HW 0x00465250
+br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char pChar) {
+    tU8 uchar;
+    br_material* material;
+    float f_size;
+    tU32 packed_font_character;
+
+    // GLOBAL: CARMA2 0x00686480
+    static int poly_font_material_index;
+
+    // GLOBAL: CARMA2 0x00686498
+    static tU16 poly_font_material_generation;
+
+    C2_HOOK_BUG_ON(sizeof(tPolyFont) != 0x1c68);
+    C2_HOOK_BUG_ON(sizeof(tPolyFontGlyph) != 0x1c);
+
+    uchar = pChar;
+    material = gPoly_fonts[pFont_index].glyphs[uchar].material;
+    packed_font_character = POLYFONT_FONT_CHARACTER(pFont_index, uchar);
+    if (material != NULL && POLYFONT_MATERIAL_GET_FONT_CHARACTER(material) == packed_font_character) {
+        material->user = POLYFONT_PACK_USER(packed_font_character, poly_font_material_generation);
+        return material;
+    }
+    // Find "oldest" material, and re-use
+    do {
+        poly_font_material_index += 1;
+        poly_font_material_generation += 1;
+        if (poly_font_material_index >= (int)REC2_ASIZE(gPoly_font_materials)) {
+            poly_font_material_index = 0;
+        }
+    } while ((poly_font_material_generation - POLYFONT_MATERIAL_GET_GENERATION(gPoly_font_materials[poly_font_material_index])) < (int)REC2_ASIZE(gPoly_font_materials));
+    material = gPoly_font_materials[poly_font_material_index];
+    gPoly_fonts[pFont_index].glyphs[uchar].material = material;
+    material->colour_map = gTexture_maps[gPoly_fonts[pFont_index].glyphs[uchar].index];
+    material->user = POLYFONT_PACK_USER(packed_font_character, poly_font_material_generation);;
+    f_size = (float)gPoly_fonts[pFont_index].fontSize;
+    BrMatrix23Scale(&material->map_transform, f_size / 64.0f, f_size / 64.0f);
+    material->map_transform.m[2][0] = gPoly_fonts[pFont_index].glyphs[uchar].texCoord.v[0];
+    material->map_transform.m[2][1] = gPoly_fonts[pFont_index].glyphs[uchar].texCoord.v[1];
+    material->extra_prim = NULL;
+    BrMaterialUpdate(material, BR_MATU_ALL);
+    return material;
+}
 
 // PolyFontText
 
