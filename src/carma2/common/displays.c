@@ -318,7 +318,7 @@ void C2_HOOK_FASTCALL OoerrIveGotTextInMeBoxMissus(int pFont_index, const char* 
 }
 
 // FUNCTION: CARMA2_HW 0x00466210
-int C2_HOOK_FASTCALL DRFontToPolyFontHandle(const tDR_font* pFont) {
+int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont) {
 
     return gDRFont_to_polyfont_mapping[pFont->id];
 }

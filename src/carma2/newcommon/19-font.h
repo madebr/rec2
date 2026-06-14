@@ -84,6 +84,6 @@ extern int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText);
 
 extern br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName);
 
-// GetPolyFontIndexToReplaceDRfontWith
+extern int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont);
 
 #endif // GUARD_19_FONT_H

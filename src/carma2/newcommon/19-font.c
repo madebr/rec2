@@ -80,6 +80,34 @@ br_actor* gString_root_actor;
 // GLOBAL: CARMA2_HW 0x0074cae0
 br_actor* gPolyfont_glyph_actors[256];
 
+// GLOBAL: CARMA2_HW 0x0059ada0
+int gDRFont_to_polyfont_mapping[24] = {
+    kPolyfont_ingame_tiny_red,
+    kPolyfont_ingame_tiny_yellow,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_tiny_green,
+    kPolyfont_ingame_italic_yellow,
+    kPolyfont_ingame_big_timer,
+    kPolyfont_ingame_medium_blue,
+    kPolyfont_ingame_medium_red,
+    kPolyfont_ingame_medium_orange,
+    kPolyfont_ingame_tiny_green,
+    kPolyfont_ingame_medium_green,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_tiny_red,
+    kPolyfont_ingame_tiny_yellow,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_tiny_blue,
+    kPolyfont_ingame_italic_red,
+    kPolyfont_ingame_italic_red,
+    kPolyfont_ingame_italic_green,
+    kPolyfont_ingame_italic_green,
+    kPolyfont_ingame_italic_red,
+    kPolyfont_ingame_italic_red,
+    kPolyfont_ingame_medium_blue,
+};
+
 #define POLYFONT_FONT_CHARACTER(FONT, CHARACTER) ((CHARACTER) + ((FONT) << 8))
 #define POLYFONT_PACK_USER(FONT_CHARACTER, GENERATION) ((void*)(uintptr_t)((FONT_CHARACTER) + ((GENERATION) << 16)))
 #define POLYFONT_MATERIAL_GET_FONT_CHARACTER(MATERIAL) (((uintptr_t)(MATERIAL)->user) & 0xffff)
@@ -774,5 +802,8 @@ br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
     return the_font;
 }
 
-// GetPolyFontIndexToReplaceDRfontWith
+// FUNCTION: CARMA2_HW 0x00466210
+int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont) {
 
+    return gDRFont_to_polyfont_mapping[pFont->id];
+}
