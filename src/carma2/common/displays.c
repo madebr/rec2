@@ -827,7 +827,7 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLi
 }
 
 // FUNCTION: CARMA2_HW 0x00465aa0
-void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge) {
+void C2_HOOK_FASTCALL DRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge) {
     int i;
     char s[512];
     int s_end;
@@ -1386,7 +1386,7 @@ void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time) {
                                 } else {
                                     x_offset = 0;
                                 }
-                                TransDRPixelmapCleverText(
+                                DRPixelmapCleverText(
                                         gBack_screen,
                                         x_offset + the_headup->x,
                                         y_offset + the_headup->y,

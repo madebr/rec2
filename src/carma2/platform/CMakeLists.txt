@@ -102,6 +102,9 @@ target_link_libraries(rec2 PRIVATE
     c2_newcommon
     c2_platform
 )
+if(MSVC)
+    target_link_options(rec2 PRIVATE "-MAP:$<TARGET_FILE_DIR:rec2>/$<TARGET_FILE_BASE_NAME:rec2>.map")
+endif()
 if(REC2_MATCHING)
     add_dependencies(rec2 brender_driver_d3d)
 

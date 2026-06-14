@@ -966,7 +966,41 @@ void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, con
     PolyFontText(pText, pX, pY, GetPolyFontIndexToReplaceDRfontWith(pFont), eJust_left, gRender_poly_text);
 }
 
-// DRPixelmapCleverText
+// FUNCTION: CARMA2_HW 0x00465aa0
+void C2_HOOK_FASTCALL DRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge) {
+    int i;
+    char s[512];
+    int s_end;
+    int x_text;
+    int x_cursor;
+    int len_text;
+
+    s_end = -1;
+    x_text = pX;
+    x_cursor = pX;
+    len_text = strlen(pText);
+    for (i = 0; i < len_text; i++) {
+
+        if (pText[i] < 0) {
+            if (s_end >= 0) {
+                s[s_end + 1] = '\0';
+                PolyFontText(s, x_text, pY, GetPolyFontIndexToReplaceDRfontWith(pFont), eJust_left, gRender_poly_text);
+                s_end = -1;
+                x_text = x_cursor;
+            }
+            pY -= (PolyFontHeight(GetPolyFontIndexToReplaceDRfontWith(&gFonts[-pText[i]])) - PolyFontHeight(GetPolyFontIndexToReplaceDRfontWith(pFont))) / 2;
+            pFont = &gFonts[-pText[i]];
+        } else {
+            s_end += 1;
+            s[s_end] = pText[i];
+            x_cursor += CharacterWidth(GetPolyFontIndexToReplaceDRfontWith(pFont), pText[i]) + GetSpacing(GetPolyFontIndexToReplaceDRfontWith(pFont));
+        }
+    }
+    if (s_end >= 0) {
+        s[s_end + 1] = '\0';
+        PolyFontText(s, x_text, pY, GetPolyFontIndexToReplaceDRfontWith(pFont), eJust_left, gRender_poly_text);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00465ca0
 int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {

@@ -72,7 +72,7 @@ extern void C2_HOOK_FASTCALL InitDRFonts(void);
 
 extern void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge);
 
-// DRPixelmapCleverText
+extern void C2_HOOK_FASTCALL DRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge);
 
 extern int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText);
 
