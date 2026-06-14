@@ -60,9 +60,9 @@ extern br_material* C2_HOOK_FASTCALL GetPolyFontMaterial(int pFont_index, char p
 
 extern void C2_HOOK_FASTCALL TransparentPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender, double pOpacity_factor);
 
-// DrawDigitAt
+extern void C2_HOOK_FASTCALL DrawDigitAt(br_pixelmap* pSource, br_pixelmap* pDest, br_uint_16 pX, br_uint_16 pY, br_uint_16 pDigit_height, int pDigit);
 
-// DrawNumberAt
+extern void C2_HOOK_FASTCALL DrawNumberAt(br_pixelmap* pSrc, br_pixelmap* pDest, int pX, int pY, int pX_pitch, int pY_pitch, int pValue ,int pDigit_count, int pLeading_zeroes);
 
 extern void C2_HOOK_FASTCALL LoadFont(int pFont_ID);
 

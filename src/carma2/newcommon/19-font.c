@@ -3,6 +3,7 @@
 #include "05-drmem.h"
 #include "08-loading1.h"
 #include "16-graphics1.h"
+#include "18-graphics2.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "62-graphics3.h"
@@ -797,9 +798,24 @@ void C2_HOOK_FASTCALL TransparentPolyFontText(const char *pText, int pX, int pY,
     }
 }
 
-// DrawDigitAt
+void C2_HOOK_FASTCALL DrawDigitAt(br_pixelmap* pSource, br_pixelmap* pDest, br_uint_16 pX, br_uint_16 pY, br_uint_16 pDigit_height, int pDigit) {
 
-// DrawNumberAt
+    DRPixelmapRectangleMaskedCopy(pDest, pX, pY, pSource, 0, pDigit * pDigit_height ,pSource->width, pDigit_height);
+}
+
+// FUNCTION: CARMA2_HW 0x004657c0
+void C2_HOOK_FASTCALL DrawNumberAt(br_pixelmap* pSrc, br_pixelmap* pDest, int pX, int pY, int pX_pitch, int pY_pitch, int pValue ,int pDigit_count, int pLeading_zeroes) {
+    int i;
+    int digit;
+
+    for (i = pDigit_count - 1; i >= 0; i--) {
+        digit = pValue % 10;
+        pValue /= 10;
+        if (pValue != 0 || pLeading_zeroes || i == pDigit_count - 1) {
+            DrawDigitAt(pSrc, pDest, pX + pX_pitch * i, pY, pY_pitch, digit);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00465850
 void C2_HOOK_FASTCALL LoadFont(int pFont_ID) {
