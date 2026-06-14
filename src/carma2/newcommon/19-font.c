@@ -748,7 +748,36 @@ int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText) {
     return PolyFontTextWidth(GetPolyFontIndexToReplaceDRfontWith(pFont), pText);
 }
 
-// DRTextCleverWidth
+// FUNCTION: CARMA2_HW 0x00465e10
+int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText) {
+    int polyfont_index;
+    int i;
+    int len;
+    int result;
+    int spacing;
+
+    polyfont_index = GetPolyFontIndexToReplaceDRfontWith(pFont);
+    len = strlen(pText);
+
+    i = 0;
+    result = 0;
+    for (; i < len; i++) {
+        tS8 c;
+
+        c = pText[i];
+        if (c < 0) {
+            polyfont_index = GetPolyFontIndexToReplaceDRfontWith(&gFonts[-(int)c]);
+        } else {
+            if (i < len - 1) {
+                spacing = gPoly_fonts[polyfont_index].interCharacterSpacing;
+            } else {
+                spacing = 0;
+            }
+            result += spacing + CharacterWidth(polyfont_index, c);
+        }
+    }
+    return result;
+}
 
 // DRPixelmapCentredText
 
