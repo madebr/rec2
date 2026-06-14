@@ -8,7 +8,7 @@
 extern br_pixelmap* gTexture_maps[1024];
 extern int gSize_font_texture_pages;
 
-// PolyFontHeight
+extern int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index);
 
 extern int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap);
 

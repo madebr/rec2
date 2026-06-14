@@ -80,7 +80,12 @@ br_actor* gString_root_actor;
 // GLOBAL: CARMA2_HW 0x0074cae0
 br_actor* gPolyfont_glyph_actors[256];
 
-// PolyFontHeight
+// FUNCTION: CARMA2_HW 0x00463730
+int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index) {
+
+    CheckAvailabilityOfThisFont(pFont_index);
+    return gPoly_fonts[pFont_index].fontCharacterHeight;
+}
 
 // FUNCTION: CARMA2_HW 0x00463760
 int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
