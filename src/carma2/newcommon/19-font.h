@@ -22,19 +22,19 @@ extern int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap);
 
 // InitPolyFonts
 
-// CreatePolyFont
+extern void C2_HOOK_FASTCALL CreatePolyFont(int pFont, const char* pName, float pFactor, int pSize);
 
 extern br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const char* glyph_name, int loadFromDisk);
 
 extern void C2_HOOK_FASTCALL KillThePixies(void);
 
-// CheckAvailabilityOfThisFont
+extern void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont);
 
 // DisposeInterfaceFonts
 
 // RemovePolyFont
 
-// LoadInterfaceFonts
+extern void C2_HOOK_FASTCALL LoadInterfaceFonts(void);
 
 extern void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex);
 

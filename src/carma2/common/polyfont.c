@@ -273,7 +273,7 @@ int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
 }
 
 // FUNCTION: CARMA2_HW 0x004643f0
-void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
+void C2_HOOK_FASTCALL CreatePolyFont(const char* pName, int pSize, int pIndex) {
     tPath_name the_path;
     tTWTVFS twt;
     char s[256];
@@ -588,37 +588,37 @@ void C2_HOOK_FASTCALL InitPolyFonts(void) {
 #endif
     ConvertCarIcons(gIcons_pix);
 
-    LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_yellow);
-    LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_blue);
-    LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_red);
-    LoadPolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_green);
+    CreatePolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_yellow);
+    CreatePolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_blue);
+    CreatePolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_red);
+    CreatePolyFont("TINYFONT", 8, kPolyfont_ingame_tiny_green);
 
-    LoadPolyFont("BIGYELLOWTIMER", 32, kPolyfont_ingame_big_timer);
+    CreatePolyFont("BIGYELLOWTIMER", 32, kPolyfont_ingame_big_timer);
     for (i = 0; i < REC2_ASIZE(gPoly_fonts->glyphs); i++) {
         gPoly_fonts[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
     }
     gPoly_fonts[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11;
 
-    LoadPolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_red);
-    LoadPolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_blue);
-    LoadPolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_orange);
-    LoadPolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_green);
+    CreatePolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_red);
+    CreatePolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_blue);
+    CreatePolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_orange);
+    CreatePolyFont("MEDIUM_HEADUP", 16, kPolyfont_ingame_medium_green);
 
-    LoadPolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_yellow);
-    LoadPolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_green);
-    LoadPolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_blue);
-    LoadPolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_red);
+    CreatePolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_yellow);
+    CreatePolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_green);
+    CreatePolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_blue);
+    CreatePolyFont("BIG_ITALIC", 32, kPolyfont_ingame_italic_red);
 
-    LoadPolyFont("NETPOSFONT", 16, kPolyfont_netpos);
+    CreatePolyFont("NETPOSFONT", 16, kPolyfont_netpos);
     gInitial_count_font_texture_pages = gSize_font_texture_pages;
     PrintMemoryDump(0, "END OF InitPolyFonts()");
 }
 
 // FUNCTION: CARMA2_HW 0x00464090
-void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, float pFactor, int pSize) {
+void C2_HOOK_FASTCALL CreatePolyFontWithTimerFix(int pFont, const char* pName, float pFactor, int pSize) {
     int i;
 
-    LoadPolyFont(pName, pSize, pFont);
+    CreatePolyFont(pName, pSize, pFont);
     if (pFont == kPolyfont_ingame_big_timer) {
         /* 0x10 -> kPolyfont_ingame_big_timer */
         for (i = 0; i < REC2_ASIZE(gPoly_fonts[kPolyfont_ingame_big_timer].glyphs); i++) {
@@ -629,22 +629,22 @@ void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, flo
 }
 
 // FUNCTION: CARMA2_HW 0x004642d0
-void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void) {
+void C2_HOOK_FASTCALL LoadInterfaceFonts(void) {
     if (!gInterface_fonts_loaded) {
         gSize_font_texture_pages = gInitial_count_font_texture_pages;
-        LoadPolyFont("HAND15U", 16, kPolyfont_hand_green_15pt_unlit);
-        LoadPolyFont("HAND15", 16, kPolyfont_hand_green_15pt_lit);
-        LoadPolyFont("HAND15U", 16, kPolyfont_hand_red_15pt_unlit);
-        LoadPolyFont("HAND15", 16, kPolyfont_hand_red_15pt_lit);
-        LoadPolyFont("HAND10U", 16, kPolyfont_hand_green_10pt_unlit);
-        LoadPolyFont("HAND10", 16, kPolyfont_hand_green_10pt_lit);
-        LoadPolyFont("SERP15", 16, kPolyfont_serp_red_15pt_lit);
-        LoadPolyFont("SERP30", 32, kPolyfont_serp_red_30pt_lit);
-        LoadPolyFont("SERP30U", 32, kPolyfont_serp_green_30pt_unlit);
-        LoadPolyFont("SERP30", 32, kPolyfont_serp_green_30pt_lit);
-        LoadPolyFont("SERP38U", 64, kPolyfont_serp_green_38pt_unlit);
-        LoadPolyFontWithTimerFix(kPolyfont_serp_green_38pt_lit, "SERP38", 1.0f, 64);
-        LoadPolyFontWithTimerFix(kPolyfont_highlighter, "HAND15lo", 1.0f, 16);
+        CreatePolyFont("HAND15U", 16, kPolyfont_hand_green_15pt_unlit);
+        CreatePolyFont("HAND15", 16, kPolyfont_hand_green_15pt_lit);
+        CreatePolyFont("HAND15U", 16, kPolyfont_hand_red_15pt_unlit);
+        CreatePolyFont("HAND15", 16, kPolyfont_hand_red_15pt_lit);
+        CreatePolyFont("HAND10U", 16, kPolyfont_hand_green_10pt_unlit);
+        CreatePolyFont("HAND10", 16, kPolyfont_hand_green_10pt_lit);
+        CreatePolyFont("SERP15", 16, kPolyfont_serp_red_15pt_lit);
+        CreatePolyFont("SERP30", 32, kPolyfont_serp_red_30pt_lit);
+        CreatePolyFont("SERP30U", 32, kPolyfont_serp_green_30pt_unlit);
+        CreatePolyFont("SERP30", 32, kPolyfont_serp_green_30pt_lit);
+        CreatePolyFont("SERP38U", 64, kPolyfont_serp_green_38pt_unlit);
+        CreatePolyFontWithTimerFix(kPolyfont_serp_green_38pt_lit, "SERP38", 1.0f, 64);
+        CreatePolyFontWithTimerFix(kPolyfont_highlighter, "HAND15lo", 1.0f, 16);
         gInterface_polyfont_texture_pages = gSize_font_texture_pages - gInitial_count_font_texture_pages;
         gInterface_fonts_loaded = 1;
     }
@@ -654,7 +654,7 @@ void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void) {
 void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
 
     if (!gPoly_fonts[pFont].available) {
-        LoadInterfacePolyFonts();
+        LoadInterfaceFonts();
     }
 }
 

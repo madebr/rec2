@@ -31,7 +31,7 @@ void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText
 
 int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap);
 
-void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex);
+void C2_HOOK_FASTCALL CreatePolyFont(const char* pName, int pSize, int pIndex);
 
 void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 
@@ -39,9 +39,9 @@ void C2_HOOK_FASTCALL UpdateMapAndSaveOptions(void);
 
 void C2_HOOK_FASTCALL InitPolyFonts(void);
 
-void C2_HOOK_FASTCALL LoadPolyFontWithTimerFix(int pFont, const char* pName, float pFactor, int pSize);
+void C2_HOOK_FASTCALL CreatePolyFontWithTimerFix(int pFont, const char* pName, float pFactor, int pSize);
 
-void C2_HOOK_FASTCALL LoadInterfacePolyFonts(void);
+void C2_HOOK_FASTCALL LoadInterfaceFonts(void);
 
 void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont);
 

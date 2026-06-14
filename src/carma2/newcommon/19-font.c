@@ -60,6 +60,15 @@ int gSize_font_texture_pages;
 // GLOBAL: CARMA2_HW 0x00765ec0
 tPolyFontBorderColours gPoly_font_border_colours[27];
 
+// GLOBAL: CARMA2_HW 0x00686488
+int gInterface_fonts_loaded;
+
+// GLOBAL: CARMA2_HW 0x00765ea0
+int gInitial_count_font_texture_pages;
+
+// GLOBAL: CARMA2_HW 0x00686494
+int gInterface_polyfont_texture_pages;
+
 
 // PolyFontHeight
 
@@ -98,7 +107,55 @@ int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
 
 // InitPolyFonts
 
-// CreatePolyFont
+// FUNCTION: CARMA2_HW 0x00464090
+void C2_HOOK_FASTCALL CreatePolyFont(int pFont, const char* pName, float pFactor, int pSize) {
+    int i;
+
+    LoadPolyFont(pName, pSize, pFont);
+
+    if (pFont == kPolyfont_ingame_big_timer) {
+        for (i = 0; i < (int)REC2_ASIZE(gPoly_fonts[kPolyfont_ingame_big_timer].glyphs); i++) {
+            gPoly_fonts[kPolyfont_ingame_big_timer].glyphs[i].glyph_width = 27;
+        }
+        gPoly_fonts[kPolyfont_ingame_big_timer].glyphs[58].glyph_width = 11; /* FIXME: What is gyph 58? */
+    }
+}
+
+br_model* C2_HOOK_FASTCALL CreateFontCharacterModel(int pIndex, int pAscii, int pWidth, int pHeight, const char* pName) {
+    br_model* model;
+
+    model = gPoly_fonts[pIndex].model;
+    while (model != NULL) {
+        if (model->bounds.max.v[0] == pWidth && model->bounds.min.v[1] == -pHeight) {
+            return model;
+        }
+        model = model->user;
+    }
+    model = BrModelAllocate("String Model", 4, 2);
+    model->user = gPoly_fonts[pIndex].glyphs[pIndex].model;
+    gPoly_fonts[pIndex].glyphs[pIndex].model = model;
+    if (model == NULL) {
+        FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
+    }
+    model->faces[0].vertices[0] = 0;
+    model->faces[0].vertices[1] = 1;
+    model->faces[0].vertices[2] = 2;
+    model->faces[1].vertices[0] = 1;
+    model->faces[1].vertices[1] = 3;
+    model->faces[1].vertices[2] = 2;
+    BrVector3Set(&model->vertices[0].p, 0.0f, 0.0f, -1.2f);
+    BrVector3Set(&model->vertices[1].p, (float) pWidth, 0.0f, -1.2f);
+    BrVector3Set(&model->vertices[2].p, 0.f, (float) -pHeight, -1.2f);
+    BrVector3Set(&model->vertices[3].p, (float) pWidth, (float) -pHeight, -1.2f);
+    BrVector2Set(&model->vertices[0].map, 0.0f, 0.0f);
+    BrVector2Set(&model->vertices[1].map, 1.0f, 0.0f);
+    BrVector2Set(&model->vertices[2].map, 0.0f, 1.0f);
+    BrVector2Set(&model->vertices[3].map, 1.0f, 1.0f);
+    ColourVertices(model, pIndex);
+    model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
+    BrModelAdd(model);
+    return model;
+}
 
 // FUNCTION: CARMA2_HW 0x00464a70
 br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const char* glyph_name, int loadFromDisk) {
@@ -144,13 +201,40 @@ void C2_HOOK_FASTCALL KillThePixies(void) {
     gPixelmap_buffer_size = 0;
 }
 
-// CheckAvailabilityOfThisFont
+// FUNCTION: CARMA2_HW 0x004640d0
+void C2_HOOK_FASTCALL CheckAvailabilityOfThisFont(int pFont) {
+
+    if (!gPoly_fonts[pFont].available) {
+        LoadInterfaceFonts();
+    }
+}
 
 // DisposeInterfaceFonts
 
 // RemovePolyFont
 
-// LoadInterfaceFonts
+// FUNCTION: CARMA2_HW 0x004642d0
+void C2_HOOK_FASTCALL LoadInterfaceFonts(void) {
+
+    if (!gInterface_fonts_loaded) {
+        gSize_font_texture_pages = gInitial_count_font_texture_pages;
+        CreatePolyFont(kPolyfont_hand_green_15pt_unlit, "HAND15U", 1.0f, 16);
+        CreatePolyFont(kPolyfont_hand_green_15pt_lit, "HAND15", 1.0f, 16);
+        CreatePolyFont(kPolyfont_hand_red_15pt_unlit, "HAND15U", 1.0f, 16);
+        CreatePolyFont(kPolyfont_hand_red_15pt_lit, "HAND15", 1.0f, 16);
+        CreatePolyFont(kPolyfont_hand_green_10pt_unlit, "HAND10U", 1.0f, 16);
+        CreatePolyFont(kPolyfont_hand_green_10pt_lit, "HAND10", 1.0f, 16);
+        CreatePolyFont(kPolyfont_serp_red_15pt_lit, "SERP15", 1.0f, 16);
+        CreatePolyFont(kPolyfont_serp_red_30pt_lit, "SERP30", 1.0f, 32);
+        CreatePolyFont(kPolyfont_serp_green_30pt_unlit, "SERP30U", 1.0f, 32);
+        CreatePolyFont(kPolyfont_serp_green_30pt_lit, "SERP30", 1.0f, 32);
+        CreatePolyFont(kPolyfont_serp_green_38pt_unlit, "SERP38U", 1.0f, 64);
+        CreatePolyFont(kPolyfont_serp_green_38pt_lit, "SERP38", 1.0f, 64);
+        CreatePolyFont(kPolyfont_highlighter, "HAND15lo", 1.0f, 16);
+        gInterface_polyfont_texture_pages = gSize_font_texture_pages - gInitial_count_font_texture_pages;
+        gInterface_fonts_loaded = 1;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004643f0
 void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
@@ -269,42 +353,6 @@ void C2_HOOK_FASTCALL LoadPolyFont(const char* pName, int pSize, int pIndex) {
     KillThePixies();
     ClosePackFileAndSetTiffLoading(twt);
     gSize_font_texture_pages += 1;
-}
-
-br_model* C2_HOOK_FASTCALL CreateFontCharacterModel(int pIndex, int pAscii, int pWidth, int pHeight, const char* pName) {
-    br_model* model;
-
-    model = gPoly_fonts[pIndex].model;
-    while (model != NULL) {
-        if (model->bounds.max.v[0] == pWidth && model->bounds.min.v[1] == -pHeight) {
-            return model;
-        }
-        model = model->user;
-    }
-    model = BrModelAllocate("String Model", 4, 2);
-    model->user = gPoly_fonts[pIndex].glyphs[pIndex].model;
-    gPoly_fonts[pIndex].glyphs[pIndex].model = model;
-    if (model == NULL) {
-        FatalError(kFatalError_CouldNotCreateTexturesPages_S, pName);
-    }
-    model->faces[0].vertices[0] = 0;
-    model->faces[0].vertices[1] = 1;
-    model->faces[0].vertices[2] = 2;
-    model->faces[1].vertices[0] = 1;
-    model->faces[1].vertices[1] = 3;
-    model->faces[1].vertices[2] = 2;
-    BrVector3Set(&model->vertices[0].p, 0.0f, 0.0f, -1.2f);
-    BrVector3Set(&model->vertices[1].p, (float) pWidth, 0.0f, -1.2f);
-    BrVector3Set(&model->vertices[2].p, 0.f, (float) -pHeight, -1.2f);
-    BrVector3Set(&model->vertices[3].p, (float) pWidth, (float) -pHeight, -1.2f);
-    BrVector2Set(&model->vertices[0].map, 0.0f, 0.0f);
-    BrVector2Set(&model->vertices[1].map, 1.0f, 0.0f);
-    BrVector2Set(&model->vertices[2].map, 0.0f, 1.0f);
-    BrVector2Set(&model->vertices[3].map, 1.0f, 1.0f);
-    ColourVertices(model, pIndex);
-    model->flags &= ~(BR_MODF_KEEP_ORIGINAL | BR_MODF_UPDATEABLE);
-    BrModelAdd(model);
-    return model;
 }
 
 // FUNCTION: CARMA2_HW 0x00464b80

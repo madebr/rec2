@@ -2320,7 +2320,7 @@ void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
 void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
 
     if (gPoly_fonts[pFont].available == 0) {
-        LoadInterfacePolyFonts();
+        LoadInterfaceFonts();
     }
     TransparentPolyFontText(pText, pX, pY, pFont, pJust, pRender, 1.0);
 }
