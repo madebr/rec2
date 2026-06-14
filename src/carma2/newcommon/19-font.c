@@ -124,7 +124,7 @@ int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter) {
     }
 
     font = &gPoly_fonts[pFont_index];
-    if (font->glyphs[pCharacter].used) {
+    if (gPoly_fonts[pFont_index].glyphs[pCharacter].used) {
         return font->glyphs[pCharacter].glyph_width;
     }
     return font->widthOfBlank;
@@ -694,7 +694,25 @@ void C2_HOOK_FASTCALL InitDRFonts(void) {
 
 // DRPixelmapCleverText
 
-// PolyFontTextWidth
+// FUNCTION: CARMA2_HW 0x00465ca0
+int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText) {
+    int len;
+    int i;
+    int text_width;
+    int spacing;
+
+    text_width = 0;
+    spacing = 0;
+    CheckAvailabilityOfThisFont(pFont);
+    len = (int)strlen(pText);
+    for (i = 0; i < len; i++) {
+        text_width += CharacterWidth(pFont, pText[i]);
+    }
+    if (len > 1) {
+        spacing = (len - 1) * gPoly_fonts[pFont].interCharacterSpacing;
+    }
+    return text_width + spacing;
+}
 
 // DRTextWidth
 

@@ -72,7 +72,7 @@ extern void C2_HOOK_FASTCALL InitDRFonts(void);
 
 // DRPixelmapCleverText
 
-// PolyFontTextWidth
+extern int C2_HOOK_FASTCALL PolyFontTextWidth(int pFont, const char* pText);
 
 // DRTextWidth
 
