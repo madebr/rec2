@@ -82,9 +82,9 @@ tSlot_info gMax_APO[3];
 
 // SetupFFBValues
 
-// AllocateActors
+// AllocateActors (see 02b-init.c)
 
-// AllocateCamera
+// AllocateCamera (see 02b-init.c)
 
 // ReinitialiseForwardCamera
 
@@ -801,7 +801,11 @@ void C2_HOOK_FASTCALL InitGame(int pStart_race) {
 
 // InitRace
 
-// GetScreenSize
+// FUNCTION: CARMA2_HW 0x00481e90
+int C2_HOOK_FASTCALL GetScreenSize(void) {
+
+    return gRender_indent;
+}
 
 // FUNCTION: CARMA2_HW 0x00481ea0
 void C2_HOOK_FASTCALL SetScreenSize(int pNew_size) {

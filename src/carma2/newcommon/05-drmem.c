@@ -293,9 +293,17 @@ br_size_t gPage_size;
 SYSTEM_INFO gSystem_info;
 #endif
 
-// SetNonFatalAllocationErrors
+// FUNCTION: CARMA2_HW 0x0044c7f0
+void C2_HOOK_FASTCALL SetNonFatalAllocationErrors(void) {
 
-// ResetNonFatalAllocationErrors
+    gNon_fatal_allocation_errors = 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0044c800
+void C2_HOOK_FASTCALL ResetNonFatalAllocationErrors(void) {
+
+    gNon_fatal_allocation_errors = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0044c820
 void C2_HOOK_FASTCALL MAMSInitMem(void) {
@@ -377,9 +385,9 @@ void C2_HOOK_FASTCALL InstallDRMemCalls(void) {
     BrAllocatorSet(&gAllocator);
 }
 
-// MAMSUnlock
+// MAMSUnlock (see plaform)
 
-// MAMSLock
+// MAMSLock (see plaform)
 
 // FUNCTION: CARMA2_HW 0x0044ca40
 void C2_HOOK_FASTCALL CreateStainlessClasses(void) {

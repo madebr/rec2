@@ -4,9 +4,9 @@
 #include "c2_hooks.h"
 #include "brender/brender.h"
 
-// SetNonFatalAllocationErrors
+extern void C2_HOOK_FASTCALL SetNonFatalAllocationErrors(void);
 
-// ResetNonFatalAllocationErrors
+extern void C2_HOOK_FASTCALL ResetNonFatalAllocationErrors(void);
 
 extern void C2_HOOK_FASTCALL MAMSInitMem(void);
 

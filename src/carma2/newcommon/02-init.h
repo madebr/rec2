@@ -63,7 +63,7 @@ extern void C2_HOOK_FASTCALL InitGame(int pStart_race);
 
 // InitRace
 
-// GetScreenSize
+extern int C2_HOOK_FASTCALL GetScreenSize(void);
 
 extern void C2_HOOK_FASTCALL SetScreenSize(int pNew_size);
 
