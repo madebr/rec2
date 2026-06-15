@@ -73,7 +73,7 @@ extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
 extern tU32 C2_HOOK_FASTCALL GetTotalTime(void);
 
-// GetRaceTime
+extern tU32 C2_HOOK_FASTCALL GetRaceTime(void);
 
 // AddLostTime
 
