@@ -37,6 +37,12 @@ br_pixelmap* g16bit_palette;
 // GLOBAL: CARMA2_HW 0x006b63f0
 br_pixelmap* gPalette_source;
 
+// GLOBAL: CARMA2_HW 0x006abef4
+tU32 gLost_time;
+
+// GLOBAL: CARMA2_HW 0x0079efb0
+tU32 gLast_tick_count;
+
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
     br_device *dev;
@@ -512,7 +518,14 @@ void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
 
 // AddLostTime
 
-// AssertThisTimeAsCurrentTime
+// FUNCTION: CARMA2_HW 0x00514c90
+void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void) {
+    tU32 now;
+
+    now = PDGetTotalTime();
+    gLost_time = now - gLast_tick_count;
+    gLast_tick_count += gLost_time;
+}
 
 // TimerString
 

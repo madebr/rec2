@@ -77,7 +77,7 @@ extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
 // AddLostTime
 
-// AssertThisTimeAsCurrentTime
+extern void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void);
 
 // TimerString
 
