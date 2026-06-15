@@ -235,7 +235,7 @@ void C2_HOOK_STDCALL SetOrderTableRange(br_order_table* order_table) {
             order_table->sort_z = order_table->max_z;
         } else {
             if ((order_table->flags & 0x20) != 0)
-                order_table->sort_z = order_table->min_z + .5f * range;
+                order_table->sort_z = order_table->min_z + 0.5f * range;
         }
     }
 }
@@ -287,9 +287,9 @@ void C2_HOOK_STDCALL RenderPrimaryOrderTable(void) {
         if (*bucket != NULL) {
             ((br_geometry_v1_buckets*)v1db.format_buckets)->dispatch->_render((br_geometry_v1_buckets *)v1db.format_buckets, v1db.renderer, bucket, 1);
         }
-        max_z-=bucket_size;
-        while(order_table!=NULL) {
-            if(order_table->sort_z < max_z) {
+        max_z -= bucket_size;
+        while (order_table != NULL) {
+            if (order_table->sort_z < max_z) {
                 break;
             }
             ((br_geometry_v1_buckets*)v1db.format_buckets)->dispatch->_render((br_geometry_v1_buckets *)v1db.format_buckets, v1db.renderer, order_table->table, order_table->size);
@@ -297,9 +297,11 @@ void C2_HOOK_STDCALL RenderPrimaryOrderTable(void) {
             order_table=order_table->next;
         }
     }
-    while (order_table!=NULL) {
+    while (order_table != NULL) {
         ((br_geometry_v1_buckets*)v1db.format_buckets)->dispatch->_render((br_geometry_v1_buckets *)v1db.format_buckets, v1db.renderer, order_table->table, order_table->size);
         order_table->visits = 0;
         order_table = order_table->next;
     }
+
+	v1db.primary_order_table->visits=0;
 }
