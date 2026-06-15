@@ -13,6 +13,7 @@
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -512,7 +513,19 @@ void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
     }
 }
 
-// GetTotalTime
+// FUNCTION: CARMA2_HW 0x00514c30
+tU32 C2_HOOK_FASTCALL GetTotalTime(void) {
+
+    if (gAction_replay_mode) {
+        return gLast_replay_frame_time;
+    } else {
+        if (gNet_mode != eNet_mode_none) {
+            return gLast_tick_count + gFrame_period;
+        } else {
+            return gLast_tick_count + gFrame_period - gLost_time;
+        }
+    }
+}
 
 // GetRaceTime
 

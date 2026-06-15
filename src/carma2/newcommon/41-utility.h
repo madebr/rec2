@@ -71,7 +71,7 @@ extern void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF);
 
 extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
-// GetTotalTime
+extern tU32 C2_HOOK_FASTCALL GetTotalTime(void);
 
 // GetRaceTime
 
