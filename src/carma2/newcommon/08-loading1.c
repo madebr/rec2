@@ -396,7 +396,10 @@ FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode) {
     return result;
 }
 
-// UnlockInterfaceStuff
+// FUNCTION: CARMA2_HW 0x0044bb80
+void C2_HOOK_FASTCALL UnlockInterfaceStuff(void) {
+
+}
 
 // DisposePhysicsObject
 

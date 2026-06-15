@@ -84,7 +84,7 @@ extern void C2_HOOK_FASTCALL DoNotAllowOpenToFail(void);
 
 extern FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
-// UnlockInterfaceStuff
+extern void C2_HOOK_FASTCALL UnlockInterfaceStuff(void);
 
 // DisposePhysicsObject
 
