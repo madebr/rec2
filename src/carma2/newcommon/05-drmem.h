@@ -28,6 +28,6 @@ extern void C2_HOOK_FASTCALL InstallDRMemCalls(void);
 
 extern void C2_HOOK_FASTCALL CreateStainlessClasses(void);
 
-// CheckMemory
+extern void C2_HOOK_FASTCALL CheckMemory(void);
 
 #endif // GUARD_05_DRMEM_H

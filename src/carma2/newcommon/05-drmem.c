@@ -401,5 +401,8 @@ void C2_HOOK_FASTCALL CreateStainlessClasses(void) {
     }
 }
 
-// CheckMemory
+// FUNCTION: CARMA2_HW 0x0044ca80
+void C2_HOOK_FASTCALL CheckMemory(void) {
+
+}
 
