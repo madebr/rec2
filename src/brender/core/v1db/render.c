@@ -170,7 +170,7 @@ void C2_HOOK_STDCALL actorRender(br_actor* ap, br_model* model, br_material* mat
                 return;
             case BRT_REJECT:
                 return;
-#ifdef REC2_FIX_BUGS
+#ifdef BRENDER_FIX_BUGS
             default:
                 break;
 #endif
