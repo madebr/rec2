@@ -576,8 +576,9 @@ void C2_HOOK_CDECL BrZsModelRender(br_actor* actor, br_model* model, br_material
 // FUNCTION: CARMA2_HW 0x005230a0
 br_renderbounds_cbfn* C2_HOOK_CDECL BrZbRenderBoundsCallbackSet(br_renderbounds_cbfn* new_cbfn) {
 
-    if ((v1db.zx_active & BR_ZX_ZB_ACTIVE_MASK) == 0) {
+    if (!(v1db.zx_active & BR_ZX_ZB_ACTIVE_MASK)) {
         BrFailure("BrZbSetRenderBoundsCallback called before BrZbBegin");
+        return NULL;
     }
     return BrDbSetRenderBoundsCallback(new_cbfn);
 }
@@ -587,6 +588,7 @@ br_renderbounds_cbfn* C2_HOOK_CDECL BrZsRenderBoundsCallbackSet(br_renderbounds_
 
     if ((v1db.zx_active & BR_ZX_ZS_ACTIVE_MASK) == 0) {
         BrFailure("BrZsSetRenderBoundsCallback called before BrZsBegin");
+        return NULL;
     }
     return BrDbSetRenderBoundsCallback(new_cbfn);
 }

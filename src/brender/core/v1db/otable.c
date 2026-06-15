@@ -18,13 +18,13 @@ br_order_table* C2_HOOK_CDECL BrZsOrderTableAllocate(br_uint_16 size, br_uint_32
     order_table->table = BrResAllocate(order_table, size * sizeof(br_primitive*), BR_MEMORY_ORDER_TABLE);
     order_table->size = size;
     order_table->next = NULL;
-    order_table->visits = 0;
-    order_table->min_z = 0.f;
-    order_table->max_z = 0.f;
-    order_table->sort_z = 0.f;
-    order_table->scale = 0.f;
     order_table->flags = flags;
     order_table->type = type;
+    order_table->visits = 0;
+    order_table->min_z = 0.0f;
+    order_table->max_z = 0.0f;
+    order_table->sort_z = 0.0f;
+    order_table->scale = 0.0f;
     return order_table;
 }
 
