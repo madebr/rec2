@@ -38,7 +38,7 @@ extern tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
 extern void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel);
 
-// HasThisSuffix
+extern int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix);
 
 // UnsuffixedMaterial
 

@@ -3,6 +3,8 @@
 #include "41-utility.h"
 #include "globvars.h"
 
+#include "c2_string.h"
+
 // GLOBAL: CARMA2_HW 0x00591374
 tCar_texturing_level gCar_texturing_level = eCTL_full;
 
@@ -187,7 +189,21 @@ tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
     gCar_texturing_level = pLevel;
 }
 
-// HasThisSuffix
+// FUNCTION: CARMA2_HW 0x00448ce0
+int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix) {
+    size_t len_ident;
+    size_t len_suffix;
+
+    len_ident = strlen(pIdent);
+    len_suffix = strlen(pSuffix);
+    if (pIdent == NULL) {
+        return 0;
+    }
+    if (len_ident < len_suffix) {
+        return 0;
+    }
+    return strcmp(pIdent + len_ident - len_suffix, pSuffix) == 0;
+}
 
 // UnsuffixedMaterial
 
