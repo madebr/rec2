@@ -527,7 +527,7 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmap(const char* path, const cha
 }
 
 void C2_HOOK_FASTCALL KillThePixies(void) {
-    int i;
+    size_t i;
 
     for (i = 0; i < gPixelmap_buffer_size; i++) {
 
