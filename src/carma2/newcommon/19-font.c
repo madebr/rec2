@@ -132,14 +132,12 @@ int C2_HOOK_FASTCALL PolyFontHeight(int pFont_index) {
 int C2_HOOK_FASTCALL FindCharacterWidth(br_pixelmap* pMap) {
     int y;
     int x;
-    // void* column_pointer;
     tU16* pixel;
     int height;
 
     height = pMap->height;
     x = pMap->width - 1;
     for (; x >= 0; x--) {
-        // column_pointer =
         pixel = (tU16*)pMap->pixels + x;
         for (y = 0; y < height; y++) {
             if (*(tU16*)pixel != 0) {
@@ -178,7 +176,84 @@ int C2_HOOK_FASTCALL GetSpacing(int pFont_index) {
 
 // PolyFontTextInABox
 
-// TransparentPolyFontTextInABox
+// FUNCTION: CARMA2_HW 0x00463ad0
+void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend) {
+    char s[256];
+    int s_len;
+    int y;
+    int in_start_put;
+    int in_end_put;
+    int str_i;
+    int newline;
+    int text_x;
+
+    in_start_put = 0;
+    text_x = 0;
+    if (pText != NULL) {
+        str_i = 0;
+        s_len = 0;
+        s[s_len] = '\0';
+        y = pTop;
+
+        while (pText[str_i] != '\0') {
+            int chr;
+
+            chr = pText[str_i];
+            newline = chr == '\r';
+            s[s_len] = chr;
+            if (newline) {
+                s[s_len] = ' ';
+            }
+            s[s_len + 1] = '\0';
+            if (!newline) {
+                text_x += CharacterWidth(pFont, (tU8)chr);
+            }
+            in_end_put = str_i;
+            if (text_x <= pRight - pLeft && !newline) {
+                s_len++;
+                str_i++;
+            } else {
+                int len_put;
+
+                /* Avoid breaking words in parts ... */
+                while (in_end_put > in_start_put && pText[in_end_put] != ' ') {
+                    in_end_put -= 1;
+                }
+                /* ... but break when the word is too long */
+                if (in_end_put == in_start_put) {
+                    in_end_put = str_i;
+                }
+                len_put = in_end_put - in_start_put;
+                s[len_put + 1] = '\0';
+                if (pText[in_end_put] == ' ') {
+                    in_end_put += 1;
+                }
+                s[len_put] = '\0';
+                if (pJust == eJust_centre) {
+                    TransparentPolyFontText(s, (pRight + pLeft) / 2, y, pFont, pJust, gRender_poly_text, pBlend);
+                } else {
+                    TransparentPolyFontText(s, pLeft, y, pFont, pJust, gRender_poly_text, pBlend);
+                }
+                while (pText[in_end_put] == '\r' || pText[in_end_put] == ' ') {
+                    in_end_put++;
+                }
+                y += (2 * PolyFontHeight(pFont)) / 2;
+                text_x = 0;
+                in_start_put = in_end_put;
+                s_len = 0;
+                str_i = in_start_put;
+            }
+        }
+        if (s_len != 0) {
+
+            if (pJust == eJust_centre) {
+                TransparentPolyFontText(s, (pRight + pLeft) / 2, y, pFont, pJust, gRender_poly_text, pBlend);
+            } else {
+                TransparentPolyFontText(s, pLeft, y, pFont, pJust, gRender_poly_text, pBlend);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00463d40
 void C2_HOOK_FASTCALL InitPolyFonts(void) {

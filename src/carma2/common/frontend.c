@@ -2268,12 +2268,12 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
         } else if (item->enabled >= 0) {
             if (item->radioButton_selected) {
                 if (text != NULL) {
-                    RenderInterfaceBlendedPolyText(item->highFont, text,
+                    SolidPolyFontTextInABox(item->highFont, text,
                         item->x, item->y, item->x + item->width, item->y + item->height, eJust_centre, 1);
                 }
             } else {
                 if (text != NULL) {
-                    RenderInterfaceBlendedPolyText(item->unlitFont, text,
+                    SolidPolyFontTextInABox(item->unlitFont, text,
                         item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1);
                 }
             }

@@ -22,7 +22,7 @@ extern int C2_HOOK_FASTCALL GetSpacing(int pFont_index);
 
 // PolyFontTextInABox
 
-// TransparentPolyFontTextInABox
+extern void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend);
 
 extern void C2_HOOK_FASTCALL InitPolyFonts(void);
 

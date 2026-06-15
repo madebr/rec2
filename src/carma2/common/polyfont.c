@@ -68,7 +68,7 @@ int C2_HOOK_FASTCALL GetSpacing(int pIndex) {
 }
 
 // FUNCTION: CARMA2_HW 0x00463850
-void C2_HOOK_FASTCALL RenderInterfaceBlendedPolyText(int pFont, const char* pText, int pX, int pY, int pWidth, int pHeight, tJustification pJustification, undefined4 pParam_8) {
+void C2_HOOK_FASTCALL SolidPolyFontTextInABox(int pFont, const char* pText, int pX, int pY, int pWidth, int pHeight, tJustification pJustification, undefined4 pParam_8) {
 
     CheckAvailabilityOfThisFont(pFont);
     TransparentPolyFontTextInABox(pFont, pText, pX, pY, pWidth, pHeight, pJustification, pParam_8, 1.0);
