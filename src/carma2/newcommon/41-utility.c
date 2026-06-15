@@ -533,7 +533,11 @@ tU32 C2_HOOK_FASTCALL GetRaceTime(void) {
     return PDGetTotalTime() - gRace_start;
 }
 
-// AddLostTime
+// FUNCTION: CARMA2_HW 0x00514c80
+void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time) {
+
+    gLost_time += pLost_time;
+}
 
 // FUNCTION: CARMA2_HW 0x00514c90
 void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void) {

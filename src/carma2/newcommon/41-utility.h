@@ -75,7 +75,7 @@ extern tU32 C2_HOOK_FASTCALL GetTotalTime(void);
 
 extern tU32 C2_HOOK_FASTCALL GetRaceTime(void);
 
-// AddLostTime
+extern void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time);
 
 extern void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void);
 
