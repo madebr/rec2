@@ -791,11 +791,6 @@ typedef struct {
     tU8 colour;
 } tSpark;
 
-typedef struct tDynamic_message {
-    struct tDynamic_message* next;
-    char data[];
-} tDynamic_message;
-
 typedef struct {
     int flags;
     tU32 next_think_time;

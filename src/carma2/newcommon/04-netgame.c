@@ -86,7 +86,14 @@ void C2_HOOK_FASTCALL InitNetHeadups(void) {
     }
 }
 
-// DisposeNetHeadups
+// FUNCTION: CARMA2_HW 0x0049a730
+void C2_HOOK_FASTCALL DisposeNetHeadups(void) {
+
+    if (gDigits_pix != NULL) {
+        BrMapRemove(gDigits_pix);
+        BrPixelmapFree(gDigits_pix);
+    }
+}
 
 // EverybodysLost
 

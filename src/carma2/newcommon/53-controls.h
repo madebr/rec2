@@ -165,7 +165,7 @@ extern int gHeadup_map_h;
 
 extern void C2_HOOK_FASTCALL InitAbuseomatic(void);
 
-// DisposeAbuseomatic
+extern void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
 // ChangeCameraTypeInGame
 

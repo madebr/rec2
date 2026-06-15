@@ -227,7 +227,16 @@ void C2_HOOK_FASTCALL InitAbuseomatic(void) {
     PFfclose(f);
 }
 
-// DisposeAbuseomatic
+// FUNCTION: CARMA2_HW 0x00444ea0
+void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
+    int i;
+
+    for (i = 0; i < REC2_ASIZE(gAbuse_text); i++) {
+        if (gAbuse_text[i] != NULL) {
+            BrMemFree(gAbuse_text[i]);
+        }
+    }
+}
 
 // ChangeCameraTypeInGame
 
