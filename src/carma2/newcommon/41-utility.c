@@ -527,7 +527,25 @@ void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void) {
     gLast_tick_count += gLost_time;
 }
 
-// TimerString
+// FUNCTION: CARMA2_HW 0x00514cb0
+void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat) {
+    int seconds;
+
+    seconds = (pTime + 500) / 1000;
+    if (pFudge_colon || seconds > 59) {
+        if (pArg3) {
+            sprintf(pStr, "%d:%02d", seconds / 60, seconds % 60);
+        } else {
+            sprintf(pStr, "%d:%02d", seconds / 60, seconds % 60);
+        }
+    } else {
+        if (pFloat) {
+            sprintf(pStr, "%.1f", (double)pTime / 1000.0);
+        } else {
+            sprintf(pStr, "%d", seconds);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00514d70
 const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {

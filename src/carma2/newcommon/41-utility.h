@@ -79,7 +79,7 @@ extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
 extern void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void);
 
-// TimerString
+extern void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat);
 
 extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
