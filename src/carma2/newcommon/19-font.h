@@ -80,7 +80,7 @@ extern int C2_HOOK_FASTCALL DRTextWidth(const tDR_font* pFont, const char* pText
 
 extern int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText);
 
-// DRPixelmapCentredText
+extern void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText);
 
 // OoerrIveGotTextInMeBoxMissus
 

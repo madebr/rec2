@@ -1218,9 +1218,13 @@ int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText)
     return result;
 }
 
-// DRPixelmapCentredText
+// FUNCTION: CARMA2_HW 0x00465f10
+void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText) {
+    int width_over_2;
 
-// OoerrIveGotTextInMeBoxMissus
+    width_over_2 = DRTextWidth(pFont, pText) / 2;
+    DRPixelmapText(pPixelmap, pX - width_over_2, pY, pFont, pText, pX + width_over_2);
+}
 
 // FUNCTION: CARMA2_HW 0x00466050
 br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
