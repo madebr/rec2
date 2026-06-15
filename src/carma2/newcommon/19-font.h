@@ -18,7 +18,7 @@ extern int C2_HOOK_FASTCALL CharacterWidth(int pFont_index, tU8 pCharacter);
 
 extern int C2_HOOK_FASTCALL GetSpacing(int pFont_index);
 
-// SolidPolyFontTextInABox
+extern void C2_HOOK_FASTCALL SolidPolyFontTextInABox(int pFont, const char* pText, int pX, int pY, int pWidth, int pHeight, tJustification pJustification, undefined4 pParam_8);
 
 // PolyFontTextInABox
 
