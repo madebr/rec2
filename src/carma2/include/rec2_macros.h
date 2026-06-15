@@ -61,4 +61,8 @@
 
 #define RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5) (gBack_screen->type == BR_PMT_RGB_565 ? (((R5) << 11) | ((G6) << 5) | (B5)) : (((R5) << 10) | (((G6) >> 1) << 5) | (B5)))
 
+#define MIN_MESSAGES_CAPACITY 200
+#define MID_MESSAGES_CAPACITY 200
+#define MAX_MESSAGES_CAPACITY 200
+
 #endif // REC2_REC2_MACROS_H

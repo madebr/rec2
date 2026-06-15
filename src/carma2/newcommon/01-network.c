@@ -1,9 +1,13 @@
 #include "01-network.h"
 
 #include "04-netgame.h"
+#include "32-spark.h"
+#include "53-controls.h"
 #include "platform.h"
 #include "globvars.h"
 #include "globvrpb.h"
+
+#include "rec2_macros.h"
 
 #include <stdlib.h>
 
@@ -49,7 +53,71 @@ int gJoin_list_mode;
 // GLOBAL: CARMA2_HW 0x0074b7dc
 tPlayer_ID gLocal_net_ID;
 
-// NetInitialise
+// GLOBAL: CARMA2_HW 0x00690c44
+int gOnly_receive_guarantee_replies;
+
+// GLOBAL: CARMA2_HW 0x0068d97c
+tMin_message* gMin_messages;
+
+// GLOBAL: CARMA2_HW 0x0068d970
+tMid_message* gMid_messages;
+
+// GLOBAL: CARMA2_HW 0x0068d980
+tMax_message* gMax_messages;
+
+// GLOBAL: CARMA2_HW 0x0068d96c
+int gNet_initialised;
+
+// GLOBAL: CARMA2_HW 0x0068d960
+int gDont_allow_joiners;
+
+// GLOBAL: CARMA2_HW 0x0074a690
+tU32 gUINT_0074a690;
+
+// GLOBAL: CARMA2_HW 0x0074a718
+tU32 gUINT_0074a718;
+
+// GLOBAL: CARMA2_HW 0x00659d30
+tU16 gGuarantee_number = 1;
+
+// GLOBAL: CARMA2_HW 0x0068d958
+int gNext_guarantee;
+
+// FUNCTION: CARMA2_HW 0x0049d210
+int C2_HOOK_FASTCALL NetInitialise(void) {
+    int i;
+
+    InitAbuseomatic();
+    gNet_service_disable = 0;
+    gIn_net_service = 0;
+    gMessage_header_size = PDNetGetHeaderSize();
+    gOnly_receive_guarantee_replies = 0;
+    gMin_messages = BrMemAllocate(MIN_MESSAGES_CAPACITY * (gMessage_header_size + sizeof(tMin_message)), kMem_net_min_messages);
+    gMid_messages = BrMemAllocate(MID_MESSAGES_CAPACITY * (gMessage_header_size + sizeof(tMid_message)), kMem_net_mid_messages);
+    gMax_messages = BrMemAllocate(MAX_MESSAGES_CAPACITY * (gMessage_header_size + sizeof(tMax_message)), kMem_net_max_messages);
+
+    for (i = 0; i < MIN_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)((br_uint_8*)&gMin_messages[i] + gMessage_header_size))->contents.raw.header.type = eNetMsg_none;
+    }
+    for (i = 0; i < MID_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)((br_uint_8*)&gMid_messages[i] + gMessage_header_size))->contents.raw.header.type = eNetMsg_none;
+    }
+    for (i = 0; i < MAX_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)((br_uint_8*)&gMax_messages[i] + gMessage_header_size))->contents.raw.header.type = eNetMsg_none;
+    }
+    gNet_initialised = PDNetInitialise() == 0;
+    if (gNet_initialised) {
+        InitNetHeadups();
+    }
+    GenerateItFoxShadeTable();
+    gDont_allow_joiners = 0;
+    gUINT_0074a690 = PDGetTotalTime();
+    gUINT_0074a718 = PDGetTotalTime();
+    gNext_guarantee = 0;
+    gMessage_to_free = NULL;
+    gGuarantee_number = ((tU16)PDGetTotalTime() & 0x3ff) + 1;
+    return !gNet_initialised;
+}
 
 // NetShutdown
 

@@ -4,7 +4,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-// NetInitialise
+extern int C2_HOOK_FASTCALL NetInitialise(void);
 
 // NetShutdown
 

@@ -1,7 +1,11 @@
 #include "04-netgame.h"
 
 #include "01-network.h"
+#include "63-loading3.h"
 #include "globvars.h"
+
+// GLOBAL: CARMA2_HW 0x0075b8f8
+br_pixelmap* gDigits_pix;
 
 // SendShapeNumbers
 
@@ -73,7 +77,14 @@
 
 // DoNetScores
 
-// InitNetHeadups
+// FUNCTION: CARMA2_HW 0x0049a710
+void C2_HOOK_FASTCALL InitNetHeadups(void) {
+
+    gDigits_pix = LoadPixelmap("HDIGITS.PIX");
+    if (gDigits_pix != NULL) {
+        BrMapAdd(gDigits_pix);
+    }
+}
 
 // DisposeNetHeadups
 
