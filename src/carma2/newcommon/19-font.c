@@ -1226,6 +1226,16 @@ void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int 
     DRPixelmapText(pPixelmap, pX - width_over_2, pY, pFont, pText, pX + width_over_2);
 }
 
+// FUNCTION: CARMA2_HW 0x00466000
+void C2_HOOK_FASTCALL OoerrIveGotTextInMeBoxMissus(int pFont_index, const char* pText, br_pixelmap* pPixelmap, int pLeft, int pTop, int pRight, int pBottom, int pCentred) {
+
+    if (pCentred) {
+        PolyFontTextInABox(GetPolyFontIndexToReplaceDRfontWith(&gFonts[pFont_index]), pText, pLeft, pTop, pRight, pBottom, eJust_centre, gRender_poly_text);
+    } else {
+        PolyFontTextInABox(GetPolyFontIndexToReplaceDRfontWith(&gFonts[pFont_index]), pText, pLeft, pTop, pRight, pBottom, eJust_left, gRender_poly_text);
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x00466050
 br_font* C2_HOOK_FASTCALL LoadBRFont(const char* pName) {
     FILE* f;
