@@ -176,9 +176,9 @@ void C2_HOOK_STDCALL InsertOrderTableList(br_order_table* order_table) {
         v1db.order_table_list = order_table;
         return;
     }
-    previous_table = v1db.order_table_list;
     current_table = v1db.order_table_list->next;
-    while (current_table != NULL && order_table->sort_z <= current_table->sort_z) {
+    previous_table = v1db.order_table_list;
+    while (current_table != NULL && !(current_table->sort_z < order_table->sort_z)) {
         previous_table = current_table;
         current_table = current_table->next;
     }
@@ -204,17 +204,16 @@ void C2_HOOK_STDCALL SetOrderTableBounds(br_bounds* bounds, br_order_table* orde
 
         for (i = 0; i < 3; i++) {
             element = v1db.model_to_screen.m[i][3];
-            if (element > 0.f) {
+            if (element > 0.0f) {
                 max_z += element * max->v[i];
                 min_z += element * min->v[i];
-            }
-            else {
+            } else {
                 max_z += element * min->v[i];
                 min_z += element * max->v[i];
             }
         }
-        order_table->min_z=min_z;
-        order_table->max_z=max_z;
+        order_table->min_z = min_z;
+        order_table->max_z = max_z;
     }
     SetOrderTableRange(order_table);
 }
@@ -224,10 +223,10 @@ void C2_HOOK_STDCALL SetOrderTableRange(br_order_table* order_table) {
     br_scalar range;
 
     range = order_table->max_z - order_table->min_z;
-    if (range > .001f) {
+    if (range > 0.001f) {
         order_table->scale = ((float) order_table->size) / range;
     } else {
-        order_table->scale = 1 / .001f;
+        order_table->scale = 1000.0f;
     }
     if ((order_table->flags & 0x8) != 0) {
         order_table->sort_z = order_table->min_z;

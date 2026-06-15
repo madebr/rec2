@@ -117,7 +117,7 @@ br_uint_32 C2_HOOK_CDECL BrOnScreenCheck(br_bounds3* bounds) {
 br_uint_16 C2_HOOK_STDCALL prependActorTransform(br_actor* ap, br_uint_16 t) {
     br_matrix34 mt;
 
-    if (ap->t.type < BR_TRANSFORM_QUAT) {
+    if (ap->t.type <= BR_TRANSFORM_MATRIX34_LP) {
         v1db.renderer->dispatch->_modelMulF(v1db.renderer, (br_matrix34_f*)&ap->t.t.mat);
     } else {
         BrTransformToMatrix34(&mt, &ap->t);
@@ -162,12 +162,13 @@ void C2_HOOK_STDCALL actorRender(br_actor* ap, br_model* model, br_material* mat
             break;
         case BR_ACTOR_BOUNDS_CORRECT:
             s = BrOnScreenCheck((br_bounds3*)ap->type_data);
-            if (s == BRT_ACCEPT) {
+            switch (s) {
+            case BRT_ACCEPT:
                 for (a = ap->children; a != NULL; a = a->next) {
                     actorRenderOnScreen(a, this_model, this_material, this_render_data, style, t);
                 }
                 return;
-            } else if (s == BRT_REJECT) {
+            case BRT_REJECT:
                 return;
             }
             break;
@@ -211,6 +212,7 @@ void C2_HOOK_STDCALL actorRender(br_actor* ap, br_model* model, br_material* mat
     }
 }
 
+// FUNCTION: CARMA2_HW 0x00522510
 void C2_HOOK_STDCALL actorRenderOnScreen(br_actor* ap, br_model* model, br_material* material, void* render_data, br_uint_8 style, br_uint_16 t) {
     br_material* this_material;
     br_model* this_model;
@@ -335,16 +337,17 @@ void C2_HOOK_CDECL BrDbSceneRenderBegin(br_actor* world, br_actor* camera) {
     vtos_type = CameraToScreenMatrix4(&vtos, camera);
     v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_MATRIX, 0, BRT_VIEW_TO_SCREEN_M4_F, (uintptr_t)&vtos);
     v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_MATRIX, 0, BRT_VIEW_TO_SCREEN_HINT_T, vtos_type);
-    for (i = 0; i < BR_ASIZE(v1db.camera_path); i++) {
+    for (i = 0; i < (int)BR_ASIZE(v1db.camera_path); i++) {
         v1db.camera_path[i].a = NULL;
     }
-    BrMatrix34Identity(&v1db.camera_path[camera->depth].m);
-    v1db.camera_path[camera->depth].transform_type = BR_TRANSFORM_IDENTITY;
-    for (i = camera->depth, a = camera; i > 0 && a != world; i--, a = a->parent) {
+    i = camera->depth;
+    BrMatrix34Identity(&v1db.camera_path[i].m);
+    v1db.camera_path[i].transform_type = BR_TRANSFORM_IDENTITY;
+    for (a = camera; i > 0 && a != world; i--, a = a->parent) {
         BrTransformToMatrix34(&tfm, &a->t);
         BrMatrix34Mul(&v1db.camera_path[i - 1].m, &v1db.camera_path[i].m, &tfm);
         v1db.camera_path[i - 1].transform_type = _CombineTransforms[v1db.camera_path[i].transform_type][a->t.type];
-        v1db.camera_path[i - 1].a = a;
+        v1db.camera_path[i].a = a;
     }
     if (world != a) {
         BrFailure("camera is not in world hierachy");
@@ -375,14 +378,14 @@ br_renderbounds_cbfn* C2_HOOK_CDECL BrDbSetRenderBoundsCallback(br_renderbounds_
 void C2_HOOK_STDCALL SetOrigin(br_pixelmap* buffer) {
 
     v1db.origin.v[0] = (br_scalar)(buffer->origin_x - buffer->width / 2) / (buffer->width / 2);
-    v1db.origin.v[1] = -(br_scalar)(buffer->origin_y - buffer->height / 2) / (buffer->height / 2);
+    v1db.origin.v[1] = -((br_scalar)(buffer->origin_y - buffer->height / 2) / (buffer->height / 2));
 }
 
 void C2_HOOK_STDCALL SetViewport(br_pixelmap* buffer) {
 
-    v1db.vp_ox = (br_scalar)buffer->base_x + buffer->width / 2 + 0.5f;
-    v1db.vp_oy = (br_scalar)buffer->height / 2 + 0.5f;
+    v1db.vp_ox = (br_scalar)(buffer->base_x + buffer->width / 2) + 0.5f;
     v1db.vp_width = (br_scalar)(buffer->width / 2);
+    v1db.vp_oy = (br_scalar)(buffer->height / 2) + 0.5f;
     v1db.vp_height = -(br_scalar)(buffer->height / 2);
 }
 
@@ -444,6 +447,7 @@ void C2_HOOK_CDECL BrZsSceneRenderBegin(br_actor* world, br_actor* camera, br_pi
     v1db.default_order_table->min_z = camera_data->hither_z;
     v1db.default_order_table->visits = 0;
     v1db.order_table_list = NULL;
+    v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_HIDDEN_SURFACE, 0, BRT_V1ORDER_TABLE_P, (uintptr_t)&v1db.default_order_table);
     v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_HIDDEN_SURFACE, 0, BRT_V1PRIMITIVE_HEAP_P, (uintptr_t)&v1db.heap);
     v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_HIDDEN_SURFACE, 0, BRT_TYPE_T, BRT_BUCKET_SORT);
     v1db.default_render_data = v1db.default_order_table;
@@ -506,7 +510,6 @@ void C2_HOOK_CDECL BrZbsSceneRenderBegin(br_actor* world, br_actor* camera, br_p
 
     v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_OUTPUT, 0, BRT_COLOUR_BUFFER_O, (uintptr_t)colour_buffer);
     v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_OUTPUT, 0, BRT_DEPTH_BUFFER_O, (uintptr_t)NULL);
-    v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_OUTPUT, 0, BRT_DEPTH_BUFFER_O, (uintptr_t)depth_buffer);
     v1db.heap.current = v1db.heap.base;
     camera_data = camera->type_data;
     v1db.default_order_table->max_z = camera_data->yon_z;
