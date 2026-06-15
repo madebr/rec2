@@ -179,7 +179,86 @@ void C2_HOOK_FASTCALL SolidPolyFontTextInABox(int pFont, const char* pText, int 
     TransparentPolyFontTextInABox(pFont, pText, pX, pY, pWidth, pHeight, pJustification, pParam_8, 1.0);
 }
 
-// PolyFontTextInABox
+// FUNCTION: CARMA2_HW 0x004638b0
+void C2_HOOK_FASTCALL PolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, int pRender) {
+    char s[256];
+    int s_len;
+    int y;
+    int in_start_put;
+    int in_end_put;
+    int in_pos;
+    int newline;
+    int text_x;
+    int max_width;
+
+    CheckAvailabilityOfThisFont(pFont);
+
+    in_start_put = 0;
+    text_x = 0;
+    max_width = pRight - pLeft;
+    in_pos = 0;
+    s_len = 0;
+    s[s_len] = '\0';
+    y = pTop;
+
+    while (pText[in_pos] != '\0') {
+        int chr;
+
+        chr = pText[in_pos];
+        newline = chr == '\r';
+        s[s_len] = chr;
+        if (newline) {
+            s[s_len] = ' ';
+        }
+        s[s_len + 1] = '\0';
+        if (!newline) {
+            text_x += CharacterWidth(pFont, (tU8)chr);
+        }
+        in_end_put = in_pos;
+        if (text_x <= max_width && !newline) {
+            s_len++;
+            in_pos++;
+        } else {
+            int len_put;
+
+            /* Avoid breaking words in parts ... */
+            while (in_end_put > in_start_put && pText[in_end_put] != ' ') {
+                in_end_put -= 1;
+            }
+            /* ... but break when the word is too long */
+            if (in_end_put == in_start_put) {
+                in_end_put = in_pos;
+            }
+            len_put = in_end_put - in_start_put;
+            s[len_put + 1] = '\0';
+            if (pText[in_end_put] == ' ') {
+                in_end_put += 1;
+            }
+            s[len_put] = '\0';
+            if (pJust == eJust_centre) {
+                PolyFontText(s, (pRight + pLeft) / 2, y, pFont, pJust, gRender_poly_text);
+            } else {
+                PolyFontText(s, pLeft, y, pFont, pJust, gRender_poly_text);
+            }
+            while (pText[in_end_put] == '\r' || pText[in_end_put] == ' ') {
+                in_end_put++;
+            }
+            y += PolyFontHeight(pFont);
+            s_len = 0;
+            text_x = 0;
+            in_start_put = in_end_put;
+            in_pos = in_end_put;
+        }
+    }
+    if (s_len != 0) {
+
+        if (pJust == eJust_centre) {
+            PolyFontText(s, (pRight + pLeft) / 2, y, pFont, pJust, gRender_poly_text);
+        } else {
+            PolyFontText(s, pLeft, y, pFont, pJust, gRender_poly_text);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00463ad0
 void C2_HOOK_FASTCALL TransparentPolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, undefined4 pUnknown, double pBlend) {

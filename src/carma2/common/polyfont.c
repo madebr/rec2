@@ -75,7 +75,7 @@ void C2_HOOK_FASTCALL SolidPolyFontTextInABox(int pFont, const char* pText, int 
 }
 
 // FUNCTION: CARMA2_HW 0x004638b0
-void C2_HOOK_FASTCALL RenderPolyText(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, int pRender) {
+void C2_HOOK_FASTCALL PolyFontTextInABox(int pFont, const char* pText, int pLeft, int pTop, int pRight, int pBottom, tJustification pJust, int pRender) {
     char s[256];
     int s_len;
     int x;

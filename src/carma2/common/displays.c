@@ -314,7 +314,7 @@ void C2_HOOK_FASTCALL OoerrIveGotTextInMeBoxMissus(int pFont_index, const char* 
     int polyfont;
 
     polyfont = gDRFont_to_polyfont_mapping[gFonts[pFont_index].id];
-    RenderPolyText(polyfont, pText, pLeft, pTop, pRight, pBottom, pCentred ? eJust_centre : eJust_left, gRender_poly_text);
+    PolyFontTextInABox(polyfont, pText, pLeft, pTop, pRight, pBottom, pCentred ? eJust_centre : eJust_left, gRender_poly_text);
 }
 
 // FUNCTION: CARMA2_HW 0x00466210
