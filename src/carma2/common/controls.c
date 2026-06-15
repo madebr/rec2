@@ -3040,7 +3040,7 @@ void C2_HOOK_FASTCALL DisplayUserMessage(void) {
         gCurrent_graf_data->net_message_enter_y + 6 * font->height,
         1);
 
-    TransDRPixelmapText(gBack_screen, 20 * gBack_screen->width / 100, gCurrent_graf_data->net_message_enter_y, font, GetMiscString(eMiscString_enter_message), 100);
+    DRPixelmapText(gBack_screen, 20 * gBack_screen->width / 100, gCurrent_graf_data->net_message_enter_y, font, GetMiscString(eMiscString_enter_message), 100);
     OoerrIveGotTextInMeBoxMissus(
         6,
         the_message,

@@ -630,6 +630,7 @@ void C2_HOOK_FASTCALL DRSetPalette2(br_pixelmap* pThe_palette, int pSet_current_
 
 // FUNCTION: CARMA2_HW 0x004b5030
 void C2_HOOK_FASTCALL DRSetPalette(br_pixelmap* pThe_palette) {
+
     DRSetPalette2(pThe_palette, 1);
 }
 
@@ -1520,7 +1521,7 @@ void C2_HOOK_FASTCALL AdjustRenderScreenSize(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004e5c70
-void C2_HOOK_FASTCALL RemovePolyFontActors(void) {
+void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {
     int i;
 
     for (i = 0; i < gCount_polyfont_glyph_actors; i++) {

@@ -213,7 +213,7 @@ int C2_HOOK_FASTCALL NetSummary_Infunc(tFrontend_spec* pFrontend) {
 // FUNCTION: CARMA2_HW 0x0044bac0
 void C2_HOOK_FASTCALL DrawThisCarIconNow(int pCar_index, int pX, int pY) {
 
-    gCar_icons_model_actor->material->colour_map = gTextureMaps[gCar_icons[pCar_index].index];
+    gCar_icons_model_actor->material->colour_map = gTexture_maps[gCar_icons[pCar_index].index];
     BrMaterialUpdate(gCar_icons_model_actor->material, BR_MATU_COLOURMAP);
     gCar_icons_model_actor->model = gCar_icons[pCar_index].model;
     BrMatrix34Translate(&gCar_icons_model_actor->t.t.mat, (float)pX, (float)-pY, 0.f);

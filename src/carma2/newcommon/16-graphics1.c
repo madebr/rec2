@@ -1,8 +1,9 @@
 #include "16-graphics1.h"
 
 #include "02-init.h"
-#include "52-errors.h"
+#include "19-font.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "63-loading3.h"
 #include "brender/brender.h"
 #include "globvars.h"
@@ -182,5 +183,15 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
 
 // StopRenderingHeadups
 
-// CleanPolyFontDanglers
+// FUNCTION: CARMA2_HW 0x004e5c70
+void C2_HOOK_FASTCALL CleanPolyFontDanglers(void) {
+    int i;
 
+    for (i = 0; i < gCount_polyfont_glyph_actors; i++) {
+        br_actor* actor = gPolyfont_glyph_actors[i];
+        if (actor->parent != NULL) {
+            BrActorRemove(actor);
+        }
+    }
+    gCount_polyfont_glyph_actors = 0;
+}

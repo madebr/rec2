@@ -181,7 +181,7 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
         tvp++;
 
         tvp->t = BRT_OPACITY_F;
-        tvp->v.f = (float)mat->opacity * (1.f / 255.f);
+        tvp->v.f = (float)mat->opacity * (1.0f / 255.0f);
         tvp++;
 
         tvp->t = BRT_AMBIENT_F;
@@ -275,11 +275,10 @@ void C2_HOOK_CDECL BrMaterialUpdate(br_material* mat, br_uint_16 flags) {
         v1db.renderer->dispatch->_partSetMany(v1db.renderer, BRT_PRIMITIVE, 0, mat->extra_prim, &c);
     }
 
-    if (mat->stored == NULL) {
-        v1db.renderer->dispatch->_stateStoredNew(v1db.renderer, &mat->stored, PARTS_MASK, 0);
-    }
-    else {
+    if (mat->stored != NULL) {
         v1db.renderer->dispatch->_stateSave(v1db.renderer, mat->stored, PARTS_MASK);
+    } else {
+        v1db.renderer->dispatch->_stateStoredNew(v1db.renderer, &mat->stored, PARTS_MASK, 0);
     }
     v1db.renderer->dispatch->_statePop(v1db.renderer, PARTS_MASK);
 }

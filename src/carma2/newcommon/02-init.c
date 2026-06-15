@@ -609,7 +609,7 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
         \
         gProgram_state.sausage_eater_mode = gSausage_override; \
         InitQuickTimeStuff(); \
-        memset(gTextureMaps, 0, sizeof(gTextureMaps)); \
+        memset(gTexture_maps, 0, sizeof(gTexture_maps)); \
         InitPackFiles(); \
         MAMSInitMem(); \
         if (gAustere_override || PDDoWeLeadAnAustereExistance()) { \

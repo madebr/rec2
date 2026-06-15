@@ -71,10 +71,11 @@ runs:
         ${{ (inputs.working-directory && format('cd "{0}"', inputs.working-directory)) || '' }}
         reccmp-reccmp --no-color --target ${{ inputs.target }} \
           --diff "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}-old.json" \
-        --json  "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.json" \
-        -H "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.html" \
-        -S "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.svg" \
-        >${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt
+          --json  "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.json" \
+          --json-diet \
+          -H "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.html" \
+          -S "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.svg" \
+          >${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt
     - name: 'Update gist'
       if: ${{ inputs.gist-token != '' && github.event_name == 'push' && github.repository == inputs.root-repo && github.event.ref == format('refs/heads/{0}', inputs.root-branch) }}
       uses: actions/github-script@main

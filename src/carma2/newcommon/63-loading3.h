@@ -5,8 +5,6 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
-// NearestPowerOfTwo
-
 extern int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity);
 
 extern br_pixelmap* C2_HOOK_FASTCALL DRLdImg(const char* texturePathDir, const char* textureName, br_pixelmap* pPalette, int flags, int* errorCode);
@@ -17,11 +15,11 @@ extern br_pixelmap* C2_HOOK_FASTCALL LoadPixelmap(const char* pPath_name);
 
 extern br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName);
 
-// LoadMaterial
+extern br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path);
 
-// LoadModel
+extern br_model* C2_HOOK_FASTCALL LoadModel(const char* pName);
 
-// LoadActor
+extern br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName);
 
 extern void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name);
 

@@ -2105,7 +2105,7 @@ int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowe
     if (pPowerup->initial_value < 0) {
         sprintf(s, "%d", -pPowerup->value);
         if (pDraw) {
-            TransDRPixelmapText(gBack_screen,
+            DRPixelmapText(gBack_screen,
                 pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
                 pY + gCurrent_graf_data->power_up_space_between_icon_text_dy,
                 &gFonts[2],
@@ -2118,7 +2118,7 @@ int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowe
     } else if (pPowerup->initial_value > 0) {
         TimerString(pPowerup->value, s, 0, 0, 1);
         if (pDraw) {
-            TransDRPixelmapText(gBack_screen,
+            DRPixelmapText(gBack_screen,
                 pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
                 pY + gCurrent_graf_data->power_up_space_between_icon_text_dy,
                 &gFonts[2],
@@ -2136,7 +2136,7 @@ int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowe
         }
         TimerString(timer, s, 0, 0, 1);
         if (pDraw) {
-            TransDRPixelmapText(gBack_screen,
+            DRPixelmapText(gBack_screen,
                 pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
                 pY + gCurrent_graf_data->power_up_space_between_icon_text_dy,
                 &gFonts[1],
@@ -2150,7 +2150,7 @@ int C2_HOOK_FASTCALL DrawSinglePowerupIcon(int pDraw, int pTime, tPowerup* pPowe
 
         sprintf(s, "%d", pPowerup->current_value);
         if (pDraw) {
-            TransDRPixelmapText(gBack_screen,
+            DRPixelmapText(gBack_screen,
                 pX + gCurrent_graf_data->power_up_space_between_icon_text_dx,
                 pY + gCurrent_graf_data->power_up_space_between_icon_text_dy,
                 &gFonts[2],
@@ -2232,7 +2232,7 @@ void C2_HOOK_FASTCALL DrawKeyPowerups(tU32 pTime) {
                     x, gCurrent_graf_data->keyboard_powerup_bg_bottom, 1);
                 i = gInventory_selected;
                 x = gCurrent_graf_data->keyboard_powerup_x;
-                TransDRPixelmapText(gBack_screen,
+                DRPixelmapText(gBack_screen,
                     gCurrent_graf_data->keyboard_powerup_bg_x + 1, gCurrent_graf_data->keyboard_powerup_bg_bottom - 9,
                     &gFonts[2],
                     gPowerup_array[gInventory[gInventory_selected]].message,

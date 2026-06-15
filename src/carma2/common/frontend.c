@@ -485,7 +485,7 @@ br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* 
     f = PFfopen(the_path, "rb");
     if (f == NULL) {
         PathCat(the_path, pFolder, pName);
-        result = DRLoadUpdatePixelmapFromTif(the_path);
+        result = DRImageLoad(the_path);
         /* FUN_005193f0(result, 0); */
         return result;
     }
@@ -2268,12 +2268,12 @@ void C2_HOOK_FASTCALL FRONTEND_DrawMenu(tFrontend_spec* pFrontend) {
         } else if (item->enabled >= 0) {
             if (item->radioButton_selected) {
                 if (text != NULL) {
-                    RenderInterfaceBlendedPolyText(item->highFont, text,
+                    SolidPolyFontTextInABox(item->highFont, text,
                         item->x, item->y, item->x + item->width, item->y + item->height, eJust_centre, 1);
                 }
             } else {
                 if (text != NULL) {
-                    RenderInterfaceBlendedPolyText(item->unlitFont, text,
+                    SolidPolyFontTextInABox(item->unlitFont, text,
                         item->x, item->y, item->x + item->width, item->y + item->height, eJust_left, 1);
                 }
             }
@@ -2319,8 +2319,8 @@ void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
 // FUNCTION: CARMA2_HW 0x00464df0
 void C2_HOOK_FASTCALL SolidPolyFontText(const char* pText, int pX, int pY, int pFont, tJustification pJust, int pRender) {
 
-    if (gPolyFonts[pFont].available == 0) {
-        LoadInterfacePolyFonts();
+    if (gPoly_fonts[pFont].available == 0) {
+        LoadInterfaceFonts();
     }
     TransparentPolyFontText(pText, pX, pY, pFont, pJust, pRender, 1.0);
 }
@@ -2442,6 +2442,7 @@ void C2_HOOK_FASTCALL MungeMetaCharactersNum(char* pText, char pMeta, int pNum) 
     MungeMetaCharacters(pText, pMeta, text);
 }
 
+// FUNCTION: CARMA2_HW 0x005191b0
 void C2_HOOK_FASTCALL DrPixelmapRectangleCopyPossibleLock(br_pixelmap* dst, br_int_32 dx, br_int_32 dy, br_pixelmap* src, br_int_32 sx, br_int_32 sy, br_int_32 w, br_int_32 h) {
 
 #if 0

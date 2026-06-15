@@ -164,7 +164,7 @@ void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen) {
     draw_factor = (float)(pScreen->width - 2 *  gTimers_draw_x) / total_duration;
     for (i = 0; i < REC2_ASIZE(gTimers); i++) {
         timer = &gTimers[i];
-        TransDRPixelmapText(pScreen,
+        DRPixelmapText(pScreen,
             10,
             gTimers_draw_y + i * gTimers_draw_y_stride - 3,
             &gFonts[1],
@@ -179,7 +179,7 @@ void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen) {
                 timer->colour);
         }
         sprintf(duration_str, "%i", timer->total_duration);
-        TransDRPixelmapText(pScreen,
+        DRPixelmapText(pScreen,
             (int)(gTimers_draw_x + timer->total_duration * draw_factor),
             gTimers_draw_y + i * gTimers_draw_y_stride - 3,
             &gFonts[1],
@@ -205,7 +205,7 @@ void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen) {
         gTimers_draw_y + (REC2_ASIZE(gTimers) - 1) * gTimers_draw_y_stride + 3,
         RGB565_TO_BACKSCREEN_COLOUR(0x1f, 0x00, 0x00));
     sprintf(tolerance_str, "8.38ms, tollerance = %i", gTimers_tolerance);
-    TransDRPixelmapText(pScreen,
+    DRPixelmapText(pScreen,
         (int)(gTimers_draw_x + draw_factor * 10000.f - 13.f),
         gTimers_draw_y + gTimers_draw_y_stride * (REC2_ASIZE(gTimers) - 1) + 7,
         &gFonts[1],

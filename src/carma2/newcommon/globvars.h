@@ -8,6 +8,7 @@
 
 extern int gApplicationDataTwtMounted;
 extern tPath_name gApplication_path;
+extern char gRace_path[256];
 extern const char* gDir_separator;
 
 //extern br_font* gBig_font;

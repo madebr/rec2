@@ -19,6 +19,7 @@
 #include "c2_string.h"
 
 #include <ctype.h>
+#include <float.h>
 
 
 // GLOBAL: CARMA2_HW 0x006abef8
@@ -204,7 +205,10 @@ br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16
     return the_map;
 }
 
-// DRImageLoad
+// STUB: CARMA2_HW 0x00513870
+br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* path) {
+    NOT_IMPLEMENTED();
+}
 
 // DRPixelmapLoad
 
@@ -518,21 +522,166 @@ const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {
     return gMisc_strings[pIndex];
 }
 
-// Flash
+// FUNCTION: CARMA2_HW 0x00514db0
+int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state) {
+    tU32 the_time;
 
-// RGBDifferenceSqr
+    the_time = PDGetTotalTime();
+    if (the_time - *pLast_change > pPeriod) {
+        *pCurrent_state = !*pCurrent_state;
+        *pLast_change = the_time;
+    }
+    return *pCurrent_state;
+}
 
-// FindBestMatch
+double C2_HOOK_FASTCALL RGBDifferenceSqr(tRGB_colour* pColour_1, tRGB_colour* pColour_2) {
 
-// BuildShadeTablePath
+    return REC2_SQR(pColour_1->red - pColour_2->red)
+           + REC2_SQR(pColour_1->green - pColour_2->green)
+           + REC2_SQR(pColour_1->blue - pColour_2->blue);
+}
 
-// LoadGeneratedShadeTable
+int C2_HOOK_FASTCALL FindBestMatch(tRGB_colour* pRGB_colour, br_pixelmap* pPalette) {
+    int n;
+    int near_c;
+    double min_d;
+    double d;
+    tRGB_colour trial_RGB;
+    br_colour* dp;
 
-// SaveGeneratedShadeTable
+    near_c = 127;
+    min_d = DBL_MAX;
+    dp = pPalette->pixels;
+    for (n = 0; n < 256; n++) {
+        trial_RGB.red = (dp[n] >> 16) & 0xff;
+        trial_RGB.green = (dp[n] >> 8) & 0xff;
+        trial_RGB.blue = (dp[n] >> 0) & 0xff;
+        d = RGBDifferenceSqr(pRGB_colour, &trial_RGB);
+        if (d < min_d) {
+            min_d = d;
+            near_c = n;
+        }
+    }
+    return near_c;
+}
 
-// GenerateShadeTable
+void C2_HOOK_FASTCALL BuildShadeTablePath(char* pThe_path, int pR, int pG, int pB) {
+    char s[32];
 
-// GenerateDarkenedShadeTable
+    s[0] = 's';
+    s[1] = 't';
+    s[2] = 'A' + ((pR >> 4) % 0x10);
+    s[3] = 'A' + ((pR >> 0) % 0x10);
+    s[4] = 'A' + ((pG >> 4) % 0x10);
+    s[5] = 'A' + ((pG >> 0) % 0x10);
+    s[6] = 'A' + ((pB >> 4) % 0x10);
+    s[7] = 'A' + ((pB >> 0) % 0x10);
+    s[8] = '\0';
+    strcat(s, ".TAB");
+    PathCat(pThe_path, gApplication_path, "SHADETAB");
+    PathCat(pThe_path, pThe_path, s);
+}
+
+br_pixelmap* C2_HOOK_FASTCALL LoadGeneratedShadeTable(int pR, int pG, int pB) {
+    char the_path[256];
+
+    BuildShadeTablePath(the_path, pR, pG, pB);
+    return BrPixelmapLoad(the_path);
+}
+
+void C2_HOOK_FASTCALL SaveGeneratedShadeTable(br_pixelmap* pThe_table, int pR, int pG, int pB) {
+    char the_path[256];
+
+    BuildShadeTablePath(the_path, pR, pG, pB);
+    BrPixelmapSave(the_path, pThe_table);
+}
+
+// FUNCTION: CARMA2_HW 0x00514e40
+br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter) {
+
+    PossibleService();
+    return GenerateDarkenedShadeTable(
+        pHeight,
+        pPalette,
+        pRed_mix,
+        pGreen_mix,
+        pBlue_mix,
+        pQuarter,
+        pHalf,
+        pThree_quarter,
+        1.0f);
+}
+
+// FUNCTION: CARMA2_HW 0x00514eb0
+br_pixelmap* C2_HOOK_FASTCALL GenerateDarkenedShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter, br_scalar pDarken) {
+    br_pixelmap* the_table;
+    tRGB_colour the_RGB;
+    tRGB_colour new_RGB;
+    tRGB_colour ref_col;
+    br_colour* cp;
+    char* tab_ptr;
+    char* shade_ptr;
+    int f_i;
+    double f_total_minus_1;
+    double ratio1;
+    double ratio2;
+    int i;
+    int c;
+
+    the_table = LoadGeneratedShadeTable(pRed_mix, pGreen_mix, pBlue_mix);
+    if (the_table == NULL) {
+        the_table = BrPixelmapAllocate(BR_PMT_INDEX_8, 256, pHeight, NULL, 0);
+        if (the_table == NULL) {
+            FatalError(kFatalError_CannotLoadAGeneratedShadeTable);
+        }
+        cp = pPalette->pixels;
+
+        ref_col.red = pRed_mix;
+        ref_col.green = pGreen_mix;
+        ref_col.blue = pBlue_mix;
+
+        for (c = 0, tab_ptr = the_table->pixels; c < 256; c++, tab_ptr++) {
+            the_RGB.red = (int)(((cp[c] >> 16) & 0xff) * pDarken);
+            the_RGB.green = (int)(((cp[c] >> 8) & 0xff) * pDarken);
+            the_RGB.blue = (int)(((cp[c] >> 0) & 0xff) * pDarken);
+
+            if (pHeight == 1) {
+                f_total_minus_1 = 1.0;
+            } else {
+                f_total_minus_1 = (double)(pHeight - 1);
+            }
+            for (i = 0, shade_ptr = tab_ptr; i < pHeight; i++, shade_ptr += 0x100) {
+                if (pHeight == 1) {
+                    f_i = 1;
+                } else {
+                    f_i = i;
+                }
+                ratio1 = (double)f_i / f_total_minus_1;
+                if (ratio1 < 0.5) {
+                    if (ratio1 < 0.25) {
+                        ratio1 = pQuarter * ratio1 * 4.0;
+                    } else {
+                        ratio1 = pQuarter + (ratio1 - 0.25f) * (pHalf - pQuarter) * 4.0;
+                    }
+                } else {
+                    if (ratio1 < 0.75) {
+                        ratio1 = pHalf + (ratio1 - 0.5) * (pThree_quarter - pHalf) * 4.0;
+                    } else {
+                        ratio1 = 1.0 - (1.0 - pThree_quarter) * (1.0 - ratio1) * 4.0;
+                    }
+                }
+                ratio2 = 1.0 - ratio1;
+                new_RGB.red = (int)(ref_col.red * ratio1 + the_RGB.red * ratio2);
+                new_RGB.green = (int)(ref_col.green * ratio1 + the_RGB.green * ratio2);
+                new_RGB.blue = (int)(ref_col.blue * ratio1 + the_RGB.blue * ratio2);
+                *shade_ptr = FindBestMatch(&new_RGB, pPalette);
+            }
+        }
+        SaveGeneratedShadeTable(the_table, pRed_mix, pGreen_mix, pBlue_mix);
+    }
+    BrTableAdd(the_table);
+    return the_table;
+}
 
 // FUNCTION: CARMA2_HW 0x005155d0
 void C2_HOOK_FASTCALL PossibleService(void) {
@@ -561,9 +710,17 @@ void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, co
     pA->v[2] = pC->m[2][2] * t3 + pC->m[2][0] * t1 + pC->m[2][1] * t2;
 }
 
-// DRPixelmapRectangleCopy
+// FUNCTION: CARMA2_HW 0x00515690
+void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h) {
 
-// NormalSideOfPlane
+    BrPixelmapRectangleCopy(dst, dx, dy, src, sx, sy, w, h);
+}
+
+// FUNCTION: CARMA2_HW 0x00515700
+int C2_HOOK_FASTCALL NormalSideOfPlane(br_vector3* pPoint, br_vector3* pNormal, br_scalar pD) {
+
+    return (BrVector3Dot(pNormal, pPoint) - pD) * BrVector3Dot(pNormal, pNormal) >= 0.0f;
+}
 
 // FUNCTION: CARMA2_HW 0x00515780
 br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier) {
@@ -815,7 +972,16 @@ int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* pModel,
 
 // DistanceFromFace
 
-// DRBoundsCopy
+// FUNCTION: CARMA2_HW 0x005160c0
+void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* pSrc) {
+
+    pDest->min.v[0] = pSrc->min.v[0];
+    pDest->min.v[1] = pSrc->min.v[1];
+    pDest->min.v[2] = pSrc->min.v[2];
+    pDest->max.v[0] = pSrc->max.v[0];
+    pDest->max.v[1] = pSrc->max.v[1];
+    pDest->max.v[2] = pSrc->max.v[2];
+}
 
 // FUNCTION: CARMA2_HW 0x005160f0
 int C2_HOOK_FASTCALL TestForNan(const float* f) {

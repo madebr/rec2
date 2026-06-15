@@ -292,7 +292,7 @@ int C2_HOOK_FASTCALL DRTextCleverWidth(const tDR_font* pFont, const char* pText)
         } else {
             int inter = 0;
             if (i < len - 1) {
-                inter = gPolyFonts[polyfont].interCharacterSpacing;
+                inter = gPoly_fonts[polyfont].interCharacterSpacing;
             }
 
             result += CharacterWidth(pText[i], polyfont) + inter;
@@ -306,7 +306,7 @@ void C2_HOOK_FASTCALL DRPixelmapCentredText(br_pixelmap* pPixelmap, int pX, int 
     int width_over_2;
 
     width_over_2 = DRTextWidth(pFont, pText) / 2;
-    TransDRPixelmapText(pPixelmap, pX - width_over_2, pY, pFont, pText, width_over_2 + pX);
+    DRPixelmapText(pPixelmap, pX - width_over_2, pY, pFont, pText, width_over_2 + pX);
 }
 
 // FUNCTION: CARMA2_HW 0x00466000
@@ -314,17 +314,17 @@ void C2_HOOK_FASTCALL OoerrIveGotTextInMeBoxMissus(int pFont_index, const char* 
     int polyfont;
 
     polyfont = gDRFont_to_polyfont_mapping[gFonts[pFont_index].id];
-    RenderPolyText(polyfont, pText, pLeft, pTop, pRight, pBottom, pCentred ? eJust_centre : eJust_left, gRender_poly_text);
+    PolyFontTextInABox(polyfont, pText, pLeft, pTop, pRight, pBottom, pCentred ? eJust_centre : eJust_left, gRender_poly_text);
 }
 
 // FUNCTION: CARMA2_HW 0x00466210
-int C2_HOOK_FASTCALL DRFontToPolyFontHandle(const tDR_font* pFont) {
+int C2_HOOK_FASTCALL GetPolyFontIndexToReplaceDRfontWith(const tDR_font* pFont) {
 
     return gDRFont_to_polyfont_mapping[pFont->id];
 }
 
 // FUNCTION: CARMA2_HW 0x00465a70
-void C2_HOOK_FASTCALL TransDRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
+void C2_HOOK_FASTCALL DRPixelmapText(br_pixelmap* pPixelmap, int pX, int pY, const tDR_font* pFont, const char* pText, int pRight_edge) {
 
     RenderPolyTextLine(pText, pX, pY, gDRFont_to_polyfont_mapping[pFont->id], eJust_left, gRender_poly_text);
 }
@@ -827,7 +827,7 @@ int C2_HOOK_FASTCALL NewTextHeadupSlot(int pSlot_index, int pFlash_rate, int pLi
 }
 
 // FUNCTION: CARMA2_HW 0x00465aa0
-void C2_HOOK_FASTCALL TransDRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge) {
+void C2_HOOK_FASTCALL DRPixelmapCleverText(br_pixelmap* pPixelmap, int pX, int pY, tDR_font* pFont, const char* pText, int pRight_edge) {
     int i;
     char s[512];
     int s_end;
@@ -1386,7 +1386,7 @@ void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time) {
                                 } else {
                                     x_offset = 0;
                                 }
-                                TransDRPixelmapCleverText(
+                                DRPixelmapCleverText(
                                         gBack_screen,
                                         x_offset + the_headup->x,
                                         y_offset + the_headup->y,
@@ -1404,7 +1404,7 @@ void C2_HOOK_FASTCALL DoHeadups(tU32 pThe_time) {
                                 } else {
                                     x_offset = 0;
                                 }
-                                TransDRPixelmapText(
+                                DRPixelmapText(
                                         gBack_screen,
                                         x_offset + the_headup->x,
                                         y_offset + the_headup->y,

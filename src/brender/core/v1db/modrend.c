@@ -79,14 +79,18 @@ br_model bounds_model = {
 
 // FUNCTION: CARMA2_HW 0x00525fc0
 void C2_HOOK_STDCALL renderFaces(br_actor* actor, br_model* model, br_material* material, void* render_data, br_uint_8 style, int on_screen) {
+    // br_geometry_stored* stored_geometry;
+    // br_geometry_v1_model* v1_model;
 
     if (model->stored != NULL) {
+        // stored_geometry = (br_geometry_stored*)model->stored;
         if (on_screen == BRT_ACCEPT) {
             ((br_geometry_stored*)model->stored)->dispatch->_renderOnScreen((br_geometry_stored*)model->stored, v1db.renderer);
         } else {
-            ((br_geometry_stored*)model->stored)->dispatch->_renderOnScreen((br_geometry_stored*)model->stored, v1db.renderer);
+            ((br_geometry_stored*)model->stored)->dispatch->_render((br_geometry_stored*)model->stored, v1db.renderer);
         }
     } else if (model->prepared != NULL) {
+        // v1_model = (br_geometry_v1_model*)v1db.format_model;
         if (on_screen == BRT_ACCEPT) {
             ((br_geometry_v1_model*)v1db.format_model)->dispatch->_renderOnScreenF((br_geometry_v1_model*)v1db.format_model, v1db.renderer, model->prepared, material->stored, BRT_TRIANGLE);
         } else {

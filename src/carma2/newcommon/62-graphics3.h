@@ -2,6 +2,7 @@
 #define GUARD_62_GRAPHICS3_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 extern int gMini_map_visible;
 
@@ -73,7 +74,7 @@ extern int gMini_map_visible;
 
 extern void C2_HOOK_FASTCALL InitMap(void);
 
-// ConvertCarIcons
+extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 
 // MapChanged
 
@@ -82,5 +83,7 @@ extern void C2_HOOK_FASTCALL InitMap(void);
 // InitSmashTargets
 
 // AddSmashTarget
+
+extern int NearestPowerOfTwo(int pValue) ;
 
 #endif // GUARD_62_GRAPHICS3_H

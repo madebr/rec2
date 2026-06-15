@@ -15,8 +15,6 @@
 // GLOBAL: CARMA2_HW 0x0065852c
 char* gPedTexturePath = "PIXELMAP";
 
-// NearestPowerOfTwo
-
 // FUNCTION: CARMA2_HW 0x0048ea40
 int C2_HOOK_FASTCALL LoadBunchOfPixies(const char* pathRoot, const char* textureName, br_pixelmap** textureBuffer, size_t bufferCapacity) {
     tPath_name tempPath;
@@ -120,11 +118,41 @@ br_pixelmap* C2_HOOK_FASTCALL LoadShadeTable(const char* pName) {
     return BrPixelmapLoad(the_path);
 }
 
-// LoadMaterial
+// FUNCTION: CARMA2_HW 0x0048ef80
+br_material* C2_HOOK_FASTCALL LoadMaterial(const char* pThe_path) {
+    tPath_name the_path;
 
-// LoadModel
+    PossibleService();
+    PathCat(the_path, gApplication_path, "MATERIAL");
+    PathCat(the_path, the_path, pThe_path);
+    return BrMaterialLoad(the_path);
+}
 
-// LoadActor
+// FUNCTION: CARMA2_HW 0x0048efd0
+br_model* C2_HOOK_FASTCALL LoadModel(const char* pName) {
+    tPath_name the_path;
+
+    PossibleService();
+    PathCat(the_path, gApplication_path, "MODELS");
+    PathCat(the_path, the_path, pName);
+    return BrModelLoad(the_path);
+}
+
+// FUNCTION: CARMA2_HW 0x0048f020
+br_actor* C2_HOOK_FASTCALL LoadActor(const char* pName) {
+    tPath_name the_path;
+    br_actor* actor;
+
+    PossibleService();
+    PathCat(the_path, gApplication_path, "ACTORS");
+    PathCat(the_path, the_path, pName);
+    actor = BrActorLoad(the_path);
+    if (actor == NULL) {
+        PathCat(the_path, gRace_path, pName);
+        actor = BrActorLoad(the_path);
+    }
+    return actor;
+}
 
 // FUNCTION: CARMA2_HW 0x0048f090
 void C2_HOOK_FASTCALL DRLoadPalette(const char* pPath_name) {

@@ -39,7 +39,7 @@ extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocate(br_uint_8 pType, br_uint
 
 extern br_pixelmap* C2_HOOK_FASTCALL DRPixelmapAllocateSub(br_pixelmap* pPm, br_uint_16 pX, br_uint_16 pY, br_uint_16 pW, br_uint_16 pH);
 
-// DRImageLoad
+extern br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* path);
 
 // DRPixelmapLoad
 
@@ -83,29 +83,29 @@ extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
 extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 
-// Flash
+extern int C2_HOOK_FASTCALL Flash(tU32 pPeriod, tU32* pLast_change, int* pCurrent_state);
 
-// RGBDifferenceSqr
+extern double C2_HOOK_FASTCALL RGBDifferenceSqr(tRGB_colour* pColour_1, tRGB_colour* pColour_2);
 
-// FindBestMatch
+extern int C2_HOOK_FASTCALL FindBestMatch(tRGB_colour* pRGB_colour, br_pixelmap* pPalette);
 
-// BuildShadeTablePath
+extern void C2_HOOK_FASTCALL BuildShadeTablePath(char* pThe_path, int pR, int pG, int pB);
 
-// LoadGeneratedShadeTable
+extern br_pixelmap* C2_HOOK_FASTCALL LoadGeneratedShadeTable(int pR, int pG, int pB);
 
-// SaveGeneratedShadeTable
+extern void C2_HOOK_FASTCALL SaveGeneratedShadeTable(br_pixelmap* pThe_table, int pR, int pG, int pB);
 
-// GenerateShadeTable
+extern br_pixelmap* C2_HOOK_FASTCALL GenerateShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter);
 
-// GenerateDarkenedShadeTable
+extern br_pixelmap* C2_HOOK_FASTCALL GenerateDarkenedShadeTable(int pHeight, br_pixelmap* pPalette, int pRed_mix, int pGreen_mix, int pBlue_mix, float pQuarter, float pHalf, float pThree_quarter, br_scalar pDarken);
 
 extern void C2_HOOK_FASTCALL PossibleService(void);
 
 extern void C2_HOOK_FASTCALL DRMatrix34TApplyP(br_vector3* pA, const br_vector3* pB, const br_matrix34* pC);
 
-// DRPixelmapRectangleCopy
+extern void C2_HOOK_FASTCALL DRPixelmapRectangleCopy(br_pixelmap* dst, br_int_16 dx, br_int_16 dy, br_pixelmap* src, br_int_16 sx, br_int_16 sy, br_int_16 w, br_int_16 h);
 
-// NormalSideOfPlane
+extern int C2_HOOK_FASTCALL NormalSideOfPlane(br_vector3* pPoint, br_vector3* pNormal, br_scalar pD);
 
 extern br_material* C2_HOOK_FASTCALL DRMaterialClone(br_material* pMaterial, int pSet_identifier);
 
@@ -137,13 +137,13 @@ extern int C2_HOOK_FASTCALL DRModelUpdateDeluxTurbo(br_actor* pActor, br_model* 
 
 // DistanceFromFace
 
-// DRBoundsCopy
+extern void C2_HOOK_FASTCALL DRBoundsCopy(br_bounds3* pDest, const br_bounds3* pSrc);
 
 extern int C2_HOOK_FASTCALL TestForNan(const float* f);
 
 extern int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
-// DRScaleModel
+extern void C2_HOOK_FASTCALL DRScaleModel(br_model* pModel, float pScale);
 
 extern float C2_HOOK_FASTCALL DistanceFromFaceND(const br_vector3* pP, const br_vector3* pN, br_scalar pF);
 
