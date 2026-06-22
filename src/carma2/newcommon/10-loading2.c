@@ -154,16 +154,22 @@ void C2_HOOK_FASTCALL GetHithers(void) {
     char s[256];
     int result;
     int position;
+    float camera_hither;
+    float cockpit_hither;
+    char whitespace[] = "\t ,";
 
     /* Hithers, general then cockpit mode */
     GetALineAndDontArgue(gTempFile, s);
-    result = sscanf(&s[strspn(s, "\t ,")], "%f%n", &gCamera_hither, &position);
+    result = sscanf(&s[strspn(s, whitespace)], "%f%n", &camera_hither, &position);
     if (result == 0) {
         FatalError(kFatalError_Mysterious_SS, s, "GENERAL.TXT");
     }
-    sscanf(&s[position + strspn(&s[position], "\t ,")], "%f", &gCamera_cockpit_hither);
+    gCamera_hither = camera_hither;
+    if (sscanf(&s[position + strspn(&s[position], "\t ,")], "%f", &cockpit_hither) == 0) {
+        cockpit_hither = gCamera_hither;
+    }
     gCamera_hither *= 2;
-    gCamera_cockpit_hither *= 2;
+    gCamera_cockpit_hither = 2 * cockpit_hither;
 }
 
 // FUNCTION: CARMA2_HW 0x00486ef0
