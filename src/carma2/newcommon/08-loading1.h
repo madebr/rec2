@@ -10,9 +10,9 @@ extern int gDecode_thing;
 
 extern tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF);
 
-// ReadF32
+extern float C2_HOOK_FASTCALL ReadF32(FILE* pF);
 
-// ReadS32
+extern tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF);
 
 extern void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber);
 

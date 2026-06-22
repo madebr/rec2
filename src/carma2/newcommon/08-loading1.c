@@ -41,12 +41,27 @@ tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
     tU32 raw_long;
 
     PFfread(&raw_long, sizeof(raw_long), 1, pF);
+    // FIXME: byteswap for BE (introduce LittleEndianToNative macro)
     return raw_long;
 }
 
-// ReadF32
+// FUNCTION: CARMA2_HW 0x0048f890
+float C2_HOOK_FASTCALL ReadF32(FILE* pF) {
+    float f;
 
-// ReadS32
+    PFfread(&f, sizeof(f), 1, pF);
+    // FIXME: byteswap for BE
+    return f;
+}
+
+// FUNCTION: CARMA2_HW 0x0048f8b0
+tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF) {
+    tS32 raw_long;
+
+    PFfread(&raw_long, sizeof(raw_long), 1, pF);
+    // FIXME: byteswap for BE
+    return raw_long;
+}
 
 // FUNCTION: CARMA2_HW 0x0048f910
 void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
@@ -54,6 +69,7 @@ void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
 
     raw_long = pNumber;
     PFfwrite(&raw_long, sizeof(raw_long), 1, pF);
+    // FIXME: byteswap for BE
 }
 
 // FUNCTION: CARMA2_HW 0x0048f930
@@ -62,6 +78,7 @@ void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber) {
 
     raw_short = pNumber;
     PFfwrite(&raw_short, sizeof(raw_short), 1, pF);
+    // FIXME: byteswap for BE
 }
 
 // FUNCTION: CARMA2_HW 0x0048f960
