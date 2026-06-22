@@ -231,7 +231,7 @@ void C2_HOOK_FASTCALL InitAbuseomatic(void) {
 void C2_HOOK_FASTCALL DisposeAbuseomatic(void) {
     int i;
 
-    for (i = 0; i < REC2_ASIZE(gAbuse_text); i++) {
+    for (i = 0; i < (int)REC2_ASIZE(gAbuse_text); i++) {
         if (gAbuse_text[i] != NULL) {
             BrMemFree(gAbuse_text[i]);
         }
