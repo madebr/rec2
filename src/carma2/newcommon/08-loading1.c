@@ -242,7 +242,21 @@ void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
     sscanf(str, "%d", pF3);
 }
 
-// GetFourInts
+// FUNCTION: CARMA2_HW 0x00490020
+void C2_HOOK_FASTCALL GetFourInts(FILE* pF, int* pF1, int* pF2, int* pF3, int* pF4) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF3);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF4);
+}
 
 // FUNCTION: CARMA2_HW 0x0048fb80
 br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF) {

@@ -48,7 +48,7 @@ extern void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2);
 
 extern void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3);
 
-// GetFourInts
+extern void C2_HOOK_FASTCALL GetFourInts(FILE* pF, int* pF1, int* pF2, int* pF3, int* pF4);
 
 extern br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF);
 
