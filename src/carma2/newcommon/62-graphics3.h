@@ -70,7 +70,7 @@ extern int gMini_map_visible;
 
 // MapStuffAfterRender
 
-// ReadMoodMessages
+// static void C2_HOOK_FASTCALL ReadMoodMessages(void);
 
 extern void C2_HOOK_FASTCALL InitMap(void);
 
