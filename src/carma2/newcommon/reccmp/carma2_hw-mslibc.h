@@ -198,6 +198,9 @@
 // GLOBAL: CARMA2_HW 0x006b3110
 // __mbcasemap
 
+// GLOBAL: CARMA2_HW 0x006761f0
+// ___badioinfo
+
 // GLOBAL: CARMA2_HW 0x0058f000
 // ___xc_a
 
@@ -319,6 +322,9 @@
 // _sscanf
 
 // LIBRARY: CARMA2_HW 0x005776c0
+// _remove
+
+// LIBRARY: CARMA2_HW 0x005776f0
 // _unlink
 
 // LIBRARY: CARMA2_HW 0x00578470

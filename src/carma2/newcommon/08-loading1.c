@@ -594,7 +594,7 @@ void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
     PFfclose(d);
 
     PDFileUnlock(pThe_path);
-    unlink(pThe_path);
+    remove(pThe_path);
     rename(new_file, pThe_path);
 }
 
