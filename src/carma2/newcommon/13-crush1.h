@@ -2,6 +2,7 @@
 #define GUARD_13_CRUSH1_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 #include <stdio.h>
 
@@ -89,7 +90,7 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 // InitPhysModCrushData
 
-// DisposeMasterCrushData
+extern void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_spec* pCar);
 
 // DisposeCrushData
 
@@ -391,7 +392,7 @@ extern void C2_HOOK_FASTCALL InitCrushSystems(void);
 
 // SendReAttachAllBits
 
-// TotallyRepairACar
+extern void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec);
 
 // TotallyRepairCar
 

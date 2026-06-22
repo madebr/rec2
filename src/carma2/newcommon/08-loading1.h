@@ -90,13 +90,13 @@ extern void C2_HOOK_FASTCALL UnlockInterfaceStuff(void);
 
 extern void C2_HOOK_FASTCALL DisposePhysicsObject(tPhysics_object* pObject);
 
-// DisposeCarActModDataCB
+extern intptr_t C2_HOOK_CDECL DisposeCarActModDataCB(br_actor* pActor, void* pContext);
 
-// DisposeCar
+extern void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner);
 
-// DisposeRaceInfo
+extern void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info);
 
-// DisposeOpponentsCars
+extern void C2_HOOK_FASTCALL DisposeOpponentsCars(tRace_info* pRace_info);
 
 extern void C2_HOOK_FASTCALL DisposeRace(void);
 

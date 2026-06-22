@@ -215,7 +215,10 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // InitPhysModCrushData
 
-// DisposeMasterCrushData
+// STUB: CARMA2_HW 0x0042c420
+void C2_HOOK_FASTCALL DisposeMasterCrushData(tCar_crush_spec* pCar_crush, tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
 
 // DisposeCrushData
 
@@ -517,7 +520,10 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
 // SendReAttachAllBits
 
-// TotallyRepairACar
+// STUB: CARMA2_HW 0x00439510
+void C2_HOOK_FASTCALL TotallyRepairACar(tCar_spec* pCar_spec) {
+    NOT_IMPLEMENTED();
+}
 
 // TotallyRepairCar
 

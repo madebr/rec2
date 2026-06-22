@@ -1,9 +1,13 @@
 #include "08-loading1.h"
 
+#include "09-funks.h"
+#include "13-crush1.h"
 #include "16-graphics1.h"
 #include "19-font.h"
 #include "23-piping.h"
 #include "27-powerup.h"
+#include "28-world3.h"
+#include "30-opponent.h"
 #include "38-flicplay.h"
 #include "43-pratcam.h"
 #include "49-physics.h"
@@ -18,6 +22,8 @@
 #include "41-utility.h"
 #include "platform.h"
 #include "globvars.h"
+#include "globvrpb.h"
+#include "rec2_macros.h"
 
 #include <ctype.h>
 #include <stdarg.h>
@@ -47,6 +53,9 @@ const tU8 gOther_long_key[16] = {
     0x67, 0xa8, 0xd6, 0x26, 0xb6, 0xdd, 0x45, 0x1b,
     0x32, 0x7e, 0x22, 0x13, 0x15, 0xc2, 0x94, 0x37,
 };
+
+// GLOBAL: CARMA2_HW 0x00763540
+int gFunk_groove_flags[30];
 
 // FUNCTION: CARMA2_HW 0x0048f830
 tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
@@ -818,13 +827,132 @@ void C2_HOOK_FASTCALL DisposePhysicsObject(tPhysics_object* pObject) {
     BrMemFree(pObject);
 }
 
-// DisposeCarActModDataCB
+// STUB: CARMA2_HW 0x0044be80
+intptr_t C2_HOOK_CDECL DisposeCarActModDataCB(br_actor* pActor, void* pContext) {
+    NOT_IMPLEMENTED();
+}
 
-// DisposeCar
+// FUNCTION: CARMA2_HW 0x0044bbe0
+void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner) {
+    int i;
+    tCar_crush_spec* car_crush_spec;
 
-// DisposeRaceInfo
+    if (pCar_spec != NULL && pCar_spec->driver_name[0] != '\0') {
+        gFunk_groove_flags[pCar_spec->fg_index] = 0;
+        pCar_spec->driver_name[0] = '\0';
+        if (pCar_spec->driver == eDriver_local_human) {
+            for (i = 0; i < (int)REC2_ASIZE(pCar_spec->cockpit_images); i++) {
+                if (pCar_spec->cockpit_images[i] != NULL) {
+                    BrMemFree(pCar_spec->cockpit_images[i]);
+                }
+            }
+            if (pCar_spec->speedo_image[0] != NULL) {
+                BrPixelmapFree(pCar_spec->speedo_image[0]);
+            }
+            if (pCar_spec->speedo_image[1] != NULL) {
+                BrPixelmapFree(pCar_spec->speedo_image[1]);
+            }
+            if (pCar_spec->tacho_image[0] != NULL) {
+                BrPixelmapFree(pCar_spec->tacho_image[0]);
+            }
+            if (pCar_spec->tacho_image[1] != NULL) {
+                BrPixelmapFree(pCar_spec->tacho_image[1]);
+            }
+            if (pCar_spec->gears_image != NULL) {
+                BrPixelmapFree(pCar_spec->gears_image);
+            }
+            for (i = 0; i < pCar_spec->number_of_hands_images; i++) {
+            if (pCar_spec->lhands_images[i] != NULL) {
+                BrPixelmapFree(pCar_spec->lhands_images[i]);
+            }
+            if (pCar_spec->rhands_images[i] != NULL) {
+                BrPixelmapFree(pCar_spec->rhands_images[i]);
+            }
+            }
+            if (pCar_spec->prat_cam_left != NULL) {
+                BrPixelmapFree(pCar_spec->prat_cam_left);
+            }
+            if (pCar_spec->prat_cam_top != NULL) {
+                BrPixelmapFree(pCar_spec->prat_cam_top);
+            }
+            if (pCar_spec->prat_cam_right != NULL) {
+                BrPixelmapFree(pCar_spec->prat_cam_right);
+            }
+            if (pCar_spec->prat_cam_bottom != NULL) {
+                BrPixelmapFree(pCar_spec->prat_cam_bottom);
+            }
+            for (i = 0; i < (int)REC2_ASIZE(pCar_spec->damage_units); i++) {
+                if (pCar_spec->damage_units[i].images != NULL) {
+                    BrPixelmapFree(pCar_spec->damage_units[i].images);
+                }
+            }
+            if (pCar_spec->damage_background != NULL) {
+                BrPixelmapFree(pCar_spec->damage_background);
+            }
+            gProgram_state.car_name[0] = '\0';
+        }
+        for (i = 0; i < (int)REC2_ASIZE(pCar_spec->damage_programs); i++) {
+            BrMemFree(pCar_spec->damage_programs[i].clauses);
+        }
+        car_crush_spec = pCar_spec->car_crush_spec;
+        if (car_crush_spec != NULL) {
+            TotallyRepairACar(pCar_spec);
+            DisposeMasterCrushData(car_crush_spec, pCar_spec);
+            pCar_spec->car_crush_spec = NULL;
+        }
+        DRActorEnumRecurse(pCar_spec->car_model_actor, DisposeCarActModDataCB, &pCar_spec->index);
+        BrActorFree(pCar_spec->car_actor);
+        pCar_spec->car_actor = NULL;
+        if (pCar_spec->car_master_actor->parent != NULL) {
+            BrActorRemove(pCar_spec->car_master_actor);
+        }
+        BrActorFree(pCar_spec->car_master_actor);
+        pCar_spec->car_master_actor = NULL;
+        pCar_spec->car_model_actor = NULL;
+        DisposeFunkotronics(pOwner);
+        DisposeGroovidelics(pOwner);
+        DisposePhysicsObject(pCar_spec->collision_info);
+        if (gNet_mode != eNet_mode_none) {
+            ClearMatertrialSetFromStorageSpace(&gNet_cars_storage_space,
+                pCar_spec->old_material_count, pCar_spec->new_material_count);
+        }
+        if (gProgram_state.racing && gNet_mode == eNet_mode_none) {
+            ForceRebuildActiveCarList();
+        }
+    }
+}
 
-// DisposeOpponentsCars
+// FUNCTION: CARMA2_HW 0x0044bf70
+void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info) {
+
+    // empty
+}
+
+// FUNCTION: CARMA2_HW 0x0044bfa0
+void C2_HOOK_FASTCALL DisposeOpponentsCars(tRace_info* pRace_info) {
+    int i;
+
+    gCurrent_APO_potential_levels[0] = gProgram_state.current_car.power_up_slots[0];
+    gCurrent_APO_potential_levels[1] = gProgram_state.current_car.power_up_slots[1];
+    gCurrent_APO_potential_levels[2] = gProgram_state.current_car.power_up_slots[2];
+    gCurrent_APO_levels[0] = gProgram_state.current_car.power_up_levels[0];
+    gCurrent_APO_levels[1] = gProgram_state.current_car.power_up_levels[1];
+    gCurrent_APO_levels[2] = gProgram_state.current_car.power_up_levels[2];
+    DisposeCar(&gProgram_state.current_car, gProgram_state.current_car.index);
+    for (i = 0; i < pRace_info->number_of_racers; i++) {
+        PossibleService();
+        if (pRace_info->opponent_list[i].index >= 0) {
+            if (pRace_info->opponent_list[i].car_spec != NULL) {
+                DisposeCar(pRace_info->opponent_list[i].car_spec, pRace_info->opponent_list[i].index);
+                BrMemFree(pRace_info->opponent_list[i].car_spec);
+            }
+        }
+    }
+    ClearOutStorageSpace(&gOur_car_storage_space);
+    ClearOutStorageSpace(&gTheir_cars_storage_space);
+    gCurrent_race.number_of_racers = 0;
+    gProgram_state.AI_vehicles.number_of_opponents = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0044c070
 void C2_HOOK_FASTCALL DisposeRace(void) {

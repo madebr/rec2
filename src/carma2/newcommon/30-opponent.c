@@ -1,5 +1,7 @@
 #include "30-opponent.h"
 
+#include <c2_hooks.h>
+
 // GLOBAL: CARMA2_HW 0x0065a3cc
 float gOpponent_nastyness_frigger = 1.0f;
 
@@ -109,7 +111,10 @@ int gMaxTimeOpponentRepair;
 
 // RebuildActiveCarList
 
-// ForceRebuildActiveCarList
+// STUB: CARMA2_HW 0x004a7a60
+void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
+    NOT_IMPLEMENTED();
+}
 
 // OpponentRepairNecessary
 

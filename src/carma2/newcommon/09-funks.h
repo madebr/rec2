@@ -20,7 +20,7 @@ extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 // AddNewFunkotronic
 
-// DisposeFunkotronics
+extern void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner);
 
 // CalcProximities
 
@@ -32,7 +32,7 @@ extern void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon);
 
 // AddFunkotronics
 
-// DisposeGroovidelics
+extern void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner);
 
 // AddNewGroovidelic
 

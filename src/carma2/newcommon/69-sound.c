@@ -153,7 +153,10 @@ int C2_HOOK_FASTCALL DRS3ShutDown(void) {
 
 // DRS3StopOutletSound
 
-// DRS3StopAllOutletSoundsExceptCDA
+// STUB: CARMA2_HW 0x004559e0
+int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ToggleSoundEnable
 

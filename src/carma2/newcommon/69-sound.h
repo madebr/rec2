@@ -37,7 +37,7 @@ extern int C2_HOOK_FASTCALL DRS3ShutDown(void);
 
 // DRS3StopOutletSound
 
-// DRS3StopAllOutletSoundsExceptCDA
+extern int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void);
 
 // ToggleSoundEnable
 
