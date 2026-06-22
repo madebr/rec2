@@ -43,7 +43,7 @@ void C2_HOOK_FASTCALL ToggleMiniMap(void);
 
 void C2_HOOK_FASTCALL ToggleFlaps(void);
 
-int C2_HOOK_FASTCALL ToggleFlapsCB(tCollision_info* pCollision_info, void* data);
+int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, void* data);
 
 int C2_HOOK_CDECL ToggleDoorsActorCallback(br_actor* pActor, void* data);
 
@@ -171,7 +171,7 @@ void C2_HOOK_FASTCALL CheckOtherRacingKeys(void);
 
 void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec);
 
-void C2_HOOK_FASTCALL FlipUpCollisionInfo(tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL FlipUpCollisionInfo(tPhysics_object* pCollision_info);
 
 void C2_HOOK_FASTCALL ResetRecoveryVouchers(void);
 

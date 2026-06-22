@@ -16,14 +16,14 @@
 
 
 // FUNCTION: CARMA2_HW 0x00433350
-tCollision_info* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds) {
+tPhysics_object* C2_HOOK_FASTCALL DetachBit(tCar_spec* pCar, br_actor* pActor, br_bounds3* pBounds) {
 
     NOT_IMPLEMENTED();
     return NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x00436d60
-tCollision_info* C2_HOOK_FASTCALL SemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, int* pArg4, br_vector3* pArg5, br_bounds3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
+tPhysics_object* C2_HOOK_FASTCALL SemiDetachBit(tCar_spec* pCar, br_actor* pActor, float pArg3, int* pArg4, br_vector3* pArg5, br_bounds3* pArg6, br_vector3* pArg7, br_vector3* pArg8) {
 
     NOT_IMPLEMENTED();
     return NULL;
@@ -272,7 +272,7 @@ void C2_HOOK_FASTCALL DoFlapping(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00434910
-int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tCollision_info* pObject) {
+int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tPhysics_object* pObject) {
     tPhysics_joint* joint = pObject->physics_joint1;
     int i;
 
@@ -290,13 +290,13 @@ int C2_HOOK_FASTCALL BitObjectIsSufficientlyOutsideCarObjectToDetach(tCollision_
 }
 
 // FUNCTION: CARMA2_HW 0x0042f4e0
-void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tCollision_info* pObject) {
+void C2_HOOK_FASTCALL FullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004314b0
-void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tCollision_info* pObject) {
+void C2_HOOK_FASTCALL SendFullyDetachBit(tCar_spec* pCar, tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
 }
@@ -426,7 +426,7 @@ br_angle C2_HOOK_FASTCALL QuantizeAngle(br_angle pAngle, br_angle pMin, br_angle
 }
 
 int C2_HOOK_FASTCALL BendCarOneForce(tCar_spec* pCar, tCar_crush* pCar_crush) {
-    tCollision_info* object;
+    tPhysics_object* object;
     int bend_max;
     float bb_z;
     br_vector3 bend_v;

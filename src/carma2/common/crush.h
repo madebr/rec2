@@ -18,13 +18,13 @@ extern const char* gPosition_type_names[2];
 extern undefined4 gCrush_array_0067a190[10];
 extern undefined4 gDAT_00679440;
 extern tCrush_info_buffer gDetached_bit_crush_info_buffer;
-extern tCollision_info* gDetached_bit_collision_infos;
+extern tPhysics_object* gDetached_bit_collision_infos;
 extern tDriver gDetached_bit_driver;
 extern tPhysics_joint* gTrack_crush_joints[32];
 extern tCrush_info_buffer gSplit_car_crush_info_buffer;
-extern tCollision_info* gSplit_car_collision_infos;
+extern tPhysics_object* gSplit_car_collision_infos;
 extern tDriver gSplit_car_driver;
-extern tCollision_shape* gGonad_sphere_collision_shape;
+extern tPhysics_shape* gGonad_sphere_collision_shape;
 extern int gCount_toggled_doors;
 extern tToggled_door gToggled_doors[16];
 extern tCrush_net_detach_list_item gNet_crush_detach_list[8];
@@ -116,7 +116,7 @@ void C2_HOOK_FASTCALL CopyShapePolyhedron(tCollision_shape_polyhedron* pDest, co
 
 void C2_HOOK_FASTCALL InitNetworkShapesStuff(tCar_crush_spec* pCar_crush);
 
-void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tCollision_info* pCollision_info, tCar_spec* pCar_spec);
+void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tPhysics_object* pCollision_info, tCar_spec* pCar_spec);
 
 void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec);
 
@@ -144,11 +144,11 @@ void C2_HOOK_FASTCALL TotallyRepairModel(br_model* pModel);
 
 intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser);
 
-int C2_HOOK_FASTCALL TotallyRepairObject(tCollision_info* pCollision_info, void* pUser_data);
+int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void* pUser_data);
 
 intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser);
 
-int C2_HOOK_FASTCALL BattenDownTheObjects(tCollision_info* pCollision_info, void* pUser_data);
+int C2_HOOK_FASTCALL BattenDownTheObjects(tPhysics_object* pCollision_info, void* pUser_data);
 
 void C2_HOOK_FASTCALL TotallyRepairCarCollisionShapes(tCar_spec *pCar_spec);
 
@@ -174,7 +174,7 @@ void C2_HOOK_FASTCALL TotallyRepairCar(void);
 
 void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec);
 
-void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar_spec, br_actor* pActor_arg2, br_actor* pActor_arg3, tCollision_info *pObject);
+void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar_spec, br_actor* pActor_arg2, br_actor* pActor_arg3, tPhysics_object *pObject);
 
 void C2_HOOK_FAKE_THISCALL TotallySpamTheModel(tCar_spec* pCar_spec, undefined4 pArg2, float pDamage);
 
@@ -216,7 +216,7 @@ int C2_HOOK_FASTCALL DRVector3TestForNan(const br_vector3* pV);
 
 void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec);
 
-int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tCollision_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal);
+int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tPhysics_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal);
 
 void C2_HOOK_FASTCALL KnackerThisCar(tCar_spec* pCar);
 
@@ -224,9 +224,9 @@ void C2_HOOK_FASTCALL RecordLastDamage(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar);
 
-float C2_HOOK_FASTCALL BashObject(tCollision_info* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
+float C2_HOOK_FASTCALL BashObject(tPhysics_object* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
 
-float C2_HOOK_FASTCALL SmashEnvironment(tCollision_info* pObject, undefined4* pArg2, float pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
+float C2_HOOK_FASTCALL SmashEnvironment(tPhysics_object* pObject, undefined4* pArg2, float pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8);
 
 void C2_HOOK_FASTCALL SphericizeModel(br_model* pModel, const br_vector3* pCenter, br_scalar pRadius);
 

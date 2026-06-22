@@ -404,7 +404,7 @@ void C2_HOOK_FASTCALL PipeSingleSkidAdjustment(int pSkid_num, br_matrix34* pMatr
     NOT_IMPLEMENTED();
 }
 
-void C2_HOOK_FASTCALL AddNonCarToPipingSession(tCollision_info* pObject, br_actor* pActor) {
+void C2_HOOK_FASTCALL AddNonCarToPipingSession(tPhysics_object* pObject, br_actor* pActor) {
     tNon_car_spec* non_car;
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tNon_car_spec, car_ID, 0x80);
@@ -416,7 +416,7 @@ void C2_HOOK_FASTCALL AddNonCarToPipingSession(tCollision_info* pObject, br_acto
 }
 
 // FUNCTION: CARMA2_HW 0x004c68a0
-int C2_HOOK_FASTCALL PipeObjectPosition(tCollision_info* pObject, void* pContext) {
+int C2_HOOK_FASTCALL PipeObjectPosition(tPhysics_object* pObject, void* pContext) {
     if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 1) {
         AddNonCarToPipingSession(pObject, pObject->actor);
     } else if (pObject != NULL && pObject->owner != NULL && pObject->flags_0x238 == 0x20) {
@@ -970,7 +970,7 @@ void C2_HOOK_FASTCALL AddBurningPedToSession(int pIndex, tPedestrian* pPed, br_v
 }
 
 // FUNCTION: CARMA2_HW 0x004c8cc0
-void C2_HOOK_FASTCALL PipeSinglePHILObject(tCollision_info* pObject) {
+void C2_HOOK_FASTCALL PipeSinglePHILObject(tPhysics_object* pObject) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPipe_phil_object, matrix, 0x0);
     C2_HOOK_STATIC_ASSERT_STRUCT_MEMBER_SIZE(tPipe_phil_object, matrix, 0x30);
 

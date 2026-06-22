@@ -1591,7 +1591,7 @@ void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pMove_action, int pWalk_
 }
 
 // FUNCTION: CARMA2_HW 0x00409040
-tCollision_info* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed) {
+tPhysics_object* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed) {
     tPed_form* form;
     int i;
 
@@ -1710,7 +1710,7 @@ int C2_HOOK_FASTCALL OrientationChanged(const br_matrix34* pOrientation_1, const
 }
 
 void C2_HOOK_FASTCALL AssertRootObjectsMatrix(tPed_character_instance* pPed) {
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     int i;
 
     if (pPed->field_0x14 & 0x1) {
@@ -1730,7 +1730,7 @@ void C2_HOOK_FASTCALL AssertRootObjectsMatrix(tPed_character_instance* pPed) {
 
 // FUNCTION: CARMA2_HW 0x004d3360
 void C2_HOOK_FASTCALL SetCharacterDirectionAR(tPed_character_instance* pPed, br_vector3* pDir, br_vector3* pUp) {
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
 
     if (pPed->field_0x14 & 0x1) {
         collision_info = pPed->personality->form->simple_physicing[pPed->field_0x5].collision_info;
@@ -2217,7 +2217,7 @@ void C2_HOOK_FASTCALL MungeNapalm(void) {
                 KillNapalmBolt(bolt);
             } else {
                 tU32 delta_time;
-                tCollision_info* object;
+                tPhysics_object* object;
                 float dt;
                 br_vector3 delta_move;
                 float delta_length_sq;
@@ -2660,7 +2660,7 @@ void C2_HOOK_FASTCALL CheckForAvoidingAction(tPedestrian* pPed, tU32 pTime) {
     }
 }
 
-void C2_HOOK_FASTCALL SetRandomOmega(tCollision_info* pObject, float pMax) {
+void C2_HOOK_FASTCALL SetRandomOmega(tPhysics_object* pObject, float pMax) {
 
 #ifdef REC2_FIX_BUGS
     BrVector3Set(&pObject->omega, SRandomPosNeg(1.f), SRandomPosNeg(1.f), SRandomPosNeg(1.f));
@@ -2753,7 +2753,7 @@ void C2_HOOK_FASTCALL MakeEmBleed(tPedestrian* pPed, tU32 pTime) {
         }
         for (i = 1; i < pPed->character->personality->form->count_bones; i++) {
             if ((pPed->character->field_0xc & gPow2_array[i]) && !(pPed->character->field_0x10 & gPow2_array[i])) {
-                tCollision_info* object;
+                tPhysics_object* object;
                 br_vector3* bone_v;
                 int other_bone_index;
 
@@ -3132,7 +3132,7 @@ void C2_HOOK_FASTCALL MungePedestrians(void) {
         CheckPowerupMoveSubstitution(ped, the_time);
         MungeCharacterAnimation(ped->character, the_time, 0);
         if (!(ped->character->field_0x14 & 0x4)) {
-            tCollision_info* simple_coll_info = ped->character->personality->form->simple_physicing[ped->character->field_0x5].collision_info;
+            tPhysics_object* simple_coll_info = ped->character->personality->form->simple_physicing[ped->character->field_0x5].collision_info;
             if (simple_coll_info != NULL) {
                 BrVector3Copy(&simple_coll_info->v, &ped->character->field_0xd8);
                 if (ped->hit_points <= 0
@@ -3693,7 +3693,7 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
         FatalError(kFatalError_BonerError_SyntaxErrorInFormFileExpected_S, "START OF BONES");
     }
     for (i = 0; i < max_boned_physicing_at_once; i++) {
-        form->boned_physicing[i].collision_infos = BrMemAllocate(form->count_bones * sizeof(tCollision_info*), kBoner_mem_type_boned_coll);
+        form->boned_physicing[i].collision_infos = BrMemAllocate(form->count_bones * sizeof(tPhysics_object*), kBoner_mem_type_boned_coll);
     }
     total_mass = 0.f;
     for (i = 0; i < form->count_bones; i++) {
@@ -3811,29 +3811,29 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
             }
             bone->hinge = joint;
             for (j = 0; j < max_boned_physicing_at_once; j++) {
-                tCollision_info* coll_info;
+                tPhysics_object* coll_info;
 
-                C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
+                C2_HOOK_BUG_ON(sizeof(tPhysics_object) != 0x4d8);
 
-                coll_info = BrMemAllocate(sizeof(tCollision_info), kBoner_mem_type_boned_coll_obj);
+                coll_info = BrMemAllocate(sizeof(tPhysics_object), kBoner_mem_type_boned_coll_obj);
                 form->boned_physicing[j].collision_infos[i] = coll_info;
                 coll_info->uid = i;
                 coll_info->M = mass;
                 switch (collision_detection_type) {
                 case ePed_form_collision_type_box:
-                    coll_info->shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
+                    coll_info->shape = (tPhysics_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
                     break;
                 case ePed_form_collision_type_polyhedron:
                 case ePed_form_collision_type_polygon:
                 case ePed_form_collision_type_none:
                     coll_info->shape = NULL;
                 case ePed_form_collision_type_line:
-                    coll_info->shape = (tCollision_shape*)AllocateWireFrameCollisionShape(2, 1, kMem_collision_shape);
+                    coll_info->shape = (tPhysics_shape*)AllocateWireFrameCollisionShape(2, 1, kMem_collision_shape);
                     coll_info->shape->wireframe.wireframe.lines[0].index1 = 0;
                     coll_info->shape->wireframe.wireframe.lines[0].index2 = 1;
                     break;
                 case ePed_form_collision_type_sphere:
-                    coll_info->shape = (tCollision_shape*)AllocateShapeSphere(kMem_collision_shape);
+                    coll_info->shape = (tPhysics_shape*)AllocateShapeSphere(kMem_collision_shape);
                     break;
                 }
                 form->boned_physicing[j].field_0x0 = 0;
@@ -3845,11 +3845,11 @@ tPed_form* C2_HOOK_FASTCALL SetUpCharacterForm(const char* pName) {
         }
     }
     for (i = 0; i < max_simple_physicing_at_once; i++) {
-        tCollision_info* coll_info;
-        coll_info = BrMemAllocate(sizeof(tCollision_info), kBoner_mem_type_simple_coll_obj);
+        tPhysics_object* coll_info;
+        coll_info = BrMemAllocate(sizeof(tPhysics_object), kBoner_mem_type_simple_coll_obj);
         form->simple_physicing[i].collision_info = coll_info;
         coll_info->M = total_mass;
-        coll_info->shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
+        coll_info->shape = (tPhysics_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
         form->simple_physicing[i].type = ePed_form_collision_type_box;
     }
 
@@ -4335,7 +4335,7 @@ br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed) {
 }
 
 // FUNCTION: CARMA2_HW 0x004cce70
-void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tCollision_info* pCollision_info) {
+void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tPhysics_object* pCollision_info) {
 
     NOT_IMPLEMENTED();
 }
@@ -4347,7 +4347,7 @@ void C2_HOOK_FASTCALL DoPostElectricution(tPedestrian* pPed, tU32 pTime, float p
 }
 
 // FUNCTION: CARMA2_HW 0x004cd880
-void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tCollision_info* pCollision_info) {
+void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tPhysics_object* pCollision_info) {
 
     NOT_IMPLEMENTED();
 }
@@ -4439,7 +4439,7 @@ br_matrix34* C2_HOOK_FASTCALL GetBoneMatrixPtr(tPed_character_instance* pCharact
 }
 
 // FUNCTION: CARMA2_HW 0x004ccff0
-void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tCollision_info* pObject, tCollision_info* pOpt_speed_object, float pArg4, br_vector3* pArg5, int pArg6) {
+void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tPhysics_object* pObject, tPhysics_object* pOpt_speed_object, float pArg4, br_vector3* pArg5, int pArg6) {
 
     NOT_IMPLEMENTED();
 }

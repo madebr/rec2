@@ -3083,7 +3083,7 @@ void C2_HOOK_FASTCALL FillInRaceInfo(tRace_info* pThe_race) {
 }
 
 // FUNCTION: CARMA2_HW 0x0044bb90
-void C2_HOOK_FASTCALL DisposePhysicsObject(tCollision_info* pCollision_info) {
+void C2_HOOK_FASTCALL DisposePhysicsObject(tPhysics_object* pCollision_info) {
 
     NOT_IMPLEMENTED();
 }
@@ -4672,13 +4672,13 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
     acceleration_highest_gear = GetAScalar(pF);
 
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, collision_info, 0x8);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, owner, 0x23c);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags_0x238, 0x238);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x1a0, 0x1a0);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x1a4, 0x1a4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, owner, 0x23c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, flags_0x238, 0x238);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x1a0, 0x1a0);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x1a4, 0x1a4);
 
-    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
-    c->collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
+    C2_HOOK_BUG_ON(sizeof(tPhysics_object) != 0x4d8);
+    c->collision_info = BrMemAllocate(sizeof(tPhysics_object), kMem_collision_object);
     c->collision_info->owner = c;
     c->collision_info->flags_0x238 = 1;
     c->collision_info->field_0x1a0 = 0xffff;
@@ -4698,7 +4698,7 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
     /* Type */
     GetAString(pF, s);
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, cmpos, 0x14);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, cmpos, 0x14);
 
     /* Centre of mass */
     GetThreeFloats(pF,
@@ -4706,12 +4706,12 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
         &c->collision_info->cmpos.v[1],
         &c->collision_info->cmpos.v[2]);
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, M, 0x4);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, M, 0x4);
 
     /* Mass */
     c->collision_info->M = GetAScalar(pF);
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, I, 0x8);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, I, 0x8);
 
     /* Angular momentum proportions */
     GetThreeFloats(pF, &ixp, &iyp, &izp);
@@ -4825,7 +4825,7 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
         c->damping = damping;
     }
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, object_friction, 0x64);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, object_friction, 0x64);
 
     c->collision_info->object_friction = 0.4f;
 
@@ -4867,8 +4867,8 @@ void C2_HOOK_FASTCALL ReadMechanics(FILE* pF, tCar_spec* c, int pSpec_version) {
     /* Number of sub-parts. */
     GetAnInt(pF);
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, bb1, 0x24);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, bb2, 0x3c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, bb1, 0x24);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, bb2, 0x3c);
 
     memcpy(&c->collision_info->bb2, &c->collision_info->bb1, sizeof(br_bounds3));
 
@@ -5281,10 +5281,10 @@ void C2_HOOK_FASTCALL ReadNonCarMechanicsData(FILE* pF, tNon_car_spec* pNon_car_
                     break;
                 } else if (DRStricmp(s, "WORLD_FRICTION") == 0) {
                     pNon_car_spec->collision_info->world_friction = GetAScalar(pF) - 1.f;
-                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, world_friction, 0x60);
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, world_friction, 0x60);
                 } else if (DRStricmp(s, "OBJECT_FRICTION") == 0) {
                     pNon_car_spec->collision_info->object_friction = GetAScalar(pF) - 1.f;
-                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, object_friction, 0x64);
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, object_friction, 0x64);
                 } else if (DRStricmp(s, "TUMBLE") == 0) {
                     pNon_car_spec->tumble_factor = GetAScalar(pF);
                     pNon_car_spec->tumble_threshold = GetAScalar(pF);

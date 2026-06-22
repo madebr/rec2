@@ -76,7 +76,7 @@ int C2_HOOK_FASTCALL SetCharacterMove(tPed_character_instance* pPed,int pMove_ac
 
 void C2_HOOK_FASTCALL SetPedMove(tPedestrian* pPed, int pAction, int pWalk_speed_factor, int pArg4, int pArg5, int pArg6, int pArg7);
 
-tCollision_info* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed);
+tPhysics_object* C2_HOOK_FASTCALL GetRootObject(tPed_character_instance *pPed);
 
 void C2_HOOK_FASTCALL DropPointOntoPlane(const br_vector3* pPoint, const br_vector3* pPlane, br_vector3* pDest);
 
@@ -156,7 +156,7 @@ void C2_HOOK_FASTCALL ResetScanDirection(tPedestrian* pPed);
 
 void C2_HOOK_FASTCALL CheckForAvoidingAction(tPedestrian* pPed, tU32 pTime);
 
-void C2_HOOK_FASTCALL SetRandomOmega(tCollision_info* pObject, float pMax);
+void C2_HOOK_FASTCALL SetRandomOmega(tPhysics_object* pObject, float pMax);
 
 void C2_HOOK_FASTCALL CheckPowerupMoveSubstitution(tPedestrian* pPed, tU32 pTime);
 
@@ -246,11 +246,11 @@ void C2_HOOK_FASTCALL EnableOverallMovement(void);
 
 br_vector3* C2_HOOK_FASTCALL GetPedPos(tPedestrian* pPed);
 
-void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL KillPedestrian(tPedestrian* pPed, tPhysics_object* pCollision_info);
 
 void C2_HOOK_FASTCALL DoPostElectricution(tPedestrian* pPed, tU32 pTime, float pF1, float pF2);
 
-void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL MakePedNoise(tPedestrian* pPed, int pArg2, int pArg3, tPhysics_object* pCollision_info);
 
 void C2_HOOK_FASTCALL SetCharacterMoveAR(tPed_character_instance* pCharacter, int pMove_action, float pSpeed, undefined4 pArg4, undefined4 pArg5, tU32 pTime);
 
@@ -272,7 +272,7 @@ void C2_HOOK_FASTCALL SetCharacterBoneModelAR(tPed_character_instance* pCharacte
 
 br_matrix34* C2_HOOK_FASTCALL GetBoneMatrixPtr(tPed_character_instance* pCharacter, int pBone_index);
 
-void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tCollision_info* pObject, tCollision_info* pOpt_speed_object, float pArg4, br_vector3* pArg5, int pArg6);
+void C2_HOOK_FASTCALL DoGiblets(tPedestrian* pPed, tPhysics_object* pObject, tPhysics_object* pOpt_speed_object, float pArg4, br_vector3* pArg5, int pArg6);
 
 void C2_HOOK_FASTCALL DoSpurt(br_matrix34* pArg1, br_vector3* pArg2, br_vector3* pArg3, br_vector3* pArg4);
 

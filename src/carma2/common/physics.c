@@ -71,7 +71,7 @@ int gPHIL_count_queued_objects;
 int gPHIL_count_queued_objects_for_removal;
 
 // GLOBAL: CARMA2_HW 0x0074a5f0
-tCollision_info* gPHIL_list_collision_infos;
+tPhysics_object* gPHIL_list_collision_infos;
 
 // GLOBAL: CARMA2_HW 0x0074a5e8
 int gPHIL_munging_objects;
@@ -92,13 +92,13 @@ int gPHIL_mechanics_time_sync;
 int gPrepared_objects;
 
 // GLOBAL: CARMA2_HW 0x006940a8
-tCollision_info** gReduced_object_list;
+tPhysics_object** gReduced_object_list;
 
 // GLOBAL: CARMA2_HW 0x006940ac
 int gINT_006940ac;
 
 // GLOBAL: CARMA2_HW 0x006923ec
-tCollision_info* gPHIL_queued_objects_for_removal[1];
+tPhysics_object* gPHIL_queued_objects_for_removal[1];
 
 // GLOBAL: CARMA2_HW 0x00692db8
 tWorld_callback_active_passive_cbfn* gPHIL_original_activate_passive;
@@ -274,7 +274,7 @@ tCollision_shape_wireframe* C2_HOOK_FASTCALL AllocateWireFrameCollisionShape(int
 }
 
 // FUNCTION: CARMA2_HW 0x00488b00
-void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
+void C2_HOOK_FASTCALL ReadMechanicsShapes(tPhysics_shape** pShape, FILE* pF) {
     int i;
     int count;
 
@@ -283,12 +283,12 @@ void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
 
     for (i = 0; i < count; i++) {
         char s[256];
-        tCollision_shape* shape;
+        tPhysics_shape* shape;
 
         GetAString(pF, s);
         if (DRStricmp(s, "box") == 0) {
 
-            shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
+            shape = (tPhysics_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
             GetThreeFloats(pF,
                 &shape->box.common.bb.min.v[0],
                 &shape->box.common.bb.min.v[1],
@@ -307,7 +307,7 @@ void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
                 sprintf(s, "Ow! Physics shape is mad (having %d points is silly)", count_points);
                 PDFatalError(s);
             }
-            shape = (tCollision_shape*)AllocateShapePolyhedron(count_points, kMem_collision_shape);
+            shape = (tPhysics_shape*)AllocateShapePolyhedron(count_points, kMem_collision_shape);
 
             shape->polyhedron.polyhedron.count_points = count_points;
             for (j = 0; j < count_points; j++) {
@@ -318,7 +318,7 @@ void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
             }
         } else if (DRStricmp(s, "sphere") == 0) {
 
-            shape = (tCollision_shape*)AllocateShapeSphere(kMem_collision_shape);
+            shape = (tPhysics_shape*)AllocateShapeSphere(kMem_collision_shape);
 
             shape->sphere.sphere.radius = GetAScalar(pF);
             GetThreeFloats(pF,
@@ -339,7 +339,7 @@ void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
                 GetThreeFloats(pF, &points[j].v[0], &points[j].v[1], &points[j].v[2]);
             }
             count_lines = GetAnInt(pF);
-            shape = (tCollision_shape*)AllocateWireFrameCollisionShape(count_points, count_lines, kMem_collision_shape);
+            shape = (tPhysics_shape*)AllocateWireFrameCollisionShape(count_points, count_lines, kMem_collision_shape);
 
             for (j = 0; j < count_points; j++) {
                 BrVector3Copy(&shape->wireframe.wireframe.points[j], &points[j]);
@@ -361,9 +361,9 @@ void C2_HOOK_FASTCALL ReadMechanicsShapes(tCollision_shape** pShape, FILE* pF) {
 }
 
 // FUNCTION: CARMA2_HW 0x004c60a0
-void C2_HOOK_FASTCALL UpdateCollisionObject(tCollision_info* pCollision_info) {
-    tCollision_shape* shape;
-    tCollision_shape* current;
+void C2_HOOK_FASTCALL UpdateCollisionObject(tPhysics_object* pCollision_info) {
+    tPhysics_shape* shape;
+    tPhysics_shape* current;
 
     shape = pCollision_info->shape;
     if (shape == NULL) {
@@ -906,7 +906,7 @@ tPhysicsError C2_HOOK_FASTCALL ConvexHull3D(tCollision_shape_polyhedron_data* pP
 }
 
 // FUNCTION: CARMA2_HW 0x004c5f20
-void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
+void C2_HOOK_FASTCALL FillInShape(tPhysics_shape* pShape) {
     int i;
     tPhysicsError error;
 
@@ -955,17 +955,17 @@ void C2_HOOK_FASTCALL FillInShape(tCollision_shape* pShape) {
 }
 
 // FUNCTION: CARMA2_HW 0x004da400
-tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight) {
-    tCollision_info* collision_info;
-    tCollision_shape* shape;
+tPhysics_object* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undefined4 pArg2, float pWeight) {
+    tPhysics_object* collision_info;
+    tPhysics_shape* shape;
     br_vector3 tv;
 
     REC2_THISCALL_UNUSED(pArg2);
 
-    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
+    C2_HOOK_BUG_ON(sizeof(tPhysics_object) != 1240);
 
-    collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
-    collision_info->shape = shape = (tCollision_shape*)AllocateShapeSphere(kMem_collision_shape);
+    collision_info = BrMemAllocate(sizeof(tPhysics_object), kMem_collision_object);
+    collision_info->shape = shape = (tPhysics_shape*)AllocateShapeSphere(kMem_collision_shape);
     BrVector3Set(&collision_info->shape->sphere.sphere.center, 0.f, 0.f, 0.f);
     BrVector3Sub(&tv, &pModel->bounds.max, &pModel->bounds.min);
     shape->sphere.sphere.radius = (tv.v[0] + tv.v[1] + tv.v[2]) / 6.f;
@@ -987,14 +987,14 @@ tCollision_info* C2_HOOK_FAKE_THISCALL MungeSphereObject(br_model* pModel, undef
 }
 
 // FUNCTION: CARMA2_HW 0x004c2b10
-void C2_HOOK_FASTCALL PositionChildren(tCollision_info *pCollision_info) {
+void C2_HOOK_FASTCALL PositionChildren(tPhysics_object *pCollision_info) {
 
     InternalPositionChildren(pCollision_info, pCollision_info);
 }
 
 // FUNCTION: CARMA2_HW 0x004c2b20
-void C2_HOOK_FASTCALL InternalPositionChildren(tCollision_info *pParent, tCollision_info *pRoot) {
-    tCollision_info *child;
+void C2_HOOK_FASTCALL InternalPositionChildren(tPhysics_object *pParent, tPhysics_object *pRoot) {
+    tPhysics_object *child;
 
     if (!(pParent->flags & 0x400)) {
         pRoot = pParent;
@@ -1015,7 +1015,7 @@ void C2_HOOK_FASTCALL InternalPositionChildren(tCollision_info *pParent, tCollis
 }
 
 // FUNCTION: CARMA2_HW 0x004b63b0
-int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pParam, ...) {
+int C2_HOOK_CDECL PHILSetObjectProperty(tPhysics_object *pCollision_info, int pParam, ...) {
     va_list va;
     tCollision_info_owner* owner;
 
@@ -1024,9 +1024,9 @@ int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pP
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x0c, 0x0c);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x10, 0x10);
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info_owner, field_0x14, 0x14);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x240, 0x240);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, box_face_ref, 0x178);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags, 0x19c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x240, 0x240);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, box_face_ref, 0x178);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, flags, 0x19c);
 
     if (gPHIL_enabled) {
         return 0;
@@ -1105,7 +1105,7 @@ int C2_HOOK_CDECL PHILSetObjectProperty(tCollision_info *pCollision_info, int pP
 }
 
 // FUNCTION: CARMA2_HW 0x004b6530
-float C2_HOOK_FASTCALL PHILGetObjectProperty(tCollision_info *pCollision_info, int pParam) {
+float C2_HOOK_FASTCALL PHILGetObjectProperty(tPhysics_object *pCollision_info, int pParam) {
     tCollision_info_owner* owner;
 
     owner = (tCollision_info_owner*)pCollision_info->field_0x240;
@@ -1137,7 +1137,7 @@ float C2_HOOK_FASTCALL PHILGetObjectProperty(tCollision_info *pCollision_info, i
 }
 
 // FUNCTION: CARMA2_HW 0x004b9eb0
-void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tCollision_info *pCollision_info, tU8 pDisable) {
+void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tPhysics_object *pCollision_info, tU8 pDisable) {
 
     while (pCollision_info != NULL) {
         pCollision_info->disable_move_rotate = pDisable;
@@ -1150,10 +1150,10 @@ void C2_HOOK_FASTCALL SetCollisionInfoDoNothing(tCollision_info *pCollision_info
 }
 
 // FUNCTION: CARMA2_HW 0x004b9ef0
-void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tCollision_info *pCollision_info, tU8 pDisable) {
-    tCollision_info *child;
+void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tPhysics_object *pCollision_info, tU8 pDisable) {
+    tPhysics_object *child;
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x1df, 0x1df);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x1df, 0x1df);
 
     pCollision_info->disable_move_rotate = pDisable;
     pCollision_info->field_0x1df = 0;
@@ -1167,18 +1167,18 @@ void C2_HOOK_FASTCALL SetCollisionInfoChildsDoNothing(tCollision_info *pCollisio
 }
 
 // FUNCTION: CARMA2_HW 0x004b5ea0
-int C2_HOOK_FASTCALL PHILRemoveObject(tCollision_info* pCollision_info) {
+int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pCollision_info) {
 
     NOT_IMPLEMENTED();
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c63d0
-void C2_HOOK_FASTCALL AddCollisionInfoChild(tCollision_info* pParent, tCollision_info* pChild) {
-    tCollision_info* current;
-    tCollision_info* last;
+void C2_HOOK_FASTCALL AddCollisionInfoChild(tPhysics_object* pParent, tPhysics_object* pChild) {
+    tPhysics_object* current;
+    tPhysics_object* last;
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, parent, 0x228);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, parent, 0x228);
 
     pChild->parent = pParent;
     last = pChild;
@@ -1191,9 +1191,9 @@ void C2_HOOK_FASTCALL AddCollisionInfoChild(tCollision_info* pParent, tCollision
 }
 
 // FUNCTION: CARMA2_HW 0x004c6470
-int C2_HOOK_FASTCALL PhysicsObjectRecurse(tCollision_info* pCollision_info, tEnumCollision_cbfn* pCallback, void* pUser_data) {
+int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pCollision_info, tEnumCollision_cbfn* pCallback, void* pUser_data) {
     int r;
-    tCollision_info* child;
+    tPhysics_object* child;
 
     r = pCallback(pCollision_info, pUser_data);
     if (r != 0) {
@@ -1209,21 +1209,21 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurse(tCollision_info* pCollision_info, tEnu
 }
 
 // FUNCTION: CARMA2_HW 0x00429070
-int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tCollision_info* pCollision_info_1, tCollision_info* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
+int C2_HOOK_FASTCALL TestForObjectInSensiblePlace(tPhysics_object* pCollision_info_1, tPhysics_object* pCollision_info_2, br_vector3* pVec3, tWorld_callbacks* pCar_callbacks) {
 
     NOT_IMPLEMENTED();
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004da290
-tCollision_info* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefined4 pArg2, float pMass) {
-    tCollision_info* box;
+tPhysics_object* C2_HOOK_FAKE_THISCALL MungeBoxObject(br_model* pModel, undefined4 pArg2, float pMass) {
+    tPhysics_object* box;
     br_vector3 tv1;
 
-    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
+    C2_HOOK_BUG_ON(sizeof(tPhysics_object) != 0x4d8);
 
-    box = BrMemAllocate(sizeof(tCollision_info), kMem_collision_shape);
-    box->shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
+    box = BrMemAllocate(sizeof(tPhysics_object), kMem_collision_shape);
+    box->shape = (tPhysics_shape*)AllocateBoxCollisionShape(kMem_collision_shape);
     box->shape->box.common.bb = pModel->bounds;
     FillInShape(box->shape);
     box->uid = gCollision_info_uid_counter;
@@ -1265,11 +1265,11 @@ tPhysics_joint* C2_HOOK_FASTCALL ClonePhysicsJoint(const tPhysics_joint* pJoint,
 }
 
 // FUNCTION: CARMA2_HW 0x004c63b0
-void C2_HOOK_FASTCALL PhysicsAddObject(tCollision_info* pParent, tCollision_info* pChild) {
+void C2_HOOK_FASTCALL PhysicsAddObject(tPhysics_object* pParent, tPhysics_object* pChild) {
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, next, 0x220);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, child, 0x224);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, parent, 0x228);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, next, 0x220);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, child, 0x224);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, parent, 0x228);
 
     pChild->next = pParent->child;
     pParent->child = pChild;
@@ -1307,7 +1307,7 @@ void C2_HOOK_FASTCALL ApplyPhysicsToCars(tU32 pLast_tick_time, tU32 pFrame_perio
 }
 
 // FUNCTION: CARMA2_HW 0x004b5fd0
-tCollision_info* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
+tPhysics_object* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
     if (!gPHIL_enabled) {
         return NULL;
     }
@@ -1315,7 +1315,7 @@ tCollision_info* C2_HOOK_FASTCALL PHILGetFirstObject(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b5ff0
-tCollision_info* C2_HOOK_FASTCALL PHILGetNextObject(tCollision_info* pCollision_info) {
+tPhysics_object* C2_HOOK_FASTCALL PHILGetNextObject(tPhysics_object* pCollision_info) {
     if (!gPHIL_enabled) {
         return NULL;
     }
@@ -1323,19 +1323,19 @@ tCollision_info* C2_HOOK_FASTCALL PHILGetNextObject(tCollision_info* pCollision_
 }
 
 // FUNCTION: CARMA2_HW 0x004b99e0
-void C2_HOOK_FASTCALL InternalPrepareObject(tCollision_info* pObject) {
+void C2_HOOK_FASTCALL InternalPrepareObject(tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004b7510
-void C2_HOOK_FAKE_THISCALL MoveJointedObject(tCollision_info* pObject, undefined4 pArg2, float pDelta_time) {
+void C2_HOOK_FAKE_THISCALL MoveJointedObject(tPhysics_object* pObject, undefined4 pArg2, float pDelta_time) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004b9f40
-void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject) {
+void C2_HOOK_FASTCALL MakeObjectListDoSomething(tPhysics_object* pObject) {
 
     while (pObject != NULL) {
         if (pObject->disable_move_rotate) {
@@ -1350,14 +1350,14 @@ void C2_HOOK_FASTCALL MakeObjectListDoSomething(tCollision_info* pObject) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b9f90
-int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original) {
+int C2_HOOK_FASTCALL CheckForObjectHierachyTouchingAnotherObject(tPhysics_object* pObject, tPhysics_object* pList, tPhysics_object* pList_original) {
 
     NOT_IMPLEMENTED();
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004b6090
-int C2_HOOK_FASTCALL PHILMakeObjectActive(tCollision_info* pObject, const br_vector3* pVel, const br_vector3* pOmega, int pArg4) {
+int C2_HOOK_FASTCALL PHILMakeObjectActive(tPhysics_object* pObject, const br_vector3* pVel, const br_vector3* pOmega, int pArg4) {
     tQueued_object_info* object_info;
 
     if (gPHIL_enabled) {
@@ -1400,8 +1400,8 @@ int C2_HOOK_FASTCALL PHILMakeObjectActive(tCollision_info* pObject, const br_vec
 }
 
 // FUNCTION: CARMA2_HW 0x004ba190
-void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tCollision_info* pObject, tCollision_info* pList, tCollision_info* pList_original) {
-    tCollision_info* item = pList;
+void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tPhysics_object* pObject, tPhysics_object* pList, tPhysics_object* pList_original) {
+    tPhysics_object* item = pList;
 
     for (item = pList; item != NULL; item = item->next) {
         if (item->disable_move_rotate) {
@@ -1414,7 +1414,7 @@ void C2_HOOK_FASTCALL CheckForObjectHierachyTouchingObjectList(tCollision_info* 
 }
 
 // FUNCTION: CARMA2_HW 0x004b6210
-int C2_HOOK_FASTCALL PHILAddActiveObject(tCollision_info* pInfo, undefined4* pArg2, const br_vector3* pArg3, const br_vector3* pArg4) {
+int C2_HOOK_FASTCALL PHILAddActiveObject(tPhysics_object* pInfo, undefined4* pArg2, const br_vector3* pArg3, const br_vector3* pArg4) {
 
     if (gPHIL_enabled) {
         return 0;
@@ -1428,9 +1428,9 @@ int C2_HOOK_FASTCALL PHILAddActiveObject(tCollision_info* pInfo, undefined4* pAr
     return PHILMakeObjectActive(pInfo, pArg3, pArg4, 0);
 }
 
-void C2_HOOK_FASTCALL SwapPair(tCollision_info* pObj1, tCollision_info* pObj2) {
-    tCollision_info* obj1_prev;
-    tCollision_info* obj2_next;
+void C2_HOOK_FASTCALL SwapPair(tPhysics_object* pObj1, tPhysics_object* pObj2) {
+    tPhysics_object* obj1_prev;
+    tPhysics_object* obj2_next;
 
     obj1_prev = pObj1->prev;
     obj2_next = pObj2->next;
@@ -1446,7 +1446,7 @@ void C2_HOOK_FASTCALL SwapPair(tCollision_info* pObj1, tCollision_info* pObj2) {
     pObj2->next = pObj1;
 }
 
-void C2_HOOK_FASTCALL CheckObjectsPostionInList(tCollision_info* pObject, tCollision_info** pList) {
+void C2_HOOK_FASTCALL CheckObjectsPostionInList(tPhysics_object* pObject, tPhysics_object** pList) {
 
     if (pObject->prev != NULL && pObject->transform_matrix.m[3][0] < pObject->prev->transform_matrix.m[3][0]) {
         do {
@@ -1462,8 +1462,8 @@ void C2_HOOK_FASTCALL CheckObjectsPostionInList(tCollision_info* pObject, tColli
     }
 }
 
-void C2_HOOK_FASTCALL MakeObjectDoSomething(tCollision_info* pObject, tCollision_info* pList) {
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, parent, 0x228);
+void C2_HOOK_FASTCALL MakeObjectDoSomething(tPhysics_object* pObject, tPhysics_object* pList) {
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, parent, 0x228);
 
     if (pObject->disable_move_rotate) {
         while (pObject->parent != NULL && pObject->parent->physics_joint1 != NULL && pObject->parent->physics_joint1->type != eJoint_none) {
@@ -1481,14 +1481,14 @@ void C2_HOOK_FASTCALL MakeObjectDoSomething(tCollision_info* pObject, tCollision
     }
 }
 
-void C2_HOOK_FASTCALL AddObjectToReducedList(tCollision_info* pObject, tCollision_info** pReduced_list) {
+void C2_HOOK_FASTCALL AddObjectToReducedList(tPhysics_object* pObject, tPhysics_object** pReduced_list) {
 
     pObject->field_0x234 = *pReduced_list;
     pReduced_list[0] = pObject;
 }
 
 // FUNCTION: CARMA2_HW 0x004b9770
-void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** pList) {
+void C2_HOOK_FASTCALL PrepareObject(tPhysics_object* pObject, tPhysics_object** pList) {
 
     InternalPrepareObject(pObject);
     gPrepared_objects = 1;
@@ -1502,7 +1502,7 @@ void C2_HOOK_FASTCALL PrepareObject(tCollision_info* pObject, tCollision_info** 
 }
 
 // FUNCTION: CARMA2_HW 0x004b5d40
-int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject) {
+int C2_HOOK_FASTCALL PHILAddObject(tPhysics_object* pObject) {
     int i;
     tPHIL_queued_header* object_info;
 
@@ -1562,8 +1562,8 @@ int C2_HOOK_FASTCALL PHILAddObject(tCollision_info* pObject) {
     return 0;
 }
 
-void C2_HOOK_FASTCALL PHILMungeObjects(tCollision_info* pObjects) {
-    tCollision_info* object;
+void C2_HOOK_FASTCALL PHILMungeObjects(tPhysics_object* pObjects) {
+    tPhysics_object* object;
 
     for (object = pObjects; object != NULL; object = object->next) {
         tPHIL_queued_header* object_info;
@@ -1657,7 +1657,7 @@ void C2_HOOK_FASTCALL FlushQueuedAddsAndRemoves(void) {
         }
     }
     for (i = 0; i < gPHIL_count_queued_objects_for_removal; i++) {
-        tCollision_info* object;
+        tPhysics_object* object;
 
         object = gPHIL_queued_objects_for_removal[i];
         if (object != NULL) {
@@ -1666,8 +1666,8 @@ void C2_HOOK_FASTCALL FlushQueuedAddsAndRemoves(void) {
     }
 }
 
-void C2_HOOK_FASTCALL PHILInterpolateObjects(tCollision_info* pObjects, tU32 pTime) {
-    tCollision_info *object;
+void C2_HOOK_FASTCALL PHILInterpolateObjects(tPhysics_object* pObjects, tU32 pTime) {
+    tPhysics_object *object;
     float dt;
 
     dt = (gPHIL_last_physics_tick - pTime) / 1000.f;
@@ -1748,49 +1748,49 @@ int C2_HOOK_FASTCALL TimeToSendData(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004b71b0
-void C2_HOOK_FASTCALL PHILActivatePassive(tCollision_info* pObject) {
+void C2_HOOK_FASTCALL PHILActivatePassive(tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004ff5d0
-void C2_HOOK_FASTCALL TestAutoSpecialVolume(tCollision_info* pObject) {
+void C2_HOOK_FASTCALL TestAutoSpecialVolume(tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004ff410
-void C2_HOOK_FASTCALL MungeSpecialVolume(tCollision_info* pObject) {
+void C2_HOOK_FASTCALL MungeSpecialVolume(tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004b6ec0
-void C2_HOOK_FASTCALL ProcessGravity(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pGravity) {
+void C2_HOOK_FASTCALL ProcessGravity(tPHIL_queued_header* pObject_info, tPhysics_object* pObject, float pGravity) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004b6ce0
-void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pDrag, int pObject_info_flags, tSpecial_volume* pSpecial_volume) {
+void C2_HOOK_FASTCALL ProcessDrag2(tPHIL_queued_header* pObject_info, tPhysics_object* pObject, float pDrag, int pObject_info_flags, tSpecial_volume* pSpecial_volume) {
 
     NOT_IMPLEMENTED();
 }
 
-void C2_HOOK_FASTCALL ProcessDrag(tPHIL_queued_header* pObject_info, tCollision_info* pObject, float pDrag) {
+void C2_HOOK_FASTCALL ProcessDrag(tPHIL_queued_header* pObject_info, tPhysics_object* pObject, float pDrag) {
 
     ProcessDrag2(pObject_info, pObject, pDrag, pObject_info->field_0x4, pObject->last_special_volume);
 }
 
 // FUNCTION: CARMA2_HW 0x004b6fb0
-void C2_HOOK_FASTCALL LevelOutOnSurface(tCollision_info *pObject) {
+void C2_HOOK_FASTCALL LevelOutOnSurface(tPhysics_object *pObject) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004b6e90
-void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tCollision_info* pObject) {
-    tCollision_info *child;
+void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tPhysics_object* pObject) {
+    tPhysics_object *child;
 
     pObject->field_0xf0 = 2;
     for (child = pObject->child; child != NULL; child = child->next) {
@@ -1799,41 +1799,41 @@ void C2_HOOK_FASTCALL MarkObjectAndChildrenAsPassive(tCollision_info* pObject) {
 }
 
 // FUNCTION: CARMA2_HW 0x004ba6b0
-void C2_HOOK_FASTCALL DoCollisions(tCollision_info** pObject_list, tWorld_callbacks* pWorld_callbacks) {
+void C2_HOOK_FASTCALL DoCollisions(tPhysics_object** pObject_list, tWorld_callbacks* pWorld_callbacks) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004b61a0
-int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tCollision_info* pObject, br_matrix34* pMatrix) {
+int C2_HOOK_FASTCALL PHILSetPassiveObjectsMatrix(tPhysics_object* pObject, br_matrix34* pMatrix) {
 
     NOT_IMPLEMENTED();
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004c2830
-void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tCollision_info* pObject, undefined4 arg2, float pDt) {
+void C2_HOOK_FAKE_THISCALL InterpolateSingleObject(tPhysics_object* pObject, undefined4 arg2, float pDt) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004b6be0
-void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tCollision_info* pObjects, tPhysics_callbacks* pCallbacks, tU32 pPeriod) {
+void C2_HOOK_FASTCALL ChangedObjectsCallbacks(tPhysics_object* pObjects, tPhysics_callbacks* pCallbacks, tU32 pPeriod) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004c2600
-void C2_HOOK_FASTCALL ResetObjectList(tCollision_info* pObjects) {
+void C2_HOOK_FASTCALL ResetObjectList(tPhysics_object* pObjects) {
 
     NOT_IMPLEMENTED();
 }
 
-typedef int C2_HOOK_FASTCALL tPhysicsObject_cbfn(tCollision_info* pObject, void* pContext);
+typedef int C2_HOOK_FASTCALL tPhysicsObject_cbfn(tPhysics_object* pObject, void* pContext);
 
 // FUNCTION: CARMA2_HW 0x004c64b0
-int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tCollision_info* pObject, tEnumCollision_cbfn* pCallback, void* pContext) {
-    tCollision_info* child;
+int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext) {
+    tPhysics_object* child;
 
     for (child = pObject->child; child != NULL; child = child->next) {
         int r;
@@ -1847,17 +1847,17 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tCollision_info* pObject, tEnu
 }
 
 // FUNCTION: CARMA2_HW 0x0049c0d0
-int C2_HOOK_FASTCALL GetObjectNetworkStuff(tCollision_info* pObject, tU8* pBuffer, int pSize) {
+int C2_HOOK_FASTCALL GetObjectNetworkStuff(tPhysics_object* pObject, tU8* pBuffer, int pSize) {
 
     NOT_IMPLEMENTED();
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x0049cd00
-int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tCollision_info* pObject, tU8* pNet_data, int pRemaining) {
+int C2_HOOK_FASTCALL GetHierarchyNetworkStuff(tPhysics_object* pObject, tU8* pNet_data, int pRemaining) {
     int size;
     int total_size;
-    tCollision_info* child;
+    tPhysics_object* child;
 
     size = GetObjectNetworkStuff(pObject, pNet_data, pRemaining);
     if (size < 0) {
@@ -1898,9 +1898,9 @@ int C2_HOOK_FASTCALL SizeOfObjectNetworkStuff(tPhysics_joint_type pType) {
 }
 
 // FUNCTION: CARMA2_HW 0x0049ce60
-int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tCollision_info* pObject) {
+int C2_HOOK_FASTCALL GetHierarchyNetworkSize(tPhysics_object* pObject) {
     int size;
-    tCollision_info* child;
+    tPhysics_object* child;
 
     size = SizeOfObjectNetworkStuff(pObject->physics_joint1 != NULL ? pObject->physics_joint1->type : eJoint_none);
     for (child = pObject->child; child != NULL; child = child->next) {

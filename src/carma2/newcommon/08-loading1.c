@@ -6,9 +6,11 @@
 #include "27-powerup.h"
 #include "38-flicplay.h"
 #include "43-pratcam.h"
+#include "49-physics.h"
 #include "51-smash.h"
 #include "52-errors.h"
 #include "56-aiworld.h"
+#include "60-phil.h"
 #include "61-pedestrn.h"
 #include "67-lighting.h"
 #include "69-sound.h"
@@ -798,7 +800,23 @@ void C2_HOOK_FASTCALL UnlockInterfaceStuff(void) {
 
 }
 
-// DisposePhysicsObject
+// FUNCTION: CARMA2_HW 0x0044bb90
+void C2_HOOK_FASTCALL DisposePhysicsObject(tPhysics_object* pObject) {
+
+    if (pObject != NULL) {
+        PHILRemoveObject(pObject);
+        if (pObject->shape != (tPhysics_shape *)0x0) {
+            FreeShapeList(pObject->shape);
+        }
+        if (pObject->physics_joint1 != (tPhysics_joint *)0x0) {
+            FreePhysicsJoint(pObject->physics_joint1);
+        }
+        if (pObject->physics_joint2 != (tPhysics_joint *)0x0) {
+            FreePhysicsJoint(pObject->physics_joint2);
+        }
+    }
+    BrMemFree(pObject);
+}
 
 // DisposeCarActModDataCB
 

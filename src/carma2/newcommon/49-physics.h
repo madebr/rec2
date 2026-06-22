@@ -2,6 +2,7 @@
 #define GUARD_49_PHYSICS_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // count
 
@@ -347,9 +348,9 @@
 
 // FreeShape
 
-// FreeShapeList
+extern void C2_HOOK_FASTCALL FreeShapeList(tPhysics_shape *pShape);
 
-// FreePhysicsJoint
+extern void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint);
 
 // GetBoundsFromPointList
 

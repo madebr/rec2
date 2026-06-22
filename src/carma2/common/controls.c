@@ -704,7 +704,7 @@ void C2_HOOK_FASTCALL ToggleFlaps(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x0042ddb0
-int C2_HOOK_FASTCALL ToggleFlapsCB(tCollision_info* pCollision_info, void* data) {
+int C2_HOOK_FASTCALL ToggleFlapsCB(tPhysics_object* pCollision_info, void* data) {
     tCar_spec *pCar_spec = data;
 
     DRActorEnumRecurse(pCollision_info->actor, ToggleDoorsActorCallback, pCar_spec);
@@ -2062,12 +2062,12 @@ void C2_HOOK_FASTCALL FlipUpCar(tCar_spec* pCar_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x00442e10
-void C2_HOOK_FASTCALL FlipUpCollisionInfo(tCollision_info* pCollision_info) {
-    tCollision_info *child;
+void C2_HOOK_FASTCALL FlipUpCollisionInfo(tPhysics_object* pCollision_info) {
+    tPhysics_object *child;
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, v, 0x68);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, omega, 0x74);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, transform_matrix, 0x8c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, v, 0x68);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, omega, 0x74);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, transform_matrix, 0x8c);
 
     for (child = pCollision_info->child; child != NULL; child = child->next) {
         int i;

@@ -45,7 +45,12 @@ void C2_HOOK_FASTCALL PHILDisable(void) {
 
 // PHILAddObject
 
-// PHILRemoveObject
+// STUB: CARMA2_HW 0x004b5ea0
+int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject) {
+
+    NOT_IMPLEMENTED();
+    return 0;
+}
 
 // PHILGetFirstObject
 

@@ -9,7 +9,7 @@ extern int gCount_drones;
 extern tDrone_form gDrone_forms[64];
 extern int gCount_drone_forms;
 extern tDrone_state_function* gDrone_state_functions[6];
-extern tCollision_info* gList_collision_infos;
+extern tPhysics_object* gList_collision_infos;
 extern int gDrones_unmodified;
 extern int gCount_rendered_drones;
 extern int gCurrent_selected_drone;
@@ -47,7 +47,7 @@ void C2_HOOK_FASTCALL DoDefaultDroneStateAction(tDrone_spec* pDrone_spec);
 
 void C2_HOOK_FASTCALL NewDroneState(tDrone_spec* pDrone_spec, int pNew_state);
 
-int C2_HOOK_FASTCALL TestObjectOverlap(tCollision_info* pCollision_1,tCollision_info* pCollision_2);
+int C2_HOOK_FASTCALL TestObjectOverlap(tPhysics_object* pCollision_1,tPhysics_object* pCollision_2);
 
 int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec);
 

@@ -43,7 +43,7 @@ tDrone_state_function* gDrone_state_functions[6] = {
 };
 
 // GLOBAL: CARMA2_HW 0x0074a5f0
-tCollision_info* gList_collision_infos;
+tPhysics_object* gList_collision_infos;
 
 // GLOBAL: CARMA2_HW 0x006820b8
 int gDrones_unmodified;
@@ -342,13 +342,13 @@ void C2_HOOK_FASTCALL NewDroneState(tDrone_spec* pDrone_spec, int pNew_state) {
 }
 
 // FUNCTION: CARMA2_HW 0x00428d40
-int C2_HOOK_FASTCALL TestObjectOverlap(tCollision_info* pCollision_1, tCollision_info* pCollision_2) {
+int C2_HOOK_FASTCALL TestObjectOverlap(tPhysics_object* pCollision_1, tPhysics_object* pCollision_2) {
 
     NOT_IMPLEMENTED();
 }
 
 int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec) {
-    tCollision_info* collision = gList_collision_infos;
+    tPhysics_object* collision = gList_collision_infos;
     for (collision = gList_collision_infos; collision != NULL; collision = collision->next) {
         if (&pDrone_spec->collision_info != collision && TestObjectOverlap(&pDrone_spec->collision_info, collision)) {
             return 1;
@@ -361,7 +361,7 @@ int C2_HOOK_FASTCALL DroneHasCollided(tDrone_spec* pDrone_spec) {
 void C2_HOOK_FASTCALL InitDroneCollisionObject(tDrone_spec *pDrone_spec) {
     br_bounds3 bnds;
     br_vector3 size;
-    tCollision_shape* original_shape;
+    tPhysics_shape* original_shape;
 
 #ifdef REC2_FIX_BUGS
     original_shape = NULL;
@@ -376,7 +376,7 @@ void C2_HOOK_FASTCALL InitDroneCollisionObject(tDrone_spec *pDrone_spec) {
     if (pDrone_spec->field_0x46) {
         pDrone_spec->collision_info.shape = original_shape;
     } else {
-        pDrone_spec->collision_info.shape = (tCollision_shape*)AllocateBoxCollisionShape(kMem_drone_collision_stuff);
+        pDrone_spec->collision_info.shape = (tPhysics_shape*)AllocateBoxCollisionShape(kMem_drone_collision_stuff);
         pDrone_spec->collision_info.shape->box.common.bb = bnds;
         pDrone_spec->collision_info.shape->box.common.field_0x1c = bnds;
         pDrone_spec->collision_info.shape->box.common.next = NULL;

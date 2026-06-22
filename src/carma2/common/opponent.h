@@ -62,11 +62,11 @@ void C2_HOOK_FASTCALL ProcessPursueAndTwat(tOpponent_spec* pOpponent_spec, tProc
 
 void C2_HOOK_FASTCALL DisposeOpponentPaths(void);
 
-void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info** pList, int pCount);
+void C2_HOOK_FASTCALL AddIfNotInList(tPhysics_object* pObject, tPhysics_object** pList, int pCount);
 
-void C2_HOOK_FASTCALL RemoveAnythingStillInList(tCollision_info** pList, int pCount);
+void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCount);
 
-void C2_HOOK_FASTCALL NoteCarsCurrentlyUsed(tCollision_info** pCollision_infos, int* pCount);
+void C2_HOOK_FASTCALL NoteCarsCurrentlyUsed(tPhysics_object** pCollision_infos, int* pCount);
 
 int C2_HOOK_FASTCALL IsNetCarActive(const br_vector3* pPoint);
 
