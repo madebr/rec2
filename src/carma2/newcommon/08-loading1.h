@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL GetFourScalars(FILE* pF, br_scalar* pS1, br_scalar*
 
 extern void C2_HOOK_FASTCALL GetNScalars(FILE* pF, int n, br_scalar* pS);
 
-// GetPairOfFloatPercents
+extern void C2_HOOK_FASTCALL GetPairOfFloatPercents(FILE* pF, float* pF1, float* pF2);
 
 // GetThreeFloatPercents
 

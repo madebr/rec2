@@ -326,7 +326,19 @@ void C2_HOOK_FASTCALL GetNScalars(FILE* pF, int n, br_scalar* pS) {
     }
 }
 
-// GetPairOfFloatPercents
+// FUNCTION: CARMA2_HW 0x004904e0
+void C2_HOOK_FASTCALL GetPairOfFloatPercents(FILE* pF, float* pF1, float* pF2) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    *pF1 = *pF1 / 100.0f;
+    *pF2 = *pF2 / 100.0f;
+}
 
 // GetThreeFloatPercents
 
