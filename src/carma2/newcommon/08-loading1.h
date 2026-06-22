@@ -52,7 +52,7 @@ extern void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3
 
 extern br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF);
 
-// GetPairOfScalars
+extern void GetPairOfScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2);
 
 // GetThreeScalars
 

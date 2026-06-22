@@ -250,7 +250,15 @@ br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF) {
     return GetAFloat(pF);
 }
 
-// GetPairOfScalars
+// FUNCTION: CARMA2_HW 0x00490130
+void GetPairOfScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2) {
+    float f1;
+    float f2;
+
+    GetPairOfFloats(pF, &f1, &f2);
+    *pS1 = f1;
+    *pS2 = f2;
+}
 
 // GetThreeScalars
 
