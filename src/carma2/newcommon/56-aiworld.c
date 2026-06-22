@@ -15,7 +15,11 @@ void C2_HOOK_FASTCALL InitPanGameAIWorld(void) {
 
 // InitialiseAIWorldForRace
 
-// DisposeAIWorldRaceStuff
+// STUB: CARMA2_HW 0x00401160
+void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void) {
+
+    NOT_IMPLEMENTED();
+}
 
 // MungeAIWorld
 

@@ -172,7 +172,7 @@ extern void C2_HOOK_FASTCALL InitSmashing(void);
 
 // KillAllGlassFragments
 
-// CleanUpSmashStuff
+extern void C2_HOOK_FASTCALL CleanUpSmashStuff(void);
 
 // DisposeSmashData
 

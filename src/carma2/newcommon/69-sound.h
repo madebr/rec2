@@ -45,7 +45,7 @@ extern void C2_HOOK_FASTCALL SoundService(void);
 
 // InitSoundSources
 
-// DisposeSoundSources
+extern void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
 // DRS3StartSound3D
 

@@ -1982,7 +1982,7 @@ void C2_HOOK_FASTCALL FinishUpLoadingPeds(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004cb8d0
-void C2_HOOK_FASTCALL DisposePedestrians(void) {
+void C2_HOOK_FASTCALL DisposePedStuff(void) {
 
     NOT_IMPLEMENTED();
 }

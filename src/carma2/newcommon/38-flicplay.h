@@ -8,7 +8,7 @@ extern float gFlic_sound_delay_post_smack;
 extern float gFlic_sound_delay_not_in_demo;
 extern float gFlic_sound_delay_post_demo;
 
-// TranslationMode
+extern int C2_HOOK_FASTCALL TranslationMode(void);
 
 // DontLetFlicFuckWithPalettes
 

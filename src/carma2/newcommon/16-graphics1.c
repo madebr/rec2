@@ -74,7 +74,10 @@ void C2_HOOK_FASTCALL InitShadow(void) {
 
 // SaveShadeTables
 
-// DisposeSavedShadeTables
+// STUB: CARMA2_HW 0x004e9b60
+void C2_HOOK_FASTCALL DisposeSavedShadeTables(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ShadowMode
 

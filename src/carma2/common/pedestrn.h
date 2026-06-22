@@ -102,7 +102,7 @@ void C2_HOOK_FASTCALL SpawnPedsOnFace(br_face *pFace, br_model *pModel);
 
 void C2_HOOK_FASTCALL FinishUpLoadingPeds(void);
 
-void C2_HOOK_FASTCALL DisposePedestrians(void);
+void C2_HOOK_FASTCALL DisposePedStuff(void);
 
 void C2_HOOK_FASTCALL InitPedsForRace(void);
 

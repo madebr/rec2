@@ -95,7 +95,11 @@ void C2_HOOK_FASTCALL InitPolyPedSystem(void) {
 
 // DisposeCharacterInstances
 
-// DisposePedStuff
+// STUB: CARMA2_HW 0x004cb8d0
+void C2_HOOK_FASTCALL DisposePedStuff(void) {
+
+    NOT_IMPLEMENTED();
+}
 
 // BonerOpenCharacterForm
 

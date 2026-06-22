@@ -1,6 +1,8 @@
 #ifndef GUARD_23_PIPING_H
 #define GUARD_23_PIPING_H
 
+#include "c2_hooks.h"
+
 // ARReplayForwards
 
 // ARReplayIsReallyPaused
@@ -129,7 +131,7 @@
 
 // InitialiseActionReplay
 
-// DisposeActionReplay
+extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 // CheckIncident
 

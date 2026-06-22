@@ -1,6 +1,16 @@
 #include "08-loading1.h"
 
+#include "16-graphics1.h"
+#include "19-font.h"
+#include "23-piping.h"
+#include "27-powerup.h"
+#include "38-flicplay.h"
+#include "43-pratcam.h"
+#include "51-smash.h"
 #include "52-errors.h"
+#include "56-aiworld.h"
+#include "61-pedestrn.h"
+#include "67-lighting.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "41-utility.h"
@@ -798,7 +808,40 @@ void C2_HOOK_FASTCALL UnlockInterfaceStuff(void) {
 
 // DisposeOpponentsCars
 
-// DisposeRace
+// FUNCTION: CARMA2_HW 0x0044c070
+void C2_HOOK_FASTCALL DisposeRace(void) {
+
+    RemoveTail();
+    PossibleService();
+    CleanUpSmashStuff();
+    DisposeActionReplay();
+    PossibleService();
+    CloseDownPowerUps();
+    PossibleService();
+    if (!TranslationMode()) {
+        DisposeFont(1);
+        DisposeFont(2);
+    }
+    PossibleService();
+    DisposeFont(6);
+    DisposeFont(7);
+    DisposeFont(8);
+    DisposeFont(3);
+    DisposeFont(4);
+    DisposeFont(5);
+    PossibleService();
+    DisposeSavedShadeTables();
+    PossibleService();
+    DisposeSoundSources();
+    PossibleService();
+    KillLightingEffects();
+    DisposeAIWorldRaceStuff();
+    PossibleService();
+    DisposePedStuff();
+    PossibleService();
+    DisposePratcam();
+    PossibleService();
+}
 
 // DisposeGameIfNecessary
 

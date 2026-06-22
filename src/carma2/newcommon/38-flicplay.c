@@ -12,7 +12,14 @@ float gFlic_sound_delay_not_in_demo;
 // GLOBAL: CARMA2_HW 0x0068b8c0
 float gFlic_sound_delay_post_demo;
 
-// TranslationMode
+// GLOBAL: CARMA2_HW 0x006861dc
+int gTranslation_count;
+
+// FUNCTION: CARMA2_HW 0x00461990
+int C2_HOOK_FASTCALL TranslationMode(void) {
+
+    return gTranslation_count;
+}
 
 // DontLetFlicFuckWithPalettes
 

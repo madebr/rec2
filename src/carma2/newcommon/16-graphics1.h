@@ -28,7 +28,7 @@ extern void C2_HOOK_FASTCALL InitShadow(void);
 
 // SaveShadeTables
 
-// DisposeSavedShadeTables
+extern void C2_HOOK_FASTCALL DisposeSavedShadeTables(void);
 
 // ShadowMode
 

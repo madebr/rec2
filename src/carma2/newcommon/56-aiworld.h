@@ -15,7 +15,7 @@ extern void C2_HOOK_FASTCALL InitPanGameAIWorld(void);
 
 // InitialiseAIWorldForRace
 
-// DisposeAIWorldRaceStuff
+extern void C2_HOOK_FASTCALL DisposeAIWorldRaceStuff(void);
 
 // MungeAIWorld
 

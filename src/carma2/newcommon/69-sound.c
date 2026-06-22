@@ -183,7 +183,10 @@ void C2_HOOK_FASTCALL SoundService(void) {
 
 // InitSoundSources
 
-// DisposeSoundSources
+// STUB: CARMA2_HW 0x00455de0
+void C2_HOOK_FASTCALL DisposeSoundSources(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DRS3StartSound3D
 

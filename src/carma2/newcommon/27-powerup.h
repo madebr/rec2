@@ -73,7 +73,7 @@ extern void C2_HOOK_FASTCALL InitPowerups(void);
 
 // ResetPowerups
 
-// CloseDownPowerUps
+extern void C2_HOOK_FASTCALL CloseDownPowerUps(void);
 
 // NewRepulseRay
 
@@ -377,7 +377,7 @@ extern void C2_HOOK_FASTCALL InitPowerups(void);
 
 // CutOffTail
 
-// RemoveTail
+extern void C2_HOOK_FASTCALL RemoveTail(void);
 
 // DoInitialTail
 

@@ -98,7 +98,7 @@ extern void C2_HOOK_FASTCALL UnlockInterfaceStuff(void);
 
 // DisposeOpponentsCars
 
-// DisposeRace
+extern void C2_HOOK_FASTCALL DisposeRace(void);
 
 // DisposeGameIfNecessary
 
