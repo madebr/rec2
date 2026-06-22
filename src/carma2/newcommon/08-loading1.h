@@ -56,7 +56,7 @@ extern void GetPairOfScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2);
 
 extern void C2_HOOK_FASTCALL GetThreeScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3);
 
-// GetFourScalars
+extern void C2_HOOK_FASTCALL GetFourScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3, br_scalar* pS4);
 
 // GetNScalars
 

@@ -286,7 +286,29 @@ void C2_HOOK_FASTCALL GetThreeScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, 
     *pS3 = f3;
 }
 
-// GetFourScalars
+// FUNCTION: CARMA2_HW 0x00490270
+void C2_HOOK_FASTCALL GetFourScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3, br_scalar* pS4) {
+    char s[256];
+    char* str;
+    float f1;
+    float f2;
+    float f3;
+    float f4;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", &f1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f3);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f4);
+    *pS1 = f1;
+    *pS2 = f2;
+    *pS3 = f3;
+    *pS4 = f4;
+}
 
 // GetNScalars
 
