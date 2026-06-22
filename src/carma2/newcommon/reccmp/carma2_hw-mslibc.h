@@ -195,6 +195,9 @@
 // GLOBAL: CARMA2_HW 0x00673ec4
 // __OP_EXPjmptab
 
+// GLOBAL: CARMA2_HW 0x006b3110
+// __mbcasemap
+
 // GLOBAL: CARMA2_HW 0x0058f000
 // ___xc_a
 
@@ -780,6 +783,9 @@
 
 // LIBRARY: CARMA2_HW 0x00581110
 // __mbspbrk
+
+// LIBRARY: CARMA2_HW 0x005787d0
+// _strpbrk
 
 // LIBRARY: CARMA2_HW 0x00581070
 // __mbctolower
