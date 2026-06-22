@@ -750,22 +750,6 @@ void C2_HOOK_FASTCALL PDEnumPath(const char *path, tEnumPathCallback pCallback, 
     SetCurrentDirectoryA(originalCurrentDirectory);
 }
 
-// FUNCTION: CARMA2_HW 0x00585ee0
-int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
-    char drivePath[4];
-    UINT driveType;
-
-    if (driveIndex == 0) {
-        return 1;
-    }
-    drivePath[0] = 'A' + driveIndex - 1;
-    drivePath[1] = ':';
-    drivePath[2] = '\\';
-    drivePath[3] = '\0';
-    driveType = GetDriveTypeA(drivePath);
-    return driveType != DRIVE_UNKNOWN && driveType != DRIVE_NO_ROOT_DIR;
-}
-
 // FUNCTION: CARMA2_HW 0x00486c20
 int C2_HOOK_FASTCALL PDmkdir(const char *path) {
 
