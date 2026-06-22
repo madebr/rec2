@@ -66,7 +66,7 @@ extern br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF);
 
 extern void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 
-// StripCR
+extern void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 // SubsStringJob
 

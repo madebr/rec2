@@ -186,7 +186,20 @@ void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
     strcpy(pString, str);
 }
 
-// StripCR
+// FUNCTION: CARMA2_HW 0x00490690
+void C2_HOOK_FASTCALL StripCRNL(char* line) {
+    char* loc;
+
+    loc = strchr(line, '\n');
+    if (loc != NULL) {
+        *loc = '\0';
+    }
+
+    loc = strchr(line, '\r');
+    if (loc != NULL) {
+        *loc = '\0';
+    }
+}
 
 // SubsStringJob
 

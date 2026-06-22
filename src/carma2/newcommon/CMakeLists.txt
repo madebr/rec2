@@ -75,6 +75,8 @@ add_library(c2_newcommon STATIC
     72-interface.c
 
     loadtif.c
+    loadtif_zlib.c
+
     globvars.c
     globvrbm.c
     globvrkm.c

@@ -775,6 +775,9 @@
 // LIBRARY: CARMA2_HW 0x005790c0
 // _memmove
 
+// LIBRARY: CARMA2_HW 0x00577d20
+// __memicmp
+
 // LIBRARY: CARMA2_HW 0x0054d036
 // _DirectSoundCreate@12
 

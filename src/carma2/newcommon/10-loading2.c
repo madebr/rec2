@@ -159,7 +159,7 @@ void C2_HOOK_FASTCALL GetHithers(void) {
     GetALineAndDontArgue(gTempFile, s);
     result = sscanf(&s[strspn(s, "\t ,")], "%f%n", &gCamera_hither, &position);
     if (result == 0) {
-        FatalError(kFatalError_MysteriousX_SS, s, "GENERAL.TXT");
+        FatalError(kFatalError_Mysterious_SS, s, "GENERAL.TXT");
     }
     sscanf(&s[position + strspn(&s[position], "\t ,")], "%f", &gCamera_cockpit_hither);
     gCamera_hither *= 2;

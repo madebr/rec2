@@ -87,6 +87,7 @@ runs:
         github-token: ${{ inputs.gist-token }}
         script: |
           fs = require('fs');
+          process = require('process');
           const commit_info = {
             repo: '${{ github.repository }}',
             branch: '${{ github.ref }}',

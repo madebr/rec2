@@ -170,7 +170,7 @@ int C2_HOOK_STDCALL FopRead_ADD_MAP(br_datafile* df, br_uint_32 id, br_uint_32 l
 }
 
 // FUNCTION: CARMA2_HW 0x00538ef0
-br_uint_32 C2_HOOK_CDECL BrPixelmapLoadMany(char* filename, br_pixelmap** pixelmaps, br_uint_16 num) {
+br_uint_32 C2_HOOK_CDECL BrPixelmapLoadMany(const char* filename, br_pixelmap** pixelmaps, br_uint_16 num) {
     br_datafile* df;
     int count;
     int r;
@@ -212,7 +212,7 @@ int C2_HOOK_STDCALL WritePixelmap(br_pixelmap* pp, br_datafile* df) {
 }
 
 // FUNCTION: CARMA2_HW 0x00538f60
-br_uint_32 C2_HOOK_CDECL BrPixelmapSaveMany(char* filename, br_pixelmap** pixelmaps, br_uint_16 num) {
+br_uint_32 C2_HOOK_CDECL BrPixelmapSaveMany(const char* filename, br_pixelmap** pixelmaps, br_uint_16 num) {
     br_datafile* df;
     int i;
 
@@ -230,7 +230,7 @@ br_uint_32 C2_HOOK_CDECL BrPixelmapSaveMany(char* filename, br_pixelmap** pixelm
 }
 
 // FUNCTION: CARMA2_HW 0x00539320
-br_pixelmap* C2_HOOK_CDECL BrPixelmapLoad(char* filename) {
+br_pixelmap* C2_HOOK_CDECL BrPixelmapLoad(const char* filename) {
     br_pixelmap* ptr;
 
     if (BrPixelmapLoadMany(filename, &ptr, 1) == 1) {
@@ -240,7 +240,7 @@ br_pixelmap* C2_HOOK_CDECL BrPixelmapLoad(char* filename) {
 }
 
 // FUNCTION: CARMA2_HW 0x005393a0
-br_uint_32 C2_HOOK_CDECL BrPixelmapSave(char* filename, br_pixelmap* ptr) {
+br_uint_32 C2_HOOK_CDECL BrPixelmapSave(const char* filename, br_pixelmap* ptr) {
 
     return BrPixelmapSaveMany(filename, &ptr, 1);
 }

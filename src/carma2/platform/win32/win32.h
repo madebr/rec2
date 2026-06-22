@@ -73,4 +73,6 @@ extern void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_on
 
 extern void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void);
 
+extern int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count);
+
 #endif // C2_WIN32_WIN32_H

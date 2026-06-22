@@ -798,6 +798,7 @@ int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
 
 // FUNCTION: CARMA2_HW 0x00486c20
 int C2_HOOK_FASTCALL PDmkdir(const char *path) {
+
     return c2_mkdir(path);
 }
 
@@ -977,13 +978,13 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
 
     gNbPixelBits = 16;
     BrDevBeginVar(&gScreen, gRenderer,
-                  BRT_WINDOW_FULLSCREEN_B, 1,
-                  BRT_WINDOW_HANDLE_H, gHWnd,
-                  BRT_WIDTH_I32, 640,
-                  BRT_HEIGHT_I32, 480,
-                  BRT_PIXEL_BITS_I32, 16,
-                  BRT_PIXEL_TYPE_U8, BR_PMT_RGB_565,
-                  0);
+        BRT_WINDOW_FULLSCREEN_B, 1,
+        BRT_WINDOW_HANDLE_H, gHWnd,
+        BRT_WIDTH_I32, 640,
+        BRT_HEIGHT_I32, 480,
+        BRT_PIXEL_BITS_I32, 16,
+        BRT_PIXEL_TYPE_U8, BR_PMT_RGB_565,
+        BR_NULL_TOKEN);
     if (gScreen == NULL) {
         BrFailure("Unable to allocate Main Front Screen");
     }
@@ -1150,4 +1151,10 @@ void C2_HOOK_FASTCALL PDFileDelete(const char *pPath, int pIgnore_read_only) {
         }
     }
     DeleteFileA(pPath);
+}
+
+// FUNCTION: CARMA2_HW 0x0047d860
+int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count) {
+
+    return c2_memicmp(str1, str2, count);
 }
