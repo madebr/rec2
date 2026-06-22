@@ -89,17 +89,59 @@ void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
     PFfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
 }
 
-// MemReadU32
+// FUNCTION: CARMA2_HW 0x0048fa00
+tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr) {
+    tU32 raw_long;
 
-// MemReadU16
+    memcpy(&raw_long, *pPtr, sizeof(raw_long));
+    *pPtr += sizeof(raw_long);
+    // FIXME: byteswap for BE
+    return raw_long;
+}
 
-// MemReadU8
+// FUNCTION: CARMA2_HW 0x0048fa10
+tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr) {
+    tU16 raw_short;
 
-// MemReadS16
+    memcpy(&raw_short, *pPtr, sizeof(raw_short));
+    *pPtr += sizeof(raw_short);
+    // FIXME: byteswap for BE
+    return raw_short;
+}
 
-// MemReadS8
+// FUNCTION: CARMA2_HW 0x0048fa20
+tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
+    tU8 raw_byte;
 
-// MemSkipBytes
+    memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
+    *pPtr += sizeof(raw_byte);
+    return raw_byte;
+}
+
+// FUNCTION: CARMA2_HW 0x0048fa40
+tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr) {
+    tS16 raw_short;
+
+    memcpy(&raw_short, *pPtr, sizeof(raw_short));
+    *pPtr += sizeof(raw_short);
+    // FIXME: byteswap for BE
+    return raw_short;
+}
+
+// FUNCTION: CARMA2_HW 0x0048fa50
+tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr) {
+    tS8 raw_byte;
+
+    memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
+    *pPtr += sizeof(raw_byte);
+    return raw_byte;
+}
+
+// FUNCTION: CARMA2_HW 0x0048fa60
+void C2_HOOK_FASTCALL MemSkipBytes(char** pPtr, int pBytes_to_skip) {
+
+    *pPtr += pBytes_to_skip;
+}
 
 // FUNCTION: CARMA2_HW 0x0048fa70
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_list, int pCount) {

@@ -20,17 +20,17 @@ extern void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber);
 
 extern void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber);
 
-// MemReadU32
+extern tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr);
 
-// MemReadU16
+extern tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr);
 
-// MemReadU8
+extern tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr);
 
-// MemReadS16
+extern tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr);
 
-// MemReadS8
+extern tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr);
 
-// MemSkipBytes
+extern void C2_HOOK_FASTCALL MemSkipBytes(char** pPtr, int pBytes_to_skip);
 
 extern int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_list, int pCount);
 
