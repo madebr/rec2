@@ -274,7 +274,17 @@ void GetPairOfScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2) {
     *pS2 = f2;
 }
 
-// GetThreeScalars
+// FUNCTION: CARMA2_HW 0x004901c0
+void C2_HOOK_FASTCALL GetThreeScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3) {
+    float f1;
+    float f2;
+    float f3;
+
+    GetThreeFloats(pF, &f1, &f2, &f3);
+    *pS1 = f1;
+    *pS2 = f2;
+    *pS3 = f3;
+}
 
 // GetFourScalars
 
