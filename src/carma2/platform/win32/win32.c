@@ -750,36 +750,6 @@ void C2_HOOK_FASTCALL PDEnumPath(const char *path, tEnumPathCallback pCallback, 
     SetCurrentDirectoryA(originalCurrentDirectory);
 }
 
-// FUNCTION: CARMA2_HW 0x00578380
-int C2_HOOK_CDECL IsNetworkShare(const char *path) {
-    const char *ptr;
-
-    if (strlen(path) < 5) {
-        return 0;
-    }
-    if (path[0] != '\\' && path[0] != '/') {
-        return 0;
-    }
-    if (path[1] != '\\' && path[1] != '/') {
-        return 0;
-    }
-    ptr = &path[3];
-    while (*ptr != '\0' && *ptr != '\\' && *ptr != '/') {
-        ptr++;
-    }
-    if (*ptr == '\0' || ptr[1] == '\0') {
-        return 0;
-    }
-    ptr++;
-    while (*ptr != '\0' && *ptr != '\\' && *ptr != '/') {
-        ptr++;
-    }
-    if (*ptr != '\0' && ptr[1] != '\0') {
-        return 0;
-    }
-    return 1;
-}
-
 // FUNCTION: CARMA2_HW 0x00585ee0
 int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
     char drivePath[4];

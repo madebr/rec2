@@ -49,8 +49,6 @@ extern LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 
 extern int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path);
 
-extern int C2_HOOK_CDECL IsNetworkShare(const char* path);
-
 extern int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex);
 
 extern void C2_HOOK_FASTCALL PDRevertPalette(void);
