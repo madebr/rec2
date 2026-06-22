@@ -62,7 +62,7 @@ extern void C2_HOOK_FASTCALL GetNScalars(FILE* pF, int n, br_scalar* pS);
 
 extern void C2_HOOK_FASTCALL GetPairOfFloatPercents(FILE* pF, float* pF1, float* pF2);
 
-// GetThreeFloatPercents
+extern void C2_HOOK_FASTCALL GetThreeFloatPercents(FILE* pF, float* pF1, float* pF2, float* pF3);
 
 extern void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 

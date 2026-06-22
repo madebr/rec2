@@ -340,7 +340,22 @@ void C2_HOOK_FASTCALL GetPairOfFloatPercents(FILE* pF, float* pF1, float* pF2) {
     *pF2 = *pF2 / 100.0f;
 }
 
-// GetThreeFloatPercents
+// FUNCTION: CARMA2_HW 0x00490570
+void C2_HOOK_FASTCALL GetThreeFloatPercents(FILE* pF, float* pF1, float* pF2, float* pF3) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF3);
+    *pF1 = *pF1 / 100.0f;
+    *pF2 = *pF2 / 100.0f;
+    *pF3 = *pF3 / 100.0f;
+}
 
 // FUNCTION: CARMA2_HW 0x00490630
 void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
