@@ -44,7 +44,7 @@ extern void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, f
 
 extern void C2_HOOK_FASTCALL GetAVector3(FILE* pF, br_vector3* pV);
 
-// GetPairOfInts
+extern void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2);
 
 extern void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3);
 

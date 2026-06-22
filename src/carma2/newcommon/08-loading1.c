@@ -216,7 +216,17 @@ void C2_HOOK_FASTCALL GetAVector3(FILE* pF, br_vector3* pV) {
     GetThreeFloats(pF, &pV->v[0], &pV->v[1], &pV->v[2]);
 }
 
-// GetPairOfInts
+// FUNCTION: CARMA2_HW 0x0048fdc0
+void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+}
 
 // FUNCTION: CARMA2_HW 0x0048fe30
 void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
