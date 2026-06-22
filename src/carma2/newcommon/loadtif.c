@@ -258,7 +258,7 @@ int C2_HOOK_FASTCALL ReadFileLink(char* pDest, const char* pPath) {
     FILE* f;
     char s1[256];
     char s2[256];
-    size_t i;
+    int i;
     size_t len;
     char c;
 
@@ -267,10 +267,11 @@ int C2_HOOK_FASTCALL ReadFileLink(char* pDest, const char* pPath) {
         return 0;
     }
     GetALineAndDontArgue(f, s1);
+    s2[0] = '\0';
     if (strstr(s1, ".TIF") != NULL) {
 
         len = strlen(s1);
-        for (i = 0; i < len; i++) {
+        for (i = 0; i < (int)len; i++) {
             c = s1[i];
             if (c == '\\') {
                 c = *gDir_separator;
@@ -278,14 +279,14 @@ int C2_HOOK_FASTCALL ReadFileLink(char* pDest, const char* pPath) {
             s2[i] = c;
         }
         s2[len] = '\0';
-        fclose(f);
         PathCat(s1, gApplication_path, s2);
         strcpy(pDest, s1);
+        fclose(f);
         return 1;
     } else if (strstr(s1, ".PIX") != NULL) {
 
         len = strlen(s1);
-        for (i = 0; i < len; i++) {
+        for (i = 0; i < (int)len; i++) {
             c = s1[i];
             if (c == '\\') {
                 c = *gDir_separator;
@@ -293,9 +294,9 @@ int C2_HOOK_FASTCALL ReadFileLink(char* pDest, const char* pPath) {
             s2[i] = c;
         }
         s2[len] = '\0';
-        fclose(f);
         PathCat(s1, gApplication_path, s2);
         strcpy(pDest, s1);
+        fclose(f);
         return 1;
     } else {
         fclose(f);
