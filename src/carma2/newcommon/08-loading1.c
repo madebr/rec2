@@ -310,7 +310,21 @@ void C2_HOOK_FASTCALL GetFourScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, b
     *pS4 = f4;
 }
 
-// GetNScalars
+// FUNCTION: CARMA2_HW 0x00490460
+void C2_HOOK_FASTCALL GetNScalars(FILE* pF, int n, br_scalar* pS) {
+    char s[256];
+    char* str;
+    float f;
+    int i;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    for (i = 0; i < n; i++) {
+        sscanf(str, "%f", &f);
+        pS[i] = f;
+        str = strtok(NULL, "\t ,/");
+    }
+}
 
 // GetPairOfFloatPercents
 
