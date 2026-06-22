@@ -1,9 +1,11 @@
 #include "62-graphics3.h"
 
 #include "08-loading1.h"
+#include "10-loading2.h"
 #include "19-font.h"
 #include "25-grafdata.h"
 #include "41-utility.h"
+#include "42-input.h"
 #include "52-errors.h"
 #include "53-controls.h"
 #include "63-loading3.h"
@@ -380,9 +382,42 @@ void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap) {
     BrMaterialAdd(gCar_icons_model_actor->material);
 }
 
-// MapChanged
+static void C2_HOOK_FASTCALL MapChanged(void) {
 
-// CheckMapMoveKeys
+    InitMap();
+    SaveOptions();
+}
+
+// FUNCTION: CARMA2_HW 0x00497620
+void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0) {
+
+    if (KeyIsDown(31) && pKey0) {
+        gHeadup_map_y_float -= (float)gFrame_period / 20.0;
+        if (gHeadup_map_y_float < 0.0f) {
+            gHeadup_map_y_float = 0.0f;
+        }
+        MapChanged();
+    } else if (KeyIsDown(32) && pKey0) {
+        gHeadup_map_y_float += (float)gFrame_period / 20.0;
+        if (gHeadup_map_y_float + gHeadup_map_h_float > (float)gBack_screen->height) {
+            gHeadup_map_y_float = (float)(gBack_screen->height - gHeadup_map_h);
+        }
+        MapChanged();
+    }
+    if (KeyIsDown(33) && pKey0) {
+        gHeadup_map_x_float -= (float)gFrame_period / 20.0;
+        if (gHeadup_map_x_float < 0.0f) {
+            gHeadup_map_x_float = 0.0f;
+        }
+        MapChanged();
+    } else if (KeyIsDown(34) && pKey0) {
+        gHeadup_map_x_float += (float)gFrame_period / 20.0;
+        if (gHeadup_map_x_float + gHeadup_map_w_float + 8.0f > (float)gBack_screen->width) {
+            gHeadup_map_x_float = (float)(gBack_screen->width - gHeadup_map_w - 8);
+        }
+        MapChanged();
+    }
+}
 
 // InitSmashTargets
 
