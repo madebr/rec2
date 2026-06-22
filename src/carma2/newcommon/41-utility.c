@@ -13,6 +13,7 @@
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
 
@@ -36,6 +37,12 @@ br_pixelmap* g16bit_palette;
 
 // GLOBAL: CARMA2_HW 0x006b63f0
 br_pixelmap* gPalette_source;
+
+// GLOBAL: CARMA2_HW 0x006abef4
+tU32 gLost_time;
+
+// GLOBAL: CARMA2_HW 0x0079efb0
+tU32 gLast_tick_count;
 
 // FUNCTION: CARMA2_HW 0x00513400
 br_error C2_HOOK_FASTCALL DRBrEnd(void) {
@@ -506,15 +513,60 @@ void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF) {
     }
 }
 
-// GetTotalTime
+// FUNCTION: CARMA2_HW 0x00514c30
+tU32 C2_HOOK_FASTCALL GetTotalTime(void) {
 
-// GetRaceTime
+    if (gAction_replay_mode) {
+        return gLast_replay_frame_time;
+    } else {
+        if (gNet_mode != eNet_mode_none) {
+            return gLast_tick_count + gFrame_period;
+        } else {
+            return gLast_tick_count + gFrame_period - gLost_time;
+        }
+    }
+}
 
-// AddLostTime
+// FUNCTION: CARMA2_HW 0x00514c70
+tU32 C2_HOOK_FASTCALL GetRaceTime(void) {
 
-// AssertThisTimeAsCurrentTime
+    return PDGetTotalTime() - gRace_start;
+}
 
-// TimerString
+// FUNCTION: CARMA2_HW 0x00514c80
+void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time) {
+
+    gLost_time += pLost_time;
+}
+
+// FUNCTION: CARMA2_HW 0x00514c90
+void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void) {
+    tU32 now;
+
+    now = PDGetTotalTime();
+    gLost_time = now - gLast_tick_count;
+    gLast_tick_count += gLost_time;
+}
+
+// FUNCTION: CARMA2_HW 0x00514cb0
+void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat) {
+    int seconds;
+
+    seconds = (pTime + 500) / 1000;
+    if (pFudge_colon || seconds > 59) {
+        if (pArg3) {
+            sprintf(pStr, "%d:%02d", seconds / 60, seconds % 60);
+        } else {
+            sprintf(pStr, "%d:%02d", seconds / 60, seconds % 60);
+        }
+    } else {
+        if (pFloat) {
+            sprintf(pStr, "%.1f", (double)pTime / 1000.0);
+        } else {
+            sprintf(pStr, "%d", seconds);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00514d70
 const char* C2_HOOK_FASTCALL GetMiscString(int pIndex) {

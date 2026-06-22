@@ -4,7 +4,7 @@
 const char* gPowerup_txt_path;
 
 // GLOBAL: CARMA2_HW 0x007059e0
-tHeadup_icon gPickedup_powerups[5];
+tHeadup_icon gPickedup_powerups[20];
 
 // GLOBAL: CARMA2_HW 0x00763480
 tSlot_info gCost_APO;

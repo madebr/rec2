@@ -1,6 +1,8 @@
 #ifndef GUARD_53_CONTROLS_H
 #define GUARD_53_CONTROLS_H
 
+#include "c2_hooks.h"
+
 extern float gMap_render_x;
 extern float gMap_render_y;
 extern float gMap_render_width;
@@ -161,9 +163,9 @@ extern int gHeadup_map_h;
 
 // DisplayUserMessage
 
-// InitAbuseomatic
+extern void C2_HOOK_FASTCALL InitAbuseomatic(void);
 
-// DisposeAbuseomatic
+extern void C2_HOOK_FASTCALL DisposeAbuseomatic(void);
 
 // ChangeCameraTypeInGame
 

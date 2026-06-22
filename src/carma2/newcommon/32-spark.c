@@ -120,7 +120,10 @@ void C2_HOOK_FASTCALL InitSmokeStuff(void) {
 
 // GenerateSmokeShades
 
-// GenerateItFoxShadeTable
+// STUB: CARMA2_HW 0x004fb9c0
+void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void) {
+    NOT_IMPLEMENTED();
+}
 
 // AdjustFlame
 

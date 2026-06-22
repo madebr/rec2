@@ -60,6 +60,9 @@ target_compile_definitions(brender_driver_d3d
 set_property(TARGET brender_driver_d3d PROPERTY PREFIX "")
 
 if(REC2_MATCHING)
+    set_property(TARGET brender_driver_d3d PROPERTY OUTPUT_NAME "d3d")
+    set_property(TARGET brender_driver_d3d PROPERTY SUFFIX ".bdd")
+
     set(CMAKE_C_FLAGS "/W3 /GX /DWIN32 /D_WINDOWS")
     set(CMAKE_C_FLAGS_DEBUG "/Gm /Od /D_DEBUG /MLd")
     set(CMAKE_C_FLAGS_RELEASE "/O2 /DNDEBUG /ML")

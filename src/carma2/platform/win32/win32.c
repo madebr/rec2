@@ -750,54 +750,9 @@ void C2_HOOK_FASTCALL PDEnumPath(const char *path, tEnumPathCallback pCallback, 
     SetCurrentDirectoryA(originalCurrentDirectory);
 }
 
-// FUNCTION: CARMA2_HW 0x00578380
-int C2_HOOK_CDECL IsNetworkShare(const char *path) {
-    const char *ptr;
-
-    if (strlen(path) < 5) {
-        return 0;
-    }
-    if (path[0] != '\\' && path[0] != '/') {
-        return 0;
-    }
-    if (path[1] != '\\' && path[1] != '/') {
-        return 0;
-    }
-    ptr = &path[3];
-    while (*ptr != '\0' && *ptr != '\\' && *ptr != '/') {
-        ptr++;
-    }
-    if (*ptr == '\0' || ptr[1] == '\0') {
-        return 0;
-    }
-    ptr++;
-    while (*ptr != '\0' && *ptr != '\\' && *ptr != '/') {
-        ptr++;
-    }
-    if (*ptr != '\0' && ptr[1] != '\0') {
-        return 0;
-    }
-    return 1;
-}
-
-// FUNCTION: CARMA2_HW 0x00585ee0
-int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex) {
-    char drivePath[4];
-    UINT driveType;
-
-    if (driveIndex == 0) {
-        return 1;
-    }
-    drivePath[0] = 'A' + driveIndex - 1;
-    drivePath[1] = ':';
-    drivePath[2] = '\\';
-    drivePath[3] = '\0';
-    driveType = GetDriveTypeA(drivePath);
-    return driveType != DRIVE_UNKNOWN && driveType != DRIVE_NO_ROOT_DIR;
-}
-
 // FUNCTION: CARMA2_HW 0x00486c20
 int C2_HOOK_FASTCALL PDmkdir(const char *path) {
+
     return c2_mkdir(path);
 }
 
@@ -977,13 +932,13 @@ void C2_HOOK_FASTCALL PDAllocateScreenAndBack(void) {
 
     gNbPixelBits = 16;
     BrDevBeginVar(&gScreen, gRenderer,
-                  BRT_WINDOW_FULLSCREEN_B, 1,
-                  BRT_WINDOW_HANDLE_H, gHWnd,
-                  BRT_WIDTH_I32, 640,
-                  BRT_HEIGHT_I32, 480,
-                  BRT_PIXEL_BITS_I32, 16,
-                  BRT_PIXEL_TYPE_U8, BR_PMT_RGB_565,
-                  0);
+        BRT_WINDOW_FULLSCREEN_B, 1,
+        BRT_WINDOW_HANDLE_H, gHWnd,
+        BRT_WIDTH_I32, 640,
+        BRT_HEIGHT_I32, 480,
+        BRT_PIXEL_BITS_I32, 16,
+        BRT_PIXEL_TYPE_U8, BR_PMT_RGB_565,
+        BR_NULL_TOKEN);
     if (gScreen == NULL) {
         BrFailure("Unable to allocate Main Front Screen");
     }
@@ -1150,4 +1105,10 @@ void C2_HOOK_FASTCALL PDFileDelete(const char *pPath, int pIgnore_read_only) {
         }
     }
     DeleteFileA(pPath);
+}
+
+// FUNCTION: CARMA2_HW 0x0047d860
+int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count) {
+
+    return c2_memicmp(str1, str2, count);
 }

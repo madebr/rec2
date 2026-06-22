@@ -744,3 +744,8 @@ void PDFileDelete(const char *pPath, int pIgnore_read_only) {
 
 void PDDisposeActionReplayBuffer(void) {
 }
+
+int PDmemicmp(const char* str1, const char* str2, size_t count) {
+
+    return memcmp(str1, str2, count);
+}

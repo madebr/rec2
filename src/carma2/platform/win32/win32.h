@@ -49,10 +49,6 @@ extern LRESULT CALLBACK Carma2MainWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, L
 
 extern int C2_HOOK_FASTCALL PDFileUnlock(const char* pThe_path);
 
-extern int C2_HOOK_CDECL IsNetworkShare(const char* path);
-
-extern int C2_HOOK_CDECL IsValidDriveIndex(int driveIndex);
-
 extern void C2_HOOK_FASTCALL PDRevertPalette(void);
 
 extern void C2_HOOK_FASTCALL PDMouseButtons(int* pLeftButtonDown, int* pRightButtonDown);
@@ -72,5 +68,7 @@ extern void C2_HOOK_FASTCALL PDGetCurrentDate(char* pStr);
 extern void C2_HOOK_FASTCALL PDFileDelete(const char* pPath, int pIgnore_read_only);
 
 extern void C2_HOOK_FASTCALL PDDisposeActionReplayBuffer(void);
+
+extern int C2_HOOK_FASTCALL PDmemicmp(const char* str1, const char* str2, size_t count);
 
 #endif // C2_WIN32_WIN32_H

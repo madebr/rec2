@@ -85,7 +85,14 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFile(const char* path) {
     return -1;
 }
 
-// ClosePackFile
+// FUNCTION: CARMA2_HW 0x004b4730
+void C2_HOOK_FASTCALL ClosePackFile(tTWTVFS twt) {
+
+    if (twt >= 0) {
+        BrMemFree(gTwatVfsMountPoints[twt].header);
+        gTwatVfsMountPoints[twt].header = NULL;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004b4760
 void C2_HOOK_FASTCALL PFfclose(FILE* pFile) {
@@ -282,9 +289,17 @@ void C2_HOOK_FASTCALL PFrewind(FILE* pF) {
         twtFile->error = 0;
     }
 }
-// STUB: CARMA2_HW 0x004b4c10
+
+// FUNCTION: CARMA2_HW 0x004b4c10
 int C2_HOOK_FASTCALL PFfeof(FILE* pFile) {
-    NOT_IMPLEMENTED();
+    tTwatVfsFile* twtFile;
+
+    if ((int)pFile >= REC2_ASIZE(gTwatVfsFiles)) {
+        return feof(pFile);
+    } else {
+        twtFile = &gTwatVfsFiles[(uintptr_t)pFile];
+        return twtFile->pos >= twtFile->end;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004b4c80
@@ -342,7 +357,12 @@ tTWTVFS C2_HOOK_FASTCALL OpenPackFileAndSetTiffLoading(const char* path) {
 
 // STUB: CARMA2_HW 0x004b4e20
 void C2_HOOK_FASTCALL ClosePackFileAndSetTiffLoading(tTWTVFS twt) {
-    NOT_IMPLEMENTED();
+
+    if (twt >= 0) {
+        gDisableTiffConversionStackPos -= 1;
+        gDisableTiffConversion = gDisableTiffConversionStack[gDisableTiffConversionStackPos];
+        ClosePackFile(twt);
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x004b4e60

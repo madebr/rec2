@@ -278,14 +278,14 @@ void C2_HOOK_STDCALL sceneRenderAdd(br_actor* tree) {
     br_int_32 t;
     br_matrix34 m;
 
-    if (tree->parent == NULL) {
-        actorRender(tree, v1db.default_model, v1db.default_material, v1db.default_render_data, BR_RSTYLE_DEFAULT, v1db.ttype);
-        return;
-    }
     material = NULL;
     model = NULL;
     render_data = NULL;
     style = BR_RSTYLE_DEFAULT;
+    if (tree->parent == NULL) {
+        actorRender(tree, v1db.default_model, v1db.default_material, v1db.default_render_data, BR_RSTYLE_DEFAULT, v1db.ttype);
+        return;
+    }
     t = BR_TRANSFORM_IDENTITY;
     BrMatrix34Identity(&m);
     for (a = tree->parent; a != NULL; a = a->parent) {
@@ -323,8 +323,9 @@ void C2_HOOK_STDCALL sceneRenderAdd(br_actor* tree) {
     } else {
         v1db.renderer->dispatch->_statePush(v1db.renderer, 0x2);
         v1db.renderer->dispatch->_modelMulF(v1db.renderer, (br_matrix34_f*)&m);
-        v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_MATRIX, 0, BRT_MODEL_TO_VIEW_HINT_T, t == BR_TRANSFORM_MATRIX34_LP ? BRT_LENGTH_PRESERVING : BRT_NONE);
-        actorRender(tree, model, material, render_data, style, v1db.ttype);
+        t = _CombineTransforms[(br_uint_16)v1db.ttype][(br_uint_16)t];
+        v1db.renderer->dispatch->_partSet(v1db.renderer, BRT_MATRIX, 0, BRT_MODEL_TO_VIEW_HINT_T, (t == BR_TRANSFORM_MATRIX34_LP) ? BRT_LENGTH_PRESERVING : BRT_NONE);
+        actorRender(tree, model, material, render_data, style, t);
         v1db.renderer->dispatch->_statePop(v1db.renderer, 0x2);
     }
 }

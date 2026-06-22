@@ -79,6 +79,7 @@ jobs:
         root-branch: master
         gist-repo: madebr/92b121cfd427c51b771fb614b4c893f4
         target: CARMA2_HW
+        symbol-count: 5162  # FIXME: remove once reccmp supports symbol count in reccmp-project.yml
         original-search-path: '${{ github.workspace }}/originals'
         working-directory: '${{ github.workspace }}/build'
         gist-token: ${{ secrets.GIST_TOKEN }}

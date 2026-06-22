@@ -432,6 +432,7 @@ int C2_HOOK_FASTCALL PDNetGetNextJoinGame(tNet_game_details* pGame, int pIndex) 
 
 // FUNCTION: CARMA2_HW 0x0051a6a0
 int C2_HOOK_FASTCALL PDNetGetHeaderSize(void) {
+
     return 0;
 }
 

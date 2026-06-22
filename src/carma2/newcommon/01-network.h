@@ -4,9 +4,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-// NetInitialise
+extern int C2_HOOK_FASTCALL NetInitialise(void);
 
-// NetShutdown
+extern int C2_HOOK_FASTCALL NetShutdown(void);
 
 extern void C2_HOOK_FASTCALL ShutdownNetIfRequired(void);
 
@@ -106,7 +106,7 @@ extern tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize);
 
 extern void C2_HOOK_FASTCALL NetFreeExcessMemory(void);
 
-// DisposeExcessMemory
+extern void C2_HOOK_FASTCALL DisposeExcessMemory(void);
 
 extern int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage);
 

@@ -34,7 +34,7 @@
 // __umaskval
 
 // GLOBAL: CARMA2_HW 0x006b2e00
-// _errno
+// errno
 
 // GLOBAL: CARMA2_HW 0x006b2e04
 // __doserrno
@@ -194,6 +194,9 @@
 
 // GLOBAL: CARMA2_HW 0x00673ec4
 // __OP_EXPjmptab
+
+// GLOBAL: CARMA2_HW 0x006b3110
+// __mbcasemap
 
 // GLOBAL: CARMA2_HW 0x0058f000
 // ___xc_a
@@ -359,9 +362,6 @@
 
 // LIBRARY: CARMA2_HW 0x005779a0
 // atof
-
-// LIBRARY: CARMA2_HW 0x00581110
-// strpbrk
 
 // LIBRARY: CARMA2_HW 0x00587d00
 // __fstat
@@ -775,10 +775,43 @@
 // LIBRARY: CARMA2_HW 0x005790c0
 // _memmove
 
-// LIBRARY: CARMA2_HW 0x0054d036
-// _DirectSoundCreate@12
+// LIBRARY: CARMA2_HW 0x00577d20
+// __memicmp
 
-// LIBRARY: CARMA2_HW 0x0054d03c
-// _DirectInputCreateA@16
+// LIBRARY: CARMA2_HW 0x00578010
+// _stat
+
+// LIBRARY: CARMA2_HW 0x00581110
+// __mbspbrk
+
+// LIBRARY: CARMA2_HW 0x005787d0
+// _strpbrk
+
+// LIBRARY: CARMA2_HW 0x00581070
+// __mbctolower
+
+// LIBRARY: CARMA2_HW 0x00580fc0
+// __getdrive
+
+// LIBRARY: CARMA2_HW 0x00580ef0
+// __fullpath
+
+// LIBRARY: CARMA2_HW 0x00577f40
+// ___dtoxmode
+
+// LIBRARY: CARMA2_HW 0x00585d90
+// __getcwd
+
+// LIBRARY: CARMA2_HW 0x00585db0
+// __getdcwd
+
+// LIBRARY: CARMA2_HW 0x00585ee0
+// __validdrive
+
+// LIBRARY: CARMA2_HW 0x00580e70
+// __mbsrchr
+
+// LIBRARY: CARMA2_HW 0x00580cf0
+// __mbsicmp
 
 #endif

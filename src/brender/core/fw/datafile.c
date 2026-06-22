@@ -1513,7 +1513,7 @@ int C2_HOOK_CDECL DfFileIdentify(const br_uint_8* magics, br_size_t n_magics) {
 }
 
 // FUNCTION: CARMA2_HW 0x0052ca50
-br_datafile* C2_HOOK_STDCALL DfOpen(char* name, int write, br_token scalar_type) {
+br_datafile* C2_HOOK_STDCALL DfOpen(const char* name, int write, br_token scalar_type) {
     int mode;
     br_datafile* df;
     void* h;

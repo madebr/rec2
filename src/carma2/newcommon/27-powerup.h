@@ -4,7 +4,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-extern tHeadup_icon gPickedup_powerups[5];
+extern tHeadup_icon gPickedup_powerups[20];
 extern tSlot_info gCost_APO;
 extern tSlot_info gTrade_in_value_APO;
 extern tSlot_info gSubstitution_value_APO;

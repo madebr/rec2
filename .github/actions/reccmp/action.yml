@@ -13,6 +13,9 @@ inputs:
   target:
     description: 'Reccmp target'
     required: true
+  symbol-count: # FIXME: remove once reccmp supports symbol count in reccmp-project.yml
+    description: 'Symbol count'
+    required: true
   reccmp-version:
     description: 'Reccmp version (empty for latest, skip for disabling installation'
     default: ''
@@ -73,6 +76,7 @@ runs:
           --diff "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}-old.json" \
           --json  "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.json" \
           --json-diet \
+          -T "${{ inputs.symbol-count }}" \
           -H "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.html" \
           -S "${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.svg" \
           >${{ steps.calc.outputs.unix-temp-path }}/${{ inputs.target }}.txt
@@ -83,6 +87,7 @@ runs:
         github-token: ${{ inputs.gist-token }}
         script: |
           fs = require('fs');
+          process = require('process');
           const commit_info = {
             repo: '${{ github.repository }}',
             branch: '${{ github.ref }}',

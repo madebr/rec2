@@ -66,7 +66,7 @@ extern br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF);
 
 extern void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 
-// StripCR
+extern void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 // SubsStringJob
 
@@ -84,7 +84,7 @@ extern void C2_HOOK_FASTCALL DoNotAllowOpenToFail(void);
 
 extern FILE* C2_HOOK_FASTCALL DRfopen(const char* pFilename, const char* pMode);
 
-// UnlockInterfaceStuff
+extern void C2_HOOK_FASTCALL UnlockInterfaceStuff(void);
 
 // DisposePhysicsObject
 

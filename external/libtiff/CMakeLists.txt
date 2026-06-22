@@ -35,6 +35,12 @@ if(REC2_MATCHING)
         libtiff-3.4/libtiff/tif_zip.c
     )
     target_include_directories(tiff PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/libtiff-3.4/libtiff")
+
+    set(CMAKE_C_FLAGS "/W3 /GX /DWIN32 /D_WINDOWS")
+    set(CMAKE_C_FLAGS_DEBUG "/Gm /Od /D_DEBUG /MLd")
+    set(CMAKE_C_FLAGS_RELEASE "/G5 /DNDEBUG /ML")
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "/G5 /DNDEBUG /ML")
+    set(CMAKE_C_FLAGS_MINSIZEREL "/Os /DNDEBUG /ML")
 else()
     set(tiff-tools OFF CACHE BOOL "" FORCE)
     set(tiff-tools OFF CACHE BOOL "" FORCE)

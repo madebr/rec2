@@ -117,7 +117,7 @@ extern void C2_HOOK_FASTCALL InitSmokeStuff(void);
 
 // GenerateSmokeShades
 
-// GenerateItFoxShadeTable
+extern void C2_HOOK_FASTCALL GenerateItFoxShadeTable(void);
 
 // AdjustFlame
 

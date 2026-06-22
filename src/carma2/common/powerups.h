@@ -9,7 +9,7 @@
 extern tSmashable_item_spec gPowerup_pickup_smashable;
 extern tSmashable_item_spec gPowerup_respawn_smashable;
 extern tSmashable_item_spec gUnknown_smashable_006a3660;
-extern tHeadup_icon gPickedup_powerups[5];
+extern tHeadup_icon gPickedup_powerups[20];
 extern const char* gRepeatability_names[4];
 extern tShit_mine gShit_mines[20];
 extern tRepulse_link gRepulse_links[6];

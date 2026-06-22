@@ -71,15 +71,15 @@ extern void C2_HOOK_FASTCALL PrintScreenFile(FILE* pF);
 
 extern void C2_HOOK_FASTCALL PrintScreenFile16(FILE* pF);
 
-// GetTotalTime
+extern tU32 C2_HOOK_FASTCALL GetTotalTime(void);
 
-// GetRaceTime
+extern tU32 C2_HOOK_FASTCALL GetRaceTime(void);
 
-// AddLostTime
+extern void C2_HOOK_FASTCALL AddLostTime(tU32 pLost_time);
 
-// AssertThisTimeAsCurrentTime
+extern void C2_HOOK_FASTCALL AssertThisTimeAsCurrentTime(void);
 
-// TimerString
+extern void C2_HOOK_FASTCALL TimerString(tU32 pTime, char* pStr, undefined4 pArg3, int pFudge_colon, int pFloat);
 
 extern const char* C2_HOOK_FASTCALL GetMiscString(int pIndex);
 

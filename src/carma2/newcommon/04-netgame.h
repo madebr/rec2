@@ -73,9 +73,9 @@
 
 // DoNetScores
 
-// InitNetHeadups
+extern void C2_HOOK_FASTCALL InitNetHeadups(void);
 
-// DisposeNetHeadups
+extern void C2_HOOK_FASTCALL DisposeNetHeadups(void);
 
 // EverybodysLost
 

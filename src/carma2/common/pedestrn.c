@@ -4261,7 +4261,7 @@ tPed_personality* C2_HOOK_FASTCALL ReadPersonality(const char* pName) {
     strcpy(personality->name, pName);
     for (i = 0; ; i++) {
         if (i >= REC2_ASIZE(gPed_personalities)) {
-            FatalError(eFatalError_BonerError_TooManyPersonalitiesLoaded);
+            FatalError(kFatalError_BonerError_TooManyPersonalitiesLoaded);
         }
         if (gPed_personalities[i] == NULL) {
             gPed_personalities[i] = personality;

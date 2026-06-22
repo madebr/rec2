@@ -1,9 +1,13 @@
 #include "01-network.h"
 
 #include "04-netgame.h"
+#include "32-spark.h"
+#include "53-controls.h"
 #include "platform.h"
 #include "globvars.h"
 #include "globvrpb.h"
+
+#include "rec2_macros.h"
 
 #include <stdlib.h>
 
@@ -38,7 +42,7 @@ int gNet_service_disable;
 int gIn_net_service;
 
 // GLOBAL: CARMA2_HW 0x00690c48
-tNet_message_memory* gMessage_to_free;
+tNet_message_memory* gDynamic_messages;
 
 // GLOBAL: CARMA2_HW 0x00690c4c
 tU32 gLast_flush_message;
@@ -49,13 +53,92 @@ int gJoin_list_mode;
 // GLOBAL: CARMA2_HW 0x0074b7dc
 tPlayer_ID gLocal_net_ID;
 
-// NetInitialise
+// GLOBAL: CARMA2_HW 0x00690c44
+int gOnly_receive_guarantee_replies;
 
-// NetShutdown
+// GLOBAL: CARMA2_HW 0x0068d97c
+tMin_message* gMin_messages;
 
-// STUB: CARMA2_HW 0x0049d370
+// GLOBAL: CARMA2_HW 0x0068d970
+tMid_message* gMid_messages;
+
+// GLOBAL: CARMA2_HW 0x0068d980
+tMax_message* gMax_messages;
+
+// GLOBAL: CARMA2_HW 0x0068d96c
+int gNet_initialised;
+
+// GLOBAL: CARMA2_HW 0x0068d960
+int gDont_allow_joiners;
+
+// GLOBAL: CARMA2_HW 0x0074a690
+tU32 gUINT_0074a690;
+
+// GLOBAL: CARMA2_HW 0x0074a718
+tU32 gUINT_0074a718;
+
+// GLOBAL: CARMA2_HW 0x00659d30
+tU16 gGuarantee_number = 1;
+
+// GLOBAL: CARMA2_HW 0x0068d958
+int gNext_guarantee;
+
+// FUNCTION: CARMA2_HW 0x0049d210
+int C2_HOOK_FASTCALL NetInitialise(void) {
+    int i;
+
+    InitAbuseomatic();
+    gNet_service_disable = 0;
+    gIn_net_service = 0;
+    gMessage_header_size = PDNetGetHeaderSize();
+    gOnly_receive_guarantee_replies = 0;
+    gMin_messages = BrMemAllocate(MIN_MESSAGES_CAPACITY * (gMessage_header_size + sizeof(tMin_message)), kMem_net_min_messages);
+    gMid_messages = BrMemAllocate(MID_MESSAGES_CAPACITY * (gMessage_header_size + sizeof(tMid_message)), kMem_net_mid_messages);
+    gMax_messages = BrMemAllocate(MAX_MESSAGES_CAPACITY * (gMessage_header_size + sizeof(tMax_message)), kMem_net_max_messages);
+
+    for (i = 0; i < MIN_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)((br_uint_8*)&gMin_messages[i] + gMessage_header_size))->contents.raw.header.type = eNetMsg_none;
+    }
+    for (i = 0; i < MID_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)((br_uint_8*)&gMid_messages[i] + gMessage_header_size))->contents.raw.header.type = eNetMsg_none;
+    }
+    for (i = 0; i < MAX_MESSAGES_CAPACITY; i++) {
+        ((tNet_message*)((br_uint_8*)&gMax_messages[i] + gMessage_header_size))->contents.raw.header.type = eNetMsg_none;
+    }
+    gNet_initialised = PDNetInitialise() == 0;
+    if (gNet_initialised) {
+        InitNetHeadups();
+    }
+    GenerateItFoxShadeTable();
+    gDont_allow_joiners = 0;
+    gUINT_0074a690 = PDGetTotalTime();
+    gUINT_0074a718 = PDGetTotalTime();
+    gNext_guarantee = 0;
+    gDynamic_messages = NULL;
+    gGuarantee_number = ((tU16)PDGetTotalTime() & 0x3ff) + 1;
+    return !gNet_initialised;
+}
+
+int C2_HOOK_FASTCALL NetShutdown(void) {
+    int err;
+
+    err = PDNetShutdown();
+    DisposeAbuseomatic();
+    BrMemFree(gMin_messages);
+    BrMemFree(gMid_messages);
+    BrMemFree(gMax_messages);
+    DisposeExcessMemory();
+    DisposeNetHeadups();
+    return err;
+}
+
+// FUNCTION: CARMA2_HW 0x0049d370
 void C2_HOOK_FASTCALL ShutdownNetIfRequired(void) {
-    NOT_IMPLEMENTED();
+
+    if (gNet_initialised) {
+        NetShutdown();
+        gNet_initialised = 0;
+    }
 }
 
 // DisableNetService
@@ -247,14 +330,22 @@ tNet_message* C2_HOOK_FASTCALL NetAllocateMessage(int pSize) {
 
 void C2_HOOK_FASTCALL NetFreeExcessMemory(void) {
 
-    while (gMessage_to_free != NULL && *(&gMessage_to_free->message.contents.raw.header.type + gMessage_header_size) == eNetMsg_none) {
-        tNet_message_memory* next = gMessage_to_free->next;
-        BrMemFree(gMessage_to_free);
-        gMessage_to_free = next;
+    while (gDynamic_messages != NULL && *(&gDynamic_messages->message.contents.raw.header.type + gMessage_header_size) == eNetMsg_none) {
+        tNet_message_memory* next = gDynamic_messages->next;
+        BrMemFree(gDynamic_messages);
+        gDynamic_messages = next;
     }
 }
 
-// DisposeExcessMemory
+void C2_HOOK_FASTCALL DisposeExcessMemory(void) {
+    tNet_message_memory* next;
+
+    while (gDynamic_messages != NULL) {
+        next = gDynamic_messages->next;
+        BrMemFree(gDynamic_messages);
+        gDynamic_messages = next;
+    }
+}
 
 // STUB: CARMA2_HW 0x0049ff50
 int C2_HOOK_FASTCALL NetDisposeMessage(tNet_game_details* pDetails, tNet_message* pMessage) {
@@ -352,7 +443,7 @@ void C2_HOOK_FASTCALL CheckForPendingStartRace(void) {
     NOT_IMPLEMENTED();
 }
 
-// FUNCTION: CARMA2_HW 0x004a5280
+// STUB: CARMA2_HW 0x004a5280
 void C2_HOOK_FASTCALL NetService(int pIn_race) {
     tU32 time;
 
