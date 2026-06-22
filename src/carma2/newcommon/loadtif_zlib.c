@@ -96,7 +96,7 @@ br_size_t C2_HOOK_CDECL ZlibFsWrite(const void* buffer, br_size_t elem_size, uns
 br_size_t C2_HOOK_CDECL ZlibFsGetLine(char* buffer, br_size_t capacity, void* context) {
     char char_buffer[1];
     int chr;
-    int i;
+    size_t i;
 
     for (i = 0; i < capacity - 1; i++) {
         if (gzread(context, char_buffer, sizeof(char_buffer)) <= 0) {
