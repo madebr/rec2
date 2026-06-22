@@ -70,9 +70,11 @@ extern void C2_HOOK_FASTCALL StripCRNL(char* line);
 
 // SubsStringJob
 
-char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
+extern void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
 
-char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS);
+extern char* C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS);
+
+extern char* C2_HOOK_FASTCALL GetALineAndDontArgue(FILE* pF, char* pS);
 
 extern FILE* OldDRfopen(const char* pFilename, const char* pMode);
 

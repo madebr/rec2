@@ -255,13 +255,61 @@ void C2_HOOK_FASTCALL LoadInFiles(const char* pThe_path, const char* pArchive_na
     ClosePackFileAndSetTiffLoading(twt);
 }
 
-// STUB: CARMA2_HW 0x0048f3b0
+// FUNCTION: CARMA2_HW 0x0048f3b0
 int C2_HOOK_FASTCALL TestForOriginalCarmaCDinDrive(void) {
-    NOT_IMPLEMENTED();
+    struct {
+        tPath_name path_txt;
+        tPath_name cd_data;
+        tPath_name cd_cutscene;
+        tPath_name cd;
+    } paths;
+    FILE* f;
+    char paths_txt_first_char;
+
+    paths.path_txt[0] = '\0';
+    strcpy(paths.path_txt, gApplication_path);
+    strcat(paths.path_txt, gDir_separator);
+    strcat(paths.path_txt, "PATHS.TXT");
+    if (PDCheckDriveExists(paths.path_txt)) {
+        f = PFfopen(paths.path_txt, "rt");
+        if (f != NULL) {
+
+            paths_txt_first_char = PFfgetc(f);
+            PFungetc(paths_txt_first_char, f);
+
+            paths.cd[0] = '\0';
+            GetALineAndDontArgue(f, paths.cd);
+            PFfclose(f);
+            strcpy(paths.cd_data, paths.cd);
+            if (strchr(gDir_separator, paths.cd_data[strlen(paths.cd_data) - 1]) == NULL) {
+                strcat(paths.cd_data, gDir_separator);
+            }
+            strcat(paths.cd_data, "DATA");
+
+            if (DRStricmp(paths.cd, gApplication_path) != 0) {
+                strcpy(paths.cd_cutscene, paths.cd_data);
+                if (strchr(gDir_separator, paths.cd_cutscene[strlen(paths.cd_cutscene) - 1]) == NULL) {
+                    strcat(paths.cd_cutscene, gDir_separator);
+                }
+                strcat(paths.cd_cutscene, "CUTSCENE");
+
+                if (PDCheckDriveExists2(paths.cd_data, "GENERAL.TXT", 100)
+                        && PDCheckDriveExists2(paths.cd, "CARMA.EXE", 1000000)
+                        && PDCheckDriveExists2(paths.cd_cutscene, "MIX_INTR.SMK", 10000000)) {
+                    if (paths_txt_first_char != '@') {
+                        EncodeFile(paths.path_txt);
+                    }
+                    return 1;
+                }
+            }
+        }
+    }
+    return 0;
 }
 
-// STUB: CARMA2_HW 0x0048f7f0
+// FUNCTION: CARMA2_HW 0x0048f7f0
 void C2_HOOK_FASTCALL SetDefaultPixelmapFolderName(void) {
+
     gPedTexturePath = "PIXELMAP";
 }
 

@@ -319,10 +319,10 @@
 // _sscanf
 
 // LIBRARY: CARMA2_HW 0x005776c0
-// unlink
+// _unlink
 
 // LIBRARY: CARMA2_HW 0x00578470
-// rename
+// _rename
 
 // LIBRARY: CARMA2_HW 0x00576960
 // _srand
