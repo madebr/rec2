@@ -106,18 +106,18 @@ void C2_HOOK_FASTCALL InstallFindFailedHooks(void) {
         SetBRenderScreenAndBuffers(0, 0, 0, 0); \
         gUniverse_actor = BrActorAllocate(BR_ACTOR_NONE, NULL); \
         if (gUniverse_actor == NULL) { \
-            FatalError(kFatalError_FailToOpenGeneralSettings); \
+            FatalError(kFatalError_CouldNotAllocateRootActor); \
         } \
         gUniverse_actor->identifier = BrResStrDup(gUniverse_actor, "Root"); \
         BrEnvironmentSet(gUniverse_actor); \
         gNon_track_actor = BrActorAllocate(BR_ACTOR_NONE, NULL); \
         if (gNon_track_actor == NULL) { \
-            FatalError(kFatalError_FailToOpenGeneralSettings); \
+            FatalError(kFatalError_CouldNotAllocateRootActor); \
         } \
         BrActorAdd(gUniverse_actor, gNon_track_actor); \
         gDont_render_actor = BrActorAllocate(BR_ACTOR_NONE, NULL); \
         if (gDont_render_actor == NULL) { \
-            FatalError(kFatalError_FailToOpenGeneralSettings); \
+            FatalError(kFatalError_CouldNotAllocateRootActor); \
         } \
         gDont_render_actor->render_style = BR_RSTYLE_NONE; \
         BrActorAdd(gUniverse_actor, gDont_render_actor); \
@@ -717,8 +717,12 @@ void C2_HOOK_FASTCALL Init2DStuff(void) {
         FinishLoadingGeneral(); \
         PrintMemoryDump(0, "AFTER FINISHING LOADING GENERAL"); \
         InitOilSpills(); \
-        if (gAustere_time) { \
-            while (PDGetTotalTime() - gAustere_time < 2000) { \
+        for (;;) { \
+            if (!gAustere_time) { \
+                break; \
+            } \
+            if (PDGetTotalTime() - gAustere_time >= 2000) { \
+                break; \
             } \
         } \
         ClearEntireScreen(); \

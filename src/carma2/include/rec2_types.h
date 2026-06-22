@@ -5564,6 +5564,7 @@ enum {
     kFatalError_InvalidScreenDepthSetting = 0x00,
     kFatalError_AllocateOffScreenBuffer = 0x01,
     kFatalError_AllocateZBuffer = 0x02,
+    kFatalError_CouldNotAllocateRootActor = 0x03,
     kFatalError_CannotAllocateCamera = 0x05,
     kFatalError_CannotAllocateSelf = 0x06,
     kFatalError_FailToOpenGeneralSettings = 0x08,
