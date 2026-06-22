@@ -210,7 +210,11 @@ void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* p
     sscanf(str, "%f", pF3);
 }
 
-// GetAVector3
+// FUNCTION: CARMA2_HW 0x0048fd30
+void C2_HOOK_FASTCALL GetAVector3(FILE* pF, br_vector3* pV) {
+
+    GetThreeFloats(pF, &pV->v[0], &pV->v[1], &pV->v[2]);
+}
 
 // GetPairOfInts
 
