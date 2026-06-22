@@ -68,7 +68,7 @@ extern void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString);
 
 extern void C2_HOOK_FASTCALL StripCRNL(char* line);
 
-// SubsStringJob
+extern void C2_HOOK_CDECL SubsStringJob(char *pFormat, ...);
 
 extern void C2_HOOK_FASTCALL EncodeFile(char* pThe_path);
 

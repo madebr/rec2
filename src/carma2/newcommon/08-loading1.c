@@ -8,6 +8,7 @@
 #include "globvars.h"
 
 #include <ctype.h>
+#include <stdarg.h>
 #include "c2_string.h"
 
 #ifdef REC2_MATCHING
@@ -214,7 +215,22 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
     }
 }
 
-// SubsStringJob
+// FUNCTION: CARMA2_HW 0x004906c0
+void C2_HOOK_CDECL SubsStringJob(char *pFormat, ...) {
+    char *str;
+    char temp[256];
+    va_list ap;
+
+    va_start(ap, pFormat);
+    while ((str = strchr(pFormat, '%')) != NULL) {
+        char *arg = va_arg(ap, char*);
+        StripCRNL(arg);
+        strcpy(temp, str + 1);
+        strcpy(str, arg);
+        strcat(pFormat, temp);
+    }
+    va_end(ap);
+}
 
 static void StripCRNLPrefix(char *line) {
 
