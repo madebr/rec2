@@ -687,11 +687,20 @@ void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, 
     PFForEveryFile(pPath, LoadIfItsAShadeTable);
 }
 
-// LoadAllStuffInDirectory
+// FUNCTION: CARMA2_HW 0x00502cf0
+void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
+
+    LoadAllShadeTablesInDirectory(pStorage, pPath);
+    LoadAllPixelmapsInDirectory(pStorage, pPath);
+    LoadAllImagesInDirectory(pStorage, pPath);
+    LoadAllMaterialsInDirectory(pStorage, pPath, pShading);
+    LoadAllModelsInDirectory(pStorage, pPath);
+}
 
 // FUNCTION: CARMA2_HW 0x00502d60
 void C2_HOOK_FASTCALL DisallowDuplicates(void) {
 
+    // empty
 }
 
 // FUNCTION: CARMA2_HW 0x00502d70

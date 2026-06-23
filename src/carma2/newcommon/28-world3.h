@@ -106,11 +106,11 @@ extern void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath);
 
 extern void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath);
 
-// LoadIfItsAShadeTable
+extern void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath);
 
 extern void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath);
 
-extern void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath);
+extern void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 
 extern void C2_HOOK_FASTCALL DisallowDuplicates(void);
 
