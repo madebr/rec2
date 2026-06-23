@@ -1,12 +1,32 @@
 #include "08-loading1.h"
 
+#include "09-funks.h"
+#include "13-crush1.h"
+#include "16-graphics1.h"
+#include "19-font.h"
+#include "23-piping.h"
+#include "27-powerup.h"
+#include "28-world3.h"
+#include "30-opponent.h"
+#include "38-flicplay.h"
+#include "43-pratcam.h"
+#include "49-physics.h"
+#include "51-smash.h"
+#include "52-errors.h"
+#include "56-aiworld.h"
+#include "60-phil.h"
+#include "61-pedestrn.h"
+#include "67-lighting.h"
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "41-utility.h"
 #include "platform.h"
 #include "globvars.h"
+#include "globvrpb.h"
+#include "rec2_macros.h"
 
 #include <ctype.h>
+#include <stdarg.h>
 #include "c2_string.h"
 
 #ifdef REC2_MATCHING
@@ -22,17 +42,47 @@ int gAllow_open_to_fail = 1;
 // GLOBAL: CARMA2_HW 0x00658614
 int g_source_exists = 1;
 
+// GLOBAL: CARMA2_HW 0x006585f0
+const tU8 gLong_key[16] = {
+    0x6c, 0x1b, 0x99, 0x5f, 0xb9, 0xcd, 0x5f, 0x13,
+    0xcb, 0x04, 0x20, 0x0e, 0x5e, 0x1c, 0xa1, 0x0e,
+};
+
+// GLOBAL: CARMA2_HW 0x00658600
+const tU8 gOther_long_key[16] = {
+    0x67, 0xa8, 0xd6, 0x26, 0xb6, 0xdd, 0x45, 0x1b,
+    0x32, 0x7e, 0x22, 0x13, 0x15, 0xc2, 0x94, 0x37,
+};
+
+// GLOBAL: CARMA2_HW 0x00763540
+int gFunk_groove_flags[30];
+
 // FUNCTION: CARMA2_HW 0x0048f830
 tU32 C2_HOOK_FASTCALL ReadU32(FILE* pF) {
     tU32 raw_long;
 
     PFfread(&raw_long, sizeof(raw_long), 1, pF);
+    // FIXME: byteswap for BE (introduce LittleEndianToNative macro)
     return raw_long;
 }
 
-// ReadF32
+// FUNCTION: CARMA2_HW 0x0048f890
+float C2_HOOK_FASTCALL ReadF32(FILE* pF) {
+    float f;
 
-// ReadS32
+    PFfread(&f, sizeof(f), 1, pF);
+    // FIXME: byteswap for BE
+    return f;
+}
+
+// FUNCTION: CARMA2_HW 0x0048f8b0
+tS32 C2_HOOK_FASTCALL ReadS32(FILE* pF) {
+    tS32 raw_long;
+
+    PFfread(&raw_long, sizeof(raw_long), 1, pF);
+    // FIXME: byteswap for BE
+    return raw_long;
+}
 
 // FUNCTION: CARMA2_HW 0x0048f910
 void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
@@ -40,6 +90,7 @@ void C2_HOOK_FASTCALL WriteU32L(FILE* pF, tU32 pNumber) {
 
     raw_long = pNumber;
     PFfwrite(&raw_long, sizeof(raw_long), 1, pF);
+    // FIXME: byteswap for BE
 }
 
 // FUNCTION: CARMA2_HW 0x0048f930
@@ -48,6 +99,7 @@ void C2_HOOK_FASTCALL WriteU16L(FILE* pF, tU16 pNumber) {
 
     raw_short = pNumber;
     PFfwrite(&raw_short, sizeof(raw_short), 1, pF);
+    // FIXME: byteswap for BE
 }
 
 // FUNCTION: CARMA2_HW 0x0048f960
@@ -58,17 +110,59 @@ void C2_HOOK_FASTCALL WriteU8L(FILE* pF, tU8 pNumber) {
     PFfwrite(&raw_byte, sizeof(raw_byte), 1, pF);
 }
 
-// MemReadU32
+// FUNCTION: CARMA2_HW 0x0048fa00
+tU32 C2_HOOK_FASTCALL MemReadU32(char** pPtr) {
+    tU32 raw_long;
 
-// MemReadU16
+    memcpy(&raw_long, *pPtr, sizeof(raw_long));
+    *pPtr += sizeof(raw_long);
+    // FIXME: byteswap for BE
+    return raw_long;
+}
 
-// MemReadU8
+// FUNCTION: CARMA2_HW 0x0048fa10
+tU16 C2_HOOK_FASTCALL MemReadU16(char** pPtr) {
+    tU16 raw_short;
 
-// MemReadS16
+    memcpy(&raw_short, *pPtr, sizeof(raw_short));
+    *pPtr += sizeof(raw_short);
+    // FIXME: byteswap for BE
+    return raw_short;
+}
 
-// MemReadS8
+// FUNCTION: CARMA2_HW 0x0048fa20
+tU8 C2_HOOK_FASTCALL MemReadU8(char** pPtr) {
+    tU8 raw_byte;
 
-// MemSkipBytes
+    memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
+    *pPtr += sizeof(raw_byte);
+    return raw_byte;
+}
+
+// FUNCTION: CARMA2_HW 0x0048fa40
+tS16 C2_HOOK_FASTCALL MemReadS16(char** pPtr) {
+    tS16 raw_short;
+
+    memcpy(&raw_short, *pPtr, sizeof(raw_short));
+    *pPtr += sizeof(raw_short);
+    // FIXME: byteswap for BE
+    return raw_short;
+}
+
+// FUNCTION: CARMA2_HW 0x0048fa50
+tS8 C2_HOOK_FASTCALL MemReadS8(char** pPtr) {
+    tS8 raw_byte;
+
+    memcpy(&raw_byte, *pPtr, sizeof(raw_byte));
+    *pPtr += sizeof(raw_byte);
+    return raw_byte;
+}
+
+// FUNCTION: CARMA2_HW 0x0048fa60
+void C2_HOOK_FASTCALL MemSkipBytes(char** pPtr, int pBytes_to_skip) {
+
+    *pPtr += pBytes_to_skip;
+}
 
 // FUNCTION: CARMA2_HW 0x0048fa70
 int C2_HOOK_FASTCALL GetALineAndInterpretCommand(FILE* pF, const char** pString_list, int pCount) {
@@ -137,9 +231,23 @@ void C2_HOOK_FASTCALL GetThreeFloats(FILE * pF, float* pF1, float* pF2, float* p
     sscanf(str, "%f", pF3);
 }
 
-// GetAVector3
+// FUNCTION: CARMA2_HW 0x0048fd30
+void C2_HOOK_FASTCALL GetAVector3(FILE* pF, br_vector3* pV) {
 
-// GetPairOfInts
+    GetThreeFloats(pF, &pV->v[0], &pV->v[1], &pV->v[2]);
+}
+
+// FUNCTION: CARMA2_HW 0x0048fdc0
+void C2_HOOK_FASTCALL GetPairOfInts(FILE* pF, int* pF1, int* pF2) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+}
 
 // FUNCTION: CARMA2_HW 0x0048fe30
 void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
@@ -155,7 +263,21 @@ void C2_HOOK_FASTCALL GetThreeInts(FILE* pF, int* pF1, int* pF2, int* pF3) {
     sscanf(str, "%d", pF3);
 }
 
-// GetFourInts
+// FUNCTION: CARMA2_HW 0x00490020
+void C2_HOOK_FASTCALL GetFourInts(FILE* pF, int* pF1, int* pF2, int* pF3, int* pF4) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%d", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF3);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%d", pF4);
+}
 
 // FUNCTION: CARMA2_HW 0x0048fb80
 br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF) {
@@ -163,17 +285,98 @@ br_scalar C2_HOOK_FASTCALL GetAScalar(FILE* pF) {
     return GetAFloat(pF);
 }
 
-// GetPairOfScalars
+// FUNCTION: CARMA2_HW 0x00490130
+void GetPairOfScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2) {
+    float f1;
+    float f2;
 
-// GetThreeScalars
+    GetPairOfFloats(pF, &f1, &f2);
+    *pS1 = f1;
+    *pS2 = f2;
+}
 
-// GetFourScalars
+// FUNCTION: CARMA2_HW 0x004901c0
+void C2_HOOK_FASTCALL GetThreeScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3) {
+    float f1;
+    float f2;
+    float f3;
 
-// GetNScalars
+    GetThreeFloats(pF, &f1, &f2, &f3);
+    *pS1 = f1;
+    *pS2 = f2;
+    *pS3 = f3;
+}
 
-// GetPairOfFloatPercents
+// FUNCTION: CARMA2_HW 0x00490270
+void C2_HOOK_FASTCALL GetFourScalars(FILE* pF, br_scalar* pS1, br_scalar* pS2, br_scalar* pS3, br_scalar* pS4) {
+    char s[256];
+    char* str;
+    float f1;
+    float f2;
+    float f3;
+    float f4;
 
-// GetThreeFloatPercents
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", &f1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f3);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", &f4);
+    *pS1 = f1;
+    *pS2 = f2;
+    *pS3 = f3;
+    *pS4 = f4;
+}
+
+// FUNCTION: CARMA2_HW 0x00490460
+void C2_HOOK_FASTCALL GetNScalars(FILE* pF, int n, br_scalar* pS) {
+    char s[256];
+    char* str;
+    float f;
+    int i;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    for (i = 0; i < n; i++) {
+        sscanf(str, "%f", &f);
+        pS[i] = f;
+        str = strtok(NULL, "\t ,/");
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004904e0
+void C2_HOOK_FASTCALL GetPairOfFloatPercents(FILE* pF, float* pF1, float* pF2) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    *pF1 = *pF1 / 100.0f;
+    *pF2 = *pF2 / 100.0f;
+}
+
+// FUNCTION: CARMA2_HW 0x00490570
+void C2_HOOK_FASTCALL GetThreeFloatPercents(FILE* pF, float* pF1, float* pF2, float* pF3) {
+    char s[256];
+    char* str;
+
+    GetALineAndDontArgue(pF, s);
+    str = strtok(s, "\t ,/");
+    sscanf(str, "%f", pF1);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF2);
+    str = strtok(NULL, "\t ,/");
+    sscanf(str, "%f", pF3);
+    *pF1 = *pF1 / 100.0f;
+    *pF2 = *pF2 / 100.0f;
+    *pF3 = *pF3 / 100.0f;
+}
 
 // FUNCTION: CARMA2_HW 0x00490630
 void C2_HOOK_FASTCALL GetAString(FILE* pF, char* pString) {
@@ -201,7 +404,199 @@ void C2_HOOK_FASTCALL StripCRNL(char* line) {
     }
 }
 
-// SubsStringJob
+// FUNCTION: CARMA2_HW 0x004906c0
+void C2_HOOK_CDECL SubsStringJob(char *pFormat, ...) {
+    char *str;
+    char temp[256];
+    va_list ap;
+
+    va_start(ap, pFormat);
+    while ((str = strchr(pFormat, '%')) != NULL) {
+        char *arg = va_arg(ap, char*);
+        StripCRNL(arg);
+        strcpy(temp, str + 1);
+        strcpy(str, arg);
+        strcat(pFormat, temp);
+    }
+    va_end(ap);
+}
+
+static void StripCRNLPrefix(char *line) {
+
+    while (line[0] == ' ' || line[0] == '\t') {
+        memmove(line, &line[1], strlen(line) - 1);
+    }
+}
+
+static void C2_HOOK_FASTCALL DecodeLine2(char* pS) {
+    int len;
+    int seed;
+    int i;
+    unsigned char c;
+    const tU8* key;
+
+    len = strlen(pS);
+    key = gLong_key;
+    while (len > 0 && (pS[len - 1] == '\r' || pS[len - 1] == '\n')) {
+        len--;
+        pS[len] = '\0';
+    }
+    seed = len % 16;
+    for (i = 0; i < len; i++) {
+        c = pS[i];
+        if (i >= 2) {
+            if (pS[i - 1] == '/' && pS[i - 2] == '/') {
+                key = gOther_long_key;
+            }
+        }
+        if (c == '\t') {
+            c = 0x9f;
+        }
+
+        c -= 0x20;
+        c ^= key[seed];
+        c &= 0x7f;
+        c += 0x20;
+        pS[i] = c;
+
+        seed += 7;
+        seed %= 16;
+
+        if (c == 0x9f) {
+            pS[i] = '\t';
+        }
+    }
+}
+
+static void C2_HOOK_FASTCALL EncodeLine2(char* pS) {
+    int len;
+    int seed;
+    int i;
+    int comment_count;
+    unsigned char c;
+    const tU8* key;
+
+    len = strlen(pS);
+    comment_count = 0;
+    key = gLong_key;
+    while (len > 0 && (pS[len - 1] == '\r' || pS[len - 1] == '\n')) {
+        len--;
+        pS[len] = '\0';
+    }
+
+    seed = len % 16;
+
+    for (i = 0; i < len; i++) {
+        if (comment_count == 2) {
+            key = gOther_long_key;
+        }
+        if (pS[i] == '/') {
+            comment_count += 1;
+        } else {
+            comment_count = 0;
+        }
+        if (pS[i] == '\t') {
+            pS[i] = (char)0x9f;
+        }
+
+        c = pS[i] - 0x20;
+        c ^= key[seed];
+        c &= 0x7f;
+        c += 0x20;
+        pS[i] = c;
+
+        seed += 7;
+        seed %= 16;
+
+        if (c == 0x9f) {
+            pS[i] = '\t';
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00490840
+void C2_HOOK_FASTCALL EncodeFile(char* pThe_path) {
+    FILE* f;
+    FILE* d;
+    char line[257];
+    char new_file[256];
+    char* result;
+    int ch;
+    int decode;
+    int len;
+    int count;
+
+    len = strlen(pThe_path);
+    strcpy(new_file, pThe_path);
+    memcpy(&new_file[len - 3], "ENC", 4);
+
+    f = PFfopen(pThe_path, "rt");
+    if (f == NULL) {
+        FatalError(kFatalError_CantOpen_S, pThe_path);
+    }
+
+    ch = PFfgetc(f);
+    PFungetc(ch, f);
+
+    if (gDecode_thing == '@' && ch == '@') {
+        PFfclose(f);
+        return;
+    }
+
+    d = PFfopen(new_file, "wb");
+    if (d == NULL) {
+        FatalError(kFatalError_CantOpen_S, new_file);
+    }
+
+    result = &line[1];
+
+    for (;;) {
+        if (PFfgets(result, 256, f) != NULL) {
+            if (result[0] == '@') {
+                decode = 1;
+            } else {
+                decode = 0;
+                StripCRNLPrefix(result);
+            }
+
+            if (decode) {
+                DecodeLine2(&result[decode]);
+            } else {
+                EncodeLine2(&result[decode]);
+            }
+
+            line[0] = '@';
+            fputs(&line[decode * 2], d);
+            count = -1;
+            while (1) {
+                count++;
+                ch = PFfgetc(f);
+                if (ch != '\r' && ch != '\n') {
+                    break;
+                }
+            }
+            if (count > 2) {
+                fputc('\r', d);
+                fputc('\n', d);
+            }
+            fputc('\r', d);
+            fputc('\n', d);
+
+            if (ch != EOF) {
+                PFungetc(ch, f);
+            }
+        }
+        if (PFfeof(f)) {
+            break;
+        }
+    }
+    PFfclose(f);
+    PFfclose(d);
+
+    PDFileUnlock(pThe_path);
+    remove(pThe_path);
+    rename(new_file, pThe_path);
+}
 
 // FUNCTION: CARMA2_HW 0x00490f30
 char * C2_HOOK_FASTCALL GetALineWithNoPossibleService(FILE* pF, char* pS) {
@@ -414,17 +809,185 @@ void C2_HOOK_FASTCALL UnlockInterfaceStuff(void) {
 
 }
 
-// DisposePhysicsObject
+// FUNCTION: CARMA2_HW 0x0044bb90
+void C2_HOOK_FASTCALL DisposePhysicsObject(tPhysics_object* pObject) {
 
-// DisposeCarActModDataCB
+    if (pObject != NULL) {
+        PHILRemoveObject(pObject);
+        if (pObject->shape != (tPhysics_shape *)0x0) {
+            FreeShapeList(pObject->shape);
+        }
+        if (pObject->physics_joint1 != (tPhysics_joint *)0x0) {
+            FreePhysicsJoint(pObject->physics_joint1);
+        }
+        if (pObject->physics_joint2 != (tPhysics_joint *)0x0) {
+            FreePhysicsJoint(pObject->physics_joint2);
+        }
+    }
+    BrMemFree(pObject);
+}
 
-// DisposeCar
+// STUB: CARMA2_HW 0x0044be80
+intptr_t C2_HOOK_CDECL DisposeCarActModDataCB(br_actor* pActor, void* pContext) {
+    NOT_IMPLEMENTED();
+}
 
-// DisposeRaceInfo
+// FUNCTION: CARMA2_HW 0x0044bbe0
+void C2_HOOK_FASTCALL DisposeCar(tCar_spec* pCar_spec, int pOwner) {
+    int i;
+    tCar_crush_spec* car_crush_spec;
 
-// DisposeOpponentsCars
+    if (pCar_spec != NULL && pCar_spec->driver_name[0] != '\0') {
+        gFunk_groove_flags[pCar_spec->fg_index] = 0;
+        pCar_spec->driver_name[0] = '\0';
+        if (pCar_spec->driver == eDriver_local_human) {
+            for (i = 0; i < (int)REC2_ASIZE(pCar_spec->cockpit_images); i++) {
+                if (pCar_spec->cockpit_images[i] != NULL) {
+                    BrMemFree(pCar_spec->cockpit_images[i]);
+                }
+            }
+            if (pCar_spec->speedo_image[0] != NULL) {
+                BrPixelmapFree(pCar_spec->speedo_image[0]);
+            }
+            if (pCar_spec->speedo_image[1] != NULL) {
+                BrPixelmapFree(pCar_spec->speedo_image[1]);
+            }
+            if (pCar_spec->tacho_image[0] != NULL) {
+                BrPixelmapFree(pCar_spec->tacho_image[0]);
+            }
+            if (pCar_spec->tacho_image[1] != NULL) {
+                BrPixelmapFree(pCar_spec->tacho_image[1]);
+            }
+            if (pCar_spec->gears_image != NULL) {
+                BrPixelmapFree(pCar_spec->gears_image);
+            }
+            for (i = 0; i < pCar_spec->number_of_hands_images; i++) {
+            if (pCar_spec->lhands_images[i] != NULL) {
+                BrPixelmapFree(pCar_spec->lhands_images[i]);
+            }
+            if (pCar_spec->rhands_images[i] != NULL) {
+                BrPixelmapFree(pCar_spec->rhands_images[i]);
+            }
+            }
+            if (pCar_spec->prat_cam_left != NULL) {
+                BrPixelmapFree(pCar_spec->prat_cam_left);
+            }
+            if (pCar_spec->prat_cam_top != NULL) {
+                BrPixelmapFree(pCar_spec->prat_cam_top);
+            }
+            if (pCar_spec->prat_cam_right != NULL) {
+                BrPixelmapFree(pCar_spec->prat_cam_right);
+            }
+            if (pCar_spec->prat_cam_bottom != NULL) {
+                BrPixelmapFree(pCar_spec->prat_cam_bottom);
+            }
+            for (i = 0; i < (int)REC2_ASIZE(pCar_spec->damage_units); i++) {
+                if (pCar_spec->damage_units[i].images != NULL) {
+                    BrPixelmapFree(pCar_spec->damage_units[i].images);
+                }
+            }
+            if (pCar_spec->damage_background != NULL) {
+                BrPixelmapFree(pCar_spec->damage_background);
+            }
+            gProgram_state.car_name[0] = '\0';
+        }
+        for (i = 0; i < (int)REC2_ASIZE(pCar_spec->damage_programs); i++) {
+            BrMemFree(pCar_spec->damage_programs[i].clauses);
+        }
+        car_crush_spec = pCar_spec->car_crush_spec;
+        if (car_crush_spec != NULL) {
+            TotallyRepairACar(pCar_spec);
+            DisposeMasterCrushData(car_crush_spec, pCar_spec);
+            pCar_spec->car_crush_spec = NULL;
+        }
+        DRActorEnumRecurse(pCar_spec->car_model_actor, DisposeCarActModDataCB, &pCar_spec->index);
+        BrActorFree(pCar_spec->car_actor);
+        pCar_spec->car_actor = NULL;
+        if (pCar_spec->car_master_actor->parent != NULL) {
+            BrActorRemove(pCar_spec->car_master_actor);
+        }
+        BrActorFree(pCar_spec->car_master_actor);
+        pCar_spec->car_master_actor = NULL;
+        pCar_spec->car_model_actor = NULL;
+        DisposeFunkotronics(pOwner);
+        DisposeGroovidelics(pOwner);
+        DisposePhysicsObject(pCar_spec->collision_info);
+        if (gNet_mode != eNet_mode_none) {
+            ClearMatertrialSetFromStorageSpace(&gNet_cars_storage_space,
+                pCar_spec->old_material_count, pCar_spec->new_material_count);
+        }
+        if (gProgram_state.racing && gNet_mode == eNet_mode_none) {
+            ForceRebuildActiveCarList();
+        }
+    }
+}
 
-// DisposeRace
+// FUNCTION: CARMA2_HW 0x0044bf70
+void C2_HOOK_FASTCALL DisposeRaceInfo(tRace_info* pRace_info) {
+
+    // empty
+}
+
+// FUNCTION: CARMA2_HW 0x0044bfa0
+void C2_HOOK_FASTCALL DisposeOpponentsCars(tRace_info* pRace_info) {
+    int i;
+
+    gCurrent_APO_potential_levels[0] = gProgram_state.current_car.power_up_slots[0];
+    gCurrent_APO_potential_levels[1] = gProgram_state.current_car.power_up_slots[1];
+    gCurrent_APO_potential_levels[2] = gProgram_state.current_car.power_up_slots[2];
+    gCurrent_APO_levels[0] = gProgram_state.current_car.power_up_levels[0];
+    gCurrent_APO_levels[1] = gProgram_state.current_car.power_up_levels[1];
+    gCurrent_APO_levels[2] = gProgram_state.current_car.power_up_levels[2];
+    DisposeCar(&gProgram_state.current_car, gProgram_state.current_car.index);
+    for (i = 0; i < pRace_info->number_of_racers; i++) {
+        PossibleService();
+        if (pRace_info->opponent_list[i].index >= 0) {
+            if (pRace_info->opponent_list[i].car_spec != NULL) {
+                DisposeCar(pRace_info->opponent_list[i].car_spec, pRace_info->opponent_list[i].index);
+                BrMemFree(pRace_info->opponent_list[i].car_spec);
+            }
+        }
+    }
+    ClearOutStorageSpace(&gOur_car_storage_space);
+    ClearOutStorageSpace(&gTheir_cars_storage_space);
+    gCurrent_race.number_of_racers = 0;
+    gProgram_state.AI_vehicles.number_of_opponents = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0044c070
+void C2_HOOK_FASTCALL DisposeRace(void) {
+
+    RemoveTail();
+    PossibleService();
+    CleanUpSmashStuff();
+    DisposeActionReplay();
+    PossibleService();
+    CloseDownPowerUps();
+    PossibleService();
+    if (!TranslationMode()) {
+        DisposeFont(1);
+        DisposeFont(2);
+    }
+    PossibleService();
+    DisposeFont(6);
+    DisposeFont(7);
+    DisposeFont(8);
+    DisposeFont(3);
+    DisposeFont(4);
+    DisposeFont(5);
+    PossibleService();
+    DisposeSavedShadeTables();
+    PossibleService();
+    DisposeSoundSources();
+    PossibleService();
+    KillLightingEffects();
+    DisposeAIWorldRaceStuff();
+    PossibleService();
+    DisposePedStuff();
+    PossibleService();
+    DisposePratcam();
+    PossibleService();
+}
 
 // DisposeGameIfNecessary
 

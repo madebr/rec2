@@ -128,7 +128,10 @@
 
 // InitialiseActionReplay
 
-// DisposeActionReplay
+// STUB: CARMA2_HW 0x004c6c60
+void C2_HOOK_FASTCALL DisposeActionReplay(void) {
+    NOT_IMPLEMENTED();
+}
 
 // CheckIncident
 

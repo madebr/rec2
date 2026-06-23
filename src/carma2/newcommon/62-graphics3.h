@@ -70,13 +70,13 @@ extern int gMini_map_visible;
 
 // MapStuffAfterRender
 
-// ReadMoodMessages
+// static void C2_HOOK_FASTCALL ReadMoodMessages(void);
 
 extern void C2_HOOK_FASTCALL InitMap(void);
 
 extern void C2_HOOK_FASTCALL ConvertCarIcons(br_pixelmap* pMap);
 
-// MapChanged
+// static void C2_HOOK_FASTCALL MapChanged(void);
 
 // CheckMapMoveKeys
 

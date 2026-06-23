@@ -4377,13 +4377,13 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
     memset(gNon_car_spec_indices, 0, sizeof(gNon_car_spec_indices));
     C2_HOOK_BUG_ON(sizeof(gNon_car_spec_indices) != 100);
     for (i = 0; i < 40; i++) { /* FIXME: magic */
-        tCollision_info *collision_info;
+        tPhysics_object *collision_info;
         tNon_car_spec* non_car;
 
         non_car = &gProgram_state.non_cars[i];
         non_car->driver = eDriver_non_car_unused_slot;
-        collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
-        C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
+        collision_info = BrMemAllocate(sizeof(tPhysics_object), kMem_collision_object);
+        C2_HOOK_BUG_ON(sizeof(tPhysics_object) != 1240);
         non_car->collision_info = collision_info;
         collision_info->owner = non_car;
         collision_info->flags_0x238 = 1;
@@ -4391,15 +4391,15 @@ void C2_HOOK_FASTCALL LoadTrack(const char* pFile_name, tTrack_spec* pTrack_spec
         collision_info->field_0x1a4 = 0;
     }
     for (i = 0; i < count_noncar_objects + gCount_smashable_noncars; i++) {
-        tCollision_info* collision_info;
+        tPhysics_object* collision_info;
         tNon_car_spec* non_car;
         char non_cars_path[256];
         FILE* g;
 
         PossibleService();
         non_car = &gProgram_state.non_cars[40 + i]; /* FIXME: magic number */
-        collision_info = BrMemAllocate(sizeof(tCollision_info), kMem_collision_object);
-        C2_HOOK_BUG_ON(sizeof(tCollision_info) != 1240);
+        collision_info = BrMemAllocate(sizeof(tPhysics_object), kMem_collision_object);
+        C2_HOOK_BUG_ON(sizeof(tPhysics_object) != 1240);
         non_car->collision_info = collision_info;
         collision_info->owner = non_car;
         collision_info->flags_0x238 = 1;

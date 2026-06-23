@@ -25,7 +25,10 @@ void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
 
 // AddNewFunkotronic
 
-// DisposeFunkotronics
+// STUB: CARMA2_HW 0x00474950
+void C2_HOOK_FASTCALL DisposeFunkotronics(int pOwner) {
+    NOT_IMPLEMENTED();
+}
 
 // CalcProximities
 
@@ -37,7 +40,10 @@ void C2_HOOK_STDCALL SetSightDistance(br_scalar pYon) {
 
 // AddFunkotronics
 
-// DisposeGroovidelics
+// STUB: CARMA2_HW 0x00476430
+void C2_HOOK_FASTCALL DisposeGroovidelics(int pOwner) {
+    NOT_IMPLEMENTED();
+}
 
 // AddNewGroovidelic
 

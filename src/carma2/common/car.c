@@ -73,7 +73,7 @@ int gNum_active_non_cars;
 br_scalar gMin_world_y;
 
 // GLOBAL: CARMA2_HW 0x006793e4
-tCollision_info* gUnknown_car_collision_info;
+tPhysics_object* gUnknown_car_collision_info;
 
 // GLOBAL: CARMA2_HW 0x00679268
 br_vector3 gAverage_grid_position;
@@ -206,7 +206,7 @@ void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c) {
 }
 
 // FUNCTION: CARMA2_HW 0x004122b0
-int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br_vector3* old_camera_pos, int manual_move, tCollision_info *collision_info) {
+int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br_vector3* old_camera_pos, int manual_move, tPhysics_object *collision_info) {
     int i;
     br_vector3 cam_hither_pos;
     br_vector3 car_coll_pos;
@@ -577,7 +577,7 @@ int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime) {
 }
 
 // FUNCTION: CARMA2_HW 0x004ff530
-void C2_HOOK_FASTCALL ResetCarSpecialVolume(tCollision_info* pCollision_info) {
+void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pCollision_info) {
     br_vector3 cast_v;
     br_vector3 norm;
     br_scalar t;
@@ -742,8 +742,8 @@ void C2_HOOK_FASTCALL ControlOurCar(tU32 pTime_difference) {
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, oldd, 0x1264);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, susp_height, 0x1218);
         C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCar_spec, frame_collision_flag, 0x64);
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, disable_move_rotate, 0xec);
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, omega, 0x74);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, disable_move_rotate, 0xec);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, omega, 0x74);
 
         if (car->number_of_wheels_on_ground < 3
                 && BrVector3LengthSquared(&car->collision_info->v) < .04f
@@ -943,9 +943,9 @@ void C2_HOOK_FASTCALL InitialiseCar2(tCar_spec* pCar, int pClear_disabled_flag) 
     br_matrix34 safe_position;
     tNet_game_player_info* net_player;
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x261, 0x261);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, message_time, 0x268);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x49c, 0x49c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x261, 0x261);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, message_time, 0x268);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x49c, 0x49c);
 
     PossibleService();
     if (pCar->disabled && pClear_disabled_flag) {
@@ -1623,7 +1623,7 @@ int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1, undefined4 p
 }
 
 // FUNCTION: CARMA2_HW 0x00414910
-void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefined4 *arg2) {
+void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefined4 *arg2) {
 
     NOT_IMPLEMENTED();
 }
@@ -2431,7 +2431,7 @@ void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime) {
 }
 
 // FUNCTION: CARMA2_HW 0x004207a0
-int C2_HOOK_FASTCALL PipeNonCarObject(tCollision_info* pCollision_info, void* pUser_data) {
+int C2_HOOK_FASTCALL PipeNonCarObject(tPhysics_object* pCollision_info, void* pUser_data) {
 
     NOT_IMPLEMENTED();
     return 0;
@@ -2510,7 +2510,7 @@ void C2_HOOK_FASTCALL CheckForDeAttachmentOfNonCars(tU32 pTime) {
                         }
                     }
                     if (drop) {
-                        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x17c, 0x17c);
+                        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x17c, 0x17c);
 
                         if (non_car->flags & 0x10000) {
                             if (Vector3DistanceSquared(&non_car->collision_info->field_0x17c,
@@ -2614,20 +2614,20 @@ void C2_HOOK_FASTCALL APTCPostCollision(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00416300
-void C2_HOOK_FASTCALL APTCChangedObjects(tCollision_info* pArg1, undefined4 pArg2) {
+void C2_HOOK_FASTCALL APTCChangedObjects(tPhysics_object* pArg1, undefined4 pArg2) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x00416270
-int C2_HOOK_FASTCALL APTCActiveHalted(tCollision_info* pArg1) {
+int C2_HOOK_FASTCALL APTCActiveHalted(tPhysics_object* pArg1) {
 
     NOT_IMPLEMENTED();
     return 0;
 }
 
 // FUNCTION: CARMA2_HW 0x004162b0
-int C2_HOOK_FASTCALL APTCPassiveActivated(tCollision_info* pArg1) {
+int C2_HOOK_FASTCALL APTCPassiveActivated(tPhysics_object* pArg1) {
 
     NOT_IMPLEMENTED();
     return 0;

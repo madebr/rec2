@@ -15,7 +15,7 @@ extern int gCar_simplification_level;
 extern tNon_car_spec* gActive_non_car_list[99];
 extern int gNum_active_non_cars;
 extern br_scalar gMin_world_y;
-extern tCollision_info* gUnknown_car_collision_info;
+extern tPhysics_object* gUnknown_car_collision_info;
 extern br_vector3 gAverage_grid_position;
 
 extern int gTesting_car_for_sensible_place;
@@ -40,13 +40,13 @@ extern const float gCar_simplification_factor[2][5];
 
 void C2_HOOK_FASTCALL SetUpPanningCamera(tCar_spec* c);
 
-int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br_vector3* old_camera_pos, int manual_move, tCollision_info *collision_info);
+int C2_HOOK_FASTCALL CollideCamera2(br_vector3* car_pos, br_vector3* cam_pos, br_vector3* old_camera_pos, int manual_move, tPhysics_object *collision_info);
 
 void C2_HOOK_FASTCALL PanningExternalCamera(tCar_spec* c, tU32 pTime);
 
 int C2_HOOK_FASTCALL IncidentCam(tCar_spec* c, tU32 pTime);
 
-void C2_HOOK_FASTCALL ResetCarSpecialVolume(tCollision_info* pCollision_info);
+void C2_HOOK_FASTCALL ResetCarSpecialVolume(tPhysics_object* pCollision_info);
 
 void C2_HOOK_FAKE_THISCALL FlyCar(tCar_spec* c, undefined4 pArg2, br_scalar dt);
 
@@ -100,7 +100,7 @@ int C2_HOOK_FASTCALL ProcessForcesCallback(void* arg1, float* arg2, int arg3);
 
 int C2_HOOK_FASTCALL ProcessJointForcesCallback(undefined4 param_1,undefined4 param_2,undefined4 param_3);
 
-void C2_HOOK_FASTCALL NewFacesListCallback(tCollision_info* pCollision, undefined4 *arg2);
+void C2_HOOK_FASTCALL NewFacesListCallback(tPhysics_object* pCollision, undefined4 *arg2);
 
 tNon_car_spec* C2_HOOK_FASTCALL DoPullActorFromWorld(br_actor* actor);
 
@@ -176,7 +176,7 @@ void C2_HOOK_FASTCALL CalcGraphicalWheelStuff(tCar_spec* pCar);
 
 void C2_HOOK_FASTCALL FinishCars(tU32 pLast_frame_time, tU32 pTime);
 
-int C2_HOOK_FASTCALL PipeNonCarObject(tCollision_info* pCollision_info, void* pUser_data);
+int C2_HOOK_FASTCALL PipeNonCarObject(tPhysics_object* pCollision_info, void* pUser_data);
 
 void C2_HOOK_FASTCALL PipeNonCars(void);
 
@@ -190,11 +190,11 @@ void C2_HOOK_FASTCALL APTCPreCollision(void);
 
 void C2_HOOK_FASTCALL APTCPostCollision(void);
 
-void C2_HOOK_FASTCALL APTCChangedObjects(tCollision_info* pArg1, undefined4 pArg2);
+void C2_HOOK_FASTCALL APTCChangedObjects(tPhysics_object* pArg1, undefined4 pArg2);
 
-int C2_HOOK_FASTCALL APTCActiveHalted(tCollision_info* pArg1);
+int C2_HOOK_FASTCALL APTCActiveHalted(tPhysics_object* pArg1);
 
-int C2_HOOK_FASTCALL APTCPassiveActivated(tCollision_info* pArg1);
+int C2_HOOK_FASTCALL APTCPassiveActivated(tPhysics_object* pArg1);
 
 float C2_HOOK_STDCALL frac(float pN);
 

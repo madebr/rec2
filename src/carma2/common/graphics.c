@@ -367,10 +367,10 @@ float gHeadup_map_w_float;
 float gHeadup_map_h_float;
 
 // GLOBAL: CARMA2_HW 0x0074ab88
-tU32 gUINT_0074ab88;
+tU32 gINT_0074ab88;
 
 // GLOBAL: CARMA2_HW 0x0074ab8c
-tU32 gUINT_0074ab8c;
+tU32 gINT_0074ab8c;
 
 // GLOBAL: CARMA2_HW 0x0074ab94
 int gINT_0074ab94;
@@ -1139,15 +1139,15 @@ void C2_HOOK_FASTCALL InitMap(void) {
         gHeadup_map_h = 64;
         gHeadup_map_h_float = 64.f;
     }
-    gUINT_0074ab8c = (int)(3.f + 0.3f * (float)gHeadup_map_w) & ~3;
-    gUINT_0074ab88 = (int)(3.f + 0.3f * (float)gHeadup_map_h) & ~3;
-    if (gUINT_0074ab8c > gUINT_0074ab88) {
-        gUINT_0074ab88 = gUINT_0074ab8c;
+    gINT_0074ab8c = (int)(3.f + 0.3f * (float)gHeadup_map_w) & ~3;
+    gINT_0074ab88 = (int)(3.f + 0.3f * (float)gHeadup_map_h) & ~3;
+    if (gINT_0074ab8c > gINT_0074ab88) {
+        gINT_0074ab88 = gINT_0074ab8c;
     } else {
-        gUINT_0074ab8c = gUINT_0074ab88;
+        gINT_0074ab8c = gINT_0074ab88;
     }
-    gINT_0074ab94 = gHeadup_map_w + 2 * gUINT_0074ab88;
-    gINT_0074abec = gHeadup_map_h + 2 * gUINT_0074ab88;
+    gINT_0074ab94 = gHeadup_map_w + 2 * gINT_0074ab88;
+    gINT_0074abec = gHeadup_map_h + 2 * gINT_0074ab88;
     gHeadup_map_half_width = gHeadup_map_w / 2;
     gHeadup_map_half_height = gHeadup_map_h / 2;
     if (gMap_overlay == NULL) {
@@ -2737,8 +2737,8 @@ void C2_HOOK_FASTCALL DrawMapBlip(br_pixelmap* pScreen, tCar_spec* pCar, tU32 pT
                     || (gCurrent_net_game->type == eNet_game_type_foxy && pCar == gNet_players[gIt_or_fox].car)
                     || (gCurrent_net_game->type != eNet_game_type_6 && gCurrent_net_game->type != eNet_game_type_foxy))) {
 
-        local_pos[0] = (int)((float)(gHeadup_map_half_width + gINT_0068d890 + gUINT_0074ab8c) - map_pos.v[0]);
-        local_pos[1] = (int)((float)(gHeadup_map_half_height + gINT_0068c858 + gUINT_0074ab88) - map_pos.v[1]);
+        local_pos[0] = (int)((float)(gHeadup_map_half_width + gINT_0068d890 + gINT_0074ab8c) - map_pos.v[0]);
+        local_pos[1] = (int)((float)(gHeadup_map_half_height + gINT_0068c858 + gINT_0074ab88) - map_pos.v[1]);
         tv1 = 0.f -map_pos.v[2];
         tv2 = (float)local_pos[1] * (float)local_pos[1] + (float)local_pos[0] * (float)local_pos[0] + tv1 * tv1;
         if (((gTarget_lock_car_2 == NULL

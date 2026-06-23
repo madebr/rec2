@@ -2,6 +2,7 @@
 #define GUARD_60_PHIL_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // ScalarToFraction
 
@@ -45,7 +46,7 @@ extern void C2_HOOK_FASTCALL PHILDisable(void);
 
 // PHILAddObject
 
-// PHILRemoveObject
+extern int C2_HOOK_FASTCALL PHILRemoveObject(tPhysics_object* pObject);
 
 // PHILGetFirstObject
 

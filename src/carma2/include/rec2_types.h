@@ -29,7 +29,7 @@ typedef tU8 tNet_message_type;
 // FIXME: incomplete type
 typedef struct tCar_spec tCar_spec;
 typedef struct tCar_crush_spec tCar_crush_spec;
-typedef struct tCollision_info tCollision_info;
+typedef struct tPhysics_object tPhysics_object;
 typedef struct tFace_ref tFace_ref;
 typedef struct tNon_car_spec tNon_car_spec;
 typedef struct tPath_section tPath_section;
@@ -39,7 +39,7 @@ typedef struct tMin_message tMin_message;
 typedef struct tMid_message tMid_message;
 typedef struct tMax_message tMax_message;
 typedef struct tSmashable_level tSmashable_level;
-typedef union tCollision_shape tCollision_shape;
+typedef union tPhysics_shape tPhysics_shape;
 typedef struct tPedestrian tPedestrian;
 typedef struct tPedestrian_distances tPedestrian_distances;
 typedef struct tRace_pedestrian tRace_pedestrian;
@@ -75,7 +75,7 @@ typedef void C2_HOOK_FASTCALL tPeriodic_proc(tPowerup*, tU32);
 typedef void C2_HOOK_FASTCALL tForEachPedestrian_cbfn(tPedestrian*, tCar_spec*, float, tU32, tPedestrian_distances*);
 typedef void C2_HOOK_FASTCALL material_cbfn(br_material*);
 typedef int C2_HOOK_FASTCALL tMaterialMaybeUpdate_cbfn(br_material*);
-typedef int C2_HOOK_FASTCALL tEnumCollision_cbfn(tCollision_info* pCollision_info, void* pUser_data);
+typedef int C2_HOOK_FASTCALL tEnumCollision_cbfn(tPhysics_object* pCollision_info, void* pUser_data);
 typedef void C2_HOOK_FASTCALL tAddToJoinListProc(tNet_game_details*);
 typedef int C2_HOOK_FASTCALL tARScanBuffer_callback(tPipe_chunk*, int, tU32);
 typedef int C2_HOOK_FASTCALL tARScanBuffer_time_check(tU32);
@@ -91,7 +91,7 @@ typedef intptr_t C2_HOOK_FASTCALL tDRActorEnumRecurseWithSnart_cbfn(br_actor*, b
 typedef int C2_HOOK_FASTCALL tDrone_form_within_rendering_distance_cbfn(const br_vector3 *pPos);
 typedef int C2_HOOK_FASTCALL tDrone_form_within_processing_distance_cbfn(const br_vector3 *pPos);
 typedef void C2_HOOK_FASTCALL tFunk_index_cbfn(int pFunk_index);
-typedef void C2_HOOK_FASTCALL tWorld_callback_active_passive_cbfn(tCollision_info*);
+typedef void C2_HOOK_FASTCALL tWorld_callback_active_passive_cbfn(tPhysics_object*);
 typedef intptr_t C2_HOOK_FASTCALL tNearbyActors_cbfn(br_actor*, void*);
 typedef void C2_HOOK_FASTCALL tDoSomethingsToCheckpoints_cbfn(br_pixelmap* pMap, int pCheckPoint, tU32 pTime, int pEnable);
 typedef void C2_HOOK_FASTCALL tTurn_on_AR_callback(void);
@@ -196,7 +196,7 @@ typedef struct {
 typedef struct {
     int field_0x0;
     tCar_spec* car;
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     br_actor* car_actor;
 } tSmoke_column_core;
 
@@ -794,7 +794,7 @@ typedef struct {
 typedef struct {
     int flags;
     tU32 next_think_time;
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     float field3_0xc;
     float initial_y_speed_factor;
     float initial_z_omega_factor;
@@ -1914,7 +1914,7 @@ typedef struct {
     undefined field_0x84[0x88 - 0x84];
     undefined4 field_0x88;
     float field_0x8c;
-    tCollision_info* field_0x90;
+    tPhysics_object* field_0x90;
     undefined field_0x94[0xc0 - 0x94];
 } tDelayed_smash;
 
@@ -2381,7 +2381,7 @@ typedef struct {
 typedef struct tCar_spec {
     int index;
     int disabled;
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     tDriver driver;
     br_actor* car_master_actor;
     undefined field_0x14[8];
@@ -3521,13 +3521,13 @@ typedef struct {
 
 typedef struct {
     tPed_form_collision_detection_type type;
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
 } tPed_form_simple_phys;
 
 typedef struct {
     tU8 field_0x0;
     undefined field_0x1[3];
-    tCollision_info** collision_infos;
+    tPhysics_object** collision_infos;
 } tPed_form_boned_phys;
 
 typedef struct {
@@ -3650,7 +3650,7 @@ typedef struct tCollision_shape_common {
     tCollision_shape_type type;
     br_bounds3 bb;
     br_bounds3 field_0x1c;
-    tCollision_shape* next;
+    tPhysics_shape* next;
 } tCollision_shape_common;
 
 typedef struct {
@@ -3699,13 +3699,13 @@ typedef struct {
     tCollision_shape_wireframe_data wireframe;
 } tCollision_shape_wireframe;
 
-typedef union tCollision_shape {
+typedef union tPhysics_shape {
     tCollision_shape_common common;
     tCollision_shape_box box;
     tCollision_shape_sphere sphere;
     tCollision_shape_wireframe wireframe;
     tCollision_shape_polyhedron polyhedron;
-} tCollision_shape;
+} tPhysics_shape;
 
 typedef enum {
     kTextureLevelCollisionChange_Solid = 0,
@@ -3882,7 +3882,7 @@ typedef struct tCar_crush_vertex_data {
 typedef struct tCar_bit_spec {
     br_actor* field_0x0;
     br_actor* field_0x4;
-    tCollision_info* field_0x8;
+    tPhysics_object* field_0x8;
     undefined4* field_0xc;
     tU32 field_0x10;
 } tCar_bit_spec;
@@ -3891,7 +3891,7 @@ typedef struct tCar_crush_spec {
     int count_shapes;
     tCar_crush_shape_info* field_0x4;
     int expand_bounding_box;
-    tCollision_shape *field_0xc;
+    tPhysics_shape *field_0xc;
     br_vector3 field_0x10;
     int version_le_100;
     tCar_crush_network_shapes* network_stuff;
@@ -3956,7 +3956,7 @@ typedef struct tCrush_net_semi_detach_bit_list_item {
 
 typedef struct tCrush_net_full_detach_bit_list_item {
     tCar_spec* car;
-    tCollision_info* object;
+    tPhysics_object* object;
     undefined field_0x8[0xc - 0x8];
 } tCrush_net_full_detach_bit_list_item;
 
@@ -4174,12 +4174,12 @@ typedef struct tPhysics_joint {
     tPhysics_joint_limit limits[];
 } tPhysics_joint;
 
-typedef struct tCollision_info {
+typedef struct tPhysics_object {
     br_actor* actor;
     float M;
     br_vector3 I;
     br_vector3 cmpos;
-    tCollision_shape* shape;
+    tPhysics_shape* shape;
     br_bounds3 bb1;
     br_bounds3 bb2;
     br_vector3 field_0x54;
@@ -4225,11 +4225,11 @@ typedef struct tCollision_info {
     br_matrix34 field_0x1e8;
     undefined4 field_0x218;
     float field_0x21c;
-    tCollision_info* next;
-    tCollision_info* child;
-    tCollision_info* parent;
-    tCollision_info* prev;
-    tCollision_info* field_0x230;
+    tPhysics_object* next;
+    tPhysics_object* child;
+    tPhysics_object* parent;
+    tPhysics_object* prev;
+    tPhysics_object* field_0x230;
     void* field_0x234;
     tU8 flags_0x238;
     tU8 field_0x239;
@@ -4250,10 +4250,10 @@ typedef struct tCollision_info {
     undefined field_0x4a0[52];
     tU8 drivable_on;
     undefined field_0x4d5[3];
-} tCollision_info;
+} tPhysics_object;
 
 typedef struct {
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     undefined2 field_0x4;
     undefined field_0x6[0x8 - 0x6];
     undefined4 field_0x8;
@@ -4263,7 +4263,7 @@ typedef struct {
 } tPHIL_queued_header;
 
 typedef struct {
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     undefined2 field_0x4;
     undefined field_0x6[0x2];
     undefined4 field_0x8;
@@ -4289,7 +4289,7 @@ typedef union {
 } tPHIL_queued_objects;
 
 typedef struct {
-    tCollision_info* object;
+    tPhysics_object* object;
     undefined2 field_0x4;
     undefined field_0x6[0x2];
     undefined4 field_0x8;
@@ -4305,7 +4305,7 @@ typedef struct {
 
 typedef struct {
     undefined field_0x0[0x8];
-    tCollision_info* collision_object;
+    tPhysics_object* collision_object;
     undefined field_0xc[0xd0];
     float field_0xdc;
     float field_0xe0;
@@ -4635,7 +4635,7 @@ typedef struct {
 typedef struct tNon_car_spec {
     int index;
     undefined field_0x4[4];
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     tDriver driver;
     br_actor* actor;
     undefined field_0x14[4];
@@ -4993,7 +4993,7 @@ typedef struct {
     union {
         br_actor* actor;
         tPedestrian* ped;
-        tCollision_info* phil_object;
+        tPhysics_object* phil_object;
     } object;
     undefined4 type;
     float water_density;
@@ -5087,7 +5087,7 @@ typedef struct tDrone_spec {
     br_actor* actor;
     br_actor* model_actor;
     int field_0xf4;
-    tCollision_info collision_info;
+    tPhysics_object collision_info;
     tFunk_grooves* funk_grooves;
     undefined4 field_0x5d4;
 } tDrone_spec;
@@ -5162,21 +5162,21 @@ typedef struct {
 typedef struct tWorld_callbacks {
     int (C2_HOOK_FASTCALL * process_forces)(void*, float*, int arg3);
     int (C2_HOOK_FASTCALL * process_joint_forces)(undefined4, undefined4, undefined4);
-    void (C2_HOOK_FASTCALL * new_face_list)(tCollision_info*, undefined4 *);
+    void (C2_HOOK_FASTCALL * new_face_list)(tPhysics_object*, undefined4 *);
     int (C2_HOOK_FASTCALL * find_faces_in_box)(tBounds*, tFace_ref*, int, struct tWorld_callbacks*);
     tNon_car_spec* (C2_HOOK_FASTCALL * pull_actor_from_world)(br_actor*);
     void (C2_HOOK_FASTCALL * stop_groovidelic)(br_actor*);
     float (C2_HOOK_FASTCALL * get_friction_from_face)(void*);
-    void (C2_HOOK_FASTCALL * activate_passive)(tCollision_info*);
+    void (C2_HOOK_FASTCALL * activate_passive)(tPhysics_object*);
 } tWorld_callbacks;
 
 typedef struct {
     tWorld_callbacks* world_callbacks;
     void (C2_HOOK_FASTCALL *pre_collision)(void);
     void (C2_HOOK_FASTCALL *post_collision)(void);
-    void (C2_HOOK_FASTCALL *changed_objects)(tCollision_info*, undefined4);
-    int (C2_HOOK_FASTCALL *active_halted)(tCollision_info*);
-    int (C2_HOOK_FASTCALL *passive_activated)(tCollision_info*);
+    void (C2_HOOK_FASTCALL *changed_objects)(tPhysics_object*, undefined4);
+    int (C2_HOOK_FASTCALL *active_halted)(tPhysics_object*);
+    int (C2_HOOK_FASTCALL *passive_activated)(tPhysics_object*);
     void* callback_0x18;
 } tPhysics_callbacks;
 

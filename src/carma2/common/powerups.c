@@ -286,7 +286,7 @@ tRepulse_link gRepulse_links[6];
 tPhysics_joint* gMutant_tail_first_joint;
 
 // GLOBAL: CARMA2_HW 0x006a0908
-tCollision_info* gMutant_tail_first_collision_info;
+tPhysics_object* gMutant_tail_first_collision_info;
 
 // GLOBAL: CARMA2_HW 0x00705540
 int gMutant_tail_state;
@@ -400,7 +400,7 @@ void C2_HOOK_FASTCALL InitRepulseEffects(void) {
 
 void C2_HOOK_FASTCALL InitTail(void) {
     int i;
-    tCollision_info* parent_collision_info;
+    tPhysics_object* parent_collision_info;
     tPath_name the_path;
     tTWTVFS twt;
 
@@ -411,7 +411,7 @@ void C2_HOOK_FASTCALL InitTail(void) {
     ClosePackFileAndSetTiffLoading(twt);
     for (i = 0; i < gCount_mutant_tail_parts; i++) {
         int is_link;
-        tCollision_info *collision_info;
+        tPhysics_object *collision_info;
         br_model *model;
 
         is_link = i != gCount_mutant_tail_parts - 1;
@@ -423,7 +423,7 @@ void C2_HOOK_FASTCALL InitTail(void) {
             collision_info = MungeSphereObject(model REC2_THISCALL_EDX, gMass_mutant_tail_ball);
         }
 
-        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, physics_joint1, 0x188);
+        C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, physics_joint1, 0x188);
 
         collision_info->flags_0x238 = 0x20;
         collision_info->physics_joint1 = AllocatePhysicsJoint(1, kMem_physics_joint);
@@ -970,7 +970,7 @@ void C2_HOOK_FASTCALL ProcessShitMines(tU32 pTime) {
                     car->collision_info->omega.v[0] += FRandomPosNeg(mine->initial_x_omega_factor) * TAU_F / car->collision_info->M;
                     car->collision_info->disable_move_rotate = 0;
 
-                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, field_0x49c, 0x49c);
+                    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, field_0x49c, 0x49c);
                     car->collision_info->field_0x49c = 40 + gPHIL_last_physics_tick;
                     if (!car->invulnerable_no_damage) {
                         int j;

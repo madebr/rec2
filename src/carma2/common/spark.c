@@ -482,7 +482,7 @@ void C2_HOOK_FASTCALL MungeSplash(tU32 pTime) {
             }
         }
     } else if (!gAction_replay_mode) {
-        tCollision_info* object;
+        tPhysics_object* object;
 
         for (object = PHILGetFirstObject(); object != NULL; object = PHILGetNextObject(object)) {
 
@@ -848,7 +848,7 @@ void C2_HOOK_FASTCALL StopCarSmoking(tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004fca90
-void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tCollision_info* pObject) {
+void C2_HOOK_FASTCALL StopObjectSmokingInstantly(tPhysics_object* pObject) {
     size_t i;
 
     for (i = 0; i < REC2_ASIZE(gSmoke_column); i++) {
@@ -929,13 +929,13 @@ void C2_HOOK_FASTCALL CreatePuffOfSmoke(br_vector3* pPos, br_vector3* pV, float 
 }
 
 // FUNCTION: CARMA2_HW 0x004fee70
-void C2_HOOK_FASTCALL ClearSplashes(tCollision_info* pObject) {
+void C2_HOOK_FASTCALL ClearSplashes(tPhysics_object* pObject) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004fb630
-void C2_HOOK_FASTCALL CreateSmokeColumn2(undefined4 pArg1, br_actor* pActor, tCar_spec* pCar, tCollision_info* pObject, undefined4 pArg5, undefined4 pArg6, undefined4 pArg7) {
+void C2_HOOK_FASTCALL CreateSmokeColumn2(undefined4 pArg1, br_actor* pActor, tCar_spec* pCar, tPhysics_object* pObject, undefined4 pArg5, undefined4 pArg6, undefined4 pArg7) {
 
     NOT_IMPLEMENTED();
 }
@@ -973,7 +973,7 @@ void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime) {
             continue;
         }
         if (gSmoke_column[i].lifetime >= pTime) {
-            tCollision_info* object;
+            tPhysics_object* object;
             tCar_spec* c;
             br_vector3 car_pos;
 
@@ -1053,13 +1053,13 @@ void C2_HOOK_FASTCALL MungeSmokeColumn(tU32 pTime) {
 }
 
 // FUNCTION: CARMA2_HW 0x004fcbb0
-void C2_HOOK_FASTCALL GeneralCreateSplash(tCollision_info* pObject, br_vector3* pVel,br_vector3* pOmega, br_vector3* pNormal, float pWater_density, br_bounds3* pBounds, br_matrix34* pMat, tU32 pTime) {
+void C2_HOOK_FASTCALL GeneralCreateSplash(tPhysics_object* pObject, br_vector3* pVel,br_vector3* pOmega, br_vector3* pNormal, float pWater_density, br_bounds3* pBounds, br_matrix34* pMat, tU32 pTime) {
 
     NOT_IMPLEMENTED();
 }
 
 // FUNCTION: CARMA2_HW 0x004fda40
-void C2_HOOK_FASTCALL CreateSplash(tCollision_info* pObject, tU32 pTime) {
+void C2_HOOK_FASTCALL CreateSplash(tPhysics_object* pObject, tU32 pTime) {
 
     GeneralCreateSplash(pObject, &pObject->v, &pObject->omega, &pObject->water_normal, pObject->water_d,
         &pObject->bb1, &pObject->actor->t.t.mat, pTime);

@@ -105,3 +105,7 @@ target_link_libraries(c2_newcommon
 if(NOT MSVC)
     add_compile_options(-Wredundant-decls)
 endif()
+
+if(MSVC AND NOT REC2_MATCHING)
+    add_compile_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
+endif()

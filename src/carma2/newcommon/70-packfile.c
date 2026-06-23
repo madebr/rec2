@@ -2,6 +2,7 @@
 
 #include "08-loading1.h"
 #include "41-utility.h"
+#include "52-errors.h"
 #include "69-sound.h"
 #include "platform.h"
 #include "rec2_macros.h"
@@ -231,8 +232,12 @@ br_size_t C2_HOOK_FASTCALL PFfread(void* buf, br_size_t size, unsigned int n, vo
 }
 
 // STUB: CARMA2_HW 0x004b4a80
-br_size_t C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, void* f) {
-    NOT_IMPLEMENTED();
+int C2_HOOK_FASTCALL PFfwrite(const void* buf, br_size_t size, unsigned int n, void* f) {
+
+    if ((uintptr_t)f >= REC2_ASIZE(gTwatVfsFiles)) {
+        return fwrite(buf, size, n, f);
+    }
+    FatalError(kFatalError_WriteAttemptToPackedFile_S, "unknown");
 }
 
 // FUNCTION: CARMA2_HW 0x004b4b00

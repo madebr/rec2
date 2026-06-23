@@ -102,7 +102,10 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 
 // ResetPowerups
 
-// CloseDownPowerUps
+// STUB: CARMA2_HW 0x004da730
+void C2_HOOK_FASTCALL CloseDownPowerUps(void) {
+    NOT_IMPLEMENTED();
+}
 
 // NewRepulseRay
 
@@ -406,7 +409,10 @@ void C2_HOOK_FASTCALL InitPowerups(void) {
 
 // CutOffTail
 
-// RemoveTail
+// STUB: CARMA2_HW 0x004e06a0
+void C2_HOOK_FASTCALL RemoveTail(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DoInitialTail
 

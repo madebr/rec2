@@ -159,7 +159,7 @@ undefined4 gDAT_00679440;
 tCrush_info_buffer gDetached_bit_crush_info_buffer;
 
 // GLOBAL: CARMA2_HW 0x00679448
-tCollision_info* gDetached_bit_collision_infos;
+tPhysics_object* gDetached_bit_collision_infos;
 
 // GLOBAL: CARMA2_HW 0x006796ac
 tDriver gDetached_bit_driver;
@@ -171,13 +171,13 @@ tPhysics_joint* gTrack_crush_joints[32];
 tCrush_info_buffer gSplit_car_crush_info_buffer;
 
 // GLOBAL: CARMA2_HW 0x0067a188
-tCollision_info* gSplit_car_collision_infos;
+tPhysics_object* gSplit_car_collision_infos;
 
 // GLOBAL: CARMA2_HW 0x0067b7c4
 tDriver gSplit_car_driver;
 
 // GLOBAL: CARMA2_HW 0x006796b4
-tCollision_shape* gGonad_sphere_collision_shape;
+tPhysics_shape* gGonad_sphere_collision_shape;
 
 // GLOBAL: CARMA2_HW 0x006796c8
 tCrush_list_item gCrush_lists[8];
@@ -247,7 +247,7 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
     int i;
 
     C2_HOOK_BUG_ON(sizeof(tCrush_info) != 0x104);
-    C2_HOOK_BUG_ON(sizeof(tCollision_info) != 0x4d8);
+    C2_HOOK_BUG_ON(sizeof(tPhysics_object) != 0x4d8);
 
     for (i = 0; i < REC2_ASIZE(gCrush_array_0067a190); i++) {
         gCrush_array_0067a190[i] = 0;
@@ -261,18 +261,18 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
     C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCrush_info, field_0xe0, 0xe0);
 
 #ifndef REC2_MATCHING
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_shape, common.next, 0x34);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_shape, common.next, 0x34);
 #endif
 
     gDetached_bit_crush_info_buffer.capacity = 16;
     gDetached_bit_crush_info_buffer.crush_infos = BrMemAllocate(gDetached_bit_crush_info_buffer.capacity * sizeof(tCrush_info), kMem_crush_data);
-    gDetached_bit_collision_infos = BrMemAllocate(gDetached_bit_crush_info_buffer.capacity * sizeof(tCollision_info),kMem_crush_data);
+    gDetached_bit_collision_infos = BrMemAllocate(gDetached_bit_crush_info_buffer.capacity * sizeof(tPhysics_object),kMem_crush_data);
     for (i = 0; i < gDetached_bit_crush_info_buffer.capacity; i++) {
         gDetached_bit_crush_info_buffer.crush_infos[i].field_0xdc = 1.f;
         gDetached_bit_crush_info_buffer.crush_infos[i].field_0xe0 = 0.28985506f;
         gDetached_bit_crush_info_buffer.crush_infos[i].collision_object = &gDetached_bit_collision_infos[i];
-        // FIXME: AllocateShapePolyhedron should return tCollision_shape pointer
-        gDetached_bit_collision_infos[i].shape = (tCollision_shape*)AllocateShapePolyhedron(16, kMem_crush_data);
+        // FIXME: AllocateShapePolyhedron should return tPhysics_shape pointer
+        gDetached_bit_collision_infos[i].shape = (tPhysics_shape*)AllocateShapePolyhedron(16, kMem_crush_data);
     }
     gDetached_bit_driver = eDriver_detached_bit;
 
@@ -282,12 +282,12 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
 
     gSplit_car_crush_info_buffer.capacity = 3;
     gSplit_car_crush_info_buffer.crush_infos = BrMemAllocate(gSplit_car_crush_info_buffer.capacity * sizeof(tCrush_info), kMem_crush_data);
-    gSplit_car_collision_infos = BrMemAllocate(gSplit_car_crush_info_buffer.capacity * sizeof(tCollision_info),kMem_crush_data);
+    gSplit_car_collision_infos = BrMemAllocate(gSplit_car_crush_info_buffer.capacity * sizeof(tPhysics_object),kMem_crush_data);
     for (i = 0; i < gSplit_car_crush_info_buffer.capacity; i++) {
         int j;
-        tCollision_shape* shape = NULL;
+        tPhysics_shape* shape = NULL;
         for (j = 0; j < 4; j++) {
-            tCollision_shape* polyhedron = (tCollision_shape*)AllocateShapePolyhedron(16, kMem_crush_data);
+            tPhysics_shape* polyhedron = (tPhysics_shape*)AllocateShapePolyhedron(16, kMem_crush_data);
             if (shape != NULL) {
                 shape->common.next = polyhedron;
             } else {
@@ -300,7 +300,7 @@ void C2_HOOK_FASTCALL InitCrushSystems(void) {
         }
     }
     gSplit_car_driver = eDriver_split_car;
-    gGonad_sphere_collision_shape = (tCollision_shape*)AllocateShapeSphere(kMem_crush_data);
+    gGonad_sphere_collision_shape = (tPhysics_shape*)AllocateShapeSphere(kMem_crush_data);
 }
 
 void C2_HOOK_FASTCALL ClearCrushLists(void) {
@@ -1155,7 +1155,7 @@ intptr_t C2_HOOK_CDECL InitPhysCrushDataCB(br_actor* actor, void* data) {
 }
 
 void C2_HOOK_FASTCALL InitPhysCrushData(tCar_spec* pCar_spec) {
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     tInitPhysCrushDataCB_Data data;
 
     collision_info = pCar_spec->collision_info;
@@ -1416,7 +1416,7 @@ void C2_HOOK_FASTCALL CopyShapePolyhedron(tCollision_shape_polyhedron* pDest, co
     for (i = 0; i < pSrc->polyhedron.count_points; i++) {
         BrVector3Copy(&pDest->polyhedron.points[i], &pSrc->polyhedron.points[i]);
     }
-    FillInShape((tCollision_shape*)pDest);
+    FillInShape((tPhysics_shape*)pDest);
 }
 
 void C2_HOOK_FASTCALL InitNetworkShapesStuff(tCar_crush_spec* pCar_crush) {
@@ -1436,8 +1436,8 @@ void C2_HOOK_FASTCALL InitNetworkShapesStuff(tCar_crush_spec* pCar_crush) {
     }
 }
 
-void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tCollision_info* pCollision_info, tCar_spec* pCar_spec) {
-    tCollision_shape* shape;
+void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tPhysics_object* pCollision_info, tCar_spec* pCar_spec) {
+    tPhysics_shape* shape;
     int i;
 
     C2_HOOK_BUG_ON(sizeof(tCar_crush_shape_info) != 0x1c);
@@ -1467,9 +1467,9 @@ void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tCollision_inf
         crush_shape_info->field_0x8 = 0;
     }
     pCar_crush->field_0xc = pCollision_info->shape;
-    pCollision_info->shape = (tCollision_shape*)pCar_crush->field_0x4->field_0x0;
+    pCollision_info->shape = (tPhysics_shape*)pCar_crush->field_0x4->field_0x0;
     for (i = 0; i < pCar_crush->count_shapes - 1; i++) {
-        pCar_crush->field_0x4[i].field_0x0->common.next = (tCollision_shape*)pCar_crush->field_0x4[i + 1].field_0x0;
+        pCar_crush->field_0x4[i].field_0x0->common.next = (tPhysics_shape*)pCar_crush->field_0x4[i + 1].field_0x0;
     }
     pCar_crush->field_0x4[pCar_crush->count_shapes - 1].field_0x0->common.next = NULL;
     pCar_crush->expand_bounding_box = 0;
@@ -1482,7 +1482,7 @@ void C2_HOOK_FASTCALL InitShapeStuff(tCar_crush_spec* pCar_crush, tCollision_inf
 // FUNCTION: CARMA2_HW 0x0042ad10
 void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec) {
     tCar_crush_spec* car_crush;
-    tCollision_info* collision_info;
+    tPhysics_object* collision_info;
     int i;
 
     car_crush = pCar_spec->car_crush_spec;
@@ -1505,7 +1505,7 @@ void C2_HOOK_FASTCALL InitPhysMasterCrushData(tCar_spec* pCar_spec) {
         car_crush->field_0x564[i]->wireframe.lines[0].index1 = 0;
         car_crush->field_0x564[i]->wireframe.lines[0].index2 = 1;
 
-        FillInShape((tCollision_shape*)car_crush->field_0x564[i]);
+        FillInShape((tPhysics_shape*)car_crush->field_0x564[i]);
     }
     car_crush->actor->user = pCar_spec;
     car_crush->field_0x574 = 0;
@@ -1629,7 +1629,7 @@ void C2_HOOK_FASTCALL CheckWheelPositions(const tCar_spec* pCar_spec) {
 
     for (wheel_i = 0; wheel_i < 4; wheel_i++) {
         const br_vector3* wpos = &pCar_spec->wpos[wheel_i];
-        const tCollision_shape* shape;
+        const tPhysics_shape* shape;
         int wheel_outside_all_shapes = 1;
 
         for (shape = pCar_spec->collision_info->shape; shape != NULL; shape = shape->common.next) {
@@ -1786,7 +1786,7 @@ intptr_t C2_HOOK_CDECL TotallyRepairModels(br_actor* pActor, void* pUser) {
 }
 
 // FUNCTION: CARMA2_HW 0x00439a10
-int C2_HOOK_FASTCALL TotallyRepairObject(tCollision_info* pCollision_info, void* pUser_data) {
+int C2_HOOK_FASTCALL TotallyRepairObject(tPhysics_object* pCollision_info, void* pUser_data) {
 
     DRActorEnumRecurse(pCollision_info->actor, TotallyRepairModels, pUser_data);
     return 0;
@@ -1815,7 +1815,7 @@ intptr_t C2_HOOK_CDECL BattenDownTheHatches(br_actor* pActor, void* pUser) {
 }
 
 // FUNCTION: CARMA2_HW 0x004398c0
-int C2_HOOK_FASTCALL BattenDownTheObjects(tCollision_info* pCollision_info, void* pUser_data) {
+int C2_HOOK_FASTCALL BattenDownTheObjects(tPhysics_object* pCollision_info, void* pUser_data) {
 
     DRActorEnumRecurse(pCollision_info->actor, BattenDownTheHatches, pUser_data);
     return 0;
@@ -1981,7 +1981,7 @@ void C2_HOOK_FASTCALL QuantizeVector3(br_vector3* pV) {
     ExpandVector3(pV, &cv3, -2.5f, 2.5f);
 }
 
-void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tCollision_shape* pCollision_shape) {
+void C2_HOOK_FASTCALL SwapCarShapes(tCar_spec* pCar_spec, tPhysics_shape* pCollision_shape) {
     pCar_spec->collision_info->shape = pCollision_shape;
     UpdateCollisionObject(pCar_spec->collision_info);
     pCar_spec->collision_info->bb2.min.v[1] = GetCarOverallBoundsMinY(pCar_spec);
@@ -2020,7 +2020,7 @@ int C2_HOOK_FASTCALL SwapShapesIfPossible(tCar_spec *pCar_spec) {
     tCar_crush_spec* car_crush = pCar_spec->car_crush_spec;
     tCollision_shape_polyhedron* first_poly;
     tCollision_shape_polyhedron* last_poly;
-    tCollision_shape* original_shape;
+    tPhysics_shape* original_shape;
     int i;
 
     if (car_crush == NULL) {
@@ -2070,13 +2070,13 @@ int C2_HOOK_FASTCALL SwapShapesIfPossible(tCar_spec *pCar_spec) {
                     BrVector3Copy(&shape->field_0x4->polyhedron.points[j],
                         &shape_field_0x18->field_0x18);
                 }
-                FillInShape((tCollision_shape*)shape->field_0x4);
+                FillInShape((tPhysics_shape*)shape->field_0x4);
             }
             if (first_poly == NULL) {
                 first_poly = shape->field_0x4;
             }
             if (last_poly != NULL) {
-                last_poly->common.next = (tCollision_shape*)shape->field_0x4;
+                last_poly->common.next = (tPhysics_shape*)shape->field_0x4;
             }
             last_poly = shape->field_0x4;
         }
@@ -2085,7 +2085,7 @@ int C2_HOOK_FASTCALL SwapShapesIfPossible(tCar_spec *pCar_spec) {
         return 0;
     }
     original_shape = pCar_spec->collision_info->shape;
-    SwapCarShapes(pCar_spec, (tCollision_shape*)first_poly);
+    SwapCarShapes(pCar_spec, (tPhysics_shape*)first_poly);
     if (!(car_crush->expand_bounding_box & 0x4)) {
         if (!MoveCarToSensiblePlace(pCar_spec)) {
             SwapCarShapes(pCar_spec, original_shape);
@@ -2192,7 +2192,7 @@ void C2_HOOK_FASTCALL WeldCar(tCar_spec* pCar_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x00434010
-void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar_spec, br_actor* pActor_arg2, br_actor* pActor_arg3, tCollision_info *pObject) {
+void C2_HOOK_FASTCALL ReAttachBit(tCar_spec* pCar_spec, br_actor* pActor_arg2, br_actor* pActor_arg3, tPhysics_object *pObject) {
 
     NOT_IMPLEMENTED();
 }
@@ -2702,7 +2702,7 @@ void C2_HOOK_FASTCALL RemoveCarFromCrushLists(tCar_spec* pCar_spec) {
 }
 
 // FUNCTION: CARMA2_HW 0x00461740
-int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tCollision_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal) {
+int C2_HOOK_FASTCALL ShapeRayCast(const br_vector3* p1, const br_vector3* p2, const tPhysics_shape* pShape, br_vector3* pPos, float* pFactor, br_vector3* pNormal) {
 
     NOT_IMPLEMENTED();
     return 0;
@@ -2741,14 +2741,14 @@ void C2_HOOK_FASTCALL SetSmokeLastDamageLevel(tCar_spec* pCar) {
 }
 
 // FUNCTION: CARMA2_HW 0x004f52f0
-float C2_HOOK_FASTCALL BashObject(tCollision_info* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8) {
+float C2_HOOK_FASTCALL BashObject(tPhysics_object* pObject, br_actor* pActor, float pArg3, br_vector3 *pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8) {
 
     NOT_IMPLEMENTED();
     return 0.f;
 }
 
 // FUNCTION: CARMA2_HW 0x004f1140
-float C2_HOOK_FASTCALL SmashEnvironment(tCollision_info* pObject, undefined4* pArg2, float pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8) {
+float C2_HOOK_FASTCALL SmashEnvironment(tPhysics_object* pObject, undefined4* pArg2, float pArg3, br_vector3* pArg4, br_vector3* pArg5, br_vector3* pArg6, int pArg7, int pArg8) {
 
     NOT_IMPLEMENTED();
     return 0.f;

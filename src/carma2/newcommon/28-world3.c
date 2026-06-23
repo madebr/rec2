@@ -3,6 +3,7 @@
 #include "41-utility.h"
 #include "52-errors.h"
 #include "63-loading3.h"
+#include "69-sound.h"
 #include "70-packfile.h"
 #include "rec2_macros.h"
 
@@ -102,9 +103,45 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
 
 // DisposeStorageSpace
 
-// ClearMatertrialSetFromStorageSpace
+// STUB: CARMA2_HW 0x00500e60
+void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pOld_count, int pNew_count) {
+    NOT_IMPLEMENTED();
+}
 
-// ClearOutStorageSpace
+// FUNCTION: CARMA2_HW 0x00500f30
+void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space) {
+    int i;
+
+    DRS3StopAllOutletSoundsExceptCDA();
+    for (i = 0; i < pStorage_space->pixelmaps_count; i++) {
+        if (pStorage_space->pixelmaps[i] != NULL) {
+            BrMapRemove(pStorage_space->pixelmaps[i]);
+            BrPixelmapFree(pStorage_space->pixelmaps[i]);
+        }
+    }
+    pStorage_space->pixelmaps_count = 0;
+    for (i = 0; i < pStorage_space->shade_tables_count; i++) {
+        if (pStorage_space->shade_tables[i] != NULL) {
+            BrTableRemove(pStorage_space->shade_tables[i]);
+            BrPixelmapFree(pStorage_space->shade_tables[i]);
+        }
+    }
+    pStorage_space->shade_tables_count = 0;
+    for (i = 0; i < pStorage_space->materials_count; i++) {
+        if (pStorage_space->materials[i] != NULL) {
+            BrMaterialRemove(pStorage_space->materials[i]);
+            BrMaterialFree(pStorage_space->materials[i]);
+        }
+    }
+    pStorage_space->materials_count = 0;
+    for (i = 0; i < pStorage_space->models_count; i++) {
+        if (pStorage_space->models[i] != NULL) {
+            BrModelRemove(pStorage_space->models[i]);
+            BrModelFree(pStorage_space->models[i]);
+        }
+    }
+    pStorage_space->models_count = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00501020
 tAdd_to_storage_result C2_HOOK_FASTCALL AddPixelmapToStorage(tBrender_storage* pStorage_space, br_pixelmap* pThe_pm) {

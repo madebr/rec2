@@ -219,7 +219,10 @@ void C2_HOOK_FASTCALL InitSmashing(void) {
 
 // KillAllGlassFragments
 
-// CleanUpSmashStuff
+// STUB: CARMA2_HW 0x004f02b0
+void C2_HOOK_FASTCALL CleanUpSmashStuff(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DisposeSmashData
 

@@ -12,7 +12,7 @@
 FILE* gDiagnostic_file;
 
 // GLOBAL: CARMA2_HW 0x00591708
-const char* gError_messages[186] = {
+const char* gError_messages[184] = {
     "Unable to support this screen depth setting",
     "Couldn't allocate off-screen buffer",
     "Couldn't allocate Z-Buffer",

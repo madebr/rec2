@@ -450,7 +450,7 @@ void C2_HOOK_FASTCALL DisposeOpponentPaths(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x004a7ea0
-void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info** pList, int pCount) {
+void C2_HOOK_FASTCALL AddIfNotInList(tPhysics_object* pObject, tPhysics_object** pList, int pCount) {
     int i;
 
     for (i = 0; i < pCount; i++) {
@@ -463,7 +463,7 @@ void C2_HOOK_FASTCALL AddIfNotInList(tCollision_info* pObject, tCollision_info**
 }
 
 // FUNCTION: CARMA2_HW 0x004a7ef0
-void C2_HOOK_FASTCALL RemoveAnythingStillInList(tCollision_info** pList, int pCount) {
+void C2_HOOK_FASTCALL RemoveAnythingStillInList(tPhysics_object** pList, int pCount) {
     int i;
 
     for (i = 0; i < pCount; i++) {
@@ -474,11 +474,11 @@ void C2_HOOK_FASTCALL RemoveAnythingStillInList(tCollision_info** pList, int pCo
     }
 }
 
-void C2_HOOK_FASTCALL NoteCarsCurrentlyUsed(tCollision_info** pCollision_infos, int* pCount) {
-    tCollision_info* info;
+void C2_HOOK_FASTCALL NoteCarsCurrentlyUsed(tPhysics_object** pCollision_infos, int* pCount) {
+    tPhysics_object* info;
 
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, flags_0x238, 0x238);
-    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tCollision_info, owner, 0x23c);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, flags_0x238, 0x238);
+    C2_HOOK_STATIC_ASSERT_STRUCT_OFFSET(tPhysics_object, owner, 0x23c);
 
     for (info = PHILGetFirstObject(); info != NULL; info = PHILGetNextObject(info)) {
         if (info != NULL && info->owner != NULL && info->flags_0x238 == 1 && ((tCar_spec*)info->owner)->driver > 5) {
@@ -508,7 +508,7 @@ void C2_HOOK_FASTCALL RebuildActiveCarList(void) {
 
     if (gActive_car_list_rebuild_required) {
         int count_used_cars;
-        tCollision_info* used_cars[1000];
+        tPhysics_object* used_cars[1000];
         int i;
 
         gActive_car_list_rebuild_required = 0;

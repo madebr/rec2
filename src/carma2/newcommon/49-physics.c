@@ -344,9 +344,20 @@
 
 // FreeShape
 
-// FreeShapeList
+// FUNCTION: CARMA2_HW 0x004c5e80
+void C2_HOOK_FASTCALL FreeShapeList(tPhysics_shape *pShape) {
 
-// FreePhysicsJoint
+    if (pShape->common.next != NULL) {
+        FreeShapeList(pShape->common.next);
+    }
+    BrMemFree(pShape);
+}
+
+// FUNCTION: CARMA2_HW 0x004c5ea0
+void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint) {
+
+    BrMemFree(pJoint);
+}
 
 // GetBoundsFromPointList
 

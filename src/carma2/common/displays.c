@@ -1694,8 +1694,8 @@ void C2_HOOK_FASTCALL DrawSmashBlip(br_pixelmap* pScreen, tU32 pTime, const br_v
 
     BrMatrix34ApplyP(&map_pos, pPosition, &gCurrent_race.map_transformation);
     BrVector3Set(&dir,
-        (float)(gHeadup_map_half_width + gINT_0068d890 + gUINT_0074ab8c) - map_pos.v[0],
-        (float)(gHeadup_map_half_height + gINT_0068c858 + gUINT_0074ab88) - map_pos.v[1],
+        (float)(gHeadup_map_half_width + gINT_0068d890 + gINT_0074ab8c) - map_pos.v[0],
+        (float)(gHeadup_map_half_height + gINT_0068c858 + gINT_0074ab88) - map_pos.v[1],
         0.f);
     dot = BrVector3LengthSquared(&dir);
     if (gINT_0068d6f4 == -1 || dot < gFLOAT_0074abc4) {
@@ -2013,7 +2013,7 @@ void C2_HOOK_FASTCALL MapOverlay(void) {
             gBack_screen,
             gHeadup_map_x + 8, gHeadup_map_y,
             gMap_overlay,
-            gINT_0068d890 + gUINT_0074ab8c, gINT_0068c858 + gUINT_0074ab88,
+            gINT_0068d890 + gINT_0074ab8c, gINT_0068c858 + gINT_0074ab88,
             gHeadup_map_w, gHeadup_map_h,
             gMap_trans);
     }

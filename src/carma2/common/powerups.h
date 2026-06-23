@@ -14,7 +14,7 @@ extern const char* gRepeatability_names[4];
 extern tShit_mine gShit_mines[20];
 extern tRepulse_link gRepulse_links[6];
 extern tPhysics_joint* gMutant_tail_first_joint;
-extern tCollision_info* gMutant_tail_first_collision_info;
+extern tPhysics_object* gMutant_tail_first_collision_info;
 extern int gMutant_tail_state;
 extern br_model* gModel_powerup_armor;
 extern br_model* gModel_powerup_power;
