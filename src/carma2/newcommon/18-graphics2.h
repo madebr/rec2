@@ -46,7 +46,7 @@ extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 
 // DeallocateAllTransientBitmaps
 
-// RemoveTransientBitmaps
+extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them);
 
 // SaveTransient
 
@@ -58,7 +58,7 @@ extern void C2_HOOK_FASTCALL InitTransientBitmaps(void);
 
 // StartMouseCursor
 
-// EndMouseCursor
+extern void C2_HOOK_FASTCALL EndMouseCursor(void);
 
 // DRDrawLine
 
@@ -66,7 +66,7 @@ extern void C2_HOOK_FASTCALL ClearEntireScreen(void);
 
 // DistanceFromPlane
 
-// KillSplashScreen
+extern void C2_HOOK_FASTCALL KillSplashScreen(void);
 
 // SplashScreenWith
 

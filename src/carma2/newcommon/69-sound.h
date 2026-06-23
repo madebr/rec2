@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 
+extern tS3_outlet* gEffects_outlet;
+
 extern int gCD_fully_installed;
 
 extern void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size);
@@ -17,7 +19,7 @@ extern void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void);
 
 extern void C2_HOOK_FASTCALL InitSound(void);
 
-// DRS3StartSound
+extern tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
 extern int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound);
 

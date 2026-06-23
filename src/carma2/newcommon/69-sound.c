@@ -77,6 +77,9 @@ const char* gSound_periodicity_choices[3] = {
 // GLOBAL: CARMA2_HW 0x00595c48
 int gSound_detail_level = 1;
 
+// GLOBAL: CARMA2_HW 0x006845fc
+tS3_outlet* gEffects_outlet;
+
 // FUNCTION: CARMA2_HW 0x00500060
 void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size) {
 
@@ -119,7 +122,10 @@ void C2_HOOK_FASTCALL InitSound(void) {
     NOT_IMPLEMENTED();
 }
 
-// DRS3StartSound
+// STUB: CARMA2_HW 0x00455690
+tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
+    NOT_IMPLEMENTED();
+}
 
 int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound) {
     if (gSound_enabled) {
