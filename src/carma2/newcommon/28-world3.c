@@ -1,10 +1,13 @@
 #include "28-world3.h"
 
 #include "41-utility.h"
+#include "50-fog.h"
 #include "52-errors.h"
 #include "63-loading3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
+#include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 #include <string.h>
@@ -103,9 +106,29 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
 
 // DisposeStorageSpace
 
-// STUB: CARMA2_HW 0x00500e60
-void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pOld_count, int pNew_count) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x00500e60
+void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pStart, int pEnd) {
+    int i;
+    int move_to;
+
+    for (i = pStart; i < pEnd && i < pStorage_space->materials_count; i++) {
+        BrMaterialRemove(pStorage_space->materials[i]);
+        BrMaterialFree(pStorage_space->materials[i]);
+        RemoveMaterialFromFogification(pStorage_space->materials[i]);
+    }
+    for (move_to = pStart, i = pEnd; i < pStorage_space->materials_count; ) {
+        pStorage_space->materials[move_to++] = pStorage_space->materials[i++];
+    }
+    pStorage_space->materials_count = move_to;
+    if (pStorage_space == &gNet_cars_storage_space) {
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            tCar_spec* car = gNet_players[i].car;
+            if (car != NULL && car->old_material_count >= pEnd) {
+                car->old_material_count += pStart - pEnd;
+                car->new_material_count += pStart - pEnd;
+            }
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00500f30

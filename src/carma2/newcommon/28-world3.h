@@ -56,7 +56,7 @@ extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_stora
 
 // DisposeStorageSpace
 
-extern void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pOld_count, int pNew_count);
+extern void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pStart, int pEnd);
 
 extern void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space);
 
