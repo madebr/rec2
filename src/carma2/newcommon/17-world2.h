@@ -14,11 +14,11 @@ extern int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4
 
 // FixificateClipulatingPlaneyThings
 
-// ProcessModelFaceMaterials
+extern void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCallback);
 
 // ProcessModelFaceMaterials2
 
-// ProcessFaceMaterials
+extern intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData);
 
 extern int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm);
 

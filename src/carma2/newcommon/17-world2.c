@@ -86,11 +86,42 @@ int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2,
 
 // FixificateClipulatingPlaneyThings
 
-// ProcessModelFaceMaterials
+void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCallback) {
+    tU16 f;
+    br_material* possible_mat;
+    br_material* new_mat = NULL;
+
+    for (f = 0; f < pModel->nfaces; f++) {
+
+        if (pModel->faces[f].material == NULL) {
+            continue;
+        }
+        possible_mat = pCallback(pModel, f);
+        if (possible_mat == NULL) {
+            continue;
+        }
+        pModel->faces[f].material = possible_mat;
+        new_mat = possible_mat;
+    }
+    if (new_mat != NULL) {
+        BrModelUpdate(pModel, BR_MODU_ALL);
+    }
+}
 
 // ProcessModelFaceMaterials2
 
-// ProcessFaceMaterials
+// FUNCTION: CARMA2_HW 0x00448850
+intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData) {
+    tPMFMCB* callback = pData;
+
+    if (pActor->identifier != NULL && pActor->identifier[0] == '&') {
+        return 0;
+    }
+    if (pActor->type == BR_ACTOR_MODEL && pActor->model != NULL) {
+        ProcessModelFaceMaterials(pActor->model, callback);
+    }
+    return BrActorEnum(pActor, ProcessFaceMaterials, pData);
+}
 
 // FUNCTION: CARMA2_HW 0x004475c0
 int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm) {
