@@ -461,11 +461,16 @@ void C2_HOOK_FASTCALL LoadKeyMapping(void) {
     PFfclose(f);
 }
 
-// LoadInterfaceStuff
+// FUNCTION: CARMA2_HW 0x00487ea0
+void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race) {
+
+    // empty
+}
 
 // FUNCTION: CARMA2_HW 0x00487eb0
 void C2_HOOK_FASTCALL InitInterfaceLoadState(void) {
 
+    // empty
 }
 
 // AdjustCarCoordinates

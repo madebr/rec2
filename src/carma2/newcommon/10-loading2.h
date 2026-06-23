@@ -20,7 +20,7 @@ extern void C2_HOOK_FASTCALL FinishLoadingGeneral(void);
 
 extern void C2_HOOK_FASTCALL LoadKeyMapping(void);
 
-// LoadInterfaceStuff
+extern void C2_HOOK_FASTCALL LoadInterfaceStuff(int pWithin_race);
 
 extern void C2_HOOK_FASTCALL InitInterfaceLoadState(void);
 
