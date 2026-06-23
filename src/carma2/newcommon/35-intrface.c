@@ -76,5 +76,12 @@ void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_se
 
 // WhichItemIsSelectedIn
 
-// SelectThisItemIn
+// FUNCTION: CARMA2_HW 0x00484f70
+void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, int pValue) {
+    int i;
 
+    for (i = pFrontend->radios[pGroup - 1].indexFirstItem; i <= pFrontend->radios[pGroup - 1].indexLastItem; i++) {
+
+        pFrontend->items[i].radioButton_selected = i == pValue;
+    }
+}

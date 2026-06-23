@@ -20,6 +20,6 @@ extern void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* 
 
 // WhichItemIsSelectedIn
 
-// SelectThisItemIn
+extern void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, int pValue);
 
 #endif // GUARD_35_INTRFACE_H
