@@ -1,7 +1,9 @@
 #ifndef GUARD_35_INTRFACE_H
 #define GUARD_35_INTRFACE_H
 
-// SetAlwaysTyping
+#include "c2_hooks.h"
+
+extern void C2_HOOK_FASTCALL SetAlwaysTyping(void);
 
 // ClearAlwaysTyping
 
