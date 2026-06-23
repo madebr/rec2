@@ -44,7 +44,7 @@ extern br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(const char* pOld_ident, 
 
 extern br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace);
 
-// WallUntexToPersp
+extern br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFace);
 
 // WallLinearToPersp
 
