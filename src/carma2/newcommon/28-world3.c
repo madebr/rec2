@@ -1,5 +1,6 @@
 #include "28-world3.h"
 
+#include "08-loading1.h"
 #include "41-utility.h"
 #include "50-fog.h"
 #include "52-errors.h"
@@ -43,9 +44,31 @@ tRendererShadingType gMaterial_shading_for_callback = kRendererShadingType_Undef
 
 // PeriodicCloaking
 
-// STUB: CARMA2_HW 0x00504b30
+// FUNCTION: CARMA2_HW 0x00504b30
 void C2_HOOK_FASTCALL InitTreeSurgery(void) {
-    NOT_IMPLEMENTED();
+    tPath_name the_path;
+    FILE* file;
+    int i;
+
+    PathCat(the_path, gApplication_path, "TreeSurgery.TXT");
+    file = PFfopen(the_path, "rt");
+    if (file != NULL) {
+        gTree_surgery_pass1_count = GetAnInt(file);
+        for (i = 0; i < gTree_surgery_pass1_count; i++) {
+            GetAString(file, gTree_surgery_pass1[i].name);
+        }
+        gTree_surgery_pass2_count = GetAnInt(file);
+        for (i = 0; i < gTree_surgery_pass2_count; i++) {
+            GetAString(file, gTree_surgery_pass2[i].original);
+            GetAString(file, gTree_surgery_pass2[i].replacement);
+        }
+#ifdef REC2_FIX_BUGS
+        PFfclose(file);
+#endif
+    } else {
+        gTree_surgery_pass1_count = 0;
+        gTree_surgery_pass2_count = 0;
+    }
 }
 
 // ModelIsATree
