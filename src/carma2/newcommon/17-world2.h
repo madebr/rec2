@@ -38,9 +38,9 @@ extern tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
 extern void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel);
 
-extern int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix);
+extern int C2_HOOK_FASTCALL HasThisSuffix(const char* pIdent, const char* pSuffix);
 
-// UnsuffixedMaterial
+extern br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(const char* pOld_ident, const char* pSuffix);
 
 // RoadUntexToPersp
 

@@ -246,7 +246,7 @@ tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void) {
 }
 
 // FUNCTION: CARMA2_HW 0x00448ce0
-int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix) {
+int C2_HOOK_FASTCALL HasThisSuffix(const char* pIdent, const char* pSuffix) {
     size_t len_ident;
     size_t len_suffix;
 
@@ -261,7 +261,19 @@ int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix) {
     return strcmp(pIdent + len_ident - len_suffix, pSuffix) == 0;
 }
 
-// UnsuffixedMaterial
+// FUNCTION: CARMA2_HW 0x00448d70
+br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(const char* pOld_ident, const char* pSuffix) {
+    br_material* result;
+    int unsuffixed_len;
+    char* new_id;
+
+    unsuffixed_len = strlen(pOld_ident) - strlen(pSuffix);
+    new_id = BrMemAllocate(unsuffixed_len + 1, kMem_new_mat_id);
+    sprintf(new_id, "%.*s", unsuffixed_len, pOld_ident);
+    result = BrMaterialFind(new_id);
+    BrMemFree(new_id);
+    return result;
+}
 
 // RoadUntexToPersp
 
