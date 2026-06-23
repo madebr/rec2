@@ -476,7 +476,11 @@ void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn) {
     gRendering_accessories = pOn;
 }
 
-// GetAccessoryRendering
+// FUNCTION: CARMA2_HW 0x00448f00
+int C2_HOOK_FASTCALL GetAccessoryRendering(void) {
+
+    return gRendering_accessories;
+}
 
 // FUNCTION: CARMA2_HW 0x00448f10
 void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {

@@ -64,7 +64,7 @@ extern intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pF
 
 extern void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn);
 
-// GetAccessoryRendering
+extern int C2_HOOK_FASTCALL GetAccessoryRendering(void);
 
 extern void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
