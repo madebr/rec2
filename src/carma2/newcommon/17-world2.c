@@ -116,7 +116,31 @@ void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCall
     }
 }
 
-// ProcessModelFaceMaterials2
+// FUNCTION: CARMA2_HW 0x00448fd0
+void C2_HOOK_FASTCALL ProcessModelFaceMaterials2(br_model* pModel, material_cbfn* pCallback) {
+    tU32 i;
+    tU32 j;
+
+    if (pModel->faces == NULL) {
+        if (pModel->prepared != NULL) {
+            for (i = 0; i < pModel->prepared->ngroups; i++) {
+
+                /* FIXME: can this inner loop be removed? */
+                for (j = 0; j < pModel->prepared->groups[i].nfaces; j++) {
+                    if (*pModel->prepared->groups[i].face_colours.materials != NULL) {
+                        pCallback(*pModel->prepared->groups[i].face_colours.materials);
+                    }
+                }
+            }
+        }
+    } else if (pModel->faces != NULL) {
+        for (i = 0; i < pModel->nfaces; i++) {
+            if (pModel->faces[i].material != NULL) {
+                pCallback(pModel->faces[i].material);
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00448850
 intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData) {

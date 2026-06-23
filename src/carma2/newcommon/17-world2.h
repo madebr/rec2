@@ -16,7 +16,7 @@ extern void C2_HOOK_FASTCALL FixificateClipulatingPlaneyThings(void);
 
 extern void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCallback);
 
-// ProcessModelFaceMaterials2
+extern void C2_HOOK_FASTCALL ProcessModelFaceMaterials2(br_model* pModel, material_cbfn* pCallback);
 
 extern intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData);
 
