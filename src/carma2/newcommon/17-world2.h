@@ -42,7 +42,7 @@ extern int C2_HOOK_FASTCALL HasThisSuffix(const char* pIdent, const char* pSuffi
 
 extern br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(const char* pOld_ident, const char* pSuffix);
 
-// RoadUntexToPersp
+extern br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace);
 
 // WallUntexToPersp
 

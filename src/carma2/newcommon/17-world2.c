@@ -275,7 +275,19 @@ br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(const char* pOld_ident, const c
     return result;
 }
 
-// RoadUntexToPersp
+// FUNCTION: CARMA2_HW 0x00447c60
+br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace) {
+    br_material* old_mat;
+    br_material* new_mat;
+
+    old_mat = pModel->faces[pFace].material;
+    if (HasThisSuffix(old_mat->identifier, ".road")) {
+        new_mat = UnsuffixedMaterial(old_mat->identifier, ".road");
+    } else {
+        new_mat = NULL;
+    }
+    return new_mat;
+}
 
 // WallUntexToPersp
 
