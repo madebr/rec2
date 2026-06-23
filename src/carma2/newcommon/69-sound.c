@@ -80,6 +80,13 @@ int gSound_detail_level = 1;
 // GLOBAL: CARMA2_HW 0x006845fc
 tS3_outlet* gEffects_outlet;
 
+// GLOBAL: CARMA2_HW 0x00595c38
+const char* gSound_generator_type_names[3] = {
+    "NONCAR",
+    "ACTOR",
+    "POINT",
+};
+
 // FUNCTION: CARMA2_HW 0x00500060
 void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size) {
 
@@ -331,9 +338,61 @@ void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpe
 
 // MungeEnvironmentalSound
 
-// BuggerModelName
+void C2_HOOK_FASTCALL BuggerModelName(tTrack_spec* pTrack_spec, const char* pName, int pIndex) {
+    br_model* model;
+    char identifier[4];
 
-// ReadSoundGenerators
+    sprintf(identifier, "%c%02d", ')', pIndex);
+    model = BrModelFind(identifier);
+    if (model == NULL || model->identifier == NULL) {
+#ifdef REC2_FIX_BUGS
+        FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S, identifier);
+#else
+        FatalError(kFatalError_CannotFindModelReferencedInSoundGeneratorList_S);
+#endif
+    } else {
+        memcpy(model->identifier, identifier, sizeof(identifier));
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x004572f0
+void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
+    float x;
+    float y;
+    float z;
+    char name[32];
+    tTrackSoundGenerator* generator;
+    int i;
+
+    gProgram_state.count_track_sound_generators = GetAnInt(pF);
+    if (gProgram_state.count_track_sound_generators != 0) {
+
+        gProgram_state.track_sound_generators = BrMemAllocate(gProgram_state.count_track_sound_generators * sizeof(tTrackSoundGenerator), kMem_sound_generator);
+        for (i = 0, generator = gProgram_state.track_sound_generators; i < gProgram_state.count_track_sound_generators; i++, generator++) {
+
+            generator->type = GetALineAndInterpretCommand(pF, gSound_generator_type_names, REC2_ASIZE(gSound_generator_type_names));
+            switch (generator->type) {
+            case kSoundGeneratorType_point:
+                GetThreeFloats(pF, &x, &y, &z);
+                BrVector3Set(&generator->point, x, y, z);
+                break;
+            case kSoundGeneratorType_actor:
+                GetAString(pF, name);
+                BuggerModelName(pTrack_spec, name, i);
+                break;
+            case kSoundGeneratorType_noncar:
+                GetAString(pF, name);
+                BuggerModelName(pTrack_spec, name, i);
+                break;
+            }
+            ReadSoundSpec(pF, &generator->fx);
+            if (generator->type == kSoundGeneratorType_noncar) {
+                ReadSoundSpec(pF, &generator->fx1_noncar);
+                ReadSoundSpec(pF, &generator->fx2_noncar);
+            }
+        }
+    }
+}
 
 // WriteOutSoundSpec
 

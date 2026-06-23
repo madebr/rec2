@@ -89,9 +89,9 @@ extern void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_dat
 
 // MungeEnvironmentalSound
 
-// BuggerModelName
+extern void C2_HOOK_FASTCALL BuggerModelName(tTrack_spec* pTrack_spec, const char* pName, int pIndex);
 
-// ReadSoundGenerators
+extern void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF);
 
 // WriteOutSoundSpec
 
