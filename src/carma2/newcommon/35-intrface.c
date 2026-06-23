@@ -101,7 +101,10 @@ void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_se
     }
 }
 
-// RecopyAreas
+void C2_HOOK_FASTCALL RecopyAreas(const tInterface_spec* pSpec) {
+
+    // empty
+}
 
 // FUNCTION: CARMA2_HW 0x004846e0
 int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice) {
@@ -251,6 +254,7 @@ int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOption
         }
         timed_out = pSpec->time_out && (PDGetTotalTime() >= gStart_time + pSpec->time_out);
         RemoveTransientBitmaps(1);
+        RecopyAreas(pSpec);
         go_ahead = 1;
         if (pSpec->go_ahead_proc[gCurrent_mode]) {
             go_ahead = pSpec->go_ahead_proc[gCurrent_mode](&gCurrent_choice, &gCurrent_mode);
