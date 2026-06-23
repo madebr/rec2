@@ -1,5 +1,6 @@
 #include "69-sound.h"
 
+#include "00-car.h"
 #include "08-loading1.h"
 #include "23-piping.h"
 #include "28-world3.h"
@@ -118,6 +119,24 @@ int gVirgin_pass = 1;
 
 // GLOBAL: CARMA2_HW 0x00595c4c
 int gOld_sound_detail_level = -1;
+
+// GLOBAL: CARMA2_HW 0x0079e120
+br_vector3 gCamera_left;
+
+// GLOBAL: CARMA2_HW 0x0079e130
+br_vector3 gCamera_position;
+
+// GLOBAL: CARMA2_HW 0x0079ea60
+br_vector3 gCamera_velocity;
+
+// GLOBAL: CARMA2_HW 0x00684540
+tU32 gNext_sound_generator_munging;
+
+// GLOBAL: CARMA2_HW 0x0079e18c
+int gCount_environmental_sound_sources;
+
+// GLOBAL: CARMA2_HW 0x0079e17c
+int gEnvironmental_sound_sources_buffer_index;
 
 // FUNCTION: CARMA2_HW 0x00500060
 void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size) {
@@ -364,7 +383,79 @@ void C2_HOOK_FASTCALL SoundService(void) {
     gServicing_sound = 0;
 }
 
-// InitSoundSources
+// FUNCTION: CARMA2_HW 0x00455bb0
+void C2_HOOK_FASTCALL InitSoundSources(void) {
+    int toggle;
+    int cat;
+    int car_count;
+    tCar_spec* car;
+    tEnvironment_sound_source* env_src;
+    int i;
+
+    if (!gSound_available) {
+        return;
+    }
+
+    if (!gSound_enabled) {
+        toggle = 1;
+        ToggleSoundEnable();
+    } else {
+        toggle = 0;
+    }
+    BrVector3Scale(&gCamera_left, (br_vector3*)gCamera_to_world.m[0], -1.0f);
+    BrVector3Copy(&gCamera_position, (br_vector3*)gCamera_to_world.m[3]);
+    S3BindListenerPositionBRender(&gCamera_position);
+    S3BindListenerVelocityBRender(&gCamera_velocity);
+    S3BindListenerLeftBRender(&gCamera_left);
+    if (!gSound_sources_inited) {
+
+        for (cat = eVehicle_rozzer; cat >= eVehicle_self; cat -= 1) {
+
+            if (cat == eVehicle_self) {
+                car_count = 1;
+            } else {
+                car_count = GetCarCount(cat);
+            }
+            for (i = 0; i < car_count; i++) {
+
+                PossibleService();
+                if (cat == eVehicle_self) {
+                    car = &gProgram_state.current_car;
+                } else {
+                    car = GetCarSpec(cat, i);
+                }
+
+                if ((car != NULL && car->driver == eDriver_local_human) || gSound_detail_level >= 3 || cat == eVehicle_rozzer) {
+
+                    car->sound_source = S3CreateSoundSourceBR(&car->pos, &car->vel, gEngine_outlet);
+                    if (car->sound_source != NULL) {
+                        S3BindAmbientSoundToOutlet(gEngine_outlet, cat == eVehicle_rozzer ? eSoundId_Cop_Siren : car->engine_noises[0], car->sound_source, 250.0f, 0, 0, 0, BR_FIXED_INT(1), BR_FIXED_INT(1));
+                    }
+                }
+            }
+        }
+
+        for (i = 0; i < (int)REC2_ASIZE(gEnvironment_sound_sources); i++) {
+
+            env_src = &gEnvironment_sound_sources[i];
+            env_src->field_0x10 = NULL;
+            if (env_src->source == NULL) {
+                env_src->source = S3CreateSoundSourceBR(&env_src->position, &gZero_v__car, gXXX_outlet);
+                if (env_src->source != NULL) {
+                    S3BindAmbientSoundToOutlet(gXXX_outlet, eSoundId_Cop_Siren, env_src->source, 100.f, 0, 0, 0, BR_FIXED_INT(1), BR_FIXED_INT(1));
+                }
+            }
+        }
+        gSound_sources_inited = 1;
+    }
+    if (toggle) {
+        ToggleSoundEnable();
+    }
+
+    gCount_environmental_sound_sources = 0;
+    gEnvironmental_sound_sources_buffer_index = 0;
+    gNext_sound_generator_munging = 0;
+}
 
 // FUNCTION: CARMA2_HW 0x00455de0
 void C2_HOOK_FASTCALL DisposeSoundSources(void) {

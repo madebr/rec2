@@ -45,7 +45,7 @@ extern void C2_HOOK_FASTCALL ToggleSoundEnable(void);
 
 extern void C2_HOOK_FASTCALL SoundService(void);
 
-// InitSoundSources
+extern void C2_HOOK_FASTCALL InitSoundSources(void);
 
 extern void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
