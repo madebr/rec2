@@ -441,7 +441,56 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
 
 // PrintPowerupIconIn3D
 
-// CreateBillBoard
+// FUNCTION: CARMA2_HW 0x004e09d0
+br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pTexture) {
+    br_actor* actor;
+    br_material* material;
+    br_model* model;
+    int width;
+    int height;
+    br_scalar left;
+    br_scalar right;
+    br_scalar top;
+    br_scalar bottom;
+
+    width = pTexture->width;
+    height = pTexture->height;
+    model = BrModelAllocate("Billboard Model", 4, 2);
+    material = BrMaterialAllocate("Billboard Material");
+    actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    actor->identifier = "Billboard Actor";
+    actor->model = model;
+    actor->material = material;
+    actor->render_style = BR_RSTYLE_FACES;
+    model->faces[0].vertices[0] = 0;
+    model->faces[0].vertices[1] = 1;
+    model->faces[0].vertices[2] = 2;
+    model->faces[1].vertices[0] = 2;
+    model->faces[1].vertices[1] = 3;
+    model->faces[1].vertices[2] = 0;
+    model->faces[0].material = NULL;
+    model->faces[1].material = NULL;
+    left = (float)-(width / 2);
+    top = (float)+(height / 2);
+    BrVector3Set(&model->vertices[0].p, left,  top, -2.0f);
+    bottom = (float)-(height / 2);
+    BrVector3Set(&model->vertices[1].p, left, bottom, -2.0f);
+    right = (float)+(width / 2);
+    BrVector3Set(&model->vertices[2].p, right, bottom, -2.0f);
+    BrVector3Set(&model->vertices[3].p, right,  top, -2.0f);
+    BrVector2Set(&model->vertices[0].map, 0.0f, 0.0f);
+    BrVector2Set(&model->vertices[1].map, 0.0f, 1.0f);
+    BrVector2Set(&model->vertices[2].map, 1.0f, 1.0f);
+    BrVector2Set(&model->vertices[3].map, 1.0f, 0.0f);
+    material->colour = 0;
+    material->colour_map = pTexture;
+    material->flags = BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
+    model->flags |= BR_MODF_KEEP_ORIGINAL;
+    BrMapAdd(pTexture);
+    BrMaterialAdd(material);
+    BrModelAdd(model);
+    return actor;
+}
 
 // FUNCTION: CARMA2_HW 0x004e0c00
 void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void) {

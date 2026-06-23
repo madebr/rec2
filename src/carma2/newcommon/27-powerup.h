@@ -391,7 +391,7 @@ extern void C2_HOOK_FASTCALL RemoveTail(void);
 
 // PrintPowerupIconIn3D
 
-// CreateBillBoard
+extern br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pTexture);
 
 extern void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
