@@ -4,21 +4,21 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-// InitialiseExtraRenders
+extern void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
-// AddExtraRender
+extern void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);
 
-// PointOutOfSight
+extern int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
 
-// CancelificateClipulatingPlaneyThings
+extern void C2_HOOK_FASTCALL CancelificateClipulatingPlaneyThings(void);
 
-// FixificateClipulatingPlaneyThings
+extern void C2_HOOK_FASTCALL FixificateClipulatingPlaneyThings(void);
 
-// ProcessModelFaceMaterials
+extern void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCallback);
 
-// ProcessModelFaceMaterials2
+extern void C2_HOOK_FASTCALL ProcessModelFaceMaterials2(br_model* pModel, material_cbfn* pCallback);
 
-// ProcessFaceMaterials
+extern intptr_t C2_HOOK_CDECL ProcessFaceMaterials(br_actor* pActor, void* pData);
 
 extern int C2_HOOK_FASTCALL DRPixelmapHasZeros(br_pixelmap* pm);
 
@@ -38,17 +38,17 @@ extern tCar_texturing_level C2_HOOK_FASTCALL GetCarTexturingLevel(void);
 
 extern void C2_HOOK_FASTCALL SetCarTexturingLevel(tCar_texturing_level pLevel);
 
-extern int C2_HOOK_FASTCALL HasThisSuffix(char* pIdent, char* pSuffix);
+extern int C2_HOOK_FASTCALL HasThisSuffix(const char* pIdent, const char* pSuffix);
 
-// UnsuffixedMaterial
+extern br_material* C2_HOOK_FASTCALL UnsuffixedMaterial(const char* pOld_ident, const char* pSuffix);
 
-// RoadUntexToPersp
+extern br_material* C2_HOOK_FASTCALL RoadUntexToPersp(br_model* pModel, tU16 pFace);
 
-// WallUntexToPersp
+extern br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFace);
 
-// WallLinearToPersp
+extern br_material* C2_HOOK_FASTCALL WallLinearToPersp(br_model* pModel, tU16 pFace);
 
-// GetRoadTexturingLevel
+extern tRoad_texturing_level C2_HOOK_FASTCALL GetRoadTexturingLevel(void);
 
 extern void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel);
 
@@ -56,7 +56,7 @@ extern void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel)
 
 extern void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel);
 
-// DisposeSuffixedMaterials
+extern br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pFace);
 
 // DisposeTexturingMaterials
 
@@ -64,14 +64,14 @@ extern intptr_t C2_HOOK_CDECL SetAccessoryRenderingCB(br_actor* pActor, void* pF
 
 extern void C2_HOOK_FASTCALL SetAccessoryRendering(int pOn);
 
-// GetAccessoryRendering
+extern int C2_HOOK_FASTCALL GetAccessoryRendering(void);
 
 extern void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
 // GetCarSimplificationLevel
 
-extern intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallback);
+extern intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, void* pContext);
 
-// BuildColourTable
+extern void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette);
 
 #endif // GUARD_17_WORLD2_H

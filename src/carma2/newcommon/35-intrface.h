@@ -1,22 +1,25 @@
 #ifndef GUARD_35_INTRFACE_H
 #define GUARD_35_INTRFACE_H
 
-// SetAlwaysTyping
+#include "c2_hooks.h"
+#include "rec2_types.h"
 
-// ClearAlwaysTyping
+extern void C2_HOOK_FASTCALL SetAlwaysTyping(void);
 
-// ChoiceDisabled
+extern void C2_HOOK_FASTCALL ClearAlwaysTyping(void);
 
-// ResetInterfaceTimeout
+extern int C2_HOOK_FASTCALL ChoiceDisabled(int pChoice);
 
-// ChangeSelection
+extern void C2_HOOK_FASTCALL ResetInterfaceTimeout__intrface(void);
+
+extern void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* pOld_selection, int* pNew_selection, int pMode, int pSkip_disabled);
 
 // RecopyAreas
 
-// DoInterfaceScreen
+extern int C2_HOOK_FASTCALL DoInterfaceScreen(const tInterface_spec* pSpec, int pOptions, int pCurrent_choice);
 
-// WhichItemIsSelectedIn
+extern int C2_HOOK_FASTCALL WhichItemIsSelectedIn(tFrontend_spec* pFrontend, int pGroup);
 
-// SelectThisItemIn
+extern void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, int pValue);
 
 #endif // GUARD_35_INTRFACE_H

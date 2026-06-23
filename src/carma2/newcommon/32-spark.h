@@ -2,6 +2,7 @@
 #define GUARD_32_SPARK_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // DrawDot
 
@@ -53,13 +54,13 @@
 
 // ActorFunks
 
-// MasterDisableCarFunks
+extern void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar);
 
-// MasterEnableCarFunks
+extern void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec);
 
 // SetPixelmap
 
-// DoCamouflageThing
+extern void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar);
 
 // DoSolidGraniteThing
 
@@ -79,7 +80,7 @@
 
 // RestorePixelmap
 
-// RestoreCarPixelmaps
+extern void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar);
 
 // MungeShrapnel
 
@@ -197,11 +198,11 @@ extern int C2_HOOK_FASTCALL GetSmokeOn(void);
 
 // BlendifyMaterialCB
 
-// BlendifyCar
+extern void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar);
 
 // UnBlendifyMaterialCB
 
-// UnBlendifyCar
+extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
 // IsCarSmoking
 

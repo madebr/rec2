@@ -22,5 +22,8 @@ void C2_HOOK_FASTCALL DisableAutoFogification(void) {
     NOT_IMPLEMENTED();
 }
 
-// RemoveMaterialFromFogification
+// STUB: CARMA2_HW 0x004ea860
+void C2_HOOK_FASTCALL RemoveMaterialFromFogification(br_material* pMaterial) {
+    NOT_IMPLEMENTED();
+}
 

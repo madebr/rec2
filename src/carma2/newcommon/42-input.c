@@ -3,9 +3,15 @@
 // GLOBAL: CARMA2_HW 0x0074b5e0
 int gKey_mapping[77];
 
+// GLOBAL: CARMA2_HW 0x0068c1c4
+int gEdge_trigger_mode;
+
 // SetJoystickArrays
 
-// PollKeys
+// STUB: CARMA2_HW 0x00481eb0
+void C2_HOOK_FASTCALL PollKeys(void) {
+    NOT_IMPLEMENTED();
+}
 
 // CyclePollKeys
 
@@ -27,7 +33,10 @@ int C2_HOOK_FASTCALL PDKeyDown(int pKey_index) {
 
 // PDKeyDown3
 
-// PDAnyKeyDown
+// STUB: CARMA2_HW 0x00482a00
+int C2_HOOK_FASTCALL PDAnyKeyDown(void) {
+    NOT_IMPLEMENTED();
+}
 
 // STUB: CARMA2_HW 0x00482d70
 int C2_HOOK_FASTCALL AnyKeyDown(void) {
@@ -43,21 +52,42 @@ int C2_HOOK_FASTCALL KeyIsDown(int pKey_index) {
 
 // KeyIsDownNoMouldiness
 
-// WaitForNoKeys
+// STUB: CARMA2_HW 0x004833b0
+void C2_HOOK_FASTCALL WaitForNoKeys(void) {
+    NOT_IMPLEMENTED();
+}
 
 // GetMousePosition
 
-// InitRollingLetters
+// STUB: CARMA2_HW 0x00483c90
+void C2_HOOK_FASTCALL InitRollingLetters(void) {
+    NOT_IMPLEMENTED();
+}
 
-// EndRollingLetters
+// STUB: CARMA2_HW 0x00483ce0
+void C2_HOOK_FASTCALL EndRollingLetters(void) {
+    NOT_IMPLEMENTED();
+}
 
 // AddRollingLetter
 
 // ChangeCharTo
 
-// RevertTyping
+// STUB: CARMA2_HW 0x00484120
+void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str) {
+    NOT_IMPLEMENTED();
+}
 
-// EdgeTriggerModeOn
+// FUNCTION: CARMA2_HW 0x00484600
+void C2_HOOK_FASTCALL EdgeTriggerModeOn(void) {
 
-// EdgeTriggerModeOff
+    gEdge_trigger_mode = 1;
+}
+
+
+// FUNCTION: CARMA2_HW 0x00484610
+void C2_HOOK_FASTCALL EdgeTriggerModeOff(void) {
+
+    gEdge_trigger_mode = 0;
+}
 

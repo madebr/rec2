@@ -7,7 +7,7 @@ extern int gKey_mapping[77];
 
 // SetJoystickArrays
 
-// PollKeys
+extern void C2_HOOK_FASTCALL PollKeys(void);
 
 // CyclePollKeys
 
@@ -25,7 +25,7 @@ extern int C2_HOOK_FASTCALL PDKeyDown(int pKey_index);
 
 // PDKeyDown3
 
-// PDAnyKeyDown
+extern int C2_HOOK_FASTCALL PDAnyKeyDown(void);
 
 extern int C2_HOOK_FASTCALL AnyKeyDown(void);
 
@@ -35,22 +35,22 @@ extern int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
 
 // KeyIsDownNoMouldiness
 
-// WaitForNoKeys
+extern void C2_HOOK_FASTCALL WaitForNoKeys(void);
 
 // GetMousePosition
 
-// InitRollingLetters
+extern void C2_HOOK_FASTCALL InitRollingLetters(void);
 
-// EndRollingLetters
+extern void C2_HOOK_FASTCALL EndRollingLetters(void);
 
 // AddRollingLetter
 
 // ChangeCharTo
 
-// RevertTyping
+extern void C2_HOOK_FASTCALL RevertTyping(int pSlot_index, char* pRevert_str);
 
-// EdgeTriggerModeOn
+extern void C2_HOOK_FASTCALL EdgeTriggerModeOn(void);
 
-// EdgeTriggerModeOff
+extern void C2_HOOK_FASTCALL EdgeTriggerModeOff(void);
 
 #endif // GUARD_42_INPUT_H

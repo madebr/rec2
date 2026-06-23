@@ -1,10 +1,14 @@
 #include "28-world3.h"
 
+#include "08-loading1.h"
 #include "41-utility.h"
+#include "50-fog.h"
 #include "52-errors.h"
 #include "63-loading3.h"
 #include "69-sound.h"
 #include "70-packfile.h"
+#include "globvars.h"
+#include "globvrpb.h"
 #include "rec2_macros.h"
 
 #include <string.h>
@@ -30,19 +34,31 @@ br_model* gDuplicate_model;
 // GLOBAL: CARMA2_HW 0x00660cb8
 tRendererShadingType gMaterial_shading_for_callback = kRendererShadingType_Undefined;
 
-// TurnOnCloaking
-
-// RemoveFromCloakingList
-
-// IsCarCloaked
-
-// TurnOffCloaking
-
-// PeriodicCloaking
-
-// STUB: CARMA2_HW 0x00504b30
+// FUNCTION: CARMA2_HW 0x00504b30
 void C2_HOOK_FASTCALL InitTreeSurgery(void) {
-    NOT_IMPLEMENTED();
+    tPath_name the_path;
+    FILE* file;
+    int i;
+
+    PathCat(the_path, gApplication_path, "TreeSurgery.TXT");
+    file = PFfopen(the_path, "rt");
+    if (file != NULL) {
+        gTree_surgery_pass1_count = GetAnInt(file);
+        for (i = 0; i < gTree_surgery_pass1_count; i++) {
+            GetAString(file, gTree_surgery_pass1[i].name);
+        }
+        gTree_surgery_pass2_count = GetAnInt(file);
+        for (i = 0; i < gTree_surgery_pass2_count; i++) {
+            GetAString(file, gTree_surgery_pass2[i].original);
+            GetAString(file, gTree_surgery_pass2[i].replacement);
+        }
+#ifdef REC2_FIX_BUGS
+        PFfclose(file);
+#endif
+    } else {
+        gTree_surgery_pass1_count = 0;
+        gTree_surgery_pass2_count = 0;
+    }
 }
 
 // ModelIsATree
@@ -101,11 +117,40 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
     pStorage_space->materialProps = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
 }
 
-// DisposeStorageSpace
+// FUNCTION: CARMA2_HW 0x00500e10
+void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage) {
 
-// STUB: CARMA2_HW 0x00500e60
-void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pOld_count, int pNew_count) {
-    NOT_IMPLEMENTED();
+    BrMemFree(pStorage->pixelmaps);
+    BrMemFree(pStorage->shade_tables);
+    BrMemFree(pStorage->materials);
+    BrMemFree(pStorage->models);
+    BrMemFree(pStorage->sounds);
+    BrMemFree(pStorage->materialProps);
+}
+
+// FUNCTION: CARMA2_HW 0x00500e60
+void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pStart, int pEnd) {
+    int i;
+    int move_to;
+
+    for (i = pStart; i < pEnd && i < pStorage_space->materials_count; i++) {
+        BrMaterialRemove(pStorage_space->materials[i]);
+        BrMaterialFree(pStorage_space->materials[i]);
+        RemoveMaterialFromFogification(pStorage_space->materials[i]);
+    }
+    for (move_to = pStart, i = pEnd; i < pStorage_space->materials_count; ) {
+        pStorage_space->materials[move_to++] = pStorage_space->materials[i++];
+    }
+    pStorage_space->materials_count = move_to;
+    if (pStorage_space == &gNet_cars_storage_space) {
+        for (i = 0; i < gNumber_of_net_players; i++) {
+            tCar_spec* car = gNet_players[i].car;
+            if (car != NULL && car->old_material_count >= pEnd) {
+                car->old_material_count += pStart - pEnd;
+                car->new_material_count += pStart - pEnd;
+            }
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00500f30
@@ -294,7 +339,34 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
     return total;
 }
 
-// LoadSinglePixelmap
+// FUNCTION: CARMA2_HW 0x00501560
+br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, const char* pName) {
+    br_pixelmap* map;
+    tAdd_to_storage_result addResult;
+
+    map = LoadPixelmap(pName);
+    if (map == NULL) {
+        return BrMapFind(pName);
+    }
+
+    addResult = AddPixelmapToStorage(pStorage, map);
+    switch (addResult) {
+    case eStorage_allocated:
+        BrMapAdd(map);
+        return map;
+    case eStorage_duplicate:
+        if (gDisallow_duplicates) {
+            FatalError(kFatalError_DuplicatePixelmap_S, map->identifier);
+        } else {
+            BrPixelmapFree(map);
+        }
+        return gDuplicate_pixelmap;
+    case eStorage_not_enough_room:
+        FatalError(kFatalError_InsufficientPixelmapSlots);
+        break;
+    }
+    return NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x005016a0
 br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_space, const char* pName) {
@@ -324,7 +396,34 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_sp
     return NULL;
 }
 
-// LoadSingleMaterial
+// FUNCTION: CARMA2_HW 0x005017e0
+br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_space, const char* pName) {
+    br_material* material;
+
+    material = LoadMaterial(pName);
+    if (material == NULL) {
+        return BrMaterialFind(pName);
+    }
+
+    switch (AddMaterialToStorage(pStorage_space, material)) {
+    case eStorage_allocated:
+        BrMaterialAdd(material);
+        return material;
+    case eStorage_duplicate:
+        if (gDisallow_duplicates) {
+            FatalError(kFatalError_DuplicateMaterial_S, material->identifier);
+        } else {
+            BrMaterialFree(material);
+        }
+        return gDuplicate_material;
+    case eStorage_not_enough_room:
+        FatalError(kFatalError_InsufficientMaterialSlots);
+        return NULL;
+    }
+#ifdef REC2_FIX_BUGS
+    return NULL;
+#endif
+}
 
 // FUNCTION: CARMA2_HW 0x00501930
 tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id) {
@@ -632,11 +731,20 @@ void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, 
     PFForEveryFile(pPath, LoadIfItsAShadeTable);
 }
 
-// LoadAllStuffInDirectory
+// FUNCTION: CARMA2_HW 0x00502cf0
+void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading) {
+
+    LoadAllShadeTablesInDirectory(pStorage, pPath);
+    LoadAllPixelmapsInDirectory(pStorage, pPath);
+    LoadAllImagesInDirectory(pStorage, pPath);
+    LoadAllMaterialsInDirectory(pStorage, pPath, pShading);
+    LoadAllModelsInDirectory(pStorage, pPath);
+}
 
 // FUNCTION: CARMA2_HW 0x00502d60
 void C2_HOOK_FASTCALL DisallowDuplicates(void) {
 
+    // empty
 }
 
 // FUNCTION: CARMA2_HW 0x00502d70

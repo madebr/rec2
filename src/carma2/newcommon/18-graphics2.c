@@ -177,7 +177,10 @@ void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
 
 // DeallocateAllTransientBitmaps
 
-// RemoveTransientBitmaps
+// STUB: CARMA2_HW 0x0043e010
+void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them) {
+    NOT_IMPLEMENTED();
+}
 
 // SaveTransient
 
@@ -189,7 +192,10 @@ void C2_HOOK_FASTCALL InitTransientBitmaps(void) {
 
 // StartMouseCursor
 
-// EndMouseCursor
+// STUB: CARMA2_HW 0x0043e710
+void C2_HOOK_FASTCALL EndMouseCursor(void) {
+    NOT_IMPLEMENTED();
+}
 
 // DRDrawLine
 
@@ -200,7 +206,10 @@ void C2_HOOK_FASTCALL ClearEntireScreen(void) {
 
 // DistanceFromPlane
 
-// KillSplashScreen
+// STUB: CARMA2_HW 0x0047b960
+void C2_HOOK_FASTCALL KillSplashScreen(void) {
+    NOT_IMPLEMENTED();
+}
 
 // SplashScreenWith
 

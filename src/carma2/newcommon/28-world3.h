@@ -6,16 +6,6 @@
 
 extern br_actor* gAdditional_actors;
 
-// TurnOnCloaking
-
-// RemoveFromCloakingList
-
-// IsCarCloaked
-
-// TurnOffCloaking
-
-// PeriodicCloaking
-
 extern void C2_HOOK_FASTCALL InitTreeSurgery(void);
 
 // ModelIsATree
@@ -54,9 +44,9 @@ extern void C2_HOOK_FASTCALL InitTreeSurgery(void);
 
 extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pStorage_space, int pMax_pixelmaps, int pMax_shade_tables, int pMax_materials, int pMax_models, int pMax_sounds);
 
-// DisposeStorageSpace
+extern void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage);
 
-extern void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pOld_count, int pNew_count);
+extern void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pStart, int pEnd);
 
 extern void C2_HOOK_FASTCALL ClearOutStorageSpace(tBrender_storage* pStorage_space);
 
@@ -72,11 +62,11 @@ extern tAdd_to_storage_result C2_HOOK_FASTCALL AddSoundToStorage(tBrender_storag
 
 extern int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* path);
 
-// LoadSinglePixelmap
+extern br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, const char* pName);
 
 extern br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_space, const char* pName);
 
-// LoadSingleMaterial
+extern br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_space, const char* pName);
 
 extern tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id);
 
@@ -106,11 +96,11 @@ extern void C2_HOOK_FASTCALL LoadIfItsAModel(const char* pPath);
 
 extern void C2_HOOK_FASTCALL LoadAllModelsInDirectory(tBrender_storage *pStorage, const char* pPath);
 
-// LoadIfItsAShadeTable
+extern void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath);
 
 extern void C2_HOOK_FASTCALL LoadAllShadeTablesInDirectory(tBrender_storage* pStorage, const char* pPath);
 
-extern void C2_HOOK_FASTCALL LoadIfItsAShadeTable(const char* pPath);
+extern void C2_HOOK_FASTCALL LoadAllStuffInDirectory(tBrender_storage* pStorage, const char* pPath, tRendererShadingType pShading);
 
 extern void C2_HOOK_FASTCALL DisallowDuplicates(void);
 

@@ -74,7 +74,7 @@ extern void C2_HOOK_FASTCALL InitWobbleStuff(void);
 
 // StartRenderingHeadups
 
-// RenderThisHeadup
+extern void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor);
 
 // StopRenderingHeadups
 
