@@ -58,7 +58,10 @@ void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar) {
     NOT_IMPLEMENTED();
 }
 
-// MasterEnableCarFunks
+// STUB: CARMA2_HW 0x004f8e10
+void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
 
 // SetPixelmap
 
@@ -82,7 +85,10 @@ void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar) {
 
 // RestorePixelmap
 
-// RestoreCarPixelmaps
+// STUB: CARMA2_HW 0x004f9620
+void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar_spec) {
+    NOT_IMPLEMENTED();
+}
 
 // MungeShrapnel
 
@@ -221,7 +227,10 @@ void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar) {
 
 // UnBlendifyMaterialCB
 
-// UnBlendifyCar
+// STUB: CARMA2_HW 0x004fed40
+void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar_spec) {
+    NOT_IMPLEMENTED();
+}
 
 // IsCarSmoking
 

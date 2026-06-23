@@ -56,7 +56,7 @@
 
 extern void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar);
 
-// MasterEnableCarFunks
+extern void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec);
 
 // SetPixelmap
 
@@ -80,7 +80,7 @@ extern void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar);
 
 // RestorePixelmap
 
-// RestoreCarPixelmaps
+extern void C2_HOOK_FASTCALL RestoreCarPixelmaps(tCar_spec* pCar);
 
 // MungeShrapnel
 
@@ -202,7 +202,7 @@ extern void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar);
 
 // UnBlendifyMaterialCB
 
-// UnBlendifyCar
+extern void C2_HOOK_FASTCALL UnBlendifyCar(tCar_spec* pCar);
 
 // IsCarSmoking
 

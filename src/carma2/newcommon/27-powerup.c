@@ -2,6 +2,9 @@
 
 #include "32-spark.h"
 #include "globvrpb.h"
+#include "rec2_macros.h"
+
+#include "c2_string.h"
 
 // GLOBAL: CARMA2_HW 0x006a0ad4
 const char* gPowerup_txt_path;
@@ -456,7 +459,25 @@ int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* pPowerup, tCar_spec* pCar) {
     return pPowerup - gPowerup_array;
 }
 
-// RemoveFromCloakingList
+// FUNCTION: CARMA2_HW 0x004e0cb0
+void C2_HOOK_FASTCALL RemoveFromCloakingList(tCar_spec* pCar) {
+    int i;
+
+    if (gNet_mode != eNet_mode_none) {
+        for (i = 0; i < gCount_cloaked_cars; i++) {
+
+            if (gCloaked_cars[i] == pCar) {
+#ifdef REC2_FIX_BUGS
+                memmove(&gCloaked_cars[i], &gCloaked_cars[i + 1], (gCount_cloaked_cars - i - 1) * sizeof(tCar_spec*));
+#else
+                memcpy(&gCloaked_cars[i], &gCloaked_cars[i + 1], (REC2_ASIZE(gCloaked_cars) - i - 1) * sizeof(tCar_spec*));
+#endif
+                gCount_cloaked_cars -= 1;
+                break;
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e0d10
 int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar) {
@@ -472,6 +493,15 @@ int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar) {
     return 0;
 }
 
-// TurnOffCloaking
+// FUNCTION: CARMA2_HW 0x004e0d50
+void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (gNet_mode != eNet_mode_none) {
+        UnBlendifyCar(pCar);
+        RemoveFromCloakingList(pCar);
+        MasterEnableCarFunks(pCar);
+        RestoreCarPixelmaps(pCar);
+    }
+}
 
 // PeriodicCloaking
