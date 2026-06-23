@@ -54,7 +54,7 @@ extern void C2_HOOK_FASTCALL InitTreeSurgery(void);
 
 extern void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pStorage_space, int pMax_pixelmaps, int pMax_shade_tables, int pMax_materials, int pMax_models, int pMax_sounds);
 
-// DisposeStorageSpace
+extern void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage);
 
 extern void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pStart, int pEnd);
 

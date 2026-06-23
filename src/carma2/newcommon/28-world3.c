@@ -127,7 +127,16 @@ void C2_HOOK_FASTCALL InitialiseStorageSpace(int pUnknown, tBrender_storage* pSt
     pStorage_space->materialProps = BrMemCalloc(pMax_materials, sizeof(br_material*), kMem_stor_space_table);
 }
 
-// DisposeStorageSpace
+// FUNCTION: CARMA2_HW 0x00500e10
+void C2_HOOK_FASTCALL DisposeStorageSpace(tBrender_storage* pStorage) {
+
+    BrMemFree(pStorage->pixelmaps);
+    BrMemFree(pStorage->shade_tables);
+    BrMemFree(pStorage->materials);
+    BrMemFree(pStorage->models);
+    BrMemFree(pStorage->sounds);
+    BrMemFree(pStorage->materialProps);
+}
 
 // FUNCTION: CARMA2_HW 0x00500e60
 void C2_HOOK_FASTCALL ClearMatertrialSetFromStorageSpace(tBrender_storage* pStorage_space, int pStart, int pEnd) {
