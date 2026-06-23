@@ -420,7 +420,9 @@ br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_spac
         FatalError(kFatalError_InsufficientMaterialSlots);
         return NULL;
     }
-
+#ifdef REC2_FIX_BUGS
+    return NULL;
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00501930
