@@ -3,6 +3,7 @@
 #include "08-loading1.h"
 #include "23-piping.h"
 #include "28-world3.h"
+#include "30-opponent.h"
 #include "41-utility.h"
 #include "52-errors.h"
 #include "70-packfile.h"
@@ -22,6 +23,9 @@ int gCD_fully_installed;
 
 // GLOBAL: CARMA2_HW 0x00684558
 int gServicing_sound;
+
+// GLOBAL: CARMA2_HW 0x00684560
+int gSound_sources_inited;
 
 // GLOBAL: CARMA2_HW 0x00684544
 tU32 gLast_sound_service;
@@ -74,6 +78,9 @@ const char* gSound_periodicity_choices[3] = {
 
 // GLOBAL: CARMA2_HW 0x00595c48
 int gSound_detail_level = 1;
+
+// GLOBAL: CARMA2_HW 0x00684570
+tEnvironment_sound_source gEnvironment_sound_sources[5];
 
 // GLOBAL: CARMA2_HW 0x006845fc
 tS3_outlet* gEffects_outlet;
@@ -306,14 +313,32 @@ int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
     return 0;
 }
 
-// DRS3StopOutletSound
+// FUNCTION: CARMA2_HW 0x00455970
+int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet) {
+
+    if (gSound_enabled) {
+        return S3StopOutletSound(pOutlet);
+    }
+    return 0;
+}
 
 // STUB: CARMA2_HW 0x004559e0
 int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void) {
     NOT_IMPLEMENTED();
 }
 
-// ToggleSoundEnable
+// FUNCTION: CARMA2_HW 0x00455a50
+void C2_HOOK_FASTCALL ToggleSoundEnable(void) {
+
+    if (gSound_enabled) {
+        S3StopAllOutletSounds();
+        S3Disable();
+        gSound_enabled = 0;
+    } else {
+        S3Enable();
+        gSound_enabled = 1;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00455a80
 void C2_HOOK_FASTCALL SoundService(void) {
@@ -341,9 +366,58 @@ void C2_HOOK_FASTCALL SoundService(void) {
 
 // InitSoundSources
 
-// STUB: CARMA2_HW 0x00455de0
+// FUNCTION: CARMA2_HW 0x00455de0
 void C2_HOOK_FASTCALL DisposeSoundSources(void) {
-    NOT_IMPLEMENTED();
+    int cat;
+    int car_count;
+    int i;
+    int toggle;
+    tCar_spec* the_car;
+
+    if (gSound_available) {
+        if (gSound_enabled) {
+            toggle = 0;
+        } else {
+            toggle = 1;
+            ToggleSoundEnable();
+        }
+        if (gSound_sources_inited) {
+            DRS3StopOutletSound(gEngine_outlet);
+            S3Service(gProgram_state.cockpit_on && gProgram_state.cockpit_image_index >= 0, 0);
+
+            for (cat = eVehicle_rozzer; cat >= eVehicle_self; cat--) {
+                if (cat == eVehicle_self) {
+                    car_count = 1;
+                } else {
+                    car_count = GetCarCount(cat);
+                }
+                for (i = 0; i < car_count; i++) {
+                    if (cat == eVehicle_self) {
+                        the_car = &gProgram_state.current_car;
+                    } else {
+                        the_car = GetCarSpec(cat, i);
+                    }
+                    if ((the_car != NULL && the_car->driver == eDriver_local_human) || gSound_detail_level == 3 || cat == eVehicle_rozzer) {
+                        if (the_car->sound_source != NULL) {
+                            S3UpdateSoundSource(gEngine_outlet, -1, the_car->sound_source, 0.0f, 0, 0, 0, 0x10000, 0x10000);
+                            S3ReleaseSoundSource(the_car->sound_source);
+                        }
+                        the_car->sound_source = NULL;
+                    }
+                }
+                // FIXME: move outside of car category loop?
+                for (i = 0; i < (int)REC2_ASIZE(gEnvironment_sound_sources); i++) {
+                    if (gEnvironment_sound_sources[i].source != NULL) {
+                        S3BindAmbientSoundToOutlet(gXXX_outlet, -1, gEnvironment_sound_sources[i].source, 100.0f, 0, 0, 0, BR_FIXED_INT(1), BR_FIXED_INT(1));
+                    }
+                }
+            }
+            gSound_sources_inited = 0;
+        }
+        if (toggle) {
+            ToggleSoundEnable();
+        }
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00455f80

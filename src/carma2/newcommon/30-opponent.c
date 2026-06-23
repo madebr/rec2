@@ -160,9 +160,15 @@ void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void) {
 
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 
-// GetCarCount
+// STUB: CARMA2_HW 0x004ae790
+int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory) {
+    NOT_IMPLEMENTED();
+}
 
-// GetCarSpec
+// STUB: CARMA2_HW 0x004ae7e0
+tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex) {
+    NOT_IMPLEMENTED();
+}
 
 // GetDriverName
 

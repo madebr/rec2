@@ -153,9 +153,9 @@ extern void C2_HOOK_FASTCALL ForceRebuildActiveCarList(void);
 
 // WakeUpOpponentsToTheFactThatTheStartHasBeenJumped
 
-// GetCarCount
+extern int C2_HOOK_FASTCALL GetCarCount(tVehicle_type pCategory);
 
-// GetCarSpec
+extern tCar_spec* C2_HOOK_FASTCALL GetCarSpec(tVehicle_type pCategory, int pIndex);
 
 // GetDriverName
 

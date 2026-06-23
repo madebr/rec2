@@ -37,11 +37,11 @@ extern int C2_HOOK_FASTCALL DRS3ShutDown(void);
 
 extern int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume);
 
-// DRS3StopOutletSound
+extern int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet);
 
 extern int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void);
 
-// ToggleSoundEnable
+extern void C2_HOOK_FASTCALL ToggleSoundEnable(void);
 
 extern void C2_HOOK_FASTCALL SoundService(void);
 
