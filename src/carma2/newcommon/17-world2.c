@@ -339,7 +339,43 @@ void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel) {
     gWall_texturing_level = pLevel;
 }
 
-// DisposeSuffixedMaterials
+// FUNCTION: CARMA2_HW 0x00448dd0
+br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pFace) {
+    size_t max_suffix_len;
+    br_material* mat;
+    br_material* victim;
+    // GLOBAL: CARMA2_HW 0x005913a0
+    static const char* suffixes[3] = {
+        ".road",
+        ".pwall",
+        ".lwall",
+    };
+    int s;
+    char* id;
+
+    mat = pModel->faces[pFace].material;
+    if (mat->identifier != NULL) {
+        max_suffix_len = 0;
+        for (s = 0; s < REC2_ASIZE(suffixes); s++) {
+            if (max_suffix_len < strlen(suffixes[s])) {
+                max_suffix_len = strlen(suffixes[s]);
+            }
+        }
+        id = BrMemAllocate(strlen(mat->identifier) + max_suffix_len + 1, kMem_new_mat_id);
+        for (s = 0; s < REC2_ASIZE(suffixes); s++) {
+            sprintf(id, "%s%s", mat->identifier, suffixes[s]);
+            victim = BrMaterialFind(id);
+            if (victim != NULL) {
+                BrMaterialRemove(victim);
+                BrMaterialFree(victim);
+            }
+        }
+#ifdef REC2_FIX_BUGS
+        BrMemFree(id);
+#endif
+    }
+    return NULL;
+}
 
 // DisposeTexturingMaterials
 

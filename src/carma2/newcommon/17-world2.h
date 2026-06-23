@@ -56,7 +56,7 @@ extern void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel)
 
 extern void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel);
 
-// DisposeSuffixedMaterials
+extern br_material* C2_HOOK_FASTCALL DisposeSuffixedMaterials(br_model* pModel, tU16 pFace);
 
 // DisposeTexturingMaterials
 
