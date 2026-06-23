@@ -9,7 +9,11 @@ void C2_HOOK_FASTCALL SetAlwaysTyping(void) {
     gAlways_typing = 1;
 }
 
-// ClearAlwaysTyping
+// FUNCTION: CARMA2_HW 0x00484630
+void C2_HOOK_FASTCALL ClearAlwaysTyping(void) {
+
+    gAlways_typing = 0;
+}
 
 // ChoiceDisabled
 

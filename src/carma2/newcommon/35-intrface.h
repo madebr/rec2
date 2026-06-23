@@ -5,7 +5,7 @@
 
 extern void C2_HOOK_FASTCALL SetAlwaysTyping(void);
 
-// ClearAlwaysTyping
+extern void C2_HOOK_FASTCALL ClearAlwaysTyping(void);
 
 // ChoiceDisabled
 
