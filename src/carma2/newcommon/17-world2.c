@@ -305,7 +305,19 @@ br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFace) {
     return new_mat;
 }
 
-// WallLinearToPersp
+// FUNCTION: CARMA2_HW 0x00448390
+br_material* C2_HOOK_FASTCALL WallLinearToPersp(br_model* pModel, tU16 pFace) {
+    br_material* old_mat;
+    br_material* new_mat;
+
+    old_mat = pModel->faces[pFace].material;
+    if (HasThisSuffix(old_mat->identifier, ".pwall")) {
+        new_mat = UnsuffixedMaterial(old_mat->identifier, ".pwall");
+    } else {
+        new_mat = NULL;
+    }
+    return new_mat;
+}
 
 // GetRoadTexturingLevel
 
