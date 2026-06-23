@@ -1,6 +1,7 @@
 #include "69-sound.h"
 
 #include "08-loading1.h"
+#include "23-piping.h"
 #include "28-world3.h"
 #include "41-utility.h"
 #include "52-errors.h"
@@ -345,7 +346,21 @@ void C2_HOOK_FASTCALL DisposeSoundSources(void) {
     NOT_IMPLEMENTED();
 }
 
-// DRS3StartSound3D
+// FUNCTION: CARMA2_HW 0x00455f80
+int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed) {
+
+    if (gSound_enabled) {
+        if (pVolume != 0
+                && pSound_id != eSoundId_pratcam_whirr_noise
+                && !(pSound_id >= 3000 && pSound_id <= 3007)
+                && !(pSound_id >= 5300 && pSound_id <= 5320)) {
+            PipeSingleSound(pOutlet, pSound_id, pVolume, 0, pPitch, pInitial_position);
+                }
+        return S3StartSound3D(pOutlet, pSound_id, pInitial_position, pInitial_velocity, pRepeats, pVolume, pPitch, pSpeed);
+    } else {
+        return 0;
+    }
+}
 
 // MungeEngineNoise
 

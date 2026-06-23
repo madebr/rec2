@@ -2,6 +2,7 @@
 #define GUARD_23_PIPING_H
 
 #include "c2_hooks.h"
+#include <s3/s3.h>
 
 // ARReplayForwards
 
@@ -185,7 +186,7 @@ extern void C2_HOOK_FASTCALL DisposeActionReplay(void);
 
 // PipeSingleGraphicalWheelStuff
 
-// PipeSingleSound
+extern void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPosition);
 
 // PipeSingleSpecial
 

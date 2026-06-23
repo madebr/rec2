@@ -957,5 +957,5 @@ int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const 
             && !(pSound_id >= 5300 && pSound_id <= 5320)) {
         PipeSingleSound(pOutlet, pSound_id, pVolume, 0, pPitch, pInitial_position);
     }
-    return DRS3StartSound3D(pOutlet, pSound_id, pInitial_position, pInitial_velocity, pRepeats, pVolume, pPitch, pSpeed);
+    return S3StartSound3D(pOutlet, pSound_id, pInitial_position, pInitial_velocity, pRepeats, pVolume, pPitch, pSpeed);
 }

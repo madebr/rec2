@@ -49,7 +49,7 @@ extern void C2_HOOK_FASTCALL SoundService(void);
 
 extern void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
-// DRS3StartSound3D
+extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
 
 // MungeEngineNoise
 
