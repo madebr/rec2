@@ -53,7 +53,10 @@ int gSmoke_on = 1;
 
 // ActorFunks
 
-// MasterDisableCarFunks
+// STUB: CARMA2_HW 0x004f8ca0
+void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
 
 // MasterEnableCarFunks
 
@@ -211,7 +214,10 @@ int C2_HOOK_FASTCALL GetSmokeOn(void) {
 
 // BlendifyMaterialCB
 
-// BlendifyCar
+// STUB: CARMA2_HW 0x004fecf0
+void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar) {
+    NOT_IMPLEMENTED();
+}
 
 // UnBlendifyMaterialCB
 

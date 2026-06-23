@@ -34,16 +34,6 @@ br_model* gDuplicate_model;
 // GLOBAL: CARMA2_HW 0x00660cb8
 tRendererShadingType gMaterial_shading_for_callback = kRendererShadingType_Undefined;
 
-// TurnOnCloaking
-
-// RemoveFromCloakingList
-
-// IsCarCloaked
-
-// TurnOffCloaking
-
-// PeriodicCloaking
-
 // FUNCTION: CARMA2_HW 0x00504b30
 void C2_HOOK_FASTCALL InitTreeSurgery(void) {
     tPath_name the_path;

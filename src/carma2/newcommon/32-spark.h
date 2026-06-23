@@ -2,6 +2,7 @@
 #define GUARD_32_SPARK_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // DrawDot
 
@@ -53,7 +54,7 @@
 
 // ActorFunks
 
-// MasterDisableCarFunks
+extern void C2_HOOK_FASTCALL MasterDisableCarFunks(tCar_spec* pCar);
 
 // MasterEnableCarFunks
 
@@ -197,7 +198,7 @@ extern int C2_HOOK_FASTCALL GetSmokeOn(void);
 
 // BlendifyMaterialCB
 
-// BlendifyCar
+extern void C2_HOOK_FASTCALL BlendifyCar(tCar_spec* pCar);
 
 // UnBlendifyMaterialCB
 

@@ -395,4 +395,14 @@ extern void C2_HOOK_FASTCALL RemoveTail(void);
 
 extern void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void);
 
+extern int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* pPowerup, tCar_spec* pCar);
+
+// RemoveFromCloakingList
+
+extern int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar);
+
+// TurnOffCloaking
+
+// PeriodicCloaking
+
 #endif // GUARD_27_POWERUP_H

@@ -1,5 +1,8 @@
 #include "27-powerup.h"
 
+#include "32-spark.h"
+#include "globvrpb.h"
+
 // GLOBAL: CARMA2_HW 0x006a0ad4
 const char* gPowerup_txt_path;
 
@@ -38,6 +41,15 @@ float gMass_mutant_tail_ball;
 
 // GLOBAL: CARMA2_HW 0x0065ebbc
 float gMass_mine = 1.0f;
+
+// GLOBAL: CARMA2_HW 0x006a0454
+int gCount_cloaked_cars;
+
+// GLOBAL: CARMA2_HW 0x006a0910
+tCar_spec* gCloaked_cars[12];
+
+// GLOBAL: CARMA2_HW 0x006a0a54
+tPowerup* gPowerup_array;
 
 // GetNextGoodyTime
 
@@ -433,3 +445,33 @@ void C2_HOOK_FASTCALL SetDefaultPowerupFilename(void) {
     gPowerup_txt_path = "POWERUP.TXT";
 }
 
+// FUNCTION: CARMA2_HW 0x004e0c40
+int C2_HOOK_FASTCALL TurnOnCloaking(tPowerup* pPowerup, tCar_spec* pCar) {
+
+    if (gNet_mode != eNet_mode_none && !IsCarCloaked(pCar)) {
+        BlendifyCar(pCar);
+        MasterDisableCarFunks(pCar);
+        gCloaked_cars[gCount_cloaked_cars++] = pCar;
+    }
+    return pPowerup - gPowerup_array;
+}
+
+// RemoveFromCloakingList
+
+// FUNCTION: CARMA2_HW 0x004e0d10
+int C2_HOOK_FASTCALL IsCarCloaked(tCar_spec* pCar) {
+    int i;
+
+    if (gNet_mode != eNet_mode_none) {
+        for (i = 0; i < gCount_cloaked_cars; i++) {
+            if (gCloaked_cars[i] == pCar) {
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+// TurnOffCloaking
+
+// PeriodicCloaking

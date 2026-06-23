@@ -6,16 +6,6 @@
 
 extern br_actor* gAdditional_actors;
 
-// TurnOnCloaking
-
-// RemoveFromCloakingList
-
-// IsCarCloaked
-
-// TurnOffCloaking
-
-// PeriodicCloaking
-
 extern void C2_HOOK_FASTCALL InitTreeSurgery(void);
 
 // ModelIsATree
