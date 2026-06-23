@@ -406,7 +406,32 @@ br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_sp
     return NULL;
 }
 
-// LoadSingleMaterial
+// FUNCTION: CARMA2_HW 0x005017e0
+br_material* C2_HOOK_FASTCALL LoadSingleMaterial(tBrender_storage* pStorage_space, const char* pName) {
+    br_material* material;
+
+    material = LoadMaterial(pName);
+    if (material == NULL) {
+        return BrMaterialFind(pName);
+    }
+
+    switch (AddMaterialToStorage(pStorage_space, material)) {
+    case eStorage_allocated:
+        BrMaterialAdd(material);
+        return material;
+    case eStorage_duplicate:
+        if (gDisallow_duplicates) {
+            FatalError(kFatalError_DuplicateMaterial_S, material->identifier);
+        } else {
+            BrMaterialFree(material);
+        }
+        return gDuplicate_material;
+    case eStorage_not_enough_room:
+        FatalError(kFatalError_InsufficientMaterialSlots);
+        return NULL;
+    }
+
+}
 
 // FUNCTION: CARMA2_HW 0x00501930
 tAdd_to_storage_result C2_HOOK_FASTCALL LoadSingleSound(tBrender_storage* pStorage_space, int pSound_id) {
