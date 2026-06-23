@@ -2,6 +2,7 @@
 
 #include "41-utility.h"
 #include "globvars.h"
+#include "rec2_macros.h"
 
 #include "c2_string.h"
 
@@ -26,6 +27,9 @@ int gCount_extra_renders;
 // GLOBAL: CARMA2_HW 0x006a22c8
 tExtra_render gExtra_renders[6];
 
+// GLOBAL: CARMA2_HW 0x00704e40
+int gMirror_on__graphics;
+
 // FUNCTION: CARMA2_HW 0x004e5cb0
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
 
@@ -40,7 +44,43 @@ void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial) {
     gCount_extra_renders += 1;
 }
 
-// PointOutOfSight
+// FUNCTION: CARMA2_HW 0x004e5ce0
+int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance) {
+    br_vector3 distance_vector;
+    int i;
+
+#define CAMERA_MAX_DISTANCE(A) ((pMax_distance != 0.f) ? pMax_distance : REC2_SQR(((br_camera*)(A)->type_data)->yon_z))
+
+    if (gMirror_on__graphics) {
+        BrVector3Sub(&distance_vector, pPoint, (br_vector3*)gRearview_camera_to_world.m[3]);
+        if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(gRearview_camera)
+                && BrVector3Dot(&distance_vector, (br_vector3*)gRearview_camera_to_world.m[2]) < 0.f) {
+
+            return 0;
+        }
+    }
+
+    for (i = 0; i < gCount_extra_renders; i++) {
+        br_actor* a = gExtra_renders[i].actor;
+
+        BrVector3Sub(&distance_vector, pPoint, &a->t.t.translate.t);
+        if (BrVector3LengthSquared(&distance_vector) < CAMERA_MAX_DISTANCE(a)) {
+
+            return 0;
+        }
+    }
+
+    BrVector3Sub(&distance_vector, pPoint, (br_vector3*)gCamera_to_world.m[3]);
+    if (BrVector3LengthSquared(&distance_vector) >= CAMERA_MAX_DISTANCE(gCamera)) {
+        return 1;
+    }
+    if (BrVector3Dot(&distance_vector, (br_vector3*)gCamera_to_world.m[2]) >= 0.f) {
+
+        return 1;
+    }
+#undef CAMERA_MAX_DISTANCE
+    return 0;
+}
 
 // CancelificateClipulatingPlaneyThings
 
