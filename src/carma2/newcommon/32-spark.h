@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL MasterEnableCarFunks(tCar_spec* pCar_spec);
 
 // SetPixelmap
 
-// DoCamouflageThing
+extern void C2_HOOK_FASTCALL DoCamouflageThing(tCar_spec* pCar);
 
 // DoSolidGraniteThing
 

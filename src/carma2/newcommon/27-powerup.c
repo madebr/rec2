@@ -504,4 +504,14 @@ void C2_HOOK_FASTCALL TurnOffCloaking(tPowerup* pPowerup, tCar_spec* pCar) {
     }
 }
 
-// PeriodicCloaking
+// FUNCTION: CARMA2_HW 0x004e0de0
+void C2_HOOK_FASTCALL PeriodicCloaking(void) {
+    int i;
+
+    if (gNet_mode != eNet_mode_none) {
+
+        for (i = 0; i < gCount_cloaked_cars; i++) {
+            DoCamouflageThing(gCloaked_cars[i]);
+        }
+    }
+}
