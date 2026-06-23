@@ -319,7 +319,11 @@ br_material* C2_HOOK_FASTCALL WallLinearToPersp(br_model* pModel, tU16 pFace) {
     return new_mat;
 }
 
-// GetRoadTexturingLevel
+// FUNCTION: CARMA2_HW 0x00448770
+tRoad_texturing_level C2_HOOK_FASTCALL GetRoadTexturingLevel(void) {
+
+    return gRoad_texturing_level;
+}
 
 // FUNCTION: CARMA2_HW 0x00448780
 void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel) {

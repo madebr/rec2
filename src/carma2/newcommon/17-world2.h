@@ -48,7 +48,7 @@ extern br_material* C2_HOOK_FASTCALL WallUntexToPersp(br_model* pModel, tU16 pFa
 
 extern br_material* C2_HOOK_FASTCALL WallLinearToPersp(br_model* pModel, tU16 pFace);
 
-// GetRoadTexturingLevel
+extern tRoad_texturing_level C2_HOOK_FASTCALL GetRoadTexturingLevel(void);
 
 extern void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel);
 
