@@ -389,7 +389,7 @@ extern void C2_HOOK_FASTCALL RemoveTail(void);
 
 // ARUndoPowerupRespawn
 
-// PrintPowerupIconIn3D
+extern void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime);
 
 extern br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pTexture);
 

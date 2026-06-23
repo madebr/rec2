@@ -1,5 +1,6 @@
 #include "27-powerup.h"
 
+#include "16-graphics1.h"
 #include "32-spark.h"
 #include "globvrpb.h"
 #include "rec2_macros.h"
@@ -439,7 +440,44 @@ void C2_HOOK_FASTCALL RemoveTail(void) {
 
 // ARUndoPowerupRespawn
 
-// PrintPowerupIconIn3D
+// FUNCTION: CARMA2_HW 0x004e07f0
+void C2_HOOK_FASTCALL PrintPowerupIconIn3D(int pX, int pY, tHeadup_icon* pIcon, tPowerup* pPowerup, int pScale, tU32 pTime) {
+    float f;
+    float scale;
+    br_fixed_ls prev_opacity;
+
+    if (pIcon == NULL) {
+        pPowerup->icon_actor->render_style = BR_RSTYLE_FACES;
+        BrVector3Set(&pIcon->icon_actor->t.t.translate.t, (float)pX + 16.0f, (float)-(pY + 16), 0.0f);
+        RenderThisHeadup(pIcon->icon_actor);
+        return;
+    }
+    if (pIcon->icon_actor != NULL) {
+        pIcon->icon_actor->render_style = BR_RSTYLE_FACES;
+        if (pScale != 0) {
+            f = (float)(pTime - pIcon->fizzle_start) / 600.0f;
+            if (pIcon->fizzle_direction > 0) {
+                f = 1.0f - f;
+                scale = 1.0f + 5.0f * f;
+                BrMatrix34Scale(&pIcon->icon_actor->t.t.mat, scale, scale, 1.0f);
+            } else {
+                BrMatrix34Scale(&pIcon->icon_actor->t.t.mat, 1.01f - f, 1.01f - f, 1.0f);
+            }
+            BrMatrix34PostRotateZ(&pIcon->icon_actor->t.t.mat, (br_angle)((1.0f - f / 2.0f) * 65536.0f));
+            pIcon->icon_actor->material->extra_prim[1].v.x = BR_FIXED_INT((1.0f - f) * 255.0f);
+            BrMaterialUpdate(pIcon->icon_actor->material, BR_MATU_EXTRA_PRIM);
+        } else {
+            prev_opacity = pIcon->icon_actor->material->extra_prim[1].v.x;
+            pIcon->icon_actor->material->extra_prim[1].v.x = BR_FIXED_INT(255);
+            if (prev_opacity != pIcon->icon_actor->material->extra_prim[1].v.x) {
+                BrMaterialUpdate(pIcon->icon_actor->material, BR_MATU_EXTRA_PRIM);
+            }
+            BrMatrix34Identity(&pIcon->icon_actor->t.t.mat);
+        }
+        BrVector3Set(&pIcon->icon_actor->t.t.translate.t, (float)pX + 16.0f, (float)-(pY + 16), 0.0f);
+        RenderThisHeadup(pIcon->icon_actor);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004e09d0
 br_actor* C2_HOOK_FASTCALL CreateBillBoard(br_pixelmap* pTexture) {

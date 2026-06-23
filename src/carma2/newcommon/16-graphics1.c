@@ -182,7 +182,10 @@ void C2_HOOK_FASTCALL InitWobbleStuff(void) {
 
 // StartRenderingHeadups
 
-// RenderThisHeadup
+// STUB: CARMA2_HW 0x004e5ad0
+void C2_HOOK_FASTCALL RenderThisHeadup(br_actor* pActor) {
+    NOT_IMPLEMENTED();
+}
 
 // StopRenderingHeadups
 
