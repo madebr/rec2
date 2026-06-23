@@ -212,7 +212,7 @@ static void C2_HOOK_FASTCALL ReadMoodMessages(void) {
     }
 }
 
-// STUB: CARMA2_HW 0x00496e30
+// FUNCTION: CARMA2_HW 0x00496e30
 void C2_HOOK_FASTCALL InitMap(void) {
 
     if (!gInitMap_done) {
@@ -279,7 +279,7 @@ void C2_HOOK_FASTCALL InitMap(void) {
     gFLOAT_0068d8a0 = (float)gINT_0074abd4;
     gFLOAT_0068d8a4 = (float)gINT_0074abd0;
     gMini_map_arrow_z = 0.0f;
-    gFLOAT_0074ab9c = REC2_SQR((float)(gHeadup_map_half_height + gHeadup_map_half_width) * 0.45);
+    gFLOAT_0074ab9c = (float)REC2_SQR((double)(gHeadup_map_half_height + gHeadup_map_half_width) * 0.45);
     gFLOAT_0074abb8 = (float)REC2_SQR(gCurrent_graf_data->field_0x51c + 1);
     if (!gInitMap_done) {
         gCheckpoint_numbers = LoadPixelmap("CPNUMB.PIX");
@@ -392,26 +392,26 @@ static void C2_HOOK_FASTCALL MapChanged(void) {
 void C2_HOOK_FASTCALL CheckMapMoveKeys(int pKey0) {
 
     if (KeyIsDown(31) && pKey0) {
-        gHeadup_map_y_float -= (float)gFrame_period / 20.0;
+        gHeadup_map_y_float = (float)((double)gHeadup_map_y_float - (double)gFrame_period / 20.0);
         if (gHeadup_map_y_float < 0.0f) {
             gHeadup_map_y_float = 0.0f;
         }
         MapChanged();
     } else if (KeyIsDown(32) && pKey0) {
-        gHeadup_map_y_float += (float)gFrame_period / 20.0;
+        gHeadup_map_y_float = (float)((double)gHeadup_map_y_float + (double)gFrame_period / 20.0);
         if (gHeadup_map_y_float + gHeadup_map_h_float > (float)gBack_screen->height) {
             gHeadup_map_y_float = (float)(gBack_screen->height - gHeadup_map_h);
         }
         MapChanged();
     }
     if (KeyIsDown(33) && pKey0) {
-        gHeadup_map_x_float -= (float)gFrame_period / 20.0;
+        gHeadup_map_x_float = (float)((double)gHeadup_map_x_float - (double)gFrame_period / 20.0);
         if (gHeadup_map_x_float < 0.0f) {
             gHeadup_map_x_float = 0.0f;
         }
         MapChanged();
     } else if (KeyIsDown(34) && pKey0) {
-        gHeadup_map_x_float += (float)gFrame_period / 20.0;
+        gHeadup_map_x_float = (float)((double)gHeadup_map_x_float + (double)gFrame_period / 20.0);
         if (gHeadup_map_x_float + gHeadup_map_w_float + 8.0f > (float)gBack_screen->width) {
             gHeadup_map_x_float = (float)(gBack_screen->width - gHeadup_map_w - 8);
         }
