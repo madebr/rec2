@@ -82,9 +82,17 @@ int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2,
     return 0;
 }
 
-// CancelificateClipulatingPlaneyThings
+// FUNCTION: CARMA2_HW 0x004e5ef0
+void C2_HOOK_FASTCALL CancelificateClipulatingPlaneyThings(void) {
 
-// FixificateClipulatingPlaneyThings
+    // empty
+}
+
+// FUNCTION: CARMA2_HW 0x004e5f00
+void C2_HOOK_FASTCALL FixificateClipulatingPlaneyThings(void) {
+
+    // empty
+}
 
 void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCallback) {
     tU16 f;

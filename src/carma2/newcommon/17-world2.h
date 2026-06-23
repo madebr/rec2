@@ -10,9 +10,9 @@ extern void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMate
 
 extern int C2_HOOK_FASTCALL PointOutOfSight(const br_vector3* pPoint, undefined4 pArg2, br_scalar pMax_distance);
 
-// CancelificateClipulatingPlaneyThings
+extern void C2_HOOK_FASTCALL CancelificateClipulatingPlaneyThings(void);
 
-// FixificateClipulatingPlaneyThings
+extern void C2_HOOK_FASTCALL FixificateClipulatingPlaneyThings(void);
 
 extern void C2_HOOK_FASTCALL ProcessModelFaceMaterials(br_model* pModel, tPMFMCB* pCallback);
 
