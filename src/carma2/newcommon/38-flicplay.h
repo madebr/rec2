@@ -58,19 +58,19 @@ extern void C2_HOOK_FASTCALL FlicPaletteAllocate(void);
 
 extern void C2_HOOK_FASTCALL InitFlics(void);
 
-// LoadFlic
+extern int C2_HOOK_FASTCALL LoadFlic(int pIndex);
 
-// UnlockFlic
+extern void C2_HOOK_FASTCALL UnlockFlic(int pIndex);
 
 // LoadFlicData
 
-// InitFlicQueue
+extern void C2_HOOK_FASTCALL InitFlicQueue(void);
 
 // FlicQueueFinished
 
 // ProcessFlicQueue
 
-// FlushFlicQueue
+extern void C2_HOOK_FASTCALL FlushFlicQueue(void);
 
 extern void C2_HOOK_FASTCALL LoadInterfaceStrings(void);
 
