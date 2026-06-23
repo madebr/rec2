@@ -299,19 +299,19 @@ void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpe
         switch (pSpec->periodicity) {
         case kSoundFxPeriodicity_Periodic:
             f1 = GetAScalar(pF);
-            pSpec->periodic1 = (int)(1000.0f * f1);
+            pSpec->period = (int)(1000.0f * f1);
             break;
         case kSoundFxPeriodicity_Random:
             GetPairOfFloats(pF, &f1, &f2);
-            pSpec->periodic1 = (int)(1000.0f * f1);
-            pSpec->periodic2 = (int)(1000.0f * f2);
+            pSpec->random.min_gap = (int)(1000.0f * f1);
+            pSpec->random.max_gap = (int)(1000.0f * f2);
             break;
 #ifdef REC2_FIX_BUGS
         default:
             break;
 #endif
         }
-        pSpec->field_0x14 = BR_FIXED_INT(GetAnInt(pF)) / 100;
+        pSpec->max_deviation = BR_FIXED_INT(GetAnInt(pF)) / 100;
         pSpec->count_sound_alternatives = GetAnInt(pF);
 
         C2_HOOK_BUG_ON(REC2_ASIZE(pSpec->sound_alternatives) != 5);
@@ -394,10 +394,42 @@ void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF) {
     }
 }
 
-// WriteOutSoundSpec
+// FUNCTION: CARMA2_HW 0x00457450
+void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec) {
+    int i;
+
+    if (pSpec->periodicity == kSoundFxPeriodicity_None) {
+        fprintf(pF, "NONE\t\t\t\t\t// sound time type\n");
+        return;
+    }
+
+    fprintf(pF, "%s\t\t\t\t\t// sound time type\n", gSound_periodicity_choices[pSpec->periodicity]);
+    switch (pSpec->periodicity) {
+    case kSoundFxPeriodicity_Periodic:
+        fprintf(pF,"%.2f\t\t\t\t\t// period\n",
+            (double)pSpec->period / 1000.0);
+        break;
+    case kSoundFxPeriodicity_Random:
+        fprintf(pF, "%.2f,%.2f\t\t\t\t\t// min,max gap\n",
+           (double)pSpec->random.min_gap / 1000.0,
+           (double)pSpec->random.max_gap / 1000.0);
+        break;
+#ifdef REC2_FIX_BUGS
+    default:
+        break;
+#endif
+    }
+    fprintf(pF, "%d\t\t\t\t\t// max deviation\n", (int)((100.0 * (double)pSpec->max_deviation) / 65536.0));
+    fprintf(pF, "%d\t\t\t\t\t// num sounds\n", pSpec->count_sound_alternatives);
+    for (i = 0; i < pSpec->count_sound_alternatives; i++) {
+
+        fprintf(pF, "%d\t\t\t\t\t// sound ID\n", pSpec->sound_alternatives[i]);
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00457570
 void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void) {
+
     gPedSoundPath = NULL;
 }
 

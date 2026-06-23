@@ -93,7 +93,7 @@ extern void C2_HOOK_FASTCALL BuggerModelName(tTrack_spec* pTrack_spec, const cha
 
 extern void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF);
 
-// WriteOutSoundSpec
+extern void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
 extern void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void);
 
