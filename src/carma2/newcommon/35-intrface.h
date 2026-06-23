@@ -18,7 +18,7 @@ extern void C2_HOOK_FASTCALL ChangeSelection(const tInterface_spec* pSpec, int* 
 
 // DoInterfaceScreen
 
-// WhichItemIsSelectedIn
+extern int C2_HOOK_FASTCALL WhichItemIsSelectedIn(tFrontend_spec* pFrontend, int pGroup);
 
 extern void C2_HOOK_FASTCALL SelectThisItemIn(tFrontend_spec* pFrontend, int pGroup, int pValue);
 
