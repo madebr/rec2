@@ -476,9 +476,17 @@ void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel) {
 
 // GetCarSimplificationLevel
 
-// STUB: CARMA2_HW 0x00448f90
-intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, material_cbfn* pCallback) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x00448f90
+intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, void* pContext) {
+    material_cbfn* callback = pContext;
+
+    if (pActor->material != NULL) {
+        callback(pActor->material);
+    }
+    if (pActor->type == BR_ACTOR_MODEL && pActor->model != NULL) {
+        ProcessModelFaceMaterials2(pActor->model, callback);
+    }
+    return BrActorEnum(pActor, ProcessMaterials, callback);
 }
 
 // BuildColourTable
