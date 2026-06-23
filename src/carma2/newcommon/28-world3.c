@@ -349,7 +349,34 @@ int C2_HOOK_FASTCALL AddPixelmaps(tBrender_storage* pStorage_space, const char* 
     return total;
 }
 
-// LoadSinglePixelmap
+// FUNCTION: CARMA2_HW 0x00501560
+br_pixelmap* C2_HOOK_FASTCALL LoadSinglePixelmap(tBrender_storage* pStorage, const char* pName) {
+    br_pixelmap* map;
+    tAdd_to_storage_result addResult;
+
+    map = LoadPixelmap(pName);
+    if (map == NULL) {
+        return BrMapFind(pName);
+    }
+
+    addResult = AddPixelmapToStorage(pStorage, map);
+    switch (addResult) {
+    case eStorage_allocated:
+        BrMapAdd(map);
+        return map;
+    case eStorage_duplicate:
+        if (gDisallow_duplicates) {
+            FatalError(kFatalError_DuplicatePixelmap_S, map->identifier);
+        } else {
+            BrPixelmapFree(map);
+        }
+        return gDuplicate_pixelmap;
+    case eStorage_not_enough_room:
+        FatalError(kFatalError_InsufficientPixelmapSlots);
+        break;
+    }
+    return NULL;
+}
 
 // FUNCTION: CARMA2_HW 0x005016a0
 br_pixelmap* C2_HOOK_FASTCALL LoadSingleShadeTable(tBrender_storage* pStorage_space, const char* pName) {
