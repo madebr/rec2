@@ -20,9 +20,25 @@ int gCar_simplification_level;
 // GLOBAL: CARMA2_HW 0x00591368
 int gRendering_accessories = 1;
 
-// InitialiseExtraRenders
+// GLOBAL: CARMA2_HW 0x006a22c0
+int gCount_extra_renders;
 
-// AddExtraRender
+// GLOBAL: CARMA2_HW 0x006a22c8
+tExtra_render gExtra_renders[6];
+
+// FUNCTION: CARMA2_HW 0x004e5cb0
+void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
+
+    gCount_extra_renders = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x004e5cc0
+void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial) {
+
+    gExtra_renders[gCount_extra_renders].actor = pActor;
+    gExtra_renders[gCount_extra_renders].material = pMaterial;
+    gCount_extra_renders += 1;
+}
 
 // PointOutOfSight
 

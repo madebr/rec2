@@ -4,9 +4,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-// InitialiseExtraRenders
+extern void C2_HOOK_FASTCALL InitialiseExtraRenders(void);
 
-// AddExtraRender
+extern void C2_HOOK_FASTCALL AddExtraRender(br_actor* pActor, br_material* pMaterial);
 
 // PointOutOfSight
 
