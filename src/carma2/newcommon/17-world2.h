@@ -72,6 +72,6 @@ extern void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
 extern intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, void* pContext);
 
-// BuildColourTable
+extern void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette);
 
 #endif // GUARD_17_WORLD2_H

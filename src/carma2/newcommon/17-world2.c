@@ -30,6 +30,16 @@ tExtra_render gExtra_renders[6];
 // GLOBAL: CARMA2_HW 0x00704e40
 int gMirror_on__graphics;
 
+// GLOBAL: CARMA2_HW 0x0065cf30
+br_colour gRGB_colours[9] = {
+    0x000000,   0xffffff,   0xff0000,   0x00ff00,
+    0x0000ff,   0xffff00,   0x00ffff,   0xff00ff,
+    0xd04702,
+};
+
+// GLOBAL: CARMA2_HW 0x0074a620
+br_colour gColours[9];
+
 // FUNCTION: CARMA2_HW 0x004e5cb0
 void C2_HOOK_FASTCALL InitialiseExtraRenders(void) {
 
@@ -489,5 +499,32 @@ intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, void* pContext) {
     return BrActorEnum(pActor, ProcessMaterials, callback);
 }
 
-// BuildColourTable
+// FUNCTION: CARMA2_HW 0x004b4ed0
+void C2_HOOK_FASTCALL BuildColourTable(br_pixelmap* pPalette) {
+    int i;
+    int j;
+    int nearest_index;
+    int red;
+    int green;
+    int blue;
+    float nearest_distance;
+    float distance;
+
+    for (i = 0; i < (int)REC2_ASIZE(gRGB_colours); i++) {
+        nearest_distance = 196608.f;
+        red = (gRGB_colours[i] >> 16) & 0xFF;
+        green = (gRGB_colours[i] >> 8) & 0xFF;
+        blue = gRGB_colours[i] & 0xFF;
+        for (j = 0; j < 256; j++) {
+            distance = (float)(sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 2) - red))
+                + sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j) - blue))
+                + sqr((double)(signed int)(*((br_uint_8*)pPalette->pixels + 4 * j + 1) - green)));
+            if (distance < nearest_distance) {
+                nearest_index = j;
+                nearest_distance = distance;
+            }
+        }
+        gColours[i] = nearest_index;
+    }
+}
 
