@@ -35,7 +35,7 @@ extern void C2_HOOK_FASTCALL DRS3Service(void);
 
 extern int C2_HOOK_FASTCALL DRS3ShutDown(void);
 
-// DRS3SetOutletVolume
+extern int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume);
 
 // DRS3StopOutletSound
 
@@ -53,7 +53,7 @@ extern void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
 // MungeEngineNoise
 
-// SetSoundVolumes
+extern void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio);
 
 // GetOutletFromIndex
 

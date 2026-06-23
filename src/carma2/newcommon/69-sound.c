@@ -52,9 +52,6 @@ undefined4 gUNK_0068455c;
 // GLOBAL: CARMA2_HW 0x0079e13c
 int gCD_is_disabled;
 
-// GLOBAL: CARMA2_HW 0x00684610
-tS3_outlet* gMusic_outlet;
-
 // GLOBAL: CARMA2_HW 0x00595c78
 int gRandom_CDA_tunes[8] = { 9600, 9601, 9602, 9603, 9604, 9605, 9606, 9607 };
 
@@ -80,6 +77,27 @@ int gSound_detail_level = 1;
 // GLOBAL: CARMA2_HW 0x006845fc
 tS3_outlet* gEffects_outlet;
 
+// GLOBAL: CARMA2_HW 0x00684600
+tS3_outlet* gCar_outlet;
+
+// GLOBAL: CARMA2_HW 0x00684604
+tS3_outlet* gEngine_outlet;
+
+// GLOBAL: CARMA2_HW 0x00684608
+tS3_outlet* gDriver_outlet;
+
+// GLOBAL: CARMA2_HW 0x0068460c
+tS3_outlet* gPedestrians_outlet;
+
+// GLOBAL: CARMA2_HW 0x00684610
+tS3_outlet* gMusic_outlet;
+
+// GLOBAL: CARMA2_HW 0x00684614
+tS3_outlet* gXXX_outlet;
+
+// GLOBAL: CARMA2_HW 0x0079e160
+tS3_outlet* gIndexed_outlets[6];
+
 // GLOBAL: CARMA2_HW 0x00595c38
 const char* gSound_generator_type_names[3] = {
     "NONCAR",
@@ -87,9 +105,16 @@ const char* gSound_generator_type_names[3] = {
     "POINT",
 };
 
+// GLOBAL: CARMA2_HW 0x00655dd8
+int gVirgin_pass = 1;
+
+// GLOBAL: CARMA2_HW 0x00595c4c
+int gOld_sound_detail_level = -1;
+
 // FUNCTION: CARMA2_HW 0x00500060
 void C2_HOOK_FASTCALL SplungeSomeData(void* pData, br_size_t size) {
 
+    // empty
 }
 
 // FUNCTION: CARMA2_HW 0x00454f40
@@ -124,9 +149,118 @@ void C2_HOOK_FASTCALL UsePathFileToDetermineIfFullInstallation(void) {
     gCD_fully_installed = 1;
 }
 
-// STUB: CARMA2_HW 0x00455080
+// FUNCTION: CARMA2_HW 0x00455080
 void C2_HOOK_FASTCALL InitSound(void) {
-    NOT_IMPLEMENTED();
+    tPath_name the_path;
+    int engine_channel_count;
+    int car_channel_count;
+    int ped_channel_count;
+    int xxx_channel_count;
+
+    if (gVirgin_pass) {
+        PathCat(the_path, gApplication_path, "SOUND");
+        PathCat(the_path, the_path, "SOUND.TXT");
+        if (gSound_override) {
+            gSound_available = gSound_enabled = 0;
+        } else {
+            gSound_available = gSound_enabled = S3Init(the_path, gAusterity_mode, gPedSoundPath) == 0;
+        }
+        S3Set3DSoundEnvironment(0.14492753f, -1.0f, -1.0f);
+        gVirgin_pass = 0;
+        gCD_is_disabled = 0;
+        UsePathFileToDetermineIfFullInstallation();
+    }
+    if (!gSound_available) {
+        return;
+    }
+    if (gSound_detail_level == 0) {
+        engine_channel_count = 2;
+        ped_channel_count = 3;
+        car_channel_count = 2;
+        xxx_channel_count = 1;
+    } else if (gSound_detail_level == 1) {
+        engine_channel_count = 4;
+        car_channel_count = 3;
+        ped_channel_count = 4;
+        xxx_channel_count = 3;
+    } else {
+        ped_channel_count = 5;
+        engine_channel_count = 6;
+        car_channel_count = 4;
+        xxx_channel_count = 5;
+    }
+    if (gDriver_outlet == NULL) {
+        gIndexed_outlets[0] = gDriver_outlet = S3CreateOutlet(1, 1);
+        if (gDriver_outlet == NULL) {
+            gSound_available = 0;
+            return;
+        }
+    }
+    if (gMusic_outlet == NULL) {
+        gIndexed_outlets[2] = gMusic_outlet = S3CreateOutlet(1, 1);
+        gMusic_available = gMusic_outlet != NULL;
+        DRS3SetOutletVolume(gMusic_outlet, gProgram_state.music_volume);
+    }
+    if (gSound_detail_level != gOld_sound_detail_level) {
+        if (gCar_outlet != NULL) {
+            S3ReleaseOutlet(gCar_outlet);
+            gCar_outlet = NULL;
+        }
+        if (gPedestrians_outlet != NULL) {
+            S3ReleaseOutlet(gPedestrians_outlet);
+            gPedestrians_outlet = NULL;
+        }
+        if (gEngine_outlet != NULL) {
+            S3ReleaseOutlet(gEngine_outlet);
+            gEngine_outlet = NULL;
+        }
+        if (gXXX_outlet != NULL) {
+            S3ReleaseOutlet(gXXX_outlet);
+            gXXX_outlet = NULL;
+        }
+        if (gEngine_outlet == NULL) {
+            gIndexed_outlets[1] = gEngine_outlet = S3CreateOutlet(engine_channel_count, engine_channel_count);
+            if (gEngine_outlet == NULL) {
+                gSound_available = 0;
+                return;
+            }
+            DRS3SetOutletVolume(gEngine_outlet, gProgram_state.effects_volume);
+        }
+        if (gCar_outlet == NULL) {
+            gIndexed_outlets[3] = gCar_outlet = S3CreateOutlet(car_channel_count, car_channel_count);
+            if (gCar_outlet == NULL) {
+                gSound_available = 0;
+                return;
+            }
+            DRS3SetOutletVolume(gCar_outlet, gProgram_state.effects_volume);
+        }
+        if (gPedestrians_outlet == NULL) {
+            gIndexed_outlets[4] = gPedestrians_outlet = S3CreateOutlet(ped_channel_count, ped_channel_count);
+            if (gPedestrians_outlet == NULL) {
+                gSound_available = 0;
+                return;
+            }
+            DRS3SetOutletVolume(gPedestrians_outlet, gProgram_state.effects_volume);
+        }
+        if (gXXX_outlet == NULL) {
+            gIndexed_outlets[5] = gXXX_outlet = S3CreateOutlet(xxx_channel_count, xxx_channel_count);
+            if (gXXX_outlet == NULL) {
+                gSound_available = 0;
+                return;
+            }
+            DRS3SetOutletVolume(gXXX_outlet, gProgram_state.effects_volume);
+        }
+    }
+    if (gEffects_outlet == NULL) {
+        gIndexed_outlets[5] = gEffects_outlet = S3CreateOutlet(2, 2);
+        if (gEffects_outlet == NULL) {
+            gSound_available = 0;
+            return;
+        }
+        DRS3SetOutletVolume(gEffects_outlet, gProgram_state.effects_volume);
+    }
+    gOld_sound_detail_level = gSound_detail_level;
+    SetSoundVolumes(0);
 }
 
 // STUB: CARMA2_HW 0x00455690
@@ -162,7 +296,14 @@ int C2_HOOK_FASTCALL DRS3ShutDown(void) {
     NOT_IMPLEMENTED();
 }
 
-// DRS3SetOutletVolume
+// FUNCTION: CARMA2_HW 0x00455930
+int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume) {
+
+    if (gSound_enabled) {
+        return S3SetOutletVolume(pOutlet, pVolume);
+    }
+    return 0;
+}
 
 // DRS3StopOutletSound
 
@@ -208,7 +349,34 @@ void C2_HOOK_FASTCALL DisposeSoundSources(void) {
 
 // MungeEngineNoise
 
-// SetSoundVolumes
+// FUNCTION: CARMA2_HW 0x00456530
+void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio) {
+
+    if (!gSound_enabled) {
+        return;
+    }
+    if (gEffects_outlet != NULL) {
+        DRS3SetOutletVolume(gEffects_outlet, gProgram_state.effects_volume);
+    }
+    DRS3SetOutletVolume(gCar_outlet, gProgram_state.effects_volume);
+    DRS3SetOutletVolume(gEngine_outlet, gProgram_state.effects_volume);
+    DRS3SetOutletVolume(gDriver_outlet, gProgram_state.effects_volume);
+    DRS3SetOutletVolume(gPedestrians_outlet, gProgram_state.effects_volume);
+    if (gINT_00595c44) {
+        dr_dprintf("CD: Setting volume to %d", gProgram_state.music_volume);
+        if (!gCDA_started_playing && !pCD_audio) {
+            dr_dprintf("CD: Hasn't played yet, so not stopping/starting it");
+        } else {
+            if (gProgram_state.music_volume < 128) {
+                StopMusic();
+            } else {
+                StartMusic();
+            }
+        }
+    } else {
+        DRS3SetOutletVolume(gMusic_outlet, gProgram_state.music_volume);
+    }
+}
 
 // GetOutletFromIndex
 
