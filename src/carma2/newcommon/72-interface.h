@@ -413,9 +413,9 @@
 
 // Graphics_Outfunc
 
-// FrontEndShowMouse
+extern void C2_HOOK_FASTCALL FrontEndShowMouse(void);
 
-// FrontEndHideMouse
+extern void C2_HOOK_FASTCALL FrontEndHideMouse(void);
 
 extern void C2_HOOK_FASTCALL IString_Load(void);
 

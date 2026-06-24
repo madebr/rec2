@@ -10,6 +10,9 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x00688b20
+int gFrontend_suppress_mouse;
+
 // GLOBAL: CARMA2_HW 0x0068c6e0
 int gCount_interface_strings;
 
@@ -426,9 +429,17 @@ char* gInterface_strings[300];
 
 // Graphics_Outfunc
 
-// FrontEndShowMouse
+// FUNCTION: CARMA2_HW 0x00474860
+void C2_HOOK_FASTCALL FrontEndShowMouse(void) {
 
-// FrontEndHideMouse
+    gFrontend_suppress_mouse = 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00474870
+void C2_HOOK_FASTCALL FrontEndHideMouse(void) {
+
+    gFrontend_suppress_mouse = 1;
+}
 
 // FUNCTION: CARMA2_HW 0x00484fd0
 void C2_HOOK_FASTCALL IString_Load(void) {
