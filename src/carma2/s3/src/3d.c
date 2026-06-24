@@ -270,7 +270,7 @@ int C2_HOOK_FASTCALL S3StartSound3D(tS3_outlet *pOutlet, int pSound, const br_ve
         if (pSpeed == -1) {
             pSpeed = BR_FIXED_INT(1);
         }
-        rate = (float)gS3_channel_template.rate * ldexp((double)pPitch, -16);
+        rate = (float)(gS3_channel_template.rate * ldexp((double)pPitch, -16));
         gS3_channel_template.rate = (int)rate;
         if (!pOutlet->independent_pitch) {
             gS3_channel_template.rate = (int)((float)ldexp((double)pSpeed, -16) * rate);
