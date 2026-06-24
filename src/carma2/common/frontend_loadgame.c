@@ -232,11 +232,11 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         SolidPolyFontText(text, 190, y_text, font, 0, 1);
 
         if (save_game->game_completed) {
-            sprintf(text, "! %i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
+            sprintf(text, "! %i", 1 + (gRace_list[save_game->current_race_index].group - gRace_groups));
         } else if (save_game->is_boundary_race) {
-            sprintf(text, "%c %i", '\x1f', 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
+            sprintf(text, "%c %i", '\x1f', 1 + (gRace_list[save_game->current_race_index].group - gRace_groups));
         } else {
-            sprintf(text, "%i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
+            sprintf(text, "%i", 1 + (gRace_list[save_game->current_race_index].group - gRace_groups));
         }
         SolidPolyFontText(text, 325, y_text, font, eJust_right, 1);
 

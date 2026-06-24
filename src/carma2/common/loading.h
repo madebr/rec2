@@ -41,7 +41,7 @@ extern char* gPedTexturePath;
 
 extern int gCurrent_race_file_index;
 extern int gCountRaceGroups;
-extern tRace_group_spec* gRaceGroups;
+extern tRace_group_spec* gRace_groups;
 extern tRace_group_spec* gRaceGroups2;
 
 extern tSlot_info gInitial_APO[3];

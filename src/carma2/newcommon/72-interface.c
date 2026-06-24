@@ -42,6 +42,9 @@ tFrontend_brender_item gFrontend_brender_items[100]; /* FIXME: parametrize size 
 // GLOBAL: CARMA2_HW 0x00688770
 int gFrontend_selected_item_index;
 
+// GLOBAL: CARMA2_HW 0x0068b8a0
+tRace_group_spec* gRace_groups;
+
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
@@ -351,9 +354,53 @@ int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_in
 
 // RaceIndex
 
-// FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt
+// FUNCTION: CARMA2_HW 0x00466bb0
+int C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(tFrontend_spec* pFrontend) {
+    int race_index;
 
-// RefreshRacesScroller
+    race_index = gProgram_state.current_race_index;
+    if (!gIs_boundary_race && !gProgram_state.game_completed) {
+        pFrontend->items[7].enabled = kFrontendItemEnabled_disabled;
+    } else {
+        pFrontend->items[7].enabled = kFrontendItemEnabled_enabled;
+    }
+    div(race_index, 4);
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x00467b30
+void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
+    char group_text[12];
+    int group;
+    int i;
+
+    group = (gCurrent_race_group - gRace_groups) % 10;
+    sprintf(group_text, "%s %d", IString_Get(78), group + 1);
+    strcpy(pFrontend->items[2].text, group_text);
+
+    for (i = pFrontend->scrollers[0].indexFirstScrollableItem; i <= pFrontend->scrollers[0].indexLastScrollableItem; i++) {
+        tFrontend_item_spec* item = &pFrontend->items[i];
+        int race_i = 4 * group + i;
+
+        strcpy(item->text, gRace_list[race_i].name);
+        if (race_i == gProgram_state.current_race_index) {
+            item->radioButton_selected = 1;
+        } else {
+            item->radioButton_selected = 0;
+
+        }
+        if (gRace_list[race_i].is_boundary) {
+            item->unlitFont = 2;
+            item->highFont = 3;
+        } else {
+            item->unlitFont = 0;
+            item->highFont = 1;
+        }
+    }
+    FuckWithWidths(pFrontend);
+    FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(pFrontend);
+    MungeButtonModels(pFrontend, 0);
+}
 
 // NetworkUpdateSelectedGameInfo
 

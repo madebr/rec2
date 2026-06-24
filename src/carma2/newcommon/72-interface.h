@@ -36,9 +36,9 @@ extern int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pS
 
 // RaceIndex
 
-// FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt
+extern int C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(tFrontend_spec* pFrontend);
 
-// RefreshRacesScroller
+extern void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 // NetworkUpdateSelectedGameInfo
 

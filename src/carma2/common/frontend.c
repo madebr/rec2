@@ -1098,7 +1098,7 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
     int i;
     int race_i;
 
-    group = 1 + (gCurrent_race_group - gRaceGroups) % 10;
+    group = 1 + (gCurrent_race_group - gRace_groups) % 10;
     sprintf(group_text, "%s %d", IString_Get(78), group);
     strcpy(pFrontend->items[2].text, group_text);
 
