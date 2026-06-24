@@ -31,7 +31,7 @@ extern int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_soun
 
 extern void C2_HOOK_FASTCALL DRS3Service(void);
 
-// DRS3SoundStillPlaying
+extern int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
 
 extern void C2_HOOK_FASTCALL DRS3ShutDown(void);
 

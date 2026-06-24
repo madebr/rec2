@@ -319,7 +319,15 @@ void C2_HOOK_FASTCALL DRS3Service(void) {
     }
 }
 
-// DRS3SoundStillPlaying
+// FUNCTION: CARMA2_HW 0x004558f0
+int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag) {
+
+    if (gSound_enabled) {
+        return S3SoundStillPlaying(pTag);
+    } else {
+        return 0;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00455910
 void C2_HOOK_FASTCALL DRS3ShutDown(void) {
