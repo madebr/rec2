@@ -356,9 +356,19 @@ int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet) {
     return 0;
 }
 
-// STUB: CARMA2_HW 0x004559e0
+// FUNCTION: CARMA2_HW 0x004559e0
 int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void) {
-    NOT_IMPLEMENTED();
+
+    if (gSound_enabled) {
+        DRS3StopOutletSound(gCar_outlet);
+        DRS3StopOutletSound(gEngine_outlet);
+        DRS3StopOutletSound(gXXX_outlet);
+        DRS3StopOutletSound(gEffects_outlet);
+        DRS3StopOutletSound(gPedestrians_outlet);
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00455a50
