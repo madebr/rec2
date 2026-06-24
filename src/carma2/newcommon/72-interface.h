@@ -4,7 +4,7 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
-// temp
+extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
 // GetItemAtMousePos
 
@@ -18,17 +18,17 @@
 
 // ToggleSelection
 
-// FuckWithWidths
+extern void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) ;
 
 // GetThisFuckingPixelmapPleaseMrTwatter
 
-// LoadMenuSettings
+extern void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend);
 
 // LoadMenuImages
 
 // LoadMenuModels
 
-// DefaultInfunc
+extern void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
 
 // FindNextActiveItem
 
@@ -272,7 +272,7 @@
 
 // Morph_Initialise
 
-// Generic_Infunc
+extern int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend);
 

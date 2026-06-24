@@ -73,6 +73,7 @@ add_library(c2_newcommon STATIC
     70-packfile.c
     71-newgame.c
     72-interface.c
+    73-istring.c
 
     loadtif.c
     loadtif_zlib.c
