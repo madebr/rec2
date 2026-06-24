@@ -222,7 +222,7 @@ extern void C2_HOOK_FASTCALL ScrollCredits(void);
 
 // LoadGameInFunc
 
-// CreateAPOactor
+extern br_actor* C2_HOOK_FASTCALL CreateAPOactor(void);
 
 // KillAPOactor
 
