@@ -228,7 +228,7 @@ extern void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor);
 
 extern int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend);
 
-// LoadGameScrollUp
+extern int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend);
 
 // LoadGameScrollDown
 

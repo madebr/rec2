@@ -97,6 +97,15 @@ br_actor* gFrontend_billboard_actors[8];
 // GLOBAL: CARMA2_HW 0x00688b10
 br_actor* gFrontend_menu_camera;
 
+// GLOBAL: CARMA2_HW 0x007638ac
+int gFrontend_load_game_index_top;
+
+// GLOBAL: CARMA2_HW 0x00763898
+int gFrontend_scroll_time_left;
+
+// GLOBAL: CARMA2_HW 0x0076389c
+int gFrontend_scroll_time_increment;
+
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
@@ -806,7 +815,16 @@ int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// LoadGameScrollUp
+// FUNCTION: CARMA2_HW 0x0046fb30
+int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend) {
+
+    if (gFrontend_load_game_index_top > 0 && gFrontend_scroll_time_left == 0) {
+        gFrontend_load_game_index_top -= 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
+        gFrontend_scroll_time_left += gFrontend_scroll_time_increment;
+    }
+    return 0;
+}
 
 // LoadGameScrollDown
 
