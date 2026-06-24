@@ -26,7 +26,7 @@
 
 extern void C2_HOOK_FASTCALL Timers_Init(void);
 
-// Timers_StartFrame
+extern void C2_HOOK_FASTCALL Timers_StartFrame(void);
 
 // Timers_EndFrame
 

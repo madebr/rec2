@@ -1,6 +1,7 @@
 #include "68-timer.h"
 
 #include "globvars.h"
+#include "platform.h"
 #include "rec2_macros.h"
 
 #include "c2_string.h"
@@ -29,6 +30,9 @@ int gTimers_draw_y_stride;
 // GLOBAL: CARMA2_HW 0x006aaa54
 int gTimers_draw_y;
 
+// GLOBAL: CARMA2_HW 0x006aaa58
+tU32 gTimers_frame_start_time;
+
 // FUNCTION: CARMA2_HW 0x00504300
 void C2_HOOK_FASTCALL Timers_Init(void) {
     int i;
@@ -50,10 +54,15 @@ void C2_HOOK_FASTCALL Timers_Init(void) {
     gTimers_draw_y = gBack_screen->height > 250 ? 150 : 0;
     gTimers_draw_y_stride = 9;
 
-#define TIMER_COLOUR_NAME(I, NAME, R5, G6, B5)                                                      \
-    do {                                                                                            \
-        gTimers[(I)].colour = RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5);                         \
-        strncpy(gTimers[(I)].identifier, (NAME), REC2_ASIZE(gTimers[(I)].identifier) - 1); \
+#ifdef REC2_FIX_BUGS
+#define LEN_IDENTIFIER(I) REC2_ASIZE(gTimers[I].identifier)
+#else
+#define LEN_IDENTIFIER(I) (REC2_ASIZE(gTimers[I].identifier) - 1)
+#endif
+#define TIMER_COLOUR_NAME(I, NAME, R5, G6, B5)                          \
+    do {                                                                \
+        gTimers[(I)].colour = RGB565_TO_BACKSCREEN_COLOUR(R5, G6, B5);  \
+        strncpy(gTimers[(I)].identifier, (NAME), LEN_IDENTIFIER(I));    \
     } while (0)
 
     TIMER_COLOUR_NAME(TIMER_MNG, "MNG", 0x1f, 0x00, 0x00);
@@ -77,9 +86,19 @@ void C2_HOOK_FASTCALL Timers_Init(void) {
     TIMER_COLOUR_NAME(TIMER_OQQ, "O??", 0x06, 0x2a, 0x06);
 
 #undef TIMER_COLOUR_NAME
+#undef LEN_IDENTIFIER
 }
 
-// Timers_StartFrame
+// FUNCTION: CARMA2_HW 0x00504700
+void C2_HOOK_FASTCALL Timers_StartFrame(void) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gTimers); i++) {
+        gTimers[i].durations[gTimers[i].index] = 0;
+    }
+    gTimers[TIMER_OQQ].start_time = PDGetMicroseconds();
+    gTimers_frame_start_time = PDGetMicroseconds();
+}
 
 // Timers_EndFrame
 
