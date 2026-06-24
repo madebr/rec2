@@ -713,7 +713,11 @@ void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio) {
     }
 }
 
-// GetOutletFromIndex
+// FUNCTION: CARMA2_HW 0x004566a0
+tS3_outlet* C2_HOOK_FASTCALL GetOutletFromIndex(int pIndex) {
+
+    return gIndexed_outlets[pIndex];
+}
 
 // GetIndexFromOutlet
 
