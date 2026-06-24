@@ -5,6 +5,7 @@
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
+#include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
 #include "rec2_macros.h"
@@ -32,6 +33,15 @@ tFrontend_item_spec gDefault_last_interface_item = {
 // GLOBAL: CARMA2_HW 0x006864f4
 int gFrontend_scrollbars_updated;
 
+// GLOBAL: CARMA2_HW 0x00686850
+br_pixelmap* gFrontend_images[100];
+
+// GLOBAL: CARMA2_HW 0x00687248
+tFrontend_brender_item gFrontend_brender_items[100]; /* FIXME: parametrize size + index of last item */
+
+// GLOBAL: CARMA2_HW 0x00688770
+int gFrontend_selected_item_index;
+
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
@@ -46,9 +56,43 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
 // ScrollDn
 
-// SetLevelBar
+static void C2_HOOK_FASTCALL SetLevelBar(tFrontend_spec* pFrontend, int pLevel_index, int pSelected_item) {
+    int i;
 
-// ToggleSelection
+    for (i = pFrontend->levels[pLevel_index - 1].first_item_id; i <= pFrontend->levels[pLevel_index - 1].last_item_id; i++) {
+
+        if (i <= pSelected_item) {
+            BrPixelmapCopy(gFrontend_brender_items[i].field_0xc, gFrontend_images[4]);
+            BrPixelmapCopy(gFrontend_brender_items[i].field_0x10, gFrontend_images[4]);
+        } else {
+            BrPixelmapCopy(gFrontend_brender_items[i].field_0xc, gFrontend_images[5]);
+            BrPixelmapCopy(gFrontend_brender_items[i].field_0x10, gFrontend_images[5]);
+        }
+        pFrontend->items[i].radioButton_selected = 0;
+    }
+    pFrontend->items[pSelected_item].radioButton_selected = 1;
+}
+
+// FUNCTION: CARMA2_HW 0x00467890
+void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend) {
+    int i;
+
+    if (pFrontend->items[gFrontend_selected_item_index].group != 0) {
+        for (i = 0; i < pFrontend->count_items; i++) {
+            if (pFrontend->items[i].group == pFrontend->items[gFrontend_selected_item_index].group && pFrontend->items[gFrontend_selected_item_index].selectable != kFrontendSelectableButton) {
+                pFrontend->items[i].radioButton_selected = 0;
+            }
+        }
+        if (pFrontend->items[gFrontend_selected_item_index].selectable != kFrontendSelectableButton) {
+            pFrontend->items[gFrontend_selected_item_index].radioButton_selected = !pFrontend->items[gFrontend_selected_item_index].radioButton_selected;
+            DRS3StartSound(gEffects_outlet, eSoundId_Done);
+        }
+    } else {
+        if (pFrontend->items[gFrontend_selected_item_index].idLevelBar != 0) {
+            SetLevelBar(pFrontend, pFrontend->items[gFrontend_selected_item_index].idLevelBar, gFrontend_selected_item_index);
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x004666f0
 void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {

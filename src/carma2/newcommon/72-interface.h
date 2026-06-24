@@ -14,9 +14,9 @@ extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
 // ScrollDn
 
-// SetLevelBar
+// static void C2_HOOK_FASTCALL SetLevelBar(tFrontend_spec* pFrontend, int pLevel_index, int pSelected_item);
 
-// ToggleSelection
+extern void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) ;
 
