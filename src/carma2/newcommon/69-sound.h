@@ -23,45 +23,45 @@ extern tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_so
 
 extern int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
-// DRS3StartSound2
+extern int C2_HOOK_FASTCALL DRS3StartSound2(tS3_outlet *pOutlet, tS3_sound_id pSound, int pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
 
-// DRS3ChangeVolume
+extern int C2_HOOK_FASTCALL DRS3ChangeVolume(int pChannel_id, int pVolume);
 
-// DRS3StopSound
+extern int C2_HOOK_FASTCALL DRS3StopSound(tS3_sound_tag pSound_tag);
 
 extern void C2_HOOK_FASTCALL DRS3Service(void);
 
-// DRS3SoundStillPlaying
+extern int C2_HOOK_FASTCALL DRS3SoundStillPlaying(int pTag);
 
-extern int C2_HOOK_FASTCALL DRS3ShutDown(void);
+extern void C2_HOOK_FASTCALL DRS3ShutDown(void);
 
-// DRS3SetOutletVolume
+extern int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume);
 
-// DRS3StopOutletSound
+extern int C2_HOOK_FASTCALL DRS3StopOutletSound(tS3_outlet* pOutlet);
 
 extern int C2_HOOK_FASTCALL DRS3StopAllOutletSoundsExceptCDA(void);
 
-// ToggleSoundEnable
+extern void C2_HOOK_FASTCALL ToggleSoundEnable(void);
 
 extern void C2_HOOK_FASTCALL SoundService(void);
 
-// InitSoundSources
+extern void C2_HOOK_FASTCALL InitSoundSources(void);
 
 extern void C2_HOOK_FASTCALL DisposeSoundSources(void);
 
-// DRS3StartSound3D
+extern int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
 
-// MungeEngineNoise
+extern void C2_HOOK_FASTCALL MungeEngineNoise(void);
 
-// SetSoundVolumes
+extern void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio);
 
-// GetOutletFromIndex
+extern tS3_outlet* C2_HOOK_FASTCALL GetOutletFromIndex(int pIndex);
 
-// GetIndexFromOutlet
+extern int C2_HOOK_FASTCALL GetIndexFromOutlet(tS3_outlet* pOutlet);
 
 extern int C2_HOOK_FASTCALL DRS3StartCDA(int pSound);
 
-// DRS3StopCDA
+extern void C2_HOOK_FASTCALL DRS3StopCDA(void);
 
 // StartMusicTrack
 
@@ -89,11 +89,11 @@ extern void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_dat
 
 // MungeEnvironmentalSound
 
-// BuggerModelName
+extern void C2_HOOK_FASTCALL BuggerModelName(tTrack_spec* pTrack_spec, const char* pName, int pIndex);
 
-// ReadSoundGenerators
+extern void C2_HOOK_FASTCALL ReadSoundGenerators(tTrack_spec* pTrack_spec, FILE* pF);
 
-// WriteOutSoundSpec
+extern void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 
 extern void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void);
 

@@ -100,6 +100,8 @@ extern double C2_HOOK_STDCALL S3FRandomBetween(double pMin, double pMax);
 
 extern int C2_HOOK_FASTCALL S3IRandomBetween(int pMin, int pMax, int pDefault);
 
+extern int C2_HOOK_FASTCALL S3IRandomBetween__dup(int pMin, int pMax, int pDefault);
+
 extern int C2_HOOK_FASTCALL S3IRandomBetweenLog(int pMin, int pMax, int pDefault);
 
 extern int C2_HOOK_FASTCALL S3FreeUnboundChannels(void);
@@ -142,6 +144,8 @@ extern tS3_error_codes C2_HOOK_FASTCALL S3PlayCDA(tS3_channel* pChannel);
 
 extern int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
+extern int C2_HOOK_FASTCALL S3SetChannelVolume(int pChannel_tag, int pVolume);
+
 extern int C2_HOOK_FASTCALL S3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, unsigned int pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
 
 extern tS3_error_codes C2_HOOK_FASTCALL S3MIDITagHasStoppedPlaying(int pTag);
@@ -149,5 +153,7 @@ extern tS3_error_codes C2_HOOK_FASTCALL S3MIDITagHasStoppedPlaying(int pTag);
 extern int C2_HOOK_FASTCALL S3ServiceMIDIChannel(tS3_channel* pChannel);
 
 extern int C2_HOOK_FASTCALL S3IsCDAPlaying(void);
+
+extern int C2_HOOK_FASTCALL S3UpdateCDAVolume(tS3_channel* pChannel, int pVolume);
 
 #endif // S3_AUDIO_H

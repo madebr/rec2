@@ -1546,11 +1546,16 @@ typedef enum tKey_down_result {
 
 typedef struct {
     tSpecial_volume_soundfx_periodicity_type periodicity;
-    int periodic1;
-    int periodic2;
+    union {
+        struct {
+            int min_gap;
+            int max_gap;
+        } random;
+        int period;
+    };
     undefined4 field_0xc;
     int count_sound_alternatives;
-    br_fixed_ls field_0x14; // fixedpoint integer? (* 16 / 100)
+    br_fixed_ls max_deviation; // fixedpoint integer? (* 16 / 100)
     tS16 sound_alternatives[5];
     tS16 unknown3;
 } tSpecial_volume_soundfx_data;

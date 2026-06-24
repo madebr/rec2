@@ -221,7 +221,7 @@ char* gMisc_strings[300];
 char* gPedsFolder;
 
 // GLOBAL: CARMA2_HW 0x00684550
-char* gPedSoundPath;
+char* gPed_sound_path;
 
 // GLOBAL: CARMA2_HW 0x006a0ad4
 char* gPowerup_txt_path;
@@ -496,7 +496,7 @@ const char* gFunk_speed_control_names[2] = {
 
 // FUNCTION: CARMA2_HW 0x00457570
 void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void) {
-    gPedSoundPath = NULL;
+    gPed_sound_path = NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c00
@@ -525,7 +525,7 @@ void C2_HOOK_FASTCALL SetDefaultPedFolderNames(void) {
 
 // FUNCTION: CARMA2_HW 0x00457590
 void C2_HOOK_FASTCALL ConfigureZombiePedSoundPath(void) {
-    gPedSoundPath = "ZOMSOUND";
+    gPed_sound_path = "ZOMSOUND";
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c20
@@ -554,7 +554,7 @@ void C2_HOOK_FASTCALL ConfigurePedZombiePaths(void) {
 
 // FUNCTION: CARMA2_HW 0x00457580
 void C2_HOOK_FASTCALL ConfigureBloodPedSoundPath(void) {
-    gPedSoundPath = NULL;
+    gPed_sound_path = NULL;
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c10
@@ -583,7 +583,7 @@ void C2_HOOK_FASTCALL ConfigurePedBloodPaths(void) {
 
 // FUNCTION: CARMA2_HW 0x004575a0
 void C2_HOOK_FASTCALL ConfigureAlienPedSoundPath(void) {
-    gPedSoundPath = "ALSOUND";
+    gPed_sound_path = "ALSOUND";
 }
 
 // FUNCTION: CARMA2_HW 0x004e0c30

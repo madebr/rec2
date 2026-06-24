@@ -34,7 +34,7 @@ extern int gTraffic_disabled;
 extern tSpecial_volume gDefault_default_water_spec_vol;
 
 extern char* gPedsFolder;
-extern char* gPedSoundPath;
+extern char* gPed_sound_path;
 extern char* gPowerup_txt_path;
 extern char* gPedTextTxtPath;
 extern char* gPedTexturePath;

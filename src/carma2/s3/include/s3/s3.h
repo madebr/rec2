@@ -249,7 +249,7 @@ extern int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
 
 extern int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
-extern int C2_HOOK_FASTCALL DRS3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, unsigned int pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
+extern int C2_HOOK_FASTCALL S3SetChannelVolume(int pChannel_tag, int pVolume);
 
 extern int C2_HOOK_FASTCALL S3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, unsigned int pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
 
@@ -280,6 +280,8 @@ extern void C2_HOOK_FASTCALL S3BindListenerPositionBRender(br_vector3* pos);
 extern void C2_HOOK_FASTCALL S3BindListenerVelocityBRender(br_vector3* vel);
 
 extern void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left);
+
+extern int C2_HOOK_FASTCALL S3StartSound3D(tS3_outlet *pOutlet, int pSound, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed);
 
 extern tS3_sound_source* C2_HOOK_FASTCALL S3CreateSoundSource(void* pPosition, void* pVelocity, tS3_outlet* pBound_outlet);
 

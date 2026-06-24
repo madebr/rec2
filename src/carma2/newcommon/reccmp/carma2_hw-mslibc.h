@@ -298,7 +298,7 @@
 // _printf
 
 // LIBRARY: CARMA2_HW 0x00576d00
-// fprintf
+// _fprintf
 
 // LIBRARY: CARMA2_HW 0x00575de0
 // _sprintf

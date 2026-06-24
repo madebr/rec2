@@ -551,9 +551,9 @@ void* C2_HOOK_FASTCALL S3LoadSoundBankFile(const char* pPath) {
     char path[512];
     char lowmem_path[512];
     char line[512];
-    size_t bytes_read;
+    int bytes_read;
     char* buffer;
-    size_t file_size;
+    int file_size;
     FILE* f;
     struct_c2_stat32 stat;
 
@@ -1105,6 +1105,19 @@ int C2_HOOK_FASTCALL S3IRandomBetween(int pMin, int pMax, int pDefault) {
     }
 }
 
+// FUNCTION: CARMA2_HW 0x005663a0
+int C2_HOOK_FASTCALL S3IRandomBetween__dup(int pMin, int pMax, int pDefault) {
+
+    if (pMin == -1) {
+        return pDefault;
+    }
+    if (pMin < pMax) {
+        return pMin + rand() % (pMax - pMin);
+    } else {
+        return pMin;
+    }
+}
+
 // FUNCTION: CARMA2_HW 0x005663dd
 int C2_HOOK_FASTCALL S3IRandomBetweenLog(int pMin, int pMax, int pDefault) {
     double dbl;
@@ -1483,6 +1496,35 @@ int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
     return 0;
 }
 
+// FUNCTION: CARMA2_HW 0x00564807
+int C2_HOOK_FASTCALL S3SetChannelVolume(int pChannel_tag, int pVolume) {
+    tS3_channel* channel;
+    if (gS3_enabled) {
+
+        channel = S3GetChannelForTag(pChannel_tag);
+        if (channel == NULL) {
+            return eS3_error_bad_stag;
+        }
+        if (pVolume < 0) {
+            pVolume = 0x80;
+        }
+        if (pVolume > 255) {
+            pVolume = 255;
+        }
+        if (channel->type == 0) {
+            channel->volume_multiplier = pVolume;
+            if (!PDS3UpdateChannelVolume(channel)) {
+                return eS3_error_function_failed;
+            }
+        } else if (channel->type == 1) {
+            S3SetMIDIVolume(channel, pVolume);
+        } else if (channel->type == 2) {
+            S3UpdateCDAVolume(channel, pVolume);
+        }
+    }
+    return eS3_error_none;
+}
+
 // FUNCTION: CARMA2_HW 0x00564e9b
 int C2_HOOK_FASTCALL S3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, unsigned int pRepeats, int pLeft_volume, int pRight_volume,  tS32 pLeft_pitch, tS32 pRight_pitch) {
     tS3_descriptor* descriptor;
@@ -1609,5 +1651,21 @@ int C2_HOOK_FASTCALL S3ServiceMIDIChannel(tS3_channel* pChannel) {
 
 // FUNCTION: CARMA2_HW 0x00565d1a
 int C2_HOOK_FASTCALL S3IsCDAPlaying(void) {
+
     return PDS3IsCDAPlaying();
+}
+
+// FUNCTION: CARMA2_HW 0x00565d24
+int C2_HOOK_FASTCALL S3UpdateCDAVolume(tS3_channel* pChannel, int pVolume) {
+
+    if (pVolume < 0) {
+        pVolume = 0;
+    }
+    if (pVolume > 255) {
+        pVolume = 255;
+    }
+    if (gS3_CDA_enabled) {
+        PDS3UpdateCDAVolume(pChannel, pVolume);
+    }
+    return 0;
 }

@@ -6,7 +6,10 @@
 
 // ARReplayPauseState
 
-// ARGetReplayRate
+// STUB: CARMA2_HW 0x00402390
+float C2_HOOK_FASTCALL ARGetReplayRate(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ARSetReplayRate
 
@@ -185,7 +188,10 @@ void C2_HOOK_FASTCALL DisposeActionReplay(void) {
 
 // PipeSingleGraphicalWheelStuff
 
-// PipeSingleSound
+// STUB: CARMA2_HW 0x004c84a0
+void C2_HOOK_FASTCALL PipeSingleSound(tS3_outlet* pOutlet, int pSound, tS3_volume pL_volume, tS3_volume pR_volume, int pPitch, const br_vector3* pPosition) {
+    NOT_IMPLEMENTED();
+}
 
 // PipeSingleSpecial
 

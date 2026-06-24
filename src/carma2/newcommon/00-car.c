@@ -18,6 +18,9 @@ tFloat_bunch_info gCar_softness;
 // GLOBAL: CARMA2_HW 0x0074d600
 tFloat_bunch_info gCar_car_damage_multiplier;
 
+// GLOBAL: CARMA2_HW 0x0068b8d0
+br_vector3 gZero_v__car;  // FIXME: make const?
+
 // DamageUnit
 
 // SwitchCarModel
