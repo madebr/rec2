@@ -293,9 +293,17 @@ void C2_HOOK_FASTCALL InitSound(void) {
     SetSoundVolumes(0);
 }
 
-// STUB: CARMA2_HW 0x00455690
+// FUNCTION: CARMA2_HW 0x00455690
 tS3_sound_tag C2_HOOK_FASTCALL DRS3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound) {
-    NOT_IMPLEMENTED();
+
+    if (gSound_enabled) {
+        if (pSound != eSoundId_pratcam_whirr_noise && !(pSound >= 3000 && pSound <= 3007) && !(pSound >= 5300 && pSound <= 5320)) {
+            PipeSingleSound(pOutlet, pSound, 0, 0, -1, NULL);
+        }
+        return S3StartSound(pOutlet, pSound);
+    } else {
+        return 0;
+    }
 }
 
 int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_sound_id pSound) {
