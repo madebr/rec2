@@ -8,7 +8,7 @@ extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY);
 
-// MungeButtonModels
+extern void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex);
 
 // ScrollUp
 

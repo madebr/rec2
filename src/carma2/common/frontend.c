@@ -1063,7 +1063,7 @@ void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
 }
 
 // FUNCTION: CARMA2_HW 0x00466ce0
-void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex) {
+void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_index) {
     int i;
 
     tFrontend_scroller_spec* scroller = &pFrontend->scrollers[pIndex];
