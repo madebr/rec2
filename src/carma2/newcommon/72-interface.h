@@ -216,7 +216,7 @@ extern intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref);
 
 extern void C2_HOOK_FASTCALL DodgyPause(tU32 pTime);
 
-// MorphBlob
+extern void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps);
 
 // ScrollCredits
 

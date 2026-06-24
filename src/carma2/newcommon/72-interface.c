@@ -662,7 +662,19 @@ void C2_HOOK_FASTCALL DodgyPause(tU32 pTime) {
     }
 }
 
-// MorphBlob
+// FUNCTION: CARMA2_HW 0x0046f5b0
+void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps) {
+    float t;
+    int i;
+
+    t = (float)pStep / (float)pCount_steps;
+    for (i = 0; i < pModel->nvertices; i++) {
+
+        pModel->vertices[i].p.v[0] = pModel_from->vertices[i].p.v[0] + (pModel_to->vertices[i].p.v[0] - pModel_from->vertices[i].p.v[0]) * t;
+        pModel->vertices[i].p.v[1] = pModel_from->vertices[i].p.v[1] + (pModel_to->vertices[i].p.v[1] - pModel_from->vertices[i].p.v[1]) * t;
+    }
+    BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
+}
 
 // ScrollCredits
 
