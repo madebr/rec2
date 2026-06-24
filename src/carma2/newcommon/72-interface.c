@@ -48,7 +48,23 @@ int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// GetItemAtMousePos
+// FUNCTION: CARMA2_HW 0x004677d0
+int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY) {
+    int i;
+
+    for (i = 0; i < pFrontend->count_items; i++) {
+
+        if (pX >= gFrontend_brender_items[i].model->vertices[1].p.v[0]
+                && pX <= gFrontend_brender_items[i].model->vertices[3].p.v[0]
+                && pY >= -gFrontend_brender_items[i].model->vertices[0].p.v[1]
+                && pY <= -gFrontend_brender_items[i].model->vertices[1].p.v[1]
+                && pFrontend->items[i].enabled > 0 /* default or disabled */
+                && pFrontend->items[i].visible) {
+            return i;
+        }
+    }
+    return -1;
+}
 
 // MungeButtonModels
 
