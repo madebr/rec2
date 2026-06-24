@@ -2,6 +2,7 @@
 
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "18-graphics2.h"
 #include "19-font.h"
 #include "41-utility.h"
 #include "42-input.h"
@@ -582,7 +583,15 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
 
 // FRONTEND_Redraw
 
-// MaybeDoMouseCursor
+// FUNCTION: CARMA2_HW 0x0046d8b0
+void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
+
+    if (!gFrontend_suppress_mouse) {
+        PossibleLock(1);
+        DoMouseCursor();
+        PossibleUnlock(1);
+    }
+}
 
 // ResetInterfaceTimeout
 

@@ -184,7 +184,10 @@ void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them) {
 
 // SaveTransient
 
-// DoMouseCursor
+// STUB: CARMA2_HW 0x0043e0a0
+int C2_HOOK_FASTCALL DoMouseCursor(void) {
+    NOT_IMPLEMENTED();
+}
 
 // AllocateCursorTransient
 

@@ -50,7 +50,7 @@ extern void C2_HOOK_FASTCALL RemoveTransientBitmaps(int pGraphically_remove_them
 
 // SaveTransient
 
-// DoMouseCursor
+extern int C2_HOOK_FASTCALL DoMouseCursor(void);
 
 // AllocateCursorTransient
 

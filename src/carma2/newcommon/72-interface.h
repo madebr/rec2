@@ -178,7 +178,7 @@ extern int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
 // FRONTEND_Redraw
 
-// MaybeDoMouseCursor
+extern void C2_HOOK_FASTCALL MaybeDoMouseCursor(void);
 
 // ResetInterfaceTimeout
 
