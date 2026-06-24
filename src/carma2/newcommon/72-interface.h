@@ -212,7 +212,7 @@ extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_s
 
 // WreckPick
 
-// HeirarchyPick
+extern intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref);
 
 extern void C2_HOOK_FASTCALL DodgyPause(tU32 pTime);
 

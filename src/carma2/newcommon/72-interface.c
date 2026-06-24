@@ -63,6 +63,9 @@ int gINT_0059b0d8 = -1;
 // GLOBAL: CARMA2_HW 0x0059b0d4
 int gFrontend_maximum_input_length = 9;
 
+// GLOBAL: CARMA2_HW 0x00763924
+int gHierarchy_has_actor;
+
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
@@ -639,7 +642,15 @@ int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size) {
 
 // WreckPick
 
-// HeirarchyPick
+// FUNCTION: CARMA2_HW 0x0046f560
+intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref) {
+
+    if (a == (br_actor*)ref) {
+        gHierarchy_has_actor = 1;
+    }
+    BrActorEnum(a, HeirarchyPick, ref);
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0046f590
 void C2_HOOK_FASTCALL DodgyPause(tU32 pTime) {
