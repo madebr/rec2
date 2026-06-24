@@ -13,7 +13,7 @@ extern void C2_HOOK_FASTCALL DoSaveGame(void);
 
 // StartSavedGamesList
 
-// EndSavedGamesList
+extern void C2_HOOK_FASTCALL EndSavedGamesList(void);
 
 // GetNthSavedGame
 
