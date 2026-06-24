@@ -469,5 +469,11 @@ void C2_HOOK_FASTCALL IString_Free(void) {
     gCount_interface_strings = 0;
 }
 
-// IString_Get
+// FUNCTION: CARMA2_HW 0x00485110
+const char* C2_HOOK_FASTCALL IString_Get(int pIndex) {
 
+    if (pIndex > gCount_interface_strings) {
+        return NULL;
+    }
+    return gInterface_strings[pIndex];
+}
