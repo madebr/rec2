@@ -60,7 +60,7 @@ extern void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 // UpdateScrollPositions
 
-// ToggleTyping
+extern int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
 // NewGameToggleTyping
 
@@ -186,9 +186,9 @@ extern void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 // ProcessInputString
 
-// StopGettingInputString
+extern int C2_HOOK_FASTCALL StopGettingInputString(void);
 
-// StartGettingInputString
+extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size);
 
 // DisposeWrecksGallery
 
@@ -214,7 +214,7 @@ extern void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 // HeirarchyPick
 
-// DodgyPause
+extern void C2_HOOK_FASTCALL DodgyPause(tU32 pTime);
 
 // MorphBlob
 

@@ -1,6 +1,7 @@
 #include "72-interface.h"
 
 #include "08-loading1.h"
+#include "10-loading2.h"
 #include "19-font.h"
 #include "41-utility.h"
 #include "42-input.h"
@@ -8,6 +9,7 @@
 #include "69-sound.h"
 #include "70-packfile.h"
 #include "globvars.h"
+#include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
@@ -44,6 +46,21 @@ int gFrontend_selected_item_index;
 
 // GLOBAL: CARMA2_HW 0x0068b8a0
 tRace_group_spec* gRace_groups;
+
+// GLOBAL: CARMA2_HW 0x00688af4
+char* gFrontend_current_input;
+
+// GLOBAL: CARMA2_HW 0x0068723c
+int gFrontend_text_input_item_index;
+
+// GLOBAL: CARMA2_HW 0x00763900
+char gFrontend_original_player_name[32];
+
+// GLOBAL: CARMA2_HW 0x0059b0d8
+int gINT_0059b0d8 = -1;
+
+// GLOBAL: CARMA2_HW 0x0059b0d4
+int gFrontend_maximum_input_length = 9;
 
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
@@ -422,7 +439,32 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 
 // UpdateScrollPositions
 
-// ToggleTyping
+// FUNCTION: CARMA2_HW 0x00466ec0
+int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
+
+    if (gTyping) {
+        EdgeTriggerModeOff();
+        WaitForNoKeys();
+        EdgeTriggerModeOn();
+        FrontEndShowMouse();
+        gTyping = 0;
+        StopGettingInputString();
+        pFrontend->items[gFrontend_text_input_item_index].unlitFont = 1;
+        pFrontend->items[gFrontend_text_input_item_index].highFont = 1;
+        gFrontend_original_player_name[0] = '\0';
+        SaveOptions();
+    } else {
+        FrontEndHideMouse();
+        gTyping = 1;
+        gFrontend_text_input_item_index = gFrontend_selected_item_index;
+        pFrontend->items[gFrontend_text_input_item_index].unlitFont = 2;
+        pFrontend->items[gFrontend_text_input_item_index].highFont = 3;
+        strcpy(pFrontend->items[gFrontend_text_input_item_index].text, gProgram_state.player_name);
+        strcpy(gFrontend_original_player_name, gProgram_state.player_name);
+        StartGettingInputString(pFrontend->items[gFrontend_text_input_item_index].text, 8);
+    }
+    return 0;
+}
 
 // NewGameToggleTyping
 
@@ -548,9 +590,23 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 
 // ProcessInputString
 
-// StopGettingInputString
+// FUNCTION: CARMA2_HW 0x0046e5c0
+int C2_HOOK_FASTCALL StopGettingInputString(void) {
 
-// StartGettingInputString
+    gFrontend_current_input = NULL;
+    return 0;
+}
+
+// FUNCTION: CARMA2_HW 0x0046e5d0
+int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size) {
+
+    PDClearKeyboardBuffer();
+    gINT_0059b0d8 = -1;
+    gFrontend_maximum_input_length = pBuffer_size;
+    gFrontend_current_input = pBuffer;
+    DodgyPause(200);
+    return 1;
+}
 
 // DisposeWrecksGallery
 
@@ -576,7 +632,15 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 
 // HeirarchyPick
 
-// DodgyPause
+// FUNCTION: CARMA2_HW 0x0046f590
+void C2_HOOK_FASTCALL DodgyPause(tU32 pTime) {
+    tU32 start;
+
+    start = PDGetTotalTime();
+    while (PDGetTotalTime() < start + pTime) {
+        /* brrrr */
+    }
+}
 
 // MorphBlob
 

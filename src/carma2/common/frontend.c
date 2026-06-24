@@ -189,7 +189,7 @@ int gFrontend_scrollbars_updated;
 // GLOBAL: CARMA2_HW 0x00688af4
 char* gFrontend_current_input;
 
-// GLOBAL: CARMA2_HW 0x0059b0d49
+// GLOBAL: CARMA2_HW 0x0059b0d4
 int gFrontend_maximum_input_length = 9;
 
 // GLOBAL: CARMA2_HW 0x00763900
