@@ -172,7 +172,7 @@ br_pixelmap* gFrontend_wrecks_pixelmap;
 tFrontendMenuType gFrontend_next_menu;
 
 // GLOBAL: CARMA2_HW 0x00686834
-tU32 gAuthor_credits_scroll_start_time;
+tU32 gCredits_scroll_start;
 
 // GLOBAL: CARMA2_HW 0x00688ab0
 tConnected_items* gConnected_items;
@@ -224,22 +224,22 @@ int gControls_frontend_to_key_mapping_lut[29] = {
 };
 
 // GLOBAL: CARMA2_HW 0x006883c0
-int gAuthor_credits_line_count;
+int gCredits_line_count;
 
 // GLOBAL: CARMA2_HW 0x00686f04
-int* gAuthor_credits_heights;
+int* gCredits_heights;
 
 // GLOBAL: CARMA2_HW 0x00687238
-int* gAuthor_credits_throbs;
+int* gCredits_throbs;
 
 // GLOBAL: CARMA2_HW 0x00688448
-char** gAuthor_credits_texts;
+char** gCredits_texts;
 
 // GLOBAL: CARMA2_HW 0x0068682c
-int* gAuthor_credits_fonts;
+int* gCredits_fonts;
 
 // GLOBAL: CARMA2_HW 0x00686f90
-int gAuthor_credits_total_height;
+int gCredits_total_height;
 
 // GLOBAL: CARMA2_HW 0x00763898
 int gFrontend_scroll_time_left;
@@ -780,21 +780,21 @@ int C2_HOOK_FASTCALL FRONTEND_Redraw(void) {
 // FUNCTION: CARMA2_HW 0x0046f630
 void C2_HOOK_FASTCALL ScrollCredits(void) {
     int i;
-    int y = (int)(430.f - 0.03f * (float)(PDGetTotalTime() - gAuthor_credits_scroll_start_time));
+    int y = (int)(430.f - 0.03f * (float)(PDGetTotalTime() - gCredits_scroll_start));
 
-    for (i = 0; i < gAuthor_credits_line_count; i++) {
-        y += gAuthor_credits_heights[i];
+    for (i = 0; i < gCredits_line_count; i++) {
+        y += gCredits_heights[i];
         if (y > 30 && y < 430) {
-            if (gAuthor_credits_throbs[i]) {
-                SolidPolyFontText(gAuthor_credits_texts[i], 320, y, gAuthor_credits_fonts[i] - 1, eJust_centre, 1);
-                TransparentPolyFontText(gAuthor_credits_texts[i], 320, y, gAuthor_credits_fonts[i], eJust_centre, 1, gFrontend_throb_factor);
+            if (gCredits_throbs[i]) {
+                SolidPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i] - 1, eJust_centre, 1);
+                TransparentPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i], eJust_centre, 1, gFrontend_throb_factor);
             } else {
-                SolidPolyFontText(gAuthor_credits_texts[i], 320, y, gAuthor_credits_fonts[i], eJust_centre, 1);
+                SolidPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i], eJust_centre, 1);
             }
         }
     }
-    if (gAuthor_credits_total_height < 0.03f * (PDGetTotalTime() - gAuthor_credits_scroll_start_time)) {
-        gAuthor_credits_scroll_start_time = PDGetTotalTime();
+    if (gCredits_total_height < 0.03f * (PDGetTotalTime() - gCredits_scroll_start)) {
+        gCredits_scroll_start = PDGetTotalTime();
     }
 }
 

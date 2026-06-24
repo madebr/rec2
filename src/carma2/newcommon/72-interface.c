@@ -66,6 +66,30 @@ int gFrontend_maximum_input_length = 9;
 // GLOBAL: CARMA2_HW 0x00763924
 int gHierarchy_has_actor;
 
+// GLOBAL: CARMA2_HW 0x00686834
+tU32 gCredits_scroll_start;
+
+// GLOBAL: CARMA2_HW 0x006883c0
+int gCredits_line_count;
+
+// GLOBAL: CARMA2_HW 0x00686f04
+int* gCredits_heights;
+
+// GLOBAL: CARMA2_HW 0x00687238
+int* gCredits_throbs;
+
+// GLOBAL: CARMA2_HW 0x00688448
+char** gCredits_texts;
+
+// GLOBAL: CARMA2_HW 0x0068682c
+int* gCredits_fonts;
+
+// GLOBAL: CARMA2_HW 0x00686f90
+int gCredits_total_height;
+
+// GLOBAL: CARMA2_HW 0x006886d0
+double gFrontend_throb_factor;
+
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
@@ -676,7 +700,27 @@ void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_m
     BrModelUpdate(pModel, BR_MODU_VERTEX_POSITIONS);
 }
 
-// ScrollCredits
+// FUNCTION: CARMA2_HW 0x0046f630
+void C2_HOOK_FASTCALL ScrollCredits(void) {
+    int y;
+    int i;
+
+    y = (int)(430.0 - (float)(PDGetTotalTime() - gCredits_scroll_start) * 0.03);
+    for (i = 0; i < gCredits_line_count; i++) {
+        y += gCredits_heights[i];
+        if (y < 430 && y > 30) {
+            if (gCredits_throbs[i]) {
+                SolidPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i] - 1, eJust_centre, 1);
+                TransparentPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i], eJust_centre, 1, gFrontend_throb_factor);
+            } else {
+                SolidPolyFontText(gCredits_texts[i], 320, y, gCredits_fonts[i], eJust_centre, 1);
+            }
+        }
+    }
+    if ((float)(PDGetTotalTime() - gCredits_scroll_start) * 0.03 > (float)gCredits_total_height) {
+        gCredits_scroll_start = PDGetTotalTime();
+    }
+}
 
 // LoadGameInFunc
 

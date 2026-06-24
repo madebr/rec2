@@ -218,7 +218,7 @@ extern void C2_HOOK_FASTCALL DodgyPause(tU32 pTime);
 
 extern void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps);
 
-// ScrollCredits
+extern void C2_HOOK_FASTCALL ScrollCredits(void);
 
 // LoadGameInFunc
 
