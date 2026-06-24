@@ -19,7 +19,7 @@ extern void C2_HOOK_FASTCALL EndSavedGamesList(void);
 
 // DoLoadGame2
 
-// DoLoadGame
+extern int C2_HOOK_FASTCALL DoLoadGame(int pIndex);
 
 // DoLoadMostRecentGame
 

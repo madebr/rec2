@@ -232,23 +232,23 @@ extern int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL LoadGameScrollDown(tFrontend_spec* pFrontend);
 
-// LoadSlot1
+extern int C2_HOOK_FASTCALL LoadSlot1(tFrontend_spec* pFrontend);
 
-// LoadSlot2
+extern int C2_HOOK_FASTCALL LoadSlot2(tFrontend_spec* pFrontend);
 
-// LoadSlot3
+extern int C2_HOOK_FASTCALL LoadSlot3(tFrontend_spec* pFrontend);
 
-// LoadSlot4
+extern int C2_HOOK_FASTCALL LoadSlot4(tFrontend_spec* pFrontend);
 
-// LoadSlot5
+extern int C2_HOOK_FASTCALL LoadSlot5(tFrontend_spec* pFrontend);
 
-// LoadSlot6
+extern int C2_HOOK_FASTCALL LoadSlot6(tFrontend_spec* pFrontend);
 
-// LoadSlot7
+extern int C2_HOOK_FASTCALL LoadSlot7(tFrontend_spec* pFrontend);
 
-// LoadSlot8
+extern int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend);
 
-// TryToLoadGame
+extern int C2_HOOK_FASTCALL TryToLoadGame(int pN);
 
 // LoadGameUpdateFunc
 

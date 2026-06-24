@@ -32,7 +32,10 @@ void C2_HOOK_FASTCALL EndSavedGamesList(void) {
 
 // DoLoadGame2
 
-// DoLoadGame
+// STUB: CARMA2_HW 0x00491e20
+int C2_HOOK_FASTCALL DoLoadGame(int pIndex) {
+    NOT_IMPLEMENTED();
+}
 
 // DoLoadMostRecentGame
 

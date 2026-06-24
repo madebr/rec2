@@ -17,6 +17,9 @@
 
 #include "c2_string.h"
 
+// GLOBAL: CARMA2_HW 0x00764eec
+tFrontendMenuType gFrontend_next_menu;
+
 // GLOBAL: CARMA2_HW 0x00688b20
 int gFrontend_suppress_mouse;
 
@@ -840,23 +843,81 @@ int C2_HOOK_FASTCALL LoadGameScrollDownLoadGameScrollDown(tFrontend_spec* pFront
     return 0;
 }
 
-// LoadSlot1
+#define LOAD_SLOT_N(FRONTEND, N) \
+    if (gFrontend_load_game_index_top + (N) + 1 > gFrontend_count_saved_games) { \
+        pFrontend->items[N + 1].menuInfo = NULL; \
+        return 0; \
+    } \
+    TryToLoadGame(N); \
+    if (gProgram_state.racing) { \
+        return 1; \
+    } \
+    gFrontend_next_menu = kFrontend_menu_main; \
+    return 3;
 
-// LoadSlot2
+// FUNCTION: CARMA2_HW 0x0046fbd0
+int C2_HOOK_FASTCALL LoadSlot1(tFrontend_spec* pFrontend) {
 
-// LoadSlot3
+    LOAD_SLOT_N(pFrontend, 0);
+}
 
-// LoadSlot4
+// FUNCTION: CARMA2_HW 0x0046fc50
+int C2_HOOK_FASTCALL LoadSlot2(tFrontend_spec* pFrontend) {
 
-// LoadSlot5
+    LOAD_SLOT_N(pFrontend, 1);
+}
 
-// LoadSlot6
+// FUNCTION: CARMA2_HW 0x0046fcd0
+int C2_HOOK_FASTCALL LoadSlot3(tFrontend_spec* pFrontend) {
 
-// LoadSlot7
+    LOAD_SLOT_N(pFrontend, 2);
+}
 
-// LoadSlot8
+// FUNCTION: CARMA2_HW 0x0046fd50
+int C2_HOOK_FASTCALL LoadSlot4(tFrontend_spec* pFrontend) {
 
-// TryToLoadGame
+    LOAD_SLOT_N(pFrontend, 3);
+}
+
+// FUNCTION: CARMA2_HW 0x0046fdd0
+int C2_HOOK_FASTCALL LoadSlot5(tFrontend_spec* pFrontend) {
+
+    LOAD_SLOT_N(pFrontend, 4);
+}
+
+// FUNCTION: CARMA2_HW 0x0046fe50
+int C2_HOOK_FASTCALL LoadSlot6(tFrontend_spec* pFrontend) {
+
+    LOAD_SLOT_N(pFrontend, 5);
+}
+
+// FUNCTION: CARMA2_HW 0x0046fed0
+int C2_HOOK_FASTCALL LoadSlot7(tFrontend_spec* pFrontend) {
+
+    LOAD_SLOT_N(pFrontend, 6);
+}
+
+// FUNCTION: CARMA2_HW 0x0046ff50
+int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend) {
+
+    LOAD_SLOT_N(pFrontend, 7);
+}
+
+#undef LOAD_SLOT_N
+
+// FUNCTION: CARMA2_HW 0x0046ffd0
+int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
+
+    if (!DoLoadGame(gFrontend_load_game_index_top + pN)) {
+        DRS3StartSound(gEffects_outlet, eSoundId_CantAffordPart);
+        return 0;
+    } else {
+        gAbandon_game = 1;
+        gNo_credits_APO_restore = 1;
+        DRS3StartSound(gEffects_outlet, eSoundId_Done);
+        return 1;
+    }
+}
 
 // LoadGameUpdateFunc
 

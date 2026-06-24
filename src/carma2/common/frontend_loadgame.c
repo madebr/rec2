@@ -236,7 +236,7 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         } else if (save_game->is_boundary_race) {
             sprintf(text, "%c %i", '\x1f', 1 + (gRace_list[save_game->current_race_index].group - gRace_groups));
         } else {
-            sprintf(text, "%i", 1 + (gRace_list[save_game->current_race_index].group - gRace_groups));
+            sprintf(text, "%i", 1 + (gRace_list[save_game->current_race_index].group - gRaceGroups));
         }
         SolidPolyFontText(text, 325, y_text, font, eJust_right, 1);
 
