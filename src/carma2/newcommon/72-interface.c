@@ -335,7 +335,19 @@ void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend) {
 
 // FindNextActiveItem
 
-// FindPrevActiveItem
+// FUNCTION: CARMA2_HW 0x00467a30
+int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index) {
+    int i;
+
+    for (i = pStart_index - 1; i >= 0; i--) {
+        tFrontend_item_spec *item = &pFrontend->items[i];
+
+        if (item->enabled > 0 && item->visible) {
+            return i;
+        }
+    }
+    return FindPrevActiveItem(pFrontend, pFrontend->count_items);
+}
 
 // RaceIndex
 

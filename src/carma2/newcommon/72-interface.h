@@ -32,7 +32,7 @@ extern void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
 
 // FindNextActiveItem
 
-// FindPrevActiveItem
+extern int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index);
 
 // RaceIndex
 
