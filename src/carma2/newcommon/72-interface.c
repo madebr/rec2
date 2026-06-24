@@ -151,7 +151,44 @@ void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) {
     }
 }
 
-// GetThisFuckingPixelmapPleaseMrTwatter
+// FUNCTION: CARMA2_HW 0x0046abf0
+br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* pFolder, const char* pName) {
+    br_pixelmap* pixelmaps[1000];
+    br_pixelmap* result;
+    FILE* f;
+    tPath_name the_path;
+    char* str;
+    size_t count;
+    size_t i;
+
+    result = NULL;
+    PathCat(the_path, pFolder, "PIXIES.P16");
+    f = PFfopen(the_path, "rb");
+    if (f != NULL) {
+        PFfclose(f);
+        count = BrPixelmapLoadMany(the_path, pixelmaps, REC2_ASIZE(pixelmaps));
+        strcpy(the_path, pName);
+        str = strchr(the_path, '.');
+        *str = '\0';
+        for (i = 0; i < count; i++) {
+            if (pixelmaps[i] != NULL) {
+                if (DRStricmp(pixelmaps[i]->identifier, the_path) == 0) {
+                    result = pixelmaps[i];
+                } else {
+                    BrPixelmapFree(pixelmaps[i]);
+                    pixelmaps[i] = NULL;
+                }
+            }
+        }
+        EnsurePixelmapAllowed(result, 0);
+        return result;
+    } else {
+        PathCat(the_path, pFolder, pName);
+        result = DRImageLoad(the_path);
+        EnsurePixelmapAllowed(result, 0);
+        return result;
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x00466760
 void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {

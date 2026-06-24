@@ -20,7 +20,7 @@ extern void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) ;
 
-// GetThisFuckingPixelmapPleaseMrTwatter
+extern br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* pFolder, const char* pName);
 
 extern void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend);
 
