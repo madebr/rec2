@@ -28,6 +28,6 @@ extern void C2_HOOK_FASTCALL Timers_Init(void);
 
 extern void C2_HOOK_FASTCALL Timers_StartFrame(void);
 
-// Timers_EndFrame
+extern void C2_HOOK_FASTCALL Timers_EndFrame(void);
 
 #endif // GUARD_68_TIMER_H

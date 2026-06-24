@@ -12,12 +12,6 @@ int gTimers_stack_size;
 // GLOBAL: CARMA2_HW 0x006b7600
 tTimer gTimers[19];
 
-// GLOBAL: CARMA2_HW 0x006aaa4c
-int gTimers_frame_count;
-
-// GLOBAL: CARMA2_HW 0x006aaa48
-int gTimers_enough_samples;
-
 // GLOBAL: CARMA2_HW 0x006b7814
 int gTimers_max_index;
 
@@ -27,11 +21,23 @@ int gTimers_draw_x;
 // GLOBAL: CARMA2_HW 0x006aaa44
 int gTimers_draw_y_stride;
 
+// GLOBAL: CARMA2_HW 0x006aaa48
+int gTimers_enough_samples;
+
+// GLOBAL: CARMA2_HW 0x006aaa4c
+int gTimers_frame_count;
+
+// GLOBAL: CARMA2_HW 0x006aaa50
+tU32 gTimers_frame_end_time;
+
 // GLOBAL: CARMA2_HW 0x006aaa54
 int gTimers_draw_y;
 
 // GLOBAL: CARMA2_HW 0x006aaa58
 tU32 gTimers_frame_start_time;
+
+// GLOBAL: CARMA2_HW 0x006aaa5c
+tU32 gTimers_tolerance;
 
 // FUNCTION: CARMA2_HW 0x00504300
 void C2_HOOK_FASTCALL Timers_Init(void) {
@@ -100,5 +106,34 @@ void C2_HOOK_FASTCALL Timers_StartFrame(void) {
     gTimers_frame_start_time = PDGetMicroseconds();
 }
 
-// Timers_EndFrame
+// FUNCTION: CARMA2_HW 0x00504740
+void C2_HOOK_FASTCALL Timers_EndFrame(void) {
+    int i;
+    int j;
+    tU32 total_duration;
+
+    if (gTimers_stack_size != 0) {
+        PDFatalError("Timers_EndFrame(): Timer stack mismatch.");
+    }
+    gTimers[TIMER_OQQ].durations[gTimers[TIMER_OQQ].index] += PDGetMicroseconds() - gTimers[TIMER_OQQ].start_time;
+    gTimers_frame_end_time = PDGetMicroseconds();
+    gTimers_frame_count += 1;
+    if (!gTimers_enough_samples && gTimers_frame_count > 64) {
+        gTimers_enough_samples = 1;
+    }
+
+    total_duration = 0;
+    for (i = 0; i < (int)REC2_ASIZE(gTimers); i++) {
+        gTimers[i].total_duration = 0;
+        for (j = 0; j < (int)REC2_ASIZE(gTimers[i].durations); j++) {
+            gTimers[i].total_duration += gTimers[i].durations[j];
+        }
+        gTimers[i].index = 0;
+        total_duration += gTimers[i].total_duration;
+        if (gTimers_enough_samples && gTimers[i].total_duration > gTimers[i].longest_duration) {
+            gTimers[i].longest_duration = gTimers[i].total_duration;
+        }
+    }
+    gTimers_tolerance = abs(total_duration - (gTimers_frame_end_time - gTimers_frame_start_time));
+}
 
