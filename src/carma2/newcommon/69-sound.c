@@ -342,7 +342,15 @@ int C2_HOOK_FASTCALL DRS3ChangeVolume(int pChannel_id, int pVolume) {
     }
 }
 
-// DRS3StopSound
+// FUNCTION: CARMA2_HW 0x00455840
+int C2_HOOK_FASTCALL DRS3StopSound(tS3_sound_tag pSound_tag) {
+
+    if (gSound_enabled) {
+        return S3StopSound(pSound_tag);
+    } else {
+        return 0;
+    }
+}
 
 void C2_HOOK_FASTCALL DRS3Service(void) {
 
