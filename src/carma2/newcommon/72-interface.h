@@ -419,6 +419,8 @@
 
 extern void C2_HOOK_FASTCALL IString_Load(void);
 
+extern void C2_HOOK_FASTCALL IString_Free(void);
+
 // IString_Get
 
 #endif // GUARD_72_INTERFACE_H
