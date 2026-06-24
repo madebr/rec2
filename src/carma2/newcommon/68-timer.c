@@ -1,5 +1,6 @@
 #include "68-timer.h"
 
+#include "19-font.h"
 #include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
@@ -137,3 +138,83 @@ void C2_HOOK_FASTCALL Timers_EndFrame(void) {
     gTimers_tolerance = abs(total_duration - (gTimers_frame_end_time - gTimers_frame_start_time));
 }
 
+// FUNCTION: CARMA2_HW 0x00504810
+void C2_HOOK_FASTCALL Timers_Draw(br_pixelmap* pScreen) {
+    tU32 longest_duration;
+    int longest_duration_timer;
+    tU32 total_duration;
+    float draw_factor;
+    char duration_str[16];
+    char tolerance_str[64];
+    int i;
+
+    total_duration = 0;
+    longest_duration_timer = -1;
+    longest_duration = 0;
+    for (i = 0; i < (int)REC2_ASIZE(gTimers); i++) {
+        total_duration += gTimers[i].total_duration;
+    }
+
+    draw_factor = (float)(pScreen->width - 2 *  gTimers_draw_x) / (float)total_duration;
+    for (i = 0; i < (int)REC2_ASIZE(gTimers); i++) {
+
+        DRPixelmapText(pScreen,
+            10,
+            i * gTimers_draw_y_stride - 3 + gTimers_draw_y,
+            &gFonts[1],
+            gTimers[i].identifier,
+            0);
+
+        BrPixelmapLine(pScreen,
+            gTimers_draw_x,
+            i * gTimers_draw_y_stride + gTimers_draw_y + 0,
+            (int)(gTimers[i].total_duration * draw_factor + (float)gTimers_draw_x),
+            i * gTimers_draw_y_stride + gTimers_draw_y + 0,
+            gTimers[i].colour);
+        BrPixelmapLine(pScreen,
+            gTimers_draw_x,
+            i * gTimers_draw_y_stride + gTimers_draw_y + 1,
+            (int)(gTimers[i].total_duration * draw_factor + (float)gTimers_draw_x),
+            i * gTimers_draw_y_stride + gTimers_draw_y + 1,
+            gTimers[i].colour);
+        BrPixelmapLine(pScreen,
+            gTimers_draw_x,
+            i * gTimers_draw_y_stride + gTimers_draw_y + 2,
+            (int)(gTimers[i].total_duration * draw_factor + (float)gTimers_draw_x),
+            i * gTimers_draw_y_stride + gTimers_draw_y + 2,
+            gTimers[i].colour);
+
+        sprintf(duration_str, "%i", gTimers[i].total_duration);
+        DRPixelmapText(pScreen,
+            (int)(gTimers[i].total_duration * draw_factor + (float)gTimers_draw_x + 4.0f),
+            i * gTimers_draw_y_stride - 3 + gTimers_draw_y,
+            &gFonts[1],
+            duration_str,
+            0);
+        if (gTimers[i].total_duration > longest_duration) {
+            longest_duration = gTimers[i].total_duration;
+            longest_duration_timer = i;
+        }
+    }
+    if (longest_duration_timer != -1) {
+        BrPixelmapRectangle(pScreen,
+            gTimers_draw_x - 2,
+            gTimers_draw_y + longest_duration_timer * gTimers_draw_y_stride - 2,
+            (int)(gTimers[longest_duration_timer].total_duration * draw_factor - 5.0f),
+            6,
+            RGB565_TO_BACKSCREEN_COLOUR(0x1f, 0x3e, 0x1f));
+    }
+    BrPixelmapLine(pScreen,
+        (int)(gTimers_draw_x + draw_factor * 10000.0),
+        gTimers_draw_y - 1,
+        (int)(gTimers_draw_x + draw_factor * 10000.0),
+        gTimers_draw_y + (REC2_ASIZE(gTimers) - 1) * gTimers_draw_y_stride + 3,
+        RGB565_TO_BACKSCREEN_COLOUR(0x1f, 0x00, 0x00));
+    sprintf(tolerance_str, "8.38ms, tollerance = %i", gTimers_tolerance);
+    DRPixelmapText(pScreen,
+        (int)(((double)gTimers_draw_x + draw_factor * 10000.0) - 13.0),
+        gTimers_draw_y + 7 + gTimers_draw_y_stride * (REC2_ASIZE(gTimers) - 1),
+        &gFonts[1],
+        tolerance_str,
+        0);
+}
