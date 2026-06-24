@@ -1,6 +1,8 @@
 #ifndef GUARD_72_INTERFACE_H
 #define GUARD_72_INTERFACE_H
 
+#include "c2_hooks.h"
+
 // temp
 
 // GetItemAtMousePos
@@ -415,7 +417,7 @@
 
 // FrontEndHideMouse
 
-// IString_Load
+extern void C2_HOOK_FASTCALL IString_Load(void);
 
 // IString_Get
 
