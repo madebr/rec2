@@ -33,7 +33,7 @@ extern void C2_HOOK_FASTCALL DRS3Service(void);
 
 // DRS3SoundStillPlaying
 
-extern int C2_HOOK_FASTCALL DRS3ShutDown(void);
+extern void C2_HOOK_FASTCALL DRS3ShutDown(void);
 
 extern int C2_HOOK_FASTCALL DRS3SetOutletVolume(tS3_outlet* pOutlet, int pVolume);
 

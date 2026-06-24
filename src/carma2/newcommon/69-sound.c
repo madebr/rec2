@@ -321,9 +321,13 @@ void C2_HOOK_FASTCALL DRS3Service(void) {
 
 // DRS3SoundStillPlaying
 
-// STUB: CARMA2_HW 0x00455910
-int C2_HOOK_FASTCALL DRS3ShutDown(void) {
-    NOT_IMPLEMENTED();
+// FUNCTION: CARMA2_HW 0x00455910
+void C2_HOOK_FASTCALL DRS3ShutDown(void) {
+
+    if (gSound_enabled) {
+        gSound_enabled = 0;
+        S3DisableSound();
+    }
 }
 
 // FUNCTION: CARMA2_HW 0x00455930
