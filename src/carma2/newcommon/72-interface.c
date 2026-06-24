@@ -4,6 +4,7 @@
 #include "10-loading2.h"
 #include "18-graphics2.h"
 #include "19-font.h"
+#include "24-loadsave.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
@@ -89,6 +90,12 @@ int gCredits_total_height;
 
 // GLOBAL: CARMA2_HW 0x006886d0
 double gFrontend_throb_factor;
+
+// GLOBAL: CARMA2_HW 0x00763940
+br_actor* gFrontend_billboard_actors[8];
+
+// GLOBAL: CARMA2_HW 0x00688b10
+br_actor* gFrontend_menu_camera;
 
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
@@ -761,9 +768,43 @@ br_actor* C2_HOOK_FASTCALL CreateAPOactor(void) {
     return actor;
 }
 
-// KillAPOactor
+// FUNCTION: CARMA2_HW 0x0046f9e0
+void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor) {
 
-// LoadGameOutFunc
+    if (pActor != NULL) {
+
+        if (pActor->material->colour_map != NULL) {
+            BrMapRemove(pActor->material->colour_map);
+            BrPixelmapFree(pActor->material->colour_map);
+        }
+        if (pActor->material != NULL) {
+            BrMaterialRemove(pActor->material);
+            BrMaterialFree(pActor->material);
+        }
+        if (pActor->model != NULL) {
+            BrModelRemove(pActor->model);
+            BrModelFree(pActor->model);
+        }
+        if (pActor->parent != NULL) {
+            BrActorRemove(pActor);
+        }
+        BrActorFree(pActor);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0046fa60
+int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gFrontend_billboard_actors); i++) {
+        KillAPOactor(gFrontend_billboard_actors[i]);
+    }
+    BrActorFree(gFrontend_menu_camera);
+    gFrontend_menu_camera = NULL;
+    EndSavedGamesList();
+    DRS3StartSound(gEffects_outlet, eSoundId_Swingout);
+    return 0;
+}
 
 // LoadGameScrollUp
 

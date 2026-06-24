@@ -224,9 +224,9 @@ extern void C2_HOOK_FASTCALL ScrollCredits(void);
 
 extern br_actor* C2_HOOK_FASTCALL CreateAPOactor(void);
 
-// KillAPOactor
+extern void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor);
 
-// LoadGameOutFunc
+extern int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend);
 
 // LoadGameScrollUp
 
