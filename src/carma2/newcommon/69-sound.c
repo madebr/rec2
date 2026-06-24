@@ -664,7 +664,7 @@ void C2_HOOK_FASTCALL MungeEngineNoise(void) {
                         pitch = 131072.0f;
                     }
 
-                    vol = 96.0 + the_car->revs * 0.0015;
+                    vol = (float)(96.0 + (double)the_car->revs * 0.0015);
                     if (type_of_engine_noise == 1) {
                         vol = (float)(vol * 5.0);
                     } else if (type_of_engine_noise == 2) {
@@ -675,7 +675,7 @@ void C2_HOOK_FASTCALL MungeEngineNoise(void) {
                     vol = MIN(vol, 255);
                 }
                 if (the_car->field_0x4d4 > 1.0) {
-                    vol *= 1.0 + (the_car->field_0x4d4 - 1.0f) / 12.0f;
+                    vol = (float)(vol * (1.0 + (the_car->field_0x4d4 - 1.0f) / 12.0f));
                 }
                 S3UpdateSoundSource(gEngine_outlet, -1, the_car->sound_source, (float)(gAction_replay_mode ? 300 : 250), 0, 0, (int)vol, (int)pitch, BR_FIXED_INT(1));
             }
