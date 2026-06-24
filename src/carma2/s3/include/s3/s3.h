@@ -249,6 +249,8 @@ extern int C2_HOOK_FASTCALL S3ReleaseSoundSource(tS3_sound_source* src);
 
 extern int C2_HOOK_FASTCALL S3StartSound(tS3_outlet* pOutlet, tS3_sound_id pSound);
 
+extern int C2_HOOK_FASTCALL S3SetChannelVolume(int pChannel_tag, int pVolume);
+
 extern int C2_HOOK_FASTCALL S3StartSound2(tS3_outlet* pOutlet, tS3_sound_id pSound, unsigned int pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
 
 extern tS3_error_codes C2_HOOK_FASTCALL S3StopSound(int pTag);

@@ -332,7 +332,15 @@ int C2_HOOK_FASTCALL DRS3StartSound2(tS3_outlet *pOutlet, tS3_sound_id pSound, i
     }
 }
 
-// DRS3ChangeVolume
+// FUNCTION: CARMA2_HW 0x004557a0
+int C2_HOOK_FASTCALL DRS3ChangeVolume(int pChannel_id, int pVolume) {
+
+    if (gSound_enabled) {
+        return S3SetChannelVolume(pChannel_id, pVolume);
+    } else {
+        return 0;
+    }
+}
 
 // DRS3StopSound
 

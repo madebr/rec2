@@ -25,7 +25,7 @@ extern int C2_HOOK_FASTCALL DRS3StartSoundNoPiping(tS3_outlet* pOutlet, tS3_soun
 
 extern int C2_HOOK_FASTCALL DRS3StartSound2(tS3_outlet *pOutlet, tS3_sound_id pSound, int pRepeats, int pLeft_volume, int pRight_volume, int pLeft_pitch, int pRight_pitch);
 
-// DRS3ChangeVolume
+extern int C2_HOOK_FASTCALL DRS3ChangeVolume(int pChannel_id, int pVolume);
 
 // DRS3StopSound
 
