@@ -234,6 +234,7 @@ void C2_HOOK_FASTCALL S3BindListenerLeftBRender(br_vector3* left) {
 int C2_HOOK_FASTCALL S3StartSound3D(tS3_outlet *pOutlet, int pSound, const br_vector3* pInitial_position, const br_vector3* pInitial_velocity, int pRepeats, int pVolume, int pPitch, int pSpeed) {
     tS3_descriptor* descriptor;
     tS3_channel* channel;
+    float rate;
 
     if (gS3_enabled) {
         descriptor = S3GetDescriptorByID(pSound);
@@ -269,9 +270,10 @@ int C2_HOOK_FASTCALL S3StartSound3D(tS3_outlet *pOutlet, int pSound, const br_ve
         if (pSpeed == -1) {
             pSpeed = BR_FIXED_INT(1);
         }
-        gS3_channel_template.rate = (int)((float)gS3_channel_template.rate * ldexp((double)pPitch, -16));
+        rate = (float)gS3_channel_template.rate * ldexp((double)pPitch, -16);
+        gS3_channel_template.rate = (int)rate;
         if (!pOutlet->independent_pitch) {
-            gS3_channel_template.rate *= (float)ldexp((double)pSpeed, -16);
+            gS3_channel_template.rate = (int)((float)ldexp((double)pSpeed, -16) * rate);
         }
         gS3_channel_template.field_0x28 = 0.0f;
         gS3_channel_template.source_rate = gS3_channel_template.rate;
