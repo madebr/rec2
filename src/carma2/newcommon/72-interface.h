@@ -230,7 +230,7 @@ extern int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend);
 
-// LoadGameScrollDown
+extern int C2_HOOK_FASTCALL LoadGameScrollDown(tFrontend_spec* pFrontend);
 
 // LoadSlot1
 
