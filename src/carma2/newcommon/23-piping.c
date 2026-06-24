@@ -6,7 +6,10 @@
 
 // ARReplayPauseState
 
-// ARGetReplayRate
+// STUB: CARMA2_HW 0x00402390
+float C2_HOOK_FASTCALL ARGetReplayRate(void) {
+    NOT_IMPLEMENTED();
+}
 
 // ARSetReplayRate
 

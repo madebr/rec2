@@ -17,7 +17,7 @@
 #include <string.h>
 
 // GLOBAL: CARMA2_HW 0x00684550
-const char* gPedSoundPath;
+const char* gPed_sound_path;
 
 // GLOBAL: CARMA2_HW 0x0068b898
 int gCD_fully_installed;
@@ -126,6 +126,9 @@ br_vector3 gCamera_left;
 // GLOBAL: CARMA2_HW 0x0079e130
 br_vector3 gCamera_position;
 
+// GLOBAL: CARMA2_HW 0x0079e180
+br_vector3 gOld_camera_position;
+
 // GLOBAL: CARMA2_HW 0x0079ea60
 br_vector3 gCamera_velocity;
 
@@ -190,7 +193,7 @@ void C2_HOOK_FASTCALL InitSound(void) {
         if (gSound_override) {
             gSound_available = gSound_enabled = 0;
         } else {
-            gSound_available = gSound_enabled = S3Init(the_path, gAusterity_mode, gPedSoundPath) == 0;
+            gSound_available = gSound_enabled = S3Init(the_path, gAusterity_mode, gPed_sound_path) == 0;
         }
         S3Set3DSoundEnvironment(0.14492753f, -1.0f, -1.0f);
         gVirgin_pass = 0;
@@ -527,7 +530,97 @@ int C2_HOOK_FASTCALL DRS3StartSound3D(tS3_outlet* pOutlet, int pSound_id, const 
     }
 }
 
-// MungeEngineNoise
+// FUNCTION: CARMA2_HW 0x00456070
+void C2_HOOK_FASTCALL MungeEngineNoise(void) {
+    int cat;
+    int car_count;
+    tCar_spec* the_car;
+    float pitch;
+    float vol;
+    int type_of_engine_noise;
+    int i;
+
+    if (!gSound_available || !gProgram_state.racing) {
+        return;
+    }
+    gCamera_left.v[0] = (br_scalar)(gCamera_to_world.m[0][0] * -1.0f);
+    gCamera_left.v[1] = (br_scalar)(gCamera_to_world.m[0][1] * -1.0f);
+    gCamera_left.v[2] = (br_scalar)(gCamera_to_world.m[0][2] * -1.0f);
+    BrVector3Copy(&gCamera_position, (br_vector3*)gCamera_to_world.m[3]);
+    if (gFrame_period != 0) {
+        gCamera_velocity.v[0] = (br_scalar)((double)(gCamera_position.v[0] - gOld_camera_position.v[0]) / ((double)gFrame_period / 1000.0));
+        gCamera_velocity.v[1] = (br_scalar)((double)(gCamera_position.v[1] - gOld_camera_position.v[1]) / ((double)gFrame_period / 1000.0));
+        gCamera_velocity.v[2] = (br_scalar)((double)(gCamera_position.v[2] - gOld_camera_position.v[2]) / ((double)gFrame_period / 1000.0));
+    } else {
+        BrVector3Set(&gCamera_velocity, 0.0f, 0.0f, 0.0f);
+    }
+    BrVector3Copy(&gOld_camera_position, &gCamera_position);
+    if (gAction_replay_mode && fabs(ARGetReplayRate()) <= 1.0) {
+        ARGetReplayRate();
+    }
+    for (cat = eVehicle_rozzer; cat >= 0; cat--) {
+
+        if (cat == eVehicle_self) {
+            car_count = 1;
+        } else {
+            car_count = GetCarCount(cat);
+        }
+        for (i = 0; i < car_count; i++) {
+
+            if (cat == eVehicle_self) {
+                the_car = &gProgram_state.current_car;
+            } else {
+                the_car = GetCarSpec(cat, i);
+            }
+            if ((the_car != NULL && the_car->driver == eDriver_local_human)
+                    || gSound_detail_level >= 3 || cat == eVehicle_rozzer) {
+
+                BrVector3Copy(&the_car->vel, &the_car->collision_info->v);
+                if (cat == eVehicle_rozzer) {
+                    vol = 255.0f;
+                    pitch = (float)BR_FIXED_INT(1);
+                } else {
+                    if (the_car->collision_info->last_special_volume != NULL) {
+                        type_of_engine_noise = the_car->collision_info->last_special_volume->engine_noise_index;
+                    } else {
+                        type_of_engine_noise = 0;
+                    }
+                    pitch = (float)(40960.0 + 10.0 * the_car->revs);
+                    if (gAction_replay_mode) {
+                        pitch = (float)(int)(fabs((double)ARGetReplayRate()) * pitch);
+                    }
+                    if (type_of_engine_noise == 1) {
+                        pitch = (float)(pitch * 0.75);
+                    } else if (type_of_engine_noise == 2) {
+                        pitch = (float)(pitch * 0.55);
+                    }
+
+                    if (pitch < 4096.0f) {
+                        pitch = 4096.0f;
+                    }
+                    if (pitch > 131072.0f) {
+                        pitch = 131072.0f;
+                    }
+
+                    vol = 96.0 + the_car->revs * 0.0015;
+                    if (type_of_engine_noise == 1) {
+                        vol = (float)(vol * 5.0);
+                    } else if (type_of_engine_noise == 2) {
+                        vol = (float)(vol * 2.0);
+                    } else {
+                        vol *= 2.5;
+                    }
+                    vol = MIN(vol, 255);
+                }
+                if (the_car->field_0x4d4 > 1.0) {
+                    vol *= 1.0 + (the_car->field_0x4d4 - 1.0f) / 12.0f;
+                }
+                S3UpdateSoundSource(gEngine_outlet, -1, the_car->sound_source, (float)(gAction_replay_mode ? 300 : 250), 0, 0, (int)vol, (int)pitch, BR_FIXED_INT(1));
+            }
+        }
+    }
+    SoundService();
+}
 
 // FUNCTION: CARMA2_HW 0x00456530
 void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio) {
@@ -778,6 +871,6 @@ void C2_HOOK_FASTCALL WriteOutSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* 
 // FUNCTION: CARMA2_HW 0x00457570
 void C2_HOOK_FASTCALL SetDefaultSoundFolderName(void) {
 
-    gPedSoundPath = NULL;
+    gPed_sound_path = NULL;
 }
 

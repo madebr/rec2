@@ -375,7 +375,7 @@ void C2_HOOK_FASTCALL InitSound(void) {
         if (gSound_override) {
             gSound_enabled = 0;
         } else {
-            gSound_enabled = S3Init(the_path, gAusterity_mode, gPedSoundPath) == 0;
+            gSound_enabled = S3Init(the_path, gAusterity_mode, gPed_sound_path) == 0;
         }
         gSound_available = gSound_enabled;
         S3Set3DSoundEnvironment(0.14492753f, -1.0f, -1.0f);
