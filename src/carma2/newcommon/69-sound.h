@@ -57,7 +57,7 @@ extern void C2_HOOK_FASTCALL SetSoundVolumes(int pCD_audio);
 
 extern tS3_outlet* C2_HOOK_FASTCALL GetOutletFromIndex(int pIndex);
 
-// GetIndexFromOutlet
+extern int C2_HOOK_FASTCALL GetIndexFromOutlet(tS3_outlet* pOutlet);
 
 extern int C2_HOOK_FASTCALL DRS3StartCDA(int pSound);
 

@@ -719,7 +719,17 @@ tS3_outlet* C2_HOOK_FASTCALL GetOutletFromIndex(int pIndex) {
     return gIndexed_outlets[pIndex];
 }
 
-// GetIndexFromOutlet
+// FUNCTION: CARMA2_HW 0x004566b0
+int C2_HOOK_FASTCALL GetIndexFromOutlet(tS3_outlet* pOutlet) {
+    int i;
+
+    for (i = 0; i < (int)REC2_ASIZE(gIndexed_outlets); i++) {
+        if (gIndexed_outlets[i] == pOutlet) {
+            return i;
+        }
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x004566d0
 int C2_HOOK_FASTCALL DRS3StartCDA(int pSound) {
