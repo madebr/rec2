@@ -694,7 +694,14 @@ int C2_HOOK_FASTCALL DRS3StartCDA(int pSound) {
     return gINT_00684568;
 }
 
-// DRS3StopCDA
+void C2_HOOK_FASTCALL DRS3StopCDA(void) {
+
+    if (gCD_fully_installed && gMusic_available && gINT_00684568 != 0) {
+        S3StopSound(gINT_00684568);
+        gINT_00684554 = 0;
+        gINT_00684568 = 0;
+    }
+}
 
 // StartMusicTrack
 
@@ -713,10 +720,8 @@ void C2_HOOK_FASTCALL StartMusic(void) {
 // FUNCTION: CARMA2_HW 0x00456910
 void C2_HOOK_FASTCALL StopMusic(void) {
 
-    if (gCD_fully_installed && gMusic_available && gINT_00684568 != 0) {
-        S3StopSound(gINT_00684568);
-        gINT_00684554 = 0;
-        gINT_00684568 = 0;
+    if (gCD_fully_installed) {
+        DRS3StopCDA();
     }
 }
 
