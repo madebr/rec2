@@ -289,7 +289,11 @@ char* gInterface_strings[300];
 
 // Generic_Infunc
 
-// Generic_Outfunc
+// FUNCTION: CARMA2_HW 0x00470c10
+int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend) {
+
+    return 0;
+}
 
 // Generic_EventEffect
 

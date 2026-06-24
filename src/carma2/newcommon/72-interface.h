@@ -2,6 +2,7 @@
 #define GUARD_72_INTERFACE_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 // temp
 
@@ -273,7 +274,7 @@
 
 // Generic_Infunc
 
-// Generic_Outfunc
+extern int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend);
 
 // Generic_EventEffect
 
