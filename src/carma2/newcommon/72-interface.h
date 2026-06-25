@@ -4,6 +4,9 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tFrontend_brender_item gFrontend_brender_items[100];
+extern tFrontend_spec* gCurrent_frontend_spec;
+
 extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY);
@@ -44,7 +47,7 @@ extern void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 // UpdateNetTrackScroller
 
-// RefreshNetRacesScroller
+extern void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend);
 
 // NetRaceUp
 
@@ -58,7 +61,7 @@ extern void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 // NetworkJoinUpdateScroller
 
-// UpdateScrollPositions
+extern void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
@@ -162,13 +165,13 @@ extern int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
 // FRONTEND_GenericMenuHandler
 
-// FRONTEND_CreateMenuButton
+extern void C2_HOOK_FASTCALL FRONTEND_CreateMenuButton(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText);
 
-// FRONTEND_CreateMenu
+extern int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 
-// FRONTEND_DestroyMenu
+extern int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend);
 
-// FRONTEND_PingPongFlash
+extern void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void);
 
 // FRONTEND_DrawMenu
 
@@ -180,7 +183,7 @@ extern int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
 extern void C2_HOOK_FASTCALL MaybeDoMouseCursor(void);
 
-// ResetInterfaceTimeout
+extern void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
 
 // FRONTEND_Main
 
@@ -250,15 +253,15 @@ extern int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL TryToLoadGame(int pN);
 
-// LoadGameUpdateFunc
+extern int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend);
 
-// PrepareAPO
+extern void C2_HOOK_FASTCALL PrepareAPO(int pActor_index);
 
-// PrintAPO
+extern void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index);
 
-// BuildAPO
+extern void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, int pAPO);
 
-// PolyClipName
+extern void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth);
 
 // Ians_GetItemAtMousePos
 
@@ -270,7 +273,7 @@ extern int C2_HOOK_FASTCALL TryToLoadGame(int pN);
 
 // PrepareSliders
 
-// Morph_Initialise
+extern void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec* pNext);
 
 extern int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend);
 
@@ -278,9 +281,9 @@ extern int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend);
 
 // Generic_EventEffect
 
-// Generic_LinkInEffect
+extern void C2_HOOK_FASTCALL Generic_LinkInEffect(void);
 
-// Generic_LinkOutEffect
+extern void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
 // GetScrollSet
 

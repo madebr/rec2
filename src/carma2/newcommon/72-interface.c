@@ -1,21 +1,29 @@
 #include "72-interface.h"
 
+#include "05-drmem.h"
 #include "08-loading1.h"
 #include "10-loading2.h"
+#include "15-displays.h"
 #include "18-graphics2.h"
 #include "19-font.h"
 #include "24-loadsave.h"
+#include "35-intrface.h"
+#include "40-main.h"
 #include "41-utility.h"
 #include "42-input.h"
 #include "52-errors.h"
 #include "69-sound.h"
 #include "70-packfile.h"
+#include "72-interface-main.h"
+#include "72-interface-network.h"
+#include "72-interface-quit.h"
 #include "globvars.h"
 #include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
 
 #include "c2_string.h"
+#include <ctype.h>
 
 // GLOBAL: CARMA2_HW 0x00764eec
 tFrontendMenuType gFrontend_next_menu;
@@ -112,29 +120,97 @@ int gFrontend_scroll_time_increment;
 // GLOBAL: CARMA2_HW 0x00764e9c
 int gFrontend_count_saved_games;
 
+// GLOBAL: CARMA2_HW 0x00763894
+tU32 gFrontend_scroll_last_update;
+
+// GLOBAL: CARMA2_HW 0x00688b04
+int gFrontend_mouse_down;
+
+// GLOBAL: CARMA2_HW 0x0068875c
+tU32 gFrontend_time_last_input;
+
+// GLOBAL: CARMA2_HW 0x00764ee4
+int gNet_join_host_result;  // FIXME: use union instead?
+
+// GLOBAL: CARMA2_HW 0x00688b08
+int gPrev_frontend_mouse_down;
+
+// GLOBAL: CARMA2_HW 0x006883a8
+int gFrontend_leave_current_menu;
+
+// GLOBAL: CARMA2_HW 0x00688abc
+tFrontend_spec* gCurrent_frontend_spec;
+
+// GLOBAL: CARMA2_HW 0x007635f0
+br_uint_32 gFrontend_APO_Colour_1;
+
+// GLOBAL: CARMA2_HW 0x007635e0
+br_uint_32 gFrontend_APO_Colour_2;
+
+// GLOBAL: CARMA2_HW 0x00763700
+br_uint_32 gFrontend_APO_Colour_3;
+
+// GLOBAL: CARMA2_HW 0x0068650c
+br_actor* gFrontend_actor;
+
+// GLOBAL: CARMA2_HW 0x0068683c
+int gFrontend_count_brender_items;
+
+// GLOBAL: CARMA2_HW 0x00764ee0
+int gFrontend_remove_current_backdrop;
+
+// GLOBAL: CARMA2_HW 0x00686f8c
+br_pixelmap* gFrontend_backdrop;
+
+// GLOBAL: CARMA2_HW 0x00688ae8
+br_colour gFrontend_some_color;
+
+// GLOBAL: CARMA2_HW 0x006870b8
+tFrontend_model gFrontend_A_models[13];
+
+// GLOBAL: CARMA2_HW 0x00687188
+tFrontend_model gFrontend_B_models[11];
+
+// GLOBAL: CARMA2_HW 0x00687058
+tFrontend_model gFrontend_C_models[6];
+
+// GLOBAL: CARMA2_HW 0x00688378
+br_model* gFrontend_A_model_from;
+
+// GLOBAL: CARMA2_HW 0x0068844c
+br_model* gFrontend_A_model_to;
+
+// GLOBAL: CARMA2_HW 0x00688768
+br_model* gFrontend_B_model_from;
+
+// GLOBAL: CARMA2_HW 0x006886e0
+br_model* gFrontend_B_model_to;
+
+// GLOBAL: CARMA2_HW 0x00686504
+br_model* gFrontend_C_model_from;
+
+// GLOBAL: CARMA2_HW 0x006886bc
+br_model* gFrontend_C_model_to;
+
+// GLOBAL: CARMA2_HW 0x006864e0
+int gFrontend_backdrop0_opacity_mode;
+
+// GLOBAL: CARMA2_HW 0x006864dc
+int gFrontend_backdrop1_opacity_mode;
+
+// GLOBAL: CARMA2_HW 0x006864d4
+int gFrontend_backdrop2_opacity_mode;
+
+// GLOBAL: CARMA2_HW 0x00686ef8
+int gFrontend_interpolate_steps_left;
+
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
 
     return 0;
 }
 
-// FUNCTION: CARMA2_HW 0x004677d0
-int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY) {
-    int i;
-
-    for (i = 0; i < pFrontend->count_items; i++) {
-
-        if (pX >= gFrontend_brender_items[i].model->vertices[1].p.v[0]
-                && pX <= gFrontend_brender_items[i].model->vertices[3].p.v[0]
-                && pY >= -gFrontend_brender_items[i].model->vertices[0].p.v[1]
-                && pY <= -gFrontend_brender_items[i].model->vertices[1].p.v[1]
-                && pFrontend->items[i].enabled > 0 /* default or disabled */
-                && pFrontend->items[i].visible) {
-            return i;
-        }
-    }
-    return -1;
-}
+// int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY); // Moved for inlining purposes
 
 // FUNCTION: CARMA2_HW 0x00466ce0
 void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pButton_index) {
@@ -473,7 +549,7 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 
 // UpdateNetTrackScroller
 
-// RefreshNetRacesScroller
+// void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend); // Moved for inlining purposes
 
 // NetRaceUp
 
@@ -487,7 +563,7 @@ void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend) {
 
 // NetworkJoinUpdateScroller
 
-// UpdateScrollPositions
+// void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend); // Moved for inlining purposes
 
 // FUNCTION: CARMA2_HW 0x00466ec0
 int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
@@ -616,13 +692,251 @@ int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend) {
 
 // FRONTEND_GenericMenuHandler
 
-// FRONTEND_CreateMenuButton
+// FUNCTION: CARMA2_HW 0x0046c5c0
+void C2_HOOK_FASTCALL FRONTEND_CreateMenuButton(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText) {
+    float map_x;
+    float map_y;
 
-// FRONTEND_CreateMenu
+    C2_HOOK_BUG_ON(sizeof(tFrontend_brender_item) != 44);
 
-// FRONTEND_DestroyMenu
+    pFrontend_brender_item->actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    pFrontend_brender_item->model = BrModelAllocate("ButtonModel", 4, 2);
+    pFrontend_brender_item->material = BrMaterialAllocate("ButtonMaterial");
+    if (pFrontend_brender_item->model == NULL || pFrontend_brender_item->material == NULL || pFrontend_brender_item->actor == NULL) {
+#ifdef REC2_FIX_BUGS
+        FatalError(kFatalError_OOM_S, "");
+#else
+        FatalError(kFatalError_OOM_S);
+#endif
+    }
+    if (pMap == NULL) {
+        pFrontend_brender_item->field_0x10 = BrPixelmapAllocate(BR_PMT_RGBA_4444, 8, 8, NULL, 0);
+        BrPixelmapFill(pFrontend_brender_item->field_0x10, BR_COLOUR_RGBA(0, 0, 0x80, 0));
+        pFrontend_brender_item->field_0xc = BrPixelmapAllocate(BR_PMT_RGBA_4444, 8, 8, NULL, 0);
+        BrPixelmapCopy(pFrontend_brender_item->field_0xc, pFrontend_brender_item->field_0x10);
+        pFrontend_brender_item->field_0xc->identifier = BrResStrDup(pFrontend_brender_item->field_0xc, pText);
+    } else {
+        pFrontend_brender_item->field_0x10 = BrPixelmapAllocate(BR_PMT_RGBA_4444, pMap->width, pMap->height, NULL, 0);
+        BrPixelmapCopy(pFrontend_brender_item->field_0x10, pMap);
+        pFrontend_brender_item->field_0xc = BrPixelmapAllocate(BR_PMT_RGBA_4444, pMap->width, pMap->height, NULL, 0);
+        BrPixelmapCopy(pFrontend_brender_item->field_0xc, pFrontend_brender_item->field_0x10);
+    }
+    BrMapAdd(pFrontend_brender_item->field_0xc);
+    pFrontend_brender_item->prims[0].t = BRT_BLEND_B;
+    pFrontend_brender_item->prims[0].v.b = 1;
+    pFrontend_brender_item->prims[1].t = BRT_OPACITY_X;
+    pFrontend_brender_item->prims[1].v.x = BR_FIXED_INT(0x80);
+    pFrontend_brender_item->prims[2].t = BR_NULL_TOKEN;
+    pFrontend_brender_item->prims[2].v.u32 = 0;
+    pFrontend_brender_item->material->extra_prim = pFrontend_brender_item->prims;
+    pFrontend_brender_item->actor->model = pFrontend_brender_item->model;
+    pFrontend_brender_item->actor->material = pFrontend_brender_item->material;
+    pFrontend_brender_item->actor->identifier = BrResStrDup(pFrontend_brender_item->actor, "Button");;
+    BrMaterialAdd(pFrontend_brender_item->material);
+    pFrontend_brender_item->material->colour = pColour;
+    pFrontend_brender_item->material->flags = BR_MATF_ALWAYS_VISIBLE | BR_MATF_FORCE_FRONT;
+    pFrontend_brender_item->material->colour_map = pFrontend_brender_item->field_0xc;
+    BrMaterialUpdate(pFrontend_brender_item->material, BR_MATU_ALL);
+    pFrontend_brender_item->model->flags |= BR_MODF_KEEP_ORIGINAL;
 
-// FRONTEND_PingPongFlash
+    pFrontend_brender_item->model->vertices[0].p.v[0] = pFrontend_brender_item->model->vertices[1].p.v[0] = (float)pX;
+    pFrontend_brender_item->model->vertices[0].p.v[1] = pFrontend_brender_item->model->vertices[3].p.v[1] = -(float)pY;
+    pFrontend_brender_item->model->vertices[2].p.v[0] = pFrontend_brender_item->model->vertices[3].p.v[0] = pFrontend_brender_item->model->vertices[1].p.v[0] + (float)pWidth;
+    pFrontend_brender_item->model->vertices[1].p.v[1] = pFrontend_brender_item->model->vertices[2].p.v[1] = pFrontend_brender_item->model->vertices[3].p.v[1] - (float)pHeight;
+    pFrontend_brender_item->model->vertices[0].p.v[2] = -1.1f;
+    pFrontend_brender_item->model->vertices[1].p.v[2] = -1.1f;
+    pFrontend_brender_item->model->vertices[2].p.v[2] = -1.1f;
+    pFrontend_brender_item->model->vertices[3].p.v[2] = -1.1f;
+    pFrontend_brender_item->model->faces[0].vertices[0] = 0;
+    pFrontend_brender_item->model->faces[0].vertices[1] = 1;
+    pFrontend_brender_item->model->faces[0].vertices[2] = 2;
+    pFrontend_brender_item->model->faces[1].vertices[0] = 2;
+    pFrontend_brender_item->model->faces[1].vertices[1] = 3;
+    pFrontend_brender_item->model->faces[1].vertices[2] = 0;
+    BrModelAdd(pFrontend_brender_item->model);
+    if (pMap != NULL) {
+        map_x = (float)pWidth / (float)HighResHeadupWidth(pMap->width);
+        map_y = (float)pWidth / (float)HighResHeadupWidth(pMap->height);
+    } else {
+        map_x = (float)pWidth / (float)HighResHeadupWidth(8);
+        map_y = (float)pWidth / (float)HighResHeadupWidth(8);
+    }
+    BrVector2Set(&pFrontend_brender_item->model->vertices[0].map, 0.0f, 0.0f);
+    BrVector2Set(&pFrontend_brender_item->model->vertices[1].map, 0.0f, map_y);
+    BrVector2Set(&pFrontend_brender_item->model->vertices[2].map, map_x, map_y);
+    BrVector2Set(&pFrontend_brender_item->model->vertices[3].map, map_x, 0.0f);
+    BrModelUpdate(pFrontend_brender_item->model, BR_MODU_ALL);
+    BrActorAdd(gFrontend_actor, pFrontend_brender_item->actor);
+    pFrontend_brender_item->actor->render_style = BR_RSTYLE_NONE;
+}
+
+// FUNCTION: CARMA2_HW 0x0046c970
+int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec) {
+    char s[256];
+    char s2[256];
+    const char* name;
+    tTWTVFS twt;
+    int count_items;
+    int i;
+
+    name = pFrontend_spec->backdrop_name;
+    sprintf(s, "START OF FRONTEND_CreateMenu for menu \'%s\'", name);
+    PrintMemoryDump(0, s);
+    if (pFrontend_spec->create != NULL) {
+        pFrontend_spec->create(pFrontend_spec);
+    }
+    gFrontend_count_brender_items = 0;
+    count_items = pFrontend_spec->count_items;
+    if (name != NULL && strlen(name) != 0) {
+        if (!gFrontend_remove_current_backdrop) {
+
+            PathCat(s2, gApplication_path, "INTRFACE");
+            PathCat(s2, s2, "BACKDROP");
+            strcpy(s, name);
+            s[strlen(s) - 4] = '\0';
+            PathCat(s2, s2, s);
+            twt = OpenPackFileAndSetTiffLoading(s2);
+            gFrontend_backdrop = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
+            ClosePackFileAndSetTiffLoading(twt);
+
+            if (gFrontend_backdrop == NULL) {
+                BrFailure("FRONTEND: Error loading background graphics.", 0);
+            }
+            PixelmapSwapByteOrder(gFrontend_backdrop);
+            BrMapAdd(gFrontend_backdrop);
+        } else if (gFrontend_backdrop != NULL) {
+
+            BrMapRemove(gFrontend_backdrop);
+            BrPixelmapFree(gFrontend_backdrop);
+
+            PathCat(s2, gApplication_path, "INTRFACE");
+            PathCat(s2, s2, "BACKDROP");
+            strcpy(s, name);
+            s[strlen(s) - 4] = '\0';
+            PathCat(s2, s2, s);
+            twt = OpenPackFileAndSetTiffLoading(s2);
+            gFrontend_backdrop = GetThisFuckingPixelmapPleaseMrTwatter(s2, name);
+            ClosePackFileAndSetTiffLoading(twt);
+
+            if (gFrontend_backdrop == NULL) {
+                BrFailure("FRONTEND: Error loading background graphics.", 0);
+            }
+            PixelmapSwapByteOrder(gFrontend_backdrop);
+            BrMapAdd(gFrontend_backdrop);
+        }
+    }
+    StartMouseCursor();
+    for (i = 0; i < count_items; i++) {
+        br_pixelmap* map;
+
+        if (pFrontend_spec->items[i].map_index != 0) {
+            map = gFrontend_images[pFrontend_spec->items[i].map_index];
+        } else {
+            map = NULL;
+        }
+        if (i == gFrontend_selected_item_index) {
+            FRONTEND_CreateMenuButton(
+                &gFrontend_brender_items[gFrontend_count_brender_items],
+                (tS16)pFrontend_spec->items[i].x,
+                pFrontend_spec->items[i].y,
+                pFrontend_spec->items[i].width,
+                pFrontend_spec->items[i].height,
+                gFrontend_some_color,
+                map,
+                pFrontend_spec->items[i].text);
+        } else {
+            FRONTEND_CreateMenuButton(
+                &gFrontend_brender_items[gFrontend_count_brender_items],
+                (tS16)pFrontend_spec->items[i].x,
+                pFrontend_spec->items[i].y,
+                pFrontend_spec->items[i].width,
+                pFrontend_spec->items[i].height,
+                gFrontend_some_color,
+                map,
+                pFrontend_spec->items[i].text);
+        }
+        gFrontend_count_brender_items++;
+    }
+    ResetInterfaceTimeout();
+    FRONTEND_CreateMenuButton(&gFrontend_brender_items[99],
+        0,
+        0,
+        0,
+        0,
+        gFrontend_some_color,
+        NULL,
+        "");
+    if (gMouse_in_use) {
+        gFrontend_selected_item_index = 99;
+    } else {
+        gFrontend_selected_item_index = 0;
+    }
+    sprintf(s, "END OF FRONTEND_CreateMenu for menu \'%s\'", pFrontend_spec->name);
+    PrintMemoryDump(0, s);
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0046ccb0
+int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend) {
+    char s[256];
+    tS8 i;
+
+    sprintf(s, "START OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
+    PrintMemoryDump(0, s);
+    if (pFrontend->destroy != NULL) {
+        pFrontend->destroy(pFrontend);
+    }
+    while (gFrontend_actor->children != NULL && strcmp("Backdrop", gFrontend_actor->children->identifier) != 0) {
+        BrActorRemove(gFrontend_actor->children);
+    }
+    for (i = 0; i < gFrontend_count_brender_items; i++) {
+
+        BrMaterialRemove(gFrontend_brender_items[i].material);
+        BrModelRemove(gFrontend_brender_items[i].model);
+        gFrontend_brender_items[i].actor->render_style = BR_RSTYLE_NONE;
+        BrMaterialFree(gFrontend_brender_items[i].material);
+        gFrontend_brender_items[i].material = NULL;
+        BrModelFree(gFrontend_brender_items[i].model);
+        gFrontend_brender_items[i].model = NULL;
+        BrActorFree(gFrontend_brender_items[i].actor);
+        gFrontend_brender_items[i].actor = NULL;
+        if (gFrontend_brender_items[i].field_0xc != NULL) {
+            BrMapRemove(gFrontend_brender_items[i].field_0xc);
+            BrPixelmapFree(gFrontend_brender_items[i].field_0xc);
+            gFrontend_brender_items[i].field_0xc = NULL;
+        }
+        if (gFrontend_brender_items[i].field_0x10 != NULL) {
+            BrPixelmapFree(gFrontend_brender_items[i].field_0x10);
+            gFrontend_brender_items[i].field_0x10 = NULL;
+        }
+    }
+    /* FIXME: parametrize last item */
+    BrMaterialRemove(gFrontend_brender_items[99].material);
+    BrModelRemove(gFrontend_brender_items[99].model);
+    gFrontend_brender_items[99].actor->render_style = BR_RSTYLE_NONE;
+    BrMaterialFree(gFrontend_brender_items[99].material);
+    gFrontend_brender_items[99].material = NULL;
+    BrModelFree(gFrontend_brender_items[99].model);
+    gFrontend_brender_items[99].model = NULL;
+    BrActorFree(gFrontend_brender_items[99].actor);
+    gFrontend_brender_items[99].actor = NULL;
+    EndMouseCursor();
+    sprintf(s, "END OF FRONTEND_DestroyMenu for menu '%s'", pFrontend->name);
+    PrintMemoryDump(0, s);
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0046cec0
+void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void) {
+    int time;
+
+    time = (int)PDGetTotalTime() % 750;
+    if (time < 375) {
+        gFrontend_throb_factor = (double)time / (750.0 / 2.0);
+    } else {
+        gFrontend_throb_factor = (double)(750 - time) / (750.0 / 2.0);
+    }
+}
 
 // FRONTEND_DrawMenu
 
@@ -642,7 +956,10 @@ void C2_HOOK_FASTCALL MaybeDoMouseCursor(void) {
     }
 }
 
-// ResetInterfaceTimeout
+void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
+
+    gFrontend_time_last_input = PDGetTotalTime();
+}
 
 // FRONTEND_Main
 
@@ -919,15 +1236,260 @@ int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
     }
 }
 
-// LoadGameUpdateFunc
+// FUNCTION: CARMA2_HW 0x00470020
+int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
+    int selected_item_index;
+    tU32 prev;
+    int mouse_x;
+    int mouse_y;
+    int i;
 
-// PrepareAPO
+    ServiceGame();
+    selected_item_index = gFrontend_selected_item_index;
+    prev = gFrontend_scroll_last_update;
+    gFrontend_scroll_last_update = PDGetTotalTime();
+    gFrontend_scroll_time_left -= gFrontend_scroll_last_update - prev;
+    if (gFrontend_scroll_time_left < 0) {
+        gFrontend_scroll_time_left = 0;
+    }
+    gFrontend_mouse_down = 0;
+    gFrontend_scroll_time_increment = 50;
+    if (gMouse_in_use) {
 
-// PrintAPO
+        gFrontend_selected_item_index = 0;
+        ResetInterfaceTimeout();
+        GetMousePosition(&mouse_x, &mouse_y);
+        gNet_join_host_result = GetItemAtMousePos(pFrontend, mouse_x, mouse_y);
+        if (gNet_join_host_result != -1) {
+            gFrontend_selected_item_index = gNet_join_host_result;
+        }
+        gPrev_frontend_mouse_down = gFrontend_mouse_down;
+        gFrontend_mouse_down = EitherMouseButtonDown();
+        if (gFrontend_mouse_down && !gPrev_frontend_mouse_down) {
+            gFrontend_scroll_time_increment = 175;
+        } else {
+            gFrontend_scroll_time_increment = 25;
+        }
+    }
+    if (gFrontend_load_game_index_top > 0) {
+        pFrontend->items[17].enabled = kFrontendItemEnabled_enabled;
+    } else {
+        pFrontend->items[17].enabled = kFrontendItemEnabled_disabled;
+    }
+    if (gFrontend_load_game_index_top + 8 < gFrontend_count_saved_games) {
+        pFrontend->items[18].enabled = kFrontendItemEnabled_enabled;
+    } else {
+        pFrontend->items[18].enabled = kFrontendItemEnabled_disabled;
+    }
+    for (i = 0; i < 8; i++) {
+        size_t j;
+        int font;
+        tSave_game* save_game;
+        char* text_ptr;
+        char text[128];
+        int y_text = 125 + i * 27;
+        int y_apo = 128 + i * 27;
+        char date_str[12];
+        char time_str[16];
+        int len_date;
 
-// BuildAPO
+        font = (i == gFrontend_selected_item_index - 1) ? kPolyfont_hand_green_15pt_lit : kPolyfont_hand_green_15pt_unlit;
+        save_game = GetNthSavedGame(gFrontend_load_game_index_top + i);
+        if (save_game == NULL) {
+            continue;
+        }
+        memset(text, 0, sizeof(text));
+        strcpy(date_str, save_game->date);
+        strcpy(time_str, save_game->time);
 
-// PolyClipName
+        len_date = strlen(date_str);
+        text_ptr = text;
+        for (j = 0; j < len_date; j++) {
+
+            if (isalnum(date_str[j])) {
+                *text_ptr++ = date_str[j];
+            } else if (date_str[j] == '/') {
+                *text_ptr++ = '-';
+            }
+        }
+        SolidPolyFontText(text, 42, y_text, font, eJust_left, 1);
+
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
+#endif
+
+        memset(text, 0, sizeof(text));
+        strncpy(text, time_str, 5);
+
+#ifdef __GNUC__
+#pragma GCC diagnostic pop
+#endif
+
+        SolidPolyFontText(text, 120, y_text, font, eJust_left, 1);
+
+        memset(text, 0, sizeof(text));
+        strcpy(text, save_game->player_name);
+        PolyClipName(text, font, 127);
+        SolidPolyFontText(text, 190, y_text, font, 0, 1);
+
+        if (save_game->game_completed) {
+            sprintf(text, "! %i", 1 + (gRace_list[save_game->current_race_index].group - gRace_groups));
+        } else if (save_game->is_boundary_race) {
+            sprintf(text, "%c %i", '\x1f', 1 + (gRace_list[save_game->current_race_index].group - gRace_groups));
+        } else {
+            sprintf(text, "%i", 1 + (gRace_list[save_game->current_race_index].group - gRace_groups));
+        }
+        SolidPolyFontText(text, 325, y_text, font, eJust_right, 1);
+
+        SolidPolyFontText(MungeCommas(save_game->credits), 366, y_text, font, eJust_left, 1);
+
+        BuildAPO(save_game->apo_levels[0], save_game->apo_potential[0], i, 0);
+        BuildAPO(save_game->apo_levels[1], save_game->apo_potential[1], i, 1);
+        BuildAPO(save_game->apo_levels[2], save_game->apo_potential[2], i, 2);
+        PrepareAPO(i);
+        PrintAPO(450, y_apo, i, 0);
+        PrintAPO(500, y_apo, i, 1);
+        PrintAPO(550, y_apo, i, 2);
+        sprintf(pFrontend->items[15].text, "%i-%i (%i)",
+            gFrontend_load_game_index_top + 1,
+            gFrontend_load_game_index_top + 8,
+            gFrontend_count_saved_games);
+    }
+
+    if (PDKeyDown(51) || PDKeyDown(52) || (gFrontend_mouse_down && gNet_join_host_result != -1)) {
+        int result;
+        tFrontend_spec* next;
+        int go_back;
+
+        ToggleSelection(pFrontend);
+        if (pFrontend->items[gFrontend_selected_item_index].field_0xc == 2) {
+            return 2;
+        } else if (pFrontend->items[gFrontend_selected_item_index].field_0xc == 1) {
+            gFrontend_leave_current_menu = 1;
+        }
+        if (pFrontend->items[gFrontend_selected_item_index].action != NULL) {
+            result = pFrontend->items[gFrontend_selected_item_index].action(pFrontend);
+        } else {
+            result = pFrontend->items[selected_item_index].field_0xc;
+        }
+        next = pFrontend->items[gFrontend_selected_item_index].menuInfo;
+        go_back = 0;
+        if (next == (tFrontend_spec*)(uintptr_t)0x1) {
+            go_back = 1;
+            next = pFrontend->previous;
+        }
+        if (pFrontend->items[gFrontend_selected_item_index].action != NULL) {
+            if (next == NULL && pFrontend->items[gFrontend_selected_item_index].action != temp) {
+                DRS3StartSound(gEffects_outlet, eSoundId_Done);
+            }
+            pFrontend->items[gFrontend_selected_item_index].action(pFrontend);
+        }
+        if (next != NULL) {
+            if (!go_back) {
+                Generic_LinkInEffect();
+            } else {
+                Generic_LinkOutEffect();
+            }
+            gCurrent_frontend_spec->default_item = gFrontend_selected_item_index;
+            for (i = 0; i < gCurrent_frontend_spec->count_scrollers; i++) {
+                gCurrent_frontend_spec->scrollers[i].indexOfItemAtTop = gCurrent_frontend_spec->scrollers[i].indexTopItem;
+            }
+            FRONTEND_DestroyMenu(pFrontend);
+            gCurrent_frontend_spec = next;
+            FRONTEND_CreateMenu(next);
+            if (gCurrent_frontend_spec != pFrontend->previous) {
+                gCurrent_frontend_spec->previous = pFrontend;
+            }
+            Morph_Initialise(pFrontend, gCurrent_frontend_spec);
+            if (gCurrent_frontend_spec == &gFrontend_QUIT) {
+                gFrontend_selected_item_index = 0;
+            } else {
+                gFrontend_selected_item_index = gCurrent_frontend_spec->default_item;
+            }
+            for (i = 0; i < gCurrent_frontend_spec->count_scrollers; i++) {
+                gCurrent_frontend_spec->scrollers[i].indexOfItemAtTop = gCurrent_frontend_spec->scrollers[i].indexTopItem;
+            }
+            UpdateScrollPositions(gCurrent_frontend_spec);
+            return result;
+        } else {
+            return go_back ? 1 : result;
+        }
+    } else {
+        return gFrontend_leave_current_menu ? 1 : 0;
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00470860
+void C2_HOOK_FASTCALL PrepareAPO(int pActor_index) {
+    br_material* material;
+    br_model* model;
+
+    material = gFrontend_billboard_actors[pActor_index]->material;
+    model = gFrontend_billboard_actors[pActor_index]->model;
+    BrMapUpdate(material->colour_map, BR_MAPU_ALL);
+    BrMaterialUpdate(material, BR_MATU_ALL);
+    BrModelUpdate(model, BR_MODU_VERTICES);
+}
+
+// FUNCTION: CARMA2_HW 0x004708a0
+void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
+    br_model *model;
+    float map_left;
+    float map_right;
+
+    model = gFrontend_billboard_actors[pIndex]->model;
+    map_left = (float)(pTex_index + 0) * 0.1875;
+    map_right = (float)(pTex_index + 1) * 0.1875;
+    BrVector2Set(&model->vertices[0].map, 0.0f,   map_left);
+    BrVector2Set(&model->vertices[1].map, 0.625f, map_left);
+    BrVector2Set(&model->vertices[2].map, 0.0f, map_right);
+    BrVector2Set(&model->vertices[3].map, 0.625f, map_right);
+    BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
+    BrVector3Set(&gFrontend_billboard_actors[pIndex]->t.t.translate.t, (float)pX, (float)-pY, 0.0f);
+    BrActorAdd(gFrontend_menu_camera, gFrontend_billboard_actors[pIndex]);
+    BrZbSceneRender(gFrontend_menu_camera, gFrontend_menu_camera, gBack_screen, gDepth_buffer);
+    BrActorRemove(gFrontend_billboard_actors[pIndex]);
+}
+
+// FUNCTION: CARMA2_HW 0x004709b0
+void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, int pAPO) {
+    br_pixelmap* map;
+    int x;
+    int y;
+    br_colour c;
+    int i;
+
+    map = gFrontend_billboard_actors[pActor_index]->material->colour_map;
+
+    if (pAPO == 0) {
+        BrPixelmapFill(map, 0);
+    }
+
+    for (i = 0; i < 3 * 10; i++) {
+
+        x = 4 * (i % 10);
+        y = 0 + 4 * (i / 10);
+
+        if (i >= pPotential) {
+            c = gFrontend_APO_Colour_2;
+        } else if (i >= pCurrent) {
+            c = gFrontend_APO_Colour_3;
+        } else {
+            c = gFrontend_APO_Colour_1;
+        }
+
+        BrPixelmapRectangleFill(map, x, y + 3 * 4 * pAPO, 3, 3, c);
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x00470a50
+void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth) {
+
+    while (PolyFontTextWidth(pFont, pText) > pWidth) {
+        pText[strlen(pText) + -1] = '\0';
+    }
+}
 
 // Ians_GetItemAtMousePos
 
@@ -939,7 +1501,35 @@ int C2_HOOK_FASTCALL TryToLoadGame(int pN) {
 
 // PrepareSliders
 
-// Morph_Initialise
+// FUNCTION: CARMA2_HW 0x00470a90
+void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec* pNext) {
+
+    gFrontend_A_model_from = gFrontend_A_models[pCurrent->model_A_index].model;
+    gFrontend_A_model_to = gFrontend_A_models[pNext->model_A_index].model;
+    if (pCurrent->model_A_index == 0) {
+        gFrontend_backdrop0_opacity_mode = pNext->model_A_index != 0 ? 1 : -2;
+    } else {
+        gFrontend_backdrop0_opacity_mode = pNext->model_A_index != 0 ? 0 : -1;
+    }
+
+    gFrontend_B_model_from = gFrontend_B_models[pCurrent->model_B_index].model;
+    gFrontend_B_model_to = gFrontend_B_models[pNext->model_B_index].model;
+    if (pCurrent->model_B_index == 0) {
+        gFrontend_backdrop1_opacity_mode = pNext->model_B_index != 0 ? 1 : -2;
+    } else {
+        gFrontend_backdrop1_opacity_mode = pNext->model_B_index != 0 ? 0 : -1;
+    }
+
+    gFrontend_C_model_from = gFrontend_C_models[pCurrent->model_C_index].model;
+    gFrontend_C_model_to = gFrontend_C_models[pNext->model_C_index].model;
+    if (pCurrent->model_C_index == 0) {
+        gFrontend_backdrop2_opacity_mode = pNext->model_C_index != 0 ? 1 : -2;
+    } else {
+        gFrontend_backdrop2_opacity_mode = pNext->model_C_index != 0 ? 0 : -1;
+    }
+
+    gFrontend_interpolate_steps_left = 16;
+}
 
 // FUNCTION: CARMA2_HW 0x00470bb0
 int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend) {
@@ -959,9 +1549,15 @@ int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend) {
 
 // Generic_EventEffect
 
-// Generic_LinkInEffect
+void C2_HOOK_FASTCALL Generic_LinkInEffect(void) {
 
-// Generic_LinkOutEffect
+    DRS3StartSound(gEffects_outlet, eSoundId_Swingin);
+}
+
+void C2_HOOK_FASTCALL Generic_LinkOutEffect(void) {
+
+    DRS3StartSound(gEffects_outlet, eSoundId_Swingout);
+}
 
 // GetScrollSet
 

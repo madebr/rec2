@@ -15,7 +15,7 @@ extern void C2_HOOK_FASTCALL PollKeys(void);
 
 // CheckKeysForMouldiness
 
-// EitherMouseButtonDown
+extern int C2_HOOK_FASTCALL EitherMouseButtonDown(void);
 
 // AnyModifiersDown
 
@@ -37,7 +37,7 @@ extern int C2_HOOK_FASTCALL KeyIsDown(int pKey_index);
 
 extern void C2_HOOK_FASTCALL WaitForNoKeys(void);
 
-// GetMousePosition
+extern void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY);
 
 extern void C2_HOOK_FASTCALL InitRollingLetters(void);
 

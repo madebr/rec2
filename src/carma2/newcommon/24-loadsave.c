@@ -28,7 +28,10 @@ void C2_HOOK_FASTCALL EndSavedGamesList(void) {
     gSaved_games = NULL;
 }
 
-// GetNthSavedGame
+// STUB: CARMA2_HW 0x00491cb0
+tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN) {
+    NOT_IMPLEMENTED();
+}
 
 // DoLoadGame2
 

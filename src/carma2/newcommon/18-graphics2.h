@@ -56,7 +56,7 @@ extern int C2_HOOK_FASTCALL DoMouseCursor(void);
 
 // InitMouseTargetLines
 
-// StartMouseCursor
+extern void C2_HOOK_FASTCALL StartMouseCursor(void);
 
 extern void C2_HOOK_FASTCALL EndMouseCursor(void);
 

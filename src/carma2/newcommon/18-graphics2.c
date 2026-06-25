@@ -193,7 +193,10 @@ int C2_HOOK_FASTCALL DoMouseCursor(void) {
 
 // InitMouseTargetLines
 
-// StartMouseCursor
+// STUB: CARMA2_HW 0x0043e6c0
+void C2_HOOK_FASTCALL StartMouseCursor(void) {
+    NOT_IMPLEMENTED();
+}
 
 // STUB: CARMA2_HW 0x0043e710
 void C2_HOOK_FASTCALL EndMouseCursor(void) {

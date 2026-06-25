@@ -19,7 +19,10 @@ void C2_HOOK_FASTCALL PollKeys(void) {
 
 // CheckKeysForMouldiness
 
-// EitherMouseButtonDown
+// STUB: CARMA2_HW 0x004824c0
+int C2_HOOK_FASTCALL EitherMouseButtonDown(void) {
+    NOT_IMPLEMENTED();
+}
 
 // AnyModifiersDown
 
@@ -57,7 +60,10 @@ void C2_HOOK_FASTCALL WaitForNoKeys(void) {
     NOT_IMPLEMENTED();
 }
 
-// GetMousePosition
+// STUB: CARMA2_HW 0x00483c10
+void C2_HOOK_FASTCALL GetMousePosition(int *pX, int *pY) {
+    NOT_IMPLEMENTED();
+}
 
 // STUB: CARMA2_HW 0x00483c90
 void C2_HOOK_FASTCALL InitRollingLetters(void) {

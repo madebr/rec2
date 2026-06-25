@@ -4,6 +4,8 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern int gMouse_in_use;
+
 extern void C2_HOOK_FASTCALL SetAlwaysTyping(void);
 
 extern void C2_HOOK_FASTCALL ClearAlwaysTyping(void);
