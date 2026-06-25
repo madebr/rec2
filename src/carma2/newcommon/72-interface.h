@@ -65,7 +65,7 @@ extern void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
-// NewGameToggleTyping
+extern int C2_HOOK_FASTCALL NewGameToggleTyping(tFrontend_spec* pFrontend);
 
 // NetGameToggleTyping
 
