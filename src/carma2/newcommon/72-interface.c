@@ -18,6 +18,7 @@
 #include "72-interface-network.h"
 #include "72-interface-quit.h"
 #include "globvars.h"
+#include "globvrpb.h"
 #include "platform.h"
 #include "rec2_macros.h"
 #include "rec2_types.h"
@@ -203,6 +204,9 @@ int gFrontend_backdrop2_opacity_mode;
 
 // GLOBAL: CARMA2_HW 0x00686ef8
 int gFrontend_interpolate_steps_left;
+
+// GLOBAL: CARMA2_HW 0x00763820
+tFrontend_slider gOptions_sound_slider;
 
 // FUNCTION: CARMA2_HW 0x00466450
 int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend) {
@@ -1674,11 +1678,53 @@ void C2_HOOK_FASTCALL Generic_LinkOutEffect(void) {
 
 // NetSummary_MenuHandler
 
-// DisplayVolumeSettings
+void C2_HOOK_FASTCALL DisplayVolumeSettings(tFrontend_spec* pFrontend) {
 
-// Slider_EffectsProc
+    gOptions_sound_slider.value = (float)(gProgram_state.effects_volume / 255.0);
+    if (gProgram_state.music_volume >= 128) {
+        SelectThisItemIn(pFrontend, 1, 14);
+    } else {
+        SelectThisItemIn(pFrontend, 1, 15);
+    }
+}
 
-// Options_Infunc
+// STUB: CARMA2_HW 0x00474660
+void C2_HOOK_FASTCALL Slider_EffectsProc(tFrontend_slider* pSlider) {
+    NOT_IMPLEMENTED();
+}
+
+// FUNCTION: CARMA2_HW 0x00474530
+int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend) {
+
+    Generic_Infunc(pFrontend);
+    gOptions_sound_slider.flags = 0;
+    gOptions_sound_slider.itemid_left_reference = 10;
+    gOptions_sound_slider.itemid_start = 6;
+    gOptions_sound_slider.width = 236;
+    gOptions_sound_slider.callback = Slider_EffectsProc;
+    gOptions_sound_slider.field_0x14 = 0.0f;
+    gOptions_sound_slider.field_0x18 = 1.0f;
+    gOptions_sound_slider.next = NULL;
+    gCurrent_frontend_scrollbars = &gOptions_sound_slider;
+    DisplayVolumeSettings(pFrontend);
+    if (gProgram_state.racing) {
+        pFrontend->items[0].enabled = kFrontendItemEnabled_enabled;
+        pFrontend->items[1].enabled = kFrontendItemEnabled_enabled;
+    } else {
+        pFrontend->items[0].enabled = kFrontendItemEnabled_disabled;
+        if (gProgram_state.field_0x2c) {
+            pFrontend->items[1].enabled = kFrontendItemEnabled_enabled;
+        } else {
+            pFrontend->items[1].enabled = kFrontendItemEnabled_disabled;
+        }
+    }
+    if (gNet_mode == eNet_mode_none) {
+        pFrontend->items[4].enabled = kFrontendItemEnabled_enabled;
+    } else {
+        pFrontend->items[4].enabled = kFrontendItemEnabled_disabled;
+    }
+    return 1;
+}
 
 // Options_Outfunc
 
