@@ -982,7 +982,56 @@ void C2_HOOK_FASTCALL ResetInterfaceTimeout(void) {
 
 // FRONTEND_Main
 
-// ProcessInputString
+// FUNCTION: CARMA2_HW 0x0046e470
+int C2_HOOK_FASTCALL ProcessInputString(void) {
+    int len;
+    int key;
+    int int_ch;
+
+    if (gFrontend_current_input == NULL) {
+        return 0;
+    }
+
+    len = strlen(gFrontend_current_input);
+    if (len > gFrontend_maximum_input_length) {
+        gFrontend_current_input[len - 1] = '\0';
+        return -1;
+    }
+    PollKeys();
+    key = PDAnyKeyDown();
+    if (key == 50) {
+        if (len > 0) {
+            gFrontend_current_input[len - 1] = '\0';
+        }
+        return 1;
+    }
+    if (key == 63) {
+        strcpy(gFrontend_current_input, gFrontend_original_player_name);
+        return -2;
+    }
+    if (key == 51) {
+        if (len == 0) {
+            strcpy(gFrontend_current_input, gFrontend_original_player_name);
+        }
+        return -1;
+    }
+    int_ch = PDGetKeyboardCharacter();
+    if (int_ch != 0) {
+        int ch;
+
+        dr_dprintf("FRONTEND: Got char %d", int_ch);
+        ch = PDConvertToASCIILessThan128(int_ch);
+        dr_dprintf("FRONTEND: Char converted to %d", (tU8)ch);
+        if (ch > 0x1f && ch != 0x7f) {
+            gFrontend_current_input[len + 0] = ch;
+            gFrontend_current_input[len + 1] = '\0';
+            dr_dprintf("FRONTEND: Adding char %d to string. String now '%s'", ch, gFrontend_current_input);
+            return 1;
+        }
+        dr_dprintf("FRONTEND: Invalid Char", int_ch);
+    }
+    return 0;
+}
 
 // FUNCTION: CARMA2_HW 0x0046e5c0
 int C2_HOOK_FASTCALL StopGettingInputString(void) {
