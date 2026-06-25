@@ -1282,7 +1282,7 @@ int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend) {
         pFrontend->items[18].enabled = kFrontendItemEnabled_disabled;
     }
     for (i = 0; i < 8; i++) {
-        size_t j;
+        int j;
         int font;
         tSave_game* save_game;
         char* text_ptr;
@@ -1439,12 +1439,12 @@ void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
     float map_right;
 
     model = gFrontend_billboard_actors[pIndex]->model;
-    map_left = (float)(pTex_index + 0) * 0.1875;
-    map_right = (float)(pTex_index + 1) * 0.1875;
-    BrVector2Set(&model->vertices[0].map, 0.0f,   map_left);
-    BrVector2Set(&model->vertices[1].map, 0.625f, map_left);
-    BrVector2Set(&model->vertices[2].map, 0.0f, map_right);
-    BrVector2Set(&model->vertices[3].map, 0.625f, map_right);
+    map_left = (double)(pTex_index + 0) * 0.1875;
+    map_right = (double)(pTex_index + 1) * 0.1875;
+    BrVector2Set(&model->vertices[0].map, 0.0f,   (float)map_left);
+    BrVector2Set(&model->vertices[1].map, 0.625f, (float)map_left);
+    BrVector2Set(&model->vertices[2].map, 0.0f, (float)map_right);
+    BrVector2Set(&model->vertices[3].map, 0.625f, (float)map_right);
     BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
     BrVector3Set(&gFrontend_billboard_actors[pIndex]->t.t.translate.t, (float)pX, (float)-pY, 0.0f);
     BrActorAdd(gFrontend_menu_camera, gFrontend_billboard_actors[pIndex]);
