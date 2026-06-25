@@ -1786,7 +1786,13 @@ int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend) {
     return 1;
 }
 
-// Options_Outfunc
+// FUNCTION: CARMA2_HW 0x00474690
+int C2_HOOK_FASTCALL Options_Outfunc(tFrontend_spec* pFrontend) {
+
+    Generic_Outfunc(pFrontend);
+    SaveOptions();
+    return 1;
+}
 
 // Options_MusicOn
 
