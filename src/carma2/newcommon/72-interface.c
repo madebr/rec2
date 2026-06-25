@@ -1748,9 +1748,12 @@ void C2_HOOK_FASTCALL DisplayVolumeSettings(tFrontend_spec* pFrontend) {
     }
 }
 
-// STUB: CARMA2_HW 0x00474660
+// FUNCTION: CARMA2_HW 0x00474660
 void C2_HOOK_FASTCALL Slider_EffectsProc(tFrontend_slider* pSlider) {
-    NOT_IMPLEMENTED();
+
+    gProgram_state.effects_volume = (int)(255.0 * pSlider->value);
+    SetSoundVolumes(0);
+    DRS3StartSound(gEffects_outlet, eSoundId_LeftButton);
 }
 
 // FUNCTION: CARMA2_HW 0x00474530
