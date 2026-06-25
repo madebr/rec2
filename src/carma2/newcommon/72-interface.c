@@ -1797,7 +1797,14 @@ int C2_HOOK_FASTCALL Options_MusicOn(tFrontend_spec* pFrontend) {
     return 0;
 }
 
-// Options_MusicOff
+// FUNCTION: CARMA2_HW 0x004746e0
+int C2_HOOK_FASTCALL Options_MusicOff(tFrontend_spec* pFrontend) {
+
+    gProgram_state.music_volume = 0;
+    DisplayVolumeSettings(pFrontend);
+    SetSoundVolumes(1);
+    return 0;
+}
 
 // Options_Ok
 

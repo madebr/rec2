@@ -403,7 +403,7 @@ extern int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend);
 
 extern int C2_HOOK_FASTCALL Options_MusicOn(tFrontend_spec* pFrontend);
 
-// Options_MusicOff
+extern int C2_HOOK_FASTCALL Options_MusicOff(tFrontend_spec* pFrontend);
 
 // Options_Ok
 
