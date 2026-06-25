@@ -820,4 +820,7 @@
 // LIBRARY: CARMA2_HW 0x00580cf0
 // __mbsicmp
 
+// LIBRARY: CARMA2_HW 0x00576c00
+// _div
+
 #endif

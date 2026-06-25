@@ -262,7 +262,7 @@ int gCurrent_race_file_index;
 int gCountRaceGroups;
 
 // GLOBAL: CARMA2_HW 0x0068b8a0
-tRace_group_spec* gRaceGroups;
+tRace_group_spec* gRace_groups;
 
 // GLOBAL: CARMA2_HW 0x0074d5e4
 tRace_group_spec* gRaceGroups2;
@@ -2387,15 +2387,15 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
     }
     *pCount = count_races;
     PFfclose(f);
-    if (gRaceGroups != NULL) {
-        BrMemFree(gRaceGroups);
+    if (gRace_groups != NULL) {
+        BrMemFree(gRace_groups);
     }
     C2_HOOK_BUG_ON(sizeof(tRace_group_spec) != 12);
-    gRaceGroups = BrMemAllocate((gCountRaceGroups == 0 ? 1 : gCountRaceGroups) * sizeof(tRace_group_spec), kMem_misc);
-    gRaceGroups[0].count_races = 0;
-    gRaceGroups[0].races = pRace_list;
+    gRace_groups = BrMemAllocate((gCountRaceGroups == 0 ? 1 : gCountRaceGroups) * sizeof(tRace_group_spec), kMem_misc);
+    gRace_groups[0].count_races = 0;
+    gRace_groups[0].races = pRace_list;
 
-    current_group = &gRaceGroups[0];
+    current_group = &gRace_groups[0];
 
     for (i = 0; i < count_races; i++) {
         int count_opponents;
@@ -2429,7 +2429,7 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
         if (pRace_list[i].is_boundary) {
             current_group->mission = &pRace_list[i];
             current_group++;
-            if (current_group - gRaceGroups < gCountRaceGroups) {
+            if (current_group - gRace_groups < gCountRaceGroups) {
                 current_group->count_races = 0;
                 current_group->races = &pRace_list[i+1];
             }
@@ -2437,7 +2437,7 @@ void C2_HOOK_FASTCALL LoadRaces(tRace_list_spec* pRace_list, int* pCount, int pR
             current_group->count_races++;
         }
     }
-    gRaceGroups2 = gRaceGroups;
+    gRaceGroups2 = gRace_groups;
     if (!gApplicationDataTwtMounted) {
         ClosePackFileAndSetTiffLoading(twt);
     }

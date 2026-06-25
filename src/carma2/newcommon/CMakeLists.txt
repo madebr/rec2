@@ -73,6 +73,18 @@ add_library(c2_newcommon STATIC
     70-packfile.c
     71-newgame.c
     72-interface.c
+    72-interface-main.c
+    72-interface-netsync.c
+    72-interface-network.c
+    72-interface-network_options.c
+    72-interface-networksummary.c
+    72-interface-newgame.c
+    72-interface-options.c
+    72-interface-quit.c
+    72-interface-startgame.c
+    72-interface-wrecks.c
+    72-interface-scrollers.c
+    73-istring.c
 
     loadtif.c
     loadtif_zlib.c

@@ -2,6 +2,7 @@
 #define GUARD_24_LOADSAVE_H
 
 #include "c2_hooks.h"
+#include "rec2_types.h"
 
 extern int gSave_game_out_of_sync;
 
@@ -13,13 +14,13 @@ extern void C2_HOOK_FASTCALL DoSaveGame(void);
 
 // StartSavedGamesList
 
-// EndSavedGamesList
+extern void C2_HOOK_FASTCALL EndSavedGamesList(void);
 
-// GetNthSavedGame
+extern tSave_game* C2_HOOK_FASTCALL GetNthSavedGame(int pN);
 
 // DoLoadGame2
 
-// DoLoadGame
+extern int C2_HOOK_FASTCALL DoLoadGame(int pIndex);
 
 // DoLoadMostRecentGame
 

@@ -97,7 +97,7 @@ int C2_HOOK_FASTCALL MainMenuInfunc(tFrontend_spec* pFrontend) {
 
     DefaultInfunc(pFrontend);
     ResetInterfaceTimeout();
-    group = (gCurrent_race_group - gRaceGroups) % 10;
+    group = (gCurrent_race_group - gRace_groups) % 10;
     sprintf(group_name, "%s %d", IString_Get(78), group + 1);
     strcpy(pFrontend->items[2].text, group_name);
     race_index = 4 * group;
@@ -451,7 +451,7 @@ int C2_HOOK_FASTCALL testUp(tFrontend_spec *pFrontend) {
 
     if (PDGetTotalTime() - gFrontend_last_scroll > 400) {
         gFrontend_last_scroll = PDGetTotalTime();
-        if ((gCurrent_race_group - gRaceGroups) % 10 > 0) {
+        if ((gCurrent_race_group - gRace_groups) % 10 > 0) {
             gCurrent_race_group -= 1;
         }
         RefreshRacesScroller(pFrontend);
@@ -465,7 +465,7 @@ int C2_HOOK_FASTCALL testDn(tFrontend_spec *pFrontend) {
 
     if (PDGetTotalTime() - gFrontend_last_scroll > 400) {
         gFrontend_last_scroll = PDGetTotalTime();
-        if ((gCurrent_race_group - gRaceGroups) % 10 < 9) {
+        if ((gCurrent_race_group - gRace_groups) % 10 < 9) {
             gCurrent_race_group += 1;
         }
         RefreshRacesScroller(pFrontend);
@@ -484,7 +484,7 @@ int C2_HOOK_FASTCALL MainMenuSelectRace(tFrontend_spec* pFrontend) {
         FillInRaceDescription(pFrontend->items[22].text, gProgram_state.current_race_index);
     }
     gCurrent_race_group = gRace_list[gProgram_state.current_race_index].group;
-    sprintf(group_name, "%s %d", IString_Get(78), (gCurrent_race_group - gRaceGroups) % 10 + 1);
+    sprintf(group_name, "%s %d", IString_Get(78), (gCurrent_race_group - gRace_groups) % 10 + 1);
     strcpy(pFrontend->items[2].text, group_name);
     FuckWithWidths(pFrontend);
     return 0;

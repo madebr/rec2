@@ -55,18 +55,18 @@ int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend) {
     }
 
     /* Number of lines */
-    gAuthor_credits_line_count = GetAnInt(f);
+    gCredits_line_count = GetAnInt(f);
 
-    gAuthor_credits_texts = malloc(sizeof(char*) * gAuthor_credits_line_count);
-    gAuthor_credits_fonts = malloc(sizeof(int) * gAuthor_credits_line_count);
-    gAuthor_credits_heights = malloc(sizeof(int) * gAuthor_credits_line_count);
-    gAuthor_credits_throbs = malloc(sizeof(int) * gAuthor_credits_line_count);
+    gCredits_texts = malloc(sizeof(char*) * gCredits_line_count);
+    gCredits_fonts = malloc(sizeof(int) * gCredits_line_count);
+    gCredits_heights = malloc(sizeof(int) * gCredits_line_count);
+    gCredits_throbs = malloc(sizeof(int) * gCredits_line_count);
 
-    gAuthor_credits_throbs[0] = 0;
-    gAuthor_credits_fonts[0] = kPolyfont_hand_red_15pt_lit;
-    gAuthor_credits_heights[0] = 0;
-    gAuthor_credits_total_height = 0;
-    for (i = 0; i < gAuthor_credits_line_count; i++) {
+    gCredits_throbs[0] = 0;
+    gCredits_fonts[0] = kPolyfont_hand_red_15pt_lit;
+    gCredits_heights[0] = 0;
+    gCredits_total_height = 0;
+    for (i = 0; i < gCredits_line_count; i++) {
         char s[256];
         char small_buf[11];
 
@@ -76,42 +76,42 @@ int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend) {
 #ifdef REC2_FIX_BUGS
             small_buf[sizeof(small_buf) - 1] = '\0';
 #endif
-            gAuthor_credits_fonts[i] = atoi(small_buf);
+            gCredits_fonts[i] = atoi(small_buf);
         } else if (strncmp(s, "SPACE", 5) == 0) {
             double space_height;
             strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
 #ifdef REC2_FIX_BUGS
             small_buf[sizeof(small_buf) - 1] = '\0';
 #endif
-            space_height = (double)PolyFontHeight(gAuthor_credits_fonts[i]) * atof(small_buf);
-            gAuthor_credits_heights[i] += (int)space_height;
+            space_height = (double)PolyFontHeight(gCredits_fonts[i]) * atof(small_buf);
+            gCredits_heights[i] += (int)space_height;
         } else if (strncmp(s, "THROB", 5) == 0) {
             strncpy(small_buf, &s[6], sizeof(small_buf) - 1);
 #ifdef REC2_FIX_BUGS
             small_buf[sizeof(small_buf) - 1] = '\0';
 #endif
             if (strncmp(small_buf, "ON", 2) == 0) {
-                gAuthor_credits_throbs[i] = 1;
+                gCredits_throbs[i] = 1;
             } else {
-                gAuthor_credits_throbs[i] = 0;
+                gCredits_throbs[i] = 0;
             }
         } else {
-            gAuthor_credits_texts[i] = malloc(strlen(s) + 1);
-            strcpy(gAuthor_credits_texts[i], s);
-            gAuthor_credits_heights[i] += PolyFontHeight(gAuthor_credits_fonts[i]);
-            gAuthor_credits_total_height += gAuthor_credits_heights[i];
+            gCredits_texts[i] = malloc(strlen(s) + 1);
+            strcpy(gCredits_texts[i], s);
+            gCredits_heights[i] += PolyFontHeight(gCredits_fonts[i]);
+            gCredits_total_height += gCredits_heights[i];
         }
-        if (i + 1 < gAuthor_credits_line_count) {
-            gAuthor_credits_fonts[i + 1] = gAuthor_credits_fonts[i];
-            gAuthor_credits_throbs[i + 1] = gAuthor_credits_throbs[i];
-            gAuthor_credits_heights[i + 1] = 0;
+        if (i + 1 < gCredits_line_count) {
+            gCredits_fonts[i + 1] = gCredits_fonts[i];
+            gCredits_throbs[i + 1] = gCredits_throbs[i];
+            gCredits_heights[i + 1] = 0;
         }
     }
 #ifdef REC2_FIX_BUGS
     PFfclose(f);
 #endif
-    gAuthor_credits_total_height += 480;
-    gAuthor_credits_scroll_start_time = PDGetTotalTime();
+    gCredits_total_height += 480;
+    gCredits_scroll_start = PDGetTotalTime();
     StartMusicTrack(9998);
     gFrontend_selected_item_index = 0;
     return 1;
@@ -121,9 +121,9 @@ int C2_HOOK_FASTCALL CreditsScreenInfunc(tFrontend_spec* pFrontend) {
 int C2_HOOK_FASTCALL CreditsScreenOutfunc(tFrontend_spec* pFrontend) {
     int i;
 
-    for (i = 0; i < gAuthor_credits_line_count; i++) {
-        free(gAuthor_credits_texts[i]);
+    for (i = 0; i < gCredits_line_count; i++) {
+        free(gCredits_texts[i]);
     }
-    free(gAuthor_credits_texts);
+    free(gCredits_texts);
     return 1;
 }

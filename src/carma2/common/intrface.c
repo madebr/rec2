@@ -18,7 +18,7 @@
 
 
 // GLOBAL: CARMA2_HW 0x00604730
-tFrontend_item_spec gDefaultLastInterfaceItem = {
+tFrontend_item_spec gDefault_last_interface_item = {
     0x401, temp, NULL, 0, 0, 0, 0, 0, 0, 0, 0, 1,
 };
 
@@ -345,7 +345,7 @@ void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend) {
     }
     // Copy item 99 (=last index)
     // FIXME: stringid = 0x401 (==> find out function of this item)
-    memcpy(&pFrontend->items[REC2_ASIZE(pFrontend->items) - 1], &gDefaultLastInterfaceItem, sizeof(tFrontend_item_spec));
+    memcpy(&pFrontend->items[REC2_ASIZE(pFrontend->items) - 1], &gDefault_last_interface_item, sizeof(tFrontend_item_spec));
 
     pFrontend->count_scrollers = GetAnInt(f);
     for (i = 0; i < pFrontend->count_scrollers; i++) {

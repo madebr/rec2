@@ -1,47 +1,53 @@
 #ifndef GUARD_72_INTERFACE_H
 #define GUARD_72_INTERFACE_H
 
-// temp
+#include "c2_hooks.h"
+#include "rec2_types.h"
 
-// GetItemAtMousePos
+extern tFrontend_brender_item gFrontend_brender_items[100];
+extern tFrontend_spec* gCurrent_frontend_spec;
 
-// MungeButtonModels
+extern int C2_HOOK_FASTCALL temp(tFrontend_spec* pFrontend);
+
+extern int C2_HOOK_FASTCALL GetItemAtMousePos(tFrontend_spec *pFrontend, int pX, int pY);
+
+extern void C2_HOOK_FASTCALL MungeButtonModels(tFrontend_spec* pFrontend, int pIndex);
 
 // ScrollUp
 
 // ScrollDn
 
-// SetLevelBar
+// static void C2_HOOK_FASTCALL SetLevelBar(tFrontend_spec* pFrontend, int pLevel_index, int pSelected_item);
 
-// ToggleSelection
+extern void C2_HOOK_FASTCALL ToggleSelection(tFrontend_spec* pFrontend);
 
-// FuckWithWidths
+extern void C2_HOOK_FASTCALL FuckWithWidths(tFrontend_spec* pFrontend) ;
 
-// GetThisFuckingPixelmapPleaseMrTwatter
+extern br_pixelmap* C2_HOOK_FASTCALL GetThisFuckingPixelmapPleaseMrTwatter(const char* pFolder, const char* pName);
 
-// LoadMenuSettings
+extern void C2_HOOK_FASTCALL LoadMenuSettings(tFrontend_spec* pFrontend);
 
 // LoadMenuImages
 
 // LoadMenuModels
 
-// DefaultInfunc
+extern void C2_HOOK_FASTCALL DefaultInfunc(tFrontend_spec* pFrontend);
 
 // FindNextActiveItem
 
-// FindPrevActiveItem
+extern int C2_HOOK_FASTCALL FindPrevActiveItem(tFrontend_spec* pFrontend, int pStart_index);
 
 // RaceIndex
 
-// FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt
+extern int C2_HOOK_FASTCALL FuckingMakeTheFuckingRaceAndGroupsDisplayHaveTheRightCuntingStuffInIt(tFrontend_spec* pFrontend);
 
-// RefreshRacesScroller
+extern void C2_HOOK_FASTCALL RefreshRacesScroller(tFrontend_spec* pFrontend);
 
 // NetworkUpdateSelectedGameInfo
 
 // UpdateNetTrackScroller
 
-// RefreshNetRacesScroller
+extern void C2_HOOK_FASTCALL RefreshNetRacesScroller(tFrontend_spec* pFrontend);
 
 // NetRaceUp
 
@@ -55,9 +61,9 @@
 
 // NetworkJoinUpdateScroller
 
-// UpdateScrollPositions
+extern void C2_HOOK_FASTCALL UpdateScrollPositions(tFrontend_spec* pFrontend);
 
-// ToggleTyping
+extern int C2_HOOK_FASTCALL ToggleTyping(tFrontend_spec* pFrontend);
 
 // NewGameToggleTyping
 
@@ -159,13 +165,13 @@
 
 // FRONTEND_GenericMenuHandler
 
-// FRONTEND_CreateMenuButton
+extern void C2_HOOK_FASTCALL FRONTEND_CreateMenuButton(tFrontend_brender_item* pFrontend_brender_item, tS16 pX, tS16 pY, tS16 pWidth, tS16 pHeight, br_colour pColour, br_pixelmap* pMap, const char* pText);
 
-// FRONTEND_CreateMenu
+extern int C2_HOOK_FASTCALL FRONTEND_CreateMenu(tFrontend_spec* pFrontend_spec);
 
-// FRONTEND_DestroyMenu
+extern int C2_HOOK_FASTCALL FRONTEND_DestroyMenu(tFrontend_spec* pFrontend);
 
-// FRONTEND_PingPongFlash
+extern void C2_HOOK_FASTCALL FRONTEND_PingPongFlash(void);
 
 // FRONTEND_DrawMenu
 
@@ -175,17 +181,17 @@
 
 // FRONTEND_Redraw
 
-// MaybeDoMouseCursor
+extern void C2_HOOK_FASTCALL MaybeDoMouseCursor(void);
 
-// ResetInterfaceTimeout
+extern void C2_HOOK_FASTCALL ResetInterfaceTimeout(void);
 
 // FRONTEND_Main
 
 // ProcessInputString
 
-// StopGettingInputString
+extern int C2_HOOK_FASTCALL StopGettingInputString(void);
 
-// StartGettingInputString
+extern int C2_HOOK_FASTCALL StartGettingInputString(char* pBuffer, int pBuffer_size);
 
 // DisposeWrecksGallery
 
@@ -209,53 +215,53 @@
 
 // WreckPick
 
-// HeirarchyPick
+extern intptr_t C2_HOOK_CDECL HeirarchyPick(br_actor* a, void* ref);
 
-// DodgyPause
+extern void C2_HOOK_FASTCALL DodgyPause(tU32 pTime);
 
-// MorphBlob
+extern void C2_HOOK_FASTCALL MorphBlob(br_model* pModel_from, br_model* pModel_to, br_model* pModel, int pStep, int pCount_steps);
 
-// ScrollCredits
+extern void C2_HOOK_FASTCALL ScrollCredits(void);
 
 // LoadGameInFunc
 
-// CreateAPOactor
+extern br_actor* C2_HOOK_FASTCALL CreateAPOactor(void);
 
-// KillAPOactor
+extern void C2_HOOK_FASTCALL KillAPOactor(br_actor* pActor);
 
-// LoadGameOutFunc
+extern int C2_HOOK_FASTCALL LoadGameOutFunc(tFrontend_spec* pFrontend);
 
-// LoadGameScrollUp
+extern int C2_HOOK_FASTCALL LoadGameScrollUp(tFrontend_spec* pFrontend);
 
-// LoadGameScrollDown
+extern int C2_HOOK_FASTCALL LoadGameScrollDown(tFrontend_spec* pFrontend);
 
-// LoadSlot1
+extern int C2_HOOK_FASTCALL LoadSlot1(tFrontend_spec* pFrontend);
 
-// LoadSlot2
+extern int C2_HOOK_FASTCALL LoadSlot2(tFrontend_spec* pFrontend);
 
-// LoadSlot3
+extern int C2_HOOK_FASTCALL LoadSlot3(tFrontend_spec* pFrontend);
 
-// LoadSlot4
+extern int C2_HOOK_FASTCALL LoadSlot4(tFrontend_spec* pFrontend);
 
-// LoadSlot5
+extern int C2_HOOK_FASTCALL LoadSlot5(tFrontend_spec* pFrontend);
 
-// LoadSlot6
+extern int C2_HOOK_FASTCALL LoadSlot6(tFrontend_spec* pFrontend);
 
-// LoadSlot7
+extern int C2_HOOK_FASTCALL LoadSlot7(tFrontend_spec* pFrontend);
 
-// LoadSlot8
+extern int C2_HOOK_FASTCALL LoadSlot8(tFrontend_spec* pFrontend);
 
-// TryToLoadGame
+extern int C2_HOOK_FASTCALL TryToLoadGame(int pN);
 
-// LoadGameUpdateFunc
+extern int C2_HOOK_FASTCALL LoadGameUpdateFunc(tFrontend_spec* pFrontend);
 
-// PrepareAPO
+extern void C2_HOOK_FASTCALL PrepareAPO(int pActor_index);
 
-// PrintAPO
+extern void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index);
 
-// BuildAPO
+extern void C2_HOOK_FASTCALL BuildAPO(int pCurrent, int pPotential, int pActor_index, int pAPO);
 
-// PolyClipName
+extern void C2_HOOK_FASTCALL PolyClipName(char *pText, int pFont, int pWidth);
 
 // Ians_GetItemAtMousePos
 
@@ -267,17 +273,17 @@
 
 // PrepareSliders
 
-// Morph_Initialise
+extern void C2_HOOK_FASTCALL Morph_Initialise(tFrontend_spec* pCurrent, tFrontend_spec* pNext);
 
-// Generic_Infunc
+extern int C2_HOOK_FASTCALL Generic_Infunc(tFrontend_spec* pFrontend);
 
-// Generic_Outfunc
+extern int C2_HOOK_FASTCALL Generic_Outfunc(tFrontend_spec* pFrontend);
 
 // Generic_EventEffect
 
-// Generic_LinkInEffect
+extern void C2_HOOK_FASTCALL Generic_LinkInEffect(void);
 
-// Generic_LinkOutEffect
+extern void C2_HOOK_FASTCALL Generic_LinkOutEffect(void);
 
 // GetScrollSet
 
@@ -411,12 +417,14 @@
 
 // Graphics_Outfunc
 
-// FrontEndShowMouse
+extern void C2_HOOK_FASTCALL FrontEndShowMouse(void);
 
-// FrontEndHideMouse
+extern void C2_HOOK_FASTCALL FrontEndHideMouse(void);
 
-// IString_Load
+extern void C2_HOOK_FASTCALL IString_Load(void);
 
-// IString_Get
+extern void C2_HOOK_FASTCALL IString_Free(void);
+
+extern const char* C2_HOOK_FASTCALL IString_Get(int pIndex);
 
 #endif // GUARD_72_INTERFACE_H
