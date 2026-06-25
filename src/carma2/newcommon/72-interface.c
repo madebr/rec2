@@ -1439,12 +1439,19 @@ void C2_HOOK_FASTCALL PrintAPO(int pX, int pY, int pIndex, int pTex_index) {
     float map_right;
 
     model = gFrontend_billboard_actors[pIndex]->model;
-    map_left = (double)(pTex_index + 0) * 0.1875;
-    map_right = (double)(pTex_index + 1) * 0.1875;
-    BrVector2Set(&model->vertices[0].map, 0.0f,   (float)map_left);
-    BrVector2Set(&model->vertices[1].map, 0.625f, (float)map_left);
-    BrVector2Set(&model->vertices[2].map, 0.0f, (float)map_right);
-    BrVector2Set(&model->vertices[3].map, 0.625f, (float)map_right);
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+#pragma warning(push)
+#pragma warning(disable : 4244) // '=' : conversion from 'double ' to 'float ', possible loss of data
+#endif
+    map_left = (float)(pTex_index + 0) * 3.0 / 16.0;
+    map_right = (float)(pTex_index + 1) * 3.0 / 16.0;
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+#pragma warning(pop)
+#endif
+    BrVector2Set(&model->vertices[0].map, 0.0f,   map_left);
+    BrVector2Set(&model->vertices[1].map, 10.0f / 16.0f, map_left);
+    BrVector2Set(&model->vertices[2].map, 0.0f, map_right);
+    BrVector2Set(&model->vertices[3].map, 10.0f / 16.0f, map_right);
     BrModelUpdate(model, BR_MODU_VERTEX_MAPPING);
     BrVector3Set(&gFrontend_billboard_actors[pIndex]->t.t.translate.t, (float)pX, (float)-pY, 0.0f);
     BrActorAdd(gFrontend_menu_camera, gFrontend_billboard_actors[pIndex]);
