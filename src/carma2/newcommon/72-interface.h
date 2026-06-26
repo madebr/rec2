@@ -409,7 +409,7 @@ extern int C2_HOOK_FASTCALL Options_Infunc(tFrontend_spec* pFrontend);
 
 // Options_AbortRace
 
-// Options_AbortGame
+extern int C2_HOOK_FASTCALL Options_AbortGame(tFrontend_spec* pFrontend);
 
 // Options_Quit
 
