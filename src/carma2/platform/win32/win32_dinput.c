@@ -620,7 +620,6 @@ int C2_HOOK_FASTCALL ReadIforceEffectsNames(const char *path, char **names, size
 
 // FUNCTION: CARMA2_HW 0x00458060
 int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
-    int i;
 
     for (i = 0; i < gCount_joystick_effects; i++) {
         if (strcmp(gJoystick_effects[i].name, name) == 0) {
@@ -633,6 +632,7 @@ int C2_HOOK_FASTCALL UnloadDinputFFBEfectwithName(const char *name) {
 
 int C2_HOOK_FASTCALL ResetForceFeedback(void) {
 	int result;
+    int i;
 
     result = 0;
     if (gJoystickFFB != 0) {
@@ -750,6 +750,7 @@ void C2_HOOK_FASTCALL RegisterJoystickFFBForces(void) {
 // FUNCTION: CARMA2_HW 0x00458860
 int C2_HOOK_FASTCALL JoystickDInputBegin(void) {
     int i;
+
     if (InitDirectInput()) {
         return 0;
     }
@@ -1410,7 +1411,6 @@ void C2_HOOK_FASTCALL PDPlayFFBEffectIndex(int index) {
     if (effect != NULL) {
         IDirectInputEffect_Start(effect, 1, DIES_NODOWNLOAD);
     }
-    return;
 }
 
 // FUNCTION: CARMA2_HW 0x0045a070
