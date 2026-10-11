@@ -30,7 +30,7 @@ extern br_material* gDefault_track_material;
 
 // RenderTrack
 
-// GetYonFactor
+extern br_scalar C2_HOOK_STDCALL GetYonFactor(void);
 
 extern void C2_HOOK_STDCALL SetYonFactor(br_scalar pNew);
 

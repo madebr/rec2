@@ -61,7 +61,10 @@ void C2_HOOK_FASTCALL SetShadowLevel(tShadow_level pLevel) {
     gShadow_level = pLevel;
 }
 
-// GetShadowLevel
+// FUNCTION: CARMA2_HW 0x004e9950
+tShadow_level C2_HOOK_FASTCALL GetShadowLevel(void) {
+    return gShadow_level;
+}
 
 // ToggleShadow
 

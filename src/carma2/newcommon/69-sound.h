@@ -73,7 +73,7 @@ extern void C2_HOOK_FASTCALL SetSoundDetailLevel(int pLevel);
 
 // ReallySetSoundDetailLevel
 
-// GetSoundDetailLevel
+extern int C2_HOOK_FASTCALL GetSoundDetailLevel(void);
 
 extern void C2_HOOK_FASTCALL ReadSoundSpec(FILE* pF, tSpecial_volume_soundfx_data* pSpec);
 

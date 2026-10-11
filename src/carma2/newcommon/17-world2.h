@@ -52,7 +52,7 @@ extern tRoad_texturing_level C2_HOOK_FASTCALL GetRoadTexturingLevel(void);
 
 extern void C2_HOOK_FASTCALL SetRoadTexturingLevel(tRoad_texturing_level pLevel);
 
-// GetWallTexturingLevel
+extern tWall_texturing_level C2_HOOK_FASTCALL GetWallTexturingLevel(void);
 
 extern void C2_HOOK_FASTCALL SetWallTexturingLevel(tWall_texturing_level pLevel);
 
@@ -68,7 +68,7 @@ extern int C2_HOOK_FASTCALL GetAccessoryRendering(void);
 
 extern void C2_HOOK_FASTCALL SetCarSimplificationLevel(int pLevel);
 
-// GetCarSimplificationLevel
+extern int C2_HOOK_FASTCALL GetCarSimplificationLevel(void);
 
 extern intptr_t C2_HOOK_CDECL ProcessMaterials(br_actor* pActor, void* pContext);
 
