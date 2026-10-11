@@ -1,17 +1,22 @@
 #ifndef GUARD_36_TRIG_H
 #define GUARD_36_TRIG_H
 
-// FastFloatSin
+#include "brender/brender.h"
+#include "c2_hooks.h"
 
-// FastFloatCos
+extern float gFloat_sine_table[91];
 
-// FastScalarSin
+extern float C2_HOOK_FASTCALL FastFloatSin(int pAngle_in_degrees);
 
-// FastScalarCos
+extern float C2_HOOK_FASTCALL FastFloatCos(int pAngle_in_degrees);
 
-// FastScalarSinAngle
+extern br_scalar C2_HOOK_FASTCALL FastScalarSin(int pAngle_in_degrees);
 
-// FastScalarCosAngle
+extern br_scalar C2_HOOK_FASTCALL FastScalarCos(int pAngle_in_degrees);
+
+extern br_scalar C2_HOOK_FASTCALL FastScalarSinAngle(br_angle pBR_angle);
+
+extern br_scalar C2_HOOK_FASTCALL FastScalarCosAngle(br_angle pBR_angle);
 
 // FastFloatArcTan2
 
@@ -21,11 +26,11 @@
 
 // FastScalarArcTan2Angle
 
-// DRMatrix34RotateX
+extern void C2_HOOK_FASTCALL DRMatrix34RotateX(br_matrix34* mat, br_angle rx);
 
-// DRMatrix34RotateY
+extern void C2_HOOK_FASTCALL DRMatrix34RotateY(br_matrix34* mat, br_angle ry);
 
-// DRMatrix34RotateZ
+extern void C2_HOOK_FASTCALL DRMatrix34RotateZ(br_matrix34* mat, br_angle rz);
 
 // DRMatrix34PostRotateX
 
@@ -35,7 +40,7 @@
 
 // DRMatrix34PostRotateZ
 
-// DRMatrix23Rotate
+extern void C2_HOOK_FASTCALL DRMatrix23Rotate(br_matrix23* mat, br_angle rz);
 
 // DRMatrix23PostRotate
 
