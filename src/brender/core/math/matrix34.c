@@ -4,6 +4,8 @@
 
 #include "c2_math.h"
 
+#include <string.h>
+
 
 // GLOBAL: CARMA2_HW 0x006b09c0
 br_matrix34 mattmp1;
@@ -40,19 +42,190 @@ void C2_HOOK_CDECL BrMatrix34Copy(br_matrix34* A, const br_matrix34* B) {
 
 // FUNCTION: CARMA2_HW 0x00532620
 void C2_HOOK_CDECL BrMatrix34Mul(br_matrix34* A, const br_matrix34* B, const br_matrix34* C) {
+    /* Keep original x87 operand forms where the compiler otherwise changes
+     * NaN payload selection or quieting; do not normalize public values. */
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+    __asm {
+        mov ecx, B
+        mov eax, C
+        mov edx, A
+        fld dword ptr [ecx + 8]
+        fld dword ptr [eax + 0x18]
+        fld dword ptr [eax + 0xc]
+        fld dword ptr [eax]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fmul dword ptr [ecx + 4]
+        fxch st(1)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [edx]
+        fld dword ptr [eax + 4]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [eax + 0x10]
+        fld dword ptr [eax + 0x1c]
+        fxch st(3)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fxch st(1)
+        fmul dword ptr [ecx + 8]
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 4]
+        fld dword ptr [eax + 8]
+        fld dword ptr [eax + 0x14]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [eax + 0x20]
+        fxch st(3)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fxch st(1)
+        fmul dword ptr [ecx + 8]
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 8]
+        fld dword ptr [ecx + 0xc]
+        fld dword ptr [ecx + 0x10]
+        fld dword ptr [eax + 0xc]
+        fld dword ptr [ecx + 0x14]
+        fxch st(3)
+        fmul dword ptr [eax]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fxch st(1)
+        fmul dword ptr [eax + 0x18]
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 0xc]
+        fld dword ptr [ecx + 0xc]
+        fld dword ptr [eax + 4]
+        fld dword ptr [ecx + 0x14]
+        fld dword ptr [eax + 0x1c]
+        fld dword ptr [ecx + 0x10]
+        fxch st(3)
+        fmulp st(4), st(0)
+        fmulp st(1), st(0)
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0x10]
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 0x10]
+        fld dword ptr [ecx + 0xc]
+        fld dword ptr [eax + 8]
+        fld dword ptr [ecx + 0x10]
+        fld dword ptr [eax + 0x14]
+        fld dword ptr [ecx + 0x14]
+        fxch st(3)
+        fmulp st(4), st(0)
+        fmulp st(1), st(0)
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0x20]
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 0x14]
+        fld dword ptr [ecx + 0x18]
+        fld dword ptr [ecx + 0x20]
+        fld dword ptr [eax + 0x18]
+        fld dword ptr [ecx + 0x1c]
+        fxch st(3)
+        fmul dword ptr [eax]
+        fxch st(1)
+        fmulp st(2), st(0)
+        fxch st(1)
+        faddp st(1), st(0)
+        fxch st(1)
+        fmul dword ptr [eax + 0xc]
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 0x18]
+        fld dword ptr [ecx + 0x1c]
+        fld dword ptr [eax + 0x10]
+        fld dword ptr [ecx + 0x18]
+        fld dword ptr [eax + 4]
+        fld dword ptr [ecx + 0x20]
+        fxch st(3)
+        fmulp st(4), st(0)
+        fmulp st(1), st(0)
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0x1c]
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 0x1c]
+        fld dword ptr [ecx + 0x1c]
+        fld dword ptr [eax + 0x14]
+        fld dword ptr [ecx + 0x18]
+        fld dword ptr [eax + 8]
+        fld dword ptr [ecx + 0x20]
+        fxch st(3)
+        fmulp st(4), st(0)
+        fmulp st(1), st(0)
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0x20]
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 0x20]
+        fld dword ptr [eax + 0xc]
+        fld dword ptr [ecx + 0x24]
+        fld dword ptr [ecx + 0x28]
+        fld dword ptr [ecx + 0x2c]
+        fxch st(2)
+        fmul dword ptr [eax]
+        fxch st(3)
+        fmulp st(1), st(0)
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0x18]
+        faddp st(1), st(0)
+        fadd dword ptr [eax + 0x24]
+        fstp dword ptr [edx + 0x24]
+        fld dword ptr [ecx + 0x28]
+        fld dword ptr [eax + 0x10]
+        fld dword ptr [ecx + 0x24]
+        fld dword ptr [eax + 4]
+        fld dword ptr [ecx + 0x2c]
+        fxch st(3)
+        fmulp st(4), st(0)
+        fmulp st(1), st(0)
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0x1c]
+        faddp st(1), st(0)
+        fadd dword ptr [eax + 0x28]
+        fstp dword ptr [edx + 0x28]
+        fld dword ptr [ecx + 0x24]
+        fld dword ptr [eax + 8]
+        fld dword ptr [ecx + 0x28]
+        fld dword ptr [eax + 0x14]
+        fld dword ptr [ecx + 0x2c]
+        fxch st(3)
+        fmulp st(4), st(0)
+        fmulp st(1), st(0)
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0x20]
+        faddp st(1), st(0)
+        fadd dword ptr [eax + 0x2c]
+        fstp dword ptr [edx + 0x2c]
+    }
+#else
+    volatile br_matrix34* output = A;
+    const volatile br_matrix34* left = B;
+    const volatile br_matrix34* right = C;
 
-    A(0, 0) = BR_MAC3(B(0, 0), C(0, 0), B(0, 1), C(1, 0), B(0, 2), C(2, 0));
-    A(0, 1) = BR_MAC3(B(0, 0), C(0, 1), B(0, 1), C(1, 1), B(0, 2), C(2, 1));
-    A(0, 2) = BR_MAC3(B(0, 0), C(0, 2), B(0, 1), C(1, 2), B(0, 2), C(2, 2));
-    A(1, 0) = BR_MAC3(B(1, 0), C(0, 0), B(1, 1), C(1, 0), B(1, 2), C(2, 0));
-    A(1, 1) = BR_MAC3(B(1, 0), C(0, 1), B(1, 1), C(1, 1), B(1, 2), C(2, 1));
-    A(1, 2) = BR_MAC3(B(1, 0), C(0, 2), B(1, 1), C(1, 2), B(1, 2), C(2, 2));
-    A(2, 0) = BR_MAC3(B(2, 0), C(0, 0), B(2, 1), C(1, 0), B(2, 2), C(2, 0));
-    A(2, 1) = BR_MAC3(B(2, 0), C(0, 1), B(2, 1), C(1, 1), B(2, 2), C(2, 1));
-    A(2, 2) = BR_MAC3(B(2, 0), C(0, 2), B(2, 1), C(1, 2), B(2, 2), C(2, 2));
-    A(3, 0) = BR_MAC3(B(3, 0), C(0, 0), B(3, 1), C(1, 0), B(3, 2), C(2, 0)) + C(3, 0);
-    A(3, 1) = BR_MAC3(B(3, 0), C(0, 1), B(3, 1), C(1, 1), B(3, 2), C(2, 1)) + C(3, 1);
-    A(3, 2) = BR_MAC3(B(3, 0), C(0, 2), B(3, 1), C(1, 2), B(3, 2), C(2, 2)) + C(3, 2);
+    /* Each original scalar store precedes fresh loads for the next element.
+     * Keep the individual x87 PC53 sum orders, including overlapping matrices. */
+    output->m[0][0] = (float)(((double)left->m[0][2] * right->m[2][0] + (double)right->m[1][0] * left->m[0][1]) + (double)right->m[0][0] * left->m[0][0]);
+    output->m[0][1] = (float)(((double)right->m[0][1] * left->m[0][0] + (double)left->m[0][1] * right->m[1][1]) + (double)right->m[2][1] * left->m[0][2]);
+    output->m[0][2] = (float)(((double)right->m[0][2] * left->m[0][0] + (double)right->m[1][2] * left->m[0][1]) + (double)right->m[2][2] * left->m[0][2]);
+    output->m[1][0] = (float)(((double)left->m[1][0] * right->m[0][0] + (double)left->m[1][1] * right->m[1][0]) + (double)left->m[1][2] * right->m[2][0]);
+    output->m[1][1] = (float)(((double)left->m[1][0] * right->m[0][1] + (double)left->m[1][2] * right->m[2][1]) + (double)left->m[1][1] * right->m[1][1]);
+    output->m[1][2] = (float)(((double)left->m[1][0] * right->m[0][2] + (double)left->m[1][1] * right->m[1][2]) + (double)left->m[1][2] * right->m[2][2]);
+    output->m[2][0] = (float)(((double)left->m[2][0] * right->m[0][0] + (double)left->m[2][2] * right->m[2][0]) + (double)left->m[2][1] * right->m[1][0]);
+    output->m[2][1] = (float)(((double)left->m[2][1] * right->m[1][1] + (double)left->m[2][0] * right->m[0][1]) + (double)left->m[2][2] * right->m[2][1]);
+    output->m[2][2] = (float)(((double)left->m[2][1] * right->m[1][2] + (double)left->m[2][0] * right->m[0][2]) + (double)left->m[2][2] * right->m[2][2]);
+    output->m[3][0] = (float)((((double)left->m[3][0] * right->m[0][0] + (double)left->m[3][1] * right->m[1][0]) + (double)left->m[3][2] * right->m[2][0]) + right->m[3][0]);
+    output->m[3][1] = (float)((((double)left->m[3][1] * right->m[1][1] + (double)left->m[3][0] * right->m[0][1]) + (double)left->m[3][2] * right->m[2][1]) + right->m[3][1]);
+    output->m[3][2] = (float)((((double)left->m[3][0] * right->m[0][2] + (double)left->m[3][1] * right->m[1][2]) + (double)left->m[3][2] * right->m[2][2]) + right->m[3][2]);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x005327c0
@@ -344,22 +517,108 @@ br_scalar C2_HOOK_CDECL BrMatrix34Inverse(br_matrix34* B, const br_matrix34* A) 
 
 // FUNCTION: CARMA2_HW 0x00532eb0
 void C2_HOOK_CDECL BrMatrix34LPInverse(br_matrix34* A, const br_matrix34* B) {
+    /* Keep original x87 operand forms where the compiler otherwise changes
+     * NaN payload selection or quieting; do not normalize public values. */
+#if defined(_MSC_VER) && _MSC_VER >= 1300 && defined(_M_IX86)
+    __asm {
+        mov ecx, B
+        mov eax, A
+        mov edx, dword ptr [ecx]
+        mov dword ptr [eax], edx
+        mov edx, dword ptr [ecx + 0xc]
+        mov dword ptr [eax + 4], edx
+        mov edx, dword ptr [ecx + 0x18]
+        mov dword ptr [eax + 8], edx
+        mov edx, dword ptr [ecx + 4]
+        mov dword ptr [eax + 0xc], edx
+        mov edx, dword ptr [ecx + 0x10]
+        mov dword ptr [eax + 0x10], edx
+        mov edx, dword ptr [ecx + 0x1c]
+        mov dword ptr [eax + 0x14], edx
+        mov edx, dword ptr [ecx + 8]
+        mov dword ptr [eax + 0x18], edx
+        mov edx, dword ptr [ecx + 0x14]
+        fld dword ptr [eax + 0x18]
+        mov dword ptr [eax + 0x1c], edx
+        mov edx, dword ptr [ecx + 0x20]
+        mov dword ptr [eax + 0x20], edx
+        fld dword ptr [ecx + 0x24]
+        fld dword ptr [ecx + 0x2c]
+        fld dword ptr [ecx + 0x28]
+        fxch st(2)
+        fmul dword ptr [eax]
+        fxch st(3)
+        fmulp st(1), st(0)
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0xc]
+        fld dword ptr [eax + 0x1c]
+        fxch st(1)
+        faddp st(2), st(0)
+        fxch st(1)
+        fchs
+        fstp dword ptr [eax + 0x24]
+        fld dword ptr [ecx + 0x2c]
+        fld dword ptr [ecx + 0x24]
+        fld dword ptr [ecx + 0x28]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fld dword ptr [eax + 0x10]
+        fxch st(1)
+        fmul dword ptr [eax + 4]
+        fxch st(1)
+        fxch st(3)
+        fxch st(2)
+        fxch st(1)
+        faddp st(2), st(0)
+        fxch st(2)
+        fmulp st(2), st(0)
+        fld dword ptr [eax + 0x20]
+        fxch st(2)
+        faddp st(1), st(0)
+        fchs
+        fstp dword ptr [eax + 0x28]
+        fld dword ptr [ecx + 0x2c]
+        fld dword ptr [ecx + 0x24]
+        fld dword ptr [ecx + 0x28]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fmul dword ptr [eax + 8]
+        faddp st(2), st(0)
+        fmul dword ptr [eax + 0x14]
+        faddp st(1), st(0)
+        fchs
+        fstp dword ptr [eax + 0x2c]
+    }
+#else
+    volatile br_matrix34* output = A;
+    const volatile br_matrix34* input = B;
+    br_uint_32 scalar_bits;
 
-    A(0, 0) = B(0, 0);
-    A(0, 1) = B(1, 0);
-    A(0, 2) = B(2, 0);
+    /* Original transpose entries are raw MOV copies, preserving sNaN bits.
+     * A local integer copy also retains sequential partial-overlap behavior. */
+    memcpy(&scalar_bits, &B(0, 0), sizeof(scalar_bits));
+    memcpy(&A(0, 0), &scalar_bits, sizeof(scalar_bits));
+    memcpy(&scalar_bits, &B(1, 0), sizeof(scalar_bits));
+    memcpy(&A(0, 1), &scalar_bits, sizeof(scalar_bits));
+    memcpy(&scalar_bits, &B(2, 0), sizeof(scalar_bits));
+    memcpy(&A(0, 2), &scalar_bits, sizeof(scalar_bits));
+    memcpy(&scalar_bits, &B(0, 1), sizeof(scalar_bits));
+    memcpy(&A(1, 0), &scalar_bits, sizeof(scalar_bits));
+    memcpy(&scalar_bits, &B(1, 1), sizeof(scalar_bits));
+    memcpy(&A(1, 1), &scalar_bits, sizeof(scalar_bits));
+    memcpy(&scalar_bits, &B(2, 1), sizeof(scalar_bits));
+    memcpy(&A(1, 2), &scalar_bits, sizeof(scalar_bits));
+    memcpy(&scalar_bits, &B(0, 2), sizeof(scalar_bits));
+    memcpy(&A(2, 0), &scalar_bits, sizeof(scalar_bits));
+    memcpy(&scalar_bits, &B(1, 2), sizeof(scalar_bits));
+    memcpy(&A(2, 1), &scalar_bits, sizeof(scalar_bits));
+    memcpy(&scalar_bits, &B(2, 2), sizeof(scalar_bits));
+    memcpy(&A(2, 2), &scalar_bits, sizeof(scalar_bits));
 
-    A(1, 0) = B(0, 1);
-    A(1, 1) = B(1, 1);
-    A(1, 2) = B(2, 1);
-
-    A(2, 0) = B(0, 2);
-    A(2, 1) = B(1, 2);
-    A(2, 2) = B(2, 2);
-
-    A(3, 0) = -BR_MAC3(B(3, 0), A(0, 0), B(3, 1), A(1, 0), B(3, 2), A(2, 0));
-    A(3, 1) = -BR_MAC3(B(3, 0), A(0, 1), B(3, 1), A(1, 1), B(3, 2), A(2, 1));
-    A(3, 2) = -BR_MAC3(B(3, 0), A(0, 2), B(3, 1), A(1, 2), B(3, 2), A(2, 2));
+    output->m[3][0] = (float)(-(((double)input->m[3][0] * output->m[0][0] + (double)input->m[3][2] * output->m[2][0]) + (double)input->m[3][1] * output->m[1][0]));
+    output->m[3][1] = (float)(-(((double)output->m[2][1] * input->m[3][2] + (double)input->m[3][0] * output->m[0][1]) + (double)input->m[3][1] * output->m[1][1]));
+    output->m[3][2] = (float)(-(((double)output->m[2][2] * input->m[3][2] + (double)input->m[3][0] * output->m[0][2]) + (double)input->m[3][1] * output->m[1][2]));
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00532f60
@@ -484,6 +743,57 @@ void C2_HOOK_CDECL BrMatrix34Apply(br_vector3* A, const br_vector4* B, const br_
 
 // FUNCTION: CARMA2_HW 0x005334a0
 void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
+    /* Keep original x87 operand forms where the compiler otherwise changes
+     * NaN payload selection or quieting; do not normalize public values. */
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, C
+        mov ecx, B
+        mov edx, A
+        fld dword ptr [eax + 0xc]
+        fld dword ptr [eax + 0x18]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [ecx + 8]
+        fld dword ptr [eax]
+        fxch st(2)
+        fmulp st(4), st(0)
+        fmulp st(2), st(0)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fadd dword ptr [eax + 0x24]
+        fstp dword ptr [edx]
+        fld dword ptr [eax + 0x1c]
+        fld dword ptr [ecx + 8]
+        fld dword ptr [eax + 0x10]
+        fld dword ptr [eax + 4]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fmul dword ptr [ecx + 4]
+        fxch st(1)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fadd dword ptr [eax + 0x28]
+        fstp dword ptr [edx + 4]
+        fld dword ptr [eax + 0x20]
+        fld dword ptr [ecx + 8]
+        fld dword ptr [eax + 0x14]
+        fld dword ptr [eax + 8]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fmul dword ptr [ecx + 4]
+        fxch st(1)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fadd dword ptr [eax + 0x2c]
+        fstp dword ptr [edx + 8]
+    }
+#else
     volatile br_vector3* output = A;
     const volatile br_vector3* input = B;
     const volatile br_matrix34* matrix = C;
@@ -494,14 +804,67 @@ void C2_HOOK_CDECL BrMatrix34ApplyP(br_vector3* A, const br_vector3* B, const br
     output->v[0] = (float)((((double)input->v[1] * matrix->m[1][0] + (double)input->v[2] * matrix->m[2][0]) + (double)input->v[0] * matrix->m[0][0]) + matrix->m[3][0]);
     output->v[1] = (float)((((double)input->v[2] * matrix->m[2][1] + (double)input->v[1] * matrix->m[1][1]) + (double)input->v[0] * matrix->m[0][1]) + matrix->m[3][1]);
     output->v[2] = (float)((((double)input->v[2] * matrix->m[2][2] + (double)input->v[1] * matrix->m[1][2]) + (double)input->v[0] * matrix->m[0][2]) + matrix->m[3][2]);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00533520
 void C2_HOOK_CDECL BrMatrix34ApplyV(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
+    /* Keep original x87 operand forms where the compiler otherwise changes
+     * NaN payload selection or quieting; do not normalize public values. */
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, C
+        mov ecx, B
+        mov edx, A
+        fld dword ptr [eax + 0x18]
+        fld dword ptr [eax + 0xc]
+        fld dword ptr [ecx + 8]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [eax]
+        fxch st(2)
+        fmulp st(4), st(0)
+        fmulp st(2), st(0)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [edx]
+        fld dword ptr [eax + 0x1c]
+        fld dword ptr [ecx + 8]
+        fld dword ptr [eax + 0x10]
+        fld dword ptr [eax + 4]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fmul dword ptr [ecx + 4]
+        fxch st(1)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 4]
+        fld dword ptr [eax + 0x14]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [eax + 0x20]
+        fld dword ptr [eax + 8]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fmul dword ptr [ecx + 8]
+        fxch st(1)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 8]
+    }
+#else
+    volatile br_vector3* output = A;
+    const volatile br_vector3* input = B;
+    const volatile br_matrix34* matrix = C;
 
-    A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(1, 0), B->v[2], C(2, 0));
-    A->v[1] = BR_MAC3(B->v[0], C(0, 1), B->v[1], C(1, 1), B->v[2], C(2, 1));
-    A->v[2] = BR_MAC3(B->v[0], C(0, 2), B->v[1], C(1, 2), B->v[2], C(2, 2));
+    output->v[0] = (float)(((double)matrix->m[2][0] * input->v[2] + (double)matrix->m[1][0] * input->v[1]) + (double)matrix->m[0][0] * input->v[0]);
+    output->v[1] = (float)(((double)matrix->m[2][1] * input->v[2] + (double)matrix->m[1][1] * input->v[1]) + (double)matrix->m[0][1] * input->v[0]);
+    output->v[2] = (float)(((double)matrix->m[1][2] * input->v[1] + (double)matrix->m[2][2] * input->v[2]) + (double)matrix->m[0][2] * input->v[0]);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00533590
@@ -524,11 +887,62 @@ void C2_HOOK_CDECL BrMatrix34TApplyP(br_vector3* A, const br_vector3* B, const b
 
 // FUNCTION: CARMA2_HW 0x00533690
 void C2_HOOK_CDECL BrMatrix34TApplyV(br_vector3* A, const br_vector3* B, const br_matrix34* C) {
+    /* Keep original x87 operand forms where the compiler otherwise changes
+     * NaN payload selection or quieting; do not normalize public values. */
+#if defined(_MSC_VER) && defined(_M_IX86)
+    __asm {
+        mov eax, C
+        mov ecx, B
+        mov edx, A
+        fld dword ptr [eax + 8]
+        fld dword ptr [eax + 4]
+        fld dword ptr [ecx + 8]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [eax]
+        fxch st(2)
+        fmulp st(4), st(0)
+        fmulp st(2), st(0)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [edx]
+        fld dword ptr [eax + 0x10]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [eax + 0x14]
+        fld dword ptr [eax + 0xc]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fmul dword ptr [ecx + 8]
+        fxch st(1)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 4]
+        fld dword ptr [eax + 0x1c]
+        fld dword ptr [ecx + 4]
+        fld dword ptr [eax + 0x20]
+        fld dword ptr [eax + 0x18]
+        fxch st(2)
+        fmulp st(3), st(0)
+        fmul dword ptr [ecx + 8]
+        fxch st(1)
+        fmul dword ptr [ecx]
+        fxch st(1)
+        faddp st(2), st(0)
+        faddp st(1), st(0)
+        fstp dword ptr [edx + 8]
+    }
+#else
+    volatile br_vector3* output = A;
+    const volatile br_vector3* input = B;
+    const volatile br_matrix34* matrix = C;
 
-    // translation elements are presumed zero or irrelevant
-    A->v[0] = BR_MAC3(B->v[0], C(0, 0), B->v[1], C(0, 1), B->v[2], C(0, 2));
-    A->v[1] = BR_MAC3(B->v[0], C(1, 0), B->v[1], C(1, 1), B->v[2], C(1, 2));
-    A->v[2] = BR_MAC3(B->v[0], C(2, 0), B->v[1], C(2, 1), B->v[2], C(2, 2));
+    output->v[0] = (float)(((double)matrix->m[0][2] * input->v[2] + (double)matrix->m[0][1] * input->v[1]) + (double)matrix->m[0][0] * input->v[0]);
+    output->v[1] = (float)(((double)matrix->m[1][1] * input->v[1] + (double)matrix->m[1][2] * input->v[2]) + (double)matrix->m[1][0] * input->v[0]);
+    output->v[2] = (float)(((double)matrix->m[2][1] * input->v[1] + (double)matrix->m[2][2] * input->v[2]) + (double)matrix->m[2][0] * input->v[0]);
+#endif
 }
 
 // FUNCTION: CARMA2_HW 0x00533700
