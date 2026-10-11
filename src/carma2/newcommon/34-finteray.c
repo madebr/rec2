@@ -376,9 +376,212 @@ void C2_HOOK_FASTCALL DisablePlingMaterials(void) {
 
 // SphereFaceCollide
 
-// CheckSingleFace
+typedef struct {
+    int axis_0;
+    int axis_1;
+    float u0;
+    float v0;
+    double u1;
+    double u2;
+    float v1;
+    float v2;
+} tFinteray_projection;
 
-// MultiRayCheckSingleFace
+static void C2_HOOK_FASTCALL FinterayFaceProjection(tFinteray_projection* projection, tFace_ref* face, int scalar_edges) {
+    int axis_m;
+
+    axis_m = !(fabs(face->normal.v[0]) >= fabs(face->normal.v[1]));
+    if (!(fabs(face->normal.v[axis_m]) >= fabs(face->normal.v[2]))) {
+        axis_m = 2;
+    }
+    projection->axis_0 = axis_m == 0 ? 1 : 0;
+    projection->axis_1 = axis_m == 2 ? 1 : 2;
+    projection->v0 = face->v[0].v[projection->axis_0];
+    projection->u0 = face->v[0].v[projection->axis_1];
+    projection->v1 = FinterayScalar((double)face->v[1].v[projection->axis_0] - projection->v0);
+    projection->v2 = FinterayScalar((double)face->v[2].v[projection->axis_0] - projection->v0);
+    projection->u1 = (double)face->v[1].v[projection->axis_1] - projection->u0;
+    projection->u2 = (double)face->v[2].v[projection->axis_1] - projection->u0;
+    if (scalar_edges) {
+        projection->u1 = FinterayScalar(projection->u1);
+        projection->u2 = FinterayScalar(projection->u2);
+    }
+}
+
+static int C2_HOOK_FASTCALL FinterayFacePoint(tFinteray_projection* projection, br_vector3* point, int scalar_edges) {
+    double du;
+    float dv;
+    float du_scalar;
+    float product_1;
+    float product_2;
+    float numerator;
+    float denominator;
+    float beta;
+    double n;
+    double d;
+    double ratio;
+
+    du = (double)point->v[projection->axis_1] - projection->u0;
+    du_scalar = FinterayScalar(du);
+    dv = FinterayScalar((double)point->v[projection->axis_0] - projection->v0);
+    product_1 = FinterayScalar(projection->u1 * projection->v2);
+    product_2 = FinterayScalar(projection->u2 * projection->v1);
+    d = projection->u2 * projection->v1 - product_1;
+    n = (scalar_edges ? (double)du_scalar : du) * projection->v1 - projection->u1 * dv;
+    numerator = FinterayScalar(n);
+    denominator = FinterayScalar(d);
+    if (!(fabs(n) <= fabs(d) * 1.0001) || !(denominator < 0.f || denominator > 0.f)) {
+        return 0;
+    }
+    ratio = (double)numerator / denominator;
+    beta = FinterayScalar(ratio);
+    if (!(ratio >= -0.0001)) {
+        return 0;
+    }
+    d = (double)product_1 - product_2;
+    n = (double)du_scalar * projection->v2 - (double)FinterayScalar(projection->u2) * dv;
+    numerator = FinterayScalar(n);
+    denominator = FinterayScalar(d);
+    if (!(fabs(n) <= fabs(d) * 1.0001) || !(denominator < 0.f || denominator > 0.f)) {
+        return 0;
+    }
+    ratio = (double)numerator / denominator;
+    if (!(ratio >= -0.0001) || (double)beta + ratio > 1.0001) {
+        return 0;
+    }
+    return 1;
+}
+
+// FUNCTION: CARMA2_HW 0x0045ecc0
+void C2_HOOK_FASTCALL CheckSingleFace(tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt, br_vector3* coll_pos) {
+    br_material* material;
+    tFinteray_projection projection;
+    float d;
+    float numerator;
+    float t;
+    double ratio;
+    volatile br_vector3* point = coll_pos;
+    const volatile br_vector3* direction = ray_dir;
+    const volatile br_vector3* position = ray_pos;
+    volatile br_vector3* output_normal = normal;
+    const volatile br_vector3* face_normal = &pFace->normal;
+
+    material = pFace->material;
+    *rt = 100.f;
+    d = FinterayScalar(((double)pFace->normal.v[0] * ray_dir->v[0] + (double)pFace->normal.v[2] * ray_dir->v[2]) + (double)pFace->normal.v[1] * ray_dir->v[1]);
+    if (material != NULL && (material->flags & (BR_MATF_ALWAYS_VISIBLE | BR_MATF_TWO_SIDED)) == 0 && d > 0.f) {
+        return;
+    }
+    if (material != NULL && material->identifier != NULL && (material->identifier[0] == '!' || material->identifier[0] == '>' || material->identifier[0] == '?') && gPling_materials) {
+        return;
+    }
+    if (!(fabs(d) >= 2.3841858e-7f)) {
+        return;
+    }
+    numerator = FinterayScalar((((double)ray_pos->v[1] - pFace->v[0].v[1]) * pFace->normal.v[1] + ((double)ray_pos->v[2] - pFace->v[0].v[2]) * pFace->normal.v[2]) + ((double)ray_pos->v[0] - pFace->v[0].v[0]) * pFace->normal.v[0]);
+    if (!(fabs(d) >= 1.f) && !(fabs(numerator) <= fabs(d) * BR_SCALAR_MAX)) {
+        return;
+    }
+    if (d > 0.f) {
+        if (!(-numerator >= 0.f) || !(d - -0.003 >= -numerator)) {
+            return;
+        }
+    } else if (!(numerator >= 0.f) || !(0.003 - d >= numerator)) {
+        return;
+    }
+    ratio = -((double)numerator / d);
+    t = FinterayScalar(ratio);
+    if (ratio > 1.f) {
+        t = 1.f;
+    }
+    point->v[0] = FinterayScalar((double)t * direction->v[0]);
+    point->v[1] = FinterayScalar((double)direction->v[1] * t);
+    point->v[2] = FinterayScalar((double)direction->v[2] * t);
+    point->v[0] = FinterayScalar((double)point->v[0] + position->v[0]);
+    point->v[1] = FinterayScalar((double)point->v[1] + position->v[1]);
+    point->v[2] = FinterayScalar((double)position->v[2] + point->v[2]);
+    FinterayFaceProjection(&projection, pFace, 0);
+    if (FinterayFacePoint(&projection, coll_pos, 0)) {
+        *rt = t;
+        output_normal->v[0] = face_normal->v[0];
+        output_normal->v[1] = face_normal->v[1];
+        output_normal->v[2] = face_normal->v[2];
+        if (d > 0.f) {
+            output_normal->v[0] = -output_normal->v[0];
+            output_normal->v[1] = -output_normal->v[1];
+            output_normal->v[2] = -output_normal->v[2];
+        }
+    }
+}
+
+// FUNCTION: CARMA2_HW 0x0045f0d0
+void C2_HOOK_FASTCALL MultiRayCheckSingleFace(int pNum_rays, tFace_ref* pFace, br_vector3* ray_pos, br_vector3* ray_dir, br_vector3* normal, br_scalar* rt) {
+    br_material* material;
+    tFinteray_projection projection;
+    float t[4];
+    br_vector3 p[4];
+    float d;
+    float numerator;
+    double ratio;
+    int i;
+    volatile br_vector3* output_normal = normal;
+    const volatile br_vector3* face_normal = &pFace->normal;
+
+    material = pFace->material;
+    d = FinterayScalar(((double)pFace->normal.v[0] * ray_dir->v[0] + (double)ray_dir->v[1] * pFace->normal.v[1]) + (double)ray_dir->v[2] * pFace->normal.v[2]);
+    for (i = 0; i < pNum_rays; i++) {
+        rt[i] = 100.f;
+    }
+    if (material != NULL && (material->flags & (BR_MATF_ALWAYS_VISIBLE | BR_MATF_TWO_SIDED)) == 0 && d > 0.f) {
+        return;
+    }
+    if (material != NULL && material->identifier != NULL && (material->identifier[0] == '!' || material->identifier[0] == '>' || material->identifier[0] == '?') && gPling_materials) {
+        return;
+    }
+    if (!(fabs(d) >= 2.3841858e-7f)) {
+        return;
+    }
+    for (i = 0; i < pNum_rays; i++) {
+        numerator = FinterayScalar((((double)ray_pos[i].v[2] - pFace->v[0].v[2]) * pFace->normal.v[2] + ((double)ray_pos[i].v[1] - pFace->v[0].v[1]) * pFace->normal.v[1]) + ((double)ray_pos[i].v[0] - pFace->v[0].v[0]) * pFace->normal.v[0]);
+        if (!(fabs(d) >= 1.f) && !(fabs(numerator) <= fabs(d) * BR_SCALAR_MAX)) {
+            return;
+        }
+        if (d > 0.f) {
+            if (!(-numerator >= -0.001) || !(d - -0.003 >= -numerator)) {
+                t[i] = 100.f;
+                continue;
+            }
+        } else if (!(numerator >= -0.001) || !(0.003 - d >= numerator)) {
+            t[i] = 100.f;
+            continue;
+        }
+        ratio = -((double)numerator / d);
+        t[i] = FinterayScalar(ratio);
+        if (ratio > 1.f) {
+            t[i] = 1.f;
+        }
+        p[i].v[0] = FinterayScalar((double)t[i] * ray_dir->v[0]);
+        p[i].v[1] = FinterayScalar((double)ray_dir->v[1] * t[i]);
+        p[i].v[2] = FinterayScalar((double)ray_dir->v[2] * t[i]);
+        p[i].v[0] = FinterayScalar((double)p[i].v[0] + ray_pos[i].v[0]);
+        p[i].v[1] = FinterayScalar((double)ray_pos[i].v[1] + p[i].v[1]);
+        p[i].v[2] = FinterayScalar((double)p[i].v[2] + ray_pos[i].v[2]);
+    }
+    FinterayFaceProjection(&projection, pFace, 1);
+    for (i = 0; i < pNum_rays; i++) {
+        if (t[i] != 100.f && FinterayFacePoint(&projection, &p[i], 1)) {
+            rt[i] = t[i];
+            output_normal->v[0] = face_normal->v[0];
+            output_normal->v[1] = face_normal->v[1];
+            output_normal->v[2] = face_normal->v[2];
+            if (d > 0.f) {
+                output_normal->v[0] = -face_normal->v[0];
+                output_normal->v[1] = -face_normal->v[1];
+                output_normal->v[2] = -face_normal->v[2];
+            }
+        }
+    }
+}
 
 // FUNCTION: CARMA2_HW 0x0045f5b0
 void C2_HOOK_FASTCALL GetNewBoundingBox(br_bounds* b2, br_bounds* b1, br_matrix34* m) {
