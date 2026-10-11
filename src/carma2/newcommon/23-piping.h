@@ -23,6 +23,8 @@ extern float gReplay_rate;
 extern int gDisable_advance;
 extern tU8* gPipe_chunk_end;
 
+extern int gMax_previous_pipe_sessions;
+
 extern int C2_HOOK_FASTCALL ARReplayForwards(void);
 
 extern int C2_HOOK_FASTCALL ARReplayIsReallyPaused(void);
@@ -43,7 +45,7 @@ extern void C2_HOOK_FASTCALL ARResetPiping(void);
 
 // ARDispose
 
-// LengthOfChunk
+extern int C2_HOOK_FASTCALL LengthOfChunk(void* pChunk, int pType);
 
 extern tU32 C2_HOOK_FASTCALL LengthOfSession(tPipe_chunk* pSession);
 
@@ -85,15 +87,15 @@ extern void C2_HOOK_FASTCALL ARSetPipePlayPtr(tU8* pPtr);
 
 // ApplyPipedSession
 
-// MoveSessionPointerBackOne
+extern int C2_HOOK_FASTCALL MoveSessionPointerBackOne(tU8** pSession);
 
 // MoveSessionPointerForwardOne
 
-// FindPreviousChunk
+extern tPipe_chunk_data* C2_HOOK_FASTCALL FindPreviousChunk(tU8* pSession, int pType, uintptr_t pOwner);
 
 // UndoPipedSession
 
-// ARScanBuffer
+extern void C2_HOOK_FASTCALL ARScanBuffer(tU8** pPtr, tPipe_chunk_type pType, tU32 pDefault_time, tARScanBuffer_callback* pCallback, tARScanBuffer_time_check* pTime_check);
 
 // CheckSound
 
@@ -107,7 +109,7 @@ extern void C2_HOOK_FASTCALL ARDisableAdvance(void);
 
 extern void C2_HOOK_FASTCALL AREnableAdvance(void);
 
-// FindNextChunk
+extern tPipe_chunk_data* C2_HOOK_FASTCALL FindNextChunk(tPipe_chunk_type pType, uintptr_t pOwner);
 
 // MoveReplayBuffer
 
