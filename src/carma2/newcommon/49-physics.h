@@ -4,6 +4,13 @@
 #include "c2_hooks.h"
 #include "rec2_types.h"
 
+extern tPhysicsError_cbfn* gPhysics_error_cb;
+extern void* gPhysics_buffer1_ptr;
+extern void* gPhysics_buffer2_ptr;
+extern void* gPhysics_buffer3_ptr;
+extern int gPhysics_other_buffer_capacity;
+extern void* gPhysics_other_buffer;
+
 // count
 
 // DrMatrix34ApplyLPInverse
@@ -358,11 +365,11 @@ extern void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint);
 
 // UpdateCollisionObject
 
-// PhysicsError
+extern void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char* pMessage);
 
 // PhysicsWarning
 
-// PhysicsSetErrorHandler
+extern void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn);
 
 // RepositionAndOrientateChildren
 
@@ -376,13 +383,13 @@ extern int C2_HOOK_FASTCALL PhysicsObjectRecurse(tPhysics_object* pObject, tEnum
 
 extern int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObject, tEnumCollision_cbfn* pCallback, void* pContext);
 
-// InitPhysicsWorkspace
+extern void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize);
 
 // FindFacesInBox
 
 // GetFrictionFromFace
 
-// DoPhysicsError
+extern void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage);
 
 // ResetMan2
 

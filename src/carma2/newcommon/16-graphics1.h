@@ -7,6 +7,7 @@
 extern int gRender_indent;
 extern int gWidth;
 extern int gHeight;
+extern tU8 gTemporary_physics_render_buffer[300000];
 
 // MungeClipPlane
 

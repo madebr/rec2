@@ -1,8 +1,32 @@
 #include "49-physics.h"
 
+#include "16-graphics1.h"
+#include "52-errors.h"
 #include "c2_string.h"
+#include "c2_stdlib.h"
 
 #include <stddef.h>
+
+#define PHYSICS_BUFFER_PART_SIZE 40000
+#define PHYSICS_BUFFER_OTHER_SIZE 50000
+
+// GLOBAL: CARMA2_HW 0x006940c0
+tPhysicsError_cbfn* gPhysics_error_cb;
+
+// GLOBAL: CARMA2_HW 0x00744818
+void* gPhysics_buffer1_ptr;
+
+// GLOBAL: CARMA2_HW 0x00744814
+void* gPhysics_buffer2_ptr;
+
+// GLOBAL: CARMA2_HW 0x0074a5e0
+void* gPhysics_buffer3_ptr;
+
+// GLOBAL: CARMA2_HW 0x006940c8
+int gPhysics_other_buffer_capacity;
+
+// GLOBAL: CARMA2_HW 0x006940c4
+void* gPhysics_other_buffer;
 
 // count
 
@@ -430,11 +454,22 @@ void C2_HOOK_FASTCALL FreePhysicsJoint(tPhysics_joint* pJoint) {
 
 // UpdateCollisionObject
 
-// PhysicsError
+// FUNCTION: CARMA2_HW 0x004c61c0
+void C2_NORETURN C2_HOOK_FASTCALL PhysicsError(tPhysicsError pError, const char* pMessage) {
+
+    if (gPhysics_error_cb != NULL) {
+        gPhysics_error_cb(pError, pMessage);
+    }
+    exit(pError);
+}
 
 // PhysicsWarning
 
-// PhysicsSetErrorHandler
+// FUNCTION: CARMA2_HW 0x004c61f0
+void C2_HOOK_FASTCALL PhysicsSetErrorHandler(tPhysicsError_cbfn* pError_cbfn) {
+
+    gPhysics_error_cb = pError_cbfn;
+}
 
 // RepositionAndOrientateChildren
 
@@ -477,13 +512,53 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObject, tEnu
     return 0;
 }
 
-// InitPhysicsWorkspace
+// FUNCTION: CARMA2_HW 0x004c6510
+void C2_HOOK_FASTCALL InitPhysicsWorkspace(tU8* pBuffer, int pSize) {
+
+    gPhysics_buffer1_ptr = pBuffer;
+    pSize -= 3 * PHYSICS_BUFFER_PART_SIZE;
+    gPhysics_buffer2_ptr = pBuffer + PHYSICS_BUFFER_PART_SIZE;
+    gPhysics_buffer3_ptr = pBuffer + 2 * PHYSICS_BUFFER_PART_SIZE;
+    pBuffer += 3 * PHYSICS_BUFFER_PART_SIZE;
+    if (pSize < PHYSICS_BUFFER_OTHER_SIZE) {
+        PhysicsError(ePhysicsError_InsufficientSizedBuffer, "Physics workspace too small");
+    }
+    gPhysics_other_buffer_capacity = pSize;
+    gPhysics_other_buffer = pBuffer;
+}
 
 // FindFacesInBox
 
 // GetFrictionFromFace
 
-// DoPhysicsError
+// FUNCTION: CARMA2_HW 0x004b5990
+void C2_HOOK_FASTCALL DoPhysicsError(tPhysicsError pError, const char* pMessage) {
+    char s[256];
+
+    (void)pMessage;
+    switch (pError) {
+    case ePhysicsError_UnknownShapeType:
+        strcpy(s, "Unknown shape type");
+        break;
+    case ePhysicsError_WireFrameHasNoPoints:
+        strcpy(s, "Wire frame shape has no points");
+        break;
+    case ePhysicsError_PolyhedronHasNoPoints:
+        strcpy(s, "Polyhedron shape has no points");
+        break;
+    case ePhysicsError_UnknownHingeType:
+        strcpy(s, "Unknown hinge type");
+        /* The original overwrites this message with the code. */
+#ifndef REC2_MATCHING
+        break;
+#endif
+        /* fall through */
+    default:
+        sprintf(s, "%d ", pError);
+        break;
+    }
+    FatalError(1000 + pError, s);
+}
 
 // ResetMan2
 
@@ -493,10 +568,20 @@ int C2_HOOK_FASTCALL PhysicsObjectRecurseChildren(tPhysics_object* pObject, tEnu
 
 // ResetMan
 
-// STUB: CARMA2_HW 0x004b5ca0
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth(0)
+#endif
+
+// FUNCTION: CARMA2_HW 0x004b5ca0
 void C2_HOOK_FASTCALL InitPhysics(void) {
-    NOT_IMPLEMENTED();
+
+    PhysicsSetErrorHandler(DoPhysicsError);
+    InitPhysicsWorkspace(gTemporary_physics_render_buffer, sizeof(gTemporary_physics_render_buffer));
 }
+
+#if defined(REC2_MATCHING) && defined(_MSC_VER)
+#pragma inline_depth()
+#endif
 
 // PointOutOfSightNotAR
 
