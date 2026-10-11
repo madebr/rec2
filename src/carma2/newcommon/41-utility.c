@@ -217,7 +217,20 @@ br_pixelmap* C2_HOOK_FASTCALL DRImageLoad(const char* path) {
     NOT_IMPLEMENTED();
 }
 
-// DRPixelmapLoad
+// FUNCTION: CARMA2_HW 0x00513970
+br_pixelmap* C2_HOOK_FASTCALL DRPixelmapLoad(char* pFile_name) {
+    br_pixelmap* the_map;
+    br_int_16 row_bytes;
+
+    the_map = BrPixelmapLoad(pFile_name);
+    if (the_map != NULL) {
+        row_bytes = the_map->row_bytes;
+        the_map->origin_x = 0;
+        the_map->row_bytes = (br_int_16)((row_bytes + sizeof(int32_t) - 1) & ~(sizeof(int32_t) - 1));
+        the_map->origin_y = 0;
+    }
+    return the_map;
+}
 
 // FUNCTION: CARMA2_HW 0x005139a0
 void C2_HOOK_FASTCALL SepDirAndFilename(const char* path, char* dirPath, char* stemPath) {

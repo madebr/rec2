@@ -5,6 +5,18 @@
 #include "brender/brender.h"
 #include "rec2_types.h"
 
+extern br_pixelmap* gDepth_shade_table;
+extern int gDepth_shade_table_power;
+extern br_pixelmap* gFog_shade_table;
+extern int gFog_shade_table_power;
+extern br_pixelmap* gAcid_shade_table;
+extern int gAcid_shade_table_power;
+extern br_pixelmap* gWater_shade_table;
+extern int gWater_shade_table_power;
+extern br_actor* gForward_sky_actor;
+extern br_material* gHorizon_material;
+extern br_model* gForward_sky_model;
+
 // Log2
 
 // CalculateWrappingMultiplier
@@ -29,7 +41,7 @@ extern void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pix
 
 // CreateHorizonModel
 
-// LoadDepthTable
+extern void C2_HOOK_FASTCALL LoadDepthTable(char* pName, br_pixelmap** pTable, int* pPower);
 
 extern void C2_HOOK_FASTCALL InitDepthEffects(void);
 

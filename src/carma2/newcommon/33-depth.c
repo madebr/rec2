@@ -2,7 +2,10 @@
 
 #include "00-car.h"
 #include "17-world2.h"
+#include "32-spark.h"
 #include "37-brucetrk.h"
+#include "41-utility.h"
+#include "52-errors.h"
 #include "globvars.h"
 #include "globvrkm.h"
 #include "rec2_macros.h"
@@ -43,9 +46,62 @@ int gSwap_depth_effect_colour_red;
 // GLOBAL: CARMA2_HW 0x0079ec40
 int gSwap_depth_effect_colour_green;
 
+// GLOBAL: CARMA2_HW 0x0079ec20
+br_pixelmap* gDepth_shade_table;
+
+// GLOBAL: CARMA2_HW 0x0067c4bc
+int gDepth_shade_table_power;
+
+// GLOBAL: CARMA2_HW 0x0079ec38
+br_pixelmap* gFog_shade_table;
+
+// GLOBAL: CARMA2_HW 0x0067c4a4
+int gFog_shade_table_power;
+
+// GLOBAL: CARMA2_HW 0x0079ec24
+br_pixelmap* gAcid_shade_table;
+
+// GLOBAL: CARMA2_HW 0x0067c4dc
+int gAcid_shade_table_power;
+
+// GLOBAL: CARMA2_HW 0x0079ec28
+br_pixelmap* gWater_shade_table;
+
+// GLOBAL: CARMA2_HW 0x0067c4cc
+int gWater_shade_table_power;
+
+// GLOBAL: CARMA2_HW 0x0067c4d8
+br_actor* gForward_sky_actor;
+
 static void C2_HOOK_FASTCALL FrobFog(void);
 
-// Log2
+static int C2_HOOK_FASTCALL Log2(int pNumber) {
+    int i;
+    int bits[16];
+
+    bits[0] = 1;
+    bits[1] = 2;
+    bits[2] = 4;
+    bits[3] = 8;
+    bits[4] = 16;
+    bits[5] = 32;
+    bits[6] = 64;
+    bits[7] = 128;
+    bits[8] = 256;
+    bits[9] = 512;
+    bits[10] = 1024;
+    bits[11] = 2048;
+    bits[12] = 4096;
+    bits[13] = 0x2000;
+    bits[14] = 0x4000;
+    bits[15] = 0x8000;
+    for (i = (int)REC2_ASIZE(bits) - 1; i >= 0; --i) {
+        if (bits[i] & pNumber) {
+            return i;
+        }
+    }
+    return 0;
+}
 
 // CalculateWrappingMultiplier
 
@@ -215,13 +271,94 @@ void C2_HOOK_FASTCALL InstantDepthChange(tDepth_effect_type pType, br_pixelmap* 
 
 // MungeSkyModel
 
-// CreateHorizonModel
+static br_model* C2_HOOK_FASTCALL CreateHorizonModel(void) {
+    tU8 nbands;
+    tU8 band;
+    int vertex;
+    tU8 stripe;
+    br_model* model;
 
-// LoadDepthTable
+    nbands = 21;
+    model = BrModelAllocate(NULL, 88, 6 * nbands);
+    model->flags |= BR_MODF_KEEP_ORIGINAL;
+    for (band = 0; band < nbands; band++) {
+        for (stripe = 0; stripe < 3; stripe++) {
+            vertex = 6 * band + 2 * stripe;
+            model->faces[vertex + 0].vertices[0] = stripe + 4 * band + 0;
+            model->faces[vertex + 0].vertices[1] = stripe + 4 * band + 1;
+            model->faces[vertex + 0].vertices[2] = stripe + 4 * band + 5;
+            model->faces[vertex + 1].vertices[0] = stripe + 4 * band + 0;
+            model->faces[vertex + 1].vertices[1] = stripe + 4 * band + 5;
+            model->faces[vertex + 1].vertices[2] = stripe + 4 * band + 4;
 
-// STUB: CARMA2_HW 0x00445620
+            model->faces[vertex + 0].smoothing = 1;
+            model->faces[vertex + 1].smoothing = 1;
+
+            model->faces[vertex + 0].material = NULL;
+            model->faces[vertex + 1].material = NULL;
+        }
+    }
+    return model;
+}
+
+// FUNCTION: CARMA2_HW 0x00445860
+void C2_HOOK_FASTCALL LoadDepthTable(char* pName, br_pixelmap** pTable, int* pPower) {
+    tPath_name the_path;
+    int i;
+    int j;
+    tU8 temp;
+
+#define PTABLE_PIXEL_AT(X, Y) ((tU8*)((*pTable)->pixels))[(X) + (Y) * (*pTable)->row_bytes]
+
+    PathCat(the_path, gApplication_path, "SHADETAB");
+    PathCat(the_path, the_path, pName);
+    *pTable = DRPixelmapLoad(the_path);
+    if (*pTable == NULL) {
+        FatalError(kFatalError_CannotLoadDepthCueShadeTable);
+    }
+    *pPower = Log2((*pTable)->height);
+    for (i = 0; i < (*pTable)->width; i++) {
+        for (j = 0; j < (*pTable)->height / 2; j++) {
+            temp = PTABLE_PIXEL_AT(i, j);
+            PTABLE_PIXEL_AT(i, j) = PTABLE_PIXEL_AT(i, ((*pTable)->height - j - 1));
+            PTABLE_PIXEL_AT(i, ((*pTable)->height - j - 1)) = temp;
+        }
+    }
+
+#undef PTABLE_PIXEL_AT
+}
+
+// FUNCTION: CARMA2_HW 0x00445620
 void C2_HOOK_FASTCALL InitDepthEffects(void) {
-    NOT_IMPLEMENTED();
+
+    LoadDepthTable("DEPTHCUE.TAB", &gDepth_shade_table, &gDepth_shade_table_power);
+    LoadDepthTable("FOG.TAB", &gFog_shade_table, &gFog_shade_table_power);
+    LoadDepthTable("ACIDFOG.TAB", &gAcid_shade_table, &gAcid_shade_table_power);
+    LoadDepthTable("BLUEGIT.TAB", &gWater_shade_table, &gWater_shade_table_power);
+    GenerateSmokeShades();
+    gHorizon_material = BrMaterialFind("HORIZON.MAT");
+    if (gHorizon_material == NULL) {
+        FatalError(kFatalError_CannotFindSkyMaterial_S);
+    }
+    if (gScreen->type == BR_PMT_INDEX_8 && !gNo_fog) {
+        int i, j;
+        gHorizon_material->index_blend = BrPixelmapAllocate(BR_PMT_INDEX_8, 256, 256, NULL, 0);
+        BrTableAdd(gHorizon_material->index_blend);
+        for (i = 0; i < 256; i++) {
+            for (j = 0; j < 256; j++) {
+                ((br_uint_8*)gHorizon_material->index_blend->pixels)[256*i + j] = (br_uint_8)j;
+            }
+        }
+        gHorizon_material->flags |= BR_MATF_PERSPECTIVE;
+    }
+    gHorizon_material->flags |= BR_MATF_MAP_INTERPOLATION;
+    gForward_sky_model = CreateHorizonModel();
+    BrModelAdd(gForward_sky_model);
+    gForward_sky_actor = BrActorAllocate(BR_ACTOR_MODEL, NULL);
+    gForward_sky_actor->model = gForward_sky_model;
+    gForward_sky_actor->material = gHorizon_material;
+    gForward_sky_actor->render_style = BR_RSTYLE_NONE;
+    BrActorAdd(gUniverse_actor, gForward_sky_actor);
 }
 
 // DoHorizon
